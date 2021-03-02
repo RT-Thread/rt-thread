@@ -6,13 +6,13 @@
 #include "acmp/acmp_8xx.h"
 
 #if defined(CHIP_LPC82X)
-	#include "adc/adc_8xx.h"
+    #include "adc/adc_8xx.h"
 #endif
 
 #include "crc/crc_8xx.h"
 
 #if defined(CHIP_LPC82X)
-	#include "dma/dma_8xx.h"
+    #include "dma/dma_8xx.h"
 #endif
 
 #include "gpio/gpio_8xx.h"
@@ -21,7 +21,7 @@
 #include "crc/crc_8xx.h"
 
 #if defined(CHIP_LPC82X)
-	#include "inmux/inmux_8xx.h"
+    #include "inmux/inmux_8xx.h"
 #endif
 
 #include "mrt/mrt_8xx.h"

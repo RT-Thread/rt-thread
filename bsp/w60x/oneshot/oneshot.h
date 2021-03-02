@@ -12,9 +12,9 @@
 #define DRV_ONESHOT_H__
 
 typedef enum{
-	WM_UDP,
+    WM_UDP,
     WM_APSOCKET,
-	WM_APWEB
+    WM_APWEB
 }WM_ONESHOT_MODE;
 
 

@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_pwr.h"
@@ -26,10 +26,10 @@
 * @{
 */
 
-/** @defgroup PWR 
+/** @defgroup PWR
 * @brief PWR driver modules
 * @{
-*/ 
+*/
 
 /** @defgroup PWR_Private_TypesDefinitions
 * @{
@@ -137,13 +137,13 @@ void PWR_BackupAccessCmd(FunctionalState NewState)
     //*(__IO uint32_t *) CR_DBP_BB = (uint32_t)NewState;
     if(NewState!=DISABLE)
     {
-        PWR->CR |= 0x00000100; 
+        PWR->CR |= 0x00000100;
     }
     else
     {
-        PWR->CR &= 0xfffffeff; 
+        PWR->CR &= 0xfffffeff;
     }
-    
+
 }
 
 /**
@@ -156,7 +156,7 @@ void PWR_PVDCmd(FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
     if(NewState==ENABLE)
     {
         PWR->CR |= 0x00000010;
@@ -209,14 +209,14 @@ void PWR_WakeUpPinCmd(FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
     if(NewState!=DISABLE)
     {
-        PWR->CSR |= 0x00000100; 
+        PWR->CSR |= 0x00000100;
     }
     else
     {
-        PWR->CSR &= 0xfffffeff; 
+        PWR->CSR &= 0xfffffeff;
     }
 }
 
@@ -227,7 +227,7 @@ void PWR_WakeUpPinCmd(FunctionalState NewState)
 * @arg PWR_Regulator_ON: STOP mode with regulator ON
 * @arg PWR_Regulator_LowPower: STOP mode with
 *   regulator in low power mode
-* @param PWR_STOPEntry: specifies if STOP mode in entered with WFI or 
+* @param PWR_STOPEntry: specifies if STOP mode in entered with WFI or
 *   WFE instruction.
 *   This parameter can be one of the following values:
 * @arg PWR_STOPEntry_WFI: enter STOP mode with WFI instruction
@@ -240,7 +240,7 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
     /* Check the parameters */
     assert_param(IS_PWR_REGULATOR(PWR_Regulator));
     assert_param(IS_PWR_STOP_ENTRY(PWR_STOPEntry));
-    
+
     /* Select the regulator state in STOP mode ---------------------------------*/
     tmpreg = PWR->CR;
     /* Clear PDDS and LPDS bits */
@@ -250,11 +250,11 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
     /* Store the new value */
     PWR->CR = tmpreg;
     /* Set SLEEPDEEP bit of Cortex System Control Register */
-    
+
     SCB->SCR |= SysCtrl_SLEEPDEEP_Set;
     /* Select STOP mode entry --------------------------------------------------*/
     if(PWR_STOPEntry == PWR_STOPEntry_WFI)
-    {   
+    {
         /* Request Wait For Interrupt */
         __WFI();
     }
@@ -300,7 +300,7 @@ FlagStatus PWR_GetFlagStatus(uint32_t PWR_FLAG)
     FlagStatus bitstatus = RESET;
     /* Check the parameters */
     assert_param(IS_PWR_GET_FLAG(PWR_FLAG));
-    
+
     if ((PWR->CSR & PWR_FLAG) != (uint32_t)RESET)
     {
         bitstatus = SET;
@@ -325,7 +325,7 @@ void PWR_ClearFlag(uint32_t PWR_FLAG)
 {
     /* Check the parameters */
     assert_param(IS_PWR_CLEAR_FLAG(PWR_FLAG));
-    
+
     PWR->CR |=  PWR_FLAG << 2;
 }
 

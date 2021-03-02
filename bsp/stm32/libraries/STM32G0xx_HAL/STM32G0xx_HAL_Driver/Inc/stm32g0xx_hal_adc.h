@@ -44,7 +44,7 @@
   * @{
   */
 
-/** 
+/**
   * @brief  ADC group regular oversampling structure definition
   */
 typedef struct
@@ -72,7 +72,7 @@ typedef struct
   *          - For all parameters: ADC disabled
   *          - For all parameters except 'ClockPrescaler' and 'Resolution': ADC enabled without conversion on going on group regular.
   *         If ADC is not in the appropriate state to modify some parameters, these parameters setting is bypassed
-  *         without error reporting (as it can be the expected behavior in case of intended action to update another parameter 
+  *         without error reporting (as it can be the expected behavior in case of intended action to update another parameter
   *         (which fulfills the ADC state condition) on the fly).
   */
 typedef struct
@@ -81,12 +81,12 @@ typedef struct
                                        This parameter can be a value of @ref ADC_HAL_EC_COMMON_CLOCK_SOURCE.
                                        Note: The ADC clock configuration is common to all ADC instances.
                                        Note: In case of synchronous clock mode based on HCLK/1, the configuration must be enabled only
-                                             if the system clock has a 50% duty clock cycle (APB prescaler configured inside RCC 
+                                             if the system clock has a 50% duty clock cycle (APB prescaler configured inside RCC
                                              must be bypassed and PCLK clock must have 50% duty cycle). Refer to reference manual for details.
                                        Note: In case of usage of asynchronous clock, the selected clock must be preliminarily enabled at RCC top level.
                                        Note: This parameter can be modified only if all ADC instances are disabled. */
 
-  uint32_t Resolution;            /*!< Configure the ADC resolution. 
+  uint32_t Resolution;            /*!< Configure the ADC resolution.
                                        This parameter can be a value of @ref ADC_HAL_EC_RESOLUTION */
 
   uint32_t DataAlign;             /*!< Specify ADC data alignment in conversion data register (right or left).
@@ -123,7 +123,7 @@ typedef struct
                                        conversion (for ADC group regular) has been retrieved by user software,
                                        using function HAL_ADC_GetValue().
                                        This feature automatically adapts the frequency of ADC conversions triggers to the speed of the system that reads the data. Moreover, this avoids risk of overrun
-                                       for low frequency applications. 
+                                       for low frequency applications.
                                        This parameter can be set to ENABLE or DISABLE.
                                        Note: Do not use with interruption or DMA (HAL_ADC_Start_IT(), HAL_ADC_Start_DMA()) since they clear immediately the EOC flag
                                              to free the IRQ vector sequencer.
@@ -162,7 +162,7 @@ typedef struct
                                        If set to ADC_SOFTWARE_START, external triggers are disabled and software trigger is used instead.
                                        This parameter can be a value of @ref ADC_regular_external_trigger_source.
                                        Caution: external trigger source is common to all ADC instances. */
-                                                                                                        
+
   uint32_t ExternalTrigConvEdge;  /*!< Select the external event edge used to trigger ADC group regular conversion start.
                                        If trigger source is set to ADC_SOFTWARE_START, this parameter is discarded.
                                        This parameter can be a value of @ref ADC_regular_external_trigger_edge */
@@ -174,11 +174,11 @@ typedef struct
 
   uint32_t Overrun;               /*!< Select the behavior in case of overrun: data overwritten or preserved (default).
                                        This parameter can be a value of @ref ADC_HAL_EC_REG_OVR_DATA_BEHAVIOR.
-                                       Note: In case of overrun set to data preserved and usage with programming model with interruption (HAL_Start_IT()): ADC IRQ handler has to clear 
-                                       end of conversion flags, this induces the release of the preserved data. If needed, this data can be saved in function 
+                                       Note: In case of overrun set to data preserved and usage with programming model with interruption (HAL_Start_IT()): ADC IRQ handler has to clear
+                                       end of conversion flags, this induces the release of the preserved data. If needed, this data can be saved in function
                                        HAL_ADC_ConvCpltCallback(), placed in user program code (called before end of conversion flags clear).
                                        Note: Error reporting with respect to the conversion mode:
-                                             - Usage with ADC conversion by polling for event or interruption: Error is reported only if overrun is set to data preserved. If overrun is set to data 
+                                             - Usage with ADC conversion by polling for event or interruption: Error is reported only if overrun is set to data preserved. If overrun is set to data
                                                overwritten, user can willingly not read all the converted data, this is not considered as an erroneous case.
                                              - Usage with ADC conversion by DMA: Error is reported whatever overrun setting (DMA is expected to process all data from data register). */
 
@@ -214,7 +214,7 @@ typedef struct
                                              (between ADC enable and ADC conversion start trigger event
                                              or between two ADC conversion start trigger event).
                                              Duration value: Refer to device datasheet, parameter "tIdle".
-                                       Note: When ADC trigger frequency mode is set to low frequency, 
+                                       Note: When ADC trigger frequency mode is set to low frequency,
                                              some rearm cycles are inserted before performing ADC conversion
                                              start, inducing a delay of 2 ADC clock cycles. */
 
@@ -289,7 +289,7 @@ typedef struct
   uint32_t HighThreshold;     /*!< Configure the ADC analog watchdog High threshold value.
                                    Depending of ADC resolution selected (12, 10, 8 or 6 bits), this parameter must be a number
                                    between Min_Data = 0x000 and Max_Data = 0xFFF, 0x3FF, 0xFF or 0x3F respectively.
-                                   Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits 
+                                   Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits
                                          the 4 LSB are ignored, if ADC resolution is 10 bits the 2 LSB are ignored.
                                    Note: If ADC oversampling is enabled, ADC analog watchdog thresholds are
                                          impacted: the comparison of analog watchdog thresholds is done on
@@ -299,7 +299,7 @@ typedef struct
   uint32_t LowThreshold;      /*!< Configures the ADC analog watchdog Low threshold value.
                                    Depending of ADC resolution selected (12, 10, 8 or 6 bits), this parameter must be a number
                                    between Min_Data = 0x000 and Max_Data = 0xFFF, 0x3FF, 0xFF or 0x3F respectively.
-                                   Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits 
+                                   Note: Analog watchdog 2 and 3 are limited to a resolution of 8 bits: if ADC resolution is 12 bits
                                          the 4 LSB are ignored, if ADC resolution is 10 bits the 2 LSB are ignored.
                                    Note: If ADC oversampling is enabled, ADC analog watchdog thresholds are
                                          impacted: the comparison of analog watchdog thresholds is done on
@@ -315,7 +315,7 @@ typedef struct
   * @brief  HAL ADC state machine: ADC states definition (bitfields)
   * @note   ADC state machine is managed by bitfields, state must be compared
   *         with bit by bit.
-  *         For example:                                                         
+  *         For example:
   *           " if ((HAL_ADC_GetState(hadc1) & HAL_ADC_STATE_REG_BUSY) != 0UL) "
   *           " if ((HAL_ADC_GetState(hadc1) & HAL_ADC_STATE_AWD1) != 0UL) "
   */
@@ -777,7 +777,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @param __HANDLE__ ADC handle
   * @retval None
   */
-#define ADC_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_ADC_ERROR_NONE) 
+#define ADC_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_ADC_ERROR_NONE)
 
 /**
   * @brief Simultaneously clear and set specific bits of the handle State.
@@ -795,7 +795,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define ADC_CFGR1_REG_DISCCONTINUOUS(_REG_DISCONTINUOUS_MODE_)                 \
   ((_REG_DISCONTINUOUS_MODE_) << 16U)
-  
+
 /**
   * @brief Enable the ADC auto off mode.
   * @param _AUTOOFF_ Auto off bit enable or disable.
@@ -819,7 +819,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define ADC_CFGR1_CONTINUOUS(_CONTINUOUS_MODE_)                                \
   ((_CONTINUOUS_MODE_) << 13U)
-    
+
 /**
   * @brief Enable ADC overrun mode.
   * @param _OVERRUN_MODE_ Overrun mode.
@@ -1013,7 +1013,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief Verify that a given value is aligned with the ADC resolution range.
   * @param __RESOLUTION__ ADC resolution (12, 10, 8 or 6 bits).
-  * @param __ADC_VALUE__ value checked against the resolution.     
+  * @param __ADC_VALUE__ value checked against the resolution.
   * @retval SET (__ADC_VALUE__ in line with __RESOLUTION__) or RESET (__ADC_VALUE__ not in line with __RESOLUTION__)
   */
 #define IS_ADC_RANGE(__RESOLUTION__, __ADC_VALUE__) \
@@ -1126,7 +1126,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define __HAL_ADC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)                     \
   (((__HANDLE__)->Instance->IER & (__INTERRUPT__)) == (__INTERRUPT__))
-    
+
 /**
   * @brief Check whether the specified ADC flag is set or not.
   * @param __HANDLE__ ADC handle
@@ -1134,10 +1134,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *        This parameter can be one of the following values:
   *            @arg @ref ADC_FLAG_RDY    ADC Ready flag
   *            @arg @ref ADC_FLAG_CCRDY  ADC channel configuration ready flag
-  *            @arg @ref ADC_FLAG_EOSMP   ADC End of Sampling flag                            
-  *            @arg @ref ADC_FLAG_EOC     ADC End of Regular Conversion flag                  
-  *            @arg @ref ADC_FLAG_EOS     ADC End of Regular sequence of Conversions flag     
-  *            @arg @ref ADC_FLAG_OVR     ADC overrun flag        
+  *            @arg @ref ADC_FLAG_EOSMP   ADC End of Sampling flag
+  *            @arg @ref ADC_FLAG_EOC     ADC End of Regular Conversion flag
+  *            @arg @ref ADC_FLAG_EOS     ADC End of Regular sequence of Conversions flag
+  *            @arg @ref ADC_FLAG_OVR     ADC overrun flag
   *            @arg @ref ADC_FLAG_AWD1    ADC Analog watchdog 1 flag (main analog watchdog)
   *            @arg @ref ADC_FLAG_AWD2    ADC Analog watchdog 2 flag (additional analog watchdog)
   *            @arg @ref ADC_FLAG_AWD3    ADC Analog watchdog 3 flag (additional analog watchdog)
@@ -1153,10 +1153,10 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *        This parameter can be one of the following values:
   *            @arg @ref ADC_FLAG_RDY    ADC Ready flag
   *            @arg @ref ADC_FLAG_CCRDY  ADC channel configuration ready flag
-  *            @arg @ref ADC_FLAG_EOSMP   ADC End of Sampling flag                            
-  *            @arg @ref ADC_FLAG_EOC     ADC End of Regular Conversion flag                  
-  *            @arg @ref ADC_FLAG_EOS     ADC End of Regular sequence of Conversions flag     
-  *            @arg @ref ADC_FLAG_OVR     ADC overrun flag        
+  *            @arg @ref ADC_FLAG_EOSMP   ADC End of Sampling flag
+  *            @arg @ref ADC_FLAG_EOC     ADC End of Regular Conversion flag
+  *            @arg @ref ADC_FLAG_EOS     ADC End of Regular sequence of Conversions flag
+  *            @arg @ref ADC_FLAG_OVR     ADC overrun flag
   *            @arg @ref ADC_FLAG_AWD1    ADC Analog watchdog 1 flag (main analog watchdog)
   *            @arg @ref ADC_FLAG_AWD2    ADC Analog watchdog 2 flag (additional analog watchdog)
   *            @arg @ref ADC_FLAG_AWD3    ADC Analog watchdog 3 flag (additional analog watchdog)
@@ -1206,7 +1206,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR
   *         @arg @ref ADC_CHANNEL_VBAT
-  *         
+  *
   *         (1) On STM32G0, parameter can be set in ADC group sequencer
   *             only if sequencer is set in mode "not fully configurable",
   *             refer to function @ref LL_ADC_REG_SetSequencerConfigurable().
@@ -1245,7 +1245,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT    (2)
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR (2)
   *         @arg @ref ADC_CHANNEL_VBAT       (2)
-  *         
+  *
   *         (1) On STM32G0, parameter can be set in ADC group sequencer
   *             only if sequencer is set in mode "not fully configurable",
   *             refer to function @ref LL_ADC_REG_SetSequencerConfigurable().\n
@@ -1296,7 +1296,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR
   *         @arg @ref ADC_CHANNEL_VBAT
-  *         
+  *
   *         (1) On STM32G0, parameter can be set in ADC group sequencer
   *             only if sequencer is set in mode "not fully configurable",
   *             refer to function @ref LL_ADC_REG_SetSequencerConfigurable().
@@ -1342,7 +1342,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR
   *         @arg @ref ADC_CHANNEL_VBAT
-  *         
+  *
   *         (1) On STM32G0, parameter can be set in ADC group sequencer
   *             only if sequencer is set in mode "not fully configurable",
   *             refer to function @ref LL_ADC_REG_SetSequencerConfigurable().
@@ -1446,7 +1446,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief  Helper macro to convert the ADC conversion data from
   *         a resolution to another resolution.
-  * @param  __DATA__ ADC conversion data to be converted 
+  * @param  __DATA__ ADC conversion data to be converted
   * @param  __ADC_RESOLUTION_CURRENT__ Resolution of to the data to be converted
   *         This parameter can be one of the following values:
   *         @arg @ref ADC_RESOLUTION_12B
@@ -1699,7 +1699,7 @@ void                    HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc);
   */
 
 /** @addtogroup ADC_Exported_Functions_Group3 Peripheral Control functions
- *  @brief    Peripheral Control functions 
+ *  @brief    Peripheral Control functions
  * @{
  */
 /* Peripheral Control functions ***********************************************/

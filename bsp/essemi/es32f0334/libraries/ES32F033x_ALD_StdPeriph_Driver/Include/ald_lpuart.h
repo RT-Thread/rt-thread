@@ -43,8 +43,8 @@ extern "C" {
   * @defgroup LPUART_Public_Macros1 LPUART FIFO Reset
   * @{
   */
-#define LPUART_FIFO_TX_RESET(hperh)	(SET_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_TXRESET_MSK))
-#define LPUART_FIFO_RX_RESET(hperh)	(SET_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_RXRESET_MSK))
+#define LPUART_FIFO_TX_RESET(hperh) (SET_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_TXRESET_MSK))
+#define LPUART_FIFO_RX_RESET(hperh) (SET_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_RXRESET_MSK))
 /**
   * @}
   */
@@ -52,8 +52,8 @@ extern "C" {
   * @defgroup LPUART_Public_Macros2 LPUART RS485 RX Enable
   * @{
   */
-#define LPUART_RS485_RX_DISABLE(hperh)	(SET_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_NMPMRXDIS_MSK))
-#define LPUART_RS485_RX_ENABLE(hperh)	(CLEAR_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_NMPMRXDIS_MSK))
+#define LPUART_RS485_RX_DISABLE(hperh)  (SET_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_NMPMRXDIS_MSK))
+#define LPUART_RS485_RX_ENABLE(hperh)   (CLEAR_BIT((hperh)->perh->FIFOCON, LPUART_FIFOCON_NMPMRXDIS_MSK))
 /**
   * @}
   */
@@ -61,8 +61,8 @@ extern "C" {
   * @defgroup LPUART_Public_Macros4 LPUART LoopMode Enable
   * @{
   */
-#define LPUART_LPBMOD_ENABLE(hperh)	(SET_BIT((hperh)->perh->CON0, LPUART_CON0_LPBMOD_MSK))
-#define LPUART_LPBMOD_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_LPBMOD_MSK))
+#define LPUART_LPBMOD_ENABLE(hperh) (SET_BIT((hperh)->perh->CON0, LPUART_CON0_LPBMOD_MSK))
+#define LPUART_LPBMOD_DISABLE(hperh)    (CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_LPBMOD_MSK))
 /**
   * @}
   */
@@ -70,8 +70,8 @@ extern "C" {
   * @defgroup LPUART_Public_Macros5 LPUART IrDA TX Enable
   * @{
   */
-#define LPUART_IRTX_ENABLE(hperh)	(SET_BIT((hperh)->perh->CON1, LPUART_CON1_IRTXE_MSK))
-#define LPUART_IRTX_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->CON1, LPUART_CON1_IRTXE_MSK))
+#define LPUART_IRTX_ENABLE(hperh)   (SET_BIT((hperh)->perh->CON1, LPUART_CON1_IRTXE_MSK))
+#define LPUART_IRTX_DISABLE(hperh)  (CLEAR_BIT((hperh)->perh->CON1, LPUART_CON1_IRTXE_MSK))
 /**
   * @}
   */
@@ -79,8 +79,8 @@ extern "C" {
   * @defgroup LPUART_Public_Macros6 LPUART IRWIDTH Enable
   * @{
   */
-#define LPUART_IRWIDTH_DISABLE(hperh)	(SET_BIT((hperh)->perh->CON1, LPUART_CON1_IRWIDTH_MSK))
-#define LPUART_IRWIDTH_ENABLE(hperh)	(CLEAR_BIT((hperh)->perh->CON1, LPUART_CON1_IRWIDTH_MSK))
+#define LPUART_IRWIDTH_DISABLE(hperh)   (SET_BIT((hperh)->perh->CON1, LPUART_CON1_IRWIDTH_MSK))
+#define LPUART_IRWIDTH_ENABLE(hperh)    (CLEAR_BIT((hperh)->perh->CON1, LPUART_CON1_IRWIDTH_MSK))
 /**
   * @}
   */
@@ -88,10 +88,10 @@ extern "C" {
   * @defgroup LPUART_Public_Macros7 LPUART CTS/RTS Enable
   * @{
   */
-#define LPUART_CTS_ENABLE(hperh)	(SET_BIT((hperh)->perh->CON0, LPUART_CON0_ATCTSE_MSK))
-#define LPUART_CTS_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_ATCTSE_MSK))
-#define LPUART_RTS_ENABLE(hperh)	(SET_BIT((hperh)->perh->CON0, LPUART_CON0_ATRTSE_MSK))
-#define LPUART_RTS_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_ATRTSE_MSK))
+#define LPUART_CTS_ENABLE(hperh)    (SET_BIT((hperh)->perh->CON0, LPUART_CON0_ATCTSE_MSK))
+#define LPUART_CTS_DISABLE(hperh)   (CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_ATCTSE_MSK))
+#define LPUART_RTS_ENABLE(hperh)    (SET_BIT((hperh)->perh->CON0, LPUART_CON0_ATRTSE_MSK))
+#define LPUART_RTS_DISABLE(hperh)   (CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_ATRTSE_MSK))
 /**
   * @}
   */
@@ -99,10 +99,10 @@ extern "C" {
   * @defgroup LPUART_Public_Macros8 LPUART CTS/RTS Polarity
   * @{
   */
-#define LPUART_CTS_POL_LOW(hperh)	(SET_BIT((hperh)->perh->CON0, LPUART_CON0_CTSPOL_MSK))
-#define LPUART_CTS_POL_HIGH(hperh)	(CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_CTSPOL_MSK))
-#define LPUART_RTS_POL_LOW(hperh)	(SET_BIT((hperh)->perh->CON0, LPUART_CON0_RTSPOL_MSK))
-#define LPUART_RTS_POL_HIGH(hperh)	(CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_RTSPOL_MSK))
+#define LPUART_CTS_POL_LOW(hperh)   (SET_BIT((hperh)->perh->CON0, LPUART_CON0_CTSPOL_MSK))
+#define LPUART_CTS_POL_HIGH(hperh)  (CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_CTSPOL_MSK))
+#define LPUART_RTS_POL_LOW(hperh)   (SET_BIT((hperh)->perh->CON0, LPUART_CON0_RTSPOL_MSK))
+#define LPUART_RTS_POL_HIGH(hperh)  (CLEAR_BIT((hperh)->perh->CON0, LPUART_CON0_RTSPOL_MSK))
 /**
   * @}
   */
@@ -110,8 +110,8 @@ extern "C" {
   * @defgroup LPUART_Public_Macros10 LPUART Update Enable
   * @{
   */
-#define LPUART_UPDATE_ENABLE(hperh)	(CLEAR_BIT((hperh)->perh->UPDATE, LPUART_UPDATE_UDIS_MSK))
-#define LPUART_UPDATE_DISABLE(hperh)	(SET_BIT((hperh)->perh->UPDATE, LPUART_UPDATE_UDIS_MSK))
+#define LPUART_UPDATE_ENABLE(hperh) (CLEAR_BIT((hperh)->perh->UPDATE, LPUART_UPDATE_UDIS_MSK))
+#define LPUART_UPDATE_DISABLE(hperh)    (SET_BIT((hperh)->perh->UPDATE, LPUART_UPDATE_UDIS_MSK))
 /**
   * @}
   */
@@ -127,191 +127,191 @@ extern "C" {
   * @brief LPUART Word Length
   */
 typedef enum {
-	LPUART_WORD_LENGTH_5B = 0x0U,	/**< 5-bits */
-	LPUART_WORD_LENGTH_6B = 0x1U,	/**< 6-bits */
-	LPUART_WORD_LENGTH_7B = 0x2U,	/**< 7-bits */
-	LPUART_WORD_LENGTH_8B = 0x3U,	/**< 8-bits */
-	LPUART_WORD_LENGTH_9B = 0x4U,	/**< 9-bits */
+    LPUART_WORD_LENGTH_5B = 0x0U,   /**< 5-bits */
+    LPUART_WORD_LENGTH_6B = 0x1U,   /**< 6-bits */
+    LPUART_WORD_LENGTH_7B = 0x2U,   /**< 7-bits */
+    LPUART_WORD_LENGTH_8B = 0x3U,   /**< 8-bits */
+    LPUART_WORD_LENGTH_9B = 0x4U,   /**< 9-bits */
 } lpuart_word_length_t;
 
 /**
   * @brief LPUART Stop Bits
   */
 typedef enum {
-	LPUART_STOP_BITS_1 = 0x0U,	/**< 1-bits */
-	LPUART_STOP_BITS_2 = 0x1U,	/**< 2-bits */
+    LPUART_STOP_BITS_1 = 0x0U,  /**< 1-bits */
+    LPUART_STOP_BITS_2 = 0x1U,  /**< 2-bits */
 } lpuart_stop_bits_t;
 
 /**
   * @brief LPUART Parity
   */
 typedef enum {
-	LPUART_PARITY_NONE = 0x0U,	/**< Not parity */
-	LPUART_PARITY_ODD  = 0x1U,	/**< Odd parity */
-	LPUART_PARITY_EVEN = 0x3U,	/**< Even parity */
+    LPUART_PARITY_NONE = 0x0U,  /**< Not parity */
+    LPUART_PARITY_ODD  = 0x1U,  /**< Odd parity */
+    LPUART_PARITY_EVEN = 0x3U,  /**< Even parity */
 } lpuart_parity_t;
 
 /**
   * @brief LPUART Mode
   */
 typedef enum {
-	LPUART_MODE_UART  = 0x0U,	/**< UART */
-	LPUART_MODE_IrDA  = 0x2U,	/**< IrDA */
-	LPUART_MODE_RS485 = 0x3U,	/**< RS485 */
+    LPUART_MODE_UART  = 0x0U,   /**< UART */
+    LPUART_MODE_IrDA  = 0x2U,   /**< IrDA */
+    LPUART_MODE_RS485 = 0x3U,   /**< RS485 */
 } lpuart_mode_t;
 
 /**
   * @brief LPUART Hardware Flow Control
   */
 typedef enum {
-	LPUART_HW_FLOW_CTL_NONE    = 0x0U,	/**< None */
-	LPUART_HW_FLOW_CTL_RTS     = 0x1U,	/**< RTS */
-	LPUART_HW_FLOW_CTL_CTS     = 0x2U,	/**< CTS */
-	LPUART_HW_FLOW_CTL_RTS_CTS = 0x3U,	/**< RTS & CTS */
+    LPUART_HW_FLOW_CTL_NONE    = 0x0U,  /**< None */
+    LPUART_HW_FLOW_CTL_RTS     = 0x1U,  /**< RTS */
+    LPUART_HW_FLOW_CTL_CTS     = 0x2U,  /**< CTS */
+    LPUART_HW_FLOW_CTL_RTS_CTS = 0x3U,  /**< RTS & CTS */
 } lpuart_hw_flow_ctl_t;
 
 /**
   * @brief ALD LPUART State
   */
 typedef enum {
-	LPUART_STATE_RESET      = 0x00U,	/**< Peripheral is not initialized */
-	LPUART_STATE_READY      = 0x01U,	/**< Peripheral Initialized and ready for use */
-	LPUART_STATE_BUSY       = 0x02U,	/**< an internal process is ongoing */
-	LPUART_STATE_BUSY_TX    = 0x11U,	/**< Data Transmission process is ongoing */
-	LPUART_STATE_BUSY_RX    = 0x21U,	/**< Data Reception process is ongoing */
-	LPUART_STATE_BUSY_TX_RX = 0x31U,	/**< Data Transmission Reception process is ongoing */
-	LPUART_STATE_TIMEOUT    = 0x03U,	/**< Timeout state */
-	LPUART_STATE_ERROR      = 0x04U,	/**< Error */
+    LPUART_STATE_RESET      = 0x00U,    /**< Peripheral is not initialized */
+    LPUART_STATE_READY      = 0x01U,    /**< Peripheral Initialized and ready for use */
+    LPUART_STATE_BUSY       = 0x02U,    /**< an internal process is ongoing */
+    LPUART_STATE_BUSY_TX    = 0x11U,    /**< Data Transmission process is ongoing */
+    LPUART_STATE_BUSY_RX    = 0x21U,    /**< Data Reception process is ongoing */
+    LPUART_STATE_BUSY_TX_RX = 0x31U,    /**< Data Transmission Reception process is ongoing */
+    LPUART_STATE_TIMEOUT    = 0x03U,    /**< Timeout state */
+    LPUART_STATE_ERROR      = 0x04U,    /**< Error */
 } lpuart_state_t;
 
 /**
   * @brief LPUART Error Codes
   */
 typedef enum {
-	LPUART_ERROR_NONE = ((uint32_t)0x00U),	/**< No error */
-	LPUART_ERROR_PE   = ((uint32_t)0x01U),	/**< Parity error */
-	LPUART_ERROR_NE   = ((uint32_t)0x02U),	/**< Noise error */
-	LPUART_ERROR_FE   = ((uint32_t)0x04U),	/**< frame error */
-	LPUART_ERROR_ORE  = ((uint32_t)0x08U),	/**< Overrun error */
-	LPUART_ERROR_DMA  = ((uint32_t)0x10U),	/**< DMA transfer error */
+    LPUART_ERROR_NONE = ((uint32_t)0x00U),  /**< No error */
+    LPUART_ERROR_PE   = ((uint32_t)0x01U),  /**< Parity error */
+    LPUART_ERROR_NE   = ((uint32_t)0x02U),  /**< Noise error */
+    LPUART_ERROR_FE   = ((uint32_t)0x04U),  /**< frame error */
+    LPUART_ERROR_ORE  = ((uint32_t)0x08U),  /**< Overrun error */
+    LPUART_ERROR_DMA  = ((uint32_t)0x10U),  /**< DMA transfer error */
 } lpuart_error_t;
 
 /**
   * @brief LPUART Init structure definition
   */
 typedef struct {
-	uint32_t baud;				/**< Specifies the lpuart communication baud rate */
-	lpuart_word_length_t word_length;	/**< Specifies the number of data bits transmitted or received in a frame */
-	lpuart_stop_bits_t stop_bits;		/**< Specifies the number of stop bits transmitted */
-	lpuart_parity_t parity;			/**< Specifies the parity mode */
-	lpuart_mode_t mode;			/**< Specifies uart mode */
-	lpuart_hw_flow_ctl_t fctl;		/**< Specifies wether the hardware flow control mode is enabled or disabled */
-	cmu_lp_perh_clock_sel_t clock;		/**< Specifies clock, only support LOSC and LRC */
+    uint32_t baud;              /**< Specifies the lpuart communication baud rate */
+    lpuart_word_length_t word_length;   /**< Specifies the number of data bits transmitted or received in a frame */
+    lpuart_stop_bits_t stop_bits;       /**< Specifies the number of stop bits transmitted */
+    lpuart_parity_t parity;         /**< Specifies the parity mode */
+    lpuart_mode_t mode;         /**< Specifies uart mode */
+    lpuart_hw_flow_ctl_t fctl;      /**< Specifies wether the hardware flow control mode is enabled or disabled */
+    cmu_lp_perh_clock_sel_t clock;      /**< Specifies clock, only support LOSC and LRC */
 } lpuart_init_t;
 
 /**
   * @brief  LPUART handle structure definition
   */
 typedef struct lpuart_handle_s {
-	LPUART_TypeDef *perh;		/**< LPUART registers base address */
-	lpuart_init_t init;		/**< LPUART communication parameters */
-	uint8_t *tx_buf;		/**< Pointer to LPUART Tx transfer Buffer */
-	uint16_t tx_size;		/**< LPUART Tx Transfer size */
-	uint16_t tx_count;		/**< LPUART Tx Transfer Counter */
-	uint8_t *rx_buf;		/**< Pointer to LPUART Rx transfer Buffer */
-	uint16_t rx_size;		/**< LPUART Rx Transfer size */
-	uint16_t rx_count;		/**< LPUART Rx Transfer Counter */
+    LPUART_TypeDef *perh;       /**< LPUART registers base address */
+    lpuart_init_t init;     /**< LPUART communication parameters */
+    uint8_t *tx_buf;        /**< Pointer to LPUART Tx transfer Buffer */
+    uint16_t tx_size;       /**< LPUART Tx Transfer size */
+    uint16_t tx_count;      /**< LPUART Tx Transfer Counter */
+    uint8_t *rx_buf;        /**< Pointer to LPUART Rx transfer Buffer */
+    uint16_t rx_size;       /**< LPUART Rx Transfer size */
+    uint16_t rx_count;      /**< LPUART Rx Transfer Counter */
 #ifdef ALD_DMA
-	dma_handle_t hdmatx;		/**< LPUART Tx DMA Handle parameters */
-	dma_handle_t hdmarx;		/**< LPUART Rx DMA Handle parameters */
+    dma_handle_t hdmatx;        /**< LPUART Tx DMA Handle parameters */
+    dma_handle_t hdmarx;        /**< LPUART Rx DMA Handle parameters */
 #endif
-	lock_state_t lock;            	/**< Locking object */
-	lpuart_state_t state;		/**< LPUART communication state */
-	lpuart_error_t err_code;	/**< LPUART Error code */
+    lock_state_t lock;              /**< Locking object */
+    lpuart_state_t state;       /**< LPUART communication state */
+    lpuart_error_t err_code;    /**< LPUART Error code */
 
-	void (*tx_cplt_cbk)(struct lpuart_handle_s *arg);	/**< Tx completed callback */
-	void (*rx_cplt_cbk)(struct lpuart_handle_s *arg);	/**< Rx completed callback */
-	void (*error_cbk)(struct lpuart_handle_s *arg);		/**< error callback */
+    void (*tx_cplt_cbk)(struct lpuart_handle_s *arg);   /**< Tx completed callback */
+    void (*rx_cplt_cbk)(struct lpuart_handle_s *arg);   /**< Rx completed callback */
+    void (*error_cbk)(struct lpuart_handle_s *arg);     /**< error callback */
 } lpuart_handle_t;
 
 /**
   * @brief LPUART RS485 Configure Structure definition
   */
 typedef struct {
-	type_func_t RS485_NMM;		/**< Normal Point Mode */
-	type_func_t RS485_AAD;		/**< Auto-Address Detect */
-	type_func_t RS485_AUD;		/**< Auto-Direction Mode */
-	type_func_t RS485_ADD_DET;	/**< Eable/Disable Address Detect */
-	uint8_t RS485_ADDCMP;		/**< Address for compare */
+    type_func_t RS485_NMM;      /**< Normal Point Mode */
+    type_func_t RS485_AAD;      /**< Auto-Address Detect */
+    type_func_t RS485_AUD;      /**< Auto-Direction Mode */
+    type_func_t RS485_ADD_DET;  /**< Eable/Disable Address Detect */
+    uint8_t RS485_ADDCMP;       /**< Address for compare */
 } lpuart_rs485_config_t;
 
 /**
   * @brief LPUART DMA Requests
   */
 typedef enum {
-	LPUART_DMA_REQ_TX = 0x0U,	/**< TX dma */
-	LPUART_DMA_REQ_RX = 0x1U,	/**< RX dma */
+    LPUART_DMA_REQ_TX = 0x0U,   /**< TX dma */
+    LPUART_DMA_REQ_RX = 0x1U,   /**< RX dma */
 } lpuart_dma_req_t;
 
 /**
   * @brief LPUART RXFIFO size
   */
 typedef enum {
-	LPUART_RXFIFO_1BYTE  = 0x0U,	/**< 1-Byte */
-	LPUART_RXFIFO_4BYTE  = 0x1U,	/**< 4-Bytes */
-	LPUART_RXFIFO_8BYTE  = 0x2U,	/**< 8-Bytes */
-	LPUART_RXFIFO_14BYTE = 0x3U,	/**< 14-Bytes */
+    LPUART_RXFIFO_1BYTE  = 0x0U,    /**< 1-Byte */
+    LPUART_RXFIFO_4BYTE  = 0x1U,    /**< 4-Bytes */
+    LPUART_RXFIFO_8BYTE  = 0x2U,    /**< 8-Bytes */
+    LPUART_RXFIFO_14BYTE = 0x3U,    /**< 14-Bytes */
 } lpuart_rxfifo_t;
 
 /**
   * @brief LPUART Interrupts Types
   */
 typedef enum {
-	LPUART_IT_RBR    = (1U << 0),	/**< RBR */
-	LPUART_IT_TBEMP  = (1U << 1),	/**< TBEMP */
-	LPUART_IT_CTSDET = (1U << 2),	/**< CTSDET */
-	LPUART_IT_RXTO   = (1U << 3),	/**< RXTO */
-	LPUART_IT_RXOV   = (1U << 4),	/**< RXOV */
-	LPUART_IT_TXOV   = (1U << 5),	/**< TXOV */
-	LPUART_IT_CTSWK  = (1U << 7),	/**< CTSWK */
-	LPUART_IT_DATWK  = (1U << 8),	/**< DATWK */
-	LPUART_IT_PERR   = (1U << 9),	/**< PERR */
-	LPUART_IT_FERR   = (1U << 10),	/**< FERR */
-	LPUART_IT_BRKERR = (1U << 11),	/**< BRKERR */
-	LPUART_IT_ADET   = (1U << 12),	/**< ADET */
-	LPUART_IT_TC     = (1U << 15),	/**< TC */
+    LPUART_IT_RBR    = (1U << 0),   /**< RBR */
+    LPUART_IT_TBEMP  = (1U << 1),   /**< TBEMP */
+    LPUART_IT_CTSDET = (1U << 2),   /**< CTSDET */
+    LPUART_IT_RXTO   = (1U << 3),   /**< RXTO */
+    LPUART_IT_RXOV   = (1U << 4),   /**< RXOV */
+    LPUART_IT_TXOV   = (1U << 5),   /**< TXOV */
+    LPUART_IT_CTSWK  = (1U << 7),   /**< CTSWK */
+    LPUART_IT_DATWK  = (1U << 8),   /**< DATWK */
+    LPUART_IT_PERR   = (1U << 9),   /**< PERR */
+    LPUART_IT_FERR   = (1U << 10),  /**< FERR */
+    LPUART_IT_BRKERR = (1U << 11),  /**< BRKERR */
+    LPUART_IT_ADET   = (1U << 12),  /**< ADET */
+    LPUART_IT_TC     = (1U << 15),  /**< TC */
 } lpuart_it_t;
 
 /**
   * @brief LPUART Flags Types
   */
 typedef enum {
-	LPUART_IF_RBR    = (1U << 0),	/**< RBR */
-	LPUART_IF_TBEMP  = (1U << 1),	/**< TBEMP */
-	LPUART_IF_CTSDET = (1U << 2),	/**< CTSDET */
-	LPUART_IF_RXTO   = (1U << 3),	/**< RXTO */
-	LPUART_IF_RXOV   = (1U << 4),	/**< RXOV */
-	LPUART_IF_TXOV   = (1U << 5),	/**< TXOV */
-	LPUART_IF_CTSWK  = (1U << 7),	/**< CTSWK */
-	LPUART_IF_DATWK  = (1U << 8),	/**< DATWK */
-	LPUART_IF_PERR   = (1U << 9),	/**< PERR */
-	LPUART_IF_FERR   = (1U << 10),	/**< FERR */
-	LPUART_IF_BRKERR = (1U << 11),	/**< BRKERR */
-	LPUART_IF_ADET   = (1U << 12),	/**< ADET */
-	LPUART_IF_TC     = (1U << 15),	/**< TC */
+    LPUART_IF_RBR    = (1U << 0),   /**< RBR */
+    LPUART_IF_TBEMP  = (1U << 1),   /**< TBEMP */
+    LPUART_IF_CTSDET = (1U << 2),   /**< CTSDET */
+    LPUART_IF_RXTO   = (1U << 3),   /**< RXTO */
+    LPUART_IF_RXOV   = (1U << 4),   /**< RXOV */
+    LPUART_IF_TXOV   = (1U << 5),   /**< TXOV */
+    LPUART_IF_CTSWK  = (1U << 7),   /**< CTSWK */
+    LPUART_IF_DATWK  = (1U << 8),   /**< DATWK */
+    LPUART_IF_PERR   = (1U << 9),   /**< PERR */
+    LPUART_IF_FERR   = (1U << 10),  /**< FERR */
+    LPUART_IF_BRKERR = (1U << 11),  /**< BRKERR */
+    LPUART_IF_ADET   = (1U << 12),  /**< ADET */
+    LPUART_IF_TC     = (1U << 15),  /**< TC */
 } lpuart_flag_t;
 
 /**
   * @brief LPUART Status Types
   */
 typedef enum {
-	LPUART_STAT_RXEMP   = (1U << 6),	/**< RX FIFO empty */
-	LPUART_STAT_RXFULL  = (1U << 7),	/**< RX FIFO full */
-	LPUART_STAT_TXEMP   = (1U << 14),	/**< TX FIFO empty */
-	LPUART_STAT_TXFULL  = (1U << 15),	/**< TX FIFO full */
-	LPUART_STAT_TXIDLE  = (1U << 16),	/**< TX idle */
-	LPUART_STAT_CTSSTAT = (1U << 17),	/**< CTS status */
-	LPUART_STAT_RTSSTAT = (1U << 18),	/**< RTS status */
+    LPUART_STAT_RXEMP   = (1U << 6),    /**< RX FIFO empty */
+    LPUART_STAT_RXFULL  = (1U << 7),    /**< RX FIFO full */
+    LPUART_STAT_TXEMP   = (1U << 14),   /**< TX FIFO empty */
+    LPUART_STAT_TXFULL  = (1U << 15),   /**< TX FIFO full */
+    LPUART_STAT_TXIDLE  = (1U << 16),   /**< TX idle */
+    LPUART_STAT_CTSSTAT = (1U << 17),   /**< CTS status */
+    LPUART_STAT_RTSSTAT = (1U << 18),   /**< RTS status */
 } lpuart_status_t;
 /**
   * @}
@@ -346,7 +346,7 @@ typedef enum {
                               ((x) == LPUART_RXFIFO_4BYTE) || \
                               ((x) == LPUART_RXFIFO_8BYTE) || \
                               ((x) == LPUART_RXFIFO_14BYTE))
-#define IS_LPUART_IT(x)	(((x) == LPUART_IT_RBR)    || \
+#define IS_LPUART_IT(x) (((x) == LPUART_IT_RBR)    || \
                          ((x) == LPUART_IT_TBEMP)  || \
                          ((x) == LPUART_IT_CTSDET) || \
                          ((x) == LPUART_IT_RXTO)   || \
@@ -359,7 +359,7 @@ typedef enum {
                          ((x) == LPUART_IT_BRKERR) || \
                          ((x) == LPUART_IT_ADET)   || \
                          ((x) == LPUART_IT_TC))
-#define IS_LPUART_IF(x)	(((x) == LPUART_IF_RBR)    || \
+#define IS_LPUART_IF(x) (((x) == LPUART_IF_RBR)    || \
                          ((x) == LPUART_IF_TBEMP)  || \
                          ((x) == LPUART_IF_CTSDET) || \
                          ((x) == LPUART_IF_RXTO)   || \
@@ -372,7 +372,7 @@ typedef enum {
                          ((x) == LPUART_IF_BRKERR) || \
                          ((x) == LPUART_IF_ADET)   || \
                          ((x) == LPUART_IF_TC))
-#define IS_LPUART_STAT(x)	(((x) == LPUART_STAT_RXEMP)   || \
+#define IS_LPUART_STAT(x)   (((x) == LPUART_STAT_RXEMP)   || \
                                  ((x) == LPUART_STAT_RXFULL)  || \
                                  ((x) == LPUART_STAT_TXEMP)   || \
                                  ((x) == LPUART_STAT_TXFULL)  || \
@@ -380,8 +380,8 @@ typedef enum {
                                  ((x) == LPUART_STAT_CTSSTAT) || \
                                  ((x) == LPUART_STAT_RTSSTAT))
 
-#define LPUART_STATE_TX_MASK	(1U << 4)
-#define LPUART_STATE_RX_MASK	(1U << 5)
+#define LPUART_STATE_TX_MASK    (1U << 4)
+#define LPUART_STATE_RX_MASK    (1U << 5)
 /**
   * @}
   */

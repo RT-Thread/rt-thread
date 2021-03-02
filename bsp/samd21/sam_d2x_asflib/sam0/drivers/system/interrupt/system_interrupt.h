@@ -145,14 +145,14 @@ extern "C" {
  * device.
  */
 enum system_interrupt_priority_level {
-	/** Priority level 0, the highest possible interrupt priority */
-	SYSTEM_INTERRUPT_PRIORITY_LEVEL_0  = 0,
-	/** Priority level 1 */
-	SYSTEM_INTERRUPT_PRIORITY_LEVEL_1  = 1,
-	/** Priority level 2 */
-	SYSTEM_INTERRUPT_PRIORITY_LEVEL_2  = 2,
-	/** Priority level 3, the lowest possible interrupt priority */
-	SYSTEM_INTERRUPT_PRIORITY_LEVEL_3  = 3,
+    /** Priority level 0, the highest possible interrupt priority */
+    SYSTEM_INTERRUPT_PRIORITY_LEVEL_0  = 0,
+    /** Priority level 1 */
+    SYSTEM_INTERRUPT_PRIORITY_LEVEL_1  = 1,
+    /** Priority level 2 */
+    SYSTEM_INTERRUPT_PRIORITY_LEVEL_2  = 2,
+    /** Priority level 3, the lowest possible interrupt priority */
+    SYSTEM_INTERRUPT_PRIORITY_LEVEL_3  = 3,
 };
 
 /**
@@ -170,7 +170,7 @@ enum system_interrupt_priority_level {
  */
 static inline void system_interrupt_enter_critical_section(void)
 {
-	cpu_irq_enter_critical();
+    cpu_irq_enter_critical();
 }
 
 /**
@@ -183,7 +183,7 @@ static inline void system_interrupt_enter_critical_section(void)
  */
 static inline void system_interrupt_leave_critical_section(void)
 {
-	cpu_irq_leave_critical();
+    cpu_irq_leave_critical();
 }
 
 /** @} */
@@ -206,7 +206,7 @@ static inline void system_interrupt_leave_critical_section(void)
  */
 static inline bool system_interrupt_is_global_enabled(void)
 {
-	return cpu_irq_is_enabled();
+    return cpu_irq_is_enabled();
 }
 
 /**
@@ -216,7 +216,7 @@ static inline bool system_interrupt_is_global_enabled(void)
  */
 static inline void system_interrupt_enable_global(void)
 {
-	cpu_irq_enable();
+    cpu_irq_enable();
 }
 
 /**
@@ -227,7 +227,7 @@ static inline void system_interrupt_enable_global(void)
  */
 static inline void system_interrupt_disable_global(void)
 {
-	cpu_irq_disable();
+    cpu_irq_disable();
 }
 
 /**
@@ -244,9 +244,9 @@ static inline void system_interrupt_disable_global(void)
  *
  */
 static inline bool system_interrupt_is_enabled(
-		const enum system_interrupt_vector vector)
+        const enum system_interrupt_vector vector)
 {
-	return (bool)((NVIC->ISER[0] >> (uint32_t)vector) & 0x00000001);
+    return (bool)((NVIC->ISER[0] >> (uint32_t)vector) & 0x00000001);
 }
 
 /**
@@ -257,9 +257,9 @@ static inline bool system_interrupt_is_enabled(
  * \param[in] vector Interrupt vector to enable
  */
 static inline void system_interrupt_enable(
-		const enum system_interrupt_vector vector)
+        const enum system_interrupt_vector vector)
 {
-	NVIC->ISER[0] = (uint32_t)(1 << ((uint32_t)vector & 0x0000001f));
+    NVIC->ISER[0] = (uint32_t)(1 << ((uint32_t)vector & 0x0000001f));
 }
 
 /**
@@ -270,9 +270,9 @@ static inline void system_interrupt_enable(
  * \param[in] vector  Interrupt vector to disable
  */
 static inline void system_interrupt_disable(
-		const enum system_interrupt_vector vector)
+        const enum system_interrupt_vector vector)
 {
-	NVIC->ICER[0] = (uint32_t)(1 << ((uint32_t)vector & 0x0000001f));
+    NVIC->ICER[0] = (uint32_t)(1 << ((uint32_t)vector & 0x0000001f));
 }
 
 /** @} */
@@ -291,19 +291,19 @@ static inline void system_interrupt_disable(
  */
 static inline enum system_interrupt_vector system_interrupt_get_active(void)
 {
-	uint32_t IPSR = __get_IPSR();
-	/* The IPSR returns the Exception number, which with an offset 16 to IRQ number. */
-	return (enum system_interrupt_vector)((IPSR & _SYSTEM_INTERRUPT_IPSR_MASK) - 16);
+    uint32_t IPSR = __get_IPSR();
+    /* The IPSR returns the Exception number, which with an offset 16 to IRQ number. */
+    return (enum system_interrupt_vector)((IPSR & _SYSTEM_INTERRUPT_IPSR_MASK) - 16);
 }
 
 bool system_interrupt_is_pending(
-		const enum system_interrupt_vector vector);
+        const enum system_interrupt_vector vector);
 
 enum status_code system_interrupt_set_pending(
-		const enum system_interrupt_vector vector);
+        const enum system_interrupt_vector vector);
 
 enum status_code system_interrupt_clear_pending(
-		const enum system_interrupt_vector vector);
+        const enum system_interrupt_vector vector);
 
 /** @} */
 
@@ -313,11 +313,11 @@ enum status_code system_interrupt_clear_pending(
  */
 
 enum status_code system_interrupt_set_priority(
-		const enum system_interrupt_vector vector,
-		const enum system_interrupt_priority_level priority_level);
+        const enum system_interrupt_vector vector,
+        const enum system_interrupt_priority_level priority_level);
 
 enum system_interrupt_priority_level system_interrupt_get_priority(
-		const enum system_interrupt_vector vector);
+        const enum system_interrupt_vector vector);
 
 /** @} */
 
@@ -330,22 +330,22 @@ enum system_interrupt_priority_level system_interrupt_get_priority(
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>ISR</td>
- *		<td>Interrupt Service Routine</td>
- *	</tr>
- *	<tr>
- *		<td>NMI</td>
- *		<td>Non-maskable Interrupt</td>
- *	</tr>
- *	<tr>
- *		<td>SERCOM</td>
- *		<td>Serial Communication Interface</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>ISR</td>
+ *      <td>Interrupt Service Routine</td>
+ *  </tr>
+ *  <tr>
+ *      <td>NMI</td>
+ *      <td>Non-maskable Interrupt</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SERCOM</td>
+ *      <td>Serial Communication Interface</td>
+ *  </tr>
  * </table>
  *
  *
@@ -366,12 +366,12 @@ enum system_interrupt_priority_level system_interrupt_get_priority(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -390,36 +390,36 @@ enum system_interrupt_priority_level system_interrupt_get_priority(
  * \page asfdoc_sam0_system_interrupt_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42122E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C20/C21</td>
- *	</tr>
- *	<tr>
- *		<td>42122D</td>
- *		<td>12/2014</td>
- *		<td>Added support for SAM R21 and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42122C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42122B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos</td>
- *	</tr>
- *	<tr>
- *		<td>42122A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</th>
+ *      <th>Date</th>
+ *      <th>Comments</th>
+ *  </tr>
+ *  <tr>
+ *      <td>42122E</td>
+ *      <td>12/2015</td>
+ *      <td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C20/C21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42122D</td>
+ *      <td>12/2014</td>
+ *      <td>Added support for SAM R21 and SAM D10/D11</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42122C</td>
+ *      <td>01/2014</td>
+ *      <td>Added support for SAM D21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42122B</td>
+ *      <td>06/2013</td>
+ *      <td>Corrected documentation typos</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42122A</td>
+ *      <td>06/2013</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

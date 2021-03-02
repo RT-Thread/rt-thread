@@ -52,10 +52,10 @@ int pwm_init(uint32_t instance, struct pwm_parms *pwm)
 {
     int idx;
 
-    // Disable PWM first 
+    // Disable PWM first
     HW_PWM_PWMCR(instance).B.EN = 0;
 
-    // Verify and set clock source 
+    // Verify and set clock source
     if ((pwm->clock < kPwmClockSourceIpg) || (pwm->clock > kPwmClockSourceCkil)) {
         printf("Invalid clock source selection.\n");
         return FALSE;
@@ -63,7 +63,7 @@ int pwm_init(uint32_t instance, struct pwm_parms *pwm)
 
     HW_PWM_PWMCR(instance).B.CLKSRC = pwm->clock;
 
-    // Set FIFO watermark to 4 empty slots 
+    // Set FIFO watermark to 4 empty slots
     HW_PWM_PWMCR(instance).B.FWM = 3;
 
     // Set prescale after checking its range.
@@ -78,13 +78,13 @@ int pwm_init(uint32_t instance, struct pwm_parms *pwm)
     // Set active polarity: 0 set at rollover, 1 clear at rollover
     HW_PWM_PWMCR(instance).B.POUTC = pwm->active_pol;
 
-    // Set period 
+    // Set period
     HW_PWM_PWMPR(instance).B.PERIOD = pwm->period;
 
     // Set sample repeat
     HW_PWM_PWMCR(instance).B.REPEAT = pwm->repeat;
 
-    // Write count to FIFO 
+    // Write count to FIFO
     if ((pwm->smp_cnt > PWM_CNT_FIFO_SZ) || (pwm->smp_cnt < 1)) {
         printf("Invalid number of samples.\n");
         return FALSE;
@@ -96,10 +96,10 @@ int pwm_init(uint32_t instance, struct pwm_parms *pwm)
 
     // Setup interrupt for FIFO empty
     if (pwm->interrupt == kPwmFifoEmptyIrq) {
-	/* register FIFO Empty interrupt to end the output test */
-	pwm_int_test_end.instance = instance;
-	pwm_int_test_end.interrupt = pwm->interrupt;
-	pwm_setup_interrupt(instance, pwm_isr_test_end, pwm->interrupt);
+    /* register FIFO Empty interrupt to end the output test */
+    pwm_int_test_end.instance = instance;
+    pwm_int_test_end.interrupt = pwm->interrupt;
+    pwm_setup_interrupt(instance, pwm_isr_test_end, pwm->interrupt);
     }
     return TRUE;
 }
@@ -181,23 +181,23 @@ int pwm_get_clock_freq(uint32_t clock)
 {
     int freq;
     switch (clock) {
-	case kPwmClockSourceIpg:
-	    freq = get_main_clock(IPG_CLK);
-	    break;
-	case kPwmClockSourceCkih:
-	    /* Extern High Frequency: CKIH:
-	     * XTALOSC 24MHz*/
-	    freq = 24000000;
-	    break;
-	case kPwmClockSourceCkil:
-	    /* Extern Low Frequency: CKIH:
-	     * XTALOSC 32kHz or 32.768kHz
-	     * on current all mx6dq or mx6sl evk board, are 32.768KHz */
-	    freq = 32768;
-	    break;
-	default:
-	    freq = 0;
-	    break;
+    case kPwmClockSourceIpg:
+        freq = get_main_clock(IPG_CLK);
+        break;
+    case kPwmClockSourceCkih:
+        /* Extern High Frequency: CKIH:
+         * XTALOSC 24MHz*/
+        freq = 24000000;
+        break;
+    case kPwmClockSourceCkil:
+        /* Extern Low Frequency: CKIH:
+         * XTALOSC 32kHz or 32.768kHz
+         * on current all mx6dq or mx6sl evk board, are 32.768KHz */
+        freq = 32768;
+        break;
+    default:
+        freq = 0;
+        break;
     }
 
     return freq;

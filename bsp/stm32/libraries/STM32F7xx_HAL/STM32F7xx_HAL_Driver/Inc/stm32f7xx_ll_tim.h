@@ -3543,9 +3543,9 @@ __STATIC_INLINE void LL_TIM_SetBreakInputSourcePolarity(TIM_TypeDef *TIMx, uint3
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR4
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_BDTR
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_OR
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCMR3 
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR5  
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR6  
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCMR3
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR5
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR6
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_AF1  (*)
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_AF2  (*)
   *         (*) value not defined in all devices

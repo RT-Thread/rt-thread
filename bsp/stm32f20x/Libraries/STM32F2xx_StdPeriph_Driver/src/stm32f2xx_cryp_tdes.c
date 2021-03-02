@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file provides high level functions to encrypt and decrypt an 
+  * @brief   This file provides high level functions to encrypt and decrypt an
   *          input message using TDES in ECB/CBC modes .
   *          It uses the stm32f2xx_cryp.c/.h drivers to access the STM32F2xx CRYP
   *          peripheral.
@@ -14,7 +14,7 @@
   *          ===================================================================
   *                                   How to use this driver
   *          ===================================================================
-  *          1. Enable The CRYP controller clock using 
+  *          1. Enable The CRYP controller clock using
   *            RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_CRYP, ENABLE); function.
   *
   *          2. Encrypt and decrypt using TDES in ECB Mode using CRYP_TDES_ECB()
@@ -37,7 +37,7 @@
   *
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx_cryp.h"
@@ -47,7 +47,7 @@
   * @{
   */
 
-/** @defgroup CRYP 
+/** @defgroup CRYP
   * @brief CRYP driver modules
   * @{
   */
@@ -64,12 +64,12 @@
 
 /** @defgroup CRYP_Private_Functions
   * @{
-  */ 
+  */
 
 /** @defgroup CRYP_Group7 High Level TDES functions
- *  @brief   High Level TDES functions 
+ *  @brief   High Level TDES functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                           High Level TDES functions
  ===============================================================================
@@ -93,7 +93,7 @@
   *          - SUCCESS: Operation done
   *          - ERROR: Operation failed
   */
-ErrorStatus CRYP_TDES_ECB(uint8_t Mode, uint8_t Key[24], uint8_t *Input, 
+ErrorStatus CRYP_TDES_ECB(uint8_t Mode, uint8_t Key[24], uint8_t *Input,
                           uint32_t Ilength, uint8_t *Output)
 {
   CRYP_InitTypeDef TDES_CRYP_InitStructure;
@@ -177,7 +177,7 @@ ErrorStatus CRYP_TDES_ECB(uint8_t Mode, uint8_t Key[24], uint8_t *Input,
   /* Disable Crypto */
   CRYP_Cmd(DISABLE);
 
-  return status; 
+  return status;
 }
 
 /**
@@ -287,22 +287,22 @@ ErrorStatus CRYP_TDES_CBC(uint8_t Mode, uint8_t Key[24], uint8_t InitVectors[8],
   /* Disable Crypto */
   CRYP_Cmd(DISABLE);
 
-  return status; 
+  return status;
 }
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -37,28 +37,28 @@ extern int32_t esai_codec_power_on(void);
 struct imx_i2c_request wm8962_i2c_req;
 
 ////////////////////////////// Macros  ///////////////////////////////////////////
-#define DEBUG_ENABLE	1
+#define DEBUG_ENABLE    1
 #if DEBUG_ENABLE
-#define TRACE(fmt, args...)	printf(fmt,##args)
+#define TRACE(fmt, args...) printf(fmt,##args)
 #else
 #define TRACE(fmt, args...)
 #endif
 
-#define WM8962_REG_WRITE(codec, reg_addr, reg_val)	\
- 	do{     \
-		if(0 != WM8962_i2c_write(codec, reg_addr, reg_val)){   \
+#define WM8962_REG_WRITE(codec, reg_addr, reg_val)  \
+    do{     \
+        if(0 != WM8962_i2c_write(codec, reg_addr, reg_val)){   \
             printf("Write %s  failed.\n", #reg_addr);   \
-            return -1;	\
+            return -1;  \
         } \
-	}while(0)
+    }while(0)
 
-#define WM8962_REG_READ(reg_addr, reg_val)	\
- 	do{     \
-		if(0 != WM8962_i2c_read(reg_addr, &reg_val)){   \
+#define WM8962_REG_READ(reg_addr, reg_val)  \
+    do{     \
+        if(0 != WM8962_i2c_read(reg_addr, &reg_val)){   \
             printf("Read %s  failed.\n", #reg_addr);   \
-			return -1;	\
+            return -1;  \
         }   \
-	}while(0)
+    }while(0)
 
 static void wm8962_i2c_init(audio_codec_p codec)
 {
@@ -123,7 +123,7 @@ static int32_t WM8962_Soft_Reset(void *priv)
 
     WM8962_REG_WRITE(codec, WM8962_SOFTWARE_RESET, WM8962_ID);
 
-    WM8962_REG_WRITE(codec, 0x7F, 0);  //PLL Software Reset 
+    WM8962_REG_WRITE(codec, 0x7F, 0);  //PLL Software Reset
 
     return 0;
 }
@@ -135,10 +135,10 @@ int32_t WM8962_dump(void *priv)
     return 0;
 }
 
-/* 
- *	Since there are tow FLLs within WM8962, the external osc is not necessary.
- *	So the osc can be saved if WM8962 works at SLAVE mode.
- *	Slave mode was tested on sbrth_tablet board, while master mode not yet.
+/*
+ *  Since there are tow FLLs within WM8962, the external osc is not necessary.
+ *  So the osc can be saved if WM8962 works at SLAVE mode.
+ *  Slave mode was tested on sbrth_tablet board, while master mode not yet.
  */
 int32_t WM8962_DAC_configure(void *priv, audio_dev_para_p para)
 {
@@ -196,16 +196,16 @@ int32_t WM8962_DAC_configure(void *priv, audio_dev_para_p para)
     /* Clocking configuration */
     WM8962_reg_modify(codec, 0x08, 0x0800, 0x0820);    //CLKREG_OVD=1, SYSCLK_ENA=0
     if(SAMPLERATE_44_1KHz == para->sample_rate) {
-    	WM8962_REG_WRITE(codec, 0x1B, 0x0000); //Set sample rate to 44.1kHz
-    	WM8962_reg_modify(codec, 0x38, 0x0006, 0x001E);    //MCLK_RATE=0011 (256fs)
+        WM8962_REG_WRITE(codec, 0x1B, 0x0000); //Set sample rate to 44.1kHz
+        WM8962_reg_modify(codec, 0x38, 0x0006, 0x001E);    //MCLK_RATE=0011 (256fs)
     }else if(SAMPLERATE_16KHz == para->sample_rate){
-    	WM8962_REG_WRITE(codec, 0x1B, 0x0013); //Set sample rate to 16K
-    	WM8962_reg_modify(codec, 0x38, 0x0006, 0x001E);    //MCLK_RATE=0011 (256fs)
+        WM8962_REG_WRITE(codec, 0x1B, 0x0013); //Set sample rate to 16K
+        WM8962_reg_modify(codec, 0x38, 0x0006, 0x001E);    //MCLK_RATE=0011 (256fs)
     }
-    WM8962_reg_modify(codec, 0x08, 0x0020, 0x0620);    //MCLK_SRC=00 (MCLK pin), SYSCLK_ENA=1 
+    WM8962_reg_modify(codec, 0x08, 0x0020, 0x0620);    //MCLK_SRC=00 (MCLK pin), SYSCLK_ENA=1
 
     /* ADC->HP path configuration */
-    WM8962_reg_modify(codec, 0x05, 0x0008, 0x0008);    //DAC Mute   
+    WM8962_reg_modify(codec, 0x05, 0x0008, 0x0008);    //DAC Mute
     WM8962_REG_WRITE(codec, 0x52, 0x0001); //CP_DYN_PWR=1 (Class W)
     WM8962_reg_modify(codec, 0x48, 0x0001, 0x0001);    //Enable charge pump
 
@@ -238,8 +238,8 @@ int32_t WM8962_DAC_configure(void *priv, audio_dev_para_p para)
     WM8962_reg_modify(codec, 0x21, 0x0000, 0x0038);    //INPGAR->MIXINR vol=0dB
     WM8962_REG_WRITE(codec, 0x00, 0x0027); // INPGAL vol=6dB
     WM8962_REG_WRITE(codec, 0x01, 0x0127); // INPGAR vol=6dB and update
-    WM8962_REG_WRITE(codec, 0x1A, 0x1F8);  //Enable headphone PGAs and DACs, Speaker PGSs, Unmute headphone PGAs 
-    WM8962_reg_modify(codec, 0x05, 0x0000, 0x0008);    //DAC Unmute 
+    WM8962_REG_WRITE(codec, 0x1A, 0x1F8);  //Enable headphone PGAs and DACs, Speaker PGSs, Unmute headphone PGAs
+    WM8962_reg_modify(codec, 0x05, 0x0000, 0x0008);    //DAC Unmute
 
     return 0;
 }

@@ -63,27 +63,27 @@ extern "C" {
  */
 
 /** AES interrupt callback function type. */
-typedef void (*aes_callback_t)(void); 
+typedef void (*aes_callback_t)(void);
 
 /** AES callback type. */
 enum aes_callback_type {
-	/** Encryption complete callback */
-	AES_CALLBACK_ENCRYPTION_COMPLETE = 0,
-	/** GF Multiplication Complete callback */
-	AES_CALLBACK_GF_MULTI_COMPLETE = 1,
+    /** Encryption complete callback */
+    AES_CALLBACK_ENCRYPTION_COMPLETE = 0,
+    /** GF Multiplication Complete callback */
+    AES_CALLBACK_GF_MULTI_COMPLETE = 1,
 };
- 
+
 /** \name Callback Configuration and Initialization
  * @{
  */
- 
+
 enum status_code aes_register_callback(
-	const aes_callback_t callback,
-	const enum aes_callback_type type);
+    const aes_callback_t callback,
+    const enum aes_callback_type type);
 
 enum status_code aes_unregister_callback(
-	const aes_callback_t callback,
-	const enum aes_callback_type type);
+    const aes_callback_t callback,
+    const enum aes_callback_type type);
 
 /** @} */
 
@@ -103,19 +103,19 @@ enum status_code aes_unregister_callback(
  * \retval STATUS_ERR_INVALID_ARG If an invalid callback type was supplied
  */
 static inline enum status_code aes_enable_callback(struct aes_module *const module,
-		const enum aes_callback_type type)
+        const enum aes_callback_type type)
 {
-	system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_AES);
-	if (type == AES_CALLBACK_ENCRYPTION_COMPLETE){
-		module->hw->INTENSET.reg = AES_INTENSET_ENCCMP;
-	} else if (type == AES_CALLBACK_GF_MULTI_COMPLETE){
-		module->hw->INTENSET.reg = AES_INTENSET_GFMCMP;
-	} else {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_AES);
+    if (type == AES_CALLBACK_ENCRYPTION_COMPLETE){
+        module->hw->INTENSET.reg = AES_INTENSET_ENCCMP;
+    } else if (type == AES_CALLBACK_GF_MULTI_COMPLETE){
+        module->hw->INTENSET.reg = AES_INTENSET_GFMCMP;
+    } else {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -129,19 +129,19 @@ static inline enum status_code aes_enable_callback(struct aes_module *const modu
  * \retval STATUS_ERR_INVALID_ARG If an invalid callback type was supplied
  */
 static inline enum status_code aes_disable_callback(struct aes_module *const module,
-		 const enum aes_callback_type type)
+         const enum aes_callback_type type)
 {
-	system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_AES);
-	if (type == AES_CALLBACK_ENCRYPTION_COMPLETE){
-		module->hw->INTENCLR.reg = AES_INTENCLR_ENCCMP;
-	} else if (type == AES_CALLBACK_GF_MULTI_COMPLETE){
-		module->hw->INTENCLR.reg = AES_INTENCLR_GFMCMP;
-	} else {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_AES);
+    if (type == AES_CALLBACK_ENCRYPTION_COMPLETE){
+        module->hw->INTENCLR.reg = AES_INTENCLR_ENCCMP;
+    } else if (type == AES_CALLBACK_GF_MULTI_COMPLETE){
+        module->hw->INTENCLR.reg = AES_INTENCLR_GFMCMP;
+    } else {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /** @} */

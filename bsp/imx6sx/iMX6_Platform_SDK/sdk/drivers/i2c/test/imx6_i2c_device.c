@@ -64,7 +64,7 @@ int32_t imx6_slave_receive(const imx_i2c_request_t *rq)
 
     s_masterDidWrite = true;
 
-    /* 
+    /*
      * Nothing to do for address size of 1 or 2 bytes, the received
      * data is only displayed at the end of the transfer.
      */
@@ -90,7 +90,7 @@ int32_t imx6_slave_receive(const imx_i2c_request_t *rq)
  * Function that prepares the data to transmit when the i.MX is
  * used in Slave mode.
  * If the requested address size is 1 or 2 bytes, it provides
- * data from test_buffer. 
+ * data from test_buffer.
  * If the requested address size is 4 bytes, then it can provides the
  * content of an i.MX memory mapped address.
  *
@@ -147,7 +147,7 @@ int32_t imx6_slave_transmit(const imx_i2c_request_t *rq)
 int32_t i2c_imx6_slave_test(void)
 {
     uint8_t sel, i;
-    uint8_t data_buffer[16];    
+    uint8_t data_buffer[16];
 
     printf("  Starting i.MX6DQ/SDL slave test...\n");
 

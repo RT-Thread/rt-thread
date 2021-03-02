@@ -33,11 +33,11 @@
 #include "flash.h"
 #endif
 #ifdef __MCF52xxx_H__
-	#ifdef USED_EXTERNAL_FLASH
-	#include "flash_NAND.h"
-	#else
-	#include "flash_cfv2.h"
-	#endif
+    #ifdef USED_EXTERNAL_FLASH
+    #include "flash_NAND.h"
+    #else
+    #include "flash_cfv2.h"
+    #endif
 #endif
 #include "usb_dfu.h"
 /******************************************************************************
@@ -79,10 +79,10 @@
 #define HID_ENDPOINT (1)
 #define HID_ENDPOINT_PACKET_SIZE (8)
 
-#define MAX_BLOCK_SIZE  	     (8)
+#define MAX_BLOCK_SIZE           (8)
 
 /* only control enpoint */
-#define DFU_DESC_ENDPOINT_COUNT (0)              
+#define DFU_DESC_ENDPOINT_COUNT (0)
 #define FUNCTIONAL_DESC_SIZE              (9)
 
 #define CONFIG_DESC_SIZE_DFU  (CONFIG_ONLY_DESC_SIZE + \
@@ -91,7 +91,7 @@
                                 ENDP_ONLY_DESC_SIZE * DFU_DESC_ENDPOINT_COUNT)
 /* string descriptors sizes */
 #define USB_STR_DESC_SIZE         (2)
-#define USB_STR_0_SIZE  		  (2)
+#define USB_STR_0_SIZE            (2)
 #define USB_STR_1_SIZE           (56)
 #define USB_STR_2_SIZE           (24)
 #define USB_STR_3_SIZE           (20)
@@ -185,7 +185,7 @@ extern uint_8 USB_Desc_Set_Interface(
         uint_8 controller_ID,
         uint_8 interface,
         uint_8 alt_interface);
-                                                                               
+
 extern boolean USB_Desc_Valid_Configation(
         uint_8 controller_ID,
         uint_16 config_val);

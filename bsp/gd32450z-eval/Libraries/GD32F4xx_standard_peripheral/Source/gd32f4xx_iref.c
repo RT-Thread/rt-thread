@@ -87,7 +87,7 @@ void iref_sink_set(uint32_t sinkmode)
 }
 
 /*!
-    \brief      set IREF step data 
+    \brief      set IREF step data
     \param[in]  stepdata
       \arg        IREF_CUR_STEP_DATA_X:(x=0..63): step*x
     \param[out] none

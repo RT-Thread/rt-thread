@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32L0xx_HAL_LPTIM_EX_H
@@ -34,7 +34,7 @@
 
 /** @defgroup LPTIMEx LPTIMEx
   * @{
-  */ 
+  */
 
 /* Exported constants --------------------------------------------------------*/
 

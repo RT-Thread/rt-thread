@@ -8,7 +8,7 @@
    Date             Author          Notes
    2020-06-12       Hongjh          First version
    2020-07-03       Hongjh          Add doxygen group:USART_Local_Functions.
-   2020-08-25       Hongjh          The variable f32Err un-initializes an 
+   2020-08-25       Hongjh          The variable f32Err un-initializes an
                                     unnecessary assignment.
    2020-10-19       Hongjh          Modify USART initialization function.
  @endverbatim

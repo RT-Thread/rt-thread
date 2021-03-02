@@ -29,7 +29,7 @@
  */
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include "sdk.h"
 #include "timer/epit.h"
@@ -100,7 +100,7 @@ int cpu_wp_test(void)
         hal_delay_us(3000);
         i++;
     }
-    
+
     // Restore to default workpoint.
     cpu_workpoint_set(CPU_WORKPOINT_800MHZ);
 

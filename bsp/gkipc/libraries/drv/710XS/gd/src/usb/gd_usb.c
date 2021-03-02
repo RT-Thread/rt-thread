@@ -31,8 +31,8 @@
 #define USB_AHB_W(addr, value)  *(volatile unsigned long*)(addr) = (value)
 #define USB_AHB_R(addr, value)  value = *(volatile unsigned long*)(addr)
 
-#define CLK_REG_W 	USB_AHB_W
-#define CLK_REG_R 	USB_AHB_R
+#define CLK_REG_W   USB_AHB_W
+#define CLK_REG_R   USB_AHB_R
 //*****************************************************************************
 //*****************************************************************************
 //** Clock Switch Related Functions
@@ -40,46 +40,46 @@
 //*****************************************************************************
 /*
 pheri_cken (w/r) - 0xA0170288
-Bit	Field Name	Default
-Value	Description
-[31:7]	reserved	R	?¨¤?¨º¡§¡é?
-[6]	Ssi2_cken	0x1	Ssi2 ????¡§o?¨¤?¡§?¡§o1?¡§1
-[5]	ssi_cken	0x1	ssi ????¡§o?¨¤?¡§?¡§o1?¡§1
-[4]	Sd2_cken	0x1	Sd2 ????¡§o?¨¤?¡§?¡§o1?¡§1
-[3]	sd_cken	0x1	sd ????¡§o?¨¤?¡§?¡§o1?¡§1
-[2]	reserved	0x1	?¨¤?¨º¡§¡é?
-[1]	eth_cken	0x1	eth ????¡§o?¨¤?¡§?¡§o1?¡§1
-[0]	usb_cken	0x1	usb ????¡§o?¨¤?¡§?¡§o1?¡§1
+Bit Field Name  Default
+Value   Description
+[31:7]  reserved    R   ?¨¤?¨º¡§¡é?
+[6] Ssi2_cken   0x1 Ssi2 ????¡§o?¨¤?¡§?¡§o1?¡§1
+[5] ssi_cken    0x1 ssi ????¡§o?¨¤?¡§?¡§o1?¡§1
+[4] Sd2_cken    0x1 Sd2 ????¡§o?¨¤?¡§?¡§o1?¡§1
+[3] sd_cken 0x1 sd ????¡§o?¨¤?¡§?¡§o1?¡§1
+[2] reserved    0x1 ?¨¤?¨º¡§¡é?
+[1] eth_cken    0x1 eth ????¡§o?¨¤?¡§?¡§o1?¡§1
+[0] usb_cken    0x1 usb ????¡§o?¨¤?¡§?¡§o1?¡§1
 */
 #define REG_ADDR_CLK_POWER_SW 0xA0170288
 #define CLK_BIT_USB_EN (1 << 0)
 void gd_clk_disable_usb()
 {
-	U32 val_clk = 0;
-	
-	CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
-	
-	val_clk &= ~CLK_BIT_USB_EN;
-	
-	CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
+    U32 val_clk = 0;
+
+    CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
+
+    val_clk &= ~CLK_BIT_USB_EN;
+
+    CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
 }
 
 void gd_clk_enable_usb()
 {
-	U32 val_clk = 0;
-	
-	CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
-	
-	val_clk |= CLK_BIT_USB_EN;
-	
-	CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
+    U32 val_clk = 0;
+
+    CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
+
+    val_clk |= CLK_BIT_USB_EN;
+
+    CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
 }
 
 void gd_clk_disable_all()
 {
-	U32 val_clk = 0;
-		
-	CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
+    U32 val_clk = 0;
+
+    CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
 }
 
 
@@ -93,13 +93,13 @@ GERR GD_USB_PHY_FPGA_Init(void)
     GD_TIMER_Delay(20);
     GH_PLL_set_USB_GRST_en(1);
 #endif
-	printf("[GK]%s()\n", __FUNCTION__);
+    printf("[GK]%s()\n", __FUNCTION__);
 
     *((unsigned volatile int*)(GPIOx_ADDR_USB_PHY_RST(12)))=0x00000001;   // Reset External USB PHY on the FPGA Platform by GPIO[0] in GK7101S or GPIO[42] in GK7102C
     GD_TIMER_Delay(1);
     *((unsigned volatile int*)(GPIOx_ADDR_USB_PHY_RST(12)))=0x00000000;
-	GD_TIMER_Delay(1);
-	return GD_OK;
+    GD_TIMER_Delay(1);
+    return GD_OK;
 }
 
 GERR GD_USB_PHY_Init(U8 GpioNumber)
@@ -578,7 +578,7 @@ void  GD_USB_Control_in(const U8 *p, U32 *length,U32 len0_flag)
             while(GH_USB_get_CSR0L_R_PERI_TxPktRdy());
             *length=0;
 
-			printf("send short packet, tran end!!!\n");
+            printf("send short packet, tran end!!!\n");
             break;
         }
         else
@@ -589,7 +589,7 @@ void  GD_USB_Control_in(const U8 *p, U32 *length,U32 len0_flag)
                 while(GH_USB_get_CSR0L_R_PERI_TxPktRdy());
             }
 
-			printf("send NULL paket, tran end!!!\n");
+            printf("send NULL paket, tran end!!!\n");
             break;
         }
     }
@@ -651,7 +651,7 @@ GERR GD_USB_DMA_Out_TranTx(U32 read_addr, U32 read_len)
     GH_USB_set_TXCSRH_W_PERI(0x24);
 
 }
-#endif 
+#endif
 
 // Func: read the INT reg & clear it.
 GERR GD_USB_Read_Clear_IntrTx(U16 *pINT)
@@ -703,39 +703,39 @@ void GD_USB_In_tranTx(U8 *p, U32 len)
     maxPktSize = 512;               // According to USB spec2.0, maxSize is 512 for BulkT
 #endif
 
-	while(1)
-	{
-		if(len>=maxPktSize) //TxPktRdy will be automatically set when data of maxPktSize (value in TxMaxP) is loaded into the TX FIFO.
-		{
-			for(i=0;i<maxPktSize;i++)
-			{
-				//*REG_USB_EP1FIFO = p[n++];
+    while(1)
+    {
+        if(len>=maxPktSize) //TxPktRdy will be automatically set when data of maxPktSize (value in TxMaxP) is loaded into the TX FIFO.
+        {
+            for(i=0;i<maxPktSize;i++)
+            {
+                //*REG_USB_EP1FIFO = p[n++];
                 GH_USB_set_FIFOs(g_tx_ep, p[n]);
                 //GH_USB_set_FIFOs(1, p[n]);
                 n++;
-			}
+            }
 
-			while(GH_USB_get_TXCSRL_R_PERI() & 0x1);  // TxPktRdy
-			len-=maxPktSize;
-			if(len==0)
-				break;
-		}
+            while(GH_USB_get_TXCSRL_R_PERI() & 0x1);  // TxPktRdy
+            len-=maxPktSize;
+            if(len==0)
+                break;
+        }
 
-		if(len<maxPktSize)
-		{
-			for(i=0;i<len;i++)
-			{
-				//*REG_USB_EP1FIFO = p[n++];
+        if(len<maxPktSize)
+        {
+            for(i=0;i<len;i++)
+            {
+                //*REG_USB_EP1FIFO = p[n++];
                 GH_USB_set_FIFOs(g_tx_ep, p[n]);
                 //GH_USB_set_FIFOs(1, p[n]);
                 n++;
-			}
+            }
 
-			GH_USB_set_TXCSRL_W_PERI(0x01);
-			while(GH_USB_get_TXCSRL_R_PERI() & 0x1);
-			break;
-		}
-	}
+            GH_USB_set_TXCSRL_W_PERI(0x01);
+            while(GH_USB_get_TXCSRL_R_PERI() & 0x1);
+            break;
+        }
+    }
 }
 
 // Func: host writes data using DMA. So the usb device would recv data from the host.
@@ -925,15 +925,15 @@ GERR GD_USB_DMA_Out_TranTx_Fix_BugDMA(U32 read_addr, U32 read_len)
 
 #endif
 
-	data = 0;
+    data = 0;
     data = GH_DMA_get_Status(MUSB_TX_DMA_CHAN);
- 	while(data == 0)
- 	{
+    while(data == 0)
+    {
          data = GH_DMA_get_Status(MUSB_TX_DMA_CHAN);
-	}
+    }
 
-	// stop USB
-	GH_USB_set_TXCSRH_W_PERI(0xa4);   // AutoSet & endpoint 1 dir: Tx & disable the DMA request for the TX endpoint and DMA mode 1
+    // stop USB
+    GH_USB_set_TXCSRH_W_PERI(0xa4);   // AutoSet & endpoint 1 dir: Tx & disable the DMA request for the TX endpoint and DMA mode 1
     printf("1....DMA CH0, CTL=%#x, STA=%#x, INT=%#x, STA0=%#x\n", GH_DMA_get_Control(MUSB_TX_DMA_CHAN), GH_DMA_get_Status(MUSB_TX_DMA_CHAN), GH_DMA_get_IR(), data);
     GH_USB_set_TXCSRL_W_PERI(0x08);   // set FlushFIFO
     GH_USB_set_TXCSRL_W_PERI(0x01);   // TxPktRdy
@@ -1024,39 +1024,39 @@ void GD_USB_PIO_In_tran_tx(U32 *p, U32 len)
     //*REG_USB_TXCSRH = 0xa4;    //ok!
     GH_USB_set_TXCSRH_W_PERI(0x20);    // dir:Tx & not enable the DMA request
 
-	while(1)
-	{
+    while(1)
+    {
         if(len>=pkt_sz)
         {
-    		for(i=0;i<pkt_sz;i++)
-    		{
-//    			*(volatile UINT32 *)REG_USB_EP1FIFO = p[n++];
+            for(i=0;i<pkt_sz;i++)
+            {
+//              *(volatile UINT32 *)REG_USB_EP1FIFO = p[n++];
 
                 GH_USB_set_FIFOs_U32(g_tx_ep, p[n++]);
                 //GH_USB_set_FIFOs_U32(1, p[n++]);
-    		}
+            }
 
             GH_USB_set_TXCSRL_W_PERI(0x01);      // TxPktRdy
-    		while((GH_USB_get_TXCSRL_R_PERI()&0x1)==0x01);
-    		len -= pkt_sz;
-    		if(len==0)
-    			break;
+            while((GH_USB_get_TXCSRL_R_PERI()&0x1)==0x01);
+            len -= pkt_sz;
+            if(len==0)
+                break;
         }
         else
         {
             for(i=0;i<len;i++)
-    		{
-    			//*(volatile UINT32 *)REG_USB_EP1FIFO = p[n++];
+            {
+                //*(volatile UINT32 *)REG_USB_EP1FIFO = p[n++];
                 GH_USB_set_FIFOs_U32(g_tx_ep, p[n++]);
                 //GH_USB_set_FIFOs_U32(1, p[n++]);
-    		}
+            }
 
             GH_USB_set_TXCSRL_W_PERI(0x01);
-    		while((GH_USB_get_TXCSRL_R_PERI()&0x1)==0x01);
-    		len=0;
-    		break;
+            while((GH_USB_get_TXCSRL_R_PERI()&0x1)==0x01);
+            len=0;
+            break;
         }
-	}
+    }
 }
 
 void GD_USB_PIO_In_tran_rx(U32 *p, U32 len)
@@ -1072,62 +1072,62 @@ void GD_USB_PIO_In_tran_rx(U32 *p, U32 len)
     //GH_USB_set_Index(2);      //select EP2
     GH_USB_set_RXCSRH_W_PERI(0x00);
 
-	while(1)
-	{
-		if((len>=pkt_sz)&&((GH_USB_get_RXCSRL_R_PERI()&0x1) == 0x1))
-		{
-			for(i=0;i<pkt_sz;i++)
-			{
-/*			    data = 0;
-			    data = GH_USB_get_FIFOs(2);
+    while(1)
+    {
+        if((len>=pkt_sz)&&((GH_USB_get_RXCSRL_R_PERI()&0x1) == 0x1))
+        {
+            for(i=0;i<pkt_sz;i++)
+            {
+/*              data = 0;
+                data = GH_USB_get_FIFOs(2);
                 data |= GH_USB_get_FIFOs(2) << 8;
 
                 data |= GH_USB_get_FIFOs(2) << 16;
                 data |= GH_USB_get_FIFOs(2) << 24;
-				//p[n++] = (*(volatile UINT32 *)REG_USB_EP2FIFO);
-				p[n++] = data;
+                //p[n++] = (*(volatile UINT32 *)REG_USB_EP2FIFO);
+                p[n++] = data;
 */
                 p[n++] = GH_USB_get_FIFOs_U32(g_rx_ep);
                 //p[n++] = GH_USB_get_FIFOs_U32(2);
-			}
+            }
 
-			GH_USB_set_RXCSRL_W_PERI(0x00);                    //ok! manual REG_USB_RXCSRL bit0=0, will true!
+            GH_USB_set_RXCSRL_W_PERI(0x00);                    //ok! manual REG_USB_RXCSRL bit0=0, will true!
 
-			//while(((*REG_USB_RXCSRL)&0x1)==0x01)    //(auto: every time of 512B to wait REG_USB_RXCSRL bit0=0, maybe error)
-			//{
-			//	printf("RXCOUNT=%d\n",
-		    //	(((*REG_USB_RXCOUNT_H)<<8)|(*REG_USB_RXCOUNT_L)));
-			//}
+            //while(((*REG_USB_RXCSRL)&0x1)==0x01)    //(auto: every time of 512B to wait REG_USB_RXCSRL bit0=0, maybe error)
+            //{
+            //  printf("RXCOUNT=%d\n",
+            //  (((*REG_USB_RXCOUNT_H)<<8)|(*REG_USB_RXCOUNT_L)));
+            //}
 
-			len-=pkt_sz;
+            len-=pkt_sz;
 
-			if(len==0)
-				break;
-		}
+            if(len==0)
+                break;
+        }
 
-		if((len<pkt_sz)&&((GH_USB_get_RXCSRL_R_PERI()&0x1) == 0x1))
-		{
-			for(i=0;i<len;i++)
-			{
-/*			    data = 0;
-			    data = GH_USB_get_FIFOs(2);
+        if((len<pkt_sz)&&((GH_USB_get_RXCSRL_R_PERI()&0x1) == 0x1))
+        {
+            for(i=0;i<len;i++)
+            {
+/*              data = 0;
+                data = GH_USB_get_FIFOs(2);
                 data |= GH_USB_get_FIFOs(2) << 8;
 
                 data |= GH_USB_get_FIFOs(2) << 16;
                 data |= GH_USB_get_FIFOs(2) << 24;
-				// p[n++] = (*REG_USB_EP2FIFO);      // maybe bug here
-				p[n++] = data; */
+                // p[n++] = (*REG_USB_EP2FIFO);      // maybe bug here
+                p[n++] = data; */
                 p[n++] = GH_USB_get_FIFOs_U32(g_rx_ep);
                 //p[n++] = GH_USB_get_FIFOs_U32(2);
-			}
+            }
 
-			GH_USB_set_RXCSRL_W_PERI(0x00);
+            GH_USB_set_RXCSRL_W_PERI(0x00);
 
             //printf("len(<=128) = 0x%x\n", len);
-			//while((*REG_USB_RXCSRL&0x1)==0x01);
-			break;
-		}
-	}
+            //while((*REG_USB_RXCSRL&0x1)==0x01);
+            break;
+        }
+    }
 }
 
 

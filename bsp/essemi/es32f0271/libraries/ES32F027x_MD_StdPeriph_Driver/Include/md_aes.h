@@ -21,9 +21,9 @@
 extern "C" {
 #endif
 
-/* Includes -------------------------------------------------------------------*/ 
+/* Includes -------------------------------------------------------------------*/
 #include "es32f0271.h"
-  
+
 /** @addtogroup Micro_Driver
   * @{
   */
@@ -34,7 +34,7 @@ extern "C" {
   * @brief AES micro driver
   * @{
   */
-  
+
 /* Private Types --------------------------------------------------------------*/
 /* Private Variables ----------------------------------------------------------*/
 /* Private Macros -------------------------------------------------------------*/
@@ -46,12 +46,12 @@ extern "C" {
 typedef struct
 {
   volatile uint8_t aes_con_bl;
-  volatile uint8_t aes_con_mode;    
+  volatile uint8_t aes_con_mode;
   volatile uint32_t aes_key[4];
   volatile uint32_t aes_iv[4];
   volatile uint32_t aes_din[4];
   volatile uint32_t aes_dout[4];
-} md_aes_init_typedef; 
+} md_aes_init_typedef;
 /**
   * @} MD_AES_INIT
   */
@@ -100,7 +100,7 @@ typedef struct
 /**
   * @} MD_AES_CON_registers
   */
-  
+
 /** @defgroup MD_AES_IER_registers AES Interrupt Enable Registers
   * @brief
   * @{
@@ -132,7 +132,7 @@ typedef struct
 /**
   * @} MD_AES_IVS_registers
   */
-  
+
 /** @defgroup MD_AES_RIF_registers AES Raw Interrupt Flag Registers
   * @brief
   * @{
@@ -144,7 +144,7 @@ typedef struct
 /**
   * @} MD_AES_RIF_registers
   */
-  
+
 /** @defgroup MD_AES_IFM_registers AES Interrupt Flag Mask Registers
   * @brief
   * @{
@@ -156,7 +156,7 @@ typedef struct
 /**
   * @} MD_AES_IFM_registers
   */
-  
+
 /** @defgroup MD_AES_ICR_registers AES Interrupt Clear Registers
   * @brief
   * @{
@@ -176,7 +176,7 @@ typedef struct
   * @brief
   * @{
   */
-  
+
 /**
   * @brief  AES Control Register
   * @param  AES Instance
@@ -346,7 +346,7 @@ __STATIC_INLINE void md_aes_set_con_re_init(AES_TypeDef *aes, uint32_t value)
   */
 __STATIC_INLINE uint32_t md_aes_get_con_re_init(AES_TypeDef *aes)
 {
-  
+
   return ((READ_BIT(aes->CON, AES_CON_RE_INIT_MSK) >> AES_CON_RE_INIT_POS) & 0x1);
 }
 

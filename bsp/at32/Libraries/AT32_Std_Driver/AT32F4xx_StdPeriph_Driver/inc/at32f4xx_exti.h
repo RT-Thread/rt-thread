@@ -65,10 +65,10 @@ typedef struct
 {
     uint32_t EXTI_Line;                     /*!< Specifies the EXTI lines to be enabled or disabled.
                                                   This parameter can be any combination of @ref EXTI_Lines */
-                                            
+
     EXTIMode_Type EXTI_Mode;                /*!< Specifies the mode for the EXTI lines.
                                                   This parameter can be a value of @ref EXTIMode_Type */
-                                            
+
     EXTITrigger_Type EXTI_Trigger;          /*!< Specifies the trigger signal active edge for the EXTI lines.
                                                   This parameter can be a value of @ref EXTIMode_Type */
 

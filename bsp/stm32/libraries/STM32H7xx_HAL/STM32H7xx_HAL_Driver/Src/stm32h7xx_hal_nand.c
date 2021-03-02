@@ -193,7 +193,7 @@ HAL_StatusTypeDef  HAL_NAND_Init(NAND_HandleTypeDef *hnand, FMC_NAND_PCC_TimingT
 
   /* Enable the NAND device */
   __FMC_NAND_ENABLE(hnand->Instance);
-  
+
   /* Enable FMC Peripheral */
   __FMC_ENABLE();
   /* Update the NAND controller state */

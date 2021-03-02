@@ -89,19 +89,19 @@ typedef void (*dac_callback_t)(uint8_t channel);
 
 /** Enum for the possible callback types for the DAC module. */
 enum dac_callback {
-	/** Callback type for when a DAC channel data empty condition occurs
-	 *  (requires event triggered mode) */
-	DAC_CALLBACK_DATA_EMPTY,
+    /** Callback type for when a DAC channel data empty condition occurs
+     *  (requires event triggered mode) */
+    DAC_CALLBACK_DATA_EMPTY,
 
-	/** Callback type for when a DAC channel data underrun condition occurs
-	 *  (requires event triggered mode) */
-	DAC_CALLBACK_DATA_UNDERRUN,
+    /** Callback type for when a DAC channel data underrun condition occurs
+     *  (requires event triggered mode) */
+    DAC_CALLBACK_DATA_UNDERRUN,
 
-	/** Callback type for when a DAC channel write buffer job complete (requires
-	 *  event triggered mode) */
-	DAC_CALLBACK_TRANSFER_COMPLETE,
+    /** Callback type for when a DAC channel write buffer job complete (requires
+     *  event triggered mode) */
+    DAC_CALLBACK_TRANSFER_COMPLETE,
 #if !defined(__DOXYGEN__)
-	DAC_CALLBACK_N,
+    DAC_CALLBACK_N,
 #endif
 };
 
@@ -115,32 +115,32 @@ enum dac_callback {
  */
 
 bool dac_is_syncing(
-		struct dac_module *const dev_inst);
+        struct dac_module *const dev_inst);
 
 void dac_get_config_defaults(
-		struct dac_config *const config);
+        struct dac_config *const config);
 
 enum status_code dac_init(
-		struct dac_module *const dev_inst,
-		Dac *const module,
-		struct dac_config *const config);
+        struct dac_module *const dev_inst,
+        Dac *const module,
+        struct dac_config *const config);
 
 void dac_reset(
-		struct dac_module *const dev_inst);
+        struct dac_module *const dev_inst);
 
 void dac_enable(
-		struct dac_module *const dev_inst);
+        struct dac_module *const dev_inst);
 
 void dac_disable(
-		struct dac_module *const dev_inst);
+        struct dac_module *const dev_inst);
 
 void dac_enable_events(
-		struct dac_module *const module_inst,
-		struct dac_events *const events);
+        struct dac_module *const module_inst,
+        struct dac_events *const events);
 
 void dac_disable_events(
-		struct dac_module *const module_inst,
-		struct dac_events *const events);
+        struct dac_module *const module_inst,
+        struct dac_events *const events);
 
 /** @} */
 
@@ -150,20 +150,20 @@ void dac_disable_events(
  */
 
 void dac_chan_get_config_defaults(
-		struct dac_chan_config *const config);
+        struct dac_chan_config *const config);
 
 void dac_chan_set_config(
-		struct dac_module *const dev_inst,
-		const enum dac_channel channel,
-		struct dac_chan_config *const config);
+        struct dac_module *const dev_inst,
+        const enum dac_channel channel,
+        struct dac_chan_config *const config);
 
 void dac_chan_enable(
-		struct dac_module *const dev_inst,
-		enum dac_channel channel);
+        struct dac_module *const dev_inst,
+        enum dac_channel channel);
 
 void dac_chan_disable(
-		struct dac_module *const dev_inst,
-		enum dac_channel channel);
+        struct dac_module *const dev_inst,
+        enum dac_channel channel);
 
 /** @} */
 
@@ -173,15 +173,15 @@ void dac_chan_disable(
  */
 
 enum status_code dac_chan_write(
-		struct dac_module *const dev_inst,
-		enum dac_channel channel,
-		const uint16_t data);
+        struct dac_module *const dev_inst,
+        enum dac_channel channel,
+        const uint16_t data);
 
 enum status_code dac_chan_write_buffer_wait(
-		struct dac_module *const module_inst,
-		enum dac_channel channel,
-		uint16_t *buffer,
-		uint32_t length);
+        struct dac_module *const module_inst,
+        enum dac_channel channel,
+        uint16_t *buffer,
+        uint32_t length);
 
 /** @} */
 
@@ -190,10 +190,10 @@ enum status_code dac_chan_write_buffer_wait(
  * @{
  */
 uint32_t dac_get_status(
-		struct dac_module *const module_inst);
+        struct dac_module *const module_inst);
 void dac_clear_status(
-		struct dac_module *const module_inst,
-		uint32_t status_flags);
+        struct dac_module *const module_inst,
+        uint32_t status_flags);
 
 /** @} */
 

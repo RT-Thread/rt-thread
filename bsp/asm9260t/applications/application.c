@@ -18,8 +18,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
- * Date           Author		Notes
- * 2011-01-13     weety		 first version
+ * Date           Author        Notes
+ * 2011-01-13     weety      first version
  * 2015-04-27     ArdaFu     Port bsp from at91sam9260 to asm9260t
  */
 

@@ -63,17 +63,17 @@ DMA_ALIGN DMA_CHDESC_T Chip_DMA_Table[MAX_DMA_CHANNEL];
 
 void ChipEz_DMA_Init(uint32_t isEnableIRQ)
 {
-	Chip_DMA_Init(LPC_DMA);
-	Chip_DMA_Enable(LPC_DMA);
-	Chip_DMA_SetSRAMBase(LPC_DMA, DMA_ADDR(Chip_DMA_Table));
-	if (isEnableIRQ)
-    	NVIC_EnableIRQ(DMA_IRQn);
+    Chip_DMA_Init(LPC_DMA);
+    Chip_DMA_Enable(LPC_DMA);
+    Chip_DMA_SetSRAMBase(LPC_DMA, DMA_ADDR(Chip_DMA_Table));
+    if (isEnableIRQ)
+        NVIC_EnableIRQ(DMA_IRQn);
 
 }
 
  /**
-  * Initialize DMA parameters specific to a channel 
-  * 
+  * Initialize DMA parameters specific to a channel
+  *
   * @param channel
   * @param src_address
   * @param dst_address
@@ -81,69 +81,69 @@ void ChipEz_DMA_Init(uint32_t isEnableIRQ)
   * @param length_bytes
   */
  void ChipEz_DMA_InitChannel( DMA_CHID_T channel, uint32_t src_address, uint32_t src_increment,
-		 uint32_t dst_address, uint32_t dst_increment, uint32_t xfr_width, uint32_t length_bytes, uint32_t priority) 
+         uint32_t dst_address, uint32_t dst_increment, uint32_t xfr_width, uint32_t length_bytes, uint32_t priority)
  {
    Chip_DMA_EnableChannel(LPC_DMA, channel);
    Chip_DMA_EnableIntChannel(LPC_DMA, channel);
- 
+
    Chip_DMA_SetupChannelConfig(LPC_DMA, channel, DMA_CFG_PERIPHREQEN |
-		   DMA_CFG_CHPRIORITY(priority));
- 
+           DMA_CFG_CHPRIORITY(priority));
+
    if (src_increment != DMA_XFERCFG_SRCINC_0) {
-	 Chip_DMA_Table[channel].source = DMA_ADDR((src_address + length_bytes)
-			 - (1UL << xfr_width));
+     Chip_DMA_Table[channel].source = DMA_ADDR((src_address + length_bytes)
+             - (1UL << xfr_width));
    } else {
-	 Chip_DMA_Table[channel].source = DMA_ADDR(src_address);
+     Chip_DMA_Table[channel].source = DMA_ADDR(src_address);
    }
- 
+
    if (dst_increment != DMA_XFERCFG_DSTINC_0) {
-	 Chip_DMA_Table[channel].dest = DMA_ADDR((dst_address + length_bytes)
-			 - (1UL << xfr_width));
+     Chip_DMA_Table[channel].dest = DMA_ADDR((dst_address + length_bytes)
+             - (1UL << xfr_width));
    } else {
-	 Chip_DMA_Table[channel].dest = DMA_ADDR(dst_address);
+     Chip_DMA_Table[channel].dest = DMA_ADDR(dst_address);
    }
    Chip_DMA_Table[channel].next = DMA_ADDR(0);
- 
+
  }
- 
+
  /**
-  * Start the DMA transfer 
-  * 
+  * Start the DMA transfer
+  *
   * @param channel
   * @param src_increment
   * @param dst_increment
   * @param xfr_width
   * @param length_bytes
   */
- void ChipEz_DMA_StartTransfer(DMA_CHID_T channel, uint32_t src_increment, uint32_t dst_increment, uint32_t xfr_width, uint32_t length_bytes) 
+ void ChipEz_DMA_StartTransfer(DMA_CHID_T channel, uint32_t src_increment, uint32_t dst_increment, uint32_t xfr_width, uint32_t length_bytes)
  {
    uint32_t xfer_count;
- 
+
    /* Calculate transfer_count ( length in terms of transfers) */
    xfer_count = (xfr_width == DMA_XFERCFG_WIDTH_8) ? length_bytes :
-		   (xfr_width == DMA_XFERCFG_WIDTH_16) ? (length_bytes >> 1) :
-		   (length_bytes >> 2);
- 
+           (xfr_width == DMA_XFERCFG_WIDTH_16) ? (length_bytes >> 1) :
+           (length_bytes >> 2);
+
    Chip_DMA_SetupChannelTransfer(LPC_DMA, channel,
-		   (DMA_XFERCFG_CFGVALID | DMA_XFERCFG_SETINTA | DMA_XFERCFG_SWTRIG |
-		   xfr_width | src_increment | dst_increment |
-		   DMA_XFERCFG_XFERCOUNT(xfer_count)));
+           (DMA_XFERCFG_CFGVALID | DMA_XFERCFG_SETINTA | DMA_XFERCFG_SWTRIG |
+           xfr_width | src_increment | dst_increment |
+           DMA_XFERCFG_XFERCOUNT(xfer_count)));
  }
 
 bool ChipEzr_DMA_Transfer( DMA_CHID_T channel, uint32_t src_address, uint32_t src_increment,
-		uint32_t dst_address, uint32_t dst_increment, uint32_t xfr_width, uint32_t length_bytes, uint32_t priority) 
+        uint32_t dst_address, uint32_t dst_increment, uint32_t xfr_width, uint32_t length_bytes, uint32_t priority)
 {
-	if ((Chip_DMA_GetBusyChannels(LPC_DMA) & (1 << channel)) != 0)
-		return FALSE;
-	ChipEz_DMA_InitChannel(channel, src_address, src_increment, dst_address, dst_increment, xfr_width, length_bytes, priority);
-	ChipEz_DMA_StartTransfer(channel, src_increment, dst_increment, xfr_width, length_bytes);
-	return TRUE;
+    if ((Chip_DMA_GetBusyChannels(LPC_DMA) & (1 << channel)) != 0)
+        return FALSE;
+    ChipEz_DMA_InitChannel(channel, src_address, src_increment, dst_address, dst_increment, xfr_width, length_bytes, priority);
+    ChipEz_DMA_StartTransfer(channel, src_increment, dst_increment, xfr_width, length_bytes);
+    return TRUE;
 }
 
 void ChipEz_DMA_AbortChannel(DMA_CHID_T ch) {
-	 Chip_DMA_DisableChannel(LPC_DMA, ch);
-	 while ((Chip_DMA_GetBusyChannels(LPC_DMA) & (1 << ch)) != 0) {}
-	 Chip_DMA_AbortChannel(LPC_DMA, ch);
-	 Chip_DMA_ClearErrorIntChannel(LPC_DMA, ch);
+     Chip_DMA_DisableChannel(LPC_DMA, ch);
+     while ((Chip_DMA_GetBusyChannels(LPC_DMA) & (1 << ch)) != 0) {}
+     Chip_DMA_AbortChannel(LPC_DMA, ch);
+     Chip_DMA_ClearErrorIntChannel(LPC_DMA, ch);
 }
 

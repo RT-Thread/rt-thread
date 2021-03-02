@@ -39,7 +39,7 @@ typedef struct _thread
 #define INTERRUPT_ENABLE   0
 #define INTERRUPT_DISABLE  1
 
-/* çº¿ç¨‹æŒ‚èµ·çŠ¶æ€ï¼Œå…±ä¸¤ç§å–å€¼ */
+/* Ïß³Ì¹ÒÆğ×´Ì¬£¬¹²Á½ÖÖÈ¡Öµ */
 #define SUSPEND_LOCK      0
 #define SUSPEND_SIGWAIT   1
 #define THREAD_RUNNING    2
@@ -103,20 +103,20 @@ static void thread_suspend_signal_handler(int sig)
     thread_from = (thread_t *) rt_interrupt_from_thread;
     thread_to = (thread_t *) rt_interrupt_to_thread;
 
-    /* æ³¨æ„ï¼æ­¤æ—¶ rt_thread_selfçš„å€¼æ˜¯toçº¿ç¨‹çš„å€¼ï¼ */
+    /* ×¢Òâ£¡´ËÊ± rt_thread_selfµÄÖµÊÇtoÏß³ÌµÄÖµ£¡ */
     tid = rt_thread_self();
     /* FIXME RT_ASSERT(thread_from->pthread == pid); */
     RT_ASSERT((thread_t *)(tid->sp) == thread_to);
 
     TRACE("signal: SIGSUSPEND suspend <%s>\n", thread_from->rtthread->name);
 
-    /* ä½¿ç”¨sigwaitæˆ–è€…sigsuspendæ¥æŒ‚èµ·fromçº¿ç¨‹  */
+    /* Ê¹ÓÃsigwait»òÕßsigsuspendÀ´¹ÒÆğfromÏß³Ì  */
     //sem_wait(&thread_from->sem);
     sigemptyset(&sigmask);
     sigaddset(&sigmask, MSG_RESUME);
 
-    /* Beginnig Linux Programmingä¸Šè¯´ï¼Œå½“ä¿¡å·å¤„ç†å‡½æ•°è¿è¡Œä¸­ï¼Œæ­¤ä¿¡å·å°±ä¼šè¢«å±è”½ï¼Œ
-     * ä»¥é˜²æ­¢é‡å¤æ‰§è¡Œä¿¡å·å¤„ç†å‡½æ•°
+    /* Beginnig Linux ProgrammingÉÏËµ£¬µ±ĞÅºÅ´¦Àíº¯ÊıÔËĞĞÖĞ£¬´ËĞÅºÅ¾Í»á±»ÆÁ±Î£¬
+     * ÒÔ·ÀÖ¹ÖØ¸´Ö´ĞĞĞÅºÅ´¦Àíº¯Êı
      */
     thread_from->status = SUSPEND_SIGWAIT;
     if (sigwait(&sigmask, &sig) != 0)
@@ -140,7 +140,7 @@ static void thread_resume_signal_handler(int sig)
     thread_from = (thread_t *) rt_interrupt_from_thread;
     thread_to = (thread_t *) rt_interrupt_to_thread;
 
-    /* æ³¨æ„ï¼æ­¤æ—¶ rt_thread_selfçš„å€¼æ˜¯toçº¿ç¨‹çš„å€¼ï¼ */
+    /* ×¢Òâ£¡´ËÊ± rt_thread_selfµÄÖµÊÇtoÏß³ÌµÄÖµ£¡ */
     tid = rt_thread_self();
     RT_ASSERT((thread_t *)(tid->sp) == thread_to);
 
@@ -171,10 +171,10 @@ static void *thread_run(void *parameter)
     thread->exit();
 
     /*TODO:
-     * æœ€åä¸€è¡Œçš„pthread_exitæ°¸è¿œæ²¡æœ‰æœºä¼šæ‰§è¡Œï¼Œè¿™æ˜¯å› ä¸ºåœ¨threead->exitå‡½æ•°ä¸­
-     * ä¼šå‘ç”Ÿçº¿ç¨‹åˆ‡æ¢ï¼Œå¹¶æ°¸ä¹…å°†æ­¤pthreadçº¿ç¨‹æŒ‚èµ·ï¼Œæ‰€ä»¥æ›´å®Œç¾çš„è§£å†³æ–¹æ¡ˆæ˜¯åœ¨è¿™
-	 * é‡Œå‘é€ä¿¡å·ç»™ä¸»çº¿ç¨‹ï¼Œä¸»çº¿ç¨‹ä¸­å†æ¬¡å”¤é†’æ­¤çº¿ç¨‹ä»¤å…¶è‡ªåŠ¨é€€å‡ºã€‚
-	 */
+     * ×îºóÒ»ĞĞµÄpthread_exitÓÀÔ¶Ã»ÓĞ»ú»áÖ´ĞĞ£¬ÕâÊÇÒòÎªÔÚthreead->exitº¯ÊıÖĞ
+     * »á·¢ÉúÏß³ÌÇĞ»»£¬²¢ÓÀ¾Ã½«´ËpthreadÏß³Ì¹ÒÆğ£¬ËùÒÔ¸üÍêÃÀµÄ½â¾ö·½°¸ÊÇÔÚÕâ
+     * Àï·¢ËÍĞÅºÅ¸øÖ÷Ïß³Ì£¬Ö÷Ïß³ÌÖĞÔÙ´Î»½ĞÑ´ËÏß³ÌÁîÆä×Ô¶¯ÍË³ö¡£
+     */
     //sem_destroy(&thread->sem);
 
     pthread_exit(NULL);
@@ -265,13 +265,13 @@ void rt_hw_interrupt_enable(rt_base_t level)
     interrupt_disable_flag = level;
 
     pthread_mutex_unlock(ptr_int_mutex);
-    /* å¦‚æœå·²ç»ä¸­æ–­ä»ç„¶å…³é—­ */
+    /* Èç¹ûÒÑ¾­ÖĞ¶ÏÈÔÈ»¹Ø±Õ */
     if (interrupt_disable_flag)
     {
         return;
     }
 
-    /* è¡¨ç¤ºå½“å‰ä¸­æ–­æ‰“å¼€, æ£€æŸ¥æ˜¯å¦æœ‰æŒ‚èµ·çš„ä¸­æ–­ */
+    /* ±íÊ¾µ±Ç°ÖĞ¶Ï´ò¿ª, ¼ì²éÊÇ·ñÓĞ¹ÒÆğµÄÖĞ¶Ï */
     pthread_mutex_lock(ptr_int_mutex);
     if (!cpu_pending_interrupts)
     {
@@ -287,9 +287,9 @@ void rt_hw_interrupt_enable(rt_base_t level)
     //pid != mainthread_pid &&
     if (thread_from->pthread == pid)
     {
-        /* æ³¨æ„è¿™æ®µä»£ç æ˜¯åœ¨RTTæ™®é€šçº¿ç¨‹å‡½æ•°æ€»å‡½æ•°ä¸­æ‰§è¡Œçš„ï¼Œ
-         * fromçº¿ç¨‹å°±æ˜¯å½“å‰rttçº¿ç¨‹ */
-        /* éœ€è¦æ£€æŸ¥æ˜¯å¦æœ‰æŒ‚èµ·çš„ä¸­æ–­éœ€è¦å¤„ç† */
+        /* ×¢ÒâÕâ¶Î´úÂëÊÇÔÚRTTÆÕÍ¨Ïß³Ìº¯Êı×Üº¯ÊıÖĞÖ´ĞĞµÄ£¬
+         * fromÏß³Ì¾ÍÊÇµ±Ç°rttÏß³Ì */
+        /* ĞèÒª¼ì²éÊÇ·ñÓĞ¹ÒÆğµÄÖĞ¶ÏĞèÒª´¦Àí */
         TRACE("conswitch: P in pid<%x> ,suspend <%s>, resume <%s>!\n",
               (unsigned int)pid,
               thread_from->rtthread->name,
@@ -298,7 +298,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
         cpu_pending_interrupts --;
         thread_from->status = SUSPEND_LOCK;
         pthread_mutex_unlock(ptr_int_mutex);
-        /* å”¤é†’è¢«æŒ‚èµ·çš„çº¿ç¨‹ */
+        /* »½ĞÑ±»¹ÒÆğµÄÏß³Ì */
         if (thread_to->status == SUSPEND_SIGWAIT)
         {
             pthread_kill(thread_to->pthread, MSG_RESUME);
@@ -313,7 +313,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
             exit(EXIT_FAILURE);
         }
 
-        /* æŒ‚èµ·å½“å‰çš„çº¿ç¨‹ */
+        /* ¹ÒÆğµ±Ç°µÄÏß³Ì */
         sem_wait(& thread_from->sem);
         pthread_mutex_lock(ptr_int_mutex);
         thread_from->status = THREAD_RUNNING;
@@ -321,9 +321,9 @@ void rt_hw_interrupt_enable(rt_base_t level)
     }
     else
     {
-        /* æ³¨æ„è¿™æ®µä»£ç å¯èƒ½åœ¨å¤šç§æƒ…å†µä¸‹è¿è¡Œï¼š
-         * 1. åœ¨system tickä¸­æ‰§è¡Œï¼Œ å³ä¸»çº¿ç¨‹çš„SIGALRMä¿¡å·å¤„ç†å‡½æ•°ä¸­æ‰§è¡Œ
-         * 2. å…¶ä»–çº¿ç¨‹ä¸­è°ƒç”¨ï¼Œæ¯”å¦‚ç”¨äºè·å–æŒ‰é”®è¾“å…¥çš„çº¿ç¨‹ä¸­è°ƒç”¨
+        /* ×¢ÒâÕâ¶Î´úÂë¿ÉÄÜÔÚ¶àÖÖÇé¿öÏÂÔËĞĞ£º
+         * 1. ÔÚsystem tickÖĞÖ´ĞĞ£¬ ¼´Ö÷Ïß³ÌµÄSIGALRMĞÅºÅ´¦Àíº¯ÊıÖĞÖ´ĞĞ
+         * 2. ÆäËûÏß³ÌÖĞµ÷ÓÃ£¬±ÈÈçÓÃÓÚ»ñÈ¡°´¼üÊäÈëµÄÏß³ÌÖĞµ÷ÓÃ
          */
         TRACE("conswitch: S in pid<%x>  ,suspend <%s>, resume <%s>!\n",
               (unsigned int)pid,
@@ -332,19 +332,19 @@ void rt_hw_interrupt_enable(rt_base_t level)
 
         cpu_pending_interrupts --;
 
-        /* éœ€è¦æŠŠè§£é”å‡½æ•°æ”¾åœ¨å‰é¢,ä»¥é˜²æ­¢æ­»é”ï¼Ÿï¼Ÿ */
+        /* ĞèÒª°Ñ½âËøº¯Êı·ÅÔÚÇ°Ãæ,ÒÔ·ÀÖ¹ËÀËø£¿£¿ */
         pthread_mutex_unlock(ptr_int_mutex);
 
-        /* æŒ‚èµ·fromçº¿ç¨‹ */
+        /* ¹ÒÆğfromÏß³Ì */
         pthread_kill(thread_from->pthread, MSG_SUSPEND);
-        /* æ³¨æ„ï¼šè¿™é‡Œéœ€è¦ç¡®ä¿çº¿ç¨‹è¢«æŒ‚èµ·äº†, å¦åˆ™312è¡Œå°±å¾ˆå¯èƒ½å°±ä¼šæŠ¥é”™é€€å‡º
-         * å› ä¸ºè¿™é‡ŒæŒ‚èµ·çº¿ç¨‹æ˜¯é€šè¿‡ä¿¡å·å®ç°çš„ï¼Œæ‰€ä»¥ä¸€å®šè¦ç¡®ä¿çº¿ç¨‹æŒ‚èµ·æ‰è¡Œ */
+        /* ×¢Òâ£ºÕâÀïĞèÒªÈ·±£Ïß³Ì±»¹ÒÆğÁË, ·ñÔò312ĞĞ¾ÍºÜ¿ÉÄÜ¾Í»á±¨´íÍË³ö
+         * ÒòÎªÕâÀï¹ÒÆğÏß³ÌÊÇÍ¨¹ıĞÅºÅÊµÏÖµÄ£¬ËùÒÔÒ»¶¨ÒªÈ·±£Ïß³Ì¹ÒÆğ²ÅĞĞ */
         while (thread_from->status != SUSPEND_SIGWAIT)
         {
             sched_yield();
         }
 
-        /* å”¤é†’toçº¿ç¨‹ */
+        /* »½ĞÑtoÏß³Ì */
         if (thread_to->status == SUSPEND_SIGWAIT)
         {
             pthread_kill(thread_to->pthread, MSG_RESUME);
@@ -374,7 +374,7 @@ void rt_hw_context_switch(rt_uint32_t from,
     RT_ASSERT(from != to);
 
 #if 0
-    //TODO: å¯èƒ½è¿˜éœ€è¦è€ƒè™‘åµŒå¥—åˆ‡æ¢çš„æƒ…å†µ
+    //TODO: ¿ÉÄÜ»¹ĞèÒª¿¼ÂÇÇ¶Ì×ÇĞ»»µÄÇé¿ö
     if (rt_thread_switch_interrupt_flag != 1)
     {
         rt_thread_switch_interrupt_flag = 1;
@@ -387,8 +387,8 @@ void rt_hw_context_switch(rt_uint32_t from,
     rt_interrupt_from_thread = *((rt_uint32_t *)from);
     rt_interrupt_to_thread = *((rt_uint32_t *)to);
 
-    /* è¿™ä¸ªå‡½æ•°åªæ˜¯å¹¶ä¸ä¼šçœŸæ­£æ‰§è¡Œä¸­æ–­å¤„ç†å‡½æ•°ï¼Œè€Œåªæ˜¯ç®€å•çš„
-     * è®¾ç½®ä¸€ä¸‹ä¸­æ–­æŒ‚èµ·æ ‡å¿—ä½
+    /* Õâ¸öº¯ÊıÖ»ÊÇ²¢²»»áÕæÕıÖ´ĞĞÖĞ¶Ï´¦Àíº¯Êı£¬¶øÖ»ÊÇ¼òµ¥µÄ
+     * ÉèÖÃÒ»ÏÂÖĞ¶Ï¹ÒÆğ±êÖ¾Î»
      */
     cpu_pending_interrupts ++;
     pthread_mutex_unlock(ptr_int_mutex);
@@ -409,7 +409,7 @@ void rt_hw_context_switch_to(rt_uint32_t to)
     rt_interrupt_from_thread = 0;
 
     //set interrupt to 1
-    rt_thread_switch_interrupt_flag = 0; //TODO: è¿˜éœ€è¦è€ƒè™‘è¿™ä¸ªåµŒå¥—åˆ‡æ¢çš„æƒ…å†µ
+    rt_thread_switch_interrupt_flag = 0; //TODO: »¹ĞèÒª¿¼ÂÇÕâ¸öÇ¶Ì×ÇĞ»»µÄÇé¿ö
 
     /* enable interrupt
      * note: NOW, there are only one interrupt in simposix: system tick */
@@ -435,7 +435,7 @@ static int mainthread_scheduler(void)
     mainthread_pid = pthread_self();
     TRACE("pid <%08x> mainthread\n", (unsigned int)(mainthread_pid));
 
-    /* å±è”½suspendä¿¡å·å’Œresumeä¿¡å· */
+    /* ÆÁ±ÎsuspendĞÅºÅºÍresumeĞÅºÅ */
     sigemptyset(&sigmask);
     sigaddset(&sigmask, MSG_SUSPEND);
     sigaddset(&sigmask, MSG_RESUME);
@@ -472,7 +472,7 @@ static int mainthread_scheduler(void)
         pause();
 #endif
         TRACE("mthread:got sig %d\n", sig);
-        /* signal mask sigalrm  å±è”½SIGALRMä¿¡å· */
+        /* signal mask sigalrm  ÆÁ±ÎSIGALRMĞÅºÅ */
         pthread_sigmask(SIG_BLOCK, &sigmask, &oldmask);
 
         // if (systick_signal_flag != 0)
@@ -487,7 +487,7 @@ static int mainthread_scheduler(void)
             TRACE("try lock failed.\n");
         }
 
-        /* å¼€å¯SIGALRMä¿¡å· */
+        /* ¿ªÆôSIGALRMĞÅºÅ */
         pthread_sigmask(SIG_UNBLOCK, &sigmask, &oldmask);
     }
 

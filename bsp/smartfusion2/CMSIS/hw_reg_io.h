@@ -4,8 +4,8 @@
  *  SmartFusion2 Cortex Microcontroller Software Interface - Peripheral
  *  Access Layer.
  *
- *  This file provides interfaces to perform register and register bit level 
- *  read / write operations. These interfaces support bit-banding in case of 
+ *  This file provides interfaces to perform register and register bit level
+ *  read / write operations. These interfaces support bit-banding in case of
  *  Cortex-M3 CPU.
  *
  * SVN $Revision: 5263 $
@@ -59,13 +59,13 @@ static __INLINE uint8_t read_reg8(volatile uint8_t * reg)
     return ( HW_REG(reg) );
 }
 /*****************************************************************************************
- * Definitions for register bits access using bit-band aliases for Cortex-M3 
+ * Definitions for register bits access using bit-band aliases for Cortex-M3
  */
 #define BITBAND(addr,bitnum)    (((uint32_t)addr & 0xF0000000)+0x02000000+(((uint32_t)addr & 0xFFFFF)<<5)+(bitnum<<2))
 #define HW_REG_BIT(reg,bitnum)  (*(volatile unsigned int *)((BITBAND(reg,bitnum))))
 
 /*****************************************************************************************
- * Functions to set a bit field in Cortex-M3 
+ * Functions to set a bit field in Cortex-M3
  */
 static __INLINE void set_bit_reg32(volatile uint32_t * reg, uint8_t bit)
 {

@@ -264,7 +264,7 @@ typedef union _hw_tempmon_tempsense1
  *
  * Values:
  * - 0x0000 - Defines a single measurement with no repeat.
- * - . . . - 
+ * - . . . -
  * - 0x0001 - Updates the temperature value at a RTC clock rate.
  * - 0x0002 - Updates the temperature value at a RTC/2 clock rate.
  * - 0xFFFF - Determines a two second sample period with a 32.768KHz RTC clock. Exact timings depend on the

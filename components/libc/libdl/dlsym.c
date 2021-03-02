@@ -17,7 +17,7 @@ void* dlsym(void *handle, const char* symbol)
 {
     int i;
     struct rt_dlmodule *module;
-    
+
     RT_ASSERT(handle != RT_NULL);
 
     module = (struct rt_dlmodule *)handle;

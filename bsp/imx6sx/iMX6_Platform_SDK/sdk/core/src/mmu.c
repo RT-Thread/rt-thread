@@ -55,7 +55,7 @@ typedef union mmu_l1_section {
         uint32_t _impl_defined:1;   //!< Implementation defined, should be zero.
         uint32_t ap1_0:2;  //!< Access permissions AP[1:0]
         uint32_t tex:3; //!< TEX remap
-        uint32_t ap2:1; //!< Access permissions AP[2] 
+        uint32_t ap2:1; //!< Access permissions AP[2]
         uint32_t s:1;   //!< Shareable
         uint32_t ng:1;  //!< Not-global
         uint32_t _zero:1;   //!< Should be zero.
@@ -81,14 +81,14 @@ extern char __l1_page_table_start;
 
 void mmu_enable()
 {
-    // invalidate all tlb 
+    // invalidate all tlb
     arm_unified_tlb_invalidate();
 
-    // read SCTLR 
+    // read SCTLR
     uint32_t sctlr;
     _ARM_MRC(15, 0, sctlr, 1, 0, 0);
-    
-    // set MMU enable bit 
+
+    // set MMU enable bit
     sctlr |= BM_SCTLR_M;
 
     // write modified SCTLR
@@ -97,11 +97,11 @@ void mmu_enable()
 
 void mmu_disable()
 {
-    // read current SCTLR 
+    // read current SCTLR
     uint32_t sctlr;
     _ARM_MRC(15, 0, sctlr, 1, 0, 0);
-    
-    // clear MMU enable bit 
+
+    // clear MMU enable bit
     sctlr &=~ BM_SCTLR_M;
 
     // write modified SCTLR
@@ -118,17 +118,17 @@ void mmu_init()
     _ARM_MCR(15, 0, table, 2, 0, 0);
 
     // set Client mode for all Domains
-    uint32_t dacr = 0x55555555; 
+    uint32_t dacr = 0x55555555;
     _ARM_MCR(15, 0, dacr, 3, 0, 0); // MCR p15, 0, <Rd>, c3, c0, 0 ; Write DACR
 
     // Clear the L1 table.
     bzero(table, MMU_L1_PAGE_TABLE_SIZE);
-    
+
     // Create default mappings.
     mmu_map_l1_range(0x00000000, 0x00000000, 0x00900000, kStronglyOrdered, kShareable, kRWAccess); // ROM and peripherals
     mmu_map_l1_range(0x00900000, 0x00900000, 0x00100000, kStronglyOrdered, kShareable, kRWAccess); // OCRAM
     mmu_map_l1_range(0x00a00000, 0x00a00000, 0x0f600000, kStronglyOrdered, kShareable, kRWAccess); // More peripherals
-   
+
     // Check whether SMP is enabled. If it is not, then we don't want to make SDRAM shareable.
     uint32_t actlr = 0x0;
     _ARM_MRC(15, 0, actlr, 1, 0, 1);
@@ -154,14 +154,14 @@ void mmu_map_l1_range(uint32_t pa, uint32_t va, uint32_t length, mmu_memory_type
 {
     register mmu_l1_section_t entry;
     entry.u = 0;
-    
+
     // Set constant attributes.
     entry.id = kMMU_L1_Section_ID;
     entry.xn = 0; // Allow execution
     entry.domain = 0; // Domain 0
     entry.ng = 0; // Global
     entry.ns = 0; // Secure
-    
+
     // Set attributes based on the selected memory type.
     switch (memoryType)
     {
@@ -206,7 +206,7 @@ void mmu_map_l1_range(uint32_t pa, uint32_t va, uint32_t length, mmu_memory_type
             entry.s = isShareable;
             break;
     }
-    
+
     // Set attributes from specified access mode.
     switch (access)
     {
@@ -223,10 +223,10 @@ void mmu_map_l1_range(uint32_t pa, uint32_t va, uint32_t length, mmu_memory_type
             entry.ap1_0 = 3;
             break;
     }
-    
+
     // Get the L1 page table base address.
     uint32_t * table = (uint32_t *)&__l1_page_table_start;
-    
+
     // Convert addresses to 12-bit bases.
     uint32_t vbase = va >> kMMU_L1_Section_Address_Shift;
     uint32_t pbase = pa >> kMMU_L1_Section_Address_Shift;
@@ -238,7 +238,7 @@ void mmu_map_l1_range(uint32_t pa, uint32_t va, uint32_t length, mmu_memory_type
         entry.address = pbase;
         table[vbase] = entry.u;
     }
-    
+
     // Invalidate TLB
     arm_unified_tlb_invalidate();
 }
@@ -246,37 +246,37 @@ void mmu_map_l1_range(uint32_t pa, uint32_t va, uint32_t length, mmu_memory_type
 bool mmu_virtual_to_physical(uint32_t virtualAddress, uint32_t * physicalAddress)
 {
     uint32_t pa = 0;
-    
-    // VA to PA translation with privileged read permission check  
+
+    // VA to PA translation with privileged read permission check
     _ARM_MCR(15, 0, virtualAddress & 0xfffffc00, 7, 8, 0);
-    
-    // Read PA register 
+
+    // Read PA register
     _ARM_MRC(15, 0, pa, 7, 4, 0);
-    
-    // First bit of returned value is Result of conversion (0 is successful translation) 
+
+    // First bit of returned value is Result of conversion (0 is successful translation)
     if (pa & 1)
     {
-        // We can try write permission also 
-        // VA to PA translation with privileged write permission check  
+        // We can try write permission also
+        // VA to PA translation with privileged write permission check
         _ARM_MCR(15, 0, virtualAddress & 0xfffffc00, 7, 8, 1);
-        
-        // Read PA register 
+
+        // Read PA register
         _ARM_MRC(15, 0, pa, 7, 4, 0);
-        
-        // First bit of returned value is Result of conversion (0 is successful translation) 
+
+        // First bit of returned value is Result of conversion (0 is successful translation)
         if (pa & 1)
         {
             return false;
         }
     }
-    
+
     if (physicalAddress)
     {
         // complete address returning base + offset
         pa = (pa & 0xfffff000) | (virtualAddress & 0x00000fff);
         *physicalAddress = pa;
     }
-    
+
     return true;
 }
 

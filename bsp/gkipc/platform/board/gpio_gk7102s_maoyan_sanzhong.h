@@ -33,8 +33,8 @@
     { GADI_GPIO_30, GADI_GPIO_TYPE_INOUT_SD1_DATA_2              }, \
     { GADI_GPIO_31, GADI_GPIO_TYPE_INOUT_SD1_DATA_3              }, \
     { GADI_GPIO_33, GADI_GPIO_TYPE_OUTPUT_SDIO1_CLK              }, \
-	{ GADI_GPIO_36, GADI_GPIO_TYPE_INPUT_SD1_CD_N                }, \
-    { GADI_GPIO_32, GADI_GPIO_TYPE_INOUT_SD1_CMD                 }, 
+    { GADI_GPIO_36, GADI_GPIO_TYPE_INPUT_SD1_CD_N                }, \
+    { GADI_GPIO_32, GADI_GPIO_TYPE_INOUT_SD1_CMD                 },
 #endif
 
 #if SYSTEM_INIT_GADI_GPIO == 1

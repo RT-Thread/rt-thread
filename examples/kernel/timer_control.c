@@ -1,27 +1,27 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šåŠ¨æ€å®šæ—¶å™¨ä¾‹ç¨‹
+ * ³ÌĞòÇåµ¥£º¶¯Ì¬¶¨Ê±Æ÷Àı³Ì
  *
- * è¿™ä¸ªä¾‹ç¨‹ä¼šåˆ›å»º1ä¸ªåŠ¨æ€å‘¨æœŸå‹å®šæ—¶å™¨å¯¹è±¡ï¼Œç„¶åæ§åˆ¶å®ƒè¿›è¡Œå®šæ—¶æ—¶é—´é•¿åº¦çš„æ›´æ”¹ã€‚
+ * Õâ¸öÀı³Ì»á´´½¨1¸ö¶¯Ì¬ÖÜÆÚĞÍ¶¨Ê±Æ÷¶ÔÏó£¬È»ºó¿ØÖÆËü½øĞĞ¶¨Ê±Ê±¼ä³¤¶ÈµÄ¸ü¸Ä¡£
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* å®šæ—¶å™¨çš„æ§åˆ¶å— */
+/* ¶¨Ê±Æ÷µÄ¿ØÖÆ¿é */
 static rt_timer_t timer1;
 static rt_uint8_t count;
 
-/* å®šæ—¶å™¨è¶…æ—¶å‡½æ•° */
+/* ¶¨Ê±Æ÷³¬Ê±º¯Êı */
 static void timeout1(void* parameter)
 {
     rt_tick_t timeout = 50;
-    
+
     rt_kprintf("periodic timer is timeout\n");
 
     count ++;
-    /* åœæ­¢å®šæ—¶å™¨è‡ªèº« */
+    /* Í£Ö¹¶¨Ê±Æ÷×ÔÉí */
     if (count >= 8)
     {
-        /* æ§åˆ¶å®šæ—¶å™¨ç„¶åæ›´æ”¹è¶…æ—¶æ—¶é—´é•¿åº¦ */
+        /* ¿ØÖÆ¶¨Ê±Æ÷È»ºó¸ü¸Ä³¬Ê±Ê±¼ä³¤¶È */
         rt_timer_control(timer1, RT_TIMER_CTRL_SET_TIME, (void *)&timeout);
         count = 0;
     }
@@ -29,13 +29,13 @@ static void timeout1(void* parameter)
 
 void timer_control_init()
 {
-    /* åˆ›å»ºå®šæ—¶å™¨1 */
-    timer1 = rt_timer_create("timer1",  /* å®šæ—¶å™¨åå­—æ˜¯ timer1 */
-        timeout1, /* è¶…æ—¶æ—¶å›è°ƒçš„å¤„ç†å‡½æ•° */
-        RT_NULL, /* è¶…æ—¶å‡½æ•°çš„å…¥å£å‚æ•° */
-        10, /* å®šæ—¶é•¿åº¦ï¼Œä»¥OS Tickä¸ºå•ä½ï¼Œå³10ä¸ªOS Tick */
-        RT_TIMER_FLAG_PERIODIC); /* å‘¨æœŸæ€§å®šæ—¶å™¨ */
-    /* å¯åŠ¨å®šæ—¶å™¨ */
+    /* ´´½¨¶¨Ê±Æ÷1 */
+    timer1 = rt_timer_create("timer1",  /* ¶¨Ê±Æ÷Ãû×ÖÊÇ timer1 */
+        timeout1, /* ³¬Ê±Ê±»Øµ÷µÄ´¦Àíº¯Êı */
+        RT_NULL, /* ³¬Ê±º¯ÊıµÄÈë¿Ú²ÎÊı */
+        10, /* ¶¨Ê±³¤¶È£¬ÒÔOS TickÎªµ¥Î»£¬¼´10¸öOS Tick */
+        RT_TIMER_FLAG_PERIODIC); /* ÖÜÆÚĞÔ¶¨Ê±Æ÷ */
+    /* Æô¶¯¶¨Ê±Æ÷ */
     if (timer1 != RT_NULL)
         rt_timer_start(timer1);
     else
@@ -45,36 +45,36 @@ void timer_control_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤å®šæ—¶å™¨å¯¹è±¡ */
+    /* É¾³ı¶¨Ê±Æ÷¶ÔÏó */
     rt_timer_delete(timer1);
     timer1 = RT_NULL;
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_timer_control()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
 
-    /* æ‰§è¡Œå®šæ—¶å™¨ä¾‹ç¨‹ */
+    /* Ö´ĞĞ¶¨Ê±Æ÷Àı³Ì */
     count = 0;
     timer_control_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_timer_control, a timer control example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     timer_control_init();

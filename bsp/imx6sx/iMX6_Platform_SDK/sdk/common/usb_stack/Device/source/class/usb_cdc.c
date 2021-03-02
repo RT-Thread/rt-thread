@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -412,13 +412,13 @@ static void USB_Class_CDC_Service_Dic_Iso_Out (
 
     if(event == USB_APP_ENUM_COMPLETE)
     {
-        uint_8 count = 0,ep_count = 0;  
-        uint_8 index_num = 0;    
-        
+        uint_8 count = 0,ep_count = 0;
+        uint_8 index_num = 0;
+
 #ifdef COMPOSITE_DEV
         DEV_ARCHITECTURE_STRUCT_PTR dev_arc_ptr;
-        CLASS_ARC_STRUCT_PTR dev_class_ptr;   
-        dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);    
+        CLASS_ARC_STRUCT_PTR dev_class_ptr;
+        dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);
         for(count = 0; count < dev_arc_ptr->cl_count; count++)
         {
             dev_class_ptr = (CLASS_ARC_STRUCT_PTR)dev_arc_ptr->value[count];
@@ -427,27 +427,27 @@ static void USB_Class_CDC_Service_Dic_Iso_Out (
             if(dev_class_ptr->class_type == 0x02/*CDC_CC*/)
                 break;
             index_num +=dev_class_ptr->value[0];
-        } 
-#else                   		    
-		ep_count = usb_ep_data->count; 
+        }
+#else
+        ep_count = usb_ep_data->count;
 #endif
 
-		for(count=index_num; count<ep_count+index_num; count++) 
-		{   
-			USB_EP_STRUCT_PTR ep_struct_ptr= 
-				(USB_EP_STRUCT_PTR) (&usb_ep_data->ep[count]);
-			(void)_usb_device_deinit_endpoint(&controller_ID,
-				ep_struct_ptr->ep_num, ep_struct_ptr->direction);
-		}
-        
+        for(count=index_num; count<ep_count+index_num; count++)
+        {
+            USB_EP_STRUCT_PTR ep_struct_ptr=
+                (USB_EP_STRUCT_PTR) (&usb_ep_data->ep[count]);
+            (void)_usb_device_deinit_endpoint(&controller_ID,
+                ep_struct_ptr->ep_num, ep_struct_ptr->direction);
+        }
+
         /* intialize all non control endpoints */
-        for(count=index_num; count<ep_count+index_num; count++) 
+        for(count=index_num; count<ep_count+index_num; count++)
         {
             USB_EP_STRUCT_PTR ep_struct=
                 (USB_EP_STRUCT_PTR) (&usb_ep_data->ep[count]);
 
             (void)_usb_device_init_endpoint(&controller_ID, ep_struct->ep_num,
-            		ep_struct->size, ep_struct->direction, ep_struct->type, FALSE);
+                    ep_struct->size, ep_struct->direction, ep_struct->type, FALSE);
 
             /* register callback service for Non Control EndPoints */
             switch(ep_struct->type)
@@ -473,7 +473,7 @@ static void USB_Class_CDC_Service_Dic_Iso_Out (
                         (void)_usb_device_register_service(controller_ID,
                             (uint_8)(USB_SERVICE_EP0+ep_struct->ep_num),
                             USB_Class_CDC_Service_Dic_Bulk_In);
-                    }                	
+                    }
 #endif
                     break;
 #else
@@ -492,7 +492,7 @@ static void USB_Class_CDC_Service_Dic_Iso_Out (
                     }
                     break;
 #endif
-                default: 
+                default:
                     break;
             }
             /* set the EndPoint Status as Idle in the device layer */
@@ -539,9 +539,9 @@ static void USB_Class_CDC_Service_Dic_Iso_Out (
  * application
  *****************************************************************************/
 #ifndef COMPOSITE_DEV
-static uint_8 USB_Other_Requests 
-#else 
-uint_8 USB_CDC_Other_Requests 
+static uint_8 USB_Other_Requests
+#else
+uint_8 USB_CDC_Other_Requests
 #endif
 (
     uint_8 controller_ID,           /* [IN] Controller ID */
@@ -553,7 +553,7 @@ uint_8 USB_CDC_Other_Requests
     uint_8 status = USBERR_INVALID_REQ_TYPE;
     if((setup_packet->request_type & USB_REQUEST_CLASS_MASK) ==
         USB_REQUEST_CLASS_CLASS)
-    {  
+    {
         /* class request so handle it here */
         status=USB_OK;
 
@@ -565,14 +565,14 @@ uint_8 USB_CDC_Other_Requests
                 *size=0;
                 break;
             case GET_ENCAPSULATED_RESPONSE :
-                /* 
+                /*
                    Add code for handling Transfer Response/Requests and
-                   Notification 
+                   Notification
                 */
                 *size=0;
                 break;
             case SET_COMM_FEATURE :
-                status = USB_Class_CDC_PSTN_Set_Comm_Feature(controller_ID, 
+                status = USB_Class_CDC_PSTN_Set_Comm_Feature(controller_ID,
                     setup_packet, data, size);
                 break;
             case GET_COMM_FEATURE :
@@ -601,7 +601,7 @@ uint_8 USB_CDC_Other_Requests
                 status = USB_Class_CDC_PSTN_Send_Break(controller_ID,
                     setup_packet, data, size);
                 break;
-            default:  
+            default:
                 *size=0;
                 break;
         }
@@ -641,17 +641,17 @@ uint_8 USB_CDC_Other_Requests
  * This function initializes the CDC Class layer and layers it is dependent upon
  *****************************************************************************/
 uint_8 USB_Class_CDC_Init (
-	uint_8    		   		controller_ID,       /* [IN] Controller ID */
-	USB_CLASS_CALLBACK 		cdc_class_callback,  /* [IN] CDC Class Callback */
-	USB_REQ_FUNC       		vendor_req_callback, /* [IN] Vendor Request Callback */
-	USB_CLASS_CALLBACK 		pstn_callback,       /* [IN] PSTN Callback */
-	uint_8            		bVregEn              /* Enables or disables internal regulator */
+    uint_8                  controller_ID,       /* [IN] Controller ID */
+    USB_CLASS_CALLBACK      cdc_class_callback,  /* [IN] CDC Class Callback */
+    USB_REQ_FUNC            vendor_req_callback, /* [IN] Vendor Request Callback */
+    USB_CLASS_CALLBACK      pstn_callback,       /* [IN] PSTN Callback */
+    uint_8                  bVregEn              /* Enables or disables internal regulator */
 )
 {
     uint_8 index,status = USB_OK;
     USB_ENDPOINTS *usb_ep_data =
         (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID);
-#ifndef COMPOSITE_DEV        
+#ifndef COMPOSITE_DEV
     /* Initialize the device layer*/
     status = _usb_device_init(controller_ID, NULL,
         (uint_8)(usb_ep_data->count+1), bVregEn);
@@ -684,9 +684,9 @@ uint_8 USB_Class_CDC_Init (
            /* save the callback pointer */
            g_vendor_req_callback = vendor_req_callback;
         }
-#ifndef COMPOSITE_DEV                
+#ifndef COMPOSITE_DEV
     }
-#endif    
+#endif
     return status;
 }
 
@@ -705,28 +705,28 @@ uint_8 USB_Class_CDC_Init (
  ******************************************************************************
  *This function de-initializes the CDC Class layer
  *****************************************************************************/
-uint_8 USB_Class_CDC_DeInit 
+uint_8 USB_Class_CDC_DeInit
 (
     uint_8 controller_ID              /* [IN] Controller ID */
-) 
+)
 {
     uint_8 status = USB_OK;
-#ifdef COMPOSITE_DEV  
+#ifdef COMPOSITE_DEV
     UNUSED(controller_ID)
 #endif
     /* save the callback pointer */
     g_cdc_class_callback = NULL;
-    
+
     /* free the vendor request callback pointer */
     g_vendor_req_callback = NULL;
-    
-#ifndef COMPOSITE_DEV    
+
+#ifndef COMPOSITE_DEV
     /* call common class deinit function */
     status = USB_Class_DeInit(controller_ID);
-    
+
     if(status == USB_OK)
     /* Call device deinit function */
-    	status = _usb_device_deinit();
+        status = _usb_device_deinit();
 #endif
     return status;
 }

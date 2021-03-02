@@ -60,7 +60,7 @@ extern "C" {
         .dma_irq  = UART1_RX_DMA_IRQ,                               \
     }
 #endif /* UART1_DMA_RX_CONFIG */
-#endif /* BSP_UART1_RX_USING_DMA */  
+#endif /* BSP_UART1_RX_USING_DMA */
 
 #if defined(BSP_UART1_TX_USING_DMA)
 #ifndef UART1_DMA_TX_CONFIG
@@ -146,6 +146,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif 
+#endif
 
 #endif

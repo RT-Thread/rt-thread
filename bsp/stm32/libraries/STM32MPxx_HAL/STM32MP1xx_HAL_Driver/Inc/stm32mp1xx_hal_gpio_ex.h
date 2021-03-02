@@ -276,12 +276,12 @@
 
 /* Private functions ---------------------------------------------------------*/
 
-/* Exported functions --------------------------------------------------------*/ 
+/* Exported functions --------------------------------------------------------*/
 /** @addtogroup GPIOEx_Exported_Functions GPIO Extended Exported Functions
   * @{
   */
 
-/** @addtogroup GPIOEx_Exported_Functions_Group1 Extended Peripheral Control functions 
+/** @addtogroup GPIOEx_Exported_Functions_Group1 Extended Peripheral Control functions
  * @{
  */
 

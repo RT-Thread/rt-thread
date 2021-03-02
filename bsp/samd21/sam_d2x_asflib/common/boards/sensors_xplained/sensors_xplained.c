@@ -115,19 +115,19 @@ static volatile void *sensor_pin5_arg;
  */
 ISR(gpio_irq_handler, AVR32_GPIO_IRQ_GROUP, GPIO_INT_LVL)
 {
-	if (gpio_get_pin_interrupt_flag(SENSOR_BOARD_PIN3)) {
-		sensor_pin3_handler(sensor_pin3_arg);
+    if (gpio_get_pin_interrupt_flag(SENSOR_BOARD_PIN3)) {
+        sensor_pin3_handler(sensor_pin3_arg);
 
-		gpio_clear_pin_interrupt_flag(SENSOR_BOARD_PIN3);
-	} else if (gpio_get_pin_interrupt_flag(SENSOR_BOARD_PIN4)) {
-		sensor_pin4_handler(sensor_pin4_arg);
+        gpio_clear_pin_interrupt_flag(SENSOR_BOARD_PIN3);
+    } else if (gpio_get_pin_interrupt_flag(SENSOR_BOARD_PIN4)) {
+        sensor_pin4_handler(sensor_pin4_arg);
 
-		gpio_clear_pin_interrupt_flag(SENSOR_BOARD_PIN4);
-	} else if (gpio_get_pin_interrupt_flag(SENSOR_BOARD_PIN5)) {
-		sensor_pin5_handler(sensor_pin5_arg);
+        gpio_clear_pin_interrupt_flag(SENSOR_BOARD_PIN4);
+    } else if (gpio_get_pin_interrupt_flag(SENSOR_BOARD_PIN5)) {
+        sensor_pin5_handler(sensor_pin5_arg);
 
-		gpio_clear_pin_interrupt_flag(SENSOR_BOARD_PIN5);
-	}
+        gpio_clear_pin_interrupt_flag(SENSOR_BOARD_PIN5);
+    }
 }
 
 #elif XMEGA
@@ -142,22 +142,22 @@ ISR(gpio_irq_handler, AVR32_GPIO_IRQ_GROUP, GPIO_INT_LVL)
  */
 ISR(SENSOR_BOARD_PORT_vect)
 {
-	PORT_t *const port = &(SENSOR_BOARD_PORT);
+    PORT_t *const port = &(SENSOR_BOARD_PORT);
 
-	/* Call the interrupt handler (if any). */
-	if (sensor_pin3_handler && (port->IN & PIN2_bm)) {
-		/* Note: header pin 3 = io port pin 2 */
-		sensor_pin3_handler(sensor_pin3_arg);
-	} else if (sensor_pin4_handler && (port->IN & PIN3_bm)) {
-		/* Note: header pin 4 = io port pin 3 */
-		sensor_pin4_handler(sensor_pin4_arg);
-	} else if (sensor_pin5_handler && (port->IN & PIN4_bm)) {
-		/* Note: header pin 5 = io port pin 4 */
-		sensor_pin5_handler(sensor_pin5_arg);
-	}
+    /* Call the interrupt handler (if any). */
+    if (sensor_pin3_handler && (port->IN & PIN2_bm)) {
+        /* Note: header pin 3 = io port pin 2 */
+        sensor_pin3_handler(sensor_pin3_arg);
+    } else if (sensor_pin4_handler && (port->IN & PIN3_bm)) {
+        /* Note: header pin 4 = io port pin 3 */
+        sensor_pin4_handler(sensor_pin4_arg);
+    } else if (sensor_pin5_handler && (port->IN & PIN4_bm)) {
+        /* Note: header pin 5 = io port pin 4 */
+        sensor_pin5_handler(sensor_pin5_arg);
+    }
 
-	/* Clear the port interrupt flag */
-	port->INTFLAGS = PORT_INT0IF_bm;
+    /* Clear the port interrupt flag */
+    port->INTFLAGS = PORT_INT0IF_bm;
 }
 #endif
 
@@ -172,9 +172,9 @@ ISR(SENSOR_BOARD_PORT_vect)
  */
 ISR(eic_pin3_handler, AVR32_EIC_IRQ_GROUP, EIC_INT_LVL)
 {
-	sensor_pin3_handler(sensor_pin3_arg);     /* call handler in driver */
+    sensor_pin3_handler(sensor_pin3_arg);     /* call handler in driver */
 
-	eic_clear_interrupt_line(&AVR32_EIC, SENSOR_PIN3_EIC_LINE);
+    eic_clear_interrupt_line(&AVR32_EIC, SENSOR_PIN3_EIC_LINE);
 }
 #endif
 
@@ -189,9 +189,9 @@ ISR(eic_pin3_handler, AVR32_EIC_IRQ_GROUP, EIC_INT_LVL)
  */
 ISR(eic_pin4_handler, AVR32_EIC_IRQ_GROUP, EIC_INT_LVL)
 {
-	sensor_pin4_handler(sensor_pin4_arg);     /* call handler in driver */
+    sensor_pin4_handler(sensor_pin4_arg);     /* call handler in driver */
 
-	eic_clear_interrupt_line(&AVR32_EIC, SENSOR_PIN4_EIC_LINE);
+    eic_clear_interrupt_line(&AVR32_EIC, SENSOR_PIN4_EIC_LINE);
 }
 #endif
 
@@ -206,9 +206,9 @@ ISR(eic_pin4_handler, AVR32_EIC_IRQ_GROUP, EIC_INT_LVL)
  */
 ISR(eic_pin5_handler, AVR32_EIC_IRQ_GROUP, EIC_INT_LVL)
 {
-	sensor_pin5_handler(sensor_pin5_arg);     /* call handler in driver */
+    sensor_pin5_handler(sensor_pin5_arg);     /* call handler in driver */
 
-	eic_clear_interrupt_line(&AVR32_EIC, SENSOR_PIN5_EIC_LINE);
+    eic_clear_interrupt_line(&AVR32_EIC, SENSOR_PIN5_EIC_LINE);
 }
 #endif
 
@@ -223,8 +223,8 @@ ISR(eic_pin5_handler, AVR32_EIC_IRQ_GROUP, EIC_INT_LVL)
  */
 static void gpio_irq_connect(uint32_t gpio_pin, uint32_t gpio_irq)
 {
-	irq_register_handler(gpio_irq_handler, gpio_irq, GPIO_INT_LVL);
-	gpio_enable_pin_interrupt(gpio_pin, GPIO_RISING_EDGE);
+    irq_register_handler(gpio_irq_handler, gpio_irq, GPIO_INT_LVL);
+    gpio_enable_pin_interrupt(gpio_pin, GPIO_RISING_EDGE);
 }
 
 #endif
@@ -242,25 +242,25 @@ static void gpio_irq_connect(uint32_t gpio_pin, uint32_t gpio_irq)
  * \param eic_handler   Interrupt handler to register
  */
 static void eic_irq_connect(uint32_t eic_line, uint32_t eic_pin,
-		uint32_t eic_func, uint32_t eic_irq, __int_handler eic_handler)
+        uint32_t eic_func, uint32_t eic_irq, __int_handler eic_handler)
 {
-	eic_options_t const eic_options = {
-		.eic_line   = eic_line,
-		.eic_mode   = EIC_MODE_EDGE_TRIGGERED,
-		.eic_edge   = EIC_EDGE_RISING_EDGE,
-		.eic_level  = EIC_LEVEL_HIGH_LEVEL,
-		.eic_filter = EIC_FILTER_ENABLED,
-		.eic_async  = EIC_ASYNCH_MODE
-	};
+    eic_options_t const eic_options = {
+        .eic_line   = eic_line,
+        .eic_mode   = EIC_MODE_EDGE_TRIGGERED,
+        .eic_edge   = EIC_EDGE_RISING_EDGE,
+        .eic_level  = EIC_LEVEL_HIGH_LEVEL,
+        .eic_filter = EIC_FILTER_ENABLED,
+        .eic_async  = EIC_ASYNCH_MODE
+    };
 
-	sysclk_enable_pba_module(SYSCLK_EIC);
+    sysclk_enable_pba_module(SYSCLK_EIC);
 
-	gpio_enable_module_pin(eic_pin, eic_func);
-	irq_register_handler(eic_handler, eic_irq, 0);
+    gpio_enable_module_pin(eic_pin, eic_func);
+    irq_register_handler(eic_handler, eic_irq, 0);
 
-	eic_init(&AVR32_EIC, &eic_options, 1);
-	eic_enable_line(&AVR32_EIC, eic_line);
-	eic_enable_interrupt_line(&AVR32_EIC, eic_line);
+    eic_init(&AVR32_EIC, &eic_options, 1);
+    eic_enable_line(&AVR32_EIC, eic_line);
+    eic_enable_interrupt_line(&AVR32_EIC, eic_line);
 }
 
 #endif
@@ -287,104 +287,104 @@ static void eic_irq_connect(uint32_t eic_line, uint32_t eic_pin,
  * \return  bool        true if the call succeeds, else false.
  */
 bool sensor_board_irq_connect(uint32_t gpio_pin,
-		SENSOR_IRQ_HANDLER handler, void *arg)
+        SENSOR_IRQ_HANDLER handler, void *arg)
 {
-	bool status = false;
+    bool status = false;
 
 #if XMEGA
-	PORT_t *sensor_port;
+    PORT_t *sensor_port;
 #endif
 
-	/* Ensure that the caller has specified a function address. */
+    /* Ensure that the caller has specified a function address. */
 
-	if (handler == NULL) {
-		return status;
-	}
+    if (handler == NULL) {
+        return status;
+    }
 
-	/* Save the interrupt flag state and disable MCU interrupts. */
+    /* Save the interrupt flag state and disable MCU interrupts. */
 
-	irqflags_t const irq_flags = cpu_irq_save();
+    irqflags_t const irq_flags = cpu_irq_save();
 
-	cpu_irq_disable();
+    cpu_irq_disable();
 
-	/* Initialize an interrupt for a specified I/O pin. */
+    /* Initialize an interrupt for a specified I/O pin. */
 
-	if (SENSOR_BOARD_PIN3 == gpio_pin) {
-		sensor_pin3_handler = handler;
-		sensor_pin3_arg     = arg;
+    if (SENSOR_BOARD_PIN3 == gpio_pin) {
+        sensor_pin3_handler = handler;
+        sensor_pin3_arg     = arg;
 
 #if UC3
 #  if defined(SENSOR_PIN3_EIC_LINE)
-		eic_irq_connect(SENSOR_PIN3_EIC_LINE, SENSOR_PIN3_EIC_PIN,
-				SENSOR_PIN3_EIC_FUNC, SENSOR_PIN3_EIC_IRQ,
-				eic_pin3_handler);
+        eic_irq_connect(SENSOR_PIN3_EIC_LINE, SENSOR_PIN3_EIC_PIN,
+                SENSOR_PIN3_EIC_FUNC, SENSOR_PIN3_EIC_IRQ,
+                eic_pin3_handler);
 #  else
-		gpio_irq_connect(gpio_pin, SENSOR_PIN3_IRQ);
+        gpio_irq_connect(gpio_pin, SENSOR_PIN3_IRQ);
 #  endif
 #elif XMEGA
-		sensor_port = ioport_pin_to_port(SENSOR_BOARD_PIN3);
-		sensor_port->INTCTRL   = PORT_INT0LVL_LO_gc;
-		sensor_port->INT0MASK |= ioport_pin_to_mask(SENSOR_BOARD_PIN3);
-		/* Some Xplained kits have limited asynchronous sensing on most
-		 * pins, which requires them to be sensing on both edges.
-		 */
-		ioport_set_pin_sense_mode(SENSOR_BOARD_PIN3,
-				IOPORT_SENSE_BOTHEDGES);
+        sensor_port = ioport_pin_to_port(SENSOR_BOARD_PIN3);
+        sensor_port->INTCTRL   = PORT_INT0LVL_LO_gc;
+        sensor_port->INT0MASK |= ioport_pin_to_mask(SENSOR_BOARD_PIN3);
+        /* Some Xplained kits have limited asynchronous sensing on most
+         * pins, which requires them to be sensing on both edges.
+         */
+        ioport_set_pin_sense_mode(SENSOR_BOARD_PIN3,
+                IOPORT_SENSE_BOTHEDGES);
 #endif
-		status = true;
-	} else if (SENSOR_BOARD_PIN4 == gpio_pin) {
-		sensor_pin4_handler = handler;
-		sensor_pin4_arg     = arg;
+        status = true;
+    } else if (SENSOR_BOARD_PIN4 == gpio_pin) {
+        sensor_pin4_handler = handler;
+        sensor_pin4_arg     = arg;
 
 #if UC3
 #  if defined(SENSOR_PIN4_EIC_LINE)
-		eic_irq_connect(SENSOR_PIN4_EIC_LINE, SENSOR_PIN4_EIC_PIN,
-				SENSOR_PIN4_EIC_FUNC, SENSOR_PIN4_EIC_IRQ,
-				eic_pin4_handler);
+        eic_irq_connect(SENSOR_PIN4_EIC_LINE, SENSOR_PIN4_EIC_PIN,
+                SENSOR_PIN4_EIC_FUNC, SENSOR_PIN4_EIC_IRQ,
+                eic_pin4_handler);
 #  else
-		gpio_irq_connect(gpio_pin, SENSOR_PIN4_IRQ);
+        gpio_irq_connect(gpio_pin, SENSOR_PIN4_IRQ);
 #  endif
 #elif XMEGA
-		sensor_port = ioport_pin_to_port(SENSOR_BOARD_PIN4);
-		sensor_port->INTCTRL   = PORT_INT0LVL_LO_gc;
-		sensor_port->INT0MASK |= ioport_pin_to_mask(SENSOR_BOARD_PIN4);
-		/* Some Xplained kits have limited asynchronous sensing on most
-		 * pins, which requires them to be sensing on both edges.
-		 */
-		ioport_set_pin_sense_mode(SENSOR_BOARD_PIN4,
-				IOPORT_SENSE_BOTHEDGES);
+        sensor_port = ioport_pin_to_port(SENSOR_BOARD_PIN4);
+        sensor_port->INTCTRL   = PORT_INT0LVL_LO_gc;
+        sensor_port->INT0MASK |= ioport_pin_to_mask(SENSOR_BOARD_PIN4);
+        /* Some Xplained kits have limited asynchronous sensing on most
+         * pins, which requires them to be sensing on both edges.
+         */
+        ioport_set_pin_sense_mode(SENSOR_BOARD_PIN4,
+                IOPORT_SENSE_BOTHEDGES);
 #endif
-		status = true;
-	} else if (SENSOR_BOARD_PIN5 == gpio_pin) {
-		sensor_pin5_handler = handler;
-		sensor_pin5_arg     = arg;
+        status = true;
+    } else if (SENSOR_BOARD_PIN5 == gpio_pin) {
+        sensor_pin5_handler = handler;
+        sensor_pin5_arg     = arg;
 
 #if UC3
 #  if defined(SENSOR_PIN5_EIC_LINE)
-		eic_irq_connect(SENSOR_PIN5_EIC_LINE, SENSOR_PIN5_EIC_PIN,
-				SENSOR_PIN5_EIC_FUNC, SENSOR_PIN5_EIC_IRQ,
-				eic_pin5_handler);
+        eic_irq_connect(SENSOR_PIN5_EIC_LINE, SENSOR_PIN5_EIC_PIN,
+                SENSOR_PIN5_EIC_FUNC, SENSOR_PIN5_EIC_IRQ,
+                eic_pin5_handler);
 #  else
-		gpio_irq_connect(gpio_pin, SENSOR_PIN5_IRQ);
+        gpio_irq_connect(gpio_pin, SENSOR_PIN5_IRQ);
 #  endif
 #elif XMEGA
-		sensor_port = ioport_pin_to_port(SENSOR_BOARD_PIN5);
-		sensor_port->INTCTRL   = PORT_INT0LVL_LO_gc;
-		sensor_port->INT0MASK |= ioport_pin_to_mask(SENSOR_BOARD_PIN5);
-		/* Some Xplained kits have limited asynchronous sensing on most
-		 * pins, which requires them to be sensing on both edges.
-		 */
-		ioport_set_pin_sense_mode(SENSOR_BOARD_PIN5,
-				IOPORT_SENSE_BOTHEDGES);
+        sensor_port = ioport_pin_to_port(SENSOR_BOARD_PIN5);
+        sensor_port->INTCTRL   = PORT_INT0LVL_LO_gc;
+        sensor_port->INT0MASK |= ioport_pin_to_mask(SENSOR_BOARD_PIN5);
+        /* Some Xplained kits have limited asynchronous sensing on most
+         * pins, which requires them to be sensing on both edges.
+         */
+        ioport_set_pin_sense_mode(SENSOR_BOARD_PIN5,
+                IOPORT_SENSE_BOTHEDGES);
 #endif
-		status = true;
-	}
+        status = true;
+    }
 
-	/* Restore the MCU interrupt flag state. */
+    /* Restore the MCU interrupt flag state. */
 
-	cpu_irq_restore(irq_flags);
+    cpu_irq_restore(irq_flags);
 
-	return status;
+    return status;
 }
 
 #endif /* defined(SENSORS_XPLAINED_BOARD) && defined(COMMON_SENSOR_PLATFORM) */
@@ -398,38 +398,38 @@ bool sensor_board_irq_connect(uint32_t gpio_pin,
  */
 void sensor_board_init(void)
 {
-	/* Configure all defined Xplained Sensor board I/O pins.
-	 *
-	 * \todo
-	 * Determine whether the interrupt event flag (rising edge, falling
-	 * edge, toggle, etc.) should be a statically configurable parameter
-	 * for devices requiring more flexibility in how events are detected.
-	 */
+    /* Configure all defined Xplained Sensor board I/O pins.
+     *
+     * \todo
+     * Determine whether the interrupt event flag (rising edge, falling
+     * edge, toggle, etc.) should be a statically configurable parameter
+     * for devices requiring more flexibility in how events are detected.
+     */
 #if (EXT_BOARD == SENSORS_XPLAINED_INERTIAL_1) || \
-	(EXT_BOARD == SENSORS_XPLAINED_INERTIAL_2) || \
-	(EXT_BOARD == SENSORS_XPLAINED_INERTIAL_A1)
+    (EXT_BOARD == SENSORS_XPLAINED_INERTIAL_2) || \
+    (EXT_BOARD == SENSORS_XPLAINED_INERTIAL_A1)
 
-	gpio_configure_pin(SENSOR_BOARD_PIN3, PIN_INPUT_FLAGS);
-	gpio_configure_pin(SENSOR_BOARD_PIN4, PIN_INPUT_FLAGS);
-	gpio_configure_pin(SENSOR_BOARD_PIN5, PIN_INPUT_FLAGS);
+    gpio_configure_pin(SENSOR_BOARD_PIN3, PIN_INPUT_FLAGS);
+    gpio_configure_pin(SENSOR_BOARD_PIN4, PIN_INPUT_FLAGS);
+    gpio_configure_pin(SENSOR_BOARD_PIN5, PIN_INPUT_FLAGS);
 
 #elif (EXT_BOARD == SENSORS_XPLAINED_PRESSURE_1)
-	gpio_configure_pin(SENSOR_BOARD_PIN3, PIN_OUTPUT_FLAGS);
-	gpio_configure_pin(SENSOR_BOARD_PIN4, PIN_INPUT_FLAGS);
+    gpio_configure_pin(SENSOR_BOARD_PIN3, PIN_OUTPUT_FLAGS);
+    gpio_configure_pin(SENSOR_BOARD_PIN4, PIN_INPUT_FLAGS);
 
 #elif (EXT_BOARD == SENSORS_XPLAINED_LIGHTPROX_1)
-	gpio_configure_pin(SENSOR_BOARD_PIN3, PIN_INPUT_FLAGS);
+    gpio_configure_pin(SENSOR_BOARD_PIN3, PIN_INPUT_FLAGS);
 
 #elif (EXT_BOARD == SENSORS_XPLAINED_BREADBOARD)
-	gpio_configure_pin(SENSOR_BOARD_PIN4, PIN_INPUT_FLAGS);
+    gpio_configure_pin(SENSOR_BOARD_PIN4, PIN_INPUT_FLAGS);
 #endif
 
-	/* Global Interrupt Disable */
-	cpu_irq_disable();
+    /* Global Interrupt Disable */
+    cpu_irq_disable();
 
-	/* Initialize interrupt vector table support. */
-	irq_initialize_vectors();
+    /* Initialize interrupt vector table support. */
+    irq_initialize_vectors();
 
-	/* Global Interrupt Enable */
-	cpu_irq_enable();
+    /* Global Interrupt Enable */
+    cpu_irq_enable();
 }

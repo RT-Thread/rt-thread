@@ -338,7 +338,7 @@ static rt_err_t eth_init(rt_device_t device)
             break;
         }
 
-        dma_addr = plat_dma_map_single(gmacdev, (void *)skb, RX_BUF_SIZE);  //è·å– skb çš„ dma åœ°å€
+        dma_addr = plat_dma_map_single(gmacdev, (void *)skb, RX_BUF_SIZE);  //»ñÈ¡ skb µÄ dma µØÖ·
 
         status = synopGMAC_set_rx_qptr(gmacdev, dma_addr, RX_BUF_SIZE, (u32)skb, 0, 0, 0);
         if (status < 0)
@@ -579,7 +579,7 @@ struct pbuf *rt_eth_rx(rt_device_t device)
           if (synopGMAC_is_rx_desc_valid(status) || SYNOP_PHY_LOOPBACK)
             {
                 dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
-                len =  synopGMAC_get_rx_desc_frame_length(status)-4; //Not interested in Ethernet CRC bytes    
+                len =  synopGMAC_get_rx_desc_frame_length(status)-4; //Not interested in Ethernet CRC bytes
                 pbuf = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
                 if (pbuf == 0) rt_kprintf("===error in pbuf_alloc\n");
                 rt_memcpy(pbuf->payload, (char *)data1, len);

@@ -258,7 +258,7 @@ void turn_on_lcd_backlight(void)
 #else
 void turn_on_lcd_backlight(void)
 {
-    
+
 }
 #endif
 

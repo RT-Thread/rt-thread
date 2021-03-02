@@ -2,7 +2,7 @@
 *   @brief System Driver Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -55,14 +55,14 @@ enum systemInterrupt
 */
 enum systemClockSource
 {
-    SYS_OSC       		= 0U,  /**< Alias for oscillator clock Source                */
-    SYS_PLL1      		= 1U,  /**< Alias for Pll1 clock Source                      */
-    SYS_EXTERNAL1  		= 3U,  /**< Alias for external clock Source                  */
-    SYS_LPO_LOW   		= 4U,  /**< Alias for low power oscillator low clock Source  */
-    SYS_LPO_HIGH  		= 5U,  /**< Alias for low power oscillator high clock Source */
-    SYS_PLL2    		= 6U,  /**< Alias for Pll2 clock Source                      */
-    SYS_EXTERNAL2 		= 7U,  /**< Alias for external 2 clock Source                */
-    SYS_VCLK      		= 9U   /**< Alias for synchronous VCLK1 clock Source         */
+    SYS_OSC             = 0U,  /**< Alias for oscillator clock Source                */
+    SYS_PLL1            = 1U,  /**< Alias for Pll1 clock Source                      */
+    SYS_EXTERNAL1       = 3U,  /**< Alias for external clock Source                  */
+    SYS_LPO_LOW         = 4U,  /**< Alias for low power oscillator low clock Source  */
+    SYS_LPO_HIGH        = 5U,  /**< Alias for low power oscillator high clock Source */
+    SYS_PLL2            = 6U,  /**< Alias for Pll2 clock Source                      */
+    SYS_EXTERNAL2       = 7U,  /**< Alias for external 2 clock Source                */
+    SYS_VCLK            = 9U   /**< Alias for synchronous VCLK1 clock Source         */
 };
 
 #define SYS_DOZE_MODE        0x000F3F02U
@@ -208,7 +208,7 @@ enum systemClockSource
 /* Configuration registers */
 typedef struct system_config_reg
 {
-	uint32 CONFIG_SYSPC1;
+    uint32 CONFIG_SYSPC1;
     uint32 CONFIG_SYSPC2;
     uint32 CONFIG_SYSPC7;
     uint32 CONFIG_SYSPC8;
@@ -245,112 +245,112 @@ typedef struct system_config_reg
 } system_config_reg_t;
 
 /* Configuration registers initial value */
-#define SYS_SYSPC1_CONFIGVALUE	0U
+#define SYS_SYSPC1_CONFIGVALUE  0U
 
-#define SYS_SYSPC2_CONFIGVALUE	1U
+#define SYS_SYSPC2_CONFIGVALUE  1U
 
-#define SYS_SYSPC7_CONFIGVALUE	0U
+#define SYS_SYSPC7_CONFIGVALUE  0U
 
-#define SYS_SYSPC8_CONFIGVALUE	0U
+#define SYS_SYSPC8_CONFIGVALUE  0U
 
-#define SYS_SYSPC9_CONFIGVALUE	1U
+#define SYS_SYSPC9_CONFIGVALUE  1U
 
-#define SYS_CSDIS_CONFIGVALUE	0x00000000U\
-								| 0x00000000U \
-								| 0x00000008U \
-								| 0x00000080U \
-								| 0x00000000U \
-								| 0x00000000U \
-								| 0x00000000U\
-								| (1U << 2U)
-					  
-#define SYS_CDDIS_CONFIGVALUE	(FALSE << 4U )\
-								|(TRUE << 5U )\
-								|(FALSE << 8U )\
-								|(FALSE << 10U)\
-								|(FALSE << 11U)
-					  
-#define SYS_GHVSRC_CONFIGVALUE	(SYS_PLL1 << 24U) \
-								| (SYS_PLL1 << 16U) \
-								|  SYS_PLL1
-								
-#define SYS_VCLKASRC_CONFIGVALUE	(SYS_VCLK << 8U)\
-									|  SYS_VCLK
-									
-#define SYS_RCLKSRC_CONFIGVALUE		(1U << 24U)\
-									| (SYS_VCLK << 16U)\
-									| (1U << 8U)\
-									|  SYS_VCLK
-									
-#define SYS_MSTGCR_CONFIGVALUE		0x00000105U
+#define SYS_CSDIS_CONFIGVALUE   0x00000000U\
+                                | 0x00000000U \
+                                | 0x00000008U \
+                                | 0x00000080U \
+                                | 0x00000000U \
+                                | 0x00000000U \
+                                | 0x00000000U\
+                                | (1U << 2U)
 
-#define SYS_MINITGCR_CONFIGVALUE 	0x5U
+#define SYS_CDDIS_CONFIGVALUE   (FALSE << 4U )\
+                                |(TRUE << 5U )\
+                                |(FALSE << 8U )\
+                                |(FALSE << 10U)\
+                                |(FALSE << 11U)
 
-#define SYS_MSINENA_CONFIGVALUE		0U
+#define SYS_GHVSRC_CONFIGVALUE  (SYS_PLL1 << 24U) \
+                                | (SYS_PLL1 << 16U) \
+                                |  SYS_PLL1
 
-#define SYS_PLLCTL1_CONFIGVALUE_1		0x00000000U \
-									|  0x20000000U \
-									| ((0x1FU)<< 24U) \
-									|  0x00000000U \
-									| ((6U - 1U)<< 16U)\
-									| ((150U - 1U)<< 8U)
-									
-#define SYS_PLLCTL1_CONFIGVALUE_2	( (SYS_PLLCTL1_CONFIGVALUE_1) & 0xE0FFFFFFU)|((1U - 1U)<< 24U)
-									
-#define SYS_PLLCTL2_CONFIGVALUE		0x00000000U\
-									| (255U << 22U)\
-									| (7U << 12U)\
-									| ((2U - 1U)<< 9U)\
-									|  61U
-									
-#define SYS_UERFLAG_CONFIGVALUE		0U
+#define SYS_VCLKASRC_CONFIGVALUE    (SYS_VCLK << 8U)\
+                                    |  SYS_VCLK
 
-#define SYS_LPOMONCTL_CONFIGVALUE_1	(1U << 24U) | LPO_TRIM_VALUE
-#define SYS_LPOMONCTL_CONFIGVALUE_2	(1U << 24U) | (16U << 8U) | 8U
+#define SYS_RCLKSRC_CONFIGVALUE     (1U << 24U)\
+                                    | (SYS_VCLK << 16U)\
+                                    | (1U << 8U)\
+                                    |  SYS_VCLK
 
-#define SYS_CLKTEST_CONFIGVALUE		0x000A0000U
+#define SYS_MSTGCR_CONFIGVALUE      0x00000105U
 
-#define SYS_DFTCTRLREG1_CONFIGVALUE	0x00002205U
+#define SYS_MINITGCR_CONFIGVALUE    0x5U
 
-#define SYS_DFTCTRLREG2_CONFIGVALUE	0x5U
+#define SYS_MSINENA_CONFIGVALUE     0U
 
-#define SYS_GPREG1_CONFIGVALUE	0x0005FFFFU
+#define SYS_PLLCTL1_CONFIGVALUE_1       0x00000000U \
+                                    |  0x20000000U \
+                                    | ((0x1FU)<< 24U) \
+                                    |  0x00000000U \
+                                    | ((6U - 1U)<< 16U)\
+                                    | ((150U - 1U)<< 8U)
 
-#define SYS_RAMGCR_CONFIGVALUE	0x00050000U
+#define SYS_PLLCTL1_CONFIGVALUE_2   ( (SYS_PLLCTL1_CONFIGVALUE_1) & 0xE0FFFFFFU)|((1U - 1U)<< 24U)
 
-#define SYS_BMMCR1_CONFIGVALUE	0xAU
+#define SYS_PLLCTL2_CONFIGVALUE     0x00000000U\
+                                    | (255U << 22U)\
+                                    | (7U << 12U)\
+                                    | ((2U - 1U)<< 9U)\
+                                    |  61U
 
-#define SYS_MMUGCR_CONFIGVALUE	0U
+#define SYS_UERFLAG_CONFIGVALUE     0U
 
-#define SYS_CLKCNTL_CONFIGVALUE	(1U << 8U) \
+#define SYS_LPOMONCTL_CONFIGVALUE_1 (1U << 24U) | LPO_TRIM_VALUE
+#define SYS_LPOMONCTL_CONFIGVALUE_2 (1U << 24U) | (16U << 8U) | 8U
+
+#define SYS_CLKTEST_CONFIGVALUE     0x000A0000U
+
+#define SYS_DFTCTRLREG1_CONFIGVALUE 0x00002205U
+
+#define SYS_DFTCTRLREG2_CONFIGVALUE 0x5U
+
+#define SYS_GPREG1_CONFIGVALUE  0x0005FFFFU
+
+#define SYS_RAMGCR_CONFIGVALUE  0x00050000U
+
+#define SYS_BMMCR1_CONFIGVALUE  0xAU
+
+#define SYS_MMUGCR_CONFIGVALUE  0U
+
+#define SYS_CLKCNTL_CONFIGVALUE (1U << 8U) \
                                 | (1U << 16U) \
-								| (1U << 24U) 
-								
-#define SYS_ECPCNTL_CONFIGVALUE	(0U << 24U)\
-								| (0U << 23U)\
-								| ((8U - 1U) & 0xFFFFU)
-								
-#define SYS_DEVCR1_CONFIGVALUE	0xAU
+                                | (1U << 24U)
 
-#define SYS_SYSECR_CONFIGVALUE	0x00004000U
-#define SYS2_PLLCTL3_CONFIGVALUE_1	((2U - 1U) << 29U)\
-									| ((0x1FU)<< 24U) \
-									| ((6U - 1U)<< 16U) \
-									| ((150U - 1U) << 8U)
-									
-#define SYS2_PLLCTL3_CONFIGVALUE_2	((SYS2_PLLCTL3_CONFIGVALUE_1) & 0xE0FFFFFFU)|((1U - 1U)<< 24U)
-#define SYS2_STCCLKDIV_CONFIGVALUE	0U
-#define SYS2_CLK2CNTL_CONFIGVALUE	(1U) \
+#define SYS_ECPCNTL_CONFIGVALUE (0U << 24U)\
+                                | (0U << 23U)\
+                                | ((8U - 1U) & 0xFFFFU)
+
+#define SYS_DEVCR1_CONFIGVALUE  0xAU
+
+#define SYS_SYSECR_CONFIGVALUE  0x00004000U
+#define SYS2_PLLCTL3_CONFIGVALUE_1  ((2U - 1U) << 29U)\
+                                    | ((0x1FU)<< 24U) \
+                                    | ((6U - 1U)<< 16U) \
+                                    | ((150U - 1U) << 8U)
+
+#define SYS2_PLLCTL3_CONFIGVALUE_2  ((SYS2_PLLCTL3_CONFIGVALUE_1) & 0xE0FFFFFFU)|((1U - 1U)<< 24U)
+#define SYS2_STCCLKDIV_CONFIGVALUE  0U
+#define SYS2_CLK2CNTL_CONFIGVALUE   (1U) \
                                     | (1U << 8U)
-#define SYS2_VCLKACON1_CONFIGVALUE	(1U << 24U) \
-									| (1U << 20U) \
-									| (SYS_VCLK << 16U)\
-									| (1U << 8U)\
-									| (1U << 4U) \
-									| SYS_VCLK
-#define SYS2_CLKSLIP_CONFIGVALUE	0x5U
-#define SYS2_EFC_CTLEN_CONFIGVALUE	0x5U
-	
+#define SYS2_VCLKACON1_CONFIGVALUE  (1U << 24U) \
+                                    | (1U << 20U) \
+                                    | (SYS_VCLK << 16U)\
+                                    | (1U << 8U)\
+                                    | (1U << 4U) \
+                                    | SYS_VCLK
+#define SYS2_CLKSLIP_CONFIGVALUE    0x5U
+#define SYS2_EFC_CTLEN_CONFIGVALUE  0x5U
+
 void systemGetConfigValue(system_config_reg_t *config_reg, config_value_type_t type);
 
 /* USER CODE BEGIN (1) */
@@ -378,8 +378,8 @@ enum flashWPowerModes
 /* USER CODE END */
 
 
-#define FSM_WR_ENA_HL		(*(volatile uint32 *)0xFFF87288U)
-#define EEPROM_CONFIG_HL	(*(volatile uint32 *)0xFFF872B8U)
+#define FSM_WR_ENA_HL       (*(volatile uint32 *)0xFFF87288U)
+#define EEPROM_CONFIG_HL    (*(volatile uint32 *)0xFFF872B8U)
 
 /* Configuration registers */
 typedef struct tcmflash_config_reg
@@ -401,29 +401,29 @@ typedef struct tcmflash_config_reg
 } tcmflash_config_reg_t;
 
 /* Configuration registers initial value */
-#define TCMFLASH_FRDCNTL_CONFIGVALUE		0x00000000U | (3U << 8U) | (1U << 4U) |  1U
-#define TCMFLASH_FEDACCTRL1_CONFIGVALUE		0x000A0005U
-#define TCMFLASH_FEDACCTRL2_CONFIGVALUE		0U
-#define TCMFLASH_FEDACSDIS_CONFIGVALUE		0U
-#define TCMFLASH_FBPROT_CONFIGVALUE			0U
-#define TCMFLASH_FBSE_CONFIGVALUE			0U
-#define TCMFLASH_FBAC_CONFIGVALUE			0xFU
-#define TCMFLASH_FBFALLBACK_CONFIGVALUE		0x00000000U\
-											| (SYS_ACTIVE << 14U) \
-											| (SYS_SLEEP << 12U) \
-											| (SYS_SLEEP << 10U) \
-											| (SYS_SLEEP << 8U) \
-											| (SYS_SLEEP << 6U) \
-											| (SYS_SLEEP << 4U) \
-											| (SYS_ACTIVE << 2U) \
-											|  SYS_ACTIVE \
-						  
-#define TCMFLASH_FPAC1_CONFIGVALUE			0x00C80001U
-#define TCMFLASH_FPAC2_CONFIGVALUE			0U
-#define TCMFLASH_FMAC_CONFIGVALUE			0U
-#define TCMFLASH_FLOCK_CONFIGVALUE			0x55AAU
-#define TCMFLASH_FDIAGCTRL_CONFIGVALUE		0x000A0000U
-#define TCMFLASH_FEDACSDIS2_CONFIGVALUE		0U
+#define TCMFLASH_FRDCNTL_CONFIGVALUE        0x00000000U | (3U << 8U) | (1U << 4U) |  1U
+#define TCMFLASH_FEDACCTRL1_CONFIGVALUE     0x000A0005U
+#define TCMFLASH_FEDACCTRL2_CONFIGVALUE     0U
+#define TCMFLASH_FEDACSDIS_CONFIGVALUE      0U
+#define TCMFLASH_FBPROT_CONFIGVALUE         0U
+#define TCMFLASH_FBSE_CONFIGVALUE           0U
+#define TCMFLASH_FBAC_CONFIGVALUE           0xFU
+#define TCMFLASH_FBFALLBACK_CONFIGVALUE     0x00000000U\
+                                            | (SYS_ACTIVE << 14U) \
+                                            | (SYS_SLEEP << 12U) \
+                                            | (SYS_SLEEP << 10U) \
+                                            | (SYS_SLEEP << 8U) \
+                                            | (SYS_SLEEP << 6U) \
+                                            | (SYS_SLEEP << 4U) \
+                                            | (SYS_ACTIVE << 2U) \
+                                            |  SYS_ACTIVE \
+
+#define TCMFLASH_FPAC1_CONFIGVALUE          0x00C80001U
+#define TCMFLASH_FPAC2_CONFIGVALUE          0U
+#define TCMFLASH_FMAC_CONFIGVALUE           0U
+#define TCMFLASH_FLOCK_CONFIGVALUE          0x55AAU
+#define TCMFLASH_FDIAGCTRL_CONFIGVALUE      0x000A0000U
+#define TCMFLASH_FEDACSDIS2_CONFIGVALUE     0U
 
 void tcmflashGetConfigValue(tcmflash_config_reg_t *config_reg, config_value_type_t type);
 
@@ -455,11 +455,11 @@ typedef struct sram_config_reg
 } sram_config_reg_t;
 
 /* Configuration registers initial value */
-#define SRAM_RAMCTRL_CONFIGVALUE		0x0005000AU
-#define SRAM_RAMTHRESHOLD_CONFIGVALUE	1U
-#define SRAM_RAMINTCTRL_CONFIGVALUE	1U
-#define SRAM_RAMTEST_CONFIGVALUE		0x5U
-#define SRAM_RAMADDRDECVECT_CONFIGVALUE	0U
+#define SRAM_RAMCTRL_CONFIGVALUE        0x0005000AU
+#define SRAM_RAMTHRESHOLD_CONFIGVALUE   1U
+#define SRAM_RAMINTCTRL_CONFIGVALUE 1U
+#define SRAM_RAMTEST_CONFIGVALUE        0x5U
+#define SRAM_RAMADDRDECVECT_CONFIGVALUE 0U
 
 void sramGetConfigValue(sram_config_reg_t *config_reg, config_value_type_t type);
 #endif

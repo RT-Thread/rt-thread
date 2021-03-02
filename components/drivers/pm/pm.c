@@ -54,7 +54,7 @@ static int _pm_device_suspend(rt_uint8_t mode)
         {
             ret = _pm.device_pm[index].ops->suspend(_pm.device_pm[index].device, mode);
             if(ret != RT_EOK)
-                break; 
+                break;
         }
     }
 

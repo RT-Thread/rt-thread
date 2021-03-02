@@ -42,7 +42,7 @@ enum
 {
     // 正常模式--连续输出pwm波形
     PWM_MODE_NORMAL = 0,
-    
+
     // 单脉冲模式，每次调用只发送一个脉冲，调用间隔必须大于pwm周期
     PWM_MODE_PULSE
 };

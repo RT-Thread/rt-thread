@@ -130,7 +130,7 @@ static rt_size_t raspi_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     volatile rt_base_t base = (volatile rt_base_t)(bus->parent.user_data);
 
     if (bus->addr == 0)
-        base = BCM283X_BSC0_BASE; 
+        base = BCM283X_BSC0_BASE;
     else
         base = BCM283X_BSC1_BASE;
 

@@ -17,7 +17,7 @@ extern int _put_char(int ch) __attribute__((weak));
 ssize_t _write(int fd, const void* ptr, size_t len) {
     const uint8_t * current = (const uint8_t *) ptr;
 
-//	if (isatty(fd)) 
+//  if (isatty(fd))
     {
         for (size_t jj = 0; jj < len; jj++) {
             _put_char(current[jj]);

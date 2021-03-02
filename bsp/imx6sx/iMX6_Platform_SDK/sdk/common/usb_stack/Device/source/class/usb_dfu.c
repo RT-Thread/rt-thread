@@ -58,96 +58,96 @@
 void USB_Class_DFU_Periodic_Task(void);
 void USB_Class_DFU_set_bwPoll_TimeOut(uint_32 timeout );
 static void USB_Class_DFU_Process_bwPoll_TimeOut(void);
-static uint_8 USB_Class_DFU_Getstatus    
+static uint_8 USB_Class_DFU_Getstatus
 (
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
-static uint_8 USB_Class_DFU_Getstate 
+static uint_8 USB_Class_DFU_Getstate
 (
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 USB_Other_Requests
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size);            
-    
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size);
+
 static uint_8 DFU_App_Detach_State
 (
-    uint_8 controller_ID,               
-    USB_SETUP_STRUCT * setup_packet,    
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Idle_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Dnload_Sync_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Dnbusy_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Dnload_Idle_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Manifest_Sync_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Manifest_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,    
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Manifest_Wait_Reset_State
 (
-    uint_8 controller_ID,               
-    USB_SETUP_STRUCT * setup_packet,    
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Upload_Idle_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 static uint_8 DFU_Error_State
 (
-    uint_8 controller_ID,              
-    USB_SETUP_STRUCT * setup_packet,   
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    USB_SETUP_STRUCT * setup_packet,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 /*****************************************************************************
  * Local Variables
@@ -235,7 +235,7 @@ static void USB_Class_DFU_Process_bwPoll_TimeOut()
  *                        Others        : When Error
  *****************************************************************************/
 
-void USB_Class_DFU_App_SetIdle(void) 
+void USB_Class_DFU_App_SetIdle(void)
 {
   g_state = USB_APP_IDLE;
 }
@@ -250,10 +250,10 @@ void USB_Class_DFU_App_SetIdle(void)
  *                        USB_OK        : When Successful
  *                        Others        : When Error
  ******************************************************************************/
-void USB_Class_DFU_App_SetDetach(void) 
+void USB_Class_DFU_App_SetDetach(void)
  {
    g_state = USB_APP_DETACH;
- }    
+ }
 /**************************************************************************//*!
  *
  * @name  USB_Class_DFU_App_Getstate
@@ -264,8 +264,8 @@ void USB_Class_DFU_App_SetDetach(void)
  * @return :  state of device
  *
  *****************************************************************************/
- 
-uint_8 USB_Class_DFU_App_Getstate(void) 
+
+uint_8 USB_Class_DFU_App_Getstate(void)
 {
   return g_state;
 }
@@ -282,15 +282,15 @@ uint_8 USB_Class_DFU_App_Getstate(void)
  *
  *****************************************************************************/
 void USB_Class_DFU_App_Set_Usbreset(void)
-{ 
-switch(g_state) 
+{
+switch(g_state)
   {
     case USB_APP_DETACH:
       g_state = USB_DFU_IDLE;
       break;
     default:
-      if(!Flag_Manifest_Complete) 
-      { 
+      if(!Flag_Manifest_Complete)
+      {
         g_state = USB_DFU_ERROR;
       }
       break;
@@ -300,7 +300,7 @@ switch(g_state)
  *
  * @name  USB_Class_DFU_App_Set_Flag_Manifest
  *
- * @brief  This function is called when app layer need set Flag to inform 
+ * @brief  This function is called when app layer need set Flag to inform
  *
  * completed manifest phase
  *
@@ -317,7 +317,7 @@ void USB_Class_DFU_App_Set_Flag_Manifest(void)
  *
  * @name  USB_Class_DFU_App_Reset_Flag_Manifest
  *
- * @brief  This function is called when app layer need set Flag to inform 
+ * @brief  This function is called when app layer need set Flag to inform
  *
  * completed manifest phase
  *
@@ -334,7 +334,7 @@ void USB_Class_DFU_App_Reset_Flag_Manifest(void)
  *
  * @name  USB_Class_DFU_App_Set_Flag_Manifest
  *
- * @brief  This function is called when app layer need set Flag to inform 
+ * @brief  This function is called when app layer need set Flag to inform
  *
  * completed manifest phase
  *
@@ -475,7 +475,7 @@ static uint_8 USB_Other_Requests (
         case USB_DFU_DNLOAD_SYNC:
             status = DFU_Dnload_Sync_State(controller_ID, setup_packet, data, size);
             break;
-        /* State4: Dfu_Dnbusy */             
+        /* State4: Dfu_Dnbusy */
         case USB_DFU_DNBUSY:
             status = DFU_Dnbusy_State(controller_ID, setup_packet, data, size);
             break;
@@ -483,19 +483,19 @@ static uint_8 USB_Other_Requests (
         case USB_DFU_DNLOAD_IDLE:
             status = DFU_Dnload_Idle_State(controller_ID, setup_packet, data, size);
             break;
-        /* State6: Dfu_Mani_Sync */  
+        /* State6: Dfu_Mani_Sync */
         case USB_DFU_MANIFEST_SYNC:
             status = DFU_Manifest_Sync_State(controller_ID, setup_packet, data, size);
             break;
-        /* State7: Dfu_Mani */  
+        /* State7: Dfu_Mani */
         case USB_DFU_MANIFEST:
             status = DFU_Manifest_State(controller_ID, setup_packet, data, size);
             break;
-        /* State8: Dfu_Mani_Wait_Reset */  
+        /* State8: Dfu_Mani_Wait_Reset */
         case USB_DFU_MANIFEST_WAIT_RESET:
            status = DFU_Manifest_Wait_Reset_State(controller_ID, setup_packet, data, size);
             break;
-        /* State9: Dfu_Upload_Idle */  
+        /* State9: Dfu_Upload_Idle */
         case USB_DFU_UPLOAD_IDLE:
             status = DFU_Upload_Idle_State(controller_ID, setup_packet, data, size);
             break;
@@ -545,7 +545,7 @@ static uint_8 DFU_App_Detach_State
     case USB_DFU_GETSTATUS:
         status= USB_Class_DFU_Getstatus(controller_ID,interface,data,size);
         break;
-    /* DFU_GETSTATE Request */    
+    /* DFU_GETSTATE Request */
     case USB_DFU_GETSTATE:
         status = USB_Class_DFU_Getstate(controller_ID,interface,data,size);
         break;
@@ -605,12 +605,12 @@ static uint_8 DFU_Idle_State
 #if(BITCANDOWNLOAD)
             /* Start check download timeout */
             g_state = USB_DFU_DNLOAD_SYNC;
-            Flag_Block_Complete = FALSE;            
+            Flag_Block_Complete = FALSE;
             /* Call to application */
             status = USB_Class_DFU_Dnload(controller_ID,wBlockNum,data,&wlength);
             if(USB_OK != status)
             {
-            	g_state = USB_DFU_ERROR;
+                g_state = USB_DFU_ERROR;
             }
 #else
             status = USBERR_INVALID_REQ_TYPE;;
@@ -630,7 +630,7 @@ static uint_8 DFU_Idle_State
         BlockNum = (uint_8)setup_packet->value;
         /* Call to application */
         status = USB_Class_DFU_Upload(controller_ID,BlockNum,data,size,setup_packet->length);
-		if (*size < setup_packet->length) g_state = USB_DFU_IDLE;
+        if (*size < setup_packet->length) g_state = USB_DFU_IDLE;
         else
         g_state = USB_DFU_UPLOAD_IDLE;
 #else
@@ -690,13 +690,13 @@ static uint_8 DFU_Dnload_Sync_State
     {
     /* DFU_GETSTATUS request */
     case USB_DFU_GETSTATUS:
-        if (Flag_Block_Complete) 
-        	g_state = USB_DFU_DNLOAD_IDLE;
+        if (Flag_Block_Complete)
+            g_state = USB_DFU_DNLOAD_IDLE;
         else
         {
-        	/* Set time out for writing to flash*/
-        	(void)RemoveTimerQ(0);
-        	Flag_bwPoll_TimeOut = FALSE;
+            /* Set time out for writing to flash*/
+            (void)RemoveTimerQ(0);
+            Flag_bwPoll_TimeOut = FALSE;
             Flag_Block_Complete = FALSE;
             if(g_status[BWPOLLTIMEOUT+2]>0)
             bwPoll_TimeOut.msCount = 0xFFFF; /* Max Poll Time Out */
@@ -704,13 +704,13 @@ static uint_8 DFU_Dnload_Sync_State
             bwPoll_TimeOut.msCount = (uint_16)(g_status[BWPOLLTIMEOUT]+(g_status[BWPOLLTIMEOUT+1] <<8));
             bwPoll_TimeOut.pfnTimerCallback = USB_Class_DFU_Process_bwPoll_TimeOut;
             (void)AddTimerQ(&bwPoll_TimeOut);
-            
-            g_state = USB_DFU_DNBUSY;       
-        } 
+
+            g_state = USB_DFU_DNBUSY;
+        }
         g_status[BSTATE] = g_state;
         status= USB_Class_DFU_Getstatus(controller_ID,interface,data,size);
         break;
-    /* DFU_GETSTATE request */    
+    /* DFU_GETSTATE request */
     case USB_DFU_GETSTATE:
         status = USB_Class_DFU_Getstate(controller_ID,interface,data,size);
         break;
@@ -745,10 +745,10 @@ static uint_8 DFU_Dnbusy_State
     USB_PACKET_SIZE *size               /* [OUT] Size to be returned*/
 )
 {
-	UNUSED (controller_ID)
-	UNUSED (setup_packet)
-	UNUSED (data)
-	UNUSED (size)
+    UNUSED (controller_ID)
+    UNUSED (setup_packet)
+    UNUSED (data)
+    UNUSED (size)
     g_state = USB_DFU_ERROR;
     return USBERR_INVALID_REQ_TYPE;
 }
@@ -789,30 +789,30 @@ static uint_8 DFU_Dnload_Idle_State
     {
     /* DFU_DNLOAD request*/
     case USB_DFU_DNLOAD:
-    
-	    #if defined(_MC9S08JS16_H)
-	    wlength = (uint_8)setup_packet->length;
-	    #else
-	    wlength = setup_packet->length;
-	    #endif
-	    
-	    /* check wlength */
-	    if (wlength>0)
-	    {               
-	        g_state = USB_DFU_DNLOAD_SYNC;
-	        Flag_Block_Complete = FALSE;
-	    }
-	    if (wlength==0)
-	    {           
-	        g_state = USB_DFU_MANIFEST_SYNC;    
-	        status = USB_OK;
-	    }
-	    /* Call to application */
-	    status = USB_Class_DFU_Dnload(controller_ID,wBlockNum,data,&wlength);      
-	        if (USB_OK != status)
-	        {
-	        	g_state= USB_DFU_ERROR;
-	        }
+
+        #if defined(_MC9S08JS16_H)
+        wlength = (uint_8)setup_packet->length;
+        #else
+        wlength = setup_packet->length;
+        #endif
+
+        /* check wlength */
+        if (wlength>0)
+        {
+            g_state = USB_DFU_DNLOAD_SYNC;
+            Flag_Block_Complete = FALSE;
+        }
+        if (wlength==0)
+        {
+            g_state = USB_DFU_MANIFEST_SYNC;
+            status = USB_OK;
+        }
+        /* Call to application */
+        status = USB_Class_DFU_Dnload(controller_ID,wBlockNum,data,&wlength);
+            if (USB_OK != status)
+            {
+                g_state= USB_DFU_ERROR;
+            }
         break;
     /* DFU_ABORT request */
     case USB_DFU_ABORT:
@@ -872,12 +872,12 @@ static uint_8 DFU_Manifest_Sync_State
 #if(MANIFESTATION)
             g_state = USB_DFU_IDLE;
             g_status[BSTATE] = g_state;
-            status= USB_Class_DFU_Getstatus(controller_ID,interface,data,size);    
+            status= USB_Class_DFU_Getstatus(controller_ID,interface,data,size);
 #endif
         }
         else
-        {	/* poll time out for manifest process */
-        	(void)RemoveTimerQ(0);
+        {   /* poll time out for manifest process */
+            (void)RemoveTimerQ(0);
             Flag_bwPoll_TimeOut = FALSE;
             if(g_status[BWPOLLTIMEOUT+2]>0)
             bwPoll_TimeOut.msCount = 0xFFFF; /* Max Poll Time Out */
@@ -888,7 +888,7 @@ static uint_8 DFU_Manifest_Sync_State
             g_state = USB_DFU_MANIFEST;
             g_status[BSTATE] = g_state;
             status= USB_Class_DFU_Getstatus(controller_ID,interface,data,size);
-            
+
         }
         break;
     /* DFU_GETSTATE request */
@@ -901,7 +901,7 @@ static uint_8 DFU_Manifest_Sync_State
         break;
     }
     return status;
-} 
+}
 /**************************************************************************//*!
  *
  * @name  DFU_Manifest_State
@@ -929,7 +929,7 @@ static uint_8 DFU_Manifest_State
     UNUSED(controller_ID);
     UNUSED(setup_packet);
     UNUSED(data);
-    UNUSED(size);    
+    UNUSED(size);
     g_state = USB_DFU_ERROR;
     return USBERR_INVALID_REQ_TYPE;
 }
@@ -961,7 +961,7 @@ static uint_8 DFU_Manifest_Wait_Reset_State
     UNUSED(setup_packet);
     UNUSED(data);
     UNUSED(size);
-    
+
     return USBERR_INVALID_REQ_TYPE;;
 }
 /**************************************************************************//*!
@@ -1092,28 +1092,28 @@ static uint_8 DFU_Error_State
  * The funtion initializes the DFU endpoints when Enumeration complete event is
  * received
  *****************************************************************************/
-static void USB_Class_DFU_Event 
+static void USB_Class_DFU_Event
 (
     uint_8 controller_ID,   /* [IN] Controller ID */
     uint_8 event,           /* [IN] Event Type */
     void* val               /* [IN] Pointer to configuration Value */
 )
 {
-	switch(event)
-	{
+    switch(event)
+    {
 
-		case USB_APP_BUS_RESET:
+        case USB_APP_BUS_RESET:
         if (g_dfu_class_callback != NULL)
         {
             /* notify the application of the event */
             g_dfu_class_callback(controller_ID, event, val);
         }
-    	break;
-    	
-		case BUS_POWERED:	
+        break;
+
+        case BUS_POWERED:
         g_state = USB_APP_DETACH;
-		break;
-	}	
+        break;
+    }
 }
 
 /*****************************************************************************
@@ -1138,7 +1138,7 @@ static void USB_Class_DFU_Event
  ******************************************************************************
  *This function initializes the DFU Class layer and layers it is dependent on
  *****************************************************************************/
-uint_8 USB_Class_DFU_Init 
+uint_8 USB_Class_DFU_Init
 (
     uint_8    controller_ID,                /* [IN] Controller ID */
     USB_CLASS_CALLBACK dfu_class_callback,  /* [IN] DFU Class Callback */
@@ -1189,31 +1189,31 @@ uint_8 USB_Class_DFU_Init
  ******************************************************************************
  *This function de-initializes the DFU Class layer
  *****************************************************************************/
-uint_8 USB_Class_DFU_DeInit 
+uint_8 USB_Class_DFU_DeInit
 (
     uint_8 controller_ID              /* [IN] Controller ID */
-) 
+)
 {
     uint_8 status;
-   
+
     /* free the HID class callback pointer */
     g_dfu_class_callback = NULL;
-    
+
     /* free the vendor request callback pointer */
     g_vendor_req_callback = NULL;
-    
+
     /* free the callback to ask application for class specific params*/
     g_param_callback = NULL;
-    
+
     /* Call common class deinit function */
     status = USB_Class_DeInit(controller_ID);
-    
+
     if(status == USB_OK)
     /* Call device deinit function */
-    	status = _usb_device_deinit();
-    	
+        status = _usb_device_deinit();
+
     return status;
-} 
+}
 
 /*****************************************************************************
  *
@@ -1231,22 +1231,22 @@ uint_8 USB_Class_DFU_DeInit
  *****************************************************************************/
 void USB_Class_DFU_Periodic_Task(void)
 {
-	    if ((g_state == USB_DFU_DNBUSY)&&(Flag_Block_Complete == FALSE))
+        if ((g_state == USB_DFU_DNBUSY)&&(Flag_Block_Complete == FALSE))
     {
-	    /* The state has just changed to USB_DFU_DNBUSY from USB_DFU_DNLOAD_SYNC 
-		state after received get_STATUS request */
-		/* Erase memory, write the received block to flash memory */
-		USB_Class_DFU_Flashing();
-		Flag_Block_Complete = TRUE;
+        /* The state has just changed to USB_DFU_DNBUSY from USB_DFU_DNLOAD_SYNC
+        state after received get_STATUS request */
+        /* Erase memory, write the received block to flash memory */
+        USB_Class_DFU_Flashing();
+        Flag_Block_Complete = TRUE;
     }
-		
- 	if((g_state == USB_DFU_MANIFEST)&&(Flag_Manifest_Complete  == FALSE))
+
+    if((g_state == USB_DFU_MANIFEST)&&(Flag_Manifest_Complete  == FALSE))
     {
-	    /* The state has just changed to USB_DFU_MANIFEST from USB_DFU_MANIFEST_SYNC 
-		state after received get_STATUS request */
-		/* Erase memory, write the received block to flash memory */
-    	USB_Class_DFU_Manifest();
-    	Flag_Manifest_Complete  = TRUE;
+        /* The state has just changed to USB_DFU_MANIFEST from USB_DFU_MANIFEST_SYNC
+        state after received get_STATUS request */
+        /* Erase memory, write the received block to flash memory */
+        USB_Class_DFU_Manifest();
+        Flag_Manifest_Complete  = TRUE;
     }
 }
 

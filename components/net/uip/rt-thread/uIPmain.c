@@ -53,12 +53,12 @@ void TransmitPacket(void)
     int i;
     u8_t data[1500];
     // Copy the header portion part
-    for(i=0; i < (UIP_LLH_LEN + 40); ++i) 
+    for(i=0; i < (UIP_LLH_LEN + 40); ++i)
     {
          data[i] =  uip_buf[i];
     }
     // Copy the data portion part
-    for(; i < uip_len; ++i) 
+    for(; i < uip_len; ++i)
     {
         data[i] =  uip_appdata[i - UIP_LLH_LEN - 40 ];
     }
@@ -71,34 +71,34 @@ void uip_tcpip_thread(void *parameter)
     while(1)
     {
         rt_thread_delay(CLOCK_SECOND*5);
-        for (i = 0; i < UIP_CONNS; i++) 
+        for (i = 0; i < UIP_CONNS; i++)
         {
-	    uip_periodic(i);
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	    if (uip_len > 0)
+        uip_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+        if (uip_len > 0)
             {
-	        uip_arp_out();
+            uip_arp_out();
                 TransmitPacket();
-	    }
+        }
         }
 #if UIP_UDP
         for (i = 0; i < UIP_UDP_CONNS; i++)
         {
-	    uip_udp_periodic(i);
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	   if (uip_len > 0)
+        uip_udp_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+       if (uip_len > 0)
            {
-	      uip_arp_out();
+          uip_arp_out();
               TransmitPacket();
-	   }
+       }
         }
-#endif /* UIP_UDP */  
+#endif /* UIP_UDP */
       /* Call the ARP timer function every 10 seconds. */
-	 if (++cnt > 2) uip_arp_timer();
+     if (++cnt > 2) uip_arp_timer();
     }
 }
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (c) Copyright 2009-2013 Microsemi SoC Products Group. All rights reserved.
- * 
+ *
  * Assertion implementation.
  *
  * This file provides the implementation of the ASSERT macro. This file can be
@@ -33,7 +33,7 @@
             __asm volatile ("BKPT\n\t"); \
         } \
     } while (0);
-    
+
 #elif defined ( __ICCARM__ )
 /*
  * IAR Embedded Workbench assertion handling.

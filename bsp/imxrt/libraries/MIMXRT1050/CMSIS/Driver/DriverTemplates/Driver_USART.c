@@ -21,7 +21,7 @@
 #define ARM_USART_DRV_VERSION    ARM_DRIVER_VERSION_MAJOR_MINOR(2, 0)  /* driver version */
 
 /* Driver Version */
-static const ARM_DRIVER_VERSION DriverVersion = { 
+static const ARM_DRIVER_VERSION DriverVersion = {
     ARM_USART_API_VERSION,
     ARM_USART_DRV_VERSION
 };

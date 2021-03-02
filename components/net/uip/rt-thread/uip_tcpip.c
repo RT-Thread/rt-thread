@@ -12,7 +12,7 @@ tcpip_input(struct pbuf *p, struct netif *inp)
      u8_t *pdata;
      if (uip_len)
      {
-        uip_arp_out(); 
+        uip_arp_out();
         if (( pdata =(u8_t*)rt_malloc(1500*sizeof(u8_t))) == RT_NULL)
         {
             pbuf_free(p);
@@ -22,7 +22,7 @@ tcpip_input(struct pbuf *p, struct netif *inp)
         {
             pdata[i] =  uip_buf[i]; /* get dest an src ipaddr */
         }
-            // Copy the data portion part  
+            // Copy the data portion part
         for(; i < uip_len; ++i)
         {
                 pdata[i] =  uip_appdata[i - UIP_LLH_LEN - 40 ];
@@ -37,5 +37,5 @@ tcpip_input(struct pbuf *p, struct netif *inp)
     {
         pbuf_free(p);
         return 0;
-    }  
+    }
 }

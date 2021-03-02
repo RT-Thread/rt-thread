@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -40,7 +40,7 @@
 #include "lpc_libcfg_default.h"
 #endif /* __BUILD_WITH_EXAMPLE__ */
 #ifdef _ADC
- 
+
 /* Includes ------------------------------------------------------------------- */
 #include "lpc_types.h"
 #include "lpc_adc.h"
@@ -225,7 +225,7 @@ void ADC_ChannelCmd (LPC_ADC_TypeDef *ADCx, uint8_t Channel, FunctionalState New
 {
     if (NewState == ENABLE) {
         ADCx->CR |= ADC_CR_CH_SEL(Channel);
-    } else {        
+    } else {
         if (ADCx->CR & ADC_CR_START_MASK) //need to stop START bits before disable channel
            ADCx->CR &= ~ADC_CR_START_MASK;
         ADCx->CR &= ~ADC_CR_CH_SEL(Channel);

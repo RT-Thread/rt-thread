@@ -78,7 +78,7 @@ extern "C" {
 #endif
 
 /*!
- * @brief	Initialize GINT peripheral.
+ * @brief   Initialize GINT peripheral.
 
  * This function initializes the GINT peripheral and enables the clock.
  *
@@ -89,7 +89,7 @@ extern "C" {
 void GINT_Init(GINT_Type *base);
 
 /*!
- * @brief	Setup GINT peripheral control parameters.
+ * @brief   Setup GINT peripheral control parameters.
 
  * This function sets the control parameters of GINT peripheral.
  *
@@ -103,7 +103,7 @@ void GINT_Init(GINT_Type *base);
 void GINT_SetCtrl(GINT_Type *base, gint_comb_t comb, gint_trig_t trig, gint_cb_t callback);
 
 /*!
- * @brief	Get GINT peripheral control parameters.
+ * @brief   Get GINT peripheral control parameters.
 
  * This function returns the control parameters of GINT peripheral.
  *
@@ -117,7 +117,7 @@ void GINT_SetCtrl(GINT_Type *base, gint_comb_t comb, gint_trig_t trig, gint_cb_t
 void GINT_GetCtrl(GINT_Type *base, gint_comb_t *comb, gint_trig_t *trig, gint_cb_t *callback);
 
 /*!
- * @brief	Configure GINT peripheral pins.
+ * @brief   Configure GINT peripheral pins.
 
  * This function enables and controls the polarity of enabled pin(s) of a given port.
  *
@@ -133,7 +133,7 @@ void GINT_GetCtrl(GINT_Type *base, gint_comb_t *comb, gint_trig_t *trig, gint_cb
 void GINT_ConfigPins(GINT_Type *base, gint_port_t port, uint32_t polarityMask, uint32_t enableMask);
 
 /*!
- * @brief	Get GINT peripheral pin configuration.
+ * @brief   Get GINT peripheral pin configuration.
 
  * This function returns the pin configuration of a given port.
  *
@@ -151,7 +151,7 @@ void GINT_ConfigPins(GINT_Type *base, gint_port_t port, uint32_t polarityMask, u
 void GINT_GetConfigPins(GINT_Type *base, gint_port_t port, uint32_t *polarityMask, uint32_t *enableMask);
 
 /*!
- * @brief	Enable callback.
+ * @brief   Enable callback.
 
  * This function enables the interrupt for the selected GINT peripheral. Although the pin(s) are monitored
  * as soon as they are enabled, the callback function is not enabled until this function is called.
@@ -163,7 +163,7 @@ void GINT_GetConfigPins(GINT_Type *base, gint_port_t port, uint32_t *polarityMas
 void GINT_EnableCallback(GINT_Type *base);
 
 /*!
- * @brief	Disable callback.
+ * @brief   Disable callback.
 
  * This function disables the interrupt for the selected GINT peripheral. Although the pins are still
  * being monitored but the callback function is not called.
@@ -175,7 +175,7 @@ void GINT_EnableCallback(GINT_Type *base);
 void GINT_DisableCallback(GINT_Type *base);
 
 /*!
- * @brief	Clear GINT status.
+ * @brief   Clear GINT status.
 
  * This function clears the GINT status bit.
  *
@@ -189,7 +189,7 @@ static inline void GINT_ClrStatus(GINT_Type *base)
 }
 
 /*!
- * @brief	Get GINT status.
+ * @brief   Get GINT status.
 
  * This function returns the GINT status.
  *
@@ -203,7 +203,7 @@ static inline uint32_t GINT_GetStatus(GINT_Type *base)
 }
 
 /*!
- * @brief	Deinitialize GINT peripheral.
+ * @brief   Deinitialize GINT peripheral.
 
  * This function disables the GINT clock.
  *

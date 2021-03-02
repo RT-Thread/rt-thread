@@ -65,29 +65,29 @@ extern struct rtc_module *_rtc_instance[RTC_INST_NUM];
  * \retval STATUS_ERR_INVALID_ARG If trying to register, a callback is not available
  */
 enum status_code rtc_calendar_register_callback(
-		struct rtc_module *const module,
-		rtc_calendar_callback_t callback,
-		enum rtc_calendar_callback callback_type)
+        struct rtc_module *const module,
+        rtc_calendar_callback_t callback,
+        enum rtc_calendar_callback callback_type)
 {
 
-	enum status_code status = STATUS_OK;
+    enum status_code status = STATUS_OK;
 
-	/* Overflow callback */
-	if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
-		status = STATUS_OK;
-	} else if (callback_type > RTC_NUM_OF_ALARMS) {
-		/* Make sure alarm callback can be registered */
-		status = STATUS_ERR_INVALID_ARG;
-	}
+    /* Overflow callback */
+    if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
+        status = STATUS_OK;
+    } else if (callback_type > RTC_NUM_OF_ALARMS) {
+        /* Make sure alarm callback can be registered */
+        status = STATUS_ERR_INVALID_ARG;
+    }
 
-	if (status == STATUS_OK) {
-		/* Register callback */
-		module->callbacks[callback_type] = callback;
-		/* Set corresponding bit to set callback as registered */
-		module->registered_callback |= (1 << callback_type);
-	}
+    if (status == STATUS_OK) {
+        /* Register callback */
+        module->callbacks[callback_type] = callback;
+        /* Set corresponding bit to set callback as registered */
+        module->registered_callback |= (1 << callback_type);
+    }
 
-	return status;
+    return status;
 }
 
 /**
@@ -104,27 +104,27 @@ enum status_code rtc_calendar_register_callback(
  * \retval STATUS_ERR_INVALID_ARG If trying to unregister, a callback is not available
  */
 enum status_code rtc_calendar_unregister_callback(
-		struct rtc_module *const module,
-		enum rtc_calendar_callback callback_type)
+        struct rtc_module *const module,
+        enum rtc_calendar_callback callback_type)
 {
-	enum status_code status = STATUS_OK;
+    enum status_code status = STATUS_OK;
 
-	/* Overflow callback */
-	if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
-		status = STATUS_OK;
-	} else if (callback_type > RTC_NUM_OF_ALARMS) {
-		/* Make sure alarm callback can be unregistered */
-		status = STATUS_ERR_INVALID_ARG;
-	}
+    /* Overflow callback */
+    if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
+        status = STATUS_OK;
+    } else if (callback_type > RTC_NUM_OF_ALARMS) {
+        /* Make sure alarm callback can be unregistered */
+        status = STATUS_ERR_INVALID_ARG;
+    }
 
-	if (status == STATUS_OK) {
-		/* Unregister callback */
-		module->callbacks[callback_type] = NULL;
+    if (status == STATUS_OK) {
+        /* Unregister callback */
+        module->callbacks[callback_type] = NULL;
 
-		/* Clear corresponding bit to set callback as unregistered */
-		module->registered_callback &= ~(1 << callback_type);
-	}
-	return status;
+        /* Clear corresponding bit to set callback as unregistered */
+        module->registered_callback &= ~(1 << callback_type);
+    }
+    return status;
 }
 
 /**
@@ -136,22 +136,22 @@ enum status_code rtc_calendar_unregister_callback(
  * \param[in]     callback_type Callback type to enable
  */
 void rtc_calendar_enable_callback(
-		struct rtc_module *const module,
-		enum rtc_calendar_callback callback_type)
+        struct rtc_module *const module,
+        enum rtc_calendar_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
-		rtc_module->MODE2.INTENSET.reg = RTC_MODE2_INTFLAG_OVF;
-	} else {
-		rtc_module->MODE2.INTENSET.reg = RTC_MODE2_INTFLAG_ALARM(1 << callback_type);
-	}
-	/* Mark callback as enabled. */
-	module->enabled_callback |= (1 << callback_type);
+    if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
+        rtc_module->MODE2.INTENSET.reg = RTC_MODE2_INTFLAG_OVF;
+    } else {
+        rtc_module->MODE2.INTENSET.reg = RTC_MODE2_INTFLAG_ALARM(1 << callback_type);
+    }
+    /* Mark callback as enabled. */
+    module->enabled_callback |= (1 << callback_type);
 }
 
 /**
@@ -163,24 +163,24 @@ void rtc_calendar_enable_callback(
  * \param[in]     callback_type Callback type to disable
  */
 void rtc_calendar_disable_callback(
-		struct rtc_module *const module,
-		enum rtc_calendar_callback callback_type)
+        struct rtc_module *const module,
+        enum rtc_calendar_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Disable interrupt */
-	if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
-		rtc_module->MODE2.INTENCLR.reg = RTC_MODE2_INTFLAG_OVF;
-	} else {
-		rtc_module->MODE2.INTENCLR.reg = RTC_MODE2_INTFLAG_ALARM(1 << callback_type);
-	}
+    /* Disable interrupt */
+    if (callback_type == RTC_CALENDAR_CALLBACK_OVERFLOW) {
+        rtc_module->MODE2.INTENCLR.reg = RTC_MODE2_INTFLAG_OVF;
+    } else {
+        rtc_module->MODE2.INTENCLR.reg = RTC_MODE2_INTFLAG_ALARM(1 << callback_type);
+    }
 
-	/* Mark callback as disabled. */
-	module->enabled_callback &= ~(1 << callback_type);
+    /* Mark callback as disabled. */
+    module->enabled_callback &= ~(1 << callback_type);
 }
 
 /**
@@ -190,65 +190,65 @@ void rtc_calendar_disable_callback(
  */
 static void _rtc_interrupt_handler(const uint32_t instance_index)
 {
-	struct rtc_module *module = _rtc_instance[instance_index];
+    struct rtc_module *module = _rtc_instance[instance_index];
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Combine callback registered and enabled masks */
-	uint16_t callback_mask = module->enabled_callback;
-	callback_mask &= module->registered_callback;
+    /* Combine callback registered and enabled masks */
+    uint16_t callback_mask = module->enabled_callback;
+    callback_mask &= module->registered_callback;
 
-	/* Read and mask interrupt flag register */
-	uint16_t interrupt_status = rtc_module->MODE2.INTFLAG.reg;
-	interrupt_status &= rtc_module->MODE2.INTENSET.reg;
+    /* Read and mask interrupt flag register */
+    uint16_t interrupt_status = rtc_module->MODE2.INTFLAG.reg;
+    interrupt_status &= rtc_module->MODE2.INTENSET.reg;
 
-	if (interrupt_status & RTC_MODE2_INTFLAG_OVF) {
-		/* Overflow interrupt */
-		if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_OVERFLOW)) {
-			module->callbacks[RTC_CALENDAR_CALLBACK_OVERFLOW]();
-		}
+    if (interrupt_status & RTC_MODE2_INTFLAG_OVF) {
+        /* Overflow interrupt */
+        if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_OVERFLOW)) {
+            module->callbacks[RTC_CALENDAR_CALLBACK_OVERFLOW]();
+        }
 
-		/* Clear interrupt flag */
-		rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_OVF;
+        /* Clear interrupt flag */
+        rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_OVF;
 
-	} else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 0)) {
-		/* Alarm 0 interrupt */
-		if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_0)) {
-			module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_0]();
-		}
-		/* Clear interrupt flag */
-		rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 0);
+    } else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 0)) {
+        /* Alarm 0 interrupt */
+        if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_0)) {
+            module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_0]();
+        }
+        /* Clear interrupt flag */
+        rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 0);
 
-	} else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 1)) {
-		#if (RTC_NUM_OF_ALARMS > 1) || defined(__DOXYGEN__)
-		/* Alarm 1 interrupt */
-		if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_1)) {
-			module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_1]();
-		}
-		/* Clear interrupt flag */
-		rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 1);
-		#endif
+    } else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 1)) {
+        #if (RTC_NUM_OF_ALARMS > 1) || defined(__DOXYGEN__)
+        /* Alarm 1 interrupt */
+        if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_1)) {
+            module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_1]();
+        }
+        /* Clear interrupt flag */
+        rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 1);
+        #endif
 
-	} else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 2)) {
-		#if (RTC_NUM_OF_ALARMS > 2)	|| defined(__DOXYGEN__)
-		/* Alarm 2 interrupt */
-		if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_2)) {
-			module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_2]();
-		}
-		/* Clear interrupt flag */
-		rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 2);
-		#endif
+    } else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 2)) {
+        #if (RTC_NUM_OF_ALARMS > 2) || defined(__DOXYGEN__)
+        /* Alarm 2 interrupt */
+        if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_2)) {
+            module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_2]();
+        }
+        /* Clear interrupt flag */
+        rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 2);
+        #endif
 
-	} else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 3)) {
-		#if (RTC_NUM_OF_ALARMS > 3)	|| defined(__DOXYGEN__)
-		/* Alarm 3 interrupt */
-		if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_3)) {
-			module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_3]();
-		}
-		/* Clear interrupt flag */
-		rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 3);
-		#endif
-	}
+    } else if (interrupt_status & RTC_MODE2_INTFLAG_ALARM(1 << 3)) {
+        #if (RTC_NUM_OF_ALARMS > 3) || defined(__DOXYGEN__)
+        /* Alarm 3 interrupt */
+        if (callback_mask & (1 << RTC_CALENDAR_CALLBACK_ALARM_3)) {
+            module->callbacks[RTC_CALENDAR_CALLBACK_ALARM_3]();
+        }
+        /* Clear interrupt flag */
+        rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << 3);
+        #endif
+    }
 }
 
 /**
@@ -257,14 +257,14 @@ static void _rtc_interrupt_handler(const uint32_t instance_index)
 #if (RTC_INST_NUM == 1)
 void RTC_Handler(void)
 {
-	_rtc_interrupt_handler(0);
+    _rtc_interrupt_handler(0);
 }
 #elif (RTC_INST_NUM > 1)
 #  define _RTC_INTERRUPT_HANDLER(n, unused) \
-		void RTC##n##_Handler(void) \
-		{ \
-			_rtc_interrupt_handler(n); \
-		}
+        void RTC##n##_Handler(void) \
+        { \
+            _rtc_interrupt_handler(n); \
+        }
 
 MREPEAT(RTC_INST_NUM, _RTC_INTERRUPT_HANDLER, ~)
 #endif /* (RTC_INST_NUM > 1) */

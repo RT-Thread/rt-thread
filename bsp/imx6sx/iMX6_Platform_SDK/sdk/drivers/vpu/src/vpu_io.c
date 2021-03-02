@@ -50,8 +50,8 @@
 ///////////////////////////////////////////////////////////////////////////////////
 // DEFINITIONS
 ///////////////////////////////////////////////////////////////////////////////////
-#define VPU_MEM_START_ADDR	(VIDEO_BUFFERS_START)
-#define VPU_MEM_END_ADDR	(VIDEO_BUFFERS_END)
+#define VPU_MEM_START_ADDR  (VIDEO_BUFFERS_START)
+#define VPU_MEM_END_ADDR    (VIDEO_BUFFERS_END)
 
 ///////////////////////////////////////////////////////////////////////////////////
 // VARIABLES
@@ -132,7 +132,7 @@ uint32_t vpu_reg_read(uint32_t addr)
 
 int vpu_malloc(vpu_mem_desc * buff)
 {
-    buff->size = (buff->size + 0xFFF) & 0xFFFFF000; //align 
+    buff->size = (buff->size + 0xFFF) & 0xFFFFF000; //align
     if (g_vpu_mem_alloc_ptr + buff->size > VPU_MEM_END_ADDR) {
         err_msg("Memory reserved for VPU is not enough!!\n");
         err_msg("Memory required 0x%x, actual pointer 0x%x, actual room 0x%x!!\n",

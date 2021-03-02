@@ -66,20 +66,20 @@ static uint32_t dma_lock;
 int DMA_Init(void)
 {
     int i;
-    
+
     if (dma_initialized) {
         return E_BAD_STATE;
     }
-    
+
     /* Initialize any system-level DMA settings */
     SYS_DMA_Init();
-    
+
     /* Initialize mutex */
     mxc_free_lock(&dma_lock);
     if (mxc_get_lock(&dma_lock, 1) != E_NO_ERROR) {
         return E_BUSY;
     }
-    
+
     /* Ensure all channels are disabled at start, clear flags, init handles */
     MXC_DMA->cn = 0;
     for (i = 0; i < MXC_DMA_CHANNELS; i++) {
@@ -89,12 +89,12 @@ int DMA_Init(void)
         dma_resource[i].regs = (mxc_dma_ch_regs_t *)&MXC_DMA->ch[i];
         dma_resource[i].regs->cfg = 0;
         dma_resource[i].regs->st = dma_resource[i].regs->st;
-        
+
         dma_resource[i].cb = NULL;
     }
     dma_initialized++;
     mxc_free_lock(&dma_lock);
-    
+
     return E_NO_ERROR;
 }
 
@@ -102,21 +102,21 @@ int DMA_Init(void)
 int DMA_Shutdown(void)
 {
     int i;
-    
+
     if (!dma_initialized) {
         /* Never initialized, so shutdown is not appropriate */
         return E_BUSY;
     }
-    
+
     if (mxc_get_lock(&dma_lock, 1) != E_NO_ERROR) {
         return E_BUSY;
     }
-    
+
     /* Prevent any new resource allocation by this API */
     dma_initialized = 0;
     /* Disable interrupts, preventing future callbacks */
     MXC_DMA->cn = 0;
-    
+
     /* For each channel:
      *  - invalidate the handles held by clients
      *  - stop any transfer in progress
@@ -130,12 +130,12 @@ int DMA_Shutdown(void)
             }
         }
     }
-    
+
     /* Disable any system-level DMA settings */
     SYS_DMA_Shutdown();
-    
+
     mxc_free_lock(&dma_lock);
-    
+
     return E_NO_ERROR;
 }
 
@@ -145,17 +145,17 @@ int DMA_Shutdown(void)
 int DMA_AcquireChannel(void)
 {
     int i, channel;
-    
+
     /* Check for initialization */
     if (!dma_initialized) {
         return E_BAD_STATE;
     }
-    
+
     /* If DMA is locked return busy */
     if (mxc_get_lock(&dma_lock, 1) != E_NO_ERROR) {
         return E_BUSY;
     }
-    
+
     /* Default is no channel available */
     channel = E_NONE_AVAIL;
     if (dma_initialized) {
@@ -171,7 +171,7 @@ int DMA_AcquireChannel(void)
         }
     }
     mxc_free_lock(&dma_lock);
-    
+
     return channel;
 }
 
@@ -190,7 +190,7 @@ int DMA_ReleaseChannel(int ch)
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -212,14 +212,14 @@ int DMA_ConfigChannel(int ch,
              (dstinc_en ? MXC_F_DMA_CFG_DSTINC : 0)   |
              (chdis_inten ? MXC_F_DMA_CFG_CHDIEN : 0) |
              (ctz_inten ? MXC_F_DMA_CFG_CTZIEN : 0)   |
-             prio |reqsel | tosel | pssel | 
+             prio |reqsel | tosel | pssel |
              (srcwd << MXC_F_DMA_CFG_SRCWD_POS) |
              (dstwd << MXC_F_DMA_CFG_DSTWD_POS) |
              (((burst_size - 1) << MXC_F_DMA_CFG_BRST_POS) & MXC_F_DMA_CFG_BRST));
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -239,7 +239,7 @@ int DMA_SetSrcDstCnt(int ch,
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -262,7 +262,7 @@ int DMA_SetReload(int ch,
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -274,7 +274,7 @@ int DMA_SetCallback(int ch, void (*callback)(int, int))
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -286,7 +286,7 @@ int DMA_EnableInterrupt(int ch)
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -297,7 +297,7 @@ int DMA_DisableInterrupt(int ch)
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -309,7 +309,7 @@ int DMA_GetFlags(int ch, unsigned int *fl)
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -320,7 +320,7 @@ int DMA_ClearFlags(int ch)
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -337,7 +337,7 @@ int DMA_Start(int ch)
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 
@@ -349,7 +349,7 @@ int DMA_Stop(int ch)
     } else {
         return E_BAD_PARAM;
     }
-    
+
     return E_NO_ERROR;
 }
 

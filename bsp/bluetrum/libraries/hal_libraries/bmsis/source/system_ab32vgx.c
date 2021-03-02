@@ -12,10 +12,10 @@
 
 typedef struct _sys_t {
     uint8_t cnt_1us;             //delay 1us cnt
-    uint8_t main_start;          //Mainæ˜¯å¦å·²å¯åŠ¨
+    uint8_t main_start;          //MainÊÇ·ñÒÑÆô¶¯
     uint8_t clk_sel;             //system clock select
     uint8_t sys_clk;
-//    uint8_t aupll_type;          //åŒºåˆ†AUPLLçš„é¢‘ç‡
+//    uint8_t aupll_type;          //Çø·ÖAUPLLµÄÆµÂÊ
     uint16_t rand_seed;
     uint32_t uart0baud;          //UART0BAUD
 } sys_t;
@@ -94,7 +94,7 @@ uint8_t set_sd_baud(uint8_t sd_rate)
 {
     uint8_t sd0baud=0;
     uint8_t sys_clk=0;
-    if(sd_rate > 14){//ä¸æ”¯æŒè¶…è¿‡14M
+    if(sd_rate > 14){//²»Ö§³Ö³¬¹ı14M
         return 0;
     }
     if (sys.sys_clk <= SYSCLK_26M) {
@@ -158,7 +158,7 @@ uint8_t sysclk_update_baud(uint8_t baud)
     return baud;
 }
 
-//å®¢æˆ·å¯èƒ½ç”¨åˆ°UART0(ä½¿ç”¨26Mæ—¶é’Ÿæº)åšé€šä¿¡,è¿™é‡Œå¯é€‰è®¾ç½®ç³»ç»Ÿæ—¶é’Ÿæ—¶ä¸æ”¹æ³¢ç‰¹ç‡
+//¿Í»§¿ÉÄÜÓÃµ½UART0(Ê¹ÓÃ26MÊ±ÖÓÔ´)×öÍ¨ĞÅ,ÕâÀï¿ÉÑ¡ÉèÖÃÏµÍ³Ê±ÖÓÊ±²»¸Ä²¨ÌØÂÊ
 WEAK void update_uart0baud_in_sysclk(uint32_t uart_baud)
 {
     if(UART0CON & BIT(0)) {
@@ -172,7 +172,7 @@ void set_sys_uart0baud(uint32_t baud)
     sys.uart0baud = baud;
 }
 
-//åˆ‡ç³»ç»Ÿæ—¶é’Ÿå‰ï¼Œå…ˆè®¾ç½®æ¨¡å—æ—¶é’Ÿåˆ†é¢‘è¾ƒå¤§å€¼ï¼Œä¿è¯æ¨¡å—ä¸ä¼šè¶…é¢‘çš„æƒ…å†µ
+//ÇĞÏµÍ³Ê±ÖÓÇ°£¬ÏÈÉèÖÃÄ£¿éÊ±ÖÓ·ÖÆµ½Ï´óÖµ£¬±£Ö¤Ä£¿é²»»á³¬ÆµµÄÇé¿ö
 void set_peripherals_clkdiv_safety(void)
 {
     uint32_t clkcon3 = CLKCON3;
@@ -182,11 +182,11 @@ void set_peripherals_clkdiv_safety(void)
     clkcon3 &= ~0xf0;                               //reset src clkdiv
     clkcon3 |= (1 << 4);                            //src clk = sys_clk / (n+1)
 
-    //sbcencç¡¬ä»¶è¦å°äº48M
+    //sbcencÓ²¼şÒªĞ¡ÓÚ48M
     clkcon3 &= ~(0x0f << 12);                       //reset sbcenc clkdiv
     clkcon3 |= (2 << 12);                           //src clk = sys_clk / (n+1)
 
-    //aec ramç¡¬ä»¶è¦å°äº50M
+    //aec ramÓ²¼şÒªĞ¡ÓÚ50M
     clkcon3 &= ~0x0f;                               //reset aec clkdiv
     clkcon3 &= ~(0x0f << 19);                       //reset plc clkdiv
     clkcon3 &= ~(0x0f << 23);                       //reset cvsd clkdiv
@@ -194,7 +194,7 @@ void set_peripherals_clkdiv_safety(void)
     clkcon3 |= (2 << 19);                           //plc clk = sys_clk / (n+1)
     clkcon3 |= (2 << 23);                           //cvsd clk = sys_clk / (n+1)
 
-    //audecç¡¬ä»¶è¦å°äº48M
+    //audecÓ²¼şÒªĞ¡ÓÚ48M
     clkcon2 &= ~(0x0f << 13);                       //reset audec clkdiv
     clkcon2 |= (2 << 13);                           //audec clk = sys_clk / (n+1)
 
@@ -202,7 +202,7 @@ void set_peripherals_clkdiv_safety(void)
     CLKCON2 = clkcon2;
 }
 
-//æ ¹æ®å®é™…ç³»ç»Ÿæ—¶é’Ÿï¼Œè®¾ç½®åˆé€‚çš„æ¨¡å—æ—¶é’Ÿåˆ†é¢‘
+//¸ù¾İÊµ¼ÊÏµÍ³Ê±ÖÓ£¬ÉèÖÃºÏÊÊµÄÄ£¿éÊ±ÖÓ·ÖÆµ
 void set_peripherals_clkdiv(void)
 {
     uint32_t clkcon3 = CLKCON3;
@@ -216,7 +216,7 @@ void set_peripherals_clkdiv(void)
         clkcon3 |= (1 << 4);                        //src clk = sys_clk / (n+1)
     }
 
-    //sbcecç¡¬ä»¶è¦å°äº48M
+    //sbcecÓ²¼şÒªĞ¡ÓÚ48M
     clkcon3 &= ~(0x0f << 12);
     if (sys_clk > SYSCLK_80M) {
         clkcon3 |= (2 << 12);
@@ -224,7 +224,7 @@ void set_peripherals_clkdiv(void)
         clkcon3 |= (1 << 12);
     }
 
-    //aec ramç¡¬ä»¶è¦å°äº50M
+    //aec ramÓ²¼şÒªĞ¡ÓÚ50M
     clkcon3 &= ~0x0f;                               //reset aec clkdiv
     clkcon3 &= ~(0x0f << 19);                       //reset plc clkdiv
     clkcon3 &= ~(0x0f << 23);                       //reset cvsd clkdiv
@@ -239,7 +239,7 @@ void set_peripherals_clkdiv(void)
     clkcon3 |= (clkdiv << 19);                      //plc clk = sys_clk / (n+1)
     clkcon3 |= (clkdiv << 23);                      //cvsd clk = sys_clk / (n+1)
 
-    //audecç¡¬ä»¶è¦å°äº48M
+    //audecÓ²¼şÒªĞ¡ÓÚ48M
     clkcon2 &= ~(0x0f << 13);                       //reset audec clkdiv
     if (sys_clk > SYSCLK_80M) {
         clkdiv = 2;
@@ -254,35 +254,35 @@ void set_peripherals_clkdiv(void)
     CLKCON2 = clkcon2;
 
 //    if (sys_clk <= SYS_48M) {
-//        PWRCON0 = (PWRCON0 & ~0xf) | (sys_trim.vddcore);                //VDDCOREå‡ä¸€æ¡£
+//        PWRCON0 = (PWRCON0 & ~0xf) | (sys_trim.vddcore);                //VDDCORE¼õÒ»µµ
 //    }
 //    vddcore_other_offset();
 }
 
-ALIGN(512)  //æ³¨æ„ï¼šè¶…è¿‡512byteæ—¶ï¼Œè¦ç”¨lock cache
+ALIGN(512)  //×¢Òâ£º³¬¹ı512byteÊ±£¬ÒªÓÃlock cache
 static void set_sysclk_do(uint32_t sys_clk, uint32_t clk_sel, uint32_t spll_div, uint32_t spi_baud, uint32_t spi1baud)
 {
     uint32_t cpu_ie;
     cpu_ie = PICCON & BIT(0);
-    PICCONCLR = BIT(0);                             //å…³ä¸­æ–­ï¼Œåˆ‡æ¢ç³»ç»Ÿæ—¶é’Ÿ
+    PICCONCLR = BIT(0);                             //¹ØÖĞ¶Ï£¬ÇĞ»»ÏµÍ³Ê±ÖÓ
     set_peripherals_clkdiv_safety();
 
     CLKCON0 &= ~(BIT(2) | BIT(3));                  //sysclk sel rc2m
     CLKCON2 &= ~(0x1f << 8);                        //reset spll div
 
     if(clk_sel <= PLL0DIV_120M) {
-        //sys_clkæ¥æºPLL0çš„åˆ†é¢‘é…ç½®
+        //sys_clkÀ´Ô´PLL0µÄ·ÖÆµÅäÖÃ
         CLKCON0 &= ~(BIT(4) | BIT(5) | BIT(6));     //sys_pll select pll0out
         if (PLL0DIV != (240 * 65536 / 26)) {
             PLL0DIV = 240 * 65536 / 26;             //pll: 240M, XOSC: 26M
             PLL0CON &= ~(BIT(3) | BIT(4) | BIT(5));
-            PLL0CON |= BIT(3);                      //Select PLL/VCO frequency band (PLLå¤§äº206M vcos = 0x01, å¦åˆ™ä¸º0)
+            PLL0CON |= BIT(3);                      //Select PLL/VCO frequency band (PLL´óÓÚ206M vcos = 0x01, ·ñÔòÎª0)
             PLL0CON |= BIT(20);                     //update pll0div to pll0_clk
             CLKCON3 &= ~(7 << 16);
             CLKCON3 |= (4 << 16);                   //USB CLK 48M
         }
     } else if (clk_sel <= OSCDIV_26M) {
-        //sys_clkæ¥æºäºXOSC26Mæ—¶é’Ÿåˆ†é¢‘, æ— USBæ—¶å…³é—­PLL0
+        //sys_clkÀ´Ô´ÓÚXOSC26MÊ±ÖÓ·ÖÆµ, ÎŞUSBÊ±¹Ø±ÕPLL0
 //        if (!is_usb_support()) {
 //            PLL0CON &= ~BIT(18);
 //            PLL0CON &= ~(BIT(12) | BIT(6));         //close pll0
@@ -314,7 +314,7 @@ void set_sysclk(uint32_t sys_clk)
         return;
     }
 //    if (sys_clk > SYSCLK_48M) {
-//        PWRCON0 = (PWRCON0 & ~0xf) | (sys_trim.vddcore + 1);            //VDDCOREåŠ ä¸€æ¡£
+//        PWRCON0 = (PWRCON0 & ~0xf) | (sys_trim.vddcore + 1);            //VDDCORE¼ÓÒ»µµ
 //    }
 //    vddcore_other_offset();
 
@@ -394,11 +394,11 @@ void set_sysclk(uint32_t sys_clk)
         return;
     }
 
-    //å…ˆåˆ¤æ–­PLL0æ˜¯å¦æ‰“å¼€
+    //ÏÈÅĞ¶ÏPLL0ÊÇ·ñ´ò¿ª
     if(clk_sel <= PLL0DIV_120M) {
         if (!(PLL0CON & BIT(12))) {
             PLL0CON &= ~(BIT(3) | BIT(4) | BIT(5));
-            PLL0CON |= BIT(3);                     //Select PLL/VCO frequency band (PLLå¤§äº206M vcos = 0x01, å¦åˆ™ä¸º0)
+            PLL0CON |= BIT(3);                     //Select PLL/VCO frequency band (PLL´óÓÚ206M vcos = 0x01, ·ñÔòÎª0)
             PLL0CON |= BIT(12);                    //enable pll0 ldo
             delay_us(100);                         //delay 100us
             PLL0DIV = 240 * 65536 / 26;            //pll0: 240M, XOSC: 26M
@@ -416,6 +416,6 @@ void set_sysclk(uint32_t sys_clk)
 
     set_sysclk_do(sys_clk, clk_sel,spll_div, spi_baud, spi1baud);
     set_peripherals_clkdiv();
-    update_sd0baud();       //æ›´æ–°ä¸‹SD0BAUD
+    update_sd0baud();       //¸üĞÂÏÂSD0BAUD
     update_uart0baud_in_sysclk(uart_baud);
 }

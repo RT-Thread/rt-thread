@@ -151,7 +151,7 @@ extern "C" {
  */
 
 /**
- * @brief	System oscillator rate
+ * @brief   System oscillator rate
  * This value is defined externally to the chip layer and contains
  * the value in Hz for the external oscillator for the board. If using the
  * internal oscillator, this rate can be 0.
@@ -159,7 +159,7 @@ extern "C" {
 extern const uint32_t OscRateIn;
 
 /**
- * @brief	Clock rate on the CLKIN pin
+ * @brief   Clock rate on the CLKIN pin
  * This value is defined externally to the chip layer and contains
  * the value in Hz for the CLKIN pin for the board. If this pin isn't used,
  * this rate can be 0.
@@ -186,36 +186,36 @@ extern const uint32_t ExtRateIn;
  */
 
 /**
- * @brief	Current system clock rate, mainly used for sysTick
+ * @brief   Current system clock rate, mainly used for sysTick
  */
 extern uint32_t SystemCoreClock;
 
 /**
- * @brief	Update system core clock rate, should be called if the
- *			system has a clock rate change
- * @return	None
+ * @brief   Update system core clock rate, should be called if the
+ *          system has a clock rate change
+ * @return  None
  */
 void SystemCoreClockUpdate(void);
 
 /**
- * @brief	Set up and initialize hardware prior to call to main()
- * @return	None
- * @note	Chip_SystemInit() is called prior to the application and sets up
+ * @brief   Set up and initialize hardware prior to call to main()
+ * @return  None
+ * @note    Chip_SystemInit() is called prior to the application and sets up
  * system clocking prior to the application starting.
  */
 void Chip_SystemInit(void);
 
 /**
- * @brief	Clock and PLL initialization based on the external oscillator
- * @return	None
- * @note	This function assumes an external crystal oscillator
+ * @brief   Clock and PLL initialization based on the external oscillator
+ * @return  None
+ * @note    This function assumes an external crystal oscillator
  * frequency of 12MHz.
  */
 void Chip_SetupXtalClocking(void);
 
 /**
- * @brief	Clock and PLL initialization based on the internal oscillator
- * @return	None
+ * @brief   Clock and PLL initialization based on the internal oscillator
+ * @return  None
  */
 void Chip_SetupIrcClocking(void);
 

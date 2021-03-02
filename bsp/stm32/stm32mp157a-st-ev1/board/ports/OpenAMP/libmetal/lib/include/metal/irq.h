@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	irq.h
- * @brief	Interrupt handling primitives for libmetal.
+ * @file    irq.h
+ * @brief   Interrupt handling primitives for libmetal.
  */
 
 #ifndef __METAL_IRQ__H__
@@ -26,9 +26,9 @@ extern "C" {
 #define METAL_IRQ_HANDLED     1
 
 /**
- * @brief	type of interrupt handler
+ * @brief   type of interrupt handler
  * @param[in]   irq interrupt id
- * @param[in]	priv private data
+ * @param[in]   priv private data
  * @return      irq handled status
  */
 typedef int (*metal_irq_handler) (int irq, void *priv);
@@ -46,9 +46,9 @@ struct metal_device;
  * @return     0 for success, non-zero on failure
  */
 int metal_irq_register(int irq,
-		       metal_irq_handler irq_handler,
-		       struct metal_device *dev,
-		       void *drv_id);
+               metal_irq_handler irq_handler,
+               struct metal_device *dev,
+               void *drv_id);
 
 /**
  * @brief      Unregister interrupt handler for driver ID and/or device.
@@ -71,9 +71,9 @@ int metal_irq_register(int irq,
  * @return     0 for success, non-zero on failure
  */
 int metal_irq_unregister(int irq,
-			metal_irq_handler irq_handler,
-			struct metal_device *dev,
-			void *drv_id);
+            metal_irq_handler irq_handler,
+            struct metal_device *dev,
+            void *drv_id);
 
 /**
  * @brief      disable interrupts
@@ -88,7 +88,7 @@ unsigned int metal_irq_save_disable(void);
 void metal_irq_restore_enable(unsigned int flags);
 
 /**
- * @brief	metal_irq_enable
+ * @brief   metal_irq_enable
  *
  * Enables the given interrupt
  *
@@ -97,7 +97,7 @@ void metal_irq_restore_enable(unsigned int flags);
 void metal_irq_enable(unsigned int vector);
 
 /**
- * @brief	metal_irq_disable
+ * @brief   metal_irq_disable
  *
  * Disables the given interrupt
  *

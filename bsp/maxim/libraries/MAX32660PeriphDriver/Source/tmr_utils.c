@@ -53,9 +53,9 @@ void TMR_Delay(mxc_tmr_regs_t *tmr, unsigned long us, const sys_cfg_tmr_t *sys_c
     if (!us) {
         return;
     }
-    
+
     TMR_TO_Start(tmr, us, sys_cfg);
-    
+
     while (TMR_TO_Check(tmr) != E_TIME_OUT) {}
 }
 
@@ -64,7 +64,7 @@ void TMR_TO_Start(mxc_tmr_regs_t *tmr, unsigned long us, const sys_cfg_tmr_t *sy
 {
     uint64_t ticks;
     int clk_shift = 0;
-    
+
     ticks = (uint64_t)us * (uint64_t)PeripheralClock / (uint64_t)1000000;
     while (ticks > 0xFFFFFFFFUL) {
         ticks >>= 1;
@@ -73,16 +73,16 @@ void TMR_TO_Start(mxc_tmr_regs_t *tmr, unsigned long us, const sys_cfg_tmr_t *sy
     tmr_pres_t prescale = (tmr_pres_t)(clk_shift << MXC_F_TMR_CN_PRES_POS);
 
     TMR_Init(tmr, prescale, sys_cfg);
-    
+
     // Initialize the timer in one-shot mode
     tmr_cfg_t cfg;
     cfg.mode = TMR_MODE_ONESHOT;
     cfg.cmp_cnt = ticks;
     cfg.pol = 0;
-    
+
     TMR_Disable(tmr);
     TMR_Config(tmr, &cfg);
-    
+
     TMR_IntClear(tmr);
     TMR_Enable(tmr);
 }
@@ -115,9 +115,9 @@ unsigned int TMR_TO_Elapsed(mxc_tmr_regs_t *tmr)
 {
     uint32_t elapsed;
     tmr_unit_t units;
-    
+
     TMR_GetTime(tmr, TMR_GetCount(tmr), &elapsed, &units);
-    
+
     switch (units) {
         case TMR_UNIT_NANOSEC:
         default:
@@ -136,10 +136,10 @@ unsigned int TMR_TO_Remaining(mxc_tmr_regs_t *tmr)
 {
     uint32_t remaining_ticks, remaining_time;
     tmr_unit_t units;
-    
+
     remaining_ticks = TMR_GetCompare(tmr) - TMR_GetCount(tmr);
     TMR_GetTime(tmr, remaining_ticks, &remaining_time, &units);
-    
+
     switch (units) {
         case TMR_UNIT_NANOSEC:
         default:

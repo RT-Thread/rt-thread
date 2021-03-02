@@ -211,34 +211,34 @@ extern "C" {
  * values requiring a period as a number of Watchdog timer clock ticks.
  */
 enum wdt_period {
-	/** No Watchdog period. This value can only be used when setting the
-	 *  Window and Early Warning periods; its use as the Watchdog Reset
-	 *  Period is invalid. */
-	WDT_PERIOD_NONE     = 0,
-	/** Watchdog period of 8 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_8CLK     = 1,
-	/** Watchdog period of 16 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_16CLK    = 2,
-	/** Watchdog period of 32 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_32CLK    = 3,
-	/** Watchdog period of 64 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_64CLK    = 4,
-	/** Watchdog period of 128 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_128CLK   = 5,
-	/** Watchdog period of 256 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_256CLK   = 6,
-	/** Watchdog period of 512 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_512CLK   = 7,
-	/** Watchdog period of 1024 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_1024CLK  = 8,
-	/** Watchdog period of 2048 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_2048CLK  = 9,
-	/** Watchdog period of 4096 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_4096CLK  = 10,
-	/** Watchdog period of 8192 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_8192CLK  = 11,
-	/** Watchdog period of 16384 clocks of the Watchdog Timer Generic Clock */
-	WDT_PERIOD_16384CLK = 12,
+    /** No Watchdog period. This value can only be used when setting the
+     *  Window and Early Warning periods; its use as the Watchdog Reset
+     *  Period is invalid. */
+    WDT_PERIOD_NONE     = 0,
+    /** Watchdog period of 8 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_8CLK     = 1,
+    /** Watchdog period of 16 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_16CLK    = 2,
+    /** Watchdog period of 32 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_32CLK    = 3,
+    /** Watchdog period of 64 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_64CLK    = 4,
+    /** Watchdog period of 128 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_128CLK   = 5,
+    /** Watchdog period of 256 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_256CLK   = 6,
+    /** Watchdog period of 512 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_512CLK   = 7,
+    /** Watchdog period of 1024 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_1024CLK  = 8,
+    /** Watchdog period of 2048 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_2048CLK  = 9,
+    /** Watchdog period of 4096 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_4096CLK  = 10,
+    /** Watchdog period of 8192 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_8192CLK  = 11,
+    /** Watchdog period of 16384 clocks of the Watchdog Timer Generic Clock */
+    WDT_PERIOD_16384CLK = 12,
 };
 
 /**
@@ -249,22 +249,22 @@ enum wdt_period {
  *  function before being modified by the user application.
  */
 struct wdt_conf {
-	/** If \c true, the Watchdog will be locked to the current configuration
-	 *  settings when the Watchdog is enabled */
-	bool always_on;
-	/** Enable/Disable the Watchdog Timer */
-	bool enable;
+    /** If \c true, the Watchdog will be locked to the current configuration
+     *  settings when the Watchdog is enabled */
+    bool always_on;
+    /** Enable/Disable the Watchdog Timer */
+    bool enable;
 #if !(SAML21) && !(SAML22) && !(SAMC20) && !(SAMC21) && !(SAMR30)
-	/** GCLK generator used to clock the peripheral except SAM L21/L22/C21/C20/R30*/
-	enum gclk_generator clock_source;
+    /** GCLK generator used to clock the peripheral except SAM L21/L22/C21/C20/R30*/
+    enum gclk_generator clock_source;
 #endif
-	/** Number of Watchdog timer clock ticks until the Watchdog expires */
-	enum wdt_period timeout_period;
-	/** Number of Watchdog timer clock ticks until the reset window opens */
-	enum wdt_period window_period;
-	/** Number of Watchdog timer clock ticks until the early warning flag is
-	 *  set */
-	enum wdt_period early_warning_period;
+    /** Number of Watchdog timer clock ticks until the Watchdog expires */
+    enum wdt_period timeout_period;
+    /** Number of Watchdog timer clock ticks until the reset window opens */
+    enum wdt_period window_period;
+    /** Number of Watchdog timer clock ticks until the early warning flag is
+     *  set */
+    enum wdt_period early_warning_period;
 };
 
 /** \name Configuration and Initialization
@@ -287,17 +287,17 @@ struct wdt_conf {
  */
 static inline bool wdt_is_syncing(void)
 {
-	Wdt *const WDT_module = WDT;
+    Wdt *const WDT_module = WDT;
 
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	if (WDT_module->SYNCBUSY.reg) {
+    if (WDT_module->SYNCBUSY.reg) {
 #else
-	if (WDT_module->STATUS.reg & WDT_STATUS_SYNCBUSY) {
+    if (WDT_module->STATUS.reg & WDT_STATUS_SYNCBUSY) {
 #endif
-		return true;
-	}
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -319,24 +319,24 @@ static inline bool wdt_is_syncing(void)
  *  \param[out] config  Configuration structure to initialize to default values
  */
 static inline void wdt_get_config_defaults(
-		struct wdt_conf *const config)
+        struct wdt_conf *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->always_on            = false;
-	config->enable               = true;
+    /* Default configuration values */
+    config->always_on            = false;
+    config->enable               = true;
 #if !(SAML21) && !(SAML22) && !(SAMC20) && !(SAMC21) && !(SAMR30)
-	config->clock_source         = GCLK_GENERATOR_4;
+    config->clock_source         = GCLK_GENERATOR_4;
 #endif
-	config->timeout_period       = WDT_PERIOD_16384CLK;
-	config->window_period        = WDT_PERIOD_NONE;
-	config->early_warning_period = WDT_PERIOD_NONE;
+    config->timeout_period       = WDT_PERIOD_16384CLK;
+    config->window_period        = WDT_PERIOD_NONE;
+    config->early_warning_period = WDT_PERIOD_NONE;
 }
 
 enum status_code wdt_set_config(
-		const struct wdt_conf *const config);
+        const struct wdt_conf *const config);
 
 /** \brief Determines if the Watchdog timer is currently locked in an enabled state.
  *
@@ -347,12 +347,12 @@ enum status_code wdt_set_config(
  */
 static inline bool wdt_is_locked(void)
 {
-	Wdt *const WDT_module = WDT;
+    Wdt *const WDT_module = WDT;
 
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	return (WDT_module->CTRLA.reg & WDT_CTRLA_ALWAYSON);
+    return (WDT_module->CTRLA.reg & WDT_CTRLA_ALWAYSON);
 #else
-	return (WDT_module->CTRL.reg & WDT_CTRL_ALWAYSON);
+    return (WDT_module->CTRL.reg & WDT_CTRL_ALWAYSON);
 #endif
 }
 
@@ -369,9 +369,9 @@ static inline bool wdt_is_locked(void)
  */
 static inline void wdt_clear_early_warning(void)
 {
-	Wdt *const WDT_module = WDT;
+    Wdt *const WDT_module = WDT;
 
-	WDT_module->INTFLAG.reg = WDT_INTFLAG_EW;
+    WDT_module->INTFLAG.reg = WDT_INTFLAG_EW;
 }
 
 /** \brief Determines if the Watchdog timer early warning period has elapsed.
@@ -385,9 +385,9 @@ static inline void wdt_clear_early_warning(void)
  */
 static inline bool wdt_is_early_warning(void)
 {
-	Wdt *const WDT_module = WDT;
+    Wdt *const WDT_module = WDT;
 
-	return (WDT_module->INTFLAG.reg & WDT_INTFLAG_EW);
+    return (WDT_module->INTFLAG.reg & WDT_INTFLAG_EW);
 }
 
 void wdt_reset_count(void);
@@ -407,14 +407,14 @@ void wdt_reset_count(void);
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>WDT</td>
- *		<td>Watchdog Timer</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>WDT</td>
+ *      <td>Watchdog Timer</td>
+ *  </tr>
  * </table>
  *
  *
@@ -435,18 +435,18 @@ void wdt_reset_count(void);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Driver updated to follow driver type convention:
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Driver updated to follow driver type convention:
  *             \li wdt_init, wdt_enable, wdt_disable functions removed
  *             \li wdt_set_config function added
  *             \li WDT module enable state moved inside the configuration struct </td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -467,36 +467,36 @@ void wdt_reset_count(void);
  * \page asfdoc_sam0_wdt_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42124E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM DA1, SAM D09, SAM R30, and SAM C20/C21</td>
- *	</tr>
- *	<tr>
- *		<td>42124D</td>
- *		<td>12/2014</td>
- *		<td>Added SAM R21 and SAM D10/D11 support</td>
- *	</tr>
- *	<tr>
- *		<td>42124C</td>
- *		<td>01/2014</td>
- *		<td>Add SAM D21 support</td>
- *	</tr>
- *	<tr>
- *		<td>42124B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos</td>
- *	</tr>
- *	<tr>
- *		<td>42124A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</th>
+ *      <th>Date</th>
+ *      <th>Comments</th>
+ *  </tr>
+ *  <tr>
+ *      <td>42124E</td>
+ *      <td>12/2015</td>
+ *      <td>Added support for SAM L21/L22, SAM DA1, SAM D09, SAM R30, and SAM C20/C21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42124D</td>
+ *      <td>12/2014</td>
+ *      <td>Added SAM R21 and SAM D10/D11 support</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42124C</td>
+ *      <td>01/2014</td>
+ *      <td>Add SAM D21 support</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42124B</td>
+ *      <td>06/2013</td>
+ *      <td>Corrected documentation typos</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42124A</td>
+ *      <td>06/2013</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

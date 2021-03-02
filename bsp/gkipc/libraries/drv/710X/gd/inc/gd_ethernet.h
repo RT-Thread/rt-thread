@@ -337,7 +337,7 @@ typedef struct
 {
     GBOOL               bHWReset;
     GD_GPIO_PIN_E       phyreset;
-	U8                  phyType;
+    U8                  phyType;
 } GD_ETH_InitParamsT;
 
 /*!

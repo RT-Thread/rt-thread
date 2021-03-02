@@ -128,8 +128,8 @@ typedef uint32_t board_spi_select_id_t;
 
 //! \brief Polled SPI device definition.
 struct spi_device {
-	//! Board specific select id
-	board_spi_select_id_t id;
+    //! Board specific select id
+    board_spi_select_id_t id;
 };
 
 /** \brief Initialize the SPI in master mode.
@@ -154,7 +154,7 @@ extern void spi_master_init(Spi *p_spi);
  * \param sel_id    Board specific select id.
  */
 extern void spi_master_setup_device(Spi *p_spi, struct spi_device *device,
-		spi_flags_t flags, uint32_t baud_rate, board_spi_select_id_t sel_id);
+        spi_flags_t flags, uint32_t baud_rate, board_spi_select_id_t sel_id);
 
 /**
  * \brief Select the given device on the SPI bus.
@@ -188,7 +188,7 @@ extern void spi_deselect_device(Spi *p_spi, struct spi_device *device);
  */
 static inline void spi_write_single(Spi *p_spi, uint8_t data)
 {
-	spi_put(p_spi, (uint16_t)data);
+    spi_put(p_spi, (uint16_t)data);
 }
 
 /**
@@ -203,7 +203,7 @@ static inline void spi_write_single(Spi *p_spi, uint8_t data)
  * \pre SPI device must be selected with spi_select_device() first.
  */
 extern status_code_t spi_write_packet(Spi *p_spi,
-		const uint8_t *data, size_t len);
+        const uint8_t *data, size_t len);
 
 /** \brief Receive one byte from an SPI device.
  *
@@ -213,7 +213,7 @@ extern status_code_t spi_write_packet(Spi *p_spi,
  */
 static inline void spi_read_single(Spi *p_spi, uint8_t *data)
 {
-	*data = (uint8_t)spi_get(p_spi);
+    *data = (uint8_t)spi_get(p_spi);
 }
 
 /**

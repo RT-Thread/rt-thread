@@ -1,29 +1,29 @@
 /**
-	*****************************************************************************
-	* @file     cmem7_flash.h
-	*
-	* @brief    CMEM7 flash controller source file
-	*
-	*
-	* @version  V1.0
-	* @date     3. September 2013
-	*
-	* @note               
-	*           
-	*****************************************************************************
-	* @attention
-	*
-	* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-	* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-	* TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT, 
-	* INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-	* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-	* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-	*
-	* <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
-	*****************************************************************************
-	*/
-	
+    *****************************************************************************
+    * @file     cmem7_flash.h
+    *
+    * @brief    CMEM7 flash controller source file
+    *
+    *
+    * @version  V1.0
+    * @date     3. September 2013
+    *
+    * @note
+    *
+    *****************************************************************************
+    * @attention
+    *
+    * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+    * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+    * TIME. AS A RESULT, CAPITAL-MICRO SHALL NOT BE HELD LIABLE FOR ANY DIRECT,
+    * INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+    * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+    * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+    *
+    * <h2><center>&copy; COPYRIGHT 2013 Capital-micro </center></h2>
+    *****************************************************************************
+    */
+
 #ifndef __CMEM7_FLASH_H
 #define __CMEM7_FLASH_H
 
@@ -37,15 +37,15 @@
 /** @defgroup FLASH_PROTECT_MODE
   * @{
   */
-#define FLASH_PROTECT_MODE_SW           0       /*!< The Status Register can be written to after a Write 
+#define FLASH_PROTECT_MODE_SW           0       /*!< The Status Register can be written to after a Write
                                                      Enable command.(Default) */
-#define FLASH_PROTECT_MODE_HW           1       /*!< WP pin decides if the Status Register can be written 
+#define FLASH_PROTECT_MODE_HW           1       /*!< WP pin decides if the Status Register can be written
                                                      WP#=0, the Status Register locked
-																									   WP#=1, the Status Register is unlocked and can be written to
+                                                                                                       WP#=1, the Status Register is unlocked and can be written to
                                                      after a Write Enable command */
-#define FLASH_PROTECT_MODE_POWERDOWN    2				/*!< Status Register is protected and can not be written to again
-                                                     until the next Power-Down, Power-Up cycle */	
-#define FLASH_PROTECT_MODE_OTP          3       /*!< Status Register is permanently protected */	
+#define FLASH_PROTECT_MODE_POWERDOWN    2               /*!< Status Register is protected and can not be written to again
+                                                     until the next Power-Down, Power-Up cycle */
+#define FLASH_PROTECT_MODE_OTP          3       /*!< Status Register is permanently protected */
 
 #define IS_FLASH_PROTECT_MODE(MODE)     (((MODE) == FLASH_PROTECT_MODE_SW) || \
                                          ((MODE) == FLASH_PROTECT_MODE_HW) || \
@@ -80,21 +80,21 @@
 #define IS_FLASH_PROTECT_REGION(REGION) (((REGION) == FLASH_PROTECT_REGION_NONE) || \
                                          ((REGION) == FLASH_PROTECT_REGION_UP_64K) || \
                                          ((REGION) == FLASH_PROTECT_REGION_UP_128K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_UP_256K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_UP_512K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_LOW_64K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_UP_256K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_UP_512K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_LOW_64K) || \
                                          ((REGION) == FLASH_PROTECT_REGION_LOW_128K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_LOW_256K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_LOW_512K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_ALL) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_LOW_256K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_LOW_512K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_ALL) || \
                                          ((REGION) == FLASH_PROTECT_REGION_UP_4K) || \
                                          ((REGION) == FLASH_PROTECT_REGION_UP_8K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_UP_16K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_UP_32K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_LOW_4K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_UP_16K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_UP_32K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_LOW_4K) || \
                                          ((REGION) == FLASH_PROTECT_REGION_LOW_8K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_LOW_16K) || \
-																				 ((REGION) == FLASH_PROTECT_REGION_LOW_32K))
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_LOW_16K) || \
+                                                                                 ((REGION) == FLASH_PROTECT_REGION_LOW_32K))
 /**
   * @}
   */
@@ -110,96 +110,96 @@
 #define IS_FLASH_READ_MODE(MODE)       (((MODE) == FLASH_READ_MODE_NORMAL) || \
                                         ((MODE) == FLASH_READ_MODE_FAST) || \
                                         ((MODE) == FLASH_READ_MODE_FAST_DUAL) || \
-																				((MODE) == FLASH_READ_MODE_FAST_QUAD))																								
+                                                                                ((MODE) == FLASH_READ_MODE_FAST_QUAD))
 /**
   * @}
   */
 
 /**
   * @brief  UART initialization structure
-	*/ 
+    */
 typedef struct
 {
   uint8_t FLASH_ClockDividor;       /*!< flash clock dividor, 2 in n times */
-	uint8_t FLASH_ProtectMode;        /*!< Status Register protection mode */
-	uint8_t FLASH_ProtectRegion;      /*!< flash protection region */
-	BOOL FLASH_QuadEnable;            /*!< if allows Quad operation */
-	void (*FLASH_Wait)(void);         /*!< When the former read or write operation is excuting, 
-	                                       Flash has to call a callback to wait it finish. 
-	                                       If null, Flash will wait forever until finish */
+    uint8_t FLASH_ProtectMode;        /*!< Status Register protection mode */
+    uint8_t FLASH_ProtectRegion;      /*!< flash protection region */
+    BOOL FLASH_QuadEnable;            /*!< if allows Quad operation */
+    void (*FLASH_Wait)(void);         /*!< When the former read or write operation is excuting,
+                                           Flash has to call a callback to wait it finish.
+                                           If null, Flash will wait forever until finish */
 } FLASH_InitTypeDef;
 
 /**
   * @brief  flash initialization
   * @note   This function should be called at first before any other interfaces.
-	*					Users should make sure that doesn't erase or write data in a 
-	*					write-protected region.
-	* @param[in] init A pointer to structure FLASH_InitTypeDef
+    *                   Users should make sure that doesn't erase or write data in a
+    *                   write-protected region.
+    * @param[in] init A pointer to structure FLASH_InitTypeDef
   * @retval None
-	*/ 
+    */
 void FLASH_Init(FLASH_InitTypeDef* init);
 
 /**
-  * @brief  Get flash status 
+  * @brief  Get flash status
   * @param[out] ProtectMode flash protect mode, ref as @ref FLASH_PROTECT_MODE
   * @param[out] ProtectRegion flash protect region, ref as @ref FLASH_PROTECT_REGION
-	* @param[out] QuadEnable quad speed mode enable bit
-	* @retval None
-	*/ 
+    * @param[out] QuadEnable quad speed mode enable bit
+    * @retval None
+    */
 void FLASH_GetStatus(uint8_t* ProtectMode, uint8_t* ProtectRegion, BOOL* QuadEnable);
 
 /**
   * @brief  Erase a sector, which is 4K bytes large.
   * @param[in] addr Start address of a sector
-	* @retval None
-	*/
+    * @retval None
+    */
 void FLASH_EraseSector(uint32_t addr);
 
 /**
   * @brief  Erase a block, which is 32K bytes large.
   * @param[in] addr Start address of a block
-	* @retval None
-	*/
+    * @retval None
+    */
 void FLASH_Erase32kBlock(uint32_t addr);
 
 /**
   * @brief  Erase a block, which is 64K bytes large.
   * @param[in] addr Start address of a block
-	* @retval None
-	*/
+    * @retval None
+    */
 void FLASH_Erase64kBlock(uint32_t addr);
 
 /**
   * @brief  Erase all chip
-  * @param	None
-	* @retval None
-	*/
+  * @param  None
+    * @retval None
+    */
 void FLASH_EraseChip(void);
 
 /**
   * @brief  Enable flash power down mode or not
   * @param[in] enable The bit indicates if flash power down mode is enable or not
-	* @retval None
-	*/
+    * @retval None
+    */
 void FLASH_EnableDeepPowerDown(BOOL enable);
 
 /**
   * @brief  Read data from flash
-	* @param[in] ReadMode Normal or fast read, ref as @ref FLASH_READ_MODE
-	* @param[in] addr Start address to be read
-	* @param[in] size Expected data size to be read
-	* @param[out] data A user-allocated buffer to fetch data to be read
+    * @param[in] ReadMode Normal or fast read, ref as @ref FLASH_READ_MODE
+    * @param[in] addr Start address to be read
+    * @param[in] size Expected data size to be read
+    * @param[out] data A user-allocated buffer to fetch data to be read
   * @retval None
-	*/
+    */
 void FLASH_Read(uint8_t ReadMode, uint32_t addr, uint16_t size, uint8_t* data);
 
 /**
   * @brief  Write data to flash
-	* @param[in] addr Start address to be read
-	* @param[in] size Expected data size to be read
-	* @param[out] data A pointer to the data to be written
+    * @param[in] addr Start address to be read
+    * @param[in] size Expected data size to be read
+    * @param[out] data A pointer to the data to be written
   * @retval None
-	*/
+    */
 void FLASH_Write(uint32_t addr, uint16_t size, uint8_t* data);
 
 

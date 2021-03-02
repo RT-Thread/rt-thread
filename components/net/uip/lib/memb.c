@@ -63,8 +63,8 @@ memb_alloc(struct memb_blocks *m)
   for(i = 0; i < m->num; ++i) {
     if(m->count[i] == 0) {
       /* If this block was unused, we increase the reference count to
-	 indicate that it now is used and return a pointer to the
-	 memory block. */
+     indicate that it now is used and return a pointer to the
+     memory block. */
       ++(m->count[i]);
       return (void *)((char *)m->mem + (i * m->size));
     }
@@ -85,13 +85,13 @@ memb_free(struct memb_blocks *m, void *ptr)
      which the pointer "ptr" points to. */
   ptr2 = (char *)m->mem;
   for(i = 0; i < m->num; ++i) {
-    
+
     if(ptr2 == (char *)ptr) {
       /* We've found to block to which "ptr" points so we decrease the
-	 reference count and return the new value of it. */
+     reference count and return the new value of it. */
       if(m->count[i] > 0) {
-	/* Make sure that we don't deallocate free memory. */
-	--(m->count[i]);
+    /* Make sure that we don't deallocate free memory. */
+    --(m->count[i]);
       }
       return m->count[i];
     }

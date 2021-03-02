@@ -34,15 +34,15 @@
 /* Put CFV2 descriptors in RAM */
 #define USB_DESC_CONST
 #else
-#define USB_DESC_CONST	const
+#define USB_DESC_CONST  const
 #endif
 /* structure containing details of all the endpoints used by this device */
 USB_DESC_CONST USB_ENDPOINTS usb_desc_runtime_ep = { HID_DESC_ENDPOINT_COUNT,
-		{HID_ENDPOINT,
-				USB_INTERRUPT_PIPE,
-				USB_SEND,
-				HID_ENDPOINT_PACKET_SIZE
-		}
+        {HID_ENDPOINT,
+                USB_INTERRUPT_PIPE,
+                USB_SEND,
+                HID_ENDPOINT_PACKET_SIZE
+        }
 };
 
 USB_DESC_CONST USB_ENDPOINTS usb_desc_dfu_ep = { DFU_DESC_ENDPOINT_COUNT };
@@ -141,7 +141,7 @@ uint_8 USB_DESC_CONST g_config_runtime_descriptor[CONFIG_DESC_SIZE_RUNTIME] =
     USB_DFU_FUNCTIONAL_DESCRIPTOR,                       /* Functional descriptor type */
     (DETACH<<3)|(MANIFESTATION<<2)|(BITCANUPLOAD<<1)|BITCANDOWNLOAD,/*  bmAttributes */
     0x64,0x00,                                       /* wDetachTimeOut   */
-    MAX_BLOCK_SIZE,0x00, 			                 /* wTransferSize IN BYTES */
+    MAX_BLOCK_SIZE,0x00,                             /* wTransferSize IN BYTES */
     0x10,0x01                                        /* bcdDFUVersion */
 
 };
@@ -710,19 +710,19 @@ unsigned char *firmware_address = (unsigned char *)0x8000;
 unsigned char *manifest_address = (unsigned char *)0x8D00;
 unsigned char *firmware_size_address = (unsigned char *)(0x8D00+MAX_FIRMWARE_SIZE);
 #elif defined(_MCF51JM128_H)
-	unsigned long *firmware_address = (unsigned long *)0x0001E000;
-	unsigned long *manifest_address = (unsigned long *)0x0001F000;
-	unsigned long *firmware_size_address = (unsigned long *)(0x0001FF00);
+    unsigned long *firmware_address = (unsigned long *)0x0001E000;
+    unsigned long *manifest_address = (unsigned long *)0x0001F000;
+    unsigned long *firmware_size_address = (unsigned long *)(0x0001FF00);
 #elif defined(__MCF52xxx_H__)
-	#if defined(USED_EXTERNAL_FLASH)
-	unsigned char *firmware_address = (unsigned char *)0x2000;
-	unsigned char *manifest_address = (unsigned char *)0x6000;
-	unsigned char *firmware_size_address = (unsigned char *)(0x2300);
-	#else
-	unsigned long *firmware_address = (unsigned long *)0x0001E000;
-	unsigned long *manifest_address = (unsigned long *)0x0001F000;
-	unsigned long *firmware_size_address = (unsigned long *)(0x0001FF00);
-	#endif
+    #if defined(USED_EXTERNAL_FLASH)
+    unsigned char *firmware_address = (unsigned char *)0x2000;
+    unsigned char *manifest_address = (unsigned char *)0x6000;
+    unsigned char *firmware_size_address = (unsigned char *)(0x2300);
+    #else
+    unsigned long *firmware_address = (unsigned long *)0x0001E000;
+    unsigned long *manifest_address = (unsigned long *)0x0001F000;
+    unsigned long *firmware_size_address = (unsigned long *)(0x0001FF00);
+    #endif
 #elif defined (_MC9S08JM60_H)
 unsigned char *firmware_address = (unsigned char *)0xF000;
 unsigned char *manifest_address = (unsigned char *)0xFAB0;
@@ -732,8 +732,8 @@ unsigned char *firmware_address = (unsigned char *)0xFA00;
 unsigned char *manifest_address = (unsigned char *)0xFB00;
 unsigned char *firmware_size_address = (unsigned char *)(0xFC00+MAX_FIRMWARE_SIZE);
 #elif (defined (__MK_xxx_H__)|| defined (MCU_mcf51jf128))
-volatile uint_32 firmware_address =	0x14000;
-volatile uint_32 manifest_address = 	0x15000;
+volatile uint_32 firmware_address = 0x14000;
+volatile uint_32 manifest_address =     0x15000;
 volatile uint_32 firmware_size_address = 0x15000 + MAX_FIRMWARE_SIZE ;
 #endif
 /**************************************************************************//*!
@@ -767,36 +767,36 @@ uint_8 USB_Class_DFU_Dnload
     uint_32 timeout;
     UNUSED(controller_ID)
     if (*size == 0)
-	    {
-	        /* PwPollTimeOut for manifestation phase */
-	        timeout = (uint_32)(MAX_BLOCK_SIZE*(wBlockNum+1));
-	        USB_Class_DFU_set_bwPoll_TimeOut(timeout);
-	    }
-	 else
-	 	{
-	 		timeout = (uint_32)*size;
-		    USB_Class_DFU_set_bwPoll_TimeOut(timeout);
-		    if ((wBlockNum * MAX_BLOCK_SIZE) > MAX_FIRMWARE_SIZE)
-		    {
-		    	return USBERR_INVALID_REQ_TYPE;
-		    }
+        {
+            /* PwPollTimeOut for manifestation phase */
+            timeout = (uint_32)(MAX_BLOCK_SIZE*(wBlockNum+1));
+            USB_Class_DFU_set_bwPoll_TimeOut(timeout);
+        }
+     else
+        {
+            timeout = (uint_32)*size;
+            USB_Class_DFU_set_bwPoll_TimeOut(timeout);
+            if ((wBlockNum * MAX_BLOCK_SIZE) > MAX_FIRMWARE_SIZE)
+            {
+                return USBERR_INVALID_REQ_TYPE;
+            }
 
-		    Final_Block = wBlockNum;
-		    if (wBlockNum == 0)
-		    {
-		       (void)USB_Class_DFU_App_Reset_Flag_Manifest();
-		       firmware_size = 0;
-		    }
-		    for (i=0;i<*size;i++)
-		    {
-		#if (STORAGE_FIRMWARE == TRUE)          /* Check storage mode */
-		        firmware_block[i] = *(uint_8_ptr)(*data+i);
-		#else
-		        s_dnload[wBlockNum*MAX_BLOCK_SIZE+i]=*(*data+i);
-		#endif
-		    }
-		    firmware_size += *size;
-	 	}
+            Final_Block = wBlockNum;
+            if (wBlockNum == 0)
+            {
+               (void)USB_Class_DFU_App_Reset_Flag_Manifest();
+               firmware_size = 0;
+            }
+            for (i=0;i<*size;i++)
+            {
+        #if (STORAGE_FIRMWARE == TRUE)          /* Check storage mode */
+                firmware_block[i] = *(uint_8_ptr)(*data+i);
+        #else
+                s_dnload[wBlockNum*MAX_BLOCK_SIZE+i]=*(*data+i);
+        #endif
+            }
+            firmware_size += *size;
+        }
     return USB_OK;
 }
 /**************************************************************************//*!
@@ -804,12 +804,12 @@ uint_8 USB_Class_DFU_Dnload
  * @name  USB_Class_DFU_Flashing
  *
  * @brief   This function erase a sector in flash memory at
- *			manifest_address,firmware_address.
- *			Write the data block received at DFU_Dnload_Sync_State to flash memory.
+ *          manifest_address,firmware_address.
+ *          Write the data block received at DFU_Dnload_Sync_State to flash memory.
  *
- * @param 	none
+ * @param   none
  *
- * @return 	none
+ * @return  none
  *
  ******************************************************************************
  *
@@ -818,17 +818,17 @@ void USB_Class_DFU_Flashing(void)
 {
 
 #if (STORAGE_FIRMWARE == TRUE)          /* Check storage mode */
-	DisableInterrupts;
-	    if (Final_Block == 0)
-	    {
-			(void)Flash_SectorErase(firmware_address);
-	    }
-	#if (defined (_MC9S08_H)|| defined (USED_EXTERNAL_FLASH)|| defined(__MK_xxx_H__))||(defined MCU_mcf51jf128)
-	    (void)Flash_ByteProgram(firmware_address+Final_Block*MAX_BLOCK_SIZE,firmware_block,MAX_BLOCK_SIZE);
-	#else
-	    (void)Flash_ByteProgram(firmware_address+Final_Block*MAX_BLOCK_SIZE/4,(uint_32_ptr)firmware_block,MAX_BLOCK_SIZE);
-	#endif
-	EnableInterrupts;
+    DisableInterrupts;
+        if (Final_Block == 0)
+        {
+            (void)Flash_SectorErase(firmware_address);
+        }
+    #if (defined (_MC9S08_H)|| defined (USED_EXTERNAL_FLASH)|| defined(__MK_xxx_H__))||(defined MCU_mcf51jf128)
+        (void)Flash_ByteProgram(firmware_address+Final_Block*MAX_BLOCK_SIZE,firmware_block,MAX_BLOCK_SIZE);
+    #else
+        (void)Flash_ByteProgram(firmware_address+Final_Block*MAX_BLOCK_SIZE/4,(uint_32_ptr)firmware_block,MAX_BLOCK_SIZE);
+    #endif
+    EnableInterrupts;
 #endif
 
 }
@@ -867,34 +867,34 @@ uint_8 USB_Class_DFU_Upload
     /* if interface valid */
     if (BlockNum == 0)
     {
-    	firmware_offset = 0;
+        firmware_offset = 0;
 #if (defined(_MCF51_H)||defined(__MCF52xxx_H__))
     #if defined(USED_EXTERNAL_FLASH)
         if(*firmware_size_address == 0xFF)
-    	      return  USBERR_INVALID_REQ_TYPE;
-    	  else
-    	      firmware_size = (uint_16)(*(uint_16*)(firmware_size_address));
+              return  USBERR_INVALID_REQ_TYPE;
+          else
+              firmware_size = (uint_16)(*(uint_16*)(firmware_size_address));
     #else
-    	  if(*firmware_size_address == 0xFFFFFFFF)
-    	      return  USBERR_INVALID_REQ_TYPE;
-    	  else
-    	      firmware_size = ((*firmware_size_address)>>16);
+          if(*firmware_size_address == 0xFFFFFFFF)
+              return  USBERR_INVALID_REQ_TYPE;
+          else
+              firmware_size = ((*firmware_size_address)>>16);
     #endif
 #else
     if((uint_8)(*(uint_8*)firmware_size_address) == 0xFF)
-    	  return  USBERR_INVALID_REQ_TYPE;
+          return  USBERR_INVALID_REQ_TYPE;
     else
-    	  firmware_size = (uint_16)(*(uint_16*)(firmware_size_address));
+          firmware_size = (uint_16)(*(uint_16*)(firmware_size_address));
 #endif
     }
     /* Calculate size of response frame */
     if((firmware_size - firmware_offset) >= wLength)
     {
-    	*size = wLength;
+        *size = wLength;
     }
     else
     {
-    	*size = (USB_PACKET_SIZE)(firmware_size - firmware_offset);
+        *size = (USB_PACKET_SIZE)(firmware_size - firmware_offset);
     }
 
     /* prepare data to response */
@@ -904,7 +904,7 @@ uint_8 USB_Class_DFU_Upload
     }
 
     /* update firmware offset */
-  	firmware_offset = (uint_16)(firmware_offset + wLength);
+    firmware_offset = (uint_16)(firmware_offset + wLength);
     *data = buffer;
 
     return USB_OK;
@@ -922,27 +922,27 @@ uint_8 USB_Class_DFU_Upload
  ******************************************************************************
  * Upload firmware image
  *****************************************************************************/
-	void USB_Class_DFU_Manifest(void)
-	{
-		DisableInterrupts;
-	#if (STORAGE_FIRMWARE == TRUE)
-		#if ((!defined(USED_EXTERNAL_FLASH)) && (!defined(_MC9S08JS16_H) ) && (!defined(_MC9S08JM16_H) ) )
-		(void)Flash_SectorErase(manifest_address);
-		#endif
-	#else
-		(void)Flash_SectorErase(manifest_address);
-	#endif
-		/* Check storage mode */
-	#if (STORAGE_FIRMWARE == TRUE)
-		(void)Flash_ByteProgram(manifest_address,firmware_address,firmware_size);
-	#else
-		(void)Flash_ByteProgram(manifest_address,(unsigned long *)s_dnload,firmware_size);
-	#endif
-	#if (defined (_MC9S08_H)|| defined(_MCF51JM128_H)||defined(_MCF52221_H_))
-		(void)Flash_SectorErase(firmware_size_address);
-	#endif
-		(void)Flash_ByteProgram(firmware_size_address,(uint_32_ptr)(&firmware_size),2);
-		EnableInterrupts;
-		USB_Class_DFU_App_Set_Flag_Manifest();
-	}
+    void USB_Class_DFU_Manifest(void)
+    {
+        DisableInterrupts;
+    #if (STORAGE_FIRMWARE == TRUE)
+        #if ((!defined(USED_EXTERNAL_FLASH)) && (!defined(_MC9S08JS16_H) ) && (!defined(_MC9S08JM16_H) ) )
+        (void)Flash_SectorErase(manifest_address);
+        #endif
+    #else
+        (void)Flash_SectorErase(manifest_address);
+    #endif
+        /* Check storage mode */
+    #if (STORAGE_FIRMWARE == TRUE)
+        (void)Flash_ByteProgram(manifest_address,firmware_address,firmware_size);
+    #else
+        (void)Flash_ByteProgram(manifest_address,(unsigned long *)s_dnload,firmware_size);
+    #endif
+    #if (defined (_MC9S08_H)|| defined(_MCF51JM128_H)||defined(_MCF52221_H_))
+        (void)Flash_SectorErase(firmware_size_address);
+    #endif
+        (void)Flash_ByteProgram(firmware_size_address,(uint_32_ptr)(&firmware_size),2);
+        EnableInterrupts;
+        USB_Class_DFU_App_Set_Flag_Manifest();
+    }
 /*end of file*/

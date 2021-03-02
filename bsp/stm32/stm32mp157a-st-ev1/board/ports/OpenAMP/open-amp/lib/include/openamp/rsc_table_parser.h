@@ -37,8 +37,8 @@ typedef int (*rsc_handler) (struct remoteproc *rproc, void *rsc);
  *
  */
 int handle_rsc_table(struct remoteproc *rproc,
-		     struct resource_table *rsc_table, int len,
-		     struct metal_io_region *io);
+             struct resource_table *rsc_table, int len,
+             struct metal_io_region *io);
 int handle_carve_out_rsc(struct remoteproc *rproc, void *rsc);
 int handle_trace_rsc(struct remoteproc *rproc, void *rsc);
 int handle_vdev_rsc(struct remoteproc *rproc, void *rsc);
@@ -61,4 +61,4 @@ size_t find_rsc(void *rsc_table, unsigned int rsc_type, unsigned int index);
 }
 #endif
 
-#endif				/* RSC_TABLE_PARSER_H */
+#endif              /* RSC_TABLE_PARSER_H */

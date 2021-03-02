@@ -2,7 +2,7 @@
 *   @brief LIN Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -48,7 +48,7 @@ typedef volatile struct linBase
     uint32      FLR;          /**< 0x001C: interrupt flag register                */
     uint32      INTVECT0;     /**< 0x0020: interrupt vector Offset 0              */
     uint32      INTVECT1;     /**< 0x0024: interrupt vector Offset 1              */
-    uint32      FORMAT;       /**< 0x0028: Format Control Register                */	
+    uint32      FORMAT;       /**< 0x0028: Format Control Register                */
     uint32      BRSR;         /**< 0x002C: Baud rate selection register           */
     uint32      ED;           /**< 0x0030: Emulation register                     */
     uint32      RD;           /**< 0x0034: Receive data register                  */
@@ -65,7 +65,7 @@ typedef volatile struct linBase
     uint32      COMP;         /**< 0x0060: Compare register                       */
     uint8       RDx[8U];      /**< 0x0064-0x0068: RX buffer register              */
     uint32      MASK;         /**< 0x006C: Mask register                          */
-    uint32      ID;           /**< 0x0070: Identification Register                */	
+    uint32      ID;           /**< 0x0070: Identification Register                */
     uint8       TDx[8U];      /**< 0x0074-0x0078: TX buffer register              */
     uint32      MBRSR;        /**< 0x007C: Maximum baud rate selection register   */
     uint32      SL;           /**< 0x0080: Pin slew rate register                 */

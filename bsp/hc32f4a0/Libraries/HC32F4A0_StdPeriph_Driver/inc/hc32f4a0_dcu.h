@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
  * @file  hc32f4a0_dcu.h
- * @brief This file contains all the functions prototypes of the DCU(Data 
+ * @brief This file contains all the functions prototypes of the DCU(Data
  *        Computing Unit) driver library.
  @verbatim
    Change Logs:

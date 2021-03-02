@@ -34,15 +34,15 @@
 
 /** @addtogroup ADC
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup ADC_Exported_Types ADC Exported Types
   * @{
   */
 
-/** 
-  * @brief  Structure definition of ADC and regular group initialization 
+/**
+  * @brief  Structure definition of ADC and regular group initialization
   * @note   Parameters of this structure are shared within 2 scopes:
   *          - Scope entire ADC (affects regular and injected groups): ClockPrescaler, Resolution, ScanConvMode, DataAlign, ScanConvMode, EOCSelection, LowPowerAutoWait, LowPowerAutoPowerOff, ChannelsBank.
   *          - Scope regular group: ContinuousConvMode, NbrOfConversion, DiscontinuousConvMode, NbrOfDiscConversion, ExternalTrigConvEdge, ExternalTrigConv.
@@ -58,10 +58,10 @@ typedef struct
 {
   uint32_t ClockPrescaler;        /*!< Select ADC clock source (asynchronous clock derived from HSI RC oscillator) and clock prescaler.
                                        This parameter can be a value of @ref ADC_ClockPrescaler
-                                       Note: In case of usage of channels on injected group, ADC frequency should be lower than AHB clock frequency /4 for resolution 12 or 10 bits, 
+                                       Note: In case of usage of channels on injected group, ADC frequency should be lower than AHB clock frequency /4 for resolution 12 or 10 bits,
                                              AHB clock frequency /3 for resolution 8 bits, AHB clock frequency /2 for resolution 6 bits.
                                        Note: HSI RC oscillator must be preliminarily enabled at RCC top level. */
-  uint32_t Resolution;            /*!< Configures the ADC resolution. 
+  uint32_t Resolution;            /*!< Configures the ADC resolution.
                                        This parameter can be a value of @ref ADC_Resolution */
   uint32_t DataAlign;             /*!< Specifies ADC data alignment to right (MSB on register bit 11 and LSB on register bit 0) (default setting)
                                        or to left (if regular group: MSB on register bit 15 and LSB on register bit 4, if injected group (MSB kept as signed value due to potential negative value after offset application): MSB on register bit 14 and LSB on register bit 3).
@@ -82,7 +82,7 @@ typedef struct
                                              If overrun feature is intended to be bypassed, use ADC in mode 'polling' or 'interruption' with parameter EOCSelection must be set to end of sequence */
   uint32_t LowPowerAutoWait;      /*!< Selects the dynamic low power Auto Delay: new conversion start only when the previous
                                        conversion (for regular group) or previous sequence (for injected group) has been treated by user software, using function HAL_ADC_GetValue() or HAL_ADCEx_InjectedGetValue().
-                                       This feature automatically adapts the speed of ADC to the speed of the system that reads the data. Moreover, this avoids risk of overrun for low frequency applications. 
+                                       This feature automatically adapts the speed of ADC to the speed of the system that reads the data. Moreover, this avoids risk of overrun for low frequency applications.
                                        This parameter can be a value of @ref ADC_LowPowerAutoWait.
                                        Note: Do not use with interruption or DMA (HAL_ADC_Start_IT(), HAL_ADC_Start_DMA()) since they have to clear immediately the EOC flag to free the IRQ vector sequencer.
                                              Do use with polling: 1. Start conversion with HAL_ADC_Start(), 2. Later on, when conversion data is needed: use HAL_ADC_PollForConversion() to ensure that conversion is completed
@@ -128,17 +128,17 @@ typedef struct
                                        This parameter can be set to ENABLE or DISABLE. */
 }ADC_InitTypeDef;
 
-/** 
-  * @brief  Structure definition of ADC channel for regular group   
+/**
+  * @brief  Structure definition of ADC channel for regular group
   * @note   The setting of these parameters with function HAL_ADC_ConfigChannel() is conditioned to ADC state.
   *         ADC can be either disabled or enabled without conversion on going on regular group.
-  */ 
-typedef struct 
+  */
+typedef struct
 {
   uint32_t Channel;                /*!< Specifies the channel to configure into ADC regular group.
                                         This parameter can be a value of @ref ADC_channels
                                         Note: Depending on devices, some channels may not be available on package pins. Refer to device datasheet for channels availability.
-                                              Maximum number of channels by device category (without taking in account each device package constraints): 
+                                              Maximum number of channels by device category (without taking in account each device package constraints):
                                               STM32L1 category 1, 2: 24 channels on external pins + 3 channels on internal measurement paths (VrefInt, Temp sensor, Vcomp): Channel 0 to channel 26.
                                               STM32L1 category 3:    25 channels on external pins + 3 channels on internal measurement paths (VrefInt, Temp sensor, Vcomp): Channel 0 to channel 26, 1 additional channel in bank B. Note: OPAMP1 and OPAMP2 are connected internally but not increasing internal channels number: they are sharing ADC input with external channels ADC_IN3 and ADC_IN8.
                                               STM32L1 category 4, 5: 40 channels on external pins + 3 channels on internal measurement paths (VrefInt, Temp sensor, Vcomp): Channel 0 to channel 31, 11 additional channels in bank B. Note: OPAMP1 and OPAMP2 are connected internally but not increasing internal channels number: they are sharing ADC input with external channels ADC_IN3 and ADC_IN8.
@@ -179,9 +179,9 @@ typedef struct
   uint32_t WatchdogNumber;    /*!< Reserved for future use, can be set to 0 */
 }ADC_AnalogWDGConfTypeDef;
 
-/** 
+/**
   * @brief  HAL ADC state machine: ADC states definition (bitfields)
-  */ 
+  */
 /* States of ADC global scope */
 #define HAL_ADC_STATE_RESET             (0x00000000U)    /*!< ADC not yet initialized or disabled */
 #define HAL_ADC_STATE_READY             (0x00000001U)    /*!< ADC peripheral ready for use */
@@ -217,7 +217,7 @@ typedef struct
 
 /**
   * @brief  ADC handle Structure definition
-  */ 
+  */
 typedef struct __ADC_HandleTypeDef
 {
   ADC_TypeDef                   *Instance;              /*!< Register base address */
@@ -283,7 +283,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @{
   */
 #define HAL_ADC_ERROR_NONE        (0x00U)   /*!< No error                                              */
-#define HAL_ADC_ERROR_INTERNAL    (0x01U)   /*!< ADC IP internal error: if problem of clocking, 
+#define HAL_ADC_ERROR_INTERNAL    (0x01U)   /*!< ADC IP internal error: if problem of clocking,
                                                           enable/disable, erroneous state                       */
 #define HAL_ADC_ERROR_OVR         (0x02U)   /*!< Overrun error                                         */
 #define HAL_ADC_ERROR_DMA         (0x04U)   /*!< DMA transfer error                                    */
@@ -522,7 +522,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_SAMPLETIME_ALLCHANNELS_SMPR0BIT2                                          \
      (ADC_SMPR0_SMP31_2 | ADC_SMPR0_SMP30_2 )
 #endif /* STM32L151xCA || STM32L151xD || STM32L152xCA || STM32L152xD || STM32L162xCA || STM32L162xD || STM32L151xE || STM32L151xDX || STM32L152xE || STM32L152xDX || STM32L162xE || STM32L162xDX */
-       
+
 #define ADC_SAMPLETIME_ALLCHANNELS_SMPR3BIT1                                          \
      (ADC_SMPR3_SMP9_1 | ADC_SMPR3_SMP8_1 | ADC_SMPR3_SMP7_1 | ADC_SMPR3_SMP6_1 |     \
       ADC_SMPR3_SMP5_1 | ADC_SMPR3_SMP4_1 | ADC_SMPR3_SMP3_1 | ADC_SMPR3_SMP2_1 |     \
@@ -544,7 +544,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define ADC_SAMPLETIME_ALLCHANNELS_SMPR0BIT1                                          \
      (ADC_SMPR0_SMP31_1 | ADC_SMPR0_SMP30_1 )
 #endif /* STM32L151xCA || STM32L151xD || STM32L152xCA || STM32L152xD || STM32L162xCA || STM32L162xD || STM32L151xE || STM32L151xDX || STM32L152xE || STM32L152xDX || STM32L162xE || STM32L162xDX */
-       
+
 #define ADC_SAMPLETIME_ALLCHANNELS_SMPR3BIT0                                          \
      (ADC_SMPR3_SMP9_0 | ADC_SMPR3_SMP8_0 | ADC_SMPR3_SMP7_0 | ADC_SMPR3_SMP6_0 |     \
       ADC_SMPR3_SMP5_0 | ADC_SMPR3_SMP4_0 | ADC_SMPR3_SMP3_0 | ADC_SMPR3_SMP2_0 |     \
@@ -669,7 +669,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 
 /**
   * @}
-  */ 
+  */
 
 
 /* Private constants ---------------------------------------------------------*/
@@ -741,7 +741,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   */
 #define __HAL_ADC_ENABLE_IT(__HANDLE__, __INTERRUPT__)                         \
   (SET_BIT((__HANDLE__)->Instance->CR1, (__INTERRUPT__)))
-    
+
 /**
   * @brief Disable the ADC end of conversion interrupt.
   * @param __HANDLE__: ADC handle
@@ -821,7 +821,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 #define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__)                               \
   ((__HANDLE__)->State = HAL_ADC_STATE_RESET)
 #endif
-   
+
 /**
   * @}
   */
@@ -880,7 +880,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 
 /**
   * @brief Set ADC number of ranks into regular channel sequence length.
-  * @param _NbrOfConversion_: Regular channel sequence length 
+  * @param _NbrOfConversion_: Regular channel sequence length
   * @retval None
   */
 #define ADC_SQR1_L_SHIFT(_NbrOfConversion_)                                    \
@@ -889,7 +889,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief Set the ADC's sample time for channel numbers between 10 and 18.
   * @param _SAMPLETIME_: Sample time parameter.
-  * @param _CHANNELNB_: Channel number.  
+  * @param _CHANNELNB_: Channel number.
   * @retval None
   */
 #define ADC_SMPR2(_SAMPLETIME_, _CHANNELNB_)                                   \
@@ -898,7 +898,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief Set the ADC's sample time for channel numbers between 0 and 9.
   * @param _SAMPLETIME_: Sample time parameter.
-  * @param _CHANNELNB_: Channel number.  
+  * @param _CHANNELNB_: Channel number.
   * @retval None
   */
 #define ADC_SMPR3(_SAMPLETIME_, _CHANNELNB_)                                   \
@@ -907,7 +907,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief Set the selected regular channel rank for rank between 1 and 6.
   * @param _CHANNELNB_: Channel number.
-  * @param _RANKNB_: Rank number.    
+  * @param _RANKNB_: Rank number.
   * @retval None
   */
 #define ADC_SQR5_RK(_CHANNELNB_, _RANKNB_)                                     \
@@ -916,7 +916,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief Set the selected regular channel rank for rank between 7 and 12.
   * @param _CHANNELNB_: Channel number.
-  * @param _RANKNB_: Rank number.    
+  * @param _RANKNB_: Rank number.
   * @retval None
   */
 #define ADC_SQR4_RK(_CHANNELNB_, _RANKNB_)                                     \
@@ -925,7 +925,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief Set the selected regular channel rank for rank between 13 and 18.
   * @param _CHANNELNB_: Channel number.
-  * @param _RANKNB_: Rank number.    
+  * @param _RANKNB_: Rank number.
   * @retval None
   */
 #define ADC_SQR3_RK(_CHANNELNB_, _RANKNB_)                                     \
@@ -934,21 +934,21 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @brief Set the selected regular channel rank for rank between 19 and 24.
   * @param _CHANNELNB_: Channel number.
-  * @param _RANKNB_: Rank number.    
+  * @param _RANKNB_: Rank number.
   * @retval None
   */
 #define ADC_SQR2_RK(_CHANNELNB_, _RANKNB_)                                     \
   ((_CHANNELNB_) << (5 * ((_RANKNB_) - 19)))
-      
+
 /**
   * @brief Set the selected regular channel rank for rank between 25 and 28.
   * @param _CHANNELNB_: Channel number.
-  * @param _RANKNB_: Rank number.    
+  * @param _RANKNB_: Rank number.
   * @retval None
   */
 #define ADC_SQR1_RK(_CHANNELNB_, _RANKNB_)                                     \
   ((_CHANNELNB_) << (5 * ((_RANKNB_) - 25)))
-      
+
 /**
   * @brief Set the injected sequence length.
   * @param _JSQR_JL_: Sequence length.
@@ -1143,7 +1143,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
                                   ((TIME) == ADC_SAMPLETIME_384CYCLES)   )
 
 #if defined(STM32L100xC) || defined (STM32L151xC) || defined (STM32L152xC) || defined (STM32L162xC) || defined(STM32L151xCA) || defined (STM32L151xD) || defined (STM32L152xCA) || defined (STM32L152xD) || defined (STM32L162xCA) || defined (STM32L162xD) || defined(STM32L151xE) || defined(STM32L151xDX) || defined (STM32L152xE) || defined (STM32L152xDX) || defined (STM32L162xE) || defined (STM32L162xDX)
-       
+
 #define IS_ADC_REGULAR_RANK(CHANNEL) (((CHANNEL) == ADC_REGULAR_RANK_1 ) || \
                                       ((CHANNEL) == ADC_REGULAR_RANK_2 ) || \
                                       ((CHANNEL) == ADC_REGULAR_RANK_3 ) || \
@@ -1222,11 +1222,11 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   * @brief Verify that a ADC data is within range corresponding to
   *        ADC resolution.
   * @param __RESOLUTION__: ADC resolution (12, 10, 8 or 6 bits).
-  * @param __ADC_DATA__: value checked against the resolution.     
+  * @param __ADC_DATA__: value checked against the resolution.
   * @retval SET: ADC data is within range corresponding to ADC resolution
   *         RESET: ADC data is not within range corresponding to ADC resolution
   *
-  */  
+  */
 #define IS_ADC_RANGE(__RESOLUTION__, __ADC_DATA__)                                          \
    ((((__RESOLUTION__) == ADC_RESOLUTION_12B) && ((__ADC_DATA__) <= (0x0FFFU))) || \
     (((__RESOLUTION__) == ADC_RESOLUTION_10B) && ((__ADC_DATA__) <= (0x03FFU))) || \
@@ -1245,8 +1245,8 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
 /**
   * @}
   */
-    
-    
+
+
 /* Include ADC HAL Extension module */
 #include "stm32l1xx_hal_adc_ex.h"
 
@@ -1347,12 +1347,12 @@ HAL_StatusTypeDef ADC_Enable(ADC_HandleTypeDef* hadc);
 HAL_StatusTypeDef ADC_ConversionStop_Disable(ADC_HandleTypeDef* hadc);
 /**
   * @}
-  */ 
+  */
 
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}

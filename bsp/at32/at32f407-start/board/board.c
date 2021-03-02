@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-11-06     balanceTWK   first version
  */
- 
+
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>

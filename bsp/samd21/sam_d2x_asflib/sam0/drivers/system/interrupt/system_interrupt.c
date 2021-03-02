@@ -59,20 +59,20 @@
  *
  */
 bool system_interrupt_is_pending(
-		const enum system_interrupt_vector vector)
+        const enum system_interrupt_vector vector)
 {
-	bool result;
+    bool result;
 
-	if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
-		result = ((NVIC->ISPR[0] & (1 << vector)) != 0);
-	} else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
-		result = ((SCB->ICSR & SCB_ICSR_PENDSTSET_Msk) != 0);
-	} else {
-		Assert(false);
-		result = false;
-	}
+    if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
+        result = ((NVIC->ISPR[0] & (1 << vector)) != 0);
+    } else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
+        result = ((SCB->ICSR & SCB_ICSR_PENDSTSET_Msk) != 0);
+    } else {
+        Assert(false);
+        result = false;
+    }
 
-	return result;
+    return result;
 }
 
 /**
@@ -92,25 +92,25 @@ bool system_interrupt_is_pending(
  * \retval STATUS_INVALID_ARG  If an unsupported interrupt vector number was given
  */
 enum status_code system_interrupt_set_pending(
-		const enum system_interrupt_vector vector)
+        const enum system_interrupt_vector vector)
 {
-	enum status_code status = STATUS_OK;
+    enum status_code status = STATUS_OK;
 
-	if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
-		NVIC->ISPR[0] = (1 << vector);
-	} else if (vector == SYSTEM_INTERRUPT_NON_MASKABLE) {
-		/* Note: Because NMI has highest priority it will be executed
-		 * immediately after it has been set pending */
-		SCB->ICSR = SCB_ICSR_NMIPENDSET_Msk;
-	} else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
-		SCB->ICSR = SCB_ICSR_PENDSTSET_Msk;
-	} else {
-		/* The user want to set something unsupported as pending */
-		Assert(false);
-		status = STATUS_ERR_INVALID_ARG;
-	}
+    if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
+        NVIC->ISPR[0] = (1 << vector);
+    } else if (vector == SYSTEM_INTERRUPT_NON_MASKABLE) {
+        /* Note: Because NMI has highest priority it will be executed
+         * immediately after it has been set pending */
+        SCB->ICSR = SCB_ICSR_NMIPENDSET_Msk;
+    } else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
+        SCB->ICSR = SCB_ICSR_PENDSTSET_Msk;
+    } else {
+        /* The user want to set something unsupported as pending */
+        Assert(false);
+        status = STATUS_ERR_INVALID_ARG;
+    }
 
-	return status;
+    return status;
 }
 
 /**
@@ -127,25 +127,25 @@ enum status_code system_interrupt_set_pending(
  * \retval STATUS_INVALID_ARG  If an unsupported interrupt vector number was given
  */
 enum status_code system_interrupt_clear_pending(
-		const enum system_interrupt_vector vector)
+        const enum system_interrupt_vector vector)
 {
-	enum status_code status = STATUS_OK;
+    enum status_code status = STATUS_OK;
 
-	if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
-		NVIC->ICPR[0] = (1 << vector);
-	} else if (vector == SYSTEM_INTERRUPT_NON_MASKABLE) {
-		/* Note: Clearing of NMI pending interrupts does not make sense and is
-		 * not supported by the device, as it has the highest priority and will
-		 * always be executed at the moment it is set */
-		return STATUS_ERR_INVALID_ARG;
-	} else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
-		SCB->ICSR = SCB_ICSR_PENDSTCLR_Msk;
-	} else {
-		Assert(false);
-		status = STATUS_ERR_INVALID_ARG;
-	}
+    if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
+        NVIC->ICPR[0] = (1 << vector);
+    } else if (vector == SYSTEM_INTERRUPT_NON_MASKABLE) {
+        /* Note: Clearing of NMI pending interrupts does not make sense and is
+         * not supported by the device, as it has the highest priority and will
+         * always be executed at the moment it is set */
+        return STATUS_ERR_INVALID_ARG;
+    } else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
+        SCB->ICSR = SCB_ICSR_PENDSTCLR_Msk;
+    } else {
+        Assert(false);
+        status = STATUS_ERR_INVALID_ARG;
+    }
 
-	return status;
+    return status;
 }
 
 /**
@@ -163,27 +163,27 @@ enum status_code system_interrupt_clear_pending(
  * \retval STATUS_INVALID_ARG  If an unsupported interrupt vector number was given
  */
 enum status_code system_interrupt_set_priority(
-		const enum system_interrupt_vector vector,
-		const enum system_interrupt_priority_level priority_level)
+        const enum system_interrupt_vector vector,
+        const enum system_interrupt_priority_level priority_level)
 {
-	enum status_code status = STATUS_OK;
+    enum status_code status = STATUS_OK;
 
-	if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
-		uint8_t register_num = vector / 4;
-		uint8_t priority_pos = ((vector % 4) * 8) + (8 - __NVIC_PRIO_BITS);
+    if (vector >= _SYSTEM_INTERRUPT_EXTERNAL_VECTOR_START) {
+        uint8_t register_num = vector / 4;
+        uint8_t priority_pos = ((vector % 4) * 8) + (8 - __NVIC_PRIO_BITS);
 
-		NVIC->IP[register_num] =
-				(NVIC->IP[register_num] & ~(_SYSTEM_INTERRUPT_PRIORITY_MASK << priority_pos)) |
-				(priority_level << priority_pos);
+        NVIC->IP[register_num] =
+                (NVIC->IP[register_num] & ~(_SYSTEM_INTERRUPT_PRIORITY_MASK << priority_pos)) |
+                (priority_level << priority_pos);
 
-	} else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
-		SCB->SHP[1] = (priority_level << _SYSTEM_INTERRUPT_SYSTICK_PRI_POS);
-	} else {
-		Assert(false);
-		status = STATUS_ERR_INVALID_ARG;
-	}
+    } else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
+        SCB->SHP[1] = (priority_level << _SYSTEM_INTERRUPT_SYSTICK_PRI_POS);
+    } else {
+        Assert(false);
+        status = STATUS_ERR_INVALID_ARG;
+    }
 
-	return status;
+    return status;
 }
 
 /**
@@ -197,21 +197,21 @@ enum status_code system_interrupt_set_priority(
  *         vector.
  */
 enum system_interrupt_priority_level system_interrupt_get_priority(
-		const enum system_interrupt_vector vector)
+        const enum system_interrupt_vector vector)
 {
-	uint8_t register_num = vector / 4;
-	uint8_t priority_pos = ((vector % 4) * 8) + (8 - __NVIC_PRIO_BITS);
+    uint8_t register_num = vector / 4;
+    uint8_t priority_pos = ((vector % 4) * 8) + (8 - __NVIC_PRIO_BITS);
 
-	enum system_interrupt_priority_level priority = SYSTEM_INTERRUPT_PRIORITY_LEVEL_0;
+    enum system_interrupt_priority_level priority = SYSTEM_INTERRUPT_PRIORITY_LEVEL_0;
 
-	if (vector >= 0) {
-		priority = (enum system_interrupt_priority_level)
-				((NVIC->IP[register_num] >> priority_pos) & _SYSTEM_INTERRUPT_PRIORITY_MASK);
-	} else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
-		priority = (enum system_interrupt_priority_level)
-				((SCB->SHP[1] >> _SYSTEM_INTERRUPT_SYSTICK_PRI_POS) & _SYSTEM_INTERRUPT_PRIORITY_MASK);
-	}
+    if (vector >= 0) {
+        priority = (enum system_interrupt_priority_level)
+                ((NVIC->IP[register_num] >> priority_pos) & _SYSTEM_INTERRUPT_PRIORITY_MASK);
+    } else if (vector == SYSTEM_INTERRUPT_SYSTICK) {
+        priority = (enum system_interrupt_priority_level)
+                ((SCB->SHP[1] >> _SYSTEM_INTERRUPT_SYSTICK_PRI_POS) & _SYSTEM_INTERRUPT_PRIORITY_MASK);
+    }
 
-	return priority;
+    return priority;
 }
 

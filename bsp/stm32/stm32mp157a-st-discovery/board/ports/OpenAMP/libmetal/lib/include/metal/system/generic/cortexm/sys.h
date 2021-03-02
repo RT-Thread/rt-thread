@@ -29,8 +29,8 @@
  */
 
 /*
- * @file	generic/mp1_m4/sys.h
- * @brief	generic mp1_m4 system primitives for libmetal.
+ * @file    generic/mp1_m4/sys.h
+ * @brief   generic mp1_m4 system primitives for libmetal.
  */
 
 #ifndef __METAL_GENERIC_SYS__H__
@@ -45,17 +45,17 @@ extern "C" {
 #endif
 
 #if !defined(MAX_IRQS)
-#define MAX_IRQS	8          /**< maximum number of irqs */
+#define MAX_IRQS    8          /**< maximum number of irqs */
 #endif
 
 static inline void sys_irq_enable(unsigned int vector)
 {
-	(void)vector;
+    (void)vector;
 }
 
 static inline void sys_irq_disable(unsigned int vector)
 {
-	(void)vector;
+    (void)vector;
 }
 
 #ifdef __cplusplus

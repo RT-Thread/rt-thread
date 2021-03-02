@@ -133,10 +133,10 @@
 
 #if 0 /* UNUSED */
 /* Bits in scan_authfile return value */
-#define NONWILD_SERVER	1
-#define NONWILD_CLIENT	2
+#define NONWILD_SERVER  1
+#define NONWILD_CLIENT  2
 
-#define ISWILD(word)	(word[0] == '*' && word[1] == 0)
+#define ISWILD(word)    (word[0] == '*' && word[1] == 0)
 #endif /* UNUSED */
 
 #if 0 /* UNUSED */
@@ -169,8 +169,8 @@ int (*pap_check_hook) (void) = NULL;
 
 /* Hook for a plugin to check the PAP user and password */
 int (*pap_auth_hook) (char *user, char *passwd, char **msgp,
-			  struct wordlist **paddrs,
-			  struct wordlist **popts) = NULL;
+              struct wordlist **paddrs,
+              struct wordlist **popts) = NULL;
 
 /* Hook for a plugin to know about the PAP user logout */
 void (*pap_logout_hook) (void) = NULL;
@@ -187,7 +187,7 @@ int (*chap_passwd_hook) (char *user, char *passwd) = NULL;
 /* Hook for a plugin to say whether it is OK if the peer
    refuses to authenticate. */
 int (*null_auth_hook) (struct wordlist **paddrs,
-			   struct wordlist **popts) = NULL;
+               struct wordlist **popts) = NULL;
 
 int (*allowed_address_hook) (u32_t addr) = NULL;
 #endif /* UNUSED */
@@ -210,27 +210,27 @@ struct notifier *link_down_notifier = NULL;
  * Option variables.
  */
 #if 0 /* MOVED TO ppp_settings */
-bool uselogin = 0;		/* Use /etc/passwd for checking PAP */
-bool session_mgmt = 0;		/* Do session management (login records) */
-bool cryptpap = 0;		/* Passwords in pap-secrets are encrypted */
-bool refuse_pap = 0;		/* Don't wanna auth. ourselves with PAP */
-bool refuse_chap = 0;		/* Don't wanna auth. ourselves with CHAP */
-bool refuse_eap = 0;		/* Don't wanna auth. ourselves with EAP */
+bool uselogin = 0;      /* Use /etc/passwd for checking PAP */
+bool session_mgmt = 0;      /* Do session management (login records) */
+bool cryptpap = 0;      /* Passwords in pap-secrets are encrypted */
+bool refuse_pap = 0;        /* Don't wanna auth. ourselves with PAP */
+bool refuse_chap = 0;       /* Don't wanna auth. ourselves with CHAP */
+bool refuse_eap = 0;        /* Don't wanna auth. ourselves with EAP */
 #if MSCHAP_SUPPORT
-bool refuse_mschap = 0;		/* Don't wanna auth. ourselves with MS-CHAP */
-bool refuse_mschap_v2 = 0;	/* Don't wanna auth. ourselves with MS-CHAPv2 */
+bool refuse_mschap = 0;     /* Don't wanna auth. ourselves with MS-CHAP */
+bool refuse_mschap_v2 = 0;  /* Don't wanna auth. ourselves with MS-CHAPv2 */
 #else /* MSCHAP_SUPPORT */
-bool refuse_mschap = 1;		/* Don't wanna auth. ourselves with MS-CHAP */
-bool refuse_mschap_v2 = 1;	/* Don't wanna auth. ourselves with MS-CHAPv2 */
+bool refuse_mschap = 1;     /* Don't wanna auth. ourselves with MS-CHAP */
+bool refuse_mschap_v2 = 1;  /* Don't wanna auth. ourselves with MS-CHAPv2 */
 #endif /* MSCHAP_SUPPORT */
-bool usehostname = 0;		/* Use hostname for our_name */
-bool auth_required = 0;		/* Always require authentication from peer */
-bool allow_any_ip = 0;		/* Allow peer to use any IP address */
-bool explicit_remote = 0;	/* User specified explicit remote name */
-bool explicit_user = 0;		/* Set if "user" option supplied */
-bool explicit_passwd = 0;	/* Set if "password" option supplied */
-char remote_name[MAXNAMELEN];	/* Peer's name for authentication */
-static char *uafname;		/* name of most recent +ua file */
+bool usehostname = 0;       /* Use hostname for our_name */
+bool auth_required = 0;     /* Always require authentication from peer */
+bool allow_any_ip = 0;      /* Allow peer to use any IP address */
+bool explicit_remote = 0;   /* User specified explicit remote name */
+bool explicit_user = 0;     /* Set if "user" option supplied */
+bool explicit_passwd = 0;   /* Set if "password" option supplied */
+char remote_name[MAXNAMELEN];   /* Peer's name for authentication */
+static char *uafname;       /* name of most recent +ua file */
 
 extern char *crypt (const char *, const char *);
 #endif /* UNUSED */
@@ -252,8 +252,8 @@ static int  have_srp_secret (char *client, char *server, int need_ip,
     int *lacks_ipp);
 static int  ip_addr_check (u32_t, struct permitted_ip *);
 static int  scan_authfile (FILE *, char *, char *, char *,
-			       struct wordlist **, struct wordlist **,
-			       char *, int);
+                   struct wordlist **, struct wordlist **,
+                   char *, int);
 static void free_wordlist (struct wordlist *);
 static void set_allowed_addrs (int, struct wordlist *, struct wordlist *);
 static int  some_ip_ok (struct wordlist *);
@@ -427,46 +427,46 @@ setupapfile(argv)
     /* open user info file */
     fname = strdup(*argv);
     if (fname == NULL)
-	novm("+ua file name");
+    novm("+ua file name");
     euid = geteuid();
     if (seteuid(getuid()) == -1) {
-	option_error("unable to reset uid before opening %s: %m", fname);
-	return 0;
+    option_error("unable to reset uid before opening %s: %m", fname);
+    return 0;
     }
     ufile = fopen(fname, "r");
     if (seteuid(euid) == -1)
-	fatal("unable to regain privileges: %m");
+    fatal("unable to regain privileges: %m");
     if (ufile == NULL) {
-	option_error("unable to open user login data file %s", fname);
-	return 0;
+    option_error("unable to open user login data file %s", fname);
+    return 0;
     }
     check_access(ufile, fname);
     uafname = fname;
 
     /* get username */
     if (fgets(u, MAXNAMELEN - 1, ufile) == NULL
-	|| fgets(p, MAXSECRETLEN - 1, ufile) == NULL) {
-	fclose(ufile);
-	option_error("unable to read user login data file %s", fname);
-	return 0;
+    || fgets(p, MAXSECRETLEN - 1, ufile) == NULL) {
+    fclose(ufile);
+    option_error("unable to read user login data file %s", fname);
+    return 0;
     }
     fclose(ufile);
 
     /* get rid of newlines */
     l = strlen(u);
     if (l > 0 && u[l-1] == '\n')
-	u[l-1] = 0;
+    u[l-1] = 0;
     l = strlen(p);
     if (l > 0 && p[l-1] == '\n')
-	p[l-1] = 0;
+    p[l-1] = 0;
 
     if (override_value("user", option_priority, fname)) {
-	strlcpy(ppp_settings.user, u, sizeof(ppp_settings.user));
-	explicit_user = 1;
+    strlcpy(ppp_settings.user, u, sizeof(ppp_settings.user));
+    explicit_user = 1;
     }
     if (override_value("passwd", option_priority, fname)) {
-	strlcpy(ppp_settings.passwd, p, sizeof(ppp_settings.passwd));
-	explicit_passwd = 1;
+    strlcpy(ppp_settings.passwd, p, sizeof(ppp_settings.passwd));
+    explicit_passwd = 1;
     }
 
     return (1);
@@ -484,14 +484,14 @@ privgroup(argv)
 
     g = getgrnam(*argv);
     if (g == 0) {
-	option_error("group %s is unknown", *argv);
-	return 0;
+    option_error("group %s is unknown", *argv);
+    return 0;
     }
     for (i = 0; i < ngroups; ++i) {
-	if (groups[i] == g->gr_gid) {
-	    privileged = 1;
-	    break;
-	}
+    if (groups[i] == g->gr_gid) {
+        privileged = 1;
+        break;
+    }
     }
     return 1;
 }
@@ -511,7 +511,7 @@ set_noauth_addr(argv)
 
     wp = (struct wordlist *) malloc(sizeof(struct wordlist) + l);
     if (wp == NULL)
-	novm("allow-ip argument");
+    novm("allow-ip argument");
     wp->word = (char *) (wp + 1);
     wp->next = noauth_addrs;
     MEMCPY(wp->word, addr, l);
@@ -533,7 +533,7 @@ set_permitted_number(argv)
 
     wp = (struct wordlist *) malloc(sizeof(struct wordlist) + l);
     if (wp == NULL)
-	novm("allow-number argument");
+    novm("allow-number argument");
     wp->word = (char *) (wp + 1);
     wp->next = permitted_numbers;
     MEMCPY(wp->word, number, l);
@@ -566,7 +566,7 @@ void start_link(unit)
     devfd = the_channel->connect();
     msg = "Connect script failed";
     if (devfd < 0)
-	goto fail;
+    goto fail;
 
     /* set up the serial device as a ppp interface */
     /*
@@ -579,21 +579,21 @@ void start_link(unit)
     fd_ppp = the_channel->establish_ppp(devfd);
     msg = "ppp establishment failed";
     if (fd_ppp < 0) {
-	status = EXIT_FATAL_ERROR;
-	goto disconnect;
+    status = EXIT_FATAL_ERROR;
+    goto disconnect;
     }
 
     if (!demand && ifunit >= 0)
-	set_ifunit(1);
+    set_ifunit(1);
 
     /*
      * Start opening the connection and wait for
      * incoming events (reply, timeout, etc.).
      */
     if (ifunit >= 0)
-	ppp_notice("Connect: %s <--> %s", ifname, ppp_devnam);
+    ppp_notice("Connect: %s <--> %s", ifname, ppp_devnam);
     else
-	ppp_notice("Starting negotiation on %s", ppp_devnam);
+    ppp_notice("Starting negotiation on %s", ppp_devnam);
     add_fd(fd_ppp);
 
     new_phase(pcb, PPP_PHASE_ESTABLISH);
@@ -604,12 +604,12 @@ void start_link(unit)
  disconnect:
     new_phase(pcb, PPP_PHASE_DISCONNECT);
     if (the_channel->disconnect)
-	the_channel->disconnect();
+    the_channel->disconnect();
 
  fail:
     new_phase(pcb, PPP_PHASE_DEAD);
     if (the_channel->cleanup)
-	(*the_channel->cleanup)();
+    (*the_channel->cleanup)();
 }
 #endif
 
@@ -623,23 +623,23 @@ void link_terminated(ppp_pcb *pcb) {
     || pcb->phase == PPP_PHASE_MASTER
 #endif /* HAVE_MULTILINK */
     )
-	return;
+    return;
     new_phase(pcb, PPP_PHASE_DISCONNECT);
 
 #if 0 /* UNUSED */
     if (pap_logout_hook) {
-	pap_logout_hook();
+    pap_logout_hook();
     }
     session_end(devnam);
 #endif /* UNUSED */
 
     if (!doing_multilink) {
-	ppp_notice("Connection terminated.");
+    ppp_notice("Connection terminated.");
 #if PPP_STATS_SUPPORT
-	print_link_stats();
+    print_link_stats();
 #endif /* PPP_STATS_SUPPORT */
     } else
-	ppp_notice("Link terminated.");
+    ppp_notice("Link terminated.");
 
     lcp_lowerdown(pcb);
 
@@ -651,7 +651,7 @@ void link_terminated(ppp_pcb *pcb) {
      * we delete its pid file.
      */
     if (!doing_multilink && !demand)
-	remove_pidfiles();
+    remove_pidfiles();
 
     /*
      * If we may want to bring the link up again, transfer
@@ -659,36 +659,36 @@ void link_terminated(ppp_pcb *pcb) {
      * real serial device back to its normal mode of operation.
      */
     if (fd_ppp >= 0) {
-	remove_fd(fd_ppp);
-	clean_check();
-	the_channel->disestablish_ppp(devfd);
-	if (doing_multilink)
-	    mp_exit_bundle();
-	fd_ppp = -1;
+    remove_fd(fd_ppp);
+    clean_check();
+    the_channel->disestablish_ppp(devfd);
+    if (doing_multilink)
+        mp_exit_bundle();
+    fd_ppp = -1;
     }
     if (!hungup)
-	lcp_lowerdown(pcb);
+    lcp_lowerdown(pcb);
     if (!doing_multilink && !demand)
-	script_unsetenv("IFNAME");
+    script_unsetenv("IFNAME");
 
     /*
      * Run disconnector script, if requested.
      * XXX we may not be able to do this if the line has hung up!
      */
     if (devfd >= 0 && the_channel->disconnect) {
-	the_channel->disconnect();
-	devfd = -1;
+    the_channel->disconnect();
+    devfd = -1;
     }
     if (the_channel->cleanup)
-	(*the_channel->cleanup)();
+    (*the_channel->cleanup)();
 
     if (doing_multilink && multilink_master) {
-	if (!bundle_terminating)
-	    new_phase(pcb, PPP_PHASE_MASTER);
-	else
-	    mp_bundle_terminated();
+    if (!bundle_terminating)
+        new_phase(pcb, PPP_PHASE_MASTER);
+    else
+        mp_bundle_terminated();
     } else
-	new_phase(pcb, PPP_PHASE_DEAD);
+    new_phase(pcb, PPP_PHASE_DEAD);
 #endif
 }
 
@@ -701,13 +701,13 @@ void link_down(ppp_pcb *pcb) {
 #endif /* PPP_NOTIFY */
 
     if (!doing_multilink) {
-	upper_layers_down(pcb);
-	if (pcb->phase != PPP_PHASE_DEAD
+    upper_layers_down(pcb);
+    if (pcb->phase != PPP_PHASE_DEAD
 #ifdef HAVE_MULTILINK
-	&& pcb->phase != PPP_PHASE_MASTER
+    && pcb->phase != PPP_PHASE_MASTER
 #endif /* HAVE_MULTILINK */
-	)
-	    new_phase(pcb, PPP_PHASE_ESTABLISH);
+    )
+        new_phase(pcb, PPP_PHASE_ESTABLISH);
     }
     /* XXX if doing_multilink, should do something to stop
        network-layer traffic on the link */
@@ -719,9 +719,9 @@ void upper_layers_down(ppp_pcb *pcb) {
 
     for (i = 0; (protp = protocols[i]) != NULL; ++i) {
         if (protp->protocol != PPP_LCP && protp->lowerdown != NULL)
-	    (*protp->lowerdown)(pcb);
+        (*protp->lowerdown)(pcb);
         if (protp->protocol < 0xC000 && protp->close != NULL)
-	    (*protp->close)(pcb, "LCP down");
+        (*protp->close)(pcb, "LCP down");
     }
     pcb->num_np_open = 0;
     pcb->num_np_up = 0;
@@ -749,56 +749,56 @@ void link_established(ppp_pcb *pcb) {
      * Tell higher-level protocols that LCP is up.
      */
     if (!doing_multilink) {
-	for (i = 0; (protp = protocols[i]) != NULL; ++i)
-	    if (protp->protocol != PPP_LCP
-		&& protp->lowerup != NULL)
-		(*protp->lowerup)(pcb);
+    for (i = 0; (protp = protocols[i]) != NULL; ++i)
+        if (protp->protocol != PPP_LCP
+        && protp->lowerup != NULL)
+        (*protp->lowerup)(pcb);
     }
 
 #if PPP_AUTH_SUPPORT
 #if PPP_SERVER
 #if PPP_ALLOWED_ADDRS
     if (!auth_required && noauth_addrs != NULL)
-	set_allowed_addrs(unit, NULL, NULL);
+    set_allowed_addrs(unit, NULL, NULL);
 #endif /* PPP_ALLOWED_ADDRS */
 
     if (pcb->settings.auth_required && !(0
 #if PAP_SUPPORT
-	|| go->neg_upap
+    || go->neg_upap
 #endif /* PAP_SUPPORT */
 #if CHAP_SUPPORT
-	|| go->neg_chap
+    || go->neg_chap
 #endif /* CHAP_SUPPORT */
 #if EAP_SUPPORT
-	|| go->neg_eap
+    || go->neg_eap
 #endif /* EAP_SUPPORT */
-	)) {
+    )) {
 
 #if PPP_ALLOWED_ADDRS
-	/*
-	 * We wanted the peer to authenticate itself, and it refused:
-	 * if we have some address(es) it can use without auth, fine,
-	 * otherwise treat it as though it authenticated with PAP using
-	 * a username of "" and a password of "".  If that's not OK,
-	 * boot it out.
-	 */
-	if (noauth_addrs != NULL) {
-	    set_allowed_addrs(unit, NULL, NULL);
-	} else
+    /*
+     * We wanted the peer to authenticate itself, and it refused:
+     * if we have some address(es) it can use without auth, fine,
+     * otherwise treat it as though it authenticated with PAP using
+     * a username of "" and a password of "".  If that's not OK,
+     * boot it out.
+     */
+    if (noauth_addrs != NULL) {
+        set_allowed_addrs(unit, NULL, NULL);
+    } else
 #endif /* PPP_ALLOWED_ADDRS */
-	if (!pcb->settings.null_login
+    if (!pcb->settings.null_login
 #if PAP_SUPPORT
-	    || !wo->neg_upap
+        || !wo->neg_upap
 #endif /* PAP_SUPPORT */
-	    ) {
-	    ppp_warn("peer refused to authenticate: terminating link");
+        ) {
+        ppp_warn("peer refused to authenticate: terminating link");
 #if 0 /* UNUSED */
-	    status = EXIT_PEER_AUTH_FAILED;
+        status = EXIT_PEER_AUTH_FAILED;
 #endif /* UNUSED */
-	    pcb->err_code = PPPERR_AUTHFAIL;
-	    lcp_close(pcb, "peer refused to authenticate");
-	    return;
-	}
+        pcb->err_code = PPPERR_AUTHFAIL;
+        lcp_close(pcb, "peer refused to authenticate");
+        return;
+    }
     }
 #endif /* PPP_SERVER */
 
@@ -807,20 +807,20 @@ void link_established(ppp_pcb *pcb) {
 #if PPP_SERVER
 #if EAP_SUPPORT
     if (go->neg_eap) {
-	eap_authpeer(pcb, PPP_OUR_NAME);
-	auth |= EAP_PEER;
+    eap_authpeer(pcb, PPP_OUR_NAME);
+    auth |= EAP_PEER;
     } else
 #endif /* EAP_SUPPORT */
 #if CHAP_SUPPORT
     if (go->neg_chap) {
-	chap_auth_peer(pcb, PPP_OUR_NAME, CHAP_DIGEST(go->chap_mdtype));
-	auth |= CHAP_PEER;
+    chap_auth_peer(pcb, PPP_OUR_NAME, CHAP_DIGEST(go->chap_mdtype));
+    auth |= CHAP_PEER;
     } else
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
     if (go->neg_upap) {
-	upap_authpeer(pcb);
-	auth |= PAP_PEER;
+    upap_authpeer(pcb);
+    auth |= PAP_PEER;
     } else
 #endif /* PAP_SUPPORT */
     {}
@@ -828,20 +828,20 @@ void link_established(ppp_pcb *pcb) {
 
 #if EAP_SUPPORT
     if (ho->neg_eap) {
-	eap_authwithpeer(pcb, pcb->settings.user);
-	auth |= EAP_WITHPEER;
+    eap_authwithpeer(pcb, pcb->settings.user);
+    auth |= EAP_WITHPEER;
     } else
 #endif /* EAP_SUPPORT */
 #if CHAP_SUPPORT
     if (ho->neg_chap) {
-	chap_auth_with_peer(pcb, pcb->settings.user, CHAP_DIGEST(ho->chap_mdtype));
-	auth |= CHAP_WITHPEER;
+    chap_auth_with_peer(pcb, pcb->settings.user, CHAP_DIGEST(ho->chap_mdtype));
+    auth |= CHAP_WITHPEER;
     } else
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
     if (ho->neg_upap) {
-	upap_authwithpeer(pcb, pcb->settings.user, pcb->settings.passwd);
-	auth |= PAP_WITHPEER;
+    upap_authwithpeer(pcb, pcb->settings.user, pcb->settings.passwd);
+    auth |= PAP_WITHPEER;
     } else
 #endif /* PAP_SUPPORT */
     {}
@@ -851,7 +851,7 @@ void link_established(ppp_pcb *pcb) {
 
     if (!auth)
 #endif /* PPP_AUTH_SUPPORT */
-	network_phase(pcb);
+    network_phase(pcb);
 }
 
 /*
@@ -868,7 +868,7 @@ static void network_phase(ppp_pcb *pcb) {
 #if 0 /* UNUSED */
     /* Log calling number. */
     if (*remote_number)
-	ppp_notice("peer from calling number %q authorized", remote_number);
+    ppp_notice("peer from calling number %q authorized", remote_number);
 #endif /* UNUSED */
 
 #if PPP_NOTIFY
@@ -877,16 +877,16 @@ static void network_phase(ppp_pcb *pcb) {
      */
     if (0
 #if CHAP_SUPPORT
-	|| go->neg_chap
+    || go->neg_chap
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
-	|| go->neg_upap
+    || go->neg_upap
 #endif /* PAP_SUPPORT */
 #if EAP_SUPPORT
-	|| go->neg_eap
+    || go->neg_eap
 #endif /* EAP_SUPPORT */
-	) {
-	notify(auth_up_notifier, 0);
+    ) {
+    notify(auth_up_notifier, 0);
     }
 #endif /* PPP_NOTIFY */
 
@@ -895,9 +895,9 @@ static void network_phase(ppp_pcb *pcb) {
      * If we negotiated callback, do it now.
      */
     if (go->neg_cbcp) {
-	new_phase(pcb, PPP_PHASE_CALLBACK);
-	(*cbcp_protent.open)(pcb);
-	return;
+    new_phase(pcb, PPP_PHASE_CALLBACK);
+    (*cbcp_protent.open)(pcb);
+    return;
     }
 #endif
 
@@ -906,9 +906,9 @@ static void network_phase(ppp_pcb *pcb) {
      * Process extra options from the secrets file
      */
     if (extra_options) {
-	options_from_list(extra_options, 1);
-	free_wordlist(extra_options);
-	extra_options = 0;
+    options_from_list(extra_options, 1);
+    free_wordlist(extra_options);
+    extra_options = 0;
     }
 #endif /* PPP_OPTIONS */
     start_networks(pcb);
@@ -924,34 +924,34 @@ void start_networks(ppp_pcb *pcb) {
 
 #ifdef HAVE_MULTILINK
     if (multilink) {
-	if (mp_join_bundle()) {
-	    if (multilink_join_hook)
-		(*multilink_join_hook)();
-	    if (updetach && !nodetach)
-		detach();
-	    return;
-	}
+    if (mp_join_bundle()) {
+        if (multilink_join_hook)
+        (*multilink_join_hook)();
+        if (updetach && !nodetach)
+        detach();
+        return;
+    }
     }
 #endif /* HAVE_MULTILINK */
 
 #ifdef PPP_FILTER
     if (!demand)
-	set_filters(&pass_filter, &active_filter);
+    set_filters(&pass_filter, &active_filter);
 #endif
 #if CCP_SUPPORT || ECP_SUPPORT
     /* Start CCP and ECP */
     for (i = 0; (protp = protocols[i]) != NULL; ++i)
-	if (
-	    (0
+    if (
+        (0
 #if ECP_SUPPORT
-	    || protp->protocol == PPP_ECP
+        || protp->protocol == PPP_ECP
 #endif /* ECP_SUPPORT */
 #if CCP_SUPPORT
-	    || protp->protocol == PPP_CCP
+        || protp->protocol == PPP_CCP
 #endif /* CCP_SUPPORT */
-	    )
-	    && protp->open != NULL)
-	    (*protp->open)(pcb);
+        )
+        && protp->open != NULL)
+        (*protp->open)(pcb);
 #endif /* CCP_SUPPORT || ECP_SUPPORT */
 
     /*
@@ -965,7 +965,7 @@ void start_networks(ppp_pcb *pcb) {
         && !pcb->ccp_gotoptions.mppe
 #endif /* MPPE_SUPPORT */
         )
-	continue_networks(pcb);
+    continue_networks(pcb);
 }
 
 void continue_networks(ppp_pcb *pcb) {
@@ -976,21 +976,21 @@ void continue_networks(ppp_pcb *pcb) {
      * Start the "real" network protocols.
      */
     for (i = 0; (protp = protocols[i]) != NULL; ++i)
-	if (protp->protocol < 0xC000
+    if (protp->protocol < 0xC000
 #if CCP_SUPPORT
-	    && protp->protocol != PPP_CCP
+        && protp->protocol != PPP_CCP
 #endif /* CCP_SUPPORT */
 #if ECP_SUPPORT
-	    && protp->protocol != PPP_ECP
+        && protp->protocol != PPP_ECP
 #endif /* ECP_SUPPORT */
-	    && protp->open != NULL) {
-	    (*protp->open)(pcb);
-	    ++pcb->num_np_open;
-	}
+        && protp->open != NULL) {
+        (*protp->open)(pcb);
+        ++pcb->num_np_open;
+    }
 
     if (pcb->num_np_open == 0)
-	/* nothing to do */
-	lcp_close(pcb, "No network protocols running");
+    /* nothing to do */
+    lcp_close(pcb, "No network protocols running");
 }
 
 #if PPP_AUTH_SUPPORT
@@ -1053,37 +1053,37 @@ void auth_peer_success(ppp_pcb *pcb, int protocol, int prot_flavor, const char *
     switch (protocol) {
 #if CHAP_SUPPORT
     case PPP_CHAP:
-	bit = CHAP_PEER;
-	switch (prot_flavor) {
-	case CHAP_MD5:
-	    bit |= CHAP_MD5_PEER;
-	    break;
+    bit = CHAP_PEER;
+    switch (prot_flavor) {
+    case CHAP_MD5:
+        bit |= CHAP_MD5_PEER;
+        break;
 #if MSCHAP_SUPPORT
-	case CHAP_MICROSOFT:
-	    bit |= CHAP_MS_PEER;
-	    break;
-	case CHAP_MICROSOFT_V2:
-	    bit |= CHAP_MS2_PEER;
-	    break;
+    case CHAP_MICROSOFT:
+        bit |= CHAP_MS_PEER;
+        break;
+    case CHAP_MICROSOFT_V2:
+        bit |= CHAP_MS2_PEER;
+        break;
 #endif /* MSCHAP_SUPPORT */
-	default:
-	    break;
-	}
-	break;
+    default:
+        break;
+    }
+    break;
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
     case PPP_PAP:
-	bit = PAP_PEER;
-	break;
+    bit = PAP_PEER;
+    break;
 #endif /* PAP_SUPPORT */
 #if EAP_SUPPORT
     case PPP_EAP:
-	bit = EAP_PEER;
-	break;
+    bit = EAP_PEER;
+    break;
 #endif /* EAP_SUPPORT */
     default:
-	ppp_warn("auth_peer_success: unknown protocol %x", protocol);
-	return;
+    ppp_warn("auth_peer_success: unknown protocol %x", protocol);
+    return;
     }
 
 #ifdef HAVE_MULTILINK
@@ -1091,7 +1091,7 @@ void auth_peer_success(ppp_pcb *pcb, int protocol, int prot_flavor, const char *
      * Save the authenticated name of the peer for later.
      */
     if (namelen > (int)sizeof(pcb->peer_authname) - 1)
-	namelen = (int)sizeof(pcb->peer_authname) - 1;
+    namelen = (int)sizeof(pcb->peer_authname) - 1;
     MEMCPY(pcb->peer_authname, name, namelen);
     pcb->peer_authname[namelen] = 0;
 #endif /* HAVE_MULTILINK */
@@ -1140,41 +1140,41 @@ void auth_withpeer_success(ppp_pcb *pcb, int protocol, int prot_flavor) {
     switch (protocol) {
 #if CHAP_SUPPORT
     case PPP_CHAP:
-	bit = CHAP_WITHPEER;
-	prot = "CHAP";
-	switch (prot_flavor) {
-	case CHAP_MD5:
-	    bit |= CHAP_MD5_WITHPEER;
-	    break;
+    bit = CHAP_WITHPEER;
+    prot = "CHAP";
+    switch (prot_flavor) {
+    case CHAP_MD5:
+        bit |= CHAP_MD5_WITHPEER;
+        break;
 #if MSCHAP_SUPPORT
-	case CHAP_MICROSOFT:
-	    bit |= CHAP_MS_WITHPEER;
-	    break;
-	case CHAP_MICROSOFT_V2:
-	    bit |= CHAP_MS2_WITHPEER;
-	    break;
+    case CHAP_MICROSOFT:
+        bit |= CHAP_MS_WITHPEER;
+        break;
+    case CHAP_MICROSOFT_V2:
+        bit |= CHAP_MS2_WITHPEER;
+        break;
 #endif /* MSCHAP_SUPPORT */
-	default:
-	    break;
-	}
-	break;
+    default:
+        break;
+    }
+    break;
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
     case PPP_PAP:
-	bit = PAP_WITHPEER;
-	prot = "PAP";
-	break;
+    bit = PAP_WITHPEER;
+    prot = "PAP";
+    break;
 #endif /* PAP_SUPPORT */
 #if EAP_SUPPORT
     case PPP_EAP:
-	bit = EAP_WITHPEER;
-	prot = "EAP";
-	break;
+    bit = EAP_WITHPEER;
+    prot = "EAP";
+    break;
 #endif /* EAP_SUPPORT */
     default:
-	ppp_warn("auth_withpeer_success: unknown protocol %x", protocol);
-	bit = 0;
-	/* no break */
+    ppp_warn("auth_withpeer_success: unknown protocol %x", protocol);
+    bit = 0;
+    /* no break */
     }
 
     ppp_notice("%s authentication succeeded", prot);
@@ -1187,7 +1187,7 @@ void auth_withpeer_success(ppp_pcb *pcb, int protocol, int prot_flavor) {
      * proceed to the network (or callback) phase.
      */
     if ((pcb->auth_pending &= ~bit) == 0)
-	network_phase(pcb);
+    network_phase(pcb);
 }
 #endif /* PPP_AUTH_SUPPORT */
 
@@ -1202,42 +1202,42 @@ void np_up(ppp_pcb *pcb, int proto) {
     LWIP_UNUSED_ARG(proto);
 
     if (pcb->num_np_up == 0) {
-	/*
-	 * At this point we consider that the link has come up successfully.
-	 */
-	new_phase(pcb, PPP_PHASE_RUNNING);
+    /*
+     * At this point we consider that the link has come up successfully.
+     */
+    new_phase(pcb, PPP_PHASE_RUNNING);
 
 #if PPP_IDLETIMELIMIT
 #if 0 /* UNUSED */
-	if (idle_time_hook != 0)
-	    tlim = (*idle_time_hook)(NULL);
-	else
+    if (idle_time_hook != 0)
+        tlim = (*idle_time_hook)(NULL);
+    else
 #endif /* UNUSED */
-	    tlim = pcb->settings.idle_time_limit;
-	if (tlim > 0)
-	    TIMEOUT(check_idle, (void*)pcb, tlim);
+        tlim = pcb->settings.idle_time_limit;
+    if (tlim > 0)
+        TIMEOUT(check_idle, (void*)pcb, tlim);
 #endif /* PPP_IDLETIMELIMIT */
 
 #if PPP_MAXCONNECT
-	/*
-	 * Set a timeout to close the connection once the maximum
-	 * connect time has expired.
-	 */
-	if (pcb->settings.maxconnect > 0)
-	    TIMEOUT(connect_time_expired, (void*)pcb, pcb->settings.maxconnect);
+    /*
+     * Set a timeout to close the connection once the maximum
+     * connect time has expired.
+     */
+    if (pcb->settings.maxconnect > 0)
+        TIMEOUT(connect_time_expired, (void*)pcb, pcb->settings.maxconnect);
 #endif /* PPP_MAXCONNECT */
 
 #ifdef MAXOCTETS
-	if (maxoctets > 0)
-	    TIMEOUT(check_maxoctets, NULL, maxoctets_timeout);
+    if (maxoctets > 0)
+        TIMEOUT(check_maxoctets, NULL, maxoctets_timeout);
 #endif
 
 #if 0 /* Unused */
-	/*
-	 * Detach now, if the updetach option was given.
-	 */
-	if (updetach && !nodetach)
-	    detach();
+    /*
+     * Detach now, if the updetach option was given.
+     */
+    if (updetach && !nodetach)
+        detach();
 #endif /* Unused */
     }
     ++pcb->num_np_up;
@@ -1250,15 +1250,15 @@ void np_down(ppp_pcb *pcb, int proto) {
     LWIP_UNUSED_ARG(proto);
     if (--pcb->num_np_up == 0) {
 #if PPP_IDLETIMELIMIT
-	UNTIMEOUT(check_idle, (void*)pcb);
+    UNTIMEOUT(check_idle, (void*)pcb);
 #endif /* PPP_IDLETIMELIMIT */
 #if PPP_MAXCONNECT
-	UNTIMEOUT(connect_time_expired, NULL);
+    UNTIMEOUT(connect_time_expired, NULL);
 #endif /* PPP_MAXCONNECT */
 #ifdef MAXOCTETS
-	UNTIMEOUT(check_maxoctets, NULL);
+    UNTIMEOUT(check_maxoctets, NULL);
 #endif
-	new_phase(pcb, PPP_PHASE_NETWORK);
+    new_phase(pcb, PPP_PHASE_NETWORK);
     }
 }
 
@@ -1268,8 +1268,8 @@ void np_down(ppp_pcb *pcb, int proto) {
 void np_finished(ppp_pcb *pcb, int proto) {
     LWIP_UNUSED_ARG(proto);
     if (--pcb->num_np_open <= 0) {
-	/* no further use for the link: shut up shop. */
-	lcp_close(pcb, "No network protocols running");
+    /* no further use for the link: shut up shop. */
+    lcp_close(pcb, "No network protocols running");
     }
 }
 
@@ -1285,26 +1285,26 @@ check_maxoctets(arg)
     link_stats_valid=0;
 
     switch(maxoctets_dir) {
-	case PPP_OCTETS_DIRECTION_IN:
-	    used = link_stats.bytes_in;
-	    break;
-	case PPP_OCTETS_DIRECTION_OUT:
-	    used = link_stats.bytes_out;
-	    break;
-	case PPP_OCTETS_DIRECTION_MAXOVERAL:
-	case PPP_OCTETS_DIRECTION_MAXSESSION:
-	    used = (link_stats.bytes_in > link_stats.bytes_out) ? link_stats.bytes_in : link_stats.bytes_out;
-	    break;
-	default:
-	    used = link_stats.bytes_in+link_stats.bytes_out;
-	    break;
+    case PPP_OCTETS_DIRECTION_IN:
+        used = link_stats.bytes_in;
+        break;
+    case PPP_OCTETS_DIRECTION_OUT:
+        used = link_stats.bytes_out;
+        break;
+    case PPP_OCTETS_DIRECTION_MAXOVERAL:
+    case PPP_OCTETS_DIRECTION_MAXSESSION:
+        used = (link_stats.bytes_in > link_stats.bytes_out) ? link_stats.bytes_in : link_stats.bytes_out;
+        break;
+    default:
+        used = link_stats.bytes_in+link_stats.bytes_out;
+        break;
     }
     if (used > maxoctets) {
-	ppp_notice("Traffic limit reached. Limit: %u Used: %u", maxoctets, used);
-	status = EXIT_TRAFFIC_LIMIT;
-	lcp_close(pcb, "Traffic limit");
+    ppp_notice("Traffic limit reached. Limit: %u Used: %u", maxoctets, used);
+    status = EXIT_TRAFFIC_LIMIT;
+    lcp_close(pcb, "Traffic limit");
 #if 0 /* UNUSED */
-	need_holdoff = 0;
+    need_holdoff = 0;
 #endif /* UNUSED */
     } else {
         TIMEOUT(check_maxoctets, NULL, maxoctets_timeout);
@@ -1325,27 +1325,27 @@ static void check_idle(void *arg) {
     int tlim;
 
     if (!get_idle_time(pcb, &idle))
-	return;
+    return;
 #if 0 /* UNUSED */
     if (idle_time_hook != 0) {
-	tlim = idle_time_hook(&idle);
+    tlim = idle_time_hook(&idle);
     } else {
 #endif /* UNUSED */
-	itime = LWIP_MIN(idle.xmit_idle, idle.recv_idle);
-	tlim = pcb->settings.idle_time_limit - itime;
+    itime = LWIP_MIN(idle.xmit_idle, idle.recv_idle);
+    tlim = pcb->settings.idle_time_limit - itime;
 #if 0 /* UNUSED */
     }
 #endif /* UNUSED */
     if (tlim <= 0) {
-	/* link is idle: shut it down. */
-	ppp_notice("Terminating connection due to lack of activity.");
-	pcb->err_code = PPPERR_IDLETIMEOUT;
-	lcp_close(pcb, "Link inactive");
+    /* link is idle: shut it down. */
+    ppp_notice("Terminating connection due to lack of activity.");
+    pcb->err_code = PPPERR_IDLETIMEOUT;
+    lcp_close(pcb, "Link inactive");
 #if 0 /* UNUSED */
-	need_holdoff = 0;
+    need_holdoff = 0;
 #endif /* UNUSED */
     } else {
-	TIMEOUT(check_idle, (void*)pcb, tlim);
+    TIMEOUT(check_idle, (void*)pcb, tlim);
     }
 }
 #endif /* PPP_IDLETIMELIMIT */
@@ -1358,7 +1358,7 @@ static void connect_time_expired(void *arg) {
     ppp_pcb *pcb = (ppp_pcb*)arg;
     ppp_info("Connect time expired");
     pcb->err_code = PPPERR_CONNECTTIME;
-    lcp_close(pcb, "Connect time expired");	/* Close connection */
+    lcp_close(pcb, "Connect time expired"); /* Close connection */
 }
 #endif /* PPP_MAXCONNECT */
 
@@ -1375,62 +1375,62 @@ auth_check_options()
 
     /* Default our_name to hostname, and user to our_name */
     if (our_name[0] == 0 || usehostname)
-	strlcpy(our_name, hostname, sizeof(our_name));
+    strlcpy(our_name, hostname, sizeof(our_name));
     /* If a blank username was explicitly given as an option, trust
        the user and don't use our_name */
     if (ppp_settings.user[0] == 0 && !explicit_user)
-	strlcpy(ppp_settings.user, our_name, sizeof(ppp_settings.user));
+    strlcpy(ppp_settings.user, our_name, sizeof(ppp_settings.user));
 
     /*
      * If we have a default route, require the peer to authenticate
      * unless the noauth option was given or the real user is root.
      */
     if (!auth_required && !allow_any_ip && have_route_to(0) && !privileged) {
-	auth_required = 1;
-	default_auth = 1;
+    auth_required = 1;
+    default_auth = 1;
     }
 
 #if CHAP_SUPPORT
     /* If we selected any CHAP flavors, we should probably negotiate it. :-) */
     if (wo->chap_mdtype)
-	wo->neg_chap = 1;
+    wo->neg_chap = 1;
 #endif /* CHAP_SUPPORT */
 
     /* If authentication is required, ask peer for CHAP, PAP, or EAP. */
     if (auth_required) {
-	allow_any_ip = 0;
-	if (1
+    allow_any_ip = 0;
+    if (1
 #if CHAP_SUPPORT
-	    && !wo->neg_chap
+        && !wo->neg_chap
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
-	    && !wo->neg_upap
+        && !wo->neg_upap
 #endif /* PAP_SUPPORT */
 #if EAP_SUPPORT
-	    && !wo->neg_eap
+        && !wo->neg_eap
 #endif /* EAP_SUPPORT */
-	    ) {
+        ) {
 #if CHAP_SUPPORT
-	    wo->neg_chap = CHAP_MDTYPE_SUPPORTED != MDTYPE_NONE;
-	    wo->chap_mdtype = CHAP_MDTYPE_SUPPORTED;
+        wo->neg_chap = CHAP_MDTYPE_SUPPORTED != MDTYPE_NONE;
+        wo->chap_mdtype = CHAP_MDTYPE_SUPPORTED;
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
-	    wo->neg_upap = 1;
+        wo->neg_upap = 1;
 #endif /* PAP_SUPPORT */
 #if EAP_SUPPORT
-	    wo->neg_eap = 1;
+        wo->neg_eap = 1;
 #endif /* EAP_SUPPORT */
-	}
+    }
     } else {
 #if CHAP_SUPPORT
-	wo->neg_chap = 0;
-	wo->chap_mdtype = MDTYPE_NONE;
+    wo->neg_chap = 0;
+    wo->chap_mdtype = MDTYPE_NONE;
 #endif /* CHAP_SUPPORT */
 #if PAP_SUPPORT
-	wo->neg_upap = 0;
+    wo->neg_upap = 0;
 #endif /* PAP_SUPPORT */
 #if EAP_SUPPORT
-	wo->neg_eap = 0;
+    wo->neg_eap = 0;
 #endif /* EAP_SUPPORT */
     }
 
@@ -1447,56 +1447,56 @@ auth_check_options()
 #endif /* PAP_SUPPORT */
     if (!can_auth && (0
 #if CHAP_SUPPORT
-	|| wo->neg_chap
+    || wo->neg_chap
 #endif /* CHAP_SUPPORT */
 #if EAP_SUPPORT
-	|| wo->neg_eap
+    || wo->neg_eap
 #endif /* EAP_SUPPORT */
-	)) {
+    )) {
 #if CHAP_SUPPORT
-	can_auth = have_chap_secret((explicit_remote? remote_name: NULL),
-				    our_name, 1, &lacks_ip);
+    can_auth = have_chap_secret((explicit_remote? remote_name: NULL),
+                    our_name, 1, &lacks_ip);
 #else
-	can_auth = 0;
+    can_auth = 0;
 #endif
     }
     if (!can_auth
 #if EAP_SUPPORT
-	&& wo->neg_eap
+    && wo->neg_eap
 #endif /* EAP_SUPPORT */
-	) {
-	can_auth = have_srp_secret((explicit_remote? remote_name: NULL),
-				    our_name, 1, &lacks_ip);
+    ) {
+    can_auth = have_srp_secret((explicit_remote? remote_name: NULL),
+                    our_name, 1, &lacks_ip);
     }
 
     if (auth_required && !can_auth && noauth_addrs == NULL) {
-	if (default_auth) {
-	    option_error(
+    if (default_auth) {
+        option_error(
 "By default the remote system is required to authenticate itself");
-	    option_error(
+        option_error(
 "(because this system has a default route to the internet)");
-	} else if (explicit_remote)
-	    option_error(
+    } else if (explicit_remote)
+        option_error(
 "The remote system (%s) is required to authenticate itself",
-			 remote_name);
-	else
-	    option_error(
+             remote_name);
+    else
+        option_error(
 "The remote system is required to authenticate itself");
-	option_error(
+    option_error(
 "but I couldn't find any suitable secret (password) for it to use to do so.");
-	if (lacks_ip)
-	    option_error(
+    if (lacks_ip)
+        option_error(
 "(None of the available passwords would let it use an IP address.)");
 
-	exit(1);
+    exit(1);
     }
 
     /*
      * Early check for remote number authorization.
      */
     if (!auth_number()) {
-	ppp_warn("calling number %q is not authorized", remote_number);
-	exit(EXIT_CNID_AUTH_FAILED);
+    ppp_warn("calling number %q is not authorized", remote_number);
+    exit(EXIT_CNID_AUTH_FAILED);
     }
 }
 #endif /* PPP_OPTIONS */
@@ -1518,30 +1518,30 @@ auth_reset(unit)
     hadchap = -1;
     ao->neg_upap = !refuse_pap && (passwd[0] != 0 || get_pap_passwd(NULL));
     ao->neg_chap = (!refuse_chap || !refuse_mschap || !refuse_mschap_v2)
-	&& (passwd[0] != 0 ||
-	    (hadchap = have_chap_secret(user, (explicit_remote? remote_name:
-					       NULL), 0, NULL)));
+    && (passwd[0] != 0 ||
+        (hadchap = have_chap_secret(user, (explicit_remote? remote_name:
+                           NULL), 0, NULL)));
     ao->neg_eap = !refuse_eap && (
-	passwd[0] != 0 ||
-	(hadchap == 1 || (hadchap == -1 && have_chap_secret(user,
-	    (explicit_remote? remote_name: NULL), 0, NULL))) ||
-	have_srp_secret(user, (explicit_remote? remote_name: NULL), 0, NULL));
+    passwd[0] != 0 ||
+    (hadchap == 1 || (hadchap == -1 && have_chap_secret(user,
+        (explicit_remote? remote_name: NULL), 0, NULL))) ||
+    have_srp_secret(user, (explicit_remote? remote_name: NULL), 0, NULL));
 
     hadchap = -1;
     if (go->neg_upap && !uselogin && !have_pap_secret(NULL))
-	go->neg_upap = 0;
+    go->neg_upap = 0;
     if (go->neg_chap) {
-	if (!(hadchap = have_chap_secret((explicit_remote? remote_name: NULL),
-			      our_name, 1, NULL)))
-	    go->neg_chap = 0;
+    if (!(hadchap = have_chap_secret((explicit_remote? remote_name: NULL),
+                  our_name, 1, NULL)))
+        go->neg_chap = 0;
     }
     if (go->neg_eap &&
-	(hadchap == 0 || (hadchap == -1 &&
-	    !have_chap_secret((explicit_remote? remote_name: NULL), our_name,
-		1, NULL))) &&
-	!have_srp_secret((explicit_remote? remote_name: NULL), our_name, 1,
-	    NULL))
-	go->neg_eap = 0;
+    (hadchap == 0 || (hadchap == -1 &&
+        !have_chap_secret((explicit_remote? remote_name: NULL), our_name,
+        1, NULL))) &&
+    !have_srp_secret((explicit_remote? remote_name: NULL), our_name, 1,
+        NULL))
+    go->neg_eap = 0;
 }
 
 /*
@@ -1550,8 +1550,8 @@ auth_reset(unit)
  * and login the user if OK.
  *
  * returns:
- *	UPAP_AUTHNAK: Authentication failed.
- *	UPAP_AUTHACK: Authentication succeeded.
+ *  UPAP_AUTHNAK: Authentication failed.
+ *  UPAP_AUTHACK: Authentication succeeded.
  * In either case, msg points to an appropriate message.
  */
 int
@@ -1585,19 +1585,19 @@ check_passwd(unit, auser, userlen, apasswd, passwdlen, msg)
      * Check if a plugin wants to handle this.
      */
     if (pap_auth_hook) {
-	ret = (*pap_auth_hook)(ppp_settings.user, ppp_settings.passwd, msg, &addrs, &opts);
-	if (ret >= 0) {
-	    /* note: set_allowed_addrs() saves opts (but not addrs):
-	       don't free it! */
-	    if (ret)
-		set_allowed_addrs(unit, addrs, opts);
-	    else if (opts != 0)
-		free_wordlist(opts);
-	    if (addrs != 0)
-		free_wordlist(addrs);
-	    BZERO(ppp_settings.passwd, sizeof(ppp_settings.passwd));
-	    return ret? UPAP_AUTHACK: UPAP_AUTHNAK;
-	}
+    ret = (*pap_auth_hook)(ppp_settings.user, ppp_settings.passwd, msg, &addrs, &opts);
+    if (ret >= 0) {
+        /* note: set_allowed_addrs() saves opts (but not addrs):
+           don't free it! */
+        if (ret)
+        set_allowed_addrs(unit, addrs, opts);
+        else if (opts != 0)
+        free_wordlist(opts);
+        if (addrs != 0)
+        free_wordlist(addrs);
+        BZERO(ppp_settings.passwd, sizeof(ppp_settings.passwd));
+        return ret? UPAP_AUTHACK: UPAP_AUTHNAK;
+    }
     }
 
     /*
@@ -1609,67 +1609,67 @@ check_passwd(unit, auser, userlen, apasswd, passwdlen, msg)
     ret = UPAP_AUTHNAK;
     f = fopen(filename, "r");
     if (f == NULL) {
-	ppp_error("Can't open PAP password file %s: %m", filename);
+    ppp_error("Can't open PAP password file %s: %m", filename);
 
     } else {
-	check_access(f, filename);
-	if (scan_authfile(f, ppp_settings.user, our_name, secret, &addrs, &opts, filename, 0) < 0) {
-	    ppp_warn("no PAP secret found for %s", user);
-	} else {
-	    /*
-	     * If the secret is "@login", it means to check
-	     * the password against the login database.
-	     */
-	    int login_secret = strcmp(secret, "@login") == 0;
-	    ret = UPAP_AUTHACK;
-	    if (uselogin || login_secret) {
-		/* login option or secret is @login */
-		if (session_full(ppp_settings.user, ppp_settings.passwd, devnam, msg) == 0) {
-		    ret = UPAP_AUTHNAK;
-		}
-	    } else if (session_mgmt) {
-		if (session_check(ppp_settings.user, NULL, devnam, NULL) == 0) {
-		    ppp_warn("Peer %q failed PAP Session verification", user);
-		    ret = UPAP_AUTHNAK;
-		}
-	    }
-	    if (secret[0] != 0 && !login_secret) {
-		/* password given in pap-secrets - must match */
-		if ((cryptpap || strcmp(ppp_settings.passwd, secret) != 0)
-		    && strcmp(crypt(ppp_settings.passwd, secret), secret) != 0)
-		    ret = UPAP_AUTHNAK;
-	    }
-	}
-	fclose(f);
+    check_access(f, filename);
+    if (scan_authfile(f, ppp_settings.user, our_name, secret, &addrs, &opts, filename, 0) < 0) {
+        ppp_warn("no PAP secret found for %s", user);
+    } else {
+        /*
+         * If the secret is "@login", it means to check
+         * the password against the login database.
+         */
+        int login_secret = strcmp(secret, "@login") == 0;
+        ret = UPAP_AUTHACK;
+        if (uselogin || login_secret) {
+        /* login option or secret is @login */
+        if (session_full(ppp_settings.user, ppp_settings.passwd, devnam, msg) == 0) {
+            ret = UPAP_AUTHNAK;
+        }
+        } else if (session_mgmt) {
+        if (session_check(ppp_settings.user, NULL, devnam, NULL) == 0) {
+            ppp_warn("Peer %q failed PAP Session verification", user);
+            ret = UPAP_AUTHNAK;
+        }
+        }
+        if (secret[0] != 0 && !login_secret) {
+        /* password given in pap-secrets - must match */
+        if ((cryptpap || strcmp(ppp_settings.passwd, secret) != 0)
+            && strcmp(crypt(ppp_settings.passwd, secret), secret) != 0)
+            ret = UPAP_AUTHNAK;
+        }
+    }
+    fclose(f);
     }
 
     if (ret == UPAP_AUTHNAK) {
         if (**msg == 0)
-	    *msg = "Login incorrect";
-	/*
-	 * XXX can we ever get here more than once??
-	 * Frustrate passwd stealer programs.
-	 * Allow 10 tries, but start backing off after 3 (stolen from login).
-	 * On 10'th, drop the connection.
-	 */
-	if (attempts++ >= 10) {
-	    ppp_warn("%d LOGIN FAILURES ON %s, %s", attempts, devnam, user);
-	    lcp_close(pcb, "login failed");
-	}
-	if (attempts > 3)
-	    sleep((u_int) (attempts - 3) * 5);
-	if (opts != NULL)
-	    free_wordlist(opts);
+        *msg = "Login incorrect";
+    /*
+     * XXX can we ever get here more than once??
+     * Frustrate passwd stealer programs.
+     * Allow 10 tries, but start backing off after 3 (stolen from login).
+     * On 10'th, drop the connection.
+     */
+    if (attempts++ >= 10) {
+        ppp_warn("%d LOGIN FAILURES ON %s, %s", attempts, devnam, user);
+        lcp_close(pcb, "login failed");
+    }
+    if (attempts > 3)
+        sleep((u_int) (attempts - 3) * 5);
+    if (opts != NULL)
+        free_wordlist(opts);
 
     } else {
-	attempts = 0;			/* Reset count */
-	if (**msg == 0)
-	    *msg = "Login ok";
-	set_allowed_addrs(unit, addrs, opts);
+    attempts = 0;           /* Reset count */
+    if (**msg == 0)
+        *msg = "Login ok";
+    set_allowed_addrs(unit, addrs, opts);
     }
 
     if (addrs != NULL)
-	free_wordlist(addrs);
+    free_wordlist(addrs);
     BZERO(ppp_settings.passwd, sizeof(ppp_settings.passwd));
     BZERO(secret, sizeof(secret));
 
@@ -1696,31 +1696,31 @@ null_login(unit)
      */
     ret = -1;
     if (null_auth_hook)
-	ret = (*null_auth_hook)(&addrs, &opts);
+    ret = (*null_auth_hook)(&addrs, &opts);
 
     /*
      * Open the file of pap secrets and scan for a suitable secret.
      */
     if (ret <= 0) {
-	filename = _PATH_UPAPFILE;
-	addrs = NULL;
-	f = fopen(filename, "r");
-	if (f == NULL)
-	    return 0;
-	check_access(f, filename);
+    filename = _PATH_UPAPFILE;
+    addrs = NULL;
+    f = fopen(filename, "r");
+    if (f == NULL)
+        return 0;
+    check_access(f, filename);
 
-	i = scan_authfile(f, "", our_name, secret, &addrs, &opts, filename, 0);
-	ret = i >= 0 && secret[0] == 0;
-	BZERO(secret, sizeof(secret));
-	fclose(f);
+    i = scan_authfile(f, "", our_name, secret, &addrs, &opts, filename, 0);
+    ret = i >= 0 && secret[0] == 0;
+    BZERO(secret, sizeof(secret));
+    fclose(f);
     }
 
     if (ret)
-	set_allowed_addrs(unit, addrs, opts);
+    set_allowed_addrs(unit, addrs, opts);
     else if (opts != 0)
-	free_wordlist(opts);
+    free_wordlist(opts);
     if (addrs != 0)
-	free_wordlist(addrs);
+    free_wordlist(addrs);
 
     return ret;
 }
@@ -1744,24 +1744,24 @@ get_pap_passwd(passwd)
      * Check whether a plugin wants to supply this.
      */
     if (pap_passwd_hook) {
-	ret = (*pap_passwd_hook)(ppp_settings,user, ppp_settings.passwd);
-	if (ret >= 0)
-	    return ret;
+    ret = (*pap_passwd_hook)(ppp_settings,user, ppp_settings.passwd);
+    if (ret >= 0)
+        return ret;
     }
 
     filename = _PATH_UPAPFILE;
     f = fopen(filename, "r");
     if (f == NULL)
-	return 0;
+    return 0;
     check_access(f, filename);
     ret = scan_authfile(f, user,
-			(remote_name[0]? remote_name: NULL),
-			secret, NULL, NULL, filename, 0);
+            (remote_name[0]? remote_name: NULL),
+            secret, NULL, NULL, filename, 0);
     fclose(f);
     if (ret < 0)
-	return 0;
+    return 0;
     if (passwd != NULL)
-	strlcpy(passwd, secret, MAXSECRETLEN);
+    strlcpy(passwd, secret, MAXSECRETLEN);
     BZERO(secret, sizeof(secret));
     return 1;
 }
@@ -1781,26 +1781,26 @@ have_pap_secret(lacks_ipp)
 
     /* let the plugin decide, if there is one */
     if (pap_check_hook) {
-	ret = (*pap_check_hook)();
-	if (ret >= 0)
-	    return ret;
+    ret = (*pap_check_hook)();
+    if (ret >= 0)
+        return ret;
     }
 
     filename = _PATH_UPAPFILE;
     f = fopen(filename, "r");
     if (f == NULL)
-	return 0;
+    return 0;
 
     ret = scan_authfile(f, (explicit_remote? remote_name: NULL), our_name,
-			NULL, &addrs, NULL, filename, 0);
+            NULL, &addrs, NULL, filename, 0);
     fclose(f);
     if (ret >= 0 && !some_ip_ok(addrs)) {
-	if (lacks_ipp != 0)
-	    *lacks_ipp = 1;
-	ret = -1;
+    if (lacks_ipp != 0)
+        *lacks_ipp = 1;
+    ret = -1;
     }
     if (addrs != 0)
-	free_wordlist(addrs);
+    free_wordlist(addrs);
 
     return ret >= 0;
 }
@@ -1824,31 +1824,31 @@ have_chap_secret(client, server, need_ip, lacks_ipp)
     struct wordlist *addrs;
 
     if (chap_check_hook) {
-	ret = (*chap_check_hook)();
-	if (ret >= 0) {
-	    return ret;
-	}
+    ret = (*chap_check_hook)();
+    if (ret >= 0) {
+        return ret;
+    }
     }
 
     filename = _PATH_CHAPFILE;
     f = fopen(filename, "r");
     if (f == NULL)
-	return 0;
+    return 0;
 
     if (client != NULL && client[0] == 0)
-	client = NULL;
+    client = NULL;
     else if (server != NULL && server[0] == 0)
-	server = NULL;
+    server = NULL;
 
     ret = scan_authfile(f, client, server, NULL, &addrs, NULL, filename, 0);
     fclose(f);
     if (ret >= 0 && need_ip && !some_ip_ok(addrs)) {
-	if (lacks_ipp != 0)
-	    *lacks_ipp = 1;
-	ret = -1;
+    if (lacks_ipp != 0)
+        *lacks_ipp = 1;
+    ret = -1;
     }
     if (addrs != 0)
-	free_wordlist(addrs);
+    free_wordlist(addrs);
 
     return ret >= 0;
 }
@@ -1874,22 +1874,22 @@ have_srp_secret(client, server, need_ip, lacks_ipp)
     filename = _PATH_SRPFILE;
     f = fopen(filename, "r");
     if (f == NULL)
-	return 0;
+    return 0;
 
     if (client != NULL && client[0] == 0)
-	client = NULL;
+    client = NULL;
     else if (server != NULL && server[0] == 0)
-	server = NULL;
+    server = NULL;
 
     ret = scan_authfile(f, client, server, NULL, &addrs, NULL, filename, 0);
     fclose(f);
     if (ret >= 0 && need_ip && !some_ip_ok(addrs)) {
-	if (lacks_ipp != 0)
-	    *lacks_ipp = 1;
-	ret = -1;
+    if (lacks_ipp != 0)
+        *lacks_ipp = 1;
+    ret = -1;
     }
     if (addrs != 0)
-	free_wordlist(addrs);
+    free_wordlist(addrs);
 
     return ret >= 0;
 }
@@ -1930,42 +1930,42 @@ int get_secret(ppp_pcb *pcb, const char *client, const char *server, char *secre
     addrs = NULL;
 
     if (!am_server && ppp_settings.passwd[0] != 0) {
-	strlcpy(secbuf, ppp_settings.passwd, sizeof(secbuf));
+    strlcpy(secbuf, ppp_settings.passwd, sizeof(secbuf));
     } else if (!am_server && chap_passwd_hook) {
-	if ( (*chap_passwd_hook)(client, secbuf) < 0) {
-	    ppp_error("Unable to obtain CHAP password for %s on %s from plugin",
-		  client, server);
-	    return 0;
-	}
+    if ( (*chap_passwd_hook)(client, secbuf) < 0) {
+        ppp_error("Unable to obtain CHAP password for %s on %s from plugin",
+          client, server);
+        return 0;
+    }
     } else {
-	filename = _PATH_CHAPFILE;
-	addrs = NULL;
-	secbuf[0] = 0;
+    filename = _PATH_CHAPFILE;
+    addrs = NULL;
+    secbuf[0] = 0;
 
-	f = fopen(filename, "r");
-	if (f == NULL) {
-	    ppp_error("Can't open chap secret file %s: %m", filename);
-	    return 0;
-	}
-	check_access(f, filename);
+    f = fopen(filename, "r");
+    if (f == NULL) {
+        ppp_error("Can't open chap secret file %s: %m", filename);
+        return 0;
+    }
+    check_access(f, filename);
 
-	ret = scan_authfile(f, client, server, secbuf, &addrs, &opts, filename, 0);
-	fclose(f);
-	if (ret < 0)
-	    return 0;
+    ret = scan_authfile(f, client, server, secbuf, &addrs, &opts, filename, 0);
+    fclose(f);
+    if (ret < 0)
+        return 0;
 
-	if (am_server)
-	    set_allowed_addrs(unit, addrs, opts);
-	else if (opts != 0)
-	    free_wordlist(opts);
-	if (addrs != 0)
-	    free_wordlist(addrs);
+    if (am_server)
+        set_allowed_addrs(unit, addrs, opts);
+    else if (opts != 0)
+        free_wordlist(opts);
+    if (addrs != 0)
+        free_wordlist(addrs);
     }
 
     len = strlen(secbuf);
     if (len > MAXSECRETLEN) {
-	ppp_error("Secret for %s on %s is too long", client, server);
-	len = MAXSECRETLEN;
+    ppp_error("Secret for %s on %s is too long", client, server);
+    len = MAXSECRETLEN;
     }
     MEMCPY(secret, secbuf, len);
     BZERO(secbuf, sizeof(secbuf));
@@ -1997,31 +1997,31 @@ get_srp_secret(unit, client, server, secret, am_server)
     struct wordlist *addrs, *opts;
 
     if (!am_server && ppp_settings.passwd[0] != '\0') {
-	strlcpy(secret, ppp_settings.passwd, MAXWORDLEN);
+    strlcpy(secret, ppp_settings.passwd, MAXWORDLEN);
     } else {
-	filename = _PATH_SRPFILE;
-	addrs = NULL;
+    filename = _PATH_SRPFILE;
+    addrs = NULL;
 
-	fp = fopen(filename, "r");
-	if (fp == NULL) {
-	    ppp_error("Can't open srp secret file %s: %m", filename);
-	    return 0;
-	}
-	check_access(fp, filename);
+    fp = fopen(filename, "r");
+    if (fp == NULL) {
+        ppp_error("Can't open srp secret file %s: %m", filename);
+        return 0;
+    }
+    check_access(fp, filename);
 
-	secret[0] = '\0';
-	ret = scan_authfile(fp, client, server, secret, &addrs, &opts,
-	    filename, am_server);
-	fclose(fp);
-	if (ret < 0)
-	    return 0;
+    secret[0] = '\0';
+    ret = scan_authfile(fp, client, server, secret, &addrs, &opts,
+        filename, am_server);
+    fclose(fp);
+    if (ret < 0)
+        return 0;
 
-	if (am_server)
-	    set_allowed_addrs(unit, addrs, opts);
-	else if (opts != NULL)
-	    free_wordlist(opts);
-	if (addrs != NULL)
-	    free_wordlist(addrs);
+    if (am_server)
+        set_allowed_addrs(unit, addrs, opts);
+    else if (opts != NULL)
+        free_wordlist(opts);
+    if (addrs != NULL)
+        free_wordlist(addrs);
     }
 
     return 1;
@@ -2049,10 +2049,10 @@ set_allowed_addrs(unit, addrs, opts)
     u32_t suggested_ip = 0;
 
     if (addresses[unit] != NULL)
-	free(addresses[unit]);
+    free(addresses[unit]);
     addresses[unit] = NULL;
     if (extra_options != NULL)
-	free_wordlist(extra_options);
+    free_wordlist(extra_options);
     extra_options = opts;
 
     /*
@@ -2060,109 +2060,109 @@ set_allowed_addrs(unit, addrs, opts)
      */
     n = wordlist_count(addrs) + wordlist_count(noauth_addrs);
     if (n == 0)
-	return;
+    return;
     ip = (struct permitted_ip *) malloc((n + 1) * sizeof(struct permitted_ip));
     if (ip == 0)
-	return;
+    return;
 
     /* temporarily append the noauth_addrs list to addrs */
     for (plink = &addrs; *plink != NULL; plink = &(*plink)->next)
-	;
+    ;
     *plink = noauth_addrs;
 
     n = 0;
     for (ap = addrs; ap != NULL; ap = ap->next) {
-	/* "-" means no addresses authorized, "*" means any address allowed */
-	ptr_word = ap->word;
-	if (strcmp(ptr_word, "-") == 0)
-	    break;
-	if (strcmp(ptr_word, "*") == 0) {
-	    ip[n].permit = 1;
-	    ip[n].base = ip[n].mask = 0;
-	    ++n;
-	    break;
-	}
+    /* "-" means no addresses authorized, "*" means any address allowed */
+    ptr_word = ap->word;
+    if (strcmp(ptr_word, "-") == 0)
+        break;
+    if (strcmp(ptr_word, "*") == 0) {
+        ip[n].permit = 1;
+        ip[n].base = ip[n].mask = 0;
+        ++n;
+        break;
+    }
 
-	ip[n].permit = 1;
-	if (*ptr_word == '!') {
-	    ip[n].permit = 0;
-	    ++ptr_word;
-	}
+    ip[n].permit = 1;
+    if (*ptr_word == '!') {
+        ip[n].permit = 0;
+        ++ptr_word;
+    }
 
-	mask = ~ (u32_t) 0;
-	offset = 0;
-	ptr_mask = strchr (ptr_word, '/');
-	if (ptr_mask != NULL) {
-	    int bit_count;
-	    char *endp;
+    mask = ~ (u32_t) 0;
+    offset = 0;
+    ptr_mask = strchr (ptr_word, '/');
+    if (ptr_mask != NULL) {
+        int bit_count;
+        char *endp;
 
-	    bit_count = (int) strtol (ptr_mask+1, &endp, 10);
-	    if (bit_count <= 0 || bit_count > 32) {
-		ppp_warn("invalid address length %v in auth. address list",
-		     ptr_mask+1);
-		continue;
-	    }
-	    bit_count = 32 - bit_count;	/* # bits in host part */
-	    if (*endp == '+') {
-		offset = ifunit + 1;
-		++endp;
-	    }
-	    if (*endp != 0) {
-		ppp_warn("invalid address length syntax: %v", ptr_mask+1);
-		continue;
-	    }
-	    *ptr_mask = '\0';
-	    mask <<= bit_count;
-	}
+        bit_count = (int) strtol (ptr_mask+1, &endp, 10);
+        if (bit_count <= 0 || bit_count > 32) {
+        ppp_warn("invalid address length %v in auth. address list",
+             ptr_mask+1);
+        continue;
+        }
+        bit_count = 32 - bit_count; /* # bits in host part */
+        if (*endp == '+') {
+        offset = ifunit + 1;
+        ++endp;
+        }
+        if (*endp != 0) {
+        ppp_warn("invalid address length syntax: %v", ptr_mask+1);
+        continue;
+        }
+        *ptr_mask = '\0';
+        mask <<= bit_count;
+    }
 
-	hp = gethostbyname(ptr_word);
-	if (hp != NULL && hp->h_addrtype == AF_INET) {
-	    a = *(u32_t *)hp->h_addr;
-	} else {
-	    np = getnetbyname (ptr_word);
-	    if (np != NULL && np->n_addrtype == AF_INET) {
-		a = lwip_htonl ((u32_t)np->n_net);
-		if (ptr_mask == NULL) {
-		    /* calculate appropriate mask for net */
-		    ah = lwip_ntohl(a);
-		    if (IN_CLASSA(ah))
-			mask = IN_CLASSA_NET;
-		    else if (IN_CLASSB(ah))
-			mask = IN_CLASSB_NET;
-		    else if (IN_CLASSC(ah))
-			mask = IN_CLASSC_NET;
-		}
-	    } else {
-		a = inet_addr (ptr_word);
-	    }
-	}
+    hp = gethostbyname(ptr_word);
+    if (hp != NULL && hp->h_addrtype == AF_INET) {
+        a = *(u32_t *)hp->h_addr;
+    } else {
+        np = getnetbyname (ptr_word);
+        if (np != NULL && np->n_addrtype == AF_INET) {
+        a = lwip_htonl ((u32_t)np->n_net);
+        if (ptr_mask == NULL) {
+            /* calculate appropriate mask for net */
+            ah = lwip_ntohl(a);
+            if (IN_CLASSA(ah))
+            mask = IN_CLASSA_NET;
+            else if (IN_CLASSB(ah))
+            mask = IN_CLASSB_NET;
+            else if (IN_CLASSC(ah))
+            mask = IN_CLASSC_NET;
+        }
+        } else {
+        a = inet_addr (ptr_word);
+        }
+    }
 
-	if (ptr_mask != NULL)
-	    *ptr_mask = '/';
+    if (ptr_mask != NULL)
+        *ptr_mask = '/';
 
-	if (a == (u32_t)-1L) {
-	    ppp_warn("unknown host %s in auth. address list", ap->word);
-	    continue;
-	}
-	if (offset != 0) {
-	    if (offset >= ~mask) {
-		ppp_warn("interface unit %d too large for subnet %v",
-		     ifunit, ptr_word);
-		continue;
-	    }
-	    a = lwip_htonl((lwip_ntohl(a) & mask) + offset);
-	    mask = ~(u32_t)0;
-	}
-	ip[n].mask = lwip_htonl(mask);
-	ip[n].base = a & ip[n].mask;
-	++n;
-	if (~mask == 0 && suggested_ip == 0)
-	    suggested_ip = a;
+    if (a == (u32_t)-1L) {
+        ppp_warn("unknown host %s in auth. address list", ap->word);
+        continue;
+    }
+    if (offset != 0) {
+        if (offset >= ~mask) {
+        ppp_warn("interface unit %d too large for subnet %v",
+             ifunit, ptr_word);
+        continue;
+        }
+        a = lwip_htonl((lwip_ntohl(a) & mask) + offset);
+        mask = ~(u32_t)0;
+    }
+    ip[n].mask = lwip_htonl(mask);
+    ip[n].base = a & ip[n].mask;
+    ++n;
+    if (~mask == 0 && suggested_ip == 0)
+        suggested_ip = a;
     }
     *plink = NULL;
 
-    ip[n].permit = 0;		/* make the last entry forbid all addresses */
-    ip[n].base = 0;		/* to terminate the list */
+    ip[n].permit = 0;       /* make the last entry forbid all addresses */
+    ip[n].base = 0;     /* to terminate the list */
     ip[n].mask = 0;
 
     addresses[unit] = ip;
@@ -2173,14 +2173,14 @@ set_allowed_addrs(unit, addrs, opts)
      * which is a single host, then use that if we find one.
      */
     if (suggested_ip != 0
-	&& (wo->hisaddr == 0 || !auth_ip_addr(unit, wo->hisaddr))) {
-	wo->hisaddr = suggested_ip;
-	/*
-	 * Do we insist on this address?  No, if there are other
-	 * addresses authorized than the suggested one.
-	 */
-	if (n > 1)
-	    wo->accept_remote = 1;
+    && (wo->hisaddr == 0 || !auth_ip_addr(unit, wo->hisaddr))) {
+    wo->hisaddr = suggested_ip;
+    /*
+     * Do we insist on this address?  No, if there are other
+     * addresses authorized than the suggested one.
+     */
+    if (n > 1)
+        wo->accept_remote = 1;
     }
 }
 
@@ -2197,21 +2197,21 @@ auth_ip_addr(unit, addr)
 
     /* don't allow loopback or multicast address */
     if (bad_ip_adrs(addr))
-	return 0;
+    return 0;
 
     if (allowed_address_hook) {
-	ok = allowed_address_hook(addr);
-	if (ok >= 0) return ok;
+    ok = allowed_address_hook(addr);
+    if (ok >= 0) return ok;
     }
 
     if (addresses[unit] != NULL) {
-	ok = ip_addr_check(addr, addresses[unit]);
-	if (ok >= 0)
-	    return ok;
+    ok = ip_addr_check(addr, addresses[unit]);
+    if (ok >= 0)
+        return ok;
     }
 
     if (auth_required)
-	return 0;		/* no addresses authorized */
+    return 0;       /* no addresses authorized */
     return allow_any_ip || privileged || !have_route_to(addr);
 }
 
@@ -2221,8 +2221,8 @@ ip_addr_check(addr, addrs)
     struct permitted_ip *addrs;
 {
     for (; ; ++addrs)
-	if ((addr & addrs->mask) == addrs->base)
-	    return addrs->permit;
+    if ((addr & addrs->mask) == addrs->base)
+        return addrs->permit;
 }
 
 /*
@@ -2236,7 +2236,7 @@ bad_ip_adrs(addr)
 {
     addr = lwip_ntohl(addr);
     return (addr >> IN_CLASSA_NSHIFT) == IN_LOOPBACKNET
-	|| IN_MULTICAST(addr) || IN_BADCLASS(addr);
+    || IN_MULTICAST(addr) || IN_BADCLASS(addr);
 }
 
 /*
@@ -2248,10 +2248,10 @@ some_ip_ok(addrs)
     struct wordlist *addrs;
 {
     for (; addrs != 0; addrs = addrs->next) {
-	if (addrs->word[0] == '-')
-	    break;
-	if (addrs->word[0] != '!')
-	    return 1;		/* some IP address is allowed */
+    if (addrs->word[0] == '-')
+        break;
+    if (addrs->word[0] != '!')
+        return 1;       /* some IP address is allowed */
     }
     return 0;
 }
@@ -2268,17 +2268,17 @@ auth_number()
 
     /* Allow all if no authorization list. */
     if (!wp)
-	return 1;
+    return 1;
 
     /* Allow if we have a match in the authorization list. */
     while (wp) {
-	/* trailing '*' wildcard */
-	l = strlen(wp->word);
-	if ((wp->word)[l - 1] == '*')
-	    l--;
-	if (!strncasecmp(wp->word, remote_number, l))
-	    return 1;
-	wp = wp->next;
+    /* trailing '*' wildcard */
+    l = strlen(wp->word);
+    if ((wp->word)[l - 1] == '*')
+        l--;
+    if (!strncasecmp(wp->word, remote_number, l))
+        return 1;
+    wp = wp->next;
     }
 
     return 0;
@@ -2295,10 +2295,10 @@ check_access(f, filename)
     struct stat sbuf;
 
     if (fstat(fileno(f), &sbuf) < 0) {
-	ppp_warn("cannot stat secret file %s: %m", filename);
+    ppp_warn("cannot stat secret file %s: %m", filename);
     } else if ((sbuf.st_mode & (S_IRWXG | S_IRWXO)) != 0) {
-	ppp_warn("Warning - secret file %s has world and/or group access",
-	     filename);
+    ppp_warn("Warning - secret file %s has world and/or group access",
+         filename);
     }
 }
 
@@ -2337,141 +2337,141 @@ scan_authfile(f, client, server, secret, addrs, opts, filename, flags)
     char *cp;
 
     if (addrs != NULL)
-	*addrs = NULL;
+    *addrs = NULL;
     if (opts != NULL)
-	*opts = NULL;
+    *opts = NULL;
     addr_list = NULL;
     if (!getword(f, word, &newline, filename))
-	return -1;		/* file is empty??? */
+    return -1;      /* file is empty??? */
     newline = 1;
     best_flag = -1;
     for (;;) {
-	/*
-	 * Skip until we find a word at the start of a line.
-	 */
-	while (!newline && getword(f, word, &newline, filename))
-	    ;
-	if (!newline)
-	    break;		/* got to end of file */
+    /*
+     * Skip until we find a word at the start of a line.
+     */
+    while (!newline && getword(f, word, &newline, filename))
+        ;
+    if (!newline)
+        break;      /* got to end of file */
 
-	/*
-	 * Got a client - check if it's a match or a wildcard.
-	 */
-	got_flag = 0;
-	if (client != NULL && strcmp(word, client) != 0 && !ISWILD(word)) {
-	    newline = 0;
-	    continue;
-	}
-	if (!ISWILD(word))
-	    got_flag = NONWILD_CLIENT;
+    /*
+     * Got a client - check if it's a match or a wildcard.
+     */
+    got_flag = 0;
+    if (client != NULL && strcmp(word, client) != 0 && !ISWILD(word)) {
+        newline = 0;
+        continue;
+    }
+    if (!ISWILD(word))
+        got_flag = NONWILD_CLIENT;
 
-	/*
-	 * Now get a server and check if it matches.
-	 */
-	if (!getword(f, word, &newline, filename))
-	    break;
-	if (newline)
-	    continue;
-	if (!ISWILD(word)) {
-	    if (server != NULL && strcmp(word, server) != 0)
-		continue;
-	    got_flag |= NONWILD_SERVER;
-	}
+    /*
+     * Now get a server and check if it matches.
+     */
+    if (!getword(f, word, &newline, filename))
+        break;
+    if (newline)
+        continue;
+    if (!ISWILD(word)) {
+        if (server != NULL && strcmp(word, server) != 0)
+        continue;
+        got_flag |= NONWILD_SERVER;
+    }
 
-	/*
-	 * Got some sort of a match - see if it's better than what
-	 * we have already.
-	 */
-	if (got_flag <= best_flag)
-	    continue;
+    /*
+     * Got some sort of a match - see if it's better than what
+     * we have already.
+     */
+    if (got_flag <= best_flag)
+        continue;
 
-	/*
-	 * Get the secret.
-	 */
-	if (!getword(f, word, &newline, filename))
-	    break;
-	if (newline)
-	    continue;
+    /*
+     * Get the secret.
+     */
+    if (!getword(f, word, &newline, filename))
+        break;
+    if (newline)
+        continue;
 
-	/*
-	 * SRP-SHA1 authenticator should never be reading secrets from
-	 * a file.  (Authenticatee may, though.)
-	 */
-	if (flags && ((cp = strchr(word, ':')) == NULL ||
-	    strchr(cp + 1, ':') == NULL))
-	    continue;
+    /*
+     * SRP-SHA1 authenticator should never be reading secrets from
+     * a file.  (Authenticatee may, though.)
+     */
+    if (flags && ((cp = strchr(word, ':')) == NULL ||
+        strchr(cp + 1, ':') == NULL))
+        continue;
 
-	if (secret != NULL) {
-	    /*
-	     * Special syntax: @/pathname means read secret from file.
-	     */
-	    if (word[0] == '@' && word[1] == '/') {
-		strlcpy(atfile, word+1, sizeof(atfile));
-		if ((sf = fopen(atfile, "r")) == NULL) {
-		    ppp_warn("can't open indirect secret file %s", atfile);
-		    continue;
-		}
-		check_access(sf, atfile);
-		if (!getword(sf, word, &xxx, atfile)) {
-		    ppp_warn("no secret in indirect secret file %s", atfile);
-		    fclose(sf);
-		    continue;
-		}
-		fclose(sf);
-	    }
-	    strlcpy(lsecret, word, sizeof(lsecret));
-	}
+    if (secret != NULL) {
+        /*
+         * Special syntax: @/pathname means read secret from file.
+         */
+        if (word[0] == '@' && word[1] == '/') {
+        strlcpy(atfile, word+1, sizeof(atfile));
+        if ((sf = fopen(atfile, "r")) == NULL) {
+            ppp_warn("can't open indirect secret file %s", atfile);
+            continue;
+        }
+        check_access(sf, atfile);
+        if (!getword(sf, word, &xxx, atfile)) {
+            ppp_warn("no secret in indirect secret file %s", atfile);
+            fclose(sf);
+            continue;
+        }
+        fclose(sf);
+        }
+        strlcpy(lsecret, word, sizeof(lsecret));
+    }
 
-	/*
-	 * Now read address authorization info and make a wordlist.
-	 */
-	app = &alist;
-	for (;;) {
-	    if (!getword(f, word, &newline, filename) || newline)
-		break;
-	    ap = (struct wordlist *)
-		    malloc(sizeof(struct wordlist) + strlen(word) + 1);
-	    if (ap == NULL)
-		novm("authorized addresses");
-	    ap->word = (char *) (ap + 1);
-	    strcpy(ap->word, word);
-	    *app = ap;
-	    app = &ap->next;
-	}
-	*app = NULL;
+    /*
+     * Now read address authorization info and make a wordlist.
+     */
+    app = &alist;
+    for (;;) {
+        if (!getword(f, word, &newline, filename) || newline)
+        break;
+        ap = (struct wordlist *)
+            malloc(sizeof(struct wordlist) + strlen(word) + 1);
+        if (ap == NULL)
+        novm("authorized addresses");
+        ap->word = (char *) (ap + 1);
+        strcpy(ap->word, word);
+        *app = ap;
+        app = &ap->next;
+    }
+    *app = NULL;
 
-	/*
-	 * This is the best so far; remember it.
-	 */
-	best_flag = got_flag;
-	if (addr_list)
-	    free_wordlist(addr_list);
-	addr_list = alist;
-	if (secret != NULL)
-	    strlcpy(secret, lsecret, MAXWORDLEN);
+    /*
+     * This is the best so far; remember it.
+     */
+    best_flag = got_flag;
+    if (addr_list)
+        free_wordlist(addr_list);
+    addr_list = alist;
+    if (secret != NULL)
+        strlcpy(secret, lsecret, MAXWORDLEN);
 
-	if (!newline)
-	    break;
+    if (!newline)
+        break;
     }
 
     /* scan for a -- word indicating the start of options */
     for (app = &addr_list; (ap = *app) != NULL; app = &ap->next)
-	if (strcmp(ap->word, "--") == 0)
-	    break;
+    if (strcmp(ap->word, "--") == 0)
+        break;
     /* ap = start of options */
     if (ap != NULL) {
-	ap = ap->next;		/* first option */
-	free(*app);			/* free the "--" word */
-	*app = NULL;		/* terminate addr list */
+    ap = ap->next;      /* first option */
+    free(*app);         /* free the "--" word */
+    *app = NULL;        /* terminate addr list */
     }
     if (opts != NULL)
-	*opts = ap;
+    *opts = ap;
     else if (ap != NULL)
-	free_wordlist(ap);
+    free_wordlist(ap);
     if (addrs != NULL)
-	*addrs = addr_list;
+    *addrs = addr_list;
     else if (addr_list != NULL)
-	free_wordlist(addr_list);
+    free_wordlist(addr_list);
 
     return best_flag;
 }
@@ -2486,7 +2486,7 @@ wordlist_count(wp)
     int n;
 
     for (n = 0; wp != NULL; wp = wp->next)
-	++n;
+    ++n;
     return n;
 }
 
@@ -2500,9 +2500,9 @@ free_wordlist(wp)
     struct wordlist *next;
 
     while (wp != NULL) {
-	next = wp->next;
-	free(wp);
-	wp = next;
+    next = wp->next;
+    free(wp);
+    wp = next;
     }
 }
 #endif /* UNUSED */

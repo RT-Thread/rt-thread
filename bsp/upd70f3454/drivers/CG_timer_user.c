@@ -8,12 +8,12 @@
 *
 * This device driver was created by Applilet3 for V850ES/Jx3
 * 32-Bit Single-Chip Microcontrollers
-* Filename:	CG_timer_user.c
-* Abstract:	This file implements device driver for Timer module.
-* APIlib:	Applilet3 for V850ES/Jx3 V2.01 [20 Apr 2010]
-* Device:	uPD70F3746
-* Compiler:	IAR Systems ICCV850
-* Creation date:	6/26/2010
+* Filename: CG_timer_user.c
+* Abstract: This file implements device driver for Timer module.
+* APIlib:   Applilet3 for V850ES/Jx3 V2.01 [20 Apr 2010]
+* Device:   uPD70F3746
+* Compiler: IAR Systems ICCV850
+* Creation date:    6/26/2010
 *******************************************************************************
 */
 
@@ -40,13 +40,13 @@
 **-----------------------------------------------------------------------------
 **
 **  Abstract:
-**	This function is INTTP0CC0 interrupt service routine.
+**  This function is INTTP0CC0 interrupt service routine.
 **
 **  Parameters:
-**	None
+**  None
 **
 **  Returns:
-**	None
+**  None
 **
 **-----------------------------------------------------------------------------
 */
@@ -54,9 +54,9 @@
 ///#pragma vector = INTTB0CC0_vector
 ///__interrupt void MD_INTTB0CC0(void)
 ///{
-	/* Start user code. Do not edit comment generated here */
+    /* Start user code. Do not edit comment generated here */
 ///    PDLH = ~PDLH;
-	/* End user code. Do not edit comment generated here */
+    /* End user code. Do not edit comment generated here */
 ///}
 
 /* Start user code for adding. Do not edit comment generated here */

@@ -33,7 +33,7 @@
 #include "pwm/pwm_ifc.h"
 #include "iomux_config.h"
 
-#define INVALID_INT	0xFFFFFFFF
+#define INVALID_INT 0xFFFFFFFF
 uint32_t g_pwm_test_end;
 
 static uint32_t pwm_get_valid_int(uint32_t low, uint32_t high)
@@ -102,7 +102,7 @@ int32_t pwm_output_test(void)
     // Configure pins.
     pwm_iomux_config(instance);
 
-    // Initialize PWM module 
+    // Initialize PWM module
     retv = pwm_init(instance, &pwm);
     if (retv == FALSE) {
         printf("PWM init failed.\n");
@@ -110,13 +110,13 @@ int32_t pwm_output_test(void)
     }
     printf("PWM output start.\n");
 
-    // Enable PWM output 
+    // Enable PWM output
     pwm_enable(instance);
 
-    // Wait until FIFO empty 
+    // Wait until FIFO empty
     while (g_pwm_test_end == FALSE) ;
 
-    // Disable PWM output 
+    // Disable PWM output
     pwm_disable(instance);
 
     printf("PWM output end.\n");

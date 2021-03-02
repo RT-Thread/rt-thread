@@ -59,7 +59,7 @@
   \ingroup Cortex_ARMv8MBL
   @{
  */
- 
+
 #include "cmsis_version.h"
 
 /*  CMSIS definitions */

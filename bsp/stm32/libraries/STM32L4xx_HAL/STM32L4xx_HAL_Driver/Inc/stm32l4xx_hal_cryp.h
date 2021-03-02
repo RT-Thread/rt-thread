@@ -33,7 +33,7 @@
   */
 
 #if defined(AES)
-  
+
 /** @addtogroup CRYP
   * @{
   */
@@ -723,7 +723,7 @@ uint32_t              HAL_CRYP_GetError(CRYP_HandleTypeDef *hcryp);
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif

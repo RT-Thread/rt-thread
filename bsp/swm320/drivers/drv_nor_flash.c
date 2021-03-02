@@ -82,7 +82,7 @@ int rt_hw_norflash_init(void)
     PORT->PORTM_SEL0 = 0xAAAAAAAA; //PM0-15 => DATA15-0
     PORT->PORTM_INEN = 0xFFFF;
 
-    PORT->PORTM_SEL1 = 0xAAA; //PM16 => OENã€PM17 => WENã€PM18 => NORFL_CSNã€PM19 => SDRAM_CSNã€PM20 => SRAM_CSNã€PM21 => SDRAM_CKE
+    PORT->PORTM_SEL1 = 0xAAA; //PM16 => OEN¡¢PM17 => WEN¡¢PM18 => NORFL_CSN¡¢PM19 => SDRAM_CSN¡¢PM20 => SRAM_CSN¡¢PM21 => SDRAM_CKE
 
     NORFL_InitStruct.DataWidth = 16;
     NORFL_InitStruct.WELowPulseTime = 5;

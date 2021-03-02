@@ -396,7 +396,7 @@ rt_err_t hc32_pulse_encoder_clear_count(struct rt_pulse_encoder_device *pulse_en
     TMRA_Stop(pulse_encoder_device->timer_periph);
     TMRA_SetCntVal(pulse_encoder_device->timer_periph, 0);
     TMRA_ClrStatus(pulse_encoder_device->timer_periph, (TMRA_FLAG_OVF | TMRA_FLAG_UNF));
-    TMRA_Start(pulse_encoder_device->timer_periph);  
+    TMRA_Start(pulse_encoder_device->timer_periph);
 
     return RT_EOK;
 }

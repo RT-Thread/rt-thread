@@ -8,7 +8,7 @@
  * 2018-02-08     Zhangyihong  the first version
  * 2018-10-29     XY
  */
- 
+
 #ifndef __DRV_TOUCH_H__
 #define __DRV_TOUCH_H__
 

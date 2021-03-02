@@ -120,21 +120,21 @@
  * the default parameters specified using the configuration symbols
  * listed above.
  * \code
-	pll_enable_config_defaults(0); \endcode
+    pll_enable_config_defaults(0); \endcode
  *
  * To configure, enable PLL0 using the default parameters and to disable
  * a specific feature like Wide Bandwidth Mode (a UC3A3-specific
  * PLL option.), you can use this initialization process.
  * \code
-	struct pll_config pllcfg;
-	if (pll_is_locked(pll_id)) {
-		return; // Pll already running
-	}
-	pll_enable_source(CONFIG_PLL0_SOURCE);
-	pll_config_defaults(&pllcfg, 0);
-	pll_config_set_option(&pllcfg, PLL_OPT_WBM_DISABLE);
-	pll_enable(&pllcfg, 0);
-	pll_wait_for_lock(0); \endcode
+    struct pll_config pllcfg;
+    if (pll_is_locked(pll_id)) {
+        return; // Pll already running
+    }
+    pll_enable_source(CONFIG_PLL0_SOURCE);
+    pll_config_defaults(&pllcfg, 0);
+    pll_config_set_option(&pllcfg, PLL_OPT_WBM_DISABLE);
+    pll_enable(&pllcfg, 0);
+    pll_wait_for_lock(0); \endcode
  *
  * When the last function call returns, PLL0 is ready to be used as the
  * main system clock source.
@@ -326,13 +326,13 @@
  */
 static inline int pll_wait_for_lock(unsigned int pll_id)
 {
-	Assert(pll_id < NR_PLLS);
+    Assert(pll_id < NR_PLLS);
 
-	while (!pll_is_locked(pll_id)) {
-		/* Do nothing */
-	}
+    while (!pll_is_locked(pll_id)) {
+        /* Do nothing */
+    }
 
-	return 0;
+    return 0;
 }
 
 //@}

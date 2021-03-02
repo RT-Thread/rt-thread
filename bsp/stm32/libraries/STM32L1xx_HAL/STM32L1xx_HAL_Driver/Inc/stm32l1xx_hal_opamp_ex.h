@@ -26,7 +26,7 @@
 #endif
 
 #if defined (STM32L151xCA) || defined (STM32L151xD) || defined (STM32L152xCA) || defined (STM32L152xD) || defined (STM32L162xCA) || defined (STM32L162xD) || defined (STM32L151xE) || defined (STM32L151xDX) || defined (STM32L152xE) || defined (STM32L152xDX) || defined (STM32L162xE) || defined (STM32L162xDX) || defined (STM32L162xC) || defined (STM32L152xC) || defined (STM32L151xC)
-   
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l1xx_hal_def.h"
 
@@ -45,13 +45,13 @@
 #if defined (STM32L151xD) || defined (STM32L152xD) || defined (STM32L162xD)
 #define OPAMP_CSR_OPAXPD_ALL                                                   \
   (OPAMP_CSR_OPA1PD | OPAMP_CSR_OPA2PD | OPAMP_CSR_OPA3PD)
-    
+
 #define OPAMP_CSR_OPAXCAL_L_ALL                                                \
   (OPAMP_CSR_OPA1CAL_L | OPAMP_CSR_OPA2CAL_L | OPAMP_CSR_OPA3CAL_L)
 
 #define OPAMP_CSR_OPAXCAL_H_ALL                                                \
   (OPAMP_CSR_OPA1CAL_H | OPAMP_CSR_OPA2CAL_H | OPAMP_CSR_OPA3CAL_H)
-    
+
 #define OPAMP_CSR_ALL_SWITCHES_ALL_OPAMPS                                      \
   (OPAMP_CSR_S3SEL1 | OPAMP_CSR_S4SEL1 | OPAMP_CSR_S5SEL1 | OPAMP_CSR_S6SEL1 | \
    OPAMP_CSR_ANAWSEL1                                                        | \
@@ -62,13 +62,13 @@
 #else
 #define OPAMP_CSR_OPAXPD_ALL                                                   \
   (OPAMP_CSR_OPA1PD | OPAMP_CSR_OPA2PD)
-    
+
 #define OPAMP_CSR_OPAXCAL_L_ALL                                                \
   (OPAMP_CSR_OPA1CAL_L | OPAMP_CSR_OPA2CAL_L)
 
 #define OPAMP_CSR_OPAXCAL_H_ALL                                                \
   (OPAMP_CSR_OPA1CAL_H | OPAMP_CSR_OPA2CAL_H)
-    
+
 #define OPAMP_CSR_ALL_SWITCHES_ALL_OPAMPS                                      \
   (OPAMP_CSR_S3SEL1 | OPAMP_CSR_S4SEL1 | OPAMP_CSR_S5SEL1 | OPAMP_CSR_S6SEL1 | \
    OPAMP_CSR_ANAWSEL1                                                        | \
@@ -79,13 +79,13 @@
 /**
   * @}
   */
-  
+
 /* Exported macro ------------------------------------------------------------*/
-    
+
 /** @defgroup OPAMPEx_Exported_Macro OPAMPEx Exported Macro
   * @{
   */
-    
+
 #if defined (STM32L151xD) || defined (STM32L152xD) || defined (STM32L162xD)
 /**
   * @brief Enable internal analog switch SW1 to connect OPAMP3 ouput to ADC
@@ -96,24 +96,24 @@
 #define __HAL_OPAMP_OPAMP3OUT_CONNECT_ADC_COMP1()    __HAL_RI_SWITCH_COMP1_SW1_CLOSE()
 
 /**
-  * @brief Disable internal analog switch SW1 to disconnect OPAMP3 ouput from 
+  * @brief Disable internal analog switch SW1 to disconnect OPAMP3 ouput from
   * ADC switch matrix (ADC channel VCOMP, channel 26) and COMP1 non-inverting
   * input.
   * @retval None
   */
 #define __HAL_OPAMP_OPAMP3OUT_DISCONNECT_ADC_COMP1() __HAL_RI_SWITCH_COMP1_SW1_OPEN()
 #endif /* STM32L151xD || STM32L152xD || STM32L162xD */
-    
+
 /**
   * @}
   */
-      
+
 /* Private macro -------------------------------------------------------------*/
 
 /** @defgroup OPAMPEx_Private_Macro OPAMPEx Private Macro
   * @{
   */
-   
+
 #if defined (STM32L151xD) || defined (STM32L152xD) || defined (STM32L162xD)
 /**
   * @brief Get the OPAMP instance in decimal number for further
@@ -154,7 +154,7 @@
 /**
   * @brief Check OPAMP non-inverting input in function of OPAMPx instance
   * @param __HANDLE__: OPAMP handle
-  * @param INPUT: OPAMP non-inverting input                                        
+  * @param INPUT: OPAMP non-inverting input
   * @retval None
   */
 #define IS_OPAMP_NONINVERTING_INPUT_CHECK_INSTANCE(__HANDLE__, INPUT)          \
@@ -183,7 +183,7 @@
 /**
   * @brief Check OPAMP non-inverting input in function of OPAMPx instance
   * @param __HANDLE__: OPAMP handle
-  * @param INPUT: OPAMP non-inverting input                                        
+  * @param INPUT: OPAMP non-inverting input
   * @retval None
   */
 #define IS_OPAMP_NONINVERTING_INPUT_CHECK_INSTANCE(__HANDLE__, INPUT)          \
@@ -205,7 +205,7 @@
 /**
   * @}
   */
-    
+
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup OPAMPEx_Exported_Functions
   * @{
@@ -227,7 +227,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
 /** @addtogroup OPAMPEx_Exported_Functions_Group2
   * @{
   */
-HAL_StatusTypeDef HAL_OPAMPEx_Unlock(OPAMP_HandleTypeDef *hopamp); 
+HAL_StatusTypeDef HAL_OPAMPEx_Unlock(OPAMP_HandleTypeDef *hopamp);
 /**
   * @}
   */

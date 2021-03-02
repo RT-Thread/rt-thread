@@ -91,23 +91,23 @@
     ====================================
     [..]
       (#) Configure the SourceInc and DestinationInc of MDMA paramters in the HAL_QSPI_MspInit() function :
-         (++) MDMA settings for write operation : 
-          (+) The DestinationInc should be MDMA_DEST_INC_DISABLE  
+         (++) MDMA settings for write operation :
+          (+) The DestinationInc should be MDMA_DEST_INC_DISABLE
           (+) The SourceInc must be a value of @ref MDMA_Source_increment_mode (Except the MDMA_SRC_INC_DOUBLEWORD).
-          (+) The SourceDataSize must be a value of @ref MDMA Source data size (Except the MDMA_SRC_DATASIZE_DOUBLEWORD) 
+          (+) The SourceDataSize must be a value of @ref MDMA Source data size (Except the MDMA_SRC_DATASIZE_DOUBLEWORD)
               aligned with @ref MDMA_Source_increment_mode .
-          (+) The DestDataSize must be a value of @ref MDMA Destination data size (Except the MDMA_DEST_DATASIZE_DOUBLEWORD) 
-         (++) MDMA settings for read operation : 
-          (+) The SourceInc should be MDMA_SRC_INC_DISABLE  
+          (+) The DestDataSize must be a value of @ref MDMA Destination data size (Except the MDMA_DEST_DATASIZE_DOUBLEWORD)
+         (++) MDMA settings for read operation :
+          (+) The SourceInc should be MDMA_SRC_INC_DISABLE
           (+) The DestinationInc must be a value of @ref MDMA_Destination_increment_mode (Except the MDMA_DEST_INC_DOUBLEWORD).
           (+) The SourceDataSize must be a value of @ref MDMA Source data size (Except the MDMA_SRC_DATASIZE_DOUBLEWORD) .
           (+) The DestDataSize must be a value of @ref MDMA Destination data size (Except the MDMA_DEST_DATASIZE_DOUBLEWORD)
               aligned with @ref MDMA_Destination_increment_mode.
          (++)The buffer Transfer Length (BufferTransferLength) = number of bytes in the FIFO (FifoThreshold) of the Quadspi.
-      (#)In case of wrong MDMA setting 
-        (++) For write operation : 
+      (#)In case of wrong MDMA setting
+        (++) For write operation :
          (+) If the DestinationInc is different to MDMA_DEST_INC_DISABLE , it will be disabled by the HAL_QSPI_Transmit_DMA().
-        (++) For read operation : 
+        (++) For read operation :
          (+) If the SourceInc is not set to MDMA_SRC_INC_DISABLE , it will be disabled by the HAL_QSPI_Receive_DMA().
 
     *** Memory-mapped functional mode ***
@@ -1306,10 +1306,10 @@ HAL_StatusTypeDef HAL_QSPI_Transmit_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pDat
 
       /* Clear the MDMA abort callback */
       hqspi->hmdma->XferAbortCallback = NULL;
-      
+
       /* In Transmit mode , the MDMA destination is the QSPI DR register : Force the MDMA Destination Increment to disable */
       MODIFY_REG(hqspi->hmdma->Instance->CTCR, (MDMA_CTCR_DINC | MDMA_CTCR_DINCOS) ,MDMA_DEST_INC_DISABLE);
-      
+
       /* Update MDMA configuration with the correct SourceInc field for Write operation */
       if (hqspi->hmdma->Init.SourceDataSize == MDMA_SRC_DATASIZE_BYTE)
       {
@@ -1323,7 +1323,7 @@ HAL_StatusTypeDef HAL_QSPI_Transmit_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pDat
       {
         MODIFY_REG(hqspi->hmdma->Instance->CTCR, (MDMA_CTCR_SINC | MDMA_CTCR_SINCOS) , MDMA_SRC_INC_WORD);
       }
-      else   
+      else
       {
         /* in case of incorrect source data size */
         hqspi->ErrorCode |= HAL_QSPI_ERROR_DMA;
@@ -1331,8 +1331,8 @@ HAL_StatusTypeDef HAL_QSPI_Transmit_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pDat
       }
 
       /* Enable the QSPI transfer error and complete Interrupts : Workaround for QSPI low kernel clock frequency */
-      __HAL_QSPI_ENABLE_IT(hqspi, QSPI_IT_TE |QSPI_IT_TC);            
-      
+      __HAL_QSPI_ENABLE_IT(hqspi, QSPI_IT_TE |QSPI_IT_TC);
+
       /* Enable the QSPI transmit MDMA */
       if(HAL_MDMA_Start_IT(hqspi->hmdma, (uint32_t)pData, (uint32_t)&hqspi->Instance->DR, hqspi->TxXferSize, 1) == HAL_OK)
       {
@@ -1413,10 +1413,10 @@ HAL_StatusTypeDef HAL_QSPI_Receive_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pData
 
       /* Start the transfer by re-writing the address in AR register */
       WRITE_REG(hqspi->Instance->AR, addr_reg);
-        
+
       /* In Receive mode , the MDMA source is the QSPI DR register : Force the MDMA Source Increment to disable */
       MODIFY_REG(hqspi->hmdma->Instance->CTCR, (MDMA_CTCR_SINC | MDMA_CTCR_SINCOS) , MDMA_SRC_INC_DISABLE);
-      
+
       /* Update MDMA configuration with the correct DestinationInc field for read operation */
       if (hqspi->hmdma->Init.DestDataSize == MDMA_DEST_DATASIZE_BYTE)
       {
@@ -1430,13 +1430,13 @@ HAL_StatusTypeDef HAL_QSPI_Receive_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pData
       {
         MODIFY_REG(hqspi->hmdma->Instance->CTCR, (MDMA_CTCR_DINC | MDMA_CTCR_DINCOS) , MDMA_DEST_INC_WORD);
       }
-      else 
+      else
       {
        /* in case of incorrect destination data size */
         hqspi->ErrorCode |= HAL_QSPI_ERROR_DMA;
         status = HAL_ERROR;
-      }            
-      
+      }
+
       /* Enable the MDMA */
       if (HAL_MDMA_Start_IT(hqspi->hmdma, (uint32_t)&hqspi->Instance->DR, (uint32_t)pData, hqspi->RxXferSize, 1) == HAL_OK)
       {

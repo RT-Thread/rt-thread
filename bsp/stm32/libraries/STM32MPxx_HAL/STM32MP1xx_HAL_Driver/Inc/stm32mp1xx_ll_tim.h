@@ -951,12 +951,12 @@ typedef struct
 #define LL_TIM_TIM2_ETRSOURCE_SAI1_FSB              (TIM1_AF1_ETRSEL_2 | TIM1_AF1_ETRSEL_0) /*!< ETR input is connected to SAI1 FS_B */
 #define LL_TIM_TIM2_ETRSOURCE_ETH_PPS               (TIM1_AF1_ETRSEL_2 | TIM1_AF1_ETRSEL_1) /*!< ETR input is connected to ETH PPS */
 
-#define LL_TIM_TIM3_ETRSOURCE_GPIO                  0x00000000U                                                 /*!< ETR input is connected to GPIO */ 
+#define LL_TIM_TIM3_ETRSOURCE_GPIO                  0x00000000U                                                 /*!< ETR input is connected to GPIO */
 #define LL_TIM_TIM3_ETRSOURCE_ETH_PPS               (TIM1_AF1_ETRSEL_2 | TIM1_AF1_ETRSEL_1) /*!< ETR input is connected to ETH PPS */
 
-#define LL_TIM_TIM4_ETRSOURCE_GPIO                  0x00000000U                                                 /*!< ETR input is connected to GPIO */ 
+#define LL_TIM_TIM4_ETRSOURCE_GPIO                  0x00000000U                                                 /*!< ETR input is connected to GPIO */
 
-#define LL_TIM_TIM5_ETRSOURCE_GPIO                  0x00000000U                                                 /*!< ETR input is connected to GPIO */ 
+#define LL_TIM_TIM5_ETRSOURCE_GPIO                  0x00000000U                                                 /*!< ETR input is connected to GPIO */
 #define LL_TIM_TIM5_ETRSOURCE_SAI2_FSA              TIM1_AF1_ETRSEL_0                                 /*!< ETR input is connected to SAI2 FS_A */
 #define LL_TIM_TIM5_ETRSOURCE_SAI2_FSB              TIM1_AF1_ETRSEL_1                                 /*!< ETR input is connected to SAI2 FS_B */
 #define LL_TIM_TIM5_ETRSOURCE_OTG_SOF               (TIM1_AF1_ETRSEL_1 | TIM1_AF1_ETRSEL_0) /*!< ETR input is connected to OTG SOF */
@@ -3830,11 +3830,11 @@ __STATIC_INLINE void LL_TIM_SetBreakInputSourcePolarity(TIM_TypeDef *TIMx, uint3
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR3
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR4
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_BDTR
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCMR3 
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR5  
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR6  
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_AF1  
-  *         @arg @ref LL_TIM_DMABURST_BASEADDR_AF2  
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCMR3
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR5
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_CCR6
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_AF1
+  *         @arg @ref LL_TIM_DMABURST_BASEADDR_AF2
   *         @arg @ref LL_TIM_DMABURST_BASEADDR_TISEL
   * @param  DMABurstLength This parameter can be one of the following values:
   *         @arg @ref LL_TIM_DMABURST_LENGTH_1TRANSFER

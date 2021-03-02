@@ -122,7 +122,7 @@ void USB_Prepare_Data(void)
     {
         for(i=0;i<remain_bytes;i++)
         {
-            video_data_SD[i] = video_data_SD[i+video_position]; 
+            video_data_SD[i] = video_data_SD[i+video_position];
         } /* EndFor */
         Read_data();
         buffer_size= (uint_16)(remain_bytes + BLOCK_SIZE);
@@ -144,7 +144,7 @@ void USB_Prepare_Data(void)
             odd_img=(uint_8)(1-odd_img);
             wav_buff[i+12] = video_data_SD[video_position];
             video_position+=2;
-            break;          
+            break;
         }
         else
         {
@@ -215,7 +215,7 @@ void TestApp_Init(void)
 * that the application can start.
 * This function also receives DATA Send and RECEIVED Events
 *****************************************************************************/
-static void USB_App_Callback 
+static void USB_App_Callback
 (
 uint_8 controller_ID,   /* [IN] Controller ID */
 uint_8 event_type,      /* [IN] value of the event */
@@ -228,7 +228,7 @@ void* val               /* [IN] gives the configuration value */
 
     if ((event_type == USB_APP_BUS_RESET) || (event_type == USB_APP_CONFIG_CHANGED))
     {
-        start_app=FALSE;   
+        start_app=FALSE;
     }/*elseif*/
     else if(event_type == USB_APP_ENUM_COMPLETE)
     {
@@ -240,7 +240,7 @@ void* val               /* [IN] gives the configuration value */
         (void)printf("Virtual camera is working ...\r\n");
     }/*EndElse*/
     else if((event_type == USB_APP_SEND_COMPLETE) && (TRUE == start_app))
-    {    
+    {
         if(( video_block_position >= total_block)&&(stop_video == TRUE))
         {
             video_block_position = 0;
@@ -263,7 +263,7 @@ void* val               /* [IN] gives the configuration value */
 *    @return      None
 *
 *****************************************************************************
-* 
+*
 *****************************************************************************/
 void TestApp_Task(void)
 {
@@ -274,7 +274,7 @@ void TestApp_Task(void)
         start_send = FALSE;
         USB_Prepare_Data();
         (void)USB_Class_Video_Send_Data(CONTROLLER_ID,VIDEO_ENDPOINT,wav_buff,video_packet_size) ;
-    }/*EndIf*/  
+    }/*EndIf*/
 }/*EndBody*/
 /******************************************************************************
 *
@@ -287,17 +287,17 @@ void TestApp_Task(void)
 *    @return      None
 *
 *****************************************************************************
-* 
+*
 *****************************************************************************/
 void Read_data (void)
-{  
+{
     /*Body*/
     /*Video_data start at 0x00011200*/
     lba_data.offset = 0x00011200 + video_block_position*BLOCK_SIZE;
     lba_data.buff_ptr = video_data_SD + remain_bytes;/* Connect data to end of remain data*/
     lba_data.size = BLOCK_SIZE;
     /* Read a video_data block from SD*/
-    SD_Read_Block(&lba_data);            
+    SD_Read_Block(&lba_data);
     video_block_position++;
 }/*EndBody*/
 /* EOF */

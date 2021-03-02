@@ -7,7 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2020-06-12       Wangmin         First version
-   2020-09-07       Wangmin         Modify channel delay configure function 
+   2020-09-07       Wangmin         Modify channel delay configure function
                                     parameter type.
  @endverbatim
  *******************************************************************************

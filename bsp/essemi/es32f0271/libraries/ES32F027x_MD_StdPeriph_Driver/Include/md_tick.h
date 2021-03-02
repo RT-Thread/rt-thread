@@ -420,7 +420,7 @@ void    md_tick_wait10us(uint16_t Unit, uint16_t usCnt);
   * @}  TICK
   */
 
-/** 
+/**
   * @}  Micro_Driver
   */
 

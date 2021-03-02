@@ -46,7 +46,7 @@
 #if PPP_SUPPORT /* don't build if not configured for use in lwipopts.h */
 
 #ifndef LCP_H
-#define	LCP_H
+#define LCP_H
 
 #include "ppp.h"
 
@@ -57,55 +57,55 @@ extern "C" {
 /*
  * Options.
  */
-#define CI_VENDOR	0	/* Vendor Specific */
-#define CI_MRU		1	/* Maximum Receive Unit */
-#define CI_ASYNCMAP	2	/* Async Control Character Map */
-#define CI_AUTHTYPE	3	/* Authentication Type */
-#define CI_QUALITY	4	/* Quality Protocol */
-#define CI_MAGICNUMBER	5	/* Magic Number */
-#define CI_PCOMPRESSION	7	/* Protocol Field Compression */
-#define CI_ACCOMPRESSION 8	/* Address/Control Field Compression */
-#define CI_FCSALTERN	9	/* FCS-Alternatives */
-#define CI_SDP		10	/* Self-Describing-Pad */
-#define CI_NUMBERED	11	/* Numbered-Mode */
-#define CI_CALLBACK	13	/* callback */
-#define CI_MRRU		17	/* max reconstructed receive unit; multilink */
-#define CI_SSNHF	18	/* short sequence numbers for multilink */
-#define CI_EPDISC	19	/* endpoint discriminator */
-#define CI_MPPLUS	22	/* Multi-Link-Plus-Procedure */
-#define CI_LDISC	23	/* Link-Discriminator */
-#define CI_LCPAUTH	24	/* LCP Authentication */
-#define CI_COBS		25	/* Consistent Overhead Byte Stuffing */
-#define CI_PREFELIS	26	/* Prefix Elision */
-#define CI_MPHDRFMT	27	/* MP Header Format */
-#define CI_I18N		28	/* Internationalization */
-#define CI_SDL		29	/* Simple Data Link */
+#define CI_VENDOR   0   /* Vendor Specific */
+#define CI_MRU      1   /* Maximum Receive Unit */
+#define CI_ASYNCMAP 2   /* Async Control Character Map */
+#define CI_AUTHTYPE 3   /* Authentication Type */
+#define CI_QUALITY  4   /* Quality Protocol */
+#define CI_MAGICNUMBER  5   /* Magic Number */
+#define CI_PCOMPRESSION 7   /* Protocol Field Compression */
+#define CI_ACCOMPRESSION 8  /* Address/Control Field Compression */
+#define CI_FCSALTERN    9   /* FCS-Alternatives */
+#define CI_SDP      10  /* Self-Describing-Pad */
+#define CI_NUMBERED 11  /* Numbered-Mode */
+#define CI_CALLBACK 13  /* callback */
+#define CI_MRRU     17  /* max reconstructed receive unit; multilink */
+#define CI_SSNHF    18  /* short sequence numbers for multilink */
+#define CI_EPDISC   19  /* endpoint discriminator */
+#define CI_MPPLUS   22  /* Multi-Link-Plus-Procedure */
+#define CI_LDISC    23  /* Link-Discriminator */
+#define CI_LCPAUTH  24  /* LCP Authentication */
+#define CI_COBS     25  /* Consistent Overhead Byte Stuffing */
+#define CI_PREFELIS 26  /* Prefix Elision */
+#define CI_MPHDRFMT 27  /* MP Header Format */
+#define CI_I18N     28  /* Internationalization */
+#define CI_SDL      29  /* Simple Data Link */
 
 /*
  * LCP-specific packet types (code numbers).
  */
-#define PROTREJ		8	/* Protocol Reject */
-#define ECHOREQ		9	/* Echo Request */
-#define ECHOREP		10	/* Echo Reply */
-#define DISCREQ		11	/* Discard Request */
-#define IDENTIF		12	/* Identification */
-#define TIMEREM		13	/* Time Remaining */
+#define PROTREJ     8   /* Protocol Reject */
+#define ECHOREQ     9   /* Echo Request */
+#define ECHOREP     10  /* Echo Reply */
+#define DISCREQ     11  /* Discard Request */
+#define IDENTIF     12  /* Identification */
+#define TIMEREM     13  /* Time Remaining */
 
 /* Value used as data for CI_CALLBACK option */
-#define CBCP_OPT	6	/* Use callback control protocol */
+#define CBCP_OPT    6   /* Use callback control protocol */
 
 #if 0 /* moved to ppp_opts.h */
-#define DEFMRU	1500		/* Try for this */
-#define MINMRU	128		/* No MRUs below this */
-#define MAXMRU	16384		/* Normally limit MRU to this */
+#define DEFMRU  1500        /* Try for this */
+#define MINMRU  128     /* No MRUs below this */
+#define MAXMRU  16384       /* Normally limit MRU to this */
 #endif /* moved to ppp_opts.h */
 
 /* An endpoint discriminator, used with multilink. */
-#define MAX_ENDP_LEN	20	/* maximum length of discriminator value */
+#define MAX_ENDP_LEN    20  /* maximum length of discriminator value */
 struct epdisc {
-    unsigned char	class_; /* -- The word "class" is reserved in C++. */
-    unsigned char	length;
-    unsigned char	value[MAX_ENDP_LEN];
+    unsigned char   class_; /* -- The word "class" is reserved in C++. */
+    unsigned char   length;
+    unsigned char   value[MAX_ENDP_LEN];
 };
 
 /*
@@ -141,20 +141,20 @@ typedef struct lcp_options {
     unsigned int neg_ssnhf         :1; /* negotiate short sequence numbers */
     unsigned int neg_endpoint      :1; /* negotiate endpoint discriminator */
 
-    u16_t mru;			/* Value of MRU */
+    u16_t mru;          /* Value of MRU */
 #ifdef HAVE_MULTILINK
-    u16_t mrru;			/* Value of MRRU, and multilink enable */
+    u16_t mrru;         /* Value of MRRU, and multilink enable */
 #endif /* MULTILINK */
 #if CHAP_SUPPORT
-    u8_t chap_mdtype;		/* which MD types (hashing algorithm) */
+    u8_t chap_mdtype;       /* which MD types (hashing algorithm) */
 #endif /* CHAP_SUPPORT */
-    u32_t asyncmap;		/* Value of async map */
+    u32_t asyncmap;     /* Value of async map */
     u32_t magicnumber;
-    u8_t  numloops;		/* Number of loops during magic number neg. */
+    u8_t  numloops;     /* Number of loops during magic number neg. */
 #if LQR_SUPPORT
-    u32_t lqr_period;	/* Reporting period for LQR 1/100ths second */
+    u32_t lqr_period;   /* Reporting period for LQR 1/100ths second */
 #endif /* LQR_SUPPORT */
-    struct epdisc endpoint;	/* endpoint discriminator */
+    struct epdisc endpoint; /* endpoint discriminator */
 } lcp_options;
 
 void lcp_open(ppp_pcb *pcb);
@@ -168,7 +168,7 @@ extern const struct protent lcp_protent;
 #if 0 /* moved to ppp_opts.h */
 /* Default number of times we receive our magic number from the peer
    before deciding the link is looped-back. */
-#define DEFLOOPBACKFAIL	10
+#define DEFLOOPBACKFAIL 10
 #endif /* moved to ppp_opts.h */
 
 #ifdef __cplusplus

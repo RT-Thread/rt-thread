@@ -20,12 +20,12 @@
 
 void rt_hw_trap_irq()
 {
-	rt_isr_handler_t hander = (rt_isr_handler_t)AT91C_AIC_IVR;
+    rt_isr_handler_t hander = (rt_isr_handler_t)AT91C_AIC_IVR;
 
-	hander(AT91C_AIC_ISR);
+    hander(AT91C_AIC_ISR);
 
-	/* end of interrupt */
-	AT91C_AIC_EOICR = 0;
+    /* end of interrupt */
+    AT91C_AIC_EOICR = 0;
 }
 
 void rt_hw_trap_fiq()

@@ -79,39 +79,39 @@ int32_t GetCharW(uint8_t * Buffer, int32_t * offset);
 
 //! \brief Gets a character from the given string at the given offset and updates the offset accordingly.
 //! \param[in] Buffer Pointer to the buffer.
-//! \param[in] offset Pointer to the offset   
+//! \param[in] offset Pointer to the offset
 RtStatus_t GetChar(uint8_t * Buffer, int32_t * offset);
 
-//! \brief Puts a character in the given string at given offset 
+//! \brief Puts a character in the given string at given offset
 //!                  and updates the offset accordingly.
 //! \param[in] Buffer Pointer to the buffer.
-//! \param[in] offset Pointer to the offset.   
+//! \param[in] offset Pointer to the offset.
 //! \param[in] Char   Character to put.
 void PutChar(uint8_t * Buffer, int32_t * offset, int32_t Char);
 
 //! \brief Puts a word in the given unicode string at given offset and updates the offset accordingly.
 //! \param[in] Buffer Pointer to the buffer.
-//! \param[in] offset Pointer to the offset.  
+//! \param[in] offset Pointer to the offset.
 //! \param[in] Char   Character/word to put.
 void PutCharW(uint8_t * Buffer, int32_t * offset, int32_t Char);
 
 //! \brief Copies the string from current position to another string.
 //! \param[in]  filepath Pointer to the file path.
-//! \param[out] currentPosition Current position.   
+//! \param[out] currentPosition Current position.
 //! \return Next current position.
 //! \note This function considers the string to be Unicode.
 RtStatus_t GetnameW(uint8_t * filepath, int32_t currentPosition);
 
 //! \brief Copies the string from current position to another string.
 //! \param[in]  filepath Pointer to the file path.
-//! \param[out] currentPosition Current position.   
+//! \param[out] currentPosition Current position.
 //! \return Next current position.
 //! \note This function considers the string to be DBCS.
 RtStatus_t Getname(uint8_t * filepath, int32_t currentPosition);
 
 //! \brief Copies the string from current position to another string.
 //! \param[in] filepath        Pointer to filepath.
-//! \param[in] currentPosition Current position.  
+//! \param[in] currentPosition Current position.
 //! \return Next current position.
 //! \note This function considers the string to be Unicode.
 int32_t GetDirnameW(uint8_t * filepath, int32_t currentPosition);
@@ -137,13 +137,13 @@ int32_t GetCWDHandle(void);
 //! \param[in] length   Length of the string (ending point of the string).
 void DBCStoUnicode(uint8_t * filepath, uint8_t * buf, int32_t index, int32_t length);
 
-//! \brief Returns the length of a string. 
+//! \brief Returns the length of a string.
 //! \param[in] filepath Pointer to the file path.
 //! \return Number of characters in the string.
 //! \note This function considers the string as DBCS.
 int32_t Strlength(uint8_t * filepath);
 
-//! \brief Returns the length of a string. 
+//! \brief Returns the length of a string.
 //! \param[in] filepath Pointer to the file path.
 //! \return Number of characters in the string.
 //! \note This function considers the string as Unicode.

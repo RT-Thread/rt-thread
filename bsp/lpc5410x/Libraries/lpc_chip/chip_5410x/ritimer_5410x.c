@@ -50,56 +50,56 @@
 /* Initialize the RIT */
 void Chip_RIT_Init(LPC_RITIMER_T *pRITimer)
 {
-	Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_RIT);
-	Chip_SYSCON_PeriphReset(RESET_RIT);
+    Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_RIT);
+    Chip_SYSCON_PeriphReset(RESET_RIT);
 
-	/* Default is timer disabled */
-	pRITimer->CTRL = 0x0;
+    /* Default is timer disabled */
+    pRITimer->CTRL = 0x0;
 }
 
 /* DeInitialize the RIT */
 void Chip_RIT_DeInit(LPC_RITIMER_T *pRITimer)
 {
-	pRITimer->CTRL = 0x0;
-	Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_RIT);
+    pRITimer->CTRL = 0x0;
+    Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_RIT);
 }
 
 /* Set timer interval value */
 void Chip_RIT_SetTimerInterval(LPC_RITIMER_T *pRITimer, uint32_t time_interval)
 {
-	uint32_t cmp_value;
+    uint32_t cmp_value;
 
-	/* Determine aapproximate compare value based on clock rate and passed interval */
-	cmp_value = (Chip_Clock_GetMainClockRate() / 1000) * time_interval;
+    /* Determine aapproximate compare value based on clock rate and passed interval */
+    cmp_value = (Chip_Clock_GetMainClockRate() / 1000) * time_interval;
 
-	/* Set timer compare value */
-	Chip_RIT_SetCOMPVAL(pRITimer, cmp_value);
+    /* Set timer compare value */
+    Chip_RIT_SetCOMPVAL(pRITimer, cmp_value);
 }
 
 /* Set timer interval value (48-bit) */
 void Chip_RIT_SetTimerInterval64(LPC_RITIMER_T *pRITimer, uint64_t time_interval)
 {
-	uint64_t cmp_value;
+    uint64_t cmp_value;
 
-	/* Determine aapproximate compare value based on clock rate and passed interval */
-	cmp_value = (uint64_t) Chip_Clock_GetMainClockRate() / 1000;
-	cmp_value = cmp_value * time_interval;
+    /* Determine aapproximate compare value based on clock rate and passed interval */
+    cmp_value = (uint64_t) Chip_Clock_GetMainClockRate() / 1000;
+    cmp_value = cmp_value * time_interval;
 
-	/* Set timer compare value */
-	Chip_RIT_SetCOMPVAL64(pRITimer, cmp_value);
+    /* Set timer compare value */
+    Chip_RIT_SetCOMPVAL64(pRITimer, cmp_value);
 }
 
 /* Check whether interrupt is pending */
 IntStatus Chip_RIT_GetIntStatus(LPC_RITIMER_T *pRITimer)
 {
-	uint8_t result;
+    uint8_t result;
 
-	if ((pRITimer->CTRL & RIT_CTRL_INT) == 1) {
-		result = SET;
-	}
-	else {
-		return RESET;
-	}
+    if ((pRITimer->CTRL & RIT_CTRL_INT) == 1) {
+        result = SET;
+    }
+    else {
+        return RESET;
+    }
 
-	return (IntStatus) result;
+    return (IntStatus) result;
 }

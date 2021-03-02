@@ -49,68 +49,68 @@ struct adc_module *_adc_instances[ADC_INST_NUM];
 
 static void _adc_interrupt_handler(const uint8_t instance)
 {
-	struct adc_module *module = _adc_instances[instance];
+    struct adc_module *module = _adc_instances[instance];
 
-	/* get interrupt flags and mask out enabled callbacks */
-	uint32_t flags = module->hw->INTFLAG.reg;
+    /* get interrupt flags and mask out enabled callbacks */
+    uint32_t flags = module->hw->INTFLAG.reg;
 
-	if (flags & ADC_INTFLAG_RESRDY) {
-		if ((module->enabled_callback_mask & (1 << ADC_CALLBACK_READ_BUFFER)) &&
-				(module->registered_callback_mask & (1 << ADC_CALLBACK_READ_BUFFER))) {
-			/* clear interrupt flag */
-			module->hw->INTFLAG.reg = ADC_INTFLAG_RESRDY;
+    if (flags & ADC_INTFLAG_RESRDY) {
+        if ((module->enabled_callback_mask & (1 << ADC_CALLBACK_READ_BUFFER)) &&
+                (module->registered_callback_mask & (1 << ADC_CALLBACK_READ_BUFFER))) {
+            /* clear interrupt flag */
+            module->hw->INTFLAG.reg = ADC_INTFLAG_RESRDY;
 
-			/* store ADC result in job buffer */
-			*(module->job_buffer++) = module->hw->RESULT.reg;
+            /* store ADC result in job buffer */
+            *(module->job_buffer++) = module->hw->RESULT.reg;
 
-			if (--module->remaining_conversions > 0) {
-				if (module->software_trigger == true
-					&& (!(module->hw->SEQSTATUS.reg & ADC_SEQSTATUS_SEQBUSY))) {
-					adc_start_conversion(module);
-				}
-			} else {
-				if (module->job_status == STATUS_BUSY) {
-					/* job is complete. update status,disable interrupt
-					 *and call callback */
-					module->job_status = STATUS_OK;
-					adc_disable_interrupt(module, ADC_INTERRUPT_RESULT_READY);
-					(module->callback[ADC_CALLBACK_READ_BUFFER])(module);
-				}
-			}
-		}
-	}
+            if (--module->remaining_conversions > 0) {
+                if (module->software_trigger == true
+                    && (!(module->hw->SEQSTATUS.reg & ADC_SEQSTATUS_SEQBUSY))) {
+                    adc_start_conversion(module);
+                }
+            } else {
+                if (module->job_status == STATUS_BUSY) {
+                    /* job is complete. update status,disable interrupt
+                     *and call callback */
+                    module->job_status = STATUS_OK;
+                    adc_disable_interrupt(module, ADC_INTERRUPT_RESULT_READY);
+                    (module->callback[ADC_CALLBACK_READ_BUFFER])(module);
+                }
+            }
+        }
+    }
 
-	if (flags & ADC_INTFLAG_WINMON) {
-		module->hw->INTFLAG.reg = ADC_INTFLAG_WINMON;
-		if ((module->enabled_callback_mask & (1 << ADC_CALLBACK_WINDOW)) &&
-				(module->registered_callback_mask & (1 << ADC_CALLBACK_WINDOW))) {
-			(module->callback[ADC_CALLBACK_WINDOW])(module);
-		}
+    if (flags & ADC_INTFLAG_WINMON) {
+        module->hw->INTFLAG.reg = ADC_INTFLAG_WINMON;
+        if ((module->enabled_callback_mask & (1 << ADC_CALLBACK_WINDOW)) &&
+                (module->registered_callback_mask & (1 << ADC_CALLBACK_WINDOW))) {
+            (module->callback[ADC_CALLBACK_WINDOW])(module);
+        }
 
-	}
+    }
 
-	if (flags & ADC_INTFLAG_OVERRUN) {
-		module->hw->INTFLAG.reg = ADC_INTFLAG_OVERRUN;
-		if ((module->enabled_callback_mask & (1 << ADC_CALLBACK_ERROR)) &&
-				(module->registered_callback_mask & (1 << ADC_CALLBACK_ERROR))) {
-			(module->callback[ADC_CALLBACK_ERROR])(module);
-		}
-	}
+    if (flags & ADC_INTFLAG_OVERRUN) {
+        module->hw->INTFLAG.reg = ADC_INTFLAG_OVERRUN;
+        if ((module->enabled_callback_mask & (1 << ADC_CALLBACK_ERROR)) &&
+                (module->registered_callback_mask & (1 << ADC_CALLBACK_ERROR))) {
+            (module->callback[ADC_CALLBACK_ERROR])(module);
+        }
+    }
 }
 
 /** Interrupt handler for the ADC module. */
 #if (ADC_INST_NUM > 1) || (SAMC20)
 #   define _ADC_INTERRUPT_HANDLER(n, m) \
-		void ADC##n##_Handler(void) \
-		{ \
-			_adc_interrupt_handler(n); \
-		}
+        void ADC##n##_Handler(void) \
+        { \
+            _adc_interrupt_handler(n); \
+        }
 
-	MREPEAT(ADC_INST_NUM, _ADC_INTERRUPT_HANDLER, 0)
+    MREPEAT(ADC_INST_NUM, _ADC_INTERRUPT_HANDLER, 0)
 #else
 void ADC_Handler(void)
 {
-	_adc_interrupt_handler(0);
+    _adc_interrupt_handler(0);
 }
 #endif
 
@@ -128,19 +128,19 @@ void ADC_Handler(void)
  *
  */
 void adc_register_callback(
-		struct adc_module *const module,
-		adc_callback_t callback_func,
-		enum adc_callback callback_type)
+        struct adc_module *const module,
+        adc_callback_t callback_func,
+        enum adc_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(callback_func);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(callback_func);
 
-	/* Register callback function */
-	module->callback[callback_type] = callback_func;
+    /* Register callback function */
+    module->callback[callback_type] = callback_func;
 
-	/* Set the bit corresponding to the callback_type */
-	module->registered_callback_mask |= (1 << callback_type);
+    /* Set the bit corresponding to the callback_type */
+    module->registered_callback_mask |= (1 << callback_type);
 }
 
 /**
@@ -153,17 +153,17 @@ void adc_register_callback(
  *
  */
 void adc_unregister_callback(
-		struct adc_module *const module,
-		enum adc_callback callback_type)
+        struct adc_module *const module,
+        enum adc_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Unregister callback function */
-	module->callback[callback_type] = NULL;
+    /* Unregister callback function */
+    module->callback[callback_type] = NULL;
 
-	/* Clear the bit corresponding to the callback_type */
-	module->registered_callback_mask &= ~(1 << callback_type);
+    /* Clear the bit corresponding to the callback_type */
+    module->registered_callback_mask &= ~(1 << callback_type);
 }
 
 /**
@@ -185,30 +185,30 @@ void adc_unregister_callback(
  * \retval STATUS_BUSY      The ADC is already busy with another job
  */
 enum status_code adc_read_buffer_job(
-		struct adc_module *const module_inst,
-		uint16_t *buffer,
-		uint16_t samples)
+        struct adc_module *const module_inst,
+        uint16_t *buffer,
+        uint16_t samples)
 {
-	Assert(module_inst);
-	Assert(samples);
-	Assert(buffer);
+    Assert(module_inst);
+    Assert(samples);
+    Assert(buffer);
 
-	if(module_inst->remaining_conversions != 0 ||
-			module_inst->job_status == STATUS_BUSY){
-		return STATUS_BUSY;
-	}
+    if(module_inst->remaining_conversions != 0 ||
+            module_inst->job_status == STATUS_BUSY){
+        return STATUS_BUSY;
+    }
 
-	module_inst->job_status = STATUS_BUSY;
-	module_inst->remaining_conversions = samples;
-	module_inst->job_buffer = buffer;
+    module_inst->job_status = STATUS_BUSY;
+    module_inst->remaining_conversions = samples;
+    module_inst->job_buffer = buffer;
 
-	adc_enable_interrupt(module_inst, ADC_INTERRUPT_RESULT_READY);
+    adc_enable_interrupt(module_inst, ADC_INTERRUPT_RESULT_READY);
 
-	if(module_inst->software_trigger == true) {
-		adc_start_conversion(module_inst);
-	}
+    if(module_inst->software_trigger == true) {
+        adc_start_conversion(module_inst);
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -222,17 +222,17 @@ enum status_code adc_read_buffer_job(
  * \return Status of the job.
  */
 enum status_code adc_get_job_status(
-		struct adc_module *module_inst,
-		enum adc_job_type type)
+        struct adc_module *module_inst,
+        enum adc_job_type type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
+    /* Sanity check arguments */
+    Assert(module_inst);
 
-	if (type == ADC_JOB_READ_BUFFER ) {
-		return module_inst->job_status;
-	} else {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type == ADC_JOB_READ_BUFFER ) {
+        return module_inst->job_status;
+    } else {
+        return STATUS_ERR_INVALID_ARG;
+    }
 }
 
 /**
@@ -244,18 +244,18 @@ enum status_code adc_get_job_status(
  * \param [in]  type        Type of job to abort
  */
 void adc_abort_job(
-		struct adc_module *module_inst,
-		enum adc_job_type type)
+        struct adc_module *module_inst,
+        enum adc_job_type type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
+    /* Sanity check arguments */
+    Assert(module_inst);
 
-	if (type == ADC_JOB_READ_BUFFER) {
-		/* Disable interrupt */
-		adc_disable_interrupt(module_inst, ADC_INTERRUPT_RESULT_READY);
-		/* Mark job as aborted */
-		module_inst->job_status = STATUS_ABORTED;
-		module_inst->remaining_conversions = 0;
-	}
+    if (type == ADC_JOB_READ_BUFFER) {
+        /* Disable interrupt */
+        adc_disable_interrupt(module_inst, ADC_INTERRUPT_RESULT_READY);
+        /* Mark job as aborted */
+        module_inst->job_status = STATUS_ABORTED;
+        module_inst->remaining_conversions = 0;
+    }
 }
 

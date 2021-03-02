@@ -62,7 +62,7 @@ void one_time_timer_test(void)
     onetime_tick = 0;
 
     rtc_init();
-    
+
     rtc_setup_onetime_timer(10, one_time_tick_callback, 0);
 
     while(loop--)
@@ -86,7 +86,7 @@ void periodic_timer_test(void)
     periodic_tick = 0;
 
     rtc_init();
-    
+
     rtc_setup_periodic_timer(2, periodic_tick_callback, 0);
 
     while(loop--)

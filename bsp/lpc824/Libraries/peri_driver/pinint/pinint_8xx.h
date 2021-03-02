@@ -44,20 +44,20 @@ extern "C" {
 /**
  * @brief LPC8xx Pin Interrupt and Pattern Match register block structure
  */
-typedef struct {			/*!< (@ 0xA0004000) PIN_INT Structure */
-	__IO uint32_t ISEL;		/*!< (@ 0xA0004000) Pin Interrupt Mode register */
-	__IO uint32_t IENR;		/*!< (@ 0xA0004004) Pin Interrupt Enable (Rising) register */
-	__IO uint32_t SIENR;	/*!< (@ 0xA0004008) Set Pin Interrupt Enable (Rising) register */
-	__IO uint32_t CIENR;	/*!< (@ 0xA000400C) Clear Pin Interrupt Enable (Rising) register */
-	__IO uint32_t IENF;		/*!< (@ 0xA0004010) Pin Interrupt Enable Falling Edge / Active Level register */
-	__IO uint32_t SIENF;	/*!< (@ 0xA0004014) Set Pin Interrupt Enable Falling Edge / Active Level register */
-	__IO uint32_t CIENF;	/*!< (@ 0xA0004018) Clear Pin Interrupt Enable Falling Edge / Active Level address */
-	__IO uint32_t RISE;		/*!< (@ 0xA000401C) Pin Interrupt Rising Edge register */
-	__IO uint32_t FALL;		/*!< (@ 0xA0004020) Pin Interrupt Falling Edge register */
-	__IO uint32_t IST;		/*!< (@ 0xA0004024) Pin Interrupt Status register */
-	__IO uint32_t PMCTRL;	/*!< (@ 0xA0004028) GPIO pattern match interrupt control register          */
-	__IO uint32_t PMSRC;	/*!< (@ 0xA000402C) GPIO pattern match interrupt bit-slice source register */
-	__IO uint32_t PMCFG;	/*!< (@ 0xA0004030) GPIO pattern match interrupt bit slice configuration register */
+typedef struct {            /*!< (@ 0xA0004000) PIN_INT Structure */
+    __IO uint32_t ISEL;     /*!< (@ 0xA0004000) Pin Interrupt Mode register */
+    __IO uint32_t IENR;     /*!< (@ 0xA0004004) Pin Interrupt Enable (Rising) register */
+    __IO uint32_t SIENR;    /*!< (@ 0xA0004008) Set Pin Interrupt Enable (Rising) register */
+    __IO uint32_t CIENR;    /*!< (@ 0xA000400C) Clear Pin Interrupt Enable (Rising) register */
+    __IO uint32_t IENF;     /*!< (@ 0xA0004010) Pin Interrupt Enable Falling Edge / Active Level register */
+    __IO uint32_t SIENF;    /*!< (@ 0xA0004014) Set Pin Interrupt Enable Falling Edge / Active Level register */
+    __IO uint32_t CIENF;    /*!< (@ 0xA0004018) Clear Pin Interrupt Enable Falling Edge / Active Level address */
+    __IO uint32_t RISE;     /*!< (@ 0xA000401C) Pin Interrupt Rising Edge register */
+    __IO uint32_t FALL;     /*!< (@ 0xA0004020) Pin Interrupt Falling Edge register */
+    __IO uint32_t IST;      /*!< (@ 0xA0004024) Pin Interrupt Status register */
+    __IO uint32_t PMCTRL;   /*!< (@ 0xA0004028) GPIO pattern match interrupt control register          */
+    __IO uint32_t PMSRC;    /*!< (@ 0xA000402C) GPIO pattern match interrupt bit-slice source register */
+    __IO uint32_t PMCFG;    /*!< (@ 0xA0004030) GPIO pattern match interrupt bit slice configuration register */
 } LPC_PININT_T;
 
 /* Reserved bits masks for registers */
@@ -80,8 +80,8 @@ typedef struct {			/*!< (@ 0xA0004000) PIN_INT Structure */
  * bit fields and macros
  */
 /* PININT interrupt control register */
-#define PININT_PMCTRL_PMATCH_SEL (1 << 0) 
-#define PININT_PMCTRL_RXEV_ENA   (1 << 1) 
+#define PININT_PMCTRL_PMATCH_SEL (1 << 0)
+#define PININT_PMCTRL_RXEV_ENA   (1 << 1)
 
 /* PININT Bit slice source register bits */
 #define PININT_SRC_BITSOURCE_START  8
@@ -108,50 +108,50 @@ typedef struct {			/*!< (@ 0xA0004000) PIN_INT Structure */
  * LPC8xx Pin Matching Interrupt bit slice enum values
  */
 typedef enum Chip_PININT_BITSLICE {
-	PININTBITSLICE0 = 0,	/*!< PININT Bit slice 0 */
-	PININTBITSLICE1 = 1,	/*!< PININT Bit slice 1 */
-	PININTBITSLICE2 = 2,	/*!< PININT Bit slice 2 */
-	PININTBITSLICE3 = 3,	/*!< PININT Bit slice 3 */
-	PININTBITSLICE4 = 4,	/*!< PININT Bit slice 4 */
-	PININTBITSLICE5 = 5,	/*!< PININT Bit slice 5 */
-	PININTBITSLICE6 = 6,	/*!< PININT Bit slice 6 */
-	PININTBITSLICE7 = 7	/*!< PININT Bit slice 7 */
+    PININTBITSLICE0 = 0,    /*!< PININT Bit slice 0 */
+    PININTBITSLICE1 = 1,    /*!< PININT Bit slice 1 */
+    PININTBITSLICE2 = 2,    /*!< PININT Bit slice 2 */
+    PININTBITSLICE3 = 3,    /*!< PININT Bit slice 3 */
+    PININTBITSLICE4 = 4,    /*!< PININT Bit slice 4 */
+    PININTBITSLICE5 = 5,    /*!< PININT Bit slice 5 */
+    PININTBITSLICE6 = 6,    /*!< PININT Bit slice 6 */
+    PININTBITSLICE7 = 7 /*!< PININT Bit slice 7 */
 } Chip_PININT_BITSLICE_T;
 
 /**
  * LPC8xx Pin Matching Interrupt bit slice configuration enum values
  */
 typedef enum Chip_PININT_BITSLICE_CFG {
-    PININT_PATTERNCONST1           = 0x0,	/*!< Contributes to product term match */
-    PININT_PATTERNRISING           = 0x1,	/*!< Rising edge */    
-    PININT_PATTERNFALLING          = 0x2,	/*!< Falling edge */    
-    PININT_PATTERNRISINGRFALLING   = 0x3,	/*!< Rising or Falling edge */    
-    PININT_PATTERNHIGH             = 0x4,	/*!< High level */    
-    PININT_PATTERNLOW              = 0x5,	/*!< Low level */    
-    PININT_PATTERCONST0            = 0x6,	/*!< Never contributes for match */    
-    PININT_PATTEREVENT             = 0x7	/*!< Match occurs on event */    
+    PININT_PATTERNCONST1           = 0x0,   /*!< Contributes to product term match */
+    PININT_PATTERNRISING           = 0x1,   /*!< Rising edge */
+    PININT_PATTERNFALLING          = 0x2,   /*!< Falling edge */
+    PININT_PATTERNRISINGRFALLING   = 0x3,   /*!< Rising or Falling edge */
+    PININT_PATTERNHIGH             = 0x4,   /*!< High level */
+    PININT_PATTERNLOW              = 0x5,   /*!< Low level */
+    PININT_PATTERCONST0            = 0x6,   /*!< Never contributes for match */
+    PININT_PATTEREVENT             = 0x7    /*!< Match occurs on event */
 } Chip_PININT_BITSLICE_CFG_T;
 
 /**
- * @brief	Initialize Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block
- * @return	Nothing
- * @note	This function should be used after the Chip_GPIO_Init() function.
+ * @brief   Initialize Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  Nothing
+ * @note    This function should be used after the Chip_GPIO_Init() function.
  */
 STATIC INLINE void Chip_PININT_Init(LPC_PININT_T *pPININT) {}
 
 /**
- * @brief	De-Initialize Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block
- * @return	Nothing
+ * @brief   De-Initialize Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_DeInit(LPC_PININT_T *pPININT) {}
 
 /**
- * @brief	Configure the pins as edge sensitive in Pin interrupt block 
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Configure the pins as edge sensitive in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins (ORed value of PININTCH*)
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_SetPinModeEdge(LPC_PININT_T *pPININT, uint32_t pins)
 {
@@ -159,10 +159,10 @@ STATIC INLINE void Chip_PININT_SetPinModeEdge(LPC_PININT_T *pPININT, uint32_t pi
 }
 
 /**
- * @brief	Configure the pins as level sensitive in Pin interrupt block 
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Configure the pins as level sensitive in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins (ORed value of PININTCH*)
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_SetPinModeLevel(LPC_PININT_T *pPININT, uint32_t pins)
 {
@@ -171,9 +171,9 @@ STATIC INLINE void Chip_PININT_SetPinModeLevel(LPC_PININT_T *pPININT, uint32_t p
 }
 
 /**
- * @brief	Return current PININT rising edge or high level interrupt enable state
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	A bifield containing the high edge/level interrupt enables for each
+ * @brief   Return current PININT rising edge or high level interrupt enable state
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  A bifield containing the high edge/level interrupt enables for each
  * interrupt. Bit 0 = PININT0, 1 = PININT1, etc.
  * For each bit, a 0 means the high edge/level interrupt is disabled, while a 1
  * means it's enabled.
@@ -184,10 +184,10 @@ STATIC INLINE uint32_t Chip_PININT_GetHighEnabled(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Enable high edge/level PININT interrupts for pins
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins to enable (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Enable high edge/level PININT interrupts for pins
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins to enable (ORed value of PININTCH*)
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_EnableIntHigh(LPC_PININT_T *pPININT, uint32_t pins)
 {
@@ -195,25 +195,25 @@ STATIC INLINE void Chip_PININT_EnableIntHigh(LPC_PININT_T *pPININT, uint32_t pin
 }
 
 /**
- * @brief	Select high/low level for level sensitive  PININT interrupts
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins to enable (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Select high/low level for level sensitive  PININT interrupts
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins to enable (ORed value of PININTCH*)
+ * @return  Nothing
 */
 STATIC INLINE void Chip_PININT_SelectLevel(LPC_PININT_T *pPININT, uint32_t pins, bool isHigh)
 {
-	if (isHigh)
-    	pPININT->SIENF = pins;
+    if (isHigh)
+        pPININT->SIENF = pins;
     else
-    	pPININT->CIENF = pins;
+        pPININT->CIENF = pins;
 }
 
 
 /**
- * @brief	Disable high edge/level PININT interrupts for pins
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins to disable (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Disable high edge/level PININT interrupts for pins
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins to disable (ORed value of PININTCH*)
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_DisableIntHigh(LPC_PININT_T *pPININT, uint32_t pins)
 {
@@ -221,9 +221,9 @@ STATIC INLINE void Chip_PININT_DisableIntHigh(LPC_PININT_T *pPININT, uint32_t pi
 }
 
 /**
- * @brief	Return current PININT falling edge or low level interrupt enable state
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	A bifield containing the low edge/level interrupt enables for each
+ * @brief   Return current PININT falling edge or low level interrupt enable state
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  A bifield containing the low edge/level interrupt enables for each
  * interrupt. Bit 0 = PININT0, 1 = PININT1, etc.
  * For each bit, a 0 means the low edge/level interrupt is disabled, while a 1
  * means it's enabled.
@@ -234,10 +234,10 @@ STATIC INLINE uint32_t Chip_PININT_GetLowEnabled(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Enable low edge/level PININT interrupts for pins
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins to enable (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Enable low edge/level PININT interrupts for pins
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins to enable (ORed value of PININTCH*)
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_EnableIntLow(LPC_PININT_T *pPININT, uint32_t pins)
 {
@@ -245,10 +245,10 @@ STATIC INLINE void Chip_PININT_EnableIntLow(LPC_PININT_T *pPININT, uint32_t pins
 }
 
 /**
- * @brief	Disable low edge/level PININT interrupts for pins
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins to disable (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Disable low edge/level PININT interrupts for pins
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins to disable (ORed value of PININTCH*)
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_DisableIntLow(LPC_PININT_T *pPININT, uint32_t pins)
 {
@@ -256,9 +256,9 @@ STATIC INLINE void Chip_PININT_DisableIntLow(LPC_PININT_T *pPININT, uint32_t pin
 }
 
 /**
- * @brief	Return pin states that have a detected latched high edge (RISE) state
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	PININT states (bit n = high) with a latched rise state detected
+ * @brief   Return pin states that have a detected latched high edge (RISE) state
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  PININT states (bit n = high) with a latched rise state detected
  */
 STATIC INLINE uint32_t Chip_PININT_GetRiseStates(LPC_PININT_T *pPININT)
 {
@@ -266,20 +266,20 @@ STATIC INLINE uint32_t Chip_PININT_GetRiseStates(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Clears pin states that had a latched high edge (RISE) state
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins with latched states to clear
- * @return	Nothing
+ * @brief   Clears pin states that had a latched high edge (RISE) state
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins with latched states to clear
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_ClearRiseStates(LPC_PININT_T *pPININT, uint32_t pins)
 {
-		pPININT->RISE = pins;
+        pPININT->RISE = pins;
 }
 
 /**
- * @brief	Return pin states that have a detected latched falling edge (FALL) state
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	PININT states (bit n = high) with a latched rise state detected
+ * @brief   Return pin states that have a detected latched falling edge (FALL) state
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  PININT states (bit n = high) with a latched rise state detected
  */
 STATIC INLINE uint32_t Chip_PININT_GetFallStates(LPC_PININT_T *pPININT)
 {
@@ -287,20 +287,20 @@ STATIC INLINE uint32_t Chip_PININT_GetFallStates(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Clears pin states that had a latched falling edge (FALL) state
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pins with latched states to clear
- * @return	Nothing
+ * @brief   Clears pin states that had a latched falling edge (FALL) state
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pins with latched states to clear
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_ClearFallStates(LPC_PININT_T *pPININT, uint32_t pins)
 {
-		pPININT->FALL = pins;
+        pPININT->FALL = pins;
 }
 
 /**
- * @brief	Get interrupt status from Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	Interrupt status (bit n for PININTn = high means interrupt ie pending)
+ * @brief   Get interrupt status from Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  Interrupt status (bit n for PININTn = high means interrupt ie pending)
  */
 STATIC INLINE uint32_t Chip_PININT_GetIntStatus(LPC_PININT_T *pPININT)
 {
@@ -308,10 +308,10 @@ STATIC INLINE uint32_t Chip_PININT_GetIntStatus(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Clear interrupt status in Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	pins	: Pin interrupts to clear (ORed value of PININTCH*)
- * @return	Nothing
+ * @brief   Clear interrupt status in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   pins    : Pin interrupts to clear (ORed value of PININTCH*)
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_ClearIntStatus(LPC_PININT_T *pPININT, uint32_t pins)
 {
@@ -319,29 +319,29 @@ STATIC INLINE void Chip_PININT_ClearIntStatus(LPC_PININT_T *pPININT, uint32_t pi
 }
 
 /**
- * @brief	Set source for pattern match in Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block 
- * @param	chan	: PININT channel number (From 0 to 7)
- * @param	slice	: PININT slice number
- * @return	Nothing
+ * @brief   Set source for pattern match in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @param   chan    : PININT channel number (From 0 to 7)
+ * @param   slice   : PININT slice number
+ * @return  Nothing
  */
 void Chip_PININT_SetPatternMatchSrc(LPC_PININT_T *pPININT, uint8_t chan, Chip_PININT_BITSLICE_T slice);
 
 /**
- * @brief	Configure the pattern matcch in Pin interrupt block
- * @param	pPININT		: The base address of Pin interrupt block 
- * @param	slice		: PININT slice number
- * @param	slice_cfg	: PININT slice configuration value (enum Chip_PININT_BITSLICE_CFG_T)
- * @param	end_point	: If true, current slice is final component
- * @return	Nothing
+ * @brief   Configure the pattern matcch in Pin interrupt block
+ * @param   pPININT     : The base address of Pin interrupt block
+ * @param   slice       : PININT slice number
+ * @param   slice_cfg   : PININT slice configuration value (enum Chip_PININT_BITSLICE_CFG_T)
+ * @param   end_point   : If true, current slice is final component
+ * @return  Nothing
  */
-void Chip_PININT_SetPatternMatchConfig(LPC_PININT_T *pPININT, Chip_PININT_BITSLICE_T slice, 
+void Chip_PININT_SetPatternMatchConfig(LPC_PININT_T *pPININT, Chip_PININT_BITSLICE_T slice,
         Chip_PININT_BITSLICE_CFG_T slice_cfg, bool end_point);
 
 /**
- * @brief	Enable pattern match interrupts in Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	Nothing
+ * @brief   Enable pattern match interrupts in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_EnablePatternMatch(LPC_PININT_T *pPININT)
 {
@@ -349,9 +349,9 @@ STATIC INLINE void Chip_PININT_EnablePatternMatch(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Disable pattern match interrupts in Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	Nothing
+ * @brief   Disable pattern match interrupts in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_DisablePatternMatch(LPC_PININT_T *pPININT)
 {
@@ -359,9 +359,9 @@ STATIC INLINE void Chip_PININT_DisablePatternMatch(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Enable RXEV output in Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	Nothing
+ * @brief   Enable RXEV output in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_EnablePatternMatchRxEv(LPC_PININT_T *pPININT)
 {
@@ -369,15 +369,15 @@ STATIC INLINE void Chip_PININT_EnablePatternMatchRxEv(LPC_PININT_T *pPININT)
 }
 
 /**
- * @brief	Disable RXEV output in Pin interrupt block
- * @param	pPININT	: The base address of Pin interrupt block 
- * @return	Nothing
+ * @brief   Disable RXEV output in Pin interrupt block
+ * @param   pPININT : The base address of Pin interrupt block
+ * @return  Nothing
  */
 STATIC INLINE void Chip_PININT_DisablePatternMatchRxEv(LPC_PININT_T *pPININT)
 {
     pPININT->PMCTRL &= ~(PININT_PMCTRL_RXEV_ENA | PININT_PMCTRL_RESERVED);
 }
-    
+
 /**
  * @}
  */

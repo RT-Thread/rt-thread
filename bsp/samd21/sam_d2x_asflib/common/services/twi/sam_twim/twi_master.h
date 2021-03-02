@@ -61,10 +61,10 @@ typedef twi_options_t twi_master_options_t;
 
 static inline uint32_t twi_master_setup(Twim *twi, twi_master_options_t *opt)
 {
-	opt->twim_clk = sysclk_get_pba_hz();
-	/* Initialize the TWIM Module */
-	twim_set_callback(twi, 0, twim_default_callback, 1);
-	return twi_master_init(twi, (twi_master_options_t *)opt);
+    opt->twim_clk = sysclk_get_pba_hz();
+    /* Initialize the TWIM Module */
+    twim_set_callback(twi, 0, twim_default_callback, 1);
+    return twi_master_init(twi, (twi_master_options_t *)opt);
 }
 
 #endif  // _TWI_MASTER_H_

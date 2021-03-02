@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -40,7 +40,7 @@
 #include "lpc_libcfg_default.h"
 #endif /* __BUILD_WITH_EXAMPLE__ */
 #ifdef _EEPROM
- 
+
 /* Includes ------------------------------------------------------------------- */
 #include "lpc_eeprom.h"
 #include "lpc_clkpwr.h"
@@ -75,7 +75,7 @@ void EEPROM_Init(void)
 /*********************************************************************//**
  * @brief       Write data to EEPROM at specific address
  * @param[in]   page_offset offset of data in page register(0 - 63)
- *              page_address page address (0-62)                    
+ *              page_address page address (0-62)
  *              mode    Write mode, should be:
  *                  - MODE_8_BIT    : write 8 bit mode
  *                  - MODE_16_BIT   : write 16 bit mode
@@ -180,7 +180,7 @@ void EEPROM_Read(uint16_t page_offset, uint16_t page_address, void* data, EEPROM
 
     //read and store data in buffer
     for(i=0;i<count;i++){
-         
+
          if(mode == MODE_8_BIT){
              *tmp8 = (uint8_t)(LPC_EEPROM -> RDATA);
              tmp8++;
@@ -223,7 +223,7 @@ void EEPROM_Erase(uint16_t page_address)
     uint32_t i;
     uint32_t count = EEPROM_PAGE_SIZE/4;
 
-    LPC_EEPROM->INT_CLR_STATUS = ((1 << EEPROM_ENDOF_RW)|(1 << EEPROM_ENDOF_PROG));  
+    LPC_EEPROM->INT_CLR_STATUS = ((1 << EEPROM_ENDOF_RW)|(1 << EEPROM_ENDOF_PROG));
 
     //clear page register
     LPC_EEPROM->ADDR = EEPROM_PAGE_OFFSET(0);

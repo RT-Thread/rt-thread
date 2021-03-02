@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	generic/cache.h
- * @brief	generic cache operation primitives for libmetal.
+ * @file    generic/cache.h
+ * @brief   generic cache operation primitives for libmetal.
  */
 
 #ifndef __METAL_CACHE__H__
@@ -25,12 +25,12 @@ extern void metal_machine_cache_invalidate(void *addr, unsigned int len);
 
 static inline void __metal_cache_flush(void *addr, unsigned int len)
 {
-	metal_machine_cache_flush(addr, len);
+    metal_machine_cache_flush(addr, len);
 }
 
 static inline void __metal_cache_invalidate(void *addr, unsigned int len)
 {
-	metal_machine_cache_invalidate(addr, len);
+    metal_machine_cache_invalidate(addr, len);
 }
 
 #ifdef __cplusplus

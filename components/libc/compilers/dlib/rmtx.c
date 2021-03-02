@@ -22,7 +22,7 @@ void _Mtxinit(_Rmtx *m)
     rt_mutex_t mutex;
 
     RT_ASSERT(m != RT_NULL);
-    
+
     mutex = (rt_mutex_t)m;
     rt_mutex_init(mutex, "iarMtx", RT_IPC_FLAG_FIFO);
 }

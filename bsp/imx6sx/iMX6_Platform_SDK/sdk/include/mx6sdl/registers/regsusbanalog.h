@@ -226,8 +226,8 @@ typedef union _hw_usb_analog_usb1_chrg_detect
     struct _hw_usb_analog_usb1_chrg_detect_bitfields
     {
         unsigned RESERVED0 : 18; //!< [17:0] Reserved.
-        unsigned CHK_CONTACT : 1; //!< [18] 
-        unsigned CHK_CHRG_B : 1; //!< [19] 
+        unsigned CHK_CONTACT : 1; //!< [18]
+        unsigned CHK_CHRG_B : 1; //!< [19]
         unsigned EN_B : 1; //!< [20] Control the charger detector.
         unsigned RESERVED2 : 11; //!< [31:21] Reserved.
     } B;
@@ -832,8 +832,8 @@ typedef union _hw_usb_analog_usb2_chrg_detect
     struct _hw_usb_analog_usb2_chrg_detect_bitfields
     {
         unsigned RESERVED0 : 18; //!< [17:0] Reserved.
-        unsigned CHK_CONTACT : 1; //!< [18] 
-        unsigned CHK_CHRG_B : 1; //!< [19] 
+        unsigned CHK_CONTACT : 1; //!< [18]
+        unsigned CHK_CHRG_B : 1; //!< [19]
         unsigned EN_B : 1; //!< [20] Control the charger detector.
         unsigned RESERVED2 : 11; //!< [31:21] Reserved.
     } B;

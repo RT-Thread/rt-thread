@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    stm32wlxx_hal_timebase_rtc_alarm_template.c 
+  * @file    stm32wlxx_hal_timebase_rtc_alarm_template.c
   * @author  MCD Application Team
   * @brief   HAL time base based on the hardware RTC_ALARM Template.
   *
-  *          This file override the native HAL time base functions (defined as 
+  *          This file override the native HAL time base functions (defined as
   *          weak) to use the RTC ALARM for time base generation:
   *           + Initializes the RTC peripheral to increment the seconds registers
   *             each 1s
@@ -22,13 +22,13 @@
     This file must be copied to the application folder and modified as follows:
     (#) Rename it to 'stm32wlxx_hal_timebase_rtc_alarm.c'
     (#) Add this file and the RTC HAL drivers to your project and uncomment
-       HAL_RTC_MODULE_ENABLED define in stm32wlxx_hal_conf.h 
+       HAL_RTC_MODULE_ENABLED define in stm32wlxx_hal_conf.h
 
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -47,11 +47,11 @@
 
 /** @defgroup HAL_TimeBase_RTC_Alarm_Template  HAL TimeBase RTC Alarm Template
   * @{
-  */ 
+  */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-/* Uncomment the line below to select the appropriate RTC Clock source for your application: 
+/* Uncomment the line below to select the appropriate RTC Clock source for your application:
   + RTC_CLOCK_SOURCE_HSE: can be selected for applications requiring timing precision.
   + RTC_CLOCK_SOURCE_LSE: can be selected for applications with low constraint on timing
                           precision.
@@ -98,15 +98,15 @@ void RTC_Alarm_IRQHandler(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  This function configures the RTC ALARM A as a time base source. 
-  *         The time source is configured to have 1ms time base with a dedicated 
-  *         Tick interrupt priority. 
+  * @brief  This function configures the RTC ALARM A as a time base source.
+  *         The time source is configured to have 1ms time base with a dedicated
+  *         Tick interrupt priority.
   *         Calendar time base is = ((RTC_ASYNCH_PREDIV + 1) * (RTC_SYNCH_PREDIV + 1)) / RTC_CLOCK
   *                               = 1s
   *         Alarm interrupt timebase is = (RTC_SYNCH_PREDIV / (1000 / uwTickFreq))
   *                                     = 1 ms when uwTickFreq is set to 1 kHz
   * @note   This function is called automatically at the beginning of program after
-  *         reset by HAL_Init() or at any time when clock is configured, by HAL_RCC_ClockConfig(). 
+  *         reset by HAL_Init() or at any time when clock is configured, by HAL_RCC_ClockConfig().
   * @param  TickPriority: Tick interrupt priority.
   * @retval HAL status
   */
@@ -131,7 +131,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 
     /* Disable the Alarm A */
     __HAL_RTC_ALARMA_DISABLE(&hRTC_Handle);
-    /* In case of interrupt mode is used, the interrupt source must disabled */ 
+    /* In case of interrupt mode is used, the interrupt source must disabled */
     __HAL_RTC_ALARM_DISABLE_IT(&hRTC_Handle, RTC_IT_ALRA);
     __HAL_RTC_ALARM_CLEAR_FLAG(&hRTC_Handle, RTC_FLAG_ALRAF);
 
@@ -193,7 +193,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     /* If RTC Clock configuration is ok */
     if (status == HAL_OK)
     {
-      /* The time base is defined to have highest synchronous prescaler but keeping 
+      /* The time base is defined to have highest synchronous prescaler but keeping
          a 1Hz RTC frequency. */
       hRTC_Handle.Instance = RTC;
       hRTC_Handle.Init.HourFormat = RTC_HOURFORMAT_24;

@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/higherapi/Longfilename.c $                                        
- $Revision: 9 $                                       
- $Date: 10/01/03 2:23p $                                           
+ $Archive: /Fatfs/FileSystem/Fat32/higherapi/Longfilename.c $
+ $Revision: 9 $
+ $Date: 10/01/03 2:23p $
  Description: Longfilename.c
- Notes:	This file read provides higherlevel API function to provide long file name.
+ Notes: This file read provides higherlevel API function to provide long file name.
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -61,10 +61,10 @@ static void GeneratefilenameTail(uint8_t * shortfilename, int32_t i, int32_t Fla
 
    Inputs:         1) Handle number
                    2) Record Number
-				   3) Pointer to file name buffer
-   
+                   3) Pointer to file name buffer
+
    Outputs:        Returns Length of the Long file name string
-      
+
    Description:    Provides long file name
 ----------------------------------------------------------------------------*/
 int32_t ConstructLongFileName(int32_t HandleNumber, int32_t RecordNumber, int8_t * LFNBuffer)
@@ -143,7 +143,7 @@ int32_t ConstructLongFileName(int32_t HandleNumber, int32_t RecordNumber, int8_t
             offset += 2;
         }
         i++;
-    }                           // while(1)            
+    }                           // while(1)
 }
 
 /*----------------------------------------------------------------------------
@@ -153,9 +153,9 @@ int32_t ConstructLongFileName(int32_t HandleNumber, int32_t RecordNumber, int8_t
 
    Inputs:         1) Pointer to Buffer
                    2) Long file name offset
-   
+
    Outputs:        Returns 0(Null Terminator) or Unicode Word
-      
+
    Description:    Provides Unicode Word from Unicode Character
 ----------------------------------------------------------------------------*/
 int32_t GetUnicodeWord(uint8_t * Buffer, int32_t LFNOffset)
@@ -175,13 +175,13 @@ int32_t GetUnicodeWord(uint8_t * Buffer, int32_t LFNOffset)
    FunctionType:   Reentrant
 
    Inputs:         1) Handle number
-				   2) Pointer to file name
-				   3) Count 
-				   4) Chksum
+                   2) Pointer to file name
+                   3) Count
+                   4) Chksum
 
    Outputs:        Returns SUCCESS or an error code if function fails
-      
-   Description:    Arranges the given long file name. 
+
+   Description:    Arranges the given long file name.
 ----------------------------------------------------------------------------*/
 RtStatus_t ArrangeLongFileName(int32_t HandleNumber, uint8_t * filename, int32_t count,
                                int32_t chksum)
@@ -215,12 +215,12 @@ RtStatus_t ArrangeLongFileName(int32_t HandleNumber, uint8_t * filename, int32_t
 
             wordno += 2;
             offset = offset + 2;
-            /* if all words of longdir firstname field is occupied, check for 
+            /* if all words of longdir firstname field is occupied, check for
                longdir secondname field */
             if (offset == LDIRATTRIOFFSET)
                 offset = LDIRNAME2OFFSET;
 
-            /* if all words of longdir secondname field is occupied  check for 
+            /* if all words of longdir secondname field is occupied  check for
                longdir thirdname field */
             if (offset == LDIRFSTCLUSNOOFFSET)
                 offset = LDIRNAME3OFFSET;
@@ -422,7 +422,7 @@ void Setshortfilename(int32_t HandleNumber, uint8_t * Buffer, uint8_t * shortfil
 
    Outputs:       Nil
 
-   Description:   Puts the given no. i in the given filename at the position 
+   Description:   Puts the given no. i in the given filename at the position
                   indicated by the Flag.
 <
 ----------------------------------------------------------------------------*/
@@ -449,12 +449,12 @@ void GeneratefilenameTail(uint8_t * shortfilename, int32_t i, int32_t Flag)
 
    Inputs:        1) Pointer to Buffer
                   2) Length
-                  3) Index  
-                  
+                  3) Index
+
    Outputs:       Returns SUCCESS, 1 (OK but reserved) or an error code if error occurs
 
    Description:   This function checks whehter the file name will fit in 8+3 format
-                  and it does not contain any restricted characters. 
+                  and it does not contain any restricted characters.
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t IsShortNameValid(uint8_t * Buffer, int32_t length, int32_t index)
@@ -512,7 +512,7 @@ RtStatus_t IsShortNameValid(uint8_t * Buffer, int32_t length, int32_t index)
                 return Flag;
         }
 
-    }                           // else     
+    }                           // else
 
     return SUCCESS;
 }

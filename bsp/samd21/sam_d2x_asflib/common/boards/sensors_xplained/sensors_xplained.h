@@ -205,16 +205,16 @@ extern "C" {
  *
  * \code
 
-	      10-pin Header           Function
-	  -------------------------------------------
-	      Pin 1                   SDA
-	      Pin 2                   SCL
-	      Pin 3                   RXD
-	      Pin 4                   TXD
-	      Pin 5                   SS
-	      Pin 6                   MOSI
-	      Pin 7                   MISO
-	      Pin 8                   SCK
+          10-pin Header           Function
+      -------------------------------------------
+          Pin 1                   SDA
+          Pin 2                   SCL
+          Pin 3                   RXD
+          Pin 4                   TXD
+          Pin 5                   SS
+          Pin 6                   MOSI
+          Pin 7                   MISO
+          Pin 8                   SCK
 
 \endcode
  * @{
@@ -454,7 +454,7 @@ extern void sensor_board_init(void);
  * \return  bool        true if the call succeeds, else false.
  */
 extern bool sensor_board_irq_connect
-	(uint32_t gpio_pin, SENSOR_IRQ_HANDLER handler, void *arg);
+    (uint32_t gpio_pin, SENSOR_IRQ_HANDLER handler, void *arg);
 
 
 #ifdef __cplusplus

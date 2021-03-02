@@ -132,7 +132,7 @@ uint32_t DMA_GetRemainingBytes(DMA_Type *base, uint32_t channel)
 {
     assert(channel < FSL_FEATURE_DMA_NUMBER_OF_CHANNELS);
 
-    /* NOTE: when descriptors are chained, ACTIVE bit is set for whole chain. It makes 
+    /* NOTE: when descriptors are chained, ACTIVE bit is set for whole chain. It makes
      * impossible to distinguish between:
      * - transfer finishes (represented by value '0x3FF')
      * - and remaining 1024 bytes to transfer (value 0x3FF)
@@ -141,7 +141,7 @@ uint32_t DMA_GetRemainingBytes(DMA_Type *base, uint32_t channel)
 
     /* Channel not active (transfer finished) and value is 0x3FF - nothing to transfer */
     if (
-        (!(base->COMMON[DMA_CHANNEL_GROUP(channel)].ACTIVE & (1U << (DMA_CHANNEL_INDEX(channel))))) && 
+        (!(base->COMMON[DMA_CHANNEL_GROUP(channel)].ACTIVE & (1U << (DMA_CHANNEL_INDEX(channel))))) &&
         (0x3FF == ((base->CHANNEL[channel].XFERCFG & DMA_CHANNEL_XFERCFG_XFERCOUNT_MASK) >> DMA_CHANNEL_XFERCFG_XFERCOUNT_SHIFT))
     )
     {
@@ -374,8 +374,8 @@ void DMA_StartTransfer(dma_handle_t *handle)
 
     /* Set channel XFERCFG register according first channel descriptor. */
     handle->base->CHANNEL[handle->channel].XFERCFG = s_dma_descriptor_table[ handle->channel ].xfercfg;
-    /* At this moment, the channel ACTIVE bit is set and application cannot modify 
-     * or start another transfer using this channel. Channel ACTIVE bit is cleared by 
+    /* At this moment, the channel ACTIVE bit is set and application cannot modify
+     * or start another transfer using this channel. Channel ACTIVE bit is cleared by
     * 'AbortTransfer' function or when the transfer finishes */
 }
 

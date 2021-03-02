@@ -55,16 +55,16 @@
  */
 static uint32_t count_bits_in_byte(uint8_t byte)
 {
-	uint32_t count = 0;
+    uint32_t count = 0;
 
-	while (byte > 0) {
-		if (byte & 1) {
-			count++;
-		}
-		byte >>= 1;
-	}
+    while (byte > 0) {
+        if (byte & 1) {
+            count++;
+        }
+        byte >>= 1;
+    }
 
-	return count;
+    return count;
 }
 
 /**
@@ -74,8 +74,8 @@ static uint32_t count_bits_in_byte(uint8_t byte)
  */
 static uint32_t count_bits_in_code256(uint8_t *code)
 {
-	return count_bits_in_byte(code[0]) + count_bits_in_byte(code[1]) +
-			count_bits_in_byte(code[2]);
+    return count_bits_in_byte(code[0]) + count_bits_in_byte(code[1]) +
+            count_bits_in_byte(code[2]);
 }
 
 /**
@@ -86,123 +86,123 @@ static uint32_t count_bits_in_code256(uint8_t *code)
  */
 static void compute256(const uint8_t *data, uint8_t *code)
 {
-	uint32_t i;
-	uint8_t column_sum = 0;
-	uint8_t even_line_code = 0;
-	uint8_t odd_line_code = 0;
-	uint8_t even_column_code = 0;
-	uint8_t odd_column_code = 0;
+    uint32_t i;
+    uint8_t column_sum = 0;
+    uint8_t even_line_code = 0;
+    uint8_t odd_line_code = 0;
+    uint8_t even_column_code = 0;
+    uint8_t odd_column_code = 0;
 
-	/* 
-	 * Xor all bytes together to get the column sum.
-	 * At the same time, calculate the even and odd line codes.
-	 */
-	for (i = 0; i < 256; i++) {
-		column_sum ^= data[i];
+    /*
+     * Xor all bytes together to get the column sum.
+     * At the same time, calculate the even and odd line codes.
+     */
+    for (i = 0; i < 256; i++) {
+        column_sum ^= data[i];
 
-		/* 
-		 * If the xor sum of the byte is 0, then this byte has no incidence on
-		 * the computed code. So check if the sum is 1.
-		 */
-		if ((count_bits_in_byte(data[i]) & 1) == 1) {
-			/*
-			 * Parity groups are formed by forcing a particular index bit to 0
-			 * (even) or 1 (odd).
-			 * Example on one byte:
-			 *
-			 * bits (dec)  7   6   5   4   3   2   1   0
-			 *      (bin) 111 110 101 100 011 010 001 000
-			 *                            '---'---'---'----------.
-			 *                                                   |
-			 * groups P4' ooooooooooooooo eeeeeeeeeeeeeee P4     |
-			 *        P2' ooooooo eeeeeee ooooooo eeeeeee P2     |
-			 *        P1' ooo eee ooo eee ooo eee ooo eee P1     |
-			 *                                                   |
-			 * We can see that:                                  |
-			 *  - P4  -> bit 2 of index is 0 --------------------'
-			 *  - P4' -> bit 2 of index is 1.
-			 *  - P2  -> bit 1 of index if 0.
-			 *  - etc...
-			 * We deduce that a bit position has an impact on all even Px if
-			 * the log2(x)nth bit of its index is 0
-			 *     ex: log2(4) = 2, bit2 of the index must be 0 (-> 0 1 2 3)
-			 * and on all odd Px' if the log2(x)nth bit of its index is 1
-			 *     ex: log2(2) = 1, bit1 of the index must be 1 (-> 0 1 4 5)
-			 *
-			 * As such, we calculate all the possible Px and Px' values at the
-			 * same time in two variables, even_line_code and odd_line_code, such as
-			 *     even_line_code bits: P128  P64  P32  P16  P8  P4  P2  P1
-			 *     odd_line_code  bits: P128' P64' P32' P16' P8' P4' P2' P1'
-			 */
-			even_line_code ^= (255 - i);
-			odd_line_code ^= i;
-		}
-	}
+        /*
+         * If the xor sum of the byte is 0, then this byte has no incidence on
+         * the computed code. So check if the sum is 1.
+         */
+        if ((count_bits_in_byte(data[i]) & 1) == 1) {
+            /*
+             * Parity groups are formed by forcing a particular index bit to 0
+             * (even) or 1 (odd).
+             * Example on one byte:
+             *
+             * bits (dec)  7   6   5   4   3   2   1   0
+             *      (bin) 111 110 101 100 011 010 001 000
+             *                            '---'---'---'----------.
+             *                                                   |
+             * groups P4' ooooooooooooooo eeeeeeeeeeeeeee P4     |
+             *        P2' ooooooo eeeeeee ooooooo eeeeeee P2     |
+             *        P1' ooo eee ooo eee ooo eee ooo eee P1     |
+             *                                                   |
+             * We can see that:                                  |
+             *  - P4  -> bit 2 of index is 0 --------------------'
+             *  - P4' -> bit 2 of index is 1.
+             *  - P2  -> bit 1 of index if 0.
+             *  - etc...
+             * We deduce that a bit position has an impact on all even Px if
+             * the log2(x)nth bit of its index is 0
+             *     ex: log2(4) = 2, bit2 of the index must be 0 (-> 0 1 2 3)
+             * and on all odd Px' if the log2(x)nth bit of its index is 1
+             *     ex: log2(2) = 1, bit1 of the index must be 1 (-> 0 1 4 5)
+             *
+             * As such, we calculate all the possible Px and Px' values at the
+             * same time in two variables, even_line_code and odd_line_code, such as
+             *     even_line_code bits: P128  P64  P32  P16  P8  P4  P2  P1
+             *     odd_line_code  bits: P128' P64' P32' P16' P8' P4' P2' P1'
+             */
+            even_line_code ^= (255 - i);
+            odd_line_code ^= i;
+        }
+    }
 
-	/*
-	 * At this point, we have the line parities, and the column sum. First, We
-	 * must calculate the parity group values on the column sum.
-	 */
-	for (i = 0; i < 8; i++) {
-		if (column_sum & 1) {
-			even_column_code ^= (7 - i);
-			odd_column_code ^= i;
-		}
-		column_sum >>= 1;
-	}
+    /*
+     * At this point, we have the line parities, and the column sum. First, We
+     * must calculate the parity group values on the column sum.
+     */
+    for (i = 0; i < 8; i++) {
+        if (column_sum & 1) {
+            even_column_code ^= (7 - i);
+            odd_column_code ^= i;
+        }
+        column_sum >>= 1;
+    }
 
-	/*
-	 * Now, we must interleave the parity values, to obtain the following layout:
-	 * Code[0] = Line1
-	 * Code[1] = Line2
-	 * Code[2] = Column
-	 * Line = Px' Px P(x-1)- P(x-1) ...
-	 * Column = P4' P4 P2' P2 P1' P1 PadBit PadBit
-	 */
-	code[0] = 0;
-	code[1] = 0;
-	code[2] = 0;
+    /*
+     * Now, we must interleave the parity values, to obtain the following layout:
+     * Code[0] = Line1
+     * Code[1] = Line2
+     * Code[2] = Column
+     * Line = Px' Px P(x-1)- P(x-1) ...
+     * Column = P4' P4 P2' P2 P1' P1 PadBit PadBit
+     */
+    code[0] = 0;
+    code[1] = 0;
+    code[2] = 0;
 
-	for (i = 0; i < 4; i++) {
-		code[0] <<= 2;
-		code[1] <<= 2;
-		code[2] <<= 2;
+    for (i = 0; i < 4; i++) {
+        code[0] <<= 2;
+        code[1] <<= 2;
+        code[2] <<= 2;
 
-		/* Line 1 */
-		if ((odd_line_code & 0x80) != 0) {
-			code[0] |= 2;
-		}
+        /* Line 1 */
+        if ((odd_line_code & 0x80) != 0) {
+            code[0] |= 2;
+        }
 
-		if ((even_line_code & 0x80) != 0) {
-			code[0] |= 1;
-		}
-		/* Line 2 */
-		if ((odd_line_code & 0x08) != 0) {
-			code[1] |= 2;
-		}
+        if ((even_line_code & 0x80) != 0) {
+            code[0] |= 1;
+        }
+        /* Line 2 */
+        if ((odd_line_code & 0x08) != 0) {
+            code[1] |= 2;
+        }
 
-		if ((even_line_code & 0x08) != 0) {
-			code[1] |= 1;
-		}
-		/* Column */
-		if ((odd_column_code & 0x04) != 0) {
-			code[2] |= 2;
-		}
+        if ((even_line_code & 0x08) != 0) {
+            code[1] |= 1;
+        }
+        /* Column */
+        if ((odd_column_code & 0x04) != 0) {
+            code[2] |= 2;
+        }
 
-		if ((even_column_code & 0x04) != 0) {
-			code[2] |= 1;
-		}
+        if ((even_column_code & 0x04) != 0) {
+            code[2] |= 1;
+        }
 
-		odd_line_code <<= 1;
-		even_line_code <<= 1;
-		odd_column_code <<= 1;
-		even_column_code <<= 1;
-	}
+        odd_line_code <<= 1;
+        even_line_code <<= 1;
+        odd_column_code <<= 1;
+        even_column_code <<= 1;
+    }
 
-	/* Invert codes (linux compatibility) */
-	code[0] = (~(uint32_t) code[0]);
-	code[1] = (~(uint32_t) code[1]);
-	code[2] = (~(uint32_t) code[2]);
+    /* Invert codes (linux compatibility) */
+    code[0] = (~(uint32_t) code[0]);
+    code[1] = (~(uint32_t) code[1]);
+    code[2] = (~(uint32_t) code[2]);
 
 }
 
@@ -217,58 +217,58 @@ static void compute256(const uint8_t *data, uint8_t *code)
  */
 static uint32_t verify256(uint8_t *puc_data, const uint8_t *puc_original_code)
 {
-	/* Calculate new code */
-	uint8_t computed_code[3];
-	uint8_t correction_code[3];
+    /* Calculate new code */
+    uint8_t computed_code[3];
+    uint8_t correction_code[3];
 
-	compute256(puc_data, computed_code);
+    compute256(puc_data, computed_code);
 
-	/* Xor both codes together */
-	correction_code[0] = computed_code[0] ^ puc_original_code[0];
-	correction_code[1] = computed_code[1] ^ puc_original_code[1];
-	correction_code[2] = computed_code[2] ^ puc_original_code[2];
+    /* Xor both codes together */
+    correction_code[0] = computed_code[0] ^ puc_original_code[0];
+    correction_code[1] = computed_code[1] ^ puc_original_code[1];
+    correction_code[2] = computed_code[2] ^ puc_original_code[2];
 
 
-	/* If all bytes are 0, there is no error */
-	if ((correction_code[0] == 0) && (correction_code[1] == 0)
-			&& (correction_code[2] == 0)) {
-		return 0;
-	}
+    /* If all bytes are 0, there is no error */
+    if ((correction_code[0] == 0) && (correction_code[1] == 0)
+            && (correction_code[2] == 0)) {
+        return 0;
+    }
 
-	/* If there is a single bit error, there are 11 bits set to 1 */
-	if (count_bits_in_code256(correction_code) == 11) {
-		/* Get byte and bit indexes */
-		uint8_t byte;
-		uint8_t bit;
+    /* If there is a single bit error, there are 11 bits set to 1 */
+    if (count_bits_in_code256(correction_code) == 11) {
+        /* Get byte and bit indexes */
+        uint8_t byte;
+        uint8_t bit;
 
-		byte = correction_code[0] & 0x80;
-		byte |= ((correction_code[0] << 1) & 0x40);
-		byte |= ((correction_code[0] << 2) & 0x20);
-		byte |= ((correction_code[0] << 3) & 0x10);
+        byte = correction_code[0] & 0x80;
+        byte |= ((correction_code[0] << 1) & 0x40);
+        byte |= ((correction_code[0] << 2) & 0x20);
+        byte |= ((correction_code[0] << 3) & 0x10);
 
-		byte |= ((correction_code[1] >> 4) & 0x08);
-		byte |= ((correction_code[1] >> 3) & 0x04);
-		byte |= ((correction_code[1] >> 2) & 0x02);
-		byte |= ((correction_code[1] >> 1) & 0x01);
+        byte |= ((correction_code[1] >> 4) & 0x08);
+        byte |= ((correction_code[1] >> 3) & 0x04);
+        byte |= ((correction_code[1] >> 2) & 0x02);
+        byte |= ((correction_code[1] >> 1) & 0x01);
 
-		bit = (correction_code[2] >> 5) & 0x04;
-		bit |= ((correction_code[2] >> 4) & 0x02);
-		bit |= ((correction_code[2] >> 3) & 0x01);
+        bit = (correction_code[2] >> 5) & 0x04;
+        bit |= ((correction_code[2] >> 4) & 0x02);
+        bit |= ((correction_code[2] >> 3) & 0x01);
 
-		/* Correct bit */
-		puc_data[byte] ^= (1 << bit);
+        /* Correct bit */
+        puc_data[byte] ^= (1 << bit);
 
-		return HAMMING_ERROR_SINGLE_BIT;
-	}
+        return HAMMING_ERROR_SINGLE_BIT;
+    }
 
-	/* Check if ECC has been corrupted */
-	if (count_bits_in_code256(correction_code) == 1) {
-		return HAMMING_ERROR_ECC;
-	}
-	/* Otherwise, this is a multi-bit error */
-	else {
-		return HAMMING_ERROR_MULTIPLE_BITS;
-	}
+    /* Check if ECC has been corrupted */
+    if (count_bits_in_code256(correction_code) == 1) {
+        return HAMMING_ERROR_ECC;
+    }
+    /* Otherwise, this is a multi-bit error */
+    else {
+        return HAMMING_ERROR_MULTIPLE_BITS;
+    }
 }
 
 /**
@@ -280,15 +280,15 @@ static uint32_t verify256(uint8_t *puc_data, const uint8_t *puc_original_code)
  *  \param puc_code Pointer to codes buffer.
  */
 void hamming_compute_256x(const uint8_t *puc_data, uint32_t dw_size,
-		uint8_t *puc_code)
+        uint8_t *puc_code)
 {
-	while (dw_size > 0) {
-		compute256(puc_data, puc_code);
+    while (dw_size > 0) {
+        compute256(puc_data, puc_code);
 
-		puc_data += 256;
-		puc_code += 3;
-		dw_size -= 256;
-	}
+        puc_data += 256;
+        puc_code += 3;
+        dw_size -= 256;
+    }
 }
 
 /**
@@ -304,26 +304,26 @@ void hamming_compute_256x(const uint8_t *puc_data, uint32_t dw_size,
  *  or HAMMING_ERROR_MULTIPLE_BITS.
  */
 uint32_t hamming_verify_256x(uint8_t *puc_data, uint32_t dw_size,
-		const uint8_t *puc_code)
+        const uint8_t *puc_code)
 {
-	uint32_t error;
-	uint32_t result = 0;
+    uint32_t error;
+    uint32_t result = 0;
 
-	while (dw_size > 0) {
-		error = verify256(puc_data, puc_code);
+    while (dw_size > 0) {
+        error = verify256(puc_data, puc_code);
 
-		if (error == HAMMING_ERROR_SINGLE_BIT) {
-			result = HAMMING_ERROR_SINGLE_BIT;
-		} else {
-			if (error) {
-				return error;
-			}
-		}
+        if (error == HAMMING_ERROR_SINGLE_BIT) {
+            result = HAMMING_ERROR_SINGLE_BIT;
+        } else {
+            if (error) {
+                return error;
+            }
+        }
 
-		puc_data += 256;
-		puc_code += 3;
-		dw_size -= 256;
-	}
+        puc_data += 256;
+        puc_code += 3;
+        dw_size -= 256;
+    }
 
-	return result;
+    return result;
 }

@@ -85,7 +85,7 @@ static void
 sendline(char *line)
 {
   static unsigned int i;
-  
+
   for(i = 0; i < TELNETD_CONF_NUMLINES; ++i) {
     if(s.lines[i] == NULL) {
       s.lines[i] = line;
@@ -145,7 +145,7 @@ static void
 acked(void)
 {
   static unsigned int i;
-  
+
   while(s.numsent > 0) {
     dealloc_line(s.lines[0]);
     for(i = 1; i < TELNETD_CONF_NUMLINES; ++i) {
@@ -161,11 +161,11 @@ senddata(void)
 {
   static char *bufptr, *lineptr;
   static int buflen, linelen;
-  
+
   bufptr = uip_appdata;
   buflen = 0;
   for(s.numsent = 0; s.numsent < TELNETD_CONF_NUMLINES &&
-	s.lines[s.numsent] != NULL ; ++s.numsent) {
+    s.lines[s.numsent] != NULL ; ++s.numsent) {
     lineptr = s.lines[s.numsent];
     linelen = strlen(lineptr);
     if(linelen > TELNETD_CONF_LINELEN) {
@@ -186,7 +186,7 @@ static void
 closed(void)
 {
   static unsigned int i;
-  
+
   for(i = 0; i < TELNETD_CONF_NUMLINES; ++i) {
     if(s.lines[i] != NULL) {
       dealloc_line(s.lines[i]);
@@ -200,7 +200,7 @@ get_char(u8_t c)
   if(c == ISO_cr) {
     return;
   }
-  
+
   s.buf[(int)s.bufptr] = c;
   if(s.buf[(int)s.bufptr] == ISO_nl ||
      s.bufptr == sizeof(s.buf) - 1) {
@@ -235,11 +235,11 @@ newdata(void)
   u16_t len;
   u8_t c;
   char *dataptr;
-    
-  
+
+
   len = uip_datalen();
   dataptr = (char *)uip_appdata;
-  
+
   while(len > 0 && s.bufptr < sizeof(s.buf)) {
     c = *dataptr;
     ++dataptr;
@@ -247,26 +247,26 @@ newdata(void)
     switch(s.state) {
     case STATE_IAC:
       if(c == TELNET_IAC) {
-	get_char(c);
-	s.state = STATE_NORMAL;
+    get_char(c);
+    s.state = STATE_NORMAL;
       } else {
-	switch(c) {
-	case TELNET_WILL:
-	  s.state = STATE_WILL;
-	  break;
-	case TELNET_WONT:
-	  s.state = STATE_WONT;
-	  break;
-	case TELNET_DO:
-	  s.state = STATE_DO;
-	  break;
-	case TELNET_DONT:
-	  s.state = STATE_DONT;
-	  break;
-	default:
-	  s.state = STATE_NORMAL;
-	  break;
-	}
+    switch(c) {
+    case TELNET_WILL:
+      s.state = STATE_WILL;
+      break;
+    case TELNET_WONT:
+      s.state = STATE_WONT;
+      break;
+    case TELNET_DO:
+      s.state = STATE_DO;
+      break;
+    case TELNET_DONT:
+      s.state = STATE_DONT;
+      break;
+    default:
+      s.state = STATE_NORMAL;
+      break;
+    }
       }
       break;
     case STATE_WILL:
@@ -274,7 +274,7 @@ newdata(void)
       sendopt(TELNET_DONT, c);
       s.state = STATE_NORMAL;
       break;
-      
+
     case STATE_WONT:
       /* Reply with a DONT */
       sendopt(TELNET_DONT, c);
@@ -292,16 +292,16 @@ newdata(void)
       break;
     case STATE_NORMAL:
       if(c == TELNET_IAC) {
-	s.state = STATE_IAC;
+    s.state = STATE_IAC;
       } else {
-	get_char(c);
+    get_char(c);
       }
       break;
     }
 
-    
+
   }
-  
+
 }
 /*---------------------------------------------------------------------------*/
 void
@@ -324,21 +324,21 @@ telnetd_appcall(void)
     uip_close();
     return;
   }
-  
+
   if(uip_closed() ||
      uip_aborted() ||
      uip_timedout()) {
     closed();
   }
-  
+
   if(uip_acked()) {
     acked();
   }
-  
+
   if(uip_newdata()) {
     newdata();
   }
-  
+
   if(uip_rexmit() ||
      uip_newdata() ||
      uip_acked() ||

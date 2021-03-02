@@ -32,7 +32,7 @@ __weak void NMI_Handler(void)
 //------------------------------------ IRQ Hard Fault Handler
 __weak void HardFault_Handler(void)
 {
-	//printf("Hard Fault\r\n");
+    //printf("Hard Fault\r\n");
     while(1);
 }
 //------------------------------------ IRQ SVCall Handler
@@ -213,8 +213,8 @@ __weak void Default_IRQHandler(void)
 }
 
 /*----------------------------------------------------------------------*/
-/*--------------     Symbols defined in linker script          ---------*/ 
-/*----------------------------------------------------------------------*/ 
+/*--------------     Symbols defined in linker script          ---------*/
+/*----------------------------------------------------------------------*/
 
 extern void __main(void);
 
@@ -301,7 +301,7 @@ __value_in_regs struct __initial_stackheap
 __user_initial_stackheap(unsigned hb, unsigned sb, unsigned hl, unsigned sl)
 {
     struct __initial_stackheap s;
-    
+
     s.heap_base   = hb;
     s.stack_base  = sb;
     s.heap_limit  = s.stack_base;

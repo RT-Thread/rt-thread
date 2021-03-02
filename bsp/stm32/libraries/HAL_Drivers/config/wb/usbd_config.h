@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       		Notes
+ * Date           Author            Notes
  * 2020-10-14     Dozingfiretruck   first version
  */
 #ifndef __USBD_CONFIG_H__

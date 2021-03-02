@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       		Notes
+ * Date           Author            Notes
  * 2020-10-14     Dozingfiretruck   first version
  */
 
@@ -183,7 +183,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
 
     /* Fill EraseInit structure*/
     EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
-    EraseInitStruct.Page 				= GetPage(addr);
+    EraseInitStruct.Page                = GetPage(addr);
     EraseInitStruct.NbPages     = (size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
 
     if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK)

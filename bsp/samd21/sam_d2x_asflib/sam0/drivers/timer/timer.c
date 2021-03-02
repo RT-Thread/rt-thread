@@ -62,8 +62,8 @@ static timer_callback_t timer_callback;
  */
 void timer_get_config_defaults(struct timer_config *config)
 {
-	config->reload_value = 0;
-	config->interrupt_enable = true;
+    config->reload_value = 0;
+    config->interrupt_enable = true;
 }
 
 
@@ -74,7 +74,7 @@ void timer_get_config_defaults(struct timer_config *config)
  */
 uint32_t timer_get_value(void)
 {
-	return TIMER0->VALUE.reg;
+    return TIMER0->VALUE.reg;
 }
 
 /**
@@ -84,7 +84,7 @@ uint32_t timer_get_value(void)
  */
 void timer_set_value(uint32_t value)
 {
-	TIMER0->RELOAD.reg = value;
+    TIMER0->RELOAD.reg = value;
 }
 
 /**
@@ -94,7 +94,7 @@ void timer_set_value(uint32_t value)
  */
 uint32_t timer_get_interrupt_status(void)
 {
-	return TIMER0->INTSTATUSCLEAR.reg;
+    return TIMER0->INTSTATUSCLEAR.reg;
 }
 
 /**
@@ -104,9 +104,9 @@ uint32_t timer_get_interrupt_status(void)
  */
 void timer_clear_interrupt_status(void)
 {
-	TIMER0->INTSTATUSCLEAR.reg = 1;
-	/* Wait for operation finish */
-	while (TIMER0->INTSTATUSCLEAR.reg);
+    TIMER0->INTSTATUSCLEAR.reg = 1;
+    /* Wait for operation finish */
+    while (TIMER0->INTSTATUSCLEAR.reg);
 }
 
 /**
@@ -116,7 +116,7 @@ void timer_clear_interrupt_status(void)
  */
 void timer_enable(void)
 {
-	TIMER0->CTRL.reg |= TIMER_CTRL_ENABLE;
+    TIMER0->CTRL.reg |= TIMER_CTRL_ENABLE;
 }
 
 /**
@@ -126,7 +126,7 @@ void timer_enable(void)
  */
 void timer_disable(void)
 {
-	TIMER0->CTRL.reg &= (~TIMER_CTRL_ENABLE);
+    TIMER0->CTRL.reg &= (~TIMER_CTRL_ENABLE);
 }
 
 /**
@@ -138,7 +138,7 @@ void timer_disable(void)
  */
 void timer_register_callback(timer_callback_t fun)
 {
-	timer_callback = fun; 
+    timer_callback = fun;
 }
 
 /**
@@ -149,7 +149,7 @@ void timer_register_callback(timer_callback_t fun)
  */
 void timer_unregister_callback(void)
 {
-	timer_callback = NULL; 
+    timer_callback = NULL;
 }
 
 /**
@@ -160,13 +160,13 @@ void timer_unregister_callback(void)
  */
 static void timer_isr_handler(void)
 {
-	if (timer_get_interrupt_status()) {
-		timer_clear_interrupt_status();
-		
-		if (timer_callback) {
-			timer_callback();
-		}
-	}
+    if (timer_get_interrupt_status()) {
+        timer_clear_interrupt_status();
+
+        if (timer_callback) {
+            timer_callback();
+        }
+    }
 }
 
 /**
@@ -181,12 +181,12 @@ static void timer_isr_handler(void)
  */
 void timer_init(const struct timer_config *config)
 {
-	/* Global reset */
-	system_peripheral_reset(PERIPHERAL_TIMER);
+    /* Global reset */
+    system_peripheral_reset(PERIPHERAL_TIMER);
 
-	TIMER0->CTRL.reg = config->interrupt_enable << TIMER_CTRL_INTERRUPT_ENABLE_Pos;
-	TIMER0->RELOAD.reg = config->reload_value;
-	
-	timer_callback = NULL;
-	system_register_isr(RAM_ISR_TABLE_TIMER0_INDEX, (uint32_t)timer_isr_handler);
+    TIMER0->CTRL.reg = config->interrupt_enable << TIMER_CTRL_INTERRUPT_ENABLE_Pos;
+    TIMER0->RELOAD.reg = config->reload_value;
+
+    timer_callback = NULL;
+    system_register_isr(RAM_ISR_TABLE_TIMER0_INDEX, (uint32_t)timer_isr_handler);
 }

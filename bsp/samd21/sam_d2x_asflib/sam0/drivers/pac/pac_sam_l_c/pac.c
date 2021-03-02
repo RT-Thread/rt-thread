@@ -63,21 +63,21 @@
  *
  * \return Status of the peripheral lock procedure.
  * \retval STATUS_OK                If the peripheral was successfully locked
- * \retval STATUS_ERR_INVALID_ARG	If invalid argument(s) were supplied
+ * \retval STATUS_ERR_INVALID_ARG   If invalid argument(s) were supplied
  */
 __no_inline enum status_code system_peripheral_lock(
-		const uint32_t peripheral_id,
-		const uint32_t key)
+        const uint32_t peripheral_id,
+        const uint32_t key)
 {
-	/* Check if key is correct. */
-	if (~peripheral_id != key) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Check if key is correct. */
+    if (~peripheral_id != key) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	PAC->WRCTRL.reg = peripheral_id | PAC_WRCTRL_KEY(PAC_WRCTRL_KEY_SET_Val);
+    PAC->WRCTRL.reg = peripheral_id | PAC_WRCTRL_KEY(PAC_WRCTRL_KEY_SET_Val);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -98,21 +98,21 @@ __no_inline enum status_code system_peripheral_lock(
  *
  * \return Status of the peripheral lock procedure.
  * \retval STATUS_OK                If the peripheral was successfully locked
- * \retval STATUS_ERR_INVALID_ARG	If invalid argument(s) were supplied
+ * \retval STATUS_ERR_INVALID_ARG   If invalid argument(s) were supplied
  */
 __no_inline enum status_code system_peripheral_lock_always(
-		const uint32_t peripheral_id,
-		const uint32_t key)
+        const uint32_t peripheral_id,
+        const uint32_t key)
 {
-	/* Check if key is correct. */
-	if (~peripheral_id != key) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Check if key is correct. */
+    if (~peripheral_id != key) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	PAC->WRCTRL.reg = peripheral_id | PAC_WRCTRL_KEY(PAC_WRCTRL_KEY_SETLCK_Val);
+    PAC->WRCTRL.reg = peripheral_id | PAC_WRCTRL_KEY(PAC_WRCTRL_KEY_SETLCK_Val);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -132,19 +132,19 @@ __no_inline enum status_code system_peripheral_lock_always(
  *
  * \return Status of the peripheral unlock procedure.
  * \retval STATUS_OK                If the peripheral was successfully locked
- * \retval STATUS_ERR_INVALID_ARG	If invalid argument(s) were supplied
+ * \retval STATUS_ERR_INVALID_ARG   If invalid argument(s) were supplied
  */
 __no_inline enum status_code system_peripheral_unlock(
-		const uint32_t peripheral_id,
-		const uint32_t key)
+        const uint32_t peripheral_id,
+        const uint32_t key)
 {
-	/* Check if key is correct. */
-	if (~peripheral_id != key) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Check if key is correct. */
+    if (~peripheral_id != key) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	PAC->WRCTRL.reg = peripheral_id | PAC_WRCTRL_KEY(PAC_WRCTRL_KEY_CLR_Val);
+    PAC->WRCTRL.reg = peripheral_id | PAC_WRCTRL_KEY(PAC_WRCTRL_KEY_CLR_Val);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

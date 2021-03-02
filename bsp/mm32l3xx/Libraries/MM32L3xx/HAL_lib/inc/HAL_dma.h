@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version V1.0.0
 * @date    28/7/2017
-* @brief   This file contains all the functions prototypes for the DMA firmware 
+* @brief   This file contains all the functions prototypes for the DMA firmware
 *          library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_DMA_H
@@ -38,7 +38,7 @@
 * @{
 */
 
-/** 
+/**
 * @brief  DMA Init structure definition
 */
 
@@ -74,7 +74,7 @@ typedef struct
           ((*(uint32_t*)&(PERIPH)) == DMA1_Channel7_BASE))
 
 
-/** @defgroup DMA_data_transfer_direction 
+/** @defgroup DMA_data_transfer_direction
 * @{
 */
 
@@ -86,7 +86,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_peripheral_incremented_mode 
+/** @defgroup DMA_peripheral_incremented_mode
 * @{
 */
 
@@ -98,7 +98,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_memory_incremented_mode 
+/** @defgroup DMA_memory_incremented_mode
 * @{
 */
 
@@ -110,7 +110,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_peripheral_data_size 
+/** @defgroup DMA_peripheral_data_size
 * @{
 */
 
@@ -124,7 +124,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_memory_data_size 
+/** @defgroup DMA_memory_data_size
 * @{
 */
 
@@ -138,7 +138,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_circular_normal_mode 
+/** @defgroup DMA_circular_normal_mode
 * @{
 */
 
@@ -149,7 +149,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_priority_level 
+/** @defgroup DMA_priority_level
 * @{
 */
 
@@ -165,7 +165,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_memory_to_memory 
+/** @defgroup DMA_memory_to_memory
 * @{
 */
 
@@ -177,7 +177,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_interrupts_definition 
+/** @defgroup DMA_interrupts_definition
 * @{
 */
 
@@ -186,7 +186,7 @@ typedef struct
 #define DMA_IT_TE                          ((uint32_t)0x00000008)
 #define IS_DMA_CONFIG_IT(IT) ((((IT) & 0xFFFFFFF1) == 0x00) && ((IT) != 0x00))
 
-/** 
+/**
 * @brief  For DMA1
 */
 
@@ -236,19 +236,19 @@ typedef struct
                     ((IT) == DMA1_IT_HT6) || ((IT) == DMA1_IT_TE6) || \
                       ((IT) == DMA1_IT_GL7) || ((IT) == DMA1_IT_TC7) || \
                         ((IT) == DMA1_IT_HT7) || ((IT) == DMA1_IT_TE7) || \
-                          
+
                           /**
                           * @}
                           */
-                          
-                          /** @defgroup DMA_flags_definition 
+
+                          /** @defgroup DMA_flags_definition
                           * @{
                           */
-                          
-                          /** 
+
+                          /**
                           * @brief  For DMA1
                           */
-                          
+
 #define DMA1_FLAG_GL1                      ((uint32_t)0x00000001)
 #define DMA1_FLAG_TC1                      ((uint32_t)0x00000002)
 #define DMA1_FLAG_HT1                      ((uint32_t)0x00000004)
@@ -277,11 +277,11 @@ typedef struct
 #define DMA1_FLAG_TC7                      ((uint32_t)0x02000000)
 #define DMA1_FLAG_HT7                      ((uint32_t)0x04000000)
 #define DMA1_FLAG_TE7                      ((uint32_t)0x08000000)
-                          
-                          
-                          
+
+
+
 #define IS_DMA_CLEAR_FLAG(FLAG) (((((FLAG) & 0xF0000000) == 0x00) || (((FLAG) & 0xEFF00000) == 0x00)) && ((FLAG) != 0x00))
-                          
+
 #define IS_DMA_GET_FLAG(FLAG) (((FLAG) == DMA1_FLAG_GL1) || ((FLAG) == DMA1_FLAG_TC1) || \
                           ((FLAG) == DMA1_FLAG_HT1) || ((FLAG) == DMA1_FLAG_TE1) || \
                             ((FLAG) == DMA1_FLAG_GL2) || ((FLAG) == DMA1_FLAG_TC2) || \
@@ -301,7 +301,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DMA_Buffer_Size 
+/** @defgroup DMA_Buffer_Size
 * @{
 */
 

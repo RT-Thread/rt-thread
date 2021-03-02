@@ -19,11 +19,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -59,7 +59,7 @@ extern "C" {
   * @{
   */
 /**
- * @brief VREFBUF VREF_SC0 & VREF_SC1 calibration values 
+ * @brief VREFBUF VREF_SC0 & VREF_SC1 calibration values
  */
 #define VREFBUF_SC0_CAL_ADDR   ((uint8_t*) (0x1FFF75F0UL)) /*!<  Address of VREFBUF trimming value for VRS=0,
                                                                  VREF_SC0 in STM32WB datasheet */
@@ -144,14 +144,14 @@ extern "C" {
 /** @defgroup SYSTEM_LL_EC_TIMBREAK SYSCFG TIMER BREAK
   * @{
   */
-#define LL_SYSCFG_TIMBREAK_ECC                  SYSCFG_CFGR2_ECCL       /*!< Enables and locks the ECC error signal 
+#define LL_SYSCFG_TIMBREAK_ECC                  SYSCFG_CFGR2_ECCL       /*!< Enables and locks the ECC error signal
                                                                               with Break Input of TIM1/16/17                                */
-#define LL_SYSCFG_TIMBREAK_PVD                  SYSCFG_CFGR2_PVDL       /*!< Enables and locks the PVD connection 
-                                                                              with TIM1/16/17 Break Input 
+#define LL_SYSCFG_TIMBREAK_PVD                  SYSCFG_CFGR2_PVDL       /*!< Enables and locks the PVD connection
+                                                                              with TIM1/16/17 Break Input
                                                                               and also the PVDE and PLS bits of the Power Control Interface */
-#define LL_SYSCFG_TIMBREAK_SRAM2_PARITY         SYSCFG_CFGR2_SPL        /*!< Enables and locks the SRAM2_PARITY error signal 
+#define LL_SYSCFG_TIMBREAK_SRAM2_PARITY         SYSCFG_CFGR2_SPL        /*!< Enables and locks the SRAM2_PARITY error signal
                                                                               with Break Input of TIM1/16/17                                */
-#define LL_SYSCFG_TIMBREAK_LOCKUP               SYSCFG_CFGR2_CLL        /*!< Enables and locks the LOCKUP output of CortexM4 
+#define LL_SYSCFG_TIMBREAK_LOCKUP               SYSCFG_CFGR2_CLL        /*!< Enables and locks the LOCKUP output of CortexM4
                                                                               with Break Input of TIM1/16/17                                */
 /**
   * @}
@@ -1940,7 +1940,7 @@ __STATIC_INLINE uint32_t LL_VREFBUF_GetTrimming(void)
   * @brief  Set the trimming code for VREFBUF calibration (Tune the internal reference buffer voltage)
   * @note   Each VrefBuf voltage scale is calibrated in production for each device,
   *         data stored in flash memory.
-  *         Functions @ref LL_VREFBUF_SC0_GetCalibration and 
+  *         Functions @ref LL_VREFBUF_SC0_GetCalibration and
   *         @ref LL_VREFBUF_SC0_GetCalibration can be used to retrieve
   *         these calibration data.
   * @rmtoll VREFBUF_CCR  TRIM          LL_VREFBUF_SetTrimming

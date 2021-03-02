@@ -61,14 +61,14 @@ extern "C" {
  * different sleep modes can be found in \ref asfdoc_sam0_system_module_overview_sleep_mode.
  */
 enum system_sleepmode {
-	/** IDLE 0 sleep mode */
-	SYSTEM_SLEEPMODE_IDLE_0 = PM_SLEEPCFG_SLEEPMODE(0),
-	/** IDLE 1 sleep mode */
-	SYSTEM_SLEEPMODE_IDLE_1 = PM_SLEEPCFG_SLEEPMODE(0x1),
-	/** IDLE 2 sleep mode */
-	SYSTEM_SLEEPMODE_IDLE_2 = PM_SLEEPCFG_SLEEPMODE(0x2),
-	/** Standby sleep mode */
-	SYSTEM_SLEEPMODE_STANDBY = PM_SLEEPCFG_SLEEPMODE(0x4),
+    /** IDLE 0 sleep mode */
+    SYSTEM_SLEEPMODE_IDLE_0 = PM_SLEEPCFG_SLEEPMODE(0),
+    /** IDLE 1 sleep mode */
+    SYSTEM_SLEEPMODE_IDLE_1 = PM_SLEEPCFG_SLEEPMODE(0x1),
+    /** IDLE 2 sleep mode */
+    SYSTEM_SLEEPMODE_IDLE_2 = PM_SLEEPCFG_SLEEPMODE(0x2),
+    /** Standby sleep mode */
+    SYSTEM_SLEEPMODE_STANDBY = PM_SLEEPCFG_SLEEPMODE(0x4),
 };
 
 /**
@@ -77,12 +77,12 @@ enum system_sleepmode {
  * Voltage references selection for ADC/DAC.
  */
 enum system_voltage_references_sel {
-	/** 1.024V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_1V024  = SUPC_VREF_SEL_1V024_Val,
-	/** 2.048V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_2V048  = SUPC_VREF_SEL_2V048_Val,
-	/** 4.096V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_4V096    = SUPC_VREF_SEL_4V096_Val,
+    /** 1.024V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_1V024  = SUPC_VREF_SEL_1V024_Val,
+    /** 2.048V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_2V048  = SUPC_VREF_SEL_2V048_Val,
+    /** 4.096V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_4V096    = SUPC_VREF_SEL_4V096_Val,
 };
 
 
@@ -93,10 +93,10 @@ enum system_voltage_references_sel {
  * device.
  */
 enum system_voltage_reference {
-	/** Temperature sensor voltage reference */
-	SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE,
-	/** Voltage reference output for ADC/DAC */
-	SYSTEM_VOLTAGE_REFERENCE_OUTPUT,
+    /** Temperature sensor voltage reference */
+    SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE,
+    /** Voltage reference output for ADC/DAC */
+    SYSTEM_VOLTAGE_REFERENCE_OUTPUT,
 };
 
 /**
@@ -105,8 +105,8 @@ enum system_voltage_reference {
  * Configuration structure for VREG.
  */
 struct system_voltage_regulator_config {
-	/** Run in standby in standby sleep mode */
-	bool run_in_standby;
+    /** Run in standby in standby sleep mode */
+    bool run_in_standby;
 };
 
 /**
@@ -115,12 +115,12 @@ struct system_voltage_regulator_config {
  * Configuration structure for VREF.
  */
 struct system_voltage_references_config {
-	/** Voltage references selection */
-	enum system_voltage_references_sel  sel;
-	/** On demand control */
-	bool on_demand;
-	/** Run in standby */
-	bool run_in_standby;
+    /** Voltage references selection */
+    enum system_voltage_references_sel  sel;
+    /** On demand control */
+    bool on_demand;
+    /** Run in standby */
+    bool run_in_standby;
 };
 
 /**
@@ -128,12 +128,12 @@ struct system_voltage_references_config {
  *
  */
 enum system_vreg_switch_mode {
-	/** Automatic mode */
-	SYSTEM_VREG_SWITCH_AUTO        = PM_STDBYCFG_VREGSMOD_AUTO_Val,
-	/** Performance oriented */
-	SYSTEM_VREG_SWITCH_PERFORMANCE = PM_STDBYCFG_VREGSMOD_PERFORMANCE_Val,
-	/** Low Power consumption oriented */
-	SYSTEM_VREG_SWITCH_LP          = PM_STDBYCFG_VREGSMOD_LP_Val,
+    /** Automatic mode */
+    SYSTEM_VREG_SWITCH_AUTO        = PM_STDBYCFG_VREGSMOD_AUTO_Val,
+    /** Performance oriented */
+    SYSTEM_VREG_SWITCH_PERFORMANCE = PM_STDBYCFG_VREGSMOD_PERFORMANCE_Val,
+    /** Low Power consumption oriented */
+    SYSTEM_VREG_SWITCH_LP          = PM_STDBYCFG_VREGSMOD_LP_Val,
 };
 
 /**
@@ -142,10 +142,10 @@ enum system_vreg_switch_mode {
  * Configuration structure for standby mode.
  */
 struct system_standby_config {
-	/** Regulator switch mode in standby */
-	enum system_vreg_switch_mode vreg_switch_mode;
-	/** Back bias for HMCRAMCHS (false: no, true: standby) */
-	bool hmcramchs_back_bias;
+    /** Regulator switch mode in standby */
+    enum system_vreg_switch_mode vreg_switch_mode;
+    /** Back bias for HMCRAMCHS (false: no, true: standby) */
+    bool hmcramchs_back_bias;
 };
 
 /**
@@ -162,10 +162,10 @@ struct system_standby_config {
  * \param[out] config  Configuration structure to fill with default values
  */
 static inline void system_voltage_regulator_get_config_defaults(
-		struct system_voltage_regulator_config *const config)
+        struct system_voltage_regulator_config *const config)
 {
-	Assert(config);
-	config->run_in_standby       = false;
+    Assert(config);
+    config->run_in_standby       = false;
 }
 
 /**
@@ -177,9 +177,9 @@ static inline void system_voltage_regulator_get_config_defaults(
  *                    the new config
  */
 static inline void system_voltage_regulator_set_config(
-		struct system_voltage_regulator_config *const config)
+        struct system_voltage_regulator_config *const config)
 {
-	SUPC->VREG.bit.RUNSTDBY = config->run_in_standby;
+    SUPC->VREG.bit.RUNSTDBY = config->run_in_standby;
 }
 
 /**
@@ -189,7 +189,7 @@ static inline void system_voltage_regulator_set_config(
  */
 static inline void system_voltage_regulator_enable(void)
 {
-	SUPC->VREG.reg |= SUPC_VREG_ENABLE;
+    SUPC->VREG.reg |= SUPC_VREG_ENABLE;
 }
 
 /**
@@ -199,7 +199,7 @@ static inline void system_voltage_regulator_enable(void)
  */
 static inline void system_voltage_regulator_disable(void)
 {
-	SUPC->VREG.reg &= ~SUPC_VREG_ENABLE;
+    SUPC->VREG.reg &= ~SUPC_VREG_ENABLE;
 }
 
 /**
@@ -222,12 +222,12 @@ static inline void system_voltage_regulator_disable(void)
  * \param[out] config  Configuration structure to fill with default values
  */
 static inline void system_voltage_reference_get_config_defaults(
-		struct system_voltage_references_config *const config)
+        struct system_voltage_references_config *const config)
 {
-	Assert(config);
-	config->sel            = SYSTEM_VOLTAGE_REFERENCE_1V024;
-	config->on_demand      = false;
-	config->run_in_standby = false;
+    Assert(config);
+    config->sel            = SYSTEM_VOLTAGE_REFERENCE_1V024;
+    config->on_demand      = false;
+    config->run_in_standby = false;
 }
 
 /**
@@ -239,12 +239,12 @@ static inline void system_voltage_reference_get_config_defaults(
  *                    the new config
  */
 static inline void system_voltage_reference_set_config(
-		struct system_voltage_references_config *const config)
+        struct system_voltage_references_config *const config)
 {
-	Assert(config);
-	SUPC->VREF.bit.SEL      = config->sel;
-	SUPC->VREF.bit.ONDEMAND = config->on_demand;
-	SUPC->VREF.bit.RUNSTDBY = config->run_in_standby;
+    Assert(config);
+    SUPC->VREF.bit.SEL      = config->sel;
+    SUPC->VREF.bit.ONDEMAND = config->on_demand;
+    SUPC->VREF.bit.RUNSTDBY = config->run_in_standby;
 }
 
 /**
@@ -256,19 +256,19 @@ static inline void system_voltage_reference_set_config(
  * \param[in] vref  Voltage reference to enable
  */
 static inline void system_voltage_reference_enable(
-		const enum system_voltage_reference vref)
+        const enum system_voltage_reference vref)
 {
-	switch (vref) {
-		case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
-			SUPC->VREF.reg |= SUPC_VREF_TSEN;
-			break;
-		case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
-			SUPC->VREF.reg |= SUPC_VREF_VREFOE;
-			break;
-		default:
-			Assert(false);
-			return;
-	}
+    switch (vref) {
+        case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
+            SUPC->VREF.reg |= SUPC_VREF_TSEN;
+            break;
+        case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
+            SUPC->VREF.reg |= SUPC_VREF_VREFOE;
+            break;
+        default:
+            Assert(false);
+            return;
+    }
 }
 
 /**
@@ -279,19 +279,19 @@ static inline void system_voltage_reference_enable(
  * \param[in] vref  Voltage reference to disable
  */
 static inline void system_voltage_reference_disable(
-		const enum system_voltage_reference vref)
+        const enum system_voltage_reference vref)
 {
-	switch (vref) {
-		case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
-			SUPC->VREF.reg &= ~SUPC_VREF_TSEN;
-			break;
-		case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
-			SUPC->VREF.reg &= ~SUPC_VREF_VREFOE;
-			break;
-		default:
-			Assert(false);
-			return;
-	}
+    switch (vref) {
+        case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
+            SUPC->VREF.reg &= ~SUPC_VREF_TSEN;
+            break;
+        case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
+            SUPC->VREF.reg &= ~SUPC_VREF_VREFOE;
+            break;
+        default:
+            Assert(false);
+            return;
+    }
 }
 
 /**
@@ -315,9 +315,9 @@ static inline void system_voltage_reference_disable(
  * \param[in] sleep_mode  Sleep mode to configure for the next sleep operation
  */
 static inline void system_set_sleepmode(
-	const enum system_sleepmode sleep_mode)
+    const enum system_sleepmode sleep_mode)
 {
-	PM->SLEEPCFG.reg = sleep_mode;
+    PM->SLEEPCFG.reg = sleep_mode;
 }
 
 
@@ -331,8 +331,8 @@ static inline void system_set_sleepmode(
  */
 static inline void system_sleep(void)
 {
-	__DSB();
-	__WFI();
+    __DSB();
+    __WFI();
 }
 
 /**
@@ -354,12 +354,12 @@ static inline void system_sleep(void)
  * \param[out] config  Configuration structure to fill with default values
  */
 static inline void system_standby_get_config_defaults(
-		struct system_standby_config *const config)
+        struct system_standby_config *const config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->vreg_switch_mode    = SYSTEM_VREG_SWITCH_AUTO;
-	config->hmcramchs_back_bias = false;
+    config->vreg_switch_mode    = SYSTEM_VREG_SWITCH_AUTO;
+    config->hmcramchs_back_bias = false;
 }
 
 /**
@@ -371,12 +371,12 @@ static inline void system_standby_get_config_defaults(
  *                    the new config
  */
 static inline void system_standby_set_config(
-		struct system_standby_config *const config)
+        struct system_standby_config *const config)
 {
-	Assert(config);
+    Assert(config);
 
-	PM->STDBYCFG.reg = PM_STDBYCFG_VREGSMOD(config->vreg_switch_mode) |
-					 PM_STDBYCFG_BBIASHS(config->hmcramchs_back_bias);
+    PM->STDBYCFG.reg = PM_STDBYCFG_VREGSMOD(config->vreg_switch_mode) |
+                     PM_STDBYCFG_BBIASHS(config->hmcramchs_back_bias);
 }
 
 /** @} */

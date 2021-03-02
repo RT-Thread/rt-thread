@@ -99,7 +99,7 @@ static int I2C_Setspeed(mxc_i2c_regs_t * i2c, i2c_speed_t i2cspeed)
             return E_BAD_PARAM;
         }
 
-        tSCLmin = 1000000 / (targBusFreq / 1000);                                
+        tSCLmin = 1000000 / (targBusFreq / 1000);
         cklMin = ((T_LOW_MIN + T_F_MAX_HS + (tPCLK - 1) - T_AF_MIN) / tPCLK) - 1;
         ckhMin = ((T_HIGH_MIN + T_R_MAX_HS + (tPCLK - 1) - T_AF_MIN) / tPCLK) - 1;
         ckh_cklMin = ((tSCLmin + (tPCLK - 1)) / tPCLK) - 2;
@@ -120,7 +120,7 @@ static int I2C_Setspeed(mxc_i2c_regs_t * i2c, i2c_speed_t i2cspeed)
            Switch setting to fast mode and fall out of if statement. */
         i2cspeed = I2C_FAST_MODE;
     }
-    
+
     /* Get the number of periph clocks needed to achieve selected speed. */
     ticks = SYS_I2C_GetFreq(i2c) / i2cspeed;
 
@@ -281,7 +281,7 @@ int I2C_Shutdown(mxc_i2c_regs_t *i2c)
     }
 
     i2c->ctrl = 0;
-    
+
     // Clears system level configurations
     if ((err = SYS_I2C_Shutdown(i2c)) != E_NO_ERROR) {
         return err;
@@ -325,7 +325,7 @@ int I2C_MasterWrite(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* data, int 
             // Set the stop bit
             i2c->master_ctrl &= ~(MXC_F_I2C_MASTER_CTRL_RESTART);
             i2c->master_ctrl |= MXC_F_I2C_MASTER_CTRL_STOP;
-             while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_STOP))) {}    
+             while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_STOP))) {}
 
             return E_COMM_ERR;
         }
@@ -343,14 +343,14 @@ int I2C_MasterWrite(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* data, int 
     }
 
     // Wait for Done or time out if enabled
-    while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_DONE | I2C_ERROR ))) {}    
+    while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_DONE | I2C_ERROR ))) {}
 
     i2c->int_fl0 = MXC_F_I2C_INT_FL0_DONE;
 
     // Wait for Stop
     if (!restart) {
         while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_STOP ))) {}
-        
+
         i2c->int_fl0 = MXC_F_I2C_INT_FL0_STOP;
     }
 
@@ -425,16 +425,16 @@ int I2C_MasterRead(mxc_i2c_regs_t *i2c, uint8_t addr, uint8_t* data, int len, in
     }
 
     // Wait for Done or time out if enabled
-    while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_DONE | I2C_ERROR ))) {}    
-  
+    while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_DONE | I2C_ERROR ))) {}
+
     i2c->int_fl0 = MXC_F_I2C_INT_FL0_DONE;
 
     // Wait for Stop
     if (!restart) {
         while (!(i2c->int_fl0 & (MXC_F_I2C_INT_FL0_STOP | I2C_ERROR))) {
-            
+
         }
-        
+
         i2c->int_fl0 = MXC_F_I2C_INT_FL0_STOP;
     }
 
@@ -482,9 +482,9 @@ int I2C_Slave(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* read_data, int r
 
     // Wait for address match
     while (!(i2c->int_fl0 & MXC_F_I2C_INT_FL0_ADDR_MATCH) && !(i2c->int_fl0 & I2C_ERROR)) {
-                
+
     }
-    
+
     i2c->int_fl0 = MXC_F_I2C_INT_FL0_ADDR_MATCH;
     i2c->int_fl0 = MXC_F_I2C_INT_FL0_TX_LOCK_OUT;
 
@@ -580,7 +580,7 @@ int I2C_Slave(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* read_data, int r
 
         // Wait for Done
         while (!(i2c->int_fl0 & MXC_F_I2C_INT_FL0_DONE)) {
-            
+
         }
         // Flush the FIFO
         if (!sw_autoflush_disable) {
@@ -914,7 +914,7 @@ static void I2C_SlaveHandler(mxc_i2c_regs_t *i2c)
         if (req->callback != NULL) {
             if (i2c->int_fl0 & MXC_F_I2C_INT_FL0_STOP) {
                 I2C_Recover(i2c);
-            } else {    
+            } else {
                 i2c->int_fl0 = i2c->int_fl0;
                 i2c->int_fl1 = i2c->int_fl1;
             }

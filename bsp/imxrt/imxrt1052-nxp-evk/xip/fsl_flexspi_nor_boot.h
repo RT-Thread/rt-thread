@@ -36,8 +36,8 @@
 
 #include <stdint.h>
 
-/************************************* 
- *  IVT Data 
+/*************************************
+ *  IVT Data
  *************************************/
 typedef struct _ivt_ {
     /** @ref hdr with tag #HAB_TAG_IVT, length and HAB version fields
@@ -83,19 +83,19 @@ typedef struct _ivt_ {
 #define IVT_RSVD            (uint32_t)(0x00000000)
 
 
-/************************************* 
- *  Boot Data 
+/*************************************
+ *  Boot Data
  *************************************/
 typedef struct _boot_data_ {
   uint32_t start;           /* boot start location */
   uint32_t size;            /* size */
   uint32_t plugin;          /* plugin flag - 1 if downloaded application is plugin */
-  uint32_t placeholder;		/* placehoder to make even 0x10 size */
+  uint32_t placeholder;     /* placehoder to make even 0x10 size */
 }BOOT_DATA_T;
 
 
-/************************************* 
- *  DCD Data 
+/*************************************
+ *  DCD Data
  *************************************/
 #define DCD_TAG_HEADER            (0xD2)
 #define DCD_TAG_HEADER_SHIFT      (24)
@@ -103,7 +103,7 @@ typedef struct _boot_data_ {
 #define DCD_ARRAY_SIZE             1
 
 #define FLASH_BASE            0x60000000
-#define FLASH_END             0x7F7FFFFF 
+#define FLASH_END             0x7F7FFFFF
 #define SCLK 1
 
 #define DCD_ADDRESS           dcd_sdram

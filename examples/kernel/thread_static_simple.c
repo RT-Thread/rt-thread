@@ -1,32 +1,32 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šé™æ€çº¿ç¨‹
+ * ³ÌĞòÇåµ¥£º¾²Ì¬Ïß³Ì
  *
- * è¿™ä¸ªç¨‹åºä¼šåˆå§‹åŒ–2ä¸ªé™æ€çº¿ç¨‹ï¼Œå®ƒä»¬æ‹¥æœ‰å…±åŒçš„å…¥å£å‡½æ•°ï¼Œä½†å‚æ•°ä¸ç›¸åŒ
+ * Õâ¸ö³ÌĞò»á³õÊ¼»¯2¸ö¾²Ì¬Ïß³Ì£¬ËüÃÇÓµÓĞ¹²Í¬µÄÈë¿Úº¯Êı£¬µ«²ÎÊı²»ÏàÍ¬
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* çº¿ç¨‹1æ§åˆ¶å— */
+/* Ïß³Ì1¿ØÖÆ¿é */
 static struct rt_thread thread1;
-/* çº¿ç¨‹1æ ˆ */
+/* Ïß³Ì1Õ» */
 static rt_uint8_t thread1_stack[THREAD_STACK_SIZE];
-/* çº¿ç¨‹2æ§åˆ¶å— */
+/* Ïß³Ì2¿ØÖÆ¿é */
 static struct rt_thread thread2;
-/* çº¿ç¨‹2æ ˆ */
+/* Ïß³Ì2Õ» */
 static rt_uint8_t thread2_stack[THREAD_STACK_SIZE];
 
-/* çº¿ç¨‹å…¥å£ */
+/* Ïß³ÌÈë¿Ú */
 static void thread_entry(void* parameter)
 {
     rt_uint32_t count = 0;
-    rt_uint32_t no = (rt_uint32_t) parameter; /* è·å¾—æ­£ç¡®çš„å…¥å£å‚æ•° */
+    rt_uint32_t no = (rt_uint32_t) parameter; /* »ñµÃÕıÈ·µÄÈë¿Ú²ÎÊı */
 
     while (1)
     {
-        /* æ‰“å°çº¿ç¨‹è®¡æ•°å€¼è¾“å‡º */
+        /* ´òÓ¡Ïß³Ì¼ÆÊıÖµÊä³ö */
         rt_kprintf("thread%d count: %d\n", no, count ++);
 
-        /* ä¼‘çœ 10ä¸ªOS Tick */
+        /* ĞİÃß10¸öOS Tick */
         rt_thread_delay(10);
     }
 }
@@ -35,22 +35,22 @@ int thread_static_simple_init()
 {
     rt_err_t result;
 
-    /* åˆå§‹åŒ–çº¿ç¨‹1 */
-    result = rt_thread_init(&thread1, "t1", /* çº¿ç¨‹åï¼št1 */
-        thread_entry, (void*)1, /* çº¿ç¨‹çš„å…¥å£æ˜¯thread_entryï¼Œå…¥å£å‚æ•°æ˜¯1 */
-        &thread1_stack[0], sizeof(thread1_stack), /* çº¿ç¨‹æ ˆæ˜¯thread1_stack */
+    /* ³õÊ¼»¯Ïß³Ì1 */
+    result = rt_thread_init(&thread1, "t1", /* Ïß³ÌÃû£ºt1 */
+        thread_entry, (void*)1, /* Ïß³ÌµÄÈë¿ÚÊÇthread_entry£¬Èë¿Ú²ÎÊıÊÇ1 */
+        &thread1_stack[0], sizeof(thread1_stack), /* Ïß³ÌÕ»ÊÇthread1_stack */
         THREAD_PRIORITY, 10);
-    if (result == RT_EOK) /* å¦‚æœè¿”å›æ­£ç¡®ï¼Œå¯åŠ¨çº¿ç¨‹1 */
+    if (result == RT_EOK) /* Èç¹û·µ»ØÕıÈ·£¬Æô¶¯Ïß³Ì1 */
         rt_thread_startup(&thread1);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆå§‹åŒ–çº¿ç¨‹2 */
-    result = rt_thread_init(&thread2, "t2", /* çº¿ç¨‹åï¼št2 */
-        thread_entry, RT_NULL, /* çº¿ç¨‹çš„å…¥å£æ˜¯thread_entryï¼Œå…¥å£å‚æ•°æ˜¯2 */
-        &thread2_stack[0], sizeof(thread2_stack), /* çº¿ç¨‹æ ˆæ˜¯thread2_stack */
+    /* ³õÊ¼»¯Ïß³Ì2 */
+    result = rt_thread_init(&thread2, "t2", /* Ïß³ÌÃû£ºt2 */
+        thread_entry, RT_NULL, /* Ïß³ÌµÄÈë¿ÚÊÇthread_entry£¬Èë¿Ú²ÎÊıÊÇ2 */
+        &thread2_stack[0], sizeof(thread2_stack), /* Ïß³ÌÕ»ÊÇthread2_stack */
         THREAD_PRIORITY + 1, 10);
-    if (result == RT_EOK) /* å¦‚æœè¿”å›æ­£ç¡®ï¼Œå¯åŠ¨çº¿ç¨‹2 */
+    if (result == RT_EOK) /* Èç¹û·µ»ØÕıÈ·£¬Æô¶¯Ïß³Ì2 */
         rt_thread_startup(&thread2);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
@@ -61,35 +61,35 @@ int thread_static_simple_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* æ‰§è¡Œçº¿ç¨‹è„±ç¦» */
+    /* Ö´ĞĞÏß³ÌÍÑÀë */
     if (thread1.stat != RT_THREAD_CLOSE)
         rt_thread_detach(&thread1);
     if (thread2.stat != RT_THREAD_CLOSE)
         rt_thread_detach(&thread2);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_thread_static_simple()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     thread_static_simple_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_thread_static_simple, a static thread example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     thread_static_simple_init();

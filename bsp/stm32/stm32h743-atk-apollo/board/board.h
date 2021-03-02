@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
   #define LSI_VALUE  ((uint32_t)32000)
 #endif
 

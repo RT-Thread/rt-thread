@@ -10,7 +10,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2006-03-13     Bernard      first version
- * 2011-05-15     lgnq         modified according bernard's implementaion.      	  	
+ * 2011-05-15     lgnq         modified according bernard's implementaion.
  */
 
 #ifndef __RT_HW_SERIAL_H__
@@ -57,21 +57,21 @@
 #define ESCR_DATABITS_7  0x03U
 #define ESCR_DATABITS_9  0x04U
 
-#define BPS					115200	/* serial baudrate */
+#define BPS                 115200  /* serial baudrate */
 
-#define UART_RX_BUFFER_SIZE		128
-#define UART_TX_BUFFER_SIZE		128
+#define UART_RX_BUFFER_SIZE     128
+#define UART_TX_BUFFER_SIZE     128
 
 struct serial_int_rx
 {
-	rt_uint8_t  rx_buffer[UART_RX_BUFFER_SIZE];
-	rt_uint32_t read_index, save_index;
+    rt_uint8_t  rx_buffer[UART_RX_BUFFER_SIZE];
+    rt_uint32_t read_index, save_index;
 };
 
 struct serial_int_tx
 {
-	rt_uint8_t  tx_buffer[UART_TX_BUFFER_SIZE];
-	rt_uint32_t write_index, save_index;
+    rt_uint8_t  tx_buffer[UART_TX_BUFFER_SIZE];
+    rt_uint32_t write_index, save_index;
 };
 
 /*
@@ -83,15 +83,15 @@ struct serial_int_tx
 
 struct serial_device
 {
-	FM4_MFS_TypeDef* uart_device;
-	/* irq number */
-	IRQn_Type rx_irq;
-	IRQn_Type tx_irq;
+    FM4_MFS_TypeDef* uart_device;
+    /* irq number */
+    IRQn_Type rx_irq;
+    IRQn_Type tx_irq;
 
-	/* rx structure */
-	struct serial_int_rx* int_rx;
-	/* tx structure */
-	struct serial_int_tx* int_tx;
+    /* rx structure */
+    struct serial_int_rx* int_rx;
+    /* tx structure */
+    struct serial_int_tx* int_tx;
 };
 
 void rt_hw_serial_isr(rt_device_t device);

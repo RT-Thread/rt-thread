@@ -155,16 +155,16 @@ GERR GD_GPIO_Init(GD_GPIO_INIT_PARAMS_S* pInitParams)
     // this is used for gpio enable
     GH_GPIO_set_INT_EN(1);
 
-	/*FIXME(heyong):gk7101  phy type*/
-	if(pInitParams->phyType == 0)//internal phy 
-	{ 
-		GH_GPIO_set_PER_SEL((U32)0x00000002);
-	}
-	else //external phy 
-	{ 
-		GH_GPIO_set_PER_SEL((U32)0x00000003); 
-	}
-    
+    /*FIXME(heyong):gk7101  phy type*/
+    if(pInitParams->phyType == 0)//internal phy
+    {
+        GH_GPIO_set_PER_SEL((U32)0x00000002);
+    }
+    else //external phy
+    {
+        GH_GPIO_set_PER_SEL((U32)0x00000003);
+    }
+
 
     // very special internal setting, hard wire CTS to 1
     // this is required to start the uart later

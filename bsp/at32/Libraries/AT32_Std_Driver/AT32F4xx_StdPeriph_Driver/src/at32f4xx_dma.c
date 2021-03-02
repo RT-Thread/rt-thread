@@ -246,47 +246,47 @@ void DMA_Init(DMA_Channel_Type* DMAy_Channelx, DMA_InitType* DMA_InitStruct)
 void DMA_Flexible_Config(DMA_Type* DMAx,uint8_t Flex_Channelx,uint8_t Hardware_ID)
 {
   /* Check the parameters */
-  assert_param(IS_DMA_ALL_CHANNELS(Flex_Channelx));	
-  assert_param(IS_DMA_ALL_HARDWARE_ID(Hardware_ID));		
-	/* Initialize the DMA flexible function */
-	DMAx->DMA_SRC_SEL1 &= (uint32_t)(~DMA_FLEX_FUNCTION_EN);
-	DMAx->DMA_SRC_SEL1 |= (uint32_t)(DMA_FLEX_FUNCTION_EN);
-	/* Set the Hardware_ID for DMA_Channel */
-	if(Flex_Channelx == Flex_Channel1)/* channel1 */
-	{ 
-		DMAx->DMA_SRC_SEL0 &= (uint32_t)(~0xFF);
-		DMAx->DMA_SRC_SEL0 |= (uint32_t)(Hardware_ID);
-	}
-	else if(Flex_Channelx == Flex_Channel2)/* channel2 */
-	{
-		DMAx->DMA_SRC_SEL0 &= (uint32_t)(~(0xFF<<8));
-		DMAx->DMA_SRC_SEL0 |= (uint32_t)((Hardware_ID<<8));
-	}
-	else if(Flex_Channelx == Flex_Channel3)/* channel3 */
-	{
-		DMAx->DMA_SRC_SEL0 &= (uint32_t)(~(0xFF<<16));
-		DMAx->DMA_SRC_SEL0 |= (uint32_t)((Hardware_ID<<16));		
-	}
-	else if(Flex_Channelx == Flex_Channel4)/* channel5 */
-	{
-		DMAx->DMA_SRC_SEL0 &= (uint32_t)(~((~0x00)<<24));
-		DMAx->DMA_SRC_SEL0 |= (uint32_t)((Hardware_ID<<24));			
-	}	
-	else if(Flex_Channelx == Flex_Channel5)/* channel5 */
-	{
-		DMAx->DMA_SRC_SEL1 &= (uint32_t)(~0xFF);
-		DMAx->DMA_SRC_SEL1 |= (uint32_t)(Hardware_ID);		
-	}	
-	else if(Flex_Channelx == Flex_Channel6)/* channel6 */
-	{
-		DMAx->DMA_SRC_SEL1 &= (uint32_t)(~(0xFF<<8));
-		DMAx->DMA_SRC_SEL1 |= (uint32_t)((Hardware_ID<<8));		
-	}	
-	else if(Flex_Channelx == Flex_Channel7)/* channel7 */
-	{
-		DMAx->DMA_SRC_SEL1 &= (uint32_t)(~(0xFF<<16));
-		DMAx->DMA_SRC_SEL1 |= (uint32_t)((Hardware_ID<<16));		
-	}
+  assert_param(IS_DMA_ALL_CHANNELS(Flex_Channelx));
+  assert_param(IS_DMA_ALL_HARDWARE_ID(Hardware_ID));
+    /* Initialize the DMA flexible function */
+    DMAx->DMA_SRC_SEL1 &= (uint32_t)(~DMA_FLEX_FUNCTION_EN);
+    DMAx->DMA_SRC_SEL1 |= (uint32_t)(DMA_FLEX_FUNCTION_EN);
+    /* Set the Hardware_ID for DMA_Channel */
+    if(Flex_Channelx == Flex_Channel1)/* channel1 */
+    {
+        DMAx->DMA_SRC_SEL0 &= (uint32_t)(~0xFF);
+        DMAx->DMA_SRC_SEL0 |= (uint32_t)(Hardware_ID);
+    }
+    else if(Flex_Channelx == Flex_Channel2)/* channel2 */
+    {
+        DMAx->DMA_SRC_SEL0 &= (uint32_t)(~(0xFF<<8));
+        DMAx->DMA_SRC_SEL0 |= (uint32_t)((Hardware_ID<<8));
+    }
+    else if(Flex_Channelx == Flex_Channel3)/* channel3 */
+    {
+        DMAx->DMA_SRC_SEL0 &= (uint32_t)(~(0xFF<<16));
+        DMAx->DMA_SRC_SEL0 |= (uint32_t)((Hardware_ID<<16));
+    }
+    else if(Flex_Channelx == Flex_Channel4)/* channel5 */
+    {
+        DMAx->DMA_SRC_SEL0 &= (uint32_t)(~((~0x00)<<24));
+        DMAx->DMA_SRC_SEL0 |= (uint32_t)((Hardware_ID<<24));
+    }
+    else if(Flex_Channelx == Flex_Channel5)/* channel5 */
+    {
+        DMAx->DMA_SRC_SEL1 &= (uint32_t)(~0xFF);
+        DMAx->DMA_SRC_SEL1 |= (uint32_t)(Hardware_ID);
+    }
+    else if(Flex_Channelx == Flex_Channel6)/* channel6 */
+    {
+        DMAx->DMA_SRC_SEL1 &= (uint32_t)(~(0xFF<<8));
+        DMAx->DMA_SRC_SEL1 |= (uint32_t)((Hardware_ID<<8));
+    }
+    else if(Flex_Channelx == Flex_Channel7)/* channel7 */
+    {
+        DMAx->DMA_SRC_SEL1 &= (uint32_t)(~(0xFF<<16));
+        DMAx->DMA_SRC_SEL1 |= (uint32_t)((Hardware_ID<<16));
+    }
 }
 
 /**

@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version V1.0.0
 * @date    28/7/2017
-* @brief   This file contains all the functions prototypes for the GPIO 
+* @brief   This file contains all the functions prototypes for the GPIO
 *          firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_GPIO_H
@@ -46,21 +46,21 @@
         ((*(uint32_t*)&(PERIPH)) == GPIOF_BASE) || \
           ((*(uint32_t*)&(PERIPH)) == GPIOG_BASE))
 
-/** 
-* @brief  Output Maximum frequency selection  
+/**
+* @brief  Output Maximum frequency selection
 */
 
 typedef enum
-{ 
+{
   GPIO_Speed_10MHz = 1,
-  GPIO_Speed_2MHz, 
+  GPIO_Speed_2MHz,
   GPIO_Speed_50MHz
 }GPIOSpeed_TypeDef;
 #define IS_GPIO_SPEED(SPEED) (((SPEED) == GPIO_Speed_10MHz) || ((SPEED) == GPIO_Speed_2MHz) || \
 ((SPEED) == GPIO_Speed_50MHz))
 
-/** 
-* @brief  Configuration Mode enumeration  
+/**
+* @brief  Configuration Mode enumeration
 */
 
 typedef enum
@@ -79,8 +79,8 @@ GPIO_Mode_AF_PP = 0x18  //∏¥”√Õ∆√‚ ‰≥ˆ
   ((MODE) == GPIO_Mode_Out_OD) || ((MODE) == GPIO_Mode_Out_PP) || \
     ((MODE) == GPIO_Mode_AF_OD) || ((MODE) == GPIO_Mode_AF_PP))
 
-/** 
-* @brief  GPIO Init structure definition  
+/**
+* @brief  GPIO Init structure definition
 */
 
 typedef struct
@@ -90,8 +90,8 @@ typedef struct
   GPIOMode_TypeDef GPIO_Mode;
 }GPIO_InitTypeDef;
 
-/** 
-* @brief  Bit_SET and Bit_RESET enumeration  
+/**
+* @brief  Bit_SET and Bit_RESET enumeration
 */
 
 typedef enum
@@ -109,7 +109,7 @@ Bit_SET
 * @{
 */
 
-/** @defgroup GPIO_pins_define 
+/** @defgroup GPIO_pins_define
 * @{
 */
 
@@ -154,7 +154,7 @@ Bit_SET
 * @}
 */
 
-/** @defgroup GPIO_Remap_define 
+/** @defgroup GPIO_Remap_define
 * @{
 */
 
@@ -200,9 +200,9 @@ Bit_SET
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup GPIO_Port_Sources 
+/** @defgroup GPIO_Port_Sources
 * @{
 */
 
@@ -231,7 +231,7 @@ Bit_SET
 * @}
 */
 
-/** @defgroup GPIO_Pin_sources 
+/** @defgroup GPIO_Pin_sources
 * @{
 */
 

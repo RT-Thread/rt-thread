@@ -36,9 +36,9 @@
 #include "sdk.h"
 #include "profile/profile.h"
 
-#define DDR_2_DDR	1
+#define DDR_2_DDR   1
 
-#define MEM2MEM_TEST_BUF_SZ 		1024*8
+#define MEM2MEM_TEST_BUF_SZ         1024*8
 
 #if DDR_2_DDR
 /* Uncacheable & unbufferable area startes */

@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62Nx
-* File Name		: Interrupt_IIC.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for all IIC channels
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name   : Interrupt program for RX62Nx
+* File Name     : Interrupt_IIC.c
+* Version       : 1.02
+* Contents      : Interrupt handlers for all IIC channels
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_iic.h"
@@ -33,23 +33,23 @@ extern void Store_detected_address(const uint8_t);
 /*""FUNC COMMENT""***************************************************
 * Module outline: IICn event interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void InterruptIIC_ICEEIn(void)
+* Declaration   : void InterruptIIC_ICEEIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: 
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: 
+* Use function  :
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_RIIC0_ICEEI0
@@ -258,23 +258,23 @@ __interrupt void Interrupt_IIC_ICEEI1(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: IICn receive data interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_IIC_ICRXIn(void)
+* Declaration   : void Interrupt_IIC_ICRXIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: ICDRR, ICIER
+* Output        : ICDRR, ICIER
 *-------------------------------------------------------------------
-* Use function	: 
+* Use function  :
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 #if FAST_INTC_VECTOR == VECT_RIIC0_ICRXI0
 __fast_interrupt void Interrupt_IIC_ICRXI0(void)
@@ -351,7 +351,7 @@ __interrupt void Interrupt_IIC_ICRXI0(void)
       {
         ICU.DTCER[DTCE_RIIC0_ICRXI0].BIT.DTCE = 1;
       }
-      else	/* DMAC */
+      else  /* DMAC */
       {
         /* Set DTE = 1 */
         *DMCNT_ADDRESS(rpdl_IIC_rx_dmac_channel[0]) = 0x01u;
@@ -493,7 +493,7 @@ __interrupt void Interrupt_IIC_ICRXI1(void)
       {
         ICU.DTCER[DTCE_RIIC1_ICRXI1].BIT.DTCE = 1;
       }
-      else	/* DMAC */
+      else  /* DMAC */
       {
         /* Set DTE = 1 */
         *DMCNT_ADDRESS(rpdl_IIC_rx_dmac_channel[1]) = 0x01u;
@@ -561,23 +561,23 @@ __interrupt void Interrupt_IIC_ICRXI1(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: IICn transmit data interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_IIC_ICTXIn(void)
+* Declaration   : void Interrupt_IIC_ICTXIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: ICDRT, ICIER
+* Output        : ICDRT, ICIER
 *-------------------------------------------------------------------
-* Use function	: 
+* Use function  :
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 #if FAST_INTC_VECTOR == VECT_RIIC0_ICTXI0
 __fast_interrupt void Interrupt_IIC_ICTXI0(void)
@@ -803,23 +803,23 @@ __interrupt void Interrupt_IIC_ICTXI1(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: IICn transmit end interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void InterruptIIC_ICTEIn(void)
+* Declaration   : void InterruptIIC_ICTEIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: ICIER, ICSR2
+* Output        : ICIER, ICSR2
 *-------------------------------------------------------------------
-* Use function	: 
+* Use function  :
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_RIIC0_ICTEI0

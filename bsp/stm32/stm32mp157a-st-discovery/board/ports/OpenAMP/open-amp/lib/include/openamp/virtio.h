@@ -26,7 +26,7 @@ extern "C" {
 #define VIRTIO_ID_ENTROPY    0x04UL
 #define VIRTIO_ID_BALLOON    0x05UL
 #define VIRTIO_ID_IOMEMORY   0x06UL
-#define VIRTIO_ID_RPMSG	     0x07UL /* remote processor messaging */
+#define VIRTIO_ID_RPMSG      0x07UL /* remote processor messaging */
 #define VIRTIO_ID_SCSI       0x08UL
 #define VIRTIO_ID_9P         0x09UL
 #define VIRTIO_DEV_ANY_ID    (-1)UL
@@ -39,12 +39,12 @@ extern "C" {
 #define VIRTIO_CONFIG_STATUS_FAILED    0x80
 
 /* Virtio device role */
-#define VIRTIO_DEV_MASTER	0UL
-#define VIRTIO_DEV_SLAVE	1UL
+#define VIRTIO_DEV_MASTER   0UL
+#define VIRTIO_DEV_SLAVE    1UL
 
 struct virtio_device_id {
-	uint32_t device;
-	uint32_t vendor;
+    uint32_t device;
+    uint32_t vendor;
 };
 
 /*
@@ -72,8 +72,8 @@ typedef void (*virtio_dev_reset_cb)(struct virtio_device *vdev);
 struct virtio_dispatch;
 
 struct virtio_feature_desc {
-	uint32_t vfd_val;
-	const char *vfd_str;
+    uint32_t vfd_val;
+    const char *vfd_str;
 };
 
 /**
@@ -85,14 +85,14 @@ struct virtio_feature_desc {
  *
  */
 struct virtio_buffer_info {
-	/* Start address of shared memory used for buffers. */
-	void *vaddr;
-	/* Start physical address of shared memory used for buffers. */
-	metal_phys_addr_t paddr;
-	/* sharmed memory I/O region */
-	struct metal_io_region *io;
-	/* Size of shared memory. */
-	unsigned long size;
+    /* Start address of shared memory used for buffers. */
+    void *vaddr;
+    /* Start physical address of shared memory used for buffers. */
+    metal_phys_addr_t paddr;
+    /* sharmed memory I/O region */
+    struct metal_io_region *io;
+    /* Size of shared memory. */
+    unsigned long size;
 };
 
 /**
@@ -105,10 +105,10 @@ struct virtio_buffer_info {
  * @io metal I/O region of the vring memory, can be NULL
  */
 struct virtio_vring_info {
-	struct virtqueue *vq;
-	struct vring_alloc_info info;
-	uint32_t notifyid;
-	struct metal_io_region *io;
+    struct virtqueue *vq;
+    struct vring_alloc_info info;
+    uint32_t notifyid;
+    struct metal_io_region *io;
 };
 
 /*
@@ -117,17 +117,17 @@ struct virtio_vring_info {
  */
 
 struct virtio_device {
-	uint32_t index; /**< unique position on the virtio bus */
-	struct virtio_device_id id; /**< the device type identification
-				      *  (used to match it with a driver
-				      */
-	uint64_t features; /**< the features supported by both ends. */
-	unsigned int role; /**< if it is virtio backend or front end. */
-	virtio_dev_reset_cb reset_cb; /**< user registered device callback */
-	const struct virtio_dispatch *func; /**< Virtio dispatch table */
-	void *priv; /**< TODO: remove pointer to virtio_device private data */
-	unsigned int vrings_num; /**< number of vrings */
-	struct virtio_vring_info *vrings_info;
+    uint32_t index; /**< unique position on the virtio bus */
+    struct virtio_device_id id; /**< the device type identification
+                      *  (used to match it with a driver
+                      */
+    uint64_t features; /**< the features supported by both ends. */
+    unsigned int role; /**< if it is virtio backend or front end. */
+    virtio_dev_reset_cb reset_cb; /**< user registered device callback */
+    const struct virtio_dispatch *func; /**< Virtio dispatch table */
+    void *priv; /**< TODO: remove pointer to virtio_device private data */
+    unsigned int vrings_num; /**< number of vrings */
+    struct virtio_vring_info *vrings_info;
 };
 
 /*
@@ -135,8 +135,8 @@ struct virtio_device {
  */
 const char *virtio_dev_name(uint16_t devid);
 void virtio_describe(struct virtio_device *dev, const char *msg,
-		     uint32_t features,
-		     struct virtio_feature_desc *feature_desc);
+             uint32_t features,
+             struct virtio_feature_desc *feature_desc);
 
 /*
  * Functions for virtio device configuration as defined in Rusty Russell's
@@ -145,32 +145,32 @@ void virtio_describe(struct virtio_device *dev, const char *msg,
  */
 
 struct virtio_dispatch {
-	uint8_t (*get_status)(struct virtio_device *dev);
-	void (*set_status)(struct virtio_device *dev, uint8_t status);
-	uint32_t (*get_features)(struct virtio_device *dev);
-	void (*set_features)(struct virtio_device *dev, uint32_t feature);
-	uint32_t (*negotiate_features)(struct virtio_device *dev,
-				       uint32_t features);
+    uint8_t (*get_status)(struct virtio_device *dev);
+    void (*set_status)(struct virtio_device *dev, uint8_t status);
+    uint32_t (*get_features)(struct virtio_device *dev);
+    void (*set_features)(struct virtio_device *dev, uint32_t feature);
+    uint32_t (*negotiate_features)(struct virtio_device *dev,
+                       uint32_t features);
 
-	/*
-	 * Read/write a variable amount from the device specific (ie, network)
-	 * configuration region. This region is encoded in the same endian as
-	 * the guest.
-	 */
-	void (*read_config)(struct virtio_device *dev, uint32_t offset,
-			    void *dst, int length);
-	void (*write_config)(struct virtio_device *dev, uint32_t offset,
-			     void *src, int length);
-	void (*reset_device)(struct virtio_device *dev);
-	void (*notify)(struct virtqueue *vq);
+    /*
+     * Read/write a variable amount from the device specific (ie, network)
+     * configuration region. This region is encoded in the same endian as
+     * the guest.
+     */
+    void (*read_config)(struct virtio_device *dev, uint32_t offset,
+                void *dst, int length);
+    void (*write_config)(struct virtio_device *dev, uint32_t offset,
+                 void *src, int length);
+    void (*reset_device)(struct virtio_device *dev);
+    void (*notify)(struct virtqueue *vq);
 };
 
 int virtio_create_virtqueues(struct virtio_device *vdev, unsigned int flags,
-			     unsigned int nvqs, const char *names[],
-			     vq_callback *callbacks[]);
+                 unsigned int nvqs, const char *names[],
+                 vq_callback *callbacks[]);
 
 #if defined __cplusplus
 }
 #endif
 
-#endif				/* _VIRTIO_H_ */
+#endif              /* _VIRTIO_H_ */

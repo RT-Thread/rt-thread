@@ -29,16 +29,16 @@
  */
 /*!
  * @file sdma.h
- * @brief SDMA library macros, structures and functions 
+ * @brief SDMA library macros, structures and functions
  */
 #ifndef SDMA_H
 #define SDMA_H
 #include "sdk.h"
 /*--------------------------------- macros --------------------------------------*/
-#define SDMA_ENV_BUF_SIZE		0x800
-#define SDMA_CHANNEL_PRIORITY_FREE	0
-#define SDMA_CHANNEL_PRIORITY_LOW	1
-#define SDMA_CHANNEL_PRIORITY_HIGH	7
+#define SDMA_ENV_BUF_SIZE       0x800
+#define SDMA_CHANNEL_PRIORITY_FREE  0
+#define SDMA_CHANNEL_PRIORITY_LOW   1
+#define SDMA_CHANNEL_PRIORITY_HIGH  7
 
 //! @brief List of scripts' names.
 typedef enum {

@@ -8,7 +8,7 @@
 
 int metal_ver_major(void)
 {
-	return METAL_VER_MAJOR;
+    return METAL_VER_MAJOR;
 }
 
 int metal_ver_minor(void)

@@ -32,7 +32,7 @@ extern void *_heap_end;
  */
 extern void _init(void);
 
-/* 
+/*
  * - Check MCU pin assignment here https://doc.nucleisys.com/nuclei_board_labs/hw/hw.html
  * - If you changed menuconfig to use different peripherals such as SPI, ADC, GPIO,
  *   HWTIMER, I2C, PWM, UART, WDT, RTC, please add or change related pinmux configuration

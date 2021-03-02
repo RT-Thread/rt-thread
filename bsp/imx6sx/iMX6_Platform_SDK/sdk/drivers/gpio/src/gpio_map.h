@@ -30,7 +30,7 @@
 
 /*!
  * @file gpio_map.h
- * @brief 
+ * @brief
  * @ingroup diag_gpio
  */
 

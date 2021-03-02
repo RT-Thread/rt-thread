@@ -147,7 +147,7 @@ parse_name(unsigned char *query)
 
   do {
     n = *query++;
-    
+
     while(n > 0) {
       /*      printf("%c", *query);*/
       ++query;
@@ -172,29 +172,29 @@ check_entries(void)
   static u8_t i;
   static u8_t n;
   register struct namemap *namemapptr;
-  
+
   for(i = 0; i < RESOLV_ENTRIES; ++i) {
     namemapptr = &names[i];
     if(namemapptr->state == STATE_NEW ||
        namemapptr->state == STATE_ASKING) {
       if(namemapptr->state == STATE_ASKING) {
-	if(--namemapptr->tmr == 0) {
-	  if(++namemapptr->retries == MAX_RETRIES) {
-	    namemapptr->state = STATE_ERROR;
-	    resolv_found(namemapptr->name, NULL);
-	    continue;
-	  }
-	  namemapptr->tmr = namemapptr->retries;
-	} else {
-	  /*	  printf("Timer %d\n", namemapptr->tmr);*/
-	  /* Its timer has not run out, so we move on to next
-	     entry. */
-	  continue;
-	}
+    if(--namemapptr->tmr == 0) {
+      if(++namemapptr->retries == MAX_RETRIES) {
+        namemapptr->state = STATE_ERROR;
+        resolv_found(namemapptr->name, NULL);
+        continue;
+      }
+      namemapptr->tmr = namemapptr->retries;
+    } else {
+      /*      printf("Timer %d\n", namemapptr->tmr);*/
+      /* Its timer has not run out, so we move on to next
+         entry. */
+      continue;
+    }
       } else {
-	namemapptr->state = STATE_ASKING;
-	namemapptr->tmr = 1;
-	namemapptr->retries = 0;
+    namemapptr->state = STATE_ASKING;
+    namemapptr->tmr = 1;
+    namemapptr->retries = 0;
       }
       hdr = (struct dns_hdr *)uip_appdata;
       memset(hdr, 0, sizeof(struct dns_hdr));
@@ -206,20 +206,20 @@ check_entries(void)
       --nameptr;
       /* Convert hostname into suitable query format. */
       do {
-	++nameptr;
-	nptr = query;
-	++query;
-	for(n = 0; *nameptr != '.' && *nameptr != 0; ++nameptr) {
-	  *query = *nameptr;
-	  ++query;
-	  ++n;
-	}
-	*nptr = n;
+    ++nameptr;
+    nptr = query;
+    ++query;
+    for(n = 0; *nameptr != '.' && *nameptr != 0; ++nameptr) {
+      *query = *nameptr;
+      ++query;
+      ++n;
+    }
+    *nptr = n;
       } while(*nameptr != 0);
       {
-	static unsigned char endquery[] =
-	  {0,0,1,0,1};
-	memcpy(query, endquery, 5);
+    static unsigned char endquery[] =
+      {0,0,1,0,1};
+    memcpy(query, endquery, 5);
       }
       uip_udp_send((unsigned char)(query + 5 - (char *)uip_appdata));
       break;
@@ -240,7 +240,7 @@ newdata(void)
   static u8_t nquestions, nanswers;
   static u8_t i;
   register struct namemap *namemapptr;
-  
+
   hdr = (struct dns_hdr *)uip_appdata;
   /*  printf("ID %d\n", htons(hdr->id));
       printf("Query %d\n", hdr->flags1 & DNS_FLAG1_RESPONSE);
@@ -282,40 +282,40 @@ newdata(void)
 
     while(nanswers > 0) {
       /* The first byte in the answer resource record determines if it
-	 is a compressed record or a normal one. */
+     is a compressed record or a normal one. */
       if(*nameptr & 0xc0) {
-	/* Compressed name. */
-	nameptr +=2;
-	/*	printf("Compressed anwser\n");*/
+    /* Compressed name. */
+    nameptr +=2;
+    /*  printf("Compressed anwser\n");*/
       } else {
-	/* Not compressed name. */
-	nameptr = parse_name((char *)nameptr);
+    /* Not compressed name. */
+    nameptr = parse_name((char *)nameptr);
       }
 
       ans = (struct dns_answer *)nameptr;
       /*      printf("Answer: type %x, class %x, ttl %x, length %x\n",
-	     htons(ans->type), htons(ans->class), (htons(ans->ttl[0])
-	     << 16) | htons(ans->ttl[1]), htons(ans->len));*/
+         htons(ans->type), htons(ans->class), (htons(ans->ttl[0])
+         << 16) | htons(ans->ttl[1]), htons(ans->len));*/
 
       /* Check for IP address type and Internet class. Others are
-	 discarded. */
+     discarded. */
       if(ans->type == HTONS(1) &&
-	 ans->class == HTONS(1) &&
-	 ans->len == HTONS(4)) {
-	/*	printf("IP address %d.%d.%d.%d\n",
-	       htons(ans->ipaddr[0]) >> 8,
-	       htons(ans->ipaddr[0]) & 0xff,
-	       htons(ans->ipaddr[1]) >> 8,
-	       htons(ans->ipaddr[1]) & 0xff);*/
-	/* XXX: we should really check that this IP address is the one
-	   we want. */
-	namemapptr->ipaddr[0] = ans->ipaddr[0];
-	namemapptr->ipaddr[1] = ans->ipaddr[1];
-	
-	resolv_found(namemapptr->name, namemapptr->ipaddr);
-	return;
+     ans->class == HTONS(1) &&
+     ans->len == HTONS(4)) {
+    /*  printf("IP address %d.%d.%d.%d\n",
+           htons(ans->ipaddr[0]) >> 8,
+           htons(ans->ipaddr[0]) & 0xff,
+           htons(ans->ipaddr[1]) >> 8,
+           htons(ans->ipaddr[1]) & 0xff);*/
+    /* XXX: we should really check that this IP address is the one
+       we want. */
+    namemapptr->ipaddr[0] = ans->ipaddr[0];
+    namemapptr->ipaddr[1] = ans->ipaddr[1];
+
+    resolv_found(namemapptr->name, namemapptr->ipaddr);
+    return;
       } else {
-	nameptr = nameptr + 10 + htons(ans->len);
+    nameptr = nameptr + 10 + htons(ans->len);
       }
       --nanswers;
     }
@@ -352,9 +352,9 @@ resolv_query(char *name)
   static u8_t i;
   static u8_t lseq, lseqi;
   register struct namemap *nameptr;
-      
+
   lseq = lseqi = 0;
-  
+
   for(i = 0; i < RESOLV_ENTRIES; ++i) {
     nameptr = &names[i];
     if(nameptr->state == STATE_UNUSED) {
@@ -397,7 +397,7 @@ resolv_lookup(char *name)
 {
   static u8_t i;
   struct namemap *nameptr;
-  
+
   /* Walk through the list to see if the name is in there. If it is
      not, we return NULL. */
   for(i = 0; i < RESOLV_ENTRIES; ++i) {
@@ -440,7 +440,7 @@ resolv_conf(u16_t *dnsserver)
   if(resolv_conn != NULL) {
     uip_udp_remove(resolv_conn);
   }
-  
+
   resolv_conn = uip_udp_new(dnsserver, HTONS(53));
 }
 /*---------------------------------------------------------------------------*/
@@ -452,7 +452,7 @@ void
 resolv_init(void)
 {
   static u8_t i;
-  
+
   for(i = 0; i < RESOLV_ENTRIES; ++i) {
     names[i].state = STATE_DONE;
   }

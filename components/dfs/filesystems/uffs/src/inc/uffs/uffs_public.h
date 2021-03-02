@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,12 +25,12 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
 
-/** 
+/**
  * \file uffs_public.h
  * \brief public data structures for uffs
  * \author Ricky Zheng
@@ -59,8 +59,8 @@ extern "C"{
 #define container_of(p, T, x) ((T *)((char *)(p) - offsetof(T,x)))
 #endif
 
-/** 
- * \def MAX_FILENAME_LENGTH 
+/**
+ * \def MAX_FILENAME_LENGTH
  * \note Be careful: it's part of the physical format (see: uffs_FileInfoSt.name)
  *    !!DO NOT CHANGE IT AFTER FILE SYSTEM IS FORMATED!!
  */
@@ -102,55 +102,55 @@ typedef struct uffs_ObjectInfoSt {
  * \brief uffs tag, 8 bytes, will be store in page spare area.
  */
 struct uffs_TagStoreSt {
-	u32 dirty:1;		//!< 0: dirty, 1: clear
-	u32 valid:1;		//!< 0: valid, 1: invalid
-	u32 type:2;			//!< block type: #UFFS_TYPE_DIR, #UFFS_TYPE_FILE, #UFFS_TYPE_DATA
-	u32 block_ts:2;		//!< time stamp of block;
-	u32 data_len:12;	//!< length of page data
-	u32 serial:14;		//!< serial number
+    u32 dirty:1;        //!< 0: dirty, 1: clear
+    u32 valid:1;        //!< 0: valid, 1: invalid
+    u32 type:2;         //!< block type: #UFFS_TYPE_DIR, #UFFS_TYPE_FILE, #UFFS_TYPE_DATA
+    u32 block_ts:2;     //!< time stamp of block;
+    u32 data_len:12;    //!< length of page data
+    u32 serial:14;      //!< serial number
 
-	u32 parent:10;		//!< parent's serial number
-	u32 page_id:6;		//!< page id
-	u32 reserved:4;		//!< reserved, for UFFS2
-	u32 tag_ecc:12;		//!< tag ECC
+    u32 parent:10;      //!< parent's serial number
+    u32 page_id:6;      //!< page id
+    u32 reserved:4;     //!< reserved, for UFFS2
+    u32 tag_ecc:12;     //!< tag ECC
 };
 
-#define TAG_ECC_DEFAULT (0xFFF)	//!< 12-bit '1'
+#define TAG_ECC_DEFAULT (0xFFF) //!< 12-bit '1'
 
 
-/** 
+/**
  * \struct uffs_TagsSt
  */
 struct uffs_TagsSt {
-	struct uffs_TagStoreSt s;		/* store must be the first member */
+    struct uffs_TagStoreSt s;       /* store must be the first member */
 
-	/** data_sum for file or dir name */
-	u16 data_sum;
+    /** data_sum for file or dir name */
+    u16 data_sum;
 
-	/** internal used */
-	u8 seal_byte;			//!< seal byte.
+    /** internal used */
+    u8 seal_byte;           //!< seal byte.
 };
 
-/** 
+/**
  * \struct uffs_MiniHeaderSt
  * \brief the mini header resides on the head of page data
  */
 struct uffs_MiniHeaderSt {
-	u8 status;
-	u8 reserved;
-	u16 crc;
+    u8 status;
+    u8 reserved;
+    u16 crc;
 };
 
 
 /** uffs_TagsSt.dirty */
-#define TAG_VALID		0
-#define TAG_INVALID		1
+#define TAG_VALID       0
+#define TAG_INVALID     1
 
 /** uffs_TagsSt.valid */
-#define TAG_DIRTY		0
-#define TAG_CLEAR		1
+#define TAG_DIRTY       0
+#define TAG_CLEAR       1
 
-#define TAG_IS_DIRTY(tag) (*((u32 *) &((tag)->s)) != 0xFFFFFFFF)	// tag is dirty if first 4 bytes not all 0xFF
+#define TAG_IS_DIRTY(tag) (*((u32 *) &((tag)->s)) != 0xFFFFFFFF)    // tag is dirty if first 4 bytes not all 0xFF
 #define TAG_IS_VALID(tag) ((tag)->s.valid == TAG_VALID)
 #define TAG_IS_SEALED(tag) ((tag)->seal_byte != 0xFF)
 
@@ -176,11 +176,11 @@ UBOOL uffs_IsSrcNewerThanObj(int src, int obj);
 
 
 /********************************** debug & error *************************************/
-#define UFFS_MSG_NOISY		-1
-#define UFFS_MSG_NORMAL		0
-#define UFFS_MSG_SERIOUS	1
-#define UFFS_MSG_DEAD		2
-#define UFFS_MSG_NOMSG		100
+#define UFFS_MSG_NOISY      -1
+#define UFFS_MSG_NORMAL     0
+#define UFFS_MSG_SERIOUS    1
+#define UFFS_MSG_DEAD       2
+#define UFFS_MSG_NOMSG      100
 
 #define TENDSTR "\n"
 
@@ -197,12 +197,12 @@ void uffs_AssertCall(const char *file, int line, const char *msg, ...);
 
 #ifdef CONFIG_ENABLE_UFFS_DEBUG_MSG
 #define uffs_DebugMessage(level, prefix, suffix, errFmt, ...) do { \
-	if (level >= UFFS_DBG_LEVEL) \
-		rt_kprintf(prefix errFmt suffix, ##__VA_ARGS__); \
+    if (level >= UFFS_DBG_LEVEL) \
+        rt_kprintf(prefix errFmt suffix, ##__VA_ARGS__); \
 } while(0)
 
 #define uffs_AssertCall(file, line, msg, ...) \
-	rt_kprintf("ASSERT %s:%d - :" msg "\n", (const char *)file, (int)line, ##__VA_ARGS__)
+    rt_kprintf("ASSERT %s:%d - :" msg "\n", (const char *)file, (int)line, ##__VA_ARGS__)
 #else
 #define uffs_DebugMessage(level, prefix, suffix, errFmt, ...)
 #define uffs_AssertCall(file, line, msg, ...)
@@ -218,23 +218,23 @@ UBOOL uffs_Assert(UBOOL expr, const char *fmt, ...);
 
 #if !defined(RT_THREAD)
 #define uffs_Perror(level, fmt, ... ) \
-	uffs_DebugMessage(level, PFX, TENDSTR, fmt, ## __VA_ARGS__)
+    uffs_DebugMessage(level, PFX, TENDSTR, fmt, ## __VA_ARGS__)
 
 #define uffs_PerrorRaw(level, fmt, ... ) \
-	uffs_DebugMessage(level, NULL, NULL, fmt, ## __VA_ARGS__)
+    uffs_DebugMessage(level, NULL, NULL, fmt, ## __VA_ARGS__)
 
 #else
 
 #ifdef CONFIG_ENABLE_UFFS_DEBUG_MSG
 
 #define uffs_Perror(level, fmt, ... ) do{\
-	if (level >= UFFS_DBG_LEVEL) \
-		rt_kprintf(PFX fmt TENDSTR, ##__VA_ARGS__); \
+    if (level >= UFFS_DBG_LEVEL) \
+        rt_kprintf(PFX fmt TENDSTR, ##__VA_ARGS__); \
 } while(0)
 
 #define uffs_PerrorRaw(level, fmt, ... ) do{\
-	if (level >= UFFS_DBG_LEVEL) \
-		rt_kprintf(fmt, ##__VA_ARGS__); \
+    if (level >= UFFS_DBG_LEVEL) \
+        rt_kprintf(fmt, ##__VA_ARGS__); \
 } while(0)
 #else
 #define uffs_Perror(level, fmt, ... )
@@ -243,15 +243,15 @@ UBOOL uffs_Assert(UBOOL expr, const char *fmt, ...);
 #endif // RT_THREAD
 
 #define uffs_Assert(expr, msg, ...) \
-	((expr) ? U_TRUE : (uffs_AssertCall(__FILE__, __LINE__, msg, ## __VA_ARGS__), U_FALSE))
+    ((expr) ? U_TRUE : (uffs_AssertCall(__FILE__, __LINE__, msg, ## __VA_ARGS__), U_FALSE))
 
 #endif //_COMPILER_DO_NOT_SUPPORT_MACRO_VALIST_REPLACE_
 
 #define uffs_Panic() \
-	do { \
-		uffs_AssertCall(__FILE__, __LINE__, "Bam !!\n"); \
-		while(1); \
-	} while(0)
+    do { \
+        uffs_AssertCall(__FILE__, __LINE__, "Bam !!\n"); \
+        while(1); \
+    } while(0)
 
 /********************************** NAND **********************************************/
 //NAND flash specific file must implement these interface
@@ -262,31 +262,31 @@ UBOOL uffs_IsBlockBad(uffs_Device *dev, uffs_BlockInfo *bc);
 
 /********************************** Public defines *****************************/
 /**
- * \def UFFS_ALL_PAGES 
+ * \def UFFS_ALL_PAGES
  * \brief UFFS_ALL_PAGES if this value presented, that means the objects are all pages in the block
  */
 #define UFFS_ALL_PAGES (0xffff)
 
-/** 
+/**
  * \def UFFS_INVALID_PAGE
  * \brief macro for invalid page number
  */
-#define UFFS_INVALID_PAGE	(0xfffe)
+#define UFFS_INVALID_PAGE   (0xfffe)
 
-/** 
+/**
  * \def UFFS_INVALID_BLOCK
  * \brief macro for invalid block number
  */
-#define UFFS_INVALID_BLOCK	(0xfffe)
+#define UFFS_INVALID_BLOCK  (0xfffe)
 
 
 URET uffs_NewBlock(uffs_Device *dev, u16 block, uffs_Tags *tag, uffs_Buf *buf);
 URET uffs_BlockRecover(uffs_Device *dev, uffs_BlockInfo *old, u16 newBlock);
-URET uffs_PageRecover(uffs_Device *dev, 
-					  uffs_BlockInfo *bc, 
-					  u16 oldPage, 
-					  u16 newPage, 
-					  uffs_Buf *buf);
+URET uffs_PageRecover(uffs_Device *dev,
+                      uffs_BlockInfo *bc,
+                      u16 oldPage,
+                      u16 newPage,
+                      uffs_Buf *buf);
 int uffs_FindFreePageInBlock(uffs_Device *dev, uffs_BlockInfo *bc);
 u16 uffs_FindBestPageInBlock(uffs_Device *dev, uffs_BlockInfo *bc, u16 page);
 u16 uffs_FindFirstFreePage(uffs_Device *dev, uffs_BlockInfo *bc, u16 pageFrom);
@@ -332,5 +332,5 @@ URET uffs_ReleaseFileSystemObjects(void);
 #ifdef __cplusplus
 }
 #endif
-#endif	// _UFFS_PUBLIC_H_
+#endif  // _UFFS_PUBLIC_H_
 

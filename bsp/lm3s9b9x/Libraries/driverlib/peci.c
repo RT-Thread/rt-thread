@@ -5,20 +5,20 @@
 //
 // Copyright (c) 2010-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -574,10 +574,10 @@ PECIDomainMaxReadClear(unsigned long ulBase, unsigned long ulDomain)
 //! \param pfnHandler is a pointer to the function to be called when the
 //! PECI interrupt occurs.
 //!
-//! This function registers the handler to be called when an PECI interrupt   
-//! occurs. This function enables the global interrupt in the interrupt  
-//! controller; specific PECI interrupts must be enabled via PECIIntEnable().   
-//! If necessary, it is the interrupt handler's responsibility to clear the 
+//! This function registers the handler to be called when an PECI interrupt
+//! occurs. This function enables the global interrupt in the interrupt
+//! controller; specific PECI interrupts must be enabled via PECIIntEnable().
+//! If necessary, it is the interrupt handler's responsibility to clear the
 //! interrupt source via PECIIntClear().
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -613,7 +613,7 @@ PECIIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //! \param ulBase specifies the PECI module base address.
 //!
 //! This function unregisters the handler to be called when a PECI interrupt
-//! occurs.  This function also masks off the interrupt in the interrupt 
+//! occurs.  This function also masks off the interrupt in the interrupt
 //! controller so that the interrupt handler no longer is called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -649,8 +649,8 @@ PECIIntUnregister(unsigned long ulBase)
 //! \param ulIntFlags is a bit mask of the interrupt sources to be enabled.
 //! \param ulIntMode is the mode for the PECI domain interrupts.
 //!
-//! This function enables the indicated PECI interrupt sources.  Only the 
-//! sources that are enabled can be reflected to the processor interrupt; 
+//! This function enables the indicated PECI interrupt sources.  Only the
+//! sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter can be any of the following values:
@@ -708,8 +708,8 @@ PECIIntEnable(unsigned long ulBase, unsigned long ulIntFlags,
 //! \param ulBase specifies the PECI module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be disabled.
 //!
-//! This function disables the indicated PECI interrupt sources.  Only the 
-//! sources that are enabled can be reflected to the processor interrupt; 
+//! This function disables the indicated PECI interrupt sources.  Only the
+//! sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter can be any of the following values:
@@ -785,11 +785,11 @@ PECIIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param ulBase specifies the PECI module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
-//! This function clears the specified PECI interrupt sources so that they no 
+//! This function clears the specified PECI interrupt sources so that they no
 //! longer assert.  This function must be called in the interrupt handler to
-//! keep the interrupts from being recognized again immediately upon exit.  
-//! The \e ulIntFlags parameter can consist of any combination of the 
-//! \b PECI_READ, \b PECI_ERR, \b PECI_AC, \b PECI_M0D0, \b PECI_M0D1, 
+//! keep the interrupts from being recognized again immediately upon exit.
+//! The \e ulIntFlags parameter can consist of any combination of the
+//! \b PECI_READ, \b PECI_ERR, \b PECI_AC, \b PECI_M0D0, \b PECI_M0D1,
 //! \b PECI_M1D0, or \b PECI_M1D1 values.
 //!
 //! \note Because there is a write buffer in the Cortex-M processor, it may

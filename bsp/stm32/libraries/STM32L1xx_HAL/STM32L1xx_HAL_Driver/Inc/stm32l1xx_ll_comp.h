@@ -94,22 +94,22 @@ typedef struct
 {
   uint32_t PowerMode;                   /*!< Set comparator operating mode to adjust power and speed.
                                              This parameter can be a value of @ref COMP_LL_EC_POWERMODE
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetPowerMode(). */
 
   uint32_t InputPlus;                   /*!< Set comparator input plus (non-inverting input).
                                              This parameter can be a value of @ref COMP_LL_EC_INPUT_PLUS
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetInputPlus(). */
 
   uint32_t InputMinus;                  /*!< Set comparator input minus (inverting input).
                                              This parameter can be a value of @ref COMP_LL_EC_INPUT_MINUS
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetInputMinus(). */
 
   uint32_t OutputSelection;             /*!< Set comparator output selection.
                                              This parameter can be a value of @ref COMP_LL_EC_OUTPUT_SELECTION
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetOutputSelection(). */
 
 } LL_COMP_InitTypeDef;
@@ -376,7 +376,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetCommonWindowMode(COMP_Common_TypeDef *COMPxy
   * @param  PowerMode This parameter can be one of the following values:
   *         @arg @ref LL_COMP_POWERMODE_MEDIUMSPEED   (1)
   *         @arg @ref LL_COMP_POWERMODE_ULTRALOWPOWER (1)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP2.
   * @retval None
   */
@@ -392,7 +392,7 @@ __STATIC_INLINE void LL_COMP_SetPowerMode(COMP_TypeDef *COMPx, uint32_t PowerMod
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_COMP_POWERMODE_MEDIUMSPEED   (1)
   *         @arg @ref LL_COMP_POWERMODE_ULTRALOWPOWER (1)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP2.
   */
 __STATIC_INLINE uint32_t LL_COMP_GetPowerMode(COMP_TypeDef *COMPx)
@@ -454,7 +454,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetPowerMode(COMP_TypeDef *COMPx)
   *         @arg @ref LL_COMP_INPUT_PLUS_OPAMP1 (1)(3)
   *         @arg @ref LL_COMP_INPUT_PLUS_OPAMP2 (1)(3)
   *         @arg @ref LL_COMP_INPUT_PLUS_OPAMP3 (1)(4)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP1. \n
   *         (2) Available only on COMP instance: COMP2. \n
   *         (3) Available on devices: STM32L100xB, STM32L151xB, STM32L152xB, STM32L100xBA, STM32L151xBA, STM32L152xBA, STM32L151xCA, STM32L151xD, STM32L152xCA, STM32L152xD, STM32L162xCA, STM32L162xD \n
@@ -473,7 +473,7 @@ __STATIC_INLINE void LL_COMP_SetInputPlus(COMP_TypeDef *COMPx, uint32_t InputPlu
   /*          If ADC needs to be used afterwards, disable IO switch control   */
   /*          mode using function @ref LL_RI_DisableSwitchControlMode().      */
   register uint32_t *preg = ((uint32_t *)((uint32_t) ((uint32_t)(&(RI->ASCR1)) + ((__COMP_IS_INSTANCE_EVEN(COMPx)) << 2U))));
-  
+
   MODIFY_REG(*preg,
              (RI_ASCR1_CH * __COMP_IS_INSTANCE_ODD(COMPx)) | (RI_ASCR2_GR6 * __COMP_IS_INSTANCE_EVEN(COMPx)),
              InputPlus | ((RI_ASCR1_VCOMP | RI_ASCR1_SCM) * __COMP_IS_INSTANCE_ODD(COMPx)));
@@ -525,7 +525,7 @@ __STATIC_INLINE void LL_COMP_SetInputPlus(COMP_TypeDef *COMPx, uint32_t InputPlu
   *         @arg @ref LL_COMP_INPUT_PLUS_OPAMP1 (1)(3)
   *         @arg @ref LL_COMP_INPUT_PLUS_OPAMP2 (1)(3)
   *         @arg @ref LL_COMP_INPUT_PLUS_OPAMP3 (1)(4)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP1. \n
   *         (2) Available only on COMP instance: COMP2. \n
   *         (3) Available on devices: STM32L100xB, STM32L151xB, STM32L152xB, STM32L100xBA, STM32L151xBA, STM32L152xBA, STM32L151xCA, STM32L151xD, STM32L152xCA, STM32L152xD, STM32L162xCA, STM32L162xD \n
@@ -536,7 +536,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetInputPlus(COMP_TypeDef *COMPx)
 {
   /* Get switch state in routing interface (RI) register ASCR1 or ASCR2 */
   register uint32_t *preg = ((uint32_t *)((uint32_t) ((uint32_t)(&(RI->ASCR1)) + ((__COMP_IS_INSTANCE_EVEN(COMPx)) << 2U))));
-  
+
   return (uint32_t)(READ_BIT(*preg,
                              (RI_ASCR1_CH * __COMP_IS_INSTANCE_ODD(COMPx)) | (RI_ASCR2_GR6 * __COMP_IS_INSTANCE_EVEN(COMPx))));
 }
@@ -556,7 +556,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetInputPlus(COMP_TypeDef *COMPx)
   *         @arg @ref LL_COMP_INPUT_MINUS_DAC1_CH1   (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_DAC1_CH2   (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_IO1        (1)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP2.
   * @retval None
   */
@@ -585,7 +585,7 @@ __STATIC_INLINE void LL_COMP_SetInputMinus(COMP_TypeDef *COMPx, uint32_t InputMi
   *         @arg @ref LL_COMP_INPUT_MINUS_DAC1_CH1   (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_DAC1_CH2   (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_IO1        (1)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP2.
   */
 __STATIC_INLINE uint32_t LL_COMP_GetInputMinus(COMP_TypeDef *COMPx)
@@ -610,7 +610,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetInputMinus(COMP_TypeDef *COMPx)
   *         @arg @ref LL_COMP_INPUT_MINUS_PULL_UP_400K   (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_PULL_DOWN_10K  (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_PULL_DOWN_400K (1)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP1.
   * @retval None
   */
@@ -637,7 +637,7 @@ __STATIC_INLINE void LL_COMP_SetInputPullingResistor(COMP_TypeDef *COMPx, uint32
   *         @arg @ref LL_COMP_INPUT_MINUS_PULL_UP_400K   (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_PULL_DOWN_10K  (1)
   *         @arg @ref LL_COMP_INPUT_MINUS_PULL_DOWN_400K (1)
-  *         
+  *
   *         (1) Available only on COMP instance: COMP1.
   */
 __STATIC_INLINE uint32_t LL_COMP_GetInputPullingResistor(COMP_TypeDef *COMPx)
@@ -676,7 +676,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetInputPullingResistor(COMP_TypeDef *COMPx)
   *         @arg @ref LL_COMP_OUTPUT_TIM4_IC4      (1)(2)
   *         @arg @ref LL_COMP_OUTPUT_TIM4_OCREFCLR (1)(2)
   *         @arg @ref LL_COMP_OUTPUT_TIM10_IC1     (1)(2)
-  *         
+  *
   *         (1) Parameter availability depending on timer availability
   *             on the selected device.
   *         (2) Available only on COMP instance: COMP2.
@@ -707,7 +707,7 @@ __STATIC_INLINE void LL_COMP_SetOutputSelection(COMP_TypeDef *COMPx, uint32_t Ou
   *         @arg @ref LL_COMP_OUTPUT_TIM4_IC4      (1)(2)
   *         @arg @ref LL_COMP_OUTPUT_TIM4_OCREFCLR (1)(2)
   *         @arg @ref LL_COMP_OUTPUT_TIM10_IC1     (1)(2)
-  *         
+  *
   *         (1) Parameter availability depending on timer availability
   *             on the selected device.
   *         (2) Available only on COMP instance: COMP2.
@@ -737,7 +737,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetOutputSelection(COMP_TypeDef *COMPx)
   * @rmtoll CSR      COMP1EN        LL_COMP_Enable\n
   *         CSR      COMP_CSR_INSEL LL_COMP_Enable
   * @param  COMPx Comparator instance (1)
-  *         
+  *
   *         (1) On this STM32 serie, the only COMP instance that can be enabled
   *             using this function is COMP1.
   *             COMP2 is enabled by setting input minus.

@@ -138,7 +138,7 @@ typedef struct _ARM_CAN_MSG_INFO {
   uint32_t id;                          ///< CAN identifier with frame format specifier (bit 31)
   uint32_t rtr              : 1;        ///< Remote transmission request frame
   uint32_t edl              : 1;        ///< Flexible data-rate format extended data length
-  uint32_t brs              : 1;        ///< Flexible data-rate format with bitrate switch 
+  uint32_t brs              : 1;        ///< Flexible data-rate format with bitrate switch
   uint32_t esi              : 1;        ///< Flexible data-rate format error state indicator
   uint32_t dlc              : 4;        ///< Data length code
   uint32_t reserved         : 24;
@@ -346,7 +346,7 @@ typedef struct _ARM_CAN_CAPABILITIES {
 typedef struct _ARM_DRIVER_CAN {
   ARM_DRIVER_VERSION       (*GetVersion)            (void);                             ///< Pointer to \ref ARM_CAN_GetVersion            : Get driver version.
   ARM_CAN_CAPABILITIES     (*GetCapabilities)       (void);                             ///< Pointer to \ref ARM_CAN_GetCapabilities       : Get driver capabilities.
-  int32_t                  (*Initialize)            (ARM_CAN_SignalUnitEvent_t   cb_unit_event,                     
+  int32_t                  (*Initialize)            (ARM_CAN_SignalUnitEvent_t   cb_unit_event,
                                                      ARM_CAN_SignalObjectEvent_t cb_object_event); ///< Pointer to \ref ARM_CAN_Initialize : Initialize CAN interface.
   int32_t                  (*Uninitialize)          (void);                             ///< Pointer to \ref ARM_CAN_Uninitialize          : De-initialize CAN interface.
   int32_t                  (*PowerControl)          (ARM_POWER_STATE          state);   ///< Pointer to \ref ARM_CAN_PowerControl          : Control CAN interface power.

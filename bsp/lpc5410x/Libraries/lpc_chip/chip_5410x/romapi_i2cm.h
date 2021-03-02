@@ -44,59 +44,59 @@ extern "C" {
  */
 
 /**
- * @brief	Get memory size in bytes needed for I2C master driver context
- * @return	Size in bytes needed for the ROM driver
+ * @brief   Get memory size in bytes needed for I2C master driver context
+ * @return  Size in bytes needed for the ROM driver
  */
 uint32_t ROM_I2CM_GetMemSize(void);
 
 /**
- * @brief	Initialize I2C master peripheral
- * @param	mem		: Pointer to memory area used to driver context
- * @param	pInit	: Pointer to I2C master init data
- * @return	NULL on error, or a pointer to the device context handle
+ * @brief   Initialize I2C master peripheral
+ * @param   mem     : Pointer to memory area used to driver context
+ * @param   pInit   : Pointer to I2C master init data
+ * @return  NULL on error, or a pointer to the device context handle
  */
 ROM_I2CM_HANDLE_T ROM_I2CM_Init(void *mem, const ROM_I2CM_INIT_T *pInit);
 
 /**
- * @brief	Set I2C master clock rate
- * @param	pHandle	: Pointer to driver context handle
- * @param	inRate	: Base clock rate for the I2C peripheral in Hz
- * @param	i2cRate	: Desired I2C master clock rate
- * @return	Actual I2C master clock rate
+ * @brief   Set I2C master clock rate
+ * @param   pHandle : Pointer to driver context handle
+ * @param   inRate  : Base clock rate for the I2C peripheral in Hz
+ * @param   i2cRate : Desired I2C master clock rate
+ * @return  Actual I2C master clock rate
  */
 uint32_t ROM_I2CM_SetClockRate(ROM_I2CM_HANDLE_T pHandle, uint32_t inRate, uint32_t i2cRate);
 
 /**
- * @brief	Register a I2C master callback
- * @param	pHandle	: Pointer to driver context handle
- * @param	cbIndex	: Callback to register
- * @param	pCB		: Pointer to callback function
- * @return	Nothing
+ * @brief   Register a I2C master callback
+ * @param   pHandle : Pointer to driver context handle
+ * @param   cbIndex : Callback to register
+ * @param   pCB     : Pointer to callback function
+ * @return  Nothing
  */
 void ROM_I2CM_RegisterCallback(ROM_I2CM_HANDLE_T pHandle, ROM_I2CM_CALLBACK_T cbIndex, void *pCB);
 
 /**
- * @brief	Start a I2C master transfer
- * @param	pHandle	: Pointer to driver context handle
- * @param	pXfer	: Pointer to master transfer configuration
- * @return	Error code
- * @note	This function starts the transfer and returns immediately.
+ * @brief   Start a I2C master transfer
+ * @param   pHandle : Pointer to driver context handle
+ * @param   pXfer   : Pointer to master transfer configuration
+ * @return  Error code
+ * @note    This function starts the transfer and returns immediately.
  */
 ErrorCode_t ROM_I2CM_Transfer(ROM_I2CM_HANDLE_T pHandle, ROM_I2CM_XFER_T *pXfer);
 
 /**
- * @brief	I2C master transfer (interrupt) handler
- * @param	pHandle	: Pointer to driver context handle
- * @return	Nothing
- * @note	This function should be called from the I2C interrupt handler and
+ * @brief   I2C master transfer (interrupt) handler
+ * @param   pHandle : Pointer to driver context handle
+ * @return  Nothing
+ * @note    This function should be called from the I2C interrupt handler and
  * is used in interrupt and DMA modes.
  */
 void ROM_I2CM_TransferHandler(ROM_I2CM_HANDLE_T pHandle);
 
 /**
- * @brief	Return the I2C master ROM driver version
- * @return	Driver version number
- * @note	The returned driver version number consists of a major and minor
+ * @brief   Return the I2C master ROM driver version
+ * @return  Driver version number
+ * @note    The returned driver version number consists of a major and minor
  * number, with the minor number in the lower 8 bits and the major number in
  * the upper 8 bits.
  */

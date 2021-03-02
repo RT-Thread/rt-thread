@@ -21,12 +21,12 @@
 
 #if defined(GK7102S_RTOS)
 #define SYSTEM_GPIO_SENSOR_HIGH_BIT_TABLE                          \
-	{ GADI_GPIO_61, GADI_GPIO_TYPE_INPUT_0/*sensor bit11*/          },\
-	{ GADI_GPIO_62, GADI_GPIO_TYPE_INPUT_0/*sensor bit12*/          },
+    { GADI_GPIO_61, GADI_GPIO_TYPE_INPUT_0/*sensor bit11*/          },\
+    { GADI_GPIO_62, GADI_GPIO_TYPE_INPUT_0/*sensor bit12*/          },
 #else
 #define SYSTEM_GPIO_SENSOR_HIGH_BIT_TABLE                          \
-	{ GADI_GPIO_61, GADI_GPIO_TYPE_UNDEFINED						},\
-	{ GADI_GPIO_62, GADI_GPIO_TYPE_UNDEFINED						},
+    { GADI_GPIO_61, GADI_GPIO_TYPE_UNDEFINED                        },\
+    { GADI_GPIO_62, GADI_GPIO_TYPE_UNDEFINED                        },
 
 #endif
 
@@ -99,7 +99,7 @@
     { GADI_GPIO_18, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_19, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_20, GADI_GPIO_TYPE_INPUT_0                       }, \
-    { GADI_GPIO_21, GADI_GPIO_TYPE_INPUT_0			           }, \
+    { GADI_GPIO_21, GADI_GPIO_TYPE_INPUT_0                     }, \
     { GADI_GPIO_22, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_23, GADI_GPIO_TYPE_OUTPUT_1   /*Sensor pwdn*/    }, \
     { GADI_GPIO_24, GADI_GPIO_TYPE_INPUT_0                       }, \
@@ -127,24 +127,24 @@
     { GADI_GPIO_53, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_54, GADI_GPIO_TYPE_OUTPUT_EPHY_LED_3             }, \
     { GADI_GPIO_55, GADI_GPIO_TYPE_INPUT_0                        },\
-	SYSTEM_GPIO_SENSOR_HIGH_BIT_TABLE
+    SYSTEM_GPIO_SENSOR_HIGH_BIT_TABLE
 
-#define SYSTEM_GPIO_IR_LED_CTRL     GADI_GPIO_12		// not real pin
-#define SYSTEM_GPIO_IR_CUT1         GADI_GPIO_10		
+#define SYSTEM_GPIO_IR_LED_CTRL     GADI_GPIO_12        // not real pin
+#define SYSTEM_GPIO_IR_CUT1         GADI_GPIO_10
 #define SYSTEM_GPIO_IR_CUT2         GADI_GPIO_9
 #define SYSTEM_GPIO_SENSOR_RESET    GADI_GPIO_27
 #define SYSTEM_GPIO_PHY_RESET       GADI_GPIO_32
 #define SYSTEM_GPIO_PHY_SPEED_LED   GADI_GPIO_54
 
-#define SYSTEM_GPIO_SPI0_EN0        GADI_GPIO_8		// not real pin
-#define SYSTEM_GPIO_SPI1_EN0        GADI_GPIO_9		// not real pin
-#define SYSTEM_GPIO_PWM0            GADI_GPIO_6  	// not real pin
-#define SYSTEM_GPIO_PWM1            GADI_GPIO_17  	// not real pin
-#define SYSTEM_GPIO_PWM2            GADI_GPIO_33   	// not real pin
-#define SYSTEM_GPIO_PWM3            GADI_GPIO_34  	// not real pin
-#define SYSTEM_GPIO_USB_HOST        GADI_GPIO_50 	// not real pin
+#define SYSTEM_GPIO_SPI0_EN0        GADI_GPIO_8     // not real pin
+#define SYSTEM_GPIO_SPI1_EN0        GADI_GPIO_9     // not real pin
+#define SYSTEM_GPIO_PWM0            GADI_GPIO_6     // not real pin
+#define SYSTEM_GPIO_PWM1            GADI_GPIO_17    // not real pin
+#define SYSTEM_GPIO_PWM2            GADI_GPIO_33    // not real pin
+#define SYSTEM_GPIO_PWM3            GADI_GPIO_34    // not real pin
+#define SYSTEM_GPIO_USB_HOST        GADI_GPIO_50    // not real pin
 #define SYSTEM_GPIO_SD_DETECT       GADI_GPIO_45
-#define SYSTEM_GPIO_SD_POWER        GADI_GPIO_55 	// not real pin
+#define SYSTEM_GPIO_SD_POWER        GADI_GPIO_55    // not real pin
 #endif
 
 #endif /* _GPIO_RTOS_H_ */

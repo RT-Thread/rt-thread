@@ -58,7 +58,7 @@ main(void)
 
   timer_set(&periodic_timer, CLOCK_SECOND / 2);
   timer_set(&arp_timer, CLOCK_SECOND * 10);
-  
+
   tapdev_init();
   uip_init();
 
@@ -70,21 +70,21 @@ main(void)
   uip_setnetmask(ipaddr);
 
   httpd_init();
-  
+
   /*  telnetd_init();*/
-  
+
   /*  hello_world_init();*/
 
   /*  {
       u8_t mac[6] = {1,2,3,4,5,6};
       dhcpc_init(&mac, 6);
       }*/
-  
+
   /*uip_ipaddr(ipaddr, 127,0,0,1);
   smtp_configure("localhost", ipaddr);
   SMTP_SEND("adam@sics.se", NULL, "uip-testing@example.com",
-	    "Testing SMTP from uIP",
-	    "Test message sent by uIP\r\n");*/
+        "Testing SMTP from uIP",
+        "Test message sent by uIP\r\n");*/
 
   /*
     webclient_init();
@@ -94,60 +94,60 @@ main(void)
     resolv_query("www.sics.se");*/
 
 
-  
+
   while(1) {
     uip_len = tapdev_read();
     if(uip_len > 0) {
       if(BUF->type == htons(UIP_ETHTYPE_IP)) {
-	uip_arp_ipin();
-	uip_input();
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	if(uip_len > 0) {
-	  uip_arp_out();
-	  tapdev_send();
-	}
+    uip_arp_ipin();
+    uip_input();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+    if(uip_len > 0) {
+      uip_arp_out();
+      tapdev_send();
+    }
       } else if(BUF->type == htons(UIP_ETHTYPE_ARP)) {
-	uip_arp_arpin();
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	if(uip_len > 0) {
-	  tapdev_send();
-	}
+    uip_arp_arpin();
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+    if(uip_len > 0) {
+      tapdev_send();
+    }
       }
 
     } else if(timer_expired(&periodic_timer)) {
       timer_reset(&periodic_timer);
       for(i = 0; i < UIP_CONNS; i++) {
-	uip_periodic(i);
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	if(uip_len > 0) {
-	  uip_arp_out();
-	  tapdev_send();
-	}
+    uip_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+    if(uip_len > 0) {
+      uip_arp_out();
+      tapdev_send();
+    }
       }
 
 #if UIP_UDP
       for(i = 0; i < UIP_UDP_CONNS; i++) {
-	uip_udp_periodic(i);
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	if(uip_len > 0) {
-	  uip_arp_out();
-	  tapdev_send();
-	}
+    uip_udp_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+    if(uip_len > 0) {
+      uip_arp_out();
+      tapdev_send();
+    }
       }
 #endif /* UIP_UDP */
-      
+
       /* Call the ARP timer function every 10 seconds. */
       if(timer_expired(&arp_timer)) {
-	timer_reset(&arp_timer);
-	uip_arp_timer();
+    timer_reset(&arp_timer);
+    uip_arp_timer();
       }
     }
   }
@@ -163,15 +163,15 @@ void
 resolv_found(char *name, u16_t *ipaddr)
 {
   u16_t *ipaddr2;
-  
+
   if(ipaddr == NULL) {
     printf("Host '%s' not found.\n", name);
   } else {
     printf("Found name '%s' = %d.%d.%d.%d\n", name,
-	   htons(ipaddr[0]) >> 8,
-	   htons(ipaddr[0]) & 0xff,
-	   htons(ipaddr[1]) >> 8,
-	   htons(ipaddr[1]) & 0xff);
+       htons(ipaddr[0]) >> 8,
+       htons(ipaddr[0]) & 0xff,
+       htons(ipaddr[1]) >> 8,
+       htons(ipaddr[1]) & 0xff);
     /*    webclient_get("www.sics.se", 80, "/~adam/uip");*/
   }
 }

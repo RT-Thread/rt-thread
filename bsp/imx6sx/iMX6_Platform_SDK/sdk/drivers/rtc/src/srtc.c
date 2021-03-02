@@ -73,15 +73,15 @@ void snvs_srtc_setup_interrupt(void (*irq_subroutine)(void), uint8_t state)
 
     if (state)
     {
-        // register the IRQ sub-routine 
+        // register the IRQ sub-routine
         register_interrupt_routine(irq_id, irq_subroutine);
-        
-        // enable the IRQ 
+
+        // enable the IRQ
         enable_interrupt(irq_id, CPU_0, 0);
     }
     else
     {
-        // disable the IRQ 
+        // disable the IRQ
         disable_interrupt(irq_id, CPU_0);
     }
 }
@@ -101,7 +101,7 @@ void snvs_srtc_interrupt_handler(void)
         s_snvs_srtc_module.onetime_timer_callback = NULL;
         s_snvs_srtc_module.callbackArg = 0;
         snvs_srtc_alarm(false);
-    }   
+    }
     else
     {
         snvs_srtc_setup_interrupt(snvs_srtc_interrupt_handler, true);
@@ -114,45 +114,45 @@ void srtc_init(void)
     s_snvs_srtc_module.onetime_timer_callback = NULL;
     s_snvs_srtc_module.callbackArg = 0;
 
-    // Initialize SNVS driver 
+    // Initialize SNVS driver
     snvs_init();
 
-    // Start SRTC counter 
+    // Start SRTC counter
     snvs_srtc_counter(true);
 
-    // Keep time alarm disabled 
+    // Keep time alarm disabled
     snvs_srtc_alarm(false);
 }
 
 void srtc_deinit(void)
 {
-    // Disable the interrupt 
+    // Disable the interrupt
     snvs_srtc_setup_interrupt(NULL, false);
 
-    // Disable the counter 
+    // Disable the counter
     snvs_srtc_counter(false);
     snvs_srtc_alarm(false);
 
-    // Deinitialize SNVS 
+    // Deinitialize SNVS
     snvs_deinit();
 }
 
 void srtc_setup_onetime_timer(uint32_t timeout, srtc_callback_t callback, void * arg)
 {
-    // Disables the interrupt 
+    // Disables the interrupt
     snvs_srtc_setup_interrupt(NULL, false);
 
-    // Clear the SRTC counter 
+    // Clear the SRTC counter
     snvs_srtc_set_counter(0);
 
-    // Program the timeout value 
+    // Program the timeout value
     snvs_srtc_set_alarm_timeout(timeout);
 
-    // Set the callback function 
+    // Set the callback function
     s_snvs_srtc_module.onetime_timer_callback = callback;
     s_snvs_srtc_module.callbackArg = arg;
 
-    // Reanable the interrupt 
+    // Reanable the interrupt
     snvs_srtc_setup_interrupt(snvs_srtc_interrupt_handler, true);
 }
 

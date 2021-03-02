@@ -34,14 +34,14 @@
 
 /** @addtogroup RCCEx
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup RCCEx_Exported_Types RCCEx Exported Types
   * @{
   */
-/** 
-  * @brief  PLLI2S Clock structure definition  
+/**
+  * @brief  PLLI2S Clock structure definition
   */
 typedef struct
 {
@@ -50,26 +50,26 @@ typedef struct
                             This parameter will be used only when PLLI2S is selected as Clock Source I2S */
 
   uint32_t PLLI2SR;    /*!< Specifies the division factor for I2S clock.
-                            This parameter must be a number between Min_Data = 2 and Max_Data = 7. 
+                            This parameter must be a number between Min_Data = 2 and Max_Data = 7.
                             This parameter will be used only when PLLI2S is selected as Clock Source I2S */
 
 }RCC_PLLI2SInitTypeDef;
 
-/** 
-  * @brief  RCC extended clocks structure definition  
+/**
+  * @brief  RCC extended clocks structure definition
   */
 typedef struct
 {
   uint32_t PeriphClockSelection; /*!< The Extended Clock to be configured.
                                       This parameter can be a value of @ref RCCEx_Periph_Clock_Selection */
 
-  RCC_PLLI2SInitTypeDef PLLI2S;  /*!< PLL I2S structure parameters. 
+  RCC_PLLI2SInitTypeDef PLLI2S;  /*!< PLL I2S structure parameters.
                                       This parameter will be used only when PLLI2S is selected as Clock Source I2S */
 
-  uint32_t RTCClockSelection;      /*!< Specifies RTC Clock Prescalers Selection. 
+  uint32_t RTCClockSelection;      /*!< Specifies RTC Clock Prescalers Selection.
                                       This parameter can be a value of @ref RCC_RTC_Clock_Source */
 
-  uint8_t TIMPresSelection;      /*!< Specifies TIM Clock Prescalers Selection. 
+  uint8_t TIMPresSelection;      /*!< Specifies TIM Clock Prescalers Selection.
                                       This parameter can be a value of @ref RCCEx_TIM_PRescaler_Selection */
 
 }RCC_PeriphCLKInitTypeDef;
@@ -106,7 +106,7 @@ typedef struct
 /**
   * @}
   */
-     
+
 /* Exported macro ------------------------------------------------------------*/
 /** @defgroup RCCEx_Exported_Macros RCC Exported Macros
   * @{
@@ -115,7 +115,7 @@ typedef struct
 /** @defgroup RCCEx_AHB1_Clock_Enable_Disable AHB1 Peripheral Clock Enable Disable
   * @brief  Enables or disables the AHB1 peripheral clock.
   * @note   After reset, the peripheral clock (used for registers read/write access)
-  *         is disabled and the application software has to enable this clock before 
+  *         is disabled and the application software has to enable this clock before
   *         using it.
   * @{
   */
@@ -164,20 +164,20 @@ typedef struct
 #define __HAL_RCC_ETHMAC_IS_CLK_ENABLED()    ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACEN))!= RESET)
 #define __HAL_RCC_ETHMACTX_IS_CLK_ENABLED()  ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACTXEN))!= RESET)
 #define __HAL_RCC_ETHMACRX_IS_CLK_ENABLED()  ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACRXEN))!= RESET)
-#define __HAL_RCC_ETHMACPTP_IS_CLK_ENABLED() ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACPTPEN))!= RESET) 
+#define __HAL_RCC_ETHMACPTP_IS_CLK_ENABLED() ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACPTPEN))!= RESET)
 #define __HAL_RCC_ETH_IS_CLK_ENABLED()        (__HAL_RCC_ETHMAC_IS_CLK_ENABLED()   && \
                                                __HAL_RCC_ETHMACTX_IS_CLK_ENABLED() && \
-	                                       __HAL_RCC_ETHMACRX_IS_CLK_ENABLED())
+                                           __HAL_RCC_ETHMACRX_IS_CLK_ENABLED())
 #define __HAL_RCC_ETHMAC_IS_CLK_DISABLED()    ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACEN))== RESET)
 #define __HAL_RCC_ETHMACTX_IS_CLK_DISABLED()  ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACTXEN))== RESET)
 #define __HAL_RCC_ETHMACRX_IS_CLK_DISABLED()  ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACRXEN))== RESET)
 #define __HAL_RCC_ETHMACPTP_IS_CLK_DISABLED() ((RCC->AHB1ENR &(RCC_AHB1ENR_ETHMACPTPEN))== RESET)
 #define __HAL_RCC_ETH_IS_CLK_DISABLED()        (__HAL_RCC_ETHMAC_IS_CLK_DISABLED()   && \
                                                 __HAL_RCC_ETHMACTX_IS_CLK_DISABLED() && \
-	                                        __HAL_RCC_ETHMACRX_IS_CLK_DISABLED())
+                                            __HAL_RCC_ETHMACRX_IS_CLK_DISABLED())
 /**
   * @}
-  */ 
+  */
 
 /**
   * @brief  Enable ETHERNET clock.
@@ -203,7 +203,7 @@ typedef struct
 /** @defgroup RCCEx_AHB2_Clock_Enable_Disable AHB2 Peripheral Clock Enable Disable
   * @brief  Enable or disable the AHB2 peripheral clock.
   * @note   After reset, the peripheral clock (used for registers read/write access)
-  *         is disabled and the application software has to enable this clock before 
+  *         is disabled and the application software has to enable this clock before
   *         using it.
   * @{
   */
@@ -262,21 +262,21 @@ typedef struct
 #endif /* defined(STM32F215xx) || defined(STM32F217xx) */
 /**
   * @}
-  */ 
-                                         
-/** @defgroup RCCEx_AHB1_Force_Release_Reset AHB1 Force Release Reset 
+  */
+
+/** @defgroup RCCEx_AHB1_Force_Release_Reset AHB1 Force Release Reset
   * @brief  Force or release AHB1 peripheral reset.
   * @{
   */
 #if defined(STM32F207xx) || defined(STM32F217xx)
 #define __HAL_RCC_ETHMAC_FORCE_RESET()   (RCC->AHB1RSTR |= (RCC_AHB1RSTR_ETHMACRST))
 #define __HAL_RCC_ETHMAC_RELEASE_RESET() (RCC->AHB1RSTR &= ~(RCC_AHB1RSTR_ETHMACRST))
-#endif /* STM32F207xx || STM32F217xx */                                        
+#endif /* STM32F207xx || STM32F217xx */
 /**
   * @}
   */
 
-/** @defgroup RCCEx_AHB2_Force_Release_Reset AHB2 Force Release Reset 
+/** @defgroup RCCEx_AHB2_Force_Release_Reset AHB2 Force Release Reset
   * @brief  Force or release AHB2 peripheral reset.
   * @{
   */
@@ -361,7 +361,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
@@ -395,7 +395,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit);
   */
 #define IS_RCC_PERIPHCLOCK(SELECTION) ((1 <= (SELECTION)) && ((SELECTION) <= 0x0000000F))
 #define IS_RCC_PLLI2SN_VALUE(VALUE) ((192 <= (VALUE)) && ((VALUE) <= 432))
-#define IS_RCC_PLLI2SR_VALUE(VALUE) ((2 <= (VALUE)) && ((VALUE) <= 7))  
+#define IS_RCC_PLLI2SR_VALUE(VALUE) ((2 <= (VALUE)) && ((VALUE) <= 7))
 /**
   * @}
   */
@@ -406,11 +406,11 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */  
+  */
 #ifdef __cplusplus
 }
 #endif

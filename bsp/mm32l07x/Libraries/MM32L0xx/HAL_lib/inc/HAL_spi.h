@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the SPI firmware 
+* @brief  This file contains all the functions prototypes for the SPI firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_SPI_H
@@ -32,14 +32,14 @@
 
 /** @addtogroup SPI
 * @{
-*/ 
+*/
 
 /** @defgroup SPI_Exported_Types
 * @{
 */
 
-/** 
-* @brief  SPI Init structure definition  
+/**
+* @brief  SPI Init structure definition
 */
 
 typedef struct
@@ -51,7 +51,7 @@ typedef struct
     uint16_t SPI_CPHA;
     uint16_t SPI_NSS;
     uint16_t SPI_BaudRatePrescaler;
-    uint16_t SPI_FirstBit; 
+    uint16_t SPI_FirstBit;
 }SPI_InitTypeDef;
 
 
@@ -73,7 +73,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_master_slave_mode 
+/** @defgroup SPI_master_slave_mode
 * @{
 */
 
@@ -85,7 +85,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_data_size 
+/** @defgroup SPI_data_size
 * @{
 */
 
@@ -99,7 +99,7 @@ typedef struct
 */
 
 
-/** @defgroup SPI_7bit_8bit data width 
+/** @defgroup SPI_7bit_8bit data width
 * @{
 */
 
@@ -137,26 +137,26 @@ typedef struct
 #define SPI_DataWidth_32b                 ((uint16_t)0x0000)
 #define IS_SPI_DATAWIDRH(WIDTH) (((WIDTH) == SPI_DataWidth_1b) || ((WIDTH) == SPI_DataWidth_2b)||\
                                 ((WIDTH) == SPI_DataWidth_3b)||((WIDTH) == SPI_DataWidth_4b)||\
-															  ((WIDTH) == SPI_DataWidth_5b)||((WIDTH) == SPI_DataWidth_6b)||\
-															  ((WIDTH) == SPI_DataWidth_7b)||((WIDTH) == SPI_DataWidth_8b)||\
-															  ((WIDTH) == SPI_DataWidth_9b)||((WIDTH) == SPI_DataWidth_10b)||\
-															  ((WIDTH) == SPI_DataWidth_11b)||((WIDTH) == SPI_DataWidth_12b)||\
-															  ((WIDTH) == SPI_DataWidth_13b)||((WIDTH) == SPI_DataWidth_14b)||\
-															  ((WIDTH) == SPI_DataWidth_15b)||((WIDTH) == SPI_DataWidth_16b)||\
-															  ((WIDTH) == SPI_DataWidth_17b)||((WIDTH) == SPI_DataWidth_18b)||\
-															  ((WIDTH) == SPI_DataWidth_19b)||((WIDTH) == SPI_DataWidth_20b)||\
-															  ((WIDTH) == SPI_DataWidth_21b)||((WIDTH) == SPI_DataWidth_22b)||\
-															  ((WIDTH) == SPI_DataWidth_23b)||((WIDTH) == SPI_DataWidth_24b)||\
-															  ((WIDTH) == SPI_DataWidth_25b)||((WIDTH) == SPI_DataWidth_26b)||\
-															  ((WIDTH) == SPI_DataWidth_27b)||((WIDTH) == SPI_DataWidth_28b)||\
-															  ((WIDTH) == SPI_DataWidth_29b)||((WIDTH) == SPI_DataWidth_30b)||\
-															  ((WIDTH) == SPI_DataWidth_31b)||((WIDTH) == SPI_DataWidth_32b)||)
+                                                              ((WIDTH) == SPI_DataWidth_5b)||((WIDTH) == SPI_DataWidth_6b)||\
+                                                              ((WIDTH) == SPI_DataWidth_7b)||((WIDTH) == SPI_DataWidth_8b)||\
+                                                              ((WIDTH) == SPI_DataWidth_9b)||((WIDTH) == SPI_DataWidth_10b)||\
+                                                              ((WIDTH) == SPI_DataWidth_11b)||((WIDTH) == SPI_DataWidth_12b)||\
+                                                              ((WIDTH) == SPI_DataWidth_13b)||((WIDTH) == SPI_DataWidth_14b)||\
+                                                              ((WIDTH) == SPI_DataWidth_15b)||((WIDTH) == SPI_DataWidth_16b)||\
+                                                              ((WIDTH) == SPI_DataWidth_17b)||((WIDTH) == SPI_DataWidth_18b)||\
+                                                              ((WIDTH) == SPI_DataWidth_19b)||((WIDTH) == SPI_DataWidth_20b)||\
+                                                              ((WIDTH) == SPI_DataWidth_21b)||((WIDTH) == SPI_DataWidth_22b)||\
+                                                              ((WIDTH) == SPI_DataWidth_23b)||((WIDTH) == SPI_DataWidth_24b)||\
+                                                              ((WIDTH) == SPI_DataWidth_25b)||((WIDTH) == SPI_DataWidth_26b)||\
+                                                              ((WIDTH) == SPI_DataWidth_27b)||((WIDTH) == SPI_DataWidth_28b)||\
+                                                              ((WIDTH) == SPI_DataWidth_29b)||((WIDTH) == SPI_DataWidth_30b)||\
+                                                              ((WIDTH) == SPI_DataWidth_31b)||((WIDTH) == SPI_DataWidth_32b)||)
 /**
 * @}
 */
 
 
-/** @defgroup SPI_Clock_Polarity 
+/** @defgroup SPI_Clock_Polarity
 * @{
 */
 
@@ -168,7 +168,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_Clock_Phase 
+/** @defgroup SPI_Clock_Phase
 * @{
 */
 
@@ -180,7 +180,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_Slave_Select_management 
+/** @defgroup SPI_Slave_Select_management
 * @{
 */
 
@@ -194,7 +194,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_NSS_internal_software_mangement 
+/** @defgroup SPI_NSS_internal_software_mangement
 * @{
 */
 
@@ -208,9 +208,9 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup SPI_BaudRate_Prescaler_ 
+/** @defgroup SPI_BaudRate_Prescaler_
 * @{
 */
 
@@ -233,9 +233,9 @@ typedef struct
                         ((PRESCALER) == SPI_BaudRatePrescaler_256))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup SPI_MSB_LSB_transmission 
+/** @defgroup SPI_MSB_LSB_transmission
 * @{
 */
 
@@ -249,11 +249,11 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_DMA_transfer_requests 
+/** @defgroup SPI_DMA_transfer_requests
 * @{
 */
 
-#define SPI_DMAReq_EN               		((uint16_t)0x0200)
+#define SPI_DMAReq_EN                       ((uint16_t)0x0200)
 #define IS_SPI_DMAREQ(DMAREQ) ((DMAREQ)  == SPI_DMAReq_EN)
 
 
@@ -261,11 +261,11 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI TX Fifo and RX Fifo trigger level 
+/** @defgroup SPI TX Fifo and RX Fifo trigger level
 * @{
 */
-#define SPI_TXTLF               		    ((uint16_t)0x0080)
-#define SPI_RXTLF               		    ((uint16_t)0x0020)
+#define SPI_TXTLF                           ((uint16_t)0x0080)
+#define SPI_RXTLF                           ((uint16_t)0x0020)
 #define IS_SPI_FIFOTRIGGER(TRIGGER) (((TRIGGER)  == SPI_TXTLF) && ((TRIGGER) == SPI_RXTLF))
 
 
@@ -278,7 +278,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_NSS_internal_software_mangement 
+/** @defgroup SPI_NSS_internal_software_mangement
 * @{
 */
 
@@ -299,14 +299,14 @@ typedef struct
 */
 
 
-/** @defgroup SPI_direction_transmit_receive 
+/** @defgroup SPI_direction_transmit_receive
 * @{
 */
 
 #define SPI_Direction_Rx                ((uint16_t)0x0010)
 #define SPI_Direction_Tx                ((uint16_t)0x0008)
-#define SPI_Disable_Tx                	((uint16_t)0xfff7)
-#define SPI_Disable_Rx                	((uint16_t)0xffef)
+#define SPI_Disable_Tx                  ((uint16_t)0xfff7)
+#define SPI_Disable_Rx                  ((uint16_t)0xffef)
 #define IS_SPI_DIRECTION(DIRECTION) (((DIRECTION) == SPI_Direction_Rx) || \
 ((DIRECTION) == SPI_Direction_Tx) || \
     ((DIRECTION) == SPI_Disable_Tx) || \
@@ -315,7 +315,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_interrupts_definition 
+/** @defgroup SPI_interrupts_definition
 * @{
 */
 #define SPI_INT_EN                    ((uint16_t)0x0002)
@@ -340,7 +340,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI_flags_definition 
+/** @defgroup SPI_flags_definition
 * @{
 */
 
@@ -355,7 +355,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SPI mode tx data transmit phase adjust set 
+/** @defgroup SPI mode tx data transmit phase adjust set
 *in slave mode according to txedge bit of CCTL register
 * @{
 */

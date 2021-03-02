@@ -65,7 +65,7 @@ __ASM uint32_t __get_PSP(void)
  * @param  uint32_t Process Stack Pointer
  * @return none
  *
- * Assign the value ProcessStackPointer to the MSP 
+ * Assign the value ProcessStackPointer to the MSP
  * (process stack pointer) Cortex processor register
  */
 __ASM void __set_PSP(uint32_t topOfProcStack)
@@ -95,7 +95,7 @@ __ASM uint32_t __get_MSP(void)
  * @param  uint32_t Main Stack Pointer
  * @return none
  *
- * Assign the value mainStackPointer to the MSP 
+ * Assign the value mainStackPointer to the MSP
  * (main stack pointer) Cortex processor register
  */
 __ASM void __set_MSP(uint32_t mainStackPointer)
@@ -168,7 +168,7 @@ __ASM void __set_PRIMASK(uint32_t priMask)
 
 /**
  * @brief  Return the Control Register value
- * 
+ *
  * @param  none
  * @return uint32_t Control value
  *
@@ -194,7 +194,7 @@ __ASM void __set_CONTROL(uint32_t control)
   bx lr
 }
 
-#endif /* __ARMCC_VERSION  */ 
+#endif /* __ARMCC_VERSION  */
 
 
 #elif (defined (__ICCARM__)) /*------------------ ICC Compiler -------------------*/
@@ -220,7 +220,7 @@ uint32_t __get_PSP(void)
  * @param  uint32_t Process Stack Pointer
  * @return none
  *
- * Assign the value ProcessStackPointer to the MSP 
+ * Assign the value ProcessStackPointer to the MSP
  * (process stack pointer) Cortex processor register
  */
 void __set_PSP(uint32_t topOfProcStack)
@@ -250,7 +250,7 @@ uint32_t __get_MSP(void)
  * @param  uint32_t Main Stack Pointer
  * @return none
  *
- * Assign the value mainStackPointer to the MSP 
+ * Assign the value mainStackPointer to the MSP
  * (main stack pointer) Cortex processor register
  */
 void __set_MSP(uint32_t topOfMainStack)
@@ -303,7 +303,7 @@ uint32_t __get_PSP(void)
  * @param  uint32_t Process Stack Pointer
  * @return none
  *
- * Assign the value ProcessStackPointer to the MSP 
+ * Assign the value ProcessStackPointer to the MSP
  * (process stack pointer) Cortex processor register
  */
 void __set_PSP(uint32_t topOfProcStack)
@@ -334,7 +334,7 @@ uint32_t __get_MSP(void)
  * @param  uint32_t Main Stack Pointer
  * @return none
  *
- * Assign the value mainStackPointer to the MSP 
+ * Assign the value mainStackPointer to the MSP
  * (main stack pointer) Cortex processor register
  */
 void __set_MSP(uint32_t topOfMainStack)
@@ -385,7 +385,7 @@ void __set_PRIMASK(uint32_t priMask)
 uint32_t __REV(uint32_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("rev %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -401,7 +401,7 @@ uint32_t __REV(uint32_t value)
 uint32_t __REV16(uint16_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("rev16 %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -417,7 +417,7 @@ uint32_t __REV16(uint16_t value)
 int32_t __REVSH(int16_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("revsh %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -425,7 +425,7 @@ int32_t __REVSH(int16_t value)
 
 /**
  * @brief  Return the Control Register value
- * 
+ *
  * @param  none
  * @return uint32_t Control value
  *

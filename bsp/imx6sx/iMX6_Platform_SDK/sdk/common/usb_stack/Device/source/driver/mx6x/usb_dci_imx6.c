@@ -25,8 +25,8 @@ static void usb_phy_init(uint_8 controller_ID);
 static usb_status_t usb_set_device_mode(uint_8 controller_ID);
 static void usbd_ep_qh_init(uint_8 controller_ID,
                             unsigned char endpt_number, unsigned char direction,
-		unsigned int max_pkt_len,
-		unsigned int zlt, unsigned char mult);
+        unsigned int max_pkt_len,
+        unsigned int zlt, unsigned char mult);
 static void usbd_ep_setup(uint_8 controller_ID, unsigned char endpt_number, unsigned char direction, unsigned char ep_type);
 static void usbd_setup_qhead(struct dqh_t *qhead);
 static void usbd_ep0_init(uint_8 controller_ID);
@@ -72,7 +72,7 @@ static inline unsigned int readl(volatile unsigned int * addr);
 #if PRINT_USB_ERRORS
 #define printf_error(fmt, ...) printf(fmt, ##__VA_ARGS__)
 #else
-    #define printf_error(fmt, ...) 
+    #define printf_error(fmt, ...)
 #endif
 
 #define MAX_DTDS_PER_EP     5
@@ -88,21 +88,21 @@ static inline unsigned int readl(volatile unsigned int * addr);
 #define NO_ERRORS                       (0)   /* Init value for error */
 
 /* control endpoint transfer types */
-#define USB_TRF_UNKNOWN      			(0xFF)
+#define USB_TRF_UNKNOWN                 (0xFF)
 
-#if CHIP_MX6DQ || CHIP_MX6SDL    
+#if CHIP_MX6DQ || CHIP_MX6SDL
 #define BM_USBC_(x) BM_USBC_UOG_##x
 #elif CHIP_MX6SL
 #define BM_USBC_(x) BM_USBC_UOG1_##x
 #endif
 
-#if CHIP_MX6DQ || CHIP_MX6SDL    
+#if CHIP_MX6DQ || CHIP_MX6SDL
 #define BP_USBC_(x) BP_USBC_UOG_##x
 #elif CHIP_MX6SL
 #define BP_USBC_(x) BP_USBC_UOG1_##x
 #endif
 
-#if CHIP_MX6DQ || CHIP_MX6SDL    
+#if CHIP_MX6DQ || CHIP_MX6SDL
 #define BF_USBC_(x, v) BF_USBC_UOG_##x(v)
 #elif CHIP_MX6SL
 #define BF_USBC_(x, v) BF_USBC_UOG1_##x(v)
@@ -169,14 +169,14 @@ uint_8 USB_DCI_Init(
 )
 {
     usb_status_t status;
-    
+
     g_usbd_qh_bufs[controller_ID] = (unsigned char *)(QH_BUFFER + TOTAL_QHD_SIZE * controller_ID);
     g_usbd_td_bufs[controller_ID] = (unsigned char *)(TD_BUFFER + TOTAL_QTD_SIZE * controller_ID);
-    
+
     // Clear qh and td bufs.
     memset(g_usbd_qh_bufs[controller_ID], 0, TOTAL_QHD_SIZE);
     memset(g_usbd_td_bufs[controller_ID], 0, TOTAL_QTD_SIZE);
-    
+
 //     unsigned char *qh_buf = controller_ID ? g_usbd1_qh_buf : g_usbd0_qh_buf;
     unsigned char *qh_buf = g_usbd_qh_bufs[controller_ID];
 
@@ -192,7 +192,7 @@ uint_8 USB_DCI_Init(
         return status;
     }
 
-	usbd_ep0_init(controller_ID);
+    usbd_ep0_init(controller_ID);
 
     status = usbd_usb_run(controller_ID);
 
@@ -248,34 +248,34 @@ uint_8 USB_DCI_Init_EndPoint(
     bool_8               flag          /* [IN] Zero Termination */
 )
 {
-	printf_info("%s, ep_num is %d, dir is %d, type is %d\n", __func__, ep_ptr->ep_num, ep_ptr->direction, ep_ptr->type);
+    printf_info("%s, ep_num is %d, dir is %d, type is %d\n", __func__, ep_ptr->ep_num, ep_ptr->direction, ep_ptr->type);
 
-	unsigned char mult;
+    unsigned char mult;
 
-	// Initialize endpoint 0
+    // Initialize endpoint 0
     if (ep_ptr->ep_num == 0)
     {
         usbd_ep0_init(controller_ID);
         return USB_OK;
     }
-	
-	switch (ep_ptr->type & 0x3) {
-		case EP_TRANSFER_TYPE_CONTROL:
-		case EP_TRANSFER_TYPE_BULK:
-		case EP_TRANSFER_TYPE_INTERRUPT:
-			mult = 0;
-            break;
-		case EP_TRANSFER_TYPE_ISOCHRONOUS:
-			/* Calculate the ISO transfer High-Bandwidth Pipe Multiplier
-			  * The ISO endpoints, must set Mult 1, 2, 3.
-			 */
-			mult = (unsigned char)(1 + (((ep_ptr->size) >> 11) & 0x03));
-	}
 
-	usbd_ep_qh_init(controller_ID, ep_ptr->ep_num, ep_ptr->direction, ep_ptr->size, flag, mult);
-		
-	usbd_ep_setup(controller_ID, ep_ptr->ep_num, ep_ptr->direction, ep_ptr->type);
-	
+    switch (ep_ptr->type & 0x3) {
+        case EP_TRANSFER_TYPE_CONTROL:
+        case EP_TRANSFER_TYPE_BULK:
+        case EP_TRANSFER_TYPE_INTERRUPT:
+            mult = 0;
+            break;
+        case EP_TRANSFER_TYPE_ISOCHRONOUS:
+            /* Calculate the ISO transfer High-Bandwidth Pipe Multiplier
+              * The ISO endpoints, must set Mult 1, 2, 3.
+             */
+            mult = (unsigned char)(1 + (((ep_ptr->size) >> 11) & 0x03));
+    }
+
+    usbd_ep_qh_init(controller_ID, ep_ptr->ep_num, ep_ptr->direction, ep_ptr->size, flag, mult);
+
+    usbd_ep_setup(controller_ID, ep_ptr->ep_num, ep_ptr->direction, ep_ptr->type);
+
     return USB_OK;
 }
 
@@ -301,7 +301,7 @@ uint_8 USB_DCI_Cancel_Transfer (
     uint_8    direction        /* [IN] Endpoint direction */
 )
 {
-	printf_info("%s\n", __func__);
+    printf_info("%s\n", __func__);
     return USBERR_NOT_SUPPORTED;
 }
 
@@ -330,7 +330,7 @@ uint_8 USB_DCI_Deinit_EndPoint (
     uint_8    direction        /* [IN] Endpoint direction */
 )
 {
-	printf_info("%s\n", __func__);
+    printf_info("%s\n", __func__);
     return USB_OK;
 }
 
@@ -357,23 +357,23 @@ void USB_DCI_Stall_EndPoint (
 )
 {
     uint_8 controller_ID = *(uint_8 *)handle;
-	printf_info("%s, ep_num is %d, dir is %d\n", __func__, ep_num, direction);
-	
-	// check if it is control endpoint
-	if(ep_num == 0){
-		// stall both directions
-#if CHIP_MX6DQ || CHIP_MX6SDL
-		HW_USBC_UOG_ENDPTCTRL0_SET(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
-#elif CHIP_MX6SL
-		HW_USBC_UOG1_ENDPTCTRL0_SET(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
-#endif
-		
-	}else{
-		
-// 		USBHS_EPCR(endpoint_number-1) |= direction?USBHS_EPCR0_TXS_MASK:USBHS_EPCR0_RXS_MASK;
+    printf_info("%s, ep_num is %d, dir is %d\n", __func__, ep_num, direction);
 
-		writel(readl(&usbotg[controller_ID]->endptctrl[ep_num]) | (direction?BM_USBC_(ENDPTCTRL0_TXS):BM_USBC_(ENDPTCTRL0_RXS)), &usbotg[controller_ID]->endptctrl[ep_num]);
-	}
+    // check if it is control endpoint
+    if(ep_num == 0){
+        // stall both directions
+#if CHIP_MX6DQ || CHIP_MX6SDL
+        HW_USBC_UOG_ENDPTCTRL0_SET(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
+#elif CHIP_MX6SL
+        HW_USBC_UOG1_ENDPTCTRL0_SET(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
+#endif
+
+    }else{
+
+//      USBHS_EPCR(endpoint_number-1) |= direction?USBHS_EPCR0_TXS_MASK:USBHS_EPCR0_RXS_MASK;
+
+        writel(readl(&usbotg[controller_ID]->endptctrl[ep_num]) | (direction?BM_USBC_(ENDPTCTRL0_TXS):BM_USBC_(ENDPTCTRL0_RXS)), &usbotg[controller_ID]->endptctrl[ep_num]);
+    }
 }
 
 /**************************************************************************//*!
@@ -400,21 +400,21 @@ void USB_DCI_Unstall_EndPoint (
 )
 {
     uint_8 controller_ID = *(uint_8 *)handle;
-	printf_info("%s\n", __func__);
-	// todo:
-	// This function unstalls the endpoint by clearing Endpoint Control Register
-	// and QH
-	if(ep_num == 0){
-			// unstall both directions
+    printf_info("%s\n", __func__);
+    // todo:
+    // This function unstalls the endpoint by clearing Endpoint Control Register
+    // and QH
+    if(ep_num == 0){
+            // unstall both directions
 #if CHIP_MX6DQ || CHIP_MX6SDL
-			HW_USBC_UOG_ENDPTCTRL0_CLR(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
+            HW_USBC_UOG_ENDPTCTRL0_CLR(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
 #elif CHIP_MX6SL
-			HW_USBC_UOG1_ENDPTCTRL0_CLR(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
+            HW_USBC_UOG1_ENDPTCTRL0_CLR(BM_USBC_(ENDPTCTRL0_TXS)|BM_USBC_(ENDPTCTRL0_RXS));
 #endif
-		}else{
-// 			USBHS_EPCR(endpoint_number-1) &= ~(direction?USBHS_EPCR_TXS_MASK:USBHS_EPCR_RXS_MASK);
+        }else{
+//          USBHS_EPCR(endpoint_number-1) &= ~(direction?USBHS_EPCR_TXS_MASK:USBHS_EPCR_RXS_MASK);
             writel(readl(&usbotg[controller_ID]->endptctrl[ep_num]) &  ~(direction?BM_USBC_(ENDPTCTRL0_TXS):BM_USBC_(ENDPTCTRL0_RXS)), &usbotg[controller_ID]->endptctrl[ep_num]);
-		}
+        }
 }
 
 /**************************************************************************//*!
@@ -439,7 +439,7 @@ void USB_DCI_Get_Setup_Data (
     uint_8_ptr  buff_ptr        /* [IN] Application buffer pointer */
 )
 {
-	printf_info("%s\n", __func__);
+    printf_info("%s\n", __func__);
 }
 
 /**************************************************************************//*!
@@ -471,7 +471,7 @@ uint_8 USB_DCI_Get_Transfer_Status (
     uint_8    direction        /* [IN] Endpoint direction */
 )
 {
-	printf_info("%s, ep_num is %d\n", __func__, ep_num);
+    printf_info("%s, ep_num is %d\n", __func__, ep_num);
     return USB_OK;
 }
 
@@ -499,7 +499,7 @@ uint_8 USB_DCI_Recv_Data (
     uint_8          ep_num,         /* [IN] Endpoint number */
     uchar_ptr       buff_ptr,       /* [OUT] Application buffer pointer */
 //     USB_PACKET_SIZE size            /* [IN] Size of the buffer */
-		uint_32                 size
+        uint_32                 size
 )
 {
     uint_8 controller_ID = *(uint_8 *)handle;
@@ -507,10 +507,10 @@ uint_8 USB_DCI_Recv_Data (
 //    printf_info("%s, ep_num is %d\n", __func__, ep_num);
 
     if (ep_num != 0) {
-    	status = usbd_receive_data_epxout(controller_ID, (unsigned int)buff_ptr, ep_num, size);
-	}
+        status = usbd_receive_data_epxout(controller_ID, (unsigned int)buff_ptr, ep_num, size);
+    }
     else
-    	status = usbd_receive_data_ep0out(controller_ID, (unsigned int)buff_ptr, size);
+        status = usbd_receive_data_ep0out(controller_ID, (unsigned int)buff_ptr, size);
 
     if (status != USB_SUCCESS)
     {
@@ -546,21 +546,21 @@ uint_8 USB_DCI_Send_Data (
     uint_8          ep_num,         /* [IN] Endpoint number */
     uchar_ptr       buff_ptr,       /* [IN] Application buffer pointer */
 //     USB_PACKET_SIZE size            /* [IN] Size of the buffer */
-		uint_32                 size
+        uint_32                 size
 )
 {
     usb_status_t status;
     uint_8 controller_ID = *(uint_8 *)handle;
  //   printf_info("%s, ep_num is %d\n", __func__, ep_num);
 
-	if (ep_num != 0) {
-    	status = usbd_send_data_epxin(controller_ID, (unsigned int)buff_ptr, ep_num, size);
-	}
+    if (ep_num != 0) {
+        status = usbd_send_data_epxin(controller_ID, (unsigned int)buff_ptr, ep_num, size);
+    }
 
     /* Send descriptor - Data Phase */
     //zlt is false=>not zero length packet, send dev descriptor to host.
     else
-    	status = usbd_send_data_ep0in(controller_ID, (unsigned int)buff_ptr, size, 0);
+        status = usbd_send_data_ep0in(controller_ID, (unsigned int)buff_ptr, size, 0);
 
     if (status != USB_SUCCESS)
         return USBERR_TX_FAILED;
@@ -618,7 +618,7 @@ void USB_DCI_Shutdown (
     _usb_device_handle    handle    /* [IN] USB Device handle */
 )
 {
-	printf_info("%s\n", __func__);
+    printf_info("%s\n", __func__);
 }
 
 /**************************************************************************//*!
@@ -641,7 +641,7 @@ void USB_DCI_Assert_Resume (
     _usb_device_handle    handle    /* [IN] USB Device handle */
 )
 {
-	printf_info("%s\n", __func__);
+    printf_info("%s\n", __func__);
 }
 
 /**************************************************************************//*!
@@ -681,7 +681,7 @@ static inline unsigned int readl(volatile unsigned int * addr)
 // Write register
 static inline void writel(unsigned int val, volatile unsigned int *addr)
 {
-//	readl(addr);
+//  readl(addr);
 //     __SWP((unsigned long)val, (unsigned long *)addr);
     *addr = val;
 }
@@ -689,7 +689,7 @@ static inline void writel(unsigned int val, volatile unsigned int *addr)
 //Let the controller run
 static usb_status_t usbd_usb_run(uint_8 controller_ID)
 {
-	unsigned reg, int_enable;
+    unsigned reg, int_enable;
 
     printf_info("%s %d\n", __FUNCTION__, controller_ID);
     if(controller_ID == 0){
@@ -756,7 +756,7 @@ static usb_status_t usbd_mx6_dev_init(uint_8 controller_ID)
 static void usb_clk_init(uint_8 controller_ID)
 {
 //     *(unsigned int *)DIGCTRL_CTRL_CLR |= (0x1 << 2);
-// 
+//
 //     if (controller_ID == 0) {
 //         *(unsigned int *)HW_CLKCTRL_PLL0CTRL0_SET |= (0x1 << 18);
 //         *(unsigned int *)HW_CLKCTRL_PLL0CTRL0_SET |= (0x1 << 17);
@@ -764,15 +764,15 @@ static void usb_clk_init(uint_8 controller_ID)
 //         *(unsigned int *)HW_CLKCTRL_PLL1CTRL0_SET |= (0x1 << 18);
 //         *(unsigned int *)HW_CLKCTRL_PLL1CTRL0_SET |= (0x1 << 17);
 //     }
-// 		        		
+//
 //     *(unsigned int *)HW_POWER_5VCTRL_SET |= (0x1 << 1);
-    
+
 //     usb_module_t usbModule = {
 //             .moduleName = "OTG",
 //             .controllerID = OTG,
 //             .phyType = Utmi
 //         };
-// 
+//
 //     usbEnableClocks(&usbModule);
 //     usbEnableTransceiver(&usbModule);
 
@@ -788,11 +788,11 @@ static void usb_clk_init(uint_8 controller_ID)
      * Host1 controller uses USB_PLL1
      */
 
-    HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_POWER);	//! - Turn PLL power on.
+    HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_POWER);   //! - Turn PLL power on.
     HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_EN_USB_CLKS); //!Powers the 9-phase PLL outputs for USBPHY0
     while(!(HW_CCM_ANALOG_PLL_USB1_RD() & BM_CCM_ANALOG_PLL_USB1_LOCK));//! - Wait for PLL to lock
-    HW_CCM_ANALOG_PLL_USB1_CLR(BM_CCM_ANALOG_PLL_USB1_BYPASS);	//! - Clear bypass
-    HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_ENABLE); 	//! - Enable PLL clock output for the PHY
+    HW_CCM_ANALOG_PLL_USB1_CLR(BM_CCM_ANALOG_PLL_USB1_BYPASS);  //! - Clear bypass
+    HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_ENABLE);  //! - Enable PLL clock output for the PHY
 }
 
 /*!
@@ -802,7 +802,7 @@ static void usb_phy_init(uint_8 controller_ID)
 {
 //     HW_USBPHY_CTRL(controller_ID).B.SFTRST = 0;
 //     HW_USBPHY_CTRL(controller_ID).B.CLKGATE = 0;
-// 
+//
 //     HW_USBPHY_PWD(controller_ID).B.TXPWDFS = 0;
 //     HW_USBPHY_PWD(controller_ID).B.TXPWDIBIAS = 0;
 //     HW_USBPHY_PWD(controller_ID).B.TXPWDV2I = 0;
@@ -810,17 +810,17 @@ static void usb_phy_init(uint_8 controller_ID)
 //     HW_USBPHY_PWD(controller_ID).B.RXPWD1PT1 = 0;
 //     HW_USBPHY_PWD(controller_ID).B.RXPWDDIFF = 0;
 //     HW_USBPHY_PWD(controller_ID).B.RXPWDRX = 0;
-// 
+//
 //     HW_USBPHY_CTRL(controller_ID).B.ENUTMILEVEL2 = 1;   //enable low speed
 //     HW_USBPHY_CTRL(controller_ID).B.ENUTMILEVEL3 = 1;   //enable low speed on full speed
 //     HW_USBPHY_CTRL(controller_ID).B.FSDLL_RST_EN = 1;   //enable added logic for full speed dll reset
 
 
     //! NOTE !! CLKGATE must be cleared before clearing power down
-    HW_USBPHY_CTRL_CLR(HW_USBPHY1, BM_USBPHY_CTRL_SFTRST);	//! - clear SFTRST
-    HW_USBPHY_CTRL_CLR(HW_USBPHY1, BM_USBPHY_CTRL_CLKGATE);	//! - clear CLKGATE
-    HW_USBPHY_PWD_WR(HW_USBPHY1, 0);	//! - clear all power down bits
-    HW_USBPHY_CTRL_SET(HW_USBPHY1, BM_USBPHY_CTRL_ENUTMILEVEL2 | BM_USBPHY_CTRL_ENUTMILEVEL3 | BM_USBPHY_CTRL_ENHOSTDISCONDETECT);    
+    HW_USBPHY_CTRL_CLR(HW_USBPHY1, BM_USBPHY_CTRL_SFTRST);  //! - clear SFTRST
+    HW_USBPHY_CTRL_CLR(HW_USBPHY1, BM_USBPHY_CTRL_CLKGATE); //! - clear CLKGATE
+    HW_USBPHY_PWD_WR(HW_USBPHY1, 0);    //! - clear all power down bits
+    HW_USBPHY_CTRL_SET(HW_USBPHY1, BM_USBPHY_CTRL_ENUTMILEVEL2 | BM_USBPHY_CTRL_ENUTMILEVEL3 | BM_USBPHY_CTRL_ENHOSTDISCONDETECT);
 
     //! disable the charger detector. This must be off during normal operation
     {
@@ -874,9 +874,9 @@ static usb_status_t usb_set_device_mode(uint_8 controller_ID)
         return USBERR_INIT_FAILED;               //timeout
 
 #if FORCE_FULLSPEED
-	reg = readl(&usbotg[controller_ID]->portsc1);
+    reg = readl(&usbotg[controller_ID]->portsc1);
     reg |= BM_USBC_(PORTSC1_PFSC);
-	writel(reg, &usbotg[controller_ID]->portsc1); /* force full speed */
+    writel(reg, &usbotg[controller_ID]->portsc1); /* force full speed */
 #endif
 
     // Configure ENDPOINTLISTADDR Pointer
@@ -900,38 +900,38 @@ static usb_status_t usb_set_device_mode(uint_8 controller_ID)
 
 static void usbd_ep_setup(uint_8 controller_ID, unsigned char endpt_number, unsigned char direction, unsigned char ep_type)
 {
-	unsigned int temp = 0;
+    unsigned int temp = 0;
 
-//	temp = readl(usbotg->endptctrl[endpt_number]);
-//	printf("endpctrl is ep[%d]=0x%x, tempj is 0x%x\n", endpt_number, readl(&usbotg->endptctrl[endpt_number]), temp);
-	
-	if (direction) {
-		if (endpt_number)
-			temp |= BM_USBC_(ENDPTCTRL1_TXR);
-		temp |= BM_USBC_(ENDPTCTRL1_TXE);
-		temp |= ((unsigned int)(ep_type)
-				<< BP_USBC_(ENDPTCTRL1_TXT));
-	} else {
-		if (endpt_number)
-			temp |= BM_USBC_(ENDPTCTRL1_RXR);
-		temp |= BM_USBC_(ENDPTCTRL1_RXE);
-		temp |= ((unsigned int)(ep_type)
-				<< BP_USBC_(ENDPTCTRL1_RXT));
-	}
-	
-	writel(temp, &usbotg[controller_ID]->endptctrl[endpt_number]);
-	printf_info("endpctrl is ep[%d]=0x%x, temp is 0x%x\n", endpt_number, readl(&usbotg[controller_ID]->endptctrl[endpt_number]), temp);
+//  temp = readl(usbotg->endptctrl[endpt_number]);
+//  printf("endpctrl is ep[%d]=0x%x, tempj is 0x%x\n", endpt_number, readl(&usbotg->endptctrl[endpt_number]), temp);
+
+    if (direction) {
+        if (endpt_number)
+            temp |= BM_USBC_(ENDPTCTRL1_TXR);
+        temp |= BM_USBC_(ENDPTCTRL1_TXE);
+        temp |= ((unsigned int)(ep_type)
+                << BP_USBC_(ENDPTCTRL1_TXT));
+    } else {
+        if (endpt_number)
+            temp |= BM_USBC_(ENDPTCTRL1_RXR);
+        temp |= BM_USBC_(ENDPTCTRL1_RXE);
+        temp |= ((unsigned int)(ep_type)
+                << BP_USBC_(ENDPTCTRL1_RXT));
+    }
+
+    writel(temp, &usbotg[controller_ID]->endptctrl[endpt_number]);
+    printf_info("endpctrl is ep[%d]=0x%x, temp is 0x%x\n", endpt_number, readl(&usbotg[controller_ID]->endptctrl[endpt_number]), temp);
 }
 
 static void usbd_ep0_init(uint_8 controller_ID)
 {
-	usbd_ep_qh_init(controller_ID, EP0, IN, 64, 0, 0);
-	usbd_ep_qh_init(controller_ID, EP0, OUT, 64, 0, 0);
-		
-	usbd_ep_setup(controller_ID, 0, USB_RECV, EP_TRANSFER_TYPE_CONTROL);
-	usbd_ep_setup(controller_ID, 0, USB_SEND, EP_TRANSFER_TYPE_CONTROL);
-	
-	return;
+    usbd_ep_qh_init(controller_ID, EP0, IN, 64, 0, 0);
+    usbd_ep_qh_init(controller_ID, EP0, OUT, 64, 0, 0);
+
+    usbd_ep_setup(controller_ID, 0, USB_RECV, EP_TRANSFER_TYPE_CONTROL);
+    usbd_ep_setup(controller_ID, 0, USB_SEND, EP_TRANSFER_TYPE_CONTROL);
+
+    return;
 }
 
 /*!
@@ -939,8 +939,8 @@ static void usbd_ep0_init(uint_8 controller_ID)
  */
 static void usbd_ep_qh_init(uint_8 controller_ID,
                             unsigned char endpt_number, unsigned char direction,
-		unsigned int max_pkt_len,
-		unsigned int zlt, unsigned char mult)
+        unsigned int max_pkt_len,
+        unsigned int zlt, unsigned char mult)
 {
     struct dqh_t qhead;
     unsigned int total_bytes;
@@ -956,7 +956,7 @@ static void usbd_ep_qh_init(uint_8 controller_ID,
     qhead.total_bytes = total_bytes;
     qhead.ioc = IOC_SET;
     qhead.status = NO_STATUS;
-	qhead.mult = mult;
+    qhead.mult = mult;
     qhead.buffer_ptr0 = 0;
     qhead.current_offset = 0;
     qhead.buffer_ptr1 = 0;
@@ -966,7 +966,7 @@ static void usbd_ep_qh_init(uint_8 controller_ID,
 
     /* Set Device Queue Head */
     usbd_setup_qhead(&qhead);
-    
+
     // Initialize the TD queue info
     int td_index = (endpt_number * 2) + direction;
     g_usbd_queue_info[controller_ID][td_index].enq_idx = 0;
@@ -1135,7 +1135,7 @@ static unsigned int usbd_get_dtd(uint_8 controller_ID, unsigned char endpt_numbe
     int td_index = (endpt_number * 2) + direction;
     uint_8 *enq_idx = &g_usbd_queue_info[controller_ID][td_index].enq_idx;
     unsigned int phys_td;
-    
+
     // Check if we are out of free TDs
     if (g_usbd_td_flag[controller_ID][td_index][*enq_idx].status == DTD_BUSY)
     {
@@ -1144,7 +1144,7 @@ static unsigned int usbd_get_dtd(uint_8 controller_ID, unsigned char endpt_numbe
     }
 
     //printf("id%d ep%d direction%d alloc = %d\n", controller_ID, endpt_number, direction, *enq_idx);
-    
+
     // We have found an available TD. Mark it as busy
     g_usbd_td_flag[controller_ID][td_index][*enq_idx].status = DTD_BUSY;
     g_usbd_td_flag[controller_ID][td_index][*enq_idx].phys_td = (volatile struct dtd_setup_t *)
@@ -1153,7 +1153,7 @@ static unsigned int usbd_get_dtd(uint_8 controller_ID, unsigned char endpt_numbe
         (*enq_idx) * (SIZE_OF_DTD0));
     g_usbd_td_flag[controller_ID][td_index][*enq_idx].total_bytes = sz;
     phys_td = (unsigned int)g_usbd_td_flag[controller_ID][td_index][*enq_idx].phys_td;
-    
+
     // Increment the enqueue TD index with wrapping
     if (++(*enq_idx) >= MAX_DTDS_PER_EP)
     {
@@ -1190,7 +1190,7 @@ static void usb0_isr(void)// *data)
     intr_stat = readl(&usbotg[0]->usbsts);
     // Only process the interrupts that are enabled
     intr_stat &= readl(&usbotg[0]->usbintr);
-    
+
 //     printf("usb0_isr %x\n", intr_stat);
 
     /* initialize event structure */
@@ -1203,35 +1203,35 @@ static void usb0_isr(void)// *data)
     event.ep_num = (uint_8)UNINITIALISED_VAL;
 
     // Handle SOF interrupt
-	if (intr_stat & BM_USBC_(USBSTS_SRI))
-	{
+    if (intr_stat & BM_USBC_(USBSTS_SRI))
+    {
         /* Clear Interrupt */
         writel(BM_USBC_(USBSTS_SRI), &usbotg[0]->usbsts);
 #if FORCE_FULLSPEED
-		sof_counter[0]++;
+        sof_counter[0]++;
 #else
-		if (++temp_sof0_counter == 8)
-		{
-			sof_counter[0]++;
-			temp_sof0_counter = 0;
-		}
+        if (++temp_sof0_counter == 8)
+        {
+            sof_counter[0]++;
+            temp_sof0_counter = 0;
+        }
 #endif
     }
 
     // Handle suspend
     if (intr_stat & BM_USBC_(USBSTS_SLI))
-	{
-		printf_info("received suspend irq on device 0\n");
-		writel(BM_USBC_(USBSTS_SLI), &usbotg[0]->usbsts);
-		return;
-	}
+    {
+        printf_info("received suspend irq on device 0\n");
+        writel(BM_USBC_(USBSTS_SLI), &usbotg[0]->usbsts);
+        return;
+    }
 
     // Handle bus reset
     if (intr_stat & BM_USBC_(USBSTS_URI))
     {
-		printf_info("received bus reset irq on device 0\n");
+        printf_info("received bus reset irq on device 0\n");
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_URI), &usbotg[0]->usbsts);
+        writel(BM_USBC_(USBSTS_URI), &usbotg[0]->usbsts);
 
         /* Handle RESET Interrupt */
         USB_Bus_Reset_Handler(0);
@@ -1247,7 +1247,7 @@ static void usb0_isr(void)// *data)
     if (intr_stat & BM_USBC_(USBSTS_UI))
     {
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_UI), &usbotg[0]->usbsts);
+        writel(BM_USBC_(USBSTS_UI), &usbotg[0]->usbsts);
 
         // todo This does happen, what else triggers this interrupt?
 //        if (!(readl(&usbotg->endptsetupstat) && !(readl(&usbotg->endptcomplete))))
@@ -1260,29 +1260,29 @@ static void usb0_isr(void)// *data)
         // trigger stack to re-prime endpoints.
         if (readl(&usbotg[0]->endptcomplete))
         {
-			usbd_ep_complete_handler(&event);
+            usbd_ep_complete_handler(&event);
         }
         // Handle setup compete packet interrupt
-		if (readl(&usbotg[0]->endptsetupstat) & BF_USBC_(ENDPTSETUPSTAT_ENDPTSETUPSTAT, 1))
+        if (readl(&usbotg[0]->endptsetupstat) & BF_USBC_(ENDPTSETUPSTAT_ENDPTSETUPSTAT, 1))
         {
-        	usbd_setup_packet_handler(&event);
+            usbd_setup_packet_handler(&event);
         }
     }
 
     // Handle port change interrupt
     if (intr_stat & BM_USBC_(USBSTS_PCI))
     {
-		printf_info("received port change irq on device 0\n");
+        printf_info("received port change irq on device 0\n");
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_PCI), &usbotg[0]->usbsts);
+        writel(BM_USBC_(USBSTS_PCI), &usbotg[0]->usbsts);
     }
 
     // Handle USB error
     if (intr_stat & BM_USBC_(USBSTS_UEI))
     {
-		printf_info("received usb error irq on device 0\n");
+        printf_info("received usb error irq on device 0\n");
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_UEI), &usbotg[0]->usbsts);
+        writel(BM_USBC_(USBSTS_UEI), &usbotg[0]->usbsts);
 
         event.errors = (uint_8)BM_USBC_(USBSTS_UEI);
 
@@ -1293,9 +1293,9 @@ static void usb0_isr(void)// *data)
     // Handle System error (this bit will always 0 on mx28 controller)
     if (intr_stat & BM_USBC_(USBSTS_SEI))
     {
-		printf_info("received usb system error irq on device 0\n");
+        printf_info("received usb system error irq on device 0\n");
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_SEI), &usbotg[0]->usbsts);
+        writel(BM_USBC_(USBSTS_SEI), &usbotg[0]->usbsts);
 
         event.errors = (uint_8)BM_USBC_(USBSTS_SEI);
 
@@ -1343,34 +1343,34 @@ static void usb1_isr(void *data)
     event.ep_num = (uint_8)UNINITIALISED_VAL;
 
     // Handle SOF interrupt
-	if (intr_stat & BM_USBC_(USBSTS_SRI))
-	{
+    if (intr_stat & BM_USBC_(USBSTS_SRI))
+    {
         /* Clear Interrupt */
         writel(BM_USBC_(USBSTS_SRI), &usbotg[1]->usbsts);
 #if FORCE_FULLSPEED
-		sof_counter[1]++;
+        sof_counter[1]++;
 #else
-		if (++temp_sof1_counter == 8)
-		{
-			sof_counter[1]++;
-			temp_sof1_counter = 0;
-		}
+        if (++temp_sof1_counter == 8)
+        {
+            sof_counter[1]++;
+            temp_sof1_counter = 0;
+        }
 #endif
     }
-	
+
     // Handle suspend
     if (intr_stat & BM_USBC_(USBSTS_SLI))
-	{
-		printf_info("receive suspend irq on device 1\n");
-		writel(BM_USBC_(USBSTS_SLI), &usbotg[1]->usbsts);
-		return;
-	}
+    {
+        printf_info("receive suspend irq on device 1\n");
+        writel(BM_USBC_(USBSTS_SLI), &usbotg[1]->usbsts);
+        return;
+    }
 
     // Handle bus reset
     if (intr_stat & BM_USBC_(USBSTS_URI))
     {
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_URI), &usbotg[1]->usbsts);
+        writel(BM_USBC_(USBSTS_URI), &usbotg[1]->usbsts);
 
         /* Handle RESET Interrupt */
         USB_Bus_Reset_Handler(1);
@@ -1386,7 +1386,7 @@ static void usb1_isr(void *data)
     if (intr_stat & BM_USBC_(USBSTS_UI))
     {
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_UI), &usbotg[1]->usbsts);
+        writel(BM_USBC_(USBSTS_UI), &usbotg[1]->usbsts);
 
         // todo This does happen, what else triggers this interrupt?
 //        if (!(readl(&usbotg[1]->endptsetupstat) && !(readl(&usbotg[1]->endptcomplete))))
@@ -1399,12 +1399,12 @@ static void usb1_isr(void *data)
         // trigger stack to re-prime endpoints.
         if (readl(&usbotg[1]->endptcomplete))
         {
-			usbd_ep_complete_handler(&event);
+            usbd_ep_complete_handler(&event);
         }
         // Handle setup compete packet interrupt
-		if (readl(&usbotg[1]->endptsetupstat) & BF_USBC_(ENDPTSETUPSTAT_ENDPTSETUPSTAT, 1))
+        if (readl(&usbotg[1]->endptsetupstat) & BF_USBC_(ENDPTSETUPSTAT_ENDPTSETUPSTAT, 1))
         {
-        	usbd_setup_packet_handler(&event);
+            usbd_setup_packet_handler(&event);
         }
     }
 
@@ -1412,14 +1412,14 @@ static void usb1_isr(void *data)
     if (intr_stat & BM_USBC_(USBSTS_PCI))
     {
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_PCI), &usbotg[1]->usbsts);
+        writel(BM_USBC_(USBSTS_PCI), &usbotg[1]->usbsts);
     }
 
     // Handle USB error
     if (intr_stat & BM_USBC_(USBSTS_UEI))
     {
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_UEI), &usbotg[1]->usbsts);
+        writel(BM_USBC_(USBSTS_UEI), &usbotg[1]->usbsts);
 
         //todo how to get error num
         //event.errors = (uint_8)(USB0_ERRSTAT & USB0_ERREN);
@@ -1432,7 +1432,7 @@ static void usb1_isr(void *data)
     if (intr_stat & BM_USBC_(USBSTS_SEI))
     {
         /* Clear Interrupt */
-		writel(BM_USBC_(USBSTS_SEI), &usbotg[1]->usbsts);
+        writel(BM_USBC_(USBSTS_SEI), &usbotg[1]->usbsts);
 
         //todo how to get error num
         //event.errors = (uint_8)(USB0_ERRSTAT & USB0_ERREN);
@@ -1464,8 +1464,8 @@ static void USB_Bus_Reset_Handler(uint_8 controller_ID)
 
     //printf_info("usb0 device get bus reset\n");
 
-	//Clear the device address
-	writel(~USBD_ADDR_MASK, &usbotg[controller_ID]->deviceaddr);
+    //Clear the device address
+    writel(~USBD_ADDR_MASK, &usbotg[controller_ID]->deviceaddr);
 
     /*1. Reading and writing back the ENDPTSETUPSTAT register
        clears the setup token semaphores */
@@ -1477,8 +1477,8 @@ static void USB_Bus_Reset_Handler(uint_8 controller_ID)
     temp = readl(&usbotg[controller_ID]->endptcomplete);
     writel(temp, &usbotg[controller_ID]->endptcomplete);
 
-	//Write 1s to the flush register
-	writel(0xffffffff, &usbotg[controller_ID]->endptflush);
+    //Write 1s to the flush register
+    writel(0xffffffff, &usbotg[controller_ID]->endptflush);
 }
 
 /**************************************************************************//*!
@@ -1564,12 +1564,12 @@ static void usbd_read_setup_packet(uint_8 controller_ID, unsigned char *setup_pa
     temp &= ~(0x1 << 13);
     writel(temp, &usbotg[controller_ID]->usbcmd);
     setup_struct = (usb_standard_device_request_t *)setup_packet;
-   	if (setup_struct->bRequest == SET_ADDRESS) {
-		g_dci_address_state[controller_ID] = 1;
-	}
-	if (setup_struct->bRequest == SET_INTERFACE) {
-		printf_info("it is set interface\n");
-	}
+    if (setup_struct->bRequest == SET_ADDRESS) {
+        g_dci_address_state[controller_ID] = 1;
+    }
+    if (setup_struct->bRequest == SET_INTERFACE) {
+        printf_info("it is set interface\n");
+    }
 //                printf_info("received setup packet\n");
 }
 
@@ -1640,7 +1640,7 @@ static void usbd_ep0_complete(USB_DEV_EVENT_STRUCT* event)
     unsigned int direction = event->direction;
     unsigned int td_index = (endpt_number * 2) + direction;
     uint_8 *deq_idx = &g_usbd_queue_info[event->controller_ID][td_index].deq_idx;
-    
+
     // Complete all retired TDs. TDs are retired in the order they were enqueued, in other words
     // starting at the current dequeue index.
     while (1)
@@ -1652,7 +1652,7 @@ static void usbd_ep0_complete(USB_DEV_EVENT_STRUCT* event)
         if ((g_usbd_td_flag[event->controller_ID][td_index][*deq_idx].status == DTD_BUSY) && ((dtd_word->dtd_word1 & 0x80) != 0x80))
         {
             //printf("id%d ep%d direction%d free = %d\n", event->controller_ID, endpt_number, direction, *deq_idx);
-            
+
             // Get original number of bytes to transfer
             unsigned int total_bytes = g_usbd_td_flag[event->controller_ID][td_index][*deq_idx].total_bytes;
             // Subtract number of remaining bytes not transferred
@@ -1661,7 +1661,7 @@ static void usbd_ep0_complete(USB_DEV_EVENT_STRUCT* event)
 
             // Mark dTD as free
             g_usbd_td_flag[event->controller_ID][td_index][*deq_idx].status = DTD_FREE;
-			
+
             if (g_dci_address_state[event->controller_ID] == 1)
             {
                 event->ep_num = CONTROL_ENDPOINT;
@@ -1669,19 +1669,19 @@ static void usbd_ep0_complete(USB_DEV_EVENT_STRUCT* event)
                 event->len = 0;
                 g_dci_address_state[event->controller_ID] = 0;
             }
-            
+
             // If this was the tail, mark list as empty
             if (dtd_word == g_usbd_queue_info[event->controller_ID][td_index].tail)
             {
                 g_usbd_queue_info[event->controller_ID][td_index].tail = NULL;
             }
-            
+
             // Increment the dequeue TD index with wrapping
             if (++(*deq_idx) >= MAX_DTDS_PER_EP)
             {
                 *deq_idx = 0;
             }
-			
+
             /* Notify Device Layer of Data Recieved or Sent Event */
             (void)USB_Device_Call_Service(event->ep_num, event);
         }
@@ -1701,7 +1701,7 @@ static void usbd_dtd_complete(USB_DEV_EVENT_STRUCT* event)
     unsigned int direction = event->direction;
     unsigned int td_index = (endpt_number * 2) + direction;
     uint_8 *deq_idx = &g_usbd_queue_info[event->controller_ID][td_index].deq_idx;
-    
+
     // Complete all retired TDs. TDs are retired in the order they were enqueued, in other words
     // starting at the current dequeue index.
     while (1)
@@ -1713,7 +1713,7 @@ static void usbd_dtd_complete(USB_DEV_EVENT_STRUCT* event)
         if ((g_usbd_td_flag[event->controller_ID][td_index][*deq_idx].status == DTD_BUSY) && ((dtd_word->dtd_word1 & 0x80) != 0x80))
         {
             //printf("id%d ep%d direction%d free = %d\n", event->controller_ID, endpt_number, direction, *deq_idx);
-            
+
             // Get original number of bytes to transfer
             unsigned int total_bytes = g_usbd_td_flag[event->controller_ID][td_index][*deq_idx].total_bytes;
             // Subtract number of remaining bytes not transferred
@@ -1722,19 +1722,19 @@ static void usbd_dtd_complete(USB_DEV_EVENT_STRUCT* event)
 
             // Mark dTD as free
             g_usbd_td_flag[event->controller_ID][td_index][*deq_idx].status = DTD_FREE;
-			
+
             // If this was the tail, mark list as empty
             if (dtd_word == g_usbd_queue_info[event->controller_ID][td_index].tail)
             {
                 g_usbd_queue_info[event->controller_ID][td_index].tail = NULL;
             }
-            
+
             // Increment the dequeue TD index with wrapping
             if (++(*deq_idx) >= MAX_DTDS_PER_EP)
             {
                 *deq_idx = 0;
             }
-			
+
             /* Notify Device Layer of Data Recieved or Sent Event */
             (void)USB_Device_Call_Service(event->ep_num, event);
         }
@@ -1872,9 +1872,9 @@ static usb_status_t usbd_receive_data_epxout(uint_8 controller_ID, unsigned int 
     unsigned int direction = OUT;
 
     //printf_info("%s, size is %d\n", __func__, sz);
-	
+
     /* Get Device Transfer Descriptor of the requested endpoint */
-	dtd_address = usbd_get_dtd(controller_ID, ep_num, direction, sz);
+    dtd_address = usbd_get_dtd(controller_ID, ep_num, direction, sz);
     if (!dtd_address)
     {
         return USB_FAILURE;
@@ -1883,11 +1883,11 @@ static usb_status_t usbd_receive_data_epxout(uint_8 controller_ID, unsigned int 
     /* Get the total bytes to be received   */
     total_bytes = sz;
 
-	if (total_bytes > 20 * 1024)
-	    printf_error("Error!!! %s, size is %d\n", __func__, sz);
-		
+    if (total_bytes > 20 * 1024)
+        printf_error("Error!!! %s, size is %d\n", __func__, sz);
+
     td.dtd_base = dtd_address;
-   	td.next_link_ptr = 0;
+    td.next_link_ptr = 0;
     td.terminate = TERMINATE;
     td.total_bytes = total_bytes;
     td.ioc = IOC_SET;
@@ -1933,7 +1933,7 @@ static usb_status_t usbd_receive_data_ep0out(uint_8 controller_ID, unsigned int 
     dqh_address = usbd_get_dqh(controller_ID, EP0, OUT);
 
     /* Get Device Transfer Descriptor of the requested endpoint */
-	dtd_address = usbd_get_dtd(controller_ID, EP0, OUT, sz);
+    dtd_address = usbd_get_dtd(controller_ID, EP0, OUT, sz);
     if (!dtd_address)
     {
         return USB_FAILURE;
@@ -1943,7 +1943,7 @@ static usb_status_t usbd_receive_data_ep0out(uint_8 controller_ID, unsigned int 
     total_bytes = sz;
 
     td.dtd_base = dtd_address;
-   	td.next_link_ptr = dtd_address + 0x20;
+    td.next_link_ptr = dtd_address + 0x20;
     td.terminate = TERMINATE;
     td.total_bytes = total_bytes;
     td.ioc = IOC_SET;
@@ -1958,7 +1958,7 @@ static usb_status_t usbd_receive_data_ep0out(uint_8 controller_ID, unsigned int 
     /* Set the Transfer Descriptor  */
     usbd_setup_td(&td);
 
-	//Yi
+    //Yi
     //(*(volatile unsigned int *)(dqh_address)) &= ~0x20000000;
 
     /* 1. write dQH next ptr and dQH terminate bit to 0 */
@@ -1991,7 +1991,7 @@ static usb_status_t usbd_send_data_epxin(uint_8 controller_ID, unsigned int epx_
     unsigned int dtd_address;
     unsigned int direction = IN;
 
-	printf_info("%s, size is %d\n", __func__, sz);
+    printf_info("%s, size is %d\n", __func__, sz);
 
     /* varify Endpoint Number and address */
     /* Get Device Transfer Descriptor of the requested endpoint */
@@ -2044,7 +2044,7 @@ static usb_status_t usbd_send_data_ep0in(uint_8 controller_ID,
     unsigned int dtd_address, dqh_address;
     unsigned int temp;
 
-	//printf_info("%s, size is %d\n", __func__, sz);
+    //printf_info("%s, size is %d\n", __func__, sz);
 
     /* varify Endpoint Number and address */
     /* Get Device Transfer Descriptor of the requested endpoint */

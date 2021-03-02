@@ -153,7 +153,7 @@ void LP_EnableRTCAlarmWakeup(void)
 {
     MXC_GCR->pm |= MXC_F_GCR_PM_RTCWKEN;
 }
-    
+
 void LP_DisableRTCAlarmWakeup(void)
 {
     MXC_GCR->pm &= ~MXC_F_GCR_PM_RTCWKEN;
@@ -174,7 +174,7 @@ void LP_DisableGPIOWakeup(const gpio_cfg_t *wu_pins)
     {
       case 0: MXC_PWRSEQ->lpwk_en &= ~wu_pins->mask; break;
     }
-    
+
     if(MXC_PWRSEQ->lpwk_en == 0)
     {
         MXC_GCR->pm &= ~MXC_F_GCR_PM_GPIOWKEN;
@@ -182,27 +182,27 @@ void LP_DisableGPIOWakeup(const gpio_cfg_t *wu_pins)
 }
 
 void LP_EnterSleepMode(void)
-{    
-    // Clear SLEEPDEEP bit 
+{
+    // Clear SLEEPDEEP bit
     SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
 
-    // Go into Sleep mode and wait for an interrupt to wake the processor 
+    // Go into Sleep mode and wait for an interrupt to wake the processor
     __WFI();
 }
 
 void LP_EnterDeepSleepMode(void)
-{    
-    // Set SLEEPDEEP bit 
+{
+    // Set SLEEPDEEP bit
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
-    // Auto-powerdown 96 MHz oscillator when in deep sleep 
+    // Auto-powerdown 96 MHz oscillator when in deep sleep
     MXC_GCR->pm |= MXC_F_GCR_PM_HIRCPD;
-    // Go into Deepsleep mode and wait for an interrupt to wake the processor 
+    // Go into Deepsleep mode and wait for an interrupt to wake the processor
     __WFI();
 }
 
 void LP_EnterBackupMode(void)
-{    
+{
     MXC_GCR->pm &= ~MXC_F_GCR_PM_MODE;
     MXC_GCR->pm |= MXC_S_GCR_PM_MODE_BACKUP;
     while(1);
@@ -250,7 +250,7 @@ void LP_SetOperatingVoltage(lp_ovr_t ovr)
 
         }
 
-    } else if( ovr == LP_OVR_1_0){  
+    } else if( ovr == LP_OVR_1_0){
         if(div == 0){
             MXC_GCR->memckcn = (MXC_GCR->memckcn & ~(MXC_F_GCR_MEMCKCN_FWS)) | (0x2UL << MXC_F_GCR_MEMCKCN_FWS_POS);
 
@@ -277,7 +277,7 @@ void LP_SetOperatingVoltage(lp_ovr_t ovr)
 void LP_EnableSRamRet0(void){
     MXC_PWRSEQ->lp_ctrl |= MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL0;
 }
- 
+
 void LP_DisableSRamRet0(void){
     MXC_PWRSEQ->lp_ctrl &= ~MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL0;
 }
@@ -285,7 +285,7 @@ void LP_DisableSRamRet0(void){
 void LP_EnableSRamRet1(void){
     MXC_PWRSEQ->lp_ctrl |= MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL1;
 }
- 
+
 void LP_DisableSRamRet1(void){
     MXC_PWRSEQ->lp_ctrl &= ~MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL1;
 }
@@ -293,7 +293,7 @@ void LP_DisableSRamRet1(void){
 void LP_EnableSRamRet2(void){
     MXC_PWRSEQ->lp_ctrl |= MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL2;
 }
- 
+
 void LP_DisableSRamRet2(void){
     MXC_PWRSEQ->lp_ctrl &= ~MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL2;
 }
@@ -301,17 +301,17 @@ void LP_DisableSRamRet2(void){
 void LP_EnableSRamRet3(void){
     MXC_PWRSEQ->lp_ctrl |= MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL3;
 }
- 
+
 void LP_DisableSRamRet3(void){
     MXC_PWRSEQ->lp_ctrl &= ~MXC_F_PWRSEQ_LP_CTRL_RAMRET_SEL3;
 }
 
 void LP_EnableBlockDetect(void){
-    MXC_PWRSEQ->lp_ctrl &= ~MXC_F_PWRSEQ_LP_CTRL_VCORE_DET_BYPASS; 
+    MXC_PWRSEQ->lp_ctrl &= ~MXC_F_PWRSEQ_LP_CTRL_VCORE_DET_BYPASS;
 }
 
 void LP_DisableBlockDetect(void){
-    MXC_PWRSEQ->lp_ctrl |= MXC_F_PWRSEQ_LP_CTRL_VCORE_DET_BYPASS; 
+    MXC_PWRSEQ->lp_ctrl |= MXC_F_PWRSEQ_LP_CTRL_VCORE_DET_BYPASS;
 }
 
 void LP_EnableRamRetReg(void){

@@ -50,36 +50,36 @@
 /* Setup the OUTPUT pin corresponding to the PWM index */
 void Chip_SCTPWM_SetOutPin(LPC_SCT_T *pSCT, uint8_t index, uint8_t pin)
 {
-	int ix = (int) index;
-	pSCT->EV[ix].CTRL = index | (1 << 12);
-	pSCT->EV[ix].STATE = 1;
-	pSCT->OUT[pin].SET = 1;
-	pSCT->OUT[pin].CLR = 1 << ix;
+    int ix = (int) index;
+    pSCT->EV[ix].CTRL = index | (1 << 12);
+    pSCT->EV[ix].STATE = 1;
+    pSCT->OUT[pin].SET = 1;
+    pSCT->OUT[pin].CLR = 1 << ix;
 
-	/* Clear the output in-case of conflict */
-	pSCT->RES = (pSCT->RES & ~(3 << (pin << 1))) | (0x01 << (pin << 1));
+    /* Clear the output in-case of conflict */
+    pSCT->RES = (pSCT->RES & ~(3 << (pin << 1))) | (0x01 << (pin << 1));
 
-	/* Set and Clear do not depend on direction */
-	pSCT->OUTPUTDIRCTRL = (pSCT->OUTPUTDIRCTRL & ~((3 << (pin << 1))|SCT_OUTPUTDIRCTRL_RESERVED));
+    /* Set and Clear do not depend on direction */
+    pSCT->OUTPUTDIRCTRL = (pSCT->OUTPUTDIRCTRL & ~((3 << (pin << 1))|SCT_OUTPUTDIRCTRL_RESERVED));
 }
 
 /* Set the PWM frequency */
 void Chip_SCTPWM_SetRate(LPC_SCT_T *pSCT, uint32_t freq)
 {
-	uint32_t rate;
+    uint32_t rate;
 
-	rate = Chip_Clock_GetSystemClockRate() / freq;;
+    rate = Chip_Clock_GetSystemClockRate() / freq;;
 
-	/* Stop the SCT before configuration */
-	Chip_SCTPWM_Stop(pSCT);
+    /* Stop the SCT before configuration */
+    Chip_SCTPWM_Stop(pSCT);
 
-	/* Set MATCH0 for max limit */
-	pSCT->REGMODE_U = 0;
-	Chip_SCT_SetMatchCount(pSCT, SCT_MATCH_0, 0);
-	Chip_SCT_SetMatchReload(pSCT, SCT_MATCH_0, rate);
-	pSCT->EV[0].CTRL = 1 << 12;
-	pSCT->EV[0].STATE = 1;
+    /* Set MATCH0 for max limit */
+    pSCT->REGMODE_U = 0;
+    Chip_SCT_SetMatchCount(pSCT, SCT_MATCH_0, 0);
+    Chip_SCT_SetMatchReload(pSCT, SCT_MATCH_0, rate);
+    pSCT->EV[0].CTRL = 1 << 12;
+    pSCT->EV[0].STATE = 1;
 
-	/* Set SCT Counter to count 32-bits and reset to 0 after reaching MATCH0 */
-	Chip_SCT_Config(pSCT, SCT_CONFIG_32BIT_COUNTER | SCT_CONFIG_AUTOLIMIT_L);
+    /* Set SCT Counter to count 32-bits and reset to 0 after reaching MATCH0 */
+    Chip_SCT_Config(pSCT, SCT_CONFIG_32BIT_COUNTER | SCT_CONFIG_AUTOLIMIT_L);
 }

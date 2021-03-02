@@ -279,7 +279,7 @@ __STATIC_INLINE uint8_t md_hdiv_get_divsts_busy(void)
   * @}  HDIV
   */
 
-/** 
+/**
   * @}  Micro_Driver
   */
 

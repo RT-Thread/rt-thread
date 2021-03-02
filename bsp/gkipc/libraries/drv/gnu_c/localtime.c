@@ -213,8 +213,8 @@ int _is_dst(time_t now)
 
 
 
-struct tm * localtime(const time_t *timer)	
+struct tm * localtime(const time_t *timer)
 {
-	return localtime_r(timer,&_localtime_tm);
+    return localtime_r(timer,&_localtime_tm);
 }
 

@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-/* Includes -------------------------------------------------------------------*/ 
+/* Includes -------------------------------------------------------------------*/
 #include <stdbool.h>
 #include "es32f0271.h"
 #include "reg_rcu.h"
@@ -36,7 +36,7 @@ extern "C" {
   * @brief RCU micro driver
   * @{
   */
-  
+
 /* Private types --------------------------------------------------------------*/
 /* Private variables ----------------------------------------------------------*/
 /* Private constants ----------------------------------------------------------*/
@@ -70,7 +70,7 @@ typedef struct
   uint32_t  Ppre;    /*! APB clock prescaler  */
   uint32_t  Hpre;    /*! AHB clock prescaler  */
   uint32_t  Sw;      /*! system clock   */
-  uint8_t   SysClock;/*! system clock enable  */  
+  uint8_t   SysClock;/*! system clock enable  */
 } md_rcu_init_typedef;
 
 /**
@@ -3903,7 +3903,7 @@ __STATIC_INLINE uint32_t md_rcu_get_apb2en_adcen(RCU_TypeDef *rcu)
   *         @arg @ref md_rcu_set_apb2en_adcen_fun(adcen)
   * @retval None
   */
-__STATIC_INLINE void md_rcu_set_apb2en(RCU_TypeDef *rcu, uint32_t cmpen,      
+__STATIC_INLINE void md_rcu_set_apb2en(RCU_TypeDef *rcu, uint32_t cmpen,
                                                          uint32_t gp16c2t4en, uint32_t gp16c2t3en,  uint32_t gp16c2t2en,
                                                          uint32_t gp16c2t1en, uint32_t uart1en,     uint32_t spi1en,
                                                          uint32_t ad16c4t1en, uint32_t adcen)

@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -331,16 +331,16 @@ both the POS2_Int bit is set and the REV_Int is set */
 #define QEI_IESET_ERR_Int           ((uint32_t)(1<<4))
 /** Set Enable Interrupt Bit Indicates that and encoder clock pulse was detected */
 #define QEI_IESET_ENCLK_Int         ((uint32_t)(1<<5))
-/** Set Enable Interrupt Bit Indicates that the position 0 compare value is equal to 
+/** Set Enable Interrupt Bit Indicates that the position 0 compare value is equal to
 * the current position */
 #define QEI_IESET_POS0_Int          ((uint32_t)(1<<6))
-/** Set Enable Interrupt Bit Indicates that the position 1compare value is equal to 
+/** Set Enable Interrupt Bit Indicates that the position 1compare value is equal to
 * the current position */
 #define QEI_IESET_POS1_Int          ((uint32_t)(1<<7))
-/** Set Enable Interrupt Bit Indicates that the position 2 compare value is equal to 
+/** Set Enable Interrupt Bit Indicates that the position 2 compare value is equal to
 * the current position */
 #define QEI_IESET_POS2_Int          ((uint32_t)(1<<8))
-/** Set Enable Interrupt Bit Indicates that the index compare value is equal to the 
+/** Set Enable Interrupt Bit Indicates that the index compare value is equal to the
 * current index count */
 #define QEI_IESET_REV_Int           ((uint32_t)(1<<9))
 /** Set Enable Interrupt Bit that combined position 0 and revolution count interrupt */
@@ -446,7 +446,7 @@ both the POS2_Int bit is set and the REV_Int is set */
 /**
  * @brief QEI Configuration structure type definition
  */
-typedef struct 
+typedef struct
 {
     uint32_t DirectionInvert    :1;     /**< Direction invert option:
                                         - QEI_DIRINV_NONE: QEI Direction is normal
@@ -469,7 +469,7 @@ typedef struct
 /**
  * @brief Timer Reload Configuration structure type definition
  */
-typedef struct 
+typedef struct
 {
 
     uint8_t ReloadOption;       /**< Velocity Timer Reload Option, should be:

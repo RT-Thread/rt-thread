@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -477,7 +477,7 @@ typedef struct
     uint8_t Active2PreChargeTime;     // Active to precharge command period (tRAS)
     uint8_t  RASLatency;          // RAS Delay
     uint8_t  CASLatency;          // CAS Delay
-    
+
 } EMC_DYN_MEM_Config_Type;
 
 typedef struct
@@ -489,7 +489,7 @@ typedef struct
     uint8_t ExtendedWait;  //1: enabled
     uint8_t AddressMirror; // 1: reset memory map, 0: normal memory map
 
-    uint8_t  WaitWEn;       // Delay from the chip select to the write enable (CCLK cycles) 
+    uint8_t  WaitWEn;       // Delay from the chip select to the write enable (CCLK cycles)
     uint8_t  WaitOEn;       // Delay from the chip select or address change to output enable (CCLK cycles)
     uint8_t  WaitRd;        // Delay from the chip select to the read access (CCLK cycles)
     uint8_t  WaitPage;      // Delay for asynchronous page mode sequential accesses (CCLK cycles)

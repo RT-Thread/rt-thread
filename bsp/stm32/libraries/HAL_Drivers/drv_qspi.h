@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-11-27     zylx         first version
  */
- 
+
 #ifndef __DRV_QSPI_H__
 #define __DRV_QSPI_H__
 

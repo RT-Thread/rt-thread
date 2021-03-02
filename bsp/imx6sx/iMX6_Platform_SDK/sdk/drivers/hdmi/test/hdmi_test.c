@@ -113,7 +113,7 @@ void hdmi_test(void)
     HW_HDMI_IH_MUTE.U = 0x2;
 
     // configure IPU to output stream for hdmi input
-    if (ips_hdmi_stream()) {    // set up ipu1 disp0  1080P60 display stream 
+    if (ips_hdmi_stream()) {    // set up ipu1 disp0  1080P60 display stream
         printf("HDMI video test PASS\n");
         printf("Audio will play for 2 more seconds\n");
         hal_delay_us(2000000);  // play hdmi audio for 3 seconds

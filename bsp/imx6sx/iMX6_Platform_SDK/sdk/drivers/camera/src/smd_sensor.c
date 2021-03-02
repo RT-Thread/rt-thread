@@ -69,10 +69,10 @@ static int32_t sensor_i2c_init(uint32_t base, uint32_t baud)
 /*!
  * @brief Perform I2C write operation for camera sensor
  *
- * @param   dev_addr	sensor i2c slave device address
- * @param   reg_addr 	sensor i2c register address
- * @param	pval 		value write to i2c register
- * @param	is_16bits	indicate value write to i2c register is 16 bits
+ * @param   dev_addr    sensor i2c slave device address
+ * @param   reg_addr    sensor i2c register address
+ * @param   pval        value write to i2c register
+ * @param   is_16bits   indicate value write to i2c register is 16 bits
  *
  * @return  0 if successful; non-zero otherwise
  */
@@ -108,10 +108,10 @@ static int32_t sensor_write_reg(uint32_t dev_addr, uint16_t reg_addr, uint16_t *
 /*!
  * @brief Perform I2C read operation for camera sensor
  *
- * @param   dev_addr	sensor i2c slave device address
- * @param   reg_addr 	sensor i2c register address
- * @param	pval 		value read from i2c register
- * @param	is_16bits	indicate value read from i2c register is 16 bits
+ * @param   dev_addr    sensor i2c slave device address
+ * @param   reg_addr    sensor i2c register address
+ * @param   pval        value read from i2c register
+ * @param   is_16bits   indicate value read from i2c register is 16 bits
  *
  * @return  0 if successful; non-zero otherwise
  */
@@ -152,7 +152,7 @@ int32_t sensor_config(camera_profile_t * sensor)
 #if defined(CHIP_MX6SL)
     csi_iomux_config();   //config csi port
 #else
-	csi_port0_iomux_config();
+    csi_port0_iomux_config();
 #endif
     ret = sensor_init(sensor);
 
@@ -179,7 +179,7 @@ camera_profile_t *sensor_search(void)
     for (i = 0; i < SENSOR_NUM; i++) {
         error = 0;
         sensor_on = &g_camera_profiles[i];
-		hal_delay_us(10000);
+        hal_delay_us(10000);
 
         for (j = 0; j < sensor_on->sensor_detection_size; ++j) {
             reg_param_t *setting = &sensor_on->sensor_detection[j];
@@ -211,7 +211,7 @@ int32_t sensor_init(camera_profile_t * sensor)
 {
     int32_t i;
     uint16_t read_value;
-	int32_t ret = 0;
+    int32_t ret = 0;
 
     ret = sensor_i2c_init(g_camera_i2c_port, 170000);
     camera_mode_t *preview_mode = &sensor->modes[sensor->mode_id];
@@ -227,7 +227,7 @@ int32_t sensor_init(camera_profile_t * sensor)
             if (read_value != setting->value) {
                 printf("reg[0x%x]=0x%x, but expected=0x%x\n", setting->addr, read_value,
                        setting->value);
-				return -1;
+                return -1;
             } else {
                 //printf ("I2C RIGHT: [reg 0x%x], real = 0x%x, expected = 0x%x\n", regAddr, tmpVal, regVal);
             }
@@ -277,7 +277,7 @@ int32_t sensor_autofocus_init(camera_profile_t * sensor)
                 if (read_value != setting->value) {
                     printf("reg[0x%x]=0x%x, but expected=0x%x\n", setting->addr, read_value,
                            setting->value);
-					return -1;
+                    return -1;
                 } else {
                     //printf ("I2C RIGHT: [reg 0x%x], real = 0x%x, expected = 0x%x\n", regAddr, tmpVal, regVal);
                 }

@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,7 +25,7 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
@@ -60,11 +60,11 @@ typedef struct uffs_PoolEntrySt {
  * \brief Memory pool.
  */
 typedef struct uffs_PoolSt {
-	u8 *mem;					//!< memory pool
-	u32 buf_size;				//!< size of a buffer
-	u32 num_bufs;				//!< number of buffers in the pool
-	uffs_PoolEntry *free_list;	//!< linked list of free buffers
-	OSSEM sem;					//!< buffer lock
+    u8 *mem;                    //!< memory pool
+    u32 buf_size;               //!< size of a buffer
+    u32 num_bufs;               //!< number of buffers in the pool
+    uffs_PoolEntry *free_list;  //!< linked list of free buffers
+    OSSEM sem;                  //!< buffer lock
 } uffs_Pool;
 
 URET uffs_PoolInit(uffs_Pool *pool, void *mem, u32 mem_size, u32 buf_size, u32 num_bufs);

@@ -1665,8 +1665,8 @@ void HAL_RCC_MCOConfig(uint32_t RCC_MCOx, uint32_t RCC_MCOSource, uint32_t RCC_M
   *         - A failure event is generated (rcc_hsecss_fail). This event is connected to the TAMP
   *           block, allowing the protection of backup registers and BKPSRAM.
   *
-  * @note   HSECSSON can be activated even when the HSEON is set to â€˜0â€™. The CSS on HSE will be
-  *         enabled by the hardware when the HSE is enabled and ready, and HSECSSON is set to â€˜1â€™.
+  * @note   HSECSSON can be activated even when the HSEON is set to ¡®0¡¯. The CSS on HSE will be
+  *         enabled by the hardware when the HSE is enabled and ready, and HSECSSON is set to ¡®1¡¯.
   *
   * @note   The HSECSS is disabled when the HSE is disabled (i.e. when the system is STOP or
   *         STANDBY).

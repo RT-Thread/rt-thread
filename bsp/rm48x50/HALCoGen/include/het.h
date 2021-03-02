@@ -2,7 +2,7 @@
 *   @brief HET Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -308,18 +308,18 @@ typedef volatile struct het1RamBase
 */
 typedef struct hetSignal
 {
-	uint32 duty;   /**< Duty cycle in % of the period  */
-	float64   period; /**< Period in us                   */
+    uint32 duty;   /**< Duty cycle in % of the period  */
+    float64   period; /**< Period in us                   */
 } hetSIGNAL_t;
 
-/** 
+/**
  *  @defgroup HET HET
  *  @brief Inter-Integrated Circuit Module.
- *  
+ *
  *  The HET is a software-controlled timer with a dedicated specialized timer micromachine and a set of 30 instructions.
  *  The HET micromachine is connected to a port of up to 32 input/output (I/O) pins.
  *
- *	Related Files
+ *  Related Files
  *   - reg_het.h
  *   - het.h
  *   - het.c
@@ -329,7 +329,7 @@ typedef struct hetSignal
  *  @addtogroup HET
  *  @{
  */
- 
+
 /* HET Interface Functions */
 void hetInit(void);
 
@@ -367,7 +367,7 @@ uint32 hetGetTimestamp(hetRAMBASE_t * hetRAM);
 *   @note This function has to be provide by the user.
 *
 * This is a interrupt callback that is provided by the application and is call upon
-* an het interrupt.  The parameter passed to the callback is a copy of the interrupt 
+* an het interrupt.  The parameter passed to the callback is a copy of the interrupt
 * offset register which is used to decode the interrupt source.
 */
 void hetNotification(hetBASE_t *het, uint32 offset);

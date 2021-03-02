@@ -30,7 +30,7 @@
 
 /* skip the inclusion in dependency statge */
 #ifndef __NO_SETJMP
-	#include <stdio.h>
+    #include <stdio.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -78,7 +78,7 @@ static void USB_App_Callback(uint_8 controller_ID,
  * Local Variables
  *****************************************************************************/
 #ifdef _MC9S08JS16_H
-	#pragma DATA_SEG APP_DATA
+    #pragma DATA_SEG APP_DATA
 #endif
 /* Audio speaker Application start Init Flag */
 static volatile boolean start_app = FALSE;
@@ -106,19 +106,19 @@ void USB_Prepare_Data(void)
     uint_8 k;
     if (g_cur_mute[0] == 0)
     {
-		/* copy data to buffer */
-		for(k=0;k<8;k++,audio_position++)
-		{
-			wav_buff[k]	= wav_data[audio_position];
-		}
+        /* copy data to buffer */
+        for(k=0;k<8;k++,audio_position++)
+        {
+            wav_buff[k] = wav_data[audio_position];
+        }
     }
     else
     {
-		/* copy data to buffer */
-		for(k=0;k<8;k++,audio_position++)
-		{
-			wav_buff[k]	= 0;
-		}
+        /* copy data to buffer */
+        for(k=0;k<8;k++,audio_position++)
+        {
+            wav_buff[k] = 0;
+        }
     }
 }
 
@@ -140,26 +140,26 @@ void TestApp_Init(void)
     uint_8   error;
 
     DisableInterrupts;
-    
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_dis();
     #endif
-     
+
      /* Initialize SCI */
-	#if (defined MCU_mcf51jf128)
-		 sci1_init();
-	#elif defined MCU_MK70F12
-		sci2_init();
-	#else
-		 sci_init();
-	#endif
-     
+    #if (defined MCU_mcf51jf128)
+         sci1_init();
+    #elif defined MCU_MK70F12
+        sci2_init();
+    #else
+         sci_init();
+    #endif
+
     /* Initialize the USB interface */
     error = USB_Class_Audio_Init(CONTROLLER_ID,USB_App_Callback,
                                 NULL,NULL);
     UNUSED(error);
-                                
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_en();
     #endif
     EnableInterrupts;
@@ -201,7 +201,7 @@ static void USB_App_Callback (
         start_app=TRUE;
         if (start_send == FALSE)
         {
-          USB_Prepare_Data();     		
+          USB_Prepare_Data();
           (void)USB_Class_Audio_Send_Data(CONTROLLER_ID, AUDIO_ENDPOINT, wav_buff,(sizeof(wav_buff)/sizeof(wav_buff[0]))) ;
         }
 #if (!(defined _MC9S08MM128_H) && !(defined _MC9S08JE128_H))
@@ -209,13 +209,13 @@ static void USB_App_Callback (
 #endif
     }
     else if((event_type == USB_APP_SEND_COMPLETE) && (TRUE == start_app))
-    {	
-        	if(audio_position > wav_size)
-        	{
-        		audio_position = 0;
-        	}
+    {
+            if(audio_position > wav_size)
+            {
+                audio_position = 0;
+            }
           USB_Prepare_Data();
-        	(void)USB_Class_Audio_Send_Data(controller_ID, AUDIO_ENDPOINT, wav_buff,(sizeof(wav_buff)/sizeof(wav_buff[0])));
+            (void)USB_Class_Audio_Send_Data(controller_ID, AUDIO_ENDPOINT, wav_buff,(sizeof(wav_buff)/sizeof(wav_buff[0])));
      }
 
     return;
@@ -232,18 +232,18 @@ static void USB_App_Callback (
  *    @return      None
  *
  *****************************************************************************
- * 
+ *
  *****************************************************************************/
 
 void TestApp_Task(void)
 {
-	/* Check whether enumeration is complete or not */
-	if((start_app == TRUE) && (start_send == TRUE))
-	{
-		start_send = FALSE;
-		USB_Prepare_Data();
-		(void)USB_Class_Audio_Send_Data(CONTROLLER_ID, AUDIO_ENDPOINT, wav_buff,(sizeof(wav_buff)/sizeof(wav_buff[0]))) ;
-	}
+    /* Check whether enumeration is complete or not */
+    if((start_app == TRUE) && (start_send == TRUE))
+    {
+        start_send = FALSE;
+        USB_Prepare_Data();
+        (void)USB_Class_Audio_Send_Data(CONTROLLER_ID, AUDIO_ENDPOINT, wav_buff,(sizeof(wav_buff)/sizeof(wav_buff[0]))) ;
+    }
 }
 
 /* EOF */

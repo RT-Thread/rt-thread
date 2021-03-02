@@ -45,30 +45,30 @@
  * No need to implement functions in this section in NO_SYS mode.
  * The OS-specific code should be implemented in arch/sys_arch.h
  * and sys_arch.c of your port.
- * 
+ *
  * The operating system emulation layer provides a common interface
  * between the lwIP code and the underlying operating system kernel. The
  * general idea is that porting lwIP to new architectures requires only
  * small changes to a few header files and a new sys_arch
  * implementation. It is also possible to do a sys_arch implementation
  * that does not rely on any underlying operating system.
- * 
+ *
  * The sys_arch provides semaphores, mailboxes and mutexes to lwIP. For the full
  * lwIP functionality, multiple threads support can be implemented in the
  * sys_arch, but this is not required for the basic lwIP
  * functionality. Timer scheduling is implemented in lwIP, but can be implemented
  * by the sys_arch port (LWIP_TIMERS_CUSTOM==1).
- * 
+ *
  * In addition to the source file providing the functionality of sys_arch,
  * the OS emulation layer must provide several header files defining
  * macros used throughout lwip.  The files required and the macros they
  * must define are listed below the sys_arch description.
- * 
+ *
  * Since lwIP 1.4.0, semaphore, mutexes and mailbox functions are prototyped in a way that
  * allows both using pointers or actual OS structures to be used. This way, memory
  * required for such types can be either allocated in place (globally or on the
  * stack) or on the heap (allocated internally in the "*_new()" functions).
- * 
+ *
  * Note:
  * -----
  * Be careful with using mem_malloc() in sys_arch. When malloc() refers to
@@ -96,7 +96,7 @@
  * Mailboxes should be implemented as a queue which allows multiple messages
  * to be posted (implementing as a rendez-vous point where only one message can be
  * posted at a time can have a highly negative impact on performance). A message
- * in a mailbox is just a pointer, nothing more. 
+ * in a mailbox is just a pointer, nothing more.
  *
  * @defgroup sys_time Time
  * @ingroup sys_layer

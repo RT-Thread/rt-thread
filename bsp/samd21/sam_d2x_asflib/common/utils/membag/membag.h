@@ -93,7 +93,7 @@
  * \param nr_objs  Number of blocks in the bag, a value less than 32
  */
 #define MEMBAG(objsize, nr_objs)\
-	{ .block_size = objsize, .num_blocks = nr_objs }
+    { .block_size = objsize, .num_blocks = nr_objs }
 
 /**
  * Macro used to store the size of the membags in conf_membag.h
@@ -105,7 +105,7 @@
  * \param nr_objs  Number of blocks in the bag, a value less than 32
  */
 #define MEMBAG_SIZE(objsize, nr_objs)\
-	(objsize * nr_objs)
+    (objsize * nr_objs)
 
 void membag_init(void);
 

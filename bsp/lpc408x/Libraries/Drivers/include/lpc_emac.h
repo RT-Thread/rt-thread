@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -518,7 +518,7 @@ typedef void (SOFT_INT_FUNC)(void);
  */
 typedef struct {
     EMAC_PHY_CFG_Type PhyCfg;               /* PHY Configuration */
-    uint8_t           bPhyAddr;                    /* 5-bit PHY Address field */    
+    uint8_t           bPhyAddr;                    /* 5-bit PHY Address field */
     uint8_t     *pbEMAC_Addr;               /**< Pointer to EMAC Station address that contains 6-bytes
                                             of MAC address, it must be sorted in order (bEMAC_Addr[0]..[5])
                                             */
@@ -529,10 +529,10 @@ typedef struct {
     EMAC_TRANSMIT_FINISH_FUNC* pfnTransmitFinish;  /*point to the function which will be called when transmit finished*/
     EMAC_ERR_RECV_FUNC    *pfnErrorReceive;     /* point to an array of functions which will be called error occur. */
                                                /* Errors:
-                                                                 EMAC_ALIGN_ERR 
+                                                                 EMAC_ALIGN_ERR
                                                         EMAC_RANGE_ERR
                                                         EMAC_LENGTH_ERR
-                                                        EMAC_SYMBOL_ERR 
+                                                        EMAC_SYMBOL_ERR
                                                         EMAC_CRC_ERR
                                                         EMAC_RX_NO_DESC_ERR
                                                         EMAC_OVERRUN_ERR
@@ -543,7 +543,7 @@ typedef struct {
                                                         EMAC_TX_NO_DESC_ERR
                                                   */
     EMAC_WAKEUP_FUNC *pfnWakeup;               /* point to the function which will be called when receiving wakeup interrupt */
-    SOFT_INT_FUNC *pfnSoftInt;                /* point to the function which will be called when the interrupt caused by software occurs */                    
+    SOFT_INT_FUNC *pfnSoftInt;                /* point to the function which will be called when the interrupt caused by software occurs */
 } EMAC_CFG_Type;
 
 /**

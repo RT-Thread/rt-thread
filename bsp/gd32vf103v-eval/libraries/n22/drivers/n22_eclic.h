@@ -12,7 +12,7 @@
 #define ECLIC_CFG_OFFSET            0x0
 //  0x0004       4B          R         eclicinfo
 #define ECLIC_INFO_OFFSET           0x4
-//  0x000B       1B          RW        mintthresh 
+//  0x000B       1B          RW        mintthresh
 #define ECLIC_MTH_OFFSET            0xB
 //
 //  0x1000+4*i   1B/input    RW        eclicintip[i]

@@ -226,18 +226,18 @@ void USB_Reset_Service (
 
     /* Deinit Endpoint in case its already initialized */
     err = _usb_device_deinit_endpoint(&(event->controller_ID),
-    	ep_struct.ep_num, ep_struct.direction);
+        ep_struct.ep_num, ep_struct.direction);
     /* now initialize the endpoint */
     err = _usb_device_init_endpoint(&(event->controller_ID),
-    		ep_struct.ep_num, (uint_16)ep_struct.size, ep_struct.direction, ep_struct.type, TRUE);
+            ep_struct.ep_num, (uint_16)ep_struct.size, ep_struct.direction, ep_struct.type, TRUE);
 
     ep_struct.direction = USB_RECV;
     /* Deinit Endpoint in case its already initialized */
     (void)_usb_device_deinit_endpoint(&(event->controller_ID),
-    	ep_struct.ep_num, ep_struct.direction);
+        ep_struct.ep_num, ep_struct.direction);
     /* now initialize the endpoint */
     (void)_usb_device_init_endpoint(&(event->controller_ID),
-    		ep_struct.ep_num, (uint_16)ep_struct.size, ep_struct.direction, ep_struct.type, TRUE);
+            ep_struct.ep_num, (uint_16)ep_struct.size, ep_struct.direction, ep_struct.type, TRUE);
 
     /* set the default device state */
     (void)_usb_device_set_status(&(event->controller_ID), USB_STATUS_DEVICE_STATE,
@@ -255,7 +255,7 @@ void USB_Reset_Service (
     /* let the application know that bus reset has taken place */
     g_class_callback(event->controller_ID, USB_APP_BUS_RESET, NULL);
 
-	UNUSED(err);
+    UNUSED(err);
     return;
 }
 
@@ -400,8 +400,8 @@ uint_8 USB_Class_Send_Data (
 
     uint_8 status = USB_OK;
     uint_8 device_state, state;
-    
-    (void)_usb_device_get_status(&controller_ID, USB_STATUS_DEVICE_STATE, 
+
+    (void)_usb_device_get_status(&controller_ID, USB_STATUS_DEVICE_STATE,
         &device_state);
     (void)_usb_device_get_status(&controller_ID, USB_STATUS_DEVICE, &state);
     if((device_state == USB_STATE_SUSPEND) &&
@@ -409,20 +409,20 @@ uint_8 USB_Class_Send_Data (
         (USB_Frame_Remote_Wakeup(controller_ID) == TRUE))
     {
         DisableInterrupts;
-		#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
-		usb_int_dis();
-		#endif		
+        #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+        usb_int_dis();
+        #endif
         /* Resume the bus */
-		_usb_device_assert_resume(&controller_ID);
+        _usb_device_assert_resume(&controller_ID);
 
         device_state = USB_STATE_CONFIG;
         /* Set the device state in the Device Layer to DEFAULT */
         (void)_usb_device_set_status(&controller_ID, USB_STATUS_DEVICE_STATE,
             USB_STATE_CONFIG);
         EnableInterrupts;
-		#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
-		usb_int_en();
-		#endif		
+        #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+        usb_int_en();
+        #endif
     }
 
     if(device_state != USB_STATE_SUSPEND)

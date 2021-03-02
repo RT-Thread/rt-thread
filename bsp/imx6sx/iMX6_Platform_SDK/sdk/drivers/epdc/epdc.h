@@ -41,7 +41,7 @@
 #define TRUE 1
 #define FALSE 0
 
-#define NUM_SCREENS	2
+#define NUM_SCREENS 2
 #define EPDC_NUM_LUTS 16
 #define EPDC_MAX_NUM_UPDATES 32
 #define INVALID_LUT -1
@@ -49,12 +49,12 @@
 #define INIT_UPDATE_MARKER 0x12345678
 #define PAN_UPDATE_MARKER 0x12345679
 
-#define LUT_UPDATE_NONE			0
-#define LUT_UPDATE_NEW			1
-#define LUT_UPDATE_COLLISION	2
+#define LUT_UPDATE_NONE         0
+#define LUT_UPDATE_NEW          1
+#define LUT_UPDATE_COLLISION    2
 
-#define POWER_STATE_OFF			0
-#define POWER_STATE_ON			1
+#define POWER_STATE_OFF         0
+#define POWER_STATE_ON          1
 
 // Use waves for B077 panel
 #define EPDC_B077_4BIT_WV_DATA
@@ -76,10 +76,10 @@
 #define EPDC_UPD_UPDATE_MODE__PARTIAL  0x0
 #define EPDC_UPD_UPDATE_MODE__FULL     0x1
 
-#define 	EPDC_WV_MODE__INIT 	0
-#define 	EPDC_WV_MODE__DU 		1   // black and white
-#define 	EPDC_WV_MODE__GC16	2   // 16 level
-#define 	EPDC_WV_MODE__GC4		3   // 4 level, low fidelity
+#define     EPDC_WV_MODE__INIT  0
+#define     EPDC_WV_MODE__DU        1   // black and white
+#define     EPDC_WV_MODE__GC16  2   // 16 level
+#define     EPDC_WV_MODE__GC4       3   // 4 level, low fidelity
 
 /*EPDC memory map*/
 #if defined(CHIP_MX6SDL)
@@ -99,7 +99,7 @@
 #define IMAGE_STORE_0_ADDR     0x73400000
 #endif
 
-//! @brief Structure of waveform data header 
+//! @brief Structure of waveform data header
 struct waveform_data_header {
     unsigned int wi0;
     unsigned int wi1;
@@ -215,7 +215,7 @@ void epdc_clock_setting(int freq_mhz);
 void epdc_load_image(void);
 
 /*!
- * @brief Provide the buffer supply for EPDC. it will use 
+ * @brief Provide the buffer supply for EPDC. it will use
  * external pmic
  */
 void epdc_power_supply(void);
@@ -251,7 +251,7 @@ void epdc_set_update_addr(unsigned int addr);
 
 /*!
  * @brief Set the coordinate of EPDC update area
- * 
+ *
  * @param x x coordinate
  * @param y y coordinate
  */

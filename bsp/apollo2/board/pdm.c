@@ -66,7 +66,7 @@ rt_uint8_t am_pdm_data_get(rt_uint8_t *buff, rt_uint16_t size)
 {
     rt_uint8_t pdm_rbufftemp[340];
 
-    /* wait pdm message forever */	
+    /* wait pdm message forever */
     rt_mq_recv(&pdm_mq, pdm_rbufftemp, 340, RT_WAITING_FOREVER);
 
     /* copy the data */

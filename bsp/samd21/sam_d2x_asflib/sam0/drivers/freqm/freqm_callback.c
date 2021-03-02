@@ -72,22 +72,22 @@ struct freqm_module *_freqm_instance;
  * \retval STATUS_OK  The function exited successfully
  */
 enum status_code freqm_register_callback(
-		struct freqm_module *const module,
-		freqm_callback_t callback_func,
-		enum freqm_callback callback_type)
+        struct freqm_module *const module,
+        freqm_callback_t callback_func,
+        enum freqm_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(callback_func);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(callback_func);
 
-	if (callback_type >= FREQM_CALLBACK_TYPE_NUM) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
-	/* Register callback function */
-	module->callback[callback_type] = callback_func;
+    if (callback_type >= FREQM_CALLBACK_TYPE_NUM) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
+    /* Register callback function */
+    module->callback[callback_type] = callback_func;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -102,20 +102,20 @@ enum status_code freqm_register_callback(
  * \retval STATUS_OK  The function exited successfully
  */
 enum status_code freqm_unregister_callback(
-		struct freqm_module *module,
-		enum freqm_callback callback_type)
+        struct freqm_module *module,
+        enum freqm_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	if (callback_type >= FREQM_CALLBACK_TYPE_NUM) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
-	/* Unregister callback function */
-	module->callback[callback_type] = NULL;
+    if (callback_type >= FREQM_CALLBACK_TYPE_NUM) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
+    /* Unregister callback function */
+    module->callback[callback_type] = NULL;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 
@@ -125,18 +125,18 @@ enum status_code freqm_unregister_callback(
 */
 void FREQM_Handler(void)
 {
-	/* Get device instance from the look-up table */
-	struct freqm_module *module = _freqm_instance;
+    /* Get device instance from the look-up table */
+    struct freqm_module *module = _freqm_instance;
 
-	/* Read and mask interrupt flag register */
-	uint32_t status = FREQM->INTFLAG.reg;
+    /* Read and mask interrupt flag register */
+    uint32_t status = FREQM->INTFLAG.reg;
 
-	/* Check if data ready needs to be serviced */
-	if (status & FREQM_INTFLAG_DONE) {
-		if (module->callback[FREQM_CALLBACK_MEASURE_DONE]) {
-			FREQM->INTFLAG.reg = FREQM_INTFLAG_DONE;
-			module->callback[FREQM_CALLBACK_MEASURE_DONE]();
-		}
-	}
+    /* Check if data ready needs to be serviced */
+    if (status & FREQM_INTFLAG_DONE) {
+        if (module->callback[FREQM_CALLBACK_MEASURE_DONE]) {
+            FREQM->INTFLAG.reg = FREQM_INTFLAG_DONE;
+            module->callback[FREQM_CALLBACK_MEASURE_DONE]();
+        }
+    }
 
 }

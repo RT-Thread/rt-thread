@@ -22,9 +22,9 @@ int rt_hw_sram_init(void)
     PORT->PORTP_SEL1 = 0xAAAA;
     PORT->PORTM_SEL0 = 0xAAAAAAAA; /* PM0-15 => DATA15-0 */
     PORT->PORTM_INEN |= 0xFFFF;
-    PORT->PORTM_SEL1 = 0x2AA; /* PM16 => OENã€PM17 => WENã€PM18 => NORFL_CSNã€PM19 => SDRAM_CSNã€PM20 => SRAM_CSNã€PM21 => SDRAM_CKE */
+    PORT->PORTM_SEL1 = 0x2AA; /* PM16 => OEN¡¢PM17 => WEN¡¢PM18 => NORFL_CSN¡¢PM19 => SDRAM_CSN¡¢PM20 => SRAM_CSN¡¢PM21 => SDRAM_CKE */
 
-    /* é…ç½®SRAMå‰éœ€è¦åˆ·æ–°ä¸‹SDRAMæŽ§åˆ¶å™¨ */
+    /* ÅäÖÃSRAMÇ°ÐèÒªË¢ÐÂÏÂSDRAM¿ØÖÆÆ÷ */
 
     SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
 
@@ -39,8 +39,8 @@ int rt_hw_sram_init(void)
     SYS->CLKEN |= (1 << SYS_CLKEN_RAMC_Pos);
 
     SRAMC->CR = (9 << SRAMC_CR_RWTIME_Pos) |
-                (0 << SRAMC_CR_BYTEIF_Pos) | // 16ä½æŽ¥å£
-                (0 << SRAMC_CR_HBLBDIS_Pos); // ä½¿èƒ½å­—èŠ‚ã€åŠå­—è®¿é—®
+                (0 << SRAMC_CR_BYTEIF_Pos) | // 16Î»½Ó¿Ú
+                (0 << SRAMC_CR_HBLBDIS_Pos); // Ê¹ÄÜ×Ö½Ú¡¢°ë×Ö·ÃÎÊ
 
     return 0;
 }

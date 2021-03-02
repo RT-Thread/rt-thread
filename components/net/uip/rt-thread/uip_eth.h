@@ -4,8 +4,8 @@
 //#include "lwip/netif.h"
 #include <rtthread.h>
 
-#define NIOCTL_GADDR		0x01
-#define ETHERNET_MTU		1500
+#define NIOCTL_GADDR        0x01
+#define ETHERNET_MTU        1500
 struct pbuf
 {
     rt_uint16_t len;
@@ -13,17 +13,17 @@ struct pbuf
 
 struct eth_device
 {
-	/* inherit from rt_device */
-	struct rt_device parent;
+    /* inherit from rt_device */
+    struct rt_device parent;
 
-	//struct eth_addr *ethaddr;
-	//struct netif *netif;
-	struct rt_semaphore tx_ack;
+    //struct eth_addr *ethaddr;
+    //struct netif *netif;
+    struct rt_semaphore tx_ack;
         struct rt_semaphore tx_msg;
 
-	/* eth device interface */
-	struct pbuf* (*eth_rx)(rt_device_t dev);
-	rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);
+    /* eth device interface */
+    struct pbuf* (*eth_rx)(rt_device_t dev);
+    rt_err_t (*eth_tx)(rt_device_t dev, struct pbuf* p);
 };
 
 rt_err_t eth_device_ready(struct eth_device* dev);

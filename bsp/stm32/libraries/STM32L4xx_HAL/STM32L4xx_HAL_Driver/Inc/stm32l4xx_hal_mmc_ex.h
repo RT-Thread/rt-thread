@@ -15,7 +15,7 @@
   *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32L4xx_HAL_MMC_EX_H
@@ -37,7 +37,7 @@
 /** @addtogroup MMCEx
   * @brief SD HAL extended module driver
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /** @addtogroup MMCEx_Exported_Types
@@ -46,7 +46,7 @@
 
 /** @addtogroup MMCEx_Exported_Types_Group1
   * @{
-  */ 
+  */
 typedef enum
 {
   MMC_DMA_BUFFER0      = 0x00U,    /*!< selects MMC internal DMA Buffer 0     */
@@ -55,20 +55,20 @@ typedef enum
 }HAL_MMCEx_DMABuffer_MemoryTypeDef;
 
 
-/** 
+/**
   * @}
   */
-  
-/** 
+
+/**
   * @}
-  */  
+  */
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup MMCEx_Exported_Functions MMCEx Exported Functions
   * @{
   */
-  
+
 /** @defgroup MMCEx_Exported_Functions_Group1 MultiBuffer functions
   * @{
   */
@@ -85,11 +85,11 @@ void HAL_MMCEx_Write_DMADoubleBuffer1CpltCallback(MMC_HandleTypeDef *hmmc);
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
-  
+
 /* Private types -------------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -97,7 +97,7 @@ void HAL_MMCEx_Write_DMADoubleBuffer1CpltCallback(MMC_HandleTypeDef *hmmc);
 /* Private macros ------------------------------------------------------------*/
 /* Private functions prototypes ----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-  
+
 /**
   * @}
   */
@@ -112,6 +112,6 @@ void HAL_MMCEx_Write_DMADoubleBuffer1CpltCallback(MMC_HandleTypeDef *hmmc);
 #endif
 
 
-#endif /* STM32L4xx_HAL_MMCEx_H */ 
+#endif /* STM32L4xx_HAL_MMCEx_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

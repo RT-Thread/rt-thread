@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -324,7 +324,7 @@ extern "C"
  */
 
 /** @brief Time structure definitions for easy manipulate the data */
-typedef struct 
+typedef struct
 {
     /** Seconds Register */
     uint32_t SEC;
@@ -345,7 +345,7 @@ typedef struct
 } RTC_TIME_Type;
 
 /** @brief RTC interrupt source */
-typedef enum 
+typedef enum
 {
     /**  Counter Increment Interrupt */
     RTC_INT_COUNTER_INCREASE = RTC_IRL_RTCCIF,
@@ -355,7 +355,7 @@ typedef enum
 
 
 /** @brief RTC time type option */
-typedef enum 
+typedef enum
 {
     /** Second */
     RTC_TIMETYPE_SECOND = 0,
@@ -391,7 +391,7 @@ typedef struct
 } RTC_ER_CONFIG_Type;
 
 /** @brief Event Monitor/Recording TimeStamp Type */
-typedef struct 
+typedef struct
 {
     /** Seconds Register */
     uint32_t SEC;

@@ -45,8 +45,8 @@ extern "C" {
  * @brief Micro Tick register block structure
  */
 typedef struct {
-	__IO uint32_t CTRL;				/*!< UTick Control register */
-	__IO uint32_t STATUS;			/*!< UTick Status register */
+    __IO uint32_t CTRL;             /*!< UTick Control register */
+    __IO uint32_t STATUS;           /*!< UTick Status register */
 } LPC_UTICK_T;
 
 /**
@@ -64,84 +64,84 @@ typedef struct {
 #define UTICK_STATUS_MASK           ((uint32_t) 0x03)
 
 /**
- * @brief	Initialize the UTICK peripheral
- * @param	pUTICK	: UTICK peripheral selected
- * @return	Nothing
+ * @brief   Initialize the UTICK peripheral
+ * @param   pUTICK  : UTICK peripheral selected
+ * @return  Nothing
  */
 STATIC INLINE void Chip_UTICK_Init(LPC_UTICK_T *pUTICK)
 {
-	Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_UTICK);
-	Chip_SYSCON_PeriphReset(RESET_UTICK);
+    Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_UTICK);
+    Chip_SYSCON_PeriphReset(RESET_UTICK);
 }
 
 /**
- * @brief	De-initialize the UTICK peripheral
- * @param	pUTICK	: UTICK peripheral selected
- * @return	Nothing
+ * @brief   De-initialize the UTICK peripheral
+ * @param   pUTICK  : UTICK peripheral selected
+ * @return  Nothing
  */
 STATIC INLINE void Chip_UTICK_DeInit(LPC_UTICK_T *pUTICK)
 {
-	Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_UTICK);
+    Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_UTICK);
 }
 
 /**
- * @brief	Setup UTICK
- * @param	pUTICK		: The base address of UTICK block
- * @param	tick_value	: Tick value, should not exceed UTICK_CTRL_DELAY_MASK
- * @param	repeat		: If true then delay repeats continuously else it is one time
- * @return	Nothing
+ * @brief   Setup UTICK
+ * @param   pUTICK      : The base address of UTICK block
+ * @param   tick_value  : Tick value, should not exceed UTICK_CTRL_DELAY_MASK
+ * @param   repeat      : If true then delay repeats continuously else it is one time
+ * @return  Nothing
  */
 void Chip_UTICK_SetTick(LPC_UTICK_T *pUTICK, uint32_t tick_value, bool repeat);
 
 /**
- * @brief	Setup UTICK for the passed delay (in mS)
- * @param	pUTICK	: The base address of UTICK block
- * @param	delayMs	: Delay value in mS (Maximum is 1000mS)
- * @param	repeat	: If true then delay repeats continuously else it is one time
- * @return	Nothing
- * @note	The WDT oscillator runs at about 500KHz, so delays in uS won't be
+ * @brief   Setup UTICK for the passed delay (in mS)
+ * @param   pUTICK  : The base address of UTICK block
+ * @param   delayMs : Delay value in mS (Maximum is 1000mS)
+ * @param   repeat  : If true then delay repeats continuously else it is one time
+ * @return  Nothing
+ * @note    The WDT oscillator runs at about 500KHz, so delays in uS won't be
  * too accurate.
  */
 void Chip_UTICK_SetDelayMs(LPC_UTICK_T *pUTICK, uint32_t delayMs, bool repeat);
 
 /**
- * @brief	Read UTICK Value
- * @param	pUTICK	: The base address of UTICK block
- * @return	Current tick value
+ * @brief   Read UTICK Value
+ * @param   pUTICK  : The base address of UTICK block
+ * @return  Current tick value
  */
 STATIC INLINE uint32_t Chip_UTICK_GetTick(LPC_UTICK_T *pUTICK)
 {
-	return pUTICK->CTRL & UTICK_CTRL_DELAY_MASK;
+    return pUTICK->CTRL & UTICK_CTRL_DELAY_MASK;
 }
 
 /**
- * @brief	Halt UTICK timer
- * @param	pUTICK	: The base address of UTICK block
- * @return	Nothing
+ * @brief   Halt UTICK timer
+ * @param   pUTICK  : The base address of UTICK block
+ * @return  Nothing
  */
 STATIC INLINE void Chip_UTICK_Halt(LPC_UTICK_T *pUTICK)
 {
-	pUTICK->CTRL = 0;
+    pUTICK->CTRL = 0;
 }
 
 /**
- * @brief	Returns the status of UTICK
- * @param	pUTICK	: The base address of UTICK block
+ * @brief   Returns the status of UTICK
+ * @param   pUTICK  : The base address of UTICK block
  * @return Micro tick timer status register value
  */
 STATIC INLINE uint32_t Chip_UTICK_GetStatus(LPC_UTICK_T *pUTICK)
 {
-	return pUTICK->STATUS;
+    return pUTICK->STATUS;
 }
 
 /**
- * @brief	Clears UTICK Interrupt flag
- * @param	pUTICK	: The base address of UTICK block
- * @return	Nothing
+ * @brief   Clears UTICK Interrupt flag
+ * @param   pUTICK  : The base address of UTICK block
+ * @return  Nothing
  */
 STATIC INLINE void Chip_UTICK_ClearInterrupt(LPC_UTICK_T *pUTICK)
 {
-	pUTICK->STATUS = UTICK_STATUS_INTR;
+    pUTICK->STATUS = UTICK_STATUS_INTR;
 }
 
 /**

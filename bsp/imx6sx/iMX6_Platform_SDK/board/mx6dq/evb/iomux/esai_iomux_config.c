@@ -51,7 +51,7 @@ void esai_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO22
     //     ALT6 (6) - Select instance: spdif signal: SPDIF_LOCK
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO(0x020E04E4)
@@ -92,13 +92,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_SRE_V(SLOW));
     // Pad ENET_MDIO is involved in Daisy Chain.
     // Input Select Register:
@@ -127,7 +127,7 @@ void esai_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO23
     //     ALT6 (6) - Select instance: spdif signal: SPDIF_SR_CLK
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK(0x020E04E8)
@@ -168,13 +168,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_SRE_V(SLOW));
     // Pad ENET_REF_CLK is involved in Daisy Chain.
     // Input Select Register:
@@ -205,7 +205,7 @@ void esai_iomux_config(void)
     //     ALT4 (4) - Select instance: enet signal: ENET_1588_EVENT2_OUT
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO24
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_ER_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_ER_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_ER_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_ER_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER(0x020E04EC)
@@ -246,13 +246,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_ER_SRE_V(SLOW));
     // Pad ENET_RX_ER is involved in Daisy Chain.
     // Input Select Register:
@@ -284,7 +284,7 @@ void esai_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO15
     //     ALT6 (6) - Select instance: ipu2 signal: IPU2_SISG0
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B(0x020E06D4)
@@ -325,13 +325,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_SRE_V(SLOW));
     // Pad NAND_CS2_B is involved in Daisy Chain.
     // Input Select Register:
@@ -362,7 +362,7 @@ void esai_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO16
     //     ALT6 (6) - Select instance: ipu2 signal: IPU2_SISG1
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B(0x020E06D8)
@@ -403,13 +403,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_SRE_V(SLOW));
     // Pad NAND_CS3_B is involved in Daisy Chain.
     // Input Select Register:
@@ -439,7 +439,7 @@ void esai_iomux_config(void)
     //     ALT4 (4) - Select instance: enet signal: ENET_1588_EVENT0_IN
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO29
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA1_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA1_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA1_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA1_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1(0x020E0500)
@@ -480,13 +480,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA1_SRE_V(SLOW));
     // Pad ENET_TX_DATA1 is involved in Daisy Chain.
     // Input Select Register:
@@ -514,7 +514,7 @@ void esai_iomux_config(void)
     //     ALT2 (2) - Select instance: esai signal: ESAI_TX3_RX2
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO28
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_EN_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_EN_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_EN_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_EN_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN(0x020E04FC)
@@ -555,13 +555,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_EN_SRE_V(SLOW));
     // Pad ENET_TX_EN is involved in Daisy Chain.
     // Input Select Register:
@@ -589,7 +589,7 @@ void esai_iomux_config(void)
     //     ALT2 (2) - Select instance: esai signal: ESAI_TX4_RX1
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO30
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA0_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA0_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA0_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_TX_DATA0_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0(0x020E0504)
@@ -630,13 +630,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_TX_DATA0_SRE_V(SLOW));
     // Pad ENET_TX_DATA0 is involved in Daisy Chain.
     // Input Select Register:
@@ -666,7 +666,7 @@ void esai_iomux_config(void)
     //     ALT4 (4) - Select instance: enet signal: ENET_1588_EVENT1_IN
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO31
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_MDC(0x020E0508)
@@ -707,13 +707,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_SRE_V(SLOW));
     // Pad ENET_MDC is involved in Daisy Chain.
     // Input Select Register:
@@ -742,7 +742,7 @@ void esai_iomux_config(void)
     //     ALT3 (3) - Select instance: spdif signal: SPDIF_EXT_CLK
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO25
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_CRS_DV_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_CRS_DV_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_CRS_DV_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_CRS_DV_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV(0x020E04F0)
@@ -785,12 +785,12 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_CRS_DV_SRE_V(SLOW));
     // Pad ENET_CRS_DV is involved in Daisy Chain.
     // Input Select Register:
@@ -820,7 +820,7 @@ void esai_iomux_config(void)
     //     ALT4 (4) - Select instance: enet signal: ENET_1588_EVENT3_OUT
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO26
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA1_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA1_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA1_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA1_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1(0x020E04F4)
@@ -861,13 +861,13 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA1_SRE_V(SLOW));
     // Pad ENET_RX_DATA1 is involved in Daisy Chain.
     // Input Select Register:
@@ -896,7 +896,7 @@ void esai_iomux_config(void)
     //     ALT3 (3) - Select instance: spdif signal: SPDIF_OUT
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO27
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA0_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA0_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA0_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_RX_DATA0_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0(0x020E04F8)
@@ -939,12 +939,12 @@ void esai_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_RX_DATA0_SRE_V(SLOW));
     // Pad ENET_RX_DATA0 is involved in Daisy Chain.
     // Input Select Register:

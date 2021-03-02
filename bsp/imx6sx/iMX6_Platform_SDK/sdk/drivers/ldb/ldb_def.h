@@ -74,16 +74,16 @@ enum lvds_bitmap {
  * @param ipu_port IPU display port selection, available value could be IPU<x>_DI<y>
  * @param lvds_port LVDS channel selection
  * @param data_width 18 or 24bit mode selection
- * @param bit_map SPWG or JEIDA mode selection 
+ * @param bit_map SPWG or JEIDA mode selection
  */
 void ldb_config(int ipu_port, int lvds_port, int data_width, int bit_map);
 
 /*!
  * @brief Vsync polarity setting
- * 
+ *
  * @param ipu_port IPU display port selection, di0 or di1
  * @param vs_pol Vsync polarity setting
- * 
+ *
  */
 void ldb_set_vs_polarity(int ipu_port, int vs_pol);
 

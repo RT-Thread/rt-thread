@@ -8,12 +8,12 @@
 *
 * This device driver was created by Applilet3 for V850ES/Jx3
 * 32-Bit Single-Chip Microcontrollers
-* Filename:	CG_systeminit.c
-* Abstract:	This file implements system initializing function.
-* APIlib:	Applilet3 for V850ES/Jx3 V2.01 [20 Apr 2010]
-* Device:	uPD70F3746
-* Compiler:	IAR Systems ICCV850
-* Creation date:	6/26/2010
+* Filename: CG_systeminit.c
+* Abstract: This file implements system initializing function.
+* APIlib:   Applilet3 for V850ES/Jx3 V2.01 [20 Apr 2010]
+* Device:   uPD70F3746
+* Compiler: IAR Systems ICCV850
+* Creation date:    6/26/2010
 *******************************************************************************
 */
 
@@ -44,45 +44,45 @@ void systeminit(void);
 **-----------------------------------------------------------------------------
 **
 **  Abstract:
-**	This function initializes each macro.
+**  This function initializes each macro.
 **
 **  Parameters:
-**	None
+**  None
 **
 **  Returns:
-**	None
+**  None
 **
 **-----------------------------------------------------------------------------
 */
 void systeminit(void)
 {
-	DI();	/* disable interrupt */
-	CG_ReadResetSource();
-	PORT_Init();
-	TAB0_Init();
-	EI();	/* enable interrupt */
+    DI();   /* disable interrupt */
+    CG_ReadResetSource();
+    PORT_Init();
+    TAB0_Init();
+    EI();   /* enable interrupt */
 }
 /*
 **-----------------------------------------------------------------------------
 **
 **  Abstract:
-**	This function initializes hardware setting.
+**  This function initializes hardware setting.
 **
 **  Parameters:
-**	None
+**  None
 **
 **  Returns:
-**	None
+**  None
 **
 **-----------------------------------------------------------------------------
 */
 UCHAR __low_level_init(void)
 {
-	VSWC = 0x13U;
-	CLOCK_Init();	/* call Clock_Init function */
-	systeminit();
-	
-	return MD_TRUE;
+    VSWC = 0x13U;
+    CLOCK_Init();   /* call Clock_Init function */
+    systeminit();
+
+    return MD_TRUE;
 }
 
 /* Start user code for adding. Do not edit comment generated here */

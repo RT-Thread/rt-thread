@@ -160,7 +160,7 @@ uint_16 value
       sim->SCGC3 |= SIM_SCGC3_ESDHC_MASK;
 #else
       sim->SCGC3 |= SIM_SCGC3_SDHC_MASK;
-#endif 
+#endif
       break;
 
    default:
@@ -364,7 +364,7 @@ ESDHC_COMMAND_STRUCT_PTR command
 )
 {
    uint_32                      xfertyp;
-   
+
    /* Check command */
    xfertyp = ESDHC_COMMAND_XFERTYP[command->COMMAND & 0x3F];
    if ((0 == xfertyp) && (0 != command->COMMAND))

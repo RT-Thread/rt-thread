@@ -43,7 +43,7 @@
 
 #ifndef _C99
 #define _C99
-#endif /* !_C99*/ 
+#endif /* !_C99*/
 
 #endif /* __cplusplus */
 

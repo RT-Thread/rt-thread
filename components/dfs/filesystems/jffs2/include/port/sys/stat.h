@@ -92,19 +92,19 @@ typedef int pid_t;
 //
 typedef void *cyg_io_handle_t;
 
-/* Variable names for pathconf()			*/
+/* Variable names for pathconf()            */
 #define _PC_ASYNC_IO                 1
-#define	_PC_CHOWN_RESTRICTED	     2
-#define	_PC_LINK_MAX		         3
-#define	_PC_MAX_CANON		         4
-#define	_PC_MAX_INPUT		         5
-#define	_PC_NAME_MAX		         6
-#define	_PC_NO_TRUNC		         7
-#define	_PC_PATH_MAX		         8
-#define	_PC_PIPE_BUF		         9
+#define _PC_CHOWN_RESTRICTED         2
+#define _PC_LINK_MAX                 3
+#define _PC_MAX_CANON                4
+#define _PC_MAX_INPUT                5
+#define _PC_NAME_MAX                 6
+#define _PC_NO_TRUNC                 7
+#define _PC_PATH_MAX                 8
+#define _PC_PIPE_BUF                 9
 #define _PC_PRIO_IO                 10
 #define _PC_SYNC_IO                 11
-#define	_PC_VDISABLE		        12
+#define _PC_VDISABLE                12
 
 //limit.h
 /* DEFINES */
@@ -118,92 +118,92 @@ typedef void *cyg_io_handle_t;
  */
 
 /* Minimum number of operations in one list I/O call.  */
-#define _POSIX_AIO_LISTIO_MAX	2
+#define _POSIX_AIO_LISTIO_MAX   2
 
 /* Minimal number of outstanding asynchronous I/O operations.  */
-#define _POSIX_AIO_MAX		1
+#define _POSIX_AIO_MAX      1
 
 /* Maximum length of arguments to `execve', including environment.  */
-#define	_POSIX_ARG_MAX		4096
+#define _POSIX_ARG_MAX      4096
 
 /* Maximum simultaneous processes per real user ID.  */
-#define	_POSIX_CHILD_MAX	6
+#define _POSIX_CHILD_MAX    6
 
 /* Minimal number of timer expiration overruns.  */
-#define _POSIX_DELAYTIMER_MAX	32
+#define _POSIX_DELAYTIMER_MAX   32
 
 /* Maximum link count of a file.  */
-#define	_POSIX_LINK_MAX		8
+#define _POSIX_LINK_MAX     8
 
 /* Size of storage required for a login name */
 #define _POSIX_LOGIN_NAME_MAX   9
 
 /* Number of bytes in a terminal canonical input queue.  */
-#define	_POSIX_MAX_CANON	255
+#define _POSIX_MAX_CANON    255
 
 /* Number of bytes for which space will be
    available in a terminal input queue.  */
-#define	_POSIX_MAX_INPUT	255
+#define _POSIX_MAX_INPUT    255
 
 /* Maximum number of message queues open for a process.  */
-#define _POSIX_MQ_OPEN_MAX	8
+#define _POSIX_MQ_OPEN_MAX  8
 
 /* Maximum number of supported message priorities.  */
-#define _POSIX_MQ_PRIO_MAX	32
+#define _POSIX_MQ_PRIO_MAX  32
 
 /* Number of bytes in a filename.  */
-#define	_POSIX_NAME_MAX		14
+#define _POSIX_NAME_MAX     14
 
 /* Number of simultaneous supplementary group IDs per process.  */
-#define	_POSIX_NGROUPS_MAX	0
+#define _POSIX_NGROUPS_MAX  0
 
 /* Number of files one process can have open at once.  */
-#define	_POSIX_OPEN_MAX		16
+#define _POSIX_OPEN_MAX     16
 
 /* Number of bytes in a pathname.  */
-#define	_POSIX_PATH_MAX		255
+#define _POSIX_PATH_MAX     255
 
 /* Number of bytes than can be written atomically to a pipe.  */
-#define	_POSIX_PIPE_BUF		512
+#define _POSIX_PIPE_BUF     512
 
 /* Minimal number of realtime signals reserved for the application.  */
-#define _POSIX_RTSIG_MAX	8
+#define _POSIX_RTSIG_MAX    8
 
 /* Number of semaphores a process can have.  */
-#define _POSIX_SEM_NSEMS_MAX	256
+#define _POSIX_SEM_NSEMS_MAX    256
 
 /* Maximal value of a semaphore.  */
-#define _POSIX_SEM_VALUE_MAX	32767
+#define _POSIX_SEM_VALUE_MAX    32767
 
 /* Number of pending realtime signals.  */
-#define _POSIX_SIGQUEUE_MAX	32
+#define _POSIX_SIGQUEUE_MAX 32
 
 /* Largest value of a `ssize_t'.  */
-#define	_POSIX_SSIZE_MAX	32767
+#define _POSIX_SSIZE_MAX    32767
 
 /* Number of streams a process can have open at once.  */
-#define	_POSIX_STREAM_MAX	8
+#define _POSIX_STREAM_MAX   8
 
 /* Controlling the iterations of destructors for thread-specific data.  */
-#define _POSIX_THREAD_DESTRUCTOR_ITERATIONS	4
+#define _POSIX_THREAD_DESTRUCTOR_ITERATIONS 4
 
 /* The number of data keys per process.  */
-#define _POSIX_THREAD_KEYS_MAX	128
+#define _POSIX_THREAD_KEYS_MAX  128
 
 /* The number of threads per process.  */
-#define _POSIX_THREAD_THREADS_MAX	64
+#define _POSIX_THREAD_THREADS_MAX   64
 
 /* Maximum number of characters in a tty name.  */
-#define	_POSIX_TTY_NAME_MAX	9
+#define _POSIX_TTY_NAME_MAX 9
 
 /* Number of timer for a process.  */
-#define _POSIX_TIMER_MAX	32
+#define _POSIX_TIMER_MAX    32
 
 /* Maximum length of a timezone name (element of `tzname').  */
-#define	_POSIX_TZNAME_MAX	3
+#define _POSIX_TZNAME_MAX   3
 
 /* Maximum clock resolution in nanoseconds.  */
-#define _POSIX_CLOCKRES_MIN	20000000
+#define _POSIX_CLOCKRES_MIN 20000000
 
 
 #ifdef CYGBLD_ISO_SSIZET_HEADER
@@ -278,7 +278,7 @@ typedef unsigned long mode_t;
 typedef unsigned int ino_t;
 typedef unsigned int dev_t;
 typedef long ssize_t;
-#elif defined(__CC_ARM)  
+#elif defined(__CC_ARM)
 #define mode_t unsigned long
 typedef unsigned int ino_t;
 typedef unsigned int dev_t;

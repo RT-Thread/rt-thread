@@ -1,12 +1,12 @@
 /**
   ******************************************************************************
-  * @file    stm32wlxx_hal_timebase_tim_template.c 
+  * @file    stm32wlxx_hal_timebase_tim_template.c
   * @author  MCD Application Team
   * @brief   HAL time base based on the hardware TIM Template.
-  *    
+  *
   *          This file overrides the native HAL time base functions (defined as
   *          weak) the TIM time base:
-  *           + Initializes the TIM peripheral generate a Period elapsed Event 
+  *           + Initializes the TIM peripheral generate a Period elapsed Event
   *             each 1ms when uwTickFreq is set to default value, else 10 ms or
   *             100 ms, depending of above global variable value.
   *           + HAL_IncTick is called inside HAL_TIM_PeriodElapsedCallback
@@ -21,11 +21,11 @@
     (#) Add this file and the TIM HAL drivers to your project and uncomment
        HAL_TIM_MODULE_ENABLED define in stm32wlxx_hal_conf.h
 
-  @endverbatim 
+  @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -58,9 +58,9 @@ void TIM2_IRQHandler(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  This function configures the TIM2 as a time base source. 
-  *         The time source is configured to have 1ms time base with a dedicated 
-  *         Tick interrupt priority. 
+  * @brief  This function configures the TIM2 as a time base source.
+  *         The time source is configured to have 1ms time base with a dedicated
+  *         Tick interrupt priority.
   * @note   This function is called  automatically at the beginning of program
   *         after reset by HAL_Init() or at any time when clock is configured,
   *         by HAL_RCC_ClockConfig().
@@ -89,7 +89,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     uwAPB1Prescaler = clkconfig.APB1CLKDivider;
 
     /* Compute TIM2 clock */
-    if (uwAPB1Prescaler == RCC_HCLK_DIV1) 
+    if (uwAPB1Prescaler == RCC_HCLK_DIV1)
     {
       uwTimclock = HAL_RCC_GetPCLK1Freq();
     }
@@ -200,10 +200,10 @@ void TIM2_IRQHandler(void)
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -389,7 +389,7 @@ HAL_StatusTypeDef HAL_OSPI_Init (OSPI_HandleTypeDef *hospi)
 
          /* Enable OctoSPI */
          __HAL_OSPI_ENABLE(hospi);
-         
+
          /* Enable free running clock if needed : must be done after OSPI enable */
          if (hospi->Init.FreeRunningClock == HAL_OSPI_FREERUNCLK_ENABLE)
          {

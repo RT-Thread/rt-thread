@@ -42,7 +42,7 @@
 void accelerometer_test(void)
 {
     mma8451_device_t dev;
-    
+
     printf("\n== Accelerometer Test ==\n\n");
 
 #if BOARD_SMART_DEVICE || BOARD_SABRE_AI
@@ -62,17 +62,17 @@ void accelerometer_test(void)
     gpio_set_level(GPIO_PORT2, 31, GPIO_LOW_LEVEL);
     hal_delay_us(1000);
     gpio_set_level(GPIO_PORT2, 31, GPIO_HIGH_LEVEL);
-#endif    
-    
+#endif
+
     int err = mma8451_init(&dev, &g_mma8451_i2c_device);
     if (err)
     {
         printf("Failed to initialize the MMA8451 (err=%d)!\n", err);
         return;
     }
-    
+
     printf("Reading acceleration data... Press any key to stop.\n");
-    
+
     while (true)
     {
         // Read acceleration data.
@@ -83,7 +83,7 @@ void accelerometer_test(void)
             printf("Failed to read acceleration data (err=%d)!\n", err);
             return;
         }
-        
+
         // Having problems with float format specifiers, so we're just converting to
         // decimal before printing.
         char buf[128];
@@ -94,16 +94,16 @@ void accelerometer_test(void)
             (int)accel.z, (int)(fabsf(modff(accel.z, &integralPart)) * 1000.0));
         printf("%s", buf);
         fflush(stdout);
-        
+
         // Check if we should exit.
         if (getchar() != NONE_CHAR)
         {
             break;
         }
-        
+
         // Delay 50 ms.
         hal_delay_us(50000);
-        
+
         // Back up to start of the line by outputting a bunch of backspace chars.
         int len = strlen(buf);
         memset(buf, 0x08, sizeof(buf));
@@ -111,7 +111,7 @@ void accelerometer_test(void)
         fputs(buf, stdout);
         fflush(stdout);
     }
-    
+
     printf("\n\n");
 
 #else // BOARD_SMART_DEVICE || BOARD_SABRE_AI

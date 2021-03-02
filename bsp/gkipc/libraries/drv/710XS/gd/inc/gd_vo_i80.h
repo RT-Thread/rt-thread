@@ -11,7 +11,7 @@
 **            ACCEPTS NO RESPONSIBILITY OR LIABILITY FOR ANY ERRORS OR
 **            OMMISSIONS.
 **
-** \note      
+** \note
 **
 ******************************************************************************/
 #ifndef _GD_VO_I80_H_
@@ -24,11 +24,11 @@
 
 #define DEAD_LOOP_CHECK
 
-#define I80_DESIGN_REF_CLK_FREQ 200//MHz    GK7101S-->200MHz GK8601-->300MHz   
+#define I80_DESIGN_REF_CLK_FREQ 200//MHz    GK7101S-->200MHz GK8601-->300MHz
 
-#define I80_CLK_FREQ			100//MHz   GK7101S: FPGA-->100MHz   IC-->200MHz
-//#define I80_CLK_PERIOD			(1000/I80_CLK_FREQ)//   5ns/Cycle
-#define TIMING_PARA_CEIL_NS(x)	(((x)*I80_CLK_FREQ+999)/1000)
+#define I80_CLK_FREQ            100//MHz   GK7101S: FPGA-->100MHz   IC-->200MHz
+//#define I80_CLK_PERIOD            (1000/I80_CLK_FREQ)//   5ns/Cycle
+#define TIMING_PARA_CEIL_NS(x)  (((x)*I80_CLK_FREQ+999)/1000)
 
 #define I80_1ST_H_L_COUNTER     (10*I80_DESIGN_REF_CLK_FREQ)
 #define I80_2ND_H_COUNTER       (100*I80_DESIGN_REF_CLK_FREQ)
@@ -40,11 +40,11 @@
 #define TIMING_PARA_FIRST_L_CEIL_MS(x)  ((1000*I80_CLK_FREQ*(x)+I80_1ST_H_L_COUNTER-1)/I80_1ST_H_L_COUNTER)
 #define TIMING_PARA_SECOND_H_CEIL_MS(x) ((1000*I80_CLK_FREQ*(x)+I80_2ND_H_COUNTER-1)/I80_2ND_H_COUNTER)
 #define TIMING_PARA_HW_DELAY_CEIL_MS(x) ((1000*I80_CLK_FREQ*(x)+I80_HW_DELAY_COUNTER-1)/I80_HW_DELAY_COUNTER)
-//#define I80_CLK_10US_CYCLE	(10*I80_CLK_FREQ)//2000     //(10000/(1000/200))cycles     
-//#define I80_CLK_100US_CYCLE	(100*I80_CLK_FREQ)//20000 //(100000/(1000/200))cycles
-//#define TIMING_PARA_FIRST_H_CEIL_MS(x)	(((x)*1000*I80_CLK_FREQ+I80_CLK_10US_CYCLE-1)/I80_CLK_10US_CYCLE)//1ms*(200/2000*(10^6)
-//#define TIMING_PARA_FIRST_L_CEIL_MS(x) 	(((x)*1000*I80_CLK_FREQ+I80_CLK_10US_CYCLE-1)/I80_CLK_10US_CYCLE)
-//#define TIMING_PARA_SECOND_H_CEIL_MS(x)	(((x)*1000*I80_CLK_FREQ+I80_CLK_100US_CYCLE-1)/I80_CLK_100US_CYCLE)
+//#define I80_CLK_10US_CYCLE    (10*I80_CLK_FREQ)//2000     //(10000/(1000/200))cycles
+//#define I80_CLK_100US_CYCLE   (100*I80_CLK_FREQ)//20000 //(100000/(1000/200))cycles
+//#define TIMING_PARA_FIRST_H_CEIL_MS(x)    (((x)*1000*I80_CLK_FREQ+I80_CLK_10US_CYCLE-1)/I80_CLK_10US_CYCLE)//1ms*(200/2000*(10^6)
+//#define TIMING_PARA_FIRST_L_CEIL_MS(x)    (((x)*1000*I80_CLK_FREQ+I80_CLK_10US_CYCLE-1)/I80_CLK_10US_CYCLE)
+//#define TIMING_PARA_SECOND_H_CEIL_MS(x)   (((x)*1000*I80_CLK_FREQ+I80_CLK_100US_CYCLE-1)/I80_CLK_100US_CYCLE)
 
 #define I80READ     0
 #define I80WRITE    1
@@ -91,7 +91,7 @@ enum
 
 typedef enum
 {
-    GD_VO_I80_OFF=0,  //!< disable. 
+    GD_VO_I80_OFF=0,  //!< disable.
     GD_VO_I80_ON=1,  //!< enable.
 
 }GD_VO_I80_ONOFF_E;
@@ -170,7 +170,7 @@ typedef enum
 typedef enum
 {
     GD_VO_I80_CMD_LITTLE_ENDIAN = 0 ,//!< low byte first.
-    GD_VO_I80_CMD_BIG_ENDIAN =1 ,    //!< high byte first.  
+    GD_VO_I80_CMD_BIG_ENDIAN =1 ,    //!< high byte first.
 }GD_VO_I80_CMD_ENDIAN_E;
 
 
@@ -185,7 +185,7 @@ typedef enum
 typedef struct
 {
     U16 width;
-    U16 height; 
+    U16 height;
 }GD_VO_I80_PIC_RESOLUTION_S;
 
 
@@ -226,7 +226,7 @@ typedef struct
 //  GBOOL bcmdrd;//1--include writing command
     U8    cmdparanum;//1--total number of command and parameter
     U8    rdnum;//state number including dummy
-    U32  *plcdcmdpara;//array of command and parameter 
+    U32  *plcdcmdpara;//array of command and parameter
     U16  *plcdinfo;//array of lcd state, dummy state will be put into plcdinfo
 }GD_VO_I80_TRANS_STATE_S;
 
@@ -241,21 +241,21 @@ typedef struct
     /*!
     Flag to request DMA for read/write transfer operation.
     */
-//	U32                 	using;
-	GD_VO_I80_DATA_WIDTH_E 	datawidth;
-	GD_VO_I80_COLOR_FORMAT_E   colorformat;
-	GD_VO_I80_TRANS_FORMAT_E   datatransformat;	
-	U16						wrcmd;/*write pixel command*/
-	U16						rdcmd;/*read pixel command*/
-	GD_VO_I80_CMD_WIDTH_E		cmdwidth;
-	GD_VO_I80_CMD_ENDIAN_E		cmdformat;
-	U32						polarctrl;
-	GD_VO_I80_PIC_RESOLUTION_S picresolution;	
-	GD_VO_I80_TRANS_TIMING_S	transtiming;
-	U32						isUseHWDelay;
-	U16						delayms;
-	U16						delaycmd;
-//	GBOOL 					isCfgValidImmediately;
+//  U32                     using;
+    GD_VO_I80_DATA_WIDTH_E  datawidth;
+    GD_VO_I80_COLOR_FORMAT_E   colorformat;
+    GD_VO_I80_TRANS_FORMAT_E   datatransformat;
+    U16                     wrcmd;/*write pixel command*/
+    U16                     rdcmd;/*read pixel command*/
+    GD_VO_I80_CMD_WIDTH_E       cmdwidth;
+    GD_VO_I80_CMD_ENDIAN_E      cmdformat;
+    U32                     polarctrl;
+    GD_VO_I80_PIC_RESOLUTION_S picresolution;
+    GD_VO_I80_TRANS_TIMING_S    transtiming;
+    U32                     isUseHWDelay;
+    U16                     delayms;
+    U16                     delaycmd;
+//  GBOOL                   isCfgValidImmediately;
 } GD_VO_I80_OPEN_PARAMS_S;
 
 typedef struct

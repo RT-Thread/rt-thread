@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -310,7 +310,7 @@ void RTC_SetTime (LPC_RTC_TypeDef *RTCx, uint32_t Timetype, uint32_t TimeValue)
     switch ( Timetype)
     {
     case RTC_TIMETYPE_SECOND:
-        if(TimeValue <= RTC_SECOND_MAX) 
+        if(TimeValue <= RTC_SECOND_MAX)
             RTCx->SEC = TimeValue & RTC_SEC_MASK;
         break;
 
@@ -724,7 +724,7 @@ Status RTC_ER_Init(RTC_ER_CONFIG_Type* pConfig)
         LPC_RTC->ERCONTROL |= RTC_ERCTRL_EV0_POS_EDGE;
     else
         LPC_RTC->ERCONTROL &= ~RTC_ERCTRL_EV0_POS_EDGE;
-    
+
     if(pConfig->InputChannel[0].IntWake)
         LPC_RTC->ERCONTROL |= RTC_ERCTRL_EV0_INTWAKE_ENABLE;
     else
@@ -740,7 +740,7 @@ Status RTC_ER_Init(RTC_ER_CONFIG_Type* pConfig)
         LPC_RTC->ERCONTROL |= RTC_ERCTRL_EV1_POS_EDGE;
     else
         LPC_RTC->ERCONTROL &= ~RTC_ERCTRL_EV1_POS_EDGE;
-    
+
     if(pConfig->InputChannel[1].IntWake)
         LPC_RTC->ERCONTROL |= RTC_ERCTRL_EV1_INTWAKE_ENABLE;
     else
@@ -756,7 +756,7 @@ Status RTC_ER_Init(RTC_ER_CONFIG_Type* pConfig)
         LPC_RTC->ERCONTROL |= RTC_ERCTRL_EV2_POS_EDGE;
     else
         LPC_RTC->ERCONTROL &= ~RTC_ERCTRL_EV2_POS_EDGE;
-    
+
     if(pConfig->InputChannel[2].IntWake)
         LPC_RTC->ERCONTROL |= RTC_ERCTRL_EV2_INTWAKE_ENABLE;
     else
@@ -840,8 +840,8 @@ uint8_t RTC_ER_GetEventCount(uint8_t channel)
         case 2:
             count = RTC_ER_EV2_COUNTER(LPC_RTC->ERCOUNTERS);
             break;
-        default: 
-            break;      
+        default:
+            break;
     }
     return count;
 }
@@ -907,7 +907,7 @@ Status RTC_ER_GetFirstTimeStamp(uint8_t channel, RTC_ER_TIMESTAMP_Type* pTimeSta
 {
     if(pTimeStamp == NULL)
         return ERROR;
-    
+
     switch(channel)
     {
         case 0:
@@ -934,8 +934,8 @@ Status RTC_ER_GetFirstTimeStamp(uint8_t channel, RTC_ER_TIMESTAMP_Type* pTimeSta
             pTimeStamp->HOUR= RTC_ER_TIMESTAMP_HOUR(LPC_RTC->ERFIRSTSTAMP2);
             pTimeStamp->DOY = RTC_ER_TIMESTAMP_DOY(LPC_RTC->ERFIRSTSTAMP2);
             break;
-        default: 
-            break;      
+        default:
+            break;
     }
     return SUCCESS;
 
@@ -950,7 +950,7 @@ Status RTC_ER_GetLastTimeStamp(uint8_t channel, RTC_ER_TIMESTAMP_Type* pTimeStam
 {
     if(pTimeStamp == NULL)
         return ERROR;
-    
+
     switch(channel)
     {
         case 0:
@@ -977,8 +977,8 @@ Status RTC_ER_GetLastTimeStamp(uint8_t channel, RTC_ER_TIMESTAMP_Type* pTimeStam
             pTimeStamp->HOUR= RTC_ER_TIMESTAMP_HOUR(LPC_RTC->ERLASTSTAMP2);
             pTimeStamp->DOY = RTC_ER_TIMESTAMP_DOY(LPC_RTC->ERLASTSTAMP2);
             break;
-        default: 
-            break;      
+        default:
+            break;
     }
     return SUCCESS;
 

@@ -50,10 +50,10 @@
 #define _ARM_DSB()  asm volatile ("dsb\n\t")
 #define _ARM_ISB()  asm volatile ("isb\n\t")
 
-#define _ARM_MRC(coproc, opcode1, Rt, CRn, CRm, opcode2)	\
+#define _ARM_MRC(coproc, opcode1, Rt, CRn, CRm, opcode2)    \
     asm volatile ("mrc p" #coproc ", " #opcode1 ", %[output], c" #CRn ", c" #CRm ", " #opcode2 "\n" : [output] "=r" (Rt))
-    
-#define _ARM_MCR(coproc, opcode1, Rt, CRn, CRm, opcode2)	\
+
+#define _ARM_MCR(coproc, opcode1, Rt, CRn, CRm, opcode2)    \
     asm volatile ("mcr p" #coproc ", " #opcode1 ", %[input], c" #CRn ", c" #CRm ", " #opcode2 "\n" :: [input] "r" (Rt))
 //@}
 

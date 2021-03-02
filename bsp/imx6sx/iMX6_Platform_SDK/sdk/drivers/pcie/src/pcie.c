@@ -45,10 +45,10 @@
 #include "registers/regspciephy.h"
 #include "pcie/pcie_phy.h"
 
-#define DEBUG_ENABLE	1
+#define DEBUG_ENABLE    1
 
 #if PCIE_DEBUG_ENABLE
-#define TRACE(fmt, args...)	printf(fmt,##args)
+#define TRACE(fmt, args...) printf(fmt,##args)
 #else
 #define TRACE(fmt, args...)
 #endif
@@ -70,7 +70,7 @@ static const pcie_iomux_gpr_field_t pcie_iomux_gpr_fields[] = {
     {IOMUXC_GPR12, (1 << 16), 16},  //    .apps_pm_xmt_turnoff(iomuxc_gpr12[16]),
     {IOMUXC_GPR12, (1 << 10), 10},  //    .app_ltssm_enable(iomuxc_gpr12[10]),
     {IOMUXC_GPR12, (1 << 11), 11},  //    .app_init_rst(iomuxc_gpr12[11]),
-    {IOMUXC_GPR1, (1 << 16), 16},   //    .ref_ssp_en(iomuxc_gpr1[16]), 
+    {IOMUXC_GPR1, (1 << 16), 16},   //    .ref_ssp_en(iomuxc_gpr1[16]),
     {IOMUXC_GPR12, (7 << 21), 21},  //    .diag_ctrl_bus(iomuxc_gpr12[23:21]),
     {IOMUXC_GPR1, (1 << 26), 26},   //    .app_req_entr_l1(iomuxc_gpr1_26),
     {IOMUXC_GPR1, (1 << 27), 27},   //    .app_ready_entr_l23(iomuxc_gpr1_27),
@@ -122,20 +122,20 @@ static int wait_link_up(int wait_ms)
 
     count = wait_ms;
     do {
-	val = HW_PCIE_PL_DEBUG1_RD() & (0x01 << (36 - 32));	//link is debug bit 36 debug 1 start in bit 32
+    val = HW_PCIE_PL_DEBUG1_RD() & (0x01 << (36 - 32)); //link is debug bit 36 debug 1 start in bit 32
         count--;
         hal_delay_us(3000);
 
-	pcie_phy_cr_read(HW_PCIE_PHY_RX_ASIC_OUT_ADDR, &rx_valid);
-	ltssm = HW_PCIE_PL_DEBUG0_RD() & 0x3F;
-	/*
-    	 * If the link up stuck, reset the phy. This is recommonded by IP vendor.
-	 */
-	if ((ltssm == 0x0D) && ((rx_valid & 0x01) == 0)) {
-		pcie_phy_cr_write(HW_PCIE_PHY_RX_OVRD_IN_LO_ADDR, 0x0028);
-		hal_delay_us(3000);
-		pcie_phy_cr_write(HW_PCIE_PHY_RX_OVRD_IN_LO_ADDR, 0x0000);
-	}
+    pcie_phy_cr_read(HW_PCIE_PHY_RX_ASIC_OUT_ADDR, &rx_valid);
+    ltssm = HW_PCIE_PL_DEBUG0_RD() & 0x3F;
+    /*
+         * If the link up stuck, reset the phy. This is recommonded by IP vendor.
+     */
+    if ((ltssm == 0x0D) && ((rx_valid & 0x01) == 0)) {
+        pcie_phy_cr_write(HW_PCIE_PHY_RX_OVRD_IN_LO_ADDR, 0x0028);
+        hal_delay_us(3000);
+        pcie_phy_cr_write(HW_PCIE_PHY_RX_OVRD_IN_LO_ADDR, 0x0000);
+    }
     } while (!val && (count > 0));
 
     if (!val)
@@ -154,7 +154,7 @@ uint32_t pcie_map_space(uint32_t viewport, uint32_t tlp_type,
     HW_PCIE_PL_IATURUBA_WR(0);
     HW_PCIE_PL_IATURLA_WR(addr_base_cpu_side + size - 1);
     HW_PCIE_PL_IATURUTA_WR(0);
-    HW_PCIE_PL_IATURLTA_WR(addr_base_pcie_side); 
+    HW_PCIE_PL_IATURLTA_WR(addr_base_pcie_side);
     HW_PCIE_PL_IATURC1_WR(tlp_type & 0x0F);
     HW_PCIE_PL_IATURC2_WR(((unsigned int)(1 << 31)));
 
@@ -204,7 +204,7 @@ int pcie_init(pcie_dm_mode_e dev_mode)
     // wait for a while, then access the controller's registers.
     hal_delay_us(1000);
 
-    //start link up       
+    //start link up
     pcie_gpr_write_field(app_ltssm_enable, 1);
 
     if (0 != wait_link_up(2000)) {
@@ -214,8 +214,8 @@ int pcie_init(pcie_dm_mode_e dev_mode)
     //enable master, io, memory
     val = HW_PCIE_RC_COMMAND_RD();
     val |= BM_PCIE_RC_COMMAND_I_O_SPACE_ENABLE |
-	BM_PCIE_RC_COMMAND_MEMORY_SPACE_ENABLE |
-	BM_PCIE_RC_COMMAND_BUS_MASTER_ENABLE;
+    BM_PCIE_RC_COMMAND_MEMORY_SPACE_ENABLE |
+    BM_PCIE_RC_COMMAND_BUS_MASTER_ENABLE;
     HW_PCIE_RC_COMMAND_WR(val);
 
     return 0;

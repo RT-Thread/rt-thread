@@ -189,7 +189,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     GPIO_InitStructure.GPIO_Mode = GPIO_MODE_AF_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_SPEED_10MHZ;
     GPIO_Init(GPIOx, &GPIO_InitStructure);
-    /* TODO åˆå§‹åŒ– RX */
+    /* TODO ³õÊ¼»¯ RX */
     GPIOx = (GPIO_TypeDef *)uart->rx_port;
     GPIO_InitStructure.GPIO_Pin = uart->rx_pin;
     GPIO_InitStructure.GPIO_Mode = GPIO_MODE_IN_FLOATING;

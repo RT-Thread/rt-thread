@@ -54,7 +54,7 @@ void spinlock_init(spinlock_t * lock)
 // int spinlock_lock(spinlock_t * lock, uint32_t timeout)
 // {
 //     uint64_t startTime = time_get_microseconds();
-//     
+//
 //     // Spin until we can lock the lock.
 //     while (atomic_compare_and_swap((uint32_t *)lock, kUnlocked, kLocked))
 //     {
@@ -65,7 +65,7 @@ void spinlock_init(spinlock_t * lock)
 //             return 1;
 //         }
 //     }
-// 
+//
 //     return 0;
 // }
 

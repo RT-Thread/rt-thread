@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-08-08     Yang        the first version
  */
- 
+
 #include <board.h>
 #include <rtdevice.h>
 #include <drv_lcd.h>
@@ -290,7 +290,7 @@ static rt_err_t rt_lcd_init(rt_device_t dev)
 
     CLOCK_SetClkDiv(kCLOCK_DivLcdClk, 1, true);
 
-    /*LCDç®¡è„šé…ç½®*/
+    /*LCD¹Ü½ÅÅäÖÃ*/
     lcd_gpio_init();
 
     /* Set the back light PWM. */
@@ -360,10 +360,10 @@ static rt_err_t rt_lcd_control(rt_device_t dev, int cmd, void *args)
     {
         struct rt_device_rect_info *rect_info = (struct rt_device_rect_info *)args;
 
-        /* å…ˆæŒ‡å‘ç»˜å›¾ buff æ˜¾ç¤º */
+        /* ÏÈÖ¸Ïò»æÍ¼ buff ÏÔÊ¾ */
         LCD->UPBASE = (rt_uint32_t)_rt_framebuffer;
 
-        /* ä»Žç»˜å›¾ buff copy æ•°æ®åˆ°æ˜¾ç¤º buff */
+        /* ´Ó»æÍ¼ buff copy Êý¾Ýµ½ÏÔÊ¾ buff */
         if (rect_info->width * rect_info->height < RT_HW_LCD_WIDTH * RT_HW_LCD_HEIGHT / 5 * 3)
         {
             int index = 0;
@@ -384,7 +384,7 @@ static rt_err_t rt_lcd_control(rt_device_t dev, int cmd, void *args)
         {
             memcpy((void *)lcd_framebuffer, _rt_framebuffer, sizeof(rt_uint16_t)*RT_HW_LCD_HEIGHT * RT_HW_LCD_WIDTH);
         }
-        /* æŒ‡å›žæ˜¾ç¤º buff */
+        /* Ö¸»ØÏÔÊ¾ buff */
         LCD->UPBASE = (rt_uint32_t)lcd_framebuffer;
         rt_kprintf("====> rect_info : %d %d %d %d\n", rect_info->x, rect_info->y, rect_info->width, rect_info->height);
     }
@@ -427,7 +427,7 @@ void rt_hw_lcd_init(void)
     _rt_framebuffer = rt_malloc_align(sizeof(rt_uint16_t) * RT_HW_LCD_HEIGHT * RT_HW_LCD_WIDTH, 32);
     if (_rt_framebuffer == RT_NULL) return; /* no memory yet */
     _lcd_info.bits_per_pixel = LCD_BITS_PER_PIXEL;
-    _lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;		// RTGRAPHIC_PIXEL_FORMAT_ARGB888
+    _lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;     // RTGRAPHIC_PIXEL_FORMAT_ARGB888
     _lcd_info.framebuffer = (void *)_rt_framebuffer;
     _lcd_info.width = RT_HW_LCD_WIDTH;
     _lcd_info.height = RT_HW_LCD_HEIGHT;

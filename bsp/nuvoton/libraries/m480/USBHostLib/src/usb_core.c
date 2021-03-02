@@ -130,7 +130,7 @@ int usbh_connect_device(UDEV_T *udev)
 
     if (g_conn_func)
         g_conn_func(udev, 0);
-    
+
     return 0;
 }
 
@@ -142,8 +142,8 @@ void usbh_disconnect_device(UDEV_T *udev)
     if (g_disconn_func)
         g_disconn_func(udev, 0);
 
-    
-#if 1    //CHECK: Maybe create a new API to quit_xfer and free udev for application    
+
+#if 1    //CHECK: Maybe create a new API to quit_xfer and free udev for application
     usbh_quit_xfer(udev, &(udev->ep0));    /* Quit control transfer if hw_pipe is not NULL.  */
 
     /* remove device from global device list */

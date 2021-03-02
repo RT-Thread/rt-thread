@@ -2,7 +2,7 @@
  * Copyright 2017 NXP
  * All rights reserved.
  *
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
@@ -74,7 +74,7 @@ status_t IO_Deinit(void);
  * @endcode
  *
  * @param   ch  transfer buffer pointer
- * @param	size transfer size
+ * @param   size transfer size
  * @param   tx indicate the transfer is TX or RX
  */
 status_t IO_Transfer(uint8_t *ch, size_t size, bool tx);

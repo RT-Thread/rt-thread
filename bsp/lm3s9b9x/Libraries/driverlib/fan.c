@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2010-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -386,9 +386,9 @@ FanChannelRPMGet(unsigned long ulBase, unsigned long ulChannel)
 //! \param ulBase is the base address of the FAN module.
 //! \param ulFlags is the logical OR of all the interrupts to be enabled.
 //!
-//! This function enables one or more interrupts from the FAN module.  The 
-//! \e ulFlags parameter is the logical OR of all the possible interrupts that 
-//! can be enabled.  For each channel, the following interrupt flags are 
+//! This function enables one or more interrupts from the FAN module.  The
+//! \e ulFlags parameter is the logical OR of all the possible interrupts that
+//! can be enabled.  For each channel, the following interrupt flags are
 //! available:
 //!
 //! - \b FAN_CHn_INT_STALL means that a stall was detected (in either mode).
@@ -505,8 +505,8 @@ FanIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param ulBase is the base address of the FAN module.
 //! \param ulFlags is the logical OR of all the interrupts to be cleared.
 //!
-//! This function clears one or more interrupts from the FAN module.  The 
-//! \e ulFlags parameter is the logical OR of all the possible interrupts that 
+//! This function clears one or more interrupts from the FAN module.  The
+//! \e ulFlags parameter is the logical OR of all the possible interrupts that
 //! can be cleared.  For a list of possible interrupt flags, refer to the
 //! documentation for the function FanIntEnable().
 //!

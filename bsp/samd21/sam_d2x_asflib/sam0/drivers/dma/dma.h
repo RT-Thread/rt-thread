@@ -336,32 +336,32 @@ extern uint8_t g_chan_interrupt_flag[CONF_MAX_USED_CHANNEL_NUM];
 
 /** DMA priority level. */
 enum dma_priority_level {
-	/** Priority level 0. */
-	DMA_PRIORITY_LEVEL_0,
-	/** Priority level 1. */
-	DMA_PRIORITY_LEVEL_1,
-	/** Priority level 2. */
-	DMA_PRIORITY_LEVEL_2,
-	/** Priority level 3. */
-	DMA_PRIORITY_LEVEL_3,
+    /** Priority level 0. */
+    DMA_PRIORITY_LEVEL_0,
+    /** Priority level 1. */
+    DMA_PRIORITY_LEVEL_1,
+    /** Priority level 2. */
+    DMA_PRIORITY_LEVEL_2,
+    /** Priority level 3. */
+    DMA_PRIORITY_LEVEL_3,
 };
 
 /** DMA input actions. */
 enum dma_event_input_action {
-	/** No action. */
-	DMA_EVENT_INPUT_NOACT,
-	/** Normal transfer and periodic transfer trigger. */
-	DMA_EVENT_INPUT_TRIG,
-	/** Conditional transfer trigger. */
-	DMA_EVENT_INPUT_CTRIG,
-	/** Conditional block transfer. */
-	DMA_EVENT_INPUT_CBLOCK,
-	/** Channel suspend operation. */
-	DMA_EVENT_INPUT_SUSPEND,
-	/** Channel resume operation. */
-	DMA_EVENT_INPUT_RESUME,
-	/** Skip next block suspend action. */
-	DMA_EVENT_INPUT_SSKIP,
+    /** No action. */
+    DMA_EVENT_INPUT_NOACT,
+    /** Normal transfer and periodic transfer trigger. */
+    DMA_EVENT_INPUT_TRIG,
+    /** Conditional transfer trigger. */
+    DMA_EVENT_INPUT_CTRIG,
+    /** Conditional block transfer. */
+    DMA_EVENT_INPUT_CBLOCK,
+    /** Channel suspend operation. */
+    DMA_EVENT_INPUT_SUSPEND,
+    /** Channel resume operation. */
+    DMA_EVENT_INPUT_RESUME,
+    /** Skip next block suspend action. */
+    DMA_EVENT_INPUT_SSKIP,
 };
 
 /**
@@ -370,22 +370,22 @@ enum dma_event_input_action {
  * STEPSEL setting.
  */
 enum dma_address_increment_stepsize {
-	/** The address is incremented by (beat size * 1). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_1 = 0,
-	/** The address is incremented by (beat size * 2). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_2,
-	/** The address is incremented by (beat size * 4). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_4,
-	/** The address is incremented by (beat size * 8). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_8,
-	/** The address is incremented by (beat size * 16). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_16,
-	/** The address is incremented by (beat size * 32). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_32,
-	/** The address is incremented by (beat size * 64). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_64,
-	/** The address is incremented by (beat size * 128). */
-	DMA_ADDRESS_INCREMENT_STEP_SIZE_128,
+    /** The address is incremented by (beat size * 1). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_1 = 0,
+    /** The address is incremented by (beat size * 2). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_2,
+    /** The address is incremented by (beat size * 4). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_4,
+    /** The address is incremented by (beat size * 8). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_8,
+    /** The address is incremented by (beat size * 16). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_16,
+    /** The address is incremented by (beat size * 32). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_32,
+    /** The address is incremented by (beat size * 64). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_64,
+    /** The address is incremented by (beat size * 128). */
+    DMA_ADDRESS_INCREMENT_STEP_SIZE_128,
 };
 
 /**
@@ -393,78 +393,78 @@ enum dma_address_increment_stepsize {
  * is applied to source or destination address.
  */
 enum dma_step_selection {
-	/** Step size settings apply to the destination address. */
-	DMA_STEPSEL_DST = 0,
-	/** Step size settings apply to the source address. */
-	DMA_STEPSEL_SRC,
+    /** Step size settings apply to the destination address. */
+    DMA_STEPSEL_DST = 0,
+    /** Step size settings apply to the source address. */
+    DMA_STEPSEL_SRC,
 };
 
 /** The basic transfer unit in DMAC is a beat, which is defined as a
  *  single bus access. Its size is configurable and applies to both read
  *  and write. */
 enum dma_beat_size {
-	/** 8-bit access. */
-	DMA_BEAT_SIZE_BYTE = 0,
-	/** 16-bit access. */
-	DMA_BEAT_SIZE_HWORD,
-	/** 32-bit access. */
-	DMA_BEAT_SIZE_WORD,
+    /** 8-bit access. */
+    DMA_BEAT_SIZE_BYTE = 0,
+    /** 16-bit access. */
+    DMA_BEAT_SIZE_HWORD,
+    /** 32-bit access. */
+    DMA_BEAT_SIZE_WORD,
 };
 
 /**
  * Block action definitions.
  */
 enum dma_block_action {
-	/** No action. */
-	DMA_BLOCK_ACTION_NOACT = 0,
-	/** Channel in normal operation and sets transfer complete interrupt flag
-	 *  after block transfer. */
-	DMA_BLOCK_ACTION_INT,
-	/** Trigger channel suspend after block transfer and sets channel
-	 *  suspend interrupt flag once the channel is suspended. */
-	DMA_BLOCK_ACTION_SUSPEND,
-	/** Sets transfer complete interrupt flag after a block transfer and
-	 *  trigger channel suspend. The channel suspend interrupt flag will be set
-	 *  once the channel is suspended. */
-	DMA_BLOCK_ACTION_BOTH,
+    /** No action. */
+    DMA_BLOCK_ACTION_NOACT = 0,
+    /** Channel in normal operation and sets transfer complete interrupt flag
+     *  after block transfer. */
+    DMA_BLOCK_ACTION_INT,
+    /** Trigger channel suspend after block transfer and sets channel
+     *  suspend interrupt flag once the channel is suspended. */
+    DMA_BLOCK_ACTION_SUSPEND,
+    /** Sets transfer complete interrupt flag after a block transfer and
+     *  trigger channel suspend. The channel suspend interrupt flag will be set
+     *  once the channel is suspended. */
+    DMA_BLOCK_ACTION_BOTH,
 };
 
 /** Event output selection. */
 enum dma_event_output_selection {
-	/** Event generation disable. */
-	DMA_EVENT_OUTPUT_DISABLE = 0,
-	/** Event strobe when block transfer complete. */
-	DMA_EVENT_OUTPUT_BLOCK,
-	/** Event output reserved. */
-	DMA_EVENT_OUTPUT_RESERVED,
-	/** Event strobe when beat transfer complete. */
-	DMA_EVENT_OUTPUT_BEAT,
+    /** Event generation disable. */
+    DMA_EVENT_OUTPUT_DISABLE = 0,
+    /** Event strobe when block transfer complete. */
+    DMA_EVENT_OUTPUT_BLOCK,
+    /** Event output reserved. */
+    DMA_EVENT_OUTPUT_RESERVED,
+    /** Event strobe when beat transfer complete. */
+    DMA_EVENT_OUTPUT_BEAT,
 };
 
 /** DMA trigger action type. */
 enum dma_transfer_trigger_action{
-	/** Perform a block transfer when triggered. */
-	DMA_TRIGGER_ACTION_BLOCK = DMAC_CHCTRLB_TRIGACT_BLOCK_Val,
-	/** Perform a beat transfer when triggered. */
-	DMA_TRIGGER_ACTION_BEAT = DMAC_CHCTRLB_TRIGACT_BEAT_Val,
-	/** Perform a transaction when triggered. */
-	DMA_TRIGGER_ACTION_TRANSACTION = DMAC_CHCTRLB_TRIGACT_TRANSACTION_Val,
+    /** Perform a block transfer when triggered. */
+    DMA_TRIGGER_ACTION_BLOCK = DMAC_CHCTRLB_TRIGACT_BLOCK_Val,
+    /** Perform a beat transfer when triggered. */
+    DMA_TRIGGER_ACTION_BEAT = DMAC_CHCTRLB_TRIGACT_BEAT_Val,
+    /** Perform a transaction when triggered. */
+    DMA_TRIGGER_ACTION_TRANSACTION = DMAC_CHCTRLB_TRIGACT_TRANSACTION_Val,
 };
 
 /**
  * Callback types for DMA callback driver.
  */
 enum dma_callback_type {
-	/** Callback for any of transfer errors. A transfer error is flagged
-     *	if a bus error is detected during an AHB access or when the DMAC
-	 *  fetches an invalid descriptor. */
-	DMA_CALLBACK_TRANSFER_ERROR,
-	/** Callback for transfer complete. */
-	DMA_CALLBACK_TRANSFER_DONE,
-	/** Callback for channel suspend. */
-	DMA_CALLBACK_CHANNEL_SUSPEND,
-	/** Number of available callbacks. */
-	DMA_CALLBACK_N,
+    /** Callback for any of transfer errors. A transfer error is flagged
+     *  if a bus error is detected during an AHB access or when the DMAC
+     *  fetches an invalid descriptor. */
+    DMA_CALLBACK_TRANSFER_ERROR,
+    /** Callback for transfer complete. */
+    DMA_CALLBACK_TRANSFER_DONE,
+    /** Callback for channel suspend. */
+    DMA_CALLBACK_CHANNEL_SUSPEND,
+    /** Number of available callbacks. */
+    DMA_CALLBACK_N,
 };
 
 /**
@@ -474,61 +474,61 @@ enum dma_callback_type {
  *
  */
 struct dma_descriptor_config {
-	/** Descriptor valid flag used to identify whether a descriptor is
-	    valid or not */
-	bool descriptor_valid;
-	/** This is used to generate an event on specific transfer action in
-	    a channel. Supported only in four lower channels. */
-	enum dma_event_output_selection event_output_selection;
-	/** Action taken when a block transfer is completed */
-	enum dma_block_action block_action;
-	/** Beat size is configurable as 8-bit, 16-bit, or 32-bit */
-	enum dma_beat_size beat_size;
-	/** Used for enabling the source address increment */
-	bool src_increment_enable;
-	/** Used for enabling the destination address increment */
-	bool dst_increment_enable;
-	/** This bit selects whether the source or destination address is
-	    using the step size settings */
-	enum dma_step_selection step_selection;
-	/** The step size for source/destination address increment.
-	    The next address is calculated
-	    as next_addr = addr + (2^step_size * beat size). */
-	enum dma_address_increment_stepsize step_size;
-	/** It is the number of beats in a block. This count value is
-	 * decremented by one after each beat data transfer. */
-	uint16_t block_transfer_count;
-	/** Transfer source address */
-	uint32_t source_address;
-	/** Transfer destination address */
-	uint32_t destination_address;
-	/** Set to zero for static descriptors. This must have a valid memory
-	    address for linked descriptors. */
-	uint32_t next_descriptor_address;
+    /** Descriptor valid flag used to identify whether a descriptor is
+        valid or not */
+    bool descriptor_valid;
+    /** This is used to generate an event on specific transfer action in
+        a channel. Supported only in four lower channels. */
+    enum dma_event_output_selection event_output_selection;
+    /** Action taken when a block transfer is completed */
+    enum dma_block_action block_action;
+    /** Beat size is configurable as 8-bit, 16-bit, or 32-bit */
+    enum dma_beat_size beat_size;
+    /** Used for enabling the source address increment */
+    bool src_increment_enable;
+    /** Used for enabling the destination address increment */
+    bool dst_increment_enable;
+    /** This bit selects whether the source or destination address is
+        using the step size settings */
+    enum dma_step_selection step_selection;
+    /** The step size for source/destination address increment.
+        The next address is calculated
+        as next_addr = addr + (2^step_size * beat size). */
+    enum dma_address_increment_stepsize step_size;
+    /** It is the number of beats in a block. This count value is
+     * decremented by one after each beat data transfer. */
+    uint16_t block_transfer_count;
+    /** Transfer source address */
+    uint32_t source_address;
+    /** Transfer destination address */
+    uint32_t destination_address;
+    /** Set to zero for static descriptors. This must have a valid memory
+        address for linked descriptors. */
+    uint32_t next_descriptor_address;
 };
 
 /** Configurations for DMA events. */
 struct dma_events_config {
-	/** Event input actions */
-	enum dma_event_input_action input_action;
-	/** Enable DMA event output */
-	bool event_output_enable;
+    /** Event input actions */
+    enum dma_event_input_action input_action;
+    /** Enable DMA event output */
+    bool event_output_enable;
 };
 
 /** DMA configurations for transfer. */
 struct dma_resource_config {
-	/** DMA transfer priority */
-	enum dma_priority_level priority;
-	/**DMA peripheral trigger index */
-	uint8_t peripheral_trigger;
-	/** DMA trigger action */
-	enum dma_transfer_trigger_action trigger_action;
+    /** DMA transfer priority */
+    enum dma_priority_level priority;
+    /**DMA peripheral trigger index */
+    uint8_t peripheral_trigger;
+    /** DMA trigger action */
+    enum dma_transfer_trigger_action trigger_action;
 #ifdef FEATURE_DMA_CHANNEL_STANDBY
-	/** Keep DMA channel enabled in standby sleep mode if true */
-	bool run_in_standby;
+    /** Keep DMA channel enabled in standby sleep mode if true */
+    bool run_in_standby;
 #endif
-	/** DMA events configurations */
-	struct dma_events_config event_config;
+    /** DMA events configurations */
+    struct dma_events_config event_config;
 };
 
 /** Forward definition of the DMA resource. */
@@ -538,18 +538,18 @@ typedef void (*dma_callback_t)(struct dma_resource *const resource);
 
 /** Structure for DMA transfer resource. */
 struct dma_resource {
-	/** Allocated DMA channel ID */
-	uint8_t channel_id;
-	/** Array of callback functions for DMA transfer job */
-	dma_callback_t callback[DMA_CALLBACK_N];
-	/** Bit mask for enabled callbacks */
-	uint8_t callback_enable;
-	/** Status of the last job */
-	volatile enum status_code job_status;
-	/** Transferred data size */
-	uint32_t transfered_size;
-	/** DMA transfer descriptor */
-	DmacDescriptor* descriptor;
+    /** Allocated DMA channel ID */
+    uint8_t channel_id;
+    /** Array of callback functions for DMA transfer job */
+    dma_callback_t callback[DMA_CALLBACK_N];
+    /** Bit mask for enabled callbacks */
+    uint8_t callback_enable;
+    /** Status of the last job */
+    volatile enum status_code job_status;
+    /** Transferred data size */
+    uint32_t transfered_size;
+    /** DMA transfer descriptor */
+    DmacDescriptor* descriptor;
 };
 
 /**
@@ -561,9 +561,9 @@ struct dma_resource {
  */
 static inline enum status_code dma_get_job_status(struct dma_resource *resource)
 {
-	Assert(resource);
+    Assert(resource);
 
-	return resource->job_status;
+    return resource->job_status;
 }
 
 /**
@@ -578,9 +578,9 @@ static inline enum status_code dma_get_job_status(struct dma_resource *resource)
  */
 static inline bool dma_is_busy(struct dma_resource *resource)
 {
-	Assert(resource);
+    Assert(resource);
 
-	return (resource->job_status == STATUS_BUSY);
+    return (resource->job_status == STATUS_BUSY);
 }
 
 /**
@@ -591,12 +591,12 @@ static inline bool dma_is_busy(struct dma_resource *resource)
  *
  */
 static inline void dma_enable_callback(struct dma_resource *resource,
-		enum dma_callback_type type)
+        enum dma_callback_type type)
 {
-	Assert(resource);
+    Assert(resource);
 
-	resource->callback_enable |= 1 << type;
-	g_chan_interrupt_flag[resource->channel_id] |= (1UL << type);
+    resource->callback_enable |= 1 << type;
+    g_chan_interrupt_flag[resource->channel_id] |= (1UL << type);
 }
 
 /**
@@ -607,13 +607,13 @@ static inline void dma_enable_callback(struct dma_resource *resource,
  *
  */
 static inline void dma_disable_callback(struct dma_resource *resource,
-		enum dma_callback_type type)
+        enum dma_callback_type type)
 {
-	Assert(resource);
+    Assert(resource);
 
-	resource->callback_enable &= ~(1 << type);
-	g_chan_interrupt_flag[resource->channel_id] &= (~(1UL << type) & DMAC_CHINTENSET_MASK);
-	DMAC->CHINTENCLR.reg = (1UL << type);
+    resource->callback_enable &= ~(1 << type);
+    g_chan_interrupt_flag[resource->channel_id] &= (~(1UL << type) & DMAC_CHINTENSET_MASK);
+    DMAC->CHINTENCLR.reg = (1UL << type);
 }
 
 /**
@@ -630,11 +630,11 @@ static inline void dma_disable_callback(struct dma_resource *resource,
  *
  */
 static inline void dma_register_callback(struct dma_resource *resource,
-		dma_callback_t callback, enum dma_callback_type type)
+        dma_callback_t callback, enum dma_callback_type type)
 {
-	Assert(resource);
+    Assert(resource);
 
-	resource->callback[type] = callback;
+    resource->callback[type] = callback;
 }
 
 /**
@@ -653,11 +653,11 @@ static inline void dma_register_callback(struct dma_resource *resource,
  *
  */
 static inline void dma_unregister_callback(struct dma_resource *resource,
-		enum dma_callback_type type)
+        enum dma_callback_type type)
 {
-	Assert(resource);
+    Assert(resource);
 
-	resource->callback[type] = NULL;
+    resource->callback[type] = NULL;
 }
 
 /**
@@ -670,9 +670,9 @@ static inline void dma_unregister_callback(struct dma_resource *resource,
  * \param[in] resource Pointer to the DMA resource
  */
 static inline void dma_trigger_transfer(struct dma_resource *resource) {
-	Assert(resource);
+    Assert(resource);
 
-	DMAC->SWTRIGCTRL.reg |= (1 << resource->channel_id);
+    DMAC->SWTRIGCTRL.reg |= (1 << resource->channel_id);
 }
 
 /**
@@ -701,32 +701,32 @@ static inline void dma_trigger_transfer(struct dma_resource *resource) {
  */
 static inline void dma_descriptor_get_config_defaults(struct dma_descriptor_config *config)
 {
-	Assert(config);
+    Assert(config);
 
-	/* Set descriptor as valid */
-	config->descriptor_valid = true;
-	/* Disable event output */
-	config->event_output_selection = DMA_EVENT_OUTPUT_DISABLE;
-	/* No block action */
-	config->block_action = DMA_BLOCK_ACTION_NOACT;
-	/* Set beat size to one byte */
-	config->beat_size = DMA_BEAT_SIZE_BYTE;
-	/* Enable source increment */
-	config->src_increment_enable = true;
-	/* Enable destination increment */
-	config->dst_increment_enable = true;
-	/* Step size is applied to the destination address */
-	config->step_selection = DMA_STEPSEL_DST;
-	/* Address increment is beat size multiplied by 1*/
-	config->step_size = DMA_ADDRESS_INCREMENT_STEP_SIZE_1;
-	/* Default transfer size is set to 0 */
-	config->block_transfer_count = 0;
-	/* Default source address is set to NULL */
-	config->source_address = (uint32_t)NULL;
-	/* Default destination address is set to NULL */
-	config->destination_address = (uint32_t)NULL;
-	/** Next descriptor address set to 0 */
-	config->next_descriptor_address = 0;
+    /* Set descriptor as valid */
+    config->descriptor_valid = true;
+    /* Disable event output */
+    config->event_output_selection = DMA_EVENT_OUTPUT_DISABLE;
+    /* No block action */
+    config->block_action = DMA_BLOCK_ACTION_NOACT;
+    /* Set beat size to one byte */
+    config->beat_size = DMA_BEAT_SIZE_BYTE;
+    /* Enable source increment */
+    config->src_increment_enable = true;
+    /* Enable destination increment */
+    config->dst_increment_enable = true;
+    /* Step size is applied to the destination address */
+    config->step_selection = DMA_STEPSEL_DST;
+    /* Address increment is beat size multiplied by 1*/
+    config->step_size = DMA_ADDRESS_INCREMENT_STEP_SIZE_1;
+    /* Default transfer size is set to 0 */
+    config->block_transfer_count = 0;
+    /* Default source address is set to NULL */
+    config->source_address = (uint32_t)NULL;
+    /* Default destination address is set to NULL */
+    config->destination_address = (uint32_t)NULL;
+    /** Next descriptor address set to 0 */
+    config->next_descriptor_address = 0;
 }
 
 /**
@@ -736,11 +736,11 @@ static inline void dma_descriptor_get_config_defaults(struct dma_descriptor_conf
  *
  */
 static inline void dma_update_descriptor(struct dma_resource *resource,
-		DmacDescriptor* descriptor)
+        DmacDescriptor* descriptor)
 {
-	Assert(resource);
+    Assert(resource);
 
-	resource->descriptor = descriptor;
+    resource->descriptor = descriptor;
 }
 
 /**
@@ -751,23 +751,23 @@ static inline void dma_update_descriptor(struct dma_resource *resource,
  */
 static inline void dma_reset_descriptor(struct dma_resource *resource)
 {
-	Assert(resource);
+    Assert(resource);
 
-	resource->descriptor = NULL;
+    resource->descriptor = NULL;
 }
 
 void dma_get_config_defaults(struct dma_resource_config *config);
 enum status_code dma_allocate(struct dma_resource *resource,
-		struct dma_resource_config *config);
+        struct dma_resource_config *config);
 enum status_code dma_free(struct dma_resource *resource);
 enum status_code dma_start_transfer_job(struct dma_resource *resource);
 void dma_abort_job(struct dma_resource *resource);
 void dma_suspend_job(struct dma_resource *resource);
 void dma_resume_job(struct dma_resource *resource);
 void dma_descriptor_create(DmacDescriptor* descriptor,
-	struct dma_descriptor_config *config);
+    struct dma_descriptor_config *config);
 enum status_code dma_add_descriptor(struct dma_resource *resource,
-		DmacDescriptor* descriptor);
+        DmacDescriptor* descriptor);
 
 /** @} */
 

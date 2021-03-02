@@ -390,7 +390,7 @@ extern "C" {
  * @{
  */
 #  if (SAMD21) || (SAMR21) || (SAMD11) || (SAMD10) || (SAML21) || (SAMDA1) || (SAMHA1) ||\
-	  (SAML22) || (SAMC20) || (SAMC21) || (SAMD09) || (SAMR30) || defined(__DOXYGEN__)
+      (SAML22) || (SAMC20) || (SAMC21) || (SAMD09) || (SAMR30) || defined(__DOXYGEN__)
 /** SPI slave select low detection. */
 #  define FEATURE_SPI_SLAVE_SELECT_LOW_DETECT
 /** Slave select can be controlled by hardware. */
@@ -428,30 +428,30 @@ extern "C" {
  *
  */
 enum spi_callback {
-	/** Callback for buffer transmitted */
-	SPI_CALLBACK_BUFFER_TRANSMITTED,
-	/** Callback for buffer received */
-	SPI_CALLBACK_BUFFER_RECEIVED,
-	/** Callback for buffers transceived */
-	SPI_CALLBACK_BUFFER_TRANSCEIVED,
-	/** Callback for error */
-	SPI_CALLBACK_ERROR,
-	/**
-	* Callback for transmission ended by master before the entire buffer was
-	* read or written from slave
-	*/
-	SPI_CALLBACK_SLAVE_TRANSMISSION_COMPLETE,
+    /** Callback for buffer transmitted */
+    SPI_CALLBACK_BUFFER_TRANSMITTED,
+    /** Callback for buffer received */
+    SPI_CALLBACK_BUFFER_RECEIVED,
+    /** Callback for buffers transceived */
+    SPI_CALLBACK_BUFFER_TRANSCEIVED,
+    /** Callback for error */
+    SPI_CALLBACK_ERROR,
+    /**
+    * Callback for transmission ended by master before the entire buffer was
+    * read or written from slave
+    */
+    SPI_CALLBACK_SLAVE_TRANSMISSION_COMPLETE,
 #  ifdef FEATURE_SPI_SLAVE_SELECT_LOW_DETECT
-	/** Callback for  slave select low */
-	SPI_CALLBACK_SLAVE_SELECT_LOW,
+    /** Callback for  slave select low */
+    SPI_CALLBACK_SLAVE_SELECT_LOW,
 #  endif
 #  ifdef FEATURE_SPI_ERROR_INTERRUPT
-	/** Callback for combined error happen */
-	SPI_CALLBACK_COMBINED_ERROR,
+    /** Callback for combined error happen */
+    SPI_CALLBACK_COMBINED_ERROR,
 #  endif
 #  if !defined(__DOXYGEN__)
-	/** Number of available callbacks */
-	SPI_CALLBACK_N,
+    /** Number of available callbacks */
+    SPI_CALLBACK_N,
 #  endif
 };
 #  endif
@@ -462,14 +462,14 @@ enum spi_callback {
  * \internal SPI transfer directions
  */
 enum _spi_direction {
-	/** Transfer direction is read */
-	SPI_DIRECTION_READ,
-	/** Transfer direction is write */
-	SPI_DIRECTION_WRITE,
-	/** Transfer direction is read and write */
-	SPI_DIRECTION_BOTH,
-	/** No transfer */
-	SPI_DIRECTION_IDLE,
+    /** Transfer direction is read */
+    SPI_DIRECTION_READ,
+    /** Transfer direction is write */
+    SPI_DIRECTION_WRITE,
+    /** Transfer direction is read and write */
+    SPI_DIRECTION_BOTH,
+    /** No transfer */
+    SPI_DIRECTION_IDLE,
 };
 #  endif
 #endif
@@ -481,25 +481,25 @@ enum _spi_direction {
  *
  */
 enum spi_interrupt_flag {
-	/**
-	 * This flag is set when the contents of the data register has been moved
-	 * to the shift register and the data register is ready for new data
-	 */
-	SPI_INTERRUPT_FLAG_DATA_REGISTER_EMPTY = SERCOM_SPI_INTFLAG_DRE,
-	/**
-	 * This flag is set when the contents of the shift register has been
-	 * shifted out
-	 */
-	SPI_INTERRUPT_FLAG_TX_COMPLETE         = SERCOM_SPI_INTFLAG_TXC,
-	/** This flag is set when data has been shifted into the data register */
-	SPI_INTERRUPT_FLAG_RX_COMPLETE         = SERCOM_SPI_INTFLAG_RXC,
+    /**
+     * This flag is set when the contents of the data register has been moved
+     * to the shift register and the data register is ready for new data
+     */
+    SPI_INTERRUPT_FLAG_DATA_REGISTER_EMPTY = SERCOM_SPI_INTFLAG_DRE,
+    /**
+     * This flag is set when the contents of the shift register has been
+     * shifted out
+     */
+    SPI_INTERRUPT_FLAG_TX_COMPLETE         = SERCOM_SPI_INTFLAG_TXC,
+    /** This flag is set when data has been shifted into the data register */
+    SPI_INTERRUPT_FLAG_RX_COMPLETE         = SERCOM_SPI_INTFLAG_RXC,
 #  ifdef FEATURE_SPI_SLAVE_SELECT_LOW_DETECT
-	/** This flag is set when slave select low  */
-	SPI_INTERRUPT_FLAG_SLAVE_SELECT_LOW         = SERCOM_SPI_INTFLAG_SSL,
+    /** This flag is set when slave select low  */
+    SPI_INTERRUPT_FLAG_SLAVE_SELECT_LOW         = SERCOM_SPI_INTFLAG_SSL,
 #  endif
 #  ifdef FEATURE_SPI_ERROR_INTERRUPT
-	/** This flag is set when combined error happen */
-	SPI_INTERRUPT_FLAG_COMBINED_ERROR         = SERCOM_SPI_INTFLAG_ERROR,
+    /** This flag is set when combined error happen */
+    SPI_INTERRUPT_FLAG_COMBINED_ERROR         = SERCOM_SPI_INTFLAG_ERROR,
 #  endif
 };
 
@@ -509,14 +509,14 @@ enum spi_interrupt_flag {
  * SPI transfer mode.
  */
 enum spi_transfer_mode {
-	/** Mode 0. Leading edge: rising, sample. Trailing edge: falling, setup */
-	SPI_TRANSFER_MODE_0 = 0,
-	/** Mode 1. Leading edge: rising, setup. Trailing edge: falling, sample */
-	SPI_TRANSFER_MODE_1 = SERCOM_SPI_CTRLA_CPHA,
-	/** Mode 2. Leading edge: falling, sample. Trailing edge: rising, setup */
-	SPI_TRANSFER_MODE_2 = SERCOM_SPI_CTRLA_CPOL,
-	/** Mode 3. Leading edge: falling, setup. Trailing edge: rising, sample */
-	SPI_TRANSFER_MODE_3 = SERCOM_SPI_CTRLA_CPHA | SERCOM_SPI_CTRLA_CPOL,
+    /** Mode 0. Leading edge: rising, sample. Trailing edge: falling, setup */
+    SPI_TRANSFER_MODE_0 = 0,
+    /** Mode 1. Leading edge: rising, setup. Trailing edge: falling, sample */
+    SPI_TRANSFER_MODE_1 = SERCOM_SPI_CTRLA_CPHA,
+    /** Mode 2. Leading edge: falling, sample. Trailing edge: rising, setup */
+    SPI_TRANSFER_MODE_2 = SERCOM_SPI_CTRLA_CPOL,
+    /** Mode 3. Leading edge: falling, setup. Trailing edge: rising, sample */
+    SPI_TRANSFER_MODE_3 = SERCOM_SPI_CTRLA_CPHA | SERCOM_SPI_CTRLA_CPOL,
 };
 
 /**
@@ -525,10 +525,10 @@ enum spi_transfer_mode {
  * Frame format for slave mode.
  */
 enum spi_frame_format {
-	/** SPI frame */
-	SPI_FRAME_FORMAT_SPI_FRAME      = SERCOM_SPI_CTRLA_FORM(0),
-	/** SPI frame with address */
-	SPI_FRAME_FORMAT_SPI_FRAME_ADDR = SERCOM_SPI_CTRLA_FORM(2),
+    /** SPI frame */
+    SPI_FRAME_FORMAT_SPI_FRAME      = SERCOM_SPI_CTRLA_FORM(0),
+    /** SPI frame with address */
+    SPI_FRAME_FORMAT_SPI_FRAME_ADDR = SERCOM_SPI_CTRLA_FORM(2),
 };
 
 /**
@@ -545,70 +545,70 @@ enum spi_frame_format {
  * various MUX setting options.
  */
 enum spi_signal_mux_setting {
-	/** SPI MUX combination A. DOPO: 0x0, DIPO: 0x0 */
-	SPI_SIGNAL_MUX_SETTING_A =
-			(0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination B. DOPO: 0x0, DIPO: 0x1 */
-	SPI_SIGNAL_MUX_SETTING_B =
-			(0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination C. DOPO: 0x0, DIPO: 0x2 */
-	SPI_SIGNAL_MUX_SETTING_C =
-			(0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination D. DOPO: 0x0, DIPO: 0x3 */
-	SPI_SIGNAL_MUX_SETTING_D =
-			(0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination E. DOPO: 0x1, DIPO: 0x0 */
-	SPI_SIGNAL_MUX_SETTING_E =
-			(0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination F. DOPO: 0x1, DIPO: 0x1 */
-	SPI_SIGNAL_MUX_SETTING_F =
-			(0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination G. DOPO: 0x1, DIPO: 0x2 */
-	SPI_SIGNAL_MUX_SETTING_G =
-			(0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination H. DOPO: 0x1, DIPO: 0x3 */
-	SPI_SIGNAL_MUX_SETTING_H =
-			(0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination I. DOPO: 0x2, DIPO: 0x0 */
-	SPI_SIGNAL_MUX_SETTING_I =
-			(0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination J. DOPO: 0x2, DIPO: 0x1 */
-	SPI_SIGNAL_MUX_SETTING_J =
-			(0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination K. DOPO: 0x2, DIPO: 0x2 */
-	SPI_SIGNAL_MUX_SETTING_K =
-			(0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination L. DOPO: 0x2, DIPO: 0x3 */
-	SPI_SIGNAL_MUX_SETTING_L =
-			(0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination M. DOPO: 0x3, DIPO: 0x0 */
-	SPI_SIGNAL_MUX_SETTING_M =
-			(0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination N. DOPO: 0x3, DIPO: 0x1 */
-	SPI_SIGNAL_MUX_SETTING_N =
-			(0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination O. DOPO: 0x3, DIPO: 0x2 */
-	SPI_SIGNAL_MUX_SETTING_O =
-			(0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
-	/** SPI MUX combination P. DOPO: 0x3, DIPO: 0x3 */
-	SPI_SIGNAL_MUX_SETTING_P =
-			(0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
-			(0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination A. DOPO: 0x0, DIPO: 0x0 */
+    SPI_SIGNAL_MUX_SETTING_A =
+            (0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination B. DOPO: 0x0, DIPO: 0x1 */
+    SPI_SIGNAL_MUX_SETTING_B =
+            (0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination C. DOPO: 0x0, DIPO: 0x2 */
+    SPI_SIGNAL_MUX_SETTING_C =
+            (0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination D. DOPO: 0x0, DIPO: 0x3 */
+    SPI_SIGNAL_MUX_SETTING_D =
+            (0x0 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination E. DOPO: 0x1, DIPO: 0x0 */
+    SPI_SIGNAL_MUX_SETTING_E =
+            (0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination F. DOPO: 0x1, DIPO: 0x1 */
+    SPI_SIGNAL_MUX_SETTING_F =
+            (0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination G. DOPO: 0x1, DIPO: 0x2 */
+    SPI_SIGNAL_MUX_SETTING_G =
+            (0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination H. DOPO: 0x1, DIPO: 0x3 */
+    SPI_SIGNAL_MUX_SETTING_H =
+            (0x1 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination I. DOPO: 0x2, DIPO: 0x0 */
+    SPI_SIGNAL_MUX_SETTING_I =
+            (0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination J. DOPO: 0x2, DIPO: 0x1 */
+    SPI_SIGNAL_MUX_SETTING_J =
+            (0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination K. DOPO: 0x2, DIPO: 0x2 */
+    SPI_SIGNAL_MUX_SETTING_K =
+            (0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination L. DOPO: 0x2, DIPO: 0x3 */
+    SPI_SIGNAL_MUX_SETTING_L =
+            (0x2 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination M. DOPO: 0x3, DIPO: 0x0 */
+    SPI_SIGNAL_MUX_SETTING_M =
+            (0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x0 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination N. DOPO: 0x3, DIPO: 0x1 */
+    SPI_SIGNAL_MUX_SETTING_N =
+            (0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x1 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination O. DOPO: 0x3, DIPO: 0x2 */
+    SPI_SIGNAL_MUX_SETTING_O =
+            (0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x2 << SERCOM_SPI_CTRLA_DIPO_Pos),
+    /** SPI MUX combination P. DOPO: 0x3, DIPO: 0x3 */
+    SPI_SIGNAL_MUX_SETTING_P =
+            (0x3 << SERCOM_SPI_CTRLA_DOPO_Pos) |
+            (0x3 << SERCOM_SPI_CTRLA_DIPO_Pos),
 };
 
 /**
@@ -618,20 +618,20 @@ enum spi_signal_mux_setting {
  *
  */
 enum spi_addr_mode {
-	/**
-	 * \c address_mask in the \ref spi_config struct is used as a mask to the register
-	 */
-	SPI_ADDR_MODE_MASK      = SERCOM_SPI_CTRLB_AMODE(0),
-	/**
-	 * The slave responds to the two unique addresses in \c address and
-	 * \c address_mask in the \ref spi_config struct
-	 */
-	SPI_ADDR_MODE_UNIQUE    = SERCOM_SPI_CTRLB_AMODE(1),
-	/**
-	 * The slave responds to the range of addresses between and including \c address
-	 * and \c address_mask in the \ref spi_config struct
-	 */
-	SPI_ADDR_MODE_RANGE     = SERCOM_SPI_CTRLB_AMODE(2),
+    /**
+     * \c address_mask in the \ref spi_config struct is used as a mask to the register
+     */
+    SPI_ADDR_MODE_MASK      = SERCOM_SPI_CTRLB_AMODE(0),
+    /**
+     * The slave responds to the two unique addresses in \c address and
+     * \c address_mask in the \ref spi_config struct
+     */
+    SPI_ADDR_MODE_UNIQUE    = SERCOM_SPI_CTRLB_AMODE(1),
+    /**
+     * The slave responds to the range of addresses between and including \c address
+     * and \c address_mask in the \ref spi_config struct
+     */
+    SPI_ADDR_MODE_RANGE     = SERCOM_SPI_CTRLB_AMODE(2),
 };
 
 /**
@@ -640,10 +640,10 @@ enum spi_addr_mode {
  * SPI mode selection.
  */
 enum spi_mode {
-	/** Master mode */
-	SPI_MODE_MASTER         = 1,
-	/** Slave mode */
-	SPI_MODE_SLAVE          = 0,
+    /** Master mode */
+    SPI_MODE_MASTER         = 1,
+    /** Slave mode */
+    SPI_MODE_SLAVE          = 0,
 };
 
 /**
@@ -653,10 +653,10 @@ enum spi_mode {
  *
  */
 enum spi_data_order {
-	/** The LSB of the data is transmitted first */
-	SPI_DATA_ORDER_LSB      = SERCOM_SPI_CTRLA_DORD,
-	/** The MSB of the data is transmitted first */
-	SPI_DATA_ORDER_MSB      = 0,
+    /** The LSB of the data is transmitted first */
+    SPI_DATA_ORDER_LSB      = SERCOM_SPI_CTRLA_DORD,
+    /** The MSB of the data is transmitted first */
+    SPI_DATA_ORDER_MSB      = 0,
 };
 
 /**
@@ -666,10 +666,10 @@ enum spi_data_order {
  *
  */
 enum spi_character_size {
-	/** 8-bit character */
-	SPI_CHARACTER_SIZE_8BIT = SERCOM_SPI_CTRLB_CHSIZE(0),
-	/** 9-bit character */
-	SPI_CHARACTER_SIZE_9BIT = SERCOM_SPI_CTRLB_CHSIZE(1),
+    /** 8-bit character */
+    SPI_CHARACTER_SIZE_8BIT = SERCOM_SPI_CTRLB_CHSIZE(0),
+    /** 9-bit character */
+    SPI_CHARACTER_SIZE_9BIT = SERCOM_SPI_CTRLB_CHSIZE(1),
 };
 
 #  if SPI_CALLBACK_MODE == true
@@ -696,42 +696,42 @@ extern void _spi_interrupt_handler(uint8_t instance);
  */
 struct spi_module {
 #  if !defined(__DOXYGEN__)
-	/** SERCOM hardware module */
-	Sercom *hw;
-	/** Module lock */
-	volatile bool locked;
-	/** SPI mode */
-	enum spi_mode mode;
-	/** SPI character size */
-	enum spi_character_size character_size;
-	/** Receiver enabled */
-	bool receiver_enabled;
+    /** SERCOM hardware module */
+    Sercom *hw;
+    /** Module lock */
+    volatile bool locked;
+    /** SPI mode */
+    enum spi_mode mode;
+    /** SPI character size */
+    enum spi_character_size character_size;
+    /** Receiver enabled */
+    bool receiver_enabled;
 #  ifdef FEATURE_SPI_HARDWARE_SLAVE_SELECT
-	/** Enable Hardware Slave Select */
-	bool master_slave_select_enable;
+    /** Enable Hardware Slave Select */
+    bool master_slave_select_enable;
 #  endif
 #  if SPI_CALLBACK_MODE == true
-	/** Direction of transaction */
-	volatile enum _spi_direction dir;
-	/** Array to store callback function pointers in */
-	spi_callback_t callback[SPI_CALLBACK_N];
-	/** Buffer pointer to where the next received character will be put */
-	volatile uint8_t *rx_buffer_ptr;
-	/** Buffer pointer to where the next character will be transmitted from
-	**/
-	volatile uint8_t *tx_buffer_ptr;
-	/** Remaining characters to receive */
-	volatile uint16_t remaining_rx_buffer_length;
-	/** Remaining dummy characters to send when reading */
-	volatile uint16_t remaining_dummy_buffer_length;
-	/** Remaining characters to transmit */
-	volatile uint16_t remaining_tx_buffer_length;
-	/** Bit mask for callbacks registered */
-	uint8_t registered_callback;
-	/** Bit mask for callbacks enabled */
-	uint8_t enabled_callback;
-	/** Holds the status of the ongoing or last operation */
-	volatile enum status_code status;
+    /** Direction of transaction */
+    volatile enum _spi_direction dir;
+    /** Array to store callback function pointers in */
+    spi_callback_t callback[SPI_CALLBACK_N];
+    /** Buffer pointer to where the next received character will be put */
+    volatile uint8_t *rx_buffer_ptr;
+    /** Buffer pointer to where the next character will be transmitted from
+    **/
+    volatile uint8_t *tx_buffer_ptr;
+    /** Remaining characters to receive */
+    volatile uint16_t remaining_rx_buffer_length;
+    /** Remaining dummy characters to send when reading */
+    volatile uint16_t remaining_dummy_buffer_length;
+    /** Remaining characters to transmit */
+    volatile uint16_t remaining_tx_buffer_length;
+    /** Bit mask for callbacks registered */
+    uint8_t registered_callback;
+    /** Bit mask for callbacks enabled */
+    uint8_t enabled_callback;
+    /** Holds the status of the ongoing or last operation */
+    volatile enum status_code status;
 #  endif
 #  endif
 };
@@ -744,12 +744,12 @@ struct spi_module {
  * \ref spi_select_slave.
  */
 struct spi_slave_inst {
-	/** Pin to use as slave select */
-	uint8_t ss_pin;
-	/** Address recognition enabled in slave device */
-	bool address_enabled;
-	/** Address of slave device */
-	uint8_t address;
+    /** Pin to use as slave select */
+    uint8_t ss_pin;
+    /** Address recognition enabled in slave device */
+    bool address_enabled;
+    /** Address of slave device */
+    uint8_t address;
 };
 
 /**
@@ -758,12 +758,12 @@ struct spi_slave_inst {
  * SPI Peripheral slave configuration structure.
  */
 struct spi_slave_inst_config {
-	/** Pin to use as slave select */
-	uint8_t ss_pin;
-	/** Enable address */
-	bool address_enabled;
-	/** Address of slave */
-	uint8_t address;
+    /** Pin to use as slave select */
+    uint8_t ss_pin;
+    /** Enable address */
+    bool address_enabled;
+    /** Address of slave */
+    uint8_t address;
 };
 
 /**
@@ -772,8 +772,8 @@ struct spi_slave_inst_config {
  * SPI Master configuration structure.
  */
 struct spi_master_config {
-	/** Baud rate */
-	uint32_t baudrate;
+    /** Baud rate */
+    uint32_t baudrate;
 };
 
 /**
@@ -782,16 +782,16 @@ struct spi_master_config {
  * SPI slave configuration structure.
  */
 struct spi_slave_config {
-	/** Frame format */
-	enum spi_frame_format frame_format;
-	/** Address mode */
-	enum spi_addr_mode address_mode;
-	/** Address */
-	uint8_t address;
-	/** Address mask */
-	uint8_t address_mask;
-	/** Preload data to the shift register while SS is high */
-	bool preload_enable;
+    /** Frame format */
+    enum spi_frame_format frame_format;
+    /** Address mode */
+    enum spi_addr_mode address_mode;
+    /** Address */
+    uint8_t address;
+    /** Address mask */
+    uint8_t address_mask;
+    /** Preload data to the shift register while SS is high */
+    bool preload_enable;
 };
 
 /**
@@ -802,45 +802,45 @@ struct spi_slave_config {
  * modified by the user application.
  */
 struct spi_config {
-	/** SPI mode */
-	enum spi_mode mode;
-	/** Data order */
-	enum spi_data_order data_order;
-	/** Transfer mode */
-	enum spi_transfer_mode transfer_mode;
-	/** MUX setting */
-	enum spi_signal_mux_setting mux_setting;
-	/** SPI character size */
-	enum spi_character_size character_size;
-	/** Enabled in sleep modes */
-	bool run_in_standby;
-	/** Enable receiver */
-	bool receiver_enable;
+    /** SPI mode */
+    enum spi_mode mode;
+    /** Data order */
+    enum spi_data_order data_order;
+    /** Transfer mode */
+    enum spi_transfer_mode transfer_mode;
+    /** MUX setting */
+    enum spi_signal_mux_setting mux_setting;
+    /** SPI character size */
+    enum spi_character_size character_size;
+    /** Enabled in sleep modes */
+    bool run_in_standby;
+    /** Enable receiver */
+    bool receiver_enable;
 #  ifdef FEATURE_SPI_SLAVE_SELECT_LOW_DETECT
-	/** Enable Slave Select Low Detect */
-	bool select_slave_low_detect_enable;
+    /** Enable Slave Select Low Detect */
+    bool select_slave_low_detect_enable;
 #  endif
 #  ifdef FEATURE_SPI_HARDWARE_SLAVE_SELECT
-	/** Enable Master Slave Select */
-	bool master_slave_select_enable;
+    /** Enable Master Slave Select */
+    bool master_slave_select_enable;
 #  endif
-	/** Union for slave or master specific configuration */
-	union {
-		/** Slave specific configuration */
-		struct spi_slave_config slave;
-		/** Master specific configuration */
-		struct spi_master_config master;
-	} mode_specific;
-	/** GCLK generator to use as clock source */
-	enum gclk_generator generator_source;
-	/** PAD0 pinmux */
-	uint32_t pinmux_pad0;
-	/** PAD1 pinmux */
-	uint32_t pinmux_pad1;
-	/** PAD2 pinmux */
-	uint32_t pinmux_pad2;
-	/** PAD3 pinmux */
-	uint32_t pinmux_pad3;
+    /** Union for slave or master specific configuration */
+    union {
+        /** Slave specific configuration */
+        struct spi_slave_config slave;
+        /** Master specific configuration */
+        struct spi_master_config master;
+    } mode_specific;
+    /** GCLK generator to use as clock source */
+    enum gclk_generator generator_source;
+    /** PAD0 pinmux */
+    uint32_t pinmux_pad0;
+    /** PAD1 pinmux */
+    uint32_t pinmux_pad1;
+    /** PAD2 pinmux */
+    uint32_t pinmux_pad2;
+    /** PAD3 pinmux */
+    uint32_t pinmux_pad3;
 };
 
 /**
@@ -859,20 +859,20 @@ struct spi_config {
  *
  */
 static inline bool spi_is_syncing(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
 #  ifdef FEATURE_SPI_SYNC_SCHEME_VERSION_2
-	/* Return synchronization status */
-	return (spi_module->SYNCBUSY.reg);
+    /* Return synchronization status */
+    return (spi_module->SYNCBUSY.reg);
 #  else
-	/* Return synchronization status */
-	return (spi_module->STATUS.reg & SERCOM_SPI_STATUS_SYNCBUSY);
+    /* Return synchronization status */
+    return (spi_module->STATUS.reg & SERCOM_SPI_STATUS_SYNCBUSY);
 #  endif
 }
 
@@ -904,38 +904,38 @@ static inline bool spi_is_syncing(
  * \param[out] config  Configuration structure to initialize to default values
  */
 static inline void spi_get_config_defaults(
-		struct spi_config *const config)
+        struct spi_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->mode             = SPI_MODE_MASTER;
-	config->data_order       = SPI_DATA_ORDER_MSB;
-	config->transfer_mode    = SPI_TRANSFER_MODE_0;
-	config->mux_setting      = SPI_SIGNAL_MUX_SETTING_D;
-	config->character_size   = SPI_CHARACTER_SIZE_8BIT;
-	config->run_in_standby   = false;
-	config->receiver_enable  = true;
+    /* Default configuration values */
+    config->mode             = SPI_MODE_MASTER;
+    config->data_order       = SPI_DATA_ORDER_MSB;
+    config->transfer_mode    = SPI_TRANSFER_MODE_0;
+    config->mux_setting      = SPI_SIGNAL_MUX_SETTING_D;
+    config->character_size   = SPI_CHARACTER_SIZE_8BIT;
+    config->run_in_standby   = false;
+    config->receiver_enable  = true;
 #  ifdef FEATURE_SPI_SLAVE_SELECT_LOW_DETECT
-	config->select_slave_low_detect_enable= true;
+    config->select_slave_low_detect_enable= true;
 #  endif
 #  ifdef FEATURE_SPI_HARDWARE_SLAVE_SELECT
-	config->master_slave_select_enable= false;
+    config->master_slave_select_enable= false;
 #  endif
-	config->generator_source = GCLK_GENERATOR_0;
+    config->generator_source = GCLK_GENERATOR_0;
 
-	/* Clear mode specific config */
-	memset(&(config->mode_specific), 0, sizeof(config->mode_specific));
+    /* Clear mode specific config */
+    memset(&(config->mode_specific), 0, sizeof(config->mode_specific));
 
-	/* Master config defaults */
-	config->mode_specific.master.baudrate = 100000;
+    /* Master config defaults */
+    config->mode_specific.master.baudrate = 100000;
 
-	/* pinmux config defaults */
-	config->pinmux_pad0 = PINMUX_DEFAULT;
-	config->pinmux_pad1 = PINMUX_DEFAULT;
-	config->pinmux_pad2 = PINMUX_DEFAULT;
-	config->pinmux_pad3 = PINMUX_DEFAULT;
+    /* pinmux config defaults */
+    config->pinmux_pad0 = PINMUX_DEFAULT;
+    config->pinmux_pad1 = PINMUX_DEFAULT;
+    config->pinmux_pad2 = PINMUX_DEFAULT;
+    config->pinmux_pad3 = PINMUX_DEFAULT;
 
 };
 
@@ -954,13 +954,13 @@ static inline void spi_get_config_defaults(
  * \param[out] config  Configuration structure to initialize to default values
  */
 static inline void spi_slave_inst_get_config_defaults(
-		struct spi_slave_inst_config *const config)
+        struct spi_slave_inst_config *const config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->ss_pin          = 10;
-	config->address_enabled = false;
-	config->address         = 0;
+    config->ss_pin          = 10;
+    config->address_enabled = false;
+    config->address         = 0;
 }
 
 /**
@@ -975,32 +975,32 @@ static inline void spi_slave_inst_get_config_defaults(
  *
  */
 static inline void spi_attach_slave(
-		struct spi_slave_inst *const slave,
-		const struct spi_slave_inst_config *const config)
+        struct spi_slave_inst *const slave,
+        const struct spi_slave_inst_config *const config)
 {
-	Assert(slave);
-	Assert(config);
+    Assert(slave);
+    Assert(config);
 
-	slave->ss_pin          = config->ss_pin;
-	slave->address_enabled = config->address_enabled;
-	slave->address         = config->address;
+    slave->ss_pin          = config->ss_pin;
+    slave->address_enabled = config->address_enabled;
+    slave->address         = config->address;
 
-	/* Get default config for pin */
-	struct port_config pin_conf;
-	port_get_config_defaults(&pin_conf);
+    /* Get default config for pin */
+    struct port_config pin_conf;
+    port_get_config_defaults(&pin_conf);
 
-	/* Edit config to set the pin as output */
-	pin_conf.direction = PORT_PIN_DIR_OUTPUT;
+    /* Edit config to set the pin as output */
+    pin_conf.direction = PORT_PIN_DIR_OUTPUT;
 
-	/* Set config on Slave Select pin */
-	port_pin_set_config(slave->ss_pin, &pin_conf);
-	port_pin_set_output_level(slave->ss_pin, true);
+    /* Set config on Slave Select pin */
+    port_pin_set_config(slave->ss_pin, &pin_conf);
+    port_pin_set_output_level(slave->ss_pin, true);
 }
 
 enum status_code spi_init(
-		struct spi_module *const module,
-		Sercom *const hw,
-		const struct spi_config *const config);
+        struct spi_module *const module,
+        Sercom *const hw,
+        const struct spi_config *const config);
 
 /** @} */
 
@@ -1017,24 +1017,24 @@ enum status_code spi_init(
  * \param[in,out] module  Pointer to the software instance struct
  */
 static inline void spi_enable(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
 #  if SPI_CALLBACK_MODE == true
-	system_interrupt_enable(_sercom_get_interrupt_vector(module->hw));
+    system_interrupt_enable(_sercom_get_interrupt_vector(module->hw));
 #  endif
 
-	while (spi_is_syncing(module)) {
-		/* Wait until the synchronization is complete */
-	}
+    while (spi_is_syncing(module)) {
+        /* Wait until the synchronization is complete */
+    }
 
-	/* Enable SPI */
-	spi_module->CTRLA.reg |= SERCOM_SPI_CTRLA_ENABLE;
+    /* Enable SPI */
+    spi_module->CTRLA.reg |= SERCOM_SPI_CTRLA_ENABLE;
 }
 
 /**
@@ -1045,39 +1045,39 @@ static inline void spi_enable(
  * \param[in,out] module  Pointer to the software instance struct
  */
 static inline void spi_disable(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
 #  if SPI_CALLBACK_MODE == true
-	system_interrupt_disable(_sercom_get_interrupt_vector(module->hw));
+    system_interrupt_disable(_sercom_get_interrupt_vector(module->hw));
 #  endif
 
-	while (spi_is_syncing(module)) {
-		/* Wait until the synchronization is complete */
-	}
+    while (spi_is_syncing(module)) {
+        /* Wait until the synchronization is complete */
+    }
 
-	/* Disbale interrupt */
-	spi_module->INTENCLR.reg = SERCOM_SPI_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	spi_module->INTFLAG.reg = SERCOM_SPI_INTFLAG_MASK;
+    /* Disbale interrupt */
+    spi_module->INTENCLR.reg = SERCOM_SPI_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    spi_module->INTFLAG.reg = SERCOM_SPI_INTFLAG_MASK;
 
-	/* Disable SPI */
-	spi_module->CTRLA.reg &= ~SERCOM_SPI_CTRLA_ENABLE;
+    /* Disable SPI */
+    spi_module->CTRLA.reg &= ~SERCOM_SPI_CTRLA_ENABLE;
 }
 
 void spi_reset(
-		struct spi_module *const module);
+        struct spi_module *const module);
 
 /** @} */
 
 enum status_code spi_set_baudrate(
-		struct spi_module *const module,
-		uint32_t baudrate);
+        struct spi_module *const module,
+        uint32_t baudrate);
 
 /**
  * \name Lock/Unlock
@@ -1101,20 +1101,20 @@ enum status_code spi_set_baudrate(
  */
 static inline enum status_code spi_lock(struct spi_module *const module)
 {
-	enum status_code status;
+    enum status_code status;
 
-	system_interrupt_enter_critical_section();
+    system_interrupt_enter_critical_section();
 
-	if (module->locked) {
-		status = STATUS_BUSY;
-	} else {
-		module->locked = true;
-		status = STATUS_OK;
-	}
+    if (module->locked) {
+        status = STATUS_BUSY;
+    } else {
+        module->locked = true;
+        status = STATUS_OK;
+    }
 
-	system_interrupt_leave_critical_section();
+    system_interrupt_leave_critical_section();
 
-	return status;
+    return status;
 }
 
 /**
@@ -1130,7 +1130,7 @@ static inline enum status_code spi_lock(struct spi_module *const module)
  */
 static inline void spi_unlock(struct spi_module *const module)
 {
-	module->locked = false;
+    module->locked = false;
 }
 
 /** @} */
@@ -1155,16 +1155,16 @@ static inline void spi_unlock(struct spi_module *const module)
  * \retval false  If the SPI master module has not shifted out data
  */
 static inline bool spi_is_write_complete(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
-	/* Check interrupt flag */
-	return (spi_module->INTFLAG.reg & SERCOM_SPI_INTFLAG_TXC);
+    /* Check interrupt flag */
+    return (spi_module->INTFLAG.reg & SERCOM_SPI_INTFLAG_TXC);
 }
 
  /**
@@ -1179,16 +1179,16 @@ static inline bool spi_is_write_complete(
  * \retval false  If the SPI module is not ready to write data
  */
 static inline bool spi_is_ready_to_write(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
-	/* Check interrupt flag */
-	return (spi_module->INTFLAG.reg & SERCOM_SPI_INTFLAG_DRE);
+    /* Check interrupt flag */
+    return (spi_module->INTFLAG.reg & SERCOM_SPI_INTFLAG_DRE);
 }
 
 /**
@@ -1203,16 +1203,16 @@ static inline bool spi_is_ready_to_write(
  * \retval false  If the SPI module is not ready to read data
  */
 static inline bool spi_is_ready_to_read(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
-	/* Check interrupt flag */
-	return (spi_module->INTFLAG.reg & SERCOM_SPI_INTFLAG_RXC);
+    /* Check interrupt flag */
+    return (spi_module->INTFLAG.reg & SERCOM_SPI_INTFLAG_RXC);
 }
 /** @} */
 
@@ -1244,31 +1244,31 @@ static inline bool spi_is_ready_to_read(
  * \retval STATUS_BUSY  If the last write was not completed
  */
 static inline enum status_code spi_write(
-		struct spi_module *module,
-		uint16_t tx_data)
+        struct spi_module *module,
+        uint16_t tx_data)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
-	/* Check if the data register has been copied to the shift register */
-	if (!spi_is_ready_to_write(module)) {
-		/* Data register has not been copied to the shift register, return */
-		return STATUS_BUSY;
-	}
+    /* Check if the data register has been copied to the shift register */
+    if (!spi_is_ready_to_write(module)) {
+        /* Data register has not been copied to the shift register, return */
+        return STATUS_BUSY;
+    }
 
-	/* Write the character to the DATA register */
-	spi_module->DATA.reg = tx_data & SERCOM_SPI_DATA_MASK;
+    /* Write the character to the DATA register */
+    spi_module->DATA.reg = tx_data & SERCOM_SPI_DATA_MASK;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 enum status_code spi_write_buffer_wait(
-		struct spi_module *const module,
-		const uint8_t *tx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        const uint8_t *tx_data,
+        uint16_t length);
 
 /**
  * \brief Reads last received SPI character
@@ -1290,62 +1290,62 @@ enum status_code spi_write_buffer_wait(
  * \retval STATUS_ERR_OVERFLOW  If the data is overflown
  */
 static inline enum status_code spi_read(
-		struct spi_module *const module,
-		uint16_t *rx_data)
+        struct spi_module *const module,
+        uint16_t *rx_data)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomSpi *const spi_module = &(module->hw->SPI);
+    SercomSpi *const spi_module = &(module->hw->SPI);
 
-	/* Check if data is ready to be read */
-	if (!spi_is_ready_to_read(module)) {
-		/* No data has been received, return */
-		return STATUS_ERR_IO;
-	}
+    /* Check if data is ready to be read */
+    if (!spi_is_ready_to_read(module)) {
+        /* No data has been received, return */
+        return STATUS_ERR_IO;
+    }
 
-	/* Return value */
-	enum status_code retval = STATUS_OK;
+    /* Return value */
+    enum status_code retval = STATUS_OK;
 
-	/* Check if data is overflown */
-	if (spi_module->STATUS.reg & SERCOM_SPI_STATUS_BUFOVF) {
-		retval = STATUS_ERR_OVERFLOW;
-		/* Clear overflow flag */
-		spi_module->STATUS.reg = SERCOM_SPI_STATUS_BUFOVF;
-	}
+    /* Check if data is overflown */
+    if (spi_module->STATUS.reg & SERCOM_SPI_STATUS_BUFOVF) {
+        retval = STATUS_ERR_OVERFLOW;
+        /* Clear overflow flag */
+        spi_module->STATUS.reg = SERCOM_SPI_STATUS_BUFOVF;
+    }
 
-	/* Read the character from the DATA register */
-	if (module->character_size == SPI_CHARACTER_SIZE_9BIT) {
-		*rx_data = (spi_module->DATA.reg & SERCOM_SPI_DATA_MASK);
-	} else {
-		*rx_data = (uint8_t)spi_module->DATA.reg;
-	}
+    /* Read the character from the DATA register */
+    if (module->character_size == SPI_CHARACTER_SIZE_9BIT) {
+        *rx_data = (spi_module->DATA.reg & SERCOM_SPI_DATA_MASK);
+    } else {
+        *rx_data = (uint8_t)spi_module->DATA.reg;
+    }
 
-	return retval;
+    return retval;
 }
 
 enum status_code spi_read_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *rx_data,
-		uint16_t length,
-		uint16_t dummy);
+        struct spi_module *const module,
+        uint8_t *rx_data,
+        uint16_t length,
+        uint16_t dummy);
 
 enum status_code spi_transceive_wait(
-		struct spi_module *const module,
-		uint16_t tx_data,
-		uint16_t *rx_data);
+        struct spi_module *const module,
+        uint16_t tx_data,
+        uint16_t *rx_data);
 
 enum status_code spi_transceive_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data,
+        uint16_t length);
 
 enum status_code spi_select_slave(
-		struct spi_module *const module,
-		struct spi_slave_inst *const slave,
-		bool select);
+        struct spi_module *const module,
+        struct spi_slave_inst *const slave,
+        bool select);
 
 /** @} */
 
@@ -1364,50 +1364,50 @@ enum status_code spi_select_slave(
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>SERCOM</td>
- *		<td>Serial Communication Interface</td>
- *	</tr>
- *	<tr>
- *		<td>SPI</td>
- *		<td>Serial Peripheral Interface</td>
- *	</tr>
- *	<tr>
- *		<td>SCK</td>
- *		<td>Serial Clock</td>
- *	</tr>
- *	<tr>
- *		<td>MOSI</td>
- *		<td>Master Output Slave Input</td>
- *	</tr>
- *	<tr>
- *		<td>MISO</td>
- *		<td>Master Input Slave Output</td>
- *	</tr>
- *	<tr>
- *		<td>SS</td>
- *		<td>Slave Select</td>
- *	</tr>
- *	<tr>
- *		<td>DIO</td>
- *		<td>Data Input Output</td>
- *	</tr>
- *	<tr>
- *		<td>DO</td>
- *		<td>Data Output</td>
- *	</tr>
- *	<tr>
- *		<td>DI</td>
- *		<td>Data Input</td>
- *	</tr>
- *	<tr>
- *		<td>DMA</td>
- *		<td>Direct Memory Access</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>SERCOM</td>
+ *      <td>Serial Communication Interface</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SPI</td>
+ *      <td>Serial Peripheral Interface</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SCK</td>
+ *      <td>Serial Clock</td>
+ *  </tr>
+ *  <tr>
+ *      <td>MOSI</td>
+ *      <td>Master Output Slave Input</td>
+ *  </tr>
+ *  <tr>
+ *      <td>MISO</td>
+ *      <td>Master Input Slave Output</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SS</td>
+ *      <td>Slave Select</td>
+ *  </tr>
+ *  <tr>
+ *      <td>DIO</td>
+ *      <td>Data Input Output</td>
+ *  </tr>
+ *  <tr>
+ *      <td>DO</td>
+ *      <td>Data Output</td>
+ *  </tr>
+ *  <tr>
+ *      <td>DI</td>
+ *      <td>Data Input</td>
+ *  </tr>
+ *  <tr>
+ *      <td>DMA</td>
+ *      <td>Direct Memory Access</td>
+ *  </tr>
  * </table>
  *
  * \section asfdoc_sam0_sercom_spi_extra_dependencies Dependencies
@@ -1424,26 +1424,26 @@ enum status_code spi_select_slave(
  * release. The current version of this corresponds to the newest version in the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Added new features as below:
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Added new features as below:
  *             \li Slave select low detect
  *             \li Hardware slave select
  *             \li DMA support </td>
- *	</tr>
- *	<tr>
- *		<td>Edited slave part of write and transceive buffer functions to ensure
- *		that second character is sent at the right time</td>
- *	</tr>
- *	<tr>
- *		<td>Renamed the anonymous union in \c struct spi_config to
+ *  </tr>
+ *  <tr>
+ *      <td>Edited slave part of write and transceive buffer functions to ensure
+ *      that second character is sent at the right time</td>
+ *  </tr>
+ *  <tr>
+ *      <td>Renamed the anonymous union in \c struct spi_config to
  *          \c mode_specific</td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -1482,142 +1482,142 @@ enum status_code spi_select_slave(
   *       given MUX setting.
   *
   * <table>
-  *		<tr>
-  *			<th>Combination</th>
-  *			<th>DOPO / DIPO</th>
-  *			<th>SERCOM PAD[0]</th>
-  *			<th>SERCOM PAD[1]</th>
-  *			<th>SERCOM PAD[2]</th>
-  *			<th>SERCOM PAD[3]</th>
-  *		</tr>
-  *		<tr>
-  *			<td>A</td>
-  *			<td>0x0 / 0x0</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *			<td>-</td>
-  *			<td>-</td>
-  *		</tr>
-  *		<tr>
-  *			<td>B</td>
-  *			<td>0x0 / 0x1</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *			<td>-</td>
-  *			<td>-</td>
-  *		</tr>
-  *		<tr>
-  *			<td>C</td>
-  *			<td>0x0 / 0x2</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *			<td>MISO</td>
-  *			<td>-</td>
-  *		</tr>
-  *		<tr>
-  *			<td>D</td>
-  *			<td>0x0 / 0x3</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *			<td>-</td>
-  *			<td>MISO</td>
-  *		</tr>
-  *		<tr>
-  *			<td>E</td>
-  *			<td>0x1 / 0x0</td>
-  *			<td>MISO</td>
-  *			<td>-</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>F</td>
-  *			<td>0x1 / 0x1</td>
-  *			<td>-</td>
-  *			<td>MISO</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>G</td>
-  *			<td>0x1 / 0x2</td>
-  *			<td>-</td>
-  *			<td>-</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>H</td>
-  *			<td>0x1 / 0x3</td>
-  *			<td>-</td>
-  *			<td>-</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>I</td>
-  *			<td>0x2 / 0x0</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *			<td>-</td>
-  *			<td>MOSI</td>
-  *		</tr>
-  *		<tr>
-  *			<td>J</td>
-  *			<td>0x2 / 0x1</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *			<td>-</td>
-  *			<td>MOSI</td>
-  *		</tr>
-  *		<tr>
-  *			<td>K</td>
-  *			<td>0x2 / 0x2</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *			<td>MISO</td>
-  *			<td>MOSI</td>
-  *		</tr>
-  *		<tr>
-  *			<td>L</td>
-  *			<td>0x2 / 0x3</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *			<td>-</td>
-  *			<td>MOSI</td>
-  *		</tr>
-  *		<tr>
-  *			<td>M</td>
-  *			<td>0x3 / 0x0</td>
-  *			<td>MOSI</td>
-  *			<td>-</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>N</td>
-  *			<td>0x3 / 0x1</td>
-  *			<td>MOSI</td>
-  *			<td>MISO</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>O</td>
-  *			<td>0x3 / 0x2</td>
-  *			<td>MOSI</td>
-  *			<td>-</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>P</td>
-  *			<td>0x3 / 0x3</td>
-  *			<td>MOSI</td>
-  *			<td>-</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *		</tr>
+  *     <tr>
+  *         <th>Combination</th>
+  *         <th>DOPO / DIPO</th>
+  *         <th>SERCOM PAD[0]</th>
+  *         <th>SERCOM PAD[1]</th>
+  *         <th>SERCOM PAD[2]</th>
+  *         <th>SERCOM PAD[3]</th>
+  *     </tr>
+  *     <tr>
+  *         <td>A</td>
+  *         <td>0x0 / 0x0</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *         <td>-</td>
+  *         <td>-</td>
+  *     </tr>
+  *     <tr>
+  *         <td>B</td>
+  *         <td>0x0 / 0x1</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *         <td>-</td>
+  *         <td>-</td>
+  *     </tr>
+  *     <tr>
+  *         <td>C</td>
+  *         <td>0x0 / 0x2</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *         <td>MISO</td>
+  *         <td>-</td>
+  *     </tr>
+  *     <tr>
+  *         <td>D</td>
+  *         <td>0x0 / 0x3</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *         <td>-</td>
+  *         <td>MISO</td>
+  *     </tr>
+  *     <tr>
+  *         <td>E</td>
+  *         <td>0x1 / 0x0</td>
+  *         <td>MISO</td>
+  *         <td>-</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>F</td>
+  *         <td>0x1 / 0x1</td>
+  *         <td>-</td>
+  *         <td>MISO</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>G</td>
+  *         <td>0x1 / 0x2</td>
+  *         <td>-</td>
+  *         <td>-</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>H</td>
+  *         <td>0x1 / 0x3</td>
+  *         <td>-</td>
+  *         <td>-</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>I</td>
+  *         <td>0x2 / 0x0</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *         <td>-</td>
+  *         <td>MOSI</td>
+  *     </tr>
+  *     <tr>
+  *         <td>J</td>
+  *         <td>0x2 / 0x1</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *         <td>-</td>
+  *         <td>MOSI</td>
+  *     </tr>
+  *     <tr>
+  *         <td>K</td>
+  *         <td>0x2 / 0x2</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *         <td>MISO</td>
+  *         <td>MOSI</td>
+  *     </tr>
+  *     <tr>
+  *         <td>L</td>
+  *         <td>0x2 / 0x3</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *         <td>-</td>
+  *         <td>MOSI</td>
+  *     </tr>
+  *     <tr>
+  *         <td>M</td>
+  *         <td>0x3 / 0x0</td>
+  *         <td>MOSI</td>
+  *         <td>-</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>N</td>
+  *         <td>0x3 / 0x1</td>
+  *         <td>MOSI</td>
+  *         <td>MISO</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>O</td>
+  *         <td>0x3 / 0x2</td>
+  *         <td>MOSI</td>
+  *         <td>-</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>P</td>
+  *         <td>0x3 / 0x3</td>
+  *         <td>MOSI</td>
+  *         <td>-</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *     </tr>
   * </table>
   *
   *
@@ -1629,142 +1629,142 @@ enum status_code spi_select_slave(
   *       given MUX setting.
   *
   * <table>
-  *		<tr>
-  *			<th>Combination</th>
-  *			<th>DOPO / DIPO</th>
-  *			<th>SERCOM PAD[0]</th>
-  *			<th>SERCOM PAD[1]</th>
-  *			<th>SERCOM PAD[2]</th>
-  *			<th>SERCOM PAD[3]</th>
-  *		</tr>
-  *		<tr>
-  *			<td>A</td>
-  *			<td>0x0 / 0x0</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>-</td>
-  *		</tr>
-  *		<tr>
-  *			<td>B</td>
-  *			<td>0x0 / 0x1</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>-</td>
-  *		</tr>
-  *		<tr>
-  *			<td>C</td>
-  *			<td>0x0 / 0x2</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>-</td>
-  *		</tr>
-  *		<tr>
-  *			<td>D</td>
-  *			<td>0x0 / 0x3</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>MOSI</td>
-  *		</tr>
-  *		<tr>
-  *			<td>E</td>
-  *			<td>0x1 / 0x0</td>
-  *			<td>MOSI</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>F</td>
-  *			<td>0x1 / 0x1</td>
-  *			<td>-</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>G</td>
-  *			<td>0x1 / 0x2</td>
-  *			<td>-</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>H</td>
-  *			<td>0x1 / 0x3</td>
-  *			<td>-</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>I</td>
-  *			<td>0x2 / 0x0</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *		</tr>
-  *		<tr>
-  *			<td>J</td>
-  *			<td>0x2 / 0x1</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *		</tr>
-  *		<tr>
-  *			<td>K</td>
-  *			<td>0x2 / 0x2</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *		</tr>
-  *		<tr>
-  *			<td>L</td>
-  *			<td>0x2 / 0x3</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *			<td>/SS</td>
-  *			<td>MISO</td>
-  *		</tr>
-  *		<tr>
-  *			<td>M</td>
-  *			<td>0x3 / 0x0</td>
-  *			<td>MISO</td>
-  *			<td>/SS</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>N</td>
-  *			<td>0x3 / 0x1</td>
-  *			<td>MISO</td>
-  *			<td>/SS</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>O</td>
-  *			<td>0x3 / 0x2</td>
-  *			<td>MISO</td>
-  *			<td>/SS</td>
-  *			<td>MOSI</td>
-  *			<td>SCK</td>
-  *		</tr>
-  *		<tr>
-  *			<td>P</td>
-  *			<td>0x3 / 0x3</td>
-  *			<td>MISO</td>
-  *			<td>/SS</td>
-  *			<td>-</td>
-  *			<td>SCK</td>
-  *		</tr>
+  *     <tr>
+  *         <th>Combination</th>
+  *         <th>DOPO / DIPO</th>
+  *         <th>SERCOM PAD[0]</th>
+  *         <th>SERCOM PAD[1]</th>
+  *         <th>SERCOM PAD[2]</th>
+  *         <th>SERCOM PAD[3]</th>
+  *     </tr>
+  *     <tr>
+  *         <td>A</td>
+  *         <td>0x0 / 0x0</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>-</td>
+  *     </tr>
+  *     <tr>
+  *         <td>B</td>
+  *         <td>0x0 / 0x1</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>-</td>
+  *     </tr>
+  *     <tr>
+  *         <td>C</td>
+  *         <td>0x0 / 0x2</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>-</td>
+  *     </tr>
+  *     <tr>
+  *         <td>D</td>
+  *         <td>0x0 / 0x3</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>MOSI</td>
+  *     </tr>
+  *     <tr>
+  *         <td>E</td>
+  *         <td>0x1 / 0x0</td>
+  *         <td>MOSI</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>F</td>
+  *         <td>0x1 / 0x1</td>
+  *         <td>-</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>G</td>
+  *         <td>0x1 / 0x2</td>
+  *         <td>-</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>H</td>
+  *         <td>0x1 / 0x3</td>
+  *         <td>-</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>I</td>
+  *         <td>0x2 / 0x0</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *     </tr>
+  *     <tr>
+  *         <td>J</td>
+  *         <td>0x2 / 0x1</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *     </tr>
+  *     <tr>
+  *         <td>K</td>
+  *         <td>0x2 / 0x2</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *     </tr>
+  *     <tr>
+  *         <td>L</td>
+  *         <td>0x2 / 0x3</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *         <td>/SS</td>
+  *         <td>MISO</td>
+  *     </tr>
+  *     <tr>
+  *         <td>M</td>
+  *         <td>0x3 / 0x0</td>
+  *         <td>MISO</td>
+  *         <td>/SS</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>N</td>
+  *         <td>0x3 / 0x1</td>
+  *         <td>MISO</td>
+  *         <td>/SS</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>O</td>
+  *         <td>0x3 / 0x2</td>
+  *         <td>MISO</td>
+  *         <td>/SS</td>
+  *         <td>MOSI</td>
+  *         <td>SCK</td>
+  *     </tr>
+  *     <tr>
+  *         <td>P</td>
+  *         <td>0x3 / 0x3</td>
+  *         <td>MISO</td>
+  *         <td>/SS</td>
+  *         <td>-</td>
+  *         <td>SCK</td>
+  *     </tr>
   * </table>
   *
   *
@@ -1772,36 +1772,36 @@ enum status_code spi_select_slave(
   * \page asfdoc_sam0_sercom_spi_document_revision_history Document Revision History
   *
   * <table>
-  *	<tr>
-  *		<th>Doc. Rev.</th>
-  *		<th>Date</th>
-  *		<th>Comments</th>
-  *	</tr>
-  *	<tr>
-  *		<td>42115E</td>
-  *		<td>12/2015</td>
-  *		<td>Add SAM L21/L22, SAM DA1, SAM D09, SAMR30 and SAM C21 support</td>
-  *	</tr>
-  *	<tr>
-  *		<td>42115D</td>
-  *		<td>12/2014</td>
-  *		<td>Add SAM R21/D10/D11 support</td>
-  *	</tr>
-  *	<tr>
-  *		<td>42115C</td>
-  *		<td>01/2014</td>
-  *		<td>Add SAM D21 support</td>
-  *	</tr>
-  *	<tr>
-  *		<td>42115B</td>
-  *		<td>11/2013</td>
-  *		<td>Replaced the pad multiplexing documentation with a condensed table</td>
-  *	</tr>
-  *	<tr>
-  *		<td>42115A</td>
-  *		<td>06/2013</td>
-  *		<td>Initial release</td>
-  *	</tr>
+  * <tr>
+  *     <th>Doc. Rev.</th>
+  *     <th>Date</th>
+  *     <th>Comments</th>
+  * </tr>
+  * <tr>
+  *     <td>42115E</td>
+  *     <td>12/2015</td>
+  *     <td>Add SAM L21/L22, SAM DA1, SAM D09, SAMR30 and SAM C21 support</td>
+  * </tr>
+  * <tr>
+  *     <td>42115D</td>
+  *     <td>12/2014</td>
+  *     <td>Add SAM R21/D10/D11 support</td>
+  * </tr>
+  * <tr>
+  *     <td>42115C</td>
+  *     <td>01/2014</td>
+  *     <td>Add SAM D21 support</td>
+  * </tr>
+  * <tr>
+  *     <td>42115B</td>
+  *     <td>11/2013</td>
+  *     <td>Replaced the pad multiplexing documentation with a condensed table</td>
+  * </tr>
+  * <tr>
+  *     <td>42115A</td>
+  *     <td>06/2013</td>
+  *     <td>Initial release</td>
+  * </tr>
   * </table>
   */
 

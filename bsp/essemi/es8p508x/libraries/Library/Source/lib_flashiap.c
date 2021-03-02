@@ -188,11 +188,11 @@ ErrorStatus FlashIap_ErasePage(uint8_t Page_Addr)
         return ERROR;
     }
 
-    IAP->ADDR.IAPPA = Page_Addr;            //输入页地址   
+    IAP->ADDR.IAPPA = Page_Addr;            //输入页地址
 
     IAP->TRIG.TRIG = 0x00005EA1;            //输入编程命令
 
-    for(Temp16 = 0; Temp16 < 0xFFFF; Temp16++)  
+    for(Temp16 = 0; Temp16 < 0xFFFF; Temp16++)
     {                                       //判断IAP工作状态
         if((IAP->STA.Word & (uint32_t)0x01) == (uint32_t)0x00)
             break;
@@ -204,7 +204,7 @@ ErrorStatus FlashIap_ErasePage(uint8_t Page_Addr)
         return ERROR;
     }
 
-    for(Temp16 = 0; Temp16 < 0xFFFF; Temp16++)  
+    for(Temp16 = 0; Temp16 < 0xFFFF; Temp16++)
     {
         if((IAP->STA.Word & (uint32_t)0x02) == (uint32_t)0x02) //判断IAP页擦除标志
             break;
@@ -231,7 +231,7 @@ ErrorStatus FlashIap_ErasePage(uint8_t Page_Addr)
     __set_PRIMASK(temp);                    //恢复PRIMASK寄存器状态
 
     return SUCCESS;
-}  
+}
 
 /***************************************************************
   函数名：FlashIap_WriteCont
@@ -244,7 +244,7 @@ ErrorStatus FlashIap_WriteCont(uint8_t Unit_addr, uint8_t Page_addr, uint32_t Da
 {
     uint16_t  temp16;
 
-    IAP->ADDR.IAPPA = Page_addr;       //输入地址 
+    IAP->ADDR.IAPPA = Page_addr;       //输入地址
     IAP->ADDR.IAPCA = Unit_addr;
 
     IAP->DATA.DATA = Data32;          //输入数据

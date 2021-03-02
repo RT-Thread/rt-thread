@@ -185,13 +185,13 @@
  */
 static inline void genclk_enable_config(unsigned int id, enum genclk_source src, unsigned int divider)
 {
-	struct genclk_config gcfg;
+    struct genclk_config gcfg;
 
-	genclk_config_defaults(&gcfg, id);
-	genclk_enable_source(src);
-	genclk_config_set_source(&gcfg, src);
-	genclk_config_set_divider(&gcfg, divider);
-	genclk_enable(&gcfg, id);
+    genclk_config_defaults(&gcfg, id);
+    genclk_enable_source(src);
+    genclk_config_set_source(&gcfg, src);
+    genclk_config_set_divider(&gcfg, divider);
+    genclk_enable(&gcfg, id);
 }
 
 //! @}

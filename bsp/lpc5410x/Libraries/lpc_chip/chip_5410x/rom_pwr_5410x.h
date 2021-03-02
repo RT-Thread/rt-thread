@@ -43,17 +43,17 @@ extern "C" {
 
 /* 'mode' input values to set_voltage ROM function */
 typedef enum {
-	POWER_LOW_POWER_MODE = 0,
-	POWER_BALANCED_MODE,
-	POWER_HIGH_PERFORMANCE
+    POWER_LOW_POWER_MODE = 0,
+    POWER_BALANCED_MODE,
+    POWER_HIGH_PERFORMANCE
 } PERF_MODE_T;
 
 /* 'mode' input values to power_mode_configure ROM function */
 typedef enum {
-	POWER_SLEEP = 0,
-	POWER_DEEP_SLEEP,
-	POWER_POWER_DOWN,
-	POWER_DEEP_POWER_DOWN
+    POWER_SLEEP = 0,
+    POWER_DEEP_SLEEP,
+    POWER_POWER_DOWN,
+    POWER_DEEP_POWER_DOWN
 } POWER_MODE_T;
 
 /** @brief Power ROM indirect function structure
@@ -61,9 +61,9 @@ typedef enum {
  * wrapper functions provided by the Power library (power_lib_5410x.h)
  */
 typedef struct {
-	uint32_t (*set_pll)(uint32_t multiply_by, uint32_t input_freq);
-	uint32_t (*set_voltage)(uint32_t mode, uint32_t desired_freq);
-	void (*power_mode_configure)(uint32_t mode, uint32_t peripheral_ctrl);
+    uint32_t (*set_pll)(uint32_t multiply_by, uint32_t input_freq);
+    uint32_t (*set_voltage)(uint32_t mode, uint32_t desired_freq);
+    void (*power_mode_configure)(uint32_t mode, uint32_t peripheral_ctrl);
 } PWRD_API_T;
 
 /**

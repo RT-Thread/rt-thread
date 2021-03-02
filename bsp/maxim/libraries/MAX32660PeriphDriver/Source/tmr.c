@@ -50,20 +50,20 @@
 int TMR_Init(mxc_tmr_regs_t *tmr, tmr_pres_t pres, const sys_cfg_tmr_t* sys_cfg)
 {
     MXC_ASSERT(tmr);
-    
+
     int err;
     // System settigns
     if((err=SYS_TMR_Init(tmr, sys_cfg)) !=E_NO_ERROR)
     {
         return err;
     }
-    
+
     // Disable timer and clear settings
     tmr->cn = 0;
-    
+
     // Clear interrupt flag
     tmr->intr = MXC_F_TMR_INTR_IRQ_CLR;
-    
+
     // Set the prescaler
     tmr->cn = pres;
 
@@ -73,17 +73,17 @@ int TMR_Init(mxc_tmr_regs_t *tmr, tmr_pres_t pres, const sys_cfg_tmr_t* sys_cfg)
 int TMR_Shutdown(mxc_tmr_regs_t *tmr)
 {
     MXC_ASSERT(tmr);
-    
+
     int err;
     // System settigns
     if((err=SYS_TMR_Shutdown(tmr)) !=E_NO_ERROR)
     {
         return err;
     }
-    
+
     // Disable timer and clear settings
     tmr->cn = 0;
-    
+
     return err;
 }
 
@@ -107,12 +107,12 @@ void TMR_Disable(mxc_tmr_regs_t* tmr)
 int TMR_Config(mxc_tmr_regs_t *tmr, const tmr_cfg_t *cfg)
 {
     MXC_ASSERT(tmr);
-    
+
     // Configure the timer
     tmr->cn = (tmr->cn & ~(MXC_F_TMR_CN_TMODE | MXC_F_TMR_CN_TPOL)) |
               ((cfg->mode << MXC_F_TMR_CN_TMODE_POS) & MXC_F_TMR_CN_TMODE) |
               ((cfg->pol << MXC_F_TMR_CN_TPOL_POS) & MXC_F_TMR_CN_TPOL);
-              
+
     tmr->cnt = 0x1;
     tmr->cmp = cfg->cmp_cnt;
 
@@ -125,15 +125,15 @@ int TMR_PWMConfig(mxc_tmr_regs_t *tmr, const tmr_pwm_cfg_t *cfg)
     if (cfg->duty_cnt > cfg->per_cnt) {
         return E_BAD_PARAM;
     }
-    
+
     // Configure the timer
     tmr->cn = (tmr->cn & ~(MXC_F_TMR_CN_TMODE | MXC_F_TMR_CN_TPOL)) |
               MXC_S_TMR_CN_TMODE_PWM | ((cfg->pol << MXC_F_TMR_CN_TPOL_POS) & MXC_F_TMR_CN_TPOL);
-              
+
     tmr->cnt = 0x1;
     tmr->cmp = cfg->per_cnt;
     tmr->pwm = cfg->duty_cnt;
-    
+
     return E_NO_ERROR;
 }
 
@@ -141,12 +141,12 @@ int TMR_PWMConfig(mxc_tmr_regs_t *tmr, const tmr_pwm_cfg_t *cfg)
 int TMR_PWMSetDuty(mxc_tmr_regs_t *tmr, uint32_t duty)
 {
     uint32_t cnt;
-    
+
     // Make sure the new Duty count is less than the period count
     if (duty > tmr->cmp) {
         return E_BAD_PARAM;
     }
-    
+
     cnt = tmr->cnt; // make sure order of volatile access is known.
     // Avoid glitching the output
     if (duty >= tmr->pwm) {
@@ -161,7 +161,7 @@ int TMR_PWMSetDuty(mxc_tmr_regs_t *tmr, uint32_t duty)
         }
     }
     tmr->pwm = duty;
-    
+
     return E_NO_ERROR;
 }
 
@@ -172,11 +172,11 @@ int TMR_PWMSetPeriod(mxc_tmr_regs_t *tmr, uint32_t per)
     if (tmr->pwm > per) {
         return E_BAD_PARAM;
     }
-    
+
     // Wait for the count to be less than the new dut_cnt
     while (tmr->cnt >= per) {}
     tmr->cmp = per;
-    
+
     return E_NO_ERROR;
 }
 
@@ -230,11 +230,11 @@ int TMR_GetTicks(mxc_tmr_regs_t *tmr, uint32_t time, tmr_unit_t units, uint32_t 
     uint32_t timerClock;
     uint32_t prescale;
     uint64_t temp_ticks;
-    
+
     timerClock = SYS_TMR_GetFreq(tmr);
-    prescale = ((tmr->cn & MXC_F_TMR_CN_PRES) >> MXC_F_TMR_CN_PRES_POS) 
+    prescale = ((tmr->cn & MXC_F_TMR_CN_PRES) >> MXC_F_TMR_CN_PRES_POS)
         | (((tmr->cn & MXC_F_TMR_CN_PRES3) >> (MXC_F_TMR_CN_PRES3_POS))<<3);
-    
+
     switch (units) {
         case TMR_UNIT_NANOSEC:
             unit_div0 = 1000000;
@@ -255,15 +255,15 @@ int TMR_GetTicks(mxc_tmr_regs_t *tmr, uint32_t time, tmr_unit_t units, uint32_t 
         default:
             return E_BAD_PARAM;
     }
-    
+
     temp_ticks = (uint64_t)time * (timerClock / unit_div0) / (unit_div1 * (1 << (prescale & 0xF)));
-    
+
     //make sure ticks is within a 32 bit value
     if (!(temp_ticks & 0xffffffff00000000)  && (temp_ticks & 0xffffffff)) {
         *ticks = temp_ticks;
         return E_NO_ERROR;
     }
-    
+
     return E_INVALID;
 }
 
@@ -272,36 +272,36 @@ int TMR_GetTime(mxc_tmr_regs_t *tmr, uint32_t ticks, uint32_t *time, tmr_unit_t 
 {
     uint64_t temp_time = 0;
     uint32_t timerClock = SYS_TMR_GetFreq(tmr);
-    uint32_t prescale = ((tmr->cn & MXC_F_TMR_CN_PRES) >> MXC_F_TMR_CN_PRES_POS) 
+    uint32_t prescale = ((tmr->cn & MXC_F_TMR_CN_PRES) >> MXC_F_TMR_CN_PRES_POS)
         | (((tmr->cn & MXC_F_TMR_CN_PRES3) >> (MXC_F_TMR_CN_PRES3_POS))<<3);
-    
+
     temp_time = (uint64_t)ticks * 1000 * (1 << (prescale & 0xF)) / (timerClock / 1000000);
     if (!(temp_time & 0xffffffff00000000)) {
         *time = temp_time;
         *units = TMR_UNIT_NANOSEC;
         return E_NO_ERROR;
     }
-    
+
     temp_time = (uint64_t)ticks * 1000 * (1 << (prescale & 0xF)) / (timerClock / 1000);
     if (!(temp_time & 0xffffffff00000000)) {
         *time = temp_time;
         *units = TMR_UNIT_MICROSEC;
         return E_NO_ERROR;
     }
-    
+
     temp_time = (uint64_t)ticks * 1000 * (1 << (prescale & 0xF)) / timerClock;
     if (!(temp_time & 0xffffffff00000000)) {
         *time = temp_time;
         *units = TMR_UNIT_MILLISEC;
         return E_NO_ERROR;
     }
-    
+
     temp_time = (uint64_t)ticks * (1 << (prescale & 0xF)) / timerClock;
     if (!(temp_time & 0xffffffff00000000)) {
         *time = temp_time;
         *units = TMR_UNIT_SEC;
         return E_NO_ERROR;
     }
-    
+
     return E_INVALID;
 }

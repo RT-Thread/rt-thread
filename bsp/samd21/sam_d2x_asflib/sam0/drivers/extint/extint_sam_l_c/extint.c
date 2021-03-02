@@ -83,10 +83,10 @@ struct _extint_module _extint_dev;
  * \param[in] detection_criteria  Edge detection mode to use (\ref extint_detect)
  */
 #define _extint_is_gclk_required(filter_input_signal, detection_criteria) \
-		((filter_input_signal) ? true : (\
-			(EXTINT_DETECT_RISING == (detection_criteria)) ? true : (\
-			(EXTINT_DETECT_FALLING == (detection_criteria)) ? true : (\
-			(EXTINT_DETECT_BOTH == (detection_criteria)) ? true : false))))
+        ((filter_input_signal) ? true : (\
+            (EXTINT_DETECT_RISING == (detection_criteria)) ? true : (\
+            (EXTINT_DETECT_FALLING == (detection_criteria)) ? true : (\
+            (EXTINT_DETECT_BOTH == (detection_criteria)) ? true : false))))
 
 static void _extint_enable(void);
 static void _extint_disable(void);
@@ -107,15 +107,15 @@ static void _extint_disable(void);
  */
 static inline bool extint_is_syncing(void)
 {
-	Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		if((eics[i]->SYNCBUSY.reg & EIC_SYNCBUSY_ENABLE)
-		 || (eics[i]->SYNCBUSY.reg & EIC_SYNCBUSY_SWRST)){
-			return true;
-		}
-	}
-	return false;
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        if((eics[i]->SYNCBUSY.reg & EIC_SYNCBUSY_ENABLE)
+         || (eics[i]->SYNCBUSY.reg & EIC_SYNCBUSY_SWRST)){
+            return true;
+        }
+    }
+    return false;
 }
 
 /**
@@ -138,53 +138,53 @@ static inline bool extint_is_syncing(void)
 void _system_extint_init(void);
 void _system_extint_init(void)
 {
-	Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-	/* Turn on the digital interface clock */
-	system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBA, MCLK_APBAMASK_EIC);
+    /* Turn on the digital interface clock */
+    system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBA, MCLK_APBAMASK_EIC);
 
 #if (EXTINT_CLOCK_SELECTION == EXTINT_CLK_GCLK)
-	/* Configure the generic clock for the module and enable it */
-	struct system_gclk_chan_config gclk_chan_conf;
-	system_gclk_chan_get_config_defaults(&gclk_chan_conf);
-	gclk_chan_conf.source_generator = EXTINT_CLOCK_SOURCE;
-	system_gclk_chan_set_config(EIC_GCLK_ID, &gclk_chan_conf);
+    /* Configure the generic clock for the module and enable it */
+    struct system_gclk_chan_config gclk_chan_conf;
+    system_gclk_chan_get_config_defaults(&gclk_chan_conf);
+    gclk_chan_conf.source_generator = EXTINT_CLOCK_SOURCE;
+    system_gclk_chan_set_config(EIC_GCLK_ID, &gclk_chan_conf);
 
-	/* Enable the clock anyway, since when needed it will be requested
-	 * by External Interrupt driver */
-	system_gclk_chan_enable(EIC_GCLK_ID);
+    /* Enable the clock anyway, since when needed it will be requested
+     * by External Interrupt driver */
+    system_gclk_chan_enable(EIC_GCLK_ID);
 #endif
 
-	/* Reset all EIC hardware modules. */
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		eics[i]->CTRLA.reg |= EIC_CTRLA_SWRST;
-	}
+    /* Reset all EIC hardware modules. */
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        eics[i]->CTRLA.reg |= EIC_CTRLA_SWRST;
+    }
 
-	while (extint_is_syncing()) {
-		/* Wait for all hardware modules to complete synchronization */
-	}
+    while (extint_is_syncing()) {
+        /* Wait for all hardware modules to complete synchronization */
+    }
 
 #if (EXTINT_CLOCK_SELECTION == EXTINT_CLK_GCLK)
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_GCLK;
-	}
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_GCLK;
+    }
 #else
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_ULP32K;
-	}
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_ULP32K;
+    }
 #endif
 
-	/* Reset the software module */
+    /* Reset the software module */
 #if EXTINT_CALLBACK_MODE == true
-	/* Clear callback registration table */
-	for (uint8_t j = 0; j < EIC_NUMBER_OF_INTERRUPTS; j++) {
-		_extint_dev.callbacks[j] = NULL;
-	}
-	system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_EIC);
+    /* Clear callback registration table */
+    for (uint8_t j = 0; j < EIC_NUMBER_OF_INTERRUPTS; j++) {
+        _extint_dev.callbacks[j] = NULL;
+    }
+    system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_EIC);
 #endif
 
-	/* Enables the driver for further use */
-	_extint_enable();
+    /* Enables the driver for further use */
+    _extint_enable();
 }
 
 /**
@@ -196,16 +196,16 @@ void _system_extint_init(void)
  */
 void _extint_enable(void)
 {
-	Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-	/* Enable all EIC hardware modules. */
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		eics[i]->CTRLA.reg |= EIC_CTRLA_ENABLE;
-	}
+    /* Enable all EIC hardware modules. */
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        eics[i]->CTRLA.reg |= EIC_CTRLA_ENABLE;
+    }
 
-	while (extint_is_syncing()) {
-		/* Wait for all hardware modules to complete synchronization */
-	}
+    while (extint_is_syncing()) {
+        /* Wait for all hardware modules to complete synchronization */
+    }
 }
 
 /**
@@ -218,16 +218,16 @@ void _extint_enable(void)
  */
 void _extint_disable(void)
 {
-	Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-	/* Disable all EIC hardware modules. */
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		eics[i]->CTRLA.reg &= ~EIC_CTRLA_ENABLE;
-	}
+    /* Disable all EIC hardware modules. */
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        eics[i]->CTRLA.reg &= ~EIC_CTRLA_ENABLE;
+    }
 
-	while (extint_is_syncing()) {
-		/* Wait for all hardware modules to complete synchronization */
-	}
+    while (extint_is_syncing()) {
+        /* Wait for all hardware modules to complete synchronization */
+    }
 }
 
 /**
@@ -247,18 +247,18 @@ void _extint_disable(void)
  * \param[out] config  Configuration structure to initialize to default values
  */
 void extint_chan_get_config_defaults(
-		struct extint_chan_conf *const config)
+        struct extint_chan_conf *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->gpio_pin            = 0;
-	config->gpio_pin_mux        = 0;
-	config->gpio_pin_pull       = EXTINT_PULL_UP;
-	config->filter_input_signal = false;
-	config->detection_criteria  = EXTINT_DETECT_FALLING;
-	config->enable_async_edge_detection = false;
+    /* Default configuration values */
+    config->gpio_pin            = 0;
+    config->gpio_pin_mux        = 0;
+    config->gpio_pin_pull       = EXTINT_PULL_UP;
+    config->filter_input_signal = false;
+    config->detection_criteria  = EXTINT_DETECT_FALLING;
+    config->enable_async_edge_detection = false;
 }
 
 /**
@@ -273,62 +273,62 @@ void extint_chan_get_config_defaults(
 
  */
 void extint_chan_set_config(
-		const uint8_t channel,
-		const struct extint_chan_conf *const config)
+        const uint8_t channel,
+        const struct extint_chan_conf *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
-	_extint_disable();
+    /* Sanity check arguments */
+    Assert(config);
+    _extint_disable();
 #if(EXTINT_CLOCK_SELECTION == EXTINT_CLK_GCLK)
-	/* Sanity check clock requirements */
-	Assert(!(!system_gclk_gen_is_enabled(EXTINT_CLOCK_SOURCE) &&
-		_extint_is_gclk_required(config->filter_input_signal,
-			config->detection_criteria)));
+    /* Sanity check clock requirements */
+    Assert(!(!system_gclk_gen_is_enabled(EXTINT_CLOCK_SOURCE) &&
+        _extint_is_gclk_required(config->filter_input_signal,
+            config->detection_criteria)));
 #endif
-	struct system_pinmux_config pinmux_config;
-	system_pinmux_get_config_defaults(&pinmux_config);
+    struct system_pinmux_config pinmux_config;
+    system_pinmux_get_config_defaults(&pinmux_config);
 
-	pinmux_config.mux_position = config->gpio_pin_mux;
-	pinmux_config.direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
-	pinmux_config.input_pull   = (enum system_pinmux_pin_pull)config->gpio_pin_pull;
-	system_pinmux_pin_set_config(config->gpio_pin, &pinmux_config);
+    pinmux_config.mux_position = config->gpio_pin_mux;
+    pinmux_config.direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
+    pinmux_config.input_pull   = (enum system_pinmux_pin_pull)config->gpio_pin_pull;
+    system_pinmux_pin_set_config(config->gpio_pin, &pinmux_config);
 
-	/* Get a pointer to the module hardware instance */
-	Eic *const EIC_module = _extint_get_eic_from_channel(channel);
+    /* Get a pointer to the module hardware instance */
+    Eic *const EIC_module = _extint_get_eic_from_channel(channel);
 
-	uint32_t config_pos = (4 * (channel % 8));
-	uint32_t new_config;
+    uint32_t config_pos = (4 * (channel % 8));
+    uint32_t new_config;
 
-	/* Determine the channel's new edge detection configuration */
-	new_config = (config->detection_criteria << EIC_CONFIG_SENSE0_Pos);
+    /* Determine the channel's new edge detection configuration */
+    new_config = (config->detection_criteria << EIC_CONFIG_SENSE0_Pos);
 
-	/* Enable the hardware signal filter if requested in the config */
-	if (config->filter_input_signal) {
-		new_config |= EIC_CONFIG_FILTEN0;
-	}
+    /* Enable the hardware signal filter if requested in the config */
+    if (config->filter_input_signal) {
+        new_config |= EIC_CONFIG_FILTEN0;
+    }
 
-	/* Clear the existing and set the new channel configuration */
-	EIC_module->CONFIG[channel / 8].reg
-		= (EIC_module->CONFIG[channel / 8].reg &
-			~((EIC_CONFIG_SENSE0_Msk | EIC_CONFIG_FILTEN0) << config_pos)) |
-			(new_config << config_pos);
+    /* Clear the existing and set the new channel configuration */
+    EIC_module->CONFIG[channel / 8].reg
+        = (EIC_module->CONFIG[channel / 8].reg &
+            ~((EIC_CONFIG_SENSE0_Msk | EIC_CONFIG_FILTEN0) << config_pos)) |
+            (new_config << config_pos);
 #if (SAML22) || (SAML21XXXB) || (SAMC20) || (SAMR30)
-	/* Config asynchronous edge detection */
-	if (config->enable_async_edge_detection) {
-		EIC_module->ASYNCH.reg |= (1UL << channel);
-	} else {
-		EIC_module->ASYNCH.reg &= (EIC_ASYNCH_MASK & (~(1UL << channel)));
-	}
+    /* Config asynchronous edge detection */
+    if (config->enable_async_edge_detection) {
+        EIC_module->ASYNCH.reg |= (1UL << channel);
+    } else {
+        EIC_module->ASYNCH.reg &= (EIC_ASYNCH_MASK & (~(1UL << channel)));
+    }
 #endif
 #if (SAMC21)
-	/* Config asynchronous edge detection */
-	if (config->enable_async_edge_detection) {
-		EIC_module->EIC_ASYNCH.reg |= (1UL << channel);
-	} else {
-		EIC_module->EIC_ASYNCH.reg &= (EIC_EIC_ASYNCH_MASK & (~(1UL << channel)));
-	}
+    /* Config asynchronous edge detection */
+    if (config->enable_async_edge_detection) {
+        EIC_module->EIC_ASYNCH.reg |= (1UL << channel);
+    } else {
+        EIC_module->EIC_ASYNCH.reg &= (EIC_EIC_ASYNCH_MASK & (~(1UL << channel)));
+    }
 #endif
-	_extint_enable();
+    _extint_enable();
 }
 
 /**
@@ -347,71 +347,71 @@ void extint_chan_set_config(
  * \retval  STATUS_ERR_BAD_FORMAT       An invalid detection mode was requested
  */
 enum status_code extint_nmi_set_config(
-		const uint8_t nmi_channel,
-		const struct extint_nmi_conf *const config)
+        const uint8_t nmi_channel,
+        const struct extint_nmi_conf *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Sanity check clock requirements */
-	Assert(!(!system_gclk_gen_is_enabled(EXTINT_CLOCK_SOURCE) &&
-		_extint_is_gclk_required(config->filter_input_signal,
-			config->detection_criteria)));
+    /* Sanity check clock requirements */
+    Assert(!(!system_gclk_gen_is_enabled(EXTINT_CLOCK_SOURCE) &&
+        _extint_is_gclk_required(config->filter_input_signal,
+            config->detection_criteria)));
 
-	struct system_pinmux_config pinmux_config;
-	system_pinmux_get_config_defaults(&pinmux_config);
+    struct system_pinmux_config pinmux_config;
+    system_pinmux_get_config_defaults(&pinmux_config);
 
-	pinmux_config.mux_position = config->gpio_pin_mux;
-	pinmux_config.direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
-	pinmux_config.input_pull   = SYSTEM_PINMUX_PIN_PULL_UP;
-	pinmux_config.input_pull   = (enum system_pinmux_pin_pull)config->gpio_pin_pull;
-	system_pinmux_pin_set_config(config->gpio_pin, &pinmux_config);
+    pinmux_config.mux_position = config->gpio_pin_mux;
+    pinmux_config.direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
+    pinmux_config.input_pull   = SYSTEM_PINMUX_PIN_PULL_UP;
+    pinmux_config.input_pull   = (enum system_pinmux_pin_pull)config->gpio_pin_pull;
+    system_pinmux_pin_set_config(config->gpio_pin, &pinmux_config);
 
-	/* Get a pointer to the module hardware instance */
-	Eic *const EIC_module = _extint_get_eic_from_channel(nmi_channel);
+    /* Get a pointer to the module hardware instance */
+    Eic *const EIC_module = _extint_get_eic_from_channel(nmi_channel);
 
-	uint32_t new_config;
+    uint32_t new_config;
 
-	/* Determine the NMI's new edge detection configuration */
-	new_config = (config->detection_criteria << EIC_NMICTRL_NMISENSE_Pos);
+    /* Determine the NMI's new edge detection configuration */
+    new_config = (config->detection_criteria << EIC_NMICTRL_NMISENSE_Pos);
 
-	/* Enable the hardware signal filter if requested in the config */
-	if (config->filter_input_signal) {
-		new_config |= EIC_NMICTRL_NMIFILTEN;
-	}
+    /* Enable the hardware signal filter if requested in the config */
+    if (config->filter_input_signal) {
+        new_config |= EIC_NMICTRL_NMIFILTEN;
+    }
 
 #if (SAML21XXXB) || (SAML22) || (SAMC21) || (SAMR30)
-	/* Enable asynchronous edge detection if requested in the config */
-	if (config->enable_async_edge_detection) {
-		new_config |= EIC_NMICTRL_NMIASYNCH;
-	}
+    /* Enable asynchronous edge detection if requested in the config */
+    if (config->enable_async_edge_detection) {
+        new_config |= EIC_NMICTRL_NMIASYNCH;
+    }
 #endif
-	
-	/* Disable EIC and general clock to configure NMI */
-	_extint_disable();
+
+    /* Disable EIC and general clock to configure NMI */
+    _extint_disable();
 #if(EXTINT_CLOCK_SELECTION == EXTINT_CLK_GCLK)
-	system_gclk_chan_disable(EIC_GCLK_ID);
+    system_gclk_chan_disable(EIC_GCLK_ID);
 #else
-	Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++){
-		eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_GCLK;
-		system_gclk_chan_disable(EIC_GCLK_ID);
-	}
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++){
+        eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_GCLK;
+        system_gclk_chan_disable(EIC_GCLK_ID);
+    }
 #endif
 
-	EIC_module->NMICTRL.reg = new_config;
+    EIC_module->NMICTRL.reg = new_config;
 
-	/* Enable the EIC clock and EIC after configure NMI */
+    /* Enable the EIC clock and EIC after configure NMI */
 #if(EXTINT_CLOCK_SELECTION == EXTINT_CLK_GCLK)
-	system_gclk_chan_enable(EIC_GCLK_ID);
+    system_gclk_chan_enable(EIC_GCLK_ID);
 #else
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++){
-		eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_ULP32K;
-	}
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++){
+        eics[i]->CTRLA.bit.CKSEL = EXTINT_CLK_ULP32K;
+    }
 #endif
-	_extint_enable();
+    _extint_enable();
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -425,31 +425,31 @@ enum status_code extint_nmi_set_config(
  *  \param[in] events    Struct containing flags of events to enable
  */
 void extint_enable_events(
-		struct extint_events *const events)
+        struct extint_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(events);
 
-	/* Array of available EICs. */
-	Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    /* Array of available EICs. */
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-	_extint_disable();
+    _extint_disable();
 
-	/* Update the event control register for each physical EIC instance */
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		uint32_t event_mask = 0;
+    /* Update the event control register for each physical EIC instance */
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        uint32_t event_mask = 0;
 
-		/* Create an enable mask for the current EIC module */
-		for (uint32_t j = 0; j < 32; j++) {
-			if (events->generate_event_on_detect[(32 * i) + j]) {
-				event_mask |= (1UL << j);
-			}
-		}
+        /* Create an enable mask for the current EIC module */
+        for (uint32_t j = 0; j < 32; j++) {
+            if (events->generate_event_on_detect[(32 * i) + j]) {
+                event_mask |= (1UL << j);
+            }
+        }
 
-		/* Enable the masked events */
-		eics[i]->EVCTRL.reg |= event_mask;
-	}
-	_extint_enable();
+        /* Enable the masked events */
+        eics[i]->EVCTRL.reg |= event_mask;
+    }
+    _extint_enable();
 }
 
 /**
@@ -463,29 +463,29 @@ void extint_enable_events(
  *  \param[in] events    Struct containing flags of events to disable
  */
 void extint_disable_events(
-		struct extint_events *const events)
+        struct extint_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(events);
 
-	/* Array of available EICs. */
-	Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    /* Array of available EICs. */
+    Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-	_extint_disable();
+    _extint_disable();
 
-	/* Update the event control register for each physical EIC instance */
-	for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
-		uint32_t event_mask = 0;
+    /* Update the event control register for each physical EIC instance */
+    for (uint32_t i = 0; i < EIC_INST_NUM; i++) {
+        uint32_t event_mask = 0;
 
-		/* Create a disable mask for the current EIC module */
-		for (uint32_t j = 0; j < 32; j++) {
-			if (events->generate_event_on_detect[(32 * i) + j]) {
-				event_mask |= (1UL << j);
-			}
-		}
+        /* Create a disable mask for the current EIC module */
+        for (uint32_t j = 0; j < 32; j++) {
+            if (events->generate_event_on_detect[(32 * i) + j]) {
+                event_mask |= (1UL << j);
+            }
+        }
 
-		/* Disable the masked events */
-		eics[i]->EVCTRL.reg &= ~event_mask;
-	}
-	_extint_enable();
+        /* Disable the masked events */
+        eics[i]->EVCTRL.reg &= ~event_mask;
+    }
+    _extint_enable();
 }

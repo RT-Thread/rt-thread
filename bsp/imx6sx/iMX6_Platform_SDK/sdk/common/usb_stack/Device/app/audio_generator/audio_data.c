@@ -1,4 +1,4 @@
-#include "types.h" 
+#include "types.h"
 #include "derivative.h"
 
 #if (defined _MC9S08MM128_H)|| (defined _MC9S08JE128_H)|| (defined _MC9S08JM16_H)

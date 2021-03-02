@@ -58,40 +58,40 @@ void board_init(void);
 
 void system_board_init(void)
 {
-	struct port_config pin_conf;
-	port_get_config_defaults(&pin_conf);
+    struct port_config pin_conf;
+    port_get_config_defaults(&pin_conf);
 
-	/* Configure LEDs as outputs, turn them off */
-	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
-	port_pin_set_config(LED_0_PIN, &pin_conf);
-	port_pin_set_output_level(LED_0_PIN, LED_0_INACTIVE);
+    /* Configure LEDs as outputs, turn them off */
+    pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+    port_pin_set_config(LED_0_PIN, &pin_conf);
+    port_pin_set_output_level(LED_0_PIN, LED_0_INACTIVE);
 
-	/* Set buttons as inputs */
-	pin_conf.direction  = PORT_PIN_DIR_INPUT;
-	pin_conf.input_pull = PORT_PIN_PULL_UP;
-	port_pin_set_config(BUTTON_0_PIN, &pin_conf);
+    /* Set buttons as inputs */
+    pin_conf.direction  = PORT_PIN_DIR_INPUT;
+    pin_conf.input_pull = PORT_PIN_PULL_UP;
+    port_pin_set_config(BUTTON_0_PIN, &pin_conf);
 #ifdef CONF_BOARD_AT86RFX
-	port_get_config_defaults(&pin_conf);
-	pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
-	port_pin_set_config(AT86RFX_SPI_SCK, &pin_conf);
-	port_pin_set_config(AT86RFX_SPI_MOSI, &pin_conf);
-	port_pin_set_config(AT86RFX_SPI_CS, &pin_conf);
-	port_pin_set_config(AT86RFX_RST_PIN, &pin_conf);
-	port_pin_set_config(AT86RFX_SLP_PIN, &pin_conf);
-	port_pin_set_output_level(AT86RFX_SPI_SCK, true);
-	port_pin_set_output_level(AT86RFX_SPI_MOSI, true);
-	port_pin_set_output_level(AT86RFX_SPI_CS, true);
-	port_pin_set_output_level(AT86RFX_RST_PIN, true);
-	port_pin_set_output_level(AT86RFX_SLP_PIN, true);
-#ifdef EXT_RF_FRONT_END_CTRL	
-	port_pin_set_config(AT86RFX_CPS, &pin_conf);
-	port_pin_set_output_level(AT86RFX_CPS, HIGH);	
-	port_pin_set_config(AT86RFX_CSD, &pin_conf);
-	port_pin_set_output_level(AT86RFX_CSD, HIGH);	
-#endif		
+    port_get_config_defaults(&pin_conf);
+    pin_conf.direction  = PORT_PIN_DIR_OUTPUT;
+    port_pin_set_config(AT86RFX_SPI_SCK, &pin_conf);
+    port_pin_set_config(AT86RFX_SPI_MOSI, &pin_conf);
+    port_pin_set_config(AT86RFX_SPI_CS, &pin_conf);
+    port_pin_set_config(AT86RFX_RST_PIN, &pin_conf);
+    port_pin_set_config(AT86RFX_SLP_PIN, &pin_conf);
+    port_pin_set_output_level(AT86RFX_SPI_SCK, true);
+    port_pin_set_output_level(AT86RFX_SPI_MOSI, true);
+    port_pin_set_output_level(AT86RFX_SPI_CS, true);
+    port_pin_set_output_level(AT86RFX_RST_PIN, true);
+    port_pin_set_output_level(AT86RFX_SLP_PIN, true);
+#ifdef EXT_RF_FRONT_END_CTRL
+    port_pin_set_config(AT86RFX_CPS, &pin_conf);
+    port_pin_set_output_level(AT86RFX_CPS, HIGH);
+    port_pin_set_config(AT86RFX_CSD, &pin_conf);
+    port_pin_set_output_level(AT86RFX_CSD, HIGH);
+#endif
 
-	pin_conf.direction  = PORT_PIN_DIR_INPUT;
-	port_pin_set_config(AT86RFX_SPI_MISO, &pin_conf);
-	
+    pin_conf.direction  = PORT_PIN_DIR_INPUT;
+    port_pin_set_config(AT86RFX_SPI_MISO, &pin_conf);
+
 #endif
 }

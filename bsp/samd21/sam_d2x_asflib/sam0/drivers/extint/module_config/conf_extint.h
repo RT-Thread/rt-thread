@@ -46,7 +46,7 @@
 #ifndef CONF_EXTINT_H_INCLUDED
 #define CONF_EXTINT_H_INCLUDED
 
-/** 
+/**
  * Define which clock type is used to clock EIC peripheral:
  *     - EXTINT_CLK_GCLK
  *     - EXTINT_CLK_ULP32K
@@ -54,7 +54,7 @@
  * EXTINT_CLK_ULP32K is available for SAM L21/C21.
  */
 #define EXTINT_CLOCK_SELECTION   EXTINT_CLK_GCLK
- 
+
 /**
  * Define which GCLK source is used when selecting EXTINT_CLK_GCLK type.
  */

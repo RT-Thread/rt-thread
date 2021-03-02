@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     å‹¤ä¸ºæœ¬       first version
+ * 2017-09-06     ÇÚÎª±¾       first version
  */
 
 
@@ -13,20 +13,20 @@
 #include "ls1c_public.h"
 
 
-// æ™¶æŒ¯çš„é¢‘ç‡
+// ¾§ÕñµÄÆµÂÊ
 #define AHB_CLK                 (24000000)
 #define APB_CLK                 (AHB_CLK)
 
 
-// START_FREQå¯„å­˜å™¨bits
+// START_FREQ¼Ä´æÆ÷bits
 #define M_PLL_SHIFT             (8)
-#define M_PLL                   (0xff << M_PLL_SHIFT)       // PLLå€é¢‘ç³»æ•°çš„æ•´æ•°éƒ¨åˆ†
+#define M_PLL                   (0xff << M_PLL_SHIFT)       // PLL±¶ÆµÏµÊıµÄÕûÊı²¿·Ö
 #define FRAC_N_SHIFT            (16)
-#define FRAC_N                  (0xff << FRAC_N_SHIFT)      // PLLå€é¢‘ç³»æ•°çš„å°æ•°éƒ¨åˆ†
+#define FRAC_N                  (0xff << FRAC_N_SHIFT)      // PLL±¶ÆµÏµÊıµÄĞ¡Êı²¿·Ö
 #define DIV_SDRAM_SHIFT         (0)
 #define DIV_SDRAM               (0x3  << DIV_SDRAM_SHIFT)
 
-// CLK_DIV_PARAMå¯„å­˜å™¨bits
+// CLK_DIV_PARAM¼Ä´æÆ÷bits
 #define DIV_PIX_EN              (0x1  << 31)
 #define DIV_PIX                 (0x7f << 24)
 #define DIV_CAM_EN              (0x1  << 23)
@@ -46,8 +46,8 @@
 
 
 /*
- * è·å–PLLé¢‘ç‡
- * @ret PLLé¢‘ç‡
+ * »ñÈ¡PLLÆµÂÊ
+ * @ret PLLÆµÂÊ
  */
 unsigned long clk_get_pll_rate(void)
 {
@@ -56,14 +56,14 @@ unsigned long clk_get_pll_rate(void)
 
     ctrl = reg_read_32((volatile unsigned int *)LS1C_START_FREQ);
     pll_rate = (((ctrl & M_PLL) >> M_PLL_SHIFT) + ((ctrl & FRAC_N) >> FRAC_N_SHIFT)) * APB_CLK / 4;
-    
+
     return pll_rate;
 }
 
 
 /*
- * è·å–CPUé¢‘ç‡
- * @ret CPUé¢‘ç‡
+ * »ñÈ¡CPUÆµÂÊ
+ * @ret CPUÆµÂÊ
  */
 unsigned long clk_get_cpu_rate(void)
 {
@@ -73,8 +73,8 @@ unsigned long clk_get_cpu_rate(void)
     pll_rate = clk_get_pll_rate();
     ctrl = reg_read_32((volatile unsigned int *)LS1C_CLK_DIV_PARAM);
 
-    // é€‰æ‹©æ—¶é’Ÿæ¥æº
-    if (DIV_CPU_SEL & ctrl)     // pllåˆ†é¢‘ä½œä¸ºæ—¶é’Ÿä¿¡å·
+    // Ñ¡ÔñÊ±ÖÓÀ´Ô´
+    if (DIV_CPU_SEL & ctrl)     // pll·ÖÆµ×÷ÎªÊ±ÖÓĞÅºÅ
     {
         if (DIV_CPU_EN & ctrl)
         {
@@ -85,7 +85,7 @@ unsigned long clk_get_cpu_rate(void)
             cpu_rate = pll_rate / 2;
         }
     }
-    else                        // bypassæ¨¡å¼ï¼Œæ™¶æŒ¯ä½œä¸ºæ—¶é’Ÿè¾“å…¥
+    else                        // bypassÄ£Ê½£¬¾§Õñ×÷ÎªÊ±ÖÓÊäÈë
     {
         cpu_rate = APB_CLK;
     }
@@ -95,8 +95,8 @@ unsigned long clk_get_cpu_rate(void)
 
 
 /*
- * è·å–DDRé¢‘ç‡
- * @ret DDRé¢‘ç‡
+ * »ñÈ¡DDRÆµÂÊ
+ * @ret DDRÆµÂÊ
  */
 unsigned long clk_get_ddr_rate(void)
 {
@@ -129,8 +129,8 @@ unsigned long clk_get_ddr_rate(void)
 
 
 /*
- * è·å–APBé¢‘ç‡
- * @ret APBé¢‘ç‡
+ * »ñÈ¡APBÆµÂÊ
+ * @ret APBÆµÂÊ
  */
 unsigned long clk_get_apb_rate(void)
 {
@@ -139,8 +139,8 @@ unsigned long clk_get_apb_rate(void)
 
 
 /*
- * è·å–DCé¢‘ç‡
- * @ret DCé¢‘ç‡
+ * »ñÈ¡DCÆµÂÊ
+ * @ret DCÆµÂÊ
  */
 unsigned long clk_get_dc_rate(void)
 {

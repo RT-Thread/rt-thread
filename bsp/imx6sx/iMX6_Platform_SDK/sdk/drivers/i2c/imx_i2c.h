@@ -185,7 +185,7 @@ void i2c_slave_handler(const imx_i2c_request_t *rq);
  * The slave mode behaves like any device with g_addr_cycle of address + g_data_cycle of data.
  * Master read =
  * START - SLAVE_ID/W - ACK - MEM_ADDR - ACK - START - SLAVE_ID/R - ACK - DATAx - NACK - STOP
- * 
+ *
  * Example for a 16-bit address access:
  * - 1st IRQ - receive the slave address and Write flag from master.
  * - 2nd IRQ - receive the lower byte of the requested 16-bit address.

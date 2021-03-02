@@ -95,7 +95,7 @@ void trng_flag_clear(trng_flag_enum flag)
     \param[out] none
     \retval     none
 */
-void trng_interrupt_enable(void) 
+void trng_interrupt_enable(void)
 {
     TRNG_CTL |= TRNG_CTL_IE;
 }

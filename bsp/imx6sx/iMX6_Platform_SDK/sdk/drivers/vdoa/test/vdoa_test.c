@@ -43,14 +43,14 @@ extern void print_media_fat_info(uint32_t);
 
 #define DeviceNum 0
 
-#define IMG_WIDTH	1920 
-#define IMG_HEIGHT	832
+#define IMG_WIDTH   1920
+#define IMG_HEIGHT  832
 
 void vdoa_test(void)
 {
     uint8_t *buffer = malloc(IMG_WIDTH * IMG_HEIGHT * 1.5 + 0x1000);
-	/*the VDOA file is extracted from VPU decoder in tiled frame mode*/
-	uint8_t readfile[] = "vdoa_in.yuv";
+    /*the VDOA file is extracted from VPU decoder in tiled frame mode*/
+    uint8_t readfile[] = "vdoa_in.yuv";
     int count, err;
     int fin = 0;
 
@@ -76,7 +76,7 @@ void vdoa_test(void)
     buffer = (uint8_t *) (((uint32_t) buffer + 0xFFF) & 0xFFFFF000);
 
     set_card_access_mode(1, 0);
-    
+
     count = Fread(fin, (uint8_t *) buffer, IMG_WIDTH * IMG_HEIGHT * 1.5);
 
     vdoa_clear_interrupt();

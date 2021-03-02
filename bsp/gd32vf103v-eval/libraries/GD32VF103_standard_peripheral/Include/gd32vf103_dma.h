@@ -180,8 +180,8 @@ typedef struct
 #define DMA_INT_ERR                         DMA_CHXCTL_ERRIE                                /*!< enable bit for channel error interrupt */
 
 /* transfer direction */
-#define DMA_PERIPHERAL_TO_MEMORY            ((uint8_t)0x0000U)                         		/*!< read from peripheral and write to memory */
-#define DMA_MEMORY_TO_PERIPHERAL            ((uint8_t)0x0001U)                         		/*!< read from memory and write to peripheral */
+#define DMA_PERIPHERAL_TO_MEMORY            ((uint8_t)0x0000U)                              /*!< read from peripheral and write to memory */
+#define DMA_MEMORY_TO_PERIPHERAL            ((uint8_t)0x0001U)                              /*!< read from memory and write to peripheral */
 
 /* peripheral increasing mode */
 #define DMA_PERIPH_INCREASE_DISABLE         ((uint8_t)0x0000U)                              /*!< next address of peripheral is fixed address mode */

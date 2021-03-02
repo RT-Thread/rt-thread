@@ -27,14 +27,14 @@
 
 /*********************************** Defines ***********************************/
 #if ((defined _MCF51MM256_H) || (defined _MCF51JE256_H))
-#define		FCDIV			F2CDIV
-#define 	FCDIV_FDIVLD 	F2CDIV_FDIVLD
-#define		FSTAT_FCBEF		F2STAT_FCBEF
+#define     FCDIV           F2CDIV
+#define     FCDIV_FDIVLD    F2CDIV_FDIVLD
+#define     FSTAT_FCBEF     F2STAT_FCBEF
 #define   FSTAT_FCCF    F2STAT_FCCF
-#define		FSTAT_FACCERR	F2STAT_FACCERR
-#define		FSTAT			F2STAT
-#define		FCMD			F2CMD
-#define		FSTAT_FPVIOL	F2STAT_FPVIOL
+#define     FSTAT_FACCERR   F2STAT_FACCERR
+#define     FSTAT           F2STAT
+#define     FCMD            F2CMD
+#define     FSTAT_FPVIOL    F2STAT_FPVIOL
 #endif
 /********************************** Constant ***********************************/
 
@@ -108,7 +108,7 @@ unsigned char Flash_SectorErase(unsigned long *FlashPtr)
         /* write command */
         FCMD = FlashCmd_SectorErase;
         RunOnStack();
-        
+
         /* check for errors */
         if (FSTAT_FACCERR == 1)
         {
@@ -159,11 +159,11 @@ unsigned char Flash_ByteProgram(unsigned long *FlashStartAdd,unsigned long *Data
     memcpy(localbuf, (void*)SpSub, (char*)SpSubEnd - (char*)SpSub);
     if (NumberOfBytes == 0)
     {
-    	return Flash_CONTENTERR;
+        return Flash_CONTENTERR;
     }
     else
     {
-    	size_buffer = (NumberOfBytes - 1)/4 + 1;	
+        size_buffer = (NumberOfBytes - 1)/4 + 1;
     }
 
     if (FCDIV_FDIVLD == 1)

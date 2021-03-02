@@ -160,14 +160,14 @@
        A DMA1 request can be generated when an external trigger (but not a software trigger)
        occurs if DMA1 requests are enabled using HAL_DAC_Start_DMA().
        DMA requests are mapped as following:
-       (#) When DMAMUX is NOT present: 
+       (#) When DMAMUX is NOT present:
            DMA1 requests are mapped as following:
              (+) DAC channel1 mapped on DMA1 request 6 / channel3
              (+) DAC channel2 mapped on DMA1 request 5 / channel4
            DMA2 requests are mapped as following:
              (+) DAC channel1 mapped on DMA2 request 3 / channel4
              (+) DAC channel2 mapped on DMA2 request 3 / channel5
-       (#) When DMAMUX is present: 
+       (#) When DMAMUX is present:
              (+) DAC channel1 mapped on DMA1/DMA2 request 6 (can be any DMA channel)
              (+) DAC channel2 mapped on DMA1/DMA2 request 7 (can be any DMA channel)
 

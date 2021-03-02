@@ -50,9 +50,9 @@
 /**
  * \defgroup asfdoc_samb_drivers_spi_group SAM Serial Peripheral Interface (SPI) Driver
  *
- * This driver for Atmel&reg; | SMART ARM-based microcontrollers provides 
- * an interface for the configuration and management of the module in 
- * its SPI mode to transfer SPI data frames. The following driver API modes 
+ * This driver for Atmel&reg; | SMART ARM-based microcontrollers provides
+ * an interface for the configuration and management of the module in
+ * its SPI mode to transfer SPI data frames. The following driver API modes
  * are covered by this manual:
  *
  * - Polled APIs
@@ -243,17 +243,17 @@ typedef void (*spi_callback_t)(struct spi_module *const module);
  *
  */
 enum spi_callback {
-	/** Callback for buffer transmitted */
-	SPI_CALLBACK_BUFFER_TRANSMITTED,
-	/** Callback for buffer received */
-	SPI_CALLBACK_BUFFER_RECEIVED,
-	/** Callback for buffers transceived */
-	SPI_CALLBACK_BUFFER_TRANSCEIVED,
-	/** Callback for error */
-	SPI_CALLBACK_ERROR,
+    /** Callback for buffer transmitted */
+    SPI_CALLBACK_BUFFER_TRANSMITTED,
+    /** Callback for buffer received */
+    SPI_CALLBACK_BUFFER_RECEIVED,
+    /** Callback for buffers transceived */
+    SPI_CALLBACK_BUFFER_TRANSCEIVED,
+    /** Callback for error */
+    SPI_CALLBACK_ERROR,
 #  if !defined(__DOXYGEN__)
-	/** Number of available callbacks */
-	SPI_CALLBACK_N,
+    /** Number of available callbacks */
+    SPI_CALLBACK_N,
 #  endif
 };
 
@@ -268,14 +268,14 @@ extern void spi_tx1_isr_handler(void);
  * \brief SPI transfer directions
  */
 enum _spi_direction {
-	/** Transfer direction is read. */
-	SPI_DIRECTION_READ,
-	/** Transfer direction is write. */
-	SPI_DIRECTION_WRITE,
-	/** Transfer direction is read and write. */
-	SPI_DIRECTION_BOTH,
-	/** No transfer. */
-	SPI_DIRECTION_IDLE,
+    /** Transfer direction is read. */
+    SPI_DIRECTION_READ,
+    /** Transfer direction is write. */
+    SPI_DIRECTION_WRITE,
+    /** Transfer direction is read and write. */
+    SPI_DIRECTION_BOTH,
+    /** No transfer. */
+    SPI_DIRECTION_IDLE,
 };
 #  endif
 #  endif
@@ -286,15 +286,15 @@ enum _spi_direction {
  * SPI transfer mode.
  */
 enum spi_transfer_mode {
-	/** Mode 0. Leading edge: rising, sample. Trailing edge: falling, setup */
-	SPI_TRANSFER_MODE_0 = 0,
-	/** Mode 1. Leading edge: rising, setup. Trailing edge: falling, sample */
-	SPI_TRANSFER_MODE_1 = SPI_CONFIGURATION_SCK_PHASE_1,
-	/** Mode 2. Leading edge: falling, sample. Trailing edge: rising, setup */
-	SPI_TRANSFER_MODE_2 = SPI_CONFIGURATION_SCK_POLARITY_1,
-	/** Mode 3. Leading edge: falling, setup. Trailing edge: rising, sample */
-	SPI_TRANSFER_MODE_3 = SPI_CONFIGURATION_SCK_PHASE_1 | \
-						SPI_CONFIGURATION_SCK_POLARITY_1,
+    /** Mode 0. Leading edge: rising, sample. Trailing edge: falling, setup */
+    SPI_TRANSFER_MODE_0 = 0,
+    /** Mode 1. Leading edge: rising, setup. Trailing edge: falling, sample */
+    SPI_TRANSFER_MODE_1 = SPI_CONFIGURATION_SCK_PHASE_1,
+    /** Mode 2. Leading edge: falling, sample. Trailing edge: rising, setup */
+    SPI_TRANSFER_MODE_2 = SPI_CONFIGURATION_SCK_POLARITY_1,
+    /** Mode 3. Leading edge: falling, setup. Trailing edge: rising, sample */
+    SPI_TRANSFER_MODE_3 = SPI_CONFIGURATION_SCK_PHASE_1 | \
+                        SPI_CONFIGURATION_SCK_POLARITY_1,
 };
 
 /**
@@ -303,10 +303,10 @@ enum spi_transfer_mode {
  * SPI mode selection.
  */
 enum spi_mode {
-	/** Master mode */
-	SPI_MODE_MASTER         = 1,
-	/** Slave mode */
-	SPI_MODE_SLAVE          = 0,
+    /** Master mode */
+    SPI_MODE_MASTER         = 1,
+    /** Slave mode */
+    SPI_MODE_SLAVE          = 0,
 };
 
 /**
@@ -316,10 +316,10 @@ enum spi_mode {
  *
  */
 enum spi_data_order {
-	/** The MSB of the data is transmitted first */
-	SPI_DATA_ORDER_MSB      = 0,
-	/** The LSB of the data is transmitted first */
-	SPI_DATA_ORDER_LSB      = SPI_CONFIGURATION_LSB_FIRST_ENABLE_1,
+    /** The MSB of the data is transmitted first */
+    SPI_DATA_ORDER_MSB      = 0,
+    /** The LSB of the data is transmitted first */
+    SPI_DATA_ORDER_LSB      = SPI_CONFIGURATION_LSB_FIRST_ENABLE_1,
 };
 
 /**
@@ -329,14 +329,14 @@ enum spi_data_order {
  *
  */
 enum spi_clock_input {
-	/** source from clock input 0 26MHz*/
-	SPI_CLK_INPUT_0 = 0,
-	/** source from clock input 1 13MHz */
-	SPI_CLK_INPUT_1,
-	/** source from clock input 2 6.5MHz*/
-	SPI_CLK_INPUT_2,
-	/** source from clock input 3 3MHz*/
-	SPI_CLK_INPUT_3,
+    /** source from clock input 0 26MHz*/
+    SPI_CLK_INPUT_0 = 0,
+    /** source from clock input 1 13MHz */
+    SPI_CLK_INPUT_1,
+    /** source from clock input 2 6.5MHz*/
+    SPI_CLK_INPUT_2,
+    /** source from clock input 3 3MHz*/
+    SPI_CLK_INPUT_3,
 };
 
 /**
@@ -350,36 +350,36 @@ enum spi_clock_input {
  */
 struct spi_module {
 #  if !defined(__DOXYGEN__)
-	/** Hardware module */
-	Spi *hw;
-	/** Module lock */
-	volatile uint8_t locked;
-	/** SPI mode */
-	enum spi_mode mode;
-	/** Transmit dummy data when receiving*/
-	uint8_t tx_dummy_byte;
+    /** Hardware module */
+    Spi *hw;
+    /** Module lock */
+    volatile uint8_t locked;
+    /** SPI mode */
+    enum spi_mode mode;
+    /** Transmit dummy data when receiving*/
+    uint8_t tx_dummy_byte;
 #if SPI_CALLBACK_MODE == true
-	/** Direction of transaction */
-	volatile enum _spi_direction dir;
-	/** Array to store callback function pointers in */
-	spi_callback_t callback[SPI_CALLBACK_N];
-	/** Buffer pointer to where the next received character will be put */
-	volatile uint8_t *rx_buffer_ptr;
-	/** Buffer pointer to where the next character will be transmitted from
-	**/
-	volatile uint8_t *tx_buffer_ptr;
-	/** Remaining characters to receive */
-	volatile uint16_t remaining_rx_buffer_length;
-	/** Remaining dummy characters to send when reading */
-	volatile uint16_t remaining_dummy_buffer_length;
-	/** Remaining characters to transmit */
-	volatile uint16_t remaining_tx_buffer_length;
-	/** Bit mask for callbacks registered */
-	uint8_t registered_callback;
-	/** Bit mask for callbacks enabled */
-	uint8_t enabled_callback;
-	/** Holds the status of the ongoing or last operation */
-	volatile enum status_code status;
+    /** Direction of transaction */
+    volatile enum _spi_direction dir;
+    /** Array to store callback function pointers in */
+    spi_callback_t callback[SPI_CALLBACK_N];
+    /** Buffer pointer to where the next received character will be put */
+    volatile uint8_t *rx_buffer_ptr;
+    /** Buffer pointer to where the next character will be transmitted from
+    **/
+    volatile uint8_t *tx_buffer_ptr;
+    /** Remaining characters to receive */
+    volatile uint16_t remaining_rx_buffer_length;
+    /** Remaining dummy characters to send when reading */
+    volatile uint16_t remaining_dummy_buffer_length;
+    /** Remaining characters to transmit */
+    volatile uint16_t remaining_tx_buffer_length;
+    /** Bit mask for callbacks registered */
+    uint8_t registered_callback;
+    /** Bit mask for callbacks enabled */
+    uint8_t enabled_callback;
+    /** Holds the status of the ongoing or last operation */
+    volatile enum status_code status;
 #  endif
 #  endif
 };
@@ -392,12 +392,12 @@ struct spi_module {
  * \ref spi_select_slave.
  */
 struct spi_slave_inst {
-	/** Pin to use as Slave Select */
-	uint8_t ss_pin;
-	/** Address recognition enabled in slave device */
-	uint8_t address_enabled;
-	/** Address of slave device */
-	uint8_t address;
+    /** Pin to use as Slave Select */
+    uint8_t ss_pin;
+    /** Address recognition enabled in slave device */
+    uint8_t address_enabled;
+    /** Address of slave device */
+    uint8_t address;
 };
 
 /**
@@ -406,12 +406,12 @@ struct spi_slave_inst {
  * SPI Peripheral slave configuration structure
  */
 struct spi_slave_inst_config {
-	/** Pin to use as Slave Select */
-	uint8_t ss_pin;
-	/** Enable address */
-	bool address_enabled;
-	/** Address of slave */
-	uint8_t address;
+    /** Pin to use as Slave Select */
+    uint8_t ss_pin;
+    /** Enable address */
+    bool address_enabled;
+    /** Address of slave */
+    uint8_t address;
 };
 
 /**
@@ -422,20 +422,20 @@ struct spi_slave_inst_config {
  * modified by the user application.
  */
 struct spi_config {
-	/** SPI mode */
-	enum spi_mode mode;
-	/** Data order */
-	enum spi_data_order data_order;
-	/** Transfer mode */
-	enum spi_transfer_mode transfer_mode;
-	/** clock source to use */
-	enum spi_clock_input clock_source;
-	/** clock divider value to use*/
-	uint8_t clock_divider;
-	/** SPI PAD pin number */
-	uint32_t pin_number_pad[4];
-	/** SPI PAD pinmux selection */
-	uint32_t pinmux_sel_pad[4];
+    /** SPI mode */
+    enum spi_mode mode;
+    /** Data order */
+    enum spi_data_order data_order;
+    /** Transfer mode */
+    enum spi_transfer_mode transfer_mode;
+    /** clock source to use */
+    enum spi_clock_input clock_source;
+    /** clock divider value to use*/
+    uint8_t clock_divider;
+    /** SPI PAD pin number */
+    uint32_t pin_number_pad[4];
+    /** SPI PAD pinmux selection */
+    uint32_t pinmux_sel_pad[4];
 };
 
 /**
@@ -444,20 +444,20 @@ struct spi_config {
  */
 
 enum status_code spi_init(
-		struct spi_module *const module,
-		Spi *const hw,
-		const struct spi_config *const config);
+        struct spi_module *const module,
+        Spi *const hw,
+        const struct spi_config *const config);
 
 void spi_reset(struct spi_module *const module);
 
 void spi_slave_inst_get_config_defaults(
-		struct spi_slave_inst_config *const config);
+        struct spi_slave_inst_config *const config);
 
 void spi_get_config_defaults(struct spi_config *const config);
 
 void spi_attach_slave(
-		struct spi_slave_inst *const slave,
-		struct spi_slave_inst_config *const config);
+        struct spi_slave_inst *const slave,
+        struct spi_slave_inst_config *const config);
 
 /** @} */
 
@@ -488,39 +488,39 @@ void spi_unlock(struct spi_module *const module);
  */
 
 enum status_code spi_write(
-		struct spi_module *module,
-		uint8_t tx_data);
+        struct spi_module *module,
+        uint8_t tx_data);
 
 enum status_code spi_write_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint16_t length);
 
 enum status_code spi_read(
-		struct spi_module *const module,
-		uint8_t *rx_data);
+        struct spi_module *const module,
+        uint8_t *rx_data);
 
 enum status_code spi_read_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *rx_data,
-		uint16_t length,
-		uint8_t dummy);
+        struct spi_module *const module,
+        uint8_t *rx_data,
+        uint16_t length,
+        uint8_t dummy);
 
 enum status_code spi_transceive_wait(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data);
 
 enum status_code spi_transceive_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data,
+        uint16_t length);
 
 enum status_code spi_select_slave(
-		struct spi_module *const module,
-		struct spi_slave_inst *const slave,
-		bool select);
+        struct spi_module *const module,
+        struct spi_slave_inst *const slave,
+        bool select);
 
 /** @} */
 
@@ -537,30 +537,30 @@ enum status_code spi_select_slave(
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>SPI</td>
- *		<td>Serial Peripheral Interface</td>
- *	</tr>
- *	<tr>
- *		<td>SCK</td>
- *		<td>Serial Clock</td>
- *	</tr>
- *	<tr>
- *		<td>MOSI</td>
- *		<td>Master Output Slave Input</td>
- *	</tr>
- *	<tr>
- *		<td>MISO</td>
- *		<td>Master Input Slave Output</td>
- *	</tr>
- *	<tr>
- *		<td>SS</td>
- *		<td>Slave Select</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>SPI</td>
+ *      <td>Serial Peripheral Interface</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SCK</td>
+ *      <td>Serial Clock</td>
+ *  </tr>
+ *  <tr>
+ *      <td>MOSI</td>
+ *      <td>Master Output Slave Input</td>
+ *  </tr>
+ *  <tr>
+ *      <td>MISO</td>
+ *      <td>Master Input Slave Output</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SS</td>
+ *      <td>Slave Select</td>
+ *  </tr>
  * </table>
  *
  * \section asfdoc_samb_drivers_spi_extra_dependencies Dependencies
@@ -577,12 +577,12 @@ enum status_code spi_select_slave(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -602,22 +602,22 @@ enum status_code spi_select_slave(
  * - \subpage asfdoc_samb_spi_slave_callback_use
  * \endif
  */
- 
+
  /**
  *
  * \page asfdoc_samb_drivers_spi_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>A</td>
- *		<td>09/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>A</td>
+ *      <td>09/2015</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

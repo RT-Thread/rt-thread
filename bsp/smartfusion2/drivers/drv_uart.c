@@ -51,19 +51,19 @@ void uart1_rx_handler(mss_uart_instance_t *this_uart)
     rt_interrupt_leave();
 }
 
-static rt_err_t sf2_uart_configure(struct rt_serial_device *serial, 
-	                               struct serial_configure *cfg)
+static rt_err_t sf2_uart_configure(struct rt_serial_device *serial,
+                                   struct serial_configure *cfg)
 {
     uint32_t baudRate;
     uint8_t datBits, parity, stopBits;
-    uint8_t config;    
+    uint8_t config;
     struct sf2_uart *uart;
-    
+
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    
+
     uart = (struct sf2_uart *)serial->parent.user_data;
-    
+
     switch(cfg->data_bits)
     {
         case DATA_BITS_5: datBits = MSS_UART_DATA_5_BITS; break;
@@ -71,7 +71,7 @@ static rt_err_t sf2_uart_configure(struct rt_serial_device *serial,
         case DATA_BITS_7: datBits = MSS_UART_DATA_7_BITS; break;
         case DATA_BITS_8: datBits = MSS_UART_DATA_8_BITS; break;
         default:          datBits = MSS_UART_DATA_8_BITS; break;
-    }    
+    }
     switch(cfg->parity)
     {
         case PARITY_NONE: parity = MSS_UART_NO_PARITY;   break;
@@ -84,26 +84,26 @@ static rt_err_t sf2_uart_configure(struct rt_serial_device *serial,
         case STOP_BITS_1: stopBits = MSS_UART_ONE_STOP_BIT; break;
         case STOP_BITS_2: stopBits = MSS_UART_TWO_STOP_BITS; break;
         case STOP_BITS_3: stopBits = MSS_UART_ONEHALF_STOP_BIT; break;
-        default         : stopBits = MSS_UART_ONE_STOP_BIT;    
+        default         : stopBits = MSS_UART_ONE_STOP_BIT;
     }
-    
+
     baudRate = cfg->baud_rate;
     config = datBits | parity | stopBits;
-    
+
     MSS_UART_init(uart->uart, baudRate, config);
     if(uart->uart == &g_mss_uart0)
         MSS_UART_set_rx_handler(uart->uart, uart0_rx_handler, MSS_UART_FIFO_SINGLE_BYTE);
-    else 
+    else
         MSS_UART_set_rx_handler(uart->uart, uart1_rx_handler, MSS_UART_FIFO_SINGLE_BYTE);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
-static rt_err_t sf2_uart_control(struct rt_serial_device *serial, 
-	                              int cmd, void *arg)
+static rt_err_t sf2_uart_control(struct rt_serial_device *serial,
+                                  int cmd, void *arg)
 {
     struct sf2_uart* uart;
-    
+
     RT_ASSERT(serial != RT_NULL);
     uart = (struct sf2_uart*)serial->parent.user_data;
 
@@ -124,11 +124,11 @@ static int sf2_uart_putc(struct rt_serial_device *serial, char c)
 {
     struct sf2_uart* uart;
     uint32_t tx_ready;
-    
+
     RT_ASSERT(serial != RT_NULL);
 
     uart = (struct sf2_uart*)serial->parent.user_data;
-        
+
     do {
         tx_ready = uart->uart->hw_reg->LSR & 0x20u;
     } while(!tx_ready);
@@ -142,14 +142,14 @@ static int sf2_uart_getc(struct rt_serial_device *serial)
     int ch = -1;
     uint8_t err_status;
     struct sf2_uart* uart;
-    
+
     RT_ASSERT(serial != RT_NULL);
     uart = (struct sf2_uart*)serial->parent.user_data;
 
     err_status = MSS_UART_get_rx_status(uart->uart);
     if(MSS_UART_NO_ERROR == err_status)
         MSS_UART_get_rx(uart->uart, (uint8_t *)&ch, 1);
-        
+
     return ch;
 }
 
@@ -172,7 +172,7 @@ int rt_hw_uart_init(void)
     serial0.ops = &sf2_uart_ops;
     /* default config: 115200, 8, no, 1 */
     serial0.config = config;
-    result = rt_hw_serial_register(&serial0, "uart0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart); 
+    result = rt_hw_serial_register(&serial0, "uart0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart);
     RT_ASSERT(result == RT_EOK);
 #endif
 
@@ -181,7 +181,7 @@ int rt_hw_uart_init(void)
     serial1.ops = &sf2_uart_ops;
     /* default config: 115200, 8, no, 1 */
     serial1.config = config;
-    result = rt_hw_serial_register(&serial1, "uart1", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart); 
+    result = rt_hw_serial_register(&serial1, "uart1", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, uart);
     RT_ASSERT(result == RT_EOK);
 #endif
     return result;

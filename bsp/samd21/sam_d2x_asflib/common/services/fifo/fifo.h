@@ -74,24 +74,24 @@
 
 //! Error codes used by FIFO driver.
 enum {
-	FIFO_OK = 0,          //!< Normal operation.
-	FIFO_ERROR_OVERFLOW,  //!< Attempt to push something in a FIFO that is full.
-	FIFO_ERROR_UNDERFLOW, //!< Attempt to pull something from a FIFO that is empty
-	FIFO_ERROR,           //!< Error condition during FIFO initialization
+    FIFO_OK = 0,          //!< Normal operation.
+    FIFO_ERROR_OVERFLOW,  //!< Attempt to push something in a FIFO that is full.
+    FIFO_ERROR_UNDERFLOW, //!< Attempt to pull something from a FIFO that is empty
+    FIFO_ERROR,           //!< Error condition during FIFO initialization
 };
 
 //! FIFO descriptor used by FIFO driver.
 struct fifo_desc {
-	union
-	{
-		uint32_t *u32ptr; //!< Pointer to unsigned-32 bits location
-		uint16_t *u16ptr; //!< Pointer to unsigned-16 bits location
-		uint8_t  *u8ptr;  //!< Pointer to unsigned-8 bits location
-	}  buffer;
-	volatile uint8_t read_index;  //!< Read index
-	volatile uint8_t write_index; //!< Write index
-	uint8_t size;                 //!< Size of the FIFO (unit is in number of 'element')
-	uint8_t mask;                 //!< Mask used to speed up FIFO operation (wrapping)
+    union
+    {
+        uint32_t *u32ptr; //!< Pointer to unsigned-32 bits location
+        uint16_t *u16ptr; //!< Pointer to unsigned-16 bits location
+        uint8_t  *u8ptr;  //!< Pointer to unsigned-8 bits location
+    }  buffer;
+    volatile uint8_t read_index;  //!< Read index
+    volatile uint8_t write_index; //!< Write index
+    uint8_t size;                 //!< Size of the FIFO (unit is in number of 'element')
+    uint8_t mask;                 //!< Mask used to speed up FIFO operation (wrapping)
 };
 
 typedef struct fifo_desc fifo_desc_t;
@@ -121,7 +121,7 @@ int fifo_init(fifo_desc_t *fifo_desc, void *buffer, uint8_t size);
  */
 static inline uint8_t fifo_get_used_size(fifo_desc_t *fifo_desc)
 {
-	return ((fifo_desc->write_index - fifo_desc->read_index) & fifo_desc->mask);
+    return ((fifo_desc->write_index - fifo_desc->read_index) & fifo_desc->mask);
 }
 
 /**
@@ -133,7 +133,7 @@ static inline uint8_t fifo_get_used_size(fifo_desc_t *fifo_desc)
  */
 static inline uint8_t fifo_get_free_size(fifo_desc_t *fifo_desc)
 {
-	return fifo_desc->size - fifo_get_used_size(fifo_desc);
+    return fifo_desc->size - fifo_get_used_size(fifo_desc);
 }
 
 /**
@@ -147,7 +147,7 @@ static inline uint8_t fifo_get_free_size(fifo_desc_t *fifo_desc)
  */
 static inline bool fifo_is_empty(fifo_desc_t *fifo_desc)
 {
-	return (fifo_desc->write_index == fifo_desc->read_index);
+    return (fifo_desc->write_index == fifo_desc->read_index);
 }
 
 /**
@@ -161,7 +161,7 @@ static inline bool fifo_is_empty(fifo_desc_t *fifo_desc)
  */
 static inline bool fifo_is_full(fifo_desc_t *fifo_desc)
 {
-	return (fifo_get_used_size(fifo_desc) == fifo_desc->size);
+    return (fifo_get_used_size(fifo_desc) == fifo_desc->size);
 }
 
 /**
@@ -172,15 +172,15 @@ static inline bool fifo_is_full(fifo_desc_t *fifo_desc)
  */
 static inline void fifo_push_uint8_nocheck(fifo_desc_t *fifo_desc, uint32_t item)
 {
-	uint8_t write_index;
+    uint8_t write_index;
 
-	write_index = fifo_desc->write_index;
-	fifo_desc->buffer.u8ptr[write_index & (fifo_desc->mask >> 1)] = item;
-	write_index = (write_index + 1) & fifo_desc->mask;
+    write_index = fifo_desc->write_index;
+    fifo_desc->buffer.u8ptr[write_index & (fifo_desc->mask >> 1)] = item;
+    write_index = (write_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->write_index = write_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->write_index = write_index;
 }
 
 /**
@@ -196,21 +196,21 @@ static inline void fifo_push_uint8_nocheck(fifo_desc_t *fifo_desc, uint32_t item
  */
 static inline int fifo_push_uint8(fifo_desc_t *fifo_desc, uint32_t item)
 {
-	uint8_t write_index;
+    uint8_t write_index;
 
-	if (fifo_is_full(fifo_desc)) {
-		return FIFO_ERROR_OVERFLOW;
-	}
+    if (fifo_is_full(fifo_desc)) {
+        return FIFO_ERROR_OVERFLOW;
+    }
 
-	write_index = fifo_desc->write_index;
-	fifo_desc->buffer.u8ptr[write_index & (fifo_desc->mask >> 1)] = item;
-	write_index = (write_index + 1) & fifo_desc->mask;
+    write_index = fifo_desc->write_index;
+    fifo_desc->buffer.u8ptr[write_index & (fifo_desc->mask >> 1)] = item;
+    write_index = (write_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->write_index = write_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->write_index = write_index;
 
-	return FIFO_OK;
+    return FIFO_OK;
 }
 
 /**
@@ -221,15 +221,15 @@ static inline int fifo_push_uint8(fifo_desc_t *fifo_desc, uint32_t item)
  */
 static inline void fifo_push_uint16_nocheck(fifo_desc_t *fifo_desc, uint32_t item)
 {
-	uint8_t write_index;
+    uint8_t write_index;
 
-	write_index = fifo_desc->write_index;
-	fifo_desc->buffer.u16ptr[write_index & (fifo_desc->mask >> 1)] = item;
-	write_index = (write_index + 1) & fifo_desc->mask;
+    write_index = fifo_desc->write_index;
+    fifo_desc->buffer.u16ptr[write_index & (fifo_desc->mask >> 1)] = item;
+    write_index = (write_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->write_index = write_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->write_index = write_index;
 }
 
 /**
@@ -245,21 +245,21 @@ static inline void fifo_push_uint16_nocheck(fifo_desc_t *fifo_desc, uint32_t ite
  */
 static inline int fifo_push_uint16(fifo_desc_t *fifo_desc, uint32_t item)
 {
-	uint8_t write_index;
+    uint8_t write_index;
 
-	if (fifo_is_full(fifo_desc)) {
-		return FIFO_ERROR_OVERFLOW;
-	}
+    if (fifo_is_full(fifo_desc)) {
+        return FIFO_ERROR_OVERFLOW;
+    }
 
-	write_index = fifo_desc->write_index;
-	fifo_desc->buffer.u16ptr[write_index & (fifo_desc->mask >> 1)] = item;
-	write_index = (write_index + 1) & fifo_desc->mask;
+    write_index = fifo_desc->write_index;
+    fifo_desc->buffer.u16ptr[write_index & (fifo_desc->mask >> 1)] = item;
+    write_index = (write_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->write_index = write_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->write_index = write_index;
 
-	return FIFO_OK;
+    return FIFO_OK;
 }
 
 /**
@@ -270,15 +270,15 @@ static inline int fifo_push_uint16(fifo_desc_t *fifo_desc, uint32_t item)
  */
 static inline void fifo_push_uint32_nocheck(fifo_desc_t *fifo_desc, uint32_t item)
 {
-	uint8_t write_index;
+    uint8_t write_index;
 
-	write_index = fifo_desc->write_index;
-	fifo_desc->buffer.u32ptr[write_index & (fifo_desc->mask >> 1)] = item;
-	write_index = (write_index + 1) & fifo_desc->mask;
+    write_index = fifo_desc->write_index;
+    fifo_desc->buffer.u32ptr[write_index & (fifo_desc->mask >> 1)] = item;
+    write_index = (write_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->write_index = write_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->write_index = write_index;
 }
 
 /**
@@ -294,21 +294,21 @@ static inline void fifo_push_uint32_nocheck(fifo_desc_t *fifo_desc, uint32_t ite
  */
 static inline int fifo_push_uint32(fifo_desc_t *fifo_desc, uint32_t item)
 {
-	uint8_t write_index;
+    uint8_t write_index;
 
-	if (fifo_is_full(fifo_desc)) {
-		return FIFO_ERROR_OVERFLOW;
-	}
+    if (fifo_is_full(fifo_desc)) {
+        return FIFO_ERROR_OVERFLOW;
+    }
 
-	write_index = fifo_desc->write_index;
-	fifo_desc->buffer.u32ptr[write_index & (fifo_desc->mask >> 1)] = item;
-	write_index = (write_index + 1) & fifo_desc->mask;
+    write_index = fifo_desc->write_index;
+    fifo_desc->buffer.u32ptr[write_index & (fifo_desc->mask >> 1)] = item;
+    write_index = (write_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->write_index = write_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->write_index = write_index;
 
-	return FIFO_OK;
+    return FIFO_OK;
 }
 
 /**
@@ -320,18 +320,18 @@ static inline int fifo_push_uint32(fifo_desc_t *fifo_desc, uint32_t item)
  */
 static inline uint8_t fifo_pull_uint8_nocheck(fifo_desc_t *fifo_desc)
 {
-	uint8_t read_index;
-	uint8_t item;
+    uint8_t read_index;
+    uint8_t item;
 
-	read_index = fifo_desc->read_index;
-	item = fifo_desc->buffer.u8ptr[read_index & (fifo_desc->mask >> 1)];
-	read_index = (read_index + 1) & fifo_desc->mask;
+    read_index = fifo_desc->read_index;
+    item = fifo_desc->buffer.u8ptr[read_index & (fifo_desc->mask >> 1)];
+    read_index = (read_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->read_index = read_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->read_index = read_index;
 
-	return item;
+    return item;
 }
 
 /**
@@ -347,21 +347,21 @@ static inline uint8_t fifo_pull_uint8_nocheck(fifo_desc_t *fifo_desc)
  */
 static inline int fifo_pull_uint8(fifo_desc_t *fifo_desc, uint8_t *item)
 {
-	uint8_t read_index;
+    uint8_t read_index;
 
-	if (fifo_is_empty(fifo_desc)) {
-		return FIFO_ERROR_UNDERFLOW;
-	}
+    if (fifo_is_empty(fifo_desc)) {
+        return FIFO_ERROR_UNDERFLOW;
+    }
 
-	read_index = fifo_desc->read_index;
-	*item = fifo_desc->buffer.u8ptr[read_index & (fifo_desc->mask >> 1)];
-	read_index = (read_index + 1) & fifo_desc->mask;
+    read_index = fifo_desc->read_index;
+    *item = fifo_desc->buffer.u8ptr[read_index & (fifo_desc->mask >> 1)];
+    read_index = (read_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->read_index = read_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->read_index = read_index;
 
-	return FIFO_OK;
+    return FIFO_OK;
 }
 
 /**
@@ -373,18 +373,18 @@ static inline int fifo_pull_uint8(fifo_desc_t *fifo_desc, uint8_t *item)
  */
 static inline uint16_t fifo_pull_uint16_nocheck(fifo_desc_t *fifo_desc)
 {
-	uint8_t read_index;
-	uint16_t item;
+    uint8_t read_index;
+    uint16_t item;
 
-	read_index = fifo_desc->read_index;
-	item = fifo_desc->buffer.u16ptr[read_index & (fifo_desc->mask >> 1)];
-	read_index = (read_index + 1) & fifo_desc->mask;
+    read_index = fifo_desc->read_index;
+    item = fifo_desc->buffer.u16ptr[read_index & (fifo_desc->mask >> 1)];
+    read_index = (read_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->read_index = read_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->read_index = read_index;
 
-	return item;
+    return item;
 }
 
 /**
@@ -400,21 +400,21 @@ static inline uint16_t fifo_pull_uint16_nocheck(fifo_desc_t *fifo_desc)
  */
 static inline int fifo_pull_uint16(fifo_desc_t *fifo_desc, uint16_t *item)
 {
-	uint8_t read_index;
+    uint8_t read_index;
 
-	if (fifo_is_empty(fifo_desc)) {
-		return FIFO_ERROR_UNDERFLOW;
-	}
+    if (fifo_is_empty(fifo_desc)) {
+        return FIFO_ERROR_UNDERFLOW;
+    }
 
-	read_index = fifo_desc->read_index;
-	*item = fifo_desc->buffer.u16ptr[read_index & (fifo_desc->mask >> 1)];
-	read_index = (read_index + 1) & fifo_desc->mask;
+    read_index = fifo_desc->read_index;
+    *item = fifo_desc->buffer.u16ptr[read_index & (fifo_desc->mask >> 1)];
+    read_index = (read_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->read_index = read_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->read_index = read_index;
 
-	return FIFO_OK;
+    return FIFO_OK;
 }
 
 /**
@@ -426,18 +426,18 @@ static inline int fifo_pull_uint16(fifo_desc_t *fifo_desc, uint16_t *item)
  */
 static inline uint32_t fifo_pull_uint32_nocheck(fifo_desc_t *fifo_desc)
 {
-	uint8_t read_index;
-	uint32_t item;
+    uint8_t read_index;
+    uint32_t item;
 
-	read_index = fifo_desc->read_index;
-	item = fifo_desc->buffer.u32ptr[read_index & (fifo_desc->mask >> 1)];
-	read_index = (read_index + 1) & fifo_desc->mask;
+    read_index = fifo_desc->read_index;
+    item = fifo_desc->buffer.u32ptr[read_index & (fifo_desc->mask >> 1)];
+    read_index = (read_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->read_index = read_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->read_index = read_index;
 
-	return item;
+    return item;
 }
 
 /**
@@ -453,21 +453,21 @@ static inline uint32_t fifo_pull_uint32_nocheck(fifo_desc_t *fifo_desc)
  */
 static inline int fifo_pull_uint32(fifo_desc_t *fifo_desc, uint32_t *item)
 {
-	uint8_t read_index;
+    uint8_t read_index;
 
-	if (fifo_is_empty(fifo_desc)) {
-		return FIFO_ERROR_UNDERFLOW;
-	}
+    if (fifo_is_empty(fifo_desc)) {
+        return FIFO_ERROR_UNDERFLOW;
+    }
 
-	read_index = fifo_desc->read_index;
-	*item = fifo_desc->buffer.u32ptr[read_index & (fifo_desc->mask >> 1)];
-	read_index = (read_index + 1) & fifo_desc->mask;
+    read_index = fifo_desc->read_index;
+    *item = fifo_desc->buffer.u32ptr[read_index & (fifo_desc->mask >> 1)];
+    read_index = (read_index + 1) & fifo_desc->mask;
 
-	// Must be the last thing to do.
-	barrier();
-	fifo_desc->read_index = read_index;
+    // Must be the last thing to do.
+    barrier();
+    fifo_desc->read_index = read_index;
 
-	return FIFO_OK;
+    return FIFO_OK;
 }
 
 /**
@@ -480,7 +480,7 @@ static inline int fifo_pull_uint32(fifo_desc_t *fifo_desc, uint32_t *item)
  */
 static inline uint32_t fifo_peek_uint32(fifo_desc_t *fifo_desc)
 {
-	return fifo_desc->buffer.u32ptr[fifo_desc->read_index & (fifo_desc->mask >> 1)];
+    return fifo_desc->buffer.u32ptr[fifo_desc->read_index & (fifo_desc->mask >> 1)];
 }
 
 /**
@@ -493,7 +493,7 @@ static inline uint32_t fifo_peek_uint32(fifo_desc_t *fifo_desc)
  */
 static inline uint16_t fifo_peek_uint16(fifo_desc_t *fifo_desc)
 {
-	return fifo_desc->buffer.u16ptr[fifo_desc->read_index & (fifo_desc->mask >> 1)];
+    return fifo_desc->buffer.u16ptr[fifo_desc->read_index & (fifo_desc->mask >> 1)];
 }
 
 /**
@@ -506,7 +506,7 @@ static inline uint16_t fifo_peek_uint16(fifo_desc_t *fifo_desc)
  */
 static inline uint8_t fifo_peek_uint8(fifo_desc_t *fifo_desc)
 {
-	return fifo_desc->buffer.u8ptr[fifo_desc->read_index & (fifo_desc->mask >> 1)];
+    return fifo_desc->buffer.u8ptr[fifo_desc->read_index & (fifo_desc->mask >> 1)];
 }
 
 /**
@@ -516,8 +516,8 @@ static inline uint8_t fifo_peek_uint8(fifo_desc_t *fifo_desc)
  */
 static inline void fifo_flush(fifo_desc_t *fifo_desc)
 {
-	// Fifo starts empty.
-	fifo_desc->read_index = fifo_desc->write_index = 0;
+    // Fifo starts empty.
+    fifo_desc->read_index = fifo_desc->write_index = 0;
 }
 
 /**
@@ -548,20 +548,20 @@ static inline void fifo_flush(fifo_desc_t *fifo_desc)
  * \subsection fifo_basic_use_case_setup_code Example code
  * The following must be added to the project:
  * \code
-	#define FIFO_BUFFER_LENGTH  4
-	#define PUSH_VALUE          0x12345678
-	union buffer_element {
-	   uint8_t  byte;
-	   uint16_t halfword;
-	   uint32_t word;
-	};
+    #define FIFO_BUFFER_LENGTH  4
+    #define PUSH_VALUE          0x12345678
+    union buffer_element {
+       uint8_t  byte;
+       uint16_t halfword;
+       uint32_t word;
+    };
 \endcode
  *
  * Add to application initialization:
  * \code
-	union buffer_element fifo_buffer[FIFO_BUFFER_LENGTH];
-	fifo_desc_t fifo_desc;
-	fifo_init(&fifo_desc, fifo_buffer, FIFO_BUFFER_LENGTH); 
+    union buffer_element fifo_buffer[FIFO_BUFFER_LENGTH];
+    fifo_desc_t fifo_desc;
+    fifo_init(&fifo_desc, fifo_buffer, FIFO_BUFFER_LENGTH);
 \endcode
  *
  * \subsection fifo_basic_use_case_setup_flow Workflow
@@ -580,10 +580,10 @@ static inline void fifo_flush(fifo_desc_t *fifo_desc)
  * \subsection fifo_basic_use_case_usage_code Example code
  * Add to application C-file:
  * \code
-	uint8_t status;
-	uint8_t pull_value;
-	status = fifo_push_uint8(&fifo_desc, PUSH_VALUE & 0xff);
-	status = fifo_pull_uint8(&fifo_desc, &pull_value);
+    uint8_t status;
+    uint8_t pull_value;
+    status = fifo_push_uint8(&fifo_desc, PUSH_VALUE & 0xff);
+    status = fifo_pull_uint8(&fifo_desc, &pull_value);
 \endcode
  *
  * \subsection fifo_basic_use_case_usage_flow Workflow
@@ -610,20 +610,20 @@ static inline void fifo_flush(fifo_desc_t *fifo_desc)
  * \subsection fifo_use_case_1_setup_code Example code
  * The following must be added to the project:
  * \code
-	#define FIFO_BUFFER_LENGTH  4
-	#define PUSH_VALUE          0x12345678
-	union buffer_element {
-	   uint8_t  byte;
-	   uint16_t halfword;
-	   uint32_t word;
-	};
+    #define FIFO_BUFFER_LENGTH  4
+    #define PUSH_VALUE          0x12345678
+    union buffer_element {
+       uint8_t  byte;
+       uint16_t halfword;
+       uint32_t word;
+    };
 \endcode
  *
  * Add to application initialization:
  * \code
-	union buffer_element fifo_buffer[FIFO_BUFFER_LENGTH];
-	fifo_desc_t fifo_desc;
-	fifo_init(&fifo_desc, fifo_buffer, FIFO_BUFFER_LENGTH); 
+    union buffer_element fifo_buffer[FIFO_BUFFER_LENGTH];
+    fifo_desc_t fifo_desc;
+    fifo_init(&fifo_desc, fifo_buffer, FIFO_BUFFER_LENGTH);
 \endcode
  *
  * \subsection fifo_use_case_1_setup_flow Workflow
@@ -641,12 +641,12 @@ static inline void fifo_flush(fifo_desc_t *fifo_desc)
  * \subsection fifo_use_case_1_usage_code Example code
  * Add to application C-file:
  * \code
-	uint8_t status;
-	bool fifo_empty;
-	status = fifo_push_uint16(&fifo_desc, PUSH_VALUE & 0xffff);
-	status = fifo_push_uint16(&fifo_desc, PUSH_VALUE & 0xffff);
-	fifo_flush(&fifo_desc);
-	fifo_empty = fifo_is_empty(&fifo_desc);
+    uint8_t status;
+    bool fifo_empty;
+    status = fifo_push_uint16(&fifo_desc, PUSH_VALUE & 0xffff);
+    status = fifo_push_uint16(&fifo_desc, PUSH_VALUE & 0xffff);
+    fifo_flush(&fifo_desc);
+    fifo_empty = fifo_is_empty(&fifo_desc);
 \endcode
  *
  * \subsection fifo_use_case_1_usage_flow Workflow

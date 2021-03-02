@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/common/Fsinit.c $              
- $Revision: 4 $                                       
- $Date: 9/18/03 10:37a $      
+ $Archive: /Fatfs/FileSystem/Fat32/common/Fsinit.c $
+ $Revision: 4 $
+ $Date: 9/18/03 10:37a $
  Description: Fsinit.c
  Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <string.h>
 
@@ -50,7 +50,7 @@
 #include "fat_internal.h"
 
 /*----------------------------------------------------------------------------
-		Globals and Declarations
+        Globals and Declarations
 ----------------------------------------------------------------------------*/
 
 int32_t g_FSinitErrorCode = 0;
@@ -97,15 +97,15 @@ RtStatus_t FSInit
 
 >  Function Name:  int32_t FSDriveInit(int32_t DeviceNumber)
 
-   FunctionType:  
-                   
+   FunctionType:
+
    Inputs:         Single input param is logical data drive number.
-   
+
 
    Outputs:        Returns 0, if Success, else ERROR CODE
                    Writes g_FSinitErrorCode static.
-                   
-                   
+
+
    Description:    Initialization of FileSystem.
 <
 --------- -------------------------------------------------------------------*/
@@ -154,7 +154,7 @@ int32_t FSDriveInit(int32_t DeviceNumber)
 
 >  Function Name:  int32_t FSInit(int32_t _X *bufx, int32_t _Y *bufy, int32_t maxdevices, int32_t maxhandles, int32_t maxcaches)
 
-   FunctionType:  
+   FunctionType:
 
    Inputs:         a) Pointer to X buffer for allocation of cache buffers
                    b) Pointer to Y buffer for allocation of handles, descriptors, etc
@@ -183,7 +183,7 @@ void FSClearDriveBuf(int32_t DriveNumber, int32_t maxhandles)
 
 >  Function Name:  int32_t FSDriveShutdown(int32_t DeviceNumber)
 
-   FunctionType:  
+   FunctionType:
 
    Inputs:         a) Pointer to X buffer for allocation of cache buffers
                    b) Pointer to Y buffer for allocation of handles, descriptors, etc
@@ -240,9 +240,9 @@ int32_t FSDriveShutdown(int32_t deviceNumber)
    Inputs:         Nil
 
    Outputs:        Returns 0 on success else an error code
-                   
-   Description:    Shutdown the file system  
-                    
+
+   Description:    Shutdown the file system
+
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t FSShutdown(void)

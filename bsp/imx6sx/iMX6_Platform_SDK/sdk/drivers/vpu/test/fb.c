@@ -193,10 +193,10 @@ struct frame_buf *tiled_framebuf_alloc(int32_t stdMode, int32_t format, int32_t 
     memset(&(fb->desc), 0, sizeof(vpu_mem_desc));
 
 /*
-	 * The buffers is luma top, chroma top, luma bottom and chroma bottom for
-	 * tiled map type, and only 20bits for the address description, so we need
-	 * to do 4K page align for each buffer.
-	 */
+     * The buffers is luma top, chroma top, luma bottom and chroma bottom for
+     * tiled map type, and only 20bits for the address description, so we need
+     * to do 4K page align for each buffer.
+     */
     align = 4 * 1024;
     if (mapType == TILED_FRAME_MB_RASTER_MAP) {
         /* luma_top_size means the Y size of one frame, chroma_top_size

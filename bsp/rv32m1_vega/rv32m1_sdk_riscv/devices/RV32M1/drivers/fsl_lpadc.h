@@ -2,7 +2,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #ifndef _FSL_LPADC_H_
@@ -587,7 +587,7 @@ static inline void LPADC_SetOffsetValue(ADC_Type *base, uint32_t value)
 /*!
 * @brief Do auto calibration.
 *
-* Calibration function should be executed before using converter in application. It used the software trigger and a 
+* Calibration function should be executed before using converter in application. It used the software trigger and a
 * dummy conversion, get the offset and write them into the OFSTRIM register. It called some of functional API including:
 *   -LPADC_EnableCalibration(...)
 *   -LPADC_LPADC_SetOffsetValue(...)

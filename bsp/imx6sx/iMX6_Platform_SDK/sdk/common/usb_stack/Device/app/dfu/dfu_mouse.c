@@ -403,7 +403,7 @@ static void USB_App_DFU_Callback
  * This function starts the keyboard application
  *****************************************************************************/
 void TestApp_Init(void)
-{  
+{
     uint_8   error;
 
     rpt_buf[3] = 0x00; /* always zero */
@@ -416,13 +416,13 @@ void TestApp_Init(void)
     Flash_Init(49);
     PPAGE = 0x01;
 #else
-    Flash_Init(0x50);	// prescaler on, freq = 187.5KHz
+    Flash_Init(0x50);   // prescaler on, freq = 187.5KHz
 #endif
     DisableInterrupts;
 #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
     usb_int_dis();
 #endif
-	
+
     /* Initialize the USB interface */
     error = USB_Class_HID_Init(CONTROLLER_ID, USB_App_HID_Callback, NULL,
                                USB_App_Param_Callback);
@@ -448,5 +448,5 @@ void TestApp_Task(void)
         /* run the button emulation code */
         Emulate_Mouse_WithButton();
     }
-	USB_Class_DFU_Periodic_Task();
+    USB_Class_DFU_Periodic_Task();
 }

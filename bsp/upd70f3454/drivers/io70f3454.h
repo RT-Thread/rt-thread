@@ -8,7 +8,7 @@
  *
  *      This header file is generated from the device file:
  *          DF3454.800
- *          Format version 2.20, File version 1.00 
+ *          Format version 2.20, File version 1.00
  *
  *-------------------------------------------------------------------------*/
 

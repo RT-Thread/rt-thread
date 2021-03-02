@@ -2,7 +2,7 @@
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -70,7 +70,7 @@ void LPTMR_Init(LPTMR_Type *base, const lptmr_config_t *config)
 
 #if defined(LPTMR_CLOCKS)
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
-    
+
     uint32_t instance = LPTMR_GetInstance(base);
 
     /* Ungate the LPTMR clock*/

@@ -2,7 +2,7 @@
 *   @brief SPI Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   (c) Texas Instruments 2009-2013, All rights reserved.
 */
 
@@ -89,28 +89,28 @@ typedef struct spiDAT1RegConfig
 typedef enum SpiTxRxDataStatus
 {
     SPI_READY = 0U,
-	SPI_PENDING = 1U,
+    SPI_PENDING = 1U,
     SPI_COMPLETED = 2U
 }SpiDataStatus_t;
 
 /* USER CODE BEGIN (0) */
 /* USER CODE END */
 
-/** 
+/**
  *  @defgroup SPI SPI
  *  @brief Serial Peripheral Interface Module.
- *  
+ *
  *  SPI is a high-speed synchronous serial input/output port that allows a serial bit stream of
  *  programmed length (2 to 16 bits) to be shifted in and out of the device at a programmed bit-transfer rate.
  *
- *	Related Files
+ *  Related Files
  *   - reg_spi.h
  *   - spi.h
  *   - spi.c
  *  @addtogroup SPI
  *  @{
  */
- 
+
 /* SPI Interface Functions */
 void spiInit(void);
 void spiSetFunctional(spiBASE_t *spi, uint32 port);
@@ -133,7 +133,7 @@ SpiDataStatus_t SpiRxStatus(spiBASE_t *spi);
 *   @param[in] flags - Copy of error interrupt flags
 *
 * This is a callback that is provided by the application and is called upon
-* an interrupt.  The parameter passed to the callback is a copy of the 
+* an interrupt.  The parameter passed to the callback is a copy of the
 * interrupt flag register.
 */
 void spiNotification(spiBASE_t *spi, uint32 flags);

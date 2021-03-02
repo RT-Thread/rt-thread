@@ -218,7 +218,7 @@ void rt_gk_dma_init(void)
     if (retVal != RT_EOK)
     {
         DMA_PRINT_ERR("GD_DMA_Init failed!\n");
-		return;
+        return;
     }
 
     rt_hw_dma_register("gk_dma",RT_DEVICE_FLAG_RDWR);

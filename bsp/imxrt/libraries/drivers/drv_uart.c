@@ -461,7 +461,7 @@ void edma_rx_callback(struct _edma_handle *handle, void *userData, bool transfer
             recv_len = uart->serial.config.bufsz - uart->dma_rx->last_index;
             uart->dma_rx->last_index = 0;
         }
-        else    
+        else
         {
             /* clear half interrupt */
             EDMA_ClearChannelStatusFlags(DMA0, uart->dma_rx->channel,kEDMA_InterruptFlag);

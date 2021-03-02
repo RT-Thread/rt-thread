@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -98,15 +98,15 @@ typedef struct {
 /**
  * @ingroup    tmr_registers
  * @defgroup   TMR_Register_Offsets Register Offsets
- * @brief      TMR Peripheral Register Offsets from the TMR Base Peripheral Address. 
+ * @brief      TMR Peripheral Register Offsets from the TMR Base Peripheral Address.
  * @{
  */
- #define MXC_R_TMR_CNT                      ((uint32_t)0x00000000UL) /**< Offset from TMR Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_TMR_CMP                      ((uint32_t)0x00000004UL) /**< Offset from TMR Base Address: <tt> 0x0004</tt> */ 
- #define MXC_R_TMR_PWM                      ((uint32_t)0x00000008UL) /**< Offset from TMR Base Address: <tt> 0x0008</tt> */ 
- #define MXC_R_TMR_INTR                     ((uint32_t)0x0000000CUL) /**< Offset from TMR Base Address: <tt> 0x000C</tt> */ 
- #define MXC_R_TMR_CN                       ((uint32_t)0x00000010UL) /**< Offset from TMR Base Address: <tt> 0x0010</tt> */ 
- #define MXC_R_TMR_NOLCMP                   ((uint32_t)0x00000014UL) /**< Offset from TMR Base Address: <tt> 0x0014</tt> */ 
+ #define MXC_R_TMR_CNT                      ((uint32_t)0x00000000UL) /**< Offset from TMR Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_TMR_CMP                      ((uint32_t)0x00000004UL) /**< Offset from TMR Base Address: <tt> 0x0004</tt> */
+ #define MXC_R_TMR_PWM                      ((uint32_t)0x00000008UL) /**< Offset from TMR Base Address: <tt> 0x0008</tt> */
+ #define MXC_R_TMR_INTR                     ((uint32_t)0x0000000CUL) /**< Offset from TMR Base Address: <tt> 0x000C</tt> */
+ #define MXC_R_TMR_CN                       ((uint32_t)0x00000010UL) /**< Offset from TMR Base Address: <tt> 0x0010</tt> */
+ #define MXC_R_TMR_NOLCMP                   ((uint32_t)0x00000014UL) /**< Offset from TMR Base Address: <tt> 0x0014</tt> */
 /**@} end of group tmr_registers */
 
 /**

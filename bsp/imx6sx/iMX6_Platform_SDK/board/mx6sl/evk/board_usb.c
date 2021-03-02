@@ -50,7 +50,7 @@ void usbEnableVbus(usb_module_t * port)
     switch (port->controllerID)
     {
     case OTG:
-    case OTG1:		// MX6SL first OTG controller.
+    case OTG1:      // MX6SL first OTG controller.
 #if defined(BOARD_EVK)
         BW_USBNC_USB_OTG1_CTRL_PWR_POL(1);
         HW_IOMUXC_SW_MUX_CTL_PAD_KEY_COL4_WR(
@@ -59,9 +59,9 @@ void usbEnableVbus(usb_module_t * port)
 #endif
 
         break;
-        
+
     case Host1:
-    case OTG2:		// MX6SL second OTG controller
+    case OTG2:      // MX6SL second OTG controller
 #if defined(BOARD_EVK)
         BW_USBNC_USB_OTG2_CTRL_PWR_POL(1);
         HW_IOMUXC_SW_MUX_CTL_PAD_KEY_COL5_WR(
@@ -70,14 +70,14 @@ void usbEnableVbus(usb_module_t * port)
 #endif
 
         break;
-        
+
     case Host2:
         break;
-        
+
     case Host3:
         // Nothing to be done here.
         break;
-        
+
     default:
         // no such controller
         break;
@@ -98,7 +98,7 @@ void usbDisableVbus(usb_module_t * port)
     switch (port->controllerID)
     {
     case OTG:
-    case OTG1:		// MX6SL first OTG controller.
+    case OTG1:      // MX6SL first OTG controller.
 #if defined(BOARD_EVK)
         BW_USBNC_USB_OTG1_CTRL_PWR_POL(0);
         HW_IOMUXC_SW_MUX_CTL_PAD_KEY_COL4_WR(
@@ -106,24 +106,24 @@ void usbDisableVbus(usb_module_t * port)
                 BF_IOMUXC_SW_MUX_CTL_PAD_KEY_COL4_MUX_MODE_V(ALT6));
 #endif
         break;
-        
+
     case Host1:
-    case OTG2:		// MX6SL first OTG controller.
+    case OTG2:      // MX6SL first OTG controller.
 #if defined(BOARD_EVK)
         BW_USBNC_USB_OTG2_CTRL_PWR_POL(0);
         HW_IOMUXC_SW_MUX_CTL_PAD_KEY_COL5_WR(
                 BF_IOMUXC_SW_MUX_CTL_PAD_KEY_COL5_SION_V(DISABLED) |
                 BF_IOMUXC_SW_MUX_CTL_PAD_KEY_COL5_MUX_MODE_V(ALT6));
 #endif
-	
-	break;
+
+    break;
     case Host2:
         break;
-        
+
     case Host3:
         // Nothing to be done here.
         break;
-        
+
     default:
         // no such controller
         break;

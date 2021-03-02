@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,7 +25,7 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
@@ -45,7 +45,7 @@
 #define FALSE 0
 #endif
 
-#define CLI_INVALID_ARG			-100
+#define CLI_INVALID_ARG         -100
 
 typedef int command_t(int argc, char *argv[]);
 
@@ -57,8 +57,8 @@ struct cli_command {
 };
 
 struct cli_commandset {
-	const struct cli_command *cmds;
-	struct cli_commandset *next;
+    const struct cli_command *cmds;
+    struct cli_commandset *next;
 };
 
 void cli_add_commandset(struct cli_commandset *set);
@@ -68,15 +68,15 @@ int cli_env_set(char env, int val);
 void cli_main_entry();
 
 #define u_assert(x) \
-	((x) ? TRUE : \
-			(uffs_PerrorRaw(UFFS_MSG_NORMAL, \
-				"Assert failed at %s:%s:%d: '%s' is not true.\n", \
-				__FILE__, __FUNCTION__, __LINE__, #x), FALSE))
+    ((x) ? TRUE : \
+            (uffs_PerrorRaw(UFFS_MSG_NORMAL, \
+                "Assert failed at %s:%s:%d: '%s' is not true.\n", \
+                __FILE__, __FUNCTION__, __LINE__, #x), FALSE))
 
 
 #define CHK_ARGC(min, max) \
-	if (argc < min || (max > 0 && argc > max)) \
-		return CLI_INVALID_ARG
+    if (argc < min || (max > 0 && argc > max)) \
+        return CLI_INVALID_ARG
 
 #endif
 

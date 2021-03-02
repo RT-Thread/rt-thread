@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ *
  */
 
 #ifndef DRV_UART_H

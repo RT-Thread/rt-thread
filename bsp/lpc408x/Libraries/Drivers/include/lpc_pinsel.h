@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -85,7 +85,7 @@
 #define IOCON_10ns_FILTER_ENABLE            (0<<IOCON_FILTER_POS)
 #define IOCON_10ns_FILTER_DISABLE           (1<<IOCON_FILTER_POS)
 
-/** I2C 50ns glitch filter and slew rate control */ 
+/** I2C 50ns glitch filter and slew rate control */
 #define IOCON_HS_POS                    (8)
 #define IOCON_HS_MASK               (0x01<<IOCON_HS_POS)
 #define IOCON_I2C_FILTER_ENABLE     (0<<IOCON_HS_POS)
@@ -125,7 +125,7 @@ typedef    int32_t      PINSEL_RET_CODE;
 /** @defgroup PINSEL_Public_Types PINSEL Public Types
  * @{
  */
- 
+
 
 typedef enum
 {
@@ -165,7 +165,7 @@ typedef enum
 /**
  * @}
  */
- 
+
 
 /* Public Functions ----------------------------------------------------------- */
 /** @defgroup PINSEL_Public_Functions PINSEL Public Functions

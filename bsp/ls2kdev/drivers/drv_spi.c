@@ -22,15 +22,15 @@
 #ifdef RT_USING_SPI
 static void spi_init(uint8_t spre_spr, uint8_t copl, uint8_t cpha)
 {
-    SET_SPI(SPSR, 0xc0); 
+    SET_SPI(SPSR, 0xc0);
     SET_SPI(PARAM, 0x40);
     SET_SPI(PARAM2, 0x01);
     SET_SPI(SPER, (spre_spr & 0b00001100) >> 2);
-    SET_SPI(SPCR, 0x50 | copl << 3 | cpha << 2 | (spre_spr & 0b00000011)); 
+    SET_SPI(SPCR, 0x50 | copl << 3 | cpha << 2 | (spre_spr & 0b00000011));
     SET_SPI(SOFTCS, 0xff);
 }
 
-static void spi_set_csn(uint8_t val) 
+static void spi_set_csn(uint8_t val)
 {
     SET_SPI(SOFTCS, val);
 }
@@ -38,7 +38,7 @@ static void spi_set_csn(uint8_t val)
 #ifdef RT_USING_SPI_GPIOCS
     #include <drivers/pin.h>
 #endif
-static void spi_set_cs(unsigned char cs, int new_status) 
+static void spi_set_cs(unsigned char cs, int new_status)
 {
     if (cs < 4)
     {

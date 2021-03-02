@@ -1,20 +1,20 @@
 /**HEADER********************************************************************
-* 
+*
 * Copyright (c) 2010 Freescale Semiconductor;
 * All Rights Reserved
 *
-*************************************************************************** 
+***************************************************************************
 *
-* THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
-* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
-* IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-* STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
-* IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+* THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+* IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+* STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+* IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 * THE POSSIBILITY OF SUCH DAMAGE.
 *
 **************************************************************************
@@ -25,7 +25,7 @@
 *
 * Comments:
 *
-*   
+*
 *
 *
 *END************************************************************************/
@@ -38,7 +38,7 @@
 * Function Name    : _usb_event_init
 * Returned Value   :
 * Comments         :
-*    
+*
 *
 *END*----------------------------------------------------------------------*/
 uint_16 _usb_event_init
@@ -54,9 +54,9 @@ USB_EVENT_STRUCT_PTR event
 /*FUNCTION*-------------------------------------------------------------------
 *
 * Function Name    : _usb_event_set
-* Returned Value   : 
+* Returned Value   :
 * Comments         :
-*    
+*
 *
 *END*----------------------------------------------------------------------*/
 uint_16 _usb_event_set
@@ -75,9 +75,9 @@ uint_16 _usb_event_set
 /*FUNCTION*-------------------------------------------------------------------
 *
 * Function Name    : _usb_event_clear
-* Returned Value   : 
+* Returned Value   :
 * Comments         :
-*    
+*
 *
 *END*----------------------------------------------------------------------*/
 uint_16 _usb_event_clear
@@ -96,9 +96,9 @@ uint_16 _usb_event_clear
 /*FUNCTION*-------------------------------------------------------------------
 *
 * Function Name    : _usb_event_wait_ticks
-* Returned Value   : 
+* Returned Value   :
 * Comments         :
-*    
+*
 *
 *END*----------------------------------------------------------------------*/
 uint_16 _usb_event_wait_ticks
@@ -109,9 +109,9 @@ uint_16 _usb_event_wait_ticks
   uint_16 ticks
 )
 {
-	UNUSED(all)
-	UNUSED(ticks)
-	
+    UNUSED(all)
+    UNUSED(ticks)
+
      if(event->VALID == USB_EVENT_VALID) {
       if(0x00 != (event->VALUE & bitmask)){
         return USB_EVENT_SET;
@@ -120,5 +120,5 @@ uint_16 _usb_event_wait_ticks
       }
     }
     return USB_EVENT_INVALID;
-    
+
 }

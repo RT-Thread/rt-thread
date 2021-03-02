@@ -1,38 +1,38 @@
 /*
- * 程序清单：动态信号量
+ * �����嵥����̬�ź���
  *
- * 这个例子中将创建一个动态信号量（初始值为0 ）及一个动态线程，在这个动态线程中
- * 将试图采用超时方式去持有信号量，应该超时返回。然后这个线程释放一次信号量，并
- * 在后面继续采用永久等待方式去持有信号量， 成功获得信号量后返回。
+ * ��������н�����һ����̬�ź�������ʼֵΪ0 ����һ����̬�̣߳��������̬�߳���
+ * ����ͼ���ó�ʱ��ʽȥ�����ź�����Ӧ�ó�ʱ���ء�Ȼ������߳��ͷ�һ���ź�������
+ * �ں�������������õȴ���ʽȥ�����ź����� �ɹ�����ź����󷵻ء�
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* 指向线程控制块的指针 */
+/* ָ���߳̿��ƿ��ָ�� */
 static rt_thread_t tid = RT_NULL;
-/* 指向信号量的指针 */
+/* ָ���ź�����ָ�� */
 static rt_sem_t sem = RT_NULL;
-/* 线程入口 */
+/* �߳���� */
 static void thread_entry(void* parameter)
 {
     rt_err_t result;
     rt_tick_t tick;
 
-    /* 获得当前的OS Tick */
+    /* ��õ�ǰ��OS Tick */
     tick = rt_tick_get();
 
-    /* 试图持有一个信号量，如果10个OS Tick依然没拿到，则超时返回 */
+    /* ��ͼ����һ���ź��������10��OS Tick��Ȼû�õ�����ʱ���� */
     result = rt_sem_take(sem, 10);
     if (result == -RT_ETIMEOUT)
     {
         rt_tick_t new_tick = rt_tick_get();
-        /* 可以有两个 tick 的误差 */
+        /* ���������� tick ����� */
         if (new_tick - tick >= 12)
         {
             rt_kprintf("tick error to large: expect: 10, get %d\n",
                        new_tick - tick);
 
-            /* 如果失败，则测试失败 */
+            /* ���ʧ�ܣ������ʧ�� */
             tc_done(TC_STAT_FAILED);
             rt_sem_delete(sem);
             return;
@@ -41,34 +41,34 @@ static void thread_entry(void* parameter)
     }
     else
     {
-        /* 因为并没释放信号量，应该是超时返回，否则测试失败 */
+        /* ��Ϊ��û�ͷ��ź�����Ӧ���ǳ�ʱ���أ��������ʧ�� */
         tc_done(TC_STAT_FAILED);
         rt_sem_delete(sem);
         return;
     }
 
-    /* 释放一次信号量 */
+    /* �ͷ�һ���ź��� */
     rt_sem_release(sem);
 
-    /* 继续持有信号量，并永远等待直到持有到信号量 */
+    /* ���������ź���������Զ�ȴ�ֱ�����е��ź��� */
     result = rt_sem_take(sem, RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
-        /* 返回不正确，测试失败 */
+        /* ���ز���ȷ������ʧ�� */
         tc_done(TC_STAT_FAILED);
         rt_sem_delete(sem);
         return;
     }
 
-    /* 测试成功 */
+    /* ���Գɹ� */
     tc_done(TC_STAT_PASSED);
-    /* 删除信号量 */
+    /* ɾ���ź��� */
     rt_sem_delete(sem);
 }
 
 int semaphore_dynamic_init()
 {
-    /* 创建一个信号量，初始值是0 */
+    /* ����һ���ź�������ʼֵ��0 */
     sem = rt_sem_create("sem", 0, RT_IPC_FLAG_FIFO);
     if (sem == RT_NULL)
     {
@@ -76,9 +76,9 @@ int semaphore_dynamic_init()
         return 0;
     }
 
-    /* 创建线程 */
+    /* �����߳� */
     tid = rt_thread_create("thread",
-                           thread_entry, RT_NULL, /* 线程入口是thread_entry, 入口参数是RT_NULL */
+                           thread_entry, RT_NULL, /* �߳������thread_entry, ��ڲ�����RT_NULL */
                            THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
@@ -91,7 +91,7 @@ int semaphore_dynamic_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* 调度器上锁，上锁后，将不再切换到其他线程，仅响应中断 */
+    /* �����������������󣬽������л��������̣߳�����Ӧ�ж� */
     rt_enter_critical();
 
     if (sem)
@@ -100,32 +100,32 @@ static void _tc_cleanup()
         sem = RT_NULL;
     }
 
-    /* 删除线程 */
+    /* ɾ���߳� */
     if (tid != RT_NULL && tid->stat != RT_THREAD_CLOSE)
     {
         rt_thread_delete(tid);
     }
 
-    /* 调度器解锁 */
+    /* ���������� */
     rt_exit_critical();
 
-    /* 设置TestCase状态 */
+    /* ����TestCase״̬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_semaphore_dynamic()
 {
-    /* 设置TestCase清理回调函数 */
+    /* ����TestCase�����ص����� */
     tc_cleanup(_tc_cleanup);
     semaphore_dynamic_init();
 
-    /* 返回TestCase运行的最长时间 */
+    /* ����TestCase���е��ʱ�� */
     return 100;
 }
-/* 输出函数命令到finsh shell中 */
+/* ����������finsh shell�� */
 FINSH_FUNCTION_EXPORT(_tc_semaphore_dynamic, a dynamic semaphore example);
 #else
-/* 用户应用入口 */
+/* �û�Ӧ����� */
 int rt_application_init()
 {
     semaphore_dynamic_init();

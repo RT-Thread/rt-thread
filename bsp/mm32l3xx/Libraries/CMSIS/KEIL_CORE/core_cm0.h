@@ -51,7 +51,7 @@
 /** \ingroup Cortex_M0
   @{
  */
-#define __NVIC_PRIO_BITS          2 
+#define __NVIC_PRIO_BITS          2
 /*  CMSIS CM0 definitions */
 #define __CM0_CMSIS_VERSION_MAIN  (0x03)                                   /*!< [31:16] CMSIS HAL main version   */
 #define __CM0_CMSIS_VERSION_SUB   (0x01)                                   /*!< [15:0]  CMSIS HAL sub version    */

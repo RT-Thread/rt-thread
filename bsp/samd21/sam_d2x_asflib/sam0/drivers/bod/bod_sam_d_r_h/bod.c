@@ -59,51 +59,51 @@
  * \retval STATUS_ERR_INVALID_OPTION  The requested BOD level was outside the acceptable range
  */
 enum status_code bod_set_config(
-		const enum bod bod_id,
-		struct bod_config *const conf)
+        const enum bod bod_id,
+        struct bod_config *const conf)
 {
-	/* Sanity check arguments */
-	Assert(conf);
+    /* Sanity check arguments */
+    Assert(conf);
 
-	uint32_t temp = 0;
+    uint32_t temp = 0;
 
-	/* Check if module is enabled. */
-	if (SYSCTRL->BOD33.reg & SYSCTRL_BOD33_ENABLE) {
-		SYSCTRL->BOD33.reg &= ~SYSCTRL_BOD33_ENABLE;
-	}
+    /* Check if module is enabled. */
+    if (SYSCTRL->BOD33.reg & SYSCTRL_BOD33_ENABLE) {
+        SYSCTRL->BOD33.reg &= ~SYSCTRL_BOD33_ENABLE;
+    }
 
-	/* Convert BOD prescaler, trigger action and mode to a bitmask */
-	temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action |
-			(uint32_t)conf->mode;
+    /* Convert BOD prescaler, trigger action and mode to a bitmask */
+    temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action |
+            (uint32_t)conf->mode;
 
-	if (conf->mode == BOD_MODE_SAMPLED) {
-		/* Enable sampling clock if sampled mode */
-		temp |= SYSCTRL_BOD33_CEN;
-	}
+    if (conf->mode == BOD_MODE_SAMPLED) {
+        /* Enable sampling clock if sampled mode */
+        temp |= SYSCTRL_BOD33_CEN;
+    }
 
-	if (conf->hysteresis == true) {
-		temp |= SYSCTRL_BOD33_HYST;
-	}
+    if (conf->hysteresis == true) {
+        temp |= SYSCTRL_BOD33_HYST;
+    }
 
-	if (conf->run_in_standby == true) {
-		temp |= SYSCTRL_BOD33_RUNSTDBY;
-	}
+    if (conf->run_in_standby == true) {
+        temp |= SYSCTRL_BOD33_RUNSTDBY;
+    }
 
-	switch (bod_id) {
-		case BOD_BOD33:
-			if (conf->level > 0x3F) {
-				return STATUS_ERR_INVALID_ARG;
-			}
+    switch (bod_id) {
+        case BOD_BOD33:
+            if (conf->level > 0x3F) {
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			SYSCTRL->BOD33.reg = SYSCTRL_BOD33_LEVEL(conf->level) | temp;
+            SYSCTRL->BOD33.reg = SYSCTRL_BOD33_LEVEL(conf->level) | temp;
 
-			while (!(SYSCTRL->PCLKSR.reg & SYSCTRL_PCLKSR_B33SRDY)) {
-				/* Wait for BOD33 register sync ready */
-			}
-			break;
-		default:
-			return STATUS_ERR_INVALID_ARG;
-	}
+            while (!(SYSCTRL->PCLKSR.reg & SYSCTRL_PCLKSR_B33SRDY)) {
+                /* Wait for BOD33 register sync ready */
+            }
+            break;
+        default:
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

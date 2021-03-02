@@ -8,7 +8,7 @@
    Date             Author          Notes
    2020-06-12       Wangmin         First version
    2020-08-31       Wangmin         Modify for MISRAC2012
-   2020-10-13       Wangmin         Define variable for count as __IO type 
+   2020-10-13       Wangmin         Define variable for count as __IO type
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2020, Huada Semiconductor Co., Ltd. All rights reserved.

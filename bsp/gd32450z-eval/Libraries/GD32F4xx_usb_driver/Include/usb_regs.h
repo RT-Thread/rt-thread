@@ -385,7 +385,7 @@
 #define DIEPINTEN_EPTXFUDEN       BIT(4)              /*!< endpoint Tx FIFO underrun interrupt enable bit */
 #define DIEPINTEN_CITOEN          BIT(3)              /*!< control In Timeout interrupt enable bit */
 #define DIEPINTEN_EPDISEN         BIT(1)              /*!< endpoint disabled interrupt enable bit */
-#define DIEPINTEN_TFEN            BIT(0)              /*!< transfer finished interrupt enable bit */ 
+#define DIEPINTEN_TFEN            BIT(0)              /*!< transfer finished interrupt enable bit */
 
 /* device OUT endpoint common interrupt enable registers bits definitions */
 #define DOEPINTEN_NYETEN          BIT(14)             /*!< NYET handshake is sent interrupt enable bit */
@@ -622,7 +622,7 @@ do { \
 do { \
     uint32_t out_epintf = USB_DOEPxINTF(EpID); \
     (x) = out_epintf & USB_DOEPINTEN; \
-} while(0) 
+} while(0)
 
 /* read all in endpoint interrupt flag */
 #define USB_DAIEP_INTR_READ(x) \

@@ -20,9 +20,9 @@ extern "C" {
  *
  * DMA Controller API
  *
- * The RP2040 Direct Memory Access (DMA) master performs bulk data transfers on a processorâ€™s
+ * The RP2040 Direct Memory Access (DMA) master performs bulk data transfers on a processor¡¯s
  * behalf. This leaves processors free to attend to other tasks, or enter low-power sleep states. The
- * data throughput of the DMA is also significantly higher than one of RP2040â€™s processors.
+ * data throughput of the DMA is also significantly higher than one of RP2040¡¯s processors.
  *
  * The DMA can perform one read access and one write access, up to 32 bits in size, every clock cycle.
  * There are 12 independent channels, which each supervise a sequence of bus transfers, usually in
@@ -173,7 +173,7 @@ static inline void channel_config_set_transfer_data_size(dma_channel_config *c, 
 /*! \brief  Set address wrapping parameters
  *  \ingroup channel_config
  *
- * Size of address wrap region. If 0, donâ€™t wrap. For values n > 0, only the lower n bits of the address
+ * Size of address wrap region. If 0, don¡¯t wrap. For values n > 0, only the lower n bits of the address
  * will change. This wraps the address on a (1 << n) byte boundary, facilitating access to naturally-aligned
  * ring buffers.
  * Ring sizes between 2 and 32768 bytes are possible (size_bits from 1 - 15)
@@ -561,7 +561,7 @@ inline static void dma_sniffer_enable(uint channel, uint mode, bool force_channe
  *
  * Note that the sniff hardware is downstream of the DMA channel byteswap performed in the
  * read master: if channel_config_set_bswap() and dma_sniffer_set_byte_swap_enabled() are both enabled,
- * their effects cancel from the snifferâ€™s point of view.
+ * their effects cancel from the sniffer¡¯s point of view.
  *
  * \param swap Set true to enable byte swapping
  */

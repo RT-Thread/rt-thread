@@ -12,7 +12,7 @@
  *
  * @version
  *
- * @date 
+ * @date
  *
  * @brief The file contains USB descriptors for Audio Application
  *
@@ -34,7 +34,7 @@
 #include <string.h>
 
 
-#if (defined __MCF52xxx_H__)|| (defined __MK_xxx_H__) 
+#if (defined __MCF52xxx_H__)|| (defined __MK_xxx_H__)
 /* Put CFV2 descriptors in RAM */
 #define USB_DESC_CONST
 #else
@@ -46,7 +46,7 @@
  *****************************************************************************/
 
 /* structure containing details of all the endpoints used by this device */
-USB_DESC_CONST USB_ENDPOINTS usb_desc_ep = { AUDIO_DESC_ENDPOINT_COUNT, 
+USB_DESC_CONST USB_ENDPOINTS usb_desc_ep = { AUDIO_DESC_ENDPOINT_COUNT,
                                       {{
                                       AUDIO_ENDPOINT,
                                       USB_ISOCHRONOUS_PIPE,
@@ -57,19 +57,19 @@ USB_DESC_CONST USB_ENDPOINTS usb_desc_ep = { AUDIO_DESC_ENDPOINT_COUNT,
 
 /* *********************************************************************
 * definition a struct of Input Terminal, Output Terminal or Feature Unit
-************************************************************************ */                                  
-                                                                            
- /* Struct of Input Terminal, Output Terminal or Feature Unit */                                 
+************************************************************************ */
 
-USB_DESC_CONST USB_AUDIO_UNITS usb_audio_unit = { AUDIO_UNIT_COUNT, 
+ /* Struct of Input Terminal, Output Terminal or Feature Unit */
+
+USB_DESC_CONST USB_AUDIO_UNITS usb_audio_unit = { AUDIO_UNIT_COUNT,
                                  {
-                                   {0x01,AUDIO_CONTROL_INPUT_TERMINAL}, 
-                                   {0x02,AUDIO_CONTROL_FEATURE_UNIT}, 
-                                   {0x03,AUDIO_CONTROL_OUTPUT_TERMINAL}, 
-                                
+                                   {0x01,AUDIO_CONTROL_INPUT_TERMINAL},
+                                   {0x02,AUDIO_CONTROL_FEATURE_UNIT},
+                                   {0x03,AUDIO_CONTROL_OUTPUT_TERMINAL},
+
                                   }
                               } ;
-                              
+
 
 uint_8 USB_DESC_CONST g_device_descriptor[DEVICE_DESCRIPTOR_SIZE] =
 {
@@ -91,7 +91,7 @@ uint_8 USB_DESC_CONST g_device_descriptor[DEVICE_DESCRIPTOR_SIZE] =
    0x01                                  /*  Number of configurations      */
 };
 
-uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] = 
+uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
 {
    CONFIG_ONLY_DESC_SIZE,           /*  Configuration Descriptor Size - always 9 bytes*/
    USB_CONFIG_DESCRIPTOR,           /* "Configuration" type of descriptor */
@@ -114,9 +114,9 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    USB_SUBCLASS_AUDIOCONTROL,       /*  AUDIO_CONTROL*/
    0x00,                            /*  Unused*/
    0x00,                            /*  Unused*/
- 
+
    /* Audio class-specific interface header */
-   HEADER_ONLY_DESC_SIZE,           /*  bLength (9) */ 
+   HEADER_ONLY_DESC_SIZE,           /*  bLength (9) */
    AUDIO_INTERFACE_DESCRIPTOR_TYPE, /*  bDescriptorType (CS_INTERFACE) */
    AUDIO_CONTROL_HEADER,            /*  bDescriptorSubtype (HEADER) */
    0x00,0x01,                       /*  bcdADC (1.0) */
@@ -136,7 +136,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    0x00,                            /*  iChannelNames (none) */
    0x00,                            /*  iTerminal (none) */
 
-  /* Audio class-specific feature unit */    
+  /* Audio class-specific feature unit */
    FEATURE_UNIT_ONLY_DESC_SIZE,     /*  bLength (9) */
    AUDIO_INTERFACE_DESCRIPTOR_TYPE, /*  bDescriptorType (CS_INTERFACE) */
    AUDIO_CONTROL_FEATURE_UNIT,      /*  bDescriptorSubtype (FEATURE_UNIT) */
@@ -146,8 +146,8 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    0x03,
    0x00,                            /* Master controls */
    0x00,                            /* Channel 0 controls */
-   
-   /* Audio class-specific output terminal   */ 
+
+   /* Audio class-specific output terminal   */
    OUTPUT_TERMINAL_ONLY_DESC_SIZE,  /*  bLength (9) */
    AUDIO_INTERFACE_DESCRIPTOR_TYPE, /*  bDescriptorType (CS_INTERFACE) */
    AUDIO_CONTROL_OUTPUT_TERMINAL,   /*  bDescriptorSubtype (OUTPUT_TERMINAL) */
@@ -156,31 +156,31 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    0x00,                            /*  bAssocTerminal (none) */
    0x02,                            /*  bSourceID (feature unit 2) */
    0x00,                            /*  iTerminal (none) */
-    
-    /* USB speaker standard AS interface descriptor - audio streaming operational 
+
+    /* USB speaker standard AS interface descriptor - audio streaming operational
 (Interface 1, Alternate Setting 0) */
    IFACE_ONLY_DESC_SIZE,            /*  bLength (9) */
    USB_IFACE_DESCRIPTOR,            /*  bDescriptorType (CS_INTERFACE) */
    0x01,                            /*  interface Number: 1 */
-   0x00,                            /*  Alternate Setting: 0 */ 
+   0x00,                            /*  Alternate Setting: 0 */
    0x00,                            /*  not used (Zero Bandwidth) */
    USB_DEVICE_CLASS_AUDIO,          /*  USB DEVICE CLASS AUDIO */
    USB_SUBCLASS_AUDIOSTREAM,        /*  AUDIO SUBCLASS AUDIOSTREAMING */
    0x00,                            /*  AUDIO PROTOCOL UNDEFINED */
    0x00,                            /*  Unused */
 
-    /* USB speaker standard AS interface descriptor - audio streaming operational 
+    /* USB speaker standard AS interface descriptor - audio streaming operational
 (Interface 1, Alternate Setting 1) */
    IFACE_ONLY_DESC_SIZE,            /*  bLength (9) */
    USB_IFACE_DESCRIPTOR,            /*  bDescriptorType (CS_INTERFACE) */
    0x01,                            /*  interface Number: 1 */
-   0x01,                            /*  Alternate Setting: 1 */ 
+   0x01,                            /*  Alternate Setting: 1 */
    0x01,                            /*  One Endpoint. */
    USB_DEVICE_CLASS_AUDIO,          /*  USB DEVICE CLASS AUDIO */
    USB_SUBCLASS_AUDIOSTREAM,        /*  AUDIO SUBCLASS AUDIOSTREAMING */
    0x00,                            /*  AUDIO PROTOCOL UNDEFINED */
    0x00,                            /*  Unused */
-   
+
     /* USB speaker standard General AS interface descriptor */
    AUDIO_STREAMING_IFACE_DESC_SIZE, /*  bLength (7) */
    AUDIO_INTERFACE_DESCRIPTOR_TYPE, /*  bDescriptorType (CS_INTERFACE) */
@@ -190,7 +190,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    0x02,0x00,                       /*  PCM format */
 
    /* USB speaker audio type I format interface descriptor */
-   AUDIO_STREAMING_TYPE_I_DESC_SIZE,/*  bLength (11) */  
+   AUDIO_STREAMING_TYPE_I_DESC_SIZE,/*  bLength (11) */
    AUDIO_INTERFACE_DESCRIPTOR_TYPE, /*  bDescriptorType (CS_INTERFACE) */
    AUDIO_STREAMING_FORMAT_TYPE,     /*  DescriptorSubtype: AUDIO STREAMING FORMAT TYPE */
    AUDIO_FORMAT_TYPE_I,             /*  Format Type: Type I */
@@ -199,7 +199,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    0x08,                            /*  Bit Resolution: 8 bits per sample */
    0x01,                            /*  One frequency supported */
    0x40,0x1F,0x00,                  /*  8 kHz */
-   
+
    /*Endpoint 1 - standard descriptor*/
    ENDP_ONLY_DESC_SIZE,            /*  bLength (9) */
    USB_ENDPOINT_DESCRIPTOR,        /*  Descriptor type (endpoint descriptor) */
@@ -213,8 +213,8 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
 #endif
    0x00,
    0x00,
-     
-   
+
+
    /* Endpoint 1 - Audio streaming descriptor */
    AUDIO_STREAMING_ENDP_DESC_SIZE,  /* bLength (7) */
    USB_AUDIO_DESCRIPTOR,            /* AUDIO ENDPOINT DESCRIPTOR TYPE */
@@ -345,8 +345,8 @@ uint_8_ptr const g_string_descriptors[USB_MAX_STRING_DESCRIPTORS] =
                                               (uint_8_ptr) USB_STR_n
                                           };
 
-USB_ALL_LANGUAGES g_languages = { 
-    USB_STR_0, 
+USB_ALL_LANGUAGES g_languages = {
+    USB_STR_0,
     sizeof(USB_STR_0),
     {
         { (const uint_16)0x0409, (const uint_8 **)g_string_descriptors, g_string_desc_size }
@@ -407,7 +407,7 @@ uint_8 USB_Desc_Get_Descriptor(
 )
 {
     UNUSED(controller_ID);
-    
+
     switch(type)
     {
       case USB_REPORT_DESCRIPTOR:
@@ -669,7 +669,7 @@ void* USB_Desc_Get_Endpoints(
  *****************************************************************************
  * This function returns the information about all the Input Terminal,
  * Output Terminal and Feature Unit
- *****************************************************************************/ 
+ *****************************************************************************/
 void* USB_Desc_Get_Audio_Entities(
       uint_8 controller_ID      /* [IN] Controller ID */
 )
@@ -712,7 +712,7 @@ uint_8 USB_Desc_Set_Copy_Protect(
     g_copy_protect[interface] = **data;
     return USB_OK;
   }
-  
+
   return USBERR_INVALID_REQ_TYPE;
 }
 
@@ -739,7 +739,7 @@ uint_8 USB_Desc_Set_Copy_Protect(
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
-{  
+{
   UNUSED(controller_ID);
   UNUSED(size);
   /* if interface valid */
@@ -777,7 +777,7 @@ uint_8 USB_Desc_Set_Cur_Mute (
     uint_8_ptr *data,                   /* [IN] Pointer to Data to be send */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
-{ 
+{
   UNUSED (controller_ID);
   UNUSED (size);
   /* if interface valid */
@@ -817,7 +817,7 @@ uint_8 USB_Desc_Get_Cur_Mute(
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-  UNUSED (controller_ID); 
+  UNUSED (controller_ID);
   /* if interface valid */
   if(interface < USB_MAX_SUPPORTED_INTERFACES){
     /* get current mute data*/
@@ -856,7 +856,7 @@ uint_8 USB_Desc_Set_Cur_Volume (
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
-{  
+{
   int_16 volume;
   UNUSED (controller_ID);
   UNUSED (size);
@@ -866,27 +866,27 @@ uint_8 USB_Desc_Set_Cur_Volume (
     g_cur_volume[interface][0] = **data;
     g_cur_volume[interface][1] = *(*data+1);
     volume = (int_16)((g_cur_volume[interface][1] << 8) | g_cur_volume[interface][0]);
-    /* The current volume is received as logical value 
+    /* The current volume is received as logical value
      * Logical  S16:  0x8000      to 0x7FFF             and corresponds to
      * Physical      -127.9661 dB to 127.9661 dB
      * The equation for the line that passes through the above coordinates results:
-     *  y = 0.0039*x - 3.1    
+     *  y = 0.0039*x - 3.1
      */
 #if (!(defined _MC9S08MM128_H) && !(defined _MC9S08JE128_H))
     {
         int_16 volPhysical;
         if((uint_16)volume == 0x8000)
         {
-            (void)printf("Volume: Silence\r\n");                
+            (void)printf("Volume: Silence\r\n");
         }
         else
         {
              volPhysical = (int_16)((int_16)(((int_32)volume * 4) / 1000) - 3);
              (void)printf("Volume: %d dB\r\n", volPhysical);
-        }        
+        }
     }
 #endif
-    
+
     return USB_OK;
   }
   return USBERR_INVALID_REQ_TYPE;
@@ -916,7 +916,7 @@ uint_8 USB_Desc_Set_Min_Volume(
     uint_8_ptr *data,                   /* [IN] Pointer to Data to send */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
-{ 
+{
   UNUSED(controller_ID);
   UNUSED(size);
   /* if interface valid */
@@ -953,7 +953,7 @@ uint_8 USB_Desc_Set_Max_Volume (
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
-{  
+{
   UNUSED(controller_ID);
   UNUSED(size);
   /* if interface valid */
@@ -989,8 +989,8 @@ uint_8 USB_Desc_Set_Res_Volume(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
-{ 
+)
+{
   UNUSED(controller_ID);
   UNUSED(size);
   /* if interface valid */
@@ -1020,8 +1020,8 @@ uint_8 USB_Desc_Set_Res_Volume(
  *                                Interface is presented
  ******************************************************************************
  * Returns Current Volume value to the Host
- *****************************************************************************/    
-    
+ *****************************************************************************/
+
 uint_8 USB_Desc_Get_Cur_Volume(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
@@ -1093,13 +1093,13 @@ uint_8 USB_Desc_Get_Cur_Volume(
  *                                Interface is presented
  ******************************************************************************
  * Returns Max Volume value to the Host
- *****************************************************************************/        
+ *****************************************************************************/
 uint_8 USB_Desc_Get_Max_Volume (
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1129,7 +1129,7 @@ uint_8 USB_Desc_Get_Max_Volume (
  *                                Interface is presented
  ******************************************************************************
  * Returns Resolution Volume value to the Host
- *****************************************************************************/        
+ *****************************************************************************/
 uint_8 USB_Desc_Get_Res_Volume(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
@@ -1176,7 +1176,7 @@ uint_8 USB_Desc_Set_Cur_Bass (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1284,7 +1284,7 @@ uint_8 USB_Desc_Set_Res_Bass (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1320,9 +1320,9 @@ uint_8 USB_Desc_Get_Cur_Bass (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
-  UNUSED(controller_ID); 
+  UNUSED(controller_ID);
   /* if interface valid */
   if(interface < USB_MAX_SUPPORTED_INTERFACES){
     /* get current bass data*/
@@ -1356,7 +1356,7 @@ uint_8 USB_Desc_Get_Min_Bass(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1392,7 +1392,7 @@ uint_8 USB_Desc_Get_Max_Bass (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1402,7 +1402,7 @@ uint_8 USB_Desc_Get_Max_Bass (
     *data = &g_max_bass[interface];
     return USB_OK;
   }
-  
+
   return USBERR_INVALID_REQ_TYPE;
 }
 
@@ -1429,7 +1429,7 @@ uint_8 USB_Desc_Get_Max_Bass (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1470,7 +1470,7 @@ uint_8 USB_Desc_Set_Cur_Mid(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1500,13 +1500,13 @@ uint_8 USB_Desc_Set_Cur_Mid(
  *                                Interface is presented
  ******************************************************************************
  * Sets Minumum Mid value specified by the Host
- *****************************************************************************/ 
+ *****************************************************************************/
 uint_8 USB_Desc_Set_Min_Mid(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1542,7 +1542,7 @@ uint_8 USB_Desc_Set_Max_Mid(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1572,13 +1572,13 @@ uint_8 USB_Desc_Set_Max_Mid(
  *                                Interface is presented
  ******************************************************************************
  * Sets Resolution Mid value specified by the Host
- *****************************************************************************/ 
+ *****************************************************************************/
 uint_8 USB_Desc_Set_Res_Mid(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1614,7 +1614,7 @@ uint_8 USB_Desc_Get_Cur_Mid (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1649,7 +1649,7 @@ uint_8 USB_Desc_Get_Min_Mid (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1685,7 +1685,7 @@ uint_8 USB_Desc_Get_Max_Mid (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1721,7 +1721,7 @@ uint_8 USB_Desc_Get_Res_Mid (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1756,13 +1756,13 @@ uint_8 g_res_treble[USB_MAX_SUPPORTED_INTERFACES] = {0x01};
  *                                Interface is presented
  ******************************************************************************
  * Sets Current Treble value specified by the Host
- *****************************************************************************/ 
+ *****************************************************************************/
  uint_8 USB_Desc_Set_Cur_Treble(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1792,13 +1792,13 @@ uint_8 g_res_treble[USB_MAX_SUPPORTED_INTERFACES] = {0x01};
  *                                Interface is presented
  ******************************************************************************
  * Sets Minimum Treble value specified by the Host
- *****************************************************************************/ 
+ *****************************************************************************/
 uint_8 USB_Desc_Set_Min_Treble(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1828,13 +1828,13 @@ uint_8 USB_Desc_Set_Min_Treble(
  *                                Interface is presented
  ******************************************************************************
  * Sets Maximum Treble value specified by the Host
- *****************************************************************************/ 
+ *****************************************************************************/
 uint_8 USB_Desc_Set_Max_Treble(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1870,7 +1870,7 @@ uint_8 USB_Desc_Set_Res_Treble(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -1906,8 +1906,8 @@ uint_8 USB_Desc_Get_Cur_Treble (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
-{  
+)
+{
   UNUSED(controller_ID);
   /* if interface valid */
   if(interface < USB_MAX_SUPPORTED_INTERFACES){
@@ -1942,7 +1942,7 @@ uint_8 USB_Desc_Get_Min_Treble (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -1978,7 +1978,7 @@ uint_8 USB_Desc_Get_Max_Treble (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2014,7 +2014,7 @@ uint_8 USB_Desc_Get_Max_Treble (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2055,8 +2055,8 @@ uint_8 g_res_graphic_equalizer[USB_MAX_SUPPORTED_INTERFACES][5] = {{0x00,0x00,0x
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
-{  
+)
+{
   UNUSED(controller_ID);
   UNUSED(size);
   /* if interface valid */
@@ -2069,7 +2069,7 @@ uint_8 g_res_graphic_equalizer[USB_MAX_SUPPORTED_INTERFACES][5] = {{0x00,0x00,0x
     g_cur_graphic_equalizer[interface][4] = *(*data+4);
     return USB_OK;
   }
-  
+
   return USBERR_INVALID_REQ_TYPE;
 }
 /**************************************************************************//*!
@@ -2095,7 +2095,7 @@ uint_8 USB_Desc_Set_Min_Graphic_Equalizer(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2129,13 +2129,13 @@ uint_8 USB_Desc_Set_Min_Graphic_Equalizer(
  *                                Interface is presented
  ******************************************************************************
  * Sets Maximum Graphic Equalizer values specified by the Host
- *****************************************************************************/ 
+ *****************************************************************************/
 uint_8 USB_Desc_Set_Max_Graphic_Equalizer(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2175,7 +2175,7 @@ uint_8 USB_Desc_Set_Res_Graphic_Equalizer(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2189,7 +2189,7 @@ uint_8 USB_Desc_Set_Res_Graphic_Equalizer(
     g_res_graphic_equalizer[interface][4] = *(*data+4);
     return USB_OK;
   }
-  
+
   return USBERR_INVALID_REQ_TYPE;
 }
 
@@ -2216,7 +2216,7 @@ uint_8 USB_Desc_Get_Cur_Graphic_Equalizer (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2252,7 +2252,7 @@ uint_8 USB_Desc_Get_Min_Graphic_Equalizer (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2288,7 +2288,7 @@ uint_8 USB_Desc_Get_Max_Graphic_Equalizer (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
 
   UNUSED(controller_ID);
@@ -2325,7 +2325,7 @@ uint_8 USB_Desc_Get_Res_Graphic_Equalizer (
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2358,13 +2358,13 @@ uint_8 g_cur_automatic_gain[USB_MAX_SUPPORTED_INTERFACES] = {0x01};
  ******************************************************************************
  * Sets Current Automatic Gain value specified by the Host
  *****************************************************************************/
- 
+
 uint_8 USB_Desc_Set_Cur_Automatic_Gain(
     uint_8 controller_ID,               /* [IN] Controller ID */
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2400,7 +2400,7 @@ uint_8 USB_Desc_Get_Cur_Automatic_Gain(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2440,7 +2440,7 @@ uint_8 USB_Desc_Set_Cur_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2477,7 +2477,7 @@ uint_8 USB_Desc_Set_Min_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2514,7 +2514,7 @@ uint_8 USB_Desc_Set_Max_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2523,7 +2523,7 @@ uint_8 USB_Desc_Set_Max_Delay(
     /* set max delay data*/
     g_max_delay[interface][0] = **data;
     g_max_delay[interface][1] = *(*data+1);
-    
+
     return USB_OK;
   }
   return USBERR_INVALID_REQ_TYPE;
@@ -2552,7 +2552,7 @@ uint_8 USB_Desc_Set_Res_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2589,7 +2589,7 @@ uint_8 USB_Desc_Get_Cur_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2625,7 +2625,7 @@ uint_8 USB_Desc_Get_Min_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2661,7 +2661,7 @@ uint_8 USB_Desc_Get_Max_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2697,7 +2697,7 @@ uint_8 USB_Desc_Get_Res_Delay(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2735,8 +2735,8 @@ uint_8 USB_Desc_Set_Cur_Bass_Boost(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
-{  
+)
+{
   UNUSED(controller_ID);
   UNUSED(size);
   /* if interface valid */
@@ -2771,7 +2771,7 @@ uint_8 USB_Desc_Get_Cur_Bass_Boost(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2809,7 +2809,7 @@ uint_8 USB_Desc_Set_Cur_Loudness(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2845,7 +2845,7 @@ uint_8 USB_Desc_Get_Cur_Loudness(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   /* if interface valid */
@@ -2886,7 +2886,7 @@ uint_8 USB_Desc_Set_Cur_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2921,7 +2921,7 @@ uint_8 USB_Desc_Set_Min_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2956,7 +2956,7 @@ uint_8 USB_Desc_Set_Max_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -2991,7 +2991,7 @@ uint_8 USB_Desc_Set_Res_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -3026,7 +3026,7 @@ uint_8 USB_Desc_Get_Cur_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(interface);
@@ -3059,7 +3059,7 @@ uint_8 USB_Desc_Get_Min_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(interface);
@@ -3092,7 +3092,7 @@ uint_8 USB_Desc_Get_Max_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(interface);
@@ -3125,7 +3125,7 @@ uint_8 USB_Desc_Get_Res_Sampling_Frequency(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(interface);
@@ -3160,7 +3160,7 @@ uint_8 USB_Desc_Set_Cur_Pitch(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(size);
@@ -3193,7 +3193,7 @@ uint_8 USB_Desc_Get_Cur_Pitch(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [OUT] Pointer to Data */
     USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(interface);
@@ -3229,18 +3229,18 @@ uint_8 USB_Desc_Set_Mem_Endpoint(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   uint_16 index;
-  
+
   UNUSED(controller_ID);
   UNUSED(interface);
 
-  for(index = 0; index < *size ; index++) 
-  {   /* copy the report sent by the host */          
+  for(index = 0; index < *size ; index++)
+  {   /* copy the report sent by the host */
       status_endpoint_data[offset + index] = *(*data + index);
   }
-  *size = 0;     
+  *size = 0;
 
   return USB_OK;
 }
@@ -3270,12 +3270,12 @@ uint_8 USB_Desc_Get_Mem_Endpoint(
     uint_8 interface,                   /* [IN] Interface */
     uint_8_ptr *data,                   /* [IN] Pointer to Data */
     USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
-) 
+)
 {
   UNUSED(controller_ID);
   UNUSED(interface);
   UNUSED(size);
-    
+
   *data = &status_endpoint_data[offset];
   return USB_OK;
 }

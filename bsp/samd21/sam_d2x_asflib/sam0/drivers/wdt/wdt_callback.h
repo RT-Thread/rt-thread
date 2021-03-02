@@ -69,18 +69,18 @@ typedef void (*wdt_callback_t)(void);
 /** Enum for the possible callback types for the WDT module. */
 enum wdt_callback
 {
-	/** Callback type for when an early warning callback from the WDT module
-	 *  is issued
-	 */
-	WDT_CALLBACK_EARLY_WARNING,
+    /** Callback type for when an early warning callback from the WDT module
+     *  is issued
+     */
+    WDT_CALLBACK_EARLY_WARNING,
 };
 
 enum status_code wdt_register_callback(
-		const wdt_callback_t callback,
-		const enum wdt_callback type);
+        const wdt_callback_t callback,
+        const enum wdt_callback type);
 
 enum status_code wdt_unregister_callback(
-		const enum wdt_callback type);
+        const enum wdt_callback type);
 
 /** @} */
 
@@ -89,10 +89,10 @@ enum status_code wdt_unregister_callback(
  */
 
 enum status_code wdt_enable_callback(
-		const enum wdt_callback type);
+        const enum wdt_callback type);
 
 enum status_code wdt_disable_callback(
-		const enum wdt_callback type);
+        const enum wdt_callback type);
 
 /** @} */
 

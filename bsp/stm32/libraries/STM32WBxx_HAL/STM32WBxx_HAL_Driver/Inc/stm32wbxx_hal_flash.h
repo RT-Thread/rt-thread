@@ -449,7 +449,7 @@ typedef struct
   */
 #define OB_PCROP_RDP_NOT_ERASE          0x00000000U                /*!< PCROP area is not erased when the RDP level
                                                                         is decreased from Level 1 to Level 0 */
-#define OB_PCROP_RDP_ERASE              FLASH_PCROP1AER_PCROP_RDP  /*!< PCROP area is erased when the RDP level is 
+#define OB_PCROP_RDP_ERASE              FLASH_PCROP1AER_PCROP_RDP  /*!< PCROP area is erased when the RDP level is
                                                                         decreased from Level 1 to Level 0 (full mass erase) */
 /**
   * @}

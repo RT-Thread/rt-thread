@@ -39,48 +39,48 @@ typedef struct
 {
     uint16_t SPI_TransMode;                 /*!< Specifies the SPI unidirectional or bidirectional data mode.
                                                This parameter can be a value of @ref SPI_data_direction */
-                                            
+
     uint16_t SPI_Mode;                      /*!< Specifies the SPI operating mode.
                                                This parameter can be a value of @ref SPI_mode */
-                                            
+
     uint16_t SPI_FrameSize;                 /*!< Specifies the SPI data size.
                                                This parameter can be a value of @ref SPI_data_size */
-                                            
+
     uint16_t SPI_CPOL;                      /*!< Specifies the serial clock steady state.
                                                This parameter can be a value of @ref SPI_Clock_Polarity */
-                                            
+
     uint16_t SPI_CPHA;                      /*!< Specifies the clock active edge for the bit capture.
                                                This parameter can be a value of @ref SPI_Clock_Phase */
-                                            
+
     uint16_t SPI_NSSSEL;                    /*!< Specifies whether the NSSSEL signal is managed by
                                                hardware (NSSSEL pin) or by software using the SSI bit.
                                                This parameter can be a value of @ref SPI_Slave_Select_management */
-                                            
+
     uint16_t SPI_MCLKP;                     /*!< Specifies the Baud Rate prescaler value which will be
                                                 used to configure the transmit and receive SCK clock.
                                                 This parameter can be a value of @ref SPI_BaudRate_Prescaler.
                                                 @note The communication clock is derived from the master
                                                       clock. The slave clock does not need to be set. */
-                                            
+
     uint16_t SPI_FirstBit;                  /*!< Specifies whether data transfers start from MSB or LSB bit.
                                                 This parameter can be a value of @ref SPI_MSB_LSB_transmission */
-                                    
+
     uint16_t SPI_CPOLY;                     /*!<  Specifies the polynomial used for the CRC calculation. */
-} SPI_InitType;                     
-                                    
-/**                                 
+} SPI_InitType;
+
+/**
   * @brief  I2S Init structure defi nition
-  */                                
-                                    
-typedef struct                      
-{                                   
-                                    
+  */
+
+typedef struct
+{
+
     uint16_t I2S_Mode;                      /*!<  Specifies the I2S operating mode.
                                                This parameter can be a value of @ref I2S_Mode */
-                                    
+
     uint16_t I2s_AudioProtocol;             /*!< Specifies the standard used for the I2S communication.
                                                 This parameter can be a value of @ref I2s_AudioProtocol */
-                                    
+
     uint16_t I2S_FrameFormat;               /*! < Specifies the data format for the I2S communication.
                                               This parameter can be a value of @ref I2S_Data_Format */
 
@@ -89,7 +89,7 @@ typedef struct
 
     uint32_t I2S_AudioFreq;                 /*!< Specifies the frequency selected for the I2S communication.
                                                This parameter can be a value of @ref I2S_Audio_Frequency */
-                                            
+
     uint16_t I2S_CPOL;                      /*!< Specifies the idle state of the I2S clock.
                                                This parameter can be a value of @ref I2S_Clock_Polarity */
 } I2S_InitType;
@@ -218,7 +218,7 @@ typedef struct
 
 
 #define SPI_MCLKP_OVER_256                  ((uint16_t)0x8000)
-                                            
+
 #define SPI_MCLKP_2                         ((uint16_t)0x0000)
 #define SPI_MCLKP_4                         ((uint16_t)0x0008)
 #define SPI_MCLKP_8                         ((uint16_t)0x0010)
@@ -316,7 +316,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 #define I2S_DIV_VALUE_MAX                   ((uint16_t)0x03FF)
 #define I2S_DIV_EXT_VALUE_MASK              ((uint16_t)0x0300)
 #define I2S_DIV_EXT_VALUE_LSHIFT_OFFSET     ((uint16_t)2)

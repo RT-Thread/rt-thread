@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -98,11 +98,11 @@ WatchdogEnable(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! This function enables the capability of the watchdog timer to issue a reset 
+//! This function enables the capability of the watchdog timer to issue a reset
 //! to the processor after a second timeout condition.
 //!
 //! \note This function has no effect if the watchdog timer has been locked.
-//! 
+//!
 //! \sa WatchdogLock(), WatchdogUnlock()
 //!
 //! \return None.
@@ -185,7 +185,7 @@ WatchdogLock(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the watchdog timer module.
 //!
-//! This function enables write access to the watchdog timer configuration 
+//! This function enables write access to the watchdog timer configuration
 //! registers.
 //!
 //! \return None.
@@ -238,10 +238,10 @@ WatchdogLockState(unsigned long ulBase)
 //! \param ulBase is the base address of the watchdog timer module.
 //! \param ulLoadVal is the load value for the watchdog timer.
 //!
-//! This function configures the value to load into the watchdog timer when the 
-//! count reaches zero for the first time; if the watchdog timer is running 
-//! when this function is called, then the value is immediately loaded into the 
-//! watchdog timer counter.  If the \e ulLoadVal parameter is 0, then an 
+//! This function configures the value to load into the watchdog timer when the
+//! count reaches zero for the first time; if the watchdog timer is running
+//! when this function is called, then the value is immediately loaded into the
+//! watchdog timer counter.  If the \e ulLoadVal parameter is 0, then an
 //! interrupt is immediately generated.
 //!
 //! \note This function has no effect if the watchdog timer has been locked.
@@ -327,8 +327,8 @@ WatchdogValueGet(unsigned long ulBase)
 //! watchdog timer interrupt occurs.
 //!
 //! This function does the actual registering of the interrupt handler.  This
-//! function also enables the global interrupt in the interrupt controller; the 
-//! watchdog timer interrupt must be enabled via WatchdogEnable().  It is the 
+//! function also enables the global interrupt in the interrupt controller; the
+//! watchdog timer interrupt must be enabled via WatchdogEnable().  It is the
 //! interrupt handler's responsibility to clear the interrupt source via
 //! WatchdogIntClear().
 //!
@@ -337,7 +337,7 @@ WatchdogValueGet(unsigned long ulBase)
 //!
 //! \note For parts with a watchdog timer module that has the ability to
 //! generate an NMI instead of a standard interrupt, this function registers
-//! the standard watchdog interrupt handler.  To register the NMI watchdog 
+//! the standard watchdog interrupt handler.  To register the NMI watchdog
 //! handler, use IntRegister() to register the handler for the
 //! \b FAULT_NMI interrupt.
 //!
@@ -442,8 +442,8 @@ WatchdogIntEnable(unsigned long ulBase)
 //! \param bMasked is \b false if the raw interrupt status is required and
 //! \b true if the masked interrupt status is required.
 //!
-//! This function returns the interrupt status for the watchdog timer module.  
-//! Either the raw interrupt status or the status of interrupt that is allowed 
+//! This function returns the interrupt status for the watchdog timer module.
+//! Either the raw interrupt status or the status of interrupt that is allowed
 //! to reflect to the processor can be returned.
 //!
 //! \return Returns the current interrupt status, where a 1 indicates that the

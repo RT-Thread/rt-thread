@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	compiler.h
- * @brief	Compiler specific primitives for libmetal.
+ * @file    compiler.h
+ * @brief   Compiler specific primitives for libmetal.
  */
 
 #ifndef __METAL_COMPILER__H__

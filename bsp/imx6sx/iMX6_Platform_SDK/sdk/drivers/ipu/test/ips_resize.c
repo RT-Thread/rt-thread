@@ -153,7 +153,7 @@ int32_t ips_resize_test(ips_dev_panel_t * panel)
             } else {
                 //even frame: 768 * 1024 (rotated result of last frame) -- 1024 * 768
                 //read data from CH27_EBA0 and rotate it, store result to CH23_EBA0 for display
-                //set rotate idma 
+                //set rotate idma
                 memset(&rot_info, 0x00, sizeof(ipu_rot_info_t));
                 rot_info.width_in = panel->height;
                 rot_info.height_in = panel->width;

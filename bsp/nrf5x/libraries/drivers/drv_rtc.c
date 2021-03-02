@@ -42,7 +42,7 @@ static uint32_t tick = 0;
 static void rtc_callback(nrfx_rtc_int_type_t int_type)
 {
     static uint32_t count = 0;
-    
+
     if (int_type == NRFX_RTC_INT_TICK)
     {
        count++;

@@ -45,34 +45,34 @@ extern "C" {
  * @brief LPC5410X Pin table structure used for enhanced boot block support
  */
 struct PINTABLE {
-	/* pin table marker: Should be 0xFEEDA5A5 */
-	uint32_t marker;
-	/* img_type:
-	    0    = Normal image check IRQ line to halt boot
-	    1    = Wait for AP to send SH_CMD_BOOT command
-	    2    = Boot image with no AP checks
-	    3    = No CRC or AP checks needed. Used during development */
-	uint8_t img_type;
-	/* ifSel: Interface selection for host
-	    (0,=AUTODETECT, 1=I2C0, 2=I2C1, 3=I2C2, 4=SPI0, 5=SPI1) */
-	uint8_t ifSel;
-	/* hostIrqPortPin:	Host IRQ port (bits 7:5) and pins (bits 4:0) */
-	uint8_t hostIrqPortPin;
-	/* hostMisoPortPin:	SPI MISO port (bits 7:5) and pins (bits 4:0) */
-	uint8_t hostMisoPortPin;
-	/* hostMosiPortPin:	SPI MOSI port (bits 7:5) and pins (bits 4:0) */
-	uint8_t hostMosiPortPin;
-	/* hostSselPortPin:	SPI SEL port (bits 7:5) and pins (bits 4:0) */
-	uint8_t hostSselPortPin;
-	/* hostSckPortPin:	SPI SCK port (bits 7:5) and pins (bits 4:0) */
-	uint8_t hostSckPortPin;
-	/* xorVal: XOR value of the 7 bytes above */
-	uint8_t xorVal;
-	/* CRC32 length and value fields */
-	uint32_t crc32_len;
-	uint32_t crc32_val;
-	/* Application image version number */
-	uint32_t version;
+    /* pin table marker: Should be 0xFEEDA5A5 */
+    uint32_t marker;
+    /* img_type:
+        0    = Normal image check IRQ line to halt boot
+        1    = Wait for AP to send SH_CMD_BOOT command
+        2    = Boot image with no AP checks
+        3    = No CRC or AP checks needed. Used during development */
+    uint8_t img_type;
+    /* ifSel: Interface selection for host
+        (0,=AUTODETECT, 1=I2C0, 2=I2C1, 3=I2C2, 4=SPI0, 5=SPI1) */
+    uint8_t ifSel;
+    /* hostIrqPortPin:  Host IRQ port (bits 7:5) and pins (bits 4:0) */
+    uint8_t hostIrqPortPin;
+    /* hostMisoPortPin: SPI MISO port (bits 7:5) and pins (bits 4:0) */
+    uint8_t hostMisoPortPin;
+    /* hostMosiPortPin: SPI MOSI port (bits 7:5) and pins (bits 4:0) */
+    uint8_t hostMosiPortPin;
+    /* hostSselPortPin: SPI SEL port (bits 7:5) and pins (bits 4:0) */
+    uint8_t hostSselPortPin;
+    /* hostSckPortPin:  SPI SCK port (bits 7:5) and pins (bits 4:0) */
+    uint8_t hostSckPortPin;
+    /* xorVal: XOR value of the 7 bytes above */
+    uint8_t xorVal;
+    /* CRC32 length and value fields */
+    uint32_t crc32_len;
+    uint32_t crc32_val;
+    /* Application image version number */
+    uint32_t version;
 };
 
 /**

@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-24     å‹¤ä¸ºæœ¬          first version
+ * 2017-11-24     ÇÚÎª±¾          first version
  * 2018-05-11     zhuangwei    add gpio interrupt ops
  */
 

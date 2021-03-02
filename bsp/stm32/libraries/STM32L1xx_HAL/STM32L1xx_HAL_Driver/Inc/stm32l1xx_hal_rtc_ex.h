@@ -285,11 +285,11 @@ typedef struct
   */
 #define RTC_TAMPERFILTER_DISABLE   (0x00000000U)  /*!< Tamper filter is disabled */
 
-#define RTC_TAMPERFILTER_2SAMPLE   (0x00000800U)  /*!< Tamper is activated after 2 
+#define RTC_TAMPERFILTER_2SAMPLE   (0x00000800U)  /*!< Tamper is activated after 2
                                                                 consecutive samples at the active level */
-#define RTC_TAMPERFILTER_4SAMPLE   (0x00001000U)  /*!< Tamper is activated after 4 
+#define RTC_TAMPERFILTER_4SAMPLE   (0x00001000U)  /*!< Tamper is activated after 4
                                                                 consecutive samples at the active level */
-#define RTC_TAMPERFILTER_8SAMPLE   (0x00001800U)  /*!< Tamper is activated after 8 
+#define RTC_TAMPERFILTER_8SAMPLE   (0x00001800U)  /*!< Tamper is activated after 8
                                                                 consecutive samples at the active level. */
 
 #define IS_RTC_TAMPER_FILTER(FILTER)  (((FILTER) == RTC_TAMPERFILTER_DISABLE) || \
@@ -497,38 +497,38 @@ typedef struct
 /** @defgroup RTC_Alarm_Sub_Seconds_Masks_Definitions Alarm Sub Seconds Masks Definitions
   * @{
   */
-#define RTC_ALARMSUBSECONDMASK_ALL         (0x00000000U)  /*!< All Alarm SS fields are masked. 
-                                                                        There is no comparison on sub seconds 
+#define RTC_ALARMSUBSECONDMASK_ALL         (0x00000000U)  /*!< All Alarm SS fields are masked.
+                                                                        There is no comparison on sub seconds
                                                                         for Alarm */
-#define RTC_ALARMSUBSECONDMASK_SS14_1      (0x01000000U)  /*!< SS[14:1] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_1      (0x01000000U)  /*!< SS[14:1] are don't care in Alarm
                                                                         comparison. Only SS[0] is compared.    */
-#define RTC_ALARMSUBSECONDMASK_SS14_2      (0x02000000U)  /*!< SS[14:2] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_2      (0x02000000U)  /*!< SS[14:2] are don't care in Alarm
                                                                         comparison. Only SS[1:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_3      (0x03000000U)  /*!< SS[14:3] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_3      (0x03000000U)  /*!< SS[14:3] are don't care in Alarm
                                                                         comparison. Only SS[2:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_4      (0x04000000U)  /*!< SS[14:4] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_4      (0x04000000U)  /*!< SS[14:4] are don't care in Alarm
                                                                         comparison. Only SS[3:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_5      (0x05000000U)  /*!< SS[14:5] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_5      (0x05000000U)  /*!< SS[14:5] are don't care in Alarm
                                                                         comparison. Only SS[4:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_6      (0x06000000U)  /*!< SS[14:6] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_6      (0x06000000U)  /*!< SS[14:6] are don't care in Alarm
                                                                         comparison. Only SS[5:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_7      (0x07000000U)  /*!< SS[14:7] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_7      (0x07000000U)  /*!< SS[14:7] are don't care in Alarm
                                                                         comparison. Only SS[6:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_8      (0x08000000U)  /*!< SS[14:8] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_8      (0x08000000U)  /*!< SS[14:8] are don't care in Alarm
                                                                         comparison. Only SS[7:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_9      (0x09000000U)  /*!< SS[14:9] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_9      (0x09000000U)  /*!< SS[14:9] are don't care in Alarm
                                                                         comparison. Only SS[8:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_10     (0x0A000000U)  /*!< SS[14:10] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_10     (0x0A000000U)  /*!< SS[14:10] are don't care in Alarm
                                                                         comparison. Only SS[9:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_11     (0x0B000000U)  /*!< SS[14:11] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_11     (0x0B000000U)  /*!< SS[14:11] are don't care in Alarm
                                                                         comparison. Only SS[10:0] are compared */
-#define RTC_ALARMSUBSECONDMASK_SS14_12     (0x0C000000U)  /*!< SS[14:12] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_12     (0x0C000000U)  /*!< SS[14:12] are don't care in Alarm
                                                                         comparison.Only SS[11:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_SS14_13     (0x0D000000U)  /*!< SS[14:13] are don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14_13     (0x0D000000U)  /*!< SS[14:13] are don't care in Alarm
                                                                         comparison. Only SS[12:0] are compared */
-#define RTC_ALARMSUBSECONDMASK_SS14        (0x0E000000U)  /*!< SS[14] is don't care in Alarm 
+#define RTC_ALARMSUBSECONDMASK_SS14        (0x0E000000U)  /*!< SS[14] is don't care in Alarm
                                                                         comparison.Only SS[13:0] are compared  */
-#define RTC_ALARMSUBSECONDMASK_NONE        (0x0F000000U)  /*!< SS[14:0] are compared and must match 
+#define RTC_ALARMSUBSECONDMASK_NONE        (0x0F000000U)  /*!< SS[14:0] are compared and must match
                                                                         to activate alarm. */
 
 #define IS_RTC_ALARM_SUB_SECOND_MASK(MASK)   (((MASK) == RTC_ALARMSUBSECONDMASK_ALL) || \
@@ -1208,7 +1208,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif

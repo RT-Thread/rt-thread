@@ -50,32 +50,32 @@
 /* Initialize SCT */
 void Chip_SCT_Init(LPC_SCT_T *pSCT)
 {
-	Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_SCT0);
-	Chip_SYSCON_PeriphReset(RESET_SCT0);
+    Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_SCT0);
+    Chip_SYSCON_PeriphReset(RESET_SCT0);
 }
 
 /* Shutdown SCT */
 void Chip_SCT_DeInit(LPC_SCT_T *pSCT)
 {
-	Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_SCT0);
+    Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_SCT0);
 }
 
 /* Set/Clear SCT control register */
 void Chip_SCT_SetClrControl(LPC_SCT_T *pSCT, uint32_t value, FunctionalState ena)
 {
-	if (ena == ENABLE) {
-		Chip_SCT_SetControl(pSCT, value);
-	}
-	else {
-		Chip_SCT_ClearControl(pSCT, value);
-	}
+    if (ena == ENABLE) {
+        Chip_SCT_SetControl(pSCT, value);
+    }
+    else {
+        Chip_SCT_ClearControl(pSCT, value);
+    }
 }
 
 /* Set Conflict resolution */
 void Chip_SCT_SetConflictResolution(LPC_SCT_T *pSCT, uint8_t outnum, uint8_t value)
 {
-	uint32_t tem;
+    uint32_t tem;
 
-	tem = pSCT->RES & (~(0x03 << (2 * outnum)));
-	pSCT->RES = tem | (value << (2 * outnum));
+    tem = pSCT->RES & (~(0x03 << (2 * outnum)));
+    pSCT->RES = tem | (value << (2 * outnum));
 }

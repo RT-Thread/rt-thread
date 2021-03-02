@@ -50,28 +50,28 @@
 /* Set source for non-maskable interrupt (NMI) */
 void Chip_SYSCON_SetNMISource(uint32_t intsrc)
 {
-	uint32_t reg;
+    uint32_t reg;
 
-	reg = LPC_SYSCON->NMISRC;
+    reg = LPC_SYSCON->NMISRC;
 #if defined(CORE_M4)
-	reg &= ~SYSCON_NMISRC_M4_ENABLE;
+    reg &= ~SYSCON_NMISRC_M4_ENABLE;
 #else
-	reg &= ~SYSCON_NMISRC_M0_ENABLE;
-	intsrc = (intsrc << 8);
+    reg &= ~SYSCON_NMISRC_M0_ENABLE;
+    intsrc = (intsrc << 8);
 #endif
 
-	/* First write without NMI bit, and then write source */
-	LPC_SYSCON->NMISRC = reg;
-	LPC_SYSCON->NMISRC = reg | intsrc;
+    /* First write without NMI bit, and then write source */
+    LPC_SYSCON->NMISRC = reg;
+    LPC_SYSCON->NMISRC = reg | intsrc;
 }
 
 /* Enable interrupt used for NMI source */
 void Chip_SYSCON_EnableNMISource(void)
 {
 #if defined(CORE_M4)
-	LPC_SYSCON->NMISRC |= SYSCON_NMISRC_M4_ENABLE;
+    LPC_SYSCON->NMISRC |= SYSCON_NMISRC_M4_ENABLE;
 #else
-	LPC_SYSCON->NMISRC |= SYSCON_NMISRC_M0_ENABLE;
+    LPC_SYSCON->NMISRC |= SYSCON_NMISRC_M0_ENABLE;
 #endif
 }
 
@@ -79,89 +79,89 @@ void Chip_SYSCON_EnableNMISource(void)
 void Chip_SYSCON_DisableNMISource(void)
 {
 #if defined(CORE_M4)
-	LPC_SYSCON->NMISRC &= ~SYSCON_NMISRC_M4_ENABLE;
+    LPC_SYSCON->NMISRC &= ~SYSCON_NMISRC_M4_ENABLE;
 #else
-	LPC_SYSCON->NMISRC &= ~SYSCON_NMISRC_M0_ENABLE;
+    LPC_SYSCON->NMISRC &= ~SYSCON_NMISRC_M0_ENABLE;
 #endif
 }
 
 /* Enable or disable asynchronous APB bridge and subsystem */
 void Chip_SYSCON_Enable_ASYNC_Syscon(bool enable)
 {
-	if (enable) {
-		LPC_SYSCON->ASYNCAPBCTRL = 0x01;
-	}
-	else {
-		LPC_SYSCON->ASYNCAPBCTRL = 0x00;
-	}
+    if (enable) {
+        LPC_SYSCON->ASYNCAPBCTRL = 0x01;
+    }
+    else {
+        LPC_SYSCON->ASYNCAPBCTRL = 0x00;
+    }
 }
 
 /* Resets a peripheral */
 void Chip_SYSCON_PeriphReset(CHIP_SYSCON_PERIPH_RESET_T periph)
 {
-	uint32_t pid = (uint32_t) periph;
+    uint32_t pid = (uint32_t) periph;
 
-	if (pid >= 128) {
-		/* Async resets mapped to 128 and above, offset for peripheral bit index */
-		pid = 1 << (((uint32_t) periph) - 128);
-		LPC_ASYNC_SYSCON->ASYNCPRESETCTRLSET = pid;
-		LPC_ASYNC_SYSCON->ASYNCPRESETCTRLCLR = pid;
-	}
-	else if (periph >= 32) {
-		pid = 1 << (((uint32_t) periph) - 32);
-		LPC_SYSCON->PRESETCTRLSET[1] = pid;
-		LPC_SYSCON->PRESETCTRLCLR[1] = pid;
-	}
-	else {
-		pid = 1 << ((uint32_t) periph);
-		LPC_SYSCON->PRESETCTRLSET[0] = pid;
-		LPC_SYSCON->PRESETCTRLCLR[0] = pid;
-	}
+    if (pid >= 128) {
+        /* Async resets mapped to 128 and above, offset for peripheral bit index */
+        pid = 1 << (((uint32_t) periph) - 128);
+        LPC_ASYNC_SYSCON->ASYNCPRESETCTRLSET = pid;
+        LPC_ASYNC_SYSCON->ASYNCPRESETCTRLCLR = pid;
+    }
+    else if (periph >= 32) {
+        pid = 1 << (((uint32_t) periph) - 32);
+        LPC_SYSCON->PRESETCTRLSET[1] = pid;
+        LPC_SYSCON->PRESETCTRLCLR[1] = pid;
+    }
+    else {
+        pid = 1 << ((uint32_t) periph);
+        LPC_SYSCON->PRESETCTRLSET[0] = pid;
+        LPC_SYSCON->PRESETCTRLCLR[0] = pid;
+    }
 }
 
 /* Returns the computed value for a frequency measurement cycle */
 uint32_t Chip_SYSCON_GetCompFreqMeas(uint32_t refClockRate)
 {
-	uint32_t capval;
-	uint64_t clkrate = 0;
+    uint32_t capval;
+    uint64_t clkrate = 0;
 
-	/* Get raw capture value */
-	capval = Chip_SYSCON_GetRawFreqMeasCapval();
+    /* Get raw capture value */
+    capval = Chip_SYSCON_GetRawFreqMeasCapval();
 
-	/* Limit CAPVAL check */
-	if (capval > 2) {
-		clkrate = (((uint64_t) capval - 2) * (uint64_t) refClockRate) / 0x4000;
-	}
+    /* Limit CAPVAL check */
+    if (capval > 2) {
+        clkrate = (((uint64_t) capval - 2) * (uint64_t) refClockRate) / 0x4000;
+    }
 
-	return (uint32_t) clkrate;
+    return (uint32_t) clkrate;
 }
 
 void Chip_SYSCON_PowerUp(uint32_t powerupmask)
 {
-	/* If turning the PLL back on, perform the following sequence to accelerate PLL lock */
-	if (powerupmask & SYSCON_PDRUNCFG_PD_SYS_PLL) {
-		volatile uint32_t delayX;
-		uint32_t maxCCO = (1 << 18) | 0x3fff;
-		uint32_t curSSCTRL = LPC_SYSCON->SYSPLLSSCTRL[0];
+    /* If turning the PLL back on, perform the following sequence to accelerate PLL lock */
+    if (powerupmask & SYSCON_PDRUNCFG_PD_SYS_PLL) {
+        volatile uint32_t delayX;
+        uint32_t maxCCO = (1 << 18) | 0x3fff;
+        uint32_t curSSCTRL = LPC_SYSCON->SYSPLLSSCTRL[0];
 
-		/* If NOT using spread spectrum mode */
-		if (curSSCTRL & (1 << 18)) {
+        /* If NOT using spread spectrum mode */
+        if (curSSCTRL & (1 << 18)) {
 
             /* Turn on PLL */
             LPC_SYSCON->PDRUNCFGCLR = SYSCON_PDRUNCFG_PD_SYS_PLL;
-            
-			/* this sequence acclerates the PLL lock time */
-			LPC_SYSCON->SYSPLLSSCTRL[0] = maxCCO | (1 << 17);	/* Set mreq to activate */
-			LPC_SYSCON->SYSPLLSSCTRL[0] = maxCCO;	/* clear mreq to prepare for restoring mreq */
 
-			/* Delay for 20 uSec @ 12Mhz*/
-			for (delayX = 0; delayX < 48; ++delayX) {}
+            /* this sequence acclerates the PLL lock time */
+            LPC_SYSCON->SYSPLLSSCTRL[0] = maxCCO | (1 << 17);   /* Set mreq to activate */
+            LPC_SYSCON->SYSPLLSSCTRL[0] = maxCCO;   /* clear mreq to prepare for restoring mreq */
 
-			/* set original value back with mreq */
-			LPC_SYSCON->SYSPLLSSCTRL[0] = curSSCTRL | (1 << 17);
-		}
-	}
+            /* Delay for 20 uSec @ 12Mhz*/
+            for (delayX = 0; delayX < 48; ++delayX) {}
 
-	/* Enable peripheral states by setting low */
-	LPC_SYSCON->PDRUNCFGCLR = powerupmask;
+            /* set original value back with mreq */
+            LPC_SYSCON->SYSPLLSSCTRL[0] = curSSCTRL | (1 << 17);
+        }
+    }
+
+    /* Enable peripheral states by setting low */
+    LPC_SYSCON->PDRUNCFGCLR = powerupmask;
 }

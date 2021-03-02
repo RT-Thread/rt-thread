@@ -60,7 +60,7 @@ rt_err_t rt_hwcrypto_rng_default(struct rt_hwcrypto_device *device);
  * @brief           Getting Random Numbers from RNG Context
  *
  * @param ctx       RNG context
- * 
+ *
  * @return          Random number
  */
 rt_uint32_t rt_hwcrypto_rng_update_ctx(struct rt_hwcrypto_ctx *ctx);

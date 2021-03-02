@@ -35,8 +35,8 @@
 /******************************************************************************
  * Includes
  *****************************************************************************/
-#include "usb_audio.h"    	/* USB Audio Class Header File */
-#include "usb_devapi.h"   	/* USB device Header File */
+#include "usb_audio.h"      /* USB Audio Class Header File */
+#include "usb_devapi.h"     /* USB device Header File */
 #include "usb_framework.h"  /* USB device Header File */
 
 /*****************************************************************************
@@ -63,16 +63,16 @@ static USB_CLASS_CALLBACK g_param_callback = NULL;
  *****************************************************************************/
 #ifndef COMPOSITE_DEV
 static uint_8 USB_Other_Requests(uint_8 controller_ID,
-		USB_SETUP_STRUCT * setup_packet,
-		uint_8_ptr *data,
-		USB_PACKET_SIZE *size);
+        USB_SETUP_STRUCT * setup_packet,
+        uint_8_ptr *data,
+        USB_PACKET_SIZE *size);
  #endif
 /*****************************************************************************
  * Local Variables
  *****************************************************************************/
 #ifdef USE_FEEDBACK_ENDPOINT
-	uint_32 feedback_data = 0;
-	uint_32 gNrSamples = 0;
+    uint_32 feedback_data = 0;
+    uint_32 gNrSamples = 0;
 #endif
 
 /*****************************************************************************
@@ -96,65 +96,65 @@ static uint_8 USB_Other_Requests(uint_8 controller_ID,
 void USB_Service_Audio_Status_Interrupt(PTR_USB_DEV_EVENT_STRUCT event)
 {
 #if IMPLEMENT_QUEUING
-	uint_8 index;
-	uint_8 producer, consumer;
+    uint_8 index;
+    uint_8 producer, consumer;
 
-	USB_ENDPOINTS *usb_ep_data = (USB_ENDPOINTS *)
-	USB_Desc_Get_Endpoints(event->controller_ID);
+    USB_ENDPOINTS *usb_ep_data = (USB_ENDPOINTS *)
+    USB_Desc_Get_Endpoints(event->controller_ID);
 
-	/* map the endpoint num to the index of the endpoint structure */
+    /* map the endpoint num to the index of the endpoint structure */
 
-	for(index = 0; index < usb_ep_data->count; index++)
-	{
-		if(usb_ep_data->ep[index].ep_num == event->ep_num)
-			break;
-	}
+    for(index = 0; index < usb_ep_data->count; index++)
+    {
+        if(usb_ep_data->ep[index].ep_num == event->ep_num)
+            break;
+    }
 
-	producer = g_audio_endpoint_data.ep[index].bin_producer;
-	consumer = g_audio_endpoint_data.ep[index].bin_consumer;
+    producer = g_audio_endpoint_data.ep[index].bin_producer;
+    consumer = g_audio_endpoint_data.ep[index].bin_consumer;
     UNUSED(producer);
-    
-	/* if there are no errors de-queue the queue and decrement the no. of
+
+    /* if there are no errors de-queue the queue and decrement the no. of
        transfers left, else send the same data again */
-	if (event->errors == 0)
-	{
-		/* de-queue if the send is complete without an error */
-		if((MAX_QUEUE_ELEMS-1) == consumer)
-		{
-			g_audio_endpoint_data.ep[index].bin_consumer = 0;
-		}
-		else
-		{
-			g_audio_endpoint_data.ep[index].bin_consumer++;
-		}
-	}
+    if (event->errors == 0)
+    {
+        /* de-queue if the send is complete without an error */
+        if((MAX_QUEUE_ELEMS-1) == consumer)
+        {
+            g_audio_endpoint_data.ep[index].bin_consumer = 0;
+        }
+        else
+        {
+            g_audio_endpoint_data.ep[index].bin_consumer++;
+        }
+    }
 
-	consumer = g_audio_endpoint_data.ep[index].bin_consumer;
-	g_audio_endpoint_data.ep[index].queue_num--;
+    consumer = g_audio_endpoint_data.ep[index].bin_consumer;
+    g_audio_endpoint_data.ep[index].queue_num--;
 
-	if(0 == g_audio_endpoint_data.ep[index].queue_num)
-	{
-		/*if bin is not empty */
-		USB_CLASS_AUDIO_QUEUE queue;
-		/* send the next packet in queue */
-		queue = g_audio_endpoint_data.ep[index].queue[consumer];
+    if(0 == g_audio_endpoint_data.ep[index].queue_num)
+    {
+        /*if bin is not empty */
+        USB_CLASS_AUDIO_QUEUE queue;
+        /* send the next packet in queue */
+        queue = g_audio_endpoint_data.ep[index].queue[consumer];
 
-		(void)USB_Class_Send_Data(queue.controller_ID, queue.channel,
-				queue.app_buff, queue.size);
-	}
+        (void)USB_Class_Send_Data(queue.controller_ID, queue.channel,
+                queue.app_buff, queue.size);
+    }
 #endif
 
-	if(g_param_callback != NULL)
-	{
-		uint_8 event_type = USB_APP_SEND_COMPLETE;
+    if(g_param_callback != NULL)
+    {
+        uint_8 event_type = USB_APP_SEND_COMPLETE;
 
-		if(event->errors != 0)
-		{
-			event_type = USB_APP_ERROR;
-		}
-		g_param_callback(event->controller_ID, event_type,
-				(uint_8*)(&(event->errors)));
-	}
+        if(event->errors != 0)
+        {
+            event_type = USB_APP_ERROR;
+        }
+        g_param_callback(event->controller_ID, event_type,
+                (uint_8*)(&(event->errors)));
+    }
 }
 
 /**************************************************************************//*!
@@ -180,61 +180,61 @@ void USB_Service_Audio_Isochronous_IN(PTR_USB_DEV_EVENT_STRUCT event)
 
     USB_ENDPOINTS *usb_ep_data = (USB_ENDPOINTS *)
         USB_Desc_Get_Endpoints(event->controller_ID);
-        
+
     iso_in_recv.data_ptr  = event->buffer_ptr;
     iso_in_recv.data_size = event->len;
 
-	/* map the endpoint num to the index of the endpoint structure */
+    /* map the endpoint num to the index of the endpoint structure */
 
-	for(index = 0; index < usb_ep_data->count; index++)
-	{
-		if(usb_ep_data->ep[index].ep_num ==event->ep_num)
-			break;
-	}
+    for(index = 0; index < usb_ep_data->count; index++)
+    {
+        if(usb_ep_data->ep[index].ep_num ==event->ep_num)
+            break;
+    }
 
 
-	producer = g_audio_endpoint_data.ep[index].bin_producer;
+    producer = g_audio_endpoint_data.ep[index].bin_producer;
     UNUSED(producer);
 
-	/* if there are no errors de-queue the queue and decrement the no. of
+    /* if there are no errors de-queue the queue and decrement the no. of
        transfers left, else send the same data again */
-	if(event->errors == 0)
-	{
-		/* de-queue if the send is complete without an error */
-		if ((MAX_QUEUE_ELEMS-1) == g_audio_endpoint_data.ep[index].bin_consumer)
-		{
-			g_audio_endpoint_data.ep[index].bin_consumer = 0;
-		} else {
-			g_audio_endpoint_data.ep[index].bin_consumer++;
-		}
-		g_audio_endpoint_data.ep[index].queue_num--;
-	}
+    if(event->errors == 0)
+    {
+        /* de-queue if the send is complete without an error */
+        if ((MAX_QUEUE_ELEMS-1) == g_audio_endpoint_data.ep[index].bin_consumer)
+        {
+            g_audio_endpoint_data.ep[index].bin_consumer = 0;
+        } else {
+            g_audio_endpoint_data.ep[index].bin_consumer++;
+        }
+        g_audio_endpoint_data.ep[index].queue_num--;
+    }
 
-	consumer = g_audio_endpoint_data.ep[index].bin_consumer;
+    consumer = g_audio_endpoint_data.ep[index].bin_consumer;
 
-	if(0 != g_audio_endpoint_data.ep[index].queue_num)
-	{
-		/*if bin is not empty */
-		USB_CLASS_AUDIO_QUEUE queue;
-		/* send the next packet in queue */
-		queue = g_audio_endpoint_data.ep[index].queue[consumer];
+    if(0 != g_audio_endpoint_data.ep[index].queue_num)
+    {
+        /*if bin is not empty */
+        USB_CLASS_AUDIO_QUEUE queue;
+        /* send the next packet in queue */
+        queue = g_audio_endpoint_data.ep[index].queue[consumer];
 
-		(void)USB_Class_Send_Data(queue.controller_ID, queue.channel,
-				queue.app_buff, queue.size);
-	}
+        (void)USB_Class_Send_Data(queue.controller_ID, queue.channel,
+                queue.app_buff, queue.size);
+    }
 #endif
 
-	if(g_audio_class_callback != NULL)
-	{
-		uint_8 event_type = USB_APP_SEND_COMPLETE;
+    if(g_audio_class_callback != NULL)
+    {
+        uint_8 event_type = USB_APP_SEND_COMPLETE;
 
-		if(event->errors != 0)
-		{
-			event_type = USB_APP_ERROR;
-		}
-		g_audio_class_callback(event->controller_ID, event_type,
-				(uint_8*)(&iso_in_recv));
-	}
+        if(event->errors != 0)
+        {
+            event_type = USB_APP_ERROR;
+        }
+        g_audio_class_callback(event->controller_ID, event_type,
+                (uint_8*)(&iso_in_recv));
+    }
 }
 
 /**************************************************************************//*!
@@ -252,23 +252,23 @@ void USB_Service_Audio_Isochronous_IN(PTR_USB_DEV_EVENT_STRUCT event)
  *****************************************************************************/
 void USB_Service_Audio_Isochronous_OUT(PTR_USB_DEV_EVENT_STRUCT event)
 {
-	APP_DATA_STRUCT iso_out_recv;
+    APP_DATA_STRUCT iso_out_recv;
 
-	if(g_audio_class_callback != NULL)
-	{
+    if(g_audio_class_callback != NULL)
+    {
 
-		if(event->errors != 0)
-		{
-			g_audio_class_callback(event->controller_ID, USB_APP_ERROR,
-					(uint_8*)(&(event->errors)));
-		}  else {
-			iso_out_recv.data_ptr = event->buffer_ptr;
-			iso_out_recv.data_size = event->len;
-			g_audio_class_callback(event->controller_ID, USB_APP_DATA_RECEIVED,
-					(uint_8*)(&(iso_out_recv)));
+        if(event->errors != 0)
+        {
+            g_audio_class_callback(event->controller_ID, USB_APP_ERROR,
+                    (uint_8*)(&(event->errors)));
+        }  else {
+            iso_out_recv.data_ptr = event->buffer_ptr;
+            iso_out_recv.data_size = event->len;
+            g_audio_class_callback(event->controller_ID, USB_APP_DATA_RECEIVED,
+                    (uint_8*)(&(iso_out_recv)));
 
-		}
-	}
+        }
+    }
 }
 
 /**************************************************************************//*!
@@ -299,12 +299,12 @@ void USB_Class_Audio_Event (
      {
          uint_8 index_num = 0;
          uint_8 count = 0,ep_count = 0;
-         USB_ENDPOINTS *ep_desc_data;  
+         USB_ENDPOINTS *ep_desc_data;
 
 #ifdef COMPOSITE_DEV
          DEV_ARCHITECTURE_STRUCT_PTR dev_arc_ptr;
-         CLASS_ARC_STRUCT_PTR dev_class_ptr;   
-         dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);    
+         CLASS_ARC_STRUCT_PTR dev_class_ptr;
+         dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);
          for(count = 0; count < dev_arc_ptr->cl_count; count++)
          {
              dev_class_ptr = (CLASS_ARC_STRUCT_PTR)dev_arc_ptr->value[count];
@@ -315,24 +315,24 @@ void USB_Class_Audio_Event (
              index_num +=dev_class_ptr->value[0];
          }
          /* get the endpoints from the descriptor module */
-         ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID); 
+         ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID);
 #else
          /* get the endpoints from the descriptor module */
-         ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID); 
+         ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID);
 
-         ep_count = ep_desc_data->count; 
+         ep_count = ep_desc_data->count;
 #endif
          /* deinitialize all endpoints in case they were initialized */
-         for(count=index_num; count<ep_count+index_num; count++) 
-         {   
-             USB_EP_STRUCT_PTR ep_struct_ptr= 
+         for(count=index_num; count<ep_count+index_num; count++)
+         {
+             USB_EP_STRUCT_PTR ep_struct_ptr=
                  (USB_EP_STRUCT_PTR) (&ep_desc_data->ep[count]);
              (void)_usb_device_deinit_endpoint(&controller_ID,
                  ep_struct_ptr->ep_num, ep_struct_ptr->direction);
          }
 
          /* intialize all non control endpoints */
-         for(count=index_num; count<ep_count+index_num; count++) 
+         for(count=index_num; count<ep_count+index_num; count++)
          {
              USB_EP_STRUCT_PTR ep_struct=
                  (USB_EP_STRUCT_PTR)&ep_desc_data->ep[count];
@@ -745,51 +745,51 @@ static uint_8 USB_Get_Res_Audio_Clock(
  * This function is called by USB_Audio_Set_Feature_Unit function
  *****************************************************************************/
 static uint_8 USB_Set_Cur_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [IN] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [IN] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
 
-	switch(control_selector)
-	{
-	case MUTE_CONTROL:
-		status = USB_Desc_Set_Cur_Mute(controller_ID,interface,data, size);
-		break;
-	case VOLUME_CONTROL:
-		status = USB_Desc_Set_Cur_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Set_Cur_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Set_Cur_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Set_Cur_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status=USB_Desc_Set_Cur_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case AUTOMATIC_GAIN_CONTROL:
-		status = USB_Desc_Set_Cur_Automatic_Gain(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status = USB_Desc_Set_Cur_Delay(controller_ID,interface,data,size);
-		break;
-	case BASS_BOOST_CONTROL:
-		status = USB_Desc_Set_Cur_Bass_Boost(controller_ID,interface,data,size);
-		break;
-	case LOUDNESS_CONTROL:
-		status = USB_Desc_Set_Cur_Loudness(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    switch(control_selector)
+    {
+    case MUTE_CONTROL:
+        status = USB_Desc_Set_Cur_Mute(controller_ID,interface,data, size);
+        break;
+    case VOLUME_CONTROL:
+        status = USB_Desc_Set_Cur_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Set_Cur_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Set_Cur_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Set_Cur_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status=USB_Desc_Set_Cur_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case AUTOMATIC_GAIN_CONTROL:
+        status = USB_Desc_Set_Cur_Automatic_Gain(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status = USB_Desc_Set_Cur_Delay(controller_ID,interface,data,size);
+        break;
+    case BASS_BOOST_CONTROL:
+        status = USB_Desc_Set_Cur_Bass_Boost(controller_ID,interface,data,size);
+        break;
+    case LOUDNESS_CONTROL:
+        status = USB_Desc_Set_Cur_Loudness(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -813,39 +813,39 @@ static uint_8 USB_Set_Cur_Audio_Feature_Unit(
  * This function is called by USB_Audio_Set_Feature_Unit function
  *****************************************************************************/
 static uint_8 USB_Set_Min_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [IN] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [IN] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
 
-	switch(control_selector)
-	{
-	case VOLUME_CONTROL:
-		status = USB_Desc_Set_Min_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Set_Min_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Set_Min_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Set_Min_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status = USB_Desc_Set_Min_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status = USB_Desc_Set_Min_Delay(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    switch(control_selector)
+    {
+    case VOLUME_CONTROL:
+        status = USB_Desc_Set_Min_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Set_Min_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Set_Min_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Set_Min_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status = USB_Desc_Set_Min_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status = USB_Desc_Set_Min_Delay(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -869,39 +869,39 @@ static uint_8 USB_Set_Min_Audio_Feature_Unit(
  * This function is called by USB_Audio_Set_Feature_Unit function
  *****************************************************************************/
 static uint_8 USB_Set_Max_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [IN] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [IN] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
 
-	switch(control_selector)
-	{
-	case VOLUME_CONTROL:
-		status = USB_Desc_Set_Max_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Set_Max_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Set_Max_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Set_Max_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status =USB_Desc_Set_Max_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status = USB_Desc_Set_Max_Delay(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    switch(control_selector)
+    {
+    case VOLUME_CONTROL:
+        status = USB_Desc_Set_Max_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Set_Max_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Set_Max_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Set_Max_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status =USB_Desc_Set_Max_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status = USB_Desc_Set_Max_Delay(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -925,39 +925,39 @@ static uint_8 USB_Set_Max_Audio_Feature_Unit(
  * This function is called by USB_Audio_Set_Feature_Unit function
  *****************************************************************************/
 static uint_8 USB_Set_Res_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [IN] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [IN] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
 
-	switch(control_selector)
-	{
-	case VOLUME_CONTROL:
-		status = USB_Desc_Set_Res_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Set_Res_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Set_Res_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Set_Res_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status = USB_Desc_Set_Res_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status = USB_Desc_Set_Res_Delay(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    switch(control_selector)
+    {
+    case VOLUME_CONTROL:
+        status = USB_Desc_Set_Res_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Set_Res_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Set_Res_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Set_Res_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status = USB_Desc_Set_Res_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status = USB_Desc_Set_Res_Delay(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -982,51 +982,51 @@ static uint_8 USB_Set_Res_Audio_Feature_Unit(
  *****************************************************************************/
 
 static uint_8 USB_Get_Cur_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	/* check control selector */
-	switch(control_selector)
-	{
-	case MUTE_CONTROL:
-		status = USB_Desc_Get_Cur_Mute(controller_ID,interface,data,size);
-		break;
-	case VOLUME_CONTROL:
-		status = USB_Desc_Get_Cur_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Get_Cur_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Get_Cur_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Get_Cur_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status = USB_Desc_Get_Cur_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case AUTOMATIC_GAIN_CONTROL:
-		status = USB_Desc_Get_Cur_Automatic_Gain(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status = USB_Desc_Get_Cur_Delay(controller_ID,interface,data,size);
-		break;
-	case BASS_BOOST_CONTROL:
-		status = USB_Desc_Get_Cur_Bass_Boost(controller_ID,interface,data,size);
-		break;
-	case LOUDNESS_CONTROL:
-		status = USB_Desc_Get_Cur_Loudness(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    /* check control selector */
+    switch(control_selector)
+    {
+    case MUTE_CONTROL:
+        status = USB_Desc_Get_Cur_Mute(controller_ID,interface,data,size);
+        break;
+    case VOLUME_CONTROL:
+        status = USB_Desc_Get_Cur_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Get_Cur_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Get_Cur_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Get_Cur_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status = USB_Desc_Get_Cur_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case AUTOMATIC_GAIN_CONTROL:
+        status = USB_Desc_Get_Cur_Automatic_Gain(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status = USB_Desc_Get_Cur_Delay(controller_ID,interface,data,size);
+        break;
+    case BASS_BOOST_CONTROL:
+        status = USB_Desc_Get_Cur_Bass_Boost(controller_ID,interface,data,size);
+        break;
+    case LOUDNESS_CONTROL:
+        status = USB_Desc_Get_Cur_Loudness(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1050,38 +1050,38 @@ static uint_8 USB_Get_Cur_Audio_Feature_Unit(
  * This function is called by USB_Audio_Get_Feature_Unit function
  *****************************************************************************/
 static uint_8 USB_Get_Min_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	switch(control_selector)
-	{
-	case VOLUME_CONTROL:
-		status = USB_Desc_Get_Min_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Get_Min_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Get_Min_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Get_Min_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status = USB_Desc_Get_Min_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status = USB_Desc_Get_Min_Delay(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    switch(control_selector)
+    {
+    case VOLUME_CONTROL:
+        status = USB_Desc_Get_Min_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Get_Min_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Get_Min_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Get_Min_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status = USB_Desc_Get_Min_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status = USB_Desc_Get_Min_Delay(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1105,38 +1105,38 @@ static uint_8 USB_Get_Min_Audio_Feature_Unit(
  * This function is called by USB_Audio_Get_Feature_Unit function
  *****************************************************************************/
 static uint_8 USB_Get_Max_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	switch(control_selector)
-	{
-	case VOLUME_CONTROL:
-		status = USB_Desc_Get_Max_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Get_Max_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Get_Max_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Get_Max_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status = USB_Desc_Get_Max_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status = USB_Desc_Get_Max_Delay(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    switch(control_selector)
+    {
+    case VOLUME_CONTROL:
+        status = USB_Desc_Get_Max_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Get_Max_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Get_Max_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Get_Max_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status = USB_Desc_Get_Max_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status = USB_Desc_Get_Max_Delay(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1161,38 +1161,38 @@ static uint_8 USB_Get_Max_Audio_Feature_Unit(
  *****************************************************************************/
 
 static uint_8 USB_Get_Res_Audio_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		uint_8 interface,                   /* [IN] interface */
-		uint_8 control_selector,            /* [IN] control selector */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        uint_8 interface,                   /* [IN] interface */
+        uint_8 control_selector,            /* [IN] control selector */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	switch(control_selector)
-	{
-	case VOLUME_CONTROL:
-		status = USB_Desc_Get_Res_Volume(controller_ID,interface,data,size);
-		break;
-	case BASS_CONTROL:
-		status = USB_Desc_Get_Res_Bass(controller_ID,interface,data,size);
-		break;
-	case MID_CONTROL:
-		status = USB_Desc_Get_Res_Mid(controller_ID,interface,data,size);
-		break;
-	case TREBLE_CONTROL:
-		status = USB_Desc_Get_Res_Treble(controller_ID,interface,data,size);
-		break;
-	case GRAPHIC_EQUALIZER_CONTROL:
-		status = USB_Desc_Get_Res_Graphic_Equalizer(controller_ID,interface,data,size);
-		break;
-	case DELAY_CONTROL:
-		status=USB_Desc_Get_Res_Delay(controller_ID,interface,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    switch(control_selector)
+    {
+    case VOLUME_CONTROL:
+        status = USB_Desc_Get_Res_Volume(controller_ID,interface,data,size);
+        break;
+    case BASS_CONTROL:
+        status = USB_Desc_Get_Res_Bass(controller_ID,interface,data,size);
+        break;
+    case MID_CONTROL:
+        status = USB_Desc_Get_Res_Mid(controller_ID,interface,data,size);
+        break;
+    case TREBLE_CONTROL:
+        status = USB_Desc_Get_Res_Treble(controller_ID,interface,data,size);
+        break;
+    case GRAPHIC_EQUALIZER_CONTROL:
+        status = USB_Desc_Get_Res_Graphic_Equalizer(controller_ID,interface,data,size);
+        break;
+    case DELAY_CONTROL:
+        status=USB_Desc_Get_Res_Delay(controller_ID,interface,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1215,27 +1215,27 @@ static uint_8 USB_Get_Res_Audio_Feature_Unit(
  * This funtion is called in USB_Set_Request_Interface function
  *****************************************************************************/
 static uint_8 USB_Audio_Set_Control_Terminal(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
-		uint_8_ptr *data,                   /* [IN] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
+        uint_8_ptr *data,                   /* [IN] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
 
-	switch(setup_packet -> request)
-	{
-	/*Copy Protect Control only supports the CUR attribute! */
-	case SET_CUR:
-		if((setup_packet->value >>8) == COPY_PROTECT_CONTROL )
-		{
-			status = USB_Desc_Set_Copy_Protect(controller_ID,(uint_8)setup_packet->index,data,size);
-		}
-		break;
-	default:
-		break;
-	}
-	return status;
+    switch(setup_packet -> request)
+    {
+    /*Copy Protect Control only supports the CUR attribute! */
+    case SET_CUR:
+        if((setup_packet->value >>8) == COPY_PROTECT_CONTROL )
+        {
+            status = USB_Desc_Set_Copy_Protect(controller_ID,(uint_8)setup_packet->index,data,size);
+        }
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1259,26 +1259,26 @@ static uint_8 USB_Audio_Set_Control_Terminal(
  *****************************************************************************/
 
 static uint_8 USB_Audio_Get_Control_Terminal(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	switch(setup_packet -> request)
-	{
-	/* Copy Protect Control only supports the CUR attribute!*/
-	case GET_CUR:
-		if((setup_packet ->value >>8) == COPY_PROTECT_CONTROL )
-		{
-			status = USB_Desc_Get_Copy_Protect(controller_ID,(uint_8)setup_packet->index,data,size);
-		}
-		break;
-	default:
-		break;
-	}
-	return status;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    switch(setup_packet -> request)
+    {
+    /* Copy Protect Control only supports the CUR attribute!*/
+    case GET_CUR:
+        if((setup_packet ->value >>8) == COPY_PROTECT_CONTROL )
+        {
+            status = USB_Desc_Get_Copy_Protect(controller_ID,(uint_8)setup_packet->index,data,size);
+        }
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1301,42 +1301,42 @@ static uint_8 USB_Audio_Get_Control_Terminal(
  * This funtion is called in Set_Request_Interface function
  *****************************************************************************/
 static uint_8 USB_Audio_Set_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
-		uint_8_ptr *data,                   /* [IN] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
+        uint_8_ptr *data,                   /* [IN] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
 {
-	uint_8 interface, control_selector;
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	/* get current interface */
-	interface = (uint_8)setup_packet->index;
-	/* get control selector */
-	control_selector = (uint_8)(setup_packet->value>>8);
+    uint_8 interface, control_selector;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    /* get current interface */
+    interface = (uint_8)setup_packet->index;
+    /* get control selector */
+    control_selector = (uint_8)(setup_packet->value>>8);
 
-	/* Select SET request Control Feature Unit Module */
-	switch(setup_packet->request)
-	{
-	case SET_CUR:
-		/*Set current attributes of Feature Unit*/
-		status = USB_Set_Cur_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	case SET_MIN:
-		/*Set Min attributes of Feature Unit*/
-		status = USB_Set_Min_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	case SET_MAX:
-		/*Set Max attributes of Feature Unit*/
-		status = USB_Set_Max_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	case SET_RES:
-		/*Set Resolution attributes of Feature Unit*/
-		status = USB_Set_Res_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	default:
-		break;
-	}
-	return status;
+    /* Select SET request Control Feature Unit Module */
+    switch(setup_packet->request)
+    {
+    case SET_CUR:
+        /*Set current attributes of Feature Unit*/
+        status = USB_Set_Cur_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    case SET_MIN:
+        /*Set Min attributes of Feature Unit*/
+        status = USB_Set_Min_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    case SET_MAX:
+        /*Set Max attributes of Feature Unit*/
+        status = USB_Set_Max_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    case SET_RES:
+        /*Set Resolution attributes of Feature Unit*/
+        status = USB_Set_Res_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    default:
+        break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1359,36 +1359,36 @@ static uint_8 USB_Audio_Set_Feature_Unit(
  * This funtion is called in the Get_Request_Interface function
  *****************************************************************************/
 static uint_8 USB_Audio_Get_Feature_Unit(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-	uint_8 interface, control_selector;
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	interface = (uint_8)setup_packet->index;
-	control_selector = (uint_8)(setup_packet->value>>8);
-	/* Select SET request Control Feature Unit Module */
-	switch(setup_packet->request)
-	{
-	case GET_CUR:
-		status = USB_Get_Cur_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	case GET_MIN:
-		status = USB_Get_Min_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	case GET_MAX:
-		status = USB_Get_Max_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	case GET_RES:
-		status = USB_Get_Res_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
-		break;
-	default:
-		break;
-	}
+    uint_8 interface, control_selector;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    interface = (uint_8)setup_packet->index;
+    control_selector = (uint_8)(setup_packet->value>>8);
+    /* Select SET request Control Feature Unit Module */
+    switch(setup_packet->request)
+    {
+    case GET_CUR:
+        status = USB_Get_Cur_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    case GET_MIN:
+        status = USB_Get_Min_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    case GET_MAX:
+        status = USB_Get_Max_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    case GET_RES:
+        status = USB_Get_Res_Audio_Feature_Unit(controller_ID,interface,control_selector,data,size);
+        break;
+    default:
+        break;
+    }
     UNUSED(status);
-	return USB_OK;
+    return USB_OK;
 }
 
 #if AUDIO_CLASS_2_0
@@ -1591,10 +1591,10 @@ static uint_8 USB_Set_Request_Interface(
  *****************************************************************************/
 
 static uint_8 USB_Get_Request_Interface(
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
     uint_8 i;
@@ -1655,102 +1655,102 @@ static uint_8 USB_Get_Request_Interface(
  *****************************************************************************/
 static uint_8 USB_Set_Request_Endpoint
 (
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
-		uint_8_ptr *data,                   /* [IN] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
+        uint_8_ptr *data,                   /* [IN] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [IN] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	uint_8 interface;
-	uint_8 control_selector;
-	uint_16 offset;
-	/* get current interface */
-	interface = (uint_8)setup_packet->index;
-	/* get control selector */
-	control_selector = (uint_8)(setup_packet->value>>8);
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    uint_8 interface;
+    uint_8 control_selector;
+    uint_16 offset;
+    /* get current interface */
+    interface = (uint_8)setup_packet->index;
+    /* get control selector */
+    control_selector = (uint_8)(setup_packet->value>>8);
 
-	switch(setup_packet->request)
-	{
-	    case SET_CUR:
-	    {
-	        *size = 0;
-	        switch(control_selector)
-	        {
+    switch(setup_packet->request)
+    {
+        case SET_CUR:
+        {
+            *size = 0;
+            switch(control_selector)
+            {
 #if !AUDIO_CLASS_2_0
-	            /*
-	             * Request Valid only in Audio 1.0, in Audio 2.0 it was moved 
-	             * into Interface Requests
-	             */
-	            case SAMPLING_FREQ_CONTROL:
-	                status = USB_Desc_Set_Cur_Sampling_Frequency(controller_ID,interface,data,size);
-	                break;
+                /*
+                 * Request Valid only in Audio 1.0, in Audio 2.0 it was moved
+                 * into Interface Requests
+                 */
+                case SAMPLING_FREQ_CONTROL:
+                    status = USB_Desc_Set_Cur_Sampling_Frequency(controller_ID,interface,data,size);
+                    break;
 #endif /* AUDIO_CLASS_2_0 */
-	            case PITCH_CONTROL:
-	                status = USB_Desc_Set_Cur_Pitch(controller_ID,interface,data,size);
-	                break;
-	            default:
-	                break;
-	        }
-	    }
-	    break;
+                case PITCH_CONTROL:
+                    status = USB_Desc_Set_Cur_Pitch(controller_ID,interface,data,size);
+                    break;
+                default:
+                    break;
+            }
+        }
+        break;
 
-	    case SET_MIN:
-	    {
-	        *size = 0;
-	        switch(control_selector)
-	        {
+        case SET_MIN:
+        {
+            *size = 0;
+            switch(control_selector)
+            {
 #if !AUDIO_CLASS_2_0
-	            case SAMPLING_FREQ_CONTROL:
-	                status = USB_Desc_Set_Min_Sampling_Frequency(controller_ID,interface,data,size);
-	                break;
-#endif /* AUDIO_CLASS_2_0 */	                
-	            default:
-	                break;
-	        }
-	    }
-	    break;
-	    
-	    case SET_MAX:
-	    {
-	        *size = 0;
-	        switch(control_selector)
-	        {
-#if !AUDIO_CLASS_2_0
-	            case SAMPLING_FREQ_CONTROL:
-	                status = USB_Desc_Set_Max_Sampling_Frequency(controller_ID,interface,data,size);
-	                break;
+                case SAMPLING_FREQ_CONTROL:
+                    status = USB_Desc_Set_Min_Sampling_Frequency(controller_ID,interface,data,size);
+                    break;
 #endif /* AUDIO_CLASS_2_0 */
-	            default:
-	                break;
-	        }
-	    }
-	    break;
+                default:
+                    break;
+            }
+        }
+        break;
 
-	    case SET_RES:
-	    {
-	        *size = 0;
-	        switch(control_selector)
-	        {
+        case SET_MAX:
+        {
+            *size = 0;
+            switch(control_selector)
+            {
 #if !AUDIO_CLASS_2_0
-	            case SAMPLING_FREQ_CONTROL:
-	                status = USB_Desc_Set_Res_Sampling_Frequency(controller_ID,interface,data,size);
-	                break;
+                case SAMPLING_FREQ_CONTROL:
+                    status = USB_Desc_Set_Max_Sampling_Frequency(controller_ID,interface,data,size);
+                    break;
 #endif /* AUDIO_CLASS_2_0 */
-	            default:
-	                break;
-	        }
-	    }
-	    break;
-	    case SET_MEM:
-	        *size = setup_packet->length;
-	        offset=setup_packet->value;
-	        status = USB_Desc_Set_Mem_Endpoint(controller_ID,offset,interface,data,size);
-	        break;
-	    default:
-	        break;
-	}
-	return status;
+                default:
+                    break;
+            }
+        }
+        break;
+
+        case SET_RES:
+        {
+            *size = 0;
+            switch(control_selector)
+            {
+#if !AUDIO_CLASS_2_0
+                case SAMPLING_FREQ_CONTROL:
+                    status = USB_Desc_Set_Res_Sampling_Frequency(controller_ID,interface,data,size);
+                    break;
+#endif /* AUDIO_CLASS_2_0 */
+                default:
+                    break;
+            }
+        }
+        break;
+        case SET_MEM:
+            *size = setup_packet->length;
+            offset=setup_packet->value;
+            status = USB_Desc_Set_Mem_Endpoint(controller_ID,offset,interface,data,size);
+            break;
+        default:
+            break;
+    }
+    return status;
 }
 
 /**************************************************************************//*!
@@ -1774,76 +1774,76 @@ static uint_8 USB_Set_Request_Endpoint
  *****************************************************************************/
 static uint_8 USB_Get_Request_Endpoint
 (
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
-		uint_8_ptr *data,                   /* [OUT] Pointer to Data */
-		USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /* [IN] Pointer to setup packet */
+        uint_8_ptr *data,                   /* [OUT] Pointer to Data */
+        USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
-	uint_8 status = USBERR_INVALID_REQ_TYPE;
-	uint_8 interface;
-	uint_8 control_selector;
-	uint_16 offset;
+    uint_8 status = USBERR_INVALID_REQ_TYPE;
+    uint_8 interface;
+    uint_8 control_selector;
+    uint_16 offset;
 
-	/* get current interface */
-	interface = (uint_8)setup_packet->index;
-	/* get control selector */
-	control_selector = (uint_8)(setup_packet->value >>8);
+    /* get current interface */
+    interface = (uint_8)setup_packet->index;
+    /* get control selector */
+    control_selector = (uint_8)(setup_packet->value >>8);
 
-	switch(setup_packet->request)
-	{
-	case  GET_CUR:
-		switch(control_selector)
-		{
-		case SAMPLING_FREQ_CONTROL:
-			status = USB_Desc_Get_Cur_Sampling_Frequency(controller_ID,interface,data,size);
-			break;
-		case PITCH_CONTROL:
-			status = USB_Desc_Get_Cur_Pitch(controller_ID,interface,data,size);
-			break;
-		default:
-			break;
-		}
-		break;
-		case GET_MIN:
-			switch(control_selector)
-			{
-			case SAMPLING_FREQ_CONTROL:
-				status = USB_Desc_Get_Min_Sampling_Frequency(controller_ID,interface,data,size);
-				break;
-			default:
-				break;
-			}
-			break;
-			case GET_MAX:
-				switch(control_selector)
-				{
-				case SAMPLING_FREQ_CONTROL:
-					status = USB_Desc_Get_Max_Sampling_Frequency(controller_ID,interface,data,size);
-					break;
-				default:
-					break;
-				}
-				break;
-				case GET_RES:
-					switch(control_selector)
-					{
-					case SAMPLING_FREQ_CONTROL:
-						status = USB_Desc_Get_Res_Sampling_Frequency(controller_ID,interface,data,size);
-						break;
-					default:
-						break;
-					}
-					break;
-					case GET_MEM:
-						*size = setup_packet->length;
-						offset=setup_packet->value;
-						status = USB_Desc_Get_Mem_Endpoint(controller_ID,offset,interface,data,size);
-						break;
-					default:
-						break;
-	}
-	return status;
+    switch(setup_packet->request)
+    {
+    case  GET_CUR:
+        switch(control_selector)
+        {
+        case SAMPLING_FREQ_CONTROL:
+            status = USB_Desc_Get_Cur_Sampling_Frequency(controller_ID,interface,data,size);
+            break;
+        case PITCH_CONTROL:
+            status = USB_Desc_Get_Cur_Pitch(controller_ID,interface,data,size);
+            break;
+        default:
+            break;
+        }
+        break;
+        case GET_MIN:
+            switch(control_selector)
+            {
+            case SAMPLING_FREQ_CONTROL:
+                status = USB_Desc_Get_Min_Sampling_Frequency(controller_ID,interface,data,size);
+                break;
+            default:
+                break;
+            }
+            break;
+            case GET_MAX:
+                switch(control_selector)
+                {
+                case SAMPLING_FREQ_CONTROL:
+                    status = USB_Desc_Get_Max_Sampling_Frequency(controller_ID,interface,data,size);
+                    break;
+                default:
+                    break;
+                }
+                break;
+                case GET_RES:
+                    switch(control_selector)
+                    {
+                    case SAMPLING_FREQ_CONTROL:
+                        status = USB_Desc_Get_Res_Sampling_Frequency(controller_ID,interface,data,size);
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                    case GET_MEM:
+                        *size = setup_packet->length;
+                        offset=setup_packet->value;
+                        status = USB_Desc_Get_Mem_Endpoint(controller_ID,offset,interface,data,size);
+                        break;
+                    default:
+                        break;
+    }
+    return status;
 }
 /**************************************************************************//*!
  *
@@ -1866,23 +1866,23 @@ static uint_8 USB_Get_Request_Endpoint
  * application
  *****************************************************************************/
 #ifndef COMPOSITE_DEV
-static uint_8 USB_Other_Requests 
-#else 
+static uint_8 USB_Other_Requests
+#else
 uint_8 USB_Audio_Other_Requests
 #endif
 (
-		uint_8 controller_ID,               /* [IN] Controller ID */
-		USB_SETUP_STRUCT * setup_packet,    /*[IN] Setup packet received */
-		uint_8_ptr *data,                   /* [OUT] Data to be send back */
-		USB_PACKET_SIZE *size               /* [OUT] Size to be returned*/
+        uint_8 controller_ID,               /* [IN] Controller ID */
+        USB_SETUP_STRUCT * setup_packet,    /*[IN] Setup packet received */
+        uint_8_ptr *data,                   /* [OUT] Data to be send back */
+        USB_PACKET_SIZE *size               /* [OUT] Size to be returned*/
 )
 {
     uint_8 status = USBERR_INVALID_REQ_TYPE;
     /* point to the data which comes after the setup packet */
     *data = ((uint_8*)setup_packet)+USB_SETUP_PKT_SIZE;
-    if (size == NULL)				
+    if (size == NULL)
     {
-        return USBERR_GET_MEMORY_FAILED;	
+        return USBERR_GET_MEMORY_FAILED;
     }
     switch(setup_packet->request_type)
     {
@@ -1931,56 +1931,56 @@ uint_8 USB_Audio_Other_Requests
  *This function initializes the Audio Class layer and layers it is dependent on
  *****************************************************************************/
 uint_8 USB_Class_Audio_Init (
-		uint_8    controller_ID,                  /* [IN] Controller ID */
-		USB_CLASS_CALLBACK audio_class_callback,  /* [IN] Audio Class Callback */
-		USB_REQ_FUNC       vendor_req_callback,   /* [IN] Vendor Request Callback */
-		USB_CLASS_CALLBACK param_callback         /* [ IN] Audio Class requests Callback */
+        uint_8    controller_ID,                  /* [IN] Controller ID */
+        USB_CLASS_CALLBACK audio_class_callback,  /* [IN] Audio Class Callback */
+        USB_REQ_FUNC       vendor_req_callback,   /* [IN] Vendor Request Callback */
+        USB_CLASS_CALLBACK param_callback         /* [ IN] Audio Class requests Callback */
 )
 {
-	uint_8 index;
+    uint_8 index;
     uint_8 status = USB_OK;
-	USB_ENDPOINTS *ep_desc_data = (USB_ENDPOINTS *)
-	USB_Desc_Get_Endpoints(controller_ID);
+    USB_ENDPOINTS *ep_desc_data = (USB_ENDPOINTS *)
+    USB_Desc_Get_Endpoints(controller_ID);
 
 #ifndef COMPOSITE_DEV
-	/* Initialize the device layer*/
+    /* Initialize the device layer*/
     status = _usb_device_init(controller_ID, NULL,
-			(uint_8)(ep_desc_data->count+1), TRUE);
-	if(status == USB_OK)
-	{
-		/* Initialize the generic class functions */
-		status = USB_Class_Init(controller_ID,USB_Class_Audio_Event,
-				USB_Other_Requests);
+            (uint_8)(ep_desc_data->count+1), TRUE);
+    if(status == USB_OK)
+    {
+        /* Initialize the generic class functions */
+        status = USB_Class_Init(controller_ID,USB_Class_Audio_Event,
+                USB_Other_Requests);
 
-		if(status == USB_OK)
-		{
+        if(status == USB_OK)
+        {
 #endif
-			g_audio_endpoint_data.count = ep_desc_data->count;
+            g_audio_endpoint_data.count = ep_desc_data->count;
 
-			for(index = 0; index < ep_desc_data->count; index++)
-			{
-				g_audio_endpoint_data.ep[index].endpoint = ep_desc_data->ep[index].ep_num;
-				g_audio_endpoint_data.ep[index].type = ep_desc_data->ep[index].type;
-				g_audio_endpoint_data.ep[index].bin_consumer = 0x00;
-				g_audio_endpoint_data.ep[index].bin_producer = 0x00;
-				g_audio_endpoint_data.ep[index].queue_num    = 0x00;
-			}
+            for(index = 0; index < ep_desc_data->count; index++)
+            {
+                g_audio_endpoint_data.ep[index].endpoint = ep_desc_data->ep[index].ep_num;
+                g_audio_endpoint_data.ep[index].type = ep_desc_data->ep[index].type;
+                g_audio_endpoint_data.ep[index].bin_consumer = 0x00;
+                g_audio_endpoint_data.ep[index].bin_producer = 0x00;
+                g_audio_endpoint_data.ep[index].queue_num    = 0x00;
+            }
 
-			/* save the Audio class callback pointer */
-			g_audio_class_callback = audio_class_callback;
+            /* save the Audio class callback pointer */
+            g_audio_class_callback = audio_class_callback;
 
-			/* save the vendor request callback pointer */
-			g_vendor_req_callback = vendor_req_callback;
-            
+            /* save the vendor request callback pointer */
+            g_vendor_req_callback = vendor_req_callback;
+
             UNUSED(g_vendor_req_callback);
 
-			/* Save the callback to ask application for class specific params*/
-			g_param_callback = param_callback;
+            /* Save the callback to ask application for class specific params*/
+            g_param_callback = param_callback;
 #ifndef COMPOSITE_DEV
-		}
-	}
+        }
+    }
 #endif
-	return status;
+    return status;
 }
 
 /**************************************************************************//*!
@@ -2000,30 +2000,30 @@ uint_8 USB_Class_Audio_Init (
  *****************************************************************************/
 uint_8 USB_Class_Audio_DeInit
 (
-		uint_8 controller_ID              /* [IN] Controller ID */
+        uint_8 controller_ID              /* [IN] Controller ID */
 )
 {
     uint_8 status = USB_OK;
 #ifdef COMPOSITE_DEV
     UNUSED(controller_ID)
 #endif
-	/* free the Audio class callback pointer */
-	g_audio_class_callback = NULL;
+    /* free the Audio class callback pointer */
+    g_audio_class_callback = NULL;
 
-	/* free the vendor request callback pointer */
-	g_vendor_req_callback = NULL;
+    /* free the vendor request callback pointer */
+    g_vendor_req_callback = NULL;
 
-	/* free the callback to ask application for class specific params*/
-	g_param_callback = NULL;
-#ifndef COMPOSITE_DEV    
-	/* Call common class deinit function */
-	status = USB_Class_DeInit(controller_ID);
+    /* free the callback to ask application for class specific params*/
+    g_param_callback = NULL;
+#ifndef COMPOSITE_DEV
+    /* Call common class deinit function */
+    status = USB_Class_DeInit(controller_ID);
 
-	if(status == USB_OK)
-		/* Call device deinit function */
-		status = _usb_device_deinit();
+    if(status == USB_OK)
+        /* Call device deinit function */
+        status = _usb_device_deinit();
 #endif
-	return status;
+    return status;
 }
 
 /**************************************************************************//*!
@@ -2045,69 +2045,69 @@ uint_8 USB_Class_Audio_DeInit
  * This fucntion is used by Application to send data through Audio class
  *****************************************************************************/
 uint_8 USB_Class_Audio_Send_Data (
-		uint_8 controller_ID,       /* [IN] Controller ID */
-		uint_8 ep_num,              /* [IN] Endpoint Number */
-		uint_8_ptr app_buff,        /* [IN] Buffer to Send */
-		USB_PACKET_SIZE size        /* [IN] Length of the Transfer */
+        uint_8 controller_ID,       /* [IN] Controller ID */
+        uint_8 ep_num,              /* [IN] Endpoint Number */
+        uint_8_ptr app_buff,        /* [IN] Buffer to Send */
+        USB_PACKET_SIZE size        /* [IN] Length of the Transfer */
 )
 {
-	uint_8 status = USB_OK;
-	PTR_USB_CLASS_AUDIO_QUEUE queue_tmp;
+    uint_8 status = USB_OK;
+    PTR_USB_CLASS_AUDIO_QUEUE queue_tmp;
 
 #if IMPLEMENT_QUEUING
-	uint_8 index;
-	uint_8 producer, queue_num;
+    uint_8 index;
+    uint_8 producer, queue_num;
 
-	USB_ENDPOINTS *usb_ep_data = (USB_ENDPOINTS *)
-	USB_Desc_Get_Endpoints(controller_ID);
+    USB_ENDPOINTS *usb_ep_data = (USB_ENDPOINTS *)
+    USB_Desc_Get_Endpoints(controller_ID);
 
-	/* map the endpoint num to the index of the endpoint structure */
+    /* map the endpoint num to the index of the endpoint structure */
 
-	for(index = 0; index < usb_ep_data->count; index++)
-	{
-		if(usb_ep_data->ep[index].ep_num == ep_num)
-			break;
-	}
+    for(index = 0; index < usb_ep_data->count; index++)
+    {
+        if(usb_ep_data->ep[index].ep_num == ep_num)
+            break;
+    }
 
-	producer = g_audio_endpoint_data.ep[index].bin_producer;
-	queue_num = g_audio_endpoint_data.ep[index].queue_num;
-    
+    producer = g_audio_endpoint_data.ep[index].bin_producer;
+    queue_num = g_audio_endpoint_data.ep[index].queue_num;
+
     UNUSED(producer);
 
-	if(MAX_QUEUE_ELEMS != queue_num)
-	{
-		/* the bin is not full*/
-		/* put all send request parameters in the endpoint data structure */
-		queue_tmp = &(g_audio_endpoint_data.ep[index].queue[producer]);
-		queue_tmp->controller_ID  = controller_ID;
-		queue_tmp->channel        = ep_num;
-		queue_tmp->app_buff       = app_buff;
-		queue_tmp->size           = size;
+    if(MAX_QUEUE_ELEMS != queue_num)
+    {
+        /* the bin is not full*/
+        /* put all send request parameters in the endpoint data structure */
+        queue_tmp = &(g_audio_endpoint_data.ep[index].queue[producer]);
+        queue_tmp->controller_ID  = controller_ID;
+        queue_tmp->channel        = ep_num;
+        queue_tmp->app_buff       = app_buff;
+        queue_tmp->size           = size;
 
-		/* increment producer bin by 1*/
-		if (producer == (MAX_QUEUE_ELEMS - 1))
-		{
-			g_audio_endpoint_data.ep[index].bin_producer = 0;
-		}
-		else
-		{
-			g_audio_endpoint_data.ep[index].bin_producer++;
-		}
-		g_audio_endpoint_data.ep[index].queue_num++;
+        /* increment producer bin by 1*/
+        if (producer == (MAX_QUEUE_ELEMS - 1))
+        {
+            g_audio_endpoint_data.ep[index].bin_producer = 0;
+        }
+        else
+        {
+            g_audio_endpoint_data.ep[index].bin_producer++;
+        }
+        g_audio_endpoint_data.ep[index].queue_num++;
 
-		if(g_audio_endpoint_data.ep[index].queue_num == 1)
-		{
+        if(g_audio_endpoint_data.ep[index].queue_num == 1)
+        {
 #endif
-			status = USB_Class_Send_Data(controller_ID, ep_num, app_buff,size);
+            status = USB_Class_Send_Data(controller_ID, ep_num, app_buff,size);
 #if IMPLEMENT_QUEUING
-		}
-	}
-	else /* bin is full */
-	{
-		status = USBERR_DEVICE_BUSY;
-	}
+        }
+    }
+    else /* bin is full */
+    {
+        status = USBERR_DEVICE_BUSY;
+    }
 #endif
-	return status;
+    return status;
 }
 
 /**************************************************************************//*!
@@ -2129,17 +2129,17 @@ uint_8 USB_Class_Audio_Send_Data (
  *****************************************************************************/
 uint_8 USB_Class_Audio_Recv_Data
 (
-		uint_8 controller_ID,       /* [IN] Controller ID */
-		uint_8 ep_num,              /* [IN] Endpoint Number */
-		uint_8_ptr app_buff,        /* [IN] Buffer to Send */
-		USB_PACKET_SIZE size        /* [IN] Length of the Transfer */
+        uint_8 controller_ID,       /* [IN] Controller ID */
+        uint_8 ep_num,              /* [IN] Endpoint Number */
+        uint_8_ptr app_buff,        /* [IN] Buffer to Send */
+        USB_PACKET_SIZE size        /* [IN] Length of the Transfer */
 )
 {
-	uint_8 status;
+    uint_8 status;
 
 
-	status = _usb_device_recv_data(&controller_ID,ep_num,app_buff,size);
+    status = _usb_device_recv_data(&controller_ID,ep_num,app_buff,size);
 
-	return status;
+    return status;
 
 }

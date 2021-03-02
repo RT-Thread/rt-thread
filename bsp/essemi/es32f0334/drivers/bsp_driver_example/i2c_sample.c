@@ -8,57 +8,57 @@
  * 2020-12-15     liuhy       first implementation.
  */
 /*
- * ç¨‹åºæ¸…å•ï¼šè¿™æ˜¯ä¸€ä¸ª I2C è®¾å¤‡ä½¿ç”¨ä¾‹ç¨‹
- * ä¾‹ç¨‹å¯¼å‡ºäº† i2c_io_sample å‘½ä»¤åˆ°æ§åˆ¶ç»ˆç«¯
- * å‘½ä»¤è°ƒç”¨æ ¼å¼ï¼ši2c_io_sample
- * å‘½ä»¤è§£é‡Šï¼šä½¿ç”¨é»˜è®¤çš„I2Cæ€»çº¿è®¾å¤‡
- * ç¨‹åºåŠŸèƒ½ï¼šé€šè¿‡ I2C è®¾å¤‡æ¥æ”¶æ•°æ®å¹¶æ‰“å°ï¼Œç„¶åå°†æ¥æ”¶çš„å­—ç¬¦åŠ 1è¾“å‡ºã€‚
+ * ³ÌĞòÇåµ¥£ºÕâÊÇÒ»¸ö I2C Éè±¸Ê¹ÓÃÀı³Ì
+ * Àı³Ìµ¼³öÁË i2c_io_sample ÃüÁîµ½¿ØÖÆÖÕ¶Ë
+ * ÃüÁîµ÷ÓÃ¸ñÊ½£ºi2c_io_sample
+ * ÃüÁî½âÊÍ£ºÊ¹ÓÃÄ¬ÈÏµÄI2C×ÜÏßÉè±¸
+ * ³ÌĞò¹¦ÄÜ£ºÍ¨¹ı I2C Éè±¸½ÓÊÕÊı¾İ²¢´òÓ¡£¬È»ºó½«½ÓÊÕµÄ×Ö·û¼Ó1Êä³ö¡£
 */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define I2C_BUS_NAME          "i2c1"  /* I2Cæ€»çº¿è®¾å¤‡åç§° */
-#define SLAVE_ADDR                  0x2D    /* ä»æœºåœ°å€ */
-#define STR_LEN                       16    /* æ¥æ”¶å‘é€çš„æ•°æ®é•¿åº¦ */
+#define I2C_BUS_NAME          "i2c1"  /* I2C×ÜÏßÉè±¸Ãû³Æ */
+#define SLAVE_ADDR                  0x2D    /* ´Ó»úµØÖ· */
+#define STR_LEN                       16    /* ½ÓÊÕ·¢ËÍµÄÊı¾İ³¤¶È */
 
 static void i2c_io_sample(int argc, char *argv[])
 {
-    
-    struct rt_i2c_bus_device *i2c_bus = RT_NULL;     /* I2Cæ€»çº¿è®¾å¤‡å¥æŸ„ */
-    struct rt_i2c_msg temp_msg;                             /* I2Cæ¶ˆæ¯ */
-    rt_uint8_t buffer[STR_LEN] = { 0U }; 
+
+    struct rt_i2c_bus_device *i2c_bus = RT_NULL;     /* I2C×ÜÏßÉè±¸¾ä±ú */
+    struct rt_i2c_msg temp_msg;                             /* I2CÏûÏ¢ */
+    rt_uint8_t buffer[STR_LEN] = { 0U };
     rt_uint32_t i,num_msg;
     rt_size_t s_stat;
-    
-    i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(I2C_BUS_NAME);    /* é€šè¿‡åå­—è·å–I2Cæ€»çº¿è®¾å¤‡çš„å¥æŸ„ */
-    
+
+    i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(I2C_BUS_NAME);    /* Í¨¹ıÃû×Ö»ñÈ¡I2C×ÜÏßÉè±¸µÄ¾ä±ú */
+
     if( i2c_bus == RT_NULL)
     {
         rt_kprintf("can't find i2c device :%s !\n",I2C_BUS_NAME);
-        
+
         return;
     }
-    
-        /*åˆå§‹åŒ–æ¶ˆæ¯*/
-        temp_msg.addr = SLAVE_ADDR;  /* ä»æœºåœ°å€ */
-        temp_msg.len  = STR_LEN;     /* ä¼ è¾“çš„æ•°æ®é•¿åº¦ */
-        temp_msg.buf = buffer;       /* è¯»å†™ç¼“å­˜å™¨ */
-    
-        num_msg = 1;             /* ä¼ è¾“ä¸€æ¡æ¶ˆæ¯ */
-    
-        temp_msg.flags = RT_I2C_RD;             /* I2Cè¯» */
-        s_stat = rt_i2c_transfer(i2c_bus,&temp_msg,num_msg);   /* ä¼ è¾“æ¶ˆæ¯ */
-        
-        rt_thread_mdelay(400); 
-        
+
+        /*³õÊ¼»¯ÏûÏ¢*/
+        temp_msg.addr = SLAVE_ADDR;  /* ´Ó»úµØÖ· */
+        temp_msg.len  = STR_LEN;     /* ´«ÊäµÄÊı¾İ³¤¶È */
+        temp_msg.buf = buffer;       /* ¶ÁĞ´»º´æÆ÷ */
+
+        num_msg = 1;             /* ´«ÊäÒ»ÌõÏûÏ¢ */
+
+        temp_msg.flags = RT_I2C_RD;             /* I2C¶Á */
+        s_stat = rt_i2c_transfer(i2c_bus,&temp_msg,num_msg);   /* ´«ÊäÏûÏ¢ */
+
+        rt_thread_mdelay(400);
+
         if( s_stat == num_msg )
         {
             rt_kprintf("receive successful. \n receive messege : %s \n:",buffer);
-            
+
             for( i = 0 ; i < STR_LEN ; i++)
             rt_kprintf(" %x",(unsigned int)buffer[i]);
-            
+
             rt_kprintf("\n");
         }
         else
@@ -66,22 +66,22 @@ static void i2c_io_sample(int argc, char *argv[])
             rt_kprintf("device s% recieve fail \n buffer : s%\n",I2C_BUS_NAME,buffer);
             return;
         }
-        
+
         for( i = 0 ; i < STR_LEN ; i++)
         buffer[i]++;
-    
-        temp_msg.flags = RT_I2C_WR;             /* I2Cå†™ */
-        s_stat = rt_i2c_transfer(i2c_bus,&temp_msg,num_msg);   /* ä¼ è¾“ä¸€æ¡ */
-        
+
+        temp_msg.flags = RT_I2C_WR;             /* I2CĞ´ */
+        s_stat = rt_i2c_transfer(i2c_bus,&temp_msg,num_msg);   /* ´«ÊäÒ»Ìõ */
+
         rt_thread_mdelay(400);
-        
+
         if( s_stat == num_msg )
         {
             rt_kprintf(" send successful \n messege : %s \n:",buffer);
-            
+
             for( i = 0 ; i < STR_LEN ; i++)
             rt_kprintf(" %x",(unsigned int)buffer[i]);
-            
+
             rt_kprintf("\n");
         }
         else
@@ -89,9 +89,9 @@ static void i2c_io_sample(int argc, char *argv[])
             rt_kprintf("device s% send fail \n",I2C_BUS_NAME);
             return;
         }
-        
+
         return;
-    
+
 }
-/* å¯¼å‡ºåˆ° msh å‘½ä»¤åˆ—è¡¨ä¸­ */
+/* µ¼³öµ½ msh ÃüÁîÁĞ±íÖĞ */
 MSH_CMD_EXPORT(i2c_io_sample, i2c io sample);

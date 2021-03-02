@@ -34,7 +34,7 @@
 
 /** @addtogroup ADCEx
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -96,7 +96,7 @@
 /**
   * @}
   */
-   
+
 /**
   * @}
   */
@@ -111,7 +111,7 @@
 
 /** @defgroup ADCEx_calibration_factor_length_verification ADC Calibration Factor Length Verification
   * @{
-  */ 
+  */
 /**
   * @brief Calibration factor length verification (7 bits maximum)
   * @param _Calibration_Factor_: Calibration factor value
@@ -120,7 +120,7 @@
 #define IS_ADC_CALFACT(_Calibration_Factor_) ((_Calibration_Factor_) <= ((uint32_t)0x7FU))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup ADC_External_trigger_Source ADC External Trigger Source
   * @{

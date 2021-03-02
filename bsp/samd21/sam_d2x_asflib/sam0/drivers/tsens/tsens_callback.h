@@ -68,17 +68,17 @@ extern "C" {
  *
  */
 enum tsens_callback {
-	/** Callback for result ready */
-	TSENS_CALLBACK_RESULT_READY,
-	/** Callback when result overwritten before read */
-	TSENS_CALLBACK_OVERRUN,
-	/** Callback when window is hit */
-	TSENS_CALLBACK_WINDOW,
-	/** Callback when the result overflows */
-	TSENS_CALLBACK_OVF,
+    /** Callback for result ready */
+    TSENS_CALLBACK_RESULT_READY,
+    /** Callback when result overwritten before read */
+    TSENS_CALLBACK_OVERRUN,
+    /** Callback when window is hit */
+    TSENS_CALLBACK_WINDOW,
+    /** Callback when the result overflows */
+    TSENS_CALLBACK_OVF,
 #  if !defined(__DOXYGEN__)
-	/** Number of available callbacks */
-	TSENS_CALLBACK_NUM,
+    /** Number of available callbacks */
+    TSENS_CALLBACK_NUM,
 #  endif
 };
 
@@ -96,10 +96,10 @@ typedef void (*tsens_callback_t)(enum tsens_callback);
  */
 struct tsens_module {
 #if !defined(__DOXYGEN__)
-	/** Array to store callback functions. */
-	tsens_callback_t callback[TSENS_CALLBACK_NUM];
-	/** Pointer to used for TSENS results. */
-	volatile int32_t *value;
+    /** Array to store callback functions. */
+    tsens_callback_t callback[TSENS_CALLBACK_NUM];
+    /** Pointer to used for TSENS results. */
+    volatile int32_t *value;
 #endif
 };
 
@@ -108,13 +108,13 @@ struct tsens_module {
  * @{
  */
 enum status_code tsens_register_callback(
-			struct tsens_module *const module,
-			tsens_callback_t callback_func,
-			enum tsens_callback callback_type);
+            struct tsens_module *const module,
+            tsens_callback_t callback_func,
+            enum tsens_callback callback_type);
 
 enum status_code tsens_unregister_callback(
-			struct tsens_module *const module,
-			enum tsens_callback callback_type);
+            struct tsens_module *const module,
+            enum tsens_callback callback_type);
 
 /**
  * \brief Enables callback.
@@ -128,28 +128,28 @@ enum status_code tsens_unregister_callback(
  */
 static inline void tsens_enable_callback(enum tsens_callback callback_type)
 {
-	uint32_t inenset_temp = 0;
+    uint32_t inenset_temp = 0;
 
-	switch (callback_type) {
-		case TSENS_CALLBACK_RESULT_READY:
-			inenset_temp |= TSENS_INTFLAG_RESRDY;
-			break;
-		case TSENS_CALLBACK_OVERRUN:
-			inenset_temp |= TSENS_INTENSET_OVERRUN;
-			break;
-		case TSENS_CALLBACK_WINDOW:
-			inenset_temp |= TSENS_INTENSET_WINMON;
-			break;
-		case TSENS_CALLBACK_OVF:
-			inenset_temp |= TSENS_INTENSET_OVF;
-			break;
+    switch (callback_type) {
+        case TSENS_CALLBACK_RESULT_READY:
+            inenset_temp |= TSENS_INTFLAG_RESRDY;
+            break;
+        case TSENS_CALLBACK_OVERRUN:
+            inenset_temp |= TSENS_INTENSET_OVERRUN;
+            break;
+        case TSENS_CALLBACK_WINDOW:
+            inenset_temp |= TSENS_INTENSET_WINMON;
+            break;
+        case TSENS_CALLBACK_OVF:
+            inenset_temp |= TSENS_INTENSET_OVF;
+            break;
 
-		default:
-			break;
-	}
+        default:
+            break;
+    }
 
-	/* Enable the interrupt for the callback */
-	TSENS->INTENSET.reg = inenset_temp;
+    /* Enable the interrupt for the callback */
+    TSENS->INTENSET.reg = inenset_temp;
 }
 
 /**
@@ -163,28 +163,28 @@ static inline void tsens_enable_callback(enum tsens_callback callback_type)
  */
 static inline void tsens_disable_callback(enum tsens_callback callback_type)
 {
-	uint32_t inenclr_temp = 0;
+    uint32_t inenclr_temp = 0;
 
-	switch (callback_type) {
-		case TSENS_CALLBACK_RESULT_READY:
-			inenclr_temp |= TSENS_INTENCLR_OVERRUN;
-			break;
-		case TSENS_CALLBACK_OVERRUN:
-			inenclr_temp |= TSENS_INTENSET_OVERRUN;
-			break;
-		case TSENS_CALLBACK_WINDOW:
-			inenclr_temp |= TSENS_INTENSET_WINMON;
-			break;
-		case TSENS_CALLBACK_OVF:
-			inenclr_temp |= TSENS_INTENSET_OVF;
-			break;
+    switch (callback_type) {
+        case TSENS_CALLBACK_RESULT_READY:
+            inenclr_temp |= TSENS_INTENCLR_OVERRUN;
+            break;
+        case TSENS_CALLBACK_OVERRUN:
+            inenclr_temp |= TSENS_INTENSET_OVERRUN;
+            break;
+        case TSENS_CALLBACK_WINDOW:
+            inenclr_temp |= TSENS_INTENSET_WINMON;
+            break;
+        case TSENS_CALLBACK_OVF:
+            inenclr_temp |= TSENS_INTENSET_OVF;
+            break;
 
-		default:
-			break;
-	}
+        default:
+            break;
+    }
 
-	/* Disable the interrupt for the callback */
-	TSENS->INTENCLR.reg = inenclr_temp;
+    /* Disable the interrupt for the callback */
+    TSENS->INTENCLR.reg = inenclr_temp;
 }
 
 void tsens_read_job(struct tsens_module *const module_inst, int32_t *result);

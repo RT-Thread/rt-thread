@@ -37,7 +37,7 @@
    #include <stdio.h>
 #endif
 #include <stdlib.h>
-#include <string.h>		
+#include <string.h>
 
 #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
 #include "exceptions.h"
@@ -229,46 +229,46 @@ static uint_8 USB_App_Param_Callback (
             break;
 
         case USB_HID_SET_REPORT_REQUEST :
-        	//for(index = 0; index < KEYBOARD_BUFF_SIZE ; index++)
+            //for(index = 0; index < KEYBOARD_BUFF_SIZE ; index++)
             //{   /* copy the report sent by the host */
             //    rpt_buf[index] = *(*data + index);
             //}
 
-			if(**data == 1)	// turn NumLock led on request from HOST
+            if(**data == 1) // turn NumLock led on request from HOST
 #if defined(_MC9S08JM60_H)
-				PTDD_PTDD2 = 0;
+                PTDD_PTDD2 = 0;
 #elif (defined(__MCF52259_H__) || defined(__MCF52221_H__))
-				MCF_GPIO_SETTC = MCF_GPIO_SETTC_SETTC0;	// led D10
+                MCF_GPIO_SETTC = MCF_GPIO_SETTC_SETTC0; // led D10
 #elif (defined(_MCF51JM128_H) || defined(_MC9S08JM16_H) || defined(_MC9S08JM60_H))
-				PTDD_PTDD2 = 0;
+                PTDD_PTDD2 = 0;
 #elif defined(MCU_MK60N512VMD100)
-				GPIOA_PCOR |= (1<<10);	// led E4
+                GPIOA_PCOR |= (1<<10);  // led E4
 #elif defined(MCU_MK53N512CMD100) || (defined MCU_MK40N512VMD100)
-				GPIOC_PCOR |= (1<<8);	// led D7
+                GPIOC_PCOR |= (1<<8);   // led D7
 #elif (defined MCU_MK20D5) || (defined MCU_MK20D7) || (defined MCU_MK40D7)
-				GPIOC_PCOR |= (1<<9);	// Turn on Led D9
+                GPIOC_PCOR |= (1<<9);   // Turn on Led D9
 #elif defined MCU_MK70F12
-				GPIOA_PCOR |= (1<<10);	// led D12
+                GPIOA_PCOR |= (1<<10);  // led D12
 #else
-				;
+                ;
 #endif
-			else if(**data == 0)	// turn NumLock led off request from HOST
+            else if(**data == 0)    // turn NumLock led off request from HOST
 #if defined(_MC9S08JM60_H)
-				PTDD_PTDD2 = 1;
+                PTDD_PTDD2 = 1;
 #elif (defined(__MCF52259_H__) || defined(__MCF52221_H__))
-				MCF_GPIO_CLRTC = (vuint8) ~MCF_GPIO_CLRTC_CLRTC0;	// led D10
+                MCF_GPIO_CLRTC = (vuint8) ~MCF_GPIO_CLRTC_CLRTC0;   // led D10
 #elif (defined (_MCF51JM128_H) || defined(_MC9S08JM16_H) || defined(_MC9S08JM60_H))
-				PTDD_PTDD2 = 1;
+                PTDD_PTDD2 = 1;
 #elif defined(MCU_MK60N512VMD100)
-				GPIOA_PSOR |= (1<<10);	// led E4
+                GPIOA_PSOR |= (1<<10);  // led E4
 #elif defined(MCU_MK53N512CMD100) || (defined MCU_MK40N512VMD100)
-				GPIOC_PSOR |= (1<<8);	// led D7
+                GPIOC_PSOR |= (1<<8);   // led D7
 #elif (defined MCU_MK20D5) || (defined MCU_MK20D7) || (defined MCU_MK40D7)
-				GPIOC_PSOR |= (1<<9);	// Turn off Led D9
+                GPIOC_PSOR |= (1<<9);   // Turn off Led D9
 #elif defined MCU_MK70F12
-				GPIOA_PSOR |= (1<<10);	// led D12
+                GPIOA_PSOR |= (1<<10);  // led D12
 #else
-				;
+                ;
 #endif
             break;
 
@@ -371,5 +371,5 @@ void TestApp_Task(void)
            /* run the button emulation code */
            KeyBoard_Events_Process();
         }
-        
+
 }

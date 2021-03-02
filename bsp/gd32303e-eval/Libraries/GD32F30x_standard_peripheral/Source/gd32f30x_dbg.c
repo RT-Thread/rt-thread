@@ -109,9 +109,9 @@ void dbg_trace_pin_disable(void)
 }
 
 /*!
-    \brief      trace pin mode selection 
+    \brief      trace pin mode selection
     \param[in]  trace_mode:
-      \arg        TRACE_MODE_ASYNC: trace pin used for async mode 
+      \arg        TRACE_MODE_ASYNC: trace pin used for async mode
       \arg        TRACE_MODE_SYNC_DATASIZE_1: trace pin used for sync mode and data size is 1
       \arg        TRACE_MODE_SYNC_DATASIZE_2: trace pin used for sync mode and data size is 2
       \arg        TRACE_MODE_SYNC_DATASIZE_4: trace pin used for sync mode and data size is 4

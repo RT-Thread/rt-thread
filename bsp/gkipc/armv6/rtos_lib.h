@@ -173,7 +173,7 @@ U32 RTOS_SetSemaphore( RTOS_SemaphoreT semaphoreHandle, U32 msecsTimeout );
 S32 RTOS_SemaphoreQuery( RTOS_Semaphore semaphoreHandle );
 RTOS_Status RTOS_SemaphoreDestroy( RTOS_Semaphore semaphoreHandle );
 
-#define RTOS_SemaphoreWait(semaphoreHandle, suspend)		RTOS_WaitSemaphore(semaphoreHandle, suspend)
+#define RTOS_SemaphoreWait(semaphoreHandle, suspend)        RTOS_WaitSemaphore(semaphoreHandle, suspend)
 #define RTOS_SemaphoreWaitTimeout(semaphoreHandle, timeout) RTOS_GetSemaphore((RTOS_Semaphore)semaphoreHandle, timeout)
 #define RTOS_SemaphoreCreate(initCount)                     RTOS_CreateSemaphore(initCount)
 #define RTOS_SemaphoreRelease(semaphoreHandle)              RTOS_SetSemaphore((RTOS_Semaphore)semaphoreHandle,RTOS_SUSPEND)
@@ -209,8 +209,8 @@ RTOS_Status RTOS_MailqueueSend(RTOS_Mailqueue mailqueue, RTOS_Message data);
 #define dmb() __asm__ __volatile__ ("mcr p15, 0, %0, c7, c10, 5" \
                                     : : "r" (0) : "memory")
 
-void 	rtos_cache_inv_range(void *addr, unsigned int size);
-void 	rtos_cache_clean_range(void *addr, unsigned int size);
+void    rtos_cache_inv_range(void *addr, unsigned int size);
+void    rtos_cache_clean_range(void *addr, unsigned int size);
 
 
 U32 RTOS_Initialize(U32 Heap_size);

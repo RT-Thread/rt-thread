@@ -26,7 +26,7 @@
  *  Version 2.3
  *    ARM_USART_STATUS and ARM_USART_MODEM_STATUS made volatile
  *  Version 2.2
- *    Corrected ARM_USART_CPOL_Pos and ARM_USART_CPHA_Pos definitions 
+ *    Corrected ARM_USART_CPOL_Pos and ARM_USART_CPHA_Pos definitions
  *  Version 2.1
  *    Removed optional argument parameter from Signal Event
  *  Version 2.0
@@ -38,7 +38,7 @@
  *      Synchronous
  *      Single-wire
  *      IrDA
- *      Smart Card  
+ *      Smart Card
  *    Changed prefix ARM_DRV -> ARM_DRIVER
  *  Version 1.10
  *    Namespace prefix ARM_ added
@@ -125,7 +125,7 @@ extern "C"
 
 /*----- USART Control Codes: Miscellaneous Controls  -----*/
 #define ARM_USART_SET_DEFAULT_TX_VALUE      (0x10UL << ARM_USART_CONTROL_Pos)   ///< Set default Transmit value (Synchronous Receive only); arg = value
-#define ARM_USART_SET_IRDA_PULSE            (0x11UL << ARM_USART_CONTROL_Pos)   ///< Set IrDA Pulse in ns; arg: 0=3/16 of bit period  
+#define ARM_USART_SET_IRDA_PULSE            (0x11UL << ARM_USART_CONTROL_Pos)   ///< Set IrDA Pulse in ns; arg: 0=3/16 of bit period
 #define ARM_USART_SET_SMART_CARD_GUARD_TIME (0x12UL << ARM_USART_CONTROL_Pos)   ///< Set Smart Card Guard Time; arg = number of bit periods
 #define ARM_USART_SET_SMART_CARD_CLOCK      (0x13UL << ARM_USART_CONTROL_Pos)   ///< Set Smart Card Clock in Hz; arg: 0=Clock not generated
 #define ARM_USART_CONTROL_SMART_CARD_NACK   (0x14UL << ARM_USART_CONTROL_Pos)   ///< Smart Card NACK generation; arg: 0=disabled, 1=enabled
@@ -268,7 +268,7 @@ typedef volatile struct _ARM_USART_MODEM_STATUS {
   \fn          int32_t ARM_USART_SetModemControl (ARM_USART_MODEM_CONTROL control)
   \brief       Set USART Modem Control line state.
   \param[in]   control  \ref ARM_USART_MODEM_CONTROL
-  \return      \ref execution_status 
+  \return      \ref execution_status
 
   \fn          ARM_USART_MODEM_STATUS ARM_USART_GetModemStatus (void)
   \brief       Get USART Modem Status lines state.
@@ -287,7 +287,7 @@ typedef void (*ARM_USART_SignalEvent_t) (uint32_t event);  ///< Pointer to \ref 
 \brief USART Device Driver Capabilities.
 */
 typedef struct _ARM_USART_CAPABILITIES {
-  uint32_t asynchronous       : 1;      ///< supports UART (Asynchronous) mode 
+  uint32_t asynchronous       : 1;      ///< supports UART (Asynchronous) mode
   uint32_t synchronous_master : 1;      ///< supports Synchronous Master mode
   uint32_t synchronous_slave  : 1;      ///< supports Synchronous Slave mode
   uint32_t single_wire        : 1;      ///< supports UART Single-wire mode

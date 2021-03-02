@@ -69,13 +69,13 @@ void _i2c_master_isr_handler(void);
 #endif
 
 void i2c_master_register_callback(
-		struct i2c_master_module *const module,
-		i2c_master_callback_t callback,
-		enum i2c_master_callback callback_type);
+        struct i2c_master_module *const module,
+        i2c_master_callback_t callback,
+        enum i2c_master_callback callback_type);
 
 void i2c_master_unregister_callback(
-		struct i2c_master_module *const module,
-		enum i2c_master_callback callback_type);
+        struct i2c_master_module *const module,
+        enum i2c_master_callback callback_type);
 
 /**
  * \brief Enables callback
@@ -86,15 +86,15 @@ void i2c_master_unregister_callback(
  * \param[in]     callback_type  Callback type to enable
  */
 static inline void i2c_master_enable_callback(
-		struct i2c_master_module *const module,
-		enum i2c_master_callback callback_type)
+        struct i2c_master_module *const module,
+        enum i2c_master_callback callback_type)
 {
-	/* Sanity check. */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check. */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as enabled. */
-	module->enabled_callback |= (1 << callback_type);
+    /* Mark callback as enabled. */
+    module->enabled_callback |= (1 << callback_type);
 }
 
 /**
@@ -106,15 +106,15 @@ static inline void i2c_master_enable_callback(
  * \param[in]     callback_type  Callback type to disable
  */
 static inline void i2c_master_disable_callback(
-		struct i2c_master_module *const module,
-		enum i2c_master_callback callback_type)
+        struct i2c_master_module *const module,
+        enum i2c_master_callback callback_type)
 {
-	/* Sanity check. */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check. */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as disabled. */
-	module->enabled_callback &= ~(1 << callback_type);
+    /* Mark callback as disabled. */
+    module->enabled_callback &= ~(1 << callback_type);
 }
 
 /** @} */
@@ -124,22 +124,22 @@ static inline void i2c_master_disable_callback(
  * \name Read and Write, Interrupt-Driven
  * @{
  */
- 
+
 enum status_code i2c_master_read_packet_job(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_read_packet_job_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_write_packet_job(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_write_packet_job_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 /** @} */
 

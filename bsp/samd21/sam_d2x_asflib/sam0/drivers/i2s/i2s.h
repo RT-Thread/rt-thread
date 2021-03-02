@@ -209,12 +209,12 @@
  * the FS width, the FS to data bits delay, etc., the module is able to handle
  * I<SUP>2</SUP>S compliant data stream.
  *
- * Also the Serializer can receive PDM format data stream, which allows the 
+ * Also the Serializer can receive PDM format data stream, which allows the
  * I<SUP>2</SUP>S module receive 1 PDM data on each SCK edge.
  *
  * \subsubsection asfdoc_sam0_i2s_module_overview_data_i2s I2S Stream Reception/Transmission
  *
- * For 2-channel I<SUP>2</SUP>S compliant data stream format the I<SUP>2</SUP>S 
+ * For 2-channel I<SUP>2</SUP>S compliant data stream format the I<SUP>2</SUP>S
  * module uses the FS line as word select (WS) signal and will send left channel
  * data word on low WS level and right channel data word on high WS level as
  * specified in the I<SUP>2</SUP>S standard. The supported word sizes are 8-,
@@ -350,18 +350,18 @@ struct i2s_module;
 
 /** Type of the callback functions. */
 typedef void (*i2s_serializer_callback_t)
-		(struct i2s_module *const module);
+        (struct i2s_module *const module);
 
 /**
  * \brief I<SUP>2</SUP>S Serializer Callback enum
  */
 enum i2s_serializer_callback {
-	/** Callback for buffer read/write finished */
-	I2S_SERIALIZER_CALLBACK_BUFFER_DONE,
-	/** Callback for Serializer overrun/underrun */
-	I2S_SERIALIZER_CALLBACK_OVER_UNDER_RUN,
+    /** Callback for buffer read/write finished */
+    I2S_SERIALIZER_CALLBACK_BUFFER_DONE,
+    /** Callback for Serializer overrun/underrun */
+    I2S_SERIALIZER_CALLBACK_OVER_UNDER_RUN,
 #  if !defined(__DOXYGEN__)
-	I2S_SERIALIZER_CALLBACK_N
+    I2S_SERIALIZER_CALLBACK_N
 #  endif
 };
 
@@ -393,229 +393,229 @@ enum i2s_serializer_callback {
  * Master Clock (MCK) source selection.
  */
 enum i2s_master_clock_source {
-	/** Master Clock (MCK) is from general clock */
-	I2S_MASTER_CLOCK_SOURCE_GCLK,
-	/** Master Clock (MCK) is from MCK input pin */
-	I2S_MASTER_CLOCK_SOURCE_MCKPIN
+    /** Master Clock (MCK) is from general clock */
+    I2S_MASTER_CLOCK_SOURCE_GCLK,
+    /** Master Clock (MCK) is from MCK input pin */
+    I2S_MASTER_CLOCK_SOURCE_MCKPIN
 };
 
 /**
  * Serial Clock (SCK) source selection.
  */
 enum i2s_serial_clock_source {
-	/** Serial Clock (SCK) is divided from Master Clock */
-	I2S_SERIAL_CLOCK_SOURCE_MCKDIV,
-	/** Serial Clock (SCK) is input from SCK input pin */
-	I2S_SERIAL_CLOCK_SOURCE_SCKPIN
+    /** Serial Clock (SCK) is divided from Master Clock */
+    I2S_SERIAL_CLOCK_SOURCE_MCKDIV,
+    /** Serial Clock (SCK) is input from SCK input pin */
+    I2S_SERIAL_CLOCK_SOURCE_SCKPIN
 };
 
 /**
  * Data delay from Frame Sync (FS).
  */
 enum i2s_data_delay {
-	/** Left Justified (no delay) */
-	I2S_DATA_DELAY_0,
-	/** I<SUP>2</SUP>S data delay (1-bit delay) */
-	I2S_DATA_DELAY_1,
-	/** Left Justified (no delay) */
-	I2S_DATA_DELAY_LEFT_JUSTIFIED = I2S_DATA_DELAY_0,
-	/** I<SUP>2</SUP>S data delay (1-bit delay) */
-	I2S_DATA_DELAY_I2S = I2S_DATA_DELAY_1
+    /** Left Justified (no delay) */
+    I2S_DATA_DELAY_0,
+    /** I<SUP>2</SUP>S data delay (1-bit delay) */
+    I2S_DATA_DELAY_1,
+    /** Left Justified (no delay) */
+    I2S_DATA_DELAY_LEFT_JUSTIFIED = I2S_DATA_DELAY_0,
+    /** I<SUP>2</SUP>S data delay (1-bit delay) */
+    I2S_DATA_DELAY_I2S = I2S_DATA_DELAY_1
 };
 
 /**
  * Frame Sync (FS) source.
  */
 enum i2s_frame_sync_source {
-	/** Frame Sync (FS) is divided from I<SUP>2</SUP>S Serial Clock */
-	I2S_FRAME_SYNC_SOURCE_SCKDIV,
-	/** Frame Sync (FS) is input from FS input pin */
-	I2S_FRAME_SYNC_SOURCE_FSPIN
+    /** Frame Sync (FS) is divided from I<SUP>2</SUP>S Serial Clock */
+    I2S_FRAME_SYNC_SOURCE_SCKDIV,
+    /** Frame Sync (FS) is input from FS input pin */
+    I2S_FRAME_SYNC_SOURCE_FSPIN
 };
 
 /**
  * Frame Sync (FS) output pulse width.
  */
 enum i2s_frame_sync_width {
-	/** Frame Sync (FS) Pulse is one slot width */
-	I2S_FRAME_SYNC_WIDTH_SLOT,
-	/** Frame Sync (FS) Pulse is half a frame width */
-	I2S_FRAME_SYNC_WIDTH_HALF_FRAME,
-	/** Frame Sync (FS) Pulse is one bit width */
-	I2S_FRAME_SYNC_WIDTH_BIT,
-	/** 1-bit wide Frame Sync (FS) per Data sample, only used when Data transfer
-	 *  is requested */
-	I2S_FRAME_SYNC_WIDTH_BURST
+    /** Frame Sync (FS) Pulse is one slot width */
+    I2S_FRAME_SYNC_WIDTH_SLOT,
+    /** Frame Sync (FS) Pulse is half a frame width */
+    I2S_FRAME_SYNC_WIDTH_HALF_FRAME,
+    /** Frame Sync (FS) Pulse is one bit width */
+    I2S_FRAME_SYNC_WIDTH_BIT,
+    /** 1-bit wide Frame Sync (FS) per Data sample, only used when Data transfer
+     *  is requested */
+    I2S_FRAME_SYNC_WIDTH_BURST
 };
 
 /**
  * Time Slot Size in number of I<SUP>2</SUP>S serial clocks (bits).
  */
 enum i2s_slot_size {
-	/** 8-bit slot */
-	I2S_SLOT_SIZE_8_BIT,
-	/** 16-bit slot */
-	I2S_SLOT_SIZE_16_BIT,
-	/** 24-bit slot */
-	I2S_SLOT_SIZE_24_BIT,
-	/** 32-bit slot */
-	I2S_SLOT_SIZE_32_BIT
+    /** 8-bit slot */
+    I2S_SLOT_SIZE_8_BIT,
+    /** 16-bit slot */
+    I2S_SLOT_SIZE_16_BIT,
+    /** 24-bit slot */
+    I2S_SLOT_SIZE_24_BIT,
+    /** 32-bit slot */
+    I2S_SLOT_SIZE_32_BIT
 };
 
 /**
  * DMA channels usage for I<SUP>2</SUP>S.
  */
 enum i2s_dma_usage {
-	/** Single DMA channel for all I<SUP>2</SUP>S channels */
-	I2S_DMA_USE_SINGLE_CHANNEL_FOR_ALL,
-	/** One DMA channel per data channel */
-	I2S_DMA_USE_ONE_CHANNEL_PER_DATA_CHANNEL
+    /** Single DMA channel for all I<SUP>2</SUP>S channels */
+    I2S_DMA_USE_SINGLE_CHANNEL_FOR_ALL,
+    /** One DMA channel per data channel */
+    I2S_DMA_USE_ONE_CHANNEL_PER_DATA_CHANNEL
 };
 
 /**
  * I<SUP>2</SUP>S data format, to extend mono data to two channels.
  */
 enum i2s_data_format {
-	/** Normal mode, keep data to its right channel */
-	I2S_DATA_FORMAT_STEREO,
-	/** Assume input is mono data for left channel, the data is duplicated to
-	 *  right channel */
-	I2S_DATA_FORMAT_MONO
+    /** Normal mode, keep data to its right channel */
+    I2S_DATA_FORMAT_STEREO,
+    /** Assume input is mono data for left channel, the data is duplicated to
+     *  right channel */
+    I2S_DATA_FORMAT_MONO
 };
 
 /**
  * I<SUP>2</SUP>S data bit order.
  */
 enum i2s_bit_order {
-	/** Transfer Data Most Significant Bit first 
-	 * (Default for I<SUP>2</SUP>S protocol) 
-	 */
-	I2S_BIT_ORDER_MSB_FIRST,
-	/** Transfer Data Least Significant Bit first */
-	I2S_BIT_ORDER_LSB_FIRST
+    /** Transfer Data Most Significant Bit first
+     * (Default for I<SUP>2</SUP>S protocol)
+     */
+    I2S_BIT_ORDER_MSB_FIRST,
+    /** Transfer Data Least Significant Bit first */
+    I2S_BIT_ORDER_LSB_FIRST
 };
 
 /**
  * I<SUP>2</SUP>S data bit padding.
  */
 enum i2s_bit_padding {
-	/** Padding with 0 */
-	I2S_BIT_PADDING_0,
-	/** Padding with 1 */
-	I2S_BIT_PADDING_1,
-	/** Padding with MSBit */
-	I2S_BIT_PADDING_MSB,
-	/** Padding with LSBit */
-	I2S_BIT_PADDING_LSB,
+    /** Padding with 0 */
+    I2S_BIT_PADDING_0,
+    /** Padding with 1 */
+    I2S_BIT_PADDING_1,
+    /** Padding with MSBit */
+    I2S_BIT_PADDING_MSB,
+    /** Padding with LSBit */
+    I2S_BIT_PADDING_LSB,
 };
 
 /**
  * I<SUP>2</SUP>S data word adjust.
  */
 enum i2s_data_adjust {
-	/** Data is right adjusted in word */
-	I2S_DATA_ADJUST_RIGHT,
-	/** Data is left adjusted in word */
-	I2S_DATA_ADJUST_LEFT
+    /** Data is right adjusted in word */
+    I2S_DATA_ADJUST_RIGHT,
+    /** Data is left adjusted in word */
+    I2S_DATA_ADJUST_LEFT
 };
 
 /**
  * I<SUP>2</SUP>S data word size.
  */
 enum i2s_data_size {
-	/** 32-bit */
-	I2S_DATA_SIZE_32BIT,
-	/** 24-bit */
-	I2S_DATA_SIZE_24BIT,
-	/** 20-bit */
-	I2S_DATA_SIZE_20BIT,
-	/** 18-bit */
-	I2S_DATA_SIZE_18BIT,
-	/** 16-bit */
-	I2S_DATA_SIZE_16BIT,
-	/** 16-bit compact stereo */
-	I2S_DATA_SIZE_16BIT_COMPACT,
-	/** 8-bit */
-	I2S_DATA_SIZE_8BIT,
-	/** 8-bit compact stereo */
-	I2S_DATA_SIZE_8BIT_COMPACT
+    /** 32-bit */
+    I2S_DATA_SIZE_32BIT,
+    /** 24-bit */
+    I2S_DATA_SIZE_24BIT,
+    /** 20-bit */
+    I2S_DATA_SIZE_20BIT,
+    /** 18-bit */
+    I2S_DATA_SIZE_18BIT,
+    /** 16-bit */
+    I2S_DATA_SIZE_16BIT,
+    /** 16-bit compact stereo */
+    I2S_DATA_SIZE_16BIT_COMPACT,
+    /** 8-bit */
+    I2S_DATA_SIZE_8BIT,
+    /** 8-bit compact stereo */
+    I2S_DATA_SIZE_8BIT_COMPACT
 };
 
 /**
  * I<SUP>2</SUP>S data slot adjust.
  */
 enum i2s_slot_adjust {
-	/** Data is right adjusted in slot */
-	I2S_SLOT_ADJUST_RIGHT,
-	/** Data is left adjusted in slot */
-	I2S_SLOT_ADJUST_LEFT
+    /** Data is right adjusted in slot */
+    I2S_SLOT_ADJUST_RIGHT,
+    /** Data is left adjusted in slot */
+    I2S_SLOT_ADJUST_LEFT
 };
 
 /**
  * I<SUP>2</SUP>S data padding.
  */
 enum i2s_data_padding {
-	/** Padding 0 in case of under-run */
-	I2S_DATA_PADDING_0,
-	/** Padding last data in case of under-run */
-	I2S_DATA_PADDING_SAME_AS_LAST,
-	/** Padding last data in case of under-run
-	 *  (abbr. \c I2S_DATA_PADDING_SAME_AS_LAST) */
-	I2S_DATA_PADDING_LAST = I2S_DATA_PADDING_SAME_AS_LAST,
-	/** Padding last data in case of under-run
-	 *  (abbr. \c I2S_DATA_PADDING_SAME_AS_LAST) */
-	I2S_DATA_PADDING_SAME = I2S_DATA_PADDING_SAME_AS_LAST
+    /** Padding 0 in case of under-run */
+    I2S_DATA_PADDING_0,
+    /** Padding last data in case of under-run */
+    I2S_DATA_PADDING_SAME_AS_LAST,
+    /** Padding last data in case of under-run
+     *  (abbr. \c I2S_DATA_PADDING_SAME_AS_LAST) */
+    I2S_DATA_PADDING_LAST = I2S_DATA_PADDING_SAME_AS_LAST,
+    /** Padding last data in case of under-run
+     *  (abbr. \c I2S_DATA_PADDING_SAME_AS_LAST) */
+    I2S_DATA_PADDING_SAME = I2S_DATA_PADDING_SAME_AS_LAST
 };
 
 /**
  * I<SUP>2</SUP>S line default value when slot disabled.
  */
 enum i2s_line_default_state {
-	/** Output default value is 0 */
-	I2S_LINE_DEFAULT_0,
-	/** Output default value is 1 */
-	I2S_LINE_DEFAULT_1,
-	/** Output default value is high impedance */
-	I2S_LINE_DEFAULT_HIGH_IMPEDANCE = 3,
-	/** Output default value is high impedance
-	 *  (abbr. \c I2S_LINE_DEFAULT_HIGH_IMPEDANCE) */
-	I2S_LINE_DEFAULT_HIZ = I2S_LINE_DEFAULT_HIGH_IMPEDANCE
+    /** Output default value is 0 */
+    I2S_LINE_DEFAULT_0,
+    /** Output default value is 1 */
+    I2S_LINE_DEFAULT_1,
+    /** Output default value is high impedance */
+    I2S_LINE_DEFAULT_HIGH_IMPEDANCE = 3,
+    /** Output default value is high impedance
+     *  (abbr. \c I2S_LINE_DEFAULT_HIGH_IMPEDANCE) */
+    I2S_LINE_DEFAULT_HIZ = I2S_LINE_DEFAULT_HIGH_IMPEDANCE
 };
 
 /**
  * I<SUP>2</SUP>S Serializer mode.
  */
 enum i2s_serializer_mode {
-	/** Serializer is used to receive data */
-	I2S_SERIALIZER_RECEIVE,
-	/** Serializer is used to transmit data */
-	I2S_SERIALIZER_TRANSMIT,
-	/** Serializer is used to receive PDM data on each clock edge */
-	I2S_SERIALIZER_PDM2
+    /** Serializer is used to receive data */
+    I2S_SERIALIZER_RECEIVE,
+    /** Serializer is used to transmit data */
+    I2S_SERIALIZER_TRANSMIT,
+    /** Serializer is used to receive PDM data on each clock edge */
+    I2S_SERIALIZER_PDM2
 };
 
 /**
  * I<SUP>2</SUP>S clock unit selection.
  */
 enum i2s_clock_unit {
-	/** Clock Unit channel 0 */
-	I2S_CLOCK_UNIT_0,
-	/** Clock Unit channel 1 */
-	I2S_CLOCK_UNIT_1,
-	/** Number of Clock Unit channels */
-	I2S_CLOCK_UNIT_N
+    /** Clock Unit channel 0 */
+    I2S_CLOCK_UNIT_0,
+    /** Clock Unit channel 1 */
+    I2S_CLOCK_UNIT_1,
+    /** Number of Clock Unit channels */
+    I2S_CLOCK_UNIT_N
 };
 
 /**
  * I<SUP>2</SUP>S Serializer selection.
  */
 enum i2s_serializer {
-	/** Serializer channel 0 */
-	I2S_SERIALIZER_0,
-	/** Serializer channel 1 */
-	I2S_SERIALIZER_1,
-	/** Number of Serializer channels */
-	I2S_SERIALIZER_N
+    /** Serializer channel 0 */
+    I2S_SERIALIZER_0,
+    /** Serializer channel 1 */
+    I2S_SERIALIZER_1,
+    /** Number of Serializer channels */
+    I2S_SERIALIZER_N
 };
 
 
@@ -623,125 +623,125 @@ enum i2s_serializer {
  * Configure for I<SUP>2</SUP>S pin.
  */
 struct i2s_pin_config {
-	/** GPIO index to access the pin */
-	uint8_t gpio;
-	/** Pin function MUX */
-	uint8_t mux;
-	/** Enable this pin for I<SUP>2</SUP>S module */
-	bool enable;
+    /** GPIO index to access the pin */
+    uint8_t gpio;
+    /** Pin function MUX */
+    uint8_t mux;
+    /** Enable this pin for I<SUP>2</SUP>S module */
+    bool enable;
 };
 
 /**
  * Configure for I<SUP>2</SUP>S clock (SCK).
  */
 struct i2s_clock_config {
-	/** Divide generic clock to master clock output (1~32, 0,1 means no div) */
-	uint8_t mck_out_div;
-	/** Divide generic clock to serial clock (1~32, 0,1 means no div) */
-	uint8_t sck_div;
-	/** Clock source selection */
-	enum gclk_generator gclk_src;
-	/** Master clock source selection: generated or input from pin */
-	enum i2s_master_clock_source mck_src;
-	/** Serial clock source selection: generated or input from pin */
-	enum i2s_serial_clock_source sck_src;
-	/** Invert master clock output */
-	bool mck_out_invert;
-	/** Invert serial clock output */
-	bool sck_out_invert;
-	/** Generate MCK clock output */
-	bool mck_out_enable;
+    /** Divide generic clock to master clock output (1~32, 0,1 means no div) */
+    uint8_t mck_out_div;
+    /** Divide generic clock to serial clock (1~32, 0,1 means no div) */
+    uint8_t sck_div;
+    /** Clock source selection */
+    enum gclk_generator gclk_src;
+    /** Master clock source selection: generated or input from pin */
+    enum i2s_master_clock_source mck_src;
+    /** Serial clock source selection: generated or input from pin */
+    enum i2s_serial_clock_source sck_src;
+    /** Invert master clock output */
+    bool mck_out_invert;
+    /** Invert serial clock output */
+    bool sck_out_invert;
+    /** Generate MCK clock output */
+    bool mck_out_enable;
 };
 
 /**
  * Configure for I<SUP>2</SUP>S frame sync (FS).
  */
 struct i2s_frame_sync_config {
-	/** Frame Sync (FS) generated or input from pin */
-	enum i2s_frame_sync_source source;
-	/** Frame Sync (FS) width */
-	enum i2s_frame_sync_width width;
-	/** Invert Frame Sync (FS) signal before use */
-	bool invert_use;
-	/** Invert Frame Sync (FS) signal before output */
-	bool invert_out;
+    /** Frame Sync (FS) generated or input from pin */
+    enum i2s_frame_sync_source source;
+    /** Frame Sync (FS) width */
+    enum i2s_frame_sync_width width;
+    /** Invert Frame Sync (FS) signal before use */
+    bool invert_use;
+    /** Invert Frame Sync (FS) signal before output */
+    bool invert_out;
 };
 
 /**
  * Configure for I<SUP>2</SUP>S frame.
  */
 struct i2s_frame_config {
-	/** Number of slots in a frame (1~8, 0,1 means minimum 1) */
-	uint8_t number_slots;
-	/** Size of each slot in frame */
-	enum i2s_slot_size slot_size;
-	/** Data delay from Frame Sync (FS) to first data bit */
-	enum i2s_data_delay data_delay;
-	/** Frame sync (FS) */
-	struct i2s_frame_sync_config frame_sync;
+    /** Number of slots in a frame (1~8, 0,1 means minimum 1) */
+    uint8_t number_slots;
+    /** Size of each slot in frame */
+    enum i2s_slot_size slot_size;
+    /** Data delay from Frame Sync (FS) to first data bit */
+    enum i2s_data_delay data_delay;
+    /** Frame sync (FS) */
+    struct i2s_frame_sync_config frame_sync;
 };
 
 /**
  * Configure for I<SUP>2</SUP>S clock unit.
  */
 struct i2s_clock_unit_config {
-	/** Configure clock generation */
-	struct i2s_clock_config clock;
-	/** Configure frame generation */
-	struct i2s_frame_config frame;
+    /** Configure clock generation */
+    struct i2s_clock_config clock;
+    /** Configure frame generation */
+    struct i2s_frame_config frame;
 
-	/** Configure master clock pin */
-	struct i2s_pin_config mck_pin;
-	/** Configure serial clock pin */
-	struct i2s_pin_config sck_pin;
-	/** Configure frame sync pin */
-	struct i2s_pin_config fs_pin;
+    /** Configure master clock pin */
+    struct i2s_pin_config mck_pin;
+    /** Configure serial clock pin */
+    struct i2s_pin_config sck_pin;
+    /** Configure frame sync pin */
+    struct i2s_pin_config fs_pin;
 };
 
 /**
  * Configure for I<SUP>2</SUP>S Serializer.
  */
 struct i2s_serializer_config {
-	/** Configure Serializer data pin */
-	struct i2s_pin_config data_pin;
+    /** Configure Serializer data pin */
+    struct i2s_pin_config data_pin;
 
-	/** Set to \c true to loop-back output to input pin for test */
-	bool loop_back;
+    /** Set to \c true to loop-back output to input pin for test */
+    bool loop_back;
 
-	/** Set to \c true to assumes mono input and duplicate it (left channel) to
-	 *  right channel */
-	bool mono_mode;
+    /** Set to \c true to assumes mono input and duplicate it (left channel) to
+     *  right channel */
+    bool mono_mode;
 
-	/** Disable data slot */
-	bool disable_data_slot[8];
+    /** Disable data slot */
+    bool disable_data_slot[8];
 
-	/** Set to \c true to transfer LSB first, \c false to transfer MSB first */
-	bool transfer_lsb_first;
-	/** Data Word Formatting Adjust,
-	 *  set to \c true to adjust bits in word to left */
-	bool data_adjust_left_in_word;
-	/** Data Slot Formatting Adjust,
-	 *  set to \c true to adjust words in slot to left */
-	bool data_adjust_left_in_slot;
+    /** Set to \c true to transfer LSB first, \c false to transfer MSB first */
+    bool transfer_lsb_first;
+    /** Data Word Formatting Adjust,
+     *  set to \c true to adjust bits in word to left */
+    bool data_adjust_left_in_word;
+    /** Data Slot Formatting Adjust,
+     *  set to \c true to adjust words in slot to left */
+    bool data_adjust_left_in_slot;
 
-	/** Data Word Size */
-	enum i2s_data_size data_size;
-	/** Data Formatting Bit Extension */
-	enum i2s_bit_padding bit_padding;
-	/** Data padding when under-run */
-	enum i2s_data_padding data_padding;
+    /** Data Word Size */
+    enum i2s_data_size data_size;
+    /** Data Formatting Bit Extension */
+    enum i2s_bit_padding bit_padding;
+    /** Data padding when under-run */
+    enum i2s_data_padding data_padding;
 
-	/** DMA usage */
-	enum i2s_dma_usage dma_usage;
+    /** DMA usage */
+    enum i2s_dma_usage dma_usage;
 
-	/** Clock unit selection */
-	enum i2s_clock_unit clock_unit;
+    /** Clock unit selection */
+    enum i2s_clock_unit clock_unit;
 
-	/** Line default state where slot is disabled */
-	enum i2s_line_default_state line_default_state;
+    /** Line default state where slot is disabled */
+    enum i2s_line_default_state line_default_state;
 
-	/** Serializer Mode */
-	enum i2s_serializer_mode mode;
+    /** Serializer Mode */
+    enum i2s_serializer_mode mode;
 };
 
 /**
@@ -750,40 +750,40 @@ struct i2s_serializer_config {
 struct i2s_serializer_module {
 
 #if I2S_CALLBACK_MODE == true
-	/** Callbacks list for Serializer */
-	i2s_serializer_callback_t callback[I2S_SERIALIZER_CALLBACK_N];
+    /** Callbacks list for Serializer */
+    i2s_serializer_callback_t callback[I2S_SERIALIZER_CALLBACK_N];
 
-	/** Job buffer */
-	void *job_buffer;
-	/** Requested data words to read/write */
-	uint32_t requested_words;
-	/** Transferred data words for read/write */
-	uint32_t transferred_words;
+    /** Job buffer */
+    void *job_buffer;
+    /** Requested data words to read/write */
+    uint32_t requested_words;
+    /** Transferred data words for read/write */
+    uint32_t transferred_words;
 
-	/** Callback mask for registered callbacks */
-	uint8_t registered_callback_mask;
-	/** Callback mask for enabled callbacks */
-	uint8_t enabled_callback_mask;
+    /** Callback mask for registered callbacks */
+    uint8_t registered_callback_mask;
+    /** Callback mask for enabled callbacks */
+    uint8_t enabled_callback_mask;
 
-	/** Status of the ongoing or last transfer job */
-	enum status_code job_status;
+    /** Status of the ongoing or last transfer job */
+    enum status_code job_status;
 #endif
 
-	/** Serializer mode */
-	enum i2s_serializer_mode mode;
-	/** Serializer data word size */
-	enum i2s_data_size data_size;
+    /** Serializer mode */
+    enum i2s_serializer_mode mode;
+    /** Serializer data word size */
+    enum i2s_data_size data_size;
 };
 
 /**
  * \brief I<SUP>2</SUP>S Software Module instance struct.
  */
 struct i2s_module {
-	/** Module HW register access base */
-	I2s *hw;
+    /** Module HW register access base */
+    I2s *hw;
 
-	/** Module Serializer used */
-	struct i2s_serializer_module serializer[2];
+    /** Module Serializer used */
+    struct i2s_serializer_module serializer[2];
 };
 
 /**
@@ -803,13 +803,13 @@ struct i2s_module {
  * \retval true If the module synchronization is ongoing
  */
 static inline bool i2s_is_syncing(
-		const struct i2s_module *const module_inst)
+        const struct i2s_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	return (module_inst->hw->SYNCBUSY.reg > 0);
+    return (module_inst->hw->SYNCBUSY.reg > 0);
 }
 
 /**
@@ -818,8 +818,8 @@ static inline bool i2s_is_syncing(
  */
 
 enum status_code i2s_init(
-		struct i2s_module *const module_inst,
-		I2s *hw);
+        struct i2s_module *const module_inst,
+        I2s *hw);
 
 /** @} */
 
@@ -837,13 +837,13 @@ enum status_code i2s_init(
  */
 static inline void i2s_enable(const struct i2s_module *const module_inst)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	while (module_inst->hw->SYNCBUSY.reg & I2S_SYNCBUSY_ENABLE) {
-		/* Sync wait */
-	}
-	module_inst->hw->CTRLA.reg |= I2S_SYNCBUSY_ENABLE;
+    while (module_inst->hw->SYNCBUSY.reg & I2S_SYNCBUSY_ENABLE) {
+        /* Sync wait */
+    }
+    module_inst->hw->CTRLA.reg |= I2S_SYNCBUSY_ENABLE;
 }
 
 /**
@@ -855,16 +855,16 @@ static inline void i2s_enable(const struct i2s_module *const module_inst)
  */
 static inline void i2s_disable(const struct i2s_module *const module_inst)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	while (module_inst->hw->SYNCBUSY.reg & I2S_SYNCBUSY_ENABLE) {
-		/* Sync wait */
-	}
+    while (module_inst->hw->SYNCBUSY.reg & I2S_SYNCBUSY_ENABLE) {
+        /* Sync wait */
+    }
 
-	module_inst->hw->INTENCLR.reg = I2S_INTENCLR_MASK;
-	module_inst->hw->INTFLAG.reg = I2S_INTFLAG_MASK;
-	module_inst->hw->CTRLA.reg &= ~I2S_SYNCBUSY_ENABLE;
+    module_inst->hw->INTENCLR.reg = I2S_INTENCLR_MASK;
+    module_inst->hw->INTFLAG.reg = I2S_INTFLAG_MASK;
+    module_inst->hw->CTRLA.reg &= ~I2S_SYNCBUSY_ENABLE;
 }
 
 /**
@@ -878,18 +878,18 @@ static inline void i2s_disable(const struct i2s_module *const module_inst)
  */
 static inline void i2s_reset(const struct i2s_module *const module_inst)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Disable the module if it is running */
-	if (module_inst->hw->CTRLA.reg & I2S_CTRLA_ENABLE) {
-		i2s_disable(module_inst);
-		while (i2s_is_syncing(module_inst)) {
-			/* Sync wait */
-		}
-	}
-	/* Reset the HW module */
-	module_inst->hw->CTRLA.reg = I2S_CTRLA_SWRST;
+    /* Disable the module if it is running */
+    if (module_inst->hw->CTRLA.reg & I2S_CTRLA_ENABLE) {
+        i2s_disable(module_inst);
+        while (i2s_is_syncing(module_inst)) {
+            /* Sync wait */
+        }
+    }
+    /* Reset the HW module */
+    module_inst->hw->CTRLA.reg = I2S_CTRLA_SWRST;
 }
 
 /** @} */
@@ -915,47 +915,47 @@ static inline void i2s_reset(const struct i2s_module *const module_inst)
  *                      to set
  */
 static inline void i2s_clock_unit_get_config_defaults(
-		struct i2s_clock_unit_config *const config)
+        struct i2s_clock_unit_config *const config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->clock.mck_out_enable = false;
-	config->clock.gclk_src = GCLK_GENERATOR_0;
+    config->clock.mck_out_enable = false;
+    config->clock.gclk_src = GCLK_GENERATOR_0;
 
-	config->clock.mck_src = I2S_MASTER_CLOCK_SOURCE_GCLK;
-	config->clock.mck_out_div = 1;
-	config->clock.mck_out_invert = false;
+    config->clock.mck_src = I2S_MASTER_CLOCK_SOURCE_GCLK;
+    config->clock.mck_out_div = 1;
+    config->clock.mck_out_invert = false;
 
-	config->clock.sck_src = I2S_SERIAL_CLOCK_SOURCE_MCKDIV;
-	config->clock.sck_div = 1;
-	config->clock.sck_out_invert = false;
+    config->clock.sck_src = I2S_SERIAL_CLOCK_SOURCE_MCKDIV;
+    config->clock.sck_div = 1;
+    config->clock.sck_out_invert = false;
 
-	config->frame.number_slots = 1;
-	config->frame.slot_size = I2S_SLOT_SIZE_32_BIT;
-	config->frame.data_delay = I2S_DATA_DELAY_I2S;
+    config->frame.number_slots = 1;
+    config->frame.slot_size = I2S_SLOT_SIZE_32_BIT;
+    config->frame.data_delay = I2S_DATA_DELAY_I2S;
 
-	config->frame.frame_sync.source = I2S_FRAME_SYNC_SOURCE_SCKDIV;
-	config->frame.frame_sync.width = I2S_FRAME_SYNC_WIDTH_HALF_FRAME;
-	config->frame.frame_sync.invert_use = false;
-	config->frame.frame_sync.invert_out = false;
+    config->frame.frame_sync.source = I2S_FRAME_SYNC_SOURCE_SCKDIV;
+    config->frame.frame_sync.width = I2S_FRAME_SYNC_WIDTH_HALF_FRAME;
+    config->frame.frame_sync.invert_use = false;
+    config->frame.frame_sync.invert_out = false;
 
-	config->mck_pin.enable = false;
-	config->mck_pin.mux = 0;
-	config->mck_pin.gpio = 0;
+    config->mck_pin.enable = false;
+    config->mck_pin.mux = 0;
+    config->mck_pin.gpio = 0;
 
-	config->sck_pin.enable = false;
-	config->sck_pin.mux = 0;
-	config->sck_pin.gpio = 0;
+    config->sck_pin.enable = false;
+    config->sck_pin.mux = 0;
+    config->sck_pin.gpio = 0;
 
-	config->fs_pin.enable = false;
-	config->fs_pin.mux = 0;
-	config->fs_pin.gpio = 0;
+    config->fs_pin.enable = false;
+    config->fs_pin.mux = 0;
+    config->fs_pin.gpio = 0;
 }
 
 enum status_code i2s_clock_unit_set_config(
-		struct i2s_module *const module_inst,
-		const enum i2s_clock_unit clock_unit,
-		const struct i2s_clock_unit_config *config);
+        struct i2s_module *const module_inst,
+        const enum i2s_clock_unit clock_unit,
+        const struct i2s_clock_unit_config *config);
 
 /** @} */
 
@@ -974,20 +974,20 @@ enum status_code i2s_clock_unit_set_config(
  * \param[in] clock_unit    I<SUP>2</SUP>S Clock Unit to enable
  */
 static inline void i2s_clock_unit_enable(
-		const struct i2s_module *const module_inst,
-		const enum i2s_clock_unit clock_unit)
+        const struct i2s_module *const module_inst,
+        const enum i2s_clock_unit clock_unit)
 {
-	uint32_t cken_bit;
+    uint32_t cken_bit;
 
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	cken_bit = I2S_CTRLA_CKEN0 << clock_unit;
+    cken_bit = I2S_CTRLA_CKEN0 << clock_unit;
 
-	while (module_inst->hw->SYNCBUSY.reg & cken_bit) {
-		/* Sync wait */
-	}
-	module_inst->hw->CTRLA.reg |= cken_bit;
+    while (module_inst->hw->SYNCBUSY.reg & cken_bit) {
+        /* Sync wait */
+    }
+    module_inst->hw->CTRLA.reg |= cken_bit;
 }
 
 /**
@@ -999,20 +999,20 @@ static inline void i2s_clock_unit_enable(
  * \param[in] clock_unit    I<SUP>2</SUP>S Clock Unit to disable
  */
 static inline void i2s_clock_unit_disable(
-		const struct i2s_module *const module_inst,
-		const enum i2s_clock_unit clock_unit)
+        const struct i2s_module *const module_inst,
+        const enum i2s_clock_unit clock_unit)
 {
-	uint32_t cken_bit;
+    uint32_t cken_bit;
 
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	cken_bit = I2S_CTRLA_CKEN0 << clock_unit;
+    cken_bit = I2S_CTRLA_CKEN0 << clock_unit;
 
-	while (module_inst->hw->SYNCBUSY.reg & cken_bit) {
-		/* Sync wait */
-	}
-	module_inst->hw->CTRLA.reg &= ~cken_bit;
+    while (module_inst->hw->SYNCBUSY.reg & cken_bit) {
+        /* Sync wait */
+    }
+    module_inst->hw->CTRLA.reg &= ~cken_bit;
 }
 
 /** @} */
@@ -1051,47 +1051,47 @@ static inline void i2s_clock_unit_disable(
  *                      to set
  */
 static inline void i2s_serializer_get_config_defaults(
-		struct i2s_serializer_config *const config)
+        struct i2s_serializer_config *const config)
 {
-	config->loop_back = false;
+    config->loop_back = false;
 
-	config->mono_mode = false;
+    config->mono_mode = false;
 
-	config->disable_data_slot[0] = false;
-	config->disable_data_slot[1] = false;
-	config->disable_data_slot[2] = false;
-	config->disable_data_slot[3] = false;
-	config->disable_data_slot[4] = false;
-	config->disable_data_slot[5] = false;
-	config->disable_data_slot[6] = false;
-	config->disable_data_slot[7] = false;
+    config->disable_data_slot[0] = false;
+    config->disable_data_slot[1] = false;
+    config->disable_data_slot[2] = false;
+    config->disable_data_slot[3] = false;
+    config->disable_data_slot[4] = false;
+    config->disable_data_slot[5] = false;
+    config->disable_data_slot[6] = false;
+    config->disable_data_slot[7] = false;
 
-	config->transfer_lsb_first = false;
-	config->data_adjust_left_in_word = false;
-	config->data_adjust_left_in_slot = true;
+    config->transfer_lsb_first = false;
+    config->data_adjust_left_in_word = false;
+    config->data_adjust_left_in_slot = true;
 
-	config->data_size = I2S_DATA_SIZE_16BIT;
+    config->data_size = I2S_DATA_SIZE_16BIT;
 
-	config->bit_padding = I2S_BIT_PADDING_0;
-	config->data_padding = I2S_DATA_PADDING_0;
+    config->bit_padding = I2S_BIT_PADDING_0;
+    config->data_padding = I2S_DATA_PADDING_0;
 
-	config->dma_usage = I2S_DMA_USE_SINGLE_CHANNEL_FOR_ALL;
+    config->dma_usage = I2S_DMA_USE_SINGLE_CHANNEL_FOR_ALL;
 
-	config->clock_unit = I2S_CLOCK_UNIT_0;
+    config->clock_unit = I2S_CLOCK_UNIT_0;
 
-	config->line_default_state = I2S_LINE_DEFAULT_0;
+    config->line_default_state = I2S_LINE_DEFAULT_0;
 
-	config->mode = I2S_SERIALIZER_TRANSMIT;
+    config->mode = I2S_SERIALIZER_TRANSMIT;
 
-	config->data_pin.enable = false;
-	config->data_pin.gpio = 0;
-	config->data_pin.mux = 0;
+    config->data_pin.enable = false;
+    config->data_pin.gpio = 0;
+    config->data_pin.mux = 0;
 }
 
 enum status_code i2s_serializer_set_config(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const struct i2s_serializer_config *config);
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const struct i2s_serializer_config *config);
 /** @} */
 
 /**
@@ -1108,20 +1108,20 @@ enum status_code i2s_serializer_set_config(
  * \param[in]  serializer    I<SUP>2</SUP>S Serializer to enable
  */
 static inline void i2s_serializer_enable(
-		const struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer)
+        const struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer)
 {
-	uint32_t seren_bit;
+    uint32_t seren_bit;
 
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	seren_bit = I2S_CTRLA_SEREN0 << serializer;
+    seren_bit = I2S_CTRLA_SEREN0 << serializer;
 
-	while (module_inst->hw->SYNCBUSY.reg & seren_bit) {
-		/* Sync wait */
-	}
-	module_inst->hw->CTRLA.reg |= seren_bit;
+    while (module_inst->hw->SYNCBUSY.reg & seren_bit) {
+        /* Sync wait */
+    }
+    module_inst->hw->CTRLA.reg |= seren_bit;
 }
 
 /**
@@ -1133,20 +1133,20 @@ static inline void i2s_serializer_enable(
  * \param[in]  serializer    I<SUP>2</SUP>S Serializer to disable
  */
 static inline void i2s_serializer_disable(
-		const struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer)
+        const struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer)
 {
-	uint32_t seren_bit;
+    uint32_t seren_bit;
 
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	seren_bit = I2S_CTRLA_SEREN0 << serializer;
+    seren_bit = I2S_CTRLA_SEREN0 << serializer;
 
-	while (module_inst->hw->SYNCBUSY.reg & seren_bit) {
-		/* Sync wait */
-	}
-	module_inst->hw->CTRLA.reg &= ~seren_bit;
+    while (module_inst->hw->SYNCBUSY.reg & seren_bit) {
+        /* Sync wait */
+    }
+    module_inst->hw->CTRLA.reg &= ~seren_bit;
 }
 /** @} */
 
@@ -1156,20 +1156,20 @@ static inline void i2s_serializer_disable(
  */
 
 uint32_t i2s_get_status(
-		const struct i2s_module *const module_inst);
+        const struct i2s_module *const module_inst);
 
 void i2s_clear_status(
-		const struct i2s_module *const module_inst,
-		uint32_t status);
+        const struct i2s_module *const module_inst,
+        uint32_t status);
 
 
 enum status_code i2s_enable_status_interrupt(
-		struct i2s_module *const module_inst,
-		uint32_t status);
+        struct i2s_module *const module_inst,
+        uint32_t status);
 
 void i2s_disable_status_interrupt(
-		struct i2s_module *const module_inst,
-		uint32_t status);
+        struct i2s_module *const module_inst,
+        uint32_t status);
 
 /** @}*/
 
@@ -1187,26 +1187,26 @@ void i2s_disable_status_interrupt(
  *
  */
 static inline void i2s_serializer_write_wait(
-		const struct i2s_module *const module_inst,
-		enum i2s_serializer serializer,
-		uint32_t data)
+        const struct i2s_module *const module_inst,
+        enum i2s_serializer serializer,
+        uint32_t data)
 {
-	uint32_t sync_bit, ready_bit;
+    uint32_t sync_bit, ready_bit;
 
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	ready_bit = I2S_INTFLAG_TXRDY0 << serializer;
-	while (!(module_inst->hw->INTFLAG.reg & ready_bit)) {
-		/* Wait until ready to transmit */
-	}
-	sync_bit = I2S_SYNCBUSY_DATA0 << serializer;
-	while (module_inst->hw->SYNCBUSY.reg & sync_bit) {
-		/* Wait sync */
-	}
-	/* Write data */
-	module_inst->hw->DATA[serializer].reg = data;
-	module_inst->hw->INTFLAG.reg = ready_bit;
+    ready_bit = I2S_INTFLAG_TXRDY0 << serializer;
+    while (!(module_inst->hw->INTFLAG.reg & ready_bit)) {
+        /* Wait until ready to transmit */
+    }
+    sync_bit = I2S_SYNCBUSY_DATA0 << serializer;
+    while (module_inst->hw->SYNCBUSY.reg & sync_bit) {
+        /* Wait sync */
+    }
+    /* Write data */
+    module_inst->hw->DATA[serializer].reg = data;
+    module_inst->hw->INTFLAG.reg = ready_bit;
 }
 
 /**
@@ -1216,38 +1216,38 @@ static inline void i2s_serializer_write_wait(
  * \param[in]  serializer    The Serializer to read
  */
 static inline uint32_t i2s_serializer_read_wait(
-		const struct i2s_module *const module_inst,
-		enum i2s_serializer serializer)
+        const struct i2s_module *const module_inst,
+        enum i2s_serializer serializer)
 {
-	uint32_t sync_bit, ready_bit;
-	uint32_t data;
+    uint32_t sync_bit, ready_bit;
+    uint32_t data;
 
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	ready_bit = I2S_INTFLAG_RXRDY0 << serializer;
-	while (!(module_inst->hw->INTFLAG.reg & ready_bit)) {
-		/* Wait until ready to transmit */
-	}
-	sync_bit = I2S_SYNCBUSY_DATA0 << serializer;
-	while (module_inst->hw->SYNCBUSY.reg & sync_bit) {
-		/* Wait sync */
-	}
-	/* Read data */
-	data = module_inst->hw->DATA[serializer].reg;
-	module_inst->hw->INTFLAG.reg = ready_bit;
-	return data;
+    ready_bit = I2S_INTFLAG_RXRDY0 << serializer;
+    while (!(module_inst->hw->INTFLAG.reg & ready_bit)) {
+        /* Wait until ready to transmit */
+    }
+    sync_bit = I2S_SYNCBUSY_DATA0 << serializer;
+    while (module_inst->hw->SYNCBUSY.reg & sync_bit) {
+        /* Wait sync */
+    }
+    /* Read data */
+    data = module_inst->hw->DATA[serializer].reg;
+    module_inst->hw->INTFLAG.reg = ready_bit;
+    return data;
 }
 
 enum status_code i2s_serializer_write_buffer_wait(
-		const struct i2s_module *const module_inst,
-		enum i2s_serializer serializer,
-		void *buffer, uint32_t size);
+        const struct i2s_module *const module_inst,
+        enum i2s_serializer serializer,
+        void *buffer, uint32_t size);
 
 enum status_code i2s_serializer_read_buffer_wait(
-		const struct i2s_module *const module_inst,
-		enum i2s_serializer serializer,
-		void *buffer, uint32_t size);
+        const struct i2s_module *const module_inst,
+        enum i2s_serializer serializer,
+        void *buffer, uint32_t size);
 
 /** @} */
 
@@ -1338,12 +1338,12 @@ enum status_code i2s_serializer_read_buffer_wait(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -1365,21 +1365,21 @@ enum status_code i2s_serializer_read_buffer_wait(
  * \page asfdoc_sam0_i2s_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42255B</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM DA1</td>
- *	</tr>
- *	<tr>
- *		<td>42255A</td>
- *		<td>01/2014</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</th>
+ *      <th>Date</th>
+ *      <th>Comments</th>
+ *  </tr>
+ *  <tr>
+ *      <td>42255B</td>
+ *      <td>12/2015</td>
+ *      <td>Added support for SAM DA1</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42255A</td>
+ *      <td>01/2014</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

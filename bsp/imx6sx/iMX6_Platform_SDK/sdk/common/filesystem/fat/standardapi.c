@@ -33,11 +33,11 @@
  $Revision: 9 $
  $Date: 9/13/03 12:23p $
  Description: Fclose.c
- Notes:	
+ Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -54,7 +54,7 @@
 
    Outputs:       Returns 0 on success else an Error Code if error occurs
 
-   Description:   Closes the opened file 
+   Description:   Closes the opened file
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t Fclose_FAT(int32_t HandleNumber)
@@ -90,7 +90,7 @@ RtStatus_t Fclose_FAT(int32_t HandleNumber)
 
    Outputs:       Returns Byte read from file or EOF or an Error Code if  Error Occurs
 
-   Description:   Reads the byte from file 
+   Description:   Reads the byte from file
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t Fgetc(int32_t HandleNumber)
@@ -120,7 +120,7 @@ RtStatus_t Fgetc(int32_t HandleNumber)
 
    Inputs:        1)HandleNumber
                   2)Number of Bytes to Read
-                  3)Pointer to Buffer 
+                  3)Pointer to Buffer
 
    Outputs:       Returns pointer to buffer containing string else Null Pointer.
 
@@ -161,7 +161,7 @@ uint8_t *Fgets(int32_t HandleNumber, int32_t NumBytesToRead, uint8_t * Buffer)
 
    Outputs:       Returns Byte Written or EOF or an Error Code if  Error Occurs
 
-   Description:   Writes the Byte to file 
+   Description:   Writes the Byte to file
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t Fputc(int32_t HandleNumber, int32_t ByteToWrite)

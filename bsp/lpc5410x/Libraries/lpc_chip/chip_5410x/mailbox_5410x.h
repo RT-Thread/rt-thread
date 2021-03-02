@@ -43,123 +43,123 @@ extern "C" {
 
 /* Mailbox indexes */
 typedef enum {
-	MAILBOX_CM0PLUS = 0,
-	MAILBOX_CM4
+    MAILBOX_CM0PLUS = 0,
+    MAILBOX_CM4
 } MBOX_IDX_T;
-#define MAILBOX_AVAIL       (MAILBOX_CM4 + 1)	/* Number of available mailboxes */
+#define MAILBOX_AVAIL       (MAILBOX_CM4 + 1)   /* Number of available mailboxes */
 
 /** Individual mailbox IRQ structure */
 typedef struct {
-	__IO    uint32_t        IRQ;		/*!< Mailbox data */
-	__O     uint32_t        IRQSET;		/*!< Mailbox data set bits only */
-	__O     uint32_t        IRQCLR;		/*!< Mailbox dataclearset bits only */
-	__I     uint32_t        RESERVED;
+    __IO    uint32_t        IRQ;        /*!< Mailbox data */
+    __O     uint32_t        IRQSET;     /*!< Mailbox data set bits only */
+    __O     uint32_t        IRQCLR;     /*!< Mailbox dataclearset bits only */
+    __I     uint32_t        RESERVED;
 } LPC_MBOXIRQ_T;
 
 /** Mailbox register structure */
-typedef struct {						/*!< Mailbox register structure */
-	LPC_MBOXIRQ_T           BOX[MAILBOX_AVAIL];	/*!< Mailbox, offset 0 = M0+, offset 1 = M4 */
-	LPC_MBOXIRQ_T           RESERVED1[15 - MAILBOX_AVAIL];
-	__I     uint32_t        RESERVED2[2];
-	__IO    uint32_t        MUTEX;		/*!< Mutex */
+typedef struct {                        /*!< Mailbox register structure */
+    LPC_MBOXIRQ_T           BOX[MAILBOX_AVAIL]; /*!< Mailbox, offset 0 = M0+, offset 1 = M4 */
+    LPC_MBOXIRQ_T           RESERVED1[15 - MAILBOX_AVAIL];
+    __I     uint32_t        RESERVED2[2];
+    __IO    uint32_t        MUTEX;      /*!< Mutex */
 } LPC_MBOX_T;
 
 /**
- * @brief	Initialize mailbox
- * @param	pMBOX	: Pointer to the mailbox register structure
- * @return	Nothing
- * @note	Even if both cores use the amilbox, only 1 core should initialize it.
+ * @brief   Initialize mailbox
+ * @param   pMBOX   : Pointer to the mailbox register structure
+ * @return  Nothing
+ * @note    Even if both cores use the amilbox, only 1 core should initialize it.
  */
 STATIC INLINE void Chip_MBOX_Init(LPC_MBOX_T *pMBOX)
 {
-	Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_MAILBOX);
-	Chip_SYSCON_PeriphReset(RESET_MAILBOX);
+    Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_MAILBOX);
+    Chip_SYSCON_PeriphReset(RESET_MAILBOX);
 }
 
 /**
- * @brief	Shutdown mailbox
- * @param	pMBOX	: Pointer to the mailbox register structure
- * @return	Nothing
+ * @brief   Shutdown mailbox
+ * @param   pMBOX   : Pointer to the mailbox register structure
+ * @return  Nothing
  */
 STATIC INLINE void Chip_MBOX_DeInit(LPC_MBOX_T *pMBOX)
 {
-	Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_MAILBOX);
+    Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_MAILBOX);
 }
 
 /**
- * @brief	Set data value in the mailbox based on the CPU ID
- * @param	pMBOX		: Pointer to the mailbox register structure
- * @param	cpu_id		: MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
- * @param	mboxData	: data to send in the mailbox
- * @return	Nothing
- * @note	Sets a data value to send via the MBOX to the other core.
+ * @brief   Set data value in the mailbox based on the CPU ID
+ * @param   pMBOX       : Pointer to the mailbox register structure
+ * @param   cpu_id      : MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
+ * @param   mboxData    : data to send in the mailbox
+ * @return  Nothing
+ * @note    Sets a data value to send via the MBOX to the other core.
  */
 STATIC INLINE void Chip_MBOX_SetValue(LPC_MBOX_T *pMBOX, uint32_t cpu_id, uint32_t mboxData)
 {
-	pMBOX->BOX[cpu_id].IRQ = mboxData;
+    pMBOX->BOX[cpu_id].IRQ = mboxData;
 }
 
 /**
- * @brief	Set data bits in the mailbox based on the CPU ID
- * @param	pMBOX		: Pointer to the mailbox register structure
- * @param	cpu_id		: MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
- * @param	mboxSetBits	: data bits to set in the mailbox
- * @return	Nothing
- * @note	Sets data bits to send via the MBOX to the other core, A value of 0 will
+ * @brief   Set data bits in the mailbox based on the CPU ID
+ * @param   pMBOX       : Pointer to the mailbox register structure
+ * @param   cpu_id      : MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
+ * @param   mboxSetBits : data bits to set in the mailbox
+ * @return  Nothing
+ * @note    Sets data bits to send via the MBOX to the other core, A value of 0 will
  * do nothing.  Only sets bits selected with a 1 in it's bit position.
  */
 STATIC INLINE void Chip_MBOX_SetValueBits(LPC_MBOX_T *pMBOX, uint32_t cpu_id, uint32_t mboxSetBits)
 {
-	pMBOX->BOX[cpu_id].IRQSET = mboxSetBits;
+    pMBOX->BOX[cpu_id].IRQSET = mboxSetBits;
 }
 
 /**
- * @brief	Clear data bits in the mailbox based on the CPU ID
- * @param	pMBOX		: Pointer to the mailbox register structure
- * @param	cpu_id		: MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
- * @param	mboxClrBits	: data bits to clear in the mailbox
- * @return	Nothing
- * @note	Clear data bits to send via the MBOX to the other core. A value of 0 will
+ * @brief   Clear data bits in the mailbox based on the CPU ID
+ * @param   pMBOX       : Pointer to the mailbox register structure
+ * @param   cpu_id      : MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
+ * @param   mboxClrBits : data bits to clear in the mailbox
+ * @return  Nothing
+ * @note    Clear data bits to send via the MBOX to the other core. A value of 0 will
  * do nothing. Only clears bits selected with a 1 in it's bit position.
  */
 STATIC INLINE void Chip_MBOX_ClearValueBits(LPC_MBOX_T *pMBOX, uint32_t cpu_id, uint32_t mboxClrBits)
 {
-	pMBOX->BOX[cpu_id].IRQCLR = mboxClrBits;
+    pMBOX->BOX[cpu_id].IRQCLR = mboxClrBits;
 }
 
 /**
- * @brief	Get data in the mailbox based on the cpu_id
- * @param	pMBOX	: Pointer to the mailbox register structure
- * @param	cpu_id	: MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
- * @return	Current mailbox data
+ * @brief   Get data in the mailbox based on the cpu_id
+ * @param   pMBOX   : Pointer to the mailbox register structure
+ * @param   cpu_id  : MAILBOX_CM0PLUS is M0+ or MAILBOX_CM4 is M4
+ * @return  Current mailbox data
  */
 STATIC INLINE uint32_t Chip_MBOX_GetValue(LPC_MBOX_T *pMBOX, uint32_t cpu_id)
 {
-	return pMBOX->BOX[cpu_id].IRQ;
+    return pMBOX->BOX[cpu_id].IRQ;
 }
 
 /**
- * @brief	Get MUTEX state and lock mutex
- * @param	pMBOX	: Pointer to the mailbox register structure
- * @return	See note
- * @note	Returns '1' if the mutex was taken or '0' if another resources has the
+ * @brief   Get MUTEX state and lock mutex
+ * @param   pMBOX   : Pointer to the mailbox register structure
+ * @return  See note
+ * @note    Returns '1' if the mutex was taken or '0' if another resources has the
  * mutex locked. Once a mutex is taken, it can be returned with the Chip_MBOX_SetMutex()
  * function.
  */
 STATIC INLINE uint32_t Chip_MBOX_GetMutex(LPC_MBOX_T *pMBOX)
 {
-	return pMBOX->MUTEX;
+    return pMBOX->MUTEX;
 }
 
 /**
- * @brief	Set MUTEX state
- * @param	pMBOX	: Pointer to the mailbox register structure
- * @return	Nothing
- * @note	Sets mutex state to '1' and allows other resources to get the mutex
+ * @brief   Set MUTEX state
+ * @param   pMBOX   : Pointer to the mailbox register structure
+ * @return  Nothing
+ * @note    Sets mutex state to '1' and allows other resources to get the mutex
  */
 STATIC INLINE void Chip_MBOX_SetMutex(LPC_MBOX_T *pMBOX)
 {
-	pMBOX->MUTEX = 1;
+    pMBOX->MUTEX = 1;
 }
 
 /**

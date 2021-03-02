@@ -431,7 +431,7 @@ HAL_StatusTypeDef HAL_SDRAM_Write_8b(SDRAM_HandleTypeDef *hsdram, uint32_t *pAdd
   uint32_t size;
   __IO uint8_t *pSdramAddress = (uint8_t *)pAddress;
   uint8_t * psrcbuff = pSrcBuffer;
-  
+
   /* Check the SDRAM controller state */
   if (hsdram->State == HAL_SDRAM_STATE_BUSY)
   {
@@ -455,7 +455,7 @@ HAL_StatusTypeDef HAL_SDRAM_Write_8b(SDRAM_HandleTypeDef *hsdram, uint32_t *pAdd
 
     /* Update the SDRAM controller state */
     hsdram->State = HAL_SDRAM_STATE_READY;
-	
+
     /* Process Unlocked */
     __HAL_UNLOCK(hsdram);
   }
@@ -540,7 +540,7 @@ HAL_StatusTypeDef HAL_SDRAM_Write_16b(SDRAM_HandleTypeDef *hsdram, uint32_t *pAd
   uint32_t size;
   __IO uint32_t *psdramaddress = pAddress;
   uint16_t * psrcbuff = pSrcBuffer;
-  
+
   /* Check the SDRAM controller state */
   if (hsdram->State == HAL_SDRAM_STATE_BUSY)
   {
@@ -553,7 +553,7 @@ HAL_StatusTypeDef HAL_SDRAM_Write_16b(SDRAM_HandleTypeDef *hsdram, uint32_t *pAd
 
     /* Update the SDRAM controller state */
     hsdram->State = HAL_SDRAM_STATE_BUSY;
-    
+
     /* Write data to memory */
     for (size = BufferSize; size >= 2U ; size-=2U)
     {
@@ -572,7 +572,7 @@ HAL_StatusTypeDef HAL_SDRAM_Write_16b(SDRAM_HandleTypeDef *hsdram, uint32_t *pAd
 
     /* Update the SDRAM controller state */
     hsdram->State = HAL_SDRAM_STATE_READY;
-	
+
     /* Process Unlocked */
     __HAL_UNLOCK(hsdram);
   }
@@ -673,7 +673,7 @@ HAL_StatusTypeDef HAL_SDRAM_Write_32b(SDRAM_HandleTypeDef *hsdram, uint32_t *pAd
 
     /* Update the SDRAM controller state */
     hsdram->State = HAL_SDRAM_STATE_READY;
-	
+
     /* Process Unlocked */
     __HAL_UNLOCK(hsdram);
   }
@@ -723,8 +723,8 @@ HAL_StatusTypeDef HAL_SDRAM_Read_DMA(SDRAM_HandleTypeDef *hsdram, uint32_t *pAdd
     }
     hsdram->hmdma->XferErrorCallback = SDRAM_DMAError;
 
-	/* Enable the DMA Stream */
-    status = HAL_MDMA_Start_IT(hsdram->hmdma, (uint32_t)pAddress, (uint32_t)pDstBuffer, (uint32_t)(BufferSize * 4U), 1);	
+    /* Enable the DMA Stream */
+    status = HAL_MDMA_Start_IT(hsdram->hmdma, (uint32_t)pAddress, (uint32_t)pDstBuffer, (uint32_t)(BufferSize * 4U), 1);
 
     /* Process Unlocked */
     __HAL_UNLOCK(hsdram);
@@ -767,7 +767,7 @@ HAL_StatusTypeDef HAL_SDRAM_Write_DMA(SDRAM_HandleTypeDef *hsdram, uint32_t *pAd
     hsdram->hmdma->XferCpltCallback = SDRAM_DMACplt;
     hsdram->hmdma->XferErrorCallback = SDRAM_DMAError;
 
-	/* Enable the DMA Stream */
+    /* Enable the DMA Stream */
   status = HAL_MDMA_Start_IT(hsdram->hmdma, (uint32_t)pSrcBuffer, (uint32_t)pAddress, (uint32_t)(BufferSize * 4U), 1);
 
     /* Process Unlocked */
@@ -798,7 +798,7 @@ HAL_StatusTypeDef HAL_SDRAM_RegisterCallback (SDRAM_HandleTypeDef *hsdram, HAL_S
 {
   HAL_StatusTypeDef status = HAL_OK;
   HAL_SDRAM_StateTypeDef state;
-  
+
   if(pCallback == NULL)
   {
     return HAL_ERROR;
@@ -806,7 +806,7 @@ HAL_StatusTypeDef HAL_SDRAM_RegisterCallback (SDRAM_HandleTypeDef *hsdram, HAL_S
 
   /* Process locked */
   __HAL_LOCK(hsdram);
-  
+
   state = hsdram->State;
   if((state == HAL_SDRAM_STATE_READY) || (state == HAL_SDRAM_STATE_WRITE_PROTECTED))
   {
@@ -871,7 +871,7 @@ HAL_StatusTypeDef HAL_SDRAM_UnRegisterCallback (SDRAM_HandleTypeDef *hsdram, HAL
 {
   HAL_StatusTypeDef status = HAL_OK;
   HAL_SDRAM_StateTypeDef state;
-  
+
   /* Process locked */
   __HAL_LOCK(hsdram);
 
@@ -943,7 +943,7 @@ HAL_StatusTypeDef HAL_SDRAM_RegisterDmaCallback(SDRAM_HandleTypeDef *hsdram, HAL
 {
   HAL_StatusTypeDef status = HAL_OK;
   HAL_SDRAM_StateTypeDef state;
-  
+
   if(pCallback == NULL)
   {
     return HAL_ERROR;
@@ -1041,7 +1041,7 @@ HAL_StatusTypeDef HAL_SDRAM_WriteProtection_Enable(SDRAM_HandleTypeDef *hsdram)
 HAL_StatusTypeDef HAL_SDRAM_WriteProtection_Disable(SDRAM_HandleTypeDef *hsdram)
 {
   HAL_SDRAM_StateTypeDef state = hsdram->State;
-  
+
   /* Check the SDRAM controller state */
   if (state == HAL_SDRAM_STATE_BUSY)
   {
@@ -1077,7 +1077,7 @@ HAL_StatusTypeDef HAL_SDRAM_WriteProtection_Disable(SDRAM_HandleTypeDef *hsdram)
 HAL_StatusTypeDef HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout)
 {
   HAL_SDRAM_StateTypeDef state = hsdram->State;
-  
+
   /* Check the SDRAM controller state */
   if (state == HAL_SDRAM_STATE_BUSY)
   {

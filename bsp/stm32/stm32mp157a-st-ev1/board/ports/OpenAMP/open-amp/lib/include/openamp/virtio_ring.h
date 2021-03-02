@@ -7,7 +7,7 @@
  */
 
 #ifndef VIRTIO_RING_H
-#define	VIRTIO_RING_H
+#define VIRTIO_RING_H
 
 #if defined __cplusplus
 extern "C" {
@@ -18,7 +18,7 @@ extern "C" {
 /* This marks a buffer as write-only (otherwise read-only). */
 #define VRING_DESC_F_WRITE      2
 /* This means the buffer contains a list of buffer descriptors. */
-#define VRING_DESC_F_INDIRECT	4
+#define VRING_DESC_F_INDIRECT   4
 
 /* The Host uses this in used->flags to advise the Guest: don't kick me
  * when you add a buffer.  It's unreliable, so it's simply an
@@ -35,42 +35,42 @@ extern "C" {
  * These can chain together via "next".
  */
 struct vring_desc {
-	/* Address (guest-physical). */
-	uint64_t addr;
-	/* Length. */
-	uint32_t len;
-	/* The flags as indicated above. */
-	uint16_t flags;
-	/* We chain unused descriptors via this, too. */
-	uint16_t next;
+    /* Address (guest-physical). */
+    uint64_t addr;
+    /* Length. */
+    uint32_t len;
+    /* The flags as indicated above. */
+    uint16_t flags;
+    /* We chain unused descriptors via this, too. */
+    uint16_t next;
 };
 
 struct vring_avail {
-	uint16_t flags;
-	uint16_t idx;
-	uint16_t ring[0];
+    uint16_t flags;
+    uint16_t idx;
+    uint16_t ring[0];
 };
 
 /* uint32_t is used here for ids for padding reasons. */
 struct vring_used_elem {
-	/* Index of start of used descriptor chain. */
-	uint32_t id;
-	/* Total length of the descriptor chain which was written to. */
-	uint32_t len;
+    /* Index of start of used descriptor chain. */
+    uint32_t id;
+    /* Total length of the descriptor chain which was written to. */
+    uint32_t len;
 };
 
 struct vring_used {
-	uint16_t flags;
-	uint16_t idx;
-	struct vring_used_elem ring[0];
+    uint16_t flags;
+    uint16_t idx;
+    struct vring_used_elem ring[0];
 };
 
 struct vring {
-	unsigned int num;
+    unsigned int num;
 
-	struct vring_desc *desc;
-	struct vring_avail *avail;
-	struct vring_used *used;
+    struct vring_desc *desc;
+    struct vring_avail *avail;
+    struct vring_used *used;
 };
 
 /* The standard layout for the ring is a continuous chunk of memory which
@@ -103,32 +103,32 @@ struct vring {
  * We publish the used event index at the end of the available ring, and vice
  * versa. They are at the end for backwards compatibility.
  */
-#define vring_used_event(vr)	((vr)->avail->ring[(vr)->num])
-#define vring_avail_event(vr)	((vr)->used->ring[(vr)->num].id & 0xFFFF)
+#define vring_used_event(vr)    ((vr)->avail->ring[(vr)->num])
+#define vring_avail_event(vr)   ((vr)->used->ring[(vr)->num].id & 0xFFFF)
 
 static inline int vring_size(unsigned int num, unsigned long align)
 {
-	int size;
+    int size;
 
-	size = num * sizeof(struct vring_desc);
-	size += sizeof(struct vring_avail) + (num * sizeof(uint16_t)) +
-	    sizeof(uint16_t);
-	size = (size + align - 1) & ~(align - 1);
-	size += sizeof(struct vring_used) +
-	    (num * sizeof(struct vring_used_elem)) + sizeof(uint16_t);
+    size = num * sizeof(struct vring_desc);
+    size += sizeof(struct vring_avail) + (num * sizeof(uint16_t)) +
+        sizeof(uint16_t);
+    size = (size + align - 1) & ~(align - 1);
+    size += sizeof(struct vring_used) +
+        (num * sizeof(struct vring_used_elem)) + sizeof(uint16_t);
 
-	return size;
+    return size;
 }
 
 static inline void
 vring_init(struct vring *vr, unsigned int num, uint8_t *p, unsigned long align)
 {
-	vr->num = num;
-	vr->desc = (struct vring_desc *)p;
-	vr->avail = (struct vring_avail *)(p + num * sizeof(struct vring_desc));
-	vr->used = (struct vring_used *)
-	    (((unsigned long)&vr->avail->ring[num] + sizeof(uint16_t) +
-	      align - 1) & ~(align - 1));
+    vr->num = num;
+    vr->desc = (struct vring_desc *)p;
+    vr->avail = (struct vring_avail *)(p + num * sizeof(struct vring_desc));
+    vr->used = (struct vring_used *)
+        (((unsigned long)&vr->avail->ring[num] + sizeof(uint16_t) +
+          align - 1) & ~(align - 1));
 }
 
 /*
@@ -141,12 +141,12 @@ vring_init(struct vring *vr, unsigned int num, uint8_t *p, unsigned long align)
 static inline int
 vring_need_event(uint16_t event_idx, uint16_t new_idx, uint16_t old)
 {
-	return (uint16_t)(new_idx - event_idx - 1) <
-	    (uint16_t)(new_idx - old);
+    return (uint16_t)(new_idx - event_idx - 1) <
+        (uint16_t)(new_idx - old);
 }
 
 #if defined __cplusplus
 }
 #endif
 
-#endif				/* VIRTIO_RING_H */
+#endif              /* VIRTIO_RING_H */

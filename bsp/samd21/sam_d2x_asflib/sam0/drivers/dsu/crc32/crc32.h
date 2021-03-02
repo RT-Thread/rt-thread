@@ -117,11 +117,11 @@ extern "C" {
 static inline void dsu_crc32_init(void)
 {
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-		/* Turn on the digital interface clock */
-		system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBB, MCLK_APBBMASK_DSU);
+        /* Turn on the digital interface clock */
+        system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBB, MCLK_APBBMASK_DSU);
 #else
-		/* Turn on the digital interface clock */
-		system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBB, PM_APBBMASK_DSU);
+        /* Turn on the digital interface clock */
+        system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBB, PM_APBBMASK_DSU);
 #endif
 
 }
@@ -174,12 +174,12 @@ enum status_code dsu_crc32_cal(const uint32_t addr, const uint32_t len, uint32_t
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 
@@ -197,15 +197,15 @@ enum status_code dsu_crc32_cal(const uint32_t addr, const uint32_t len, uint32_t
  * \page asfdoc_sam0_drivers_crc32_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
+ *  <tr>
  *      <th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>06/2016</td>
- *		<td>Initial release</td>
- *	</tr>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>06/2016</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  *
  */

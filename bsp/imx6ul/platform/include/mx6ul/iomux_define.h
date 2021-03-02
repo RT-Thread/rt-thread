@@ -78,30 +78,30 @@
 #define DO_TRIM_RES1 0x1
 
 #define MK_PAD(HYS, PUS, PUE, PKE, ODE, SPEED, DSE, SRE) ( \
-		((HYS & 0x1) << 16) | \
-		((PUS & 0x3) << 14) | \
-		((PUE & 0x1) << 13) | \
-		((PKE & 0x1) << 12) | \
-		((ODE & 0x1) << 11) | \
-		((SPEED & 0x3) << 6 ) | \
-		((DSE & 0x7) << 3 ) | \
-		((SRE & 0x1) << 0 ) )
+        ((HYS & 0x1) << 16) | \
+        ((PUS & 0x3) << 14) | \
+        ((PUE & 0x1) << 13) | \
+        ((PKE & 0x1) << 12) | \
+        ((ODE & 0x1) << 11) | \
+        ((SPEED & 0x3) << 6 ) | \
+        ((DSE & 0x7) << 3 ) | \
+        ((SRE & 0x1) << 0 ) )
 
-#define PAD_ENET_INPUT	MK_PAD(1, 0, 0, 0, 0, 3, 5, 1)
-#define PAD_ENET_OUTPUT	MK_PAD(0, 0, 0, 0, 0, 3, 5, 1)
-#define PAD_ENET_CTRL	MK_PAD(0, 0, 0, 0, 0, 0, 3, 1)
-#define PAD_GPIO_OUTPUT	MK_PAD(0, 0, 0, 0, 0, 0, 2, 0)
-#define PAD_GPIO_INPUT	MK_PAD(0, 1, 1, 1, 0, 0, 2, 0)
-#define PAD_UART_OUTPUT	MK_PAD(0, 0, 0, 0, 0, 0, 2, 0)
-#define PAD_UART_INPUT	MK_PAD(0, 2, 0, 0, 0, 0, 2, 0)
-#define PAD_I2C			MK_PAD(0, 2, 0, 0, 1, 0, 2, 0)
-#define PAD_I2C4		MK_PAD(0, 2, 0, 0, 1, 0, 4, 0)
-#define PAD_LCD_DATA	MK_PAD(0, 0, 0, 0, 0, 2, 3, 1)
-#define PAD_AUDMUX		MK_PAD(0, 0, 0, 0, 0, 0, 5, 1)
-#define PAD_CAN			MK_PAD(0, 0, 0, 0, 0, 0, 2, 0)
-#define PAD_SDHC_DATA	MK_PAD(0, 1, 1, 1, 0, 2, 3, 1)
-#define PAD_QSPI		MK_PAD(0, 0, 0, 0, 0, 3, 3, 1)
-#define PAD_QSPI_PU		MK_PAD(0, 1, 1, 1, 0, 3, 3, 1)
+#define PAD_ENET_INPUT  MK_PAD(1, 0, 0, 0, 0, 3, 5, 1)
+#define PAD_ENET_OUTPUT MK_PAD(0, 0, 0, 0, 0, 3, 5, 1)
+#define PAD_ENET_CTRL   MK_PAD(0, 0, 0, 0, 0, 0, 3, 1)
+#define PAD_GPIO_OUTPUT MK_PAD(0, 0, 0, 0, 0, 0, 2, 0)
+#define PAD_GPIO_INPUT  MK_PAD(0, 1, 1, 1, 0, 0, 2, 0)
+#define PAD_UART_OUTPUT MK_PAD(0, 0, 0, 0, 0, 0, 2, 0)
+#define PAD_UART_INPUT  MK_PAD(0, 2, 0, 0, 0, 0, 2, 0)
+#define PAD_I2C         MK_PAD(0, 2, 0, 0, 1, 0, 2, 0)
+#define PAD_I2C4        MK_PAD(0, 2, 0, 0, 1, 0, 4, 0)
+#define PAD_LCD_DATA    MK_PAD(0, 0, 0, 0, 0, 2, 3, 1)
+#define PAD_AUDMUX      MK_PAD(0, 0, 0, 0, 0, 0, 5, 1)
+#define PAD_CAN         MK_PAD(0, 0, 0, 0, 0, 0, 2, 0)
+#define PAD_SDHC_DATA   MK_PAD(0, 1, 1, 1, 0, 2, 3, 1)
+#define PAD_QSPI        MK_PAD(0, 0, 0, 0, 0, 3, 3, 1)
+#define PAD_QSPI_PU     MK_PAD(0, 1, 1, 1, 0, 3, 3, 1)
 
 #endif
 

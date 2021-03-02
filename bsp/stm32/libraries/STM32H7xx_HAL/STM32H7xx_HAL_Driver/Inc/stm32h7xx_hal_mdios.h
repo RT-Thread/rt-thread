@@ -195,39 +195,39 @@ typedef  void (*pMDIOS_CallbackTypeDef)(MDIOS_HandleTypeDef * hmdios); /*!< poin
 /** @defgroup MDIOS_Registers_Flags  MDIOS Registers Flags
   * @{
   */
-#define MDIOS_REG0_FLAG			((uint32_t)0x00000001U)
-#define	MDIOS_REG1_FLAG			((uint32_t)0x00000002U)
-#define	MDIOS_REG2_FLAG			((uint32_t)0x00000004U)
-#define	MDIOS_REG3_FLAG			((uint32_t)0x00000008U)
-#define	MDIOS_REG4_FLAG			((uint32_t)0x00000010U)
-#define	MDIOS_REG5_FLAG			((uint32_t)0x00000020U)
-#define	MDIOS_REG6_FLAG			((uint32_t)0x00000040U)
-#define	MDIOS_REG7_FLAG			((uint32_t)0x00000080U)
-#define	MDIOS_REG8_FLAG			((uint32_t)0x00000100U)
-#define	MDIOS_REG9_FLAG			((uint32_t)0x00000200U)
-#define	MDIOS_REG10_FLAG		((uint32_t)0x00000400U)
-#define	MDIOS_REG11_FLAG		((uint32_t)0x00000800U)
-#define	MDIOS_REG12_FLAG		((uint32_t)0x00001000U)
-#define	MDIOS_REG13_FLAG		((uint32_t)0x00002000U)
-#define	MDIOS_REG14_FLAG		((uint32_t)0x00004000U)
-#define	MDIOS_REG15_FLAG		((uint32_t)0x00008000U)
-#define	MDIOS_REG16_FLAG		((uint32_t)0x00010000U)
-#define	MDIOS_REG17_FLAG		((uint32_t)0x00020000U)
-#define	MDIOS_REG18_FLAG		((uint32_t)0x00040000U)
-#define	MDIOS_REG19_FLAG		((uint32_t)0x00080000U)
-#define	MDIOS_REG20_FLAG		((uint32_t)0x00100000U)
-#define	MDIOS_REG21_FLAG		((uint32_t)0x00200000U)
-#define	MDIOS_REG22_FLAG		((uint32_t)0x00400000U)
-#define	MDIOS_REG23_FLAG		((uint32_t)0x00800000U)
-#define	MDIOS_REG24_FLAG		((uint32_t)0x01000000U)
-#define	MDIOS_REG25_FLAG		((uint32_t)0x02000000U)
-#define	MDIOS_REG26_FLAG		((uint32_t)0x04000000U)
-#define	MDIOS_REG27_FLAG		((uint32_t)0x08000000U)
-#define	MDIOS_REG28_FLAG		((uint32_t)0x10000000U)
-#define	MDIOS_REG29_FLAG		((uint32_t)0x20000000U)
-#define	MDIOS_REG30_FLAG		((uint32_t)0x40000000U)
-#define	MDIOS_REG31_FLAG		((uint32_t)0x80000000U)
-#define	MDIOS_ALLREG_FLAG		((uint32_t)0xFFFFFFFFU)
+#define MDIOS_REG0_FLAG         ((uint32_t)0x00000001U)
+#define MDIOS_REG1_FLAG         ((uint32_t)0x00000002U)
+#define MDIOS_REG2_FLAG         ((uint32_t)0x00000004U)
+#define MDIOS_REG3_FLAG         ((uint32_t)0x00000008U)
+#define MDIOS_REG4_FLAG         ((uint32_t)0x00000010U)
+#define MDIOS_REG5_FLAG         ((uint32_t)0x00000020U)
+#define MDIOS_REG6_FLAG         ((uint32_t)0x00000040U)
+#define MDIOS_REG7_FLAG         ((uint32_t)0x00000080U)
+#define MDIOS_REG8_FLAG         ((uint32_t)0x00000100U)
+#define MDIOS_REG9_FLAG         ((uint32_t)0x00000200U)
+#define MDIOS_REG10_FLAG        ((uint32_t)0x00000400U)
+#define MDIOS_REG11_FLAG        ((uint32_t)0x00000800U)
+#define MDIOS_REG12_FLAG        ((uint32_t)0x00001000U)
+#define MDIOS_REG13_FLAG        ((uint32_t)0x00002000U)
+#define MDIOS_REG14_FLAG        ((uint32_t)0x00004000U)
+#define MDIOS_REG15_FLAG        ((uint32_t)0x00008000U)
+#define MDIOS_REG16_FLAG        ((uint32_t)0x00010000U)
+#define MDIOS_REG17_FLAG        ((uint32_t)0x00020000U)
+#define MDIOS_REG18_FLAG        ((uint32_t)0x00040000U)
+#define MDIOS_REG19_FLAG        ((uint32_t)0x00080000U)
+#define MDIOS_REG20_FLAG        ((uint32_t)0x00100000U)
+#define MDIOS_REG21_FLAG        ((uint32_t)0x00200000U)
+#define MDIOS_REG22_FLAG        ((uint32_t)0x00400000U)
+#define MDIOS_REG23_FLAG        ((uint32_t)0x00800000U)
+#define MDIOS_REG24_FLAG        ((uint32_t)0x01000000U)
+#define MDIOS_REG25_FLAG        ((uint32_t)0x02000000U)
+#define MDIOS_REG26_FLAG        ((uint32_t)0x04000000U)
+#define MDIOS_REG27_FLAG        ((uint32_t)0x08000000U)
+#define MDIOS_REG28_FLAG        ((uint32_t)0x10000000U)
+#define MDIOS_REG29_FLAG        ((uint32_t)0x20000000U)
+#define MDIOS_REG30_FLAG        ((uint32_t)0x40000000U)
+#define MDIOS_REG31_FLAG        ((uint32_t)0x80000000U)
+#define MDIOS_ALLREG_FLAG       ((uint32_t)0xFFFFFFFFU)
 /**
   * @}
   */
@@ -245,9 +245,9 @@ typedef  void (*pMDIOS_CallbackTypeDef)(MDIOS_HandleTypeDef * hmdios); /*!< poin
 /** @defgroup MDIOS_Interrupt_Flags  MDIOS Interrupt Flags
   * @{
   */
-#define	MDIOS_TURNAROUND_ERROR_FLAG       MDIOS_SR_TERF
-#define	MDIOS_START_ERROR_FLAG            MDIOS_SR_SERF
-#define	MDIOS_PREAMBLE_ERROR_FLAG         MDIOS_SR_PERF
+#define MDIOS_TURNAROUND_ERROR_FLAG       MDIOS_SR_TERF
+#define MDIOS_START_ERROR_FLAG            MDIOS_SR_SERF
+#define MDIOS_PREAMBLE_ERROR_FLAG         MDIOS_SR_PERF
 /**
   * @}
   */

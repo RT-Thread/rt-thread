@@ -35,16 +35,16 @@
 
 /** @addtogroup DFSDM
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup DFSDM_Exported_Types DFSDM Exported Types
   * @{
   */
 
-/** 
-  * @brief  HAL DFSDM Channel states definition  
-  */ 
+/**
+  * @brief  HAL DFSDM Channel states definition
+  */
 typedef enum
 {
   HAL_DFSDM_CHANNEL_STATE_RESET = 0x00U, /*!< DFSDM channel not initialized */
@@ -52,9 +52,9 @@ typedef enum
   HAL_DFSDM_CHANNEL_STATE_ERROR = 0xFFU  /*!< DFSDM channel state error */
 }HAL_DFSDM_Channel_StateTypeDef;
 
-/** 
-  * @brief  DFSDM channel output clock structure definition  
-  */  
+/**
+  * @brief  DFSDM channel output clock structure definition
+  */
 typedef struct
 {
   FunctionalState Activation; /*!< Output clock enable/disable */
@@ -64,9 +64,9 @@ typedef struct
                                    This parameter must be a number between Min_Data = 2 and Max_Data = 256 */
 }DFSDM_Channel_OutputClockTypeDef;
 
-/** 
-  * @brief  DFSDM channel input structure definition  
-  */  
+/**
+  * @brief  DFSDM channel input structure definition
+  */
 typedef struct
 {
   uint32_t Multiplexer; /*!< Input is external serial inputs or internal register.
@@ -77,9 +77,9 @@ typedef struct
                              This parameter can be a value of @ref DFSDM_Channel_InputPins */
 }DFSDM_Channel_InputTypeDef;
 
-/** 
-  * @brief  DFSDM channel serial interface structure definition  
-  */  
+/**
+  * @brief  DFSDM channel serial interface structure definition
+  */
 typedef struct
 {
   uint32_t Type;     /*!< SPI or Manchester modes.
@@ -88,9 +88,9 @@ typedef struct
                           This parameter can be a value of @ref DFSDM_Channel_SpiClock */
 }DFSDM_Channel_SerialInterfaceTypeDef;
 
-/** 
-  * @brief  DFSDM channel analog watchdog structure definition  
-  */  
+/**
+  * @brief  DFSDM channel analog watchdog structure definition
+  */
 typedef struct
 {
   uint32_t FilterOrder;  /*!< Analog watchdog Sinc filter order.
@@ -99,9 +99,9 @@ typedef struct
                               This parameter must be a number between Min_Data = 1 and Max_Data = 32 */
 }DFSDM_Channel_AwdTypeDef;
 
-/** 
-  * @brief  DFSDM channel init structure definition  
-  */  
+/**
+  * @brief  DFSDM channel init structure definition
+  */
 typedef struct
 {
   DFSDM_Channel_OutputClockTypeDef     OutputClock;     /*!< DFSDM channel output clock parameters */
@@ -114,14 +114,14 @@ typedef struct
                                                              This parameter must be a number between Min_Data = 0x00 and Max_Data = 0x1F */
 }DFSDM_Channel_InitTypeDef;
 
-/** 
-  * @brief  DFSDM channel handle structure definition  
-  */  
+/**
+  * @brief  DFSDM channel handle structure definition
+  */
 #if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 typedef struct __DFSDM_Channel_HandleTypeDef
 #else
 typedef struct
-#endif /* USE_HAL_DFSDM_REGISTER_CALLBACKS */ 
+#endif /* USE_HAL_DFSDM_REGISTER_CALLBACKS */
 {
   DFSDM_Channel_TypeDef          *Instance; /*!< DFSDM channel instance */
   DFSDM_Channel_InitTypeDef      Init;      /*!< DFSDM channel init parameters */
@@ -151,9 +151,9 @@ typedef enum
   */
 typedef void (*pDFSDM_Channel_CallbackTypeDef)(DFSDM_Channel_HandleTypeDef *hdfsdm_channel);
 #endif
-/** 
-  * @brief  HAL DFSDM Filter states definition  
-  */ 
+/**
+  * @brief  HAL DFSDM Filter states definition
+  */
 typedef enum
 {
   HAL_DFSDM_FILTER_STATE_RESET   = 0x00U, /*!< DFSDM filter not initialized */
@@ -164,9 +164,9 @@ typedef enum
   HAL_DFSDM_FILTER_STATE_ERROR   = 0xFFU  /*!< DFSDM filter state error */
 }HAL_DFSDM_Filter_StateTypeDef;
 
-/** 
-  * @brief  DFSDM filter regular conversion parameters structure definition  
-  */  
+/**
+  * @brief  DFSDM filter regular conversion parameters structure definition
+  */
 typedef struct
 {
   uint32_t        Trigger;  /*!< Trigger used to start regular conversion: software or synchronous.
@@ -175,9 +175,9 @@ typedef struct
   FunctionalState DmaMode;  /*!< Enable/disable DMA for regular conversion */
 }DFSDM_Filter_RegularParamTypeDef;
 
-/** 
-  * @brief  DFSDM filter injected conversion parameters structure definition  
-  */  
+/**
+  * @brief  DFSDM filter injected conversion parameters structure definition
+  */
 typedef struct
 {
   uint32_t        Trigger;        /*!< Trigger used to start injected conversion: software, external or synchronous.
@@ -190,9 +190,9 @@ typedef struct
                                        This parameter can be a value of @ref DFSDM_Filter_ExtTriggerEdge */
 }DFSDM_Filter_InjectedParamTypeDef;
 
-/** 
-  * @brief  DFSDM filter parameters structure definition  
-  */  
+/**
+  * @brief  DFSDM filter parameters structure definition
+  */
 typedef struct
 {
   uint32_t SincOrder;       /*!< Sinc filter order.
@@ -203,9 +203,9 @@ typedef struct
                                  This parameter must be a number between Min_Data = 1 and Max_Data = 256 */
 }DFSDM_Filter_FilterParamTypeDef;
 
-/** 
-  * @brief  DFSDM filter init structure definition  
-  */  
+/**
+  * @brief  DFSDM filter init structure definition
+  */
 typedef struct
 {
   DFSDM_Filter_RegularParamTypeDef  RegularParam;  /*!< DFSDM regular conversion parameters */
@@ -213,14 +213,14 @@ typedef struct
   DFSDM_Filter_FilterParamTypeDef   FilterParam;   /*!< DFSDM filter parameters */
 }DFSDM_Filter_InitTypeDef;
 
-/** 
-  * @brief  DFSDM filter handle structure definition  
-  */  
+/**
+  * @brief  DFSDM filter handle structure definition
+  */
 #if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
 typedef struct __DFSDM_Filter_HandleTypeDef
 #else
 typedef struct
-#endif /* USE_HAL_DFSDM_REGISTER_CALLBACKS */  
+#endif /* USE_HAL_DFSDM_REGISTER_CALLBACKS */
 {
   DFSDM_Filter_TypeDef          *Instance;           /*!< DFSDM filter instance */
   DFSDM_Filter_InitTypeDef      Init;                /*!< DFSDM filter init parameters */
@@ -234,7 +234,7 @@ typedef struct
   uint32_t                      InjectedChannelsNbr; /*!< Number of channels in injected sequence */
   uint32_t                      InjConvRemaining;    /*!< Injected conversions remaining */
   HAL_DFSDM_Filter_StateTypeDef State;               /*!< DFSDM filter state */
-  uint32_t                      ErrorCode;           /*!< DFSDM filter error code */  
+  uint32_t                      ErrorCode;           /*!< DFSDM filter error code */
 #if (USE_HAL_DFSDM_REGISTER_CALLBACKS == 1)
   void (*AwdCallback)             (struct __DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
                                    uint32_t Channel, uint32_t Threshold);               /*!< DFSDM filter analog watchdog callback */
@@ -248,9 +248,9 @@ typedef struct
 #endif
 }DFSDM_Filter_HandleTypeDef;
 
-/** 
-  * @brief  DFSDM filter analog watchdog parameters structure definition  
-  */  
+/**
+  * @brief  DFSDM filter analog watchdog parameters structure definition
+  */
 typedef struct
 {
   uint32_t DataSource;      /*!< Values from digital filter or from channel watchdog filter.
@@ -290,7 +290,7 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
 #endif
 /**
   * @}
-  */ 
+  */
 /* End of exported types -----------------------------------------------------*/
 
 /* Exported constants --------------------------------------------------------*/
@@ -382,7 +382,7 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
   * @{
   */
 #define DFSDM_FILTER_EXT_TRIG_TIM1_TRGO  ((uint32_t)0x00000000U)                             /*!< For DFSDM filter 0, 1, 2 and 3 */
-#define DFSDM_FILTER_EXT_TRIG_TIM1_TRGO2 DFSDM_FLTCR1_JEXTSEL_0                              /*!< For DFSDM filter 0, 1, 2 and 3 */ 
+#define DFSDM_FILTER_EXT_TRIG_TIM1_TRGO2 DFSDM_FLTCR1_JEXTSEL_0                              /*!< For DFSDM filter 0, 1, 2 and 3 */
 #define DFSDM_FILTER_EXT_TRIG_TIM8_TRGO  DFSDM_FLTCR1_JEXTSEL_1                              /*!< For DFSDM filter 0, 1, 2 and 3 */
 #define DFSDM_FILTER_EXT_TRIG_TIM8_TRGO2 (DFSDM_FLTCR1_JEXTSEL_0 | DFSDM_FLTCR1_JEXTSEL_1)   /*!< For DFSDM filter 0, 1, 2 and 3 */
 #define DFSDM_FILTER_EXT_TRIG_TIM3_TRGO  DFSDM_FLTCR1_JEXTSEL_2                              /*!< For DFSDM filter 0, 1, 2 and 3 */
@@ -393,12 +393,12 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
 #define DFSDM_FILTER_EXT_TRIG_TIM7_TRGO  DFSDM_FLTCR1_JEXTSEL_3                              /*!< For DFSDM filter 0, 1, 2 and 3 */
 #define DFSDM_FILTER_EXT_TRIG_EXTI11     (DFSDM_FLTCR1_JEXTSEL_3 | DFSDM_FLTCR1_JEXTSEL_4)   /*!< For DFSDM filter 0, 1, 2 and 3 */
 #define DFSDM_FILTER_EXT_TRIG_EXTI15     (DFSDM_FLTCR1_JEXTSEL_0 | DFSDM_FLTCR1_JEXTSEL_3 | \
-                                         DFSDM_FLTCR1_JEXTSEL_4)                             /*!< For DFSDM filter 0, 1, 2 and 3 */                         
+                                         DFSDM_FLTCR1_JEXTSEL_4)                             /*!< For DFSDM filter 0, 1, 2 and 3 */
 #define DFSDM_FILTER_EXT_TRIG_LPTIM1_OUT (DFSDM_FLTCR1_JEXTSEL_1 | DFSDM_FLTCR1_JEXTSEL_3 | \
-                                         DFSDM_FLTCR1_JEXTSEL_4)                             /*!< For DFSDM filter 0, 1, 2 and 3 */                          
+                                         DFSDM_FLTCR1_JEXTSEL_4)                             /*!< For DFSDM filter 0, 1, 2 and 3 */
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup DFSDM_Filter_ExtTriggerEdge DFSDM filter external trigger edge
   * @{
@@ -434,7 +434,7 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
 
 /** @defgroup DFSDM_Filter_ErrorCode DFSDM filter error code
   * @{
-  */ 
+  */
 #define DFSDM_FILTER_ERROR_NONE             ((uint32_t)0x00000000U) /*!< No error */
 #define DFSDM_FILTER_ERROR_REGULAR_OVERRUN  ((uint32_t)0x00000001U) /*!< Overrun occurs during regular conversion */
 #define DFSDM_FILTER_ERROR_INJECTED_OVERRUN ((uint32_t)0x00000002U) /*!< Overrun occurs during injected conversion */
@@ -467,7 +467,7 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
    - in 16-bit MSB the channel number is set
    e.g. for channel 5 definition:
         - the channel mask is 0x00000020 (bit 5 is set)
-        - the channel number 5 is 0x00050000 
+        - the channel number 5 is 0x00050000
         --> Consequently, channel 5 definition is 0x00000020 | 0x00050000 = 0x00050020 */
 #define DFSDM_CHANNEL_0                              ((uint32_t)0x00000001U)
 #define DFSDM_CHANNEL_1                              ((uint32_t)0x00010002U)
@@ -501,10 +501,10 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
 
 /**
   * @}
-  */ 
+  */
 /* End of exported constants -------------------------------------------------*/
 
-/* Exported macros -----------------------------------------------------------*/  
+/* Exported macros -----------------------------------------------------------*/
 /** @defgroup DFSDM_Exported_Macros DFSDM Exported Macros
  * @{
  */
@@ -541,8 +541,8 @@ typedef void (*pDFSDM_Filter_AwdCallbackTypeDef)(DFSDM_Filter_HandleTypeDef *hdf
   * @}
   */
 /* End of exported macros ----------------------------------------------------*/
-  
-/* Exported functions --------------------------------------------------------*/  
+
+/* Exported functions --------------------------------------------------------*/
 /** @addtogroup DFSDM_Exported_Functions DFSDM Exported Functions
   * @{
   */
@@ -775,17 +775,17 @@ uint32_t                      HAL_DFSDM_FilterGetError(DFSDM_Filter_HandleTypeDe
                                                        ((MODE) == DFSDM_CONTINUOUS_CONV_ON))
 /**
   * @}
-  */ 
+  */
 /* End of private macros -----------------------------------------------------*/
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
   */
-#endif /* STM32F765xx || STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */ 
+#endif /* STM32F765xx || STM32F767xx || STM32F769xx || STM32F777xx || STM32F779xx */
 #ifdef __cplusplus
 }
 #endif

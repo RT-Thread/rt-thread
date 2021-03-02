@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -115,7 +115,7 @@ static void PHD_Disassociation_Timer_Callback(void* arg);
 
 /*****************************************************************************
  * Constant and Macro's
- *****************************************************************************/ 
+ *****************************************************************************/
 PHD_STATE_MC_FUNC const phd_state_mc_func[AG_MAX_STATES][AG_MAX_EVENTS] =
 {
    /* PHD_AG_STATE_DISCONNECTED */
@@ -167,12 +167,12 @@ static uint_8 assoc_retry_count = PHD_ASSOC_RETRY_COUNT;
  * Local Functions
  *****************************************************************************/
 #if(defined LITTLE_ENDIAN)
-intu16 SWAPBYTE16(intu16 a) 
+intu16 SWAPBYTE16(intu16 a)
  {
     return ((a >> (intu16)0x08) | ((a & 0xFF) << (intu16)0x08));
  }
 #else
-#define SWAPBYTE16(a) 			(a)
+#define SWAPBYTE16(a)           (a)
 #endif
 /******************************************************************************
  *
@@ -195,14 +195,14 @@ static void PHD_OPN_STATE_PRST_APDU_Handler (
     APDU* val               /* [IN] Pointer to APDU received */
 )
 {
-    if( (val->choice == PRST_CHOSEN) &&        
+    if( (val->choice == PRST_CHOSEN) &&
         (
          (phd_com_state == PHD_AG_STATE_CON_ASSOC_OPERATING) ||
          (phd_com_state == PHD_AG_STATE_CON_ASSOCIATING)     ||
          (phd_com_state == PHD_AG_STATE_CON_ASSOC_CFG_SENDING_CONFIG) ||
          (phd_com_state == PHD_AG_STATE_CON_ASSOC_CFG_WAITING_APPROVAL)
-        )         
-      ) 
+        )
+      )
     {
         /* get the APDU received starting from invoke id */
         DATA_apdu *p_data_pdu = (DATA_apdu *)&(val->u.prst.value);
@@ -210,26 +210,26 @@ static void PHD_OPN_STATE_PRST_APDU_Handler (
         if(p_data_pdu->choice.choice == ROIV_CMIP_GET_CHOSEN)
         {/* its the Get command */
             if(p_data_pdu->choice.u.roiv_cmipGet.attribute_id_list.count == 0)
-            { 
-				/* count 0 implies the whole MDS class */
-            	uint_16 invoke_id = SWAPBYTE16(p_data_pdu->invoke_id);
-				
+            {
+                /* count 0 implies the whole MDS class */
+                uint_16 invoke_id = SWAPBYTE16(p_data_pdu->invoke_id);
+
                 /* if phd_buffer is already in use, return */
                 /* Safe to test without Disable/Enable interrupts, PHD_OPN_STATE_PRST_APDU_Handler
                    is only called from interrupt context
-                 */   
-                if(g_phd_buffer_being_used == TRUE) 
+                 */
+                if(g_phd_buffer_being_used == TRUE)
                 {
-                    return;   
+                    return;
                 }
                 g_phd_buffer_being_used = TRUE;
 
                 /* copy the get attribute response into the phd_buffer */
-				(void)memcpy(phd_buffer, 
-					g_phd_cnf_param[g_phd_selected_configuration].
-						DimGetAttrRes, 
-					(size_t)g_phd_cnf_param[g_phd_selected_configuration].
-						DimGetAttrResSize);
+                (void)memcpy(phd_buffer,
+                    g_phd_cnf_param[g_phd_selected_configuration].
+                        DimGetAttrRes,
+                    (size_t)g_phd_cnf_param[g_phd_selected_configuration].
+                        DimGetAttrResSize);
                 /* get the invoke id from the get attribute request sent
                 by manager */
 #if(defined LITTLE_ENDIAN)
@@ -244,26 +244,26 @@ static void PHD_OPN_STATE_PRST_APDU_Handler (
                 g_sent_resp_get_attr=TRUE;
                 /* Send Atributes to Manager */
                 (void)USB_Class_PHDC_Send_Data(controller_ID, FALSE, 0,
-                	SEND_DATA_QOS, (uint_8_ptr)phd_buffer,
+                    SEND_DATA_QOS, (uint_8_ptr)phd_buffer,
                     (USB_PACKET_SIZE)
                     (g_phd_cnf_param[g_phd_selected_configuration].
-					DimGetAttrResSize));
+                    DimGetAttrResSize));
             }
         }
         else if(p_data_pdu->choice.choice == RORS_CMIP_CONFIRMED_EVENT_REPORT_CHOSEN)
         {
-          if(phd_com_state == PHD_AG_STATE_CON_ASSOC_CFG_WAITING_APPROVAL) 
-          {            
+          if(phd_com_state == PHD_AG_STATE_CON_ASSOC_CFG_WAITING_APPROVAL)
+          {
                       /* confirmed */
             /* configuration accepted */
             ConfigReportRsp *p_rsp = (ConfigReportRsp *)p_data_pdu->choice.
                    u.rors_cmipConfirmedEventReport.event_reply_info.value;
             p_rsp->config_report_id = SWAPBYTE16(p_rsp->config_report_id);
-            if((p_rsp->config_report_id == 
+            if((p_rsp->config_report_id ==
             (g_phd_cnf_param[g_phd_selected_configuration].ConfigurationVal)) &&
                (p_rsp->config_result == ACCEPTED_CONFIG ))
             {
-                (void)PHD_Remove_Timer(&timer_index); 
+                (void)PHD_Remove_Timer(&timer_index);
                 /* if configuration accepted, enter operating state */
                 phd_com_state = PHD_AG_STATE_CON_ASSOC_OPERATING;
                 g_phd_callback(controller_ID,APP_PHD_CONNECTED_TO_HOST);
@@ -274,15 +274,15 @@ static void PHD_OPN_STATE_PRST_APDU_Handler (
                 /* configuration not accepted by the manager */
                 phd_com_state = PHD_AG_STATE_CON_ASSOC_CFG_SENDING_CONFIG;
             }
-          } 
-          else 
+          }
+          else
           {
             /* confirmed report on completion */
             /* if the received APDU is the response to the measurements sent */
-            (void)PHD_Remove_Timer(&timer_index);            
+            (void)PHD_Remove_Timer(&timer_index);
             g_phd_callback(controller_ID,APP_PHD_MEASUREMENT_SENT);
           }
-          
+
         }
 
     }
@@ -314,7 +314,7 @@ static void PHD_Config_Event_Report_Handler (
        ( val->choice ==  PRST_CHOSEN))
     {
         DATA_apdu *p_data_pdu = (DATA_apdu *)&(val->u.prst.value);
-        (void)PHD_Remove_Timer(&timer_index);                
+        (void)PHD_Remove_Timer(&timer_index);
         if(p_data_pdu->choice.choice ==
                                   RORS_CMIP_CONFIRMED_EVENT_REPORT_CHOSEN)
         {
@@ -322,7 +322,7 @@ static void PHD_Config_Event_Report_Handler (
             /* configuration accepted */
             ConfigReportRsp *p_rsp = (ConfigReportRsp *)p_data_pdu->choice.
                    u.rors_cmipConfirmedEventReport.event_reply_info.value;
-            if((p_rsp->config_report_id == 
+            if((p_rsp->config_report_id ==
             (g_phd_cnf_param[g_phd_selected_configuration].ConfigurationVal)) &&
                (p_rsp->config_result == ACCEPTED_CONFIG ))
             {
@@ -364,8 +364,8 @@ static void PHD_Assoc_Response_Handler (
         ( val->choice ==  AARE_CHOSEN))
     {
         AARE_apdu *p_assoc_res = &(val->u.aare);
-        (void)PHD_Remove_Timer(&timer_index);  
-           
+        (void)PHD_Remove_Timer(&timer_index);
+
         if( p_assoc_res->result == ACCEPTED_UNKNOWN_CONFIG)
         {
             /* if manager says the configuration is unknown, send configuration
@@ -455,10 +455,10 @@ static void PHD_Assoc_RelRes_Handler(
 )
 {
     UNUSED (val)
-    (void)PHD_Remove_Timer(&timer_index);        
+    (void)PHD_Remove_Timer(&timer_index);
     phd_com_state = PHD_AG_STATE_CON_UNASSOCIATED;
     assoc_retry_count = PHD_ASSOC_RETRY_COUNT;
-    g_phd_callback(controller_ID, APP_PHD_DISCONNECTED_FROM_HOST);    
+    g_phd_callback(controller_ID, APP_PHD_DISCONNECTED_FROM_HOST);
 }
 /******************************************************************************
  *
@@ -480,11 +480,11 @@ static void PHD_Assoc_RelReq_Handler(
 )
 {
     UNUSED (val)
-    (void)PHD_Remove_Timer(&timer_index);    
+    (void)PHD_Remove_Timer(&timer_index);
     /* send release response */
     (void)USB_Class_PHDC_Send_Data(controller_ID, FALSE, 0,SEND_DATA_QOS,
                     (uint_8_ptr)(g_phd_cnf_param[g_phd_selected_configuration].
-                    AssociationRelRes), 
+                    AssociationRelRes),
                     REL_RES_SIZE);
 
     phd_com_state = PHD_AG_STATE_CON_UNASSOCIATED;
@@ -572,160 +572,160 @@ void PHD_Callback(
 
     switch (event_type)
     {
-		case USB_APP_BUS_RESET:
+        case USB_APP_BUS_RESET:
         case USB_APP_CONFIG_CHANGED:
-			/* on reset, transport is disconnected */
-			trans_event = PHD_AG_EVT_TRANSPORT_DISCONNECTED;
-			break;
-		case USB_APP_ENUM_COMPLETE:
+            /* on reset, transport is disconnected */
+            trans_event = PHD_AG_EVT_TRANSPORT_DISCONNECTED;
+            break;
+        case USB_APP_ENUM_COMPLETE:
 #if HIGH_SPEED_DEVICE
-			USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, phd_buffer, PHD_BUFF_SIZE);
+            USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, phd_buffer, PHD_BUFF_SIZE);
 #endif
-			
-			/* when enumeration is complete, transport is connected */
-			trans_event = PHD_AG_EVT_TRANSPORT_CONNECTED;
-			break;
-	    case USB_APP_META_DATA_PARAMS_CHANGED:
-        case USB_APP_ERROR:
-			(void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, NULL, 0);
-			return;
-			break;
-		case USB_APP_GET_DATA_BUFF:
-		{
-			/* called by lower layer to get recv buffer */
-			PTR_USB_CLASS_PHDC_RX_BUFF rx_buff = 
-				(PTR_USB_CLASS_PHDC_RX_BUFF)val;
 
-			/* Copy Received Data*/
-			if(phd_buffer_offset == 0)
-			{
-				(void)memcpy(phd_buffer, rx_buff->in_buff, rx_buff->in_size);
-			}
+            /* when enumeration is complete, transport is connected */
+            trans_event = PHD_AG_EVT_TRANSPORT_CONNECTED;
+            break;
+        case USB_APP_META_DATA_PARAMS_CHANGED:
+        case USB_APP_ERROR:
+            (void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, NULL, 0);
+            return;
+            break;
+        case USB_APP_GET_DATA_BUFF:
+        {
+            /* called by lower layer to get recv buffer */
+            PTR_USB_CLASS_PHDC_RX_BUFF rx_buff =
+                (PTR_USB_CLASS_PHDC_RX_BUFF)val;
+
+            /* Copy Received Data*/
+            if(phd_buffer_offset == 0)
+            {
+                (void)memcpy(phd_buffer, rx_buff->in_buff, rx_buff->in_size);
+            }
 
 #ifdef _MC9S08JS16_H
-		    phd_buffer_offset += rx_buff->in_size;
-            (void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, 
-                phd_buffer + phd_buffer_offset, 
+            phd_buffer_offset += rx_buff->in_size;
+            (void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS,
+                phd_buffer + phd_buffer_offset,
                 (uint_8)(rx_buff->transfer_size - phd_buffer_offset));
-#else            
-		    phd_buffer_offset += rx_buff->in_size;
-            (void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, 
-                phd_buffer + phd_buffer_offset, 
-                (uint_16)(rx_buff->transfer_size - phd_buffer_offset));	
-#endif     
-			break;
-		}
-		case USB_APP_GET_TRANSFER_SIZE:
-		{
-            PTR_USB_CLASS_PHDC_XFER_SIZE xfer_size = 
-				(PTR_USB_CLASS_PHDC_XFER_SIZE)val;
-#if USB_METADATA_SUPPORTED
-			if(xfer_size->meta_data_packet)
-			{
-				PTR_USB_META_DATA_MSG_PREAMBLE metadata_preamble_ptr =
-					(PTR_USB_META_DATA_MSG_PREAMBLE)xfer_size->in_buff;
-				xfer_size->transfer_size = (USB_PACKET_SIZE)
-					(metadata_preamble_ptr->opaque_data_size + 
-					METADATA_HEADER_SIZE);
-			}
-			else
+#else
+            phd_buffer_offset += rx_buff->in_size;
+            (void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS,
+                phd_buffer + phd_buffer_offset,
+                (uint_16)(rx_buff->transfer_size - phd_buffer_offset));
 #endif
-			{
+            break;
+        }
+        case USB_APP_GET_TRANSFER_SIZE:
+        {
+            PTR_USB_CLASS_PHDC_XFER_SIZE xfer_size =
+                (PTR_USB_CLASS_PHDC_XFER_SIZE)val;
+#if USB_METADATA_SUPPORTED
+            if(xfer_size->meta_data_packet)
+            {
+                PTR_USB_META_DATA_MSG_PREAMBLE metadata_preamble_ptr =
+                    (PTR_USB_META_DATA_MSG_PREAMBLE)xfer_size->in_buff;
+                xfer_size->transfer_size = (USB_PACKET_SIZE)
+                    (metadata_preamble_ptr->opaque_data_size +
+                    METADATA_HEADER_SIZE);
+            }
+            else
+#endif
+            {
 
-		    	APDU *papdu = (APDU*)xfer_size->in_buff;
-			    xfer_size->transfer_size = (USB_PACKET_SIZE)
-    			    (papdu->length + APDU_HEADER_SIZE);
-			}
-			if(xfer_size->direction == USB_RECV)
-			{
-			    phd_buffer_offset = 0;
-			}
-			break;
-		}
-		case USB_APP_DATA_RECEIVED:
-		{
-			PTR_USB_APP_EVENT_DATA_RECEIVED rx_buff = 
-				(PTR_USB_APP_EVENT_DATA_RECEIVED )val;
-		
-			/* Copy Received Data*/
-			if(phd_buffer_offset == 0)
-			{
-				(void)memcpy(phd_buffer, rx_buff->buffer_ptr, rx_buff->size);
-			}
+                APDU *papdu = (APDU*)xfer_size->in_buff;
+                xfer_size->transfer_size = (USB_PACKET_SIZE)
+                    (papdu->length + APDU_HEADER_SIZE);
+            }
+            if(xfer_size->direction == USB_RECV)
+            {
+                phd_buffer_offset = 0;
+            }
+            break;
+        }
+        case USB_APP_DATA_RECEIVED:
+        {
+            PTR_USB_APP_EVENT_DATA_RECEIVED rx_buff =
+                (PTR_USB_APP_EVENT_DATA_RECEIVED )val;
 
-			/* receive data complete */
-			trans_event = PHD_AG_EVT_TRANSPORT_APDU_RECEIVED;
-		    
-		}
-			break;
-		case USB_APP_SEND_COMPLETE:
-			/* send data complete */
-			g_phd_buffer_being_used = FALSE;/* release the phd_buffer */
-			switch (phd_com_state)
-			{
-				case PHD_AG_STATE_CON_ASSOCIATING:
-				{                
-					TIMER_OBJECT AssocTimerObject;
-					/* 10 sec timer */
-					AssocTimerObject.msCount = PHD_ASSOCIATION_TIMEOUT;
-					AssocTimerObject.pfnTimerCallback = 
-					    PHD_Association_Timer_Callback;
-					/* start timer */
-					timer_index = PHD_Add_Timer(&AssocTimerObject);
-					break;
-				}
-				case PHD_AG_STATE_CON_ASSOC_CFG_SENDING_CONFIG:
-				{                
+            /* Copy Received Data*/
+            if(phd_buffer_offset == 0)
+            {
+                (void)memcpy(phd_buffer, rx_buff->buffer_ptr, rx_buff->size);
+            }
 
-					TIMER_OBJECT ConfigTimerObject;
-					phd_com_state = 
-						PHD_AG_STATE_CON_ASSOC_CFG_WAITING_APPROVAL;
-					/* 10 sec timer */
-					ConfigTimerObject.msCount = PHD_CONFIGURATION_TIMEOUT;
-					ConfigTimerObject.pfnTimerCallback = 
-						PHD_Configuration_Timer_Callback;
-					/* start timer */
-					timer_index = PHD_Add_Timer(&ConfigTimerObject);
-					break;
-				}
-				case PHD_AG_STATE_CON_DISASSOCIATING:
-				{
-					TIMER_OBJECT DissocTimerObject;
-					/* 3 sec timer */
-					DissocTimerObject.msCount = PHD_ASSOC_RELEASE_TIMEOUT;
-					DissocTimerObject.pfnTimerCallback = 
-						PHD_Disassociation_Timer_Callback;
-					/* start timer */
-					timer_index = PHD_Add_Timer(&DissocTimerObject);
-					break;
-				}
-				case PHD_AG_STATE_CON_ASSOC_OPERATING:
-				{
-					if(g_sent_resp_get_attr==TRUE)
-					{
-						/* attributes sent, ready to send measurements */
-						g_phd_callback(controller_ID,
-							APP_PHD_CONNECTED_TO_HOST);
-						g_sent_resp_get_attr=FALSE;
-					}
-					else if(phd_com_state == PHD_AG_STATE_CON_ASSOC_OPERATING)
-					{
-						TIMER_OBJECT MsrTimerObject;
-						/* 3 sec timer */
-						MsrTimerObject.msCount = PHD_DEFAULT_RESPONSE_TIMEOUT;
-						MsrTimerObject.pfnTimerCallback = 
-							PHD_Msr_Timer_Callback;
-						/* start timer */
-						timer_index = PHD_Add_Timer(&MsrTimerObject);                
-					}
-					break;
-				}
-			} /* End switch(phd_com_state) */
-			break;
+            /* receive data complete */
+            trans_event = PHD_AG_EVT_TRANSPORT_APDU_RECEIVED;
 
-		default:
-			break;
-	}/* End switch(event_type) */
+        }
+            break;
+        case USB_APP_SEND_COMPLETE:
+            /* send data complete */
+            g_phd_buffer_being_used = FALSE;/* release the phd_buffer */
+            switch (phd_com_state)
+            {
+                case PHD_AG_STATE_CON_ASSOCIATING:
+                {
+                    TIMER_OBJECT AssocTimerObject;
+                    /* 10 sec timer */
+                    AssocTimerObject.msCount = PHD_ASSOCIATION_TIMEOUT;
+                    AssocTimerObject.pfnTimerCallback =
+                        PHD_Association_Timer_Callback;
+                    /* start timer */
+                    timer_index = PHD_Add_Timer(&AssocTimerObject);
+                    break;
+                }
+                case PHD_AG_STATE_CON_ASSOC_CFG_SENDING_CONFIG:
+                {
+
+                    TIMER_OBJECT ConfigTimerObject;
+                    phd_com_state =
+                        PHD_AG_STATE_CON_ASSOC_CFG_WAITING_APPROVAL;
+                    /* 10 sec timer */
+                    ConfigTimerObject.msCount = PHD_CONFIGURATION_TIMEOUT;
+                    ConfigTimerObject.pfnTimerCallback =
+                        PHD_Configuration_Timer_Callback;
+                    /* start timer */
+                    timer_index = PHD_Add_Timer(&ConfigTimerObject);
+                    break;
+                }
+                case PHD_AG_STATE_CON_DISASSOCIATING:
+                {
+                    TIMER_OBJECT DissocTimerObject;
+                    /* 3 sec timer */
+                    DissocTimerObject.msCount = PHD_ASSOC_RELEASE_TIMEOUT;
+                    DissocTimerObject.pfnTimerCallback =
+                        PHD_Disassociation_Timer_Callback;
+                    /* start timer */
+                    timer_index = PHD_Add_Timer(&DissocTimerObject);
+                    break;
+                }
+                case PHD_AG_STATE_CON_ASSOC_OPERATING:
+                {
+                    if(g_sent_resp_get_attr==TRUE)
+                    {
+                        /* attributes sent, ready to send measurements */
+                        g_phd_callback(controller_ID,
+                            APP_PHD_CONNECTED_TO_HOST);
+                        g_sent_resp_get_attr=FALSE;
+                    }
+                    else if(phd_com_state == PHD_AG_STATE_CON_ASSOC_OPERATING)
+                    {
+                        TIMER_OBJECT MsrTimerObject;
+                        /* 3 sec timer */
+                        MsrTimerObject.msCount = PHD_DEFAULT_RESPONSE_TIMEOUT;
+                        MsrTimerObject.pfnTimerCallback =
+                            PHD_Msr_Timer_Callback;
+                        /* start timer */
+                        timer_index = PHD_Add_Timer(&MsrTimerObject);
+                    }
+                    break;
+                }
+            } /* End switch(phd_com_state) */
+            break;
+
+        default:
+            break;
+    }/* End switch(event_type) */
 
     if(trans_event != 0xff)
     {
@@ -734,15 +734,15 @@ void PHD_Callback(
 
         /* get the received APDU */
         USB_APP_EVENT_DATA_RECEIVED *p_recv =
-			(USB_APP_EVENT_DATA_RECEIVED *)val;
+            (USB_APP_EVENT_DATA_RECEIVED *)val;
 
         APDU *p_apdu = (APDU *)(phd_buffer);
 
         if(trans_event == PHD_AG_EVT_TRANSPORT_APDU_RECEIVED)
         {
-			/* apdu received from transport */
+            /* apdu received from transport */
             transport_event = (uint_8)((p_apdu->choice >> UPPER_BYTE_SHIFT)
-				& LOW_NIBBLE_MASK);
+                & LOW_NIBBLE_MASK);
         }
 
         com_state = (uint_8)(phd_com_state & AG_PHD_STATE_MASK);
@@ -750,7 +750,7 @@ void PHD_Callback(
         if(phd_state_mc_func[com_state][transport_event] != NULL)
         {   /* incase valid event then call the function */
             (void)phd_state_mc_func[com_state][transport_event]
-				(controller_ID, p_apdu);
+                (controller_ID, p_apdu);
         }
         else
         {
@@ -758,9 +758,9 @@ void PHD_Callback(
             g_phd_callback(controller_ID,APP_PHD_ERROR);
         }
     }
-	/* Start next Receive */
-	if(trans_event == PHD_AG_EVT_TRANSPORT_APDU_RECEIVED)
-	    (void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, NULL, 0);
+    /* Start next Receive */
+    if(trans_event == PHD_AG_EVT_TRANSPORT_APDU_RECEIVED)
+        (void)USB_Class_PHDC_Recv_Data(controller_ID, PHDC_BULK_OUT_QOS, NULL, 0);
     return;
 }
 
@@ -788,7 +788,7 @@ uint_8 PHD_Transport_Init(
 )
 {
     g_phd_callback = phd_callback;
-	g_controllerID = controller_ID;
+    g_controllerID = controller_ID;
     return USB_Class_PHDC_Init(controller_ID, PHD_Callback, NULL);
 }
 /******************************************************************************
@@ -816,7 +816,7 @@ void PHD_Connect_to_Manager(
         /* Send Assoc request to Manager */
         (void)USB_Class_PHDC_Send_Data(controller_ID, FALSE, 0, SEND_DATA_QOS,
                     (uint_8_ptr)(g_phd_cnf_param[g_phd_selected_configuration].
-                    AssociationReq), 
+                    AssociationReq),
                     ASSOC_REQ_SIZE);
     }
 
@@ -844,20 +844,20 @@ void PHD_Disconnect_from_Manager(
         case PHD_AG_STATE_CON_ASSOCIATING:
             phd_com_state = PHD_AG_STATE_CON_UNASSOCIATED;
             /* Send abort */
-            PHD_Send_Abort_to_Manager(controller_ID, 
-				(uint_16)ABORT_REASON_UNDEFINED);
+            PHD_Send_Abort_to_Manager(controller_ID,
+                (uint_16)ABORT_REASON_UNDEFINED);
             break;
         case PHD_AG_STATE_CON_DISASSOCIATING:
         case PHD_AG_STATE_CON_UNASSOCIATED:
             /* No State Change in case of Dis-Associating or UnAssociated */
             break;
         default:
-			phd_com_state = PHD_AG_STATE_CON_DISASSOCIATING;
-			/* Send Association release to Manager */
+            phd_com_state = PHD_AG_STATE_CON_DISASSOCIATING;
+            /* Send Association release to Manager */
             (void)USB_Class_PHDC_Send_Data(controller_ID, FALSE, 0,
                   SEND_DATA_QOS,
                   (uint_8_ptr)(g_phd_cnf_param[g_phd_selected_configuration].
-                  AssociationRelReq), 
+                  AssociationRelReq),
                   REL_REQ_SIZE);
             break;
     }
@@ -883,16 +883,16 @@ void PHD_Send_Abort_to_Manager (
 {
     extern uint_8 const PHD_ABRT[];
     phd_com_state = PHD_AG_STATE_CON_UNASSOCIATED;
-    assoc_retry_count = PHD_ASSOC_RETRY_COUNT;    
+    assoc_retry_count = PHD_ASSOC_RETRY_COUNT;
     (void)memcpy(phd_buffer, PHD_ABRT, ABRT_SIZE);
-    
+
     /* Update the abort reason */
     phd_buffer[4] = (uint_8)((abort_reason >> 8) & 0xFF);
-    phd_buffer[5] = (uint_8)(abort_reason & 0xFF);    
-    
+    phd_buffer[5] = (uint_8)(abort_reason & 0xFF);
+
     /* Send Abort to Manager */
     (void)USB_Class_PHDC_Send_Data(controller_ID, FALSE, 0, SEND_DATA_QOS,
-		(uint_8_ptr)&phd_buffer, ABRT_SIZE);
+        (uint_8_ptr)&phd_buffer, ABRT_SIZE);
 }
 
 /******************************************************************************
@@ -915,33 +915,33 @@ void PHD_Send_Measurements_to_Manager(
     if(phd_com_state == PHD_AG_STATE_CON_ASSOC_OPERATING)
     {
         USB_PACKET_SIZE buff_size = (USB_PACKET_SIZE)PHD_BUFF_SIZE;
-        
+
         DisableInterrupts;
-		#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+        #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
         usb_int_dis();
-        #endif		
+        #endif
         /* if phd_buffer already in use, return */
-        if(g_phd_buffer_being_used == TRUE) 
-		{
+        if(g_phd_buffer_being_used == TRUE)
+        {
             EnableInterrupts;
-			#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+            #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
             usb_int_en();
-            #endif			
-			return;
-		}
+            #endif
+            return;
+        }
         g_phd_buffer_being_used = TRUE;
         EnableInterrupts;
-		#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+        #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
          usb_int_en();
-        #endif		
-        
+        #endif
+
         /* update measurements of the selected specialization */
         (g_phd_cnf_param[g_phd_selected_configuration].usb_phd_send_msr)
-                                            (0, &phd_buffer, (void*)&buff_size); 
+                                            (0, &phd_buffer, (void*)&buff_size);
         /* send measurements */
         (void)USB_Class_PHDC_Send_Data(controller_ID, FALSE, 0, SEND_DATA_QOS,
-			(uint_8_ptr)phd_buffer, buff_size);
-                                                                             
+            (uint_8_ptr)phd_buffer, buff_size);
+
     }
 }
 
@@ -956,7 +956,7 @@ void PHD_Send_Measurements_to_Manager(
  *    @return      None
  *
  *****************************************************************************
- * This function is called whenever association response is not received 
+ * This function is called whenever association response is not received
  * within the association timeout time (10 seconds)
  *****************************************************************************/
 #ifdef TIMER_CALLBACK_ARG
@@ -968,11 +968,11 @@ static void PHD_Association_Timer_Callback(void)
 #ifdef TIMER_CALLBACK_ARG
     UNUSED(arg)
 #endif
-    
+
     /* Decrement association retry count */
     assoc_retry_count--;
     if(assoc_retry_count != 0)
-    {                
+    {
         /* connect to the manager if max retry count not reached */
         PHD_Connect_to_Manager(g_controllerID);
     }
@@ -980,11 +980,11 @@ static void PHD_Association_Timer_Callback(void)
     {
 
         /* association failed for max retry count, so trasition to unassociated
-        state, and reset the retry count. Now it is upto the application to 
+        state, and reset the retry count. Now it is upto the application to
         start the association */
         /* Send abort */
-        PHD_Send_Abort_to_Manager(g_controllerID, 
-		(uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
+        PHD_Send_Abort_to_Manager(g_controllerID,
+        (uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
         /* send error to app layer */
         g_phd_callback(g_controllerID, APP_PHD_ASSOCIATION_TIMEDOUT);
     }
@@ -993,7 +993,7 @@ static void PHD_Association_Timer_Callback(void)
  *
  *    @name        PHD_Configuration_Timer_Callback
  *
- *    @brief       This function is called whenever configuration timeout 
+ *    @brief       This function is called whenever configuration timeout
  *                 occurs
  *
  *    @param       arg : Argument passed by Timer ISR (optional)
@@ -1001,8 +1001,8 @@ static void PHD_Association_Timer_Callback(void)
  *    @return      None
  *
  *****************************************************************************
- * This function is called whenever no response is received by the device 
- * after sending the configuration event report within the configuration 
+ * This function is called whenever no response is received by the device
+ * after sending the configuration event report within the configuration
  * timeout time
  *****************************************************************************/
 #ifdef TIMER_CALLBACK_ARG
@@ -1015,8 +1015,8 @@ static void PHD_Configuration_Timer_Callback(void)
     UNUSED(arg)
 #endif
     /* Send abort */
-    PHD_Send_Abort_to_Manager(g_controllerID, 
-		(uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
+    PHD_Send_Abort_to_Manager(g_controllerID,
+        (uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
 }
 /******************************************************************************
  *
@@ -1029,7 +1029,7 @@ static void PHD_Configuration_Timer_Callback(void)
  *    @return      None
  *
  *****************************************************************************
- * This function is called whenever the response to the measurements is not 
+ * This function is called whenever the response to the measurements is not
  * sent by the host within the specified time
  *****************************************************************************/
 #ifdef TIMER_CALLBACK_ARG
@@ -1042,8 +1042,8 @@ static void PHD_Msr_Timer_Callback(void)
     UNUSED(arg)
 #endif
     /* Send abort */
-    PHD_Send_Abort_to_Manager(g_controllerID, 
-		(uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
+    PHD_Send_Abort_to_Manager(g_controllerID,
+        (uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
 }
 /******************************************************************************
  *
@@ -1056,10 +1056,10 @@ static void PHD_Msr_Timer_Callback(void)
  *    @return      None
  *
  *****************************************************************************
- * This function is called whenever the timer expires after the disassociation 
- * request is sent by the device i.e. no packet received in response to the 
+ * This function is called whenever the timer expires after the disassociation
+ * request is sent by the device i.e. no packet received in response to the
  * association release request
- *****************************************************************************/    
+ *****************************************************************************/
 #ifdef TIMER_CALLBACK_ARG
 static void PHD_Disassociation_Timer_Callback(void* arg)
 #else
@@ -1070,15 +1070,15 @@ static void PHD_Disassociation_Timer_Callback(void)
     UNUSED(arg)
 #endif
     /* Send abort */
-    PHD_Send_Abort_to_Manager(g_controllerID, 
-		(uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
+    PHD_Send_Abort_to_Manager(g_controllerID,
+        (uint_16) ABORT_REASON_RESPONSE_TIMEOUT);
 }
 
 /******************************************************************************
  *
  *    @name        PHD_Remove_Timer
  *
- *    @brief       This funtion calls the Timer api to remove the timer from 
+ *    @brief       This funtion calls the Timer api to remove the timer from
  *                 the queue
  *
  *    @param       pindex : Pointer to Timer Index
@@ -1102,10 +1102,10 @@ static uint_8 PHD_Remove_Timer(uint_8_ptr pindex)
     return err;
 #else
     UNUSED(pindex)
-	return ERR_SUCCESS;
-#endif	
+    return ERR_SUCCESS;
+#endif
 }
-        
+
 /******************************************************************************
  *
  *    @name        PHD_Add_Timer
@@ -1118,14 +1118,14 @@ static uint_8 PHD_Remove_Timer(uint_8_ptr pindex)
  *                 Others       : In case of error
  *
  *****************************************************************************
- * This function when called starts a timer 
+ * This function when called starts a timer
  *****************************************************************************/
 static uint_8 PHD_Add_Timer(PTIMER_OBJECT pTimerObject)
 {
-#if MAX_TIMER_OBJECTS    
-	return AddTimerQ(pTimerObject);
+#if MAX_TIMER_OBJECTS
+    return AddTimerQ(pTimerObject);
 #else
     UNUSED(pTimerObject)
-	return ERR_SUCCESS;	
-#endif	
+    return ERR_SUCCESS;
+#endif
 }

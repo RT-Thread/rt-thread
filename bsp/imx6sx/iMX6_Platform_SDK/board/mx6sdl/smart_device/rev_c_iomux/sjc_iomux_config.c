@@ -84,8 +84,8 @@ void sjc_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_JTAG_MOD_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_MOD_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_MOD_PUS_V(100K_OHM_PU) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_MOD_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_MOD_PUS_V(100K_OHM_PU) |
             BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_MOD_PKE_V(ENABLED));
 
     // Config sjc.JTAG_TCK to pad JTAG_TCK(H5)
@@ -139,8 +139,8 @@ void sjc_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_JTAG_TCK_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TCK_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TCK_PUS_V(47K_OHM_PU) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TCK_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TCK_PUS_V(47K_OHM_PU) |
             BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TCK_PKE_V(ENABLED));
 
     // Config sjc.JTAG_TDI to pad JTAG_TDI(G5)
@@ -194,8 +194,8 @@ void sjc_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_JTAG_TDI_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TDI_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TDI_PUS_V(47K_OHM_PU) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TDI_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TDI_PUS_V(47K_OHM_PU) |
             BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TDI_PKE_V(ENABLED));
 
     // Config sjc.JTAG_TDO to pad JTAG_TDO(G6)
@@ -306,8 +306,8 @@ void sjc_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_JTAG_TMS_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TMS_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TMS_PUS_V(47K_OHM_PU) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TMS_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TMS_PUS_V(47K_OHM_PU) |
             BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TMS_PKE_V(ENABLED));
 
     // Config sjc.JTAG_TRSTB to pad JTAG_TRSTB(C2)
@@ -361,7 +361,7 @@ void sjc_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_JTAG_TRSTB_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TRSTB_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TRSTB_PUS_V(47K_OHM_PU) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TRSTB_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TRSTB_PUS_V(47K_OHM_PU) |
             BF_IOMUXC_SW_PAD_CTL_PAD_JTAG_TRSTB_PKE_V(ENABLED));
 }

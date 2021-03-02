@@ -17,56 +17,56 @@
 #include <linux/errno.h>
 
 struct pushpull {
-	unsigned char *buf;
-	unsigned int buflen;
-	unsigned int ofs;
-	unsigned int reserve;
+    unsigned char *buf;
+    unsigned int buflen;
+    unsigned int ofs;
+    unsigned int reserve;
 };
 
 
 static inline void init_pushpull(struct pushpull *pp, char *buf, unsigned buflen, unsigned ofs, unsigned reserve)
 {
-	pp->buf = (unsigned char *)buf;
-	pp->buflen = buflen;
-	pp->ofs = ofs;
-	pp->reserve = reserve;
+    pp->buf = (unsigned char *)buf;
+    pp->buflen = buflen;
+    pp->ofs = ofs;
+    pp->reserve = reserve;
 }
 
 static inline int pushbit(struct pushpull *pp, int bit, int use_reserved)
 {
-	if (pp->ofs >= pp->buflen - (use_reserved?0:pp->reserve)) {
-		return -ENOSPC;
-	}
+    if (pp->ofs >= pp->buflen - (use_reserved?0:pp->reserve)) {
+        return -ENOSPC;
+    }
 
-	if (bit) {
-		pp->buf[pp->ofs >> 3] |= (1<<(7-(pp->ofs &7)));
-	}
-	else {
-		pp->buf[pp->ofs >> 3] &= ~(1<<(7-(pp->ofs &7)));
-	}
-	pp->ofs++;
+    if (bit) {
+        pp->buf[pp->ofs >> 3] |= (1<<(7-(pp->ofs &7)));
+    }
+    else {
+        pp->buf[pp->ofs >> 3] &= ~(1<<(7-(pp->ofs &7)));
+    }
+    pp->ofs++;
 
-	return 0;
+    return 0;
 }
 
 static inline int pushedbits(struct pushpull *pp)
 {
-	return pp->ofs;
+    return pp->ofs;
 }
 
 static inline int pullbit(struct pushpull *pp)
 {
-	int bit;
+    int bit;
 
-	bit = (pp->buf[pp->ofs >> 3] >> (7-(pp->ofs & 7))) & 1;
+    bit = (pp->buf[pp->ofs >> 3] >> (7-(pp->ofs & 7))) & 1;
 
-	pp->ofs++;
-	return bit;
+    pp->ofs++;
+    return bit;
 }
 
 static inline int pulledbits(struct pushpull *pp)
 {
-	return pp->ofs;
+    return pp->ofs;
 }
 
 #endif /* __PUSHPULL_H__ */

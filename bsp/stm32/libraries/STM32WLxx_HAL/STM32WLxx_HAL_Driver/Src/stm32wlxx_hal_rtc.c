@@ -808,7 +808,7 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
 
       /* Set the RTC_TR register */
       WRITE_REG(RTC->TR, (tmpreg & RTC_TR_RESERVED_MASK));
-      
+
       /* This interface is deprecated. To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions */
       CLEAR_BIT(RTC->CR, RTC_CR_BKP);
 

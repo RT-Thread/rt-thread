@@ -197,10 +197,10 @@
 ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
-  
+
     /* Note: On this STM32 serie, only COMP instance COMP2 has                */
     /*       features settables: power mode, input minus selection            */
     /*       and output selection.                                            */
@@ -220,7 +220,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
                  | COMP_CSR_400KPU
                  | COMP_CSR_10KPD
                  | COMP_CSR_400KPD
-                ) 
+                )
                );
     }
     else
@@ -229,13 +229,13 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
                 (  COMP_CSR_SPEED
                  | COMP_CSR_INSEL
                  | COMP_CSR_OUTSEL
-                ) 
+                )
                );
     }
-    
+
     /* Set comparator input plus */
     LL_COMP_SetInputPlus(COMPx, LL_COMP_INPUT_PLUS_NONE);
-    
+
   return status;
 }
 
@@ -254,7 +254,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
   if(COMPx == COMP2)
@@ -264,7 +264,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
     assert_param(IS_LL_COMP_OUTPUT_SELECTION(COMP_InitStruct->OutputSelection));
   }
   assert_param(IS_LL_COMP_INPUT_PLUS(COMPx, COMP_InitStruct->InputPlus));
-  
+
   /* Configuration of comparator instance :                                 */
   /*  - PowerMode                                                           */
   /*  - InputPlus                                                           */
@@ -286,7 +286,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
                | COMP_InitStruct->InputMinus
                | COMP_InitStruct->OutputSelection
               );
-    
+
     /* Set comparator input plus */
     LL_COMP_SetInputPlus(COMPx, COMP_InitStruct->InputPlus);
   }
@@ -300,7 +300,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
       LL_COMP_SetInputPlus(COMPx, COMP_InitStruct->InputPlus);
     }
   }
-    
+
   return status;
 }
 

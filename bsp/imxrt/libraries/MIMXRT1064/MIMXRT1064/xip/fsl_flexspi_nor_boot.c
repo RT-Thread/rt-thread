@@ -13,8 +13,8 @@
 #elif defined(__ICCARM__)
 #pragma location=".boot_hdr.ivt"
 #endif
-/************************************* 
- *  IVT Data 
+/*************************************
+ *  IVT Data
  *************************************/
 const ivt image_vector_table = {
   IVT_HEADER,                         /* IVT Header */
@@ -32,14 +32,14 @@ const ivt image_vector_table = {
 #elif defined(__ICCARM__)
 #pragma location=".boot_hdr.boot_data"
 #endif
-/************************************* 
- *  Boot Data 
+/*************************************
+ *  Boot Data
  *************************************/
 const BOOT_DATA_T boot_data = {
   FLASH_BASE,                 /* boot start location */
   FLASH_SIZE,                 /* size */
   PLUGIN_FLAG,                /* Plugin flag*/
-  0xFFFFFFFF  				  /* empty - extra data word */
+  0xFFFFFFFF                  /* empty - extra data word */
 };
 #endif
 

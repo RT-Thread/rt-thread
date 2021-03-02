@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: I/O Port API for RX62N (176-pin LFBGA)
-* File Name		: r_pdl_io_port_RX62NxBG.h
-* Version		: 1.02
-* Contents		: I/O Port API header
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name   : I/O Port API for RX62N (176-pin LFBGA)
+* File Name     : r_pdl_io_port_RX62NxBG.h
+* Version       : 1.02
+* Contents      : I/O Port API header
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_IO_PORT_RX62NxBG_H
@@ -25,84 +25,84 @@
 
 /* Library prototypes */
 bool R_IO_PORT_SetAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_ReadControlAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	volatile uint8_t * const
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    volatile uint8_t * const
 );
 bool R_IO_PORT_ReadControlRegisterAll(
-	const uint8_t,
-	const uint8_t,
-	volatile uint8_t * const
+    const uint8_t,
+    const uint8_t,
+    volatile uint8_t * const
 );
 bool R_IO_PORT_ModifyControlAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_ModifyControlRegisterAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_ReadDataAll(
-	const uint8_t,
-	const uint8_t,
-	volatile uint8_t * const
+    const uint8_t,
+    const uint8_t,
+    volatile uint8_t * const
 );
 bool R_IO_PORT_ReadDataRegisterAll(
-	const uint8_t,
-	volatile uint8_t * const
+    const uint8_t,
+    volatile uint8_t * const
 );
 bool R_IO_PORT_WriteAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_WriteRegisterAll(
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_CompareAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	VoidCallBackFunc const
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    VoidCallBackFunc const
 );
 bool R_IO_PORT_CompareRegisterAll(
-	const uint8_t,
-	const uint8_t,
-	VoidCallBackFunc const
+    const uint8_t,
+    const uint8_t,
+    VoidCallBackFunc const
 );
 bool R_IO_PORT_ModifyDataAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_ModifyDataRegisterAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_WaitAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_IO_PORT_WaitRegisterAll(
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t
 );
 bool ReturnFalse(void);
 

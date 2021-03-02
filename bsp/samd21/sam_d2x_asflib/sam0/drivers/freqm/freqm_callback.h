@@ -64,22 +64,22 @@ extern "C" {
 
 /** FREQM callback type. */
 enum freqm_callback_type {
-	/** Measurement done callback.*/
-	FREQM_CALLBACK_MEASURE_DONE = 0,
+    /** Measurement done callback.*/
+    FREQM_CALLBACK_MEASURE_DONE = 0,
 };
- 
+
 /** \name Callback Configuration and Initialization
  * @{
  */
- 
+
 enum status_code freqm_register_callback(
-		struct freqm_module *const module,
-		freqm_callback_t callback_func,
-		enum freqm_callback callback_type);
+        struct freqm_module *const module,
+        freqm_callback_t callback_func,
+        enum freqm_callback callback_type);
 
 enum status_code freqm_unregister_callback(
-		struct freqm_module *module,
-		enum freqm_callback callback_type);
+        struct freqm_module *module,
+        enum freqm_callback callback_type);
 
 /** @} */
 
@@ -99,20 +99,20 @@ enum status_code freqm_unregister_callback(
  * \retval STATUS_ERR_INVALID_ARG If an invalid callback type was supplied
  */
 static inline enum status_code freqm_enable_callback(struct freqm_module *const module,
-		const enum freqm_callback_type type)
+        const enum freqm_callback_type type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	if (type == FREQM_CALLBACK_MEASURE_DONE){
-		module->hw->INTENSET.reg = FREQM_INTENSET_DONE;
-	} else {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type == FREQM_CALLBACK_MEASURE_DONE){
+        module->hw->INTENSET.reg = FREQM_INTENSET_DONE;
+    } else {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_FREQM);
-	return STATUS_OK;
+    system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_FREQM);
+    return STATUS_OK;
 }
 
 /**
@@ -126,20 +126,20 @@ static inline enum status_code freqm_enable_callback(struct freqm_module *const 
  * \retval STATUS_ERR_INVALID_ARG If an invalid callback type was supplied
  */
 static inline enum status_code freqm_disable_callback(struct freqm_module *const module,
-		 const enum freqm_callback_type type)
+         const enum freqm_callback_type type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	if (type == FREQM_CALLBACK_MEASURE_DONE){
-		module->hw->INTENCLR.reg = FREQM_INTENCLR_DONE;
-	} else {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type == FREQM_CALLBACK_MEASURE_DONE){
+        module->hw->INTENCLR.reg = FREQM_INTENCLR_DONE;
+    } else {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_FREQM);
-	return STATUS_OK;
+    system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_FREQM);
+    return STATUS_OK;
 }
 
 /** @} */

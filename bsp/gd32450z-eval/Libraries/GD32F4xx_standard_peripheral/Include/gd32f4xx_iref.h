@@ -25,7 +25,7 @@
 #define IREF_CTL_CSDT                   BITS(0,5)              /*!< current step data */
 #define IREF_CTL_SCMOD                  BIT(7)                 /*!< sink current mode */
 #define IREF_CTL_CPT                    BITS(8,12)             /*!< current precision trim */
-#define IREF_CTL_SSEL                   BIT(14)                /*!< step selection */ 
+#define IREF_CTL_SSEL                   BIT(14)                /*!< step selection */
 #define IREF_CTL_CREN                   BIT(15)                /*!< current reference enable */
 
 /* constants definitions */
@@ -130,13 +130,13 @@
 #define IREF_CUR_STEP_DATA_61           CTL_CSDT(61)           /*!< IREF current step data 61 */
 #define IREF_CUR_STEP_DATA_62           CTL_CSDT(62)           /*!< IREF current step data 62 */
 #define IREF_CUR_STEP_DATA_63           CTL_CSDT(63)           /*!< IREF current step data 63 */
- 
+
 /* IREF mode selection */
 #define IREF_STEP(regval)               (BIT(14) & ((uint32_t)(regval) << 14))
 #define IREF_MODE_LOW_POWER             IREF_STEP(0)           /*!< low power, 1uA step */
 #define IREF_MODE_HIGH_CURRENT          IREF_STEP(1)           /*!< high current, 8uA step */
- 
-/* IREF sink current mode*/ 
+
+/* IREF sink current mode*/
 #define IREF_CURRENT(regval)            (BIT(7) & ((uint32_t)(regval) << 7))
 #define IREF_SOURCE_CURRENT             IREF_CURRENT(0)        /*!< IREF source current */
 #define IREF_SINK_CURRENT               IREF_CURRENT(1)        /*!< IREF sink current */

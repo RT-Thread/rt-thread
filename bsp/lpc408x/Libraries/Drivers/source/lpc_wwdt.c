@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -53,10 +53,10 @@
   */
 
  /********************************************************************//**
- * @brief       Set timeout value to Timer Constant register 
+ * @brief       Set timeout value to Timer Constant register
  *              (if enable) to generate a WatchDog event if match
  *
- * @param[in]   timeoutVal  The value (counter) will write directly to 
+ * @param[in]   timeoutVal  The value (counter) will write directly to
  *              Register w/o pre-calc
  *
  * @return      None
@@ -85,7 +85,7 @@ int8_t WWDT_SetTimeOutRaw(uint32_t timeoutVal)
 /********************************************************************//**
  * @brief       Set WDT timeout (cal by usec) to TC register
  *
- * @param[in]   timeout The time (usec) to generate watchdog event if 
+ * @param[in]   timeout The time (usec) to generate watchdog event if
  *              the watchdog counter reach this value
  *
  * @return      WWDT_FUNC_OK if success
@@ -264,7 +264,7 @@ void WWDT_Cmd(FunctionalState NewState)
  * @brief       Set the warning value to register to generate interrupt
  *              (if enable) if the watchdog timer matches this value.
  *
- * @param[in]   warnVal The value (counter) will write directly to Warning 
+ * @param[in]   warnVal The value (counter) will write directly to Warning
  *              Register w/o pre-calc
  *
  * @return      WWDT_FUNC_OK if success

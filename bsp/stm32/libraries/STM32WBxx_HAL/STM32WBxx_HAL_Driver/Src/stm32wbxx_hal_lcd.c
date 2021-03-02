@@ -68,11 +68,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -329,23 +329,23 @@ __weak void HAL_LCD_MspInit(LCD_HandleTypeDef *hlcd)
  [..] Using its double buffer memory the LCD controller ensures the coherency of the
  displayed information without having to use interrupts to control LCD_RAM
  modification.
- 
+
  [..] The application software can access the first buffer level (LCD_RAM) through
  the APB interface. Once it has modified the LCD_RAM using the HAL_LCD_Write() API,
  it sets the UDR flag in the LCD_SR register using the HAL_LCD_UpdateDisplayRequest() API.
- 
+
  [..] This UDR flag (update display request) requests the updated information to be
  moved into the second buffer level (LCD_DISPLAY).
- 
+
  [..] This operation is done synchronously with the frame (at the beginning of the
  next frame), until the update is completed, the LCD_RAM is write protected and
  the UDR flag stays high.
- 
+
  [..] Once the update is completed another flag (UDD - Update Display Done) is set and
  generates an interrupt if the UDDIE bit in the LCD_FCR register is set.
  The time it takes to update LCD_DISPLAY is, in the worst case, one odd and one
  even frame.
- 
+
  [..] The update will not occur (UDR = 1 and UDD = 0) until the display is
  enabled (LCDEN = 1).
 
@@ -382,7 +382,7 @@ HAL_StatusTypeDef HAL_LCD_Write(LCD_HandleTypeDef *hlcd, uint32_t RAMRegisterInd
 {
   uint32_t tickstart;
   HAL_LCD_StateTypeDef state = hlcd->State;
-  
+
   if ((state == HAL_LCD_STATE_READY) || (state == HAL_LCD_STATE_BUSY))
   {
     /* Check the parameters */
@@ -434,7 +434,7 @@ HAL_StatusTypeDef HAL_LCD_Clear(LCD_HandleTypeDef *hlcd)
   uint32_t counter;
   HAL_StatusTypeDef status = HAL_ERROR;
   HAL_LCD_StateTypeDef state = hlcd->State;
-  
+
   if ((state == HAL_LCD_STATE_READY) || (state == HAL_LCD_STATE_BUSY))
   {
     /* Process Locked */

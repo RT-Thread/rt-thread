@@ -71,18 +71,18 @@ typedef struct imx_enet_bd imx_enet_bd_t;
 //! @brief  Data structure for ENET device
 typedef struct imx_enet_priv_s {
     hw_enet_t *enet_reg;        //!< the reister base address of ENET
-    uint8_t phy_addr;     //!< the address of PHY which associated with ENET controller 
+    uint8_t phy_addr;     //!< the address of PHY which associated with ENET controller
     uint32_t phy_id;            //!< ID of the PHY
-    uint8_t tx_busy;      //!< 0:free, 1:transmitting frame 
+    uint8_t tx_busy;      //!< 0:free, 1:transmitting frame
     uint8_t res[2];
-    uint32_t status;       //!< the status of ENET device:link-status etc. 
-    uint32_t tx_key;       //!< save the key delivered from send function 
-    imx_enet_bd_t *rx_bd;       //!< the receive buffer description ring 
-    imx_enet_bd_t *rx_cur;      //!< the next recveive buffer description 
-    imx_enet_bd_t *tx_bd;       //!< the transmit buffer description rign 
-    imx_enet_bd_t *tx_cur;      //!< the next transmit buffer description 
-    // TODO: Add interrupt about fields 
-    // TODO: Add timer about fields 
+    uint32_t status;       //!< the status of ENET device:link-status etc.
+    uint32_t tx_key;       //!< save the key delivered from send function
+    imx_enet_bd_t *rx_bd;       //!< the receive buffer description ring
+    imx_enet_bd_t *rx_cur;      //!< the next recveive buffer description
+    imx_enet_bd_t *tx_bd;       //!< the transmit buffer description rign
+    imx_enet_bd_t *tx_cur;      //!< the next transmit buffer description
+    // TODO: Add interrupt about fields
+    // TODO: Add timer about fields
 } imx_enet_priv_t;
 
 //! @brief Definitions of the status field of imx_enet_priv_t.
@@ -103,26 +103,26 @@ enum {
 extern "C" {
 #endif
 
-/*! 
+/*!
  * @brief Enable ENET and start transfer.
- * @param dev    a pointer of ENET interface(imx_enet_priv_t) 
+ * @param dev    a pointer of ENET interface(imx_enet_priv_t)
  * @param enaddr     a pointer of MAC address
  *
  * @return      none
  */
 void imx_enet_start(imx_enet_priv_t * dev, unsigned char *enaddr);
 
-/*! 
+/*!
  * @brief Disable ENET
- * @param       dev    a pointer of ENET interface(imx_enet_priv_t) 
+ * @param       dev    a pointer of ENET interface(imx_enet_priv_t)
  *
  * @return      none
  */
 void imx_enet_stop(imx_enet_priv_t * dev);
 
-/*! 
+/*!
  * @brief Initialize ENET PHY, like LAN8700, 8720, AR8031, etc
- * @param       dev    a pointer of ENET interface(imx_enet_priv_t) 
+ * @param       dev    a pointer of ENET interface(imx_enet_priv_t)
  *
  * @return      none
  */
@@ -136,9 +136,9 @@ void imx_enet_phy_init(imx_enet_priv_t * dev);
  */
 uint32_t imx_enet_get_phy_status(imx_enet_priv_t * dev);
 
-/*! 
+/*!
  * @brief Initialize ENET interface, including buffer descriptor and MAC
- * @param dev    a pointer of ENET interface(imx_enet_priv_t) 
+ * @param dev    a pointer of ENET interface(imx_enet_priv_t)
  * @param reg_base   base address of ethernet registers
  * @param phy_addr   phy address, 0 or 1
  *
@@ -146,17 +146,17 @@ uint32_t imx_enet_get_phy_status(imx_enet_priv_t * dev);
  */
 int imx_enet_init(imx_enet_priv_t * dev, unsigned long reg_base, int phy_addr);
 
-/*! 
+/*!
  * @brief Poll ENET events
- * @param       dev    a pointer of ENET interface(imx_enet_priv_t) 
+ * @param       dev    a pointer of ENET interface(imx_enet_priv_t)
  *
  * @return      event value
  */
 unsigned long imx_enet_poll(imx_enet_priv_t * dev);
 
-/*! 
+/*!
  * @brief Recieve ENET packet
- * @param       dev    a pointer of ENET interface(imx_enet_priv_t) 
+ * @param       dev    a pointer of ENET interface(imx_enet_priv_t)
  * @param buf        a pointer of buffer for received packet
  * @param length the length of received packet
  *
@@ -166,9 +166,9 @@ unsigned long imx_enet_poll(imx_enet_priv_t * dev);
  */
 int imx_enet_recv(imx_enet_priv_t * dev, unsigned char *buf, int *length);
 
-/*! 
+/*!
  * @brief Transmit ENET packet
- * @param dev    a pointer of ENET interface(imx_enet_priv_t) 
+ * @param dev    a pointer of ENET interface(imx_enet_priv_t)
  * @param buf       a pointer of buffer for packet to be sent
  * @param length the length of packet to be sent
  * @param key        key

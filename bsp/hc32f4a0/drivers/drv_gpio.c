@@ -392,7 +392,7 @@ static rt_err_t hc32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
-                                
+
 {
     struct hc32_pin_irq_map *irq_map;
     rt_base_t level;

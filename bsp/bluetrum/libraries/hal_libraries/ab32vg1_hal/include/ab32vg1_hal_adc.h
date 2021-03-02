@@ -31,28 +31,28 @@
 #define ADC_CHANNEL_15      (1u << 15)
 /**
  * @}
- * 
+ *
  */
 
 /**
  * @brief Enable ADC
- * 
- * @param enable 
+ *
+ * @param enable
  */
 void hal_adc_enable(uint8_t enable);
 
 /**
  * @brief Starts conversion of the channels
- * 
+ *
  * @param channel @ref ADC_channels
  */
 void hal_adc_start(uint32_t channel);
 
 /**
  * @brief Poll for conversion complete
- * 
+ *
  * @param timeout Timeout value in millisecond
- * @return hal_error_t 
+ * @return hal_error_t
  */
 hal_error_t hal_adc_poll_for_conversion(uint32_t timeout);
 

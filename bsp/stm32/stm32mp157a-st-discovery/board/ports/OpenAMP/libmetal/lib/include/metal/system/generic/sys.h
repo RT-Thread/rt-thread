@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	generic/sys.h
- * @brief	Generic system primitives for libmetal.
+ * @file    generic/sys.h
+ * @brief   Generic system primitives for libmetal.
  */
 
 #ifndef __METAL_SYS__H__
@@ -36,8 +36,8 @@ extern "C" {
 /** Structure of generic libmetal runtime state. */
 struct metal_state {
 
-	/** Common (system independent) data. */
-	struct metal_common_state common;
+    /** Common (system independent) data. */
+    struct metal_common_state common;
 };
 
 #ifdef METAL_INTERNAL

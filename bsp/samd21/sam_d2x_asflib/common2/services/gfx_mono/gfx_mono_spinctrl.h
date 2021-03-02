@@ -135,14 +135,14 @@ extern "C" {
 
 /** Maximum number of spinner elements on display */
 #define GFX_MONO_SPINCTRL_ELEMENTS_PER_SCREEN \
-	((GFX_MONO_LCD_HEIGHT / SYSFONT_LINESPACING) - 1)
+    ((GFX_MONO_LCD_HEIGHT / SYSFONT_LINESPACING) - 1)
 
 /**
  * Maximum numbers of spinner elements in a spincollection - limited to
  * one screen.
  */
 #define GFX_MONO_SPINCTRL_MAX_ELEMENTS_IN_SPINCOLLECTION \
-	GFX_MONO_SPINCTRL_ELEMENTS_PER_SCREEN
+    GFX_MONO_SPINCTRL_ELEMENTS_PER_SCREEN
 
 /** Width of string spinner choices */
 #define GFX_MONO_SPINCTRL_STRING_SPINNER_WIDTH 9
@@ -151,92 +151,92 @@ extern "C" {
 
 /** Enum to specify what kind of data spinner should spin */
 typedef enum gfx_mono_spinctrl_type_enum {
-	SPINTYPE_STRING,
-	SPINTYPE_INTEGER
+    SPINTYPE_STRING,
+    SPINTYPE_INTEGER
 } gfx_mono_spinctrl_type_t;
 
 /** String struct */
 struct gfx_mono_spinctrl_string {
-	/** Pointer to progmem strings to spin through
-	 * \note Each string must be shorter than
-	 * \ref  GFX_MONO_SPINCTRL_STRING_SPINNER_WIDTH characters.
-	 * If not, printing it to the screen will corrupt the spinner
-	 * appearance.
-	 */
-	PROGMEM_STRING_T *data;
-	/** Index in string array */
-	uint8_t index;
+    /** Pointer to progmem strings to spin through
+     * \note Each string must be shorter than
+     * \ref  GFX_MONO_SPINCTRL_STRING_SPINNER_WIDTH characters.
+     * If not, printing it to the screen will corrupt the spinner
+     * appearance.
+     */
+    PROGMEM_STRING_T *data;
+    /** Index in string array */
+    uint8_t index;
 };
 
 /** Spin control struct */
 struct gfx_mono_spinctrl {
-	/** Spinner title */
-	PROGMEM_STRING_T title;
-	/** Type of data to spin */
-	gfx_mono_spinctrl_type_t datatype;
-	/** Spinner data, depends on spinner datatype. */
-	union {
-		/** Spinner strings and index */
-		struct gfx_mono_spinctrl_string strings;
-		/** Spinner integer data */
-		int16_t integer_data;
-	};
-	/** Variable to store the last selected spinner value */
-	uint16_t last_saved_value;
+    /** Spinner title */
+    PROGMEM_STRING_T title;
+    /** Type of data to spin */
+    gfx_mono_spinctrl_type_t datatype;
+    /** Spinner data, depends on spinner datatype. */
+    union {
+        /** Spinner strings and index */
+        struct gfx_mono_spinctrl_string strings;
+        /** Spinner integer data */
+        int16_t integer_data;
+    };
+    /** Variable to store the last selected spinner value */
+    uint16_t last_saved_value;
 
-	/**
-	 * Lower limit for spinning, must be positive and fit in uin8_t for
-	 * spinner type SPINTYPE_STRING
-	 */
-	int16_t lower_limit;
+    /**
+     * Lower limit for spinning, must be positive and fit in uin8_t for
+     * spinner type SPINTYPE_STRING
+     */
+    int16_t lower_limit;
 
-	/**
-	 * Upper limit for spinning, must be positive and fit in uin8_t for
-	 * spinner type SPINTYPE_STRING
-	 */
-	int16_t upper_limit;
-	/** Y coordinate for placement of spinner on screen */
-	gfx_coord_t y;
-	/** Boolean to tell if spinner is in focus or not */
-	bool in_focus;
-	/** Pointer to next spinner in a spincollection */
-	struct gfx_mono_spinctrl *next;
-	/** Pointer to previous spinner in a spincollection */
-	struct gfx_mono_spinctrl *prev;
+    /**
+     * Upper limit for spinning, must be positive and fit in uin8_t for
+     * spinner type SPINTYPE_STRING
+     */
+    int16_t upper_limit;
+    /** Y coordinate for placement of spinner on screen */
+    gfx_coord_t y;
+    /** Boolean to tell if spinner is in focus or not */
+    bool in_focus;
+    /** Pointer to next spinner in a spincollection */
+    struct gfx_mono_spinctrl *next;
+    /** Pointer to previous spinner in a spincollection */
+    struct gfx_mono_spinctrl *prev;
 };
 
 /** Collection of spinners struct */
 struct gfx_mono_spinctrl_spincollection {
-	/** Pointer to the first spinner in the collection */
-	struct gfx_mono_spinctrl *collection;
-	/** Pointer to the last spinner in the collection */
-	struct gfx_mono_spinctrl *collection_last;
-	/** Number of spinners in collection */
-	uint8_t number_of_spinners;
-	/** Current spinner/button */
-	uint8_t current_selection;
-	/** Return value from selected spinner */
-	uint16_t selection;
-	/** Boolean to tell if input should be sent directly to a spinner */
-	bool active_spinner;
-	/** Boolean to initialize results array when starting key processing */
-	bool init;
+    /** Pointer to the first spinner in the collection */
+    struct gfx_mono_spinctrl *collection;
+    /** Pointer to the last spinner in the collection */
+    struct gfx_mono_spinctrl *collection_last;
+    /** Number of spinners in collection */
+    uint8_t number_of_spinners;
+    /** Current spinner/button */
+    uint8_t current_selection;
+    /** Return value from selected spinner */
+    uint16_t selection;
+    /** Boolean to tell if input should be sent directly to a spinner */
+    bool active_spinner;
+    /** Boolean to initialize results array when starting key processing */
+    bool init;
 };
 
 void gfx_mono_spinctrl_init(struct gfx_mono_spinctrl *spinner,
-		gfx_mono_spinctrl_type_t datatype, PROGMEM_STRING_T title,
-		PROGMEM_STRING_T *data, int16_t lower_limit,
-		int16_t upper_limit,
-		gfx_coord_t y);
+        gfx_mono_spinctrl_type_t datatype, PROGMEM_STRING_T title,
+        PROGMEM_STRING_T *data, int16_t lower_limit,
+        int16_t upper_limit,
+        gfx_coord_t y);
 void gfx_mono_spinctrl_draw(struct gfx_mono_spinctrl *spinner, bool redraw);
 void gfx_mono_spinctrl_spincollection_init(struct
-		gfx_mono_spinctrl_spincollection *collection);
+        gfx_mono_spinctrl_spincollection *collection);
 void gfx_mono_spinctrl_spincollection_add_spinner(struct gfx_mono_spinctrl
-		*spinner, struct gfx_mono_spinctrl_spincollection *spinners);
+        *spinner, struct gfx_mono_spinctrl_spincollection *spinners);
 void gfx_mono_spinctrl_spincollection_show(struct
-		gfx_mono_spinctrl_spincollection *spinners);
+        gfx_mono_spinctrl_spincollection *spinners);
 int16_t gfx_mono_spinctrl_process_key(struct gfx_mono_spinctrl *spinner,
-		uint8_t keycode);
+        uint8_t keycode);
 
 int16_t gfx_mono_spinctrl_spincollection_process_key(struct
 gfx_mono_spinctrl_spincollection *spinners, uint8_t keycode,

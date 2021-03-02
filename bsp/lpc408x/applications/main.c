@@ -14,6 +14,6 @@
 int main(void)
 {
     rt_kprintf("Hello RT-Thread!\n");
-    
+
     return RT_EOK;
-} 
+}

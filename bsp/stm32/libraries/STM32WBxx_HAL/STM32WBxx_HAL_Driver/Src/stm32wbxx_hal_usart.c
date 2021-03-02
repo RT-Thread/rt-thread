@@ -124,11 +124,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -746,7 +746,7 @@ HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxDa
   uint8_t  *ptxdata8bits;
   uint16_t *ptxdata16bits;
   uint32_t tickstart;
-  
+
 
   if (husart->State == HAL_USART_STATE_READY)
   {
@@ -845,7 +845,7 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
   uint16_t *prxdata16bits;
   uint16_t uhMask;
   uint32_t tickstart;
-  
+
 
   if (husart->State == HAL_USART_STATE_READY)
   {
@@ -1448,7 +1448,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *p
 
       /* Restore husart->State to ready */
       husart->State = HAL_USART_STATE_READY;
-      
+
       return HAL_ERROR;
     }
   }
@@ -1475,7 +1475,7 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
 {
   HAL_StatusTypeDef status = HAL_OK;
   uint32_t *tmp = (uint32_t *)&pRxData;
-  
+
 
   /* Check that a Rx process is not already ongoing */
   if (husart->State == HAL_USART_STATE_READY)
@@ -1555,7 +1555,7 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
       {
         status = HAL_DMA_Abort(husart->hdmarx);
       }
- 
+
       /* No need to check on error code */
       UNUSED(status);
 
@@ -1593,7 +1593,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uin
 {
   HAL_StatusTypeDef status;
   uint32_t *tmp;
-  
+
 
   if (husart->State == HAL_USART_STATE_READY)
   {
@@ -1648,7 +1648,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uin
     {
       status = HAL_ERROR;
     }
-    
+
     if(status == HAL_OK)
     {
       /* Process Unlocked */

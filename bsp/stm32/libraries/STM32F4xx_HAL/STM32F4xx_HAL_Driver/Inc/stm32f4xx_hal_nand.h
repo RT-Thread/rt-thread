@@ -42,7 +42,7 @@
 
 /** @addtogroup NAND
   * @{
-  */ 
+  */
 
 #if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F407xx) || defined(STM32F417xx) || \
     defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx) || defined(STM32F439xx) || \
@@ -54,7 +54,7 @@
   * @{
   */
 
-/** 
+/**
   * @brief  HAL NAND State structures definition
   */
 typedef enum
@@ -64,15 +64,15 @@ typedef enum
   HAL_NAND_STATE_BUSY      = 0x02U,  /*!< NAND internal process is ongoing     */
   HAL_NAND_STATE_ERROR     = 0x03U   /*!< NAND error state                     */
 }HAL_NAND_StateTypeDef;
-   
-/** 
+
+/**
   * @brief  NAND Memory electronic signature Structure definition
   */
 typedef struct
 {
   /*<! NAND memory electronic signature maker and device IDs */
 
-  uint8_t Maker_Id; 
+  uint8_t Maker_Id;
 
   uint8_t Device_Id;
 
@@ -81,10 +81,10 @@ typedef struct
   uint8_t Fourth_Id;
 }NAND_IDTypeDef;
 
-/** 
+/**
   * @brief  NAND Memory address Structure definition
   */
-typedef struct 
+typedef struct
 {
   uint16_t Page;   /*!< NAND memory Page address    */
 
@@ -94,34 +94,34 @@ typedef struct
 
 }NAND_AddressTypeDef;
 
-/** 
+/**
   * @brief  NAND Memory info Structure definition
-  */ 
+  */
 typedef struct
 {
-  uint32_t        PageSize;              /*!< NAND memory page (without spare area) size measured in bytes 
+  uint32_t        PageSize;              /*!< NAND memory page (without spare area) size measured in bytes
                                               for 8 bits adressing or words for 16 bits addressing             */
 
-  uint32_t        SpareAreaSize;         /*!< NAND memory spare area size measured in bytes 
+  uint32_t        SpareAreaSize;         /*!< NAND memory spare area size measured in bytes
                                               for 8 bits adressing or words for 16 bits addressing             */
-  
+
   uint32_t        BlockSize;             /*!< NAND memory block size measured in number of pages               */
 
   uint32_t        BlockNbr;              /*!< NAND memory number of total blocks                               */
-     
+
   uint32_t        PlaneNbr;              /*!< NAND memory number of planes                                     */
 
   uint32_t        PlaneSize;             /*!< NAND memory plane size measured in number of blocks               */
 
-  FunctionalState ExtraCommandEnable;    /*!< NAND extra command needed for Page reading mode. This 
-                                              parameter is mandatory for some NAND parts after the read 
-                                              command (NAND_CMD_AREA_TRUE1) and before DATA reading sequence. 
+  FunctionalState ExtraCommandEnable;    /*!< NAND extra command needed for Page reading mode. This
+                                              parameter is mandatory for some NAND parts after the read
+                                              command (NAND_CMD_AREA_TRUE1) and before DATA reading sequence.
                                               Example: Toshiba THTH58BYG3S0HBAI6.
                                               This parameter could be ENABLE or DISABLE
                                               Please check the Read Mode sequnece in the NAND device datasheet */
-}NAND_DeviceConfigTypeDef; 
+}NAND_DeviceConfigTypeDef;
 
-/** 
+/**
   * @brief  NAND handle Structure definition
   */
 #if (USE_HAL_NAND_REGISTER_CALLBACKS == 1)
@@ -131,7 +131,7 @@ typedef struct
 #endif /* USE_HAL_NAND_REGISTER_CALLBACKS  */
 {
   FMC_NAND_TypeDef               *Instance;  /*!< Register base address                                 */
-  
+
   FMC_NAND_InitTypeDef           Init;       /*!< NAND device control configuration parameters          */
 
   HAL_LockTypeDef                Lock;       /*!< NAND locking object                                   */
@@ -172,7 +172,7 @@ typedef void (*pNAND_CallbackTypeDef)(NAND_HandleTypeDef *hnand);
 /* Exported macros ------------------------------------------------------------*/
 /** @defgroup NAND_Exported_Macros NAND Exported Macros
  * @{
- */ 
+ */
 
 /** @brief Reset NAND handle state
   * @param  __HANDLE__ specifies the NAND handle.
@@ -196,8 +196,8 @@ typedef void (*pNAND_CallbackTypeDef)(NAND_HandleTypeDef *hnand);
 /** @addtogroup NAND_Exported_Functions NAND Exported Functions
   * @{
   */
-    
-/** @addtogroup NAND_Exported_Functions_Group1 Initialization and de-initialization functions 
+
+/** @addtogroup NAND_Exported_Functions_Group1 Initialization and de-initialization functions
   * @{
   */
 
@@ -218,8 +218,8 @@ void               HAL_NAND_ITCallback(NAND_HandleTypeDef *hnand);
 /**
   * @}
   */
-  
-/** @addtogroup NAND_Exported_Functions_Group2 Input and Output functions 
+
+/** @addtogroup NAND_Exported_Functions_Group2 Input and Output functions
   * @{
   */
 
@@ -251,7 +251,7 @@ HAL_StatusTypeDef  HAL_NAND_UnRegisterCallback(NAND_HandleTypeDef *hnand, HAL_NA
   * @}
   */
 
-/** @addtogroup NAND_Exported_Functions_Group3 Peripheral Control functions 
+/** @addtogroup NAND_Exported_Functions_Group3 Peripheral Control functions
   * @{
   */
 
@@ -263,8 +263,8 @@ HAL_StatusTypeDef  HAL_NAND_GetECC(NAND_HandleTypeDef *hnand, uint32_t *ECCval, 
 /**
   * @}
   */
-    
-/** @addtogroup NAND_Exported_Functions_Group4 Peripheral State functions 
+
+/** @addtogroup NAND_Exported_Functions_Group4 Peripheral State functions
   * @{
   */
 /* NAND State functions *******************************************************/
@@ -276,15 +276,15 @@ HAL_NAND_StateTypeDef HAL_NAND_GetState(NAND_HandleTypeDef *hnand);
 /**
   * @}
   */
-    
+
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup NAND_Private_Constants NAND Private Constants
   * @{
   */
-#define NAND_DEVICE1               0x70000000U 
-#define NAND_DEVICE2               0x80000000U 
+#define NAND_DEVICE1               0x70000000U
+#define NAND_DEVICE2               0x80000000U
 #define NAND_WRITE_TIMEOUT         0x01000000U
 
 #define CMD_AREA                   ((uint32_t)(1U<<16U))  /* A16 = CLE high */
@@ -360,17 +360,17 @@ HAL_NAND_StateTypeDef HAL_NAND_GetState(NAND_HandleTypeDef *hnand);
 #endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx ||\
           STM32F427xx || STM32F437xx || STM32F429xx || STM32F439xx ||\
           STM32F446xx || STM32F469xx || STM32F479xx */
-    
+
 /**
   * @}
   */
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 #ifdef __cplusplus
 }

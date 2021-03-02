@@ -616,7 +616,7 @@ en_result_t MPU_RegionInit(uint32_t u32Num, const stc_mpu_region_init_t *pstcReg
 
         RGD = (__IO uint32_t *)MPU_RGD(u32Num);
         WRITE_REG32(*RGD, (pstcRegionInit->u32Size | pstcRegionInit->u32BaseAddr));
-        /* Configure the read/write permission for the region */ 
+        /* Configure the read/write permission for the region */
         RegionBuffer[0] = pstcRegionInit->stcDma1;
         RegionBuffer[1] = pstcRegionInit->stcDma2;
         RegionBuffer[2] = pstcRegionInit->stcUsbFSDma;

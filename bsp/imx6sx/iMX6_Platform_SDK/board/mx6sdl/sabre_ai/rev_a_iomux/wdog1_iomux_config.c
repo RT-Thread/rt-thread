@@ -52,7 +52,7 @@ void wdog1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO09
     //     ALT6 (6) - Select instance: usdhc1 signal: SD1_WP
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO09_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO09_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO09_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO09_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO09(0x020E0610)
@@ -93,12 +93,12 @@ void wdog1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO09_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO09_SRE_V(SLOW));
 }

@@ -24,17 +24,17 @@
 
 /* Resource table for the given remote */
 struct shared_resource_table {
-	unsigned int version;
-	unsigned int num;
-	unsigned int reserved[2];
-	unsigned int offset[NUM_RESOURCE_ENTRIES];
-	/* text carveout entry */
+    unsigned int version;
+    unsigned int num;
+    unsigned int reserved[2];
+    unsigned int offset[NUM_RESOURCE_ENTRIES];
+    /* text carveout entry */
 
-	/* rpmsg vdev entry */
-	struct fw_rsc_vdev vdev;
-	struct fw_rsc_vdev_vring vring0;
-	struct fw_rsc_vdev_vring vring1;
-	struct fw_rsc_trace cm_trace;
+    /* rpmsg vdev entry */
+    struct fw_rsc_vdev vdev;
+    struct fw_rsc_vdev_vring vring0;
+    struct fw_rsc_vdev_vring vring1;
+    struct fw_rsc_trace cm_trace;
 };
 
 void resource_table_init(int RPMsgRole, void **table_ptr, int *length);

@@ -161,7 +161,7 @@ int pthread_attr_getguardsize(pthread_attr_t const *attr, size_t *guard_size);
 int pthread_attr_setscope(pthread_attr_t *attr, int scope);
 int pthread_attr_getscope(pthread_attr_t const *attr);
 int pthread_system_init(void);
-int pthread_create (pthread_t *tid, const pthread_attr_t *attr, 
+int pthread_create (pthread_t *tid, const pthread_attr_t *attr,
     void *(*start) (void *), void *arg);
 
 int pthread_detach (pthread_t thread);

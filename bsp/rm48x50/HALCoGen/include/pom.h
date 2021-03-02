@@ -2,7 +2,7 @@
 *   @brief POM Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -40,19 +40,19 @@ enum pom_region_size
         SIZE_256KB      = 13U
 };
 
-/** @def INTERNAL_RAM 
+/** @def INTERNAL_RAM
 *   @brief Alias name for Internal RAM
-*/   
+*/
 #define INTERNAL_RAM    0x08000000U
 
-/** @def SDRAM 
+/** @def SDRAM
 *   @brief Alias name for SD RAM
-*/   
+*/
 #define SDRAM   0x80000000U
 
-/** @def ASYNC_MEMORY 
+/** @def ASYNC_MEMORY
 *   @brief Alias name for Async RAM
-*/   
+*/
 #define ASYNC_MEMORY   0x60000000U
 
 
@@ -62,7 +62,7 @@ typedef uint32 REGION_t;
 *   @brief POM region configuration
 */
 typedef struct
-{       
+{
         uint32 Prog_Reg_Sta_Addr;
         uint32 Ovly_Reg_Sta_Addr;
         uint32 Reg_Size;
@@ -71,22 +71,22 @@ typedef struct
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
 
-/** 
+/**
  *  @defgroup POM POM
  *  @brief Parameter Overlay Module.
- *  
+ *
  *  The POM provides a mechanism to redirect accesses to non-volatile memory into a volatile memory
  *  internal or external to the device. The data requested by the CPU will be fetched from the overlay memory
  *  instead of the main non-volatile memory.
  *
- *	Related Files
+ *  Related Files
  *   - reg_pom.h
  *   - pom.h
  *   - pom.c
  *  @addtogroup POM
  *  @{
  */
- 
+
 /* POM Interface Functions */
 void POM_Region_Config(REGION_CONFIG_t *Reg_Config_Ptr,REGION_t Region_Num);
 void POM_Reset(void);

@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version V1.5.0
 * @date    21/10/2016
-* @brief   This file contains all the functions prototypes for the RTC firmware 
+* @brief   This file contains all the functions prototypes for the RTC firmware
 *          library.
 ******************************************************************************
 * @attention
@@ -27,34 +27,34 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
+
   /* Includes ------------------------------------------------------------------*/
 #include "HAL_device.h"
-  
-  /** @addtogroup 
+
+  /** @addtogroup
   * @{
   */
-  
+
   /** @addtogroup RTC
   * @{
-  */ 
-  
+  */
+
   /** @defgroup RTC_Exported_Types
   * @{
-  */ 
-  
+  */
+
   /**
   * @}
-  */ 
-  
+  */
+
   /** @defgroup RTC_Exported_Constants
   * @{
   */
-  
-  /** @defgroup RTC_interrupts_define 
+
+  /** @defgroup RTC_interrupts_define
   * @{
   */
-  
+
 #define RTC_IT_OW            ((uint16_t)0x0004)  /*!< Overflow interrupt */
 #define RTC_IT_ALR           ((uint16_t)0x0002)  /*!< Alarm interrupt */
 #define RTC_IT_SEC           ((uint16_t)0x0001)  /*!< Second interrupt */
@@ -63,9 +63,9 @@ extern "C" {
   ((IT) == RTC_IT_SEC))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup RTC_interrupts_flags 
+/** @defgroup RTC_interrupts_flags
 * @{
 */
 

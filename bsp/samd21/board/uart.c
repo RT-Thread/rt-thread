@@ -49,7 +49,7 @@ static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configu
 
     uart = (SAMD2x_UART_T *)serial->parent.user_data;
     //! [setup_config]
-	struct usart_config config_usart;
+    struct usart_config config_usart;
     //! [setup_config]
     //! [setup_config_defaults]
     usart_get_config_defaults(&config_usart);
@@ -148,7 +148,7 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
         usart_disable_transceiver(uart->instance, USART_TRANSCEIVER_RX);
         system_interrupt_disable(uart->vector);
         /* Wait for the synchronization to complete */
-	    _usart_wait_for_sync(uart->instance);
+        _usart_wait_for_sync(uart->instance);
         break;
         /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
@@ -158,7 +158,7 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
         usart_enable_transceiver(uart->instance, USART_TRANSCEIVER_RX);
         system_interrupt_enable(uart->vector);
         /* Wait for the synchronization to complete */
-	    _usart_wait_for_sync(uart->instance);
+        _usart_wait_for_sync(uart->instance);
         break;
 
     default:
@@ -179,11 +179,11 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
 
     uart = (SAMD2x_UART_T *)(serial->parent.user_data);
 
-	/* Write data to USART module */
-	uart->com->USART.DATA.reg = c;
+    /* Write data to USART module */
+    uart->com->USART.DATA.reg = c;
 
-	while (!(uart->com->USART.INTFLAG.reg & SERCOM_USART_INTFLAG_TXC)) {
-		/* Wait until data is sent */
+    while (!(uart->com->USART.INTFLAG.reg & SERCOM_USART_INTFLAG_TXC)) {
+        /* Wait until data is sent */
     }
 
     return 1;
@@ -199,9 +199,9 @@ static int _uart_getc(struct rt_serial_device *serial)
     uart = (SAMD2x_UART_T *)(serial->parent.user_data);
 
     /* Check if USART has new data */
-	if (!(uart->com->USART.INTFLAG.reg & SERCOM_USART_INTFLAG_RXC)) {
-		/* Return error code */
-		return -1;
+    if (!(uart->com->USART.INTFLAG.reg & SERCOM_USART_INTFLAG_RXC)) {
+        /* Return error code */
+        return -1;
     }
 
     ch = uart->com->USART.DATA.reg & 0x1FF;
@@ -219,19 +219,19 @@ static struct rt_uart_ops _uart_ops = {
 static void uart_int_cb(SAMD2x_UART_T *uart_handle)
 {
     /* Temporary variables */
-	uint16_t interrupt_status;
-	uint8_t error_code;
+    uint16_t interrupt_status;
+    uint8_t error_code;
     struct usart_module *module = uart_handle->instance;
-	/* Pointer to the hardware module instance */
-	SercomUsart *const usart_hw = &(module->hw->USART);
+    /* Pointer to the hardware module instance */
+    SercomUsart *const usart_hw = &(module->hw->USART);
 
-	/* Read and mask interrupt flag register */
-	interrupt_status = usart_hw->INTFLAG.reg;
-	interrupt_status &= usart_hw->INTENSET.reg;
+    /* Read and mask interrupt flag register */
+    interrupt_status = usart_hw->INTFLAG.reg;
+    interrupt_status &= usart_hw->INTENSET.reg;
 
-	/* Check if the Receive Complete interrupt has occurred, and that
-	 * there's more data to receive */
-	if (interrupt_status & SERCOM_USART_INTFLAG_RXC) {
+    /* Check if the Receive Complete interrupt has occurred, and that
+     * there's more data to receive */
+    if (interrupt_status & SERCOM_USART_INTFLAG_RXC) {
         /* Read out the status code and mask away all but the 4 LSBs*/
         error_code = (uint8_t)(usart_hw->STATUS.reg & SERCOM_USART_STATUS_MASK);
 #if !SAMD20
@@ -274,33 +274,33 @@ static void uart_int_cb(SAMD2x_UART_T *uart_handle)
         } else {
             rt_hw_serial_isr(uart_handle->serial, RT_SERIAL_EVENT_RX_IND);
         }
-	}
+    }
 
 #ifdef FEATURE_USART_HARDWARE_FLOW_CONTROL
-	if (interrupt_status & SERCOM_USART_INTFLAG_CTSIC) {
-		/* Disable interrupts */
-		usart_hw->INTENCLR.reg = SERCOM_USART_INTENCLR_CTSIC;
-		/* Clear interrupt flag */
-		usart_hw->INTFLAG.reg = SERCOM_USART_INTFLAG_CTSIC;
-	}
+    if (interrupt_status & SERCOM_USART_INTFLAG_CTSIC) {
+        /* Disable interrupts */
+        usart_hw->INTENCLR.reg = SERCOM_USART_INTENCLR_CTSIC;
+        /* Clear interrupt flag */
+        usart_hw->INTFLAG.reg = SERCOM_USART_INTFLAG_CTSIC;
+    }
 #endif
 
 #ifdef FEATURE_USART_LIN_SLAVE
-	if (interrupt_status & SERCOM_USART_INTFLAG_RXBRK) {
-		/* Disable interrupts */
-		usart_hw->INTENCLR.reg = SERCOM_USART_INTENCLR_RXBRK;
-		/* Clear interrupt flag */
-		usart_hw->INTFLAG.reg = SERCOM_USART_INTFLAG_RXBRK;
-	}
+    if (interrupt_status & SERCOM_USART_INTFLAG_RXBRK) {
+        /* Disable interrupts */
+        usart_hw->INTENCLR.reg = SERCOM_USART_INTENCLR_RXBRK;
+        /* Clear interrupt flag */
+        usart_hw->INTFLAG.reg = SERCOM_USART_INTFLAG_RXBRK;
+    }
 #endif
 
 #ifdef FEATURE_USART_START_FRAME_DECTION
-	if (interrupt_status & SERCOM_USART_INTFLAG_RXS) {
-		/* Disable interrupts */
-		usart_hw->INTENCLR.reg = SERCOM_USART_INTENCLR_RXS;
-		/* Clear interrupt flag */
-		usart_hw->INTFLAG.reg = SERCOM_USART_INTFLAG_RXS;
-	}
+    if (interrupt_status & SERCOM_USART_INTFLAG_RXS) {
+        /* Disable interrupts */
+        usart_hw->INTENCLR.reg = SERCOM_USART_INTENCLR_RXS;
+        /* Clear interrupt flag */
+        usart_hw->INTFLAG.reg = SERCOM_USART_INTFLAG_RXS;
+    }
 #endif
 }
 

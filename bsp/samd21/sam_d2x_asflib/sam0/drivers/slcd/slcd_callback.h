@@ -63,21 +63,21 @@ extern "C" {
 /**
  * \brief SLCD callback type
  *
- * Enum SLCD callback type. 
+ * Enum SLCD callback type.
  */
 enum slcd_callback_type {
-	/** Frame Counter 0 Overflow callback */
-	SLCD_CALLBACK_FC0_OVERFLOW = 0,
-	/** Frame Counter 1 Overflow callback */
-	SLCD_CALLBACK_FC1_OVERFLOW,
-	/** Frame Counter 2 Overflow callback */
-	SLCD_CALLBACK_FC2_OVERFLOW,
-	/** VLCD Ready Toggle callback */
-	SLCD_CALLBACK_VLCD_READY,
-	/** VLCD Status Toggle callback */
-	SLCD_CALLBACK_VLCD_TOGGLE,
-	/** Pump Run Status Toggle callback */
-	SLCD_CALLBACK_PUMP_TOGGLE,
+    /** Frame Counter 0 Overflow callback */
+    SLCD_CALLBACK_FC0_OVERFLOW = 0,
+    /** Frame Counter 1 Overflow callback */
+    SLCD_CALLBACK_FC1_OVERFLOW,
+    /** Frame Counter 2 Overflow callback */
+    SLCD_CALLBACK_FC2_OVERFLOW,
+    /** VLCD Ready Toggle callback */
+    SLCD_CALLBACK_VLCD_READY,
+    /** VLCD Status Toggle callback */
+    SLCD_CALLBACK_VLCD_TOGGLE,
+    /** Pump Run Status Toggle callback */
+    SLCD_CALLBACK_PUMP_TOGGLE,
 };
 
 /** SLCD interrupt callback function type. */
@@ -91,12 +91,12 @@ typedef void (*slcd_callback_t)(enum slcd_callback_type type);
  */
 
 enum status_code slcd_register_callback(
-	const slcd_callback_t callback,
-	const enum slcd_callback_type type);
+    const slcd_callback_t callback,
+    const enum slcd_callback_type type);
 
 enum status_code slcd_unregister_callback(
-	const slcd_callback_t callback,
-	const enum slcd_callback_type type);
+    const slcd_callback_t callback,
+    const enum slcd_callback_type type);
 
 /**
  * \brief Enable an SLCD callback
@@ -108,9 +108,9 @@ enum status_code slcd_unregister_callback(
  */
 static inline void slcd_enable_callback(const enum slcd_callback_type type)
 {
-	if (type < SLCD_CALLBACK_TYPE_NUM){
-		SLCD->INTENSET.reg = 1 << type;
-	}
+    if (type < SLCD_CALLBACK_TYPE_NUM){
+        SLCD->INTENSET.reg = 1 << type;
+    }
 }
 
 /**
@@ -123,9 +123,9 @@ static inline void slcd_enable_callback(const enum slcd_callback_type type)
  */
 static inline void slcd_disable_callback(const enum slcd_callback_type type)
 {
-	if (type < SLCD_CALLBACK_TYPE_NUM){
-		SLCD->INTENCLR.reg = 1 << type;
-	}
+    if (type < SLCD_CALLBACK_TYPE_NUM){
+        SLCD->INTENCLR.reg = 1 << type;
+    }
 }
 
 /** @} */

@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62Nxx
-* File Name		: Interrupt_SPI.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for all SPI channels
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name   : Interrupt program for RX62Nxx
+* File Name     : Interrupt_SPI.c
+* Version       : 1.02
+* Contents      : Interrupt handlers for all SPI channels
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_spi.h"
@@ -27,23 +27,23 @@
 /*""FUNC COMMENT""***************************************************
 * Module outline: SPIn receive data error interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_RSPIn_SPEIn(void)
+* Declaration   : void Interrupt_RSPIn_SPEIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: None
+* Output        : None
 *-------------------------------------------------------------------
-* Use function	: rpdl_SPI_callback_func[n]
+* Use function  : rpdl_SPI_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_RSPI0_SPEI0
@@ -79,24 +79,24 @@ __interrupt void Interrupt_RSPI1_SPEI1(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: SPIn receive data interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_RSPIn_SPRIn(void)
+* Declaration   : void Interrupt_RSPIn_SPRIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Input			: (I/ ) : SPDCR, SBDR
-* Output		: (I/O) : SPCR, SPCR2
+* Input         : (I/ ) : SPDCR, SBDR
+* Output        : (I/O) : SPCR, SPCR2
 *-------------------------------------------------------------------
-* Use function	: None
+* Use function  : None
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_RSPI0_SPRI0
@@ -294,25 +294,25 @@ __interrupt void Interrupt_RSPI1_SPRI1(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: SPIn transmit data interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_RSPIn_SPTIn(void)
+* Declaration   : void Interrupt_RSPIn_SPTIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Input			: (I/ ) : SPDCR
-* Output		: ( /O) : SBDR
-*				: (I/O) : SPCR, SPCR2
+* Input         : (I/ ) : SPDCR
+* Output        : ( /O) : SBDR
+*               : (I/O) : SPCR, SPCR2
 *-------------------------------------------------------------------
-* Use function	: 
+* Use function  :
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_RSPI0_SPTI0
@@ -506,23 +506,23 @@ __interrupt void Interrupt_RSPI1_SPTI1(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: SPIn idle interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_RSPIn_SPIIn(void)
+* Declaration   : void Interrupt_RSPIn_SPIIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: SPCR, SPCR2
+* Output        : SPCR, SPCR2
 *-------------------------------------------------------------------
-* Use function	: rpdl_SPI_callback_func()
+* Use function  : rpdl_SPI_callback_func()
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_RSPI0_SPII0

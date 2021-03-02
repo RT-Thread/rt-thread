@@ -32,7 +32,7 @@ static rt_err_t ls1b_uart_configure(struct rt_serial_device *serial, struct seri
 
     uart_dev = (struct rt_uart_ls1b *)serial->parent.user_data;
 
-    // åˆå§‹åŒ–ä¸²å£
+    // ³õÊ¼»¯´®¿Ú
     uart_info.UARTx    = uart_dev->UARTx;
     uart_info.baudrate = cfg->baud_rate;
     uart_info.rx_enable = TRUE;
@@ -108,7 +108,7 @@ static void uart_irq_handler(int vector, void *param)
     void *uart_base = uart_get_base(uart_dev->UARTx);
     unsigned char iir = reg_read_8(uart_base + LS1B_UART_IIR_OFFSET);
 
-    // åˆ¤æ–­æ˜¯å¦ä¸ºæŽ¥æ”¶è¶…æ—¶æˆ–æŽ¥æ”¶åˆ°æœ‰æ•ˆæ•°æ®
+    // ÅÐ¶ÏÊÇ·ñÎª½ÓÊÕ³¬Ê±»ò½ÓÊÕµ½ÓÐÐ§Êý¾Ý
     if ((IIR_RXTOUT & iir) || (IIR_RXRDY & iir))
     {
         rt_interrupt_enter();
@@ -181,19 +181,19 @@ void rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART5
-		uart = &uart5;
-	
-		serial5.ops    = &ls1b_uart_ops;
-		serial5.config = config;
-	
-		rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial5, "UART5");
-	
-		/* register UART5 device */
-		rt_hw_serial_register(&serial5,
-							  "uart5",
-							  //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
-							  RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-							  uart);
+        uart = &uart5;
+
+        serial5.ops    = &ls1b_uart_ops;
+        serial5.config = config;
+
+        rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial5, "UART5");
+
+        /* register UART5 device */
+        rt_hw_serial_register(&serial5,
+                              "uart5",
+                              //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                              RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                              uart);
 #endif /* RT_USING_UART5 */
 
 

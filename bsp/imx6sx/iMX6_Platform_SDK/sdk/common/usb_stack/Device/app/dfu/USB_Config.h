@@ -45,7 +45,7 @@
 
 
 /*****************************************************************************/
-/* 								Function's Prototypes						 */
+/*                              Function's Prototypes                        */
 /*****************************************************************************/
 /* HID class services */
 extern void USB_Service_Hid (PTR_USB_DEV_EVENT_STRUCT event);

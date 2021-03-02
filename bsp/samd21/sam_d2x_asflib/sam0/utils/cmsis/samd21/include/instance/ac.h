@@ -81,7 +81,7 @@
 #define AC_CMP_NUM                  2        // Number of comparators
 #define AC_GCLK_ID_ANA              32       // Index of Generic Clock for analog
 #define AC_GCLK_ID_DIG              31       // Index of Generic Clock for digital
-#define AC_NUM_CMP                  2       
+#define AC_NUM_CMP                  2
 #define AC_PAIRS                    1        // Number of pairs of comparators
 
 #endif /* _SAMD21_AC_INSTANCE_ */

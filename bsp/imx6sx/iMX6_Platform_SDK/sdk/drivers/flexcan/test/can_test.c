@@ -47,8 +47,8 @@ uint32_t can_test_count;
 void flexcan_test(void)
 {
     int i;
-	uint8_t ch;
-    //struct imx_flexcan can1, can2;    
+    uint8_t ch;
+    //struct imx_flexcan can1, can2;
 
     //can_set_can_attributes(&can1, KBPS_500, &can1_port);
     //can_set_can_attributes(&can2, KBPS_500, &can2_port);
@@ -56,18 +56,18 @@ void flexcan_test(void)
     //can_update_bitrate(&can2);
 
     printf("\n---- Running CAN1/2 loopback test ----\n");
-	printf("Please plugin Sabre_ai board onto the main base board\n");
-	printf("Connect pin 6 in J35 to slot 7 in J34\n");
-	printf("Connect pin 7 in J35 to slot 2 in J34\n");
+    printf("Please plugin Sabre_ai board onto the main base board\n");
+    printf("Connect pin 6 in J35 to slot 7 in J34\n");
+    printf("Connect pin 7 in J35 to slot 2 in J34\n");
     printf("Please make sure accessories are availalbe. Type \"y\" or \"Y\" to confirm.\n");
-	do {
-		ch = getchar();
-	} while (ch == (uint8_t) 0xFF);
-	
-	if((ch != 'Y') && (ch != 'y')){
-		printf("\nTest exit.\n");
-		return ;
-	}
+    do {
+        ch = getchar();
+    } while (ch == (uint8_t) 0xFF);
+
+    if((ch != 'Y') && (ch != 'y')){
+        printf("\nTest exit.\n");
+        return ;
+    }
     can_test_count = 0;
 
     can_init(can1_port, CAN_LAST_MB);  // max 64 MB 0-63
@@ -111,7 +111,7 @@ void can2_rx_handler(void)
     if(iflag !=0L){
         for (i = 0; i < 64; i++) {
             if (iflag & (1L << i)) {
-		can_mb_int_ack(can2_port, i);
+        can_mb_int_ack(can2_port, i);
                 printf("\tCAN2 MB:%d Recieved:\n", i);
                 print_can_mb(can2_port, i);
                 can_test_count++;

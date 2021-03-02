@@ -51,29 +51,29 @@ extern int imx_fec_mii_type(imx_fec_priv_t * dev, enum imx_mii_type mii_type);
 
 static int imx_fec_setup(void)
 {
-	unsigned int reg=0;
-//	unsigned int timeout = 100000;
-	
-	/* config iomux */
-	fec_iomux_config();
-	
-	/* gpio4_21 controls the power of FEC PHY */
-	gpio_set_direction(GPIO_PORT4, 21, GPIO_GDIR_OUTPUT);
-	gpio_set_level(GPIO_PORT4, 21, GPIO_HIGH_LEVEL);
-	hal_delay_us(100000);
-	
-	/* get enet tx reference clk from internal clock from anatop
-	 * GPR1[14] = 0, GPR1[18:17] = 00
-	 */
-	reg = HW_IOMUXC_GPR1_RD();
-	reg &= ~(BM_IOMUXC_GPR1_ENET_CLK_SEL_FROM_ANALOG_LOOPBACK);
-	reg &= ~(BM_IOMUXC_GPR1_ENET_CLK_SEL);
-	HW_IOMUXC_GPR1_WR(reg);
-	
-	/* Enable ENET PLLs */
-	/* already done in ccm_init() */
+    unsigned int reg=0;
+//  unsigned int timeout = 100000;
 
-	return 0;
+    /* config iomux */
+    fec_iomux_config();
+
+    /* gpio4_21 controls the power of FEC PHY */
+    gpio_set_direction(GPIO_PORT4, 21, GPIO_GDIR_OUTPUT);
+    gpio_set_level(GPIO_PORT4, 21, GPIO_HIGH_LEVEL);
+    hal_delay_us(100000);
+
+    /* get enet tx reference clk from internal clock from anatop
+     * GPR1[14] = 0, GPR1[18:17] = 00
+     */
+    reg = HW_IOMUXC_GPR1_RD();
+    reg &= ~(BM_IOMUXC_GPR1_ENET_CLK_SEL_FROM_ANALOG_LOOPBACK);
+    reg &= ~(BM_IOMUXC_GPR1_ENET_CLK_SEL);
+    HW_IOMUXC_GPR1_WR(reg);
+
+    /* Enable ENET PLLs */
+    /* already done in ccm_init() */
+
+    return 0;
 }
 
 static void pkt_fill(unsigned char *packet, unsigned char *eth_addr, unsigned char seed, int length)
@@ -114,7 +114,7 @@ static int pkt_compare(unsigned char *packet1, unsigned char *packet2, int lengt
 /*!
  * This test performs a loopback transfer on the RGMII interface through
  * an external AR8031 giga ethernet PHY.
- * 
+ *
  * @return TEST_PASSED or TEST_FAILED
  */
 test_return_t fec_test(void)
@@ -130,9 +130,9 @@ test_return_t fec_test(void)
            first plug in a loopback cable to the Ethernet port) \n", indent);
     if (!is_input_char('y', NULL))
         return TEST_BYPASSED;
-	
+
     //setup iomux and power for FEC
-	imx_fec_setup();
+    imx_fec_setup();
 
     //init fec0
     imx_fec_init(dev0, REGS_FEC_BASE, 0);

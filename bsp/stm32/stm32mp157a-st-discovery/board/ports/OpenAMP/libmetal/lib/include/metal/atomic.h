@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	atomic.h
- * @brief	Atomic primitives for libmetal.
+ * @file    atomic.h
+ * @brief   Atomic primitives for libmetal.
  */
 
 #ifndef __METAL_ATOMIC__H__

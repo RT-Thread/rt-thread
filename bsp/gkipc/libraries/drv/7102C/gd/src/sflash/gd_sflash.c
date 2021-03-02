@@ -4595,7 +4595,7 @@ GERR GD_SFLASH_DisableIO4(GD_HANDLE handle)
         }
 
         if(device->dev->manufacture_ID == EON_MID)
-        {       
+        {
             return GD_OK;
         }
 
@@ -4894,7 +4894,7 @@ GERR GD_SFLASH_Read(GD_HANDLE handle, U32 address, U32* buffer, U32 words)
         device->func.GH_SFLASH_set_Data(device->devicechannel);
     }
     //////////////////////////////////////////
-#if 0 // all flash 1X read by xiahong    
+#if 0 // all flash 1X read by xiahong
     if((device->feature & 0x0F) == GD_SFLASH_4X_READ)
     {
         if(old_feature != GD_SFLASH_FEATURE_IO4)
@@ -4957,7 +4957,7 @@ GERR GD_SFLASH_Read(GD_HANDLE handle, U32 address, U32* buffer, U32 words)
             return gerr;
         }
     }
-#endif 
+#endif
 
     if(device->dev->type == GD_SPI_NOR)                      // check if spi-nor flash
     {

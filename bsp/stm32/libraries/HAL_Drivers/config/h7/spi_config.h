@@ -26,7 +26,7 @@ extern "C" {
     }
 #endif /* SPI1_BUS_CONFIG */
 #endif /* BSP_USING_SPI1 */
-    
+
 #ifdef BSP_SPI1_TX_USING_DMA
 #ifndef SPI1_TX_DMA_CONFIG
 #define SPI1_TX_DMA_CONFIG                          \
@@ -60,7 +60,7 @@ extern "C" {
     }
 #endif /* SPI2_BUS_CONFIG */
 #endif /* BSP_USING_SPI2 */
-    
+
 #ifdef BSP_SPI2_TX_USING_DMA
 #ifndef SPI2_TX_DMA_CONFIG
 #define SPI2_TX_DMA_CONFIG                          \
@@ -94,7 +94,7 @@ extern "C" {
     }
 #endif /* SPI3_BUS_CONFIG */
 #endif /* BSP_USING_SPI3 */
-    
+
 #ifdef BSP_SPI3_TX_USING_DMA
 #ifndef SPI3_TX_DMA_CONFIG
 #define SPI3_TX_DMA_CONFIG                          \
@@ -128,7 +128,7 @@ extern "C" {
     }
 #endif /* SPI4_BUS_CONFIG */
 #endif /* BSP_USING_SPI4 */
-    
+
 #ifdef BSP_SPI4_TX_USING_DMA
 #ifndef SPI4_TX_DMA_CONFIG
 #define SPI4_TX_DMA_CONFIG                          \
@@ -162,7 +162,7 @@ extern "C" {
     }
 #endif /* SPI5_BUS_CONFIG */
 #endif /* BSP_USING_SPI5 */
-    
+
 #ifdef BSP_SPI5_TX_USING_DMA
 #ifndef SPI5_TX_DMA_CONFIG
 #define SPI5_TX_DMA_CONFIG                          \

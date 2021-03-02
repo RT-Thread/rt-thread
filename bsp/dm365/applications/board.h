@@ -18,8 +18,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
- * Date           Author		Notes
- * 2011-01-13     weety		first version
+ * Date           Author        Notes
+ * 2011-01-13     weety     first version
  */
 
 

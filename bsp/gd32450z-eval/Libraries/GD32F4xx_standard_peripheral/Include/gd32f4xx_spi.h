@@ -121,7 +121,7 @@
 /* constants definitions */
 /* SPI and I2S parameter struct definitions */
 typedef struct
-{   
+{
     uint32_t device_mode;                                                       /*!< SPI master or slave */
     uint32_t trans_mode;                                                        /*!< SPI transtype */
     uint32_t frame_size;                                                        /*!< SPI frame size */
@@ -183,10 +183,10 @@ typedef struct
 #define I2S_FRAMEFORMAT_DT16B_CH32B     (I2SCTL_DTLEN(0)|SPI_I2SCTL_CHLEN)      /*!< I2S data length is 16 bit and channel length is 32 bit */
 #define I2S_FRAMEFORMAT_DT24B_CH32B     (I2SCTL_DTLEN(1)|SPI_I2SCTL_CHLEN)      /*!< I2S data length is 24 bit and channel length is 32 bit */
 #define I2S_FRAMEFORMAT_DT32B_CH32B     (I2SCTL_DTLEN(2)|SPI_I2SCTL_CHLEN)      /*!< I2S data length is 32 bit and channel length is 32 bit */
-                                                                               
+
 #define I2S_MCKOUT_DISABLE              ((uint32_t)0x00000000U)                 /*!< I2S master clock output disable */
 #define I2S_MCKOUT_ENABLE               SPI_I2SPSC_MCKOEN                       /*!< I2S master clock output enable */
-                                                                           
+
 #define I2SCTL_I2SOPMOD(regval)         (BITS(8,9)&((uint32_t)(regval)<<8))
 #define I2S_MODE_SLAVETX                I2SCTL_I2SOPMOD(0)                      /*!< I2S slave transmit mode */
 #define I2S_MODE_SLAVERX                I2SCTL_I2SOPMOD(1)                      /*!< I2S slave receive mode */
@@ -203,7 +203,7 @@ typedef struct
 #define I2S_CKPL_LOW                    ((uint32_t)0x00000000U)                 /*!< I2S clock polarity low level */
 #define I2S_CKPL_HIGH                   SPI_I2SCTL_CKPL                         /*!< I2S clock polarity high level */
 
-/* SPI dma constants definitions */                                    
+/* SPI dma constants definitions */
 #define SPI_DMA_TRANSMIT                ((uint8_t)0x00U)                        /*!< SPI transmit data DMA */
 #define SPI_DMA_RECEIVE                 ((uint8_t)0x01U)                        /*!< SPI receive data DMA */
 
@@ -221,7 +221,7 @@ typedef struct
 #define SPI_I2S_INT_ERR                 ((uint8_t)0x06U)                        /*!< error interrupt */
 #define SPI_I2S_INT_FERR                ((uint8_t)0x07U)                        /*!< format error interrupt */
 
-/* SPI flag definitions */                                                  
+/* SPI flag definitions */
 #define SPI_FLAG_RBNE                   SPI_STAT_RBNE                           /*!< receive buffer not empty flag */
 #define SPI_FLAG_TBE                    SPI_STAT_TBE                            /*!< transmit buffer empty flag */
 #define SPI_FLAG_CRCERR                 SPI_STAT_CRCERR                         /*!< CRC error flag */

@@ -54,67 +54,67 @@ static bool stdio_usb_interface_enable = false;
 
 int stdio_usb_putchar (volatile void * unused, char data)
 {
-	/* A negative return value should be used to indicate that data
-	 * was not written, but this doesn't seem to work with GCC libc.
-	 */
-	if (!stdio_usb_interface_enable) {
-		return 0;  // -1
-	}
+    /* A negative return value should be used to indicate that data
+     * was not written, but this doesn't seem to work with GCC libc.
+     */
+    if (!stdio_usb_interface_enable) {
+        return 0;  // -1
+    }
 
-	return udi_cdc_putc(data) ? 0 : -1;
+    return udi_cdc_putc(data) ? 0 : -1;
 }
 
 void stdio_usb_getchar (void volatile * unused, char *data)
 {
-	/* A negative return value should be used to indicate that data
-	 * was not read, but this doesn't seem to work with GCC libc.
-	 */
-	if (!stdio_usb_interface_enable) {
-		*data = 0;  // -1
-		return;
-	}
+    /* A negative return value should be used to indicate that data
+     * was not read, but this doesn't seem to work with GCC libc.
+     */
+    if (!stdio_usb_interface_enable) {
+        *data = 0;  // -1
+        return;
+    }
 
-	*data = (char)udi_cdc_getc();
+    *data = (char)udi_cdc_getc();
 }
 
 bool stdio_usb_enable(void)
 {
-	stdio_usb_interface_enable = true;
-	return true;
+    stdio_usb_interface_enable = true;
+    return true;
 }
 
 void stdio_usb_disable(void)
 {
-	stdio_usb_interface_enable = false;
+    stdio_usb_interface_enable = false;
 }
 
 void stdio_usb_init(void)
 {
-	stdio_base = NULL;
-	ptr_put = stdio_usb_putchar;
-	ptr_get = stdio_usb_getchar;
+    stdio_base = NULL;
+    ptr_put = stdio_usb_putchar;
+    ptr_get = stdio_usb_getchar;
 
-	/*
-	 * Start and attach USB CDC device interface for devices with
-	 * integrated USB interfaces.  Assume the VBUS is present if
-	 * VBUS monitoring is not available.
-	 */
-	udc_start ();
+    /*
+     * Start and attach USB CDC device interface for devices with
+     * integrated USB interfaces.  Assume the VBUS is present if
+     * VBUS monitoring is not available.
+     */
+    udc_start ();
 
 #if defined(__GNUC__)
 # if XMEGA
-	// For AVR GCC libc print redirection uses fdevopen.
-	fdevopen((int (*)(char, FILE*))(_write),(int (*)(FILE*))(_read));
+    // For AVR GCC libc print redirection uses fdevopen.
+    fdevopen((int (*)(char, FILE*))(_write),(int (*)(FILE*))(_read));
 # endif
 # if UC3 || SAM
-	// For AVR32 and SAM GCC
-	// Specify that stdout and stdin should not be buffered.
-	setbuf(stdout, NULL);
-	setbuf(stdin, NULL);
-	// Note: Already the case in IAR's Normal DLIB default configuration
-	// and AVR GCC library:
-	// - printf() emits one character at a time.
-	// - getchar() requests only 1 byte to exit.
+    // For AVR32 and SAM GCC
+    // Specify that stdout and stdin should not be buffered.
+    setbuf(stdout, NULL);
+    setbuf(stdin, NULL);
+    // Note: Already the case in IAR's Normal DLIB default configuration
+    // and AVR GCC library:
+    // - printf() emits one character at a time.
+    // - getchar() requests only 1 byte to exit.
 # endif
 #endif
 }

@@ -150,12 +150,12 @@ extern "C" {
  * Enum SLCD frame counter definition.
  */
 enum slcd_frame_counter {
-	/** SLCD frame counter 0 */
-	SLCD_FRAME_COUNTER_0,
-	/** SLCD frame counter 1 */
-	SLCD_FRAME_COUNTER_1,
-	/** SLCD frame counter 2 */
-	SLCD_FRAME_COUNTER_2,
+    /** SLCD frame counter 0 */
+    SLCD_FRAME_COUNTER_0,
+    /** SLCD frame counter 1 */
+    SLCD_FRAME_COUNTER_1,
+    /** SLCD frame counter 2 */
+    SLCD_FRAME_COUNTER_2,
 };
 
 /**
@@ -164,10 +164,10 @@ enum slcd_frame_counter {
  * Enum waveform mode.
  */
 enum slcd_waveform_mode {
-	/** Low power waveform mode */
-	SLCD_LOW_POWER_WAVEFORM_MODE = 0,
-	/** Standard waveform mode */
-	SLCD_STANDARD_WAVEFORM_MODE,
+    /** Low power waveform mode */
+    SLCD_LOW_POWER_WAVEFORM_MODE = 0,
+    /** Standard waveform mode */
+    SLCD_STANDARD_WAVEFORM_MODE,
 };
 
 /**
@@ -176,19 +176,19 @@ enum slcd_waveform_mode {
  * Basic configuration for SLCDC.
  */
 struct slcd_config {
-	/** Keep SLCD enabled in standby sleep mode if true */
-	bool run_in_standby;
-	/** waveform mode selection */
-	enum slcd_waveform_mode waveform_mode;
+    /** Keep SLCD enabled in standby sleep mode if true */
+    bool run_in_standby;
+    /** waveform mode selection */
+    enum slcd_waveform_mode waveform_mode;
 
-	/** Low resistance network duration */
-	uint8_t low_resistance_duration;
-	/** Enable Low resistance if true */
-	bool enable_low_resistance;
-	/** Bias buffer duration */
-	uint8_t bias_buffer_duration;
-	/** Enable bias buffer if true */
-	bool enable_bias_buffer;
+    /** Low resistance network duration */
+    uint8_t low_resistance_duration;
+    /** Enable Low resistance if true */
+    bool enable_low_resistance;
+    /** Bias buffer duration */
+    uint8_t bias_buffer_duration;
+    /** Enable bias buffer if true */
+    bool enable_bias_buffer;
 };
 /**
  * \brief SLCD event enable/disable structure
@@ -197,12 +197,12 @@ struct slcd_config {
  * disable events via \ref slcd_enable_events() and \ref slcd_disable_events().
  */
 struct slcd_events {
-	/** Enable event generation on frame counter 0 overflow */
-	bool generate_event_on_fc0_overflow;
-	/** Enable event generation on frame counter 1 overflow */
-	bool generate_event_on_fc1_overflow;
-	/** Enable event generation on frame counter 2 overflow */
-	bool generate_event_on_fc2_overflow;
+    /** Enable event generation on frame counter 0 overflow */
+    bool generate_event_on_fc0_overflow;
+    /** Enable event generation on frame counter 1 overflow */
+    bool generate_event_on_fc1_overflow;
+    /** Enable event generation on frame counter 2 overflow */
+    bool generate_event_on_fc2_overflow;
 };
 
 /**
@@ -211,11 +211,11 @@ struct slcd_events {
  * SLCD blink configuration.
  */
 struct slcd_blink_config {
-	/** Frame counter selection for blinking */
-	enum slcd_frame_counter fc;
-	/** All segments are allowed to blink if true, else only
-	  Selected segments are allowed to blink */
-	bool blink_all_seg;
+    /** Frame counter selection for blinking */
+    enum slcd_frame_counter fc;
+    /** All segments are allowed to blink if true, else only
+      Selected segments are allowed to blink */
+    bool blink_all_seg;
 };
 
 /**
@@ -224,10 +224,10 @@ struct slcd_blink_config {
  * Enum SLCD circular shift direction.
  */
 enum slcd_circular_shift_dir {
-	/** Circular shift direction is left */
-	SLCD_CIRCULAR_SHIFT_LEFT = 0,
-	/** Circular shift direction is right */
-	SLCD_CIRCULAR_SHIFT_RIGHT,
+    /** Circular shift direction is left */
+    SLCD_CIRCULAR_SHIFT_LEFT = 0,
+    /** Circular shift direction is right */
+    SLCD_CIRCULAR_SHIFT_RIGHT,
 };
 
 /**
@@ -236,14 +236,14 @@ enum slcd_circular_shift_dir {
  * SLCD circular shift configuration.
  */
 struct slcd_circular_shift_config {
-	/** Frame counter selection for circular shift */
-	enum slcd_frame_counter fc;
-	/** Shift direction */
-	enum slcd_circular_shift_dir dir;
-	/** Size of the circular shift register, MAX. size is 16 */
-	uint8_t size;
-	/** Circular shift register value */
-	uint16_t data;
+    /** Frame counter selection for circular shift */
+    enum slcd_frame_counter fc;
+    /** Shift direction */
+    enum slcd_circular_shift_dir dir;
+    /** Size of the circular shift register, MAX. size is 16 */
+    uint8_t size;
+    /** Circular shift register value */
+    uint16_t data;
 };
 
 /**
@@ -252,10 +252,10 @@ struct slcd_circular_shift_config {
  * Enum automated char order.
  */
 enum slcd_automated_char_order {
-	/** Segment is starting from bottom right */
-	SLCD_AUTOMATED_CHAR_START_FROM_BOTTOM_RIGHT = 0,
-	/** Segment is starting from bottom left */
-	SLCD_AUTOMATED_CHAR_START_FROM_BOTTOM_LEFT,
+    /** Segment is starting from bottom right */
+    SLCD_AUTOMATED_CHAR_START_FROM_BOTTOM_RIGHT = 0,
+    /** Segment is starting from bottom left */
+    SLCD_AUTOMATED_CHAR_START_FROM_BOTTOM_LEFT,
 };
 
 /**
@@ -264,10 +264,10 @@ enum slcd_automated_char_order {
  * Enum automated char display mode.
  */
 enum slcd_automated_char_mode {
-	/** Sequential Display Mode */
-	SLCD_AUTOMATED_CHAR_SEQ = 0,
-	/** Scrolling Display Mode */
-	SLCD_AUTOMATED_CHAR_SCROLL,
+    /** Sequential Display Mode */
+    SLCD_AUTOMATED_CHAR_SEQ = 0,
+    /** Scrolling Display Mode */
+    SLCD_AUTOMATED_CHAR_SCROLL,
 };
 
 /**
@@ -276,29 +276,29 @@ enum slcd_automated_char_mode {
  * SLCD automated char configuration.
  */
 struct slcd_automated_char_config {
-	/** Mapping order in automated char mode */
-	enum slcd_automated_char_order order;
-	/** Frame counter selection for automated character mapping */
-	enum slcd_frame_counter fc;
-	/** Display mode */
-	enum slcd_automated_char_mode mode;
-	/** Define the number of SEG line per digit,
-		it equal to number of SEG line - 1 */
-	uint8_t seg_line_num;
-	/** Define the index of the first segment terminal of the digit to display */
-	uint8_t start_seg_line;
-	/** Define the number of digit per row */
-	uint8_t row_digit_num;
-	/** Define the number of digit, it must be greater than 1 */
-	uint8_t digit_num;
-	/** Define the number of steps in scrolling mode.
-		scrolling_step = character string length - digit_num + 1 */
-	uint8_t scrolling_step;
-	/** Define the number of COM line per row,
-		it equal to number of COM line - 1 */
-	uint8_t com_line_num;
-	/** Segments data mask */
-	uint32_t data_mask;
+    /** Mapping order in automated char mode */
+    enum slcd_automated_char_order order;
+    /** Frame counter selection for automated character mapping */
+    enum slcd_frame_counter fc;
+    /** Display mode */
+    enum slcd_automated_char_mode mode;
+    /** Define the number of SEG line per digit,
+        it equal to number of SEG line - 1 */
+    uint8_t seg_line_num;
+    /** Define the index of the first segment terminal of the digit to display */
+    uint8_t start_seg_line;
+    /** Define the number of digit per row */
+    uint8_t row_digit_num;
+    /** Define the number of digit, it must be greater than 1 */
+    uint8_t digit_num;
+    /** Define the number of steps in scrolling mode.
+        scrolling_step = character string length - digit_num + 1 */
+    uint8_t scrolling_step;
+    /** Define the number of COM line per row,
+        it equal to number of COM line - 1 */
+    uint8_t com_line_num;
+    /** Segments data mask */
+    uint32_t data_mask;
 
 };
 
@@ -332,11 +332,11 @@ enum status_code slcd_set_contrast(uint8_t contrast);
 static inline bool slcd_is_syncing(void)
 {
 
-	if (SLCD->SYNCBUSY.reg) {
-		return true;
-	}
+    if (SLCD->SYNCBUSY.reg) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -347,7 +347,7 @@ static inline bool slcd_is_syncing(void)
  */
 static inline void slcd_lock_shadow_memory(void)
 {
-	SLCD->CTRLC.reg |= SLCD_CTRLC_LOCK;
+    SLCD->CTRLC.reg |= SLCD_CTRLC_LOCK;
 }
 
 /**
@@ -357,7 +357,7 @@ static inline void slcd_lock_shadow_memory(void)
  */
 static inline void slcd_unlock_shadow_memory(void)
 {
-	SLCD->CTRLC.reg &= (SLCD_CTRLC_MASK & ( ~SLCD_CTRLC_LOCK));
+    SLCD->CTRLC.reg &= (SLCD_CTRLC_MASK & ( ~SLCD_CTRLC_LOCK));
 }
 
 /**
@@ -367,7 +367,7 @@ static inline void slcd_unlock_shadow_memory(void)
  */
 static inline void slcd_clear_display_memory(void)
 {
-	SLCD->CTRLC.reg |= SLCD_CTRLC_CLEAR;
+    SLCD->CTRLC.reg |= SLCD_CTRLC_CLEAR;
 }
 
 /**
@@ -377,10 +377,10 @@ static inline void slcd_clear_display_memory(void)
  */
 static inline void slcd_enable_display(void)
 {
-	SLCD->CTRLD.reg |= SLCD_CTRLD_DISPEN;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg |= SLCD_CTRLD_DISPEN;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -390,10 +390,10 @@ static inline void slcd_enable_display(void)
  */
 static inline void slcd_disable_display(void)
 {
-	SLCD->CTRLD.reg &= (SLCD_CTRLD_MASK & ( ~SLCD_CTRLD_DISPEN));
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg &= (SLCD_CTRLD_MASK & ( ~SLCD_CTRLD_DISPEN));
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 /**
  * \brief  DMA display memory update frame counter selection
@@ -406,7 +406,7 @@ static inline void slcd_disable_display(void)
  */
 static inline void slcd_dma_display_memory_update_fc_sel(enum slcd_frame_counter fc)
 {
-	SLCD->CTRLA.bit.DMFCS = fc;
+    SLCD->CTRLA.bit.DMFCS = fc;
 }
 
 /** @} */
@@ -423,10 +423,10 @@ static inline void slcd_dma_display_memory_update_fc_sel(enum slcd_frame_counter
  */
 static inline void slcd_enable_blink(void)
 {
-	SLCD->CTRLD.reg |= SLCD_CTRLD_BLINK;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg |= SLCD_CTRLD_BLINK;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -436,10 +436,10 @@ static inline void slcd_enable_blink(void)
  */
 static inline void slcd_disable_blink(void)
 {
-	SLCD->CTRLD.reg &= ~SLCD_CTRLD_BLINK;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg &= ~SLCD_CTRLD_BLINK;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 void slcd_blink_get_config_defaults(struct slcd_blink_config *blink_config);
@@ -463,10 +463,10 @@ void slcd_set_blink_pixel(uint8_t pix_com,uint8_t pix_seg);
  */
 static inline void slcd_enable_blank(void)
 {
-	SLCD->CTRLD.reg |= SLCD_CTRLD_BLANK;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg |= SLCD_CTRLD_BLANK;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 /**
  * \brief Blank mode disable
@@ -475,10 +475,10 @@ static inline void slcd_enable_blank(void)
  */
 static inline void slcd_disable_blank(void)
 {
-	SLCD->CTRLD.reg &= ~SLCD_CTRLD_BLANK;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg &= ~SLCD_CTRLD_BLANK;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 /** @} */
 
@@ -499,24 +499,24 @@ static inline void slcd_disable_blank(void)
 static inline void slcd_enable_events(struct slcd_events *const events)
 {
 
-	Assert(hw);
-	Assert(events);
+    Assert(hw);
+    Assert(events);
 
-	uint8_t event_mask = 0;
+    uint8_t event_mask = 0;
 
-	if (events->generate_event_on_fc0_overflow) {
-		event_mask |= SLCD_EVCTRL_FC0OEO;
-	}
+    if (events->generate_event_on_fc0_overflow) {
+        event_mask |= SLCD_EVCTRL_FC0OEO;
+    }
 
-	if (events->generate_event_on_fc1_overflow) {
-		event_mask |= SLCD_EVCTRL_FC1OEO;
-	}
+    if (events->generate_event_on_fc1_overflow) {
+        event_mask |= SLCD_EVCTRL_FC1OEO;
+    }
 
-	if (events->generate_event_on_fc2_overflow) {
-		event_mask |= SLCD_EVCTRL_FC2OEO;
-	}
+    if (events->generate_event_on_fc2_overflow) {
+        event_mask |= SLCD_EVCTRL_FC2OEO;
+    }
 
-	SLCD->EVCTRL.reg |= event_mask;
+    SLCD->EVCTRL.reg |= event_mask;
 }
 
 /**
@@ -529,23 +529,23 @@ static inline void slcd_enable_events(struct slcd_events *const events)
 static inline void slcd_disable_events(struct slcd_events *const events)
 {
 
-	Assert(events);
+    Assert(events);
 
-	uint8_t event_mask = 0;
+    uint8_t event_mask = 0;
 
-	if (events->generate_event_on_fc0_overflow) {
-		event_mask |= SLCD_EVCTRL_FC0OEO;
-	}
+    if (events->generate_event_on_fc0_overflow) {
+        event_mask |= SLCD_EVCTRL_FC0OEO;
+    }
 
-	if (events->generate_event_on_fc1_overflow) {
-		event_mask |= SLCD_EVCTRL_FC1OEO;
-	}
+    if (events->generate_event_on_fc1_overflow) {
+        event_mask |= SLCD_EVCTRL_FC1OEO;
+    }
 
-	if (events->generate_event_on_fc2_overflow) {
-		event_mask |= SLCD_EVCTRL_FC2OEO;
-	}
+    if (events->generate_event_on_fc2_overflow) {
+        event_mask |= SLCD_EVCTRL_FC2OEO;
+    }
 
-	SLCD->EVCTRL.reg &= ~event_mask;
+    SLCD->EVCTRL.reg &= ~event_mask;
 }
 
 /** @} */
@@ -565,15 +565,15 @@ static inline void slcd_disable_events(struct slcd_events *const events)
  *  \param[in] fc Frame counter index
  *  \param[in] presc_bypass_enable Bypass of the frame counter prescaler
  *  \param[in] overflow_value  Frame counter overflow value. The number of frame
- *		before overflow is ((overflow_value+1)*8) when presc_bypass_enable=0
- 		else (overflow_value+1). The MAX. overflow value is 0x1FFFF.
+ *      before overflow is ((overflow_value+1)*8) when presc_bypass_enable=0
+        else (overflow_value+1). The MAX. overflow value is 0x1FFFF.
  */
 static inline void slcd_set_frame_counter(enum slcd_frame_counter fc,
-										   bool  presc_bypass_enable,
-										   uint16_t overflow_value)
+                                           bool  presc_bypass_enable,
+                                           uint16_t overflow_value)
 {
-	*(&(SLCD->FC0.reg) + fc) =  (presc_bypass_enable << SLCD_FC0_PB_Pos)
-							 | SLCD_FC0_OVF(overflow_value);
+    *(&(SLCD->FC0.reg) + fc) =  (presc_bypass_enable << SLCD_FC0_PB_Pos)
+                             | SLCD_FC0_OVF(overflow_value);
 }
 
 /**
@@ -581,27 +581,27 @@ static inline void slcd_set_frame_counter(enum slcd_frame_counter fc,
  *
  *  Enables one frame counter.
  *
- *	\param[in] fc Frame counter index
+ *  \param[in] fc Frame counter index
  */
 static inline void slcd_enable_frame_counter(enum slcd_frame_counter fc)
 {
 
-	switch(fc) {
-		case SLCD_FRAME_COUNTER_0:
-			SLCD->CTRLD.reg |= SLCD_CTRLD_FC0EN;
-			break;
-		case SLCD_FRAME_COUNTER_1:
-			SLCD->CTRLD.reg |= SLCD_CTRLD_FC1EN;
-			break;
-		case SLCD_FRAME_COUNTER_2:
-			SLCD->CTRLD.reg |= SLCD_CTRLD_FC2EN;
-			break;
-		default :
-			break;
-	}
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    switch(fc) {
+        case SLCD_FRAME_COUNTER_0:
+            SLCD->CTRLD.reg |= SLCD_CTRLD_FC0EN;
+            break;
+        case SLCD_FRAME_COUNTER_1:
+            SLCD->CTRLD.reg |= SLCD_CTRLD_FC1EN;
+            break;
+        case SLCD_FRAME_COUNTER_2:
+            SLCD->CTRLD.reg |= SLCD_CTRLD_FC2EN;
+            break;
+        default :
+            break;
+    }
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -609,26 +609,26 @@ static inline void slcd_enable_frame_counter(enum slcd_frame_counter fc)
  *
  *  Disable one frame counter.
  *
- *	\param[in] fc Frame counter index
+ *  \param[in] fc Frame counter index
  */
 static inline void slcd_disable_frame_counter(enum slcd_frame_counter fc)
 {
-	switch(fc) {
-		case SLCD_FRAME_COUNTER_0:
-			SLCD->CTRLD.reg &= ~SLCD_CTRLD_FC0EN;
-			break;
-		case SLCD_FRAME_COUNTER_1:
-			SLCD->CTRLD.reg &= ~SLCD_CTRLD_FC1EN;
-			break;
-		case SLCD_FRAME_COUNTER_2:
-			SLCD->CTRLD.reg &= ~SLCD_CTRLD_FC2EN;
-			break;
-		default :
-			break;
-	}
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    switch(fc) {
+        case SLCD_FRAME_COUNTER_0:
+            SLCD->CTRLD.reg &= ~SLCD_CTRLD_FC0EN;
+            break;
+        case SLCD_FRAME_COUNTER_1:
+            SLCD->CTRLD.reg &= ~SLCD_CTRLD_FC1EN;
+            break;
+        case SLCD_FRAME_COUNTER_2:
+            SLCD->CTRLD.reg &= ~SLCD_CTRLD_FC2EN;
+            break;
+        default :
+            break;
+    }
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 /** @} */
 
@@ -650,12 +650,12 @@ void slcd_set_seg_data(uint8_t seg_data, uint8_t byte_offset, uint8_t seg_mask);
  */
 
 void slcd_character_map_set(
-		enum slcd_automated_char_order order,
-		uint8_t seg_line_num);
+        enum slcd_automated_char_order order,
+        uint8_t seg_line_num);
 void slcd_character_write_data(uint8_t com_line_index,
-							uint8_t seg_line_index,
-							uint32_t seg_data,
-							uint32_t data_mask);
+                            uint8_t seg_line_index,
+                            uint32_t seg_data,
+                            uint32_t data_mask);
 
 /**
  * \brief Enables automated character display
@@ -664,7 +664,7 @@ void slcd_character_write_data(uint8_t com_line_index,
  */
 static inline void slcd_enable_automated_character(void)
 {
-	SLCD->CTRLC.reg |= SLCD_CTRLC_ACMEN;
+    SLCD->CTRLC.reg |= SLCD_CTRLC_ACMEN;
 }
 
 /**
@@ -674,12 +674,12 @@ static inline void slcd_enable_automated_character(void)
  */
 static inline void slcd_disable_automated_character(void)
 {
-	SLCD->CTRLC.reg &= ~SLCD_CTRLC_ACMEN;
+    SLCD->CTRLC.reg &= ~SLCD_CTRLC_ACMEN;
 }
 void slcd_automated_char_get_config_default(
-		struct slcd_automated_char_config *config);
+        struct slcd_automated_char_config *config);
 enum status_code slcd_automated_char_set_config(
-		struct slcd_automated_char_config *const config);
+        struct slcd_automated_char_config *const config);
 /** @} */
 
 /**
@@ -694,7 +694,7 @@ enum status_code slcd_automated_char_set_config(
  */
 static inline void slcd_enable_automated_bit(void)
 {
-	SLCD->CTRLC.reg |= SLCD_CTRLC_ABMEN;
+    SLCD->CTRLC.reg |= SLCD_CTRLC_ABMEN;
 }
 
 /**
@@ -704,7 +704,7 @@ static inline void slcd_enable_automated_bit(void)
  */
 static inline void slcd_disable_automated_bit(void)
 {
-	SLCD->CTRLC.reg &= ~SLCD_CTRLC_ABMEN;
+    SLCD->CTRLC.reg &= ~SLCD_CTRLC_ABMEN;
 }
 
 /**
@@ -716,9 +716,9 @@ static inline void slcd_disable_automated_bit(void)
  */
 static inline void slcd_set_automated_bit(uint8_t size,enum slcd_frame_counter fc)
 {
-	if(size > 0 && size < 0x3f) {
-		SLCD->ABMCFG.reg = SLCD_ABMCFG_SIZE(size) | SLCD_ABMCFG_FCS(fc);
-	}
+    if(size > 0 && size < 0x3f) {
+        SLCD->ABMCFG.reg = SLCD_ABMCFG_SIZE(size) | SLCD_ABMCFG_FCS(fc);
+    }
 }
 
 /** @} */
@@ -733,26 +733,26 @@ static inline void slcd_set_automated_bit(uint8_t size,enum slcd_frame_counter f
  */
 static inline void slcd_enable_circular_shift(void)
 {
-	SLCD->CTRLD.reg |= SLCD_CTRLD_CSREN;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg |= SLCD_CTRLD_CSREN;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 /**
  * \brief Disable SLCD circular shift mode
  */
 static inline void slcd_disable_circular_shift(void)
 {
-	SLCD->CTRLD.reg &= ~SLCD_CTRLD_CSREN;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->CTRLD.reg &= ~SLCD_CTRLD_CSREN;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 void slcd_circular_shift_get_config_defaults(
-		struct slcd_circular_shift_config *const config);
+        struct slcd_circular_shift_config *const config);
 
 enum status_code slcd_circular_shift_set_config(
-		struct slcd_circular_shift_config *const config);
+        struct slcd_circular_shift_config *const config);
 
 /** @} */
 
@@ -772,7 +772,7 @@ enum status_code slcd_circular_shift_set_config(
 
 static inline bool slcd_get_auto_bit_status(void)
 {
-	return ((SLCD->STATUS.reg & SLCD_STATUS_ABMBUSY) == SLCD_STATUS_ABMBUSY);
+    return ((SLCD->STATUS.reg & SLCD_STATUS_ABMBUSY) == SLCD_STATUS_ABMBUSY);
 }
 
 /**
@@ -786,7 +786,7 @@ static inline bool slcd_get_auto_bit_status(void)
 
 static inline bool slcd_get_auto_char_status(void)
 {
-	return ((SLCD->STATUS.reg & SLCD_STATUS_ACMBUSY) == SLCD_STATUS_ACMBUSY);
+    return ((SLCD->STATUS.reg & SLCD_STATUS_ACMBUSY) == SLCD_STATUS_ACMBUSY);
 }
 
 /**
@@ -800,7 +800,7 @@ static inline bool slcd_get_auto_char_status(void)
 
 static inline bool slcd_get_char_writing_status(void)
 {
-	return ((SLCD->STATUS.reg & SLCD_STATUS_CMWRBUSY) == SLCD_STATUS_CMWRBUSY);
+    return ((SLCD->STATUS.reg & SLCD_STATUS_CMWRBUSY) == SLCD_STATUS_CMWRBUSY);
 }
 
 /**
@@ -814,7 +814,7 @@ static inline bool slcd_get_char_writing_status(void)
 
 static inline bool slcd_get_vlcd_vdd33_status(void)
 {
-	return ((SLCD->STATUS.reg & SLCD_STATUS_VLCDS) == SLCD_STATUS_VLCDS);
+    return ((SLCD->STATUS.reg & SLCD_STATUS_VLCDS) == SLCD_STATUS_VLCDS);
 }
 
 /**
@@ -828,7 +828,7 @@ static inline bool slcd_get_vlcd_vdd33_status(void)
 
 static inline bool slcd_get_charge_pump_status(void)
 {
-	return ((SLCD->STATUS.reg & SLCD_STATUS_PRUN) == SLCD_STATUS_PRUN);
+    return ((SLCD->STATUS.reg & SLCD_STATUS_PRUN) == SLCD_STATUS_PRUN);
 }
 
 /**
@@ -842,7 +842,7 @@ static inline bool slcd_get_charge_pump_status(void)
 
 static inline bool slcd_get_vlcd_ready_status(void)
 {
-	return ((SLCD->STATUS.reg & SLCD_STATUS_VLCDR) == SLCD_STATUS_VLCDR);
+    return ((SLCD->STATUS.reg & SLCD_STATUS_VLCDR) == SLCD_STATUS_VLCDR);
 }
 
 /** @} */
@@ -909,12 +909,12 @@ static inline bool slcd_get_vlcd_ready_status(void)
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 
@@ -932,16 +932,16 @@ static inline bool slcd_get_vlcd_ready_status(void)
  * \page asfdoc_sam0_drivers_slcd_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
+ *  <tr>
+ *      <th>Doc. rev.</th>
+ *      <th>Date</th>
+ *      <th>Comments</th>
+ *  </tr>
+ *  <tr>
  *      <td>42605A</td>
- *		<td>12/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *      <td>12/2015</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  *
  */

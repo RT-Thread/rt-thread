@@ -16,9 +16,9 @@
 
 /* 内部参考电压选择 */
 typedef enum {
-	ADC_VREF_SEL_2_0 = 0,	/* 内部参考电压2.048v*/
-	ADC_VREF_SEL_1_6 = 1,	/* 内部参考电压1.6v*/
-	ADC_VREF_SEL_MAX = 1,
+    ADC_VREF_SEL_2_0 = 0,   /* 内部参考电压2.048v*/
+    ADC_VREF_SEL_1_6 = 1,   /* 内部参考电压1.6v*/
+    ADC_VREF_SEL_MAX = 1,
 }ADC_TYPE_VREF_SEL;
 
 /* ADC时钟源选择 */
@@ -103,7 +103,7 @@ typedef enum
 }ADC_TYPE_BUFEN;
 
 /* ADC IF 状态 */
-typedef enum 
+typedef enum
 {
     ADC_IF = 0x01,
     ADC_IF_ACPMIN = 0x02,
@@ -112,7 +112,7 @@ typedef enum
 }ADC_TYPE_IF;
 
 /* ADC IE 状态 */
-typedef enum 
+typedef enum
 {
     ADC_IE = 0x01,
     ADC_IE_ACPMIN = 0x02,
@@ -123,13 +123,13 @@ typedef enum
 /* ADC初始化配置结构体定义 */
 typedef struct
 {
-    ADC_TYPE_CLKS  ADC_ClkS;      //ADCCON1:bit3 ADC时钟源选择 
-    ADC_TYPE_CLKDIV  ADC_ClkDiv;  //ADCCON1:bit2-0 ADC时钟源预分频 
+    ADC_TYPE_CLKS  ADC_ClkS;      //ADCCON1:bit3 ADC时钟源选择
+    ADC_TYPE_CLKDIV  ADC_ClkDiv;  //ADCCON1:bit2-0 ADC时钟源预分频
     ADC_TYPE_VREFP  ADC_VrefP;    //ADCCON1:bit9-8 ADC正向参考电压选择
     ADC_TYPE_SMPS  ADC_SampS;     //ADCCON1:bit12 ADC采样模式选择
     ADC_TYPE_CHS  ADC_ChS;        //ADCCHS:bit0-3 ADC模拟通道选择
-		//ADC_TYPE_VREF_SEL VREF_SEL;	  //参考电压选择
-		uint8_t ST;							      //硬件采样时间 (当控制模式为硬件时设置) 0~31
+        //ADC_TYPE_VREF_SEL VREF_SEL;     //参考电压选择
+        uint8_t ST;                               //硬件采样时间 (当控制模式为硬件时设置) 0~31
     TYPE_FUNCEN ADC_VREFN;        //负向参考电压选择位
     TYPE_FUNCEN ADC_VRBUF_EN;
 }ADC_InitStruType;

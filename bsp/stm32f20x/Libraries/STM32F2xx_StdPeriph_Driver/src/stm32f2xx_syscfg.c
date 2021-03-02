@@ -7,24 +7,24 @@
   * @brief   This file provides firmware functions to manage the SYSCFG peripheral.
   *
   *  @verbatim
-  *  
+  *
   *          ===================================================================
   *                                 How to use this driver
   *          ===================================================================
-  *                  
+  *
   *          This driver provides functions for:
-  *          
+  *
   *          1. Remapping the memory accessible in the code area using SYSCFG_MemoryRemapConfig()
-  *              
+  *
   *          2. Manage the EXTI lines connection to the GPIOs using SYSCFG_EXTILineConfig()
-  *            
+  *
   *          3. Select the ETHERNET media interface (RMII/RII) using SYSCFG_ETH_MediaInterfaceConfig()
   *
   *  @note  SYSCFG APB clock must be enabled to get write access to SYSCFG registers,
   *         using RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-  *                 
+  *
   *  @endverbatim
-  *      
+  *
   ******************************************************************************
   * @attention
   *
@@ -47,26 +47,26 @@
   * @{
   */
 
-/** @defgroup SYSCFG 
+/** @defgroup SYSCFG
   * @brief SYSCFG driver modules
   * @{
-  */ 
+  */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* ------------ RCC registers bit address in the alias region ----------- */
 #define SYSCFG_OFFSET             (SYSCFG_BASE - PERIPH_BASE)
-/* ---  PMC Register ---*/ 
-/* Alias word address of MII_RMII_SEL bit */ 
-#define PMC_OFFSET                (SYSCFG_OFFSET + 0x04) 
-#define MII_RMII_SEL_BitNumber    ((uint8_t)0x17) 
-#define PMC_MII_RMII_SEL_BB       (PERIPH_BB_BASE + (PMC_OFFSET * 32) + (MII_RMII_SEL_BitNumber * 4)) 
+/* ---  PMC Register ---*/
+/* Alias word address of MII_RMII_SEL bit */
+#define PMC_OFFSET                (SYSCFG_OFFSET + 0x04)
+#define MII_RMII_SEL_BitNumber    ((uint8_t)0x17)
+#define PMC_MII_RMII_SEL_BB       (PERIPH_BB_BASE + (PMC_OFFSET * 32) + (MII_RMII_SEL_BitNumber * 4))
 
-/* ---  CMPCR Register ---*/ 
-/* Alias word address of CMP_PD bit */ 
-#define CMPCR_OFFSET              (SYSCFG_OFFSET + 0x20) 
-#define CMP_PD_BitNumber          ((uint8_t)0x00) 
-#define CMPCR_CMP_PD_BB           (PERIPH_BB_BASE + (CMPCR_OFFSET * 32) + (CMP_PD_BitNumber * 4)) 
+/* ---  CMPCR Register ---*/
+/* Alias word address of CMP_PD bit */
+#define CMPCR_OFFSET              (SYSCFG_OFFSET + 0x20)
+#define CMP_PD_BitNumber          ((uint8_t)0x00)
+#define CMPCR_CMP_PD_BB           (PERIPH_BB_BASE + (CMPCR_OFFSET * 32) + (CMP_PD_BitNumber * 4))
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -75,7 +75,7 @@
 
 /** @defgroup SYSCFG_Private_Functions
   * @{
-  */ 
+  */
 
 /**
   * @brief  Deinitializes the Alternate Functions (remap and EXTI configuration)
@@ -93,17 +93,17 @@ void SYSCFG_DeInit(void)
   * @brief  Changes the mapping of the specified pin.
   * @param  SYSCFG_Memory: selects the memory remapping.
   *         This parameter can be one of the following values:
-  *            @arg SYSCFG_MemoryRemap_Flash:       Main Flash memory mapped at 0x00000000  
+  *            @arg SYSCFG_MemoryRemap_Flash:       Main Flash memory mapped at 0x00000000
   *            @arg SYSCFG_MemoryRemap_SystemFlash: System Flash memory mapped at 0x00000000
   *            @arg SYSCFG_MemoryRemap_FSMC:        FSMC (Bank1 (NOR/PSRAM 1 and 2) mapped at 0x00000000
   *            @arg SYSCFG_MemoryRemap_SRAM:        Embedded SRAM (112kB) mapped at 0x00000000
-  *  
+  *
   * @note   In remap mode, the FSMC addressing is fixed to the remap address area only
   *        (Bank1 NOR/PSRAM 1 and NOR/PSRAM 2) and FSMC control registers are not
   *         accessible. The FSMC remap function must be disabled to allows addressing
   *         other memory devices through the FSMC and/or to access FSMC control
-  *         registers. 
-  *        
+  *         registers.
+  *
   * @retval None
   */
 void SYSCFG_MemoryRemapConfig(uint8_t SYSCFG_MemoryRemap)
@@ -137,28 +137,28 @@ void SYSCFG_EXTILineConfig(uint8_t EXTI_PortSourceGPIOx, uint8_t EXTI_PinSourcex
 }
 
 /**
-  * @brief  Selects the ETHERNET media interface 
-  * @param  SYSCFG_ETH_MediaInterface: specifies the Media Interface mode. 
-  *          This parameter can be one of the following values: 
+  * @brief  Selects the ETHERNET media interface
+  * @param  SYSCFG_ETH_MediaInterface: specifies the Media Interface mode.
+  *          This parameter can be one of the following values:
   *            @arg SYSCFG_ETH_MediaInterface_MII: MII mode selected
-  *            @arg SYSCFG_ETH_MediaInterface_RMII: RMII mode selected 
-  * @retval None 
+  *            @arg SYSCFG_ETH_MediaInterface_RMII: RMII mode selected
+  * @retval None
   */
-void SYSCFG_ETH_MediaInterfaceConfig(uint32_t SYSCFG_ETH_MediaInterface) 
-{ 
-  assert_param(IS_SYSCFG_ETH_MEDIA_INTERFACE(SYSCFG_ETH_MediaInterface)); 
-  /* Configure MII_RMII selection bit */ 
-  *(__IO uint32_t *) PMC_MII_RMII_SEL_BB = SYSCFG_ETH_MediaInterface; 
+void SYSCFG_ETH_MediaInterfaceConfig(uint32_t SYSCFG_ETH_MediaInterface)
+{
+  assert_param(IS_SYSCFG_ETH_MEDIA_INTERFACE(SYSCFG_ETH_MediaInterface));
+  /* Configure MII_RMII selection bit */
+  *(__IO uint32_t *) PMC_MII_RMII_SEL_BB = SYSCFG_ETH_MediaInterface;
 }
 
 /**
   * @brief  Enables or disables the I/O Compensation Cell.
   * @note   The I/O compensation cell can be used only when the device supply
-  *         voltage ranges from 2.4 to 3.6 V.  
+  *         voltage ranges from 2.4 to 3.6 V.
   * @param  NewState: new state of the I/O Compensation Cell.
   *          This parameter can be one of the following values:
-  *            @arg ENABLE: I/O compensation cell enabled  
-  *            @arg DISABLE: I/O compensation cell power-down mode  
+  *            @arg ENABLE: I/O compensation cell enabled
+  *            @arg DISABLE: I/O compensation cell power-down mode
   * @retval None
   */
 void SYSCFG_CompensationCellCmd(FunctionalState NewState)
@@ -177,7 +177,7 @@ void SYSCFG_CompensationCellCmd(FunctionalState NewState)
 FlagStatus SYSCFG_GetCompensationCellStatus(void)
 {
   FlagStatus bitstatus = RESET;
-    
+
   if ((SYSCFG->CMPCR & SYSCFG_CMPCR_READY ) != (uint32_t)RESET)
   {
     bitstatus = SET;
@@ -201,4 +201,4 @@ FlagStatus SYSCFG_GetCompensationCellStatus(void)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/   
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -62,7 +62,7 @@ static void delay(U32 j)
 
     for (i = 0; i < j; i++)
     {
-    	/* nothing */
+        /* nothing */
     }
 }
 

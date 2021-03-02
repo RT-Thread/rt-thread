@@ -57,28 +57,28 @@ extern "C" {
 
 /** CRC Polynomial Type. */
 enum crc_polynomial_type {
-	/** CRC16 (CRC-CCITT). */
-	CRC_TYPE_16,
-	/** CRC32 (IEEE 802.3). */
-	CRC_TYPE_32,
+    /** CRC16 (CRC-CCITT). */
+    CRC_TYPE_16,
+    /** CRC32 (IEEE 802.3). */
+    CRC_TYPE_32,
 };
 
 /** CRC Beat Type. */
 enum crc_beat_size {
-	/** Byte bus access. */
-	CRC_BEAT_SIZE_BYTE,
-	/** Half-word bus access. */
-	CRC_BEAT_SIZE_HWORD,
-	/** Word bus access. */
-	CRC_BEAT_SIZE_WORD,
+    /** Byte bus access. */
+    CRC_BEAT_SIZE_BYTE,
+    /** Half-word bus access. */
+    CRC_BEAT_SIZE_HWORD,
+    /** Word bus access. */
+    CRC_BEAT_SIZE_WORD,
 };
 
 /** Configurations for CRC calculation. */
 struct dma_crc_config {
-	/** CRC polynomial type. */
-	enum crc_polynomial_type type;
-	/** CRC beat size. */
-	enum crc_beat_size size;
+    /** CRC polynomial type. */
+    enum crc_polynomial_type type;
+    /** CRC beat size. */
+    enum crc_beat_size size;
 };
 
 /**
@@ -92,10 +92,10 @@ struct dma_crc_config {
  */
 static inline void dma_crc_get_config_defaults(struct dma_crc_config *config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->type = CRC_TYPE_16;
-	config->size = CRC_BEAT_SIZE_BYTE;
+    config->type = CRC_TYPE_16;
+    config->size = CRC_BEAT_SIZE_BYTE;
 }
 
 /**
@@ -112,19 +112,19 @@ static inline void dma_crc_get_config_defaults(struct dma_crc_config *config)
  * \retval STATUS_BUSY DMA CRC module is already taken and not ready yet
  */
 static inline enum status_code dma_crc_channel_enable(uint32_t channel_id,
-		struct dma_crc_config *config)
+        struct dma_crc_config *config)
 {
-	if (DMAC->CRCSTATUS.reg & DMAC_CRCSTATUS_CRCBUSY) {
-		return STATUS_BUSY;
-	}
+    if (DMAC->CRCSTATUS.reg & DMAC_CRCSTATUS_CRCBUSY) {
+        return STATUS_BUSY;
+    }
 
-	DMAC->CRCCTRL.reg = DMAC_CRCCTRL_CRCBEATSIZE(config->size) |
-		DMAC_CRCCTRL_CRCPOLY(config->type) |
-		DMAC_CRCCTRL_CRCSRC(channel_id+DMA_CRC_CHANNEL_N_OFFSET);
+    DMAC->CRCCTRL.reg = DMAC_CRCCTRL_CRCBEATSIZE(config->size) |
+        DMAC_CRCCTRL_CRCPOLY(config->type) |
+        DMAC_CRCCTRL_CRCSRC(channel_id+DMA_CRC_CHANNEL_N_OFFSET);
 
-	DMAC->CTRL.reg |= DMAC_CTRL_CRCENABLE;
+    DMAC->CTRL.reg |= DMAC_CTRL_CRCENABLE;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -133,8 +133,8 @@ static inline enum status_code dma_crc_channel_enable(uint32_t channel_id,
  */
 static inline void dma_crc_disable(void)
 {
-	DMAC->CTRL.reg &= ~DMAC_CTRL_CRCENABLE;
-	DMAC->CRCCTRL.reg = 0;
+    DMAC->CTRL.reg &= ~DMAC_CTRL_CRCENABLE;
+    DMAC->CRCCTRL.reg = 0;
 }
 
 /**
@@ -144,11 +144,11 @@ static inline void dma_crc_disable(void)
  */
 static inline uint32_t dma_crc_get_checksum(void)
 {
-	if (DMAC->CRCCTRL.bit.CRCSRC == DMAC_CRCCTRL_CRCSRC_IO_Val) {
-		DMAC->CRCSTATUS.reg = DMAC_CRCSTATUS_CRCBUSY;
-	}
+    if (DMAC->CRCCTRL.bit.CRCSRC == DMAC_CRCCTRL_CRCSRC_IO_Val) {
+        DMAC->CRCSTATUS.reg = DMAC_CRCSTATUS_CRCBUSY;
+    }
 
-	return DMAC->CRCCHKSUM.reg;
+    return DMAC->CRCCHKSUM.reg;
 }
 
 /**
@@ -163,27 +163,27 @@ static inline uint32_t dma_crc_get_checksum(void)
  * \retval STATUS_BUSY DMA CRC module is already taken and not ready yet
  */
 static inline enum status_code dma_crc_io_enable(
-		struct dma_crc_config *config)
+        struct dma_crc_config *config)
 {
-	if (DMAC->CRCSTATUS.reg & DMAC_CRCSTATUS_CRCBUSY) {
-		return STATUS_BUSY;
-	}
+    if (DMAC->CRCSTATUS.reg & DMAC_CRCSTATUS_CRCBUSY) {
+        return STATUS_BUSY;
+    }
 
-	if (DMAC->CTRL.reg & DMAC_CTRL_CRCENABLE) {
-		return STATUS_BUSY;
-	}
+    if (DMAC->CTRL.reg & DMAC_CTRL_CRCENABLE) {
+        return STATUS_BUSY;
+    }
 
-	DMAC->CRCCTRL.reg = DMAC_CRCCTRL_CRCBEATSIZE(config->size) |
-		DMAC_CRCCTRL_CRCPOLY(config->type) |
-		DMAC_CRCCTRL_CRCSRC_IO;
+    DMAC->CRCCTRL.reg = DMAC_CRCCTRL_CRCBEATSIZE(config->size) |
+        DMAC_CRCCTRL_CRCPOLY(config->type) |
+        DMAC_CRCCTRL_CRCSRC_IO;
 
-	if (config->type == CRC_TYPE_32) {
-		DMAC->CRCCHKSUM.reg = 0xFFFFFFFF;
-	}
+    if (config->type == CRC_TYPE_32) {
+        DMAC->CRCCHKSUM.reg = 0xFFFFFFFF;
+    }
 
-	DMAC->CTRL.reg |= DMAC_CTRL_CRCENABLE;
+    DMAC->CTRL.reg |= DMAC_CTRL_CRCENABLE;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -197,30 +197,30 @@ static inline enum status_code dma_crc_io_enable(
  * \return Calculated CRC checksum value.
  */
 static inline void dma_crc_io_calculation(void *buffer,
-		 uint32_t total_beat_size)
+         uint32_t total_beat_size)
 {
-	uint32_t counter = total_beat_size;
-	uint8_t *buffer_8;
-	uint16_t *buffer_16;
-	uint32_t *buffer_32;
+    uint32_t counter = total_beat_size;
+    uint8_t *buffer_8;
+    uint16_t *buffer_16;
+    uint32_t *buffer_32;
 
-	for (counter=0; counter<total_beat_size; counter++) {
-		if (DMAC->CRCCTRL.bit.CRCBEATSIZE == CRC_BEAT_SIZE_BYTE) {
-			buffer_8 = buffer;
-			DMAC->CRCDATAIN.reg = buffer_8[counter];
-		} else if (DMAC->CRCCTRL.bit.CRCBEATSIZE == CRC_BEAT_SIZE_HWORD) {
-			buffer_16 = buffer;
-			DMAC->CRCDATAIN.reg = buffer_16[counter];
-		} else if (DMAC->CRCCTRL.bit.CRCBEATSIZE == CRC_BEAT_SIZE_WORD) {
-			buffer_32 = buffer;
-			DMAC->CRCDATAIN.reg = buffer_32[counter];
-		}
-		/* Wait several cycle to make sure CRC complete */
-		nop();
-		nop();
-		nop();
-		nop();
-	}
+    for (counter=0; counter<total_beat_size; counter++) {
+        if (DMAC->CRCCTRL.bit.CRCBEATSIZE == CRC_BEAT_SIZE_BYTE) {
+            buffer_8 = buffer;
+            DMAC->CRCDATAIN.reg = buffer_8[counter];
+        } else if (DMAC->CRCCTRL.bit.CRCBEATSIZE == CRC_BEAT_SIZE_HWORD) {
+            buffer_16 = buffer;
+            DMAC->CRCDATAIN.reg = buffer_16[counter];
+        } else if (DMAC->CRCCTRL.bit.CRCBEATSIZE == CRC_BEAT_SIZE_WORD) {
+            buffer_32 = buffer;
+            DMAC->CRCDATAIN.reg = buffer_32[counter];
+        }
+        /* Wait several cycle to make sure CRC complete */
+        nop();
+        nop();
+        nop();
+        nop();
+    }
 }
 
 #ifdef __cplusplus

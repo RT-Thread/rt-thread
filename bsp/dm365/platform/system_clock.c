@@ -18,8 +18,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
- * Date           Author		Notes
- * 2010-11-13     weety		first version
+ * Date           Author        Notes
+ * 2010-11-13     weety     first version
  */
 
 
@@ -33,6 +33,6 @@ extern int davinci_clk_init(void);
  */
 void rt_hw_clock_init(void)
 {
-	davinci_clk_init();
+    davinci_clk_init();
 }
 

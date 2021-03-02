@@ -19,21 +19,21 @@
  ***************************************************************/
 void ADC_Init(ADC_InitStruType * ADC_InitStruct)
 {
-		ADC->VREFCON.VREF_EN = ENABLE;    //内部VREFP使能
-	  ADC->VREFCON.IREF_EN = ENABLE;    //IREF使能位
-	  ADC->CON1.VCMBUF_EN = ENABLE;     //ADC共模电压VCM BUF使能
-	  ADC ->CON1.VCMBUF_HS = ENABLE;    //ADC共模电压VCM BUF高速模式使能
-	  ADC->CON1.HSEN = ENABLE;          //ADC转换速度：高速 
-	  ADC->CHS.VDD5_FLAG_EN = DISABLE;        //屏蔽VDD检测控制
-	
+        ADC->VREFCON.VREF_EN = ENABLE;    //内部VREFP使能
+      ADC->VREFCON.IREF_EN = ENABLE;    //IREF使能位
+      ADC->CON1.VCMBUF_EN = ENABLE;     //ADC共模电压VCM BUF使能
+      ADC ->CON1.VCMBUF_HS = ENABLE;    //ADC共模电压VCM BUF高速模式使能
+      ADC->CON1.HSEN = ENABLE;          //ADC转换速度：高速
+      ADC->CHS.VDD5_FLAG_EN = DISABLE;        //屏蔽VDD检测控制
+
     ADC->CON1.CLKS = ADC_InitStruct->ADC_ClkS;     //ADCCON1:bit3 ADC时钟源选择
     ADC->CON1.CLKDIV = ADC_InitStruct->ADC_ClkDiv; //ADCCON1:bit2-0 ADC时钟源预分频
     ADC->CON1.VREFP = ADC_InitStruct->ADC_VrefP;   //ADCCON1:bit9-8 ADC正向参考电压选择
     ADC->CON1.SMPS = ADC_InitStruct->ADC_SampS;    //ADCCON1:bit12 ADC采样模式选择
     ADC->CHS.CHS = ADC_InitStruct->ADC_ChS;        //ADCCHS:bit0-3 ADC模拟通道选择
-		ADC->CON1.ST = ADC_InitStruct->ST;             //ADCCON1:bit20-16 ADC采样时间选择 ST*2+1个Tadclk 
-	  //ADC->VREFCON.VREF_SEL=ADC_InitStruct->VREF_SEL;//内部参考电压选择
-	
+        ADC->CON1.ST = ADC_InitStruct->ST;             //ADCCON1:bit20-16 ADC采样时间选择 ST*2+1个Tadclk
+      //ADC->VREFCON.VREF_SEL=ADC_InitStruct->VREF_SEL;//内部参考电压选择
+
     ADC->CON1.VREFN = ADC_InitStruct->ADC_VREFN;                    //负向参考电压使能位
     ADC->CON1.VRBUF_EN = ADC_InitStruct->ADC_VRBUF_EN;              //VREF BUF使能位
 }
@@ -59,7 +59,7 @@ void ADC_Set_CH(ADC_TYPE_CHS AdcCH)
   返回值：转换值
  ***************************************************************/
 uint16_t ADC_GetConvValue(void)
-{   
+{
     return ((uint16_t)ADC->DR.DR);
 }
 

@@ -41,7 +41,7 @@
 const i2c_device_info_t g_wm8962_i2c_device = { HW_I2C2, (0x34 >> 1), 48000 };
 
 // const i2c_device_info_t g_sgtl5000_i2c_device = { HW_I2C2, 0x0a, 100000 };
-// 
+//
 // const i2c_device_info_t g_cs42888_i2c_device = { HW_I2C1, (0x90 >> 1), 100000 };
 
 

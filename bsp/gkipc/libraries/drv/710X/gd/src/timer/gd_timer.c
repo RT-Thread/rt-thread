@@ -26,7 +26,7 @@
 /*---------------------------------------------------------------------------*/
 #define GD_TIMER_MAX_SOFT_TIME          10
 
-#define RTOS_TICK_PER_SECOND			1000
+#define RTOS_TICK_PER_SECOND            1000
 /*---------------------------------------------------------------------------*/
 /* private datatypes (used by more than one driver module)                   */
 /*---------------------------------------------------------------------------*/
@@ -99,7 +99,7 @@ GISR1 GI_TIME_ISR(void)
     int index;
 
     nTimeStamp ++;
-	//GM_Printf("stamp = %ld\n", (U32)nTimeStamp);
+    //GM_Printf("stamp = %ld\n", (U32)nTimeStamp);
     for( index=0; index <= GD_TIMER_MAX_SOFT_TIME; index++ )
     {
         if( gd_timer_sSoftTime[index].eState == TIME_RUNNING )
@@ -1048,7 +1048,7 @@ U64 GD_TIMER_ReadTimerStamp(void)
     U32 Reloadn, CntnSts, temp = 0,nStamp;
     nStamp = nTimeStamp;
     CntnSts = GH_TIMER_get_CntnSts(gd_timer_sSoftTime[0].timerReg);
-	//GM_Printf("sts = %d \n", CntnSts);
+    //GM_Printf("sts = %d \n", CntnSts);
     Reloadn = (GD_GET_APB_ClkHz() / 100);
     if(Reloadn != 0)
     {
@@ -1057,8 +1057,8 @@ U64 GD_TIMER_ReadTimerStamp(void)
     }
     return (nStamp + temp);
 #else
-	//return gkosGetTicks();
-	return rt_tick_get();
+    //return gkosGetTicks();
+    return rt_tick_get();
 #endif
 }
 

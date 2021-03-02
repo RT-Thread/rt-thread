@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-03-19 	  WangHuachen  first version
+ * 2020-03-19     WangHuachen  first version
  */
 
 #ifndef __INTERRUPT_H__

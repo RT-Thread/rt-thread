@@ -65,18 +65,18 @@ static uint8_t membag_pool[CONF_MEMBAG_POOL_SIZE];
  * with maximum 32 blocks per membag.
  */
 struct membag {
-	/*! Number of bytes per block in this bag. */
-	size_t block_size;
-	/*! Total number of blocks. */
-	size_t num_blocks;
-	/*! Pointer to start of this bag. */
-	uintptr_t start;
-	/*! Pointer to end of this bag. */
-	uintptr_t end;
-	/*! 32-bit integer used to keep track of allocations. */
-	uint32_t allocated;
-	/*! Counter for number of free blocks. */
-	uint8_t blocks_free;
+    /*! Number of bytes per block in this bag. */
+    size_t block_size;
+    /*! Total number of blocks. */
+    size_t num_blocks;
+    /*! Pointer to start of this bag. */
+    uintptr_t start;
+    /*! Pointer to end of this bag. */
+    uintptr_t end;
+    /*! 32-bit integer used to keep track of allocations. */
+    uint32_t allocated;
+    /*! Counter for number of free blocks. */
+    uint8_t blocks_free;
 };
 
 /**
@@ -84,18 +84,18 @@ struct membag {
  * conf_membag.h header file. Example:
  *
  * \code
-	 #define CONF_MEMBAG_ARRAY \
-	     MEMBAG(32, 4),        \
-	     MEMBAG(16, 2),
+     #define CONF_MEMBAG_ARRAY \
+         MEMBAG(32, 4),        \
+         MEMBAG(16, 2),
 
-	 #define CONF_MEMBAG_POOL_SIZE \
-	     MEMBAG_SIZE(32, 4) +      \
-	     MEMBAG_SIZE(16, 2)
+     #define CONF_MEMBAG_POOL_SIZE \
+         MEMBAG_SIZE(32, 4) +      \
+         MEMBAG_SIZE(16, 2)
 \endcode
  *
  */
 static struct membag membag_list[] = {
-	CONF_MEMBAG_ARRAY
+    CONF_MEMBAG_ARRAY
 };
 
 /**
@@ -107,25 +107,25 @@ static struct membag membag_list[] = {
  */
 void membag_init(void)
 {
-	uint8_t i;
-	uintptr_t poolptr;
+    uint8_t i;
+    uintptr_t poolptr;
 
-	poolptr = (uintptr_t)membag_pool;
+    poolptr = (uintptr_t)membag_pool;
 
-	for (i = 0; i < ARRAY_LEN(membag_list); i++) {
-		Assert(membag_list[i].block_size > 0);
-		Assert(membag_list[i].num_blocks > 0);
-		Assert(membag_list[i].num_blocks <= 32);
-	
-		membag_list[i].start = poolptr;
-		poolptr += (membag_list[i].block_size *
-				membag_list[i].num_blocks);
-		membag_list[i].end = poolptr;
-		membag_list[i].blocks_free = membag_list[i].num_blocks;
+    for (i = 0; i < ARRAY_LEN(membag_list); i++) {
+        Assert(membag_list[i].block_size > 0);
+        Assert(membag_list[i].num_blocks > 0);
+        Assert(membag_list[i].num_blocks <= 32);
 
-		/* Mark all blocks as free. */
-		membag_list[i].allocated = 0;
-	}
+        membag_list[i].start = poolptr;
+        poolptr += (membag_list[i].block_size *
+                membag_list[i].num_blocks);
+        membag_list[i].end = poolptr;
+        membag_list[i].blocks_free = membag_list[i].num_blocks;
+
+        /* Mark all blocks as free. */
+        membag_list[i].allocated = 0;
+    }
 }
 
 /**
@@ -135,15 +135,15 @@ void membag_init(void)
  */
 size_t membag_get_total_free(void)
 {
-	uint8_t i;
-	size_t total_free = 0;
+    uint8_t i;
+    size_t total_free = 0;
 
-	for (i = 0; i < ARRAY_LEN(membag_list); i++) {
-		total_free += membag_list[i].blocks_free *
-				membag_list[i].block_size;
-	}
+    for (i = 0; i < ARRAY_LEN(membag_list); i++) {
+        total_free += membag_list[i].blocks_free *
+                membag_list[i].block_size;
+    }
 
-	return total_free;
+    return total_free;
 }
 
 /**
@@ -153,14 +153,14 @@ size_t membag_get_total_free(void)
  */
 size_t membag_get_total(void)
 {
-	uint8_t i;
-	size_t total = 0;
+    uint8_t i;
+    size_t total = 0;
 
-	for (i = 0; i < ARRAY_LEN(membag_list); i++) {
-		total += membag_list[i].num_blocks * membag_list[i].block_size;
-	}
+    for (i = 0; i < ARRAY_LEN(membag_list); i++) {
+        total += membag_list[i].num_blocks * membag_list[i].block_size;
+    }
 
-	return total;
+    return total;
 }
 
 /**
@@ -174,25 +174,25 @@ size_t membag_get_total(void)
  */
 size_t membag_get_smallest_free_block_size(void)
 {
-	uint8_t i;
-	struct membag *smallest_bag = NULL;
+    uint8_t i;
+    struct membag *smallest_bag = NULL;
 
-	for (i = 0; i < ARRAY_LEN(membag_list); i++) {
-		if (membag_list[i].blocks_free == 0) {
-			continue;
-		}
+    for (i = 0; i < ARRAY_LEN(membag_list); i++) {
+        if (membag_list[i].blocks_free == 0) {
+            continue;
+        }
 
-		if (!smallest_bag ||
-				(smallest_bag->block_size > membag_list[i].block_size)) {
-			smallest_bag = &membag_list[i];
-		}
-	}
+        if (!smallest_bag ||
+                (smallest_bag->block_size > membag_list[i].block_size)) {
+            smallest_bag = &membag_list[i];
+        }
+    }
 
-	if (smallest_bag) {
-		return smallest_bag->block_size;
-	}
+    if (smallest_bag) {
+        return smallest_bag->block_size;
+    }
 
-	return 0;
+    return 0;
 }
 
 /**
@@ -205,25 +205,25 @@ size_t membag_get_smallest_free_block_size(void)
  */
 size_t membag_get_largest_free_block_size(void)
 {
-	uint8_t i;
-	struct membag *largest_bag = NULL;
+    uint8_t i;
+    struct membag *largest_bag = NULL;
 
-	for (i = 0; i < ARRAY_LEN(membag_list); i++) {
-		if (membag_list[i].blocks_free == 0) {
-			continue;
-		}
+    for (i = 0; i < ARRAY_LEN(membag_list); i++) {
+        if (membag_list[i].blocks_free == 0) {
+            continue;
+        }
 
-		if (!largest_bag ||
-				(largest_bag->block_size < membag_list[i].block_size)) {
-			largest_bag = &membag_list[i];
-		}
-	}
+        if (!largest_bag ||
+                (largest_bag->block_size < membag_list[i].block_size)) {
+            largest_bag = &membag_list[i];
+        }
+    }
 
-	if (largest_bag) {
-		return largest_bag->block_size;
-	}
-	
-	return 0;
+    if (largest_bag) {
+        return largest_bag->block_size;
+    }
+
+    return 0;
 }
 
 /**
@@ -245,51 +245,51 @@ size_t membag_get_largest_free_block_size(void)
  */
 void *membag_alloc(const size_t size)
 {
-	uint8_t i;
-	struct membag *smallest_bag = NULL;
-	uintptr_t p;
+    uint8_t i;
+    struct membag *smallest_bag = NULL;
+    uintptr_t p;
 
-	/* Find the smallest available block size big enough for the requested
-	 * memory chunk size. */
-	for (i = 0; i < ARRAY_LEN(membag_list); i++) {
-		if (membag_list[i].blocks_free == 0) {
-			continue;
-		}
+    /* Find the smallest available block size big enough for the requested
+     * memory chunk size. */
+    for (i = 0; i < ARRAY_LEN(membag_list); i++) {
+        if (membag_list[i].blocks_free == 0) {
+            continue;
+        }
 
-		if (membag_list[i].block_size >= size) {
-			if (!smallest_bag ||
-					(smallest_bag->block_size > membag_list[i].block_size)) {
-				smallest_bag = &membag_list[i];
-			}
-		}
-	}
+        if (membag_list[i].block_size >= size) {
+            if (!smallest_bag ||
+                    (smallest_bag->block_size > membag_list[i].block_size)) {
+                smallest_bag = &membag_list[i];
+            }
+        }
+    }
 
-	/* We return the first available block in the bag that has one, and if
-	 * there is none, we return NULL.
-	 */
-	if (smallest_bag) {
-		/* We know that there is a free block within the membag's
-		 * memory, and we simply return the first one available.
-		 */
-		p = smallest_bag->start;
+    /* We return the first available block in the bag that has one, and if
+     * there is none, we return NULL.
+     */
+    if (smallest_bag) {
+        /* We know that there is a free block within the membag's
+         * memory, and we simply return the first one available.
+         */
+        p = smallest_bag->start;
 
-		for (i = 0; i < smallest_bag->num_blocks; i++) {
-			/* Check the allocation byte to see whether the block is
-			 * in use. */
-			if (!(smallest_bag->allocated & ((uint32_t)1 << i))) {
-				/* It is free, set it to used. */
-				smallest_bag->allocated |= ((uint32_t)1 << i);
-				smallest_bag->blocks_free--;
+        for (i = 0; i < smallest_bag->num_blocks; i++) {
+            /* Check the allocation byte to see whether the block is
+             * in use. */
+            if (!(smallest_bag->allocated & ((uint32_t)1 << i))) {
+                /* It is free, set it to used. */
+                smallest_bag->allocated |= ((uint32_t)1 << i);
+                smallest_bag->blocks_free--;
 
-				return (void *)(p);
-			}
+                return (void *)(p);
+            }
 
-			p += smallest_bag->block_size;
-		}
-	}
+            p += smallest_bag->block_size;
+        }
+    }
 
-	/* There is no available memory. Return NULL. */
-	return NULL;
+    /* There is no available memory. Return NULL. */
+    return NULL;
 }
 
 /**
@@ -307,19 +307,19 @@ void *membag_alloc(const size_t size)
  */
 void membag_free(const void *ptr)
 {
-	uint8_t i;
-	uintptr_t p = (uintptr_t)ptr;
-	uint8_t block_index;
+    uint8_t i;
+    uintptr_t p = (uintptr_t)ptr;
+    uint8_t block_index;
 
-	for (i = 0; i < ARRAY_LEN(membag_list); i++) {
-		if (p >= membag_list[i].start && p < membag_list[i].end) {
-			block_index = (p - membag_list[i].start) / membag_list[i].block_size;
-			
-			/* Mark the memory as free. */
-			membag_list[i].allocated &= ~((uint32_t)1 << block_index);
-			membag_list[i].blocks_free++;
+    for (i = 0; i < ARRAY_LEN(membag_list); i++) {
+        if (p >= membag_list[i].start && p < membag_list[i].end) {
+            block_index = (p - membag_list[i].start) / membag_list[i].block_size;
 
-			return;
-		}
-	}
+            /* Mark the memory as free. */
+            membag_list[i].allocated &= ~((uint32_t)1 << block_index);
+            membag_list[i].blocks_free++;
+
+            return;
+        }
+    }
 }

@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_bkp.h"
@@ -25,7 +25,7 @@
 * @{
 */
 
-/** @defgroup BKP 
+/** @defgroup BKP
 * @brief BKP driver modules
 * @{
 */

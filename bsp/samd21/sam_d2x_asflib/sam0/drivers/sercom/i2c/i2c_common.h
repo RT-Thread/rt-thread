@@ -116,32 +116,32 @@ extern "C" {
  *
  * \subsection asfdoc_sam0_sercom_i2c_module_features Driver Feature Macro Definition
  * <table>
- *	<tr>
- *		<th>Driver Feature Macro</th>
- *		<th>Supported devices</th>
- *	</tr>
- *	<tr>
- *		<td>FEATURE_I2C_FAST_MODE_PLUS_AND_HIGH_SPEED</td>
- *		<td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
- *	</tr>
- *	<tr>
- *		<td>FEATURE_I2C_10_BIT_ADDRESS</td>
- *		<td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
- *	</tr>
- *	<tr>
- *		<td>FEATURE_I2C_SCL_STRETCH_MODE</td>
- *		<td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
- *	</tr>
- *	<tr>
- *		<td>FEATURE_I2C_SCL_EXTEND_TIMEOUT</td>
- *		<td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
- *	</tr>
+ *  <tr>
+ *      <th>Driver Feature Macro</th>
+ *      <th>Supported devices</th>
+ *  </tr>
+ *  <tr>
+ *      <td>FEATURE_I2C_FAST_MODE_PLUS_AND_HIGH_SPEED</td>
+ *      <td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
+ *  </tr>
+ *  <tr>
+ *      <td>FEATURE_I2C_10_BIT_ADDRESS</td>
+ *      <td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
+ *  </tr>
+ *  <tr>
+ *      <td>FEATURE_I2C_SCL_STRETCH_MODE</td>
+ *      <td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
+ *  </tr>
+ *  <tr>
+ *      <td>FEATURE_I2C_SCL_EXTEND_TIMEOUT</td>
+ *      <td>SAM D21/R21/D10/D11/L21/L22/DA1/C20/C21/HA1</td>
+ *  </tr>
  * </table>
  * \note The specific features are only available in the driver when the selected
- * device supports those features. 
+ * device supports those features.
  * \note When using the I2C high-speed mode for off-board communication,
- * there are various high frequency interference, which can lead to distortion of the signals 
- * and communication failure. When using Xplained Pro boards in order to test I2C high-speed 
+ * there are various high frequency interference, which can lead to distortion of the signals
+ * and communication failure. When using Xplained Pro boards in order to test I2C high-speed
  * communication, the following recommendation should be followed:
  * - Use the SDA-line on PA08 and SCL-line on PA09 for both boards. This will provide stronger
  * pull-ups on both SDA and SCL.
@@ -407,7 +407,7 @@ extern "C" {
  * @{
  */
 #if (SAMD21) || (SAMR21) || (SAMD10) || (SAMD11) || (SAML21) || (SAMDA1) || \
-	(SAMHA1) || (SAML22) || (SAMC20) || (SAMC21) || (SAMD09) || (SAMR30) || defined(__DOXYGEN__)
+    (SAMHA1) || (SAML22) || (SAMC20) || (SAMC21) || (SAMD09) || (SAMR30) || defined(__DOXYGEN__)
 /** Fast mode plus and high speed support. */
 #  define FEATURE_I2C_FAST_MODE_PLUS_AND_HIGH_SPEED
 /** 10-bit address support */
@@ -426,10 +426,10 @@ extern "C" {
  * For slave: direction of request from master.
  */
 enum i2c_transfer_direction {
-	/** Master write operation is in progress */
-	I2C_TRANSFER_WRITE = 0,
-	/** Master read operation is in progress */
-	I2C_TRANSFER_READ  = 1,
+    /** Master write operation is in progress */
+    I2C_TRANSFER_WRITE = 0,
+    /** Master read operation is in progress */
+    I2C_TRANSFER_READ  = 1,
 };
 
 /** @} */
@@ -448,26 +448,26 @@ enum i2c_transfer_direction {
  * \anchor asfdoc_sam0_sercom_i2c_acronyms_table
  * <table>
  *  <caption>Acronyms</caption>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>SDA</td>
- *		<td>Serial Data Line</td>
- *	</tr>
- *	<tr>
- *		<td>SCL</td>
- *		<td>Serial Clock Line</td>
- *	</tr>
- *	<tr>
- *		<td>SERCOM</td>
- *		<td>Serial Communication Interface</td>
- *	</tr>
- *	<tr>
- *		<td>DMA</td>
- *		<td>Direct Memory Access</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>SDA</td>
+ *      <td>Serial Data Line</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SCL</td>
+ *      <td>Serial Clock Line</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SERCOM</td>
+ *      <td>Serial Communication Interface</td>
+ *  </tr>
+ *  <tr>
+ *      <td>DMA</td>
+ *      <td>Direct Memory Access</td>
+ *  </tr>
  * </table>
  *
  * \section asfdoc_sam0_sercom_i2c_extra_dependencies Dependencies
@@ -488,29 +488,29 @@ enum i2c_transfer_direction {
  * \anchor asfdoc_sam0_sercom_i2c_extra_history_table
  * <table>
  *  <caption>Module History</caption>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>
- *		\li Added 10-bit addressing and high speed support in SAM D21
- *		\li Separate structure i2c_packet into i2c_master_packet and i2c_slave packet
- *		</td>
- *	</tr>
- *	<tr>
- *		<td>
- *		\li Added support for SCL stretch and extended timeout hardware features in SAM D21
- *		\li Added fast mode plus support in SAM D21
- *		</td>
- *	</tr>
- *	<tr>
- *		<td>Fixed incorrect logical mask for determining if a bus error has
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>
+ *      \li Added 10-bit addressing and high speed support in SAM D21
+ *      \li Separate structure i2c_packet into i2c_master_packet and i2c_slave packet
+ *      </td>
+ *  </tr>
+ *  <tr>
+ *      <td>
+ *      \li Added support for SCL stretch and extended timeout hardware features in SAM D21
+ *      \li Added fast mode plus support in SAM D21
+ *      </td>
+ *  </tr>
+ *  <tr>
+ *      <td>Fixed incorrect logical mask for determining if a bus error has
  *          occurred in I<SUP>2</SUP>C Slave mode
  *      </td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -521,7 +521,7 @@ enum i2c_transfer_direction {
  * applications for \ref asfdoc_sam0_sercom_i2c_group. QSGs are simple examples with
  * step-by-step instructions to configure and use this driver in a selection of
  * use cases. Note that a QSG can be compiled as a standalone application or be
- * added to the user application.  
+ * added to the user application.
  *
  * \if I2C_MASTER_MODE
  * - \subpage asfdoc_sam0_sercom_i2c_master_basic_use_case "Quick Start Guide for the I2C Master module - Basic Use Case"
@@ -542,71 +542,71 @@ enum i2c_transfer_direction {
  *
  * \if (I2C_MASTER_MODE || I2C_MASTER_CALLBACK_MODE)
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42117E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C21</td>
- *	</tr>
- *	<tr>
- *		<td>42117D</td>
- *		<td>12/2014</td>
- *		<td>Added support for 10-bit addressing and high speed in SAM D21.
- *		    Added support for SAM R21 and SAM D10/D11.</td>
- *	</tr>
- *	<tr>
- *		<td>42117C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42117B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos. Updated I<SUP>2</SUP>C Bus State Diagram.</td>
- *	</tr>
- *	<tr>
- *		<td>42117A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</th>
+ *      <th>Date</th>
+ *      <th>Comments</th>
+ *  </tr>
+ *  <tr>
+ *      <td>42117E</td>
+ *      <td>12/2015</td>
+ *      <td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42117D</td>
+ *      <td>12/2014</td>
+ *      <td>Added support for 10-bit addressing and high speed in SAM D21.
+ *          Added support for SAM R21 and SAM D10/D11.</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42117C</td>
+ *      <td>01/2014</td>
+ *      <td>Added support for SAM D21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42117B</td>
+ *      <td>06/2013</td>
+ *      <td>Corrected documentation typos. Updated I<SUP>2</SUP>C Bus State Diagram.</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42117A</td>
+ *      <td>06/2013</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  * \else
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42116E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C21</td>
- *	</tr>
- *	<tr>
- *		<td>42116D</td>
- *		<td>12/2014</td>
- *		<td>Added support for 10-bit addressing and high speed in SAM D21.
- *		    Added support for SAM R21 and SAM D10/D11.</td>
- *	</tr>
- *	<tr>
- *		<td>42116C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42116B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos. Updated I<SUP>2</SUP>C Bus State Diagram.</td>
- *	</tr>
- *	<tr>
- *		<td>42116A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</th>
+ *      <th>Date</th>
+ *      <th>Comments</th>
+ *  </tr>
+ *  <tr>
+ *      <td>42116E</td>
+ *      <td>12/2015</td>
+ *      <td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42116D</td>
+ *      <td>12/2014</td>
+ *      <td>Added support for 10-bit addressing and high speed in SAM D21.
+ *          Added support for SAM R21 and SAM D10/D11.</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42116C</td>
+ *      <td>01/2014</td>
+ *      <td>Added support for SAM D21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42116B</td>
+ *      <td>06/2013</td>
+ *      <td>Corrected documentation typos. Updated I<SUP>2</SUP>C Bus State Diagram.</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42116A</td>
+ *      <td>06/2013</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  *\endif
  */

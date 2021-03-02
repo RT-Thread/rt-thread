@@ -138,6 +138,6 @@
 #define SERCOM4_DMAC_ID_TX          10       // Index of DMA TX trigger
 #define SERCOM4_GCLK_ID_CORE        24       // Index of Generic Clock for Core
 #define SERCOM4_GCLK_ID_SLOW        19       // Index of Generic Clock for SMbus timeout
-#define SERCOM4_INT_MSB             6       
+#define SERCOM4_INT_MSB             6
 
 #endif /* _SAMD21_SERCOM4_INSTANCE_ */

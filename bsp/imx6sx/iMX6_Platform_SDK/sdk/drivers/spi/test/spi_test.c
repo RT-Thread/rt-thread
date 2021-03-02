@@ -55,32 +55,32 @@ static int numonyx_spi_nor_test(void)
     uint8_t id[4];
     uint32_t retv, idx, len = TEST_BUF_SZ * sizeof(uint32_t);
 
-#if defined(BOARD_SABRE_AI) && !defined(BOARD_REV_A) 
+#if defined(BOARD_SABRE_AI) && !defined(BOARD_REV_A)
     printf("Please remove the jumper within J3 on the board.\n");
     if(!is_input_char('y', NULL))
-	return FALSE;
+    return FALSE;
 
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_ADDR24_WR(
-    		BF_IOMUXC_SW_MUX_CTL_PAD_EIM_ADDR24_MUX_MODE_V(ALT5));
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_ADDR24_MUX_MODE_V(ALT5));
     gpio_set_direction(GPIO_PORT5, 4, GPIO_GDIR_OUTPUT);
     gpio_set_level(GPIO_PORT5, 4, GPIO_LOW_LEVEL);
 #endif
 
-    // eCSPI device setup 
+    // eCSPI device setup
     dev_spi_nor = DEV_ECSPI1;
-    
+
     param_ecspi_t numonyxParams = NUMONYX_INIT_PARAM;
 
-    // Init eCSPI 
+    // Init eCSPI
     ecspi_open(dev_spi_nor, &numonyxParams);
 
-    // Query Numonyx chip ID 
+    // Query Numonyx chip ID
     if (spi_nor_query_numonyx((uint8_t *) id) == FAIL) {
         printf("Chip ID query FAIL.\n");
         return FALSE;
     }
 
-    // Verify chip ID 
+    // Verify chip ID
     if ((id[0] == numonyx_chip_id.id0) &&
         (id[1] == numonyx_chip_id.id1) && (id[2] == numonyx_chip_id.id2)) {
         printf("Chip ID checking PASS.\n");
@@ -89,14 +89,14 @@ static int numonyx_spi_nor_test(void)
         return FALSE;
     }
 
-    // Setup src & dst buffer 
+    // Setup src & dst buffer
     for (idx = 0; idx < TEST_BUF_SZ; idx++) {
         src_buf[idx] = idx + TEST_SRC_VAL;
     }
 
     memset((void *)dst_buf, 0x0, len);
 
-    // Erase flash 
+    // Erase flash
     if (spi_nor_erase_numonyx(0, TEST_ERASE_SZ) == FAIL) {
         printf("Flash erase FAIL.\n");
         return FALSE;
@@ -104,7 +104,7 @@ static int numonyx_spi_nor_test(void)
         printf("Flash erase SUCCESS.\n");
     }
 
-    // Program flash 
+    // Program flash
     if (spi_nor_write_numonyx(0, (void *)src_buf, len) == FAIL) {
         printf("Flash write FAIL.\n");
         return FALSE;
@@ -112,10 +112,10 @@ static int numonyx_spi_nor_test(void)
         printf("Flash write SUCCESS.\n");
     }
 
-    // Reset eCSPI controller 
+    // Reset eCSPI controller
     ecspi_configure(dev_spi_nor, &numonyxParams);
 
-    // Read back flash 
+    // Read back flash
     if (spi_nor_read_numonyx(0, (void *)dst_buf, len) == FAIL) {
         printf("Flash read FAIL.\n");
         return FALSE;
@@ -123,7 +123,7 @@ static int numonyx_spi_nor_test(void)
         printf("Flash read SUCCESS.\n");
     }
 
-    // Compare src & dst 
+    // Compare src & dst
     for (retv = TRUE, idx = 0; ((idx < TEST_BUF_SZ) && retv == TRUE); idx++) {
         if (dst_buf[idx] != src_buf[idx]) {
             printf("[%d] mismatch: src - %d, dst - %d\n", idx, src_buf[idx], dst_buf[idx]);
@@ -137,7 +137,7 @@ static int numonyx_spi_nor_test(void)
         printf("Data comparation FAIL.\n");
     }
 
-    // Close eCSPI 
+    // Close eCSPI
     ecspi_close(dev_spi_nor);
 
     return retv;

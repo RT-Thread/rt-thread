@@ -65,13 +65,13 @@ extern "C" {
  */
 
 void spi_register_callback(
-		struct spi_module *const module,
-		spi_callback_t callback_func,
-		enum spi_callback callback_type);
+        struct spi_module *const module,
+        spi_callback_t callback_func,
+        enum spi_callback callback_type);
 
 void spi_unregister_callback(
-		struct spi_module *module,
-		enum spi_callback callback_type);
+        struct spi_module *module,
+        enum spi_callback callback_type);
 
 /**
  * \brief Enables an SPI callback of a given type
@@ -84,14 +84,14 @@ void spi_unregister_callback(
  * \param[in] callback_type  Callback type given by an enum
  */
 static inline void spi_enable_callback(
-		struct spi_module *const module,
-		enum spi_callback callback_type)
+        struct spi_module *const module,
+        enum spi_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Enable callback */
-	module->enabled_callback |= (1 << callback_type);
+    /* Enable callback */
+    module->enabled_callback |= (1 << callback_type);
 }
 
 /**
@@ -104,14 +104,14 @@ static inline void spi_enable_callback(
  * \param[in] callback_type  Callback type given by an enum
  */
 static inline void spi_disable_callback(
-		struct spi_module *const module,
-		enum spi_callback callback_type)
+        struct spi_module *const module,
+        enum spi_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Disable callback */
-	module->enabled_callback &= ~(1 << callback_type);
+    /* Disable callback */
+    module->enabled_callback &= ~(1 << callback_type);
 }
 
 /** @} */
@@ -122,24 +122,24 @@ static inline void spi_disable_callback(
  * @{
  */
 enum status_code spi_write_buffer_job(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint16_t length);
 
 enum status_code spi_read_buffer_job(
-		struct spi_module *const module,
-		uint8_t *rx_data,
-		uint16_t length,
-		uint16_t dummy);
+        struct spi_module *const module,
+        uint8_t *rx_data,
+        uint16_t length,
+        uint16_t dummy);
 
 enum status_code spi_transceive_buffer_job(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data,
+        uint16_t length);
 
 void spi_abort_job(
-		struct spi_module *const module);
+        struct spi_module *const module);
 
 /**
  * \brief Retrieves the current status of a job.
@@ -151,9 +151,9 @@ void spi_abort_job(
  * \return Current job status.
  */
 static inline enum status_code spi_get_job_status(
-		const struct spi_module *const module)
+        const struct spi_module *const module)
 {
-	return module->status;
+    return module->status;
 }
 
 /**
@@ -166,15 +166,15 @@ static inline enum status_code spi_get_job_status(
  * \return Current non-busy job status.
  */
 static inline enum status_code spi_get_job_status_wait(
-		const struct spi_module *const module)
+        const struct spi_module *const module)
 {
-	enum status_code status;
+    enum status_code status;
 
-	do {
-		status = spi_get_job_status(module);
-	} while (status == STATUS_BUSY);
+    do {
+        status = spi_get_job_status(module);
+    } while (status == STATUS_BUSY);
 
-	return status;
+    return status;
 }
 
 /** @} */

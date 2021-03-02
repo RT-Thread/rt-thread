@@ -1,18 +1,18 @@
 /**********************************************************************
-* $Id$		system_LPC407x_8x_177x_8x.c			2012-01-16
+* $Id$      system_LPC407x_8x_177x_8x.c         2012-01-16
 *//**
-* @file		system_LPC407x_8x_177x_8x.c
-* @brief	CMSIS Cortex-M3, M4 Device Peripheral Access Layer Source File
-*          	for the NXP LPC407x_8x_177x_8x Device Series
+* @file     system_LPC407x_8x_177x_8x.c
+* @brief    CMSIS Cortex-M3, M4 Device Peripheral Access Layer Source File
+*           for the NXP LPC407x_8x_177x_8x Device Series
 *
-*			ARM Limited (ARM) is supplying this software for use with
-*			Cortex-M processor based microcontrollers.  This file can be
-*			freely distributed within development tools that are supporting
-*			such ARM based processors.
+*           ARM Limited (ARM) is supplying this software for use with
+*           Cortex-M processor based microcontrollers.  This file can be
+*           freely distributed within development tools that are supporting
+*           such ARM based processors.
 *
-* @version	1.2
-* @date		20. June. 2012
-* @author	NXP MCU SW Application Team
+* @version  1.2
+* @date     20. June. 2012
+* @author   NXP MCU SW Application Team
 *
 * Copyright(C) 2012, NXP Semiconductor
 * All rights reserved.
@@ -41,180 +41,180 @@
 */
 /*--------------------- Clock Configuration ----------------------------------
 //
-//	<e>	Clock Configuration
-//		<h>	System Controls and Status Register (SCS - address 0x400F C1A0)
-//			<o1.0>	EMC Shift Control Bit
-//					<i>		Controls how addresses are output on the EMC address pins for static memories
-//					<0=>	Static CS addresses match bus width; AD[1] = 0 for 32 bit, AD[0] = 0 for 16+32 bit (Bit 0 is 0)
-//					<1=>	Static CS addresses start at LSB 0 regardless of memory width (Bit 0 is 1)
+//  <e> Clock Configuration
+//      <h> System Controls and Status Register (SCS - address 0x400F C1A0)
+//          <o1.0>  EMC Shift Control Bit
+//                  <i>     Controls how addresses are output on the EMC address pins for static memories
+//                  <0=>    Static CS addresses match bus width; AD[1] = 0 for 32 bit, AD[0] = 0 for 16+32 bit (Bit 0 is 0)
+//                  <1=>    Static CS addresses start at LSB 0 regardless of memory width (Bit 0 is 1)
 //
-//			<o1.1>	EMC Reset Disable Bit
-//					<i>		If 0 (zero), all registers and functions of the EMC are initialized upon any reset condition
-//					<i>		If 1, EMC is still retained its state through a warm reset
-//					<0=>	Both EMC resets are asserted when any type of chip reset event occurs (Bit 1 is 0)
-//					<1=>	Portions of EMC will only be reset by POR or BOR event (Bit 1 is 1)
+//          <o1.1>  EMC Reset Disable Bit
+//                  <i>     If 0 (zero), all registers and functions of the EMC are initialized upon any reset condition
+//                  <i>     If 1, EMC is still retained its state through a warm reset
+//                  <0=>    Both EMC resets are asserted when any type of chip reset event occurs (Bit 1 is 0)
+//                  <1=>    Portions of EMC will only be reset by POR or BOR event (Bit 1 is 1)
 //
-//			<o1.2>	EMC Burst Control
-//					<i>		Set to 1 to prevent multiple sequential accesses to memory via EMC static memory chip selects
-//					<0=>	Burst enabled (Bit 2 is 0)
-//					<1=>	Bust disbled (Bit 2 is 1)
+//          <o1.2>  EMC Burst Control
+//                  <i>     Set to 1 to prevent multiple sequential accesses to memory via EMC static memory chip selects
+//                  <0=>    Burst enabled (Bit 2 is 0)
+//                  <1=>    Bust disbled (Bit 2 is 1)
 //
-//			<o1.3>	MCIPWR Active Level
-//					<i>		Selects the active level for the SD card interface signal SD_PWR
-//					<0=>	SD_PWR is active low (inverted output of the SD Card interface block) (Bit 3 is 0)
-//					<1=>	SD_PWR is active high (follows the output of the SD Card interface block) (Bit 3 is 1)
+//          <o1.3>  MCIPWR Active Level
+//                  <i>     Selects the active level for the SD card interface signal SD_PWR
+//                  <0=>    SD_PWR is active low (inverted output of the SD Card interface block) (Bit 3 is 0)
+//                  <1=>    SD_PWR is active high (follows the output of the SD Card interface block) (Bit 3 is 1)
 //
-//			<o1.4>	Main Oscillator Range Select
-//					<0=>	In Range 1 MHz to 20 MHz (Bit 4 is 0)
-//					<1=>	In Range 15 MHz to 25 MHz (Bit 4 is 1)
+//          <o1.4>  Main Oscillator Range Select
+//                  <0=>    In Range 1 MHz to 20 MHz (Bit 4 is 0)
+//                  <1=>    In Range 15 MHz to 25 MHz (Bit 4 is 1)
 //
-//			<o1.5>	Main Oscillator enable
-//					<i>		0 (zero) means disabled, 1 means enable
+//          <o1.5>  Main Oscillator enable
+//                  <i>     0 (zero) means disabled, 1 means enable
 //
-//			<o1.6>	Main Oscillator status (Read-Only)
-//		</h>
+//          <o1.6>  Main Oscillator status (Read-Only)
+//      </h>
 //
-//		<h>	Clock Source Select Register (CLKSRCSEL - address 0x400F C10C)
-//			<o2.0>	CLKSRC: Select the clock source for sysclk to PLL0 clock
-//					<0=>	Internal RC oscillator (Bit 0 is 0)
-//					<1=>	Main oscillator (Bit 0 is 1)
-//		</h>
+//      <h> Clock Source Select Register (CLKSRCSEL - address 0x400F C10C)
+//          <o2.0>  CLKSRC: Select the clock source for sysclk to PLL0 clock
+//                  <0=>    Internal RC oscillator (Bit 0 is 0)
+//                  <1=>    Main oscillator (Bit 0 is 1)
+//      </h>
 //
-//		<e3>PLL0 Configuration (Main PLL PLL0CFG - address 0x400F C084)
-//			<i>			F_in  is in the range of 1 MHz to 25 MHz
-//			<i>			F_cco = (F_in * M * 2 * P) is in range of 156 MHz to 320 MHz
-//			<i>			PLL out clock = (F_cco / (2 * P)) is in rane of 9.75 MHz to 160 MHz
+//      <e3>PLL0 Configuration (Main PLL PLL0CFG - address 0x400F C084)
+//          <i>         F_in  is in the range of 1 MHz to 25 MHz
+//          <i>         F_cco = (F_in * M * 2 * P) is in range of 156 MHz to 320 MHz
+//          <i>         PLL out clock = (F_cco / (2 * P)) is in rane of 9.75 MHz to 160 MHz
 //
-//			<o4.0..4>   MSEL: PLL Multiplier Value
-//						<i>				M Value
-//						<1-32><#-1>
+//          <o4.0..4>   MSEL: PLL Multiplier Value
+//                      <i>             M Value
+//                      <1-32><#-1>
 //
-//			<o4.5..6>	PSEL: PLL Divider Value
-//						<i>				P Value
-//						<0=> 			1
-//						<1=>			2
-//						<2=>			4
-//						<3=>			8
-//		</e>
+//          <o4.5..6>   PSEL: PLL Divider Value
+//                      <i>             P Value
+//                      <0=>            1
+//                      <1=>            2
+//                      <2=>            4
+//                      <3=>            8
+//      </e>
 //
-//		<e5>PLL1 Configuration (Alt PLL PLL1CFG - address 0x400F C0A4)
-//			<i>			F_in  is in the range of 1 MHz to 25 MHz
-//			<i>			F_cco = (F_in * M * 2 * P) is in range of 156 MHz to 320 MHz
-//			<i>			PLL out clock = (F_cco / (2 * P)) is in rane of 9.75 MHz to 160 MHz
+//      <e5>PLL1 Configuration (Alt PLL PLL1CFG - address 0x400F C0A4)
+//          <i>         F_in  is in the range of 1 MHz to 25 MHz
+//          <i>         F_cco = (F_in * M * 2 * P) is in range of 156 MHz to 320 MHz
+//          <i>         PLL out clock = (F_cco / (2 * P)) is in rane of 9.75 MHz to 160 MHz
 //
-//			<o6.0..4>   MSEL: PLL Multiplier Value
-//						<i>				M Value
-//						<1-32><#-1>
+//          <o6.0..4>   MSEL: PLL Multiplier Value
+//                      <i>             M Value
+//                      <1-32><#-1>
 //
-//			<o6.5..6>	PSEL: PLL Divider Value
-//						<i>		P Value
-//						<0=>	1
-//						<1=>	2
-//						<2=>	4
-//						<3=>	8
-//		</e>
+//          <o6.5..6>   PSEL: PLL Divider Value
+//                      <i>     P Value
+//                      <0=>    1
+//                      <1=>    2
+//                      <2=>    4
+//                      <3=>    8
+//      </e>
 //
-//		<h>	CPU Clock Selection Register (CCLKSEL - address 0x400F C104)
-//			<o7.0..4>	CCLKDIV: Select the value for divider of CPU clock (CCLK)
-//						<i>		0: The divider is turned off. No clock will be provided to the CPU
-//						<i>		n: The input clock is divided by n to produce the CPU clock
-//						<0-31>
+//      <h> CPU Clock Selection Register (CCLKSEL - address 0x400F C104)
+//          <o7.0..4>   CCLKDIV: Select the value for divider of CPU clock (CCLK)
+//                      <i>     0: The divider is turned off. No clock will be provided to the CPU
+//                      <i>     n: The input clock is divided by n to produce the CPU clock
+//                      <0-31>
 //
-//			<o7.8>		CCLKSEL: Select the input to the divider of CPU clock
-//						<0=>	sysclk clock is used
-//						<1=>	Main PLL0 clock is used
-//		</h>
+//          <o7.8>      CCLKSEL: Select the input to the divider of CPU clock
+//                      <0=>    sysclk clock is used
+//                      <1=>    Main PLL0 clock is used
+//      </h>
 //
-//		<h>	USB Clock Selection Register (USBCLKSEL - 0x400F C108)
-//			<o8.0..4>	USBDIV: USB clock (source PLL0) divider selection
-//						<0=>	Divider is off and no clock provides to USB subsystem
-//						<4=>	Divider value is 4 (The source clock is divided by 4)
-//						<6=>	Divider value is 6 (The source clock is divided by 6)
+//      <h> USB Clock Selection Register (USBCLKSEL - 0x400F C108)
+//          <o8.0..4>   USBDIV: USB clock (source PLL0) divider selection
+//                      <0=>    Divider is off and no clock provides to USB subsystem
+//                      <4=>    Divider value is 4 (The source clock is divided by 4)
+//                      <6=>    Divider value is 6 (The source clock is divided by 6)
 //
-//			<o8.8..9>	USBSEL: Select the source for USB clock divider
-//						<i>		When CPU clock is selected, the USB can be accessed
-//						<i>		by software but cannot perform USB functions
-//						<0=>	sysclk clock (the clock input to PLL0)
-//						<1=>	The clock output from PLL0
-//						<2=>	The clock output from PLL1
-//		</h>
+//          <o8.8..9>   USBSEL: Select the source for USB clock divider
+//                      <i>     When CPU clock is selected, the USB can be accessed
+//                      <i>     by software but cannot perform USB functions
+//                      <0=>    sysclk clock (the clock input to PLL0)
+//                      <1=>    The clock output from PLL0
+//                      <2=>    The clock output from PLL1
+//      </h>
 //
-//		<h>	EMC Clock Selection Register (EMCCLKSEL - address 0x400F C100)
-//			<o9.0>	EMCDIV: Set the divider for EMC clock
-//					<0=> Divider value is 1
-//					<1=> Divider value is 2 (EMC clock is equal a half of input clock)
-//		</h>
+//      <h> EMC Clock Selection Register (EMCCLKSEL - address 0x400F C100)
+//          <o9.0>  EMCDIV: Set the divider for EMC clock
+//                  <0=> Divider value is 1
+//                  <1=> Divider value is 2 (EMC clock is equal a half of input clock)
+//      </h>
 //
-//		<h>	Peripheral Clock Selection Register (PCLKSEL - address 0x400F C1A8)
-//			<o10.0..4>	PCLKDIV: APB Peripheral clock divider
-//						<i>	0: The divider is turned off. No clock will be provided to APB peripherals
-//						<i>	n: The input clock is divided by n to produce the APB peripheral clock
-//						<0-31>
-//		</h>
+//      <h> Peripheral Clock Selection Register (PCLKSEL - address 0x400F C1A8)
+//          <o10.0..4>  PCLKDIV: APB Peripheral clock divider
+//                      <i> 0: The divider is turned off. No clock will be provided to APB peripherals
+//                      <i> n: The input clock is divided by n to produce the APB peripheral clock
+//                      <0-31>
+//      </h>
 //
-//		<h>	SPIFI Clock Selection Register (SPIFICLKSEL - address 0x400F C1B4)
-//			<o11.0..4>	SPIFIDIV: Set the divider for SPIFI clock
-//						<i>	0: The divider is turned off. No clock will be provided to the SPIFI
-//						<i>	n: The input clock is divided by n to produce the SPIFI clock
-//						<0-31>
+//      <h> SPIFI Clock Selection Register (SPIFICLKSEL - address 0x400F C1B4)
+//          <o11.0..4>  SPIFIDIV: Set the divider for SPIFI clock
+//                      <i> 0: The divider is turned off. No clock will be provided to the SPIFI
+//                      <i> n: The input clock is divided by n to produce the SPIFI clock
+//                      <0-31>
 //
-//			<o11.8..9>	SPIFISEL: Select the input clock for SPIFI clock divider
-//						<0=>	sysclk clock (the clock input to PLL0)
-//						<1=>	The clock output from PLL0
-//						<2=>	The clock output from PLL1
-//		</h>
+//          <o11.8..9>  SPIFISEL: Select the input clock for SPIFI clock divider
+//                      <0=>    sysclk clock (the clock input to PLL0)
+//                      <1=>    The clock output from PLL0
+//                      <2=>    The clock output from PLL1
+//      </h>
 //
-//		<h>	Power Control for Peripherals Register (PCONP - address 0x400F C1C8)
-//			<o12.0>		PCLCD: LCD controller power/clock enable (bit 0)
-//			<o12.1>		PCTIM0: Timer/Counter 0 power/clock enable (bit 1)
-//			<o12.2>		PCTIM1: Timer/Counter 1 power/clock enable (bit 2)
-//			<o12.3>		PCUART0: UART 0 power/clock enable (bit 3)
-//			<o12.4>		PCUART1: UART 1 power/clock enable (bit 4)
-//			<o12.5>		PCPWM0: PWM0 power/clock enable (bit 5)
-//			<o12.6>		PCPWM1: PWM1 power/clock enable (bit 6)
-//			<o12.7>		PCI2C0: I2C 0 interface power/clock enable (bit 7)
-//			<o12.8>		PCUART4: UART 4 power/clock enable (bit 8)
-//			<o12.9>		PCRTC: RTC and Event Recorder power/clock enable (bit 9)
-//			<o12.10>	PCSSP1: SSP 1 interface power/clock enable (bit 10)
-//			<o12.11>	PCEMC: External Memory Controller power/clock enable (bit 11)
-//			<o12.12>	PCADC: A/D converter power/clock enable (bit 12)
-//			<o12.13>	PCCAN1: CAN controller 1 power/clock enable (bit 13)
-//			<o12.14>	PCCAN2: CAN controller 2 power/clock enable (bit 14)
-//			<o12.15>	PCGPIO: IOCON, GPIO, and GPIO interrupts power/clock enable (bit 15)
-//			<o12.17>	PCMCPWM: Motor Control PWM power/clock enable (bit 17)
-//			<o12.18>	PCQEI: Quadrature encoder interface power/clock enable (bit 18)
-//			<o12.19>	PCI2C1: I2C 1 interface power/clock enable (bit 19)
-//			<o12.20>	PCSSP2: SSP 2 interface power/clock enable (bit 20)
-//			<o12.21>	PCSSP0: SSP 0 interface power/clock enable (bit 21)
-//			<o12.22>	PCTIM2: Timer 2 power/clock enable (bit 22)
-//			<o12.23>	PCTIM3: Timer 3 power/clock enable (bit 23)
-//			<o12.24>	PCUART2: UART 2 power/clock enable (bit 24)
-//			<o12.25>	PCUART3: UART 3 power/clock enable (bit 25)
-//			<o12.26>	PCI2C2: I2C 2 interface power/clock enable (bit 26)
-//			<o12.27>	PCI2S: I2S interface power/clock enable (bit 27)
-//			<o12.28>	PCSDC: SD Card interface power/clock enable (bit 28)
-//			<o12.29>	PCGPDMA: GPDMA function power/clock enable (bit 29)
-//			<o12.30>	PCENET: Ethernet block power/clock enable (bit 30)
-//			<o12.31>	PCUSB: USB interface power/clock enable (bit 31)
-//		</h>
+//      <h> Power Control for Peripherals Register (PCONP - address 0x400F C1C8)
+//          <o12.0>     PCLCD: LCD controller power/clock enable (bit 0)
+//          <o12.1>     PCTIM0: Timer/Counter 0 power/clock enable (bit 1)
+//          <o12.2>     PCTIM1: Timer/Counter 1 power/clock enable (bit 2)
+//          <o12.3>     PCUART0: UART 0 power/clock enable (bit 3)
+//          <o12.4>     PCUART1: UART 1 power/clock enable (bit 4)
+//          <o12.5>     PCPWM0: PWM0 power/clock enable (bit 5)
+//          <o12.6>     PCPWM1: PWM1 power/clock enable (bit 6)
+//          <o12.7>     PCI2C0: I2C 0 interface power/clock enable (bit 7)
+//          <o12.8>     PCUART4: UART 4 power/clock enable (bit 8)
+//          <o12.9>     PCRTC: RTC and Event Recorder power/clock enable (bit 9)
+//          <o12.10>    PCSSP1: SSP 1 interface power/clock enable (bit 10)
+//          <o12.11>    PCEMC: External Memory Controller power/clock enable (bit 11)
+//          <o12.12>    PCADC: A/D converter power/clock enable (bit 12)
+//          <o12.13>    PCCAN1: CAN controller 1 power/clock enable (bit 13)
+//          <o12.14>    PCCAN2: CAN controller 2 power/clock enable (bit 14)
+//          <o12.15>    PCGPIO: IOCON, GPIO, and GPIO interrupts power/clock enable (bit 15)
+//          <o12.17>    PCMCPWM: Motor Control PWM power/clock enable (bit 17)
+//          <o12.18>    PCQEI: Quadrature encoder interface power/clock enable (bit 18)
+//          <o12.19>    PCI2C1: I2C 1 interface power/clock enable (bit 19)
+//          <o12.20>    PCSSP2: SSP 2 interface power/clock enable (bit 20)
+//          <o12.21>    PCSSP0: SSP 0 interface power/clock enable (bit 21)
+//          <o12.22>    PCTIM2: Timer 2 power/clock enable (bit 22)
+//          <o12.23>    PCTIM3: Timer 3 power/clock enable (bit 23)
+//          <o12.24>    PCUART2: UART 2 power/clock enable (bit 24)
+//          <o12.25>    PCUART3: UART 3 power/clock enable (bit 25)
+//          <o12.26>    PCI2C2: I2C 2 interface power/clock enable (bit 26)
+//          <o12.27>    PCI2S: I2S interface power/clock enable (bit 27)
+//          <o12.28>    PCSDC: SD Card interface power/clock enable (bit 28)
+//          <o12.29>    PCGPDMA: GPDMA function power/clock enable (bit 29)
+//          <o12.30>    PCENET: Ethernet block power/clock enable (bit 30)
+//          <o12.31>    PCUSB: USB interface power/clock enable (bit 31)
+//      </h>
 //
-//		<h>	Clock Output Configuration Register (CLKOUTCFG)
-//			<o13.0..3>	CLKOUTSEL: Clock Source for CLKOUT Selection
-//						<0=>	CPU clock
-//						<1=>	Main Oscillator
-//						<2=>	Internal RC Oscillator
-//						<3=>	USB clock
-//						<4=>	RTC Oscillator
-//						<5=>	unused
-//						<6=>	Watchdog Oscillator
+//      <h> Clock Output Configuration Register (CLKOUTCFG)
+//          <o13.0..3>  CLKOUTSEL: Clock Source for CLKOUT Selection
+//                      <0=>    CPU clock
+//                      <1=>    Main Oscillator
+//                      <2=>    Internal RC Oscillator
+//                      <3=>    USB clock
+//                      <4=>    RTC Oscillator
+//                      <5=>    unused
+//                      <6=>    Watchdog Oscillator
 //
-//			<o13.4..7>	CLKOUTDIV: Output Clock Divider
-//						<1-16><#-1>
+//          <o13.4..7>  CLKOUTDIV: Output Clock Divider
+//                      <1-16><#-1>
 //
-//			<o13.8>		CLKOUT_EN: CLKOUT enable
-//		</h>
+//          <o13.8>     CLKOUT_EN: CLKOUT enable
+//      </h>
 //
-//	</e>
+//  </e>
 */
 
 #define CLOCK_SETUP           1
@@ -233,7 +233,7 @@
 #define CLKOUTCFG_Val         0x00000100
 
 #ifdef CORE_M4
-#define	LPC_CPACR	        0xE000ED88
+#define LPC_CPACR           0xE000ED88
 
 #define SCB_MVFR0           0xE000EF40
 #define SCB_MVFR0_RESET     0x10110021
@@ -245,15 +245,15 @@
 
 /*--------------------- Flash Accelerator Configuration ----------------------
 //
-//	<e>	Flash Accelerator Configuration register (FLASHCFG - address 0x400F C000)
-//		<o1.12..15>	FLASHTIM: Flash Access Time
-//					<0=>	1 CPU clock (for CPU clock up to 20 MHz)
-//					<1=>	2 CPU clocks (for CPU clock up to 40 MHz)
-//					<2=>	3 CPU clocks (for CPU clock up to 60 MHz)
-//					<3=>	4 CPU clocks (for CPU clock up to 80 MHz)
-//					<4=>	5 CPU clocks (for CPU clock up to 100 MHz)
-//					<5=>	6 CPU clocks (for any CPU clock)
-//	</e>
+//  <e> Flash Accelerator Configuration register (FLASHCFG - address 0x400F C000)
+//      <o1.12..15> FLASHTIM: Flash Access Time
+//                  <0=>    1 CPU clock (for CPU clock up to 20 MHz)
+//                  <1=>    2 CPU clocks (for CPU clock up to 40 MHz)
+//                  <2=>    3 CPU clocks (for CPU clock up to 60 MHz)
+//                  <3=>    4 CPU clocks (for CPU clock up to 80 MHz)
+//                  <4=>    5 CPU clocks (for CPU clock up to 100 MHz)
+//                  <5=>    6 CPU clocks (for any CPU clock)
+//  </e>
 */
 
 #define FLASH_SETUP           1
@@ -320,8 +320,8 @@
 #define __M                   ((PLL0CFG_Val & 0x1F) + 1)
 #define __PLL0_CLK(__F_IN)    (__F_IN * __M)
 #define __CCLK_DIV            (CCLKSEL_Val & 0x1F)
-#define __PCLK_DIV			  (PCLKSEL_Val & 0x1F)
-#define __ECLK_DIV			  ((EMCCLKSEL_Val & 0x01) + 1)
+#define __PCLK_DIV            (PCLKSEL_Val & 0x1F)
+#define __ECLK_DIV            ((EMCCLKSEL_Val & 0x01) + 1)
 
 /* Determine core clock frequency according to settings */
 #if (CLOCK_SETUP)                       /* Clock Setup                        */
@@ -337,7 +337,7 @@
   #if ((CCLKSEL_Val & 0x100) == 0)      /* cclk = sysclk */
     #if ((CLKSRCSEL_Val & 0x01) == 0)   /* sysclk = irc_clk */
         #define __CORE_CLK (IRC_OSC / __CCLK_DIV)
-		#define __PER_CLK  (IRC_OSC/  __PCLK_DIV)
+        #define __PER_CLK  (IRC_OSC/  __PCLK_DIV)
         #define __EMC_CLK  (__CORE_CLK/  __ECLK_DIV)
     #else                               /* sysclk = osc_clk */
         #define __CORE_CLK (OSC_CLK / __CCLK_DIV)
@@ -352,7 +352,7 @@
     #else                               /* sysclk = osc_clk */
         #define __CORE_CLK (__PLL0_CLK(OSC_CLK) / __CCLK_DIV)
         #define __PER_CLK  (__PLL0_CLK(OSC_CLK) / __PCLK_DIV)
-		#define __EMC_CLK  (__CORE_CLK / __ECLK_DIV)
+        #define __EMC_CLK  (__CORE_CLK / __ECLK_DIV)
     #endif
   #endif
 
@@ -367,9 +367,9 @@
  *----------------------------------------------------------------------------*/
 uint32_t SystemCoreClock = __CORE_CLK;/*!< System Clock Frequency (Core Clock)*/
 uint32_t PeripheralClock = __PER_CLK; /*!< Peripheral Clock Frequency (Pclk)  */
-uint32_t EMCClock		 = __EMC_CLK; /*!< EMC Clock Frequency 				  */
-uint32_t USBClock 		 = (48000000UL);		  /*!< USB Clock Frequency - this value will
-									be updated after call SystemCoreClockUpdate, should be 48MHz*/
+uint32_t EMCClock        = __EMC_CLK; /*!< EMC Clock Frequency                */
+uint32_t USBClock        = (48000000UL);          /*!< USB Clock Frequency - this value will
+                                    be updated after call SystemCoreClockUpdate, should be 48MHz*/
 
 
 /*----------------------------------------------------------------------------
@@ -380,7 +380,7 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
   /* Determine clock frequency according to clock register values             */
   if ((LPC_SC->CCLKSEL &0x100) == 0) {            /* cclk = sysclk    */
     if ((LPC_SC->CLKSRCSEL & 0x01) == 0) {    /* sysclk = irc_clk */
-		  SystemCoreClock = __CLK_DIV(IRC_OSC , (LPC_SC->CCLKSEL & 0x1F));
+          SystemCoreClock = __CLK_DIV(IRC_OSC , (LPC_SC->CCLKSEL & 0x1F));
           PeripheralClock = __CLK_DIV(IRC_OSC , (LPC_SC->PCLKSEL & 0x1F));
           EMCClock        = (SystemCoreClock / ((LPC_SC->EMCCLKSEL & 0x01)+1));
     }
@@ -401,7 +401,7 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
     if ((LPC_SC->PLL0STAT & 0x100) == 0) {        /* PLL0 not enabled */
           SystemCoreClock = 0;                      /* this should never happen! */
           PeripheralClock = 0;
-          EMCClock 		  = 0;
+          EMCClock        = 0;
     }
     else {
       if ((LPC_SC->CLKSRCSEL & 0x01) == 0) {    /* sysclk = irc_clk */
@@ -417,13 +417,13 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
         if ((LPC_SC->SCS & 0x40) == 0) {
           SystemCoreClock = 0;                      /* this should never happen! */
           PeripheralClock = 0;
-          EMCClock 		  = 0;
+          EMCClock        = 0;
         }
         else {
           uint8_t mul = ((LPC_SC->PLL0STAT & 0x1F) + 1);
           uint8_t cpu_div = (LPC_SC->CCLKSEL & 0x1F);
           uint8_t per_div = (LPC_SC->PCLKSEL & 0x1F);
-		  uint8_t emc_div = (LPC_SC->EMCCLKSEL & 0x01)+1;
+          uint8_t emc_div = (LPC_SC->EMCCLKSEL & 0x01)+1;
           SystemCoreClock = __CLK_DIV(OSC_CLK * mul , cpu_div);
           PeripheralClock = __CLK_DIV(OSC_CLK * mul , per_div);
           EMCClock        = SystemCoreClock / emc_div;
@@ -434,35 +434,35 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
   /* ---update USBClock------------------*/
   if(LPC_SC->USBCLKSEL & (0x01<<8))//Use PLL0 as the input to the USB clock divider
   {
-	  switch (LPC_SC->USBCLKSEL & 0x1F)
-	  {
-	  case 0:
-		  USBClock = 0; //no clock will be provided to the USB subsystem
-		  break;
-	  case 4:
-	  case 6:
+      switch (LPC_SC->USBCLKSEL & 0x1F)
+      {
+      case 0:
+          USBClock = 0; //no clock will be provided to the USB subsystem
+          break;
+      case 4:
+      case 6:
             {
                  uint8_t mul = ((LPC_SC->PLL0STAT & 0x1F) + 1);
                  uint8_t usb_div = (LPC_SC->USBCLKSEL & 0x1F);
-		  if(LPC_SC->CLKSRCSEL & 0x01)	//pll_clk_in = main_osc
-			  USBClock = OSC_CLK * mul / usb_div;
-		  else //pll_clk_in = irc_clk
-			  USBClock = IRC_OSC * mul / usb_div;
+          if(LPC_SC->CLKSRCSEL & 0x01)  //pll_clk_in = main_osc
+              USBClock = OSC_CLK * mul / usb_div;
+          else //pll_clk_in = irc_clk
+              USBClock = IRC_OSC * mul / usb_div;
             }
             break;
-	  default:
-		  USBClock = 0;  /* this should never happen! */
-	  }
+      default:
+          USBClock = 0;  /* this should never happen! */
+      }
   }
   else if(LPC_SC->USBCLKSEL & (0x02<<8))//usb_input_clk = alt_pll (pll1)
   {
-	  if(LPC_SC->CLKSRCSEL & 0x01)	//pll1_clk_in = main_osc
-	  		USBClock = (OSC_CLK * ((LPC_SC->PLL1STAT & 0x1F) + 1));
-	  else //pll1_clk_in = irc_clk
-	  		USBClock = (IRC_OSC * ((LPC_SC->PLL0STAT & 0x1F) + 1));
+      if(LPC_SC->CLKSRCSEL & 0x01)  //pll1_clk_in = main_osc
+            USBClock = (OSC_CLK * ((LPC_SC->PLL1STAT & 0x1F) + 1));
+      else //pll1_clk_in = irc_clk
+            USBClock = (IRC_OSC * ((LPC_SC->PLL0STAT & 0x1F) + 1));
   }
   else
-	  USBClock = 0; /* this should never happen! */
+      USBClock = 0; /* this should never happen! */
 }
 
   /* Determine clock frequency according to clock register values             */
@@ -555,7 +555,7 @@ fpu_init();
   LPC_SC->CLKOUTCFG = CLKOUTCFG_Val;    /* Clock Output Configuration         */
 #endif
 
-  LPC_SC->PBOOST 	|= 0x03;			/* Power Boost control				*/
+  LPC_SC->PBOOST    |= 0x03;            /* Power Boost control              */
 
 #if (FLASH_SETUP == 1)                  /* Flash Accelerator Setup            */
   LPC_SC->FLASHCFG  = FLASHCFG_Val|0x03A;

@@ -472,7 +472,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledUSBStandByModePD(void)
 /**
   * @brief  Enable (write 0) USB Type-C dead battery pull-down behavior
   * on UCPD1_CC1 and UCPD1_CC2 pins.
-  * @note After exiting reset, the USB Type-C ‚Äúdead battery‚Äù behavior will be enabled,
+  * @note After exiting reset, the USB Type-C °∞dead battery°± behavior will be enabled,
   * which may have a pull-down effect on CC1 and CC2 pins. It is recommended to disable it
   * in all cases, either to stop this pull-down or to hand over control to the UCPD1
   * (which should therefore be initialized before doing the disable).
@@ -487,7 +487,7 @@ __STATIC_INLINE void LL_PWR_EnableUSBDeadBattery(void)
 /**
   * @brief  Disable (write 1) USB Type-C dead battery pull-down behavior
   *  on UCPD1_CC1 and UCPD1_CC2 pins.
-  * @note After exiting reset, the USB Type-C ‚Äúdead battery‚Äù behavior will be enabled,
+  * @note After exiting reset, the USB Type-C °∞dead battery°± behavior will be enabled,
   * which may have a pull-down effect on CC1 and CC2 pins. It is recommended to disable it
   * in all cases, either to stop this pull-down or to hand over control to the UCPD1
   * (which should therefore be initialized before doing the disable).
@@ -502,7 +502,7 @@ __STATIC_INLINE void LL_PWR_DisableUSBDeadBattery(void)
 /**
   * @brief  Check USB Type-C dead battery pull-down behavior
   *         on UCPD1_CC1 and UCPD1_CC2 pins.
-  * @note After exiting reset, the USB Type-C ‚Äúdead battery‚Äù behavior will be enabled,
+  * @note After exiting reset, the USB Type-C °∞dead battery°± behavior will be enabled,
   * which may have a pull-down effect on CC1 and CC2 pins. It is recommended to disable it
   * in all cases, either to stop this pull-down or to hand over control to the UCPD1
   * (which should therefore be initialized before doing the disable).
@@ -598,7 +598,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledVddIO2(void)
   * @param  PeriphVoltage This parameter can be one of the following values:
   *         @arg @ref LL_PWR_PVM_VDDA_COMP     (*)
   *         @arg @ref LL_PWR_PVM_VDDA_FASTDAC  (*)
-  *         @arg @ref LL_PWR_PVM_VDDA_ADC      
+  *         @arg @ref LL_PWR_PVM_VDDA_ADC
   *         @arg @ref LL_PWR_PVM_VDDA_OPAMP_DAC
   *
   *         (*) value not defined in all devices
@@ -618,7 +618,7 @@ __STATIC_INLINE void LL_PWR_EnablePVM(uint32_t PeriphVoltage)
   * @param  PeriphVoltage This parameter can be one of the following values:
   *         @arg @ref LL_PWR_PVM_VDDA_COMP     (*)
   *         @arg @ref LL_PWR_PVM_VDDA_FASTDAC  (*)
-  *         @arg @ref LL_PWR_PVM_VDDA_ADC      
+  *         @arg @ref LL_PWR_PVM_VDDA_ADC
   *         @arg @ref LL_PWR_PVM_VDDA_OPAMP_DAC
   *
   *         (*) value not defined in all devices
@@ -638,7 +638,7 @@ __STATIC_INLINE void LL_PWR_DisablePVM(uint32_t PeriphVoltage)
   * @param  PeriphVoltage This parameter can be one of the following values:
   *         @arg @ref LL_PWR_PVM_VDDA_COMP     (*)
   *         @arg @ref LL_PWR_PVM_VDDA_FASTDAC  (*)
-  *         @arg @ref LL_PWR_PVM_VDDA_ADC      
+  *         @arg @ref LL_PWR_PVM_VDDA_ADC
   *         @arg @ref LL_PWR_PVM_VDDA_OPAMP_DAC
   *
   *         (*) value not defined in all devices

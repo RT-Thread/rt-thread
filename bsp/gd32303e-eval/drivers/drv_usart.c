@@ -44,7 +44,7 @@ struct gd32_uart
     uint32_t tx_port;
     uint16_t tx_pin;
     uint32_t rx_port;
-    uint16_t rx_pin; 
+    uint16_t rx_pin;
 
     struct rt_serial_device * serial;
     char *device_name;
@@ -143,7 +143,7 @@ static const struct gd32_uart uarts[] = {
         "uart0",
     },
     #endif
-    
+
     #ifdef RT_USING_USART1
     {
         USART1,                                 // uart peripheral index
@@ -155,7 +155,7 @@ static const struct gd32_uart uarts[] = {
         "uart1",
     },
     #endif
-    
+
     #ifdef RT_USING_USART2
     {
         USART2,                                 // uart peripheral index
@@ -167,7 +167,7 @@ static const struct gd32_uart uarts[] = {
         "uart2",
     },
     #endif
-    
+
     #ifdef RT_USING_UART3
     {
         UART3,                                 // uart peripheral index
@@ -179,7 +179,7 @@ static const struct gd32_uart uarts[] = {
         "uart3",
     },
     #endif
-    
+
     #ifdef RT_USING_UART4
     {
         UART4,                                 // uart peripheral index
@@ -228,9 +228,9 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial, struct serial_co
     RT_ASSERT(cfg != RT_NULL);
 
     uart = (struct gd32_uart *)serial->parent.user_data;
-    
+
     gd32_uart_gpio_init(uart);
-    
+
     usart_baudrate_set(uart->uart_periph, cfg->baud_rate);
 
     switch (cfg->data_bits)
@@ -310,7 +310,7 @@ static int gd32_putc(struct rt_serial_device *serial, char ch)
 
     usart_data_transmit(uart->uart_periph, ch);
     while((usart_flag_get(uart->uart_periph, USART_FLAG_TC) == RESET));
-    
+
     return 1;
 }
 

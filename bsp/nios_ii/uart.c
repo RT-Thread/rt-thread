@@ -106,10 +106,10 @@ void rt_hw_uart_init(void)
     // register device
     uart_device.type = RT_Device_Class_Char;
     /* device interface */
-    uart_device.init 	    = rt_uart_init;
-    uart_device.open 	    = rt_uart_open;
+    uart_device.init        = rt_uart_init;
+    uart_device.open        = rt_uart_open;
     uart_device.close       = rt_uart_close;
-    uart_device.read 	    = rt_uart_read;
+    uart_device.read        = rt_uart_read;
     uart_device.write       = rt_uart_write;
     uart_device.control     = rt_uart_control;
 

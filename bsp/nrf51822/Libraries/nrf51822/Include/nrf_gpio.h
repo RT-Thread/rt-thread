@@ -246,16 +246,16 @@ static __INLINE void nrf_gpio_pin_toggle(uint32_t pin_number)
 {
     const uint32_t pin_bit   = 1UL << pin_number;
     const uint32_t pin_state = ((NRF_GPIO->OUT >> pin_number) & 1UL);
-    
+
     if (pin_state == 0)
     {
         // Current state low, set high.
-        NRF_GPIO->OUTSET = pin_bit;        
+        NRF_GPIO->OUTSET = pin_bit;
     }
     else
     {
-        // Current state high, set low.    
-        NRF_GPIO->OUTCLR = pin_bit;       
+        // Current state high, set low.
+        NRF_GPIO->OUTCLR = pin_bit;
     }
 }
 

@@ -63,49 +63,49 @@
  *
  * \return Status of the peripheral lock procedure.
  * \retval STATUS_OK                If the peripheral was successfully locked.
- * \retval STATUS_ERR_INVALID_ARG	If invalid argument(s) were supplied.
+ * \retval STATUS_ERR_INVALID_ARG   If invalid argument(s) were supplied.
  */
 __no_inline enum status_code system_peripheral_lock(
-		const uint32_t peripheral_id,
-		const uint32_t key)
+        const uint32_t peripheral_id,
+        const uint32_t key)
 {
-	/* Bit to be set in desired register is given by bit 5:0 */
-	uint8_t register_bit_pos = peripheral_id % 32;
-	UNUSED(register_bit_pos);
+    /* Bit to be set in desired register is given by bit 5:0 */
+    uint8_t register_bit_pos = peripheral_id % 32;
+    UNUSED(register_bit_pos);
 
-	/* Value of which PAC register to use is given by bit 31:6 */
-	uint8_t register_pos = peripheral_id / 32;
+    /* Value of which PAC register to use is given by bit 31:6 */
+    uint8_t register_pos = peripheral_id / 32;
 
-	/* Check if key is correct. */
-	if (~peripheral_id != key) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Check if key is correct. */
+    if (~peripheral_id != key) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	switch (register_pos) {
+    switch (register_pos) {
 #ifdef PAC0
-		case 0:
-			PAC0->WPSET.reg = (1 << register_bit_pos);
-			break;
+        case 0:
+            PAC0->WPSET.reg = (1 << register_bit_pos);
+            break;
 #endif
 #ifdef PAC1
-		case 1:
-			PAC1->WPSET.reg = (1 << register_bit_pos);
-			break;
+        case 1:
+            PAC1->WPSET.reg = (1 << register_bit_pos);
+            break;
 #endif
 #ifdef PAC2
-		case 2:
-			/* Turn on the digital interface clock */
-			system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, PM_APBCMASK_PAC2);
-			PAC2->WPSET.reg = (1 << register_bit_pos);
-			break;
+        case 2:
+            /* Turn on the digital interface clock */
+            system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, PM_APBCMASK_PAC2);
+            PAC2->WPSET.reg = (1 << register_bit_pos);
+            break;
 #endif
-		default:
-			Assert(false);
-			return STATUS_ERR_INVALID_ARG;
-	}
+        default:
+            Assert(false);
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -125,47 +125,47 @@ __no_inline enum status_code system_peripheral_lock(
  *
  * \return Status of the peripheral unlock procedure.
  * \retval STATUS_OK                If the peripheral was successfully locked.
- * \retval STATUS_ERR_INVALID_ARG	If invalid argument(s) were supplied.
+ * \retval STATUS_ERR_INVALID_ARG   If invalid argument(s) were supplied.
  */
 __no_inline enum status_code system_peripheral_unlock(
-		const uint32_t peripheral_id,
-		const uint32_t key)
+        const uint32_t peripheral_id,
+        const uint32_t key)
 {
-	/* Bit to be set in desired register is given by bit 5:0 */
-	uint8_t register_bit_pos = peripheral_id % 32;
-	UNUSED(register_bit_pos);
+    /* Bit to be set in desired register is given by bit 5:0 */
+    uint8_t register_bit_pos = peripheral_id % 32;
+    UNUSED(register_bit_pos);
 
-	/* Value of which PAC register to use is given by bit 31:6 */
-	uint8_t register_pos = peripheral_id / 32;
+    /* Value of which PAC register to use is given by bit 31:6 */
+    uint8_t register_pos = peripheral_id / 32;
 
-	/* Check if key is correct. */
-	if (~peripheral_id != key) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Check if key is correct. */
+    if (~peripheral_id != key) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	switch (register_pos) {
+    switch (register_pos) {
 #ifdef PAC0
-		case 0:
-			PAC0->WPCLR.reg = (1 << register_bit_pos);
-			break;
+        case 0:
+            PAC0->WPCLR.reg = (1 << register_bit_pos);
+            break;
 #endif
 #ifdef PAC1
-		case 1:
-			PAC1->WPCLR.reg = (1 << register_bit_pos);
-			break;
+        case 1:
+            PAC1->WPCLR.reg = (1 << register_bit_pos);
+            break;
 #endif
 #ifdef PAC2
-		case 2:
-			/* Turn on the digital interface clock */
-			system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, PM_APBCMASK_PAC2);
-			PAC2->WPCLR.reg = (1 << register_bit_pos);
-			break;
+        case 2:
+            /* Turn on the digital interface clock */
+            system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, PM_APBCMASK_PAC2);
+            PAC2->WPCLR.reg = (1 << register_bit_pos);
+            break;
 #endif
-		default:
-			Assert(false);
-			return STATUS_ERR_INVALID_ARG;
-	}
+        default:
+            Assert(false);
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

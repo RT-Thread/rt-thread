@@ -25,28 +25,28 @@ extern "C" {
 #endif
 
 #ifdef BSP_USING_SPI1
-#define SPI1_BUS_NAME			"spi1"
-#define SPI1_BUS_MUTEX_NAME	    "spi1_bus_mutex"
+#define SPI1_BUS_NAME           "spi1"
+#define SPI1_BUS_MUTEX_NAME     "spi1_bus_mutex"
 #endif
 #ifdef BSP_USING_SPI2
-#define SPI2_BUS_NAME			"spi2"
-#define SPI2_BUS_MUTEX_NAME	    "spi2_bus_mutex"
+#define SPI2_BUS_NAME           "spi2"
+#define SPI2_BUS_MUTEX_NAME     "spi2_bus_mutex"
 #endif
 #ifdef BSP_USING_SPI3
-#define SPI3_BUS_NAME			"spi3"
-#define SPI3_BUS_MUTEX_NAME	    "spi3_bus_mutex"
+#define SPI3_BUS_NAME           "spi3"
+#define SPI3_BUS_MUTEX_NAME     "spi3_bus_mutex"
 #endif
 #ifdef BSP_USING_SPI4
-#define SPI4_BUS_NAME			"spi4"
-#define SPI4_BUS_MUTEX_NAME	    "spi4_bus_mutex"
+#define SPI4_BUS_NAME           "spi4"
+#define SPI4_BUS_MUTEX_NAME     "spi4_bus_mutex"
 #endif
 #ifdef BSP_USING_SPI5
-#define SPI4_BUS_NAME			"spi5"
-#define SPI4_BUS_MUTEX_NAME	    "spi5_bus_mutex"
+#define SPI4_BUS_NAME           "spi5"
+#define SPI4_BUS_MUTEX_NAME     "spi5_bus_mutex"
 #endif
 #ifdef BSP_USING_SPI6
-#define SPI4_BUS_NAME			"spi6"
-#define SPI4_BUS_MUTEX_NAME	    "spi6_bus_mutex"
+#define SPI4_BUS_NAME           "spi6"
+#define SPI4_BUS_MUTEX_NAME     "spi6_bus_mutex"
 #endif
 
 #ifdef BSP_USING_SPI1

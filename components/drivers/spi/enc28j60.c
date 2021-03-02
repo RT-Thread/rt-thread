@@ -747,7 +747,7 @@ static struct pbuf *enc28j60_rx(rt_device_t dev)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops enc28j60_ops = 
+const static struct rt_device_ops enc28j60_ops =
 {
     enc28j60_init,
     enc28j60_open,

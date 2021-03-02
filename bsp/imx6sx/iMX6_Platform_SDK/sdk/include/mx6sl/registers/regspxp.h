@@ -269,10 +269,10 @@ typedef union _hw_pxp_ctrl
  * defined as occurring after the FLIP_X and FLIP_Y permutation.
  *
  * Values:
- * - ROT_0 = 0x0 - 
- * - ROT_90 = 0x1 - 
- * - ROT_180 = 0x2 - 
- * - ROT_270 = 0x3 - 
+ * - ROT_0 = 0x0 -
+ * - ROT_90 = 0x1 -
+ * - ROT_180 = 0x2 -
+ * - ROT_270 = 0x3 -
  */
 //@{
 #define BP_PXP_CTRL_ROTATE      (8)      //!< Bit position for PXP_CTRL_ROTATE.
@@ -292,10 +292,10 @@ typedef union _hw_pxp_ctrl
 //! @brief Macro to simplify usage of value macros.
 #define BF_PXP_CTRL_ROTATE_V(v) BF_PXP_CTRL_ROTATE(BV_PXP_CTRL_ROTATE__##v)
 
-#define BV_PXP_CTRL_ROTATE__ROT_0 (0x0) //!< 
-#define BV_PXP_CTRL_ROTATE__ROT_90 (0x1) //!< 
-#define BV_PXP_CTRL_ROTATE__ROT_180 (0x2) //!< 
-#define BV_PXP_CTRL_ROTATE__ROT_270 (0x3) //!< 
+#define BV_PXP_CTRL_ROTATE__ROT_0 (0x0) //!<
+#define BV_PXP_CTRL_ROTATE__ROT_90 (0x1) //!<
+#define BV_PXP_CTRL_ROTATE__ROT_180 (0x2) //!<
+#define BV_PXP_CTRL_ROTATE__ROT_270 (0x3) //!<
 //@}
 
 /*! @name Register PXP_CTRL, field HFLIP[10] (RW)

@@ -62,34 +62,34 @@ extern "C" {
  */
 
 enum sleepmgr_mode {
-	/** Active mode. */
-	SLEEPMGR_ACTIVE = 0,
+    /** Active mode. */
+    SLEEPMGR_ACTIVE = 0,
 
-	/**
-	 *  Idle 0 mode.
-	 *  Potential Wake Up sources: Synchronous(APB, AHB), asynchronous.
-	 */
-	SLEEPMGR_IDLE_0,
+    /**
+     *  Idle 0 mode.
+     *  Potential Wake Up sources: Synchronous(APB, AHB), asynchronous.
+     */
+    SLEEPMGR_IDLE_0,
 
-	/**
-	 *  Idle 1 mode.
-	 *  Potential Wake Up sources: Synchronous (APB), asynchronous
-	 */
-	SLEEPMGR_IDLE_1,
+    /**
+     *  Idle 1 mode.
+     *  Potential Wake Up sources: Synchronous (APB), asynchronous
+     */
+    SLEEPMGR_IDLE_1,
 
-	/**
-	 *  Idle 2 mode.
-	 *  Potential Wake Up sources: Asynchronous
-	 */
-	SLEEPMGR_IDLE_2,
+    /**
+     *  Idle 2 mode.
+     *  Potential Wake Up sources: Asynchronous
+     */
+    SLEEPMGR_IDLE_2,
 
-	/**
-	 * Standby mode.
-	 * Potential Wake Up sources: Asynchronous
-	 */
-	SLEEPMGR_STANDBY,
+    /**
+     * Standby mode.
+     * Potential Wake Up sources: Asynchronous
+     */
+    SLEEPMGR_STANDBY,
 
-	SLEEPMGR_NR_OF_MODES,
+    SLEEPMGR_NR_OF_MODES,
 };
 
 /**
@@ -105,17 +105,17 @@ extern uint8_t sleepmgr_locks[];
 
 static inline void sleepmgr_sleep(const enum sleepmgr_mode sleep_mode)
 {
-	Assert(sleep_mode != SLEEPMGR_ACTIVE);
+    Assert(sleep_mode != SLEEPMGR_ACTIVE);
 #ifdef CONFIG_SLEEPMGR_ENABLE
-	cpu_irq_disable();
+    cpu_irq_disable();
 
-	/* Enter the sleep mode. */
-	system_set_sleepmode((enum system_sleepmode)(sleep_mode - 1));
-	cpu_irq_enable();
-	system_sleep();
+    /* Enter the sleep mode. */
+    system_set_sleepmode((enum system_sleepmode)(sleep_mode - 1));
+    cpu_irq_enable();
+    system_sleep();
 #else
-	UNUSED(sleep_mode);
-	cpu_irq_enable();
+    UNUSED(sleep_mode);
+    cpu_irq_enable();
 #endif /* CONFIG_SLEEPMGR_ENABLE */
 }
 

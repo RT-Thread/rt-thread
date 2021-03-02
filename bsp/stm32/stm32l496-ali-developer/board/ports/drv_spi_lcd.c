@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-11-27     zylx         first version
  */
- 
+
 #include <board.h>
 #include <drv_spi.h>
 #include <rtdevice.h>

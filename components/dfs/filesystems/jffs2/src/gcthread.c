@@ -125,11 +125,11 @@ jffs2_garbage_collect_thread(unsigned long data)
      D1(printk("jffs2_garbage_collect_thread EXIT\n"));
      cyg_flag_setbits(&sb->s_gc_thread_flags,GC_THREAD_FLAG_HAS_EXIT);
 }
-#endif 
+#endif
 
 rt_uint32_t cyg_current_time(void)
 {
-	return 0;
+    return 0;
 }
 
 static void
@@ -152,34 +152,34 @@ jffs2_start_garbage_collect_thread(struct jffs2_sb_info *c)
      struct super_block *sb=OFNI_BS_2SFFJ(c);
      cyg_mtab_entry *mte;
      int result;
-	
+
      RT_ASSERT(c);
      //RT_ASSERT(!sb->s_gc_thread_handle);
-	 
+
      mte=(cyg_dir *) sb->s_root;
      RT_ASSERT(mte);
-	 
-     rt_event_init(&sb->s_gc_thread_flags, "gc_event", RT_IPC_FLAG_FIFO);	 
+
+     rt_event_init(&sb->s_gc_thread_flags, "gc_event", RT_IPC_FLAG_FIFO);
      rt_mutex_init(&sb->s_lock, "gc_mutex", RT_IPC_FLAG_FIFO);
 //     rt_mutex_init(&mte->fs->syncmode, "fs_lock", RT_IPC_FLAG_FIFO);
-	 
+
      D1(printk("jffs2_start_garbage_collect_thread\n"));
      /* Start the thread. Doesn't matter if it fails -- it's only an
       * optimisation anyway */
-     result =  rt_thread_init(&sb->s_gc_thread, 
-	                   "jffs2_gc_thread",
+     result =  rt_thread_init(&sb->s_gc_thread,
+                       "jffs2_gc_thread",
                        jffs2_garbage_collect_thread,
                        (void *)c,
                        (void*)sb->s_gc_thread_stack,
                        sizeof(sb->s_gc_thread_stack),
-					   CYGNUM_JFFS2_GC_THREAD_PRIORITY,
-					   CYGNUM_JFFS2_GC_THREAD_TICKS
-					   );
-	 if (result != RT_EOK) {
-		 rt_thread_startup(&sb->s_gc_thread);
-		 /* how to deal with the following filed? */
-		 /* sb->s_gc_thread_handle; */
-	 }
+                       CYGNUM_JFFS2_GC_THREAD_PRIORITY,
+                       CYGNUM_JFFS2_GC_THREAD_TICKS
+                       );
+     if (result != RT_EOK) {
+         rt_thread_startup(&sb->s_gc_thread);
+         /* how to deal with the following filed? */
+         /* sb->s_gc_thread_handle; */
+     }
 }
 
 void
@@ -189,7 +189,7 @@ jffs2_stop_garbage_collect_thread(struct jffs2_sb_info *c)
      cyg_mtab_entry *mte;
      rt_uint32_t  e;
      rt_err_t result;
-	 
+
      //RT_ASSERT(sb->s_gc_thread_handle);
 
      D1(printk("jffs2_stop_garbage_collect_thread\n"));
@@ -198,12 +198,12 @@ jffs2_stop_garbage_collect_thread(struct jffs2_sb_info *c)
      rt_event_send(&sb->s_gc_thread_flags,GC_THREAD_FLAG_STOP);
 
      D1(printk("jffs2_stop_garbage_collect_thread wait\n"));
-	 
+
      result = rt_event_recv(&sb->s_gc_thread_flags,
                    GC_THREAD_FLAG_HAS_EXIT,
                    RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-				   RT_WAITING_FOREVER,  &e);
-     if (result == -RT_ETIMEOUT) 
+                   RT_WAITING_FOREVER,  &e);
+     if (result == -RT_ETIMEOUT)
      {
        LOG_E("wait completed timeout");
        return;
@@ -230,21 +230,21 @@ jffs2_garbage_collect_thread(unsigned long data)
      cyg_mtab_entry *mte;
      rt_uint32_t flag = 0;
      rt_err_t result;
-	 
+
      D1(printk("jffs2_garbage_collect_thread START\n"));
 
      while(1) {
           result = rt_event_recv(&sb->s_gc_thread_flags,
                         GC_THREAD_FLAG_TRIG | GC_THREAD_FLAG_STOP,
                         RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
-				        cyg_current_time() + CYGNUM_JFFS2_GS_THREAD_TICKS,  
-						&flag);
-          if (result == -RT_ETIMEOUT) 
+                        cyg_current_time() + CYGNUM_JFFS2_GS_THREAD_TICKS,
+                        &flag);
+          if (result == -RT_ETIMEOUT)
           {
             LOG_E("wait completed timeout");
             continue;
           }
-          else if (result == -RT_ERROR) 
+          else if (result == -RT_ERROR)
           {
             LOG_E("event received error");
             continue;
@@ -269,6 +269,6 @@ jffs2_garbage_collect_thread(unsigned long data)
      }
 
      D1(printk("jffs2_garbage_collect_thread EXIT\n"));
-     rt_event_send(&sb->s_gc_thread_flags,GC_THREAD_FLAG_HAS_EXIT);	 
+     rt_event_send(&sb->s_gc_thread_flags,GC_THREAD_FLAG_HAS_EXIT);
 }
 #endif

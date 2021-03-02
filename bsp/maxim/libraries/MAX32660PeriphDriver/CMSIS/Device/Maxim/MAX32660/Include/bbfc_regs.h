@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -93,10 +93,10 @@ typedef struct {
 /**
  * @ingroup    bbfc_registers
  * @defgroup   BBFC_Register_Offsets Register Offsets
- * @brief      BBFC Peripheral Register Offsets from the BBFC Base Peripheral Address. 
+ * @brief      BBFC Peripheral Register Offsets from the BBFC Base Peripheral Address.
  * @{
  */
- #define MXC_R_BBFC_BBFCR0                  ((uint32_t)0x00000000UL) /**< Offset from BBFC Base Address: <tt> 0x0000</tt> */ 
+ #define MXC_R_BBFC_BBFCR0                  ((uint32_t)0x00000000UL) /**< Offset from BBFC Base Address: <tt> 0x0000</tt> */
 /**@} end of group bbfc_registers */
 
 /**

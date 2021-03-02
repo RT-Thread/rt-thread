@@ -1290,14 +1290,14 @@ void SDIF_Deinit(SDIF_Type *base)
 
 void SDIF_DriverIRQHandler(void)
 {
-	 /* enter interrupt */
+     /* enter interrupt */
     rt_interrupt_enter();
 
     assert(s_sdifHandle[0]);
 
     s_sdifIsr(SDIF, s_sdifHandle[0]);
-	
-	/* leave interrupt */
+
+    /* leave interrupt */
     rt_interrupt_leave();
 }
 #endif

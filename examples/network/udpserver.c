@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <sys/select.h>
 #endif
-#include <sys/socket.h> /* ä½¿ç”¨BSD socketï¼Œéœ€è¦åŒ…å«socket.hå¤´æ–‡ä»¶ */
+#include <sys/socket.h> /* Ê¹ÓÃBSD socket£¬ĞèÒª°üº¬socket.hÍ·ÎÄ¼ş */
 #include "netdb.h"
 
 #define DEBUG_UDP_SERVER
@@ -37,7 +37,7 @@ static void udpserv(void *paramemter)
     struct timeval timeout;
     fd_set readset;
 
-    /* åˆ†é…æ¥æ”¶ç”¨çš„æ•°æ®ç¼“å†² */
+    /* ·ÖÅä½ÓÊÕÓÃµÄÊı¾İ»º³å */
     recv_data = rt_malloc(BUFSZ);
     if (recv_data == RT_NULL)
     {
@@ -45,20 +45,20 @@ static void udpserv(void *paramemter)
         return;
     }
 
-    /* åˆ›å»ºä¸€ä¸ªsocketï¼Œç±»å‹æ˜¯SOCK_DGRAMï¼ŒUDPç±»å‹ */
+    /* ´´½¨Ò»¸ösocket£¬ÀàĞÍÊÇSOCK_DGRAM£¬UDPÀàĞÍ */
     if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
     {
         LOG_E("Create socket error");
         goto __exit;
     }
 
-    /* åˆå§‹åŒ–æœåŠ¡ç«¯åœ°å€ */
+    /* ³õÊ¼»¯·şÎñ¶ËµØÖ· */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = INADDR_ANY;
     rt_memset(&(server_addr.sin_zero), 0, sizeof(server_addr.sin_zero));
 
-    /* ç»‘å®šsocketåˆ°æœåŠ¡ç«¯åœ°å€ */
+    /* °ó¶¨socketµ½·şÎñ¶ËµØÖ· */
     if (bind(sock, (struct sockaddr *)&server_addr,
              sizeof(struct sockaddr)) == -1)
     {
@@ -84,7 +84,7 @@ static void udpserv(void *paramemter)
         if (select(sock + 1, &readset, RT_NULL, RT_NULL, &timeout) == 0)
             continue;
 
-        /* ä»sockä¸­æ”¶å–æœ€å¤§BUFSZ - 1å­—èŠ‚æ•°æ® */
+        /* ´ÓsockÖĞÊÕÈ¡×î´óBUFSZ - 1×Ö½ÚÊı¾İ */
         bytes_read = recvfrom(sock, recv_data, BUFSZ - 1, 0,
                               (struct sockaddr *)&client_addr, &addr_len);
         if (bytes_read < 0)
@@ -99,12 +99,12 @@ static void udpserv(void *paramemter)
         }
         else
         {
-            recv_data[bytes_read] = '\0'; /* æŠŠæœ«ç«¯æ¸…é›¶ */
+            recv_data[bytes_read] = '\0'; /* °ÑÄ©¶ËÇåÁã */
 
-            /* è¾“å‡ºæ¥æ”¶çš„æ•°æ® */
+            /* Êä³ö½ÓÊÕµÄÊı¾İ */
             LOG_D("Received data = %s", recv_data);
 
-            /* å¦‚æœæ¥æ”¶æ•°æ®æ˜¯exitï¼Œé€€å‡º */
+            /* Èç¹û½ÓÊÕÊı¾İÊÇexit£¬ÍË³ö */
             if (strcmp(recv_data, "exit") == 0)
             {
                 goto __exit;

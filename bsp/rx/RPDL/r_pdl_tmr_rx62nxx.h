@@ -1,35 +1,35 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Timer TMR API for RX62Nxx
-* File Name		: r_pdl_tmr_RX62Nxx.h
-* Version		: 1.02
-* Contents		: Timer TMR API header
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name   : Timer TMR API for RX62Nxx
+* File Name     : r_pdl_tmr_RX62Nxx.h
+* Version       : 1.02
+* Contents      : Timer TMR API header
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_TMR_RX62Nxx_H
 #define R_PDL_TMR_RX62Nxx_H
 
-#define TMR_UNITS 				2
-#define TMR_CHANNELS_PER_UNIT	2
+#define TMR_UNITS               2
+#define TMR_CHANNELS_PER_UNIT   2
 #define TMR_CHANNELS (uint8_t)(TMR_UNITS * TMR_CHANNELS_PER_UNIT)
 
 /* One-shot modes */
-#define CHANNEL_MODE	0x01u
-#define UNIT_MODE		0x02u
+#define CHANNEL_MODE    0x01u
+#define UNIT_MODE       0x02u
 
 /* Callback function storage */
 extern VoidCallBackFunc rpdl_TMR_Overflow_callback_func[TMR_CHANNELS];
@@ -44,113 +44,113 @@ extern volatile  uint8_t rpdl_TMR_one_shot[TMR_CHANNELS];
 
 /* Library prototypes */
 bool R_TMR_SetAll(
-	const uint8_t
+    const uint8_t
 );
 bool R_TMR_CreateChannelAll(
-	const uint8_t,
-	const uint32_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	VoidCallBackFunc const,
-	VoidCallBackFunc const,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    VoidCallBackFunc const,
+    VoidCallBackFunc const,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_TMR_CreateUnitAll(
-	const uint8_t,
-	const uint32_t,
-	const uint8_t,
-	const uint16_t,
-	const uint16_t,
-	const uint16_t,
-	VoidCallBackFunc const,
-	VoidCallBackFunc const,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const uint8_t,
+    const uint16_t,
+    const uint16_t,
+    const uint16_t,
+    VoidCallBackFunc const,
+    VoidCallBackFunc const,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_TMR_CreatePeriodicChannelAll(
-	const uint8_t,
-	const uint32_t,
-	const float,
-	const float,
-	VoidCallBackFunc const,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const float,
+    const float,
+    VoidCallBackFunc const,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_TMR_CreatePeriodicUnitAll(
-	const uint8_t,
-	const uint32_t,
-	const float,
-	const float,
-	VoidCallBackFunc const,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const float,
+    const float,
+    VoidCallBackFunc const,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_TMR_CreateOneShotChannelAll(
-	const uint8_t,
-	const uint32_t,
-	const float,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const float,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_TMR_CreateOneShotUnitAll(
-	const uint8_t,
-	const uint32_t,
-	const float,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const float,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_TMR_DestroyAll(
-	const uint8_t
+    const uint8_t
 );
 bool R_TMR_ControlChannelAll(
-	const uint8_t,
-	const uint32_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_TMR_ControlUnitAll(
-	const uint8_t,
-	const uint32_t,
-	const uint16_t,
-	const uint16_t,
-	const uint16_t
+    const uint8_t,
+    const uint32_t,
+    const uint16_t,
+    const uint16_t,
+    const uint16_t
 );
 bool R_TMR_ControlPeriodicChannelAll(
-	const uint8_t,
-	const uint32_t,
-	const float,
-	const float
+    const uint8_t,
+    const uint32_t,
+    const float,
+    const float
 );
 bool R_TMR_ControlPeriodicUnitAll(
-	const uint8_t,
-	const uint32_t,
-	const float,
-	const float
+    const uint8_t,
+    const uint32_t,
+    const float,
+    const float
 );
 bool R_TMR_ReadChannelAll(
-	const uint8_t,
-	volatile uint8_t * const,
-	volatile uint8_t * const,
-	volatile uint8_t * const,
-	volatile uint8_t * const
+    const uint8_t,
+    volatile uint8_t * const,
+    volatile uint8_t * const,
+    volatile uint8_t * const,
+    volatile uint8_t * const
 );
 bool R_TMR_ReadUnitAll(
-	const uint8_t,
-	volatile uint8_t * const,
-	volatile uint16_t * const,
-	volatile uint16_t * const,
-	volatile uint16_t * const
+    const uint8_t,
+    volatile uint8_t * const,
+    volatile uint16_t * const,
+    volatile uint16_t * const,
+    volatile uint16_t * const
 );
 bool ReturnFalse(void);
 
 /* Macro definitions */
 
 #if defined (DEVICE_PACKAGE_LFBGA_176) || defined (DEVICE_PACKAGE_TFLGA_145) || \
-	defined (DEVICE_PACKAGE_LQFP_144)
+    defined (DEVICE_PACKAGE_LQFP_144)
 #define R_TMR_Set(a) \
 ( R_TMR_SetAll( (a) ) )
 #else

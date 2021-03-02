@@ -136,16 +136,16 @@
     __STATIC_INLINE uint32_t __CLZ(uint32_t data)
     {
       if (data == 0u) { return 32u; }
-      
+
       uint32_t count = 0;
       uint32_t mask = 0x80000000;
-      
+
       while ((data & mask) == 0)
       {
         count += 1u;
         mask = mask >> 1u;
       }
-      
+
       return (count);
     }
   #endif

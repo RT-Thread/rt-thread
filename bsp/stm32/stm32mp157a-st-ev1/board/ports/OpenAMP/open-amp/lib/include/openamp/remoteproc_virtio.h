@@ -58,13 +58,13 @@ typedef int (*rpvdev_notify_func)(void *priv, uint32_t id);
  * @node list node
  */
 struct remoteproc_virtio {
-	void *priv;
-	uint32_t notify_id;
-	void *vdev_rsc;
-	struct metal_io_region *vdev_rsc_io;
-	rpvdev_notify_func notify;
-	struct virtio_device vdev;
-	struct metal_list node;
+    void *priv;
+    uint32_t notify_id;
+    void *vdev_rsc;
+    struct metal_io_region *vdev_rsc_io;
+    rpvdev_notify_func notify;
+    struct virtio_device vdev;
+    struct metal_list node;
 };
 
 /**
@@ -85,10 +85,10 @@ struct remoteproc_virtio {
  */
 struct virtio_device *
 rproc_virtio_create_vdev(unsigned int role, unsigned int notifyid,
-			 void *rsc, struct metal_io_region *rsc_io,
-			 void *priv,
-			 rpvdev_notify_func notify,
-			 virtio_dev_reset_cb rst_cb);
+             void *rsc, struct metal_io_region *rsc_io,
+             void *priv,
+             rpvdev_notify_func notify,
+             virtio_dev_reset_cb rst_cb);
 
 /**
  * rproc_virtio_remove_vdev
@@ -115,9 +115,9 @@ void rproc_virtio_remove_vdev(struct virtio_device *vdev);
  * return 0 for success, negative value for failure.
  */
 int rproc_virtio_init_vring(struct virtio_device *vdev, unsigned int index,
-			    unsigned int notifyid, void *va,
-			    struct metal_io_region *io,
-			    unsigned int num_descs, unsigned int align);
+                unsigned int notifyid, void *va,
+                struct metal_io_region *io,
+                unsigned int num_descs, unsigned int align);
 
 /**
  * rproc_virtio_notified

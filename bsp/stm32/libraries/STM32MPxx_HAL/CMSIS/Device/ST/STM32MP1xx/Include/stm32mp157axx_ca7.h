@@ -83,7 +83,7 @@
    SecurePhysicalTimer_IRQn         = 29,     /*!< Secure Physical Timer Interrupt                                      */
    NonSecurePhysicalTimer_IRQn      = 30,     /*!< Non-Secure Physical Timer Interrupt                                  */
    Legacy_nIRQ_IRQn                 = 31,     /*!< Legacy nIRQ Interrupt                                                */
-   /******  STM32 specific Interrupt Numbers ****************************************************************************/    
+   /******  STM32 specific Interrupt Numbers ****************************************************************************/
    WWDG1_IRQn                       = 32,     /*!< Window WatchDog Interrupt                                            */
    PVD_AVD_IRQn                     = 33,     /*!< PVD & AVD detector through EXTI                                      */
    TAMP_IRQn                        = 34,     /*!< Tamper interrupts through the EXTI line                              */
@@ -5447,37 +5447,37 @@ typedef struct
   * @{
   */
 #define FDCAN_IT_GROUP_RX_FIFO0          FDCAN_ILS_RF0NL|FDCAN_ILS_RF0FL|FDCAN_ILS_RF0LL|FDCAN_ILS_RF0WL
-															/*!< RX FIFO 0 Interrupts Group:
+                                                            /*!< RX FIFO 0 Interrupts Group:
                                                                   RF0LL: Rx FIFO 0 Message Lost
                                                                   RF0FL: Rx FIFO 0 is Full
                                                                   RF0NL: Rx FIFO 0 Has New Message            */
 #define FDCAN_IT_GROUP_RX_FIFO1          FDCAN_ILS_RF1NL|FDCAN_ILS_RF1FL|FDCAN_ILS_RF1LL|FDCAN_ILS_RF1WL
-															/*!< RX FIFO 1 Interrupts Group:
+                                                            /*!< RX FIFO 1 Interrupts Group:
                                                                   RF1LL: Rx FIFO 1 Message Lost
                                                                   RF1FL: Rx FIFO 1 is Full
                                                                   RF1NL: Rx FIFO 1 Has New Message            */
 #define FDCAN_IT_GROUP_SMSG              FDCAN_ILS_HPML|FDCAN_ILS_TCL|FDCAN_ILS_TCFL
-															/*!< Status Message Interrupts Group:
+                                                            /*!< Status Message Interrupts Group:
                                                                   TCFL: Transmission Cancellation Finished
                                                                   TCL: Transmission Completed
                                                                   HPML: High Priority Message                 */
 #define FDCAN_IT_GROUP_TX_FIFO_ERROR     FDCAN_ILS_TFEL|FDCAN_ILS_TEFNL|FDCAN_ILS_TEFWL|FDCAN_ILS_TEFLL
-															/*!< TX FIFO Error Interrupts Group:
+                                                            /*!< TX FIFO Error Interrupts Group:
                                                                   TEFLL: Tx Event FIFO Element Lost
                                                                   TEFFL: Tx Event FIFO Full
                                                                   TEFNL: Tx Event FIFO New Entry
                                                                   TFEL: Tx FIFO Empty Interrupt Line          */
 #define FDCAN_IT_GROUP_MISC              FDCAN_ILS_TSWL|FDCAN_ILS_MRAFL|FDCAN_ILS_TOOL|FDCAN_ILS_DRXL
-															/*!< Misc. Interrupts Group:
+                                                            /*!< Misc. Interrupts Group:
                                                                   TOOL: Timeout Occurred
                                                                   MRAFL: Message RAM Access Failure
                                                                   TSWL: Timestamp Wraparound                  */
 #define FDCAN_IT_GROUP_BIT_LINE_ERROR    FDCAN_ILS_ELOL|FDCAN_ILS_EPL
-															/*!< Bit and Line Error Interrupts Group:
+                                                            /*!< Bit and Line Error Interrupts Group:
                                                                   EPL: Error Passive
                                                                   ELOL: Error Logging Overflow                */
 #define FDCAN_IT_GROUP_PROTOCOL_ERROR    FDCAN_ILS_EWL|FDCAN_ILS_BOL|FDCAN_ILS_WDIL|FDCAN_ILS_PEAL|FDCAN_ILS_PEDL|FDCAN_ILS_ARAL
-															/*!< Protocol Error Group:
+                                                            /*!< Protocol Error Group:
                                                                   ARAL: Access to Reserved Address Line
                                                                   PEDL: Protocol Error in Data Phase Line
                                                                   PEAL: Protocol Error in Arbitration Phase Line
@@ -13228,7 +13228,7 @@ typedef struct
 #define DMAMUX_RGxCR_GPOL              DMAMUX_RGxCR_GPOL_Msk
 #define DMAMUX_RGxCR_GPOL_0            (0x1U << DMAMUX_RGxCR_GPOL_Pos)         /*!< 0x00020000 */
 #define DMAMUX_RGxCR_GPOL_1            (0x2U << DMAMUX_RGxCR_GPOL_Pos)         /*!< 0x00040000 */
-#define DMAMUX_RGxCR_GNBREQ_Pos        (19U)                                   
+#define DMAMUX_RGxCR_GNBREQ_Pos        (19U)
 #define DMAMUX_RGxCR_GNBREQ_Msk        (0x1FU << DMAMUX_RGxCR_GNBREQ_Pos)      /*!< 0x00F80000 */
 #define DMAMUX_RGxCR_GNBREQ            DMAMUX_RGxCR_GNBREQ_Msk                 /*!< Number of DMA requests to be generated */
 #define DMAMUX_RGxCR_GNBREQ_0          (0x01U << DMAMUX_RGxCR_GNBREQ_Pos)      /*!< 0x00080000 */
@@ -13891,7 +13891,7 @@ typedef struct
 #define DSI_PCONFR_NL                  ((uint32_t)0x00000003U)               /*!< Number of Lanes */
 #define DSI_PCONFR_NL0                 ((uint32_t)0x00000001U)
 #define DSI_PCONFR_NL1                 ((uint32_t)0x00000002U)
-                                     
+
 #define DSI_PCONFR_SW_TIME             ((uint32_t)0x0000FF00U)               /*!< Stop Wait Time */
 #define DSI_PCONFR_SW_TIME0            ((uint32_t)0x00000100U)
 #define DSI_PCONFR_SW_TIME1            ((uint32_t)0x00000200U)
@@ -14283,7 +14283,7 @@ typedef struct
 #define DSI_WCFGR_COLMUX0              ((uint32_t)0x00000002U)
 #define DSI_WCFGR_COLMUX1              ((uint32_t)0x00000004U)
 #define DSI_WCFGR_COLMUX2              ((uint32_t)0x00000008U)
- 
+
 #define DSI_WCFGR_TESRC                ((uint32_t)0x00000010U)               /*!< Tearing Effect Source */
 #define DSI_WCFGR_TEPOL                ((uint32_t)0x00000020U)               /*!< Tearing Effect Polarity */
 #define DSI_WCFGR_AR                   ((uint32_t)0x00000040U)               /*!< Automatic Refresh */
@@ -20509,109 +20509,109 @@ typedef struct
 #define PWR_CSR1_PVDO                  PWR_CSR1_PVDO_Msk                       /*!< Programmable Voltage Detect Output */
 
 /********************  Bit definition for PWR_CR2 register  ********************/
-#define PWR_CR2_BREN_Pos        (0U)                                           
+#define PWR_CR2_BREN_Pos        (0U)
 #define PWR_CR2_BREN_Msk        (0x1U << PWR_CR2_BREN_Pos)                     /*!< 0x00000001 */
 #define PWR_CR2_BREN            PWR_CR2_BREN_Msk                               /*!< Backup regulator enable */
-#define PWR_CR2_RREN_Pos        (1U)                                           
+#define PWR_CR2_RREN_Pos        (1U)
 #define PWR_CR2_RREN_Msk        (0x1U << PWR_CR2_RREN_Pos)                     /*!< 0x00000002 */
 #define PWR_CR2_RREN            PWR_CR2_RREN_Msk                               /*!< Retention Regulator enable */
-#define PWR_CR2_MONEN_Pos       (4U)                                           
+#define PWR_CR2_MONEN_Pos       (4U)
 #define PWR_CR2_MONEN_Msk       (0x1U << PWR_CR2_MONEN_Pos)                    /*!< 0x00000010 */
 #define PWR_CR2_MONEN           PWR_CR2_MONEN_Msk                              /*!< VBAT and temperature monitoring enable */
-#define PWR_CR2_BRRDY_Pos       (16U)                                          
+#define PWR_CR2_BRRDY_Pos       (16U)
 #define PWR_CR2_BRRDY_Msk       (0x1U << PWR_CR2_BRRDY_Pos)                    /*!< 0x00010000 */
 #define PWR_CR2_BRRDY           PWR_CR2_BRRDY_Msk                              /*!< Backup Regulator ready */
-#define PWR_CR2_RRRDY_Pos       (17U)                                          
+#define PWR_CR2_RRRDY_Pos       (17U)
 #define PWR_CR2_RRRDY_Msk       (0x1U << PWR_CR2_RRRDY_Pos)                    /*!< 0x00020000 */
 #define PWR_CR2_RRRDY           PWR_CR2_RRRDY_Msk                              /*!< Retention Regulator ready */
-#define PWR_CR2_VBATL_Pos       (20U)                                          
+#define PWR_CR2_VBATL_Pos       (20U)
 #define PWR_CR2_VBATL_Msk       (0x1U << PWR_CR2_VBATL_Pos)                    /*!< 0x00100000 */
 #define PWR_CR2_VBATL           PWR_CR2_VBATL_Msk                              /*!< Monitored VBAT level equal or below low threshold */
-#define PWR_CR2_VBATH_Pos       (21U)                                          
+#define PWR_CR2_VBATH_Pos       (21U)
 #define PWR_CR2_VBATH_Msk       (0x1U << PWR_CR2_VBATH_Pos)                    /*!< 0x00200000 */
 #define PWR_CR2_VBATH           PWR_CR2_VBATH_Msk                              /*!< Monitored VBAT level equal or above high threshold */
-#define PWR_CR2_TEMPL_Pos       (22U)                                          
+#define PWR_CR2_TEMPL_Pos       (22U)
 #define PWR_CR2_TEMPL_Msk       (0x1U << PWR_CR2_TEMPL_Pos)                    /*!< 0x00300000 */
 #define PWR_CR2_TEMPL           PWR_CR2_TEMPL_Msk                              /*!< Monitored temperature level equal or below low threshold */
-#define PWR_CR2_TEMPH_Pos       (23U)                                          
+#define PWR_CR2_TEMPH_Pos       (23U)
 #define PWR_CR2_TEMPH_Msk       (0x1U << PWR_CR2_TEMPH_Pos)                    /*!< 0x00400000 */
 #define PWR_CR2_TEMPH           PWR_CR2_TEMPH_Msk                              /*!< Monitored temperature level equal or below high threshold */
 
 /********************  Bit definition for PWR_CR3 register  ********************/
-#define PWR_CR3_VBE_Pos               (8U)                                     
+#define PWR_CR3_VBE_Pos               (8U)
 #define PWR_CR3_VBE_Msk               (0x1U << PWR_CR3_VBE_Pos)                /*!< 0x00000100 */
 #define PWR_CR3_VBE                   PWR_CR3_VBE_Msk                          /*!< VBAT charging enable */
-#define PWR_CR3_VBRS_Pos              (9U)                                     
+#define PWR_CR3_VBRS_Pos              (9U)
 #define PWR_CR3_VBRS_Msk              (0x1U << PWR_CR3_VBRS_Pos)               /*!< 0x00000200 */
 #define PWR_CR3_VBRS                  PWR_CR3_VBRS_Msk                         /*!< VBAT charging resistor selection */
-#define PWR_CR3_DDRSREN_Pos           (10U)                                    
+#define PWR_CR3_DDRSREN_Pos           (10U)
 #define PWR_CR3_DDRSREN_Msk           (0x1U << PWR_CR3_DDRSREN_Pos)            /*!< 0x00000400 */
 #define PWR_CR3_DDRSREN               PWR_CR3_DDRSREN_Msk                      /*!< DDR self-refresh in standby mode enable */
-#define PWR_CR3_DDRSRDIS_Pos          (11U)                                    
+#define PWR_CR3_DDRSRDIS_Pos          (11U)
 #define PWR_CR3_DDRSRDIS_Msk          (0x1U << PWR_CR3_DDRSRDIS_Pos)           /*!< 0x00000800 */
 #define PWR_CR3_DDRSRDIS              PWR_CR3_DDRSRDIS_Msk                     /*!< DDR self-refresh retention after standby disable */
-#define PWR_CR3_DDRRETEN_Pos          (12U)                                    
+#define PWR_CR3_DDRRETEN_Pos          (12U)
 #define PWR_CR3_DDRRETEN_Msk          (0x1U << PWR_CR3_DDRRETEN_Pos)           /*!< 0x00001000 */
 #define PWR_CR3_DDRRETEN              PWR_CR3_DDRRETEN_Msk                     /*!< DDR retention enable */
 #define PWR_CR3_POPL_Pos              (17U)
 #define PWR_CR3_POPL_Msk              (0x1FU << PWR_CR3_POPL_Pos)              /*!< 0x003E0000 */
 #define PWR_CR3_POPL                  PWR_CR3_POPL_Msk                         /*!< PWR_ON pulse low configuration */
-#define PWR_CR3_USB33DEN_Pos          (24U)                                    
+#define PWR_CR3_USB33DEN_Pos          (24U)
 #define PWR_CR3_USB33DEN_Msk          (0x1U << PWR_CR3_USB33DEN_Pos)           /*!< 0x01000000 */
 #define PWR_CR3_USB33DEN              PWR_CR3_USB33DEN_Msk                     /*!< USB33DEN: USB 3.3V voltage level detector enable */
-#define PWR_CR3_USB33RDY_Pos          (26U)                                    
+#define PWR_CR3_USB33RDY_Pos          (26U)
 #define PWR_CR3_USB33RDY_Msk          (0x1U << PWR_CR3_USB33RDY_Pos)           /*!< 0x04000000 */
-#define PWR_CR3_USB33RDY              PWR_CR3_USB33RDY_Msk                     /*!< USB 3.3V supply ready */ 
-#define PWR_CR3_REG18EN_Pos           (28U)                                    
+#define PWR_CR3_USB33RDY              PWR_CR3_USB33RDY_Msk                     /*!< USB 3.3V supply ready */
+#define PWR_CR3_REG18EN_Pos           (28U)
 #define PWR_CR3_REG18EN_Msk           (0x1U << PWR_CR3_REG18EN_Pos)            /*!< 0x10000000 */
 #define PWR_CR3_REG18EN               PWR_CR3_REG18EN_Msk                      /*!< 1V8 regulator enable */
-#define PWR_CR3_REG18RDY_Pos          (29U)                                    
+#define PWR_CR3_REG18RDY_Pos          (29U)
 #define PWR_CR3_REG18RDY_Msk          (0x1U << PWR_CR3_REG18RDY_Pos)           /*!< 0x20000000 */
 #define PWR_CR3_REG18RDY              PWR_CR3_REG18RDY_Msk                     /*!< 1V8 regulator supply ready */
-#define PWR_CR3_REG11EN_Pos           (30U)                                    
+#define PWR_CR3_REG11EN_Pos           (30U)
 #define PWR_CR3_REG11EN_Msk           (0x1U << PWR_CR3_REG11EN_Pos)            /*!< 0x40000000 */
 #define PWR_CR3_REG11EN               PWR_CR3_REG11EN_Msk                      /*!< 1V1 regulator enable  */
-#define PWR_CR3_REG11RDY_Pos          (31U)                                    
+#define PWR_CR3_REG11RDY_Pos          (31U)
 #define PWR_CR3_REG11RDY_Msk          (0x1U << PWR_CR3_REG11RDY_Pos)           /*!< 0x80000000 */
 #define PWR_CR3_REG11RDY              PWR_CR3_REG11RDY_Msk                     /*!< 1V1 regulator supply ready */
 
 /********************  Bit definition for PWR_MPUCR register  ********************/
-#define PWR_MPUCR_PDDS_Pos            (0U)                                     
+#define PWR_MPUCR_PDDS_Pos            (0U)
 #define PWR_MPUCR_PDDS_Msk            (0x1U << PWR_MPUCR_PDDS_Pos)             /*!< 0x00000001 */
 #define PWR_MPUCR_PDDS                PWR_MPUCR_PDDS_Msk                       /*!< System Power Down Deepsleep selection */
-#define PWR_MPUCR_CSTBYDIS_Pos        (3U)                                     
+#define PWR_MPUCR_CSTBYDIS_Pos        (3U)
 #define PWR_MPUCR_CSTBYDIS_Msk        (0x1U << PWR_MPUCR_CSTBYDIS_Pos)         /*!< 0x00000008 */
 #define PWR_MPUCR_CSTBYDIS            PWR_MPUCR_CSTBYDIS_Msk                   /*!< MPU CStandby mode disable */
-#define PWR_MPUCR_STOPF_Pos           (5U)                                     
+#define PWR_MPUCR_STOPF_Pos           (5U)
 #define PWR_MPUCR_STOPF_Msk           (0x1U << PWR_MPUCR_STOPF_Pos)            /*!< 0x00000020 */
 #define PWR_MPUCR_STOPF               PWR_MPUCR_STOPF_Msk                      /*!< Stop Flag */
-#define PWR_MPUCR_SBF_Pos             (6U)                                     
+#define PWR_MPUCR_SBF_Pos             (6U)
 #define PWR_MPUCR_SBF_Msk             (0x1U << PWR_MPUCR_SBF_Pos)              /*!< 0x00000040 */
 #define PWR_MPUCR_SBF                 PWR_MPUCR_SBF_Msk                        /*!< System Standby Flag */
-#define PWR_MPUCR_SBF_MPU_Pos         (7U)                                     
+#define PWR_MPUCR_SBF_MPU_Pos         (7U)
 #define PWR_MPUCR_SBF_MPU_Msk         (0x1U << PWR_MPUCR_SBF_MPU_Pos)          /*!< 0x00000080 */
 #define PWR_MPUCR_SBF_MPU             PWR_MPUCR_SBF_MPU_Msk                    /*!< MPU Standby Flag */
-#define PWR_MPUCR_CSSF_Pos            (9U)                                     
+#define PWR_MPUCR_CSSF_Pos            (9U)
 #define PWR_MPUCR_CSSF_Msk            (0x1U << PWR_MPUCR_CSSF_Pos)             /*!< 0x00000200 */
 #define PWR_MPUCR_CSSF                PWR_MPUCR_CSSF_Msk                       /*!< Clear MCU STANDBY, STOP and HOLD flags.(always read as 0) */
-#define PWR_MPUCR_STANDBYWFIL2_Pos    (15U)                                    
+#define PWR_MPUCR_STANDBYWFIL2_Pos    (15U)
 #define PWR_MPUCR_STANDBYWFIL2_Msk    (0x1U << PWR_MPUCR_STANDBYWFIL2_Pos)     /*!< 0x00008000 */
 #define PWR_MPUCR_STANDBYWFIL2        PWR_MPUCR_STANDBYWFIL2_Msk               /*!< MPU system idle indication */
 
 /********************  Bit definition for PWR_MCUCR register  ********************/
-#define PWR_MCUCR_PDDS_Pos            (0U)                                     
+#define PWR_MCUCR_PDDS_Pos            (0U)
 #define PWR_MCUCR_PDDS_Msk            (0x1U << PWR_MCUCR_PDDS_Pos)             /*!< 0x00000001 */
 #define PWR_MCUCR_PDDS                PWR_MCUCR_PDDS_Msk                       /*!< System Power Down Deepsleep selection */
-#define PWR_MCUCR_STOPF_Pos           (5U)                                     
+#define PWR_MCUCR_STOPF_Pos           (5U)
 #define PWR_MCUCR_STOPF_Msk           (0x1U << PWR_MCUCR_STOPF_Pos)            /*!< 0x00000020 */
 #define PWR_MCUCR_STOPF               PWR_MCUCR_STOPF_Msk                      /*!< Stop Flag */
-#define PWR_MCUCR_SBF_Pos             (6U)                                     
+#define PWR_MCUCR_SBF_Pos             (6U)
 #define PWR_MCUCR_SBF_Msk             (0x1U << PWR_MCUCR_SBF_Pos)              /*!< 0x00000040 */
 #define PWR_MCUCR_SBF                 PWR_MCUCR_SBF_Msk                        /*!< System Standby Flag */
-#define PWR_MCUCR_CSSF_Pos            (9U)                                     
+#define PWR_MCUCR_CSSF_Pos            (9U)
 #define PWR_MCUCR_CSSF_Msk            (0x1U << PWR_MCUCR_CSSF_Pos)             /*!< 0x00000200 */
 #define PWR_MCUCR_CSSF                PWR_MCUCR_CSSF_Msk                       /*!< Clear MCU Standby, Stop flags */
-#define PWR_MCUCR_DEEPSLEEP_Pos       (15U)                                    
+#define PWR_MCUCR_DEEPSLEEP_Pos       (15U)
 #define PWR_MCUCR_DEEPSLEEP_Msk       (0x1U << PWR_MCUCR_DEEPSLEEP_Pos)        /*!< 0x00008000 */
 #define PWR_MCUCR_DEEPSLEEP           PWR_MCUCR_DEEPSLEEP_Msk                  /*!< MCU system idle indication */
 
@@ -20761,109 +20761,109 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 /******************  Bit definition for BSEC_OTP_CONFIG register  *****************/
-#define BSEC_OTP_CONFIG_PWRUP_Pos          (0U)                                
+#define BSEC_OTP_CONFIG_PWRUP_Pos          (0U)
 #define BSEC_OTP_CONFIG_PWRUP_Msk          (0x1U << BSEC_OTP_CONFIG_PWRUP_Pos) /*!< 0x00000001 */
 #define BSEC_OTP_CONFIG_PWRUP              BSEC_OTP_CONFIG_PWRUP_Msk           /*!< OTP power-up control */
-#define BSEC_OTP_CONFIG_FRC_Pos            (1U)                                
+#define BSEC_OTP_CONFIG_FRC_Pos            (1U)
 #define BSEC_OTP_CONFIG_FRC_Msk            (0x3U << BSEC_OTP_CONFIG_FRC_Pos)   /*!< 0x00000006 */
 #define BSEC_OTP_CONFIG_FRC                BSEC_OTP_CONFIG_FRC_Msk             /*!< OTP clock frequency range selection */
 #define BSEC_OTP_CONFIG_FRC_0              (0x1U << BSEC_OTP_CONFIG_FRC_Pos)   /*!< 0x00000002 */
 #define BSEC_OTP_CONFIG_FRC_1              (0x2U << BSEC_OTP_CONFIG_FRC_Pos)   /*!< 0x00000004 */
-#define BSEC_OTP_CONFIG_PRGWIDTH_Pos       (3U)                                
+#define BSEC_OTP_CONFIG_PRGWIDTH_Pos       (3U)
 #define BSEC_OTP_CONFIG_PRGWIDTH_Msk       (0xFU << BSEC_OTP_CONFIG_PRGWIDTH_Pos) /*!< 0x00000078 */
 #define BSEC_OTP_CONFIG_PRGWIDTH           BSEC_OTP_CONFIG_PRGWIDTH_Msk        /*!< OTP programming pulse width */
 #define BSEC_OTP_CONFIG_PRGWIDTH_0         (0x1U << BSEC_OTP_CONFIG_PRGWIDTH_Pos) /*!< 0x00000008 */
 #define BSEC_OTP_CONFIG_PRGWIDTH_1         (0x2U << BSEC_OTP_CONFIG_PRGWIDTH_Pos) /*!< 0x00000010 */
 #define BSEC_OTP_CONFIG_PRGWIDTH_2         (0x4U << BSEC_OTP_CONFIG_PRGWIDTH_Pos) /*!< 0x00000020 */
 #define BSEC_OTP_CONFIG_PRGWIDTH_3         (0x8U << BSEC_OTP_CONFIG_PRGWIDTH_Pos) /*!< 0x00000040 */
-#define BSEC_OTP_CONFIG_TREAD_Pos          (7U)                                
+#define BSEC_OTP_CONFIG_TREAD_Pos          (7U)
 #define BSEC_OTP_CONFIG_TREAD_Msk          (0x3U << BSEC_OTP_CONFIG_TREAD_Pos) /*!< 0x00000180 */
 #define BSEC_OTP_CONFIG_TREAD              BSEC_OTP_CONFIG_TREAD_Msk           /*!< set OTP reading current level */
 #define BSEC_OTP_CONFIG_TREAD_0            (0x1U << BSEC_OTP_CONFIG_TREAD_Pos) /*!< 0x00000080 */
 #define BSEC_OTP_CONFIG_TREAD_1            (0x2U << BSEC_OTP_CONFIG_TREAD_Pos) /*!< 0x00000100 */
 
 /******************  Bit definition for BSEC_OTP_CONTROL register  ****************/
-#define BSEC_OTP_CONTROL_ADDR_Pos          (0U)                                
+#define BSEC_OTP_CONTROL_ADDR_Pos          (0U)
 #define BSEC_OTP_CONTROL_ADDR_Msk          (0x7FU << BSEC_OTP_CONTROL_ADDR_Pos) /*!< 0x0000007F */
 #define BSEC_OTP_CONTROL_ADDR              BSEC_OTP_CONTROL_ADDR_Msk           /*!< OTP word address */
-#define BSEC_OTP_CONTROL_PROG_Pos          (8U)                                
+#define BSEC_OTP_CONTROL_PROG_Pos          (8U)
 #define BSEC_OTP_CONTROL_PROG_Msk          (0x1U << BSEC_OTP_CONTROL_PROG_Pos) /*!< 0x00000100 */
 #define BSEC_OTP_CONTROL_PROG              BSEC_OTP_CONTROL_PROG_Msk           /*!< OTP operation control */
-#define BSEC_OTP_CONTROL_LOCK_Pos          (9U)                                
+#define BSEC_OTP_CONTROL_LOCK_Pos          (9U)
 #define BSEC_OTP_CONTROL_LOCK_Msk          (0x1U << BSEC_OTP_CONTROL_LOCK_Pos) /*!< 0x00000200 */
 #define BSEC_OTP_CONTROL_LOCK              BSEC_OTP_CONTROL_LOCK_Msk           /*!< OTP permanent word lock control */
 
 /******************  Bit definition for BSEC_OTP_STATUS register  *****************/
-#define BSEC_OTP_STATUS_SECURE_Pos         (0U)                                
+#define BSEC_OTP_STATUS_SECURE_Pos         (0U)
 #define BSEC_OTP_STATUS_SECURE_Msk         (0x1U << BSEC_OTP_STATUS_SECURE_Pos) /*!< 0x00000001 */
 #define BSEC_OTP_STATUS_SECURE             BSEC_OTP_STATUS_SECURE_Msk          /*!< OTP secured mode */
-#define BSEC_OTP_STATUS_FULLDBG_Pos        (1U)                                
+#define BSEC_OTP_STATUS_FULLDBG_Pos        (1U)
 #define BSEC_OTP_STATUS_FULLDBG_Msk        (0x1U << BSEC_OTP_STATUS_FULLDBG_Pos) /*!< 0x00000002 */
 #define BSEC_OTP_STATUS_FULLDBG            BSEC_OTP_STATUS_FULLDBG_Msk         /*!< OTP mode in full debug */
-#define BSEC_OTP_STATUS_INVALID_Pos        (2U)                                
+#define BSEC_OTP_STATUS_INVALID_Pos        (2U)
 #define BSEC_OTP_STATUS_INVALID_Msk        (0x1U << BSEC_OTP_STATUS_INVALID_Pos) /*!< 0x00000004 */
 #define BSEC_OTP_STATUS_INVALID            BSEC_OTP_STATUS_INVALID_Msk         /*!< OTP invalid mode */
-#define BSEC_OTP_STATUS_BUSY_Pos           (3U)                                
+#define BSEC_OTP_STATUS_BUSY_Pos           (3U)
 #define BSEC_OTP_STATUS_BUSY_Msk           (0x1U << BSEC_OTP_STATUS_BUSY_Pos)  /*!< 0x00000008 */
 #define BSEC_OTP_STATUS_BUSY               BSEC_OTP_STATUS_BUSY_Msk            /*!< OTP operation status */
-#define BSEC_OTP_STATUS_PROGFAIL_Pos       (4U)                                
+#define BSEC_OTP_STATUS_PROGFAIL_Pos       (4U)
 #define BSEC_OTP_STATUS_PROGFAIL_Msk       (0x1U << BSEC_OTP_STATUS_PROGFAIL_Pos) /*!< 0x00000010 */
 #define BSEC_OTP_STATUS_PROGFAIL           BSEC_OTP_STATUS_PROGFAIL_Msk        /*!< last programming status */
-#define BSEC_OTP_STATUS_PWRON_Pos          (5U)                                
+#define BSEC_OTP_STATUS_PWRON_Pos          (5U)
 #define BSEC_OTP_STATUS_PWRON_Msk          (0x1U << BSEC_OTP_STATUS_PWRON_Pos) /*!< 0x00000020 */
 #define BSEC_OTP_STATUS_PWRON              BSEC_OTP_STATUS_PWRON_Msk           /*!< OTP power status */
-#define BSEC_OTP_STATUS_BIST1LOCK_Pos      (6U)                                
+#define BSEC_OTP_STATUS_BIST1LOCK_Pos      (6U)
 #define BSEC_OTP_STATUS_BIST1LOCK_Msk      (0x1U << BSEC_OTP_STATUS_BIST1LOCK_Pos) /*!< 0x00000040 */
 #define BSEC_OTP_STATUS_BIST1LOCK          BSEC_OTP_STATUS_BIST1LOCK_Msk       /*!< BIST1 locked */
-#define BSEC_OTP_STATUS_BIST2LOCK_Pos      (7U)                                
+#define BSEC_OTP_STATUS_BIST2LOCK_Pos      (7U)
 #define BSEC_OTP_STATUS_BIST2LOCK_Msk      (0x1U << BSEC_OTP_STATUS_BIST2LOCK_Pos) /*!< 0x00000080 */
 #define BSEC_OTP_STATUS_BIST2LOCK          BSEC_OTP_STATUS_BIST2LOCK_Msk       /*!< BIST2 locked */
 
 /******************  Bit definition for BSEC_OTP_LOCK register  ********************/
-#define BSEC_OTP_LOCK_OTP_Pos              (0U)                                
+#define BSEC_OTP_LOCK_OTP_Pos              (0U)
 #define BSEC_OTP_LOCK_OTP_Msk              (0x1U << BSEC_OTP_LOCK_OTP_Pos)     /*!< 0x00000001 */
 #define BSEC_OTP_LOCK_OTP                  BSEC_OTP_LOCK_OTP_Msk               /*!< upper OTP read lock */
-#define BSEC_OTP_LOCK_DENREG_Pos           (2U)                                
+#define BSEC_OTP_LOCK_DENREG_Pos           (2U)
 #define BSEC_OTP_LOCK_DENREG_Msk           (0x1U << BSEC_OTP_LOCK_DENREG_Pos)  /*!< 0x00000004 */
 #define BSEC_OTP_LOCK_DENREG               BSEC_OTP_LOCK_DENREG_Msk            /*!< debug enable register sticky lock */
-#define BSEC_OTP_LOCK_FENREG_Pos           (3U)                                
+#define BSEC_OTP_LOCK_FENREG_Pos           (3U)
 #define BSEC_OTP_LOCK_FENREG_Msk           (0x1U << BSEC_OTP_LOCK_FENREG_Pos)  /*!< 0x00000008 */
 #define BSEC_OTP_LOCK_FENREG               BSEC_OTP_LOCK_FENREG_Msk            /*!< feature enable register sticky lock */
-#define BSEC_OTP_LOCK_GPLOCK_Pos           (4U)                                
+#define BSEC_OTP_LOCK_GPLOCK_Pos           (4U)
 #define BSEC_OTP_LOCK_GPLOCK_Msk           (0x1U << BSEC_OTP_LOCK_GPLOCK_Pos)  /*!< 0x00000010 */
 #define BSEC_OTP_LOCK_GPLOCK               BSEC_OTP_LOCK_GPLOCK_Msk            /*!< programming sticky lock */
 
 /********************  Bit definition for BSEC_DENABLE register********************/
-#define BSEC_DENABLE_DFTEN_Pos             (0U)                                
+#define BSEC_DENABLE_DFTEN_Pos             (0U)
 #define BSEC_DENABLE_DFTEN_Msk             (0x1U << BSEC_DENABLE_DFTEN_Pos)    /*!< 0x00000001 */
 #define BSEC_DENABLE_DFTEN                 BSEC_DENABLE_DFTEN_Msk              /*!< DFT enable with signal dften */
-#define BSEC_DENABLE_DBGEN_Pos             (1U)                                
+#define BSEC_DENABLE_DBGEN_Pos             (1U)
 #define BSEC_DENABLE_DBGEN_Msk             (0x1U << BSEC_DENABLE_DBGEN_Pos)    /*!< 0x00000002 */
 #define BSEC_DENABLE_DBGEN                 BSEC_DENABLE_DBGEN_Msk              /*!< debug enable with signal dbgen */
-#define BSEC_DENABLE_NIDEN_Pos             (2U)                                
+#define BSEC_DENABLE_NIDEN_Pos             (2U)
 #define BSEC_DENABLE_NIDEN_Msk             (0x1U << BSEC_DENABLE_NIDEN_Pos)    /*!< 0x00000004 */
 #define BSEC_DENABLE_NIDEN                 BSEC_DENABLE_NIDEN_Msk              /*!< non-invasive debug enable with signal niden */
-#define BSEC_DENABLE_DEVICEEN_Pos          (3U)                                
+#define BSEC_DENABLE_DEVICEEN_Pos          (3U)
 #define BSEC_DENABLE_DEVICEEN_Msk          (0x1U << BSEC_DENABLE_DEVICEEN_Pos) /*!< 0x00000008 */
 #define BSEC_DENABLE_DEVICEEN              BSEC_DENABLE_DEVICEEN_Msk           /*!< controls access to debug component via external debug port by signal deviceen */
-#define BSEC_DENABLE_HDPEN_Pos             (4U)                                
+#define BSEC_DENABLE_HDPEN_Pos             (4U)
 #define BSEC_DENABLE_HDPEN_Msk             (0x1U << BSEC_DENABLE_HDPEN_Pos)    /*!< 0x00000010 */
 #define BSEC_DENABLE_HDPEN                 BSEC_DENABLE_HDPEN_Msk              /*!< hardware debug port enable with signal hdpen */
-#define BSEC_DENABLE_SPIDEN_Pos            (5U)                                
+#define BSEC_DENABLE_SPIDEN_Pos            (5U)
 #define BSEC_DENABLE_SPIDEN_Msk            (0x1U << BSEC_DENABLE_SPIDEN_Pos)   /*!< 0x00000020 */
 #define BSEC_DENABLE_SPIDEN                BSEC_DENABLE_SPIDEN_Msk             /*!< secure privilege invasive debug enable with signal spniden */
-#define BSEC_DENABLE_SPNIDEN_Pos           (6U)                                
+#define BSEC_DENABLE_SPNIDEN_Pos           (6U)
 #define BSEC_DENABLE_SPNIDEN_Msk           (0x1U << BSEC_DENABLE_SPNIDEN_Pos)  /*!< 0x00000040 */
 #define BSEC_DENABLE_SPNIDEN               BSEC_DENABLE_SPNIDEN_Msk            /*!< secure privilege non-invasive debug enable with signal spiden */
-#define BSEC_DENABLE_CP15SDISABLE_Pos      (7U)                                
+#define BSEC_DENABLE_CP15SDISABLE_Pos      (7U)
 #define BSEC_DENABLE_CP15SDISABLE_Msk      (0x3U << BSEC_DENABLE_CP15SDISABLE_Pos) /*!< 0x00000180 */
 #define BSEC_DENABLE_CP15SDISABLE          BSEC_DENABLE_CP15SDISABLE_Msk       /*!< write access to some secure Cortex®-A7 CP15 registers disable CPDISABLE[0] applies to CPU0. CPDISABLE[1] applies to CPU1 */
 #define BSEC_DENABLE_CP15SDISABLE_0        (0x1U << BSEC_DENABLE_CP15SDISABLE_Pos) /*!< 0x00000080 */
 #define BSEC_DENABLE_CP15SDISABLE_1        (0x2U << BSEC_DENABLE_CP15SDISABLE_Pos) /*!< 0x00000100 */
-#define BSEC_DENABLE_CFGSDISABLE_Pos       (9U)                                
+#define BSEC_DENABLE_CFGSDISABLE_Pos       (9U)
 #define BSEC_DENABLE_CFGSDISABLE_Msk       (0x1U << BSEC_DENABLE_CFGSDISABLE_Pos) /*!< 0x00000200 */
 #define BSEC_DENABLE_CFGSDISABLE           BSEC_DENABLE_CFGSDISABLE_Msk        /*!< write access to secure GIC registers disable with signal cfgsdisable */
-#define BSEC_DENABLE_DBGSWENABLE_Pos       (10U)                               
+#define BSEC_DENABLE_DBGSWENABLE_Pos       (10U)
 #define BSEC_DENABLE_DBGSWENABLE_Msk       (0x1U << BSEC_DENABLE_DBGSWENABLE_Pos) /*!< 0x00000400 */
 #define BSEC_DENABLE_DBGSWENABLE           BSEC_DENABLE_DBGSWENABLE_Msk        /*!< control self hosted debug enable with signal dbgswenable */
 
@@ -23719,7 +23719,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
  * by the BOOTROM code, after a power-on reset (por_rst), a system reset (nreset), or
  * exit from STANDBY or CSTANDBY.
  *
- * @note Writing '0' has no effect, reading will return the effective values of 
+ * @note Writing '0' has no effect, reading will return the effective values of
  *       the corresponding bits. Writing a '1' clears the corresponding bit to '0'.
  * @note The register is located in VDD_CORE.
  * @note If TZEN = '1', this register can only be modified in secure mode.
@@ -26504,7 +26504,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define SPI_CFG1_CRCSIZE_3          (0x08U << SPI_CFG1_CRCSIZE_Pos)            /*!< 0x00080000 */
 #define SPI_CFG1_CRCSIZE_4          (0x10U << SPI_CFG1_CRCSIZE_Pos)            /*!< 0x00100000 */
 
-#define SPI_CFG1_CRCEN_Pos          (22U)                                      
+#define SPI_CFG1_CRCEN_Pos          (22U)
 #define SPI_CFG1_CRCEN_Msk          (0x1U << SPI_CFG1_CRCEN_Pos)               /*!< 0x00400000 */
 #define SPI_CFG1_CRCEN              SPI_CFG1_CRCEN_Msk                         /*!<Hardware CRC computation enable */
 
@@ -26582,37 +26582,37 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 /*******************  Bit definition for SPI_IER register  ********************/
 #define SPI_IER_RXPIE_Pos           (0U)
 #define SPI_IER_RXPIE_Msk           (0x1U << SPI_IER_RXPIE_Pos)                /*!< 0x00000001 */
-#define SPI_IER_RXPIE               SPI_IER_RXPIE_Msk                          /*!<RXP Interrupt Enable						*/
+#define SPI_IER_RXPIE               SPI_IER_RXPIE_Msk                          /*!<RXP Interrupt Enable                     */
 #define SPI_IER_TXPIE_Pos           (1U)
 #define SPI_IER_TXPIE_Msk           (0x1U << SPI_IER_TXPIE_Pos)                /*!< 0x00000002 */
-#define SPI_IER_TXPIE               SPI_IER_TXPIE_Msk                          /*!<TXP interrupt enable						*/
+#define SPI_IER_TXPIE               SPI_IER_TXPIE_Msk                          /*!<TXP interrupt enable                     */
 #define SPI_IER_DXPIE_Pos           (2U)
 #define SPI_IER_DXPIE_Msk           (0x1U << SPI_IER_DXPIE_Pos)                /*!< 0x00000004 */
-#define SPI_IER_DXPIE               SPI_IER_DXPIE_Msk                          /*!<DXP interrupt enable 						*/
+#define SPI_IER_DXPIE               SPI_IER_DXPIE_Msk                          /*!<DXP interrupt enable                         */
 #define SPI_IER_EOTIE_Pos           (3U)
 #define SPI_IER_EOTIE_Msk           (0x1U << SPI_IER_EOTIE_Pos)                /*!< 0x00000008 */
-#define SPI_IER_EOTIE               SPI_IER_EOTIE_Msk                          /*!<EOT/SUSP/TXC interrupt enable 	*/
+#define SPI_IER_EOTIE               SPI_IER_EOTIE_Msk                          /*!<EOT/SUSP/TXC interrupt enable    */
 #define SPI_IER_TXTFIE_Pos          (4U)
 #define SPI_IER_TXTFIE_Msk          (0x1U << SPI_IER_TXTFIE_Pos)               /*!< 0x00000010 */
-#define SPI_IER_TXTFIE              SPI_IER_TXTFIE_Msk                         /*!<TXTF interrupt enable 					*/
+#define SPI_IER_TXTFIE              SPI_IER_TXTFIE_Msk                         /*!<TXTF interrupt enable                    */
 #define SPI_IER_UDRIE_Pos           (5U)
 #define SPI_IER_UDRIE_Msk           (0x1U << SPI_IER_UDRIE_Pos)                /*!< 0x00000020 */
-#define SPI_IER_UDRIE               SPI_IER_UDRIE_Msk                          /*!<UDR interrupt enable 						*/
+#define SPI_IER_UDRIE               SPI_IER_UDRIE_Msk                          /*!<UDR interrupt enable                         */
 #define SPI_IER_OVRIE_Pos           (6U)
 #define SPI_IER_OVRIE_Msk           (0x1U << SPI_IER_OVRIE_Pos)                /*!< 0x00000040 */
-#define SPI_IER_OVRIE               SPI_IER_OVRIE_Msk                          /*!<OVR interrupt enable 						*/
+#define SPI_IER_OVRIE               SPI_IER_OVRIE_Msk                          /*!<OVR interrupt enable                         */
 #define SPI_IER_CRCEIE_Pos           (7U)
 #define SPI_IER_CRCEIE_Msk           (0x1U << SPI_IER_CRCEIE_Pos)                /*!< 0x00000080 */
-#define SPI_IER_CRCEIE               SPI_IER_CRCEIE_Msk                          /*!<CRC interrupt enable 						*/
+#define SPI_IER_CRCEIE               SPI_IER_CRCEIE_Msk                          /*!<CRC interrupt enable                       */
 #define SPI_IER_TIFREIE_Pos         (8U)
 #define SPI_IER_TIFREIE_Msk         (0x1U << SPI_IER_TIFREIE_Pos)              /*!< 0x00000100 */
 #define SPI_IER_TIFREIE             SPI_IER_TIFREIE_Msk                        /*!<TI Frame Error interrupt enable */
 #define SPI_IER_MODFIE_Pos          (9U)
 #define SPI_IER_MODFIE_Msk          (0x1U << SPI_IER_MODFIE_Pos)               /*!< 0x00000200 */
-#define SPI_IER_MODFIE              SPI_IER_MODFIE_Msk                         /*!<MODF interrupt enable 					*/
+#define SPI_IER_MODFIE              SPI_IER_MODFIE_Msk                         /*!<MODF interrupt enable                    */
 #define SPI_IER_TSERFIE_Pos          (10U)
 #define SPI_IER_TSERFIE_Msk          (0x1U << SPI_IER_TSERFIE_Pos)               /*!< 0x00000400 */
-#define SPI_IER_TSERFIE              SPI_IER_TSERFIE_Msk                         /*!<TSERF interrupt enable 				*/
+#define SPI_IER_TSERFIE              SPI_IER_TSERFIE_Msk                         /*!<TSERF interrupt enable                 */
 
 /*******************  Bit definition for SPI_SR register  ********************/
 #define SPI_SR_RXP_Pos              (0U)
@@ -26696,32 +26696,32 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define SPI_IFCR_SUSPC              SPI_IFCR_SUSPC_Msk                         /*!<SUSPend flag clear                      */
 
 /*******************  Bit definition for SPI_TXDR register  ********************/
-#define SPI_TXDR_TXDR_Pos           (0U)                                       
+#define SPI_TXDR_TXDR_Pos           (0U)
 #define SPI_TXDR_TXDR_Msk           (0xFFFFFFFFU << SPI_TXDR_TXDR_Pos)         /*!< 0xFFFFFFFF */
 #define SPI_TXDR_TXDR               SPI_TXDR_TXDR_Msk                          /* Transmit Data Register */
 
 /*******************  Bit definition for SPI_RXDR register  ********************/
-#define SPI_RXDR_RXDR_Pos           (0U)                                       
+#define SPI_RXDR_RXDR_Pos           (0U)
 #define SPI_RXDR_RXDR_Msk           (0xFFFFFFFFU << SPI_RXDR_RXDR_Pos)         /*!< 0xFFFFFFFF */
 #define SPI_RXDR_RXDR               SPI_RXDR_RXDR_Msk                          /* Receive Data Register  */
 
 /*******************  Bit definition for SPI_CRCPOLY register  ********************/
-#define SPI_CRCPOLY_CRCPOLY_Pos     (0U)                                       
+#define SPI_CRCPOLY_CRCPOLY_Pos     (0U)
 #define SPI_CRCPOLY_CRCPOLY_Msk     (0xFFFFFFFFU << SPI_CRCPOLY_CRCPOLY_Pos)   /*!< 0xFFFFFFFF */
 #define SPI_CRCPOLY_CRCPOLY         SPI_CRCPOLY_CRCPOLY_Msk                    /* CRC Polynomial register  */
 
 /*******************  Bit definition for SPI_TXCRC register  ********************/
-#define SPI_TXCRC_TXCRC_Pos         (0U)                                       
+#define SPI_TXCRC_TXCRC_Pos         (0U)
 #define SPI_TXCRC_TXCRC_Msk         (0xFFFFFFFFU << SPI_TXCRC_TXCRC_Pos)       /*!< 0xFFFFFFFF */
 #define SPI_TXCRC_TXCRC             SPI_TXCRC_TXCRC_Msk                        /* CRCRegister for transmitter */
 
 /*******************  Bit definition for SPI_RXCRC register  ********************/
-#define SPI_RXCRC_RXCRC_Pos         (0U)                                       
+#define SPI_RXCRC_RXCRC_Pos         (0U)
 #define SPI_RXCRC_RXCRC_Msk         (0xFFFFFFFFU << SPI_RXCRC_RXCRC_Pos)       /*!< 0xFFFFFFFF */
 #define SPI_RXCRC_RXCRC             SPI_RXCRC_RXCRC_Msk                        /* CRCRegister for receiver */
 
 /*******************  Bit definition for SPI_UDRDR register  ********************/
-#define SPI_UDRDR_UDRDR_Pos         (0U)                                       
+#define SPI_UDRDR_UDRDR_Pos         (0U)
 #define SPI_UDRDR_UDRDR_Msk         (0xFFFFFFFFU << SPI_UDRDR_UDRDR_Pos)       /*!< 0xFFFFFFFF */
 #define SPI_UDRDR_UDRDR             SPI_UDRDR_UDRDR_Msk                        /* Data at slave underrun condition */
 
@@ -26763,7 +26763,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define SPI_I2SCFGR_DATFMT_Pos      (14U)
 #define SPI_I2SCFGR_DATFMT_Msk      (0x1U << SPI_I2SCFGR_DATFMT_Pos)           /*!< 0x00003000 */
 #define SPI_I2SCFGR_DATFMT          SPI_I2SCFGR_DATFMT_Msk                     /*!<Data format                                       */
-#define SPI_I2SCFGR_I2SDIV_Pos      (16U)                                      
+#define SPI_I2SCFGR_I2SDIV_Pos      (16U)
 #define SPI_I2SCFGR_I2SDIV_Msk      (0xFFU << SPI_I2SCFGR_I2SDIV_Pos)          /*!< 0x00FF0000 */
 #define SPI_I2SCFGR_I2SDIV          SPI_I2SCFGR_I2SDIV_Msk                     /*!<I2S Linear prescaler */
 #define SPI_I2SCFGR_ODD_Pos         (24U)
@@ -27079,22 +27079,22 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 /*                                                                            */
 /******************************************************************************/
 /******************  Bit definition for SYSCFG_BOOTR register  *****************/
-#define SYSCFG_BOOTR_BOOT0_Pos               (0U)                              
+#define SYSCFG_BOOTR_BOOT0_Pos               (0U)
 #define SYSCFG_BOOTR_BOOT0_Msk               (0x1U << SYSCFG_BOOTR_BOOT0_Pos)  /*!< 0x00000001 */
 #define SYSCFG_BOOTR_BOOT0                   SYSCFG_BOOTR_BOOT0_Msk            /*!< BOOT0 pin value */
-#define SYSCFG_BOOTR_BOOT1_Pos               (1U)                              
+#define SYSCFG_BOOTR_BOOT1_Pos               (1U)
 #define SYSCFG_BOOTR_BOOT1_Msk               (0x1U << SYSCFG_BOOTR_BOOT1_Pos)  /*!< 0x00000002 */
 #define SYSCFG_BOOTR_BOOT1                   SYSCFG_BOOTR_BOOT1_Msk            /*!< BOOT1 pin value */
-#define SYSCFG_BOOTR_BOOT2_Pos               (2U)                              
+#define SYSCFG_BOOTR_BOOT2_Pos               (2U)
 #define SYSCFG_BOOTR_BOOT2_Msk               (0x1U << SYSCFG_BOOTR_BOOT2_Pos)  /*!< 0x00000004 */
 #define SYSCFG_BOOTR_BOOT2                   SYSCFG_BOOTR_BOOT2_Msk            /*!< BOOT2 pin value */
-#define SYSCFG_BOOTR_BOOT0_PD_Pos            (4U)                              
+#define SYSCFG_BOOTR_BOOT0_PD_Pos            (4U)
 #define SYSCFG_BOOTR_BOOT0_PD_Msk            (0x1U << SYSCFG_BOOTR_BOOT0_PD_Pos) /*!< 0x00000010 */
 #define SYSCFG_BOOTR_BOOT0_PD                SYSCFG_BOOTR_BOOT0_PD_Msk         /*!< BOOT0 pin pull-down disable */
-#define SYSCFG_BOOTR_BOOT1_PD_Pos            (5U)                              
+#define SYSCFG_BOOTR_BOOT1_PD_Pos            (5U)
 #define SYSCFG_BOOTR_BOOT1_PD_Msk            (0x1U << SYSCFG_BOOTR_BOOT1_PD_Pos) /*!< 0x00000020 */
 #define SYSCFG_BOOTR_BOOT1_PD                SYSCFG_BOOTR_BOOT1_PD_Msk         /*!< BOOT1 pin pull-down disable */
-#define SYSCFG_BOOTR_BOOT2_PD_Pos            (6U)                              
+#define SYSCFG_BOOTR_BOOT2_PD_Pos            (6U)
 #define SYSCFG_BOOTR_BOOT2_PD_Msk            (0x1U << SYSCFG_BOOTR_BOOT2_PD_Pos) /*!< 0x00000040 */
 #define SYSCFG_BOOTR_BOOT2_PD                SYSCFG_BOOTR_BOOT2_PD_Msk         /*!< BOOT2 pin pull-down disable */
 
@@ -27242,66 +27242,66 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 #define SYSCFG_IOCTRLCLRR_HSLVEN_SPI            SYSCFG_IOCTRLCLRR_HSLVEN_SPI_Msk     /*!< High Speed Low Voltage Pad mode Enable */
 
 /******************  Bit definition for SYSCFG_ICNR register  ********************/
-#define SYSCFG_ICNR_AXI_M0_Pos               (0U)                              
+#define SYSCFG_ICNR_AXI_M0_Pos               (0U)
 #define SYSCFG_ICNR_AXI_M0_Msk               (0x1U << SYSCFG_ICNR_AXI_M0_Pos)  /*!< 0x00000001 */
 #define SYSCFG_ICNR_AXI_M0                   SYSCFG_ICNR_AXI_M0_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M1_Pos               (1U)                              
+#define SYSCFG_ICNR_AXI_M1_Pos               (1U)
 #define SYSCFG_ICNR_AXI_M1_Msk               (0x1U << SYSCFG_ICNR_AXI_M1_Pos)  /*!< 0x00000002 */
 #define SYSCFG_ICNR_AXI_M1                   SYSCFG_ICNR_AXI_M1_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M2_Pos               (2U)                              
+#define SYSCFG_ICNR_AXI_M2_Pos               (2U)
 #define SYSCFG_ICNR_AXI_M2_Msk               (0x1U << SYSCFG_ICNR_AXI_M2_Pos)  /*!< 0x00000004 */
 #define SYSCFG_ICNR_AXI_M2                   SYSCFG_ICNR_AXI_M2_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M3_Pos               (3U)                              
+#define SYSCFG_ICNR_AXI_M3_Pos               (3U)
 #define SYSCFG_ICNR_AXI_M3_Msk               (0x1U << SYSCFG_ICNR_AXI_M3_Pos)  /*!< 0x00000008 */
 #define SYSCFG_ICNR_AXI_M3                   SYSCFG_ICNR_AXI_M3_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M5_Pos               (5U)                              
+#define SYSCFG_ICNR_AXI_M5_Pos               (5U)
 #define SYSCFG_ICNR_AXI_M5_Msk               (0x1U << SYSCFG_ICNR_AXI_M5_Pos)  /*!< 0x00000020 */
 #define SYSCFG_ICNR_AXI_M5                   SYSCFG_ICNR_AXI_M5_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M6_Pos               (6U)                              
+#define SYSCFG_ICNR_AXI_M6_Pos               (6U)
 #define SYSCFG_ICNR_AXI_M6_Msk               (0x1U << SYSCFG_ICNR_AXI_M6_Pos)  /*!< 0x00000040 */
 #define SYSCFG_ICNR_AXI_M6                   SYSCFG_ICNR_AXI_M6_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M7_Pos               (7U)                              
+#define SYSCFG_ICNR_AXI_M7_Pos               (7U)
 #define SYSCFG_ICNR_AXI_M7_Msk               (0x1U << SYSCFG_ICNR_AXI_M7_Pos)  /*!< 0x00000080 */
 #define SYSCFG_ICNR_AXI_M7                   SYSCFG_ICNR_AXI_M7_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M8_Pos               (8U)                              
+#define SYSCFG_ICNR_AXI_M8_Pos               (8U)
 #define SYSCFG_ICNR_AXI_M8_Msk               (0x1U << SYSCFG_ICNR_AXI_M8_Pos)  /*!< 0x00000100 */
 #define SYSCFG_ICNR_AXI_M8                   SYSCFG_ICNR_AXI_M8_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M9_Pos               (9U)                              
+#define SYSCFG_ICNR_AXI_M9_Pos               (9U)
 #define SYSCFG_ICNR_AXI_M9_Msk               (0x1U << SYSCFG_ICNR_AXI_M9_Pos)  /*!< 0x00000200 */
 #define SYSCFG_ICNR_AXI_M9                   SYSCFG_ICNR_AXI_M9_Msk            /*!< controls which slave port is used by the master to access the DDR */
-#define SYSCFG_ICNR_AXI_M10_Pos              (10U)                             
+#define SYSCFG_ICNR_AXI_M10_Pos              (10U)
 #define SYSCFG_ICNR_AXI_M10_Msk              (0x1U << SYSCFG_ICNR_AXI_M10_Pos) /*!< 0x00000400 */
 #define SYSCFG_ICNR_AXI_M10                  SYSCFG_ICNR_AXI_M10_Msk           /*!< controls which slave port is used by the master to access the DDR */
 
 /******************  Bit definition for SYSCFG_CMPCR register   ********************/
-#define SYSCFG_CMPCR_SW_CTRL_Pos             (1U)                              
+#define SYSCFG_CMPCR_SW_CTRL_Pos             (1U)
 #define SYSCFG_CMPCR_SW_CTRL_Msk             (0x1U << SYSCFG_CMPCR_SW_CTRL_Pos) /*!< 0x00000002 */
 #define SYSCFG_CMPCR_SW_CTRL                 SYSCFG_CMPCR_SW_CTRL_Msk          /*!< Compensation Software Control */
-#define SYSCFG_CMPCR_READY_Pos               (8U)                              
+#define SYSCFG_CMPCR_READY_Pos               (8U)
 #define SYSCFG_CMPCR_READY_Msk               (0x1U << SYSCFG_CMPCR_READY_Pos)  /*!< 0x00000100 */
 #define SYSCFG_CMPCR_READY                   SYSCFG_CMPCR_READY_Msk            /*!< Compensation cell ready flag */
-#define SYSCFG_CMPCR_RANSRC_Pos              (16U)                             
+#define SYSCFG_CMPCR_RANSRC_Pos              (16U)
 #define SYSCFG_CMPCR_RANSRC_Msk              (0xFU << SYSCFG_CMPCR_RANSRC_Pos) /*!< 0x000F0000 */
 #define SYSCFG_CMPCR_RANSRC                  SYSCFG_CMPCR_RANSRC_Msk           /*!< NMOS I/O Compensation value sent to IOs when SW_CTRL = 1 */
 #define SYSCFG_CMPCR_RANSRC_0                (0x1U << SYSCFG_CMPCR_RANSRC_Pos) /*!< 0x00010000 */
 #define SYSCFG_CMPCR_RANSRC_1                (0x2U << SYSCFG_CMPCR_RANSRC_Pos) /*!< 0x00020000 */
 #define SYSCFG_CMPCR_RANSRC_2                (0x4U << SYSCFG_CMPCR_RANSRC_Pos) /*!< 0x00040000 */
 #define SYSCFG_CMPCR_RANSRC_3                (0x8U << SYSCFG_CMPCR_RANSRC_Pos) /*!< 0x00080000 */
-#define SYSCFG_CMPCR_RAPSRC_Pos              (20U)                             
+#define SYSCFG_CMPCR_RAPSRC_Pos              (20U)
 #define SYSCFG_CMPCR_RAPSRC_Msk              (0xFU << SYSCFG_CMPCR_RAPSRC_Pos) /*!< 0x00F00000 */
 #define SYSCFG_CMPCR_RAPSRC                  SYSCFG_CMPCR_RAPSRC_Msk           /*!< PMOS I/O Compensation value sent to IOs when SW_CTRL = 1 */
 #define SYSCFG_CMPCR_RAPSRC_0                (0x1U << SYSCFG_CMPCR_RAPSRC_Pos) /*!< 0x00100000 */
 #define SYSCFG_CMPCR_RAPSRC_1                (0x2U << SYSCFG_CMPCR_RAPSRC_Pos) /*!< 0x00200000 */
 #define SYSCFG_CMPCR_RAPSRC_2                (0x4U << SYSCFG_CMPCR_RAPSRC_Pos) /*!< 0x00400000 */
 #define SYSCFG_CMPCR_RAPSRC_3                (0x8U << SYSCFG_CMPCR_RAPSRC_Pos) /*!< 0x00800000 */
-#define SYSCFG_CMPCR_ANSRC_Pos               (24U)                             
+#define SYSCFG_CMPCR_ANSRC_Pos               (24U)
 #define SYSCFG_CMPCR_ANSRC_Msk               (0xFU << SYSCFG_CMPCR_ANSRC_Pos)  /*!< 0x0F000000 */
 #define SYSCFG_CMPCR_ANSRC                   SYSCFG_CMPCR_ANSRC_Msk            /*!< NMOS I/O Compensation value provided by compensation cell */
 #define SYSCFG_CMPCR_ANSRC_0                 (0x1U << SYSCFG_CMPCR_ANSRC_Pos)  /*!< 0x01000000 */
 #define SYSCFG_CMPCR_ANSRC_1                 (0x2U << SYSCFG_CMPCR_ANSRC_Pos)  /*!< 0x02000000 */
 #define SYSCFG_CMPCR_ANSRC_2                 (0x4U << SYSCFG_CMPCR_ANSRC_Pos)  /*!< 0x04000000 */
 #define SYSCFG_CMPCR_ANSRC_3                 (0x8U << SYSCFG_CMPCR_ANSRC_Pos)  /*!< 0x08000000 */
-#define SYSCFG_CMPCR_APSRC_Pos               (28U)                             
+#define SYSCFG_CMPCR_APSRC_Pos               (28U)
 #define SYSCFG_CMPCR_APSRC_Msk               (0xFU << SYSCFG_CMPCR_APSRC_Pos)  /*!< 0xF0000000 */
 #define SYSCFG_CMPCR_APSRC                   SYSCFG_CMPCR_APSRC_Msk            /*!< PMOS I/O Compensation value provided by compensation cell */
 #define SYSCFG_CMPCR_APSRC_0                 (0x1U << SYSCFG_CMPCR_APSRC_Pos)  /*!< 0x10000000 */
@@ -31850,7 +31850,7 @@ peripheral. It shall be used to deallocate a peripheral from MCU */
 
 /**
   * @brief  Check whether platform is engineering boot mode
-  * @param  None 
+  * @param  None
   * @retval TRUE or FALSE
   */
 #define IS_ENGINEERING_BOOT_MODE()   (((SYSCFG->BOOTR) & (SYSCFG_BOOTR_BOOT2|SYSCFG_BOOTR_BOOT1|SYSCFG_BOOTR_BOOT0)) == (SYSCFG_BOOTR_BOOT2))

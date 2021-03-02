@@ -184,9 +184,9 @@ static DSTATUS disk_initialize(
     if (CardDetect)
     {
         /*
-			 * Card detection check
-			 * If the HC detects the No Card State, power will be cleared
-			 */
+             * Card detection check
+             * If the HC detects the No Card State, power will be cleared
+             */
         while (!((XSDPS_PSR_CARD_DPL_MASK |
                   XSDPS_PSR_CARD_STABLE_MASK |
                   XSDPS_PSR_CARD_INSRT_MASK) ==
@@ -198,8 +198,8 @@ static DSTATUS disk_initialize(
     }
 
     /*
-	 * Initialize the host controller
-	 */
+     * Initialize the host controller
+     */
     SdConfig = XSdPs_LookupConfig((u16)pdrv);
     if (NULL == SdConfig)
     {
@@ -223,9 +223,9 @@ static DSTATUS disk_initialize(
     }
 
     /*
-	 * Disk is initialized.
-	 * Store the same in Stat.
-	 */
+     * Disk is initialized.
+     * Store the same in Stat.
+     */
     s &= (~STA_NOINIT);
 
     Stat[pdrv] = s;

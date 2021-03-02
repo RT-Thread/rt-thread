@@ -581,18 +581,18 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
 uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
 {
   uint32_t frequency = 0U;
-  
+
 #if defined(RCC_SMPS_SUPPORT)
   uint32_t smps_prescaler_index = ((LL_RCC_GetSMPSPrescaler()) >> RCC_SMPSCR_SMPSDIV_Pos);
 #endif
-  
+
   /* Check the parameters */
   assert_param(IS_RCC_PERIPHCLOCK(PeriphClk));
-  
+
   if (PeriphClk == RCC_PERIPHCLK_RTC)
   {
     uint32_t rtcClockSource = LL_RCC_GetRTCClockSource();
-    
+
     if (rtcClockSource == LL_RCC_RTC_CLKSOURCE_LSE) /* LSE clock used as RTC clock source */
     {
       if (LL_RCC_LSE_IsReady() == 1U)
@@ -641,7 +641,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
 #if defined(SAI1)
     case LL_RCC_SAI1_CLKSOURCE_PLLSAI1:    /* PLLSAI1 clock used as SAI1 clock source */
       if (LL_RCC_PLLSAI1_IsReady() == 1U)
@@ -654,7 +654,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       }
       break;
 #endif
-      
+
     case LL_RCC_SAI1_CLKSOURCE_PLL:        /* PLL clock used as SAI1 clock source */
       if (LL_RCC_PLL_IsReady() == 1U)
       {
@@ -665,7 +665,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     default: /* External input clock used as SAI1 clock source */
       frequency = EXTERNAL_SAI1_CLOCK_VALUE;
       break;
@@ -675,7 +675,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
   else if (PeriphClk == RCC_PERIPHCLK_RNG)
   {
     uint32_t rngClockSource = HAL_RCCEx_GetRngCLKSource();
-    
+
     if (rngClockSource == RCC_RNGCLKSOURCE_LSI)             /* LSI clock used as RNG clock source */
     {
       const uint32_t temp_lsi1ready = LL_RCC_LSI1_IsReady();
@@ -751,7 +751,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       }
       break;
 #endif
-      
+
     case LL_RCC_USB_CLKSOURCE_PLL:           /* PLL clock used as USB clock source */
       if (LL_RCC_PLL_IsReady() == 1U)
       {
@@ -762,7 +762,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     case LL_RCC_USB_CLKSOURCE_MSI:           /* MSI clock used as USB clock source */
       if (LL_RCC_MSI_IsReady() == 1U)
       {
@@ -773,7 +773,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     default: /* HSI48 clock used as USB clock source */
       if (LL_RCC_HSI48_IsReady() == 1U)
       {
@@ -794,7 +794,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case LL_RCC_USART1_CLKSOURCE_SYSCLK: /* USART1 Clock is System Clock */
       frequency = HAL_RCC_GetSysClockFreq();
       break;
-      
+
     case LL_RCC_USART1_CLKSOURCE_HSI:    /* USART1 Clock is HSI Osc. */
       if (LL_RCC_HSI_IsReady() == 1U)
       {
@@ -805,7 +805,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     case LL_RCC_USART1_CLKSOURCE_LSE:    /* USART1 Clock is LSE Osc. */
       if (LL_RCC_LSE_IsReady() == 1U)
       {
@@ -816,7 +816,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     default: /* USART1 Clock is PCLK2 */
       frequency = __LL_RCC_CALC_PCLK2_FREQ(__LL_RCC_CALC_HCLK1_FREQ(HAL_RCC_GetSysClockFreq(), \
         LL_RCC_GetAHBPrescaler()), LL_RCC_GetAPB2Prescaler());
@@ -831,7 +831,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case LL_RCC_LPUART1_CLKSOURCE_SYSCLK: /* LPUART1 Clock is System Clock */
       frequency = HAL_RCC_GetSysClockFreq();
       break;
-      
+
     case LL_RCC_LPUART1_CLKSOURCE_HSI:    /* LPUART1 Clock is HSI Osc. */
       if (LL_RCC_HSI_IsReady() == 1U)
       {
@@ -842,7 +842,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     case LL_RCC_LPUART1_CLKSOURCE_LSE:    /* LPUART1 Clock is LSE Osc. */
       if (LL_RCC_LSE_IsReady() == 1U)
       {
@@ -853,7 +853,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     default: /* LPUART1 Clock is PCLK1 */
       frequency = __LL_RCC_CALC_PCLK1_FREQ(__LL_RCC_CALC_HCLK1_FREQ(HAL_RCC_GetSysClockFreq(), \
         LL_RCC_GetAHBPrescaler()), LL_RCC_GetAPB1Prescaler());
@@ -890,7 +890,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     default: /* No clock used as ADC clock source */
       break;
     }
@@ -902,7 +902,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case LL_RCC_I2C1_CLKSOURCE_SYSCLK: /* I2C1 Clock is System Clock */
       frequency = HAL_RCC_GetSysClockFreq();
       break;
-      
+
     case LL_RCC_I2C1_CLKSOURCE_HSI:    /* I2C1 Clock is HSI Osc. */
       if (LL_RCC_HSI_IsReady() == 1U)
       {
@@ -913,7 +913,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     default: /* I2C1 Clock is PCLK1 */
       frequency = __LL_RCC_CALC_PCLK1_FREQ(__LL_RCC_CALC_HCLK1_FREQ(HAL_RCC_GetSysClockFreq(), \
         LL_RCC_GetAHBPrescaler()), LL_RCC_GetAPB1Prescaler());
@@ -928,7 +928,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case LL_RCC_I2C3_CLKSOURCE_SYSCLK: /* I2C3 Clock is System Clock */
       frequency = HAL_RCC_GetSysClockFreq();
       break;
-      
+
     case LL_RCC_I2C3_CLKSOURCE_HSI: /* I2C3 Clock is HSI Osc. */
       if (LL_RCC_HSI_IsReady() == 1U)
       {
@@ -939,7 +939,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Nothing to do as frequency already initialized to 0U */
       }
       break;
-      
+
     default: /* I2C3 Clock is PCLK1 */
       frequency = __LL_RCC_CALC_PCLK1_FREQ(__LL_RCC_CALC_HCLK1_FREQ(HAL_RCC_GetSysClockFreq(), \
         LL_RCC_GetAHBPrescaler()), LL_RCC_GetAPB1Prescaler());
@@ -950,7 +950,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
   else if (PeriphClk == RCC_PERIPHCLK_LPTIM1)
   {
     uint32_t lptimClockSource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
-    
+
     if (lptimClockSource == LL_RCC_LPTIM1_CLKSOURCE_LSI) /* LPTIM1 Clock is LSI Osc. */
     {
       const uint32_t temp_lsi1ready = LL_RCC_LSI1_IsReady();
@@ -994,7 +994,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
   else if (PeriphClk == RCC_PERIPHCLK_LPTIM2)
   {
     uint32_t lptimClockSource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE);
-    
+
     if (lptimClockSource == LL_RCC_LPTIM2_CLKSOURCE_LSI) /* LPTIM2 Clock is LSI Osc. */
     {
       const uint32_t temp_lsi1ready = LL_RCC_LSI1_IsReady();
@@ -1038,7 +1038,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
   else if (PeriphClk == RCC_PERIPHCLK_RFWAKEUP)
   {
     uint32_t rfwkpClockSource = LL_RCC_GetRFWKPClockSource();
-    
+
     if (rfwkpClockSource == LL_RCC_RFWKP_CLKSOURCE_LSE) /* LSE clock used as RF Wakeup clock source */
     {
       if (LL_RCC_LSE_IsReady() == 1U)
@@ -1076,7 +1076,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
   else if (PeriphClk == RCC_PERIPHCLK_SMPS)
   {
     uint32_t smpsClockSource = LL_RCC_GetSMPSClockSource();
-    
+
     if (smpsClockSource == LL_RCC_SMPS_CLKSOURCE_STATUS_HSI) /* SMPS Clock source is HSI Osc. */
     {
       if (LL_RCC_HSI_IsReady() == 1U)
@@ -1136,18 +1136,18 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case LL_RCC_I2S_CLKSOURCE_PIN:          /* I2S Clock is External clock */
       frequency = EXTERNAL_CLOCK_VALUE;
       break;
-      
+
     case LL_RCC_I2S_CLKSOURCE_HSI:          /* I2S Clock is HSI Osc. */
       if (LL_RCC_HSI_IsReady() == 1U)
       {
         frequency = HSI_VALUE;
       }
       break;
-      
+
     case LL_RCC_I2S_CLKSOURCE_PLL:          /* I2S Clock is PLL */
       frequency = RCC_PLL_GetFreqDomain_P();
       break;
-      
+
     case LL_RCC_I2S_CLKSOURCE_NONE:          /* No clock used as I2S clock source */
     default:
       break;

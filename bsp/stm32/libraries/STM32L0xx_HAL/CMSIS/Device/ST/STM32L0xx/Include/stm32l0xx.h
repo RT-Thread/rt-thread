@@ -2,19 +2,19 @@
   ******************************************************************************
   * @file    stm32l0xx.h
   * @author  MCD Application Team
-  * @brief   CMSIS Cortex-M0+ Device Peripheral Access Layer Header File. 
-  *          This file contains all the peripheral register's definitions, bits 
-  *          definitions and memory mapping for STM32L0xx devices.            
-  *            
+  * @brief   CMSIS Cortex-M0+ Device Peripheral Access Layer Header File.
+  *          This file contains all the peripheral register's definitions, bits
+  *          definitions and memory mapping for STM32L0xx devices.
+  *
   *          The file is the unique include file that the application programmer
   *          is using in the C source code, usually in main.c. This file contains:
   *           - Configuration section that allows to select:
   *              - The device used in the target application
-  *              - To use or not the peripheral's drivers in application code(i.e. 
-  *                code will be based on direct access to peripheral's registers 
-  *                rather than drivers API), this option is controlled by 
+  *              - To use or not the peripheral's drivers in application code(i.e.
+  *                code will be based on direct access to peripheral's registers
+  *                rather than drivers API), this option is controlled by
   *                "#define USE_HAL_DRIVER"
-  *  
+  *
   ******************************************************************************
   * @attention
   *
@@ -26,8 +26,8 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************  
-  */ 
+  ******************************************************************************
+  */
 
 /** @addtogroup CMSIS
   * @{
@@ -36,14 +36,14 @@
 /** @addtogroup stm32l0xx
   * @{
   */
-    
+
 #ifndef __STM32L0xx_H
 #define __STM32L0xx_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif /* __cplusplus */
-   
+
 /** @addtogroup Library_configuration_section
   * @{
   */
@@ -56,7 +56,7 @@
 #endif /* STM32L0 */
 
 /* Uncomment the line below according to the target STM32 device used in your
-   application 
+   application
   */
 
 #if !defined (STM32L010x4) && !defined (STM32L010x6) && !defined (STM32L010x8) && !defined (STM32L010xB) && \
@@ -87,15 +87,15 @@
   /* #define STM32L082xx */   /*!< STM32L082KB, STM32L082KZ, STM32L082CZ Devices                                                                                                         */
   /* #define STM32L083xx */   /*!< STM32L083V8, STM32L083VB, STM32L083RB, STM32L083VZ, STM32L083RZ, STM32L083CB, STM32L083CZ Devices                                                     */
 #endif
-   
+
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.
   */
 #if !defined  (USE_HAL_DRIVER)
 /**
  * @brief Comment the line below if you will not use the peripherals drivers.
-   In this case, these drivers will not be included and the application code will 
-   be based on direct access to peripherals registers 
+   In this case, these drivers will not be included and the application code will
+   be based on direct access to peripherals registers
    */
   /*#define USE_HAL_DRIVER */
 #endif /* USE_HAL_DRIVER */
@@ -111,7 +111,7 @@
                                          |(__STM32L0xx_CMSIS_VERSION_SUB1 << 16)\
                                          |(__STM32L0xx_CMSIS_VERSION_SUB2 << 8 )\
                                          |(__STM32L0xx_CMSIS_VERSION_RC))
-                                             
+
 /**
   * @}
   */
@@ -169,21 +169,21 @@
 
 /** @addtogroup Exported_types
   * @{
-  */ 
-typedef enum 
+  */
+typedef enum
 {
-  RESET = 0, 
+  RESET = 0,
   SET = !RESET
 } FlagStatus, ITStatus;
 
-typedef enum 
+typedef enum
 {
-  DISABLE = 0, 
+  DISABLE = 0,
   ENABLE = !DISABLE
 } FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))
 
-typedef enum 
+typedef enum
 {
   SUCCESS = 0,
   ERROR = !SUCCESS
@@ -231,7 +231,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 
 
 

@@ -18,8 +18,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
- * Date           Author		Notes
- * 2010-11-13     weety		first version
+ * Date           Author        Notes
+ * 2010-11-13     weety     first version
  */
 
 #include "dm36x.h"
@@ -33,13 +33,13 @@
  * ------------------------------------------------------------------------ */
 void psc_change_state(int id, int state)
 {
-	rt_uint32_t mdstat, mdctl;
+    rt_uint32_t mdstat, mdctl;
 
-	if (id > DAVINCI_DM365_LPSC_KALEIDO)
-		return;
+    if (id > DAVINCI_DM365_LPSC_KALEIDO)
+        return;
 
-	mdstat = PSC_MDSTAT_BASE + (id * 4);
-	mdctl = PSC_MDCTL_BASE + (id * 4);
+    mdstat = PSC_MDSTAT_BASE + (id * 4);
+    mdctl = PSC_MDCTL_BASE + (id * 4);
 
     /*
      *  Step 0 - Ignore request if the state is already set as is

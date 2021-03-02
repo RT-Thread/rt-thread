@@ -136,7 +136,7 @@ int32_t decoder_start(struct decode * dec)
     if (rot_en || dering_en || tiled2LinearEnable || (dec->codecctrl->format == STD_MJPG)) {
         /*
          * VPU is setting the rotation angle by counter-clockwise.
-         * We convert it to clockwise 
+         * We convert it to clockwise
          */
         if (rot_en) {
             if (rot_angle == 90 || rot_angle == 270)
@@ -201,7 +201,7 @@ int32_t decoder_allocate_framebuffer(struct decode * dec)
     if (rot_en || dering_en || tiled2LinearEnable) {
         /*
          * At least 1 extra fb for rotation(or dering) is needed, two extrafb
-         * are allocated for rotation 
+         * are allocated for rotation
          */
         dec->rot_buf_count = (dec->codecctrl->dst_scheme == PATH_IPU) ? 2 : 1;
         dec->extrafb += dec->rot_buf_count;

@@ -65,17 +65,17 @@ extern "C" {
  */
 #if !defined(__DOXYGEN__)
 void _i2c_master_interrupt_handler(
-		uint8_t instance);
+        uint8_t instance);
 #endif
 
 void i2c_master_register_callback(
-		struct i2c_master_module *const module,
-		i2c_master_callback_t callback,
-		enum i2c_master_callback callback_type);
+        struct i2c_master_module *const module,
+        i2c_master_callback_t callback,
+        enum i2c_master_callback callback_type);
 
 void i2c_master_unregister_callback(
-		struct i2c_master_module *const module,
-		enum i2c_master_callback callback_type);
+        struct i2c_master_module *const module,
+        enum i2c_master_callback callback_type);
 
 /**
  * \brief Enables callback
@@ -86,15 +86,15 @@ void i2c_master_unregister_callback(
  * \param[in]     callback_type  Callback type to enable
  */
 static inline void i2c_master_enable_callback(
-		struct i2c_master_module *const module,
-		enum i2c_master_callback callback_type)
+        struct i2c_master_module *const module,
+        enum i2c_master_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as enabled */
-	module->enabled_callback |= (1 << callback_type);
+    /* Mark callback as enabled */
+    module->enabled_callback |= (1 << callback_type);
 }
 
 /**
@@ -106,15 +106,15 @@ static inline void i2c_master_enable_callback(
  * \param[in]     callback_type  Callback type to disable
  */
 static inline void i2c_master_disable_callback(
-		struct i2c_master_module *const module,
-		enum i2c_master_callback callback_type)
+        struct i2c_master_module *const module,
+        enum i2c_master_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as disabled */
-	module->enabled_callback &= ~(1 << callback_type);
+    /* Mark callback as disabled */
+    module->enabled_callback &= ~(1 << callback_type);
 }
 
 /** @} */
@@ -125,32 +125,32 @@ static inline void i2c_master_disable_callback(
  */
 
 enum status_code i2c_master_read_bytes(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
- 
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
+
 enum status_code i2c_master_read_packet_job(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_read_packet_job_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_read_packet_job_no_nack(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_write_bytes(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_write_packet_job(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_write_packet_job_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 /**
  * \brief Cancel any currently ongoing operation
@@ -160,16 +160,16 @@ enum status_code i2c_master_write_packet_job_no_stop(
  * \param[in,out] module  Pointer to software module structure
  */
 static inline void i2c_master_cancel_job(
-		struct i2c_master_module *const module)
+        struct i2c_master_module *const module)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Set buffer to 0 */
-	module->buffer_remaining = 0;
-	/* Update status */
-	module->status = STATUS_ABORTED;
+    /* Set buffer to 0 */
+    module->buffer_remaining = 0;
+    /* Update status */
+    module->status = STATUS_ABORTED;
 }
 
 /**
@@ -193,14 +193,14 @@ static inline void i2c_master_cancel_job(
  *                                      want more data and was not able to read
  */
 static inline enum status_code i2c_master_get_job_status(
-		struct i2c_master_module *const module)
+        struct i2c_master_module *const module)
 {
-	/* Check sanity */
-	Assert(module);
-	Assert(module->hw);
+    /* Check sanity */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Return current status code */
-	return module->status;
+    /* Return current status code */
+    return module->status;
 }
 
 /** @} */

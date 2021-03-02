@@ -116,7 +116,7 @@ int rt_hw_rtc_init(void)
     /* Select LFRC for RTC clock source */
     am_hal_rtc_osc_select(AM_HAL_RTC_OSC_LFRC);
 #endif
-  
+
 #if RTC_CLK_SRC == XT
     /* Enable the XT for the RTC */
     am_hal_clkgen_osc_start(AM_HAL_CLKGEN_OSC_XT);
@@ -129,12 +129,12 @@ int rt_hw_rtc_init(void)
     am_hal_rtc_osc_enable();
 
     /* register rtc device */
-    rtc.type	= RT_Device_Class_RTC;
-    rtc.init 	= RT_NULL;
-    rtc.open 	= rt_rtc_open;
-    rtc.close	= RT_NULL;
-    rtc.read 	= rt_rtc_read;
-    rtc.write	= RT_NULL;
+    rtc.type    = RT_Device_Class_RTC;
+    rtc.init    = RT_NULL;
+    rtc.open    = rt_rtc_open;
+    rtc.close   = RT_NULL;
+    rtc.read    = rt_rtc_read;
+    rtc.write   = RT_NULL;
     rtc.control = rt_rtc_control;
 
     /* no private */

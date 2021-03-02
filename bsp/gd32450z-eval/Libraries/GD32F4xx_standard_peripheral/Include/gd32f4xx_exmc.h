@@ -248,7 +248,7 @@ typedef struct
     uint32_t databus_width;                                             /*!< specifies the databus width of external memory */
     uint32_t memory_type;                                               /*!< specifies the type of external memory */
     uint32_t address_data_mux;                                          /*!< specifies whether the data bus and address bus are multiplexed */
-    exmc_norsram_timing_parameter_struct* read_write_timing;            /*!< timing parameters for read and write if the extendedmode is not used or the timing 
+    exmc_norsram_timing_parameter_struct* read_write_timing;            /*!< timing parameters for read and write if the extendedmode is not used or the timing
                                                                              parameters for read if the extendedmode is used. */
     exmc_norsram_timing_parameter_struct* write_timing;                 /*!< timing parameters for write when the extendedmode is used. */
 }exmc_norsram_parameter_struct;
@@ -265,7 +265,7 @@ typedef struct
 /* EXMC NAND initialize struct */
 typedef struct
 {
-    uint32_t nand_bank;                                                 /*!< select the bank of NAND */ 
+    uint32_t nand_bank;                                                 /*!< select the bank of NAND */
     uint32_t ecc_size;                                                  /*!< the page size for the ECC calculation */
     uint32_t atr_latency;                                               /*!< configure the latency of ALE low to RB low */
     uint32_t ctr_latency;                                               /*!< configure the latency of CLE low to RB low */
@@ -283,7 +283,7 @@ typedef struct
     uint32_t ctr_latency;                                               /*!< configure the latency of CLE low to RB low */
     uint32_t wait_feature;                                              /*!< enables or disables the Wait feature */
     exmc_nand_pccard_timing_parameter_struct*  common_space_timing;     /*!< the timing parameters for NAND flash Common Space */
-    exmc_nand_pccard_timing_parameter_struct*  attribute_space_timing;  /*!< the timing parameters for NAND flash Attribute Space */  
+    exmc_nand_pccard_timing_parameter_struct*  attribute_space_timing;  /*!< the timing parameters for NAND flash Attribute Space */
     exmc_nand_pccard_timing_parameter_struct*  io_space_timing;         /*!< the timing parameters for NAND flash IO Space */
 }exmc_pccard_parameter_struct;;
 
@@ -293,7 +293,7 @@ typedef struct
     uint32_t row_to_column_delay;                                       /*!< configure the row to column delay */
     uint32_t row_precharge_delay;                                       /*!< configure the row precharge delay */
     uint32_t write_recovery_delay;                                      /*!< configure the write recovery delay */
-    uint32_t auto_refresh_delay;                                        /*!< configure the auto refresh delay */       
+    uint32_t auto_refresh_delay;                                        /*!< configure the auto refresh delay */
     uint32_t row_address_select_delay;                                  /*!< configure the row address select delay */
     uint32_t exit_selfrefresh_delay;                                    /*!< configure the exit self-refresh delay */
     uint32_t load_mode_register_delay;                                  /*!< configure the load mode register delay */

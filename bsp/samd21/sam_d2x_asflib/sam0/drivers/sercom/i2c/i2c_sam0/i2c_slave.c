@@ -61,72 +61,72 @@
  *                                         previously set
  */
 static enum status_code _i2c_slave_set_config(
-		struct i2c_slave_module *const module,
-		const struct i2c_slave_config *const config)
+        struct i2c_slave_module *const module,
+        const struct i2c_slave_config *const config)
 {
-	uint32_t tmp_ctrla;
+    uint32_t tmp_ctrla;
 
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(config);
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
-	Sercom *const sercom_hw = module->hw;
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    Sercom *const sercom_hw = module->hw;
 
-	module->buffer_timeout = config->buffer_timeout;
-	module->ten_bit_address = config->ten_bit_address;
+    module->buffer_timeout = config->buffer_timeout;
+    module->ten_bit_address = config->ten_bit_address;
 
-	struct system_pinmux_config pin_conf;
-	system_pinmux_get_config_defaults(&pin_conf);
+    struct system_pinmux_config pin_conf;
+    system_pinmux_get_config_defaults(&pin_conf);
 
-	uint32_t pad0 = config->pinmux_pad0;
-	uint32_t pad1 = config->pinmux_pad1;
+    uint32_t pad0 = config->pinmux_pad0;
+    uint32_t pad1 = config->pinmux_pad1;
 
-	/* SERCOM PAD0 - SDA */
-	if (pad0 == PINMUX_DEFAULT) {
-		pad0 = _sercom_get_default_pad(sercom_hw, 0);
-	}
-	pin_conf.mux_position = pad0 & 0xFFFF;
-	pin_conf.direction    = SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK;
-	system_pinmux_pin_set_config(pad0 >> 16, &pin_conf);
+    /* SERCOM PAD0 - SDA */
+    if (pad0 == PINMUX_DEFAULT) {
+        pad0 = _sercom_get_default_pad(sercom_hw, 0);
+    }
+    pin_conf.mux_position = pad0 & 0xFFFF;
+    pin_conf.direction    = SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK;
+    system_pinmux_pin_set_config(pad0 >> 16, &pin_conf);
 
-	/* SERCOM PAD1 - SCL */
-	if (pad1 == PINMUX_DEFAULT) {
-		pad1 = _sercom_get_default_pad(sercom_hw, 1);
-	}
-	pin_conf.mux_position = pad1 & 0xFFFF;
-	pin_conf.direction    = SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK;
-	system_pinmux_pin_set_config(pad1 >> 16, &pin_conf);
+    /* SERCOM PAD1 - SCL */
+    if (pad1 == PINMUX_DEFAULT) {
+        pad1 = _sercom_get_default_pad(sercom_hw, 1);
+    }
+    pin_conf.mux_position = pad1 & 0xFFFF;
+    pin_conf.direction    = SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK;
+    system_pinmux_pin_set_config(pad1 >> 16, &pin_conf);
 
-	/* Prepare config to write to register CTRLA */
-	if (config->run_in_standby || system_is_debugger_present()) {
-		tmp_ctrla = SERCOM_I2CS_CTRLA_RUNSTDBY;
-	} else {
-		tmp_ctrla = 0;
-	}
+    /* Prepare config to write to register CTRLA */
+    if (config->run_in_standby || system_is_debugger_present()) {
+        tmp_ctrla = SERCOM_I2CS_CTRLA_RUNSTDBY;
+    } else {
+        tmp_ctrla = 0;
+    }
 
-	/* Check and set SCL clock stretch mode. */
-	if (config->scl_stretch_only_after_ack_bit || (config->transfer_speed == I2C_SLAVE_SPEED_HIGH_SPEED)) {
-		tmp_ctrla |= SERCOM_I2CM_CTRLA_SCLSM;
-	}
-	
-	tmp_ctrla |= ((uint32_t)config->sda_hold_time |
-			config->transfer_speed |
-			(config->scl_low_timeout << SERCOM_I2CS_CTRLA_LOWTOUTEN_Pos) |
-			(config->slave_scl_low_extend_timeout << SERCOM_I2CS_CTRLA_SEXTTOEN_Pos));
+    /* Check and set SCL clock stretch mode. */
+    if (config->scl_stretch_only_after_ack_bit || (config->transfer_speed == I2C_SLAVE_SPEED_HIGH_SPEED)) {
+        tmp_ctrla |= SERCOM_I2CM_CTRLA_SCLSM;
+    }
 
-	i2c_hw->CTRLA.reg |= tmp_ctrla;
+    tmp_ctrla |= ((uint32_t)config->sda_hold_time |
+            config->transfer_speed |
+            (config->scl_low_timeout << SERCOM_I2CS_CTRLA_LOWTOUTEN_Pos) |
+            (config->slave_scl_low_extend_timeout << SERCOM_I2CS_CTRLA_SEXTTOEN_Pos));
 
-	/* Set CTRLB configuration */
-	i2c_hw->CTRLB.reg = SERCOM_I2CS_CTRLB_SMEN | config->address_mode;
+    i2c_hw->CTRLA.reg |= tmp_ctrla;
 
-	i2c_hw->ADDR.reg = config->address << SERCOM_I2CS_ADDR_ADDR_Pos |
-			config->address_mask << SERCOM_I2CS_ADDR_ADDRMASK_Pos |
-			config->ten_bit_address << SERCOM_I2CS_ADDR_TENBITEN_Pos |
-			config->enable_general_call_address << SERCOM_I2CS_ADDR_GENCEN_Pos;
+    /* Set CTRLB configuration */
+    i2c_hw->CTRLB.reg = SERCOM_I2CS_CTRLB_SMEN | config->address_mode;
 
-	return STATUS_OK;
+    i2c_hw->ADDR.reg = config->address << SERCOM_I2CS_ADDR_ADDR_Pos |
+            config->address_mask << SERCOM_I2CS_ADDR_ADDRMASK_Pos |
+            config->ten_bit_address << SERCOM_I2CS_ADDR_TENBITEN_Pos |
+            config->enable_general_call_address << SERCOM_I2CS_ADDR_GENCEN_Pos;
+
+    return STATUS_OK;
 }
 
 /**
@@ -148,91 +148,91 @@ static enum status_code _i2c_slave_set_config(
  *                                         previously set
  */
 enum status_code i2c_slave_init(
-		struct i2c_slave_module *const module,
-		Sercom *const hw,
-		const struct i2c_slave_config *const config)
+        struct i2c_slave_module *const module,
+        Sercom *const hw,
+        const struct i2c_slave_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(hw);
+    Assert(config);
 
-	/* Initialize software module */
-	module->hw = hw;
+    /* Initialize software module */
+    module->hw = hw;
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
 
-	/* Check if module is enabled */
-	if (i2c_hw->CTRLA.reg & SERCOM_I2CS_CTRLA_ENABLE) {
-		return STATUS_ERR_DENIED;
-	}
+    /* Check if module is enabled */
+    if (i2c_hw->CTRLA.reg & SERCOM_I2CS_CTRLA_ENABLE) {
+        return STATUS_ERR_DENIED;
+    }
 
-	/* Check if reset is in progress */
-	if (i2c_hw->CTRLA.reg & SERCOM_I2CS_CTRLA_SWRST) {
-		return STATUS_BUSY;
-	}
+    /* Check if reset is in progress */
+    if (i2c_hw->CTRLA.reg & SERCOM_I2CS_CTRLA_SWRST) {
+        return STATUS_BUSY;
+    }
 
-	uint32_t sercom_index = _sercom_get_sercom_inst_index(module->hw);
-	uint32_t pm_index, gclk_index; 
+    uint32_t sercom_index = _sercom_get_sercom_inst_index(module->hw);
+    uint32_t pm_index, gclk_index;
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
 #if (SAML21) || (SAMR30)
-	if (sercom_index == 5) {
-		pm_index     = MCLK_APBDMASK_SERCOM5_Pos;
-		gclk_index   = SERCOM5_GCLK_ID_CORE;
-	} else {
-		pm_index     = sercom_index + MCLK_APBCMASK_SERCOM0_Pos;
-		gclk_index   = sercom_index + SERCOM0_GCLK_ID_CORE;
-	}
+    if (sercom_index == 5) {
+        pm_index     = MCLK_APBDMASK_SERCOM5_Pos;
+        gclk_index   = SERCOM5_GCLK_ID_CORE;
+    } else {
+        pm_index     = sercom_index + MCLK_APBCMASK_SERCOM0_Pos;
+        gclk_index   = sercom_index + SERCOM0_GCLK_ID_CORE;
+    }
 #else
-	pm_index     = sercom_index + MCLK_APBCMASK_SERCOM0_Pos;
-	gclk_index   = sercom_index + SERCOM0_GCLK_ID_CORE;
+    pm_index     = sercom_index + MCLK_APBCMASK_SERCOM0_Pos;
+    gclk_index   = sercom_index + SERCOM0_GCLK_ID_CORE;
 #endif
 #else
-	pm_index     = sercom_index + PM_APBCMASK_SERCOM0_Pos;
-	gclk_index   = sercom_index + SERCOM0_GCLK_ID_CORE;
-#endif
-	
-	/* Turn on module in PM */
-#if (SAML21) || (SAMR30)
-	if (sercom_index == 5) {
-		system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBD, 1 << pm_index);
-	} else {
-		system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, 1 << pm_index);	
-	}
-#else
-	system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, 1 << pm_index);
+    pm_index     = sercom_index + PM_APBCMASK_SERCOM0_Pos;
+    gclk_index   = sercom_index + SERCOM0_GCLK_ID_CORE;
 #endif
 
-	/* Set up the GCLK for the module */
-	struct system_gclk_chan_config gclk_chan_conf;
-	system_gclk_chan_get_config_defaults(&gclk_chan_conf);
-	gclk_chan_conf.source_generator = config->generator_source;
-	system_gclk_chan_set_config(gclk_index, &gclk_chan_conf);
-	system_gclk_chan_enable(gclk_index);
-	sercom_set_gclk_generator(config->generator_source, false);
+    /* Turn on module in PM */
+#if (SAML21) || (SAMR30)
+    if (sercom_index == 5) {
+        system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBD, 1 << pm_index);
+    } else {
+        system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, 1 << pm_index);
+    }
+#else
+    system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, 1 << pm_index);
+#endif
+
+    /* Set up the GCLK for the module */
+    struct system_gclk_chan_config gclk_chan_conf;
+    system_gclk_chan_get_config_defaults(&gclk_chan_conf);
+    gclk_chan_conf.source_generator = config->generator_source;
+    system_gclk_chan_set_config(gclk_index, &gclk_chan_conf);
+    system_gclk_chan_enable(gclk_index);
+    sercom_set_gclk_generator(config->generator_source, false);
 
 #if I2C_SLAVE_CALLBACK_MODE == true
-	/* Get sercom instance index */
-	uint8_t instance_index = _sercom_get_sercom_inst_index(module->hw);
+    /* Get sercom instance index */
+    uint8_t instance_index = _sercom_get_sercom_inst_index(module->hw);
 
-	/* Save software module in interrupt handler */
-	_sercom_set_handler(instance_index, _i2c_slave_interrupt_handler);
+    /* Save software module in interrupt handler */
+    _sercom_set_handler(instance_index, _i2c_slave_interrupt_handler);
 
-	/* Save software module */
-	_sercom_instances[instance_index] = module;
+    /* Save software module */
+    _sercom_instances[instance_index] = module;
 
-	/* Initialize values in module */
-	module->registered_callback = 0;
-	module->enabled_callback = 0;
-	module->buffer_length = 0;
-	module->nack_on_address = config->enable_nack_on_address;
+    /* Initialize values in module */
+    module->registered_callback = 0;
+    module->enabled_callback = 0;
+    module->buffer_length = 0;
+    module->nack_on_address = config->enable_nack_on_address;
 #endif
 
-	/* Set SERCOM module to operate in I2C slave mode */
-	i2c_hw->CTRLA.reg = SERCOM_I2CS_CTRLA_MODE(0x4);
+    /* Set SERCOM module to operate in I2C slave mode */
+    i2c_hw->CTRLA.reg = SERCOM_I2CS_CTRLA_MODE(0x4);
 
-	/* Set config and return status */
-	return _i2c_slave_set_config(module, config);
+    /* Set config and return status */
+    return _i2c_slave_set_config(module, config);
 }
 
 /**
@@ -243,38 +243,38 @@ enum status_code i2c_slave_init(
  * \param[in,out] module  Pointer to software module structure
  */
 void i2c_slave_reset(
-		struct i2c_slave_module *const module)
+        struct i2c_slave_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
-
-#if I2C_SLAVE_CALLBACK_MODE == true
-	/* Reset module instance */
-	module->registered_callback = 0;
-	module->enabled_callback = 0;
-	module->buffer_length = 0;
-	module->buffer_remaining = 0;
-	module->buffer = NULL;
-#endif
-
-	/* Disable module */
-	i2c_slave_disable(module);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
 
 #if I2C_SLAVE_CALLBACK_MODE == true
-	/* Clear all pending interrupts */
-	system_interrupt_enter_critical_section();
-	system_interrupt_clear_pending(_sercom_get_interrupt_vector(module->hw));
-	system_interrupt_leave_critical_section();
+    /* Reset module instance */
+    module->registered_callback = 0;
+    module->enabled_callback = 0;
+    module->buffer_length = 0;
+    module->buffer_remaining = 0;
+    module->buffer = NULL;
 #endif
 
-	/* Wait for sync */
-	_i2c_slave_wait_for_sync(module);
+    /* Disable module */
+    i2c_slave_disable(module);
 
-	/* Reset module */
-	i2c_hw->CTRLA.reg = SERCOM_I2CS_CTRLA_SWRST;
+#if I2C_SLAVE_CALLBACK_MODE == true
+    /* Clear all pending interrupts */
+    system_interrupt_enter_critical_section();
+    system_interrupt_clear_pending(_sercom_get_interrupt_vector(module->hw));
+    system_interrupt_leave_critical_section();
+#endif
+
+    /* Wait for sync */
+    _i2c_slave_wait_for_sync(module);
+
+    /* Reset module */
+    i2c_hw->CTRLA.reg = SERCOM_I2CS_CTRLA_SWRST;
 }
 
 /**
@@ -288,26 +288,26 @@ void i2c_slave_reset(
  *                             period
  */
 static enum status_code _i2c_slave_wait_for_bus(
-		struct i2c_slave_module *const module)
+        struct i2c_slave_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomI2cm *const i2c_module = &(module->hw->I2CM);
+    SercomI2cm *const i2c_module = &(module->hw->I2CM);
 
-	/* Wait for reply */
-	uint16_t timeout_counter = 0;
-	while ((!(i2c_module->INTFLAG.reg & SERCOM_I2CS_INTFLAG_DRDY)) &&
-			(!(i2c_module->INTFLAG.reg & SERCOM_I2CS_INTFLAG_PREC)) &&
-			(!(i2c_module->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH))) {
+    /* Wait for reply */
+    uint16_t timeout_counter = 0;
+    while ((!(i2c_module->INTFLAG.reg & SERCOM_I2CS_INTFLAG_DRDY)) &&
+            (!(i2c_module->INTFLAG.reg & SERCOM_I2CS_INTFLAG_PREC)) &&
+            (!(i2c_module->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH))) {
 
-		/* Check timeout condition */
-		if (++timeout_counter >= module->buffer_timeout) {
-			return STATUS_ERR_TIMEOUT;
-		}
-	}
-	return STATUS_OK;
+        /* Check timeout condition */
+        if (++timeout_counter >= module->buffer_timeout) {
+            return STATUS_ERR_TIMEOUT;
+        }
+    }
+    return STATUS_OK;
 }
 
 /**
@@ -333,117 +333,117 @@ static enum status_code _i2c_slave_wait_for_bus(
  *                                  period
  */
 enum status_code i2c_slave_write_packet_wait(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet)
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
 
-	uint16_t length = packet->data_length;
+    uint16_t length = packet->data_length;
 
-	if (length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
 #if I2C_SLAVE_CALLBACK_MODE == true
-	/* Check if the module is busy with a job or AMATCH is enabled */
-	if (module->buffer_remaining > 0 ||
-			(i2c_hw->INTENSET.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
-		return STATUS_BUSY;
-	}
+    /* Check if the module is busy with a job or AMATCH is enabled */
+    if (module->buffer_remaining > 0 ||
+            (i2c_hw->INTENSET.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
+        return STATUS_BUSY;
+    }
 #endif
 
-	enum status_code status;
-	/* Wait for master to send address packet */
-	status = _i2c_slave_wait_for_bus(module);
+    enum status_code status;
+    /* Wait for master to send address packet */
+    status = _i2c_slave_wait_for_bus(module);
 
-	if (status != STATUS_OK) {
-			/* Timeout, return */
-			return status;
-	}
-	if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
-		/* Not address interrupt, something is wrong */
-		return STATUS_ERR_DENIED;
-	}
+    if (status != STATUS_OK) {
+            /* Timeout, return */
+            return status;
+    }
+    if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
+        /* Not address interrupt, something is wrong */
+        return STATUS_ERR_DENIED;
+    }
 
-	if (module->ten_bit_address) {
-		/* ACK the first address */
-		i2c_hw->CTRLB.reg &= ~SERCOM_I2CS_CTRLB_ACKACT;
-		i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
+    if (module->ten_bit_address) {
+        /* ACK the first address */
+        i2c_hw->CTRLB.reg &= ~SERCOM_I2CS_CTRLB_ACKACT;
+        i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
 
-		/* Wait for address interrupt */
-		status = _i2c_slave_wait_for_bus(module);
+        /* Wait for address interrupt */
+        status = _i2c_slave_wait_for_bus(module);
 
-		if (status != STATUS_OK) {
-			/* Timeout, return */
-			return STATUS_ERR_TIMEOUT;
-		}
+        if (status != STATUS_OK) {
+            /* Timeout, return */
+            return STATUS_ERR_TIMEOUT;
+        }
 
-		if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
-			/* Not address interrupt, something is wrong */
-			return STATUS_ERR_DENIED;
-		}
-	}
+        if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
+            /* Not address interrupt, something is wrong */
+            return STATUS_ERR_DENIED;
+        }
+    }
 
-	/* Check if there was an error in last transfer */
-	if (i2c_hw->STATUS.reg & (SERCOM_I2CS_STATUS_BUSERR |
-			SERCOM_I2CS_STATUS_COLL | SERCOM_I2CS_STATUS_LOWTOUT)) {
-		return STATUS_ERR_IO;
-	}
+    /* Check if there was an error in last transfer */
+    if (i2c_hw->STATUS.reg & (SERCOM_I2CS_STATUS_BUSERR |
+            SERCOM_I2CS_STATUS_COLL | SERCOM_I2CS_STATUS_LOWTOUT)) {
+        return STATUS_ERR_IO;
+    }
 
-	/* Check direction */
-	if (!(i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_DIR)) {
-		/* Write request from master, send NACK and return */
-		i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_ACKACT;
-		i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
-		return STATUS_ERR_BAD_FORMAT;
-	}
+    /* Check direction */
+    if (!(i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_DIR)) {
+        /* Write request from master, send NACK and return */
+        i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_ACKACT;
+        i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
+        return STATUS_ERR_BAD_FORMAT;
+    }
 
-	/* Read request from master, ACK address */
-	i2c_hw->CTRLB.reg &= ~SERCOM_I2CS_CTRLB_ACKACT;
-	i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
+    /* Read request from master, ACK address */
+    i2c_hw->CTRLB.reg &= ~SERCOM_I2CS_CTRLB_ACKACT;
+    i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
 
-	uint16_t i = 0;
+    uint16_t i = 0;
 
-	/* Wait for data interrupt */
-	status = _i2c_slave_wait_for_bus(module);
-	if (status != STATUS_OK) {
-			/* Timeout, return */
-			return status;
-	}
+    /* Wait for data interrupt */
+    status = _i2c_slave_wait_for_bus(module);
+    if (status != STATUS_OK) {
+            /* Timeout, return */
+            return status;
+    }
 
-	while (length--) {
-		/* Write data */
-		_i2c_slave_wait_for_sync(module);
-		i2c_hw->DATA.reg = packet->data[i++];
+    while (length--) {
+        /* Write data */
+        _i2c_slave_wait_for_sync(module);
+        i2c_hw->DATA.reg = packet->data[i++];
 
-		/* Wait for response from master */
-		status = _i2c_slave_wait_for_bus(module);
+        /* Wait for response from master */
+        status = _i2c_slave_wait_for_bus(module);
 
-		if (status != STATUS_OK) {
-			/* Timeout, return */
-			return status;
-		}
+        if (status != STATUS_OK) {
+            /* Timeout, return */
+            return status;
+        }
 
-		if (i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_RXNACK &&
-				length !=0) {
-			/* NACK from master, abort */
-			/* Release line */
-			i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x02);
+        if (i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_RXNACK &&
+                length !=0) {
+            /* NACK from master, abort */
+            /* Release line */
+            i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x02);
 
-			return STATUS_ERR_OVERFLOW;
-		}
-		/* ACK from master, continue writing */
-	}
+            return STATUS_ERR_OVERFLOW;
+        }
+        /* ACK from master, continue writing */
+    }
 
-	/* Release line */
-	i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x02);
+    /* Release line */
+    i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x02);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -469,98 +469,98 @@ enum status_code i2c_slave_write_packet_wait(
  * \retval STATUS_ERR_ERR_OVERFLOW  Last byte received overflows buffer
  */
 enum status_code i2c_slave_read_packet_wait(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet)
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
 
-	uint16_t length = packet->data_length;
+    uint16_t length = packet->data_length;
 
-	if (length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
 #if I2C_SLAVE_CALLBACK_MODE == true
-	/* Check if the module is busy with a job or AMATCH is enabled */
-	if (module->buffer_remaining > 0 ||
-			(i2c_hw->INTENSET.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
-		return STATUS_BUSY;
-	}
+    /* Check if the module is busy with a job or AMATCH is enabled */
+    if (module->buffer_remaining > 0 ||
+            (i2c_hw->INTENSET.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
+        return STATUS_BUSY;
+    }
 #endif
 
-	enum status_code status;
+    enum status_code status;
 
-	/* Wait for master to send address packet */
-	status = _i2c_slave_wait_for_bus(module);
-	if (status != STATUS_OK) {
-		/* Timeout, return */
-		return status;
-	}
+    /* Wait for master to send address packet */
+    status = _i2c_slave_wait_for_bus(module);
+    if (status != STATUS_OK) {
+        /* Timeout, return */
+        return status;
+    }
 
-	if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
-		/* Not address interrupt, something is wrong */
-		return STATUS_ERR_DENIED;
-	}
+    if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
+        /* Not address interrupt, something is wrong */
+        return STATUS_ERR_DENIED;
+    }
 
-	/* Check if there was an error in the last transfer */
-	if (i2c_hw->STATUS.reg & (SERCOM_I2CS_STATUS_BUSERR |
-			SERCOM_I2CS_STATUS_COLL | SERCOM_I2CS_STATUS_LOWTOUT)) {
-		return STATUS_ERR_IO;
-	}
-	/* Check direction */
-	if ((i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_DIR)) {
-		/* Read request from master, send NACK and return */
-		i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_ACKACT;
-		i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
-		return STATUS_ERR_BAD_FORMAT;
-	}
+    /* Check if there was an error in the last transfer */
+    if (i2c_hw->STATUS.reg & (SERCOM_I2CS_STATUS_BUSERR |
+            SERCOM_I2CS_STATUS_COLL | SERCOM_I2CS_STATUS_LOWTOUT)) {
+        return STATUS_ERR_IO;
+    }
+    /* Check direction */
+    if ((i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_DIR)) {
+        /* Read request from master, send NACK and return */
+        i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_ACKACT;
+        i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
+        return STATUS_ERR_BAD_FORMAT;
+    }
 
-	/* Write request from master, ACK address */
-	i2c_hw->CTRLB.reg &= ~SERCOM_I2CS_CTRLB_ACKACT;
-	i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
+    /* Write request from master, ACK address */
+    i2c_hw->CTRLB.reg &= ~SERCOM_I2CS_CTRLB_ACKACT;
+    i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x3);
 
-	uint16_t i = 0;
-	while (length--) {
+    uint16_t i = 0;
+    while (length--) {
 
-		/* Wait for next byte or stop condition */
-		status = _i2c_slave_wait_for_bus(module);
-		if (status != STATUS_OK) {
-			/* Timeout, return */
-			return status;
-		}
+        /* Wait for next byte or stop condition */
+        status = _i2c_slave_wait_for_bus(module);
+        if (status != STATUS_OK) {
+            /* Timeout, return */
+            return status;
+        }
 
-		if ((i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_PREC) ||
-				i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH) {
-			/* Master sent stop condition, or repeated start, read done */
-			/* Clear stop flag */
-			i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_PREC;
-			return STATUS_ABORTED;
-		}
+        if ((i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_PREC) ||
+                i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH) {
+            /* Master sent stop condition, or repeated start, read done */
+            /* Clear stop flag */
+            i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_PREC;
+            return STATUS_ABORTED;
+        }
 
-		/* Read data */
-		_i2c_slave_wait_for_sync(module);
-		packet->data[i++] = i2c_hw->DATA.reg;
+        /* Read data */
+        _i2c_slave_wait_for_sync(module);
+        packet->data[i++] = i2c_hw->DATA.reg;
 
-	}
+    }
 
-	/* Packet read done, wait for packet to NACK, Stop or repeated start */
-	status = _i2c_slave_wait_for_bus(module);
+    /* Packet read done, wait for packet to NACK, Stop or repeated start */
+    status = _i2c_slave_wait_for_bus(module);
 
-	if (i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_DRDY) {
-		/* Buffer is full, send NACK */
-		i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_ACKACT;
-		i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x2);
-	}
-	if (i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_PREC) {
-		/* Clear stop flag */
-		i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_PREC;
-	}
-	return STATUS_OK;
+    if (i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_DRDY) {
+        /* Buffer is full, send NACK */
+        i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_ACKACT;
+        i2c_hw->CTRLB.reg |= SERCOM_I2CS_CTRLB_CMD(0x2);
+    }
+    if (i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_PREC) {
+        /* Clear stop flag */
+        i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_PREC;
+    }
+    return STATUS_OK;
 }
 
 /**
@@ -569,7 +569,7 @@ enum status_code i2c_slave_read_packet_wait(
  * \note This function is only available for 7-bit slave addressing.
  *
  * Waits for the master to issue a start condition on the bus.
- * 
+ *
  * \note This function does not check for errors in the last transfer,
  * this will be discovered when reading or writing.
  *
@@ -582,37 +582,37 @@ enum status_code i2c_slave_read_packet_wait(
  * \retval I2C_SLAVE_DIRECTION_WRITE  Read request from master
  */
 enum i2c_slave_direction i2c_slave_get_direction_wait(
-		struct i2c_slave_module *const module)
+        struct i2c_slave_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
 
-	enum status_code status;
+    enum status_code status;
 
-	/* Wait for address interrupt */
-	status = _i2c_slave_wait_for_bus(module);
+    /* Wait for address interrupt */
+    status = _i2c_slave_wait_for_bus(module);
 
-	if (status != STATUS_OK) {
-		/* Timeout, return */
-		return I2C_SLAVE_DIRECTION_NONE;
-	}
+    if (status != STATUS_OK) {
+        /* Timeout, return */
+        return I2C_SLAVE_DIRECTION_NONE;
+    }
 
-	if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
-		/* Not address interrupt, something is wrong */
-		return I2C_SLAVE_DIRECTION_NONE;
-	}
+    if (!(i2c_hw->INTFLAG.reg & SERCOM_I2CS_INTFLAG_AMATCH)) {
+        /* Not address interrupt, something is wrong */
+        return I2C_SLAVE_DIRECTION_NONE;
+    }
 
-	/* Check direction */
-	if ((i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_DIR)) {
-		/* Read request from master */
-		return I2C_SLAVE_DIRECTION_WRITE;
-	} else {
-		/* Write request from master */
-		return I2C_SLAVE_DIRECTION_READ;
-	}
+    /* Check direction */
+    if ((i2c_hw->STATUS.reg & SERCOM_I2CS_STATUS_DIR)) {
+        /* Read request from master */
+        return I2C_SLAVE_DIRECTION_WRITE;
+    } else {
+        /* Write request from master */
+        return I2C_SLAVE_DIRECTION_READ;
+    }
 }
 
 /**
@@ -645,56 +645,56 @@ enum i2c_slave_direction i2c_slave_get_direction_wait(
  *                                          occurred on the bus
  */
 uint32_t i2c_slave_get_status(
-		struct i2c_slave_module *const module)
+        struct i2c_slave_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
 
-	uint8_t intflags = i2c_hw->INTFLAG.reg;
-	uint8_t status = i2c_hw->STATUS.reg;
-	uint32_t status_flags = 0;
+    uint8_t intflags = i2c_hw->INTFLAG.reg;
+    uint8_t status = i2c_hw->STATUS.reg;
+    uint32_t status_flags = 0;
 
-	/* Check Address Match flag */
-	if (intflags & SERCOM_I2CS_INTFLAG_AMATCH) {
-		status_flags |= I2C_SLAVE_STATUS_ADDRESS_MATCH;
-	}
-	/* Check Data Ready flag */
-	if (intflags & SERCOM_I2CS_INTFLAG_DRDY) {
-		status_flags |= I2C_SLAVE_STATUS_DATA_READY;
-	}
-	/* Check Stop flag */
-	if (intflags & SERCOM_I2CS_INTFLAG_PREC) {
-		status_flags |= I2C_SLAVE_STATUS_STOP_RECEIVED;
-	}
-	/* Check Clock Hold */
-	if (status & SERCOM_I2CS_STATUS_CLKHOLD) {
-		status_flags |= I2C_SLAVE_STATUS_CLOCK_HOLD;
-	}
-	/* Check SCL Low Timeout */
-	if (status & SERCOM_I2CS_STATUS_LOWTOUT) {
-		status_flags |= I2C_SLAVE_STATUS_SCL_LOW_TIMEOUT;
-	}
-	/* Check Repeated Start */
-	if (status & SERCOM_I2CS_STATUS_SR) {
-		status_flags |= I2C_SLAVE_STATUS_REPEATED_START;
-	}
-	/* Check Received Not Acknowledge */
-	if (status & SERCOM_I2CS_STATUS_RXNACK) {
-		status_flags |= I2C_SLAVE_STATUS_RECEIVED_NACK;
-	}
-	/* Check Transmit Collision */
-	if (status & SERCOM_I2CS_STATUS_COLL) {
-		status_flags |= I2C_SLAVE_STATUS_COLLISION;
-	}
-	/* Check Bus Error */
-	if (status & SERCOM_I2CS_STATUS_BUSERR) {
-		status_flags |= I2C_SLAVE_STATUS_BUS_ERROR;
-	}
+    /* Check Address Match flag */
+    if (intflags & SERCOM_I2CS_INTFLAG_AMATCH) {
+        status_flags |= I2C_SLAVE_STATUS_ADDRESS_MATCH;
+    }
+    /* Check Data Ready flag */
+    if (intflags & SERCOM_I2CS_INTFLAG_DRDY) {
+        status_flags |= I2C_SLAVE_STATUS_DATA_READY;
+    }
+    /* Check Stop flag */
+    if (intflags & SERCOM_I2CS_INTFLAG_PREC) {
+        status_flags |= I2C_SLAVE_STATUS_STOP_RECEIVED;
+    }
+    /* Check Clock Hold */
+    if (status & SERCOM_I2CS_STATUS_CLKHOLD) {
+        status_flags |= I2C_SLAVE_STATUS_CLOCK_HOLD;
+    }
+    /* Check SCL Low Timeout */
+    if (status & SERCOM_I2CS_STATUS_LOWTOUT) {
+        status_flags |= I2C_SLAVE_STATUS_SCL_LOW_TIMEOUT;
+    }
+    /* Check Repeated Start */
+    if (status & SERCOM_I2CS_STATUS_SR) {
+        status_flags |= I2C_SLAVE_STATUS_REPEATED_START;
+    }
+    /* Check Received Not Acknowledge */
+    if (status & SERCOM_I2CS_STATUS_RXNACK) {
+        status_flags |= I2C_SLAVE_STATUS_RECEIVED_NACK;
+    }
+    /* Check Transmit Collision */
+    if (status & SERCOM_I2CS_STATUS_COLL) {
+        status_flags |= I2C_SLAVE_STATUS_COLLISION;
+    }
+    /* Check Bus Error */
+    if (status & SERCOM_I2CS_STATUS_BUSERR) {
+        status_flags |= I2C_SLAVE_STATUS_BUS_ERROR;
+    }
 
-	return status_flags;
+    return status_flags;
 }
 
 /**
@@ -709,37 +709,37 @@ uint32_t i2c_slave_get_status(
  *
  */
 void i2c_slave_clear_status(
-		struct i2c_slave_module *const module,
-		uint32_t status_flags)
+        struct i2c_slave_module *const module,
+        uint32_t status_flags)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
 
-	/* Clear Address Match flag */
-	if (status_flags & I2C_SLAVE_STATUS_ADDRESS_MATCH) {
-		i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_AMATCH;
-	}
-	/* Clear Data Ready flag */
-	if (status_flags & I2C_SLAVE_STATUS_DATA_READY) {
-		i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_DRDY;
-	}
-	/* Clear Stop flag */
-	if (status_flags & I2C_SLAVE_STATUS_STOP_RECEIVED) {
-		i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_PREC;
-	}
-	/* Clear SCL Low Timeout */
-	if (status_flags & I2C_SLAVE_STATUS_SCL_LOW_TIMEOUT) {
-		i2c_hw->STATUS.reg = SERCOM_I2CS_STATUS_LOWTOUT;
-	}
-	/* Clear Transmit Collision */
-	if (status_flags & I2C_SLAVE_STATUS_COLLISION) {
-		i2c_hw->STATUS.reg = SERCOM_I2CS_STATUS_COLL;
-	}
-	/* Clear Bus Error */
-	if (status_flags & I2C_SLAVE_STATUS_BUS_ERROR) {
-		i2c_hw->STATUS.reg = SERCOM_I2CS_STATUS_BUSERR;
-	}
+    /* Clear Address Match flag */
+    if (status_flags & I2C_SLAVE_STATUS_ADDRESS_MATCH) {
+        i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_AMATCH;
+    }
+    /* Clear Data Ready flag */
+    if (status_flags & I2C_SLAVE_STATUS_DATA_READY) {
+        i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_DRDY;
+    }
+    /* Clear Stop flag */
+    if (status_flags & I2C_SLAVE_STATUS_STOP_RECEIVED) {
+        i2c_hw->INTFLAG.reg = SERCOM_I2CS_INTFLAG_PREC;
+    }
+    /* Clear SCL Low Timeout */
+    if (status_flags & I2C_SLAVE_STATUS_SCL_LOW_TIMEOUT) {
+        i2c_hw->STATUS.reg = SERCOM_I2CS_STATUS_LOWTOUT;
+    }
+    /* Clear Transmit Collision */
+    if (status_flags & I2C_SLAVE_STATUS_COLLISION) {
+        i2c_hw->STATUS.reg = SERCOM_I2CS_STATUS_COLL;
+    }
+    /* Clear Bus Error */
+    if (status_flags & I2C_SLAVE_STATUS_BUS_ERROR) {
+        i2c_hw->STATUS.reg = SERCOM_I2CS_STATUS_BUSERR;
+    }
 }

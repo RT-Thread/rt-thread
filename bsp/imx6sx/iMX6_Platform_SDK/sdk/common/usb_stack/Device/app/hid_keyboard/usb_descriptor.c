@@ -30,7 +30,7 @@
 /* Put CFV2 and Kinetis descriptors in RAM */
 #define USB_DESC_CONST
 #else
-#define USB_DESC_CONST	const
+#define USB_DESC_CONST  const
 #endif
 /*****************************************************************************
  * Constant and Macro's
@@ -38,13 +38,13 @@
 
 /* structure containing details of all the endpoints used by this device */
 const USB_ENDPOINTS usb_desc_ep = {
-				HID_DESC_ENDPOINT_COUNT,
-				{
-						HID_ENDPOINT,
-						USB_INTERRUPT_PIPE,
-						USB_SEND,
-						HID_ENDPOINT_PACKET_SIZE,
-				}
+                HID_DESC_ENDPOINT_COUNT,
+                {
+                        HID_ENDPOINT,
+                        USB_INTERRUPT_PIPE,
+                        USB_SEND,
+                        HID_ENDPOINT_PACKET_SIZE,
+                }
 };
 
 
@@ -194,19 +194,19 @@ uint_8 USB_DESC_CONST USB_STR_2[USB_STR_2_SIZE+USB_STR_DESC_SIZE]
                                USB_STRING_DESCRIPTOR,
                                ' ',0,
                                ' ',0,
-							#ifdef __MK_xxx_H__
-							   'M',0,
-							   'K',0,                               
-							#elif (defined __MCF52xxx_H__)
-							   'C',0,
-							   'F',0, 
-							#elif (defined MCU_mcf51jf128)
-							   'J',0,
-							   'F',0,                              
-							#else     
-							   'J',0,
-							   'M',0,
-							#endif              
+                            #ifdef __MK_xxx_H__
+                               'M',0,
+                               'K',0,
+                            #elif (defined __MCF52xxx_H__)
+                               'C',0,
+                               'F',0,
+                            #elif (defined MCU_mcf51jf128)
+                               'J',0,
+                               'F',0,
+                            #else
+                               'J',0,
+                               'M',0,
+                            #endif
                                ' ',0,
                                'K',0,
                                'E',0,
@@ -287,7 +287,7 @@ uint_8_ptr const g_string_descriptors[USB_MAX_STRING_DESCRIPTORS+1] =
                                     };
 
 USB_ALL_LANGUAGES g_languages = { USB_STR_0, sizeof(USB_STR_0),
-                                    { 
+                                    {
                                         (uint_16 const)0x0409,
                                         (const uint_8 **)g_string_descriptors,
                                         g_string_desc_size
@@ -513,7 +513,7 @@ boolean USB_Desc_Valid_Configation (
 {
     uint_8 loop_index=0;
     UNUSED (controller_ID)
-    
+
     /* check with only supported val right now */
     while(loop_index < (USB_MAX_CONFIG_SUPPORTED+1))
     {

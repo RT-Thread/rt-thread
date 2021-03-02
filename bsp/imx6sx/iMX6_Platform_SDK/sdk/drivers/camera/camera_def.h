@@ -48,24 +48,24 @@
 //! @a address is a 16-bit sensor register address.
 //! @a value can be both 16-bit or 8-bit, it is determined by @a is_16bits.
 typedef struct {
-    uint16_t addr;			//!< Sensor register address.
-    uint16_t value;			//!< Data along with the register address.
-    uint16_t is_16bits;		//!< If the @a value is a 16bit or 8bit
-    uint32_t delay_ms;		//!< Time delay needed after setting regiter, the unit is ms.
-    uint8_t verify;			//!< If need to verify the write operation is correctly
+    uint16_t addr;          //!< Sensor register address.
+    uint16_t value;         //!< Data along with the register address.
+    uint16_t is_16bits;     //!< If the @a value is a 16bit or 8bit
+    uint32_t delay_ms;      //!< Time delay needed after setting regiter, the unit is ms.
+    uint8_t verify;         //!< If need to verify the write operation is correctly
 } reg_param_t;
 
 //! @brief The register setting information for specific camera mode
 //!
 //! When the camera need to work at specific mode, a serie of regiter settings are need to be downloaded to sensor.
 //
-//!	The register setting should be hold in array.
+//! The register setting should be hold in array.
 //
 //! @a setting is the start address of the register setting array.
 //! @a size if the size of the register setting array.
 typedef struct {
-    reg_param_t *setting;	//!< Pointer to register setting array
-    int32_t size;			//!< Size of register setting array
+    reg_param_t *setting;   //!< Pointer to register setting array
+    int32_t size;           //!< Size of register setting array
 } camera_mode_t;
 
 //! @brief The available informations for the some type of sensor.
@@ -75,22 +75,22 @@ typedef struct {
 //! There are 3 voltages needed by sensor: avdd, dovdd and dvdd. They might be used when power up.
 //! @a i2c_dev_addr is in lower 7 bits
 typedef struct {
-    int8_t sensor_name[30];			//!< Char array holds sensor name
-    uint32_t avdd_mv;				//!< Power for I/O circuit
-	uint32_t dovdd_mv;				//!< Power for digital circuit
-	uint32_t dvdd_mv;				//!< Power for analog circuit
-    int32_t i2c_dev_addr;			//!< Sensor slave address (in lower 7 bits)
-    reg_param_t *sensor_detection;	//!< Pointer to register setting array which holds sensor detection mode
-    int32_t sensor_detection_size;	//!< Size of sensor detection mode array
-    int32_t mode_id;				//!< Working mode id for this sensor
-    camera_mode_t *modes;			//!< Pointer to the register setting array which holds sensor capture mode
-    int32_t auto_focus_enable;		//!< To specify if the auto focus function is enable for this sensor
-    reg_param_t *af_firmware;		//!< Pointer to the register setting array which holds sensor auto focus mode
-    int32_t af_firmware_size;		//!< Size of sensor auto focus mode array
-    reg_param_t *af_trigger;		//!< Pointer to the register setting array which holds sensor trigger mode
-    int32_t af_trigger_size;		//!< Size of sensor trigger mode
-    reg_param_t *af_ready;			//!< Pointer to the register setting array which holds sensor auto focus ready mode
-    int32_t af_ready_size;			//!< size of sensor auto focus reaady mode.
+    int8_t sensor_name[30];         //!< Char array holds sensor name
+    uint32_t avdd_mv;               //!< Power for I/O circuit
+    uint32_t dovdd_mv;              //!< Power for digital circuit
+    uint32_t dvdd_mv;               //!< Power for analog circuit
+    int32_t i2c_dev_addr;           //!< Sensor slave address (in lower 7 bits)
+    reg_param_t *sensor_detection;  //!< Pointer to register setting array which holds sensor detection mode
+    int32_t sensor_detection_size;  //!< Size of sensor detection mode array
+    int32_t mode_id;                //!< Working mode id for this sensor
+    camera_mode_t *modes;           //!< Pointer to the register setting array which holds sensor capture mode
+    int32_t auto_focus_enable;      //!< To specify if the auto focus function is enable for this sensor
+    reg_param_t *af_firmware;       //!< Pointer to the register setting array which holds sensor auto focus mode
+    int32_t af_firmware_size;       //!< Size of sensor auto focus mode array
+    reg_param_t *af_trigger;        //!< Pointer to the register setting array which holds sensor trigger mode
+    int32_t af_trigger_size;        //!< Size of sensor trigger mode
+    reg_param_t *af_ready;          //!< Pointer to the register setting array which holds sensor auto focus ready mode
+    int32_t af_ready_size;          //!< size of sensor auto focus reaady mode.
 } camera_profile_t;
 
 
@@ -171,14 +171,14 @@ void sensor_reset(void);
  * When @enable equals 1, it initiates hardware standy mode
  * Before entering work mode, make sure call this function with @enable 0.
  *
- * @param	enable parameter controlis if initiate a hardware standby mode or normal work mode. 1 for standby mode, 0 for normal work mode.
+ * @param   enable parameter controlis if initiate a hardware standby mode or normal work mode. 1 for standby mode, 0 for normal work mode.
  */
 void sensor_standby(int32_t enable);
 
 /*!
  * @brief Set sensor input clock
  *
- * Sensor input clock comes from IPU. A typical camera sensor clock is 24MHz. 
+ * Sensor input clock comes from IPU. A typical camera sensor clock is 24MHz.
  */
 void sensor_clock_setting(void);
 
@@ -199,7 +199,7 @@ camera_profile_t *sensor_search(void);
 /*!
  * @brief configure csi port and initialize camera sensor
  *
- * @param	sensor sensor profile information
+ * @param   sensor sensor profile information
  *
  * @return 0 on success; non-zero otherwise
  *
@@ -210,7 +210,7 @@ int32_t sensor_config(camera_profile_t * sensor);
 /*!
  * @brief Initialize camera sensor according to sensor profile
  *
- * @param	sensor sensor profile information
+ * @param   sensor sensor profile information
  *
  * @return 0 on success; non-zero otherwise
  */
@@ -219,7 +219,7 @@ int32_t sensor_init(camera_profile_t * sensor);
 /*!
  * @brief configure camera sensor to af trigger mode
  *
- * @param	sensor sensor profile information
+ * @param   sensor sensor profile information
  *
  * @return 0 on success; non-zero otherwise
  *
@@ -229,7 +229,7 @@ int32_t sensor_af_trigger(camera_profile_t * sensor);
 /*!
  * @brief configure camera sensor to auto focus mode
  *
- * @param	sensor sensor profile information
+ * @param   sensor sensor profile information
  *
  * @return 0 on success; non-zero otherwise
  */

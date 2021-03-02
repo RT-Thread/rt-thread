@@ -185,7 +185,7 @@
 #define FLEXCOMM_CLOCKS                                                        \
     {                                                                          \
         kCLOCK_FlexComm0, kCLOCK_FlexComm1, kCLOCK_FlexComm2, kCLOCK_FlexComm3, \
-					kCLOCK_FlexComm4, kCLOCK_FlexComm5, kCLOCK_FlexComm6, kCLOCK_FlexComm7, \
+                    kCLOCK_FlexComm4, kCLOCK_FlexComm5, kCLOCK_FlexComm6, kCLOCK_FlexComm7, \
                                         kCLOCK_FlexComm8, kCLOCK_FlexComm9 \
     }
 /*! @brief Clock ip name array for LPUART. */
@@ -451,7 +451,7 @@ typedef enum _clock_name
     kClock_WdtOsc,      /*!< Watchdog Oscillator                                     */
     kCLOCK_Frg,         /*!< Frg Clock                                               */
     kCLOCK_Dmic,        /*!< Digital Mic clock                                       */
-    kCLOCK_AsyncApbClk, /*!< Async APB clock										 */
+    kCLOCK_AsyncApbClk, /*!< Async APB clock                                         */
     kCLOCK_FlexI2S,     /*!< FlexI2S clock                                           */
     kCLOCK_Flexcomm0,   /*!< Flexcomm0Clock                                          */
     kCLOCK_Flexcomm1,   /*!< Flexcomm1Clock                                          */
@@ -670,12 +670,12 @@ typedef enum _clock_attach_id
     kFRO_HF_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 3),
     kAUDIO_PLL_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 4),
     kNONE_to_SDIO_CLK = MUX_A(CM_SDIOCLKSEL, 7),
-    
+
     kMCLK_to_LCD_CLK = MUX_A(CM_LCDCLKSEL, 0),
     kLCDCLKIN_to_LCD_CLK = MUX_A(CM_LCDCLKSEL, 1),
     kFRO_HF_to_LCD_CLK = MUX_A(CM_LCDCLKSEL, 2),
     kNONE_to_LCD_CLK = MUX_A(CM_LCDCLKSEL, 3),
-    
+
     kMAIN_CLK_to_ASYNC_APB = MUX_A(CM_ASYNCAPB, 0),
     kFRO12M_to_ASYNC_APB = MUX_A(CM_ASYNCAPB, 1),
     kAUDIO_PLL_to_ASYNC_APB = MUX_A(CM_ASYNCAPB, 2),
@@ -761,9 +761,9 @@ typedef enum _clock_flashtim
 } clock_flashtim_t;
 
 /**
- * @brief	Set FLASH memory access time in clocks
- * @param	clks	: Clock cycles for FLASH access
- * @return	Nothing
+ * @brief   Set FLASH memory access time in clocks
+ * @param   clks    : Clock cycles for FLASH access
+ * @return  Nothing
  */
 static inline void CLOCK_SetFLASHAccessCycles(clock_flashtim_t clks)
 {
@@ -776,171 +776,171 @@ static inline void CLOCK_SetFLASHAccessCycles(clock_flashtim_t clks)
 }
 
 /**
- * @brief	Initialize the Core clock to given frequency (12, 48 or 96 MHz).
+ * @brief   Initialize the Core clock to given frequency (12, 48 or 96 MHz).
  * Turns on FRO and uses default CCO, if freq is 12000000, then high speed output is off, else high speed output is
  * enabled.
- * @param	iFreq	: Desired frequency (must be one of #CLK_FRO_12MHZ or #CLK_FRO_48MHZ or #CLK_FRO_96MHZ)
- * @return	returns success or fail status.
+ * @param   iFreq   : Desired frequency (must be one of #CLK_FRO_12MHZ or #CLK_FRO_48MHZ or #CLK_FRO_96MHZ)
+ * @return  returns success or fail status.
  */
 status_t CLOCK_SetupFROClocking(uint32_t iFreq);
 /**
- * @brief	Configure the clock selection muxes.
- * @param	connection	: Clock to be configured.
- * @return	Nothing
+ * @brief   Configure the clock selection muxes.
+ * @param   connection  : Clock to be configured.
+ * @return  Nothing
  */
 void CLOCK_AttachClk(clock_attach_id_t connection);
 /**
- * @brief	Setup peripheral clock dividers.
- * @param	div_name	: Clock divider name
+ * @brief   Setup peripheral clock dividers.
+ * @param   div_name    : Clock divider name
  * @param divided_by_value: Value to be divided
  * @param reset :  Whether to reset the divider counter.
- * @return	Nothing
+ * @return  Nothing
  */
 void CLOCK_SetClkDiv(clock_div_name_t div_name, uint32_t divided_by_value, bool reset);
 /**
- * @brief	Set the flash wait states for the input freuqency.
- * @param	iFreq	: Input frequency
- * @return	Nothing
+ * @brief   Set the flash wait states for the input freuqency.
+ * @param   iFreq   : Input frequency
+ * @return  Nothing
  */
 void CLOCK_SetFLASHAccessCyclesForFreq(uint32_t iFreq);
-/*! @brief	Return Frequency of selected clock
- *  @return	Frequency of selected clock
+/*! @brief  Return Frequency of selected clock
+ *  @return Frequency of selected clock
  */
 uint32_t CLOCK_GetFreq(clock_name_t clockName);
-/*! @brief	Return Frequency of FRO 12MHz
- *  @return	Frequency of FRO 12MHz
+/*! @brief  Return Frequency of FRO 12MHz
+ *  @return Frequency of FRO 12MHz
  */
 uint32_t CLOCK_GetFro12MFreq(void);
-/*! @brief	Return Frequency of ClockOut
- *  @return	Frequency of ClockOut
+/*! @brief  Return Frequency of ClockOut
+ *  @return Frequency of ClockOut
  */
 uint32_t CLOCK_GetClockOutClkFreq(void);
-/*! @brief	Return Frequency of Spifi Clock
- *  @return	Frequency of Spifi.
+/*! @brief  Return Frequency of Spifi Clock
+ *  @return Frequency of Spifi.
  */
 uint32_t CLOCK_GetSpifiClkFreq(void);
-/*! @brief	Return Frequency of Adc Clock
- *  @return	Frequency of Adc Clock.
+/*! @brief  Return Frequency of Adc Clock
+ *  @return Frequency of Adc Clock.
  */
 uint32_t CLOCK_GetAdcClkFreq(void);
-/*! @brief	Return Frequency of Usb0 Clock
- *  @return	Frequency of Usb0 Clock.
+/*! @brief  Return Frequency of Usb0 Clock
+ *  @return Frequency of Usb0 Clock.
  */
 uint32_t CLOCK_GetUsb0ClkFreq(void);
-/*! @brief	Return Frequency of Usb1 Clock
- *  @return	Frequency of Usb1 Clock.
+/*! @brief  Return Frequency of Usb1 Clock
+ *  @return Frequency of Usb1 Clock.
  */
 uint32_t CLOCK_GetUsb1ClkFreq(void);
-/*! @brief	Return Frequency of MClk Clock
- *  @return	Frequency of MClk Clock.
+/*! @brief  Return Frequency of MClk Clock
+ *  @return Frequency of MClk Clock.
  */
 uint32_t CLOCK_GetMclkClkFreq(void);
-/*! @brief	Return Frequency of SCTimer Clock
- *  @return	Frequency of SCTimer Clock.
+/*! @brief  Return Frequency of SCTimer Clock
+ *  @return Frequency of SCTimer Clock.
  */
 uint32_t CLOCK_GetSctClkFreq(void);
-/*! @brief	Return Frequency of SDIO Clock
- *  @return	Frequency of SDIO Clock.
+/*! @brief  Return Frequency of SDIO Clock
+ *  @return Frequency of SDIO Clock.
  */
 uint32_t CLOCK_GetSdioClkFreq(void);
-/*! @brief	Return Frequency of LCD Clock
- *  @return	Frequency of LCD Clock.
+/*! @brief  Return Frequency of LCD Clock
+ *  @return Frequency of LCD Clock.
  */
 uint32_t CLOCK_GetLcdClkFreq(void);
-/*! @brief	Return Frequency of LCD CLKIN Clock
- *  @return	Frequency of LCD CLKIN Clock.
+/*! @brief  Return Frequency of LCD CLKIN Clock
+ *  @return Frequency of LCD CLKIN Clock.
  */
 uint32_t CLOCK_GetLcdClkIn(void);
-/*! @brief	Return Frequency of External Clock
- *  @return	Frequency of External Clock. If no external clock is used returns 0.
+/*! @brief  Return Frequency of External Clock
+ *  @return Frequency of External Clock. If no external clock is used returns 0.
  */
 uint32_t CLOCK_GetExtClkFreq(void);
-/*! @brief	Return Frequency of Watchdog Oscillator
- *  @return	Frequency of Watchdog Oscillator
+/*! @brief  Return Frequency of Watchdog Oscillator
+ *  @return Frequency of Watchdog Oscillator
  */
 uint32_t CLOCK_GetWdtOscFreq(void);
-/*! @brief	Return Frequency of High-Freq output of FRO
- *  @return	Frequency of High-Freq output of FRO
+/*! @brief  Return Frequency of High-Freq output of FRO
+ *  @return Frequency of High-Freq output of FRO
  */
 uint32_t CLOCK_GetFroHfFreq(void);
-/*! @brief	Return Frequency of PLL
- *  @return	Frequency of PLL
+/*! @brief  Return Frequency of PLL
+ *  @return Frequency of PLL
  */
 uint32_t CLOCK_GetPllOutFreq(void);
-/*! @brief	Return Frequency of USB PLL
- *  @return	Frequency of PLL
+/*! @brief  Return Frequency of USB PLL
+ *  @return Frequency of PLL
  */
 uint32_t CLOCK_GetUsbPllOutFreq(void);
-/*! @brief	Return Frequency of AUDIO PLL
- *  @return	Frequency of PLL
+/*! @brief  Return Frequency of AUDIO PLL
+ *  @return Frequency of PLL
  */
 uint32_t CLOCK_GetAudioPllOutFreq(void);
-/*! @brief	Return Frequency of 32kHz osc
- *  @return	Frequency of 32kHz osc
+/*! @brief  Return Frequency of 32kHz osc
+ *  @return Frequency of 32kHz osc
  */
 uint32_t CLOCK_GetOsc32KFreq(void);
-/*! @brief	Return Frequency of Core System
- *  @return	Frequency of Core System
+/*! @brief  Return Frequency of Core System
+ *  @return Frequency of Core System
  */
 uint32_t CLOCK_GetCoreSysClkFreq(void);
-/*! @brief	Return Frequency of I2S MCLK Clock
- *  @return	Frequency of I2S MCLK Clock
+/*! @brief  Return Frequency of I2S MCLK Clock
+ *  @return Frequency of I2S MCLK Clock
  */
 uint32_t CLOCK_GetI2SMClkFreq(void);
-/*! @brief	Return Frequency of Flexcomm functional Clock
- *  @return	Frequency of Flexcomm functional Clock
+/*! @brief  Return Frequency of Flexcomm functional Clock
+ *  @return Frequency of Flexcomm functional Clock
  */
 uint32_t CLOCK_GetFlexCommClkFreq(uint32_t id);
-/*! @brief	Return Asynchronous APB Clock source
- *  @return	Asynchronous APB CLock source
+/*! @brief  Return Asynchronous APB Clock source
+ *  @return Asynchronous APB CLock source
  */
 __STATIC_INLINE async_clock_src_t CLOCK_GetAsyncApbClkSrc(void)
 {
     return (async_clock_src_t)(ASYNC_SYSCON->ASYNCAPBCLKSELA & 0x3);
 }
-/*! @brief	Return Frequency of Asynchronous APB Clock
- *  @return	Frequency of Asynchronous APB Clock Clock
+/*! @brief  Return Frequency of Asynchronous APB Clock
+ *  @return Frequency of Asynchronous APB Clock Clock
  */
 uint32_t CLOCK_GetAsyncApbClkFreq(void);
-/*! @brief	Return Audio PLL input clock rate
- *  @return	Audio PLL input clock rate
+/*! @brief  Return Audio PLL input clock rate
+ *  @return Audio PLL input clock rate
  */
 uint32_t CLOCK_GetAudioPLLInClockRate(void);
-/*! @brief	Return System PLL input clock rate
- *  @return	System PLL input clock rate
+/*! @brief  Return System PLL input clock rate
+ *  @return System PLL input clock rate
  */
 uint32_t CLOCK_GetSystemPLLInClockRate(void);
 
-/*! @brief	Return System PLL output clock rate
- *  @param	recompute	: Forces a PLL rate recomputation if true
- *  @return	System PLL output clock rate
- *  @note	The PLL rate is cached in the driver in a variable as
+/*! @brief  Return System PLL output clock rate
+ *  @param  recompute   : Forces a PLL rate recomputation if true
+ *  @return System PLL output clock rate
+ *  @note   The PLL rate is cached in the driver in a variable as
  *  the rate computation function can take some time to perform. It
  *  is recommended to use 'false' with the 'recompute' parameter.
  */
 uint32_t CLOCK_GetSystemPLLOutClockRate(bool recompute);
 
-/*! @brief	Return System AUDIO PLL output clock rate
- *  @param	recompute	: Forces a AUDIO PLL rate recomputation if true
- *  @return	System AUDIO PLL output clock rate
- *  @note	The AUDIO PLL rate is cached in the driver in a variable as
+/*! @brief  Return System AUDIO PLL output clock rate
+ *  @param  recompute   : Forces a AUDIO PLL rate recomputation if true
+ *  @return System AUDIO PLL output clock rate
+ *  @note   The AUDIO PLL rate is cached in the driver in a variable as
  *  the rate computation function can take some time to perform. It
  *  is recommended to use 'false' with the 'recompute' parameter.
  */
 uint32_t CLOCK_GetAudioPLLOutClockRate(bool recompute);
 
-/*! @brief	Return System USB PLL output clock rate
- *  @param	recompute	: Forces a USB PLL rate recomputation if true
- *  @return	System USB PLL output clock rate
- *  @note	The USB PLL rate is cached in the driver in a variable as
+/*! @brief  Return System USB PLL output clock rate
+ *  @param  recompute   : Forces a USB PLL rate recomputation if true
+ *  @return System USB PLL output clock rate
+ *  @note   The USB PLL rate is cached in the driver in a variable as
  *  the rate computation function can take some time to perform. It
  *  is recommended to use 'false' with the 'recompute' parameter.
  */
 uint32_t CLOCK_GetUSbPLLOutClockRate(bool recompute);
 
-/*! @brief	Enables and disables PLL bypass mode
- *  @brief	bypass	: true to bypass PLL (PLL output = PLL input, false to disable bypass
- *  @return	System PLL output clock rate
+/*! @brief  Enables and disables PLL bypass mode
+ *  @brief  bypass  : true to bypass PLL (PLL output = PLL input, false to disable bypass
+ *  @return System PLL output clock rate
  */
 __STATIC_INLINE void CLOCK_SetBypassPLL(bool bypass)
 {
@@ -954,32 +954,32 @@ __STATIC_INLINE void CLOCK_SetBypassPLL(bool bypass)
     }
 }
 
-/*! @brief	Check if PLL is locked or not
- *  @return	true if the PLL is locked, false if not locked
+/*! @brief  Check if PLL is locked or not
+ *  @return true if the PLL is locked, false if not locked
  */
 __STATIC_INLINE bool CLOCK_IsSystemPLLLocked(void)
 {
     return (bool)((SYSCON->SYSPLLSTAT & SYSCON_SYSPLLSTAT_LOCK_MASK) != 0);
 }
 
-/*! @brief	Check if USB PLL is locked or not
- *  @return	true if the USB PLL is locked, false if not locked
+/*! @brief  Check if USB PLL is locked or not
+ *  @return true if the USB PLL is locked, false if not locked
  */
 __STATIC_INLINE bool CLOCK_IsUsbPLLLocked(void)
 {
     return (bool)((SYSCON->USBPLLSTAT & SYSCON_USBPLLSTAT_LOCK_MASK) != 0);
 }
 
-/*! @brief	Check if AUDIO PLL is locked or not
- *  @return	true if the AUDIO PLL is locked, false if not locked
+/*! @brief  Check if AUDIO PLL is locked or not
+ *  @return true if the AUDIO PLL is locked, false if not locked
  */
 __STATIC_INLINE bool CLOCK_IsAudioPLLLocked(void)
 {
     return (bool)((SYSCON->AUDPLLSTAT & SYSCON_AUDPLLSTAT_LOCK_MASK) != 0);
 }
 
-/*! @brief	Enables and disables SYS OSC
- *  @brief	enable	: true to enable SYS OSC, false to disable SYS OSC
+/*! @brief  Enables and disables SYS OSC
+ *  @brief  enable  : true to enable SYS OSC, false to disable SYS OSC
 */
 __STATIC_INLINE  void CLOCK_Enable_SysOsc(bool enable)
 {
@@ -988,24 +988,24 @@ __STATIC_INLINE  void CLOCK_Enable_SysOsc(bool enable)
         SYSCON->PDRUNCFGCLR[0] |= SYSCON_PDRUNCFG_PDEN_VD2_ANA_MASK;
         SYSCON->PDRUNCFGCLR[1] |= SYSCON_PDRUNCFG_PDEN_SYSOSC_MASK;
     }
-    
+
     else
     {
-        SYSCON->PDRUNCFGSET[0] = SYSCON_PDRUNCFG_PDEN_VD2_ANA_MASK; 
+        SYSCON->PDRUNCFGSET[0] = SYSCON_PDRUNCFG_PDEN_VD2_ANA_MASK;
         SYSCON->PDRUNCFGSET[1] = SYSCON_PDRUNCFG_PDEN_SYSOSC_MASK;
 
     }
 }
 
 /*! @brief Store the current PLL rate
- *  @param	rate: Current rate of the PLL
- *  @return	Nothing
+ *  @param  rate: Current rate of the PLL
+ *  @return Nothing
  **/
 void CLOCK_SetStoredPLLClockRate(uint32_t rate);
 
 /*! @brief Store the current AUDIO PLL rate
- *  @param	rate: Current rate of the PLL
- *  @return	Nothing
+ *  @param  rate: Current rate of the PLL
+ *  @return Nothing
  **/
 void CLOCK_SetStoredAudioPLLClockRate(uint32_t rate);
 
@@ -1122,47 +1122,47 @@ typedef struct _usb_pll_setup
   uint32_t inputRate;     /*!< USB PLL input rate */
 } usb_pll_setup_t;
 
-/*! @brief	Return System PLL output clock rate from setup structure
- *  @param	pSetup	: Pointer to a PLL setup structure
- *  @return	System PLL output clock rate the setup structure will generate
+/*! @brief  Return System PLL output clock rate from setup structure
+ *  @param  pSetup  : Pointer to a PLL setup structure
+ *  @return System PLL output clock rate the setup structure will generate
  */
 uint32_t CLOCK_GetSystemPLLOutFromSetup(pll_setup_t *pSetup);
 
-/*! @brief	Return System AUDIO PLL output clock rate from setup structure
- *  @param	pSetup	: Pointer to a PLL setup structure
- *  @return	System PLL output clock rate the setup structure will generate
+/*! @brief  Return System AUDIO PLL output clock rate from setup structure
+ *  @param  pSetup  : Pointer to a PLL setup structure
+ *  @return System PLL output clock rate the setup structure will generate
  */
 uint32_t CLOCK_GetAudioPLLOutFromSetup(pll_setup_t *pSetup);
 
-/*! @brief	Return System USB PLL output clock rate from setup structure
- *  @param	pSetup	: Pointer to a PLL setup structure
- *  @return	System PLL output clock rate the setup structure will generate
+/*! @brief  Return System USB PLL output clock rate from setup structure
+ *  @param  pSetup  : Pointer to a PLL setup structure
+ *  @return System PLL output clock rate the setup structure will generate
  */
 uint32_t CLOCK_GetUsbPLLOutFromSetup(const usb_pll_setup_t *pSetup);
 
-/*! @brief	Set PLL output based on the passed PLL setup data
- *  @param	pControl	: Pointer to populated PLL control structure to generate setup with
- *  @param	pSetup		: Pointer to PLL setup structure to be filled
- *  @return	PLL_ERROR_SUCCESS on success, or PLL setup error code
- *  @note	Actual frequency for setup may vary from the desired frequency based on the
+/*! @brief  Set PLL output based on the passed PLL setup data
+ *  @param  pControl    : Pointer to populated PLL control structure to generate setup with
+ *  @param  pSetup      : Pointer to PLL setup structure to be filled
+ *  @return PLL_ERROR_SUCCESS on success, or PLL setup error code
+ *  @note   Actual frequency for setup may vary from the desired frequency based on the
  *  accuracy of input clocks, rounding, non-fractional PLL mode, etc.
  */
 pll_error_t CLOCK_SetupPLLData(pll_config_t *pControl, pll_setup_t *pSetup);
 
-/*! @brief	Set AUDIO PLL output based on the passed AUDIO PLL setup data
- *  @param	pControl	: Pointer to populated PLL control structure to generate setup with
- *  @param	pSetup		: Pointer to PLL setup structure to be filled
- *  @return	PLL_ERROR_SUCCESS on success, or PLL setup error code
- *  @note	Actual frequency for setup may vary from the desired frequency based on the
+/*! @brief  Set AUDIO PLL output based on the passed AUDIO PLL setup data
+ *  @param  pControl    : Pointer to populated PLL control structure to generate setup with
+ *  @param  pSetup      : Pointer to PLL setup structure to be filled
+ *  @return PLL_ERROR_SUCCESS on success, or PLL setup error code
+ *  @note   Actual frequency for setup may vary from the desired frequency based on the
  *  accuracy of input clocks, rounding, non-fractional PLL mode, etc.
  */
 pll_error_t CLOCK_SetupAudioPLLData(pll_config_t *pControl, pll_setup_t *pSetup);
 
-/*! @brief	Set PLL output from PLL setup structure (precise frequency)
- * @param	pSetup	: Pointer to populated PLL setup structure
+/*! @brief  Set PLL output from PLL setup structure (precise frequency)
+ * @param   pSetup  : Pointer to populated PLL setup structure
 * @param flagcfg : Flag configuration for PLL config structure
- * @return	PLL_ERROR_SUCCESS on success, or PLL setup error code
- * @note	This function will power off the PLL, setup the PLL with the
+ * @return  PLL_ERROR_SUCCESS on success, or PLL setup error code
+ * @note    This function will power off the PLL, setup the PLL with the
  * new setup data, and then optionally powerup the PLL, wait for PLL lock,
  * and adjust system voltages to the new PLL rate. The function will not
  * alter any source clocks (ie, main systen clock) that may use the PLL,
@@ -1170,11 +1170,11 @@ pll_error_t CLOCK_SetupAudioPLLData(pll_config_t *pControl, pll_setup_t *pSetup)
  */
 pll_error_t CLOCK_SetupSystemPLLPrec(pll_setup_t *pSetup, uint32_t flagcfg);
 
-/*! @brief	Set AUDIO PLL output from AUDIOPLL setup structure (precise frequency)
- * @param	pSetup	: Pointer to populated PLL setup structure
+/*! @brief  Set AUDIO PLL output from AUDIOPLL setup structure (precise frequency)
+ * @param   pSetup  : Pointer to populated PLL setup structure
 * @param flagcfg : Flag configuration for PLL config structure
- * @return	PLL_ERROR_SUCCESS on success, or PLL setup error code
- * @note	This function will power off the PLL, setup the PLL with the
+ * @return  PLL_ERROR_SUCCESS on success, or PLL setup error code
+ * @note    This function will power off the PLL, setup the PLL with the
  * new setup data, and then optionally powerup the AUDIO PLL, wait for PLL lock,
  * and adjust system voltages to the new AUDIOPLL rate. The function will not
  * alter any source clocks (ie, main systen clock) that may use the AUDIO PLL,
@@ -1183,10 +1183,10 @@ pll_error_t CLOCK_SetupSystemPLLPrec(pll_setup_t *pSetup, uint32_t flagcfg);
 pll_error_t CLOCK_SetupAudioPLLPrec(pll_setup_t *pSetup, uint32_t flagcfg);
 
 /**
- * @brief	Set PLL output from PLL setup structure (precise frequency)
- * @param	pSetup	: Pointer to populated PLL setup structure
- * @return	kStatus_PLL_Success on success, or PLL setup error code
- * @note	This function will power off the PLL, setup the PLL with the
+ * @brief   Set PLL output from PLL setup structure (precise frequency)
+ * @param   pSetup  : Pointer to populated PLL setup structure
+ * @return  kStatus_PLL_Success on success, or PLL setup error code
+ * @note    This function will power off the PLL, setup the PLL with the
  * new setup data, and then optionally powerup the PLL, wait for PLL lock,
  * and adjust system voltages to the new PLL rate. The function will not
  * alter any source clocks (ie, main systen clock) that may use the PLL,
@@ -1195,10 +1195,10 @@ pll_error_t CLOCK_SetupAudioPLLPrec(pll_setup_t *pSetup, uint32_t flagcfg);
 pll_error_t CLOCK_SetPLLFreq(const pll_setup_t *pSetup);
 
 /**
- * @brief	Set Audio PLL output from Audio PLL setup structure (precise frequency)
- * @param	pSetup	: Pointer to populated PLL setup structure
- * @return	kStatus_PLL_Success on success, or Audio PLL setup error code
- * @note	This function will power off the PLL, setup the Audio PLL with the
+ * @brief   Set Audio PLL output from Audio PLL setup structure (precise frequency)
+ * @param   pSetup  : Pointer to populated PLL setup structure
+ * @return  kStatus_PLL_Success on success, or Audio PLL setup error code
+ * @note    This function will power off the PLL, setup the Audio PLL with the
  * new setup data, and then optionally powerup the PLL, wait for Audio PLL lock,
  * and adjust system voltages to the new PLL rate. The function will not
  * alter any source clocks (ie, main systen clock) that may use the Audio PLL,
@@ -1207,10 +1207,10 @@ pll_error_t CLOCK_SetPLLFreq(const pll_setup_t *pSetup);
 pll_error_t CLOCK_SetAudioPLLFreq(const pll_setup_t *pSetup);
 
 /**
- * @brief	Set USB PLL output from USB PLL setup structure (precise frequency)
- * @param	pSetup	: Pointer to populated USB PLL setup structure
- * @return	kStatus_PLL_Success on success, or USB PLL setup error code
- * @note	This function will power off the USB PLL, setup the PLL with the
+ * @brief   Set USB PLL output from USB PLL setup structure (precise frequency)
+ * @param   pSetup  : Pointer to populated USB PLL setup structure
+ * @return  kStatus_PLL_Success on success, or USB PLL setup error code
+ * @note    This function will power off the USB PLL, setup the PLL with the
  * new setup data, and then optionally powerup the USB PLL, wait for USB PLL lock,
  * and adjust system voltages to the new USB PLL rate. The function will not
  * alter any source clocks (ie, usb pll clock) that may use the USB PLL,
@@ -1218,11 +1218,11 @@ pll_error_t CLOCK_SetAudioPLLFreq(const pll_setup_t *pSetup);
  */
 pll_error_t CLOCK_SetUsbPLLFreq(const usb_pll_setup_t *pSetup);
 
-/*! @brief	Set PLL output based on the multiplier and input frequency
- * @param	multiply_by	: multiplier
- * @param	input_freq	: Clock input frequency of the PLL
- * @return	Nothing
- * @note	Unlike the Chip_Clock_SetupSystemPLLPrec() function, this
+/*! @brief  Set PLL output based on the multiplier and input frequency
+ * @param   multiply_by : multiplier
+ * @param   input_freq  : Clock input frequency of the PLL
+ * @return  Nothing
+ * @note    Unlike the Chip_Clock_SetupSystemPLLPrec() function, this
  * function does not disable or enable PLL power, wait for PLL lock,
  * or adjust system voltages. These must be done in the application.
  * The function will not alter any source clocks (ie, main systen clock)
@@ -1241,29 +1241,29 @@ static inline void CLOCK_DisableUsbDevicefs0Clock(clock_ip_name_t clk)
 }
 
 /*! @brief Enable USB Device FS clock.
- * @param	src	: clock source
- * @param	freq: clock frequency
+ * @param   src : clock source
+ * @param   freq: clock frequency
  * Enable USB Device Full Speed clock.
  */
 bool CLOCK_EnableUsbfs0DeviceClock(clock_usb_src_t src, uint32_t freq);
 
 /*! @brief Enable USB HOST FS clock.
- * @param	src	: clock source
- * @param	freq: clock frequency
+ * @param   src : clock source
+ * @param   freq: clock frequency
  * Enable USB HOST Full Speed clock.
  */
 bool CLOCK_EnableUsbfs0HostClock(clock_usb_src_t src, uint32_t freq);
 
 /*! @brief Enable USB Device HS clock.
- * @param	src	: clock source
- * @param	freq: clock frequency
+ * @param   src : clock source
+ * @param   freq: clock frequency
  * Enable USB Device High Speed clock.
  */
 bool CLOCK_EnableUsbhs0DeviceClock(clock_usb_src_t src, uint32_t freq);
 
 /*! @brief Enable USB HOST HS clock.
- * @param	src	: clock source
- * @param	freq: clock frequency
+ * @param   src : clock source
+ * @param   freq: clock frequency
  * Enable USB HOST High Speed clock.
  */
 bool CLOCK_EnableUsbhs0HostClock(clock_usb_src_t src, uint32_t freq);

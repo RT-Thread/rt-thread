@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-02     å‹¤ä¸ºæœ¬       first version
+ * 2017-11-02     ÇÚÎª±¾       first version
  */
 
 #ifndef LS1C_DRV_SPI_H
@@ -29,10 +29,10 @@ struct ls1c_spi_cs
 
 
 /*
- * åˆå§‹åŒ–å¹¶æ³¨å†Œé¾™èŠ¯1cçš„spiæ€»çº¿
- * @SPI SPIæ€»çº¿ï¼Œæ¯”å¦‚LS1C_SPI_0ï¼Œ LS1C_SPI_1
- * @spi_bus_name æ€»çº¿åå­—
- * @ret 
+ * ³õÊ¼»¯²¢×¢²áÁúĞ¾1cµÄspi×ÜÏß
+ * @SPI SPI×ÜÏß£¬±ÈÈçLS1C_SPI_0£¬ LS1C_SPI_1
+ * @spi_bus_name ×ÜÏßÃû×Ö
+ * @ret
  */
 rt_err_t ls1c_spi_bus_register(rt_uint8_t SPI, const char *spi_bus_name);
 

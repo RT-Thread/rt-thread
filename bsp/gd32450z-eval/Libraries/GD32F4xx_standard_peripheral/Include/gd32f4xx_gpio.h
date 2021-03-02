@@ -41,7 +41,7 @@
 
 /* bits definitions */
 /* GPIO_CTL */
-#define GPIO_CTL_CTL0              BITS(0,1)             /*!< pin 0 configuration bits */ 
+#define GPIO_CTL_CTL0              BITS(0,1)             /*!< pin 0 configuration bits */
 #define GPIO_CTL_CTL1              BITS(2,3)             /*!< pin 1 configuration bits */
 #define GPIO_CTL_CTL2              BITS(4,5)             /*!< pin 2 configuration bits */
 #define GPIO_CTL_CTL3              BITS(6,7)             /*!< pin 3 configuration bits */
@@ -324,9 +324,9 @@ typedef FlagStatus bit_status;
 /* gpio alternate function values */
 #define GPIO_AFR_SET(n, af)        ((uint32_t)((uint32_t)(af) << (4U * (n))))
 #define GPIO_AFR_MASK(n)           (0xFU << (4U * (n)))
- 
+
 /* gpio alternate function */
-#define AF(regval)                 (BITS(0,3) & ((uint32_t)(regval) << 0)) 
+#define AF(regval)                 (BITS(0,3) & ((uint32_t)(regval) << 0))
 #define GPIO_AF_0                   AF(0)                /*!< alternate function selected 0 */
 #define GPIO_AF_1                   AF(1)                /*!< alternate function selected 1 */
 #define GPIO_AF_2                   AF(2)                /*!< alternate function selected 2 */

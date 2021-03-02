@@ -3,7 +3,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -65,7 +65,7 @@ extern "C" {
 #endif
 
 /*!
- * @brief	Initialize INPUTMUX peripheral.
+ * @brief   Initialize INPUTMUX peripheral.
 
  * This function enables the INPUTMUX clock.
  *
@@ -104,7 +104,7 @@ void INPUTMUX_EnableSignal(INPUTMUX_Type *base, inputmux_signal_t signal, bool e
 #endif
 
 /*!
- * @brief	Deinitialize INPUTMUX peripheral.
+ * @brief   Deinitialize INPUTMUX peripheral.
 
  * This function disables the INPUTMUX clock.
  *

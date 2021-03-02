@@ -1,33 +1,33 @@
 /******************************************************************************
-*                                                  
+*
 *  (c) copyright Freescale Semiconductor 2008
 *  ALL RIGHTS RESERVED
 *
 *  File Name: FAT16.c
-*                                                                          
-*  Purpose: This file is for a USB Mass-Storage Device bootloader.  This file 
+*
+*  Purpose: This file is for a USB Mass-Storage Device bootloader.  This file
 *           mimics a FAT16 drive in order to enumerate as a disk drive
-*                                                                          
+*
 *  Assembler:  Codewarrior for Microcontrollers V6.2
-*                                            
+*
 *  Version:  1.3
-*                                                                          
-*                                                                          
-*  Author: Derek Snell                             
-*                                                                                       
-*  Location: Indianapolis, IN. USA                                            
-*                                                                                  
+*
+*
+*  Author: Derek Snell
+*
+*  Location: Indianapolis, IN. USA
+*
 * UPDATED HISTORY:
 *
 * REV   YYYY.MM.DD  AUTHOR        DESCRIPTION OF CHANGE
-* ---   ----------  ------        --------------------- 
+* ---   ----------  ------        ---------------------
 * 1.3   2009.01.13  Derek Snell   Added linker SEGMENTs for S08 version
 * 1.2   2008.11.24  Derek Snell   Added Volume label "BOOTLOADER" to FAT16 root directory
 * 1.1   2008.09.17  Derek Snell   Updated to give S19 address error in status
 * 1.0   2008.06.10  Derek Snell   Initial version
-* 
 *
-******************************************************************************/                                                                        
+*
+******************************************************************************/
 /* Freescale  is  not  obligated  to  provide  any  support, upgrades or new */
 /* releases  of  the Software. Freescale may make changes to the Software at */
 /* any time, without any obligation to notify or provide updated versions of */
@@ -57,7 +57,7 @@
 /* specifically  represent and warrant that you will not use the Software or */
 /* any  derivative  work of the Software for High Risk Activities.           */
 /* Freescale  and the Freescale logos are registered trademarks of Freescale */
-/* Semiconductor Inc.                                                        */ 
+/* Semiconductor Inc.                                                        */
 /*****************************************************************************/
 
 
@@ -70,13 +70,13 @@ static unsigned char GetASCIIValue(unsigned char value);
  * External references.
  *****************************************************************************/
  extern unsigned char BootloaderStatus;
- extern uint_32 S19Address; 
+ extern uint_32 S19Address;
 /********************************************************************
 *********************************************************************
 *       FAT16 Boot Sector
 *********************************************************************
 ********************************************************************/
-const uint_8 FAT16_BootSector[FATBootSize]= 
+const uint_8 FAT16_BootSector[FATBootSize]=
 {
     0xEB,           /*00 - BS_jmpBoot */
     0x3C,           /*01 - BS_jmpBoot */
@@ -122,7 +122,7 @@ const uint_8 FAT16_BootSector[FATBootSize]=
 *       First Sector of FAT Table
 *********************************************************************
 ********************************************************************/
-const uint_8 FAT16_TableSector0[FATTableSize]= 
+const uint_8 FAT16_TableSector0[FATTableSize]=
 {
     0xF8,0xFF,0xFF,0x7F
 };
@@ -131,23 +131,23 @@ const uint_8 FAT16_TableSector0[FATTableSize]=
 *       FAT Root Directory Sector
 *********************************************************************
 ********************************************************************/
-const uint_8 FAT16_ReadyFileName[FATFileNameSize]= 
+const uint_8 FAT16_ReadyFileName[FATFileNameSize]=
 {
     'R','E','A','D','Y',' ',' ',' ','T','X','T'    /*00-10 - Short File Name */
 };
-const uint_8 FAT16_SuccessFileName[FATFileNameSize]= 
+const uint_8 FAT16_SuccessFileName[FATFileNameSize]=
 {
     'S','U','C','C','E','S','S',' ','T','X','T'    /*00-10 - Short File Name */
 };
-const uint_8 FAT16_FlashFailFileName[FATFileNameSize]= 
+const uint_8 FAT16_FlashFailFileName[FATFileNameSize]=
 {
     'F','F','A','I','L','E','D',' ','T','X','T'    /*00-10 - Short File Name */
 };
-const uint_8 FAT16_StartedFileName[FATFileNameSize]= 
+const uint_8 FAT16_StartedFileName[FATFileNameSize]=
 {
     'S','T','A','R','T','E','D',' ','T','X','T'    /*00-10 - Short File Name */
 };
-const uint_8 FAT16_RootDirSector[FATDirSize]= 
+const uint_8 FAT16_RootDirSector[FATDirSize]=
 {
     0x20,           /*11 - Archive Attribute set */
     0x00,           /*12 - Reserved */
@@ -193,21 +193,21 @@ const uint_8 FAT16_RootDirSector[FATDirSize]=
 *
 * Desc: Converts hex value to ASCII character
 *
-* Parameter: hex value to convert 
+* Parameter: hex value to convert
 *
 * Return: unsigned char, ASCII character
-*             
+*
 **********************************************************/
-static unsigned char GetASCIIValue 
+static unsigned char GetASCIIValue
     (
         unsigned char value
     )
 {
     /* Body */
-    if(value <= 9) 
+    if(value <= 9)
     {
-        return (uint_8)(value + '0'); 
-    } else if(value <= 0xF) 
+        return (uint_8)(value + '0');
+    } else if(value <= 0xF)
     {
         return (uint_8)(value - 0xA + 'A');
     } else
@@ -216,26 +216,26 @@ static unsigned char GetASCIIValue
 /*********************************************************
 * Name: FATReadLBA
 *
-* Desc: Read a Logical Block Address 
+* Desc: Read a Logical Block Address
 *
 * Parameter: FAT_LBA - Logical Block Address to Read
-*            pu8DataPointer - Pointer to array to store data read  
+*            pu8DataPointer - Pointer to array to store data read
 *
 * Return: None
-*             
+*
 **********************************************************/
 void FATReadLBA
     (
         uint_32 FAT_LBA,
         uint_8 *pu8DataPointer
-    ) 
+    )
 {
     /* Body */
     int_32 i;
-    switch (FAT_LBA) 
+    switch (FAT_LBA)
     {
         /* Boot Sector */
-        case FATBootSec: 
+        case FATBootSec:
             /* Write Boot Sector info */
             for(i=0;i<FATBootSize;i++)
             {
@@ -243,7 +243,7 @@ void FATReadLBA
             } /* EndFor */
             /* Rest of sector empty except last two bytes */
             i += 2;
-            while (i++ < FATBytesPerSec) 
+            while (i++ < FATBytesPerSec)
             {
                 *pu8DataPointer++ = 0;
             } /* EndWhile */
@@ -260,60 +260,60 @@ void FATReadLBA
                 *pu8DataPointer++ = FAT16_TableSector0[i];
             } /* EndFor */
             /* Rest of sector empty */
-            while (i++ < FATBytesPerSec) 
+            while (i++ < FATBytesPerSec)
             {
                 *pu8DataPointer++ = 0;
             } /*ENdWhile */
             break;
-            
+
         /* Root Directory Sector */
         case FATRootDirSec0:
             /* Write file name */
-            switch (BootloaderStatus) 
+            switch (BootloaderStatus)
             {
                 case BootloaderReady:
                 default:
-                    for(i=0;i<FATFileNameSize;i++) 
+                    for(i=0;i<FATFileNameSize;i++)
                     {
                         *pu8DataPointer++ = FAT16_ReadyFileName[i];
                     } /* EndFor */
                     break;
                 case BootloaderFlashError:
-                    for(i=0;i<FATFileNameSize;i++) 
+                    for(i=0;i<FATFileNameSize;i++)
                     {
                         *pu8DataPointer++ = FAT16_FlashFailFileName[i];
                     } /* EndFor */
                     break;
                 case BootloaderSuccess:
                     for(i=0;i<FATFileNameSize;i++) {
-                        *pu8DataPointer++ = FAT16_SuccessFileName[i];    
+                        *pu8DataPointer++ = FAT16_SuccessFileName[i];
                     } /* EndFor */
                     break;
                 case BootloaderStarted:
                     for(i=0;i<FATFileNameSize;i++) {
-                        *pu8DataPointer++ = FAT16_StartedFileName[i];    
+                        *pu8DataPointer++ = FAT16_StartedFileName[i];
                     }
                     break;
             } /* EndSwitch */
-        
+
             /* Write rest of file FAT structure */
-            for(i=0;i<FATDirSize;i++) 
+            for(i=0;i<FATDirSize;i++)
             {
-                *pu8DataPointer++ = FAT16_RootDirSector[i];    
+                *pu8DataPointer++ = FAT16_RootDirSector[i];
             } /* EndFor */
-        
+
             /* Rest of sector empty to signify no more files */
             i += FATFileNameSize;
-            while (i++ < FATBytesPerSec) 
+            while (i++ < FATBytesPerSec)
             {
                 *pu8DataPointer++ = 0;
             } /* EndWhile */
             break;
-            
+
           /* All other sectors empty */
         default:
             i = 0;
-            while (i++ < FATBytesPerSec) 
+            while (i++ < FATBytesPerSec)
             {
                 *pu8DataPointer++ = 0;
             } /* EndWhile */

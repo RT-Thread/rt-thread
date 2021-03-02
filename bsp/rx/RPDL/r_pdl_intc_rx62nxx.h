@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: External interrupt API for RX62Nxx
-* File Name		: r_pdl_intc_RX62Nxx.h
-* Version		: 1.02
-* Contents		: INTC API header
-* Customer		:
-* Model			:
-* Order			:
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	:
-* Note			:
+* System Name   : External interrupt API for RX62Nxx
+* File Name     : r_pdl_intc_RX62Nxx.h
+* Version       : 1.02
+* Contents      : INTC API header
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_INTC_RX62Nxx_H
@@ -28,44 +28,44 @@ extern VoidCallBackFunc rpdl_INTC_callback_func[];
 
 /* Library prototypes */
 bool R_INTC_CreateExtInterruptAll(
-	const uint8_t,
-	const uint32_t,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_INTC_CreateSoftwareInterruptAll(
-	const uint8_t,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_INTC_CreateFastInterruptAll(
-	const uint8_t
+    const uint8_t
 );
 bool R_INTC_CreateExceptionHandlersAll(
-	VoidCallBackFunc const,
-	VoidCallBackFunc const,
-	VoidCallBackFunc const
+    VoidCallBackFunc const,
+    VoidCallBackFunc const,
+    VoidCallBackFunc const
 );
 bool R_INTC_ControlExtInterruptAll(
-	const uint8_t,
-	const uint32_t
+    const uint8_t,
+    const uint32_t
 );
 bool R_INTC_GetExtInterruptStatusAll(
-	const uint8_t,
-	volatile uint8_t * const
+    const uint8_t,
+    volatile uint8_t * const
 );
 bool R_INTC_ReadAll(
-	const uint16_t,
-	volatile uint8_t * const
+    const uint16_t,
+    volatile uint8_t * const
 );
 bool R_INTC_WriteAll(
-	const uint16_t,
-	const uint8_t
+    const uint16_t,
+    const uint8_t
 );
 bool R_INTC_ModifyAll(
-	const uint16_t,
-	const uint8_t,
-	const uint8_t
+    const uint16_t,
+    const uint8_t,
+    const uint8_t
 );
 bool ReturnFalse(void);
 

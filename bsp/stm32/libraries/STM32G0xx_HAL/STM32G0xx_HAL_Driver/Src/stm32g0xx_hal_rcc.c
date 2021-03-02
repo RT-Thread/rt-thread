@@ -686,7 +686,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
         return HAL_ERROR;
       }
       else
-      {   
+      {
         /* Do not return HAL_ERROR if request repeats the current configuration */
         temp_pllckcfg = RCC->PLLCFGR;
         if((READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLSRC) != RCC_OscInitStruct->PLL.PLLSource) ||

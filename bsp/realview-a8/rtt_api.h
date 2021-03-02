@@ -149,11 +149,11 @@ struct vmm_domain
 
 struct vmm_iomap
 {
-	const char name[16];        /* iomap name       */
+    const char name[16];        /* iomap name       */
 
-	unsigned long pa;           /* physical address */
-	volatile void __iomem * va; /* virtual address  */
-	size_t size;                /* memory size      */
+    unsigned long pa;           /* physical address */
+    volatile void __iomem * va; /* virtual address  */
+    size_t size;                /* memory size      */
 };
 
 struct vmm_entry_param

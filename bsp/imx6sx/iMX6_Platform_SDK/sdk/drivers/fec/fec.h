@@ -70,19 +70,19 @@ typedef struct imx_fec_bd imx_fec_bd_t;
 
 //! @brief  Data structure for FEC device
 typedef struct imx_fec_priv_s {
-    hw_fec_t *fec_reg;     //!< the reister base address of FEC 
-    unsigned char phy_addr;     //!< the address of PHY which associated with FEC controller 
+    hw_fec_t *fec_reg;     //!< the reister base address of FEC
+    unsigned char phy_addr;     //!< the address of PHY which associated with FEC controller
     uint32_t phy_id;            //!< ID of the PHY
-    unsigned char tx_busy;      //!< 0:free, 1:transmitting frame 
+    unsigned char tx_busy;      //!< 0:free, 1:transmitting frame
     unsigned char res[2];
-    unsigned long status;       //!< the status of FEC device:link-status etc. 
-    unsigned long tx_key;       //!< save the key delivered from send function 
-    imx_fec_bd_t *rx_bd;       //!< the receive buffer description ring 
-    imx_fec_bd_t *rx_cur;      //!< the next recveive buffer description 
-    imx_fec_bd_t *tx_bd;       //!< the transmit buffer description rign 
-    imx_fec_bd_t *tx_cur;      //!< the next transmit buffer description 
-    // TODO: Add interrupt about fields 
-    // TODO: Add timer about fields 
+    unsigned long status;       //!< the status of FEC device:link-status etc.
+    unsigned long tx_key;       //!< save the key delivered from send function
+    imx_fec_bd_t *rx_bd;       //!< the receive buffer description ring
+    imx_fec_bd_t *rx_cur;      //!< the next recveive buffer description
+    imx_fec_bd_t *tx_bd;       //!< the transmit buffer description rign
+    imx_fec_bd_t *tx_cur;      //!< the next transmit buffer description
+    // TODO: Add interrupt about fields
+    // TODO: Add timer about fields
 } imx_fec_priv_t;
 
 //! @brief Definitions of the status field of imx_fec_priv_t.
@@ -103,26 +103,26 @@ enum {
 extern "C" {
 #endif
 
-/*! 
+/*!
  * @brief Enable FEC and start transfer.
- * @param dev    a pointer of FEC interface(imx_fec_priv_t) 
+ * @param dev    a pointer of FEC interface(imx_fec_priv_t)
  * @param enaddr     a pointer of MAC address
  *
  * @return      none
  */
 void imx_fec_start(imx_fec_priv_t * dev, unsigned char *enaddr);
 
-/*! 
+/*!
  * @brief Disable FEC
- * @param       dev    a pointer of FEC interface(imx_fec_priv_t) 
+ * @param       dev    a pointer of FEC interface(imx_fec_priv_t)
  *
  * @return      none
  */
 void imx_fec_stop(imx_fec_priv_t * dev);
 
-/*! 
+/*!
  * @brief Initialize FEC PHY, like LAN8700, 8720, AR8031, etc
- * @param       dev    a pointer of FEC interface(imx_fec_priv_t) 
+ * @param       dev    a pointer of FEC interface(imx_fec_priv_t)
  *
  * @return      none
  */
@@ -136,9 +136,9 @@ void imx_fec_phy_init(imx_fec_priv_t * dev);
  */
 uint32_t imx_fec_get_phy_status(imx_fec_priv_t * dev);
 
-/*! 
+/*!
  * @brief Initialize FEC interface, including buffer descriptor and MAC
- * @param dev    a pointer of FEC interface(imx_fec_priv_t) 
+ * @param dev    a pointer of FEC interface(imx_fec_priv_t)
  * @param reg_base   base address of ethernet registers
  * @param phy_addr   phy address, 0 or 1
  *
@@ -146,17 +146,17 @@ uint32_t imx_fec_get_phy_status(imx_fec_priv_t * dev);
  */
 int imx_fec_init(imx_fec_priv_t * dev, unsigned long reg_base, int phy_addr);
 
-/*! 
+/*!
  * @brief Poll FEC events
- * @param       dev    a pointer of FEC interface(imx_fec_priv_t) 
+ * @param       dev    a pointer of FEC interface(imx_fec_priv_t)
  *
  * @return      event value
  */
 unsigned long imx_fec_poll(imx_fec_priv_t * dev);
 
-/*! 
+/*!
  * @brief Recieve FEC packet
- * @param dev    a pointer of FEC interface(imx_fec_priv_t) 
+ * @param dev    a pointer of FEC interface(imx_fec_priv_t)
  * @param buf        a pointer of buffer for received packet
  * @param length the length of received packet
  *
@@ -166,9 +166,9 @@ unsigned long imx_fec_poll(imx_fec_priv_t * dev);
  */
 int imx_fec_recv(imx_fec_priv_t * dev, unsigned char *buf, int *length);
 
-/*! 
+/*!
  * @brief Transmit FEC packet
- * @param dev    a pointer of FEC interface(imx_fec_priv_t) 
+ * @param dev    a pointer of FEC interface(imx_fec_priv_t)
  * @param buf        a pointer of buffer for packet to be sent
  * @param length the length of packet to be sent
  * @param key        key

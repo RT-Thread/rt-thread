@@ -23,10 +23,10 @@ void NVIC_Init(NVIC_IRQChannel Channel,NVIC_IRQPriority Priority,TYPE_FUNCEN Cmd
 
     if (Cmd != DISABLE)
     {
-        /* Compute the Corresponding IRQ Priority */    
+        /* Compute the Corresponding IRQ Priority */
         tmppriority = NVIC->IP[Channel >> 0x02];
         tmppriority &= (uint32_t)(~(((uint32_t)0xFF) << ((Channel & 0x03) * 8)));
-        tmppriority |= (uint32_t)((((uint32_t)Priority << 6) & 0xFF) << ((Channel & 0x03) * 8));    
+        tmppriority |= (uint32_t)((((uint32_t)Priority << 6) & 0xFF) << ((Channel & 0x03) * 8));
 
         NVIC->IP[Channel >> 0x02] = tmppriority;
 

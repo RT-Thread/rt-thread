@@ -64,53 +64,53 @@
  * \param[in]  color      Pixel operation of the line.
  */
 void gfx_mono_generic_draw_horizontal_line(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t length, enum gfx_mono_color color)
+        gfx_coord_t length, enum gfx_mono_color color)
 {
-	uint8_t page;
-	uint8_t pixelmask;
-	uint8_t temp;
+    uint8_t page;
+    uint8_t pixelmask;
+    uint8_t temp;
 
-	/* Clip line length if too long */
-	if (x + length > GFX_MONO_LCD_WIDTH) {
-		length = GFX_MONO_LCD_WIDTH - x;
-	}
+    /* Clip line length if too long */
+    if (x + length > GFX_MONO_LCD_WIDTH) {
+        length = GFX_MONO_LCD_WIDTH - x;
+    }
 
-	page = y / 8;
-	pixelmask = (1 << (y - (page * 8)));
+    page = y / 8;
+    pixelmask = (1 << (y - (page * 8)));
 
-	if (length == 0) {
-		/* Nothing to do. Move along. */
-		return;
-	}
+    if (length == 0) {
+        /* Nothing to do. Move along. */
+        return;
+    }
 
-	switch (color) {
-	case GFX_PIXEL_SET:
-		while (length-- > 0) {
-			temp = gfx_mono_get_byte(page, x + length);
-			temp |= pixelmask;
-			gfx_mono_put_byte(page, x + length, temp);
-		}
-		break;
+    switch (color) {
+    case GFX_PIXEL_SET:
+        while (length-- > 0) {
+            temp = gfx_mono_get_byte(page, x + length);
+            temp |= pixelmask;
+            gfx_mono_put_byte(page, x + length, temp);
+        }
+        break;
 
-	case GFX_PIXEL_CLR:
-		while (length-- > 0) {
-			temp = gfx_mono_get_byte(page, x + length);
-			temp &= ~pixelmask;
-			gfx_mono_put_byte(page, x + length, temp);
-		}
-		break;
+    case GFX_PIXEL_CLR:
+        while (length-- > 0) {
+            temp = gfx_mono_get_byte(page, x + length);
+            temp &= ~pixelmask;
+            gfx_mono_put_byte(page, x + length, temp);
+        }
+        break;
 
-	case GFX_PIXEL_XOR:
-		while (length-- > 0) {
-			temp = gfx_mono_get_byte(page, x + length);
-			temp ^= pixelmask;
-			gfx_mono_put_byte(page, x + length, temp);
-		}
-		break;
+    case GFX_PIXEL_XOR:
+        while (length-- > 0) {
+            temp = gfx_mono_get_byte(page, x + length);
+            temp ^= pixelmask;
+            gfx_mono_put_byte(page, x + length, temp);
+        }
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 }
 
 /**
@@ -127,45 +127,45 @@ void gfx_mono_generic_draw_horizontal_line(gfx_coord_t x, gfx_coord_t y,
  * \param[in]  color      Pixel operation of the line.
  */
 void gfx_mono_generic_draw_vertical_line(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t length, enum gfx_mono_color color)
+        gfx_coord_t length, enum gfx_mono_color color)
 {
-	if (length == 0) {
-		return;
-	}
+    if (length == 0) {
+        return;
+    }
 
-	gfx_coord_t y2 = y + length - 1;
+    gfx_coord_t y2 = y + length - 1;
 
-	if (y == y2) {
-		gfx_mono_draw_pixel(x, y, color);
-		return;
-	}
+    if (y == y2) {
+        gfx_mono_draw_pixel(x, y, color);
+        return;
+    }
 
-	if (y2 >= GFX_MONO_LCD_HEIGHT - 1) {
-		y2 = GFX_MONO_LCD_HEIGHT - 1;
-	}
+    if (y2 >= GFX_MONO_LCD_HEIGHT - 1) {
+        y2 = GFX_MONO_LCD_HEIGHT - 1;
+    }
 
-	gfx_coord_t y1page = y / 8;
-	gfx_coord_t y2page = y2 / 8;
+    gfx_coord_t y1page = y / 8;
+    gfx_coord_t y2page = y2 / 8;
 
-	uint8_t y1bitpos = y & 0x07;
-	uint8_t y2bitpos = y2 & 0x07;
+    uint8_t y1bitpos = y & 0x07;
+    uint8_t y2bitpos = y2 & 0x07;
 
-	uint8_t y1pixelmask = 0xFF << y1bitpos;
-	uint8_t y2pixelmask = 0xFF >> (7 - y2bitpos);
+    uint8_t y1pixelmask = 0xFF << y1bitpos;
+    uint8_t y2pixelmask = 0xFF >> (7 - y2bitpos);
 
-	/* The pixels are on the same page; combine masks */
-	if (y1page == y2page) {
-		uint8_t pixelmask = y1pixelmask & y2pixelmask;
-		gfx_mono_mask_byte(y1page, x, pixelmask, color);
-	} else {
-		gfx_mono_mask_byte(y1page, x, y1pixelmask, color);
+    /* The pixels are on the same page; combine masks */
+    if (y1page == y2page) {
+        uint8_t pixelmask = y1pixelmask & y2pixelmask;
+        gfx_mono_mask_byte(y1page, x, pixelmask, color);
+    } else {
+        gfx_mono_mask_byte(y1page, x, y1pixelmask, color);
 
-		while (++y1page < y2page) {
-			gfx_mono_mask_byte(y1page, x, 0xFF, color);
-		}
+        while (++y1page < y2page) {
+            gfx_mono_mask_byte(y1page, x, 0xFF, color);
+        }
 
-		gfx_mono_mask_byte(y2page, x, y2pixelmask, color);
-	}
+        gfx_mono_mask_byte(y2page, x, y2pixelmask, color);
+    }
 }
 
 /**
@@ -178,73 +178,73 @@ void gfx_mono_generic_draw_vertical_line(gfx_coord_t x, gfx_coord_t y,
  * \param[in]  color       Pixel operation of the line.
  */
 void gfx_mono_generic_draw_line(gfx_coord_t x1, gfx_coord_t y1,
-		gfx_coord_t x2, gfx_coord_t y2,
-		enum gfx_mono_color color)
+        gfx_coord_t x2, gfx_coord_t y2,
+        enum gfx_mono_color color)
 {
-	uint8_t i;
-	uint8_t x;
-	uint8_t y;
-	int8_t xinc;
-	int8_t yinc;
-	int8_t dx;
-	int8_t dy;
-	int8_t e;
+    uint8_t i;
+    uint8_t x;
+    uint8_t y;
+    int8_t xinc;
+    int8_t yinc;
+    int8_t dx;
+    int8_t dy;
+    int8_t e;
 
-	/* swap x1,y1  with x2,y2 */
-	if (x1 > x2) {
-		dx = x1;
-		x1 = x2;
-		x2 = dx;
-		dy = y1;
-		y1 = y2;
-		y2 = dy;
-	}
+    /* swap x1,y1  with x2,y2 */
+    if (x1 > x2) {
+        dx = x1;
+        x1 = x2;
+        x2 = dx;
+        dy = y1;
+        y1 = y2;
+        y2 = dy;
+    }
 
-	dx = x2 - x1;
-	dy = y2 - y1;
+    dx = x2 - x1;
+    dy = y2 - y1;
 
-	x = x1;
-	y = y1;
+    x = x1;
+    y = y1;
 
-	if (dx < 0) {
-		xinc = -1;
-		dx = -dx;
-	} else {
-		xinc = 1;
-	}
+    if (dx < 0) {
+        xinc = -1;
+        dx = -dx;
+    } else {
+        xinc = 1;
+    }
 
-	if (dy < 0) {
-		yinc = -1;
-		dy = -dy;
-	} else {
-		yinc = 1;
-	}
+    if (dy < 0) {
+        yinc = -1;
+        dy = -dy;
+    } else {
+        yinc = 1;
+    }
 
-	if (dx > dy) {
-		e = dy - dx;
-		for (i = 0; i <= dx; i++) {
-			gfx_mono_draw_pixel(x, y, color);
-			if (e >= 0) {
-				e -= dx;
-				y += yinc;
-			}
+    if (dx > dy) {
+        e = dy - dx;
+        for (i = 0; i <= dx; i++) {
+            gfx_mono_draw_pixel(x, y, color);
+            if (e >= 0) {
+                e -= dx;
+                y += yinc;
+            }
 
-			e += dy;
-			x += xinc;
-		}
-	} else {
-		e = dx - dy;
-		for (i = 0; i <= dy; i++) {
-			gfx_mono_draw_pixel(x, y, color);
-			if (e >= 0) {
-				e -= dy;
-				x += xinc;
-			}
+            e += dy;
+            x += xinc;
+        }
+    } else {
+        e = dx - dy;
+        for (i = 0; i <= dy; i++) {
+            gfx_mono_draw_pixel(x, y, color);
+            if (e >= 0) {
+                e -= dy;
+                x += xinc;
+            }
 
-			e += dx;
-			y += yinc;
-		}
-	}
+            e += dx;
+            y += yinc;
+        }
+    }
 }
 
 /**
@@ -257,14 +257,14 @@ void gfx_mono_generic_draw_line(gfx_coord_t x1, gfx_coord_t y1,
  * \param[in] color       Pixel operation of the line.
  */
 void gfx_mono_generic_draw_rect(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t width, gfx_coord_t height,
-		enum gfx_mono_color color)
+        gfx_coord_t width, gfx_coord_t height,
+        enum gfx_mono_color color)
 {
-	gfx_mono_draw_horizontal_line(x, y, width, color);
-	gfx_mono_draw_horizontal_line(x, y + height - 1, width, color);
+    gfx_mono_draw_horizontal_line(x, y, width, color);
+    gfx_mono_draw_horizontal_line(x, y + height - 1, width, color);
 
-	gfx_mono_draw_vertical_line(x, y, height, color);
-	gfx_mono_draw_vertical_line(x + width - 1, y, height, color);
+    gfx_mono_draw_vertical_line(x, y, height, color);
+    gfx_mono_draw_vertical_line(x + width - 1, y, height, color);
 }
 
 /**
@@ -277,17 +277,17 @@ void gfx_mono_generic_draw_rect(gfx_coord_t x, gfx_coord_t y,
  * \param[in]  color       Pixel operation of the line
  */
 void gfx_mono_generic_draw_filled_rect(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t width, gfx_coord_t height,
-		enum gfx_mono_color color)
+        gfx_coord_t width, gfx_coord_t height,
+        enum gfx_mono_color color)
 {
-	if (height == 0) {
-		/* Nothing to do. Move along. */
-		return;
-	}
+    if (height == 0) {
+        /* Nothing to do. Move along. */
+        return;
+    }
 
-	while (height-- > 0) {
-		gfx_mono_draw_horizontal_line(x, y + height, width, color);
-	}
+    while (height-- > 0) {
+        gfx_mono_draw_horizontal_line(x, y + height, width, color);
+    }
 }
 
 /**
@@ -309,70 +309,70 @@ void gfx_mono_generic_draw_filled_rect(gfx_coord_t x, gfx_coord_t y,
  * \param[in]  octant_mask Bitmask indicating which octants to draw.
  */
 void gfx_mono_generic_draw_circle(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t radius, enum gfx_mono_color color,
-		uint8_t octant_mask)
+        gfx_coord_t radius, enum gfx_mono_color color,
+        uint8_t octant_mask)
 {
-	gfx_coord_t offset_x;
-	gfx_coord_t offset_y;
-	int16_t error;
+    gfx_coord_t offset_x;
+    gfx_coord_t offset_y;
+    int16_t error;
 
-	/* Draw only a pixel if radius is zero. */
-	if (radius == 0) {
-		gfx_mono_draw_pixel(x, y, color);
-		return;
-	}
+    /* Draw only a pixel if radius is zero. */
+    if (radius == 0) {
+        gfx_mono_draw_pixel(x, y, color);
+        return;
+    }
 
-	/* Set up start iterators. */
-	offset_x = 0;
-	offset_y = radius;
-	error = 3 - 2 * radius;
+    /* Set up start iterators. */
+    offset_x = 0;
+    offset_y = radius;
+    error = 3 - 2 * radius;
 
-	/* Iterate offsetX from 0 to radius. */
-	while (offset_x <= offset_y) {
-		/* Draw one pixel for each octant enabled in octant_mask. */
-		if (octant_mask & GFX_OCTANT0) {
-			gfx_mono_draw_pixel(x + offset_y, y - offset_x, color);
-		}
+    /* Iterate offsetX from 0 to radius. */
+    while (offset_x <= offset_y) {
+        /* Draw one pixel for each octant enabled in octant_mask. */
+        if (octant_mask & GFX_OCTANT0) {
+            gfx_mono_draw_pixel(x + offset_y, y - offset_x, color);
+        }
 
-		if (octant_mask & GFX_OCTANT1) {
-			gfx_mono_draw_pixel(x + offset_x, y - offset_y, color);
-		}
+        if (octant_mask & GFX_OCTANT1) {
+            gfx_mono_draw_pixel(x + offset_x, y - offset_y, color);
+        }
 
-		if (octant_mask & GFX_OCTANT2) {
-			gfx_mono_draw_pixel(x - offset_x, y - offset_y, color);
-		}
+        if (octant_mask & GFX_OCTANT2) {
+            gfx_mono_draw_pixel(x - offset_x, y - offset_y, color);
+        }
 
-		if (octant_mask & GFX_OCTANT3) {
-			gfx_mono_draw_pixel(x - offset_y, y - offset_x, color);
-		}
+        if (octant_mask & GFX_OCTANT3) {
+            gfx_mono_draw_pixel(x - offset_y, y - offset_x, color);
+        }
 
-		if (octant_mask & GFX_OCTANT4) {
-			gfx_mono_draw_pixel(x - offset_y, y + offset_x, color);
-		}
+        if (octant_mask & GFX_OCTANT4) {
+            gfx_mono_draw_pixel(x - offset_y, y + offset_x, color);
+        }
 
-		if (octant_mask & GFX_OCTANT5) {
-			gfx_mono_draw_pixel(x - offset_x, y + offset_y, color);
-		}
+        if (octant_mask & GFX_OCTANT5) {
+            gfx_mono_draw_pixel(x - offset_x, y + offset_y, color);
+        }
 
-		if (octant_mask & GFX_OCTANT6) {
-			gfx_mono_draw_pixel(x + offset_x, y + offset_y, color);
-		}
+        if (octant_mask & GFX_OCTANT6) {
+            gfx_mono_draw_pixel(x + offset_x, y + offset_y, color);
+        }
 
-		if (octant_mask & GFX_OCTANT7) {
-			gfx_mono_draw_pixel(x + offset_y, y + offset_x, color);
-		}
+        if (octant_mask & GFX_OCTANT7) {
+            gfx_mono_draw_pixel(x + offset_y, y + offset_x, color);
+        }
 
-		/* Update error value and step offset_y when required. */
-		if (error < 0) {
-			error += ((offset_x << 2) + 6);
-		} else {
-			error += (((offset_x - offset_y) << 2) + 10);
-			--offset_y;
-		}
+        /* Update error value and step offset_y when required. */
+        if (error < 0) {
+            error += ((offset_x << 2) + 6);
+        } else {
+            error += (((offset_x - offset_y) << 2) + 10);
+            --offset_y;
+        }
 
-		/* Next X. */
-		++offset_x;
-	}
+        /* Next X. */
+        ++offset_x;
+    }
 }
 
 /**
@@ -398,66 +398,66 @@ void gfx_mono_generic_draw_circle(gfx_coord_t x, gfx_coord_t y,
  * \param[in]  quadrant_mask Bitmask indicating which quadrants to draw.
  */
 void gfx_mono_generic_draw_filled_circle(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t radius, enum gfx_mono_color color,
-		uint8_t quadrant_mask)
+        gfx_coord_t radius, enum gfx_mono_color color,
+        uint8_t quadrant_mask)
 {
-	gfx_coord_t offset_x;
-	gfx_coord_t offset_y;
-	int16_t error;
+    gfx_coord_t offset_x;
+    gfx_coord_t offset_y;
+    int16_t error;
 
-	/* Draw only a pixel if radius is zero. */
-	if (radius == 0) {
-		gfx_mono_draw_pixel(x, y, color);
-		return;
-	}
+    /* Draw only a pixel if radius is zero. */
+    if (radius == 0) {
+        gfx_mono_draw_pixel(x, y, color);
+        return;
+    }
 
-	/* Set up start iterators. */
-	offset_x = 0;
-	offset_y = radius;
-	error = 3 - 2 * radius;
+    /* Set up start iterators. */
+    offset_x = 0;
+    offset_y = radius;
+    error = 3 - 2 * radius;
 
-	/* Iterate offset_x from 0 to radius. */
-	while (offset_x <= offset_y) {
-		/* Draw vertical lines tracking each quadrant. */
-		if (quadrant_mask & GFX_QUADRANT0) {
-			gfx_mono_draw_vertical_line(x + offset_y,
-					y - offset_x, offset_x + 1, color);
-			gfx_mono_draw_vertical_line(x + offset_x,
-					y - offset_y, offset_y + 1, color);
-		}
+    /* Iterate offset_x from 0 to radius. */
+    while (offset_x <= offset_y) {
+        /* Draw vertical lines tracking each quadrant. */
+        if (quadrant_mask & GFX_QUADRANT0) {
+            gfx_mono_draw_vertical_line(x + offset_y,
+                    y - offset_x, offset_x + 1, color);
+            gfx_mono_draw_vertical_line(x + offset_x,
+                    y - offset_y, offset_y + 1, color);
+        }
 
-		if (quadrant_mask & GFX_QUADRANT1) {
-			gfx_mono_draw_vertical_line(x - offset_y,
-					y - offset_x, offset_x + 1, color);
-			gfx_mono_draw_vertical_line(x - offset_x,
-					y - offset_y, offset_y + 1, color);
-		}
+        if (quadrant_mask & GFX_QUADRANT1) {
+            gfx_mono_draw_vertical_line(x - offset_y,
+                    y - offset_x, offset_x + 1, color);
+            gfx_mono_draw_vertical_line(x - offset_x,
+                    y - offset_y, offset_y + 1, color);
+        }
 
-		if (quadrant_mask & GFX_QUADRANT2) {
-			gfx_mono_draw_vertical_line(x - offset_y,
-					y, offset_x + 1, color);
-			gfx_mono_draw_vertical_line(x - offset_x,
-					y, offset_y + 1, color);
-		}
+        if (quadrant_mask & GFX_QUADRANT2) {
+            gfx_mono_draw_vertical_line(x - offset_y,
+                    y, offset_x + 1, color);
+            gfx_mono_draw_vertical_line(x - offset_x,
+                    y, offset_y + 1, color);
+        }
 
-		if (quadrant_mask & GFX_QUADRANT3) {
-			gfx_mono_draw_vertical_line(x + offset_y,
-					y, offset_x + 1, color);
-			gfx_mono_draw_vertical_line(x + offset_x,
-					y, offset_y + 1, color);
-		}
+        if (quadrant_mask & GFX_QUADRANT3) {
+            gfx_mono_draw_vertical_line(x + offset_y,
+                    y, offset_x + 1, color);
+            gfx_mono_draw_vertical_line(x + offset_x,
+                    y, offset_y + 1, color);
+        }
 
-		/* Update error value and step offset_y when required. */
-		if (error < 0) {
-			error += ((offset_x << 2) + 6);
-		} else {
-			error += (((offset_x - offset_y) << 2) + 10);
-			--offset_y;
-		}
+        /* Update error value and step offset_y when required. */
+        if (error < 0) {
+            error += ((offset_x << 2) + 6);
+        } else {
+            error += (((offset_x - offset_y) << 2) + 10);
+            --offset_y;
+        }
 
-		/* Next X. */
-		++offset_x;
-	}
+        /* Next X. */
+        ++offset_x;
+    }
 }
 
 /**
@@ -470,37 +470,37 @@ void gfx_mono_generic_draw_filled_circle(gfx_coord_t x, gfx_coord_t y,
  *
  */
 void gfx_mono_generic_put_bitmap(struct gfx_mono_bitmap *bitmap, gfx_coord_t x,
-		gfx_coord_t y)
+        gfx_coord_t y)
 {
-	gfx_coord_t num_pages = bitmap->height / 8;
-	gfx_coord_t page = y / 8;
-	gfx_coord_t column;
-	gfx_coord_t i;
-	gfx_mono_color_t temp;
+    gfx_coord_t num_pages = bitmap->height / 8;
+    gfx_coord_t page = y / 8;
+    gfx_coord_t column;
+    gfx_coord_t i;
+    gfx_mono_color_t temp;
 
-	switch (bitmap->type) {
-	case GFX_MONO_BITMAP_PROGMEM:
-		for (i = 0; i < num_pages; i++) {
-			for (column = 0; column < bitmap->width; column++) {
-				temp = PROGMEM_READ_BYTE(bitmap->data.progmem
-						+ (i * bitmap->width)
-						+ column);
-				gfx_mono_put_byte(i + page, column + x, temp);
-			}
-		}
-		break;
+    switch (bitmap->type) {
+    case GFX_MONO_BITMAP_PROGMEM:
+        for (i = 0; i < num_pages; i++) {
+            for (column = 0; column < bitmap->width; column++) {
+                temp = PROGMEM_READ_BYTE(bitmap->data.progmem
+                        + (i * bitmap->width)
+                        + column);
+                gfx_mono_put_byte(i + page, column + x, temp);
+            }
+        }
+        break;
 
-	case GFX_MONO_BITMAP_RAM:
-		for (i = 0; i < num_pages; i++) {
-			gfx_mono_put_page(bitmap->data.pixmap
-					+ (i * bitmap->width), page + i, x,
-					bitmap->width);
-		}
-		break;
+    case GFX_MONO_BITMAP_RAM:
+        for (i = 0; i < num_pages; i++) {
+            gfx_mono_put_page(bitmap->data.pixmap
+                    + (i * bitmap->width), page + i, x,
+                    bitmap->width);
+        }
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 }
 
 /** @} */

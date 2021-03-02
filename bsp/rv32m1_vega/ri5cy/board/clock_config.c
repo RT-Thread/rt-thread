@@ -1,7 +1,7 @@
 /*
  * Copyright 2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -58,7 +58,7 @@ extern uint32_t SystemCoreClock;
  * Description   : This function is used to safely configure FIRC clock.
  *                 In default out of reset, the CPU is clocked from FIRC(IRC48M).
  *                 Before setting FIRC, change to use SIRC as system clock,
- *                 then configure FIRC. 
+ *                 then configure FIRC.
  * Param fircConfig  : FIRC configuration.
  *
  *END**************************************************************************/

@@ -55,20 +55,20 @@ void *_i2c_instances;
  * \param[in,out] module  Pointer to software module structure
  */
 static void _i2c_master_read(
-		struct i2c_master_module *const module)
+        struct i2c_master_module *const module)
 {
-	/* Sanity check arguments. */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments. */
+    Assert(module);
+    Assert(module->hw);
 
-	I2c *const i2c_module = module->hw;
+    I2c *const i2c_module = module->hw;
 
-	/* Find index to save next value in buffer */
-	uint16_t buffer_index = module->buffer_length - module->buffer_remaining;
+    /* Find index to save next value in buffer */
+    uint16_t buffer_index = module->buffer_length - module->buffer_remaining;
 
-	module->buffer_remaining--;
+    module->buffer_remaining--;
 
-	module->buffer[buffer_index] = i2c_module->RECEIVE_DATA.reg;
+    module->buffer[buffer_index] = i2c_module->RECEIVE_DATA.reg;
 }
 
 /**
@@ -80,23 +80,23 @@ static void _i2c_master_read(
  */
 static void _i2c_master_write(struct i2c_master_module *const module)
 {
-	/* Sanity check arguments. */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments. */
+    Assert(module);
+    Assert(module->hw);
 
-	I2c *const i2c_module = module->hw;
+    I2c *const i2c_module = module->hw;
 
-	/* Find index to get next byte in buffer */
-	volatile uint16_t buffer_index = module->buffer_length - module->buffer_remaining;
+    /* Find index to get next byte in buffer */
+    volatile uint16_t buffer_index = module->buffer_length - module->buffer_remaining;
 
-	module->buffer_remaining--;
+    module->buffer_remaining--;
 
-	/* Write byte from buffer to slave */
-	i2c_module->TRANSMIT_DATA.reg = module->buffer[buffer_index];
-	
-	if (module->buffer_remaining <= 0) {
-		i2c_module->TX_INTERRUPT_MASK.reg = I2C_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
-	}
+    /* Write byte from buffer to slave */
+    i2c_module->TRANSMIT_DATA.reg = module->buffer[buffer_index];
+
+    if (module->buffer_remaining <= 0) {
+        i2c_module->TX_INTERRUPT_MASK.reg = I2C_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+    }
 }
 
 
@@ -115,20 +115,20 @@ static void _i2c_master_write(struct i2c_master_module *const module)
  * \param[in]      callback_type  Callback type to register
  */
 void i2c_master_register_callback(
-		struct i2c_master_module *const module,
-		const i2c_master_callback_t callback,
-		enum i2c_master_callback callback_type)
+        struct i2c_master_module *const module,
+        const i2c_master_callback_t callback,
+        enum i2c_master_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(callback);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(callback);
 
-	/* Register callback */
-	module->callbacks[callback_type] = callback;
+    /* Register callback */
+    module->callbacks[callback_type] = callback;
 
-	/* Set corresponding bit to set callback as registered */
-	module->registered_callback |= (1 << callback_type);
+    /* Set corresponding bit to set callback as registered */
+    module->registered_callback |= (1 << callback_type);
 }
 
 /**
@@ -141,18 +141,18 @@ void i2c_master_register_callback(
  * \param[in]     callback_type  Specifies the callback type to unregister
  */
 void i2c_master_unregister_callback(
-		struct i2c_master_module *const module,
-		enum i2c_master_callback callback_type)
+        struct i2c_master_module *const module,
+        enum i2c_master_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	
-	/* Register callback */
-	module->callbacks[callback_type] = NULL;
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Clear corresponding bit to set callback as unregistered */
-	module->registered_callback &= ~(1 << callback_type);
+    /* Register callback */
+    module->callbacks[callback_type] = NULL;
+
+    /* Clear corresponding bit to set callback as unregistered */
+    module->registered_callback &= ~(1 << callback_type);
 }
 
 /**
@@ -167,34 +167,34 @@ void i2c_master_unregister_callback(
  * \retval STATUS_BUSY  If module is currently busy with another transfer
  */
 static enum status_code _i2c_master_read_packet(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet)
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	I2c *const i2c_module = module->hw;
+    I2c *const i2c_module = module->hw;
 
-	/* Save packet to software module */
-	module->buffer             = packet->data;
-	module->buffer_remaining   = packet->data_length;
-	module->transfer_direction = I2C_TRANSFER_READ;
-	module->status             = STATUS_BUSY;
-	
-	i2c_wait_for_idle(i2c_module);
-	/* Flush the FIFO */
-	i2c_module->I2C_FLUSH.reg = 1;
-	/* Enable I2C on bus (start condition) */
-	i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_1;
-	/* Set address and direction bit. Will send start command on bus */
-	i2c_module->TRANSMIT_DATA.reg = I2C_TRANSMIT_DATA_ADDRESS_FLAG_1 |
-			(packet->address << 1) | module->transfer_direction;
-	/* Enable interrupts */
-	i2c_module->RX_INTERRUPT_MASK.reg = I2C_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK;
-	
-	return STATUS_OK;
+    /* Save packet to software module */
+    module->buffer             = packet->data;
+    module->buffer_remaining   = packet->data_length;
+    module->transfer_direction = I2C_TRANSFER_READ;
+    module->status             = STATUS_BUSY;
+
+    i2c_wait_for_idle(i2c_module);
+    /* Flush the FIFO */
+    i2c_module->I2C_FLUSH.reg = 1;
+    /* Enable I2C on bus (start condition) */
+    i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_1;
+    /* Set address and direction bit. Will send start command on bus */
+    i2c_module->TRANSMIT_DATA.reg = I2C_TRANSMIT_DATA_ADDRESS_FLAG_1 |
+            (packet->address << 1) | module->transfer_direction;
+    /* Enable interrupts */
+    i2c_module->RX_INTERRUPT_MASK.reg = I2C_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK;
+
+    return STATUS_OK;
 }
 
 /**
@@ -211,23 +211,23 @@ static enum status_code _i2c_master_read_packet(
  * \retval STATUS_BUSY  If module is currently busy with another transfer
  */
 enum status_code i2c_master_read_packet_job(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet)
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	/* Check if the I2C module is busy with a job */
-	if (module->buffer_remaining > 0) {
-		return STATUS_BUSY;
-	}
+    /* Check if the I2C module is busy with a job */
+    if (module->buffer_remaining > 0) {
+        return STATUS_BUSY;
+    }
 
-	/* Make sure we send STOP */
-	module->no_stop = false;
-	/* Start reading */
-	return _i2c_master_read_packet(module, packet);
+    /* Make sure we send STOP */
+    module->no_stop = false;
+    /* Start reading */
+    return _i2c_master_read_packet(module, packet);
 }
 
 /**
@@ -249,23 +249,23 @@ enum status_code i2c_master_read_packet_job(
  * \retval STATUS_BUSY If module is currently busy with another operation
  */
 enum status_code i2c_master_read_packet_job_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet)
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	/* Check if the I2C module is busy with a job */
-	if (module->buffer_remaining > 0) {
-		return STATUS_BUSY;
-	}
+    /* Check if the I2C module is busy with a job */
+    if (module->buffer_remaining > 0) {
+        return STATUS_BUSY;
+    }
 
-	/* Make sure we don't send STOP */
-	module->no_stop = true;
-	/* Start reading */
-	return _i2c_master_read_packet(module, packet);
+    /* Make sure we don't send STOP */
+    module->no_stop = true;
+    /* Start reading */
+    return _i2c_master_read_packet(module, packet);
 }
 
 
@@ -280,31 +280,31 @@ enum status_code i2c_master_read_packet_job_no_stop(
  * \retval STATUS_BUSY If module is currently busy with another transfer
  */
 static enum status_code _i2c_master_write_packet(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet)
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	I2c *const i2c_module = module->hw;
+    I2c *const i2c_module = module->hw;
 
-	/* Save packet to software module */
-	module->buffer             = packet->data;
-	module->buffer_remaining   = packet->data_length;
-	module->transfer_direction = I2C_TRANSFER_WRITE;
-	module->status             = STATUS_BUSY;
+    /* Save packet to software module */
+    module->buffer             = packet->data;
+    module->buffer_remaining   = packet->data_length;
+    module->transfer_direction = I2C_TRANSFER_WRITE;
+    module->status             = STATUS_BUSY;
 
-	/* Enable I2C on bus (start condition) */
-	i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_1;
-	/* Set address and direction bit, will send start command on bus */
-	i2c_module->TRANSMIT_DATA.reg = I2C_TRANSMIT_DATA_ADDRESS_FLAG_1 |
-			(packet->address << 1) | module->transfer_direction;
-	/* Enable interrupts */
-	i2c_module->TX_INTERRUPT_MASK.reg = I2C_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+    /* Enable I2C on bus (start condition) */
+    i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_1;
+    /* Set address and direction bit, will send start command on bus */
+    i2c_module->TRANSMIT_DATA.reg = I2C_TRANSMIT_DATA_ADDRESS_FLAG_1 |
+            (packet->address << 1) | module->transfer_direction;
+    /* Enable interrupts */
+    i2c_module->TX_INTERRUPT_MASK.reg = I2C_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -321,23 +321,23 @@ static enum status_code _i2c_master_write_packet(
  * \retval STATUS_BUSY  If module is currently busy with another transfer
  */
 enum status_code i2c_master_write_packet_job(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet)
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	/* Check if the I2C module is busy with another job. */
-	if (module->buffer_remaining > 0) {
-		return STATUS_BUSY;
-	}
+    /* Check if the I2C module is busy with another job. */
+    if (module->buffer_remaining > 0) {
+        return STATUS_BUSY;
+    }
 
-	/* Make sure we send STOP at end*/
-	module->no_stop = false;
-	/* Start write operation */
-	return _i2c_master_write_packet(module, packet);
+    /* Make sure we send STOP at end*/
+    module->no_stop = false;
+    /* Start write operation */
+    return _i2c_master_write_packet(module, packet);
 }
 
 /**
@@ -359,23 +359,23 @@ enum status_code i2c_master_write_packet_job(
  * \retval STATUS_BUSY  If module is currently busy with another
  */
 enum status_code i2c_master_write_packet_job_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet)
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	/* Check if the I2C module is busy with another job. */
-	if (module->buffer_remaining > 0) {
-		return STATUS_BUSY;
-	}
+    /* Check if the I2C module is busy with another job. */
+    if (module->buffer_remaining > 0) {
+        return STATUS_BUSY;
+    }
 
-	/* Do not send stop condition when done */
-	module->no_stop = true;
-	/* Start write operation */
-	return _i2c_master_write_packet(module, packet);
+    /* Do not send stop condition when done */
+    module->no_stop = true;
+    /* Start write operation */
+    return _i2c_master_write_packet(module, packet);
 }
 
 /**
@@ -383,79 +383,79 @@ enum status_code i2c_master_write_packet_job_no_stop(
  */
 void _i2c_master_isr_handler(void)
 {
-	/* Get software module for callback handling */
-	struct i2c_master_module *module =
-			(struct i2c_master_module*)_i2c_instances;
+    /* Get software module for callback handling */
+    struct i2c_master_module *module =
+            (struct i2c_master_module*)_i2c_instances;
 
-	Assert(module);
+    Assert(module);
 
-	I2c *const i2c_module = module->hw;
+    I2c *const i2c_module = module->hw;
 
-	/* Combine callback registered and enabled masks */
-	uint8_t callback_mask = module->enabled_callback &
-			module->registered_callback;
+    /* Combine callback registered and enabled masks */
+    uint8_t callback_mask = module->enabled_callback &
+            module->registered_callback;
 
-	if ((module->buffer_length <= 0) && (module->buffer_remaining > 0)) {
-		module->buffer_length = module->buffer_remaining;
-	/* Check if buffer write is done */
-	} else if ((module->buffer_length > 0) && (module->buffer_remaining <= 0) &&
-			(module->status == STATUS_BUSY) &&
-			(module->transfer_direction == I2C_TRANSFER_WRITE)) {
-		/* Disable write interrupt flag */
-		i2c_module->TX_INTERRUPT_MASK.reg = 0;
+    if ((module->buffer_length <= 0) && (module->buffer_remaining > 0)) {
+        module->buffer_length = module->buffer_remaining;
+    /* Check if buffer write is done */
+    } else if ((module->buffer_length > 0) && (module->buffer_remaining <= 0) &&
+            (module->status == STATUS_BUSY) &&
+            (module->transfer_direction == I2C_TRANSFER_WRITE)) {
+        /* Disable write interrupt flag */
+        i2c_module->TX_INTERRUPT_MASK.reg = 0;
 
-		module->buffer_length = 0;
-		module->status        = STATUS_OK;
+        module->buffer_length = 0;
+        module->status        = STATUS_OK;
 
-		if (!module->no_stop) {
-			/* Send stop condition */
-			i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_0;
-		} 
+        if (!module->no_stop) {
+            /* Send stop condition */
+            i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_0;
+        }
 
-		if (callback_mask & (1 << I2C_MASTER_CALLBACK_WRITE_COMPLETE)) {
-			module->callbacks[I2C_MASTER_CALLBACK_WRITE_COMPLETE](module);
-		}
+        if (callback_mask & (1 << I2C_MASTER_CALLBACK_WRITE_COMPLETE)) {
+            module->callbacks[I2C_MASTER_CALLBACK_WRITE_COMPLETE](module);
+        }
 
-	/* Continue buffer write/read */
-	} else if ((module->buffer_length > 0) && (module->buffer_remaining > 0)){
-		if (module->transfer_direction == I2C_TRANSFER_WRITE) {
-			_i2c_master_write(module);
-		} else {
-			_i2c_master_read(module);
-		}
-	}
+    /* Continue buffer write/read */
+    } else if ((module->buffer_length > 0) && (module->buffer_remaining > 0)){
+        if (module->transfer_direction == I2C_TRANSFER_WRITE) {
+            _i2c_master_write(module);
+        } else {
+            _i2c_master_read(module);
+        }
+    }
 
-	/* Check if read buffer transfer is complete */
-	if ((module->buffer_length > 0) && (module->buffer_remaining <= 0) &&
-			(module->status == STATUS_BUSY) &&
-			(module->transfer_direction == I2C_TRANSFER_READ)) {
-		/* Disable read interrupt flag */
-		i2c_module->RX_INTERRUPT_MASK.reg = 0;
+    /* Check if read buffer transfer is complete */
+    if ((module->buffer_length > 0) && (module->buffer_remaining <= 0) &&
+            (module->status == STATUS_BUSY) &&
+            (module->transfer_direction == I2C_TRANSFER_READ)) {
+        /* Disable read interrupt flag */
+        i2c_module->RX_INTERRUPT_MASK.reg = 0;
 
-		module->buffer_length = 0;
-		module->status        = STATUS_OK;
+        module->buffer_length = 0;
+        module->status        = STATUS_OK;
 
-		if (!module->no_stop) {
-			/* Send stop condition */
-			i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_0;
-		}
-		
-		if ((callback_mask & (1 << I2C_MASTER_CALLBACK_READ_COMPLETE))
-				&& (module->transfer_direction == I2C_TRANSFER_READ)) {
-			module->callbacks[I2C_MASTER_CALLBACK_READ_COMPLETE](module);
-		}
-	}
-	if (module->transfer_direction == I2C_TRANSFER_READ) {
-		if (module->hw == I2C0) {
-			NVIC_ClearPendingIRQ(I2C0_RX_IRQn);
-		} else if (module->hw == I2C1) {
-			NVIC_ClearPendingIRQ(I2C1_RX_IRQn);
-		} 
-	} else {
-		if (module->hw == I2C0) {
-			NVIC_ClearPendingIRQ(I2C0_TX_IRQn);
-		} else if (module->hw == I2C1) {
-			NVIC_ClearPendingIRQ(I2C1_TX_IRQn);
-		}
-	}
+        if (!module->no_stop) {
+            /* Send stop condition */
+            i2c_module->I2C_ONBUS.reg = I2C_ONBUS_ONBUS_ENABLE_0;
+        }
+
+        if ((callback_mask & (1 << I2C_MASTER_CALLBACK_READ_COMPLETE))
+                && (module->transfer_direction == I2C_TRANSFER_READ)) {
+            module->callbacks[I2C_MASTER_CALLBACK_READ_COMPLETE](module);
+        }
+    }
+    if (module->transfer_direction == I2C_TRANSFER_READ) {
+        if (module->hw == I2C0) {
+            NVIC_ClearPendingIRQ(I2C0_RX_IRQn);
+        } else if (module->hw == I2C1) {
+            NVIC_ClearPendingIRQ(I2C1_RX_IRQn);
+        }
+    } else {
+        if (module->hw == I2C0) {
+            NVIC_ClearPendingIRQ(I2C0_TX_IRQn);
+        } else if (module->hw == I2C1) {
+            NVIC_ClearPendingIRQ(I2C1_TX_IRQn);
+        }
+    }
 }

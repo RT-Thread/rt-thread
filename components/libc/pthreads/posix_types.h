@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2013-12-23     Bernard      Add the checking for ESHUTDOWN 
+ * 2013-12-23     Bernard      Add the checking for ESHUTDOWN
  */
 
 #ifndef __POSIX_TYPES_H__

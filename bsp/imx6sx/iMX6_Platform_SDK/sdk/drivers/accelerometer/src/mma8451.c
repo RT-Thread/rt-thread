@@ -52,7 +52,7 @@ uint8_t mma8451_read_register(const mma8451_device_t * device, uint8_t reg_addr)
     rq.reg_addr_sz = 1;
     rq.buffer_sz = 1;
     rq.buffer = buf;
-    
+
     i2c_read(&rq);
 
     return buf[0];
@@ -78,21 +78,21 @@ int mma8451_init(mma8451_device_t * device, const i2c_device_info_t * address)
 {
     // Clear device struct.
     memset(device, 0, sizeof(*device));
-    
+
     // Check the I2C address.
     if (address->address != kMMA8451_I2C_Address && address->address != kMMA8451_I2C_Address_With_SAO_Set)
     {
         return kMMA8451_Invalid_I2C_Address_Error;
     }
-    
+
     // Save I2C device info struct.
     device->addressInfo = *address;
-    
+
     // Init the I2C port.
     i2c_init(device->addressInfo.port, address->freq);
 
     unsigned char val = 0;
-    
+
     // Read WHO_AM_I register.
     val = mma8451_read_register(device, kMMA8451_WHO_AM_I);
     if (val != kMMA8451_WHO_AM_I_Device_ID)
@@ -101,28 +101,28 @@ int mma8451_init(mma8451_device_t * device, const i2c_device_info_t * address)
         return 1;
     }
 
-    // Put the mma8451 into standby mode 
+    // Put the mma8451 into standby mode
     val = mma8451_read_register(device, kMMA8451_CTRL_REG1);
     val &= ~(0x01);
     mma8451_write_register(device, kMMA8451_CTRL_REG1, val);
 
-    // Set the range, -8g to 8g 
+    // Set the range, -8g to 8g
     val = mma8451_read_register(device, kMMA8451_XYZ_DATA_CFG);
     val &= ~0x03;
     val |= 0x02;
     mma8451_write_register(device, kMMA8451_XYZ_DATA_CFG, val);
 
-    // Set the F_MODE, disable FIFO 
+    // Set the F_MODE, disable FIFO
     val = mma8451_read_register(device, kMMA8451_F_SETUP);
     val &= 0x3F;
     mma8451_write_register(device, kMMA8451_F_SETUP, val);
 
-    // Put the mma8451 into active mode 
+    // Put the mma8451 into active mode
     val = mma8451_read_register(device, kMMA8451_CTRL_REG1);
     val |= 0x01;
     val &= ~0x02;               //set F_READ to 0
     mma8451_write_register(device, kMMA8451_CTRL_REG1, val);
-    
+
     return SUCCESS;
 }
 
@@ -132,14 +132,14 @@ int mma8451_get_acceleration(const mma8451_device_t * device, acceleration_t * a
     {
         return 0;
     }
-    
+
     uint8_t ucVal1 = 0;
     uint8_t ucVal2 = 0;
     uint8_t ucStatus = 0;
     uint16_t iTemp = 0;
     int sign = 1;
 //     char signch = '+';
-    
+
     do {
         ucStatus = mma8451_read_register(device, kMMA8451_STATUS);
     } while (!(ucStatus & 0x08));
@@ -152,7 +152,7 @@ int mma8451_get_acceleration(const mma8451_device_t * device, acceleration_t * a
         iTemp = (~iTemp + 1) & 0x1FFF;
 //     signch = (sign == -1) ? '-' : '+';
     accel->x = (float)(iTemp * sign) * 8.0 / 8192.0;
-//     printf("\r 	  The acceleration is: (%c%01d.%02dg, ",
+//     printf("\r     The acceleration is: (%c%01d.%02dg, ",
 //            signch, iTemp * 8 / 0x2000, (iTemp & 0x3FF) * 800 / 0x2000);
 
     ucVal1 = mma8451_read_register(device, kMMA8451_OUT_Y_MSB);

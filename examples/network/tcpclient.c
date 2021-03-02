@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <sys/select.h>
 #endif
-#include <sys/socket.h> /* ä½¿ç”¨BSD socketï¼Œéœ€è¦åŒ…å«socket.hå¤´æ–‡ä»¶ */
+#include <sys/socket.h> /* Ê¹ÓÃBSD socket£¬ĞèÒª°üº¬socket.hÍ·ÎÄ¼ş */
 #include "netdb.h"
 
 #define DEBUG_TCP_CLIENT
@@ -26,7 +26,7 @@ static int started = 0;
 static int is_running = 0;
 static char url[256];
 static int port = 8080;
-static const char send_data[] = "This is TCP Client from RT-Thread."; /* å‘é€ç”¨åˆ°çš„æ•°æ® */
+static const char send_data[] = "This is TCP Client from RT-Thread."; /* ·¢ËÍÓÃµ½µÄÊı¾İ */
 
 static void tcpclient(void *arg)
 {
@@ -40,7 +40,7 @@ static void tcpclient(void *arg)
     struct timeval timeout;
     fd_set readset;
 
-    /* é€šè¿‡å‡½æ•°å…¥å£å‚æ•°urlè·å¾—hoståœ°å€ï¼ˆå¦‚æœæ˜¯åŸŸåï¼Œä¼šåšåŸŸåè§£æï¼‰ */
+    /* Í¨¹ıº¯ÊıÈë¿Ú²ÎÊıurl»ñµÃhostµØÖ·£¨Èç¹ûÊÇÓòÃû£¬»á×öÓòÃû½âÎö£© */
     host = gethostbyname(url);
     if (host == RT_NULL)
     {
@@ -48,7 +48,7 @@ static void tcpclient(void *arg)
         return;
     }
 
-    /* åˆ†é…ç”¨äºå­˜æ”¾æ¥æ”¶æ•°æ®çš„ç¼“å†² */
+    /* ·ÖÅäÓÃÓÚ´æ·Å½ÓÊÕÊı¾İµÄ»º³å */
     recv_data = rt_malloc(BUFSZ);
     if (recv_data == RT_NULL)
     {
@@ -56,24 +56,24 @@ static void tcpclient(void *arg)
         return;
     }
 
-    /* åˆ›å»ºä¸€ä¸ªsocketï¼Œç±»å‹æ˜¯SOCKET_STREAMï¼ŒTCPç±»å‹ */
+    /* ´´½¨Ò»¸ösocket£¬ÀàĞÍÊÇSOCKET_STREAM£¬TCPÀàĞÍ */
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        /* åˆ›å»ºsocketå¤±è´¥ */
+        /* ´´½¨socketÊ§°Ü */
         LOG_E("Create socket error");
         goto __exit;
     }
 
-    /* åˆå§‹åŒ–é¢„è¿æ¥çš„æœåŠ¡ç«¯åœ°å€ */
+    /* ³õÊ¼»¯Ô¤Á¬½ÓµÄ·şÎñ¶ËµØÖ· */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr = *((struct in_addr *)host->h_addr);
     rt_memset(&(server_addr.sin_zero), 0, sizeof(server_addr.sin_zero));
 
-    /* è¿æ¥åˆ°æœåŠ¡ç«¯ */
+    /* Á¬½Óµ½·şÎñ¶Ë */
     if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
     {
-        /* è¿æ¥å¤±è´¥ */
+        /* Á¬½ÓÊ§°Ü */
         LOG_E("Connect fail!");
         goto __exit;
     }
@@ -93,49 +93,49 @@ static void tcpclient(void *arg)
         if (select(sock + 1, &readset, RT_NULL, RT_NULL, &timeout) == 0)
             continue;
 
-        /* ä»sockè¿æ¥ä¸­æ¥æ”¶æœ€å¤§BUFSZ - 1å­—èŠ‚æ•°æ® */
+        /* ´ÓsockÁ¬½ÓÖĞ½ÓÊÕ×î´óBUFSZ - 1×Ö½ÚÊı¾İ */
         bytes_received = recv(sock, recv_data, BUFSZ - 1, 0);
         if (bytes_received < 0)
         {
-            /* æ¥æ”¶å¤±è´¥ï¼Œå…³é—­è¿™ä¸ªè¿æ¥ */
+            /* ½ÓÊÕÊ§°Ü£¬¹Ø±ÕÕâ¸öÁ¬½Ó */
             LOG_E("Received error, close the socket.");
             goto __exit;
         }
         else if (bytes_received == 0)
         {
-            /* æ‰“å°recvå‡½æ•°è¿”å›å€¼ä¸º0çš„è­¦å‘Šä¿¡æ¯ */
+            /* ´òÓ¡recvº¯Êı·µ»ØÖµÎª0µÄ¾¯¸æĞÅÏ¢ */
             LOG_W("Received warning, recv function return 0.");
             continue;
         }
         else
         {
-            /* æœ‰æ¥æ”¶åˆ°æ•°æ®ï¼ŒæŠŠæœ«ç«¯æ¸…é›¶ */
+            /* ÓĞ½ÓÊÕµ½Êı¾İ£¬°ÑÄ©¶ËÇåÁã */
             recv_data[bytes_received] = '\0';
 
             if (rt_strcmp(recv_data, "q") == 0 || rt_strcmp(recv_data, "Q") == 0)
             {
-                /* å¦‚æœæ˜¯é¦–å­—æ¯æ˜¯qæˆ–Qï¼Œå…³é—­è¿™ä¸ªè¿æ¥ */
+                /* Èç¹ûÊÇÊ××ÖÄ¸ÊÇq»òQ£¬¹Ø±ÕÕâ¸öÁ¬½Ó */
                 LOG_I("Got a 'q' or 'Q', close the socket.");
                 goto __exit;
             }
             else
             {
-                /* åœ¨æ§åˆ¶ç»ˆç«¯æ˜¾ç¤ºæ”¶åˆ°çš„æ•°æ® */
+                /* ÔÚ¿ØÖÆÖÕ¶ËÏÔÊ¾ÊÕµ½µÄÊı¾İ */
                 LOG_D("Received data = %s", recv_data);
             }
         }
 
-        /* å‘é€æ•°æ®åˆ°sockè¿æ¥ */
+        /* ·¢ËÍÊı¾İµ½sockÁ¬½Ó */
         ret = send(sock, send_data, rt_strlen(send_data), 0);
         if (ret < 0)
         {
-            /* å‘é€å¤±è´¥ï¼Œå…³é—­è¿™ä¸ªè¿æ¥ */
+            /* ·¢ËÍÊ§°Ü£¬¹Ø±ÕÕâ¸öÁ¬½Ó */
             LOG_I("send error, close the socket.");
             goto __exit;
         }
         else if (ret == 0)
         {
-            /* æ‰“å°sendå‡½æ•°è¿”å›å€¼ä¸º0çš„è­¦å‘Šä¿¡æ¯ */
+            /* ´òÓ¡sendº¯Êı·µ»ØÖµÎª0µÄ¾¯¸æĞÅÏ¢ */
             LOG_W("Send warning, send function return 0.");
         }
     }

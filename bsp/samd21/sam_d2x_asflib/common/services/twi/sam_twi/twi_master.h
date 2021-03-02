@@ -55,50 +55,50 @@ typedef twi_options_t twi_master_options_t;
 typedef twi_packet_t twi_package_t;
 
 static inline uint32_t twi_master_setup(twi_master_t p_twi,
-		twi_master_options_t *p_opt)
+        twi_master_options_t *p_opt)
 {
-	p_opt->master_clk = sysclk_get_peripheral_hz();
-	p_opt->smbus      = 0;
+    p_opt->master_clk = sysclk_get_peripheral_hz();
+    p_opt->smbus      = 0;
 #if SAMG55
-	if (p_twi == TWI0) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM0);
-	} else if (p_twi == TWI1) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM1);
-	} else if (p_twi == TWI2) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM2);
-	} else if (p_twi == TWI3) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM3);
-	} else if (p_twi == TWI4) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM4);
-	} else if (p_twi == TWI5) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM5);
-	} else if (p_twi == TWI6) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM6);
+    if (p_twi == TWI0) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM0);
+    } else if (p_twi == TWI1) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM1);
+    } else if (p_twi == TWI2) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM2);
+    } else if (p_twi == TWI3) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM3);
+    } else if (p_twi == TWI4) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM4);
+    } else if (p_twi == TWI5) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM5);
+    } else if (p_twi == TWI6) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM6);
 #ifdef _SAMG55_FLEXCOM7_INSTANCE_
-	} else if (p_twi == TWI7) {
-		sysclk_enable_peripheral_clock(ID_FLEXCOM7);
+    } else if (p_twi == TWI7) {
+        sysclk_enable_peripheral_clock(ID_FLEXCOM7);
 #endif /* _SAMG55_FLEXCOM7_INSTANCE_*/
-	} else {
-		// Do Nothing
-	}
+    } else {
+        // Do Nothing
+    }
 #else
 #if (!(SAMG51 || SAMG53 || SAMG54))
-	if (p_twi == TWI0) {
-		sysclk_enable_peripheral_clock(ID_TWI0);
-	} else
+    if (p_twi == TWI0) {
+        sysclk_enable_peripheral_clock(ID_TWI0);
+    } else
 #endif
-	if (p_twi == TWI1) {
-		sysclk_enable_peripheral_clock(ID_TWI1);
+    if (p_twi == TWI1) {
+        sysclk_enable_peripheral_clock(ID_TWI1);
 #if (SAM4N || SAMG)
-	} else if (p_twi == TWI2) {
-		sysclk_enable_peripheral_clock(ID_TWI2);
+    } else if (p_twi == TWI2) {
+        sysclk_enable_peripheral_clock(ID_TWI2);
 #endif
-	} else {
-		// Do Nothing
-	}
+    } else {
+        // Do Nothing
+    }
 #endif
 
-	return (twi_master_init(p_twi, p_opt));
+    return (twi_master_init(p_twi, p_opt));
 }
 
 #define twi_master_enable(p_twi)   twi_enable_master_mode(p_twi)

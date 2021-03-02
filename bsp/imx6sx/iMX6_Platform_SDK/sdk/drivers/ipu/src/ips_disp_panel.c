@@ -342,7 +342,7 @@ uint32_t num_of_panels = sizeof(disp_dev_list) / sizeof(ips_dev_panel_t);
 
 /*! Set display parameters in IPU configuration structure according to your display panel name. There are only some displays are supported by this function. And you can set the display manually all by your self if the hardware is supported by IPU.
  *
- * @param panel_name 		panel name of your display
+ * @param panel_name        panel name of your display
  */
 ips_dev_panel_t *search_panel(char *panel_name)
 {
@@ -369,7 +369,7 @@ ips_dev_panel_t *search_panel(char *panel_name)
 
 /*! @brief list the supported panel of specific type.
  *
- * @param panel_type 		panel type of display
+ * @param panel_type        panel type of display
  */
 void list_panel(uint32_t panel_type)
 {

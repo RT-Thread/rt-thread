@@ -113,15 +113,15 @@ extern "C" {
 
 /** Maximum number of menu elements on display */
 #define GFX_MONO_MENU_ELEMENTS_PER_SCREEN ((GFX_MONO_LCD_HEIGHT / \
-	SYSFONT_LINESPACING) - 1)
+    SYSFONT_LINESPACING) - 1)
 
 /** Menu struct */
 struct gfx_mono_menu {
-	PROGMEM_STRING_T title;
-	PROGMEM_STRING_T *strings;
-	uint8_t num_elements;
-	uint8_t current_selection;
-	uint8_t current_page;
+    PROGMEM_STRING_T title;
+    PROGMEM_STRING_T *strings;
+    uint8_t num_elements;
+    uint8_t current_selection;
+    uint8_t current_page;
 };
 
 void gfx_mono_menu_init(struct gfx_mono_menu *menu);

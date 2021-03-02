@@ -123,9 +123,9 @@
 #define reg32_write_mask(addr, data, mask) \
         reg32_write((addr),((reg32_read(addr) & (~mask)) | (mask & data)))
 
-#define gen_msk32(start, end)	((0xFFFFFFFF << (start)) ^ (0xFFFFFFFF << ((end + 1))))
+#define gen_msk32(start, end)   ((0xFFFFFFFF << (start)) ^ (0xFFFFFFFF << ((end + 1))))
 #define reg32_set_field(addr, start, end, val) \
-		reg32_write_mask(addr, (val) << (start), gen_msk32((start, end)))
+        reg32_write_mask(addr, (val) << (start), gen_msk32((start, end)))
 //@}
 
 /*!

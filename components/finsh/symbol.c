@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2010-03-22     Bernard      first version
  */
- 
+
 #include <rtthread.h>
 
 #if defined(RT_USING_FINSH) && !defined(FINSH_USING_SYMTAB)

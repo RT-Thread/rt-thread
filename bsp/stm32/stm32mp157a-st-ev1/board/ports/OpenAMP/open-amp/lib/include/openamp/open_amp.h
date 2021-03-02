@@ -14,4 +14,4 @@
 #include <openamp/remoteproc_virtio.h>
 
 
-#endif				/* OPEN_AMP_H_ */
+#endif              /* OPEN_AMP_H_ */

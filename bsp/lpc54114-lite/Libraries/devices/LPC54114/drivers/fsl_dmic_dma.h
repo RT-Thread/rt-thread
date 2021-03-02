@@ -3,7 +3,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -122,7 +122,7 @@ status_t DMIC_TransferCreateHandleDMA(DMIC_Type *base,
  * @param base USART peripheral base address.
  * @param handle Pointer to usart_dma_handle_t structure.
  * @param xfer DMIC DMA transfer structure. See #dmic_transfer_t.
- * @param dmic_channel DMIC channel 
+ * @param dmic_channel DMIC channel
  * @retval kStatus_Success
  */
 status_t DMIC_TransferReceiveDMA(DMIC_Type *base,

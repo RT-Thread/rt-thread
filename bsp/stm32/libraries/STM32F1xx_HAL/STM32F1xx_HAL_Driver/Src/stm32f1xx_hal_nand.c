@@ -195,7 +195,7 @@ HAL_StatusTypeDef  HAL_NAND_Init(NAND_HandleTypeDef *hnand, FSMC_NAND_PCC_Timing
 
   /* Enable the NAND device */
   __FSMC_NAND_ENABLE(hnand->Instance, hnand->Init.NandBank);
-  
+
   /* Update the NAND controller state */
   hnand->State = HAL_NAND_STATE_READY;
 

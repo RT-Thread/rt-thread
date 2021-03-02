@@ -27,7 +27,7 @@
 unsigned int pwm_get_reg_base(unsigned int gpio)
 {
     unsigned int reg_base = 0;
-    
+
     switch (gpio)
     {
         case LS1C_PWM0_GPIO06:
@@ -62,7 +62,7 @@ unsigned int pwm_get_reg_base(unsigned int gpio)
 void pwm_disable(pwm_info_t *pwm_info)
 {
     unsigned int pwm_reg_base = 0;
-    
+
     // 检查入参
     if (NULL == pwm_info)
     {
@@ -115,7 +115,7 @@ void pwm_enable(pwm_info_t *pwm_info)
         ctrl &= ~(1 << LS1C_PWM_SINGLE);
     }
     reg_write_32(ctrl, (volatile unsigned int *)(pwm_reg_base + LS1C_PWM_CTRL));
-    
+
     return ;
 }
 
@@ -132,7 +132,7 @@ void pwm_init(pwm_info_t *pwm_info)
     unsigned long tmp = 0;
     unsigned int pwm_reg_base = 0;
     unsigned long period = 0;
-    
+
     // 判断入参
     if (NULL == pwm_info)
     {
@@ -187,7 +187,7 @@ void pwm_init(pwm_info_t *pwm_info)
     period = (1.0 * pwm_clk * pwm_info->period_ns) / 1000000000;
     period = MIN(period, PWM_MAX_PERIOD);       // 限制周期不能超过最大值
     tmp = period - (period * pwm_info->duty);
-    
+
     // 写寄存器HRC和LRC
     pwm_reg_base = pwm_get_reg_base(gpio);
     reg_write_32(--tmp, (volatile unsigned int *)(pwm_reg_base + LS1C_PWM_HRC));
@@ -195,7 +195,7 @@ void pwm_init(pwm_info_t *pwm_info)
 
     // 写主计数器
     pwm_enable(pwm_info);
-    
+
     return ;
 }
 

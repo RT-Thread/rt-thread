@@ -154,7 +154,7 @@ static int usdhc_test_adma(void)
 //    SDHC_ADMA_mode = TRUE;
     set_card_access_mode(1, 0);
     /* MMC - 8 bit, SD - 4 bit  */
-//    retv = mmc_test(8, USDHC3_BASE_ADDR);    
+//    retv = mmc_test(8, USDHC3_BASE_ADDR);
     retv = mmc_test(8, HW_USDHC3);
 
 //    SDHC_ADMA_mode = FALSE;
@@ -171,7 +171,7 @@ static int usdhc_test_adma_intr(void)
     /* MMC - 8 bit, SD - 4 bit  */
 //    retv = mmc_test(8, USDHC3_BASE_ADDR);
     retv = mmc_test(8, HW_USDHC3);
-    
+
 //    SDHC_INTR_mode = SDHC_ADMA_mode = FALSE;
 
     return retv;
@@ -181,7 +181,7 @@ static int emmc_test_dump(void)
 {
 //    emmc_print_cfg_info(emmc_base_addr);
     emmc_print_cfg_info(HW_USDHC3);
-    
+
     return TRUE;
 }
 
@@ -251,7 +251,7 @@ static int emmc_test_width(void)
 
 /*!
  * @brief Run eMMC Card Test - Initialize the card, read/write data from/to card
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int emmc_test_ack(void)
@@ -288,7 +288,7 @@ static int emmc_test_ack(void)
 
 /*!
  * @brief Run eMMC Card Test - Initialize the card, read/write data from/to card
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int usdhc_test_emmc(void)
@@ -297,7 +297,7 @@ static int usdhc_test_emmc(void)
     char sel;
     uint32_t instance = HW_USDHC3;
     printf("\n\tInitializing eMMC chip.\n");
-     
+
 //    emmc_base_addr = USDHC3_BASE_ADDR;
 
     if (FAIL == card_emmc_init(instance)) {
@@ -338,7 +338,7 @@ static int usdhc_test_emmc(void)
  *
  * @param bus_width    Bus width
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             TEST_PASSED if successful; TEST_FAILED otherwise
  */
 static test_return_t mmc_test(unsigned int bus_width, uint32_t instance)

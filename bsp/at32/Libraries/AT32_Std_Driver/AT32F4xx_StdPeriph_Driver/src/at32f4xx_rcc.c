@@ -239,7 +239,7 @@ ErrorStatus RCC_WaitForHSEStable(void)
     StartUpCounter++;
   }
   while((StartUpCounter != HSE_STARTUP_TIMEOUT) && (HSEStatus == RESET));
-  
+
   /* Delay for HSE Stable */
   RCC_HSEENDelay(HSE_STABLE_DELAY);
 
@@ -325,7 +325,7 @@ void RCC_HSICmd(FunctionalState NewState)
   *     @arg RCC_PLLRefClk_HSE_Div1: HSE oscillator clock selected as PLL clock entry
   *     @arg RCC_PLLRefClk_HSE_Div2: HSE oscillator clock divided by 2 selected as PLL clock entry
   * @param  RCC_PLLMult: specifies the PLL multiplication factor.
-  *   			This parameter can be RCC_PLLMult_x where x:[2,64]
+  *             This parameter can be RCC_PLLMult_x where x:[2,64]
   * @param  RCC_PLLRange: specifies the PLL frequency range
   *     @arg RCC_Range_LessEqual_72Mhz: When PLL output is less than or equal to 72 MHz.
   *     @arg RCC_Range_GreatThan_72Mhz: When PLL output is greater than 72 MHz.
@@ -579,7 +579,7 @@ void RCC_ADCCLKConfig(uint32_t RCC_PCLK2_Div)
   *     @arg RCC_LSE_DISABLE: LSE oscillator OFF
   *     @arg RCC_LSE_ENABLE:  LSE oscillator ON
   *     @arg RCC_LSE_BYPASS:  LSE oscillator bypassed with external clock
-  * @retval None  
+  * @retval None
   */
 void RCC_LSEConfig(uint8_t RCC_LSE)
 {
@@ -699,7 +699,7 @@ void RCC_GetClocksFreq(RCC_ClockType* RCC_Clocks)
 {
 #if defined (AT32F415xx)
   uint32_t pllcfgen = 0, pllfref = 0, pllns = 0, pllms = 0, pllfr = 0;
-  uint32_t retfref = 0, retfr = 0; 
+  uint32_t retfref = 0, retfr = 0;
 #endif
   uint32_t tmp = 0, pllmult = 0, pllrefclk = 0, psc = 0;
 
@@ -740,7 +740,7 @@ void RCC_GetClocksFreq(RCC_ClockType* RCC_Clocks)
       pllmult = BIT_READ(RCC->CFG, RCC_CFG_PLLMULT);
       pllrefclk = RCC->CFG & RCC_CFG_PLLRC;
       pllmult = RCC_GET_PLLMULT(pllmult);
-  
+
       if (pllrefclk == 0x00)
       {
         /* HSI oscillator clock divided by 2 selected as PLL clock entry */
@@ -1040,36 +1040,36 @@ void RCC_CLKOUTConfig(uint32_t RCC_CLKOUT)
 {
     uint32_t tmpreg = 0;
 
-		/* Check the parameters */
-		assert_param(IS_RCC_CLKOUT(RCC_CLKOUT));
+        /* Check the parameters */
+        assert_param(IS_RCC_CLKOUT(RCC_CLKOUT));
 
     if((RCC_CLKOUT >> 28) == 0)
-		{
-			// Clear CLKOUT[3];
-			RCC->MISC &= ~RCC_MISC_CLKOUT_3;
+        {
+            // Clear CLKOUT[3];
+            RCC->MISC &= ~RCC_MISC_CLKOUT_3;
 
-			tmpreg = RCC->CFG;
-			/* Clear CLKOUT[2:0] bits */
-			tmpreg &= ~RCC_CFG_CLKOUT;
-			/* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
-			tmpreg |= RCC_CLKOUT;
-			/* Store the new value */
-			RCC->CFG = tmpreg;
-		}
-		else if((RCC_CLKOUT >> 28) == 1)
-		{
-			// Set CLKOUT[3];
-			RCC->MISC &= ~RCC_MISC_CLKOUT_3;
-			RCC->MISC |= RCC_MISC_CLKOUT_3;
+            tmpreg = RCC->CFG;
+            /* Clear CLKOUT[2:0] bits */
+            tmpreg &= ~RCC_CFG_CLKOUT;
+            /* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
+            tmpreg |= RCC_CLKOUT;
+            /* Store the new value */
+            RCC->CFG = tmpreg;
+        }
+        else if((RCC_CLKOUT >> 28) == 1)
+        {
+            // Set CLKOUT[3];
+            RCC->MISC &= ~RCC_MISC_CLKOUT_3;
+            RCC->MISC |= RCC_MISC_CLKOUT_3;
 
-			tmpreg = RCC->CFG;
-			/* Clear CLKOUT[2:0] bits */
-			tmpreg &= ~RCC_CFG_CLKOUT;
-			/* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
-			tmpreg |= (RCC_CLKOUT & 0xFFFFFFF);
-			/* Store the new value */
-			RCC->CFG = tmpreg;
-		}
+            tmpreg = RCC->CFG;
+            /* Clear CLKOUT[2:0] bits */
+            tmpreg &= ~RCC_CFG_CLKOUT;
+            /* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
+            tmpreg |= (RCC_CLKOUT & 0xFFFFFFF);
+            /* Store the new value */
+            RCC->CFG = tmpreg;
+        }
 }
 #else
 /**
@@ -1104,41 +1104,41 @@ void RCC_CLKOUTConfig(uint32_t RCC_CLKOUT, uint32_t RCC_CLKOUTPRE)
 {
     uint32_t tmpreg = 0;
 
-		/* Check the parameters */
-		assert_param(IS_RCC_CLKOUT(RCC_CLKOUT));
+        /* Check the parameters */
+        assert_param(IS_RCC_CLKOUT(RCC_CLKOUT));
     assert_param(IS_RCC_MCO(RCC_CLKOUTPRE));
-  
+
     /* Config MCOPRE */
     RCC->MISC &= ~RCC_MCOPRE_MASK;
     RCC->MISC |= RCC_CLKOUTPRE;
 
     if((RCC_CLKOUT >> 28) == 0)
-		{
-			// Clear CLKOUT[3];
-			RCC->MISC &= ~RCC_MISC_CLKOUT_3;
+        {
+            // Clear CLKOUT[3];
+            RCC->MISC &= ~RCC_MISC_CLKOUT_3;
 
-			tmpreg = RCC->CFG;
-			/* Clear CLKOUT[2:0] bits */
-			tmpreg &= ~RCC_CFG_CLKOUT;
-			/* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
-			tmpreg |= RCC_CLKOUT;
-			/* Store the new value */
-			RCC->CFG = tmpreg;
-		}
-		else if((RCC_CLKOUT >> 28) == 1)
-		{
-			// Set CLKOUT[3];
-			RCC->MISC &= ~RCC_MISC_CLKOUT_3;
-			RCC->MISC |= RCC_MISC_CLKOUT_3;
+            tmpreg = RCC->CFG;
+            /* Clear CLKOUT[2:0] bits */
+            tmpreg &= ~RCC_CFG_CLKOUT;
+            /* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
+            tmpreg |= RCC_CLKOUT;
+            /* Store the new value */
+            RCC->CFG = tmpreg;
+        }
+        else if((RCC_CLKOUT >> 28) == 1)
+        {
+            // Set CLKOUT[3];
+            RCC->MISC &= ~RCC_MISC_CLKOUT_3;
+            RCC->MISC |= RCC_MISC_CLKOUT_3;
 
-			tmpreg = RCC->CFG;
-			/* Clear CLKOUT[2:0] bits */
-			tmpreg &= ~RCC_CFG_CLKOUT;
-			/* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
-			tmpreg |= (RCC_CLKOUT & 0xFFFFFFF);
-			/* Store the new value */
-			RCC->CFG = tmpreg;
-		}
+            tmpreg = RCC->CFG;
+            /* Clear CLKOUT[2:0] bits */
+            tmpreg &= ~RCC_CFG_CLKOUT;
+            /* Set CLKOUT[2:0] bits according to RCC_CLKOUT value */
+            tmpreg |= (RCC_CLKOUT & 0xFFFFFFF);
+            /* Store the new value */
+            RCC->CFG = tmpreg;
+        }
 }
 #endif
 /**
@@ -1295,13 +1295,13 @@ void RCC_StepModeCmd(FunctionalState NewState)
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
   if(ENABLE == NewState)
-	{
+    {
     RCC->MISC2 |= RCC_MISC2_AUTO_STEP_EN;
-	}
-	else
-	{
+    }
+    else
+    {
     RCC->MISC2 &= ~RCC_MISC2_AUTO_STEP_EN;
-	}
+    }
 }
 
 /**
@@ -1315,15 +1315,15 @@ void RCC_HSI2USB48M(FunctionalState NewState)
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
   if(ENABLE == NewState)
-	{
+    {
     RCC->MISC  |= RCC_MISC_HSI_DIV_EN;
     RCC->MISC2 |= RCC_MISC2_HSI_FOR_USB;
-	}
-	else
-	{
+    }
+    else
+    {
     RCC->MISC  &= ~RCC_MISC_HSI_DIV_EN;
     RCC->MISC2 &= ~RCC_MISC2_HSI_FOR_USB;
-	}
+    }
 }
 #endif
 
@@ -1360,13 +1360,13 @@ void RCC_USBINTRemap(FunctionalState NewState)
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
   if(ENABLE == NewState)
-	{
+    {
     RCC->INTCTRL |= RCC_INTCTRL_USB_INT_CTRL;
-	}
-	else
-	{
+    }
+    else
+    {
     RCC->INTCTRL &= ~RCC_INTCTRL_USB_INT_CTRL;
-	}
+    }
 }
 
 /**
@@ -1380,13 +1380,13 @@ void RCC_MCO2TMR10(FunctionalState NewState)
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
   if(ENABLE == NewState)
-	{
+    {
     RCC->TEST  |= RCC_TEST_MCO2TMR_EN;
-	}
-	else
-	{
+    }
+    else
+    {
     RCC->TEST  &= ~RCC_TEST_MCO2TMR_EN;
-	}
+    }
 }
 #endif
 
@@ -1424,7 +1424,7 @@ void RCC_MCO2TMR10(FunctionalState NewState)
   */
 void RCC_PLLconfig2(uint32_t PLL_fref, uint32_t PLL_ns, uint32_t PLL_ms, uint32_t PLL_fr)
 {
-	volatile uint32_t result = 0;
+    volatile uint32_t result = 0;
   uint32_t pll_reg = 0, ret = 0;
 
   assert_param(IS_RCC_FR(PLL_fr));

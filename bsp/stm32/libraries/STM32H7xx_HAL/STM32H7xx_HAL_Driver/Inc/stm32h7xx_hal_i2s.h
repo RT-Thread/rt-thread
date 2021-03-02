@@ -98,38 +98,38 @@ typedef enum
 typedef struct __I2S_HandleTypeDef
 {
   SPI_TypeDef                *Instance;            /*!< I2S registers base address */
-                                                   
+
   I2S_InitTypeDef            Init;                 /*!< I2S communication parameters */
-                                                   
+
   uint16_t                   *pTxBuffPtr;          /*!< Pointer to I2S Tx transfer buffer */
-                                                   
+
   __IO uint16_t              TxXferSize;           /*!< I2S Tx transfer size */
-                                                   
+
   __IO uint16_t              TxXferCount;          /*!< I2S Tx transfer Counter */
-                                                   
+
   uint16_t                   *pRxBuffPtr;          /*!< Pointer to I2S Rx transfer buffer */
-                                                   
+
   __IO uint16_t              RxXferSize;           /*!< I2S Rx transfer size */
-                                                   
+
   __IO uint16_t              RxXferCount;          /*!< I2S Rx transfer counter
                                                       (This field is initialized at the
                                                        same value as transfer size at the
                                                        beginning of the transfer and
                                                        decremented when a sample is received
                                                        NbSamplesReceived = RxBufferSize-RxBufferCount) */
-                                                       
+
   void (*RxISR)(struct __I2S_HandleTypeDef *hi2s); /*!< function pointer on Rx ISR */
 
   void (*TxISR)(struct __I2S_HandleTypeDef *hi2s); /*!< function pointer on Tx ISR */
-  
+
   DMA_HandleTypeDef          *hdmatx;              /*!< I2S Tx DMA handle parameters */
-                                                   
+
   DMA_HandleTypeDef          *hdmarx;              /*!< I2S Rx DMA handle parameters */
-                                                   
+
   __IO HAL_LockTypeDef       Lock;                 /*!< I2S locking object */
-                                                   
+
   __IO HAL_I2S_StateTypeDef  State;                /*!< I2S communication state */
-                                                   
+
   __IO uint32_t              ErrorCode;            /*!< I2S Error code
                                                         This parameter can be a value of @ref I2S_Error */
 

@@ -2,7 +2,7 @@
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #ifndef _FSL_RTC_H_
@@ -317,7 +317,7 @@ void RTC_ClearStatusFlags(RTC_Type *base, uint32_t mask);
 
 /*!
  * @brief Set RTC clock source.
- * 
+ *
  * @param base RTC peripheral base address
  *
  * @note After setting this bit, wait the oscillator startup time before enabling

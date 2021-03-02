@@ -36,7 +36,7 @@
 #define TEST_SRC_VAL  0x3569AC00
 #define TEST_ERASE_SZ (64 * 1024)
 
-/*!  
+/*!
  * Channel: SS1
  * Mode: master
  * pre_div, post_div: 2 - clock: 60M/4 = 15MHz

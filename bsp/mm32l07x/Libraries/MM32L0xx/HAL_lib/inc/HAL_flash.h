@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the FLASH 
+* @brief  This file contains all the functions prototypes for the FLASH
 *         firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_FLASH_H
@@ -38,12 +38,12 @@
 * @{
 */
 
-/** 
-* @brief  FLASH Status  
+/**
+* @brief  FLASH Status
 */
 
 typedef enum
-{ 
+{
     FLASH_BUSY = 1,
     FLASH_ERROR_PG,
     FLASH_ERROR_WRP,
@@ -59,7 +59,7 @@ typedef enum
 * @{
 */
 
-/** @defgroup Flash_Latency 
+/** @defgroup Flash_Latency
 * @{
 */
 
@@ -75,31 +75,31 @@ typedef enum
 * @}
 */
 
-/** @defgroup Half_Cycle_Enable_Disable 
+/** @defgroup Half_Cycle_Enable_Disable
 * @{
 */
 
 #define FLASH_HalfCycleAccess_Enable   ((uint32_t)0x00000008)  /* FLASH Half Cycle Enable */
 #define FLASH_HalfCycleAccess_Disable  ((uint32_t)0x00000000)  /* FLASH Half Cycle Disable */
 #define IS_FLASH_HALFCYCLEACCESS_STATE(STATE) (((STATE) == FLASH_HalfCycleAccess_Enable) || \
-((STATE) == FLASH_HalfCycleAccess_Disable)) 
+((STATE) == FLASH_HalfCycleAccess_Disable))
 /**
 * @}
 */
 
-/** @defgroup Prefetch_Buffer_Enable_Disable 
+/** @defgroup Prefetch_Buffer_Enable_Disable
 * @{
 */
 
 #define FLASH_PrefetchBuffer_Enable    ((uint32_t)0x00000010)  /* FLASH Prefetch Buffer Enable */
 #define FLASH_PrefetchBuffer_Disable   ((uint32_t)0x00000000)  /* FLASH Prefetch Buffer Disable */
 #define IS_FLASH_PREFETCHBUFFER_STATE(STATE) (((STATE) == FLASH_PrefetchBuffer_Enable) || \
-((STATE) == FLASH_PrefetchBuffer_Disable)) 
+((STATE) == FLASH_PrefetchBuffer_Disable))
 /**
 * @}
 */
 
-/** @defgroup Option_Bytes_Write_Protection 
+/** @defgroup Option_Bytes_Write_Protection
 * @{
 */
 
@@ -184,7 +184,7 @@ ranges between 256 and 512 Kbytes with page size equal to 2 Kbytes */
 * @}
 */
 
-/** @defgroup Option_Bytes_IWatchdog 
+/** @defgroup Option_Bytes_IWatchdog
 * @{
 */
 
@@ -196,7 +196,7 @@ ranges between 256 and 512 Kbytes with page size equal to 2 Kbytes */
 * @}
 */
 
-/** @defgroup Option_Bytes_nRST_STOP 
+/** @defgroup Option_Bytes_nRST_STOP
 * @{
 */
 
@@ -208,7 +208,7 @@ ranges between 256 and 512 Kbytes with page size equal to 2 Kbytes */
 * @}
 */
 
-/** @defgroup Option_Bytes_nRST_STDBY 
+/** @defgroup Option_Bytes_nRST_STDBY
 * @{
 */
 
@@ -220,7 +220,7 @@ ranges between 256 and 512 Kbytes with page size equal to 2 Kbytes */
 * @}
 */
 
-/** @defgroup FLASH_Interrupts 
+/** @defgroup FLASH_Interrupts
 * @{
 */
 
@@ -232,7 +232,7 @@ ranges between 256 and 512 Kbytes with page size equal to 2 Kbytes */
 * @}
 */
 
-/** @defgroup FLASH_Flags 
+/** @defgroup FLASH_Flags
 * @{
 */
 

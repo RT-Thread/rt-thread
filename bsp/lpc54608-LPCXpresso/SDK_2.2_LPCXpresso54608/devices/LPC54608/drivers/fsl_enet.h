@@ -548,8 +548,8 @@ void ENET_Deinit(ENET_Type *base);
 /*!
  * @brief Initialize for all ENET descriptors.
  *
- * @note This function is do all tx/rx descriptors initialization. Because this API 
- *  read all interrupt registers first and then set the interrupt flag for all descriptos, 
+ * @note This function is do all tx/rx descriptors initialization. Because this API
+ *  read all interrupt registers first and then set the interrupt flag for all descriptos,
  * if the interrupt register is set. so the descriptor initialization should be called
  * after ENET_Init(), ENET_EnableInterrupts() and ENET_CreateHandle()(if transactional APIs
  * are used).
@@ -733,7 +733,7 @@ static inline void ENET_ExitPowerDown(ENET_Type *base)
  * @endcode
  *
  * @param base  ENET peripheral base address.
- * @param mask  ENET interrupts to enable. This is a logical OR of both 
+ * @param mask  ENET interrupts to enable. This is a logical OR of both
  *             enumeration :: enet_dma_interrupt_enable_t and enet_mac_interrupt_enable_t.
  */
 void ENET_EnableInterrupts(ENET_Type *base, uint32_t mask);
@@ -749,11 +749,11 @@ void ENET_EnableInterrupts(ENET_Type *base, uint32_t mask);
  * @endcode
  *
  * @param base  ENET peripheral base address.
- * @param mask  ENET interrupts to disables. This is a logical OR of both 
+ * @param mask  ENET interrupts to disables. This is a logical OR of both
  *             enumeration :: enet_dma_interrupt_enable_t and enet_mac_interrupt_enable_t.
  */
 void ENET_DisableInterrupts(ENET_Type *base, uint32_t mask);
-    
+
 /*!
  * @brief Gets the ENET DMA interrupt status flag.
  *
@@ -785,9 +785,9 @@ static inline void ENET_ClearDmaInterruptStatus(ENET_Type *base, uint8_t channel
  * @brief Gets the ENET MAC interrupt status flag.
  *
  * @param base  ENET peripheral base address.
- * @return The event status of the interrupt source. 
+ * @return The event status of the interrupt source.
  *       Use the enum in enet_mac_interrupt_enable_t and right shift
- *       ENET_MACINT_ENUM_OFFSET to mask the returned value to get the 
+ *       ENET_MACINT_ENUM_OFFSET to mask the returned value to get the
  *       exact interrupt status.
  */
 static inline uint32_t ENET_GetMacInterruptStatus(ENET_Type *base)
@@ -940,17 +940,17 @@ void ENET_UpdateRxDescriptor(
  */
 
 /*!
- * @brief Create ENET Handler 
+ * @brief Create ENET Handler
  *
  * This is a transactional API and it's provided to store all datas which are needed
  * during the whole transactional process. This API should not be used when you use
- * functional APIs to do data tx/rx. This is funtion will store many data/flag for 
+ * functional APIs to do data tx/rx. This is funtion will store many data/flag for
  * transactional use, so all configure API such as ENET_Init(), ENET_DescriptorInit(),
  * ENET_EnableInterrupts() etc.
  *
  * @note as our transactional transmit API use the zero-copy transmit buffer.
  * so there are two thing we emphasize here:
- *  1. tx buffer free/requeue for application should be done in the tx 
+ *  1. tx buffer free/requeue for application should be done in the tx
  *  interrupt handler. Please set callback: kENET_TxIntEvent with tx buffer free/requeue
  *  process APIs.
  *  2. the tx interrupt is forced to open.

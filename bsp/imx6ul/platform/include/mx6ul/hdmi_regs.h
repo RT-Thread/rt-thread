@@ -30,7 +30,7 @@
 #define CREGS_DIGTXMODE                 0x1E
 
 //
-// Hdmi controller registers 
+// Hdmi controller registers
 //
 
 // Identification Registers

@@ -1,5 +1,5 @@
 /******************************************************************************
-* @brief header file for ETM. 
+* @brief header file for ETM.
 *
 *******************************************************************************
 *
@@ -69,13 +69,13 @@ extern "C" {
 *//*! @addtogroup ETM_initvalue
 * @{
 *******************************************************************************/
-#define ETM_MOD_INIT	(20000-1)                /*!< MOD inite value */
-#define ETM_C0V_INIT	1000                     /*!< C0V inite value */
-#define ETM_C1V_INIT	1000                     /*!< C1V inite value */
-#define ETM_C2V_INIT	1000                     /*!< C2V inite value */    
-#define ETM_C3V_INIT	1000                     /*!< C3V inite value */
-#define ETM_C4V_INIT	1000                     /*!< C4V inite value */
-#define ETM_C5V_INIT	1000                     /*!< C5V inite value */
+#define ETM_MOD_INIT    (20000-1)                /*!< MOD inite value */
+#define ETM_C0V_INIT    1000                     /*!< C0V inite value */
+#define ETM_C1V_INIT    1000                     /*!< C1V inite value */
+#define ETM_C2V_INIT    1000                     /*!< C2V inite value */
+#define ETM_C3V_INIT    1000                     /*!< C3V inite value */
+#define ETM_C4V_INIT    1000                     /*!< C4V inite value */
+#define ETM_C5V_INIT    1000                     /*!< C5V inite value */
 /*! @} End of ETM_initvalue                                                   */
 
 /******************************************************************************
@@ -162,7 +162,7 @@ extern "C" {
 *//*! @addtogroup ETM_dualcapturemode
 * @{
 *******************************************************************************/
-#define ETM_INPUTCAPTURE_DUALEDGE_ONESHOT     4  /*!< dual edge one shot mode*/ 
+#define ETM_INPUTCAPTURE_DUALEDGE_ONESHOT     4  /*!< dual edge one shot mode*/
 #define ETM_INPUTCAPTURE_DUALEDGE_CONTINUOUS  5  /*!< dual edge continuouse mode*/
 /*! @} End of ETM_dualcapturemode                                            */
 
@@ -193,7 +193,7 @@ extern "C" {
 *
 *//*! @addtogroup ETM_swoutputcontrol
 * @{
-*******************************************************************************/ 
+*******************************************************************************/
 #define ETM_SWOCTRL_HIGH    1                /*!< software output high */
 #define ETM_SWOCTRL_LOW     0                /*!< software output low */
 /*! @} End of ETM_swoutputcontrol                                             */
@@ -272,10 +272,10 @@ typedef struct
   union
   {
     uint32_t      u32dw;
-    struct 
+    struct
     {
       uint32_t    bMode         : 3;        /*!< flexETMer mode: GPIO, INPUT_CAPTURE, OUTPUT_COMPARE, EDGE_ALIGNED_PWM, CENTER_ALIGNED_PWM,
-                                             * COMBINE_PWM, DUAL_EDGE_CAPTURE 
+                                             * COMBINE_PWM, DUAL_EDGE_CAPTURE
                                              */
       uint32_t    bEdge         : 2;        /*!< edge select */
       uint32_t    bOutCmp       : 2;        /*!< toggle, clear, set */
@@ -304,7 +304,7 @@ typedef struct
 /*****************************************************************************//*!
 *
 * @brief  enable the over flow interrupt.
-*        
+*
 * @param[in]    pETM          pointer to one of three ETM base register address.
 *
 * @return none.
@@ -326,7 +326,7 @@ __STATIC_INLINE void ETM_EnableOverflowInt(ETM_Type *pETM)
 /*****************************************************************************//*!
 *
 * @brief  disable the over flow interrupt.
-*        
+*
 * @param[in]    pETM          pointer to one of three ETM base register address.
 *
 * @return none.
@@ -344,7 +344,7 @@ __STATIC_INLINE void ETM_DisableOverflowInt(ETM_Type *pETM)
 /*****************************************************************************//*!
 *
 * @brief  enable the channel interrupt.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
 * @param[in]    u8ETM_Channel  channel number.
 *
@@ -363,7 +363,7 @@ __STATIC_INLINE void ETM_EnableChannelInt(ETM_Type *pETM, uint8_t u8ETM_Channel)
 /*****************************************************************************//*!
 *
 * @brief  disable the channel interrupt.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
 * @param[in]    u8ETM_Channel  channel number.
 *
@@ -382,9 +382,9 @@ __STATIC_INLINE void ETM_DisableChannelInt(ETM_Type *pETM, uint8_t u8ETM_Channel
 /*****************************************************************************//*!
 *
 * @brief  get the over flow flag.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
-*    
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -400,9 +400,9 @@ __STATIC_INLINE uint8_t ETM_GetOverFlowFlag(ETM_Type *pETM)
 /*****************************************************************************//*!
 *
 * @brief  clear the over flow flag.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
-*    
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -421,7 +421,7 @@ __STATIC_INLINE void ETM_ClrOverFlowFlag(ETM_Type *pETM)
 /*****************************************************************************//*!
 *
 * @brief  get the channel flag.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
 * @param[in]    u8ETM_Channel  channel number.
 *
@@ -440,9 +440,9 @@ __STATIC_INLINE uint8_t ETM_GetChannelFlag(ETM_Type *pETM, uint8_t u8ETM_Channel
 /*****************************************************************************//*!
 *
 * @brief  clear the channel flag.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
-*    
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -457,8 +457,8 @@ __STATIC_INLINE void ETM_ClrChannelFlag(ETM_Type *pETM, uint8_t u8ETM_Channel)
 
 /*********************************************************************************//*!
 *
-* @brief enable the write protection function.Write protected bits cannot be written. 
-*        
+* @brief enable the write protection function.Write protected bits cannot be written.
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -475,8 +475,8 @@ __STATIC_INLINE void ETM_WriteProtectionEnable(ETM_Type *pETM)
 
 /*********************************************************************************//*!
 *
-* @brief disable the write protection function.Write protected bits can be written. 
-*        
+* @brief disable the write protection function.Write protected bits can be written.
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -497,9 +497,9 @@ __STATIC_INLINE void ETM_WriteProtectionDisable(ETM_Type *pETM)
 /*****************************************************************************//*!
 *
 * @brief  set ETMEN bit to enable ETM-specific register.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
-*    
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -518,16 +518,16 @@ __STATIC_INLINE void ETM_SetETMEnhanced(ETM_Type *pETM)
         ETM_WriteProtectionDisable(pETM);
         pETM->MODE |= ETM_MODE_ETMEN_MASK;
         ETM_WriteProtectionEnable(pETM);
-    }    
+    }
 }
 
 /*****************************************************************************//*!
 *
 * @brief  clear ETMEN bit to disable ETM-specific registers, only TPM-compatible
 *         registers can be used.
-*        
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
-*    
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -546,13 +546,13 @@ __STATIC_INLINE void ETM_SetETMBasic(ETM_Type *pETM)
         ETM_WriteProtectionDisable(pETM);
         pETM->MODE &= ~ETM_MODE_ETMEN_MASK;
         ETM_WriteProtectionEnable(pETM);
-    }  
+    }
 }
 
 /*****************************************************************************//*!
 *
 * @brief  set the ETM mod value.
-*              
+*
 * @param[in]    pETM           pointer to one of three ETM base register address.
 * @param[in]    u16ModValue    the mod value required to set.
 *
@@ -585,7 +585,7 @@ __STATIC_INLINE void ETM_SetModValue(ETM_Type *pETM, uint16_t u16ModValue)
 /*****************************************************************************//*!
 *
 * @brief  set the ETM channel value.
-*                
+*
 * @param[in]    pETM             pointer to one of three ETM base register address.
 * @param[in]    u16ChannelValue  the CnV value required to set.
 * @param[in]    u8ETM_Channel    ETM channel number.
@@ -616,7 +616,7 @@ __STATIC_INLINE void ETM_SetChannelValue(ETM_Type *pETM, uint8_t u8ETM_Channel, 
             {
                 pETM->COMBINE |= ETM_COMBINE_SYNCEN2_MASK;
             }
-            pETM->PWMLOAD |= ETM_PWMLOAD_LDOK_MASK;  
+            pETM->PWMLOAD |= ETM_PWMLOAD_LDOK_MASK;
         }
         else
         {
@@ -630,7 +630,7 @@ __STATIC_INLINE void ETM_SetChannelValue(ETM_Type *pETM, uint8_t u8ETM_Channel, 
 /*****************************************************************************//*!
 *
 * @brief  set the ETM channel value.
-*               
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u16CounterValue   the CNTIN value required to set.
 *
@@ -656,7 +656,7 @@ __STATIC_INLINE void ETM_SetCounterInitValue(ETM_Type *pETM, uint16_t u16Counter
 /*****************************************************************************//*!
 *
 * @brief  set the channel output mask value, ETM2 used only.
-*               
+*
 * @param[in]    pETM            pointer to one of three ETM base register address.
 * @param[in]    u16ChMask       the CNTIN value required to set.
 *
@@ -675,7 +675,7 @@ __STATIC_INLINE void ETM_MaskChannels(ETM_Type *pETM, uint16_t u16ChMask)
 /*****************************************************************************//*!
 *
 * @brief  clear the channel output mask value, ETM2 used only.
-*               
+*
 * @param[in]    pETM            pointer to one of three ETM base register address.
 * @param[in]    u16ChMask       the CNTIN value required to set.
 *
@@ -694,7 +694,7 @@ __STATIC_INLINE void ETM_UnMaskChannels(ETM_Type *pETM, uint16_t u16ChMask)
 /*********************************************************************************//*!
 *
 * @brief set ETM channels polarity.
-*        
+*
 * @param[in]    pETM                  pointer to one of three ETM base register address.
 * @param[in]    u8ChsPolValue         the channels value need to be set.
 *
@@ -713,7 +713,7 @@ __STATIC_INLINE void ETM_SetChannelsPolarity(ETM_Type *pETM, uint8_t u8ChsPolVal
 /*********************************************************************************//*!
 *
 * @brief get ETM channels polarity.
-*        
+*
 * @param[in]    pETM                  pointer to one of three ETM base register address.
 *
 * @return uint8_t the channels polarity.
@@ -731,7 +731,7 @@ __STATIC_INLINE uint8_t ETM_GetChannelsPolarity(ETM_Type *pETM)
 /*********************************************************************************//*!
 *
 * @brief select the enhanced SYNC mode.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -749,7 +749,7 @@ __STATIC_INLINE void ETM_EnableEnhancedSYNCMode(ETM_Type *pETM)
 /*********************************************************************************//*!
 *
 * @brief select the legacy SYNC mode.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -767,7 +767,7 @@ __STATIC_INLINE void ETM_DisableEnhancedSYNCMode(ETM_Type *pETM)
 /*********************************************************************************//*!
 *
 * @brief set the external trigger source.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8TirggerSource   initial trigger or CHn(0~5)trigger
 *
@@ -786,7 +786,7 @@ __STATIC_INLINE void ETM_SetExternalTrigger(ETM_Type *pETM, uint8_t u8TirggerSou
 /*********************************************************************************//*!
 *
 * @brief get the external trigger flag.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return ex trigger flag.
@@ -804,7 +804,7 @@ __STATIC_INLINE uint8_t ETM_GetExternalTriggerFlag(ETM_Type *pETM)
 /*********************************************************************************//*!
 *
 * @brief set LDOK bit.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -822,7 +822,7 @@ __STATIC_INLINE void ETM_SetLoadEnable(ETM_Type *pETM)
 /*********************************************************************************//*!
 *
 * @brief set the channel in the matching process.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8Matchchannel    the channel in the matching process.
 *
@@ -841,7 +841,7 @@ __STATIC_INLINE void ETM_SetLoadMatchChannel(ETM_Type *pETM, uint8_t u8Matchchan
 /*********************************************************************************//*!
 *
 * @brief disable the channel input capture filter.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8ETM_Channel     the channel number: 0~3.
 *
@@ -860,7 +860,7 @@ __STATIC_INLINE void ETM_InputCaptureFilterClr(ETM_Type *pETM, uint8_t u8ETM_Cha
 /*********************************************************************************//*!
 *
 * @brief set the channel input capture filter value.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8ETM_Channel     the channel number: 0~3.
 * @param[in]    u8FilterValue     fliter cycles:1~15, 0: disable channel filter.
@@ -888,7 +888,7 @@ __STATIC_INLINE void ETM_InputCaptureFilterSet(ETM_Type *pETM, uint8_t u8ETM_Cha
 /*********************************************************************************//*!
 *
 * @brief enable the fault input pin.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8FaultPin        the fault input channel number: 0~3.
 *
@@ -905,7 +905,7 @@ __STATIC_INLINE void ETM_FaultPinEnable(ETM_Type *pETM, uint8_t u8FaultPin)
     {
         pETM->FLTCTRL |= (1 << u8FaultPin);
     }
-    else                                  /* if protected */ 
+    else                                  /* if protected */
     {
         ETM_WriteProtectionDisable(pETM);
         pETM->FLTCTRL |= (1 << u8FaultPin);
@@ -916,7 +916,7 @@ __STATIC_INLINE void ETM_FaultPinEnable(ETM_Type *pETM, uint8_t u8FaultPin)
 /*********************************************************************************//*!
 *
 * @brief disable the fault input pin.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8FaultPin        the fault input channel number: 0~3.
 *
@@ -933,7 +933,7 @@ __STATIC_INLINE void ETM_FaultPinDisable(ETM_Type *pETM, uint8_t u8FaultPin)
     {
         pETM->FLTCTRL &= ~(1 << u8FaultPin);
     }
-    else                                  /* if protected */ 
+    else                                  /* if protected */
     {
         ETM_WriteProtectionDisable(pETM);
         pETM->FLTCTRL &= ~(1 << u8FaultPin);
@@ -944,7 +944,7 @@ __STATIC_INLINE void ETM_FaultPinDisable(ETM_Type *pETM, uint8_t u8FaultPin)
 /*********************************************************************************//*!
 *
 * @brief enable the fault pin filter.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8FaultPin        the fault input channel number: 0~3.
 *
@@ -961,7 +961,7 @@ __STATIC_INLINE void ETM_FaultPinFilterEnable(ETM_Type *pETM, uint8_t u8FaultPin
     {
         pETM->FLTCTRL |= (0x10 << u8FaultPin);
     }
-    else                                  /* if protected */ 
+    else                                  /* if protected */
     {
         ETM_WriteProtectionDisable(pETM);
         pETM->FLTCTRL |= (0x10 << u8FaultPin);
@@ -972,7 +972,7 @@ __STATIC_INLINE void ETM_FaultPinFilterEnable(ETM_Type *pETM, uint8_t u8FaultPin
 /*********************************************************************************//*!
 *
 * @brief disable the fault pin filter.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8FaultPin        the fault input channel number: 0~3.
 *
@@ -989,7 +989,7 @@ __STATIC_INLINE void ETM_FaultPinFilterDisable(ETM_Type *pETM, uint8_t u8FaultPi
     {
         pETM->FLTCTRL &= ~(0x10 << u8FaultPin);
     }
-    else                                  /* if protected */ 
+    else                                  /* if protected */
     {
         ETM_WriteProtectionDisable(pETM);
         pETM->FLTCTRL &= ~(0x10 << u8FaultPin);
@@ -999,8 +999,8 @@ __STATIC_INLINE void ETM_FaultPinFilterDisable(ETM_Type *pETM, uint8_t u8FaultPi
 
 /*********************************************************************************//*!
 *
-* @brief disable all the fault pins filter together. 
-*        
+* @brief disable all the fault pins filter together.
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -1018,7 +1018,7 @@ __STATIC_INLINE void ETM_FaultPinFilterCDisableAll(ETM_Type *pETM)
 /*********************************************************************************//*!
 *
 * @brief set the fault filter value. All channels share the same filter value.
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8FilterValue     the fault input filter value: 1~15, 0 disable the filter.
 *
@@ -1044,7 +1044,7 @@ __STATIC_INLINE void ETM_FaultPinFilterSet(ETM_Type *pETM, uint8_t u8FilterValue
 /*********************************************************************************//*!
 *
 * @brief get the logic OR of all the fault detection flags
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -1062,7 +1062,7 @@ __STATIC_INLINE uint8_t ETM_GetFaultDetectionLogicORFlag(ETM_Type *pETM)
 /*********************************************************************************//*!
 *
 * @brief get the fault detection flag
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 * @param[in]    u8FaultPin        fault input pin number: 0~3.
 *
@@ -1081,7 +1081,7 @@ __STATIC_INLINE uint8_t ETM_GetFaultDetectionFlag(ETM_Type *pETM, uint8_t u8Faul
 /*********************************************************************************//*!
 *
 * @brief get the logic OR value of the fault inputs
-*        
+*
 * @param[in]    pETM              pointer to one of three ETM base register address.
 *
 * @return none.
@@ -1103,7 +1103,7 @@ __STATIC_INLINE uint8_t ETM_GetFaultInputsLogicORValue(ETM_Type *pETM)
 void ETM_ClockSet(ETM_Type *pETM, uint8_t u8ClockSource, uint8_t u8ClockPrescale);
 void ETM_PWMInit(ETM_Type *pETM, uint8_t u8PWMModeSelect, uint8_t u8PWMEdgeSelect);
 void ETM_InputCaptureInit(ETM_Type *pETM, uint8_t u8ETM_Channel, uint8_t u8CaptureMode);
-void ETM_DualEdgeCaptureInit(ETM_Type *pETM, uint8_t u8ChannelPair, uint8_t u8CaptureMode, 
+void ETM_DualEdgeCaptureInit(ETM_Type *pETM, uint8_t u8ChannelPair, uint8_t u8CaptureMode,
                              uint8_t u8Channel_N_Edge, uint8_t u8Channel_Np1_Edge);
 void ETM_OutputCompareInit(ETM_Type *pETM, uint8_t u8ETM_Channel, uint8_t u8CompareMode);
 void ETM_SoftwareSync(ETM_Type *pETM);

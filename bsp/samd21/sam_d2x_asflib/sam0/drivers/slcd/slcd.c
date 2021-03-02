@@ -117,14 +117,14 @@
  */
 void slcd_get_config_defaults(struct slcd_config *config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->run_in_standby = false;
-	config->waveform_mode = SLCD_LOW_POWER_WAVEFORM_MODE;
-	config->low_resistance_duration = 0;
-	config->enable_low_resistance = false;
-	config->bias_buffer_duration = 0;
-	config->enable_bias_buffer = false;
+    config->run_in_standby = false;
+    config->waveform_mode = SLCD_LOW_POWER_WAVEFORM_MODE;
+    config->low_resistance_duration = 0;
+    config->enable_low_resistance = false;
+    config->bias_buffer_duration = 0;
+    config->enable_bias_buffer = false;
 }
 
 /**
@@ -140,34 +140,34 @@ void slcd_get_config_defaults(struct slcd_config *config)
  */
 enum status_code slcd_init(struct slcd_config *const config)
 {
-	if (!config) {
-		return STATUS_ERR_INVALID_ARG;
-	}
-	system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, MCLK_APBCMASK_SLCD);
+    if (!config) {
+        return STATUS_ERR_INVALID_ARG;
+    }
+    system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, MCLK_APBCMASK_SLCD);
 
-	/* Select SLCD clock */
-	OSC32KCTRL->SLCDCTRL.reg = CONF_SLCD_CLOCK_SOURCE & OSC32KCTRL_SLCDCTRL_MASK;
+    /* Select SLCD clock */
+    OSC32KCTRL->SLCDCTRL.reg = CONF_SLCD_CLOCK_SOURCE & OSC32KCTRL_SLCDCTRL_MASK;
 
-	slcd_disable();
-	slcd_reset();
+    slcd_disable();
+    slcd_reset();
 
-	SLCD->CTRLA.reg = SLCD_CTRLA_DUTY(CONF_SLCD_DUTY) | SLCD_CTRLA_BIAS(CONF_SLCD_BIAS)
-					 | SLCD_CTRLA_PRESC(CONF_SLCD_PVAL) | SLCD_CTRLA_CKDIV(CONF_SLCD_CKDIV)
-					 | (CONF_SLCD_VLCD_SEL << SLCD_CTRLA_XVLCD_Pos)
-					 | (config->run_in_standby << SLCD_CTRLA_RUNSTDBY_Pos)
-					 | SLCD_CTRLA_RRF(CONF_SLCD_REF_REFRESH_FREQ)
-					 | SLCD_CTRLA_PRF(CONF_SLCD_POWER_REFRESH_FREQ)
-					 | (config->waveform_mode << SLCD_CTRLA_WMOD_Pos);
-	SLCD->CTRLB.reg = SLCD_CTRLB_BBD(config->bias_buffer_duration)
-  					| (config->enable_bias_buffer << SLCD_CTRLB_BBEN_Pos)
-  					| SLCD_CTRLB_LRD(config->low_resistance_duration)
-  					| (config->enable_low_resistance << SLCD_CTRLB_LREN_Pos);
+    SLCD->CTRLA.reg = SLCD_CTRLA_DUTY(CONF_SLCD_DUTY) | SLCD_CTRLA_BIAS(CONF_SLCD_BIAS)
+                     | SLCD_CTRLA_PRESC(CONF_SLCD_PVAL) | SLCD_CTRLA_CKDIV(CONF_SLCD_CKDIV)
+                     | (CONF_SLCD_VLCD_SEL << SLCD_CTRLA_XVLCD_Pos)
+                     | (config->run_in_standby << SLCD_CTRLA_RUNSTDBY_Pos)
+                     | SLCD_CTRLA_RRF(CONF_SLCD_REF_REFRESH_FREQ)
+                     | SLCD_CTRLA_PRF(CONF_SLCD_POWER_REFRESH_FREQ)
+                     | (config->waveform_mode << SLCD_CTRLA_WMOD_Pos);
+    SLCD->CTRLB.reg = SLCD_CTRLB_BBD(config->bias_buffer_duration)
+                    | (config->enable_bias_buffer << SLCD_CTRLB_BBEN_Pos)
+                    | SLCD_CTRLB_LRD(config->low_resistance_duration)
+                    | (config->enable_low_resistance << SLCD_CTRLB_LREN_Pos);
 
 
     SLCD->CTRLC.reg |= SLCD_CTRLC_LPPM(CONF_SLCD_POWER_MODE) | SLCD_CTRLC_CTST(0x0F);
 
-	SLCD->LPENL.reg = CONF_SLCD_PIN_L_MASK & SLCD_LPENL_MASK;
-	SLCD->LPENH.reg = CONF_SLCD_PIN_H_MASK & SLCD_LPENH_MASK;
+    SLCD->LPENL.reg = CONF_SLCD_PIN_L_MASK & SLCD_LPENL_MASK;
+    SLCD->LPENH.reg = CONF_SLCD_PIN_H_MASK & SLCD_LPENH_MASK;
 
    return STATUS_OK;
 }
@@ -181,14 +181,14 @@ enum status_code slcd_init(struct slcd_config *const config)
 
 void slcd_enable(void)
 {
-	SLCD->CTRLA.reg |= SLCD_CTRLA_ENABLE;
+    SLCD->CTRLA.reg |= SLCD_CTRLA_ENABLE;
 
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 
-	while (!slcd_get_vlcd_ready_status()) {
-   	}
+    while (!slcd_get_vlcd_ready_status()) {
+    }
 }
 
 /**
@@ -198,12 +198,12 @@ void slcd_enable(void)
  */
 void slcd_disable(void)
 {
-	SLCD->INTENCLR.reg = SLCD_INTENCLR_MASK;
-	SLCD->INTFLAG.reg = SLCD_INTFLAG_MASK;
-	SLCD->CTRLA.reg &= ~(SLCD_CTRLA_ENABLE);
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    SLCD->INTENCLR.reg = SLCD_INTENCLR_MASK;
+    SLCD->INTFLAG.reg = SLCD_INTFLAG_MASK;
+    SLCD->CTRLA.reg &= ~(SLCD_CTRLA_ENABLE);
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -218,7 +218,7 @@ void slcd_disable(void)
 
 bool slcd_is_enabled(void)
 {
-	return ((SLCD->CTRLA.reg & SLCD_CTRLA_ENABLE) == SLCD_CTRLA_ENABLE);
+    return ((SLCD->CTRLA.reg & SLCD_CTRLA_ENABLE) == SLCD_CTRLA_ENABLE);
 }
 
 /**
@@ -228,11 +228,11 @@ bool slcd_is_enabled(void)
  */
 void slcd_reset(void)
 {
-	slcd_disable();
-	SLCD->CTRLA.reg |= SLCD_CTRLA_SWRST;
-	while (slcd_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    slcd_disable();
+    SLCD->CTRLA.reg |= SLCD_CTRLA_SWRST;
+    while (slcd_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -254,16 +254,16 @@ void slcd_reset(void)
 enum status_code slcd_set_contrast(uint8_t contrast)
 {
 
-	if (SLCD->CTRLA.bit.XVLCD) {
-		return STATUS_ERR_INVALID_ARG;
-	}
-	uint16_t temp = SLCD->CTRLC.reg;
+    if (SLCD->CTRLA.bit.XVLCD) {
+        return STATUS_ERR_INVALID_ARG;
+    }
+    uint16_t temp = SLCD->CTRLC.reg;
 
-	temp &= ~ SLCD_CTRLC_CTST(0xf);
-	temp |= SLCD_CTRLC_CTST(contrast);
+    temp &= ~ SLCD_CTRLC_CTST(0xf);
+    temp |= SLCD_CTRLC_CTST(contrast);
 
-	SLCD->CTRLC.reg = temp;
-	return STATUS_OK;
+    SLCD->CTRLC.reg = temp;
+    return STATUS_OK;
 }
 
 /**
@@ -276,10 +276,10 @@ enum status_code slcd_set_contrast(uint8_t contrast)
  */
 void slcd_blink_get_config_defaults(struct slcd_blink_config *blink_config)
 {
-	Assert(blink_config);
+    Assert(blink_config);
 
-	blink_config->fc = SLCD_FRAME_COUNTER_0;
-	blink_config->blink_all_seg = true;
+    blink_config->fc = SLCD_FRAME_COUNTER_0;
+    blink_config->blink_all_seg = true;
 }
 
 /**
@@ -298,13 +298,13 @@ void slcd_blink_get_config_defaults(struct slcd_blink_config *blink_config)
 
 enum status_code  slcd_blink_set_config(struct slcd_blink_config *const blink_config)
 {
-	if (!blink_config) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (!blink_config) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	SLCD->BCFG.bit.MODE = (!(blink_config->blink_all_seg) << SLCD_BCFG_MODE_Pos);
-	SLCD->BCFG.bit.FCS	= SLCD_BCFG_FCS(blink_config->fc);
-	return STATUS_OK;
+    SLCD->BCFG.bit.MODE = (!(blink_config->blink_all_seg) << SLCD_BCFG_MODE_Pos);
+    SLCD->BCFG.bit.FCS  = SLCD_BCFG_FCS(blink_config->fc);
+    return STATUS_OK;
 }
 
 /**
@@ -314,19 +314,19 @@ enum status_code  slcd_blink_set_config(struct slcd_blink_config *const blink_co
  * \param[in] pix_seg Pixel/segment SEG coordinate (range 0 to 1 inclusive)
  */
 void slcd_set_blink_pixel(
-		uint8_t pix_com,
-		uint8_t pix_seg)
+        uint8_t pix_com,
+        uint8_t pix_seg)
 {
-	/* Validate parameters. */
-	Assert(pix_seg<=1);
-	
-	if (pix_seg == 0) {
-		SLCD->BCFG.reg |= SLCD_BCFG_BSS0(1 << pix_com);
-	}
+    /* Validate parameters. */
+    Assert(pix_seg<=1);
 
-	if (pix_seg == 1) {
-		SLCD->BCFG.reg |= SLCD_BCFG_BSS1(1 << pix_com);
-	}
+    if (pix_seg == 0) {
+        SLCD->BCFG.reg |= SLCD_BCFG_BSS0(1 << pix_com);
+    }
+
+    if (pix_seg == 1) {
+        SLCD->BCFG.reg |= SLCD_BCFG_BSS1(1 << pix_com);
+    }
 }
 
 /**
@@ -336,19 +336,19 @@ void slcd_set_blink_pixel(
  * \param[in] pix_seg Pixel/segment SEG coordinate (range 0 to 1 inclusive)
  */
 void slcd_clear_blink_pixel(
-		uint8_t pix_com,
-		uint8_t pix_seg)
+        uint8_t pix_com,
+        uint8_t pix_seg)
 {
-	/* Validate parameters. */
-	Assert(pix_seg<=1);
-	
-	if (pix_seg == 0) {
-		SLCD->BCFG.reg &= ~ SLCD_BCFG_BSS0(1 << pix_com);
-	}
+    /* Validate parameters. */
+    Assert(pix_seg<=1);
 
-	if (pix_seg == 1) {
-		SLCD->BCFG.reg &= ~ SLCD_BCFG_BSS1(1 << pix_com);
-	}
+    if (pix_seg == 0) {
+        SLCD->BCFG.reg &= ~ SLCD_BCFG_BSS0(1 << pix_com);
+    }
+
+    if (pix_seg == 1) {
+        SLCD->BCFG.reg &= ~ SLCD_BCFG_BSS1(1 << pix_com);
+    }
 }
 
 /**
@@ -356,8 +356,8 @@ void slcd_clear_blink_pixel(
  */
 void slcd_clear_blink_all_pixel(void)
 {
-	SLCD->BCFG.bit.BSS0 = 0;
-	SLCD->BCFG.bit.BSS1 = 0;
+    SLCD->BCFG.bit.BSS0 = 0;
+    SLCD->BCFG.bit.BSS1 = 0;
 }
 
 
@@ -366,22 +366,22 @@ void slcd_clear_blink_all_pixel(void)
  */
 void slcd_set_display_memory(void)
 {
-	SLCD->SDATAH0.reg = SLCD_SDATAH0_MASK;
-	SLCD->SDATAL0.reg = SLCD_SDATAL0_MASK;
-	SLCD->SDATAH1.reg = SLCD_SDATAH1_MASK;
-	SLCD->SDATAL1.reg = SLCD_SDATAL1_MASK;
-	SLCD->SDATAH2.reg = SLCD_SDATAH2_MASK;
-	SLCD->SDATAL2.reg = SLCD_SDATAL2_MASK;
-	SLCD->SDATAH3.reg = SLCD_SDATAH3_MASK;
-	SLCD->SDATAL3.reg = SLCD_SDATAL3_MASK;
-	SLCD->SDATAH4.reg = SLCD_SDATAH4_MASK;
-	SLCD->SDATAL4.reg = SLCD_SDATAL4_MASK;
-	SLCD->SDATAH5.reg = SLCD_SDATAH5_MASK;
-	SLCD->SDATAL5.reg = SLCD_SDATAL5_MASK;
-	SLCD->SDATAH6.reg = SLCD_SDATAH6_MASK;
-	SLCD->SDATAL6.reg = SLCD_SDATAL6_MASK;
-	SLCD->SDATAH7.reg = SLCD_SDATAH7_MASK;
-	SLCD->SDATAL7.reg = SLCD_SDATAL7_MASK;
+    SLCD->SDATAH0.reg = SLCD_SDATAH0_MASK;
+    SLCD->SDATAL0.reg = SLCD_SDATAL0_MASK;
+    SLCD->SDATAH1.reg = SLCD_SDATAH1_MASK;
+    SLCD->SDATAL1.reg = SLCD_SDATAL1_MASK;
+    SLCD->SDATAH2.reg = SLCD_SDATAH2_MASK;
+    SLCD->SDATAL2.reg = SLCD_SDATAL2_MASK;
+    SLCD->SDATAH3.reg = SLCD_SDATAH3_MASK;
+    SLCD->SDATAL3.reg = SLCD_SDATAL3_MASK;
+    SLCD->SDATAH4.reg = SLCD_SDATAH4_MASK;
+    SLCD->SDATAL4.reg = SLCD_SDATAL4_MASK;
+    SLCD->SDATAH5.reg = SLCD_SDATAH5_MASK;
+    SLCD->SDATAL5.reg = SLCD_SDATAL5_MASK;
+    SLCD->SDATAH6.reg = SLCD_SDATAH6_MASK;
+    SLCD->SDATAL6.reg = SLCD_SDATAL6_MASK;
+    SLCD->SDATAH7.reg = SLCD_SDATAH7_MASK;
+    SLCD->SDATAL7.reg = SLCD_SDATAL7_MASK;
 }
 
 
@@ -392,72 +392,72 @@ void slcd_set_display_memory(void)
  * \param[in] pix_seg Pixel/segment SEG coordinate within [0-43]
  */
  void slcd_set_pixel(
-		uint8_t pix_com,
-		uint8_t pix_seg)
+        uint8_t pix_com,
+        uint8_t pix_seg)
 {
-	if ((pix_com < SLCD_MAX_COM) &&
-			(pix_seg < SLCD_MAX_SEG)) {
-		switch(pix_com){
-			case 0:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH0.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL0.reg |= 1 <<pix_seg;
-				}
-				break;
-			case 1:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH1.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL1.reg |= 1 <<pix_seg;
-				}
-				break;
-			case 2:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH2.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL2.reg |= 1 <<pix_seg;
-				}
-				break;
-			case 3:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH3.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL3.reg |= 1 <<pix_seg;
-				}
-				break;
-			case 4:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH4.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL4.reg |= 1 <<pix_seg;
-				}
-				break;
-			case 5:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH5.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL5.reg |= 1 <<pix_seg;
-				}
-				break;
-			case 6:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH6.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL6.reg |= 1 <<pix_seg;
-				}
-				break;
-			case 7:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH7.reg |= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL7.reg |= 1 <<pix_seg;
-				}
-				break;
-		}
-		while (slcd_get_char_writing_status()) {
-		}
-	}
+    if ((pix_com < SLCD_MAX_COM) &&
+            (pix_seg < SLCD_MAX_SEG)) {
+        switch(pix_com){
+            case 0:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH0.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL0.reg |= 1 <<pix_seg;
+                }
+                break;
+            case 1:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH1.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL1.reg |= 1 <<pix_seg;
+                }
+                break;
+            case 2:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH2.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL2.reg |= 1 <<pix_seg;
+                }
+                break;
+            case 3:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH3.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL3.reg |= 1 <<pix_seg;
+                }
+                break;
+            case 4:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH4.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL4.reg |= 1 <<pix_seg;
+                }
+                break;
+            case 5:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH5.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL5.reg |= 1 <<pix_seg;
+                }
+                break;
+            case 6:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH6.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL6.reg |= 1 <<pix_seg;
+                }
+                break;
+            case 7:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH7.reg |= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL7.reg |= 1 <<pix_seg;
+                }
+                break;
+        }
+        while (slcd_get_char_writing_status()) {
+        }
+    }
 }
 
 /**
@@ -468,69 +468,69 @@ void slcd_set_display_memory(void)
  */
  void slcd_clear_pixel(uint8_t pix_com, uint8_t pix_seg)
 {
-	if ((pix_com < SLCD_MAX_COM) &&
-			(pix_seg < SLCD_MAX_SEG)) {
-		switch(pix_com){
-			case 0:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH0.reg &= ~(1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL0.reg &= ~(1 <<pix_seg);
-				}
-				break;
-			case 1:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH1.reg &= ~(1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL1.reg &= ~(1 <<pix_seg);
-				}
-				break;
-			case 2:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH2.reg &= (1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL2.reg &= ~(1 <<pix_seg);
-				}
-				break;
-			case 3:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH3.reg &= ~(1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL3.reg &= ~(1 <<pix_seg);
-				}
-				break;
-			case 4:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH4.reg &= ~(1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL4.reg &= ~(1 <<pix_seg);
-				}
-				break;
-			case 5:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH5.reg &= ~(1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL5.reg &= ~(1 <<pix_seg);
-				}
-				break;
-			case 6:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH6.reg &= ~(1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL6.reg &= ~(1 <<pix_seg);
-				}
-				break;
-			case 7:
-				if (pix_seg >= 32) {
-					SLCD->SDATAH7.reg &= ~(1 <<(pix_seg-32));
-				} else {
-					SLCD->SDATAL7.reg &= ~(1 <<pix_seg);
-				}
-				break;
-		}
-		while (slcd_get_char_writing_status()) {
-		}
-	}
+    if ((pix_com < SLCD_MAX_COM) &&
+            (pix_seg < SLCD_MAX_SEG)) {
+        switch(pix_com){
+            case 0:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH0.reg &= ~(1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL0.reg &= ~(1 <<pix_seg);
+                }
+                break;
+            case 1:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH1.reg &= ~(1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL1.reg &= ~(1 <<pix_seg);
+                }
+                break;
+            case 2:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH2.reg &= (1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL2.reg &= ~(1 <<pix_seg);
+                }
+                break;
+            case 3:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH3.reg &= ~(1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL3.reg &= ~(1 <<pix_seg);
+                }
+                break;
+            case 4:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH4.reg &= ~(1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL4.reg &= ~(1 <<pix_seg);
+                }
+                break;
+            case 5:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH5.reg &= ~(1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL5.reg &= ~(1 <<pix_seg);
+                }
+                break;
+            case 6:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH6.reg &= ~(1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL6.reg &= ~(1 <<pix_seg);
+                }
+                break;
+            case 7:
+                if (pix_seg >= 32) {
+                    SLCD->SDATAH7.reg &= ~(1 <<(pix_seg-32));
+                } else {
+                    SLCD->SDATAL7.reg &= ~(1 <<pix_seg);
+                }
+                break;
+        }
+        while (slcd_get_char_writing_status()) {
+        }
+    }
 }
 
 /**
@@ -542,12 +542,12 @@ void slcd_set_display_memory(void)
  */
 void slcd_set_seg_data(uint8_t seg_data,uint8_t byte_offset,uint8_t seg_mask)
 {
-	SLCD->ISDATA.reg = SLCD_ISDATA_SDATA(seg_data)
-					 | SLCD_ISDATA_OFF(byte_offset)
-					 | SLCD_ISDATA_SDMASK(seg_mask);
+    SLCD->ISDATA.reg = SLCD_ISDATA_SDATA(seg_data)
+                     | SLCD_ISDATA_OFF(byte_offset)
+                     | SLCD_ISDATA_SDMASK(seg_mask);
 
-	while (slcd_get_char_writing_status()) {
-	}
+    while (slcd_get_char_writing_status()) {
+    }
 }
 
 /**
@@ -559,20 +559,20 @@ void slcd_set_seg_data(uint8_t seg_data,uint8_t byte_offset,uint8_t seg_mask)
  *
  */
 void slcd_automated_char_get_config_default(
-		struct slcd_automated_char_config *config)
+        struct slcd_automated_char_config *config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->order = SLCD_AUTOMATED_CHAR_START_FROM_BOTTOM_RIGHT;
-	config->fc = SLCD_FRAME_COUNTER_0;
-	config->mode = SLCD_AUTOMATED_CHAR_SEQ;
-	config->seg_line_num = 0;
-	config->start_seg_line = 0;
-	config->row_digit_num = 1;
-	config->digit_num = 0;
-	config->scrolling_step = 1;
-	config->com_line_num = 1;
-	config->data_mask = 0;
+    config->order = SLCD_AUTOMATED_CHAR_START_FROM_BOTTOM_RIGHT;
+    config->fc = SLCD_FRAME_COUNTER_0;
+    config->mode = SLCD_AUTOMATED_CHAR_SEQ;
+    config->seg_line_num = 0;
+    config->start_seg_line = 0;
+    config->row_digit_num = 1;
+    config->digit_num = 0;
+    config->scrolling_step = 1;
+    config->com_line_num = 1;
+    config->data_mask = 0;
 
 }
 
@@ -591,24 +591,24 @@ void slcd_automated_char_get_config_default(
  * \retval STATUS_ERR_INVALID_ARG  If automated character  configuration failed
  */
 enum status_code slcd_automated_char_set_config(
-		struct slcd_automated_char_config *const config)
+        struct slcd_automated_char_config *const config)
 {
-	if (!config) {
-		return STATUS_ERR_INVALID_ARG;
-	}
-	SLCD->CMCFG.reg = SLCD_CMCFG_NSEG(config->seg_line_num)
-					 | (config->order  << SLCD_CMCFG_DEC_Pos);
-	SLCD->ACMCFG.reg = SLCD_ACMCFG_FCS(config->fc)
-					 | (config->mode << SLCD_ACMCFG_MODE_Pos)
-					 | SLCD_ACMCFG_STSEG(config->start_seg_line)
-					 | SLCD_ACMCFG_NDROW(config->row_digit_num)
-					 | SLCD_ACMCFG_NDIG(config->digit_num)
-					 | SLCD_ACMCFG_STEPS(config->scrolling_step)
-					 | SLCD_ACMCFG_NCOM(config->com_line_num);
+    if (!config) {
+        return STATUS_ERR_INVALID_ARG;
+    }
+    SLCD->CMCFG.reg = SLCD_CMCFG_NSEG(config->seg_line_num)
+                     | (config->order  << SLCD_CMCFG_DEC_Pos);
+    SLCD->ACMCFG.reg = SLCD_ACMCFG_FCS(config->fc)
+                     | (config->mode << SLCD_ACMCFG_MODE_Pos)
+                     | SLCD_ACMCFG_STSEG(config->start_seg_line)
+                     | SLCD_ACMCFG_NDROW(config->row_digit_num)
+                     | SLCD_ACMCFG_NDIG(config->digit_num)
+                     | SLCD_ACMCFG_STEPS(config->scrolling_step)
+                     | SLCD_ACMCFG_NCOM(config->com_line_num);
 
-	SLCD->CMDMASK.reg = SLCD_CMDMASK_SDMASK(config->data_mask);
+    SLCD->CMDMASK.reg = SLCD_CMDMASK_SDMASK(config->data_mask);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -621,11 +621,11 @@ enum status_code slcd_automated_char_set_config(
  *                          it equal to number of SEG line - 1
  */
 void slcd_character_map_set(
-		enum slcd_automated_char_order order,
-		uint8_t seg_line_num)
+        enum slcd_automated_char_order order,
+        uint8_t seg_line_num)
 {
-	SLCD->CMCFG.reg = SLCD_CMCFG_NSEG(seg_line_num)
-					 | (order  << SLCD_CMCFG_DEC_Pos);
+    SLCD->CMCFG.reg = SLCD_CMCFG_NSEG(seg_line_num)
+                     | (order  << SLCD_CMCFG_DEC_Pos);
 }
 
 /**
@@ -637,16 +637,16 @@ void slcd_character_map_set(
  * \param[in] seg_line_index Segments line index
  */
 void slcd_character_write_data(uint8_t com_line_index,
-									uint8_t seg_line_index,
-									uint32_t seg_data,uint32_t data_mask)
+                                    uint8_t seg_line_index,
+                                    uint32_t seg_data,uint32_t data_mask)
 {
 
-	SLCD->CMINDEX.reg = SLCD_CMINDEX_SINDEX(seg_line_index)
-						| SLCD_CMINDEX_CINDEX(com_line_index);
-	SLCD->CMDMASK.reg = SLCD_CMDMASK_SDMASK(data_mask);
-	SLCD->CMDATA.reg = SLCD_CMDATA_SDATA(seg_data);
-	while (slcd_get_char_writing_status()) {
-	}
+    SLCD->CMINDEX.reg = SLCD_CMINDEX_SINDEX(seg_line_index)
+                        | SLCD_CMINDEX_CINDEX(com_line_index);
+    SLCD->CMDMASK.reg = SLCD_CMDMASK_SDMASK(data_mask);
+    SLCD->CMDATA.reg = SLCD_CMDATA_SDATA(seg_data);
+    while (slcd_get_char_writing_status()) {
+    }
 }
 
 /**
@@ -658,14 +658,14 @@ void slcd_character_write_data(uint8_t com_line_index,
  *
  */
 void slcd_circular_shift_get_config_defaults(
-		struct slcd_circular_shift_config *const config)
+        struct slcd_circular_shift_config *const config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->fc = SLCD_FRAME_COUNTER_0;
-	config->dir = SLCD_CIRCULAR_SHIFT_LEFT;
-	config->size = 0;
-	config->data = 0;
+    config->fc = SLCD_FRAME_COUNTER_0;
+    config->dir = SLCD_CIRCULAR_SHIFT_LEFT;
+    config->size = 0;
+    config->data = 0;
 }
 
 /**
@@ -683,16 +683,16 @@ void slcd_circular_shift_get_config_defaults(
  */
 
 enum status_code slcd_circular_shift_set_config(
-		struct slcd_circular_shift_config *const config)
+        struct slcd_circular_shift_config *const config)
 {
-	if (!config) {
-		return STATUS_ERR_INVALID_ARG;
-	}
-	SLCD->CSRCFG.reg = SLCD_CSRCFG_FCS(config->fc)
-					 | (config->dir << SLCD_CSRCFG_DIR_Pos)
-					 | SLCD_CSRCFG_SIZE(config->size)
-					 | SLCD_CSRCFG_DATA(config->data);
+    if (!config) {
+        return STATUS_ERR_INVALID_ARG;
+    }
+    SLCD->CSRCFG.reg = SLCD_CSRCFG_FCS(config->fc)
+                     | (config->dir << SLCD_CSRCFG_DIR_Pos)
+                     | SLCD_CSRCFG_SIZE(config->size)
+                     | SLCD_CSRCFG_DATA(config->data);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 

@@ -26,7 +26,7 @@
 #endif
 
 #if !defined(STM32L010xB) && !defined (STM32L010x8) && !defined (STM32L010x6) && !defined (STM32L010x4) && !defined (STM32L011xx) && !defined (STM32L021xx) && !defined (STM32L031xx) && !defined (STM32L041xx) && !defined (STM32L051xx) && !defined (STM32L061xx) && !defined (STM32L071xx) && !defined (STM32L081xx)
-   
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal_def.h"
 
@@ -39,13 +39,13 @@
   */
 
 /* Exported types ------------------------------------------------------------*/
-   
+
 /* Exported constants --------------------------------------------------------*/
-  
+
 /** @defgroup DACEx_Exported_Constants DACEx Exported Constants
   * @{
-  */ 
-   
+  */
+
 /** @defgroup DACEx_lfsrunmask_triangleamplitude DACEx lfsrunmask triangleamplitude
   * @{
   */
@@ -107,9 +107,9 @@
   * @}
   */
 
-/* Exported macro ------------------------------------------------------------*/  
+/* Exported macro ------------------------------------------------------------*/
 
-/* Exported functions --------------------------------------------------------*/  
+/* Exported functions --------------------------------------------------------*/
 
 /** @defgroup DACEx_Exported_Functions DACEx Exported Functions
   * @{
@@ -156,7 +156,7 @@ void HAL_DACEx_DMAUnderrunCallbackCh2(DAC_HandleTypeDef* hdac);
   * @}
   */
 #endif /* !STM32L010xB && !STM32L010x8 && !STM32L010x6 && !STM32L010x4 && !STM32L011xx && !STM32L021xx && !STM32L031xx && !STM32L041xx && !STM32L051xx && !STM32L061xx && !STM32L071xx && !STM32L081xx*/
-  
+
 #ifdef __cplusplus
 }
 #endif

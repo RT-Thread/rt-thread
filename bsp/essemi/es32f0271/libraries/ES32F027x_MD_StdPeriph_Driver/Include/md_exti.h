@@ -47,20 +47,20 @@ extern "C" {
   * @{
   */
 
-/** @defgroup MD_EXTI_PC_Source EXTI Line Source 
+/** @defgroup MD_EXTI_PC_Source EXTI Line Source
   * @{
   */
 #define MD_EXTI_Pin_GPIOA                 (0x00000000UL)       /*!< @brief Select GPIOA for EXTIx */
 #define MD_EXTI_Pin_GPIOB                  (0x00000001UL)       /*!< @brief Select GPIOB for EXTIx */
 #define MD_EXTI_Pin_GPIOC                 (0x00000002UL)       /*!< @brief Select GPIOC for EXTIx */
 #define MD_EXTI_Pin_GPIOD                  (0x00000003UL)       /*!< @brief Select GPIOD for EXTIx */
- 
- /**  
-  * @} MD_EXTI_PC_Source 
+
+ /**
+  * @} MD_EXTI_PC_Source
   */
 
-/**  
-* @} MD_EXTI_Public_Constants 
+/**
+* @} MD_EXTI_Public_Constants
 */
 
 
@@ -77,7 +77,7 @@ extern "C" {
   */
 /**
   * @brief  Set EXTI interrupt configuration register 1
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->ICFG1
   * @retval None
   */
@@ -88,7 +88,7 @@ __STATIC_INLINE void md_exti_set_icfg1(EXTI_TypeDef *exti, uint32_t value)
 
 /**
   * @brief  Get EXTI interrupt configuration register 1
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_get_icfg1(EXTI_TypeDef *exti)
@@ -98,7 +98,7 @@ __STATIC_INLINE uint32_t md_exti_get_icfg1(EXTI_TypeDef *exti)
 
 /**
   * @brief  Set EXTI interrupt configuration register 2
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->ICFG2
   * @retval None
   */
@@ -109,7 +109,7 @@ __STATIC_INLINE void md_exti_set_icfg2(EXTI_TypeDef *exti, uint32_t value)
 
 /**
   * @brief  Get EXTI interrupt configuration register 2
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_get_icfg2(EXTI_TypeDef *exti)
@@ -580,19 +580,19 @@ __STATIC_INLINE void md_exti_set_icfg2_gpio15(EXTI_TypeDef *exti, uint32_t Sourc
 __STATIC_INLINE uint32_t md_exti_get_icfg2_gpio15(EXTI_TypeDef *exti)
 {
   return (uint32_t)(READ_BIT(exti->ICFG2, EXTI_ICFG2_GPIO15_MSK)>>EXTI_ICFG2_GPIO15_POSS);
-}  
+}
 
 /**
   * @} MD_EXTI_PF_Basic_Configuration
   */
 
-/** @defgroup MD_EXTI_PF_RTS EXTI Rising Edge Trigger Selection Register 
+/** @defgroup MD_EXTI_PF_RTS EXTI Rising Edge Trigger Selection Register
   * @{
   */
 
 /**
-  * @brief  Set rising trigger event configuration bit of line 
-  * @param  exti EXTI Instance 
+  * @brief  Set rising trigger event configuration bit of line
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->RTS
   * @retval None
   */
@@ -603,7 +603,7 @@ __STATIC_INLINE void md_exti_set_rts(EXTI_TypeDef *exti, uint32_t value)
 
 /**
   * @brief  Get rising trigger event configuration bit of line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_get_rts(EXTI_TypeDef *exti)
@@ -639,7 +639,7 @@ __STATIC_INLINE void md_exti_disable_rts_gpio0(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_rts_gpio0(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->RTS, EXTI_RTS_GPIO0_MSK) == (EXTI_RTS_GPIO0_MSK));
-} 
+}
 
 /**
   * @brief  Enable rising trigger event configuration bit of line 1
@@ -1219,10 +1219,10 @@ __STATIC_INLINE uint32_t md_exti_is_enable_rts_wakeup(EXTI_TypeDef *exti)
 /** @defgroup MD_EXTI_PF_FTS EXTI Falling Edge Trigger Selection Register
   * @{
   */
- 
+
 /**
-  * @brief  Set falling trigger event configuration bit of line 
-  * @param  exti EXTI Instance 
+  * @brief  Set falling trigger event configuration bit of line
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->FTS
   * @retval None
   */
@@ -1233,7 +1233,7 @@ __STATIC_INLINE void md_exti_set_fts(EXTI_TypeDef *exti, uint32_t value)
 
 /**
   * @brief  Get falling trigger event configuration bit of line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_get_fts(EXTI_TypeDef *exti)
@@ -1269,7 +1269,7 @@ __STATIC_INLINE void md_exti_disable_fts_gpio0(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_fts_gpio0(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->FTS, EXTI_FTS_GPIO0_MSK) == (EXTI_FTS_GPIO0_MSK));
-} 
+}
 
 /**
   * @brief  Enable falling trigger event configuration bit of line 1
@@ -1853,10 +1853,10 @@ __STATIC_INLINE uint32_t md_exti_is_enable_fts_wakeup(EXTI_TypeDef *exti)
 /** @defgroup MD_EXTI_PF_SWI EXTI Software Interrupt Event register
   * @{
   */
-  
+
 /**
   * @brief  Set software interrupt on line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->SWI
   * @retval None
   */
@@ -1867,7 +1867,7 @@ __STATIC_INLINE void md_exti_set_swi(EXTI_TypeDef *exti, uint32_t value)
 
 /**
   * @brief  Get software interrupt on line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_get_swi(EXTI_TypeDef *exti)
@@ -1903,7 +1903,7 @@ __STATIC_INLINE void md_exti_disable_swi_gpio0(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_swi_gpio0(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->SWI, EXTI_SWI_GPIO0_MSK) == (EXTI_SWI_GPIO0_MSK));
-} 
+}
 
 /**
   * @brief  Enable software interrupt on line 1
@@ -2485,8 +2485,8 @@ __STATIC_INLINE uint32_t md_exti_is_enable_swi_wakeup(EXTI_TypeDef *exti)
   * @{
   */
 /**
-  * @brief  Set ADC trigger enable on line 
-  * @param  exti EXTI Instance 
+  * @brief  Set ADC trigger enable on line
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->ADTE
   * @retval None
   */
@@ -2497,7 +2497,7 @@ __STATIC_INLINE void md_exti_set_adte(EXTI_TypeDef *exti, uint32_t value)
 
 /**
   * @brief  Get ADC trigger enable on line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_get_adte(EXTI_TypeDef *exti)
@@ -2533,7 +2533,7 @@ __STATIC_INLINE void md_exti_disable_adte_gpio0(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_adte_gpio0(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->ADTE, EXTI_ADTE_GPIO0_MSK) == (EXTI_ADTE_GPIO0_MSK));
-} 
+}
 
 /**
   * @brief  Enable ADC trigger on line 1
@@ -3120,8 +3120,8 @@ __STATIC_INLINE uint32_t md_exti_is_enable_adte_wakeup(EXTI_TypeDef *exti)
 
 
 /**
-  * @brief  Set interrupt enable on line 
-  * @param  exti EXTI Instance 
+  * @brief  Set interrupt enable on line
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->IER
   * @retval None
   */
@@ -3331,7 +3331,7 @@ __STATIC_INLINE void md_exti_enable_ier_wakeup(EXTI_TypeDef *exti)
   SET_BIT(exti->IER, EXTI_IER_WAKEUP_MSK);
 }
 
-/** 
+/**
   * @} MD_EXTI_PF_IER
   */
 
@@ -3341,7 +3341,7 @@ __STATIC_INLINE void md_exti_enable_ier_wakeup(EXTI_TypeDef *exti)
 
 /**
   * @brief  Disable interrupt on line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->IDR
   * @retval None
   */
@@ -3352,7 +3352,7 @@ __STATIC_INLINE void md_exti_disable_idr(EXTI_TypeDef *exti, uint32_t value)
 
 
 /**
-  * @brief  Disable interrupt on line 0 
+  * @brief  Disable interrupt on line 0
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3362,7 +3362,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio0(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 1 
+  * @brief  Disable interrupt on line 1
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3372,7 +3372,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio1(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 2 
+  * @brief  Disable interrupt on line 2
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3382,7 +3382,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio2(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 3 
+  * @brief  Disable interrupt on line 3
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3392,7 +3392,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio3(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 4 
+  * @brief  Disable interrupt on line 4
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3402,7 +3402,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio4(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 5 
+  * @brief  Disable interrupt on line 5
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3422,7 +3422,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio6(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 7 
+  * @brief  Disable interrupt on line 7
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3432,7 +3432,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio7(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 8 
+  * @brief  Disable interrupt on line 8
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3442,7 +3442,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio8(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 9 
+  * @brief  Disable interrupt on line 9
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3452,7 +3452,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio9(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 10 
+  * @brief  Disable interrupt on line 10
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3462,7 +3462,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio10(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 11 
+  * @brief  Disable interrupt on line 11
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3472,7 +3472,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio11(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 12 
+  * @brief  Disable interrupt on line 12
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3482,7 +3482,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio12(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 13 
+  * @brief  Disable interrupt on line 13
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3492,7 +3492,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio13(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 14 
+  * @brief  Disable interrupt on line 14
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3502,7 +3502,7 @@ __STATIC_INLINE void md_exti_disable_idr_gpio14(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 15 
+  * @brief  Disable interrupt on line 15
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3532,7 +3532,7 @@ __STATIC_INLINE void md_exti_disable_idr_cmp2(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 20 
+  * @brief  Disable interrupt on line 20
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3542,7 +3542,7 @@ __STATIC_INLINE void md_exti_disable_idr_pvd0(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable interrupt on line 21 
+  * @brief  Disable interrupt on line 21
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -3552,7 +3552,7 @@ __STATIC_INLINE void md_exti_disable_idr_wakeup(EXTI_TypeDef *exti)
 }
 
 
-/** 
+/**
   * @} MD_EXTI_PF_IDR
   */
 
@@ -3562,7 +3562,7 @@ __STATIC_INLINE void md_exti_disable_idr_wakeup(EXTI_TypeDef *exti)
 
 /**
   * @brief  Interrupt Clear on line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->ICR
   * @retval None
   */
@@ -3773,7 +3773,7 @@ __STATIC_INLINE void md_exti_clear_icr_wakeup(EXTI_TypeDef *exti)
   SET_BIT(exti->ICR, EXTI_ICR_WAKEUP_MSK);
 }
 
-/** 
+/**
   * @} MD_EXTI_PF_ICR
   */
 
@@ -3783,7 +3783,7 @@ __STATIC_INLINE void md_exti_clear_icr_wakeup(EXTI_TypeDef *exti)
 
 /**
   * @brief  Interrupt Valid Status on line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->IVS
   * @retval None
   */
@@ -3995,7 +3995,7 @@ __STATIC_INLINE uint32_t md_exti_is_enable_ivs_wakeup(EXTI_TypeDef *exti)
 }
 
 
-/** 
+/**
   * @} MD_EXTI_PF_IVS
   */
 
@@ -4005,7 +4005,7 @@ __STATIC_INLINE uint32_t md_exti_is_enable_ivs_wakeup(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm(EXTI_TypeDef *exti)
@@ -4016,7 +4016,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 0 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio0(EXTI_TypeDef *exti)
@@ -4026,7 +4026,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio0(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 1 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio1(EXTI_TypeDef *exti)
@@ -4036,7 +4036,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio1(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 2 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio2(EXTI_TypeDef *exti)
@@ -4046,7 +4046,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio2(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 3 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio3(EXTI_TypeDef *exti)
@@ -4056,7 +4056,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio3(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 4 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio4(EXTI_TypeDef *exti)
@@ -4066,7 +4066,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio4(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 5 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio5(EXTI_TypeDef *exti)
@@ -4076,7 +4076,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio5(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 6 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio6(EXTI_TypeDef *exti)
@@ -4086,7 +4086,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio6(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 7 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio7(EXTI_TypeDef *exti)
@@ -4096,7 +4096,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio7(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 8 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio8(EXTI_TypeDef *exti)
@@ -4106,7 +4106,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio8(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 9 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio9(EXTI_TypeDef *exti)
@@ -4116,7 +4116,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio9(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 10 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio10(EXTI_TypeDef *exti)
@@ -4126,7 +4126,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio10(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 11 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio11(EXTI_TypeDef *exti)
@@ -4136,7 +4136,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio11(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 12 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio12(EXTI_TypeDef *exti)
@@ -4146,7 +4146,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio12(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 13 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio13(EXTI_TypeDef *exti)
@@ -4156,7 +4156,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio13(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 14 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio14(EXTI_TypeDef *exti)
@@ -4166,7 +4166,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio14(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 15 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio15(EXTI_TypeDef *exti)
@@ -4177,7 +4177,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_gpio15(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 16 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_cmp1(EXTI_TypeDef *exti)
@@ -4187,7 +4187,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_cmp1(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 17 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_cmp2(EXTI_TypeDef *exti)
@@ -4198,7 +4198,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_cmp2(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 20 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_pvd0(EXTI_TypeDef *exti)
@@ -4208,7 +4208,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_pvd0(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Interrupt Flag Masked Status on line 21 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_WAKEUP(EXTI_TypeDef *exti)
@@ -4216,7 +4216,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_WAKEUP(EXTI_TypeDef *exti)
   return (uint32_t)(READ_BIT(exti->IFM, EXTI_IFM_WAKEUP_MSK) == EXTI_IFM_WAKEUP_POS);
 }
 
-/** 
+/**
   * @} MD_EXTI_PF_IFM
   */
 
@@ -4227,7 +4227,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_ifm_WAKEUP(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif(EXTI_TypeDef *exti)
@@ -4238,7 +4238,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 0 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio0(EXTI_TypeDef *exti)
@@ -4248,7 +4248,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio0(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 1 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio1(EXTI_TypeDef *exti)
@@ -4258,7 +4258,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio1(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 2 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio2(EXTI_TypeDef *exti)
@@ -4268,7 +4268,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio2(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 3 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio3(EXTI_TypeDef *exti)
@@ -4278,7 +4278,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio3(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 4 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio4(EXTI_TypeDef *exti)
@@ -4288,7 +4288,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio4(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 5 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio5(EXTI_TypeDef *exti)
@@ -4298,7 +4298,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio5(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 6 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio6(EXTI_TypeDef *exti)
@@ -4308,7 +4308,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio6(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 7 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio7(EXTI_TypeDef *exti)
@@ -4318,7 +4318,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio7(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 8 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio8(EXTI_TypeDef *exti)
@@ -4328,7 +4328,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio8(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 9 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio9(EXTI_TypeDef *exti)
@@ -4338,7 +4338,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio9(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 10 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio10(EXTI_TypeDef *exti)
@@ -4348,7 +4348,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio10(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 11 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio11(EXTI_TypeDef *exti)
@@ -4358,7 +4358,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio11(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 12 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio12(EXTI_TypeDef *exti)
@@ -4368,7 +4368,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio12(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 13 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio13(EXTI_TypeDef *exti)
@@ -4378,7 +4378,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio13(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 14 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio14(EXTI_TypeDef *exti)
@@ -4388,7 +4388,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio14(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 15 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio15(EXTI_TypeDef *exti)
@@ -4399,7 +4399,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_gpio15(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 16 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_cmp1(EXTI_TypeDef *exti)
@@ -4409,7 +4409,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_cmp1(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 17 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_cmp2(EXTI_TypeDef *exti)
@@ -4420,7 +4420,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_cmp2(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 20 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_pvd0(EXTI_TypeDef *exti)
@@ -4430,7 +4430,7 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_pvd0(EXTI_TypeDef *exti)
 
 /**
   * @brief  Check if Raw interrupt flag Status on line 21 is actived
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_WAKEUP(EXTI_TypeDef *exti)
@@ -4459,8 +4459,8 @@ __STATIC_INLINE uint32_t md_exti_is_active_flag_rif_WAKEUP(EXTI_TypeDef *exti)
   * @{
   */
 /**
-  * @brief  Set debounce enable bit of line 
-  * @param  exti EXTI Instance 
+  * @brief  Set debounce enable bit of line
+  * @param  exti EXTI Instance
   * @param  value The value write in EXTI->DB
   * @retval None
   */
@@ -4471,7 +4471,7 @@ __STATIC_INLINE void md_spi_set_exti_db(EXTI_TypeDef *exti, uint32_t value)
 
 /**
   * @brief  Get debounce enable bit of line
-  * @param  exti EXTI Instance 
+  * @param  exti EXTI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_exti_db(EXTI_TypeDef *exti)
@@ -4507,7 +4507,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio0(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio0(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO0_MSK) == (EXTI_DB_GPIO0_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 1
@@ -4520,7 +4520,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio1(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 1 
+  * @brief  Disable debounce enable bit of line 1
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4537,7 +4537,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio1(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio1(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO1_MSK) == (EXTI_DB_GPIO1_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 2
@@ -4567,7 +4567,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio2(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio2(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO2_MSK) == (EXTI_DB_GPIO2_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 3
@@ -4580,7 +4580,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio3(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 3 
+  * @brief  Disable debounce enable bit of line 3
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4597,7 +4597,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio3(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio3(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO3_MSK) == (EXTI_DB_GPIO3_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 4
@@ -4610,7 +4610,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio4(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 4 
+  * @brief  Disable debounce enable bit of line 4
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4627,7 +4627,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio4(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio4(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO4_MSK) == (EXTI_DB_GPIO4_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 5
@@ -4640,7 +4640,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio5(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 5 
+  * @brief  Disable debounce enable bit of line 5
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4657,7 +4657,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio5(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio5(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO5_MSK) == (EXTI_DB_GPIO5_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 6
@@ -4670,7 +4670,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio6(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 6 
+  * @brief  Disable debounce enable bit of line 6
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4687,7 +4687,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio6(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio6(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO6_MSK) == (EXTI_DB_GPIO6_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 7
@@ -4700,7 +4700,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio7(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 7 
+  * @brief  Disable debounce enable bit of line 7
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4717,7 +4717,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio7(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio7(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO7_MSK) == (EXTI_DB_GPIO7_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 8
@@ -4730,7 +4730,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio8(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 8 
+  * @brief  Disable debounce enable bit of line 8
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4747,7 +4747,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio8(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio8(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO8_MSK) == (EXTI_DB_GPIO8_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 9
@@ -4760,7 +4760,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio9(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 9 
+  * @brief  Disable debounce enable bit of line 9
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4777,7 +4777,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio9(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio9(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO9_MSK) == (EXTI_DB_GPIO9_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 10
@@ -4790,7 +4790,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio10(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 10 
+  * @brief  Disable debounce enable bit of line 10
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4807,7 +4807,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio10(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio10(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO10_MSK) == (EXTI_DB_GPIO10_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 11
@@ -4820,7 +4820,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio11(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 11 
+  * @brief  Disable debounce enable bit of line 11
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4837,7 +4837,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio11(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio11(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO11_MSK) == (EXTI_DB_GPIO11_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 12
@@ -4867,7 +4867,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio12(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio12(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO12_MSK) == (EXTI_DB_GPIO12_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 13
@@ -4880,7 +4880,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio13(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 13 
+  * @brief  Disable debounce enable bit of line 13
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4897,7 +4897,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio13(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio13(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO13_MSK) == (EXTI_DB_GPIO13_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 14
@@ -4927,7 +4927,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio14(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio14(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO14_MSK) == (EXTI_DB_GPIO14_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 1
@@ -4940,7 +4940,7 @@ __STATIC_INLINE void md_exti_enable_db_gpio15(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 15 
+  * @brief  Disable debounce enable bit of line 15
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -4957,7 +4957,7 @@ __STATIC_INLINE void md_exti_disable_db_gpio15(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_gpio15(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_GPIO15_MSK) == (EXTI_DB_GPIO15_MSK));
-} 
+}
 
 
 /**
@@ -4988,7 +4988,7 @@ __STATIC_INLINE void md_exti_disable_db_cmp1(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_cmp1(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_CMP1_MSK) == (EXTI_DB_CMP1_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 17
@@ -5018,7 +5018,7 @@ __STATIC_INLINE void md_exti_disable_db_cmp2(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_cmp2(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_CMP2_MSK) == (EXTI_DB_CMP2_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 20
@@ -5031,7 +5031,7 @@ __STATIC_INLINE void md_exti_enable_db_pvd0(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 20 
+  * @brief  Disable debounce enable bit of line 20
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -5048,7 +5048,7 @@ __STATIC_INLINE void md_exti_disable_db_pvd0(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_pvd0(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_PVD0_MSK) == (EXTI_DB_PVD0_MSK));
-} 
+}
 
 /**
   * @brief  Enable debounce enable bit of line 21
@@ -5061,7 +5061,7 @@ __STATIC_INLINE void md_exti_enable_db_wakeup(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Disable debounce enable bit of line 21 
+  * @brief  Disable debounce enable bit of line 21
   * @param  exti EXTI Instance
   * @retval None
   */
@@ -5078,10 +5078,10 @@ __STATIC_INLINE void md_exti_disable_db_wakeup(EXTI_TypeDef *exti)
 __STATIC_INLINE uint32_t md_exti_is_enable_db_wakeup(EXTI_TypeDef *exti)
 {
   return (READ_BIT(exti->DB, EXTI_DB_WAKEUP_MSK) == (EXTI_DB_WAKEUP_MSK));
-} 
+}
 
 /**
-  * @brief  Set Debounce counter  
+  * @brief  Set Debounce counter
   * @param  exti EXTI Port
   * @param  dbcnt This bit can be one of following valus:
   *         @arg Max Value 7
@@ -5094,7 +5094,7 @@ __STATIC_INLINE void md_exti_set_dbcon_dbcnt(EXTI_TypeDef *exti, uint32_t dbcnt)
 }
 
 /**
-  * @brief  Return Debounce counter  
+  * @brief  Return Debounce counter
   * @retval 0~7
   */
 __STATIC_INLINE uint32_t md_exti_get_dbcon_dbcnt(EXTI_TypeDef *exti)
@@ -5103,7 +5103,7 @@ __STATIC_INLINE uint32_t md_exti_get_dbcon_dbcnt(EXTI_TypeDef *exti)
 }
 
 /**
-  * @brief  Set Debounce prescale  
+  * @brief  Set Debounce prescale
   * @param  exti EXTI Port
   * @param  prescale This bit can be one of following valus:
   *         @arg Max Value 255
@@ -5116,7 +5116,7 @@ __STATIC_INLINE void md_exti_set_dbcon_dbpre(EXTI_TypeDef *exti, uint32_t presca
 }
 
 /**
-  * @brief  Get Debounce prescale  
+  * @brief  Get Debounce prescale
   * @retval 0~255
   */
 __STATIC_INLINE uint32_t md_exti_get_dbcon_dbpre(EXTI_TypeDef *exti)

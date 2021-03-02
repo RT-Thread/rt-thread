@@ -62,7 +62,7 @@ enum {
 #define RBC(A,B,C,D)                 ((A)<<10 | (B)<< 6 | (C)<<4 | (D))
 #define RBC_SAME(A,B)                ((A)<<10 | (B)<< 6 | (A)<<4 | (B))
 
-//! @brief GDI tiled map structure 
+//! @brief GDI tiled map structure
 typedef struct {
     int xy2ca_map[16];
     int xy2ba_map[16];
@@ -83,7 +83,7 @@ typedef struct {
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @brief Configure the GDI for tiled mode. this is a new feature for imx6. tiled mode will 
+ * @brief Configure the GDI for tiled mode. this is a new feature for imx6. tiled mode will
  *  lease the burden of bandwidth. but need VDOA to cooperate to convert the data.
  *
  * @param TiledMapType tiled map type

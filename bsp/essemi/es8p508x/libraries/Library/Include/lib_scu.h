@@ -149,7 +149,7 @@ typedef enum
 #define SCU_LVDIFS_Rise() (SCU->LVDCON.IFS = 0x0) //LVDO上升沿产生中断
 #define SCU_LVDIFS_Fall() (SCU->LVDCON.IFS = 0x1) //LVDO下降沿产生中断
 #define SCU_LVDIFS_High() (SCU->LVDCON.IFS = 0x2) //LVDO高电平产生中断
-#define SCU_LVDIFS_Low()  (SCU->LVDCON.IFS = 0x3)   //LVDO低电平产生中断 
+#define SCU_LVDIFS_Low()  (SCU->LVDCON.IFS = 0x3)   //LVDO低电平产生中断
 #define SCU_LVDIFS_Change() (SCU->LVDCON.IFS = 0x4) //LVDO电平变化产生中断
 
 /* FLASH访问等待时间选择 */

@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -49,15 +49,15 @@
   */
 typedef struct
 {
-  uint32_t PVMType;   /*!< PVMType: Specifies which voltage is monitored and against which threshold. 
-                           This parameter can be a value of @ref PWREx_PVM_Type. 
-                           @arg @ref PWR_PVM_1 Peripheral Voltage Monitoring 1 enable: VDDUSB versus 1.2 V (applicable when USB feature is supported). 
-                           @arg @ref PWR_PVM_3 Peripheral Voltage Monitoring 3 enable: VDDA versus 1.62 V. 
+  uint32_t PVMType;   /*!< PVMType: Specifies which voltage is monitored and against which threshold.
+                           This parameter can be a value of @ref PWREx_PVM_Type.
+                           @arg @ref PWR_PVM_1 Peripheral Voltage Monitoring 1 enable: VDDUSB versus 1.2 V (applicable when USB feature is supported).
+                           @arg @ref PWR_PVM_3 Peripheral Voltage Monitoring 3 enable: VDDA versus 1.62 V.
                            */
 
   uint32_t Mode;      /*!< Mode: Specifies the operating mode for the selected pins.
                            This parameter can be a value of @ref PWREx_PVM_Mode. */
-  uint32_t WakeupTarget;   /*!< Specifies the Wakeup Target 
+  uint32_t WakeupTarget;   /*!< Specifies the Wakeup Target
                            This parameter can be a value of @ref PWREx_WakeUpTarget_Definition */
 }PWR_PVMTypeDef;
 
@@ -69,7 +69,7 @@ typedef struct
 {
   uint32_t StartupCurrent; /*!< SMPS step down converter supply startup current selection.
                                 This parameter can be a value of @ref PWREx_SMPS_STARTUP_CURRENT. */
-  
+
   uint32_t OutputVoltage;  /*!< SMPS step down converter output voltage scaling voltage level.
                                 This parameter can be a value of @ref PWREx_SMPS_OUTPUT_VOLTAGE_LEVEL */
 }PWR_SMPSTypeDef;
@@ -155,8 +155,8 @@ typedef struct
 #define PWR_PVM_3                  PWR_CR2_PVME3  /*!< Peripheral Voltage Monitoring 3 enable: VDDA versus 1.62 V */
 /**
   * @}
-  */  
-  
+  */
+
 /** @defgroup PWREx_PVM_Mode  PWR PVM interrupt and event mode
   * @{
   */
@@ -195,7 +195,7 @@ typedef struct
   * @}
   */
 
-  
+
 /** @defgroup PWREx_VBAT_Battery_Charging_Selection PWR battery charging resistor selection
   * @{
   */
@@ -204,7 +204,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /** @defgroup PWREx_VBAT_Battery_Charging PWR battery charging
   * @{
   */
@@ -212,8 +212,8 @@ typedef struct
 #define PWR_BATTERY_CHARGING_ENABLE         PWR_CR4_VBE
 /**
   * @}
-  */ 
-  
+  */
+
 /** @defgroup PWREx_GPIO_Bit_Number GPIO bit number for I/O setting in standby/shutdown mode
   * @{
   */
@@ -236,7 +236,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /** @defgroup PWREx_GPIO GPIO port
   * @{
   */
@@ -325,7 +325,7 @@ typedef struct
   *                 - 10: SR2 register
   *                 - 11: EXTSCR register
   *        The only exception is PWR_FLAG_WUF, encompassing all
-  *        wake-up flags and set to PWR_SR1_WUF.    
+  *        wake-up flags and set to PWR_SR1_WUF.
   * @{
   */
 /*--------------------------------SR1-------------------------------*/
@@ -406,7 +406,7 @@ typedef struct
 /**
   * @}
   */
-/* Private define ------------------------------------------------------------*/ 
+/* Private define ------------------------------------------------------------*/
 /** @defgroup PWR_Private_Defines PWR Private Defines
   * @{
   */
@@ -713,7 +713,7 @@ typedef struct
   *                                                system frequency up to 16 MHz.
   * @note  This macro is similar to HAL_PWREx_ControlVoltageScaling() API but doesn't check
   *        whether or not VOSF flag is cleared when moving from range 2 to range 1. User
-  *        may resort to __HAL_PWR_GET_FLAG() macro to check VOSF bit resetting.   
+  *        may resort to __HAL_PWR_GET_FLAG() macro to check VOSF bit resetting.
   * @retval None
   */
 #define __HAL_PWR_VOLTAGESCALING_CONFIG(__REGULATOR__) do {                                                     \
@@ -744,7 +744,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /* Private macros --------------------------------------------------------*/
 /** @addtogroup  PWREx_Private_Macros   PWR Extended Private Macros
   * @{
@@ -783,8 +783,8 @@ typedef struct
                                 ((MODE) == PWR_PVM_MODE_IT_RISING_FALLING)   ||\
                                 ((MODE) == PWR_PVM_MODE_EVENT_RISING)        ||\
                                 ((MODE) == PWR_PVM_MODE_EVENT_FALLING)       ||\
-                                ((MODE) == PWR_PVM_MODE_EVENT_RISING_FALLING))  
-                                
+                                ((MODE) == PWR_PVM_MODE_EVENT_RISING_FALLING))
+
 #define IS_PWR_FLASH_POWERDOWN(__MODE__)    ((((__MODE__) & (PWR_FLASHPD_LPRUN | PWR_FLASHPD_LPSLEEP)) != 0x00u) && \
                                              (((__MODE__) & ~(PWR_FLASHPD_LPRUN | PWR_FLASHPD_LPSLEEP)) == 0x00u))
 
@@ -794,10 +794,10 @@ typedef struct
 #endif
 
 #define IS_PWR_BATTERY_RESISTOR_SELECT(RESISTOR) (((RESISTOR) == PWR_BATTERY_CHARGING_RESISTOR_5) ||\
-                                                  ((RESISTOR) == PWR_BATTERY_CHARGING_RESISTOR_1_5))  
-                                                  
+                                                  ((RESISTOR) == PWR_BATTERY_CHARGING_RESISTOR_1_5))
+
 #define IS_PWR_BATTERY_CHARGING(CHARGING) (((CHARGING) == PWR_BATTERY_CHARGING_DISABLE) ||\
-                                           ((CHARGING) == PWR_BATTERY_CHARGING_ENABLE)) 
+                                           ((CHARGING) == PWR_BATTERY_CHARGING_ENABLE))
 
 
 #define IS_PWR_GPIO_BIT_NUMBER(BIT_NUMBER) (((BIT_NUMBER) & GPIO_PIN_MASK) != (uint32_t)0x00)
@@ -854,13 +854,13 @@ typedef struct
 /**
   * @}
   */
-  
+
 
 /** @addtogroup PWREx_Exported_Functions PWR Extended Exported Functions
   * @{
   */
-  
-/** @addtogroup PWREx_Exported_Functions_Group1 Extended Peripheral Control functions 
+
+/** @addtogroup PWREx_Exported_Functions_Group1 Extended Peripheral Control functions
   * @{
   */
 

@@ -48,7 +48,7 @@ void gpio6_iomux_config(void)
     //     ALT0 (0) - Select instance: gpmi signal: NAND_CLE
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO07
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_CLE_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CLE_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CLE_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CLE_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_CLE(0x020E0658)
@@ -89,13 +89,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CLE_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO08 to pad NAND_ALE(A16)
@@ -114,7 +114,7 @@ void gpio6_iomux_config(void)
     //     ALT1 (1) - Select instance: usdhc4 signal: SD4_RESET
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO08
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_ALE_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_ALE_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_ALE_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_ALE_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_ALE(0x020E0654)
@@ -155,13 +155,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_ALE_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO09 to pad NAND_WP_B(E15)
@@ -180,7 +180,7 @@ void gpio6_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO09
     //     ALT9 (9) - Select instance: i2c4 signal: I2C4_SCL
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_WP_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_WP_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_WP_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_WP_B_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B(0x020E0690)
@@ -221,13 +221,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_WP_B_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO10 to pad NAND_READY(B16)
@@ -245,7 +245,7 @@ void gpio6_iomux_config(void)
     //     ALT0 (0) - Select instance: gpmi signal: NAND_READY
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO10
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_READY_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_READY_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_READY_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_READY_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_READY(0x020E068C)
@@ -286,13 +286,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_READY_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO11 to pad NAND_CS0_B(F15)
@@ -310,7 +310,7 @@ void gpio6_iomux_config(void)
     //     ALT0 (0) - Select instance: gpmi signal: NAND_CE0_B
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO11
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_CS0_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS0_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS0_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS0_B_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B(0x020E065C)
@@ -351,13 +351,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS0_B_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO14 to pad NAND_CS1_B(C16)
@@ -377,7 +377,7 @@ void gpio6_iomux_config(void)
     //     ALT2 (2) - Select instance: usdhc3 signal: SD3_VSELECT
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO14
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_CS1_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS1_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS1_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS1_B_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B(0x020E0660)
@@ -418,13 +418,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS1_B_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO15 to pad NAND_CS2_B(A17)
@@ -446,7 +446,7 @@ void gpio6_iomux_config(void)
     //     ALT4 (4) - Select instance: ccm signal: CCM_CLKO2
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO15
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS2_B_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B(0x020E0664)
@@ -487,13 +487,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS2_B_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO16 to pad NAND_CS3_B(D16)
@@ -515,7 +515,7 @@ void gpio6_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO16
     //     ALT9 (9) - Select instance: i2c4 signal: I2C4_SDA
     HW_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_NAND_CS3_B_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B(0x020E0668)
@@ -556,13 +556,13 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_NAND_CS3_B_SRE_V(SLOW));
 
     // Config gpio6.GPIO6_IO31 to pad EIM_BCLK(N22)
@@ -582,7 +582,7 @@ void gpio6_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO31
     //     ALT8 (8) - Select instance: epdc signal: EPDC_SDCE9
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_BCLK_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_BCLK_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_BCLK_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_BCLK_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK(0x020E0508)
@@ -623,12 +623,12 @@ void gpio6_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_BCLK_SRE_V(FAST));
 }

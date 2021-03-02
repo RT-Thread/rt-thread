@@ -47,16 +47,16 @@
 #define PIN_SPI1_MISO   (12u)
 #define PIN_SPI1_MOSI   (11u)
 #define PIN_SPI1_SS0    (10u)
-#define PIN_SPI1_SS1    (14u) 
+#define PIN_SPI1_SS1    (14u)
 #define PIN_SPI1_SS2    (15u)
 #define PIN_SPI1_SS3    (16u)
 
 #define SS_PIN_TO_CS_ID(x) \
-  ((x==PIN_SPI1_SS0 ? 0 :		 \
-    (x==PIN_SPI1_SS1 ? 1 :		 \
-     (x==PIN_SPI1_SS2 ? 2 :		 \
-      (x==PIN_SPI1_SS3 ? 3 :		 \
-       -1))))) 
+  ((x==PIN_SPI1_SS0 ? 0 :        \
+    (x==PIN_SPI1_SS1 ? 1 :       \
+     (x==PIN_SPI1_SS2 ? 2 :      \
+      (x==PIN_SPI1_SS3 ? 3 :         \
+       -1)))))
 
 
 // These buttons are present only on the Freedom E300 Arty Dev Kit.

@@ -27,7 +27,7 @@ extern "C" {
  *
  * The I2C bus is a two-wire serial interface, consisting of a serial data line SDA and a serial clock SCL. These wires carry
  * information between the devices connected to the bus. Each device is recognized by a unique address and can operate as
- * either a â€œtransmitterâ€ or â€œreceiverâ€, depending on the function of the device. Devices can also be considered as masters or
+ * either a ¡°transmitter¡± or ¡°receiver¡±, depending on the function of the device. Devices can also be considered as masters or
  * slaves when performing data transfers. A master is a device that initiates a data transfer on the bus and generates the
  * clock signals to permit that transfer. At that time, any device addressed is considered a slave.
  *

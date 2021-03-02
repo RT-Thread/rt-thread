@@ -452,7 +452,7 @@ void USB_Control_Service (
         g_setup_pkt.index = BYTE_SWAP16(g_setup_pkt.index);
         g_setup_pkt.value = BYTE_SWAP16(g_setup_pkt.value);
         g_setup_pkt.length = BYTE_SWAP16(g_setup_pkt.length);
-        
+
         /* if the request is standard request */
         if ((g_setup_pkt.request_type & USB_REQUEST_CLASS_MASK) ==
             USB_REQUEST_CLASS_STRD)
@@ -610,91 +610,91 @@ static uint_8 USB_Strd_Req_Get_Status (
     USB_PACKET_SIZE *size               /* [OUT] Size to be returned */
 )
 {
-	uint_8_ptr pu8ConfigDesc = NULL;
-	uint_16 u16DescSize;
+    uint_8_ptr pu8ConfigDesc = NULL;
+    uint_16 u16DescSize;
     uint_8 interface, endpoint = 0;
     uint_8 status;
     uint_8 device_state = USB_STATE_POWERED;
 
 
     status = _usb_device_get_status(&controller_ID, USB_STATUS_DEVICE_STATE, &device_state);
-  
+
     if((setup_packet->request_type & USB_REQUEST_SRC_MASK) == USB_REQUEST_SRC_DEVICE)
     {
         #ifdef OTG_BUILD
         if(setup_packet->index == USB_WINDEX_OTG_STATUS_SEL)
         {
-			uint_8 temp;
-			 /* Request for Device */
-			 status = _usb_device_get_status(&controller_ID, USB_STATUS_OTG, &temp);
-			 g_std_framework_data = (uint_16)temp;
-			 g_std_framework_data &= GET_STATUS_OTG_MASK;
-			 g_std_framework_data = BYTE_SWAP16(g_std_framework_data);
-			 *size = OTG_STATUS_SIZE;
+            uint_8 temp;
+             /* Request for Device */
+             status = _usb_device_get_status(&controller_ID, USB_STATUS_OTG, &temp);
+             g_std_framework_data = (uint_16)temp;
+             g_std_framework_data &= GET_STATUS_OTG_MASK;
+             g_std_framework_data = BYTE_SWAP16(g_std_framework_data);
+             *size = OTG_STATUS_SIZE;
         }
         else
         #endif
         {
          uint_8 device_state1;
-        	
+
          /* Request for Device */
          status = _usb_device_get_status(&controller_ID, USB_STATUS_DEVICE, &device_state1);
          g_std_framework_data = (uint_16)device_state1;
          g_std_framework_data &= GET_STATUS_DEVICE_MASK;
          g_std_framework_data = BYTE_SWAP16(g_std_framework_data);
 
-         /* Set Self Powered bit in device state according to configuration */		
+         /* Set Self Powered bit in device state according to configuration */
          status = USB_Desc_Get_Descriptor(controller_ID, USB_CONFIG_DESCRIPTOR,
-        		                          0, 0, &pu8ConfigDesc, (USB_PACKET_SIZE *)&u16DescSize);		
-		
-		 if((pu8ConfigDesc[7] & SELF_POWERED) != 0)
-		 {
-			g_std_framework_data |= 0x0100;
-		 }
-		 else
-		 {
-			g_std_framework_data &= ~0x0100;
-		 }
+                                          0, 0, &pu8ConfigDesc, (USB_PACKET_SIZE *)&u16DescSize);
+
+         if((pu8ConfigDesc[7] & SELF_POWERED) != 0)
+         {
+            g_std_framework_data |= 0x0100;
+         }
+         else
+         {
+            g_std_framework_data &= ~0x0100;
+         }
          *size = DEVICE_STATUS_SIZE;
         }
     }
     else if((setup_packet->request_type & USB_REQUEST_SRC_MASK) == USB_REQUEST_SRC_INTERFACE)
     {
         /* Request for Interface */
-    	interface = (uint_8) setup_packet->index;
+        interface = (uint_8) setup_packet->index;
         if((device_state == USB_STATE_ADDRESS) && (interface > 0))
         {
-        	 status = USBERR_INVALID_REQ_TYPE;
+             status = USBERR_INVALID_REQ_TYPE;
         }
         else
         {
-        	/* Interface requests always return 0 */
-        	g_std_framework_data = 0x0000;
-			*size = INTERFACE_STATUS_SIZE;
+            /* Interface requests always return 0 */
+            g_std_framework_data = 0x0000;
+            *size = INTERFACE_STATUS_SIZE;
         }
     }
     else if((setup_packet->request_type & USB_REQUEST_SRC_MASK) == USB_REQUEST_SRC_ENDPOINT)
     {
         /* Request for Endpoint */
-    	if((device_state == USB_STATE_ADDRESS) && (endpoint > 0))
-		{
-			 status = USBERR_INVALID_REQ_TYPE;
-		}
-    	else
-    	{
-			uint_8 device_state2;
-			endpoint  = (uint_8)(((uint_8) setup_packet->index) |
-				USB_STATUS_ENDPOINT);
-			status =  _usb_device_get_status(&controller_ID,
-				endpoint,
-				&device_state2);
-			g_std_framework_data = (uint_16)device_state2;
-			g_std_framework_data = BYTE_SWAP16(g_std_framework_data);
-			*size = ENDP_STATUS_SIZE;
-			
-			/* All other fields except HALT must be zero */
-			g_std_framework_data &= 0x0100;
-    	}
+        if((device_state == USB_STATE_ADDRESS) && (endpoint > 0))
+        {
+             status = USBERR_INVALID_REQ_TYPE;
+        }
+        else
+        {
+            uint_8 device_state2;
+            endpoint  = (uint_8)(((uint_8) setup_packet->index) |
+                USB_STATUS_ENDPOINT);
+            status =  _usb_device_get_status(&controller_ID,
+                endpoint,
+                &device_state2);
+            g_std_framework_data = (uint_16)device_state2;
+            g_std_framework_data = BYTE_SWAP16(g_std_framework_data);
+            *size = ENDP_STATUS_SIZE;
+
+            /* All other fields except HALT must be zero */
+            g_std_framework_data &= 0x0100;
+        }
     }
 
     *data = (uint_8_ptr)&g_std_framework_data;
@@ -741,83 +741,83 @@ static uint_8 USB_Strd_Req_Feature (
 
     if((setup_packet->request_type & USB_REQUEST_SRC_MASK) == USB_REQUEST_SRC_DEVICE)
     {
-    	/* Request for Device */
-		if(set_request == TRUE)
-        {           
-            /* Standard Feature Selector */
-			if((setup_packet->value == DEVICE_FEATURE_REMOTE_WAKEUP) || (setup_packet->value == DEVICE_FEATURE_TEST_MODE))
-            {
-				status = _usb_device_get_status(&controller_ID, USB_STATUS_DEVICE, &device_status);
-
-				if(status == USB_OK)
-				{ 
-					/* Add the request to be set to the device_status */
-					device_status |= (uint_16)(1 << (uint_8)setup_packet->value);
-
-					/* Set the status on the device */
-					status = _usb_device_set_status(&controller_ID, USB_STATUS_DEVICE, device_status);
-				}
-            }
-            #ifdef OTG_BUILD                           
-            /* OTG Feature Selector */
-			else if(setup_packet->value == DEVICE_SET_FEATURE_B_HNP_ENABLE)
-            {
- 			   OTG_DESCRIPTOR_PTR_T otg_desc_ptr;
- 			   USB_PACKET_SIZE size;
-
- 			   status = USB_Desc_Get_Descriptor(controller_ID, USB_OTG_DESCRIPTOR,(uint_8)UNINITIALISED_VAL,
- 					                            (uint_16)UNINITIALISED_VAL,(uint_8_ptr *)&otg_desc_ptr,&size);
- 			   if(status == USB_OK)
- 			   {
- 				   if(otg_desc_ptr->bmAttributes & USB_OTG_HNP_SUPPORT)
- 				   {
- 					  _usb_otg_hnp_enable(controller_ID, set_request);
- 				   }
- 			   }            	            	               
-            }
-            #endif			
-            else
-            {
-               status = USBERR_INVALID_REQ_TYPE;
-            }																					
-        }
-        else //(set_request == FALSE) it is a clear feature request
+        /* Request for Device */
+        if(set_request == TRUE)
         {
-        	if(setup_packet->value == DEVICE_FEATURE_REMOTE_WAKEUP)
+            /* Standard Feature Selector */
+            if((setup_packet->value == DEVICE_FEATURE_REMOTE_WAKEUP) || (setup_packet->value == DEVICE_FEATURE_TEST_MODE))
             {
-        		status = _usb_device_get_status(&controller_ID, USB_STATUS_DEVICE, &device_status);
+                status = _usb_device_get_status(&controller_ID, USB_STATUS_DEVICE, &device_status);
 
                 if(status == USB_OK)
                 {
-                	/* Remove the request to be cleared from device_status */
-                	device_status &= (uint_16)~(1 << (uint_8)setup_packet->value);
-                	status = _usb_device_set_status(&controller_ID, USB_STATUS_DEVICE, device_status);
+                    /* Add the request to be set to the device_status */
+                    device_status |= (uint_16)(1 << (uint_8)setup_packet->value);
+
+                    /* Set the status on the device */
+                    status = _usb_device_set_status(&controller_ID, USB_STATUS_DEVICE, device_status);
                 }
-            }           
-        	else
-        	{
-        		status = USBERR_INVALID_REQ_TYPE;
-        	}
+            }
+            #ifdef OTG_BUILD
+            /* OTG Feature Selector */
+            else if(setup_packet->value == DEVICE_SET_FEATURE_B_HNP_ENABLE)
+            {
+               OTG_DESCRIPTOR_PTR_T otg_desc_ptr;
+               USB_PACKET_SIZE size;
+
+               status = USB_Desc_Get_Descriptor(controller_ID, USB_OTG_DESCRIPTOR,(uint_8)UNINITIALISED_VAL,
+                                                (uint_16)UNINITIALISED_VAL,(uint_8_ptr *)&otg_desc_ptr,&size);
+               if(status == USB_OK)
+               {
+                   if(otg_desc_ptr->bmAttributes & USB_OTG_HNP_SUPPORT)
+                   {
+                      _usb_otg_hnp_enable(controller_ID, set_request);
+                   }
+               }
+            }
+            #endif
+            else
+            {
+               status = USBERR_INVALID_REQ_TYPE;
+            }
+        }
+        else //(set_request == FALSE) it is a clear feature request
+        {
+            if(setup_packet->value == DEVICE_FEATURE_REMOTE_WAKEUP)
+            {
+                status = _usb_device_get_status(&controller_ID, USB_STATUS_DEVICE, &device_status);
+
+                if(status == USB_OK)
+                {
+                    /* Remove the request to be cleared from device_status */
+                    device_status &= (uint_16)~(1 << (uint_8)setup_packet->value);
+                    status = _usb_device_set_status(&controller_ID, USB_STATUS_DEVICE, device_status);
+                }
+            }
+            else
+            {
+                status = USBERR_INVALID_REQ_TYPE;
+            }
         }
     }
     else if((setup_packet->request_type & USB_REQUEST_SRC_MASK) == USB_REQUEST_SRC_ENDPOINT)
     {
         /* Request for Endpoint */
         epinfo = (uint_8)(setup_packet->index & 0x00FF);
-	    status = _usb_device_set_status(&controller_ID, (uint_8)(epinfo|USB_STATUS_ENDPOINT), set_request);
+        status = _usb_device_set_status(&controller_ID, (uint_8)(epinfo|USB_STATUS_ENDPOINT), set_request);
 
         if((set_request == 0) && (epinfo == 0x03))
         {
-        	#if (defined(__CWCC__) || defined(__IAR_SYSTEMS_ICC__) || defined(__GNUC__))
-            	asm("nop");
-			#elif defined (__CC_ARM)
-            	__nop();
-			#endif
+            #if (defined(__CWCC__) || defined(__IAR_SYSTEMS_ICC__) || defined(__GNUC__))
+                asm("nop");
+            #elif defined (__CC_ARM)
+                __nop();
+            #endif
         }
 
-	    event = (uint_8)(set_request ? USB_APP_EP_STALLED : USB_APP_EP_UNSTALLED);
+        event = (uint_8)(set_request ? USB_APP_EP_STALLED : USB_APP_EP_UNSTALLED);
 
-	    /* Inform the upper layers of stall/unstall */
+        /* Inform the upper layers of stall/unstall */
         g_framework_callback(controller_ID,event,(void*)&epinfo);
     }
     return status;
@@ -918,9 +918,9 @@ static uint_8 USB_Strd_Req_Get_Config (
 )
 {
     uint_8 device_status;
- 
+
     UNUSED(setup_packet)
-    
+
     *size = CONFIG_SIZE;
     (void)_usb_device_get_status(&controller_ID, USB_STATUS_CURRENT_CONFIG, &device_status);
     g_std_framework_data = (uint_16)device_status;
@@ -1024,12 +1024,12 @@ static uint_8 USB_Strd_Req_Get_Interface (
     }
     else
     {
-    	*size = INTERFACE_SIZE;
-		status = USB_Desc_Get_Interface(controller_ID,(uint_8)setup_packet->index,
-										(uint_8_ptr)&g_std_framework_data);
-		*data = (uint_8_ptr)&g_std_framework_data;
+        *size = INTERFACE_SIZE;
+        status = USB_Desc_Get_Interface(controller_ID,(uint_8)setup_packet->index,
+                                        (uint_8_ptr)&g_std_framework_data);
+        *data = (uint_8_ptr)&g_std_framework_data;
 
-		return status;
+        return status;
     }
 }
 
@@ -1069,13 +1069,13 @@ static uint_8 USB_Strd_Req_Set_Interface (
     }
     else
     {
-    	/* Set Interface and alternate interface from setup_packet */
-    	status = USB_Desc_Set_Interface(controller_ID,(uint_8)setup_packet->index,
-										(uint_8)setup_packet->value);
+        /* Set Interface and alternate interface from setup_packet */
+        status = USB_Desc_Set_Interface(controller_ID,(uint_8)setup_packet->index,
+                                        (uint_8)setup_packet->value);
 
-    	UNUSED (status);
-	
-    	return USB_OK;
+        UNUSED (status);
+
+        return USB_OK;
     }
 }
 
@@ -1105,18 +1105,18 @@ static uint_8 USB_Strd_Req_Sync_Frame (
 )
 {
     uint_8 status;
-	uint_8 device_status;
-    
+    uint_8 device_status;
+
     UNUSED(setup_packet)
-	*size = FRAME_SIZE;
+    *size = FRAME_SIZE;
 
-	/* Get the frame number */
-	status = _usb_device_get_status(&controller_ID, USB_STATUS_SOF_COUNT,
-									&device_status);
-	g_std_framework_data = (uint_16)device_status;
-	*data = (uint_8_ptr)&g_std_framework_data;
+    /* Get the frame number */
+    status = _usb_device_get_status(&controller_ID, USB_STATUS_SOF_COUNT,
+                                    &device_status);
+    g_std_framework_data = (uint_16)device_status;
+    *data = (uint_8_ptr)&g_std_framework_data;
 
-	return status;    
+    return status;
 }
 
 
@@ -1146,21 +1146,21 @@ static uint_8 USB_Strd_Req_Get_Descriptor (
     USB_PACKET_SIZE *size               /* [OUT] Size to be returned */
 )
 {
-    uint_8 type = USB_uint_16_high(setup_packet->value);	
+    uint_8 type = USB_uint_16_high(setup_packet->value);
     uint_16 index = (uint_16)UNINITIALISED_VAL;
     uint_8 str_num = (uint_8)UNINITIALISED_VAL;
     uint_8 status;
 
-	if (type == STRING_DESCRIPTOR_TYPE)
-	{
-		/* for string descriptor set the language and string number */
-		index = setup_packet->index;
-		/*g_setup_pkt.lValue*/
-		str_num = USB_uint_16_low(setup_packet->value);
-	}
+    if (type == STRING_DESCRIPTOR_TYPE)
+    {
+        /* for string descriptor set the language and string number */
+        index = setup_packet->index;
+        /*g_setup_pkt.lValue*/
+        str_num = USB_uint_16_low(setup_packet->value);
+    }
 
-	/* Call descriptor class to get descriptor */
-	status = USB_Desc_Get_Descriptor(controller_ID, type, str_num, index, data, size);
-	
-	return status;     
+    /* Call descriptor class to get descriptor */
+    status = USB_Desc_Get_Descriptor(controller_ID, type, str_num, index, data, size);
+
+    return status;
 }

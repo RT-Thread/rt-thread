@@ -38,7 +38,7 @@ enum
     GD_ERR_I2S_INT_ERR,
     GD_ERR_I2S_NOT_OPEN,
     GD_ERR_I2S_BUSY,
-	GD_ERR_I2S_WAIT,    
+    GD_ERR_I2S_WAIT,
 };
 
 /*!
@@ -83,7 +83,7 @@ typedef enum
 ******************************************************************************/
 typedef enum
 {
-	GD_I2S_24000BPS = 24000,
+    GD_I2S_24000BPS = 24000,
     GD_I2S_32000BPS = 32000,     //!< 32kHz datarate.
     GD_I2S_44100BPS = 44100,
     GD_I2S_48000BPS = 48000,       //!< 48kHz datarate.
@@ -127,12 +127,12 @@ typedef enum
 
 enum
 {
-	I2S_EVENT_FRAME          = 1, /* received one audio frame or send finished one audio frame */
+    I2S_EVENT_FRAME          = 1, /* received one audio frame or send finished one audio frame */
     I2S_EVENT_WILL_OVERFLOW  = 2,
-	I2S_EVENT_WILL_UNDERFLOW = 3,	
+    I2S_EVENT_WILL_UNDERFLOW = 3,
     I2S_EVENT_ALREADY_OVERFLOW  = 4,
-	I2S_EVENT_ALREADY_UNDERFLOW = 5,	
-	I2S_EVENT_UNDEFINED         = 6,
+    I2S_EVENT_ALREADY_UNDERFLOW = 5,
+    I2S_EVENT_UNDEFINED         = 6,
 };
 
 typedef void (*GD_I2S_Notifier)(U32 event);
@@ -146,18 +146,18 @@ typedef void (*GD_I2S_Notifier)(U32 event);
 ******************************************************************************/
 typedef struct
 {
-   GBOOL               master;   
+   GBOOL               master;
    GD_I2S_CHANNEL_E    channel;
    GD_I2S_MODE_E       mode;
    GD_I2S_SPEED_E      speed;
-   GD_I2S_WLEN_E       wlen; 
+   GD_I2S_WLEN_E       wlen;
 } GD_I2S_INIT_PARAM_S;
 
 
 typedef struct
 {
-   U32      		   frameSize;
-   GD_I2S_Notifier     notifier; 
+   U32                 frameSize;
+   GD_I2S_Notifier     notifier;
 } GD_I2S_OPEN_PARAM_S;
 
 

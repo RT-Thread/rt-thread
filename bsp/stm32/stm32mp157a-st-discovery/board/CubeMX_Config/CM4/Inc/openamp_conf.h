@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                       opensource.org/licenses/BSD-3-Clause
   *
@@ -162,7 +162,7 @@ extern int __OPENAMP_region_end__[];    /* defined by linker script */
 #define VRING_TX_ADDRESS        -1        /* allocated by Master processor: CA7 */
 #define VRING_BUFF_ADDRESS      -1        /* allocated by Master processor: CA7 */
 #define VRING_ALIGNMENT         16        /* fixed to match with linux constraint */
-#define VRING_NUM_BUFFS         16		  /* number of rpmsg buffer */
+#define VRING_NUM_BUFFS         16        /* number of rpmsg buffer */
 #else
 
 #define VRING_RX_ADDRESS     0x10040000             /* allocated by Master processor: CA7 */

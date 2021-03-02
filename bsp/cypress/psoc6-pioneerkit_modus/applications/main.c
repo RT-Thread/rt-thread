@@ -57,8 +57,8 @@ int main(void)
 
     for(;;)
     {
-    	rt_kprintf("hello rt-thread\n");
-    	rt_thread_mdelay(1000);
+        rt_kprintf("hello rt-thread\n");
+        rt_thread_mdelay(1000);
 
 
     }

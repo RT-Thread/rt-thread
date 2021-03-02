@@ -121,19 +121,19 @@ void isp_start_appli(void);
 
 //! Data type for holding flash memory addresses
 #ifdef ISP_SMALL_MEMORY_SIZE
-	typedef uint16_t isp_addr_t;
+    typedef uint16_t isp_addr_t;
 #else
-	typedef uint32_t isp_addr_t;
+    typedef uint32_t isp_addr_t;
 #endif
 
 //! Memory API definition
 typedef struct {
-	//! Size of the memory (unit Byte)
-	uint32_t size;
-	//! Function to read memory
-	void (*fnct_read) (void *dst, isp_addr_t src, uint16_t nbytes);
-	//! Function to write memory
-	void (*fnct_write) (isp_addr_t dst, const void *src, uint16_t nbytes);
+    //! Size of the memory (unit Byte)
+    uint32_t size;
+    //! Function to read memory
+    void (*fnct_read) (void *dst, isp_addr_t src, uint16_t nbytes);
+    //! Function to write memory
+    void (*fnct_write) (isp_addr_t dst, const void *src, uint16_t nbytes);
 } isp_mem_t;
 
 /**
@@ -163,26 +163,26 @@ typedef struct {
 
 //! Memories list structure
 typedef union {
-	isp_mem_t const *mem[ISP_MEM_COUNT];
-	struct {
-		isp_mem_t const *flash;
-		isp_mem_t const *eeprom;
-		isp_mem_t const *security;
-		isp_mem_t const *conf;
-		isp_mem_t const *bootloader;
-		isp_mem_t const *signature;
-		isp_mem_t const *user;
-		isp_mem_t const *int_ram;
-		isp_mem_t const *ext_mem_cs0;
-		isp_mem_t const *ext_mem_cs1;
-		isp_mem_t const *ext_mem_cs2;
-		isp_mem_t const *ext_mem_cs3;
-		isp_mem_t const *ext_mem_cs4;
-		isp_mem_t const *ext_mem_cs5;
-		isp_mem_t const *ext_mem_cs6;
-		isp_mem_t const *ext_mem_cs7;
-		isp_mem_t const *ext_mem_df;
-	}list;
+    isp_mem_t const *mem[ISP_MEM_COUNT];
+    struct {
+        isp_mem_t const *flash;
+        isp_mem_t const *eeprom;
+        isp_mem_t const *security;
+        isp_mem_t const *conf;
+        isp_mem_t const *bootloader;
+        isp_mem_t const *signature;
+        isp_mem_t const *user;
+        isp_mem_t const *int_ram;
+        isp_mem_t const *ext_mem_cs0;
+        isp_mem_t const *ext_mem_cs1;
+        isp_mem_t const *ext_mem_cs2;
+        isp_mem_t const *ext_mem_cs3;
+        isp_mem_t const *ext_mem_cs4;
+        isp_mem_t const *ext_mem_cs5;
+        isp_mem_t const *ext_mem_cs6;
+        isp_mem_t const *ext_mem_cs7;
+        isp_mem_t const *ext_mem_df;
+    }list;
 } isp_mems_t;
 
 //! Memories list declaration
@@ -192,13 +192,13 @@ COMPILER_PACK_SET(1) // alignment requested to simulate a memory
 
 //! Memory signature structure to store JTAG ID
 typedef union {
-	uint8_t mem[4];
-	struct {
-		uint8_t manufacture;
-		uint8_t product_number_msb;
-		uint8_t product_number_lsb;
-		uint8_t product_revision;
-	};
+    uint8_t mem[4];
+    struct {
+        uint8_t manufacture;
+        uint8_t product_number_msb;
+        uint8_t product_number_lsb;
+        uint8_t product_revision;
+    };
 } isp_mem_signature_t;
 
 
@@ -213,9 +213,9 @@ typedef union {
  * - id1 & id2 are not used and must always be 0.
  */
 typedef struct {
-	uint8_t version;
-	uint8_t id1;
-	uint8_t id2;
+    uint8_t version;
+    uint8_t id1;
+    uint8_t id2;
 } isp_mem_bootloader_t;
 
 COMPILER_PACK_RESET()

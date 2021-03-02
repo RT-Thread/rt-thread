@@ -692,8 +692,8 @@ ARM_I2C_STATUS I2C_InterruptGetStatus(cmsis_i2c_interrupt_driver_state_t *i2c)
 #endif
 
 #if defined(I2C0) && RTE_I2C0
-/* User needs to provide the implementation for I2C0_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C0_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C0_GetFreq(void);
 extern void I2C0_InitPins(void);
 extern void I2C0_DeinitPins(void);
@@ -833,8 +833,8 @@ ARM_DRIVER_I2C Driver_I2C0 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 
 #if defined(I2C1) && RTE_I2C1
 
-/* User needs to provide the implementation for I2C1_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C1_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C1_GetFreq(void);
 extern void I2C1_InitPins(void);
 extern void I2C1_DeinitPins(void);
@@ -973,8 +973,8 @@ ARM_DRIVER_I2C Driver_I2C1 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 
 #if defined(I2C2) && RTE_I2C2
 
-/* User needs to provide the implementation for I2C2_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C2_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C2_GetFreq(void);
 extern void I2C2_InitPins(void);
 extern void I2C2_DeinitPins(void);
@@ -1114,8 +1114,8 @@ ARM_DRIVER_I2C Driver_I2C2 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 
 #if defined(I2C3) && RTE_I2C3
 
-/* User needs to provide the implementation for I2C3_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C3_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C3_GetFreq(void);
 extern void I2C3_InitPins(void);
 extern void I2C3_DeinitPins(void);
@@ -1254,8 +1254,8 @@ ARM_DRIVER_I2C Driver_I2C3 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 #endif
 
 #if defined(I2C4) && RTE_I2C4
-/* User needs to provide the implementation for I2C4_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C4_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C4_GetFreq(void);
 extern void I2C4_InitPins(void);
 extern void I2C4_DeinitPins(void);
@@ -1394,8 +1394,8 @@ ARM_DRIVER_I2C Driver_I2C4 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 #endif
 
 #if defined(I2C5) && RTE_I2C5
-/* User needs to provide the implementation for I2C5_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C5_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C5_GetFreq(void);
 extern void I2C5_InitPins(void);
 extern void I2C5_DeinitPins(void);
@@ -1534,8 +1534,8 @@ ARM_DRIVER_I2C Driver_I2C5 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 #endif
 
 #if defined(I2C6) && RTE_I2C6
-/* User needs to provide the implementation for I2C6_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C6_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C6_GetFreq(void);
 extern void I2C6_InitPins(void);
 extern void I2C6_DeinitPins(void);
@@ -1674,8 +1674,8 @@ ARM_DRIVER_I2C Driver_I2C6 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 #endif
 
 #if defined(I2C7) && RTE_I2C7
-/* User needs to provide the implementation for I2C7_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C7_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C7_GetFreq(void);
 extern void I2C7_InitPins(void);
 extern void I2C7_DeinitPins(void);
@@ -1812,8 +1812,8 @@ ARM_DRIVER_I2C Driver_I2C7 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 #endif
 
 #if defined(I2C8) && RTE_I2C8
-/* User needs to provide the implementation for I2C8_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C8_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C8_GetFreq(void);
 extern void I2C8_InitPins(void);
 extern void I2C8_DeinitPins(void);
@@ -1951,8 +1951,8 @@ ARM_DRIVER_I2C Driver_I2C8 = {I2Cx_GetVersion, I2Cx_GetCapabilities,
 #endif
 
 #if defined(I2C9) && RTE_I2C9
-/* User needs to provide the implementation for I2C9_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for I2C9_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t I2C9_GetFreq(void);
 extern void I2C9_InitPins(void);
 extern void I2C9_DeinitPins(void);

@@ -39,8 +39,8 @@
  * $Revision: 38105 $
  *
  *************************************************************************** */
- 
-// Define to prevent redundant inclusion 
+
+// Define to prevent redundant inclusion
 #ifndef _LP_H_
 #define _LP_H_
 
@@ -60,8 +60,8 @@ typedef enum {
 } lp_ovr_t;
 
 /**
- * @brief 	   Clears the low power wakeup flags
- */	
+ * @brief      Clears the low power wakeup flags
+ */
 void LP_ClearWakeStatus(void);
 
 /**
@@ -155,7 +155,7 @@ void LP_DisableSysRAM1LightSleep(void);
 void LP_DisableSysRAM0LightSleep(void);
 
 /**
- * @brief      Enables the selected GPIO port and its selected pins to wake up the device from any low power mode.  
+ * @brief      Enables the selected GPIO port and its selected pins to wake up the device from any low power mode.
  *             Call this function multiple times to enable pins on multiple ports.  This function does not configure
  *             the GPIO pins nor does it setup their interrupt functionality.
  * @param      wu_pins      The port and pins to configure as wakeup sources.  Only the gpio and mask fields of the
@@ -164,7 +164,7 @@ void LP_DisableSysRAM0LightSleep(void);
 void LP_EnableGPIOWakeup(const gpio_cfg_t *wu_pins);
 
 /**
- * @brief      Disables the selected GPIO port and its selected pins as a wake up source.  
+ * @brief      Disables the selected GPIO port and its selected pins as a wake up source.
  *             Call this function multiple times to disable pins on multiple ports.
  * @param      wu_pins      The port and pins to disable as wakeup sources.  Only the gpio and mask fields of the
  *                          structure are used.  The func and pad fields are ignored.
@@ -172,43 +172,43 @@ void LP_EnableGPIOWakeup(const gpio_cfg_t *wu_pins);
 void LP_DisableGPIOWakeup(const gpio_cfg_t *wu_pins);
 
 /**
- * @brief      Enables the RTC alarm to wake up the device from any low power mode.  
+ * @brief      Enables the RTC alarm to wake up the device from any low power mode.
  */
 void LP_EnableRTCAlarmWakeup(void);
 
 /**
- * @brief      Disables the RTC alarm from waking up the device.  
+ * @brief      Disables the RTC alarm from waking up the device.
  */
 void LP_DisableRTCAlarmWakeup(void);
 
 /**
- * @brief      Places the device into SLEEP mode.  This function returns once any interrupt occurs. 
- * @note 	   LP_ClearWakeStatus should be called before this function, to avoid immediately waking up again
+ * @brief      Places the device into SLEEP mode.  This function returns once any interrupt occurs.
+ * @note       LP_ClearWakeStatus should be called before this function, to avoid immediately waking up again
  */
 void LP_EnterSleepMode(void);
 
 /**
- * @brief      Places the device into DEEPSLEEP mode.  This function returns once an RTC or external interrupt occur. 
+ * @brief      Places the device into DEEPSLEEP mode.  This function returns once an RTC or external interrupt occur.
  * @note      LP_ClearWakeStatus should be called before this function, to avoid immediately waking up again
 */
 void LP_EnterDeepSleepMode(void);
 
 /**
- * @brief      Places the device into BACKUP mode.  CPU state is not maintained in this mode, so this function never returns.  
- *             Instead, the device will restart once an RTC or external interrupt occur. 
+ * @brief      Places the device into BACKUP mode.  CPU state is not maintained in this mode, so this function never returns.
+ *             Instead, the device will restart once an RTC or external interrupt occur.
  * @note       LP_ClearWakeStatus should be called before this function, to avoid immediately waking up again
  */
 void LP_EnterBackupMode(void);
 
 /**
- * @brief      Places the device into Shutdown mode.  CPU state is not maintained in this mode, so this function never returns.  
- *             Instead, the device will restart once an RTC, USB wakeup, or external interrupt occur. 
+ * @brief      Places the device into Shutdown mode.  CPU state is not maintained in this mode, so this function never returns.
+ *             Instead, the device will restart once an RTC, USB wakeup, or external interrupt occur.
  */
 void LP_EnterShutDownMode(void);
 
 /**
- * @brief      Set operating voltage and change the clock to match the new voltage. 
- * @param	   system reset configuration struct
+ * @brief      Set operating voltage and change the clock to match the new voltage.
+ * @param      system reset configuration struct
  */
 void LP_SetOperatingVoltage(lp_ovr_t ovr);
 
@@ -218,7 +218,7 @@ void LP_SetOperatingVoltage(lp_ovr_t ovr);
 void LP_EnableSRamRet0(void);
 
 /**
- * @brief      Disables Data Retention to RAM addresses 0x20000000-0x20003FFF. 
+ * @brief      Disables Data Retention to RAM addresses 0x20000000-0x20003FFF.
  */
 void LP_DisableSRamRet0(void);
 
@@ -273,7 +273,7 @@ void LP_EnableRamRetReg(void);
 void LP_DisableRamRetReg(void);
 
 /**
- * @brief      Enables Fast wake up from deepsleep 
+ * @brief      Enables Fast wake up from deepsleep
  */
 void LP_EnableFastWk(void);
 
@@ -283,7 +283,7 @@ void LP_EnableFastWk(void);
 void LP_DisableFastWk(void);
 
 /**
- * @brief      Turns on band gap during deepsleep and backup mode. 
+ * @brief      Turns on band gap during deepsleep and backup mode.
  */
 void LP_EnableBandGap(void);
 
@@ -298,7 +298,7 @@ void LP_DisableBandGap(void);
 void LP_EnableVCorePORSignal(void);
 
 /**
- * @brief     Disables signal for power on reset when the device is int DEEPSLEEP or BACKUP mode 
+ * @brief     Disables signal for power on reset when the device is int DEEPSLEEP or BACKUP mode
  */
 void LP_DisableVCorePORSignal(void);
 
@@ -308,28 +308,28 @@ void LP_DisableVCorePORSignal(void);
 void LP_EnableLDO(void);
 
 /**
- * @brief     Disables signal for power on reset when the device is int DEEPSLEEP or BACKUP mode 
+ * @brief     Disables signal for power on reset when the device is int DEEPSLEEP or BACKUP mode
  */
 void LP_DisableLDO(void);
 
 /**
- * @brief     Enables V CORE Supply Voltage Monitor 
+ * @brief     Enables V CORE Supply Voltage Monitor
  */
 void LP_EnableVCoreSVM(void);
 
 /**
- * @brief     Disables V CORE Supply Voltage Monitor 
+ * @brief     Disables V CORE Supply Voltage Monitor
  */
 void LP_DisableVCoreSVM(void);
 
 
 /**
- * @brief     Enables VDDIO Power-On-Reset Monitor 
+ * @brief     Enables VDDIO Power-On-Reset Monitor
  */
 void LP_EnableVDDIOPorMonitor(void);
 
 /**
- * @brief     Disables VDDIO Power-On-Reset Monitor  
+ * @brief     Disables VDDIO Power-On-Reset Monitor
  */
 void LP_DisableVDDIOPorMonitor(void);
 

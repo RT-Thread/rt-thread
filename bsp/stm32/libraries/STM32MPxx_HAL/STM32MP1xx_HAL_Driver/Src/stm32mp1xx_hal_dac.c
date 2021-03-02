@@ -1474,7 +1474,7 @@ HAL_StatusTypeDef HAL_DAC_UnRegisterCallback(DAC_HandleTypeDef *hdac, HAL_DAC_Ca
 /**
   * @}
   */
-  
+
 /**
   * @}
   */

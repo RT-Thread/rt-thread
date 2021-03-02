@@ -33,27 +33,27 @@
 #define ESDCTL_ESDSCR_OFFSET  0x1C
 // PLL definitions
 #define HW_ANADIG_USB1_PLL_480_CTRL_RW  (ANATOP_IPS_BASE_ADDR+0x10)
-#define HW_ANADIG_PLL_528_RW    (ANATOP_IPS_BASE_ADDR+0x30) 
+#define HW_ANADIG_PLL_528_RW    (ANATOP_IPS_BASE_ADDR+0x30)
 #define HW_ANADIG_PLL_528_NUM   (ANATOP_IPS_BASE_ADDR+0x50)
 #define HW_ANADIG_PLL_528_DENOM     (ANATOP_IPS_BASE_ADDR+0x60)
 #define HW_ANADIG_PFD_528_RW        (ANATOP_IPS_BASE_ADDR+0x100)
 #define HW_ANADIG_PLL_SYS_RW        (ANATOP_IPS_BASE_ADDR+0x000)
 
-#define HW_ANADIG_REG_CORE	(ANATOP_IPS_BASE_ADDR + 0x140)
-#define HW_ANADIG_REG_CORE_V_CORE_VALUE_mv(x)	((((x)-700)/25) << 0)
-#define HW_ANADIG_REG_CORE_V_SOC_VALUE_mv(x)	((((x)-700)/25) << 18)
-#define HW_ANADIG_REG_CORE_V_CORE_MSK		0x1F
-#define HW_ANADIG_REG_CORE_V_SOC_MSK		(0x1F << 18)
+#define HW_ANADIG_REG_CORE  (ANATOP_IPS_BASE_ADDR + 0x140)
+#define HW_ANADIG_REG_CORE_V_CORE_VALUE_mv(x)   ((((x)-700)/25) << 0)
+#define HW_ANADIG_REG_CORE_V_SOC_VALUE_mv(x)    ((((x)-700)/25) << 18)
+#define HW_ANADIG_REG_CORE_V_CORE_MSK       0x1F
+#define HW_ANADIG_REG_CORE_V_SOC_MSK        (0x1F << 18)
 
 // audio defines
-#define WM8960_I2C_DEV_ADDR 		(0x34>>1)
-#define WM8960_I2C_BASE_ADDR		I2C2_BASE_ADDR
+#define WM8960_I2C_DEV_ADDR         (0x34>>1)
+#define WM8960_I2C_BASE_ADDR        I2C2_BASE_ADDR
 
-#define WM8958_I2C_DEV_ADDR 		(0x34>>1)
-#define WM8958_I2C_BASE_ADDR		I2C1_BASE_ADDR
+#define WM8958_I2C_DEV_ADDR         (0x34>>1)
+#define WM8958_I2C_BASE_ADDR        I2C1_BASE_ADDR
 
-#define WM8962_I2C_DEV_ADDR 		(0x34>>1)
-#define WM8962_I2C_BASE_ADDR		I2C4_BASE_ADDR
+#define WM8962_I2C_DEV_ADDR         (0x34>>1)
+#define WM8962_I2C_BASE_ADDR        I2C4_BASE_ADDR
 
 #define SGTL5000_I2C_BASE   I2C1_BASE_ADDR  // audio codec on i2c1
 #define SGTL5000_I2C_ID     0x0A
@@ -139,26 +139,26 @@ struct imx_i2c_request max7310_i2c_req_array[MAX7310_NBR];
 #define MMA8451_I2C_ID      0x1C
 #define MAG3112_I2C_ID      0x1D
 #define MAG3110_I2C_ID      0x0E
-#define ISL29023_I2C_ID	    0x44
+#define ISL29023_I2C_ID     0x44
 #define FXLS8471Q_I2C_ID    0x1E
 
-#define MAX11801_I2C_BASE	I2C3_BASE_ADDR
+#define MAX11801_I2C_BASE   I2C3_BASE_ADDR
 #define MAX11801_I2C_ID     (0x90 >> 1)
 
 #ifdef SABRE_AI
-#define CS42888_I2C_BASE	I2C2_BASE_ADDR
+#define CS42888_I2C_BASE    I2C2_BASE_ADDR
 #endif
 #ifdef EVB
-#define CS42888_I2C_BASE	I2C1_BASE_ADDR
+#define CS42888_I2C_BASE    I2C1_BASE_ADDR
 #endif
 /* use that defined for boards that doesn't have any CS42888 */
 #if defined(SMART_DEVICE) || defined(SABRE_LITE)
-#define CS42888_I2C_BASE	DUMMY_VALUE_NOT_USED
+#define CS42888_I2C_BASE    DUMMY_VALUE_NOT_USED
 #endif
 #define CS42888_I2C_ID      (0x90 >> 1)
 
-#define AT24Cx_I2C_BASE		I2C3_BASE_ADDR
-#define AT24Cx_I2C_ID		0x50
+#define AT24Cx_I2C_BASE     I2C3_BASE_ADDR
+#define AT24Cx_I2C_ID       0x50
 
 // USB test defines
 #define USBH1_BASE_ADDR     (USBOH2_USB_BASE_ADDR + 0x200)
@@ -256,15 +256,15 @@ enum lvds_panel_bit_mode {
 };
 
 enum shift_reg_bit{
-	HDMI_nRST = 1,
-	ENET1_nRST = 2,
-	ENET2_nRST = 4,
-	CAN1_2_STBY = 8,
-	BT_nPWD = 16,
-	CSI_RST = 32,
-	CSI_PWDN = 64,
-	LCD_nPWREN = 128,
-	ALL_BITS = 0xFF,
+    HDMI_nRST = 1,
+    ENET1_nRST = 2,
+    ENET2_nRST = 4,
+    CAN1_2_STBY = 8,
+    BT_nPWD = 16,
+    CSI_RST = 32,
+    CSI_PWDN = 64,
+    LCD_nPWREN = 128,
+    ALL_BITS = 0xFF,
 };
 
 void set_shift_reg(enum shift_reg_bit b, bool state);

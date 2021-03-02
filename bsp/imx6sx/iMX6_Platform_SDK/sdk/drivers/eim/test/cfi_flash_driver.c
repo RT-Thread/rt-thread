@@ -806,7 +806,7 @@ int32_t flash_erase(flash_info_t * info, int32_t s_first, int32_t s_last)
 
     if (s_first == 0 && s_last == (info->sector_count - 1)
         && (info->vendor == CFI_CMDSET_AMD_STANDARD || info->vendor == CFI_CMDSET_AMD_EXTENDED)) {
-        // Erase chip       
+        // Erase chip
         sect = s_first;
         flash_unlock_seq(info, sect);
         flash_write_cmd(info, sect, AMD_ADDR_ERASE_START, AMD_CMD_ERASE_START);

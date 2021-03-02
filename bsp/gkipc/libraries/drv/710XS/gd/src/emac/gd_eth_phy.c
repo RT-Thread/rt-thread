@@ -161,8 +161,8 @@ static const char *phy_if_strings[] __attribute__ ((section(".nocache_buffer")))
 GERR GD_ETH_PHY_Init(U8 phyType)
 {
     U32 i,j,k,count,phy_id,try_time;
-	U32 a = 0;
-	
+    U32 a = 0;
+
     if (initialized == GTRUE)
     {
         return GD_ERR_ALREADY_INITIALIZED;
@@ -211,13 +211,13 @@ GERR GD_ETH_PHY_Init(U8 phyType)
                     break;
                 }
                 //GD_TIMER_Delay(2);
-			    if(phyType != 0)
-			    {
-					for(a=0;a<100000;a++)
-					{
-						GH_ETH_get_GAR();
-					}
-			    }
+                if(phyType != 0)
+                {
+                    for(a=0;a<100000;a++)
+                    {
+                        GH_ETH_get_GAR();
+                    }
+                }
             }
         }
     }
@@ -248,7 +248,7 @@ GERR GD_ETH_PHY_Open(GD_ETH_PHY_AddrE* paddr, GD_HANDLE* pHandle)
                 *pHandle  = phyhandle;
                 *paddr    = (GD_ETH_PHY_AddrE)i;
                 //return GD_OK;
-				goto PHY_INIT;
+                goto PHY_INIT;
                 //if(phyhandle)
                 //{
                 //    return GD_ERR_ALREADY_OPEN;
@@ -515,8 +515,8 @@ GERR GD_ETH_PHY_SetWorkMode(GD_HANDLE handle, GD_ETH_Work_ModeT workmode)
                 regval |= PHY_val(0,100M);
                 // RMII mode RXD_3 used as 10/100M indicator
                 if(workmode.mode == GD_ETH_PHY_IF_MODE_RMII)
-                {                
-			GH_GPIO_set_INPUT_CFG_in_sel(GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_ENET_PHY_RXD_3)-2, GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_1));
+                {
+            GH_GPIO_set_INPUT_CFG_in_sel(GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_ENET_PHY_RXD_3)-2, GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_1));
                 }
             }
             else if (workmode.speed == GD_ETH_SPEED_10M )/* 10M */
@@ -525,7 +525,7 @@ GERR GD_ETH_PHY_SetWorkMode(GD_HANDLE handle, GD_ETH_Work_ModeT workmode)
                 // RMII mode RXD_3 used as 10/100M indicator
                 if(workmode.mode == GD_ETH_PHY_IF_MODE_RMII)
                 {
-			GH_GPIO_set_INPUT_CFG_in_sel(GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_ENET_PHY_RXD_3)-2, GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_0));                    
+            GH_GPIO_set_INPUT_CFG_in_sel(GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_ENET_PHY_RXD_3)-2, GD_GPIO_GET_IN_SEL(GD_GPIO_TYPE_INPUT_0));
                 }
             }
             else

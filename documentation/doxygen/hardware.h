@@ -70,7 +70,7 @@ void rt_hw_interrupt_umask(int vector);
  * @note not all of platform provide this function.
  */
 void rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler,
-		rt_isr_handler_t *old_handler);
+        rt_isr_handler_t *old_handler);
 
 /**
  * This function will reset whole platform.

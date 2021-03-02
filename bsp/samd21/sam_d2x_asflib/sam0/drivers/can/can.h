@@ -111,27 +111,27 @@ typedef union {
  * \brief CAN receive element structure for buffer.
  */
 struct can_rx_element_buffer {
-	__IO CAN_RX_ELEMENT_R0_Type R0;
-	__IO CAN_RX_ELEMENT_R1_Type R1;
-	uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
+    __IO CAN_RX_ELEMENT_R0_Type R0;
+    __IO CAN_RX_ELEMENT_R1_Type R1;
+    uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
 };
 
 /**
  * \brief CAN receive element structure for FIFO 0.
  */
 struct can_rx_element_fifo_0 {
-	__IO CAN_RX_ELEMENT_R0_Type R0;
-	__IO CAN_RX_ELEMENT_R1_Type R1;
-	uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
+    __IO CAN_RX_ELEMENT_R0_Type R0;
+    __IO CAN_RX_ELEMENT_R1_Type R1;
+    uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
 };
 
 /**
  * \brief CAN receive element structure for FIFO 1.
  */
 struct can_rx_element_fifo_1 {
-	__IO CAN_RX_ELEMENT_R0_Type R0;
-	__IO CAN_RX_ELEMENT_R1_Type R1;
-	uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
+    __IO CAN_RX_ELEMENT_R0_Type R0;
+    __IO CAN_RX_ELEMENT_R1_Type R1;
+    uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
 };
 
 /* -------- CAN_TX_ELEMENT_T0 : (CAN TX element: 0x00) (R/W 32) Tx Element T0 Configuration -------- */
@@ -199,9 +199,9 @@ typedef union {
  *  Common element structure for transfer buffer and FIFO/QUEUE.
  */
 struct can_tx_element {
-	__IO CAN_TX_ELEMENT_T0_Type T0;
-	__IO CAN_TX_ELEMENT_T1_Type T1;
-	uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
+    __IO CAN_TX_ELEMENT_T0_Type T0;
+    __IO CAN_TX_ELEMENT_T1_Type T1;
+    uint8_t data[CONF_CAN_ELEMENT_DATA_SIZE];
 };
 
 /* -------- CAN_TX_EVENT_ELEMENT_E0 : (CAN TX event element: 0x00) (R/W 32) Tx Event Element E0 Configuration -------- */
@@ -261,8 +261,8 @@ typedef union {
  *  Common element structure for transfer event FIFO.
  */
 struct can_tx_event_element {
-	__IO CAN_TX_EVENT_ELEMENT_E0_Type E0;
-	__IO CAN_TX_EVENT_ELEMENT_E1_Type E1;
+    __IO CAN_TX_EVENT_ELEMENT_E0_Type E0;
+    __IO CAN_TX_EVENT_ELEMENT_E1_Type E1;
 };
 
 /* -------- CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0 : (CAN standard message ID filter element: 0x00) (R/W 32) Standard Message ID Filter Element S0 Configuration -------- */
@@ -307,7 +307,7 @@ typedef union {
  *  Common element structure for standard message ID filter element.
  */
 struct can_standard_message_filter_element {
-	__IO CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_Type S0;
+    __IO CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_Type S0;
 };
 
 /* -------- CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0 : (CAN extended message ID filter element: 0x00) (R/W 32) Extended Message ID Filter Element F0 Configuration -------- */
@@ -361,8 +361,8 @@ typedef union {
  *  Common element structure for extended message ID filter element.
  */
 struct can_extended_message_filter_element {
-	__IO CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_Type F0;
-	__IO CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F1_Type F1;
+    __IO CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_Type F0;
+    __IO CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F1_Type F1;
 };
 /** @} */
 
@@ -446,26 +446,26 @@ extern "C" {
  * \brief Can time out modes.
  */
 enum can_timeout_mode {
-	/** Continuous operation. */
-	CAN_TIMEOUT_CONTINUES = CAN_TOCC_TOS_CONT,
-	/** Timeout controlled by TX Event FIFO. */
-	CAN_TIMEOUT_TX_EVEN_FIFO = CAN_TOCC_TOS_TXEF,
-	/** Timeout controlled by Rx FIFO 0. */
-	CAN_TIMEOUT_RX_FIFO_0 = CAN_TOCC_TOS_RXF0,
-	/** Timeout controlled by Rx FIFO 1. */
-	CAN_TIMEOUT_RX_FIFO_1 = CAN_TOCC_TOS_RXF1,
+    /** Continuous operation. */
+    CAN_TIMEOUT_CONTINUES = CAN_TOCC_TOS_CONT,
+    /** Timeout controlled by TX Event FIFO. */
+    CAN_TIMEOUT_TX_EVEN_FIFO = CAN_TOCC_TOS_TXEF,
+    /** Timeout controlled by Rx FIFO 0. */
+    CAN_TIMEOUT_RX_FIFO_0 = CAN_TOCC_TOS_RXF0,
+    /** Timeout controlled by Rx FIFO 1. */
+    CAN_TIMEOUT_RX_FIFO_1 = CAN_TOCC_TOS_RXF1,
 };
 
 /**
  * \brief Can nonmatching frames action.
  */
 enum can_nonmatching_frames_action {
-	/** Accept in Rx FIFO 0. */
-	CAN_NONMATCHING_FRAMES_FIFO_0,
-	/** Accept in Rx FIFO 1. */
-	CAN_NONMATCHING_FRAMES_FIFO_1,
-	/** Reject. */
-	CAN_NONMATCHING_FRAMES_REJECT,
+    /** Accept in Rx FIFO 0. */
+    CAN_NONMATCHING_FRAMES_FIFO_0,
+    /** Accept in Rx FIFO 1. */
+    CAN_NONMATCHING_FRAMES_FIFO_1,
+    /** Reject. */
+    CAN_NONMATCHING_FRAMES_REJECT,
 };
 
 /**
@@ -479,8 +479,8 @@ enum can_nonmatching_frames_action {
  */
 struct can_module {
 #if !defined(__DOXYGEN__)
-	/** Pointer to CAN hardware module. */
-	Can *hw;
+    /** Pointer to CAN hardware module. */
+    Can *hw;
 #endif
 };
 
@@ -492,60 +492,60 @@ struct can_module {
  * function before being modified by the user application.
  */
 struct can_config {
-	/** GCLK generator used to clock the peripheral. */
-	enum gclk_generator clock_source;
-	/** CAN run in standby control. */
-	bool run_in_standby;
-	/** Start value of the Message RAM Watchdog Counter */
-	uint8_t watchdog_configuration;
-	/** Transmit Pause. */
-	bool transmit_pause;
-	/** Edge Filtering during Bus Integration. */
-	bool edge_filtering;
-	/** Protocol Exception Handling. */
-	bool protocol_exception_handling;
-	/** Automatic Retransmission. */
-	bool automatic_retransmission;
-	/** Clock Stop Request. */
-	bool clock_stop_request;
-	/** Clock Stop Acknowledge. */
-	bool clock_stop_acknowledge;
-	/** Timestamp Counter Prescaler: 0x0-0xF */
-	uint8_t timestamp_prescaler;
-	/** Timeout Period. */
-	uint16_t timeout_period;
-	/** Timeout Mode. */
-	enum can_timeout_mode timeout_mode;
-	/** Timeout enable. */
-	bool timeout_enable;
-	/** Transceiver Delay Compensation enable. */		
-	bool tdc_enable;
-	/** Transmitter Delay Compensation Offset : 0x0-0x7F */
-	uint8_t delay_compensation_offset;
-	/** Transmitter Delay Compensation Filter Window Length : 0x0-0x7F */
-	uint8_t delay_compensation_filter_window_length;
-	/** Nonmatching frames action for standard frames. */
-	enum can_nonmatching_frames_action nonmatching_frames_action_standard;
-	/** Nonmatching frames action for extended frames. */
-	enum can_nonmatching_frames_action nonmatching_frames_action_extended;
-	/** Reject Remote Standard Frames. */
-	bool remote_frames_standard_reject;
-	/** Reject Remote Extended Frames. */
-	bool remote_frames_extended_reject;
-	/** Extended ID Mask: 0x0-0x1FFFFFFF. */
-	uint32_t extended_id_mask;
-	/** Rx FIFO 0 Operation Mode. */
-	bool rx_fifo_0_overwrite;
-	/** Rx FIFO 0 Watermark: 1-64, other value disable it. */
-	uint8_t rx_fifo_0_watermark;
-	/** Rx FIFO 1 Operation Mode. */
-	bool rx_fifo_1_overwrite;
-	/** Rx FIFO 1 Watermark: 1-64, other value disable it. */
-	uint8_t rx_fifo_1_watermark;
-	/** Tx FIFO/Queue Mode, 0 for FIFO and 1 for Queue. */
-	bool tx_queue_mode;
-	/** Tx Event FIFO Watermark: 1-32, other value disable it. */
-	uint8_t tx_event_fifo_watermark;
+    /** GCLK generator used to clock the peripheral. */
+    enum gclk_generator clock_source;
+    /** CAN run in standby control. */
+    bool run_in_standby;
+    /** Start value of the Message RAM Watchdog Counter */
+    uint8_t watchdog_configuration;
+    /** Transmit Pause. */
+    bool transmit_pause;
+    /** Edge Filtering during Bus Integration. */
+    bool edge_filtering;
+    /** Protocol Exception Handling. */
+    bool protocol_exception_handling;
+    /** Automatic Retransmission. */
+    bool automatic_retransmission;
+    /** Clock Stop Request. */
+    bool clock_stop_request;
+    /** Clock Stop Acknowledge. */
+    bool clock_stop_acknowledge;
+    /** Timestamp Counter Prescaler: 0x0-0xF */
+    uint8_t timestamp_prescaler;
+    /** Timeout Period. */
+    uint16_t timeout_period;
+    /** Timeout Mode. */
+    enum can_timeout_mode timeout_mode;
+    /** Timeout enable. */
+    bool timeout_enable;
+    /** Transceiver Delay Compensation enable. */
+    bool tdc_enable;
+    /** Transmitter Delay Compensation Offset : 0x0-0x7F */
+    uint8_t delay_compensation_offset;
+    /** Transmitter Delay Compensation Filter Window Length : 0x0-0x7F */
+    uint8_t delay_compensation_filter_window_length;
+    /** Nonmatching frames action for standard frames. */
+    enum can_nonmatching_frames_action nonmatching_frames_action_standard;
+    /** Nonmatching frames action for extended frames. */
+    enum can_nonmatching_frames_action nonmatching_frames_action_extended;
+    /** Reject Remote Standard Frames. */
+    bool remote_frames_standard_reject;
+    /** Reject Remote Extended Frames. */
+    bool remote_frames_extended_reject;
+    /** Extended ID Mask: 0x0-0x1FFFFFFF. */
+    uint32_t extended_id_mask;
+    /** Rx FIFO 0 Operation Mode. */
+    bool rx_fifo_0_overwrite;
+    /** Rx FIFO 0 Watermark: 1-64, other value disable it. */
+    uint8_t rx_fifo_0_watermark;
+    /** Rx FIFO 1 Operation Mode. */
+    bool rx_fifo_1_overwrite;
+    /** Rx FIFO 1 Watermark: 1-64, other value disable it. */
+    uint8_t rx_fifo_1_watermark;
+    /** Tx FIFO/Queue Mode, 0 for FIFO and 1 for Queue. */
+    bool tx_queue_mode;
+    /** Tx Event FIFO Watermark: 1-32, other value disable it. */
+    uint8_t tx_event_fifo_watermark;
 
 };
 
@@ -588,39 +588,39 @@ struct can_config {
  *                     default values
  */
 static inline void can_get_config_defaults(
-		struct can_config *const config)
+        struct can_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->clock_source = GCLK_GENERATOR_8;
-	config->run_in_standby = false;
-	config->watchdog_configuration = 0x00;
-	config->transmit_pause = true;
-	config->edge_filtering = true;
-	config->protocol_exception_handling = true;
-	config->automatic_retransmission = true;
-	config->clock_stop_request = false;
-	config->clock_stop_acknowledge = false;
-	config->timestamp_prescaler = 0;
-	config->timeout_period = 0xFFFF;
-	config->timeout_mode = CAN_TIMEOUT_CONTINUES;
-	config->timeout_enable = false;
-	config->tdc_enable = false;
-	config->delay_compensation_offset = 0;
-	config->delay_compensation_filter_window_length = 0;
-	config->nonmatching_frames_action_standard = CAN_NONMATCHING_FRAMES_REJECT;
-	config->nonmatching_frames_action_extended = CAN_NONMATCHING_FRAMES_REJECT;
-	config->remote_frames_standard_reject = true;
-	config->remote_frames_extended_reject = true;
-	config->extended_id_mask = 0x1FFFFFFF;
-	config->rx_fifo_0_overwrite = true;
-	config->rx_fifo_0_watermark = 0;
-	config->rx_fifo_1_overwrite = true;
-	config->rx_fifo_1_watermark = 0;
-	config->tx_queue_mode = false;
-	config->tx_event_fifo_watermark = 0;
+    /* Default configuration values */
+    config->clock_source = GCLK_GENERATOR_8;
+    config->run_in_standby = false;
+    config->watchdog_configuration = 0x00;
+    config->transmit_pause = true;
+    config->edge_filtering = true;
+    config->protocol_exception_handling = true;
+    config->automatic_retransmission = true;
+    config->clock_stop_request = false;
+    config->clock_stop_acknowledge = false;
+    config->timestamp_prescaler = 0;
+    config->timeout_period = 0xFFFF;
+    config->timeout_mode = CAN_TIMEOUT_CONTINUES;
+    config->timeout_enable = false;
+    config->tdc_enable = false;
+    config->delay_compensation_offset = 0;
+    config->delay_compensation_filter_window_length = 0;
+    config->nonmatching_frames_action_standard = CAN_NONMATCHING_FRAMES_REJECT;
+    config->nonmatching_frames_action_extended = CAN_NONMATCHING_FRAMES_REJECT;
+    config->remote_frames_standard_reject = true;
+    config->remote_frames_extended_reject = true;
+    config->extended_id_mask = 0x1FFFFFFF;
+    config->rx_fifo_0_overwrite = true;
+    config->rx_fifo_0_watermark = 0;
+    config->rx_fifo_1_overwrite = true;
+    config->rx_fifo_1_watermark = 0;
+    config->tx_queue_mode = false;
+    config->tx_event_fifo_watermark = 0;
 }
 
 
@@ -632,7 +632,7 @@ static inline void can_get_config_defaults(
  * \param[in]  config      Pointer to the configuration struct
  */
 void can_init(struct can_module *const module_inst, Can *hw,
-		struct can_config *config);
+        struct can_config *config);
 
 /**
  * \brief Set CAN baudrate.
@@ -690,7 +690,7 @@ void can_disable_fd_mode(struct can_module *const module_inst);
  * \param[in] module_inst  Pointer to the CAN software instance struct
  */
 void can_enable_restricted_operation_mode(
-		struct can_module *const module_inst);
+        struct can_module *const module_inst);
 
 /**
  * \brief Disable CAN restricted operation mode.
@@ -698,7 +698,7 @@ void can_enable_restricted_operation_mode(
  * \param[in] module_inst  Pointer to the CAN software instance struct
  */
 void can_disable_restricted_operation_mode(
-		struct can_module *const module_inst);
+        struct can_module *const module_inst);
 
 /**
  * \brief Enable CAN bus monitor mode.
@@ -756,9 +756,9 @@ void can_disable_test_mode(struct can_module *const module_inst);
  * \return Timestamp count value.
  */
 static inline uint16_t can_read_timestamp_count_value(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->TSCV.bit.TSC;
+    return module_inst->hw->TSCV.bit.TSC;
 }
 
 /**
@@ -769,9 +769,9 @@ static inline uint16_t can_read_timestamp_count_value(
  * \return Timeout count value.
  */
 static inline uint16_t can_read_timeout_count_value(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->TOCV.bit.TOC;
+    return module_inst->hw->TOCV.bit.TOC;
 }
 
 /**
@@ -782,9 +782,9 @@ static inline uint16_t can_read_timeout_count_value(
  * \return Error count value.
  */
 static inline uint32_t can_read_error_count(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->ECR.reg;
+    return module_inst->hw->ECR.reg;
 }
 
 /**
@@ -795,9 +795,9 @@ static inline uint32_t can_read_error_count(
  * \return protocol status value.
  */
 static inline uint32_t can_read_protocal_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->PSR.reg;
+    return module_inst->hw->PSR.reg;
 }
 
 /** @} */
@@ -815,9 +815,9 @@ static inline uint32_t can_read_protocal_status(
  * \return High priority message status value.
  */
 static inline uint32_t can_read_high_priority_message_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->HPMS.reg;
+    return module_inst->hw->HPMS.reg;
 }
 
 /**
@@ -832,22 +832,22 @@ static inline uint32_t can_read_high_priority_message_status(
  *  \retval false Rx Buffer not updated.
  */
 static inline bool can_rx_get_buffer_status(
-		struct can_module *const module_inst, uint32_t index)
+        struct can_module *const module_inst, uint32_t index)
 {
-	if (index < 32) {
-		if (module_inst->hw->NDAT1.reg & (1 << index)) {
-			return true;
-		} else {
-			return false;
-		}
-	} else {
-		index -= 32;
-		if (module_inst->hw->NDAT2.reg & (1 << index)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    if (index < 32) {
+        if (module_inst->hw->NDAT1.reg & (1 << index)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        index -= 32;
+        if (module_inst->hw->NDAT2.reg & (1 << index)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 /**
@@ -858,14 +858,14 @@ static inline bool can_rx_get_buffer_status(
  *
  */
 static inline void can_rx_clear_buffer_status(
-		struct can_module *const module_inst, uint32_t index)
+        struct can_module *const module_inst, uint32_t index)
 {
-	if (index < 32) {
-		module_inst->hw->NDAT1.reg = (1 << index);
-	} else {
-		index -= 32;
-		module_inst->hw->NDAT2.reg = (1 << index);
-	}
+    if (index < 32) {
+        module_inst->hw->NDAT1.reg = (1 << index);
+    } else {
+        index -= 32;
+        module_inst->hw->NDAT2.reg = (1 << index);
+    }
 }
 
 /**
@@ -877,13 +877,13 @@ static inline void can_rx_clear_buffer_status(
  * \return Rx FIFO status value.
  */
 static inline uint32_t can_rx_get_fifo_status(
-		struct can_module *const module_inst, bool fifo_number)
+        struct can_module *const module_inst, bool fifo_number)
 {
-	if (!fifo_number) {
-		return module_inst->hw->RXF0S.reg;
-	} else {
-		return module_inst->hw->RXF1S.reg;
-	}
+    if (!fifo_number) {
+        return module_inst->hw->RXF0S.reg;
+    } else {
+        return module_inst->hw->RXF1S.reg;
+    }
 }
 
 /**
@@ -894,13 +894,13 @@ static inline uint32_t can_rx_get_fifo_status(
  * \param[in] index  Index offset in FIFO
  */
 static inline void can_rx_fifo_acknowledge(
-		struct can_module *const module_inst, bool fifo_number, uint32_t index)
+        struct can_module *const module_inst, bool fifo_number, uint32_t index)
 {
-	if (!fifo_number) {
-		module_inst->hw->RXF0A.reg = CAN_RXF0A_F0AI(index);
-	} else {
-		module_inst->hw->RXF1A.reg = CAN_RXF1A_F1AI(index);
-	}
+    if (!fifo_number) {
+        module_inst->hw->RXF0A.reg = CAN_RXF0A_F0AI(index);
+    } else {
+        module_inst->hw->RXF1A.reg = CAN_RXF1A_F1AI(index);
+    }
 }
 
 /**
@@ -915,13 +915,13 @@ static inline void can_rx_fifo_acknowledge(
  * \param[out] sd_filter  Pointer to standard filter element struct to initialize to default values
  */
 static inline void can_get_standard_message_filter_element_default(
-		struct can_standard_message_filter_element *sd_filter)
+        struct can_standard_message_filter_element *sd_filter)
 {
-	sd_filter->S0.reg = CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFID2_Msk |
-			CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFID1(0) |
-			CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFEC(
-			CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFEC_STF0M_Val) |
-			CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFT_CLASSIC;
+    sd_filter->S0.reg = CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFID2_Msk |
+            CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFID1(0) |
+            CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFEC(
+            CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFEC_STF0M_Val) |
+            CAN_STANDARD_MESSAGE_FILTER_ELEMENT_S0_SFT_CLASSIC;
 }
 
 /**
@@ -937,8 +937,8 @@ static inline void can_get_standard_message_filter_element_default(
  *  \retval STATUS_ERR_INVALID_ARG The parameter is not correct.
  */
 enum status_code can_set_rx_standard_filter(
-		struct can_module *const module_inst,
-		struct can_standard_message_filter_element *sd_filter, uint32_t index);
+        struct can_module *const module_inst,
+        struct can_standard_message_filter_element *sd_filter, uint32_t index);
 
 /**
  * \brief Get the extended message filter default value.
@@ -952,13 +952,13 @@ enum status_code can_set_rx_standard_filter(
  * \param[out] et_filter  Pointer to extended filter element struct to initialize to default values
  */
 static inline void can_get_extended_message_filter_element_default(
-		struct can_extended_message_filter_element *et_filter)
+        struct can_extended_message_filter_element *et_filter)
 {
-	et_filter->F0.reg = CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_EFID1(0) |
-			CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_EFEC(
-			CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_EFEC_STF1M_Val);
-	et_filter->F1.reg = CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F1_EFID2_Msk |
-			CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F1_EFT_CLASSIC;
+    et_filter->F0.reg = CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_EFID1(0) |
+            CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_EFEC(
+            CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F0_EFEC_STF1M_Val);
+    et_filter->F1.reg = CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F1_EFID2_Msk |
+            CAN_EXTENDED_MESSAGE_FILTER_ELEMENT_F1_EFT_CLASSIC;
 }
 
 /**
@@ -974,8 +974,8 @@ static inline void can_get_extended_message_filter_element_default(
  *  \retval STATUS_ERR_INVALID_ARG The parameter is not correct.
  */
 enum status_code can_set_rx_extended_filter(
-		struct can_module *const module_inst,
-		struct can_extended_message_filter_element *et_filter, uint32_t index);
+        struct can_module *const module_inst,
+        struct can_extended_message_filter_element *et_filter, uint32_t index);
 
 /**
  * \brief Get the pointer to the receive buffer element.
@@ -990,8 +990,8 @@ enum status_code can_set_rx_extended_filter(
  *  \retval STATUS_ERR_INVALID_ARG The parameter is not correct.
  */
 enum status_code can_get_rx_buffer_element(
-		struct can_module *const module_inst,
-		struct can_rx_element_buffer *rx_element, uint32_t index);
+        struct can_module *const module_inst,
+        struct can_rx_element_buffer *rx_element, uint32_t index);
 
 /**
  * \brief Get the pointer to the receive FIFO 0 element.
@@ -1006,8 +1006,8 @@ enum status_code can_get_rx_buffer_element(
  *  \retval STATUS_ERR_INVALID_ARG The parameter is not correct.
  */
 enum status_code can_get_rx_fifo_0_element(
-		struct can_module *const module_inst,
-		struct can_rx_element_fifo_0 *rx_element, uint32_t index);
+        struct can_module *const module_inst,
+        struct can_rx_element_fifo_0 *rx_element, uint32_t index);
 
 /**
  * \brief Get the pointer to the receive FIFO 1 element.
@@ -1022,8 +1022,8 @@ enum status_code can_get_rx_fifo_0_element(
  *  \retval STATUS_ERR_INVALID_ARG The parameter is not correct.
  */
 enum status_code can_get_rx_fifo_1_element(
-		struct can_module *const module_inst,
-		struct can_rx_element_fifo_1 *rx_element, uint32_t index);
+        struct can_module *const module_inst,
+        struct can_rx_element_fifo_1 *rx_element, uint32_t index);
 
 /** @} */
 
@@ -1040,9 +1040,9 @@ enum status_code can_get_rx_fifo_1_element(
  * \return Tx FIFO/Queue status value.
  */
 static inline uint32_t can_tx_get_fifo_queue_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->TXFQS.reg;
+    return module_inst->hw->TXFQS.reg;
 }
 
 /**
@@ -1053,9 +1053,9 @@ static inline uint32_t can_tx_get_fifo_queue_status(
  * \return Bit mask of Tx buffer request pending status value.
  */
 static inline uint32_t can_tx_get_pending_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->TXBRP.reg;
+    return module_inst->hw->TXBRP.reg;
 }
 
 /**
@@ -1070,13 +1070,13 @@ static inline uint32_t can_tx_get_pending_status(
  *  \retval STATUS_BUSY The module is in configuration.
  */
 static inline enum status_code can_tx_transfer_request(
-		struct can_module *const module_inst, uint32_t trig_mask)
+        struct can_module *const module_inst, uint32_t trig_mask)
 {
-	if (module_inst->hw->CCCR.reg & CAN_CCCR_CCE) {
-		return STATUS_BUSY;
-	}
-	module_inst->hw->TXBAR.reg = trig_mask;
-	return STATUS_OK;
+    if (module_inst->hw->CCCR.reg & CAN_CCCR_CCE) {
+        return STATUS_BUSY;
+    }
+    module_inst->hw->TXBAR.reg = trig_mask;
+    return STATUS_OK;
 }
 
 /**
@@ -1091,13 +1091,13 @@ static inline enum status_code can_tx_transfer_request(
  *  \retval STATUS_BUSY The module is in configuration.
  */
 static inline enum status_code can_tx_cancel_request(
-		struct can_module *const module_inst, uint32_t trig_mask)
+        struct can_module *const module_inst, uint32_t trig_mask)
 {
-	if (module_inst->hw->CCCR.reg & CAN_CCCR_CCE) {
-		return STATUS_BUSY;
-	}
-	module_inst->hw->TXBCR.reg = trig_mask;
-	return STATUS_OK;
+    if (module_inst->hw->CCCR.reg & CAN_CCCR_CCE) {
+        return STATUS_BUSY;
+    }
+    module_inst->hw->TXBCR.reg = trig_mask;
+    return STATUS_OK;
 }
 
 /**
@@ -1108,9 +1108,9 @@ static inline enum status_code can_tx_cancel_request(
  * \return Bit mask of Tx transmission status value.
  */
 static inline uint32_t can_tx_get_transmission_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->TXBTO.reg;
+    return module_inst->hw->TXBTO.reg;
 }
 
 /**
@@ -1121,9 +1121,9 @@ static inline uint32_t can_tx_get_transmission_status(
  * \return Bit mask of Tx cancellation status value.
  */
 static inline uint32_t can_tx_get_cancellation_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->TXBCF.reg;
+    return module_inst->hw->TXBCF.reg;
 }
 
 /**
@@ -1134,9 +1134,9 @@ static inline uint32_t can_tx_get_cancellation_status(
  * \return Tx event FIFO status value.
  */
 static inline uint32_t can_tx_get_event_fifo_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->TXEFS.reg;
+    return module_inst->hw->TXEFS.reg;
 }
 
 /**
@@ -1146,9 +1146,9 @@ static inline uint32_t can_tx_get_event_fifo_status(
  * \param[in] index  Index for the transfer FIFO
  */
 static inline void can_tx_event_fifo_acknowledge(
-		struct can_module *const module_inst, uint32_t index)
+        struct can_module *const module_inst, uint32_t index)
 {
-	module_inst->hw->TXEFA.reg = CAN_TXEFA_EFAI(index);
+    module_inst->hw->TXEFA.reg = CAN_TXEFA_EFAI(index);
 }
 
 /**
@@ -1165,11 +1165,11 @@ static inline void can_tx_event_fifo_acknowledge(
  * \param[out] tx_element  Pointer to transfer element struct to initialize to default values
  */
 static inline void can_get_tx_buffer_element_defaults(
-		struct can_tx_element *tx_element)
+        struct can_tx_element *tx_element)
 {
-	tx_element->T0.reg = 0;
-	tx_element->T1.reg = CAN_TX_ELEMENT_T1_EFC |
-			CAN_TX_ELEMENT_T1_DLC(CAN_TX_ELEMENT_T1_DLC_DATA8_Val);
+    tx_element->T0.reg = 0;
+    tx_element->T1.reg = CAN_TX_ELEMENT_T1_EFC |
+            CAN_TX_ELEMENT_T1_DLC(CAN_TX_ELEMENT_T1_DLC_DATA8_Val);
 }
 
 /**
@@ -1185,8 +1185,8 @@ static inline void can_get_tx_buffer_element_defaults(
  *  \retval STATUS_ERR_INVALID_ARG The parameter is not correct.
  */
 enum status_code can_set_tx_buffer_element(
-		struct can_module *const module_inst,
-		struct can_tx_element *tx_element, uint32_t index);
+        struct can_module *const module_inst,
+        struct can_tx_element *tx_element, uint32_t index);
 
 /**
  * \brief Get the pointer to the transfer event FIFO element.
@@ -1201,8 +1201,8 @@ enum status_code can_set_tx_buffer_element(
  *  \retval STATUS_ERR_INVALID_ARG The parameter is not correct.
  */
 enum status_code can_get_tx_event_fifo_element(
-		struct can_module *const module_inst,
-		struct can_tx_event_element *tx_event_element, uint32_t index);
+        struct can_module *const module_inst,
+        struct can_tx_event_element *tx_event_element, uint32_t index);
 
 /** @} */
 
@@ -1217,66 +1217,66 @@ enum status_code can_get_tx_event_fifo_element(
  * Enum for the interrupt source.
  */
 enum can_interrupt_source {
-	/** Rx FIFO 0 New Message Interrupt Enable. */
-	CAN_RX_FIFO_0_NEW_MESSAGE = CAN_IE_RF0NE,
-	/** Rx FIFO 0 Watermark Reached Interrupt Enable. */
-	CAN_RX_FIFO_0_WATERMARK = CAN_IE_RF0WE,
-	/** Rx FIFO 0 Full Interrupt Enable. */
-	CAN_RX_FIFO_0_FULL = CAN_IE_RF0FE,
-	/** Rx FIFO 0 Message Lost Interrupt Enable. */
-	CAN_RX_FIFO_0_LOST_MESSAGE = CAN_IE_RF0LE,
-	/** Rx FIFO 1 New Message Interrupt Enable. */
-	CAN_RX_FIFO_1_NEW_MESSAGE = CAN_IE_RF1NE,
-	/** Rx FIFO 1 Watermark Reached Interrupt Enable. */
-	CAN_RX_FIFO_1_WATERMARK = CAN_IE_RF1WE,
-	/** Rx FIFO 1 Full Interrupt Enable. */
-	CAN_RX_FIFO_1_FULL = CAN_IE_RF1FE,
-	/** Rx FIFO 1 Message Lost Interrupt Enable. */
-	CAN_RX_FIFO_1_MESSAGE_LOST = CAN_IE_RF1LE,
-	/** High Priority Message Interrupt Enable. */
-	CAN_RX_HIGH_PRIORITY_MESSAGE = CAN_IE_HPME,
-	/** Timestamp Completed Interrupt Enable. */
-	CAN_TIMESTAMP_COMPLETE = CAN_IE_TCE,
-	/** Transmission Cancellation Finished Interrupt Enable. */
-	CAN_TX_CANCELLATION_FINISH = CAN_IE_TCFE,
-	/** Tx FIFO Empty Interrupt Enable. */
-	CAN_TX_FIFO_EMPTY = CAN_IE_TFEE,
-	/** Tx Event FIFO New Entry Interrupt Enable. */
-	CAN_TX_EVENT_FIFO_NEW_ENTRY = CAN_IE_TEFNE,
-	/** Tx Event FIFO Watermark Reached Interrupt Enable. */
-	CAN_TX_EVENT_FIFO_WATERMARK = CAN_IE_TEFWE,
-	/** Tx Event FIFO Full Interrupt Enable. */
-	CAN_TX_EVENT_FIFO_FULL = CAN_IE_TEFFE,
-	/** Tx Event FIFO Element Lost Interrupt Enable. */
-	CAN_TX_EVENT_FIFO_ELEMENT_LOST = CAN_IE_TEFLE,
-	/** Timestamp Wraparound Interrupt Enable. */
-	CAN_TIMESTAMP_WRAPAROUND = CAN_IE_TSWE,
-	/** Message RAM Access Failure Interrupt Enable. */
-	CAN_MESSAGE_RAM_ACCESS_FAILURE = CAN_IE_MRAFE,
-	/** Timeout Occurred Interrupt Enable. */
-	CAN_TIMEOUT_OCCURRED = CAN_IE_TOOE,
-	/** Message stored to Dedicated Rx Buffer Interrupt Enable. */
-	CAN_RX_BUFFER_NEW_MESSAGE = CAN_IE_DRXE,
-	/** Bit Error Corrected Interrupt Enable. */
-	CAN_BIT_ERROR_CORRECTED = CAN_IE_BECE,
-	/** Bit Error Uncorrected Interrupt Enable. */
-	CAN_BIT_ERROR_UNCORRECTED = CAN_IE_BEUE,
-	/** Error Logging Overflow Interrupt Enable. */
-	CAN_ERROR_LOGGING_OVERFLOW = CAN_IE_ELOE,
-	/** Error Passive Interrupt Enable. */
-	CAN_ERROR_PASSIVE = CAN_IE_EPE,
-	/** Warning Status Interrupt Enable. */
-	CAN_WARNING_STATUS = CAN_IE_EWE,
-	/** Bus_Off Status Interrupt Enable. */
-	CAN_BUS_OFF = CAN_IE_BOE,
-	/** Watchdog Interrupt Interrupt Enable. */
-	CAN_WATCHDOG = CAN_IE_WDIE,
-	/** Protocol Error in Arbitration Phase Enable. */
-	CAN_PROTOCOL_ERROR_ARBITRATION = CAN_IE_PEAE,
-	/** Protocol Error in Data Phase Enable. */
-	CAN_PROTOCOL_ERROR_DATA = CAN_IE_PEDE,
-	/** Access to Reserved Address Enable. */
-	CAN_ACCESS_RESERVED_ADDRESS = CAN_IE_ARAE,
+    /** Rx FIFO 0 New Message Interrupt Enable. */
+    CAN_RX_FIFO_0_NEW_MESSAGE = CAN_IE_RF0NE,
+    /** Rx FIFO 0 Watermark Reached Interrupt Enable. */
+    CAN_RX_FIFO_0_WATERMARK = CAN_IE_RF0WE,
+    /** Rx FIFO 0 Full Interrupt Enable. */
+    CAN_RX_FIFO_0_FULL = CAN_IE_RF0FE,
+    /** Rx FIFO 0 Message Lost Interrupt Enable. */
+    CAN_RX_FIFO_0_LOST_MESSAGE = CAN_IE_RF0LE,
+    /** Rx FIFO 1 New Message Interrupt Enable. */
+    CAN_RX_FIFO_1_NEW_MESSAGE = CAN_IE_RF1NE,
+    /** Rx FIFO 1 Watermark Reached Interrupt Enable. */
+    CAN_RX_FIFO_1_WATERMARK = CAN_IE_RF1WE,
+    /** Rx FIFO 1 Full Interrupt Enable. */
+    CAN_RX_FIFO_1_FULL = CAN_IE_RF1FE,
+    /** Rx FIFO 1 Message Lost Interrupt Enable. */
+    CAN_RX_FIFO_1_MESSAGE_LOST = CAN_IE_RF1LE,
+    /** High Priority Message Interrupt Enable. */
+    CAN_RX_HIGH_PRIORITY_MESSAGE = CAN_IE_HPME,
+    /** Timestamp Completed Interrupt Enable. */
+    CAN_TIMESTAMP_COMPLETE = CAN_IE_TCE,
+    /** Transmission Cancellation Finished Interrupt Enable. */
+    CAN_TX_CANCELLATION_FINISH = CAN_IE_TCFE,
+    /** Tx FIFO Empty Interrupt Enable. */
+    CAN_TX_FIFO_EMPTY = CAN_IE_TFEE,
+    /** Tx Event FIFO New Entry Interrupt Enable. */
+    CAN_TX_EVENT_FIFO_NEW_ENTRY = CAN_IE_TEFNE,
+    /** Tx Event FIFO Watermark Reached Interrupt Enable. */
+    CAN_TX_EVENT_FIFO_WATERMARK = CAN_IE_TEFWE,
+    /** Tx Event FIFO Full Interrupt Enable. */
+    CAN_TX_EVENT_FIFO_FULL = CAN_IE_TEFFE,
+    /** Tx Event FIFO Element Lost Interrupt Enable. */
+    CAN_TX_EVENT_FIFO_ELEMENT_LOST = CAN_IE_TEFLE,
+    /** Timestamp Wraparound Interrupt Enable. */
+    CAN_TIMESTAMP_WRAPAROUND = CAN_IE_TSWE,
+    /** Message RAM Access Failure Interrupt Enable. */
+    CAN_MESSAGE_RAM_ACCESS_FAILURE = CAN_IE_MRAFE,
+    /** Timeout Occurred Interrupt Enable. */
+    CAN_TIMEOUT_OCCURRED = CAN_IE_TOOE,
+    /** Message stored to Dedicated Rx Buffer Interrupt Enable. */
+    CAN_RX_BUFFER_NEW_MESSAGE = CAN_IE_DRXE,
+    /** Bit Error Corrected Interrupt Enable. */
+    CAN_BIT_ERROR_CORRECTED = CAN_IE_BECE,
+    /** Bit Error Uncorrected Interrupt Enable. */
+    CAN_BIT_ERROR_UNCORRECTED = CAN_IE_BEUE,
+    /** Error Logging Overflow Interrupt Enable. */
+    CAN_ERROR_LOGGING_OVERFLOW = CAN_IE_ELOE,
+    /** Error Passive Interrupt Enable. */
+    CAN_ERROR_PASSIVE = CAN_IE_EPE,
+    /** Warning Status Interrupt Enable. */
+    CAN_WARNING_STATUS = CAN_IE_EWE,
+    /** Bus_Off Status Interrupt Enable. */
+    CAN_BUS_OFF = CAN_IE_BOE,
+    /** Watchdog Interrupt Interrupt Enable. */
+    CAN_WATCHDOG = CAN_IE_WDIE,
+    /** Protocol Error in Arbitration Phase Enable. */
+    CAN_PROTOCOL_ERROR_ARBITRATION = CAN_IE_PEAE,
+    /** Protocol Error in Data Phase Enable. */
+    CAN_PROTOCOL_ERROR_DATA = CAN_IE_PEDE,
+    /** Access to Reserved Address Enable. */
+    CAN_ACCESS_RESERVED_ADDRESS = CAN_IE_ARAE,
 };
 
 /**
@@ -1286,9 +1286,9 @@ enum can_interrupt_source {
  * \param[in] source  Interrupt source type
  */
 static inline void can_enable_interrupt(struct can_module *const module_inst,
-		const enum can_interrupt_source source)
+        const enum can_interrupt_source source)
 {
-	module_inst->hw->IE.reg |= source;
+    module_inst->hw->IE.reg |= source;
 }
 
 /**
@@ -1298,9 +1298,9 @@ static inline void can_enable_interrupt(struct can_module *const module_inst,
  * \param[in] source  Interrupt source type
  */
 static inline void can_disable_interrupt(struct can_module *const module_inst,
-		const enum can_interrupt_source source)
+        const enum can_interrupt_source source)
 {
-	module_inst->hw->IE.reg &= ~source;
+    module_inst->hw->IE.reg &= ~source;
 }
 
 /**
@@ -1309,9 +1309,9 @@ static inline void can_disable_interrupt(struct can_module *const module_inst,
  * \param[in] module_inst  Pointer to the CAN software instance struct
  */
 static inline uint32_t can_read_interrupt_status(
-		struct can_module *const module_inst)
+        struct can_module *const module_inst)
 {
-	return module_inst->hw->IR.reg;
+    return module_inst->hw->IR.reg;
 }
 
 /**
@@ -1323,10 +1323,10 @@ static inline uint32_t can_read_interrupt_status(
  * \return Bit mask of interrupt status value.
  */
 static inline void can_clear_interrupt_status(
-		struct can_module *const module_inst,
-		const enum can_interrupt_source source)
+        struct can_module *const module_inst,
+        const enum can_interrupt_source source)
 {
-	module_inst->hw->IR.reg = source;
+    module_inst->hw->IR.reg = source;
 }
 
 /** @} */
@@ -1347,18 +1347,18 @@ static inline void can_clear_interrupt_status(
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
  *  <tr>
- *		<td>CAN</td>
- *		<td>Control Area Network (CAN) Controller</td>
- *	</tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
  *  <tr>
- *		<td>CAN FD</td>
- *		<td>CAN with Flexible Data-Rate</td>
- *	</tr>
+ *      <td>CAN</td>
+ *      <td>Control Area Network (CAN) Controller</td>
+ *  </tr>
+ *  <tr>
+ *      <td>CAN FD</td>
+ *      <td>CAN with Flexible Data-Rate</td>
+ *  </tr>
  * </table>
  *
  *
@@ -1377,12 +1377,12 @@ static inline void can_clear_interrupt_status(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
-  *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+  * <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -1402,16 +1402,16 @@ static inline void can_clear_interrupt_status(
  * \page asfdoc_sam0_can_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>A</td>
- *		<td>03/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>A</td>
+ *      <td>03/2015</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

@@ -60,8 +60,8 @@ static void thread_entry(void* parameter)
 int timer_timeout_init()
 {
     /* 初始化消息队列 */
-    rt_mq_init(&mq, "mqt", 
-        &msg_pool[0], /* 内存池指向msg_pool */ 
+    rt_mq_init(&mq, "mqt",
+        &msg_pool[0], /* 内存池指向msg_pool */
         128 - sizeof(void*), /* 每个消息的大小是 128 - void* */
         sizeof(msg_pool), /* 内存池的大小是msg_pool的大小 */
         RT_IPC_FLAG_FIFO); /* 如果有多个线程等待，按照先来先得到的方法分配消息 */

@@ -32,7 +32,7 @@
 #include "../dcp.h"
 #include "profile/profile.h"
 
-#define DCP_TEST_BUFFER_SIZE	0x1000000
+#define DCP_TEST_BUFFER_SIZE    0x1000000
 
 int dcp_test(void)
 {

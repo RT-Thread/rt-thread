@@ -52,10 +52,10 @@ public:
     //! A previously created port object will be returned if it exists. If no object has been
     //! created for the specified port number, one will be dynamically allocated for you.
     static SPIMasterPort * getPort(int port);
-    
+
     //! @brief Constructor.
     SPIMasterPort(int port);
-    
+
     //! @brief Destructor.
     virtual ~SPIMasterPort();
 
@@ -87,10 +87,10 @@ public:
 protected:
 
     dev_ecspi_e m_port; //!< This port number.
-    
+
     //! Table of port objects.
     static SPIMasterPort * s_ports[];
-    
+
 };
 
 /*!
@@ -102,25 +102,25 @@ protected:
 class SPIDevice
 {
 public:
-    
+
     //! @brief Constructor.
     //!
     //! The I2CMasterPort object will be created dynamically if it does not already exist.
     SPIDevice(int port, uint8_t address, uint32_t busFrequencyKHz=1000);
-    
+
     //! @brief Constructor.
     //!
     //! This version of the constructor takes a pointer to the SPIMasterPort object to use, instead
     //! of just a port number.
     SPIDevice(SPIMasterPort * port, uint8_t address, uint32_t busFrequencyKHz=1000);
-    
+
     //! @name Bus configuration
     //@{
     void setBusFrequency(uint32_t busFrequencyKHz);
     void setPolarityAndPhase(unsigned polarity, unsigned phase);
     void setChipSelectPolarity(unsigned polarity);
     //@}
-    
+
     //! @name Transfers
     //@{
     //! @brief Perform a full-duplex transfer, both sending and receiving data.
@@ -137,10 +137,10 @@ public:
     //!     transfer is performed.
     //! @retval SUCCESS
     int transfer(const void * sendData, void * receiveData, uint32_t dataLength);
-    
+
     //! @brief Send data to the slave device.
     int send(const void * data, uint32_t dataLength) { return transfer(data, NULL, dataLength); }
-    
+
     //! @brief Receive data from the slave device.
     int receive(void * data, uint32_t dataLength) { return transfer(NULL, data, dataLength); }
     //@}

@@ -93,12 +93,12 @@
  */
 typedef enum
 {
-	MSD_CARD_TYPE_UNKNOWN = 0,                      /**< unknown */
-	MSD_CARD_TYPE_MMC,                              /**< MultiMedia Card */
-	MSD_CARD_TYPE_SD_V1_X,                          /**< Ver 1.X  Standard Capacity SD Memory Card */
-	MSD_CARD_TYPE_SD_V2_X,                          /**< Ver 2.00 or later Standard Capacity SD Memory Card */
-	MSD_CARD_TYPE_SD_SDHC,                          /**< High Capacity SD Memory Card */
-	MSD_CARD_TYPE_SD_SDXC,                          /**< later Extended Capacity SD Memory Card */
+    MSD_CARD_TYPE_UNKNOWN = 0,                      /**< unknown */
+    MSD_CARD_TYPE_MMC,                              /**< MultiMedia Card */
+    MSD_CARD_TYPE_SD_V1_X,                          /**< Ver 1.X  Standard Capacity SD Memory Card */
+    MSD_CARD_TYPE_SD_V2_X,                          /**< Ver 2.00 or later Standard Capacity SD Memory Card */
+    MSD_CARD_TYPE_SD_SDHC,                          /**< High Capacity SD Memory Card */
+    MSD_CARD_TYPE_SD_SDXC,                          /**< later Extended Capacity SD Memory Card */
 }msd_card_type;
 
 typedef enum

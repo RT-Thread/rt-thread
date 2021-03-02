@@ -50,42 +50,42 @@
 //! @brief Modes of the PARITY for UART transfer.
 enum _uart_parity
 {
-	PARITY_NONE = 0, //!< PARITY mode is PARITY_NONE.
-	PARITY_EVEN = 2, //!< PARITY mode is PARITY_EVEN.
-        PARITY_ODD  = 3  //!< PARITY mode is PARITY_ODD. 
+    PARITY_NONE = 0, //!< PARITY mode is PARITY_NONE.
+    PARITY_EVEN = 2, //!< PARITY mode is PARITY_EVEN.
+        PARITY_ODD  = 3  //!< PARITY mode is PARITY_ODD.
 };
 
 //!  @brief Number of stopbits after a character.
 enum _uart_stopbits
 {
-	STOPBITS_ONE = 0, //!< One stopbits after a character.
-	STOPBITS_TWO = 1  //!< Two stopbits after a character.
+    STOPBITS_ONE = 0, //!< One stopbits after a character.
+    STOPBITS_TWO = 1  //!< Two stopbits after a character.
 };
 
 //!  @brief Flow control mode for UART transfer.
 enum _uart_flowctrl
 {
-	FLOWCTRL_OFF = 0, //!< Flow control off for UART transfer.
-	FLOWCTRL_ON  = 1  //!< Flow control on for UART transfer.
+    FLOWCTRL_OFF = 0, //!< Flow control off for UART transfer.
+    FLOWCTRL_ON  = 1  //!< Flow control on for UART transfer.
 };
 
 //!  @brief Specify the FIFO for UART transfer.
 enum _uart_fifo
 {
-	TX_FIFO = 0,	  //!< Config the TX fifo for UART transfer.
-	RX_FIFO = 1	  //!< Config the RX fifo for UART transfer.
-};   	
+    TX_FIFO = 0,      //!< Config the TX fifo for UART transfer.
+    RX_FIFO = 1   //!< Config the RX fifo for UART transfer.
+};
 
 //! @brief Specify the number of bits in a data
 enum _uart_bits
 {
-	SEVENBITS = 0,	  //!< Config seven bits in a data.
-	EIGHTBITS = 1     //!< Config eight bits in a data.
+    SEVENBITS = 0,    //!< Config seven bits in a data.
+    EIGHTBITS = 1     //!< Config eight bits in a data.
 };
 
 //! @brief Specify the service mode
-#define	DMA_MODE  2	  //!< Config the service mode for dma request.
-#define	IRQ_MODE  1      //!< Config the service mode for interrupt.
+#define DMA_MODE  2   //!< Config the service mode for dma request.
+#define IRQ_MODE  1      //!< Config the service mode for interrupt.
 
 #define UART_MODULE_CLK(x) ((x) == HW_UART1 ? UART1_MODULE_CLK : (x) == HW_UART2 ? UART2_MODULE_CLK : (x) == HW_UART3 ? UART3_MODULE_CLK : (x) == HW_UART4 ? UART4_MODULE_CLK : -1)
 

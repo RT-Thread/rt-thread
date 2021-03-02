@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ *
  */
 
 #include <easyflash.h>

@@ -48,28 +48,28 @@
 
 static enum status_code _adc_gpio_ms_enable(enum adc_input_channel channel)
 {
-	switch (channel) {
-		case ADC_INPUT_CH_GPIO_MS1:
-			AON_GP_REGS0->MS_GPIO_MODE.reg |= \
-				AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_44;
-			break;
-		case ADC_INPUT_CH_GPIO_MS2:
-			AON_GP_REGS0->MS_GPIO_MODE.reg |= \
-				AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_45;
-		break;
-		case ADC_INPUT_CH_GPIO_MS3:
-			AON_GP_REGS0->MS_GPIO_MODE.reg |= \
-				AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_46;
-		break;
-		case ADC_INPUT_CH_GPIO_MS4:
-			AON_GP_REGS0->MS_GPIO_MODE.reg |= \
-				AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_47;
-		break;
+    switch (channel) {
+        case ADC_INPUT_CH_GPIO_MS1:
+            AON_GP_REGS0->MS_GPIO_MODE.reg |= \
+                AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_44;
+            break;
+        case ADC_INPUT_CH_GPIO_MS2:
+            AON_GP_REGS0->MS_GPIO_MODE.reg |= \
+                AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_45;
+        break;
+        case ADC_INPUT_CH_GPIO_MS3:
+            AON_GP_REGS0->MS_GPIO_MODE.reg |= \
+                AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_46;
+        break;
+        case ADC_INPUT_CH_GPIO_MS4:
+            AON_GP_REGS0->MS_GPIO_MODE.reg |= \
+                AON_GP_REGS_MS_GPIO_MODE_ANALOG_ENABLE_47;
+        break;
 
-		default:
-			return STATUS_ERR_INVALID_ARG;
-	}
-	return STATUS_OK;
+        default:
+            return STATUS_ERR_INVALID_ARG;
+    }
+    return STATUS_OK;
 }
 
 /**
@@ -95,16 +95,16 @@ static enum status_code _adc_gpio_ms_enable(enum adc_input_channel channel)
  */
 void adc_get_config_defaults(struct adc_config *const config)
 {
-	Assert(config);
-	config->reference = ADC_REFERENCE_VBATT_2;
-	config->internal_vref = ADC_INTERNAL_BUF_1_5;
-	config->input_channel = ADC_INPUT_CH_GPIO_MS1;
-	config->channel_mode = ADC_CH_MODE_ASSIGN;
-	config->input_dynamic_range = ADC_INPUT_DYNAMIC_RANGE_3;
-	config->bias_current = ADC_BIAS_CURRENT_3;
-	config->invert_clock = false;
-	config->frac_part = 0;
-	config->int_part = 0x12;
+    Assert(config);
+    config->reference = ADC_REFERENCE_VBATT_2;
+    config->internal_vref = ADC_INTERNAL_BUF_1_5;
+    config->input_channel = ADC_INPUT_CH_GPIO_MS1;
+    config->channel_mode = ADC_CH_MODE_ASSIGN;
+    config->input_dynamic_range = ADC_INPUT_DYNAMIC_RANGE_3;
+    config->bias_current = ADC_BIAS_CURRENT_3;
+    config->invert_clock = false;
+    config->frac_part = 0;
+    config->int_part = 0x12;
 }
 
 /**
@@ -118,50 +118,50 @@ void adc_get_config_defaults(struct adc_config *const config)
  */
 void adc_init(struct adc_config *config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	if (config->invert_clock) {
-		LPMCU_MISC_REGS0->SENS_ADC_CLK_CTRL.reg = LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_INVERT;
-	} else {
-		LPMCU_MISC_REGS0->SENS_ADC_CLK_CTRL.reg &= ~LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_MASK;
-	}
+    if (config->invert_clock) {
+        LPMCU_MISC_REGS0->SENS_ADC_CLK_CTRL.reg = LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_INVERT;
+    } else {
+        LPMCU_MISC_REGS0->SENS_ADC_CLK_CTRL.reg &= ~LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_MASK;
+    }
 
-	/* Setting ADC clock */
-	LPMCU_MISC_REGS0->SENS_ADC_CLK_CTRL.reg |= \
-			LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_FRAC_PART(config->frac_part) | \
-			LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_INT_PART(config->int_part);
+    /* Setting ADC clock */
+    LPMCU_MISC_REGS0->SENS_ADC_CLK_CTRL.reg |= \
+            LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_FRAC_PART(config->frac_part) | \
+            LPMCU_MISC_REGS_SENS_ADC_CLK_CTRL_INT_PART(config->int_part);
 
-	if ((config->reference == ADC_REFERENCE_GPIO_MS1) || \
-		(config->reference == ADC_REFERENCE_GPIO_MS2) || \
-		(config->reference == ADC_REFERENCE_GPIO_MS3) || \
-		(config->reference == ADC_REFERENCE_GPIO_MS4)) {
-		_adc_gpio_ms_enable(config->reference - ADC_REFERENCE_GPIO_MS1);
-	}
+    if ((config->reference == ADC_REFERENCE_GPIO_MS1) || \
+        (config->reference == ADC_REFERENCE_GPIO_MS2) || \
+        (config->reference == ADC_REFERENCE_GPIO_MS3) || \
+        (config->reference == ADC_REFERENCE_GPIO_MS4)) {
+        _adc_gpio_ms_enable(config->reference - ADC_REFERENCE_GPIO_MS1);
+    }
 
-	AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_REF_SEL = config->reference;
-	AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_BIAS_RES_CTRL = config->internal_vref;
+    AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_REF_SEL = config->reference;
+    AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_BIAS_RES_CTRL = config->internal_vref;
 
-	if (config->channel_mode == ADC_CH_MODE_ASSIGN) {
-		AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_CHN_CTRL = \
-				AON_GP_REGS_RF_PMU_REGS_1_SADC_CHN_CTRL_1_Val;
-		AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_CHN_SEL = config->input_channel;
-		
-		if (config->input_channel <= ADC_INPUT_CH_GPIO_MS4) {
-			/* Enable GPIO_MS pin */
-			_adc_gpio_ms_enable(config->input_channel);
-		}
-	} else if (config->channel_mode == ADC_CH_MODE_CH0_TO_CH3) {
-		/* Input channels time multiplexing is between channel 0 to channel 3 */
-		/* Config GPIO_MS1 ~ GPIO_MS4 pin */
-		AON_GP_REGS0->MS_GPIO_MODE.reg = AON_GP_REGS_MS_GPIO_MODE_MASK;
-	} else if (config->channel_mode == ADC_CH_MODE_CH4_TO_CH7) {
-		/* Input channels time multiplexing is between channel 4 to channel 7 */
-		AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_CHN_SEL = 0x4;
-	}
+    if (config->channel_mode == ADC_CH_MODE_ASSIGN) {
+        AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_CHN_CTRL = \
+                AON_GP_REGS_RF_PMU_REGS_1_SADC_CHN_CTRL_1_Val;
+        AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_CHN_SEL = config->input_channel;
 
-	AON_GP_REGS0->RF_PMU_REGS_1.bit.CODE_IN = config->input_dynamic_range;
-	AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_LP_CTRL = config->bias_current;
+        if (config->input_channel <= ADC_INPUT_CH_GPIO_MS4) {
+            /* Enable GPIO_MS pin */
+            _adc_gpio_ms_enable(config->input_channel);
+        }
+    } else if (config->channel_mode == ADC_CH_MODE_CH0_TO_CH3) {
+        /* Input channels time multiplexing is between channel 0 to channel 3 */
+        /* Config GPIO_MS1 ~ GPIO_MS4 pin */
+        AON_GP_REGS0->MS_GPIO_MODE.reg = AON_GP_REGS_MS_GPIO_MODE_MASK;
+    } else if (config->channel_mode == ADC_CH_MODE_CH4_TO_CH7) {
+        /* Input channels time multiplexing is between channel 4 to channel 7 */
+        AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_CHN_SEL = 0x4;
+    }
+
+    AON_GP_REGS0->RF_PMU_REGS_1.bit.CODE_IN = config->input_dynamic_range;
+    AON_GP_REGS0->RF_PMU_REGS_1.bit.SADC_LP_CTRL = config->bias_current;
 }
 
 /**
@@ -173,7 +173,7 @@ void adc_init(struct adc_config *config)
  */
 uint32_t adc_get_status(void)
 {
-	return (LPMCU_MISC_REGS0->SENS_ADC_RAW_STATUS.reg);
+    return (LPMCU_MISC_REGS0->SENS_ADC_RAW_STATUS.reg);
 }
 
 /**
@@ -184,18 +184,18 @@ uint32_t adc_get_status(void)
  */
 void adc_enable(void)
 {
-	///* Enable ADC clock */
-	system_clock_peripheral_enable(PERIPHERAL_ADC);
+    ///* Enable ADC clock */
+    system_clock_peripheral_enable(PERIPHERAL_ADC);
 
-	/* Enable ADC module */
-	AON_GP_REGS0->AON_PMU_CTRL.reg &= \
-		~AON_GP_REGS_AON_PMU_CTRL_PMU_SENS_ADC_RST;
-	AON_GP_REGS0->AON_PMU_CTRL.reg |= \
-			AON_GP_REGS_AON_PMU_CTRL_PMU_SENS_ADC_EN | \
-			AON_GP_REGS_AON_PMU_CTRL_PMU_BGR_EN;
-	for (uint16_t i = 0; i < 0xFF; i++) {
-		/* Waiting... */
-	}
+    /* Enable ADC module */
+    AON_GP_REGS0->AON_PMU_CTRL.reg &= \
+        ~AON_GP_REGS_AON_PMU_CTRL_PMU_SENS_ADC_RST;
+    AON_GP_REGS0->AON_PMU_CTRL.reg |= \
+            AON_GP_REGS_AON_PMU_CTRL_PMU_SENS_ADC_EN | \
+            AON_GP_REGS_AON_PMU_CTRL_PMU_BGR_EN;
+    for (uint16_t i = 0; i < 0xFF; i++) {
+        /* Waiting... */
+    }
 }
 
 /**
@@ -206,13 +206,13 @@ void adc_enable(void)
  */
 void adc_disable(void)
 {
-	/* Disable ADC clock */
-	system_clock_peripheral_disable(PERIPHERAL_ADC);
+    /* Disable ADC clock */
+    system_clock_peripheral_disable(PERIPHERAL_ADC);
 
-	/* Disable ADC module */
-	AON_GP_REGS0->AON_PMU_CTRL.reg &= \
-			~(AON_GP_REGS_AON_PMU_CTRL_PMU_SENS_ADC_EN | \
-			AON_GP_REGS_AON_PMU_CTRL_PMU_BGR_EN);
+    /* Disable ADC module */
+    AON_GP_REGS0->AON_PMU_CTRL.reg &= \
+            ~(AON_GP_REGS_AON_PMU_CTRL_PMU_SENS_ADC_EN | \
+            AON_GP_REGS_AON_PMU_CTRL_PMU_BGR_EN);
 }
 
 /**
@@ -223,8 +223,8 @@ void adc_disable(void)
  */
 void adc_reset(void)
 {
-	/* Reset ADC module */
-	system_peripheral_reset(PERIPHERAL_ADC);
+    /* Reset ADC module */
+    system_peripheral_reset(PERIPHERAL_ADC);
 }
 
 /**
@@ -242,39 +242,39 @@ void adc_reset(void)
 enum status_code adc_read(enum adc_input_channel input_channel, uint16_t *result)
 
 {
-	Assert(result);
+    Assert(result);
 
-	/* The transition of the ADC_DONE signal from LO to HI indicates that the
-	 * ADC conversion is done. */
-	while (adc_get_status() & LPMCU_MISC_REGS_SENS_ADC_RAW_STATUS_ADC_DONE) {
-		/* Waiting... */
-	}
+    /* The transition of the ADC_DONE signal from LO to HI indicates that the
+     * ADC conversion is done. */
+    while (adc_get_status() & LPMCU_MISC_REGS_SENS_ADC_RAW_STATUS_ADC_DONE) {
+        /* Waiting... */
+    }
 
-	while(!(adc_get_status() & LPMCU_MISC_REGS_SENS_ADC_RAW_STATUS_ADC_DONE)) {
-		/* Waiting... */
-	}
+    while(!(adc_get_status() & LPMCU_MISC_REGS_SENS_ADC_RAW_STATUS_ADC_DONE)) {
+        /* Waiting... */
+    }
 
-	switch (input_channel) {
-		case ADC_INPUT_CH_GPIO_MS1:
-		case ADC_INPUT_CH_TEMPERATURE:
-			*result = LPMCU_MISC_REGS0->SENS_ADC_CH0_DATA.reg;
-			break;
+    switch (input_channel) {
+        case ADC_INPUT_CH_GPIO_MS1:
+        case ADC_INPUT_CH_TEMPERATURE:
+            *result = LPMCU_MISC_REGS0->SENS_ADC_CH0_DATA.reg;
+            break;
 
-		case ADC_INPUT_CH_GPIO_MS2:
-		case ADC_INPUT_CH_VBATT_4:
-			*result = LPMCU_MISC_REGS0->SENS_ADC_CH1_DATA.reg;
-			break;
+        case ADC_INPUT_CH_GPIO_MS2:
+        case ADC_INPUT_CH_VBATT_4:
+            *result = LPMCU_MISC_REGS0->SENS_ADC_CH1_DATA.reg;
+            break;
 
-		case ADC_INPUT_CH_GPIO_MS3:
-		case ADC_INPUT_CH_LPD0_LDO:
-			*result = LPMCU_MISC_REGS0->SENS_ADC_CH2_DATA.reg;
-			break;
+        case ADC_INPUT_CH_GPIO_MS3:
+        case ADC_INPUT_CH_LPD0_LDO:
+            *result = LPMCU_MISC_REGS0->SENS_ADC_CH2_DATA.reg;
+            break;
 
-		case ADC_INPUT_CH_GPIO_MS4:
-		case ADC_INPUT_CH_VREF:
-			*result = LPMCU_MISC_REGS0->SENS_ADC_CH3_DATA.reg;
-			break;
-	}
+        case ADC_INPUT_CH_GPIO_MS4:
+        case ADC_INPUT_CH_VREF:
+            *result = LPMCU_MISC_REGS0->SENS_ADC_CH3_DATA.reg;
+            break;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

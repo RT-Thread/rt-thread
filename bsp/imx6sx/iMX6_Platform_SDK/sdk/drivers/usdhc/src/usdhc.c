@@ -105,7 +105,7 @@ static int SDHC_INTR_mode = FALSE;
  * @brief Softreset card and then send CMD0 to card
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int card_software_reset(uint32_t instance)
@@ -130,7 +130,7 @@ static int card_software_reset(uint32_t instance)
  * @brief Enable interrupt for the card
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int card_init_interrupt(uint32_t instance)
@@ -159,25 +159,25 @@ static int card_init_interrupt(uint32_t instance)
  * @brief Set Card access mode
  *
  * @param mode     Set card access mode
- * 
- * @return           
+ *
+ * @return
  */
 extern void set_card_access_mode(uint32_t sdma, uint32_t intr)
 {
-	/* Whether to enable ADMA */
+    /* Whether to enable ADMA */
     SDHC_ADMA_mode = sdma;
 
-	/* Whether to enable Interrupt */
-    SDHC_INTR_mode = intr; 	
+    /* Whether to enable Interrupt */
+    SDHC_INTR_mode = intr;
 }
- 
+
 uint32_t read_usdhc_adma_mode()
 {
-	return SDHC_ADMA_mode;
+    return SDHC_ADMA_mode;
 }
-uint32_t read_usdhc_intr_mode() 
+uint32_t read_usdhc_intr_mode()
 {
-	return SDHC_INTR_mode;
+    return SDHC_INTR_mode;
 }
 
 /*!
@@ -185,7 +185,7 @@ uint32_t read_usdhc_intr_mode()
  *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    Bus width
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_init(uint32_t instance, int bus_width)
@@ -261,7 +261,7 @@ int card_init(uint32_t instance, int bus_width)
  * @brief eMMC Card initialization
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_emmc_init(uint32_t instance)
@@ -368,7 +368,7 @@ void card_cmd_config(command_t * cmd, int index, int argument, xfer_type_t trans
  * @brief Get Card CID
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_get_cid(uint32_t instance)
@@ -399,7 +399,7 @@ int card_get_cid(uint32_t instance)
  * @brief Toggle the card between the standby and transfer states
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_enter_trans(uint32_t instance)
@@ -434,7 +434,7 @@ int card_enter_trans(uint32_t instance)
  * @brief Addressed card send its status register
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_trans_status(uint32_t instance)
@@ -471,17 +471,17 @@ int card_trans_status(uint32_t instance)
 }
 
 /*!
- * @brief Get the card port 
+ * @brief Get the card port
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             The index of port
  */
 int card_get_port(uint32_t instance)
 {
     int idx;
     int base_address = REGS_USDHC_BASE(instance);
-    
+
     for (idx = 0; idx < USDHC_NUMBER_PORTS; idx++) {
         if (usdhc_device[idx].reg_base == base_address) {
             break;
@@ -496,7 +496,7 @@ int card_get_port(uint32_t instance)
  *
  * @param instance     Instance number of the uSDHC module.
  * @param len          Block length to be set
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_set_blklen(uint32_t instance, int len)
@@ -512,8 +512,8 @@ int card_set_blklen(uint32_t instance, int len)
     /* Send CMD16 */
     if (host_send_cmd(instance, &cmd) == SUCCESS) {
         status = SUCCESS;
-    } 
-    
+    }
+
     return status;
 }
 
@@ -533,7 +533,7 @@ static void card_buffer_flush(void *buffer, int length)
  * @param dst_ptr      Data destination pointer
  * @param length       Data length to be read
  * @param offset       Data reading offset
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_data_read(uint32_t instance, int *dst_ptr, int length, uint32_t offset)
@@ -624,7 +624,7 @@ int card_data_read(uint32_t instance, int *dst_ptr, int length, uint32_t offset)
  * @param src_ptr      Data source pointer
  * @param length       Data length to be writen
  * @param offset       Data writing offset
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_data_write(uint32_t instance, int *src_ptr, int length, int offset)
@@ -676,7 +676,7 @@ int card_data_write(uint32_t instance, int *src_ptr, int length, int offset)
     /* If DMA mode enabled, configure BD chain */
     if (SDHC_ADMA_mode == TRUE) {
         host_setup_adma(instance, src_ptr, length);
-        card_buffer_flush(src_ptr, length);        
+        card_buffer_flush(src_ptr, length);
     }
 
     /* Use CMD25 for multi-block write */
@@ -709,7 +709,7 @@ int card_data_write(uint32_t instance, int *src_ptr, int length, int offset)
  *
  * @param instance     Instance number of the uSDHC module.
  * @param result       Card status
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_xfer_result(uint32_t instance, int *result)
@@ -730,7 +730,7 @@ int card_xfer_result(uint32_t instance, int *result)
  * @brief Wait for the transfer complete. It covers the interrupt mode, DMA mode and PIO mode
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int card_wait_xfer_done(uint32_t instance)

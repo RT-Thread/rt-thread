@@ -51,32 +51,32 @@ struct tsens_module *_tsens_instances;
 /** Interrupt handler for the TSENS module. */
 void TSENS_Handler(void)
 {
-	struct tsens_module *module = _tsens_instances;
-	Assert(module);
+    struct tsens_module *module = _tsens_instances;
+    Assert(module);
 
-	/* get interrupt flags and mask out enabled callbacks */
-	uint32_t flags = TSENS->INTFLAG.reg;
+    /* get interrupt flags and mask out enabled callbacks */
+    uint32_t flags = TSENS->INTFLAG.reg;
 
-	/* store TSENS result in job buffer */
-	uint32_t temp = TSENS->VALUE.reg;
-	if(temp & 0x00800000) {
-		temp |= ~TSENS_VALUE_MASK;
-	}
+    /* store TSENS result in job buffer */
+    uint32_t temp = TSENS->VALUE.reg;
+    if(temp & 0x00800000) {
+        temp |= ~TSENS_VALUE_MASK;
+    }
 #if (ERRATA_14476)
-	*(module->value) = temp * (-1);
+    *(module->value) = temp * (-1);
 #endif
 
-	for(uint8_t i = 0; i < TSENS_CALLBACK_NUM; i++)
-	{
-		if (flags & ((uint32_t)0x01 << i)) {
-			/* Clear the INTFLAG anyway */
-			TSENS->INTFLAG.reg = (uint32_t)0x01 << i;
+    for(uint8_t i = 0; i < TSENS_CALLBACK_NUM; i++)
+    {
+        if (flags & ((uint32_t)0x01 << i)) {
+            /* Clear the INTFLAG anyway */
+            TSENS->INTFLAG.reg = (uint32_t)0x01 << i;
 
-			if(module->callback[i] != NULL) {
-				module->callback[i]((enum tsens_callback)i);
-			}
-		}
-	}
+            if(module->callback[i] != NULL) {
+                module->callback[i]((enum tsens_callback)i);
+            }
+        }
+    }
 }
 
 /**
@@ -93,23 +93,23 @@ void TSENS_Handler(void)
  *
  */
 enum status_code tsens_register_callback(
-		struct tsens_module *const module,
-		tsens_callback_t callback_func,
-		enum tsens_callback callback_type)
+        struct tsens_module *const module,
+        tsens_callback_t callback_func,
+        enum tsens_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(callback_func);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(callback_func);
 
-	if(callback_type > TSENS_CALLBACK_NUM) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if(callback_type > TSENS_CALLBACK_NUM) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Register callback function */
-	module->callback[callback_type] = callback_func;
-	_tsens_instances = module;
+    /* Register callback function */
+    module->callback[callback_type] = callback_func;
+    _tsens_instances = module;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -122,20 +122,20 @@ enum status_code tsens_register_callback(
  *
  */
 enum status_code tsens_unregister_callback(
-		struct tsens_module *const module,
-		enum tsens_callback callback_type)
+        struct tsens_module *const module,
+        enum tsens_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	if(callback_type > TSENS_CALLBACK_NUM) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if(callback_type > TSENS_CALLBACK_NUM) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Register callback function */
-	module->callback[callback_type] = NULL;
+    /* Register callback function */
+    module->callback[callback_type] = NULL;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -146,15 +146,15 @@ enum status_code tsens_unregister_callback(
  *
  */
 void tsens_read_job(
-		struct tsens_module *const module_inst,
-		int32_t *result)
+        struct tsens_module *const module_inst,
+        int32_t *result)
 {
-	Assert(module_inst);
-	Assert(result);
+    Assert(module_inst);
+    Assert(result);
 
-	module_inst->value = result;
+    module_inst->value = result;
 
-	if(!(TSENS->CTRLC.reg & TSENS_CTRLC_FREERUN)) {
-		tsens_start_conversion();
-	}
+    if(!(TSENS->CTRLC.reg & TSENS_CTRLC_FREERUN)) {
+        tsens_start_conversion();
+    }
 }

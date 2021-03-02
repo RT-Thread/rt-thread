@@ -116,7 +116,7 @@ void pf0100_enable_vgen2_1v5(void)
 
 /*!
  * Function to generate vgen3--1.8V
- */ 
+ */
 void pf0100_enable_vgen3_1v8(void)
 {
     unsigned char data;
@@ -165,7 +165,7 @@ void pf0100_enable_vgen6_2v8(void)
 test_return_t pf0100_i2c_device_id_check(void)
 {
     unsigned char data;
-	const char* indent = menu_get_indent();
+    const char* indent = menu_get_indent();
 
     i2c_init(g_pmic_pf0100_i2c_device.port, 170000);
 

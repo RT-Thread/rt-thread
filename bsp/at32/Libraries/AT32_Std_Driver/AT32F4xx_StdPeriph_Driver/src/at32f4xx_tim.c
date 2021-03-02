@@ -37,7 +37,7 @@
 #define SMC_ETR_Mask               ((uint16_t)0x00FF)
 #define CCMR_Offset                ((uint16_t)0x0018)
 #define CCE_CCE_Set                ((uint16_t)0x0001)
-#define	CCE_CCNE_Set               ((uint16_t)0x0004)
+#define CCE_CCNE_Set               ((uint16_t)0x0004)
 
 /**
   * @}
@@ -248,7 +248,7 @@ void TMR_TimeBaseInit(TMR_Type* TMRx, TMR_TimerBaseInitType* TMR_TimeBaseInitStr
   TMRx->DIV = TMR_TimeBaseInitStruct->TMR_DIV;
 
 #ifdef AT32F415xx
-	if (TMRx == TMR1)
+    if (TMRx == TMR1)
 #elif defined AT32F413xx
     if ((TMRx == TMR1) || (TMRx == TMR8))
 #elif defined AT32F403xx
@@ -269,31 +269,31 @@ void TMR_TimeBaseInit(TMR_Type* TMRx, TMR_TimerBaseInitType* TMR_TimeBaseInitStr
   *         parameters.
   * @param  TIMx: where x can be  2 or 5 to select the TIM peripheral.
   * @param  TIMx_PLUS_MODE_STATE: eable or disable the plus mode
-  * @ex	    TMR_Plus_Mode_Enable
-  *         TMR_Plus_Mode_Disable	
+  * @ex     TMR_Plus_Mode_Enable
+  *         TMR_Plus_Mode_Disable
   * @retval None
   */
 void TMR_SelectPlusMode(TMR_Type* TMRx, uint16_t TMRx_PLUS_MODE_STATE)
 {
-	/* Check the parameters */
+    /* Check the parameters */
   assert_param(IS_TMR_PLUSMODE_PERIPH(TMRx));
-	assert_param(IS_TMR_PLUS_MODE_STATE(TMRx_PLUS_MODE_STATE));
-	/*Config TIMx plus mode*/
-	if((TMRx == TMR2) || (TMRx == TMR5))
-	{
-		/*Enable*/
-		if(TMRx_PLUS_MODE_STATE)
-		{
-			TMRx->CTRL1 &= (uint16_t)(~((uint16_t)TMR_Plus_Mode_Enable));
-			TMRx->CTRL1 |= TMRx_PLUS_MODE_STATE;
-		}
-		/*Disable*/
-		else
-		{
-			TMRx->CTRL1 &= (uint16_t)(~((uint16_t)TMR_Plus_Mode_Enable));
-			TMRx->CTRL1 |= TMRx_PLUS_MODE_STATE;
-		}
-	}
+    assert_param(IS_TMR_PLUS_MODE_STATE(TMRx_PLUS_MODE_STATE));
+    /*Config TIMx plus mode*/
+    if((TMRx == TMR2) || (TMRx == TMR5))
+    {
+        /*Enable*/
+        if(TMRx_PLUS_MODE_STATE)
+        {
+            TMRx->CTRL1 &= (uint16_t)(~((uint16_t)TMR_Plus_Mode_Enable));
+            TMRx->CTRL1 |= TMRx_PLUS_MODE_STATE;
+        }
+        /*Disable*/
+        else
+        {
+            TMRx->CTRL1 &= (uint16_t)(~((uint16_t)TMR_Plus_Mode_Enable));
+            TMRx->CTRL1 |= TMRx_PLUS_MODE_STATE;
+        }
+    }
 }
 
 
@@ -341,12 +341,12 @@ void TMR_OC1Init(TMR_Type* TMRx, TMR_OCInitType* TMR_OCInitStruct)
   tmpccer |= TMR_OCInitStruct->TMR_OutputState;
 
 #ifdef AT32F415xx
-	if (TMRx == TMR1)
+    if (TMRx == TMR1)
 #elif defined AT32F413xx
     if ((TMRx == TMR1) || (TMRx == TMR8))
 #elif defined AT32F403xx
     if ((TMRx == TMR1) || (TMRx == TMR8) || (TMRx == TMR15))
-#endif  
+#endif
   {
     assert_param(IS_TMR_OUTPUTN_STATE(TMR_OCInitStruct->TMR_OutputNState));
     assert_param(IS_TMR_OCN_POLARITY(TMR_OCInitStruct->TMR_OCNPolarity));
@@ -431,7 +431,7 @@ void TMR_OC2Init(TMR_Type* TMRx, TMR_OCInitType* TMR_OCInitStruct)
   tmpccer |= (uint16_t)(TMR_OCInitStruct->TMR_OutputState << 4);
 
 #ifdef AT32F415xx
-	if (TMRx == TMR1)
+    if (TMRx == TMR1)
 #elif defined AT32F413xx
     if ((TMRx == TMR1) || (TMRx == TMR8))
 #elif defined AT32F403xx
@@ -519,7 +519,7 @@ void TMR_OC3Init(TMR_Type* TMRx, TMR_OCInitType* TMR_OCInitStruct)
   tmpccer |= (uint16_t)(TMR_OCInitStruct->TMR_OutputState << 8);
 
 #ifdef AT32F415xx
-	if (TMRx == TMR1)
+    if (TMRx == TMR1)
 #elif defined AT32F413xx
     if ((TMRx == TMR1) || (TMRx == TMR8))
 #elif defined AT32F403xx
@@ -606,7 +606,7 @@ void TMR_OC4Init(TMR_Type* TMRx, TMR_OCInitType* TMR_OCInitStruct)
   tmpccer |= (uint16_t)(TMR_OCInitStruct->TMR_OutputState << 12);
 
 #ifdef AT32F415xx
-	if (TMRx == TMR1)
+    if (TMRx == TMR1)
 #elif defined AT32F413xx
     if ((TMRx == TMR1) || (TMRx == TMR8))
 #elif defined AT32F403xx
@@ -654,7 +654,7 @@ void TMR_ICInit(TMR_Type* TMRx, TMR_ICInitType* TMR_ICInitStruct)
      (TMRx == TMR8) ||
 #endif
 #if defined (AT32F403xx)
-     (TMRx == TMR15) || 
+     (TMRx == TMR15) ||
 #endif
 
      (TMRx == TMR3) || (TMRx == TMR4) || (TMRx == TMR5))

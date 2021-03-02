@@ -29,58 +29,58 @@
 
 /*Core definations*/
 #define PRIVMODE  0x13
-#define	Mode_USR	0x10
-#define	Mode_REAL	0x11
-#define	Mode_IRQ	0x12
-#define	Mode_PRIV	0x13
-#define	Mode_TRAP	0x17
-#define	Mode_EXT	0x1B
-#define	Mode_SUSR	0x1F
+#define Mode_USR    0x10
+#define Mode_REAL   0x11
+#define Mode_IRQ    0x12
+#define Mode_PRIV   0x13
+#define Mode_TRAP   0x17
+#define Mode_EXT    0x1B
+#define Mode_SUSR   0x1F
 
 /*
  *  Address
  */
 
-#define	 SEP6200_VIC_BASE	0xb0000000
-#define  SEP6200_PMU_BASE	0xb0001000
-#define  SEP6200_RTC_BASE	0xb0002000
-#define	 SEP6200_TIMER_BASE 0xb0003000
-#define  SEP6200_PWM_BASE	0xb0004000
-#define  SEP6200_GPIO_BASE	0xb0006000
-#define  SEP6200_TOUCH_ADC	0xb0007000
-#define  SEP6200_SYSCTL_BASE	0xb0008000
-#define  SEP6200_UART0_BASE	0xb1000000
-#define  SEP6200_UART1_BASE	0xb1001000
-#define  SEP6200_UART2_BASE	0xb1002000
-#define  SEP6200_UART3_BASE	0xb1003000
-#define	 SEP6200_SSI1_BASE	0xb1004000
-#define	 SEP6200_SSI2_BASE	0xb1005000
-#define	 SEP6200_SSI3_BASE	0xb1006000
-#define  SEP6200_I2C_BASE	0xb1007000
-#define  SEP6200_I2S_BASE	0xb1008000
+#define  SEP6200_VIC_BASE   0xb0000000
+#define  SEP6200_PMU_BASE   0xb0001000
+#define  SEP6200_RTC_BASE   0xb0002000
+#define  SEP6200_TIMER_BASE 0xb0003000
+#define  SEP6200_PWM_BASE   0xb0004000
+#define  SEP6200_GPIO_BASE  0xb0006000
+#define  SEP6200_TOUCH_ADC  0xb0007000
+#define  SEP6200_SYSCTL_BASE    0xb0008000
+#define  SEP6200_UART0_BASE 0xb1000000
+#define  SEP6200_UART1_BASE 0xb1001000
+#define  SEP6200_UART2_BASE 0xb1002000
+#define  SEP6200_UART3_BASE 0xb1003000
+#define  SEP6200_SSI1_BASE  0xb1004000
+#define  SEP6200_SSI2_BASE  0xb1005000
+#define  SEP6200_SSI3_BASE  0xb1006000
+#define  SEP6200_I2C_BASE   0xb1007000
+#define  SEP6200_I2S_BASE   0xb1008000
 #define  SEP6200_USB_BASE    0xb1010000
 #define  SEP6200_DMAC2_BASE  0xb1011000
 #define  SEP6200_ESRAM_BASE  0xb2000000
-#define	 SEP6200_NORREG_BASE0xb2020000
-#define	 SEP6200_SDIO1_BASE	0xb2022000
-#define	 SEP6200_SDIO2_BASE	0xb2023000
-#define	 SEP6200_LCDC_BASE	0xb2025000
-#define	 SEP6200_VPU_BASE	0xb2026000
-#define	 SEP6200_DMAC1_BASE	0xb2027000
-#define	 SEP6200_DDR2_REG	0xb3000000
-#define	 SEP6200_DDR_MEM	0x40000000
+#define  SEP6200_NORREG_BASE0xb2020000
+#define  SEP6200_SDIO1_BASE 0xb2022000
+#define  SEP6200_SDIO2_BASE 0xb2023000
+#define  SEP6200_LCDC_BASE  0xb2025000
+#define  SEP6200_VPU_BASE   0xb2026000
+#define  SEP6200_DMAC1_BASE 0xb2027000
+#define  SEP6200_DDR2_REG   0xb3000000
+#define  SEP6200_DDR_MEM    0x40000000
 
-#define SEP6200_UART0_DLBL	(SEP6200_UART0_BASE+0x00)
-#define SEP6200_UART0_RXFIFO	(SEP6200_UART0_BASE+0x00)
-#define SEP6200_UART0_TXFIFO	(SEP6200_UART0_BASE+0x00)
-#define SEP6200_UART0_DLBH	(SEP6200_UART0_BASE+0x04)
-#define SEP6200_UART0_IER	(SEP6200_UART0_BASE+0x04)
-#define SEP6200_UART0_IIR	(SEP6200_UART0_BASE+0x08)
-#define SEP6200_UART0_FCR	(SEP6200_UART0_BASE+0x08)
-#define SEP6200_UART0_LCR	(SEP6200_UART0_BASE+0x0c)
-#define SEP6200_UART0_MCR	(SEP6200_UART0_BASE+0x10)
-#define SEP6200_UART0_LSR	(SEP6200_UART0_BASE+0x14)
-#define SEP6200_UART0_MSR	(SEP6200_UART0_BASE+0x18)
+#define SEP6200_UART0_DLBL  (SEP6200_UART0_BASE+0x00)
+#define SEP6200_UART0_RXFIFO    (SEP6200_UART0_BASE+0x00)
+#define SEP6200_UART0_TXFIFO    (SEP6200_UART0_BASE+0x00)
+#define SEP6200_UART0_DLBH  (SEP6200_UART0_BASE+0x04)
+#define SEP6200_UART0_IER   (SEP6200_UART0_BASE+0x04)
+#define SEP6200_UART0_IIR   (SEP6200_UART0_BASE+0x08)
+#define SEP6200_UART0_FCR   (SEP6200_UART0_BASE+0x08)
+#define SEP6200_UART0_LCR   (SEP6200_UART0_BASE+0x0c)
+#define SEP6200_UART0_MCR   (SEP6200_UART0_BASE+0x10)
+#define SEP6200_UART0_LSR   (SEP6200_UART0_BASE+0x14)
+#define SEP6200_UART0_MSR   (SEP6200_UART0_BASE+0x18)
 
 
 #define    SEP6200_TIMER_T1LCR              (SEP6200_TIMER_BASE + 0X000)
@@ -362,7 +362,7 @@ typedef    void                 (*FP)();   /* program start address */
 
 #ifndef    _BOOL_TYPE_
 #define    _BOOL_TYPE_
-typedef    int                  BOOL;	     /* Boolean value.  TRUE (1) or FALSE (0). */
+typedef    int                  BOOL;        /* Boolean value.  TRUE (1) or FALSE (0). */
 #endif
 
 typedef    int                  ER;         /* Error code.  A signed integer. */
@@ -382,88 +382,88 @@ typedef    int                  ER;         /* Error code.  A signed integer. */
 /*Macros for debug*/
 
 #define EOUT(fmt,...) \
-	do \
-	{ 	\
-		rt_kprintf("EOUT:(%s:%i)  ",__FILE__,__LINE__); \
-		rt_kprintf(fmt,##__VA_ARGS__); \
-	}while(0)
+    do \
+    {   \
+        rt_kprintf("EOUT:(%s:%i)  ",__FILE__,__LINE__); \
+        rt_kprintf(fmt,##__VA_ARGS__); \
+    }while(0)
 
 #define RT_DEBUG
 #ifdef RT_DEBUG
-	#define DBOUT(fmt,...) \
-	do \
-	{ 	\
-		rt_kprintf("DBOUT:(%s:%i)  ",__FILE__,__LINE__); \
-		rt_kprintf(fmt,##__VA_ARGS__); \
-	}while(0)
+    #define DBOUT(fmt,...) \
+    do \
+    {   \
+        rt_kprintf("DBOUT:(%s:%i)  ",__FILE__,__LINE__); \
+        rt_kprintf(fmt,##__VA_ARGS__); \
+    }while(0)
 #else
-	#define DBOUT(fmt,...) \
-	do{}while(0)
+    #define DBOUT(fmt,...) \
+    do{}while(0)
 #endif
 
-#ifdef	RT_DEBUG
-	#define ASSERT(arg) \
-	if((arg) == 0) \
-	{		\
-		while(1) \
-		{		  \
-			rt_kprintf("have a assert failure\n"); \
-		}										 \
-	}
+#ifdef  RT_DEBUG
+    #define ASSERT(arg) \
+    if((arg) == 0) \
+    {       \
+        while(1) \
+        {         \
+            rt_kprintf("have a assert failure\n"); \
+        }                                        \
+    }
 #else
-	#define ASSERT(arg) \
-	do		\
-	{		 \
-	}while(0)
+    #define ASSERT(arg) \
+    do      \
+    {        \
+    }while(0)
 #endif
 
 
 #define write_reg(reg,value) \
-	do \
-	{ \
-		*(RP)(reg) = value; \
-	}while(0)
+    do \
+    { \
+        *(RP)(reg) = value; \
+    }while(0)
 
 #define read_reg(reg) (*(RP)reg)
 
 
 struct rt_hw_register
 {
-	rt_uint32_t r0;
-	rt_uint32_t r1;
-	rt_uint32_t r2;
-	rt_uint32_t r3;
-	rt_uint32_t r4;
-	rt_uint32_t r5;
-	rt_uint32_t r6;
-	rt_uint32_t r7;
-	rt_uint32_t r8;
-	rt_uint32_t r9;
-	rt_uint32_t r10;
-	rt_uint32_t r11;
-	rt_uint32_t r12;
-	rt_uint32_t r13;
-	rt_uint32_t r14;
-	rt_uint32_t r15;
-	rt_uint32_t r16;
-	rt_uint32_t r17;
-	rt_uint32_t r18;
-	rt_uint32_t r19;
-	rt_uint32_t r20;
-	rt_uint32_t r21;
-	rt_uint32_t r22;
-	rt_uint32_t r23;
-	rt_uint32_t r24;
-	rt_uint32_t sb;
-	rt_uint32_t sl;
-	rt_uint32_t fp;
-	rt_uint32_t ip;
-	rt_uint32_t sp;
-	rt_uint32_t lr;
-	rt_uint32_t pc;
-	rt_uint32_t asr;
-	rt_uint32_t bsr;
-	rt_uint32_t ORIG_r0;
+    rt_uint32_t r0;
+    rt_uint32_t r1;
+    rt_uint32_t r2;
+    rt_uint32_t r3;
+    rt_uint32_t r4;
+    rt_uint32_t r5;
+    rt_uint32_t r6;
+    rt_uint32_t r7;
+    rt_uint32_t r8;
+    rt_uint32_t r9;
+    rt_uint32_t r10;
+    rt_uint32_t r11;
+    rt_uint32_t r12;
+    rt_uint32_t r13;
+    rt_uint32_t r14;
+    rt_uint32_t r15;
+    rt_uint32_t r16;
+    rt_uint32_t r17;
+    rt_uint32_t r18;
+    rt_uint32_t r19;
+    rt_uint32_t r20;
+    rt_uint32_t r21;
+    rt_uint32_t r22;
+    rt_uint32_t r23;
+    rt_uint32_t r24;
+    rt_uint32_t sb;
+    rt_uint32_t sl;
+    rt_uint32_t fp;
+    rt_uint32_t ip;
+    rt_uint32_t sp;
+    rt_uint32_t lr;
+    rt_uint32_t pc;
+    rt_uint32_t asr;
+    rt_uint32_t bsr;
+    rt_uint32_t ORIG_r0;
 };
 
 /*@}*/

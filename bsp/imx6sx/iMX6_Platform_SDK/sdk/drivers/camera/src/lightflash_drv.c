@@ -63,7 +63,7 @@ static unsigned char ADP1650_reg_read(unsigned int i2c_base_addr, unsigned char 
     rq.reg_addr_sz = 1;
     rq.buffer_sz = 1;
     rq.buffer = buf;
-    rq.ctl_addr = i2c_base_addr; 
+    rq.ctl_addr = i2c_base_addr;
     i2c_xfer(&rq, I2C_READ);
     reg_data = buf[0];
     return reg_data;

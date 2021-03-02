@@ -52,7 +52,7 @@ void uart1_iomux_config(void)
     //     ALT4 (4) - Select instance: uart5 signal: UART5_RX_DATA
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO16
     HW_IOMUXC_SW_MUX_CTL_PAD_UART1_RXD_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_UART1_RXD_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_UART1_RXD_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_UART1_RXD_MUX_MODE_V(ALT0));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_UART1_RXD(0x020E05A0)
@@ -96,14 +96,14 @@ void uart1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_LVE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_PUE_V(KEEP) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_LVE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_PUE_V(KEEP) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_UART1_RXD_SRE_V(SLOW));
     // Pad UART1_RXD is involved in Daisy Chain.
     // Input Select Register:
@@ -135,7 +135,7 @@ void uart1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO17
     //     ALT7 (7) - Select instance: uart5 signal: UART5_DCD_B
     HW_IOMUXC_SW_MUX_CTL_PAD_UART1_TXD_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_UART1_TXD_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_UART1_TXD_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_UART1_TXD_MUX_MODE_V(ALT0));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_UART1_TXD(0x020E05A4)
@@ -179,14 +179,14 @@ void uart1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_LVE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_PUE_V(KEEP) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_LVE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_PUE_V(KEEP) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_UART1_TXD_SRE_V(SLOW));
     // Pad UART1_TXD is involved in Daisy Chain.
     // Input Select Register:

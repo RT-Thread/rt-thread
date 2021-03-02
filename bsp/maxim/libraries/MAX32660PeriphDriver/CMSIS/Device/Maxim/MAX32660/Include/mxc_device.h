@@ -38,7 +38,7 @@
  * @file    mxc_device.h
  * @brief   contains device and revision specific definitions
  */
- 
+
 #ifndef _MXC_DEVICE_H_
 #define _MXC_DEVICE_H_
 
@@ -58,7 +58,7 @@
     #error TARGET_REV NOT DEFINED
 #endif
 
-#if(TARGET_REV == 0x4131) 
+#if(TARGET_REV == 0x4131)
     // A1
     #define MXC_PBM_REV         0
     #define MXC_TMR_REV         0
@@ -67,6 +67,6 @@
 
 #error TARGET_REV NOT SUPPORTED
 
-#endif  // if(TARGET_REV == ...) 
+#endif  // if(TARGET_REV == ...)
 
 #endif  /* _MXC_DEVICE_H_ */

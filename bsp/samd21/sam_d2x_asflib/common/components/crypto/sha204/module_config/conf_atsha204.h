@@ -60,7 +60,7 @@
 #endif // BOARD
 
 // Xplain board independent configuration
-#define ATSHA204_TWI_SPEED      	(400000)
+#define ATSHA204_TWI_SPEED          (400000)
 
 //! TWI address used at SHA204 library startup
 #define SHA204_I2C_DEFAULT_ADDRESS  (0xCA)

@@ -239,7 +239,7 @@ typedef union _hw_usdhc_blk_att
  * is aborted and change BLKCNT register back to its original value instead of keeping the dynamical
  * indicator of remained block count. When restoring transfer content prior to issuing a Resume
  * command, the Host Driver shall restore the previously saved block count. Although the BLKCNT
- * field is 0 after reset, the read of reset value is 0x1. This is because when MSBSEL bit is éˆ¥?éˆ¥?
+ * field is 0 after reset, the read of reset value is 0x1. This is because when MSBSEL bit is â€?â€?
  * indicating a single block transfer, the read value of BLKCNT is always 1.
  *
  * Values:
@@ -6495,7 +6495,7 @@ typedef union _hw_usdhc_vend_spec
  * Only for debug. Card detection is only detected during data line idle.
  *
  * Values:
- * 1b - 
+ * 1b -
  */
 
 #define BP_USDHC_VEND_SPEC_CARD_DET_IN_IDLE_ENJ      (30)      //!< Bit position for USDHC_VEND_SPEC_CARD_DET_IN_IDLE_ENJ.

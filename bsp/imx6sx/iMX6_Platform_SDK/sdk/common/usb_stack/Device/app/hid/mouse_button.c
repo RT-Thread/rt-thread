@@ -301,7 +301,7 @@ void TestApp_Init(void)
     DisableInterrupts;
     #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_dis();
-    #endif	
+    #endif
 
     /* Initialize the USB interface */
     error = USB_Class_HID_Init(CONTROLLER_ID, USB_App_Callback, NULL,
@@ -311,7 +311,7 @@ void TestApp_Init(void)
     EnableInterrupts;
     #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_en();
-    #endif	
+    #endif
 }
 
 /******************************************************************************
@@ -329,13 +329,13 @@ void TestApp_Init(void)
  *****************************************************************************/
 void TestApp_Task(void)
 {
-	/* call the periodic task function */
-	USB_Class_HID_Periodic_Task();
+    /* call the periodic task function */
+    USB_Class_HID_Periodic_Task();
 
-	if(mouse_init) /*check whether enumeration is
+    if(mouse_init) /*check whether enumeration is
                                         complete or not */
-	{
-		/* run the button emulation code */
-		Emulate_Mouse_WithButton();
-	}
+    {
+        /* run the button emulation code */
+        Emulate_Mouse_WithButton();
+    }
 }

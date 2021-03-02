@@ -2,7 +2,7 @@
 *   @brief System Core Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Core Interface Functions
 *   .
@@ -94,7 +94,7 @@ void _coreDisableFlashEcc_(void);
 /** @fn uint32 _coreGetDataFault_(void)
 *   @brief Get core data fault status register
 *   @return The function will return the data fault status register value:
-*           - bit [10,3..0]: 
+*           - bit [10,3..0]:
 *                            - 0b00001: Alignment                -> address is valid
 *                            - 0b00000: Background               -> address is valid
 *                            - 0b01101: Permission               -> address is valid
@@ -103,10 +103,10 @@ void _coreDisableFlashEcc_(void);
 *                            - 0b11001: Precise ECC Error        -> address is valid
 *                            - 0b11000: Imprecise ECC Error      -> address is unpredictable
 *                            - 0b00010: Debug                    -> address is unchanged
-*           - bit [11]: 
+*           - bit [11]:
 *                            - 0: Read
 *                            - 1: Write
-*           - bit [12]: 
+*           - bit [12]:
 *                            - 0: AXI Decode Error (DECERR)
 *                            - 1: AXI Slave Error (SLVERR)
 */
@@ -120,7 +120,7 @@ void _coreClearDataFault_(void);
 /** @fn uint32 _coreGetInstructionFault_(void)
 *   @brief Get core instruction fault status register
 *   @return The function will return the instruction fault status register value:
-*           - bit [10,3..0]: 
+*           - bit [10,3..0]:
 *                            - 0b00001: Alignment                -> address is valid
 *                            - 0b00000: Background               -> address is valid
 *                            - 0b01101: Permission               -> address is valid
@@ -129,7 +129,7 @@ void _coreClearDataFault_(void);
 *                            - 0b11001: Precise ECC Error        -> address is valid
 *                            - 0b11000: Imprecise ECC Error      -> address is unpredictable
 *                            - 0b00010: Debug                    -> address is unchanged
-*           - bit [12]: 
+*           - bit [12]:
 *                            - 0: AXI Decode Error (DECERR)
 *                            - 1: AXI Slave Error (SLVERR)
 */
@@ -167,7 +167,7 @@ void _coreClearInstructionFaultAddress_(void);
 *   @return The function will return the auxiliary data fault status register value:
 *           - bit [13..5]:
 *                            - Index value for access giving error
-*           - bit [21]: 
+*           - bit [21]:
 *                            - 0: Unrecoverable error
 *                            - 1: Recoverable error
 *           - bit [23..22]:
@@ -175,7 +175,7 @@ void _coreClearInstructionFaultAddress_(void);
 *                            - 1: Side ATCM (Flash)
 *                            - 2: Side BTCM (RAM)
 *                            - 3: Reserved
-*           - bit [27..24]: 
+*           - bit [27..24]:
 *                            - Cache way or way in which error occurred
 */
 uint32 _coreGetAuxiliaryDataFault_(void);
@@ -190,7 +190,7 @@ void _coreClearAuxiliaryDataFault_(void);
 *   @return The function will return the auxiliary instruction fault status register value:
 *           - bit [13..5]:
 *                            - Index value for access giving error
-*           - bit [21]: 
+*           - bit [21]:
 *                            - 0: Unrecoverable error
 *                            - 1: Recoverable error
 *           - bit [23..22]:
@@ -198,7 +198,7 @@ void _coreClearAuxiliaryDataFault_(void);
 *                            - 1: Side ATCM (Flash)
 *                            - 2: Side BTCM (RAM)
 *                            - 3: Reserved
-*           - bit [27..24]: 
+*           - bit [27..24]:
 *                            - Cache way or way in which error occurred
 */
 uint32 _coreGetAuxiliaryInstructionFault_(void);
@@ -240,7 +240,7 @@ void _enable_interrupt_(void);
 /** @fn void _esmCcmErrorsClear_(void)
 *   @brief Clears ESM Error caused due to CCM Errata in RevA Silicon
 *
-*   This function Clears ESM Error caused due to CCM Errata 
+*   This function Clears ESM Error caused due to CCM Errata
 *   in RevA Silicon immediately after powerup.
 */
 void _esmCcmErrorsClear_(void);
@@ -248,7 +248,7 @@ void _esmCcmErrorsClear_(void);
 /** @fn void _errata_CORTEXR4_66_(void)
 *   @brief Work Around for Errata CORTEX-R4#66
 *
-*   This function Disable out-of-order completion for divide 
+*   This function Disable out-of-order completion for divide
 *   instructions in Auxiliary Control register.
 */
 void _errata_CORTEXR4_66_(void);
@@ -256,7 +256,7 @@ void _errata_CORTEXR4_66_(void);
 /** @fn void _errata_CORTEXR4_57_(void)
 *   @brief Work Around for Errata CORTEX-R4#57
 *
-*   Disable out-of-order single-precision floating point  
+*   Disable out-of-order single-precision floating point
 *   multiply-accumulate instruction completion.
 */
 void _errata_CORTEXR4_57_(void);

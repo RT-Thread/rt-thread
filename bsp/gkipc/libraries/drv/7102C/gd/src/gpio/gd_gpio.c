@@ -39,7 +39,7 @@ typedef struct
     U8             number;
     GBOOL          in_use;
     GD_GPIO_TYPE_E type;
-	GD_GPIO_INT_TRIGGER_E trigger;
+    GD_GPIO_INT_TRIGGER_E trigger;
     void         (*notifier)(void);
 }GD_GPIO_HANDLE_S;
 
@@ -122,7 +122,7 @@ GERR GD_GPIO_Init(GD_GPIO_INIT_PARAMS_S* pInitParams)
         gd_gpio_handle_array[index].in_use   = GFALSE;
         gd_gpio_handle_array[index].number   = 0;
         gd_gpio_handle_array[index].type     = GD_GPIO_TYPE_UNDEFINED;
-		gd_gpio_handle_array[index].trigger  = 5;
+        gd_gpio_handle_array[index].trigger  = 5;
         gd_gpio_handle_array[index].notifier = NULL;
     }
     for(index=0; index < (GD_GPIO_PIN_COUNT); index++)
@@ -175,15 +175,15 @@ GERR GD_GPIO_Init(GD_GPIO_INIT_PARAMS_S* pInitParams)
     }
     // this is used for gpio enable
     GH_GPIO_set_INT_EN(1);
-	/*FIXME(heyong):gk7101  phy type*/
-	if(pInitParams->phyType == 0)//internal phy
-	{
-		GH_GPIO_set_PER_SEL((U32)0x00000002);
-	}
-	else //external phy
-	{
-		GH_GPIO_set_PER_SEL((U32)0x00000003);
-	}
+    /*FIXME(heyong):gk7101  phy type*/
+    if(pInitParams->phyType == 0)//internal phy
+    {
+        GH_GPIO_set_PER_SEL((U32)0x00000002);
+    }
+    else //external phy
+    {
+        GH_GPIO_set_PER_SEL((U32)0x00000003);
+    }
 
 
     // very special internal setting, hard wire CTS to 1
@@ -318,7 +318,7 @@ GERR GD_GPIO_Open(U8 number, GD_GPIO_TYPE_E type, GD_GPIO_INT_CONFIG_S* pIntConf
         else
         {
             ph->notifier = pIntConfig->notifyFct;
-			ph->trigger  = pIntConfig->trigger;
+            ph->trigger  = pIntConfig->trigger;
             gpioIntSetting(number, pIntConfig->trigger);
             if(number < GD_GPIO_LOW_NUM)
             {
@@ -911,9 +911,9 @@ static void gpioIntSetting(U8 number,GD_GPIO_INT_TRIGGER_E type)
                 temp_value = temp_value | (0x1 << number);
                 GH_GPIO_set_IS_LOW(temp_value);
 
-				temp_value = GH_GPIO_get_IBE_LOW();
-				temp_value = temp_value & (~(0x1 <<number));
-				GH_GPIO_set_IBE_LOW(temp_value);
+                temp_value = GH_GPIO_get_IBE_LOW();
+                temp_value = temp_value & (~(0x1 <<number));
+                GH_GPIO_set_IBE_LOW(temp_value);
 
                 temp_value = GH_GPIO_get_IEV_LOW();
                 temp_value = temp_value | (0x1 << number);
@@ -926,9 +926,9 @@ static void gpioIntSetting(U8 number,GD_GPIO_INT_TRIGGER_E type)
                 temp_value = temp_value | (0x1 << (number - GD_GPIO_LOW_NUM));
                 GH_GPIO_set_IS_HIGH(temp_value);
 
-				temp_value = GH_GPIO_get_IBE_HIGH();
+                temp_value = GH_GPIO_get_IBE_HIGH();
                 temp_value = temp_value & (~(0x1 << (number - GD_GPIO_LOW_NUM)));
-				GH_GPIO_set_IBE_HIGH(temp_value);
+                GH_GPIO_set_IBE_HIGH(temp_value);
 
 
                 temp_value = GH_GPIO_get_IEV_HIGH();

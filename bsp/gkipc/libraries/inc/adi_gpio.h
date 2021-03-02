@@ -18,59 +18,59 @@
 #define _ADI_GPIO_H_
 
 
-	//*****************************************************************************
-	//*****************************************************************************
-	//** Defines and Macros
-	//*****************************************************************************
-	//*****************************************************************************
+    //*****************************************************************************
+    //*****************************************************************************
+    //** Defines and Macros
+    //*****************************************************************************
+    //*****************************************************************************
 
-	/*
-	**************************************************************************
-	** Defines for general error codes of the module.
-	**************************************************************************
-	*/
-	/*! Bad parameter passed. */
+    /*
+    **************************************************************************
+    ** Defines for general error codes of the module.
+    **************************************************************************
+    */
+    /*! Bad parameter passed. */
 #define GADI_GPIO_ERR_BAD_PARAMETER                                          \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_BAD_PARAMETER)
-	/*! Memory allocation failed. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_BAD_PARAMETER)
+    /*! Memory allocation failed. */
 #define GADI_GPIO_ERR_OUT_OF_MEMORY                                          \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_OUT_OF_MEMORY)
-	/*! Device already initialised. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_OUT_OF_MEMORY)
+    /*! Device already initialised. */
 #define GADI_GPIO_ERR_ALREADY_INITIALIZED                                    \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_ALREADY_INITIALIZED)
-	/*! Device not initialised. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_ALREADY_INITIALIZED)
+    /*! Device not initialised. */
 #define GADI_GPIO_ERR_NOT_INITIALIZED                                        \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_NOT_INITIALIZED)
-	/*! Feature or function is not available. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_NOT_INITIALIZED)
+    /*! Feature or function is not available. */
 #define GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED                                  \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_FEATURE_NOT_SUPPORTED)
-	/*! Timeout occured. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_FEATURE_NOT_SUPPORTED)
+    /*! Timeout occured. */
 #define GADI_GPIO_ERR_TIMEOUT                                                \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_TIMEOUT)
-	/*! The device is busy, try again later. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_TIMEOUT)
+    /*! The device is busy, try again later. */
 #define GADI_GPIO_ERR_DEVICE_BUSY                                            \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_DEVICE_BUSY)
-	/*! Invalid handle was passed. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_DEVICE_BUSY)
+    /*! Invalid handle was passed. */
 #define GADI_GPIO_ERR_INVALID_HANDLE                                         \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_INVALID_HANDLE)
-	/*! Semaphore could not be created. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_INVALID_HANDLE)
+    /*! Semaphore could not be created. */
 #define GADI_GPIO_ERR_SEMAPHORE_CREATE                                       \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_SEMAPHORE_CREATE)
-	/*! The driver's used version is not supported. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_SEMAPHORE_CREATE)
+    /*! The driver's used version is not supported. */
 #define GADI_GPIO_ERR_UNSUPPORTED_VERSION                                    \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_UNSUPPORTED_VERSION)
-	/*! The driver's used version is not supported. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_UNSUPPORTED_VERSION)
+    /*! The driver's used version is not supported. */
 #define GADI_GPIO_ERR_FROM_DRIVER                                            \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_FROM_DRIVER)
-	/*! The device/handle is not open.. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_FROM_DRIVER)
+    /*! The device/handle is not open.. */
 #define GADI_GPIO_ERR_NOT_OPEN                                               \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_NOT_OPEN)
-	/*! The file is written failed. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_NOT_OPEN)
+    /*! The file is written failed. */
 #define GADI_GPIO_ERR_WRITE_FAILED                                           \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_WRITE_FAILED)
-	/*! The file is read failed. */
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_WRITE_FAILED)
+    /*! The file is read failed. */
 #define GADI_GPIO_ERR_READ_FAILED                                            \
-								  (GADI_GPIO_MODULE_BASE + GADI_ERR_READ_FAILED)
+                                  (GADI_GPIO_MODULE_BASE + GADI_ERR_READ_FAILED)
 
 #define GADI_GPIO_OUT_SEL(n)      ((n))
 #define GADI_GPIO_IN_SEL(n)       ((n)<<8)
@@ -341,7 +341,7 @@ typedef enum
     //GADI_GPIO_TYPE_INOUT_SD1_DATA_2                                                                                                                                        GADI_GPIO_OEN_SEL(22)                          GADI_GPIO_OUT_SEL(53)
     //GADI_GPIO_TYPE_INOUT_SD1_DATA_3                                                                                                                                        GADI_GPIO_OEN_SEL(23)                          GADI_GPIO_OUT_SEL(54)
     //GADI_GPIO_TYPE_INOUT_SDIO_CMD                                                                                                                                          GADI_GPIO_OEN_SEL(24)                          GADI_GPIO_OUT_SEL(55)
-    GADI_GPIO_TYPE_OUTPUT_SDIO1_CLK       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_4MA)     | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(56),	//!< Output type: sd2_clk_sdcard
+    GADI_GPIO_TYPE_OUTPUT_SDIO1_CLK       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_4MA)     | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(56),    //!< Output type: sd2_clk_sdcard
     GADI_GPIO_TYPE_OUTPUT_JTAGE_TDO       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(57),    //!< Output type: jtag_tdout
     GADI_GPIO_TYPE_OUTPUT_VD_VSYNC        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(58),    //!< Output type: lcd_vsync
     GADI_GPIO_TYPE_OUTPUT_VD_HSYNC        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(59),    //!< Output type: lcd_hsync
@@ -472,7 +472,7 @@ typedef enum
     GADI_GPIO_TYPE_INPUT_I80_DATA6        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+51) | GADI_GPIO_OUT_SEL( 0),//!< Input type: i80_data_rx6
     GADI_GPIO_TYPE_INPUT_I80_DATA7        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+52) | GADI_GPIO_OUT_SEL( 0),//!< Input type: i80_data_rx7
     GADI_GPIO_TYPE_INPUT_I80_DATA8        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+53) | GADI_GPIO_OUT_SEL( 0),//!< Input type: i80_data_rx8
-    GADI_GPIO_TYPE_INPUT_JTAG_TRSTN     	= GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+56) | GADI_GPIO_OUT_SEL( 0),//!< Input type: jtag_trstn
+    GADI_GPIO_TYPE_INPUT_JTAG_TRSTN         = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+56) | GADI_GPIO_OUT_SEL( 0),//!< Input type: jtag_trstn
     GADI_GPIO_TYPE_INPUT_JTAG_TCK         = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+57) | GADI_GPIO_OUT_SEL( 0),//!< Input type: jtag_tck
     GADI_GPIO_TYPE_INPUT_JTAG_TMS         = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+58) | GADI_GPIO_OUT_SEL( 0),//!< Input type: jtag_tms
     GADI_GPIO_TYPE_INPUT_JTAG_TDI         = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+59) | GADI_GPIO_OUT_SEL( 0),//!< Input type: jtag_tdi
@@ -495,11 +495,11 @@ typedef enum
     GADI_GPIO_TYPE_INOUT_SD_DATA_7        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(15) | GADI_GPIO_IN_SEL(2+21) | GADI_GPIO_OUT_SEL(29),    //!< Input/Output type: sd_data_out[7]
     GADI_GPIO_TYPE_INOUT_SD_CMD           = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_4MA)   | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(16) | GADI_GPIO_IN_SEL(2+22) | GADI_GPIO_OUT_SEL(30),    //!< Input/Output : sd_cmd
 
-    GADI_GPIO_TYPE_INOUT_SD1_DATA_0	    = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)	 | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(20) | GADI_GPIO_IN_SEL(2+40) | GADI_GPIO_OUT_SEL(51),    //!< Input/Output type: sd2_data_out[0]
-    GADI_GPIO_TYPE_INOUT_SD1_DATA_1       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)	 | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(21) | GADI_GPIO_IN_SEL(2+41) | GADI_GPIO_OUT_SEL(52),    //!< Input/Output type: sd2_data_out[1]
-    GADI_GPIO_TYPE_INOUT_SD1_DATA_2       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)	 | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(22) | GADI_GPIO_IN_SEL(2+42) | GADI_GPIO_OUT_SEL(53),    //!< Input/Output type: sd2_data_out[2]
-    GADI_GPIO_TYPE_INOUT_SD1_DATA_3       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)	 | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(23) | GADI_GPIO_IN_SEL(2+43) | GADI_GPIO_OUT_SEL(54),    //!< Input/Output type: sd2_data_out[3]
-    GADI_GPIO_TYPE_INOUT_SD1_CMD          = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_4MA)	 | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(24) | GADI_GPIO_IN_SEL(2+44) | GADI_GPIO_OUT_SEL(55),    //!< Input/Output : sd2_cmd
+    GADI_GPIO_TYPE_INOUT_SD1_DATA_0     = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(20) | GADI_GPIO_IN_SEL(2+40) | GADI_GPIO_OUT_SEL(51),    //!< Input/Output type: sd2_data_out[0]
+    GADI_GPIO_TYPE_INOUT_SD1_DATA_1       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)     | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(21) | GADI_GPIO_IN_SEL(2+41) | GADI_GPIO_OUT_SEL(52),    //!< Input/Output type: sd2_data_out[1]
+    GADI_GPIO_TYPE_INOUT_SD1_DATA_2       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)     | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(22) | GADI_GPIO_IN_SEL(2+42) | GADI_GPIO_OUT_SEL(53),    //!< Input/Output type: sd2_data_out[2]
+    GADI_GPIO_TYPE_INOUT_SD1_DATA_3       = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)     | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(23) | GADI_GPIO_IN_SEL(2+43) | GADI_GPIO_OUT_SEL(54),    //!< Input/Output type: sd2_data_out[3]
+    GADI_GPIO_TYPE_INOUT_SD1_CMD          = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_4MA)     | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL(24) | GADI_GPIO_IN_SEL(2+44) | GADI_GPIO_OUT_SEL(55),    //!< Input/Output : sd2_cmd
 /*  GADI_GPIO_TYPE_INOUT_I80_DATA0        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA) | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 25) | GADI_GPIO_IN_SEL(2+45) | GADI_GPIO_OUT_SEL( 85),//!< Input/Output type: i80_data_rx0
     GADI_GPIO_TYPE_INOUT_I80_DATA1        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA) | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 25) | GADI_GPIO_IN_SEL(2+46) | GADI_GPIO_OUT_SEL( 86),//!< Input/Output type: i80_data_rx1
     GADI_GPIO_TYPE_INOUT_I80_DATA2        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA) | GADI_GPIO_OEN_INVERT(1) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 25) | GADI_GPIO_IN_SEL(2+47) | GADI_GPIO_OUT_SEL( 87),//!< Input/Output type: i80_data_rx2
@@ -583,7 +583,7 @@ typedef enum
     GADI_GPIO_TYPE_OUTPUT_RCT_CLK_OUT2    = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(53),    //!< Output type: rct_clk_out2
     GADI_GPIO_TYPE_OUTPUT_RCT_CLK_OUT1    = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(54),    //!< Output type: rct_clk_out1
     //GADI_GPIO_TYPE_OUTPUT_SF_WP                                                                                                                                            GADI_GPIO_OEN_SEL(18)                        | GADI_GPIO_OUT_SEL(55),//!< Output type: sf_wp
-    //GADI_GPIO_TYPE_OUTPUT_SF_HOLD  
+    //GADI_GPIO_TYPE_OUTPUT_SF_HOLD
     GADI_GPIO_TYPE_OUTPUT_RCT_XOSC        = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(57),    //!< Output type: rct_xosc
     GADI_GPIO_TYPE_OUTPUT_EPHY_LED_0      = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(58),//!< Output type: ephy_led[0] hcd ok
     GADI_GPIO_TYPE_OUTPUT_EPHY_LED_1      = GADI_GPIO_FUNC(GADI_GPIO_FUNC_OUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 0) | GADI_GPIO_IN_SEL( 0)   | GADI_GPIO_OUT_SEL(59),//!< Output type: ephy_led[1] duplex
@@ -639,17 +639,17 @@ typedef enum
     GADI_GPIO_TYPE_INPUT_JTAG_TMS         = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+28) | GADI_GPIO_OUT_SEL( 0),//!< Input type: jtag_tms
     GADI_GPIO_TYPE_INPUT_JTAG_TDI         = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+29) | GADI_GPIO_OUT_SEL( 0),//!< Input type: jtag_tdi
     GADI_GPIO_TYPE_INPUT_SENSOR_IDSP      = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+30) | GADI_GPIO_OUT_SEL( 0),//!< Input type: sensor_idsp_field
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_0   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+31) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[0]                         
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_1   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+32) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[1]                         
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_2   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+33) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[2]                         
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_3   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+34) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[3]                         
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_COL     = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+35) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_col                            
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_CRS     = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+36) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_crs                            
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXER    = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+37) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxer                           
-    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXDV    = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+38) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxdv                           
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_0   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+31) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[0]
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_1   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+32) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[1]
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_2   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+33) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[2]
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXD_3   = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+34) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxd[3]
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_COL     = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+35) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_col
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_CRS     = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+36) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_crs
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXER    = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+37) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxer
+    GADI_GPIO_TYPE_INPUT_ENET_PHY_RXDV    = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+38) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_phy_rxdv
     // GADI_GPIO_TYPE_INOUT_ETH_MDIO                                                                                                                                                                                                                                             GD_GPIO_OEN_SEL(20)     GD_GPIO_IN_SEL(2+39)
-    GADI_GPIO_TYPE_INPUT_ENET_CLK_RX      = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+40) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_clk_rx                             
-    GADI_GPIO_TYPE_INPUT_ENET_CLK_TX      = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+41) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_clk_tx                             
+    GADI_GPIO_TYPE_INPUT_ENET_CLK_RX      = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+40) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_clk_rx
+    GADI_GPIO_TYPE_INPUT_ENET_CLK_TX      = GADI_GPIO_FUNC(GADI_GPIO_FUNC_IN) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_DOWN|GADI_IOCTRL_2MA)    | GADI_GPIO_OEN_INVERT( 0)| GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 1) | GADI_GPIO_IN_SEL(2+41) | GADI_GPIO_OUT_SEL( 0),//!< Input type: enet_clk_tx
 
     /* ----------------------------------- GPIO input&&output function define --------------------------------------------------------------------------------------------------- */
     GADI_GPIO_TYPE_INOUT_I2C_DATA         = GADI_GPIO_FUNC(GADI_GPIO_FUNC_INOUT) | GADI_GPIO_IOCTRL(GADI_IOCTRL_PULL_UP|GADI_IOCTRL_2MA)   | GADI_GPIO_OEN_INVERT(0) | GADI_GPIO_OUT_INVERT(0) | GADI_GPIO_OEN_SEL( 3) | GADI_GPIO_IN_SEL(2+ 1) | GADI_GPIO_OUT_SEL( 0),//!< Input/Output type: i2c_sda
@@ -692,8 +692,8 @@ typedef enum
 */
 typedef enum
 {
-	GADI_ADC_CHANNEL_ONE,
-	GADI_ADC_CHANNEL_TWO,
+    GADI_ADC_CHANNEL_ONE,
+    GADI_ADC_CHANNEL_TWO,
 }GADI_GPIO_ADC_ChannelT;
 
 /*
@@ -704,10 +704,10 @@ typedef enum
 
 typedef struct
 {
-	/* channel number */
-	GADI_GPIO_ADC_ChannelT channel;
-	/* adc number */
-	GADI_U32 value;
+    /* channel number */
+    GADI_GPIO_ADC_ChannelT channel;
+    /* adc number */
+    GADI_U32 value;
 
 }GADI_GPIO_AdcValue;
 
@@ -786,13 +786,13 @@ typedef struct
 typedef struct
 {
 
-	GADI_U8 num_gpio;
-	/* level mode, 1 for negative 0 for positive */
-	GADI_U8 active_low;
-	/* output/input, 1/0 */
-	GADI_U8 direction;
-	/* high/low level, 1/0 in positive mode, 0/1 in negative mode */
-	GADI_U8 value;
+    GADI_U8 num_gpio;
+    /* level mode, 1 for negative 0 for positive */
+    GADI_U8 active_low;
+    /* output/input, 1/0 */
+    GADI_U8 direction;
+    /* high/low level, 1/0 in positive mode, 0/1 in negative mode */
+    GADI_U8 value;
     /*Interrupt configuration */
     GADI_GPIO_INT_CONFIG_S InterruptConfig;
 }GADI_GPIO_OpenParam;
@@ -817,15 +817,15 @@ extern "C" {
 ** \param[in] UserConfig: Contains GPIO parameters.
 **
 ** \return
-**		   - #(GADI_SYS_HandleT)gpioHandle					An valid handle of gpio ADI instance
-**																			  when function calls success.
+**         - #(GADI_SYS_HandleT)gpioHandle                  An valid handle of gpio ADI instance
+**                                                                            when function calls success.
 ** \sa
-**		   - gadi_gpio_close
+**         - gadi_gpio_close
 **
 *******************************************************************************
 */
 GADI_SYS_HandleT gadi_gpio_open(GADI_ERR *errorCodePtr,
-										GADI_GPIO_OpenParam *userConfig);
+                                        GADI_GPIO_OpenParam *userConfig);
 
 
 
@@ -837,17 +837,17 @@ GADI_SYS_HandleT gadi_gpio_open(GADI_ERR *errorCodePtr,
 ** \param[in] handle: Valid GPIO ADI instance handle previously opened by #gadi_gpio_open.
 **
 ** \return
-**		   - #GADI_OK													On success.
-**		   - #NULL														   Error occurred.
-**		   - #GADI_GPIO_ERR_BAD_PARAMETER				 Invalid parameter.
-**		   - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED  File of "export" doesn't exist.
-**		   - #GADI_GPIO_ERR_OUT_OF_MEMORY				Get memory failed!
-**		   - #GADI_GPIO_ERR_FROM_DRIVER 				   Can't get file descriptor of "unexport"
-**																				or file doesn`t exist!by #open.
-**		   - #GADI_GPIO_ERR_WRITE_FAILED				   File written failed.
+**         - #GADI_OK                                                   On success.
+**         - #NULL                                                         Error occurred.
+**         - #GADI_GPIO_ERR_BAD_PARAMETER                Invalid parameter.
+**         - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED  File of "export" doesn't exist.
+**         - #GADI_GPIO_ERR_OUT_OF_MEMORY               Get memory failed!
+**         - #GADI_GPIO_ERR_FROM_DRIVER                    Can't get file descriptor of "unexport"
+**                                                                              or file doesn`t exist!by #open.
+**         - #GADI_GPIO_ERR_WRITE_FAILED                   File written failed.
 **
 ** \sa
-**		   - gadi_gpio_open
+**         - gadi_gpio_open
 **
 *******************************************************************************
 */
@@ -862,15 +862,15 @@ GADI_ERR gadi_gpio_close(GADI_SYS_HandleT handle);
 ** \param[in] handle: Valid GPIO ADI instance handle previously opened by #gadi_gpio_open.
 **
 ** return
-**		  - #GADI_OK													On success.
-**		  - #GADI_GPIO_ERR_BAD_PARAMETER				 Invalid parameter.
-**		  - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED   Direction is output mode.
-**		  - #GADI_GPIO_ERR_FROM_DRIVER					   Can't get file descriptor of "value"
-**																				by #open.
-**		  - #GADI_GPIO_ERR_WRITE_FAILED 				   File written failed.
+**        - #GADI_OK                                                    On success.
+**        - #GADI_GPIO_ERR_BAD_PARAMETER                 Invalid parameter.
+**        - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED   Direction is output mode.
+**        - #GADI_GPIO_ERR_FROM_DRIVER                     Can't get file descriptor of "value"
+**                                                                              by #open.
+**        - #GADI_GPIO_ERR_WRITE_FAILED                    File written failed.
 **
 ** \sa
-**		  - gadi_gpio_clear
+**        - gadi_gpio_clear
 **
 *******************************************************************************
 */
@@ -883,15 +883,15 @@ GADI_ERR gadi_gpio_set(GADI_SYS_HandleT handle);
 ** \param[in] handle: Valid GPIO ADI instance handle previously opened by #gadi_gpio_open.
 **
 ** \return
-**		  - #GADI_OK													On success.
-**		  - #GADI_GPIO_ERR_BAD_PARAMETER				 Invalid parameter.
-**		  - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED   Direction is output mode.
-**		  - #GADI_GPIO_ERR_FROM_DRIVER					   Can't get file descriptor of "value" by
-**																				#open.
-**		  - #GADI_GPIO_ERR_WRITE_FAILED 				   File written failed.
+**        - #GADI_OK                                                    On success.
+**        - #GADI_GPIO_ERR_BAD_PARAMETER                 Invalid parameter.
+**        - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED   Direction is output mode.
+**        - #GADI_GPIO_ERR_FROM_DRIVER                     Can't get file descriptor of "value" by
+**                                                                              #open.
+**        - #GADI_GPIO_ERR_WRITE_FAILED                    File written failed.
 **
 ** \sa
-**		  - gadi_gpio_set
+**        - gadi_gpio_set
 **
 *******************************************************************************
 */
@@ -908,15 +908,15 @@ GADI_ERR gadi_gpio_clear(GADI_SYS_HandleT handle);
 ** \parame[in] value:  A pointer to return the 1/0 that represent high-low level.
 **
 ** \return
-**		   - #GADI_OK													On success.
-**		   - #GADI_GPIO_ERR_BAD_PARAMETER				 Invalid parameter.
-**		   - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED  Direction is input mode.
-**		   - #GADI_GPIO_ERR_FROM_DRIVER 				   Can't get file descriptor of "value" by
-**																				#open.
-**		   - #GADI_GPIO_ERR_READ_FAILED 					File read failed.
+**         - #GADI_OK                                                   On success.
+**         - #GADI_GPIO_ERR_BAD_PARAMETER                Invalid parameter.
+**         - #GADI_GPIO_ERR_FEATURE_NOT_SUPPORTED  Direction is input mode.
+**         - #GADI_GPIO_ERR_FROM_DRIVER                    Can't get file descriptor of "value" by
+**                                                                              #open.
+**         - #GADI_GPIO_ERR_READ_FAILED                     File read failed.
 **
 ** \sa
-**		   - gadi_gpio_open
+**         - gadi_gpio_open
 **
 *******************************************************************************
 */
@@ -932,9 +932,9 @@ GADI_ERR gadi_gpio_read_value(GADI_SYS_HandleT handle, GADI_S32 *value);
 
 **
 ** \return
-**		   - #GADI_OK									  On success.
-**		   - #GADI_GPIO_ERR_BAD_PARAMETER				  Invalid parameter.
-**		   - #GADI_GPIO_ERR_FROM_DRIVER 				  Read error
+**         - #GADI_OK                                     On success.
+**         - #GADI_GPIO_ERR_BAD_PARAMETER                 Invalid parameter.
+**         - #GADI_GPIO_ERR_FROM_DRIVER                   Read error
 **
 **
 ** \sa
@@ -953,9 +953,9 @@ GADI_ERR gadi_gpio_open_adc(GADI_GPIO_ADC_OpenParamT *adcOpenParams);
 
 **
 ** \return
-**		   - #GADI_OK									  On success.
-**		   - #GADI_GPIO_ERR_BAD_PARAMETER				  Invalid parameter.
-**		   - #GADI_GPIO_ERR_FROM_DRIVER 				  Read error
+**         - #GADI_OK                                     On success.
+**         - #GADI_GPIO_ERR_BAD_PARAMETER                 Invalid parameter.
+**         - #GADI_GPIO_ERR_FROM_DRIVER                   Read error
 **
 **
 ** \sa
@@ -966,7 +966,7 @@ GADI_ERR gadi_gpio_read_adc(GADI_U32 *adcValue);
 GADI_ERR gadi_gpio_close_adc(void);
 
 #ifdef __cplusplus
-		}
+        }
 #endif
 
 

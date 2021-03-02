@@ -44,7 +44,7 @@
           For STM32F100x high-density value line devices: TIM15 as
           replacement of TIM5.
           (DAC_TRIGGER_T2_TRGO, DAC_TRIGGER_T4_TRGO...)
-  
+
       (#) Software using DAC_TRIGGER_SOFTWARE
 
       *** DAC Buffer mode feature ***
@@ -116,7 +116,7 @@
           for STM32F100x low-density, medium-density, high-density with DAC
           DMA remap:
       (#) DAC channel2 mapped on DMA2 channel3
-          for STM32F100x high-density without DAC DMA remap and other  
+          for STM32F100x high-density without DAC DMA remap and other
           STM32F1 devices
 
      [..]
@@ -154,7 +154,7 @@
            HAL_DAC_ConvCpltCallbackCh1() or HAL_DACEx_ConvHalfCpltCallbackCh2()
        (+) In case of transfer Error, HAL_DAC_ErrorCallbackCh1() function is executed and user can
             add his own code by customization of function pointer HAL_DAC_ErrorCallbackCh1
-       (+) For STM32F100x devices with specific feature: DMA underrun.             
+       (+) For STM32F100x devices with specific feature: DMA underrun.
            In case of DMA underrun, DAC interruption triggers and execute internal function HAL_DAC_IRQHandler.
            HAL_DAC_DMAUnderrunCallbackCh1() or HAL_DACEx_DMAUnderrunCallbackCh2()
            function is executed and user can add his own code by customization of function pointer
@@ -976,7 +976,7 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConf
   tmpreg1 &= ~(((uint32_t)(DAC_CR_MAMP1 | DAC_CR_WAVE1 | DAC_CR_TSEL1 | DAC_CR_TEN1 | DAC_CR_BOFF1)) << (Channel & 0x10UL));
   /* Configure for the selected DAC channel: buffer output, trigger */
   /* Set TSELx and TENx bits according to DAC_Trigger value */
-  /* Set BOFFx bit according to DAC_OutputBuffer value */   
+  /* Set BOFFx bit according to DAC_OutputBuffer value */
   tmpreg2 = (sConfig->DAC_Trigger | sConfig->DAC_OutputBuffer);
   /* Calculate CR register value depending on DAC_Channel */
   tmpreg1 |= tmpreg2 << (Channel & 0x10UL);

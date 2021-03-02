@@ -25,7 +25,7 @@ typedef enum
 /* 初始化结构体 */
 typedef struct
 {
-    uint32_t WDT_Tms;       //定时时间，单位ms 
+    uint32_t WDT_Tms;       //定时时间，单位ms
     TYPE_FUNCEN WDT_IE;     //中断使能
     TYPE_FUNCEN WDT_Rst;    //复位使能
     WDT_TYPE_CLKS WDT_Clock;//时钟选择
@@ -42,7 +42,7 @@ typedef enum
 /* 初始化结构体 */
 typedef struct
 {
-    uint32_t WDT_Tms;       //定时时间，单位ms 
+    uint32_t WDT_Tms;       //定时时间，单位ms
     TYPE_FUNCEN WDT_IE;     //中断使能
     TYPE_FUNCEN WDT_Rst;    //复位使能
     WDT_TYPE_CLKS WDT_Clock;//时钟选择

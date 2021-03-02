@@ -171,8 +171,8 @@
     #define __FPU_USED         0
   #endif
 
-#elif defined ( __CSMC__ )		/* Cosmic */
-  #if ( __CSMC__ & 0x400)		// FPU present for parser
+#elif defined ( __CSMC__ )      /* Cosmic */
+  #if ( __CSMC__ & 0x400)       // FPU present for parser
     #if (__FPU_PRESENT == 1)
       #define __FPU_USED       1
     #else

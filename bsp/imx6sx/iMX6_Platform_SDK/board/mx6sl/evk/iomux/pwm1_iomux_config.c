@@ -52,7 +52,7 @@ void pwm1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO23
     //     ALT6 (6) - Select instance: epit1 signal: EPIT1_OUT
     HW_IOMUXC_SW_MUX_CTL_PAD_PWM1_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_PWM1_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_PWM1_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_PWM1_MUX_MODE_V(ALT0));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_PWM1(0x020E0528)
@@ -96,13 +96,13 @@ void pwm1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_PWM1_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_LVE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_PUE_V(KEEP) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_LVE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_PUE_V(KEEP) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_PWM1_SRE_V(SLOW));
 }

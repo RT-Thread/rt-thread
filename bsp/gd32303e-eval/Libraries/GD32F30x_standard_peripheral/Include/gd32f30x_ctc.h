@@ -25,7 +25,7 @@
 
 /* bits definitions */
 /* CTC_CTL0 */
-#define CTC_CTL0_CKOKIE              BIT(0)                    /*!< clock trim OK(CKOKIF) interrupt enable */ 
+#define CTC_CTL0_CKOKIE              BIT(0)                    /*!< clock trim OK(CKOKIF) interrupt enable */
 #define CTC_CTL0_CKWARNIE            BIT(1)                    /*!< clock trim warning(CKWARNIF) interrupt enable */
 #define CTC_CTL0_ERRIE               BIT(2)                    /*!< error(ERRIF) interrupt enable */
 #define CTC_CTL0_EREFIE              BIT(3)                    /*!< EREFIF interrupt enable */
@@ -117,7 +117,7 @@ void ctc_interrupt_enable(uint32_t ctc_interrupt);
 /* disable the CTC interrupt */
 void ctc_interrupt_disable(uint32_t ctc_interrupt);
 /* get CTC interrupt flag */
-FlagStatus ctc_interrupt_flag_get(uint32_t ctc_interrupt); 
+FlagStatus ctc_interrupt_flag_get(uint32_t ctc_interrupt);
 /* clear CTC interrupt flag */
 void ctc_interrupt_flag_clear(uint32_t ctc_interrupt);
 

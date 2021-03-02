@@ -140,7 +140,7 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 
                 /* dealwith the device return error -1*/
                 if (mask < 0)
-                {   
+                {
                     fd_put(f);
                     pollfd->revents = 0;
                     return mask;
@@ -232,4 +232,4 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
     return num;
 }
 
-#endif 
+#endif

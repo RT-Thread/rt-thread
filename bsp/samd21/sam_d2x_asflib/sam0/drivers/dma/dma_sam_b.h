@@ -103,8 +103,8 @@ extern "C" {
  *      <td>4</td>
  *    </tr>
  * </table>
- * The DMA channel operation can be suspended at any time by software, 
- * or after selectable descriptor execution. The DMAC driver for SAM 
+ * The DMA channel operation can be suspended at any time by software,
+ * or after selectable descriptor execution. The DMAC driver for SAM
  * supports four types of transfers such as peripheral to peripheral,
  * peripheral to memory, memory to peripheral, and memory to memory.
  *
@@ -264,75 +264,75 @@ extern "C" {
 #include "conf_dma.h"
 
 /** DMA IRQn number. */
-#define PROV_DMA_CTRL0_IRQn		15
+#define PROV_DMA_CTRL0_IRQn     15
 
 /** DMA invalid channel number. */
 #define DMA_INVALID_CHANNEL        0xff
 
 /** DMA peripheral index */
 enum dma_peripheral_index {
-	MEMORY_DMA_PERIPHERAL = 0,
-	UART0RX_DMA_PERIPHERAL,
-	UART0TX_DMA_PERIPHERAL,
-	UART1RX_DMA_PERIPHERAL,
-	UART1TX_DMA_PERIPHERAL,
-	SPI0RX_DMA_PERIPHERAL,
-	SPI0TX_DMA_PERIPHERAL,
-	SPI1RX_DMA_PERIPHERAL,
-	SPI1TX_DMA_PERIPHERAL,
-	I2C0RX_DMA_PERIPHERAL,
-	I2C0TX_DMA_PERIPHERAL,
-	I2C1RX_DMA_PERIPHERAL,
-	I2C1TX_DMA_PERIPHERAL,
-	DUALTIMER0_DMA_PERIPHERAL = 15,
-	TIMER0_DMA_PERIPHERAL,
+    MEMORY_DMA_PERIPHERAL = 0,
+    UART0RX_DMA_PERIPHERAL,
+    UART0TX_DMA_PERIPHERAL,
+    UART1RX_DMA_PERIPHERAL,
+    UART1TX_DMA_PERIPHERAL,
+    SPI0RX_DMA_PERIPHERAL,
+    SPI0TX_DMA_PERIPHERAL,
+    SPI1RX_DMA_PERIPHERAL,
+    SPI1TX_DMA_PERIPHERAL,
+    I2C0RX_DMA_PERIPHERAL,
+    I2C0TX_DMA_PERIPHERAL,
+    I2C1RX_DMA_PERIPHERAL,
+    I2C1TX_DMA_PERIPHERAL,
+    DUALTIMER0_DMA_PERIPHERAL = 15,
+    TIMER0_DMA_PERIPHERAL,
 };
 
 /** DMA channel index */
 enum dma_ch_index {
-	/** DMA channel 0 */
-	DMA_CHANNEL_0 = 0,
-	/** DMA channel 1 */
-	DMA_CHANNEL_1,
-	/** DMA channel 2 */
-	DMA_CHANNEL_2,
-	/** DMA channel 3 */
-	DMA_CHANNEL_3,
+    /** DMA channel 0 */
+    DMA_CHANNEL_0 = 0,
+    /** DMA channel 1 */
+    DMA_CHANNEL_1,
+    /** DMA channel 2 */
+    DMA_CHANNEL_2,
+    /** DMA channel 3 */
+    DMA_CHANNEL_3,
 };
 
 enum dma_endian_swap {
-	/** DMA endian no swap */
-	DMA_ENDIAN_NO_SWAP,
-	/** DMA endian 16-bit */
-	DMA_ENDIAN_SIZE_16,
-	/** DMA endian 32-bit */
-	DMA_ENDIAN_SIZE_32,
-	/** DMA endian 64-bit */
-	DMA_ENDIAN_SIZE_64,
+    /** DMA endian no swap */
+    DMA_ENDIAN_NO_SWAP,
+    /** DMA endian 16-bit */
+    DMA_ENDIAN_SIZE_16,
+    /** DMA endian 32-bit */
+    DMA_ENDIAN_SIZE_32,
+    /** DMA endian 64-bit */
+    DMA_ENDIAN_SIZE_64,
 };
 
 /**
  * Callback types for DMA callback driver.
  */
 enum dma_callback_type {
-	/** Callback for transfer complete */
-	DMA_CALLBACK_TRANSFER_DONE,
-	/** AHB read slave error */
-	DMA_CALLBACK_READ_ERR,
-	/**  AHB write slave error */
-	DMA_CALLBACK_WRITE_ERR,
-	/** FIFO has been overflown */
-	DMA_CALLBACK_FIFO_OVERFLOW,
-	/** FIFO has been underflows */
-	DMA_CALLBACK_FIFO_UNDERFLOW,
-	/** Read timeout on AHB bus (timeout value fixed at 1024 cycles) */
-	DMA_CALLBACK_READ_TIMEOUT,
-	/** Write timeout on AHB bus (timeout value fixed at 1024 cycles) */
-	DMA_CALLBACK_WRITE_TIMEOUT,
-	/** Channel active but did not start a burst for 2048 cycles */
-	DMA_CALLBACK_WDT_TRIGGER,
-	/** Number of available callbacks */
-	DMA_CALLBACK_N,
+    /** Callback for transfer complete */
+    DMA_CALLBACK_TRANSFER_DONE,
+    /** AHB read slave error */
+    DMA_CALLBACK_READ_ERR,
+    /**  AHB write slave error */
+    DMA_CALLBACK_WRITE_ERR,
+    /** FIFO has been overflown */
+    DMA_CALLBACK_FIFO_OVERFLOW,
+    /** FIFO has been underflows */
+    DMA_CALLBACK_FIFO_UNDERFLOW,
+    /** Read timeout on AHB bus (timeout value fixed at 1024 cycles) */
+    DMA_CALLBACK_READ_TIMEOUT,
+    /** Write timeout on AHB bus (timeout value fixed at 1024 cycles) */
+    DMA_CALLBACK_WRITE_TIMEOUT,
+    /** Channel active but did not start a burst for 2048 cycles */
+    DMA_CALLBACK_WDT_TRIGGER,
+    /** Number of available callbacks */
+    DMA_CALLBACK_N,
 };
 
 /**
@@ -341,57 +341,57 @@ enum dma_callback_type {
  * must correspond to the end of the transfer.
  */
 struct dma_descriptor {
-	/** Start address of read buffer */
-	uint32_t read_start_addr;
-	/** Start address of write buffer */
-	uint32_t write_start_addr;
-	/** Size (in bytes) of buffer to transfer */
-	uint32_t buffer_size;
-	union {
-		struct {
-			/** Active high interrupt enable once buffer has been transferred */
-			uint32_t set_interrupt:1;
-			/** If set, channel stops when buffer done, otherwise load from cmd_next_addr */
-			uint32_t last:1;
-			/** Address of next command if cmd_last is not set */
-			uint32_t next_addr:30;
-		} cmd;
-		uint32_t next;
-	};
+    /** Start address of read buffer */
+    uint32_t read_start_addr;
+    /** Start address of write buffer */
+    uint32_t write_start_addr;
+    /** Size (in bytes) of buffer to transfer */
+    uint32_t buffer_size;
+    union {
+        struct {
+            /** Active high interrupt enable once buffer has been transferred */
+            uint32_t set_interrupt:1;
+            /** If set, channel stops when buffer done, otherwise load from cmd_next_addr */
+            uint32_t last:1;
+            /** Address of next command if cmd_last is not set */
+            uint32_t next_addr:30;
+        } cmd;
+        uint32_t next;
+    };
 };
 /** Structure for DMA source/description */
 struct dma_config {
-	/** Maximum number of bytes of an AHB read/write burst */
-	uint8_t max_burst;
-	/** Number of AHB read/write commands to issue before channel is released */
-	uint8_t tokens;
-	/** If true, the controller will increment the next burst address */
-	bool enable_inc_addr;
-	/** Index of peripheral to read/write from (0 if memory or no peripheral flow control) */
-	enum dma_peripheral_index periph;
-	/** 
-	 * Number of cycles to wait for read/write request signal to update 
-	 * after issuing the read/write clear signal
-	 */
-	uint8_t periph_delay;
-	/** Top priority enable */
-	bool enable_proi_top;
-	/** Top priority channel index */
-	uint8_t proi_top_index;
-	/** High priority enable */
-	bool enable_proi_high;
-	/** High priority channel index */
-	uint8_t proi_high_index;
+    /** Maximum number of bytes of an AHB read/write burst */
+    uint8_t max_burst;
+    /** Number of AHB read/write commands to issue before channel is released */
+    uint8_t tokens;
+    /** If true, the controller will increment the next burst address */
+    bool enable_inc_addr;
+    /** Index of peripheral to read/write from (0 if memory or no peripheral flow control) */
+    enum dma_peripheral_index periph;
+    /**
+     * Number of cycles to wait for read/write request signal to update
+     * after issuing the read/write clear signal
+     */
+    uint8_t periph_delay;
+    /** Top priority enable */
+    bool enable_proi_top;
+    /** Top priority channel index */
+    uint8_t proi_top_index;
+    /** High priority enable */
+    bool enable_proi_high;
+    /** High priority channel index */
+    uint8_t proi_high_index;
 };
 
 /** Structure for DMA transfer resource */
 struct dma_resource_config {
-	struct dma_config src;
-	struct dma_config des;
-	/** If true, channel will work in joint mode */
-	bool enable_joint_mode;
-	/** Endian Byte Swapping */
-	enum dma_endian_swap swap;
+    struct dma_config src;
+    struct dma_config des;
+    /** If true, channel will work in joint mode */
+    bool enable_joint_mode;
+    /** Endian Byte Swapping */
+    enum dma_endian_swap swap;
 };
 
 /** Forward definition of the DMA resource */
@@ -401,18 +401,18 @@ typedef void (*dma_callback_t)(struct dma_resource *const resource);
 
 /** Structure for DMA transfer resource */
 struct dma_resource {
-	/** Allocated DMA channel ID */
-	uint8_t channel_id;
-	/** Array of callback functions for DMA transfer job */
-	dma_callback_t callback[DMA_CALLBACK_N];
-	/** Bit mask for enabled callbacks */
-	uint8_t callback_enable;
-	/** Status of the last job */
-	volatile enum status_code job_status;
-	/** Transferred data size */
-	uint32_t transfered_size;
-	/** DMA transfer descriptor */
-	struct dma_descriptor* descriptor;
+    /** Allocated DMA channel ID */
+    uint8_t channel_id;
+    /** Array of callback functions for DMA transfer job */
+    dma_callback_t callback[DMA_CALLBACK_N];
+    /** Bit mask for enabled callbacks */
+    uint8_t callback_enable;
+    /** Status of the last job */
+    volatile enum status_code job_status;
+    /** Transferred data size */
+    uint32_t transfered_size;
+    /** DMA transfer descriptor */
+    struct dma_descriptor* descriptor;
 };
 
 /**
@@ -424,7 +424,7 @@ struct dma_resource {
  */
 static inline enum status_code dma_get_job_status(struct dma_resource *resource)
 {
-	return resource->job_status;
+    return resource->job_status;
 }
 
 /**
@@ -435,9 +435,9 @@ static inline enum status_code dma_get_job_status(struct dma_resource *resource)
  *
  */
 static inline void dma_enable_callback(struct dma_resource *resource,
-		enum dma_callback_type type)
+        enum dma_callback_type type)
 {
-	resource->callback_enable |= 1 << type;
+    resource->callback_enable |= 1 << type;
 }
 
 /**
@@ -448,9 +448,9 @@ static inline void dma_enable_callback(struct dma_resource *resource,
  *
  */
 static inline void dma_disable_callback(struct dma_resource *resource,
-		enum dma_callback_type type)
+        enum dma_callback_type type)
 {
-	resource->callback_enable &= ~(1 << type);
+    resource->callback_enable &= ~(1 << type);
 }
 
 /**
@@ -467,9 +467,9 @@ static inline void dma_disable_callback(struct dma_resource *resource,
  *
  */
 static inline void dma_register_callback(struct dma_resource *resource,
-		dma_callback_t callback, enum dma_callback_type type)
+        dma_callback_t callback, enum dma_callback_type type)
 {
-	resource->callback[type] = callback;
+    resource->callback[type] = callback;
 }
 
 /**
@@ -488,9 +488,9 @@ static inline void dma_register_callback(struct dma_resource *resource,
  *
  */
 static inline void dma_unregister_callback(struct dma_resource *resource,
-		enum dma_callback_type type)
+        enum dma_callback_type type)
 {
-	resource->callback[type] = NULL;
+    resource->callback[type] = NULL;
 }
 
 /**
@@ -514,18 +514,18 @@ static inline void dma_unregister_callback(struct dma_resource *resource,
  */
 static inline void dma_descriptor_get_config_defaults(struct dma_descriptor *config)
 {
-	/* Default read buffer size is set to 0 */
-	config->read_start_addr = 0;
-	/* Default write buffer size is set to 0 */
-	config->write_start_addr = 0;
-	/* Set beat size to one byte */
-	config->buffer_size = 1;
-	/* Enable transferred interrupt */
-	config->cmd.set_interrupt = 1;
-	/* Channel stops when buffer done */
-	config->cmd.last = 1;
-	/* Set next command to 0 */
-	config->cmd.next_addr = 0;
+    /* Default read buffer size is set to 0 */
+    config->read_start_addr = 0;
+    /* Default write buffer size is set to 0 */
+    config->write_start_addr = 0;
+    /* Set beat size to one byte */
+    config->buffer_size = 1;
+    /* Enable transferred interrupt */
+    config->cmd.set_interrupt = 1;
+    /* Channel stops when buffer done */
+    config->cmd.last = 1;
+    /* Set next command to 0 */
+    config->cmd.next_addr = 0;
 }
 
 /**
@@ -535,9 +535,9 @@ static inline void dma_descriptor_get_config_defaults(struct dma_descriptor *con
  *
  */
 static inline void dma_update_descriptor(struct dma_resource *resource,
-		struct dma_descriptor* descriptor)
+        struct dma_descriptor* descriptor)
 {
-	resource->descriptor = descriptor;
+    resource->descriptor = descriptor;
 }
 
 /**
@@ -548,14 +548,14 @@ static inline void dma_update_descriptor(struct dma_resource *resource,
  */
 static inline void dma_reset_descriptor(struct dma_resource *resource)
 {
-	resource->descriptor = NULL;
+    resource->descriptor = NULL;
 }
 
 void dma_get_config_defaults(struct dma_resource_config *config);
 enum status_code dma_allocate(struct dma_resource *resource,
-		struct dma_resource_config *config);
+        struct dma_resource_config *config);
 enum status_code dma_add_descriptor(struct dma_resource *resource,
-		struct dma_descriptor* descriptor);
+        struct dma_descriptor* descriptor);
 enum status_code dma_start_transfer_job(struct dma_resource *resource);
 enum status_code dma_free(struct dma_resource *resource);
 uint8_t dma_get_status(uint8_t channel);

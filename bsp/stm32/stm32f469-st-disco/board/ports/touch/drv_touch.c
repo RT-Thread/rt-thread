@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-02-08     Zhangyihong  the first version
  */
- 
+
 #include "drv_touch.h"
 #include <string.h>
 #ifdef BSP_USING_TOUCH
@@ -105,7 +105,7 @@ static void touch_thread_entry(void *parameter)
         {
             continue;
         }
-        
+
         while(touch->ops->read_point(&msg) == RT_EOK)
         {
             switch (msg.event)

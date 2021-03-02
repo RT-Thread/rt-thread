@@ -33,7 +33,7 @@
 
 /* skip the inclusion in dependency state */
 #ifndef __NO_SETJMP
-	#include <stdio.h>
+    #include <stdio.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -106,7 +106,7 @@ void TestApp_Init(void)
 
     g_recv_size = 0;
     g_send_size= 0;
-    DisableInterrupts;		
+    DisableInterrupts;
     #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_dis();
     #endif
@@ -119,7 +119,7 @@ void TestApp_Init(void)
         return;
     }
     EnableInterrupts;
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_en();
     #endif
 }
@@ -140,10 +140,10 @@ void TestApp_Init(void)
 void TestApp_Task(void)
 {
 #if (defined _MC9S08JE128_H) || (defined _MC9S08JM16_H) || (defined _MC9S08JM60_H) || (defined _MC9S08JS16_H) || (defined _MC9S08MM128_H)
-	if(USB_PROCESS_PENDING())
-	{
-		USB_Engine();
-	}
+    if(USB_PROCESS_PENDING())
+    {
+        USB_Engine();
+    }
 #endif
         /* call the periodic task function */
         USB_Class_CDC_Periodic_Task();
@@ -174,13 +174,13 @@ static void Virtual_Com_App(void)
     /* Loopback Application Code */
     if(g_recv_size)
     {
-    	/* Copy Received Buffer to Send Buffer */
-    	for (status = 0; status < g_recv_size; status++)
-    	{
-    		g_curr_send_buf[status] = g_curr_recv_buf[status];
-    	}
-    	g_send_size = g_recv_size;
-    	g_recv_size = 0;
+        /* Copy Received Buffer to Send Buffer */
+        for (status = 0; status < g_recv_size; status++)
+        {
+            g_curr_send_buf[status] = g_curr_recv_buf[status];
+        }
+        g_send_size = g_recv_size;
+        g_recv_size = 0;
     }
     if(g_send_size)
     {
@@ -230,12 +230,12 @@ static void USB_App_Callback (
         start_app=FALSE;
     }
     else if(event_type == USB_APP_ENUM_COMPLETE)
-    {    	
+    {
 #if HIGH_SPEED_DEVICE
-    	// prepare for the next receive event
-    	USB_Class_CDC_Interface_DIC_Recv_Data(&controller_ID,
-    	                                      (uint_8_ptr)g_cdcBuffer, 
-    	                                      DIC_BULK_OUT_ENDP_PACKET_SIZE);
+        // prepare for the next receive event
+        USB_Class_CDC_Interface_DIC_Recv_Data(&controller_ID,
+                                              (uint_8_ptr)g_cdcBuffer,
+                                              DIC_BULK_OUT_ENDP_PACKET_SIZE);
 #endif
         start_app=TRUE;
     }
@@ -258,7 +258,7 @@ static void USB_App_Callback (
     {
         /* Previous Send is complete. Queue next receive */
 #if HIGH_SPEED_DEVICE
-    	(void)USB_Class_CDC_Interface_DIC_Recv_Data(CONTROLLER_ID, g_cdcBuffer, DIC_BULK_OUT_ENDP_PACKET_SIZE);
+        (void)USB_Class_CDC_Interface_DIC_Recv_Data(CONTROLLER_ID, g_cdcBuffer, DIC_BULK_OUT_ENDP_PACKET_SIZE);
 #else
         (void)USB_Class_CDC_Interface_DIC_Recv_Data(CONTROLLER_ID, NULL, 0);
 #endif

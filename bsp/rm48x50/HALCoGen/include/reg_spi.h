@@ -2,7 +2,7 @@
 *   @brief SPI Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -38,10 +38,10 @@
 typedef volatile struct spiBase
 {
     uint32  GCR0;                 /**< 0x0000: Global Control 0 */
-    uint32  GCR1;                  /**< 0x0004: Global Control 1 */	
-    uint32  INT0;                  /**< 0x0008: Interrupt Register */	
+    uint32  GCR1;                  /**< 0x0004: Global Control 1 */
+    uint32  INT0;                  /**< 0x0008: Interrupt Register */
     uint32  LVL;                  /**< 0x000C: Interrupt Level */
-    uint32  FLG;                  /**< 0x0010: Interrupt flags */		
+    uint32  FLG;                  /**< 0x0010: Interrupt flags */
     uint32  PCFUN;                /**< 0x0014: Function Pin Enable */
     uint32  PCDIR;                /**< 0x0018: Pin Direction */
     uint32  PCDIN;                /**< 0x001C: Pin Input Latch */
@@ -64,7 +64,7 @@ typedef volatile struct spiBase
     uint32  INTVECT0;             /**< 0x0060: Interrupt Vector 0 */
     uint32  INTVECT1;             /**< 0x0064: Interrupt Vector 1 */
     uint32  SRSEL;                /**< 0x0068: Slew Rate Select */
-    uint32  RESERVED[50U];        /**< 0x006C to 0x0130: Reserved */	
+    uint32  RESERVED[50U];        /**< 0x006C to 0x0130: Reserved */
     uint32  IOLPKTSTCR;           /**< 0x0134: IO loopback */
 } spiBASE_t;
 

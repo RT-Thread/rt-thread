@@ -2,7 +2,7 @@
 *   @brief DMM Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -39,9 +39,9 @@
 typedef volatile struct dmmBase
 {
     uint32  GLBCTRL;    /**< 0x0000: Global control register 0         */
-    uint32  INTSET;     /**< 0x0004: DMM Interrupt Set Register        */    
+    uint32  INTSET;     /**< 0x0004: DMM Interrupt Set Register        */
     uint32  INTCLR;     /**< 0x0008: DMM Interrupt Clear Register      */
-    uint32  INTLVL;     /**< 0x000C: DMM Interrupt Level Register      */    
+    uint32  INTLVL;     /**< 0x000C: DMM Interrupt Level Register      */
     uint32  INTFLG;     /**< 0x0010: DMM Interrupt Flag Register       */
     uint32  OFF1;       /**< 0x0014: DMM Interrupt Offset 1 Register           */
     uint32  OFF2;       /**< 0x0018: DMM Interrupt Offset 2 Register           */
@@ -66,7 +66,7 @@ typedef volatile struct dmmBase
     uint32  DEST3REG2;  /**< 0x0064: DMM Destination 3 Region 2              */
     uint32  DEST3BL2;   /**< 0x0068: DMM Destination 3 Blocksize 2              */
     uint32  PC0;        /**< 0x006C: DMM Pin Control 0                          */
-    uint32  PC1;        /**< 0x0070: DMM Pin Control 1               */     
+    uint32  PC1;        /**< 0x0070: DMM Pin Control 1               */
     uint32  PC2;        /**< 0x0074: DMM Pin Control 2              */
     uint32  PC3;        /**< 0x0078: DMM Pin Control 3              */
     uint32  PC4;        /**< 0x007C: DMM Pin Control 4   */

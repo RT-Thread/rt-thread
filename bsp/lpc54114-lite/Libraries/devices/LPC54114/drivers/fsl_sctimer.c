@@ -319,7 +319,7 @@ void SCTIMER_UpdatePwmDutycycle(SCT_Type *base, sctimer_out_t output, uint8_t du
 {
     assert(dutyCyclePercent > 0);
     assert(output < FSL_FEATURE_SCT_NUMBER_OF_OUTPUTS);
-      
+
     uint32_t periodMatchReg, pulseMatchReg;
     uint32_t pulsePeriod = 0, period;
 

@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2021-02-02   michael5hzg@gmail.com   adapt to ls1b
  */
-// ä¸²å£ç›¸å…³æºç 
+// ´®¿ÚÏà¹ØÔ´Âë
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -19,23 +19,23 @@
 #include "ls1b.h"
 
 
-// ä¸²å£çº¿è·¯çŠ¶æ€å¯„å­˜å™¨çš„ä½åŸŸ
+// ´®¿ÚÏßÂ·×´Ì¬¼Ä´æÆ÷µÄÎ»Óò
 #define LS1B_UART_LSR_TE                (1 << 6)
 #define LS1B_UART_LSR_TFE               (1 << 5)
 
 
-// æ‰“å°ç¼“å­˜çš„å¤§å°
+// ´òÓ¡»º´æµÄ´óĞ¡
 #define LS1B_UART_PRINT_BUF_SIZE        (256)
 
 
-// è°ƒè¯•ä¸²å£ä¿¡æ¯
+// µ÷ÊÔ´®¿ÚĞÅÏ¢
 ls1b_uart_info_t debug_uart_info = {0};
 
 
 /*
- * è·å–æŒ‡å®šä¸²å£æ¨¡å—çš„åŸºåœ°å€
- * @UARTx ä¸²å£ç¼–å·
- * @ret åŸºåœ°å€
+ * »ñÈ¡Ö¸¶¨´®¿ÚÄ£¿éµÄ»ùµØÖ·
+ * @UARTx ´®¿Ú±àºÅ
+ * @ret »ùµØÖ·
  */
 void *uart_get_base(ls1b_uart_t UARTx)
 {
@@ -53,7 +53,7 @@ void *uart_get_base(ls1b_uart_t UARTx)
         case LS1B_UART1:
             base = (void *)LS1B_UART1_BASE;
             break;
-        
+
         case LS1B_UART2:
             base = (void *)LS1B_UART2_BASE;
             break;
@@ -61,7 +61,7 @@ void *uart_get_base(ls1b_uart_t UARTx)
         case LS1B_UART3:
             base = (void *)LS1B_UART3_BASE;
             break;
-        
+
         case LS1B_UART4:
             base = (void *)LS1B_UART4_BASE;
             break;
@@ -103,30 +103,30 @@ void *uart_get_base(ls1b_uart_t UARTx)
 
 
 /*
- * åˆå§‹åŒ–æŒ‡å®šçš„ä¸²å£æ¨¡å—
- * @uart_info_p ä¸²å£æ¨¡å—ä¿¡æ¯
+ * ³õÊ¼»¯Ö¸¶¨µÄ´®¿ÚÄ£¿é
+ * @uart_info_p ´®¿ÚÄ£¿éĞÅÏ¢
  */
 void uart_init(ls1b_uart_info_t *uart_info_p)
 {
     void *uart_base = uart_get_base(uart_info_p->UARTx);
     unsigned long baudrate_div = 0;
 
-    // ç¦æ­¢æ‰€æœ‰ä¸­æ–­
+    // ½ûÖ¹ËùÓĞÖĞ¶Ï
     reg_write_8(0,      uart_base + LS1B_UART_IER_OFFSET);
 
-    // æ¥æ”¶FIFOçš„ä¸­æ–­ç”³è¯·Triggerä¸º14å­—èŠ‚ï¼Œæ¸…ç©ºå‘é€å’Œæ¥æ”¶FIFOï¼Œå¹¶å¤ä½
+    // ½ÓÊÕFIFOµÄÖĞ¶ÏÉêÇëTriggerÎª14×Ö½Ú£¬Çå¿Õ·¢ËÍºÍ½ÓÊÕFIFO£¬²¢¸´Î»
     reg_write_8(0xc3,   uart_base + LS1B_UART_FCR_OFFSET);
 
-    // è®¾ç½®æ³¢ç‰¹ç‡
+    // ÉèÖÃ²¨ÌØÂÊ
     reg_write_8(0x80,   uart_base + LS1B_UART_LCR_OFFSET);
     baudrate_div = clk_get_apb_rate() / 16 / uart_info_p->baudrate;
     reg_write_8((baudrate_div >> 8) & 0xff, uart_base + LS1B_UART_MSB_OFFSET);
     reg_write_8(baudrate_div & 0xff,        uart_base + LS1B_UART_LSB_OFFSET);
 
-    // 8ä¸ªæ•°æ®ä½ï¼Œ1ä¸ªåœæ­¢ä½ï¼Œæ— æ ¡éªŒ
+    // 8¸öÊı¾İÎ»£¬1¸öÍ£Ö¹Î»£¬ÎŞĞ£Ñé
     reg_write_8(0x03,   uart_base + LS1B_UART_LCR_OFFSET);
 
-    // ä½¿èƒ½æ¥æ”¶ä¸­æ–­
+    // Ê¹ÄÜ½ÓÊÕÖĞ¶Ï
     if (TRUE == uart_info_p->rx_enable)
     {
         reg_write_8(IER_IRxE|IER_ILE , uart_base + LS1B_UART_IER_OFFSET);
@@ -137,8 +137,8 @@ void uart_init(ls1b_uart_info_t *uart_info_p)
 
 
 /*
- * åˆ¤æ–­FIFOæ˜¯å¦ä¸ºç©º
- * @uartx ä¸²å£å·
+ * ÅĞ¶ÏFIFOÊÇ·ñÎª¿Õ
+ * @uartx ´®¿ÚºÅ
  * @ret TRUE or FALSE
  */
 BOOL uart_is_transmit_empty(ls1b_uart_t uartx)
@@ -158,19 +158,19 @@ BOOL uart_is_transmit_empty(ls1b_uart_t uartx)
 
 
 /*
- * å‘é€ä¸€ä¸ªå­—èŠ‚
- * @uartx ä¸²å£å·
- * @ch å¾…å‘é€çš„å­—ç¬¦ä¸²
+ * ·¢ËÍÒ»¸ö×Ö½Ú
+ * @uartx ´®¿ÚºÅ
+ * @ch ´ı·¢ËÍµÄ×Ö·û´®
  */
 void uart_putc(ls1b_uart_t uartx, unsigned char ch)
 {
     void *uart_base = uart_get_base(uartx);
-    
-    // ç­‰å¾…
+
+    // µÈ´ı
     while (FALSE == uart_is_transmit_empty(uartx))
         ;
 
-    // å‘é€
+    // ·¢ËÍ
     reg_write_8(ch, uart_base + LS1B_UART_DAT_OFFSET);
 
     return ;
@@ -178,15 +178,15 @@ void uart_putc(ls1b_uart_t uartx, unsigned char ch)
 
 
 /*
- * æ‰“å°ä¸€ä¸ªå­—ç¬¦ä¸²åˆ°æŒ‡å®šä¸²å£
- * @uartx ä¸²å£å·
- * @str å¾…æ‰“å°çš„å­—ç¬¦ä¸²
+ * ´òÓ¡Ò»¸ö×Ö·û´®µ½Ö¸¶¨´®¿Ú
+ * @uartx ´®¿ÚºÅ
+ * @str ´ı´òÓ¡µÄ×Ö·û´®
  */
 void uart_print(ls1b_uart_t uartx, const char *str)
 {
-    while ('\0' != *str)                // åˆ¤æ–­æ˜¯å¦ä¸ºå­—ç¬¦ä¸²ç»“æŸç¬¦
+    while ('\0' != *str)                // ÅĞ¶ÏÊÇ·ñÎª×Ö·û´®½áÊø·û
     {
-        uart_putc(uartx, *str);   // å‘é€ä¸€ä¸ªå­—ç¬¦
+        uart_putc(uartx, *str);   // ·¢ËÍÒ»¸ö×Ö·û
         str++;
     }
 
@@ -195,21 +195,21 @@ void uart_print(ls1b_uart_t uartx, const char *str)
 
 
 /*
- * åˆå§‹åŒ–ä¸²å£2
+ * ³õÊ¼»¯´®¿Ú2
  */
 void uart2_init(void)
 {
     unsigned int tx_gpio = 37;
     unsigned int rx_gpio = 36;
 
-    // è®¾ç½®å¤ç”¨
+    // ÉèÖÃ¸´ÓÃ
     pin_set_remap(tx_gpio, PIN_REMAP_SECOND);
     pin_set_remap(rx_gpio, PIN_REMAP_SECOND);
-    
-    // åˆå§‹åŒ–ç›¸å…³å¯„å­˜å™¨
+
+    // ³õÊ¼»¯Ïà¹Ø¼Ä´æÆ÷
     debug_uart_info.UARTx = LS1B_UART2;
     debug_uart_info.baudrate = 115200;
-    debug_uart_info.rx_enable = FALSE;  // è°ƒè¯•ä¸²å£åªéœ€è¦æ‰“å°(å‘é€)åŠŸèƒ½ï¼Œä¸éœ€è¦æ¥æ”¶åŠŸèƒ½
+    debug_uart_info.rx_enable = FALSE;  // µ÷ÊÔ´®¿ÚÖ»ĞèÒª´òÓ¡(·¢ËÍ)¹¦ÄÜ£¬²»ĞèÒª½ÓÊÕ¹¦ÄÜ
     uart_init(&debug_uart_info);
 
     return ;
@@ -217,8 +217,8 @@ void uart2_init(void)
 
 
 /*
- * åœ¨ä¸²å£2ä¸Šæ‰“å°å­—ç¬¦ä¸²
- * @str å¾…æ‰“å°çš„å­—ç¬¦ä¸²
+ * ÔÚ´®¿Ú2ÉÏ´òÓ¡×Ö·û´®
+ * @str ´ı´òÓ¡µÄ×Ö·û´®
  */
 void uart2_print(const char *str)
 {
@@ -228,8 +228,8 @@ void uart2_print(const char *str)
 
 
 /*
- * åœ¨è°ƒè¯•ä¸²å£æ‰“å°å­—ç¬¦ä¸²
- * @str å¾…æ‰“å°çš„å­—ç¬¦ä¸²
+ * ÔÚµ÷ÊÔ´®¿Ú´òÓ¡×Ö·û´®
+ * @str ´ı´òÓ¡µÄ×Ö·û´®
  */
 void uart_debug_print(const char *str)
 {
@@ -239,8 +239,8 @@ void uart_debug_print(const char *str)
 
 
 /*
- * åœ¨è°ƒè¯•ä¸²å£æ‰“å°ä¸€ä¸ªå­—ç¬¦
- * @ch å¾…æ‰“å°çš„å­—ç¬¦
+ * ÔÚµ÷ÊÔ´®¿Ú´òÓ¡Ò»¸ö×Ö·û
+ * @ch ´ı´òÓ¡µÄ×Ö·û
  */
 void uart_debug_putc(unsigned char ch)
 {

@@ -39,7 +39,7 @@
 /*!
  * @brief GPIO-based software I2C peripheral.
  *
- * In order to stay consistent with the i2c spec, we do not 
+ * In order to stay consistent with the i2c spec, we do not
  * drive the SDA/SCL HIGH.  Instead the pin will be placed into
  * HI-Z and allow the pull-ups to get the line to HIGH.  This makes
  * sure we do not have bus contention on the 9th clock pulse (ACK) as
@@ -55,10 +55,10 @@
 class SoftwareI2CPort : public I2CMasterPort
 {
 public:
-    
+
     //! @brief Init the I2C port.
     int init(GpioPin * scl, GpioPin * sda);
-    
+
     //! @brief Destructor.
     virtual ~SoftwareI2CPort();
 
@@ -77,13 +77,13 @@ protected:
     {
         uint32_t low_count;
         uint32_t high_count;
-    
+
         uint32_t rcv_count;
         uint32_t xmit_count;
-    
+
         uint32_t lead_in_count;
     };
-    
+
     clock_timing m_timing;
     uint32_t m_addressBuffer[3];
 
@@ -99,7 +99,7 @@ protected:
 
     bool _write(uint8_t u8SlaveAddress, const void* pData, uint16_t u16Size, bool doSendStart, bool bStop, bool holdLow);
     bool _read(uint8_t u8SlaveAddress, void* pData, uint16_t u16Size, bool holdLow);
-    
+
 };
 
 //! @}

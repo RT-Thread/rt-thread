@@ -103,15 +103,15 @@ typedef struct {
        \ref GAPI_SDIO_VersionEnumT "GAPI_SDIO_VERSION".
     */
     GD_SDIO_VersionEnumT version;
-	GD_SDIO_TransferTypeEnumT type;
+    GD_SDIO_TransferTypeEnumT type;
     /*!
     ** The handle specific notification function.
     */
     GD_SDIO_NotifyFuncT  notifyFunc;
 
-	GD_SDIO_IRQFuncT	irqFunc;
+    GD_SDIO_IRQFuncT    irqFunc;
 
-	GD_SDIO_RESETFuncT resetFunc;
+    GD_SDIO_RESETFuncT resetFunc;
     /*!
     ** Optional data pointer for the notification function.
     */
@@ -119,7 +119,7 @@ typedef struct {
     /*!
        Flag to request DMA for read/write transfer operation.
     */
-    U32       			isUseDmaWay;
+    U32                 isUseDmaWay;
 } GD_SDIO_OpenParamsT;
 
 /*cid info */

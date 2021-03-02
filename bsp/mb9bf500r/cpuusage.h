@@ -11,7 +11,7 @@
  * Date           Author       Notes
  * 2011-03-03     lgnq
  */
- 
+
 #ifndef __CPUUSAGE_H__
 #define __CPUUSAGE_H__
 

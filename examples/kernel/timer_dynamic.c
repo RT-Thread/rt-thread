@@ -1,22 +1,22 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šåŠ¨æ€å®šæ—¶å™¨ä¾‹ç¨‹
+ * ³ÌĞòÇåµ¥£º¶¯Ì¬¶¨Ê±Æ÷Àı³Ì
  *
- * è¿™ä¸ªä¾‹ç¨‹ä¼šåˆ›å»ºä¸¤ä¸ªåŠ¨æ€å®šæ—¶å™¨å¯¹è±¡ï¼Œä¸€ä¸ªæ˜¯å•æ¬¡å®šæ—¶ï¼Œä¸€ä¸ªæ˜¯å‘¨æœŸæ€§çš„å®šæ—¶
+ * Õâ¸öÀı³Ì»á´´½¨Á½¸ö¶¯Ì¬¶¨Ê±Æ÷¶ÔÏó£¬Ò»¸öÊÇµ¥´Î¶¨Ê±£¬Ò»¸öÊÇÖÜÆÚĞÔµÄ¶¨Ê±
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* å®šæ—¶å™¨çš„æ§åˆ¶å— */
+/* ¶¨Ê±Æ÷µÄ¿ØÖÆ¿é */
 static rt_timer_t timer1;
 static rt_timer_t timer2;
 
-/* å®šæ—¶å™¨1è¶…æ—¶å‡½æ•° */
+/* ¶¨Ê±Æ÷1³¬Ê±º¯Êı */
 static void timeout1(void* parameter)
 {
     rt_kprintf("periodic timer is timeout\n");
 }
 
-/* å®šæ—¶å™¨2è¶…æ—¶å‡½æ•° */
+/* ¶¨Ê±Æ÷2³¬Ê±º¯Êı */
 static void timeout2(void* parameter)
 {
     rt_kprintf("one shot timer is timeout\n");
@@ -24,26 +24,26 @@ static void timeout2(void* parameter)
 
 void timer_create_init()
 {
-    /* åˆ›å»ºå®šæ—¶å™¨1 */
-    timer1 = rt_timer_create("timer1",  /* å®šæ—¶å™¨åå­—æ˜¯ timer1 */
-        timeout1, /* è¶…æ—¶æ—¶å›è°ƒçš„å¤„ç†å‡½æ•° */
-        RT_NULL, /* è¶…æ—¶å‡½æ•°çš„å…¥å£å‚æ•° */
-        10, /* å®šæ—¶é•¿åº¦ï¼Œä»¥OS Tickä¸ºå•ä½ï¼Œå³10ä¸ªOS Tick */
-        RT_TIMER_FLAG_PERIODIC); /* å‘¨æœŸæ€§å®šæ—¶å™¨ */
-    /* å¯åŠ¨å®šæ—¶å™¨ */
+    /* ´´½¨¶¨Ê±Æ÷1 */
+    timer1 = rt_timer_create("timer1",  /* ¶¨Ê±Æ÷Ãû×ÖÊÇ timer1 */
+        timeout1, /* ³¬Ê±Ê±»Øµ÷µÄ´¦Àíº¯Êı */
+        RT_NULL, /* ³¬Ê±º¯ÊıµÄÈë¿Ú²ÎÊı */
+        10, /* ¶¨Ê±³¤¶È£¬ÒÔOS TickÎªµ¥Î»£¬¼´10¸öOS Tick */
+        RT_TIMER_FLAG_PERIODIC); /* ÖÜÆÚĞÔ¶¨Ê±Æ÷ */
+    /* Æô¶¯¶¨Ê±Æ÷ */
     if (timer1 != RT_NULL)
         rt_timer_start(timer1);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºå®šæ—¶å™¨2 */
-    timer2 = rt_timer_create("timer2",   /* å®šæ—¶å™¨åå­—æ˜¯ timer2 */
-        timeout2, /* è¶…æ—¶æ—¶å›è°ƒçš„å¤„ç†å‡½æ•° */
-        RT_NULL, /* è¶…æ—¶å‡½æ•°çš„å…¥å£å‚æ•° */
-        30, /* å®šæ—¶é•¿åº¦ä¸º30ä¸ªOS Tick */
-        RT_TIMER_FLAG_ONE_SHOT); /* å•æ¬¡å®šæ—¶å™¨ */
+    /* ´´½¨¶¨Ê±Æ÷2 */
+    timer2 = rt_timer_create("timer2",   /* ¶¨Ê±Æ÷Ãû×ÖÊÇ timer2 */
+        timeout2, /* ³¬Ê±Ê±»Øµ÷µÄ´¦Àíº¯Êı */
+        RT_NULL, /* ³¬Ê±º¯ÊıµÄÈë¿Ú²ÎÊı */
+        30, /* ¶¨Ê±³¤¶ÈÎª30¸öOS Tick */
+        RT_TIMER_FLAG_ONE_SHOT); /* µ¥´Î¶¨Ê±Æ÷ */
 
-    /* å¯åŠ¨å®šæ—¶å™¨ */
+    /* Æô¶¯¶¨Ê±Æ÷ */
     if (timer2 != RT_NULL)
         rt_timer_start(timer2);
     else
@@ -53,35 +53,35 @@ void timer_create_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤å®šæ—¶å™¨å¯¹è±¡ */
+    /* É¾³ı¶¨Ê±Æ÷¶ÔÏó */
     rt_timer_delete(timer1);
     rt_timer_delete(timer2);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_timer_create()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
 
-    /* æ‰§è¡Œå®šæ—¶å™¨ä¾‹ç¨‹ */
+    /* Ö´ĞĞ¶¨Ê±Æ÷Àı³Ì */
     timer_create_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_timer_create, a dynamic timer example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     timer_create_init();

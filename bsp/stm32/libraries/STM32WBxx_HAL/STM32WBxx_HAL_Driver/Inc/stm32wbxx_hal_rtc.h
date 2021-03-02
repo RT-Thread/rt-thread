@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -39,13 +39,13 @@
   * @{
   */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup RTC_Exported_Types RTC Exported Types
   * @{
   */
 
-/** 
-  * @brief  HAL State structures definition  
+/**
+  * @brief  HAL State structures definition
   */
 typedef enum
 {
@@ -57,7 +57,7 @@ typedef enum
 
 }HAL_RTCStateTypeDef;
 
-/** 
+/**
   * @brief  RTC Configuration Structure definition
   */
 typedef struct
@@ -67,7 +67,7 @@ typedef struct
 
   uint32_t AsynchPrediv;    /*!< Specifies the RTC Asynchronous Predivider value.
                                  This parameter must be a number between Min_Data = 0x00 and Max_Data = 0x7F */
-                               
+
   uint32_t SynchPrediv;     /*!< Specifies the RTC Synchronous Predivider value.
                                  This parameter must be a number between Min_Data = 0x00 and Max_Data = 0x7FFF */
 
@@ -77,15 +77,15 @@ typedef struct
   uint32_t OutPutRemap;    /*!< Specifies the remap for RTC output.
                                  This parameter can be a value of @ref  RTC_Output_ALARM_OUT_Remap */
 
-  uint32_t OutPutPolarity;  /*!< Specifies the polarity of the output signal.  
+  uint32_t OutPutPolarity;  /*!< Specifies the polarity of the output signal.
                                  This parameter can be a value of @ref RTC_Output_Polarity_Definitions */
 
   uint32_t OutPutType;      /*!< Specifies the RTC Output Pin mode.
                                  This parameter can be a value of @ref RTC_Output_Type_ALARM_OUT */
 }RTC_InitTypeDef;
 
-/** 
-  * @brief  RTC Time structure definition  
+/**
+  * @brief  RTC Time structure definition
   */
 typedef struct
 {
@@ -101,26 +101,26 @@ typedef struct
 
   uint8_t TimeFormat;       /*!< Specifies the RTC AM/PM Time.
                                  This parameter can be a value of @ref RTC_AM_PM_Definitions */
-  
+
   uint32_t SubSeconds;     /*!< Specifies the RTC_SSR RTC Sub Second register content.
                                  This parameter corresponds to a time unit range between [0-1] Second
                                  with [1 Sec / SecondFraction +1] granularity */
- 
+
   uint32_t SecondFraction;  /*!< Specifies the range or granularity of Sub Second register content
                                  corresponding to Synchronous pre-scaler factor value (PREDIV_S)
                                  This parameter corresponds to a time unit range between [0-1] Second
                                  with [1 Sec / SecondFraction +1] granularity.
                                  This field will be used only by HAL_RTC_GetTime function */
-  
+
   uint32_t DayLightSaving;  /*!< Specifies RTC_DayLightSaveOperation: the value of hour adjustment.
                                  This parameter can be a value of @ref RTC_DayLightSaving_Definitions */
 
-  uint32_t StoreOperation;  /*!< Specifies RTC_StoreOperation value to be written in the BCK bit 
+  uint32_t StoreOperation;  /*!< Specifies RTC_StoreOperation value to be written in the BCK bit
                                  in CR register to store the operation.
                                  This parameter can be a value of @ref RTC_StoreOperation_Definitions */
 }RTC_TimeTypeDef;
 
-/** 
+/**
   * @brief  RTC Date structure definition
   */
 typedef struct
@@ -139,7 +139,7 @@ typedef struct
 
 }RTC_DateTypeDef;
 
-/** 
+/**
   * @brief  RTC Alarm structure definition
   */
 typedef struct
@@ -148,7 +148,7 @@ typedef struct
 
   uint32_t AlarmMask;            /*!< Specifies the RTC Alarm Masks.
                                       This parameter can be a value of @ref RTC_AlarmMask_Definitions */
-  
+
   uint32_t AlarmSubSecondMask;   /*!< Specifies the RTC Alarm SubSeconds Masks.
                                       This parameter can be a value of @ref RTC_Alarm_Sub_Seconds_Masks_Definitions */
 
@@ -163,8 +163,8 @@ typedef struct
                                       This parameter can be a value of @ref RTC_Alarms_Definitions */
 }RTC_AlarmTypeDef;
 
-/** 
-  * @brief  RTC Handle Structure definition  
+/**
+  * @brief  RTC Handle Structure definition
   */
 #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
 typedef struct __RTC_HandleTypeDef
@@ -238,7 +238,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
 /** @defgroup RTC_Exported_Constants RTC Exported Constants
   * @{
   */
- 
+
 /** @defgroup RTC_Hour_Formats RTC Hour Formats
   * @{
   */
@@ -278,7 +278,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
 /**
   * @}
   */
-  
+
 /** @defgroup RTC_AM_PM_Definitions RTC AM PM Definitions
   * @{
   */
@@ -697,7 +697,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
 
 
 /**
-  * @brief  Enable rising & falling edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Enable rising & falling edge trigger on the RTC Alarm associated Exti line.
   * @retval None.
   */
 #define __HAL_RTC_ALARM_EXTI_ENABLE_RISING_FALLING_EDGE()  do { \
@@ -706,7 +706,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
                                                            } while(0U)
 
 /**
-  * @brief  Disable rising & falling edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Disable rising & falling edge trigger on the RTC Alarm associated Exti line.
   * @retval None.
   */
 #define __HAL_RTC_ALARM_EXTI_DISABLE_RISING_FALLING_EDGE() do { \
@@ -809,7 +809,7 @@ void              HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc);
 
 /** @defgroup  RTC_Exported_Functions_Group4 Peripheral Control functions
   * @{
-  */  
+  */
 /* Peripheral Control functions ***********************************************/
 HAL_StatusTypeDef   HAL_RTC_WaitForSynchro(RTC_HandleTypeDef* hrtc);
 /**
@@ -818,7 +818,7 @@ HAL_StatusTypeDef   HAL_RTC_WaitForSynchro(RTC_HandleTypeDef* hrtc);
 
 /** @defgroup RTC_Exported_Functions_Group5 Peripheral State functions
   * @{
-  */  
+  */
 /* Peripheral State functions *************************************************/
 HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
 /**
@@ -827,9 +827,9 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
 
 /**
   * @}
-  */  
+  */
 
-/* Private types -------------------------------------------------------------*/ 
+/* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup RTC_Private_Constants RTC Private Constants
@@ -860,7 +860,7 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
 
 /** @defgroup RTC_IS_RTC_Definitions RTC Private macros to check input parameters
   * @{
-  */ 
+  */
 
 #define IS_RTC_HOUR_FORMAT(FORMAT)     (((FORMAT) == RTC_HOURFORMAT_12) || \
                                         ((FORMAT) == RTC_HOURFORMAT_24))
@@ -955,7 +955,7 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
 /**
   * @}
   */
-  
+
 /* Private functions -------------------------------------------------------------*/
 /** @defgroup RTC_Private_Functions RTC Private Functions
   * @{
@@ -966,7 +966,7 @@ uint8_t            RTC_Bcd2ToByte(uint8_t Value);
 /**
   * @}
   */
-  
+
 
 /**
   * @}

@@ -32,7 +32,7 @@
 #include "iomux_config.h"
 #include "registers/regsecspi.h"
 #include "timer/timer.h"
-#include "registers/regsiomuxc.h" 
+#include "registers/regsiomuxc.h"
 
 #define ECSPI_FIFO_SIZE 64
 
@@ -48,10 +48,10 @@ static int ecspi_xfer_mst(unsigned instance, const uint8_t * tx_buf, uint8_t * r
 
 static void ecspi_start_transfer(unsigned instance, uint16_t brs_bts)
 {
-    // Set burst length 
+    // Set burst length
     HW_ECSPI_CONREG(instance).B.BURST_LENGTH = brs_bts - 1;
 
-    // Clear status 
+    // Clear status
     HW_ECSPI_STATREG_WR(instance, BM_ECSPI_STATREG_RO | BM_ECSPI_STATREG_TC);
 }
 
@@ -75,10 +75,10 @@ static int ecspi_xfer_mst(unsigned instance, const uint8_t * tx_buf, uint8_t * r
     uint32_t val;
     uint32_t idx;
 
-    // Start burst 
+    // Start burst
     HW_ECSPI_CONREG_SET(instance, BM_ECSPI_CONREG_SMC);
 
-    // Write to Tx FIFO 
+    // Write to Tx FIFO
     val = 0;
     for (idx = 0; idx < bytes; idx += 4)
     {
@@ -92,7 +92,7 @@ static int ecspi_xfer_mst(unsigned instance, const uint8_t * tx_buf, uint8_t * r
         HW_ECSPI_TXDATA_WR(instance, val);
     }
 
-    // Wait for transfer complete 
+    // Wait for transfer complete
     val = SPI_RETRY_TIMES;
     while (!HW_ECSPI_STATREG(instance).B.TC)
     {
@@ -108,7 +108,7 @@ static int ecspi_xfer_mst(unsigned instance, const uint8_t * tx_buf, uint8_t * r
         hal_delay_us(500);
     }
 
-    // Read from Rx FIFO 
+    // Read from Rx FIFO
     for (idx = 0; bytes > 0; bytes -= 4, idx += 4)
     {
         val = HW_ECSPI_RXDATA_RD(instance);
@@ -130,7 +130,7 @@ static int ecspi_xfer_mst(unsigned instance, const uint8_t * tx_buf, uint8_t * r
         }
     }
 
-    // Clear status 
+    // Clear status
     HW_ECSPI_STATREG_WR(instance, BM_ECSPI_STATREG_TC);
 
     return SUCCESS;
@@ -138,49 +138,49 @@ static int ecspi_xfer_mst(unsigned instance, const uint8_t * tx_buf, uint8_t * r
 
 int ecspi_configure(dev_ecspi_e instance, const param_ecspi_t * param)
 {
-    // Reset eCSPI controller 
+    // Reset eCSPI controller
     HW_ECSPI_CONREG(instance).B.EN = 0;
 
-    // Setup chip select 
+    // Setup chip select
     HW_ECSPI_CONREG(instance).B.CHANNEL_SELECT = param->channel;
 
-    // Setup mode 
+    // Setup mode
     uint32_t channelMask = 1 << param->channel;
     uint32_t value = HW_ECSPI_CONREG(instance).B.CHANNEL_MODE;
     BW_ECSPI_CONREG_CHANNEL_MODE(instance, param->mode ? (value | channelMask) : (value & ~channelMask));
 
-    // Setup pre & post clock divider 
+    // Setup pre & post clock divider
     HW_ECSPI_CONREG(instance).B.PRE_DIVIDER = (param->pre_div == 0) ? 0 : (param->pre_div - 1);
     HW_ECSPI_CONREG(instance).B.POST_DIVIDER = param->post_div;
 
-    // Enable eCSPI 
+    // Enable eCSPI
     HW_ECSPI_CONREG(instance).B.EN = 1;
 
-    // Setup SCLK_PHA, SCLK_POL, SS_POL 
+    // Setup SCLK_PHA, SCLK_POL, SS_POL
     value = HW_ECSPI_CONFIGREG(instance).B.SCLK_PHA;
     HW_ECSPI_CONFIGREG(instance).B.SCLK_PHA = param->sclk_pha ? (value | channelMask) : (value & ~channelMask);
-    
+
     value = HW_ECSPI_CONFIGREG(instance).B.SCLK_POL;
     HW_ECSPI_CONFIGREG(instance).B.SCLK_POL = param->sclk_pol ? (value | channelMask) : (value & ~channelMask);
-    
+
     value = HW_ECSPI_CONFIGREG(instance).B.SS_POL;
     HW_ECSPI_CONFIGREG(instance).B.SS_POL = param->ss_pol ? (value | channelMask) : (value & ~channelMask);
-    
+
     HW_ECSPI_CONFIGREG(instance).B.SS_CTL |= channelMask;
-    
+
     return SUCCESS;
 }
 
 //! @todo Validate @a dev value for the chip, since not all chips will have all 5 instances.
 int ecspi_open(dev_ecspi_e dev, const param_ecspi_t * param)
 {
-    // Configure IO signals 
+    // Configure IO signals
     ecspi_iomux_config(dev);
-    
+
     // Ungate the module clock.
     clock_gating_config(REGS_ECSPI_BASE(dev), CLOCK_ON);
 
-    // Configure eCSPI registers 
+    // Configure eCSPI registers
     ecspi_configure(dev, param);
 
     return SUCCESS;
@@ -188,9 +188,9 @@ int ecspi_open(dev_ecspi_e dev, const param_ecspi_t * param)
 
 int ecspi_close(dev_ecspi_e dev)
 {
-    // Disable controller 
+    // Disable controller
     HW_ECSPI_CONREG(dev).B.EN = 0;
-    
+
     // Gate the module clock.
     clock_gating_config(REGS_ECSPI_BASE(dev), CLOCK_OFF);
 
@@ -202,16 +202,16 @@ int ecspi_xfer(dev_ecspi_e dev, const uint8_t * tx_buf, uint8_t * rx_buf, uint16
 {
     uint32_t retv = SUCCESS;
 
-    // Set bytes for burst 
+    // Set bytes for burst
     int bytes = brs_bts >> 3;
 
-    // Handle non-byte-aligned bits 
+    // Handle non-byte-aligned bits
     if ((brs_bts & 0x7) != 0)
     {
         bytes++;
     }
 
-    // Check burst length 
+    // Check burst length
     if (bytes > ECSPI_FIFO_SIZE * 4)
     {
 #if DEBUG
@@ -222,13 +222,13 @@ int ecspi_xfer(dev_ecspi_e dev, const uint8_t * tx_buf, uint8_t * rx_buf, uint16
 
     if (retv == SUCCESS)
     {
-        // Prepare transfer 
+        // Prepare transfer
         ecspi_start_transfer(dev, brs_bts);
 
-        // Initiate transfer  
+        // Initiate transfer
         uint32_t channel = HW_ECSPI_CONREG(dev).B.CHANNEL_SELECT;
 
-        // Handle different mode transfer 
+        // Handle different mode transfer
         if ((HW_ECSPI_CONREG(dev).B.CHANNEL_MODE & (1 << channel)) == 0)
         {
             retv = ecspi_xfer_slv(dev, tx_buf, rx_buf, bytes);

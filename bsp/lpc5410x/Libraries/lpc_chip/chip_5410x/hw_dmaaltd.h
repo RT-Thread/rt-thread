@@ -47,9 +47,9 @@ ErrorCode_t dmaalt_init_queue(ROM_DMA_HANDLE_T pHandle, uint8_t dmaCh, ROM_DMA_Q
 void dmaalt_register_queue_callback(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue, uint32_t cbIndex, void *pCB);
 
 ErrorCode_t dmaalt_build_descriptor_chain(ROM_DMA_HANDLE_T pHandle,
-										  ROM_DMA_XFERDESC_CFG_T *pXferCfg,
-										  ROM_DMA_DESC_T *pDesc,
-										  ROM_DMA_DESC_T *pDescPrev);
+                                          ROM_DMA_XFERDESC_CFG_T *pXferCfg,
+                                          ROM_DMA_DESC_T *pDesc,
+                                          ROM_DMA_DESC_T *pDescPrev);
 
 uint32_t dmaalt_get_transfer_count(ROM_DMA_HANDLE_T pHandle, ROM_DMA_DESC_T *pDesc);
 

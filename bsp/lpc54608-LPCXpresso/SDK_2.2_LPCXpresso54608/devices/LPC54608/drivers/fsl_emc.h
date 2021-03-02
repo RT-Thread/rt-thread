@@ -53,7 +53,7 @@
 #define EMC_DYNAMIC_MEMDEV_NUM       (4U)
 #define EMC_ADDRMAP_SHIFT        EMC_DYNAMIC_DYNAMICCONFIG_AM0_SHIFT
 #define EMC_ADDRMAP_MASK         (EMC_DYNAMIC_DYNAMICCONFIG_AM0_MASK |EMC_DYNAMIC_DYNAMICCONFIG_AM1_MASK)
-#define EMC_ADDRMAP(x)    (((uint32_t)(((uint32_t)(x)) << EMC_ADDRMAP_SHIFT)) & EMC_ADDRMAP_MASK)     
+#define EMC_ADDRMAP(x)    (((uint32_t)(((uint32_t)(x)) << EMC_ADDRMAP_SHIFT)) & EMC_ADDRMAP_MASK)
 #define EMC_HZ_ONEMHZ   (1000000U)
 #define EMC_MILLISECS_ONESEC   (1000U)
 #define EMC_SDRAM_MODE_CL_SHIFT   (4U)
@@ -73,7 +73,7 @@ typedef enum _emc_static_memwidth
  * @brief Define EMC static configuration.
  */
 typedef enum _emc_static_special_config
-{ 
+{
     kEMC_AsynchronosPageEnable = 0x0008U,/*!< Enable the asynchronous page mode. page length four. */
     kEMC_ActiveHighChipSelect = 0x0040U, /*!< Chip select active high. */
     kEMC_ByteLaneStateAllLow = 0x0080U,  /*!< Reads/writes the respective valuie bits in BLS3:0 are low. */
@@ -91,7 +91,7 @@ typedef enum _emc_dynamic_device
 /*! @brief EMC dynamic read strategy. */
 typedef enum _emc_dynamic_read
 {
-    kEMC_NoDelay = 0x0U,        /*!< No delay. */ 
+    kEMC_NoDelay = 0x0U,        /*!< No delay. */
     kEMC_Cmddelay,              /*!< Command delayed strategy, using EMCCLKDELAY. */
     kEMC_CmdDelayPulseOneclk,   /*!< Command delayed strategy pluse one clock cycle using EMCCLKDELAY. */
     kEMC_CmddelayPulsetwoclk,   /*!< Command delayed strategy pulse two clock cycle using EMCCLKDELAY. */
@@ -122,7 +122,7 @@ typedef struct _emc_dynamic_timing_config
     uint32_t tApr_Ns;     /*!< Last data out to active command time in unit of nanosecond. */
     uint32_t tDal_Ns;     /*!< Data-in to active command in unit of nanosecond. */
     uint32_t tWr_Ns;      /*!< Write recovery time in unit of nanosecond. */
-    uint32_t tRc_Ns;      /*!< Active to active command period in unit of nanosecond. */       
+    uint32_t tRc_Ns;      /*!< Active to active command period in unit of nanosecond. */
     uint32_t tRfc_Ns;     /*!< Auto-refresh period and auto-refresh to active command period in unit of nanosecond. */
     uint32_t tXsr_Ns;     /*!< Exit self-refresh to active command time in unit of nanosecond. */
     uint32_t tRrd_Ns;     /*!< Active bank A to active bank B latency in unit of nanosecond. */
@@ -131,13 +131,13 @@ typedef struct _emc_dynamic_timing_config
 
 /*!
  * @brief EMC dynamic memory controller independent chip configuration structure.
- * Please take refer to the address mapping table in the RM in EMC chapter when you 
+ * Please take refer to the address mapping table in the RM in EMC chapter when you
  * set the "devAddrMap". Choose the right Bit 14 Bit12 ~ Bit 7 group in the table
  * according to the bus width/banks/row/colum length for you device.
- * Set devAddrMap with the value make up with the seven bits (bit14 bit12 ~ bit 7) 
+ * Set devAddrMap with the value make up with the seven bits (bit14 bit12 ~ bit 7)
  * and inset the bit 13 with 0.
  * for example, if the bit 14 and bit12 ~ bit7 is 1000001 is choosen according to the
- * 32bit high-performance bus width with 2 banks, 11 row lwngth, 8 column length. 
+ * 32bit high-performance bus width with 2 banks, 11 row lwngth, 8 column length.
  * Set devAddrMap with 0x81.
  */
 typedef struct _emc_dynamic_chip_config
@@ -161,7 +161,7 @@ typedef struct _emc_static_chip_config
     uint32_t tWaitWriteEn_Ns;/*!< The delay form chip select to write enable in unit of nanosecond. */
     uint32_t tWaitOutEn_Ns;  /*!< The delay from chip selcet to output enable in unit of nanosecond. */
     uint32_t tWaitReadNoPage_Ns;/*!< In No-page mode, the delay from chip select to read access in unit of nanosecond. */
-    uint32_t tWaitReadPage_Ns;  /*!< In page mode, the read after the first read wait states in unit of nanosecond. */ 
+    uint32_t tWaitReadPage_Ns;  /*!< In page mode, the read after the first read wait states in unit of nanosecond. */
     uint32_t tWaitWrite_Ns;     /*!< The delay from chip select to write access in unit of nanosecond. */
     uint32_t tWaitTurn_Ns;      /*!< The Bus turn-around time in unit of nanosecond. */
 } emc_static_chip_config_t;
@@ -169,7 +169,7 @@ typedef struct _emc_static_chip_config
 /*!
  * @brief EMC module basic configuration structure.
  *
- * Defines the static memory controller configure structure and 
+ * Defines the static memory controller configure structure and
  * uses the EMC_Init() function to make necessary initializations.
  *
  */
@@ -215,10 +215,10 @@ void EMC_Init(EMC_Type *base, emc_basic_config_t *config);
  * @param configure The EMC dynamic memory controller chip independent configuration pointer.
  *       This configuration pointer is actually pointer to a configration array. the array number
  *       depends on the "totalChips".
- * @param totalChips The total dynamic memory chip numbers been used or the length of the 
+ * @param totalChips The total dynamic memory chip numbers been used or the length of the
  *        "emc_dynamic_chip_config_t" type memory.
  */
-void EMC_DynamicMemInit(EMC_Type *base, emc_dynamic_timing_config_t *timing, 
+void EMC_DynamicMemInit(EMC_Type *base, emc_dynamic_timing_config_t *timing,
         emc_dynamic_chip_config_t *config, uint32_t totalChips);
 
 /*!
@@ -232,7 +232,7 @@ void EMC_DynamicMemInit(EMC_Type *base, emc_dynamic_timing_config_t *timing,
  * @param configure The EMC static memory controller chip independent configuration pointer.
  *       This configuration pointer is actually pointer to a configration array. the array number
  *       depends on the "totalChips".
- * @param totalChips The total static memory chip numbers been used or the length of the 
+ * @param totalChips The total static memory chip numbers been used or the length of the
  *        "emc_static_chip_config_t" type memory.
  */
 void EMC_StaticMemInit(EMC_Type *base, uint32_t *extWait_Ns, emc_static_chip_config_t *config, uint32_t totalChips);
@@ -300,11 +300,11 @@ static inline void EMC_EnableDynamicMemControl(EMC_Type *base, bool enable)
  */
 static inline void EMC_MirrorChipAddr(EMC_Type *base, bool enable)
 {
-    if (enable) 
+    if (enable)
     {
         base->CONTROL |= EMC_CONTROL_M_MASK;
     }
-    else 
+    else
     {
         base->CONTROL &= ~EMC_CONTROL_M_MASK;
     }
@@ -312,7 +312,7 @@ static inline void EMC_MirrorChipAddr(EMC_Type *base, bool enable)
 
 /*!
  * @brief Enter the self-refresh mode for dynamic memory controller.
- * This function provided self-refresh mode enter or exit for application. 
+ * This function provided self-refresh mode enter or exit for application.
  *
  * @param base EMC peripheral base address.
  * @param enable   True enter the self-refresh mode, false to exit self-refresh
@@ -332,7 +332,7 @@ static inline void EMC_EnterSelfRefreshCommand(EMC_Type *base, bool enable)
 
 /*!
  * @brief Get the operating mode of the EMC.
- * This function can be used to get the operating mode of the EMC. 
+ * This function can be used to get the operating mode of the EMC.
  *
  * @param base EMC peripheral base address.
  * @return The EMC in self-refresh mode if true, else in normal mode.
@@ -347,7 +347,7 @@ static inline bool EMC_IsInSelfrefreshMode(EMC_Type *base)
  *
  * @param base EMC peripheral base address.
  * @param enable True Enter the low-power mode, false exit low-power mode
- *        and return to normal mode. 
+ *        and return to normal mode.
  */
 static inline void EMC_EnterLowPowerMode(EMC_Type *base, bool enable)
 {

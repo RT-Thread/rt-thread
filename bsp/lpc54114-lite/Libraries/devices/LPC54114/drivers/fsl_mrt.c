@@ -3,7 +3,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -104,7 +104,7 @@ void MRT_Init(MRT_Type *base, const mrt_config_t *config)
 
     /* Reset the module */
     RESET_PeripheralReset(s_mrtResets[MRT_GetInstance(base)]);
-    
+
 #if !(defined(FSL_FEATURE_MRT_HAS_NO_MODCFG_MULTITASK) && FSL_FEATURE_MRT_HAS_NO_MODCFG_MULTITASK)
     /* Set timer operating mode */
     base->MODCFG = MRT_MODCFG_MULTITASK(config->enableMultiTask);

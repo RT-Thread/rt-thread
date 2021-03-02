@@ -17,7 +17,7 @@
  *
  */
 #pragma vector = VECT_CMT0_CMI0
-__interrupt 
+__interrupt
 void SysTick_Handler(void)
 {
    // __enable_interrupt();
@@ -56,7 +56,7 @@ void  rt_hw_systick_init(void)
 }
 
 void rt_hw_system_freq_init(void)
-{ 
+{
    /* Declare error flag */
   bool err = true;
 
@@ -69,15 +69,15 @@ void rt_hw_system_freq_init(void)
     24E6,
     PDL_NO_DATA
     );
-  /* 
+  /*
   Clock Description              Frequency
   ----------------------------------------
   Input Clock Frequency..............12MHz
-  Internal Clock Frequency...........96MHz    
+  Internal Clock Frequency...........96MHz
   Peripheral Clock Frequency.........48MHz
   External Bus Clock Frequency.......24MHz */
 
-  /* Halt in while loop when RPDL errors detected */    
+  /* Halt in while loop when RPDL errors detected */
   while (!err);
 }
 
@@ -86,8 +86,8 @@ void rt_hw_system_freq_init(void)
  */
 void rt_hw_board_init()
 {
-    
-    rt_hw_system_freq_init();               
+
+    rt_hw_system_freq_init();
     rt_hw_systick_init();
     rt_hw_uart_init();
 #ifdef RT_USING_CONSOLE

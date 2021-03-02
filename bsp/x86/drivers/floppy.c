@@ -29,31 +29,31 @@ typedef rt_int32_t s32;
 #define _local_irq_save(level) level = rt_hw_interrupt_disable()
 #define _local_irq_restore(level) rt_hw_interrupt_enable(level)
 
-static u8 floppy_buffer[512];                       /* è½¯ç›˜é«˜é€Ÿç¼“å†²åŒºåœ°å€æŒ‡é’ˆ */
+static u8 floppy_buffer[512];                       /* ÈíÅÌ¸ßËÙ»º³åÇøµØÖ·Ö¸Õë */
 
-#define MAX_REPLIES 7                                                             
-static u8 floppy_reply_buffer[MAX_REPLIES];         /* è½¯é©±å›åº”ç¼“å†²åŒº */
-#define ST0 (floppy_reply_buffer[0])                /* è½¯é©±å›åº”0å·å­—èŠ‚ */
-#define ST1 (floppy_reply_buffer[1])                /* è½¯é©±å›åº”1å·å­—èŠ‚ */
-#define ST2 (floppy_reply_buffer[2])                /* è½¯é©±å›åº”2å·å­—èŠ‚ */
-#define ST3 (floppy_reply_buffer[3])                /* è½¯é©±å›åº”3å·å­—èŠ‚ */
+#define MAX_REPLIES 7
+static u8 floppy_reply_buffer[MAX_REPLIES];         /* ÈíÇı»ØÓ¦»º³åÇø */
+#define ST0 (floppy_reply_buffer[0])                /* ÈíÇı»ØÓ¦0ºÅ×Ö½Ú */
+#define ST1 (floppy_reply_buffer[1])                /* ÈíÇı»ØÓ¦1ºÅ×Ö½Ú */
+#define ST2 (floppy_reply_buffer[2])                /* ÈíÇı»ØÓ¦2ºÅ×Ö½Ú */
+#define ST3 (floppy_reply_buffer[3])                /* ÈíÇı»ØÓ¦3ºÅ×Ö½Ú */
 
 
-static char *floppy_inc_name;                       /* è½¯é©±å‹å·å */
+static char *floppy_inc_name;                       /* ÈíÇıĞÍºÅÃû */
 static char *floppy_type;
-static u32  floppy_motor=0;                         /* è½¯é©±é©¬è¾¾çŠ¶æ€å­—èŠ‚ */
+static u32  floppy_motor=0;                         /* ÈíÇıÂí´ï×´Ì¬×Ö½Ú */
 static u32  floppy_size =0;
-/**********************åŠŸèƒ½å‡½æ•°***************************/
-static void floppy_result(void);                    /* è·å¾—è½¯é©±å“åº”çŠ¶æ€  */
-static u32  floppy_sendbyte(u32);                   /* å‘è½¯é©±æ§åˆ¶å¯„å­˜å™¨å‘é€ä¸€ä¸ªæ§åˆ¶å­—èŠ‚  */
-static u32  floppy_getbyte(void);                   /* ä»è½¯é©±æ•°æ®å¯„å­˜å™¨å¾—åˆ°ä¸€ä¸ªæ•°æ®å­—èŠ‚  */
-static u32  floppy_get_info(void);                  /* å¾—åˆ°è½¯é©±ä¿¡æ¯  */
-static void floppy_motorOn(void);                   /* æ‰“å¼€è½¯é©±é©¬è¾¾  */
-static void floppy_motorOff(void);                  /* å…³é—­è½¯é©±é©¬è¾¾  */
-static void floppy_setmode(void);                   /* è½¯é©±æ¨¡å¼è®¾ç½®  */
-static void block_to_hts(u32, u32*, u32*, u32*);    /* é€»è¾‘å—è½¬ä¸ºç£ç›˜å¤´ã€ç£é“å·å’Œæ‰‡åŒºå·  */
-static void floppy_setupDMA(void);                  /* è®¾ç½®è½¯é©±DMAé€šé“  */
-static void floppy_read_cmd(u32 blk);               /* ä»è½¯ç›˜ä¸Šè¯»å–æŒ‡å®šçš„é€»è¾‘å—åˆ°ç¼“å†²åŒº  */
+/**********************¹¦ÄÜº¯Êı***************************/
+static void floppy_result(void);                    /* »ñµÃÈíÇıÏìÓ¦×´Ì¬  */
+static u32  floppy_sendbyte(u32);                   /* ÏòÈíÇı¿ØÖÆ¼Ä´æÆ÷·¢ËÍÒ»¸ö¿ØÖÆ×Ö½Ú  */
+static u32  floppy_getbyte(void);                   /* ´ÓÈíÇıÊı¾İ¼Ä´æÆ÷µÃµ½Ò»¸öÊı¾İ×Ö½Ú  */
+static u32  floppy_get_info(void);                  /* µÃµ½ÈíÇıĞÅÏ¢  */
+static void floppy_motorOn(void);                   /* ´ò¿ªÈíÇıÂí´ï  */
+static void floppy_motorOff(void);                  /* ¹Ø±ÕÈíÇıÂí´ï  */
+static void floppy_setmode(void);                   /* ÈíÇıÄ£Ê½ÉèÖÃ  */
+static void block_to_hts(u32, u32*, u32*, u32*);    /* Âß¼­¿é×ªÎª´ÅÅÌÍ·¡¢´ÅµÀºÅºÍÉÈÇøºÅ  */
+static void floppy_setupDMA(void);                  /* ÉèÖÃÈíÇıDMAÍ¨µÀ  */
+static void floppy_read_cmd(u32 blk);               /* ´ÓÈíÅÌÉÏ¶ÁÈ¡Ö¸¶¨µÄÂß¼­¿éµ½»º³åÇø  */
 
 
 void floppy_result(void)
@@ -62,7 +62,7 @@ void floppy_result(void)
     i=0;
     for(count=0; count<0xFF; count++)
     {
-        stat = inb( FD_STATUS ) & (STATUS_READY|STATUS_DIR|STATUS_BUSY); //è¯»å–çŠ¶æ€å¯„å­˜å™¨
+        stat = inb( FD_STATUS ) & (STATUS_READY|STATUS_DIR|STATUS_BUSY); //¶ÁÈ¡×´Ì¬¼Ä´æÆ÷
         if (stat == STATUS_READY)
             return;
         if (stat == (STATUS_READY|STATUS_DIR|STATUS_BUSY))
@@ -80,13 +80,13 @@ u32 floppy_sendbyte( u32 value )
     u8 stat, i;
 
     for ( i = 0; i < 128; i++ ) {
-        stat = inb( FD_STATUS ) & (STATUS_READY|STATUS_DIR);    //è¯»å–çŠ¶æ€å¯„å­˜å™¨
+        stat = inb( FD_STATUS ) & (STATUS_READY|STATUS_DIR);    //¶ÁÈ¡×´Ì¬¼Ä´æÆ÷
         if  ( stat  == STATUS_READY )
         {
-            OUTB( value ,FD_DATA);                              //å°†å‚æ•°å†™å…¥æ•°æ®å¯„å­˜å™¨
+            OUTB( value ,FD_DATA);                              //½«²ÎÊıĞ´ÈëÊı¾İ¼Ä´æÆ÷
             return 1;
         }
-        io_delay();                                             // ä½œä¸€äº›å»¶è¿Ÿ
+        io_delay();                                             // ×÷Ò»Ğ©ÑÓ³Ù
     }
     return 0;
 }
@@ -97,7 +97,7 @@ u32 floppy_getbyte(void)
     u8 stat, i;
 
     for ( i = 0; i < 128; i++ ) {
-        stat = inb( FD_STATUS ) & (STATUS_READY|STATUS_DIR|STATUS_BUSY); //è¯»å–çŠ¶æ€å¯„å­˜å™¨
+        stat = inb( FD_STATUS ) & (STATUS_READY|STATUS_DIR|STATUS_BUSY); //¶ÁÈ¡×´Ì¬¼Ä´æÆ÷
         if (stat == STATUS_READY)
             return -1;
         if ( stat  == 0xD0 )
@@ -114,7 +114,7 @@ u32 floppy_get_info(void)
     u8 CmType, FdType;
 
     floppy_sendbyte(0x10);
-    i = floppy_getbyte(); 
+    i = floppy_getbyte();
 
     switch (i)
     {
@@ -136,7 +136,7 @@ u32 floppy_get_info(void)
         floppy_size = 2458*512;
     break;
 
-    case 0x04: // 1.44MB       æ ‡å‡†è½¯ç›˜
+    case 0x04: // 1.44MB       ±ê×¼ÈíÅÌ
         floppy_type = "1.44MB";
         floppy_size = 2880*512;
         break;
@@ -180,7 +180,7 @@ void floppy_motorOff( void )
 
 
 void floppy_setmode(void)
-{   
+{
     floppy_sendbyte (FD_SPECIFY);
     floppy_sendbyte (0xcf);
     floppy_sendbyte (0x06);
@@ -197,7 +197,7 @@ void block_to_hts(u32 block, u32 *head, u32 *track, u32 *sector )
 
 
 void floppy_setupDMA(void)
-{  
+{
     u32 eflags;
     _local_irq_save(eflags);
     DisableDma(2);
@@ -235,7 +235,7 @@ void floppy_read_cmd(u32 blk)
     floppy_sendbyte (18);
     //floppy_sendbyte (sector+secs-1);          /*  Last sector in track:here are  sectors count */
     floppy_sendbyte (0x1B);
-    floppy_sendbyte (0xff);                      
+    floppy_sendbyte (0xff);
     return;
 }
 
@@ -282,12 +282,12 @@ static rt_size_t rt_floppy_read(rt_device_t device, rt_off_t position, void *buf
         {
             panic("ST0 %d ST1 %d ST2 %d\n",ST0,ST1,ST2);
         }
-    
+
         rt_memcpy(buffer, floppy_buffer, 512);
 
         floppy_motorOff();
         io_delay();
-        
+
         position += 1;
         size     -= 1;
     }

@@ -66,7 +66,7 @@ void ICC_Enable(void)
     // Invalidate cache and wait until ready
     MXC_ICC->invalidate = 1;
     while (!(ICC_Ready()));
-    
+
     // Enable Cache
     MXC_ICC->cache_ctrl |= MXC_F_ICC_CACHE_CTRL_CACHE_EN;
 }

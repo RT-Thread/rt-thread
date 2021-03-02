@@ -187,4 +187,4 @@ test_return_t sata_test(void)
     return TEST_FAILED;
 
 }
-#endif 
+#endif

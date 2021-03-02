@@ -67,12 +67,12 @@ extern "C" {
  * Structure to be used when transferring I<SUP>2</SUP>C master packets.
  */
 struct i2c_master_packet {
-	/** Address to slave device */
-	uint16_t address;
-	/** Length of data array */
-	uint16_t data_length;
-	/** Data array containing all data to be transferred */
-	uint8_t *data;
+    /** Address to slave device */
+    uint16_t address;
+    /** Length of data array */
+    uint16_t data_length;
+    /** Data array containing all data to be transferred */
+    uint8_t *data;
 };
 
 /** \brief Interrupt flags
@@ -80,23 +80,23 @@ struct i2c_master_packet {
  * Flags used when reading or setting interrupt flags.
  */
 enum i2c_master_interrupt_flag {
-	/** Interrupt flag used for write */
-	I2C_MASTER_INTERRUPT_WRITE = 0,
-	/** Interrupt flag used for read */
-	I2C_MASTER_INTERRUPT_READ  = 1,
+    /** Interrupt flag used for write */
+    I2C_MASTER_INTERRUPT_WRITE = 0,
+    /** Interrupt flag used for read */
+    I2C_MASTER_INTERRUPT_READ  = 1,
 };
 
 /**
  * \brief I<SUP>2</SUP>C frequencies
  *
- * Values for I<SUP>2</SUP>C speeds supported by the module. 
+ * Values for I<SUP>2</SUP>C speeds supported by the module.
  *
  */
 enum i2c_master_baud_rate {
-	/** Baud rate at 100KHz (Standard-mode) */
-	I2C_MASTER_BAUD_RATE_100KHZ = 100,
-	/** Baud rate at 400KHz (Fast-mode) */
-	I2C_MASTER_BAUD_RATE_400KHZ = 400,
+    /** Baud rate at 100KHz (Standard-mode) */
+    I2C_MASTER_BAUD_RATE_100KHZ = 100,
+    /** Baud rate at 400KHz (Fast-mode) */
+    I2C_MASTER_BAUD_RATE_400KHZ = 400,
 };
 
 
@@ -107,13 +107,13 @@ enum i2c_master_baud_rate {
  * The available callback types for the I<SUP>2</SUP>C master module.
  */
 enum i2c_master_callback {
-	/** Callback for packet write complete */
-	I2C_MASTER_CALLBACK_WRITE_COMPLETE = 0,
-	/** Callback for packet read complete */
-	I2C_MASTER_CALLBACK_READ_COMPLETE  = 1,
+    /** Callback for packet write complete */
+    I2C_MASTER_CALLBACK_WRITE_COMPLETE = 0,
+    /** Callback for packet read complete */
+    I2C_MASTER_CALLBACK_READ_COMPLETE  = 1,
 #  if !defined(__DOXYGEN__)
-	/** Total number of callbacks */
-	_I2C_MASTER_CALLBACK_N             = 2,
+    /** Total number of callbacks */
+    _I2C_MASTER_CALLBACK_N             = 2,
 #  endif
 };
 
@@ -123,7 +123,7 @@ struct i2c_master_module;
 
 /** Prototype for I2C Callback function */
 typedef void (*i2c_master_callback_t)(
-		struct i2c_master_module *const module);
+        struct i2c_master_module *const module);
 #  endif
 #endif
 
@@ -138,32 +138,32 @@ typedef void (*i2c_master_callback_t)(
  */
 struct i2c_master_module {
 #if !defined(__DOXYGEN__)
-	/** Hardware instance initialized for the struct */
-	I2c *hw;
-	/** Module lock */
-	volatile bool locked;
-	/** If true, stop condition will be sent after a read/write */
-	bool no_stop;
+    /** Hardware instance initialized for the struct */
+    I2c *hw;
+    /** Module lock */
+    volatile bool locked;
+    /** If true, stop condition will be sent after a read/write */
+    bool no_stop;
 #  if I2C_MASTER_CALLBACK_MODE == true
-	/** Pointers to callback functions */
-	volatile i2c_master_callback_t callbacks[_I2C_MASTER_CALLBACK_N];
-	/** Mask for registered callbacks */
-	volatile uint8_t registered_callback;
-	/** Mask for enabled callbacks */
-	volatile uint8_t enabled_callback;
-	/** The total number of bytes to transfer */
-	volatile uint16_t buffer_length;
-	/**
-	 * Counter used for bytes left to send in write and to count number of
-	 * obtained bytes in read
-	 */
-	volatile uint16_t buffer_remaining;
-	/** Data buffer for packet write and read */
-	volatile uint8_t *buffer;
-	/** Save direction of async request. 1 = read, 0 = write */
-	volatile enum i2c_transfer_direction transfer_direction;
-	/** Status for status read back in error callback */
-	volatile enum status_code status;
+    /** Pointers to callback functions */
+    volatile i2c_master_callback_t callbacks[_I2C_MASTER_CALLBACK_N];
+    /** Mask for registered callbacks */
+    volatile uint8_t registered_callback;
+    /** Mask for enabled callbacks */
+    volatile uint8_t enabled_callback;
+    /** The total number of bytes to transfer */
+    volatile uint16_t buffer_length;
+    /**
+     * Counter used for bytes left to send in write and to count number of
+     * obtained bytes in read
+     */
+    volatile uint16_t buffer_remaining;
+    /** Data buffer for packet write and read */
+    volatile uint8_t *buffer;
+    /** Save direction of async request. 1 = read, 0 = write */
+    volatile enum i2c_transfer_direction transfer_direction;
+    /** Status for status read back in error callback */
+    volatile enum status_code status;
 #  endif
 #endif
 };
@@ -177,62 +177,62 @@ struct i2c_master_module {
  * \ref i2c_master_get_config_defaults .
  */
 struct i2c_master_config {
-	/** CLOCK INPUT to use as clock source */
-	enum i2c_clock_input clock_source;
-	/** Divide ratio used to generate the sck clock */
-	uint16_t clock_divider;
-	/** PAD0 (SDA) pin number */
-	uint32_t pin_number_pad0;
-	/** PAD0 (SDA) pinmux selection */
-	uint32_t pinmux_sel_pad0;
-	/** PAD1 (SCL) pin numer */
-	uint32_t pin_number_pad1;
-	/** PAD1 (SCL) pinmux selection */
-	uint32_t pinmux_sel_pad1;
+    /** CLOCK INPUT to use as clock source */
+    enum i2c_clock_input clock_source;
+    /** Divide ratio used to generate the sck clock */
+    uint16_t clock_divider;
+    /** PAD0 (SDA) pin number */
+    uint32_t pin_number_pad0;
+    /** PAD0 (SDA) pinmux selection */
+    uint32_t pinmux_sel_pad0;
+    /** PAD1 (SCL) pin numer */
+    uint32_t pin_number_pad1;
+    /** PAD1 (SCL) pinmux selection */
+    uint32_t pinmux_sel_pad1;
 };
 
 void i2c_master_get_config_defaults(
-		struct i2c_master_config *const config);
+        struct i2c_master_config *const config);
 
  enum status_code i2c_master_init(
-		struct i2c_master_module *const module,
-		I2c *const hw,
-		const struct i2c_master_config *const config);
+        struct i2c_master_module *const module,
+        I2c *const hw,
+        const struct i2c_master_config *const config);
 
 void i2c_master_reset(struct i2c_master_module *const module);
 
 enum status_code i2c_master_write_address(
-		struct i2c_master_module *const module,
-		uint8_t address,
-		uint8_t command);
+        struct i2c_master_module *const module,
+        uint8_t address,
+        uint8_t command);
 
 enum status_code i2c_master_read_packet_wait(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_read_packet_wait_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_write_packet_wait(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 enum status_code i2c_master_write_packet_wait_no_stop(
-		struct i2c_master_module *const module,
-		struct i2c_master_packet *const packet);
+        struct i2c_master_module *const module,
+        struct i2c_master_packet *const packet);
 
 void i2c_master_send_stop(struct i2c_master_module *const module);
 
 void i2c_master_send_start(struct i2c_master_module *const module);
 
 enum status_code i2c_master_read_byte(
-		struct i2c_master_module *const module,
-		uint8_t *byte);
+        struct i2c_master_module *const module,
+        uint8_t *byte);
 
 enum status_code i2c_master_write_byte(
-		struct i2c_master_module *const module,
-		uint8_t byte);
+        struct i2c_master_module *const module,
+        uint8_t byte);
 
 /** @} */
 

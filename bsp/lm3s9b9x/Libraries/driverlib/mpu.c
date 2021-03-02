@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2007-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -108,7 +108,7 @@ MPUDisable(void)
 //
 //! Gets the count of regions supported by the MPU.
 //!
-//! This function is used to get the total number of regions that are supported 
+//! This function is used to get the total number of regions that are supported
 //! by the MPU, including regions that are already programmed.
 //!
 //! \return The number of memory protection regions that are available
@@ -133,8 +133,8 @@ MPURegionCountGet(void)
 //! \param ulRegion is the region number to enable.
 //!
 //! This function is used to enable a memory protection region.  The region
-//! should already be configured with the MPURegionSet() function.  Once 
-//! enabled, the memory protection rules of the region are applied and access 
+//! should already be configured with the MPURegionSet() function.  Once
+//! enabled, the memory protection rules of the region are applied and access
 //! violations cause a memory management fault.
 //!
 //! \return None.
@@ -202,9 +202,9 @@ MPURegionDisable(unsigned long ulRegion)
 //! \param ulFlags is a set of flags to define the attributes of the region.
 //!
 //! This function sets up the protection rules for a region.  The region has
-//! a base address and a set of attributes including the size. The base 
-//! address parameter, \e ulAddr, must be aligned according to the size, and 
-//! the size must be a power of 2. 
+//! a base address and a set of attributes including the size. The base
+//! address parameter, \e ulAddr, must be aligned according to the size, and
+//! the size must be a power of 2.
 //!
 //! The \e ulFlags parameter is the logical OR of all of the attributes
 //! of the region.  It is a combination of choices for region size,
@@ -381,8 +381,8 @@ MPURegionGet(unsigned long ulRegion, unsigned long *pulAddr,
 //! \param pfnHandler is a pointer to the function to be called when the
 //! memory management fault occurs.
 //!
-//! This function sets and enables the handler to be called when the MPU 
-//! generates a memory management fault due to a protection region access 
+//! This function sets and enables the handler to be called when the MPU
+//! generates a memory management fault due to a protection region access
 //! violation.
 //!
 //! \sa IntRegister() for important information about registering interrupt

@@ -104,202 +104,202 @@ typedef uint32_t ioport_port_mask_t;
 
 inline static ioport_port_t arch_ioport_pin_to_port_id(ioport_pin_t pin)
 {
-	return pin >> 5;
+    return pin >> 5;
 }
 
 inline static PortGroup *arch_ioport_port_to_base(
-		ioport_port_t port)
+        ioport_port_t port)
 {
-	return &PORT->Group[port];
+    return &PORT->Group[port];
 }
 
 inline static PortGroup *arch_ioport_pin_to_base(ioport_pin_t pin)
 {
-	return arch_ioport_port_to_base(arch_ioport_pin_to_port_id(pin));
+    return arch_ioport_port_to_base(arch_ioport_pin_to_port_id(pin));
 }
 
 inline static ioport_port_mask_t arch_ioport_pin_to_mask(ioport_pin_t pin)
 {
-	return 1U << (pin & 0x1F);
+    return 1U << (pin & 0x1F);
 }
 
 inline static void arch_ioport_init(void)
 {
-	/* No implementation for SAM0 */
+    /* No implementation for SAM0 */
 }
 
 
 inline static void arch_ioport_enable_port(ioport_port_t port,
-		ioport_port_mask_t mask)
+        ioport_port_mask_t mask)
 {
-	volatile PortGroup *base = arch_ioport_port_to_base(port);
+    volatile PortGroup *base = arch_ioport_port_to_base(port);
 
-	for (uint32_t i = 0; i < 32; i++) {
-		if (mask & (1 << i)) {
-			base->PINCFG[i].reg &= ~PORT_PINCFG_PMUXEN;
-		}
-	}
+    for (uint32_t i = 0; i < 32; i++) {
+        if (mask & (1 << i)) {
+            base->PINCFG[i].reg &= ~PORT_PINCFG_PMUXEN;
+        }
+    }
 }
 
 inline static void arch_ioport_disable_port(ioport_port_t port,
-		ioport_port_mask_t mask)
+        ioport_port_mask_t mask)
 {
-	volatile PortGroup *base = arch_ioport_port_to_base(port);
+    volatile PortGroup *base = arch_ioport_port_to_base(port);
 
-	for (uint32_t i = 0; i < 32; i++) {
-		if (mask & (1 << i)) {
-			base->PINCFG[i].reg |= PORT_PINCFG_PMUXEN;
-		}
-	}
+    for (uint32_t i = 0; i < 32; i++) {
+        if (mask & (1 << i)) {
+            base->PINCFG[i].reg |= PORT_PINCFG_PMUXEN;
+        }
+    }
 }
 
 inline static void arch_ioport_enable_pin(ioport_pin_t pin)
 {
-	arch_ioport_enable_port(arch_ioport_pin_to_port_id(pin),
-			arch_ioport_pin_to_mask(pin));
+    arch_ioport_enable_port(arch_ioport_pin_to_port_id(pin),
+            arch_ioport_pin_to_mask(pin));
 }
 
 inline static void arch_ioport_disable_pin(ioport_pin_t pin)
 {
-	arch_ioport_disable_port(arch_ioport_pin_to_port_id(pin),
-			arch_ioport_pin_to_mask(pin));
+    arch_ioport_disable_port(arch_ioport_pin_to_port_id(pin),
+            arch_ioport_pin_to_mask(pin));
 }
 
 inline static void arch_ioport_set_port_mode(ioport_port_t port,
-		ioport_port_mask_t mask, ioport_mode_t mode)
+        ioport_port_mask_t mask, ioport_mode_t mode)
 {
-	PortGroup *base = arch_ioport_port_to_base(port);
+    PortGroup *base = arch_ioport_port_to_base(port);
 
-	uint32_t config_mask = 0;
-	uint32_t config_mux  = 0;
+    uint32_t config_mask = 0;
+    uint32_t config_mux  = 0;
 
-	config_mask |= PORT_WRCONFIG_INEN;
+    config_mask |= PORT_WRCONFIG_INEN;
 
-	if ((mode & IOPORT_MODE_PULLDOWN) || (mode & IOPORT_MODE_PULLUP)) {
-		config_mask |= PORT_WRCONFIG_PULLEN;
-	}
+    if ((mode & IOPORT_MODE_PULLDOWN) || (mode & IOPORT_MODE_PULLUP)) {
+        config_mask |= PORT_WRCONFIG_PULLEN;
+    }
 
 #ifdef PORT_WRCONFIG_ODRAIN
-	if (mode & IOPORT_MODE_OPEN_DRAIN) {
-		config_mask |= PORT_WRCONFIG_ODRAIN;
-	}
+    if (mode & IOPORT_MODE_OPEN_DRAIN) {
+        config_mask |= PORT_WRCONFIG_ODRAIN;
+    }
 #endif
 
-	if (mode & IOPORT_MODE_DRIVE_STRENGTH) {
-		config_mask |= PORT_WRCONFIG_DRVSTR;
-	}
+    if (mode & IOPORT_MODE_DRIVE_STRENGTH) {
+        config_mask |= PORT_WRCONFIG_DRVSTR;
+    }
 
-	config_mux = (mode & IOPORT_MODE_MUX_MASK) << PORT_WRCONFIG_PMUX_Pos;
+    config_mux = (mode & IOPORT_MODE_MUX_MASK) << PORT_WRCONFIG_PMUX_Pos;
 
-	uint32_t lower_pin_mask = (mask & 0xFFFF);
-	uint32_t upper_pin_mask = (mask >> 16);
+    uint32_t lower_pin_mask = (mask & 0xFFFF);
+    uint32_t upper_pin_mask = (mask >> 16);
 
-	base->WRCONFIG.reg =
-			(lower_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
-			config_mask | config_mux |
-			PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG;
+    base->WRCONFIG.reg =
+            (lower_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
+            config_mask | config_mux |
+            PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG;
 
-	base->WRCONFIG.reg =
-			(upper_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
-			config_mask | config_mux |
-			PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG |
-			PORT_WRCONFIG_HWSEL;
+    base->WRCONFIG.reg =
+            (upper_pin_mask << PORT_WRCONFIG_PINMASK_Pos) |
+            config_mask | config_mux |
+            PORT_WRCONFIG_WRPMUX | PORT_WRCONFIG_WRPINCFG |
+            PORT_WRCONFIG_HWSEL;
 
-	if (mode & IOPORT_MODE_PULLDOWN) {
-		base->OUTCLR.reg = mask;
-	}
-	else if (mode & IOPORT_MODE_PULLUP) {
-		base->OUTSET.reg = mask;
-	}
+    if (mode & IOPORT_MODE_PULLDOWN) {
+        base->OUTCLR.reg = mask;
+    }
+    else if (mode & IOPORT_MODE_PULLUP) {
+        base->OUTSET.reg = mask;
+    }
 }
 
 inline static void arch_ioport_set_pin_mode(ioport_pin_t pin,
-		ioport_mode_t mode)
+        ioport_mode_t mode)
 {
-	arch_ioport_set_port_mode(arch_ioport_pin_to_port_id(pin),
-			arch_ioport_pin_to_mask(pin), mode);
+    arch_ioport_set_port_mode(arch_ioport_pin_to_port_id(pin),
+            arch_ioport_pin_to_mask(pin), mode);
 }
 
 inline static void arch_ioport_set_port_dir(ioport_port_t port,
-		ioport_port_mask_t mask, unsigned char dir)
+        ioport_port_mask_t mask, unsigned char dir)
 {
-	if (dir == IOPORT_DIR_OUTPUT) {
-		arch_ioport_port_to_base(port)->DIRSET.reg = mask;
-	} else if (dir == IOPORT_DIR_INPUT) {
-		arch_ioport_port_to_base(port)->DIRCLR.reg = mask;
-	}
+    if (dir == IOPORT_DIR_OUTPUT) {
+        arch_ioport_port_to_base(port)->DIRSET.reg = mask;
+    } else if (dir == IOPORT_DIR_INPUT) {
+        arch_ioport_port_to_base(port)->DIRCLR.reg = mask;
+    }
 }
 
 inline static void arch_ioport_set_pin_dir(ioport_pin_t pin,
-		enum ioport_direction dir)
+        enum ioport_direction dir)
 {
-	PortGroup *base = arch_ioport_pin_to_base(pin);
+    PortGroup *base = arch_ioport_pin_to_base(pin);
 
-	if (dir == IOPORT_DIR_OUTPUT) {
-		base->DIRSET.reg = arch_ioport_pin_to_mask(pin);
-	} else if (dir == IOPORT_DIR_INPUT) {
-		base->DIRCLR.reg = arch_ioport_pin_to_mask(pin);
-	}
+    if (dir == IOPORT_DIR_OUTPUT) {
+        base->DIRSET.reg = arch_ioport_pin_to_mask(pin);
+    } else if (dir == IOPORT_DIR_INPUT) {
+        base->DIRCLR.reg = arch_ioport_pin_to_mask(pin);
+    }
 
-	base->PINCFG[pin].reg |= PORT_PINCFG_INEN;
+    base->PINCFG[pin].reg |= PORT_PINCFG_INEN;
 }
 
 inline static void arch_ioport_set_pin_level(ioport_pin_t pin,
-		bool level)
+        bool level)
 {
-	if (level) {
-		arch_ioport_pin_to_base(pin)->OUTSET.reg = arch_ioport_pin_to_mask(pin);
-	} else {
-		arch_ioport_pin_to_base(pin)->OUTCLR.reg = arch_ioport_pin_to_mask(pin);
-	}
+    if (level) {
+        arch_ioport_pin_to_base(pin)->OUTSET.reg = arch_ioport_pin_to_mask(pin);
+    } else {
+        arch_ioport_pin_to_base(pin)->OUTCLR.reg = arch_ioport_pin_to_mask(pin);
+    }
 }
 
 inline static void arch_ioport_set_port_level(ioport_port_t port,
-		ioport_port_mask_t mask, enum ioport_value level)
+        ioport_port_mask_t mask, enum ioport_value level)
 {
-	volatile PortGroup *base = arch_ioport_port_to_base(port);
+    volatile PortGroup *base = arch_ioport_port_to_base(port);
 
-	if (level){
-		base->OUTSET.reg = mask;
-	} else {
-		base->OUTCLR.reg = mask;
-	}
+    if (level){
+        base->OUTSET.reg = mask;
+    } else {
+        base->OUTCLR.reg = mask;
+    }
 }
 
 inline static bool arch_ioport_get_pin_level(ioport_pin_t pin)
 {
-	return arch_ioport_pin_to_base(pin)->IN.reg & arch_ioport_pin_to_mask(pin);
+    return arch_ioport_pin_to_base(pin)->IN.reg & arch_ioport_pin_to_mask(pin);
 }
 
 inline static ioport_port_mask_t arch_ioport_get_port_level(
-		ioport_port_t port, ioport_port_mask_t mask)
+        ioport_port_t port, ioport_port_mask_t mask)
 {
-	return arch_ioport_port_to_base(port)->IN.reg & mask;
+    return arch_ioport_port_to_base(port)->IN.reg & mask;
 }
 
 inline static void arch_ioport_toggle_pin_level(ioport_pin_t pin)
 {
-	arch_ioport_pin_to_base(pin)->OUTTGL.reg = arch_ioport_pin_to_mask(pin);
+    arch_ioport_pin_to_base(pin)->OUTTGL.reg = arch_ioport_pin_to_mask(pin);
 }
 
 inline static void arch_ioport_toggle_port_level(ioport_port_t port,
-		ioport_port_mask_t mask)
+        ioport_port_mask_t mask)
 {
-	arch_ioport_port_to_base(port)->OUTTGL.reg = mask;
+    arch_ioport_port_to_base(port)->OUTTGL.reg = mask;
 }
 
 inline static void arch_ioport_set_port_sense_mode(ioport_port_t port,
-		ioport_port_mask_t mask, enum ioport_sense pin_sense)
+        ioport_port_mask_t mask, enum ioport_sense pin_sense)
 {
-	// TODO
-	Assert(false);
+    // TODO
+    Assert(false);
 }
 
 inline static void arch_ioport_set_pin_sense_mode(ioport_pin_t pin,
-		enum ioport_sense pin_sense)
+        enum ioport_sense pin_sense)
 {
-	arch_ioport_set_port_sense_mode(arch_ioport_pin_to_port_id(pin),
-			arch_ioport_pin_to_mask(pin), pin_sense);
+    arch_ioport_set_port_sense_mode(arch_ioport_pin_to_port_id(pin),
+            arch_ioport_pin_to_mask(pin), pin_sense);
 }
 
 #endif /* IOPORT_SAM0_H */

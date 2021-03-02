@@ -53,7 +53,7 @@ void ecspi1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO17
     //     ALT6 (6) - Select instance: i2c3 signal: I2C3_SCL
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA17_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA17_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA17_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA17_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17(0x020E03A8)
@@ -94,13 +94,13 @@ void ecspi1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA17_SRE_V(SLOW));
     // Pad EIM_DATA17 is involved in Daisy Chain.
     // Input Select Register:
@@ -134,7 +134,7 @@ void ecspi1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO18
     //     ALT6 (6) - Select instance: i2c3 signal: I2C3_SDA
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA18_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA18_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA18_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA18_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18(0x020E03AC)
@@ -175,13 +175,13 @@ void ecspi1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA18_SRE_V(SLOW));
     // Pad EIM_DATA18 is involved in Daisy Chain.
     // Input Select Register:
@@ -215,7 +215,7 @@ void ecspi1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO16
     //     ALT6 (6) - Select instance: i2c2 signal: I2C2_SDA
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA16_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA16_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA16_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA16_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16(0x020E03A4)
@@ -256,13 +256,13 @@ void ecspi1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA16_SRE_V(SLOW));
     // Pad EIM_DATA16 is involved in Daisy Chain.
     // Input Select Register:
@@ -296,7 +296,7 @@ void ecspi1_iomux_config(void)
     //     ALT6 (6) - Select instance: i2c2 signal: I2C2_SCL
     //     ALT7 (7) - Select instance: src signal: SRC_BOOT_CFG30
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_EB2_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_EB2_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_EB2_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_EB2_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_EB2(0x020E03A0)
@@ -337,13 +337,13 @@ void ecspi1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB2_SRE_V(SLOW));
     // Pad EIM_EB2 is involved in Daisy Chain.
     // Input Select Register:
@@ -377,7 +377,7 @@ void ecspi1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO19
     //     ALT6 (6) - Select instance: epit1 signal: EPIT1_OUT
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA19_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA19_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA19_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA19_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19(0x020E03B0)
@@ -418,13 +418,13 @@ void ecspi1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA19_SRE_V(SLOW));
     // Pad EIM_DATA19 is involved in Daisy Chain.
     // Input Select Register:

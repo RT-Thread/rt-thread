@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -167,7 +167,7 @@ void (*g_pfnRAMVectors[NUM_INTERRUPTS])(void) __attribute__ ((aligned(1024)));
 //! Enables the processor interrupt.
 //!
 //! This function allows the processor to respond to interrupts.  This function
-//! does not affect the set of interrupts enabled in the interrupt controller; 
+//! does not affect the set of interrupts enabled in the interrupt controller;
 //! it just gates the single interrupt from the controller to the processor.
 //!
 //! \note Previously, this function had no return value.  As such, it was
@@ -193,9 +193,9 @@ IntMasterEnable(void)
 //
 //! Disables the processor interrupt.
 //!
-//! This function prevents the processor from receiving interrupts.  This 
-//! function does not affect the set of interrupts enabled in the interrupt 
-//! controller; it just gates the single interrupt from the controller to the 
+//! This function prevents the processor from receiving interrupts.  This
+//! function does not affect the set of interrupts enabled in the interrupt
+//! controller; it just gates the single interrupt from the controller to the
 //! processor.
 //!
 //! \note Previously, this function had no return value.  As such, it was
@@ -227,8 +227,8 @@ IntMasterDisable(void)
 //! This function is used to specify the handler function to be called when the
 //! given interrupt is asserted to the processor.  When the interrupt occurs,
 //! if it is enabled (via IntEnable()), the handler function is called in
-//! interrupt context.  Because the handler function can preempt other code, 
-//! care must be taken to protect memory or peripherals that are accessed by 
+//! interrupt context.  Because the handler function can preempt other code,
+//! care must be taken to protect memory or peripherals that are accessed by
 //! the handler and other non-handler code.
 //!
 //! \note The use of this function (directly or indirectly via a peripheral
@@ -588,11 +588,11 @@ IntDisable(unsigned long ulInterrupt)
 //!
 //! \param ulInterrupt specifies the interrupt to be pended.
 //!
-//! The specified interrupt is pended in the interrupt controller.  Pending an 
-//! interrupt causes the interrupt controller to execute the corresponding 
-//! interrupt handler at the next available time, based on the current 
-//! interrupt state priorities. For example, if called by a higher priority 
-//! interrupt handler, the specified interrupt handler is not called until 
+//! The specified interrupt is pended in the interrupt controller.  Pending an
+//! interrupt causes the interrupt controller to execute the corresponding
+//! interrupt handler at the next available time, based on the current
+//! interrupt state priorities. For example, if called by a higher priority
+//! interrupt handler, the specified interrupt handler is not called until
 //! after the current interrupt handler has completed execution.  The interrupt
 //! must have been enabled for it to be called.
 //!
@@ -648,8 +648,8 @@ IntPendSet(unsigned long ulInterrupt)
 //! \param ulInterrupt specifies the interrupt to be unpended.
 //!
 //! The specified interrupt is unpended in the interrupt controller.  Unpending
-//! an interrupt causes any previously generated interrupts that have not been 
-//! handled yet (due to higher priority interrupts or the interrupt not having 
+//! an interrupt causes any previously generated interrupts that have not been
+//! handled yet (due to higher priority interrupts or the interrupt not having
 //! been enabled yet) to be discarded.
 //!
 //! \return None.
@@ -698,7 +698,7 @@ IntPendClear(unsigned long ulInterrupt)
 //!
 //! This function sets the interrupt priority masking level so that all
 //! interrupts at the specified or lesser priority level are masked.  Masking
-//! interrupts can be used to globally disable a set of interrupts with 
+//! interrupts can be used to globally disable a set of interrupts with
 //! priority below a predetermined threshold.  A value of 0 disables priority
 //! masking.
 //!

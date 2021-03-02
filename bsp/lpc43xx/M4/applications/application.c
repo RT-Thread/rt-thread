@@ -32,10 +32,10 @@ static void _boot_M0(void)
 
     LPC_CREG->M0APPMEMMAP = (uint32_t)&_M0_CODE[0];
 
-    // Release Slave from reset,  first read status 
+    // Release Slave from reset,  first read status
     u32REG = LPC_RGU->RESET_ACTIVE_STATUS1;
 
-    // If the M0 is being held in reset,  release it... 
+    // If the M0 is being held in reset,  release it...
     // 1 = no reset,  0 = reset
     while(!(u32REG & (1u << 24)))
     {

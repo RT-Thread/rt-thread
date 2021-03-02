@@ -64,21 +64,21 @@ wdt_callback_t wdt_early_warning_callback;
  * \retval STATUS_ERR_INVALID_ARG  If an invalid callback type was supplied
  */
 enum status_code wdt_register_callback(
-		const wdt_callback_t callback,
-		const enum wdt_callback type)
+        const wdt_callback_t callback,
+        const enum wdt_callback type)
 {
-	/* Sanity check arguments */
-	Assert(callback);
+    /* Sanity check arguments */
+    Assert(callback);
 
-	switch (type)
-	{
-	case WDT_CALLBACK_EARLY_WARNING:
-		wdt_early_warning_callback = callback;
-		return STATUS_OK;
-	default:
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    switch (type)
+    {
+    case WDT_CALLBACK_EARLY_WARNING:
+        wdt_early_warning_callback = callback;
+        return STATUS_OK;
+    default:
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 }
 
 /**
@@ -94,17 +94,17 @@ enum status_code wdt_register_callback(
  * \retval STATUS_ERR_INVALID_ARG  If an invalid callback type was supplied
  */
 enum status_code wdt_unregister_callback(
-		const enum wdt_callback type)
+        const enum wdt_callback type)
 {
-	switch (type)
-	{
-	case WDT_CALLBACK_EARLY_WARNING:
-		wdt_early_warning_callback = NULL;
-		return STATUS_OK;
-	default:
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    switch (type)
+    {
+    case WDT_CALLBACK_EARLY_WARNING:
+        wdt_early_warning_callback = NULL;
+        return STATUS_OK;
+    default:
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 }
 
 /**
@@ -120,20 +120,20 @@ enum status_code wdt_unregister_callback(
  * \retval STATUS_ERR_INVALID_ARG  If an invalid callback type was supplied
  */
 enum status_code wdt_enable_callback(
-		const enum wdt_callback type)
+        const enum wdt_callback type)
 {
-	Wdt *const WDT_module = WDT;
+    Wdt *const WDT_module = WDT;
 
-	switch (type)
-	{
-	case WDT_CALLBACK_EARLY_WARNING:
-		WDT_module->INTENSET.reg = WDT_INTENSET_EW;
-		system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_WDT);
-		return STATUS_OK;
-	default:
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    switch (type)
+    {
+    case WDT_CALLBACK_EARLY_WARNING:
+        WDT_module->INTENSET.reg = WDT_INTENSET_EW;
+        system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_WDT);
+        return STATUS_OK;
+    default:
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 }
 
 /**
@@ -148,27 +148,27 @@ enum status_code wdt_enable_callback(
  * \retval STATUS_ERR_INVALID_ARG  If an invalid callback type was supplied
  */
 enum status_code wdt_disable_callback(
-		const enum wdt_callback type)
+        const enum wdt_callback type)
 {
-	Wdt *const WDT_module = WDT;
+    Wdt *const WDT_module = WDT;
 
-	switch (type)
-	{
-	case WDT_CALLBACK_EARLY_WARNING:
-		WDT_module->INTENCLR.reg = WDT_INTENCLR_EW;
-		return STATUS_OK;
-	default:
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    switch (type)
+    {
+    case WDT_CALLBACK_EARLY_WARNING:
+        WDT_module->INTENCLR.reg = WDT_INTENCLR_EW;
+        return STATUS_OK;
+    default:
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 }
 
 /** Handler for the WDT hardware module interrupt. */
 void WDT_Handler(void)
 {
-	wdt_clear_early_warning();
+    wdt_clear_early_warning();
 
-	if (wdt_early_warning_callback) {
-		wdt_early_warning_callback();
-	}
+    if (wdt_early_warning_callback) {
+        wdt_early_warning_callback();
+    }
 }

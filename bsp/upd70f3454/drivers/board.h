@@ -30,7 +30,7 @@
 #define UP_KEY       0x1b
 #define DOWN_KEY     0x17
 #define LEFT_KEY     0x0f
-#define RIGHT_KEY    0x1e  
+#define RIGHT_KEY    0x1e
 
 void rt_hw_board_init(void);
 rt_uint8_t get_key(void);

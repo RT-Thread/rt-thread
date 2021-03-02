@@ -183,51 +183,51 @@ extern "C" {
 
 /** AES processing mode. */
 enum aes_encrypt_mode {
-	AES_DECRYPTION = 0,     /**< Decryption of data will be performed */
-	AES_ENCRYPTION,         /**< Encryption of data will be performed */
+    AES_DECRYPTION = 0,     /**< Decryption of data will be performed */
+    AES_ENCRYPTION,         /**< Encryption of data will be performed */
 };
 
 /** AES cryptographic key size. */
 enum aes_key_size {
-	AES_KEY_SIZE_128 = 0,   /**< AES key size is 128-bit */
-	AES_KEY_SIZE_192,       /**< AES key size is 192-bit */
-	AES_KEY_SIZE_256,       /**< AES key size is 256-bit */
+    AES_KEY_SIZE_128 = 0,   /**< AES key size is 128-bit */
+    AES_KEY_SIZE_192,       /**< AES key size is 192-bit */
+    AES_KEY_SIZE_256,       /**< AES key size is 256-bit */
 };
 
 /** AES start mode. */
 enum aes_start_mode {
-	AES_MANUAL_START = 0,   /**< Manual start mode */
-	AES_AUTO_START,         /**< Auto start mode */
+    AES_MANUAL_START = 0,   /**< Manual start mode */
+    AES_AUTO_START,         /**< Auto start mode */
 };
 
 /** AES operation mode. */
 enum aes_operation_mode {
-	AES_ECB_MODE = 0,       /**< Electronic Codebook (ECB) */
-	AES_CBC_MODE,           /**< Cipher Block Chaining (CBC) */
-	AES_OFB_MODE,           /**< Output Feedback (OFB) */
-	AES_CFB_MODE,           /**< Cipher Feedback (CFB) */
-	AES_CTR_MODE,           /**< Counter (CTR) */
-	AES_CCM_MODE,           /**< Counter (CCM) */
-	AES_GCM_MODE,           /**< Galois Counter Mode (GCM) */
+    AES_ECB_MODE = 0,       /**< Electronic Codebook (ECB) */
+    AES_CBC_MODE,           /**< Cipher Block Chaining (CBC) */
+    AES_OFB_MODE,           /**< Output Feedback (OFB) */
+    AES_CFB_MODE,           /**< Cipher Feedback (CFB) */
+    AES_CTR_MODE,           /**< Counter (CTR) */
+    AES_CCM_MODE,           /**< Counter (CCM) */
+    AES_GCM_MODE,           /**< Galois Counter Mode (GCM) */
 };
 
 /** AES Cipher FeedBack (CFB) size. */
 enum aes_cfb_size {
-	AES_CFB_SIZE_128 = 0,   /**< Cipher feedback data size is 128-bit */
-	AES_CFB_SIZE_64,        /**< Cipher feedback data size is 64-bit */
-	AES_CFB_SIZE_32,        /**< Cipher feedback data size is 32-bit */
-	AES_CFB_SIZE_16,        /**< Cipher feedback data size is 16-bit */
-	AES_CFB_SIZE_8,         /**< Cipher feedback data size is 8-bit */
+    AES_CFB_SIZE_128 = 0,   /**< Cipher feedback data size is 128-bit */
+    AES_CFB_SIZE_64,        /**< Cipher feedback data size is 64-bit */
+    AES_CFB_SIZE_32,        /**< Cipher feedback data size is 32-bit */
+    AES_CFB_SIZE_16,        /**< Cipher feedback data size is 16-bit */
+    AES_CFB_SIZE_8,         /**< Cipher feedback data size is 8-bit */
 };
 
 /** AES countermeasure type */
 enum aes_countermeature_type {
-	AES_COUNTERMEASURE_TYPE_disabled = 0x0,    /**< Countermeasure type all disabled */
-	AES_COUNTERMEASURE_TYPE_1 = 0x01,          /**< Countermeasure1 enabled */
-	AES_COUNTERMEASURE_TYPE_2 = 0x02,          /**< Countermeasure2 enabled */
-	AES_COUNTERMEASURE_TYPE_3 = 0x04,          /**< Countermeasure3 enabled */
-	AES_COUNTERMEASURE_TYPE_4 = 0x08,          /**< Countermeasure4 enabled */
-	AES_COUNTERMEASURE_TYPE_ALL = 0x0F,        /**< Countermeasure type all enabled */
+    AES_COUNTERMEASURE_TYPE_disabled = 0x0,    /**< Countermeasure type all disabled */
+    AES_COUNTERMEASURE_TYPE_1 = 0x01,          /**< Countermeasure1 enabled */
+    AES_COUNTERMEASURE_TYPE_2 = 0x02,          /**< Countermeasure2 enabled */
+    AES_COUNTERMEASURE_TYPE_3 = 0x04,          /**< Countermeasure3 enabled */
+    AES_COUNTERMEASURE_TYPE_4 = 0x08,          /**< Countermeasure4 enabled */
+    AES_COUNTERMEASURE_TYPE_ALL = 0x0F,        /**< Countermeasure type all enabled */
 };
 
 /**
@@ -251,24 +251,24 @@ enum aes_countermeature_type {
 
 /** AES Configuration structure. */
 struct aes_config {
-	/** AES data mode (decryption or encryption) */
-	enum aes_encrypt_mode encrypt_mode;
-	/** AES key size */
-	enum aes_key_size key_size;
-	/** Start mode */
-	enum aes_start_mode start_mode;
-	/** AES cipher operation mode*/
-	enum aes_operation_mode opmode;
-	/** Cipher feedback data size */
-	enum aes_cfb_size cfb_size;
-	/** Countermeasure type */
-	enum aes_countermeature_type ctype;
-	/** Enable XOR key */
-	bool enable_xor_key;
-	/** Enable key generation */
-	bool enable_key_gen;
-	/** Last output data mode enable/disable */
-	bool lod;
+    /** AES data mode (decryption or encryption) */
+    enum aes_encrypt_mode encrypt_mode;
+    /** AES key size */
+    enum aes_key_size key_size;
+    /** Start mode */
+    enum aes_start_mode start_mode;
+    /** AES cipher operation mode*/
+    enum aes_operation_mode opmode;
+    /** Cipher feedback data size */
+    enum aes_cfb_size cfb_size;
+    /** Countermeasure type */
+    enum aes_countermeature_type ctype;
+    /** Enable XOR key */
+    bool enable_xor_key;
+    /** Enable key generation */
+    bool enable_key_gen;
+    /** Last output data mode enable/disable */
+    bool lod;
 };
 
 #if !defined(__DOXYGEN__)
@@ -276,14 +276,14 @@ struct aes_config {
  * \brief Device structure.
  */
 struct aes_module {
-	/** AES hardware module. */
-	Aes *hw;
-	/** AES cipher operation mode.*/
-	enum aes_operation_mode opmode;
-	/** AES key size. */
-	enum aes_key_size key_size;
-	/** Cipher feedback data size. */
-	enum aes_cfb_size cfb_size;
+    /** AES hardware module. */
+    Aes *hw;
+    /** AES cipher operation mode.*/
+    enum aes_operation_mode opmode;
+    /** AES key size. */
+    enum aes_key_size key_size;
+    /** Cipher feedback data size. */
+    enum aes_cfb_size cfb_size;
 };
 #endif
 
@@ -294,12 +294,12 @@ struct aes_module {
 void aes_get_config_defaults(struct aes_config *const config);
 
 void aes_set_config(struct aes_module *const module,
-					Aes *const hw,
-					struct aes_config *const config);
+                    Aes *const hw,
+                    struct aes_config *const config);
 
 void aes_init(struct aes_module *const module,
-				Aes *const hw,
-				struct aes_config *const config);
+                Aes *const hw,
+                struct aes_config *const config);
 
 /** @} */
 
@@ -315,10 +315,10 @@ void aes_init(struct aes_module *const module,
  */
 static inline void aes_start(struct aes_module *const module)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->CTRLB.reg |= AES_CTRLB_START;
+    module->hw->CTRLB.reg |= AES_CTRLB_START;
 }
 /**
  * \brief Notifies the module that the next input data block
@@ -329,9 +329,9 @@ static inline void aes_start(struct aes_module *const module)
  */
 static inline void aes_set_new_message(struct aes_module *const module)
 {
-	Assert(module);
-	Assert(module->hw);
-	module->hw->CTRLB.reg |= AES_CTRLB_NEWMSG;
+    Assert(module);
+    Assert(module->hw);
+    module->hw->CTRLB.reg |= AES_CTRLB_NEWMSG;
 }
 /**
  * \brief Clear the indication of the beginning for a new message
@@ -341,9 +341,9 @@ static inline void aes_set_new_message(struct aes_module *const module)
  */
 static inline void aes_clear_new_message(struct aes_module *const module)
 {
-	Assert(module);
-	Assert(module->hw);
-	module->hw->CTRLB.reg &= ~AES_CTRLB_NEWMSG;
+    Assert(module);
+    Assert(module->hw);
+    module->hw->CTRLB.reg &= ~AES_CTRLB_NEWMSG;
 }
 
 void aes_enable(struct aes_module *const module);
@@ -355,10 +355,10 @@ void aes_write_key(struct aes_module *const module, const uint32_t *key);
 void aes_write_init_vector(struct aes_module *const module, const uint32_t *vector);
 
 void aes_write_input_data(struct aes_module *const module,
-		const uint32_t *p_input_data_buffer);
+        const uint32_t *p_input_data_buffer);
 
 void aes_read_output_data(struct aes_module *const module,
-		uint32_t *p_output_data_buffer);
+        uint32_t *p_output_data_buffer);
 
 /**
  * \brief Write AES random seed.
@@ -367,12 +367,12 @@ void aes_read_output_data(struct aes_module *const module,
  * \param[in] seed Seed for the random number generator
  */
 static inline void aes_write_random_seed(struct aes_module *const module,
-										uint32_t seed)
+                                        uint32_t seed)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->RANDSEED.reg = seed;
+    module->hw->RANDSEED.reg = seed;
 }
 
 /** @} */
@@ -394,22 +394,22 @@ static inline void aes_write_random_seed(struct aes_module *const module,
  */
 static inline uint32_t aes_get_status(struct aes_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	uint32_t int_flags = module->hw->INTFLAG.reg;
-	uint32_t status_flags = 0;
+    uint32_t int_flags = module->hw->INTFLAG.reg;
+    uint32_t status_flags = 0;
 
-	if (int_flags & AES_INTFLAG_ENCCMP) {
-		status_flags |= AES_ENCRYPTION_COMPLETE;
-	}
+    if (int_flags & AES_INTFLAG_ENCCMP) {
+        status_flags |= AES_ENCRYPTION_COMPLETE;
+    }
 
-	if (int_flags & AES_INTFLAG_GFMCMP) {
-		status_flags |= AES_GF_MULTI_COMPLETE;
-	}
+    if (int_flags & AES_INTFLAG_GFMCMP) {
+        status_flags |= AES_GF_MULTI_COMPLETE;
+    }
 
-	return status_flags;
+    return status_flags;
 }
 
 /**
@@ -421,25 +421,25 @@ static inline uint32_t aes_get_status(struct aes_module *const module)
  * \param[in] status_flags Bitmask flags to clear
  */
 static inline void aes_clear_status(
-		struct aes_module *const module,
-		const uint32_t status_flags)
+        struct aes_module *const module,
+        const uint32_t status_flags)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	uint32_t int_flags = 0;
+    uint32_t int_flags = 0;
 
-	if (status_flags & AES_ENCRYPTION_COMPLETE) {
-		int_flags |= AES_INTENCLR_ENCCMP;
-	}
+    if (status_flags & AES_ENCRYPTION_COMPLETE) {
+        int_flags |= AES_INTENCLR_ENCCMP;
+    }
 
-	if (status_flags & AES_GF_MULTI_COMPLETE) {
-		int_flags |= AES_INTENCLR_GFMCMP;
-	}
+    if (status_flags & AES_GF_MULTI_COMPLETE) {
+        int_flags |= AES_INTENCLR_GFMCMP;
+    }
 
-	/* Clear interrupt flag */
-	module->hw->INTFLAG.reg = int_flags;
+    /* Clear interrupt flag */
+    module->hw->INTFLAG.reg = int_flags;
 }
 
 /** @} */
@@ -459,10 +459,10 @@ static inline void aes_clear_status(
  */
 static inline uint32_t aes_gcm_read_ghash(struct aes_module *const module, uint32_t id)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	return module->hw->GHASH[id].reg;
+    return module->hw->GHASH[id].reg;
 }
 
 /**
@@ -473,12 +473,12 @@ static inline uint32_t aes_gcm_read_ghash(struct aes_module *const module, uint3
  * \param[in] ghash GCM hash value
  */
 static inline void aes_gcm_write_ghash(struct aes_module *const module,
-									uint32_t id,uint32_t ghash)
+                                    uint32_t id,uint32_t ghash)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->GHASH[id].reg = ghash;
+    module->hw->GHASH[id].reg = ghash;
 }
 
 
@@ -491,12 +491,12 @@ static inline void aes_gcm_write_ghash(struct aes_module *const module,
  * \return The contents of the HASHKEYx[x = 0...3] specified.
  */
 static inline uint32_t aes_gcm_read_hash_key(struct aes_module *const module,
-											uint32_t id)
+                                            uint32_t id)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	return module->hw->HASHKEY[id].reg;
+    return module->hw->HASHKEY[id].reg;
 }
 
 /**
@@ -507,12 +507,12 @@ static inline uint32_t aes_gcm_read_hash_key(struct aes_module *const module,
  * \param[in] key GCM Hash key
  */
 static inline void aes_gcm_write_hash_key(struct aes_module *const module,
-										uint32_t id, uint32_t key)
+                                        uint32_t id, uint32_t key)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->HASHKEY[id].reg = key;
+    module->hw->HASHKEY[id].reg = key;
 }
 
 /**
@@ -524,10 +524,10 @@ static inline void aes_gcm_write_hash_key(struct aes_module *const module,
  */
 static inline uint32_t aes_gcm_read_cipher_len(struct aes_module *const module)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	return (module->hw->CIPLEN.reg);
+    return (module->hw->CIPLEN.reg);
 }
 
 /**
@@ -537,12 +537,12 @@ static inline uint32_t aes_gcm_read_cipher_len(struct aes_module *const module)
  * \param[in] len Cipher length
  */
 static inline void aes_gcm_write_cipher_len(struct aes_module *const module,
-										uint32_t len)
+                                        uint32_t len)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->CIPLEN.reg = len;
+    module->hw->CIPLEN.reg = len;
 }
 
 /**
@@ -552,10 +552,10 @@ static inline void aes_gcm_write_cipher_len(struct aes_module *const module,
  */
 static inline void aes_gcm_set_end_message_status(struct aes_module *const module)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->CTRLB.reg |= AES_CTRLB_EOM;
+    module->hw->CTRLB.reg |= AES_CTRLB_EOM;
 }
 
 /**
@@ -565,10 +565,10 @@ static inline void aes_gcm_set_end_message_status(struct aes_module *const modul
  */
 static inline void aes_gcm_clear_end_message_status(struct aes_module *const module)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->CTRLB.reg &= ~AES_CTRLB_EOM;
+    module->hw->CTRLB.reg &= ~AES_CTRLB_EOM;
 }
 
 /**
@@ -578,10 +578,10 @@ static inline void aes_gcm_clear_end_message_status(struct aes_module *const mod
  */
 static inline void aes_gcm_set_gf_multiplication(struct aes_module *const module)
 {
-	Assert(module);
-	Assert(module->hw);
+    Assert(module);
+    Assert(module->hw);
 
-	module->hw->CTRLB.reg |= AES_CTRLB_GFMUL;
+    module->hw->CTRLB.reg |= AES_CTRLB_GFMUL;
 }
 
 /** @} */
@@ -664,12 +664,12 @@ static inline void aes_gcm_set_gf_multiplication(struct aes_module *const module
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 
@@ -689,21 +689,21 @@ static inline void aes_gcm_set_gf_multiplication(struct aes_module *const module
  * \page asfdoc_sam0_drivers_aes_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
+ *  <tr>
  *      <th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
  *      <td>42445B</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L22</td>
- *	</tr>
- *	<tr>
+ *      <td>12/2015</td>
+ *      <td>Added support for SAM L22</td>
+ *  </tr>
+ *  <tr>
  *      <td>42445A</td>
- *		<td>06/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *      <td>06/2015</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  *
  */

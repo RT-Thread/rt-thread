@@ -16,43 +16,43 @@
 
 /* 加密解密模式选择位 */
 typedef enum {
-	AES_MODE_DECRYPT = 0,	/* 解密 */
-	AES_MODE_ENCRYPT = 1,	/* 加密 */
+    AES_MODE_DECRYPT = 0,   /* 解密 */
+    AES_MODE_ENCRYPT = 1,   /* 加密 */
 }AES_TYPE_MODE;
 
 /* 加密/解密控制位 */
 typedef enum {
-	AES_DONE_YES = 0,	/* 加密完成 */
-	AES_DONE_NO = 1,	/* 正在加密 */
+    AES_DONE_YES = 0,   /* 加密完成 */
+    AES_DONE_NO = 1,    /* 正在加密 */
 }AES_TYPE_DONE;
 
 /* 加解密数据结构体 */
 typedef struct {
-	uint32_t DATA[4];
+    uint32_t DATA[4];
 }AES_DATA_TypeDef;
 
 typedef enum {
-	AES_IF_IF = 0x80,
+    AES_IF_IF = 0x80,
 }AES_TYPE_IF;
 
 typedef enum {
-	AES_IT_IT = 0x40,
+    AES_IT_IT = 0x40,
 }AES_TYPE_IT;
 
 /* 加解密密钥结构体 */
 typedef struct {
-	uint32_t KEY[4];
+    uint32_t KEY[4];
 }AES_KEY_TypeDef;
 
 /* 加解密初始结构体 */
 typedef struct {
-	AES_TYPE_MODE MODE;	/* 加密或者解密 */
+    AES_TYPE_MODE MODE; /* 加密或者解密 */
 }AES_InitStruType;
 
 /* 加解密使能，开始加密 */
-#define AES_Enable()	(AES->CON.GO_DONE = 1)
+#define AES_Enable()    (AES->CON.GO_DONE = 1)
 /* 加密模块关闭 */
-#define AES_Disable()	(AES->CON.GO_DONE = 0)
+#define AES_Disable()   (AES->CON.GO_DONE = 0)
 
 
 /********************* ADC模块函数声明 *********************/

@@ -55,7 +55,7 @@
 #define ESCR_DATABITS_7  0x03U
 #define ESCR_DATABITS_9  0x04U
 
-#define FIFO_SIZE		16
+#define FIFO_SIZE       16
 
 /*
  *  Enable/DISABLE Interrupt Controller
@@ -66,19 +66,19 @@
 
 struct uart03_device
 {
-	FM3_MFS03_UART_TypeDef *uart_regs;
-	/* irq number */
-	IRQn_Type rx_irq;
-	IRQn_Type tx_irq;
+    FM3_MFS03_UART_TypeDef *uart_regs;
+    /* irq number */
+    IRQn_Type rx_irq;
+    IRQn_Type tx_irq;
 };
 
 struct uart47_device
 {
-	FM3_MFS47_UART_TypeDef *uart_regs;
-	/* irq number */
-	IRQn_Type rx_irq;
-	IRQn_Type tx_irq;
-	rt_uint8_t fifo_size;	
+    FM3_MFS47_UART_TypeDef *uart_regs;
+    /* irq number */
+    IRQn_Type rx_irq;
+    IRQn_Type tx_irq;
+    rt_uint8_t fifo_size;
 };
 
 void rt_hw_serial_init(void);

@@ -20,9 +20,9 @@ extern const struct fal_flash_dev stm32_onchip_flash;
 
 /* ========================= Device Configuration ========================== */
 #ifdef BSP_USING_ON_CHIP_FLASH
-#define ONCHIP_FLASH_DEV     &stm32_onchip_flash,  
+#define ONCHIP_FLASH_DEV     &stm32_onchip_flash,
 #else
-#define ONCHIP_FLASH_DEV    
+#define ONCHIP_FLASH_DEV
 #endif /* BSP_USING_ON_CHIP_FLASH */
 
 /* flash device table */

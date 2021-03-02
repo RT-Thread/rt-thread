@@ -539,47 +539,47 @@ void GPIO_EventOutputCmd(FunctionalState NewState)
   *     @arg GPIO_Remap10_SDIO2          : SDIO2 Alternate Function mapping 10:CK/CMD Remaped to PA2/PA3,D0~D3 Remaped None.
   *     @arg GPIO_Remap11_SDIO2          : SDIO2 Alternate Function mapping 11:CK/CMD Remaped to PA2/PA3,D0~D3 Remaped to PA4~PA7.
   *     @arg GPIO_Remap_EXT_FLASH        : EXT_FLASH Alternate Function mapping
-  
+
   *     @arg AFIO_MAP3_TMR9_0010         : TMR9 Alternate Function mapping:
   *     @arg AFIO_MAP3_TMR10_0010        : TMR10 Alternate Function mapping:
   *     @arg AFIO_MAP3_TMR11_0010        : TMR11 Alternate Function mapping:
-  *     @arg AFIO_MAP4_TMR1_0001         : TMR1 Alternate Function mapping 
+  *     @arg AFIO_MAP4_TMR1_0001         : TMR1 Alternate Function mapping
   *     @arg AFIO_MAP4_TMR2_0001         : TMR2 Alternate Function mapping 0001
   *     @arg AFIO_MAP4_TMR2_0010         : TMR2 Alternate Function mapping 0010
   *     @arg AFIO_MAP4_TMR2_0011         : TMR2 Alternate Function mapping 0011
   *     @arg AFIO_MAP4_TMR3_0010         : TMR3 Alternate Function mapping 0010
   *     @arg AFIO_MAP4_TMR3_0011         : TMR3 Alternate Function mapping 0011
   *     @arg AFIO_MAP4_TMR5_0001         : TMR5 Alternate Function mapping 0001: CH1/CH2
-  *     @arg AFIO_MAP4_TMR5_1000         : TMR5 Alternate Function mapping 1000: CH4 
-  *     @arg AFIO_MAP4_TMR5_1001         : TMR5 Alternate Function mapping 1001: CH1/CH2+CH4 
+  *     @arg AFIO_MAP4_TMR5_1000         : TMR5 Alternate Function mapping 1000: CH4
+  *     @arg AFIO_MAP4_TMR5_1001         : TMR5 Alternate Function mapping 1001: CH1/CH2+CH4
   *     @arg AFIO_MAP5_I2C1_0001         : I2C1 Alternate Function mapping 0001
   *     @arg AFIO_MAP5_I2C1_0011         : I2C1 Alternate Function mapping 0011
   *     @arg AFIO_MAP5_I2C2_0001         : I2C2 Alternate Function mapping 0001
   *     @arg AFIO_MAP5_I2C2_0010         : I2C2 Alternate Function mapping 0010
   *     @arg AFIO_MAP5_I2C2_0011         : I2C2 Alternate Function mapping 0011
-  *     @arg AFIO_MAP5_SPI1_0001         : SPI1 Alternate Function mapping 
-  *     @arg AFIO_MAP5_SPI2_0001         : SPI2 Alternate Function mapping 
-  *     @arg AFIO_MAP6_CAN1_0010         : CAN1 Alternate Function mapping 
-  *     @arg AFIO_MAP6_CAN2_0001         : CAN2 Alternate Function mapping 
-  *     @arg AFIO_MAP6_SDIO_0100         : SDIO Alternate Function mapping 100 
-  *     @arg AFIO_MAP6_SDIO_0101         : SDIO Alternate Function mapping 101 
-  *     @arg AFIO_MAP6_SDIO_0110         : SDIO Alternate Function mapping 110 
-  *     @arg AFIO_MAP6_SDIO_0111         : SDIO Alternate Function mapping 111 
-  *     @arg AFIO_MAP6_USART1_0001       : USART1 Alternate Function mapping 
-  *     @arg AFIO_MAP6_USART3_0001       : USART3 Partial Alternate Function mapping 
-  *     @arg AFIO_MAP6_UART4_0001        : UART4 Alternate Function mapping 
-  *     @arg AFIO_MAP7_SPIF_1000         : EXT_FLASH Alternate Function mapping  
-  *     @arg AFIO_MAP7_SPIF_1001         : EXT_FLASH Alternate Function enable  
-  *     @arg AFIO_MAP7_ADC1_0001         : ADC1 External Trigger Injected Conversion remapping 
-  *     @arg AFIO_MAP7_ADC1_0010         : ADC1 External Trigger Regular Conversion remapping 
-  *     @arg AFIO_MAP7_ADC1_0011         : ADC1 External Trigger Regular & Injected Conversion remapping 
-  *     @arg AFIO_MAP7_ADC2_0001         : ADC2 External Trigger Injected Conversion remapping 
-  *     @arg AFIO_MAP7_ADC2_0010         : ADC2 External Trigger Regular Conversion remapping 
-  *     @arg AFIO_MAP7_ADC2_0011         : ADC2 External Trigger Regular & Injected Conversion remapping 
-  *     @arg AFIO_MAP7_SWJTAG_0001       : Full SWJ Enabled (JTAG-DP + SW-DP) but without JTRST 
-  *     @arg AFIO_MAP7_SWJTAG_0010       : JTAG-DP Disabled and SW-DP Enabled 
-  *     @arg AFIO_MAP7_SWJTAG_0100       : Full SWJ Disabled (JTAG-DP + SW-DP) 
-  *     @arg AFIO_MAP7_PD01_0001         : PD01 Alternate Function mapping 
+  *     @arg AFIO_MAP5_SPI1_0001         : SPI1 Alternate Function mapping
+  *     @arg AFIO_MAP5_SPI2_0001         : SPI2 Alternate Function mapping
+  *     @arg AFIO_MAP6_CAN1_0010         : CAN1 Alternate Function mapping
+  *     @arg AFIO_MAP6_CAN2_0001         : CAN2 Alternate Function mapping
+  *     @arg AFIO_MAP6_SDIO_0100         : SDIO Alternate Function mapping 100
+  *     @arg AFIO_MAP6_SDIO_0101         : SDIO Alternate Function mapping 101
+  *     @arg AFIO_MAP6_SDIO_0110         : SDIO Alternate Function mapping 110
+  *     @arg AFIO_MAP6_SDIO_0111         : SDIO Alternate Function mapping 111
+  *     @arg AFIO_MAP6_USART1_0001       : USART1 Alternate Function mapping
+  *     @arg AFIO_MAP6_USART3_0001       : USART3 Partial Alternate Function mapping
+  *     @arg AFIO_MAP6_UART4_0001        : UART4 Alternate Function mapping
+  *     @arg AFIO_MAP7_SPIF_1000         : EXT_FLASH Alternate Function mapping
+  *     @arg AFIO_MAP7_SPIF_1001         : EXT_FLASH Alternate Function enable
+  *     @arg AFIO_MAP7_ADC1_0001         : ADC1 External Trigger Injected Conversion remapping
+  *     @arg AFIO_MAP7_ADC1_0010         : ADC1 External Trigger Regular Conversion remapping
+  *     @arg AFIO_MAP7_ADC1_0011         : ADC1 External Trigger Regular & Injected Conversion remapping
+  *     @arg AFIO_MAP7_ADC2_0001         : ADC2 External Trigger Injected Conversion remapping
+  *     @arg AFIO_MAP7_ADC2_0010         : ADC2 External Trigger Regular Conversion remapping
+  *     @arg AFIO_MAP7_ADC2_0011         : ADC2 External Trigger Regular & Injected Conversion remapping
+  *     @arg AFIO_MAP7_SWJTAG_0001       : Full SWJ Enabled (JTAG-DP + SW-DP) but without JTRST
+  *     @arg AFIO_MAP7_SWJTAG_0010       : JTAG-DP Disabled and SW-DP Enabled
+  *     @arg AFIO_MAP7_SWJTAG_0100       : Full SWJ Disabled (JTAG-DP + SW-DP)
+  *     @arg AFIO_MAP7_PD01_0001         : PD01 Alternate Function mapping
   * @param  NewState: new state of the port pin remapping.
   *   This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -598,7 +598,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
     Remap_Addr &= 0x7f;
     bit_ost = Remap_Addr >> 4;
     Remap_Addr &= 0x0f;
-    
+
 #ifdef AT32F415xx
     if(reg_ost != AFIO_MAP8)
       Remap_val = Remap_Addr << (bit_ost * 4);
@@ -607,7 +607,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
 #else
     Remap_val = Remap_Addr << (bit_ost * 4);
 #endif
-    
+
     switch(reg_ost)
     {
       case AFIO_MAP3:
@@ -629,13 +629,13 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       case AFIO_MAP7:
         AFIO_MAPx = &(AFIO->MAP7);
         break;
-      
+
 #ifndef AT32F413xx
       case AFIO_MAP8:
         AFIO_MAPx = &(AFIO->MAP8);
         break;
 #endif
-      
+
       default:
         break;
     }
@@ -774,7 +774,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
 #ifdef AT32F403xx
     case GPIO_Remap10_SPI1:
       AFIO->MAP &= 0x7FFFFFFE;
@@ -786,7 +786,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
 
       break;
 #endif
-      
+
     case GPIO_PartialRemap_USART3:
       AFIO->MAP &= 0xFFFFFFCF;
 
@@ -796,7 +796,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
 #ifdef AT32F415xx
     case GPIO_PartialRemap2_USART3:
       AFIO->MAP &= 0xFFFFFFCF;
@@ -807,7 +807,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
     case GPIO_PartialRemap2_TMR1:
       AFIO->MAP &= 0xFFFFFF3F;
 
@@ -954,7 +954,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
 #if defined (AT32F403Axx) || defined (AT32F407xx)
     case GPIO_Remap_PTP_PPS:
       AFIO->MAP &= ~GPIO_Remap_PTP_PPS;
@@ -965,7 +965,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
     case GPIO_Remap_TMR2ITR1:
       AFIO->MAP &= ~GPIO_Remap_TMR2ITR1;
 
@@ -975,7 +975,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
     case GPIO_Remap_SPI3:
       AFIO->MAP &= ~GPIO_Remap_SPI3;
 
@@ -985,7 +985,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
     case GPIO_Remap_MII_RMII:
       AFIO->MAP &= ~GPIO_Remap_MII_RMII;
 
@@ -995,7 +995,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
     case GPIO_Remap_CAN2:
       AFIO->MAP &= ~GPIO_Remap_CAN2;
 
@@ -1005,7 +1005,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
     case GPIO_Remap_ETH:
       AFIO->MAP &= ~GPIO_Remap_ETH;
 
@@ -1016,7 +1016,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
 
       break;
 #endif
-      
+
 #if defined (AT32F403xx)
     case GPIO_Remap_TMR15:
     case GPIO_Remap_TMR10:
@@ -1032,7 +1032,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
 
       break;
 #endif
-      
+
 #if defined (AT32F403xx) || defined (AT32F403Axx) || defined (AT32F407xx)
     case GPIO_Remap_TMR9:
     case GPIO_Remap_XMC_NADV:
@@ -1097,7 +1097,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
       }
 
       break;
-      
+
     case GPIO_Remap10_COMP:
       AFIO->MAP2 &= 0xF3FFFFFF;
 
@@ -1108,7 +1108,7 @@ void GPIO_PinsRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)
 
       break;
 #endif
-      
+
     default:
       break;
     }
@@ -1137,18 +1137,18 @@ void GPIO_EXTILineConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource)
 
 /**
   * @brief  Selects the Ethernet media interface.
-  * @note   This function applies only to AT32 Connectivity line devices.  
+  * @note   This function applies only to AT32 Connectivity line devices.
   * @param  GPIO_ETH_MediaInterface: specifies the Media Interface mode.
   *   This parameter can be one of the following values:
   *     @arg GPIO_ETH_MediaInterface_MII: MII mode
-  *     @arg GPIO_ETH_MediaInterface_RMII: RMII mode    
+  *     @arg GPIO_ETH_MediaInterface_RMII: RMII mode
   * @retval None
   */
-void GPIO_ETH_MediaInterfaceConfig(uint32_t GPIO_ETH_MediaInterface) 
-{ 
-  assert_param(IS_GPIO_ETH_MEDIA_INTERFACE(GPIO_ETH_MediaInterface)); 
-  /* Configure MII_RMII selection bit */ 
-  *(__IO uint32_t *) MAPR_MII_RMII_SEL_BB = GPIO_ETH_MediaInterface; 
+void GPIO_ETH_MediaInterfaceConfig(uint32_t GPIO_ETH_MediaInterface)
+{
+  assert_param(IS_GPIO_ETH_MEDIA_INTERFACE(GPIO_ETH_MediaInterface));
+  /* Configure MII_RMII selection bit */
+  *(__IO uint32_t *) MAPR_MII_RMII_SEL_BB = GPIO_ETH_MediaInterface;
 }
 
 /**

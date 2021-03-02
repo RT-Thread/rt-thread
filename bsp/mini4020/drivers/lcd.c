@@ -56,7 +56,7 @@ void radio_rtgui_init(void)
     _rtgui_lcd_driver.bits_per_pixel  = 16;
     _rtgui_lcd_driver.width           = 320;
     _rtgui_lcd_driver.height          = 240;
-        
+
     _rtgui_lcd_driver.ops = &_rtgui_graphic_driver_ops;
 
     //_rtgui_lcd_driver.screen_update   = lcd_update;

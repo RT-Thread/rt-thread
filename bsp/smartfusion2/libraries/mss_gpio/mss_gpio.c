@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (c) Copyright 2008-2015 Microsemi SoC Products Group.  All rights reserved.
- * 
+ *
  * SmartFusion2 microcontroller subsystem GPIO bare metal driver implementation.
  *
  * SVN $Revision: 7749 $
@@ -11,7 +11,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * Defines.
@@ -106,14 +106,14 @@ static const IRQn_Type g_gpio_irqn_lut[NB_OF_GPIO] =
 void MSS_GPIO_init( void )
 {
     uint32_t inc;
-    
+
     /* reset MSS GPIO hardware */
     SYSREG->SOFT_RST_CR |= SYSREG_GPIO_SOFTRESET_MASK;
     SYSREG->SOFT_RST_CR |= (SYSREG_GPIO_7_0_SOFTRESET_MASK |
                             SYSREG_GPIO_15_8_SOFTRESET_MASK |
                             SYSREG_GPIO_23_16_SOFTRESET_MASK |
                             SYSREG_GPIO_31_24_SOFTRESET_MASK);
-                            
+
     /* Clear any previously pended MSS GPIO interrupt */
     for(inc = 0U; inc < NB_OF_GPIO; ++inc)
     {
@@ -139,7 +139,7 @@ void MSS_GPIO_config
 )
 {
     uint32_t gpio_idx = (uint32_t)port_id;
-    
+
     ASSERT(gpio_idx < NB_OF_GPIO);
 
     if(gpio_idx < NB_OF_GPIO)
@@ -160,9 +160,9 @@ void MSS_GPIO_set_output
 {
     uint32_t gpio_setting;
     uint32_t gpio_idx = (uint32_t)port_id;
-    
+
     ASSERT(gpio_idx < NB_OF_GPIO);
-    
+
     if(gpio_idx < NB_OF_GPIO)
     {
         gpio_setting = GPIO->GPIO_OUT;
@@ -185,9 +185,9 @@ void MSS_GPIO_drive_inout
     uint32_t outputs_state;
     uint32_t config;
     uint32_t gpio_idx = (uint32_t)port_id;
-    
+
     ASSERT(gpio_idx < NB_OF_GPIO);
-    
+
     if(gpio_idx < NB_OF_GPIO)
     {
         switch(inout_state)
@@ -202,7 +202,7 @@ void MSS_GPIO_drive_inout
                 config |= OUTPUT_BUFFER_ENABLE_MASK;
                 *(g_config_reg_lut[gpio_idx]) = config;
             break;
-                
+
             case MSS_GPIO_DRIVE_LOW:
                 /* Set output low */
                 outputs_state = GPIO->GPIO_OUT;
@@ -213,14 +213,14 @@ void MSS_GPIO_drive_inout
                 config |= OUTPUT_BUFFER_ENABLE_MASK;
                 *(g_config_reg_lut[gpio_idx]) = config;
             break;
-                
+
             case MSS_GPIO_HIGH_Z:
                 /* Disable output buffer */
                 config = *(g_config_reg_lut[gpio_idx]);
                 config &= ~OUTPUT_BUFFER_ENABLE_MASK;
                 *(g_config_reg_lut[gpio_idx]) = config;
             break;
-                
+
             default:
                 ASSERT(0);
             break;
@@ -239,9 +239,9 @@ void MSS_GPIO_enable_irq
 {
     uint32_t cfg_value;
     uint32_t gpio_idx = (uint32_t)port_id;
-    
+
     ASSERT(gpio_idx < NB_OF_GPIO);
-    
+
     if(gpio_idx < NB_OF_GPIO)
     {
         cfg_value = *(g_config_reg_lut[gpio_idx]);
@@ -261,7 +261,7 @@ void MSS_GPIO_disable_irq
 {
     uint32_t cfg_value;
     uint32_t gpio_idx = (uint32_t)port_id;
-    
+
     ASSERT(gpio_idx < NB_OF_GPIO);
 
     if(gpio_idx < NB_OF_GPIO)
@@ -281,9 +281,9 @@ void MSS_GPIO_clear_irq
 )
 {
     uint32_t gpio_idx = (uint32_t)port_id;
-    
+
     ASSERT(gpio_idx < NB_OF_GPIO);
-    
+
     if(gpio_idx < NB_OF_GPIO)
     {
         GPIO->GPIO_IRQ = ((uint32_t)1) << gpio_idx;

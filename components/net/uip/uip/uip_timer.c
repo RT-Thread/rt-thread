@@ -127,61 +127,61 @@ static struct rt_mailbox uip_mbox;
 static struct rt_thread aa;
 
 static char uip_timeout_mb_pool[4 * 4];
-extern u16_t uip_len, uip_slen; 
+extern u16_t uip_len, uip_slen;
 
 void uip_timeout_entry2(void* parameter)
 {
-  
-     
+
+
 }
 void uip_timeout_entry(void* parameter)//由于TIMEOUT函数，不参与调度
 {
    // struct timer periodic_timer, arp_timer;
     static uint8_t cnt;
     int i;
-	/* post message to ethernet thread */
+    /* post message to ethernet thread */
 
-    //if ((rt_sem_take(msg,RT_WAITING_NO)) != -RT_ETIMEOUT) 
+    //if ((rt_sem_take(msg,RT_WAITING_NO)) != -RT_ETIMEOUT)
     //if (timer_expired(&periodic_timer)) //5s enter once
     {
        //timer_reset(&periodic_timer);
        for (i = 0; i < UIP_CONNS; i++)
        {
-	  uip_periodic(i);
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	  if (uip_len > 0)
+      uip_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+      if (uip_len > 0)
           {
-	      uip_arp_out();
-	      TransmitPacket();
-	  }
+          uip_arp_out();
+          TransmitPacket();
+      }
        }
 #if UIP_UDP
        for (i = 0; i < UIP_UDP_CONNS; i++) //
        {
-	   uip_udp_periodic(i);
-	/* If the above function invocation resulted in data that
-	   should be sent out on the network, the global variable
-	   uip_len is set to a value > 0. */
-	   if (uip_len > 0)
+       uip_udp_periodic(i);
+    /* If the above function invocation resulted in data that
+       should be sent out on the network, the global variable
+       uip_len is set to a value > 0. */
+       if (uip_len > 0)
            {
-	      uip_arp_out();
-	      TransmitPacket();
-	    }
+          uip_arp_out();
+          TransmitPacket();
+        }
         }
 #endif /* UIP_UDP */
-      
+
        /* Call the ARP timer function every 10 seconds. */
-       //if (timer_expired(&arp_timer)) 
+       //if (timer_expired(&arp_timer))
        if (++cnt >= 2) //t
        {
-	  //timer_reset(&arp_timer);
-	  uip_arp_timer();
+      //timer_reset(&arp_timer);
+      uip_arp_timer();
           cnt = 0;
        }
     }
-  
+
 }
 int
 timer_expired(struct timer *t)
@@ -190,7 +190,7 @@ timer_expired(struct timer *t)
     {
         //rt_mb_send(mbox,&
     }
-    
+
 }
 /*---------------------------------------------------------------------------*/
 

@@ -151,13 +151,13 @@ tcp_set_state(struct tcp_pcb* pcb, enum tcp_state state, const ip_addr_t* local_
   /* @todo: are these all states? */
   /* @todo: remove from previous list */
   pcb->state = state;
-  
+
   iss = tcp_next_iss(pcb);
   pcb->snd_wl2 = iss;
   pcb->snd_nxt = iss;
   pcb->lastack = iss;
   pcb->snd_lbb = iss;
-  
+
   if (state == ESTABLISHED) {
     TCP_REG(&tcp_active_pcbs, pcb);
     ip_addr_copy(pcb->local_ip, *local_ip);

@@ -96,7 +96,7 @@ int32_t is_input_char(uint8_t c, const char* const indent)
         uc = c - 'a' + 'A';
     } else {
         printf_color(g_TextAttributeBold, g_TextColorRed, "%sError: not a valid letter: %c\n",
-        		indent == NULL ? "" : indent, c);
+                indent == NULL ? "" : indent, c);
         return 0;
     }
     printf("%sPlease enter %c or %c to confirm.\n", indent == NULL ? "" : indent, lc, uc);
@@ -120,10 +120,10 @@ char * read_input_string(input_string_filter_t filter)
     {
         return NULL;
     }
-    
+
     // Start off with an empty string.
     result[0] = 0;
-    
+
     while (true)
     {
         char c = getchar();
@@ -151,21 +151,21 @@ char * read_input_string(input_string_filter_t filter)
             {
                 result[--len] = 0;
             }
-            
+
             // Erase the char.
             fputc(c, stdout);
             fputc(' ', stdout);
             fputc(c, stdout);
-            
+
             continue;
         }
-        
+
         // Ask the filter if the char is ok.
         if (filter && !filter(c, result))
         {
             continue;
         }
-        
+
         // Reallocate the string if needed.
         if (len >= maxLen)
         {
@@ -176,15 +176,15 @@ char * read_input_string(input_string_filter_t filter)
                 return NULL;
             }
         }
-        
+
         // Build up the string.
         result[len++] = c;
         result[len] = 0;
-        
+
         // Echo the character.
         fputc(c, stdout);
     }
-    
+
     return result;
 }
 
@@ -233,7 +233,7 @@ int read_int(void)
 {
     int result = 0;
     bool isDone = false;
-    
+
     while (!isDone)
     {
         char c = getchar();
@@ -242,7 +242,7 @@ int read_int(void)
             case NONE_CHAR:
             default:
                 continue;
-            
+
             case '0':
             case '1':
             case '2':
@@ -256,7 +256,7 @@ int read_int(void)
                 // Update our int value.
                 result = (result * 10) + (c - '0');
                 break;
-                
+
             case '\n':
             case '\r':
                 // Exit the scan loop.
@@ -274,7 +274,7 @@ int read_int(void)
 
 void jump_to_sdp(void)
 {
-	/* Re-configure the clock gating like the ROM expects it */
+    /* Re-configure the clock gating like the ROM expects it */
     HW_CCM_CCGR0_WR(0xF0C03F0F);
     HW_CCM_CCGR1_WR(0xF0FC0000);
     HW_CCM_CCGR2_WR(0xFC3FF00C);
@@ -283,7 +283,7 @@ void jump_to_sdp(void)
     HW_CCM_CCGR5_WR(0xF0033F0F);
     HW_CCM_CCGR6_WR(0xFFFF0303);
 
-	/* enter the ROM Serial Download Protocol */
+    /* enter the ROM Serial Download Protocol */
     hab_rvt_failsafe();
 }
 

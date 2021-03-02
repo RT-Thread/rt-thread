@@ -12126,7 +12126,7 @@ const unsigned char gImage_foretext[120000] = { /* 0X00,0X10,0X58,0X02,0X78,0X00
 /*!
  * load the image to the center of the screen.
  *
- * @param   addr memory address where to load the image   
+ * @param   addr memory address where to load the image
  * @param   panel ipu panel configuration data structure
  */
 void load_centralized_image(uint32_t addr, ips_dev_panel_t * panel)

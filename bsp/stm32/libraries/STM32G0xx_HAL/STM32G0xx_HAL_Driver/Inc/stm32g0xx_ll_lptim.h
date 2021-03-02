@@ -33,7 +33,7 @@ extern "C" {
   */
 
 #if defined (LPTIM1) || defined (LPTIM2)
-	
+
 /** @defgroup LPTIM_LL LPTIM
   * @{
   */
@@ -279,7 +279,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 
 /**
   * @}

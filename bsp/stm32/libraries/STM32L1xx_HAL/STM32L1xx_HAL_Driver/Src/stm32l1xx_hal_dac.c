@@ -961,7 +961,7 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConf
   tmpreg1 &= ~(((uint32_t)(DAC_CR_MAMP1 | DAC_CR_WAVE1 | DAC_CR_TSEL1 | DAC_CR_TEN1 | DAC_CR_BOFF1)) << Channel);
   /* Configure for the selected DAC channel: buffer output, trigger */
   /* Set TSELx and TENx bits according to DAC_Trigger value */
-  /* Set BOFFx bit according to DAC_OutputBuffer value */   
+  /* Set BOFFx bit according to DAC_OutputBuffer value */
   tmpreg2 = (sConfig->DAC_Trigger | sConfig->DAC_OutputBuffer);
   /* Calculate CR register value depending on DAC_Channel */
   tmpreg1 |= tmpreg2 << Channel;

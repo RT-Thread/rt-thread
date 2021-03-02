@@ -35,7 +35,7 @@
    #include <stdio.h>
 #endif
 #include <stdlib.h>
-#include <string.h>			
+#include <string.h>
 
 #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
 #include "exceptions.h"
@@ -50,7 +50,7 @@
 void TestApp_Init(void);
 extern void display_led(uint_8 val);
 /****************************************************************************
- * Global Variables 
+ * Global Variables
  ****************************************************************************/
 extern uint_8 g_phd_selected_configuration;
 /*****************************************************************************
@@ -111,15 +111,15 @@ static void USB_App_Callback(
     {
         case APP_PHD_UNINITIALISED:
         case APP_PHD_INITIALISED:
-		    App_Display((uint_8)g_phd_selected_configuration);
+            App_Display((uint_8)g_phd_selected_configuration);
 
         case APP_PHD_CONNECTED_TO_HOST:
 #if HIGH_SPEED_DEVICE
-    	// prepare for the next receive event
-    	_usb_device_recv_data(&controller_ID, 
-    			PHDC_BULK_OUT_EP,
-    			g_phdcBuffer,
-    			PHDC_BULK_OUT_EP_SIZE);
+        // prepare for the next receive event
+        _usb_device_recv_data(&controller_ID,
+                PHDC_BULK_OUT_EP,
+                g_phdcBuffer,
+                PHDC_BULK_OUT_EP_SIZE);
 #endif
         case APP_PHD_ERROR:
             scanReportNo = 0; /* Initialize with 0 each time the Agent is associated to the manager */
@@ -130,16 +130,16 @@ static void USB_App_Callback(
             break;
         case APP_PHD_DISCONNECTED_FROM_HOST:
 #if HIGH_SPEED_DEVICE
-    	// prepare for the next receive event
-    	_usb_device_recv_data(&controller_ID, 
-    			PHDC_BULK_OUT_EP,
-    			g_phdcBuffer,
-    			PHDC_BULK_OUT_EP_SIZE);
+        // prepare for the next receive event
+        _usb_device_recv_data(&controller_ID,
+                PHDC_BULK_OUT_EP,
+                g_phdcBuffer,
+                PHDC_BULK_OUT_EP_SIZE);
 #endif
         case APP_PHD_ASSOCIATION_TIMEDOUT:
             event = APP_PHD_INITIALISED;
-        	break;
-    }   
+            break;
+    }
     return;
 }
 /******************************************************************************
@@ -161,27 +161,27 @@ static void USB_App_Callback(
     {
         switch(kbi_stat & KBI_STAT_MASK)
         {
-            case SEND_MEASUREMENT: 
-                /* 
+            case SEND_MEASUREMENT:
+                /*
                     PTG1 is pressed, used to send
-                    measurements 
+                    measurements
                 */
                 if(event == APP_PHD_CONNECTED_TO_HOST)
                 {
-    		        /* 
-    		            Send measurements only when the device is in the 
-    		            operating state 
-    		        */
-    		        event = APP_PHD_MEASUREMENT_SENDING;
+                    /*
+                        Send measurements only when the device is in the
+                        operating state
+                    */
+                    event = APP_PHD_MEASUREMENT_SENDING;
                     PHD_Send_Measurements_to_Manager(CONTROLLER_ID);
                 }
                 break;
 
-            case DISCONNECT:  
+            case DISCONNECT:
              #ifndef BUTTON_PRESS_SIMULATION
-                /* 
+                /*
                     PTG2 is pressed, to disconnect(dis-associate)
-                    from the host 
+                    from the host
                 */
                 if(event == APP_PHD_CONNECTED_TO_HOST)
                 {
@@ -192,42 +192,42 @@ static void USB_App_Callback(
       break;
 
             case SELECT_DEVICE_SPEC:
-			{
-			    uint_8 index;
-			    /*
-			        Remove Timer if any 
-			    */
+            {
+                uint_8 index;
+                /*
+                    Remove Timer if any
+                */
                 (void)RemoveTimerQ(g_app_timer);
                 if(event == APP_PHD_SELECT_TIMER_STARTED)
                 {
-                    /* 
-                        If the device is not associated, start a timer to wait 
-                        for another select device key press 
+                    /*
+                        If the device is not associated, start a timer to wait
+                        for another select device key press
                     */
                     TIMER_OBJECT TimerObject;
                     TimerObject.msCount = SELECT_TIMEOUT;
                     TimerObject.pfnTimerCallback = SelectTimerCallback;
 
                     g_app_timer = AddTimerQ(&TimerObject);
-                } 
+                }
                 else if (event == APP_PHD_CONNECTED_TO_HOST)
                 {
-                    /* 
+                    /*
                         If the device is associated, send association release
-                        request, so that the new specialization can be 
-                        associated 
+                        request, so that the new specialization can be
+                        associated
                     */
                     event = APP_PHD_DISCONNECTING;
                     PHD_Disconnect_from_Manager(CONTROLLER_ID);
                 }
-                    
+
                 index = g_phd_selected_configuration;
                 index = (uint_8)((index + 1) % MAX_DEV_SPEC_SUPPORTED);
                 g_phd_selected_configuration = index;
                 App_Display((uint_8)g_phd_selected_configuration);
-			}
+            }
                 break;
-               
+
             default:
                 break; /* otherwise */
         }
@@ -239,7 +239,7 @@ static void USB_App_Callback(
  *   @name        TestApp_Init
  *
  *   @brief       This function is the entry for the PHDC Multi Specialization
- *                Application 
+ *                Application
  *
  *   @param       None
  *
@@ -253,17 +253,17 @@ void TestApp_Init(void)
     uint_8 error;
 
     DisableInterrupts;
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_dis();
-    #endif	
+    #endif
 
     /* Initialize the USB interface */
     error = PHD_Transport_Init(CONTROLLER_ID, USB_App_Callback);
 
     EnableInterrupts;
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_en();
-    #endif	   
+    #endif
 }
 
 /******************************************************************************
@@ -281,54 +281,54 @@ void TestApp_Init(void)
  *****************************************************************************/
 void TestApp_Task(void)
 {
-        
+
         /* Check for any button pressed */
         Button_Pressed();
-        
+
         switch (event)
         {
             case APP_PHD_INITIALISED:
                 {
-                    /* 
-                        Start a timer so that the user has enough time to 
-                        select the device specialization 
+                    /*
+                        Start a timer so that the user has enough time to
+                        select the device specialization
                     */
                     TIMER_OBJECT TimerObject;
                     TimerObject.msCount = SELECT_TIMEOUT;
                     TimerObject.pfnTimerCallback = SelectTimerCallback;
-                 
+
                     event = APP_PHD_SELECT_TIMER_STARTED;
                     g_app_timer = AddTimerQ(&TimerObject);
                 }
                 break;
             case APP_PHD_DISCONNECTED_FROM_HOST:
-                /* 
-                    transition to initialised state so the association 
-                    procedure can start again 
+                /*
+                    transition to initialised state so the association
+                    procedure can start again
                 */
                 event = APP_PHD_INITIALISED;
                 break;
 
             case APP_PHD_MEASUREMENT_SENT:
-                /* 
+                /*
                     enters here each time we receive a response to the
-                    measurements sent 
+                    measurements sent
                 */
                 event = APP_PHD_CONNECTED_TO_HOST;
                 break;
             case APP_PHD_SELECT_TIMER_OFF:
-                /* 
-                    Start the association procedure once the select timer 
-                    fires 
+                /*
+                    Start the association procedure once the select timer
+                    fires
                 */
                 event = APP_PHD_INITIATED;
                 /* connect to the manager */
-                PHD_Connect_to_Manager(CONTROLLER_ID);                  
+                PHD_Connect_to_Manager(CONTROLLER_ID);
                 break;
-                  
+
           default:
               break;
-    
+
         }
 
 }
@@ -337,7 +337,7 @@ void TestApp_Task(void)
  *
  *   @name        App_Display
  *
- *   @brief       This function displays the leds on the demo board 
+ *   @brief       This function displays the leds on the demo board
  *                corressponding to the device specialization currently running
  *
  *   @param       val   : Value to display
@@ -345,7 +345,7 @@ void TestApp_Task(void)
  *   @return      None
  *
  *****************************************************************************
- * This funtions displays the LEDs on the board so that user knows which 
+ * This funtions displays the LEDs on the board so that user knows which
  * device specialization is active
  *****************************************************************************/
 static void App_Display (
@@ -372,7 +372,7 @@ static void App_Display (
  *   @return      None
  *
  *****************************************************************************
- * This function when called initiates the association procedure for the 
+ * This function when called initiates the association procedure for the
  * selected device specialization
  *****************************************************************************/
 #ifdef TIMER_CALLBACK_ARG

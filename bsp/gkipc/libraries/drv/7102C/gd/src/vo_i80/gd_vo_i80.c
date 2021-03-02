@@ -10,13 +10,13 @@
 **            ACCEPTS NO RESPONSIBILITY OR LIABILITY FOR ANY ERRORS OR
 **            OMMISSIONS.
 **
-** \note     
+** \note
 **
 ******************************************************************************/
 
 #include "gd_gpio.h"
-#include "gd_vo_i80.h"    
-#include "gh_vo_i80.h"    
+#include "gd_vo_i80.h"
+#include "gh_vo_i80.h"
 #include "gd_timer.h"
 
 //#define DEBUG_PRINT
@@ -37,21 +37,21 @@ static U8                       I80InitDone = 0;  //is or not already initialize
 GERR GD_VO_I80_CfgInvalid(void)
 {
     GH_VO_I80_set_Ctrl_cfg_end(0);//cfg_end=0
-    
+
     return GD_OK;
 }
 
 GERR GD_VO_I80_CfgValid(void)
 {
     GH_VO_I80_set_Ctrl_cfg_end(1);//cfg_end=1
-    
+
     return GD_OK;
 }
 
 GERR GD_VO_I80_CmdParaInvalid(void)
 {
     GH_VO_I80_set_Cmd_Sram_State_sram_state(0);//sram_state=0
-    
+
     return GD_OK;
 }
 
@@ -59,7 +59,7 @@ GERR GD_VO_I80_CmdParaInvalid(void)
 GERR GD_VO_I80_CmdParaValid(void)
 {
     GH_VO_I80_set_Cmd_Sram_State_sram_state(1);//sram_state=1
-    
+
     return GD_OK;
 }
 
@@ -70,12 +70,12 @@ GERR GD_VO_I80_OnOff(GD_HANDLE *pHandle,GD_VO_I80_ONOFF_E onoff)
     {
         return GD_ERR_INVALID_HANDLE;
     }
-    
+
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
-    }  
+    }
     if(onoff == GD_VO_I80_OFF)
     {
         GH_VO_I80_set_Ctrl_module_en(0);
@@ -84,11 +84,11 @@ GERR GD_VO_I80_OnOff(GD_HANDLE *pHandle,GD_VO_I80_ONOFF_E onoff)
     {
         GH_VO_I80_set_Ctrl_module_en(1);
     }
-    
+
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }     
+    }
     return GD_OK;
 }
 
@@ -100,7 +100,7 @@ GERR GD_VO_I80_SetTransWidth(GD_HANDLE* pHandle,GD_VO_I80_DATA_WIDTH_E data_widt
         return GD_ERR_INVALID_HANDLE;
     }
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
-    
+
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
@@ -144,11 +144,11 @@ GERR GD_VO_I80_SetTransWidth(GD_HANDLE* pHandle,GD_VO_I80_DATA_WIDTH_E data_widt
 #endif
         break;
     }
-    
+
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }          
+    }
     return GD_OK;
 }
 
@@ -160,12 +160,12 @@ GERR GD_VO_I80_SetPixelBits(GD_HANDLE* pHandle,GD_VO_I80_COLOR_FORMAT_E color_fo
         return GD_ERR_INVALID_HANDLE;
     }
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
-    
+
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
     }
-        
+
     switch(color_format)
     {
     case GD_VO_I80_PIXEL_16BIT:
@@ -181,7 +181,7 @@ GERR GD_VO_I80_SetPixelBits(GD_HANDLE* pHandle,GD_VO_I80_COLOR_FORMAT_E color_fo
 #ifdef DEBUG_PRINT
         GM_Printf("Set i80 work in 18bits/pixel mode\n");
 #endif
-        break;        
+        break;
     case GD_VO_I80_PIXEL_24BIT:
         GH_VO_I80_set_Data_Format_color_format(2);
         device->colorformat = GD_VO_I80_PIXEL_24BIT;
@@ -195,13 +195,13 @@ GERR GD_VO_I80_SetPixelBits(GD_HANDLE* pHandle,GD_VO_I80_COLOR_FORMAT_E color_fo
 #ifdef DEBUG_PRINT
         GM_Printf("Set i80 work in 12bits/pixel mode\n");
 #endif
-        break; 
-    }        
+        break;
+    }
 
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }          
+    }
     return GD_OK;
 }
 
@@ -213,12 +213,12 @@ GERR GD_VO_I80_SetMultiTransSeq(GD_HANDLE* pHandle,GD_VO_I80_TRANS_FORMAT_E data
         return GD_ERR_INVALID_HANDLE;
     }
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
- 
+
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
     }
-       
+
     switch(datatransformat)
     {
         case GD_VO_I80_18BIT_TWICE_1PIXEL:
@@ -226,22 +226,22 @@ GERR GD_VO_I80_SetMultiTransSeq(GD_HANDLE* pHandle,GD_VO_I80_TRANS_FORMAT_E data
             device->datatransformat = GD_VO_I80_18BIT_TWICE_1PIXEL;
 #ifdef DEBUG_PRINT
                GM_Printf("Set i80 work in 1PIXEL/TWICE mode\n");
-#endif            
+#endif
             break;
         case GD_VO_I80_18BIT_TRICE_2PIXEL:
             GH_VO_I80_set_Data_Format_data_transfer_format(1);
             device->datatransformat = GD_VO_I80_18BIT_TRICE_2PIXEL;
 #ifdef DEBUG_PRINT
                GM_Printf("Set i80 work in 2PIXEL/TRICE mode\n");
-#endif                        
+#endif
             break;
     }
-    
+
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }      
-    return GD_OK;    
+    }
+    return GD_OK;
 }
 
 
@@ -258,22 +258,22 @@ GERR GD_VO_I80_SetPixelTransCmd(GD_HANDLE* pHandle, U16 pixelwrcmd,U16 pixelrdcm
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
     }
-        
+
     GH_VO_I80_set_Pixel_RdWrcmd_pixel_wrcmd(pixelwrcmd);
     device->wrcmd = pixelwrcmd;
 #ifdef DEBUG_PRINT
     GM_Printf("Set i80 write command:%x\n",pixelwrcmd);
 #endif
     GH_VO_I80_set_Pixel_RdWrcmd_pixel_rdcmd(pixelrdcmd);
-    device->rdcmd = pixelrdcmd;    
+    device->rdcmd = pixelrdcmd;
 #ifdef DEBUG_PRINT
     GM_Printf("Set i80 read command:%x\n",pixelrdcmd);
-#endif  
+#endif
 
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }      
+    }
     return GD_OK;
 }
 
@@ -291,7 +291,7 @@ GERR GD_VO_I80_SetCmdFormat(GD_HANDLE* pHandle,GD_VO_I80_CMD_WIDTH_E cmdwidth,GD
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
     }
-        
+
     switch(cmdwidth)
     {
     case GD_VO_I80_CMD_8BIT:
@@ -308,8 +308,8 @@ GERR GD_VO_I80_SetCmdFormat(GD_HANDLE* pHandle,GD_VO_I80_CMD_WIDTH_E cmdwidth,GD
         GM_Printf("Set i80 command in 16bits mode\n");
 #endif
         break;
-    }    
-    
+    }
+
     switch(cmdformat)
     {
     case GD_VO_I80_CMD_LITTLE_ENDIAN:
@@ -326,12 +326,12 @@ GERR GD_VO_I80_SetCmdFormat(GD_HANDLE* pHandle,GD_VO_I80_CMD_WIDTH_E cmdwidth,GD
         GM_Printf("Set i80 command in big endian mode\n");
 #endif
         break;
-    }          
+    }
 
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }     
+    }
     return GD_OK;
 }
 
@@ -343,12 +343,12 @@ GERR GD_VO_I80_SetPolarCtrl(GD_HANDLE* pHandle, U32 polarctrl)
         return GD_ERR_INVALID_HANDLE;
     }
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
-    
+
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
     }
-              
+
     GH_VO_I80_set_Polar_Ctrl(polarctrl);
     device->polarctrl = polarctrl;
 #ifdef DEBUG_PRINT
@@ -358,7 +358,7 @@ GERR GD_VO_I80_SetPolarCtrl(GD_HANDLE* pHandle, U32 polarctrl)
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }     
+    }
     return GD_OK;
 }
 
@@ -374,8 +374,8 @@ GERR GD_VO_I80_SetPicResolution(GD_HANDLE* pHandle, GD_VO_I80_PIC_RESOLUTION_S p
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
-    }  
-        
+    }
+
     GH_VO_I80_set_Pic_Resolution_width(picresolution.width);
     device->picresolution.width = picresolution.width;
 #ifdef DEBUG_PRINT
@@ -391,9 +391,9 @@ GERR GD_VO_I80_SetPicResolution(GD_HANDLE* pHandle, GD_VO_I80_PIC_RESOLUTION_S p
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }     
-    return GD_OK;    
-        
+    }
+    return GD_OK;
+
 }
 
 GERR GD_VO_I80_SetTransTiming(GD_HANDLE* pHandle,GD_VO_I80_TRANS_TIMING_S *pTranstiming)
@@ -403,53 +403,53 @@ GERR GD_VO_I80_SetTransTiming(GD_HANDLE* pHandle,GD_VO_I80_TRANS_TIMING_S *pTran
     {
         return GD_ERR_INVALID_HANDLE;
     }
-    
+
     if( pTranstiming==NULL)
     {
         return GD_ERR_BAD_PARAMETER;
        }
-    
+
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
 
-    GH_VO_I80_set_Tcs_Timing_cs_ref(pTranstiming->csref);                                   
+    GH_VO_I80_set_Tcs_Timing_cs_ref(pTranstiming->csref);
     device->transtiming.csref= pTranstiming->csref;
 
-    GH_VO_I80_set_Tcs_Timing_tas(pTranstiming->tas);    
-    device->transtiming.tas  = pTranstiming->tas;     
-         
+    GH_VO_I80_set_Tcs_Timing_tas(pTranstiming->tas);
+    device->transtiming.tas  = pTranstiming->tas;
+
     if(pTranstiming->csref==1)
-    { 
-        GH_VO_I80_set_Tcsref_Wt_Timing_pwcsh_wt(pTranstiming->pwcsh_wt);                      
-        device->transtiming.pwcsh_wt = pTranstiming->pwcsh_wt;    
+    {
+        GH_VO_I80_set_Tcsref_Wt_Timing_pwcsh_wt(pTranstiming->pwcsh_wt);
+        device->transtiming.pwcsh_wt = pTranstiming->pwcsh_wt;
 
-        GH_VO_I80_set_Tcsref_Wt_Timing_pwcsl_wt(pTranstiming->pwcsl_wt);                  
-        device->transtiming.pwcsl_wt = pTranstiming->pwcsl_wt; 
+        GH_VO_I80_set_Tcsref_Wt_Timing_pwcsl_wt(pTranstiming->pwcsl_wt);
+        device->transtiming.pwcsl_wt = pTranstiming->pwcsl_wt;
 
-        GH_VO_I80_set_Tcsref_Rd_Timing_pwcsh_rd(pTranstiming->pwcsh_rd);                    
-        device->transtiming.pwcsh_rd = pTranstiming->pwcsh_rd; 
-        
-        GH_VO_I80_set_Tcsref_Rd_Timing_pwcsl_rd(pTranstiming->pwcsl_rd);                         
-        device->transtiming.pwcsl_rd = pTranstiming->pwcsl_rd;                     
+        GH_VO_I80_set_Tcsref_Rd_Timing_pwcsh_rd(pTranstiming->pwcsh_rd);
+        device->transtiming.pwcsh_rd = pTranstiming->pwcsh_rd;
+
+        GH_VO_I80_set_Tcsref_Rd_Timing_pwcsl_rd(pTranstiming->pwcsl_rd);
+        device->transtiming.pwcsl_rd = pTranstiming->pwcsl_rd;
     }
     else
     {
         GH_VO_I80_set_Twr_Timing_twrh(pTranstiming->twrh);
-        device->transtiming.twrh = pTranstiming->twrh; 
-    
-        GH_VO_I80_set_Twr_Timing_twrl(pTranstiming->twrl);                             
-        device->transtiming.twrl = pTranstiming->twrl;         
-    
-        GH_VO_I80_set_Trd_Timing_trdh(pTranstiming->trdh);                            
-        device->transtiming.trdh = pTranstiming->trdh;      
-    
-        GH_VO_I80_set_Trd_Timing_trdl(pTranstiming->trdl);                                   
-        device->transtiming.trdl = pTranstiming->trdl;             
+        device->transtiming.twrh = pTranstiming->twrh;
+
+        GH_VO_I80_set_Twr_Timing_twrl(pTranstiming->twrl);
+        device->transtiming.twrl = pTranstiming->twrl;
+
+        GH_VO_I80_set_Trd_Timing_trdh(pTranstiming->trdh);
+        device->transtiming.trdh = pTranstiming->trdh;
+
+        GH_VO_I80_set_Trd_Timing_trdl(pTranstiming->trdl);
+        device->transtiming.trdl = pTranstiming->trdl;
     }
     GH_VO_I80_set_Todh_Timing((U32)(pTranstiming->todh));
-    device->transtiming.todh =  pTranstiming->todh;          
+    device->transtiming.todh =  pTranstiming->todh;
 
-    
-    return GD_OK;                            
+
+    return GD_OK;
 }
 
 GERR GD_VO_I80_SetCfgValidImmediately(GD_HANDLE* pHandle,GBOOL bValidimmediately)
@@ -459,10 +459,10 @@ GERR GD_VO_I80_SetCfgValidImmediately(GD_HANDLE* pHandle,GBOOL bValidimmediately
     {
         return GD_ERR_INVALID_HANDLE;
     }
-    device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);        
-    
+    device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
+
     device->isCfgValidImmediately=bValidimmediately;
-       
+
        return GD_OK;
 }
 
@@ -505,30 +505,30 @@ GERR GD_VO_I80_Open( GD_VO_I80_OPEN_PARAMS_S *openParamsP,GD_HANDLE *pHandle)
     {
         return GD_ERR_DEVICE_BUSY;
     }
-    
+
     i80_state_machine_dat.using = GTRUE;
     *pHandle=(GD_HANDLE )(&i80_state_machine_dat);
-    
+
     i80_state_machine_dat.isCfgValidImmediately = GFALSE;
-	//parameter decided by LCM(LCD module),put in the function of GD_VO_I80_Open()
-	GD_VO_I80_SetTransWidth(pHandle,openParamsP->datawidth);
-	GD_VO_I80_SetPixelBits(pHandle,openParamsP->colorformat);
-	GD_VO_I80_SetMultiTransSeq(pHandle,openParamsP->datatransformat);// See LCD driver IC Spec,such as ILI9342C-MDT[1:0] which is configurable
-	GD_VO_I80_SetPixelTransCmd(pHandle,openParamsP->wrcmd,openParamsP->rdcmd);
-	GD_VO_I80_SetCmdFormat(pHandle,openParamsP->cmdwidth,openParamsP->cmdformat);//width of command
-	GD_VO_I80_SetPolarCtrl(pHandle,openParamsP->polarctrl);	//6'b001000	
-	GD_VO_I80_SetPicResolution(pHandle,openParamsP->picresolution);//Picture/Video Feature given by VOUT
-	GD_VO_I80_SetTransTiming(pHandle,&(openParamsP->transtiming));	//write and read timing
-	i80_state_machine_dat.isUseHWDelay=openParamsP->isUseHWDelay;
-	//i80 delay parameter
-	if(openParamsP->isUseHWDelay==1)
-	{
-		GD_VO_I80_DelayEnable(pHandle,openParamsP->delayms,openParamsP->delaycmd);		
-	}
-	else
-	{
-		GD_VO_I80_DelayDisable(pHandle); 	
-	}
+    //parameter decided by LCM(LCD module),put in the function of GD_VO_I80_Open()
+    GD_VO_I80_SetTransWidth(pHandle,openParamsP->datawidth);
+    GD_VO_I80_SetPixelBits(pHandle,openParamsP->colorformat);
+    GD_VO_I80_SetMultiTransSeq(pHandle,openParamsP->datatransformat);// See LCD driver IC Spec,such as ILI9342C-MDT[1:0] which is configurable
+    GD_VO_I80_SetPixelTransCmd(pHandle,openParamsP->wrcmd,openParamsP->rdcmd);
+    GD_VO_I80_SetCmdFormat(pHandle,openParamsP->cmdwidth,openParamsP->cmdformat);//width of command
+    GD_VO_I80_SetPolarCtrl(pHandle,openParamsP->polarctrl); //6'b001000
+    GD_VO_I80_SetPicResolution(pHandle,openParamsP->picresolution);//Picture/Video Feature given by VOUT
+    GD_VO_I80_SetTransTiming(pHandle,&(openParamsP->transtiming));  //write and read timing
+    i80_state_machine_dat.isUseHWDelay=openParamsP->isUseHWDelay;
+    //i80 delay parameter
+    if(openParamsP->isUseHWDelay==1)
+    {
+        GD_VO_I80_DelayEnable(pHandle,openParamsP->delayms,openParamsP->delaycmd);
+    }
+    else
+    {
+        GD_VO_I80_DelayDisable(pHandle);
+    }
 
     return GD_OK;
 
@@ -559,7 +559,7 @@ GERR GD_VO_I80_HWResetLCM(GD_HANDLE* pHandle,GD_VO_I80_RST_TIMING_S *pRrstlcmtim
         return GD_ERR_INVALID_HANDLE;
     }
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
-    
+
     if(pRrstlcmtiming==NULL)
     {
         return GD_ERR_BAD_PARAMETER;
@@ -568,22 +568,22 @@ GERR GD_VO_I80_HWResetLCM(GD_HANDLE* pHandle,GD_VO_I80_RST_TIMING_S *pRrstlcmtim
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
-    }  
-           
+    }
+
     GH_VO_I80_set_Lcd_Rst_Para1_lcdrst_first_hlevel(pRrstlcmtiming->firstHTime);
     device->rstlcmtiming.firstHTime=pRrstlcmtiming->firstHTime;
     GH_VO_I80_set_Lcd_Rst_Para2_lcdrst_level(pRrstlcmtiming->firstLTime);
-    device->rstlcmtiming.firstLTime=pRrstlcmtiming->firstLTime;    
+    device->rstlcmtiming.firstLTime=pRrstlcmtiming->firstLTime;
     GH_VO_I80_set_Lcd_Rst_Para2_lcdrst_hsetup(pRrstlcmtiming->secondHTime);
-    device->rstlcmtiming.secondHTime=pRrstlcmtiming->secondHTime;      
-    
+    device->rstlcmtiming.secondHTime=pRrstlcmtiming->secondHTime;
+
     GH_VO_I80_set_Lcd_Rst_Para1_lcdrst_en(1);//lcd reset enable,hardware will clean this bit automatically.
-    
+
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }     
-    return GD_OK; 
+    }
+    return GD_OK;
 }
 
 
@@ -595,7 +595,7 @@ GERR GD_VO_I80_DelayEnable(GD_HANDLE* pHandle,U16 delayms,U16 delaycmd)
         return GD_ERR_INVALID_HANDLE;
     }
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
-    
+
     if(delayms>2047/10)
     {
         return GD_ERR_BAD_PARAMETER;
@@ -604,22 +604,22 @@ GERR GD_VO_I80_DelayEnable(GD_HANDLE* pHandle,U16 delayms,U16 delaycmd)
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
-    }  
-      
-	GH_VO_I80_set_Delay_Para_delay_time(TIMING_PARA_HW_DELAY_CEIL_MS(delayms));
+    }
+
+    GH_VO_I80_set_Delay_Para_delay_time(TIMING_PARA_HW_DELAY_CEIL_MS(delayms));
     device->delayms=delayms;
-    GH_VO_I80_set_Delay_Para_delay_cmd(delaycmd);    
-    device->delaycmd=delaycmd;    
-    
+    GH_VO_I80_set_Delay_Para_delay_cmd(delaycmd);
+    device->delaycmd=delaycmd;
+
     GH_VO_I80_set_Delay_Para_delay_cmd_en(1);//enable delay
-    device->isUseHWDelay=1;    
-    
+    device->isUseHWDelay=1;
+
      if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
-    }   
-    return GD_OK;     
-    
+    }
+    return GD_OK;
+
 }
 
 GERR GD_VO_I80_DelayDisable(GD_HANDLE* pHandle)
@@ -630,28 +630,28 @@ GERR GD_VO_I80_DelayDisable(GD_HANDLE* pHandle)
         return GD_ERR_INVALID_HANDLE;
     }
     device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
-    
-        
+
+
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgInvalid();//cfg_end=0;
     }
-    
+
     GH_VO_I80_set_Delay_Para_delay_cmd_en(0);//disable delay
-    device->isUseHWDelay=0;    
-        
+    device->isUseHWDelay=0;
+
     if(device->isCfgValidImmediately==GTRUE)
     {
         GD_VO_I80_CfgValid();//cfg_end=1;
     }
-    
-    return GD_OK;        
+
+    return GD_OK;
 }
 
 //wait sram_state=0
 GBOOL GD_VO_I80_CheckNoCmdParaTrans(void)
 {
-    U32 i=0; 
+    U32 i=0;
     U8 value;
     while ( i < 2000 )//how to ensure the numbers of the cycle??
     {
@@ -669,12 +669,12 @@ GBOOL GD_VO_I80_CheckNoCmdParaTrans(void)
 //wait rdcmd_para_en=1
 GBOOL GD_VO_I80_CheckRdCmdParaReady(void)
 {
-    U32 i=0; 
+    U32 i=0;
     U8 value;
     while ( i < 2000 )//how to ensure the numbers of the cycle??
     {
         value = GH_VO_I80_get_Lcd_State_rdcmd_para_en();
-        if(value == 1) //info of lcd_statexx is ready 
+        if(value == 1) //info of lcd_statexx is ready
             return GTRUE;
     #ifndef DEAD_LOOP_CHECK    //dead loop
         i++;
@@ -766,7 +766,7 @@ U16 GD_VO_I80_GetLcdState(U8 indexreg)
         retval=GH_VO_I80_get_Lcd_State4_lcd_para9();
         break;
     default:
-        retval=0xdead;                   
+        retval=0xdead;
         break;
     }
     return retval;
@@ -782,29 +782,29 @@ U16 GD_VO_I80_GetLcdState(U8 indexreg)
 //    {
 //        return GD_ERR_INVALID_HANDLE;
 //    }
-//    
+//
 //    if(lcdcmdpara == NULL || cmdparanum>MAX_CMDPARA_NUM)
 //    {
 //        return GD_ERR_BAD_PARAMETER;
-//       }    
-//        
+//       }
+//
 //    //wait sram_state=0
 //    retval=GD_VO_I80_CheckNoCmdParaTrans();
 //    if(retval==GFALSE)
 //    {
 //        return GD_ERR_I80_CHECK_TIME_OUT;
 //    }
-//    
+//
 //    //set number of command and parameter
 //    GH_VO_I80_set_cmd_sram_state_cpn(cmdparanum);
-//    
+//
 //    //write cmd and parameter to sram
 //    psram=(volatile U32 *)REG_VOUT_I80_SRAM_BASE;
 //    for(i=0;i<cmdparanum;i++)
 //    {
 //        *psram++=lcdcmdpara[i];
 //    }
-//    
+//
 //    GD_VO_I80_CmdParaValid();//sram_state=1
 //    return GD_OK;
 //}
@@ -814,21 +814,21 @@ GERR GD_VO_I80_ReadLcdInfo(GD_HANDLE* pHandle,GD_VO_I80_READ_STATE_S *pLcdrdstat
 {
     GBOOL   retval;
     U8 i;
-    volatile U32 *psram;    
+    volatile U32 *psram;
     volatile U16 dummydat;
     U16 *pinfo;
     if(pHandle == NULL)
     {
         return GD_ERR_INVALID_HANDLE;
     }
-    
+
     if(pLcdrdstate == NULL)
     {
         return GD_ERR_BAD_PARAMETER;
-       }    
-    
-    if( (pLcdrdstate->rdnum<pLcdrdstate->rddummynum) || 
-        (pLcdrdstate->rdnum>MAX_READINFO_NUM) || 
+       }
+
+    if( (pLcdrdstate->rdnum<pLcdrdstate->rddummynum) ||
+        (pLcdrdstate->rdnum>MAX_READINFO_NUM) ||
         (pLcdrdstate->plcdinfo==NULL) )
     {
         return GD_ERR_BAD_PARAMETER;
@@ -840,9 +840,9 @@ GERR GD_VO_I80_ReadLcdInfo(GD_HANDLE* pHandle,GD_VO_I80_READ_STATE_S *pLcdrdstat
     {
         return GD_ERR_I80_CHECK_TIME_OUT;
     }
-    
+
     //set number of command and parameter
-    GH_VO_I80_set_Cmd_Sram_State_cmd_para_num(1+pLcdrdstate->rdnum);//add 1 for command self        
+    GH_VO_I80_set_Cmd_Sram_State_cmd_para_num(1+pLcdrdstate->rdnum);//add 1 for command self
     //set number of read parameter
     GH_VO_I80_set_Cmd_Sram_State_rd_para_num(pLcdrdstate->rdnum);
     //write cmd and parameter to sram
@@ -852,28 +852,28 @@ GERR GD_VO_I80_ReadLcdInfo(GD_HANDLE* pHandle,GD_VO_I80_READ_STATE_S *pLcdrdstat
     {
         *psram++=LCD_READ_PARA;
     }
-    
-    GD_VO_I80_CmdParaValid();//sram_state=1      
-    
+
+    GD_VO_I80_CmdParaValid();//sram_state=1
+
     //wait rdcmd_para_en=1,LCD information ready
     retval=GD_VO_I80_CheckRdCmdParaReady();
     if(retval==GFALSE)
     {
         return GD_ERR_I80_CHECK_TIME_OUT;
-    }    
+    }
     //read lcd_state register
     for(i=0;i<pLcdrdstate->rddummynum;i++)//skip dummy data
     {
         dummydat=GD_VO_I80_GetLcdState(i);
     }
-    
+
     for(pinfo=pLcdrdstate->plcdinfo;i<pLcdrdstate->rdnum;i++)//useful data
     {
         *pinfo++=GD_VO_I80_GetLcdState(i);
     }
     //finish reading LCD information , rdcmd_para_en is cleaned by hardware or software
     GD_VO_I80_ClearRdCmdParaReady();
-        
+
        return GD_OK;
 }
 
@@ -882,47 +882,47 @@ GERR GD_VO_I80_TransCmdPara(GD_HANDLE* pHandle,GD_VO_I80_TRANS_STATE_S *pLcdtran
 {
     GBOOL   retval0,retval1;
     U8 i;
-    volatile U32 *psram;    
+    volatile U32 *psram;
     U16 *pinfo;
     if(pHandle == NULL)
     {
         return GD_ERR_INVALID_HANDLE;
     }
-    
+
     if(pLcdtransstate == NULL)
     {
         return GD_ERR_BAD_PARAMETER;
-       }    
+       }
 
-    if( (pLcdtransstate->cmdparanum>MAX_CMDPARA_NUM) || 
-        (pLcdtransstate->rdnum>MAX_READINFO_NUM) || 
+    if( (pLcdtransstate->cmdparanum>MAX_CMDPARA_NUM) ||
+        (pLcdtransstate->rdnum>MAX_READINFO_NUM) ||
         (pLcdtransstate->plcdcmdpara==NULL) ||
         ((pLcdtransstate->rdnum!=0) && (pLcdtransstate->plcdinfo==NULL)) )
     {
         return GD_ERR_BAD_PARAMETER;
-    }    
-    
+    }
+
     //wait sram_state=0
     retval0=GD_VO_I80_CheckNoCmdParaTrans();
     if(retval0==GFALSE)
     {
         return GD_ERR_I80_CHECK_TIME_OUT;
     }
-    
+
     //set number of command and parameter
     GH_VO_I80_set_Cmd_Sram_State_cmd_para_num(pLcdtransstate->cmdparanum);
     //set number of read parameter
     GH_VO_I80_set_Cmd_Sram_State_rd_para_num(pLcdtransstate->rdnum);
-        
+
     //write cmd and parameter to sram
     psram=(volatile U32 *)REG_VO_I80_SRAM_CMDPARA;
     for(i=0;i<pLcdtransstate->cmdparanum;i++)
     {
         *psram++=pLcdtransstate->plcdcmdpara[i];
     }
-    
+
     GD_VO_I80_CmdParaValid();//sram_state=1
-    
+
     if(0!=pLcdtransstate->rdnum)
     {
         //wait rdcmd_para_en=1,LCD information ready
@@ -930,20 +930,20 @@ GERR GD_VO_I80_TransCmdPara(GD_HANDLE* pHandle,GD_VO_I80_TRANS_STATE_S *pLcdtran
         if(retval1==GFALSE)
         {
             return GD_ERR_I80_CHECK_TIME_OUT;
-        }    
-        
+        }
+
         pinfo=pLcdtransstate->plcdinfo;
         for(i=0;i<pLcdtransstate->rdnum;i++)//dummy and useful data
         {
             *pinfo++=GD_VO_I80_GetLcdState(i);
         }
         //finish LCD information read, rdcmd_para_en cleaned by hardware
-        GD_VO_I80_ClearRdCmdParaReady();        
-        
+        GD_VO_I80_ClearRdCmdParaReady();
+
     }
-    
-    return GD_OK;    
-    
+
+    return GD_OK;
+
 }
 
 /*-----------------send pixel-writing command to LCM-------------------*/
@@ -956,13 +956,13 @@ GERR GD_VO_I80_EnterPixelWrite(GD_HANDLE* pHandle)
     {
         return GD_ERR_INVALID_HANDLE;
     }
-    device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);    
-    
+    device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
+
     wrcmdinsram=LCD_WRITE_CMD((U32)(device->wrcmd));
     wrstate.cmdparanum=1;
     wrstate.rdnum=0;
     wrstate.plcdcmdpara=&wrcmdinsram;
-    wrstate.plcdinfo=NULL;    
+    wrstate.plcdinfo=NULL;
     return(GD_VO_I80_TransCmdPara(pHandle,&wrstate));
 }
 
@@ -976,13 +976,13 @@ GERR GD_VO_I80_EnterPixelReading(GD_HANDLE* pHandle)
     {
         return GD_ERR_INVALID_HANDLE;
     }
-    device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);    
-    
+    device = (GD_VO_I80_STATE_MACHINE_S *)(*pHandle);
+
     rdcmdinsram=LCD_WRITE_CMD((U32)(device->rdcmd));
     wrstate.cmdparanum=1;
     wrstate.rdnum=0;
     wrstate.plcdcmdpara=&rdcmdinsram;
-    wrstate.plcdinfo=NULL;    
+    wrstate.plcdinfo=NULL;
     return(GD_VO_I80_TransCmdPara(pHandle,&wrstate));
 }
 

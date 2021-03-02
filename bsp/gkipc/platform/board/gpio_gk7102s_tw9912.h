@@ -27,7 +27,7 @@
         { GADI_GPIO_34, GADI_GPIO_TYPE_INOUT_SD1_DATA_0               }, \
         { GADI_GPIO_35, GADI_GPIO_TYPE_INOUT_SD1_DATA_1               }, \
         { GADI_GPIO_30, GADI_GPIO_TYPE_INOUT_SD1_DATA_2               }, \
-        { GADI_GPIO_31, GADI_GPIO_TYPE_INOUT_SD1_DATA_3               }, 
+        { GADI_GPIO_31, GADI_GPIO_TYPE_INOUT_SD1_DATA_3               },
         //{ GADI_GPIO_36, GADI_GPIO_TYPE_OUTPUT_1/*SDIO_CARD_POWER_EN*/}, \
 //#endif
 
@@ -60,7 +60,7 @@
     { GADI_GPIO_27, GADI_GPIO_TYPE_OUTPUT_1      /*Sensor reset*/}, \
     { GADI_GPIO_28, GADI_GPIO_TYPE_INOUT_I2C_DATA         /*S D*/}, \
     { GADI_GPIO_29, GADI_GPIO_TYPE_INOUT_I2C_CLK          /*S C*/}, \
-	SYSTEM_GPIO_SD_TABLE\
+    SYSTEM_GPIO_SD_TABLE\
     { GADI_GPIO_37, GADI_GPIO_TYPE_INPUT_UART1_RX                       }, \
     { GADI_GPIO_38, GADI_GPIO_TYPE_OUTPUT_UART1_TX                       }, \
     { GADI_GPIO_39, GADI_GPIO_TYPE_INPUT_SD_CD_N                 }, \

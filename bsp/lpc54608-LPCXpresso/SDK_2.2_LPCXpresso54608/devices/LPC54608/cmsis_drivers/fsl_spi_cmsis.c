@@ -1106,8 +1106,8 @@ ARM_SPI_STATUS SPI_InterruptGetStatus(cmsis_spi_interrupt_driver_state_t *spi)
 
 #if defined(SPI0) && RTE_SPI0
 
-/* User needs to provide the implementation for SPI0_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI0_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI0_GetFreq(void);
 extern void SPI0_InitPins(void);
 extern void SPI0_DeinitPins(void);
@@ -1261,8 +1261,8 @@ ARM_DRIVER_SPI Driver_SPI0 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 #endif /*  SPI0  */
 
 #if defined(SPI1) && RTE_SPI1
-/* User needs to provide the implementation for SPI1_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI1_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI1_GetFreq(void);
 extern void SPI1_InitPins(void);
 extern void SPI1_DeinitPins(void);
@@ -1415,8 +1415,8 @@ ARM_DRIVER_SPI Driver_SPI1 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI2) && RTE_SPI2
 
-/* User needs to provide the implementation for SPI2_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI2_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI2_GetFreq(void);
 extern void SPI2_InitPins(void);
 extern void SPI2_DeinitPins(void);
@@ -1570,8 +1570,8 @@ ARM_DRIVER_SPI Driver_SPI2 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI3) && RTE_SPI3
 
-/* User needs to provide the implementation for SPI3_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI3_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI3_GetFreq(void);
 extern void SPI3_InitPins(void);
 extern void SPI3_DeinitPins(void);
@@ -1725,8 +1725,8 @@ ARM_DRIVER_SPI Driver_SPI3 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI4) && RTE_SPI4
 
-/* User needs to provide the implementation for SPI4_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI4_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI4_GetFreq(void);
 extern void SPI4_InitPins(void);
 extern void SPI4_DeinitPins(void);
@@ -1880,8 +1880,8 @@ ARM_DRIVER_SPI Driver_SPI4 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI5) && RTE_SPI5
 
-/* User needs to provide the implementation for SPI5_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI5_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI5_GetFreq(void);
 extern void SPI5_InitPins(void);
 extern void SPI5_DeinitPins(void);
@@ -2035,8 +2035,8 @@ ARM_DRIVER_SPI Driver_SPI5 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI6) && RTE_SPI6
 
-/* User needs to provide the implementation for SPI6_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI6_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI6_GetFreq(void);
 extern void SPI6_InitPins(void);
 extern void SPI6_DeinitPins(void);
@@ -2190,8 +2190,8 @@ ARM_DRIVER_SPI Driver_SPI6 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI7) && RTE_SPI7
 
-/* User needs to provide the implementation for SPI7_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI7_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI7_GetFreq(void);
 extern void SPI7_InitPins(void);
 extern void SPI7_DeinitPins(void);
@@ -2345,8 +2345,8 @@ ARM_DRIVER_SPI Driver_SPI7 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI8) && RTE_SPI8
 
-/* User needs to provide the implementation for SPI8_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI8_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI8_GetFreq(void);
 extern void SPI8_InitPins(void);
 extern void SPI8_DeinitPins(void);
@@ -2500,8 +2500,8 @@ ARM_DRIVER_SPI Driver_SPI8 = {SPIx_GetVersion,    SPIx_GetCapabilities,
 
 #if defined(SPI9) && RTE_SPI9
 
-/* User needs to provide the implementation for SPI9_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for SPI9_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t SPI9_GetFreq(void);
 extern void SPI9_InitPins(void);
 extern void SPI9_DeinitPins(void);

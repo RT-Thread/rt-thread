@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-12-22     zylx         first version 
+ * 2018-12-22     zylx         first version
  */
 
 #ifndef __QSPI_CONFIG_H__

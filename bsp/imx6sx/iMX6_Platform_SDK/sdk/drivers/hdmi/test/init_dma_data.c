@@ -1126,7 +1126,7 @@ int init_dma_data(int sample_rate, int ch)
     uint16_t pcm_data;
 
     // sample_16bit_32k_4ch.pcm from file hdmi_audio_sample.c
-    // with data (unsigned char*) array:  gAudio_sample[] 
+    // with data (unsigned char*) array:  gAudio_sample[]
 
     hdmi_audio_header.U = 0;
     hdmi_audio_header.B.comsumer = 0;   // Consumer use

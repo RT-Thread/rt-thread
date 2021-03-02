@@ -1,7 +1,7 @@
 /**
  * @file    spimss.h
  * @brief   Serial Peripheral Interface (SPIMSS) function prototypes and data types.
- */ 
+ */
 
 /* ****************************************************************************
  * Copyright (C) 2017 Maxim Integrated Products, Inc., All Rights Reserved.
@@ -38,7 +38,7 @@
  * $Revision: 40072 $
  *
  *************************************************************************** */
- 
+
 /* Define to prevent redundant inclusion */
 #ifndef _SPIMSS_H_
 #define _SPIMSS_H_
@@ -61,7 +61,7 @@ extern "C" {
 /* **** Definitions **** */
 
 
-/** 
+/**
  * @brief Enumeration type for setting the number data lines to use for communication.
  */
 typedef enum {  // ONLY FOR COMPATIBILITY FOR CONSOLIDATION WITH SPY17, NOT USED OR NEEDED
@@ -78,7 +78,7 @@ typedef struct spimss_req spimss_req_t;
 /**
  * @brief Callback function type used in asynchronous SPI Master communication requests.
  * @details The function declaration for the SPI Master callback is:
- * @code 
+ * @code
  * void callback(spi_req_t * req, int error_code);
  * @endcode
  * |        |                                            |
@@ -125,7 +125,7 @@ int SPIMSS_Init(mxc_spimss_regs_t *spi, unsigned mode, unsigned freq, const sys_
 /**
  * @brief      Shutdown SPI module.
  * @param      spi  Pointer to SPI regs.
- * 
+ *
  * @return  \c #E_NO_ERROR if successful, appropriate error otherwise
  */
 int SPIMSS_Shutdown(mxc_spimss_regs_t *spi);
@@ -134,7 +134,7 @@ int SPIMSS_Shutdown(mxc_spimss_regs_t *spi);
  * @brief     Execute a master transaction.
  * @param     spi   Pointer to spi module.
  * @param     req   Pointer to spi request
- * 
+ *
  * @return  \c #E_NO_ERROR if successful, @ref
  *             MXC_Error_Codes "error" if unsuccessful.
  */
@@ -151,7 +151,7 @@ void SPIMSS_Handler(mxc_spimss_regs_t *spi);
  * @brief     Execute a slave transaction.
  * @param     spi   Pointer to spi module.
  * @param     req   Pointer to spi request
- * 
+ *
  * @return  \c #E_NO_ERROR if successful, @ref
  *             MXC_Error_Codes "error" if unsuccessful.
  */

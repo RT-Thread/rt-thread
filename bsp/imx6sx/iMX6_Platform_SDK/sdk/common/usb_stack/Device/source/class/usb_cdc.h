@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -159,11 +159,11 @@ typedef struct _usb_class_cdc_endpoint
  * Global Functions
  *****************************************************************************/
 extern uint_8 USB_Class_CDC_Init (
-	uint_8    		   		controller_ID,       /* [IN] Controller ID */
-	USB_CLASS_CALLBACK 		cdc_class_callback,  /* [IN] CDC Class Callback */
-	USB_REQ_FUNC       		vendor_req_callback, /* [IN] Vendor Request Callback */
-	USB_CLASS_CALLBACK 		pstn_callback,       /* [IN] PSTN Callback */
-	uint_8            		bVregEn              /* Enables or disables internal regulator */
+    uint_8                  controller_ID,       /* [IN] Controller ID */
+    USB_CLASS_CALLBACK      cdc_class_callback,  /* [IN] CDC Class Callback */
+    USB_REQ_FUNC            vendor_req_callback, /* [IN] Vendor Request Callback */
+    USB_CLASS_CALLBACK      pstn_callback,       /* [IN] PSTN Callback */
+    uint_8                  bVregEn              /* Enables or disables internal regulator */
 );
 
 #ifdef COMPOSITE_DEV
@@ -173,10 +173,10 @@ extern uint_8 USB_CDC_Other_Requests(uint_8 controller_ID,
                           USB_PACKET_SIZE *size);
 #endif
 
-extern uint_8 USB_Class_CDC_DeInit 
+extern uint_8 USB_Class_CDC_DeInit
 (
-    uint_8 controller_ID              
-); 
+    uint_8 controller_ID
+);
 
 extern uint_8 USB_Class_CDC_Send_Data (
     uint_8           controller_ID,
@@ -193,9 +193,9 @@ extern uint_8 USB_Class_CDC_Send_Data (
 #define USB_Class_CDC_Interface_DIC_Send_Data(a,b,c)  \
     USB_Class_CDC_Send_Data(a,DIC_SEND_ENDPOINT,b,c)
 #define USB_Class_CDC_Interface_DIC_Recv_Data(a,b,c)  \
-	_usb_device_recv_data(a,DIC_RECV_ENDPOINT,b,c)
+    _usb_device_recv_data(a,DIC_RECV_ENDPOINT,b,c)
 #define USB_Class_CDC_Interface_DIC_Get_Send_Buffer(a,b,c)  \
-	_usb_device_get_send_buffer(a,DIC_SEND_ENDPOINT,b,c)
+    _usb_device_get_send_buffer(a,DIC_SEND_ENDPOINT,b,c)
 
 #define USB_Class_CDC_Periodic_Task     USB_Class_Periodic_Task
 

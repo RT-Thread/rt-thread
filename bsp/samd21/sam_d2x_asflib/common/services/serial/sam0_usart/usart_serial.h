@@ -70,16 +70,16 @@ typedef Sercom * usart_inst_t;
  * \retval false if initialization failed (error in baud rate calculation)
  */
 static inline bool usart_serial_init(
-		struct usart_module *const module,
-		usart_inst_t const hw,
-		const struct usart_config *const config)
+        struct usart_module *const module,
+        usart_inst_t const hw,
+        const struct usart_config *const config)
 {
-	if (usart_init(module, hw, config) == STATUS_OK) {
-		return true;
-	}
-	else {
-		return false;
-	}
+    if (usart_init(module, hw, config) == STATUS_OK) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 /** \brief Sends a character with the USART.
@@ -90,12 +90,12 @@ static inline bool usart_serial_init(
  * \return Status code
  */
 static inline enum status_code usart_serial_putchar(
-		struct usart_module *const module,
-		uint8_t c)
+        struct usart_module *const module,
+        uint8_t c)
 {
-	while(STATUS_OK !=usart_write_wait(module, c));
+    while(STATUS_OK !=usart_write_wait(module, c));
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /** \brief Waits until a character is received, and returns it.
@@ -104,14 +104,14 @@ static inline enum status_code usart_serial_putchar(
  * \param[out]    c       Destination for the read character.
  */
 static inline void usart_serial_getchar(
-		struct usart_module *const module,
-		uint8_t *c)
+        struct usart_module *const module,
+        uint8_t *c)
 {
-	uint16_t temp = 0;
+    uint16_t temp = 0;
 
-	while(STATUS_OK != usart_read_wait(module, &temp));
+    while(STATUS_OK != usart_read_wait(module, &temp));
 
-	*c = temp;
+    *c = temp;
 }
 
 /**
@@ -122,11 +122,11 @@ static inline void usart_serial_getchar(
  * \param[in]     length   Length of data to write.
  */
 static inline enum status_code usart_serial_write_packet(
-		struct usart_module *const module,
-		const uint8_t *tx_data,
-		uint16_t length)
+        struct usart_module *const module,
+        const uint8_t *tx_data,
+        uint16_t length)
 {
-	return usart_write_buffer_wait(module, tx_data, length);
+    return usart_write_buffer_wait(module, tx_data, length);
 }
 
 /**
@@ -137,11 +137,11 @@ static inline enum status_code usart_serial_write_packet(
  * \param[in]     length   Length of data to read.
  */
 static inline enum status_code usart_serial_read_packet(
-		struct usart_module *const module,
-		uint8_t *rx_data,
-		uint16_t length)
+        struct usart_module *const module,
+        uint8_t *rx_data,
+        uint16_t length)
 {
-	return usart_read_buffer_wait(module, rx_data, length);
+    return usart_read_buffer_wait(module, rx_data, length);
 }
 
 #ifdef __cplusplus

@@ -25,24 +25,24 @@ extern "C"
 /** @addtogroup WWDT_EXPORTED_CONSTANTS WWDT Exported Constants
   @{
 */
-#define WWDT_PRESCALER_1          (0UL << 8)   ///< WWDT setting prescaler to 1     \hideinitializer 
-#define WWDT_PRESCALER_2          (1UL << 8)   ///< WWDT setting prescaler to 2     \hideinitializer 
-#define WWDT_PRESCALER_4          (2UL << 8)   ///< WWDT setting prescaler to 4     \hideinitializer 
-#define WWDT_PRESCALER_8          (3UL << 8)   ///< WWDT setting prescaler to 8     \hideinitializer 
-#define WWDT_PRESCALER_16         (4UL << 8)   ///< WWDT setting prescaler to 16    \hideinitializer 
-#define WWDT_PRESCALER_32         (5UL << 8)   ///< WWDT setting prescaler to 32    \hideinitializer 
-#define WWDT_PRESCALER_64         (6UL << 8)   ///< WWDT setting prescaler to 64    \hideinitializer 
-#define WWDT_PRESCALER_128        (7UL << 8)   ///< WWDT setting prescaler to 128   \hideinitializer 
-#define WWDT_PRESCALER_192        (8UL << 8)   ///< WWDT setting prescaler to 192   \hideinitializer 
-#define WWDT_PRESCALER_256        (9UL << 8)   ///< WWDT setting prescaler to 256   \hideinitializer 
-#define WWDT_PRESCALER_384        (0xAUL << 8) ///< WWDT setting prescaler to 384   \hideinitializer 
-#define WWDT_PRESCALER_512        (0xBUL << 8) ///< WWDT setting prescaler to 512   \hideinitializer 
-#define WWDT_PRESCALER_768        (0xCUL << 8) ///< WWDT setting prescaler to 768   \hideinitializer 
-#define WWDT_PRESCALER_1024       (0xDUL << 8) ///< WWDT setting prescaler to 1024  \hideinitializer 
-#define WWDT_PRESCALER_1536       (0xEUL << 8) ///< WWDT setting prescaler to 1536  \hideinitializer 
-#define WWDT_PRESCALER_2048       (0xFUL << 8) ///< WWDT setting prescaler to 2048  \hideinitializer 
+#define WWDT_PRESCALER_1          (0UL << 8)   ///< WWDT setting prescaler to 1     \hideinitializer
+#define WWDT_PRESCALER_2          (1UL << 8)   ///< WWDT setting prescaler to 2     \hideinitializer
+#define WWDT_PRESCALER_4          (2UL << 8)   ///< WWDT setting prescaler to 4     \hideinitializer
+#define WWDT_PRESCALER_8          (3UL << 8)   ///< WWDT setting prescaler to 8     \hideinitializer
+#define WWDT_PRESCALER_16         (4UL << 8)   ///< WWDT setting prescaler to 16    \hideinitializer
+#define WWDT_PRESCALER_32         (5UL << 8)   ///< WWDT setting prescaler to 32    \hideinitializer
+#define WWDT_PRESCALER_64         (6UL << 8)   ///< WWDT setting prescaler to 64    \hideinitializer
+#define WWDT_PRESCALER_128        (7UL << 8)   ///< WWDT setting prescaler to 128   \hideinitializer
+#define WWDT_PRESCALER_192        (8UL << 8)   ///< WWDT setting prescaler to 192   \hideinitializer
+#define WWDT_PRESCALER_256        (9UL << 8)   ///< WWDT setting prescaler to 256   \hideinitializer
+#define WWDT_PRESCALER_384        (0xAUL << 8) ///< WWDT setting prescaler to 384   \hideinitializer
+#define WWDT_PRESCALER_512        (0xBUL << 8) ///< WWDT setting prescaler to 512   \hideinitializer
+#define WWDT_PRESCALER_768        (0xCUL << 8) ///< WWDT setting prescaler to 768   \hideinitializer
+#define WWDT_PRESCALER_1024       (0xDUL << 8) ///< WWDT setting prescaler to 1024  \hideinitializer
+#define WWDT_PRESCALER_1536       (0xEUL << 8) ///< WWDT setting prescaler to 1536  \hideinitializer
+#define WWDT_PRESCALER_2048       (0xFUL << 8) ///< WWDT setting prescaler to 2048  \hideinitializer
 
-#define WWDT_RELOAD_WORD          (0x00005AA5) ///< Fill this value to RLD register to reload WWDT counter  \hideinitializer 
+#define WWDT_RELOAD_WORD          (0x00005AA5) ///< Fill this value to RLD register to reload WWDT counter  \hideinitializer
 /*@}*/ /* end of group WWDT_EXPORTED_CONSTANTS */
 
 

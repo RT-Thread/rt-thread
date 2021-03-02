@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2018-08-14    flybreak           the first version
- * 2018-09-18    balanceTWK         add sleep mode function 
+ * 2018-09-18    balanceTWK         add sleep mode function
  */
 
 #ifndef __DRV_LCD_H__

@@ -58,7 +58,7 @@ static void dsi_touch_thread_entry(void *param)
         rt_kprintf("init dsi touch err!\n");
         return;
     }
-    
+
     while (1)
     {
         struct touch_regs *regs = (struct touch_regs *)touchbuf;
@@ -73,7 +73,7 @@ static void dsi_touch_thread_entry(void *param)
         {
             touch_state = 0;
         }
-        rt_thread_mdelay(50); 
+        rt_thread_mdelay(50);
     }
 }
 

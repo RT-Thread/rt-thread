@@ -136,7 +136,7 @@
 
 /* constants definitions */
 /* DMA channel select */
-typedef enum 
+typedef enum
 {
     DMA_CH0 = 0,                                    /*!< DMA Channel 0 */
     DMA_CH1,                                        /*!< DMA Channel 1 */
@@ -149,7 +149,7 @@ typedef enum
 } dma_channel_enum;
 
 /* DMA peripheral select */
-typedef enum 
+typedef enum
 {
     DMA_SUBPERI0 = 0,                               /*!< DMA Peripheral 0 */
     DMA_SUBPERI1,                                   /*!< DMA Peripheral 1 */
@@ -166,7 +166,7 @@ typedef struct
 {
     uint32_t periph_addr;                           /*!< peripheral base address */
     uint32_t periph_width;                          /*!< transfer data size of peripheral */
-    uint32_t periph_inc;                            /*!< peripheral increasing mode */  
+    uint32_t periph_inc;                            /*!< peripheral increasing mode */
 
     uint32_t memory0_addr;                          /*!< memory 0 base address */
     uint32_t memory_width;                          /*!< transfer data size of memory */
@@ -186,7 +186,7 @@ typedef struct
 typedef struct
 {
     uint32_t periph_addr;                           /*!< peripheral base address */
-    uint32_t periph_inc;                            /*!< peripheral increasing mode */  
+    uint32_t periph_inc;                            /*!< peripheral increasing mode */
 
     uint32_t memory0_addr;                          /*!< memory 0 base address */
     uint32_t memory_inc;                            /*!< memory increasing mode */

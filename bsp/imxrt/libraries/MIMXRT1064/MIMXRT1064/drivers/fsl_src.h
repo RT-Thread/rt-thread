@@ -2,7 +2,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -86,8 +86,8 @@ enum _src_reset_status_flags
                                                     power-on detection logic. */
 #endif                                         /* FSL_FEATURE_SRC_HAS_SRSR_POR */
 #if (defined(FSL_FEATURE_SRC_HAS_SRSR_LOCKUP_SYSRESETREQ) && FSL_FEATURE_SRC_HAS_SRSR_LOCKUP_SYSRESETREQ)
-    kSRC_LockupSysResetFlag = SRC_SRSR_LOCKUP_SYSRESETREQ_MASK, /*!< Indicates a reset has been caused by CPU lockup or software 
-                                                                     setting of SYSRESETREQ bit in Application Interrupt and 
+    kSRC_LockupSysResetFlag = SRC_SRSR_LOCKUP_SYSRESETREQ_MASK, /*!< Indicates a reset has been caused by CPU lockup or software
+                                                                     setting of SYSRESETREQ bit in Application Interrupt and
                                                                      Reset Control Register of the ARM core. */
 #endif                                         /* FSL_FEATURE_SRC_HAS_SRSR_LOCKUP_SYSRESETREQ */
 #if (defined(FSL_FEATURE_SRC_HAS_SRSR_IPP_RESET_B) && FSL_FEATURE_SRC_HAS_SRSR_IPP_RESET_B)

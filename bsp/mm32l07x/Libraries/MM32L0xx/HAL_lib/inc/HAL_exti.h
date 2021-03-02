@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the EXTI 
+* @brief  This file contains all the functions prototypes for the EXTI
 *         firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_EXTI_H
@@ -38,8 +38,8 @@
 * @{
 */
 
-/** 
-* @brief  EXTI mode enumeration  
+/**
+* @brief  EXTI mode enumeration
 */
 
 typedef enum
@@ -50,22 +50,22 @@ typedef enum
 
 #define IS_EXTI_MODE(MODE) (((MODE) == EXTI_Mode_Interrupt) || ((MODE) == EXTI_Mode_Event))
 
-/** 
-* @brief  EXTI Trigger enumeration  
+/**
+* @brief  EXTI Trigger enumeration
 */
 
 typedef enum
 {
     EXTI_Trigger_Rising = 0x08,
-    EXTI_Trigger_Falling = 0x0C,  
+    EXTI_Trigger_Falling = 0x0C,
     EXTI_Trigger_Rising_Falling = 0x10
 }EXTITrigger_TypeDef;
 
 #define IS_EXTI_TRIGGER(TRIGGER) (((TRIGGER) == EXTI_Trigger_Rising) || \
 ((TRIGGER) == EXTI_Trigger_Falling) || \
     ((TRIGGER) == EXTI_Trigger_Rising_Falling))
-/** 
-* @brief  EXTI Init Structure definition  
+/**
+* @brief  EXTI Init Structure definition
 */
 
 typedef struct
@@ -84,7 +84,7 @@ typedef struct
 * @{
 */
 
-/** @defgroup EXTI_Lines 
+/** @defgroup EXTI_Lines
 * @{
 */
 
@@ -114,13 +114,13 @@ typedef struct
 
 #define IS_GET_EXTI_LINE(LINE) (((LINE) == EXTI_Line0) || ((LINE) == EXTI_Line1) || \
 ((LINE) == EXTI_Line2) || ((LINE) == EXTI_Line3) || \
-	((LINE) == EXTI_Line4) || ((LINE) == EXTI_Line5) || \
-		((LINE) == EXTI_Line6) || ((LINE) == EXTI_Line7) || \
-			((LINE) == EXTI_Line8) || ((LINE) == EXTI_Line9) || \
-				((LINE) == EXTI_Line10) || ((LINE) == EXTI_Line11) || \
-					((LINE) == EXTI_Line12) || ((LINE) == EXTI_Line13) || \
-						((LINE) == EXTI_Line14) || ((LINE) == EXTI_Line15) || \
-							((LINE) == EXTI_Line16) || ((LINE) == EXTI_Line18)) || \
+    ((LINE) == EXTI_Line4) || ((LINE) == EXTI_Line5) || \
+        ((LINE) == EXTI_Line6) || ((LINE) == EXTI_Line7) || \
+            ((LINE) == EXTI_Line8) || ((LINE) == EXTI_Line9) || \
+                ((LINE) == EXTI_Line10) || ((LINE) == EXTI_Line11) || \
+                    ((LINE) == EXTI_Line12) || ((LINE) == EXTI_Line13) || \
+                        ((LINE) == EXTI_Line14) || ((LINE) == EXTI_Line15) || \
+                            ((LINE) == EXTI_Line16) || ((LINE) == EXTI_Line18)) || \
                              ((LINE) == EXTI_Line19) || ((LINE) == EXTI_Line20))
 
 /**

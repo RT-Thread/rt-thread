@@ -49,7 +49,7 @@ void rtthread_startup(void)
 
     /* show version */
     rt_show_version();
-        
+
     /* init timer system */
     rt_system_timer_init();
 
@@ -91,7 +91,7 @@ int main(void)
 
     /* init system setting */
     TAB0_Start();
-    
+
     /* startup RT-Thread RTOS */
     rtthread_startup();
 

@@ -102,7 +102,7 @@ void magic_randomize(void);
 /*
  * Return a new random number.
  */
-u32_t magic(void);	/* Returns the next magic number */
+u32_t magic(void);  /* Returns the next magic number */
 
 /*
  * Fill buffer with random bytes

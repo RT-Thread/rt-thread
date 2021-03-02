@@ -185,43 +185,43 @@ void md_rcu_init_set(RCU_TypeDef *rcu, md_rcu_init_typedef *RCU_InitStruct)
   md_rcu_set_cfg_hoscdiv(rcu, (RCU_InitStruct->HoscDiv) - 1);
   md_rcu_set_cfg_ppre(rcu, RCU_InitStruct->Ppre);
   md_rcu_set_cfg_hpre(rcu, RCU_InitStruct->Hpre);
-  md_rcu_set_cfg_sw(rcu, RCU_InitStruct->Sw);  
-  
+  md_rcu_set_cfg_sw(rcu, RCU_InitStruct->Sw);
+
   if(RCU_InitStruct->SysClock & RCU_CON_CSSON_MSK)
     md_rcu_enable_con_csson(rcu);
   else
-    md_rcu_disable_con_csson(rcu);  
-  
+    md_rcu_disable_con_csson(rcu);
+
   if(RCU_InitStruct->SysClock & RCU_CON_PLL1ON_MSK)
     md_rcu_enable_con_pll1on(rcu);
   else
-    md_rcu_disable_con_pll1on(rcu);  
-  
+    md_rcu_disable_con_pll1on(rcu);
+
   if(RCU_InitStruct->SysClock & RCU_CON_PLL0ON_MSK)
     md_rcu_enable_con_pll0on(rcu);
   else
-    md_rcu_disable_con_pll0on(rcu);  
-  
+    md_rcu_disable_con_pll0on(rcu);
+
   if(RCU_InitStruct->SysClock & RCU_CON_LOSCON_MSK)
     md_rcu_enable_con_loscon(rcu);
   else
-    md_rcu_disable_con_loscon(rcu);  
-  
+    md_rcu_disable_con_loscon(rcu);
+
   if(RCU_InitStruct->SysClock & RCU_CON_LRCON_MSK)
     md_rcu_enable_con_lrcon(rcu);
   else
-    md_rcu_disable_con_lrcon(rcu);  
-  
+    md_rcu_disable_con_lrcon(rcu);
+
   if(RCU_InitStruct->SysClock & RCU_CON_HOSCON_MSK)
     md_rcu_enable_con_hoscon(rcu);
   else
-    md_rcu_disable_con_hoscon(rcu);  
-  
+    md_rcu_disable_con_hoscon(rcu);
+
   if(RCU_InitStruct->SysClock & RCU_CON_HRCON_MSK)
     md_rcu_enable_con_hrcon(rcu);
   else
-    md_rcu_disable_con_hrcon(rcu);  
-  
+    md_rcu_disable_con_hrcon(rcu);
+
   md_rcu_set_cfg_ckcfg(rcu);
 
   /*  while(md_rcu_get_con_hoscrdy(RCU)==0)  {} */

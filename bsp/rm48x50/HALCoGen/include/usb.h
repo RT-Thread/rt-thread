@@ -36,7 +36,7 @@
 #define USB_FIFO_SZ_TO_BYTES(x) ((8 << ((x) & ~ USB_FIFO_SIZE_DB_FLAG)) * \
                                  (((x) & USB_FIFO_SIZE_DB_FLAG) ? 2 : 1))
 
-								 
+
 //*****************************************************************************
 //
 //! The maximum number of independent interfaces that any single device
@@ -56,12 +56,12 @@
 //! cannot be modified to any other value.
 //
 //*****************************************************************************
-#define USBD_PWR_BUS_PWR				(0x0000u) 	//Device is bus powered
-#define USBD_PWR_SELF_PWR   			(0x0004u)	//Device is self powered
-#define USBD_DATA_ENDIAN_LITTLE			(0x0000u)	//Little Endian Data (RM48x)
-#define USBD_DATA_ENDIAN_BIG			(0x0080u)	//Bit Endian Data
-#define USBD_DMA_ENDIAN_LITTLE			(0x0000u)	//DMA is Little Endian
-#define USBD_DMA_ENDIAN_BIG				(0x0040u)	//DMA is Big Endian
+#define USBD_PWR_BUS_PWR                (0x0000u)   //Device is bus powered
+#define USBD_PWR_SELF_PWR               (0x0004u)   //Device is self powered
+#define USBD_DATA_ENDIAN_LITTLE         (0x0000u)   //Little Endian Data (RM48x)
+#define USBD_DATA_ENDIAN_BIG            (0x0080u)   //Bit Endian Data
+#define USBD_DMA_ENDIAN_LITTLE          (0x0000u)   //DMA is Little Endian
+#define USBD_DMA_ENDIAN_BIG             (0x0040u)   //DMA is Big Endian
 
 //*****************************************************************************
 //
@@ -70,24 +70,24 @@
 //! cannot be modified to any other value.
 //
 //*****************************************************************************
-#define USBD_EP_DIR_IN       			(0x0010u)		//IN Endpoint
-#define USBD_EP_DIR_OUT       			(0x0000u)		//OUT Endpoint
-#define USB_EP_DEV_IN					USBD_EP_DIR_IN	//IN Endpoint
-#define USB_EP_DEV_OUT					USBD_EP_DIR_OUT	//OUT Endpoint
-#define USB_TRANS_IN					USBD_EP_DIR_IN	//IN Endpoint
-#define USB_TRANS_OUT					USBD_EP_DIR_OUT	//OUT Endpoint
-#define USB_EP_DIR_IN					USBD_EP_DIR_IN
-#define USB_EP_DIR_OUT					USBD_EP_DIR_OUT
-#define USB_TRANS_IN_LAST				0				//Used to indicate the last transaction
-														//(NOT USED in this port of USB)
+#define USBD_EP_DIR_IN                  (0x0010u)       //IN Endpoint
+#define USBD_EP_DIR_OUT                 (0x0000u)       //OUT Endpoint
+#define USB_EP_DEV_IN                   USBD_EP_DIR_IN  //IN Endpoint
+#define USB_EP_DEV_OUT                  USBD_EP_DIR_OUT //OUT Endpoint
+#define USB_TRANS_IN                    USBD_EP_DIR_IN  //IN Endpoint
+#define USB_TRANS_OUT                   USBD_EP_DIR_OUT //OUT Endpoint
+#define USB_EP_DIR_IN                   USBD_EP_DIR_IN
+#define USB_EP_DIR_OUT                  USBD_EP_DIR_OUT
+#define USB_TRANS_IN_LAST               0               //Used to indicate the last transaction
+                                                        //(NOT USED in this port of USB)
 
-#define USBD_TXRX_EP_VALID_VALID		(0x8000u)		//EP is valid & configured
-#define USBD_TXRX_EP_VALID_NOTVALID		(0x0000u)		//EP is not valid & not configured
-#define USBD_TXRX_EP_ISO_ISO			(0x0800u)		//EP is of ISO type
-#define USBD_TXRX_EP_ISO_NONISO			(0x0000u)		//EP is either Bulk/Interrup/Control
-#define USBD_TXRX_EP_DB_ENABLED			(0x4000u) 		//EP has double buffering enabled
-														// For IN EPs DB should be enabled only in DMA mode */
-#define USBD_TXRX_EP_DB_DISABLED		(0x0000u)		//EP has double buffering disabled
+#define USBD_TXRX_EP_VALID_VALID        (0x8000u)       //EP is valid & configured
+#define USBD_TXRX_EP_VALID_NOTVALID     (0x0000u)       //EP is not valid & not configured
+#define USBD_TXRX_EP_ISO_ISO            (0x0800u)       //EP is of ISO type
+#define USBD_TXRX_EP_ISO_NONISO         (0x0000u)       //EP is either Bulk/Interrup/Control
+#define USBD_TXRX_EP_DB_ENABLED         (0x4000u)       //EP has double buffering enabled
+                                                        // For IN EPs DB should be enabled only in DMA mode */
+#define USBD_TXRX_EP_DB_DISABLED        (0x0000u)       //EP has double buffering disabled
 
 //*****************************************************************************
 //
@@ -96,16 +96,16 @@
 //! cannot be modified to any other value.
 //
 //*****************************************************************************
-#define USBD_INT_EN_SOF_IE      				(0x0080u)	//Start-of-Frame Interrupt
-#define USBD_INT_EN_EPN_RX_IE   				(0x0020u)	//Non-EP0 RX Interrupt
-#define USBD_INT_EN_EPN_TX_IE   				(0x0010u)	//Non-EP0 TX Interrupt
-#define USBD_INT_EN_DS_CHG_IE   				(0x0008u)	//Device State change interrupt
-#define USBD_INT_EN_EP0_IE      				(0x0001u)	//EP0 Interrupt
-#define USBD_INT_EN_ALL							(USBD_IRQ_EN_SOF_IE | \
-												 USBD_IRQ_EN_EPN_RX_IE | \
-												 USBD_IRQ_EN_EPN_TX_IE | \
-												 USBD_IRQ_EN_DS_CHG_IE | \
-												 USBD_IRQ_EN_EP0_IE)
+#define USBD_INT_EN_SOF_IE                      (0x0080u)   //Start-of-Frame Interrupt
+#define USBD_INT_EN_EPN_RX_IE                   (0x0020u)   //Non-EP0 RX Interrupt
+#define USBD_INT_EN_EPN_TX_IE                   (0x0010u)   //Non-EP0 TX Interrupt
+#define USBD_INT_EN_DS_CHG_IE                   (0x0008u)   //Device State change interrupt
+#define USBD_INT_EN_EP0_IE                      (0x0001u)   //EP0 Interrupt
+#define USBD_INT_EN_ALL                         (USBD_IRQ_EN_SOF_IE | \
+                                                 USBD_IRQ_EN_EPN_RX_IE | \
+                                                 USBD_IRQ_EN_EPN_TX_IE | \
+                                                 USBD_IRQ_EN_DS_CHG_IE | \
+                                                 USBD_IRQ_EN_EP0_IE)
 
 
 //*****************************************************************************
@@ -115,16 +115,16 @@
 //! cannot be modified to any other value.
 //
 //*****************************************************************************
-#define USBD_INT_SRC_TXN_DONE   				(0x0400u)	//non-EP0 TX done interrupt
-#define USBD_INT_SRC_RXN_CNT    				(0x0200u)	//non-EP0 RX Count
-#define USBD_INT_SRC_RXN_EOT    				(0x0100u)	//non-EP0 RX end of transfer
-#define USBD_INT_SRC_SOF        				(0x0080u)	//Start-of-frame interrupt
-#define USBD_INT_SRC_EPN_RX     				(0x0020u)	//non-EP0 RX interrupt
-#define USBD_INT_SRC_EPN_TX    					(0x0010u)	//non-EP0 TX interrupt
-#define USBD_INT_SRC_DS_CHG     				(0x0008u)	//Device State change interrupt
-#define USBD_INT_SRC_SETUP      				(0x0004u)	//Setup interrupt
-#define USBD_INT_SRC_EP0_RX     				(0x0002u)	//EP0 RX Interrupt
-#define USBD_INT_SRC_EP0_TX     				(0x0001u)	//EP0 TX Interrupt
+#define USBD_INT_SRC_TXN_DONE                   (0x0400u)   //non-EP0 TX done interrupt
+#define USBD_INT_SRC_RXN_CNT                    (0x0200u)   //non-EP0 RX Count
+#define USBD_INT_SRC_RXN_EOT                    (0x0100u)   //non-EP0 RX end of transfer
+#define USBD_INT_SRC_SOF                        (0x0080u)   //Start-of-frame interrupt
+#define USBD_INT_SRC_EPN_RX                     (0x0020u)   //non-EP0 RX interrupt
+#define USBD_INT_SRC_EPN_TX                     (0x0010u)   //non-EP0 TX interrupt
+#define USBD_INT_SRC_DS_CHG                     (0x0008u)   //Device State change interrupt
+#define USBD_INT_SRC_SETUP                      (0x0004u)   //Setup interrupt
+#define USBD_INT_SRC_EP0_RX                     (0x0002u)   //EP0 RX Interrupt
+#define USBD_INT_SRC_EP0_TX                     (0x0001u)   //EP0 TX Interrupt
 
 
 //*****************************************************************************
@@ -179,9 +179,9 @@
 //
 //*****************************************************************************
 #define USB_DEV_EP0_OUT_PKTRDY 0x00000001u  // Receive data packet ready
-#define USB_DEV_RX_PKT_RDY    	0x00010000u  // Data packet ready
-#define USB_DEV_TX_TXPKTRDY		0x00000001u
-#define USB_DEV_TX_FIFO_NE		0x00000002u
+#define USB_DEV_RX_PKT_RDY      0x00010000u  // Data packet ready
+#define USB_DEV_TX_TXPKTRDY     0x00000001u
+#define USB_DEV_TX_FIFO_NE      0x00000002u
 
 
 //*****************************************************************************
@@ -198,7 +198,7 @@
 // Macros for hardware access, both direct and via the bit-band region.
 //
 //*****************************************************************************
-#define HWREG(x) 				(*((volatile unsigned int *)(x)))
+#define HWREG(x)                (*((volatile unsigned int *)(x)))
 
 
 
@@ -209,10 +209,10 @@
 //!
 //! \param ulBase specifies the USB module base address.
 //! \param usFlags specifies the bus/self powered and endianness for data & dma.
-//!			Should be a combination of the following flags
-//! 			USBD_PWR_BUS_PWR or USBD_PWR_SELF_PWR
-//!				USBD_DATA_ENDIAN_LITTLE or USBD_DATA_ENDIAN_BIG
-//!				USBD_DMA_ENDIAN_LITTLE or USBD_DMA_ENDIAN_BIG
+//!         Should be a combination of the following flags
+//!             USBD_PWR_BUS_PWR or USBD_PWR_SELF_PWR
+//!             USBD_DATA_ENDIAN_LITTLE or USBD_DATA_ENDIAN_BIG
+//!             USBD_DMA_ENDIAN_LITTLE or USBD_DMA_ENDIAN_BIG
 //! \param usFifoPtr specifies the start of the EP0 FIFO.
 //!
 //! This function will initialize the USB Device controller specified by the
@@ -234,7 +234,7 @@ void USBDevInit(uint32 ulBase, uint16 usFlags, uint16 usFifoPtr);
 //!
 //! \param ulBase specifies the USB module base address.
 //! \param usSize FIFO size. Supported values are USB_FIFO_SZ_8/USB_FIFO_SZ_16/
-//!			USB_FIFO_SZ_32/USB_FIFO_SZ_64.
+//!         USB_FIFO_SZ_32/USB_FIFO_SZ_64.
 //! \param usFifoPtr specifies the start of the EP0 FIFO.
 //!
 //! This function will initialize the USB Device controller specified by the
@@ -390,7 +390,7 @@ void USBDevDisconnect(uint32 ulBase);
 //! likely received via a SET ADDRESS command from the host controller.
 //!
 //! \note This function is not available on this controller. This is maintained
-//! 		for compatibility.
+//!         for compatibility.
 //!
 //! \return None.
 //
@@ -449,7 +449,7 @@ uint32 USBEndpointDataGet(uint32 ulBase, uint16 usEndpoint, uint8 *pucData, uint
 //!
 //! \param ulBase specifies the USB module base address.
 //! \param sPkt Pointer to the data area for storing the setup packet.
-//!			Atleast 8 bytes should be available.
+//!         Atleast 8 bytes should be available.
 //! \param pusPktSize On return this contains the size of the setup packet (8Bytes)
 //!
 //! This function will retrieves the 8Byte long setup packet from the EP0 setup

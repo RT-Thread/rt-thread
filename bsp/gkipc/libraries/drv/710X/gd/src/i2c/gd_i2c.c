@@ -175,7 +175,7 @@ static GD_INT_DATA_S* i2cHandler_AM(U8 channelIndex)
         }
         else
         {
-			GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT|I2C_STOP);
+            GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT|I2C_STOP);
             i2c_handle_ptr->i2cErrorState  = GD_ERR_I2C_START_NOACK;
         }
         break;
@@ -207,7 +207,7 @@ static GD_INT_DATA_S* i2cHandler_AM(U8 channelIndex)
         }
         else
         {
-			GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT);
+            GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT);
             i2c_handle_ptr->i2cErrorState  = GD_ERR_I2C_NOACK;
         }
         break;
@@ -228,7 +228,7 @@ static GD_INT_DATA_S* i2cHandler_AM(U8 channelIndex)
         }
         else
         {
-			GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT|I2C_STOP);
+            GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT|I2C_STOP);
             i2c_handle_ptr->i2cErrorState  = GD_ERR_I2C_READ_NOACK;
         }
         break;
@@ -238,7 +238,7 @@ static GD_INT_DATA_S* i2cHandler_AM(U8 channelIndex)
         {
             if(gd_i2c_ack(i2c_handle_ptr->channel, I2C_RESPOND|I2C_ACK) != GD_OK)
             {
-				GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT);
+                GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT);
                 i2c_handle_ptr->i2cErrorState  = GD_ERR_I2C_READ_NOACK;
                 break;
             }
@@ -258,7 +258,7 @@ static GD_INT_DATA_S* i2cHandler_AM(U8 channelIndex)
         {
             if(gd_i2c_ack(i2c_handle_ptr->channel, I2C_RESPOND|I2C_NO_ACK) != GD_OK)
             {
-				GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT);
+                GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_OPT);
                 i2c_handle_ptr->i2cErrorState  = GD_ERR_I2C_READ_NOACK;
                 break;
             }
@@ -461,17 +461,17 @@ GERR GD_I2C_Process( GD_HANDLE* pHandle, U8 address, U8* writeDataP, U32 wrDataL
     i2c_handle_ptr->rxLength     = rdDataLen;
     i2c_handle_ptr->address      = address;
 
-	if(writeDataP && (wrDataLen > 0))//dx8 chip only do write opreation when need. youbo,20170926
-	{
-	    GH_I2C_set_DATA(i2c_handle_ptr->channel,address & 0xFE);
-	    i2c_handle_ptr->eState = GD_I2C_STATE_START_WRITE;
-	}
-	else
-	{
+    if(writeDataP && (wrDataLen > 0))//dx8 chip only do write opreation when need. youbo,20170926
+    {
+        GH_I2C_set_DATA(i2c_handle_ptr->channel,address & 0xFE);
+        i2c_handle_ptr->eState = GD_I2C_STATE_START_WRITE;
+    }
+    else
+    {
         GH_I2C_set_DATA(i2c_handle_ptr->channel,address | 0x01);
-	    i2c_handle_ptr->eState = GD_I2C_STATE_START_READ;
-	}
-	
+        i2c_handle_ptr->eState = GD_I2C_STATE_START_READ;
+    }
+
     i2c_handle_ptr->i2cErrorState= GD_ERR_I2C_BUSY;
 
     GH_I2C_set_CONTROL(i2c_handle_ptr->channel,I2C_START);
@@ -587,16 +587,16 @@ GERR GD_I2C_Read( GD_HANDLE* pHandle, U8 address, U8* regbuffer,U32 regbytes,U8*
     default:
         GD_INT_Enable(&device->i2cHandle, GD_INT_DISABLED);
 
-		if(regbytes)//dx8 chip only do write opreation when need. youbo,20170926
-		{
-	        GH_I2C_set_DATA(device->channel,address & 0xFE);
-	        GH_I2C_set_CONTROL(device->channel,I2C_START);
-	        if(gd_i2c_ack(device->channel, I2C_RESPOND|I2C_ACK) != GD_OK)
-	        {	
-	            return GD_ERR_I2C_START_NOACK;
-	        }
-		}
-		
+        if(regbytes)//dx8 chip only do write opreation when need. youbo,20170926
+        {
+            GH_I2C_set_DATA(device->channel,address & 0xFE);
+            GH_I2C_set_CONTROL(device->channel,I2C_START);
+            if(gd_i2c_ack(device->channel, I2C_RESPOND|I2C_ACK) != GD_OK)
+            {
+                return GD_ERR_I2C_START_NOACK;
+            }
+        }
+
         while(regbytes)
         {
             GH_I2C_set_DATA_Data(device->channel,*regbuffer++);

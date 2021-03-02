@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-4-30     misonyo     the first version.
  */
- 
+
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdef.h>

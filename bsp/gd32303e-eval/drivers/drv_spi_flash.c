@@ -21,16 +21,16 @@
 #define SPI_BUS_NAME                "spi0"
 #define SPI_DEVICE_NAME             "spi01"
 #define SPI_FLASH_DEVICE_NAME       "gd25q"
-#define GD25Q_SPI_CS_PIN             2          //PE3ï¼Œåœ¨ drv_gpio.c æ–‡ä»¶ pin_index pins[]ä¸­æŸ¥åˆ° PE3 ç¼–å·ä¸º 2
+#define GD25Q_SPI_CS_PIN             2          //PE3£¬ÔÚ drv_gpio.c ÎÄ¼ş pin_index pins[]ÖĞ²éµ½ PE3 ±àºÅÎª 2
 
 static int rt_hw_gd25q40_init(void)
 {
     rt_err_t res;
-    static struct rt_spi_device spi_dev_gd25q;           /* SPIè®¾å¤‡å¯¹è±¡ */
-    static rt_base_t gd25q_cs_pin;                       /* SPIè®¾å¤‡CSç‰‡é€‰å¼•è„š */
+    static struct rt_spi_device spi_dev_gd25q;           /* SPIÉè±¸¶ÔÏó */
+    static rt_base_t gd25q_cs_pin;                       /* SPIÉè±¸CSÆ¬Ñ¡Òı½Å */
 
     gd25q_cs_pin = GD25Q_SPI_CS_PIN;
-    
+
     rt_pin_mode(GD25Q_SPI_CS_PIN, GPIO_MODE_OUT_PP);
 
     res = rt_spi_bus_attach_device(&spi_dev_gd25q, SPI_DEVICE_NAME, SPI_BUS_NAME, (void*)gd25q_cs_pin);

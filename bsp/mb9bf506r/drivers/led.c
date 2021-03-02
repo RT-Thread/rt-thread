@@ -11,7 +11,7 @@
  * Date           Author       Notes
  * 2011-03-03     lgnq
  */
-     
+
 #include <rtthread.h>
 #include <rthw.h>
 
@@ -20,8 +20,8 @@
 
 void rt_hw_led_on(rt_uint8_t num)
 {
-	RT_ASSERT(num < LEDS_MAX_NUMBER);
-    
+    RT_ASSERT(num < LEDS_MAX_NUMBER);
+
     switch (num)
     {
         case 1:
@@ -31,16 +31,16 @@ void rt_hw_led_on(rt_uint8_t num)
             USER_LED_PDOR &= ~USER_LED2;
         break;
         case 3:
-            USER_LED_PDOR &= ~USER_LED3;        
+            USER_LED_PDOR &= ~USER_LED3;
         break;
         default:
         break;
-    }	
+    }
 }
 
 void rt_hw_led_off(rt_uint8_t num)
 {
-	RT_ASSERT(num < LEDS_MAX_NUMBER);
+    RT_ASSERT(num < LEDS_MAX_NUMBER);
 
     switch (num)
     {
@@ -51,17 +51,17 @@ void rt_hw_led_off(rt_uint8_t num)
             USER_LED_PDOR |= USER_LED2;
         break;
         case 3:
-            USER_LED_PDOR |= USER_LED3;        
+            USER_LED_PDOR |= USER_LED3;
         break;
         default:
         break;
-    }	
+    }
 }
 
 void rt_hw_led_toggle(rt_uint8_t num)
 {
-	RT_ASSERT(num < LEDS_MAX_NUMBER);
-    
+    RT_ASSERT(num < LEDS_MAX_NUMBER);
+
     switch (num)
     {
         case 1:
@@ -80,11 +80,11 @@ void rt_hw_led_toggle(rt_uint8_t num)
             if (USER_LED_PDOR&USER_LED3)
                 USER_LED_PDOR &= ~USER_LED3;
             else
-                USER_LED_PDOR |= USER_LED3;    
+                USER_LED_PDOR |= USER_LED3;
         break;
         default:
         break;
-    }	    
+    }
 }
 
 void led_init(void)
@@ -102,7 +102,7 @@ void led_init(void)
 
 void pwm_update(rt_uint16_t value)
 {
-    FM3_BT2_PWM->PDUT  = value;			
+    FM3_BT2_PWM->PDUT  = value;
 }
 
 static void led1_thread_entry(void *parameter)
@@ -130,11 +130,11 @@ void rt_hw_led_init(void)
     led_init();
 
     led1_thread = rt_thread_create("led1", led1_thread_entry, RT_NULL, 384, 29, 5);
-    if (led1_thread != RT_NULL) 
+    if (led1_thread != RT_NULL)
         rt_thread_startup(led1_thread);
-    
+
     led2_thread = rt_thread_create("led2", led2_thread_entry, RT_NULL, 384, 30, 5);
-    if (led2_thread != RT_NULL) 
+    if (led2_thread != RT_NULL)
         rt_thread_startup(led2_thread);
 }
 

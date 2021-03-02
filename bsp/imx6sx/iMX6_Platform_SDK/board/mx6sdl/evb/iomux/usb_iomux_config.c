@@ -53,7 +53,7 @@ void usb_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO01
     //     ALT6 (6) - Select instance: usdhc1 signal: SD1_CD_B
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO01_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO01_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO01_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO01_MUX_MODE_V(ALT3));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO01(0x020E05E0)
@@ -94,13 +94,13 @@ void usb_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO01_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO01_SRE_V(SLOW));
     // Pad GPIO01 is involved in Daisy Chain.
     // Input Select Register:
@@ -133,7 +133,7 @@ void usb_iomux_config(void)
     //     ALT6 (6) - Select instance: i2c1 signal: I2C1_SCL
     //     ALT7 (7) - Select instance: spdif signal: SPDIF_IN
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_MUX_MODE_V(ALT4));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21(0x020E0528)
@@ -174,13 +174,13 @@ void usb_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_SRE_V(SLOW));
     // Pad EIM_DATA21 is involved in Daisy Chain.
     // Input Select Register:
@@ -212,7 +212,7 @@ void usb_iomux_config(void)
     //     ALT6 (6) - Select instance: spdif signal: SPDIF_OUT
     //     ALT8 (8) - Select instance: epdc signal: EPDC_SDCE6
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA22_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA22_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA22_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA22_MUX_MODE_V(ALT4));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22(0x020E052C)
@@ -253,12 +253,12 @@ void usb_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA22_SRE_V(SLOW));
 }

@@ -42,7 +42,7 @@
 #include "registers/regspciepl.h"
 #include "registers/regspciephy.h"
 
-#define PCIE_PHY_CR_ACK_POLLING_TIMES	0x100
+#define PCIE_PHY_CR_ACK_POLLING_TIMES   0x100
 
 //! phy control bus bit definition
 #define PCIE_CR_CTL_DATA_LOC 0
@@ -61,7 +61,7 @@ static int pcie_phy_cr_ack_polling(int32_t max_iterations, int32_t exp_val)
 
     wait_counter = 0;
     do {
-	val = (HW_PCIE_PL_PHY_STATUS_RD() >> PCIE_CR_STAT_ACK_LOC) & 0x01;
+    val = (HW_PCIE_PL_PHY_STATUS_RD() >> PCIE_CR_STAT_ACK_LOC) & 0x01;
         wait_counter++;
     } while ((wait_counter < max_iterations) && (val != exp_val));
 

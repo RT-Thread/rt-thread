@@ -1,5 +1,5 @@
 /******************************************************************************
-* @brief header file for ACMP utilities. 
+* @brief header file for ACMP utilities.
 *
 *******************************************************************************
 *
@@ -59,7 +59,7 @@ enum
 *******************************************************************************/
 #define     ACMP_SENSITIVITYMODE_FALLING   0    /*!< interrupt on falling edge  */
 #define     ACMP_SENSITIVITYMODE_RISING    1    /*!< interrupt on rising edge  */
-#define     ACMP_SENSITIVITYMODE_ANY       3    /*!< interrupt on falling or rising edge */ 
+#define     ACMP_SENSITIVITYMODE_ANY       3    /*!< interrupt on falling or rising edge */
 /*! @} End of acmp_intedgesel                                                 */
 
 
@@ -104,10 +104,10 @@ typedef void (*ACMP_CallbackPtr)(void);
  *
  */
 
-typedef union 
+typedef union
 {
-    uint8_t byte;    				 /*!< byte field of union type */
-    struct 
+    uint8_t byte;                    /*!< byte field of union type */
+    struct
     {
         uint8_t bMod        : 2;     /*!< Sensitivity modes of the interrupt trigger */
         uint8_t bOutEn      : 1;     /*!< Output can be placed onto an external pin */
@@ -116,7 +116,7 @@ typedef union
         uint8_t bIntFlag    : 1;     /*!< ACMP Interrupt Flag Bit */
         uint8_t bHyst       : 1;     /*!< Selects ACMP hystersis */
         uint8_t bEn         : 1;     /*!< Enables the ACMP module */
-    }bits;      				     /*!< bitfield of union type */
+    }bits;                           /*!< bitfield of union type */
 }ACMP_CtrlStatusType, *ACMP_CtrlStatusPtr;  /*!< ACMP Control/Status reg structure */
 /*! @} End of acmp_ctrlstatusstruct                                           */
 
@@ -131,17 +131,17 @@ typedef union
 *
 */
 
-typedef union 
+typedef union
 {
-    uint8_t byte;    				 /*!< byte field of union type */
-    struct 
+    uint8_t byte;                    /*!< byte field of union type */
+    struct
     {
         uint8_t bNegPin  : 2;        /*!< Negative pin select */
         uint8_t          : 2;
         uint8_t bPosPin  : 2;        /*!< Positive pin select */
         uint8_t          : 2;
-    }bits;      				     /*!< bitfield of union type */  
-}ACMP_PinSelType, *ACMP_PinSelPtr; 	     /*!< ACMP Pin select structure */ 
+    }bits;                           /*!< bitfield of union type */
+}ACMP_PinSelType, *ACMP_PinSelPtr;       /*!< ACMP Pin select structure */
 /*! @} End of acmp_pinselectstruct                                            */
 
 /******************************************************************************
@@ -154,16 +154,16 @@ typedef union
 * @brief ACMP internal ADC control struct.
 *
 */
-typedef union 
+typedef union
 {
-    uint8_t byte;    				 /*!< byte field of union type */
-    struct 
+    uint8_t byte;                    /*!< byte field of union type */
+    struct
     {
         uint8_t bVal  : 6;           /*!< 6 bit DAC value */
         uint8_t bRef  : 1;           /*!< 6 bit DAC reference select */
         uint8_t bEn   : 1;           /*!< 6 bit DAC enable bit */
-    }bits;      				     /*!< bitfield of union type */  
-}ACMP_DACType, *ACMP_DACPtr;	     /*!< ACMP DAC control structure */ 
+    }bits;                           /*!< bitfield of union type */
+}ACMP_DACType, *ACMP_DACPtr;         /*!< ACMP DAC control structure */
 /*! @} End of acmp_dacctrlstruct                                              */
 
 /******************************************************************************
@@ -176,15 +176,15 @@ typedef union
 * @brief ACMP external input pin enable control struct.
 *
 */
-typedef union 
+typedef union
 {
-    uint8_t byte;    				 /*!< byte field of union type */
-    struct 
+    uint8_t byte;                    /*!< byte field of union type */
+    struct
     {
         uint8_t bEn   : 3;           /*!< ACMP external input pin enable */
         uint8_t bRsvd : 5;
-    }bits;      				     /*!< bitfield of union type */  
-}ACMP_PinEnType, *ACMP_PinEnPtr;	 /*!< ACMP Pin enable structure */ 
+    }bits;                           /*!< bitfield of union type */
+}ACMP_PinEnType, *ACMP_PinEnPtr;     /*!< ACMP Pin enable structure */
 /*! @} End of acmp_pinenunion                                                 */
 
 /******************************************************************************
@@ -198,7 +198,7 @@ typedef union
 *
 */
 
-typedef struct 
+typedef struct
 {
     ACMP_CtrlStatusType  sCtrlStatus;     /*!< ACMP control and status */
     ACMP_PinSelType      sPinSelect;      /*!< ACMP pin select */
@@ -223,9 +223,9 @@ typedef struct
 /*****************************************************************************//*!
 *
 * @brief  enable the acmp module.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -241,9 +241,9 @@ __STATIC_INLINE void ACMP_Enable(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  disable the acmp module.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -259,9 +259,9 @@ __STATIC_INLINE void ACMP_Disable(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  select sensitivity modes of the interrupt trigger.
-*        
+*
 * @param[in]  pACMPx         pointer to an ACMP module.
-* @param[in]  u8EdgeSelect   falling or rising selction, 0~3. 
+* @param[in]  u8EdgeSelect   falling or rising selction, 0~3.
 *
 * @return none.
 *
@@ -277,9 +277,9 @@ __STATIC_INLINE void ACMP_SelectIntMode(ACMP_Type *pACMPx, uint8_t u8EdgeSelect)
 /*****************************************************************************//*!
 *
 * @brief  enable the ACMP module analog comparator output.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -295,9 +295,9 @@ __STATIC_INLINE void ACMP_EnablePinOut(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  disable the ACMP module analog comparator output.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -312,10 +312,10 @@ __STATIC_INLINE void ACMP_DisablePinOut(ACMP_Type *pACMPx)
 
 /*****************************************************************************//*!
 *
-* @brief  select ACMP hystersis. 
-*        
+* @brief  select ACMP hystersis.
+*
 * @param[in]  pACMPx           pointer to an ACMP module.
-* @param[in]  u8HystSelect     ACMP_HYST_20MV or ACMP_HYST_30MV.   
+* @param[in]  u8HystSelect     ACMP_HYST_20MV or ACMP_HYST_30MV.
 *
 * @return none.
 *
@@ -331,9 +331,9 @@ __STATIC_INLINE void ACMP_SelectHyst(ACMP_Type *pACMPx, uint8_t u8HystSelect)
 /*****************************************************************************//*!
 *
 * @brief  enable the acmp module interrupt.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -349,9 +349,9 @@ __STATIC_INLINE void ACMP_EnableInterrupt(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  disable the acmp module interrupt.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -367,9 +367,9 @@ __STATIC_INLINE void ACMP_DisableInterrupt(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  get the interrupt flag bit.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -385,9 +385,9 @@ __STATIC_INLINE uint8_t ACMP_GetFlag(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  clear the interrupt flag bit.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -403,9 +403,9 @@ __STATIC_INLINE void ACMP_ClrFlag(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  ACMP Positive Input Select.
-*        
+*
 * @param[in]  pACMPx        pointer to an ACMP module.
-* @param[in]  u8PosPinSel   positive input select, ACMP_INPUT_P_EXT0~2 or ACMP_INPUT_P_DAC.     
+* @param[in]  u8PosPinSel   positive input select, ACMP_INPUT_P_EXT0~2 or ACMP_INPUT_P_DAC.
 *
 * @return none.
 *
@@ -423,9 +423,9 @@ __STATIC_INLINE void ACMP_PositiveInputSelect(ACMP_Type *pACMPx, uint8_t u8PosPi
 /*****************************************************************************//*!
 *
 * @brief  ACMP Negative Input Select.
-*        
+*
 * @param[in]  pACMPx        pointer to an ACMP module.
-* @param[in]  u8NegPinSel   negative input select, ACMP_INPUT_N_EXT0~2 or ACMP_INPUT_N_DAC.  
+* @param[in]  u8NegPinSel   negative input select, ACMP_INPUT_N_EXT0~2 or ACMP_INPUT_N_DAC.
 *
 * @return none.
 *
@@ -443,9 +443,9 @@ __STATIC_INLINE void ACMP_NegativeInputSelect(ACMP_Type *pACMPx, uint8_t u8NegPi
 /*****************************************************************************//*!
 *
 * @brief  Enable 6 bit DAC in ACMP module.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -461,9 +461,9 @@ __STATIC_INLINE void ACMP_DacEnable(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  Disable 6 bit DAC in ACMP module.
-*        
+*
 * @param[in]  pACMPx      pointer to an ACMP module.
-*              
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -479,7 +479,7 @@ __STATIC_INLINE void ACMP_DacDisable(ACMP_Type *pACMPx)
 /*****************************************************************************//*!
 *
 * @brief  ACMP 6 bit DAC Reference Select.
-*        
+*
 * @param[in]  pACMPx        pointer to an ACMP module.
 * @param[in]  u8RefSelect   dac reference select:ACMP_DAC_REFERENCE_BANDGAP or ACMP_DAC_REFERENCE_VDDA.
 *
@@ -497,7 +497,7 @@ __STATIC_INLINE void ACMP_DacReferenceSelect(ACMP_Type *pACMPx, uint8_t u8RefSel
 /*****************************************************************************//*!
 *
 * @brief  ACMP 6 bit DAC Output Value Set.
-*        
+*
 * @param[in]  pACMPx        pointer to an ACMP module.
 * @param[in]  u8DacValue    dac output set, Voutput= (Vin/64)x(DACVAL[5:0]+1).
 *
@@ -516,7 +516,7 @@ __STATIC_INLINE void ACMP_DacOutputSet(ACMP_Type *pACMPx, uint8_t u8DacValue)
 /*****************************************************************************//*!
 *
 * @brief  Enable ACMP input pin.
-*        
+*
 * @param[in]  pACMPx        pointer to an ACMP module.
 * @param[in]  u8InputPin    ACMP external pin, 0~2.
 *
@@ -534,7 +534,7 @@ __STATIC_INLINE void ACMP_InputPinEnable(ACMP_Type *pACMPx, uint8_t u8InputPin)
 /*****************************************************************************//*!
 *
 * @brief  Disable ACMP input pin.
-*        
+*
 * @param[in]  pACMPx        pointer to an ACMP module.
 * @param[in]  u8InputPin    ACMP external pin, 0~2.
 *
@@ -555,7 +555,7 @@ __STATIC_INLINE void ACMP_InputPinDisable(ACMP_Type *pACMPx, uint8_t u8InputPin)
 * Global functions
 ******************************************************************************/
 void ACMP_Init(ACMP_Type *pACMPx, ACMP_ConfigType *pConfig);
-void ACMP_DeInit(ACMP_Type *pACMPx); 
+void ACMP_DeInit(ACMP_Type *pACMPx);
 void ACMP_ConfigDAC(ACMP_Type *pACMPx, ACMP_DACType *pDACConfig);
 void ACMP_SetCallback(ACMP_Type *pACMPx, ACMP_CallbackPtr pfnCallback);
 

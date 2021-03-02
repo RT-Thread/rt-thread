@@ -66,7 +66,7 @@ extern "C" {
  * @param slave_id         I/O expander instance number
  * @param io_default_dir   default I/O direction
  * @param out_default_val  default output value
- * 
+ *
  * @return 0 on success; non-zero otherwise
  */
 int32_t max7310_init(uint32_t slave_id, uint32_t io_default_dir, uint32_t out_default_val);
@@ -77,7 +77,7 @@ int32_t max7310_init(uint32_t slave_id, uint32_t io_default_dir, uint32_t out_de
  * @param slave_id   I/O expander instance number (0=instance 0,...)
  * @param io_x       I/O number (0=IO_0, 1=IO_1, ...)
  * @param level      I/O state (0=low, 1=high)
- * 
+ *
  * @return 0 on success; non-zero otherwise
  */
 void max7310_set_gpio_output(uint32_t slave_id, uint32_t io_x, uint32_t level);

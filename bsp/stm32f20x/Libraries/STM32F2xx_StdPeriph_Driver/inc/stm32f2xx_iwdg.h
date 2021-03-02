@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file contains all the functions prototypes for the IWDG 
+  * @brief   This file contains all the functions prototypes for the IWDG
   *          firmware library.
   ******************************************************************************
   * @attention
@@ -45,7 +45,7 @@
 /** @defgroup IWDG_Exported_Constants
   * @{
   */
-  
+
 /** @defgroup IWDG_WriteAccess
   * @{
   */
@@ -57,7 +57,7 @@
   * @}
   */
 
-/** @defgroup IWDG_prescaler 
+/** @defgroup IWDG_prescaler
   * @{
   */
 #define IWDG_Prescaler_4            ((uint8_t)0x00)
@@ -78,7 +78,7 @@
   * @}
   */
 
-/** @defgroup IWDG_Flag 
+/** @defgroup IWDG_Flag
   * @{
   */
 #define IWDG_FLAG_PVU               ((uint16_t)0x0001)

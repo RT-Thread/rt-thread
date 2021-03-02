@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2008-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -265,7 +265,7 @@ I2STxConfigSet(unsigned long ulBase, unsigned long ulConfig)
     {
         //
         // If compact 8 mode is not used, then set the FIFO config
-        // register for 16 bit.  This setting is okay if a compact 
+        // register for 16 bit.  This setting is okay if a compact
         // mode is not used.
         //
         HWREG(ulBase + I2S_O_TXFIFOCFG) = 0;
@@ -861,7 +861,7 @@ I2STxRxConfigSet(unsigned long ulBase, unsigned long ulConfig)
     }
 
     //
-    // Write the configuration register.  Because all the fields are specified 
+    // Write the configuration register.  Because all the fields are specified
     // by the configuration parameter, it is not necessary to do a
     // read-modify-write.
     //
@@ -1021,7 +1021,7 @@ I2SIntStatus(unsigned long ulBase, tBoolean bMasked)
 //!
 //! This function clears the specified pending I2S interrupts.  This function
 //! must be called in the interrupt handler to keep the interrupt from being
-//! triggered again immediately upon exit.  The \e ulIntFlags parameter can be 
+//! triggered again immediately upon exit.  The \e ulIntFlags parameter can be
 //! the logical OR of any of the following values: \b I2S_INT_RXERR,
 //! \b I2S_INT_RXREQ, \b I2S_INT_TXERR, or \b I2S_INT_TXREQ.
 //!
@@ -1061,8 +1061,8 @@ I2SIntClear(unsigned long ulBase, unsigned long ulIntFlags)
 //! \param pfnHandler is a pointer to the function to be called when the
 //! interrupt is activated.
 //!
-//! This function sets and enables the handler to be called when the I2S 
-//! controller generates an interrupt.  Specific I2S interrupts must still be 
+//! This function sets and enables the handler to be called when the I2S
+//! controller generates an interrupt.  Specific I2S interrupts must still be
 //! enabled with the I2SIntEnable() function.  It is the responsibility of the
 //! interrupt handler to clear any pending interrupts with I2SIntClear().
 //!

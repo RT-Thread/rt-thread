@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	dma.h
- * @brief	DMA primitives for libmetal.
+ * @file    dma.h
+ * @brief   DMA primitives for libmetal.
  */
 
 #ifndef __METAL_DMA__H__
@@ -30,9 +30,9 @@ extern "C" {
  * @brief scatter/gather list element structure
  */
 struct metal_sg {
-	void *virt; /**< CPU virtual address */
-	struct metal_io_region *io; /**< IO region */
-	int len; /**< length */
+    void *virt; /**< CPU virtual address */
+    struct metal_io_region *io; /**< IO region */
+    int len; /**< length */
 };
 
 struct metal_device;
@@ -50,10 +50,10 @@ struct metal_device;
  * @return     number of mapped sg entries, -error on failure.
  */
 int metal_dma_map(struct metal_device *dev,
-		  uint32_t dir,
-		  struct metal_sg *sg_in,
-		  int nents_in,
-		  struct metal_sg *sg_out);
+          uint32_t dir,
+          struct metal_sg *sg_in,
+          int nents_in,
+          struct metal_sg *sg_out);
 
 /**
  * @brief      Unmap DMA memory
@@ -66,9 +66,9 @@ int metal_dma_map(struct metal_device *dev,
  * @param[in]  nents     number of sg list entries of DMA memory
  */
 void metal_dma_unmap(struct metal_device *dev,
-		  uint32_t dir,
-		  struct metal_sg *sg,
-		  int nents);
+          uint32_t dir,
+          struct metal_sg *sg,
+          int nents);
 
 /** @} */
 

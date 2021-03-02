@@ -391,9 +391,9 @@
 #endif
 
 #define SYSTEM_ETH_PHY_RESET_GPIO               GADI_GPIO_NUM//not real pin
-#define SYSTEM_GPIO_SENSOR_RESET    			GADI_GPIO_27
-#define SYSTEM_GPIO_IR_CUT1         			GADI_GPIO_NUM
-#define SYSTEM_GPIO_IR_CUT2         			GADI_GPIO_NUM
+#define SYSTEM_GPIO_SENSOR_RESET                GADI_GPIO_27
+#define SYSTEM_GPIO_IR_CUT1                     GADI_GPIO_NUM
+#define SYSTEM_GPIO_IR_CUT2                     GADI_GPIO_NUM
 #define SYSTEM_GPIO_USB_HOST                    GADI_GPIO_30
 #define SYSTEM_GPIO_LCD_BL_EN                   GADI_GPIO_17  /*lcd_bl_en*/
 

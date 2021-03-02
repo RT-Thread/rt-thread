@@ -39,12 +39,12 @@
 #include "sdk.h"
 #include "registers/regsdcp.h"
 
-#define HW_DCP_CHnCMDPTR_WR(ch, v)	(((ch) == 0) ? HW_DCP_CH0CMDPTR_WR((v)) : \
-					((ch) == 1) ? HW_DCP_CH1CMDPTR_WR((v)): \
-					((ch) == 2) ? HW_DCP_CH2CMDPTR_WR((v)): \
-					HW_DCP_CH3CMDPTR_WR((v)))
+#define HW_DCP_CHnCMDPTR_WR(ch, v)  (((ch) == 0) ? HW_DCP_CH0CMDPTR_WR((v)) : \
+                    ((ch) == 1) ? HW_DCP_CH1CMDPTR_WR((v)): \
+                    ((ch) == 2) ? HW_DCP_CH2CMDPTR_WR((v)): \
+                    HW_DCP_CH3CMDPTR_WR((v)))
 
-#define HW_DCP_CHnSEMA_WR(ch, v)	(((ch) == 0) ? HW_DCP_CH0SEMA_WR((v)) : \
+#define HW_DCP_CHnSEMA_WR(ch, v)    (((ch) == 0) ? HW_DCP_CH0SEMA_WR((v)) : \
                                         ((ch) == 1) ? HW_DCP_CH1SEMA_WR((v)): \
                                         ((ch) == 2) ? HW_DCP_CH2SEMA_WR((v)): \
                                         HW_DCP_CH3SEMA_WR((v)))

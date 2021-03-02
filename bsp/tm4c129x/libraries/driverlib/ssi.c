@@ -4,23 +4,23 @@
 //
 // Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,7 +32,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
+//
 // This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -176,9 +176,9 @@ _SSIIntNumberGet(uint32_t ui32Base)
 //! The \e ui32Protocol parameter defines the data frame format.  The
 //! \e ui32Protocol parameter can be one of the following values:
 //! \b SSI_FRF_MOTO_MODE_0, \b SSI_FRF_MOTO_MODE_1, \b SSI_FRF_MOTO_MODE_2,
-//! \b SSI_FRF_MOTO_MODE_3, \b SSI_FRF_TI, or \b SSI_FRF_NMW. Note that 
+//! \b SSI_FRF_MOTO_MODE_3, \b SSI_FRF_TI, or \b SSI_FRF_NMW. Note that
 //! the \b SSI_FRF_NMW option is only available on some devices. Refer to the
-//! device data sheet to determine if the Microwire format is supported on 
+//! device data sheet to determine if the Microwire format is supported on
 //! a particular device.  The Motorola  frame formats encode the following
 //! polarity and phase configurations:
 //!
@@ -213,7 +213,7 @@ _SSIIntNumberGet(uint32_t ui32Base)
 //! the system clock is the value returned by SysCtlClockGet() for TM4C123x
 //! devices or the value returned by SysCtlClockFreqSet() for TM4C129x devices,
 //! or it can be explicitly hard coded if it is constant and known (to save the
-//! code/execution overhead of a call to SysCtlClockGet() or fetch of the 
+//! code/execution overhead of a call to SysCtlClockGet() or fetch of the
 //! variable call holding the return value of SysCtlClockFreqSet()).
 //!
 //! \return None.
@@ -1111,7 +1111,7 @@ SSIAdvFrameHoldEnable(uint32_t ui32Base)
 
 //*****************************************************************************
 //
-//! Configures the SSI advanced mode to de-assert the SSIFss signal after every 
+//! Configures the SSI advanced mode to de-assert the SSIFss signal after every
 //! byte transfer.
 //!
 //! \param ui32Base is the base address of the SSI module.

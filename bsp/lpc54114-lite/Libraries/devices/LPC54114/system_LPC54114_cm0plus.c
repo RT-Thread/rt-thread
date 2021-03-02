@@ -21,7 +21,7 @@
 **     Copyright (c) 2016 Freescale Semiconductor, Inc.
 **     Copyright 2016 - 2017 NXP
 **     All rights reserved.
-**     
+**
 **     Redistribution and use in source and binary forms, with or without modification,
 **     are permitted (subject to the limitations in the disclaimer below) provided
 **      that the following conditions are met:
@@ -92,7 +92,7 @@ extern void *__Vectors;
 
 uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
 
-static const uint8_t wdtFreqLookup[32] = {0, 8, 12, 15, 18, 20, 24, 26, 28, 30, 32, 34, 36, 38, 40, 41, 42, 44, 45, 46, 
+static const uint8_t wdtFreqLookup[32] = {0, 8, 12, 15, 18, 20, 24, 26, 28, 30, 32, 34, 36, 38, 40, 41, 42, 44, 45, 46,
                                             48, 49, 50, 52, 53, 54, 56, 57, 58, 59, 60, 61};
 
 static uint32_t GetWdtOscFreq(void)

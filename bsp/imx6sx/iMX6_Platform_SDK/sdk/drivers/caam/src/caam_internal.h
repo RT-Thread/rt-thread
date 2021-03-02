@@ -29,7 +29,7 @@
  */
 
 #ifndef __CAAM_INTERNAL_H__
-#define	__CAAM_INTERNAL_H__
+#define __CAAM_INTERNAL_H__
 
 /* 4kbyte pages */
 #define SEC_MEM_PAGE0       CAAM_SEC_RAM_START_ADDR
@@ -94,7 +94,7 @@
                                              * lock SMAP
                                              * lock SMAG
                                              * group 1 Blob
-                                             */    
+                                             */
 
 #define CMD_PAGE_ALLOC      0x1
 #define CMD_PAGE_DEALLOC    0x2
@@ -155,14 +155,14 @@ typedef enum {
  *  1011 0000 1000 0000 0000 0000 0000 1001
  *  |||| |                             ||||
  *  ++++-+-- Header                    ++++-- 9 words in descriptor
- */  
+ */
 #define DECAP_BLOB_DESC1 0xB0800009
 
 /* 2. Load command KEY 2 immediate
- *  
+ *
  *  0001 0100 1100 0000 0000 1100 0000 1000
  *  |||| |||  |||| |||| |||| |||| |||| ||||
- *  |||| |||  |||| |||| |||| |||| ++++-++++-- Length 
+ *  |||| |||  |||| |||| |||| |||| ++++-++++-- Length
  *  |||| |||  |||| |||| ++++-++++-- Offset
  *  |||| |||  |+++-++++-- DST (Destination Register) Key2
  *  |||| |||  +-- IMM (Immediate flag)
@@ -175,7 +175,7 @@ typedef enum {
  *
  *  0000 0000 0001 0000 0101 0101 0110 0110
  *  |||| |||| |||| |||| |||| |||| |||| ||||
- *  |||| |||| |||| |||| |||| |||| ++++-++++-- CCM Mode 
+ *  |||| |||| |||| |||| |||| |||| ++++-++++-- CCM Mode
  *  |||| |||| |||| |||| ++++-++++-- AES
  *  |||| |||| ++++-++++-- Length
  *  ++++-++++-- Flag
@@ -184,23 +184,23 @@ typedef enum {
 #define DECAP_BLOB_DESC4 0x00000000
 
 /* 5. SEQ In Ptr
- *  
+ *
  *  1111 0000 0000 0000 0000 0000 0100 0000
  *  |||| |              |||| |||| |||| ||||
- *  |||| |              ++++-++++-++++-++++-- Length in bytes (64) 
+ *  |||| |              ++++-++++-++++-++++-- Length in bytes (64)
  *  ++++-+-- Seq In Ptr
  */
 #define DECAP_BLOB_DESC5 0xF0000040
 
 /* 6. Pointer for above SEQ In ptr command */
 /* Address is provided during run time */
-#define DECAP_BLOB_DESC6 0x00000000 
+#define DECAP_BLOB_DESC6 0x00000000
 
 /* 7. SEQ Out Ptr
- *  
+ *
  *  1111 1000 0000 0000 0000 0000 0001 0000
  *  |||| |              |||| |||| |||| ||||
- *  |||| |              ++++-++++-++++-++++-- Length in bytes (16) 
+ *  |||| |              ++++-++++-++++-++++-- Length in bytes (16)
  *  ++++-+-- Seq In Ptr
  */
 #define DECAP_BLOB_DESC7 0xF8000010
@@ -209,8 +209,8 @@ typedef enum {
 /* Address could be changed during run time */
 #define DECAP_BLOB_DESC8 SEC_MEM_PAGE1
 
-/* 9. Protocol 
- *  
+/* 9. Protocol
+ *
  *  1000 0110 0000 1101 0000 0000 0000 1000
  *  |||| |||| |||| |||| |||| |||| |||| ||||
  *  |||| |||| |||| |||| ++++-++++-++++-++++-- Proto Info = sec mem blob
@@ -228,14 +228,14 @@ typedef enum {
  *  1011 0000 1000 0000 0000 0000 0000 1001
  *  |||| |                             |
  *  ++++-+-- Header                    +-- 9 words in descriptor
- */  
+ */
 #define ENCAP_BLOB_DESC1  0xB0800009
 
 /* 2. Load command KEY 2 immediate
- *  
+ *
  *  0001 0100 1100 0000 0000 1100 0000 1000
  *  |||| |||  |||| |||| |||| |||| |||| ||||
- *  |||| |||  |||| |||| |||| |||| ++++-++++-- Length 
+ *  |||| |||  |||| |||| |||| |||| ++++-++++-- Length
  *  |||| |||  |||| |||| ++++-++++-- Offset
  *  |||| |||  |+++-++++-- DST (Destination Register) Key2
  *  |||| |||  +-- IMM (Immediate flag)
@@ -248,7 +248,7 @@ typedef enum {
  *
  *  0000 0000 0001 0000 0101 0101 0110 0110
  *  |||| |||| |||| |||| |||| |||| |||| ||||
- *  |||| |||| |||| |||| |||| |||| ++++-++++-- CCM Mode 
+ *  |||| |||| |||| |||| |||| |||| ++++-++++-- CCM Mode
  *  |||| |||| |||| |||| ++++-++++-- AES
  *  |||| |||| ++++-++++-- Length
  *  ++++-++++-- Flag
@@ -257,10 +257,10 @@ typedef enum {
 #define ENCAP_BLOB_DESC4 0x00000000
 
 /* 5. SEQ In Ptr
- *  
+ *
  *  1111 0000 0000 0000 0000 0000 0001 0000
  *  |||| |              |||| |||| |||| ||||
- *  |||| |              ++++-++++-++++-++++-- Length in bytes (16) 
+ *  |||| |              ++++-++++-++++-++++-- Length in bytes (16)
  *  ++++-+-- Seq In Ptr
  */
 #define ENCAP_BLOB_DESC5 0xF0000010
@@ -270,10 +270,10 @@ typedef enum {
 #define ENCAP_BLOB_DESC6 SEC_MEM_PAGE1
 
 /* 7. SEQ Out Ptr
- *  
+ *
  *  1111 1000 0000 0000 0000 0000 0100 0000
  *  |||| |              |||| |||| |||| ||||
- *  |||| |              ++++-++++-++++-++++-- Length in bytes (64) 
+ *  |||| |              ++++-++++-++++-++++-- Length in bytes (64)
  *  ++++-+-- Seq Out Ptr
  */
 #define ENCAP_BLOB_DESC7  0xF8000040
@@ -282,8 +282,8 @@ typedef enum {
 /* Address is provided during run time */
 #define ENCAP_BLOB_DESC8  0x00000000
 
-/* 9. Protocol 
- *  
+/* 9. Protocol
+ *
  *  1000 0111 0000 1101 0000 0000 0000 1000
  *  |||| |||| |||| |||| |||| |||| |||| ||||
  *  |||| |||| |||| |||| ++++-++++-++++-++++-- Proto Info = sec mem blob

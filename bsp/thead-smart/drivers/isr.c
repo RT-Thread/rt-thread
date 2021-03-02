@@ -44,7 +44,7 @@ void __attribute__((isr)) SysTick_Handler(void)
 #endif
 
     csi_coret_config(drv_get_sys_freq() / CONFIG_SYSTICK_HZ, CORET_IRQn);
-    
+
 #if defined(CONFIG_KERNEL_RHINO)
     systick_handler();
 #elif defined(CONFIG_KERNEL_FREERTOS)

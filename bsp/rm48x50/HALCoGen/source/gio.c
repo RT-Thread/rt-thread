@@ -1,4 +1,4 @@
-/** @file gio.c 
+/** @file gio.c
 *   @brief GIO Driver Implementation File
 *   @date 29.May.2013
 *   @version 03.05.02
@@ -18,7 +18,7 @@
 /** @fn void gioInit(void)
 *   @brief Initializes the GIO Driver
 *
-*   This function initializes the GIO module and set the GIO ports 
+*   This function initializes the GIO module and set the GIO ports
 *   to the initial values.
 */
 /* SourceId : GIO_SourceId_001 */
@@ -31,7 +31,7 @@ void gioInit(void)
     /** bring GIO module out of reset */
     gioREG->GCR0      = 1U;
     gioREG->INTENACLR = 0xFFU;
-    gioREG->LVLCLR    = 0xFFU;              
+    gioREG->LVLCLR    = 0xFFU;
 
     /** @b initialize @b Port @b A */
 
@@ -181,7 +181,7 @@ void gioInit(void)
                    | (0U << 14U) /* Bit 14 */
                    | (0U << 15U);/* Bit 15 */
 
-    
+
 
 
     /** - clear all pending interrupts */
@@ -368,18 +368,18 @@ void gioEnableNotification(gioPORT_t *port, uint32 bit)
 /* USER CODE BEGIN (11) */
 /* USER CODE END */
 
-	if (port == gioPORTA)
-	{
-		gioREG->INTENASET = 1U << bit;
-	}
-	else if (port == gioPORTB)
-	{
-		gioREG->INTENASET = 1U << (bit + 8);
-	}
-	else
-	{
-		/* Empty */
-	}
+    if (port == gioPORTA)
+    {
+        gioREG->INTENASET = 1U << bit;
+    }
+    else if (port == gioPORTB)
+    {
+        gioREG->INTENASET = 1U << (bit + 8);
+    }
+    else
+    {
+        /* Empty */
+    }
 }
 
 
@@ -401,18 +401,18 @@ void gioDisableNotification(gioPORT_t *port, uint32 bit)
 /* USER CODE BEGIN (12) */
 /* USER CODE END */
 
-	if (port == gioPORTA)
-	{
-		gioREG->INTENACLR = 1U << bit;
-	}
-	else if (port == gioPORTB)
-	{
-		gioREG->INTENACLR = 1U << (bit + 8);
-	}
-	else
-	{
-		/* Empty */
-	}
+    if (port == gioPORTA)
+    {
+        gioREG->INTENACLR = 1U << bit;
+    }
+    else if (port == gioPORTB)
+    {
+        gioREG->INTENACLR = 1U << (bit + 8);
+    }
+    else
+    {
+        /* Empty */
+    }
 }
 
 

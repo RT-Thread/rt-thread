@@ -67,12 +67,12 @@ static rt_err_t mm32_uart_control(struct rt_serial_device *serial, int cmd, void
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
         NVIC_DisableIRQ(uart->irq);
-	    UART_ITConfig(uart->uart, UART_IT_RXIEN, DISABLE);
+        UART_ITConfig(uart->uart, UART_IT_RXIEN, DISABLE);
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         NVIC_EnableIRQ(uart->irq);
-	    /* enable interrupt */
+        /* enable interrupt */
         UART_ITConfig(uart->uart, UART_IT_RXIEN, ENABLE);
         break;
     }
@@ -165,15 +165,15 @@ void UART2_IRQHandler(void)
 static void UART1PINconfigStepA(void)
 {
     /* Enable UART clock */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_UART1, ENABLE);  
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);  
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_UART1, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 }
 
 static void UART1PINconfigStepB(void)
 {
-   
+
     GPIO_InitTypeDef GPIO_InitStructure;
     /* Configure USART Rx/tx PIN */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
@@ -191,9 +191,9 @@ static void UART1PINconfigStepB(void)
 static void UART2PINconfigStepA(void)
 {
     /* Enable UART clock */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART2, ENABLE);   
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE); 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART2, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 }
 
@@ -219,8 +219,8 @@ int rt_hw_uart_init(void)
 #ifdef BSP_USING_UART1
     UART1PINconfigStepA();
     uart = &uart1;
-	uart->uart = UART1;
-	uart->irq = UART1_IRQn;
+    uart->uart = UART1;
+    uart->irq = UART1_IRQn;
     config.baud_rate = BAUD_RATE_115200;
     serial1.ops    = &mm32_uart_ops;
     serial1.config = config;
@@ -234,8 +234,8 @@ int rt_hw_uart_init(void)
 #ifdef BSP_USING_UART2
     UART2PINconfigStepA();
     uart = &uart2;
-	uart->uart = UART2;
-	uart->irq = UART2_IRQn;
+    uart->uart = UART2;
+    uart->irq = UART2_IRQn;
     config.baud_rate = BAUD_RATE_115200;
     serial2.ops    = &mm32_uart_ops;
     serial2.config = config;

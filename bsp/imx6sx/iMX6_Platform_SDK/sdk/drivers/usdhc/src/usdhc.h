@@ -220,18 +220,18 @@ extern usdhc_inst_t usdhc_device[];
  * @brief Set Card access mode
  *
  * @param mode     Set card access mode
- * 
- * @return           
+ *
+ * @return
  */
 extern void set_card_access_mode(uint32_t sdma, uint32_t intr);
 extern uint32_t read_usdhc_adma_mode();
-extern uint32_t read_usdhc_intr_mode(); 
+extern uint32_t read_usdhc_intr_mode();
 /*!
  * @brief Card initialization
  *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    Bus width
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_init(uint32_t instance, int bus_width);
@@ -240,7 +240,7 @@ extern int card_init(uint32_t instance, int bus_width);
  * @brief eMMC Card initialization
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_emmc_init(uint32_t instance);
@@ -265,16 +265,16 @@ void card_cmd_config(command_t * cmd, int index, int argument, xfer_type_t trans
  * @brief Get Card CID
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
-extern int card_get_cid(uint32_t instance);                     
+extern int card_get_cid(uint32_t instance);
 
 /*!
  * @brief Toggle the card between the standby and transfer states
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_enter_trans(uint32_t instance);
@@ -283,16 +283,16 @@ extern int card_enter_trans(uint32_t instance);
  * @brief Addressed card send its status register
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_trans_status(uint32_t instance);
 
 /*!
- * @brief Get the card port 
+ * @brief Get the card port
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             The index of port
  */
 extern int card_get_port(uint32_t instance);
@@ -302,7 +302,7 @@ extern int card_get_port(uint32_t instance);
  *
  * @param instance     Instance number of the uSDHC module.
  * @param len          Block length to be set
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_set_blklen(uint32_t instance, int len);
@@ -314,7 +314,7 @@ extern int card_set_blklen(uint32_t instance, int len);
  * @param dst_ptr      Data destination pointer
  * @param length       Data length to be read
  * @param offset       Data reading offset
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_data_read(uint32_t instance, int *dst_ptr, int length, uint32_t offset);
@@ -326,7 +326,7 @@ extern int card_data_read(uint32_t instance, int *dst_ptr, int length, uint32_t 
  * @param src_ptr      Data source pointer
  * @param length       Data length to be writen
  * @param offset       Data writing offset
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_data_write(uint32_t instance, int *src_ptr, int length, int offset);
@@ -336,7 +336,7 @@ extern int card_data_write(uint32_t instance, int *src_ptr, int length, int offs
  *
  * @param instance     Instance number of the uSDHC module.
  * @param result       Card status
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_xfer_result(uint32_t instance, int *result);
@@ -345,54 +345,54 @@ extern int card_xfer_result(uint32_t instance, int *result);
  * @brief Wait for the transfer complete. It covers the interrupt mode, DMA mode and PIO mode
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_wait_xfer_done(uint32_t instance);
 
 /*!
  * @brief Initialize MMC - Get Card ID, Set RCA, Frequency and bus width.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    bus width to be configured.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int mmc_init(uint32_t instance, int bus_width);
 
 /*!
  * @brief Initialize eMMC - Get Card ID, Set RCA, Frequency and bus width.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int emmc_init(uint32_t instance);
 
 /*!
  * @brief Valid the voltage.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int mmc_voltage_validation(uint32_t instance);
 
 /*!
  * @brief Initialize SD - Get Card ID, Set RCA, Frequency and bus width.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    bus width to be configured.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int sd_init(uint32_t instance, int bus_width);
 
 /*!
  * @brief Valid the voltage.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int sd_voltage_validation(uint32_t instance);

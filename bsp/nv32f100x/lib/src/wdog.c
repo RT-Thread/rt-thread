@@ -1,14 +1,14 @@
 
 /******************************************************************************
 *
-* @brief Provide common watchdog module routines. 
+* @brief Provide common watchdog module routines.
 *
 * @history:
-* 	Jun. 25, 2013	modified the watch dog unlock sequence and disable sequence
+*   Jun. 25, 2013   modified the watch dog unlock sequence and disable sequence
 ******************************************************************************/
 #include "common.h"
 #include "wdog.h"
- 
+
 /******************************************************************************
 * Global variables
 ******************************************************************************/
@@ -47,8 +47,8 @@
 /*****************************************************************************//*!
 *
 * @brief Watchdog ETMer disable routine.
-*        
-* @param  none 
+*
+* @param  none
 *
 * @return none
 *
@@ -58,15 +58,15 @@
 
 void WDOG_Disable(void)
 {
-    uint8_t u8Cs1 =  WDOG->CS1;  
-    uint8_t u8Cs2 =  WDOG->CS2;  
-    uint16_t u16TOVAL =  WDOG->TOVAL;  
-    uint16_t u16WIN =  WDOG->WIN;  
+    uint8_t u8Cs1 =  WDOG->CS1;
+    uint8_t u8Cs2 =  WDOG->CS2;
+    uint16_t u16TOVAL =  WDOG->TOVAL;
+    uint16_t u16WIN =  WDOG->WIN;
 
     u8Cs1       &= ~WDOG_CS1_EN_MASK;
 
-	/* First unlock the watchdog so that we can write to registers */
-    WDOG_Unlock(); 
+    /* First unlock the watchdog so that we can write to registers */
+    WDOG_Unlock();
     WDOG->CS2    =  u8Cs2;
     WDOG->TOVAL  =  u16TOVAL;
     WDOG->WIN    =  u16WIN;
@@ -77,10 +77,10 @@ void WDOG_Disable(void)
 /*****************************************************************************//*!
 *
 * @brief Watchdog ETMer disable routine with update enabled.
-*        
+*
 *   Disable watchdog but the watchdog can be enabled and updated later.
 *
-* @param  none 
+* @param  none
 *
 * @return none
 *
@@ -90,16 +90,16 @@ void WDOG_Disable(void)
 
 void WDOG_DisableWDOGEnableUpdate(void)
 {
-    uint8_t u8Cs1 =  WDOG->CS1;  
-    uint8_t u8Cs2 =  WDOG->CS2;  
-    uint16_t u16TOVAL =  WDOG->TOVAL;  
-    uint16_t u16WIN =  WDOG->WIN;  
+    uint8_t u8Cs1 =  WDOG->CS1;
+    uint8_t u8Cs2 =  WDOG->CS2;
+    uint16_t u16TOVAL =  WDOG->TOVAL;
+    uint16_t u16WIN =  WDOG->WIN;
 
     u8Cs1       &= ~WDOG_CS1_EN_MASK;
     u8Cs1       |= WDOG_CS1_UPDATE_MASK;
 
-	/* First unlock the watchdog so that we can write to registers */
-    //WDOG_Unlock(); 
+    /* First unlock the watchdog so that we can write to registers */
+    //WDOG_Unlock();
     WDOG->CS2    =  u8Cs2;
     WDOG->TOVAL  =  u16TOVAL;
     WDOG->WIN    =  u16WIN;
@@ -109,7 +109,7 @@ void WDOG_DisableWDOGEnableUpdate(void)
 /*****************************************************************************//*!
 *
 * @brief Watchdog ETMer enable routine.
-*        
+*
 * @param  none
 *
 * @return none
@@ -121,10 +121,10 @@ void WDOG_DisableWDOGEnableUpdate(void)
 void WDOG_Enable(void)
 {
     uint8_t u8Cs1 =  WDOG->CS1;
-    
+
     u8Cs1       |= WDOG_CS1_EN_MASK;
 
-	/* First unlock the watchdog so that we can write to registers */
+    /* First unlock the watchdog so that we can write to registers */
     WDOG_Unlock();
     WDOG->CS1    = u8Cs1;
 }
@@ -133,14 +133,14 @@ void WDOG_Enable(void)
 /*****************************************************************************//*!
 *
 * @brief initialize watchdog.
-*        
+*
 * @param[in]   pConfig  poiner to watchdog configuration strcture.
 *
 * @return none
 *
 * @ Pass/ Fail criteria: none
-* 
-* @warning make sure that WDOG is not initialized after reset or WDOG update is enabled 
+*
+* @warning make sure that WDOG is not initialized after reset or WDOG update is enabled
 * after reset by calling WDOG_EnableUpdate / WDOG_DisableWDOGEnableUpdate.
 *
 * @see WDOG_EnableUpdate, WDOG_DisableWDOGEnableUpdate
@@ -153,12 +153,12 @@ void WDOG_Init(WDOG_ConfigPtr pConfig)
     uint8_t     u8Cs2;
     uint16_t    u16Toval;
     uint16_t    u16Win;
-    
+
     u8Cs1       = 0x80;                                   /* default CS1 register value */
     u8Cs2       = 0;
     u16Toval    = pConfig->u16ETMeOut;
     u16Win      = pConfig->u16WinETMe;
-        
+
     if(pConfig->sBits.bDisable)
     {
         u8Cs1 &= ~WDOG_CS1_EN_MASK;
@@ -192,26 +192,26 @@ void WDOG_Init(WDOG_ConfigPtr pConfig)
         u8Cs2 |= WDOG_CS2_PRES_MASK;
     }
     u8Cs2   |= (pConfig->sBits.bClkSrc & 0x03);
-    
+
     /* write regisers */
     WDOG_Unlock();              /* unlock watchdog first */
     WDOG->CS2   = u8Cs2;
 
     WDOG->TOVAL8B.TOVALL  = u16Toval;
     WDOG->TOVAL8B.TOVALH  = u16Toval >> 8;
-    
+
     WDOG->WIN8B.WINL  = u16Win;
     WDOG->WIN8B.WINH  = u16Win >> 8;
-    
-    WDOG->CS1   = u8Cs1;                            
+
+    WDOG->CS1   = u8Cs1;
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief initialize watchdog to the default state.
-*        
-* @param   none 
+*
+* @param   none
 *
 * @return none
 *
@@ -226,17 +226,17 @@ void WDOG_Init(WDOG_ConfigPtr pConfig)
 void WDOG_DeInit(void)
 {
     WDOG_Unlock();
-    
+
     WDOG->CS2    =  WDOG_CS2_DEFAULT_VALUE;
     WDOG->TOVAL  =  WDOG_TOVAL_DEFAULT_VALUE;
-    WDOG->WIN    =  WDOG_WIN_DEFAULT_VALUE;    
+    WDOG->WIN    =  WDOG_WIN_DEFAULT_VALUE;
     WDOG->CS1    =  WDOG_CS1_DEFAULT_VALUE;
 }
 
 /*****************************************************************************//*!
 *
 * @brief feed/refresh watchdog.
-*        
+*
 * @param   none
 *
 * @return none
@@ -256,8 +256,8 @@ void WDOG_Feed(void)
 
 /*****************************************************************************//*!
 *
-* @brief enable update of WDOG. 
-*        
+* @brief enable update of WDOG.
+*
 * @param  none
 *
 * @return none
@@ -268,27 +268,27 @@ void WDOG_Feed(void)
 
 void WDOG_EnableUpdate(void)
 {
-    uint8_t u8Cs1 =  WDOG->CS1;  
-    uint8_t u8Cs2 =  WDOG->CS2;  
-    uint16_t u16TOVAL =  WDOG->TOVAL;  
-    uint16_t u16WIN =  WDOG->WIN;  
+    uint8_t u8Cs1 =  WDOG->CS1;
+    uint8_t u8Cs2 =  WDOG->CS2;
+    uint16_t u16TOVAL =  WDOG->TOVAL;
+    uint16_t u16WIN =  WDOG->WIN;
 
     u8Cs1 |= WDOG_CS1_UPDATE_MASK;
 
-	/* First unlock the watchdog so that we can write to registers */
-    WDOG_Unlock(); 
+    /* First unlock the watchdog so that we can write to registers */
+    WDOG_Unlock();
     WDOG->CS2    =  u8Cs2;
     WDOG->TOVAL  =  u16TOVAL;
     WDOG->WIN    =  u16WIN;
-    WDOG->CS1    =  u8Cs1;  
+    WDOG->CS1    =  u8Cs1;
 }
 
 
 /*****************************************************************************//*!
 *
-* @brief disable update of WDOG. 
-*        
-* @param  none 
+* @brief disable update of WDOG.
+*
+* @param  none
 *
 * @return none
 *
@@ -298,26 +298,26 @@ void WDOG_EnableUpdate(void)
 
 void WDOG_DisableUpdate(void)
 {
-    uint8_t u8Cs1 =  WDOG->CS1;  
-    uint8_t u8Cs2 =  WDOG->CS2;  
-    uint16_t u16TOVAL =  WDOG->TOVAL;  
-    uint16_t u16WIN =  WDOG->WIN;  
+    uint8_t u8Cs1 =  WDOG->CS1;
+    uint8_t u8Cs2 =  WDOG->CS2;
+    uint16_t u16TOVAL =  WDOG->TOVAL;
+    uint16_t u16WIN =  WDOG->WIN;
 
     u8Cs1 &= ~WDOG_CS1_UPDATE_MASK;
 
-	/* First unlock the watchdog so that we can write to registers */
-    WDOG_Unlock(); 
+    /* First unlock the watchdog so that we can write to registers */
+    WDOG_Unlock();
     WDOG->CS2    =  u8Cs2;
     WDOG->TOVAL  =  u16TOVAL;
     WDOG->WIN    =  u16WIN;
-    WDOG->CS1    =  u8Cs1;  
-    
+    WDOG->CS1    =  u8Cs1;
+
 }
 
 
 /********************************************************************/
 
-/*! @} End of wdog_api_list                                                    					*/
+/*! @} End of wdog_api_list                                                                     */
 
 
 

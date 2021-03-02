@@ -12,6 +12,6 @@
 
 #define TMR_CTRL_ADDR           0xd1000000
 #define TMR_REG(offset)         _REG32(TMR_CTRL_ADDR, offset)
-#define TMR_FREQ	            ((uint32_t)SystemCoreClock/4)  //units HZ
+#define TMR_FREQ                ((uint32_t)SystemCoreClock/4)  //units HZ
 
 #endif

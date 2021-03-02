@@ -165,7 +165,7 @@
 /* constants definitions */
 /* IPA foreground parameter struct definitions */
 typedef struct
-{   
+{
     uint32_t foreground_memaddr;                          /*!< foreground memory base address */
     uint32_t foreground_lineoff;                          /*!< foreground line offset */
     uint32_t foreground_prealpha;                         /*!< foreground pre-defined alpha value */
@@ -174,25 +174,25 @@ typedef struct
     uint32_t foreground_prered;                           /*!< foreground pre-defined red value */
     uint32_t foreground_pregreen;                         /*!< foreground pre-defined green value */
     uint32_t foreground_preblue;                          /*!< foreground pre-defined blue value */
-}ipa_foreground_parameter_struct; 
+}ipa_foreground_parameter_struct;
 
 /* IPA background parameter struct definitions */
 typedef struct
-{   
+{
     uint32_t background_memaddr;                          /*!< background memory base address */
     uint32_t background_lineoff;                          /*!< background line offset */
     uint32_t background_prealpha;                         /*!< background pre-defined alpha value */
-    uint32_t background_alpha_algorithm;                  /*!< background alpha value calculation algorithm */                                          
+    uint32_t background_alpha_algorithm;                  /*!< background alpha value calculation algorithm */
     uint32_t background_pf;                               /*!< background pixel format */
     uint32_t background_prered;                           /*!< background pre-defined red value */
     uint32_t background_pregreen;                         /*!< background pre-defined green value */
     uint32_t background_preblue;                          /*!< background pre-defined blue value */
-}ipa_background_parameter_struct; 
+}ipa_background_parameter_struct;
 
 /* IPA destination parameter struct definitions */
 typedef struct
 {
-    uint32_t destination_memaddr;                         /*!< destination memory base address */    
+    uint32_t destination_memaddr;                         /*!< destination memory base address */
     uint32_t destination_lineoff;                         /*!< destination line offset */
     uint32_t destination_prealpha;                        /*!< destination pre-defined alpha value */
     uint32_t destination_pf;                              /*!< destination pixel format */
@@ -200,11 +200,11 @@ typedef struct
     uint32_t destination_pregreen;                        /*!< destination pre-defined green value */
     uint32_t destination_preblue;                         /*!< destination pre-defined blue value */
     uint32_t image_width;                                 /*!< width of the image to be processed */
-    uint32_t image_height;                                /*!< height of the image to be processed */                                          
-}ipa_destination_parameter_struct; 
+    uint32_t image_height;                                /*!< height of the image to be processed */
+}ipa_destination_parameter_struct;
 
 /* destination pixel format */
-typedef enum 
+typedef enum
 {
     IPA_DPF_ARGB8888,                                         /*!< destination pixel format ARGB8888 */
     IPA_DPF_RGB888,                                           /*!< destination pixel format RGB888 */

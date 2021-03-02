@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file provides high level functions to encrypt and decrypt an 
+  * @brief   This file provides high level functions to encrypt and decrypt an
   *          input message using DES in ECB/CBC modes.
   *          It uses the stm32f2xx_cryp.c/.h drivers to access the STM32F2xx CRYP
   *          peripheral.
@@ -14,7 +14,7 @@
   *          ===================================================================
   *                                   How to use this driver
   *          ===================================================================
-  *          1. Enable The CRYP controller clock using 
+  *          1. Enable The CRYP controller clock using
   *            RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_CRYP, ENABLE); function.
   *
   *          2. Encrypt and decrypt using DES in ECB Mode using CRYP_DES_ECB()
@@ -47,7 +47,7 @@
   * @{
   */
 
-/** @defgroup CRYP 
+/** @defgroup CRYP
   * @brief CRYP driver modules
   * @{
   */
@@ -64,12 +64,12 @@
 
 /** @defgroup CRYP_Private_Functions
   * @{
-  */ 
+  */
 
 /** @defgroup CRYP_Group8 High Level DES functions
- *  @brief   High Level DES functions 
+ *  @brief   High Level DES functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                           High Level DES functions
  ===============================================================================
@@ -91,7 +91,7 @@
   *          - SUCCESS: Operation done
   *          - ERROR: Operation failed
   */
-ErrorStatus CRYP_DES_ECB(uint8_t Mode, uint8_t Key[8], uint8_t *Input, 
+ErrorStatus CRYP_DES_ECB(uint8_t Mode, uint8_t Key[8], uint8_t *Input,
                          uint32_t Ilength, uint8_t *Output)
 {
   CRYP_InitTypeDef DES_CRYP_InitStructure;
@@ -113,7 +113,7 @@ ErrorStatus CRYP_DES_ECB(uint8_t Mode, uint8_t Key[8], uint8_t *Input,
      DES_CRYP_InitStructure.CRYP_AlgoDir  = CRYP_AlgoDir_Encrypt;
   }
   else/* if( Mode == MODE_DECRYPT )*/ /* DES decryption */
-  {      
+  {
      DES_CRYP_InitStructure.CRYP_AlgoDir  = CRYP_AlgoDir_Decrypt;
   }
 
@@ -168,7 +168,7 @@ ErrorStatus CRYP_DES_ECB(uint8_t Mode, uint8_t Key[8], uint8_t *Input,
   /* Disable Crypto */
   CRYP_Cmd(DISABLE);
 
-  return status; 
+  return status;
 }
 
 /**
@@ -232,7 +232,7 @@ ErrorStatus CRYP_DES_CBC(uint8_t Mode, uint8_t Key[8], uint8_t InitVectors[8],
 
   /* Flush IN/OUT FIFO */
   CRYP_FIFOFlush();
-  
+
   /* Enable Crypto processor */
   CRYP_Cmd(ENABLE);
 
@@ -269,23 +269,23 @@ ErrorStatus CRYP_DES_CBC(uint8_t Mode, uint8_t Key[8], uint8_t InitVectors[8],
   /* Disable Crypto */
   CRYP_Cmd(DISABLE);
 
-  return status; 
+  return status;
 }
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

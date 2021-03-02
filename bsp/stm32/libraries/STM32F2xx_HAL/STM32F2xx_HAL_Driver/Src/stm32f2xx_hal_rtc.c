@@ -117,7 +117,7 @@
     (+) Tamper1EventCallback         : RTC Tamper 1 Event callback.
     (+) MspInitCallback              : RTC MspInit callback.
     (+) MspDeInitCallback            : RTC MspDeInit callback.
-  [..]	
+  [..]
   This function takes as parameters the HAL peripheral handle, the Callback ID
   and a pointer to the user callback function.
   [..]

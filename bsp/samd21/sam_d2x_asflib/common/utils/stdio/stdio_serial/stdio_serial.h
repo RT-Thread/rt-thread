@@ -70,8 +70,8 @@
 #include "serial.h"
 
 #if (XMEGA || MEGA_RF) && defined(__GNUC__)
-	extern int _write (char c, int *f);
-	extern int _read (int *f);
+    extern int _write (char c, int *f);
+    extern int _read (int *f);
 #endif
 
 
@@ -91,33 +91,33 @@ extern void (*ptr_get)(void volatile*, char*);
  */
 static inline void stdio_serial_init(volatile void *usart, const usart_serial_options_t *opt)
 {
-	stdio_base = (void *)usart;
-	ptr_put = (int (*)(void volatile*,char))&usart_serial_putchar;
-	ptr_get = (void (*)(void volatile*,char*))&usart_serial_getchar;
+    stdio_base = (void *)usart;
+    ptr_put = (int (*)(void volatile*,char))&usart_serial_putchar;
+    ptr_get = (void (*)(void volatile*,char*))&usart_serial_getchar;
 # if (XMEGA || MEGA_RF)
-	usart_serial_init((USART_t *)usart,opt);
+    usart_serial_init((USART_t *)usart,opt);
 # elif UC3
-	usart_serial_init(usart,(usart_serial_options_t *)opt);
+    usart_serial_init(usart,(usart_serial_options_t *)opt);
 # elif SAM
-	usart_serial_init((Usart *)usart,(usart_serial_options_t *)opt);
+    usart_serial_init((Usart *)usart,(usart_serial_options_t *)opt);
 # else
 #  error Unsupported chip type
 # endif
 
 # if defined(__GNUC__)
 #  if (XMEGA || MEGA_RF)
-	// For AVR GCC libc print redirection uses fdevopen.
-	fdevopen((int (*)(char, FILE*))(_write),(int (*)(FILE*))(_read));
+    // For AVR GCC libc print redirection uses fdevopen.
+    fdevopen((int (*)(char, FILE*))(_write),(int (*)(FILE*))(_read));
 #  endif
 #  if UC3 || SAM
-	// For AVR32 and SAM GCC
-	// Specify that stdout and stdin should not be buffered.
-	setbuf(stdout, NULL);
-	setbuf(stdin, NULL);
-	// Note: Already the case in IAR's Normal DLIB default configuration
-	// and AVR GCC library:
-	// - printf() emits one character at a time.
-	// - getchar() requests only 1 byte to exit.
+    // For AVR32 and SAM GCC
+    // Specify that stdout and stdin should not be buffered.
+    setbuf(stdout, NULL);
+    setbuf(stdin, NULL);
+    // Note: Already the case in IAR's Normal DLIB default configuration
+    // and AVR GCC library:
+    // - printf() emits one character at a time.
+    // - getchar() requests only 1 byte to exit.
 #  endif
 # endif
 }

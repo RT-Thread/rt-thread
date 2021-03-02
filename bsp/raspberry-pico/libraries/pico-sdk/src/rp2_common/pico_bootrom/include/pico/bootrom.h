@@ -19,7 +19,7 @@
  * \ingroup pico_bootrom
  *
  * These codes are uses to lookup data or function addresses in the bootrom
- * 
+ *
  * \param c1 the first character
  * \param c2 the second character
  * \return the 'code' to use in rom_func_lookup() or rom_data_lookup()

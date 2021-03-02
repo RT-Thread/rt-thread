@@ -65,43 +65,43 @@
 /* Setup deep sleep behaviour for power down */
 void Chip_SYSCTL_SetDeepSleepPD(uint32_t sleepmask)
 {
-	/* Update new value */
-	LPC_SYSCTL->PDSLEEPCFG = PDSLEEPWRMASK | (sleepmask & PDSLEEPDATMASK);
+    /* Update new value */
+    LPC_SYSCTL->PDSLEEPCFG = PDSLEEPWRMASK | (sleepmask & PDSLEEPDATMASK);
 }
 
 /* Setup wakeup behaviour from deep sleep */
 void Chip_SYSCTL_SetWakeup(uint32_t wakeupmask)
 {
-	/* Update new value */
-	LPC_SYSCTL->PDAWAKECFG = PDWAKEUPWRMASK | (wakeupmask & PDWAKEUPDATMASK);
+    /* Update new value */
+    LPC_SYSCTL->PDAWAKECFG = PDWAKEUPWRMASK | (wakeupmask & PDWAKEUPDATMASK);
 }
 
 /* Power down one or more blocks or peripherals */
 void Chip_SYSCTL_PowerDown(uint32_t powerdownmask)
 {
-	uint32_t pdrun;
+    uint32_t pdrun;
 
-	/* Get current power states */
-	pdrun = LPC_SYSCTL->PDRUNCFG & PDWAKEUPDATMASK;
+    /* Get current power states */
+    pdrun = LPC_SYSCTL->PDRUNCFG & PDWAKEUPDATMASK;
 
-	/* Disable peripheral states by setting high */
-	pdrun |= (powerdownmask & PDWAKEUPDATMASK);
+    /* Disable peripheral states by setting high */
+    pdrun |= (powerdownmask & PDWAKEUPDATMASK);
 
-	/* Update power states with required register bits */
-	LPC_SYSCTL->PDRUNCFG = (PDWAKEUPWRMASK | pdrun);
+    /* Update power states with required register bits */
+    LPC_SYSCTL->PDRUNCFG = (PDWAKEUPWRMASK | pdrun);
 }
 
 /* Power up one or more blocks or peripherals */
 void Chip_SYSCTL_PowerUp(uint32_t powerupmask)
 {
-	uint32_t pdrun;
+    uint32_t pdrun;
 
-	/* Get current power states */
-	pdrun = LPC_SYSCTL->PDRUNCFG & PDWAKEUPDATMASK;
+    /* Get current power states */
+    pdrun = LPC_SYSCTL->PDRUNCFG & PDWAKEUPDATMASK;
 
-	/* Enable peripheral states by setting low */
-	pdrun &= ~(powerupmask & PDWAKEUPDATMASK);
+    /* Enable peripheral states by setting low */
+    pdrun &= ~(powerupmask & PDWAKEUPDATMASK);
 
-	/* Update power states with required register bits */
-	LPC_SYSCTL->PDRUNCFG = (PDWAKEUPWRMASK | pdrun);
+    /* Update power states with required register bits */
+    LPC_SYSCTL->PDRUNCFG = (PDWAKEUPWRMASK | pdrun);
 }

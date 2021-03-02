@@ -60,14 +60,14 @@ typedef struct {
 //#########################################
 //# GPIO peripheral defines
 //#########################################
-#define GPIO_DR0_OFFSET	0x00    //  32bit gpio pta data direction reg
-#define GPIO_GDIR0_OFFSET	0x04    //  32bit gpio pta output config 1 reg
-#define GPIO_PSR0_OFFSET	0x08    //  32bit gpio pta output config 2 reg
-#define GPIO_ICR1_OFFSET	0x0C    //  32bit gpio pta input config A1 reg
-#define GPIO_ICR2_OFFSET	0x10    //  32bit gpio pta input config A2 reg
-#define GPIO_IMR_OFFSET	0x14    //  32bit gpio pta input config B1 reg
-#define GPIO_ISR_OFFSET	0x18    // GPIO Interrupt Status Register
-#define GPIO_EDGE_SEL_OFFSET	0x1C    // GPIO Edge Detect Register
+#define GPIO_DR0_OFFSET 0x00    //  32bit gpio pta data direction reg
+#define GPIO_GDIR0_OFFSET   0x04    //  32bit gpio pta output config 1 reg
+#define GPIO_PSR0_OFFSET    0x08    //  32bit gpio pta output config 2 reg
+#define GPIO_ICR1_OFFSET    0x0C    //  32bit gpio pta input config A1 reg
+#define GPIO_ICR2_OFFSET    0x10    //  32bit gpio pta input config A2 reg
+#define GPIO_IMR_OFFSET 0x14    //  32bit gpio pta input config B1 reg
+#define GPIO_ISR_OFFSET 0x18    // GPIO Interrupt Status Register
+#define GPIO_EDGE_SEL_OFFSET    0x1C    // GPIO Edge Detect Register
 
 #define GPIO1_DR                   GPIO1_BASE_ADDR+0x00
 #define GPIO1_GDIR                 GPIO1_BASE_ADDR+0x04

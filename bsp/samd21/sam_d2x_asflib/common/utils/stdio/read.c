@@ -81,18 +81,18 @@ _STD_BEGIN
  */
 size_t __read(int handle, unsigned char *buffer, size_t size)
 {
-	int nChars = 0;
-	// This implementation only reads from stdin.
-	// For all other file handles, it returns failure.
-	if (handle != _LLIO_STDIN) {
-		return _LLIO_ERROR;
-	}
-	for (; size > 0; --size) {
-		ptr_get(stdio_base, (char*)buffer);
-		buffer++;
-		nChars++;
-	}
-	return nChars;
+    int nChars = 0;
+    // This implementation only reads from stdin.
+    // For all other file handles, it returns failure.
+    if (handle != _LLIO_STDIN) {
+        return _LLIO_ERROR;
+    }
+    for (; size > 0; --size) {
+        ptr_get(stdio_base, (char*)buffer);
+        buffer++;
+        nChars++;
+    }
+    return nChars;
 }
 
 /*! \brief This routine is required by IAR DLIB library since EWAVR V6.10
@@ -100,8 +100,8 @@ size_t __read(int handle, unsigned char *buffer, size_t size)
  */
 int __close(int handle)
 {
-	UNUSED(handle);
-	return 0;
+    UNUSED(handle);
+    return 0;
 }
 
 /*! \brief This routine is required by IAR DLIB library since EWAVR V6.10
@@ -109,8 +109,8 @@ int __close(int handle)
  */
 int remove(const char* val)
 {
-	UNUSED(val);
-	return 0;
+    UNUSED(val);
+    return 0;
 }
 
 /*! \brief This routine is required by IAR DLIB library since EWAVR V6.10
@@ -118,15 +118,15 @@ int remove(const char* val)
  */
 long __lseek(int handle, long val, int val2)
 {
-	UNUSED(handle);
-	UNUSED(val2);
-	return val;
+    UNUSED(handle);
+    UNUSED(val2);
+    return val;
 }
 
 _STD_END
 
 // GCC AVR32 and SAM implementation
-#elif (defined(__GNUC__) && !XMEGA && !MEGA) 
+#elif (defined(__GNUC__) && !XMEGA && !MEGA)
 
 int __attribute__((weak))
 _read (int file, char * ptr, int len); // Remove GCC compiler warning
@@ -134,18 +134,18 @@ _read (int file, char * ptr, int len); // Remove GCC compiler warning
 int __attribute__((weak))
 _read (int file, char * ptr, int len)
 {
-	int nChars = 0;
+    int nChars = 0;
 
-	if (file != 0) {
-		return -1;
-	}
+    if (file != 0) {
+        return -1;
+    }
 
-	for (; len > 0; --len) {
-		ptr_get(stdio_base, ptr);
-		ptr++;
-		nChars++;
-	}
-	return nChars;
+    for (; len > 0; --len) {
+        ptr_get(stdio_base, ptr);
+        ptr++;
+        nChars++;
+    }
+    return nChars;
 }
 
 // GCC AVR implementation
@@ -155,9 +155,9 @@ int _read (int *f); // Remove GCC compiler warning
 
 int _read (int *f)
 {
-	char c;
-	ptr_get(stdio_base,&c);
-	return c;
+    char c;
+    ptr_get(stdio_base,&c);
+    return c;
 }
 #endif
 

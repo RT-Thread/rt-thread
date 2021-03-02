@@ -35,40 +35,40 @@ static void rt_hw_board_led_init(void);
  */
 void rt_hw_timer_handler(int vector, void* param)
 {
-	if (AT91C_BASE_PITC->PITC_PISR & 0x01)
-	{
-		/* increase a tick */
-		rt_tick_increase();
+    if (AT91C_BASE_PITC->PITC_PISR & 0x01)
+    {
+        /* increase a tick */
+        rt_tick_increase();
 
-		/* ack interrupt */
-		AT91C_BASE_AIC->AIC_EOICR = AT91C_BASE_PITC->PITC_PIVR;
-	}
-	else
-	{
-		/* end of interrupt */
-		AT91C_BASE_AIC->AIC_EOICR = 0;
-	}
+        /* ack interrupt */
+        AT91C_BASE_AIC->AIC_EOICR = AT91C_BASE_PITC->PITC_PIVR;
+    }
+    else
+    {
+        /* end of interrupt */
+        AT91C_BASE_AIC->AIC_EOICR = 0;
+    }
 }
-						/* PIO   Flash    PA    PB   PIN */
-#define LED1 (1 << 19)	/* PA0 / PGMEN0 & PWM0 TIOA0  48 */
-#define LED2 (1 << 20)	/* PA1 / PGMEN1 & PWM1 TIOB0  47 */
-#define LED3 (1 << 21)	/* PA2          & PWM2 SCK0   44 */
-#define LED4 (1 << 22)	/* PA3          & TWD  NPCS3  43 */
-#define LED_MASK		(LED1|LED2|LED3|LED4)
+                        /* PIO   Flash    PA    PB   PIN */
+#define LED1 (1 << 19)  /* PA0 / PGMEN0 & PWM0 TIOA0  48 */
+#define LED2 (1 << 20)  /* PA1 / PGMEN1 & PWM1 TIOB0  47 */
+#define LED3 (1 << 21)  /* PA2          & PWM2 SCK0   44 */
+#define LED4 (1 << 22)  /* PA3          & TWD  NPCS3  43 */
+#define LED_MASK        (LED1|LED2|LED3|LED4)
 
 int leds[] = {LED1, LED2, LED3, LED4};
 
-/** 
+/**
  * This function will init led on the board
  */
 static void rt_hw_board_led_init()
 {
-	/* enable the clock of the PIO A, PIO B */
-	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA | 1 << AT91C_ID_PIOB;
+    /* enable the clock of the PIO A, PIO B */
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA | 1 << AT91C_ID_PIOB;
 
-	/* configure PIO as output for led */
-	AT91C_BASE_PIOB->PIO_PER = LED_MASK;
-	AT91C_BASE_PIOB->PIO_OER = LED_MASK;
+    /* configure PIO as output for led */
+    AT91C_BASE_PIOB->PIO_PER = LED_MASK;
+    AT91C_BASE_PIOB->PIO_OER = LED_MASK;
 }
 
 /**
@@ -78,10 +78,10 @@ static void rt_hw_board_led_init()
  */
 void rt_hw_board_led_on(int n)
 {
-	if (n >= 0 && n < 4)
-	{
-		AT91C_BASE_PIOB->PIO_CODR = leds[n];
-	}
+    if (n >= 0 && n < 4)
+    {
+        AT91C_BASE_PIOB->PIO_CODR = leds[n];
+    }
 }
 
 /**
@@ -91,10 +91,10 @@ void rt_hw_board_led_on(int n)
  */
 void rt_hw_board_led_off(int n)
 {
-	if (n >= 0 && n < 4)
-	{
-		AT91C_BASE_PIOB->PIO_SODR = leds[n];
-	}
+    if (n >= 0 && n < 4)
+    {
+        AT91C_BASE_PIOB->PIO_SODR = leds[n];
+    }
 }
 
 /*
@@ -108,47 +108,47 @@ void rt_hw_board_led_off(int n)
  */
 void rt_hw_console_output(const char* str)
 {
-	while (*str)
-	{
-		if (*str == '\n')
-		{
-			while (!(AT91C_BASE_US0->US_CSR & AT91C_US_TXRDY));
-			AT91C_BASE_US0->US_THR = '\r';
-		}
-		
-		/* Wait for Empty Tx Buffer */
-		while (!(AT91C_BASE_US0->US_CSR & AT91C_US_TXRDY));
-		/* Transmit Character */
-		AT91C_BASE_US0->US_THR = *str;
-		
-		str ++;
-	}
+    while (*str)
+    {
+        if (*str == '\n')
+        {
+            while (!(AT91C_BASE_US0->US_CSR & AT91C_US_TXRDY));
+            AT91C_BASE_US0->US_THR = '\r';
+        }
+
+        /* Wait for Empty Tx Buffer */
+        while (!(AT91C_BASE_US0->US_CSR & AT91C_US_TXRDY));
+        /* Transmit Character */
+        AT91C_BASE_US0->US_THR = *str;
+
+        str ++;
+    }
 }
 
 static void rt_hw_console_init()
 {
-	/* Enable Clock for USART0 */
-	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US0;
-	/* Enable RxD0 and TxD0 Pin */
-	//AT91C_BASE_PIOA->PIO_PDR = (1 << 5) | (1 << 6);
-	AT91C_BASE_PIOA->PIO_PDR = 1 | (1 << 1);//fix bug 2010-3-9
+    /* Enable Clock for USART0 */
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_US0;
+    /* Enable RxD0 and TxD0 Pin */
+    //AT91C_BASE_PIOA->PIO_PDR = (1 << 5) | (1 << 6);
+    AT91C_BASE_PIOA->PIO_PDR = 1 | (1 << 1);//fix bug 2010-3-9
 
-	AT91C_BASE_US0->US_CR = AT91C_US_RSTRX	|		/* Reset Receiver      */
-				AT91C_US_RSTTX		|		/* Reset Transmitter   */
-				AT91C_US_RXDIS		|		/* Receiver Disable    */
-				AT91C_US_TXDIS;				/* Transmitter Disable */
+    AT91C_BASE_US0->US_CR = AT91C_US_RSTRX  |       /* Reset Receiver      */
+                AT91C_US_RSTTX      |       /* Reset Transmitter   */
+                AT91C_US_RXDIS      |       /* Receiver Disable    */
+                AT91C_US_TXDIS;             /* Transmitter Disable */
 
-	AT91C_BASE_US0->US_MR = AT91C_US_USMODE_NORMAL |		/* Normal Mode */
-				AT91C_US_CLKS_CLOCK		|		/* Clock = MCK */
-				AT91C_US_CHRL_8_BITS	|		/* 8-bit Data  */
-				AT91C_US_PAR_NONE		|		/* No Parity   */
-				AT91C_US_NBSTOP_1_BIT;			/* 1 Stop Bit  */
+    AT91C_BASE_US0->US_MR = AT91C_US_USMODE_NORMAL |        /* Normal Mode */
+                AT91C_US_CLKS_CLOCK     |       /* Clock = MCK */
+                AT91C_US_CHRL_8_BITS    |       /* 8-bit Data  */
+                AT91C_US_PAR_NONE       |       /* No Parity   */
+                AT91C_US_NBSTOP_1_BIT;          /* 1 Stop Bit  */
 
-	/* set baud rate divisor */
-	AT91C_BASE_US0->US_BRGR = BRD;
+    /* set baud rate divisor */
+    AT91C_BASE_US0->US_BRGR = BRD;
 
-	AT91C_BASE_US0->US_CR = AT91C_US_RXEN |	/* Receiver Enable     */
-				AT91C_US_TXEN;	/* Transmitter Enable  */
+    AT91C_BASE_US0->US_CR = AT91C_US_RXEN | /* Receiver Enable     */
+                AT91C_US_TXEN;  /* Transmitter Enable  */
 }
 
 /**
@@ -156,20 +156,20 @@ static void rt_hw_console_init()
  */
 void rt_hw_board_init(void)
 {
-	extern void rt_serial_init(void);
-	
-	/* init hardware console */
-	rt_hw_console_init();
+    extern void rt_serial_init(void);
 
-	/* init led */
-	rt_hw_board_led_init();
+    /* init hardware console */
+    rt_hw_console_init();
 
-	/* init PITC */
-	AT91C_BASE_PITC->PITC_PIMR = (1 << 25) | (1 << 24) | PIV;
+    /* init led */
+    rt_hw_board_led_init();
 
-	/* install timer handler */
-	rt_hw_interrupt_install(AT91C_ID_SYS, rt_hw_timer_handler, RT_NULL, "tick");
-	AT91C_BASE_AIC->AIC_SMR[AT91C_ID_SYS] = 0;
-	rt_hw_interrupt_umask(AT91C_ID_SYS);	
+    /* init PITC */
+    AT91C_BASE_PITC->PITC_PIMR = (1 << 25) | (1 << 24) | PIV;
+
+    /* install timer handler */
+    rt_hw_interrupt_install(AT91C_ID_SYS, rt_hw_timer_handler, RT_NULL, "tick");
+    AT91C_BASE_AIC->AIC_SMR[AT91C_ID_SYS] = 0;
+    rt_hw_interrupt_umask(AT91C_ID_SYS);
 }
 /*@}*/

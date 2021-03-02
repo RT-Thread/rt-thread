@@ -35,52 +35,52 @@
 uint32_t ROM_DMA_GetMemSize(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->GetMemSize();
+    return ROMAPI_DMAALT_API->GetMemSize();
 #else
-	return dmaalt_api.GetMemSize();
+    return dmaalt_api.GetMemSize();
 #endif
 }
 
 /* Initialize DMA controller */
 ROM_DMA_HANDLE_T ROM_DMA_Init(void *mem, ROM_DMA_INIT_T *pInit)
 {
-	/* Verify SRAMBASE alginemnt is at least MINDMATABLEALIGN bytes */
-	if (((uint32_t) pInit->sramBase & (MINDMATABLEALIGN - 1)) != 0) {
-		return NULL;
-	}
+    /* Verify SRAMBASE alginemnt is at least MINDMATABLEALIGN bytes */
+    if (((uint32_t) pInit->sramBase & (MINDMATABLEALIGN - 1)) != 0) {
+        return NULL;
+    }
 
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->Init(mem, pInit);
+    return ROMAPI_DMAALT_API->Init(mem, pInit);
 #else
-	return dmaalt_api.Init(mem, pInit);
+    return dmaalt_api.Init(mem, pInit);
 #endif
 }
 
 /* Configures a DMA channel */
 ErrorCode_t ROM_DMA_SetupChannel(ROM_DMA_HANDLE_T pHandle, ROM_DMA_CHAN_CFG_T *pCfg, uint8_t dmaCh)
 {
-	if (dmaCh >= NUMDMACHANNELS) {
-		return ERR_DMA_CHANNEL_NUMBER;
-	}
+    if (dmaCh >= NUMDMACHANNELS) {
+        return ERR_DMA_CHANNEL_NUMBER;
+    }
 
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->SetupChannel(pHandle, pCfg, dmaCh);
+    return ROMAPI_DMAALT_API->SetupChannel(pHandle, pCfg, dmaCh);
 #else
-	return dmaalt_api.SetupChannel(pHandle, pCfg, dmaCh);
+    return dmaalt_api.SetupChannel(pHandle, pCfg, dmaCh);
 #endif
 }
 
 /* Initializes a transfer descriptor queue for a channel */
 ErrorCode_t ROM_DMA_InitQueue(ROM_DMA_HANDLE_T pHandle, uint8_t dmaCh, ROM_DMA_QUEUE_T *pQueue)
 {
-	if (dmaCh >= NUMDMACHANNELS) {
-		return ERR_DMA_CHANNEL_NUMBER;
-	}
+    if (dmaCh >= NUMDMACHANNELS) {
+        return ERR_DMA_CHANNEL_NUMBER;
+    }
 
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->InitQueue(pHandle, dmaCh, pQueue);
+    return ROMAPI_DMAALT_API->InitQueue(pHandle, dmaCh, pQueue);
 #else
-	return dmaalt_api.InitQueue(pHandle, dmaCh, pQueue);
+    return dmaalt_api.InitQueue(pHandle, dmaCh, pQueue);
 #endif
 }
 
@@ -88,26 +88,26 @@ ErrorCode_t ROM_DMA_InitQueue(ROM_DMA_HANDLE_T pHandle, uint8_t dmaCh, ROM_DMA_Q
 void ROM_DMA_RegisterQueueCallback(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue, uint32_t cbIndex, void *pCB)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_DMAALT_API->RegisterQueueCallback(pHandle, pQueue, cbIndex, pCB);
+    ROMAPI_DMAALT_API->RegisterQueueCallback(pHandle, pQueue, cbIndex, pCB);
 #else
-	dmaalt_api.RegisterQueueCallback(pHandle, pQueue, cbIndex, pCB);
+    dmaalt_api.RegisterQueueCallback(pHandle, pQueue, cbIndex, pCB);
 #endif
 }
 
 /* Builds a transfer descriptor chain from the passed settings */
 ErrorCode_t ROM_DMA_BuildDescriptorChain(ROM_DMA_HANDLE_T pHandle,
-										 ROM_DMA_XFERDESC_CFG_T *pXferCfg,
-										 ROM_DMA_DESC_T *pDesc,
-										 ROM_DMA_DESC_T *pDescPrev)
+                                         ROM_DMA_XFERDESC_CFG_T *pXferCfg,
+                                         ROM_DMA_DESC_T *pDesc,
+                                         ROM_DMA_DESC_T *pDescPrev)
 {
-	if (pXferCfg->dmaCh >= NUMDMACHANNELS) {
-		return ERR_DMA_CHANNEL_NUMBER;
-	}
+    if (pXferCfg->dmaCh >= NUMDMACHANNELS) {
+        return ERR_DMA_CHANNEL_NUMBER;
+    }
 
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->BuildDescriptorChain(pHandle, pXferCfg, pDesc, pDescPrev);
+    return ROMAPI_DMAALT_API->BuildDescriptorChain(pHandle, pXferCfg, pDesc, pDescPrev);
 #else
-	return dmaalt_api.BuildDescriptorChain(pHandle, pXferCfg, pDesc, pDescPrev);
+    return dmaalt_api.BuildDescriptorChain(pHandle, pXferCfg, pDesc, pDescPrev);
 #endif
 }
 
@@ -115,9 +115,9 @@ ErrorCode_t ROM_DMA_BuildDescriptorChain(ROM_DMA_HANDLE_T pHandle,
 uint32_t ROM_DMA_GetTransferCount(ROM_DMA_HANDLE_T pHandle, ROM_DMA_DESC_T *pDesc)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->GetTransferCount(pHandle, pDesc);
+    return ROMAPI_DMAALT_API->GetTransferCount(pHandle, pDesc);
 #else
-	return dmaalt_api.GetTransferCount(pHandle, pDesc);
+    return dmaalt_api.GetTransferCount(pHandle, pDesc);
 #endif
 }
 
@@ -125,9 +125,9 @@ uint32_t ROM_DMA_GetTransferCount(ROM_DMA_HANDLE_T pHandle, ROM_DMA_DESC_T *pDes
 void ROM_DMA_UnstallDescriptorChain(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_DMAALT_API->UnstallDescriptorChain(pHandle, pQueue);
+    ROMAPI_DMAALT_API->UnstallDescriptorChain(pHandle, pQueue);
 #else
-	dmaalt_api.UnstallDescriptorChain(pHandle, pQueue);
+    dmaalt_api.UnstallDescriptorChain(pHandle, pQueue);
 #endif
 }
 
@@ -135,9 +135,9 @@ void ROM_DMA_UnstallDescriptorChain(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *p
 void ROM_DMA_QueueDescriptor(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue, ROM_DMA_DESC_T *pDescChainHead)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_DMAALT_API->QueueDescriptor(pHandle, pQueue, pDescChainHead);
+    ROMAPI_DMAALT_API->QueueDescriptor(pHandle, pQueue, pDescChainHead);
 #else
-	dmaalt_api.QueueDescriptor(pHandle, pQueue, pDescChainHead);
+    dmaalt_api.QueueDescriptor(pHandle, pQueue, pDescChainHead);
 #endif
 }
 
@@ -145,9 +145,9 @@ void ROM_DMA_QueueDescriptor(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue, 
 ROM_DMA_DESC_STS_T ROM_DMA_GetQueuePopDescriptorStatus(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->GetQueuePopDescriptorStatus(pHandle, pQueue);
+    return ROMAPI_DMAALT_API->GetQueuePopDescriptorStatus(pHandle, pQueue);
 #else
-	return dmaalt_api.GetQueuePopDescriptorStatus(pHandle, pQueue);
+    return dmaalt_api.GetQueuePopDescriptorStatus(pHandle, pQueue);
 #endif
 }
 
@@ -155,9 +155,9 @@ ROM_DMA_DESC_STS_T ROM_DMA_GetQueuePopDescriptorStatus(ROM_DMA_HANDLE_T pHandle,
 ROM_DMA_DESC_T *ROM_DMA_UnQueueDescriptor(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->UnQueueDescriptor(pHandle, pQueue);
+    return ROMAPI_DMAALT_API->UnQueueDescriptor(pHandle, pQueue);
 #else
-	return dmaalt_api.UnQueueDescriptor(pHandle, pQueue);
+    return dmaalt_api.UnQueueDescriptor(pHandle, pQueue);
 #endif
 }
 
@@ -165,9 +165,9 @@ ROM_DMA_DESC_T *ROM_DMA_UnQueueDescriptor(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEU
 ErrorCode_t ROM_DMA_StartQueue(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->StartQueue(pHandle, pQueue);
+    return ROMAPI_DMAALT_API->StartQueue(pHandle, pQueue);
 #else
-	return dmaalt_api.StartQueue(pHandle, pQueue);
+    return dmaalt_api.StartQueue(pHandle, pQueue);
 #endif
 }
 
@@ -175,9 +175,9 @@ ErrorCode_t ROM_DMA_StartQueue(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue
 ErrorCode_t ROM_DMA_StopQueue(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->StopQueue(pHandle, pQueue);
+    return ROMAPI_DMAALT_API->StopQueue(pHandle, pQueue);
 #else
-	return dmaalt_api.StopQueue(pHandle, pQueue);
+    return dmaalt_api.StopQueue(pHandle, pQueue);
 #endif
 }
 
@@ -185,9 +185,9 @@ ErrorCode_t ROM_DMA_StopQueue(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 void ROM_DMA_FlushQueue(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_DMAALT_API->FlushQueue(pHandle, pQueue);
+    ROMAPI_DMAALT_API->FlushQueue(pHandle, pQueue);
 #else
-	dmaalt_api.FlushQueue(pHandle, pQueue);
+    dmaalt_api.FlushQueue(pHandle, pQueue);
 #endif
 }
 
@@ -195,9 +195,9 @@ void ROM_DMA_FlushQueue(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 uint8_t ROM_DMA_GetQueueState(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->GetQueueState(pHandle, pQueue);
+    return ROMAPI_DMAALT_API->GetQueueState(pHandle, pQueue);
 #else
-	return dmaalt_api.GetQueueState(pHandle, pQueue);
+    return dmaalt_api.GetQueueState(pHandle, pQueue);
 #endif
 }
 
@@ -205,9 +205,9 @@ uint8_t ROM_DMA_GetQueueState(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 void ROM_DMA_ForceTrigger(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_DMAALT_API->ForceTrigger(pHandle, pQueue);
+    ROMAPI_DMAALT_API->ForceTrigger(pHandle, pQueue);
 #else
-	dmaalt_api.ForceTrigger(pHandle, pQueue);
+    dmaalt_api.ForceTrigger(pHandle, pQueue);
 #endif
 }
 
@@ -215,9 +215,9 @@ void ROM_DMA_ForceTrigger(ROM_DMA_HANDLE_T pHandle, ROM_DMA_QUEUE_T *pQueue)
 void ROM_DMA_DMAHandler(ROM_DMA_HANDLE_T pHandle)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_DMAALT_API->DMAHandler(pHandle);
+    ROMAPI_DMAALT_API->DMAHandler(pHandle);
 #else
-	dmaalt_api.DMAHandler(pHandle);
+    dmaalt_api.DMAHandler(pHandle);
 #endif
 }
 
@@ -225,8 +225,8 @@ void ROM_DMA_DMAHandler(ROM_DMA_HANDLE_T pHandle)
 uint16_t ROM_DMA_GetDriverVersion(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_DMAALT_API->GetDriverVersion();
+    return ROMAPI_DMAALT_API->GetDriverVersion();
 #else
-	return dmaalt_api.GetDriverVersion();
+    return dmaalt_api.GetDriverVersion();
 #endif
 }

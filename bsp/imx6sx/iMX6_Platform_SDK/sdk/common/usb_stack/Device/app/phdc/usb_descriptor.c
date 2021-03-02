@@ -30,7 +30,7 @@
 /* Put CFV2 descriptors in RAM */
 #define USB_DESC_CONST
 #else
-#define USB_DESC_CONST	const
+#define USB_DESC_CONST  const
 #endif
 
 /*****************************************************************************
@@ -118,7 +118,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
 
     /*PHDC function extension descriptor */
     USB_PHDC_FUNCTION_EXT_DESC_SIZE,
-    
+
     PHDC_11073PHD_FUNCTION_DESCRIPTOR,
     0x00,
     0x01,
@@ -239,19 +239,19 @@ uint_8 USB_DESC_CONST USB_STR_2[USB_STR_2_SIZE+USB_STR_DESC_SIZE]
                                USB_STRING_DESCRIPTOR,
                                ' ',0,
                                ' ',0,
-							#ifdef __MK_xxx_H__
-							   'M',0,
-							   'K',0,                               
-							#elif (defined __MCF52xxx_H__)
-							   'C',0,
-							   'F',0,
-							#elif (defined MCU_mcf51jf128)
-							   'J',0,
-							   'F',0,  	   
-							#else     
-							   'J',0,
-							   'M',0,
-							#endif               
+                            #ifdef __MK_xxx_H__
+                               'M',0,
+                               'K',0,
+                            #elif (defined __MCF52xxx_H__)
+                               'C',0,
+                               'F',0,
+                            #elif (defined MCU_mcf51jf128)
+                               'J',0,
+                               'F',0,
+                            #else
+                               'J',0,
+                               'M',0,
+                            #endif
                                ' ',0,
                                'P',0,
                                'H',0,
@@ -317,19 +317,19 @@ uint_8 const g_string_desc_size[USB_MAX_STRING_DESCRIPTORS+1] =
                                     };
 
 uint_8_ptr const g_string_descriptors[USB_MAX_STRING_DESCRIPTORS+1] =
-										  {
-											  (uint_8_ptr const) USB_STR_0,
-											  (uint_8_ptr const) USB_STR_1,
-											  (uint_8_ptr const) USB_STR_2,
-											  (uint_8_ptr const) USB_STR_n
-										  };
+                                          {
+                                              (uint_8_ptr const) USB_STR_0,
+                                              (uint_8_ptr const) USB_STR_1,
+                                              (uint_8_ptr const) USB_STR_2,
+                                              (uint_8_ptr const) USB_STR_n
+                                          };
 
 USB_ALL_LANGUAGES g_languages = { USB_STR_0, sizeof(USB_STR_0),
-									{ 
-										(uint_16 const)0x0409,
-                                   		(const uint_8 **)g_string_descriptors,
-                                      	g_string_desc_size
-									}
+                                    {
+                                        (uint_16 const)0x0409,
+                                        (const uint_8 **)g_string_descriptors,
+                                        g_string_desc_size
+                                    }
                                 };
 uint_8 const g_valid_config_values[USB_MAX_CONFIG_SUPPORTED+1]={0,1};
 
@@ -532,7 +532,7 @@ boolean USB_Desc_Valid_Configation (
 {
     uint_8 loop_index=0;
     UNUSED (controller_ID)
-    
+
     /* check with only supported val right now */
     while(loop_index < (USB_MAX_CONFIG_SUPPORTED+1))
     {
@@ -567,7 +567,7 @@ boolean USB_Desc_Valid_Interface (
 {
     uint_8 loop_index=0;
     UNUSED (controller_ID)
-    
+
     /* check with only supported val right now */
     while(loop_index < USB_MAX_SUPPORTED_INTERFACES)
     {

@@ -25,8 +25,8 @@
   [..]
   During and just after reset, the alternate functions and external interrupt
         lines are not active and the I/O ports are configured in input floating mode.
-     
-    (+) All GPIO pins have weak internal pull-up and pull-down resistors, which can be 
+
+    (+) All GPIO pins have weak internal pull-up and pull-down resistors, which can be
         activated or not.
 
   [..]
@@ -333,7 +333,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
         /* Clear Rising Falling edge configuration */
         EXTI->RTSR1 &= ~((uint32_t)iocurrent);
         EXTI->FTSR1 &= ~((uint32_t)iocurrent);
-		
+
         /* Configure the External Interrupt or event for the current IO */
         tmp = ((uint32_t)0xFF) << (8 * (position & 0x03));
         EXTI->EXTICR[position >> 2] &= ~tmp;

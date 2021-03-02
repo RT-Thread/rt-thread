@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2007-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -69,8 +69,8 @@ static unsigned long g_ulWriteDelay;
 //! \param None.
 //!
 //! On non-Fury-class devices, the hibernate module provides an indication when
-//! any write is completed.  This mechanism is used to pace writes to the 
-//! module.  This function merely polls this bit and returns as soon as it is 
+//! any write is completed.  This mechanism is used to pace writes to the
+//! module.  This function merely polls this bit and returns as soon as it is
 //! set.  At this point, it is safe to perform another write to the module.
 //!
 //! \return None.
@@ -156,7 +156,7 @@ HibernateEnableExpClk(unsigned long ulHibClk)
 //
 //! Disables the Hibernation module for operation.
 //!
-//! This function disables the Hibernation module for operation.  After this 
+//! This function disables the Hibernation module for operation.  After this
 //! function is called, none of the Hibernation module features are available.
 //!
 //! \return None.
@@ -182,9 +182,9 @@ HibernateDisable(void)
 //!
 //! \param ulClockInput specifies the clock input.
 //!
-//! This function configures the clock input for the Hibernation module.  The 
+//! This function configures the clock input for the Hibernation module.  The
 //! configuration option chosen depends entirely on hardware design.  The clock
-//! input for the module is either a 32.768 kHz oscillator or a 4.194304 MHz 
+//! input for the module is either a 32.768 kHz oscillator or a 4.194304 MHz
 //! crystal. The \e ulClockFlags parameter must be one of the following:
 //!
 //! - \b HIBERNATE_CLOCK_SEL_RAW - use the raw signal from a 32.768 kHz
@@ -289,9 +289,9 @@ HibernateClockConfig(unsigned long ulConfig)
 //
 //! Enables the RTC feature of the Hibernation module.
 //!
-//! This function enables the RTC in the Hibernation module.  The RTC can be 
-//! used to wake the processor from hibernation at a certain time, or to 
-//! generate interrupts at certain times.  This function must be called before 
+//! This function enables the RTC in the Hibernation module.  The RTC can be
+//! used to wake the processor from hibernation at a certain time, or to
+//! generate interrupts at certain times.  This function must be called before
 //! using any of the RTC features of the Hibernation module.
 //!
 //! \return None.
@@ -316,7 +316,7 @@ HibernateRTCEnable(void)
 //! Disables the RTC feature of the Hibernation module.
 //!
 //! This function disables the RTC in the Hibernation module.  After calling
-//! this function, the RTC features of the Hibernation module are not 
+//! this function, the RTC features of the Hibernation module are not
 //! available.
 //!
 //! \return None.
@@ -375,7 +375,7 @@ HibernateBatCheckStart(void)
 //! Returns if a forced battery check has completed.
 //!
 //! This function returns if the forced battery check initiated by a call to
-//! the HibernateBatCheckStart() function has completed.  This function 
+//! the HibernateBatCheckStart() function has completed.  This function
 //! returns a non-zero value until the battery level check has completed.  Once
 //! this function returns a value of zero, the hibernation module has completed
 //! the battery check and the HibernateIntStatus() function can be used to
@@ -385,7 +385,7 @@ HibernateBatCheckStart(void)
 //! \note This function is only available on some Stellaris devices.
 //!
 //! \return The value is zero when the battery level check has completed or
-//! non-zero if the check is still in process.  
+//! non-zero if the check is still in process.
 //
 //*****************************************************************************
 unsigned long
@@ -403,8 +403,8 @@ HibernateBatCheckDone(void)
 //!
 //! \param ulWakeFlags specifies which conditions should be used for waking.
 //!
-//! This function enables the conditions under which the Hibernation module 
-//! wakes.  The \e ulWakeFlags parameter is the logical OR of any combination 
+//! This function enables the conditions under which the Hibernation module
+//! wakes.  The \e ulWakeFlags parameter is the logical OR of any combination
 //! of the following:
 //!
 //! - \b HIBERNATE_WAKE_PIN - wake when the external wake pin is asserted.
@@ -477,10 +477,10 @@ HibernateWakeGet(void)
 //!
 //! \param ulLowBatFlags specifies behavior of low battery detection.
 //!
-//! This function enables the low battery detection and whether hibernation is 
-//! allowed if a low battery is detected.  If low battery detection is enabled, 
-//! then a low battery condition is indicated in the raw interrupt status 
-//! register, and can also trigger an interrupt.  Optionally, hibernation can be 
+//! This function enables the low battery detection and whether hibernation is
+//! allowed if a low battery is detected.  If low battery detection is enabled,
+//! then a low battery condition is indicated in the raw interrupt status
+//! register, and can also trigger an interrupt.  Optionally, hibernation can be
 //! aborted if a low battery is detected.
 //!
 //! The \e ulLowBatFlags parameter is one of the following values:
@@ -503,7 +503,7 @@ HibernateWakeGet(void)
 //! HibernateLowBatSet(HIBERNATE_LOW_BAT_ABORT | HIBERNATE_LOW_BAT_2_1V);
 //! \endverbatim
 //!
-//! \note The parameters with the specific voltage levels are only available on 
+//! \note The parameters with the specific voltage levels are only available on
 //! some Stellaris devices.
 //!
 //! \return None.
@@ -560,7 +560,7 @@ HibernateLowBatGet(void)
 //!
 //! \param ulRTCValue is the new value for the RTC.
 //!
-//! This function sets the value of the RTC.  The RTC count seconds if the 
+//! This function sets the value of the RTC.  The RTC count seconds if the
 //! hardware is configured correctly.  The RTC must be enabled by calling
 //! HibernateRTCEnable() before calling this function.
 //!
@@ -605,9 +605,9 @@ HibernateRTCGet(void)
 //!
 //! \param ulMatch is the value for the match register.
 //!
-//! This function sets the match 0 register for the RTC.  The Hibernation 
-//! module can be configured to wake from hibernation, and/or generate an 
-//! interrupt when the value of the RTC counter is the same as the match 
+//! This function sets the match 0 register for the RTC.  The Hibernation
+//! module can be configured to wake from hibernation, and/or generate an
+//! interrupt when the value of the RTC counter is the same as the match
 //! register.
 //!
 //! \return None.
@@ -651,9 +651,9 @@ HibernateRTCMatch0Get(void)
 //!
 //! \param ulMatch is the value for the match register.
 //!
-//! This function sets the match 1 register for the RTC.  The Hibernation 
-//! module can be configured to wake from hibernation, and/or generate an 
-//! interrupt when the value of the RTC counter is the same as the match 
+//! This function sets the match 1 register for the RTC.  The Hibernation
+//! module can be configured to wake from hibernation, and/or generate an
+//! interrupt when the value of the RTC counter is the same as the match
 //! register.
 //!
 //! \note The Hibernation RTC Match 1 feature is not available on all Stellaris
@@ -705,10 +705,10 @@ HibernateRTCMatch1Get(void)
 //!
 //! \param ulMatch is the value for the sub second match register.
 //!
-//! This function sets the sub second match 0 register for the RTC in 1/32768 
-//! of a second increments.  The Hibernation module can be configured to wake 
-//! from hibernation, and/or generate an interrupt when the value of the RTC 
-//! counter is the same as the match combined with the sub second match 
+//! This function sets the sub second match 0 register for the RTC in 1/32768
+//! of a second increments.  The Hibernation module can be configured to wake
+//! from hibernation, and/or generate an interrupt when the value of the RTC
+//! counter is the same as the match combined with the sub second match
 //! register.
 //!
 //! \note The Hibernation sub second RTC Match 0 feature is not available on
@@ -784,13 +784,13 @@ HibernateRTCSSGet(void)
 //!
 //! \param ulTrim is the new value for the pre-divider trim register.
 //!
-//! This function sets the value of the pre-divider trim register.  The input 
-//! time source is divided by the pre-divider to achieve a one-second clock 
+//! This function sets the value of the pre-divider trim register.  The input
+//! time source is divided by the pre-divider to achieve a one-second clock
 //! rate.  Once every 64 seconds, the value of the pre-divider trim register is
 //! applied to the predivider to allow fine-tuning of the RTC rate, in order
-//! to make corrections to the rate.  The software application can make 
-//! adjustments to the predivider trim register to account for variations in 
-//! the accuracy of the input time source.  The nominal value is 0x7FFF, and it 
+//! to make corrections to the rate.  The software application can make
+//! adjustments to the predivider trim register to account for variations in
+//! the accuracy of the input time source.  The nominal value is 0x7FFF, and it
 //! can be adjusted up or down in order to fine-tune the RTC rate.
 //!
 //! \return None.
@@ -819,8 +819,8 @@ HibernateRTCTrimSet(unsigned long ulTrim)
 //
 //! Gets the value of the RTC predivider trim register.
 //!
-//! This function gets the value of the pre-divider trim register.  This 
-//! function can be used to get the current value of the trim register prior 
+//! This function gets the value of the pre-divider trim register.  This
+//! function can be used to get the current value of the trim register prior
 //! to making an adjustment by using the HibernateRTCTrimSet() function.
 //!
 //! \return None.
@@ -843,8 +843,8 @@ HibernateRTCTrimGet(void)
 //! memory of the Hibernation module.
 //! \param ulCount is the count of 32-bit words to store.
 //!
-//! Stores a set of data in the Hibernation module battery-backed memory. 
-//! This memory is preserved when the power to the processor is turned off, 
+//! Stores a set of data in the Hibernation module battery-backed memory.
+//! This memory is preserved when the power to the processor is turned off,
 //! and can be used to store application state information which is available
 //! when the processor wakes.  Up to 64 32-bit words can be stored in the
 //! battery-backed memory.  The data can be restored by calling the
@@ -888,7 +888,7 @@ HibernateDataSet(unsigned long *pulData, unsigned long ulCount)
 
 //*****************************************************************************
 //
-//! Reads a set of data from the battery-backed memory of the Hibernation 
+//! Reads a set of data from the battery-backed memory of the Hibernation
 //! module.
 //!
 //! \param pulData points to a location where the data that is read from the
@@ -896,9 +896,9 @@ HibernateDataSet(unsigned long *pulData, unsigned long ulCount)
 //! \param ulCount is the count of 32-bit words to read.
 //!
 //! This function retrieves a set of data from the Hibernation module battery-
-//! backed memory that was previously stored with the HibernateDataSet() 
-//! function.  The caller must ensure that \e pulData points to a large enough 
-//! memory block to hold all the data that is read from the battery-backed 
+//! backed memory that was previously stored with the HibernateDataSet()
+//! function.  The caller must ensure that \e pulData points to a large enough
+//! memory block to hold all the data that is read from the battery-backed
 //! memory.
 //!
 //! \note The amount of memory available in the Hibernation module varies
@@ -945,10 +945,10 @@ HibernateDataGet(unsigned long *pulData, unsigned long ulCount)
 //! The Hibernation module re-enables the external regulator when one of
 //! the configured wake conditions occurs (such as RTC match or external
 //! \b WAKE pin).  When the power is restored the processor goes through a
-//! power-on reset although the Hibernation module is not reset.  The processor 
-//! can retrieve saved state information with the HibernateDataGet() function.  
-//! Prior to calling the function to request hibernation mode, the conditions 
-//! for waking must have already been set by using the HibernateWakeSet() 
+//! power-on reset although the Hibernation module is not reset.  The processor
+//! can retrieve saved state information with the HibernateDataGet() function.
+//! Prior to calling the function to request hibernation mode, the conditions
+//! for waking must have already been set by using the HibernateWakeSet()
 //! function.
 //!
 //! Note that this function may return because some time may elapse before the
@@ -1000,9 +1000,9 @@ HibernateRequest(void)
 //! - \b HIBERNATE_INT_RTC_MATCH_0 - RTC match 0 interrupt
 //! - \b HIBERNATE_INT_RTC_MATCH_1 - RTC match 1 interrupt
 //!
-//! \note The \b HIBERNATE_INT_WR_COMPLETE and \b HIBERNATE_INT_RTC_MATCH_1 
-//! settings are not available on all Stellaris devices.  Please consult the 
-//! data sheet for the Stellaris device that you are using to determine if  
+//! \note The \b HIBERNATE_INT_WR_COMPLETE and \b HIBERNATE_INT_RTC_MATCH_1
+//! settings are not available on all Stellaris devices.  Please consult the
+//! data sheet for the Stellaris device that you are using to determine if
 //! these interrupt sources are available.
 //!
 //! \return None.
@@ -1036,7 +1036,7 @@ HibernateIntEnable(unsigned long ulIntFlags)
 //!
 //! \param ulIntFlags is the bit mask of the interrupts to be disabled.
 //!
-//! This function disables the specified interrupt sources from the 
+//! This function disables the specified interrupt sources from the
 //! Hibernation module.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags
@@ -1074,9 +1074,9 @@ HibernateIntDisable(unsigned long ulIntFlags)
 //! \param pfnHandler points to the function to be called when a hibernation
 //! interrupt occurs.
 //!
-//! This function registers the interrupt handler in the system interrupt 
-//! controller.  The interrupt is enabled at the global level, but individual 
-//! interrupt sources must still be enabled with a call to 
+//! This function registers the interrupt handler in the system interrupt
+//! controller.  The interrupt is enabled at the global level, but individual
+//! interrupt sources must still be enabled with a call to
 //! HibernateIntEnable().
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -1103,8 +1103,8 @@ HibernateIntRegister(void (*pfnHandler)(void))
 //
 //! Unregisters an interrupt handler for the Hibernation module interrupt.
 //!
-//! This function unregisters the interrupt handler in the system interrupt 
-//! controller.  The interrupt is disabled at the global level, and the 
+//! This function unregisters the interrupt handler in the system interrupt
+//! controller.  The interrupt is disabled at the global level, and the
 //! interrupt handler is longer called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -1134,8 +1134,8 @@ HibernateIntUnregister(void)
 //! \param bMasked is false to retrieve the raw interrupt status, and true to
 //! retrieve the masked interrupt status.
 //!
-//! This function returns the interrupt status of the Hibernation module.  The 
-//! caller can use this function to determine the cause of a hibernation 
+//! This function returns the interrupt status of the Hibernation module.  The
+//! caller can use this function to determine the cause of a hibernation
 //! interrupt.  Either the masked or raw interrupt status can be returned.
 //!
 //! \return Returns the interrupt status as a bit field with the values as
@@ -1164,8 +1164,8 @@ HibernateIntStatus(tBoolean bMasked)
 //!
 //! \param ulIntFlags is the bit mask of the interrupts to be cleared.
 //!
-//! This function clears the specified interrupt sources.  This function must 
-//! be called within the interrupt handler or else the handler is called again 
+//! This function clears the specified interrupt sources.  This function must
+//! be called within the interrupt handler or else the handler is called again
 //! upon exit.
 //!
 //! The \e ulIntFlags parameter has the same definition as the \e ulIntFlags

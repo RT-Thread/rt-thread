@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #define SaturaLH(N, L, H) (((N)<(L))?(L):(((N)>(H))?(H):(N)))
-    
+
 #ifdef __cplusplus
 }
 #endif

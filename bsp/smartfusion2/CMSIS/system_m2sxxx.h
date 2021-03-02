@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (c) Copyright 2012-2013 Microsemi SoC Products Group. All rights reserved.
- * 
+ *
  *  SmartFusion2 CMSIS system initialization.
  *
  * SVN $Revision: 5280 $
@@ -12,13 +12,13 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /* Standard CMSIS global variables. */
 extern uint32_t SystemCoreClock;    /*!< System Clock Frequency (Core Clock) */
 
 /* SmartFusion2 specific clocks. */
-extern uint32_t g_FrequencyPCLK0;   /*!< Clock frequency of APB bus 0. */  
+extern uint32_t g_FrequencyPCLK0;   /*!< Clock frequency of APB bus 0. */
 extern uint32_t g_FrequencyPCLK1;   /*!< Clock frequency of APB bus 1. */
 extern uint32_t g_FrequencyPCLK2;   /*!< Clock frequency of APB bus 2. */
 extern uint32_t g_FrequencyFIC0;    /*!< Clock frequecny of FPGA fabric interface controller 1. */

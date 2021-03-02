@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-/* Includes -------------------------------------------------------------------*/ 
+/* Includes -------------------------------------------------------------------*/
 #include "es32f0271.h"
 #include "reg_i2c.h"
 
@@ -35,7 +35,7 @@ extern "C" {
   * @brief I2C micro driver
   * @{
   */
-  
+
 /* Private types --------------------------------------------------------------*/
 /* Private variables ----------------------------------------------------------*/
 /* Private constants ----------------------------------------------------------*/
@@ -59,7 +59,7 @@ typedef struct
                                      This parameter can be a value of @ref I2C_LL_EC_OWNADDRESS1
 
                                      This feature can be modified afterwards using unitary function @ref LL_I2C_SetOwnAddress1(). */
-  
+
   uint32_t DualAddressMode;     /*!< Specifies if dual addressing mode is selected.
                                   This parameter can be a value of @ref I2C_DUAL_ADDRESSING_MODE */
 
@@ -168,7 +168,7 @@ typedef struct
 /**
   * @} MD_I2C_PECBYTE_ENABLE
   */
-  
+
 /** @defgroup MD_I2C_AUTOEND_ENABLE I2C Autoend Enable
   * @{
   */
@@ -177,7 +177,7 @@ typedef struct
 /**
   * @} MD_I2C_AUTOEND_ENABLE
   */
-  
+
 /** @defgroup MD_I2C_RELOAD_MODE I2C Reload Mode
   * @{
   */
@@ -195,7 +195,7 @@ typedef struct
 /**
   * @} MD_I2C_NACKNOWLEDGE
   */
-  
+
 /** @defgroup MD_I2C_STOP_GENERATION Stop Generation
   * @{
   */
@@ -203,7 +203,7 @@ typedef struct
 /**
   * @} MD_I2C_STOP_GENERATION
   */
-  
+
 /** @defgroup MD_I2C_START_GENERATION Start Generation
   * @{
   */
@@ -221,7 +221,7 @@ typedef struct
   * @} MD_I2C_HEAD10R
   */
 
-/** @defgroup MD_I2C_TRANSFER_DIRECTION Transfer direction (master mode) 
+/** @defgroup MD_I2C_TRANSFER_DIRECTION Transfer direction (master mode)
   * @{
   */
 #define MD_I2C_MASTER_WRITE                    0x00000000U                           /*!< Master Write */
@@ -229,8 +229,8 @@ typedef struct
 /**
   * @} MD_I2C_TRANSFER_DIRECTION
   */
-  
-/** @defgroup MD_I2C_OA1_MODE Own Address 1 mode 
+
+/** @defgroup MD_I2C_OA1_MODE Own Address 1 mode
   * @{
   */
 #define MD_I2C_OA1_7BIT                      0x00000000U                           /*!< OA1 7-bit mode */
@@ -239,7 +239,7 @@ typedef struct
   * @} MD_I2C_OA1_MODE
   */
 
-/** @defgroup MD_I2C_TIDLE_MODE Tidle  mode 
+/** @defgroup MD_I2C_TIDLE_MODE Tidle  mode
   * @{
   */
 #define MD_I2C_LOW_TIMEOUTA                      0x00000000U                           /*!< TIMEOUTA is used to detect SCL low timeout */
@@ -248,7 +248,7 @@ typedef struct
   * @} MD_I2C_TIDLE_MODE
   */
 
-/** @defgroup MD_I2C_RXFIFO_THRESHOLD FIFO Threshold 
+/** @defgroup MD_I2C_RXFIFO_THRESHOLD FIFO Threshold
   * @{
   */
 #define MD_I2C_RXFIFO_THRESHOLD_RX1                      0U<<I2C_FCON_RXFTH_POSS                /*!< 1 character in the FIFO, I2C_FCON_RXFTH_POSS = 1<<14 */
@@ -258,7 +258,7 @@ typedef struct
 /**
   * @} MD_I2C_RXFIFO_THRESHOLD
   */
-  
+
 /** @defgroup MD_I2C_RXFIFO_RESET Rx FIFO Reset
   * @{
   */
@@ -266,8 +266,8 @@ typedef struct
 /**
   * @} MD_I2C_RXFIFO_RESET
   */
-  
-/** @defgroup MD_I2C_TXFIFO_THRESHOLD FIFO Threshold 
+
+/** @defgroup MD_I2C_TXFIFO_THRESHOLD FIFO Threshold
   * @{
   */
 #define MD_I2C_TXFIFO_THRESHOLD_TX0                      0U<<I2C_FCON_TXFTH_POSS                /*!< 0 character in the FIFO, I2C_FCON_TXFTH_POSS = 1<<6 */
@@ -321,7 +321,7 @@ __STATIC_INLINE uint32_t md_i2c_get_con1(I2C_TypeDef *I2Cx)
 /**
   * @brief  I2C PEC Enable
   * @note   If the SMBus feature is not supported,this bit is reserved and forced by hardware to 0.
-  *         This register must be configured when the I2C is disabled (PE = 0). 
+  *         This register must be configured when the I2C is disabled (PE = 0).
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -754,12 +754,12 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_con2_holdack(I2C_TypeDef *I2Cx)
 /**
   * @brief  Set I2C Packet error checking byte
   * @note   This bit is set by software, and cleared by hardware when the PEC is transferred,
-  *         or when a STOP condition or an Address matched is received, also when PE=0. 
+  *         or when a STOP condition or an Address matched is received, also when PE=0.
   *         Writing 0 to this bit has no effet. This bit has no effect when RELOAD is set,
   *         and when SBC is 0 in the slave mode.
   *         If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0.
   * @param  I2Cx I2C Instance
-  * @param  setbit 
+  * @param  setbit
   *         @arg @ref MD_I2C_PECBYTE_ENABLE
   * @retval None
   */
@@ -771,7 +771,7 @@ __STATIC_INLINE void md_i2c_set_con2_pecbyte(I2C_TypeDef *I2Cx, uint32_t setbit)
 /**
   * @brief  Get I2C Packet error checking byte
   * @note   This bit is set by software, and cleared by hardware when the PEC is transferred,
-  *         or when a STOP condition or an Address matched is received, also when PE=0. 
+  *         or when a STOP condition or an Address matched is received, also when PE=0.
   *         Writing 0 to this bit has no effet. This bit has no effect when RELOAD is set,
   *         and when SBC is 0 in the slave mode.
   *         If the SMBus feature is not supported, this bit is reserved and forced by hardware to 0.
@@ -784,14 +784,14 @@ __STATIC_INLINE uint32_t md_i2c_get_con2_pecbyte(I2C_TypeDef *I2Cx)
 }
 
 /**
-  * @brief  Set I2C automatic end mode or software end mode(master mode) 
+  * @brief  Set I2C automatic end mode or software end mode(master mode)
   * @note   This bit has no effect in slave mode or when the RELOAD bit is set.
   *         Software end mode: TC flag is set when NBYTES data are transferred, stretching SCL low.
-  *         Automatic end mode: a STOP condition is automatically sent when NBYTES data are transferred. 
+  *         Automatic end mode: a STOP condition is automatically sent when NBYTES data are transferred.
   * @param  I2Cx I2C Instance
-  * @param  setbit 
-  *         @arg @ref MD_I2C_SOFTEND_MODE 
-  *         @arg @ref MD_I2C_AUTOEND_MODE 
+  * @param  setbit
+  *         @arg @ref MD_I2C_SOFTEND_MODE
+  *         @arg @ref MD_I2C_AUTOEND_MODE
   * @retval None
   */
 __STATIC_INLINE void md_i2c_set_con2_autoend(I2C_TypeDef *I2Cx, uint32_t setbit)
@@ -800,10 +800,10 @@ __STATIC_INLINE void md_i2c_set_con2_autoend(I2C_TypeDef *I2Cx, uint32_t setbit)
 }
 
 /**
-  * @brief  Get I2C automatic or software end mode(master mode) 
+  * @brief  Get I2C automatic or software end mode(master mode)
   * @note   This bit has no effect in slave mode or when the RELOAD bit is set.
   *         Software end mode: TC flag is set when NBYTES data are transferred, stretching SCL low.
-  *         Automatic end mode: a STOP condition is automatically sent when NBYTES data are transferred. 
+  *         Automatic end mode: a STOP condition is automatically sent when NBYTES data are transferred.
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -818,9 +818,9 @@ __STATIC_INLINE uint32_t md_i2c_get_con2_autoend(I2C_TypeDef *I2Cx)
   *         RELOAD = 1: The transfer is not completed after the NBYTES data transfer (NBYTES will be reloaded).
   *                     TCR flag is set when NBYTES data are transferred, stretching SCL low.
   * @param  I2Cx I2C Instance
-  * @param  setbit 
+  * @param  setbit
   *         @arg @ref MD_I2C_NORELOAD_MODE
-  *         @arg @ref MD_I2C_RELOAD_MODE 
+  *         @arg @ref MD_I2C_RELOAD_MODE
   * @retval None
   */
 __STATIC_INLINE void md_i2c_set_con2_reload(I2C_TypeDef *I2Cx, uint32_t setbit)
@@ -843,7 +843,7 @@ __STATIC_INLINE uint32_t md_i2c_get_con2_reload(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Set I2C number of bytes
-  * @note   The number of bytes to be transmitted/received is programmed there. 
+  * @note   The number of bytes to be transmitted/received is programmed there.
   *         This field is don¡¯t care in slave mode with SBC=0.
   *         Changing these bits when the START bit is set is not allowed.
   * @param  I2Cx I2C Instance
@@ -859,7 +859,7 @@ __STATIC_INLINE void md_i2c_set_con2_nbytes(I2C_TypeDef *I2Cx, uint32_t nbytes)
 
 /**
   * @brief  Get I2C number of bytes
-  * @note   The number of bytes to be transmitted/received is programmed there. 
+  * @note   The number of bytes to be transmitted/received is programmed there.
   *         This field is don¡¯t care in slave mode with SBC=0.
   *         Changing these bits when the START bit is set is not allowed.
   * @param  I2Cx I2C Instance
@@ -904,7 +904,7 @@ __STATIC_INLINE uint32_t md_i2c_get_con2_nack(I2C_TypeDef *I2Cx)
   * @note   Writing 0 to this bit has no effect.
   * @param  I2Cx I2C Instance
   * @param  stop_generate stop generate
-  *         @arg MD_I2C_STOP_GENERATION 
+  *         @arg MD_I2C_STOP_GENERATION
   * @retval None
   */
 __STATIC_INLINE void md_i2c_set_con2_stop(I2C_TypeDef *I2Cx, uint32_t stop_generate)
@@ -926,7 +926,7 @@ __STATIC_INLINE uint32_t md_i2c_get_con2_stop(I2C_TypeDef *I2Cx)
 /**
   * @brief  Set I2C Start generation
   * @note   Writing 0 to this bit has no effect.The START bit can be set even if the bus is BUSY or I2C is in slave mode.
-  *         In 10-bit addressing mode, if a NACK is received on the first part of the address, 
+  *         In 10-bit addressing mode, if a NACK is received on the first part of the address,
   *         the START bit is not cleared by hardware and the master will resend the address sequence.
   * @param  I2Cx I2C Instance
   * @param  start_generate stop generate
@@ -951,11 +951,11 @@ __STATIC_INLINE uint32_t md_i2c_get_con2_start(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Set the master operates in 10-bit addressing mode(master receiver mode)
-  * @note   Changing this bit when the START bit is set is not allowed. 
+  * @note   Changing this bit when the START bit is set is not allowed.
   *         It can be used when the 10-bit transmission was done before.
   * @param  I2Cx I2C Instance
   * @param  read_header format of read header
-  *         @arg @ref MD_I2C_GENERAL_10BIT_READ 
+  *         @arg @ref MD_I2C_GENERAL_10BIT_READ
   *         @arg @ref MD_I2C_SIMPLIFIED_10BIT_READ
   * @retval None
   */
@@ -1275,7 +1275,7 @@ __STATIC_INLINE uint32_t md_i2c_get_oa2(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Set I2C TIMINGR
-  * @note   These bits must be configured when the I2C is disabled (PE = 0). 
+  * @note   These bits must be configured when the I2C is disabled (PE = 0).
   * @param  I2Cx I2C Instance
   * @param  Reg_Value is a 32-bit value
   * @retval None
@@ -1300,7 +1300,7 @@ __STATIC_INLINE uint32_t md_i2c_get_timingr(I2C_TypeDef *I2Cx)
   * @brief  Set I2C Timing prescaler
   * @note   This register must be configured when the I2C is disabled(PE = 0)
   * @param  I2Cx I2C Instance
-  * @param  timing_prescaler 
+  * @param  timing_prescaler
   *         @arg Max Value 0xF
   *         @arg Min Value 0x0
   * @retval None
@@ -1354,7 +1354,7 @@ __STATIC_INLINE uint32_t md_i2c_get_timingr_scldel(I2C_TypeDef *I2Cx)
   * @brief  Set I2C date hold time
   * @note   This register must be configured when the I2C is disabled(PE = 0)
   * @param  I2Cx I2C Instance
-  * @param  data_hold_time 
+  * @param  data_hold_time
   *         @arg Max Value 0xF
   *         @arg Min Value 0x0
   * @retval None
@@ -1381,7 +1381,7 @@ __STATIC_INLINE uint32_t md_i2c_get_timingr_sdadel(I2C_TypeDef *I2Cx)
   * @brief  Set I2C SCL high period(master mode)
   * @note   This register must be configured when the I2C is disabled(PE = 0)
   * @param  I2Cx I2C Instance
-  * @param  SCL_hperiod 
+  * @param  SCL_hperiod
   *         @arg Max Value 0xFF
   *         @arg Min Value 0x0
   * @retval None
@@ -1408,7 +1408,7 @@ __STATIC_INLINE uint32_t md_i2c_get_timingr_sclh(I2C_TypeDef *I2Cx)
   * @brief  Set I2C SCL low period(master mode)
   * @note   This register must be configured when the I2C is disabled(PE = 0)
   * @param  I2Cx I2C Instance
-  * @param  SCL_lperiod 
+  * @param  SCL_lperiod
   *         @arg Max Value 0xFF
   *         @arg Min Value 0x0
   * @retval None
@@ -1923,7 +1923,7 @@ __STATIC_INLINE void md_i2c_send(I2C_TypeDef *I2Cx, uint32_t txdata)
 
 /**
   * @brief  Set I2C IER
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @param  ier
   * @retval None
@@ -1935,7 +1935,7 @@ __STATIC_INLINE void md_i2c_set_ier(I2C_TypeDef *I2Cx, uint32_t ier)
 
 /**
   * @brief  Enable SMBus alert interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -1946,7 +1946,7 @@ __STATIC_INLINE void md_i2c_enable_ier_alertie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable timeout interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -1957,7 +1957,7 @@ __STATIC_INLINE void md_i2c_enable_ier_toutie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable PEC error interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -1968,7 +1968,7 @@ __STATIC_INLINE void md_i2c_enable_ier_peceie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable arbitration loss interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -1979,7 +1979,7 @@ __STATIC_INLINE void md_i2c_enable_ier_arloie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable bus error interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -1990,7 +1990,7 @@ __STATIC_INLINE void md_i2c_enable_ier_berrie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable stop detection interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2001,7 +2001,7 @@ __STATIC_INLINE void md_i2c_enable_ier_stopie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable NACK reception interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2012,7 +2012,7 @@ __STATIC_INLINE void md_i2c_enable_ier_nackie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable address matched interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2023,7 +2023,7 @@ __STATIC_INLINE void md_i2c_enable_ier_addrie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable transfer complete and reload interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2034,7 +2034,7 @@ __STATIC_INLINE void md_i2c_enable_ier_tcrie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable transfer complete interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2045,7 +2045,7 @@ __STATIC_INLINE void md_i2c_enable_ier_tcie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable receive buffer over threshold interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2056,7 +2056,7 @@ __STATIC_INLINE void md_i2c_enable_ier_rxthie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable receive buffer underrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2067,7 +2067,7 @@ __STATIC_INLINE void md_i2c_enable_ier_rxudie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable receive buffer ovrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2078,7 +2078,7 @@ __STATIC_INLINE void md_i2c_enable_ier_rxovie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable receive buffer full interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2089,7 +2089,7 @@ __STATIC_INLINE void md_i2c_enable_ier_rxfie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable transmit buffer under threshold interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2100,7 +2100,7 @@ __STATIC_INLINE void md_i2c_enable_ier_txthie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable transmit buffer underrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2111,7 +2111,7 @@ __STATIC_INLINE void md_i2c_enable_ier_txudie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Enable transmit buffer ovrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2121,8 +2121,8 @@ __STATIC_INLINE void md_i2c_enable_ier_txovie(I2C_TypeDef *I2Cx)
 }
 
 /**
-  * @brief  Enable transmit buffer empty interrupt 
-  * @note   None 
+  * @brief  Enable transmit buffer empty interrupt
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2133,7 +2133,7 @@ __STATIC_INLINE void md_i2c_enable_ier_txeie(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Set I2C IDR
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @param  ier
   * @retval None
@@ -2145,7 +2145,7 @@ __STATIC_INLINE void md_i2c_set_idr(I2C_TypeDef *I2Cx, uint32_t idr)
 
 /**
   * @brief  Disable SMBus alert interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2155,8 +2155,8 @@ __STATIC_INLINE void md_i2c_disable_idr_alertid(I2C_TypeDef *I2Cx)
 }
 
 /**
-  * @brief  Disable timeout interrupt 
-  * @note   None 
+  * @brief  Disable timeout interrupt
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2167,7 +2167,7 @@ __STATIC_INLINE void md_i2c_disable_idr_toutid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable PEC error interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2178,7 +2178,7 @@ __STATIC_INLINE void md_i2c_disable_idr_peceid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable arbitration loss interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2189,7 +2189,7 @@ __STATIC_INLINE void md_i2c_disable_idr_arloid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable bus error interrupt.
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2200,7 +2200,7 @@ __STATIC_INLINE void md_i2c_disable_idr_berrid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable stop detection interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2211,7 +2211,7 @@ __STATIC_INLINE void md_i2c_disable_idr_stopid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable NACK reception interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2222,7 +2222,7 @@ __STATIC_INLINE void md_i2c_disable_idr_nackid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable address matched interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2233,7 +2233,7 @@ __STATIC_INLINE void md_i2c_disable_idr_addrid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable transfer complete and reload interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2244,7 +2244,7 @@ __STATIC_INLINE void md_i2c_disable_idr_tcrid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable transfer complete interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2255,7 +2255,7 @@ __STATIC_INLINE void md_i2c_disable_idr_tcid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable receive buffer over threshold interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2266,7 +2266,7 @@ __STATIC_INLINE void md_i2c_disable_idr_rxthid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable receive buffer underrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2277,7 +2277,7 @@ __STATIC_INLINE void md_i2c_disable_idr_rxudid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable receive buffer ovrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2288,7 +2288,7 @@ __STATIC_INLINE void md_i2c_disable_idr_rxovid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable receive buffer full interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2299,7 +2299,7 @@ __STATIC_INLINE void md_i2c_disable_idr_rxfid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable transmit buffer under threshold interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2310,7 +2310,7 @@ __STATIC_INLINE void md_i2c_disable_idr_txthid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable transmit buffer underrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2321,7 +2321,7 @@ __STATIC_INLINE void md_i2c_disable_idr_txudid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable transmit buffer ovrun interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2332,7 +2332,7 @@ __STATIC_INLINE void md_i2c_disable_idr_txovid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Disable transmit buffer empty interrupt
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2343,7 +2343,7 @@ __STATIC_INLINE void md_i2c_disable_idr_txeid(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get I2C IVS
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval a 32-bit value
   */
@@ -2354,7 +2354,7 @@ __STATIC_INLINE uint32_t md_i2c_get_ivs(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if SMBus alert interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2364,8 +2364,8 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_alertiv(I2C_TypeDef *I2Cx)
 }
 
 /**
-  * @brief  Check if timeout interrupt is enabled 
-  * @note   None 
+  * @brief  Check if timeout interrupt is enabled
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2376,7 +2376,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_toutiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if PEC error interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2387,7 +2387,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_peceiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if arbitration loss interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2398,7 +2398,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_arloiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if bus error interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2409,7 +2409,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_berriv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if stop detection interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2420,7 +2420,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_stopiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if NACK reception interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2431,7 +2431,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_nackiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if address matched interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2442,7 +2442,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_addriv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if transfer complete and reload interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2453,7 +2453,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_tcriv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if transfer complete interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2464,7 +2464,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_tciv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if receive buffer over threshold interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2475,7 +2475,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_rxthiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if receive buffer underrun interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2486,7 +2486,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_rxudiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if receive buffer ovrun interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2497,7 +2497,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_rxoviv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if receive buffer full interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2508,7 +2508,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_rxfiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if transmit buffer under threshold interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2519,7 +2519,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_txthiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if transmit buffer underrun interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2530,7 +2530,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_txudiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if transmit buffer ovrun interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2541,7 +2541,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_txoviv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Check if transmit buffer empty interrupt is enabled
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2552,7 +2552,7 @@ __STATIC_INLINE uint32_t md_i2c_is_enabled_ivs_txeiv(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get I2C RIF
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval a 32-bit value
   */
@@ -2563,7 +2563,7 @@ __STATIC_INLINE uint32_t md_i2c_get_rif(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get SMBus alert raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2573,8 +2573,8 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_alertri(I2C_TypeDef *I2Cx)
 }
 
 /**
-  * @brief  Get timeout raw interrupt flag 
-  * @note   None 
+  * @brief  Get timeout raw interrupt flag
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2585,7 +2585,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_toutri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get PEC error raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2596,7 +2596,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_peceri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get arbitration loss raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2607,7 +2607,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_arlori(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get bus error raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2618,7 +2618,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_berrri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get stop detection raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2629,7 +2629,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_stopri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get NACK reception raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2640,7 +2640,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_nackri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get address matched raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2651,7 +2651,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_addrri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transfer complete and reload raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2662,7 +2662,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_tcrri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transfer complete raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2673,7 +2673,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_tcri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer over threshold raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2684,7 +2684,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_rxthri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer underrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2695,7 +2695,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_rxudri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer ovrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2706,7 +2706,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_rxovri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer full raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2717,7 +2717,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_rxfri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer under threshold raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2728,7 +2728,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_txthri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer underrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2739,7 +2739,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_txudri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer ovrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2750,7 +2750,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_txovri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer empty raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2761,7 +2761,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_rif_txeri(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Set I2C ICR
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @param  icr
   * @retval None
@@ -2773,7 +2773,7 @@ __STATIC_INLINE void md_i2c_set_icr(I2C_TypeDef *I2Cx, uint32_t icr)
 
 /**
   * @brief  Clear SMBus alert raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2784,7 +2784,7 @@ __STATIC_INLINE void md_i2c_clear_icr_alertic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear timeout raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2795,7 +2795,7 @@ __STATIC_INLINE void md_i2c_clear_icr_toutic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear PEC error raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2806,7 +2806,7 @@ __STATIC_INLINE void md_i2c_clear_icr_peceic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear arbitration loss raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2817,7 +2817,7 @@ __STATIC_INLINE void md_i2c_clear_icr_arloic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear bus error raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2828,7 +2828,7 @@ __STATIC_INLINE void md_i2c_clear_icr_berric(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear stop detection raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2839,7 +2839,7 @@ __STATIC_INLINE void md_i2c_clear_icr_stopic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear NACK reception raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2850,7 +2850,7 @@ __STATIC_INLINE void md_i2c_clear_icr_nackic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear address matched raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2861,7 +2861,7 @@ __STATIC_INLINE void md_i2c_clear_icr_addric(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear transfer complete and reload raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2872,7 +2872,7 @@ __STATIC_INLINE void md_i2c_clear_icr_tcric(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear transfer complete raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2883,7 +2883,7 @@ __STATIC_INLINE void md_i2c_clear_icr_tcic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear receive buffer over threshold raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2894,7 +2894,7 @@ __STATIC_INLINE void md_i2c_clear_icr_rxthic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear receive buffer underrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2905,7 +2905,7 @@ __STATIC_INLINE void md_i2c_clear_icr_rxudic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear receive buffer ovrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2916,7 +2916,7 @@ __STATIC_INLINE void md_i2c_clear_icr_rxovic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear receive buffer full raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2927,7 +2927,7 @@ __STATIC_INLINE void md_i2c_clear_icr_rxfic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear transmit buffer under threshold raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2938,7 +2938,7 @@ __STATIC_INLINE void md_i2c_clear_icr_txthic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear transmit buffer underrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2949,7 +2949,7 @@ __STATIC_INLINE void md_i2c_clear_icr_txudic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Clear transmit buffer ovrun raw interrupt flag
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2959,8 +2959,8 @@ __STATIC_INLINE void md_i2c_clear_icr_txovic(I2C_TypeDef *I2Cx)
 }
 
 /**
-  * @brief  Clear transmit buffer empty raw interrupt flag 
-  * @note   None 
+  * @brief  Clear transmit buffer empty raw interrupt flag
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval None
   */
@@ -2971,7 +2971,7 @@ __STATIC_INLINE void md_i2c_clear_icr_txeic(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get I2C IFM
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval a 32-bit value
   */
@@ -2982,7 +2982,7 @@ __STATIC_INLINE uint32_t md_i2c_get_ifm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get SMBus alert interrupt flag massked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -2992,8 +2992,8 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_alertfm(I2C_TypeDef *I2Cx)
 }
 
 /**
-  * @brief  Get timeout interrupt flag masked status 
-  * @note   None 
+  * @brief  Get timeout interrupt flag masked status
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3004,7 +3004,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_toutfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get PEC error interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3015,7 +3015,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_pecefm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get arbitration loss interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3026,7 +3026,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_arlofm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get bus error interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3037,7 +3037,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_berrfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get stop detection interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3048,7 +3048,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_stopfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get NACK reception interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3059,7 +3059,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_nackfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get address matched interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3070,7 +3070,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_addrfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transfer complete and reload interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3081,7 +3081,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_tcrfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transfer complete interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3092,7 +3092,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_tcfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer over threshold interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3103,7 +3103,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_rxthfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer underrun interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3114,7 +3114,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_rxudfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer ovrun interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3125,7 +3125,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_rxovfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get receive buffer full interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3136,7 +3136,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_rxffm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer under threshold interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3147,7 +3147,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_txthfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer underrun interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3158,7 +3158,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_txudfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer ovrun interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3169,7 +3169,7 @@ __STATIC_INLINE uint32_t md_i2c_is_active_ifm_txovfm(I2C_TypeDef *I2Cx)
 
 /**
   * @brief  Get transmit buffer empty interrupt flag masked status
-  * @note   None 
+  * @note   None
   * @param  I2Cx I2C Instance
   * @retval State of bit (1 or 0).
   */
@@ -3237,9 +3237,9 @@ void        md_i2c_slave_rece(I2C_TypeDef *I2Cx, uint8_t Num, uint8_t *rxbuf);
 
 #define IS_MD_I2C_ADDRSIZE(__VALUE__) ((__VALUE__ == MD_I2C_ADDRESSINGMODE_7BIT)  \
                                     || (__VALUE__ == MD_I2C_ADDRESSINGMODE_10BIT))
-      
+
 #define IS_MD_I2C_ADDRESS1(__VALUE__) (__VALUE__ <= 0x000003FFU)
-#define IS_MD_I2C_ADDRESS2(__VALUE__) (__VALUE__ <= (uint16_t)0x00FFU)  
+#define IS_MD_I2C_ADDRESS2(__VALUE__) (__VALUE__ <= (uint16_t)0x00FFU)
 
 #define IS_MD_I2C_DUALADDRESSMODE(__VALUE__)   ((__VALUE__ == MD_I2C_DUALADDRESS_DISABLE)  \
                                              || (__VALUE__ == MD_I2C_DUALADDRESS_ENABLE))
@@ -3254,12 +3254,12 @@ void        md_i2c_slave_rece(I2C_TypeDef *I2Cx, uint8_t Num, uint8_t *rxbuf);
 
 /**
   * @} MD_I2C_Private_Macro
-  */  
+  */
 
 /**
   * @} I2C
-  */  
-  
+  */
+
 /**
   * @} Micro_Driver
   */

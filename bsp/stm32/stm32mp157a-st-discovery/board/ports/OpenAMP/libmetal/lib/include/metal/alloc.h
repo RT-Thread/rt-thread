@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	alloc.h
- * @brief	Memory allocation handling primitives for libmetal.
+ * @file    alloc.h
+ * @brief   Memory allocation handling primitives for libmetal.
  */
 
 #ifndef __METAL_ALLOC__H__

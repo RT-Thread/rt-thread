@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -104,17 +104,17 @@ typedef struct {
 /**
  * @ingroup    spimss_registers
  * @defgroup   SPIMSS_Register_Offsets Register Offsets
- * @brief      SPIMSS Peripheral Register Offsets from the SPIMSS Base Peripheral Address. 
+ * @brief      SPIMSS Peripheral Register Offsets from the SPIMSS Base Peripheral Address.
  * @{
  */
- #define MXC_R_SPIMSS_DATA16                ((uint32_t)0x00000000UL) /**< Offset from SPIMSS Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_SPIMSS_DATA8                 ((uint32_t)0x00000000UL) /**< Offset from SPIMSS Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_SPIMSS_CTRL                  ((uint32_t)0x00000004UL) /**< Offset from SPIMSS Base Address: <tt> 0x0004</tt> */ 
- #define MXC_R_SPIMSS_STATUS                ((uint32_t)0x00000008UL) /**< Offset from SPIMSS Base Address: <tt> 0x0008</tt> */ 
- #define MXC_R_SPIMSS_MOD                   ((uint32_t)0x0000000CUL) /**< Offset from SPIMSS Base Address: <tt> 0x000C</tt> */ 
- #define MXC_R_SPIMSS_BRG                   ((uint32_t)0x00000014UL) /**< Offset from SPIMSS Base Address: <tt> 0x0014</tt> */ 
- #define MXC_R_SPIMSS_DMA                   ((uint32_t)0x00000018UL) /**< Offset from SPIMSS Base Address: <tt> 0x0018</tt> */ 
- #define MXC_R_SPIMSS_I2S_CTRL              ((uint32_t)0x0000001CUL) /**< Offset from SPIMSS Base Address: <tt> 0x001C</tt> */ 
+ #define MXC_R_SPIMSS_DATA16                ((uint32_t)0x00000000UL) /**< Offset from SPIMSS Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_SPIMSS_DATA8                 ((uint32_t)0x00000000UL) /**< Offset from SPIMSS Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_SPIMSS_CTRL                  ((uint32_t)0x00000004UL) /**< Offset from SPIMSS Base Address: <tt> 0x0004</tt> */
+ #define MXC_R_SPIMSS_STATUS                ((uint32_t)0x00000008UL) /**< Offset from SPIMSS Base Address: <tt> 0x0008</tt> */
+ #define MXC_R_SPIMSS_MOD                   ((uint32_t)0x0000000CUL) /**< Offset from SPIMSS Base Address: <tt> 0x000C</tt> */
+ #define MXC_R_SPIMSS_BRG                   ((uint32_t)0x00000014UL) /**< Offset from SPIMSS Base Address: <tt> 0x0014</tt> */
+ #define MXC_R_SPIMSS_DMA                   ((uint32_t)0x00000018UL) /**< Offset from SPIMSS Base Address: <tt> 0x0018</tt> */
+ #define MXC_R_SPIMSS_I2S_CTRL              ((uint32_t)0x0000001CUL) /**< Offset from SPIMSS Base Address: <tt> 0x001C</tt> */
 /**@} end of group spimss_registers */
 
 /**

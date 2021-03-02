@@ -64,7 +64,7 @@ extern "C" {
 void srtc_init(void);
 
 /*!
- * @brief Disables interrupt, counter and time alarm 
+ * @brief Disables interrupt, counter and time alarm
  */
 void srtc_deinit(void);
 

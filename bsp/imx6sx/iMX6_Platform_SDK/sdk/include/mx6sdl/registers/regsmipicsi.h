@@ -383,10 +383,10 @@ typedef union _hw_mipi_csi_phy_state
     {
         unsigned PHY_RXULPSESC_0 : 1; //!< [0] Lane module 0 has entered the Ultra Low Power mode
         unsigned PHY_RXULPSESC_1 : 1; //!< [1] Lane module 1 has entered the Ultra Low Power mode
-        unsigned RESERVED0 : 2; //!< [3:2] 
+        unsigned RESERVED0 : 2; //!< [3:2]
         unsigned PHY_STOPSTATEDATA_0 : 1; //!< [4] Data Lane 0 in Stop state
         unsigned PHY_STOPSTATEDATA_1 : 1; //!< [5] Data Lane 1 in Stop state
-        unsigned RESERVED1 : 2; //!< [7:6] 
+        unsigned RESERVED1 : 2; //!< [7:6]
         unsigned PHY_RXCLKACTIVEHS : 1; //!< [8] Indicates that the clock lane is actively receiving a DDR clock
         unsigned PHY_RXULPSCLKNOT : 1; //!< [9] Active Low.
         unsigned PHY_STOPSTATECLK : 1; //!< [10] Clock Lane in Stop state
@@ -738,7 +738,7 @@ typedef union _hw_mipi_csi_err1
     {
         unsigned PHY_ERRSOTSYNCHS_0 : 1; //!< [0] Start of Transmission Error on data lane 0 (no synchronization achieved)
         unsigned PHY_ERRSOTSYNCHS_1 : 1; //!< [1] Start of Transmission Error on data lane 1 (no synchronization achieved)
-        unsigned RESERVED0 : 2; //!< [3:2] 
+        unsigned RESERVED0 : 2; //!< [3:2]
         unsigned ERR_F_BNDRY_MATCH_VC0 : 1; //!< [4] Error matching Frame Start with Frame End for Virtual Channel 0
         unsigned ERR_F_BNDRY_MATCH_VC1 : 1; //!< [5] Error matching Frame Start with Frame End for Virtual Channel 1
         unsigned ERR_F_BNDRY_MATCH_VC2 : 1; //!< [6] Error matching Frame Start with Frame End for Virtual Channel 2
@@ -1128,10 +1128,10 @@ typedef union _hw_mipi_csi_err2
     {
         unsigned PHY_ERRESC_0 : 1; //!< [0] Escape Entry Error (ULPM) on data lane 0
         unsigned PHY_ERRESC_1 : 1; //!< [1] Escape Entry Error (ULPM) on data lane 1
-        unsigned RESERVED0 : 2; //!< [3:2] 
+        unsigned RESERVED0 : 2; //!< [3:2]
         unsigned PHY_ERRSOTHS_0 : 1; //!< [4] Start of Transmission Error on data lane 0 (synchronization can still be achieved)
         unsigned PHY_ERRSOTHS_1 : 1; //!< [5] Start of Transmission Error on data lane 1 (synchronization can still be achieved)
-        unsigned RESERVED1 : 2; //!< [7:6] 
+        unsigned RESERVED1 : 2; //!< [7:6]
         unsigned VC0_ERR_ECC_CORRECTED : 1; //!< [8] Header error detected and corrected on Virtual Channel 0
         unsigned VC1_ERR_ECC_CORRECTED : 1; //!< [9] Header error detected and corrected on Virtual Channel 1
         unsigned VC2_ERR_ECC_CORRECTED : 1; //!< [10] Header error detected and corrected on Virtual Channel 2
@@ -1326,10 +1326,10 @@ typedef union _hw_mipi_csi_mask2
     {
         unsigned MASK_PHY_ERRESC_0 : 1; //!< [0] Mask for phy_erresc_0.
         unsigned MASK_PHY_ERRESC_1 : 1; //!< [1] Mask for phy_erresc_1.
-        unsigned RESERVED0 : 2; //!< [3:2] 
+        unsigned RESERVED0 : 2; //!< [3:2]
         unsigned MASK_PHY_ERRSOTHS_0 : 1; //!< [4] Mask for phy_errsoths_0.
         unsigned MASK_PHY_ERRSOTHS_1 : 1; //!< [5] Mask for phy_errsoths_1.
-        unsigned RESERVED1 : 2; //!< [7:6] 
+        unsigned RESERVED1 : 2; //!< [7:6]
         unsigned MASK_VC0_ERR_ECC_CORRECTED : 1; //!< [8] Mask for vc0_err_ecc_corrected.
         unsigned MASK_VC1_ERR_ECC_CORRECTED : 1; //!< [9] Mask for vc1_err_ecc_corrected.
         unsigned MASK_VC2_ERR_ECC_CORRECTED : 1; //!< [10] Mask for vc2_err_ecc_corrected.

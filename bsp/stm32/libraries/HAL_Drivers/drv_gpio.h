@@ -7,7 +7,7 @@
  * Date           Author            Notes
  * 2018-11-06     balanceTWK        first version
  * 2020-06-16     thread-liu        add stm32mp1
- * 2020-09-01     thread-liu        add GPIOZ 
+ * 2020-09-01     thread-liu        add GPIOZ
  * 2020-09-18     geniusgogo        optimization design pin-index algorithm
  */
 

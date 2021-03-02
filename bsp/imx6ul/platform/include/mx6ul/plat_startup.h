@@ -50,7 +50,7 @@ self_ptr:               .long 0x00907400
 app_code_csf:           .long 0x0 // reserve 4K for csf
 reserv2:                .long 0x0
 boot_data:              .long 0x00907000
-image_len:              .long 16*1024  
+image_len:              .long 16*1024
 plugin:                 .long 0x1  // Enable plugin flag
 
 /* Second IVT to give entry point into the bootloader copied to DDR */
@@ -139,7 +139,7 @@ ASM_REG32_WR(0, 0x021B001C, 0x00000000)
 
 
 #else
-	#error "Please add the DDR initialization code for this board, unless you can make sure the existing code can be shared."
+    #error "Please add the DDR initialization code for this board, unless you can make sure the existing code can be shared."
 #endif
 
 read_obds:
@@ -170,8 +170,8 @@ before_calling_rom___pu_irom_hwcnfg_setup:
     blx r4  /* call into ROM function */
 after_calling_rom___pu_irom_hwcnfg_setup:
 
-	/* SDRAM has been setup, binary image has been copied to SDRAM */
-	b	startup // Jump to our code directly
+    /* SDRAM has been setup, binary image has been copied to SDRAM */
+    b   startup // Jump to our code directly
 
 DDR_DEST_ADDR:    .word   IMAGE_ENTRY_ADDR
 COPY_SIZE:        .word   IMAGE_SIZE
@@ -235,46 +235,46 @@ skip_SDRAM_copy:
 .endm /* init_aips */
 
 .macro clean_L1_DCache
-	mov r0, #0
-	mcr p15, 2, r0, c0, c0, 0 // select DCache
-	mrc p15, 1, r0, c0, c0, 0 // read CCSIDR
-	mov r0, r0, ASR #13
-	ldr	r3, =0x3FFF
-	and r0, r0, r3
-	cmp r0, #0x7F
-	moveq r6, #0x1000 // 4KB * 4way = 16KB
-	beq	clean_and_invalidate_L1_dcache
-	cmp r0, #0xFF
-	moveq r6, #0x2000 // 32KB
-	beq clean_and_invalidate_L1_dcache
-	movne r6, #0x4000 // 64KB
+    mov r0, #0
+    mcr p15, 2, r0, c0, c0, 0 // select DCache
+    mrc p15, 1, r0, c0, c0, 0 // read CCSIDR
+    mov r0, r0, ASR #13
+    ldr r3, =0x3FFF
+    and r0, r0, r3
+    cmp r0, #0x7F
+    moveq r6, #0x1000 // 4KB * 4way = 16KB
+    beq clean_and_invalidate_L1_dcache
+    cmp r0, #0xFF
+    moveq r6, #0x2000 // 32KB
+    beq clean_and_invalidate_L1_dcache
+    movne r6, #0x4000 // 64KB
 
 clean_and_invalidate_L1_dcache:
-	mov r2, #0x00000000
-	mov r3, #0x40000000
-	mov r4, #0x80000000
-	mov r5, #0xC0000000
+    mov r2, #0x00000000
+    mov r3, #0x40000000
+    mov r4, #0x80000000
+    mov r5, #0xC0000000
 
 clean_and_invalidate_L1_dcache_byset:
-	mcr p15, 0, r2, c7, c14, 2 //clean and invalidate dcache on way 0
-	mcr p15, 0, r3, c7, c14, 2 //clean and invalidate dcache on way 1
-	mcr p15, 0, r4, c7, c14, 2 //clean and invalidate dcache on way 2
-	mcr p15, 0, r5, c7, c14, 2 //clean and invalidate dcache on way 3
-	add r2, r2, #0x20
-	add r3, r3, #0x20
-	add r4, r4, #0x20
-	add r5, r5, #0x20
-	
-	cmp r2, r6
-	bne clean_and_invalidate_L1_dcache_byset
-	
+    mcr p15, 0, r2, c7, c14, 2 //clean and invalidate dcache on way 0
+    mcr p15, 0, r3, c7, c14, 2 //clean and invalidate dcache on way 1
+    mcr p15, 0, r4, c7, c14, 2 //clean and invalidate dcache on way 2
+    mcr p15, 0, r5, c7, c14, 2 //clean and invalidate dcache on way 3
+    add r2, r2, #0x20
+    add r3, r3, #0x20
+    add r4, r4, #0x20
+    add r5, r5, #0x20
+
+    cmp r2, r6
+    bne clean_and_invalidate_L1_dcache_byset
+
 .endm
 
 .macro enable_L1_cache
     mov r0, #0
     mcr p15, 0, r0, c7, c5, 6 // invalidate BTAC
     mcr p15, 0, r0, c7, c5, 0 // invalidate icache
-    
+
     mov r0, #0
     mcr p15, 2, r0, c0, c0, 0 // select DCache
     mrc p15, 1, r0, c0, c0, 0 // read CCSIDR
@@ -304,15 +304,15 @@ invalidate_dcache_byset:
     add r3, r3, #0x20
     add r4, r4, #0x20
     add r5, r5, #0x20
-    
+
     cmp r2, r6
     bne invalidate_dcache_byset
-    
+
     ldr r0, =0x00930000 //where to store the TLB page table
     mcr p15, 0, r0, c2, c0, 0
     ldr r0, =0x55555555
     mcr p15, 0, r0, c3, c0, 0
-    
+
     mrc p15, 0, r0, c1, c0, 0 // read CP15 register 1 into r0
     orr r0, r0, #(0x1<<12)    // enable I Cache
     orr r0, r0, #(0x1<<11)    // turn on BP
@@ -324,21 +324,21 @@ invalidate_dcache_byset:
 
 .macro disable_L1_cache
     mrc p15, 0, r0, c1, c0, 0
-    bic r0, r0, #(0x1<<12) 
-    bic r0, r0, #(0x1<<11) 
-    bic r0, r0, #(0x1<<2) 
-    bic r0, r0, #(0x1<<0) 
+    bic r0, r0, #(0x1<<12)
+    bic r0, r0, #(0x1<<11)
+    bic r0, r0, #(0x1<<2)
+    bic r0, r0, #(0x1<<0)
     mcr p15, 0, r0, c1, c0, 0
 .endm
 
 .macro disable_L1_DCache
-	mrc		p15, 0, r0, c1, c0, 0
-	ands	r0, r0, #(0x1<<11)	//check if L1 DCache has been disabled
-	beq		disable_L1_DCache_done
-	bic r0, r0, #(0x1<<11) 
-	bic r0, r0, #(0x1<<0) //disable MMU 
-	mcr p15, 0, r0, c1, c0, 0
-	clean_L1_DCache
+    mrc     p15, 0, r0, c1, c0, 0
+    ands    r0, r0, #(0x1<<11)  //check if L1 DCache has been disabled
+    beq     disable_L1_DCache_done
+    bic r0, r0, #(0x1<<11)
+    bic r0, r0, #(0x1<<0) //disable MMU
+    mcr p15, 0, r0, c1, c0, 0
+    clean_L1_DCache
 disable_L1_DCache_done:
 .endm
 
@@ -350,7 +350,7 @@ disable_L1_DCache_done:
     ldr     r1, =L2CC_DAT_RAM_CTRL
     ldr     r0,=0x0132
     str     r0,[r1]
-    
+
     /* invalidate L2Cache by way */
     ldr     r1, =L2CC_INV_REG
     ldr     r0, =0xffff
@@ -360,7 +360,7 @@ l2cc_inv_done:
     mov     r0,#0x0
     cmp     r2,r0
     bne     l2cc_inv_done
-    
+
     /* turn on l2 cache */
     ldr     r1, =L2CC_REG1_CTRL
     mov     r0,#1

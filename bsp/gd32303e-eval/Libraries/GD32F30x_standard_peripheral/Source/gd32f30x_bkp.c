@@ -55,7 +55,7 @@ void bkp_write_data(bkp_data_register_enum register_number, uint16_t data)
 uint16_t bkp_read_data(bkp_data_register_enum register_number)
 {
     uint16_t data = 0U;
-    
+
     /* get the data from the BKP data register */
     if((register_number >= BKP_DATA_10) && (register_number <= BKP_DATA_41)){
         data = BKP_DATA10_41(register_number-1U);
@@ -122,7 +122,7 @@ void bkp_rtc_signal_output_disable(void)
 void bkp_rtc_output_select(uint16_t outputsel)
 {
     uint16_t ctl = 0U;
-    
+
     ctl = BKP_OCTL;
     ctl &= (uint16_t)~BKP_OCTL_ROSEL;
     ctl |= outputsel;
@@ -140,7 +140,7 @@ void bkp_rtc_output_select(uint16_t outputsel)
 void bkp_rtc_clock_output_select(uint16_t clocksel)
 {
     uint16_t ctl = 0U;
-    
+
     ctl = BKP_OCTL;
     ctl &= (uint16_t)~BKP_OCTL_CCOSEL;
     ctl |= clocksel;
@@ -158,7 +158,7 @@ void bkp_rtc_clock_output_select(uint16_t clocksel)
 void bkp_rtc_clock_calibration_direction(uint16_t direction)
 {
     uint16_t ctl = 0U;
-    
+
     ctl = BKP_OCTL;
     ctl &= (uint16_t)~BKP_OCTL_CALDIR;
     ctl |= direction;
@@ -166,7 +166,7 @@ void bkp_rtc_clock_calibration_direction(uint16_t direction)
 }
 
 /*!
-    \brief      set RTC clock calibration value 
+    \brief      set RTC clock calibration value
     \param[in]  value: RTC clock calibration value
       \arg        0x00 - 0x7F
     \param[out] none
@@ -175,7 +175,7 @@ void bkp_rtc_clock_calibration_direction(uint16_t direction)
 void bkp_rtc_calibration_value_set(uint8_t value)
 {
     uint16_t ctl;
-    
+
     ctl = BKP_OCTL;
     ctl &= (uint16_t)OCTL_RCCV(0);
     ctl |= (uint16_t)OCTL_RCCV(value);
@@ -215,7 +215,7 @@ void bkp_tamper_detection_disable(void)
 void bkp_tamper_active_level_set(uint16_t level)
 {
     uint16_t ctl = 0U;
-    
+
     ctl = BKP_TPCTL;
     ctl &= (uint16_t)~BKP_TPCTL_TPAL;
     ctl |= level;

@@ -49,10 +49,10 @@ inline int32_t need_csc(int32_t i, int32_t o)
 /*!
  * write field of ipu registers, without affecting other bits.
  *
- * @param	ipu_index:	ipu index
- * @param	ID_addr:    register address
- * @param	ID_mask:    fields position
- * @param	data:	    the value of input
+ * @param   ipu_index:  ipu index
+ * @param   ID_addr:    register address
+ * @param   ID_mask:    fields position
+ * @param   data:       the value of input
  */
 void ipu_write_field(int32_t ipu_index, uint32_t ID_addr, uint32_t ID_mask, uint32_t data)
 {
@@ -69,8 +69,8 @@ void ipu_write_field(int32_t ipu_index, uint32_t ID_addr, uint32_t ID_mask, uint
 /*!
  * write field of ipu registers, without affecting other bits.
  *
- * @param	ipu_index:	ipu index
- * @param	ID_addr:    register address
+ * @param   ipu_index:  ipu index
+ * @param   ID_addr:    register address
  */
 uint32_t ipu_read(int32_t ipu_index, uint32_t ID_addr)
 {
@@ -86,10 +86,10 @@ uint32_t ipu_read(int32_t ipu_index, uint32_t ID_addr)
 /*!
  * write field of ipu registers, without affecting other bits.
  *
- * @param	ipu_index:	ipu index
- * @param	ID_addr:    register address
- * @param	ID_mask:    fields position
- * @param	data:	    the value of input
+ * @param   ipu_index:  ipu index
+ * @param   ID_addr:    register address
+ * @param   ID_mask:    fields position
+ * @param   data:       the value of input
  */
 void ipu_write(int32_t ipu_index, uint32_t ID_addr, uint32_t data)
 {
@@ -101,7 +101,7 @@ void ipu_write(int32_t ipu_index, uint32_t ID_addr, uint32_t data)
 /*!
  * enable submodules of IPU to establish the data path.
  *
- * @param	ipu_index:	ipu index
+ * @param   ipu_index:  ipu index
  */
 void ipu_enable_display(int32_t ipu_index)
 {
@@ -115,7 +115,7 @@ void ipu_enable_display(int32_t ipu_index)
 /*!
  * disable submodules of IPU to establish the data path.
  *
- * @param	ipu_index:	ipu index
+ * @param   ipu_index:  ipu index
  */
 void ipu_disable_display(int32_t ipu_index)
 {
@@ -130,10 +130,10 @@ void ipu_disable_display(int32_t ipu_index)
 /*!
  * reset ipu by SRC(system reset controller)
  *
- * @param	ipu_index:	ipu index
- * @param	timeout:    time out setting for ipu reset
+ * @param   ipu_index:  ipu index
+ * @param   timeout:    time out setting for ipu reset
  *
- * @return	true for success, others for time out.
+ * @return  true for success, others for time out.
  */
 int32_t ipu_sw_reset(int32_t ipu_index, int32_t timeout)
 {
@@ -207,8 +207,8 @@ void ipu_display_setup(uint32_t ipu_index, uint32_t mem_addr0, uint32_t mem_addr
 /*!
  * display function HW configuration for IPU.
  *
- * @param	ipu_index:	ipu index
- * @param	panel:		ipu panel configuration data structure
+ * @param   ipu_index:  ipu index
+ * @param   panel:      ipu panel configuration data structure
  * @param   mem_colorimetry colorimetry configuration
  * @param   fg_width foreground width
  * @param   fg_height foreground height
@@ -252,7 +252,7 @@ void ipu_capture_setup(uint32_t ipu_index, uint32_t csi_interface, uint32_t raw_
     uint32_t csi_mem0 = CH23_EBA0, csi_mem1 = 0;
     uint32_t disp_mem0 = csi_mem0, disp_mem1 = csi_mem1;
     uint32_t csi_pixel_format = NON_INTERLEAVED_YUV420;
-    
+
     /*step1: config the csi: idma channel (csi -- mem), smfc, csi */
     memset(&idmac_info, 0, sizeof(ipu_idmac_info_t));
     idmac_info.channel = CSI_TO_MEM_CH0;
@@ -289,14 +289,14 @@ void ipu_capture_setup(uint32_t ipu_index, uint32_t csi_interface, uint32_t raw_
 
     if(csi_dma_band_mode) // enable band mode
     {
-        ipu_cpmem_set_field(ipu_cpmem_addr(ipu_index, idmac_info.channel), CPMEM_BNDM, 0x6); // set band lines, test 128 lines mode 
+        ipu_cpmem_set_field(ipu_cpmem_addr(ipu_index, idmac_info.channel), CPMEM_BNDM, 0x6); // set band lines, test 128 lines mode
         ipu_write_field(ipu_index, IPU_IDMAC_BNDM_EN_1__IDMAC_BNDM_EN_0 << idmac_info.channel, 1); // enable band mode
         if(idmac_info.channel == 0)
-            ipu_ch0_eobnd_interrupt_register(ipu_index); 
+            ipu_ch0_eobnd_interrupt_register(ipu_index);
         else {
             printf("CSI channel not supported! you need to modify the interrupt registration!\n");
-            ipu_cpmem_set_field(ipu_cpmem_addr(ipu_index, idmac_info.channel), CPMEM_BNDM, 0x0); 
-            ipu_write_field(ipu_index, IPU_IDMAC_BNDM_EN_1__IDMAC_BNDM_EN_0 << idmac_info.channel, 0); 
+            ipu_cpmem_set_field(ipu_cpmem_addr(ipu_index, idmac_info.channel), CPMEM_BNDM, 0x0);
+            ipu_write_field(ipu_index, IPU_IDMAC_BNDM_EN_1__IDMAC_BNDM_EN_0 << idmac_info.channel, 0);
         }
     }
 
@@ -405,12 +405,12 @@ void ipu1_ch0_eobnd_isr(void)
     static int i = 0;
     static int frame = 0;
     int frame_width = 1024;
-    int cap_height = 480; 
+    int cap_height = 480;
     int band_height = 128; // must match with DMA settings
     int band_num = (cap_height + band_height - 1) / band_height;
 
     ipu_write_field(1, IPU_IPU_INT_STAT_11__IDMAC_EOBND_0, 1); // clear interrupt state
-    
+
     // copy out the data before it was overwritten, data in YUV444 format
     if(i%band_num != band_num - 1)
         memcpy((void *)(CH27_EBA0 + frame_width*band_height*2*(i%band_num)), (void *)CH23_EBA0, frame_width*band_height*2);
@@ -422,7 +422,7 @@ void ipu1_ch0_eobnd_isr(void)
         ipu_write_field(1, IPU_IPU_INT_STAT_1__IDMAC_EOF_0, 1);
         frame ++;
     }
-    
+
     i++;
 }
 

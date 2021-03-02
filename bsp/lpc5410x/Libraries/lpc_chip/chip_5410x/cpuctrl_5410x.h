@@ -49,40 +49,40 @@ extern "C" {
  */
 
 /**
- * @brief	Determine which MCU this code is running on
+ * @brief   Determine which MCU this code is running on
  * @return  true if executing on the CM4, or false if executing on the CM0+
  */
 STATIC INLINE bool Chip_CPU_IsM4Core(void) {
-	/* M4 core is designated by values 0xC24 on bits 15..4 */
-	if (((SCB->CPUID >> 4) & 0xFFF) == 0xC24) {
-		return true;
-	}
+    /* M4 core is designated by values 0xC24 on bits 15..4 */
+    if (((SCB->CPUID >> 4) & 0xFFF) == 0xC24) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
- * @brief	Determine if this core is a slave or master
+ * @brief   Determine if this core is a slave or master
  * @return  true if this MCU is operating as the master, or false if operating as a slave
  */
 bool Chip_CPU_IsMasterCore(void);
 
 /**
- * @brief	Setup M0+ boot and reset M0+ core
- * @param	coentry		: Pointer to boot entry point for M0+ core
- * @param	costackptr	: Pointer to where stack should be located for M0+ core
+ * @brief   Setup M0+ boot and reset M0+ core
+ * @param   coentry     : Pointer to boot entry point for M0+ core
+ * @param   costackptr  : Pointer to where stack should be located for M0+ core
  * @return  Nothing
- * @note	Will setup boot stack and entry point, enable M0+ clock and then
+ * @note    Will setup boot stack and entry point, enable M0+ clock and then
  * reset M0+ core.
  */
 void Chip_CPU_CM0Boot(uint32_t *coentry, uint32_t *costackptr);
 
 /**
- * @brief	Setup M4 boot and reset M4 core
- * @param	coentry		: Pointer to boot entry point for M4 core
- * @param	costackptr	: Pointer to where stack should be located for M4 core
+ * @brief   Setup M4 boot and reset M4 core
+ * @param   coentry     : Pointer to boot entry point for M4 core
+ * @param   costackptr  : Pointer to where stack should be located for M4 core
  * @return  Nothing
- * @note	Will setup boot stack and entry point, enable M4 clock and then
+ * @note    Will setup boot stack and entry point, enable M4 clock and then
  * reset M0+ core.
  */
 void Chip_CPU_CM4Boot(uint32_t *coentry, uint32_t *costackptr);

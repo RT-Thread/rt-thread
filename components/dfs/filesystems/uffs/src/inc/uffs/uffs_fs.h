@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,12 +25,12 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
 
-/** 
+/**
  * \file uffs_fs.h
  * \brief uffs basic file operations
  * \author Ricky Zheng
@@ -50,33 +50,33 @@ extern "C"{
 
 /** file object */
 struct uffs_ObjectSt {
-	/******* objects manager ********/
-	int dev_lock_count;
-	int dev_get_count;
+    /******* objects manager ********/
+    int dev_lock_count;
+    int dev_get_count;
 
-	/******** init level 0 ********/
-	const char * name;					//!< pointer to the start of name, for open or create
-	u32 name_len;						//!< name length
-	u16 sum;							//!< sum of name
-	uffs_Device *dev;					//!< uffs device
-	u32 oflag;
-	u8 type;
-	u16 head_pages;						//!< data pages on file head block
-	u16 parent;
+    /******** init level 0 ********/
+    const char * name;                  //!< pointer to the start of name, for open or create
+    u32 name_len;                       //!< name length
+    u16 sum;                            //!< sum of name
+    uffs_Device *dev;                   //!< uffs device
+    u32 oflag;
+    u8 type;
+    u16 head_pages;                     //!< data pages on file head block
+    u16 parent;
 
-	/******* init level 1 ********/
-	TreeNode *node;						//!< file entry node in tree
-	u16 serial;
-	
-	/******* output ******/
-	int err;							//!< error number
+    /******* init level 1 ********/
+    TreeNode *node;                     //!< file entry node in tree
+    u16 serial;
 
-	/******* current *******/
-	u32 pos;							//!< current position in file
+    /******* output ******/
+    int err;                            //!< error number
 
-	/***** others *******/
-	UBOOL attr_loaded;					//!< attributes loaded ?
-	UBOOL open_succ;					//!< U_TRUE or U_FALSE
+    /******* current *******/
+    u32 pos;                            //!< current position in file
+
+    /***** others *******/
+    UBOOL attr_loaded;                  //!< attributes loaded ?
+    UBOOL open_succ;                    //!< U_TRUE or U_FALSE
 
 };
 
@@ -106,10 +106,10 @@ URET uffs_ReInitObject(uffs_Object *obj);
 
 URET uffs_ParseObject(uffs_Object *obj, const char *name);
 
-URET uffs_CreateObjectEx(uffs_Object *obj, uffs_Device *dev, 
-								   int dir, const char *name, int name_len, int oflag);
-URET uffs_OpenObjectEx(uffs_Object *obj, uffs_Device *dev, 
-								   int dir, const char *name, int name_len, int oflag);
+URET uffs_CreateObjectEx(uffs_Object *obj, uffs_Device *dev,
+                                   int dir, const char *name, int name_len, int oflag);
+URET uffs_OpenObjectEx(uffs_Object *obj, uffs_Device *dev,
+                                   int dir, const char *name, int name_len, int oflag);
 
 URET uffs_OpenObject(uffs_Object *obj, const char *fullname, int oflag);
 URET uffs_TruncateObject(uffs_Object *obj, u32 remain);

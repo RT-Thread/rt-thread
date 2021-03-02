@@ -39,9 +39,9 @@
 #define REMOTE_WAKEUP_SUPPORT            (TRUE)
 
 /* This macro enables/disables Meta Data Processing */
-#define USB_METADATA_SUPPORTED 			(FALSE)
-#define PHDC_BULK_OUT_EP_SIZE     		(64)
-#define PHDC_BULK_IN_EP_SIZE      		(32)
+#define USB_METADATA_SUPPORTED          (FALSE)
+#define PHDC_BULK_OUT_EP_SIZE           (64)
+#define PHDC_BULK_IN_EP_SIZE            (32)
 #if USB_METADATA_SUPPORTED
     #if (PHDC_BULK_OUT_EP_SIZE < 32)
       #error Minimum Endpoint Size required is 32 bytes

@@ -152,7 +152,7 @@ typedef struct {
     dma_reqsel_t dma_reqsel_rx;
 } sys_cfg_i2s_t;
 
-/** @brief TIMER system configuration object */ 
+/** @brief TIMER system configuration object */
 typedef struct {
    int out_en;
 } sys_cfg_tmr_t;
@@ -227,7 +227,7 @@ int SYS_UART_Shutdown(mxc_uart_regs_t *uart);
  * @brief      System level initialization for I2C module.
  * @param      i2c  Pointer to I2C module registers
  * @param      sys_cfg  System configuration object
- * 
+ *
  * @returns    #E_NO_ERROR if successful, appropriate error otherwise
  */
 int SYS_I2C_Init(mxc_i2c_regs_t *i2c,  const sys_cfg_i2c_t* sys_cfg);

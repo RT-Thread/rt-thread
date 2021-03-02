@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version V1.0.0
 * @date    28/7/2017
-* @brief   This file contains all the functions prototypes for the WWDG 
+* @brief   This file contains all the functions prototypes for the WWDG
 *          firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_WWDG_H
@@ -32,23 +32,23 @@
 
 /** @addtogroup WWDG
 * @{
-*/ 
+*/
 
 /** @defgroup WWDG_Exported_Types
 * @{
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup WWDG_Exported_Constants
 * @{
-*/ 
+*/
 
-/** @defgroup WWDG_Prescaler 
+/** @defgroup WWDG_Prescaler
 * @{
-*/ 
+*/
 
 #define WWDG_Prescaler_1    ((uint32_t)0x00000000)
 #define WWDG_Prescaler_2    ((uint32_t)0x00000080)
@@ -63,22 +63,22 @@
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup WWDG_Exported_Macros
 * @{
-*/ 
+*/
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup WWDG_Exported_Functions
 * @{
-*/ 
+*/
 
 void WWDG_DeInit(void);
 void WWDG_SetPrescaler(uint32_t WWDG_Prescaler);
@@ -93,14 +93,14 @@ void WWDG_ClearFlag(void);
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /*-------------------------(C) COPYRIGHT 2017 MindMotion ----------------------*/

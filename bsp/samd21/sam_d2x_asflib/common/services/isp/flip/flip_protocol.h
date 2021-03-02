@@ -82,8 +82,8 @@ COMPILER_PACK_SET(1)
  * \brief FLIP message structure
  */
 typedef struct {
-	uint8_t cmd_id;
-	uint8_t arg[5];
+    uint8_t cmd_id;
+    uint8_t arg[5];
 } flip_msg_v1_t;
 COMPILER_PACK_RESET()
 
@@ -164,9 +164,9 @@ COMPILER_PACK_SET(1)
  * \brief FLIP message structure
  */
 typedef struct {
-	uint8_t group;
-	uint8_t cmd_id;
-	uint8_t arg[4];
+    uint8_t group;
+    uint8_t cmd_id;
+    uint8_t arg[4];
 } flip_msg_v2_t;
 COMPILER_PACK_RESET()
 
@@ -237,7 +237,7 @@ COMPILER_PACK_RESET()
 #define FLIP_V2_CMD_SELECT_MEM_EXT_MEM_CS6    0x0E
 #define FLIP_V2_CMD_SELECT_MEM_EXT_MEM_CS7    0x0F
 #define FLIP_V2_CMD_SELECT_MEM_EXT_MEM_DF     0x10
-#define FLIP_V2_CMD_SELECT_MEM_COUNT          0x11	// Number of memory units
+#define FLIP_V2_CMD_SELECT_MEM_COUNT          0x11  // Number of memory units
 //@}
 //@}
 

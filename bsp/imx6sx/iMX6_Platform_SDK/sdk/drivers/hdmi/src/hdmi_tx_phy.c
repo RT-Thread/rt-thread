@@ -44,7 +44,7 @@ void hdmi_phy_int_mask(int mask)
 /*!
  * @brief Set the DE polarity
  *
- * @param	pol High or low for DE active
+ * @param   pol High or low for DE active
  */
 static void hdmi_phy_de_pol(int pol)
 {
@@ -64,7 +64,7 @@ static void hdmi_phy_if_sel(int seldipif)
 /*!
  * @brief Enable TMDS output
  *
- * @param	en Enable or disable the TMDS output
+ * @param   en Enable or disable the TMDS output
  */
 static void hdmi_phy_tmds(int en)
 {
@@ -86,7 +86,7 @@ static void hdmi_phy_pdown(int en)
 /*!
  * @brief PHY reset
  *
- * @param 	bit: reset PHY
+ * @param   bit: reset PHY
  * 1 - reset PHY
  * 0 - turn PHY to normal
  */
@@ -97,7 +97,7 @@ static void hdmi_phy_reset(uint8_t bit)
 
 /*!
  * @brief HDMI TEST mode clear
- * 
+ *
  * @param bit Enable or disable
  */
 static inline void hdmi_phy_test_clear(uint8_t bit)
@@ -107,7 +107,7 @@ static inline void hdmi_phy_test_clear(uint8_t bit)
 
 /*!
  * @brief HDMI TEST mode enable
- * 
+ *
  * @param bit Enable or disable
  */
 static inline void hdmi_phy_test_enable(uint8_t bit)
@@ -117,7 +117,7 @@ static inline void hdmi_phy_test_enable(uint8_t bit)
 
 /*!
  * @brief HDMI PHY TEST clock enable
- * 
+ *
  * @param bit Enable or disable
  */
 static inline void hdmi_phy_test_clock(uint8_t bit)
@@ -127,7 +127,7 @@ static inline void hdmi_phy_test_clock(uint8_t bit)
 
 /*!
  * @brief HDMI PHY TEST data input
- * 
+ *
  * @param bit Data value
  */
 static inline void hdmi_phy_test_din(uint8_t bit)
@@ -137,7 +137,7 @@ static inline void hdmi_phy_test_din(uint8_t bit)
 
 /*!
  * @brief HDMI PHY TEST data output
- * 
+ *
  * @param bit Data value
  */
 static inline void hdmi_phy_test_dout(uint8_t bit)
@@ -147,7 +147,7 @@ static inline void hdmi_phy_test_dout(uint8_t bit)
 
 /*!
  * @brief HDMI PHY TEST mode control
- * 
+ *
  * @param value Test Data input value
  */
 static int hdmi_phy_test_control(uint8_t value)
@@ -163,7 +163,7 @@ static int hdmi_phy_test_control(uint8_t value)
 
 /*!
  * @brief HDMI PHY TEST data set
- * 
+ *
  * @param value Test Data input value
  */
 static int hdmi_phy_test_data(uint8_t value)
@@ -178,7 +178,7 @@ static int hdmi_phy_test_data(uint8_t value)
 
 /*!
  * @brief HDMI PHY tx power down
- * 
+ *
  * @param bit Enable or disable
  */
 static void hdmi_phy_gen2_tx_pon(uint8_t bit)
@@ -188,7 +188,7 @@ static void hdmi_phy_gen2_tx_pon(uint8_t bit)
 
 /*!
  * @brief HDMI PHY tx PDDQ down
- * 
+ *
  * @param bit Enable or disable
  */
 static void hdmi_phy_gen2_pddq(uint8_t bit)
@@ -198,7 +198,7 @@ static void hdmi_phy_gen2_pddq(uint8_t bit)
 
 /*!
  * @brief HDMI PHY reset
- * 
+ *
  * @param bit Enable or disable
  */
 static void hdmi_heacphy_reset(uint8_t bit)
@@ -232,10 +232,10 @@ static int hdmi_phy_wait_i2c_done(int msec)
 /*!
  * @brief HDMI phy registers access through internal I2C bus
  *
- * @param	data Value to be send
- * @param	addr Sub-address of registers
+ * @param   data Value to be send
+ * @param   addr Sub-address of registers
  *
- * @return TRUE if I2C write succeed or FALSE if I2C write failed/timeout  
+ * @return TRUE if I2C write succeed or FALSE if I2C write failed/timeout
  */
 static int hdmi_phy_i2c_write(uint16_t data, uint8_t addr)
 {
@@ -250,9 +250,9 @@ static int hdmi_phy_i2c_write(uint16_t data, uint8_t addr)
 /*!
  * @brief HDMI phy registers read through internal I2C bus
  *
- * @param	addr Sub-address of register
+ * @param   addr Sub-address of register
  *
- * @return	value read back
+ * @return  value read back
  */
 static uint16_t hdmi_phy_i2c_read(uint8_t addr)
 {
@@ -272,11 +272,11 @@ static uint16_t hdmi_phy_i2c_read(uint8_t addr)
 /*!
  * @brief HDMI phy registers access and verificate through internal I2C bus
  *
- * @param	data Value to be send
- * @param	addr Sub-address of registers
+ * @param   data Value to be send
+ * @param   addr Sub-address of registers
  *
- * @return TRUE if I2C write succeed, or False if the value read back does not 
- * equal to the input  
+ * @return TRUE if I2C write succeed, or False if the value read back does not
+ * equal to the input
  */
 static int hdmi_phy_i2c_write_verify(uint16_t data, uint8_t addr)
 {
@@ -296,13 +296,13 @@ static int hdmi_phy_i2c_write_verify(uint16_t data, uint8_t addr)
 /*!
  * @brief HDMI phy configuration
  *
- * @param	pClk Pixel clock input
- * @param	pRep Repetition setting
- * @param	cRes Color resolution per component
- * @param	cscOn Csc on/off switch
- * @param	audioOn Audio on/off switch
- * @param	cecOn CEC on/off switch
- * @param	hdcpOn HDCP on/off switch
+ * @param   pClk Pixel clock input
+ * @param   pRep Repetition setting
+ * @param   cRes Color resolution per component
+ * @param   cscOn Csc on/off switch
+ * @param   audioOn Audio on/off switch
+ * @param   cecOn CEC on/off switch
+ * @param   hdcpOn HDCP on/off switch
  *
  * @return FALSE if configuration failed or TRUE ifconfiguration succeed
  */

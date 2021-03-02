@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	generic/irq.c
- * @brief	Generic libmetal irq definitions.
+ * @file    generic/irq.c
+ * @brief   Generic libmetal irq definitions.
  */
 
 #ifndef __METAL_IRQ__H__
@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 /**
- * @brief      default interrupt handler 
+ * @brief      default interrupt handler
  * @param[in]  vector interrupt vector
  */
 void metal_irq_isr(unsigned int vector);

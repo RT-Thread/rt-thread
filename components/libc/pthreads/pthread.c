@@ -201,7 +201,7 @@ int pthread_create(pthread_t            *pid,
 
     /* allocate posix thread data */
     pth_id = _pthread_data_create();
-    if (pth_id == PTHREAD_NUM_MAX) 
+    if (pth_id == PTHREAD_NUM_MAX)
     {
         ret = ENOMEM;
         goto __exit;

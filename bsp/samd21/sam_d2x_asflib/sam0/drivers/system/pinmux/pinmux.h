@@ -217,15 +217,15 @@ extern "C" {
  * structure, to indicate the direction the pin should use.
  */
 enum system_pinmux_pin_dir {
-	/** The pin's input buffer should be enabled, so that the pin state can
-	 *  be read */
-	SYSTEM_PINMUX_PIN_DIR_INPUT,
-	/** The pin's output buffer should be enabled, so that the pin state can
-	 *  be set (but not read back) */
-	SYSTEM_PINMUX_PIN_DIR_OUTPUT,
-	/** The pin's output and input buffers should both be enabled, so that the
-	 *  pin state can be set and read back */
-	SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK,
+    /** The pin's input buffer should be enabled, so that the pin state can
+     *  be read */
+    SYSTEM_PINMUX_PIN_DIR_INPUT,
+    /** The pin's output buffer should be enabled, so that the pin state can
+     *  be set (but not read back) */
+    SYSTEM_PINMUX_PIN_DIR_OUTPUT,
+    /** The pin's output and input buffers should both be enabled, so that the
+     *  pin state can be set and read back */
+    SYSTEM_PINMUX_PIN_DIR_OUTPUT_WITH_READBACK,
 };
 
 /**
@@ -235,12 +235,12 @@ enum system_pinmux_pin_dir {
  * structure, to indicate the type of logic level pull the pin should use.
  */
 enum system_pinmux_pin_pull {
-	/** No logical pull should be applied to the pin */
-	SYSTEM_PINMUX_PIN_PULL_NONE,
-	/** Pin should be pulled up when idle */
-	SYSTEM_PINMUX_PIN_PULL_UP,
-	/** Pin should be pulled down when idle */
-	SYSTEM_PINMUX_PIN_PULL_DOWN,
+    /** No logical pull should be applied to the pin */
+    SYSTEM_PINMUX_PIN_PULL_NONE,
+    /** Pin should be pulled up when idle */
+    SYSTEM_PINMUX_PIN_PULL_UP,
+    /** Pin should be pulled down when idle */
+    SYSTEM_PINMUX_PIN_PULL_DOWN,
 };
 
 /**
@@ -250,10 +250,10 @@ enum system_pinmux_pin_pull {
  * structure, to indicate the type of sampling a port pin should use.
  */
 enum system_pinmux_pin_sample {
-	/** Pin input buffer should continuously sample the pin state */
-	SYSTEM_PINMUX_PIN_SAMPLE_CONTINUOUS,
-	/** Pin input buffer should be enabled when the IN register is read */
-	SYSTEM_PINMUX_PIN_SAMPLE_ONDEMAND,
+    /** Pin input buffer should continuously sample the pin state */
+    SYSTEM_PINMUX_PIN_SAMPLE_CONTINUOUS,
+    /** Pin input buffer should be enabled when the IN register is read */
+    SYSTEM_PINMUX_PIN_SAMPLE_ONDEMAND,
 };
 
 /**
@@ -264,22 +264,22 @@ enum system_pinmux_pin_sample {
  * before being modified by the user application.
  */
 struct system_pinmux_config {
-	/** MUX index of the peripheral that should control the pin, if peripheral
-	 *  control is desired. For GPIO use, this should be set to
-	 *  \ref SYSTEM_PINMUX_GPIO. */
-	uint8_t mux_position;
+    /** MUX index of the peripheral that should control the pin, if peripheral
+     *  control is desired. For GPIO use, this should be set to
+     *  \ref SYSTEM_PINMUX_GPIO. */
+    uint8_t mux_position;
 
-	/** Port buffer input/output direction */
-	enum system_pinmux_pin_dir direction;
+    /** Port buffer input/output direction */
+    enum system_pinmux_pin_dir direction;
 
-	/** Logic level pull of the input buffer */
-	enum system_pinmux_pin_pull input_pull;
+    /** Logic level pull of the input buffer */
+    enum system_pinmux_pin_pull input_pull;
 
-	/** Enable lowest possible powerstate on the pin
-	 *
-	 *  \note All other configurations will be ignored, the pin will be disabled.
-	 */
-	bool powersave;
+    /** Enable lowest possible powerstate on the pin
+     *
+     *  \note All other configurations will be ignored, the pin will be disabled.
+     */
+    bool powersave;
 };
 
 /** \name Configuration and Initialization
@@ -301,26 +301,26 @@ struct system_pinmux_config {
  * \param[out] config  Configuration structure to initialize to default values
  */
 static inline void system_pinmux_get_config_defaults(
-		struct system_pinmux_config *const config)
+        struct system_pinmux_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->mux_position = SYSTEM_PINMUX_GPIO;
-	config->direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
-	config->input_pull   = SYSTEM_PINMUX_PIN_PULL_UP;
-	config->powersave    = false;
+    /* Default configuration values */
+    config->mux_position = SYSTEM_PINMUX_GPIO;
+    config->direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
+    config->input_pull   = SYSTEM_PINMUX_PIN_PULL_UP;
+    config->powersave    = false;
 }
 
 void system_pinmux_pin_set_config(
-		const uint8_t gpio_pin,
-		const struct system_pinmux_config *const config);
+        const uint8_t gpio_pin,
+        const struct system_pinmux_config *const config);
 
 void system_pinmux_group_set_config(
-		PortGroup *const port,
-		const uint32_t mask,
-		const struct system_pinmux_config *const config);
+        PortGroup *const port,
+        const uint32_t mask,
+        const struct system_pinmux_config *const config);
 
 /** @} */
 
@@ -339,26 +339,26 @@ void system_pinmux_group_set_config(
  * \return Base address of the associated PORT module.
  */
 static inline PortGroup* system_pinmux_get_group_from_gpio_pin(
-		const uint8_t gpio_pin)
+        const uint8_t gpio_pin)
 {
-	uint8_t port_index  = (gpio_pin / 128);
-	uint8_t group_index = (gpio_pin / 32);
+    uint8_t port_index  = (gpio_pin / 128);
+    uint8_t group_index = (gpio_pin / 32);
 
-	/* Array of available ports */
-	Port *const ports[PORT_INST_NUM] = PORT_INSTS;
+    /* Array of available ports */
+    Port *const ports[PORT_INST_NUM] = PORT_INSTS;
 
-	if (port_index < PORT_INST_NUM) {
-		return &(ports[port_index]->Group[group_index]);
-	} else {
-		Assert(false);
-		return NULL;
-	}
+    if (port_index < PORT_INST_NUM) {
+        return &(ports[port_index]->Group[group_index]);
+    } else {
+        Assert(false);
+        return NULL;
+    }
 }
 
 void system_pinmux_group_set_input_sample_mode(
-		PortGroup *const port,
-		const uint32_t mask,
-		const enum system_pinmux_pin_sample mode);
+        PortGroup *const port,
+        const uint32_t mask,
+        const enum system_pinmux_pin_sample mode);
 
 /** @} */
 
@@ -376,23 +376,23 @@ void system_pinmux_group_set_input_sample_mode(
  * \return Currently selected peripheral index on the specified pin.
  */
 static inline uint8_t system_pinmux_pin_get_mux_position(
-		const uint8_t gpio_pin)
+        const uint8_t gpio_pin)
 {
-	PortGroup *const port = system_pinmux_get_group_from_gpio_pin(gpio_pin);
-	uint32_t pin_index = (gpio_pin % 32);
+    PortGroup *const port = system_pinmux_get_group_from_gpio_pin(gpio_pin);
+    uint32_t pin_index = (gpio_pin % 32);
 
-	if (!(port->PINCFG[pin_index].reg & PORT_PINCFG_PMUXEN)) {
-		return SYSTEM_PINMUX_GPIO;
-	}
+    if (!(port->PINCFG[pin_index].reg & PORT_PINCFG_PMUXEN)) {
+        return SYSTEM_PINMUX_GPIO;
+    }
 
-	uint32_t pmux_reg = port->PMUX[pin_index / 2].reg;
+    uint32_t pmux_reg = port->PMUX[pin_index / 2].reg;
 
-	if (pin_index & 1) {
-		return (pmux_reg & PORT_PMUX_PMUXO_Msk) >> PORT_PMUX_PMUXO_Pos;
-	}
-	else {
-		return (pmux_reg & PORT_PMUX_PMUXE_Msk) >> PORT_PMUX_PMUXE_Pos;
-	}
+    if (pin_index & 1) {
+        return (pmux_reg & PORT_PMUX_PMUXO_Msk) >> PORT_PMUX_PMUXO_Pos;
+    }
+    else {
+        return (pmux_reg & PORT_PMUX_PMUXE_Msk) >> PORT_PMUX_PMUXE_Pos;
+    }
 }
 
 /**
@@ -406,17 +406,17 @@ static inline uint8_t system_pinmux_pin_get_mux_position(
  * \param[in] mode     New pin sampling mode to configure
  */
 static inline void system_pinmux_pin_set_input_sample_mode(
-		const uint8_t gpio_pin,
-		const enum system_pinmux_pin_sample mode)
+        const uint8_t gpio_pin,
+        const enum system_pinmux_pin_sample mode)
 {
-	PortGroup* const port = system_pinmux_get_group_from_gpio_pin(gpio_pin);
-	uint32_t pin_index = (gpio_pin % 32);
+    PortGroup* const port = system_pinmux_get_group_from_gpio_pin(gpio_pin);
+    uint32_t pin_index = (gpio_pin % 32);
 
-	if (mode == SYSTEM_PINMUX_PIN_SAMPLE_ONDEMAND) {
-		port->CTRL.reg |= (1 << pin_index);
-	} else {
-		port->CTRL.reg &= ~(1 << pin_index);
-	}
+    if (mode == SYSTEM_PINMUX_PIN_SAMPLE_ONDEMAND) {
+        port->CTRL.reg |= (1 << pin_index);
+    } else {
+        port->CTRL.reg &= ~(1 << pin_index);
+    }
 }
 
 /** @} */
@@ -569,18 +569,18 @@ void system_pinmux_group_set_output_drive(
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>GPIO</td>
- *		<td>General Purpose Input/Output</td>
- *	</tr>
- *	<tr>
- *		<td>MUX</td>
- *		<td>Multiplexer</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>GPIO</td>
+ *      <td>General Purpose Input/Output</td>
+ *  </tr>
+ *  <tr>
+ *      <td>MUX</td>
+ *      <td>Multiplexer</td>
+ *  </tr>
  * </table>
  *
  *
@@ -601,23 +601,23 @@ void system_pinmux_group_set_output_drive(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Removed code of open drain, slew limit and drive strength
- *		features</td>
- *	</tr>
- *	<tr>
- *		<td>Fixed broken sampling mode function implementations, which wrote
- *		    corrupt configuration values to the device registers</td>
- *	</tr>
- *	<tr>
- *		<td>Added missing NULL pointer asserts to the PORT driver functions</td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Removed code of open drain, slew limit and drive strength
+ *      features</td>
+ *  </tr>
+ *  <tr>
+ *      <td>Fixed broken sampling mode function implementations, which wrote
+ *          corrupt configuration values to the device registers</td>
+ *  </tr>
+ *  <tr>
+ *      <td>Added missing NULL pointer asserts to the PORT driver functions</td>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -635,41 +635,41 @@ void system_pinmux_group_set_output_drive(
  * \page asfdoc_sam0_system_pinmux_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42121F</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C20/C21</td>
- *	</tr>
- *	<tr>
- *		<td>42121E</td>
- *		<td>12/2014</td>
- *		<td>Added support for SAM R21 and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42121D</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42121C</td>
- *		<td>09/2013</td>
- *		<td>Fixed incorrect documentation for the device pin sampling mode</td>
- *	</tr>
- *	<tr>
- *		<td>42121B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos</td>
- *	</tr>
- *	<tr>
- *		<td>42121A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42121F</td>
+ *      <td>12/2015</td>
+ *      <td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C20/C21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42121E</td>
+ *      <td>12/2014</td>
+ *      <td>Added support for SAM R21 and SAM D10/D11</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42121D</td>
+ *      <td>01/2014</td>
+ *      <td>Added support for SAM D21</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42121C</td>
+ *      <td>09/2013</td>
+ *      <td>Fixed incorrect documentation for the device pin sampling mode</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42121B</td>
+ *      <td>06/2013</td>
+ *      <td>Corrected documentation typos</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42121A</td>
+ *      <td>06/2013</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

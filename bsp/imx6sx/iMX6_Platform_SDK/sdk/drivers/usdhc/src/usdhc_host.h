@@ -72,7 +72,7 @@
                                        BM_USDHC_INT_STATUS_DEBE | \
                                        BM_USDHC_INT_STATUS_AC12E | \
                                        BM_USDHC_INT_STATUS_DMAE)
-                                       
+
 //#define ESDHC_INTERRUPT_ENABLE        ((unsigned int)0x007F013F)
 #define ESDHC_INTERRUPT_ENABLE        (BM_USDHC_INT_STATUS_EN_CCSEN | \
                                        BM_USDHC_INT_STATUS_EN_TCSEN | \
@@ -87,7 +87,7 @@
                                        BM_USDHC_INT_STATUS_EN_DTOESEN | \
                                        BM_USDHC_INT_STATUS_EN_DCESEN | \
                                        BM_USDHC_INT_STATUS_EN_DEBESEN)
-                                       
+
 //#define ESDHC_PRESENT_STATE_CIHB      ((unsigned int)0x00000001)
 //#define ESDHC_PRESENT_STATE_CDIHB     ((unsigned int)0x00000002)
 
@@ -150,7 +150,7 @@
                                          BM_USDHC_MIX_CTRL_SMP_CLK_SEL | \
                                          BM_USDHC_MIX_CTRL_AUTO_TUNE_EN | \
                                          BM_USDHC_MIX_CTRL_FBCLK_SEL)
-                                         
+
 
 #define ESDHC_ADMA_BD_ACT             ((unsigned char)0x20)
 #define ESDHC_ADMA_BD_END             ((unsigned char)0x02)
@@ -238,7 +238,7 @@ typedef struct {
 */
 /*---------------------------------------- Function Define ----------------------------------------*/
 /*!
- * @brief uSDHC Controller initialization - enble clock and iomux configuration 
+ * @brief uSDHC Controller initialization - enble clock and iomux configuration
  *
  * @param instance     Instance number of the uSDHC module.
  */
@@ -256,33 +256,33 @@ extern void host_init_active(uint32_t instance);
  *
  * @param instance     Instance number of the uSDHC module.
  * @param cmd          the command to be sent
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int host_send_cmd(uint32_t instance, command_t * cmd);
 
 /*!
  * @brief uSDHC Controller sets bus width
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    Bus_width
- * 
+ *
  */
 extern void host_set_bus_width(uint32_t instance, int bus_width);
 
 /*!
  * @brief Reset uSDHC Controller
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    Bus_width
  * @param endian_mode  Endain mode
- * 
+ *
  */
 extern void host_reset(uint32_t instance, int bus_width, int endian_mode);
 
 /*!
  * @brief uSDHC Controller reads responses
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param response     Responses from card
  */
@@ -293,30 +293,30 @@ extern void host_read_response(uint32_t instance, command_response_t * response)
  *
  * @param instance     Instance number of the uSDHC module.
  * @param frequency    The frequency to be set
- * 
+ *
  */
 extern void host_cfg_clock(uint32_t instance, int frequency);
 
 /*!
  * @brief uSDHC Controller configures block
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param blk_len      Block Length
  * @param nob          Block count for current transfer
- * @param wml          Read and write Watermark level 
+ * @param wml          Read and write Watermark level
  */
 extern void host_cfg_block(uint32_t instance, int blk_len, int nob, int wml);
 
 /*!
  * @brief uSDHC Controller Clears FIFO
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  */
 extern void host_clear_fifo(uint32_t instance);
 
 /*!
  * @brief uSDHC Controller Sets up for ADMA transfer
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param ptr          Pointer for destination
  * @param length       ADMA transfer length
@@ -325,24 +325,24 @@ extern void host_setup_adma(uint32_t instance, int *ptr, int length);
 
 /*!
  * @brief uSDHC Controller reads data
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param dst_ptr      Pointer for data destination
  * @param length       Data length to be reading
  * @param wml          Watermark for data reading
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int host_data_read(uint32_t instance, int *dst_ptr, int length, int wml);
 
 /*!
  * @brief uSDHC Controller writes data
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param src_ptr      Pointer of data source
  * @param length       Data length to be writen
  * @param wml          Watermark for data writing
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int host_data_write(uint32_t instance, int *src_ptr, int length, int wml);

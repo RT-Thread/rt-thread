@@ -77,7 +77,7 @@
  * it can be used for precision measurement of speed, acceleration, and position
  * of a motor's rotor and with rotary knobs to determine user input. The SAMB11
  * contains 3 Quadrature Decoder. Each one may be programmed independently.
- * The Quadrature Decoder require initialization prior to being enabled. 
+ * The Quadrature Decoder require initialization prior to being enabled.
  * Quadrature Decoder is a flexible fully configurable module which has the following features:
  *
  *   - 3 independent configurable Quadrature Decoder blocks.
@@ -158,12 +158,12 @@ typedef void (*quad_decoder_callback_t)(void);
  * Values is the axis(x,y,z) of QUAD DECODER instance.
  */
 enum quad_decoder_axis {
-	/** AXIS X */
-	QDEC_AXIS_X = 0,
-	/** AXIS Y */
-	QDEC_AXIS_Y,
-	/** AXIS Z */
-	QDEC_AXIS_Z,
+    /** AXIS X */
+    QDEC_AXIS_X = 0,
+    /** AXIS Y */
+    QDEC_AXIS_Y,
+    /** AXIS Z */
+    QDEC_AXIS_Z,
 };
 
 /**
@@ -173,14 +173,14 @@ enum quad_decoder_axis {
  *
  */
 enum quad_decoder_clock_input {
-	/** Source from clock input 0: 26MHz */
-	QDEC_CLK_INPUT_0 = 0,
-	/** Source from clock input 1: 13MHz */
-	QDEC_CLK_INPUT_1,
-	/** Source from clock input 2: 6.5MHz */
-	QDEC_CLK_INPUT_2,
-	/** Source from clock input 3: 3MHz */
-	QDEC_CLK_INPUT_3,
+    /** Source from clock input 0: 26MHz */
+    QDEC_CLK_INPUT_0 = 0,
+    /** Source from clock input 1: 13MHz */
+    QDEC_CLK_INPUT_1,
+    /** Source from clock input 2: 6.5MHz */
+    QDEC_CLK_INPUT_2,
+    /** Source from clock input 3: 3MHz */
+    QDEC_CLK_INPUT_3,
 };
 
 /**
@@ -189,18 +189,18 @@ enum quad_decoder_clock_input {
  * Private configuration struct for Quad Decoder instance.
  */
 struct quad_decoder_private_config {
-	/** Quad Decoder Source Clock Frequency Select */
-	enum quad_decoder_clock_input clock_sel;
-	/** Upper Threshold of counter for Quad Decoder */
-	int16_t threshold_upper;
-	/** Lower Threshold of counter for Quad Decoder */
-	int16_t threshold_lower;
-	/** Dec_in_a pin number */
-	/** Dec_in_b pin number */
-	uint32_t pin_number_pad[2];
-	/** Dec_in_a pinmux selection */
-	/** Dec_in_b pinmux selection */
-	uint32_t pinmux_sel_pad[2];
+    /** Quad Decoder Source Clock Frequency Select */
+    enum quad_decoder_clock_input clock_sel;
+    /** Upper Threshold of counter for Quad Decoder */
+    int16_t threshold_upper;
+    /** Lower Threshold of counter for Quad Decoder */
+    int16_t threshold_lower;
+    /** Dec_in_a pin number */
+    /** Dec_in_b pin number */
+    uint32_t pin_number_pad[2];
+    /** Dec_in_a pinmux selection */
+    /** Dec_in_b pinmux selection */
+    uint32_t pinmux_sel_pad[2];
 };
 
 /**
@@ -212,10 +212,10 @@ struct quad_decoder_private_config {
  * before being modified by the user application.
  */
 struct quad_decoder_config {
-	uint8_t qdec_enalbe;
-	struct quad_decoder_private_config qdec0;
-	struct quad_decoder_private_config qdec1;
-	struct quad_decoder_private_config qdec2;
+    uint8_t qdec_enalbe;
+    struct quad_decoder_private_config qdec0;
+    struct quad_decoder_private_config qdec1;
+    struct quad_decoder_private_config qdec2;
 };
 
 /**
@@ -223,7 +223,7 @@ struct quad_decoder_config {
  * @{
  */
 void quad_decoder_get_config_defaults(
-		struct quad_decoder_config *config);
+        struct quad_decoder_config *config);
 void quad_decoder_init(const struct quad_decoder_config *config);
 /** @} */
 
@@ -247,7 +247,7 @@ int16_t quad_decoder_get_counter(enum quad_decoder_axis qdec);
  * @{
  */
 void quad_decoder_register_callback(enum quad_decoder_axis qdec,
-		quad_decoder_callback_t fun);
+        quad_decoder_callback_t fun);
 void quad_decoder_unregister_callback(enum quad_decoder_axis qdec);
 /** @} */
 
@@ -263,14 +263,14 @@ void quad_decoder_unregister_callback(enum quad_decoder_axis qdec);
  * Below is a table listing the acronyms used in this module, along with their
  * intended meanings.
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>Quadrature Decoder</td>
- *		<td>Quadrature Decoder</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Quadrature Decoder</td>
+ *      <td>Quadrature Decoder</td>
+ *  </tr>
  * </table>
  *
  * \section asfdoc_samb_quad_decoder_extra_dependencies Dependencies

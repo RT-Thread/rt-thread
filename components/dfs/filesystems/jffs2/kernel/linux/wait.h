@@ -2,7 +2,7 @@
 #define __LINUX_WAIT_H__
 
 
-#if defined (__GNUC__)    
+#if defined (__GNUC__)
 typedef struct { } wait_queue_head_t;
 #elif defined (MSVC)
 typedef struct {int no; } wait_queue_head_t;

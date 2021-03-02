@@ -54,15 +54,15 @@
 #  define CONF_SPI_MASTER_VEC_OS_SUPPORT
 #  define CONF_SPI_MASTER_VEC_SEMAPHORE_TYPE                   xSemaphoreHandle
 #  define CONF_SPI_MASTER_VEC_CREATE_SEMAPHORE(semaphore)  \
-		vSemaphoreCreateBinary(semaphore)
+        vSemaphoreCreateBinary(semaphore)
 #  define CONF_SPI_MASTER_VEC_DELETE_SEMAPHORE(semaphore)  \
-		vSemaphoreDelete(semaphore)
+        vSemaphoreDelete(semaphore)
 #  define CONF_SPI_MASTER_VEC_TAKE_SEMAPHORE(semaphore)  \
-		xSemaphoreTake((semaphore), portMAX_DELAY)
+        xSemaphoreTake((semaphore), portMAX_DELAY)
 #  define CONF_SPI_MASTER_VEC_GIVE_SEMAPHORE(semaphore)  \
-		xSemaphoreGive((semaphore))
+        xSemaphoreGive((semaphore))
 #  define CONF_SPI_MASTER_VEC_GIVE_SEMAPHORE_FROM_ISR(semaphore)  \
-		xSemaphoreGiveFromISR((semaphore), NULL)
+        xSemaphoreGiveFromISR((semaphore), NULL)
 #endif
 
 #endif // CONF_SPI_MASTER_VEC_H

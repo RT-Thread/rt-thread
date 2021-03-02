@@ -1,6 +1,6 @@
 #include <rtthread.h>
 
-#include <sys/socket.h> /* ä½¿ç”¨BSD socketï¼Œéœ€è¦åŒ…å«sockets.hå¤´æ–‡ä»¶ */
+#include <sys/socket.h> /* Ê¹ÓÃBSD socket£¬ĞèÒª°üº¬sockets.hÍ·ÎÄ¼ş */
 #include "netdb.h"
 
 #define DEBUG_UDP_CLIENT
@@ -18,7 +18,7 @@ static int is_running = 0;
 static char url[256];
 static int port = 8080;
 static int count = 10;
-const char send_data[] = "This is UDP Client from RT-Thread.\n"; /* å‘é€ç”¨åˆ°çš„æ•°æ® */
+const char send_data[] = "This is UDP Client from RT-Thread.\n"; /* ·¢ËÍÓÃµ½µÄÊı¾İ */
 
 static void udpclient(void *arg)
 {
@@ -26,7 +26,7 @@ static void udpclient(void *arg)
     struct hostent *host;
     struct sockaddr_in server_addr;
 
-    /* é€šè¿‡å‡½æ•°å…¥å£å‚æ•°urlè·å¾—hoståœ°å€ï¼ˆå¦‚æœæ˜¯åŸŸåï¼Œä¼šåšåŸŸåè§£æï¼‰ */
+    /* Í¨¹ıº¯ÊıÈë¿Ú²ÎÊıurl»ñµÃhostµØÖ·£¨Èç¹ûÊÇÓòÃû£¬»á×öÓòÃû½âÎö£© */
     host = (struct hostent *) gethostbyname(url);
     if (host == RT_NULL)
     {
@@ -34,14 +34,14 @@ static void udpclient(void *arg)
         return;
     }
 
-    /* åˆ›å»ºä¸€ä¸ªsocketï¼Œç±»å‹æ˜¯SOCK_DGRAMï¼ŒUDPç±»å‹ */
+    /* ´´½¨Ò»¸ösocket£¬ÀàĞÍÊÇSOCK_DGRAM£¬UDPÀàĞÍ */
     if ((sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
         LOG_E("Create socket error");
         return;
     }
 
-    /* åˆå§‹åŒ–é¢„è¿æ¥çš„æœåŠ¡ç«¯åœ°å€ */
+    /* ³õÊ¼»¯Ô¤Á¬½ÓµÄ·şÎñ¶ËµØÖ· */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr = *((struct in_addr *)host->h_addr);
@@ -50,17 +50,17 @@ static void udpclient(void *arg)
     started = 1;
     is_running = 1;
 
-    /* æ€»è®¡å‘é€countæ¬¡æ•°æ® */
+    /* ×Ü¼Æ·¢ËÍcount´ÎÊı¾İ */
     while (count && is_running)
     {
-        /* å‘é€æ•°æ®åˆ°æœåŠ¡è¿œç«¯ */
+        /* ·¢ËÍÊı¾İµ½·şÎñÔ¶¶Ë */
         sendto(sock, send_data, rt_strlen(send_data), 0,
                (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
 
-        /* çº¿ç¨‹ä¼‘çœ ä¸€æ®µæ—¶é—´ */
+        /* Ïß³ÌĞİÃßÒ»¶ÎÊ±¼ä */
         rt_thread_mdelay(1000);
 
-        /* è®¡æ•°å€¼å‡ä¸€ */
+        /* ¼ÆÊıÖµ¼õÒ» */
         count --;
     }
 
@@ -69,7 +69,7 @@ static void udpclient(void *arg)
         LOG_I("UDP client send data finished!");
     }
 
-    /* å…³é—­è¿™ä¸ªsocket */
+    /* ¹Ø±ÕÕâ¸ösocket */
     if (sock >= 0)
     {
         closesocket(sock);

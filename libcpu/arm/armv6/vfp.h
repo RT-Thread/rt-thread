@@ -87,7 +87,7 @@
  })
 
 #define vmsr(vfp, var) \
-    asm("vmsr  "#vfp",  %0"	\
+    asm("vmsr  "#vfp",  %0" \
        : : "r" (var) : "cc")
 
 

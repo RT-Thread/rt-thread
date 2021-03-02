@@ -227,7 +227,7 @@ enum _i2c_slave_flags
     kI2C_SlaveSelected = I2C_STAT_SLVSEL_MASK, /*!< Indicates whether the slave is selected by an address match. */
     kI2C_SaveDeselected = I2C_STAT_SLVDESEL_MASK /*!< Indicates that slave was previously deselected (deselect event took place, w1c). */
 };
- 
+
 /*! @brief I2C slave address register. */
 typedef enum _i2c_slave_address_register
 {

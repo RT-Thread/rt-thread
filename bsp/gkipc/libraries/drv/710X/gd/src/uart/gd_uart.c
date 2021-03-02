@@ -472,14 +472,14 @@ GERR GD_UART_Init(GD_UART_INIT_PARAMS_S *initParamsP)
     }
 
     GH_PLL_set_SCALER_UART_Div(0x1);//div_uart = 1
-    
+
     g_uart_state_machine_data[0].RxBuffer = g_uart0_rx_buffer;
     g_uart_state_machine_data[0].TxBuffer = g_uart0_tx_buffer;
     g_uart_state_machine_data[1].RxBuffer = g_uart1_rx_buffer;
     g_uart_state_machine_data[1].TxBuffer = g_uart1_tx_buffer;
     g_uart_state_machine_data[2].RxBuffer = g_uart2_rx_buffer;
     g_uart_state_machine_data[2].TxBuffer = g_uart2_tx_buffer;
-    
+
     g_uart_state_machine_data[0].RxBufSize = UART0_RX_BUF_SIZE;
     g_uart_state_machine_data[0].TxBufSize = UART0_TX_BUF_SIZE;
     g_uart_state_machine_data[1].RxBufSize = UART1_RX_BUF_SIZE;
@@ -582,19 +582,19 @@ GERR GD_UART_Open(GD_UART_OPEN_PARAMS_S *openParamsP, GD_HANDLE *handleP)
 
         //if(openParamsP->paramsP->protocol == GD_UART_HARDWARE) /* use CTS/RTS protocol */
     }
-    
+
     if (openParamsP->NotifyFunction)
     {
         uart_handle_ptr->NotifyFunction = openParamsP->NotifyFunction;
     }
     if(uart_handle_ptr->interruptEnable)
-    {        
+    {
         GH_UART_set_FCR_FIFO_Enable(uart_handle_ptr->channel, 1);
         GH_UART_set_FCR_RCVR_Trigger(uart_handle_ptr->channel, UART_FC_RX_2_TO_FULL);
         GH_UART_set_FCR_TX_Empty_Trigger(uart_handle_ptr->channel, UART_FC_TX_EMPTY);
         GH_UART_set_FCR_XMIT_FIFO_Reset(uart_handle_ptr->channel, 1);
         GH_UART_set_FCR_RCVR_FIFO_Reset(uart_handle_ptr->channel, 1);
-        
+
         GH_UART_set_IER_etbei(uart_handle_ptr->channel, 0); //Turn off THRE interrupt
 
         //0108 hhl add for interrupt-mode test
@@ -619,10 +619,10 @@ GERR GD_UART_Open(GD_UART_OPEN_PARAMS_S *openParamsP, GD_HANDLE *handleP)
             GH_UART_set_IER_elsi(2,1);
         }
         /*************0108 hhl add (end)***********/
-        
+
     }
-	else
-    	GH_UART_set_FCR_FIFO_Enable(uart_handle_ptr->channel, 1);
+    else
+        GH_UART_set_FCR_FIFO_Enable(uart_handle_ptr->channel, 1);
 
     return GD_OK;
 }
@@ -735,29 +735,29 @@ GERR GD_UART_Read(GD_HANDLE handle, U8 *bufferP, U16 desiredReadBytes, U16 *actu
 /***************0108 hhl add (head)**************/
 GERR GD_UART_Set_IntMode(U8 channel)
 {
-    
+
     GD_UART_STATE_MACHINE_S* uart_handle_ptr = NULL;
     GD_INT_OPEN_PARAMS_S intParams;
     GD_INT_HANDLER_F uartP = uartHandler;
     GD_INT_HANDLER_F uart1P = uart1Handler;
     GD_INT_HANDLER_F uart2P = uart2Handler;
     GERR                 ret = GD_OK;
-    
+
     if(channel>2)
         return GD_ERR_BAD_PARAMETER;
-    
+
     uart_handle_ptr = &(g_uart_state_machine_data[channel]);
     if(uart_handle_ptr->inUse == GFALSE)
         return GD_ERR_NOT_INITIALIZED;
-    
+
     if(uart_handle_ptr->interruptEnable )
     {
         //if(uart_intr_flag == 0)
-        //{ 
+        //{
             intParams.sensitivity    = GD_INT_LEVEL_HIGH;    //hhl note: check this value.
             intParams.active         = GD_INT_INVERT_IRQ;
             intParams.priority       = GD_INT_MID_PRIORITY;
-            
+
             if(channel == 0)
             {
                 intParams.type           = (S8)GD_INT_UART_IRQ;
@@ -776,9 +776,9 @@ GERR GD_UART_Set_IntMode(U8 channel)
                 intParams.isrFct.lowPrio = uart2ISR;
                 ret = GD_INT_Open(&intParams, &int2Handle);
             }
-                        
+
             if(ret != GD_OK) return ret;
-    
+
             /* Register interrupt handler function */
             if(channel == 0)
                 GD_INT_SetHandler( intParams.type, uartP );
@@ -789,12 +789,12 @@ GERR GD_UART_Set_IntMode(U8 channel)
 
         //    uart_intr_flag = 1;
         //}
-    
+
         //GH_UART_set_Imsc_Rxim(uart_handle_ptr->channel, 1);
         //GH_UART_set_Imsc_Txim(uart_handle_ptr->channel, 0);
         //GH_UART_set_Imsc_Rtim(uart_handle_ptr->channel, 1);
         //GH_UART_set_Imsc_Oeim(uart_handle_ptr->channel, 1);
-        
+
         //GH_UART_set_FCR_RCVR_Trigger(uart_handle_ptr->channel, 0);
         //GH_UART_set_FCR_TX_Empty_Trigger(uart_handle_ptr->channel, 3);
     }
@@ -802,7 +802,7 @@ GERR GD_UART_Set_IntMode(U8 channel)
     {
         GM_Printf("err call function: GD_UART_Set_IntMode!  \n");
     }
-    
+
 }
 /***************0108 hhl add (end)**************/
 
@@ -1212,7 +1212,7 @@ GERR GD_UART_Write(GD_HANDLE handle, U8 *bufferP, U16 bufferSize)
         intFlag = 1;
     }
 
-    
+
     for(i=0; i<bufferSize; i++)
     {
         if((uart_handle_ptr->interruptEnable) && intFlag)
@@ -1230,7 +1230,7 @@ GERR GD_UART_Write(GD_HANDLE handle, U8 *bufferP, U16 bufferSize)
                     uart_handle_ptr->TxBufCounter--;
                     uart_handle_ptr->UartStatics.numTransmittedChar++;
             }
-            
+
             /* If TxBuffer is not full, fill data into TxBuffer to prepare for transmitting */
             uart_handle_ptr->TxBuffer[uart_handle_ptr->TxBufWrite++] = *bufferP++;
             uart_handle_ptr->TxBufCounter++;
@@ -1248,7 +1248,7 @@ GERR GD_UART_Write(GD_HANDLE handle, U8 *bufferP, U16 bufferSize)
             GH_UART_set_THR_Data(uart_handle_ptr->channel, *bufferP++);
             uart_handle_ptr->UartStatics.numTransmittedChar++;
             writeCnt++;
-        }        
+        }
     }
     if((uart_handle_ptr->interruptEnable) && intFlag)
     {
@@ -1408,7 +1408,7 @@ GERR GD_UART_Receive_Chars(GD_UART_STATE_MACHINE_S *handle, U32 timeout)
     {
         rxBufState = RX_BUFFER_STATE_EMPTY;
     }
-    
+
     do {
         if (line_status_BI || line_status_FE || line_status_PE || line_status_OE)
         {
@@ -1420,7 +1420,7 @@ GERR GD_UART_Receive_Chars(GD_UART_STATE_MACHINE_S *handle, U32 timeout)
                 line_status_FE = GH_UART_get_LSR_fe(uart_handle_ptr->channel);
                 line_status_PE = GH_UART_get_LSR_pe(uart_handle_ptr->channel);
                 line_status_OE = GH_UART_get_LSR_oe(uart_handle_ptr->channel);
-                line_status_DR = GH_UART_get_LSR_dr(uart_handle_ptr->channel);                
+                line_status_DR = GH_UART_get_LSR_dr(uart_handle_ptr->channel);
                 continue;
             }
             if (line_status_FE)
@@ -1467,7 +1467,7 @@ GERR GD_UART_Receive_Chars(GD_UART_STATE_MACHINE_S *handle, U32 timeout)
                 GM_Printf("False timeout get %d\n", character);
             }
         }
-        
+
         line_status_BI = GH_UART_get_LSR_bi(uart_handle_ptr->channel);
         line_status_FE = GH_UART_get_LSR_fe(uart_handle_ptr->channel);
         line_status_PE = GH_UART_get_LSR_pe(uart_handle_ptr->channel);
@@ -1490,8 +1490,8 @@ GERR GD_UART_Receive_Chars(GD_UART_STATE_MACHINE_S *handle, U32 timeout)
 **
 *******************************************************************************
 */
-    
-    
+
+
 
 /*---------------------------------------------------------------------------*/
 /* local  functions                                                          */
@@ -1705,7 +1705,7 @@ static GD_INT_DATA_S* uart1Handler(void)
     //0111 hhl modify
     uartData.IRQStatus = GH_UART_get_LSR(1);    //ori
     //uartData.IRQStatus = GH_UART_get_IIR(1);    //hhl
-    
+
     return(&intData);
 }
 /*
@@ -1729,7 +1729,7 @@ static GD_INT_DATA_S* uart2Handler(void)
     //0111 hhl modify
     uartData.IRQStatus = GH_UART_get_LSR(2);    //ori
     //uartData.IRQStatus = GH_UART_get_IIR(2);    //hhl
-    
+
     return(&intData);
 }
 
@@ -1835,7 +1835,7 @@ static void uartProcessor(void* data)
     U8 int_id = 0;
     U8 data = 0;
     GD_HANDLE handleP = (GD_HANDLE)(&(g_uart_state_machine_data[0]));
-     
+
     int_id = GH_UART_get_IIR_interrupt_id(0);
 
     if(handleP == NULL)
@@ -1934,7 +1934,7 @@ static void uart1Processor(void* data)
     U8 int_id = 0;
     U8 tem_data = 0;
     GD_HANDLE handleP = (GD_HANDLE)(&(g_uart_state_machine_data[1]));
-     
+
     int_id = GH_UART_get_IIR_interrupt_id(1);
 
     if(handleP == NULL)
@@ -2032,7 +2032,7 @@ static void uart2Processor(void* data)
     U8 int_id = 0;
     U8 tem_data = 0;
     GD_HANDLE handleP = (GD_HANDLE)(&(g_uart_state_machine_data[2]));
-     
+
     int_id = GH_UART_get_IIR_interrupt_id(2);
 
     if(handleP == NULL)

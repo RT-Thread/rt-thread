@@ -15,14 +15,14 @@
 extern "C" {
 #endif
 
-unsigned int Wdog_Init(void);                   // æš‚æ—¶ä¸ºç©º
-unsigned int Wdog_Enable(void);                 // çœ‹é—¨ç‹—ä½¿èƒ½å¯„å­˜å™¨ï¼ˆWDT_ENï¼‰
-unsigned int Wdog_Disable(void);                // çœ‹é—¨ç‹—å¤±èƒ½å¯„å­˜å™¨ï¼ˆWDT_ENï¼‰
-unsigned int Wdog_Set(void);                    // çœ‹é—¨ç‹—è®¾ç½®å¯„å­˜å™¨ (WDT_SET)
-unsigned int Wdog_Reset(void);                  // çœ‹é—¨ç‹—è®¾ç½®å¯„å­˜å™¨ (WDT_SET)
-unsigned int Wdog_GetValue(void);               // èŽ·å¾—çœ‹é—¨ç‹—è®¡æ•°å™¨ï¼ˆWDT_timerï¼‰
-unsigned int Wdog_LoadValue(unsigned int cnt);  // è®¾ç½®çœ‹é—¨ç‹—è®¡æ•°å™¨ï¼ˆWDT_timerï¼‰
-unsigned int Wdog_GetPreValue(void);            // èŽ·å¾—çœ‹é—¨ç‹—è®¡æ•°å™¨è®¾å®šå€¼
+unsigned int Wdog_Init(void);                   // ÔÝÊ±Îª¿Õ
+unsigned int Wdog_Enable(void);                 // ¿´ÃÅ¹·Ê¹ÄÜ¼Ä´æÆ÷£¨WDT_EN£©
+unsigned int Wdog_Disable(void);                // ¿´ÃÅ¹·Ê§ÄÜ¼Ä´æÆ÷£¨WDT_EN£©
+unsigned int Wdog_Set(void);                    // ¿´ÃÅ¹·ÉèÖÃ¼Ä´æÆ÷ (WDT_SET)
+unsigned int Wdog_Reset(void);                  // ¿´ÃÅ¹·ÉèÖÃ¼Ä´æÆ÷ (WDT_SET)
+unsigned int Wdog_GetValue(void);               // »ñµÃ¿´ÃÅ¹·¼ÆÊýÆ÷£¨WDT_timer£©
+unsigned int Wdog_LoadValue(unsigned int cnt);  // ÉèÖÃ¿´ÃÅ¹·¼ÆÊýÆ÷£¨WDT_timer£©
+unsigned int Wdog_GetPreValue(void);            // »ñµÃ¿´ÃÅ¹·¼ÆÊýÆ÷Éè¶¨Öµ
 
 #ifdef __cplusplus
 }

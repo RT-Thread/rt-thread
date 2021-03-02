@@ -38,36 +38,36 @@ extern "C" {
 typedef struct
 {
     uint32_t DMA_PeripheralBaseAddr;        /*!< Specifies the peripheral base address for DMAy Channelx. */
-                                            
+
     uint32_t DMA_MemoryBaseAddr;            /*!< Specifies the memory base address for DMAy Channelx. */
-                                            
+
     uint32_t DMA_Direction;                 /*!< Specifies if the peripheral is the source or destination.
                                                This parameter can be a value of @ref DMA_data_transfer_direction */
-                                            
+
     uint32_t DMA_BufferSize;                /*!< Specifies the buffer size, in data unit, of the specified Channel.
                                                The data unit is equal to the configuration set in DMA_PeripheralDataWidth
                                                or DMA_MemoryDataWidth members depending in the transfer direction. */
-                                            
+
     uint32_t DMA_PeripheralInc;             /*!< Specifies whether the Peripheral address register is incremented or not.
                                                This parameter can be a value of @ref DMA_peripheral_incremented_mode */
-                                            
+
     uint32_t DMA_MemoryInc;                 /*!< Specifies whether the memory address register is incremented or not.
                                                This parameter can be a value of @ref DMA_memory_incremented_mode */
-                                            
+
     uint32_t DMA_PeripheralDataWidth;       /*!< Specifies the Peripheral data width.
                                                This parameter can be a value of @ref DMA_peripheral_data_size */
-                                            
+
     uint32_t DMA_MemoryDataWidth;           /*!< Specifies the Memory data width.
                                                This parameter can be a value of @ref DMA_memory_data_size */
-                                            
+
     uint32_t DMA_Mode;                      /*!< Specifies the operation mode of the DMAy Channelx.
                                                This parameter can be a value of @ref DMA_circular_normal_mode.
                                                @note: The circular buffer mode cannot be used if the memory-to-memory
                                                      data transfer is configured on the selected Channel */
-                                            
+
     uint32_t DMA_Priority;                  /*!< Specifies the software priority for the DMAy Channelx.
                                                This parameter can be a value of @ref DMA_priority_level */
-                                            
+
     uint32_t DMA_MTOM;                      /*!< Specifies if the DMAy Channelx will be used in memory-to-memory transfer.
                                                This parameter can be a value of @ref DMA_memory_to_memory */
 } DMA_InitType;

@@ -44,50 +44,50 @@ extern "C" {
  */
 
 /**
- * @brief	Get memory size in bytes needed for I2C monitor driver context
- * @return	Size in bytes needed for the ROM driver
+ * @brief   Get memory size in bytes needed for I2C monitor driver context
+ * @return  Size in bytes needed for the ROM driver
  */
 uint32_t ROM_I2CMON_GetMemSize(void);
 
 /**
- * @brief	Initialize I2C monitor peripheral
- * @param	mem		: Pointer to memory area used to driver context
- * @param	pInit	: Pointer to I2C monitor init data
- * @return	NULL on error, or a pointer to the device context handle
+ * @brief   Initialize I2C monitor peripheral
+ * @param   mem     : Pointer to memory area used to driver context
+ * @param   pInit   : Pointer to I2C monitor init data
+ * @return  NULL on error, or a pointer to the device context handle
  */
 ROM_I2CMON_HANDLE_T ROM_I2CMON_Init(void *mem, ROM_I2CMON_INIT_T *pInit);
 
 /**
- * @brief	Register a I2C monitor callback
- * @param	pHandle	: Pointer to driver context handle
- * @param	cbIndex	: Callback to register
- * @param	pCB		: Pointer to callback function
- * @return	Nothing
+ * @brief   Register a I2C monitor callback
+ * @param   pHandle : Pointer to driver context handle
+ * @param   cbIndex : Callback to register
+ * @param   pCB     : Pointer to callback function
+ * @return  Nothing
  */
 void ROM_I2CMON_RegisterCallback(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CALLBACK_T cbIndex, void *pCB);
 
 /**
- * @brief	Start I2C monitoring
- * @param	pHandle	: Pointer to driver context handle
- * @param	pCap	: Pointer to capture monitor configuration
- * @return	Error code
- * @note	This function starts the transfer and returns immediately.
+ * @brief   Start I2C monitoring
+ * @param   pHandle : Pointer to driver context handle
+ * @param   pCap    : Pointer to capture monitor configuration
+ * @return  Error code
+ * @note    This function starts the transfer and returns immediately.
  */
 ErrorCode_t ROM_I2CMON_StartLog(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CAP_T *pCap);
 
 /**
- * @brief	I2C monitor transfer (interrupt) handler
- * @param	pHandle	: Pointer to driver context handle
- * @return	Nothing
- * @note	This function should be called from the I2C interrupt handler and
+ * @brief   I2C monitor transfer (interrupt) handler
+ * @param   pHandle : Pointer to driver context handle
+ * @return  Nothing
+ * @note    This function should be called from the I2C interrupt handler and
  * is used in interrupt and DMA modes.
  */
 void ROM_I2CMON_TransferHandler(ROM_I2CMON_HANDLE_T pHandle);
 
 /**
- * @brief	Return the I2C monitor ROM driver version
- * @return	Driver version number
- * @note	The returned driver version number consists of a major and minor
+ * @brief   Return the I2C monitor ROM driver version
+ * @return  Driver version number
+ * @note    The returned driver version number consists of a major and minor
  * number, with the minor number in the lower 8 bits and the major number in
  * the upper 8 bits.
  */

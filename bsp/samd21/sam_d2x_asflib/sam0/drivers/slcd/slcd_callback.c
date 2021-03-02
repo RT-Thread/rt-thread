@@ -72,15 +72,15 @@ slcd_callback_t slcd_callback_pointer[SLCD_CALLBACK_TYPE_NUM];
  */
 
 enum status_code slcd_register_callback(
-	const slcd_callback_t callback,
-	const enum slcd_callback_type type)
+    const slcd_callback_t callback,
+    const enum slcd_callback_type type)
 {
-	if (type >= SLCD_CALLBACK_TYPE_NUM){
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type >= SLCD_CALLBACK_TYPE_NUM){
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	slcd_callback_pointer[type] = callback;
-	return STATUS_OK;
+    slcd_callback_pointer[type] = callback;
+    return STATUS_OK;
 }
 
 /**
@@ -95,15 +95,15 @@ enum status_code slcd_register_callback(
  */
 
 enum status_code slcd_unregister_callback(
-	const slcd_callback_t callback,
-	const enum slcd_callback_type type)
+    const slcd_callback_t callback,
+    const enum slcd_callback_type type)
 {
-	if (type >= SLCD_CALLBACK_TYPE_NUM){
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type >= SLCD_CALLBACK_TYPE_NUM){
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	slcd_callback_pointer[type] = NULL;
-	return STATUS_OK;
+    slcd_callback_pointer[type] = NULL;
+    return STATUS_OK;
 }
 
 /**
@@ -111,15 +111,15 @@ enum status_code slcd_unregister_callback(
 */
 void SLCD_Handler(void)
 {
-	uint32_t status = SLCD->INTFLAG.reg;
-	for (uint8_t i = 0; i < SLCD_CALLBACK_TYPE_NUM; i++) {
-		if (status & (1 << i)) {
-			/* Clear the INTFLAG anyway */
-			SLCD->INTFLAG.reg = 1 << i;
+    uint32_t status = SLCD->INTFLAG.reg;
+    for (uint8_t i = 0; i < SLCD_CALLBACK_TYPE_NUM; i++) {
+        if (status & (1 << i)) {
+            /* Clear the INTFLAG anyway */
+            SLCD->INTFLAG.reg = 1 << i;
 
-			if (slcd_callback_pointer[i]) {
-				slcd_callback_pointer[i]((enum slcd_callback_type)i);
-			}
-		}
-	}
+            if (slcd_callback_pointer[i]) {
+                slcd_callback_pointer[i]((enum slcd_callback_type)i);
+            }
+        }
+    }
 }

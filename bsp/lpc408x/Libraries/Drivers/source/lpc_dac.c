@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -81,7 +81,7 @@ void DAC_Init(uint8_t DAC_Id)
      * Init DAC pin connect
      * AOUT on P0.26
      */
-    PINSEL_ConfigPin(0, 26, 2);                              
+    PINSEL_ConfigPin(0, 26, 2);
 
     PINSEL_SetAnalogPinMode(0,26,ENABLE);
 

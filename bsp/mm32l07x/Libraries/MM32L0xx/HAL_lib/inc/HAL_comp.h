@@ -4,14 +4,14 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief   This file contains all the functions prototypes for the COMP firmware 
+* @brief   This file contains all the functions prototypes for the COMP firmware
 *          library.
 ******************************************************************************
 * @attention
 *
 * <h2><center>&copy; 2017 MindMotion</center></h2>
 ******************************************************************************
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_COMP_H
@@ -20,71 +20,71 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
+
   /* Includes ------------------------------------------------------------------*/
 #include "HAL_device.h"
-  
-  /** @addtogroup 
+
+  /** @addtogroup
   * @{
   */
-  
+
   /** @addtogroup COMP
   * @{
   */
-  
+
   /* Exported types ------------------------------------------------------------*/
-  
-  /** 
-  * @brief  COMP Init structure definition  
+
+  /**
+  * @brief  COMP Init structure definition
   */
-  
+
   typedef struct
   {
-    
+
     uint32_t COMP_InvertingInput;     /*!< Selects the inverting input of the comparator.
     This parameter can be a value of @ref COMP_InvertingInput */
-    
+
     uint32_t COMP_NonInvertingInput;  /*!< Selects the non inverting input of the comparator.
     This parameter can be a value of @ref COMP_NonInvertingInput */
-    
+
     uint32_t COMP_Output;             /*!< Selects the output redirection of the comparator.
     This parameter can be a value of @ref COMP_Output */
-    
+
     uint32_t COMP_BlankingSrce;      /*!< Selects the output blanking source of the comparator.
     This parameter can be a value of @ref COMP_BlankingSrce */
-    
+
     uint32_t COMP_OutputPol;           /*!< Selects the output polarity of the comparator.
     This parameter can be a value of @ref COMP_OutputPoloarity */
-    
+
     uint32_t COMP_Hysteresis;         /*!< Selects the hysteresis voltage of the comparator.
     This parameter can be a value of @ref COMP_Hysteresis */
-    
+
     uint32_t COMP_Mode;               /*!< Selects the operating mode of the comparator
     and allows to adjust the speed/consumption.
     This parameter can be a value of @ref COMP_Mode */
-    
+
   }COMP_InitTypeDef;
-  
+
   /* Exported constants --------------------------------------------------------*/
-  
+
   /** @defgroup COMP_Exported_Constants
   * @{
-  */ 
-  
+  */
+
   /** @defgroup COMP_Selection
   * @{
   */
-  
+
 #define COMP_Selection_COMP1                    ((uint32_t)0x00000000) /*!< COMP1 Selection */
 #define COMP_Selection_COMP2                    ((uint32_t)0x00000004) /*!< COMP2 Selection */
-  
-  
+
+
 #define IS_COMP_ALL_PERIPH(PERIPH) (((PERIPH) == COMP_Selection_COMP1) || \
   ((PERIPH) == COMP_Selection_COMP2))
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup COMP_InvertingInput
 * @{
@@ -110,7 +110,7 @@ extern "C" {
             ((INPUT) == COMP_InvertingInput_IO2))
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup COMP_NonInvertingInput
 * @{
@@ -144,7 +144,7 @@ extern "C" {
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup COMP_Output
 * @{
@@ -164,7 +164,7 @@ extern "C" {
 #define COMP_Output_TIM3OCREFCLR          ((uint32_t)0x00002C00)   /*!< COMP output connected to TIM3 OCREF Clear */
 
 
-#define IS_COMP_OUTPUT(OUTPUT) 		(((OUTPUT) == COMP_Output_None)  || \
+#define IS_COMP_OUTPUT(OUTPUT)      (((OUTPUT) == COMP_Output_None)  || \
 ((OUTPUT) == COMP_Output_TIM1BKIN)  || \
   ((OUTPUT) == COMP_Output_TIM1IC1)  || \
     ((OUTPUT) == COMP_Output_TIM1OCREFCLR)  || \
@@ -175,7 +175,7 @@ extern "C" {
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup COMP_BlankingSrce
 * @{
@@ -185,11 +185,11 @@ extern "C" {
 #define COMP_BlankingSrce_None                   ((uint32_t)0x00000000)    /*!< No blanking source */
 
 
-#define IS_COMP_BLANKING_SOURCE(SOURCE) (((SOURCE) == COMP_BlankingSrce_None))   
+#define IS_COMP_BLANKING_SOURCE(SOURCE) (((SOURCE) == COMP_BlankingSrce_None))
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup COMP_OutputPoloarity
 * @{
@@ -202,7 +202,7 @@ extern "C" {
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup COMP_Hysteresis
 * @{
@@ -242,7 +242,7 @@ the power consumption values */
 
 /** @defgroup COMP_OutputLevel
 * @{
-*/ 
+*/
 /* When output polarity is not inverted, comparator output is high when
 the non-inverting input is at a higher voltage than the inverting input */
 #define COMP_OutputLevel_High                   ((uint32_t)0x40000000)
@@ -252,7 +252,7 @@ the non-inverting input is at a lower voltage than the inverting input*/
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup COMP_WindowMode
 * @{
@@ -266,7 +266,7 @@ the non-inverting input is at a lower voltage than the inverting input*/
 
 /**
 * @}
-*/ 
+*/
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
@@ -292,7 +292,7 @@ void COMP_LockConfig(uint32_t COMP_Selection);
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}

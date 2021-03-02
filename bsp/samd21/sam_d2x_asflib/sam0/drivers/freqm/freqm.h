@@ -138,11 +138,11 @@ typedef void (*freqm_callback_t)(void);
 
 /** Enum for possible callback types for the FREQM module. */
 enum freqm_callback {
-	/** Callback for measurement done */
-	FREQM_CALLBACK_DONE = 0,
-	/** Number of available callbacks */
+    /** Callback for measurement done */
+    FREQM_CALLBACK_DONE = 0,
+    /** Number of available callbacks */
 #if !defined(__DOXYGEN__)
-	FREQM_CALLBACK_N,
+    FREQM_CALLBACK_N,
 #endif
 };
 #endif
@@ -158,25 +158,25 @@ enum freqm_callback {
  */
 struct freqm_module {
 #if !defined(__DOXYGEN__)
-	/** Hardware module pointer of the associated FREQM peripheral */
-	Freqm *hw;
-	/** The frequency of reference clock in Hz*/
-	uint32_t ref_clock_freq;
+    /** Hardware module pointer of the associated FREQM peripheral */
+    Freqm *hw;
+    /** The frequency of reference clock in Hz*/
+    uint32_t ref_clock_freq;
 #  if FREQM_CALLBACK_MODE == true
-	/** Array of callbacks */
-	freqm_callback_t callback[FREQM_CALLBACK_N];
+    /** Array of callbacks */
+    freqm_callback_t callback[FREQM_CALLBACK_N];
 #  endif
 #endif
 };
 
 /** Enum for the possible status types for the FREQM module. */
 enum freqm_status {
-	/** FREQM measurement is finish */
-	FREQM_STATUS_MEASURE_DONE =  0,
-	/** FREQM measurement is ongoing or not */
-	FREQM_STATUS_MEASURE_BUSY =  1,
-	/** FREQM sticky count value overflow */
-	FREQM_STATUS_CNT_OVERFLOW =  2,
+    /** FREQM measurement is finish */
+    FREQM_STATUS_MEASURE_DONE =  0,
+    /** FREQM measurement is ongoing or not */
+    FREQM_STATUS_MEASURE_BUSY =  1,
+    /** FREQM sticky count value overflow */
+    FREQM_STATUS_CNT_OVERFLOW =  2,
 };
 
 /**
@@ -185,12 +185,12 @@ enum freqm_status {
  *  Configuration structure for a Frequency Meter.
  */
 struct freqm_config {
-	/** GCLK source select for measurement */
-	enum gclk_generator msr_clock_source;
-	/** GCLK source select for reference */
-	enum gclk_generator ref_clock_source;
-	/** Measurement duration in number of reference clock cycles. Range 1~255 */
-	uint16_t ref_clock_circles;
+    /** GCLK source select for measurement */
+    enum gclk_generator msr_clock_source;
+    /** GCLK source select for reference */
+    enum gclk_generator ref_clock_source;
+    /** Measurement duration in number of reference clock cycles. Range 1~255 */
+    uint16_t ref_clock_circles;
 };
 
 /**
@@ -209,13 +209,13 @@ struct freqm_config {
  */
 static inline bool freqm_is_syncing(void)
 {
-	Freqm *const freqm_module = FREQM;
+    Freqm *const freqm_module = FREQM;
 
-	if (freqm_module->SYNCBUSY.reg) {
-		return true;
-	}
+    if (freqm_module->SYNCBUSY.reg) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -223,9 +223,9 @@ static inline bool freqm_is_syncing(void)
  * @{
  */
 enum status_code freqm_init(
-		struct freqm_module *const module_inst,
-		Freqm *const hw,
-		struct freqm_config *const config);
+        struct freqm_module *const module_inst,
+        Freqm *const hw,
+        struct freqm_config *const config);
 
 /**
  * \brief Initializes all members of a FREQM configuration structure
@@ -244,15 +244,15 @@ enum status_code freqm_init(
  *  \param[in] config  Configuration structure to initialize to default values
  */
 static inline void freqm_get_config_defaults(
-		struct freqm_config *const config)
+        struct freqm_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->msr_clock_source = GCLK_GENERATOR_0;
-	config->ref_clock_source = GCLK_GENERATOR_1;
-	config->ref_clock_circles = 127;
+    /* Default configuration values */
+    config->msr_clock_source = GCLK_GENERATOR_0;
+    config->ref_clock_source = GCLK_GENERATOR_1;
+    config->ref_clock_circles = 127;
 }
 
 /**
@@ -264,20 +264,20 @@ static inline void freqm_get_config_defaults(
  * \param[in] module_inst  Software instance for the Frequency Meter peripheral
  */
 static inline void freqm_enable(
-		struct freqm_module *const module_inst)
+        struct freqm_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Freqm *const freqm_module = module_inst->hw;
+    Freqm *const freqm_module = module_inst->hw;
 
-	/* Enable FREQM */
-	freqm_module->CTRLA.reg |= FREQM_CTRLA_ENABLE;
+    /* Enable FREQM */
+    freqm_module->CTRLA.reg |= FREQM_CTRLA_ENABLE;
 
-	while (freqm_is_syncing()) {
-		/* Wait for all hardware modules to complete synchronization */
-	}
+    while (freqm_is_syncing()) {
+        /* Wait for all hardware modules to complete synchronization */
+    }
 }
 
 /**
@@ -289,25 +289,25 @@ static inline void freqm_enable(
  * \param[in] module_inst  Software instance for the Frequency Meter peripheral
  */
 static inline void freqm_disable(
-		struct freqm_module *const module_inst)
+        struct freqm_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Freqm *const freqm_module = module_inst->hw;
+    Freqm *const freqm_module = module_inst->hw;
 
-	/* Disbale interrupt */
-	freqm_module->INTENCLR.reg = FREQM_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	freqm_module->INTFLAG.reg = FREQM_INTFLAG_MASK;
+    /* Disbale interrupt */
+    freqm_module->INTENCLR.reg = FREQM_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    freqm_module->INTFLAG.reg = FREQM_INTFLAG_MASK;
 
-	/* Disable FREQM */
-	freqm_module->CTRLA.reg &= ~FREQM_CTRLA_ENABLE;
+    /* Disable FREQM */
+    freqm_module->CTRLA.reg &= ~FREQM_CTRLA_ENABLE;
 
-	while (freqm_is_syncing()) {
-		/* Wait for all hardware modules to complete synchronization */
-	}
+    while (freqm_is_syncing()) {
+        /* Wait for all hardware modules to complete synchronization */
+    }
 }
 
 /** @} */
@@ -323,12 +323,12 @@ static inline void freqm_disable(
  */
 static inline void freqm_start_measure(struct freqm_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Trigger measurement */
-	module->hw->CTRLB.reg |= FREQM_CTRLB_START;
+    /* Trigger measurement */
+    module->hw->CTRLB.reg |= FREQM_CTRLB_START;
 }
 
 /**
@@ -340,16 +340,16 @@ static inline void freqm_start_measure(struct freqm_module *const module)
  */
 static inline void freqm_clear_overflow(struct freqm_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Clear overflow flag */
-	module->hw->STATUS.reg = FREQM_STATUS_OVF;
+    /* Clear overflow flag */
+    module->hw->STATUS.reg = FREQM_STATUS_OVF;
 }
 
 enum freqm_status freqm_get_result_value(
-		struct freqm_module *const module_inst, uint32_t *result);
+        struct freqm_module *const module_inst, uint32_t *result);
 
 /** @} */
 
@@ -367,14 +367,14 @@ enum freqm_status freqm_get_result_value(
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
  *  <tr>
- *		<td>FREQM</td>
- *		<td>Frequency Meter</td>
- *	</tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>FREQM</td>
+ *      <td>Frequency Meter</td>
+ *  </tr>
  * </table>
  *
  *
@@ -393,12 +393,12 @@ enum freqm_status freqm_get_result_value(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
-  *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+  * <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -419,16 +419,16 @@ enum freqm_status freqm_get_result_value(
  * \page asfdoc_sam0_freqm_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42506A</td>
- *		<td>08/2015</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42506A</td>
+ *      <td>08/2015</td>
+ *      <td>Initial document release</td>
+ *  </tr>
  * </table>
  */
 

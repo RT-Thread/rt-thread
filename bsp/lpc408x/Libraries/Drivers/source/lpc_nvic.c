@@ -2,14 +2,14 @@
 * $Id$      lpc_nvic.c          2011-06-02
 *//**
 * @file     lpc_nvic.c
-* @brief    Contains all expansion functions support for Nesting 
-*           Vectored Interrupt Controller (NVIC) firmware library 
-*           on LPC. The main NVIC functions are defined 
+* @brief    Contains all expansion functions support for Nesting
+*           Vectored Interrupt Controller (NVIC) firmware library
+*           on LPC. The main NVIC functions are defined
 *           in core_cm3.h
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *

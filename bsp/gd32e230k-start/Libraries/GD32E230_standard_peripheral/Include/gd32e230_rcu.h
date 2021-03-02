@@ -1,7 +1,7 @@
 /*!
     \file  gd32e230_rcu.h
     \brief definitions for the RCU
-    
+
     \version 2018-06-19, V1.0.0, firmware for GD32E230
 */
 
@@ -10,27 +10,27 @@
 
     All rights reserved.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -224,13 +224,13 @@ OF SUCH DAMAGE.
 typedef enum
 {
     /* peripherals enable */
-    IDX_AHBEN      = 0x14U, 
-    IDX_APB2EN     = 0x18U, 
-    IDX_APB1EN     = 0x1CU, 
+    IDX_AHBEN      = 0x14U,
+    IDX_APB2EN     = 0x18U,
+    IDX_APB1EN     = 0x1CU,
     /* peripherals reset */
-    IDX_AHBRST     = 0x28U, 
-    IDX_APB2RST    = 0x0CU, 
-    IDX_APB1RST    = 0x10U, 
+    IDX_AHBRST     = 0x28U,
+    IDX_APB2RST    = 0x0CU,
+    IDX_APB1RST    = 0x10U,
     /* clock stabilization */
     IDX_CTL0       = 0x00U,
     IDX_BDCTL      = 0x20U,
@@ -254,7 +254,7 @@ typedef enum
     RCU_GPIOB   = RCU_REGIDX_BIT(IDX_AHBEN, 18U),                 /*!< GPIOB clock */
     RCU_GPIOC   = RCU_REGIDX_BIT(IDX_AHBEN, 19U),                 /*!< GPIOC clock */
     RCU_GPIOF   = RCU_REGIDX_BIT(IDX_AHBEN, 22U),                 /*!< GPIOF clock */
-    
+
     /* APB2 peripherals */
     RCU_CFGCMP  = RCU_REGIDX_BIT(IDX_APB2EN, 0U),                 /*!< CFGCMP clock */
     RCU_ADC     = RCU_REGIDX_BIT(IDX_APB2EN, 9U),                 /*!< ADC clock */
@@ -265,7 +265,7 @@ typedef enum
     RCU_TIMER15 = RCU_REGIDX_BIT(IDX_APB2EN, 17U),                /*!< TIMER15 clock */
     RCU_TIMER16 = RCU_REGIDX_BIT(IDX_APB2EN, 18U),                /*!< TIMER16 clock */
     RCU_DBGMCU  = RCU_REGIDX_BIT(IDX_APB2EN, 22U),                /*!< DBGMCU clock */
-    
+
     /* APB1 peripherals */
     RCU_TIMER2  = RCU_REGIDX_BIT(IDX_APB1EN, 1U),                 /*!< TIMER2 clock */
     RCU_TIMER5  = RCU_REGIDX_BIT(IDX_APB1EN, 4U),                 /*!< TIMER5 clock */
@@ -276,7 +276,7 @@ typedef enum
     RCU_I2C0    = RCU_REGIDX_BIT(IDX_APB1EN, 21U),                /*!< I2C0 clock */
     RCU_I2C1    = RCU_REGIDX_BIT(IDX_APB1EN, 22U),                /*!< I2C1 clock */
     RCU_PMU     = RCU_REGIDX_BIT(IDX_APB1EN, 28U),                /*!< PMU clock */
-    
+
     /* Backup domain control(BDCTL) */
     RCU_RTC     = RCU_REGIDX_BIT(IDX_BDCTL, 15U)                  /*!< RTC clock */
 }rcu_periph_enum;
@@ -297,7 +297,7 @@ typedef enum
     RCU_GPIOBRST   = RCU_REGIDX_BIT(IDX_AHBRST, 18U),             /*!< GPIOB reset */
     RCU_GPIOCRST   = RCU_REGIDX_BIT(IDX_AHBRST, 19U),             /*!< GPIOC reset */
     RCU_GPIOFRST   = RCU_REGIDX_BIT(IDX_AHBRST, 22U),             /*!< GPIOF reset */
-    
+
     /* APB2 peripherals reset */
     RCU_CFGCMPRST  = RCU_REGIDX_BIT(IDX_APB2RST, 0U),             /*!< CFGCMP reset */
     RCU_ADCRST     = RCU_REGIDX_BIT(IDX_APB2RST, 9U),             /*!< ADC reset */
@@ -307,7 +307,7 @@ typedef enum
     RCU_TIMER14RST = RCU_REGIDX_BIT(IDX_APB2RST, 16U),            /*!< TIMER14 reset */
     RCU_TIMER15RST = RCU_REGIDX_BIT(IDX_APB2RST, 17U),            /*!< TIMER15 reset */
     RCU_TIMER16RST = RCU_REGIDX_BIT(IDX_APB2RST, 18U),            /*!< TIMER16 reset */
-    
+
     /* APB1 peripherals reset */
     RCU_TIMER2RST  = RCU_REGIDX_BIT(IDX_APB1RST, 1U),             /*!< TIMER2 reset */
     RCU_TIMER5RST  = RCU_REGIDX_BIT(IDX_APB1RST, 4U),             /*!< TIMER5 reset */

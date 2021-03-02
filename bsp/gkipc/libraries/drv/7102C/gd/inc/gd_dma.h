@@ -38,9 +38,9 @@
 /* DMA Channel Assignments  */
 /****************************/
 
-#define DMA_CHAN_MAX_NUM    4  
+#define DMA_CHAN_MAX_NUM    4
 #define DMA_CHAN_MAX_DESC   32 /* max descriptor per channel */
-#define DMA_BUFF_ADDR_ALIGN 8 
+#define DMA_BUFF_ADDR_ALIGN 8
 
 
 /* General DMA instance channel */
@@ -52,7 +52,7 @@
 #define DMA_CHAN_USB        3
 
 
-#define DMA_MODE_NORMAL 	0
+#define DMA_MODE_NORMAL     0
 #define DMA_MODE_DESCRIPTOR 1
 
 
@@ -139,7 +139,7 @@ typedef struct
 {
     U32      channel;
     U32      mode;
-	GD_DMA_NOTIFIER_F intNotifier;
+    GD_DMA_NOTIFIER_F intNotifier;
 }GD_DMA_OPEN_PARAM_S;
 
 

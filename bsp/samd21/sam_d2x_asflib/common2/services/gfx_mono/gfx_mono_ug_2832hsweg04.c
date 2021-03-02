@@ -59,28 +59,28 @@ static uint8_t framebuffer[GFX_MONO_LCD_FRAMEBUFFER_SIZE];
  */
 void gfx_mono_ssd1306_init(void)
 {
-	uint8_t page;
-	uint8_t column;
+    uint8_t page;
+    uint8_t column;
 
 #ifdef CONFIG_SSD1306_FRAMEBUFFER
-	gfx_mono_set_framebuffer(framebuffer);
+    gfx_mono_set_framebuffer(framebuffer);
 #endif
 
-	/* Initialize the low-level display controller. */
-	ssd1306_init();
+    /* Initialize the low-level display controller. */
+    ssd1306_init();
 
-	/* Set display to output data from line 0 */
-	ssd1306_set_display_start_line_address(0);
+    /* Set display to output data from line 0 */
+    ssd1306_set_display_start_line_address(0);
 
-	/* Clear the contents of the display.
-	 * If using a framebuffer (SPI interface) it will both clear the
-	 * controller memory and the framebuffer.
-	 */
-	for (page = 0; page < GFX_MONO_LCD_PAGES; page++) {
-		for (column = 0; column < GFX_MONO_LCD_WIDTH; column++) {
-			gfx_mono_ssd1306_put_byte(page, column, 0x00, true);
-		}
-	}
+    /* Clear the contents of the display.
+     * If using a framebuffer (SPI interface) it will both clear the
+     * controller memory and the framebuffer.
+     */
+    for (page = 0; page < GFX_MONO_LCD_PAGES; page++) {
+        for (column = 0; column < GFX_MONO_LCD_WIDTH; column++) {
+            gfx_mono_ssd1306_put_byte(page, column, 0x00, true);
+        }
+    }
 }
 
 #ifdef CONFIG_SSD1306_FRAMEBUFFER
@@ -95,15 +95,15 @@ void gfx_mono_ssd1306_init(void)
  */
 void gfx_mono_ssd1306_put_framebuffer(void)
 {
-	uint8_t page;
+    uint8_t page;
 
-	for (page = 0; page < GFX_MONO_LCD_PAGES; page++) {
-		ssd1306_set_page_address(page);
-		ssd1306_set_column_address(0);
-		gfx_mono_ssd1306_put_page(framebuffer
-				+ (page * GFX_MONO_LCD_WIDTH), page, 0,
-				GFX_MONO_LCD_WIDTH);
-	}
+    for (page = 0; page < GFX_MONO_LCD_PAGES; page++) {
+        ssd1306_set_page_address(page);
+        ssd1306_set_column_address(0);
+        gfx_mono_ssd1306_put_page(framebuffer
+                + (page * GFX_MONO_LCD_WIDTH), page, 0,
+                GFX_MONO_LCD_WIDTH);
+    }
 }
 #endif
 
@@ -116,57 +116,57 @@ void gfx_mono_ssd1306_put_framebuffer(void)
  *
  * The following will set the pixel at x=10,y=10:
  * \code
-	gfx_mono_ssd1306_draw_pixel(10, 10, GFX_PIXEL_SET);
+    gfx_mono_ssd1306_draw_pixel(10, 10, GFX_PIXEL_SET);
 \endcode
  * The following example will clear the pixel at x=10,y=10:
  * \code
-	gfx_mono_ssd1306_draw_pixel(10, 10, GFX_PIXEL_CLR);
+    gfx_mono_ssd1306_draw_pixel(10, 10, GFX_PIXEL_CLR);
 \endcode
  * And the following will toggle the pixel at x=10,y=10:
  * \code
-	gfx_mono_ssd1306_draw_pixel(10, 10, GFX_PIXEL_XOR);
+    gfx_mono_ssd1306_draw_pixel(10, 10, GFX_PIXEL_XOR);
 \endcode
  */
 void gfx_mono_ssd1306_draw_pixel(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t color)
+        gfx_coord_t color)
 {
-	uint8_t page;
-	uint8_t pixel_mask;
-	uint8_t pixel_value;
+    uint8_t page;
+    uint8_t pixel_mask;
+    uint8_t pixel_value;
 
-	/* Discard pixels drawn outside the screen */
-	if ((x > GFX_MONO_LCD_WIDTH - 1) || (y > GFX_MONO_LCD_HEIGHT - 1)) {
-		return;
-	}
+    /* Discard pixels drawn outside the screen */
+    if ((x > GFX_MONO_LCD_WIDTH - 1) || (y > GFX_MONO_LCD_HEIGHT - 1)) {
+        return;
+    }
 
-	page = y / GFX_MONO_LCD_PIXELS_PER_BYTE;
-	pixel_mask = (1 << (y - (page * 8)));
+    page = y / GFX_MONO_LCD_PIXELS_PER_BYTE;
+    pixel_mask = (1 << (y - (page * 8)));
 
-	/*
-	 * Read the page containing the pixel in interest, then perform the
-	 * requested action on this pixel before writing the page back to the
-	 * display.
-	 */
-	pixel_value = gfx_mono_get_byte(page, x);
+    /*
+     * Read the page containing the pixel in interest, then perform the
+     * requested action on this pixel before writing the page back to the
+     * display.
+     */
+    pixel_value = gfx_mono_get_byte(page, x);
 
-	switch (color) {
-	case GFX_PIXEL_SET:
-		pixel_value |= pixel_mask;
-		break;
+    switch (color) {
+    case GFX_PIXEL_SET:
+        pixel_value |= pixel_mask;
+        break;
 
-	case GFX_PIXEL_CLR:
-		pixel_value &= ~pixel_mask;
-		break;
+    case GFX_PIXEL_CLR:
+        pixel_value &= ~pixel_mask;
+        break;
 
-	case GFX_PIXEL_XOR:
-		pixel_value ^= pixel_mask;
-		break;
+    case GFX_PIXEL_XOR:
+        pixel_value ^= pixel_mask;
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	gfx_mono_put_byte(page, x, pixel_value);
+    gfx_mono_put_byte(page, x, pixel_value);
 }
 
 /**
@@ -178,22 +178,22 @@ void gfx_mono_ssd1306_draw_pixel(gfx_coord_t x, gfx_coord_t y,
  *
  * The following example will read the pixel value from x=10,y=10:
  * \code
-	pixelval = gfx_mono_ssd1306_get_pixel(10,10);
+    pixelval = gfx_mono_ssd1306_get_pixel(10,10);
 \endcode
  */
 uint8_t gfx_mono_ssd1306_get_pixel(gfx_coord_t x, gfx_coord_t y)
 {
-	uint8_t page;
-	uint8_t pixel_mask;
+    uint8_t page;
+    uint8_t pixel_mask;
 
-	if ((x > GFX_MONO_LCD_WIDTH - 1) || (y > GFX_MONO_LCD_HEIGHT - 1)) {
-		return 0;
-	}
+    if ((x > GFX_MONO_LCD_WIDTH - 1) || (y > GFX_MONO_LCD_HEIGHT - 1)) {
+        return 0;
+    }
 
-	page = y / GFX_MONO_LCD_PIXELS_PER_BYTE;
-	pixel_mask = (1 << (y - (page * 8)));
+    page = y / GFX_MONO_LCD_PIXELS_PER_BYTE;
+    pixel_mask = (1 << (y - (page * 8)));
 
-	return gfx_mono_get_byte(page, x) & pixel_mask;
+    return gfx_mono_get_byte(page, x) & pixel_mask;
 }
 
 /**
@@ -213,21 +213,21 @@ uint8_t gfx_mono_ssd1306_get_pixel(gfx_coord_t x, gfx_coord_t y)
  * column 10. This will place data_buf in the rectangle x1=10,y1=0,x2=42,y2=8
  * (10 pixels from the upper left corner of the screen):
  * \code
-	gfx_mono_ssd1306_put_page(data_buf, 0, 10, 32);
+    gfx_mono_ssd1306_put_page(data_buf, 0, 10, 32);
 \endcode
  */
 void gfx_mono_ssd1306_put_page(gfx_mono_color_t *data, gfx_coord_t page,
-		gfx_coord_t column, gfx_coord_t width)
+        gfx_coord_t column, gfx_coord_t width)
 {
 #ifdef CONFIG_SSD1306_FRAMEBUFFER
-	gfx_mono_framebuffer_put_page(data, page, column, width);
+    gfx_mono_framebuffer_put_page(data, page, column, width);
 #endif
-	ssd1306_set_page_address(page);
-	ssd1306_set_column_address(column);
+    ssd1306_set_page_address(page);
+    ssd1306_set_column_address(column);
 
-	do {
-		ssd1306_write_data(*data++);
-	} while (--width);
+    do {
+        ssd1306_write_data(*data++);
+    } while (--width);
 }
 
 /**
@@ -245,21 +245,21 @@ void gfx_mono_ssd1306_put_page(gfx_mono_color_t *data, gfx_coord_t page,
  * The following example will read back the first 128 bytes (first page) from
  * the display memory:
  * \code
-	gfx_mono_ssd1306_get_page(read_buffer, 0, 0, 128);
+    gfx_mono_ssd1306_get_page(read_buffer, 0, 0, 128);
 \endcode
  */
 void gfx_mono_ssd1306_get_page(gfx_mono_color_t *data, gfx_coord_t page,
-		gfx_coord_t column, gfx_coord_t width)
+        gfx_coord_t column, gfx_coord_t width)
 {
 #ifdef CONFIG_SSD1306_FRAMEBUFFER
-	gfx_mono_framebuffer_get_page(data, page, column, width);
+    gfx_mono_framebuffer_get_page(data, page, column, width);
 #else
-	ssd1306_set_page_address(page);
-	ssd1306_set_column_address(column);
+    ssd1306_set_page_address(page);
+    ssd1306_set_column_address(column);
 
-	do {
-		*data++ = ssd1306_read_data();
-	} while (--width);
+    do {
+        *data++ = ssd1306_read_data();
+    } while (--width);
 #endif
 }
 
@@ -278,23 +278,23 @@ void gfx_mono_ssd1306_get_page(gfx_mono_color_t *data, gfx_coord_t page,
  * setting a 8 pixel high column of pixels in the upper left corner of the
  * display.
  * \code
-	gfx_mono_ssd1306_put_byte(0, 0, 0xFF, false);
+    gfx_mono_ssd1306_put_byte(0, 0, 0xFF, false);
 \endcode
   */
  void gfx_mono_ssd1306_put_byte(gfx_coord_t page, gfx_coord_t column,
-		uint8_t data, bool force)
+        uint8_t data, bool force)
 {
 #ifdef CONFIG_SSD1306_FRAMEBUFFER
-	if (!force && data == gfx_mono_framebuffer_get_byte(page, column)) {
-		return;
-	}
-	gfx_mono_framebuffer_put_byte(page, column, data);
+    if (!force && data == gfx_mono_framebuffer_get_byte(page, column)) {
+        return;
+    }
+    gfx_mono_framebuffer_put_byte(page, column, data);
 #endif
 
-	ssd1306_set_page_address(page);
-	ssd1306_set_column_address(column);
+    ssd1306_set_page_address(page);
+    ssd1306_set_column_address(column);
 
-	ssd1306_write_data(data);
+    ssd1306_write_data(data);
 }
 
 /**
@@ -311,19 +311,19 @@ void gfx_mono_ssd1306_get_page(gfx_mono_color_t *data, gfx_coord_t page,
  * local framebuffer if direct read is not possible. The data represents the
  * pixels from x = 0 and y = 0 to y = 7.
  * \code
-	data = gfx_mono_ssd1306_get_byte(0, 0);
+    data = gfx_mono_ssd1306_get_byte(0, 0);
 \endcode
  */
 uint8_t gfx_mono_ssd1306_get_byte(gfx_coord_t page, gfx_coord_t column)
 {
 #ifdef CONFIG_SSD1306_FRAMEBUFFER
-	return gfx_mono_framebuffer_get_byte(page, column);
+    return gfx_mono_framebuffer_get_byte(page, column);
 
 #else
-	ssd1306_set_page_address(page);
-	ssd1306_set_column_address(column);
+    ssd1306_set_page_address(page);
+    ssd1306_set_column_address(column);
 
-	return ssd1306_read_data();
+    return ssd1306_read_data();
 
 #endif
 }
@@ -343,30 +343,30 @@ uint8_t gfx_mono_ssd1306_get_byte(gfx_coord_t page, gfx_coord_t column)
  *
  * A small example that will XOR the first byte of display memory with 0xAA
  * \code
-	gfx_mono_ssd1306_mask_byte(0,0,0xAA,GFX_PIXEL_XOR);
+    gfx_mono_ssd1306_mask_byte(0,0,0xAA,GFX_PIXEL_XOR);
 \endcode
  */
 void gfx_mono_ssd1306_mask_byte(gfx_coord_t page, gfx_coord_t column,
-		gfx_mono_color_t pixel_mask, gfx_mono_color_t color)
+        gfx_mono_color_t pixel_mask, gfx_mono_color_t color)
 {
-	gfx_mono_color_t temp = gfx_mono_get_byte(page, column);
+    gfx_mono_color_t temp = gfx_mono_get_byte(page, column);
 
-	switch (color) {
-	case GFX_PIXEL_SET:
-		temp |= pixel_mask;
-		break;
+    switch (color) {
+    case GFX_PIXEL_SET:
+        temp |= pixel_mask;
+        break;
 
-	case GFX_PIXEL_CLR:
-		temp &= ~pixel_mask;
-		break;
+    case GFX_PIXEL_CLR:
+        temp &= ~pixel_mask;
+        break;
 
-	case GFX_PIXEL_XOR:
-		temp ^= pixel_mask;
-		break;
+    case GFX_PIXEL_XOR:
+        temp ^= pixel_mask;
+        break;
 
-	default:
-		break;
-	}
+    default:
+        break;
+    }
 
-	gfx_mono_put_byte(page, column, temp);
+    gfx_mono_put_byte(page, column, temp);
 }

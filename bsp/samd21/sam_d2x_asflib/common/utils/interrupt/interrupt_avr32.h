@@ -86,11 +86,11 @@ typedef void (__interrupt *__int_handler)(void);
  *
  * Usage:
  * \code
-	ISR(foo_irq_handler, AVR32_xxx_IRQ_GROUP, n)
-	{
-	     // Function definition
-	     ...
-	}
+    ISR(foo_irq_handler, AVR32_xxx_IRQ_GROUP, n)
+    {
+         // Function definition
+         ...
+    }
 \endcode
  *
  * \param func Name for the function, needed by \ref irq_register_handler.
@@ -105,17 +105,17 @@ typedef void (__interrupt *__int_handler)(void);
  * device header files of both IAR and GCC.
  */
 #  define ISR(func, int_grp, int_lvl)    \
-	__attribute__((__interrupt__)) static void func (void)
+    __attribute__((__interrupt__)) static void func (void)
 
 #elif defined(__ICCAVR32__) && defined(CONFIG_INTERRUPT_FORCE_INTC)
 #  define ISR(func, int_grp, int_lvl) \
-		__interrupt static void func (void)
+        __interrupt static void func (void)
 
 #elif defined(__ICCAVR32__)
 #  define ISR0(...) _Pragma(#__VA_ARGS__)
 #  define ISR(func, int_grp, int_lvl)                                          \
-		ISR0(handler=int_grp, int_lvl)                                 \
-		__interrupt static void func (void)
+        ISR0(handler=int_grp, int_lvl)                                 \
+        __interrupt static void func (void)
 #endif
 
 #if defined(__GNUC__) || defined(__DOXYGEN__) || defined(CONFIG_INTERRUPT_FORCE_INTC)
@@ -154,8 +154,8 @@ typedef void (__interrupt *__int_handler)(void);
  *
  * Usage:
  * \code
-	irq_initialize_vectors();
-	irq_register_handler(foo_irq_handler, AVR32_xxx_IRQ, n);
+    irq_initialize_vectors();
+    irq_register_handler(foo_irq_handler, AVR32_xxx_IRQ, n);
 \endcode
  *
  * \note The function \a func must be defined with the \ref ISR macro.
@@ -163,8 +163,8 @@ typedef void (__interrupt *__int_handler)(void);
  * the GCC toolchain (avr32/\<part\>.h).
  */
 #  define irq_register_handler(func, int_num, int_lvl)                         \
-	INTC_register_interrupt(func, int_num,                                 \
-			TPASTE2(AVR32_INTC_INT, int_lvl))
+    INTC_register_interrupt(func, int_num,                                 \
+            TPASTE2(AVR32_INTC_INT, int_lvl))
 
 #elif defined(__ICCAVR32__)
 #  define irq_initialize_vectors()                        do{ } while(0)
@@ -175,27 +175,27 @@ typedef void (__interrupt *__int_handler)(void);
 
 #if (defined __GNUC__)
 #  define cpu_irq_enable()                             \
-	do {                                           \
-		barrier();                             \
-		__builtin_csrf(AVR32_SR_GM_OFFSET);    \
-	} while (0)
+    do {                                           \
+        barrier();                             \
+        __builtin_csrf(AVR32_SR_GM_OFFSET);    \
+    } while (0)
 #  define cpu_irq_disable()                            \
-	do {                                           \
-		__builtin_ssrf(AVR32_SR_GM_OFFSET);    \
-		barrier();                             \
-	} while (0)
+    do {                                           \
+        __builtin_ssrf(AVR32_SR_GM_OFFSET);    \
+        barrier();                             \
+    } while (0)
 #elif (defined __ICCAVR32__)
 #  if (defined CONFIG_INTERRUPT_FORCE_INTC)
 #    define cpu_irq_enable()                                 \
-	do {                                                 \
-		barrier();                                   \
-		__clear_status_flag(AVR32_SR_GM_OFFSET);     \
-	} while(0)
+    do {                                                 \
+        barrier();                                   \
+        __clear_status_flag(AVR32_SR_GM_OFFSET);     \
+    } while(0)
 #    define cpu_irq_disable()                                \
-	do {                                                 \
-		__set_status_flag(AVR32_SR_GM_OFFSET);       \
-		barrier();                                   \
-	} while (0)
+    do {                                                 \
+        __set_status_flag(AVR32_SR_GM_OFFSET);       \
+        barrier();                                   \
+    } while (0)
 #  else
 #    define cpu_irq_enable()     __enable_interrupt()
 #    define cpu_irq_disable()    __disable_interrupt()
@@ -206,29 +206,29 @@ typedef uint32_t irqflags_t;
 
 static inline irqflags_t cpu_irq_save(void)
 {
-	volatile irqflags_t flags;
+    volatile irqflags_t flags;
 
-	flags = sysreg_read(AVR32_SR);
-	cpu_irq_disable();
+    flags = sysreg_read(AVR32_SR);
+    cpu_irq_disable();
 
-	return flags;
+    return flags;
 }
 
 static inline bool cpu_irq_is_enabled_flags(irqflags_t flags)
 {
-	return !(flags & AVR32_SR_GM_MASK);
+    return !(flags & AVR32_SR_GM_MASK);
 }
 
 static inline void cpu_irq_restore(irqflags_t flags)
 {
-	barrier();
+    barrier();
 
    /* Restore the global IRQ mask status flag if it was previously set */
    if ( cpu_irq_is_enabled_flags(flags) ) {
       cpu_irq_enable();
    }
 
-	barrier();
+    barrier();
 }
 
 #define cpu_irq_is_enabled()    cpu_irq_is_enabled_flags(sysreg_read(AVR32_SR))
@@ -245,9 +245,9 @@ static inline void cpu_irq_restore(irqflags_t flags)
  * \return True if interrupt level is enabled.
  */
 static inline bool cpu_irq_level_is_enabled_flags(irqflags_t flags,
-		uint32_t level)
+        uint32_t level)
 {
-	return !(flags & (1 << level));
+    return !(flags & (1 << level));
 }
 
 /**
@@ -260,8 +260,8 @@ static inline bool cpu_irq_level_is_enabled_flags(irqflags_t flags,
  * \note The interrupt level must be known at compile time.
  */
 #define cpu_irq_level_is_enabled(level)                                  \
-	cpu_irq_level_is_enabled_flags(sysreg_read(AVR32_SR),             \
-			TPASTE3(AVR32_SR_I, level, M_OFFSET))
+    cpu_irq_level_is_enabled_flags(sysreg_read(AVR32_SR),             \
+            TPASTE3(AVR32_SR_I, level, M_OFFSET))
 
 #if defined(__GNUC__) || defined(__DOXYGEN__)
 /**
@@ -272,10 +272,10 @@ static inline bool cpu_irq_level_is_enabled_flags(irqflags_t flags,
  * \note The interrupt level must be known at compile time.
  */
 #  define cpu_irq_enable_level(level)                                    \
-	do {                                                             \
-		barrier();                                               \
-		__builtin_csrf(TPASTE3(AVR32_SR_I, level, M_OFFSET));    \
-	} while (0)
+    do {                                                             \
+        barrier();                                               \
+        __builtin_csrf(TPASTE3(AVR32_SR_I, level, M_OFFSET));    \
+    } while (0)
 
 /**
  * \brief Disable interrupt level
@@ -285,22 +285,22 @@ static inline bool cpu_irq_level_is_enabled_flags(irqflags_t flags,
  * \note The interrupt level must be known at compile time.
  */
 #  define cpu_irq_disable_level(level)                                   \
-	do {                                                             \
-		__builtin_ssrf(TPASTE3(AVR32_SR_I, level, M_OFFSET));    \
-		barrier();                                               \
-	} while (0)
+    do {                                                             \
+        __builtin_ssrf(TPASTE3(AVR32_SR_I, level, M_OFFSET));    \
+        barrier();                                               \
+    } while (0)
 
 #elif (defined __ICCAVR32__)
 #  define cpu_irq_enable_level(level)                                          \
-	do {                                                                   \
-		barrier();                                                     \
-		__clear_status_flag(TPASTE3(AVR32_SR_I, level, M_OFFSET));     \
-	} while(0)
+    do {                                                                   \
+        barrier();                                                     \
+        __clear_status_flag(TPASTE3(AVR32_SR_I, level, M_OFFSET));     \
+    } while(0)
 #  define cpu_irq_disable_level(level)                                         \
-	do {                                                                   \
-		__set_status_flag(TPASTE3(AVR32_SR_I, level, M_OFFSET));       \
-		barrier();                                                     \
-	} while (0)
+    do {                                                                   \
+        __set_status_flag(TPASTE3(AVR32_SR_I, level, M_OFFSET));       \
+        barrier();                                                     \
+    } while (0)
 #endif
 
 //@}
@@ -330,9 +330,9 @@ static inline bool cpu_irq_level_is_enabled_flags(irqflags_t flags,
  * \brief Start section with code protected against interrupts
  */
 #define AVR32_ENTER_CRITICAL_REGION()                                          \
-	{                                                                      \
-		bool global_interrupt_enabled = Is_global_interrupt_enabled(); \
-		Disable_global_interrupt();
+    {                                                                      \
+        bool global_interrupt_enabled = Is_global_interrupt_enabled(); \
+        Disable_global_interrupt();
 
 /**
  * \brief End section with code protected against interrupts
@@ -341,8 +341,8 @@ static inline bool cpu_irq_level_is_enabled_flags(irqflags_t flags,
  * \ref AVR32_ENTER_CRITICAL_REGION so that interrupts are enabled again.
  */
 #define AVR32_LEAVE_CRITICAL_REGION()                                          \
-		if (global_interrupt_enabled) Enable_global_interrupt();       \
-	}
+        if (global_interrupt_enabled) Enable_global_interrupt();       \
+    }
 
 //@}
 

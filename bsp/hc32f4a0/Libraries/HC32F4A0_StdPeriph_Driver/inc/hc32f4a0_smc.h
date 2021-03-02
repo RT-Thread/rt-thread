@@ -115,7 +115,7 @@ typedef struct
 } stc_exmc_smc_timing_cfg_t;
 
 /**
- * @brief  EXMC SMC Initialization Structure definition 
+ * @brief  EXMC SMC Initialization Structure definition
  */
 typedef struct
 {

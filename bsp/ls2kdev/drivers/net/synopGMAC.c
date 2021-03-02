@@ -361,7 +361,7 @@ static rt_err_t eth_init(rt_device_t device)
             break;
         }
 
-        dma_addr = plat_dma_map_single(gmacdev, (void *)skb, RX_BUF_SIZE);  //è·å– skb çš„ dma åœ°å€
+        dma_addr = plat_dma_map_single(gmacdev, (void *)skb, RX_BUF_SIZE);  //»ñÈ¡ skb µÄ dma µØÖ·
 
         status = synopGMAC_set_rx_qptr(gmacdev, dma_addr, RX_BUF_SIZE, (u64)skb, 0, 0, 0);
         if (status < 0)

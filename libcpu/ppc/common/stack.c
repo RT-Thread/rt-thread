@@ -9,7 +9,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-02-14     Fred         first implementation for 
+ * 2011-02-14     Fred         first implementation for
  */
 
 #include <rtthread.h>

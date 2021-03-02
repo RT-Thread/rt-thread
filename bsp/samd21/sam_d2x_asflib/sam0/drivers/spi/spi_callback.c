@@ -62,21 +62,21 @@ static bool flag_direction_both[SPI_INST_NUM];
  * \param[in,out]  module  Pointer to SPI software instance struct
  */
 static void _spi_write(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Pointer to the hardware module instance */
-	Spi *const spi_hw = module->hw;
+    /* Pointer to the hardware module instance */
+    Spi *const spi_hw = module->hw;
 
-	/* Write value will be at least 8-bits long */
-	uint16_t data_to_send = *(module->tx_buffer_ptr);
-	/* Increment 8-bit pointer */
-	(module->tx_buffer_ptr)++;
+    /* Write value will be at least 8-bits long */
+    uint16_t data_to_send = *(module->tx_buffer_ptr);
+    /* Increment 8-bit pointer */
+    (module->tx_buffer_ptr)++;
 
-	/* Write the data to send*/
-	spi_hw->TRANSMIT_DATA.reg = data_to_send & SPI_TRANSMIT_DATA_MASK;
+    /* Write the data to send*/
+    spi_hw->TRANSMIT_DATA.reg = data_to_send & SPI_TRANSMIT_DATA_MASK;
 
-	/* Decrement remaining buffer length */
-	(module->remaining_tx_buffer_length)--;
+    /* Decrement remaining buffer length */
+    (module->remaining_tx_buffer_length)--;
 }
 
 /**
@@ -86,20 +86,20 @@ static void _spi_write(
  * \param[in,out]  module  Pointer to SPI software instance struct
  */
 static void _spi_read(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Pointer to the hardware module instance */
-	Spi *const spi_hw = module->hw;
+    /* Pointer to the hardware module instance */
+    Spi *const spi_hw = module->hw;
 
-	uint16_t received_data = (spi_hw->RECEIVE_DATA.reg & SPI_RECEIVE_DATA_MASK);
+    uint16_t received_data = (spi_hw->RECEIVE_DATA.reg & SPI_RECEIVE_DATA_MASK);
 
-	/* Read value will be at least 8-bits long */
-	*(module->rx_buffer_ptr) = received_data;
-	/* Increment 8-bit pointer */
-	module->rx_buffer_ptr += 1;
+    /* Read value will be at least 8-bits long */
+    *(module->rx_buffer_ptr) = received_data;
+    /* Increment 8-bit pointer */
+    module->rx_buffer_ptr += 1;
 
-	/* Decrement length of the remaining buffer */
-	module->remaining_rx_buffer_length--;
+    /* Decrement length of the remaining buffer */
+    module->remaining_rx_buffer_length--;
 }
 
 #if CONF_SPI_MASTER_ENABLE == true
@@ -110,16 +110,16 @@ static void _spi_read(
  * \param[in,out]  module  Pointer to SPI software instance struct
  */
 static void _spi_write_dummy(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Pointer to the hardware module instance */
-	Spi *const spi_hw = module->hw;
+    /* Pointer to the hardware module instance */
+    Spi *const spi_hw = module->hw;
 
-	/* Write dummy byte */
-	spi_hw->TRANSMIT_DATA.reg = dummy_write;
+    /* Write dummy byte */
+    spi_hw->TRANSMIT_DATA.reg = dummy_write;
 
-	/* Decrement remaining dummy buffer length */
-	module->remaining_dummy_buffer_length--;
+    /* Decrement remaining dummy buffer length */
+    module->remaining_dummy_buffer_length--;
 }
 #endif
 
@@ -130,305 +130,305 @@ static void _spi_write_dummy(
  * \param[in,out]  module  Pointer to SPI software instance struct
  */
 static void _spi_read_dummy(
-		struct spi_module *const module)
+        struct spi_module *const module)
 {
-	/* Pointer to the hardware module instance */
-	Spi *const spi_hw = module->hw;
-	uint16_t flush = 0;
+    /* Pointer to the hardware module instance */
+    Spi *const spi_hw = module->hw;
+    uint16_t flush = 0;
 
-	/* Read dummy byte */
-	flush = spi_hw->RECEIVE_DATA.reg;
-	UNUSED(flush);
+    /* Read dummy byte */
+    flush = spi_hw->RECEIVE_DATA.reg;
+    UNUSED(flush);
 
-	/* Decrement remaining dummy buffer length */
-	module->remaining_dummy_buffer_length--;
+    /* Decrement remaining dummy buffer length */
+    module->remaining_dummy_buffer_length--;
 }
 
 void spi_rx0_isr_handler(void)
 {
-	struct spi_module *module = _spi_instances[0];
+    struct spi_module *module = _spi_instances[0];
 
-	/* get interrupt flags and mask out enabled callbacks */
-	uint32_t flags = module->hw->RECEIVE_STATUS.reg;
-	flags &= module->hw->RX_INTERRUPT_MASK.reg;
+    /* get interrupt flags and mask out enabled callbacks */
+    uint32_t flags = module->hw->RECEIVE_STATUS.reg;
+    flags &= module->hw->RX_INTERRUPT_MASK.reg;
 
-	if (flags & SPI_RECEIVE_STATUS_RX_FIFO_NOT_EMPTY) {
-		if (module->hw->RECEIVE_STATUS.reg & SPI_RECEIVE_STATUS_FIFO_OVERRUN) {
-			if (module->dir != SPI_DIRECTION_WRITE) {
-				/* Store the error code */
-				module->status = STATUS_ERR_OVERFLOW;
+    if (flags & SPI_RECEIVE_STATUS_RX_FIFO_NOT_EMPTY) {
+        if (module->hw->RECEIVE_STATUS.reg & SPI_RECEIVE_STATUS_FIFO_OVERRUN) {
+            if (module->dir != SPI_DIRECTION_WRITE) {
+                /* Store the error code */
+                module->status = STATUS_ERR_OVERFLOW;
 
-				/* End transaction */
-				module->dir = SPI_DIRECTION_IDLE;
+                /* End transaction */
+                module->dir = SPI_DIRECTION_IDLE;
 
-				module->hw->RX_INTERRUPT_MASK.reg &=
-					~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK |
-					SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
-				/* Run callback if registered and enabled */
-				if ((module->enabled_callback & (1 << SPI_CALLBACK_ERROR)) &&
-					(module->registered_callback & (1 << SPI_CALLBACK_ERROR))) {
-					module->status = STATUS_ERR_OVERFLOW;
-					module->hw->RX_INTERRUPT_MASK.reg &=
-							~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK);
-					(module->callback[SPI_CALLBACK_ERROR])(module);
-				}
-			}
-			/* Flush */
-			uint16_t flush = module->hw->RECEIVE_DATA.reg;
-			UNUSED(flush);
-		} else {
-			if (module->dir == SPI_DIRECTION_WRITE) {
-				/* Flush receive buffer when writing */
-				_spi_read_dummy(module);
-				if (module->remaining_dummy_buffer_length == 0) {
-					module->hw->RX_INTERRUPT_MASK.reg &=
-						~SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK;
-					module->status = STATUS_OK;
-					module->dir = SPI_DIRECTION_IDLE;
-					///* Run callback if registered and enabled */
-					//if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED)) &&
-						//(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED))) {
-						//(module->callback[SPI_CALLBACK_BUFFER_TRANSMITTED])(module);
-					//}
-				}
-			} else {
-				_spi_read(module);
-				if (module->remaining_rx_buffer_length == 0) {
-					if(module->dir == SPI_DIRECTION_READ) {
-						if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED)) &&
-							(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED))) {
-							module->status = STATUS_OK;
-							module->hw->RX_INTERRUPT_MASK.reg &=
-									~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
-							(module->callback[SPI_CALLBACK_BUFFER_RECEIVED])(module);
-						}
-					} else if (module->dir == SPI_DIRECTION_BOTH) {
-						if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
-							(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
-								module->hw->RX_INTERRUPT_MASK.reg &=
-										~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
-								if (flag_direction_both[0]) {
-									module->status = STATUS_OK;
-									flag_direction_both[0] = false;
-									(module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
-								} else {
-									flag_direction_both[0] = true;
-								}
-						}
-					}
-				}
-			}
-		}
-	}
+                module->hw->RX_INTERRUPT_MASK.reg &=
+                    ~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK |
+                    SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
+                /* Run callback if registered and enabled */
+                if ((module->enabled_callback & (1 << SPI_CALLBACK_ERROR)) &&
+                    (module->registered_callback & (1 << SPI_CALLBACK_ERROR))) {
+                    module->status = STATUS_ERR_OVERFLOW;
+                    module->hw->RX_INTERRUPT_MASK.reg &=
+                            ~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK);
+                    (module->callback[SPI_CALLBACK_ERROR])(module);
+                }
+            }
+            /* Flush */
+            uint16_t flush = module->hw->RECEIVE_DATA.reg;
+            UNUSED(flush);
+        } else {
+            if (module->dir == SPI_DIRECTION_WRITE) {
+                /* Flush receive buffer when writing */
+                _spi_read_dummy(module);
+                if (module->remaining_dummy_buffer_length == 0) {
+                    module->hw->RX_INTERRUPT_MASK.reg &=
+                        ~SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK;
+                    module->status = STATUS_OK;
+                    module->dir = SPI_DIRECTION_IDLE;
+                    ///* Run callback if registered and enabled */
+                    //if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED)) &&
+                        //(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED))) {
+                        //(module->callback[SPI_CALLBACK_BUFFER_TRANSMITTED])(module);
+                    //}
+                }
+            } else {
+                _spi_read(module);
+                if (module->remaining_rx_buffer_length == 0) {
+                    if(module->dir == SPI_DIRECTION_READ) {
+                        if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED)) &&
+                            (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED))) {
+                            module->status = STATUS_OK;
+                            module->hw->RX_INTERRUPT_MASK.reg &=
+                                    ~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
+                            (module->callback[SPI_CALLBACK_BUFFER_RECEIVED])(module);
+                        }
+                    } else if (module->dir == SPI_DIRECTION_BOTH) {
+                        if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
+                            (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
+                                module->hw->RX_INTERRUPT_MASK.reg &=
+                                        ~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
+                                if (flag_direction_both[0]) {
+                                    module->status = STATUS_OK;
+                                    flag_direction_both[0] = false;
+                                    (module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
+                                } else {
+                                    flag_direction_both[0] = true;
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void spi_tx0_isr_handler(void)
 {
-	struct spi_module *module = _spi_instances[0];
+    struct spi_module *module = _spi_instances[0];
 
-	/* get interrupt flags and mask out enabled callbacks */
-	uint32_t flags = module->hw->TRANSMIT_STATUS.reg;
-	flags &= module->hw->TX_INTERRUPT_MASK.reg;
+    /* get interrupt flags and mask out enabled callbacks */
+    uint32_t flags = module->hw->TRANSMIT_STATUS.reg;
+    flags &= module->hw->TX_INTERRUPT_MASK.reg;
 
-	if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_NOT_FULL_1) {
+    if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_NOT_FULL_1) {
 #  if CONF_SPI_MASTER_ENABLE == true
-		if ((module->mode == SPI_MODE_MASTER) &&
-			(module->dir == SPI_DIRECTION_READ)) {
-			/* Send dummy byte when reading in master mode */
-			_spi_write_dummy(module);
-			if (module->remaining_dummy_buffer_length == 0) {
-				/* Disable the Data Register Empty Interrupt */
-				module->hw->TX_INTERRUPT_MASK.reg &=
-					~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
-			}
-		}
+        if ((module->mode == SPI_MODE_MASTER) &&
+            (module->dir == SPI_DIRECTION_READ)) {
+            /* Send dummy byte when reading in master mode */
+            _spi_write_dummy(module);
+            if (module->remaining_dummy_buffer_length == 0) {
+                /* Disable the Data Register Empty Interrupt */
+                module->hw->TX_INTERRUPT_MASK.reg &=
+                    ~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
+            }
+        }
 #  endif
-		if (0
+        if (0
 #  if CONF_SPI_MASTER_ENABLE == true
-		|| ((module->mode == SPI_MODE_MASTER) &&
-		(module->dir != SPI_DIRECTION_READ))
+        || ((module->mode == SPI_MODE_MASTER) &&
+        (module->dir != SPI_DIRECTION_READ))
 #  endif
 #  if CONF_SPI_SLAVE_ENABLE == true
-		|| ((module->mode == SPI_MODE_SLAVE) &&
-		(module->dir != SPI_DIRECTION_READ))
+        || ((module->mode == SPI_MODE_SLAVE) &&
+        (module->dir != SPI_DIRECTION_READ))
 #  endif
-		) {
-			_spi_write(module);
-			if (module->remaining_tx_buffer_length == 0) {
-				module->hw->TX_INTERRUPT_MASK.reg &=
-						~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
-				module->hw->TX_INTERRUPT_MASK.reg |=
-						SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
-			}
-		}
-	}
-	if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_EMPTY) {
-		if (module->dir == SPI_DIRECTION_WRITE) {
-			if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED)) &&
-				(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED))) {
-					module->status = STATUS_OK;
-					/* Disable interrupt */
-					module->hw->TX_INTERRUPT_MASK.reg &=
-							~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
-					(module->callback[SPI_CALLBACK_BUFFER_TRANSMITTED])(module);
-				}
-		} else if (module->dir == SPI_DIRECTION_BOTH) {
-			if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
-				(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
-					/* Disable interrupt */
-					module->hw->TX_INTERRUPT_MASK.reg &=
-							~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
-					if (flag_direction_both[0]) {
-						module->status = STATUS_OK;
-						flag_direction_both[0] = false;
-						(module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
-					} else {
-						flag_direction_both[0] = true;
-					}
-			}
-		}
-	}
+        ) {
+            _spi_write(module);
+            if (module->remaining_tx_buffer_length == 0) {
+                module->hw->TX_INTERRUPT_MASK.reg &=
+                        ~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
+                module->hw->TX_INTERRUPT_MASK.reg |=
+                        SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+            }
+        }
+    }
+    if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_EMPTY) {
+        if (module->dir == SPI_DIRECTION_WRITE) {
+            if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED)) &&
+                (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED))) {
+                    module->status = STATUS_OK;
+                    /* Disable interrupt */
+                    module->hw->TX_INTERRUPT_MASK.reg &=
+                            ~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+                    (module->callback[SPI_CALLBACK_BUFFER_TRANSMITTED])(module);
+                }
+        } else if (module->dir == SPI_DIRECTION_BOTH) {
+            if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
+                (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
+                    /* Disable interrupt */
+                    module->hw->TX_INTERRUPT_MASK.reg &=
+                            ~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+                    if (flag_direction_both[0]) {
+                        module->status = STATUS_OK;
+                        flag_direction_both[0] = false;
+                        (module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
+                    } else {
+                        flag_direction_both[0] = true;
+                    }
+            }
+        }
+    }
 }
 
 void spi_rx1_isr_handler(void)
 {
-	struct spi_module *module = _spi_instances[1];
+    struct spi_module *module = _spi_instances[1];
 
-	/* get interrupt flags and mask out enabled callbacks */
-	uint32_t flags = module->hw->RECEIVE_STATUS.reg;
-	flags &= module->hw->RX_INTERRUPT_MASK.reg;
+    /* get interrupt flags and mask out enabled callbacks */
+    uint32_t flags = module->hw->RECEIVE_STATUS.reg;
+    flags &= module->hw->RX_INTERRUPT_MASK.reg;
 
-	if (flags & SPI_RECEIVE_STATUS_RX_FIFO_NOT_EMPTY) {
-		if (module->hw->RECEIVE_STATUS.reg & SPI_RECEIVE_STATUS_FIFO_OVERRUN) {
-			if (module->dir != SPI_DIRECTION_WRITE) {
-				/* Store the error code */
-				module->status = STATUS_ERR_OVERFLOW;
+    if (flags & SPI_RECEIVE_STATUS_RX_FIFO_NOT_EMPTY) {
+        if (module->hw->RECEIVE_STATUS.reg & SPI_RECEIVE_STATUS_FIFO_OVERRUN) {
+            if (module->dir != SPI_DIRECTION_WRITE) {
+                /* Store the error code */
+                module->status = STATUS_ERR_OVERFLOW;
 
-				/* End transaction */
-				module->dir = SPI_DIRECTION_IDLE;
+                /* End transaction */
+                module->dir = SPI_DIRECTION_IDLE;
 
-				module->hw->RX_INTERRUPT_MASK.reg &=
-						~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK |
-						SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
-				/* Run callback if registered and enabled */
-				if ((module->enabled_callback & (1 << SPI_CALLBACK_ERROR)) &&
-					(module->registered_callback & (1 << SPI_CALLBACK_ERROR))) {
-					module->status = STATUS_ERR_OVERFLOW;
-					module->hw->RX_INTERRUPT_MASK.reg &=
-							~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK);
-					(module->callback[SPI_CALLBACK_ERROR])(module);
-				}
-			}
-			/* Flush */
-			uint16_t flush = module->hw->RECEIVE_DATA.reg;
-			UNUSED(flush);
-		} else {
-			if (module->dir == SPI_DIRECTION_WRITE) {
-				/* Flush receive buffer when writing */
-				_spi_read_dummy(module);
-				if (module->remaining_dummy_buffer_length == 0) {
-					module->hw->RX_INTERRUPT_MASK.reg &=
-							~SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK;
-					module->status = STATUS_OK;
-					module->dir = SPI_DIRECTION_IDLE;
-				}
-			} else {
-				_spi_read(module);
-				if (module->remaining_rx_buffer_length == 0) {
-					if(module->dir == SPI_DIRECTION_READ) {
-						if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED)) &&
-							(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED))) {
-							module->status = STATUS_OK;
-							module->hw->RX_INTERRUPT_MASK.reg &=
-									~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
-							(module->callback[SPI_CALLBACK_BUFFER_RECEIVED])(module);
-						}
-					} else if (module->dir == SPI_DIRECTION_BOTH) {
-						if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
-							(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
-							module->hw->RX_INTERRUPT_MASK.reg &=
-									~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
-							if (flag_direction_both[1]) {
-								module->status = STATUS_OK;
-								flag_direction_both[1] = false;
-								(module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
-							} else {
-								flag_direction_both[1] = true;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+                module->hw->RX_INTERRUPT_MASK.reg &=
+                        ~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK |
+                        SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
+                /* Run callback if registered and enabled */
+                if ((module->enabled_callback & (1 << SPI_CALLBACK_ERROR)) &&
+                    (module->registered_callback & (1 << SPI_CALLBACK_ERROR))) {
+                    module->status = STATUS_ERR_OVERFLOW;
+                    module->hw->RX_INTERRUPT_MASK.reg &=
+                            ~(SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK);
+                    (module->callback[SPI_CALLBACK_ERROR])(module);
+                }
+            }
+            /* Flush */
+            uint16_t flush = module->hw->RECEIVE_DATA.reg;
+            UNUSED(flush);
+        } else {
+            if (module->dir == SPI_DIRECTION_WRITE) {
+                /* Flush receive buffer when writing */
+                _spi_read_dummy(module);
+                if (module->remaining_dummy_buffer_length == 0) {
+                    module->hw->RX_INTERRUPT_MASK.reg &=
+                            ~SPI_RX_INTERRUPT_MASK_FIFO_OVERRUN_MASK;
+                    module->status = STATUS_OK;
+                    module->dir = SPI_DIRECTION_IDLE;
+                }
+            } else {
+                _spi_read(module);
+                if (module->remaining_rx_buffer_length == 0) {
+                    if(module->dir == SPI_DIRECTION_READ) {
+                        if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED)) &&
+                            (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_RECEIVED))) {
+                            module->status = STATUS_OK;
+                            module->hw->RX_INTERRUPT_MASK.reg &=
+                                    ~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
+                            (module->callback[SPI_CALLBACK_BUFFER_RECEIVED])(module);
+                        }
+                    } else if (module->dir == SPI_DIRECTION_BOTH) {
+                        if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
+                            (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
+                            module->hw->RX_INTERRUPT_MASK.reg &=
+                                    ~(SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK);
+                            if (flag_direction_both[1]) {
+                                module->status = STATUS_OK;
+                                flag_direction_both[1] = false;
+                                (module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
+                            } else {
+                                flag_direction_both[1] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 void spi_tx1_isr_handler(void)
 {
-	struct spi_module *module = _spi_instances[1];
+    struct spi_module *module = _spi_instances[1];
 
-	/* get interrupt flags and mask out enabled callbacks */
-	uint32_t flags = module->hw->TRANSMIT_STATUS.reg;
-	flags &= module->hw->TX_INTERRUPT_MASK.reg;
+    /* get interrupt flags and mask out enabled callbacks */
+    uint32_t flags = module->hw->TRANSMIT_STATUS.reg;
+    flags &= module->hw->TX_INTERRUPT_MASK.reg;
 
-	if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_NOT_FULL_1) {
+    if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_NOT_FULL_1) {
 #  if CONF_SPI_MASTER_ENABLE == true
-		if ((module->mode == SPI_MODE_MASTER) &&
-		(module->dir == SPI_DIRECTION_READ)) {
-			/* Send dummy byte when reading in master mode */
-			_spi_write_dummy(module);
-			if (module->remaining_dummy_buffer_length == 0) {
-				/* Disable the Data Register Empty Interrupt */
-				module->hw->TX_INTERRUPT_MASK.reg &=
-				~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
-			}
-		}
+        if ((module->mode == SPI_MODE_MASTER) &&
+        (module->dir == SPI_DIRECTION_READ)) {
+            /* Send dummy byte when reading in master mode */
+            _spi_write_dummy(module);
+            if (module->remaining_dummy_buffer_length == 0) {
+                /* Disable the Data Register Empty Interrupt */
+                module->hw->TX_INTERRUPT_MASK.reg &=
+                ~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
+            }
+        }
 #  endif
-		if (0
+        if (0
 #  if CONF_SPI_MASTER_ENABLE == true
-		|| ((module->mode == SPI_MODE_MASTER) &&
-		(module->dir != SPI_DIRECTION_READ))
+        || ((module->mode == SPI_MODE_MASTER) &&
+        (module->dir != SPI_DIRECTION_READ))
 #  endif
 #  if CONF_SPI_SLAVE_ENABLE == true
-		|| ((module->mode == SPI_MODE_SLAVE) &&
-		(module->dir != SPI_DIRECTION_READ))
+        || ((module->mode == SPI_MODE_SLAVE) &&
+        (module->dir != SPI_DIRECTION_READ))
 #  endif
-		) {
-			_spi_write(module);
-			if (module->remaining_tx_buffer_length == 0) {
-				module->hw->TX_INTERRUPT_MASK.reg &=
-						~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
-				module->hw->TX_INTERRUPT_MASK.reg |=
-				SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
-			}
-		}
-	}
-	if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_EMPTY) {
-		if (module->dir == SPI_DIRECTION_WRITE) {
-			if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED)) &&
-			(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED))) {
-				module->status = STATUS_OK;
-				/* Disable interrupt */
-				module->hw->TX_INTERRUPT_MASK.reg &=
-						~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
-				(module->callback[SPI_CALLBACK_BUFFER_TRANSMITTED])(module);
-			}
-		} else if (module->dir == SPI_DIRECTION_BOTH) {
-			if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
-				(module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
-				/* Disable interrupt */
-				module->hw->TX_INTERRUPT_MASK.reg &=
-						~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
-				if (flag_direction_both[1]) {
-					module->status = STATUS_OK;
-					flag_direction_both[1] = false;
-					(module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
-				} else {
-					flag_direction_both[1] = true;
-				}
-			}
-		}
-	}
+        ) {
+            _spi_write(module);
+            if (module->remaining_tx_buffer_length == 0) {
+                module->hw->TX_INTERRUPT_MASK.reg &=
+                        ~SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
+                module->hw->TX_INTERRUPT_MASK.reg |=
+                SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+            }
+        }
+    }
+    if (flags & SPI_TRANSMIT_STATUS_TX_FIFO_EMPTY) {
+        if (module->dir == SPI_DIRECTION_WRITE) {
+            if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED)) &&
+            (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSMITTED))) {
+                module->status = STATUS_OK;
+                /* Disable interrupt */
+                module->hw->TX_INTERRUPT_MASK.reg &=
+                        ~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+                (module->callback[SPI_CALLBACK_BUFFER_TRANSMITTED])(module);
+            }
+        } else if (module->dir == SPI_DIRECTION_BOTH) {
+            if ((module->enabled_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED)) &&
+                (module->registered_callback & (1 << SPI_CALLBACK_BUFFER_TRANSCEIVED))) {
+                /* Disable interrupt */
+                module->hw->TX_INTERRUPT_MASK.reg &=
+                        ~SPI_TX_INTERRUPT_MASK_TX_FIFO_EMPTY_MASK;
+                if (flag_direction_both[1]) {
+                    module->status = STATUS_OK;
+                    flag_direction_both[1] = false;
+                    (module->callback[SPI_CALLBACK_BUFFER_TRANSCEIVED])(module);
+                } else {
+                    flag_direction_both[1] = true;
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -446,19 +446,19 @@ void spi_tx1_isr_handler(void)
  *
  */
 void spi_register_callback(
-		struct spi_module *const module,
-		spi_callback_t callback_func,
-		enum spi_callback callback_type)
+        struct spi_module *const module,
+        spi_callback_t callback_func,
+        enum spi_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(callback_func);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(callback_func);
 
-	/* Register callback function */
-	module->callback[callback_type] = callback_func;
+    /* Register callback function */
+    module->callback[callback_type] = callback_func;
 
-	/* Set the bit corresponding to the callback_type */
-	module->registered_callback |= (1 << callback_type);
+    /* Set the bit corresponding to the callback_type */
+    module->registered_callback |= (1 << callback_type);
 }
 
 /**
@@ -471,17 +471,17 @@ void spi_register_callback(
  *
  */
 void spi_unregister_callback(
-		struct spi_module *const module,
-		enum spi_callback callback_type)
+        struct spi_module *const module,
+        enum spi_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Unregister callback function */
-	module->callback[callback_type] = NULL;
+    /* Unregister callback function */
+    module->callback[callback_type] = NULL;
 
-	/* Clear the bit corresponding to the callback_type */
-	module->registered_callback &= ~(1 << callback_type);
+    /* Clear the bit corresponding to the callback_type */
+    module->registered_callback &= ~(1 << callback_type);
 }
 
 /**
@@ -495,13 +495,13 @@ void spi_unregister_callback(
  * \param[in]  callback_type  Callback type given by an enum
  */
 void spi_enable_callback(struct spi_module *const module,
-		enum spi_callback callback_type)
+        enum spi_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Enable callback */
-	module->enabled_callback |= (1 << callback_type);
+    /* Enable callback */
+    module->enabled_callback |= (1 << callback_type);
 }
 
 /**
@@ -514,13 +514,13 @@ void spi_enable_callback(struct spi_module *const module,
  * \param[in]  callback_type  Callback type given by an enum
  */
 void spi_disable_callback(struct spi_module *const module,
-		enum spi_callback callback_type)
+        enum spi_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Enable callback */
-	module->enabled_callback &= ~(1 << callback_type);
+    /* Enable callback */
+    module->enabled_callback &= ~(1 << callback_type);
 }
 
 /**
@@ -533,25 +533,25 @@ void spi_disable_callback(struct spi_module *const module,
  *
  */
 static void _spi_write_buffer(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint16_t length)
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint16_t length)
 {
-	Assert(module);
-	Assert(tx_data);
+    Assert(module);
+    Assert(tx_data);
 
-	/* Write parameters to the device instance */
-	module->remaining_tx_buffer_length = length;
-	module->remaining_dummy_buffer_length = length;
-	module->tx_buffer_ptr = tx_data;
-	module->status = STATUS_BUSY;
+    /* Write parameters to the device instance */
+    module->remaining_tx_buffer_length = length;
+    module->remaining_dummy_buffer_length = length;
+    module->tx_buffer_ptr = tx_data;
+    module->status = STATUS_BUSY;
 
-	module->dir = SPI_DIRECTION_WRITE;
+    module->dir = SPI_DIRECTION_WRITE;
 
-	/* Get a pointer to the hardware module instance */
-	Spi *const hw = module->hw;
+    /* Get a pointer to the hardware module instance */
+    Spi *const hw = module->hw;
 
-	hw->TX_INTERRUPT_MASK.reg = SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
+    hw->TX_INTERRUPT_MASK.reg = SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
 }
 
 /**
@@ -564,29 +564,29 @@ static void _spi_write_buffer(
  *
  */
 static void _spi_read_buffer(
-		struct spi_module *const module,
-		uint8_t *rx_data,
-		uint16_t length)
+        struct spi_module *const module,
+        uint8_t *rx_data,
+        uint16_t length)
 {
-	Assert(module);
-	Assert(rx_data);
+    Assert(module);
+    Assert(rx_data);
 
-	/* Set length for the buffer and the pointer, and let
-	 * the interrupt handler do the rest */
-	module->remaining_rx_buffer_length = length;
-	module->remaining_dummy_buffer_length = length;
-	module->rx_buffer_ptr = rx_data;
-	module->status = STATUS_BUSY;
+    /* Set length for the buffer and the pointer, and let
+     * the interrupt handler do the rest */
+    module->remaining_rx_buffer_length = length;
+    module->remaining_dummy_buffer_length = length;
+    module->rx_buffer_ptr = rx_data;
+    module->status = STATUS_BUSY;
 
-	module->dir = SPI_DIRECTION_READ;
+    module->dir = SPI_DIRECTION_READ;
 
-	/* Get a pointer to the hardware module instance */
-	Spi *const hw = module->hw;
+    /* Get a pointer to the hardware module instance */
+    Spi *const hw = module->hw;
 
-	hw->RX_INTERRUPT_MASK.reg = SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK;
+    hw->RX_INTERRUPT_MASK.reg = SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK;
 
 #if CONF_SPI_MASTER_ENABLE == true
-	hw->TX_INTERRUPT_MASK.reg = SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
+    hw->TX_INTERRUPT_MASK.reg = SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
 #endif
 }
 
@@ -601,35 +601,35 @@ static void _spi_read_buffer(
  *
  */
 static void _spi_transceive_buffer(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data,
-		uint16_t length)
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data,
+        uint16_t length)
 {
-	Assert(module);
-	Assert(tx_data);
+    Assert(module);
+    Assert(tx_data);
 
-	/* Write parameters to the device instance */
-	module->remaining_tx_buffer_length = length;
-	module->remaining_rx_buffer_length = length;
-	module->rx_buffer_ptr = rx_data;
-	module->tx_buffer_ptr = tx_data;
-	module->status = STATUS_BUSY;
+    /* Write parameters to the device instance */
+    module->remaining_tx_buffer_length = length;
+    module->remaining_rx_buffer_length = length;
+    module->rx_buffer_ptr = rx_data;
+    module->tx_buffer_ptr = tx_data;
+    module->status = STATUS_BUSY;
 
-	module->dir = SPI_DIRECTION_BOTH;
+    module->dir = SPI_DIRECTION_BOTH;
 
-	if (module->hw == SPI0) {
-		flag_direction_both[0] = false;
-	} else if (module->hw == SPI1) {
-		flag_direction_both[1] = false;
-	}
+    if (module->hw == SPI0) {
+        flag_direction_both[0] = false;
+    } else if (module->hw == SPI1) {
+        flag_direction_both[1] = false;
+    }
 
-	/* Get a pointer to the hardware module instance */
-	Spi *const hw = module->hw;
+    /* Get a pointer to the hardware module instance */
+    Spi *const hw = module->hw;
 
-	/* Enable the Data Register Empty and RX Complete Interrupt */
-	hw->TX_INTERRUPT_MASK.reg = SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
-	hw->RX_INTERRUPT_MASK.reg = SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK;
+    /* Enable the Data Register Empty and RX Complete Interrupt */
+    hw->TX_INTERRUPT_MASK.reg = SPI_TX_INTERRUPT_MASK_TX_FIFO_NOT_FULL_MASK;
+    hw->RX_INTERRUPT_MASK.reg = SPI_RX_INTERRUPT_MASK_RX_FIFO_NOT_EMPTY_MASK;
 }
 
 /**
@@ -649,26 +649,26 @@ static void _spi_transceive_buffer(
  * \retval STATUS_ERR_INVALID_ARG  If requested write length was zero
  */
 enum status_code spi_write_buffer_job(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint16_t length)
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint16_t length)
 {
-	Assert(module);
-	Assert(tx_data);
+    Assert(module);
+    Assert(tx_data);
 
-	if (length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Check if the SPI is busy transmitting or slave waiting for TXC*/
-	if (module->status == STATUS_BUSY) {
-		return STATUS_BUSY;
-	}
+    /* Check if the SPI is busy transmitting or slave waiting for TXC*/
+    if (module->status == STATUS_BUSY) {
+        return STATUS_BUSY;
+    }
 
-	/* Issue internal write */
-	_spi_write_buffer(module, tx_data, length);
+    /* Issue internal write */
+    _spi_write_buffer(module, tx_data, length);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -693,28 +693,28 @@ enum status_code spi_write_buffer_job(
  * \retval  STATUS_ERR_INVALID_ARG  If requested read length was zero
  */
 enum status_code spi_read_buffer_job(
-		struct spi_module *const module,
-		uint8_t *rx_data,
-		uint16_t length,
-		uint16_t dummy)
+        struct spi_module *const module,
+        uint8_t *rx_data,
+        uint16_t length,
+        uint16_t dummy)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(rx_data);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(rx_data);
 
-	if (length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Check if the SPI is busy transmitting or slave waiting for TXC*/
-	if (module->status == STATUS_BUSY) {
-		return STATUS_BUSY;
-	}
+    /* Check if the SPI is busy transmitting or slave waiting for TXC*/
+    if (module->status == STATUS_BUSY) {
+        return STATUS_BUSY;
+    }
 
-	dummy_write = dummy;
-	/* Issue internal read */
-	_spi_read_buffer(module, rx_data, length);
-	return STATUS_OK;
+    dummy_write = dummy;
+    /* Issue internal read */
+    _spi_read_buffer(module, rx_data, length);
+    return STATUS_OK;
 }
 
 /**
@@ -739,26 +739,26 @@ enum status_code spi_read_buffer_job(
  * \retval  STATUS_ERR_INVALID_ARG  If requested read length was zero
  */
 enum status_code spi_transceive_buffer_job(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data,
-		uint16_t length)
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data,
+        uint16_t length)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(rx_data);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(rx_data);
 
-	if (length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Check if the SPI is busy transmitting or slave waiting for TXC*/
-	if (module->status == STATUS_BUSY) {
-		return STATUS_BUSY;
-	}
+    /* Check if the SPI is busy transmitting or slave waiting for TXC*/
+    if (module->status == STATUS_BUSY) {
+        return STATUS_BUSY;
+    }
 
-	/* Issue internal transceive */
-	_spi_transceive_buffer(module, tx_data, rx_data, length);
+    /* Issue internal transceive */
+    _spi_transceive_buffer(module, tx_data, rx_data, length);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

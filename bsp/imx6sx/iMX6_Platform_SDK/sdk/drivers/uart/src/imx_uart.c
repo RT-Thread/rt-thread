@@ -41,7 +41,7 @@
 #include "core/ccm_pll.h"
 #include "core/interrupt.h"
 
-#define UART_UFCR_RFDIV    BF_UART_UFCR_RFDIV(4) 
+#define UART_UFCR_RFDIV    BF_UART_UFCR_RFDIV(4)
 //#define UART_UFCR_RFDIV     UART_UFCR_RFDIV_4
 //#define UART_UFCR_RFDIV     UART_UFCR_RFDIV_7
 
@@ -79,7 +79,7 @@ uint8_t uart_getchar(uint32_t instance)
     if (!(HW_UART_USR2(instance).B.RDR))
         return NONE_CHAR;
 
-    read_data = HW_UART_URXD_RD(instance); 
+    read_data = HW_UART_URXD_RD(instance);
 
     /* If error are detected */
     if (read_data & 0x7C00)
@@ -94,32 +94,32 @@ void uart_set_FIFO_mode(uint32_t instance, uint8_t fifo, uint8_t trigger_level,
     if (fifo == TX_FIFO) {
         /* Configure the TX_FIFO trigger level */
         HW_UART_UFCR_CLR(instance,BM_UART_UFCR_TXTL);
-        HW_UART_UFCR_SET(instance, BF_UART_UFCR_TXTL(trigger_level)); 
+        HW_UART_UFCR_SET(instance, BF_UART_UFCR_TXTL(trigger_level));
         /* Configure the TX_FIFO service mode */
         /* Default mode is polling: IRQ and DMA requests are disabled */
         HW_UART_UCR1_CLR(instance,(BM_UART_UCR1_TRDYEN | BM_UART_UCR1_TXDMAEN));
         if (service_mode == DMA_MODE)
            HW_UART_UCR1_SET(instance,BM_UART_UCR1_TXDMAEN);
         else if (service_mode == IRQ_MODE)
-            HW_UART_UCR1_SET(instance,BM_UART_UCR1_TRDYEN); 
+            HW_UART_UCR1_SET(instance,BM_UART_UCR1_TRDYEN);
     } else {                    /* fifo = RX_FIFO */
         /* Configure the RX_FIFO trigger level */
          HW_UART_UFCR_CLR(instance,BM_UART_UFCR_RXTL);
-        HW_UART_UFCR_SET(instance,BF_UART_UFCR_RXTL(trigger_level)); 
+        HW_UART_UFCR_SET(instance,BF_UART_UFCR_RXTL(trigger_level));
         /* Configure the RX_FIFO service mode */
         /* Default mode is polling: IRQ and DMA requests are disabled */
-        HW_UART_UCR1_CLR(instance,(BM_UART_UCR1_RRDYEN | BM_UART_UCR1_RXDMAEN)); 
+        HW_UART_UCR1_CLR(instance,(BM_UART_UCR1_RRDYEN | BM_UART_UCR1_RXDMAEN));
         if (service_mode == DMA_MODE)
-            HW_UART_UCR1_SET(instance,BM_UART_UCR1_RXDMAEN); 
+            HW_UART_UCR1_SET(instance,BM_UART_UCR1_RXDMAEN);
         else if (service_mode == IRQ_MODE)
-            HW_UART_UCR1_SET(instance,BM_UART_UCR1_RRDYEN); 
+            HW_UART_UCR1_SET(instance,BM_UART_UCR1_RRDYEN);
     }
 }
 
 void uart_set_loopback_mode(uint32_t instance, uint8_t state)
 {
     if (state == TRUE)
-	HW_UART_UTS_SET(instance, BM_UART_UTS_LOOP);
+    HW_UART_UTS_SET(instance, BM_UART_UTS_LOOP);
     else
         HW_UART_UTS_CLR(instance, BM_UART_UTS_LOOP);
 }
@@ -156,14 +156,14 @@ void uart_init(uint32_t instance, uint32_t baudrate, uint8_t parity,
     HW_UART_UCR1_CLR(instance,BM_UART_UCR1_UARTEN );
 
     /* Configure FIFOs trigger level to half-full and half-empty */
-    HW_UART_UFCR_WR(instance, BF_UART_UFCR_RXTL(16) | UART_UFCR_RFDIV | BF_UART_UFCR_TXTL(16)); 
+    HW_UART_UFCR_WR(instance, BF_UART_UFCR_RXTL(16) | UART_UFCR_RFDIV | BF_UART_UFCR_TXTL(16));
 
     /* Setup One Millisecond timer */
     HW_UART_ONEMS_WR(instance, uart_get_reffreq(instance) / 1000);
 
     /* Set parity */
     if (parity == PARITY_NONE)
-        HW_UART_UCR2_CLR(instance,(BM_UART_UCR2_PREN| BM_UART_UCR2_PROE)); 
+        HW_UART_UCR2_CLR(instance,(BM_UART_UCR2_PREN| BM_UART_UCR2_PROE));
     else if (parity == PARITY_ODD)
         HW_UART_UCR2_SET(instance,(BM_UART_UCR2_PREN| BM_UART_UCR2_PROE));
     else {                      /* parity == PARITY_EVEN */

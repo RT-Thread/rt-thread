@@ -1195,7 +1195,7 @@ typedef union _hw_epdc_upd_ctrl
         unsigned UPDATE_MODE : 1; //!< [0] Update Mode
         unsigned DRY_RUN : 1; //!< [1] Enable Dry Run mode(set to 1).
         unsigned AUTOWV : 1; //!< [2] enable automatical waveform mode selection
-        unsigned AUTOWV_PAUSE : 1; //!< [3] 
+        unsigned AUTOWV_PAUSE : 1; //!< [3]
         unsigned RESERVED0 : 4; //!< [7:4] Reserved.
         unsigned WAVEFORM_MODE : 8; //!< [15:8] Waveform Mode 0-255
         unsigned LUT_SEL : 6; //!< [21:16] LUT select 0-63

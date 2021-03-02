@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -126,11 +126,11 @@ uint32_t CRC_CalcDataChecksum(uint32_t data, CRC_WR_SIZE SizeType)
 uint32_t CRC_CalcBlockChecksum(void *block_data, uint32_t block_size, CRC_WR_SIZE data_size)
 {
     uint8_t  *data = (uint8_t*) block_data;
-    
+
     while(block_size !=0) {
-        
+
       switch(data_size) {
-        
+
         case CRC_WR_8BIT:
         {
            uint8_t *tmp = data;

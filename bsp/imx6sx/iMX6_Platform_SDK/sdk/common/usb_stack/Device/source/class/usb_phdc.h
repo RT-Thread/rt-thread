@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -154,7 +154,7 @@ typedef struct _usb_class_phdc_xfer_size
     uint_16 transfer_size;      /* Transfer Size */
 #if USB_METADATA_SUPPORTED
     boolean meta_data_packet;   /* meta data packet flag */
-#endif    
+#endif
 }USB_CLASS_PHDC_XFER_SIZE, *PTR_USB_CLASS_PHDC_XFER_SIZE;
 
 /* USB class PHDC Receive Buffer  */
@@ -262,11 +262,11 @@ extern uint_8 USB_Phdc_Other_Requests(uint_8 controller_ID,
                                     uint_8_ptr *data,
                                     USB_PACKET_SIZE *size);
 
-#ifdef COMPOSITE_DEV                                    
+#ifdef COMPOSITE_DEV
 extern void USB_Class_PHDC_Event (
     uint_8 controller_ID,   /* [IN] Controller ID */
     uint_8 event,           /* [IN] Event Type */
-    void* val               /* [IN] Pointer to configuration Value */   
+    void* val               /* [IN] Pointer to configuration Value */
 );
 #endif
 
@@ -274,9 +274,9 @@ void USB_Class_PHDC_Endpoint_Service (
     PTR_USB_DEV_EVENT_STRUCT event  /* [IN] Pointer to USB Event Structure */
 );
 
-extern uint_8 USB_Class_PHDC_DeInit 
+extern uint_8 USB_Class_PHDC_DeInit
 (
-    uint_8 controller_ID              
+    uint_8 controller_ID
 );
 
 extern uint_8 USB_Class_PHDC_Send_Data (

@@ -68,7 +68,7 @@ void audio_codec_power_on (void)
  */
 void audio_clock_config(void)
 {
-#if defined(BOARD_SMART_DEVICE) 
+#if defined(BOARD_SMART_DEVICE)
     ccm_iomux_config();
 
     HW_CCM_CCOSR_WR(BF_CCM_CCOSR_CLKO2_EN(1)

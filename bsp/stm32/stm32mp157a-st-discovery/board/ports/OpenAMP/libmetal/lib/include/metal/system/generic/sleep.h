@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	generic/sleep.h
- * @brief	Generic sleep primitives for libmetal.
+ * @file    generic/sleep.h
+ * @brief   Generic sleep primitives for libmetal.
  */
 
 #ifndef __METAL_SLEEP__H__
@@ -24,9 +24,9 @@ extern "C" {
 
 static inline int __metal_sleep_usec(unsigned int usec)
 {
-	metal_unused(usec);
-	/* Fix me */
-	return 0;
+    metal_unused(usec);
+    /* Fix me */
+    return 0;
 }
 
 /** @} */

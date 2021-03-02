@@ -6,14 +6,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 /**
  * @defgroup smtp_opts Options
  * @ingroup smtp
- * 
+ *
  * @{
  */
-    
+
 /** Set this to 1 to enable data handler callback on BODY */
 #ifndef SMTP_BODYDH
 #define SMTP_BODYDH             0

@@ -42,7 +42,7 @@ struct net_device_stats
     unsigned long    tx_fifo_errors;
     unsigned long    tx_heartbeat_errors;
     unsigned long    tx_window_errors;
-    
+
     /* for cslip etc */
     unsigned long    rx_compressed;
     unsigned long    tx_compressed;

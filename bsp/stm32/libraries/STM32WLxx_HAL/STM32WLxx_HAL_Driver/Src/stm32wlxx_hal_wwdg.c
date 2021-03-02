@@ -55,7 +55,7 @@
     (+) Enable WWDG APB1 clock using __HAL_RCC_WWDG_CLK_ENABLE().
     (+) Configure the WWDG prescaler, refresh window value, counter value and early
         interrupt status using HAL_WWDG_Init() function. This will automatically
-        enable WWDG and start its downcounter. Time reference can be taken from 
+        enable WWDG and start its downcounter. Time reference can be taken from
         function exit. Care must be taken to provide a counter value
         greater than 0x40 to prevent generation of immediate reset.
     (+) If the Early Wakeup Interrupt (EWI) feature is enabled, an interrupt is

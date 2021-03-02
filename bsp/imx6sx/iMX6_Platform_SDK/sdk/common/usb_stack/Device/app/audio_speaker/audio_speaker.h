@@ -8,13 +8,13 @@
  *
  * @file audio_speaker.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date
  *
- * @brief The file contains Macro's and functions required for Audio speaker  
+ * @brief The file contains Macro's and functions required for Audio speaker
  *        Loopback Application
  *
  *****************************************************************************/
@@ -31,13 +31,13 @@
 /******************************************************************************
  * Macro's
  *****************************************************************************/
-#define  CONTROLLER_ID      (0)   /* ID to identify USB CONTROLLER */ 
+#define  CONTROLLER_ID      (0)   /* ID to identify USB CONTROLLER */
 
 #define  KBI_STAT_MASK      (0x0F)
 
-/* 
-   DATA_BUFF_SIZE should be greater than or equal to the endpoint buffer size, 
-   otherwise there will be data loss. For MC9S08JS16, maximum DATA_BUFF_SIZE 
+/*
+   DATA_BUFF_SIZE should be greater than or equal to the endpoint buffer size,
+   otherwise there will be data loss. For MC9S08JS16, maximum DATA_BUFF_SIZE
    supported is 16 Bytes
 */
 #ifndef _MC9S08JS16_H
@@ -56,4 +56,4 @@
 extern void TestApp_Init(void);
 extern void TestApp_Task(void);
 
-#endif 
+#endif

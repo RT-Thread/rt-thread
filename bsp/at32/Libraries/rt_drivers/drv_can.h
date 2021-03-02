@@ -22,7 +22,7 @@ extern "C" {
 #define CAN_TX_MAILBOX0             (0x00000001U)  /*!< Tx Mailbox 0  */
 #define CAN_TX_MAILBOX1             (0x00000002U)  /*!< Tx Mailbox 1  */
 #define CAN_TX_MAILBOX2             (0x00000004U)  /*!< Tx Mailbox 2  */
-  
+
 struct at32_baud_rate_tab
 {
     rt_uint32_t baud_rate;

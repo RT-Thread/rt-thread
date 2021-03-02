@@ -165,8 +165,8 @@ typedef union _hw_csi2ipu_sw_rst
  * rgb444 mode selection
  *
  * Values:
- * - 0 - {4â€™h0,r4b4g4}
- * - 1 - {r4,1â€™b0,g4,2â€™b00,b4,1â€™b0}
+ * - 0 - {4¡¯h0,r4b4g4}
+ * - 1 - {r4,1¡¯b0,g4,2¡¯b00,b4,1¡¯b0}
  */
 //@{
 #define BP_CSI2IPU_SW_RST_RGB444_FM      (3)      //!< Bit position for CSI2IPU_SW_RST_RGB444_FM.

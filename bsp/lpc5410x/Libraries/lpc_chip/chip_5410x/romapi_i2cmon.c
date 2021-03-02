@@ -35,9 +35,9 @@
 uint32_t ROM_I2CMON_GetMemSize(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_I2CMON_API->GetMemSize();
+    return ROMAPI_I2CMON_API->GetMemSize();
 #else
-	return i2cmon_api.GetMemSize();
+    return i2cmon_api.GetMemSize();
 #endif
 }
 
@@ -45,9 +45,9 @@ uint32_t ROM_I2CMON_GetMemSize(void)
 ROM_I2CMON_HANDLE_T ROM_I2CMON_Init(void *mem, ROM_I2CMON_INIT_T *pInit)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_I2CMON_API->Init(mem, pInit);
+    return ROMAPI_I2CMON_API->Init(mem, pInit);
 #else
-	return i2cmon_api.Init(mem, pInit);
+    return i2cmon_api.Init(mem, pInit);
 #endif
 }
 
@@ -55,9 +55,9 @@ ROM_I2CMON_HANDLE_T ROM_I2CMON_Init(void *mem, ROM_I2CMON_INIT_T *pInit)
 void ROM_I2CMON_RegisterCallback(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CALLBACK_T cbIndex, void *pCB)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_I2CMON_API->RegisterCallback(pHandle, cbIndex, pCB);
+    ROMAPI_I2CMON_API->RegisterCallback(pHandle, cbIndex, pCB);
 #else
-	i2cmon_api.RegisterCallback(pHandle, cbIndex, pCB);
+    i2cmon_api.RegisterCallback(pHandle, cbIndex, pCB);
 #endif
 }
 
@@ -65,9 +65,9 @@ void ROM_I2CMON_RegisterCallback(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CALLBAC
 ErrorCode_t ROM_I2CMON_StartLog(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CAP_T *pCap)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_I2CMON_API->StartLog(pHandle, pCap);
+    return ROMAPI_I2CMON_API->StartLog(pHandle, pCap);
 #else
-	return i2cmon_api.StartLog(pHandle, pCap);
+    return i2cmon_api.StartLog(pHandle, pCap);
 #endif
 }
 
@@ -75,9 +75,9 @@ ErrorCode_t ROM_I2CMON_StartLog(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CAP_T *p
 void ROM_I2CMON_TransferHandler(ROM_I2CMON_HANDLE_T pHandle)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_I2CMON_API->TransferHandler(pHandle);
+    ROMAPI_I2CMON_API->TransferHandler(pHandle);
 #else
-	i2cmon_api.TransferHandler(pHandle);
+    i2cmon_api.TransferHandler(pHandle);
 #endif
 }
 
@@ -85,8 +85,8 @@ void ROM_I2CMON_TransferHandler(ROM_I2CMON_HANDLE_T pHandle)
 uint16_t ROM_I2CMON_GetDriverVersion(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_I2CMON_API->GetDriverVersion();
+    return ROMAPI_I2CMON_API->GetDriverVersion();
 #else
-	return i2cmon_api.GetDriverVersion();
+    return i2cmon_api.GetDriverVersion();
 #endif
 }

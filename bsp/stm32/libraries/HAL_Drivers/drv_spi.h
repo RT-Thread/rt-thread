@@ -62,7 +62,7 @@ struct stm32_spi
         DMA_HandleTypeDef handle_rx;
         DMA_HandleTypeDef handle_tx;
     } dma;
-    
+
     rt_uint8_t spi_dma_flag;
     struct rt_spi_bus spi_bus;
 };

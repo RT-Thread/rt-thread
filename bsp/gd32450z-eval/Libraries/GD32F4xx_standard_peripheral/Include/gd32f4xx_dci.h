@@ -100,14 +100,14 @@
 /* constants definitions */
 /* DCI parameter struct definitions */
 typedef struct
-{   
+{
     uint32_t capture_mode;                                           /*!< DCI capture mode: continuous or snapshot */
     uint32_t clock_polarity;                                         /*!< clock polarity selection */
     uint32_t hsync_polarity;                                         /*!< horizontal polarity selection */
     uint32_t vsync_polarity;                                         /*!< vertical polarity selection */
     uint32_t frame_rate;                                             /*!< frame capture rate */
     uint32_t interface_format;                                       /*!< digital camera interface format */
-}dci_parameter_struct;                                                         
+}dci_parameter_struct;
 
 #define DCI_CAPTURE_MODE_CONTINUOUS   ((uint32_t)0x00000000U)        /*!< continuous capture mode */
 #define DCI_CAPTURE_MODE_SNAPSHOT     DCI_CTL_SNAP                   /*!< snapshot capture mode */
@@ -120,13 +120,13 @@ typedef struct
 
 #define DCI_VSYNC_POLARITY_LOW        ((uint32_t)0x00000000U)        /*!< low level during blanking period */
 #define DCI_VSYNC_POLARITY_HIGH       DCI_CTL_VPS                    /*!< high level during blanking period*/
- 
-#define CTL_FR(regval)                (BITS(8,9)&((uint32_t)(regval) << 8U))    
+
+#define CTL_FR(regval)                (BITS(8,9)&((uint32_t)(regval) << 8U))
 #define DCI_FRAME_RATE_ALL            CTL_FR(0)                      /*!< capture all frames */
 #define DCI_FRAME_RATE_1_2            CTL_FR(1)                      /*!< capture one in 2 frames */
 #define DCI_FRAME_RATE_1_4            CTL_FR(2)                      /*!< capture one in 4 frames */
 
-#define CTL_DCIF(regval)              (BITS(10,11)&((uint32_t)(regval) << 10U)) 
+#define CTL_DCIF(regval)              (BITS(10,11)&((uint32_t)(regval) << 10U))
 #define DCI_INTERFACE_FORMAT_8BITS    CTL_DCIF(0)                    /*!< 8-bit data on every pixel clock */
 #define DCI_INTERFACE_FORMAT_10BITS   CTL_DCIF(1)                    /*!< 10-bit data on every pixel clock */
 #define DCI_INTERFACE_FORMAT_12BITS   CTL_DCIF(2)                    /*!< 12-bit data on every pixel clock */
@@ -139,7 +139,7 @@ typedef struct
 #define DCI_INT_VS                    ((uint32_t)0x00000008U)         /*!< vsync interrupt */
 #define DCI_INT_EL                    ((uint32_t)0x00000010U)         /*!< end of line interrupt */
 
-/* DCI flag definitions */  
+/* DCI flag definitions */
 #define DCI_FLAG_HS                   ((uint8_t)0x01U)                /*!< HS line status */
 #define DCI_FLAG_VS                   ((uint8_t)0x02U)                /*!< VS line status */
 #define DCI_FLAG_FV                   ((uint8_t)0x03U)                /*!< FIFO valid */

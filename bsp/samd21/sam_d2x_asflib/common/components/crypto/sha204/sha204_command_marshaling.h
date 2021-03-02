@@ -362,7 +362,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_check_mac function.
  */
 struct sha204_check_mac_parameters {
@@ -371,30 +371,30 @@ struct sha204_check_mac_parameters {
    uint8_t mode;              //!< what to include in the MAC calculation
    uint8_t key_id;            //!< what key to use for the MAC calculation
    uint8_t *client_challenge; //!< pointer to challenge that host had sent to client
-   uint8_t *client_response;  //!< pointer to challenge response received from client 
+   uint8_t *client_response;  //!< pointer to challenge response received from client
    uint8_t *other_data;       //!< pointer to 13 bytes of data that were used by client to calculate MAC
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_derive_key function.
  */
 struct sha204_derive_key_parameters {
-   uint8_t *tx_buffer;   	//!< pointer to send buffer
-   uint8_t *rx_buffer;   	//!< pointer to receive buffer
-   uint8_t use_random;   	//!< true if source for TempKey was random number
-   uint8_t target_key;   	//!< slot where derived key should be stored
-   uint8_t *mac;	     	   //!< pointer to MAC for this command
+   uint8_t *tx_buffer;      //!< pointer to send buffer
+   uint8_t *rx_buffer;      //!< pointer to receive buffer
+   uint8_t use_random;      //!< true if source for TempKey was random number
+   uint8_t target_key;      //!< slot where derived key should be stored
+   uint8_t *mac;               //!< pointer to MAC for this command
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_dev_rev function.
  */
 struct sha204_dev_rev_parameters {
-   uint8_t *tx_buffer;   	//!< pointer to send buffer
-   uint8_t *rx_buffer;		//!< pointer to receive buffer
+   uint8_t *tx_buffer;      //!< pointer to send buffer
+   uint8_t *rx_buffer;      //!< pointer to receive buffer
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_gen_dig function.
  */
 struct sha204_gen_dig_parameters {
@@ -402,10 +402,10 @@ struct sha204_gen_dig_parameters {
    uint8_t *rx_buffer;        //!< pointer to receive buffer
    uint8_t zone;              //!< what zone (config, OTP, or data) to use in the digest calculation
    uint8_t key_id;            //!< what key or OTP block to use for the digest calculation
-   uint8_t *other_data;       //!< pointer to four bytes of data to use for the digest calculation, only needed when key is CheckMac only key 
+   uint8_t *other_data;       //!< pointer to four bytes of data to use for the digest calculation, only needed when key is CheckMac only key
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_hmac function.
  */
 struct sha204_hmac_parameters {
@@ -415,7 +415,7 @@ struct sha204_hmac_parameters {
    uint16_t key_id;           //!< what key to use for the HMAC calculation
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_lock function.
  */
 struct sha204_lock_parameters {
@@ -425,7 +425,7 @@ struct sha204_lock_parameters {
    uint16_t summary;          //!< CRC over the zone to be locked
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_mac function.
  */
 struct sha204_mac_parameters {
@@ -436,7 +436,7 @@ struct sha204_mac_parameters {
    uint8_t *challenge;        //!< pointer to 32 bytes of challenge data to be sent to client
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_nonce function.
  */
 struct sha204_nonce_parameters {
@@ -446,7 +446,7 @@ struct sha204_nonce_parameters {
    uint8_t *num_in;           //!< pointer to 20 bytes of input or 32 bytes of pass-through data
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_pause function.
  */
 struct sha204_pause_parameters {
@@ -455,7 +455,7 @@ struct sha204_pause_parameters {
    uint8_t selector;          //!< which device not to set into Idle mode (single-wire interface only)
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_random function.
  */
 struct sha204_random_parameters {
@@ -464,7 +464,7 @@ struct sha204_random_parameters {
    uint8_t mode;              //!< true if existing EEPROM seed should be used
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_read function.
  */
 struct sha204_read_parameters {
@@ -474,7 +474,7 @@ struct sha204_read_parameters {
    uint16_t address;          //!< what address to read from
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_update_extra function.
  */
 struct sha204_update_extra_parameters {
@@ -484,7 +484,7 @@ struct sha204_update_extra_parameters {
    uint8_t new_value;         //!< value to write
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_write function.
  */
 struct sha204_write_parameters {
@@ -493,28 +493,28 @@ struct sha204_write_parameters {
    uint8_t zone;              //!< what zone (config, OTP, or data) to write to, how many bytes (4 or 32), and whether data are encrypted
    uint16_t address;          //!< what address to write to
    uint8_t *new_value;        //!< pointer to 4 or 32 bytes of data to be written
-   uint8_t *mac;              //!< pointer to MAC of this command (null if zone is unlocked) 
+   uint8_t *mac;              //!< pointer to MAC of this command (null if zone is unlocked)
 };
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204m_execute function.
  */
 struct sha204_command_parameters {
-	uint8_t op_code;      //!< command code
-	uint8_t param_1;      //!< parameter 1
-	uint16_t param_2;     //!< parameter 2
-	uint8_t data_len_1;   //!< length of data field 1
-	uint8_t data_len_2;   //!< length of data field 2
-	uint8_t data_len_3;   //!< length of data field 3
-	uint8_t *data_1;      //!< pointer to data field 1
-	uint8_t *data_2;      //!< pointer to data field 2
-	uint8_t *data_3;      //!< pointer to data field 3
-	uint8_t *tx_buffer;   //!< pointer to send buffer
-	uint8_t *rx_buffer;   //!< pointer to receive buffer
-	uint8_t tx_size;      //!< size of supplied send buffer
-	uint8_t rx_size;      //!< size of supplied receive buffer
+    uint8_t op_code;      //!< command code
+    uint8_t param_1;      //!< parameter 1
+    uint16_t param_2;     //!< parameter 2
+    uint8_t data_len_1;   //!< length of data field 1
+    uint8_t data_len_2;   //!< length of data field 2
+    uint8_t data_len_3;   //!< length of data field 3
+    uint8_t *data_1;      //!< pointer to data field 1
+    uint8_t *data_2;      //!< pointer to data field 2
+    uint8_t *data_3;      //!< pointer to data field 3
+    uint8_t *tx_buffer;   //!< pointer to send buffer
+    uint8_t *rx_buffer;   //!< pointer to receive buffer
+    uint8_t tx_size;      //!< size of supplied send buffer
+    uint8_t rx_size;      //!< size of supplied receive buffer
 };
-	
+
 /**
  * \defgroup sha204_command_marshaling_group SHA204 Service - command marshaling functions
  *

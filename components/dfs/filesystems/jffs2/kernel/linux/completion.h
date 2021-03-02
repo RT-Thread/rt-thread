@@ -1,7 +1,7 @@
 #ifndef __LINUX_COMPLETION_H__
 #define __LINUX_COMPLETION_H__
 
-#if defined (__GNUC__)    
+#if defined (__GNUC__)
 struct completion { } ;
 #elif defined (MSVC)
 struct completion {int no; } ;

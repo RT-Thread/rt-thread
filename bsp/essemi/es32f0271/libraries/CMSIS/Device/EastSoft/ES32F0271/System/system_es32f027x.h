@@ -13,18 +13,18 @@
   **************************************************************************************
   */
 
-/* Define to prevent recursive inclusion -------------------------------------*/ 
+/* Define to prevent recursive inclusion -------------------------------------*/
 
 #ifndef __SYSTEM_ES32F027x_H__
 #define __SYSTEM_ES32F027x_H__
 
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes -------------------------------------------------------*/
 #include <stdint.h>
- 
+
 /** @addtogroup CMSIS
   * @{
   */
@@ -32,7 +32,7 @@
 /** @addtogroup System_ES32F027x
   * @{
   */
-   
+
 /* Public Functions -----------------------------------------------------------*/
 /* Public Init Structure ------------------------------------------------------*/
 /* Public Macros --------------------------------------------------------------*/
@@ -42,7 +42,7 @@
 /* Private Constants-----------------------------------------------------------*/
 
 /* Public Types ---------------------------------------------------------------*/
-/** @addtogroup Public_Types 
+/** @addtogroup Public_Types
   * @{
   */
 extern unsigned int SystemCoreClock;
@@ -63,21 +63,21 @@ extern void SystemInit (void);
 }
 #endif
 
-#endif 
+#endif
 
 /**
-  * @} Public_Functions 
+  * @} Public_Functions
   */
 
 /**
   * @} Public_Types
   */
-  
+
 /**
   * @} System_ES32F027x
   */
-  
+
 /**
   * @} CMSIS
-  */ 
+  */
 /********** (C) COPYRIGHT Eastsoft Microelectronics END OF FILE SYSTEM_ES32F027x.H **********/

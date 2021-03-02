@@ -2,10 +2,10 @@
 #define __SAM7X_EMAC_H__
 
 //#define DM9161
-#define RTL8201 
+#define RTL8201
 
-#ifdef 	 DM9161
-   #define AT91C_PHY_ADDR	31
+#ifdef   DM9161
+   #define AT91C_PHY_ADDR   31
 #else
 #define AT91C_PHY_ADDR      0x01
 #endif
@@ -64,21 +64,21 @@
 #define BMSR_100FULL        0x4000      /* Can do 100mbps, full-duplex       */
 #define BMSR_100BASE4       0x8000      /* Can do 100mbps, 4k packets        */
 
-#define RxDESC_FLAG_ADDR_MASK		0xfffffffc
-#define	RxDESC_FLAG_WARP			0x00000002
-#define	RxDESC_FLAG_OWNSHIP			0x00000001
-#define RxDESC_STATUS_BUF_SIZE		(0x00000FFF)
-#define RxDESC_STATUS_FRAME_START	(1U << 14)
-#define RxDESC_STATUS_FRAME_END		(1U << 15)
+#define RxDESC_FLAG_ADDR_MASK       0xfffffffc
+#define RxDESC_FLAG_WARP            0x00000002
+#define RxDESC_FLAG_OWNSHIP         0x00000001
+#define RxDESC_STATUS_BUF_SIZE      (0x00000FFF)
+#define RxDESC_STATUS_FRAME_START   (1U << 14)
+#define RxDESC_STATUS_FRAME_END     (1U << 15)
 
-#define TxDESC_STATUS_BUF_SIZE		(0x000007FF)
-#define TxDESC_STATUS_LAST_BUF		(1U << 15)
-#define	TxDESC_STATUS_NO_CRC		(1U << 16)
-#define	TxDESC_STATUS_BUF_EXHAUSTED	(1U << 27)
-#define	TxDESC_STATUS_Tx_UNDERRUN	(1U << 28)
-#define	TxDESC_STATUS_Tx_ERROR		(1U << 29)
-#define	TxDESC_STATUS_WRAP			(1U << 30)
-#define	TxDESC_STATUS_USED			(1U << 31)
+#define TxDESC_STATUS_BUF_SIZE      (0x000007FF)
+#define TxDESC_STATUS_LAST_BUF      (1U << 15)
+#define TxDESC_STATUS_NO_CRC        (1U << 16)
+#define TxDESC_STATUS_BUF_EXHAUSTED (1U << 27)
+#define TxDESC_STATUS_Tx_UNDERRUN   (1U << 28)
+#define TxDESC_STATUS_Tx_ERROR      (1U << 29)
+#define TxDESC_STATUS_WRAP          (1U << 30)
+#define TxDESC_STATUS_USED          (1U << 31)
 
 //----dm9161 define----
 #define DM9161_RESET             (1 << 15) // 1= Software Reset; 0=Normal Operation

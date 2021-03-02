@@ -8,30 +8,30 @@
  * 2018-11-25     misonyo      first implementation.
  */
 /*
- * ç¨‹åºæ¸…å•ï¼šè¿™æ˜¯ä¸€ä¸ª PWM è®¾å¤‡ä½¿ç”¨ä¾‹ç¨‹
- * ä¾‹ç¨‹å¯¼å‡ºäº† pwm_led_sample å‘½ä»¤åˆ°æŽ§åˆ¶ç»ˆç«¯
- * å‘½ä»¤è°ƒç”¨æ ¼å¼ï¼špwm_led_sample
- * ç¨‹åºåŠŸèƒ½ï¼šé€šè¿‡ PWM è®¾å¤‡æŽ§åˆ¶ LED ç¯çš„äº®åº¦ï¼Œå¯ä»¥çœ‹åˆ°LEDä¸åœçš„ç”±æš—å˜åˆ°äº®ï¼Œç„¶åŽåˆä»Žäº®å˜åˆ°æš—ã€‚
+ * ³ÌÐòÇåµ¥£ºÕâÊÇÒ»¸ö PWM Éè±¸Ê¹ÓÃÀý³Ì
+ * Àý³Ìµ¼³öÁË pwm_led_sample ÃüÁîµ½¿ØÖÆÖÕ¶Ë
+ * ÃüÁîµ÷ÓÃ¸ñÊ½£ºpwm_led_sample
+ * ³ÌÐò¹¦ÄÜ£ºÍ¨¹ý PWM Éè±¸¿ØÖÆ LED µÆµÄÁÁ¶È£¬¿ÉÒÔ¿´µ½LED²»Í£µÄÓÉ°µ±äµ½ÁÁ£¬È»ºóÓÖ´ÓÁÁ±äµ½°µ¡£
 */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define LED_PIN_NUM         16      /* LED PINè„šç¼–å·ï¼ŒæŸ¥çœ‹é©±åŠ¨æ–‡ä»¶drv_gpio.cç¡®å®š */
-#define PWM_DEV_NAME        "pwm1"  /* PWMè®¾å¤‡åç§° */
-#define PWM_DEV_CHANNEL     4       /* PB9 PWMé€šé“ */
+#define LED_PIN_NUM         16      /* LED PIN½Å±àºÅ£¬²é¿´Çý¶¯ÎÄ¼þdrv_gpio.cÈ·¶¨ */
+#define PWM_DEV_NAME        "pwm1"  /* PWMÉè±¸Ãû³Æ */
+#define PWM_DEV_CHANNEL     4       /* PB9 PWMÍ¨µÀ */
 
-struct rt_device_pwm *pwm_dev;      /* PWMè®¾å¤‡å¥æŸ„ */
+struct rt_device_pwm *pwm_dev;      /* PWMÉè±¸¾ä±ú */
 
 static int pwm_led_sample(int argc, char *argv[])
 {
     rt_uint32_t period, pulse, dir;
 
-    period = 500000;    /* å‘¨æœŸä¸º0.5msï¼Œå•ä½ä¸ºçº³ç§’ns */
-    dir = 1;            /* PWMè„‰å†²å®½åº¦å€¼çš„å¢žå‡æ–¹å‘ */
-    pulse = 0;          /* PWMè„‰å†²å®½åº¦å€¼ï¼Œå•ä½ä¸ºçº³ç§’ns */
+    period = 500000;    /* ÖÜÆÚÎª0.5ms£¬µ¥Î»ÎªÄÉÃëns */
+    dir = 1;            /* PWMÂö³å¿í¶ÈÖµµÄÔö¼õ·½Ïò */
+    pulse = 0;          /* PWMÂö³å¿í¶ÈÖµ£¬µ¥Î»ÎªÄÉÃëns */
 
-    /* æŸ¥æ‰¾è®¾å¤‡ */
+    /* ²éÕÒÉè±¸ */
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
     if (pwm_dev == RT_NULL)
     {
@@ -39,21 +39,21 @@ static int pwm_led_sample(int argc, char *argv[])
         return RT_ERROR;
     }
 
-    /* è®¾ç½®PWMå‘¨æœŸå’Œè„‰å†²å®½åº¦é»˜è®¤å€¼ */
+    /* ÉèÖÃPWMÖÜÆÚºÍÂö³å¿í¶ÈÄ¬ÈÏÖµ */
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
-    /* ä½¿èƒ½è®¾å¤‡ */
+    /* Ê¹ÄÜÉè±¸ */
     rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
-    
+
     while (1)
     {
         rt_thread_mdelay(50);
         if (dir)
         {
-            pulse += 5000;      /* ä»Ž0å€¼å¼€å§‹æ¯æ¬¡å¢žåŠ 5000ns */
+            pulse += 5000;      /* ´Ó0Öµ¿ªÊ¼Ã¿´ÎÔö¼Ó5000ns */
         }
         else
         {
-            pulse -= 5000;      /* ä»Žæœ€å¤§å€¼å¼€å§‹æ¯æ¬¡å‡å°‘5000ns */
+            pulse -= 5000;      /* ´Ó×î´óÖµ¿ªÊ¼Ã¿´Î¼õÉÙ5000ns */
         }
         if (pulse >= period)
         {
@@ -64,9 +64,9 @@ static int pwm_led_sample(int argc, char *argv[])
             dir = 1;
         }
 
-        /* è®¾ç½®PWMå‘¨æœŸå’Œè„‰å†²å®½åº¦ */
+        /* ÉèÖÃPWMÖÜÆÚºÍÂö³å¿í¶È */
         rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
     }
 }
-/* å¯¼å‡ºåˆ° msh å‘½ä»¤åˆ—è¡¨ä¸­ */
+/* µ¼³öµ½ msh ÃüÁîÁÐ±íÖÐ */
 MSH_CMD_EXPORT(pwm_led_sample, pwm sample);

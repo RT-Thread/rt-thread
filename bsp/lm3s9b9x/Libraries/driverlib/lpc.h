@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2010-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -83,7 +83,7 @@ extern "C"
 #define LPC_IRQ2                0x00040000  // Serial IRQ2
 #define LPC_IRQ1                0x00020000  // Serial IRQ1
 #define LPC_IRQ0                0x00010000  // Serial IRQ0
-                                 
+
 //*****************************************************************************
 //
 // Addition values that can be returned from LPCIRQGet.
@@ -91,7 +91,7 @@ extern "C"
 //*****************************************************************************
 #define LPC_IRQ_BUSY            0x00000004  // SERIRQ frame in progress
 #define LPC_IRQ_CONT            0x00000001  // SERIRQ in Continuous Mode
-                                 
+
 //*****************************************************************************
 //
 // Values that can be passed as the ulChannel parameter in LPCChannel...
@@ -219,7 +219,7 @@ extern "C"
 //
 //*****************************************************************************
 #define LPC_COMx_ENABLED        0x00010000  // COMx mode enabled.
-    
+
 //*****************************************************************************
 //
 // Values that can be passed to LPCIntEnable, LPCIntDisable, and LPCIntClear
@@ -330,7 +330,7 @@ extern "C"
 #define LPC_COMx_MASK_CX        0x00200000  // Event Mask for COMx
 #define LPC_COMx_MASK_CXTX      0x00100000  // Event Mask for COMx TX
 #define LPC_COMx_MASK_CXRX      0x00080000  // Event Mask for COMx RX
-    
+
 //*****************************************************************************
 //
 // Values that can be passed to the LPCChannelDMAConfigSet function as part
@@ -366,7 +366,7 @@ extern "C"
 #define LPC_CH_ST_USER2         0x00000400  // User Status Bit 2
 #define LPC_CH_ST_USER3         0x00000800  // User Status Bit 3
 #define LPC_CH_ST_USER4         0x00001000  // User Status Bit 4
-    
+
 //*****************************************************************************
 //
 // Additinoal values that can be returned by the LPCChannelStatusGet function.

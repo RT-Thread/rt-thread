@@ -3,7 +3,7 @@
 #define ARM_USBD_DRV_VERSION    ARM_DRIVER_VERSION_MAJOR_MINOR(2, 0) /* driver version */
 
 /* Driver Version */
-static const ARM_DRIVER_VERSION usbd_driver_version = { 
+static const ARM_DRIVER_VERSION usbd_driver_version = {
     ARM_USBD_API_VERSION,
     ARM_USBD_DRV_VERSION
 };

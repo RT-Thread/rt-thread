@@ -8,13 +8,13 @@
  *
  * @file ieee11073_phd_types.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date Mar-31-2009
  *
- * @brief This file contains definitions of the data types and the structures 
+ * @brief This file contains definitions of the data types and the structures
  *        for the data that appears on the network (specific to IEEE_11073)
  *****************************************************************************/
 #ifndef PHD_TYPES
@@ -31,7 +31,7 @@ typedef unsigned short intu16;
 typedef unsigned long intu32;
 
 typedef struct _Any
-{    
+{
     intu16 length;
     intu8 value[1]; /* first element of the array */
 } Any;
@@ -127,7 +127,7 @@ typedef struct _octet_string
     intu8 value[1]; /* first element of the array */
 } octet_string;
 
-typedef struct _SystemModel 
+typedef struct _SystemModel
 {
     octet_string manufacturer;
     octet_string model_number;
@@ -681,7 +681,7 @@ typedef struct _RejectResult
 } RejectResult;
 
 typedef struct _DATA_apdu
-{            
+{
     InvokeIDType invoke_id;
     struct
     {
@@ -756,7 +756,7 @@ typedef intu16 ConfigId;
 #define MANAGER_CONFIG_RESPONSE 0x0000
 #define STANDARD_CONFIG_START 0x0001
 #define STANDARD_CONFIG_END 0x3FFF
-#define EXTENDED_CONFIG_START 0x4004 
+#define EXTENDED_CONFIG_START 0x4004
 
 #define EXTENDED_CONFIG_END 0x7FFF
 #define RESERVED_START 0x8000
@@ -787,10 +787,10 @@ typedef struct _PhdAssociationInformation
     NomenclatureVersion nomenclatureVersion;
     FunctionalUnits functionalUnits;
     SystemType systemType;
-    octet_string system_id; 
+    octet_string system_id;
     intu16 dev_config_id;
     DataReqModeCapab data_req_mode_capab;
-    AttributeList optionList; 
+    AttributeList optionList;
 } PhdAssociationInformation;
 
 typedef struct _ManufSpecAssociationInformation

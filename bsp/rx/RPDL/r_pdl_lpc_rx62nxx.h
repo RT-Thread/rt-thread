@@ -1,48 +1,48 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: LPC API for RX62Nxx
-* File Name		: r_pdl_lpc_RX62Nxx.h
-* Version		: 1.02
-* Contents		: LPC API header
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name   : LPC API for RX62Nxx
+* File Name     : r_pdl_lpc_RX62Nxx.h
+* Version       : 1.02
+* Contents      : LPC API header
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_LPC_RX62Nxx_H
 #define R_PDL_LPC_RX62Nxx_H
 
-#define R_PDL_LPC_BACKUP_AREA_SIZE	32
+#define R_PDL_LPC_BACKUP_AREA_SIZE  32
 
 /* Library prototypes */
 bool R_LPC_CreateAll(
-	const uint32_t,
-	const uint32_t
+    const uint32_t,
+    const uint32_t
 );
 bool R_LPC_ControlAll(
-	const uint16_t
+    const uint16_t
 );
 bool R_LPC_WriteBackupAll(
-	volatile const uint8_t * const,
-	const uint8_t
+    volatile const uint8_t * const,
+    const uint8_t
 );
 bool R_LPC_ReadBackupAll(
-	volatile uint8_t * const,
-	const uint8_t
+    volatile uint8_t * const,
+    const uint8_t
 );
 bool R_LPC_GetStatusAll(
-	volatile uint16_t * const
+    volatile uint16_t * const
 );
 bool ReturnFalse(void);
 

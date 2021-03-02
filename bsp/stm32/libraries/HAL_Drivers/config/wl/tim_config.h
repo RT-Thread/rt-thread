@@ -33,8 +33,8 @@ extern "C" {
         .minfreq = 2000,                        \
         .maxcnt  = 0xFFFF,                      \
         .cntmode = HWTIMER_CNTMODE_UP,          \
-    }    
-#endif    
+    }
+#endif
 #endif /* TIM_DEV_INFO_CONFIG */
 
 #ifdef BSP_USING_TIM2
@@ -47,7 +47,7 @@ extern "C" {
     }
 #endif /* TIM2_CONFIG */
 #endif /* BSP_USING_TIM2 */
-    
+
 #ifdef BSP_USING_TIM15
 #ifndef TIM15_CONFIG
 #define TIM15_CONFIG                                        \

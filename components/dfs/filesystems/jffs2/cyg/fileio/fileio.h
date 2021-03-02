@@ -259,27 +259,27 @@ struct CYG_IOVEC_TAG
     ssize_t        iov_len;             /* Length. */
 };
 
-enum	cyg_uio_rw { UIO_READ, UIO_WRITE };
+enum    cyg_uio_rw { UIO_READ, UIO_WRITE };
 
 /* Segment flag values. */
 enum cyg_uio_seg
 {
-    UIO_USERSPACE,		        /* from user data space */
-    UIO_SYSSPACE		        /* from system space */
+    UIO_USERSPACE,              /* from user data space */
+    UIO_SYSSPACE                /* from system space */
 };
 
 struct CYG_UIO_TAG
 {
-    struct CYG_IOVEC_TAG *uio_iov;	/* pointer to array of iovecs */
-    int	                 uio_iovcnt;	/* number of iovecs in array */
-    off_t       	 uio_offset;	/* offset into file this uio corresponds to */
-    ssize_t     	 uio_resid;	/* residual i/o count */
+    struct CYG_IOVEC_TAG *uio_iov;  /* pointer to array of iovecs */
+    int                  uio_iovcnt;    /* number of iovecs in array */
+    off_t            uio_offset;    /* offset into file this uio corresponds to */
+    ssize_t          uio_resid; /* residual i/o count */
     enum cyg_uio_seg     uio_segflg;    /* see above */
     enum cyg_uio_rw      uio_rw;        /* see above */
 };
 
 // Limits
-#define UIO_SMALLIOV	8		/* 8 on stack, else malloc */
+#define UIO_SMALLIOV    8       /* 8 on stack, else malloc */
 
 //=============================================================================
 // Description of open file
@@ -313,13 +313,13 @@ struct CYG_FILEOPS_TAG
 
 struct CYG_FILE_TAG
 {
-    cyg_uint32	                f_flag;		    /* file state                   */
+    cyg_uint32                  f_flag;         /* file state                   */
     cyg_uint16                  f_ucount;       /* use count                    */
-    cyg_uint16                  f_type;		    /* descriptor type              */
+    cyg_uint16                  f_type;         /* descriptor type              */
     cyg_uint32                  f_syncmode;     /* synchronization protocol     */
     struct CYG_FILEOPS_TAG      *f_ops;         /* file operations              */
-    off_t       	            f_offset;       /* current offset               */
-    CYG_ADDRWORD	            f_data;		    /* file or socket               */
+    off_t                       f_offset;       /* current offset               */
+    CYG_ADDRWORD                f_data;         /* file or socket               */
     CYG_ADDRWORD                f_xops;         /* extra type specific ops      */
     cyg_mtab_entry              *f_mte;         /* mount table entry            */
 };
@@ -348,9 +348,9 @@ struct CYG_FILE_TAG
 //-----------------------------------------------------------------------------
 // Type of file
 
-#define	CYG_FILE_TYPE_FILE      1	/* file */
-#define	CYG_FILE_TYPE_SOCKET	2	/* communications endpoint */
-#define	CYG_FILE_TYPE_DEVICE	3	/* device */
+#define CYG_FILE_TYPE_FILE      1   /* file */
+#define CYG_FILE_TYPE_SOCKET    2   /* communications endpoint */
+#define CYG_FILE_TYPE_DEVICE    3   /* device */
 
 //-----------------------------------------------------------------------------
 // Keys for getinfo() and setinfo()

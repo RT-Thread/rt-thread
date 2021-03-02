@@ -25,28 +25,28 @@
 
 /** @addtogroup TMR
   * @{
-  */ 
+  */
 
 /** @defgroup TMR_Exported_Types
   * @{
-  */ 
+  */
 
-/** 
+/**
   * @brief  TMR Time Base Init structure definition
-  * @note   This structure is used with all TMRx except for TMR6 and TMR7.    
+  * @note   This structure is used with all TMRx except for TMR6 and TMR7.
   */
 
 typedef struct
 {
-  uint16_t TMR_DIV;         			/*!< Specifies the prescaler value used to divide the TMR clock.
+  uint16_t TMR_DIV;                     /*!< Specifies the prescaler value used to divide the TMR clock.
                                        This parameter can be a number between 0x0000 and 0xFFFF */
 
   uint32_t TMR_CounterMode;       /*!< Specifies the counter mode.
                                        This parameter can be a value of @ref TMR_Counter_Mode */
 
   uint32_t TMR_Period;            /*!< Specifies the period value to be loaded into the active
-                                       Auto-Reload Register at the next update event. 
-																			 This parameter must be a number between 0x0000 and 0xFFFF. */ 
+                                       Auto-Reload Register at the next update event.
+                                                                             This parameter must be a number between 0x0000 and 0xFFFF. */
 
   uint16_t TMR_ClockDivision;     /*!< Specifies the clock division.
                                       This parameter can be a value of @ref TMR_Clock_Division_CKD */
@@ -57,12 +57,12 @@ typedef struct
                                        This means in PWM mode that (N+1) corresponds to:
                                           - the number of PWM periods in edge-aligned mode
                                           - the number of half PWM period in center-aligned mode
-                                       This parameter must be a number between 0x00 and 0xFF. 
+                                       This parameter must be a number between 0x00 and 0xFF.
                                        @note This parameter is valid only for TMR1 and TMR8. */
-} TMR_TimerBaseInitType;       
+} TMR_TimerBaseInitType;
 
-/** 
-  * @brief  TMR Output Compare Init structure definition  
+/**
+  * @brief  TMR Output Compare Init structure definition
   */
 
 typedef struct
@@ -77,9 +77,9 @@ typedef struct
                                    This parameter can be a value of @ref TMR_Output_Compare_N_state
                                    @note This parameter is valid only for TMR1 and TMR8. */
 
-  uint32_t TMR_Pulse;         /*!< Specifies the pulse value to be loaded into the Capture Compare Register. 
+  uint32_t TMR_Pulse;         /*!< Specifies the pulse value to be loaded into the Capture Compare Register.
                                    This parameter can be a number between 0x0000 and 0xFFFF */
- 
+
 
   uint16_t TMR_OCPolarity;    /*!< Specifies the output polarity.
                                    This parameter can be a value of @ref TMR_Output_Compare_Polarity */
@@ -97,8 +97,8 @@ typedef struct
                                    @note This parameter is valid only for TMR1 and TMR8. */
 } TMR_OCInitType;
 
-/** 
-  * @brief  TMR Input Capture Init structure definition  
+/**
+  * @brief  TMR Input Capture Init structure definition
   */
 
 typedef struct
@@ -120,9 +120,9 @@ typedef struct
                                   This parameter can be a number between 0x0 and 0xF */
 } TMR_ICInitType;
 
-/** 
-  * @brief  BDTR structure definition 
-  * @note   This structure is used only with TMR1 and TMR8.    
+/**
+  * @brief  BDTR structure definition
+  * @note   This structure is used only with TMR1 and TMR8.
   */
 
 typedef struct
@@ -135,23 +135,23 @@ typedef struct
                                       This parameter can be a value of @ref OSSI_Off_State_Selection_for_Idle_mode_state */
 
   uint16_t TMR_LOCKgrade;         /*!< Specifies the LOCK level parameters.
-                                      This parameter can be a value of @ref Lock_level */ 
+                                      This parameter can be a value of @ref Lock_level */
 
   uint16_t TMR_DeadTime;          /*!< Specifies the delay time between the switching-off and the
                                       switching-on of the outputs.
                                       This parameter can be a number between 0x00 and 0xFF  */
 
-  uint16_t TMR_Break;             /*!< Specifies whether the TMR Break input is enabled or not. 
+  uint16_t TMR_Break;             /*!< Specifies whether the TMR Break input is enabled or not.
                                       This parameter can be a value of @ref Break_Input_enable_disable */
 
   uint16_t TMR_BreakPolarity;     /*!< Specifies the TMR Break Input pin polarity.
                                       This parameter can be a value of @ref Break_Polarity */
 
-  uint16_t TMR_AutomaticOutput;   /*!< Specifies whether the TMR Automatic Output feature is enabled or not. 
+  uint16_t TMR_AutomaticOutput;   /*!< Specifies whether the TMR Automatic Output feature is enabled or not.
                                       This parameter can be a value of @ref TMR_AOE_Bit_Set_Reset */
 } TMR_BRKDTInitType;
 
-/** @defgroup TMR_Exported_constants 
+/** @defgroup TMR_Exported_constants
   * @{
   */
 
@@ -250,14 +250,14 @@ typedef struct
                                       ((PERIPH) == TMR4) || \
                                       ((PERIPH) == TMR5) || \
                                       ((PERIPH) == TMR8) || \
-                                      ((PERIPH) == TMR15)) 
+                                      ((PERIPH) == TMR15))
 #elif defined (AT32F413xx)
 #define IS_TMR_LIST3_PERIPH(PERIPH)  (((PERIPH) == TMR1) || \
                                       ((PERIPH) == TMR2) || \
                                       ((PERIPH) == TMR3) || \
                                       ((PERIPH) == TMR4) || \
                                       ((PERIPH) == TMR5) || \
-                                      ((PERIPH) == TMR8)) 
+                                      ((PERIPH) == TMR8))
 #elif defined (AT32F415xx)
 #define IS_TMR_LIST3_PERIPH(PERIPH)  (((PERIPH) == TMR1) || \
                                       ((PERIPH) == TMR2) || \
@@ -272,7 +272,7 @@ typedef struct
                                       ((PERIPH) == TMR5) || \
                                       ((PERIPH) == TMR8))
 #endif
-									                                 
+
 /* LIST4: TMR 1, 2, 3, 4, 5, 8, 15 */
 #if defined (AT32F403xx)
 #define IS_TMR_LIST4_PERIPH(PERIPH)  (((PERIPH) == TMR1) || \
@@ -304,7 +304,7 @@ typedef struct
                                       ((PERIPH) == TMR8))
 #endif
 
-/* LIST5: TMR 1, 2, 3, 4, 5, 8 and 15 */ 
+/* LIST5: TMR 1, 2, 3, 4, 5, 8 and 15 */
 
 #if defined (AT32F403xx)
 #define IS_TMR_LIST5_PERIPH(PERIPH)  (((PERIPH) == TMR1) || \
@@ -414,7 +414,7 @@ typedef struct
                                       ((PERIPH) == TMR12))
 #endif
 
-/* LIST8: TMR 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15 */  
+/* LIST8: TMR 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15 */
 #if defined (AT32F403xx)
 #define IS_TMR_LIST8_PERIPH(PERIPH)  (((PERIPH) == TMR1) || \
                                       ((PERIPH) == TMR2) || \
@@ -498,14 +498,14 @@ typedef struct
                                       ((PERIPH) == TMR8))
 #endif
 
-/*LIST10:TIM 2, 5*/																	 
+/*LIST10:TIM 2, 5*/
 #define IS_TMR_PLUSMODE_PERIPH(PERIPH) (((PERIPH)==TMR2) ||\
-																			 ((PERIPH)==TMR5))
+                                                                             ((PERIPH)==TMR5))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_and_PWM_modes 
+/** @defgroup TMR_Output_Compare_and_PWM_modes
   * @{
   */
 
@@ -526,14 +526,14 @@ typedef struct
                                             ((MODE) == TMR_OCMode_Inactive) || \
                                             ((MODE) == TMR_OCMode_Toggle)|| \
                                             ((MODE) == TMR_OCMode_PWM1) || \
-                                            ((MODE) == TMR_OCMode_PWM2) ||	\
+                                            ((MODE) == TMR_OCMode_PWM2) ||  \
                                             ((MODE) == TMR_ForcedAction_Active) || \
                                             ((MODE) == TMR_ForcedAction_InActive))
 /**
   * @}
   */
 
-/** @defgroup TMR_One_Pulse_Mode 
+/** @defgroup TMR_One_Pulse_Mode
   * @{
   */
 
@@ -543,9 +543,9 @@ typedef struct
                                           ((MODE) == TMR_OPMode_Repetitive))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Channel 
+/** @defgroup TMR_Channel
   * @{
   */
 
@@ -564,9 +564,9 @@ typedef struct
                                                ((CHANNEL) == TMR_Channel_3))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Clock_Division_CKD 
+/** @defgroup TMR_Clock_Division_CKD
   * @{
   */
 
@@ -581,7 +581,7 @@ typedef struct
   */
 
 
-/** @defgroup TMR_Counter_Mode 
+/** @defgroup TMR_Counter_Mode
   * @{
   */
 
@@ -597,9 +597,9 @@ typedef struct
                                            ((DIR) == TMR_CounterDIR_CenterAligned3))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_Polarity 
+/** @defgroup TMR_Output_Compare_Polarity
   * @{
   */
 
@@ -611,10 +611,10 @@ typedef struct
   * @}
   */
 
-/** @defgroup TMR_Output_Compare_N_Polarity 
+/** @defgroup TMR_Output_Compare_N_Polarity
   * @{
   */
-  
+
 #define TMR_OCNPolarity_High               ((uint16_t)0x0000)
 #define TMR_OCNPolarity_Low                ((uint16_t)0x0008)
 #define IS_TMR_OCN_POLARITY(POLARITY)      (((POLARITY) == TMR_OCNPolarity_High) || \
@@ -623,7 +623,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup TMR_Output_Compare_state 
+/** @defgroup TMR_Output_Compare_state
   * @{
   */
 
@@ -633,9 +633,9 @@ typedef struct
                                             ((STATE) == TMR_OutputState_Enable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_N_state 
+/** @defgroup TMR_Output_Compare_N_state
   * @{
   */
 
@@ -645,9 +645,9 @@ typedef struct
                                             ((STATE) == TMR_OutputNState_Enable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Capture_Compare_state 
+/** @defgroup TMR_Capture_Compare_state
   * @{
   */
 
@@ -657,9 +657,9 @@ typedef struct
                                             ((CCX) == TMR_CCx_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Capture_Compare_N_state 
+/** @defgroup TMR_Capture_Compare_N_state
   * @{
   */
 
@@ -669,9 +669,9 @@ typedef struct
                                             ((CCXN) == TMR_CCxN_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup Break_Input_enable_disable 
+/** @defgroup Break_Input_enable_disable
   * @{
   */
 
@@ -681,9 +681,9 @@ typedef struct
                                            ((STATE) == TMR_Break_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup Break_Polarity 
+/** @defgroup Break_Polarity
   * @{
   */
 
@@ -693,9 +693,9 @@ typedef struct
                                            ((POLARITY) == TMR_BreakPolarity_High))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_AOE_Bit_Set_Reset 
+/** @defgroup TMR_AOE_Bit_Set_Reset
   * @{
   */
 
@@ -705,9 +705,9 @@ typedef struct
                                                ((STATE) == TMR_AutomaticOutput_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup Lock_level 
+/** @defgroup Lock_level
   * @{
   */
 
@@ -721,9 +721,9 @@ typedef struct
                                             ((grade) == TMR_LOCKgrade_3))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup OSSI_Off_State_Selection_for_Idle_mode_state 
+/** @defgroup OSSI_Off_State_Selection_for_Idle_mode_state
   * @{
   */
 
@@ -735,7 +735,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup OSSR_Off_State_Selection_for_Run_mode_state 
+/** @defgroup OSSR_Off_State_Selection_for_Run_mode_state
   * @{
   */
 
@@ -745,9 +745,9 @@ typedef struct
                                             ((STATE) == TMR_OSIMRState_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_Idle_State 
+/** @defgroup TMR_Output_Compare_Idle_State
   * @{
   */
 
@@ -757,9 +757,9 @@ typedef struct
                                             ((STATE) == TMR_OCIdleState_Reset))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_N_Idle_State 
+/** @defgroup TMR_Output_Compare_N_Idle_State
   * @{
   */
 
@@ -769,9 +769,9 @@ typedef struct
                                             ((STATE) == TMR_OCNIdleState_Reset))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Input_Capture_Polarity 
+/** @defgroup TMR_Input_Capture_Polarity
   * @{
   */
 
@@ -782,16 +782,16 @@ typedef struct
                                             ((POLARITY) == TMR_ICPolarity_Falling))
 #define IS_TMR_IC_POLARITY_LITE(POLARITY)  (((POLARITY) == TMR_ICPolarity_Rising) || \
                                             ((POLARITY) == TMR_ICPolarity_Falling)|| \
-                                            ((POLARITY) == TMR_ICPolarity_BothEdge))                                      
+                                            ((POLARITY) == TMR_ICPolarity_BothEdge))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Input_Capture_Selection 
+/** @defgroup TMR_Input_Capture_Selection
   * @{
   */
 
-#define TMR_ICSelection_DirectTI           ((uint16_t)0x0001) /*!< TMR Input 1, 2, 3 or 4 is selected to be 
+#define TMR_ICSelection_DirectTI           ((uint16_t)0x0001) /*!< TMR Input 1, 2, 3 or 4 is selected to be
                                                                    connected to IC1, IC2, IC3 or IC4, respectively */
 #define TMR_ICSelection_IndirectTI         ((uint16_t)0x0002) /*!< TMR Input 1, 2, 3 or 4 is selected to be
                                                                    connected to IC2, IC1, IC4 or IC3, respectively. */
@@ -801,9 +801,9 @@ typedef struct
                                             ((SELECTION) == TMR_ICSelection_TRC))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Input_Capture_Prescaler 
+/** @defgroup TMR_Input_Capture_Prescaler
   * @{
   */
 
@@ -817,9 +817,9 @@ typedef struct
                                             ((DIV) == TMR_ICDIV_DIV8))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_interrupt_sources 
+/** @defgroup TMR_interrupt_sources
   * @{
   */
 
@@ -843,9 +843,9 @@ typedef struct
                                              ((INT) == TMR_INT_Break))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_DMA_Base_address 
+/** @defgroup TMR_DMA_Base_address
   * @{
   */
 
@@ -889,9 +889,9 @@ typedef struct
                                              ((BASE) == TMR_DMABase_DMAC))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_DMA_Burst_Length 
+/** @defgroup TMR_DMA_Burst_Length
   * @{
   */
 
@@ -933,9 +933,9 @@ typedef struct
                                                 ((LENGTH) == TMR_DMABurstLength_18Transfers))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_DMA_sources 
+/** @defgroup TMR_DMA_sources
   * @{
   */
 
@@ -950,9 +950,9 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_External_Trigger_Prescaler 
+/** @defgroup TMR_External_Trigger_Prescaler
   * @{
   */
 
@@ -966,9 +966,9 @@ typedef struct
                                             ((DIV) == TMR_ExtTRGDIV_DIV8))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Internal_Trigger_Selection 
+/** @defgroup TMR_Internal_Trigger_Selection
   * @{
   */
 
@@ -994,9 +994,9 @@ typedef struct
                                                       ((SELECTION) == TMR_TRGSEL_ITR3))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_TIx_External_Clock_Source 
+/** @defgroup TMR_TIx_External_Clock_Source
   * @{
   */
 
@@ -1008,11 +1008,11 @@ typedef struct
                                                ((SOURCE) == TMR_TIxExternalCLK1Source_TI1ED))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_External_Trigger_Polarity 
+/** @defgroup TMR_External_Trigger_Polarity
   * @{
-  */ 
+  */
 #define TMR_ExtTRGPolarity_Inverted         ((uint16_t)0x8000)
 #define TMR_ExtTRGPolarity_NonInverted      ((uint16_t)0x0000)
 #define IS_TMR_EXT_POLARITY(POLARITY)       (((POLARITY) == TMR_ExtTRGPolarity_Inverted) || \
@@ -1021,7 +1021,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup TMR_Prescaler_Reload_Mode 
+/** @defgroup TMR_Prescaler_Reload_Mode
   * @{
   */
 
@@ -1031,9 +1031,9 @@ typedef struct
                                             ((RELOAD) == TMR_DIVReloadMode_Immediate))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Forced_Action 
+/** @defgroup TMR_Forced_Action
   * @{
   */
 
@@ -1043,9 +1043,9 @@ typedef struct
                                             ((ACTION) == TMR_ForcedAction_InActive))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Encoder_Mode 
+/** @defgroup TMR_Encoder_Mode
   * @{
   */
 
@@ -1057,10 +1057,10 @@ typedef struct
                                             ((MODE) == TMR_EncoderMode_TI12))
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup TMR_Event_Source 
+/** @defgroup TMR_Event_Source
   * @{
   */
 
@@ -1076,9 +1076,9 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Update_Source 
+/** @defgroup TMR_Update_Source
   * @{
   */
 
@@ -1090,21 +1090,21 @@ typedef struct
                                             ((SOURCE) == TMR_UpdateSource_Regular))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TIM_Plus_Mode__State 
+/** @defgroup TIM_Plus_Mode__State
   * @{
-  */	
-	
-#define TMR_Plus_Mode_Enable              ((uint16_t)0x0400)	
-#define TMR_Plus_Mode_Disable             ((uint16_t)0x0000)	
+  */
+
+#define TMR_Plus_Mode_Enable              ((uint16_t)0x0400)
+#define TMR_Plus_Mode_Disable             ((uint16_t)0x0000)
 #define IS_TMR_PLUS_MODE_STATE(STATE) (((STATE) == TMR_Plus_Mode_Enable) || \
-                                       ((STATE) == TMR_Plus_Mode_Disable))	
+                                       ((STATE) == TMR_Plus_Mode_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_Preload_State 
+/** @defgroup TMR_Output_Compare_Preload_State
   * @{
   */
 
@@ -1114,9 +1114,9 @@ typedef struct
                                             ((STATE) == TMR_OCPreload_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_Fast_State 
+/** @defgroup TMR_Output_Compare_Fast_State
   * @{
   */
 
@@ -1124,12 +1124,12 @@ typedef struct
 #define TMR_OCFast_Disable                 ((uint16_t)0x0000)
 #define IS_TMR_OCFAST_STATE(STATE)         (((STATE) == TMR_OCFast_Enable) || \
                                             ((STATE) == TMR_OCFast_Disable))
-                                     
+
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Output_Compare_Clear_State 
+/** @defgroup TMR_Output_Compare_Clear_State
   * @{
   */
 
@@ -1139,9 +1139,9 @@ typedef struct
                                             ((STATE) == TMR_OCClear_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Trigger_Output_Source 
+/** @defgroup TMR_Trigger_Output_Source
   * @{
   */
 
@@ -1163,9 +1163,9 @@ typedef struct
                                             ((SOURCE) == TMR_TRGOSource_OC4Ref))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Slave_Mode 
+/** @defgroup TMR_Slave_Mode
   * @{
   */
 
@@ -1179,9 +1179,9 @@ typedef struct
                                             ((MODE) == TMR_SlaveMode_External1))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Master_Slave_Mode 
+/** @defgroup TMR_Master_Slave_Mode
   * @{
   */
 
@@ -1191,9 +1191,9 @@ typedef struct
                                             ((STATE) == TMR_MasterSlaveMode_Disable))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Flags 
+/** @defgroup TMR_Flags
   * @{
   */
 
@@ -1221,32 +1221,32 @@ typedef struct
                                             ((FLAG) == TMR_FLAG_C2OF) || \
                                             ((FLAG) == TMR_FLAG_C3OF) || \
                                             ((FLAG) == TMR_FLAG_C4OF))
-                               
-                               
+
+
 #define IS_TMR_CLEAR_FLAG(TMR_FLAG)        ((((TMR_FLAG) & (uint16_t)0xE100) == 0x0000) && ((TMR_FLAG) != 0x0000))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Input_Capture_Filer_Value 
+/** @defgroup TMR_Input_Capture_Filer_Value
   * @{
   */
 
-#define IS_TMR_IC_FILTER(ICFILTER)         ((ICFILTER) <= 0xF) 
+#define IS_TMR_IC_FILTER(ICFILTER)         ((ICFILTER) <= 0xF)
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_External_Trigger_Filter 
+/** @defgroup TMR_External_Trigger_Filter
   * @{
   */
 
 #define IS_TMR_EXT_FILTER(EXTFILTER)      ((EXTFILTER) <= 0xF)
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup TMR_Legacy 
+/** @defgroup TMR_Legacy
   * @{
   */
 
@@ -1282,7 +1282,7 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup TMR_Exported_Functions
   * @{
@@ -1313,7 +1313,7 @@ void TMR_TIxExternalClockConfig(TMR_Type* TMRx, uint16_t TMR_TIxExternalCLKSourc
                                 uint16_t TMR_ICPolarity, uint16_t ICFilter);
 void TMR_ETRClockMode1Config(TMR_Type* TMRx, uint16_t TMR_ExtTRGPrescaler, uint16_t TMR_ExtTRGPolarity,
                              uint16_t ExtTRGFilter);
-void TMR_ETRClockMode2Config(TMR_Type* TMRx, uint16_t TMR_ExtTRGPrescaler, 
+void TMR_ETRClockMode2Config(TMR_Type* TMRx, uint16_t TMR_ExtTRGPrescaler,
                              uint16_t TMR_ExtTRGPolarity, uint16_t ExtTRGFilter);
 void TMR_ETRConfig(TMR_Type* TMRx, uint16_t TMR_ExtTRGPrescaler, uint16_t TMR_ExtTRGPolarity,
                    uint16_t ExtTRGFilter);
@@ -1389,11 +1389,11 @@ void TMR_ClearITPendingBit(TMR_Type* TMRx, uint16_t TMR_INT);
 #endif /*__AT32F4xx_TIM_H */
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}

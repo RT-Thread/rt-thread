@@ -41,13 +41,13 @@
 
 /*!
  *Global variable which defines the buffer descriptions for receiving frame
- * 	comment:: it must aligned by 128-bits.
+ *  comment:: it must aligned by 128-bits.
  */
 static imx_fec_bd_t imx_fec_rx_bd[FEC_BD_RX_NUM * NUM_OF_ETH_DEVS] __attribute__ ((aligned(32)));
 
 /*!
  *Global variable which defines the buffer descriptions for receiving frame
- * 	comment:: it must aligned by 128-bits.
+ *  comment:: it must aligned by 128-bits.
  */
 static imx_fec_bd_t imx_fec_tx_bd[FEC_BD_TX_NUM * NUM_OF_ETH_DEVS] __attribute__ ((aligned(32)));
 
@@ -166,7 +166,7 @@ static void imx_fec_bd_init(imx_fec_priv_t * dev, int dev_idx)
 static void imx_fec_chip_init(imx_fec_priv_t * dev)
 {
     volatile hw_fec_t *fec_reg = (hw_fec_t *) dev->fec_reg;
-	unsigned int ipg_clk;
+    unsigned int ipg_clk;
 
     fec_reg->ECR.U = FEC_RESET;
 
@@ -190,8 +190,8 @@ static void imx_fec_chip_init(imx_fec_priv_t * dev)
     fec_reg->GALR.U = 0;
 
     /*TODO:: Use MII_SPEED(IPG_CLK) to get the value */
-	ipg_clk = get_main_clock(IPG_CLK);
-    fec_reg->MSCR.U = (fec_reg->MSCR.U & (~0x7e)) | (((ipg_clk + 499999) / 5000000) << 1); 
+    ipg_clk = get_main_clock(IPG_CLK);
+    fec_reg->MSCR.U = (fec_reg->MSCR.U & (~0x7e)) | (((ipg_clk + 499999) / 5000000) << 1);
 
     /*Enable ETHER_EN */
     fec_reg->EMRBR.U = 2048 - 16;
@@ -206,13 +206,13 @@ void imx_fec_phy_init(imx_fec_priv_t * dev)
 {
     unsigned short value = 0;
     unsigned long id = 0;
-	
-	/* read phy id */
+
+    /* read phy id */
     imx_fec_mii_read(dev->fec_reg, dev->phy_addr, PHY_IDENTIFY_1, &value);
     id = (value & PHY_ID1_MASK) << PHY_ID1_SHIFT;
     imx_fec_mii_read(dev->fec_reg, dev->phy_addr, PHY_IDENTIFY_2, &value);
     id |= (value & PHY_ID2_MASK) << PHY_ID2_SHIFT;
-    
+
     switch (id & 0xfffffff0)
     {
         case 0x00540088:
@@ -228,22 +228,22 @@ void imx_fec_phy_init(imx_fec_priv_t * dev)
     }
     dev->phy_id = id;
 
-	/* re-start Auto Neg */
+    /* re-start Auto Neg */
     imx_fec_mii_read(dev->fec_reg, dev->phy_addr, PHY_CTRL_REG, &value);
-	value |= 0x1200;
+    value |= 0x1200;
     imx_fec_mii_write(dev->fec_reg, dev->phy_addr, PHY_CTRL_REG, value);
-	
-	/* read phy status */
-	imx_fec_get_phy_status(dev);
+
+    /* read phy status */
+    imx_fec_get_phy_status(dev);
 }
 
 uint32_t imx_fec_get_phy_status(imx_fec_priv_t * dev)
 {
     uint16_t value;
-    
+
     // Reset saved status.
     dev->status = 0;
-    
+
     imx_fec_mii_read(dev->fec_reg, dev->phy_addr, PHY_STATUS_REG, &value);
     printf("fec phy status %0d: %04x\n", dev->phy_addr, value);    //  0x7809 or 0x782d
 
@@ -252,21 +252,21 @@ uint32_t imx_fec_get_phy_status(imx_fec_priv_t * dev)
     } else {
         dev->status &= ~FEC_STATUS_LINK_ON;
     }
-	if (value & (PHY_STATUS_100TXF | PHY_STATUS_100TXH | PHY_STATUS_100T4))
+    if (value & (PHY_STATUS_100TXF | PHY_STATUS_100TXH | PHY_STATUS_100T4))
         dev->status |= FEC_STATUS_100M;
-	else
+    else
         dev->status |= FEC_STATUS_10M;
-	if (value & (PHY_STATUS_100TXF | PHY_STATUS_10TF))
-		dev->status |= FEC_STATUS_FULL_DPLX;
-	else
-		dev->status &= ~FEC_STATUS_FULL_DPLX;
+    if (value & (PHY_STATUS_100TXF | PHY_STATUS_10TF))
+        dev->status |= FEC_STATUS_FULL_DPLX;
+    else
+        dev->status &= ~FEC_STATUS_FULL_DPLX;
 
 //     printf("FEC %0d: [ %s ] [ %s ] [ %s ]:\n", dev->phy_addr,
 //            (dev->status & FEC_STATUS_FULL_DPLX) ? "FULL_DUPLEX" : "HALF_DUPLEX",
 //            (dev->status & FEC_STATUS_LINK_ON) ? "connected" : "disconnected",
 //            (dev->status & FEC_STATUS_1000M) ? "1000M bps" : (dev->status & FEC_STATUS_100M) ?
 //            "100M bps" : "10M bps");
-    
+
     return dev->status;
 }
 
@@ -438,24 +438,24 @@ int imx_fec_mii_type(imx_fec_priv_t * dev, enum imx_mii_type mii_type)
 {
     switch (mii_type) {
     case RMII:
-		/*
-		 * setup the MII gasket for RMII mode
-		 */
-		
-		/* disable the gasket */
-		FEC_MIIGSK_ENR = 0;
-		
-		/* wait for the gasket to be disabled */
-		while (FEC_MIIGSK_ENR & FEC_MIIGSK_ENR_READY)
-			hal_delay_us(FEC_MII_TICK);
-		
-		/* configure gasket for RMII, 50 MHz, no loopback, and no echo */
-		FEC_MIIGSK_CFGR = FEC_MIIGSK_CFGR_IF_MODE_RMII;
-		
-		/* re-enable the gasket */
-		FEC_MIIGSK_ENR = FEC_MIIGSK_ENR_EN;
-		while(!(FEC_MIIGSK_ENR & FEC_MIIGSK_ENR_READY))
-			hal_delay_us(FEC_MII_TICK);
+        /*
+         * setup the MII gasket for RMII mode
+         */
+
+        /* disable the gasket */
+        FEC_MIIGSK_ENR = 0;
+
+        /* wait for the gasket to be disabled */
+        while (FEC_MIIGSK_ENR & FEC_MIIGSK_ENR_READY)
+            hal_delay_us(FEC_MII_TICK);
+
+        /* configure gasket for RMII, 50 MHz, no loopback, and no echo */
+        FEC_MIIGSK_CFGR = FEC_MIIGSK_CFGR_IF_MODE_RMII;
+
+        /* re-enable the gasket */
+        FEC_MIIGSK_ENR = FEC_MIIGSK_ENR_EN;
+        while(!(FEC_MIIGSK_ENR & FEC_MIIGSK_ENR_READY))
+            hal_delay_us(FEC_MII_TICK);
         break;
     default:
         printf("BUG:unknow MII type=%x\n", mii_type);

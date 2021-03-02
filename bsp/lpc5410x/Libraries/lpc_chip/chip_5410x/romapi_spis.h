@@ -44,59 +44,59 @@ extern "C" {
  */
 
 /**
- * @brief	Get memory size in bytes needed for SPI slave driver context
- * @return	Size in bytes needed for the ROM driver
+ * @brief   Get memory size in bytes needed for SPI slave driver context
+ * @return  Size in bytes needed for the ROM driver
  */
 uint32_t ROM_SPIS_GetMemSize(void);
 
 /**
- * @brief	Initialize SPI slave peripheral
- * @param	mem		: Pointer to memory area used to driver context
- * @param	pInit	: Pointer to SPI slave init data
- * @return	NULL on error, or a pointer to the device context handle
+ * @brief   Initialize SPI slave peripheral
+ * @param   mem     : Pointer to memory area used to driver context
+ * @param   pInit   : Pointer to SPI slave init data
+ * @return  NULL on error, or a pointer to the device context handle
  */
 ROM_SPIS_HANDLE_T ROM_SPIS_Init(void *mem, ROM_SPIS_INIT_T *pInit);
 
 /**
- * @brief	Register a SPI slave callback
- * @param	pHandle	: Pointer to driver context handle
- * @param	cbIndex	: Callback to register
- * @param	pCB		: Pointer to callback function
- * @return	Nothing
+ * @brief   Register a SPI slave callback
+ * @param   pHandle : Pointer to driver context handle
+ * @param   cbIndex : Callback to register
+ * @param   pCB     : Pointer to callback function
+ * @return  Nothing
  */
 void ROM_SPIS_RegisterCallback(ROM_SPIS_HANDLE_T pHandle, ROM_SPIS_CALLBACK_T cbIndex, void *pCB);
 
 /**
- * @brief	Setup SPI slave transfer configuration
- * @param	pHandle		: Pointer to driver context handle
- * @param	pSlaveSetup	: Slave setup data
- * @return	Error code
- * @note	Sets up the slave interface configuration for a transfer.
+ * @brief   Setup SPI slave transfer configuration
+ * @param   pHandle     : Pointer to driver context handle
+ * @param   pSlaveSetup : Slave setup data
+ * @return  Error code
+ * @note    Sets up the slave interface configuration for a transfer.
  */
 ErrorCode_t ROM_SPIS_SetupSlave(ROM_SPIS_HANDLE_T pHandle, ROM_SPIS_SLAVE_T *pSlaveSetup);
 
 /**
- * @brief	Start a SPI slave transfer
- * @param	pHandle	: Pointer to driver context handle
- * @param	pXfer	: Pointer to slave transfer configuration
- * @return	Error code
- * @note	This function starts the transfer and returns immediately.
+ * @brief   Start a SPI slave transfer
+ * @param   pHandle : Pointer to driver context handle
+ * @param   pXfer   : Pointer to slave transfer configuration
+ * @return  Error code
+ * @note    This function starts the transfer and returns immediately.
  */
 ErrorCode_t ROM_SPIS_Transfer(ROM_SPIS_HANDLE_T pHandle, ROM_SPIS_XFER_T *pXfer);
 
 /**
- * @brief	SPI slave transfer (interrupt) handler
- * @param	pHandle	: Pointer to driver context handle
- * @return	Nothing
- * @note	This function should be called from the SPI interrupt handler and
+ * @brief   SPI slave transfer (interrupt) handler
+ * @param   pHandle : Pointer to driver context handle
+ * @return  Nothing
+ * @note    This function should be called from the SPI interrupt handler and
  * is used in interrupt and DMA modes.
  */
 void ROM_SPIS_TransferHandler(ROM_SPIS_HANDLE_T pHandle);
 
 /**
- * @brief	Return the SPI slave ROM driver version
- * @return	Driver version number
- * @note	The returned driver version number consists of a major and minor
+ * @brief   Return the SPI slave ROM driver version
+ * @return  Driver version number
+ * @note    The returned driver version number consists of a major and minor
  * number, with the minor number in the lower 8 bits and the major number in
  * the upper 8 bits.
  */

@@ -48,11 +48,11 @@ enum _gicd_sgi_filter
 {
     //! Forward the interrupt to the CPU interfaces specified in the @a target_list parameter.
     kGicSgiFilter_UseTargetList = 0,
-    
+
     //! Forward the interrupt to all CPU interfaces except that of the processor that requested
     //! the interrupt.
     kGicSgiFilter_AllOtherCPUs = 1,
-    
+
     //! Forward the interrupt only to the CPU interface of the processor that requested the
     //! interrupt.
     kGicSgiFilter_OnlyThisCPU = 2

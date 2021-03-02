@@ -8,9 +8,9 @@
  * Copyright (C) 2009-2010 ARM Limited. All rights reserved.
  *
  * @par
- * ARM Limited (ARM) is supplying this software for use with Cortex-M 
- * processor based microcontrollers.  This file can be freely distributed 
- * within development tools that are supporting such ARM based processors. 
+ * ARM Limited (ARM) is supplying this software for use with Cortex-M
+ * processor based microcontrollers.  This file can be freely distributed
+ * within development tools that are supporting such ARM based processors.
  *
  * @par
  * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
@@ -32,7 +32,7 @@
  /**
  * @brief  No Operation
  *
- * No Operation does nothing. This instruction can be used for code alignment 
+ * No Operation does nothing. This instruction can be used for code alignment
  * purposes.
  */
 #define __NOP                             __nop
@@ -40,7 +40,7 @@
  /**
  * @brief  Wait For Interrupt
  *
- * Wait For Interrupt is a hint instruction that suspends execution until 
+ * Wait For Interrupt is a hint instruction that suspends execution until
  * one of a number of events occurs.
  */
 #define __WFI                             __wfi
@@ -48,7 +48,7 @@
  /**
  * @brief  Wait For Event
  *
- * Wait For Event is a hint instruction that permits the processor to enter 
+ * Wait For Event is a hint instruction that permits the processor to enter
  * a low-power state until one of a number of events occurs.
  */
 #define __WFE                             __wfe
@@ -56,7 +56,7 @@
  /**
  * @brief  Send Event
  *
- * Send Event is a hint instruction. It causes an event to be signaled 
+ * Send Event is a hint instruction. It causes an event to be signaled
  * to the CPU.
  */
 #define __SEV                             __sev
@@ -64,8 +64,8 @@
  /**
  * @brief  Instruction Synchronization Barrier
  *
- * Instruction Synchronization Barrier flushes the pipeline in the processor, 
- * so that all instructions following the ISB are fetched from cache or 
+ * Instruction Synchronization Barrier flushes the pipeline in the processor,
+ * so that all instructions following the ISB are fetched from cache or
  * memory, after the instruction has been completed
  */
 #define __ISB()                           __isb(0xF)
@@ -73,17 +73,17 @@
  /**
  * @brief  Data Synchronization Barrier
  *
- * The DSB instruction operation acts as a special kind of Data Memory Barrier. 
- * The DSB operation completes when all explicit memory accesses before this 
- * instruction complete. 
+ * The DSB instruction operation acts as a special kind of Data Memory Barrier.
+ * The DSB operation completes when all explicit memory accesses before this
+ * instruction complete.
  */
 #define __DSB()                           __dsb(0xF)
 
  /**
  * @brief  Data Memory Barrier
  *
- * DMB ensures the apparent order of the explicit memory operations before 
- * and after the instruction, without ensuring their completion. 
+ * DMB ensures the apparent order of the explicit memory operations before
+ * and after the instruction, without ensuring their completion.
  */
 #define __DMB()                           __dmb(0xF)
 
@@ -113,7 +113,7 @@ static __INLINE __ASM uint32_t __REV16(uint16_t value)
   rev16 r0, r0
   bx lr
 }
-#endif /* __ARMCC_VERSION  */ 
+#endif /* __ARMCC_VERSION  */
 
 /**
  * @brief  Reverse byte order in signed short value with sign extension to integer
@@ -131,7 +131,7 @@ static __INLINE __ASM int32_t __REVSH(int16_t value)
   revsh r0, r0
   bx lr
 }
-#endif /* __ARMCC_VERSION  */ 
+#endif /* __ARMCC_VERSION  */
 
 
 #if       (__CORTEX_M >= 0x03)
@@ -218,7 +218,7 @@ static __INLINE __ASM int32_t __REVSH(int16_t value)
 extern void __CLREX(void);
 #else  /* (__ARMCC_VERSION >= 400000)  */
 #define __CLREX                           __clrex
-#endif /* __ARMCC_VERSION  */ 
+#endif /* __ARMCC_VERSION  */
 
 #endif /* (__CORTEX_M >= 0x03) */
 
@@ -234,7 +234,7 @@ extern void __CLREX(void);
  /**
  * @brief  No Operation
  *
- * No Operation does nothing. This instruction can be used for code alignment 
+ * No Operation does nothing. This instruction can be used for code alignment
  * purposes.
  */
 #define __NOP                           __no_operation
@@ -242,7 +242,7 @@ extern void __CLREX(void);
  /**
  * @brief  Wait For Interrupt
  *
- * Wait For Interrupt is a hint instruction that suspends execution until 
+ * Wait For Interrupt is a hint instruction that suspends execution until
  * one of a number of events occurs.
  */
 static __INLINE  void __WFI()           { __ASM ("wfi"); }
@@ -250,7 +250,7 @@ static __INLINE  void __WFI()           { __ASM ("wfi"); }
  /**
  * @brief  Wait For Event
  *
- * Wait For Event is a hint instruction that permits the processor to enter 
+ * Wait For Event is a hint instruction that permits the processor to enter
  * a low-power state until one of a number of events occurs.
  */
 static __INLINE  void __WFE()           { __ASM ("wfe"); }
@@ -258,7 +258,7 @@ static __INLINE  void __WFE()           { __ASM ("wfe"); }
  /**
  * @brief  Send Event
  *
- * Send Event is a hint instruction. It causes an event to be signaled 
+ * Send Event is a hint instruction. It causes an event to be signaled
  * to the CPU.
  */
 static __INLINE  void __SEV()           { __ASM ("sev"); }
@@ -266,8 +266,8 @@ static __INLINE  void __SEV()           { __ASM ("sev"); }
  /**
  * @brief  Instruction Synchronization Barrier
  *
- * Instruction Synchronization Barrier flushes the pipeline in the processor, 
- * so that all instructions following the ISB are fetched from cache or 
+ * Instruction Synchronization Barrier flushes the pipeline in the processor,
+ * so that all instructions following the ISB are fetched from cache or
  * memory, after the instruction has been completed
  */
 /* intrinsic void __ISB(void)  (see intrinsics.h */
@@ -275,17 +275,17 @@ static __INLINE  void __SEV()           { __ASM ("sev"); }
  /**
  * @brief  Data Synchronization Barrier
  *
- * The DSB instruction operation acts as a special kind of Data Memory Barrier. 
- * The DSB operation completes when all explicit memory accesses before this 
- * instruction complete. 
+ * The DSB instruction operation acts as a special kind of Data Memory Barrier.
+ * The DSB operation completes when all explicit memory accesses before this
+ * instruction complete.
  */
 /* intrinsic void __DSB(void)  (see intrinsics.h */
 
  /**
  * @brief  Data Memory Barrier
  *
- * DMB ensures the apparent order of the explicit memory operations before 
- * and after the instruction, without ensuring their completion. 
+ * DMB ensures the apparent order of the explicit memory operations before
+ * and after the instruction, without ensuring their completion.
  */
 /* intrinsic void __DMB(void)  (see intrinsics.h */
 
@@ -439,7 +439,7 @@ static __INLINE  void __CLREX()                   { __ASM ("clrex"); }
  /**
  * @brief  No Operation
  *
- * No Operation does nothing. This instruction can be used for code alignment 
+ * No Operation does nothing. This instruction can be used for code alignment
  * purposes.
  */
 static __INLINE void __NOP()                      { __ASM volatile ("nop"); }
@@ -447,7 +447,7 @@ static __INLINE void __NOP()                      { __ASM volatile ("nop"); }
  /**
  * @brief  Wait For Interrupt
  *
- * Wait For Interrupt is a hint instruction that suspends execution until 
+ * Wait For Interrupt is a hint instruction that suspends execution until
  * one of a number of events occurs.
  */
 static __INLINE void __WFI()                      { __ASM volatile ("wfi"); }
@@ -455,7 +455,7 @@ static __INLINE void __WFI()                      { __ASM volatile ("wfi"); }
  /**
  * @brief  Wait For Event
  *
- * Wait For Event is a hint instruction that permits the processor to enter 
+ * Wait For Event is a hint instruction that permits the processor to enter
  * a low-power state until one of a number of events occurs.
  */
 static __INLINE void __WFE()                      { __ASM volatile ("wfe"); }
@@ -463,7 +463,7 @@ static __INLINE void __WFE()                      { __ASM volatile ("wfe"); }
  /**
  * @brief  Send Event
  *
- * Send Event is a hint instruction. It causes an event to be signaled 
+ * Send Event is a hint instruction. It causes an event to be signaled
  * to the CPU.
  */
 static __INLINE void __SEV()                      { __ASM volatile ("sev"); }
@@ -471,8 +471,8 @@ static __INLINE void __SEV()                      { __ASM volatile ("sev"); }
  /**
  * @brief  Instruction Synchronization Barrier
  *
- * Instruction Synchronization Barrier flushes the pipeline in the processor, 
- * so that all instructions following the ISB are fetched from cache or 
+ * Instruction Synchronization Barrier flushes the pipeline in the processor,
+ * so that all instructions following the ISB are fetched from cache or
  * memory, after the instruction has been completed
  */
 static __INLINE void __ISB()                      { __ASM volatile ("isb"); }
@@ -480,17 +480,17 @@ static __INLINE void __ISB()                      { __ASM volatile ("isb"); }
  /**
  * @brief  Data Synchronization Barrier
  *
- * The DSB instruction operation acts as a special kind of Data Memory Barrier. 
- * The DSB operation completes when all explicit memory accesses before this 
- * instruction complete. 
+ * The DSB instruction operation acts as a special kind of Data Memory Barrier.
+ * The DSB operation completes when all explicit memory accesses before this
+ * instruction complete.
  */
 static __INLINE void __DSB()                      { __ASM volatile ("dsb"); }
 
  /**
  * @brief  Data Memory Barrier
  *
- * DMB ensures the apparent order of the explicit memory operations before 
- * and after the instruction, without ensuring their completion. 
+ * DMB ensures the apparent order of the explicit memory operations before
+ * and after the instruction, without ensuring their completion.
  */
 static __INLINE void __DMB()                      { __ASM volatile ("dmb"); }
 
@@ -505,7 +505,7 @@ static __INLINE void __DMB()                      { __ASM volatile ("dmb"); }
 static __INLINE uint32_t __REV(uint32_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("rev %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -521,7 +521,7 @@ static __INLINE uint32_t __REV(uint32_t value)
 static __INLINE uint32_t __REV16(uint16_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("rev16 %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -537,7 +537,7 @@ static __INLINE uint32_t __REV16(uint16_t value)
 static __INLINE int32_t __REVSH(int16_t value)
 {
   uint32_t result=0;
-  
+
   __ASM volatile ("revsh %0, %1" : "=r" (result) : "r" (value) );
   return(result);
 }
@@ -556,7 +556,7 @@ static __INLINE int32_t __REVSH(int16_t value)
 static __INLINE uint32_t __RBIT(uint32_t value)
 {
   uint32_t result=0;
-  
+
    __ASM volatile ("rbit %0, %1" : "=r" (result) : "r" (value) );
    return(result);
 }
@@ -572,7 +572,7 @@ static __INLINE uint32_t __RBIT(uint32_t value)
 static __INLINE uint8_t __LDREXB(uint8_t *addr)
 {
     uint8_t result=0;
-  
+
    __ASM volatile ("ldrexb %0, [%1]" : "=r" (result) : "r" (addr) );
    return(result);
 }
@@ -588,7 +588,7 @@ static __INLINE uint8_t __LDREXB(uint8_t *addr)
 static __INLINE uint16_t __LDREXH(uint16_t *addr)
 {
     uint16_t result=0;
-  
+
    __ASM volatile ("ldrexh %0, [%1]" : "=r" (result) : "r" (addr) );
    return(result);
 }
@@ -604,7 +604,7 @@ static __INLINE uint16_t __LDREXH(uint16_t *addr)
 static __INLINE uint32_t __LDREXW(uint32_t *addr)
 {
     uint32_t result=0;
-  
+
    __ASM volatile ("ldrex %0, [%1]" : "=r" (result) : "r" (addr) );
    return(result);
 }
@@ -621,7 +621,7 @@ static __INLINE uint32_t __LDREXW(uint32_t *addr)
 static __INLINE uint32_t __STREXB(uint8_t value, uint8_t *addr)
 {
    uint32_t result=0;
-  
+
    __ASM volatile ("strexb %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
    return(result);
 }
@@ -638,7 +638,7 @@ static __INLINE uint32_t __STREXB(uint8_t value, uint8_t *addr)
 static __INLINE uint32_t __STREXH(uint16_t value, uint16_t *addr)
 {
    uint32_t result=0;
-  
+
    __ASM volatile ("strexh %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
    return(result);
 }
@@ -655,7 +655,7 @@ static __INLINE uint32_t __STREXH(uint16_t value, uint16_t *addr)
 static __INLINE uint32_t __STREXW(uint32_t value, uint32_t *addr)
 {
    uint32_t result=0;
-  
+
    __ASM volatile ("strex %0, %2, [%1]" : "=r" (result) : "r" (addr), "r" (value) );
    return(result);
 }

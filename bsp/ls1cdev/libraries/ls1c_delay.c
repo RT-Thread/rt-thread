@@ -64,7 +64,7 @@ void delay_us(int n)
     // 延时
     for (tmp = count_max; tmp > 0; tmp--)
     {
-        __asm__ ("nop");        // 注意，这里必须用内联汇编，否则会被优化掉            
+        __asm__ ("nop");        // 注意，这里必须用内联汇编，否则会被优化掉
     }
 
     return ;

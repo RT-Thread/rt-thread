@@ -2,7 +2,7 @@
 *   @brief NHET Instruction Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   (c) Texas Instruments 2009-2013, All rights reserved.
 */
 
@@ -28,7 +28,7 @@ typedef struct memory_format
   uint32 data_word     ;
   uint32 reserved_word ;
 } HET_MEMORY  ;
- 
+
 
 /*---------------------------------------------*/
 /* ACMP INSTRUCTION                            */
@@ -51,18 +51,18 @@ typedef struct acmp_format
   uint32 cond_addr            : 9 ;
   uint32 pin_select           : 5 ;
   uint32 ext_reg              : 1 ;
-  uint32                      : 2 ; 
+  uint32                      : 2 ;
   uint32 pin_action           : 1 ;
   uint32                      : 1 ;
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
- 
+
   uint32 data                 : 25 ;
   uint32                      : 7  ;
- 
+
 } ACMP_FIELDS;
- 
+
 typedef union
 {
   ACMP_FIELDS  acmp   ;
@@ -73,12 +73,12 @@ typedef union
 /*---------------------------------------------*/
 /* ECMP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct ecmp_format   
+typedef struct ecmp_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
-  uint32 brk                  : 1 ;          
-  uint32 next_program_address : 9 ;          
+  uint32 brk                  : 1 ;
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 hr_lr                : 1 ;
   uint32 angle_compare        : 1 ;
@@ -99,13 +99,13 @@ typedef struct ecmp_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
 
 } ECMP_FIELDS;
 
-typedef union 
+typedef union
 {
   ECMP_FIELDS  ecmp   ;
   HET_MEMORY   memory ;
@@ -115,12 +115,12 @@ typedef union
 /*---------------------------------------------*/
 /* SCMP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct scmp_format     
+typedef struct scmp_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
-  uint32 brk                  : 1 ;          
-  uint32 next_program_address : 9 ;          
+  uint32 brk                  : 1 ;
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32                      : 2 ;
   uint32                      : 2 ;
@@ -141,13 +141,13 @@ typedef struct scmp_format
   uint32 restart_en           : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
 
 } SCMP_FIELDS ;
 
-typedef union 
+typedef union
 {
   SCMP_FIELDS  scmp   ;
   HET_MEMORY   memory ;
@@ -157,7 +157,7 @@ typedef union
 /*---------------------------------------------*/
 /* MCMP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct mcmp_format                     
+typedef struct mcmp_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
@@ -169,7 +169,7 @@ typedef struct mcmp_format
   uint32                      : 1 ;
   uint32 save_subtract        : 1 ;
   uint32                      : 5 ;
- 
+
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
@@ -178,21 +178,21 @@ typedef struct mcmp_format
   uint32 cond_addr            : 9 ;
   uint32 pin_select           : 5 ;
   uint32                      : 1 ;
-  uint32 sub_opcode           : 1 ; 
-  uint32 order                : 1 ; 
+  uint32 sub_opcode           : 1 ;
+  uint32 order                : 1 ;
   uint32 pin_action           : 1 ;
   uint32 opposite_action      : 1 ;
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
-} MCMP_FIELDS ; 
 
-typedef union 
+} MCMP_FIELDS ;
+
+typedef union
 {
   MCMP_FIELDS  mcmp   ;
   HET_MEMORY   memory ;
@@ -202,11 +202,11 @@ typedef union
 /*---------------------------------------------*/
 /* MOV64 INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct mov64_format                     
+typedef struct mov64_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
-  uint32 next_program_address : 9 ;          
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
 
@@ -224,14 +224,14 @@ typedef struct mov64_format
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
 
-} MOV64_FIELDS ; 
+} MOV64_FIELDS ;
 
-typedef union 
+typedef union
 {
   MOV64_FIELDS  mov64  ;
   HET_MEMORY    memory ;
@@ -241,14 +241,14 @@ typedef union
 /*---------------------------------------------*/
 /* DADM64 INSTRUCTION                          */
 /*---------------------------------------------*/
-typedef struct dadm64_format                     
+typedef struct dadm64_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
@@ -263,14 +263,14 @@ typedef struct dadm64_format
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
-} DADM64_FIELDS ; 
 
-typedef union 
+} DADM64_FIELDS ;
+
+typedef union
 {
   DADM64_FIELDS  dadm64 ;
   HET_MEMORY     memory ;
@@ -280,14 +280,14 @@ typedef union
 /*---------------------------------------------*/
 /* RADM64 INSTRUCTION                          */
 /*---------------------------------------------*/
-typedef struct RADM64_format                     
+typedef struct RADM64_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
@@ -302,15 +302,15 @@ typedef struct RADM64_format
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
-} RADM64_FIELDS ; 
+
+} RADM64_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   RADM64_FIELDS  radm64 ;
   HET_MEMORY     memory ;
@@ -320,34 +320,34 @@ typedef union
 /*---------------------------------------------*/
 /* MOV32 INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct MOV32_format                     
+typedef struct MOV32_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 auto_read_clear      : 1 ;
   uint32                      : 3 ;
   uint32 z_flag               : 1 ;
   uint32                      : 15 ;
   uint32 init_flag            : 1 ;
-  uint32 sub_opcode           : 1 ;   
-  uint32 move_type            : 2 ;     
+  uint32 sub_opcode           : 1 ;
+  uint32 move_type            : 2 ;
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
-} MOV32_FIELDS ; 
+
+} MOV32_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   MOV32_FIELDS  mov32  ;
   HET_MEMORY    memory ;
@@ -357,14 +357,14 @@ typedef union
 /*---------------------------------------------*/
 /* ADM32 INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct ADM32_format                     
+typedef struct ADM32_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 auto_read_clear      : 1 ;
   uint32                      : 19 ;
@@ -374,15 +374,15 @@ typedef struct ADM32_format
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
-} ADM32_FIELDS ; 
+
+} ADM32_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADM32_FIELDS  adm32  ;
   HET_MEMORY    memory ;
@@ -392,27 +392,27 @@ typedef union
 /*---------------------------------------------*/
 /* ADCNST INSTRUCTION                          */
 /*---------------------------------------------*/
-typedef struct ADCNST_format                     
+typedef struct ADCNST_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1 ;  /* pk */
   uint32                      : 1 ;
   uint32 constant             : 25 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } ADCNST_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADCNST_FIELDS  adcnst ;
   HET_MEMORY     memory ;
@@ -420,17 +420,17 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* ADD INSTRUCTION				  	*/
+/* ADD INSTRUCTION                  */
 /*----------------------------------------------*/
 
-typedef struct ADD_format                     
+typedef struct ADD_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1;
   uint32 sub_opcode3          : 3 ;
@@ -442,17 +442,17 @@ typedef struct ADD_format
   uint32 init_flag            : 1 ;
   uint32 sub_opcode1          : 1 ;
   uint32 rem_dest             : 2 ;
-  uint32 reg	                : 2 ;
+  uint32 reg                    : 2 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } ADD_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADD_FIELDS  add ;
   HET_MEMORY  memory ;
@@ -461,17 +461,17 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* ADC INSTRUCTION					*/
+/* ADC INSTRUCTION                  */
 /*----------------------------------------------*/
 
-typedef struct ADC_format                     
+typedef struct ADC_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1;
   uint32 sub_opcode3          : 3 ;
@@ -483,17 +483,17 @@ typedef struct ADC_format
   uint32 init_flag            : 1 ;
   uint32 sub_opcode1          : 1 ;
   uint32 rem_dest             : 2 ;
-  uint32 reg	                : 2 ;
+  uint32 reg                    : 2 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } ADC_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADC_FIELDS  adc ;
   HET_MEMORY  memory ;
@@ -502,17 +502,17 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* SUB INSTRUCTION					*/
+/* SUB INSTRUCTION                  */
 /*----------------------------------------------*/
 
-typedef struct SUB_format                     
+typedef struct SUB_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1;
   uint32 sub_opcode3          : 3 ;
@@ -524,17 +524,17 @@ typedef struct SUB_format
   uint32 init_flag            : 1 ;
   uint32 sub_opcode1          : 1 ;
   uint32 rem_dest             : 2 ;
-  uint32 reg	                : 2 ;
+  uint32 reg                    : 2 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } SUB_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   SUB_FIELDS  sub ;
   HET_MEMORY  memory ;
@@ -543,17 +543,17 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* SBB INSTRUCTION					*/
+/* SBB INSTRUCTION                  */
 /*----------------------------------------------*/
 
-typedef struct SBB_format                     
+typedef struct SBB_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1;
   uint32 sub_opcode3          : 3 ;
@@ -565,17 +565,17 @@ typedef struct SBB_format
   uint32 init_flag            : 1 ;
   uint32 sub_opcode1          : 1 ;
   uint32 rem_dest             : 2 ;
-  uint32 reg	                : 2 ;
+  uint32 reg                    : 2 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } SBB_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   SBB_FIELDS  sbb ;
   HET_MEMORY  memory ;
@@ -584,7 +584,7 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* AND INSTRUCTION				      */
+/* AND INSTRUCTION                    */
 /*----------------------------------------------*/
 
 typedef struct AND_format
@@ -594,7 +594,7 @@ typedef struct AND_format
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1;
   uint32 sub_opcode3          : 3 ;
@@ -606,17 +606,17 @@ typedef struct AND_format
   uint32 init_flag            : 1 ;
   uint32 sub_opcode1          : 1 ;
   uint32 rem_dest             : 2 ;
-  uint32 reg	                : 2 ;
+  uint32 reg                    : 2 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } AND_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   AND_FIELDS  and ;
   HET_MEMORY  memory ;
@@ -625,7 +625,7 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* OR INSTRUCTION					      */
+/* OR INSTRUCTION                         */
 /*----------------------------------------------*/
 
 
@@ -636,7 +636,7 @@ typedef struct OR_format
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1;
   uint32 sub_opcode3          : 3 ;
@@ -648,17 +648,17 @@ typedef struct OR_format
   uint32 init_flag            : 1 ;
   uint32 sub_opcode1          : 1 ;
   uint32 rem_dest             : 2 ;
-  uint32 reg	                : 2 ;
+  uint32 reg                    : 2 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } OR_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   OR_FIELDS  or ;
   HET_MEMORY  memory ;
@@ -667,17 +667,17 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* XOR INSTRUCTION					*/
+/* XOR INSTRUCTION                  */
 /*----------------------------------------------*/
 
-typedef struct XOR_format                     
+typedef struct XOR_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 remote_address       : 9 ;
- 
+
   uint32                      : 5 ;
   uint32 control              : 1;
   uint32 sub_opcode3          : 3 ;
@@ -689,17 +689,17 @@ typedef struct XOR_format
   uint32 init_flag            : 1 ;
   uint32 sub_opcode1          : 1 ;
   uint32 rem_dest             : 2 ;
-  uint32 reg	                : 2 ;
+  uint32 reg                    : 2 ;
   uint32                      : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
+
 } XOR_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   XOR_FIELDS  xor ;
   HET_MEMORY  memory ;
@@ -710,18 +710,18 @@ typedef union
 /*---------------------------------------------*/
 /* CNT INSTRUCTION                             */
 /*---------------------------------------------*/
-typedef struct CNT_format                     
+typedef struct CNT_format
 {
-  uint32                      : 9 ;        
-  uint32 brk                  : 1 ;          
-  uint32 next_program_address : 9 ;          
+  uint32                      : 9 ;
+  uint32 brk                  : 1 ;
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 angle_cnt            : 1 ;
   uint32 t_register_select    : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32                      : 4 ;
   uint32 interrupt_enable     : 1 ;
- 
+
 
   uint32                      : 3 ;
   uint32 request              : 2 ;
@@ -729,15 +729,15 @@ typedef struct CNT_format
   uint32                      : 1 ;
   uint32 max                  : 25 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
 
-} CNT_FIELDS ; 
+} CNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  CNT_FIELDS   cnt    ; 
+  CNT_FIELDS   cnt    ;
   HET_MEMORY   memory ;
 } CNT_INSTRUCTION;
 
@@ -761,30 +761,30 @@ typedef struct apcnt_format
   uint32 auto_read_clear      : 1 ;
   uint32 previous_bit         : 1 ;
   uint32 count                : 25 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
- 
+
 } APCNT_FIELDS ;
- 
+
 typedef union
 {
   APCNT_FIELDS  apcnt   ;
   HET_MEMORY   memory ;
 } APCNT_INSTRUCTION;
- 
- 
+
+
 
 /*---------------------------------------------*/
 /* PCNT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct pcnt_format                     
+typedef struct pcnt_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
-  uint32 brk                  : 1 ;          
-  uint32 next_program_address : 9 ;          
+  uint32 brk                  : 1 ;
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 interrupt_enable     : 1 ;
   uint32 period_pulse_select  : 2 ;
@@ -797,15 +797,15 @@ typedef struct pcnt_format
   uint32 previous_bit         : 1 ;
   uint32 count                : 25 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
 
-} PCNT_FIELDS ;      
+} PCNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  PCNT_FIELDS  pcnt   ; 
+  PCNT_FIELDS  pcnt   ;
   HET_MEMORY   memory ;
 } PCNT_INSTRUCTION;
 
@@ -813,7 +813,7 @@ typedef union
 /*---------------------------------------------*/
 /* SCNT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct scnt_format                     
+typedef struct scnt_format
 {
   uint32                      : 9 ;
   uint32 brk                  : 1 ;
@@ -829,49 +829,49 @@ typedef struct scnt_format
   uint32                      : 1 ;
   uint32 gap_start            : 25 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
 
-} SCNT_FIELDS ;      
+} SCNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  SCNT_FIELDS  scnt   ; 
+  SCNT_FIELDS  scnt   ;
   HET_MEMORY   memory ;
 } SCNT_INSTRUCTION;
 
 
-
+
 /*---------------------------------------------*/
 /* ACNT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct acnt_format                     
+typedef struct acnt_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
   uint32 brk                  : 1 ;
-  uint32 next_program_address : 9 ;          
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32 edge_select          : 1 ;
   uint32                      : 7 ;
-  uint32 interrupt_enable     : 1 ; 
+  uint32 interrupt_enable     : 1 ;
 
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
   uint32 previous_bit         : 1 ;
   uint32 gap_end              : 25 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
 
-} ACNT_FIELDS ;      
+} ACNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  ACNT_FIELDS  acnt   ; 
+  ACNT_FIELDS  acnt   ;
   HET_MEMORY   memory ;
 } ACNT_INSTRUCTION;
 
@@ -889,7 +889,7 @@ typedef struct ecnt_format
   uint32                      : 1 ;
   uint32 count_mode           : 2 ;
   uint32                      : 6 ;
- 
+
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
@@ -904,12 +904,12 @@ typedef struct ecnt_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
- 
+
 } ECNT_FIELDS ;
- 
+
 typedef union
 {
   ECNT_FIELDS  ecnt   ;
@@ -932,19 +932,19 @@ typedef struct rcnt_format
   uint32 count_mode           : 2 ;
   uint32                      : 5 ;
   uint32 count_mode1          : 1 ;
- 
+
   uint32                      : 3 ;
   uint32                      : 2 ;
   uint32 control              : 1 ;
   uint32                      : 1 ;
   uint32 divisor              : 25 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
- 
+
 } RCNT_FIELDS ;
- 
+
 typedef union
 {
   RCNT_FIELDS  rcnt   ;
@@ -955,12 +955,12 @@ typedef union
 /*---------------------------------------------*/
 /* DJNZ INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct djnz_format                     
+typedef struct djnz_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
   uint32 brk                  : 1 ;
-  uint32 next_program_address : 9 ;          
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32                      : 1 ;
   uint32 sub_opcode           : 2 ;
@@ -976,15 +976,15 @@ typedef struct djnz_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
 
-} DJNZ_FIELDS ;      
+} DJNZ_FIELDS ;
 
-typedef union 
+typedef union
 {
-  DJNZ_FIELDS  djnz   ; 
+  DJNZ_FIELDS  djnz   ;
   HET_MEMORY   memory ;
 } DJNZ_INSTRUCTION;
 
@@ -992,12 +992,12 @@ typedef union
 /*---------------------------------------------*/
 /* DJZ INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct djz_format                     
+typedef struct djz_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
   uint32 brk                  : 1 ;
-  uint32 next_program_address : 9 ;          
+  uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32                      : 1 ;
   uint32 sub_opcode           : 2 ;
@@ -1013,22 +1013,22 @@ typedef struct djz_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
 
-} DJZ_FIELDS ;      
+} DJZ_FIELDS ;
 
-typedef union 
+typedef union
 {
-  DJZ_FIELDS  djz   ; 
+  DJZ_FIELDS  djz   ;
   HET_MEMORY   memory ;
 } DJZ_INSTRUCTION;
 
 /*---------------------------------------------*/
 /* PWCNT INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct pwcnt_format                     
+typedef struct pwcnt_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
@@ -1053,13 +1053,13 @@ typedef struct pwcnt_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
-} PWCNT_FIELDS ;      
 
-typedef union 
+} PWCNT_FIELDS ;
+
+typedef union
 {
   PWCNT_FIELDS  pwcnt ;
   HET_MEMORY   memory ;
@@ -1069,7 +1069,7 @@ typedef union
 /*---------------------------------------------*/
 /* WCAP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct wcap_format                     
+typedef struct wcap_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
@@ -1078,7 +1078,7 @@ typedef struct wcap_format
   uint32 op_code              : 4 ;
   uint32 hr_lr                : 1 ;
   uint32                      : 8 ;
-  
+
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
@@ -1093,22 +1093,22 @@ typedef struct wcap_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
 
-} WCAP_FIELDS ;      
+} WCAP_FIELDS ;
 
-typedef union 
+typedef union
 {
-  WCAP_FIELDS  wcap   ; 
+  WCAP_FIELDS  wcap   ;
   HET_MEMORY   memory ;
 } WCAP_INSTRUCTION;
- 
+
 /*----------------------------------------------*/
 /* WCAPE INSTRUCTION                            */
 /*----------------------------------------------*/
-typedef struct wcape_format                     
+typedef struct wcape_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
@@ -1116,7 +1116,7 @@ typedef struct wcape_format
   uint32 next_program_address : 9 ;
   uint32 op_code              : 4 ;
   uint32                      : 9 ;
-  
+
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
@@ -1131,23 +1131,23 @@ typedef struct wcape_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 ts_data              : 25 ;
   uint32 ec_data              : 7 ;
 
-} WCAPE_FIELDS ;      
+} WCAPE_FIELDS ;
 
-typedef union 
+typedef union
 {
-  WCAPE_FIELDS  wcape   ; 
+  WCAPE_FIELDS  wcape   ;
   HET_MEMORY   memory ;
 } WCAPE_INSTRUCTION;
- 
+
 
 /*---------------------------------------------*/
 /* BR   INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct br_format                     
+typedef struct br_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
@@ -1166,32 +1166,32 @@ typedef struct br_format
 
 #if HET_v2
   uint32 branch_condition     : 5 ;
-#else 
+#else
   uint32 branch_condition     : 3 ;
   uint32                      : 1 ;
   uint32                      : 1 ;
-#endif 
+#endif
 
   uint32                      : 2 ;
   uint32 interrupt_enable     : 1 ;
- 
-  
+
+
   uint32 data                 : 25 ;
   uint32 hr_data              : 7 ;
- 
-} BR_FIELDS ;      
 
-typedef union 
+} BR_FIELDS ;
+
+typedef union
 {
-  BR_FIELDS  br     ; 
+  BR_FIELDS  br     ;
   HET_MEMORY memory ;
 } BR_INSTRUCTION;
 
- 
+
 /*---------------------------------------------*/
 /* SHFT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct shft_format                     
+typedef struct shft_format
 {
   uint32                      : 6 ;
   uint32 reqnum               : 3 ;
@@ -1200,7 +1200,7 @@ typedef struct shft_format
   uint32 op_code              : 4 ;
   uint32                      : 5 ;
   uint32 shift_mode           : 4 ;
- 
+
   uint32                      : 3 ;
   uint32 request              : 2 ;
   uint32 auto_read_clear      : 1 ;
@@ -1215,15 +1215,15 @@ typedef struct shft_format
   uint32 ab_register_select   : 1 ;
   uint32 interrupt_enable     : 1 ;
 
-  
+
   uint32 data                 : 25 ;
   uint32                      : 7 ;
 
-} SHFT_FIELDS ;      
+} SHFT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  SHFT_FIELDS  shft   ; 
+  SHFT_FIELDS  shft   ;
   HET_MEMORY   memory ;
 } SHFT_INSTRUCTION;
 
@@ -1242,7 +1242,7 @@ typedef struct memory_format
   uint32 data_word     ;
   uint32 reserved_word ;
 } HET_MEMORY  ;
- 
+
 /*---------------------------------------------*/
 /* ACMP INSTRUCTION                            */
 /*---------------------------------------------*/
@@ -1262,19 +1262,19 @@ typedef struct acmp_format
   uint32 pin_action           : 1 ;
   uint32                      : 3 ;
   uint32 pin_select           : 5 ;
-  uint32 cond_addr            : 9 ; 
+  uint32 cond_addr            : 9 ;
   uint32 en_pin_action        : 1 ;
   uint32                      : 2 ;
   uint32 coutprv              : 1 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
-  uint32                      : 3 ; 
+  uint32                      : 3 ;
 
   uint32                      : 7  ;
   uint32 data                 : 25 ;
- 
+
 } ACMP_FIELDS;
- 
+
 typedef union
 {
   ACMP_FIELDS  acmp   ;
@@ -1285,14 +1285,14 @@ typedef union
 /*---------------------------------------------*/
 /* ECMP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct ecmp_format   
+typedef struct ecmp_format
 {
   uint32                      : 7 ;
   uint32 angle_compare        : 1 ;
-  uint32 hr_lr                : 1 ;         
+  uint32 hr_lr                : 1 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ; 
+  uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
   uint32                      : 6 ;
 
@@ -1307,16 +1307,16 @@ typedef struct ecmp_format
   uint32 cond_addr            : 9 ;
   uint32 en_pin_action        : 1 ;
   uint32                      : 3 ;
-  uint32 auto_read_clear      : 1 ; 
+  uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
 
 } ECMP_FIELDS;
 
-typedef union 
+typedef union
 {
   ECMP_FIELDS  ecmp   ;
   HET_MEMORY   memory ;
@@ -1326,14 +1326,14 @@ typedef union
 /*---------------------------------------------*/
 /* SCMP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct scmp_format     
+typedef struct scmp_format
 {
   uint32                      : 5 ;
   uint32                      : 2 ;
-  uint32                      : 2 ;         
+  uint32                      : 2 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ; 
+  uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
   uint32                      : 6 ;
 
@@ -1351,13 +1351,13 @@ typedef struct scmp_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32                      : 7 ;
   uint32 data                 : 25 ;
 
 } SCMP_FIELDS ;
 
-typedef union 
+typedef union
 {
   SCMP_FIELDS  scmp   ;
   HET_MEMORY   memory ;
@@ -1367,7 +1367,7 @@ typedef union
 /*---------------------------------------------*/
 /* MCMP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct mcmp_format                     
+typedef struct mcmp_format
 {
   uint32                      : 5 ;
   uint32 save_subtract        : 1 ;
@@ -1379,14 +1379,14 @@ typedef struct mcmp_format
   uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
   uint32                      : 6 ;
- 
+
   uint32 interrupt_enable     : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 t_register_select    : 1 ;
   uint32 opposite_action      : 1 ;
   uint32 pin_action           : 1 ;
-  uint32 order                : 1 ; 
-  uint32 sub_opcode           : 1 ;  
+  uint32 order                : 1 ;
+  uint32 sub_opcode           : 1 ;
   uint32                      : 1 ;
   uint32 pin_select           : 5 ;
   uint32 cond_addr            : 9 ;
@@ -1395,14 +1395,14 @@ typedef struct mcmp_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
- 
-  
+
+
   uint32 hr_data              : 7 ;
-  uint32 data                 : 25 ; 
+  uint32 data                 : 25 ;
 
-} MCMP_FIELDS ; 
+} MCMP_FIELDS ;
 
-typedef union 
+typedef union
 {
   MCMP_FIELDS  mcmp   ;
   HET_MEMORY   memory ;
@@ -1411,11 +1411,11 @@ typedef union
 /*---------------------------------------------*/
 /* MOV64 INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct mov64_format                     
+typedef struct mov64_format
 {
   uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
-  uint32 next_program_address : 9 ;          
+  uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
@@ -1432,14 +1432,14 @@ typedef struct mov64_format
   uint32                      : 3 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
-  uint32                      : 3 ; 
-  
+  uint32                      : 3 ;
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
 
-} MOV64_FIELDS ; 
+} MOV64_FIELDS ;
 
-typedef union 
+typedef union
 {
   MOV64_FIELDS  mov64  ;
   HET_MEMORY    memory ;
@@ -1449,13 +1449,13 @@ typedef union
 /*---------------------------------------------*/
 /* DADM64 INSTRUCTION                          */
 /*---------------------------------------------*/
-typedef struct dadm64_format                     
+typedef struct dadm64_format
 {
   uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
-  uint32                      : 9 ; 
+  uint32                      : 9 ;
 
   uint32 interrupt_enable     : 1 ;
   uint32 ab_register_select   : 1 ;
@@ -1470,14 +1470,14 @@ typedef struct dadm64_format
   uint32                      : 3 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
-  uint32                      : 3 ; 
-  
+  uint32                      : 3 ;
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
-} DADM64_FIELDS ; 
 
-typedef union 
+} DADM64_FIELDS ;
+
+typedef union
 {
   DADM64_FIELDS  dadm64 ;
   HET_MEMORY     memory ;
@@ -1487,13 +1487,13 @@ typedef union
 /*---------------------------------------------*/
 /* RADM64 INSTRUCTION                          */
 /*---------------------------------------------*/
-typedef struct RADM64_format                     
+typedef struct RADM64_format
 {
   uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
-  uint32                      : 9 ; 
+  uint32                      : 9 ;
 
   uint32 interrupt_enable     : 1 ;
   uint32 ab_register_select   : 1 ;
@@ -1508,15 +1508,15 @@ typedef struct RADM64_format
   uint32                      : 3 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
-  uint32                      : 3 ; 
-  
+  uint32                      : 3 ;
+
   uint32 hr_data              : 7 ;
-  uint32 data                 : 25 ; 
+  uint32 data                 : 25 ;
 
-} RADM64_FIELDS ; 
+} RADM64_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   RADM64_FIELDS  radm64 ;
   HET_MEMORY     memory ;
@@ -1526,14 +1526,14 @@ typedef union
 /*---------------------------------------------*/
 /* MOV32 INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct MOV32_format                     
+typedef struct MOV32_format
 {
   uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32                      : 9 ;
- 
+
   uint32                      : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 t_register_select    : 1 ;
@@ -1544,15 +1544,15 @@ typedef struct MOV32_format
   uint32 z_flag               : 1 ;
   uint32                      : 3 ;
   uint32 auto_read_clear      : 1 ;
-  uint32                      : 5 ; 
-  
+  uint32                      : 5 ;
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
-} MOV32_FIELDS ; 
+
+} MOV32_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   MOV32_FIELDS  mov32  ;
   HET_MEMORY    memory ;
@@ -1562,13 +1562,13 @@ typedef union
 /*---------------------------------------------*/
 /* ADM32 INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct ADM32_format                     
+typedef struct ADM32_format
 {
   uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
-  uint32                      : 9 ; 
+  uint32                      : 9 ;
 
   uint32                      : 1 ;
   uint32 ab_register_select   : 1 ;
@@ -1578,15 +1578,15 @@ typedef struct ADM32_format
   uint32 init_flag            : 1 ;
   uint32                      : 19 ;
   uint32 auto_read_clear      : 1 ;
-  uint32                      : 5 ; 
-  
+  uint32                      : 5 ;
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
-   
-} ADM32_FIELDS ; 
+
+} ADM32_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADM32_FIELDS  adm32  ;
   HET_MEMORY    memory ;
@@ -1596,25 +1596,25 @@ typedef union
 /*---------------------------------------------*/
 /* ADCNST INSTRUCTION                          */
 /*---------------------------------------------*/
-typedef struct ADCNST_format                     
+typedef struct ADCNST_format
 {
   uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32                      : 9 ;
- 
+
   uint32 constant             : 25 ;
   uint32                      : 1 ;
-  uint32                      : 5 ; 
-  
+  uint32                      : 5 ;
+
   uint32 hr_data              : 7 ;
-  uint32 data                 : 25 ; 
+  uint32 data                 : 25 ;
 
 } ADCNST_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADCNST_FIELDS  adcnst ;
   HET_MEMORY     memory ;
@@ -1623,19 +1623,19 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* ADD INSTRUCTION					*/
+/* ADD INSTRUCTION                  */
 /*----------------------------------------------*/
-typedef struct ADD_format                     
+typedef struct ADD_format
 {
 
-  uint32 remote_address       : 9 ;	
+  uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;	
+  uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
-  uint32                      : 1 ;  
-  uint32 reg	                : 2 ;
+  uint32                      : 1 ;
+  uint32 reg                    : 2 ;
   uint32 rem_dest             : 2 ;
   uint32 sub_opcode1          : 1 ;
   uint32 init_flag            : 1 ;
@@ -1648,14 +1648,14 @@ typedef struct ADD_format
   uint32 control              : 1 ;
   uint32                      : 5 ;
 
-  uint32 hr_data              : 7 ; 
+  uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
- 
+
+
 } ADD_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADD_FIELDS  add ;
   HET_MEMORY  memory ;
@@ -1665,21 +1665,21 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* ADC INSTRUCTION					*/
+/* ADC INSTRUCTION                  */
 /*----------------------------------------------*/
 
 
-typedef struct ADC_format                     
+typedef struct ADC_format
 {
 
-  uint32 remote_address       : 9 ;	
+  uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;	
+  uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
-  uint32                      : 1 ;  
-  uint32 reg	                : 2 ;
+  uint32                      : 1 ;
+  uint32 reg                    : 2 ;
   uint32 rem_dest             : 2 ;
   uint32 sub_opcode1          : 1 ;
   uint32 init_flag            : 1 ;
@@ -1692,14 +1692,14 @@ typedef struct ADC_format
   uint32 control              : 1 ;
   uint32                      : 5 ;
 
-  uint32 hr_data              : 7 ; 
+  uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
- 
+
+
 } ADC_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   ADC_FIELDS  adc ;
   HET_MEMORY  memory ;
@@ -1709,20 +1709,20 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* SUB INSTRUCTION					*/
+/* SUB INSTRUCTION                  */
 /*----------------------------------------------*/
 
-typedef struct SUB_format                     
+typedef struct SUB_format
 {
 
-  uint32 remote_address       : 9 ;	
+  uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;	
+  uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
-  uint32                      : 1 ;  
-  uint32 reg	                : 2 ;
+  uint32                      : 1 ;
+  uint32 reg                    : 2 ;
   uint32 rem_dest             : 2 ;
   uint32 sub_opcode1          : 1 ;
   uint32 init_flag            : 1 ;
@@ -1735,14 +1735,14 @@ typedef struct SUB_format
   uint32 control              : 1 ;
   uint32                      : 5 ;
 
-  uint32 hr_data              : 7 ; 
+  uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
- 
+
+
 } SUB_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   SUB_FIELDS  sub ;
   HET_MEMORY  memory ;
@@ -1753,20 +1753,20 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* SBB INSTRUCTION					*/
+/* SBB INSTRUCTION                  */
 /*----------------------------------------------*/
 
 typedef struct SBB_format
 {
 
-  uint32 remote_address       : 9 ;	
+  uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;	
+  uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
-  uint32                      : 1 ;  
-  uint32 reg	                : 2 ;
+  uint32                      : 1 ;
+  uint32 reg                    : 2 ;
   uint32 rem_dest             : 2 ;
   uint32 sub_opcode1          : 1 ;
   uint32 init_flag            : 1 ;
@@ -1779,14 +1779,14 @@ typedef struct SBB_format
   uint32 control              : 1 ;
   uint32                      : 5 ;
 
-  uint32 hr_data              : 7 ; 
+  uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
- 
+
+
 } SBB_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   SBB_FIELDS  sbb ;
   HET_MEMORY  memory ;
@@ -1796,20 +1796,20 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* AND INSTRUCTION					*/
+/* AND INSTRUCTION                  */
 /*----------------------------------------------*/
 
 typedef struct AND_format
 {
 
-  uint32 remote_address       : 9 ;	
+  uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;	
+  uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
-  uint32                      : 1 ;  
-  uint32 reg	                : 2 ;
+  uint32                      : 1 ;
+  uint32 reg                    : 2 ;
   uint32 rem_dest             : 2 ;
   uint32 sub_opcode1          : 1 ;
   uint32 init_flag            : 1 ;
@@ -1822,14 +1822,14 @@ typedef struct AND_format
   uint32 control              : 1 ;
   uint32                      : 5 ;
 
-  uint32 hr_data              : 7 ; 
+  uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
- 
+
+
 } AND_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   AND_FIELDS  and ;
   HET_MEMORY  memory ;
@@ -1838,20 +1838,20 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* OR INSTRUCTION						*/
+/* OR INSTRUCTION                       */
 /*----------------------------------------------*/
 
 typedef struct OR_format
 {
 
-  uint32 remote_address       : 9 ;	
+  uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;	
+  uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
-  uint32                      : 1 ;  
-  uint32 reg	                : 2 ;
+  uint32                      : 1 ;
+  uint32 reg                    : 2 ;
   uint32 rem_dest             : 2 ;
   uint32 sub_opcode1          : 1 ;
   uint32 init_flag            : 1 ;
@@ -1864,14 +1864,14 @@ typedef struct OR_format
   uint32 control              : 1 ;
   uint32                      : 5 ;
 
-  uint32 hr_data              : 7 ; 
+  uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
- 
+
+
 } OR_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   OR_FIELDS  or ;
   HET_MEMORY  memory ;
@@ -1880,20 +1880,20 @@ typedef union
 
 
 /*----------------------------------------------*/
-/* XOR INSTRUCTION					*/
+/* XOR INSTRUCTION                  */
 /*----------------------------------------------*/
 
 typedef struct XOR_format
 {
 
-  uint32 remote_address       : 9 ;	
+  uint32 remote_address       : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;	
+  uint32 brk                  : 1 ;
   uint32                      : 9 ;
 
-  uint32                      : 1 ;  
-  uint32 reg	                : 2 ;
+  uint32                      : 1 ;
+  uint32 reg                    : 2 ;
   uint32 rem_dest             : 2 ;
   uint32 sub_opcode1          : 1 ;
   uint32 init_flag            : 1 ;
@@ -1906,14 +1906,14 @@ typedef struct XOR_format
   uint32 control              : 1 ;
   uint32                      : 5 ;
 
-  uint32 hr_data              : 7 ; 
+  uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
- 
- 
+
+
 } XOR_FIELDS ;
 
 
-typedef union 
+typedef union
 {
   XOR_FIELDS  xor ;
   HET_MEMORY  memory ;
@@ -1925,32 +1925,32 @@ typedef union
 /*---------------------------------------------*/
 /* CNT INSTRUCTION                             */
 /*---------------------------------------------*/
-typedef struct CNT_format                     
+typedef struct CNT_format
 {
-  uint32 interrupt_enable     : 1 ;         
-  uint32                      : 4 ;        
-  uint32 ab_register_select   : 1 ;          
+  uint32 interrupt_enable     : 1 ;
+  uint32                      : 4 ;
+  uint32 ab_register_select   : 1 ;
   uint32 t_register_select    : 1 ;
   uint32 angle_cnt            : 1 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
-  uint32 brk                  : 1 ;  
-  uint32                      : 9 ;  
+  uint32 brk                  : 1 ;
+  uint32                      : 9 ;
 
   uint32 max                  : 25 ;
   uint32                      : 1 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32                      : 7 ;
   uint32 data                 : 25 ;
 
-} CNT_FIELDS ; 
+} CNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  CNT_FIELDS   cnt    ; 
+  CNT_FIELDS   cnt    ;
   HET_MEMORY   memory ;
 } CNT_INSTRUCTION;
 
@@ -1973,30 +1973,30 @@ typedef struct apcnt_format
   uint32 previous_bit         : 1 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
-  uint32                      : 3 ; 
-  
+  uint32                      : 3 ;
+
   uint32                      : 7 ;
-  uint32 data                 : 25 ; 
+  uint32 data                 : 25 ;
 
 } APCNT_FIELDS ;
- 
+
 typedef union
 {
   APCNT_FIELDS  apcnt   ;
   HET_MEMORY   memory ;
 } APCNT_INSTRUCTION;
- 
- 
+
+
 
 /*---------------------------------------------*/
 /* PCNT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct pcnt_format                     
+typedef struct pcnt_format
 {
   uint32 pin_select           : 5 ;
   uint32                      : 1 ;
-  uint32 period_pulse_select  : 2 ;          
-  uint32 interrupt_enable     : 1 ;          
+  uint32 period_pulse_select  : 2 ;
+  uint32 interrupt_enable     : 1 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
@@ -2008,15 +2008,15 @@ typedef struct pcnt_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
 
-} PCNT_FIELDS ;      
+} PCNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  PCNT_FIELDS  pcnt   ; 
+  PCNT_FIELDS  pcnt   ;
   HET_MEMORY   memory ;
 } PCNT_INSTRUCTION;
 
@@ -2024,7 +2024,7 @@ typedef union
 /*---------------------------------------------*/
 /* SCNT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct scnt_format                     
+typedef struct scnt_format
 {
   uint32                      : 4 ;
   uint32 step_width           : 2 ;
@@ -2039,24 +2039,24 @@ typedef struct scnt_format
   uint32                      : 1 ;
   uint32 auto_read_clear      : 1 ;
   uint32                      : 5 ;
-  
+
   uint32                      : 7 ;
   uint32 data                 : 25 ;
 
-} SCNT_FIELDS ;      
+} SCNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  SCNT_FIELDS  scnt   ; 
+  SCNT_FIELDS  scnt   ;
   HET_MEMORY   memory ;
 } SCNT_INSTRUCTION;
 
 /*---------------------------------------------*/
 /* ACNT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct acnt_format                     
+typedef struct acnt_format
 {
-  uint32 interrupt_enable     : 1 ; 
+  uint32 interrupt_enable     : 1 ;
   uint32                      : 7 ;
   uint32 edge_select          : 1 ;
   uint32 op_code              : 4 ;
@@ -2069,16 +2069,16 @@ typedef struct acnt_format
   uint32 previous_bit         : 1 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
-  uint32                      : 3 ; 
-  
+  uint32                      : 3 ;
+
   uint32                      : 7 ;
   uint32 data                 : 25 ;
 
-} ACNT_FIELDS ;      
+} ACNT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  ACNT_FIELDS  acnt   ; 
+  ACNT_FIELDS  acnt   ;
   HET_MEMORY   memory ;
 } ACNT_INSTRUCTION;
 
@@ -2096,7 +2096,7 @@ typedef struct ecnt_format
   uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
   uint32                      : 6 ;
- 
+
   uint32 interrupt_enable     : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 t_register_select    : 1 ;
@@ -2110,13 +2110,13 @@ typedef struct ecnt_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32                      : 7 ;
-  uint32 data                 : 25 ; 
- 
+  uint32 data                 : 25 ;
+
 
 } ECNT_FIELDS ;
- 
+
 typedef union
 {
   ECNT_FIELDS  ecnt   ;
@@ -2140,18 +2140,18 @@ typedef struct rcnt_format
   uint32                      : 6 ;
 
 
-  uint32 divisor              : 25 ;  
+  uint32 divisor              : 25 ;
   uint32                      : 1 ;
   uint32 control              : 1 ;
   uint32                      : 2 ;
   uint32                      : 3 ;
 
-  uint32                      : 7 ;  
+  uint32                      : 7 ;
   uint32 data                 : 25 ;
 
- 
+
 } RCNT_FIELDS ;
- 
+
 typedef union
 {
   RCNT_FIELDS  rcnt   ;
@@ -2162,13 +2162,13 @@ typedef union
 /*---------------------------------------------*/
 /* DJNZ INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct djnz_format                     
+typedef struct djnz_format
 {
   uint32                      : 6 ;
   uint32 sub_opcode           : 2 ;
   uint32                      : 1 ;
   uint32 op_code              : 4 ;
-  uint32 next_program_address : 9 ; 
+  uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
   uint32                      : 6 ;
@@ -2182,15 +2182,15 @@ typedef struct djnz_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32                      : 7 ;
   uint32 data                 : 25 ;
 
-} DJNZ_FIELDS ;      
+} DJNZ_FIELDS ;
 
-typedef union 
+typedef union
 {
-  DJNZ_FIELDS  djnz   ; 
+  DJNZ_FIELDS  djnz   ;
   HET_MEMORY   memory ;
 } DJNZ_INSTRUCTION;
 
@@ -2198,13 +2198,13 @@ typedef union
 /*---------------------------------------------*/
 /* DJZ INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct djz_format                     
+typedef struct djz_format
 {
   uint32                      : 6 ;
   uint32 sub_opcode           : 2 ;
   uint32                      : 1 ;
   uint32 op_code              : 4 ;
-  uint32 next_program_address : 9 ; 
+  uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
   uint32                      : 6 ;
@@ -2218,22 +2218,22 @@ typedef struct djz_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32                      : 7 ;
   uint32 data                 : 25 ;
 
-} DJZ_FIELDS ;      
+} DJZ_FIELDS ;
 
-typedef union 
+typedef union
 {
-  DJZ_FIELDS  djz   ; 
+  DJZ_FIELDS  djz   ;
   HET_MEMORY   memory ;
 } DJZ_INSTRUCTION;
-
+
 /*---------------------------------------------*/
 /* PWCNT INSTRUCTION                           */
 /*---------------------------------------------*/
-typedef struct pwcnt_format                     
+typedef struct pwcnt_format
 {
   uint32                      : 6 ;
   uint32 count_mode           : 2 ;
@@ -2257,14 +2257,14 @@ typedef struct pwcnt_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
 
   uint32 hr_data              : 7 ;
-  uint32 data                 : 25 ;  
- 
-} PWCNT_FIELDS ;      
+  uint32 data                 : 25 ;
 
-typedef union 
+} PWCNT_FIELDS ;
+
+typedef union
 {
   PWCNT_FIELDS  pwcnt ;
   HET_MEMORY   memory ;
@@ -2274,7 +2274,7 @@ typedef union
 /*---------------------------------------------*/
 /* WCAP INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct wcap_format                     
+typedef struct wcap_format
 {
   uint32                      : 8 ;
   uint32 hr_lr                : 1 ;
@@ -2282,8 +2282,8 @@ typedef struct wcap_format
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
-  uint32                      : 6 ; 
-  
+  uint32                      : 6 ;
+
   uint32 interrupt_enable     : 1 ;
   uint32 ab_register_select   : 1 ;
   uint32 t_register_select    : 1 ;
@@ -2297,29 +2297,29 @@ typedef struct wcap_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
 
-} WCAP_FIELDS ;      
+} WCAP_FIELDS ;
 
-typedef union 
+typedef union
 {
-  WCAP_FIELDS  wcap   ; 
+  WCAP_FIELDS  wcap   ;
   HET_MEMORY   memory ;
 } WCAP_INSTRUCTION;
- 
+
 /*----------------------------------------------*/
 /* WCAPE INSTRUCTION                            */
 /*----------------------------------------------*/
-typedef struct wcape_format                     
+typedef struct wcape_format
 {
   uint32                      : 9 ;
   uint32 op_code              : 4 ;
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
-  uint32                      : 6 ;  
+  uint32                      : 6 ;
 
   uint32 interrupt_enable     : 1 ;
   uint32 ab_register_select   : 1 ;
@@ -2333,23 +2333,23 @@ typedef struct wcape_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32 ec_data              : 7 ;
   uint32 ts_data              : 25 ;
 
-} WCAPE_FIELDS ;      
+} WCAPE_FIELDS ;
 
-typedef union 
+typedef union
 {
-  WCAPE_FIELDS  wcape   ; 
+  WCAPE_FIELDS  wcape   ;
   HET_MEMORY   memory ;
 } WCAPE_INSTRUCTION;
- 
+
 
 /*---------------------------------------------*/
 /* BR   INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct br_format                     
+typedef struct br_format
 {
   uint32                      : 9 ;
   uint32 op_code              : 4 ;
@@ -2369,24 +2369,24 @@ typedef struct br_format
   uint32 previous_bit         : 1 ;
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
-  uint32                      : 3 ; 
-  
+  uint32                      : 3 ;
+
   uint32 hr_data              : 7 ;
   uint32 data                 : 25 ;
 
-} BR_FIELDS ;      
+} BR_FIELDS ;
 
-typedef union 
+typedef union
 {
-  BR_FIELDS  br     ; 
+  BR_FIELDS  br     ;
   HET_MEMORY memory ;
 } BR_INSTRUCTION;
 
- 
+
 /*---------------------------------------------*/
 /* SHFT INSTRUCTION                            */
 /*---------------------------------------------*/
-typedef struct shft_format                     
+typedef struct shft_format
 {
   uint32 shift_mode           : 4 ;
   uint32                      : 5 ;
@@ -2394,7 +2394,7 @@ typedef struct shft_format
   uint32 next_program_address : 9 ;
   uint32 brk                  : 1 ;
   uint32 reqnum               : 3 ;
-  uint32                      : 6 ; 
+  uint32                      : 6 ;
 
   uint32 interrupt_enable     : 1 ;
   uint32 ab_register_select   : 1 ;
@@ -2409,15 +2409,15 @@ typedef struct shft_format
   uint32 auto_read_clear      : 1 ;
   uint32 request              : 2 ;
   uint32                      : 3 ;
-  
+
   uint32                      : 7 ;
   uint32 data                 : 25 ;
 
-} SHFT_FIELDS ;      
+} SHFT_FIELDS ;
 
-typedef union 
+typedef union
 {
-  SHFT_FIELDS  shft   ; 
+  SHFT_FIELDS  shft   ;
   HET_MEMORY   memory ;
 } SHFT_INSTRUCTION;
 

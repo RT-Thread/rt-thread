@@ -26,7 +26,7 @@
 {
     volatile unsigned int rw_region_base;
     volatile unsigned int readonly_region_base;
-    
+
     rw_region_base = (unsigned int)&Image$$ER_RW$$Base;
     if (rw_region_base >= MDDR_BASE_ADDRESS)
     {
@@ -37,7 +37,7 @@
         SYSREG->ENVM_REMAP_BASE_CR = 0u;
         SYSREG->DDR_CR = 1u;
     }
-    
+
     readonly_region_base = (unsigned int)&Image$$ER_RO$$Base;
     SCB->VTOR = readonly_region_base;
 }  */

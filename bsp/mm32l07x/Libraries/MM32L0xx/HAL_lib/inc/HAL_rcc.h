@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the RCC firmware 
+* @brief  This file contains all the functions prototypes for the RCC firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 //SJH&TM change
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -55,7 +55,7 @@ typedef struct
 * @{
 */
 
-/** @defgroup HSE_configuration 
+/** @defgroup HSE_configuration
 * @{
 */
 
@@ -67,9 +67,9 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup PLL_entry_clock_source 
+/** @defgroup PLL_entry_clock_source
 * @{
 */
 
@@ -81,17 +81,17 @@ typedef struct
     ((SOURCE) == RCC_PLLSource_HSE_Div2))
 /**
 * @}
-*/ 
+*/
 
 
-/** @defgroup System_clock_source 
+/** @defgroup System_clock_source
 * @{
 */
 
 #define RCC_SYSCLKSource_HSI             ((uint32_t)0x00000000)
 #define RCC_SYSCLKSource_HSE             ((uint32_t)0x00000001)
 #define RCC_SYSCLKSource_PLLCLK          ((uint32_t)0x00000002)
-#define RCC_SYSCLKSource_LSI       		   ((uint32_t)0x00000003)
+#define RCC_SYSCLKSource_LSI               ((uint32_t)0x00000003)
 #define IS_RCC_SYSCLK_SOURCE(SOURCE) (((SOURCE) == RCC_SYSCLKSource_HSI) || \
 ((SOURCE) == RCC_SYSCLKSource_HSE) || \
     ((SOURCE) == RCC_SYSCLKSource_PLLCLK||(SOURCE) == RCC_SYSCLKSource_LSI))
@@ -99,7 +99,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup AHB_clock_source 
+/** @defgroup AHB_clock_source
 * @{
 */
 
@@ -119,9 +119,9 @@ typedef struct
             ((HCLK) == RCC_SYSCLK_Div512))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup APB1_APB2_clock_source 
+/** @defgroup APB1_APB2_clock_source
 * @{
 */
 
@@ -136,9 +136,9 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup PLL_multiplication_factor 
+/** @defgroup PLL_multiplication_factor
 * @{
 */
 
@@ -165,14 +165,14 @@ typedef struct
             ((MUL) == RCC_PLLMul_10) || ((MUL) == RCC_PLLMul_11) || \
                 ((MUL) == RCC_PLLMul_12) || ((MUL) == RCC_PLLMul_13) || \
                     ((MUL) == RCC_PLLMul_14) || ((MUL) == RCC_PLLMul_15) || \
-                        ((MUL) == RCC_PLLMul_16))													 
+                        ((MUL) == RCC_PLLMul_16))
 
 
 /**
 * @}
 */
 
-/** @defgroup RCC_Interrupt_source 
+/** @defgroup RCC_Interrupt_source
 * @{
 */
 
@@ -190,7 +190,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup USB_clock_source 
+/** @defgroup USB_clock_source
 * @{
 */
 
@@ -203,7 +203,7 @@ typedef struct
 ((SOURCE) == RCC_USBCLKSource_PLLCLK_Div4))
 
 
-/** @defgroup AHB_peripheral 
+/** @defgroup AHB_peripheral
 * @{
 */
 
@@ -222,7 +222,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup APB2_peripheral 
+/** @defgroup APB2_peripheral
 * @{
 */
 
@@ -240,9 +240,9 @@ typedef struct
 #define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFB825FE) == 0x00) && ((PERIPH) != 0x00))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup APB1_peripheral 
+/** @defgroup APB1_peripheral
 * @{
 */
 
@@ -267,7 +267,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup Clock_source_to_output_on_MCO_pin 
+/** @defgroup Clock_source_to_output_on_MCO_pin
 * @{
 */
 
@@ -284,7 +284,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup RCC_Flag 
+/** @defgroup RCC_Flag
 * @{
 */
 
@@ -363,6 +363,6 @@ void RCC_ClearITPendingBit(uint8_t RCC_IT);
 
 /**
 * @}
-*/ 
+*/
 
 /*-------------------------(C) COPYRIGHT 2017 MindMotion ----------------------*/

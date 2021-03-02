@@ -47,7 +47,7 @@ typedef struct {
     // BPB-mandated    Microsoft
     // size            Name
     // -------         ------
-    int32_t BytesPerSector;     // 2               BPB_BytsPerSec    
+    int32_t BytesPerSector;     // 2               BPB_BytsPerSec
     uint8_t SectorsPerCluster;  // 1               BPB_SecPerClus
     uint16_t RsvdSectors;       // 2               BPB_RsvdSecCnt
     uint8_t NoOfFATs;           // 1               BPB_NumFATs
@@ -57,8 +57,8 @@ typedef struct {
     int32_t FATSize;            // 2 (FAT16)       BPB_FATSz16    size units: sectors
     // or 4 (FAT32)    BPB_FATSz32
     int32_t RootdirCluster;     // 4               BPB_RootClus
-    //int32_t  FSInfoSector;  
-    //int32_t  BkBootSector;  
+    //int32_t  FSInfoSector;
+    //int32_t  BkBootSector;
 
     /* *******************************************************************
        Derived variables

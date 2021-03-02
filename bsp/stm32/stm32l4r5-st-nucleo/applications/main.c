@@ -19,12 +19,12 @@
 /* defined the LED3 pin: PB14 */
 #define LED3_PIN    GET_PIN(B, 14)
 
-#define LED_RUN_PIN	LED3_PIN
+#define LED_RUN_PIN LED3_PIN
 
 int main(void)
 {
     int count = 1;
-		
+
     rt_pin_mode(LED_RUN_PIN, PIN_MODE_OUTPUT);
 
     while (count++)

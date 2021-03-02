@@ -52,9 +52,9 @@ void print_current_temp(void)
 void tempmon_test(void)
 {
     int status;
-    
+
     printf("\n--- tempmon test ---\n\n");
-    
+
     // Init the driver.
     status = tempmon_init();
     if (status)
@@ -62,10 +62,10 @@ void tempmon_test(void)
         printf("tempmon init failed: err=%d\n", status);
         return;
     }
-    
+
     // Read the current temperature
     print_current_temp();
-    
+
     do {
         // Print the prompt.
         printf("\n\
@@ -76,7 +76,7 @@ Choose an option:\n\
     x - Exit test\n\
 \n\
 > ");
-    
+
         // Wait for the user to type a valid character.
         char c;
         while (true)
@@ -87,10 +87,10 @@ Choose an option:\n\
                 break;
             }
         }
-        
+
         // Echo the typed char.
         printf("%c\n\n", c);
-        
+
         switch (c)
         {
             case 'x':
@@ -101,23 +101,23 @@ Choose an option:\n\
                 // Read the current temperature
                 print_current_temp();
                 break;
-            
+
             case 'a':
             {
                 printf("Enter the measurement period in milliseconds:\n");
                 int period = read_int();
-                
+
                 printf("Enter alarm temperature in integer degrees C:\n");
                 int alarmTemp = read_int();
-                
+
                 // Set the alarm.
                 tempmon_set_alarm(period, alarmTemp, over_temp_callback);
                 break;
             }
-            
+
             case 'd':
                 tempmon_disable_alarm();
-                
+
                 printf("Alarm disabled!\n");
                 break;
         }

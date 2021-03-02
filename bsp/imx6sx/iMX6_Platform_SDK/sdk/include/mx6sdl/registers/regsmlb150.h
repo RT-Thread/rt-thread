@@ -478,7 +478,7 @@ typedef union _hw_mlb150_mlbpc2
  *
  * Values:
  * - 0x00 - Divider factor is 1.
- * - ... - 
+ * - ... -
  * - 0x01 - Divider factor is 2.
  * - 0xff - Divider factor is 256.
  */

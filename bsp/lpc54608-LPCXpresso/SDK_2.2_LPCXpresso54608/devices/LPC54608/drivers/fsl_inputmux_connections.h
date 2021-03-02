@@ -159,7 +159,7 @@ typedef enum _inputmux_connection_t
     kINPUTMUX_GpioPort1Pin29ToPintsel = 61U + (PINTSEL_PMUX_ID << PMUX_SHIFT),
     kINPUTMUX_GpioPort1Pin30ToPintsel = 62U + (PINTSEL_PMUX_ID << PMUX_SHIFT),
     kINPUTMUX_GpioPort1Pin31ToPintsel = 63U + (PINTSEL_PMUX_ID << PMUX_SHIFT),
-	kINPUTMUX_GpioPort4Pin0ToPintsel = 128U + (PINTSEL_PMUX_ID << PMUX_SHIFT),
+    kINPUTMUX_GpioPort4Pin0ToPintsel = 128U + (PINTSEL_PMUX_ID << PMUX_SHIFT),
     /*!< DMA ITRIG. */
     kINPUTMUX_Adc0SeqaIrqToDma = 0U + (DMA_TRIG0_PMUX_ID << PMUX_SHIFT),
     kINPUTMUX_Adc0SeqbIrqToDma = 1U + (DMA_TRIG0_PMUX_ID << PMUX_SHIFT),

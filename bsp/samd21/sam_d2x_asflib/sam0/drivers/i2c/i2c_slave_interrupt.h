@@ -70,13 +70,13 @@ void _i2c_slave_tx_isr_handler(void);
 #endif
 
 void i2c_slave_register_callback(
-		struct i2c_slave_module *const module,
-		i2c_slave_callback_t callback,
-		enum i2c_slave_callback callback_type);
+        struct i2c_slave_module *const module,
+        i2c_slave_callback_t callback,
+        enum i2c_slave_callback callback_type);
 
 void i2c_slave_unregister_callback(
-		struct i2c_slave_module *const module,
-		enum i2c_slave_callback callback_type);
+        struct i2c_slave_module *const module,
+        enum i2c_slave_callback callback_type);
 
 /**
  * \brief Enables callback
@@ -87,15 +87,15 @@ void i2c_slave_unregister_callback(
  * \param[in]      callback_type  Callback type to enable
  */
 static inline void i2c_slave_enable_callback(
-		struct i2c_slave_module *const module,
-		enum i2c_slave_callback callback_type)
+        struct i2c_slave_module *const module,
+        enum i2c_slave_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as enabled */
-	module->enabled_callback |= (1 << callback_type);
+    /* Mark callback as enabled */
+    module->enabled_callback |= (1 << callback_type);
 }
 
 /**
@@ -107,15 +107,15 @@ static inline void i2c_slave_enable_callback(
  * \param[in]      callback_type  Callback type to disable
  */
 static inline void i2c_slave_disable_callback(
-		struct i2c_slave_module *const module,
-		enum i2c_slave_callback callback_type)
+        struct i2c_slave_module *const module,
+        enum i2c_slave_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as disabled */
-	module->enabled_callback &= ~(1 << callback_type);
+    /* Mark callback as disabled */
+    module->enabled_callback &= ~(1 << callback_type);
 }
 
 /** @} */
@@ -127,12 +127,12 @@ static inline void i2c_slave_disable_callback(
 
 
 enum status_code i2c_slave_read_packet_job(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet);
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet);
 
 enum status_code i2c_slave_write_packet_job(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet);
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet);
 
 
 /** @} */

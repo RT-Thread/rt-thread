@@ -166,20 +166,20 @@ void hdmi_clock_set(int ipu_index, uint32_t pclk)
     case 74250000:
     case 148500000:
         if (ipu_index == 1) {
-            //clk output from 540M PFD1 of PLL3 
+            //clk output from 540M PFD1 of PLL3
             HW_CCM_CHSCCDR.B.IPU1_DI0_CLK_SEL = 0;  // derive clock from divided pre-muxed ipu1 di0 clock
             HW_CCM_CHSCCDR.B.IPU1_DI0_PODF = 5; // div by 6
             HW_CCM_CHSCCDR.B.IPU1_DI0_PRE_CLK_SEL = 5;  // derive clock from 540M PFD
         }
 #if CHIP_MX6DQ
         else {
-            //clk output from 540M PFD1 of PLL3 
+            //clk output from 540M PFD1 of PLL3
             HW_CCM_CSCDR2.B.IPU2_DI0_CLK_SEL = 0;   // derive clock from divided pre-muxed ipu1 di0 clock
             HW_CCM_CSCDR2.B.IPU2_DI0_PODF = 5;  // div by 6
             HW_CCM_CSCDR2.B.IPU2_DI0_PRE_CLK_SEL = 5;   // derive clock from 540M PFD
         }
 #endif // CHIP_MX6DQ
-        //config PFD1 of PLL3 to be 445MHz 
+        //config PFD1 of PLL3 to be 445MHz
         BW_CCM_ANALOG_PFD_480_PFD1_FRAC(0x13);
         break;
 

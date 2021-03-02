@@ -57,32 +57,32 @@
  *
  */
 static void _dac_set_config(
-		struct dac_module *const module_inst,
-		struct dac_config *const config)
+        struct dac_module *const module_inst,
+        struct dac_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(config);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(config);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	/* Set selected DAC start on event to be disable when enabling the module */
-	module_inst->start_on_event[DAC_CHANNEL_0] = false;
-	module_inst->start_on_event[DAC_CHANNEL_1] = false;
+    /* Set selected DAC start on event to be disable when enabling the module */
+    module_inst->start_on_event[DAC_CHANNEL_0] = false;
+    module_inst->start_on_event[DAC_CHANNEL_1] = false;
 
-	uint32_t new_ctrlb = 0;
+    uint32_t new_ctrlb = 0;
 
-	/* Enable DAC in differential mode if configured */
-	if (config->differential_mode) {
-		new_ctrlb |= DAC_CTRLB_DIFF;
-	}
+    /* Enable DAC in differential mode if configured */
+    if (config->differential_mode) {
+        new_ctrlb |= DAC_CTRLB_DIFF;
+    }
 
-	/* Set reference voltage */
-	new_ctrlb |= config->reference;
+    /* Set reference voltage */
+    new_ctrlb |= config->reference;
 
-	/* Apply the new configuration to the hardware module */
-	dac_module->CTRLB.reg = new_ctrlb;
+    /* Apply the new configuration to the hardware module */
+    dac_module->CTRLB.reg = new_ctrlb;
 }
 
 /**
@@ -102,18 +102,18 @@ static void _dac_set_config(
  * \retval false If the module has completed synchronization
  */
 bool dac_is_syncing(
-		struct dac_module *const dev_inst)
+        struct dac_module *const dev_inst)
 {
-	/* Sanity check arguments */
-	Assert(dev_inst);
+    /* Sanity check arguments */
+    Assert(dev_inst);
 
-	Dac *const dac_module = dev_inst->hw;
+    Dac *const dac_module = dev_inst->hw;
 
-	if (dac_module->SYNCBUSY.reg) {
-		return true;
-	}
+    if (dac_module->SYNCBUSY.reg) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -135,15 +135,15 @@ bool dac_is_syncing(
  * \param[out] config  Configuration structure to initialize to default values
  */
 void dac_get_config_defaults(
-		struct dac_config *const config)
+        struct dac_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->differential_mode = false;
+    /* Default configuration values */
+    config->differential_mode = false;
     config->reference      = DAC_REFERENCE_INTREF;
-	config->clock_source   = GCLK_GENERATOR_0;
+    config->clock_source   = GCLK_GENERATOR_0;
 }
 
 /**
@@ -165,55 +165,55 @@ void dac_get_config_defaults(
  * \retval STATUS_BUSY        If module is busy resetting
  */
 enum status_code dac_init(
-		struct dac_module *const module_inst,
-		Dac *const module,
-		struct dac_config *const config)
+        struct dac_module *const module_inst,
+        Dac *const module,
+        struct dac_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module);
+    Assert(config);
 
-	/* Initialize device instance */
-	module_inst->hw = module;
+    /* Initialize device instance */
+    module_inst->hw = module;
 
-	/* Turn on the digital interface clock */
-	system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, MCLK_APBCMASK_DAC);
+    /* Turn on the digital interface clock */
+    system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, MCLK_APBCMASK_DAC);
 
-	/* Check if module is enabled. */
-	if (module->CTRLA.reg & DAC_CTRLA_ENABLE) {
-		return STATUS_ERR_DENIED;
-	}
+    /* Check if module is enabled. */
+    if (module->CTRLA.reg & DAC_CTRLA_ENABLE) {
+        return STATUS_ERR_DENIED;
+    }
 
-	/* Check if reset is in progress. */
-	if (module->CTRLA.reg & DAC_CTRLA_SWRST) {
-		return STATUS_BUSY;
-	}
+    /* Check if reset is in progress. */
+    if (module->CTRLA.reg & DAC_CTRLA_SWRST) {
+        return STATUS_BUSY;
+    }
 
-	/* Configure GCLK channel and enable clock */
-	struct system_gclk_chan_config gclk_chan_conf;
-	system_gclk_chan_get_config_defaults(&gclk_chan_conf);
-	gclk_chan_conf.source_generator = config->clock_source;
-	system_gclk_chan_set_config(DAC_GCLK_ID, &gclk_chan_conf);
-	system_gclk_chan_enable(DAC_GCLK_ID);
+    /* Configure GCLK channel and enable clock */
+    struct system_gclk_chan_config gclk_chan_conf;
+    system_gclk_chan_get_config_defaults(&gclk_chan_conf);
+    gclk_chan_conf.source_generator = config->clock_source;
+    system_gclk_chan_set_config(DAC_GCLK_ID, &gclk_chan_conf);
+    system_gclk_chan_enable(DAC_GCLK_ID);
 
-	/* Write configuration to module */
-	_dac_set_config(module_inst, config);
+    /* Write configuration to module */
+    _dac_set_config(module_inst, config);
 
-	/* Store reference selection for later use */
-	module_inst->reference = config->reference;
+    /* Store reference selection for later use */
+    module_inst->reference = config->reference;
 
 #if DAC_CALLBACK_MODE == true
-	for (uint8_t i = 0; i < DAC_CHANNEL_N; i++) {
-		for (uint8_t j = 0; j < DAC_CALLBACK_N; j++) {
-			module_inst->callback[i][j] = NULL;
-		}
-	};
+    for (uint8_t i = 0; i < DAC_CHANNEL_N; i++) {
+        for (uint8_t j = 0; j < DAC_CALLBACK_N; j++) {
+            module_inst->callback[i][j] = NULL;
+        }
+    };
 
-	_dac_instances[0] = module_inst;
+    _dac_instances[0] = module_inst;
 #endif
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -225,20 +225,20 @@ enum status_code dac_init(
  * \param[in] module_inst  Pointer to the DAC software instance struct
  */
 void dac_reset(
-		struct dac_module *const module_inst)
+        struct dac_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	while (dac_is_syncing(module_inst)) {
-		/* Wait until the synchronization is complete */
-	}
+    while (dac_is_syncing(module_inst)) {
+        /* Wait until the synchronization is complete */
+    }
 
-	/* Software reset the module */
-	dac_module->CTRLA.reg |= DAC_CTRLA_SWRST;
+    /* Software reset the module */
+    dac_module->CTRLA.reg |= DAC_CTRLA_SWRST;
 }
 
 /**
@@ -251,33 +251,33 @@ void dac_reset(
  *
  */
 void dac_enable(
-		struct dac_module *const module_inst)
+        struct dac_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	while (dac_is_syncing(module_inst)) {
-		/* Wait until the synchronization is complete */
-	}
+    while (dac_is_syncing(module_inst)) {
+        /* Wait until the synchronization is complete */
+    }
 
-	/* Enable the module */
-	dac_module->CTRLA.reg |= DAC_CTRLA_ENABLE;
+    /* Enable the module */
+    dac_module->CTRLA.reg |= DAC_CTRLA_ENABLE;
 
-	/* Enable internal bandgap reference if selected in the configuration */
-	if (module_inst->reference == DAC_REFERENCE_INTREF) {
-		system_voltage_reference_enable(SYSTEM_VOLTAGE_REFERENCE_OUTPUT);
-	}
+    /* Enable internal bandgap reference if selected in the configuration */
+    if (module_inst->reference == DAC_REFERENCE_INTREF) {
+        system_voltage_reference_enable(SYSTEM_VOLTAGE_REFERENCE_OUTPUT);
+    }
 
-	if(dac_module->DACCTRL[DAC_CHANNEL_0].reg & DAC_DACCTRL_ENABLE) {
-		while(! (dac_module->STATUS.reg & DAC_STATUS_READY(DAC_CHANNEL_0 + 1))) {
-		};
-	} else if(dac_module->DACCTRL[DAC_CHANNEL_1].reg & DAC_DACCTRL_ENABLE) {
-		while(! (dac_module->STATUS.reg & DAC_STATUS_READY(DAC_CHANNEL_1 + 1))) {
-		};
-	}
+    if(dac_module->DACCTRL[DAC_CHANNEL_0].reg & DAC_DACCTRL_ENABLE) {
+        while(! (dac_module->STATUS.reg & DAC_STATUS_READY(DAC_CHANNEL_0 + 1))) {
+        };
+    } else if(dac_module->DACCTRL[DAC_CHANNEL_1].reg & DAC_DACCTRL_ENABLE) {
+        while(! (dac_module->STATUS.reg & DAC_STATUS_READY(DAC_CHANNEL_1 + 1))) {
+        };
+    }
 }
 
 /**
@@ -289,25 +289,25 @@ void dac_enable(
  *
  */
 void dac_disable(
-		struct dac_module *const module_inst)
+        struct dac_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	while (dac_is_syncing(module_inst)) {
-		/* Wait until the synchronization is complete */
-	}
+    while (dac_is_syncing(module_inst)) {
+        /* Wait until the synchronization is complete */
+    }
 
-	/* Disbale interrupt */
-	dac_module->INTENCLR.reg = DAC_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	dac_module->INTFLAG.reg = DAC_INTFLAG_MASK;
+    /* Disbale interrupt */
+    dac_module->INTENCLR.reg = DAC_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    dac_module->INTFLAG.reg = DAC_INTFLAG_MASK;
 
-	/* Disable DAC */
-	dac_module->CTRLA.reg &= ~DAC_CTRLA_ENABLE;
+    /* Disable DAC */
+    dac_module->CTRLA.reg &= ~DAC_CTRLA_ENABLE;
 }
 
 /**
@@ -322,51 +322,51 @@ void dac_disable(
  *  \param[in] events       Struct containing flags of events to enable
  */
 void dac_enable_events(
-		struct dac_module *const module_inst,
-		struct dac_events *const events)
+        struct dac_module *const module_inst,
+        struct dac_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(events);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Configure Enable Inversion of input event */
-	if (events->generate_event_on_chan0_falling_edge) {
-		event_mask |= DAC_EVCTRL_INVEI0;
-	}
+    /* Configure Enable Inversion of input event */
+    if (events->generate_event_on_chan0_falling_edge) {
+        event_mask |= DAC_EVCTRL_INVEI0;
+    }
 
-	/* Configure Enable Inversion of input event */
-	if (events->generate_event_on_chan1_falling_edge) {
-		event_mask |= DAC_EVCTRL_INVEI1;
-	}
+    /* Configure Enable Inversion of input event */
+    if (events->generate_event_on_chan1_falling_edge) {
+        event_mask |= DAC_EVCTRL_INVEI1;
+    }
 
-	/* Configure Buffer Empty event */
-	if (events->generate_event_on_chan0_buffer_empty) {
-		event_mask |= DAC_EVCTRL_EMPTYEO0;
-	}
+    /* Configure Buffer Empty event */
+    if (events->generate_event_on_chan0_buffer_empty) {
+        event_mask |= DAC_EVCTRL_EMPTYEO0;
+    }
 
-	/* Configure Buffer Empty event */
-	if (events->generate_event_on_chan1_buffer_empty) {
-		event_mask |= DAC_EVCTRL_EMPTYEO1;
-	}
+    /* Configure Buffer Empty event */
+    if (events->generate_event_on_chan1_buffer_empty) {
+        event_mask |= DAC_EVCTRL_EMPTYEO1;
+    }
 
-	/* Configure Conversion Start event */
-	if (events->on_event_chan0_start_conversion) {
-		event_mask |= DAC_EVCTRL_STARTEI0;
-		module_inst->start_on_event[DAC_CHANNEL_0] = true;
-	}
+    /* Configure Conversion Start event */
+    if (events->on_event_chan0_start_conversion) {
+        event_mask |= DAC_EVCTRL_STARTEI0;
+        module_inst->start_on_event[DAC_CHANNEL_0] = true;
+    }
 
-	/* Configure Conversion Start event */
-	if (events->on_event_chan1_start_conversion) {
-		event_mask |= DAC_EVCTRL_STARTEI1;
-		module_inst->start_on_event[DAC_CHANNEL_1] = true;
-	}
+    /* Configure Conversion Start event */
+    if (events->on_event_chan1_start_conversion) {
+        event_mask |= DAC_EVCTRL_STARTEI1;
+        module_inst->start_on_event[DAC_CHANNEL_1] = true;
+    }
 
-	dac_module->EVCTRL.reg |= event_mask;
+    dac_module->EVCTRL.reg |= event_mask;
 }
 
 /**
@@ -381,55 +381,55 @@ void dac_enable_events(
  *  \param[in] events       Struct containing flags of events to disable
  */
 void dac_disable_events(
-		struct dac_module *const module_inst,
-		struct dac_events *const events)
+        struct dac_module *const module_inst,
+        struct dac_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(events);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Configure Buffer Empty event */
-	if (events->on_event_chan0_start_conversion) {
-		event_mask |= DAC_EVCTRL_EMPTYEO0;
-	}
+    /* Configure Buffer Empty event */
+    if (events->on_event_chan0_start_conversion) {
+        event_mask |= DAC_EVCTRL_EMPTYEO0;
+    }
 
-	/* Configure Buffer Empty event */
-	if (events->on_event_chan1_start_conversion) {
-		event_mask |= DAC_EVCTRL_EMPTYEO1;
-	}
+    /* Configure Buffer Empty event */
+    if (events->on_event_chan1_start_conversion) {
+        event_mask |= DAC_EVCTRL_EMPTYEO1;
+    }
 
-	/* Configure Conversion Start event */
-	if (events->generate_event_on_chan0_buffer_empty) {
-		event_mask |= DAC_EVCTRL_STARTEI0;
-		module_inst->start_on_event[DAC_CHANNEL_0] = false;
-	}
+    /* Configure Conversion Start event */
+    if (events->generate_event_on_chan0_buffer_empty) {
+        event_mask |= DAC_EVCTRL_STARTEI0;
+        module_inst->start_on_event[DAC_CHANNEL_0] = false;
+    }
 
-	/* Configure Conversion Start event */
-	if (events->generate_event_on_chan0_buffer_empty) {
-		event_mask |= DAC_EVCTRL_STARTEI1;
-		module_inst->start_on_event[DAC_CHANNEL_1] = false;
-	}
+    /* Configure Conversion Start event */
+    if (events->generate_event_on_chan0_buffer_empty) {
+        event_mask |= DAC_EVCTRL_STARTEI1;
+        module_inst->start_on_event[DAC_CHANNEL_1] = false;
+    }
 
-	dac_module->EVCTRL.reg &= ~event_mask;
+    dac_module->EVCTRL.reg &= ~event_mask;
 }
 
 void dac_chan_get_config_defaults(
-		struct dac_chan_config *const config)
+        struct dac_chan_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Dac channel default configuration values */
-	config->left_adjust    = false;
-	config->current        = DAC_CURRENT_12M;
-	config->run_in_standby = false;
-	config->dither_mode    = false;
-	config->refresh_period = 2;
+    /* Dac channel default configuration values */
+    config->left_adjust    = false;
+    config->current        = DAC_CURRENT_12M;
+    config->run_in_standby = false;
+    config->dither_mode    = false;
+    config->refresh_period = 2;
 }
 
 
@@ -447,59 +447,59 @@ void dac_chan_get_config_defaults(
  *
  */
 void dac_chan_set_config(
-		struct dac_module *const module_inst,
-		const enum dac_channel channel,
-		struct dac_chan_config *const config)
+        struct dac_module *const module_inst,
+        const enum dac_channel channel,
+        struct dac_chan_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(config);
 
-	/* MUX the DAC VOUT pin */
-	struct system_pinmux_config pin_conf;
-	system_pinmux_get_config_defaults(&pin_conf);
+    /* MUX the DAC VOUT pin */
+    struct system_pinmux_config pin_conf;
+    system_pinmux_get_config_defaults(&pin_conf);
 
-	pin_conf.direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
-	pin_conf.input_pull   = SYSTEM_PINMUX_PIN_PULL_NONE;
+    pin_conf.direction    = SYSTEM_PINMUX_PIN_DIR_INPUT;
+    pin_conf.input_pull   = SYSTEM_PINMUX_PIN_PULL_NONE;
 
-	if(channel == DAC_CHANNEL_0) {
-		/* Set up the DAC VOUT0 pin */
-		pin_conf.mux_position = MUX_PA02B_DAC_VOUT0;
-		system_pinmux_pin_set_config(PIN_PA02B_DAC_VOUT0, &pin_conf);
-	}
-	else if(channel == DAC_CHANNEL_1) {
-		/* Set up the DAC VOUT1 pin */
-		pin_conf.mux_position = MUX_PA05B_DAC_VOUT1;
-		system_pinmux_pin_set_config(PIN_PA05B_DAC_VOUT1, &pin_conf);
-	}
+    if(channel == DAC_CHANNEL_0) {
+        /* Set up the DAC VOUT0 pin */
+        pin_conf.mux_position = MUX_PA02B_DAC_VOUT0;
+        system_pinmux_pin_set_config(PIN_PA02B_DAC_VOUT0, &pin_conf);
+    }
+    else if(channel == DAC_CHANNEL_1) {
+        /* Set up the DAC VOUT1 pin */
+        pin_conf.mux_position = MUX_PA05B_DAC_VOUT1;
+        system_pinmux_pin_set_config(PIN_PA05B_DAC_VOUT1, &pin_conf);
+    }
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	uint32_t new_dacctrl = 0;
+    uint32_t new_dacctrl = 0;
 
-	/* Left adjust data if configured */
-	if (config->left_adjust) {
-		new_dacctrl |= DAC_DACCTRL_LEFTADJ;
-	}
+    /* Left adjust data if configured */
+    if (config->left_adjust) {
+        new_dacctrl |= DAC_DACCTRL_LEFTADJ;
+    }
 
-	/* Set current control */
-	new_dacctrl |= config->current;
+    /* Set current control */
+    new_dacctrl |= config->current;
 
-	/* Enable DAC in standby sleep mode if configured */
-	if (config->run_in_standby) {
-		new_dacctrl |= DAC_DACCTRL_RUNSTDBY;
-	}
+    /* Enable DAC in standby sleep mode if configured */
+    if (config->run_in_standby) {
+        new_dacctrl |= DAC_DACCTRL_RUNSTDBY;
+    }
 
-	/* Voltage pump disable if configured */
-	if (config->dither_mode) {
-		new_dacctrl |= DAC_DACCTRL_DITHER;
-	}
+    /* Voltage pump disable if configured */
+    if (config->dither_mode) {
+        new_dacctrl |= DAC_DACCTRL_DITHER;
+    }
 
-	new_dacctrl |= DAC_DACCTRL_REFRESH(config->refresh_period);
+    new_dacctrl |= DAC_DACCTRL_REFRESH(config->refresh_period);
 
-	/* Apply the new configuration to the hardware module */
-	dac_module->DACCTRL[channel].reg = new_dacctrl;
+    /* Apply the new configuration to the hardware module */
+    dac_module->DACCTRL[channel].reg = new_dacctrl;
 }
 
 /**
@@ -512,17 +512,17 @@ void dac_chan_set_config(
  *
  */
 void dac_chan_enable(
-		struct dac_module *const module_inst,
-		enum dac_channel channel)
+        struct dac_module *const module_inst,
+        enum dac_channel channel)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	/* Enable the module */
-	dac_module->DACCTRL[channel].reg |= DAC_DACCTRL_ENABLE;
+    /* Enable the module */
+    dac_module->DACCTRL[channel].reg |= DAC_DACCTRL_ENABLE;
 }
 
 /**
@@ -535,17 +535,17 @@ void dac_chan_enable(
  *
  */
 void dac_chan_disable(
-		struct dac_module *const module_inst,
-		enum dac_channel channel)
+        struct dac_module *const module_inst,
+        enum dac_channel channel)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	/* Enable the module */
-	dac_module->DACCTRL[channel].reg &= ~DAC_DACCTRL_ENABLE;
+    /* Enable the module */
+    dac_module->DACCTRL[channel].reg &= ~DAC_DACCTRL_ENABLE;
 
 }
 
@@ -571,29 +571,29 @@ void dac_chan_disable(
  * \retval STATUS_OK           If the data was written
  */
 enum status_code dac_chan_write(
-		struct dac_module *const module_inst,
-		enum dac_channel channel,
-		const uint16_t data)
+        struct dac_module *const module_inst,
+        enum dac_channel channel,
+        const uint16_t data)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	while (dac_is_syncing(module_inst)) {
-		/* Wait until the synchronization is complete */
-	}
+    while (dac_is_syncing(module_inst)) {
+        /* Wait until the synchronization is complete */
+    }
 
-	if (module_inst->start_on_event[channel]) {
-		/* Write the new value to the buffered DAC data register */
-		dac_module->DATABUF[channel].reg = data;
-	} else {
-		/* Write the new value to the DAC data register */
-		dac_module->DATA[channel].reg = data;
-	}
+    if (module_inst->start_on_event[channel]) {
+        /* Write the new value to the buffered DAC data register */
+        dac_module->DATABUF[channel].reg = data;
+    } else {
+        /* Write the new value to the DAC data register */
+        dac_module->DATA[channel].reg = data;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -619,63 +619,63 @@ enum status_code dac_chan_write(
  * \retval STATUS_BUSY                 The DAC is busy and can not do the conversion
  */
 enum status_code dac_chan_write_buffer_wait(
-		struct dac_module *const module_inst,
-		enum dac_channel channel,
-		uint16_t *buffer,
-		uint32_t length)
+        struct dac_module *const module_inst,
+        enum dac_channel channel,
+        uint16_t *buffer,
+        uint32_t length)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	while (dac_is_syncing(module_inst)) {
-		/* Wait until the synchronization is complete */
-	}
+    while (dac_is_syncing(module_inst)) {
+        /* Wait until the synchronization is complete */
+    }
 
-	/* Zero length request */
-	if (length == 0) {
-		/* No data to be converted */
-		return STATUS_OK;
-	}
+    /* Zero length request */
+    if (length == 0) {
+        /* No data to be converted */
+        return STATUS_OK;
+    }
 
 #if DAC_CALLBACK_MODE == true
-	/* Check if busy */
-	if (module_inst->job_status[channel] == STATUS_BUSY) {
-		return STATUS_BUSY;
-	}
+    /* Check if busy */
+    if (module_inst->job_status[channel] == STATUS_BUSY) {
+        return STATUS_BUSY;
+    }
 #endif
 
-	/* Only support event triggered conversion */
-	if (module_inst->start_on_event[channel] == false) {
-		return STATUS_ERR_UNSUPPORTED_DEV;
-	}
+    /* Only support event triggered conversion */
+    if (module_inst->start_on_event[channel] == false) {
+        return STATUS_ERR_UNSUPPORTED_DEV;
+    }
 
-	/* Blocks while buffer is being transferred */
-	while (length--) {
-		/* Convert one data */
-		dac_chan_write(module_inst, channel, buffer[length]);
+    /* Blocks while buffer is being transferred */
+    while (length--) {
+        /* Convert one data */
+        dac_chan_write(module_inst, channel, buffer[length]);
 
-		/* Wait until Transmit is complete or timeout */
-		for (uint32_t i = 0; i <= DAC_TIMEOUT; i++) {
-			if(channel == DAC_CHANNEL_0) {
-				if (dac_module->INTFLAG.reg & DAC_INTFLAG_EMPTY0) {
-					break;
-				} else if (i == DAC_TIMEOUT) {
-					return STATUS_ERR_TIMEOUT;
-				}
-			} else if(channel == DAC_CHANNEL_1) {
-				if (dac_module->INTFLAG.reg & DAC_INTFLAG_EMPTY1) {
-					break;
-				} else if (i == DAC_TIMEOUT) {
-					return STATUS_ERR_TIMEOUT;
-				}
-			}
-		}
-	}
+        /* Wait until Transmit is complete or timeout */
+        for (uint32_t i = 0; i <= DAC_TIMEOUT; i++) {
+            if(channel == DAC_CHANNEL_0) {
+                if (dac_module->INTFLAG.reg & DAC_INTFLAG_EMPTY0) {
+                    break;
+                } else if (i == DAC_TIMEOUT) {
+                    return STATUS_ERR_TIMEOUT;
+                }
+            } else if(channel == DAC_CHANNEL_1) {
+                if (dac_module->INTFLAG.reg & DAC_INTFLAG_EMPTY1) {
+                    break;
+                } else if (i == DAC_TIMEOUT) {
+                    return STATUS_ERR_TIMEOUT;
+                }
+            }
+        }
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -691,20 +691,20 @@ enum status_code dac_chan_write_buffer_wait(
  * \retval false    No conversion completed since last load of DATA
  */
 bool dac_chan_is_end_of_conversion(
-		struct dac_module *const module_inst,
-		enum dac_channel channel)
+        struct dac_module *const module_inst,
+        enum dac_channel channel)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	if(dac_module->STATUS.reg & DAC_STATUS_EOC(channel + 1)) {
-		return true;
-	} else {
-		return false;
-	}
+    if(dac_module->STATUS.reg & DAC_STATUS_EOC(channel + 1)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -725,34 +725,34 @@ bool dac_chan_is_end_of_conversion(
  *
  */
 uint32_t dac_get_status(
-		struct dac_module *const module_inst)
+        struct dac_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	uint8_t intflags = dac_module->INTFLAG.reg;
-	uint32_t status_flags = 0;
+    uint8_t intflags = dac_module->INTFLAG.reg;
+    uint32_t status_flags = 0;
 
-	if (intflags & DAC_INTFLAG_EMPTY0) {
-		status_flags |= DAC_STATUS_CHANNEL_0_EMPTY;
-	}
+    if (intflags & DAC_INTFLAG_EMPTY0) {
+        status_flags |= DAC_STATUS_CHANNEL_0_EMPTY;
+    }
 
-	if (intflags & DAC_INTFLAG_EMPTY1) {
-		status_flags |= DAC_STATUS_CHANNEL_1_EMPTY;
-	}
+    if (intflags & DAC_INTFLAG_EMPTY1) {
+        status_flags |= DAC_STATUS_CHANNEL_1_EMPTY;
+    }
 
-	if (intflags & DAC_INTFLAG_UNDERRUN0) {
-		status_flags |= DAC_STATUS_CHANNEL_0_UNDERRUN;
-	}
+    if (intflags & DAC_INTFLAG_UNDERRUN0) {
+        status_flags |= DAC_STATUS_CHANNEL_0_UNDERRUN;
+    }
 
-	if (intflags & DAC_INTFLAG_UNDERRUN1) {
-		status_flags |= DAC_STATUS_CHANNEL_1_UNDERRUN;
-	}
+    if (intflags & DAC_INTFLAG_UNDERRUN1) {
+        status_flags |= DAC_STATUS_CHANNEL_1_UNDERRUN;
+    }
 
-	return status_flags;
+    return status_flags;
 }
 
 /**
@@ -765,32 +765,32 @@ uint32_t dac_get_status(
  *
  */
 void dac_clear_status(
-		struct dac_module *const module_inst,
-		uint32_t status_flags)
+        struct dac_module *const module_inst,
+        uint32_t status_flags)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Dac *const dac_module = module_inst->hw;
+    Dac *const dac_module = module_inst->hw;
 
-	uint32_t intflags = 0;
+    uint32_t intflags = 0;
 
-	if (status_flags & DAC_STATUS_CHANNEL_0_EMPTY) {
-		intflags |= DAC_INTFLAG_EMPTY0;
-	}
+    if (status_flags & DAC_STATUS_CHANNEL_0_EMPTY) {
+        intflags |= DAC_INTFLAG_EMPTY0;
+    }
 
-	if (status_flags & DAC_STATUS_CHANNEL_1_EMPTY) {
-		intflags |= DAC_INTFLAG_EMPTY1;
-	}
+    if (status_flags & DAC_STATUS_CHANNEL_1_EMPTY) {
+        intflags |= DAC_INTFLAG_EMPTY1;
+    }
 
-	if (status_flags & DAC_STATUS_CHANNEL_0_UNDERRUN) {
-		intflags |= DAC_INTFLAG_UNDERRUN0;
-	}
+    if (status_flags & DAC_STATUS_CHANNEL_0_UNDERRUN) {
+        intflags |= DAC_INTFLAG_UNDERRUN0;
+    }
 
-	if (status_flags & DAC_STATUS_CHANNEL_1_UNDERRUN) {
-		intflags |= DAC_INTFLAG_UNDERRUN1;
-	}
+    if (status_flags & DAC_STATUS_CHANNEL_1_UNDERRUN) {
+        intflags |= DAC_INTFLAG_UNDERRUN1;
+    }
 
-	dac_module->INTFLAG.reg = intflags;
+    dac_module->INTFLAG.reg = intflags;
 }

@@ -337,7 +337,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
       }
     }
 
-	position++;
+    position++;
   }
 }
 

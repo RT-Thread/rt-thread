@@ -69,63 +69,63 @@ extern "C" {
 #define GFX_MONO_LCD_HEIGHT             32
 #define GFX_MONO_LCD_PIXELS_PER_BYTE    8
 #define GFX_MONO_LCD_PAGES              (GFX_MONO_LCD_HEIGHT / \
-	GFX_MONO_LCD_PIXELS_PER_BYTE)
+    GFX_MONO_LCD_PIXELS_PER_BYTE)
 #define GFX_MONO_LCD_FRAMEBUFFER_SIZE   ((GFX_MONO_LCD_WIDTH * \
-	GFX_MONO_LCD_HEIGHT) / GFX_MONO_LCD_PIXELS_PER_BYTE)
+    GFX_MONO_LCD_HEIGHT) / GFX_MONO_LCD_PIXELS_PER_BYTE)
 
 #define gfx_mono_draw_horizontal_line(x, y, length, color) \
-	gfx_mono_generic_draw_horizontal_line(x, y, length, color)
+    gfx_mono_generic_draw_horizontal_line(x, y, length, color)
 
 #define gfx_mono_draw_vertical_line(x, y, length, color) \
-	gfx_mono_generic_draw_vertical_line(x, y, length, color)
+    gfx_mono_generic_draw_vertical_line(x, y, length, color)
 
 #define gfx_mono_draw_line(x1, y1, x2, y2, color) \
-	gfx_mono_generic_draw_line(x1, y1, x2, y2, color)
+    gfx_mono_generic_draw_line(x1, y1, x2, y2, color)
 
 #define gfx_mono_draw_rect(x, y, width, height, color) \
-	gfx_mono_generic_draw_rect(x, y, width, height, color)
+    gfx_mono_generic_draw_rect(x, y, width, height, color)
 
 #define gfx_mono_draw_filled_rect(x, y, width, height, color) \
-	gfx_mono_generic_draw_filled_rect(x, y, width, height, \
-		color)
+    gfx_mono_generic_draw_filled_rect(x, y, width, height, \
+        color)
 
 #define gfx_mono_draw_circle(x, y, radius, color, octant_mask) \
-	gfx_mono_generic_draw_circle(x, y, radius, color, \
-		octant_mask)
+    gfx_mono_generic_draw_circle(x, y, radius, color, \
+        octant_mask)
 
-#define gfx_mono_draw_filled_circle(x, y, radius, color, quadrant_mask)	\
-	gfx_mono_generic_draw_filled_circle(x, y, radius, \
-		color, quadrant_mask)
+#define gfx_mono_draw_filled_circle(x, y, radius, color, quadrant_mask) \
+    gfx_mono_generic_draw_filled_circle(x, y, radius, \
+        color, quadrant_mask)
 
 #define gfx_mono_put_bitmap(bitmap, x, y) \
-	gfx_mono_generic_put_bitmap(bitmap, x, y)
+    gfx_mono_generic_put_bitmap(bitmap, x, y)
 
 #define gfx_mono_draw_pixel(x, y, color) \
-	gfx_mono_framebuffer_draw_pixel(x, y, color)
+    gfx_mono_framebuffer_draw_pixel(x, y, color)
 
 #define gfx_mono_get_pixel(x, y) \
-	gfx_mono_framebuffer_get_pixel(x, y)
+    gfx_mono_framebuffer_get_pixel(x, y)
 
-#define gfx_mono_init()	\
-	gfx_mono_null_init()
+#define gfx_mono_init() \
+    gfx_mono_null_init()
 
 #define gfx_mono_put_page(data, page, column, width) \
-	gfx_mono_framebuffer_put_page(data, page, column, width)
+    gfx_mono_framebuffer_put_page(data, page, column, width)
 
 #define gfx_mono_get_page(data, page, column, width) \
-	gfx_mono_framebuffer_get_page(data, page, column, width)
+    gfx_mono_framebuffer_get_page(data, page, column, width)
 
 #define gfx_mono_put_byte(page, column, data) \
-	gfx_mono_framebuffer_put_byte(page, column, data)
+    gfx_mono_framebuffer_put_byte(page, column, data)
 
-#define gfx_mono_get_byte(page, column)	\
-	gfx_mono_framebuffer_get_byte(page, column)
+#define gfx_mono_get_byte(page, column) \
+    gfx_mono_framebuffer_get_byte(page, column)
 
 #define gfx_mono_mask_byte(page, column, pixel_mask, color) \
-	gfx_mono_framebuffer_mask_byte(page, column, pixel_mask, color)
+    gfx_mono_framebuffer_mask_byte(page, column, pixel_mask, color)
 
 #define gfx_mono_put_framebuffer() \
-	;
+    ;
 
 void gfx_mono_null_init(void);
 

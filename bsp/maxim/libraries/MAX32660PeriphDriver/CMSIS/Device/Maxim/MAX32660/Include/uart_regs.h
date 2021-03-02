@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -102,19 +102,19 @@ typedef struct {
 /**
  * @ingroup    uart_registers
  * @defgroup   UART_Register_Offsets Register Offsets
- * @brief      UART Peripheral Register Offsets from the UART Base Peripheral Address. 
+ * @brief      UART Peripheral Register Offsets from the UART Base Peripheral Address.
  * @{
  */
- #define MXC_R_UART_CTRL                    ((uint32_t)0x00000000UL) /**< Offset from UART Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_UART_THRESH_CTRL             ((uint32_t)0x00000004UL) /**< Offset from UART Base Address: <tt> 0x0004</tt> */ 
- #define MXC_R_UART_STATUS                  ((uint32_t)0x00000008UL) /**< Offset from UART Base Address: <tt> 0x0008</tt> */ 
- #define MXC_R_UART_INT_EN                  ((uint32_t)0x0000000CUL) /**< Offset from UART Base Address: <tt> 0x000C</tt> */ 
- #define MXC_R_UART_INT_FL                  ((uint32_t)0x00000010UL) /**< Offset from UART Base Address: <tt> 0x0010</tt> */ 
- #define MXC_R_UART_BAUD0                   ((uint32_t)0x00000014UL) /**< Offset from UART Base Address: <tt> 0x0014</tt> */ 
- #define MXC_R_UART_BAUD1                   ((uint32_t)0x00000018UL) /**< Offset from UART Base Address: <tt> 0x0018</tt> */ 
- #define MXC_R_UART_FIFO                    ((uint32_t)0x0000001CUL) /**< Offset from UART Base Address: <tt> 0x001C</tt> */ 
- #define MXC_R_UART_DMA                     ((uint32_t)0x00000020UL) /**< Offset from UART Base Address: <tt> 0x0020</tt> */ 
- #define MXC_R_UART_TX_FIFO                 ((uint32_t)0x00000024UL) /**< Offset from UART Base Address: <tt> 0x0024</tt> */ 
+ #define MXC_R_UART_CTRL                    ((uint32_t)0x00000000UL) /**< Offset from UART Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_UART_THRESH_CTRL             ((uint32_t)0x00000004UL) /**< Offset from UART Base Address: <tt> 0x0004</tt> */
+ #define MXC_R_UART_STATUS                  ((uint32_t)0x00000008UL) /**< Offset from UART Base Address: <tt> 0x0008</tt> */
+ #define MXC_R_UART_INT_EN                  ((uint32_t)0x0000000CUL) /**< Offset from UART Base Address: <tt> 0x000C</tt> */
+ #define MXC_R_UART_INT_FL                  ((uint32_t)0x00000010UL) /**< Offset from UART Base Address: <tt> 0x0010</tt> */
+ #define MXC_R_UART_BAUD0                   ((uint32_t)0x00000014UL) /**< Offset from UART Base Address: <tt> 0x0014</tt> */
+ #define MXC_R_UART_BAUD1                   ((uint32_t)0x00000018UL) /**< Offset from UART Base Address: <tt> 0x0018</tt> */
+ #define MXC_R_UART_FIFO                    ((uint32_t)0x0000001CUL) /**< Offset from UART Base Address: <tt> 0x001C</tt> */
+ #define MXC_R_UART_DMA                     ((uint32_t)0x00000020UL) /**< Offset from UART Base Address: <tt> 0x0020</tt> */
+ #define MXC_R_UART_TX_FIFO                 ((uint32_t)0x00000024UL) /**< Offset from UART Base Address: <tt> 0x0024</tt> */
 /**@} end of group uart_registers */
 
 /**

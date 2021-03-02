@@ -46,7 +46,7 @@
                               CONSTANTS
 =============================================================================*/
 /** @addtogroup struct
- *  @{ 
+ *  @{
  */
 
 #define HDR_BYTES 4  /* cannot use sizeof(hab_hdr_t) in preprocessor */
@@ -86,9 +86,9 @@
 #define HAB_VER_MIN_WIDTH 4     /**< Minor version field width  */
 #define HAB_VER_MIN_SHIFT 0     /**< Minor version field offset  */
 /** Full version of this HAB release @hideinitializer */
-#define HAB_VERSION HAB_VER(HAB_MAJOR_VERSION, HAB_MINOR_VERSION) 
+#define HAB_VERSION HAB_VER(HAB_MAJOR_VERSION, HAB_MINOR_VERSION)
 /** Base version for this HAB release @hideinitializer */
-#define HAB_BASE_VERSION HAB_VER(HAB_MAJOR_VERSION, 0) 
+#define HAB_BASE_VERSION HAB_VER(HAB_MAJOR_VERSION, 0)
 
 /*@}*/
 
@@ -97,7 +97,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup cmd
- *  @{ 
+ *  @{
  */
 
 /** @name Command tags
@@ -130,11 +130,11 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup pcl
- *  @{ 
+ *  @{
  */
 
 /** @name Protocol tags
- * @anchor pcl_tag 
+ * @anchor pcl_tag
  *
  * Tag values 0x00 .. 0xef are reserved for HAB.  Values 0xf0 .. 0xff are
  * available for custom use.
@@ -169,7 +169,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup alg
- *  @{ 
+ *  @{
  */
 
 /** @name Algorithm types
@@ -261,10 +261,10 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup eng
- *  @{ 
+ *  @{
  */
 
-/** @name Engine plugin tags 
+/** @name Engine plugin tags
  *  @anchor eng_tag
  *
  * Tag values 0x00 .. 0xef and 0xff are reserved for HAB.  Values 0xf0 .. 0xfe
@@ -317,7 +317,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup sah
- *  @{ 
+ *  @{
  */
 
 /** Maximum data blocks in a single hash  */
@@ -341,7 +341,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup dcp
- *  @{ 
+ *  @{
  */
 
 /** Maximum data blocks in a single hash */
@@ -363,7 +363,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup rtic
- *  @{ 
+ *  @{
  */
 
 /** Maximum data blocks in a single hash */
@@ -374,7 +374,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup scc
- *  @{ 
+ *  @{
  */
 
 /** @cond rom */
@@ -397,7 +397,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup caam
- *  @{ 
+ *  @{
  */
 
 /** Maximum data blocks in an @ref cmd_aut_dat command */
@@ -420,7 +420,7 @@
  *
  * This figure is derived in several parts:
  * - each AEAD operation needs
- *   - a 16-word descriptor, 
+ *   - a 16-word descriptor,
  *   - a 32-byte initial context value (B0 and CTR0), and
  *   - a 16-byte MAC value,
  *   - giving a base requirement of (16*4 + 32 + 16) = 112 bytes
@@ -450,7 +450,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup key
- *  @{ 
+ *  @{
  */
 
 /** @name Key types
@@ -494,7 +494,7 @@
 
 #ifdef HAB_FUTURE
 /** @addtogroup key_ecdsa
- *  @{ 
+ *  @{
  */
 
 /** @name Bitfield definitions */
@@ -515,7 +515,7 @@
 /*---------------------------------------------------------------------------*/
 
 /** @addtogroup key_pkcs1
- *  @{ 
+ *  @{
  */
 
 /** @name Bitfield definitions */
@@ -560,7 +560,7 @@
  *  @{
  */
 
-/** @name Binding object IDs 
+/** @name Binding object IDs
  * @anchor bnd_ids
  *
  * The ASN.1 object identifiers used to identify HAB binding attributes are
@@ -569,7 +569,7 @@
 @verbatim
       id-fsl  OBJECT IDENTIFIER ::= {
            joint-iso-itu-t(2) country(16) us(840) organization(1) fsl(123456) }
-  
+
       id-habBnd OBJECT IDENTIFIER  ::=  {
            id-fsl hab(32) binding-objects(16) }
 
@@ -685,8 +685,8 @@
 
 #define CSF_HDR(bytes, HABVER)                  \
     HDR(HAB_TAG_CSF, (bytes), HABVER)
-    
-    
+
+
 /*
  *    DCD  header
  */
@@ -701,7 +701,7 @@
     {HAB_TAG_IVT, {(uint8_t)((bytes)>>8), (uint8_t)(bytes)}, HABVER}
 
 /*
- *    Write Data     
+ *    Write Data
  */
 
 #define WRT_DAT(flags, bytes, address, val_msk)                         \
@@ -983,7 +983,7 @@ typedef enum hab_data_width
     HAB_DATA_WIDTH_HALF = 2,    /**< 16-bit value */
     HAB_DATA_WIDTH_WORD = 4     /**< 32-bit value */
 } hab_data_width_t;
-    
+
 
 /** Flags for Write Data commands.
  * @ingroup cmd_wrt_dat
@@ -1196,7 +1196,7 @@ typedef enum hab_context {
     HAB_CTX_ENTRY = 0xe1,       /**< Event logged in hab_rvt.entry() */
     HAB_CTX_TARGET = 0x33,      /**< Event logged in hab_rvt.check_target() */
     HAB_CTX_AUTHENTICATE = 0x0a, /**< Event logged in
-                                  *   hab_rvt.authenticate_image() 
+                                  *   hab_rvt.authenticate_image()
                                   */
     HAB_CTX_DCD = 0xdd,         /**< Event logged in hab_rvt.run_dcd() */
     HAB_CTX_CSF = 0xcf,         /**< Event logged in hab_rvt.run_csf() */
@@ -1217,7 +1217,7 @@ typedef enum hab_assertion {
     HAB_ASSERT_MAX
 } hab_assertion_t;
 
-/** RTIC configuration flags 
+/** RTIC configuration flags
  * @ingroup rtic
  */
 typedef enum hab_rtic_config {
@@ -1232,7 +1232,7 @@ typedef enum hab_rtic_config {
                                  *   monitoring */
 } hab_rtic_config_t;
 
-/** SAHARA configuration flags 
+/** SAHARA configuration flags
  * @ingroup sah
  */
 typedef enum hab_sahara_config {
@@ -1250,7 +1250,7 @@ typedef enum hab_sahara_config {
                                    *   BE-8 32-bit memory. */
 } hab_sahara_config_t;
 
-/** CAAM configuration flags 
+/** CAAM configuration flags
  * @ingroup caam
  */
 typedef enum hab_caam_config {
@@ -1277,7 +1277,7 @@ typedef enum hab_caam_config {
                                   *   CAAM) */
 } hab_caam_config_t;
 
-/** CAAM unlock flags 
+/** CAAM unlock flags
  * @ingroup caam
  */
 typedef enum hab_caam_unlock_flag {
@@ -1290,7 +1290,7 @@ typedef enum hab_caam_unlock_flag {
                                    *   instantiation */
 } hab_caam_unlock_flag_t;
 
-/** SNVS unlock flags 
+/** SNVS unlock flags
  * @ingroup snvs
  */
 typedef enum hab_snvs_unlock_flag {
@@ -1299,7 +1299,7 @@ typedef enum hab_snvs_unlock_flag {
                                        *   unlocked */
 } hab_snvs_unlock_flag_t;
 
-/** SNVS master keys 
+/** SNVS master keys
  * @ingroup snvs
  *
  * @remark Note that the first two master key selections are completely
@@ -1313,7 +1313,7 @@ typedef enum hab_snvs_keys {
 } hab_snvs_keys_t;
 
 
-/** OCOTP unlock flags 
+/** OCOTP unlock flags
  * @ingroup ocotp
  */
 typedef enum hab_ocotp_unlock_flag {
@@ -1325,7 +1325,7 @@ typedef enum hab_ocotp_unlock_flag {
                                            *   bit */
 } hab_ocotp_unlock_flag_t;
 
-/** DCP configuration flags 
+/** DCP configuration flags
  * @ingroup dcp
  *
  * @warning The byte-swapping controls produce unpredictable results unless
@@ -1353,7 +1353,7 @@ typedef enum hab_ec_spec {
      * object identifier.  Supported object identifiers are listed under @ref
      * key_ecdsa_profile "ECDSA key profile".
      */
-    HAB_EC_SPEC_NAMED_CURVE = 0x01 
+    HAB_EC_SPEC_NAMED_CURVE = 0x01
 } hab_ec_spec_t;
 #endif
 
@@ -1391,8 +1391,8 @@ typedef struct hab_hdr {
  * intended to finalise image loading in those boot modes where only a portion
  * of the image is loaded to a temporary initial location prior to device
  * configuration.
- * 
- * @par Operation 
+ *
+ * @par Operation
  *
  * This function is called during hab_rvt.authenticate_image() between running
  * the @ref dcd and @ref csf.  The operation of this function is defined by
@@ -1429,8 +1429,8 @@ typedef struct hab_hdr {
  * @retval #HAB_FAILURE otherwise.
  */
 typedef hab_status_t (*hab_loader_callback_f)(
-    void** start, 
-    size_t* bytes, 
+    void** start,
+    size_t* bytes,
     const void* boot_data);
 
 /*---------------------------------------------------------------------------*/
@@ -1470,11 +1470,11 @@ struct hab_rvt {
      * intended for use by post-ROM boot stage components, via the @ref rvt,
      * prior to calling any other HAB functions other than
      * hab_rvt.report_event() and hab_rvt.report_status().
-     * 
+     *
      * @ifrom It is also intended for use by the boot ROM via hab_rvt.entry().
      * @endrom
-     * 
-     * @par Operation 
+     *
+     * @par Operation
      *
      * This function performs the following operations every time it is called:
      *
@@ -1517,7 +1517,7 @@ struct hab_rvt {
      * information gathered for one image cannot be misapplied to another
      * image.
      *
-     * @ifrom 
+     * @ifrom
      *
      * @warning This applies to each boot path in boot ROM as well, except for
      * the fabrication test path.
@@ -1558,8 +1558,8 @@ struct hab_rvt {
      *
      * @ifrom It is also intended for use by the boot ROM via hab_rvt.exit().
      * @endrom
-     * 
-     * @par Operation 
+     *
+     * @par Operation
      *
      * This function performs the following operations:
      *
@@ -1608,12 +1608,12 @@ struct hab_rvt {
      * in order to avoid configuring security-sensitive peripherals, or
      * loading images over sensitive memory regions or outside recognised
      * memory devices in the address map.
-     * 
+     *
      * @ifrom It is also available for use by the boot ROM, both directly via
-     * hab_rvt.check_target() and indirectly via hab_rvt.authenticate_image(). 
+     * hab_rvt.check_target() and indirectly via hab_rvt.authenticate_image().
      * @endrom
      *
-     * @par Operation 
+     * @par Operation
      *
      * The lists of allowed target regions vary by IC and core, and should be
      * taken from the @ref ref_rug.
@@ -1621,7 +1621,7 @@ struct hab_rvt {
      * @ifrom The allowed register sets for peripheral configuration and memory
      * regions for image loading are defined in the @ref hal by
      * #hab_hal_peripheral and #hab_hal_memory respectively. @endrom
-     * 
+     *
      * @param[in] type Type of target (memory, peripheral or any in which both
      * the memory and peripheral regions are checked)
      *
@@ -1644,7 +1644,7 @@ struct hab_rvt {
      *
      * @retval #HAB_FAILURE otherwise
      */
-    hab_status_t (*check_target)(hab_target_t type, 
+    hab_status_t (*check_target)(hab_target_t type,
                                  const void* start,
                                  size_t bytes);
 
@@ -1658,11 +1658,11 @@ struct hab_rvt {
      * use by post-ROM boot stage components, via the @ref rvt.  Support for
      * images partially loaded to an initial location is provided via a
      * callback function.
-     * 
+     *
      * @ifrom It is also available for use by the boot ROM via
      * hab_rvt.authenticate_image(). @endrom
-     * 
-     * @par Operation 
+     *
+     * @par Operation
      *
      * This function performs the following sequence of operations:
      * - Check that the initial image load addresses pass
@@ -1677,10 +1677,10 @@ struct hab_rvt {
      * and check that it lies within the initial image bounds.
      * - If provided in the parameters, invoke the callback function with the
      * initial image bounds and initial location of the @ref ivt Boot Data.
-     * 
+     *
      * From this point on, the full image is assumed to be in its final
-     * location. The following operations will be performed on all IC 
-     * configurations (#hab_config), but will be only enforced on an IC 
+     * location. The following operations will be performed on all IC
+     * configurations (#hab_config), but will be only enforced on an IC
      * configured as #HAB_CFG_CLOSED:
      * - Check that the final image load addresses pass hab_rvt.check_target().
      * - Check that the CSF lies within the image bounds, and run the CSF
@@ -1713,7 +1713,7 @@ struct hab_rvt {
      * @remark A @a loader callback function may be supplied even if the image
      * is already loaded to its final location on entry.
      *
-     * @remark Boot Data (boot_data in @ref ivt) will be ignored if the 
+     * @remark Boot Data (boot_data in @ref ivt) will be ignored if the
      * @a loader callback function point is set to Null.
      *
      * @warning The @a loader callback function should lie within existing
@@ -1740,7 +1740,7 @@ struct hab_rvt {
      *     - #HAB_INV_ADDRESS: initial or final image addresses outside allowed
      *     regions
      *     - #HAB_INV_ADDRESS: IVT, DCD, Boot Data or CSF outside image bounds
-     *     - #HAB_INV_ADDRESS: IVT @a self or @a entry pointer is NULL 
+     *     - #HAB_INV_ADDRESS: IVT @a self or @a entry pointer is NULL
      *     - #HAB_INV_CALL: hab_rvt.entry() not run successfully prior to call
      *     - #HAB_INV_IVT: IVT malformed
      *     - #HAB_INV_IVT: IVT version number is less than HAB library version
@@ -1752,7 +1752,7 @@ struct hab_rvt {
      *  - the @a start pointer and the pointer it locates are not NULL
      *  - the initial @ref ivt location is not NULL
      *  - the @ref ivt @ref hdr (given in the @a hdr field) is valid
-     *  - the final @ref ivt location (given by the @a self field) is not NULL 
+     *  - the final @ref ivt location (given by the @a self field) is not NULL
      *  - any loader callback completed successfully,
      *
      * @retval entry field from @ref ivt on other ICs if all operations
@@ -1761,9 +1761,9 @@ struct hab_rvt {
      * @retval NULL otherwise.
      */
     hab_image_entry_f (*authenticate_image)(uint8_t cid,
-                                            ptrdiff_t ivt_offset, 
-                                            void** start, 
-                                            size_t* bytes, 
+                                            ptrdiff_t ivt_offset,
+                                            void** start,
+                                            size_t* bytes,
                                             hab_loader_callback_f loader);
 
     /** Execute a boot configuration script.
@@ -1778,14 +1778,14 @@ struct hab_rvt {
      * @ifrom It is also intended for use by the boot ROM, both directly via
      * hab_rvt.run_dcd() and indirectly via hab_rvt.authenticate_image().
      * @endrom
-     * 
+     *
      * The difference between the configuration functionality in this function
      * and hab_rvt.run_csf() arises because the @ref dcd table is not
      * authenticated prior to running the commands.  Hence, there is a more
      * limited range of commands allowed, and a limited range of parameters to
      * allowed commands.
-     * 
-     * @par Operation 
+     *
+     * @par Operation
      *
      * This function performs the following operations:
      * - Checks the @ref hdr for compatibility and consistency
@@ -1856,12 +1856,12 @@ struct hab_rvt {
      * a @ref csf.  It is intended for use by post-ROM boot stage components,
      * via the @ref rvt.  This function may be invoked as often as required
      * for each boot stage.
-     * 
+     *
      * @ifrom It is also available for use by the boot ROM via hab_rvt.run_csf,
      * although it is anticipated that the boot ROM will mostly call this
      * function indirectly via hab_rvt.authenticate_image(). @endrom
      *
-     * @par Operation 
+     * @par Operation
      *
      * This function performs the following operations:
      * - Checks the @ref hdr for compatibility and consistency
@@ -1932,7 +1932,7 @@ struct hab_rvt {
      *
      * @retval #HAB_FAILURE otherwise.
      */
-    hab_status_t (*run_csf)(const uint8_t* csf, 
+    hab_status_t (*run_csf)(const uint8_t* csf,
                             uint8_t cid);
 
     /** Test an assertion against the audit log.
@@ -1949,7 +1949,7 @@ struct hab_rvt {
      * hab_rvt.assert() and indirectly via hab_rvt.authenticate_image().
      * @endrom
      *
-     * @par Operation 
+     * @par Operation
      *
      * This function checks the required assertion as detailed below.
      *
@@ -1968,7 +1968,7 @@ struct hab_rvt {
      * - @a data: memory block starting address
      * - @a count: memory block size (in bytes)
      *
-     * @par 
+     * @par
      *
      * A simple interpretation of "memory block has been authenticated" is
      * taken, such that the given block must lie wholly within a single
@@ -1990,8 +1990,8 @@ struct hab_rvt {
      *
      * @retval #HAB_FAILURE otherwise
      */
-    hab_status_t (*assert)(hab_assertion_t type, 
-                           const void* data, 
+    hab_status_t (*assert)(hab_assertion_t type,
+                           const void* data,
                            uint32_t count);
 
     /** Report an event from the audit log.
@@ -2003,12 +2003,12 @@ struct hab_rvt {
      * for use by post-ROM boot stage components, via the @ref rvt, to
      * determine the state of authentication operations.  This function may
      * be called outside an hab_rvt.entry() / hab_rvt.exit() pair.
-     * 
+     *
      * @ifrom It is also available for use by the boot ROM, where it may be
      * used to report boot failures as part of a tethered boot
      * protocol. @endrom
      *
-     * @par Operation 
+     * @par Operation
      *
      * This function performs the following operations:
      * - Scans the audit log for a matching event
@@ -2035,13 +2035,13 @@ struct hab_rvt {
      * @warning Parameter @a bytes may not be NULL.
      *
      * @warning If the @a event buffer is a NULL pointer or too small to fit
-     * the event record, the required size is written to @a bytes, but no 
+     * the event record, the required size is written to @a bytes, but no
      * part of the event record is copied to the output buffer.
      *
      * @retval #HAB_SUCCESS if the required event is found, and the event
      * record is copied to the output buffer.
-     * 
-     * @retval #HAB_SUCCESS if the required event is found and @a event buffer 
+     *
+     * @retval #HAB_SUCCESS if the required event is found and @a event buffer
      * passed is a NULL pointer.
      *
      * @retval #HAB_FAILURE otherwise
@@ -2061,11 +2061,11 @@ struct hab_rvt {
      * process.  It is intended for use by post-ROM boot stage components, via
      * the @ref rvt.  This function may be called outside an
      * hab_rvt.entry() / hab_rvt.exit() pair.
-     * 
+     *
      * @ifrom It is also available for use by the boot ROM, and should be used
      * rather than the HAL function hab_hal_read_sec_cfg(). @endrom
      *
-     * @par Operation 
+     * @par Operation
      *
      * This function reads the fuses which indicate the security
      * configuration.  The fusemap varies by IC, and should be taken from the
@@ -2096,11 +2096,11 @@ struct hab_rvt {
      * This function provides a safe path when image authentication has failed
      * and all possible boot paths have been exhausted.  It is intended for
      * use by post-ROM boot stage components, via the @ref rvt.
-     * 
+     *
      * @ifrom It is also available for use by the boot ROM via
      * hab_rvt.failsafe(). @endrom
      *
-     * @par Operation 
+     * @par Operation
      *
      * The precise details of this function vary by IC and core, and should be
      * taken from @ref ref_rug.
@@ -2153,7 +2153,7 @@ typedef struct hab_rvt hab_rvt_t;
  * images loaded from block devices (see @ref ref_rug for details).
  *
  * @remark All addresses given in the IVT, including the Boot Data (if
- * present) are those for the final load location. 
+ * present) are those for the final load location.
  *
  * @anchor ila
  *
@@ -2174,7 +2174,7 @@ typedef struct hab_rvt hab_rvt_t;
         hab_ivt_t* ivt_initial = <initial IVT load address>;
         const void* dcd_initial = ivt_initial->dcd;
         if (ivt_initial->dcd != NULL)
-            dcd_initial = (const uint8_t*)ivt_initial 
+            dcd_initial = (const uint8_t*)ivt_initial
                           + (ivt_initial->dcd - ivt_initial->self)
 @endverbatim
  */

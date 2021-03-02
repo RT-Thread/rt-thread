@@ -1954,7 +1954,7 @@ typedef union _hw_usdhc_sys_ctrl
  *
  * Values:
  * - 0000 - Divide-by-1
- * - ....... - 
+ * - ....... -
  * - 0001 - Divide-by-2
  * - 1110 - Divide-by-15
  * - 1111 - Divide-by-16

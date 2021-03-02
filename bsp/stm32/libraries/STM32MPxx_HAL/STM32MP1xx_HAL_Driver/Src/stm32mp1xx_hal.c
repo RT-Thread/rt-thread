@@ -49,7 +49,7 @@
 /** @defgroup HAL_Private_Defines HAL Private Defines
   * @{
   */
-  
+
 /**
  * @brief STM32MP1xx HAL Driver version number
    */
@@ -923,7 +923,7 @@ HAL_StatusTypeDef HAL_SYSCFG_EnableIOCompensation(void)
 
   return status;
 }
-  
+
 /**
   * @}
   */

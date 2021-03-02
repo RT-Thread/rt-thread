@@ -7,11 +7,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -37,7 +37,7 @@
 /** @defgroup HAL HAL
   * @{
   */
-  
+
 /** @defgroup HAL_TICK_FREQ Tick Frequency
   * @{
   */
@@ -52,7 +52,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup HAL_Exported_Constants HAL Exported Constants
   * @{
@@ -74,7 +74,7 @@ typedef enum
 /**
   * @}
   */
-    
+
 /** @defgroup SYSCFG_FPU_Interrupts FPU Interrupts
   * @{
   */
@@ -209,16 +209,16 @@ typedef enum
   */
 
 /** @brief  Fast-mode Plus driving capability on a specific GPIO
-  */  
+  */
 #define SYSCFG_FASTMODEPLUS_PB6         SYSCFG_CFGR1_I2C_PB6_FMP        /*!< Enable Fast-mode Plus on PB6 */
 #define SYSCFG_FASTMODEPLUS_PB7         SYSCFG_CFGR1_I2C_PB7_FMP        /*!< Enable Fast-mode Plus on PB7 */
 #define SYSCFG_FASTMODEPLUS_PB8         SYSCFG_CFGR1_I2C_PB8_FMP        /*!< Enable Fast-mode Plus on PB8 */
 #define SYSCFG_FASTMODEPLUS_PB9         SYSCFG_CFGR1_I2C_PB9_FMP        /*!< Enable Fast-mode Plus on PB9 */
-   
+
 /**
  * @}
  */
-    
+
 /** @defgroup Secure_IP_Write_Access Secure IP Write Access
   * @{
   */
@@ -504,7 +504,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup HAL_Private_Macros HAL Private Macros
   * @{
@@ -629,7 +629,7 @@ void HAL_DBGMCU_DisableDBGStandbyMode(void);
 /**
   * @}
   */
-  
+
 /* Exported variables ---------------------------------------------------------*/
 /** @addtogroup HAL_Exported_Variables
   * @{

@@ -184,7 +184,7 @@ double WRAPPER_FUNC(round)(double x) {
     }
     if(e==-1) {              // 0.5<=|x|<1
         ix&=0x8000000000000000ULL;
-        ix|=0x3ff0000000000000ULL;        // Â±1
+        ix|=0x3ff0000000000000ULL;        // ¡À1
         return *(double*)&ix;
     }
     e=52-e;                  // bit position in mantissa with significance 1, <=52
@@ -212,7 +212,7 @@ double WRAPPER_FUNC(floor)(double x) {
     e=52-e;                  // bit position in mantissa with significance 1
     if(e<=0) return x;       // |x| large, so must be an integer
     m=(1ULL<<e)-1;           // mask for bit of significance <1
-    if(disneg(x)) ix+=m;     // add 1-Îµ to magnitude if negative
+    if(disneg(x)) ix+=m;     // add 1-¦Å to magnitude if negative
     ix&=~m;                  // truncate
     return *(double*)&ix;
 }
@@ -233,7 +233,7 @@ double WRAPPER_FUNC(ceil)(double x) {
     e=52-e;                  // bit position in mantissa with significance 1
     if(e<=0) return x;       // |x| large, so must be an integer
     m=(1ULL<<e)-1;           // mask for bit of significance <1
-    if(!disneg(x)) ix+=m;    // add 1-Îµ to magnitude if positive
+    if(!disneg(x)) ix+=m;    // add 1-¦Å to magnitude if positive
     ix&=~m;                  // truncate
     return *(double*)&ix;
 }
@@ -555,7 +555,7 @@ double WRAPPER_FUNC(fmod)(double x,double y) {
         if(!disneg(x)) return PZERO;
         return MZERO;
     }
-    if(ex<ey) return x;  // |x|<|y|, including case x=Â±0
+    if(ex<ey) return x;  // |x|<|y|, including case x=¡À0
     mx=drem_0(mx,my,ex-ey,0);
     if(sx) mx=-mx;
     return fix642double(mx,0x3ff-ey+52);

@@ -31,7 +31,7 @@
   * @{
   */
 
-#if defined (OPAMP1) || defined (OPAMP2) || defined (OPAMP3) 
+#if defined (OPAMP1) || defined (OPAMP2) || defined (OPAMP3)
 
 /** @addtogroup OPAMP_LL OPAMP
   * @{
@@ -134,10 +134,10 @@
 ErrorStatus LL_OPAMP_DeInit(OPAMP_TypeDef* OPAMPx)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_OPAMP_ALL_INSTANCE(OPAMPx));
-  
+
   MODIFY_REG(OPAMP->CSR,
                (OPAMP_CSR_S3SEL1 | OPAMP_CSR_S4SEL1 | OPAMP_CSR_S5SEL1 | OPAMP_CSR_S6SEL1 | OPAMP_CSR_OPA1CAL_L | OPAMP_CSR_OPA1CAL_H | OPAMP_CSR_OPA1LPM) << __OPAMP_INSTANCE_BITOFFSET(OPAMPx)
              | (OPAMP_CSR_ANAWSEL1) << __OPAMP_INSTANCE_DECIMAL(OPAMPx)
@@ -170,7 +170,7 @@ ErrorStatus LL_OPAMP_Init(OPAMP_TypeDef *OPAMPx, LL_OPAMP_InitTypeDef *OPAMP_Ini
   assert_param(IS_LL_OPAMP_POWER_MODE(OPAMP_InitStruct->PowerMode));
   assert_param(IS_LL_OPAMP_FUNCTIONAL_MODE(OPAMP_InitStruct->FunctionalMode));
   assert_param(IS_LL_OPAMP_INPUT_NONINVERTING(OPAMPx, OPAMP_InitStruct->InputNonInverting));
-  
+
   /* Note: OPAMP inverting input can be used with OPAMP in mode standalone.   */
   /*       Otherwise (OPAMP in mode follower), OPAMP inverting input is       */
   /*       not used (not connected to GPIO pin).                              */
@@ -178,7 +178,7 @@ ErrorStatus LL_OPAMP_Init(OPAMP_TypeDef *OPAMPx, LL_OPAMP_InitTypeDef *OPAMP_Ini
   {
     assert_param(IS_LL_OPAMP_INPUT_INVERTING(OPAMPx, OPAMP_InitStruct->InputInverting));
   }
-  
+
   /* Configuration of OPAMP instance :                                        */
   /*  - PowerMode                                                             */
   /*  - Functional mode                                                       */

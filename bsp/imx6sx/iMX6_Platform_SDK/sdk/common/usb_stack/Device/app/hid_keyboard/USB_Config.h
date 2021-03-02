@@ -45,7 +45,7 @@
 
 
 /*****************************************************************************/
-/* 								Function's Prototypes						 */
+/*                              Function's Prototypes                        */
 /*****************************************************************************/
 extern void USB_Service_Hid (PTR_USB_DEV_EVENT_STRUCT event);
 extern void USB_NULL_CALLBACK (PTR_USB_DEV_EVENT_STRUCT event);
@@ -53,38 +53,38 @@ extern void USB_NULL_CALLBACK (PTR_USB_DEV_EVENT_STRUCT event);
 /*****************************************************************************/
 /*                          Defines & Macros Section                         */
 /*****************************************************************************/
-#define REMOTE_WAKEUP_SUPPORT			(TRUE)
+#define REMOTE_WAKEUP_SUPPORT           (TRUE)
 
 /* Hardware components configuration */
-#define USB_HW_VREG_EN					TRUE
-#define USB_HW_PU_EN					TRUE
+#define USB_HW_VREG_EN                  TRUE
+#define USB_HW_PU_EN                    TRUE
 
 /* Event callbacks assignation */
-#define  USB_EP0_CALLBACK				USB_Control_Service
-#define  USB_EP1_CALLBACK				USB_Service_Hid
-#define  USB_EP2_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP3_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP4_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP5_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP6_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP7_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP8_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP9_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP10_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP11_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP12_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP13_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP14_CALLBACK				USB_NULL_CALLBACK
-#define  USB_EP15_CALLBACK				USB_NULL_CALLBACK
+#define  USB_EP0_CALLBACK               USB_Control_Service
+#define  USB_EP1_CALLBACK               USB_Service_Hid
+#define  USB_EP2_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP3_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP4_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP5_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP6_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP7_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP8_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP9_CALLBACK               USB_NULL_CALLBACK
+#define  USB_EP10_CALLBACK              USB_NULL_CALLBACK
+#define  USB_EP11_CALLBACK              USB_NULL_CALLBACK
+#define  USB_EP12_CALLBACK              USB_NULL_CALLBACK
+#define  USB_EP13_CALLBACK              USB_NULL_CALLBACK
+#define  USB_EP14_CALLBACK              USB_NULL_CALLBACK
+#define  USB_EP15_CALLBACK              USB_NULL_CALLBACK
 
-#define  USB_BUS_RESET_CALLBACK			USB_Reset_Service
-#define  USB_SUSPEND_CALLBACK			USB_NULL_CALLBACK
-#define  USB_SOF_CALLBACK				USB_Sof_Service
-#define  USB_RESUME_CALLBACK			USB_Resume_Service
-#define  USB_SLEEP_CALLBACK				USB_Suspend_Service
-#define  USB_SPEED_DETECTION_CALLBACK	USB_NULL_CALLBACK
-#define  USB_ERROR_CALLBACK				USB_Error_Service
-#define  USB_STALL_CALLBACK				USB_Stall_Service
+#define  USB_BUS_RESET_CALLBACK         USB_Reset_Service
+#define  USB_SUSPEND_CALLBACK           USB_NULL_CALLBACK
+#define  USB_SOF_CALLBACK               USB_Sof_Service
+#define  USB_RESUME_CALLBACK            USB_Resume_Service
+#define  USB_SLEEP_CALLBACK             USB_Suspend_Service
+#define  USB_SPEED_DETECTION_CALLBACK   USB_NULL_CALLBACK
+#define  USB_ERROR_CALLBACK             USB_Error_Service
+#define  USB_STALL_CALLBACK             USB_Stall_Service
 
 /* Endpoints configuration */
 #define USB_EP0_ENABLE              TRUE

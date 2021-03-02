@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2018 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -123,7 +123,7 @@ enum _status_groups
     kStatusGroup_LPC_MINISPI = 76,            /*!< Group number for LPC_MINISPI status codes. */
     kStatusGroup_NOTIFIER = 98,               /*!< Group number for NOTIFIER status codes. */
     kStatusGroup_DebugConsole = 99,           /*!< Group number for debug console status codes. */
-    kStatusGroup_SEMC = 100,                  /*!< Group number for SEMC status codes. */    
+    kStatusGroup_SEMC = 100,                  /*!< Group number for SEMC status codes. */
     kStatusGroup_ApplicationRangeStart = 101, /*!< Starting number for application groups. */
     kStatusGroup_IAP = 102,                   /*!< Group number for IAP status codes */
 };
@@ -348,7 +348,7 @@ _Pragma("diag_suppress=Pm120")
 #define AT_QUICKACCESS_SECTION_DATA(func) func
 #else
 #error Toolchain not supported.
-#endif    
+#endif
 #endif /* __FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE */
 /* @} */
 
@@ -532,15 +532,15 @@ _Pragma("diag_suppress=Pm120")
      * @param size The length required to malloc.
      * @param alignbytes The alignment size.
      * @retval The allocated memory.
-     */    
+     */
     void *SDK_Malloc(size_t size, size_t alignbytes);
-    
+
     /*!
      * @brief Free memory.
      *
      * @param ptr The memory to be release.
-     */ 
-    void SDK_Free(void *ptr);    
+     */
+    void SDK_Free(void *ptr);
 
 #if defined(__cplusplus)
 }

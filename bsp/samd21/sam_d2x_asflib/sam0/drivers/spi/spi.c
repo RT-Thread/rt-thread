@@ -62,9 +62,9 @@
  */
 static bool _spi_is_active(Spi *const spi_module)
 {
-	Assert(spi_module);
+    Assert(spi_module);
 
-	return spi_module->SPI_BUS_STATUS.bit.SPI_ACTIVE;
+    return spi_module->SPI_BUS_STATUS.bit.SPI_ACTIVE;
 }
 
 /**
@@ -76,21 +76,21 @@ static bool _spi_is_active(Spi *const spi_module)
  */
 static void _spi_clock_enable(struct spi_module *const module)
 {
-	Assert(module);
+    Assert(module);
 
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
-	if (spi_module == (void *)SPI0) {
-		system_clock_peripheral_enable(PERIPHERAL_SPI0_SCK_CLK);
-		system_clock_peripheral_enable(PERIPHERAL_SPI0_SCK_PHASE);
-		system_clock_peripheral_enable(PERIPHERAL_SPI0_IF);
-		system_clock_peripheral_enable(PERIPHERAL_SPI0_CORE);
-	} else if (spi_module == (void *)SPI1) {
-		system_clock_peripheral_enable(PERIPHERAL_SPI1_SCK_CLK);
-		system_clock_peripheral_enable(PERIPHERAL_SPI1_SCK_PHASE);
-		system_clock_peripheral_enable(PERIPHERAL_SPI1_IF);
-		system_clock_peripheral_enable(PERIPHERAL_SPI1_CORE);
-	}
+    if (spi_module == (void *)SPI0) {
+        system_clock_peripheral_enable(PERIPHERAL_SPI0_SCK_CLK);
+        system_clock_peripheral_enable(PERIPHERAL_SPI0_SCK_PHASE);
+        system_clock_peripheral_enable(PERIPHERAL_SPI0_IF);
+        system_clock_peripheral_enable(PERIPHERAL_SPI0_CORE);
+    } else if (spi_module == (void *)SPI1) {
+        system_clock_peripheral_enable(PERIPHERAL_SPI1_SCK_CLK);
+        system_clock_peripheral_enable(PERIPHERAL_SPI1_SCK_PHASE);
+        system_clock_peripheral_enable(PERIPHERAL_SPI1_IF);
+        system_clock_peripheral_enable(PERIPHERAL_SPI1_CORE);
+    }
 }
 
 /**
@@ -102,21 +102,21 @@ static void _spi_clock_enable(struct spi_module *const module)
  */
 static void _spi_clock_disable(struct spi_module *const module)
 {
-	Assert(module);
+    Assert(module);
 
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
-	if (spi_module == (void *)SPI0) {
-		system_clock_peripheral_disable(PERIPHERAL_SPI0_SCK_CLK);
-		system_clock_peripheral_disable(PERIPHERAL_SPI0_SCK_PHASE);
-		system_clock_peripheral_disable(PERIPHERAL_SPI0_IF);
-		system_clock_peripheral_disable(PERIPHERAL_SPI0_CORE);
-	} else if (spi_module == (void *)SPI1) {
-		system_clock_peripheral_disable(PERIPHERAL_SPI1_SCK_CLK);
-		system_clock_peripheral_disable(PERIPHERAL_SPI1_SCK_PHASE);
-		system_clock_peripheral_disable(PERIPHERAL_SPI1_IF);
-		system_clock_peripheral_disable(PERIPHERAL_SPI1_CORE);
-	}
+    if (spi_module == (void *)SPI0) {
+        system_clock_peripheral_disable(PERIPHERAL_SPI0_SCK_CLK);
+        system_clock_peripheral_disable(PERIPHERAL_SPI0_SCK_PHASE);
+        system_clock_peripheral_disable(PERIPHERAL_SPI0_IF);
+        system_clock_peripheral_disable(PERIPHERAL_SPI0_CORE);
+    } else if (spi_module == (void *)SPI1) {
+        system_clock_peripheral_disable(PERIPHERAL_SPI1_SCK_CLK);
+        system_clock_peripheral_disable(PERIPHERAL_SPI1_SCK_PHASE);
+        system_clock_peripheral_disable(PERIPHERAL_SPI1_IF);
+        system_clock_peripheral_disable(PERIPHERAL_SPI1_CORE);
+    }
 }
 
 /**
@@ -133,54 +133,54 @@ static void _spi_clock_disable(struct spi_module *const module)
  * \retval STATUS_OK               If the configuration was written
  */
 static enum status_code _spi_set_config(
-		struct spi_module *const module,
-		const struct spi_config *const config)
+        struct spi_module *const module,
+        const struct spi_config *const config)
 {
-	Assert(module);
-	Assert(config);
+    Assert(module);
+    Assert(config);
 
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
-	module->mode  = config->mode;
+    module->mode  = config->mode;
 
 #if CONF_SPI_MASTER_ENABLE == true
-	/* Find baud value and write it */
-	if (config->mode == SPI_MODE_MASTER) {
-		spi_module->SPI_CLK_DIVIDER.reg = config->clock_divider;
-	}
+    /* Find baud value and write it */
+    if (config->mode == SPI_MODE_MASTER) {
+        spi_module->SPI_CLK_DIVIDER.reg = config->clock_divider;
+    }
 #endif
 
-	/* Set data order */
-	if (config->data_order == SPI_DATA_ORDER_LSB) {
-		spi_module->SPI_CONFIGURATION.bit.LSB_FIRST_ENABLE = 0x1;
-	} else {
-		spi_module->SPI_CONFIGURATION.bit.LSB_FIRST_ENABLE = 0x0;
-	}
+    /* Set data order */
+    if (config->data_order == SPI_DATA_ORDER_LSB) {
+        spi_module->SPI_CONFIGURATION.bit.LSB_FIRST_ENABLE = 0x1;
+    } else {
+        spi_module->SPI_CONFIGURATION.bit.LSB_FIRST_ENABLE = 0x0;
+    }
 
-	/* Set clock polarity and clock phase */
-	switch(config->transfer_mode)
-	{
-		case SPI_TRANSFER_MODE_0:
-			spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x0;
-			spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x0;
-			break;
-		case SPI_TRANSFER_MODE_1:
-			spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x1;
-			spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x0;
-			break;
-		case SPI_TRANSFER_MODE_2:
-			spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x0;
-			spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x1;
-			break;
-		case SPI_TRANSFER_MODE_3:
-			spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x1;
-			spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x1;
-			break;
-		default:
-			break;
-	}
+    /* Set clock polarity and clock phase */
+    switch(config->transfer_mode)
+    {
+        case SPI_TRANSFER_MODE_0:
+            spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x0;
+            spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x0;
+            break;
+        case SPI_TRANSFER_MODE_1:
+            spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x1;
+            spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x0;
+            break;
+        case SPI_TRANSFER_MODE_2:
+            spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x0;
+            spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x1;
+            break;
+        case SPI_TRANSFER_MODE_3:
+            spi_module->SPI_CONFIGURATION.bit.SCK_PHASE = 0x1;
+            spi_module->SPI_CONFIGURATION.bit.SCK_POLARITY = 0x1;
+            break;
+        default:
+            break;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -199,12 +199,12 @@ static enum status_code _spi_set_config(
  * \retval false  If the SPI master module has not shifted out data
  */
 static inline bool _spi_is_write_complete(
-		Spi *const spi_module)
+        Spi *const spi_module)
 {
-	Assert(spi_module);
+    Assert(spi_module);
 
-	/* Check interrupt flag */
-	return (spi_module->TRANSMIT_STATUS.bit.TX_FIFO_EMPTY);
+    /* Check interrupt flag */
+    return (spi_module->TRANSMIT_STATUS.bit.TX_FIFO_EMPTY);
 }
 
 
@@ -220,12 +220,12 @@ static inline bool _spi_is_write_complete(
  * \retval false  If the SPI module is not ready to write data
  */
 static inline bool _spi_is_ready_to_write(
-		Spi *const spi_module)
+        Spi *const spi_module)
 {
-	Assert(spi_module);
+    Assert(spi_module);
 
-	/* Check interrupt flag */
-	return (spi_module->TRANSMIT_STATUS.bit.TX_FIFO_NOT_FULL);
+    /* Check interrupt flag */
+    return (spi_module->TRANSMIT_STATUS.bit.TX_FIFO_NOT_FULL);
 }
 
 /**
@@ -240,12 +240,12 @@ static inline bool _spi_is_ready_to_write(
  * \retval false  If the SPI module is not ready to read data
  */
 static inline bool _spi_is_ready_to_read(
-		Spi *const spi_module)
+        Spi *const spi_module)
 {
-	Assert(spi_module);
+    Assert(spi_module);
 
-	/* Check interrupt flag */
-	return (spi_module->RECEIVE_STATUS.bit.RX_FIFO_NOT_EMPTY);
+    /* Check interrupt flag */
+    return (spi_module->RECEIVE_STATUS.bit.RX_FIFO_NOT_EMPTY);
 }
 
 /**
@@ -263,13 +263,13 @@ static inline bool _spi_is_ready_to_read(
  * \param[out] config  Configuration structure to initialize to default values
  */
 void spi_slave_inst_get_config_defaults(
-		struct spi_slave_inst_config *const config)
+        struct spi_slave_inst_config *const config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->ss_pin          = PIN_LP_GPIO_12;
-	config->address_enabled = false;
-	config->address         = 0;
+    config->ss_pin          = PIN_LP_GPIO_12;
+    config->address_enabled = false;
+    config->address         = 0;
 }
 
 /**
@@ -291,32 +291,32 @@ void spi_slave_inst_get_config_defaults(
  *  \li Baudrate 50000
  *  \li Default pinmux settings for all pads
  *  \li Clock source 0 (26MHz)
- *  \li	Clock divider  (Formula: baud_rate = ((clock input freq/clock_divider+1)/2))
+ *  \li Clock divider  (Formula: baud_rate = ((clock input freq/clock_divider+1)/2))
  *                                  (For Example: if clock source is CLOCK_INPUT_0 then
  *                                  ((26000000/(129+1))/2) = 100000 bps)
  *
  * \param[in,out] config  Configuration structure to initialize to default values
  */
 void spi_get_config_defaults(
-		struct spi_config *const config)
+        struct spi_config *const config)
 {
-	Assert(config);
+    Assert(config);
 
-	config->mode             = SPI_MODE_MASTER;
-	config->data_order       = SPI_DATA_ORDER_MSB;
-	config->transfer_mode    = SPI_TRANSFER_MODE_0;
-	config->clock_source     = SPI_CLK_INPUT_0;
-	config->clock_divider    = 129;
+    config->mode             = SPI_MODE_MASTER;
+    config->data_order       = SPI_DATA_ORDER_MSB;
+    config->transfer_mode    = SPI_TRANSFER_MODE_0;
+    config->clock_source     = SPI_CLK_INPUT_0;
+    config->clock_divider    = 129;
 
-	config->pin_number_pad[0] = PIN_LP_GPIO_10;
-	config->pin_number_pad[1] = PIN_LP_GPIO_11;
-	config->pin_number_pad[2] = PIN_LP_GPIO_12;
-	config->pin_number_pad[3] = PIN_LP_GPIO_13;
+    config->pin_number_pad[0] = PIN_LP_GPIO_10;
+    config->pin_number_pad[1] = PIN_LP_GPIO_11;
+    config->pin_number_pad[2] = PIN_LP_GPIO_12;
+    config->pin_number_pad[3] = PIN_LP_GPIO_13;
 
-	config->pinmux_sel_pad[0] = MUX_LP_GPIO_10_SPI0_SCK;
-	config->pinmux_sel_pad[1] = MUX_LP_GPIO_11_SPI0_MOSI;
-	config->pinmux_sel_pad[2] = MUX_LP_GPIO_12_SPI0_SSN;
-	config->pinmux_sel_pad[3] = MUX_LP_GPIO_13_SPI0_MISO;
+    config->pinmux_sel_pad[0] = MUX_LP_GPIO_10_SPI0_SCK;
+    config->pinmux_sel_pad[1] = MUX_LP_GPIO_11_SPI0_MOSI;
+    config->pinmux_sel_pad[2] = MUX_LP_GPIO_12_SPI0_SSN;
+    config->pinmux_sel_pad[3] = MUX_LP_GPIO_13_SPI0_MISO;
 };
 
 /**
@@ -331,22 +331,22 @@ void spi_get_config_defaults(
  *
  */
 void spi_attach_slave(
-		struct spi_slave_inst *const slave,
-		struct spi_slave_inst_config *const config)
+        struct spi_slave_inst *const slave,
+        struct spi_slave_inst_config *const config)
 {
-	Assert(slave);
-	Assert(config);
+    Assert(slave);
+    Assert(config);
 
-	slave->ss_pin          = config->ss_pin;
-	slave->address_enabled = config->address_enabled;
-	slave->address         = config->address;
+    slave->ss_pin          = config->ss_pin;
+    slave->address_enabled = config->address_enabled;
+    slave->address         = config->address;
 
-	struct gpio_config config_gpio;
-	gpio_get_config_defaults(&config_gpio);
-	config_gpio.direction = GPIO_PIN_DIR_OUTPUT;
-	gpio_pin_set_config(slave->ss_pin, &config_gpio);
+    struct gpio_config config_gpio;
+    gpio_get_config_defaults(&config_gpio);
+    config_gpio.direction = GPIO_PIN_DIR_OUTPUT;
+    gpio_pin_set_config(slave->ss_pin, &config_gpio);
 
-	gpio_pin_set_output_level(slave->ss_pin, true);
+    gpio_pin_set_output_level(slave->ss_pin, true);
 }
 
 /**
@@ -359,20 +359,20 @@ void spi_attach_slave(
  */
 void spi_reset(struct spi_module *const module)
 {
-	/* Sanity check arguments */
-	Spi *const spi_module = (module->hw);
+    /* Sanity check arguments */
+    Spi *const spi_module = (module->hw);
 
-	/* Disable the module */
-	spi_disable(module);
+    /* Disable the module */
+    spi_disable(module);
 
-	/* Software reset the module */
-	if(spi_module == (void *)SPI0) {
-		system_peripheral_reset(PERIPHERAL_SPI0_CORE);
-		system_peripheral_reset(PERIPHERAL_SPI0_IF);
-	} else if (spi_module == (void *)SPI1) {
-		system_peripheral_reset(PERIPHERAL_SPI1_CORE);
-		system_peripheral_reset(PERIPHERAL_SPI1_IF);
-	}
+    /* Software reset the module */
+    if(spi_module == (void *)SPI0) {
+        system_peripheral_reset(PERIPHERAL_SPI0_CORE);
+        system_peripheral_reset(PERIPHERAL_SPI0_IF);
+    } else if (spi_module == (void *)SPI1) {
+        system_peripheral_reset(PERIPHERAL_SPI1_CORE);
+        system_peripheral_reset(PERIPHERAL_SPI1_IF);
+    }
 }
 
 /**
@@ -392,98 +392,98 @@ void spi_reset(struct spi_module *const module)
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were provided
  */
 enum status_code spi_init(
-		struct spi_module *const module,
-		Spi *const hw,
-		const struct spi_config *const config)
+        struct spi_module *const module,
+        Spi *const hw,
+        const struct spi_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(hw);
+    Assert(config);
 
-	uint8_t idx;
+    uint8_t idx;
 
-	/* Initialize device instance */
-	module->hw = hw;
+    /* Initialize device instance */
+    module->hw = hw;
 
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
-	/* Check if module is enabled. */
-	if (spi_module->SPI_MODULE_ENABLE.reg & SPI_MODULE_ENABLE_MASK) {
-		spi_module->SPI_MODULE_ENABLE.reg = (0x0ul << SPI_MODULE_ENABLE_ENABLE_Pos);
-	}
+    /* Check if module is enabled. */
+    if (spi_module->SPI_MODULE_ENABLE.reg & SPI_MODULE_ENABLE_MASK) {
+        spi_module->SPI_MODULE_ENABLE.reg = (0x0ul << SPI_MODULE_ENABLE_ENABLE_Pos);
+    }
 
-	spi_reset(module);
-	_spi_clock_enable(module);
+    spi_reset(module);
+    _spi_clock_enable(module);
 
 #if SPI_CALLBACK_MODE == true
-	if (module->hw == SPI0) {
-		_spi_instances[0] = module;
-		system_register_isr(RAM_ISR_TABLE_SPIRX0_INDEX, (uint32_t)spi_rx0_isr_handler);
-		system_register_isr(RAM_ISR_TABLE_SPITX0_INDEX, (uint32_t)spi_tx0_isr_handler);
-	} else if (module->hw == SPI1) {
-		_spi_instances[1] = module;
-		system_register_isr(RAM_ISR_TABLE_SPIRX1_INDEX, (uint32_t)spi_rx1_isr_handler);
-		system_register_isr(RAM_ISR_TABLE_SPITX1_INDEX, (uint32_t)spi_tx1_isr_handler);
-	}
+    if (module->hw == SPI0) {
+        _spi_instances[0] = module;
+        system_register_isr(RAM_ISR_TABLE_SPIRX0_INDEX, (uint32_t)spi_rx0_isr_handler);
+        system_register_isr(RAM_ISR_TABLE_SPITX0_INDEX, (uint32_t)spi_tx0_isr_handler);
+    } else if (module->hw == SPI1) {
+        _spi_instances[1] = module;
+        system_register_isr(RAM_ISR_TABLE_SPIRX1_INDEX, (uint32_t)spi_rx1_isr_handler);
+        system_register_isr(RAM_ISR_TABLE_SPITX1_INDEX, (uint32_t)spi_tx1_isr_handler);
+    }
 #endif
 
-	//Program the pinmux.
-	struct gpio_config config_gpio;
-	gpio_get_config_defaults(&config_gpio);
+    //Program the pinmux.
+    struct gpio_config config_gpio;
+    gpio_get_config_defaults(&config_gpio);
 
-	/* Set the pinmux for this spi module. */
-	for(idx = 0; idx < 4; idx++) {
-		if (config->pin_number_pad[idx] != PINMUX_UNUSED) {
-			if (config->mode == SPI_MODE_MASTER) {
-				config_gpio.direction = GPIO_PIN_DIR_OUTPUT;
-			} else if (config->mode == SPI_MODE_SLAVE) {
-				config_gpio.direction = GPIO_PIN_DIR_INPUT;
-			}
-			gpio_pin_set_config(config->pin_number_pad[idx], &config_gpio);
-			gpio_pinmux_cofiguration(config->pin_number_pad[idx], \
-						(uint16_t)(config->pinmux_sel_pad[idx]));
-		}
-	}
+    /* Set the pinmux for this spi module. */
+    for(idx = 0; idx < 4; idx++) {
+        if (config->pin_number_pad[idx] != PINMUX_UNUSED) {
+            if (config->mode == SPI_MODE_MASTER) {
+                config_gpio.direction = GPIO_PIN_DIR_OUTPUT;
+            } else if (config->mode == SPI_MODE_SLAVE) {
+                config_gpio.direction = GPIO_PIN_DIR_INPUT;
+            }
+            gpio_pin_set_config(config->pin_number_pad[idx], &config_gpio);
+            gpio_pinmux_cofiguration(config->pin_number_pad[idx], \
+                        (uint16_t)(config->pinmux_sel_pad[idx]));
+        }
+    }
 
-	/* Set up the input clock for the module */
-	spi_module->CLOCK_SOURCE_SELECT.reg = config->clock_source;
+    /* Set up the input clock for the module */
+    spi_module->CLOCK_SOURCE_SELECT.reg = config->clock_source;
 
 #  if CONF_SPI_MASTER_ENABLE == true
-	if (config->mode == SPI_MODE_MASTER) {
-		/* Set the mode in SPI master mode */
-		spi_module->SPI_MASTER_MODE.reg = SPI_MODE_MASTER;
-	}
+    if (config->mode == SPI_MODE_MASTER) {
+        /* Set the mode in SPI master mode */
+        spi_module->SPI_MASTER_MODE.reg = SPI_MODE_MASTER;
+    }
 #  endif
 
 #  if CONF_SPI_SLAVE_ENABLE == true
-	if (config->mode == SPI_MODE_SLAVE) {
-		/* Set the mode in SPI slave mode */
-		spi_module->SPI_MASTER_MODE.reg = SPI_MODE_SLAVE;
-	}
+    if (config->mode == SPI_MODE_SLAVE) {
+        /* Set the mode in SPI slave mode */
+        spi_module->SPI_MASTER_MODE.reg = SPI_MODE_SLAVE;
+    }
 #  endif
 
 #if SPI_CALLBACK_MODE == true
-	/* Temporary variables */
-	uint8_t i;
+    /* Temporary variables */
+    uint8_t i;
 
-	/* Initialize parameters */
-	for (i = 0; i < SPI_CALLBACK_N; i++) {
-		module->callback[i]        = NULL;
-	}
-	module->tx_buffer_ptr              = NULL;
-	module->rx_buffer_ptr              = NULL;
-	module->remaining_tx_buffer_length = 0x0000;
-	module->remaining_rx_buffer_length = 0x0000;
-	module->registered_callback        = 0x00;
-	module->enabled_callback           = 0x00;
-	module->status                     = STATUS_OK;
-	module->dir                        = SPI_DIRECTION_IDLE;
-	module->locked                     = 0;
+    /* Initialize parameters */
+    for (i = 0; i < SPI_CALLBACK_N; i++) {
+        module->callback[i]        = NULL;
+    }
+    module->tx_buffer_ptr              = NULL;
+    module->rx_buffer_ptr              = NULL;
+    module->remaining_tx_buffer_length = 0x0000;
+    module->remaining_rx_buffer_length = 0x0000;
+    module->registered_callback        = 0x00;
+    module->enabled_callback           = 0x00;
+    module->status                     = STATUS_OK;
+    module->dir                        = SPI_DIRECTION_IDLE;
+    module->locked                     = 0;
 #endif
 
-	/* Write configuration to module and return status code */
-	return _spi_set_config(module, config);
+    /* Write configuration to module and return status code */
+    return _spi_set_config(module, config);
 }
 
 /**
@@ -500,20 +500,20 @@ enum status_code spi_init(
  */
 void spi_enable(struct spi_module *const module)
 {
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
 #if SPI_CALLBACK_MODE == true
-	if(spi_module == SPI0) {
-		NVIC_EnableIRQ(SPI0_RX_IRQn);
-		NVIC_EnableIRQ(SPI0_TX_IRQn);
-	} else if(spi_module == SPI1) {
-		NVIC_EnableIRQ(SPI1_RX_IRQn);
-		NVIC_EnableIRQ(SPI1_TX_IRQn);
-	}
+    if(spi_module == SPI0) {
+        NVIC_EnableIRQ(SPI0_RX_IRQn);
+        NVIC_EnableIRQ(SPI0_TX_IRQn);
+    } else if(spi_module == SPI1) {
+        NVIC_EnableIRQ(SPI1_RX_IRQn);
+        NVIC_EnableIRQ(SPI1_TX_IRQn);
+    }
 #endif
 
-	/* Enable SPI */
-	spi_module->SPI_MODULE_ENABLE.reg = SPI_MODULE_ENABLE_ENABLE;
+    /* Enable SPI */
+    spi_module->SPI_MODULE_ENABLE.reg = SPI_MODULE_ENABLE_ENABLE;
 }
 
 /**
@@ -525,21 +525,21 @@ void spi_enable(struct spi_module *const module)
  */
 void spi_disable(struct spi_module *const module)
 {
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
 #  if SPI_CALLBACK_MODE == true
-	if(spi_module == SPI0) {
-		NVIC_DisableIRQ(SPI0_RX_IRQn);
-		NVIC_DisableIRQ(SPI0_TX_IRQn);
-	} else if(spi_module == SPI1) {
-		NVIC_DisableIRQ(SPI1_RX_IRQn);
-		NVIC_DisableIRQ(SPI1_TX_IRQn);
-	}
+    if(spi_module == SPI0) {
+        NVIC_DisableIRQ(SPI0_RX_IRQn);
+        NVIC_DisableIRQ(SPI0_TX_IRQn);
+    } else if(spi_module == SPI1) {
+        NVIC_DisableIRQ(SPI1_RX_IRQn);
+        NVIC_DisableIRQ(SPI1_TX_IRQn);
+    }
 #  endif
 
-	/* Disable SPI */
-	spi_module->SPI_MODULE_ENABLE.reg = (0x0ul << SPI_MODULE_ENABLE_ENABLE_Pos);
-	_spi_clock_disable(module);
+    /* Disable SPI */
+    spi_module->SPI_MODULE_ENABLE.reg = (0x0ul << SPI_MODULE_ENABLE_ENABLE_Pos);
+    _spi_clock_disable(module);
 }
 
 /**
@@ -559,16 +559,16 @@ void spi_disable(struct spi_module *const module)
  */
 enum status_code spi_lock(struct spi_module *const module)
 {
-	enum status_code status;
+    enum status_code status;
 
-	if (module->locked) {
-		status = STATUS_BUSY;
-	} else {
-		module->locked = true;
-		status = STATUS_OK;
-	}
+    if (module->locked) {
+        status = STATUS_BUSY;
+    } else {
+        module->locked = true;
+        status = STATUS_OK;
+    }
 
-	return status;
+    return status;
 }
 
 /**
@@ -584,7 +584,7 @@ enum status_code spi_lock(struct spi_module *const module)
  */
 void spi_unlock(struct spi_module *const module)
 {
-	module->locked = false;
+    module->locked = false;
 }
 
 /**
@@ -610,22 +610,22 @@ void spi_unlock(struct spi_module *const module)
  */
 enum status_code spi_write(struct spi_module *module, uint8_t tx_data)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
-	/* Check if the data register has been copied to the shift register */
-	if (!_spi_is_ready_to_write(spi_module)) {
-		/* Data register has not been copied to the shift register, return */
-		return STATUS_BUSY;
-	}
+    /* Check if the data register has been copied to the shift register */
+    if (!_spi_is_ready_to_write(spi_module)) {
+        /* Data register has not been copied to the shift register, return */
+        return STATUS_BUSY;
+    }
 
-	/* Write the character to the DATA register */
-	spi_module->TRANSMIT_DATA.reg = tx_data & SPI_TRANSMIT_DATA_MASK;
+    /* Write the character to the DATA register */
+    spi_module->TRANSMIT_DATA.reg = tx_data & SPI_TRANSMIT_DATA_MASK;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -645,33 +645,33 @@ enum status_code spi_write(struct spi_module *module, uint8_t tx_data)
  * \retval STATUS_ERR_OVERFLOW  If the data is overflown
  */
 enum status_code spi_read(
-		struct spi_module *const module,
-		uint8_t *rx_data)
+        struct spi_module *const module,
+        uint8_t *rx_data)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Spi *const spi_module = (module->hw);
+    Spi *const spi_module = (module->hw);
 
-	/* Check if data is ready to be read */
-	if (!_spi_is_ready_to_read(spi_module)) {
-		/* No data has been received, return */
-		return STATUS_ERR_IO;
-	}
+    /* Check if data is ready to be read */
+    if (!_spi_is_ready_to_read(spi_module)) {
+        /* No data has been received, return */
+        return STATUS_ERR_IO;
+    }
 
-	/* Return value */
-	enum status_code retval = STATUS_OK;
+    /* Return value */
+    enum status_code retval = STATUS_OK;
 
-	/* Check if data is overflown */
-	if (spi_module->RECEIVE_STATUS.bit.FIFO_OVERRUN) {
-		retval = STATUS_ERR_OVERFLOW;
-	}
+    /* Check if data is overflown */
+    if (spi_module->RECEIVE_STATUS.bit.FIFO_OVERRUN) {
+        retval = STATUS_ERR_OVERFLOW;
+    }
 
-	/* Read the character from the DATA register */
-	*rx_data = ((uint8_t)spi_module->RECEIVE_DATA.reg & SPI_RECEIVE_DATA_MASK);
+    /* Read the character from the DATA register */
+    *rx_data = ((uint8_t)spi_module->RECEIVE_DATA.reg & SPI_RECEIVE_DATA_MASK);
 
-	return retval;
+    return retval;
 }
 
 /**
@@ -694,63 +694,63 @@ enum status_code spi_read(
  * \retval STATUS_ERR_OVERFLOW  If the data is overflown
  */
 enum status_code spi_transceive_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data,
-		uint16_t length)
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data,
+        uint16_t length)
 {
-	Spi *spi_module = module->hw;
-	uint8_t dummy = 0;
-	uint8_t skip_mosi = 0;
-	uint8_t skip_miso = 0;
-	uint8_t status;
-	uint16_t transfer_len = 0;
+    Spi *spi_module = module->hw;
+    uint8_t dummy = 0;
+    uint8_t skip_mosi = 0;
+    uint8_t skip_miso = 0;
+    uint8_t status;
+    uint16_t transfer_len = 0;
 
-	if(spi_module == 0) {
-		return STATUS_ERR_NOT_INITIALIZED;
-	}
-	if(!tx_data) {
-		tx_data = &dummy;
-		*tx_data = module->tx_dummy_byte;
-		skip_mosi = 1;
-	} else if(!rx_data) {
-		rx_data = &dummy;
-		skip_miso = 1;
-	} else if(length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if(spi_module == 0) {
+        return STATUS_ERR_NOT_INITIALIZED;
+    }
+    if(!tx_data) {
+        tx_data = &dummy;
+        *tx_data = module->tx_dummy_byte;
+        skip_mosi = 1;
+    } else if(!rx_data) {
+        rx_data = &dummy;
+        skip_miso = 1;
+    } else if(length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Check for Idle */
-	do {
-		status = _spi_is_active(spi_module);
-	}while(status);
+    /* Check for Idle */
+    do {
+        status = _spi_is_active(spi_module);
+    }while(status);
 
-	/* Clear all status registers */
-	spi_module->RECEIVE_STATUS.reg;
-	spi_module->TRANSMIT_STATUS.reg;
+    /* Clear all status registers */
+    spi_module->RECEIVE_STATUS.reg;
+    spi_module->TRANSMIT_STATUS.reg;
 
-	/* Start transfer */
-	while(transfer_len < length) {
-		/* Write data to MOSI */
-		while(!_spi_is_ready_to_write(spi_module));
-		spi_module->TRANSMIT_DATA.reg = *tx_data;
-		/* Read data shifted from MISO */
-		while(!_spi_is_ready_to_read(spi_module));
-		*rx_data = spi_module->RECEIVE_DATA.reg;
-		transfer_len++;
-		if (!skip_mosi) {
-			tx_data++;
-		}
-		if (!skip_miso) {
-			rx_data++;
-		}
-	}
-	/* check TXFIFO is empty */
-	do {
-		status = _spi_is_write_complete(spi_module);
-	}while(!status);
+    /* Start transfer */
+    while(transfer_len < length) {
+        /* Write data to MOSI */
+        while(!_spi_is_ready_to_write(spi_module));
+        spi_module->TRANSMIT_DATA.reg = *tx_data;
+        /* Read data shifted from MISO */
+        while(!_spi_is_ready_to_read(spi_module));
+        *rx_data = spi_module->RECEIVE_DATA.reg;
+        transfer_len++;
+        if (!skip_mosi) {
+            tx_data++;
+        }
+        if (!skip_miso) {
+            rx_data++;
+        }
+    }
+    /* check TXFIFO is empty */
+    do {
+        status = _spi_is_write_complete(spi_module);
+    }while(!status);
 
-	return STATUS_OK;
+    return STATUS_OK;
 
 }
 
@@ -773,11 +773,11 @@ enum status_code spi_transceive_buffer_wait(
  * \retval STATUS_ERR_OVERFLOW  If the data is overflown
  */
 enum status_code spi_transceive_wait(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data)
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data)
 {
-	return spi_transceive_buffer_wait(module, tx_data, rx_data, 1);
+    return spi_transceive_buffer_wait(module, tx_data, rx_data, 1);
 }
 
 /**
@@ -800,13 +800,13 @@ enum status_code spi_transceive_wait(
  * \retval STATUS_ERR_OVERFLOW  If the data is overflown
  */
 enum status_code spi_read_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *rx_data,
-		uint16_t length,
-		uint8_t dummy)
+        struct spi_module *const module,
+        uint8_t *rx_data,
+        uint16_t length,
+        uint8_t dummy)
 {
-	module->tx_dummy_byte = dummy;
-	return spi_transceive_buffer_wait(module, NULL, rx_data, length);
+    module->tx_dummy_byte = dummy;
+    return spi_transceive_buffer_wait(module, NULL, rx_data, length);
 }
 
 /**
@@ -827,11 +827,11 @@ enum status_code spi_read_buffer_wait(
  * \retval STATUS_ERR_OVERFLOW  If the data is overflown
  */
 enum status_code spi_write_buffer_wait(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint16_t length)
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint16_t length)
 {
-	return spi_transceive_buffer_wait(module, tx_data, NULL, length);
+    return spi_transceive_buffer_wait(module, tx_data, NULL, length);
 }
 
 /**
@@ -849,18 +849,18 @@ enum status_code spi_write_buffer_wait(
  * \retval STATUS_ERR_INVALID_ARG   Invalid SS pin
  */
 enum status_code spi_select_slave(
-		struct spi_module *const module,
-		struct spi_slave_inst *const slave,
-		bool select)
+        struct spi_module *const module,
+        struct spi_slave_inst *const slave,
+        bool select)
 {
-	uint8_t gpio_num = slave->ss_pin;
-	if(select) {
-		/* ASSERT Slave select pin */
-		gpio_pin_set_output_level(gpio_num, false);
-	} else {
-		/* DEASSERT Slave select pin */
-		gpio_pin_set_output_level(gpio_num, true);
-	}
+    uint8_t gpio_num = slave->ss_pin;
+    if(select) {
+        /* ASSERT Slave select pin */
+        gpio_pin_set_output_level(gpio_num, false);
+    } else {
+        /* DEASSERT Slave select pin */
+        gpio_pin_set_output_level(gpio_num, true);
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

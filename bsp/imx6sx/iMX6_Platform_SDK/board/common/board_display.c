@@ -219,7 +219,7 @@ void ldb_clock_config(int freq, int ipu_index)
 {
     if (freq == 65000000)       //for XGA resolution
     {
-        //config pll3 PFD1 to 455M. pll3 is 480M 
+        //config pll3 PFD1 to 455M. pll3 is 480M
         BW_CCM_ANALOG_PFD_480_PFD1_FRAC(19);
 
         // set ldb_di0_clk_sel to PLL3 PFD1
@@ -231,13 +231,13 @@ void ldb_clock_config(int freq, int ipu_index)
         HW_CCM_CSCMR2.B.LDB_DI1_IPU_DIV = 1;
 
         if (ipu_index == 1) {
-            //set ipu1_di0_clk_sel from ldb_di0_clk 
+            //set ipu1_di0_clk_sel from ldb_di0_clk
             HW_CCM_CHSCCDR.B.IPU1_DI0_CLK_SEL = 3;  // ldb_di0_clk
             HW_CCM_CHSCCDR.B.IPU1_DI1_CLK_SEL = 3;  // ldb_di0_clk
         }
 #if CHIP_MX6DQ
         else {
-            //set ipu2_di0_clk_sel from ldb_di0_clk 
+            //set ipu2_di0_clk_sel from ldb_di0_clk
             HW_CCM_CSCDR2.B.IPU2_DI0_CLK_SEL = 3;
             HW_CCM_CSCDR2.B.IPU2_DI1_CLK_SEL = 3;
         }

@@ -108,61 +108,61 @@ typedef struct
 #define RCC_PLLMult_14                  RCC_CFG_PLLMULT14
 #define RCC_PLLMult_15                  RCC_CFG_PLLMULT15
 #define RCC_PLLMult_16                  RCC_CFG_PLLMULT16
-#define RCC_PLLMult_17                  RCC_CFG_PLLMULT17 
-#define RCC_PLLMult_18                  RCC_CFG_PLLMULT18 
-#define RCC_PLLMult_19                  RCC_CFG_PLLMULT19 
-#define RCC_PLLMult_20                  RCC_CFG_PLLMULT20 
-#define RCC_PLLMult_21                  RCC_CFG_PLLMULT21 
-#define RCC_PLLMult_22                  RCC_CFG_PLLMULT22 
-#define RCC_PLLMult_23                  RCC_CFG_PLLMULT23 
-#define RCC_PLLMult_24                  RCC_CFG_PLLMULT24 
-#define RCC_PLLMult_25                  RCC_CFG_PLLMULT25 
-#define RCC_PLLMult_26                  RCC_CFG_PLLMULT26 
-#define RCC_PLLMult_27                  RCC_CFG_PLLMULT27 
-#define RCC_PLLMult_28                  RCC_CFG_PLLMULT28 
-#define RCC_PLLMult_29                  RCC_CFG_PLLMULT29 
-#define RCC_PLLMult_30                  RCC_CFG_PLLMULT30 
-#define RCC_PLLMult_31                  RCC_CFG_PLLMULT31 
-#define RCC_PLLMult_32                  RCC_CFG_PLLMULT32 
-#define RCC_PLLMult_33                  RCC_CFG_PLLMULT33 
-#define RCC_PLLMult_34                  RCC_CFG_PLLMULT34 
-#define RCC_PLLMult_35                  RCC_CFG_PLLMULT35 
-#define RCC_PLLMult_36                  RCC_CFG_PLLMULT36 
-#define RCC_PLLMult_37                  RCC_CFG_PLLMULT37 
-#define RCC_PLLMult_38                  RCC_CFG_PLLMULT38 
-#define RCC_PLLMult_39                  RCC_CFG_PLLMULT39 
-#define RCC_PLLMult_40                  RCC_CFG_PLLMULT40 
-#define RCC_PLLMult_41                  RCC_CFG_PLLMULT41 
-#define RCC_PLLMult_42                  RCC_CFG_PLLMULT42 
-#define RCC_PLLMult_43                  RCC_CFG_PLLMULT43 
-#define RCC_PLLMult_44                  RCC_CFG_PLLMULT44 
-#define RCC_PLLMult_45                  RCC_CFG_PLLMULT45 
-#define RCC_PLLMult_46                  RCC_CFG_PLLMULT46 
-#define RCC_PLLMult_47                  RCC_CFG_PLLMULT47 
-#define RCC_PLLMult_48                  RCC_CFG_PLLMULT48 
-#define RCC_PLLMult_49                  RCC_CFG_PLLMULT49 
-#define RCC_PLLMult_50                  RCC_CFG_PLLMULT50 
-#define RCC_PLLMult_51                  RCC_CFG_PLLMULT51 
-#define RCC_PLLMult_52                  RCC_CFG_PLLMULT52 
-#define RCC_PLLMult_53                  RCC_CFG_PLLMULT53 
-#define RCC_PLLMult_54                  RCC_CFG_PLLMULT54 
-#define RCC_PLLMult_55                  RCC_CFG_PLLMULT55 
-#define RCC_PLLMult_56                  RCC_CFG_PLLMULT56 
-#define RCC_PLLMult_57                  RCC_CFG_PLLMULT57 
-#define RCC_PLLMult_58                  RCC_CFG_PLLMULT58 
-#define RCC_PLLMult_59                  RCC_CFG_PLLMULT59 
-#define RCC_PLLMult_60                  RCC_CFG_PLLMULT60 
-#define RCC_PLLMult_61                  RCC_CFG_PLLMULT61 
-#define RCC_PLLMult_62                  RCC_CFG_PLLMULT62 
-#define RCC_PLLMult_63                  RCC_CFG_PLLMULT63 
-#define RCC_PLLMult_64                  RCC_CFG_PLLMULT64 
+#define RCC_PLLMult_17                  RCC_CFG_PLLMULT17
+#define RCC_PLLMult_18                  RCC_CFG_PLLMULT18
+#define RCC_PLLMult_19                  RCC_CFG_PLLMULT19
+#define RCC_PLLMult_20                  RCC_CFG_PLLMULT20
+#define RCC_PLLMult_21                  RCC_CFG_PLLMULT21
+#define RCC_PLLMult_22                  RCC_CFG_PLLMULT22
+#define RCC_PLLMult_23                  RCC_CFG_PLLMULT23
+#define RCC_PLLMult_24                  RCC_CFG_PLLMULT24
+#define RCC_PLLMult_25                  RCC_CFG_PLLMULT25
+#define RCC_PLLMult_26                  RCC_CFG_PLLMULT26
+#define RCC_PLLMult_27                  RCC_CFG_PLLMULT27
+#define RCC_PLLMult_28                  RCC_CFG_PLLMULT28
+#define RCC_PLLMult_29                  RCC_CFG_PLLMULT29
+#define RCC_PLLMult_30                  RCC_CFG_PLLMULT30
+#define RCC_PLLMult_31                  RCC_CFG_PLLMULT31
+#define RCC_PLLMult_32                  RCC_CFG_PLLMULT32
+#define RCC_PLLMult_33                  RCC_CFG_PLLMULT33
+#define RCC_PLLMult_34                  RCC_CFG_PLLMULT34
+#define RCC_PLLMult_35                  RCC_CFG_PLLMULT35
+#define RCC_PLLMult_36                  RCC_CFG_PLLMULT36
+#define RCC_PLLMult_37                  RCC_CFG_PLLMULT37
+#define RCC_PLLMult_38                  RCC_CFG_PLLMULT38
+#define RCC_PLLMult_39                  RCC_CFG_PLLMULT39
+#define RCC_PLLMult_40                  RCC_CFG_PLLMULT40
+#define RCC_PLLMult_41                  RCC_CFG_PLLMULT41
+#define RCC_PLLMult_42                  RCC_CFG_PLLMULT42
+#define RCC_PLLMult_43                  RCC_CFG_PLLMULT43
+#define RCC_PLLMult_44                  RCC_CFG_PLLMULT44
+#define RCC_PLLMult_45                  RCC_CFG_PLLMULT45
+#define RCC_PLLMult_46                  RCC_CFG_PLLMULT46
+#define RCC_PLLMult_47                  RCC_CFG_PLLMULT47
+#define RCC_PLLMult_48                  RCC_CFG_PLLMULT48
+#define RCC_PLLMult_49                  RCC_CFG_PLLMULT49
+#define RCC_PLLMult_50                  RCC_CFG_PLLMULT50
+#define RCC_PLLMult_51                  RCC_CFG_PLLMULT51
+#define RCC_PLLMult_52                  RCC_CFG_PLLMULT52
+#define RCC_PLLMult_53                  RCC_CFG_PLLMULT53
+#define RCC_PLLMult_54                  RCC_CFG_PLLMULT54
+#define RCC_PLLMult_55                  RCC_CFG_PLLMULT55
+#define RCC_PLLMult_56                  RCC_CFG_PLLMULT56
+#define RCC_PLLMult_57                  RCC_CFG_PLLMULT57
+#define RCC_PLLMult_58                  RCC_CFG_PLLMULT58
+#define RCC_PLLMult_59                  RCC_CFG_PLLMULT59
+#define RCC_PLLMult_60                  RCC_CFG_PLLMULT60
+#define RCC_PLLMult_61                  RCC_CFG_PLLMULT61
+#define RCC_PLLMult_62                  RCC_CFG_PLLMULT62
+#define RCC_PLLMult_63                  RCC_CFG_PLLMULT63
+#define RCC_PLLMult_64                  RCC_CFG_PLLMULT64
 #define IS_RCC_PLL_MULT(MULT)           (((MULT) & (~RCC_CFG_PLLMULT)) == 0x00000000)
 
 #define RCC_GET_PLLMULT(MULT)           ((((MULT & RCC_CFG_PLLMULT_LB_MASK) >> RCC_CFG_PLLMULT_LB_POS) | \
                                             ((MULT & RCC_CFG_PLLMULT_HB_MASK) >> (RCC_CFG_PLLMULT_HB_POS - RCC_CFG_PLLMULT_HB_OFFSET))) +\
                                           ((((MULT & RCC_CFG_PLLMULT_HB_MASK)==0) && \
                                             ((MULT & RCC_CFG_PLLMULT_LB_MASK)!=RCC_CFG_PLLMULT_LB_MASK) )? 2 : 1 ))
-											
+
 /**
   * @}
   */
@@ -253,9 +253,9 @@ typedef struct
                                      ((CFG) == RCC_USBCLKSelection_PLL_Div1)   || \
                                      ((CFG) == RCC_USBCLKSelection_PLL_Div2_5) || \
                                      ((CFG) == RCC_USBCLKSelection_PLL_Div2)   || \
-																		 ((CFG) == RCC_USBCLKSelection_PLL_Div3_5) || \
-																		 ((CFG) == RCC_USBCLKSelection_PLL_Div3)   || \
-																		 ((CFG) == RCC_USBCLKSelection_PLL_Div4))						
+                                                                         ((CFG) == RCC_USBCLKSelection_PLL_Div3_5) || \
+                                                                         ((CFG) == RCC_USBCLKSelection_PLL_Div3)   || \
+                                                                         ((CFG) == RCC_USBCLKSelection_PLL_Div4))
 /**
   * @}
   */
@@ -694,7 +694,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /** @defgroup RCC_Exported_Macros
   * @{
   */

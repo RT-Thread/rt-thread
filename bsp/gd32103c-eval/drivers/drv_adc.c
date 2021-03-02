@@ -61,7 +61,7 @@ static gd32_adc_device g_gd32_devs[] = {
 /*
  * static void init_pin4adc
  *
- * åˆå§‹åŒ–æŒ‡å®šçš„ç®¡è…³çˆ² analog æ¨¡å¼
+ * ³õÊ¼»¯Ö¸¶¨µÄ¹ÜÄ_ ‘ analog Ä£Ê½
  * @ rt_uint32_t pin: pin information
  * return: N/A
  */

@@ -39,8 +39,8 @@
 /*!
  * DC submodule configuration.
  * DC submodule is to control the data, and tranfer them to display.
- * @param	ipu_index:	ipu index
- * @param	channel:    ipu channel
+ * @param   ipu_index:  ipu index
+ * @param   channel:    ipu channel
  * @param   di display interface 0 or 1
  * @param   width display width
  * @param   colorimetry colorimetry configuration

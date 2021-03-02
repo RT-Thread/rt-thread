@@ -116,54 +116,54 @@ void (* const g_pfnVectors[])(void) =
     SysTick_Handler,            // SysTick Handler
 
     // External Interrupts
-    WDT_IRQHandler,        
-    BOD_IRQHandler, 
-	Reserved_IRQHandler,	
-    DMA_IRQHandler,        
-    GINT0_IRQHandler,      
-    PIN_INT0_IRQHandler,   
-    PIN_INT1_IRQHandler,   
-    PIN_INT2_IRQHandler,   
-    PIN_INT3_IRQHandler,   
-    UTICK_IRQHandler,      
-    MRT_IRQHandler,        
-    CT32B0_IRQHandler,     
-    CT32B1_IRQHandler,     
-    CT32B2_IRQHandler,     
-    CT32B3_IRQHandler,     
-    CT32B4_IRQHandler,     
-    SCT0_IRQHandler,       
-    UART0_IRQHandler,      
-    UART1_IRQHandler,      
-    UART2_IRQHandler,      
-    UART3_IRQHandler,      
-    I2C0_IRQHandler,      
-    I2C1_IRQHandler,       
-    I2C2_IRQHandler,       
-    SPI0_IRQHandler,       
-    SPI1_IRQHandler,       
-    ADC_SEQA_IRQHandler,   
-    ADC_SEQB_IRQHandler,   
-    ADC_THCMP_IRQHandler,  
-    RTC_IRQHandler,    
-	Reserved_IRQHandler,    
-    MAILBOX_IRQHandler,   
-    GINT1_IRQHandler,      
-    PIN_INT4_IRQHandler,   
-    PIN_INT5_IRQHandler,   
-    PIN_INT6_IRQHandler,   
-    PIN_INT7_IRQHandler, 
-	Reserved_IRQHandler,
-	Reserved_IRQHandler,
-	Reserved_IRQHandler,
-	RIT_IRQHandler,       
-	Reserved41_IRQHandler,	
-	Reserved42_IRQHandler,
-	Reserved43_IRQHandler,
-	Reserved44_IRQHandler,	    
+    WDT_IRQHandler,
+    BOD_IRQHandler,
+    Reserved_IRQHandler,
+    DMA_IRQHandler,
+    GINT0_IRQHandler,
+    PIN_INT0_IRQHandler,
+    PIN_INT1_IRQHandler,
+    PIN_INT2_IRQHandler,
+    PIN_INT3_IRQHandler,
+    UTICK_IRQHandler,
+    MRT_IRQHandler,
+    CT32B0_IRQHandler,
+    CT32B1_IRQHandler,
+    CT32B2_IRQHandler,
+    CT32B3_IRQHandler,
+    CT32B4_IRQHandler,
+    SCT0_IRQHandler,
+    UART0_IRQHandler,
+    UART1_IRQHandler,
+    UART2_IRQHandler,
+    UART3_IRQHandler,
+    I2C0_IRQHandler,
+    I2C1_IRQHandler,
+    I2C2_IRQHandler,
+    SPI0_IRQHandler,
+    SPI1_IRQHandler,
+    ADC_SEQA_IRQHandler,
+    ADC_SEQB_IRQHandler,
+    ADC_THCMP_IRQHandler,
+    RTC_IRQHandler,
+    Reserved_IRQHandler,
+    MAILBOX_IRQHandler,
+    GINT1_IRQHandler,
+    PIN_INT4_IRQHandler,
+    PIN_INT5_IRQHandler,
+    PIN_INT6_IRQHandler,
+    PIN_INT7_IRQHandler,
+    Reserved_IRQHandler,
+    Reserved_IRQHandler,
+    Reserved_IRQHandler,
+    RIT_IRQHandler,
+    Reserved41_IRQHandler,
+    Reserved42_IRQHandler,
+    Reserved43_IRQHandler,
+    Reserved44_IRQHandler,
 };
 //**RIT_IRQHandler        ***************************************************************************
-//  Reserved41_IRQHandler 
+//  Reserved41_IRQHandler
 // TReserved42_IRQHandler he following are constructs created by the linker, indicating where the
 // tReserved43_IRQHandler he "data" and "bss" segments reside in memory.  The initializers for the
 // fReserved44_IRQHandler or the "data" segment resides immediately following the "text" segment.
@@ -197,8 +197,8 @@ static void Reset_Handler(void)
     {
         *pulDest++ = *pulSrc++;
     }
-	
-	
+
+
 #if !defined (__USE_LPCOPEN)
 // LPCOpen init code deals with FP and VTOR initialisation
 #if defined (__VFP_FP__) && !defined (__SOFTFP__)
@@ -231,7 +231,7 @@ static void Reset_Handler(void)
         *pSCB_VTOR = (unsigned int) g_pfnVectors;
     }
 #endif
-	
+
     //
     // Zero fill the bss segment.
     //
@@ -245,8 +245,8 @@ static void Reset_Handler(void)
           "        strlt   r2, [r0], #4\n"
           "        blt     zero_loop");
 
-    // call system init.	
-	SystemInit();
+    // call system init.
+    SystemInit();
 
     //
     // Call the application's entry point.

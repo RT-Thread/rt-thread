@@ -41,7 +41,7 @@
 // Definitions
 //////////////////////////////////////////////////////////////////////////////////////////
 
-//! @name Core number available OTP register constants 
+//! @name Core number available OTP register constants
 //!{
 #define CORE_NUM_MASK (0x0300000) //!< Number of cores available bit mask.
 #define CORE_NUM_SHIFT (20)       //!< Number of cores available bit shift.
@@ -68,13 +68,13 @@
 
 int cpu_get_cores(void)
 {
-    int core_count = GET_CORES_ERROR;             
+    int core_count = GET_CORES_ERROR;
 
 #if defined(CHIP_MX6DQ) || defined(CHIP_MX6SDL)
     // Mask and shift the contents of the control register so bit 21 and 20, which
     // are responsible for tracking cpu accessbility, are isolated.
     uint32_t raw_data = (HW_OCOTP_CFG2_RD() & CORE_NUM_MASK) >> CORE_NUM_SHIFT;
-    
+
     // Determine whether there are 2 or 4 cores active and set the return
     // value accordingly. If no core is active, return error.
     switch(raw_data)

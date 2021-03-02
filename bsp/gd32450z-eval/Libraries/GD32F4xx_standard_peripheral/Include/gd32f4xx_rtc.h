@@ -1,6 +1,6 @@
 /*!
     \file  gd32f4xx_rtc.h
-    \brief definitions for the RTC 
+    \brief definitions for the RTC
 */
 
 /*
@@ -254,7 +254,7 @@ typedef struct
     ControlStatus tamper_precharge_enable;                                      /*!< RTC tamper precharge feature during a voltage level detection */
     uint32_t tamper_precharge_time;                                             /*!< RTC tamper precharge duration if precharge feature is enabled */
     ControlStatus tamper_with_timestamp;                                        /*!< RTC tamper time-stamp feature */
-}rtc_tamper_struct; 
+}rtc_tamper_struct;
 
 /* time register value */
 #define TIME_SC(regval)                    (BITS(0,6) & ((uint32_t)(regval) << 0))    /*!< write value to RTC_TIME_SC bit field */
@@ -475,12 +475,12 @@ typedef struct
 #define RTC_WUT_RESET                      ((uint32_t)0x0000FFFFU)                    /*!< RTC_WUT register reset value */
 
 /* RTC alarm */
-#define RTC_ALARM0                         ((uint8_t)0x01U)                           /*!< RTC alarm 0 */              
-#define RTC_ALARM1                         ((uint8_t)0x02U)                           /*!< RTC alarm 1 */   
+#define RTC_ALARM0                         ((uint8_t)0x01U)                           /*!< RTC alarm 0 */
+#define RTC_ALARM1                         ((uint8_t)0x02U)                           /*!< RTC alarm 1 */
 
 /* RTC coarse calibration direction */
-#define CALIB_INCREASE                     ((uint8_t)0x01U)                           /*!< RTC coarse calibration increase */  
-#define CALIB_DECREASE                     ((uint8_t)0x02U)                           /*!< RTC coarse calibration decrease */  
+#define CALIB_INCREASE                     ((uint8_t)0x01U)                           /*!< RTC coarse calibration increase */
+#define CALIB_DECREASE                     ((uint8_t)0x02U)                           /*!< RTC coarse calibration decrease */
 
 /* RTC wakeup timer clock */
 #define CTL_WTCS(regval)                   (BITS(0,2) & ((regval)<< 0))
@@ -490,7 +490,7 @@ typedef struct
 #define WAKEUP_RTCCK_DIV2                  CTL_WTCS(3)                                /*!< wakeup timer clock is RTC clock divided by 2 */
 #define WAKEUP_CKSPRE                      CTL_WTCS(4)                                /*!< wakeup timer clock is ckapre */
 #define WAKEUP_CKSPRE_2EXP16               CTL_WTCS(6)                                /*!< wakeup timer clock is ckapre and wakeup timer add 2exp16 */
- 
+
 /* RTC_AF pin */
 #define RTC_AF0_TIMESTAMP                  ((uint32_t)0x00000000)                     /*!< RTC_AF0 use for timestamp */
 #define RTC_AF1_TIMESTAMP                  RTC_TAMP_TSSEL                             /*!< RTC_AF1 use for timestamp */

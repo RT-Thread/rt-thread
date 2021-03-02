@@ -212,7 +212,7 @@ void gpmi_enable_writes(bool doEnable);
 //!     the DMA semphore times out, and most DMA chains also return this
 //!     error (see below for how) when the GPMI device busy timeout expires.
 //!
-//! @note Uses the BAR field of the last DMA command to signal                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+//! @note Uses the BAR field of the last DMA command to signal
 //!             result of the DMA chain.
 ////////////////////////////////////////////////////////////////////////////////
 int gpmi_run_dma(apbh_dma_t * theDma, unsigned chipSelect, uint16_t waitMask, uint32_t timeout);

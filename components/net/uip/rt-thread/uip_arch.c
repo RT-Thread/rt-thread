@@ -61,7 +61,7 @@ void uip_add32(u8_t *op32, u16_t op16)
     if(uip_acc32[2] == 0) {
       ++uip_acc32[1];
       if(uip_acc32[1] == 0) {
-	++uip_acc32[0];
+    ++uip_acc32[0];
       }
     }
   }
@@ -108,7 +108,7 @@ u16_t uip_tcpchksum(void)
   /* Compute the checksum of the data in the TCP packet and add it to
      the TCP header checksum. */
   sum = uip_chksum((u16_t *)uip_appdata,
-		   (u16_t)(((((u16_t)(BUF->len[0]) << 8) + BUF->len[1]) - 40)));
+           (u16_t)(((((u16_t)(BUF->len[0]) << 8) + BUF->len[1]) - 40)));
 
   if((sum += hsum) < hsum) {
     ++sum;

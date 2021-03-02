@@ -40,7 +40,7 @@
 /* constants definitions */
 /* trng status flag */
 typedef enum
-{ 
+{
     TRNG_FLAG_DRDY = TRNG_STAT_DRDY,                           /*!< random Data ready status */
     TRNG_FLAG_CECS = TRNG_STAT_CECS,                           /*!< clock error current status */
     TRNG_FLAG_SECS = TRNG_STAT_SECS                            /*!< seed error current status */

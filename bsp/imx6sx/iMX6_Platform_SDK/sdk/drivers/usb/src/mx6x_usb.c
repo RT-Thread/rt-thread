@@ -35,7 +35,7 @@
  * The functions in this file are implementation specific routines, like USB transceiver, PLL, clocks etc.\n
  * Each supported i.MX device has a dedicated set of routines.\n
  * The routines are referenced in the usb_module structure.
- * 
+ *
  * @ingroup diag_usb
  */
 
@@ -68,20 +68,20 @@ int usbEnableClocks(usb_module_t * port)
     case OTG:                  // OTG, Host2 and Host3 use the same PLL
     case Host2:
     case Host3:
-    case OTG1:		// MX6SL first OTG controller.
-	HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_POWER);	//! - Turn PLL power on.
-	HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_EN_USB_CLKS); //!Powers the 9-phase PLL outputs for USBPHY0
+    case OTG1:      // MX6SL first OTG controller.
+    HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_POWER);   //! - Turn PLL power on.
+    HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_EN_USB_CLKS); //!Powers the 9-phase PLL outputs for USBPHY0
         while(!(HW_CCM_ANALOG_PLL_USB1_RD() & BM_CCM_ANALOG_PLL_USB1_LOCK));//! - Wait for PLL to lock
-	HW_CCM_ANALOG_PLL_USB1_CLR(BM_CCM_ANALOG_PLL_USB1_BYPASS);	//! - Clear bypass
-	HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_ENABLE); 	//! - Enable PLL clock output for the PHY
+    HW_CCM_ANALOG_PLL_USB1_CLR(BM_CCM_ANALOG_PLL_USB1_BYPASS);  //! - Clear bypass
+    HW_CCM_ANALOG_PLL_USB1_SET(BM_CCM_ANALOG_PLL_USB1_ENABLE);  //! - Enable PLL clock output for the PHY
         break;
     case Host1:
     case OTG2:
-	HW_CCM_ANALOG_PLL_USB2_SET(BM_CCM_ANALOG_PLL_USB2_POWER);
-	HW_CCM_ANALOG_PLL_USB2_SET(BM_CCM_ANALOG_PLL_USB2_EN_USB_CLKS);
+    HW_CCM_ANALOG_PLL_USB2_SET(BM_CCM_ANALOG_PLL_USB2_POWER);
+    HW_CCM_ANALOG_PLL_USB2_SET(BM_CCM_ANALOG_PLL_USB2_EN_USB_CLKS);
         while(!(HW_CCM_ANALOG_PLL_USB2_RD() & BM_CCM_ANALOG_PLL_USB2_LOCK));
-	HW_CCM_ANALOG_PLL_USB2_CLR(BM_CCM_ANALOG_PLL_USB2_BYPASS);
-	HW_CCM_ANALOG_PLL_USB2_SET(BM_CCM_ANALOG_PLL_USB2_ENABLE);
+    HW_CCM_ANALOG_PLL_USB2_CLR(BM_CCM_ANALOG_PLL_USB2_BYPASS);
+    HW_CCM_ANALOG_PLL_USB2_SET(BM_CCM_ANALOG_PLL_USB2_ENABLE);
         break;
     default:
         return (-1);
@@ -102,21 +102,21 @@ int usbEnableTransceiver(usb_module_t * port)
 
     switch (port->controllerID) {
     case OTG:
-    case OTG1:	
-	instance = HW_USBPHY1;;
+    case OTG1:
+    instance = HW_USBPHY1;;
         break;
     case Host1:
-    case OTG2:	
-	instance = HW_USBPHY2;
+    case OTG2:
+    instance = HW_USBPHY2;
         break;
     default:
         return -1;
     }
     //! NOTE !! CLKGATE must be cleared before clearing power down
-    HW_USBPHY_CTRL_CLR(instance, BM_USBPHY_CTRL_SFTRST);	//! - clear SFTRST
-    HW_USBPHY_CTRL_CLR(instance, BM_USBPHY_CTRL_CLKGATE);	//! - clear CLKGATE
-    HW_USBPHY_PWD_WR(instance, 0);	//! - clear all power down bits
-    HW_USBPHY_CTRL_SET(instance, BM_USBPHY_CTRL_ENUTMILEVEL2 | BM_USBPHY_CTRL_ENUTMILEVEL3 | BM_USBPHY_CTRL_ENHOSTDISCONDETECT);    
+    HW_USBPHY_CTRL_CLR(instance, BM_USBPHY_CTRL_SFTRST);    //! - clear SFTRST
+    HW_USBPHY_CTRL_CLR(instance, BM_USBPHY_CTRL_CLKGATE);   //! - clear CLKGATE
+    HW_USBPHY_PWD_WR(instance, 0);  //! - clear all power down bits
+    HW_USBPHY_CTRL_SET(instance, BM_USBPHY_CTRL_ENUTMILEVEL2 | BM_USBPHY_CTRL_ENUTMILEVEL3 | BM_USBPHY_CTRL_ENHOSTDISCONDETECT);
 
     //! disable the charger detector. This must be off during normal operation
     {

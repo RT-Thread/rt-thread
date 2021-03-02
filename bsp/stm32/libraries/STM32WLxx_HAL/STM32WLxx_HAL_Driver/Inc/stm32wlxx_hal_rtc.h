@@ -599,7 +599,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef *hrtc);  /*!< pointer to
 
 /**
   * @brief  Subtract 1 hour (winter time change).
-  * @note   This interface is deprecated. 
+  * @note   This interface is deprecated.
   *         To manage Daylight Saving Time, please use HAL_RTC_DST_xxx functions
   * @param  __HANDLE__ specifies the RTC handle.
   * @param  __BKP__ Backup

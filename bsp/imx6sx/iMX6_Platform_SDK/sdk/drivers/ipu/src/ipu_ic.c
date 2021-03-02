@@ -38,9 +38,9 @@
 /*!
  * enable IC submodule
  *
- * @param	ipu_index:	ipu index
- * @param	ic_enable:	enable IC
- * @param	irt_enable:	enable IRT
+ * @param   ipu_index:  ipu index
+ * @param   ic_enable:  enable IC
+ * @param   irt_enable: enable IRT
  */
 void ipu_ic_enable(int32_t ipu_index, int32_t ic_enable, int32_t irt_enable)
 {

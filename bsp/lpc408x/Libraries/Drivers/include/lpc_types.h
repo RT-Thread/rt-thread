@@ -9,7 +9,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -43,7 +43,7 @@
  * @ingroup LPC_CMSIS_FwLib_Drivers
  * @{
  */
- 
+
 /* Public Types --------------------------------------------------------------- */
 /** @defgroup LPC_Types_Public_Types Basic Public Data Types
  * @{

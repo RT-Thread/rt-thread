@@ -175,7 +175,7 @@
 #define HTTPD_DEBUG         LWIP_DBG_OFF
 #endif
 
-/** Set this to 1 to use a memp pool for allocating 
+/** Set this to 1 to use a memp pool for allocating
  * struct http_state instead of the heap.
  * If enabled, you'll need to define MEMP_NUM_PARALLEL_HTTPD_CONNS
  * (and MEMP_NUM_PARALLEL_HTTPD_SSI_CONNS for SSI) to set the size of

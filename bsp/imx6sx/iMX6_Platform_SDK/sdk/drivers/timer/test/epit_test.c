@@ -91,7 +91,7 @@ void epit_delay_test(void)
     printf("This test displays the elapsed number of second.\n");
     printf("The test exists after %d seconds.\n",max_duration);
 
-    while (counter != max_duration) {        
+    while (counter != max_duration) {
         hal_delay_us(1000000);
         counter++;
         printf("%ds\n",counter);
@@ -101,7 +101,7 @@ void epit_delay_test(void)
 /* epit instance for system tick */
 static uint32_t epit_instance = HW_EPIT2;
 
-/*! 
+/*!
  * Tick timer interrupt handler.
  */
 void tick_timer_interrupt_routine(void)
@@ -141,7 +141,7 @@ void epit_tick_test(void)
         while (g_wait_for_irq == 1);
         counter++;
 
-        if (!(counter%100)) 
+        if (!(counter%100))
             printf("Elapsed time %d seconds <=> %d ticks.\n", counter/100, counter);
     };
 

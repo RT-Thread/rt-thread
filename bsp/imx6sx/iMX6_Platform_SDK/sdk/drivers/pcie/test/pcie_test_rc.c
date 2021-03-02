@@ -32,7 +32,7 @@
 #include "pcie/pcie_common.h"
 #include "pcie/pcie_prot.h"
 
-#define PCIE_VERIFY_PATTERN		0x5a
+#define PCIE_VERIFY_PATTERN     0x5a
 
 extern int pcie_init(pcie_dm_mode_e dev_mode);
 

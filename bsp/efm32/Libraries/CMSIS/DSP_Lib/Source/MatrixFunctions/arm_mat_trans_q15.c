@@ -1,58 +1,58 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:	    arm_mat_trans_q15.c    
-*    
-* Description:	Q15 matrix transpose.    
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:    V1.1.0
+*
+* Project:      CMSIS DSP Library
+* Title:        arm_mat_trans_q15.c
+*
+* Description:  Q15 matrix transpose.
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated.    
-*    
-* Version 0.0.5  2010/04/26     
-*    incorporated review comments and updated with latest CMSIS layer    
-*    
-* Version 0.0.3  2010/03/10     
-*    Initial version    
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.10 2011/7/15
+*    Big Endian support added and Merged M0 and M3/M4 Source code.
+*
+* Version 1.0.3 2010/11/29
+*    Re-organized the CMSIS folders and updated documentation.
+*
+* Version 1.0.2 2010/11/11
+*    Documentation updated.
+*
+* Version 1.0.1 2010/10/05
+*    Production release and review comments incorporated.
+*
+* Version 1.0.0 2010/09/20
+*    Production release and review comments incorporated.
+*
+* Version 0.0.5  2010/04/26
+*    incorporated review comments and updated with latest CMSIS layer
+*
+* Version 0.0.3  2010/03/10
+*    Initial version
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
 
-/**    
- * @ingroup groupMatrix    
+/**
+ * @ingroup groupMatrix
  */
 
-/**    
- * @addtogroup MatrixTrans    
- * @{    
+/**
+ * @addtogroup MatrixTrans
+ * @{
  */
 
-/*    
- * @brief Q15 matrix transpose.    
- * @param[in]  *pSrc points to the input matrix    
- * @param[out] *pDst points to the output matrix    
- * @return 	The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>    
- * or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.    
+/*
+ * @brief Q15 matrix transpose.
+ * @param[in]  *pSrc points to the input matrix
+ * @param[out] *pDst points to the output matrix
+ * @return  The function returns either  <code>ARM_MATH_SIZE_MISMATCH</code>
+ * or <code>ARM_MATH_SUCCESS</code> based on the outcome of size checking.
  */
 
 arm_status arm_mat_trans_q15(
@@ -77,7 +77,7 @@ arm_status arm_mat_trans_q15(
 
   q15_t in;
 
-#endif	/*	#ifndef UNALIGNED_SUPPORT_DISABLE	*/
+#endif  /*  #ifndef UNALIGNED_SUPPORT_DISABLE   */
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
@@ -103,7 +103,7 @@ arm_status arm_mat_trans_q15(
       /* The pointer pOut is set to starting address of the column being processed */
       pOut = pDst->pData + i;
 
-      /* First part of the processing with loop unrolling.  Compute 4 outputs at a time.    
+      /* First part of the processing with loop unrolling.  Compute 4 outputs at a time.
        ** a second loop below computes the remaining 1 to 3 samples. */
       while(col > 0u)
       {
@@ -177,31 +177,13 @@ arm_status arm_mat_trans_q15(
 
 #endif /*    #ifndef ARM_MATH_BIG_ENDIAN    */
 
-#else	 
+#else
         /* Read one element from the row */
         in = *pSrcA++;
 
         /* Store one element in the destination */
         *pOut = in;
- 
-        /* Update the pointer px to point to the next row of the transposed matrix */
-        pOut += nRows;
 
-        /* Read one element from the row */
-        in = *pSrcA++;
-
-        /* Store one element in the destination */
-        *pOut = in;
- 
-        /* Update the pointer px to point to the next row of the transposed matrix */
-        pOut += nRows;
-
-        /* Read one element from the row */
-        in = *pSrcA++;
-
-        /* Store one element in the destination */
-        *pOut = in;
- 
         /* Update the pointer px to point to the next row of the transposed matrix */
         pOut += nRows;
 
@@ -211,7 +193,25 @@ arm_status arm_mat_trans_q15(
         /* Store one element in the destination */
         *pOut = in;
 
-#endif	/*	#ifndef UNALIGNED_SUPPORT_DISABLE	*/
+        /* Update the pointer px to point to the next row of the transposed matrix */
+        pOut += nRows;
+
+        /* Read one element from the row */
+        in = *pSrcA++;
+
+        /* Store one element in the destination */
+        *pOut = in;
+
+        /* Update the pointer px to point to the next row of the transposed matrix */
+        pOut += nRows;
+
+        /* Read one element from the row */
+        in = *pSrcA++;
+
+        /* Store one element in the destination */
+        *pOut = in;
+
+#endif  /*  #ifndef UNALIGNED_SUPPORT_DISABLE   */
 
         /* Update the pointer pOut to point to the next row of the transposed matrix */
         pOut += nRows;
@@ -277,6 +277,6 @@ arm_status arm_mat_trans_q15(
   return (status);
 }
 
-/**    
- * @} end of MatrixTrans group    
+/**
+ * @} end of MatrixTrans group
  */

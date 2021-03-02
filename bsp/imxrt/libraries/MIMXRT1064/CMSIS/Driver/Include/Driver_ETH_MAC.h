@@ -194,7 +194,7 @@ typedef struct _ARM_ETH_MAC_TIME {
   \param[in]   len    Frame buffer length in bytes
   \return      number of data bytes read or execution status
                  - value >= 0: number of data bytes read
-                 - value < 0: error occurred, value is execution status as defined with \ref execution_status 
+                 - value < 0: error occurred, value is execution status as defined with \ref execution_status
 */
 /**
   \fn          uint32_t ARM_ETH_MAC_GetRxFrameSize (void)

@@ -92,7 +92,7 @@ extern "C" {
   *        (when HSE is used as system clock source, directly or through the PLL).
   */
 #if !defined  (HSE_VALUE)
-#define HSE_VALUE    8000000U         /*!< Value of the External oscillator in Hz */                                                                                 
+#define HSE_VALUE    8000000U         /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
 
 #if !defined  (HSE_STARTUP_TIMEOUT)
@@ -111,11 +111,11 @@ extern "C" {
 /**
   * @brief Internal Low Speed oscillator (LSI) value.
   */
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
 #define LSI_VALUE  32000U                  /*!< LSI Typical Value in Hz*/
 #endif /* LSI_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
 The real value may vary depending on the variations
-in voltage and temperature.*/                                           
+in voltage and temperature.*/
 /**
   * @brief External Low Speed oscillator (LSE) value.
   *        This value is used by the UART, RTC HAL module to compute the system frequency
@@ -130,13 +130,13 @@ in voltage and temperature.*/
 
 /**
   * @brief External clock source for I2S1 peripheral
-  *        This value is used by the RCC HAL module to compute the I2S1 clock source 
+  *        This value is used by the RCC HAL module to compute the I2S1 clock source
   *        frequency.
   */
 #if !defined  (EXTERNAL_I2S1_CLOCK_VALUE)
 #define EXTERNAL_I2S1_CLOCK_VALUE    12288000U /*!< Value of the I2S1 External clock source in Hz*/
-#endif /* EXTERNAL_I2S1_CLOCK_VALUE */ 
-   
+#endif /* EXTERNAL_I2S1_CLOCK_VALUE */
+
 /* Tip: To avoid modifying this file each time you need to use different HSE,
    ===  you can define the HSE value in your toolchain compiler preprocessor. */
 
@@ -145,7 +145,7 @@ in voltage and temperature.*/
   * @brief This is the HAL system configuration section
   */
 #define  VDD_VALUE                    3300U                                         /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY            0U /*!< tick interrupt priority */       
+#define  TICK_INT_PRIORITY            0U /*!< tick interrupt priority */
 #define  USE_RTOS                     0U
 #define  PREFETCH_ENABLE              1U
 #define  INSTRUCTION_CACHE_ENABLE     1U

@@ -64,8 +64,8 @@ extern "C" {
  * the driver.
  */
 enum sdadc_job_type {
-	/** Asynchronous SDADC read into a user provided buffer */
-	SDADC_JOB_READ_BUFFER,
+    /** Asynchronous SDADC read into a user provided buffer */
+    SDADC_JOB_READ_BUFFER,
 };
 
 /**
@@ -73,13 +73,13 @@ enum sdadc_job_type {
  * @{
  */
 void sdadc_register_callback(
-		struct sdadc_module *const module,
-		sdadc_callback_t callback_func,
-		enum sdadc_callback callback_type);
+        struct sdadc_module *const module,
+        sdadc_callback_t callback_func,
+        enum sdadc_callback callback_type);
 
 void sdadc_unregister_callback(
-		struct sdadc_module *module,
-		enum sdadc_callback callback_type);
+        struct sdadc_module *module,
+        enum sdadc_callback callback_type);
 
 /**
  * \brief Enables callback.
@@ -98,23 +98,23 @@ void sdadc_unregister_callback(
  *
  */
 static inline void sdadc_enable_callback(
-		struct sdadc_module *const module,
-		enum sdadc_callback callback_type)
+        struct sdadc_module *const module,
+        enum sdadc_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Enable callback */
-	module->enabled_callback_mask |= (1 << callback_type);
+    /* Enable callback */
+    module->enabled_callback_mask |= (1 << callback_type);
 
-	/* Enable window interrupt if this is a window callback */
-	if (callback_type == SDADC_CALLBACK_WINDOW) {
-		sdadc_enable_interrupt(module, SDADC_INTERRUPT_WINDOW);
-	}
-	/* Enable overrun interrupt if error callback is registered */
-	if (callback_type == SDADC_CALLBACK_ERROR) {
-		sdadc_enable_interrupt(module, SDADC_INTERRUPT_OVERRUN);
-	}
+    /* Enable window interrupt if this is a window callback */
+    if (callback_type == SDADC_CALLBACK_WINDOW) {
+        sdadc_enable_interrupt(module, SDADC_INTERRUPT_WINDOW);
+    }
+    /* Enable overrun interrupt if error callback is registered */
+    if (callback_type == SDADC_CALLBACK_ERROR) {
+        sdadc_enable_interrupt(module, SDADC_INTERRUPT_OVERRUN);
+    }
 }
 
 /**
@@ -133,23 +133,23 @@ static inline void sdadc_enable_callback(
  *
  */
 static inline void sdadc_disable_callback(
-		struct sdadc_module *const module,
-		enum sdadc_callback callback_type)
+        struct sdadc_module *const module,
+        enum sdadc_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Disable callback */
-	module->enabled_callback_mask &= ~(1 << callback_type);
+    /* Disable callback */
+    module->enabled_callback_mask &= ~(1 << callback_type);
 
-	/* Disable window interrupt if this is a window callback */
-	if (callback_type == SDADC_CALLBACK_WINDOW) {
-		sdadc_disable_interrupt(module, SDADC_INTERRUPT_WINDOW);
-	}
-	/* Disable overrun interrupt if this is the error callback */
-	if (callback_type == SDADC_CALLBACK_ERROR) {
-		sdadc_disable_interrupt(module, SDADC_INTERRUPT_OVERRUN);
-	}
+    /* Disable window interrupt if this is a window callback */
+    if (callback_type == SDADC_CALLBACK_WINDOW) {
+        sdadc_disable_interrupt(module, SDADC_INTERRUPT_WINDOW);
+    }
+    /* Disable overrun interrupt if this is the error callback */
+    if (callback_type == SDADC_CALLBACK_ERROR) {
+        sdadc_disable_interrupt(module, SDADC_INTERRUPT_OVERRUN);
+    }
 }
 
 /** @} */
@@ -160,17 +160,17 @@ static inline void sdadc_disable_callback(
  * @{
  */
 enum status_code sdadc_read_buffer_job(
-		struct sdadc_module *const module_inst,
-		int32_t *buffer,
-		uint16_t samples);
+        struct sdadc_module *const module_inst,
+        int32_t *buffer,
+        uint16_t samples);
 
 enum status_code sdadc_get_job_status(
-		struct sdadc_module *module_inst,
-		enum sdadc_job_type type);
+        struct sdadc_module *module_inst,
+        enum sdadc_job_type type);
 
 void sdadc_abort_job(
-		struct sdadc_module *module_inst,
-		enum sdadc_job_type type);
+        struct sdadc_module *module_inst,
+        enum sdadc_job_type type);
 /** @} */
 
 /** @} */

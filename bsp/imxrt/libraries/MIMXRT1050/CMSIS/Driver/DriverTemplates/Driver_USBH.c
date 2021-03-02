@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #include "Driver_USBH.h"
 
 /* USB Host Driver */
@@ -23,7 +23,7 @@
 #define ARM_USBH_DRV_VERSION    ARM_DRIVER_VERSION_MAJOR_MINOR(2, 0) /* driver version */
 
 /* Driver Version */
-static const ARM_DRIVER_VERSION usbh_driver_version = { 
+static const ARM_DRIVER_VERSION usbh_driver_version = {
     ARM_USBH_API_VERSION,
     ARM_USBH_DRV_VERSION
 };
@@ -156,7 +156,7 @@ void ARM_USBH_SignalEndpointEvent(ARM_USBH_EP_HANDLE ep_hndl, uint32_t event)
 /* USB Host HCI (OHCI/EHCI) Driver */
 
 /* Driver Version */
-static const ARM_DRIVER_VERSION usbh_hci_driver_version = { 
+static const ARM_DRIVER_VERSION usbh_hci_driver_version = {
     ARM_USBH_API_VERSION,
     ARM_USBH_DRV_VERSION
 };

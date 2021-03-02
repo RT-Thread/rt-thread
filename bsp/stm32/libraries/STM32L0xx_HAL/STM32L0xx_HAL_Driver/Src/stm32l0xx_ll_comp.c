@@ -145,10 +145,10 @@
 ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
-  
+
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       COMP instance must not be locked.                                  */
   if(LL_COMP_IsLocked(COMPx) == 0U)
@@ -162,7 +162,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
                  | COMP_CSR_COMP1LPTIM1IN1
                  | COMP_CSR_COMP1POLARITY
                  | COMP_CSR_COMP1LOCK
-                ) 
+                )
                );
     }
     else
@@ -176,7 +176,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
                  | COMP_CSR_COMP2LPTIM1IN1
                  | COMP_CSR_COMP2POLARITY
                  | COMP_CSR_COMP2LOCK
-                ) 
+                )
                );
     }
 
@@ -188,7 +188,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
     /* The only way to unlock the comparator is a device hardware reset.       */
     status = ERROR;
   }
-  
+
   return status;
 }
 
@@ -207,7 +207,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
   if(COMPx == COMP2)
@@ -217,7 +217,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
   }
   assert_param(IS_LL_COMP_INPUT_MINUS(COMPx, COMP_InitStruct->InputMinus));
   assert_param(IS_LL_COMP_OUTPUT_POLARITY(COMP_InitStruct->OutputPolarity));
-  
+
   /* Note: Hardware constraint (refer to description of this function)        */
   /*       COMP instance must not be locked.                                  */
   if(LL_COMP_IsLocked(COMPx) == 0U)
@@ -235,27 +235,27 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
       MODIFY_REG(COMPx->CSR,
                  ( COMP_CSR_COMP1INNSEL
                   | COMP_CSR_COMP1POLARITY
-                 ) 
+                 )
                 ,
                  (  COMP_InitStruct->InputMinus
                   | COMP_InitStruct->OutputPolarity
-                 ) 
+                 )
                 );
     }
     else
     {
       MODIFY_REG(COMPx->CSR,
-                 (  COMP_CSR_COMP2SPEED       
-                  | COMP_CSR_COMP2INPSEL      
-                  | COMP_CSR_COMP2INNSEL      
+                 (  COMP_CSR_COMP2SPEED
+                  | COMP_CSR_COMP2INPSEL
+                  | COMP_CSR_COMP2INNSEL
                   | COMP_CSR_COMP2POLARITY
-                 ) 
+                 )
                 ,
                  (  COMP_InitStruct->PowerMode
                   | COMP_InitStruct->InputPlus
                   | COMP_InitStruct->InputMinus
                   | COMP_InitStruct->OutputPolarity
-                 ) 
+                 )
                 );
     }
 
@@ -265,7 +265,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
     /* Initialization error: COMP instance is locked.                         */
     status = ERROR;
   }
-  
+
   return status;
 }
 

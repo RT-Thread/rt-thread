@@ -7,11 +7,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                       opensource.org/licenses/BSD-3-Clause
   *
@@ -70,13 +70,13 @@ int MAILBOX_Init(void)
 
   if (HAL_IPCC_ActivateNotification(&hipcc, IPCC_CHANNEL_1, IPCC_CHANNEL_DIR_RX,
           IPCC_channel1_callback) != HAL_OK) {
-	  OPENAMP_log_err("%s: ch_1 RX fail\n", __func__);
+      OPENAMP_log_err("%s: ch_1 RX fail\n", __func__);
     return -1;
   }
 
   if (HAL_IPCC_ActivateNotification(&hipcc, IPCC_CHANNEL_2, IPCC_CHANNEL_DIR_RX,
           IPCC_channel2_callback) != HAL_OK) {
-	  OPENAMP_log_err("%s: ch_2 RX fail\n", __func__);
+      OPENAMP_log_err("%s: ch_2 RX fail\n", __func__);
     return -1;
   }
 
@@ -146,7 +146,7 @@ int MAILBOX_Notify(void *priv, uint32_t id)
 
   /* Inform A7 (either new message, or buf free) */
   HAL_IPCC_NotifyCPU(&hipcc, channel, IPCC_CHANNEL_DIR_TX);
-  
+
   return 0;
 }
 

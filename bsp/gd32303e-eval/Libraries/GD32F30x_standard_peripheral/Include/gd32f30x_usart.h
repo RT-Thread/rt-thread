@@ -96,7 +96,7 @@
 /* USARTx_GP */
 #define USART_GP_PSC                  BITS(0,7)    /*!< prescaler value for dividing the system clock */
 #define USART_GP_GUAT                 BITS(8,15)   /*!< guard time value in smartcard mode */
- 
+
 /* USARTx_CTL3 */
 #define USART_CTL3_RTEN               BIT(0)       /*!< receiver timeout enable */
 #define USART_CTL3_SCRTNUM            BITS(1,3)    /*!< smartcard auto-retry number */
@@ -415,4 +415,4 @@ void usart_interrupt_disable(uint32_t usart_periph, uint32_t int_flag);
 FlagStatus usart_interrupt_flag_get(uint32_t usart_periph, uint32_t int_flag);
 /* clear interrupt flag in STAT0/STAT1 register */
 void usart_interrupt_flag_clear(uint32_t usart_periph, uint32_t flag);
-#endif /* GD32F30x_USART_H */ 
+#endif /* GD32F30x_USART_H */

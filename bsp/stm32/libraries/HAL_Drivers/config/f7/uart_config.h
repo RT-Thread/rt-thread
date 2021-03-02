@@ -8,7 +8,7 @@
  * 2018-10-30     SummerGift   first version
  * 2019-01-05     zylx         modify dma support
  */
- 
+
 #ifndef __UART_CONFIG_H__
 #define __UART_CONFIG_H__
 
@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #if defined(BSP_USING_UART1)
-#ifndef UART1_CONFIG    
+#ifndef UART1_CONFIG
 #define UART1_CONFIG                                                \
     {                                                               \
         .name = "uart1",                                            \

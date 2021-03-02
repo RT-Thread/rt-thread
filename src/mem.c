@@ -489,7 +489,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         {
             ((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
         }
-        
+
         if (mem2 < lfree)
         {
             /* the splited struct is now the lowest */

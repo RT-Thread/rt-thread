@@ -2,7 +2,7 @@
 *   @brief HET Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -139,11 +139,11 @@ typedef volatile struct hetBase
 
 #define hetRAM2 ((hetRAMBASE_t *)0xFF440000U)
 
-#define NHET1RAMPARLOC	(*(volatile uint32 *)0xFF462000U)
-#define NHET1RAMLOC		(*(volatile uint32 *)0xFF460000U)
+#define NHET1RAMPARLOC  (*(volatile uint32 *)0xFF462000U)
+#define NHET1RAMLOC     (*(volatile uint32 *)0xFF460000U)
 
-#define NHET2RAMPARLOC	(*(volatile uint32 *)0xFF442000U)
-#define NHET2RAMLOC		(*(volatile uint32 *)0xFF440000U)
+#define NHET2RAMPARLOC  (*(volatile uint32 *)0xFF442000U)
+#define NHET2RAMLOC     (*(volatile uint32 *)0xFF440000U)
 
 /* USER CODE BEGIN (1) */
 /* USER CODE END */

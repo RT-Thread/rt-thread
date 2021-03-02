@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2019-03-08     obito0   first version
  */
- 
+
 #include "board.h"
 
 void SystemClock_Config(void)

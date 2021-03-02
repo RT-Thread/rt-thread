@@ -105,9 +105,9 @@ typedef signed long long     s64;        //!< 64 bit signed integer.
 typedef unsigned long        GERR;       //!< GOKESDK error/return code.
 typedef unsigned long        GD_HANDLE;  //!< GOKESDK handle.
 
-typedef unsigned int    	UINT32;
+typedef unsigned int        UINT32;
 typedef signed long         INT32;
-typedef unsigned char       UC8; 
+typedef unsigned char       UC8;
 
 
 /*! \brief Defines a GOKESDK boolean. */

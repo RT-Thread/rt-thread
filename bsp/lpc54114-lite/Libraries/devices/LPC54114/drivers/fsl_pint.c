@@ -3,7 +3,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -72,11 +72,11 @@ void PINT_Init(PINT_Type *base)
     {
         pmcfg = pmcfg | (kPINT_PatternMatchNever << (PININT_BITSLICE_CFG_START + (i * 3U)));
     }
-    
+
 #if defined(FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE) && (FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE == 1)
     /* Enable the peripheral clock */
     CLOCK_EnableClock(kCLOCK_GpioInt);
-    
+
     /* Reset the peripheral */
     RESET_PeripheralReset(kGPIOINT_RST_N_SHIFT_RSTn);
 #elif defined(FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE) && (FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE == 0)
@@ -311,19 +311,19 @@ void PINT_Deinit(PINT_Type *base)
 #if defined(FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE) && (FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE == 1)
     /* Reset the peripheral */
     RESET_PeripheralReset(kGPIOINT_RST_N_SHIFT_RSTn);
-    
+
     /* Disable the peripheral clock */
     CLOCK_DisableClock(kCLOCK_GpioInt);
 #elif defined(FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE) && (FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE == 0)
     /* Reset the peripheral */
     RESET_PeripheralReset(kGPIO0_RST_N_SHIFT_RSTn);
-    
+
     /* Disable the peripheral clock */
     CLOCK_DisableClock(kCLOCK_Gpio0);
 #else
     /* Reset the peripheral */
     RESET_PeripheralReset(kPINT_RST_SHIFT_RSTn);
-    
+
     /* Disable the peripheral clock */
     CLOCK_DisableClock(kCLOCK_Pint);
 #endif /* FSL_FEATURE_CLOCK_HAS_GPIOINT_CLOCK_SOURCE */
@@ -345,7 +345,7 @@ void PIN_INT0_DriverIRQHandler(void)
     {
         /* Edge sensitive: clear Pin interrupt after callback */
         PINT_PinInterruptClrStatus(PINT, kPINT_PinInt0);
-    } 
+    }
 /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
   exception return operation might vector to incorrect interrupt */
 #if defined __CORTEX_M && (__CORTEX_M == 4U)
@@ -369,7 +369,7 @@ void PIN_INT1_DriverIRQHandler(void)
     {
         /* Edge sensitive: clear Pin interrupt after callback */
         PINT_PinInterruptClrStatus(PINT, kPINT_PinInt1);
-    } 
+    }
 /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
   exception return operation might vector to incorrect interrupt */
 #if defined __CORTEX_M && (__CORTEX_M == 4U)

@@ -56,11 +56,11 @@ extern "C" {
  * @defgroup tmr_utils Timer Utility Functions
  * @{
  */
- 
+
 /* **** Definitions **** */
 
 /** @def Macro to convert the parameter \p s from seconds to micro-seconds. */
-#define SEC(s)            (((unsigned long)s) * 1000000UL) 
+#define SEC(s)            (((unsigned long)s) * 1000000UL)
 
 /** @def Macro to convert the parameter \p ms from milli-seconds to micro-seconds. */
 #define MSEC(ms)          (ms * 1000UL)
@@ -123,7 +123,7 @@ unsigned int TMR_TO_Remaining(mxc_tmr_regs_t *tmr);
 
 /**
  * @brief      Start the stopwatch.
- * @note 	   This function does not handle overflows
+ * @note       This function does not handle overflows
  * @param      tmr   Which Timer to use
  * @param      sys_cfg  System configuration object, identical to TMR_Init()
  */
@@ -132,12 +132,12 @@ void TMR_SW_Start(mxc_tmr_regs_t *tmr, const sys_cfg_tmr_t *sys_cfg);
 /**
  * @brief      Stop the stopwatch and return the number of microseconds that
  *             have elapsed.
- * @note 	   This function does not handle overflows
+ * @note       This function does not handle overflows
  * @param      tmr   Which Timer instance to use
  * @return     Number of microseconds since TMR_SW_Start().
  */
 unsigned int TMR_SW_Stop(mxc_tmr_regs_t *tmr);
-  
+
 /**@} end of defgroup tmr_utils*/
 #ifdef __cplusplus
 }

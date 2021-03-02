@@ -18,12 +18,12 @@
 #define __BOARD_H__
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
-//	<i>Default: 64
+//  <i>Default: 64
 #define LM3S_SRAM_SIZE         64
 #define LM3S_SRAM_END          (0x20000000 + LM3S_SRAM_SIZE * 1024)
 
 // For lm3s8962, it should be SYSCTL_XTAL_8MHZ
-#define LM3S_XTAL_TYPE      	SYSCTL_XTAL_8MHZ
+#define LM3S_XTAL_TYPE          SYSCTL_XTAL_8MHZ
 
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);

@@ -522,7 +522,7 @@ extern "C" {
  */
 static inline bool system_is_debugger_present(void)
 {
-	return DSU->STATUSB.reg & DSU_STATUSB_DBGPRES;
+    return DSU->STATUSB.reg & DSU_STATUSB_DBGPRES;
 }
 
 /**
@@ -543,7 +543,7 @@ static inline bool system_is_debugger_present(void)
  */
 static inline uint32_t system_get_device_id(void)
 {
-	return DSU->DID.reg;
+    return DSU->DID.reg;
 }
 
 /**

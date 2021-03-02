@@ -1,15 +1,15 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šä¿¡å·é‡å®ç°ç”Ÿäº§è€…æ¶ˆè´¹è€…é—´çš„äº’æ–¥
+ * ³ÌĞòÇåµ¥£ºĞÅºÅÁ¿ÊµÏÖÉú²úÕßÏû·ÑÕß¼äµÄ»¥³â
  *
- * åœ¨è¿™ä¸ªç¨‹åºä¸­ï¼Œä¼šåˆ›å»ºä¸¤ä¸ªçº¿ç¨‹ï¼Œä¸€ä¸ªæ˜¯ç”Ÿæˆè€…çº¿ç¨‹workerä¸€ä¸ªæ˜¯æ¶ˆè´¹è€…çº¿ç¨‹thread
+ * ÔÚÕâ¸ö³ÌĞòÖĞ£¬»á´´½¨Á½¸öÏß³Ì£¬Ò»¸öÊÇÉú³ÉÕßÏß³ÌworkerÒ»¸öÊÇÏû·ÑÕßÏß³Ìthread
  *
- * åœ¨æ•°æ®ä¿¡æ¯ç”Ÿäº§ã€æ¶ˆè´¹çš„è¿‡ç¨‹ä¸­ï¼Œworkerè´Ÿè´£æŠŠæ•°æ®å°†å†™å…¥åˆ°ç¯å½¢bufferä¸­ï¼Œè€Œthread
- * åˆ™ä»ç¯å½¢bufferä¸­è¯»å‡ºã€‚
+ * ÔÚÊı¾İĞÅÏ¢Éú²ú¡¢Ïû·ÑµÄ¹ı³ÌÖĞ£¬worker¸ºÔğ°ÑÊı¾İ½«Ğ´Èëµ½»·ĞÎbufferÖĞ£¬¶øthread
+ * Ôò´Ó»·ĞÎbufferÖĞ¶Á³ö¡£
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* ä¸€ä¸ªç¯å½¢bufferçš„å®ç° */
+/* Ò»¸ö»·ĞÎbufferµÄÊµÏÖ */
 struct rb
 {
     rt_uint16_t read_index, write_index;
@@ -17,47 +17,47 @@ struct rb
     rt_uint16_t buffer_size;
 };
 
-/* æŒ‡å‘ä¿¡å·é‡æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòĞÅºÅÁ¿¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_sem_t sem = RT_NULL;
-/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_thread_t tid = RT_NULL, worker = RT_NULL;
 
-/* ç¯å½¢bufferçš„å†…å­˜å—ï¼ˆç”¨æ•°ç»„ä½“ç°å‡ºæ¥ï¼‰ */
+/* »·ĞÎbufferµÄÄÚ´æ¿é£¨ÓÃÊı×éÌåÏÖ³öÀ´£© */
 #define BUFFER_SIZE        256
 #define BUFFER_ITEM        32
 static rt_uint8_t working_buffer[BUFFER_SIZE];
 struct rb working_rb;
 
-/* åˆå§‹åŒ–ç¯å½¢bufferï¼ŒsizeæŒ‡çš„æ˜¯bufferçš„å¤§å°ã€‚æ³¨ï¼šè¿™é‡Œå¹¶æ²¡å¯¹æ•°æ®åœ°å€å¯¹é½åšå¤„ç† */
+/* ³õÊ¼»¯»·ĞÎbuffer£¬sizeÖ¸µÄÊÇbufferµÄ´óĞ¡¡£×¢£ºÕâÀï²¢Ã»¶ÔÊı¾İµØÖ·¶ÔÆë×ö´¦Àí */
 static void rb_init(struct rb* rb, rt_uint8_t *pool, rt_uint16_t size)
 {
     RT_ASSERT(rb != RT_NULL);
 
-    /* å¯¹è¯»å†™æŒ‡é’ˆæ¸…é›¶*/
+    /* ¶Ô¶ÁĞ´Ö¸ÕëÇåÁã*/
     rb->read_index = rb->write_index = 0;
 
-    /* è®¾ç½®ç¯å½¢bufferçš„å†…å­˜æ•°æ®å— */
+    /* ÉèÖÃ»·ĞÎbufferµÄÄÚ´æÊı¾İ¿é */
     rb->buffer_ptr = pool;
     rb->buffer_size = size;
 }
 
-/* å‘ç¯å½¢bufferä¸­å†™å…¥æ•°æ® */
+/* Ïò»·ĞÎbufferÖĞĞ´ÈëÊı¾İ */
 static rt_bool_t rb_put(struct rb* rb, const rt_uint8_t *ptr, rt_uint16_t length)
 {
     rt_size_t size;
 
-    /* åˆ¤æ–­æ˜¯å¦æœ‰è¶³å¤Ÿçš„å‰©ä½™ç©ºé—´ */
+    /* ÅĞ¶ÏÊÇ·ñÓĞ×ã¹»µÄÊ£Óà¿Õ¼ä */
     if (rb->read_index > rb->write_index)
         size = rb->read_index - rb->write_index;
     else
         size = rb->buffer_size - rb->write_index + rb->read_index;
 
-    /* æ²¡æœ‰å¤šä½™çš„ç©ºé—´ */
+    /* Ã»ÓĞ¶àÓàµÄ¿Õ¼ä */
     if (size < length) return RT_FALSE;
 
     if (rb->read_index > rb->write_index)
     {
-        /* read_index - write_index å³ä¸ºæ€»çš„ç©ºä½™ç©ºé—´ */
+        /* read_index - write_index ¼´Îª×ÜµÄ¿ÕÓà¿Õ¼ä */
         memcpy(&rb->buffer_ptr[rb->write_index], ptr, length);
         rb->write_index += length;
     }
@@ -65,15 +65,15 @@ static rt_bool_t rb_put(struct rb* rb, const rt_uint8_t *ptr, rt_uint16_t length
     {
         if (rb->buffer_size - rb->write_index > length)
         {
-            /* write_index åé¢å‰©ä½™çš„ç©ºé—´æœ‰è¶³å¤Ÿçš„é•¿åº¦ */
+            /* write_index ºóÃæÊ£ÓàµÄ¿Õ¼äÓĞ×ã¹»µÄ³¤¶È */
             memcpy(&rb->buffer_ptr[rb->write_index], ptr, length);
             rb->write_index += length;
         }
         else
         {
             /*
-             * write_index åé¢å‰©ä½™çš„ç©ºé—´ä¸å­˜åœ¨è¶³å¤Ÿçš„é•¿åº¦ï¼Œéœ€è¦æŠŠéƒ¨åˆ†æ•°æ®å¤åˆ¶åˆ°
-             * å‰é¢çš„å‰©ä½™ç©ºé—´ä¸­
+             * write_index ºóÃæÊ£ÓàµÄ¿Õ¼ä²»´æÔÚ×ã¹»µÄ³¤¶È£¬ĞèÒª°Ñ²¿·ÖÊı¾İ¸´ÖÆµ½
+             * Ç°ÃæµÄÊ£Óà¿Õ¼äÖĞ
              */
             memcpy(&rb->buffer_ptr[rb->write_index], ptr,
                    rb->buffer_size - rb->write_index);
@@ -86,31 +86,31 @@ static rt_bool_t rb_put(struct rb* rb, const rt_uint8_t *ptr, rt_uint16_t length
     return RT_TRUE;
 }
 
-/* ä»ç¯å½¢bufferä¸­è¯»å‡ºæ•°æ® */
+/* ´Ó»·ĞÎbufferÖĞ¶Á³öÊı¾İ */
 static rt_bool_t rb_get(struct rb* rb, rt_uint8_t *ptr, rt_uint16_t length)
 {
     rt_size_t size;
 
-    /* åˆ¤æ–­æ˜¯å¦æœ‰è¶³å¤Ÿçš„æ•°æ® */
+    /* ÅĞ¶ÏÊÇ·ñÓĞ×ã¹»µÄÊı¾İ */
     if (rb->read_index > rb->write_index)
         size = rb->buffer_size - rb->read_index + rb->write_index;
     else
         size = rb->write_index - rb->read_index;
 
-    /* æ²¡æœ‰è¶³å¤Ÿçš„æ•°æ® */
+    /* Ã»ÓĞ×ã¹»µÄÊı¾İ */
     if (size < length) return RT_FALSE;
 
     if (rb->read_index > rb->write_index)
     {
         if (rb->buffer_size - rb->read_index > length)
         {
-            /* read_indexçš„æ•°æ®è¶³å¤Ÿå¤šï¼Œç›´æ¥å¤åˆ¶ */
+            /* read_indexµÄÊı¾İ×ã¹»¶à£¬Ö±½Ó¸´ÖÆ */
             memcpy(ptr, &rb->buffer_ptr[rb->read_index], length);
             rb->read_index += length;
         }
         else
         {
-            /* read_indexçš„æ•°æ®ä¸å¤Ÿï¼Œéœ€è¦åˆ†æ®µå¤åˆ¶ */
+            /* read_indexµÄÊı¾İ²»¹»£¬ĞèÒª·Ö¶Î¸´ÖÆ */
             memcpy(ptr, &rb->buffer_ptr[rb->read_index],
                    rb->buffer_size - rb->read_index);
             memcpy(&ptr[rb->buffer_size - rb->read_index], &rb->buffer_ptr[0],
@@ -121,8 +121,8 @@ static rt_bool_t rb_get(struct rb* rb, rt_uint8_t *ptr, rt_uint16_t length)
     else
     {
         /*
-         * read_indexè¦æ¯”write_indexå°ï¼Œæ€»çš„æ•°æ®é‡å¤Ÿï¼ˆå‰é¢å·²ç»æœ‰æ€»æ•°æ®é‡çš„åˆ¤
-         * æ–­ï¼‰ï¼Œç›´æ¥å¤åˆ¶å‡ºæ•°æ®ã€‚
+         * read_indexÒª±Èwrite_indexĞ¡£¬×ÜµÄÊı¾İÁ¿¹»£¨Ç°ÃæÒÑ¾­ÓĞ×ÜÊı¾İÁ¿µÄÅĞ
+         * ¶Ï£©£¬Ö±½Ó¸´ÖÆ³öÊı¾İ¡£
          */
         memcpy(ptr, &rb->buffer_ptr[rb->read_index], length);
         rb->read_index += length;
@@ -131,7 +131,7 @@ static rt_bool_t rb_get(struct rb* rb, rt_uint8_t *ptr, rt_uint16_t length)
     return RT_TRUE;
 }
 
-/* ç”Ÿäº§è€…çº¿ç¨‹å…¥å£ */
+/* Éú²úÕßÏß³ÌÈë¿Ú */
 static void thread_entry(void* parameter)
 {
     rt_bool_t result;
@@ -139,26 +139,26 @@ static void thread_entry(void* parameter)
 
     while (1)
     {
-        /* æŒæœ‰ä¿¡å·é‡ */
+        /* ³ÖÓĞĞÅºÅÁ¿ */
         rt_sem_take(sem, RT_WAITING_FOREVER);
-        /* ä»ç¯bufferä¸­è·å¾—æ•°æ® */
+        /* ´Ó»·bufferÖĞ»ñµÃÊı¾İ */
         result = rb_get(&working_rb, &data_buffer[0], BUFFER_ITEM);
-        /* é‡Šæ”¾ä¿¡å·é‡ */
+        /* ÊÍ·ÅĞÅºÅÁ¿ */
         rt_sem_release(sem);
         data_buffer[BUFFER_ITEM] = '\0';
 
         if (result == RT_TRUE)
         {
-            /* è·å–æ•°æ®æˆåŠŸï¼Œæ‰“å°æ•°æ® */
+            /* »ñÈ¡Êı¾İ³É¹¦£¬´òÓ¡Êı¾İ */
             rt_kprintf("%s\n", data_buffer);
         }
 
-        /* åšä¸€ä¸ª5 OS Tickçš„ä¼‘çœ  */
+        /* ×öÒ»¸ö5 OS TickµÄĞİÃß */
         rt_thread_delay(5);
     }
 }
 
-/* workerçº¿ç¨‹å…¥å£ */
+/* workerÏß³ÌÈë¿Ú */
 static void worker_entry(void* parameter)
 {
     rt_bool_t result;
@@ -168,7 +168,7 @@ static void worker_entry(void* parameter)
     setchar = 0x21;
     while (1)
     {
-        /* æ„é€ æ•°æ® */
+        /* ¹¹ÔìÊı¾İ */
         for(index = 0; index < BUFFER_ITEM; index++)
         {
             data_buffer[index] = setchar;
@@ -176,30 +176,30 @@ static void worker_entry(void* parameter)
                 setchar = 0x21;
         }
 
-        /* æŒæœ‰ä¿¡å·é‡ */
+        /* ³ÖÓĞĞÅºÅÁ¿ */
         rt_sem_take(sem, RT_WAITING_FOREVER);
 
-        /* æŠŠæ•°æ®æ”¾åˆ°ç¯å½¢bufferä¸­ */
+        /* °ÑÊı¾İ·Åµ½»·ĞÎbufferÖĞ */
         result = rb_put(&working_rb, &data_buffer[0], BUFFER_ITEM);
         if (result == RT_FALSE)
         {
             rt_kprintf("put error\n");
         }
 
-        /* é‡Šæ”¾ä¿¡å·é‡ */
+        /* ÊÍ·ÅĞÅºÅÁ¿ */
         rt_sem_release(sem);
 
-        /* æ”¾å…¥æˆåŠŸï¼Œåšä¸€ä¸ª10 OS Tickçš„ä¼‘çœ  */
+        /* ·ÅÈë³É¹¦£¬×öÒ»¸ö10 OS TickµÄĞİÃß */
         rt_thread_delay(10);
     }
 }
 
 int semaphore_buffer_worker_init()
 {
-    /* åˆå§‹åŒ–ring buffer */
+    /* ³õÊ¼»¯ring buffer */
     rb_init(&working_rb, working_buffer, BUFFER_SIZE);
 
-    /* åˆ›å»ºä¿¡å·é‡ */
+    /* ´´½¨ĞÅºÅÁ¿ */
     sem = rt_sem_create("sem", 1, RT_IPC_FLAG_FIFO);
     if (sem == RT_NULL)
     {
@@ -207,18 +207,18 @@ int semaphore_buffer_worker_init()
         return 0;
     }
 
-    /* åˆ›å»ºçº¿ç¨‹1 */
+    /* ´´½¨Ïß³Ì1 */
     tid = rt_thread_create("thread",
-                           thread_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                           thread_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                            THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹2 */
+    /* ´´½¨Ïß³Ì2 */
     worker = rt_thread_create("worker",
-                              worker_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯worker_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                              worker_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇworker_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                               THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (worker != RT_NULL)
         rt_thread_startup(worker);
@@ -231,39 +231,39 @@ int semaphore_buffer_worker_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤ä¿¡å·é‡ */
+    /* É¾³ıĞÅºÅÁ¿ */
     if (sem != RT_NULL)
         rt_sem_delete(sem);
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (tid != RT_NULL && tid->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid);
     if (worker != RT_NULL && worker->stat != RT_THREAD_CLOSE)
         rt_thread_delete(worker);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_semaphore_buffer_worker()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     semaphore_buffer_worker_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_semaphore_buffer_worker, a buffer worker with semaphore example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     semaphore_buffer_worker_init();

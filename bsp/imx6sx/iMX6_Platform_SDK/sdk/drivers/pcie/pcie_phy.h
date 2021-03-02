@@ -56,20 +56,20 @@
 // API
 ///////////////////////////////////////////////////////////////////////////////
 
-/*! 
+/*!
  * @brief This function read the control register of the PCIE phy
- * @param    addr address of the register to be read	
- * @param    data 	register value be read
+ * @param    addr address of the register to be read
+ * @param    data   register value be read
  *
  * @return   0 on success,
  *           -1 if failed
  */
 int pcie_phy_cr_read(uint32_t addr, uint32_t * data);
 
-/*! 
+/*!
  * @brief This function write the control register of the PCIE phy
  * @param    addr address of the register to be written
- * @param    data 	register value to be written
+ * @param    data   register value to be written
  *
  * @return   0 on success,
  *           -1 if failed

@@ -65,7 +65,7 @@ extern "C" {
 
 //! Default Configuration of SPI Master Dummy Field
 #ifndef CONFIG_USART_SPI_DUMMY
-	#define CONFIG_USART_SPI_DUMMY              0xFF
+    #define CONFIG_USART_SPI_DUMMY              0xFF
 #endif
 //! @}
 
@@ -78,12 +78,12 @@ typedef uint8_t spi_flags_t;
 typedef uint32_t board_spi_select_id_t;
 #endif
 
-typedef uint8_t port_pin_t; 
+typedef uint8_t port_pin_t;
 
 //! \brief Polled SPI device definition.
 struct usart_spi_device {
-	/* Board specific select id. */
-	port_pin_t	id;
+    /* Board specific select id. */
+    port_pin_t  id;
 };
 
 void usart_spi_init(Usart *p_usart);

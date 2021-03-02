@@ -94,7 +94,7 @@ ls1c_i2c_ret_t i2c_receive_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *buf,
  * @slave_addr 从机地址
  * @direction 数据传输方向(读、写)
  */
-ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p, 
+ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p,
                                        unsigned char slave_addr,
                                        ls1c_i2c_direction_t direction);
 

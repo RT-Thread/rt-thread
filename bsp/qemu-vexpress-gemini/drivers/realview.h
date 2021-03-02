@@ -6,18 +6,18 @@
 
 /*
  * Peripheral memory map
- * Address range	        Size	Description
- * 0xE000_0000-0xFFFF_FFFF	512MB	External AXI between daughterboards
- * 0xA000_0000-0xDFFF_FFFF	1GB	    Daughterboard, private
- * 0x8000_0000-0x9FFF_FFFF	512MB	Local DDR2
- * 0x8000_0000-0x81FF_FFFF	64MB	Remappable memory location
- * 0x6000_0000-0x7FFF_FFFF	512MB	Local DDR2 lower
- * 0x5C00-0000-0x5FFF_FFFF	64MB	Reserved
- * 0x4000_0000-0x5BFF_FFFF	448MB	Motherboard peripherals, typically, memory devices
- * 0x2000_0000-0x3FFF_FFFF	512MB	Reserved
- * 0x1002_0000-0x1FFF_FFFF	~256MB	Daughterboard, private
- * 0x1000_0000-0x1001_FFFF	128KB	Motherboard peripherals, CS7
- * 0x0000_0000-0x0FFF_FFFF	64MB	Remappable memory section
+ * Address range            Size    Description
+ * 0xE000_0000-0xFFFF_FFFF  512MB   External AXI between daughterboards
+ * 0xA000_0000-0xDFFF_FFFF  1GB     Daughterboard, private
+ * 0x8000_0000-0x9FFF_FFFF  512MB   Local DDR2
+ * 0x8000_0000-0x81FF_FFFF  64MB    Remappable memory location
+ * 0x6000_0000-0x7FFF_FFFF  512MB   Local DDR2 lower
+ * 0x5C00-0000-0x5FFF_FFFF  64MB    Reserved
+ * 0x4000_0000-0x5BFF_FFFF  448MB   Motherboard peripherals, typically, memory devices
+ * 0x2000_0000-0x3FFF_FFFF  512MB   Reserved
+ * 0x1002_0000-0x1FFF_FFFF  ~256MB  Daughterboard, private
+ * 0x1000_0000-0x1001_FFFF  128KB   Motherboard peripherals, CS7
+ * 0x0000_0000-0x0FFF_FFFF  64MB    Remappable memory section
  */
 
 /*

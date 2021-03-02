@@ -43,9 +43,9 @@ OF SUCH DAMAGE.
 */
 void pmu_deinit(void)
 {
-	/* reset PMU */
-	rcu_periph_reset_enable(RCU_PMURST);
-	rcu_periph_reset_disable(RCU_PMURST);
+    /* reset PMU */
+    rcu_periph_reset_enable(RCU_PMURST);
+    rcu_periph_reset_disable(RCU_PMURST);
 }
 
 /*!
@@ -65,14 +65,14 @@ void pmu_deinit(void)
 */
 void pmu_lvd_select(uint32_t lvdt_n)
 {
-	/* disable LVD */
-	PMU_CTL &= ~PMU_CTL_LVDEN;
-	/* clear LVDT bits */
-	PMU_CTL &= ~PMU_CTL_LVDT;
-	/* set LVDT bits according to lvdt_n */
-	PMU_CTL |= lvdt_n;
-	/* enable LVD */
-	PMU_CTL |= PMU_CTL_LVDEN;
+    /* disable LVD */
+    PMU_CTL &= ~PMU_CTL_LVDEN;
+    /* clear LVDT bits */
+    PMU_CTL &= ~PMU_CTL_LVDT;
+    /* set LVDT bits according to lvdt_n */
+    PMU_CTL |= lvdt_n;
+    /* enable LVD */
+    PMU_CTL |= PMU_CTL_LVDEN;
 }
 
 /*!
@@ -83,8 +83,8 @@ void pmu_lvd_select(uint32_t lvdt_n)
 */
 void pmu_lvd_disable(void)
 {
-	/* disable LVD */
-	PMU_CTL &= ~PMU_CTL_LVDEN;
+    /* disable LVD */
+    PMU_CTL &= ~PMU_CTL_LVDEN;
 }
 
 /*!
@@ -99,17 +99,17 @@ void pmu_lvd_disable(void)
 void pmu_to_sleepmode(uint8_t sleepmodecmd)
 {
     /* clear sleepdeep bit of Cortex-M3 system control register */
-	clear_csr(0x811, 0x1);
+    clear_csr(0x811, 0x1);
 
     /* select WFI or WFE command to enter sleep mode */
     if(WFI_CMD == sleepmodecmd){
         __WFI();
     }else{
-    	clear_csr(mstatus, MSTATUS_MIE);
-    	set_csr(0x810, 0x1);
-    	__WFI();
-    	clear_csr(0x810, 0x1);
-    	set_csr(mstatus, MSTATUS_MIE);
+        clear_csr(mstatus, MSTATUS_MIE);
+        set_csr(0x810, 0x1);
+        __WFI();
+        clear_csr(0x810, 0x1);
+        set_csr(mstatus, MSTATUS_MIE);
     }
 }
 
@@ -128,7 +128,7 @@ void pmu_to_sleepmode(uint8_t sleepmodecmd)
 */
 void pmu_to_deepsleepmode(uint32_t ldo,uint8_t deepsleepmodecmd)
 {
-	/* clear stbmod and ldolp bits */
+    /* clear stbmod and ldolp bits */
     PMU_CTL &= ~((uint32_t)(PMU_CTL_STBMOD | PMU_CTL_LDOLP));
     /* set ldolp bit according to pmu_ldo */
     PMU_CTL |= ldo;
@@ -138,11 +138,11 @@ void pmu_to_deepsleepmode(uint32_t ldo,uint8_t deepsleepmodecmd)
     if(WFI_CMD == deepsleepmodecmd){
         __WFI();
     }else{
-    	clear_csr(mstatus, MSTATUS_MIE);
-    	set_csr(0x810, 0x1);
-    	__WFI();
-    	clear_csr(0x810, 0x1);
-    	set_csr(mstatus, MSTATUS_MIE);
+        clear_csr(mstatus, MSTATUS_MIE);
+        set_csr(0x810, 0x1);
+        __WFI();
+        clear_csr(0x810, 0x1);
+        set_csr(mstatus, MSTATUS_MIE);
     }
     /* reset sleepdeep bit of RISC-V system control register */
     clear_csr(0x811, 0x1);
@@ -160,7 +160,7 @@ void pmu_to_deepsleepmode(uint32_t ldo,uint8_t deepsleepmodecmd)
 void pmu_to_standbymode(uint8_t standbymodecmd)
 {
     /* set CSR_SLEEPVALUE bit of RISC-V system control register */
-	set_csr(0x811, 0x1);
+    set_csr(0x811, 0x1);
 
     /* set stbmod bit */
     PMU_CTL |= PMU_CTL_STBMOD;
@@ -172,11 +172,11 @@ void pmu_to_standbymode(uint8_t standbymodecmd)
     if(WFI_CMD == standbymodecmd){
         __WFI();
     }else{
-    	clear_csr(mstatus, MSTATUS_MIE);
-    	set_csr(0x810, 0x1);
-    	__WFI();
-    	clear_csr(0x810, 0x1);
-    	set_csr(mstatus, MSTATUS_MIE);
+        clear_csr(mstatus, MSTATUS_MIE);
+        set_csr(0x810, 0x1);
+        __WFI();
+        clear_csr(0x810, 0x1);
+        set_csr(mstatus, MSTATUS_MIE);
     }
     clear_csr(0x811, 0x1);
 }
@@ -189,7 +189,7 @@ void pmu_to_standbymode(uint8_t standbymodecmd)
 */
 void pmu_wakeup_pin_enable(void)
 {
-	PMU_CS |= PMU_CS_WUPEN;
+    PMU_CS |= PMU_CS_WUPEN;
 }
 
 /*!
@@ -200,7 +200,7 @@ void pmu_wakeup_pin_enable(void)
 */
 void pmu_wakeup_pin_disable(void)
 {
-	PMU_CS &= ~PMU_CS_WUPEN;
+    PMU_CS &= ~PMU_CS_WUPEN;
 }
 
 /*!

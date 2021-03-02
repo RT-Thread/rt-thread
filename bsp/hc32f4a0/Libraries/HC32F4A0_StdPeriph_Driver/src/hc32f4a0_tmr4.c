@@ -6,9 +6,9 @@
    Change Logs:
    Date             Author          Notes
    2020-06-12       Hongjh          First version
-   2020-07-15       Hongjh          Modify error parameter assert condition for 
+   2020-07-15       Hongjh          Modify error parameter assert condition for
                                     the function TMR4_PWM_SetPclkDiv.
-   2020-07-25       Hongjh          Modify TMR4_OCO_SetLowChCompareMode function 
+   2020-07-25       Hongjh          Modify TMR4_OCO_SetLowChCompareMode function
                                     comment:from TMR4_OCO_UH/VH/WH to TMR4_OCO_UL/VL/WL
  @endverbatim
  *******************************************************************************

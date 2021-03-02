@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* @brief header file for ADC module utilities (ADC). 
+* @brief header file for ADC module utilities (ADC).
 *
 *******************************************************************************
 *
@@ -16,55 +16,55 @@ extern "C" {
 * Macros
 ******************************************************************************/
 /******************************************************************************
-*define ADC refernce voltage 
+*define ADC refernce voltage
 *
 *//*! @addtogroup adc_ref_list
 * @{
 *******************************************************************************/
 
-#define ADC_VREF_VREFH                 0x00			/*!< ADC reference voltage is VREFH*/
-#define ADC_VREF_VDDA                  0x01			/*!< ADC reference voltage is VDDA*/
+#define ADC_VREF_VREFH                 0x00         /*!< ADC reference voltage is VREFH*/
+#define ADC_VREF_VDDA                  0x01         /*!< ADC reference voltage is VDDA*/
 
-/*! @} End of adc_ref_list                                                    						*/
+/*! @} End of adc_ref_list                                                                          */
 
 /******************************************************************************
-* define ADC clock source 
+* define ADC clock source
 *
 *//*! @addtogroup adc_clock_source_list
 * @{
 *******************************************************************************/
 
-#define CLOCK_SOURCE_BUS_CLOCK							0x00	/*!< ADC clock source is bus clock*/
-#define CLOCK_SOURCE_BUS_CLOCK_DIVIDE_2			        0x01	/*!< ADC clock source is bus clock devided by 2*/
-#define CLOCK_SOURCE_ALTCLK								0x02	/*!< ADC clock source is alternative clcok*/
-#define CLOCK_SOURCE_ADACK								0x03	/*!< ADC clock source is asynchronous clock*/
-/*! @} End of adc_clock_source_list                                          						*/
+#define CLOCK_SOURCE_BUS_CLOCK                          0x00    /*!< ADC clock source is bus clock*/
+#define CLOCK_SOURCE_BUS_CLOCK_DIVIDE_2                 0x01    /*!< ADC clock source is bus clock devided by 2*/
+#define CLOCK_SOURCE_ALTCLK                             0x02    /*!< ADC clock source is alternative clcok*/
+#define CLOCK_SOURCE_ADACK                              0x03    /*!< ADC clock source is asynchronous clock*/
+/*! @} End of adc_clock_source_list                                                                 */
 
 
 /******************************************************************************
-* define ADC divider 
+* define ADC divider
 *
 *//*! @addtogroup adc_clock_divider_list
 * @{
 *******************************************************************************/
 
-#define ADC_ADIV_DIVIDE_1								0x00		/*!< ADC clock divide by 1*/
-#define ADC_ADIV_DIVIDE_2								0x01		/*!< ADC clock divide by 2*/
-#define ADC_ADIV_DIVIDE_4								0x02		/*!< ADC clock divide by 4*/
-#define ADC_ADIV_DIVIDE_8								0x03		/*!< ADC clock divide by 8*/
-/*! @} End of adc_clock_divider_list                                          						*/
+#define ADC_ADIV_DIVIDE_1                               0x00        /*!< ADC clock divide by 1*/
+#define ADC_ADIV_DIVIDE_2                               0x01        /*!< ADC clock divide by 2*/
+#define ADC_ADIV_DIVIDE_4                               0x02        /*!< ADC clock divide by 4*/
+#define ADC_ADIV_DIVIDE_8                               0x03        /*!< ADC clock divide by 8*/
+/*! @} End of adc_clock_divider_list                                                                */
 
 /******************************************************************************
-* define ADC mode 
+* define ADC mode
 *
 *//*! @addtogroup adc_mode_list
 * @{
 *******************************************************************************/
 
-#define ADC_MODE_8BIT									0x00		/*!< ADC 8bit mode*/
-#define ADC_MODE_10BIT									0x01		/*!< ADC 10bit mode*/
-#define ADC_MODE_12BIT									0x02		/*!< ADC 12bit mode */
-/*! @} End of adc_mode_list                                               						*/
+#define ADC_MODE_8BIT                                   0x00        /*!< ADC 8bit mode*/
+#define ADC_MODE_10BIT                                  0x01        /*!< ADC 10bit mode*/
+#define ADC_MODE_12BIT                                  0x02        /*!< ADC 12bit mode */
+/*! @} End of adc_mode_list                                                                     */
 
 /******************************************************************************
 * define ADC channel
@@ -89,13 +89,13 @@ extern "C" {
 #define ADC_CHANNEL_AD13                                 0xd /*!< ADC input channel 13 */
 #define ADC_CHANNEL_AD14                                 0xe /*!< ADC input channel 14 */
 #define ADC_CHANNEL_AD15                                 0xf /*!< ADC input channel 15 */
-#define ADC_CHANNEL_AD18_VSS                            0x12 /*!< ADC input channel VSS */ 
+#define ADC_CHANNEL_AD18_VSS                            0x12 /*!< ADC input channel VSS */
 #define ADC_CHANNEL_AD22_TEMPSENSOR                     0x16 /*!< ADC input channel internal temperature sensor */
-#define ADC_CHANNEL_AD23_BANDGAP                        0x17 /*!< ADC input channel bandgap */ 
-#define ADC_CHANNEL_AD29_VREFH                          0x1D /*!< ADC input channel Vrefh */ 
-#define ADC_CHANNEL_AD30_VREFL                          0x1E /*!< ADC input channel Vrefl */ 
+#define ADC_CHANNEL_AD23_BANDGAP                        0x17 /*!< ADC input channel bandgap */
+#define ADC_CHANNEL_AD29_VREFH                          0x1D /*!< ADC input channel Vrefh */
+#define ADC_CHANNEL_AD30_VREFL                          0x1E /*!< ADC input channel Vrefl */
 #define ADC_CHANNEL_DISABLE                             0x1F /*!< ADC disable */
-/*! @} End of adc_channel_list                                               						*/
+/*! @} End of adc_channel_list                                                                      */
 
 
 /******************************************************************************
@@ -111,8 +111,8 @@ extern "C" {
 #define ADC_FIFO_LEVEL5                                 4 /*!< FIFO Level 4 */
 #define ADC_FIFO_LEVEL6                                 5 /*!< FIFO Level 5 */
 #define ADC_FIFO_LEVEL7                                 6 /*!< FIFO Level 6 */
-#define ADC_FIFO_LEVEL8                                 7	/*!< FIFO Level 7 */
-/*! @} End of adc_fifo_level_list                                               						*/
+#define ADC_FIFO_LEVEL8                                 7   /*!< FIFO Level 7 */
+/*! @} End of adc_fifo_level_list                                                                       */
 
 
 /******************************************************************************
@@ -122,12 +122,12 @@ extern "C" {
 * @{
 *******************************************************************************/
 #define ADC_HARDWARE_TRIGGER                            0x01  /*!< hardware trigger */
-#define ADC_SOFTWARE_TRIGGER                            0x00	/*!< software trigger */
-#define ADC_TRIGGER_RTC                                 0x00  /*!< RTC act as trigger source */          
-#define ADC_TRIGGER_PIT                                 0x01  /*!< PIT act as trigger source */ 
-#define ADC_TRIGGER_ETM2INIT                            0x10  /*!< ETM2 initialization act as trigger source */ 
+#define ADC_SOFTWARE_TRIGGER                            0x00    /*!< software trigger */
+#define ADC_TRIGGER_RTC                                 0x00  /*!< RTC act as trigger source */
+#define ADC_TRIGGER_PIT                                 0x01  /*!< PIT act as trigger source */
+#define ADC_TRIGGER_ETM2INIT                            0x10  /*!< ETM2 initialization act as trigger source */
 #define ADC_TRIGGER_ETM2MATCH                           0x11  /*!< ETM2 match interrupt act as trigger source */
-/*! @} End of adc_trigger_list                                               						*/
+/*! @} End of adc_trigger_list                                                                      */
 
 
 #define ADC_COMPARE_LESS                                0x00
@@ -140,11 +140,11 @@ extern "C" {
 *//*! @addtogroup adc_callback
 * @{
 *******************************************************************************/
-typedef void (*ADC_CallbackType)(void);							/*!< ADC call back function */
-/*! @} End of adc_callback                                               						*/
+typedef void (*ADC_CallbackType)(void);                         /*!< ADC call back function */
+/*! @} End of adc_callback                                                                      */
 
 /******************************************************************************
-* 
+*
 *
 *//*! @addtogroup adc_setting_type
 * @{
@@ -164,19 +164,19 @@ typedef struct
     uint16_t bLongSampleEn          :1;     /*!< 1: long sample mode, 0: short sample mode */
     uint16_t bFiFoScanModeEn        :1;     /*!< 1: FIFO scan mode enable, 0: FIFO scan mode disable */
     uint16_t bCompareAndEn          :1;     /*!< 1: Compare and logic, 0: Compare and logic */
-#ifdef CPU_NV32 
-    uint16_t bReverse               :7;    
+#ifdef CPU_NV32
+    uint16_t bReverse               :7;
 #else
-    uint16_t bHTRGMEn               :1;     /*!< one hardware trigger pulse trigger multiple conversions in fifo mode */      
-    uint16_t bHTRGMASKEn            :1;		/*!< Hardware trigger mask enable. */
-    uint16_t bHTRGMASKSEL           :1;		/*!< This field selects hardware trigger mask mode. */
+    uint16_t bHTRGMEn               :1;     /*!< one hardware trigger pulse trigger multiple conversions in fifo mode */
+    uint16_t bHTRGMASKEn            :1;     /*!< Hardware trigger mask enable. */
+    uint16_t bHTRGMASKSEL           :1;     /*!< This field selects hardware trigger mask mode. */
     uint16_t Reserve                :4;
 #endif
 }ADC_SettingType;
-/*! @} End of adc_setting_type                                               						*/
+/*! @} End of adc_setting_type                                                                      */
 
 /******************************************************************************
-* 
+*
 *
 *//*! @addtogroup adc_config_type
 * @{
@@ -205,8 +205,8 @@ typedef struct
 /*****************************************************************************//*!
    *
    * @brief enable ADC interrupt.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -214,13 +214,13 @@ typedef struct
    *****************************************************************************/
 __STATIC_INLINE void ADC_IntEnable( ADC_Type *pADC )
 {
-    pADC->SC1 |= ADC_SC1_AIEN_MASK;   
+    pADC->SC1 |= ADC_SC1_AIEN_MASK;
 }
 /*****************************************************************************//*!
    *
    * @brief disable ADC interrupt.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -228,13 +228,13 @@ __STATIC_INLINE void ADC_IntEnable( ADC_Type *pADC )
    *****************************************************************************/
 __STATIC_INLINE void ADC_IntDisable( ADC_Type *pADC )
 {
-    pADC->SC1 &= ~ADC_SC1_AIEN_MASK;   
+    pADC->SC1 &= ~ADC_SC1_AIEN_MASK;
 }
 /*****************************************************************************//*!
    *
    * @brief enable ADC continuous conversion.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -242,13 +242,13 @@ __STATIC_INLINE void ADC_IntDisable( ADC_Type *pADC )
    *****************************************************************************/
 __STATIC_INLINE void ADC_ContinuousConversion( ADC_Type *pADC )
 {
-    pADC->SC1 |= ADC_SC1_ADCO_MASK;   
+    pADC->SC1 |= ADC_SC1_ADCO_MASK;
 }
 /*****************************************************************************//*!
    *
    * @brief enable ADC single conversion
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -256,13 +256,13 @@ __STATIC_INLINE void ADC_ContinuousConversion( ADC_Type *pADC )
    *****************************************************************************/
 __STATIC_INLINE void ADC_SingleConversion( ADC_Type *pADC )
 {
-    pADC->SC1 &= ~ADC_SC1_ADCO_MASK;   
+    pADC->SC1 &= ~ADC_SC1_ADCO_MASK;
 }
 /*****************************************************************************//*!
    *
    * @brief set the ADC to hardware trigger.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none.
    *
@@ -275,8 +275,8 @@ __STATIC_INLINE void ADC_SetHardwareTrigger( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief set the ADC to software trigger.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -289,8 +289,8 @@ __STATIC_INLINE void ADC_SetSoftwareTrigger( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief enable ADC compare function.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -303,8 +303,8 @@ __STATIC_INLINE void ADC_CompareEnable( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief disable ADC compare function.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -317,8 +317,8 @@ __STATIC_INLINE void ADC_CompareDisable( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief enable ADC compare greater function.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -331,8 +331,8 @@ __STATIC_INLINE void ADC_CompareGreaterFunction( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief enable ADC compare less function.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -345,8 +345,8 @@ __STATIC_INLINE void ADC_CompareLessFunction( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief set ADC to low power configuration.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -359,8 +359,8 @@ __STATIC_INLINE void ADC_SetLowPower( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief set ADC to high speed configuration.
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -373,7 +373,7 @@ __STATIC_INLINE void ADC_SetHighSpeed( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Long Sample ETMe Configuration.
-   *        
+   *
    * @param[in]  pADC point to ADC module type.
    *
    * @return none
@@ -387,7 +387,7 @@ __STATIC_INLINE void ADC_SetLongSample( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Short Sample ETMe Configuration.
-   *        
+   *
    * @param[in]  pADC point to ADC module type.
    *
    * @return none
@@ -401,7 +401,7 @@ __STATIC_INLINE void ADC_SetShortSample( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief FIFO scan mode enable.
-   *        
+   *
    * @param[in]  pADC point to ADC module type.
    *
    * @return none.
@@ -415,7 +415,7 @@ __STATIC_INLINE void ADC_FifoScanModeEnable( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief FIFO scan mode disable.
-   *        
+   *
    * @param[in]  pADC point to ADC module type.
    *
    * @return none
@@ -429,7 +429,7 @@ __STATIC_INLINE void ADC_FifoScanModeDisable( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief OR all of compare trigger.
-   *        
+   *
    * @param[in]  pADC point to ADC module type.
    *
    * @return none
@@ -443,7 +443,7 @@ __STATIC_INLINE void ADC_CompareFifoOr( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief And all of compare trigger.
-   *        
+   *
    * @param[in]  pADC point to ADC module type.
    *
    * @return none
@@ -457,7 +457,7 @@ __STATIC_INLINE void ADC_CompareFifoAnd( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief read ADC result register.
-   *        
+   *
    * @param[in]  pADC point to ADC module type.
    *
    * @return ADC result value.
@@ -471,9 +471,9 @@ __STATIC_INLINE uint16_t ADC_ReadResultReg( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief set ADC compare value.
-   *        
-   * @param[in]  pADC point to ADC module type. 
-   * @param[in]  u16Compare compare value. 
+   *
+   * @param[in]  pADC point to ADC module type.
+   * @param[in]  u16Compare compare value.
    *
    * @return none
    *
@@ -486,9 +486,9 @@ __STATIC_INLINE void ADC_SetCompareValue( ADC_Type *pADC, uint16_t u16Compare )
 /*****************************************************************************//*!
    *
    * @brief ADC pin control enable.
-   *        
-   * @param[in]  pADC point to ADC module type. 
-   * @param[in]  u16PinNumber enable ADC function to specified pin number. 
+   *
+   * @param[in]  pADC point to ADC module type.
+   * @param[in]  u16PinNumber enable ADC function to specified pin number.
    *
    * @return none
    *
@@ -502,9 +502,9 @@ __STATIC_INLINE void ADC_PinControlEnable( ADC_Type *pADC, uint16_t u16PinNumber
 /*****************************************************************************//*!
    *
    * @brief ADC pin control disable.
-   *        
-   * @param[in]  pADC point to ADC module type. 
-   * @param[in]  u16PinNumber  disable ADC function to specified pin number. 
+   *
+   * @param[in]  pADC point to ADC module type.
+   * @param[in]  u16PinNumber  disable ADC function to specified pin number.
    *
    * @return none
    *
@@ -518,8 +518,8 @@ __STATIC_INLINE void ADC_PinControlDisable( ADC_Type *pADC, uint16_t u16PinNumbe
 /*****************************************************************************//*!
    *
    * @brief check conversion active status
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return TRUE or FALSE
    *
@@ -532,8 +532,8 @@ __STATIC_INLINE uint8_t ADC_IsConversionActiveFlag( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief check COCO flag
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return TRUE or FALSE
    *
@@ -546,8 +546,8 @@ __STATIC_INLINE uint8_t ADC_IsCOCOFlag( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief check Result FIFO empty
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return TRUE or FALSE
    *
@@ -560,8 +560,8 @@ __STATIC_INLINE uint8_t ADC_IsFIFOEmptyFlag( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief check Result FIFO full
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return TRUE or FALSE
    *
@@ -575,8 +575,8 @@ __STATIC_INLINE uint8_t ADC_IsFIFOFullFlag( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Hardware Trigger Multiple Conversion Enable
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -589,8 +589,8 @@ __STATIC_INLINE void ADC_HardwareTriggerMultiple( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Hardware Trigger Single Conversion
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -603,8 +603,8 @@ __STATIC_INLINE void ADC_HardwareTriggerSingle( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Hardware Trigger Mask Enable
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -617,8 +617,8 @@ __STATIC_INLINE void ADC_HardwareTriggerMaskEnable( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Hardware Trigger Mask Disable
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -631,8 +631,8 @@ __STATIC_INLINE void ADC_HardwareTriggerMaskDisable( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Hardware Trigger Mask Mode Select Automatic Mode
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -645,8 +645,8 @@ __STATIC_INLINE void ADC_HardwareTriggerMaskAuto( ADC_Type *pADC )
 /*****************************************************************************//*!
    *
    * @brief Hardware Trigger Mask Mode Select to be with HTRGMASKE
-   *        
-   * @param[in]  pADC point to ADC module type. 
+   *
+   * @param[in]  pADC point to ADC module type.
    *
    * @return none
    *
@@ -703,7 +703,7 @@ unsigned int ADC_PollRead( ADC_Type *pADC, uint8_t u8Channel);
 void ADC_SetCallBack(ADC_CallbackType pADC_CallBack);
 void ADC_DeInit(ADC_Type *pADC);
 void ADC_Init(ADC_Type *pADC, ADC_ConfigTypePtr pADC_Config);
-/*! @} End of adc_api_list                                               						*/
+/*! @} End of adc_api_list                                                                      */
 
 #ifdef __cplusplus
 }

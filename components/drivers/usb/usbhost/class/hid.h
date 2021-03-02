@@ -18,7 +18,7 @@ struct uhid
     upipe_t pipe_in;
     rt_uint8_t buffer[8];
     uprotocal_t protocal;
-};    
+};
 typedef struct uhid uhid_t;
 
 #define USB_REQ_GET_REPORT      0x01
@@ -28,7 +28,7 @@ typedef struct uhid uhid_t;
 #define USB_REQ_SET_IDLE        0x0a
 #define USB_REQ_SET_PROTOCOL    0x0b
 
-#define USB_HID_KEYBOARD        1    
+#define USB_HID_KEYBOARD        1
 #define USB_HID_MOUSE            2
 
 rt_err_t rt_usbh_hid_set_idle(struct uintf* intf, int duration, int report_id);

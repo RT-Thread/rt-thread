@@ -58,35 +58,35 @@
  * \retval STATUS_ERR_INVALID_OPTION  The requested BOD level was outside the acceptable range
  */
 enum status_code bodvdd_set_config(
-		struct bodvdd_config *const conf)
+        struct bodvdd_config *const conf)
 {
-	/* Sanity check arguments */
-	Assert(conf);
+    /* Sanity check arguments */
+    Assert(conf);
 
-	uint32_t temp = 0;
+    uint32_t temp = 0;
 
-	/* Check if module is enabled. */
-	if (SUPC->BODVDD.reg & SUPC_BODVDD_ENABLE) {
-		SUPC->BODVDD.reg &= ~SUPC_BODVDD_ENABLE;
-	}
+    /* Check if module is enabled. */
+    if (SUPC->BODVDD.reg & SUPC_BODVDD_ENABLE) {
+        SUPC->BODVDD.reg &= ~SUPC_BODVDD_ENABLE;
+    }
 
-	/* Convert BOD prescaler, trigger action and mode to a bitmask */
-	temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action |
-			(uint32_t)conf->mode_in_active | (uint32_t)conf->mode_in_standby;
+    /* Convert BOD prescaler, trigger action and mode to a bitmask */
+    temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action |
+            (uint32_t)conf->mode_in_active | (uint32_t)conf->mode_in_standby;
 
-	if (conf->hysteresis == true) {
-		temp |= SUPC_BODVDD_HYST;
-	}
+    if (conf->hysteresis == true) {
+        temp |= SUPC_BODVDD_HYST;
+    }
 
-	if (conf->run_in_standby == true) {
-		temp |= SUPC_BODVDD_RUNSTDBY;
-	}
+    if (conf->run_in_standby == true) {
+        temp |= SUPC_BODVDD_RUNSTDBY;
+    }
 
-	if (conf->level > 0x3F) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (conf->level > 0x3F) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	SUPC->BODVDD.reg = SUPC_BODVDD_LEVEL(conf->level) | temp;
+    SUPC->BODVDD.reg = SUPC_BODVDD_LEVEL(conf->level) | temp;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

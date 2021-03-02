@@ -32,7 +32,7 @@
 #ifndef __HW_I2CSD_ROM_API_H
 #define __HW_I2CSD_ROM_API_H
 
-#include "stdint.h"		// added to define uint32_t, etc.
+#include "stdint.h"     // added to define uint32_t, etc.
 #include "error.h"
 #include "packing.h"
 #include "hw_i2c_common.h"
@@ -57,33 +57,33 @@ typedef void *ROM_I2CS_HANDLE_T;
 #define ROM_I2CS_HANDLE_TOUDATA(p)          (void *) (*(uint32_t *) p)
 
 /** @brief I2C master optional transfer flags */
-#define ROM_I2CS_FLAG_USERBITS  (0xFFFF)		/*!< Application can safely use the flag bits designated by this mask */
+#define ROM_I2CS_FLAG_USERBITS  (0xFFFF)        /*!< Application can safely use the flag bits designated by this mask */
 
 /** @brief slave transfer descriptor */
 typedef PRE_PACK struct POST_PACK {
-	const void              *txBuff;		/*!< Pointer to array of bytes to be transmitted */
-	void                    *rxBuff;		/*!< Pointer memory where bytes received from I2C be stored */
-	volatile ErrorCode_t    status;			/*!< Packed status of the current I2C transfer (ErrorCode_t), must be 32-bits */
-	uint32_t                flags;			/*!< Reserved, set to 0 */
-	uint16_t                txSz;			/*!< Number of bytes in transmit array, if 0 only receive transfer will be performed */
-	uint16_t                rxSz;			/*!< Number of bytes to receive, if 0 only transmission will be performed */
-	uint16_t                bytesSent;		/*!< Number of bytes sent */
-	uint16_t                bytesRecv;		/*!< Number of bytes recevied */
+    const void              *txBuff;        /*!< Pointer to array of bytes to be transmitted */
+    void                    *rxBuff;        /*!< Pointer memory where bytes received from I2C be stored */
+    volatile ErrorCode_t    status;         /*!< Packed status of the current I2C transfer (ErrorCode_t), must be 32-bits */
+    uint32_t                flags;          /*!< Reserved, set to 0 */
+    uint16_t                txSz;           /*!< Number of bytes in transmit array, if 0 only receive transfer will be performed */
+    uint16_t                rxSz;           /*!< Number of bytes to receive, if 0 only transmission will be performed */
+    uint16_t                bytesSent;      /*!< Number of bytes sent */
+    uint16_t                bytesRecv;      /*!< Number of bytes recevied */
 } ROM_I2CS_XFER_T;
 
 /** I2C slave callback IDs */
 typedef enum {
-	ROM_I2CS_START_CB = 0,				/*!< Callback ID for I2C slave service start callback */
-	ROM_I2CS_XFERSEND_CB,				/*!< Callback ID for I2C slave send data callback */
-	ROM_I2CS_XFERRECV_CB,				/*!< Callback ID for I2C slave receive data callback */
-	ROM_I2CS_DONE_CB,					/*!< Callback ID for I2C slave service done callback */
+    ROM_I2CS_START_CB = 0,              /*!< Callback ID for I2C slave service start callback */
+    ROM_I2CS_XFERSEND_CB,               /*!< Callback ID for I2C slave send data callback */
+    ROM_I2CS_XFERRECV_CB,               /*!< Callback ID for I2C slave receive data callback */
+    ROM_I2CS_DONE_CB,                   /*!< Callback ID for I2C slave service done callback */
 } ROM_I2CS_CALLBACK_T;
 
 /** @brief I2C slave state machine transfer control */
 typedef enum {
-	ROM_I2CS_CONTINUE = 0,				/*!< Continue transfer */
-	ROM_I2CS_NAK,						/*!< Will NAK master at next opportunity */
-	ROM_I2CS_DMA						/*!< Tell I2C handler DMA is handling the data */
+    ROM_I2CS_CONTINUE = 0,              /*!< Continue transfer */
+    ROM_I2CS_NAK,                       /*!< Will NAK master at next opportunity */
+    ROM_I2CS_DMA                        /*!< Tell I2C handler DMA is handling the data */
 } ROM_I2CS_TRANCTRL_T;
 
 /** @brief I2C slave transfer start callback
@@ -119,33 +119,33 @@ typedef void (*i2cSlaveCompleteCB)(ROM_I2CS_HANDLE_T i2csHandle, ROM_I2CS_XFER_T
 
 /** @brief I2C slave initialization structure */
 typedef PRE_PACK struct POST_PACK {
-	void        *pUserData;			/*!< Pointer to user data used by driver instance, use NULL if not used */
-	uint32_t    base;				/*!< Base address of I2C peripheral to use */
+    void        *pUserData;         /*!< Pointer to user data used by driver instance, use NULL if not used */
+    uint32_t    base;               /*!< Base address of I2C peripheral to use */
 } ROM_I2CS_INIT_T;
 
 /** @brief I2C slave address setup structure */
 typedef PRE_PACK struct POST_PACK {
-	uint16_t    slaveAddr;			/*!< Slave address used for this index in the controller */
-	uint8_t     SlaveIndex;			/*!< Slave index to use, 0 is first index */
-	uint8_t     EnableSlave;		/*!< Set to 0 to disable this slave index, or non-0 to enable */
+    uint16_t    slaveAddr;          /*!< Slave address used for this index in the controller */
+    uint8_t     SlaveIndex;         /*!< Slave index to use, 0 is first index */
+    uint8_t     EnableSlave;        /*!< Set to 0 to disable this slave index, or non-0 to enable */
 } ROM_I2CS_SLAVE_T;
 
 /** @brief I2C slave ROM indirect function structure */
 typedef PRE_PACK struct POST_PACK {
-	uint32_t (*GetMemSize)(void);	/*!< Returns needed memory size required for run-time context of I2C slave driver */
-	ROM_I2CS_HANDLE_T (*Init)(void *mem, const ROM_I2CS_INIT_T *pInit);	/*!< Initializes the I2C slave driver and peripheral */
-	void (*SetupSlave)(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_SLAVE_T *pSlaveSetup);	/*!< Sets up a slave address to use with the I2C controller */
-	void (*RegisterCallback)(ROM_I2CS_HANDLE_T pHandle, uint32_t cbIndex, void *pCB);	/*!< Registers an I2C slave callback */
-	ErrorCode_t (*Transfer)(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_XFER_T *pXfer);		/*!< Queues an I2C slave transfer */
-	void (*TransferHandler)(ROM_I2CS_HANDLE_T pHandle);		/*!< I2C slave transfer (interrupt) handler */
-	uint32_t (*GetDriverVersion)(void);
+    uint32_t (*GetMemSize)(void);   /*!< Returns needed memory size required for run-time context of I2C slave driver */
+    ROM_I2CS_HANDLE_T (*Init)(void *mem, const ROM_I2CS_INIT_T *pInit); /*!< Initializes the I2C slave driver and peripheral */
+    void (*SetupSlave)(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_SLAVE_T *pSlaveSetup);   /*!< Sets up a slave address to use with the I2C controller */
+    void (*RegisterCallback)(ROM_I2CS_HANDLE_T pHandle, uint32_t cbIndex, void *pCB);   /*!< Registers an I2C slave callback */
+    ErrorCode_t (*Transfer)(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_XFER_T *pXfer);     /*!< Queues an I2C slave transfer */
+    void (*TransferHandler)(ROM_I2CS_HANDLE_T pHandle);     /*!< I2C slave transfer (interrupt) handler */
+    uint32_t (*GetDriverVersion)(void);
 } ROM_I2CSD_API_T;
 
 /**
  * @}
  */
 
-extern const ROM_I2CSD_API_T i2cs_api;	// so application program can access	pointer to
+extern const ROM_I2CSD_API_T i2cs_api;  // so application program can access    pointer to
 // function table
 
 #endif /* __HW_I2CSD_ROM_API_H */

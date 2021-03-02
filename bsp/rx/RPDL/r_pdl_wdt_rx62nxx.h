@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: WDT API for RX62Nxx
-* File Name		: r_pdl_wdt_RX62Nxx.h
-* Version		: 1.02
-* Contents		: WDT API header
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name   : WDT API for RX62Nxx
+* File Name     : r_pdl_wdt_RX62Nxx.h
+* Version       : 1.02
+* Contents      : WDT API header
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_WDT_RX62Nxx_H
@@ -28,15 +28,15 @@ extern VoidCallBackFunc rpdl_WDT_callback_func;
 
 /* Library prototypes */
 bool R_WDT_CreateAll(
-	const uint16_t,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint16_t,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_WDT_ControlAll(
-	const uint8_t
+    const uint8_t
 );
 bool R_WDT_ReadAll(
-	volatile uint8_t * const
+    volatile uint8_t * const
 );
 bool ReturnFalse(void);
 

@@ -481,7 +481,7 @@ typedef struct
  *              PWRC0, PWRC1, PWRC2, PWRC3, PDWKE0, PDWKE1, PDWKE2, PDWKES, PDWKF0,
  *              PDWKF1, PWCMR, PWR_STPMCR, RAMPC0, RAMOPM.
  *          Below registers are locked in VBAT module.
- *              RSTR, BATCR0, VBTBKR0~VBTBK127. 
+ *              RSTR, BATCR0, VBTBKR0~VBTBK127.
  *          Below registers are locked in CLK module.
  *              PERICKSEL, I2SCKSEL,
  *          Below register is locked in RMU module.
@@ -510,7 +510,7 @@ __STATIC_INLINE void PWC_Lock(uint16_t u16Module)
  *              PWRC0, PWRC1, PWRC2, PWRC3, PDWKE0, PDWKE1, PDWKE2, PDWKES, PDWKF0,
  *              PDWKF1, PWCMR, PWR_STPMCR, RAMPC0, RAMOPM.
  *          Below registers are unlocked in VBAT module.
- *              RSTR, BATCR0, VBTBKR0~VBTBK127. 
+ *              RSTR, BATCR0, VBTBKR0~VBTBK127.
  *          Below registers are unlocked in CLK module.
  *              PERICKSEL, I2SCKSEL,
  *          Below register is unlocked in RMU module.

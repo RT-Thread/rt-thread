@@ -152,7 +152,7 @@ extern "C" {
  */
 
 /**
- * @brief	Clock rate on the CLKIN pin
+ * @brief   Clock rate on the CLKIN pin
  * This value is defined externally to the chip layer and contains
  * the value in Hz for the CLKIN pin for the board. If this pin isn't used,
  * this rate can be 0.
@@ -196,36 +196,36 @@ extern const uint32_t ExtClockIn;
  */
 
 /**
- * @brief	Current system clock rate, mainly used for peripherals in SYSCON
+ * @brief   Current system clock rate, mainly used for peripherals in SYSCON
  */
 extern uint32_t SystemCoreClock;
 
 /**
- * @brief	Update system core and ASYNC syscon clock rate, should be called if the
- *			system has a clock rate change
- * @return	None
+ * @brief   Update system core and ASYNC syscon clock rate, should be called if the
+ *          system has a clock rate change
+ * @return  None
  */
 void SystemCoreClockUpdate(void);
 
 /**
- * @brief	Set up and initialize hardware prior to call to main()
- * @return	None
- * @note	Chip_SystemInit() is called prior to the application and sets up
+ * @brief   Set up and initialize hardware prior to call to main()
+ * @return  None
+ * @note    Chip_SystemInit() is called prior to the application and sets up
  * system clocking prior to the application starting.
  */
 void Chip_SystemInit(void);
 
 /**
- * @brief	Clock and PLL initialization based on the internal oscillator
- * @param	iFreq	: Rate (in Hz) to set the main system clock to
- * @return	None
+ * @brief   Clock and PLL initialization based on the internal oscillator
+ * @param   iFreq   : Rate (in Hz) to set the main system clock to
+ * @return  None
  */
 void Chip_SetupIrcClocking(uint32_t iFreq);
 
 /**
- * @brief	Clock and PLL initialization based on the external clock input
- * @param	iFreq	: Rate (in Hz) to set the main system clock to
- * @return	None
+ * @brief   Clock and PLL initialization based on the external clock input
+ * @param   iFreq   : Rate (in Hz) to set the main system clock to
+ * @return  None
  */
 void Chip_SetupExtInClocking(uint32_t iFreq);
 

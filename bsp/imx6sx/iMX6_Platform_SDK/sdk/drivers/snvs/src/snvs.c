@@ -45,18 +45,18 @@ void snvs_rtc_counter(uint8_t state)
 {
     if (state)
     {
-        // Set RTC_EN bit in hpcr register 
+        // Set RTC_EN bit in hpcr register
         HW_SNVS_HPCR_SET(BM_SNVS_HPCR_RTC_EN);
 
-        // Wait until the bit is set 
+        // Wait until the bit is set
         while (!HW_SNVS_HPCR.B.RTC_EN);
     }
     else
     {
-        // Clear RTC_EN bit in hpcr register 
+        // Clear RTC_EN bit in hpcr register
         HW_SNVS_HPCR_CLR(BM_SNVS_HPCR_RTC_EN);
 
-        // Wait until the bit is cleared 
+        // Wait until the bit is cleared
         while (HW_SNVS_HPCR.B.RTC_EN);
     }
 }
@@ -65,18 +65,18 @@ void snvs_rtc_alarm(uint8_t state)
 {
     if (state)
     {
-        // Set HPTA_EN bit of hpcr register 
+        // Set HPTA_EN bit of hpcr register
         HW_SNVS_HPCR_SET(BM_SNVS_HPCR_HPTA_EN);
 
-        // Wait until the bit is set 
+        // Wait until the bit is set
         while (!HW_SNVS_HPCR.B.HPTA_EN);
     }
     else
     {
-        // Clear HPTA_EN bit of hpcr register 
+        // Clear HPTA_EN bit of hpcr register
         HW_SNVS_HPCR_CLR(BM_SNVS_HPCR_HPTA_EN);
 
-        // Wait until the bit is cleared 
+        // Wait until the bit is cleared
         while (HW_SNVS_HPCR.B.HPTA_EN);
     }
 }
@@ -99,7 +99,7 @@ void snvs_rtc_periodic_interrupt(uint8_t freq, uint8_t state)
     }
     else
     {
-        // Clear freq and periodic interrupt bit to disable periodic interrupt 
+        // Clear freq and periodic interrupt bit to disable periodic interrupt
         HW_SNVS_HPCR_CLR(BM_SNVS_HPCR_PI_EN);
 
         while (HW_SNVS_HPCR.B.PI_EN);
@@ -111,11 +111,11 @@ void snvs_rtc_set_counter(uint64_t count)
     // Disable RTC
     snvs_rtc_counter(false);
 
-    // Program the counter  
+    // Program the counter
     HW_SNVS_HPRTCLR_WR(count & 0xffffffff);
     HW_SNVS_HPRTCMR_WR(count >> 32);
 
-    // Reenable RTC 
+    // Reenable RTC
     snvs_rtc_counter(true);
 }
 
@@ -124,11 +124,11 @@ void snvs_rtc_set_alarm_timeout(uint64_t timeout)
     // Disable alarm
     snvs_rtc_alarm(false);
 
-    // Program time alarm registers 
+    // Program time alarm registers
     HW_SNVS_HPTALR_WR(timeout & 0xffffffff);
     HW_SNVS_HPTAMR_WR(timeout >> 32);
 
-    // Reenable alarm 
+    // Reenable alarm
     snvs_rtc_alarm(true);
 }
 
@@ -152,7 +152,7 @@ void snvs_srtc_alarm(uint8_t state)
     {
         HW_SNVS_LPCR_SET(BM_SNVS_LPCR_LPTA_EN);
         while (!HW_SNVS_LPCR.B.LPTA_EN);
-    }    
+    }
     else
     {
         HW_SNVS_LPCR_CLR(BM_SNVS_LPCR_LPTA_EN);
@@ -165,11 +165,11 @@ void snvs_srtc_set_counter(uint64_t count)
     // Disable RTC
     snvs_srtc_counter(false);
 
-    // Program the counter  
+    // Program the counter
     HW_SNVS_LPSRTCLR_WR(count & 0xffffffff);
     HW_SNVS_LPSRTCMR_WR(count >> 32);
 
-    // Reenable RTC 
+    // Reenable RTC
     snvs_srtc_counter(true);
 }
 
@@ -178,10 +178,10 @@ void snvs_srtc_set_alarm_timeout(uint32_t timeout)
     // Disable alarm
     snvs_srtc_alarm(false);
 
-    // Program time alarm register 
+    // Program time alarm register
     HW_SNVS_LPTAR_WR(timeout);
 
-    // Reenable alarm 
+    // Reenable alarm
     snvs_srtc_alarm(true);
 }
 

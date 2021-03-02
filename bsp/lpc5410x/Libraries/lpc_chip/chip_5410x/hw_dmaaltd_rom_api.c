@@ -32,22 +32,22 @@
 #include "hw_dmaaltd.h"
 
 const ROM_DMAALTD_API_T  dmaalt_api = {
-	&dmaalt_get_mem_size,
-	&dmaalt_init,
-	&dmaalt_setup_channel,
-	&dmaalt_init_queue,
-	&dmaalt_register_queue_callback,
-	&dmaalt_build_descriptor_chain,
-	&dmaalt_get_transfer_count,
-	&dmaalt_unstall_descriptor_chain,
-	&dmaalt_queue_descriptor,
-	&dmaalt_get_queue_pop_descriptor_status,
-	&dmaalt_unqueue_descriptor,
-	&dmaalt_start_queue,
-	&dmaalt_stop_queue,
-	&dmaalt_flush_queue,
-	&dmaalt_get_queue_state,
-	&dmaalt_force_trigger,
-	&dmaalt_handler,
-	&dmaalt_get_driver_version
-};		// end of table ************************************
+    &dmaalt_get_mem_size,
+    &dmaalt_init,
+    &dmaalt_setup_channel,
+    &dmaalt_init_queue,
+    &dmaalt_register_queue_callback,
+    &dmaalt_build_descriptor_chain,
+    &dmaalt_get_transfer_count,
+    &dmaalt_unstall_descriptor_chain,
+    &dmaalt_queue_descriptor,
+    &dmaalt_get_queue_pop_descriptor_status,
+    &dmaalt_unqueue_descriptor,
+    &dmaalt_start_queue,
+    &dmaalt_stop_queue,
+    &dmaalt_flush_queue,
+    &dmaalt_get_queue_state,
+    &dmaalt_force_trigger,
+    &dmaalt_handler,
+    &dmaalt_get_driver_version
+};      // end of table ************************************

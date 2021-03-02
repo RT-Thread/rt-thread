@@ -305,8 +305,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
                 drv_can->FilterConfig.FilterIdHigh = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                drv_can->FilterConfig.FilterIdLow = ((filter_cfg->items[i].id << 3) | 
-                                                    (filter_cfg->items[i].ide << 2) | 
+                drv_can->FilterConfig.FilterIdLow = ((filter_cfg->items[i].id << 3) |
+                                                    (filter_cfg->items[i].ide << 2) |
                                                     (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
                 drv_can->FilterConfig.FilterMaskIdHigh = (filter_cfg->items[i].mask >> 16) & 0xFFFF;
                 drv_can->FilterConfig.FilterMaskIdLow = filter_cfg->items[i].mask & 0xFFFF;

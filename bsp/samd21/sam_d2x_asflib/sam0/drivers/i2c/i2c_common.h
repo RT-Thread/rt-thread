@@ -273,27 +273,27 @@ extern "C" {
  * For slave: direction of request from master.
  */
 enum i2c_transfer_direction {
-	/** Master write operation is in progress */
-	I2C_TRANSFER_WRITE = 0,
-	/** Master read operation is in progress */
-	I2C_TRANSFER_READ  = 1,
+    /** Master write operation is in progress */
+    I2C_TRANSFER_WRITE = 0,
+    /** Master read operation is in progress */
+    I2C_TRANSFER_READ  = 1,
 };
 
 /**
- * \brief I2C module clock input 
+ * \brief I2C module clock input
  *
  * I2C module clock.
  *
  */
 enum i2c_clock_input {
-	/** source from clock input 0: 26MHz */
-	I2C_CLK_INPUT_0 = 0,
-	/** source from clock input 1: 13MHz */
-	I2C_CLK_INPUT_1,
-	/** source from clock input 2: 6.5MHz */
-	I2C_CLK_INPUT_2,
-	/** source from clock input 3: 3MHz */
-	I2C_CLK_INPUT_3,
+    /** source from clock input 0: 26MHz */
+    I2C_CLK_INPUT_0 = 0,
+    /** source from clock input 1: 13MHz */
+    I2C_CLK_INPUT_1,
+    /** source from clock input 2: 6.5MHz */
+    I2C_CLK_INPUT_2,
+    /** source from clock input 3: 3MHz */
+    I2C_CLK_INPUT_3,
 };
 
 /**
@@ -305,9 +305,9 @@ enum i2c_clock_input {
  */
 static inline void i2c_wait_for_idle(I2c *const i2c_module)
 {
-	while (i2c_module->I2C_STATUS.bit.I2C_ACTIVE) {
-		/* Wait for I2C module to sync. */
-	}
+    while (i2c_module->I2C_STATUS.bit.I2C_ACTIVE) {
+        /* Wait for I2C module to sync. */
+    }
 }
 
 /**
@@ -320,10 +320,10 @@ static inline void i2c_wait_for_idle(I2c *const i2c_module)
  */
 static inline void i2c_enable(I2c *const i2c_module)
 {
-	/* Wait for module to sync. */
-	i2c_wait_for_idle(i2c_module);
-	/* Enable module. */
-	i2c_module->I2C_MODULE_ENABLE.reg = (1 << I2C_MODULE_ENABLE_ENABLE_Pos);
+    /* Wait for module to sync. */
+    i2c_wait_for_idle(i2c_module);
+    /* Enable module. */
+    i2c_module->I2C_MODULE_ENABLE.reg = (1 << I2C_MODULE_ENABLE_ENABLE_Pos);
 }
 
 /**
@@ -336,8 +336,8 @@ static inline void i2c_enable(I2c *const i2c_module)
  */
 static inline void i2c_disable(I2c *const i2c_module)
 {
-	i2c_wait_for_idle(i2c_module);
-	i2c_module->I2C_MODULE_ENABLE.reg = 0;
+    i2c_wait_for_idle(i2c_module);
+    i2c_module->I2C_MODULE_ENABLE.reg = 0;
 }
 
 /**
@@ -350,8 +350,8 @@ static inline void i2c_disable(I2c *const i2c_module)
  */
 static inline void i2c_slave_flush_fifo(I2c *const i2c_module)
 {
-	i2c_wait_for_idle(i2c_module);
-	i2c_module->I2C_FLUSH.reg = 1;
+    i2c_wait_for_idle(i2c_module);
+    i2c_module->I2C_FLUSH.reg = 1;
 }
 
 /**
@@ -365,11 +365,11 @@ static inline void i2c_slave_flush_fifo(I2c *const i2c_module)
  */
 static inline void i2c_slave_rx_interrupt(I2c *const i2c_module, bool enable)
 {
-	if (enable) {
-		i2c_module->RX_INTERRUPT_MASK.bit.RX_FIFO_NOT_EMPTY_MASK = 1;
-	} else {
-		i2c_module->RX_INTERRUPT_MASK.bit.RX_FIFO_NOT_EMPTY_MASK = 0;
-	}
+    if (enable) {
+        i2c_module->RX_INTERRUPT_MASK.bit.RX_FIFO_NOT_EMPTY_MASK = 1;
+    } else {
+        i2c_module->RX_INTERRUPT_MASK.bit.RX_FIFO_NOT_EMPTY_MASK = 0;
+    }
 }
 
 /**
@@ -383,13 +383,13 @@ static inline void i2c_slave_rx_interrupt(I2c *const i2c_module, bool enable)
  */
 static inline void i2c_slave_tx_interrupt(I2c *const i2c_module, bool enable)
 {
-	if (enable) {
-		i2c_module->TX_INTERRUPT_MASK.bit.TX_FIFO_NOT_FULL_MASK = 1;
-		i2c_module->RX_INTERRUPT_MASK.bit.NAK_MASK = 1;
-	} else {
-		i2c_module->TX_INTERRUPT_MASK.bit.TX_FIFO_NOT_FULL_MASK = 0;
-		i2c_module->RX_INTERRUPT_MASK.bit.NAK_MASK = 0;
-	}
+    if (enable) {
+        i2c_module->TX_INTERRUPT_MASK.bit.TX_FIFO_NOT_FULL_MASK = 1;
+        i2c_module->RX_INTERRUPT_MASK.bit.NAK_MASK = 1;
+    } else {
+        i2c_module->TX_INTERRUPT_MASK.bit.TX_FIFO_NOT_FULL_MASK = 0;
+        i2c_module->RX_INTERRUPT_MASK.bit.NAK_MASK = 0;
+    }
 }
 /** @} */
 
@@ -407,18 +407,18 @@ static inline void i2c_slave_tx_interrupt(I2c *const i2c_module, bool enable)
  * \anchor asfdoc_samb_i2c_acronyms_table
  * <table>
  *  <caption>Acronyms</caption>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>SDA</td>
- *		<td>Serial Data Line</td>
- *	</tr>
- *	<tr>
- *		<td>SCL</td>
- *		<td>Serial Clock Line</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>SDA</td>
+ *      <td>Serial Data Line</td>
+ *  </tr>
+ *  <tr>
+ *      <td>SCL</td>
+ *      <td>Serial Clock Line</td>
+ *  </tr>
  * </table>
  *
  * \section asfdoc_samb_i2c_extra_dependencies Dependencies
@@ -438,12 +438,12 @@ static inline void i2c_slave_tx_interrupt(I2c *const i2c_module, bool enable)
  * \anchor asfdoc_samb_i2c_extra_history_table
  * <table>
  *  <caption>Module History</caption>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -472,16 +472,16 @@ static inline void i2c_slave_tx_interrupt(I2c *const i2c_module, bool enable)
  * \page asfdoc_samb_i2c_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>A</td>
- *		<td>09/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>A</td>
+ *      <td>09/2015</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

@@ -238,19 +238,19 @@ extern "C" {
  * Interrupt Controller module.
  */
 enum extint_detect {
-	/** No edge detection. Not allowed as a NMI detection mode on some
-	 *  devices. */
-	EXTINT_DETECT_NONE    = 0,
-	/** Detect rising signal edges */
-	EXTINT_DETECT_RISING  = 1,
-	/** Detect falling signal edges */
-	EXTINT_DETECT_FALLING = 2,
-	/** Detect both signal edges */
-	EXTINT_DETECT_BOTH    = 3,
-	/** Detect high signal levels */
-	EXTINT_DETECT_HIGH    = 4,
-	/** Detect low signal levels */
-	EXTINT_DETECT_LOW     = 5,
+    /** No edge detection. Not allowed as a NMI detection mode on some
+     *  devices. */
+    EXTINT_DETECT_NONE    = 0,
+    /** Detect rising signal edges */
+    EXTINT_DETECT_RISING  = 1,
+    /** Detect falling signal edges */
+    EXTINT_DETECT_FALLING = 2,
+    /** Detect both signal edges */
+    EXTINT_DETECT_BOTH    = 3,
+    /** Detect high signal levels */
+    EXTINT_DETECT_HIGH    = 4,
+    /** Detect low signal levels */
+    EXTINT_DETECT_LOW     = 5,
 };
 
 /**
@@ -263,12 +263,12 @@ enum extint_detect {
  *       inputs generating continuous interrupts.
  */
 enum extint_pull {
-	/** Internal pull-up resistor is enabled on the pin */
-	EXTINT_PULL_UP        = SYSTEM_PINMUX_PIN_PULL_UP,
-	/** Internal pull-down resistor is enabled on the pin */
-	EXTINT_PULL_DOWN      = SYSTEM_PINMUX_PIN_PULL_DOWN,
-	/** Internal pull resistor is disconnected from the pin */
-	EXTINT_PULL_NONE      = SYSTEM_PINMUX_PIN_PULL_NONE,
+    /** Internal pull-up resistor is enabled on the pin */
+    EXTINT_PULL_UP        = SYSTEM_PINMUX_PIN_PULL_UP,
+    /** Internal pull-down resistor is enabled on the pin */
+    EXTINT_PULL_DOWN      = SYSTEM_PINMUX_PIN_PULL_DOWN,
+    /** Internal pull resistor is disconnected from the pin */
+    EXTINT_PULL_NONE      = SYSTEM_PINMUX_PIN_PULL_NONE,
 };
 
 /** The EIC is clocked by GCLK_EIC. */
@@ -283,24 +283,24 @@ enum extint_pull {
  *  interrupt channel.
  */
 struct extint_chan_conf {
-	/** GPIO pin the NMI should be connected to */
-	uint32_t gpio_pin;
-	/** MUX position the GPIO pin should be configured to */
-	uint32_t gpio_pin_mux;
-	/** Internal pull to enable on the input pin */
-	enum extint_pull gpio_pin_pull;
+    /** GPIO pin the NMI should be connected to */
+    uint32_t gpio_pin;
+    /** MUX position the GPIO pin should be configured to */
+    uint32_t gpio_pin_mux;
+    /** Internal pull to enable on the input pin */
+    enum extint_pull gpio_pin_pull;
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	/** Enable asynchronous edge detection. */
-	bool enable_async_edge_detection;
+    /** Enable asynchronous edge detection. */
+    bool enable_async_edge_detection;
 #else
-	/** Wake up the device if the channel interrupt fires during sleep mode */
-	bool wake_if_sleeping;
+    /** Wake up the device if the channel interrupt fires during sleep mode */
+    bool wake_if_sleeping;
 #endif
-	/** Filter the raw input signal to prevent noise from triggering an
-	 *  interrupt accidentally, using a three sample majority filter */
-	bool filter_input_signal;
-	/** Edge detection mode to use */
-	enum extint_detect detection_criteria;
+    /** Filter the raw input signal to prevent noise from triggering an
+     *  interrupt accidentally, using a three sample majority filter */
+    bool filter_input_signal;
+    /** Edge detection mode to use */
+    enum extint_detect detection_criteria;
 };
 
 /**
@@ -310,9 +310,9 @@ struct extint_chan_conf {
  * \ref extint_disable_events().
  */
 struct extint_events {
-	/** If \c true, an event will be generated when an external interrupt
-	 *  channel detection state changes */
-	bool generate_event_on_detect[32 * EIC_INST_NUM];
+    /** If \c true, an event will be generated when an external interrupt
+     *  channel detection state changes */
+    bool generate_event_on_detect[32 * EIC_INST_NUM];
 };
 
 /**
@@ -322,22 +322,22 @@ struct extint_events {
  *  interrupt NMI channel.
  */
 struct extint_nmi_conf {
-	/** GPIO pin the NMI should be connected to */
-	uint32_t gpio_pin;
-	/** MUX position the GPIO pin should be configured to */
-	uint32_t gpio_pin_mux;
-	/** Internal pull to enable on the input pin */
-	enum extint_pull gpio_pin_pull;
-	/** Filter the raw input signal to prevent noise from triggering an
-	 *  interrupt accidentally, using a three sample majority filter */
-	bool filter_input_signal;
-	/** Edge detection mode to use. Not all devices support all possible
-	 *  detection modes for NMIs.
-	 */
-	enum extint_detect detection_criteria;
+    /** GPIO pin the NMI should be connected to */
+    uint32_t gpio_pin;
+    /** MUX position the GPIO pin should be configured to */
+    uint32_t gpio_pin_mux;
+    /** Internal pull to enable on the input pin */
+    enum extint_pull gpio_pin_pull;
+    /** Filter the raw input signal to prevent noise from triggering an
+     *  interrupt accidentally, using a three sample majority filter */
+    bool filter_input_signal;
+    /** Edge detection mode to use. Not all devices support all possible
+     *  detection modes for NMIs.
+     */
+    enum extint_detect detection_criteria;
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	/** Enable asynchronous edge detection. */
-	bool enable_async_edge_detection;
+    /** Enable asynchronous edge detection. */
+    bool enable_async_edge_detection;
 #endif
 };
 
@@ -357,11 +357,11 @@ typedef void (*extint_callback_t)(void);
 struct _extint_module
 {
 #  if EXTINT_CALLBACK_MODE == true
-	/** Asynchronous channel callback table, for user-registered handlers */
-	extint_callback_t callbacks[EIC_NUMBER_OF_INTERRUPTS];
+    /** Asynchronous channel callback table, for user-registered handlers */
+    extint_callback_t callbacks[EIC_NUMBER_OF_INTERRUPTS];
 #  else
-	/** Dummy value to ensure the struct has at least one member */
-	uint8_t _dummy;
+    /** Dummy value to ensure the struct has at least one member */
+    uint8_t _dummy;
 #  endif
 };
 
@@ -376,19 +376,19 @@ struct _extint_module
  * \return Base address of the associated EIC module.
  */
 static inline Eic * _extint_get_eic_from_channel(
-		const uint8_t channel)
+        const uint8_t channel)
 {
-	uint8_t eic_index = (channel / 32);
+    uint8_t eic_index = (channel / 32);
 
-	if (eic_index < EIC_INST_NUM) {
-		/* Array of available EICs */
-		Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    if (eic_index < EIC_INST_NUM) {
+        /* Array of available EICs */
+        Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-		return eics[eic_index];
-	} else {
-		Assert(false);
-		return NULL;
-	}
+        return eics[eic_index];
+    } else {
+        Assert(false);
+        return NULL;
+    }
 }
 
 /**
@@ -402,19 +402,19 @@ static inline Eic * _extint_get_eic_from_channel(
  * \return Base address of the associated EIC module.
  */
 static inline Eic * _extint_get_eic_from_nmi(
-		const uint8_t nmi_channel)
+        const uint8_t nmi_channel)
 {
-	uint8_t eic_index = nmi_channel;
+    uint8_t eic_index = nmi_channel;
 
-	if (eic_index < EIC_INST_NUM) {
-		/* Array of available EICs */
-		Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
+    if (eic_index < EIC_INST_NUM) {
+        /* Array of available EICs */
+        Eic *const eics[EIC_INST_NUM] = EIC_INSTS;
 
-		return eics[eic_index];
-	} else {
-		Assert(false);
-		return NULL;
-	}
+        return eics[eic_index];
+    } else {
+        Assert(false);
+        return NULL;
+    }
 }
 #endif
 
@@ -423,10 +423,10 @@ static inline Eic * _extint_get_eic_from_nmi(
  */
 
 void extint_enable_events(
-		struct extint_events *const events);
+        struct extint_events *const events);
 
 void extint_disable_events(
-		struct extint_events *const events);
+        struct extint_events *const events);
 
 /** @} */
 
@@ -435,11 +435,11 @@ void extint_disable_events(
  */
 
 void extint_chan_get_config_defaults(
-		struct extint_chan_conf *const config);
+        struct extint_chan_conf *const config);
 
 void extint_chan_set_config(
-		const uint8_t channel,
-		const struct extint_chan_conf *const config);
+        const uint8_t channel,
+        const struct extint_chan_conf *const config);
 
 /** @} */
 
@@ -463,26 +463,26 @@ void extint_chan_set_config(
  * \param[out] config  Configuration structure to initialize to default values
  */
 static inline void extint_nmi_get_config_defaults(
-		struct extint_nmi_conf *const config)
+        struct extint_nmi_conf *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->gpio_pin            = 0;
-	config->gpio_pin_mux        = 0;
-	config->gpio_pin_pull       = EXTINT_PULL_UP;
-	config->filter_input_signal = false;
-	config->detection_criteria  = EXTINT_DETECT_FALLING;
+    /* Default configuration values */
+    config->gpio_pin            = 0;
+    config->gpio_pin_mux        = 0;
+    config->gpio_pin_pull       = EXTINT_PULL_UP;
+    config->filter_input_signal = false;
+    config->detection_criteria  = EXTINT_DETECT_FALLING;
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	 config->enable_async_edge_detection = false;
+     config->enable_async_edge_detection = false;
 #endif
 
 }
 
 enum status_code extint_nmi_set_config(
-		const uint8_t nmi_channel,
-		const struct extint_nmi_conf *const config);
+        const uint8_t nmi_channel,
+        const struct extint_nmi_conf *const config);
 
 /** @} */
 
@@ -503,12 +503,12 @@ enum status_code extint_nmi_set_config(
  *  \retval false  If the channel has not detected its configured criteria
  */
 static inline bool extint_chan_is_detected(
-		const uint8_t channel)
+        const uint8_t channel)
 {
-	Eic *const eic_module = _extint_get_eic_from_channel(channel);
-	uint32_t eic_mask   = (1UL << (channel % 32));
+    Eic *const eic_module = _extint_get_eic_from_channel(channel);
+    uint32_t eic_mask   = (1UL << (channel % 32));
 
-	return (eic_module->INTFLAG.reg & eic_mask);
+    return (eic_module->INTFLAG.reg & eic_mask);
 }
 
 /**
@@ -520,12 +520,12 @@ static inline bool extint_chan_is_detected(
  *  \param[in] channel  External Interrupt channel index to check
  */
 static inline void extint_chan_clear_detected(
-		const uint8_t channel)
+        const uint8_t channel)
 {
-	Eic *const eic_module = _extint_get_eic_from_channel(channel);
-	uint32_t eic_mask   = (1UL << (channel % 32));
+    Eic *const eic_module = _extint_get_eic_from_channel(channel);
+    uint32_t eic_mask   = (1UL << (channel % 32));
 
-	eic_module->INTFLAG.reg = eic_mask;
+    eic_module->INTFLAG.reg = eic_mask;
 }
 
 /** @} */
@@ -547,11 +547,11 @@ static inline void extint_chan_clear_detected(
  *  \retval false  If the NMI channel has not detected its configured criteria
  */
 static inline bool extint_nmi_is_detected(
-		const uint8_t nmi_channel)
+        const uint8_t nmi_channel)
 {
-	Eic *const eic_module = _extint_get_eic_from_nmi(nmi_channel);
+    Eic *const eic_module = _extint_get_eic_from_nmi(nmi_channel);
 
-	return (eic_module->NMIFLAG.reg & EIC_NMIFLAG_NMI);
+    return (eic_module->NMIFLAG.reg & EIC_NMIFLAG_NMI);
 }
 
 /**
@@ -563,11 +563,11 @@ static inline bool extint_nmi_is_detected(
  *  \param[in] nmi_channel  External Interrupt NMI channel index to check
  */
 static inline void extint_nmi_clear_detected(
-		const uint8_t nmi_channel)
+        const uint8_t nmi_channel)
 {
-	Eic *const eic_module = _extint_get_eic_from_nmi(nmi_channel);
+    Eic *const eic_module = _extint_get_eic_from_nmi(nmi_channel);
 
-	eic_module->NMIFLAG.reg = EIC_NMIFLAG_NMI;
+    eic_module->NMIFLAG.reg = EIC_NMIFLAG_NMI;
 }
 
 /** @} */

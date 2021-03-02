@@ -104,12 +104,12 @@ typedef enum
 
 enum
 {
-	AUDIO_EVENT_FRAME          = 1, /* received one audio frame or send finished one audio frame */
+    AUDIO_EVENT_FRAME          = 1, /* received one audio frame or send finished one audio frame */
     AUDIO_EVENT_WILL_OVERFLOW  = 2,
-	AUDIO_EVENT_WILL_UNDERFLOW = 3,	
+    AUDIO_EVENT_WILL_UNDERFLOW = 3,
     AUDIO_EVENT_ALREADY_OVERFLOW  = 4,
-	AUDIO_EVENT_ALREADY_UNDERFLOW = 5,	
-	AUDIO_EVENT_UNDEFINED         = 6,
+    AUDIO_EVENT_ALREADY_UNDERFLOW = 5,
+    AUDIO_EVENT_UNDEFINED         = 6,
 };
 
 typedef void (*GD_AUDIO_Notifier)(U32 event);
@@ -126,7 +126,7 @@ typedef struct
     GD_AUDIO_BIT_WIDTH_E           bitWidth;
     GD_AUDIO_SOUND_MODE_E          soundMode;
     U32                            sampleNumber;
-	GD_AUDIO_Notifier              notifier;
+    GD_AUDIO_Notifier              notifier;
 }GD_AUDIO_OPEN_PARAM_S;
 
 
@@ -134,12 +134,12 @@ typedef struct
 {
     GD_AUDIO_BIT_WIDTH_E      bitWidth;
     GD_AUDIO_SOUND_MODE_E     soundMode;
-	GD_AUDIO_SAMPLE_RATE_E    sampleRate;
+    GD_AUDIO_SAMPLE_RATE_E    sampleRate;
     U32                       frameAddr;
-	U32                       frameSize;
+    U32                       frameSize;
     U32                       timeStamp;
     U32                       seqNumber;
-	U32                       aecSeq;     /* audio echo cancellation seque number */
+    U32                       aecSeq;     /* audio echo cancellation seque number */
 }GD_AUDIO_FRAME_S;
 
 

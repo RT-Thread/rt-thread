@@ -19,6 +19,6 @@
 
 void rt_hw_board_init()
 {
-	rt_hw_serial_init();
-	rt_console_set_device("uart1");
+    rt_hw_serial_init();
+    rt_console_set_device("uart1");
 }

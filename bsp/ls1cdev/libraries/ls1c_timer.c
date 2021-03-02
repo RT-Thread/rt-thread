@@ -9,7 +9,7 @@
  */
 // 硬件定时器源码
 
-#include <ls1c.h>  
+#include <ls1c.h>
 #include "ls1c_public.h"
 #include "ls1c_pin.h"
 #include "ls1c_clock.h"
@@ -65,7 +65,7 @@ void timer_init(timer_info_t *timer_info)
     unsigned long timer_clk = 0;            // 硬件定时器的时钟
     unsigned long tmp;
     unsigned int ctrl = 0;                  // 控制寄存器中的控制信息
-    
+
     // 判断入参
     if (NULL == timer_info)
     {
@@ -112,7 +112,7 @@ BOOL timer_is_time_out(timer_info_t *timer_info)
 {
     unsigned int timer_reg_base = 0;        // 寄存器基地址
     unsigned int ctrl;                      // 控制寄存器的值
-    
+
     // 判断入参
     if (NULL == timer_info)
     {
@@ -143,7 +143,7 @@ BOOL timer_is_time_out(timer_info_t *timer_info)
 void timer_stop(timer_info_t *timer_info)
 {
     unsigned int timer_reg_base = 0;
-    
+
     // 判断入参
     if (NULL == timer_info)
     {
@@ -209,8 +209,8 @@ void timer_print_regs(timer_info_t *timer_info)
 void timer_int_clr(timer_info_t *timer_info)
 {
     unsigned int timer_reg_base = 0;        // 寄存器基地址
-    unsigned int ctrl ;  
-    
+    unsigned int ctrl ;
+
     // 判断入参
     if (NULL == timer_info)
     {
@@ -232,8 +232,8 @@ void timer_int_clr(timer_info_t *timer_info)
 void timer_cnt_clr(timer_info_t *timer_info)
 {
     unsigned int timer_reg_base = 0;        // 寄存器基地址
-    unsigned int ctrl ;  
-    
+    unsigned int ctrl ;
+
     // 判断入参
     if (NULL == timer_info)
     {
@@ -260,7 +260,7 @@ void timer_int_init(timer_info_t *timer_info, int hrc, int lrc)
     unsigned long timer_clk = 0;            // 硬件定时器的时钟
     unsigned long h_value, l_value;
     unsigned int ctrl = 0;                  // 控制寄存器中的控制信息
-    
+
     // 判断入参
     if (NULL == timer_info)
     {

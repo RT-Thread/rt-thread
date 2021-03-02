@@ -64,21 +64,21 @@ extern "C" {
  * @{
  */
 void spi_register_callback(
-		struct spi_module *const module,
-		spi_callback_t callback_func,
-		enum spi_callback callback_type);
+        struct spi_module *const module,
+        spi_callback_t callback_func,
+        enum spi_callback callback_type);
 
 void spi_unregister_callback(
-		struct spi_module *module,
-		enum spi_callback callback_type);
+        struct spi_module *module,
+        enum spi_callback callback_type);
 
 void spi_enable_callback(
-		struct spi_module *const module,
-		enum spi_callback callback_type);
+        struct spi_module *const module,
+        enum spi_callback callback_type);
 
 void spi_disable_callback(
-		struct spi_module *const module,
-		enum spi_callback callback_type);
+        struct spi_module *const module,
+        enum spi_callback callback_type);
 /** @} */
 
 /**
@@ -86,19 +86,19 @@ void spi_disable_callback(
  * @{
  */
 enum status_code spi_write_buffer_job(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint16_t length);
 enum status_code spi_read_buffer_job(
-		struct spi_module *const module,
-		uint8_t *rx_data,
-		uint16_t length,
-		uint16_t dummy);
+        struct spi_module *const module,
+        uint8_t *rx_data,
+        uint16_t length,
+        uint16_t dummy);
 enum status_code spi_transceive_buffer_job(
-		struct spi_module *const module,
-		uint8_t *tx_data,
-		uint8_t *rx_data,
-		uint16_t length);
+        struct spi_module *const module,
+        uint8_t *tx_data,
+        uint8_t *rx_data,
+        uint16_t length);
 /** @} */
 
 /** @} */
@@ -106,5 +106,5 @@ enum status_code spi_transceive_buffer_job(
 }
 #endif
 
-#endif	//SPI_H_INCLUDED
+#endif  //SPI_H_INCLUDED
 

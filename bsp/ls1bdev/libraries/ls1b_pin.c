@@ -5,11 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     å‹¤ä¸ºæœ¬       first version
+ * 2017-09-06     ÇÚÎª±¾       first version
  * 2021-02-02     michael5hzg@gmail.com       adapt to ls1b
  */
 
-// å¼•è„šåŠŸèƒ½(æ™®é€šgpioï¼Œpwmï¼Œå¤ç”¨ç­‰)ç›¸å…³æ¥å£
+// Òı½Å¹¦ÄÜ(ÆÕÍ¨gpio£¬pwm£¬¸´ÓÃµÈ)Ïà¹Ø½Ó¿Ú
 
 
 #include "ls1b_public.h"
@@ -19,21 +19,21 @@
 
 
 /*
- * æŠŠæŒ‡å®špinè®¾ç½®ä¸ºæŒ‡å®šç”¨é€”(æ™®é€šgpioï¼Œégpio)
- * @gpio gpioå¼•è„šç¼–å·
- * @purpose ç”¨é€”
+ * °ÑÖ¸¶¨pinÉèÖÃÎªÖ¸¶¨ÓÃÍ¾(ÆÕÍ¨gpio£¬·Çgpio)
+ * @gpio gpioÒı½Å±àºÅ
+ * @purpose ÓÃÍ¾
  */
 void pin_set_purpose(unsigned int gpio, pin_purpose_t purpose)
 {
-    volatile unsigned int *gpio_cfgx;           // GPIO_CFGxå¯„å­˜å™¨
+    volatile unsigned int *gpio_cfgx;           // GPIO_CFGx¼Ä´æÆ÷
     unsigned int pin = GPIO_GET_PIN(gpio);
 
     gpio_cfgx = gpio_get_cfg_reg(gpio);
-    if (PIN_PURPOSE_GPIO == purpose)            // å¼•è„šç”¨ä½œæ™®é€šgpio
+    if (PIN_PURPOSE_GPIO == purpose)            // Òı½ÅÓÃ×÷ÆÕÍ¨gpio
     {
         reg_set_one_bit(gpio_cfgx, pin);
     }
-    else                                        // å¼•è„šç”¨ä½œå…¶å®ƒåŠŸèƒ½(égpio)
+    else                                        // Òı½ÅÓÃ×÷ÆäËü¹¦ÄÜ(·Çgpio)
     {
         reg_clr_one_bit(gpio_cfgx, pin);
     }
@@ -44,22 +44,22 @@ void pin_set_purpose(unsigned int gpio, pin_purpose_t purpose)
 
 
 /*
- * è®¾ç½®æŒ‡å®špinä¸ºç¬¬nå¤ç”¨
- * @gpio gpioç¼–å·
- * @remap ç¬¬nå¤ç”¨
+ * ÉèÖÃÖ¸¶¨pinÎªµÚn¸´ÓÃ
+ * @gpio gpio±àºÅ
+ * @remap µÚn¸´ÓÃ
  */
 void pin_set_remap(unsigned int gpio, pin_remap_t remap)
 {
-    volatile unsigned int *reg = NULL;          // å¤ç”¨å¯„å­˜å™¨
+    volatile unsigned int *reg = NULL;          // ¸´ÓÃ¼Ä´æÆ÷
     unsigned int port = GPIO_GET_PORT(gpio);
     unsigned int pin  = GPIO_GET_PIN(gpio);
     int i;
 
-    /*æŒ‡å®šå…¨éƒ¨pinå¤ç”¨ä¸º0*/
+    /*Ö¸¶¨È«²¿pin¸´ÓÃÎª0*/
     for (i = 0; i <= 4; i++)
     {
         reg = (volatile unsigned int *)((LS1B_CBUS_FIRST0) + ((port) * 0x04) + ((i) * 0x10));
-        // ç½®0
+        // ÖÃ0
         reg_clr_one_bit(reg, pin);
     }
 
@@ -155,7 +155,7 @@ void pin_set_remap(unsigned int gpio, pin_remap_t remap)
         return ;
     }
 
-    // ç½®1
+    // ÖÃ1
     reg_set_one_bit(reg, pin);
 
     return ;

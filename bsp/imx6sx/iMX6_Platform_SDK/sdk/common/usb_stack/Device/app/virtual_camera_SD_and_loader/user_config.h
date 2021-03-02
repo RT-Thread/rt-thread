@@ -12,7 +12,7 @@
  *
  * @version
  *
- * @date 
+ * @date
  *
  * @brief The file contains User Modifiable Macros for Generator Application
  *
@@ -20,7 +20,7 @@
 #include "derivative.h"
 
 #if defined( __MCF52277_H__) || defined( MCU_mcf51jf128)
-#define  HIGH_SPEED_DEVICE            (1) 
+#define  HIGH_SPEED_DEVICE            (1)
 #define  BUTTON_PRESS_SIMULATION      (1)
 #define  KEY_PRESS_SIM_TMR_INTERVAL   (2000)    /* 2s between simulated key press events */
 #else
@@ -43,8 +43,8 @@
 #endif
 
 #if defined (__MK_xxx_H__) || defined(__MCF52259_H__) || defined(__MCF52221_H__) || defined(__MCF52277_H__)
-#define USE_SDHC_PROTOCOL					(0)
-#define USE_SPI_PROTOCOL					(1)
+#define USE_SDHC_PROTOCOL                   (0)
+#define USE_SPI_PROTOCOL                    (1)
 #endif
 
 #ifndef _MC9S08JS16_H

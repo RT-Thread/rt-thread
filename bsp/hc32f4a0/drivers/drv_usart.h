@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2020-10-30     CDT          first version
  */
- 
+
 
 #ifndef __DRV_USART_H__
 #define __DRV_USART_H__

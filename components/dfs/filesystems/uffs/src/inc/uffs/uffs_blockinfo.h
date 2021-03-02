@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,11 +25,11 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
-/** 
+/**
  * \file uffs_blockinfo.h
  * \brief data structure for operating block information
  * \author Ricky Zheng
@@ -45,27 +45,27 @@
 #ifdef __cplusplus
 extern "C"{
 #endif
-/** 
+/**
  * \struct uffs_PageSpareSt
- * \brief this structure is for storing uffs tag and more. 
+ * \brief this structure is for storing uffs tag and more.
  */
 struct uffs_PageSpareSt {
-	uffs_Tags tag;			//!< page tag
-	int expired:1;
+    uffs_Tags tag;          //!< page tag
+    int expired:1;
 };
 
-/** 
+/**
  * \struct uffs_BlockInfoSt
  * \brief block information data. Block info is frequently accessed,
           UFFS use a cache system to speed up block info access.
  */
 struct uffs_BlockInfoSt {
-	struct uffs_BlockInfoSt *next;
-	struct uffs_BlockInfoSt *prev;
-	u16 block;							//!< block number
-	struct uffs_PageSpareSt *spares;	//!< page spare info array
-	int expired_count;					//!< how many pages expired in this block ? 
-	int ref_count;						//!< reference counter, it's safe to reuse this block memory when the counter is 0.
+    struct uffs_BlockInfoSt *next;
+    struct uffs_BlockInfoSt *prev;
+    u16 block;                          //!< block number
+    struct uffs_PageSpareSt *spares;    //!< page spare info array
+    int expired_count;                  //!< how many pages expired in this block ?
+    int ref_count;                      //!< reference counter, it's safe to reuse this block memory when the counter is 0.
 };
 
 /** get tag from block info */

@@ -24,7 +24,7 @@ static uint16_t usbh_freechannel_get (usb_core_handle_struct *pudev);
     \param[out] none
     \retval     operation status
 */
-uint8_t usbh_channel_open (usb_core_handle_struct *pudev, 
+uint8_t usbh_channel_open (usb_core_handle_struct *pudev,
                            uint8_t  channel_num,
                            uint8_t  dev_addr,
                            uint8_t  dev_speed,
@@ -74,7 +74,7 @@ uint8_t usbh_channel_modify (usb_core_handle_struct *pudev,
     }
 
     if ((puhc->endp_mps != ep_mps) && (0U != ep_mps)) {
-        puhc->endp_mps = ep_mps; 
+        puhc->endp_mps = ep_mps;
     }
 
     if ((puhc->dev_speed != dev_speed) && (0U != dev_speed)) {

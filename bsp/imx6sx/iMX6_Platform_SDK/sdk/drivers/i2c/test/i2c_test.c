@@ -41,7 +41,7 @@
 extern int32_t i2c_eeprom_at24cxx_test(void);
 extern int32_t i2c_imx6_slave_test(void);
 
-/*! 
+/*!
  * I2c test.
  * This test uses the EEPROM write/read test !
  *

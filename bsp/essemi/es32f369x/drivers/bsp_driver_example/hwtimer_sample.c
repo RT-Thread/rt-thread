@@ -8,18 +8,18 @@
  * 2018-11-30     misonyo      first implementation.
  */
 /*
- * ç¨‹åºæ¸…å•ï¼šè¿™æ˜¯ä¸€ä¸ª hwtimer è®¾å¤‡ä½¿ç”¨ä¾‹ç¨‹
- * ä¾‹ç¨‹å¯¼å‡ºäº† hwtimer_sample å‘½ä»¤åˆ°æ§åˆ¶ç»ˆç«¯
- * å‘½ä»¤è°ƒç”¨æ ¼å¼ï¼šhwtimer_sample
- * ç¨‹åºåŠŸèƒ½ï¼šç¡¬ä»¶å®šæ—¶å™¨è¶…æ—¶å›è°ƒå‡½æ•°å‘¨æœŸæ€§çš„æ‰“å°å½“å‰tickå€¼ï¼Œ2æ¬¡tickå€¼ä¹‹å·®æ¢ç®—ä¸ºæ—¶é—´ç­‰åŒäºå®šæ—¶æ—¶é—´å€¼ã€‚
+ * ³ÌĞòÇåµ¥£ºÕâÊÇÒ»¸ö hwtimer Éè±¸Ê¹ÓÃÀı³Ì
+ * Àı³Ìµ¼³öÁË hwtimer_sample ÃüÁîµ½¿ØÖÆÖÕ¶Ë
+ * ÃüÁîµ÷ÓÃ¸ñÊ½£ºhwtimer_sample
+ * ³ÌĞò¹¦ÄÜ£ºÓ²¼ş¶¨Ê±Æ÷³¬Ê±»Øµ÷º¯ÊıÖÜÆÚĞÔµÄ´òÓ¡µ±Ç°tickÖµ£¬2´ÎtickÖµÖ®²î»»ËãÎªÊ±¼äµÈÍ¬ÓÚ¶¨Ê±Ê±¼äÖµ¡£
 */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define HWTIMER_DEV_NAME   "timer0"     /* å®šæ—¶å™¨åç§° */
+#define HWTIMER_DEV_NAME   "timer0"     /* ¶¨Ê±Æ÷Ãû³Æ */
 
-/* å®šæ—¶å™¨è¶…æ—¶å›è°ƒå‡½æ•° */
+/* ¶¨Ê±Æ÷³¬Ê±»Øµ÷º¯Êı */
 static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
 {
     rt_kprintf("tick is :%d !\n", rt_tick_get());
@@ -30,11 +30,11 @@ static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
 static int hwtimer_sample(int argc, char *argv[])
 {
     rt_err_t ret = RT_EOK;
-    rt_hwtimerval_t timeout_s;      /* å®šæ—¶å™¨è¶…æ—¶å€¼ */
-    rt_device_t hw_dev = RT_NULL;   /* å®šæ—¶å™¨è®¾å¤‡å¥æŸ„ */
-    rt_hwtimer_mode_t mode;         /* å®šæ—¶å™¨æ¨¡å¼ */
+    rt_hwtimerval_t timeout_s;      /* ¶¨Ê±Æ÷³¬Ê±Öµ */
+    rt_device_t hw_dev = RT_NULL;   /* ¶¨Ê±Æ÷Éè±¸¾ä±ú */
+    rt_hwtimer_mode_t mode;         /* ¶¨Ê±Æ÷Ä£Ê½ */
 
-    /* æŸ¥æ‰¾å®šæ—¶å™¨è®¾å¤‡ */
+    /* ²éÕÒ¶¨Ê±Æ÷Éè±¸ */
     hw_dev = rt_device_find(HWTIMER_DEV_NAME);
     if (hw_dev == RT_NULL)
     {
@@ -42,7 +42,7 @@ static int hwtimer_sample(int argc, char *argv[])
         return RT_ERROR;
     }
 
-    /* ä»¥è¯»å†™æ–¹å¼æ‰“å¼€è®¾å¤‡ */
+    /* ÒÔ¶ÁĞ´·½Ê½´ò¿ªÉè±¸ */
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
     if (ret != RT_EOK)
     {
@@ -50,10 +50,10 @@ static int hwtimer_sample(int argc, char *argv[])
         return ret;
     }
 
-    /* è®¾ç½®è¶…æ—¶å›è°ƒå‡½æ•° */
+    /* ÉèÖÃ³¬Ê±»Øµ÷º¯Êı */
     rt_device_set_rx_indicate(hw_dev, timeout_cb);
 
-    /* è®¾ç½®æ¨¡å¼ä¸ºå‘¨æœŸæ€§å®šæ—¶å™¨ */
+    /* ÉèÖÃÄ£Ê½ÎªÖÜÆÚĞÔ¶¨Ê±Æ÷ */
     mode = HWTIMER_MODE_PERIOD;
     ret = rt_device_control(hw_dev, HWTIMER_CTRL_MODE_SET, &mode);
     if (ret != RT_EOK)
@@ -62,9 +62,9 @@ static int hwtimer_sample(int argc, char *argv[])
         return ret;
     }
 
-    /* è®¾ç½®å®šæ—¶å™¨è¶…æ—¶å€¼ä¸º5så¹¶å¯åŠ¨å®šæ—¶å™¨ */
-    timeout_s.sec = 5;      /* ç§’ */
-    timeout_s.usec = 0;     /* å¾®ç§’ */
+    /* ÉèÖÃ¶¨Ê±Æ÷³¬Ê±ÖµÎª5s²¢Æô¶¯¶¨Ê±Æ÷ */
+    timeout_s.sec = 5;      /* Ãë */
+    timeout_s.usec = 0;     /* Î¢Ãë */
 
     if (rt_device_write(hw_dev, 0, &timeout_s, sizeof(timeout_s)) != sizeof(timeout_s))
     {
@@ -72,14 +72,14 @@ static int hwtimer_sample(int argc, char *argv[])
         return RT_ERROR;
     }
 
-    /* å»¶æ—¶3500ms */
+    /* ÑÓÊ±3500ms */
     rt_thread_mdelay(3500);
 
-    /* è¯»å–å®šæ—¶å™¨å½“å‰å€¼ */
+    /* ¶ÁÈ¡¶¨Ê±Æ÷µ±Ç°Öµ */
     rt_device_read(hw_dev, 0, &timeout_s, sizeof(timeout_s));
     rt_kprintf("Read: Sec = %d, Usec = %d\n", timeout_s.sec, timeout_s.usec);
 
     return ret;
 }
-/* å¯¼å‡ºåˆ° msh å‘½ä»¤åˆ—è¡¨ä¸­ */
+/* µ¼³öµ½ msh ÃüÁîÁĞ±íÖĞ */
 MSH_CMD_EXPORT(hwtimer_sample, hwtimer sample);

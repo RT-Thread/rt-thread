@@ -8,9 +8,9 @@
  *
  * @file virtual_camera.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date Jul-20-2010
  *
@@ -32,7 +32,7 @@
 /******************************************************************************
  * Macro's
  *****************************************************************************/
-#define  CONTROLLER_ID      (0)   /* ID to identify USB CONTROLLER */ 
+#define  CONTROLLER_ID      (0)   /* ID to identify USB CONTROLLER */
 
 #define  KBI_STAT_MASK      (0x0F)
 
@@ -52,6 +52,6 @@ extern void TestApp_Init(void);
 #elif USE_SKI_VIDEO
    #define VIDEO_PACKET_SIZE 63
 #elif USE_PRESENTATION_VIDEO
-	#define VIDEO_PACKET_SIZE 195
+    #define VIDEO_PACKET_SIZE 195
 #endif
-#endif 
+#endif

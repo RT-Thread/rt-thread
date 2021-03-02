@@ -178,7 +178,7 @@ extern "C" {
 #endif
 
 /*!
- * @brief	Initialize PINT peripheral.
+ * @brief   Initialize PINT peripheral.
 
  * This function initializes the PINT peripheral and enables the clock.
  *
@@ -189,7 +189,7 @@ extern "C" {
 void PINT_Init(PINT_Type *base);
 
 /*!
- * @brief	Configure PINT peripheral pin interrupt.
+ * @brief   Configure PINT peripheral pin interrupt.
 
  * This function configures a given pin interrupt.
  *
@@ -203,7 +203,7 @@ void PINT_Init(PINT_Type *base);
 void PINT_PinInterruptConfig(PINT_Type *base, pint_pin_int_t intr, pint_pin_enable_t enable, pint_cb_t callback);
 
 /*!
- * @brief	Get PINT peripheral pin interrupt configuration.
+ * @brief   Get PINT peripheral pin interrupt configuration.
 
  * This function returns the configuration of a given pin interrupt.
  *
@@ -217,7 +217,7 @@ void PINT_PinInterruptConfig(PINT_Type *base, pint_pin_int_t intr, pint_pin_enab
 void PINT_PinInterruptGetConfig(PINT_Type *base, pint_pin_int_t pintr, pint_pin_enable_t *enable, pint_cb_t *callback);
 
 /*!
- * @brief	Clear Selected pin interrupt status only when the pin was triggered by edge-sensitive.
+ * @brief   Clear Selected pin interrupt status only when the pin was triggered by edge-sensitive.
 
  * This function clears the selected pin interrupt status.
  *
@@ -229,7 +229,7 @@ void PINT_PinInterruptGetConfig(PINT_Type *base, pint_pin_int_t pintr, pint_pin_
 void PINT_PinInterruptClrStatus(PINT_Type *base, pint_pin_int_t pintr);
 
 /*!
- * @brief	Get Selected pin interrupt status.
+ * @brief   Get Selected pin interrupt status.
 
  * This function returns the selected pin interrupt status.
  *
@@ -244,7 +244,7 @@ static inline uint32_t PINT_PinInterruptGetStatus(PINT_Type *base, pint_pin_int_
 }
 
 /*!
- * @brief	Clear all pin interrupts status only when pins were triggered by edge-sensitive.
+ * @brief   Clear all pin interrupts status only when pins were triggered by edge-sensitive.
 
  * This function clears the status of all pin interrupts.
  *
@@ -255,7 +255,7 @@ static inline uint32_t PINT_PinInterruptGetStatus(PINT_Type *base, pint_pin_int_
 void PINT_PinInterruptClrStatusAll(PINT_Type *base);
 
 /*!
- * @brief	Get all pin interrupts status.
+ * @brief   Get all pin interrupts status.
 
  * This function returns the status of all pin interrupts.
  *
@@ -270,7 +270,7 @@ static inline uint32_t PINT_PinInterruptGetStatusAll(PINT_Type *base)
 }
 
 /*!
- * @brief	Clear Selected pin interrupt fall flag.
+ * @brief   Clear Selected pin interrupt fall flag.
 
  * This function clears the selected pin interrupt fall flag.
  *
@@ -285,7 +285,7 @@ static inline void PINT_PinInterruptClrFallFlag(PINT_Type *base, pint_pin_int_t 
 }
 
 /*!
- * @brief	Get selected pin interrupt fall flag.
+ * @brief   Get selected pin interrupt fall flag.
 
  * This function returns the selected pin interrupt fall flag.
  *
@@ -300,7 +300,7 @@ static inline uint32_t PINT_PinInterruptGetFallFlag(PINT_Type *base, pint_pin_in
 }
 
 /*!
- * @brief	Clear all pin interrupt fall flags.
+ * @brief   Clear all pin interrupt fall flags.
 
  * This function clears the fall flag for all pin interrupts.
  *
@@ -314,7 +314,7 @@ static inline void PINT_PinInterruptClrFallFlagAll(PINT_Type *base)
 }
 
 /*!
- * @brief	Get all pin interrupt fall flags.
+ * @brief   Get all pin interrupt fall flags.
 
  * This function returns the fall flag of all pin interrupts.
  *
@@ -329,7 +329,7 @@ static inline uint32_t PINT_PinInterruptGetFallFlagAll(PINT_Type *base)
 }
 
 /*!
- * @brief	Clear Selected pin interrupt rise flag.
+ * @brief   Clear Selected pin interrupt rise flag.
 
  * This function clears the selected pin interrupt rise flag.
  *
@@ -344,7 +344,7 @@ static inline void PINT_PinInterruptClrRiseFlag(PINT_Type *base, pint_pin_int_t 
 }
 
 /*!
- * @brief	Get selected pin interrupt rise flag.
+ * @brief   Get selected pin interrupt rise flag.
 
  * This function returns the selected pin interrupt rise flag.
  *
@@ -359,7 +359,7 @@ static inline uint32_t PINT_PinInterruptGetRiseFlag(PINT_Type *base, pint_pin_in
 }
 
 /*!
- * @brief	Clear all pin interrupt rise flags.
+ * @brief   Clear all pin interrupt rise flags.
 
  * This function clears the rise flag for all pin interrupts.
  *
@@ -373,7 +373,7 @@ static inline void PINT_PinInterruptClrRiseFlagAll(PINT_Type *base)
 }
 
 /*!
- * @brief	Get all pin interrupt rise flags.
+ * @brief   Get all pin interrupt rise flags.
 
  * This function returns the rise flag of all pin interrupts.
  *
@@ -388,7 +388,7 @@ static inline uint32_t PINT_PinInterruptGetRiseFlagAll(PINT_Type *base)
 }
 
 /*!
- * @brief	Configure PINT pattern match.
+ * @brief   Configure PINT pattern match.
 
  * This function configures a given pattern match bit slice.
  *
@@ -401,7 +401,7 @@ static inline uint32_t PINT_PinInterruptGetRiseFlagAll(PINT_Type *base)
 void PINT_PatternMatchConfig(PINT_Type *base, pint_pmatch_bslice_t bslice, pint_pmatch_cfg_t *cfg);
 
 /*!
- * @brief	Get PINT pattern match configuration.
+ * @brief   Get PINT pattern match configuration.
 
  * This function returns the configuration of a given pattern match bit slice.
  *
@@ -414,7 +414,7 @@ void PINT_PatternMatchConfig(PINT_Type *base, pint_pmatch_bslice_t bslice, pint_
 void PINT_PatternMatchGetConfig(PINT_Type *base, pint_pmatch_bslice_t bslice, pint_pmatch_cfg_t *cfg);
 
 /*!
- * @brief	Get pattern match bit slice status.
+ * @brief   Get pattern match bit slice status.
 
  * This function returns the status of selected bit slice.
  *
@@ -429,7 +429,7 @@ static inline uint32_t PINT_PatternMatchGetStatus(PINT_Type *base, pint_pmatch_b
 }
 
 /*!
- * @brief	Get status of all pattern match bit slices.
+ * @brief   Get status of all pattern match bit slices.
 
  * This function returns the status of all bit slices.
  *
@@ -444,7 +444,7 @@ static inline uint32_t PINT_PatternMatchGetStatusAll(PINT_Type *base)
 }
 
 /*!
- * @brief	Reset pattern match detection logic.
+ * @brief   Reset pattern match detection logic.
 
  * This function resets the pattern match detection logic if any of the product term is matching.
  *
@@ -456,13 +456,13 @@ static inline uint32_t PINT_PatternMatchGetStatusAll(PINT_Type *base)
 uint32_t PINT_PatternMatchResetDetectLogic(PINT_Type *base);
 
 /*!
- * @brief	Enable pattern match function.
+ * @brief   Enable pattern match function.
 
  * This function enables the pattern match function.
  *
  * @param base Base address of the PINT peripheral.
  *
- * @retval	None.
+ * @retval  None.
  */
 static inline void PINT_PatternMatchEnable(PINT_Type *base)
 {
@@ -470,13 +470,13 @@ static inline void PINT_PatternMatchEnable(PINT_Type *base)
 }
 
 /*!
- * @brief	Disable pattern match function.
+ * @brief   Disable pattern match function.
 
  * This function disables the pattern match function.
  *
  * @param base Base address of the PINT peripheral.
  *
- * @retval	None.
+ * @retval  None.
  */
 static inline void PINT_PatternMatchDisable(PINT_Type *base)
 {
@@ -484,13 +484,13 @@ static inline void PINT_PatternMatchDisable(PINT_Type *base)
 }
 
 /*!
- * @brief	Enable RXEV output.
+ * @brief   Enable RXEV output.
 
  * This function enables the pattern match RXEV output.
  *
  * @param base Base address of the PINT peripheral.
  *
- * @retval	None.
+ * @retval  None.
  */
 static inline void PINT_PatternMatchEnableRXEV(PINT_Type *base)
 {
@@ -498,13 +498,13 @@ static inline void PINT_PatternMatchEnableRXEV(PINT_Type *base)
 }
 
 /*!
- * @brief	Disable RXEV output.
+ * @brief   Disable RXEV output.
 
  * This function disables the pattern match RXEV output.
  *
  * @param base Base address of the PINT peripheral.
  *
- * @retval	None.
+ * @retval  None.
  */
 static inline void PINT_PatternMatchDisableRXEV(PINT_Type *base)
 {
@@ -512,7 +512,7 @@ static inline void PINT_PatternMatchDisableRXEV(PINT_Type *base)
 }
 
 /*!
- * @brief	Enable callback.
+ * @brief   Enable callback.
 
  * This function enables the interrupt for the selected PINT peripheral. Although the pin(s) are monitored
  * as soon as they are enabled, the callback function is not enabled until this function is called.
@@ -524,7 +524,7 @@ static inline void PINT_PatternMatchDisableRXEV(PINT_Type *base)
 void PINT_EnableCallback(PINT_Type *base);
 
 /*!
- * @brief	Disable callback.
+ * @brief   Disable callback.
 
  * This function disables the interrupt for the selected PINT peripheral. Although the pins are still
  * being monitored but the callback function is not called.
@@ -536,7 +536,7 @@ void PINT_EnableCallback(PINT_Type *base);
 void PINT_DisableCallback(PINT_Type *base);
 
 /*!
- * @brief	Deinitialize PINT peripheral.
+ * @brief   Deinitialize PINT peripheral.
 
  * This function disables the PINT clock.
  *
@@ -547,7 +547,7 @@ void PINT_DisableCallback(PINT_Type *base);
 void PINT_Deinit(PINT_Type *base);
 
 /*!
- * @brief	enable callback by pin index.
+ * @brief   enable callback by pin index.
 
  * This function  enables callback by pin index instead of enabling all pins.
  *

@@ -230,7 +230,7 @@ HAL_StatusTypeDef HAL_ADCEx_LinearCalibration_GetValue(ADC_HandleTypeDef* hadc, 
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Enable the ADC ADEN = 1 to be able to read the linear calibration factor */
-  if(LL_ADC_IsEnabled(hadc->Instance) == 0UL) 
+  if(LL_ADC_IsEnabled(hadc->Instance) == 0UL)
     {
       tmp_hal_status = ADC_Enable(hadc);
     }

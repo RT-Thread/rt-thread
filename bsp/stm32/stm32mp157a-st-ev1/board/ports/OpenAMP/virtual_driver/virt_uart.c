@@ -52,7 +52,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 static int VIRT_UART_read_cb(struct rpmsg_endpoint *ept, void *data,
-			    size_t len, uint32_t src, void *priv)
+                size_t len, uint32_t src, void *priv)
 {
   VIRT_UART_HandleTypeDef *huart = metal_container_of(ept, VIRT_UART_HandleTypeDef, ept);
   (void)src;
@@ -74,7 +74,7 @@ VIRT_UART_StatusTypeDef VIRT_UART_Init(VIRT_UART_HandleTypeDef *huart)
   /* Create a endpoint for rmpsg communication */
 
   status = OPENAMP_create_endpoint(&huart->ept, RPMSG_SERVICE_NAME, RPMSG_ADDR_ANY,
-		  	  	  	  	  	  	   VIRT_UART_read_cb, NULL);
+                                   VIRT_UART_read_cb, NULL);
 
   if(status < 0) {
     return VIRT_UART_ERROR;
@@ -112,15 +112,15 @@ VIRT_UART_StatusTypeDef VIRT_UART_RegisterCallback(VIRT_UART_HandleTypeDef *huar
 
 VIRT_UART_StatusTypeDef VIRT_UART_Transmit(VIRT_UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size)
 {
-	int res;
+    int res;
 
-	if (Size > (RPMSG_BUFFER_SIZE-16))
-	  return VIRT_UART_ERROR;
+    if (Size > (RPMSG_BUFFER_SIZE-16))
+      return VIRT_UART_ERROR;
 
-	res = OPENAMP_send(&huart->ept, pData, Size);
-	if (res <0) {
-		return VIRT_UART_ERROR;
-	}
+    res = OPENAMP_send(&huart->ept, pData, Size);
+    if (res <0) {
+        return VIRT_UART_ERROR;
+    }
 
-	return VIRT_UART_OK;
+    return VIRT_UART_OK;
 }

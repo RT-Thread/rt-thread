@@ -38,7 +38,7 @@
 #define PM1_STS             HWREG32(PM1_BASE)
 #define PM1_EN              HWREG32(PM1_BASE + 0x04)
 #define PM1_CNT             HWREG32(PM1_BASE + 0x08)
-	
+
 /*
  * Watch Dog Configuration Registers
  */

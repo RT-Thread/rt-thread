@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,12 +25,12 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
 
-/** 
+/**
  * \file uffs_find.h
  * \brief find objects under dir
  * \author Ricky Zheng
@@ -46,14 +46,14 @@ extern "C"{
 #endif
 
 typedef struct uffs_FindInfoSt {
-	uffs_Device *dev;				//!< the device to be searched
-	u16 serial;						//!< the dir serial number
-	int step;						//!< step:	0 - working on dir entries,
-									//			1 - working on file entries,
-									//			2 - stoped.
-	int hash;						//!< hash entry, internal used
-	TreeNode *work;					//!< working node, internal used.
-	int pos;						//!< current position
+    uffs_Device *dev;               //!< the device to be searched
+    u16 serial;                     //!< the dir serial number
+    int step;                       //!< step:  0 - working on dir entries,
+                                    //          1 - working on file entries,
+                                    //          2 - stoped.
+    int hash;                       //!< hash entry, internal used
+    TreeNode *work;                 //!< working node, internal used.
+    int pos;                        //!< current position
 } uffs_FindInfo;
 
 

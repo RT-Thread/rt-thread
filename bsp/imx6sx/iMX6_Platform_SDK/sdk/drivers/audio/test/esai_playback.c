@@ -111,30 +111,30 @@ int32_t esai_playback(audio_pcm_p pcm_file)
     pcm_file->size = sizeof(ac97_pattern);
 #endif
     /*
-     * CS42888 driver supports 48/44.1KHz only, although it was 
+     * CS42888 driver supports 48/44.1KHz only, although it was
      * expected to support all sample rates.  When lower sample rate used,
      * no audio output.
      * It is supposed that the pcm was 16KHz, and we should convert it to 48KHz,
      */
      uint8_t *buf_sr_48K = malloc(pcm_file->size * 3);
      if(NULL == buf_sr_48K){
-	printf("Failed to malloc pcm buf for up-samplerate.\n");
-	return -1;
-     } 
+    printf("Failed to malloc pcm buf for up-samplerate.\n");
+    return -1;
+     }
      uint16_t *sample_dst = (uint16_t *)buf_sr_48K;
      uint16_t *sample_src = (uint16_t *)pcm_file->buf;
      uint16_t r_val, l_val;
      for(int i = 0; i < pcm_file->size/(pcm_file->para->word_length/8); i+=2){
-	r_val = *sample_src++;
-	l_val = *sample_src++;
-	for(int j=0; j <3; j++){
-		*sample_dst++ = r_val;	// R channel  
-		*sample_dst++ = l_val;    // L channel
-	}
+    r_val = *sample_src++;
+    l_val = *sample_src++;
+    for(int j=0; j <3; j++){
+        *sample_dst++ = r_val;  // R channel
+        *sample_dst++ = l_val;    // L channel
+    }
      }
 
      pcm_file->buf = buf_sr_48K;
-     pcm_file->size *= 3; 
+     pcm_file->size *= 3;
 
     while (1) {
         snd_card->ops->write(snd_card, pcm_file->buf, pcm_file->size, &bytes_written);

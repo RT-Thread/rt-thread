@@ -108,7 +108,7 @@ char * read_input_string(input_string_filter_t filter);
 
 /*!
  * This function waits for an input char to be received from the UART. Once a char is received,
- * it tests against the passed in char and return 0 if they don't match. 
+ * it tests against the passed in char and return 0 if they don't match.
  * @param   c        the input character to be expected (NOT case sensitive)
  * @param   indent   pointer to a character buffer to use for indenting text to screen
  * @return  0        if input char doesn't match with c
@@ -128,7 +128,7 @@ int read_int(void);
 
 /*!
  * @brief Function to jump into the ROM Serial Download Protocol.
- * 
+ *
  * Control never returns to the caller once this function is called.
  */
 void jump_to_sdp(void);

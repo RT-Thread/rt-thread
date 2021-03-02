@@ -47,17 +47,17 @@ typedef struct
 
     uint16_t USART_StopBits;                /*!< Specifies the number of stop bits transmitted.
                                                  This parameter can be a value of @ref USART_Stop_Bits */
-                                             
+
     uint16_t USART_Parity;                  /*!< Specifies the parity mode.
                                                  This parameter can be a value of @ref USART_Parity
                                                  @note When parity is enabled, the computed parity is inserted
                                                        at the MSB position of the transmitted data (9th bit when
                                                        the word length is set to 9 data bits; 8th bit when the
                                                        word length is set to 8 data bits). */
-                                            
+
     uint16_t USART_Mode;                    /*!< Specifies wether the Receive or Transmit mode is enabled or disabled.
                                                  This parameter can be a value of @ref USART_Mode */
-                                            
+
     uint16_t USART_HardwareFlowControl;     /*!< Specifies wether the hardware flow control mode is enabled
                                                  or disabled.
                                                  This parameter can be a value of @ref USART_Hardware_Flow_Control */
@@ -72,13 +72,13 @@ typedef struct
 
     uint16_t USART_Clock;                   /*!< Specifies whether the USART clock is enabled or disabled.
                                                 This parameter can be a value of @ref USART_Clock */
-                                            
+
     uint16_t USART_CPOL;                    /*!< Specifies the steady state value of the serial clock.
                                                 This parameter can be a value of @ref USART_Clock_Polarity */
-                                            
+
     uint16_t USART_CPHA;                    /*!< Specifies the clock transition on which the bit capture is made.
                                                 This parameter can be a value of @ref USART_Clock_Phase */
-                                            
+
     uint16_t USART_LastBit;                 /*!< Specifies whether the clock pulse corresponding to the last transmitted
                                                 data bit (MSB) has to be output on the SCLK pin in synchronous mode.
                                                 This parameter can be a value of @ref USART_Last_Bit */
@@ -101,7 +101,7 @@ typedef struct
 #define IS_USART_123_PERIPH(PERIPH)         (((PERIPH) == USART1) || \
                                              ((PERIPH) == USART2) || \
                                              ((PERIPH) == USART3))
-                                            
+
 #define IS_USART_1234_PERIPH(PERIPH)        (((PERIPH) == USART1) || \
                                              ((PERIPH) == USART2) || \
                                              ((PERIPH) == USART3) || \
@@ -122,7 +122,7 @@ typedef struct
 /** @defgroup USART_Stop_Bits
   * @{
   */
-                                            
+
 #define USART_StopBits_1                    ((uint16_t)0x0000)
 #define USART_StopBits_0_5                  ((uint16_t)0x1000)
 #define USART_StopBits_2                    ((uint16_t)0x2000)

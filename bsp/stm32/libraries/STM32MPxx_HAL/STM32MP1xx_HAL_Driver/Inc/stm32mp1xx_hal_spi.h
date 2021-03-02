@@ -195,11 +195,11 @@ typedef struct __SPI_HandleTypeDef
   __IO HAL_SPI_StateTypeDef  State;                        /*!< SPI communication state                  */
 
   __IO uint32_t              ErrorCode;                    /*!< SPI Error code                           */
-  
+
 #if defined(USE_SPI_RELOAD_TRANSFER)
 
   SPI_ReloadTypeDef          Reload;                       /*!< SPI reload parameters                    */
-  
+
 #endif /* USE_HSPI_RELOAD_TRANSFER */
 
 #if (USE_HAL_SPI_REGISTER_CALLBACKS == 1UL)

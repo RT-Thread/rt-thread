@@ -14,7 +14,7 @@
 
 #ifdef cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* define GD32F4xx */
 #if !defined (GD32F4xx)
@@ -35,7 +35,7 @@
 #endif /* high speed crystal oscillator startup timeout */
 
 /* define value of internal 16MHz RC oscillator (IRC16M) in Hz */
-#if !defined  (IRC16M_VALUE) 
+#if !defined  (IRC16M_VALUE)
 #define IRC16M_VALUE  ((uint32_t)16000000)
 #endif /* internal 16MHz RC oscillator value */
 
@@ -45,12 +45,12 @@
 #endif /* internal 16MHz RC oscillator startup timeout */
 
 /* define value of internal 32KHz RC oscillator(IRC32K) in Hz */
-#if !defined  (IRC32K_VALUE) 
+#if !defined  (IRC32K_VALUE)
 #define IRC32K_VALUE  ((uint32_t)32000)
 #endif /* internal 32KHz RC oscillator value */
 
 /* define value of low speed crystal oscillator (LXTAL)in Hz */
-#if !defined  (LXTAL_VALUE) 
+#if !defined  (LXTAL_VALUE)
 #define LXTAL_VALUE  ((uint32_t)32768)
 #endif /* low speed crystal oscillator value */
 
@@ -61,7 +61,7 @@
 #define __GD32F4xx_STDPERIPH_VERSION_MAIN   (0x03) /*!< [31:24] main version     */
 #define __GD32F4xx_STDPERIPH_VERSION_SUB1   (0x00) /*!< [23:16] sub1 version     */
 #define __GD32F4xx_STDPERIPH_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version     */
-#define __GD32F4xx_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]  release candidate */ 
+#define __GD32F4xx_STDPERIPH_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __GD32F4xx_STDPERIPH_VERSION        ((__GD32F4xx_STDPERIPH_VERSION_MAIN << 24)\
                                             |(__GD32F4xx_STDPERIPH_VERSION_SUB1 << 16)\
                                             |(__GD32F4xx_STDPERIPH_VERSION_SUB2 << 8)\
@@ -193,7 +193,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 #define REG16(addr)                  (*(volatile uint16_t *)(uint32_t)(addr))
 #define REG8(addr)                   (*(volatile uint8_t *)(uint32_t)(addr))
 #define BIT(x)                       ((uint32_t)((uint32_t)0x01U<<(x)))
-#define BITS(start, end)             ((0xFFFFFFFFUL << (start)) & (0xFFFFFFFFUL >> (31U - (uint32_t)(end)))) 
+#define BITS(start, end)             ((0xFFFFFFFFUL << (start)) & (0xFFFFFFFFUL >> (31U - (uint32_t)(end))))
 #define GET_BITS(regval, start, end) (((regval) & BITS((start),(end))) >> (start))
 
 /* main flash and SRAM memory map */
@@ -254,7 +254,7 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 /* define marco USE_STDPERIPH_DRIVER */
 #if !defined  USE_STDPERIPH_DRIVER
 #define USE_STDPERIPH_DRIVER
-#endif 
+#endif
 #ifdef USE_STDPERIPH_DRIVER
 #include "gd32f4xx_libopt.h"
 #endif /* USE_STDPERIPH_DRIVER */
@@ -262,4 +262,4 @@ typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrStatus;
 #ifdef cplusplus
 }
 #endif
-#endif 
+#endif

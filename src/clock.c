@@ -111,7 +111,7 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
         tick = RT_TICK_PER_SECOND * (ms / 1000);
         tick += (RT_TICK_PER_SECOND * (ms % 1000) + 999) / 1000;
     }
-    
+
     /* return the calculated tick */
     return tick;
 }

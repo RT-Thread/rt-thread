@@ -389,7 +389,7 @@ rt_err_t es32f0_pin_irq_enable(struct rt_device *device, rt_base_t pin,
                     0xF<<(index->pin%8),
                     (((uint32_t)(index->gpio) - AHB2_BASE)/0x400)<<(index->pin%8));
         SET_BIT(EXTI->DB, 0x1<<index->pin);
-        
+
         switch (pin_irq_hdr_tab[irqindex].mode)
         {
             case PIN_IRQ_MODE_RISING:
@@ -456,7 +456,7 @@ const static struct rt_pin_ops _es32f0_pin_ops =
 int rt_hw_pin_init(void)
 {
     int result;
-    
+
     /* Open IO clock */
     SET_BIT(RCU->AHBEN, RCU_AHBEN_GPDEN_MSK|RCU_AHBEN_GPCEN_MSK            \
                                 |RCU_AHBEN_GPBEN_MSK|RCU_AHBEN_GPAEN_MSK);

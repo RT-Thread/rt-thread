@@ -242,13 +242,13 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
 {
   /* Check the parameters */
   assert_param(IS_ADC_COMMON_INSTANCE(ADCxy_COMMON));
-  
+
   /* Force reset of ADC clock (core clock) */
   LL_APB2_GRP1_ForceReset(LL_APB2_GRP1_PERIPH_ADC);
-  
+
   /* Release reset of ADC clock (core clock) */
   LL_APB2_GRP1_ReleaseReset(LL_APB2_GRP1_PERIPH_ADC);
-  
+
   return SUCCESS;
 }
 
@@ -270,11 +270,11 @@ ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)
 ErrorStatus LL_ADC_CommonInit(ADC_Common_TypeDef *ADCxy_COMMON, LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_COMMON_INSTANCE(ADCxy_COMMON));
   assert_param(IS_LL_ADC_COMMON_CLOCK(ADC_CommonInitStruct->CommonClock));
-  
+
   /* Note: Hardware constraint (refer to description of functions             */
   /*       "LL_ADC_SetCommonXXX()":                                           */
   /*       On this STM32 serie, setting of these features is conditioned to   */
@@ -294,7 +294,7 @@ ErrorStatus LL_ADC_CommonInit(ADC_Common_TypeDef *ADCxy_COMMON, LL_ADC_CommonIni
     /* the same ADC common instance are not disabled.                         */
     status = ERROR;
   }
-  
+
   return status;
 }
 
@@ -310,7 +310,7 @@ void LL_ADC_CommonStructInit(LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
   /* Set fields of ADC common */
   /* (all ADC instances belonging to the same ADC common instance) */
   ADC_CommonInitStruct->CommonClock = LL_ADC_CLOCK_ASYNC_DIV2;
-  
+
 }
 
 /**
@@ -331,12 +331,12 @@ void LL_ADC_CommonStructInit(LL_ADC_CommonInitTypeDef *ADC_CommonInitStruct)
 ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 {
   ErrorStatus status = SUCCESS;
-  
+
   __IO uint32_t timeout_cpu_cycles = 0UL;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
-  
+
   /* Disable ADC instance if not already disabled.                            */
   if(LL_ADC_IsEnabled(ADCx) == 1UL)
   {
@@ -344,7 +344,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     /* have an external trigger event occurring during the conversion stop    */
     /* ADC disable process.                                                   */
     LL_ADC_REG_SetTriggerSource(ADCx, LL_ADC_REG_TRIG_SOFTWARE);
-    
+
     /* Stop potential ADC conversion on going on ADC group regular.           */
     if(LL_ADC_REG_IsConversionOngoing(ADCx) != 0UL)
     {
@@ -353,7 +353,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
         LL_ADC_REG_StopConversion(ADCx);
       }
     }
-    
+
     /* Wait for ADC conversions are effectively stopped                       */
     timeout_cpu_cycles = ADC_TIMEOUT_STOP_CONVERSION_CPU_CYCLES;
     while (LL_ADC_REG_IsStopConversionOngoing(ADCx) == 1UL)
@@ -366,10 +366,10 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
         break;
       }
     }
-    
+
     /* Disable the ADC instance */
     LL_ADC_Disable(ADCx);
-    
+
     /* Wait for ADC instance is effectively disabled */
     timeout_cpu_cycles = ADC_TIMEOUT_DISABLE_CPU_CYCLES;
     while (LL_ADC_IsDisableOngoing(ADCx) == 1UL)
@@ -383,7 +383,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
       }
     }
   }
-  
+
   /* Check whether ADC state is compliant with expected state */
   if(READ_BIT(ADCx->CR,
               (  ADC_CR_ADSTP | ADC_CR_ADSTART
@@ -406,7 +406,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | LL_ADC_IT_CCRDY
               )
              );
-    
+
     /* Reset register ISR */
     SET_BIT(ADCx->ISR,
             (  LL_ADC_FLAG_ADRDY
@@ -421,12 +421,12 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
              | LL_ADC_FLAG_CCRDY
             )
            );
-    
+
     /* Reset register CR */
     /* Bits ADC_CR_ADCAL, ADC_CR_ADSTP, ADC_CR_ADSTART are in access mode     */
     /* "read-set": no direct reset applicable.                                */
     CLEAR_BIT(ADCx->CR, ADC_CR_ADVREGEN);
-    
+
     /* Reset register CFGR1 */
     CLEAR_BIT(ADCx->CFGR1,
               (  ADC_CFGR1_AWD1CH  | ADC_CFGR1_AWD1EN | ADC_CFGR1_AWD1SGL | ADC_CFGR1_DISCEN
@@ -434,7 +434,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_CFGR1_EXTEN   | ADC_CFGR1_EXTSEL | ADC_CFGR1_ALIGN   | ADC_CFGR1_RES
                | ADC_CFGR1_SCANDIR | ADC_CFGR1_DMACFG | ADC_CFGR1_DMAEN                     )
              );
-    
+
     /* Reset register CFGR2 */
     /* Note: Update of ADC clock mode is conditioned to ADC state disabled:   */
     /*       already done above.                                              */
@@ -443,19 +443,19 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_CFGR2_TOVS   | ADC_CFGR2_OVSS  | ADC_CFGR2_OVSR
                | ADC_CFGR2_OVSE                                     )
              );
-    
+
     /* Reset register SMPR */
     CLEAR_BIT(ADCx->SMPR, ADC_SMPR_SMP1 | ADC_SMPR_SMP2 | ADC_SMPR_SMPSEL);
 
     /* Reset register TR1 */
     MODIFY_REG(ADCx->TR1, ADC_TR1_HT1 | ADC_TR1_LT1, ADC_TR1_HT1);
-    
+
     /* Reset register TR2 */
     MODIFY_REG(ADCx->TR2, ADC_TR2_HT2 | ADC_TR2_LT2, ADC_TR2_HT2);
-    
+
     /* Reset register TR3 */
     MODIFY_REG(ADCx->TR3, ADC_TR3_HT3 | ADC_TR3_LT3, ADC_TR3_HT3);
-    
+
     /* Reset register CHSELR */
     CLEAR_BIT(ADCx->CHSELR,
               (  ADC_CHSELR_CHSEL18 | ADC_CHSELR_CHSEL17 | ADC_CHSELR_CHSEL16
@@ -464,7 +464,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
                | ADC_CHSELR_CHSEL7  | ADC_CHSELR_CHSEL6  | ADC_CHSELR_CHSEL5  | ADC_CHSELR_CHSEL4
                | ADC_CHSELR_CHSEL3  | ADC_CHSELR_CHSEL2  | ADC_CHSELR_CHSEL1  | ADC_CHSELR_CHSEL0 )
              );
-    
+
     /* Wait for ADC channel configuration ready */
     timeout_cpu_cycles = ADC_TIMEOUT_CCRDY_CPU_CYCLES;
     while (LL_ADC_IsActiveFlag_CCRDY(ADCx) == 0UL)
@@ -477,16 +477,16 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
         break;
       }
     }
-    
+
     /* Clear flag ADC channel configuration ready */
     LL_ADC_ClearFlag_CCRDY(ADCx);
-    
+
     /* Reset register DR */
     /* bits in access mode read only, no direct reset applicable */
-    
+
     /* Reset register CALFACT */
     CLEAR_BIT(ADCx->CALFACT, ADC_CALFACT_CALFACT);
-    
+
   }
   else
   {
@@ -498,7 +498,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     /*          all ADC instances belonging to the common ADC instance.       */
     status = ERROR;
   }
-  
+
   return status;
 }
 
@@ -541,15 +541,15 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
 ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
-  
+
   assert_param(IS_LL_ADC_CLOCK(ADC_InitStruct->Clock));
   assert_param(IS_LL_ADC_RESOLUTION(ADC_InitStruct->Resolution));
   assert_param(IS_LL_ADC_DATA_ALIGN(ADC_InitStruct->DataAlignment));
   assert_param(IS_LL_ADC_LOW_POWER(ADC_InitStruct->LowPowerMode));
-  
+
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0UL)
@@ -569,7 +569,7 @@ ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
                | ADC_InitStruct->DataAlignment
                | ADC_InitStruct->LowPowerMode
               );
-    
+
     MODIFY_REG(ADCx->CFGR2,
                ADC_CFGR2_CKMODE
               ,
@@ -581,7 +581,7 @@ ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
     /* Initialization error: ADC instance is not disabled. */
     status = ERROR;
   }
-  
+
   return status;
 }
 
@@ -599,7 +599,7 @@ void LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct)
   ADC_InitStruct->Resolution    = LL_ADC_RESOLUTION_12B;
   ADC_InitStruct->DataAlignment = LL_ADC_DATA_ALIGN_RIGHT;
   ADC_InitStruct->LowPowerMode  = LL_ADC_LP_MODE_NONE;
-  
+
 }
 
 /**
@@ -642,7 +642,7 @@ void LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct)
 ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(ADCx));
   assert_param(IS_LL_ADC_REG_TRIG_SOURCE(ADC_REG_InitStruct->TriggerSource));
@@ -654,7 +654,7 @@ ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_I
   assert_param(IS_LL_ADC_REG_CONTINUOUS_MODE(ADC_REG_InitStruct->ContinuousMode));
   assert_param(IS_LL_ADC_REG_DMA_TRANSFER(ADC_REG_InitStruct->DMATransfer));
   assert_param(IS_LL_ADC_REG_OVR_DATA_BEHAVIOR(ADC_REG_InitStruct->Overrun));
-  
+
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       ADC instance must be disabled.                                     */
   if(LL_ADC_IsEnabled(ADCx) == 0UL)

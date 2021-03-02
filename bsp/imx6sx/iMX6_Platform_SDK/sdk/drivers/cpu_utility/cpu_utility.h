@@ -83,7 +83,7 @@ extern "C" {
 int cpu_get_cores(void);
 
 //! @brief Set the CPU work point
-//! 
+//!
 //! This function will switch the CPU work point by changing the core frequency
 //! and voltages.
 //!

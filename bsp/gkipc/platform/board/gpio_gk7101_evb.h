@@ -10,10 +10,10 @@
 
 #if SYSTEM_USE_EXTERN_I2S == 1
 #define SYSTEM_GPIO_I2S_TABLE                              \
-	{ GADI_GPIO_4,  GADI_GPIO_TYPE_OUTPUT_AOMCLK			}, \
-	{ GADI_GPIO_5 , GADI_GPIO_TYPE_OUTPUT_AOLRCLK			}, \
-	{ GADI_GPIO_6 , GADI_GPIO_TYPE_INPUT_I2S_SI 			}, \
-	{ GADI_GPIO_7 , GADI_GPIO_TYPE_OUTPUT_AOBCLK			},
+    { GADI_GPIO_4,  GADI_GPIO_TYPE_OUTPUT_AOMCLK            }, \
+    { GADI_GPIO_5 , GADI_GPIO_TYPE_OUTPUT_AOLRCLK           }, \
+    { GADI_GPIO_6 , GADI_GPIO_TYPE_INPUT_I2S_SI             }, \
+    { GADI_GPIO_7 , GADI_GPIO_TYPE_OUTPUT_AOBCLK            },
 #else
 #define SYSTEM_GPIO_I2S_TABLE                              \
     { GADI_GPIO_4 , GADI_GPIO_TYPE_OUTPUT_SPI0_SO           }, \
@@ -86,7 +86,7 @@
     { GADI_GPIO_1 , GADI_GPIO_TYPE_OUTPUT_SF_CS1            }, \
     { GADI_GPIO_2 , GADI_GPIO_TYPE_OUTPUT_ENET_PHY_TXD_1    }, \
     { GADI_GPIO_3 , GADI_GPIO_TYPE_OUTPUT_ENET_PHY_TXD_0    }, \
-	SYSTEM_GPIO_I2S_TABLE\
+    SYSTEM_GPIO_I2S_TABLE\
     { GADI_GPIO_8 , GADI_GPIO_TYPE_OUTPUT_1 /* SPI0_HOLD */ }, \
     { GADI_GPIO_9 , GADI_GPIO_TYPE_OUTPUT_PWM2_OUT          }, \
     { GADI_GPIO_10, GADI_GPIO_TYPE_OUTPUT_PWM1_OUT          }, \
@@ -123,7 +123,7 @@
 #define SYSTEM_GPIO_IR_CUT1                         GADI_GPIO_10
 #define SYSTEM_GPIO_IR_CUT2                         GADI_GPIO_9
 #define SYSTEM_ETH_PHY_RESET_GPIO                   GADI_GPIO_33
-#define SYSTEM_GPIO_SENSOR_RESET    				GADI_GPIO_27
+#define SYSTEM_GPIO_SENSOR_RESET                    GADI_GPIO_27
 #define SYSTEM_GPIO_USB_HOST                        GADI_GPIO_49
 
 #endif

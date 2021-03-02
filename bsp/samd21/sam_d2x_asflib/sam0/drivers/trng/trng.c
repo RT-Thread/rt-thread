@@ -61,41 +61,41 @@
  * \retval STATUS_OK           The module was initialized successfully
  */
 enum status_code trng_init(
-		struct trng_module *const module_inst,
-		Trng *const hw,
-		struct trng_config *const config)
+        struct trng_module *const module_inst,
+        Trng *const hw,
+        struct trng_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(hw);
+    Assert(config);
 
-	/* Initialize device instance */
-	module_inst->hw = hw;
+    /* Initialize device instance */
+    module_inst->hw = hw;
 
-	/* Turn on the digital interface clock */
-	system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, MCLK_APBCMASK_TRNG);
+    /* Turn on the digital interface clock */
+    system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBC, MCLK_APBCMASK_TRNG);
 
 #if TRNG_CALLBACK_MODE == true
-	/* Initialize parameters */
-	for (uint8_t i = 0; i < TRNG_CALLBACK_N; i++) {
-		module_inst->callback[i] = NULL;
-	}
+    /* Initialize parameters */
+    for (uint8_t i = 0; i < TRNG_CALLBACK_N; i++) {
+        module_inst->callback[i] = NULL;
+    }
 
-	/* Initialize software flags*/
-	module_inst->register_callback_mask = 0x00;
-	module_inst->enable_callback_mask   = 0x00;
-	module_inst->job_buffer             = NULL;
-	module_inst->remaining_number       = 0;
-	module_inst->job_status             = STATUS_OK;
+    /* Initialize software flags*/
+    module_inst->register_callback_mask = 0x00;
+    module_inst->enable_callback_mask   = 0x00;
+    module_inst->job_buffer             = NULL;
+    module_inst->remaining_number       = 0;
+    module_inst->job_status             = STATUS_OK;
 
-	/* Register this instance for callbacks*/
-	_trng_instance = module_inst;
+    /* Register this instance for callbacks*/
+    _trng_instance = module_inst;
 #endif
 
-	/* Write configuration to module */
-	hw->CTRLA.reg = ((uint32_t)config->run_in_standby << TRNG_CTRLA_RUNSTDBY_Pos);
+    /* Write configuration to module */
+    hw->CTRLA.reg = ((uint32_t)config->run_in_standby << TRNG_CTRLA_RUNSTDBY_Pos);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 

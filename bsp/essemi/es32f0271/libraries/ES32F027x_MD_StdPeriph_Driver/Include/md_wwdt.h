@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-/* Includes -------------------------------------------------------------------*/ 
+/* Includes -------------------------------------------------------------------*/
 #include "es32f0271.h"
 #include "reg_wwdt.h"
 
@@ -92,7 +92,7 @@ typedef struct
 /** @defgroup MD_WWDT_Public_Macros WWDT Public Macros
   * @{
   */
-  
+
 /**
   * @brief  Set the WWDT_CON value
   * @note   A write of 0 in bit 7 has no effect.
@@ -147,7 +147,7 @@ __STATIC_INLINE uint32_t md_wwdt_is_enabled_wdga(WWDT_TypeDef *WWD)
   *         A reset is produced when it is decremented from 0x40 to 0x3F(T6 becomes cleared),
   *         and when it is renewed on the condition the value is more than the window value and the WDGA bit is enabled.
   * @param  WWD WWDT Instance
-  * @param  counter is a 7-bit number 
+  * @param  counter is a 7-bit number
   *         @arg Max Value 0x7F
   *         @arg Min Value 0x40
   * @retval None
@@ -198,17 +198,17 @@ __STATIC_INLINE uint32_t md_wwdt_get_cfg(WWDT_TypeDef *WWD)
 
 /**
   * @brief  Set WWDT WDGTB 2-bit prescaler value
-  * @note   The time base of the prescaler can be modified as follows: 
-  *         00: CK Counter Clock (PCLK div 4096) div 1 
-  *         01: CK Counter Clock (PCLK div 4096) div 2 
-  *         10: CK Counter Clock (PCLK div 4096) div 4 
-  *         11: CK Counter Clock (PCLK div 4096) div 8 
+  * @note   The time base of the prescaler can be modified as follows:
+  *         00: CK Counter Clock (PCLK div 4096) div 1
+  *         01: CK Counter Clock (PCLK div 4096) div 2
+  *         10: CK Counter Clock (PCLK div 4096) div 4
+  *         11: CK Counter Clock (PCLK div 4096) div 8
   * @param  WWD WWDT Instance
-  * @param  prescaler is a 2-bit number 
-  *         @arg @ref WWDT_PRESCALER_1 
-  *         @arg @ref WWDT_PRESCALER_2 
-  *         @arg @ref WWDT_PRESCALER_4 
-  *         @arg @ref WWDT_PRESCALER_8 
+  * @param  prescaler is a 2-bit number
+  *         @arg @ref WWDT_PRESCALER_1
+  *         @arg @ref WWDT_PRESCALER_2
+  *         @arg @ref WWDT_PRESCALER_4
+  *         @arg @ref WWDT_PRESCALER_8
   * @retval None
   */
 __STATIC_INLINE void md_wwdt_set_cfg_wdgtb(WWDT_TypeDef *WWD, uint32_t prescaler)
@@ -218,17 +218,17 @@ __STATIC_INLINE void md_wwdt_set_cfg_wdgtb(WWDT_TypeDef *WWD, uint32_t prescaler
 
 /**
   * @brief  Get WWDT WDGTB 2-bit prescaler value
-  * @note   The time base of the prescaler can be modified as follows: 
-            00: CK Counter Clock (PCLK div 4096) div 1 
-            01: CK Counter Clock (PCLK div 4096) div 2 
-            10: CK Counter Clock (PCLK div 4096) div 4 
-            11: CK Counter Clock (PCLK div 4096) div 8 
+  * @note   The time base of the prescaler can be modified as follows:
+            00: CK Counter Clock (PCLK div 4096) div 1
+            01: CK Counter Clock (PCLK div 4096) div 2
+            10: CK Counter Clock (PCLK div 4096) div 4
+            11: CK Counter Clock (PCLK div 4096) div 8
   * @param  WWD WWDT Instance
   * @retval The retval can be one of the following values:
-  *         @arg @ref WWDT_PRESCALER_1 
-  *         @arg @ref WWDT_PRESCALER_2 
-  *         @arg @ref WWDT_PRESCALER_4 
-  *         @arg @ref WWDT_PRESCALER_8 
+  *         @arg @ref WWDT_PRESCALER_1
+  *         @arg @ref WWDT_PRESCALER_2
+  *         @arg @ref WWDT_PRESCALER_4
+  *         @arg @ref WWDT_PRESCALER_8
   */
 __STATIC_INLINE uint32_t md_wwdt_get_cfg_wdgtb(WWDT_TypeDef *WWD)
 {
@@ -237,7 +237,7 @@ __STATIC_INLINE uint32_t md_wwdt_get_cfg_wdgtb(WWDT_TypeDef *WWD)
 
 /**
   * @brief  Set WWDT W 7-bit window
-  * @note   These bits contain the window value to be compared to the downcounter. 
+  * @note   These bits contain the window value to be compared to the downcounter.
   * @param  WWD WWDT Instance
   * @param  window is a 7-bit number
   *         @arg Max Value 0x7F
@@ -251,7 +251,7 @@ __STATIC_INLINE void md_wwdt_set_cfg_w(WWDT_TypeDef *WWD, uint32_t window)
 
 /**
   * @brief  Get WWDT W 7-bit window
-  * @note   These bits contain the window value to be compared to the downcounter. 
+  * @note   These bits contain the window value to be compared to the downcounter.
   * @param  WWD WWDT Instance
   * @retval The retval can be a value of the area:
   *         @arg Max Value 0x7F
@@ -297,8 +297,8 @@ __STATIC_INLINE uint32_t md_wwdt_is_enabled_ivs_ewis(WWDT_TypeDef *WWD)
 
 /**
   * @brief  Get the early wakeup interrupt flag status
-  * @note   This bit is set by hardware when the counter has reached the value 0x40. 
-            It can be cleared by software by writing 1 in WWDT_ICR. This bit is 
+  * @note   This bit is set by hardware when the counter has reached the value 0x40.
+            It can be cleared by software by writing 1 in WWDT_ICR. This bit is
             also set if the interrupt is not enabled.
   * @param  WWD WWDT Instance
   * @retval State of bit (1 or 0).
@@ -310,8 +310,8 @@ __STATIC_INLINE uint32_t md_wwdt_is_active_rif_ewif(WWDT_TypeDef *WWD)
 
 /**
   * @brief  Get the early wakeup interrupt flag masked status
-  * @note   This bit is set by hardware when the counter has reached the value 0x40 
-            and the interrupt is enabled. 
+  * @note   This bit is set by hardware when the counter has reached the value 0x40
+            and the interrupt is enabled.
   * @param  WWD WWDT Instance
   * @retval State of bit (1 or 0).
   */

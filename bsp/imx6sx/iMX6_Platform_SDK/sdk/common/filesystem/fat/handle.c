@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/handle/Handle.c $ 
- $Revision: 18 $                                       
+ $Archive: /Fatfs/FileSystem/Fat32/handle/Handle.c $
+ $Revision: 18 $
  $Date: 9/27/03 5:32p $
  Description: Handle.c
  Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -78,7 +78,7 @@ RtStatus_t Freehandle(int32_t HandleNumber)
    FunctionType:  Reentrant
 
    Inputs:        1) Handle number
-                  2) Mode 
+                  2) Mode
 
    Outputs:       Returns SUCCESS or Error if the mode can not be updated.
 
@@ -105,7 +105,7 @@ RtStatus_t Updatehandlemode(int32_t HandleNumber, int32_t Mode)
    FunctionType:  Reentrant
 
    Inputs:        1) Handle number
-                  2) Mode 
+                  2) Mode
 
    Outputs:       Returns HandleMode or an Error.
 
@@ -179,10 +179,10 @@ FileSystemModeTypes_t IsHandleWriteAllocated(int32_t HandleNumber)
 
    Inputs:        Nil
 
-   Outputs:       Handle number of free handle or error(NofreeHandle) if no 
+   Outputs:       Handle number of free handle or error(NofreeHandle) if no
                   free handle is available
 
-   Description:   Searches in the handle table for free handle. If free handle is found 
+   Description:   Searches in the handle table for free handle. If free handle is found
                   then mark this handle  as active in the handle table
 <
 ----------------------------------------------------------------------------*/
@@ -330,7 +330,7 @@ int32_t GetCWDHandle(void)
    FunctionType:   Reentrant
 
    Inputs:         1) Handle number
-				   2) Device number pointer
+                   2) Device number pointer
 
    Outputs:        Writes the device handle to the device number pointer address
 

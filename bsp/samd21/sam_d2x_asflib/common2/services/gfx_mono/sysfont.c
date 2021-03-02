@@ -62,14 +62,14 @@ SYSFONT_DEFINE_GLYPHS;
  * This initializes a basic system font globally usable by the application.
  */
 struct font sysfont = {
-	.type           = FONT_LOC_PROGMEM,
-	.width          = SYSFONT_WIDTH,
-	.height         = SYSFONT_HEIGHT,
-	.first_char     = SYSFONT_FIRSTCHAR,
-	.last_char      = SYSFONT_LASTCHAR,
-	.data           = {
-		.progmem        = sysfont_glyphs,
-	},
+    .type           = FONT_LOC_PROGMEM,
+    .width          = SYSFONT_WIDTH,
+    .height         = SYSFONT_HEIGHT,
+    .first_char     = SYSFONT_FIRSTCHAR,
+    .last_char      = SYSFONT_LASTCHAR,
+    .data           = {
+        .progmem        = sysfont_glyphs,
+    },
 };
 
 /** @} */

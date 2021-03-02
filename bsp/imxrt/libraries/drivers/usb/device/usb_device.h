@@ -253,7 +253,7 @@ extern "C" {
  * @retval kStatus_USB_Busy                 Cannot allocate a device handle.
  * @retval kStatus_USB_ControllerNotFound   Cannot find the controller according to the controller id.
  * @retval kStatus_USB_InvalidControllerInterface  The controller driver interfaces is invalid. There is an empty
- * 													interface entity.
+ *                                                  interface entity.
  * @retval kStatus_USB_Error                The macro USB_DEVICE_CONFIG_ENDPOINTS is more than the IP's endpoint number.
  *                                          Or, the device has been initialized.
  *                                          Or, the mutex or message queue is created failed.
@@ -501,8 +501,8 @@ extern usb_status_t USB_DeviceDcdInitModule(usb_device_handle handle, void *time
  *
  * @param[in] handle The device handle got from #USB_DeviceInit.
  *
- * @retval kStatus_USB_Success 			 The device is stopped successfully.
- * @retval kStatus_USB_InvalidHandle		 The device handle is a NULL pointer or the controller handle is invalid.
+ * @retval kStatus_USB_Success           The device is stopped successfully.
+ * @retval kStatus_USB_InvalidHandle         The device handle is a NULL pointer or the controller handle is invalid.
  */
 extern usb_status_t USB_DeviceDcdDeinitModule(usb_device_handle handle);
 #endif

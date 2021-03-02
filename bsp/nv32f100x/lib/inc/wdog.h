@@ -1,6 +1,6 @@
 
 /******************************************************************************
-* @brief provide commond watch dog utilities. 
+* @brief provide commond watch dog utilities.
 *
 *******************************************************************************
 *
@@ -28,10 +28,10 @@ extern "C" {
 * Macros
 ******************************************************************************/
 /* wdog_unlock sequence must be performed within 16 bus clock cycles without
- * any interrupt 
+ * any interrupt
  */
 
-   
+
 /* WDOG clock sources option */
 /******************************************************************************
 * define watchdog clock source selection
@@ -42,20 +42,20 @@ extern "C" {
 
 #define WDOG_CLK_BUS                    0   /*!< clock source is bus clock */
 #define WDOG_CLK_INTERNAL_32KHZ         2   /*!< clock source is internal oscillator 32 kHz (ICSIRCLK) */
-#define WDOG_CLK_INTERNAL_1KHZ	        1   /*!< clock source is internal LPO 1 KHz */
+#define WDOG_CLK_INTERNAL_1KHZ          1   /*!< clock source is internal LPO 1 KHz */
 #define WDOG_CLK_EXTERNAL               3   /*!< clock source is external clock */
-/*! @} End of wdog_clock_sources                                                    					*/
+/*! @} End of wdog_clock_sources                                                                        */
 
 /* WDOG clock source selection */
 #define WDOG_CLK  (WDOG_CLK_INTERNAL_1KHZ)
-    
+
 /* WDOG default values */
 #define WDOG_CS1_DEFAULT_VALUE      0x80
 #define WDOG_CS2_DEFAULT_VALUE      0x01
 #define WDOG_TOVAL_DEFAULT_VALUE    0x0400
 #define WDOG_WIN_DEFAULT_VALUE      0x0000
-     
-/* WDOG utilities */  
+
+/* WDOG utilities */
 
 /******************************************************************************
 * define watchdog API list
@@ -63,12 +63,12 @@ extern "C" {
 *//*! @addtogroup wdog_api_list
 * @{
 *******************************************************************************/
-/*! 
+/*!
  * @brief watchdog unlock routine.
  */
-#define WDOG_Unlock()        WDOG->CNT = 0x20C5; WDOG->CNT = 0x28D9        
-//#define WDOG_Unlock()       DisableInterrupts; WDOG->CNT = 0x20C5; WDOG->CNT = 0x28D9; EnableInterrupts        
-/*! @} End of wdog_api_list                                                    					*/
+#define WDOG_Unlock()        WDOG->CNT = 0x20C5; WDOG->CNT = 0x28D9
+//#define WDOG_Unlock()       DisableInterrupts; WDOG->CNT = 0x20C5; WDOG->CNT = 0x28D9; EnableInterrupts
+/*! @} End of wdog_api_list                                                                     */
 
 /******************************************************************************
 * Types
@@ -85,22 +85,22 @@ extern "C" {
  * @brief watchdog configuration structure.
  *
  */
-typedef struct {	
+typedef struct {
     struct {
-	uint16_t    bIntEnable      : 1;    /*!< watchdog interrupt enable */
-	uint16_t    bDisable        : 1;    /*!< disable watchdog */
-	uint16_t    bWaitEnable     : 1;    /*!< enable watchdog in wait mode */
-	uint16_t    bStopEnable     : 1;    /*!< enable watchdog in stop mode */
-	uint16_t    bDbgEnable      : 1;    /*!< enable watchdog in debug mode */
-	uint16_t    bWinEnable      : 1;    /*!< enable watchdog window mode */
-	uint16_t    bUpdateEnable   : 1;    /*!< enable update of watchdog control */
-	uint16_t    bClkSrc         : 2;    /*!< watchdog clock source selection */  
-	uint16_t    bPrescaler      : 1;    /*!< prescaler */  
+    uint16_t    bIntEnable      : 1;    /*!< watchdog interrupt enable */
+    uint16_t    bDisable        : 1;    /*!< disable watchdog */
+    uint16_t    bWaitEnable     : 1;    /*!< enable watchdog in wait mode */
+    uint16_t    bStopEnable     : 1;    /*!< enable watchdog in stop mode */
+    uint16_t    bDbgEnable      : 1;    /*!< enable watchdog in debug mode */
+    uint16_t    bWinEnable      : 1;    /*!< enable watchdog window mode */
+    uint16_t    bUpdateEnable   : 1;    /*!< enable update of watchdog control */
+    uint16_t    bClkSrc         : 2;    /*!< watchdog clock source selection */
+    uint16_t    bPrescaler      : 1;    /*!< prescaler */
     }sBits;                             /*!< bitfield structure  */
     uint16_t    u16ETMeOut;             /*!< watchdog ETMeout value */
     uint16_t    u16WinETMe;             /*!< watchdog window value */
 } WDOG_ConfigType, *WDOG_ConfigPtr;  /*!< watchdog configuration structure type */
-/*! @} End of wdog_config_type                                                    					*/
+/*! @} End of wdog_config_type                                                                      */
 
 /******************************************************************************
 * Global variables
@@ -121,7 +121,7 @@ typedef struct {
 /*****************************************************************************//*!
 *
 * @brief set ETMe out value for WDOG.
-*        
+*
 * @param[in]   u16ETMeOut  ETMeout value to TOVAL register.
 *
 * @return none
@@ -132,7 +132,7 @@ typedef struct {
 
 __STATIC_INLINE void WDOG_SetETMeOut(uint16_t u16ETMeOut)
 {
-    WDOG->CNT = 0x20C5; 
+    WDOG->CNT = 0x20C5;
     WDOG->CNT = 0x28D9;
     WDOG->TOVAL8B.TOVALL  = u16ETMeOut;
     WDOG->TOVAL8B.TOVALH  = u16ETMeOut >> 8;
@@ -142,7 +142,7 @@ __STATIC_INLINE void WDOG_SetETMeOut(uint16_t u16ETMeOut)
 /*****************************************************************************//*!
 *
 * @brief set window value for WDOG.
-*        
+*
 * @param[in]   u16WinETMe  window value to WIN register.
 *
 * @return none
@@ -153,7 +153,7 @@ __STATIC_INLINE void WDOG_SetETMeOut(uint16_t u16ETMeOut)
 
 __STATIC_INLINE void WDOG_SetWindow(uint16_t u16WinETMe)
 {
-    WDOG->CNT = 0x20C5; 
+    WDOG->CNT = 0x20C5;
     WDOG->CNT = 0x28D9;
     WDOG->WIN8B.WINL  = u16WinETMe;
     WDOG->WIN8B.WINH  = u16WinETMe >> 8;
@@ -162,7 +162,7 @@ __STATIC_INLINE void WDOG_SetWindow(uint16_t u16WinETMe)
 /*****************************************************************************//*!
 *
 * @brief check if watchdog reset occurs.
-*        
+*
 * @param    none.
 *
 * @return   TRUE if watchdog reset occurs, FALSE otherwise.
@@ -179,7 +179,7 @@ __STATIC_INLINE uint8_t WDOG_IsReset(void)
     return (FALSE);
 }
 
-/*! @} End of wdog_api_list                                                    					*/
+/*! @} End of wdog_api_list                                                                     */
 
 
 void WDOG_Init(WDOG_ConfigPtr pConfig);

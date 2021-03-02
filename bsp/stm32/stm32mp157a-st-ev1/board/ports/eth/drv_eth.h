@@ -368,7 +368,7 @@ enum {
 #define RTL8211E_INSR_FALSE_CARRIER           0x0100
 #define RTL8211E_INSR_JABBER                  0x0001
 
-/* Link Down Power Saving register */ 
+/* Link Down Power Saving register */
 #define RTL8211E_LDPSR_POWER_SAVE_MODE        0x0001
 
 /* Extension Page Select register */

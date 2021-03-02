@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62Nxx
-* File Name		: Interrupt_SCI.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for all SCI channels
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name   : Interrupt program for RX62Nxx
+* File Name     : Interrupt_SCI.c
+* Version       : 1.02
+* Contents      : Interrupt handlers for all SCI channels
+* Customer      :
+* Model         :
+* Order         :
+* CPU           : RX
+* Compiler      : RXC
+* OS            : Nothing
+* Programmer    :
+* Note          :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_sci.h"
@@ -27,23 +27,23 @@
 /*""FUNC COMMENT""***************************************************
 * Module outline: SCIn receive data error interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_SCIn_ERIn(void)
+* Declaration   : void Interrupt_SCIn_ERIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: SSR for that SCI channel
+* Output        : SSR for that SCI channel
 *-------------------------------------------------------------------
-* Use function	: rpdl_SCI_RX_Error_callback_func
+* Use function  : rpdl_SCI_RX_Error_callback_func
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_SCI0_ERI0
@@ -171,23 +171,23 @@ __interrupt void Interrupt_SCI6_ERI6(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: SCIn receive data interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_SCIn_RXIn(void)
+* Declaration   : void Interrupt_SCIn_RXIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: 
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_SCI_RX_End_callback_func
+* Use function  : rpdl_SCI_RX_End_callback_func
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_SCI0_RXI0
@@ -228,11 +228,11 @@ __interrupt void Interrupt_SCI0_RXI0(void)
           if (rpdl_SCI_RX_End_callback_func[0] != PDL_NO_FUNC)
           {
             rpdl_SCI_RX_End_callback_func[0]();
-          }					
-        }	
+          }
+        }
 
         /* Exit ISR */
-        return;	
+        return;
       }
     }
 
@@ -257,7 +257,7 @@ __interrupt void Interrupt_SCI0_RXI0(void)
       if (((SCI0.SMR.BIT.MP) != 0) && ((rpdl_SCI_MP_mode[0]) != 0))
       {
         /* Set MPIE = 1 (multiprocessor mode reception) */
-        SCI0.SCR.BIT.MPIE = 1;		
+        SCI0.SCR.BIT.MPIE = 1;
       }
 
       /* Notify the user */
@@ -267,7 +267,7 @@ __interrupt void Interrupt_SCI0_RXI0(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -316,11 +316,11 @@ __interrupt void Interrupt_SCI1_RXI1(void)
           if (rpdl_SCI_RX_End_callback_func[1] != PDL_NO_FUNC)
           {
             rpdl_SCI_RX_End_callback_func[1]();
-          }					
-        }	
+          }
+        }
 
         /* Exit ISR */
-        return;	
+        return;
       }
     }
 
@@ -345,7 +345,7 @@ __interrupt void Interrupt_SCI1_RXI1(void)
       if (((SCI1.SMR.BIT.MP) != 0) && ((rpdl_SCI_MP_mode[1]) != 0))
       {
         /* Set MPIE = 1 (multiprocessor mode reception) */
-        SCI1.SCR.BIT.MPIE = 1;		
+        SCI1.SCR.BIT.MPIE = 1;
       }
 
       /* Notify the user */
@@ -355,7 +355,7 @@ __interrupt void Interrupt_SCI1_RXI1(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -405,11 +405,11 @@ __interrupt void Interrupt_SCI2_RXI2(void)
           if (rpdl_SCI_RX_End_callback_func[2] != PDL_NO_FUNC)
           {
             rpdl_SCI_RX_End_callback_func[2]();
-          }					
-        }	
+          }
+        }
 
         /* Exit ISR */
-        return;	
+        return;
       }
     }
 
@@ -435,7 +435,7 @@ __interrupt void Interrupt_SCI2_RXI2(void)
       if (((SCI2.SMR.BIT.MP) != 0) && ((rpdl_SCI_MP_mode[2]) != 0))
       {
         /* Set MPIE = 1 (multiprocessor mode reception) */
-        SCI2.SCR.BIT.MPIE = 1;		
+        SCI2.SCR.BIT.MPIE = 1;
       }
 
       /* Notify the user */
@@ -445,7 +445,7 @@ __interrupt void Interrupt_SCI2_RXI2(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -494,11 +494,11 @@ __interrupt void Interrupt_SCI3_RXI3(void)
           if (rpdl_SCI_RX_End_callback_func[3] != PDL_NO_FUNC)
           {
             rpdl_SCI_RX_End_callback_func[3]();
-          }					
-        }	
+          }
+        }
 
         /* Exit ISR */
-        return;	
+        return;
       }
     }
 
@@ -523,7 +523,7 @@ __interrupt void Interrupt_SCI3_RXI3(void)
       if (((SCI3.SMR.BIT.MP) != 0) && ((rpdl_SCI_MP_mode[3]) != 0))
       {
         /* Set MPIE = 1 (multiprocessor mode reception) */
-        SCI3.SCR.BIT.MPIE = 1;		
+        SCI3.SCR.BIT.MPIE = 1;
       }
 
       /* Notify the user */
@@ -533,7 +533,7 @@ __interrupt void Interrupt_SCI3_RXI3(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -583,11 +583,11 @@ __interrupt void Interrupt_SCI5_RXI5(void)
           if (rpdl_SCI_RX_End_callback_func[5] != PDL_NO_FUNC)
           {
             rpdl_SCI_RX_End_callback_func[5]();
-          }					
-        }	
+          }
+        }
 
         /* Exit ISR */
-        return;	
+        return;
       }
     }
 
@@ -612,7 +612,7 @@ __interrupt void Interrupt_SCI5_RXI5(void)
       if (((SCI5.SMR.BIT.MP) != 0) && ((rpdl_SCI_MP_mode[5]) != 0))
       {
         /* Set MPIE = 1 (multiprocessor mode reception) */
-        SCI5.SCR.BIT.MPIE = 1;		
+        SCI5.SCR.BIT.MPIE = 1;
       }
 
       /* Notify the user */
@@ -622,7 +622,7 @@ __interrupt void Interrupt_SCI5_RXI5(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -671,11 +671,11 @@ __interrupt void Interrupt_SCI6_RXI6(void)
           if (rpdl_SCI_RX_End_callback_func[6] != PDL_NO_FUNC)
           {
             rpdl_SCI_RX_End_callback_func[6]();
-          }					
-        }	
+          }
+        }
 
         /* Exit ISR */
-        return;	
+        return;
       }
     }
 
@@ -700,7 +700,7 @@ __interrupt void Interrupt_SCI6_RXI6(void)
       if (((SCI6.SMR.BIT.MP) != 0) && ((rpdl_SCI_MP_mode[6]) != 0))
       {
         /* Set MPIE = 1 (multiprocessor mode reception) */
-        SCI6.SCR.BIT.MPIE = 1;		
+        SCI6.SCR.BIT.MPIE = 1;
       }
 
       /* Notify the user */
@@ -710,7 +710,7 @@ __interrupt void Interrupt_SCI6_RXI6(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -724,23 +724,23 @@ __interrupt void Interrupt_SCI6_RXI6(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: SCIn transmit data interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_SCIn_TXIn(void)
+* Declaration   : void Interrupt_SCIn_TXIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: TDR for that SCI channel
+* Output        : TDR for that SCI channel
 *-------------------------------------------------------------------
-* Use function	: 
+* Use function  :
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_SCI0_TXI0
@@ -790,7 +790,7 @@ __interrupt void Interrupt_SCI0_TXI0(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -848,7 +848,7 @@ __interrupt void Interrupt_SCI1_TXI1(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -906,7 +906,7 @@ __interrupt void Interrupt_SCI2_TXI2(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -964,7 +964,7 @@ __interrupt void Interrupt_SCI3_TXI3(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -1023,7 +1023,7 @@ __interrupt void Interrupt_SCI5_TXI5(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -1081,7 +1081,7 @@ __interrupt void Interrupt_SCI6_TXI6(void)
       }
     }
   }
-  /* Either the DMAC or DTC has passed on the interrupt */ 
+  /* Either the DMAC or DTC has passed on the interrupt */
   else
   {
     /* Call the callback function */
@@ -1095,23 +1095,23 @@ __interrupt void Interrupt_SCI6_TXI6(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: SCIn transmit end interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_SCIn_TEIn(void)
+* Declaration   : void Interrupt_SCIn_TEIn(void)
 *-------------------------------------------------------------------
-* Function		: 
+* Function      :
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument      : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value  : Nothing
 *-------------------------------------------------------------------
-* Output		: SCR for that channel
+* Output        : SCR for that channel
 *-------------------------------------------------------------------
-* Use function	: rpdl_SCI_TX_End_callback_func()
+* Use function  : rpdl_SCI_TX_End_callback_func()
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes         :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History       : 2011.04.08
+*               : Ver 1.02
+*               : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_SCI0_TEI0

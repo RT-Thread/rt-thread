@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    stm32l1xx_hal_adc_ex.c
   * @author  MCD Application Team
-  * @brief   This file provides firmware functions to manage the following 
+  * @brief   This file provides firmware functions to manage the following
   *          functionalities of the Analog to Digital Convertor (ADC)
   *          peripheral:
   *           + Operation functions
@@ -10,11 +10,11 @@
   *                group, using 2 possible modes: polling, interruption.
   *           + Control functions
   *             ++ Channels configuration on injected group
-  *          Other functions (generic functions) are available in file 
+  *          Other functions (generic functions) are available in file
   *          "stm32l1xx_hal_adc.c".
   *
   @verbatim
-  [..] 
+  [..]
   (@) Sections "ADC peripheral features" and "How to use this driver" are
       available in file of generic functions "stm32l1xx_hal_adc.c".
   [..]
@@ -97,7 +97,7 @@
       (+) Get result of injected channel conversion.
       (+) Start conversion of injected group and enable interruptions.
       (+) Stop conversion of injected group and disable interruptions.
-      
+
 @endverbatim
   * @{
   */
@@ -111,16 +111,16 @@
 HAL_StatusTypeDef HAL_ADCEx_InjectedStart(ADC_HandleTypeDef* hadc)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  
+
   /* Process locked */
   __HAL_LOCK(hadc);
-    
+
   /* Enable the ADC peripheral */
   tmp_hal_status = ADC_Enable(hadc);
-  
+
   /* Start conversion if ADC is effectively enabled */
   if (tmp_hal_status == HAL_OK)
   {
@@ -130,7 +130,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart(ADC_HandleTypeDef* hadc)
     ADC_STATE_CLR_SET(hadc->State,
                       HAL_ADC_STATE_READY | HAL_ADC_STATE_INJ_EOC,
                       HAL_ADC_STATE_INJ_BUSY);
-    
+
     /* Check if a regular conversion is ongoing */
     /* Note: On this device, there is no ADC error code fields related to     */
     /*       conversions on group injected only. In case of conversion on     */
@@ -140,30 +140,30 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart(ADC_HandleTypeDef* hadc)
       /* Reset ADC all error code fields */
       ADC_CLEAR_ERRORCODE(hadc);
     }
-    
+
     /* Process unlocked */
     /* Unlock before starting ADC conversions: in case of potential           */
     /* interruption, to let the process to ADC IRQ Handler.                   */
     __HAL_UNLOCK(hadc);
-    
+
     /* Clear injected group conversion flag */
     /* (To ensure of no unknown state from potential previous ADC operations) */
     __HAL_ADC_CLEAR_FLAG(hadc, ADC_FLAG_JEOC);
-    
+
     /* Enable conversion of injected group.                                   */
     /* If software start has been selected, conversion starts immediately.    */
     /* If external trigger has been selected, conversion will start at next   */
     /* trigger event.                                                         */
     /* If automatic injected conversion is enabled, conversion will start     */
     /* after next regular group conversion.                                   */
-    if (ADC_IS_SOFTWARE_START_INJECTED(hadc)              && 
+    if (ADC_IS_SOFTWARE_START_INJECTED(hadc)              &&
         HAL_IS_BIT_CLR(hadc->Instance->CR1, ADC_CR1_JAUTO)  )
     {
       /* Enable ADC software conversion for injected channels */
       SET_BIT(hadc->Instance->CR2, ADC_CR2_JSWSTART);
     }
   }
-  
+
   /* Return function status */
   return tmp_hal_status;
 }
@@ -171,7 +171,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart(ADC_HandleTypeDef* hadc)
 /**
   * @brief  Stop conversion of injected channels. Disable ADC peripheral if
   *         no regular conversion is on going.
-  * @note   If ADC must be disabled and if conversion is on going on 
+  * @note   If ADC must be disabled and if conversion is on going on
   *         regular group, function HAL_ADC_Stop must be used to stop both
   *         injected and regular groups, and disable the ADC.
   * @note   If injected group mode auto-injection is enabled,
@@ -183,13 +183,13 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart(ADC_HandleTypeDef* hadc)
 HAL_StatusTypeDef HAL_ADCEx_InjectedStop(ADC_HandleTypeDef* hadc)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Process locked */
   __HAL_LOCK(hadc);
-    
+
   /* Stop potential conversion and disable ADC peripheral                     */
   /* Conditioned to:                                                          */
   /* - No conversion on the other group (regular group) is intended to        */
@@ -202,7 +202,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop(ADC_HandleTypeDef* hadc)
     /* Stop potential conversion on going, on regular and injected groups */
     /* Disable ADC peripheral */
     tmp_hal_status = ADC_ConversionStop_Disable(hadc);
-    
+
     /* Check if ADC is effectively disabled */
     if (tmp_hal_status == HAL_OK)
     {
@@ -216,13 +216,13 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop(ADC_HandleTypeDef* hadc)
   {
     /* Update ADC state machine to error */
     SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
-      
+
     tmp_hal_status = HAL_ERROR;
   }
-  
+
   /* Process unlocked */
   __HAL_UNLOCK(hadc);
-  
+
   /* Return function status */
   return tmp_hal_status;
 }
@@ -244,19 +244,19 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
   /* "conversion_timeout_cpu_cycles_max"                                      */
   uint32_t conversion_timeout_cpu_cycles = 28;
   uint32_t conversion_timeout_cpu_cycles_max = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  
+
   /* Get timeout */
-  tickstart = HAL_GetTick();  
-     
+  tickstart = HAL_GetTick();
+
   /* Polling for end of conversion: differentiation if single/sequence        */
   /* conversion.                                                              */
   /* For injected group, flag JEOC is set only at the end of the sequence,    */
   /* not for each conversion within the sequence.                             */
   /* If setting "EOCSelection" is set to poll for each single conversion,     */
-  /* management of polling depends on setting of injected group sequencer:    */ 
+  /* management of polling depends on setting of injected group sequencer:    */
   /*  - If single conversion for injected group (scan mode disabled or        */
   /*    InjectedNbrOfConversion ==1), flag JEOC is used to determine the      */
   /*    conversion completion.                                                */
@@ -285,10 +285,10 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
         {
           /* Update ADC state machine to timeout */
           SET_BIT(hadc->State, HAL_ADC_STATE_TIMEOUT);
-          
+
           /* Process unlocked */
           __HAL_UNLOCK(hadc);
-          
+
           return HAL_TIMEOUT;
         }
       }
@@ -315,14 +315,14 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
 
           /* Process unlocked */
           __HAL_UNLOCK(hadc);
-          
+
           return HAL_TIMEOUT;
         }
       }
       conversion_timeout_cpu_cycles ++;
     }
   }
-  
+
   /* Clear end of conversion flag of injected group if low power feature      */
   /* "Auto Wait" is disabled, to not interfere with this feature until data   */
   /* register is read using function HAL_ADCEx_InjectedGetValue().            */
@@ -331,10 +331,10 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
     /* Clear injected group conversion flag */
     __HAL_ADC_CLEAR_FLAG(hadc, ADC_FLAG_JSTRT | ADC_FLAG_JEOC);
   }
-  
+
   /* Update ADC state machine */
   SET_BIT(hadc->State, HAL_ADC_STATE_INJ_EOC);
-  
+
   /* Determine whether any further conversion upcoming on group injected      */
   /* by external trigger, continuous mode or scan sequence on going.          */
   /* Note: On STM32L1, there is no independent flag of end of sequence.       */
@@ -350,13 +350,13 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
   {
     /* Set ADC state */
     CLEAR_BIT(hadc->State, HAL_ADC_STATE_INJ_BUSY);
-    
+
     if (HAL_IS_BIT_CLR(hadc->State, HAL_ADC_STATE_REG_BUSY))
-    { 
+    {
       SET_BIT(hadc->State, HAL_ADC_STATE_READY);
     }
   }
-  
+
   /* Return ADC state */
   return HAL_OK;
 }
@@ -371,16 +371,16 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedPollForConversion(ADC_HandleTypeDef* hadc, u
 HAL_StatusTypeDef HAL_ADCEx_InjectedStart_IT(ADC_HandleTypeDef* hadc)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
-  
+
   /* Process locked */
   __HAL_LOCK(hadc);
-    
+
   /* Enable the ADC peripheral */
   tmp_hal_status = ADC_Enable(hadc);
-  
+
   /* Start conversion if ADC is effectively enabled */
   if (tmp_hal_status == HAL_OK)
   {
@@ -390,7 +390,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart_IT(ADC_HandleTypeDef* hadc)
     ADC_STATE_CLR_SET(hadc->State,
                       HAL_ADC_STATE_READY | HAL_ADC_STATE_INJ_EOC,
                       HAL_ADC_STATE_INJ_BUSY);
-    
+
     /* Check if a regular conversion is ongoing */
     /* Note: On this device, there is no ADC error code fields related to     */
     /*       conversions on group injected only. In case of conversion on     */
@@ -400,42 +400,42 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart_IT(ADC_HandleTypeDef* hadc)
       /* Reset ADC all error code fields */
       ADC_CLEAR_ERRORCODE(hadc);
     }
-    
+
     /* Process unlocked */
     /* Unlock before starting ADC conversions: in case of potential           */
     /* interruption, to let the process to ADC IRQ Handler.                   */
     __HAL_UNLOCK(hadc);
-    
+
     /* Clear injected group conversion flag */
     /* (To ensure of no unknown state from potential previous ADC operations) */
     __HAL_ADC_CLEAR_FLAG(hadc, ADC_FLAG_JEOC);
-    
+
     /* Enable end of conversion interrupt for injected channels */
     __HAL_ADC_ENABLE_IT(hadc, ADC_IT_JEOC);
-    
+
     /* Enable conversion of injected group.                                   */
     /* If software start has been selected, conversion starts immediately.    */
     /* If external trigger has been selected, conversion will start at next   */
     /* trigger event.                                                         */
     /* If automatic injected conversion is enabled, conversion will start     */
     /* after next regular group conversion.                                   */
-    if (ADC_IS_SOFTWARE_START_INJECTED(hadc)              && 
+    if (ADC_IS_SOFTWARE_START_INJECTED(hadc)              &&
         HAL_IS_BIT_CLR(hadc->Instance->CR1, ADC_CR1_JAUTO)  )
     {
       /* Enable ADC software conversion for injected channels */
       SET_BIT(hadc->Instance->CR2, ADC_CR2_JSWSTART);
     }
   }
-  
+
   /* Return function status */
   return tmp_hal_status;
 }
 
 /**
-  * @brief  Stop conversion of injected channels, disable interruption of 
+  * @brief  Stop conversion of injected channels, disable interruption of
   *         end-of-conversion. Disable ADC peripheral if no regular conversion
   *         is on going.
-  * @note   If ADC must be disabled and if conversion is on going on 
+  * @note   If ADC must be disabled and if conversion is on going on
   *         regular group, function HAL_ADC_Stop must be used to stop both
   *         injected and regular groups, and disable the ADC.
   * @note   If injected group mode auto-injection is enabled,
@@ -446,32 +446,32 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStart_IT(ADC_HandleTypeDef* hadc)
 HAL_StatusTypeDef HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef* hadc)
 {
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
 
   /* Process locked */
   __HAL_LOCK(hadc);
-    
+
   /* Stop potential conversion and disable ADC peripheral                     */
   /* Conditioned to:                                                          */
   /* - No conversion on the other group (regular group) is intended to        */
   /*   continue (injected and regular groups stop conversion and ADC disable  */
   /*   are common)                                                            */
-  /* - In case of auto-injection mode, HAL_ADC_Stop must be used.             */ 
+  /* - In case of auto-injection mode, HAL_ADC_Stop must be used.             */
   if(((hadc->State & HAL_ADC_STATE_REG_BUSY) == RESET)  &&
      HAL_IS_BIT_CLR(hadc->Instance->CR1, ADC_CR1_JAUTO)   )
   {
     /* Stop potential conversion on going, on regular and injected groups */
     /* Disable ADC peripheral */
     tmp_hal_status = ADC_ConversionStop_Disable(hadc);
-    
+
     /* Check if ADC is effectively disabled */
     if (tmp_hal_status == HAL_OK)
     {
       /* Disable ADC end of conversion interrupt for injected channels */
       __HAL_ADC_DISABLE_IT(hadc, ADC_IT_JEOC);
-      
+
       /* Set ADC state */
       ADC_STATE_CLR_SET(hadc->State,
                         HAL_ADC_STATE_REG_BUSY | HAL_ADC_STATE_INJ_BUSY,
@@ -482,13 +482,13 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef* hadc)
   {
     /* Update ADC state machine to error */
     SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
-      
+
     tmp_hal_status = HAL_ERROR;
   }
-  
+
   /* Process unlocked */
   __HAL_UNLOCK(hadc);
-  
+
   /* Return function status */
   return tmp_hal_status;
 }
@@ -497,7 +497,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef* hadc)
   * @brief  Get ADC injected group conversion result.
   * @note   Reading register JDRx automatically clears ADC flag JEOC
   *         (ADC group injected end of unitary conversion).
-  * @note   This function does not clear ADC flag JEOS 
+  * @note   This function does not clear ADC flag JEOS
   *         (ADC group injected end of sequence conversion)
   *         Occurrence of flag JEOS rising:
   *          - If sequencer is composed of 1 rank, flag JEOS is equivalent
@@ -508,9 +508,9 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef* hadc)
   *         Flag JEOS must not be cleared by this function because
   *         it would not be compliant with low power features
   *         (feature low power auto-wait, not available on all STM32 families).
-  *         To clear this flag, either use function: 
+  *         To clear this flag, either use function:
   *         in programming model IT: @ref HAL_ADC_IRQHandler(), in programming
-  *         model polling: @ref HAL_ADCEx_InjectedPollForConversion() 
+  *         model polling: @ref HAL_ADCEx_InjectedPollForConversion()
   *         or @ref __HAL_ADC_CLEAR_FLAG(&hadc, ADC_FLAG_JEOS).
   * @param  hadc ADC handle
   * @param  InjectedRank the converted ADC injected rank.
@@ -524,21 +524,21 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef* hadc)
 uint32_t HAL_ADCEx_InjectedGetValue(ADC_HandleTypeDef* hadc, uint32_t InjectedRank)
 {
   uint32_t tmp_jdr = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
   assert_param(IS_ADC_INJECTED_RANK(InjectedRank));
-  
+
   /* Get ADC converted value */
   switch(InjectedRank)
-  {  
+  {
     case ADC_INJECTED_RANK_4:
       tmp_jdr = hadc->Instance->JDR4;
       break;
-    case ADC_INJECTED_RANK_3: 
+    case ADC_INJECTED_RANK_3:
       tmp_jdr = hadc->Instance->JDR3;
       break;
-    case ADC_INJECTED_RANK_2: 
+    case ADC_INJECTED_RANK_2:
       tmp_jdr = hadc->Instance->JDR2;
       break;
     case ADC_INJECTED_RANK_1:
@@ -546,13 +546,13 @@ uint32_t HAL_ADCEx_InjectedGetValue(ADC_HandleTypeDef* hadc, uint32_t InjectedRa
       tmp_jdr = hadc->Instance->JDR1;
       break;
   }
-  
-  /* Return ADC converted value */ 
+
+  /* Return ADC converted value */
   return tmp_jdr;
 }
 
 /**
-  * @brief  Injected conversion complete callback in non blocking mode 
+  * @brief  Injected conversion complete callback in non blocking mode
   * @param  hadc ADC handle
   * @retval None
   */
@@ -573,13 +573,13 @@ __weak void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
 /** @defgroup ADCEx_Exported_Functions_Group2 ADC Extended Peripheral Control functions
   * @brief    ADC Extended Peripheral Control functions
   *
-@verbatim   
+@verbatim
  ===============================================================================
              ##### Peripheral Control functions #####
- ===============================================================================  
+ ===============================================================================
     [..]  This section provides functions allowing to:
       (+) Configure channels on injected group
-      
+
 @endverbatim
   * @{
   */
@@ -588,10 +588,10 @@ __weak void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
   * @brief  Configures the ADC injected group and the selected channel to be
   *         linked to the injected group.
   * @note   Possibility to update parameters on the fly:
-  *         This function initializes injected group, following calls to this 
+  *         This function initializes injected group, following calls to this
   *         function can be used to reconfigure some parameters of structure
   *         "ADC_InjectionConfTypeDef" on the fly, without reseting the ADC.
-  *         The setting of these parameters is conditioned to ADC state: 
+  *         The setting of these parameters is conditioned to ADC state:
   *         this function must be called when ADC is not under conversion.
   * @param  hadc ADC handle
   * @param  sConfigInjected Structure of ADC injected group and ADC channel for
@@ -599,10 +599,10 @@ __weak void HAL_ADCEx_InjectedConvCpltCallback(ADC_HandleTypeDef* hadc)
   * @retval None
   */
 HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_InjectionConfTypeDef* sConfigInjected)
-{   
+{
   HAL_StatusTypeDef tmp_hal_status = HAL_OK;
   __IO uint32_t wait_loop_index = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_ADC_ALL_INSTANCE(hadc->Instance));
   assert_param(IS_ADC_CHANNEL(sConfigInjected->InjectedChannel));
@@ -610,22 +610,22 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
   assert_param(IS_FUNCTIONAL_STATE(sConfigInjected->AutoInjectedConv));
   assert_param(IS_ADC_EXTTRIGINJEC(sConfigInjected->ExternalTrigInjecConv));
   assert_param(IS_ADC_RANGE(ADC_RESOLUTION_12B, sConfigInjected->InjectedOffset));
-  
+
   if(hadc->Init.ScanConvMode != ADC_SCAN_DISABLE)
   {
     assert_param(IS_ADC_INJECTED_RANK(sConfigInjected->InjectedRank));
     assert_param(IS_ADC_INJECTED_NB_CONV(sConfigInjected->InjectedNbrOfConversion));
     assert_param(IS_FUNCTIONAL_STATE(sConfigInjected->InjectedDiscontinuousConvMode));
   }
-  
+
   if(sConfigInjected->ExternalTrigInjecConv != ADC_INJECTED_SOFTWARE_START)
   {
     assert_param(IS_ADC_EXTTRIGINJEC_EDGE(sConfigInjected->ExternalTrigInjecConvEdge));
   }
-  
+
   /* Process locked */
   __HAL_LOCK(hadc);
-  
+
   /* Configuration of injected group sequencer:                               */
   /* - if scan mode is disabled, injected channels sequence length is set to  */
   /*   0x00: 1 channel converted (channel on regular rank 1)                  */
@@ -656,12 +656,12 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
     {
       /* Update ADC state machine to error */
       SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
-        
+
       tmp_hal_status = HAL_ERROR;
     }
   }
   else
-  {   
+  {
     /* Since injected channels rank conv. order depends on total number of   */
     /* injected conversions, selected rank must be below or equal to total   */
     /* number of injected conversions to be updated.                         */
@@ -670,39 +670,39 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
       /* Clear the old SQx bits for the selected rank */
       /* Set the SQx bits for the selected rank */
       MODIFY_REG(hadc->Instance->JSQR                                                     ,
-                 
+
                  ADC_JSQR_JL                                               |
-                 ADC_JSQR_RK_JL(ADC_JSQR_JSQ1,                         
-                                  sConfigInjected->InjectedRank,         
+                 ADC_JSQR_RK_JL(ADC_JSQR_JSQ1,
+                                  sConfigInjected->InjectedRank,
                                   sConfigInjected->InjectedNbrOfConversion)               ,
-                 
+
                  ADC_JSQR_JL_SHIFT(sConfigInjected->InjectedNbrOfConversion)             |
-                 ADC_JSQR_RK_JL(sConfigInjected->InjectedChannel,      
-                                                sConfigInjected->InjectedRank,         
+                 ADC_JSQR_RK_JL(sConfigInjected->InjectedChannel,
+                                                sConfigInjected->InjectedRank,
                                                 sConfigInjected->InjectedNbrOfConversion)  );
     }
     else
     {
       /* Clear the old SQx bits for the selected rank */
       MODIFY_REG(hadc->Instance->JSQR                                       ,
-                 
+
                  ADC_JSQR_JL                                               |
-                 ADC_JSQR_RK_JL(ADC_JSQR_JSQ1,                         
-                                  sConfigInjected->InjectedRank,         
+                 ADC_JSQR_RK_JL(ADC_JSQR_JSQ1,
+                                  sConfigInjected->InjectedRank,
                                   sConfigInjected->InjectedNbrOfConversion) ,
-                 
+
                  0x00000000                                                  );
     }
-  } 
-    
+  }
+
   /* Enable external trigger if trigger selection is different of software    */
   /* start.                                                                   */
   /* Note: This configuration keeps the hardware feature of parameter         */
   /*       ExternalTrigConvEdge "trigger edge none" equivalent to             */
   /*       software start.                                                    */
-  
+
   if (sConfigInjected->ExternalTrigInjecConv != ADC_INJECTED_SOFTWARE_START)
-  {    
+  {
     MODIFY_REG(hadc->Instance->CR2                        ,
                ADC_CR2_JEXTEN  |
                ADC_CR2_JEXTSEL                            ,
@@ -726,7 +726,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
   {
     hadc->Instance->CR1 &= ~(ADC_CR1_JAUTO   |
                              ADC_CR1_JDISCEN  );
-    
+
     /* Automatic injected conversion can be enabled if injected group         */
     /* external triggers are disabled.                                        */
     if (sConfigInjected->AutoInjectedConv == ENABLE)
@@ -739,24 +739,24 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
       {
         /* Update ADC state machine to error */
         SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
-        
+
         tmp_hal_status = HAL_ERROR;
       }
     }
-    
+
     /* Injected discontinuous can be enabled only if auto-injected mode is    */
-    /* disabled.                                                              */  
+    /* disabled.                                                              */
     if (sConfigInjected->InjectedDiscontinuousConvMode == ENABLE)
     {
       if (sConfigInjected->AutoInjectedConv == DISABLE)
       {
         SET_BIT(hadc->Instance->CR1, ADC_CR1_JDISCEN);
-      } 
+      }
       else
       {
         /* Update ADC state machine to error */
         SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
-        
+
         tmp_hal_status = HAL_ERROR;
       }
     }
@@ -780,7 +780,7 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
   /* For InjectedChannels 20 to 26 for devices Cat.1, Cat.2, Cat.3 */
   /* For InjectedChannels 20 to 29 for devices Cat4, Cat.5 */
   else if (sConfigInjected->InjectedChannel <= ADC_SMPR1_CHANNEL_MAX)
-  {   
+  {
     MODIFY_REG(hadc->Instance->SMPR1,
                ADC_SMPR1(ADC_SMPR1_SMP20, sConfigInjected->InjectedChannel),
                ADC_SMPR1(sConfigInjected->InjectedSamplingTime, sConfigInjected->InjectedChannel) );
@@ -790,8 +790,8 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
   {
     ADC_SMPR0_CHANNEL_SET(hadc, sConfigInjected->InjectedSamplingTime, sConfigInjected->InjectedChannel);
   }
-  
-  
+
+
   /* Configure the offset: offset enable/disable, InjectedChannel, offset value */
   switch(sConfigInjected->InjectedRank)
   {
@@ -820,14 +820,14 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
                  sConfigInjected->InjectedOffset);
       break;
   }
-  
+
   /* If ADC1 Channel_16 or Channel_17 is selected, enable Temperature sensor  */
   /* and VREFINT measurement path.                                            */
   if ((sConfigInjected->InjectedChannel == ADC_CHANNEL_TEMPSENSOR) ||
       (sConfigInjected->InjectedChannel == ADC_CHANNEL_VREFINT)      )
   {
     SET_BIT(ADC->CCR, ADC_CCR_TSVREFE);
-    
+
     if ((sConfigInjected->InjectedChannel == ADC_CHANNEL_TEMPSENSOR))
     {
       /* Delay for temperature sensor stabilization time */
@@ -839,17 +839,17 @@ HAL_StatusTypeDef HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc, ADC_I
       }
     }
   }
-  
+
   /* Process unlocked */
   __HAL_UNLOCK(hadc);
-  
+
   /* Return function status */
   return tmp_hal_status;
 }
 
 /**
   * @}
-  */  
+  */
 
 /**
   * @}

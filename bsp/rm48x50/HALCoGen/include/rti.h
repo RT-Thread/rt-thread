@@ -2,7 +2,7 @@
 *   @brief RTI Driver Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -150,11 +150,11 @@
 */
 typedef enum dwdViolationTag
 {
-	NoTime_Violation = 0U,
-	Time_Window_Violation = 1U,
-	EndTime_Window_Violation = 2U,
-	StartTime_Window_Violation = 3U,
-	Key_Seq_Violation = 4U
+    NoTime_Violation = 0U,
+    Time_Window_Violation = 1U,
+    EndTime_Window_Violation = 2U,
+    StartTime_Window_Violation = 3U,
+    Key_Seq_Violation = 4U
 }dwdViolation_t;
 
 /* USER CODE BEGIN (2) */
@@ -165,8 +165,8 @@ typedef enum dwdViolationTag
 */
 typedef enum dwdResetStatusTag
 {
-	No_Reset_Generated = 0U,
-	Reset_Generated    = 1U
+    No_Reset_Generated = 0U,
+    Reset_Generated    = 1U
 }dwdResetStatus_t;
 
 /* USER CODE BEGIN (3) */
@@ -177,8 +177,8 @@ typedef enum dwdResetStatusTag
 */
 typedef enum dwwdReactionTag
 {
-	Generate_Reset = 0x00000005U,
-	Generate_NMI   = 0x0000000AU
+    Generate_Reset = 0x00000005U,
+    Generate_NMI   = 0x0000000AU
 }dwwdReaction_t;
 
 /* USER CODE BEGIN (4) */
@@ -189,12 +189,12 @@ typedef enum dwwdReactionTag
 */
 typedef enum dwwdWindowSizeTag
 {
-	Size_100_Percent   = 0x00000005U,
-	Size_50_Percent    = 0x00000050U,
-	Size_25_Percent    = 0x00000500U,
-	Size_12_5_Percent  = 0x00005000U,
-	Size_6_25_Percent  = 0x00050000U,
-	Size_3_125_Percent = 0x00500000U
+    Size_100_Percent   = 0x00000005U,
+    Size_50_Percent    = 0x00000050U,
+    Size_25_Percent    = 0x00000500U,
+    Size_12_5_Percent  = 0x00005000U,
+    Size_6_25_Percent  = 0x00050000U,
+    Size_3_125_Percent = 0x00500000U
 }dwwdWindowSize_t;
 
 /* USER CODE BEGIN (5) */
@@ -222,7 +222,7 @@ typedef struct rti_config_reg
 
 
 /* Configuration registers initial value */
-#define RTI_GCTRL_CONFIGVALUE	(1U << 16U) | 0x00000000U
+#define RTI_GCTRL_CONFIGVALUE   (1U << 16U) | 0x00000000U
 #define RTI_TBCTRL_CONFIGVALUE  0x00000000U
 #define RTI_CAPCTRL_CONFIGVALUE  0U | 0U
 #define RTI_COMPCTRL_CONFIGVALUE  0x00001000U | 0x00000100U | 0x00000000U | 0x00000000U
@@ -239,22 +239,22 @@ typedef struct rti_config_reg
 #define RTI_WWDSIZECTRL_CONFIGVALUE 0x5U
 
 
-/** 
+/**
  *  @defgroup RTI RTI
  *  @brief Real Time Interrupt Module.
- *  
+ *
  *  The real-time interrupt (RTI) module provides timer functionality for operating systems and for
  *  benchmarking code. The RTI module can incorporate several counters that define the timebases needed
  *  for scheduling in the operating system.
  *
- *	Related Files
+ *  Related Files
  *   - reg_rti.h
  *   - rti.h
  *   - rti.c
  *  @addtogroup RTI
  *  @{
  */
- 
+
 /* RTI Interface Functions */
 
 void rtiInit(void);

@@ -228,14 +228,14 @@ void spi_flash_turn_on(void);
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>SPI Flash</td>
- *		<td>Serial Peripheral Interface Flash</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>SPI Flash</td>
+ *      <td>Serial Peripheral Interface Flash</td>
+ *  </tr>
  * </table>
  *
  *
@@ -254,12 +254,12 @@ void spi_flash_turn_on(void);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -277,16 +277,16 @@ void spi_flash_turn_on(void);
  * \page asfdoc_samb_spi_flash_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>A</td>
- *		<td>09/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>A</td>
+ *      <td>09/2015</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

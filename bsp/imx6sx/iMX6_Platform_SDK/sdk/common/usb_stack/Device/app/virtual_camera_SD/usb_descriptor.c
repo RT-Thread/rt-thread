@@ -12,7 +12,7 @@
  *
  * @version
  *
- * @date 
+ * @date
  *
  * @brief The file contains USB descriptors for Video Application
  *
@@ -33,7 +33,7 @@
 #include <string.h>
 
 
-#if (defined __MCF52xxx_H__)|| (defined __MK_xxx_H__) 
+#if (defined __MCF52xxx_H__)|| (defined __MK_xxx_H__)
 /* Put CFV2 descriptors in RAM */
 #define USB_DESC_CONST
 #else
@@ -45,7 +45,7 @@
  *****************************************************************************/
 
 /* structure containing details of all the endpoints used by this device */
-USB_DESC_CONST USB_ENDPOINTS usb_desc_ep = { VIDEO_DESC_ENDPOINT_COUNT, 
+USB_DESC_CONST USB_ENDPOINTS usb_desc_ep = { VIDEO_DESC_ENDPOINT_COUNT,
                                       {
                                       VIDEO_ENDPOINT,
                                       USB_ISOCHRONOUS_PIPE,
@@ -56,19 +56,19 @@ USB_DESC_CONST USB_ENDPOINTS usb_desc_ep = { VIDEO_DESC_ENDPOINT_COUNT,
 
 /* *********************************************************************
 * definition a struct of Input Terminal, Output Terminal or Feature Unit
-************************************************************************ */                                  
-                                                                            
- /* Struct of Input Terminal, Output Terminal or Feature Unit */                                 
+************************************************************************ */
 
-USB_DESC_CONST USB_VIDEO_UNITS usb_video_unit = { VIDEO_UNIT_COUNT, 
+ /* Struct of Input Terminal, Output Terminal or Feature Unit */
+
+USB_DESC_CONST USB_VIDEO_UNITS usb_video_unit = { VIDEO_UNIT_COUNT,
                                  {
-                                   {0x02,VC_INPUT_TERMINAL}, 
-                                   {0x05,VC_PROCESSING_UNIT}, 
+                                   {0x02,VC_INPUT_TERMINAL},
+                                   {0x05,VC_PROCESSING_UNIT},
                                    {0x03,VC_OUTPUT_TERMINAL},
-                                
+
                                   }
                               } ;
-                              
+
 uint_8 USB_DESC_CONST g_device_descriptor[DEVICE_DESCRIPTOR_SIZE] =
 {
   /* Device Descriptor */
@@ -85,16 +85,16 @@ uint_8 USB_DESC_CONST g_device_descriptor[DEVICE_DESCRIPTOR_SIZE] =
    0x01,                                 /*  Manufacturer string index     */
    0x02,                                 /*  Product string index          */
    0x00,                                 /*  Serial number string index    */
-   0x01                                  /*  Number of configurations      */    
+   0x01                                  /*  Number of configurations      */
 };
 
-uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] = 
+uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
 {
    /* Configuration Descriptor */
    CONFIG_ONLY_DESC_SIZE,               /* Size of this desciptor in bytes */
    USB_CONFIG_DESCRIPTOR,               /* DEVICE descriptor */
    CONFIG_DESC_SIZE,0x00,               /* Length of total configuration block */
-   0x02,                                /* This device has two interface */                            
+   0x02,                                /* This device has two interface */
    0x01,                                /* ID of this configuration */
    0x00,                                /* Unused */
    0x80,                               /* Bus-powered device, no remote wakeup */
@@ -103,7 +103,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    /* Interface Association Descriptor */
    IAD_DESC_SIZE,                       /* Size of this descriptor */
    USB_IFACE_ASSOCIATION_DESCRIPTOR,    /* INTERFACE ASSOCIATION Descriptor */
-   0x00,                                /* Interface number ofthe VideoControl 
+   0x00,                                /* Interface number ofthe VideoControl
                                         interface that is associated with this function */
    0x02,                                /* Number of contiguous Video interfaces
                                         that are associated with this function */
@@ -111,7 +111,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    0x03,                                /* SC_VIDEO_INTERFACE_COLLECTION */
    0x00,                                /* Not used */
    0x02,                                /* Index to string descriptor */
- 
+
    /* Standard VC Interface Descriptor */
    IFACE_ONLY_DESC_SIZE,                /* Size of this descriptor */
    INTERFACE_DESC,                                /* INTERFACE descriptor type */
@@ -122,25 +122,25 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
    0x01,                                /* SC_VIDEOCONTROL */
    0x00,                                /* Not used, PC_PROTOCOOL_UNDEFINED */
    0x02,                                /* Index of this string descriptor */
-    
-  /* Class-specific VC Inteface Descriptor */   
+
+  /* Class-specific VC Inteface Descriptor */
   VC_HEADER_ONLY_DESC_SIZE,                /* Size of this descriptor */
   CS_INTERFACE,                         /* CS_INTERFACE */
   VC_HEADER,                            /* VC_HEADER subtype */
   0x00,0x01,                            /* Revision of class specification */
   0x32,0x00,                            /* Total size of class-specific descriptor */
-  0x80,0x8D,0x5B,0x00,                  /* This device will provide timestamps and 
+  0x80,0x8D,0x5B,0x00,                  /* This device will provide timestamps and
                                             and a device clock reference based on 6MHz clock */
   0x01,                                 /* Number of streaming interfaces */
   0x01,                                 /* VideoStreaming interface 1 belongs to
-                                            this VideoControl interface */                                   
-  
+                                            this VideoControl interface */
+
   /* Input Terminal Descriptor (Camera) */
   INPUT_TERMINAL_ONLY_DESC_SIZE,        /* Size of this descriptor */
   CS_INTERFACE,                         /* CS_INTERFACE */
   VC_INPUT_TERMINAL,                    /* VC_INPUT_TERMINAL subtype */
   0x01,                                 /* ID of this input terminal */
-  0x01,0x02,                            /* ITT_CAMERA type. This terminal is a 
+  0x01,0x02,                            /* ITT_CAMERA type. This terminal is a
                                         /* Camera terminal representing the CCD sensor */
   0x00,                                 /* No association */
   0x00,                                 /* Unused */
@@ -149,7 +149,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   0x00,0x00,                            /* No optical zoom supported */
   0x02,                                 /* The size of bmControls is 2 bytes */
   0x00,0x00,                            /* No controls are supported */
-  
+
     /* Output Terminal Descriptor */
   OUTPUT_TERMINAL_ONLY_DESC_SIZE,       /* Size of this descriptor */
   CS_INTERFACE,                         /* CS_INTERFACE */
@@ -160,7 +160,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   0x00,                                 /* No association */
   0x02,                                 /* The input pin of this unit */
   0x00,                                 /* Unused */
-    
+
   /* Processing Uint Descriptor */
   PROCESSING_UNIT_ONLY_DESC_SIZE,       /* Size of this descriptor */
   CS_INTERFACE,                         /* CS_INTERFACE */
@@ -172,7 +172,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   0x02,                                 /* Size of the bmControls field */
   0x01,0x00,                            /* Brightness control supported */
   0x00,                                 /* Unused */
-  
+
   /* Standard Interrupt Endpoint Descriptor */
   INTERRUPT_ENDPOINT_DESC_SIZE,         /* Size of this descriptor */
   USB_ENDPOINT_DESCRIPTOR,              /* ENDPOINT descriptor */
@@ -180,7 +180,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   0x03,                                 /* Interrupt transfer type */
   0x08,0x00,                            /* 8 byte status packet */
   0x20,                                 /* Poll at lease every 32ms */
-    
+
   /* Standard VS Interface Descriptor */
   IFACE_ONLY_DESC_SIZE,                 /* Size */
   INTERFACE_DESC,                       /* INTERFACE descriptor type */
@@ -191,7 +191,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   SC_VIDEOSTREAMING,                    /* SC_VIDEOSTREAMING */
   PC_PROTOCOL_UNDEFINED,                /* PC_PROTOCOL_UNDEFINED */
   0x00,                                 /* Unused */
-  
+
   /* Class-specific VS Header Descriptor (Input) */
   0x0E,                                 /* Size */
   CS_INTERFACE,                         /* CS_INTERFACE */
@@ -209,7 +209,7 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   0x00,                                 /* Hardware trigger should initiate a still image capture */
   0x01,                                 /* Size of the bmaControls field */
   0x00,                                 /* No VideoStreaming specific controls are supported */
-  
+
   /* Class-specifc VS Format Descriptor */
   0x0B,                                 /* Size */
   CS_INTERFACE,                         /* CS_INTERFACE */
@@ -221,9 +221,9 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   0x00,                                 /* Non-interlaced stream - not required */
   0x00,                                 /* Non-interlaced stream - not required */
   0x00,                                 /* Non-interlaced stream */
-  0x00,                                 /* No restrictions imposed on 
+  0x00,                                 /* No restrictions imposed on
                                            the duplication of this video stream*/
-  
+
   /* Class-specific VS Frame Descriptor */
   SPECIFIC_VS_FRAME_DESC_SIZE,          /* Size */
   CS_INTERFACE,                         /* CS_INTERFACE */
@@ -237,16 +237,16 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
 
   0x00,0x09,0x3D,0x00,                  /* Min bit rate in bits/s */
   0x00,0x09,0x3D,0x00,                  /* Max bit rate in bits/s */
-    
+
   0x80,0x94,0x00,0x00,                  /* Max video or still frame size */
-  
+
   0x2A,0x2C,0x0A,0x00,                  /* Default frame interval is 15fps */
-  
+
   0x00,                                 /* Continuous frame interval*/
   0x2A,0x2C,0x0A,0x00,                  /* Min frame interval is 15fps */
   0x2A,0x2C,0x0A,0x00,                  /* Max frame interval is 15fps */
   0x00,0x00,0x00,0x00,                  /* No frame interval step supported */
-  
+
   /* Standard VS Interface Descriptor */
   IFACE_ONLY_DESC_SIZE,                 /* Size */
   INTERFACE_DESC,                       /* INTERFACE descriptor type */
@@ -257,14 +257,14 @@ uint_8 USB_DESC_CONST g_config_descriptor[CONFIG_DESC_SIZE] =
   SC_VIDEOSTREAMING,                    /* SC_VIDEOSTREAMING */
   PC_PROTOCOL_UNDEFINED,                /* PC_PROTOCOL_UNDEFINED */
   0x00,                                 /* Unused */
-  
+
   /* Standard VS Isochronous Video Data Endpoint Descriptor */
   VIDEO_STREAMING_ENDP_DESC_SIZE,       /* Size */
   USB_ENDPOINT_DESCRIPTOR,              /* USB_ENDPOINT_DESCRIPTOR */
   0x82,                                 /* IN endpoint 2 */
   0x05,                                 /* Isochronous tranfer type */
   0xFE,0x01,                            /* Max packet size */
-  0x01                                  /* One frame inteval */  
+  0x01                                  /* One frame inteval */
 };
 
 uint_8 USB_DESC_CONST USB_STR_0[USB_STR_0_SIZE+USB_STR_DESC_SIZE] =
@@ -450,7 +450,7 @@ uint_8 USB_Desc_Get_Descriptor(
     /*Body*/
     UNUSED(controller_ID);
     switch(type)
-    {        
+    {
       case USB_STRING_DESCRIPTOR:
         {
             if(index == 0)
@@ -597,7 +597,7 @@ boolean USB_Desc_Valid_Configation(
 {
     uint_8 loop_index=0;
 
-    /*Body*/    
+    /*Body*/
     UNUSED (controller_ID);
     /* check with only supported val right now */
     while(loop_index < (USB_MAX_CONFIG_SUPPORTED+1))
@@ -631,7 +631,7 @@ boolean USB_Desc_Valid_Interface(
 )
 {
     uint_8 loop_index=0;
-    
+
     /*Body*/
     UNUSED(controller_ID);
     /* check with only supported val right now */
@@ -699,12 +699,12 @@ void* USB_Desc_Get_Endpoints(
  *****************************************************************************
  * This function returns the information about all the Input Terminal,
  * Output Terminal and Feature Unit
- *****************************************************************************/ 
+ *****************************************************************************/
 void* USB_Desc_Get_Video_Entities(
       uint_8 controller_ID      /* [IN] Controller ID */
 )
 {
-    /*Body*/    
+    /*Body*/
     UNUSED (controller_ID);
     return (void*)&usb_video_unit;
 }/*EndBody*/
@@ -734,10 +734,10 @@ uint_8 USB_Desc_Set_Cur_Brightness(
 /*Body*/
   UNUSED(controller_ID);
   UNUSED(size);
-  
+
     g_cur_brightness[0]=**data;
     g_cur_brightness[1]=*(*data+1);
-    
+
     return USB_OK;
 }/*EndBody*/
 /**************************************************************************//*!
@@ -766,7 +766,7 @@ uint_8 USB_Desc_Get_Cur_Brightness(
 
     *size = 2;
     *data = g_cur_brightness;
-    
+
     return USB_OK;
 }/*EndBody*/
 uint_8 g_min_brightness[2] = {0xf0,0xff};
@@ -796,7 +796,7 @@ uint_8 USB_Desc_Get_Min_Brightness(
 
     *size = 2;
     *data = g_min_brightness;
-    
+
     return USB_OK;
 }/*EndBody*/
 uint_8 g_max_brightness[2] = {0x10,0x00};
@@ -826,7 +826,7 @@ uint_8 USB_Desc_Get_Max_Brightness(
 
     *size = 2;
     *data = g_max_brightness;
-    
+
     return USB_OK;
 }/*EndBody*/
 
@@ -857,7 +857,7 @@ uint_8 USB_Desc_Get_Res_Brightness(
 
     *size = 2;
     *data = g_res_brightness;
-    
+
     return USB_OK;
 }/*EndBody*/
 
@@ -888,7 +888,7 @@ uint_8 USB_Desc_Get_Info_Brightness(
 
     *size = 1;
     *data = g_info_brightness;
-    
+
     return USB_OK;
 }/*EndBody*/
 
@@ -919,7 +919,7 @@ uint_8 USB_Desc_Get_Def_Brightness(
 
     *size = 2;
     *data = g_def_brightness;
-    
+
     return USB_OK;
 }/*EndBody*/
 
@@ -950,7 +950,7 @@ uint_8 USB_Desc_Set_Cur_Power_Mode(
   UNUSED(size);
 
     g_cur_power_mode[0]=**data;
-    
+
     return USB_OK;
 }/*EndBody*/
 /**************************************************************************//*!
@@ -1100,15 +1100,15 @@ uint_8 USB_Desc_Set_Cur_Video_Probe(
 )
 {
   uint_8 i;
-  
+
   /*Body*/
    UNUSED(controller_ID);
    UNUSED(size);
-  
+
     for(i=0;i<26;i++){
     g_cur_video_probe[i]=*(*data+i);
     }
-    
+
     return USB_OK;
 }/*EndBody*/
 /**************************************************************************//*!
@@ -1134,8 +1134,8 @@ uint_8 USB_Desc_Get_Cur_Video_Probe(
 {
 /*Body*/
   UNUSED(controller_ID);
-    
-  *size=26;   
+
+  *size=26;
   *data=g_cur_video_probe;
 
     return USB_OK;
@@ -1168,8 +1168,8 @@ uint_8 USB_Desc_Get_Len_Video_Probe(
 {
 /*Body*/
   UNUSED(controller_ID);
-    
-  *size=26;   
+
+  *size=26;
   *data=g_len_video_probe;
 
     return USB_OK;
@@ -1199,8 +1199,8 @@ uint_8 USB_Desc_Get_Info_Video_Probe(
 {
 /*Body*/
   UNUSED(controller_ID);
-    
-  *size=1;   
+
+  *size=1;
   *data=g_info_video_probe;
 
     return USB_OK;
@@ -1232,15 +1232,15 @@ uint_8 USB_Desc_Set_Cur_Video_Commit(
 )
 {
   uint_8 i;
-  
+
   /*Body*/
   UNUSED(controller_ID);
   UNUSED(size);
-  
+
     for(i=0;i<26;i++){
     g_cur_video_commit[i]=*(*data+i);
     }/*EndFor*/
-    
+
     return USB_OK;
 }/*EndBody*/
 /**************************************************************************//*!
@@ -1266,8 +1266,8 @@ uint_8 USB_Desc_Get_Cur_Video_Commit(
 {
 /*Body*/
   UNUSED(controller_ID);
-    
-  *size=26;   
+
+  *size=26;
   *data=g_cur_video_commit;
 
     return USB_OK;
@@ -1300,8 +1300,8 @@ uint_8 USB_Desc_Get_Len_Video_Commit(
 {
 /*Body*/
   UNUSED(controller_ID);
-    
-  *size=26;   
+
+  *size=26;
   *data=g_len_video_commit;
 
     return USB_OK;
@@ -1331,8 +1331,8 @@ uint_8 USB_Desc_Get_Info_Video_Commit(
 {
 /*Body*/
   UNUSED(controller_ID);
-    
-  *size=1;   
+
+  *size=1;
   *data=g_info_video_commit;
 
     return USB_OK;

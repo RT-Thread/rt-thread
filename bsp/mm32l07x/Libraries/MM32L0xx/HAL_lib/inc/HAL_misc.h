@@ -4,11 +4,11 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the 
+* @brief  This file contains all the functions prototypes for the
 *         miscellaneous firmware library functions.
 ******************************************************************************
 
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_MISC_H
@@ -32,15 +32,15 @@
 * @{
 */
 
-/** 
-* @brief  NVIC Init Structure definition  
+/**
+* @brief  NVIC Init Structure definition
 */
 
 typedef struct
 {
   uint8_t NVIC_IRQChannel;             /*!< Specifies the IRQ channel to be enabled or disabled.
-                                            This parameter can be a value of @ref IRQn_Type 
-                                            (For the complete MM32 Devices IRQ Channels list, 
+                                            This parameter can be a value of @ref IRQn_Type
+                                            (For the complete MM32 Devices IRQ Channels list,
                                             please refer to HAL_device.h file) */
 
   uint8_t NVIC_IRQChannelPriority;     /*!< Specifies the priority level for the IRQ channel specified
@@ -48,8 +48,8 @@ typedef struct
                                             between 0 and 3.  */
 
   FunctionalState NVIC_IRQChannelCmd;  /*!< Specifies whether the IRQ channel defined in NVIC_IRQChannel
-                                            will be enabled or disabled. 
-                                            This parameter can be set either to ENABLE or DISABLE */   
+                                            will be enabled or disabled.
+                                            This parameter can be set either to ENABLE or DISABLE */
 } NVIC_InitTypeDef;
 
 /**
@@ -60,7 +60,7 @@ typedef struct
 * @{
 */
 
-/** @defgroup MISC_System_Low_Power 
+/** @defgroup MISC_System_Low_Power
   * @{
   */
 
@@ -74,7 +74,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup MISC_Preemption_Priority_Group 
+/** @defgroup MISC_Preemption_Priority_Group
   * @{
   */
 #define IS_NVIC_PRIORITY(PRIORITY)  ((PRIORITY) < 0x04)
@@ -83,7 +83,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup SysTick_clock_source 
+/** @defgroup SysTick_clock_source
 * @{
 */
 

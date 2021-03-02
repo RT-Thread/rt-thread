@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	iar/compiler.h
- * @brief	IAR specific primitives for libmetal.
+ * @file    iar/compiler.h
+ * @brief   IAR specific primitives for libmetal.
  */
 
 #ifndef __METAL_IAR_COMPILER__H__

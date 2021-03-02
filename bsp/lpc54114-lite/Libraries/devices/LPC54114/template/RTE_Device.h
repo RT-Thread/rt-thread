@@ -36,8 +36,8 @@
 #define __RTE_DEVICE_H
 
 /* UART Select, UART0-UART7. */
-/* User needs to provide the implementation for XXX_GetFreq/XXX_InitPins/XXX_DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for XXX_GetFreq/XXX_InitPins/XXX_DeinitPins
+in the application for enabling according instance. */
 #define RTE_USART0 0
 #define RTE_USART0_DMA_EN 0
 #define RTE_USART1 0
@@ -107,8 +107,8 @@ in the application for enabling according instance. */
 #define RTE_USART7_DMA_RX_DMA_BASE DMA0
 
 /* I2C Select, I2C0 -I2C7*/
-/* User needs to provide the implementation for XXX_GetFreq/XXX_InitPins/XXX_DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for XXX_GetFreq/XXX_InitPins/XXX_DeinitPins
+in the application for enabling according instance. */
 #define RTE_I2C0 0
 #define RTE_I2C0_DMA_EN 0
 #define RTE_I2C1 0
@@ -152,8 +152,8 @@ in the application for enabling according instance. */
 #define RTE_I2C7_Master_DMA_CH 15
 
 /* SPI select, SPI0 - SPI7.*/
-/* User needs to provide the implementation for XXX_GetFreq/XXX_InitPins/XXX_DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for XXX_GetFreq/XXX_InitPins/XXX_DeinitPins
+in the application for enabling according instance. */
 #define RTE_SPI0 0
 #define RTE_SPI0_DMA_EN 0
 #define RTE_SPI1 0

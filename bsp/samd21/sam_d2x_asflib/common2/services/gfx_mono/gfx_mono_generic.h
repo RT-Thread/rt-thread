@@ -78,49 +78,49 @@ extern "C" {
  * \brief Storage structure for bitmap pixel data and metadata
  */
 struct gfx_mono_bitmap {
-	/** Width of bitmap */
-	gfx_coord_t width;
-	/** Height of bitmap */
-	gfx_coord_t height;
-	/** Bitmap type */
-	enum gfx_mono_bitmap_type type;
-	union {
-		/** Pointer to pixels for bitmap stored in RAM */
-		gfx_mono_color_t *pixmap;
-		/** Pointer to pixels for bitmap stored in progmem */
-		gfx_mono_color_t PROGMEM_T *progmem;
-	}
-	data;
+    /** Width of bitmap */
+    gfx_coord_t width;
+    /** Height of bitmap */
+    gfx_coord_t height;
+    /** Bitmap type */
+    enum gfx_mono_bitmap_type type;
+    union {
+        /** Pointer to pixels for bitmap stored in RAM */
+        gfx_mono_color_t *pixmap;
+        /** Pointer to pixels for bitmap stored in progmem */
+        gfx_mono_color_t PROGMEM_T *progmem;
+    }
+    data;
 };
 
 void gfx_mono_generic_draw_horizontal_line(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t length, enum gfx_mono_color color);
+        gfx_coord_t length, enum gfx_mono_color color);
 
 void gfx_mono_generic_draw_vertical_line(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t length, enum gfx_mono_color color);
+        gfx_coord_t length, enum gfx_mono_color color);
 
 void gfx_mono_generic_draw_line(gfx_coord_t x1, gfx_coord_t y1,
-		gfx_coord_t x2, gfx_coord_t y2,
-		enum gfx_mono_color color);
+        gfx_coord_t x2, gfx_coord_t y2,
+        enum gfx_mono_color color);
 
 void gfx_mono_generic_draw_rect(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t width, gfx_coord_t height,
-		enum gfx_mono_color color);
+        gfx_coord_t width, gfx_coord_t height,
+        enum gfx_mono_color color);
 
 void gfx_mono_generic_draw_filled_rect(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t width, gfx_coord_t height,
-		enum gfx_mono_color color);
+        gfx_coord_t width, gfx_coord_t height,
+        enum gfx_mono_color color);
 
 void gfx_mono_generic_draw_circle(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t radius, enum gfx_mono_color color,
-		uint8_t octant_mask);
+        gfx_coord_t radius, enum gfx_mono_color color,
+        uint8_t octant_mask);
 
 void gfx_mono_generic_draw_filled_circle(gfx_coord_t x, gfx_coord_t y,
-		gfx_coord_t radius, enum gfx_mono_color color,
-		uint8_t quadrant_mask);
+        gfx_coord_t radius, enum gfx_mono_color color,
+        uint8_t quadrant_mask);
 
 void gfx_mono_generic_put_bitmap(struct gfx_mono_bitmap *bitmap, gfx_coord_t x,
-		gfx_coord_t y);
+        gfx_coord_t y);
 
 /** @} */
 

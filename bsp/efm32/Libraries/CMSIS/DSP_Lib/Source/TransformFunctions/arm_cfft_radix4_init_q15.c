@@ -1,74 +1,74 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:	    arm_cfft_radix4_init_q15.c    
-*    
-* Description:	Radix-4 Decimation in Frequency Q15 FFT & IFFT initialization function    
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:    V1.1.0
+*
+* Project:      CMSIS DSP Library
+* Title:        arm_cfft_radix4_init_q15.c
+*
+* Description:  Radix-4 Decimation in Frequency Q15 FFT & IFFT initialization function
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated.    
-*    
-* Version 0.0.5  2010/04/26     
-* 	 incorporated review comments and updated with latest CMSIS layer    
-*    
-* Version 0.0.3  2010/03/10     
-*    Initial version    
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.10 2011/7/15
+*    Big Endian support added and Merged M0 and M3/M4 Source code.
+*
+* Version 1.0.3 2010/11/29
+*    Re-organized the CMSIS folders and updated documentation.
+*
+* Version 1.0.2 2010/11/11
+*    Documentation updated.
+*
+* Version 1.0.1 2010/10/05
+*    Production release and review comments incorporated.
+*
+* Version 1.0.0 2010/09/20
+*    Production release and review comments incorporated.
+*
+* Version 0.0.5  2010/04/26
+*    incorporated review comments and updated with latest CMSIS layer
+*
+* Version 0.0.3  2010/03/10
+*    Initial version
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
 #include "arm_common_tables.h"
 
-/**    
- * @ingroup groupTransforms    
+/**
+ * @ingroup groupTransforms
  */
 
 
-/**    
- * @addtogroup Radix4_CFFT_CIFFT    
- * @{    
+/**
+ * @addtogroup Radix4_CFFT_CIFFT
+ * @{
  */
 
 
-/**    
-* @brief Initialization function for the Q15 CFFT/CIFFT.   
-* @param[in,out] *S             points to an instance of the Q15 CFFT/CIFFT structure.   
-* @param[in]     fftLen         length of the FFT.   
-* @param[in]     ifftFlag       flag that selects forward (ifftFlag=0) or inverse (ifftFlag=1) transform.   
-* @param[in]     bitReverseFlag flag that enables (bitReverseFlag=1) or disables (bitReverseFlag=0) bit reversal of output.   
-* @return        The function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>fftLen</code> is not a supported value.   
-*    
-* \par Description:   
-* \par    
-* The parameter <code>ifftFlag</code> controls whether a forward or inverse transform is computed.    
-* Set(=1) ifftFlag for calculation of CIFFT otherwise  CFFT is calculated   
-* \par    
-* The parameter <code>bitReverseFlag</code> controls whether output is in normal order or bit reversed order.    
-* Set(=1) bitReverseFlag for output to be in normal order otherwise output is in bit reversed order.    
-* \par    
-* The parameter <code>fftLen</code>	Specifies length of CFFT/CIFFT process. Supported FFT Lengths are 16, 64, 256, 1024.    
-* \par    
-* This Function also initializes Twiddle factor table pointer and Bit reversal table pointer.    
+/**
+* @brief Initialization function for the Q15 CFFT/CIFFT.
+* @param[in,out] *S             points to an instance of the Q15 CFFT/CIFFT structure.
+* @param[in]     fftLen         length of the FFT.
+* @param[in]     ifftFlag       flag that selects forward (ifftFlag=0) or inverse (ifftFlag=1) transform.
+* @param[in]     bitReverseFlag flag that enables (bitReverseFlag=1) or disables (bitReverseFlag=0) bit reversal of output.
+* @return        The function returns ARM_MATH_SUCCESS if initialization is successful or ARM_MATH_ARGUMENT_ERROR if <code>fftLen</code> is not a supported value.
+*
+* \par Description:
+* \par
+* The parameter <code>ifftFlag</code> controls whether a forward or inverse transform is computed.
+* Set(=1) ifftFlag for calculation of CIFFT otherwise  CFFT is calculated
+* \par
+* The parameter <code>bitReverseFlag</code> controls whether output is in normal order or bit reversed order.
+* Set(=1) bitReverseFlag for output to be in normal order otherwise output is in bit reversed order.
+* \par
+* The parameter <code>fftLen</code> Specifies length of CFFT/CIFFT process. Supported FFT Lengths are 16, 64, 256, 1024.
+* \par
+* This Function also initializes Twiddle factor table pointer and Bit reversal table pointer.
 */
 
 arm_status arm_cfft_radix4_init_q15(
@@ -144,6 +144,6 @@ arm_status arm_cfft_radix4_init_q15(
   return (status);
 }
 
-/**    
- * @} end of Radix4_CFFT_CIFFT group    
+/**
+ * @} end of Radix4_CFFT_CIFFT group
  */

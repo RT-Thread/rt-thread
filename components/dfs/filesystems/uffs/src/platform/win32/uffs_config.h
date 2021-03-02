@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,12 +25,12 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
 
-/** 
+/**
  * \file uffs_config.h
  * \brief basic configuration of uffs
  * \author Ricky Zheng
@@ -43,7 +43,7 @@
  * \def UFFS_MAX_PAGE_SIZE
  * \note maximum page size UFFS support
  */
-#define UFFS_MAX_PAGE_SIZE		2048
+#define UFFS_MAX_PAGE_SIZE      2048
 
 /**
  * \def UFFS_MAX_SPARE_SIZE
@@ -60,39 +60,39 @@
  * \note uffs cache the block info for opened directories and files,
  *       a practical value is 5 ~ MAX_OBJECT_HANDLE
  */
-#define MAX_CACHED_BLOCK_INFO	50
+#define MAX_CACHED_BLOCK_INFO   50
 
-/** 
+/**
  * \def MAX_PAGE_BUFFERS
  * \note the bigger value will bring better read/write performance.
- *       but few writing performance will be improved when this 
+ *       but few writing performance will be improved when this
  *       value is become larger than 'max pages per block'
  */
-#define MAX_PAGE_BUFFERS		40
+#define MAX_PAGE_BUFFERS        40
 
 
-/** 
+/**
  * \def CLONE_BUFFER_THRESHOLD
  * \note reserve buffers for clone. 1 or 2 should be enough.
  */
-#define CLONE_BUFFERS_THRESHOLD	2
+#define CLONE_BUFFERS_THRESHOLD 2
 
 /**
  * \def MAX_SPARE_BUFFERS
  * \note spare buffers are used for lower level flash operations,
- *		 5 should be enough.
+ *       5 should be enough.
  */
-#define MAX_SPARE_BUFFERS		5
+#define MAX_SPARE_BUFFERS       5
 
 
 /**
- * \def MAX_DIRTY_PAGES_IN_A_BLOCK 
+ * \def MAX_DIRTY_PAGES_IN_A_BLOCK
  * \note this value should be between '2' and the lesser of
- *		 'max pages per block' and (MAX_PAGE_BUFFERS - CLONE_BUFFERS_THRESHOLD - 1).
+ *       'max pages per block' and (MAX_PAGE_BUFFERS - CLONE_BUFFERS_THRESHOLD - 1).
  *
  *       the smaller the value the frequently the buffer will be flushed.
  */
-#define MAX_DIRTY_PAGES_IN_A_BLOCK	32
+#define MAX_DIRTY_PAGES_IN_A_BLOCK  32
 
 /**
  * \def CONFIG_ENABLE_UFFS_DEBUG_MSG
@@ -112,7 +112,7 @@
 /**
  * \def CONFIG_USE_PER_DEVICE_LOCK
  * \note use per-device lock.
- *		 this is required if you use fs APIs in multi-thread environment.
+ *       this is required if you use fs APIs in multi-thread environment.
  */
 //#define CONFIG_USE_PER_DEVICE_LOCK
 
@@ -136,13 +136,13 @@
 
 
 
-/** 
+/**
  * \def CONFIG_FLUSH_BUF_AFTER_WRITE
- * \note UFFS will write all data directly into flash in 
+ * \note UFFS will write all data directly into flash in
  *       each 'write' call if you enable this option.
  *       (which means lesser data lost when power failure but
- *		 poorer writing performance).
- *		 It's not recommended to open this define for normal applications.
+ *       poorer writing performance).
+ *       It's not recommended to open this define for normal applications.
  */
 //#define CONFIG_FLUSH_BUF_AFTER_WRITE
 
@@ -155,19 +155,19 @@
 //#define CONFIG_UFFS_AUTO_LAYOUT_USE_MTD_SCHEME
 
 
-/** 
+/**
  * \def MAX_OBJECT_HANDLE
- * maximum number of object handle 
+ * maximum number of object handle
  */
-#define MAX_OBJECT_HANDLE	50
-#define FD_SIGNATURE_SHIFT	6
+#define MAX_OBJECT_HANDLE   50
+#define FD_SIGNATURE_SHIFT  6
 
 
 /**
  * \def MAX_DIR_HANDLE
  * maximum number of uffs_DIR
  */
-#define MAX_DIR_HANDLE	10
+#define MAX_DIR_HANDLE  10
 
 /**
  * \def MINIMUN_ERASED_BLOCK
@@ -188,7 +188,7 @@
 /**
  * \def CONFIG_ENABLE_BAD_BLOCK_VERIFY
  * \note allow erase and verify block marked as 'bad' when format UFFS partition.
- *		it's not recommended for most NAND flash.
+ *      it's not recommended for most NAND flash.
  */
 #define CONFIG_ENABLE_BAD_BLOCK_VERIFY
 
@@ -208,7 +208,7 @@
  * \def CONFIG_BAD_BLOCK_POLICY_STRICT
  * \note If this is enabled, UFFS will report the block as 'bad' if any bit-flips found;
  *       otherwise, UFFS report bad block only when ECC failed or reported
- *		 by low level flash driver.
+ *       by low level flash driver.
  *
  * \note Enable this will ensure your data always be stored on completely good blocks.
  */
@@ -226,31 +226,31 @@
 /** micros for calculating buffer sizes */
 
 /**
- *	\def UFFS_BLOCK_INFO_BUFFER_SIZE
- *	\brief calculate memory bytes for block info caches
+ *  \def UFFS_BLOCK_INFO_BUFFER_SIZE
+ *  \brief calculate memory bytes for block info caches
  */
-#define UFFS_BLOCK_INFO_BUFFER_SIZE(n_pages_per_block)	\
-			(											\
-				(										\
-					sizeof(uffs_BlockInfo) +			\
-					sizeof(uffs_PageSpare) * n_pages_per_block \
-				 ) * MAX_CACHED_BLOCK_INFO				\
-			)
+#define UFFS_BLOCK_INFO_BUFFER_SIZE(n_pages_per_block)  \
+            (                                           \
+                (                                       \
+                    sizeof(uffs_BlockInfo) +            \
+                    sizeof(uffs_PageSpare) * n_pages_per_block \
+                 ) * MAX_CACHED_BLOCK_INFO              \
+            )
 
 /**
- *	\def UFFS_PAGE_BUFFER_SIZE
- *	\brief calculate memory bytes for page buffers
+ *  \def UFFS_PAGE_BUFFER_SIZE
+ *  \brief calculate memory bytes for page buffers
  */
-#define UFFS_PAGE_BUFFER_SIZE(n_page_size)	\
-			(								\
-				(							\
-					sizeof(uffs_Buf) + n_page_size	\
-				) * MAX_PAGE_BUFFERS		\
-			)
+#define UFFS_PAGE_BUFFER_SIZE(n_page_size)  \
+            (                               \
+                (                           \
+                    sizeof(uffs_Buf) + n_page_size  \
+                ) * MAX_PAGE_BUFFERS        \
+            )
 
 /**
- *	\def UFFS_TREE_BUFFER_SIZE
- *	\brief calculate memory bytes for tree nodes
+ *  \def UFFS_TREE_BUFFER_SIZE
+ *  \brief calculate memory bytes for tree nodes
  */
 #define UFFS_TREE_BUFFER_SIZE(n_blocks) (sizeof(TreeNode) * n_blocks)
 
@@ -259,16 +259,16 @@
 
 
 /**
- *	\def UFFS_STATIC_BUFF_SIZE
- *	\brief calculate total memory usage of uffs system
+ *  \def UFFS_STATIC_BUFF_SIZE
+ *  \brief calculate total memory usage of uffs system
  */
 #define UFFS_STATIC_BUFF_SIZE(n_pages_per_block, n_page_size, n_blocks) \
-			(		\
-				UFFS_BLOCK_INFO_BUFFER_SIZE(n_pages_per_block) + \
-				UFFS_PAGE_BUFFER_SIZE(n_page_size) + \
-				UFFS_TREE_BUFFER_SIZE(n_blocks) + \
-				UFFS_SPARE_BUFFER_SIZE \
-			 )
+            (       \
+                UFFS_BLOCK_INFO_BUFFER_SIZE(n_pages_per_block) + \
+                UFFS_PAGE_BUFFER_SIZE(n_page_size) + \
+                UFFS_TREE_BUFFER_SIZE(n_blocks) + \
+                UFFS_SPARE_BUFFER_SIZE \
+             )
 
 
 

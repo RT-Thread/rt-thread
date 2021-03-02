@@ -60,7 +60,7 @@ extern "C" {
 #define BKP_RTCOutput_CalClk                ((uint16_t)0x0080)
 #define BKP_RTCOutput_Alarm_Pulse           ((uint16_t)0x0100)
 #define BKP_RTCOutput_Second_Pulse          ((uint16_t)0x0300)
-#if defined (AT32F403Axx) || defined (AT32F407xx) 
+#if defined (AT32F403Axx) || defined (AT32F407xx)
 #define BKP_RTCOutput_Alarm_Toggle          ((uint16_t)0x0900)
 #define BKP_RTCOutput_Second_Toggle         ((uint16_t)0x0B00)
 #endif
@@ -77,7 +77,7 @@ extern "C" {
                                              ((SEL) == BKP_RTCOutput_CalClk) || \
                                              ((SEL) == BKP_RTCOutput_Alarm_Pulse) || \
                                              ((SEL) == BKP_RTCOutput_Second_Pulse))
-#endif																		 
+#endif
 /**
   * @}
   */

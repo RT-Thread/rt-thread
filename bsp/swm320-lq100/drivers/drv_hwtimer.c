@@ -28,11 +28,11 @@ void TIMR0_Handler(void)
 {
     TIMR_INTClr(TIMR0);
     rt_device_hwtimer_isr(&hwtimer0.parent);
-    
+
     if (HWTIMER_MODE_ONESHOT == hwtimer0.parent.mode)
     {
         TIMR_Stop(hwtimer0.hwtimer_periph);
-    }  
+    }
 }
 #endif //BSP_USING_HWTIMER0
 
@@ -47,7 +47,7 @@ void TIMR1_Handler(void)
     if (HWTIMER_MODE_ONESHOT == hwtimer1.parent.mode)
     {
         TIMR_Stop(hwtimer1.hwtimer_periph);
-    } 
+    }
 }
 #endif //BSP_USING_HWTIMER1
 
@@ -58,11 +58,11 @@ void TIMR2_Handler(void)
 {
     TIMR_INTClr(TIMR2);
     rt_device_hwtimer_isr(&hwtimer2.parent);
-    
+
     if (HWTIMER_MODE_ONESHOT == hwtimer2.parent.mode)
     {
         TIMR_Stop(hwtimer2.hwtimer_periph);
-    } 
+    }
 }
 #endif //BSP_USING_HWTIMER2
 
@@ -73,7 +73,7 @@ void TIMR3_Handler(void)
 {
     TIMR_INTClr(TIMR3);
     rt_device_hwtimer_isr(&hwtimer3.parent);
-    
+
     if (HWTIMER_MODE_ONESHOT == hwtimer3.parent.mode)
     {
         TIMR_Stop(hwtimer3.hwtimer_periph);
@@ -88,7 +88,7 @@ void TIMR4_Handler(void)
 {
     TIMR_INTClr(TIMR4);
     rt_device_hwtimer_isr(&hwtimer4.parent);
-    
+
     if (HWTIMER_MODE_ONESHOT == hwtimer4.parent.mode)
     {
         TIMR_Stop(hwtimer4.hwtimer_periph);
@@ -103,7 +103,7 @@ void TIMR5_Handler(void)
 {
     TIMR_INTClr(TIMR5);
     rt_device_hwtimer_isr(&hwtimer5.parent);
-    
+
     if (HWTIMER_MODE_ONESHOT == hwtimer5.parent.mode)
     {
         TIMR_Stop(hwtimer5.hwtimer_periph);
@@ -113,9 +113,9 @@ void TIMR5_Handler(void)
 
 static struct rt_hwtimer_info swm320_hwtimer_info =
 {
-    120000000,  /*Êó∂ÈíüÊ∫ê‰∏∫Á≥ªÁªüÊó∂Èíü*/
-    120000000, 
-    4294967295, /*32‰ΩçËÆ°Êï∞Âô®Ôºå2ÁöÑ32Ê¨°Êñπ*/
+    120000000,  /* ±÷”‘¥Œ™œµÕ≥ ±÷”*/
+    120000000,
+    4294967295, /*32Œªº∆ ˝∆˜£¨2µƒ32¥Œ∑Ω*/
     HWTIMER_CNTMODE_DW
 };
 

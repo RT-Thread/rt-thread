@@ -43,19 +43,19 @@
  * Cipher text = 3ad77bb40d7a3660a89ecaf32466ef97
  */
 /* Data Encryption Key - i.e. the key will be wrapped in the blob */
-uint8_t dek[16] = 
+uint8_t dek[16] =
 {
     0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6,
     0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C
 };
 /* Test vector to encrypt */
-uint8_t test_vect[16] = 
+uint8_t test_vect[16] =
 {
     0x6B, 0xC1, 0xBE, 0xE2, 0x2E, 0x40, 0x9F, 0x96,
     0xE9, 0x3D, 0x7E, 0x11, 0x73, 0x93, 0x17, 0x2A
 };
 /* Cipher text */
-uint8_t cipher_text[16] = 
+uint8_t cipher_text[16] =
 {
     0x3A, 0xD7, 0x7B, 0xB4, 0x0D, 0x7A, 0x36, 0x60,
     0xA8, 0x9E, 0xCA, 0xF3, 0x24, 0x66, 0xEF, 0x97
@@ -144,7 +144,7 @@ int32_t caam_test(void)
          * that known key to compare the result against the known reference.
          * This ensures that the whole flow of enc/decap is functional.
          */
-        ret = caam_enc_data((uint32_t) &test_vect[0], 
+        ret = caam_enc_data((uint32_t) &test_vect[0],
                             (uint32_t) &enc_result[0], 0);
         if(ret != SUCCESS)
             printf("Error during encryption operation: 0x%d\n",ret);

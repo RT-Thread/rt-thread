@@ -39,9 +39,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #if defined(CHIP_MX6SL)
-#define EPDC_PIGEON_16_0		(EPDC_BASE_ADDR + 0xC00)
-#define EPDC_PIGEON_16_1		(EPDC_BASE_ADDR + 0xC10)
-#define EPDC_PIGEON_16_2		(EPDC_BASE_ADDR + 0xC20)
+#define EPDC_PIGEON_16_0        (EPDC_BASE_ADDR + 0xC00)
+#define EPDC_PIGEON_16_1        (EPDC_BASE_ADDR + 0xC10)
+#define EPDC_PIGEON_16_2        (EPDC_BASE_ADDR + 0xC20)
 #endif
 
 /* EPDC_CTRL field values */
@@ -242,12 +242,12 @@
 #define    EPDC_GPIO_BDR_OFFSET   0
 
 /* EPDC_VERSION field values */
-#define	EPDC_VERSION_MAJOR_MASK   0xFF000000
-#define	EPDC_VERSION_MAJOR_OFFSET   24
-#define	EPDC_VERSION_MINOR_MASK   0xFF0000
-#define	EPDC_VERSION_MINOR_OFFSET   16
-#define	EPDC_VERSION_STEP_MASK   0xFFFF
-#define	EPDC_VERSION_STEP_OFFSET   0
+#define EPDC_VERSION_MAJOR_MASK   0xFF000000
+#define EPDC_VERSION_MAJOR_OFFSET   24
+#define EPDC_VERSION_MINOR_MASK   0xFF0000
+#define EPDC_VERSION_MINOR_OFFSET   16
+#define EPDC_VERSION_STEP_MASK   0xFFFF
+#define EPDC_VERSION_STEP_OFFSET   0
 
 //! @}
 

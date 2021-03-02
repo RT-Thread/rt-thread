@@ -59,7 +59,7 @@ void NVIC_SetRAM(void)
     /* should be defined in starup_<device>.S */
     extern uint32_t __isr_vector[97];
 #endif
-    
+
     memcpy(&ramVectorTable, &__isr_vector, sizeof(ramVectorTable));
     SCB->VTOR = (uint32_t)&ramVectorTable;
 }
@@ -67,12 +67,12 @@ void NVIC_SetRAM(void)
 void NVIC_SetVector(IRQn_Type irqn, void(*irq_handler)(void))
 {
     int index = irqn + 16;  /* offset for externals */
-    
+
     /* If not copied, do copy */
     if (SCB->VTOR != (uint32_t)&ramVectorTable) {
         NVIC_SetRAM();
     }
-    
+
     ramVectorTable[index] = irq_handler;
     NVIC_EnableIRQ(irqn);
 }

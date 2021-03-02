@@ -649,27 +649,27 @@ void system_board_init(void);
 #endif
 /** Enables the transceiver main interrupt. */
 #define ENABLE_TRX_IRQ()     \
-		extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
+        extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
 
 /** Disables the transceiver main interrupt. */
 #define DISABLE_TRX_IRQ()    \
-		extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
+        extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
 
 /** Clears the transceiver main interrupt. */
 #define CLEAR_TRX_IRQ()      \
-		extint_chan_clear_detected(AT86RFX_IRQ_CHAN);
+        extint_chan_clear_detected(AT86RFX_IRQ_CHAN);
 
 /*
  * This macro saves the trx interrupt status and disables the trx interrupt.
  */
 #define ENTER_TRX_REGION()   \
-		{ extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
+        { extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
 
 /*
  *  This macro restores the transceiver interrupt status
  */
 #define LEAVE_TRX_REGION()   \
-		extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT); }
+        extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT); }
 
 /** @} */
 

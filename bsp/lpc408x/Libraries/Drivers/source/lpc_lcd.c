@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     14. October. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -78,9 +78,9 @@ LCD_RET_CODE LCD_Init (LCD_Config_Type* pConfig)
 
     if(pConfig->big_endian_byte & !pConfig->big_endian_pixel)
       return LCD_FUNC_ERR;
-    
+
     lcd_config = *pConfig;
-    
+
     // Assign pins
     PINSEL_ConfigPin(0,4,7);
     PINSEL_ConfigPin(0,5,7);
@@ -109,7 +109,7 @@ LCD_RET_CODE LCD_Init (LCD_Config_Type* pConfig)
     PINSEL_ConfigPin(0,10,7);
 #else
     PINSEL_ConfigPin(2,7,7);
-#endif    
+#endif
     PINSEL_ConfigPin(2,8,7);
     PINSEL_ConfigPin(2,9,7);
     PINSEL_ConfigPin(2,11,7);
@@ -117,11 +117,11 @@ LCD_RET_CODE LCD_Init (LCD_Config_Type* pConfig)
     PINSEL_ConfigPin(2,13,7);
     PINSEL_ConfigPin(4,28,7);
     PINSEL_ConfigPin(4,29,7);
-    
+
     //Turn on LCD clock
     CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCLCD, ENABLE);
 
-    // Set clock    
+    // Set clock
     LPC_LCD->POL &= ~(0x01 << 5);
     if( pConfig->panel_clk > 0) {
         clkdiv = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU) / pConfig->panel_clk - 1;
@@ -149,10 +149,10 @@ LCD_RET_CODE LCD_Init (LCD_Config_Type* pConfig)
 
         // Setup
     LCD_CtrlSetup(pConfig);
-    
+
     return LCD_FUNC_OK;
 
-    
+
 }
 /*********************************************************************//**
  * @brief     Horizontal Timing Setting
@@ -208,7 +208,7 @@ void LCD_SetPolarity(LCD_TYPES lcd_type, LCD_POLARITY_Type* pConfig)
     if(pConfig->invert_vsync)
         LPC_LCD->POL |= (1<<11);
     else
-        LPC_LCD->POL &= ~(1<<11);        
+        LPC_LCD->POL &= ~(1<<11);
     // LCDLP pin is active LOW and inactive HIGH
     if(pConfig->invert_hsync)
         LPC_LCD->POL |= (1<<12);
@@ -219,7 +219,7 @@ void LCD_SetPolarity(LCD_TYPES lcd_type, LCD_POLARITY_Type* pConfig)
         LPC_LCD->POL |= (1<<13);
     else
         LPC_LCD->POL &= ~(1<<13);
-    
+
     // active high
     if(pConfig->active_high) {
       LPC_LCD->POL &= ~(1<<14);
@@ -264,9 +264,9 @@ void LCD_SetBaseAddress(LCD_PANEL panel, uint32_t pAddress)
  **********************************************************************/
 void LCD_CtrlSetup(LCD_Config_Type* pConfig)
 {
-    // disable LCD controller   
+    // disable LCD controller
     LPC_LCD->CTRL = 0;
-    
+
     //  bpp
     LPC_LCD->CTRL &= ~(0x07 <<1);
     LPC_LCD->CTRL |=((pConfig->lcd_bpp & 0x07)<<1);
@@ -298,7 +298,7 @@ void LCD_CtrlSetup(LCD_Config_Type* pConfig)
         else
             LPC_LCD->CTRL &= ~(0x01 << 7);
     }
-    
+
     // notmal output
     if(pConfig->lcd_bgr)
         LPC_LCD->CTRL |= (1<<8);    // BGR
@@ -316,7 +316,7 @@ void LCD_CtrlSetup(LCD_Config_Type* pConfig)
       LPC_LCD->CTRL |= (1<<10);
     else
       LPC_LCD->CTRL &= ~(1<<10);
-    
+
     // disable power
     LPC_LCD->CTRL &= ~(1<<11);
 }
@@ -398,9 +398,9 @@ uint32_t LCD_GetBitOffset(uint32_t x, uint32_t y)
   uint32_t pixel_num;
   uint32_t ofs;
   pixel_num = x + y*lcd_hsize;
-  
+
   ofs = (pixel_num * bits_per_pixel[lcd_config.lcd_bpp])%32;
-  
+
   if(lcd_config.big_endian_pixel & lcd_config.big_endian_byte)
   {
      ofs = 32 - bits_per_pixel[lcd_config.lcd_bpp] - ofs;
@@ -485,7 +485,7 @@ void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t c
     uint8_t  bpp = bits_per_pixel[lcd_config.lcd_bpp];
     uint8_t  bytes_per_pixel = bpp/8;
     uint32_t start_bit;
-  
+
     if((X_Left >= lcd_hsize)||(Y_Up >= lcd_vsize))
         return;
 
@@ -493,11 +493,11 @@ void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t c
     pWordData = (uint32_t*) LPC_LCD->UPBASE + LCD_GetWordOffset(X_Left,Y_Up);
     else
     pWordData = (uint32_t*) LPC_LCD->LPBASE + LCD_GetWordOffset(X_Left,Y_Up);
-    
+
     bitOffset = LCD_GetBitOffset(X_Left,Y_Up);
     pByteData = (uint8_t*) pWordData;
     pByteData += bitOffset/8;
-    
+
     start_bit =  bitOffset%8;
 
     if(bpp < 8)
@@ -507,7 +507,7 @@ void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t c
       for(bit_ofs = 0;bit_ofs <bpp; bit_ofs++,bit_pos++)
       {
           *pByteData &= ~ (0x01 << bit_pos);
-          *pByteData |= ((*pByteSrc >> (k+bit_ofs)) & 0x01) << bit_pos; 
+          *pByteData |= ((*pByteSrc >> (k+bit_ofs)) & 0x01) << bit_pos;
       }
     }
     else
@@ -526,13 +526,13 @@ void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t c
  *                                             - LCD_PANEL_LOWER
  * @param[in] X_Left        Start X position.
  * @param[in] Y_Up          Start Y position.
- * @param[in] pBmp          Image information. 
+ * @param[in] pBmp          Image information.
  * @param[in] Mask          Mask on pixel values.
  *
  * @return    None.
  *
  **********************************************************************/
-void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, 
+void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
                         Bmp_t * pBmp, uint32_t Mask)
 {
   uint32_t i, j, k, inc;
@@ -549,11 +549,11 @@ void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
 
   if(pBmp->BytesPP == 0)
     pBmp->BytesPP = bytes_per_pixel;
-         
+
   hsize = pBmp->H_Size;
   vsize = pBmp->V_Size;
   inc = (pixels_per_byte > 0) ? pixels_per_byte:1;
-   
+
   for(i = 0; i < vsize; i++)
   {
     if(panel == LCD_PANEL_UPPER)
@@ -564,14 +564,14 @@ void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
     bitOffset = LCD_GetBitOffset(X_Left,Y_Up);
     pByteData = (uint8_t*) pWordData;
     pByteData += bitOffset/8;
-    
+
     start_bit =  bitOffset%8;
-  
+
     if(pBmp->BytesPP > 0)
     pByteSrc = (uint8_t*) pBmp->pPicStream + i*hsize*pBmp->BytesPP; // storage of each line must be word alignment
     else
     pByteSrc = (uint8_t*) pBmp->pPicStream + (i*hsize*pBmp->BitsPP + 7)/8; // storage of each line must be word alignment
-    
+
     X_LeftHold = X_Left;
 
     for(j = 0; j <= hsize; j+= inc)
@@ -587,7 +587,7 @@ void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
               for(bit_ofs = 0;bit_ofs <bpp; bit_ofs++,bit_pos++)
               {
                  *pByteData &= ~ (0x01 << bit_pos);
-                 *pByteData |= ((*pByteSrc >> (k+bit_ofs)) & 0x01) << bit_pos; 
+                 *pByteData |= ((*pByteSrc >> (k+bit_ofs)) & 0x01) << bit_pos;
               }
               if(lcd_config.big_endian_byte && lcd_config.big_endian_pixel)
               {
@@ -600,7 +600,7 @@ void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
                      pByteData += 7; // change to next word
                    else
                      pByteData--;  // change to previous byte
-                }   
+                }
              }
              else if( !lcd_config.big_endian_byte && lcd_config.big_endian_pixel)
               {
@@ -619,13 +619,13 @@ void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
                     bit_pos = 0;
                     pByteData++; // change to next byte
                  }
-                   
+
                }
                X_LeftHold++;
-               if((X_LeftHold  >= lcd_hsize) || 
+               if((X_LeftHold  >= lcd_hsize) ||
                    (X_LeftHold - X_Left  >= hsize))
                     break;
-          } 
+          }
           pByteSrc++;
           continue;
         }
@@ -668,7 +668,7 @@ void LCD_LoadPic (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up,
  * @return    None.
  *
  **********************************************************************/
-void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx, 
+void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx,
                                         uint32_t starty, uint32_t endy,
                                         LcdPixel_t color)
 {
@@ -685,13 +685,13 @@ void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx,
    mask = 0;
    for( x = 0; x < bpp; x++)
      mask |= 0x01 << x;
-   
+
    color &= mask;
 
    word_val = 0;
    for(x = 0; x < pixels_per_word; x++)
       word_val |= color << (x*bpp);
-      
+
    ys = (starty > endy) ? endy : starty;
    ye = (starty > endy) ? starty : endy;
 
@@ -711,7 +711,7 @@ void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx,
    {
      rect[x] = word_val;
    }
-   
+
    while(1)
     {
       if(max_vsize >= vsize)
@@ -726,9 +726,9 @@ void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx,
         LCD_LoadPic(panel,xs,ys, &bitmap, 0);
         ys += max_vsize;
       }
-    } 
+    }
 
-   
+
 }
 
 /*********************************************************************//**
@@ -756,7 +756,7 @@ void LCD_Cursor_Cfg(LCD_Cursor_Config_Type* pConfig)
     LPC_LCD->CRSR_CFG |= (0x01 << 1);
 
   lcd_cursor_base_addr = pConfig->baseaddress;
-  
+
   LPC_LCD->CRSR_PAL0 = pConfig->palette[0].Red |
                        pConfig->palette[0].Green << 8 |
                        pConfig->palette[0].Blue << 16;
@@ -834,11 +834,11 @@ void LCD_Cursor_SetImage (const uint32_t *pCursor, int cursor, int size)
     uint32_t i ;
     uint32_t * pDst = (uint32_t *)lcd_cursor_base_addr;
 
-    if(lcd_cursor_size == 32) 
+    if(lcd_cursor_size == 32)
         pDst += cursor*GET_CURSOR_IMG_SIZE(lcd_cursor_size);
-        
 
-    for(i = 0; i < size ; i++) 
+
+    for(i = 0; i < size ; i++)
     {
     *pDst = *pCursor;
     pDst++;
@@ -849,7 +849,7 @@ void LCD_Cursor_SetImage (const uint32_t *pCursor, int cursor, int size)
 /**
  * @}
  */
- 
+
 #endif /*_LCD*/
 
 

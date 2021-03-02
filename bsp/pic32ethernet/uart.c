@@ -5,9 +5,9 @@
 
 #include "uart.h"
 
-#define	GetSystemClock() 			(80000000ul)
-#define	GetPeripheralClock()		(GetSystemClock()/(1 << OSCCONbits.PBDIV))
-#define	GetInstructionClock()		(GetSystemClock())
+#define GetSystemClock()            (80000000ul)
+#define GetPeripheralClock()        (GetSystemClock()/(1 << OSCCONbits.PBDIV))
+#define GetInstructionClock()       (GetSystemClock())
 
 struct rt_uart_pic32
 {
@@ -261,10 +261,10 @@ void rt_hw_usart_init(void)
     uart_device->parent.type = RT_Device_Class_Char;
 
     /* device interface */
-    uart_device->parent.init 	    = rt_uart_init;
-    uart_device->parent.open 	    = rt_uart_open;
+    uart_device->parent.init        = rt_uart_init;
+    uart_device->parent.open        = rt_uart_open;
     uart_device->parent.close       = rt_uart_close;
-    uart_device->parent.read 	    = rt_uart_read;
+    uart_device->parent.read        = rt_uart_read;
     uart_device->parent.write       = rt_uart_write;
     uart_device->parent.control     = RT_NULL;
     uart_device->parent.user_data   = RT_NULL;
@@ -281,10 +281,10 @@ void rt_hw_usart_init(void)
     uart_device->parent.type = RT_Device_Class_Char;
 
     /* device interface */
-    uart_device->parent.init 	    = rt_uart_init;
-    uart_device->parent.open 	    = rt_uart_open;
+    uart_device->parent.init        = rt_uart_init;
+    uart_device->parent.open        = rt_uart_open;
     uart_device->parent.close       = rt_uart_close;
-    uart_device->parent.read 	    = rt_uart_read;
+    uart_device->parent.read        = rt_uart_read;
     uart_device->parent.write       = rt_uart_write;
     uart_device->parent.control     = RT_NULL;
     uart_device->parent.user_data   = RT_NULL;

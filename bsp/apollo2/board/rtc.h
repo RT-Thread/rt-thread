@@ -21,7 +21,7 @@
  * Date           Author       Notes
  * 2017-09-14     Haley        the first version
  */
- 
+
 #ifndef __RTC_H
 #define __RTC_H
 

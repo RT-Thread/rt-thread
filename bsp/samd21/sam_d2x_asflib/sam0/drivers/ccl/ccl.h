@@ -126,24 +126,24 @@ extern "C" {
  * \brief CCL LUT(look up table) ID number enum.
  */
 enum ccl_lut_id {
-	/** CCL LUT 0 */
-	CCL_LUT_0 = 0,
-	/** CCL LUT 1 */
-	CCL_LUT_1 = 1,
-	/** CCL LUT 2 */
-	CCL_LUT_2 = 2,
-	/** CCL LUT 3 */
-	CCL_LUT_3 = 3,
+    /** CCL LUT 0 */
+    CCL_LUT_0 = 0,
+    /** CCL LUT 1 */
+    CCL_LUT_1 = 1,
+    /** CCL LUT 2 */
+    CCL_LUT_2 = 2,
+    /** CCL LUT 3 */
+    CCL_LUT_3 = 3,
 };
 
 /**
  * \brief CCL sequential module ID number enum.
  */
 enum ccl_seq_id {
-	/** CCL SEQ 0 */
-	CCL_SEQ_0 = 0,
-	/** CCL SEQ 1 */
-	CCL_SEQ_1 = 1,
+    /** CCL SEQ 0 */
+    CCL_SEQ_0 = 0,
+    /** CCL SEQ 1 */
+    CCL_SEQ_1 = 1,
 };
 
 /**
@@ -152,16 +152,16 @@ enum ccl_seq_id {
  * Enum for the sequential selection configuration.
  */
 enum ccl_seq_selection {
-	/** Sequential logic is disabled */
-	CCL_SEQ_DISABLED = CCL_SEQCTRL_SEQSEL_DISABLE,
-	/** D flip flop */
-	CCL_SEQ_D_FLIP_FLOP = CCL_SEQCTRL_SEQSEL_DFF,
-	/** JK flip flop */
-	CCL_SEQ_JK_FLIP_FLOP = CCL_SEQCTRL_SEQSEL_JK,
-	/** D latch */
-	CCL_SEQ_D_LATCH = CCL_SEQCTRL_SEQSEL_LATCH,
-	/** RS latch */
-	CCL_SEQ_RS_LATCH = CCL_SEQCTRL_SEQSEL_RS,
+    /** Sequential logic is disabled */
+    CCL_SEQ_DISABLED = CCL_SEQCTRL_SEQSEL_DISABLE,
+    /** D flip flop */
+    CCL_SEQ_D_FLIP_FLOP = CCL_SEQCTRL_SEQSEL_DFF,
+    /** JK flip flop */
+    CCL_SEQ_JK_FLIP_FLOP = CCL_SEQCTRL_SEQSEL_JK,
+    /** D latch */
+    CCL_SEQ_D_LATCH = CCL_SEQCTRL_SEQSEL_LATCH,
+    /** RS latch */
+    CCL_SEQ_RS_LATCH = CCL_SEQCTRL_SEQSEL_RS,
 };
 
 /**
@@ -170,26 +170,26 @@ enum ccl_seq_selection {
  * Enum for the LUT Input source selection.
  */
 enum ccl_lut_input_src_sel {
-	/** Masked input */
-	CCL_LUT_INPUT_SRC_MASK = 0,
-	/** Feedback input source */
-	CCL_LUT_INPUT_SRC_FEEDBACK = 1,
-	/** Linked LUT input source */
-	CCL_LUT_INPUT_SRC_LINK = 2,
-	/** Event input source */
-	CCL_LUT_INPUT_SRC_EVENT = 3,
-	/** I/O pin input source */
-	CCL_LUT_INPUT_SRC_IO = 4,
-	/** AC input source */
-	CCL_LUT_INPUT_SRC_AC = 5,
-	/** TC input source */
-	CCL_LUT_INPUT_SRC_TC = 6,
-	/** Alternative TC input source */
-	CCL_LUT_INPUT_SRC_ALTTC = 7,
-	/** TCC input source */
-	CCL_LUT_INPUT_SRC_TCC = 8,
-	/** SERCOM input source */
-	CCL_LUT_INPUT_SRC_SERCOM = 9,
+    /** Masked input */
+    CCL_LUT_INPUT_SRC_MASK = 0,
+    /** Feedback input source */
+    CCL_LUT_INPUT_SRC_FEEDBACK = 1,
+    /** Linked LUT input source */
+    CCL_LUT_INPUT_SRC_LINK = 2,
+    /** Event input source */
+    CCL_LUT_INPUT_SRC_EVENT = 3,
+    /** I/O pin input source */
+    CCL_LUT_INPUT_SRC_IO = 4,
+    /** AC input source */
+    CCL_LUT_INPUT_SRC_AC = 5,
+    /** TC input source */
+    CCL_LUT_INPUT_SRC_TC = 6,
+    /** Alternative TC input source */
+    CCL_LUT_INPUT_SRC_ALTTC = 7,
+    /** TCC input source */
+    CCL_LUT_INPUT_SRC_TCC = 8,
+    /** SERCOM input source */
+    CCL_LUT_INPUT_SRC_SERCOM = 9,
 };
 
 /**
@@ -198,12 +198,12 @@ enum ccl_lut_input_src_sel {
  * Enum for the LUT output filter options.
  */
 enum ccl_lut_filter_sel {
-	/** Filter disabled */
-	CCL_LUT_FILTER_DISABLE = CCL_LUTCTRL_FILTSEL_DISABLE,
-	/** Synchronizer enabled */
-	CCL_LUT_FILTER_SYNC = CCL_LUTCTRL_FILTSEL_SYNCH,
-	/** Filter enabled */
-	CCL_LUT_FILTER_ENABLE = CCL_LUTCTRL_FILTSEL_FILTER,
+    /** Filter disabled */
+    CCL_LUT_FILTER_DISABLE = CCL_LUTCTRL_FILTSEL_DISABLE,
+    /** Synchronizer enabled */
+    CCL_LUT_FILTER_SYNC = CCL_LUTCTRL_FILTSEL_SYNCH,
+    /** Filter enabled */
+    CCL_LUT_FILTER_ENABLE = CCL_LUTCTRL_FILTSEL_FILTER,
 };
 
 /**
@@ -212,10 +212,10 @@ enum ccl_lut_filter_sel {
  *  Configuration structure for CCL module.
  */
 struct ccl_config {
-	/** GCLK generator used to clock the peripheral */
-	enum gclk_generator clock_source;
-	/** If \c true, the GCLK_CCL clock will not stop in standby sleep mode */
-	bool run_in_standby;
+    /** GCLK generator used to clock the peripheral */
+    enum gclk_generator clock_source;
+    /** If \c true, the GCLK_CCL clock will not stop in standby sleep mode */
+    bool run_in_standby;
 };
 
 /**
@@ -224,24 +224,24 @@ struct ccl_config {
  *  Configuration structure for CCL LUT 0 to 3.
  */
 struct ccl_lut_config {
-	/**  The value of truth logic as a function of inputs IN[2:0] */
-	uint8_t truth_table_value;
-	/** If \c true, LUT event output is enabled */
-	bool event_output_enable;
-	/** If \c true, LUT incoming event is enabled */
-	bool event_input_enable;
-	/** If \c true, incoming event is inverted */
-	bool event_input_inverted_enable;
-	/** Selection of the input0 source */
-	enum ccl_lut_input_src_sel input0_src_sel;
-	/** Selection of the input1 source */
-	enum ccl_lut_input_src_sel input1_src_sel;
-	/** Selection of the input2 source */
-	enum ccl_lut_input_src_sel input2_src_sel;
-	/** If \c true, Edge detector is enabled */
-	bool edge_selection_enable;
-	/**  Selection of the LUT output filter options */
-	enum ccl_lut_filter_sel filter_sel;
+    /**  The value of truth logic as a function of inputs IN[2:0] */
+    uint8_t truth_table_value;
+    /** If \c true, LUT event output is enabled */
+    bool event_output_enable;
+    /** If \c true, LUT incoming event is enabled */
+    bool event_input_enable;
+    /** If \c true, incoming event is inverted */
+    bool event_input_inverted_enable;
+    /** Selection of the input0 source */
+    enum ccl_lut_input_src_sel input0_src_sel;
+    /** Selection of the input1 source */
+    enum ccl_lut_input_src_sel input1_src_sel;
+    /** Selection of the input2 source */
+    enum ccl_lut_input_src_sel input2_src_sel;
+    /** If \c true, Edge detector is enabled */
+    bool edge_selection_enable;
+    /**  Selection of the LUT output filter options */
+    enum ccl_lut_filter_sel filter_sel;
 };
 
 /**
@@ -273,14 +273,14 @@ void ccl_init(struct ccl_config *const config);
  *  \param[out] config  Configuration structure to initialize to default values
  */
 static inline void ccl_get_config_defaults(
-		struct ccl_config *const config)
+        struct ccl_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	config->clock_source = GCLK_GENERATOR_0;
-	/* Default configuration values */
-	config->run_in_standby = false;
+    config->clock_source = GCLK_GENERATOR_0;
+    /* Default configuration values */
+    config->run_in_standby = false;
 }
 
 /**
@@ -291,10 +291,10 @@ static inline void ccl_get_config_defaults(
  */
 static inline void ccl_module_reset(void)
 {
-	/* Reset CCL. */
-	CCL->CTRL.reg |= CCL_CTRL_SWRST;
+    /* Reset CCL. */
+    CCL->CTRL.reg |= CCL_CTRL_SWRST;
 
-	while((CCL->CTRL.reg & CCL_CTRL_SWRST));
+    while((CCL->CTRL.reg & CCL_CTRL_SWRST));
 }
 /** @} */
 
@@ -311,8 +311,8 @@ static inline void ccl_module_reset(void)
  */
 static inline void ccl_module_enable(void)
 {
-	/* Enable CCL. */
-	CCL->CTRL.reg |= CCL_CTRL_ENABLE;
+    /* Enable CCL. */
+    CCL->CTRL.reg |= CCL_CTRL_ENABLE;
 }
 
 /**
@@ -322,8 +322,8 @@ static inline void ccl_module_enable(void)
  */
 static inline void ccl_module_disable(void)
 {
-	/* Disable CCL. */
-	CCL->CTRL.reg &= ~CCL_CTRL_ENABLE;
+    /* Disable CCL. */
+    CCL->CTRL.reg &= ~CCL_CTRL_ENABLE;
 }
 
 /** @} */
@@ -344,7 +344,7 @@ static inline void ccl_module_disable(void)
  *  \param[in] number     SEQ unit number to config
  */
 enum status_code ccl_seq_config(const enum ccl_seq_id number,
-		const enum ccl_seq_selection seq_selection);
+        const enum ccl_seq_selection seq_selection);
 
 /**
  * \brief Initializes all members of LUT configuration
@@ -379,7 +379,7 @@ void ccl_lut_get_config_defaults(struct ccl_lut_config *const config);
  *  \param[in] number     LUT number to config
  */
 enum status_code ccl_lut_set_config(const enum ccl_lut_id number,
-		struct ccl_lut_config *const config);
+        struct ccl_lut_config *const config);
 /** @} */
 
 /**
@@ -423,14 +423,14 @@ void ccl_lut_disable(const enum ccl_lut_id number);
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
  *  <tr>
- *		<td>CCL</td>
- *		<td>Configurable Custom Logic</td>
- *	</tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>CCL</td>
+ *      <td>Configurable Custom Logic</td>
+ *  </tr>
  * </table>
  *
  *
@@ -449,12 +449,12 @@ void ccl_lut_disable(const enum ccl_lut_id number);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
-  *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+  * <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -472,21 +472,21 @@ void ccl_lut_disable(const enum ccl_lut_id number);
  * \page asfdoc_sam0_ccl_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42448B</td>
- *		<td>08/2015</td>
- *		<td>Add support for SAM L22</td>
- *	</tr>
- *	<tr>
- *		<td>42448A</td>
- *		<td>06/2015</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42448B</td>
+ *      <td>08/2015</td>
+ *      <td>Add support for SAM L22</td>
+ *  </tr>
+ *  <tr>
+ *      <td>42448A</td>
+ *      <td>06/2015</td>
+ *      <td>Initial document release</td>
+ *  </tr>
  * </table>
  */
 

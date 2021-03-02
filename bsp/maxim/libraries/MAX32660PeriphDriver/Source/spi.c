@@ -90,7 +90,7 @@ int SPI_MasterTransAsync(spi_type spi_name, spi_req_t *req)
 
     if (spi_name == SPI0A) {
         error = SPI17Y_MasterTransAsync(MXC_SPI17Y,  (spi17y_req_t *) req);
-    
+
     } else if((spi_name == SPI1A) || (spi_name == SPI1B)) {
         error = SPIMSS_MasterTransAsync(MXC_SPIMSS,  (spimss_req_t *) req);
 
@@ -126,7 +126,7 @@ int SPI_SlaveTrans(spi_type spi_name, spi_req_t *req)
     int error = E_NO_ERROR;
 
     if (spi_name == SPI0A) {
-        error = SPI17Y_SlaveTrans(MXC_SPI17Y, (spi17y_req_t *) req); 
+        error = SPI17Y_SlaveTrans(MXC_SPI17Y, (spi17y_req_t *) req);
 
     } else if ((spi_name == SPI1A) || (spi_name == SPI1B)) {
         error = SPIMSS_SlaveTrans(MXC_SPIMSS, (spimss_req_t *) req);
@@ -148,7 +148,7 @@ int SPI_SlaveTransAsync(spi_type spi_name, spi_req_t *req)
 
     } else if ((spi_name == SPI1A) || (spi_name == SPI1B)) {
         error = SPIMSS_SlaveTransAsync(MXC_SPIMSS, (spimss_req_t *) req);
-     
+
     } else {
         return E_BAD_PARAM;
     }
@@ -182,7 +182,7 @@ int SPI_AbortAsync(spi_type spi_name, spi_req_t *req)
 
     if (spi_name == SPI0A) {
         error = SPI17Y_AbortAsync((spi17y_req_t *) req);
-     
+
     } else if ((spi_name == SPI1A) || (spi_name == SPI1B)) {
         error = SPIMSS_AbortAsync((spimss_req_t *) req);
 
@@ -214,9 +214,9 @@ int SPI_Enable(spi_type spi_name)
 {
     if (spi_name == SPI0A) {
         SPI17Y_Enable(MXC_SPI17Y);
-        
+
     } else if ((spi_name == SPI1A) || (spi_name == SPI1B)) {
-        return E_NOT_SUPPORTED; 
+        return E_NOT_SUPPORTED;
     } else {
         return E_BAD_PARAM;
     }
@@ -228,9 +228,9 @@ int SPI_Disable(spi_type spi_name)
 {
     if (spi_name == SPI0A) {
         SPI17Y_Disable(MXC_SPI17Y);
-        
+
     } else if ((spi_name == SPI1A) || (spi_name == SPI1B)) {
-         return E_NOT_SUPPORTED;  
+         return E_NOT_SUPPORTED;
     } else {
         return E_BAD_PARAM;
     }
@@ -242,9 +242,9 @@ int SPI_Clear_fifo(spi_type spi_name)
 {
     if (spi_name == SPI0A) {
         SPI17Y_Clear_fifo(MXC_SPI17Y);
-        
+
     } else if ((spi_name == SPI1A) || (spi_name == SPI1B)) {
-         return E_NOT_SUPPORTED;  
+         return E_NOT_SUPPORTED;
     } else {
         return E_BAD_PARAM;
     }

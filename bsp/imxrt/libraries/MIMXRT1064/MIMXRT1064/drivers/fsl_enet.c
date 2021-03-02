@@ -2,7 +2,7 @@
  * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -321,12 +321,12 @@ void ENET_GetDefaultConfig(enet_config_t *config)
     memset(config, 0, sizeof(enet_config_t));
 
     /* Sets MII mode, full duplex, 100Mbps for MAC and PHY data interface. */
-#if defined(FSL_FEATURE_ENET_HAS_AVB) && FSL_FEATURE_ENET_HAS_AVB 
+#if defined(FSL_FEATURE_ENET_HAS_AVB) && FSL_FEATURE_ENET_HAS_AVB
     config->miiMode = kENET_RgmiiMode;
 #else
     config->miiMode = kENET_RmiiMode;
 #endif
-    config->miiSpeed = kENET_MiiSpeed100M; 
+    config->miiSpeed = kENET_MiiSpeed100M;
     config->miiDuplex = kENET_MiiFullDuplex;
 
     config->ringNum = 1;
@@ -487,7 +487,7 @@ static void ENET_SetMacController(ENET_Type *base,
           ((macSpecialConfig & kENET_ControlRxPadRemoveEnable) ? ENET_RCR_PADEN_MASK : 0) |
           ((macSpecialConfig & kENET_ControlRxBroadCastRejectEnable) ? ENET_RCR_BC_REJ_MASK : 0) |
           ((macSpecialConfig & kENET_ControlPromiscuousEnable) ? ENET_RCR_PROM_MASK : 0) |
-          ENET_RCR_MAX_FL(maxFrameLen) | ENET_RCR_CRCFWD_MASK;    
+          ENET_RCR_MAX_FL(maxFrameLen) | ENET_RCR_CRCFWD_MASK;
 
 /* Set the RGMII or RMII, MII mode and control register. */
 #if defined(FSL_FEATURE_ENET_HAS_AVB) && FSL_FEATURE_ENET_HAS_AVB
@@ -583,11 +583,11 @@ static void ENET_SetMacController(ENET_Type *base,
     /* Initializes the ring 0. */
 #if defined(FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET) && FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET
     base->TDSR = MEMORY_ConvertMemoryMapAddress((uint32_t)bufferConfig->txBdStartAddrAlign, kMEMORY_Local2DMA);
-    base->RDSR = MEMORY_ConvertMemoryMapAddress((uint32_t)bufferConfig->rxBdStartAddrAlign, kMEMORY_Local2DMA);    
+    base->RDSR = MEMORY_ConvertMemoryMapAddress((uint32_t)bufferConfig->rxBdStartAddrAlign, kMEMORY_Local2DMA);
 #else
     base->TDSR = (uint32_t)bufferConfig->txBdStartAddrAlign;
     base->RDSR = (uint32_t)bufferConfig->rxBdStartAddrAlign;
-#endif    
+#endif
     base->MRBR = bufferConfig->rxBuffSizeAlign;
 
 #if defined(FSL_FEATURE_ENET_HAS_AVB) && FSL_FEATURE_ENET_HAS_AVB
@@ -602,7 +602,7 @@ static void ENET_SetMacController(ENET_Type *base,
         base->RDSR1 = MEMORY_ConvertMemoryMapAddress((uint32_t)buffCfg->rxBdStartAddrAlign, kMEMORY_Local2DMA);
 #else
         base->TDSR1 = (uint32_t)buffCfg->txBdStartAddrAlign;
-        base->RDSR1 = (uint32_t)buffCfg->rxBdStartAddrAlign;     
+        base->RDSR1 = (uint32_t)buffCfg->rxBdStartAddrAlign;
 #endif
         base->MRBR1 = buffCfg->rxBuffSizeAlign;
         /* Enable the DMAC for ring 1 and with no rx classification set. */
@@ -1168,14 +1168,14 @@ status_t ENET_ReadFrame(ENET_Type *base, enet_handle_t *handle, uint8_t *data, u
         address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer,kMEMORY_DMA2Local);
 #else
         address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */        
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
 #if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
         /* Add the cache invalidate maintain. */
         DCACHE_InvalidateByRange(address, handle->rxBuffSizeAlign[0]);
-#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */        
+#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
 #ifdef ENET_ENHANCEDBUFFERDESCRIPTOR_MODE
         enet_ptp_time_data_t ptpTimestamp;
-        bool isPtpEventMessage = false;    
+        bool isPtpEventMessage = false;
         /* Parse the PTP message according to the header message. */
         isPtpEventMessage = ENET_Ptp1588ParseFrame((uint8_t *)address, &ptpTimestamp, false);
 #endif /* ENET_ENHANCEDBUFFERDESCRIPTOR_MODE */
@@ -1236,8 +1236,8 @@ status_t ENET_ReadFrame(ENET_Type *base, enet_handle_t *handle, uint8_t *data, u
             address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer,kMEMORY_DMA2Local);
 #else
             address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */                
-#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL        
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
+#if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
             DCACHE_InvalidateByRange(address, handle->rxBuffSizeAlign[0]);
 #endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
         }
@@ -1388,7 +1388,7 @@ status_t ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const uint8_t *d
             address = MEMORY_ConvertMemoryMapAddress((uint32_t)curBuffDescrip->buffer,kMEMORY_DMA2Local);
 #else
             address = (uint32_t)curBuffDescrip->buffer;
-#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */            
+#endif /* FSL_FEATURE_MEMORY_HAS_ADDRESS_OFFSET */
             if (sizeleft > handle->txBuffSizeAlign[0])
             {
                 /* Data copy. */
@@ -1413,10 +1413,10 @@ status_t ENET_SendFrame(ENET_Type *base, enet_handle_t *handle, const uint8_t *d
 #if defined(FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL) && FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL
                 /* Add the cache clean maintain. */
                 DCACHE_CleanByRange(address, sizeleft);
-#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */ 
+#endif  /* FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL */
                 curBuffDescrip->length = sizeleft;
                 /* Set Last buffer wrap flag. */
-                curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_TX_READY_MASK | ENET_BUFFDESCRIPTOR_TX_LAST_MASK;                
+                curBuffDescrip->control |= ENET_BUFFDESCRIPTOR_TX_READY_MASK | ENET_BUFFDESCRIPTOR_TX_LAST_MASK;
                 /* Active the transmit buffer descriptor. */
                 ENET_ActiveSend(base, 0);
 
@@ -1534,7 +1534,7 @@ status_t ENET_GetRxFrameSizeMultiRing(enet_handle_t *handle, uint32_t *length, u
         if ((!(curBuffDescrip->control & ENET_BUFFDESCRIPTOR_RX_EMPTY_MASK)) && (!curBuffDescrip->length))
         {
             return kStatus_ENET_RxFrameError;
-        }        
+        }
         /* Find the last buffer descriptor. */
         if ((curBuffDescrip->control & validLastMask) == ENET_BUFFDESCRIPTOR_RX_LAST_MASK)
         {
@@ -1985,7 +1985,7 @@ status_t ENET_GetTxErrAfterSendFrame(enet_handle_t *handle, enet_data_error_stat
     return kStatus_ENET_TxFrameFail;
 }
 
-#if FSL_FEATURE_ENET_QUEUE > 1 
+#if FSL_FEATURE_ENET_QUEUE > 1
 status_t ENET_GetTxErrAfterSendFrameMultiRing(enet_handle_t *handle, enet_data_error_stats_t *eErrorStatic,
                                                                              uint32_t ringId)
 {
@@ -2077,7 +2077,7 @@ static bool ENET_Ptp1588ParseFrame(const uint8_t *data, enet_ptp_time_data_t *pt
 #if defined(FSL_FEATUR_ENET_HAS_AVB) && FSL_FEATURE_HAS_AVB
         if (*(uint16_t *)(buffer + ENET_PTP1588_ETHL2_PACKETTYPE_OFFSET) == ENET_HTONS(ENET_8021QVLAN)
         {
-            buffer += ENET_FRAME_VLAN_TAGLEN;          
+            buffer += ENET_FRAME_VLAN_TAGLEN;
         }
 #endif /* FSL_FEATURE_ENET_HAS_AVB */
     }
@@ -2419,7 +2419,7 @@ static status_t ENET_StoreTxFrameTime(ENET_Type *base, enet_handle_t *handle, ui
     isPtpEventMessage = ENET_Ptp1588ParseFrame((uint8_t *)address, &ptpTimeData, false);
     if (isPtpEventMessage)
     {
-         /* Only store tx timestamp for ptp event message. */  
+         /* Only store tx timestamp for ptp event message. */
         do
         {
             /* Increase current buffer descriptor to the next one. */
@@ -2486,7 +2486,7 @@ static status_t ENET_StoreTxFrameTime(ENET_Type *base, enet_handle_t *handle, ui
         else
         {
             handle->txBdDirtyTime[ringId]++;
-        } 
+        }
     }
     return kStatus_Success;
 }
@@ -2848,7 +2848,7 @@ void ENET_DriverIRQHandler(void)
   exception return operation might vector to incorrect interrupt */
 #if defined __CORTEX_M && (__CORTEX_M == 4U)
     __DSB();
-#endif    
+#endif
     /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
       exception return operation might vector to incorrect interrupt */
 #if defined __CORTEX_M && (__CORTEX_M == 4U)
@@ -2859,7 +2859,7 @@ void ENET_DriverIRQHandler(void)
 #endif
 
 
-#if defined(ENET1) 
+#if defined(ENET1)
 void ENET1_DriverIRQHandler(void)
 {
     ENET_CommonFrame0IRQHandler(ENET1);
@@ -2884,7 +2884,7 @@ void ENET2_DriverIRQHandler(void)
 #endif
 
 
-#if defined(CONNECTIVITY__ENET0) 
+#if defined(CONNECTIVITY__ENET0)
 void CONNECTIVITY_ENET0_FRAME0_EVENT_INT_DriverIRQHandler(void)
 {
     ENET_CommonFrame0IRQHandler(CONNECTIVITY__ENET0);

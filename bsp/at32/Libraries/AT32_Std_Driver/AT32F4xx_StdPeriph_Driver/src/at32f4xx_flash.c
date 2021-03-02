@@ -95,7 +95,7 @@
   */
 #define IS_SYS_BOOTLOADER()       ((FLASH->SLIB_CDR0 & FLASH_SLIB_CDR0_BOOT_DIS) == 0x0)
 #define IS_RDP_DISABLE()          (FLASH_GetReadProtectStatus() == RESET)
-                                    
+
 #define IS_MAIN_SLIB()             ((FLASH->SLIB_CDR0 & FLASH_SLIB_CDR0_SLIB_EN)? 1:0)
 #define IS_SYS_SLIB()             ((FLASH->SLIB_CDR0 & FLASH_SLIB_CDR0_SYS_SLIB_EN)? TRUE:FALSE)
 #define IS_SLIB_DISABLE()          (IS_MAIN_SLIB()? 0:1)
@@ -320,7 +320,7 @@ FLASH_Status FLASH_ErasePage(uint32_t Page_Address)
     }
   }
 #endif
-  
+
   if(Page_Address <= FLASH_BNK1_END_ADDR)
   {
     /* Wait for last process to be completed */
@@ -658,8 +658,8 @@ FLASH_Status FLASH_ProgramWord(uint32_t Address, uint32_t Data)
       FLASH->CTRL &= CTRL_PRGM_Rst;
     }
   }
-#endif  
-  
+#endif
+
   if(Address <= FLASH_BNK1_END_ADDR)
   {
     /* Wait for last process to be completed */
@@ -841,7 +841,7 @@ FLASH_Status FLASH_ProgramByte(uint32_t Address, uint8_t Data)
     }
   }
 #endif
-  
+
   if(Address <= FLASH_BNK1_END_ADDR)
   {
     status = FLASH_WaitForBank1Process(PRGM_TIMEOUT);
@@ -876,7 +876,7 @@ FLASH_Status FLASH_ProgramByte(uint32_t Address, uint8_t Data)
       /* Disable the PRGM Bit */
       FLASH->CTRL2 &= CTRL_PRGM_Rst;
     }
-  }  
+  }
 #endif
   /* Return the Program Status */
   return status;
@@ -1464,7 +1464,7 @@ FlagStatus FLASH_GetFlagStatus(uint32_t FLASH_FLAG)
    else
    {
      bitstatus = RESET;
-   }    
+   }
 #endif
   }
 
@@ -1527,7 +1527,7 @@ void FLASH_ClearFlag(uint32_t FLASH_FLAG)
   }
 #else
   /* Clear the flags */
-  FLASH->STS = FLASH_FLAG;  
+  FLASH->STS = FLASH_FLAG;
 #endif
 
 #endif
@@ -1820,7 +1820,7 @@ void FLASH_Bank3EncEndAddrConfig(uint32_t EndAddress)
     return;
   if((UOPTB->BANK3SCRKEY[0]==0xFF00FF00) && (UOPTB->BANK3SCRKEY[1]==0xFF00FF00) && \
      (UOPTB->BANK3SCRKEY[2]==0xFF00FF00) && (UOPTB->BANK3SCRKEY[3]==0xFF00FF00))
-    return;  
+    return;
   if((UOPTB->BANK3SCRKEY[0]==0x00FF00FF) && (UOPTB->BANK3SCRKEY[1]==0x00FF00FF) && \
      (UOPTB->BANK3SCRKEY[2]==0x00FF00FF) && (UOPTB->BANK3SCRKEY[3]==0x00FF00FF))
     return;
@@ -1846,7 +1846,7 @@ FLASH_Status FLASH_SlibMainEnable(uint32_t Psw, uint16_t StartPage, uint16_t Dat
 
   assert_param(IS_SLIB_DISABLE());
   assert_param((Psw != 0xFFFFFFFF)&&(Psw != 0x00000000));
-  assert_param((StartPage >= 1)&&(StartPage <= 127)); 
+  assert_param((StartPage >= 1)&&(StartPage <= 127));
   assert_param((DataStartPage >= 1)&&(DataStartPage <= 127));
   assert_param((EndPage >= 1)&&(EndPage <= 127));
 
@@ -1855,7 +1855,7 @@ FLASH_Status FLASH_SlibMainEnable(uint32_t Psw, uint16_t StartPage, uint16_t Dat
   /*check param limits*/
   if((StartPage>=DataStartPage) || ((DataStartPage>EndPage)&&(DataStartPage!=0x7FF)) || (StartPage>EndPage))
     return Status;
-  
+
   SlibRange = ((uint32_t)DataStartPage<<11&FLASH_SLIB_DATA_START_PAGE) | ((uint32_t)EndPage<<22&FLASH_SLIB_END_PAGE) | ((uint32_t)StartPage&FLASH_SLIB_START_PAGE);
 
   if(Status == FLASH_PRC_DONE)
@@ -1888,7 +1888,7 @@ uint32_t FLASH_SlibDisable(uint32_t Psw)
   /* Write Password to disable SLIB */
   FLASH->SLIB_PSW = Psw;
   Status = FLASH_WaitForProcess(ERS_TIMEOUT);
-  
+
   if(Status == FLASH_PRC_DONE)
   {
     if(FLASH->SLIB_PSW_STS & FLASH_SLIB_PSWSTS_PSW_OK)
@@ -1896,7 +1896,7 @@ uint32_t FLASH_SlibDisable(uint32_t Psw)
     else
       return ERROR;
   }
-  
+
   return ERROR;
 }
 
@@ -1904,7 +1904,7 @@ uint32_t FLASH_SlibDisable(uint32_t Psw)
 /**
  * @brief  Get the value of current remaining SLIB CFG count (range: 256~0)
  * @note   This function can not be used for AT32F415 devices.
- * @param  None 
+ * @param  None
  * @retval uint32_t
  */
 uint32_t FLASH_GetSlibCurCnt(void)
@@ -2005,7 +2005,7 @@ FLASH_Status FLASH_SlibSysEnable(uint32_t Psw,uint8_t data_start_page)
   /* Unlock SLIB CFG register */
   FLASH->SLIB_KEYR = SLIB_UNLOCK_KEY;
   while((FLASH->SLIB_PSW_STS & FLASH_SLIB_UNLOCK) == 0);
-  
+
   /* make sure System Memory as AP mode */
   if(FLASH->SLIB_CDR0 & FLASH_SLIB_CDR0_BOOT_DIS)
   {
@@ -2029,7 +2029,7 @@ FLASH_Status FLASH_SlibSysEnable(uint32_t Psw,uint8_t data_start_page)
 FlagStatus FLASH_GetOptionByteProtectStatus(void)
 {
   FlagStatus status = RESET;
-  
+
   if ((FLASH->UOB & FLASH_UOB_RDPRTEN) != (uint32_t)RESET)
   {
     if ((FLASH->UOB & FLASH_UOB_OPTION_BYTE_PRT_EN) != (uint32_t)RESET)
@@ -2037,7 +2037,7 @@ FlagStatus FLASH_GetOptionByteProtectStatus(void)
       status = SET;
     }
   }
-  
+
   return status;
 }
 #endif /* AT32F415xx */
@@ -2058,7 +2058,7 @@ FLASH_Status FLASH_RDPandOptionByteProtectEnable(void)
   /* Check the parameters */
 
   status = FLASH_WaitForProcess(ERS_TIMEOUT);
-    
+
   if(status == FLASH_PRC_DONE)
   {
     /* Unlock OTP2 */
@@ -2075,7 +2075,7 @@ FLASH_Status FLASH_RDPandOptionByteProtectEnable(void)
       FLASH->CTRL &= CTRL_UOBERS_Rst;
 
       /* Program OTP2 */
-      FLASH->CTRL |= CTRL_UOBPRGM_Set;      
+      FLASH->CTRL |= CTRL_UOBPRGM_Set;
       UOPTB->RDPRT = OPTION_BYTE_PRT_Key;
       status = FLASH_WaitForProcess(ERS_TIMEOUT);
 
@@ -2110,7 +2110,7 @@ void FLASH_OptionByteProtectDisable(void)
 {
   volatile FLASH_Status tStatus = FLASH_PRC_DONE;
 
-  if (FLASH_GetOptionByteProtectStatus() != SET) 
+  if (FLASH_GetOptionByteProtectStatus() != SET)
   {
     /* option byte protection is not set */
     return;

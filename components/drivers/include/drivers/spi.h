@@ -151,7 +151,7 @@ struct rt_qspi_configuration
 };
 
 struct rt_qspi_device
-{ 
+{
     struct rt_spi_device parent;
 
     struct rt_qspi_configuration config;

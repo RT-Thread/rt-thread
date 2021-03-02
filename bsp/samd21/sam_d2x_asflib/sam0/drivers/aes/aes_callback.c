@@ -61,29 +61,29 @@ aes_callback_t aes_callback_pointer[AES_CALLBACK_TYPE_NUM]={NULL,NULL};
 
 
 enum status_code aes_register_callback(
-	const aes_callback_t callback,
-	const enum aes_callback_type type)
+    const aes_callback_t callback,
+    const enum aes_callback_type type)
 {
-	if (type >= AES_CALLBACK_TYPE_NUM){
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type >= AES_CALLBACK_TYPE_NUM){
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	aes_callback_pointer[type] = callback;
-	return STATUS_OK;
+    aes_callback_pointer[type] = callback;
+    return STATUS_OK;
 }
 
 enum status_code aes_unregister_callback(
-	const aes_callback_t callback,
-	const enum aes_callback_type type)
+    const aes_callback_t callback,
+    const enum aes_callback_type type)
 {
-	if (type >= AES_CALLBACK_TYPE_NUM){
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type >= AES_CALLBACK_TYPE_NUM){
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	aes_callback_pointer[type] = NULL;
-	return STATUS_OK;
+    aes_callback_pointer[type] = NULL;
+    return STATUS_OK;
 }
 
 
@@ -93,19 +93,19 @@ enum status_code aes_unregister_callback(
 */
 void AES_Handler(void)
 {
-	uint32_t status = AES->INTFLAG.reg;
+    uint32_t status = AES->INTFLAG.reg;
 
-	if (status & AES_INTFLAG_ENCCMP) {
-		if (aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]) {
-			AES->INTFLAG.reg = AES_INTFLAG_ENCCMP;
-			aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]();
-		}
-	}
+    if (status & AES_INTFLAG_ENCCMP) {
+        if (aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]) {
+            AES->INTFLAG.reg = AES_INTFLAG_ENCCMP;
+            aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]();
+        }
+    }
 
-	if (status & AES_INTFLAG_GFMCMP) {
-		if (aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]) {
-			AES->INTFLAG.reg = AES_INTFLAG_GFMCMP;
-			aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]();
-		}
-	}
+    if (status & AES_INTFLAG_GFMCMP) {
+        if (aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]) {
+            AES->INTFLAG.reg = AES_INTFLAG_GFMCMP;
+            aes_callback_pointer[AES_CALLBACK_ENCRYPTION_COMPLETE]();
+        }
+    }
 }

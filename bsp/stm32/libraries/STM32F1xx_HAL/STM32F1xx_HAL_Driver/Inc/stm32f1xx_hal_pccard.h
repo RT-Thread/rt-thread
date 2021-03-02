@@ -65,7 +65,7 @@ typedef enum
 /**
   * @brief  FSMC_PCCARD handle Structure definition
   */
-#if (USE_HAL_PCCARD_REGISTER_CALLBACKS == 1)  
+#if (USE_HAL_PCCARD_REGISTER_CALLBACKS == 1)
 typedef struct __PCCARD_HandleTypeDef
 #else
 typedef struct

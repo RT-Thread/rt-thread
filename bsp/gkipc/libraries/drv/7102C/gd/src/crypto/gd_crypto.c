@@ -181,21 +181,21 @@ GERR GD_CRYPTO_Open(GD_CRYPTO_OpenParamsT* pOpenParams, GD_HANDLE* pHandle)
         if(pOpenParams->mode == GD_CRYPTO_DES)
         {
             GH_CRYPTO_set_DES_Interrupt_En(1);
-#if defined(GK710X)            
+#if defined(GK710X)
             OpenParams.type     = GD_INT_DES_OUTPUT_READY_IRQ;
 #else
             OpenParams.type     = GD_INT_CRYPTO_OUTPUT_READY_IRQ;
-#endif            
+#endif
             OpenParams.isrFct.midPrio = gd_des_crypt_isr;
         }
         else
         {
             GH_CRYPTO_set_AES_Interrupt_En(1);
-#if defined(GK710X)            
+#if defined(GK710X)
             OpenParams.type     = GD_INT_AES_OUTPUT_READY_IRQ;
 #else
             OpenParams.type     = GD_INT_CRYPTO_OUTPUT_READY_IRQ;
-#endif               
+#endif
             OpenParams.isrFct.midPrio = gd_aes_crypt_isr;
         }
         GD_INT_Open(&OpenParams, &device->inthandle);

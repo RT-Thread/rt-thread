@@ -83,7 +83,7 @@ static void pxp_clock_enable(void)
  */
 void pxp_disable(void)
 {
-    /* The ENABLE bit will be cleared once the current operation completes 
+    /* The ENABLE bit will be cleared once the current operation completes
      * If the Repeat mode is open, disable it. */
     if (HW_PXP_CTRL.B.EN_REPEAT)
         HW_PXP_CTRL.B.EN_REPEAT = 0;

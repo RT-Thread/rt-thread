@@ -94,7 +94,7 @@ unsigned i2c_get_request_instance(const imx_i2c_request_t * rq)
         // Use the instance number in the device info.
         return rq->device->port;
     }
-    
+
     // Check if the ctl_addr is within the range of instances.
     if (rq->ctl_addr >= 1 && rq->ctl_addr <= HW_I2C_INSTANCE_COUNT)
     {
@@ -181,7 +181,7 @@ static inline void imx_send_stop(unsigned int instance)
  * If operation is transfer byte function will make sure we received an ack
  *
  * @param instance Instance number of the I2C module.
- * @param   is_tx       Pass 1 for transfering, 0 for receiving 
+ * @param   is_tx       Pass 1 for transfering, 0 for receiving
  *
  * @return  0 if successful; negative integer otherwise
  */
@@ -190,33 +190,33 @@ static int wait_op_done(uint32_t instance, int is_tx)
     hw_i2c_i2sr_t v;
     int i = WAIT_RXAK_LOOPS;
 
-    // Loop until we get an interrupt 
+    // Loop until we get an interrupt
     do {
         v.U = HW_I2C_I2SR_RD(instance);
     } while (!v.B.IIF && (--i > 0));
 
-    // If timeout error occurred return error 
+    // If timeout error occurred return error
     if (i <= 0) {
         debug_printf("I2C Error: timeout unexpected\n");
         return -1;
     }
 
-    // Clear the interrupts 
+    // Clear the interrupts
     HW_I2C_I2SR_WR(instance, 0);
 
-    // Check for arbitration lost 
+    // Check for arbitration lost
     if (v.B.IAL) {
         debug_printf("Error %d: Arbitration lost\n", __LINE__);
         return ERR_ARB_LOST;
     }
 
-    // Check for ACK received in transmit mode 
+    // Check for ACK received in transmit mode
     if (is_tx) {
         if (v.B.RXAK) {
-            // No ACK received, generate STOP by clearing MSTA bit 
+            // No ACK received, generate STOP by clearing MSTA bit
             debug_printf("Error %d: no ack received\n", __LINE__);
-            
-            // Generate a STOP signal 
+
+            // Generate a STOP signal
             imx_send_stop(instance);
             return ERR_NO_ACK;
         }
@@ -241,13 +241,13 @@ static int tx_byte(uint8_t * data, uint32_t instance)
     debug_printf("%s(data=0x%02x, instance=%d)\n", __FUNCTION__, *data, instance);
 #endif // TRACE_I2C
 
-    // clear both IAL and IIF bits 
+    // clear both IAL and IIF bits
     HW_I2C_I2SR_WR(instance, 0);
 
-    // write to data register 
+    // write to data register
     HW_I2C_I2DR_WR(instance, *data);
 
-    // wait for transfer of byte to complete 
+    // wait for transfer of byte to complete
     return wait_op_done(instance, 1);
 }
 
@@ -271,19 +271,19 @@ static int rx_bytes(uint8_t * data, uint32_t instance, int sz)
             return -1;
         }
 
-        // the next two if-statements setup for the next read control register value 
+        // the next two if-statements setup for the next read control register value
         if (sz == 1) {
-            // last byte --> generate STOP 
-            // generate STOP by clearing MSTA bit 
+            // last byte --> generate STOP
+            // generate STOP by clearing MSTA bit
             imx_send_stop(instance);
         }
 
         if (sz == 2) {
-            // 2nd last byte --> set TXAK bit to NOT generate ACK 
+            // 2nd last byte --> set TXAK bit to NOT generate ACK
             HW_I2C_I2CR(instance).B.TXAK = 1;
         }
-        
-        // read the true data 
+
+        // read the true data
         data[i] = HW_I2C_I2DR_RD(instance);
 #if TRACE_I2C
 
@@ -296,11 +296,11 @@ static int rx_bytes(uint8_t * data, uint32_t instance, int sz)
 
 static void set_i2c_clock(uint32_t instance, uint32_t baud)
 {
-    // Adjust the divider to get the closest SCL frequency to baud rate 
+    // Adjust the divider to get the closest SCL frequency to baud rate
     uint32_t src_clk = get_main_clock(IPG_PER_CLK);
     uint32_t divider = src_clk / baud;
     uint8_t index = 0;
-    
+
     if (divider < i2c_freq_div[0][0])
     {
         divider = i2c_freq_div[0][0];
@@ -320,7 +320,7 @@ static void set_i2c_clock(uint32_t instance, uint32_t baud)
         for (index = 0; i2c_freq_div[index][0] < divider; index++);
         divider = i2c_freq_div[index][0];
     }
-    
+
     HW_I2C_IFDR_WR(instance, BF_I2C_IFDR_IC(i2c_freq_div[index][1]));
 }
 
@@ -340,17 +340,17 @@ int i2c_xfer(const imx_i2c_request_t *rq, int dir)
         return ERR_INVALID_REQUEST;
     }
 
-    // clear the status register 
+    // clear the status register
     HW_I2C_I2SR_WR(instance, 0);
 
-    // enable the I2C controller 
+    // enable the I2C controller
     HW_I2C_I2CR_WR(instance, BM_I2C_I2CR_IEN);
 
-    // Check if bus is free, if not return error 
+    // Check if bus is free, if not return error
     if (is_bus_free(instance) != 0) {
         return -1;
     }
-    
+
     // If the request has device info attached and it has a non-zero bit rate, then
     // change the clock to the specified rate.
     if (rq->device && rq->device->freq)
@@ -358,16 +358,16 @@ int i2c_xfer(const imx_i2c_request_t *rq, int dir)
         set_i2c_clock(instance, rq->device->freq);
     }
 
-    // Step 1: Select master mode, assert START signal and also indicate TX mode 
+    // Step 1: Select master mode, assert START signal and also indicate TX mode
     HW_I2C_I2CR_WR(instance, BM_I2C_I2CR_IEN | BM_I2C_I2CR_MSTA | BM_I2C_I2CR_MTX);
 
-    // make sure bus is busy after the START signal 
+    // make sure bus is busy after the START signal
     if (wait_till_busy(instance) != 0) {
         debug_printf("1\n");
         return -1;
     }
-    
-    // Step 2: send slave address + read/write at the LSB 
+
+    // Step 2: send slave address + read/write at the LSB
     data = address | I2C_WRITE;
 
     if ((ret = tx_byte(&data, instance)) != 0) {
@@ -379,8 +379,8 @@ int i2c_xfer(const imx_i2c_request_t *rq, int dir)
             return ret;
         }
     }
-    
-    // Step 3: send I2C device register address 
+
+    // Step 3: send I2C device register address
     if (rq->reg_addr_sz > 4) {
         debug_printf("Warning register address size %d should less than 4\n", rq->reg_addr_sz);
         return ERR_INVALID_REQUEST;
@@ -390,7 +390,7 @@ int i2c_xfer(const imx_i2c_request_t *rq, int dir)
 
     for (i = 0; i < rq->reg_addr_sz; i++, reg >>= 8) {
         data = reg & 0xFF;
-        
+
 #if TRACE_I2C
         debug_printf("sending I2C=%d device register: data=0x%x, byte %d\n", instance, data, i);
 #endif // TRACE_I2C
@@ -400,43 +400,43 @@ int i2c_xfer(const imx_i2c_request_t *rq, int dir)
         }
     }
 
-    // Step 4: read/write data 
+    // Step 4: read/write data
     if (dir == I2C_READ) {
-        // do repeat-start 
+        // do repeat-start
         HW_I2C_I2CR(instance).B.RSTA = 1;
 
-        // make sure bus is busy after the REPEATED START signal 
+        // make sure bus is busy after the REPEATED START signal
         if (wait_till_busy(instance) != 0) {
             return ERR_TX;
         }
-        
-        // send slave address again, but indicate read operation 
+
+        // send slave address again, but indicate read operation
         data = address | I2C_READ;
 
         if (tx_byte(&data, instance) != 0) {
             return -1;
         }
 
-        // change to receive mode 
+        // change to receive mode
         i2cr = HW_I2C_I2CR_RD(instance) & ~BM_I2C_I2CR_MTX;
-        
-        // if only one byte to read, make sure don't send ack 
+
+        // if only one byte to read, make sure don't send ack
         if (rq->buffer_sz == 1) {
             i2cr |= BM_I2C_I2CR_TXAK;
         }
         HW_I2C_I2CR_WR(instance, i2cr);
 
-        // dummy read 
+        // dummy read
         data = HW_I2C_I2DR_RD(instance);
 
-        // now reading ... 
+        // now reading ...
         if (rx_bytes(rq->buffer, instance, rq->buffer_sz) != 0) {
             return -1;
         }
     } else {
-        // I2C_WRITE 
+        // I2C_WRITE
         for (i = 0; i < rq->buffer_sz; i++) {
-            // send device register value 
+            // send device register value
             data = rq->buffer[i];
 
             if ((ret = tx_byte(&data, instance)) != 0) {
@@ -445,15 +445,15 @@ int i2c_xfer(const imx_i2c_request_t *rq, int dir)
         }
     }
 
-    // generate STOP by clearing MSTA bit 
+    // generate STOP by clearing MSTA bit
     imx_send_stop(instance);
 
-    // Check if bus is free, if not return error 
+    // Check if bus is free, if not return error
     if (is_bus_free(instance) != 0) {
         debug_printf("WARNING: bus is not free\n");
     }
-    
-    // disable the controller 
+
+    // disable the controller
     HW_I2C_I2CR_WR(instance, 0);
 
     return ret;
@@ -474,25 +474,25 @@ void i2c_setup_interrupt(uint32_t instance, void (*irq_subroutine)(void), bool s
     uint32_t irq_id = I2C_IRQS(instance);
 
     if (state) {
-        // register the IRQ sub-routine 
+        // register the IRQ sub-routine
         register_interrupt_routine(irq_id, irq_subroutine);
-        
-        // enable the IRQ at the ARM core level 
+
+        // enable the IRQ at the ARM core level
         enable_interrupt(irq_id, CPU_0, 0);
-        
-        // clear the status register 
+
+        // clear the status register
         HW_I2C_I2SR_WR(instance, 0);
-        
-        // and enable the interrupts in the I2C controller 
+
+        // and enable the interrupts in the I2C controller
         HW_I2C_I2CR(instance).B.IIEN = 1;
     } else {
-        // disable the IRQ at the ARM core level 
+        // disable the IRQ at the ARM core level
         disable_interrupt(irq_id, CPU_0);
-        
-        // and disable the interrupts in the I2C controller 
+
+        // and disable the interrupts in the I2C controller
         HW_I2C_I2CR(instance).B.IIEN = 0;
-        
-        // clear the status register 
+
+        // clear the status register
         HW_I2C_I2SR_WR(instance, 0);
     }
 }
@@ -500,7 +500,7 @@ void i2c_setup_interrupt(uint32_t instance, void (*irq_subroutine)(void), bool s
 int i2c_init(uint32_t base, uint32_t baud)
 {
     int instance;
-    
+
     // Accept either an instance or base address for the base param.
     if (base >= 1 && base <= HW_I2C_INSTANCE_COUNT)
     {
@@ -510,26 +510,26 @@ int i2c_init(uint32_t base, uint32_t baud)
     {
         instance = REGS_I2C_INSTANCE(base);
     }
-    
-    // enable the source clocks to the I2C port 
+
+    // enable the source clocks to the I2C port
     clock_gating_config(REGS_I2C_BASE(instance), CLOCK_ON);
 
-    // Set iomux configuration 
+    // Set iomux configuration
     i2c_iomux_config(instance);
 
-    // reset I2C 
+    // reset I2C
     HW_I2C_I2CR_WR(instance, 0);
 
     // Set clock.
     set_i2c_clock(instance, baud);
 
-    // set an I2C slave address 
+    // set an I2C slave address
     HW_I2C_IADR_WR(instance, IMX6_DEFAULT_SLAVE_ID);
 
-    // clear the status register 
+    // clear the status register
     HW_I2C_I2SR_WR(instance, 0);
 
-    // enable the I2C controller 
+    // enable the I2C controller
     HW_I2C_I2CR_WR(instance, BM_I2C_I2CR_IEN);
 
     return 0;

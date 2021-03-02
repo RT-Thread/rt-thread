@@ -45,7 +45,7 @@
 
 
 /*****************************************************************************/
-/* 								Function's Prototypes						 */
+/*                              Function's Prototypes                        */
 /*****************************************************************************/
 extern void USB_Service_Bulk_Out(PTR_USB_DEV_EVENT_STRUCT event);
 extern void USB_Service_Bulk_In(PTR_USB_DEV_EVENT_STRUCT event);

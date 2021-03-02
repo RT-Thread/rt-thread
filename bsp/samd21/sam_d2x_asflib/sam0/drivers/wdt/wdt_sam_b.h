@@ -127,13 +127,13 @@ typedef void (*wdt_callback_t)(void);
 /** Enum for the possible callback types for the WDT module. */
 enum wdt_callback
 {
-	/** 
-	 * Callback type for when an early warning callback from the WDT module
-	 * is issued
-	 */
-	WDT_CALLBACK_EARLY_WARNING,
-	/** Number of available callbacks */
-	WDT_CALLBACK_N,
+    /**
+     * Callback type for when an early warning callback from the WDT module
+     * is issued
+     */
+    WDT_CALLBACK_EARLY_WARNING,
+    /** Number of available callbacks */
+    WDT_CALLBACK_N,
 };
 
 /**
@@ -144,12 +144,12 @@ enum wdt_callback
  *  function before being modified by the user application.
  */
 struct wdt_config {
-	/** Watchdog load value */
-	uint32_t load_value;
-	/** Enable reset output */
-	bool enable_reset;
-	/** Enable write access */
-	bool write_access;
+    /** Watchdog load value */
+    uint32_t load_value;
+    /** Enable reset output */
+    bool enable_reset;
+    /** Enable write access */
+    bool write_access;
 };
 
 /**
@@ -163,14 +163,14 @@ struct wdt_config {
  */
 struct wdt_module {
 #if !defined(__DOXYGEN__)
-	/** Pointer to the hardware instance */
-	Wdt *hw;
-	/** Array to store callback function pointers in */
-	wdt_callback_t callback[WDT_CALLBACK_N];
-	/** Bit mask for callbacks registered */
-	uint8_t callback_reg_mask;
-	/** Bit mask for callbacks enabled */
-	uint8_t callback_enable_mask;
+    /** Pointer to the hardware instance */
+    Wdt *hw;
+    /** Array to store callback function pointers in */
+    wdt_callback_t callback[WDT_CALLBACK_N];
+    /** Bit mask for callbacks registered */
+    uint8_t callback_reg_mask;
+    /** Bit mask for callbacks enabled */
+    uint8_t callback_enable_mask;
 #endif
 };
 
@@ -180,7 +180,7 @@ struct wdt_module {
  */
 void wdt_get_config_defaults(struct wdt_config *const config);
 enum status_code wdt_set_config(struct wdt_module *const module, Wdt * const hw, \
-			const struct wdt_config *const config);
+            const struct wdt_config *const config);
 /** @} */
 
 /**
@@ -204,9 +204,9 @@ void wdt_clear_status(struct wdt_module *const module);
  * @{
  */
 enum status_code wdt_set_reload_count(struct wdt_module *const module, \
-			uint32_t load_value);
+            uint32_t load_value);
 void wdt_get_current_count(struct wdt_module *const module, \
-			uint32_t * count_value);
+            uint32_t * count_value);
 /** @} */
 
 /**
@@ -214,14 +214,14 @@ void wdt_get_current_count(struct wdt_module *const module, \
  * @{
  */
 void wdt_register_callback(struct wdt_module *const module,
-		wdt_callback_t callback_func,
-		enum wdt_callback callback_type);
+        wdt_callback_t callback_func,
+        enum wdt_callback callback_type);
 void wdt_unregister_callback(struct wdt_module *module,
-		enum wdt_callback callback_type);
+        enum wdt_callback callback_type);
 void wdt_enable_callback(struct wdt_module *module,
-		enum wdt_callback callback_type);
+        enum wdt_callback callback_type);
 void wdt_disable_callback(struct wdt_module *const module,
-		enum wdt_callback callback_type);
+        enum wdt_callback callback_type);
 /** @} */
 
 /** @} */
@@ -239,14 +239,14 @@ void wdt_disable_callback(struct wdt_module *const module,
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>WDT</td>
- *		<td>Watchdog Timer</td>
- *	</tr>
+ *  <tr>
+ *      <th>Acronym</th>
+ *      <th>Description</th>
+ *  </tr>
+ *  <tr>
+ *      <td>WDT</td>
+ *      <td>Watchdog Timer</td>
+ *  </tr>
  * </table>
  *
  *
@@ -265,12 +265,12 @@ void wdt_disable_callback(struct wdt_module *const module,
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Changelog</th>
+ *  </tr>
+ *  <tr>
+ *      <td>Initial Release</td>
+ *  </tr>
  * </table>
  */
 
@@ -288,16 +288,16 @@ void wdt_disable_callback(struct wdt_module *const module,
  * \page asfdoc_samb_wdt_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>A</td>
- *		<td>09/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *  <tr>
+ *      <th>Doc. Rev.</td>
+ *      <th>Date</td>
+ *      <th>Comments</td>
+ *  </tr>
+ *  <tr>
+ *      <td>A</td>
+ *      <td>09/2015</td>
+ *      <td>Initial release</td>
+ *  </tr>
  * </table>
  */
 

@@ -52,12 +52,12 @@
 /* Generates a interrupt vector table enum list entry for a given module type
    and index (e.g. "SYSTEM_INTERRUPT_MODULE_TC0 = TC0_IRQn,"). */
 #  define _MODULE_IRQn(n, module) \
-		SYSTEM_INTERRUPT_MODULE_##module##n = module##n##_IRQn,
+        SYSTEM_INTERRUPT_MODULE_##module##n = module##n##_IRQn,
 
 /* Generates interrupt vector table enum list entries for all instances of a
    given module type on the selected device. */
 #  define _SYSTEM_INTERRUPT_MODULES(name) \
-		MREPEAT(name##_INST_NUM, _MODULE_IRQn, name)
+        MREPEAT(name##_INST_NUM, _MODULE_IRQn, name)
 
 #  define _SYSTEM_INTERRUPT_IPSR_MASK              0x0000003f
 #  define _SYSTEM_INTERRUPT_PRIORITY_MASK          0x00000003
@@ -86,107 +86,107 @@ enum system_interrupt_vector_samd21 {
 #else
 enum system_interrupt_vector {
 #endif
-	/** Interrupt vector index for a NMI interrupt */
-	SYSTEM_INTERRUPT_NON_MASKABLE      = NonMaskableInt_IRQn,
-	/** Interrupt vector index for a Hard Fault memory access exception */
-	SYSTEM_INTERRUPT_HARD_FAULT        = HardFault_IRQn,
-	/** Interrupt vector index for a Supervisor Call exception */
-	SYSTEM_INTERRUPT_SV_CALL           = SVCall_IRQn,
-	/** Interrupt vector index for a Pending Supervisor interrupt */
-	SYSTEM_INTERRUPT_PENDING_SV        = PendSV_IRQn,
-	/** Interrupt vector index for a System Tick interrupt */
-	SYSTEM_INTERRUPT_SYSTICK           = SysTick_IRQn,
+    /** Interrupt vector index for a NMI interrupt */
+    SYSTEM_INTERRUPT_NON_MASKABLE      = NonMaskableInt_IRQn,
+    /** Interrupt vector index for a Hard Fault memory access exception */
+    SYSTEM_INTERRUPT_HARD_FAULT        = HardFault_IRQn,
+    /** Interrupt vector index for a Supervisor Call exception */
+    SYSTEM_INTERRUPT_SV_CALL           = SVCall_IRQn,
+    /** Interrupt vector index for a Pending Supervisor interrupt */
+    SYSTEM_INTERRUPT_PENDING_SV        = PendSV_IRQn,
+    /** Interrupt vector index for a System Tick interrupt */
+    SYSTEM_INTERRUPT_SYSTICK           = SysTick_IRQn,
 
-	/** Interrupt vector index for a Power Manager peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_PM         = PM_IRQn,
-	/** Interrupt vector index for a System Control peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_SYSCTRL    = SYSCTRL_IRQn,
-	/** Interrupt vector index for a Watch Dog peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_WDT        = WDT_IRQn,
-	/** Interrupt vector index for a Real Time Clock peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_RTC        = RTC_IRQn,
-	/** Interrupt vector index for an External Interrupt peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_EIC        = EIC_IRQn,
-	/** Interrupt vector index for a Non Volatile Memory Controller interrupt */
-	SYSTEM_INTERRUPT_MODULE_NVMCTRL    = NVMCTRL_IRQn,
-	/** Interrupt vector index for a Direct Memory Access interrupt */
-	SYSTEM_INTERRUPT_MODULE_DMA        = DMAC_IRQn,
+    /** Interrupt vector index for a Power Manager peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_PM         = PM_IRQn,
+    /** Interrupt vector index for a System Control peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_SYSCTRL    = SYSCTRL_IRQn,
+    /** Interrupt vector index for a Watch Dog peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_WDT        = WDT_IRQn,
+    /** Interrupt vector index for a Real Time Clock peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_RTC        = RTC_IRQn,
+    /** Interrupt vector index for an External Interrupt peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_EIC        = EIC_IRQn,
+    /** Interrupt vector index for a Non Volatile Memory Controller interrupt */
+    SYSTEM_INTERRUPT_MODULE_NVMCTRL    = NVMCTRL_IRQn,
+    /** Interrupt vector index for a Direct Memory Access interrupt */
+    SYSTEM_INTERRUPT_MODULE_DMA        = DMAC_IRQn,
 #if defined(__DOXYGEN__) || defined(ID_USB)
-	/** Interrupt vector index for a Universal Serial Bus interrupt */
-	SYSTEM_INTERRUPT_MODULE_USB        = USB_IRQn,
+    /** Interrupt vector index for a Universal Serial Bus interrupt */
+    SYSTEM_INTERRUPT_MODULE_USB        = USB_IRQn,
 #endif
-	/** Interrupt vector index for an Event System interrupt */
-	SYSTEM_INTERRUPT_MODULE_EVSYS      = EVSYS_IRQn,
+    /** Interrupt vector index for an Event System interrupt */
+    SYSTEM_INTERRUPT_MODULE_EVSYS      = EVSYS_IRQn,
 #if defined(__DOXYGEN__)
-	/** Interrupt vector index for a SERCOM peripheral interrupt.
-	 *
-	 *  Each specific device may contain several SERCOM peripherals; each module
-	 *  instance will have its own entry in the table, with the instance number
-	 *  substituted for "n" in the entry name (e.g.
-	 *  \c SYSTEM_INTERRUPT_MODULE_SERCOM0).
-	 */
-	SYSTEM_INTERRUPT_MODULE_SERCOMn    = SERCOMn_IRQn,
+    /** Interrupt vector index for a SERCOM peripheral interrupt.
+     *
+     *  Each specific device may contain several SERCOM peripherals; each module
+     *  instance will have its own entry in the table, with the instance number
+     *  substituted for "n" in the entry name (e.g.
+     *  \c SYSTEM_INTERRUPT_MODULE_SERCOM0).
+     */
+    SYSTEM_INTERRUPT_MODULE_SERCOMn    = SERCOMn_IRQn,
 
-	/** Interrupt vector index for a Timer/Counter Control peripheral interrupt.
-	 *
-	 *  Each specific device may contain several TCC peripherals; each module
-	 *  instance will have its own entry in the table, with the instance number
-	 *  substituted for "n" in the entry name (e.g.
-	 *  \c SYSTEM_INTERRUPT_MODULE_TCC0).
-	 */
-	SYSTEM_INTERRUPT_MODULE_TCCn        = TCCn_IRQn,
+    /** Interrupt vector index for a Timer/Counter Control peripheral interrupt.
+     *
+     *  Each specific device may contain several TCC peripherals; each module
+     *  instance will have its own entry in the table, with the instance number
+     *  substituted for "n" in the entry name (e.g.
+     *  \c SYSTEM_INTERRUPT_MODULE_TCC0).
+     */
+    SYSTEM_INTERRUPT_MODULE_TCCn        = TCCn_IRQn,
 
-	/** Interrupt vector index for a Timer/Counter peripheral interrupt.
-	 *
-	 *  Each specific device may contain several TC peripherals; each module
-	 *  instance will have its own entry in the table, with the instance number
-	 *  substituted for "n" in the entry name (e.g.
-	 *  \c SYSTEM_INTERRUPT_MODULE_TC3).
-	 */
-	SYSTEM_INTERRUPT_MODULE_TCn        = TCn_IRQn,
+    /** Interrupt vector index for a Timer/Counter peripheral interrupt.
+     *
+     *  Each specific device may contain several TC peripherals; each module
+     *  instance will have its own entry in the table, with the instance number
+     *  substituted for "n" in the entry name (e.g.
+     *  \c SYSTEM_INTERRUPT_MODULE_TC3).
+     */
+    SYSTEM_INTERRUPT_MODULE_TCn        = TCn_IRQn,
 #else
-	_SYSTEM_INTERRUPT_MODULES(SERCOM)
+    _SYSTEM_INTERRUPT_MODULES(SERCOM)
 
-	_SYSTEM_INTERRUPT_MODULES(TCC)
+    _SYSTEM_INTERRUPT_MODULES(TCC)
 
-	SYSTEM_INTERRUPT_MODULE_TC3        = TC3_IRQn,
-	SYSTEM_INTERRUPT_MODULE_TC4        = TC4_IRQn,
-	SYSTEM_INTERRUPT_MODULE_TC5        = TC5_IRQn,
+    SYSTEM_INTERRUPT_MODULE_TC3        = TC3_IRQn,
+    SYSTEM_INTERRUPT_MODULE_TC4        = TC4_IRQn,
+    SYSTEM_INTERRUPT_MODULE_TC5        = TC5_IRQn,
 #  if defined(ID_TC6)
-	SYSTEM_INTERRUPT_MODULE_TC6        = TC6_IRQn,
+    SYSTEM_INTERRUPT_MODULE_TC6        = TC6_IRQn,
 #  endif
 #  if defined(ID_TC7)
-	SYSTEM_INTERRUPT_MODULE_TC7        = TC7_IRQn,
+    SYSTEM_INTERRUPT_MODULE_TC7        = TC7_IRQn,
 #  endif
 #endif
 
 #if defined(__DOXYGEN__) || defined(ID_ADC)
-	/** Interrupt vector index for an Analog-to-Digital peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_ADC        = ADC_IRQn,
+    /** Interrupt vector index for an Analog-to-Digital peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_ADC        = ADC_IRQn,
 #endif
 
 #if defined(__DOXYGEN__) || defined(ID_AC)
-	/** Interrupt vector index for an Analog Comparator peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_AC         = AC_IRQn,
+    /** Interrupt vector index for an Analog Comparator peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_AC         = AC_IRQn,
 #endif
 
 #if defined(__DOXYGEN__) || defined(ID_DAC)
-	/** Interrupt vector index for a Digital-to-Analog peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_DAC        = DAC_IRQn,
+    /** Interrupt vector index for a Digital-to-Analog peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_DAC        = DAC_IRQn,
 #endif
 #if defined(__DOXYGEN__) || defined(ID_PTC)
-	/** Interrupt vector index for a Peripheral Touch Controller peripheral
-	 *  interrupt */
-	SYSTEM_INTERRUPT_MODULE_PTC        = PTC_IRQn,
+    /** Interrupt vector index for a Peripheral Touch Controller peripheral
+     *  interrupt */
+    SYSTEM_INTERRUPT_MODULE_PTC        = PTC_IRQn,
 #endif
 #if defined(__DOXYGEN__) || defined(ID_I2S)
-	/** Interrupt vector index for a Inter-IC Sound Interface peripheral
-	 *  interrupt */
-	SYSTEM_INTERRUPT_MODULE_I2S        = I2S_IRQn,
+    /** Interrupt vector index for a Inter-IC Sound Interface peripheral
+     *  interrupt */
+    SYSTEM_INTERRUPT_MODULE_I2S        = I2S_IRQn,
 #endif
 #if defined(__DOXYGEN__) || defined(ID_AC1)
-	/** Interrupt vector index for an Analog Comparator 1 peripheral interrupt */
-	SYSTEM_INTERRUPT_MODULE_AC1        = AC1_IRQn,
+    /** Interrupt vector index for an Analog Comparator 1 peripheral interrupt */
+    SYSTEM_INTERRUPT_MODULE_AC1        = AC1_IRQn,
 #endif
 };
 

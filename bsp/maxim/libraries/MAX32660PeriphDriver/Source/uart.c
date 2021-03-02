@@ -103,33 +103,33 @@ int UART_Init(mxc_uart_regs_t *uart, const uart_cfg_t *cfg, const sys_cfg_uart_t
 {
     int err;
     int uart_num;
-    
+
     uint32_t baud0 = 0, baud1 = 0,div;
     int32_t factor = -1;
-    
+
     // Get the state array index
     uart_num = MXC_UART_GET_IDX(uart);
     if (uart_num == -1) {
         return E_BAD_PARAM;
     }
-    
+
     if ((err = SYS_UART_Init(uart, sys_cfg)) != E_NO_ERROR) {
         return err;
     }
-    
+
     // Initialize state pointers
     rx_states[uart_num] = NULL;
     tx_states[uart_num] = NULL;
-    
+
     // Drain FIFOs, enable UART, and set configuration
     uart->ctrl = (MXC_F_UART_CTRL_ENABLE | cfg->parity | cfg->size | cfg->stop | cfg->flow | cfg->pol);
-    
+
     // Set the baud rate
     // Calculate divisor
 #if (TARGET != 32660)
     uart->ctrl |=  cfg->clksel;
     if (cfg->clksel == UART_CLKSEL_ALTERNATE) {
-        div = UART_ALTERNATE_CLOCK_HZ / ((cfg->baud)); 
+        div = UART_ALTERNATE_CLOCK_HZ / ((cfg->baud));
     } else {
         div = PeripheralClock / ((cfg->baud));
     }
@@ -138,9 +138,9 @@ int UART_Init(mxc_uart_regs_t *uart, const uart_cfg_t *cfg, const sys_cfg_uart_t
 #endif
     // Search for integer and fractional baud rate registers based on divisor
     do {
-	factor += 1;
-	baud0 = div >> (7-factor); // divide by 128,64,32,16 to extract integer part
-	baud1 = ((div << factor) - (baud0 << 7)); //subtract factor corrected div - integer parts
+    factor += 1;
+    baud0 = div >> (7-factor); // divide by 128,64,32,16 to extract integer part
+    baud1 = ((div << factor) - (baud0 << 7)); //subtract factor corrected div - integer parts
     } while ((baud0 == 0) && (factor < MAX_FACTOR));
 
     uart->baud0 = ((factor << MXC_F_UART_BAUD0_FACTOR_POS) | baud0);
@@ -150,9 +150,9 @@ int UART_Init(mxc_uart_regs_t *uart, const uart_cfg_t *cfg, const sys_cfg_uart_t
      *   to help avoid this bug.
      */
     if (baud1 > 3) {
-	uart->baud1 = baud1 - 3;
+    uart->baud1 = baud1 - 3;
     } else {
-	uart->baud1 = baud1 + 3;
+    uart->baud1 = baud1 + 3;
     }
 #else
     uart->baud1 = baud1;
@@ -213,19 +213,19 @@ int UART_Shutdown(mxc_uart_regs_t *uart)
     }
     // Wait for not busy
     while (uart->status & (MXC_F_UART_STATUS_TX_BUSY | MXC_F_UART_STATUS_RX_BUSY)) {
-        
+
     }
 
     // Shutdown the UART
     uart->ctrl = 0;
-    
+
     // Shutdown any system level setup
     SYS_UART_Shutdown(uart);
 
     // Clear pending requests
     rx_states[uart_num] = NULL;
     tx_states[uart_num] = NULL;
-    
+
     return E_NO_ERROR;
 }
 
@@ -394,7 +394,7 @@ int UART_Read(mxc_uart_regs_t *uart, uint8_t *data, int len, int *num)
 
     // Lock this UART from reading
     while (mxc_get_lock((uint32_t*)&rx_states[uart_num], 1) != E_NO_ERROR) {
-        
+
     }
 
     // Get bytes FIFO
@@ -464,7 +464,7 @@ int UART_Write(mxc_uart_regs_t *uart, const uint8_t *data, int len)
 
     // Lock this UART from writing
     while (mxc_get_lock((uint32_t*)&tx_states[uart_num], 1) != E_NO_ERROR) {
-        
+
     }
 
     // Clear errors
@@ -488,7 +488,7 @@ void UART_WriteByte(mxc_uart_regs_t *uart, uint8_t data)
 
     // Wait for TXFIFO if full
     while (uart->status & MXC_F_UART_STATUS_TX_FULL) {
-        
+
     }
 
     // Put data into fifo

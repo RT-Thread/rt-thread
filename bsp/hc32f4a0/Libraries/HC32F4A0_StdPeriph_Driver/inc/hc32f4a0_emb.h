@@ -7,7 +7,7 @@
    Change Logs:
    Date             Author          Notes
    2020-06-12       Hongjh          First version
-   2020-07-07       Hongjh          1. Modify structure member comments for 
+   2020-07-07       Hongjh          1. Modify structure member comments for
                                        stc_emb_monitor_port_t/stc_emb_monitor_tmr_pwm_t
                                     2. Replace the word Timer with TMR abbreviation
  @endverbatim
@@ -81,7 +81,7 @@ typedef struct
                                      EMB_TMR6_x_PWM_Selection(x=1~8) */
 
     uint32_t    u32PwmLevel;    /*!< Detect TMR4/6 PWM x channel polarity level
-                                     This parameter can be a value of EMB_Detect_TMR4_PWM_x_Level(x=U/V/W) or 
+                                     This parameter can be a value of EMB_Detect_TMR4_PWM_x_Level(x=U/V/W) or
                                      EMB_Detect_TMR6_x_PWM_Level(x=1~8) */
 } stc_emb_monitor_tmr_pwm_t;
 

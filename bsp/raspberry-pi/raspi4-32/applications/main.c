@@ -17,7 +17,7 @@
 int main(int argc, char** argv)
 {
     rt_kprintf("Hi, this is RT-Thread!!\n");
-    
+
     rt_pin_mode(ACTLED, PIN_MODE_OUTPUT);
 
     while(1)

@@ -2,15 +2,15 @@
   ******************************************************************************
   * @file    stm32f0xx_hal_can.c
   * @author  MCD Application Team
-  * @brief   This file provides firmware functions to manage the following 
+  * @brief   This file provides firmware functions to manage the following
   *          functionalities of the Controller Area Network (CAN) peripheral:
-  *           + Initialization and de-initialization functions 
+  *           + Initialization and de-initialization functions
   *           + IO operation functions
   *           + Peripheral Control functions
   *           + Peripheral State and Error functions
   *
   @verbatim
-  ==============================================================================    
+  ==============================================================================
                                  ##### User NOTE #####
   ==============================================================================
     [..]
@@ -20,17 +20,17 @@
   ==============================================================================
                         ##### How to use this driver #####
   ==============================================================================
-    [..]            
-      (#) Enable the CAN controller interface clock using __HAL_RCC_CAN1_CLK_ENABLE(); 
-       
+    [..]
+      (#) Enable the CAN controller interface clock using __HAL_RCC_CAN1_CLK_ENABLE();
+
       (#) CAN pins configuration
         (++) Enable the clock for the CAN GPIOs using the following function:
-             __HAL_RCC_GPIOx_CLK_ENABLE();   
-        (++) Connect and configure the involved CAN pins to AF9 using the 
-              following function HAL_GPIO_Init(); 
-              
-      (#) Initialise and configure the CAN using HAL_CAN_Init() function.   
-                 
+             __HAL_RCC_GPIOx_CLK_ENABLE();
+        (++) Connect and configure the involved CAN pins to AF9 using the
+              following function HAL_GPIO_Init();
+
+      (#) Initialise and configure the CAN using HAL_CAN_Init() function.
+
       (#) Transmit the desired CAN frame using HAL_CAN_Transmit() function.
 
       (#) Or transmit the desired CAN frame using HAL_CAN_Transmit_IT() function.
@@ -41,41 +41,41 @@
 
      *** Polling mode IO operation ***
      =================================
-     [..]    
-       (+) Start the CAN peripheral transmission and wait the end of this operation 
+     [..]
+       (+) Start the CAN peripheral transmission and wait the end of this operation
            using HAL_CAN_Transmit(), at this stage user can specify the value of timeout
            according to his end application
-       (+) Start the CAN peripheral reception and wait the end of this operation 
+       (+) Start the CAN peripheral reception and wait the end of this operation
            using HAL_CAN_Receive(), at this stage user can specify the value of timeout
-           according to his end application 
-       
-     *** Interrupt mode IO operation ***    
+           according to his end application
+
+     *** Interrupt mode IO operation ***
      ===================================
-     [..]    
+     [..]
        (+) Start the CAN peripheral transmission using HAL_CAN_Transmit_IT()
-       (+) Start the CAN peripheral reception using HAL_CAN_Receive_IT()         
+       (+) Start the CAN peripheral reception using HAL_CAN_Receive_IT()
        (+) Use HAL_CAN_IRQHandler() called under the used CAN Interrupt subroutine
-       (+) At CAN end of transmission HAL_CAN_TxCpltCallback() function is executed and user can 
-            add his own code by customization of function pointer HAL_CAN_TxCpltCallback 
-       (+) In case of CAN Error, HAL_CAN_ErrorCallback() function is executed and user can 
+       (+) At CAN end of transmission HAL_CAN_TxCpltCallback() function is executed and user can
+            add his own code by customization of function pointer HAL_CAN_TxCpltCallback
+       (+) In case of CAN Error, HAL_CAN_ErrorCallback() function is executed and user can
             add his own code by customization of function pointer HAL_CAN_ErrorCallback
- 
+
      *** CAN HAL driver macros list ***
-     ============================================= 
+     =============================================
      [..]
        Below the list of most used macros in CAN HAL driver.
-       
+
       (+) __HAL_CAN_ENABLE_IT: Enable the specified CAN interrupts
       (+) __HAL_CAN_DISABLE_IT: Disable the specified CAN interrupts
       (+) __HAL_CAN_GET_IT_SOURCE: Check if the specified CAN interrupt source is enabled or disabled
       (+) __HAL_CAN_CLEAR_FLAG: Clear the CAN's pending flags
       (+) __HAL_CAN_GET_FLAG: Get the selected CAN's flag status
-      
-     [..] 
+
+     [..]
       (@) You can refer to the CAN Legacy HAL driver header file for more useful macros
-                
+
   @endverbatim
-           
+
   ******************************************************************************
   * @attention
   *
@@ -100,10 +100,10 @@
 /** @defgroup CAN CAN
   * @brief CAN driver modules
   * @{
-  */ 
+  */
 
-#ifdef HAL_CAN_LEGACY_MODULE_ENABLED    
-#if defined(STM32F072xB) || defined(STM32F042x6) || defined(STM32F048xx) || defined(STM32F091xC) || defined(STM32F098xx) 
+#ifdef HAL_CAN_LEGACY_MODULE_ENABLED
+#if defined(STM32F072xB) || defined(STM32F042x6) || defined(STM32F048xx) || defined(STM32F091xC) || defined(STM32F098xx)
 #ifdef HAL_CAN_MODULE_ENABLED
 /* Select HAL CAN module in stm32f0xx_hal_conf.h file:
    (#) HAL_CAN_MODULE_ENABLED for new HAL CAN driver fixing FIFO limitations
@@ -132,40 +132,40 @@ static HAL_StatusTypeDef CAN_Transmit_IT(CAN_HandleTypeDef* hcan);
 /**
   * @}
   */
-  
+
 /* Exported functions ---------------------------------------------------------*/
 
 /** @defgroup CAN_Exported_Functions CAN Exported Functions
   * @{
   */
 
-/** @defgroup CAN_Exported_Functions_Group1 Initialization and de-initialization functions 
- *  @brief    Initialization and Configuration functions 
+/** @defgroup CAN_Exported_Functions_Group1 Initialization and de-initialization functions
+ *  @brief    Initialization and Configuration functions
  *
-@verbatim    
+@verbatim
   ==============================================================================
               ##### Initialization and de-initialization functions #####
   ==============================================================================
     [..]  This section provides functions allowing to:
-      (+) Initialize and configure the CAN. 
-      (+) De-initialize the CAN. 
-         
+      (+) Initialize and configure the CAN.
+      (+) De-initialize the CAN.
+
 @endverbatim
   * @{
   */
-  
+
 /**
   * @brief Initializes the CAN peripheral according to the specified
   *        parameters in the CAN_InitStruct.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *             the configuration information for the specified CAN.  
+  *             the configuration information for the specified CAN.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef* hcan)
 {
   uint32_t status = CAN_INITSTATUS_FAILED;  /* Default init status */
   uint32_t tickstart = 0U;
-  
+
   /* Check CAN handle */
   if(hcan == NULL)
   {
@@ -185,7 +185,7 @@ HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef* hcan)
   assert_param(IS_CAN_BS1(hcan->Init.BS1));
   assert_param(IS_CAN_BS2(hcan->Init.BS2));
   assert_param(IS_CAN_PRESCALER(hcan->Init.Prescaler));
-  
+
   if(hcan->State == HAL_CAN_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
@@ -193,10 +193,10 @@ HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef* hcan)
     /* Init the low level hardware */
     HAL_CAN_MspInit(hcan);
   }
-  
+
   /* Initialize the CAN state*/
   hcan->State = HAL_CAN_STATE_BUSY;
-  
+
   /* Exit from sleep mode */
   CLEAR_BIT(hcan->Instance->MCR, CAN_MCR_SLEEP);
 
@@ -204,8 +204,8 @@ HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef* hcan)
   SET_BIT(hcan->Instance->MCR, CAN_MCR_INRQ);
 
   /* Get tick */
-  tickstart = HAL_GetTick();   
-  
+  tickstart = HAL_GetTick();
+
   /* Wait the acknowledge */
   while(HAL_IS_BIT_CLR(hcan->Instance->MSR, CAN_MSR_INAK))
   {
@@ -292,8 +292,8 @@ HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef* hcan)
     CLEAR_BIT(hcan->Instance->MCR, CAN_MCR_INRQ);
 
     /* Get tick */
-    tickstart = HAL_GetTick();   
-   
+    tickstart = HAL_GetTick();
+
     /* Wait the acknowledge */
     while(HAL_IS_BIT_SET(hcan->Instance->MSR, CAN_MSR_INAK))
     {
@@ -314,15 +314,15 @@ HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef* hcan)
       status = CAN_INITSTATUS_SUCCESS;
     }
   }
- 
+
   if(status == CAN_INITSTATUS_SUCCESS)
   {
     /* Set CAN error code to none */
     hcan->ErrorCode = HAL_CAN_ERROR_NONE;
-    
+
     /* Initialize the CAN state */
     hcan->State = HAL_CAN_STATE_READY;
-  
+
     /* Return function status */
     return HAL_OK;
   }
@@ -348,7 +348,7 @@ HAL_StatusTypeDef HAL_CAN_Init(CAN_HandleTypeDef* hcan)
 HAL_StatusTypeDef HAL_CAN_ConfigFilter(CAN_HandleTypeDef* hcan, CAN_FilterConfTypeDef* sFilterConfig)
 {
   uint32_t filternbrbitpos = 0U;
-  
+
   /* Check the parameters */
   assert_param(IS_CAN_FILTER_NUMBER(sFilterConfig->FilterNumber));
   assert_param(IS_CAN_FILTER_MODE(sFilterConfig->FilterMode));
@@ -356,7 +356,7 @@ HAL_StatusTypeDef HAL_CAN_ConfigFilter(CAN_HandleTypeDef* hcan, CAN_FilterConfTy
   assert_param(IS_CAN_FILTER_FIFO(sFilterConfig->FilterFIFOAssignment));
   assert_param(IS_FUNCTIONAL_STATE(sFilterConfig->FilterActivation));
   assert_param(IS_CAN_BANKNUMBER(sFilterConfig->BankNumber));
-  
+
   filternbrbitpos = (1U) << sFilterConfig->FilterNumber;
 
   /* Initialisation mode for the filter */
@@ -375,13 +375,13 @@ HAL_StatusTypeDef HAL_CAN_ConfigFilter(CAN_HandleTypeDef* hcan, CAN_FilterConfTy
 
     /* First 16-bit identifier and First 16-bit mask */
     /* Or First 16-bit identifier and Second 16-bit identifier */
-    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR1 = 
+    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR1 =
        ((0x0000FFFFU & (uint32_t)sFilterConfig->FilterMaskIdLow) << 16U) |
         (0x0000FFFFU & (uint32_t)sFilterConfig->FilterIdLow);
 
     /* Second 16-bit identifier and Second 16-bit mask */
     /* Or Third 16-bit identifier and Fourth 16-bit identifier */
-    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR2 = 
+    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR2 =
        ((0x0000FFFFU & (uint32_t)sFilterConfig->FilterMaskIdHigh) << 16U) |
         (0x0000FFFFU & (uint32_t)sFilterConfig->FilterIdHigh);
   }
@@ -392,12 +392,12 @@ HAL_StatusTypeDef HAL_CAN_ConfigFilter(CAN_HandleTypeDef* hcan, CAN_FilterConfTy
     SET_BIT(hcan->Instance->FS1R, filternbrbitpos);
 
     /* 32-bit identifier or First 32-bit identifier */
-    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR1 = 
+    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR1 =
        ((0x0000FFFFU & (uint32_t)sFilterConfig->FilterIdHigh) << 16U) |
         (0x0000FFFFU & (uint32_t)sFilterConfig->FilterIdLow);
 
     /* 32-bit mask or Second 32-bit identifier */
-    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR2 = 
+    hcan->Instance->sFilterRegister[sFilterConfig->FilterNumber].FR2 =
        ((0x0000FFFFU & (uint32_t)sFilterConfig->FilterMaskIdHigh) << 16U) |
         (0x0000FFFFU & (uint32_t)sFilterConfig->FilterMaskIdLow);
   }
@@ -425,7 +425,7 @@ HAL_StatusTypeDef HAL_CAN_ConfigFilter(CAN_HandleTypeDef* hcan, CAN_FilterConfTy
     /* FIFO 1 assignation for the filter */
     SET_BIT(hcan->Instance->FFA1R, filternbrbitpos);
   }
-  
+
   /* Filter activation */
   if (sFilterConfig->FilterActivation == ENABLE)
   {
@@ -434,15 +434,15 @@ HAL_StatusTypeDef HAL_CAN_ConfigFilter(CAN_HandleTypeDef* hcan, CAN_FilterConfTy
 
   /* Leave the initialisation mode for the filter */
   CLEAR_BIT(hcan->Instance->FMR, ((uint32_t)CAN_FMR_FINIT));
-  
+
   /* Return function status */
   return HAL_OK;
 }
 
 /**
-  * @brief  Deinitializes the CANx peripheral registers to their default reset values. 
+  * @brief  Deinitializes the CANx peripheral registers to their default reset values.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CAN_DeInit(CAN_HandleTypeDef* hcan)
@@ -452,16 +452,16 @@ HAL_StatusTypeDef HAL_CAN_DeInit(CAN_HandleTypeDef* hcan)
   {
      return HAL_ERROR;
   }
-  
+
   /* Check the parameters */
   assert_param(IS_CAN_ALL_INSTANCE(hcan->Instance));
-  
+
   /* Change CAN state */
   hcan->State = HAL_CAN_STATE_BUSY;
-  
+
   /* DeInit the low level hardware */
   HAL_CAN_MspDeInit(hcan);
-  
+
   /* Change CAN state */
   hcan->State = HAL_CAN_STATE_RESET;
 
@@ -475,7 +475,7 @@ HAL_StatusTypeDef HAL_CAN_DeInit(CAN_HandleTypeDef* hcan)
 /**
   * @brief  Initializes the CAN MSP.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @retval None
   */
 __weak void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
@@ -485,13 +485,13 @@ __weak void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan)
 
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_CAN_MspInit could be implemented in the user file
-   */ 
+   */
 }
 
 /**
   * @brief  DeInitializes the CAN MSP.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @retval None
   */
 __weak void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
@@ -501,7 +501,7 @@ __weak void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
 
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_CAN_MspDeInit could be implemented in the user file
-   */ 
+   */
 }
 
 /**
@@ -509,18 +509,18 @@ __weak void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
   */
 
 /** @defgroup CAN_Exported_Functions_Group2 Input and Output operation functions
- *  @brief    IO operation functions 
+ *  @brief    IO operation functions
  *
-@verbatim   
+@verbatim
   ==============================================================================
                       ##### IO operation functions #####
   ==============================================================================
     [..]  This section provides functions allowing to:
       (+) Transmit a CAN frame message.
       (+) Receive a CAN frame message.
-      (+) Enter CAN peripheral in sleep mode. 
+      (+) Enter CAN peripheral in sleep mode.
       (+) Wake up the CAN peripheral from sleep mode.
-               
+
 @endverbatim
   * @{
   */
@@ -528,7 +528,7 @@ __weak void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan)
 /**
   * @brief  Initiates and transmits a CAN frame message.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @param  Timeout Timeout duration.
   * @retval HAL status
   */
@@ -584,7 +584,7 @@ HAL_StatusTypeDef HAL_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t Timeout)
     hcan->Instance->sTxMailBox[transmitmailbox].TIR &= CAN_TI0R_TXRQ;
     if (hcan->pTxMsg->IDE == CAN_ID_STD)
     {
-      assert_param(IS_CAN_STDID(hcan->pTxMsg->StdId));  
+      assert_param(IS_CAN_STDID(hcan->pTxMsg->StdId));
       hcan->Instance->sTxMailBox[transmitmailbox].TIR |= ((hcan->pTxMsg->StdId << CAN_TI0R_STID_Pos) | \
                                                            hcan->pTxMsg->RTR);
     }
@@ -595,7 +595,7 @@ HAL_StatusTypeDef HAL_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t Timeout)
                                                            hcan->pTxMsg->IDE | \
                                                            hcan->pTxMsg->RTR);
     }
-    
+
     /* Set up the DLC */
     hcan->pTxMsg->DLC &= (uint8_t)0x0000000FU;
     hcan->Instance->sTxMailBox[transmitmailbox].TDTR &= 0xFFFFFFF0U;
@@ -613,10 +613,10 @@ HAL_StatusTypeDef HAL_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t Timeout)
 
     /* Request transmission */
     SET_BIT(hcan->Instance->sTxMailBox[transmitmailbox].TIR, CAN_TI0R_TXRQ);
-  
+
     /* Get tick */
-    tickstart = HAL_GetTick();   
-  
+    tickstart = HAL_GetTick();
+
     /* Check End of transmission flag */
     while(!(__HAL_CAN_TRANSMIT_STATUS(hcan, transmitmailbox)))
     {
@@ -656,14 +656,14 @@ HAL_StatusTypeDef HAL_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t Timeout)
 
     /* Process unlocked */
     __HAL_UNLOCK(hcan);
-    
+
     /* Return function status */
     return HAL_OK;
   }
   else
   {
     /* Change CAN state */
-    hcan->State = HAL_CAN_STATE_ERROR; 
+    hcan->State = HAL_CAN_STATE_ERROR;
 
     /* Return function status */
     return HAL_ERROR;
@@ -673,7 +673,7 @@ HAL_StatusTypeDef HAL_CAN_Transmit(CAN_HandleTypeDef* hcan, uint32_t Timeout)
 /**
   * @brief  Initiates and transmits a CAN frame message.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_CAN_Transmit_IT(CAN_HandleTypeDef* hcan)
@@ -691,7 +691,7 @@ HAL_StatusTypeDef HAL_CAN_Transmit_IT(CAN_HandleTypeDef* hcan)
   {
     /* Process Locked */
     __HAL_LOCK(hcan);
-    
+
     /* Select one empty transmit mailbox */
     if(HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME0))
     {
@@ -785,14 +785,14 @@ HAL_StatusTypeDef HAL_CAN_Transmit_IT(CAN_HandleTypeDef* hcan)
     /* Return function status */
     return HAL_ERROR;
   }
-  
+
   return HAL_OK;
 }
 
 /**
   * @brief  Receives a correct CAN frame.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @param  FIFONumber    FIFO number.
   * @param  Timeout       Timeout duration.
   * @retval HAL status
@@ -871,8 +871,8 @@ HAL_StatusTypeDef HAL_CAN_Receive(CAN_HandleTypeDef* hcan, uint8_t FIFONumber, u
   }
 
   /* Get tick */
-  tickstart = HAL_GetTick();   
-  
+  tickstart = HAL_GetTick();
+
   /* Check pending message */
   while(__HAL_CAN_MSG_PENDING(hcan, FIFONumber) == 0U)
   {
@@ -927,7 +927,7 @@ HAL_StatusTypeDef HAL_CAN_Receive(CAN_HandleTypeDef* hcan, uint8_t FIFONumber, u
   pRxMsg->Data[5] = (CAN_RDH0R_DATA5 & hcan->Instance->sFIFOMailBox[FIFONumber].RDHR) >> CAN_RDH0R_DATA5_Pos;
   pRxMsg->Data[6] = (CAN_RDH0R_DATA6 & hcan->Instance->sFIFOMailBox[FIFONumber].RDHR) >> CAN_RDH0R_DATA6_Pos;
   pRxMsg->Data[7] = (CAN_RDH0R_DATA7 & hcan->Instance->sFIFOMailBox[FIFONumber].RDHR) >> CAN_RDH0R_DATA7_Pos;
-  
+
   /* Release the FIFO */
   if(FIFONumber == CAN_FIFO0)
   {
@@ -977,7 +977,7 @@ HAL_StatusTypeDef HAL_CAN_Receive(CAN_HandleTypeDef* hcan, uint8_t FIFONumber, u
         break;
     }
   }
-  
+
   /* Process unlocked */
   __HAL_UNLOCK(hcan);
 
@@ -988,7 +988,7 @@ HAL_StatusTypeDef HAL_CAN_Receive(CAN_HandleTypeDef* hcan, uint8_t FIFONumber, u
 /**
   * @brief  Receives a correct CAN frame.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @param  FIFONumber    FIFO number.
   * @retval HAL status
   */
@@ -1090,7 +1090,7 @@ HAL_StatusTypeDef HAL_CAN_Receive_IT(CAN_HandleTypeDef* hcan, uint8_t FIFONumber
     /* Enable FIFO 1 overrun and message pending Interrupt */
     __HAL_CAN_ENABLE_IT(hcan, CAN_IT_FOV1 | CAN_IT_FMP1);
   }
-  
+
   /* Return function status */
   return HAL_OK;
 }
@@ -1104,18 +1104,18 @@ HAL_StatusTypeDef HAL_CAN_Receive_IT(CAN_HandleTypeDef* hcan, uint8_t FIFONumber
 HAL_StatusTypeDef HAL_CAN_Sleep(CAN_HandleTypeDef* hcan)
 {
   uint32_t tickstart = 0U;
-   
+
   /* Process locked */
   __HAL_LOCK(hcan);
-  
+
   /* Change CAN state */
-  hcan->State = HAL_CAN_STATE_BUSY; 
-    
+  hcan->State = HAL_CAN_STATE_BUSY;
+
   /* Request Sleep mode */
   MODIFY_REG(hcan->Instance->MCR,
              CAN_MCR_INRQ       ,
              CAN_MCR_SLEEP       );
-   
+
   /* Sleep mode status */
   if (HAL_IS_BIT_CLR(hcan->Instance->MSR, CAN_MSR_SLAK) ||
       HAL_IS_BIT_SET(hcan->Instance->MSR, CAN_MSR_INAK)   )
@@ -1126,10 +1126,10 @@ HAL_StatusTypeDef HAL_CAN_Sleep(CAN_HandleTypeDef* hcan)
     /* Return function status */
     return HAL_ERROR;
   }
-  
+
   /* Get tick */
-  tickstart = HAL_GetTick();   
-  
+  tickstart = HAL_GetTick();
+
   /* Wait the acknowledge */
   while (HAL_IS_BIT_CLR(hcan->Instance->MSR, CAN_MSR_SLAK) ||
          HAL_IS_BIT_SET(hcan->Instance->MSR, CAN_MSR_INAK)   )
@@ -1142,13 +1142,13 @@ HAL_StatusTypeDef HAL_CAN_Sleep(CAN_HandleTypeDef* hcan)
       return HAL_TIMEOUT;
     }
   }
-  
+
   /* Change CAN state */
   hcan->State = HAL_CAN_STATE_READY;
-  
+
   /* Process unlocked */
   __HAL_UNLOCK(hcan);
-  
+
   /* Return function status */
   return HAL_OK;
 }
@@ -1163,19 +1163,19 @@ HAL_StatusTypeDef HAL_CAN_Sleep(CAN_HandleTypeDef* hcan)
 HAL_StatusTypeDef HAL_CAN_WakeUp(CAN_HandleTypeDef* hcan)
 {
   uint32_t tickstart = 0U;
-    
+
   /* Process locked */
   __HAL_LOCK(hcan);
-  
+
   /* Change CAN state */
-  hcan->State = HAL_CAN_STATE_BUSY;  
- 
+  hcan->State = HAL_CAN_STATE_BUSY;
+
   /* Wake up request */
   CLEAR_BIT(hcan->Instance->MCR, CAN_MCR_SLEEP);
-    
+
   /* Get tick */
-  tickstart = HAL_GetTick();   
-  
+  tickstart = HAL_GetTick();
+
   /* Sleep mode status */
   while(HAL_IS_BIT_SET(hcan->Instance->MSR, CAN_MSR_SLAK))
   {
@@ -1198,19 +1198,19 @@ HAL_StatusTypeDef HAL_CAN_WakeUp(CAN_HandleTypeDef* hcan)
     /* Return function status */
     return HAL_ERROR;
   }
-  
+
   /* Change CAN state */
-  hcan->State = HAL_CAN_STATE_READY; 
-  
+  hcan->State = HAL_CAN_STATE_READY;
+
   /* Process unlocked */
   __HAL_UNLOCK(hcan);
-  
+
   /* Return function status */
   return HAL_OK;
 }
 
 /**
-  * @brief  Handles CAN interrupt request  
+  * @brief  Handles CAN interrupt request
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
   *         the configuration information for the specified CAN.
   * @retval None
@@ -1268,7 +1268,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
                                    CAN_FLAG_TXOK0 | CAN_FLAG_TXOK1 | CAN_FLAG_TXOK2);
     }
   }
-  
+
   /* Check End of reception flag for FIFO0 */
   if((__HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FMP0)) &&
      (__HAL_CAN_MSG_PENDING(hcan, CAN_FIFO0) != 0U))
@@ -1276,7 +1276,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
     /* Call receive function */
     CAN_Receive_IT(hcan, CAN_FIFO0);
   }
-  
+
   /* Check End of reception flag for FIFO1 */
   if((__HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_FMP1)) &&
      (__HAL_CAN_MSG_PENDING(hcan, CAN_FIFO1) != 0U))
@@ -1284,7 +1284,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
     /* Call receive function */
     CAN_Receive_IT(hcan, CAN_FIFO1);
   }
-  
+
   /* Set error code in handle */
   hcan->ErrorCode |= errorcode;
 
@@ -1297,7 +1297,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
     hcan->ErrorCode |= HAL_CAN_ERROR_EWG;
     /* No need for clear of Error Warning Flag as read-only */
   }
-  
+
   /* Check Error Passive Flag */
   if((__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_EPV))    &&
      (__HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_EPV)) &&
@@ -1305,9 +1305,9 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
   {
     /* Set CAN error code to EPV error */
     hcan->ErrorCode |= HAL_CAN_ERROR_EPV;
-    /* No need for clear of Error Passive Flag as read-only */ 
+    /* No need for clear of Error Passive Flag as read-only */
   }
-  
+
   /* Check Bus-Off Flag */
   if((__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_BOF))    &&
      (__HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_BOF)) &&
@@ -1317,7 +1317,7 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
     hcan->ErrorCode |= HAL_CAN_ERROR_BOF;
     /* No need for clear of Bus-Off Flag as read-only */
   }
-  
+
   /* Check Last error code Flag */
   if((!HAL_IS_BIT_CLR(hcan->Instance->ESR, CAN_ESR_LEC)) &&
      (__HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_LEC))         &&
@@ -1353,14 +1353,14 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
           break;
     }
 
-    /* Clear Last error code Flag */ 
+    /* Clear Last error code Flag */
     CLEAR_BIT(hcan->Instance->ESR, CAN_ESR_LEC);
   }
 
   /* Call the Error call Back in case of Errors */
   if(hcan->ErrorCode != HAL_CAN_ERROR_NONE)
   {
-    /* Clear ERRI Flag */ 
+    /* Clear ERRI Flag */
     SET_BIT(hcan->Instance->MSR, CAN_MSR_ERRI);
 
     /* Set the CAN state ready to be able to start again the process */
@@ -1390,11 +1390,11 @@ void HAL_CAN_IRQHandler(CAN_HandleTypeDef* hcan)
 
     /* Call Error callback function */
     HAL_CAN_ErrorCallback(hcan);
-  }  
+  }
 }
 
 /**
-  * @brief  Transmission  complete callback in non blocking mode 
+  * @brief  Transmission  complete callback in non blocking mode
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
   *         the configuration information for the specified CAN.
   * @retval None
@@ -1410,7 +1410,7 @@ __weak void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef* hcan)
 }
 
 /**
-  * @brief  Transmission  complete callback in non blocking mode 
+  * @brief  Transmission  complete callback in non blocking mode
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
   *         the configuration information for the specified CAN.
   * @retval None
@@ -1446,9 +1446,9 @@ __weak void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
   */
 
 /** @defgroup CAN_Exported_Functions_Group3 Peripheral State and Error functions
- *  @brief   CAN Peripheral State functions 
+ *  @brief   CAN Peripheral State functions
  *
-@verbatim   
+@verbatim
   ==============================================================================
             ##### Peripheral State and Error functions #####
   ==============================================================================
@@ -1456,7 +1456,7 @@ __weak void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
     This subsection provides functions allowing to :
       (+) Check the CAN state.
       (+) Check CAN Errors detected during interrupt process
-         
+
 @endverbatim
   * @{
   */
@@ -1491,9 +1491,9 @@ uint32_t HAL_CAN_GetError(CAN_HandleTypeDef *hcan)
 /**
   * @}
   */
-  
+
 /** @addtogroup CAN_Private_Functions CAN Private Functions
- *  @brief    CAN Frame message Rx/Tx functions 
+ *  @brief    CAN Frame message Rx/Tx functions
  *
  * @{
  */
@@ -1501,16 +1501,16 @@ uint32_t HAL_CAN_GetError(CAN_HandleTypeDef *hcan)
 /**
   * @brief  Initiates and transmits a CAN frame message.
   * @param  hcan pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
+  *         the configuration information for the specified CAN.
   * @retval HAL status
   */
 static HAL_StatusTypeDef CAN_Transmit_IT(CAN_HandleTypeDef* hcan)
 {
   /* Disable Transmit mailbox empty Interrupt */
   __HAL_CAN_DISABLE_IT(hcan, CAN_IT_TME);
-  
+
   if(hcan->State == HAL_CAN_STATE_BUSY_TX)
-  {   
+  {
     /* Disable interrupts: */
     /*  - Disable Error warning Interrupt */
     /*  - Disable Error passive Interrupt */
@@ -1541,17 +1541,17 @@ static HAL_StatusTypeDef CAN_Transmit_IT(CAN_HandleTypeDef* hcan)
       break;
   }
 
-  /* Transmission complete callback */ 
+  /* Transmission complete callback */
   HAL_CAN_TxCpltCallback(hcan);
-  
+
   return HAL_OK;
 }
 
 /**
   * @brief  Receives a correct CAN frame.
   * @param  hcan       Pointer to a CAN_HandleTypeDef structure that contains
-  *         the configuration information for the specified CAN.  
-  * @param  FIFONumber Specify the FIFO number    
+  *         the configuration information for the specified CAN.
+  * @param  FIFONumber Specify the FIFO number
   * @retval HAL status
   * @retval None
   */
@@ -1601,7 +1601,7 @@ static HAL_StatusTypeDef CAN_Receive_IT(CAN_HandleTypeDef* hcan, uint8_t FIFONum
   if (FIFONumber == CAN_FIFO0)
   {
     __HAL_CAN_FIFO_RELEASE(hcan, CAN_FIFO0);
-    
+
     /* Disable FIFO 0 overrun and message pending Interrupt */
     __HAL_CAN_DISABLE_IT(hcan, CAN_IT_FOV0 | CAN_IT_FMP0);
   }
@@ -1609,13 +1609,13 @@ static HAL_StatusTypeDef CAN_Receive_IT(CAN_HandleTypeDef* hcan, uint8_t FIFONum
   else /* FIFONumber == CAN_FIFO1 */
   {
     __HAL_CAN_FIFO_RELEASE(hcan, CAN_FIFO1);
-    
+
     /* Disable FIFO 1 overrun and message pending Interrupt */
     __HAL_CAN_DISABLE_IT(hcan, CAN_IT_FOV1 | CAN_IT_FMP1);
   }
-  
+
   if((hcan->State == HAL_CAN_STATE_BUSY_RX0) || (hcan->State == HAL_CAN_STATE_BUSY_RX1))
-  {   
+  {
     /* Disable interrupts: */
     /*  - Disable Error warning Interrupt */
     /*  - Disable Error passive Interrupt */
@@ -1667,7 +1667,7 @@ static HAL_StatusTypeDef CAN_Receive_IT(CAN_HandleTypeDef* hcan, uint8_t FIFONum
     }
   }
 
-  /* Receive complete callback */ 
+  /* Receive complete callback */
   HAL_CAN_RxCpltCallback(hcan);
 
   /* Return function status */

@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    stm32f7xx_hal.h
   * @author  MCD Application Team
-  * @brief   This file contains all the functions prototypes for the HAL 
+  * @brief   This file contains all the functions prototypes for the HAL
   *          module driver.
   ******************************************************************************
   * @attention
@@ -16,7 +16,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F7xx_HAL_H
@@ -35,7 +35,7 @@
 
 /** @addtogroup HAL
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -70,13 +70,13 @@ typedef enum
 /**
   * @}
   */
-   
+
 /* Exported macro ------------------------------------------------------------*/
 /** @defgroup HAL_Exported_Macros HAL Exported Macros
   * @{
   */
-  
-/** @brief  Freeze/Unfreeze Peripherals in Debug mode 
+
+/** @brief  Freeze/Unfreeze Peripherals in Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_TIM2()           (DBGMCU->APB1FZ |= (DBGMCU_APB1_FZ_DBG_TIM2_STOP))
 #define __HAL_DBGMCU_FREEZE_TIM3()           (DBGMCU->APB1FZ |= (DBGMCU_APB1_FZ_DBG_TIM3_STOP))
@@ -132,7 +132,7 @@ typedef enum
 /** @brief  FMC (NOR/RAM) mapped at 0x60000000 and SDRAM mapped at 0xC0000000
   */
 #define __HAL_SYSCFG_REMAPMEMORY_FMC()          (SYSCFG->MEMRMP &= ~(SYSCFG_MEMRMP_SWP_FMC))
-                                       
+
 
 /** @brief  FMC/SDRAM  mapped at 0x60000000 (NOR/RAM) mapped at 0xC0000000
   */
@@ -165,7 +165,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 /** @defgroup HAL_Private_Macros HAL Private Macros
   * @{
   */
@@ -191,7 +191,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority);
 /**
   * @}
   */
- 
+
  /* Exported variables ---------------------------------------------------------*/
 /** @addtogroup HAL_Exported_Variables
   * @{
@@ -202,10 +202,10 @@ extern HAL_TickFreqTypeDef uwTickFreq;
 /**
   * @}
   */
- 
+
 /** @addtogroup HAL_Exported_Functions_Group2
   * @{
-  */ 
+  */
 /* Peripheral Control functions  ************************************************/
 void HAL_IncTick(void);
 void HAL_Delay(uint32_t Delay);
@@ -241,7 +241,7 @@ void HAL_DisableMemorySwappingBank(void);
 
 /**
   * @}
-  */  
+  */
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /** @defgroup HAL_Private_Variables HAL Private Variables
@@ -261,12 +261,12 @@ void HAL_DisableMemorySwappingBank(void);
 /* Private functions ---------------------------------------------------------*/
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
-  
+  */
+
 #ifdef __cplusplus
 }
 #endif

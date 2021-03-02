@@ -59,6 +59,6 @@
 #define ALD_EBI
 #endif
 
-#define TICK_INT_PRIORITY	3
+#define TICK_INT_PRIORITY   3
 
 #endif

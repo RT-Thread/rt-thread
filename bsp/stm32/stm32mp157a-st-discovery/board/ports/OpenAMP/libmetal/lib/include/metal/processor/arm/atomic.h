@@ -5,7 +5,7 @@
  */
 
 /*
- * @file	arm/atomic.h
+ * @file    arm/atomic.h
  * @brief   ARM specific atomic primitives for libmetal.
  */
 

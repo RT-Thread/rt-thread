@@ -52,7 +52,7 @@ enum _spinlock_timeouts
 {
     //! Timeout value meaning do not block at all if the spinlock isn't free.
     kSpinlockNoWait = 0,
-    
+
     //! Timeout value to use to wait indefinitely for the spinlock to become available.
     kSpinlockWaitForever = 0xffffffff
 };

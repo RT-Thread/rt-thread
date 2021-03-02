@@ -1,44 +1,44 @@
-/* ----------------------------------------------------------------------     
-* Copyright (C) 2011 ARM Limited. All rights reserved.  
-*     
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*     
-* Project:      CMSIS DSP Library  
-* Title:		arm_sqrt_q31.c     
-*     
-* Description:	Q31 square root function.    
-*     
+/* ----------------------------------------------------------------------
+* Copyright (C) 2011 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:    V1.1.0
+*
+* Project:      CMSIS DSP Library
+* Title:        arm_sqrt_q31.c
+*
+* Description:  Q31 square root function.
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-* 
-* Version 1.0.0 2011/03/08 
-*     Alpha release. 
-* 
-* Version 1.0.1 2011/09/30 
-*     Beta release.  
-*     
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.0 2011/03/08
+*     Alpha release.
+*
+* Version 1.0.1 2011/09/30
+*     Beta release.
+*
 * -------------------------------------------------------------------- */
 #include "arm_math.h"
 #include "arm_common_tables.h"
 
-/**     
- * @ingroup groupFastMath     
+/**
+ * @ingroup groupFastMath
  */
 
-/**     
- * @addtogroup SQRT     
- * @{     
+/**
+ * @addtogroup SQRT
+ * @{
  */
 
-/**    
- * @brief Q31 square root function.    
- * @param[in]   in    input value.  The range of the input value is [0 +1) or 0x00000000 to 0x7FFFFFFF.    
- * @param[out]  *pOut square root of input value.    
- * @return The function returns ARM_MATH_SUCCESS if input value is positive value or ARM_MATH_ARGUMENT_ERROR if    
- * <code>in</code> is negative value and returns zero output for negative values.    
+/**
+ * @brief Q31 square root function.
+ * @param[in]   in    input value.  The range of the input value is [0 +1) or 0x00000000 to 0x7FFFFFFF.
+ * @param[out]  *pOut square root of input value.
+ * @return The function returns ARM_MATH_SUCCESS if input value is positive value or ARM_MATH_ARGUMENT_ERROR if
+ * <code>in</code> is negative value and returns zero output for negative values.
  */
 
 arm_status arm_sqrt_q31(
@@ -75,7 +75,7 @@ arm_status arm_sqrt_q31(
     /*Store as integer */
     bits_val1 = *(int *) &temp_float1;
     /* Subtract the shifted value from the magic number to give intial guess */
-    bits_val1 = 0x5f3759df - (bits_val1 >> 1);  // gives initial guess  
+    bits_val1 = 0x5f3759df - (bits_val1 >> 1);  // gives initial guess
     /* Store as float */
     temp_float1 = *(float *) &bits_val1;
     /* Convert to integer format */
@@ -124,6 +124,6 @@ arm_status arm_sqrt_q31(
   }
 }
 
-/**     
- * @} end of SQRT group     
+/**
+ * @} end of SQRT group
  */

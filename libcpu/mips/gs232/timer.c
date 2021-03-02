@@ -20,14 +20,14 @@
  */
 void rt_hw_timer_handler(void)
 {
-	unsigned int count;
+    unsigned int count;
 
-	count = read_c0_compare();
-	write_c0_compare(count);
-	write_c0_count(0);
+    count = read_c0_compare();
+    write_c0_compare(count);
+    write_c0_count(0);
 
-	/* increase a OS tick */
-	rt_tick_increase();
+    /* increase a OS tick */
+    rt_tick_increase();
 }
 
 /**
@@ -35,7 +35,7 @@ void rt_hw_timer_handler(void)
  */
 void rt_hw_timer_init(void)
 {
-	write_c0_compare(CPU_HZ/2/RT_TICK_PER_SECOND);
-	write_c0_count(0);
-	mips_unmask_cpu_irq(7);
+    write_c0_compare(CPU_HZ/2/RT_TICK_PER_SECOND);
+    write_c0_count(0);
+    mips_unmask_cpu_irq(7);
 }

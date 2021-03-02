@@ -309,7 +309,7 @@ HAL_StatusTypeDef HAL_USART_Init(USART_HandleTypeDef *husart)
 
   /* Enable the Peripheral */
   __HAL_USART_ENABLE(husart);
-  
+
   /* TEACK and/or REACK to check before moving husart->State to Ready */
   return (USART_CheckIdleState(husart));
 }

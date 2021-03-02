@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_dac.h"
@@ -26,10 +26,10 @@
 * @{
 */
 
-/** @defgroup DAC 
+/** @defgroup DAC
 * @brief DAC driver modules
 * @{
-*/ 
+*/
 
 /** @defgroup DAC_Private_TypesDefinitions
 * @{
@@ -113,9 +113,9 @@ void DAC_DeInit(void)
 }
 
 /**
-* @brief  Initializes the DAC peripheral according to the specified 
+* @brief  Initializes the DAC peripheral according to the specified
 *   parameters in the DAC_InitStruct.
-* @param DAC_Channel: the selected DAC channel. 
+* @param DAC_Channel: the selected DAC channel.
 *   This parameter can be one of the following values:
 * @arg DAC_Channel_1: DAC Channel1 selected
 * @arg DAC_Channel_2: DAC Channel2 selected
@@ -141,8 +141,8 @@ void DAC_Init(uint32_t DAC_Channel, DAC_InitTypeDef* DAC_InitStruct)
     mask/amplitude for wave genration */
     /* Set TSELx and TENx bits according to DAC_Trigger value */
     /* Set WAVEx bits according to DAC_WaveGeneration value */
-    /* Set MAMPx bits according to DAC_LFSRUnmask_TriangleAmplitude value */ 
-    /* Set BOFFx bit according to DAC_OutputBuffer value */   
+    /* Set MAMPx bits according to DAC_LFSRUnmask_TriangleAmplitude value */
+    /* Set BOFFx bit according to DAC_OutputBuffer value */
     tmpreg2 = (DAC_InitStruct->DAC_Trigger | DAC_InitStruct->DAC_WaveGeneration |
                DAC_InitStruct->DAC_LFSRUnmask_TriangleAmplitude | DAC_InitStruct->DAC_OutputBuffer);
     /* Calculate CR register value depending on DAC_Channel */
@@ -172,11 +172,11 @@ void DAC_StructInit(DAC_InitTypeDef* DAC_InitStruct)
 
 /**
 * @brief  Enables or disables the specified DAC channel.
-* @param DAC_Channel: the selected DAC channel. 
+* @param DAC_Channel: the selected DAC channel.
 *   This parameter can be one of the following values:
 * @arg DAC_Channel_1: DAC Channel1 selected
 * @arg DAC_Channel_2: DAC Channel2 selected
-* @param NewState: new state of the DAC channel. 
+* @param NewState: new state of the DAC channel.
 *   This parameter can be: ENABLE or DISABLE.
 * @retval : None
 */
@@ -199,7 +199,7 @@ void DAC_Cmd(uint32_t DAC_Channel, FunctionalState NewState)
 
 /**
 * @brief  Enables or disables the specified DAC channel DMA request.
-* @param DAC_Channel: the selected DAC channel. 
+* @param DAC_Channel: the selected DAC channel.
 *   This parameter can be one of the following values:
 * @arg DAC_Channel_1: DAC Channel1 selected
 * @arg DAC_Channel_2: DAC Channel2 selected
@@ -226,7 +226,7 @@ void DAC_DMACmd(uint32_t DAC_Channel, FunctionalState NewState)
 
 /**
 * @brief  Enables or disables the selected DAC channel software trigger.
-* @param DAC_Channel: the selected DAC channel. 
+* @param DAC_Channel: the selected DAC channel.
 *   This parameter can be one of the following values:
 * @arg DAC_Channel_1: DAC Channel1 selected
 * @arg DAC_Channel_2: DAC Channel2 selected
@@ -276,7 +276,7 @@ void DAC_DualSoftwareTriggerCmd(FunctionalState NewState)
 
 /**
 * @brief  Enables or disables the selected DAC channel wave generation.
-* @param DAC_Channel: the selected DAC channel. 
+* @param DAC_Channel: the selected DAC channel.
 *   This parameter can be one of the following values:
 * @arg DAC_Channel_1: DAC Channel1 selected
 * @arg DAC_Channel_2: DAC Channel2 selected
@@ -292,7 +292,7 @@ void DAC_WaveGenerationCmd(uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalSt
 {
     /* Check the parameters */
     assert_param(IS_DAC_CHANNEL(DAC_Channel));
-    assert_param(IS_DAC_WAVE(DAC_Wave)); 
+    assert_param(IS_DAC_WAVE(DAC_Wave));
     assert_param(IS_FUNCTIONAL_STATE(NewState));
     if (NewState != DISABLE)
     {
@@ -313,7 +313,7 @@ void DAC_WaveGenerationCmd(uint32_t DAC_Channel, uint32_t DAC_Wave, FunctionalSt
 * @arg DAC_Align_8b_R: 8bit right data alignement selected
 * @arg DAC_Align_12b_L: 12bit left data alignement selected
 * @arg DAC_Align_12b_R: 12bit right data alignement selected
-* @param Data : Data to be loaded in the selected data holding 
+* @param Data : Data to be loaded in the selected data holding
 *   register.
 * @retval : None
 */
@@ -333,7 +333,7 @@ void DAC_SetChannel1Data(uint32_t DAC_Align, uint16_t Data)
 * @arg DAC_Align_8b_R: 8bit right data alignement selected
 * @arg DAC_Align_12b_L: 12bit left data alignement selected
 * @arg DAC_Align_12b_R: 12bit right data alignement selected
-* @param Data : Data to be loaded in the selected data holding 
+* @param Data : Data to be loaded in the selected data holding
 *   register.
 * @retval : None
 */
@@ -354,9 +354,9 @@ void DAC_SetChannel2Data(uint32_t DAC_Align, uint16_t Data)
 * @arg DAC_Align_8b_R: 8bit right data alignement selected
 * @arg DAC_Align_12b_L: 12bit left data alignement selected
 * @arg DAC_Align_12b_R: 12bit right data alignement selected
-* @param Data2: Data for DAC Channel2 to be loaded in the selected data 
+* @param Data2: Data for DAC Channel2 to be loaded in the selected data
 *   holding register.
-* @param Data1: Data for DAC Channel1 to be loaded in the selected data 
+* @param Data1: Data for DAC Channel1 to be loaded in the selected data
 *   holding register.
 * @retval : None
 */
@@ -367,11 +367,11 @@ void DAC_SetDualChannelData(uint32_t DAC_Align, uint16_t Data2, uint16_t Data1)
     assert_param(IS_DAC_ALIGN(DAC_Align));
     assert_param(IS_DAC_DATA(Data1));
     assert_param(IS_DAC_DATA(Data2));
-    
+
     /* Calculate and set dual DAC data holding register value */
     if (DAC_Align == DAC_Align_8b_R)
     {
-        data = ((uint32_t)Data2 << 8) | Data1; 
+        data = ((uint32_t)Data2 << 8) | Data1;
     }
     else
     {
@@ -383,7 +383,7 @@ void DAC_SetDualChannelData(uint32_t DAC_Align, uint16_t Data2, uint16_t Data1)
 
 /**
 * @brief  Returns the last data output value of the selected DAC cahnnel.
-* @param DAC_Channel: the selected DAC channel. 
+* @param DAC_Channel: the selected DAC channel.
 *   This parameter can be one of the following values:
 * @arg DAC_Channel_1: DAC Channel1 selected
 * @arg DAC_Channel_2: DAC Channel2 selected

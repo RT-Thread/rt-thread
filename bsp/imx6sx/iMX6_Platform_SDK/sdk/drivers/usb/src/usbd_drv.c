@@ -88,12 +88,12 @@ uint32_t usbd_device_init(usb_module_t * port, usbdEndpointPair_t * endpointList
     while (HW_USBC_USBCMD_RD(core) & (BM_USBC_UH1_USBCMD_RST)) ;
 
     //! - Set controller to device Mode
-    HW_USBC_USBMODE_WR(core, USB_USBMODE_CM_DEVICE); 
+    HW_USBC_USBMODE_WR(core, USB_USBMODE_CM_DEVICE);
 
     //! - Set initial configuration for controller
-    HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) & (~(BF_USBC_UH1_USBCMD_ITC(0xFF))));	//Set interrupt threshold control = 0
+    HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) & (~(BF_USBC_UH1_USBCMD_ITC(0xFF))));   //Set interrupt threshold control = 0
 
-    HW_USBC_USBMODE_WR(core,  HW_USBC_USBMODE_RD(core) | BM_USBC_UH1_USBMODE_SLOM);	// Setup Lockouts Off
+    HW_USBC_USBMODE_WR(core,  HW_USBC_USBMODE_RD(core) | BM_USBC_UH1_USBMODE_SLOM); // Setup Lockouts Off
 
     //! Setup the endpoint list
     // Check if endpoint list is aligned on a 4K boundary
@@ -147,8 +147,8 @@ uint32_t usbd_device_init(usb_module_t * port, usbdEndpointPair_t * endpointList
 /*!
  * USB device response to a USB bus reset.
  *
- * @param port		USB controller to use
- * @return			returns the operating speed of the port
+ * @param port      USB controller to use
+ * @return          returns the operating speed of the port
  */
 usbPortSpeed_t usbd_bus_reset(usb_module_t * port)
 {
@@ -180,9 +180,9 @@ usbPortSpeed_t usbd_bus_reset(usb_module_t * port)
  * USB device function to return the data from a setup packet.
  * NOTE: We assume only endpoint 0 is a control endpoint
  *
- * @param	endpointList	pointer to the device endpoint list address
- * @param	port			pointer to controller info structure
- * @param	setupPacket		Setup data of the setup packet
+ * @param   endpointList    pointer to the device endpoint list address
+ * @param   port            pointer to controller info structure
+ * @param   setupPacket     Setup data of the setup packet
  */
 void usbd_get_setup_packet(usb_module_t * port, usbdEndpointPair_t * endpointList,
                            usbdSetupPacket_t * setupPacket)
@@ -201,7 +201,7 @@ void usbd_get_setup_packet(usb_module_t * port, usbdEndpointPair_t * endpointLis
      * and when it is cleared, we repeat the copy to get the new setup data.
      */
     do {
-	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | BM_USBC_UH1_USBCMD_SUTW);
+    HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | BM_USBC_UH1_USBCMD_SUTW);
         memcpy(setupPacket, &enpointQueueHead->setupBuffer, sizeof(usbdSetupPacket_t)); //! - copy the setup data
     } while (!(HW_USBC_USBCMD_RD(core) & BM_USBC_UH1_USBCMD_SUTW));   //! - repeat if SUTW got cleared
 
@@ -223,10 +223,10 @@ void usbd_get_setup_packet(usb_module_t * port, usbdEndpointPair_t * endpointLis
 /*! NOTE: this function uses the default control endpoint (0).\n
  *       The endpoint number is hard-coded.
  *
- * @param	port			Controller to use
- * @param	endpointList	pointer to the device endpoint list
- * @param	buffer			Data to be sent to host
- * @param	size			Amount of data to be transferred in bytes
+ * @param   port            Controller to use
+ * @param   endpointList    pointer to the device endpoint list
+ * @param   buffer          Data to be sent to host
+ * @param   size            Amount of data to be transferred in bytes
  */
 void usbd_device_send_control_packet(usb_module_t * port, usbdEndpointPair_t * endpointList,
                                      uint8_t * buffer, uint32_t size)
@@ -244,7 +244,7 @@ void usbd_device_send_control_packet(usb_module_t * port, usbdEndpointPair_t * e
     endpointList[0].in.nextDtd = (uint32_t) dtdIn;
 
     //! - Prime transmit endpoint (IN)
-    HW_USBC_ENDPTPRIME_WR(core, HW_USBC_ENDPTPRIME_RD(core) | (USB_ENDPTPRIME_PETB(1))); 
+    HW_USBC_ENDPTPRIME_WR(core, HW_USBC_ENDPTPRIME_RD(core) | (USB_ENDPTPRIME_PETB(1)));
 
     /*!
      * Initialize a transfer descriptor for receive.\n
@@ -260,7 +260,7 @@ void usbd_device_send_control_packet(usb_module_t * port, usbdEndpointPair_t * e
     endpointList[0].out.nextDtd = (uint32_t) dtdOut;
 
     //! - Prime prime receive endpoint (OUT)
-    HW_USBC_ENDPTPRIME_WR(core, HW_USBC_ENDPTPRIME_RD(core) | (USB_ENDPTPRIME_PERB(1))); 
+    HW_USBC_ENDPTPRIME_WR(core, HW_USBC_ENDPTPRIME_RD(core) | (USB_ENDPTPRIME_PERB(1)));
 
     /*!
      * Wait for OUT to complete and clear interrupt flag\n
@@ -275,7 +275,7 @@ void usbd_device_send_control_packet(usb_module_t * port, usbdEndpointPair_t * e
     //! - Check endpoint's complete flags and clear
     // This is normally used in the ISR to determine if and which endpoint generated an interrupt
     if(HW_USBC_ENDPTCOMPLETE_RD(core) & USB_ENDPTCOMPLETE_ETCE0){
-	HW_USBC_ENDPTCOMPLETE_WR(core, HW_USBC_ENDPTCOMPLETE_RD(core) | USB_ENDPTCOMPLETE_ETCE0);
+    HW_USBC_ENDPTCOMPLETE_WR(core, HW_USBC_ENDPTCOMPLETE_RD(core) | USB_ENDPTCOMPLETE_ETCE0);
     } else {
         while (1) ;             // Not our endpoint. Do something else
     }
@@ -316,7 +316,7 @@ void usbd_device_send_zero_len_packet(usb_module_t * port, usbdEndpointPair_t * 
     endpointList[0].in.nextDtd = (uint32_t) usbDtd;
 
     //! - Prime Tx buffer for control endpoint
-    HW_USBC_ENDPTPRIME_WR(core, HW_USBC_ENDPTPRIME_RD(core) | USB_ENDPTPRIME_PETB(1 << endpointNumber)); 
+    HW_USBC_ENDPTPRIME_WR(core, HW_USBC_ENDPTPRIME_RD(core) | USB_ENDPTPRIME_PETB(1 << endpointNumber));
 
     //! - Wait for prime to complete
     while (HW_USBC_ENDPTPRIME_RD(core) & USB_ENDPTPRIME_PETB(1 << endpointNumber)) ;
@@ -338,9 +338,9 @@ void usbd_device_send_zero_len_packet(usb_module_t * port, usbdEndpointPair_t * 
  * allocated when the endpoint list was created, so this function does not
  * call malloc.
  *
- * @param endpointList		location of the endpoint list
+ * @param endpointList      location of the endpoint list
  * @param usbdEndpoint    Pointer to the endpoint characteristics
- * @param nextDtd		pointer to the first transfer descriptor for the queue head
+ * @param nextDtd       pointer to the first transfer descriptor for the queue head
  */
 void usbd_endpoint_qh_init(usbdEndpointPair_t * endpointList, usbdEndpointInfo_t * usbdEndpoint,
                            uint32_t nextDtd)
@@ -382,12 +382,12 @@ void usbd_endpoint_qh_init(usbdEndpointPair_t * endpointList, usbdEndpointInfo_t
  * initializes the dTD. This function assumes the dTD is the last in the list so
  * the next dTD pointer is marked as invalid.
  *
- * 	@param transferSize			number of bytes to be transferred
- *	@param interruptOnComplete	interrupt on complete flag
- *	@param multOverride			Override the queue head multiplier setting (0 for default)
- *	@param bufferPointer		pointer to the data buffer
+ *  @param transferSize         number of bytes to be transferred
+ *  @param interruptOnComplete  interrupt on complete flag
+ *  @param multOverride         Override the queue head multiplier setting (0 for default)
+ *  @param bufferPointer        pointer to the data buffer
  *
- *	@return 					pointer to the transfer descriptor
+ *  @return                     pointer to the transfer descriptor
  *
  */
 usbdEndpointDtd_t *usbd_dtd_init(uint32_t transferSize, uint32_t interruptOnComplete,
@@ -441,10 +441,10 @@ usbdEndpointDtd_t *usbd_dtd_init(uint32_t transferSize, uint32_t interruptOnComp
 /*! This function places a new transfer on the linked list of transfer descriptors.\n
  * If the list was empty, the new transfer descriptor is placed on the queue head.
  *
- * 	@param port					Pointer to controller info structure.
- * 	@param usbdEndpoint			Endpoint
- *	@param endpointList			Pointer to the endpoint list
- *	@param new_dtd				pointer to the descriptor to add
+ *  @param port                 Pointer to controller info structure.
+ *  @param usbdEndpoint         Endpoint
+ *  @param endpointList         Pointer to the endpoint list
+ *  @param new_dtd              pointer to the descriptor to add
  *
  */
 void usbd_add_dtd(usb_module_t * port, usbdEndpointPair_t * endpointList,
@@ -460,18 +460,18 @@ void usbd_add_dtd(usb_module_t * port, usbdEndpointPair_t * endpointList,
      *  - Case 1: Link list is empty\n
      *      -# Write dQH next pointer AND dQH terminate bit to 0 as a single DWord operation.
      *      -# Clear active & halt bit in dQH (in case set from a previous error).
-     *      -# Prime endpoint by writing â€˜1â€™ to correct bit position in ENDPTPRIME.\n
+     *      -# Prime endpoint by writing ¡®1¡¯ to correct bit position in ENDPTPRIME.\n
      *  - Case 2: Link list is not empty
      *      -# Add dTD to end of linked list.
-     *      -# Read correct prime bit in ENDPTPRIME â€“ if â€˜1â€™ DONE.
-     *      -# Set ATDTW bit in USBCMD register to â€˜1â€™.
+     *      -# Read correct prime bit in ENDPTPRIME ¨C if ¡®1¡¯ DONE.
+     *      -# Set ATDTW bit in USBCMD register to ¡®1¡¯.
      *      -# Read correct status bit in ENDPTSTAT. (store in tmp. variable for later)
      *      -# Read ATDTW bit in USBCMD register.\n
-     *          If â€˜0â€™ goto c.\n
-     *          If â€˜1â€™ continue to f.\n
-     *      -# Write ATDTW bit in USBCMD register to â€˜0â€™.
-     *      -# If status bit read in (d) is â€˜1â€™ DONE.
-     *      -# If status bit read in (d) is â€˜0â€™ then Goto Case 1: Step 1.
+     *          If ¡®0¡¯ goto c.\n
+     *          If ¡®1¡¯ continue to f.\n
+     *      -# Write ATDTW bit in USBCMD register to ¡®0¡¯.
+     *      -# If status bit read in (d) is ¡®1¡¯ DONE.
+     *      -# If status bit read in (d) is ¡®0¡¯ then Goto Case 1: Step 1.
      */
 
     //! Implementation:
@@ -509,11 +509,11 @@ void usbd_add_dtd(usb_module_t * port, usbdEndpointPair_t * endpointList,
         if (!(HW_USBC_ENDPTPRIME_RD(core) & bitmask)) {
             do {                //! - loop until ATDTW bit remains set
                 //! - set ATDTW bit
-		HW_USBC_USBCMD_WR(core,HW_USBC_USBCMD_RD(core) | BM_USBC_UH1_USBCMD_ATDTW);
+        HW_USBC_USBCMD_WR(core,HW_USBC_USBCMD_RD(core) | BM_USBC_UH1_USBCMD_ATDTW);
                 //! - Read ENDPTSTAT bit
-		endpointStat = HW_USBC_ENDPTSTAT_RD(core) | bitmask;
-	    } while((HW_USBC_USBCMD_RD(core) & BM_USBC_UH1_USBCMD_ATDTW) == 0);
-	    HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) & (~BM_USBC_UH1_USBCMD_ATDTW)); 	//! clear ATDTW bit
+        endpointStat = HW_USBC_ENDPTSTAT_RD(core) | bitmask;
+        } while((HW_USBC_USBCMD_RD(core) & BM_USBC_UH1_USBCMD_ATDTW) == 0);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) & (~BM_USBC_UH1_USBCMD_ATDTW));     //! clear ATDTW bit
         } else {
             endpointStat = 0x8000;  // set endpointStat to non-zero to skip the "case 1" action
         }
@@ -533,12 +533,12 @@ void usbd_add_dtd(usb_module_t * port, usbdEndpointPair_t * endpointList,
  * at the Head pointer and up to the currently active descriptor.\n
  * It removes retired descriptors from the list and returns memory used by the descriptor to the heap.
  *
- * 	@param port					Pointer to controller info structure.
- * 	@param usbdEndpoint			Endpoint
- *	@param endpointList			Pointer to the endpoint list
- *	@param head					pointer to the head of the list
+ *  @param port                 Pointer to controller info structure.
+ *  @param usbdEndpoint         Endpoint
+ *  @param endpointList         Pointer to the endpoint list
+ *  @param head                 pointer to the head of the list
  *
- *	@return						Pointer to the new list head.
+ *  @return                     Pointer to the new list head.
  *
  */
 usbdEndpointDtd_t *usbd_reclaim_dtd(usb_module_t * port, usbdEndpointPair_t * endpointList,

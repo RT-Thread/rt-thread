@@ -70,7 +70,7 @@ typedef struct _ARM_FLASH_SECTOR {
 typedef struct _ARM_FLASH_INFO {
   ARM_FLASH_SECTOR *sector_info;        ///< Sector layout information (NULL=Uniform sectors)
   uint32_t          sector_count;       ///< Number of sectors
-  uint32_t          sector_size;        ///< Uniform sector size in bytes (0=sector_info used) 
+  uint32_t          sector_size;        ///< Uniform sector size in bytes (0=sector_info used)
   uint32_t          page_size;          ///< Optimal programming page size in bytes
   uint32_t          program_unit;       ///< Smallest programmable unit in bytes
   uint8_t           erased_value;       ///< Contents of erased memory (usually 0xFF)

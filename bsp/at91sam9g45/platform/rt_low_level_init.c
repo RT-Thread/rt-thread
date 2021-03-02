@@ -21,9 +21,9 @@
  * Date           Author       Notes
  * 2015-04-14     ArdaFu      first version
  */
- 
+
 /* write register a=address, v=value */
-#define write_reg(a,v)	    (*(volatile unsigned int *)(a) = (v))
+#define write_reg(a,v)      (*(volatile unsigned int *)(a) = (v))
 /* Processor Reset */
 #define AT91C_RSTC_PROCRST   (1 << 0)
 #define AT91C_RSTC_PERRST    (1 << 2)

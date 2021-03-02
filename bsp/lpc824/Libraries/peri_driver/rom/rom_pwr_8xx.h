@@ -77,8 +77,8 @@ extern "C" {
  * @brief LPC8XX Power ROM API structure
  */
 typedef struct PWRD_API {
-	void (*set_pll)(uint32_t cmd[], uint32_t resp[]);	/*!< Set PLL function */
-	void (*set_power)(uint32_t cmd[], uint32_t resp[]);	/*!< Set power function */
+    void (*set_pll)(uint32_t cmd[], uint32_t resp[]);   /*!< Set PLL function */
+    void (*set_power)(uint32_t cmd[], uint32_t resp[]); /*!< Set power function */
 } PWRD_API_T;
 
 /**

@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -97,13 +97,13 @@ typedef struct {
 /**
  * @ingroup    pwrseq_registers
  * @defgroup   PWRSEQ_Register_Offsets Register Offsets
- * @brief      PWRSEQ Peripheral Register Offsets from the PWRSEQ Base Peripheral Address. 
+ * @brief      PWRSEQ Peripheral Register Offsets from the PWRSEQ Base Peripheral Address.
  * @{
  */
- #define MXC_R_PWRSEQ_LP_CTRL               ((uint32_t)0x00000000UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_PWRSEQ_LP_WAKEFL             ((uint32_t)0x00000004UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0004</tt> */ 
- #define MXC_R_PWRSEQ_LPWK_EN               ((uint32_t)0x00000008UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0008</tt> */ 
- #define MXC_R_PWRSEQ_LPMEMSD               ((uint32_t)0x00000040UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0040</tt> */ 
+ #define MXC_R_PWRSEQ_LP_CTRL               ((uint32_t)0x00000000UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_PWRSEQ_LP_WAKEFL             ((uint32_t)0x00000004UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0004</tt> */
+ #define MXC_R_PWRSEQ_LPWK_EN               ((uint32_t)0x00000008UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0008</tt> */
+ #define MXC_R_PWRSEQ_LPMEMSD               ((uint32_t)0x00000040UL) /**< Offset from PWRSEQ Base Address: <tt> 0x0040</tt> */
 /**@} end of group pwrseq_registers */
 
 /**

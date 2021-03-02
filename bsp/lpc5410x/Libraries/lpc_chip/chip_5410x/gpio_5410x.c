@@ -50,59 +50,59 @@
 /* GPIO initilisation function */
 void Chip_GPIO_Init(LPC_GPIO_T *pGPIO)
 {
-	Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_GPIO0);
-	Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_GPIO1);
-	Chip_SYSCON_PeriphReset(RESET_GPIO0);
-	Chip_SYSCON_PeriphReset(RESET_GPIO1);
+    Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_GPIO0);
+    Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_GPIO1);
+    Chip_SYSCON_PeriphReset(RESET_GPIO0);
+    Chip_SYSCON_PeriphReset(RESET_GPIO1);
 }
 
 /* GPIO deinitialisation function */
 void Chip_GPIO_DeInit(LPC_GPIO_T *pGPIO)
 {
-	Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_GPIO0);
-	Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_GPIO1);
+    Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_GPIO0);
+    Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_GPIO1);
 }
 
 /* Set GPIO direction for a single GPIO pin */
 void Chip_GPIO_WriteDirBit(LPC_GPIO_T *pGPIO, uint32_t port, uint8_t pin, bool setting)
 {
-	if (setting) {
-		pGPIO->DIR[port] |= 1UL << pin;
-	}
-	else {
-		pGPIO->DIR[port] &= ~(1UL << pin);
-	}
+    if (setting) {
+        pGPIO->DIR[port] |= 1UL << pin;
+    }
+    else {
+        pGPIO->DIR[port] &= ~(1UL << pin);
+    }
 }
 
 /* Set GPIO direction for a single GPIO pin */
 void Chip_GPIO_SetPinDIR(LPC_GPIO_T *pGPIO, uint8_t port, uint8_t pin, bool output)
 {
-	if (output) {
-		Chip_GPIO_SetPinDIROutput(pGPIO, port, pin);
-	}
-	else {
-		Chip_GPIO_SetPinDIRInput(pGPIO, port, pin);
-	}
+    if (output) {
+        Chip_GPIO_SetPinDIROutput(pGPIO, port, pin);
+    }
+    else {
+        Chip_GPIO_SetPinDIRInput(pGPIO, port, pin);
+    }
 }
 
 /* Set Direction for a GPIO port */
 void Chip_GPIO_SetDir(LPC_GPIO_T *pGPIO, uint8_t portNum, uint32_t bitValue, uint8_t out)
 {
-	if (out) {
-		pGPIO->DIR[portNum] |= bitValue;
-	}
-	else {
-		pGPIO->DIR[portNum] &= ~bitValue;
-	}
+    if (out) {
+        pGPIO->DIR[portNum] |= bitValue;
+    }
+    else {
+        pGPIO->DIR[portNum] &= ~bitValue;
+    }
 }
 
 /* Set GPIO direction for a all selected GPIO pins to an input or output */
 void Chip_GPIO_SetPortDIR(LPC_GPIO_T *pGPIO, uint8_t port, uint32_t pinMask, bool outSet)
 {
-	if (outSet) {
-		Chip_GPIO_SetPortDIROutput(pGPIO, port, pinMask);
-	}
-	else {
-		Chip_GPIO_SetPortDIRInput(pGPIO, port, pinMask);
-	}
+    if (outSet) {
+        Chip_GPIO_SetPortDIROutput(pGPIO, port, pinMask);
+    }
+    else {
+        Chip_GPIO_SetPortDIRInput(pGPIO, port, pinMask);
+    }
 }

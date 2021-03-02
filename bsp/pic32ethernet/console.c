@@ -23,8 +23,8 @@
 
 void rt_hw_console_init(void)
 {
-	//Initialize the DB_UTILS IO channel
-//	DBINIT();
+    //Initialize the DB_UTILS IO channel
+//  DBINIT();
 }
 
 /**

@@ -2,7 +2,7 @@
 *   @brief DCC Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -36,17 +36,17 @@
 */
 typedef volatile struct dccBase
 {
-    uint32 GCTRL;      	/**< 0x0000: DCC Control Register		*/
-    uint32 REV;      		/**< 0x0004: DCC Revision Id Register 	*/
-    uint32 CNT0SEED;    	/**< 0x0008: DCC Counter0 Seed Register	*/
-    uint32 VALID0SEED;    /**< 0x000C: DCC Valid0 Seed Register 	*/
-    uint32 CNT1SEED;		/**< 0x0010: DCC Counter1 Seed Register 	*/
-    uint32 STAT; 			/**< 0x0014: DCC Status Register 		*/
-    uint32 CNT0;    		/**< 0x0018: DCC Counter0 Value Register 	*/
-    uint32 VALID0;    	/**< 0x001C: DCC Valid0 Value Register 	*/
-    uint32 CNT1;      	/**< 0x0020: DCC Counter1 Value Register	*/
-    uint32 CLKSRC1;   	/**< 0x0024: DCC Counter1 Clock Source Selection Register 	*/
-    uint32 CLKSRC0;   	/**< 0x0028: DCC Counter0 Clock Source Selection Register 	*/
+    uint32 GCTRL;       /**< 0x0000: DCC Control Register       */
+    uint32 REV;             /**< 0x0004: DCC Revision Id Register   */
+    uint32 CNT0SEED;        /**< 0x0008: DCC Counter0 Seed Register */
+    uint32 VALID0SEED;    /**< 0x000C: DCC Valid0 Seed Register     */
+    uint32 CNT1SEED;        /**< 0x0010: DCC Counter1 Seed Register     */
+    uint32 STAT;            /**< 0x0014: DCC Status Register        */
+    uint32 CNT0;            /**< 0x0018: DCC Counter0 Value Register    */
+    uint32 VALID0;      /**< 0x001C: DCC Valid0 Value Register  */
+    uint32 CNT1;        /**< 0x0020: DCC Counter1 Value Register    */
+    uint32 CLKSRC1;     /**< 0x0024: DCC Counter1 Clock Source Selection Register   */
+    uint32 CLKSRC0;     /**< 0x0028: DCC Counter0 Clock Source Selection Register   */
 } dccBASE_t;
 
 

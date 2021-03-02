@@ -23,22 +23,22 @@
 #include <driverlib/sysctl.h>
 
 /* Status of Disk Functions */
-typedef rt_uint8_t	DSTATUS;
+typedef rt_uint8_t  DSTATUS;
 
 /* Results of Disk Functions */
 typedef enum {
-	RES_OK = 0,		/* 0: Successful */
-	RES_ERROR,		/* 1: R/W Error */
-	RES_WRPRT,		/* 2: Write Protected */
-	RES_NOTRDY,		/* 3: Not Ready */
-	RES_PARERR		/* 4: Invalid Parameter */
+    RES_OK = 0,     /* 0: Successful */
+    RES_ERROR,      /* 1: R/W Error */
+    RES_WRPRT,      /* 2: Write Protected */
+    RES_NOTRDY,     /* 3: Not Ready */
+    RES_PARERR      /* 4: Invalid Parameter */
 } DRESULT;
 
 /* Disk Status Bits (DSTATUS) */
 
-#define STA_NOINIT		0x01	/* Drive not initialized */
-#define STA_NODISK		0x02	/* No medium in the drive */
-#define STA_PROTECT		0x04	/* Write protected */
+#define STA_NOINIT      0x01    /* Drive not initialized */
+#define STA_NODISK      0x02    /* No medium in the drive */
+#define STA_PROTECT     0x04    /* Write protected */
 
 /* Definitions for MMC/SDC command */
 #define CMD0    (0x40+0)    /* GO_IDLE_STATE */
@@ -60,23 +60,23 @@ typedef enum {
 /* Command code for disk_ioctrl() */
 
 /* Generic command */
-#define CTRL_SYNC			0	/* Mandatory for write functions */
-#define GET_SECTOR_COUNT	1	/* Mandatory for only f_mkfs() */
-#define GET_SECTOR_SIZE		2	/* Mandatory for multiple sector size cfg */
-#define GET_BLOCK_SIZE		3	/* Mandatory for only f_mkfs() */
-#define CTRL_POWER			4
-#define CTRL_LOCK			5
-#define CTRL_EJECT			6
+#define CTRL_SYNC           0   /* Mandatory for write functions */
+#define GET_SECTOR_COUNT    1   /* Mandatory for only f_mkfs() */
+#define GET_SECTOR_SIZE     2   /* Mandatory for multiple sector size cfg */
+#define GET_BLOCK_SIZE      3   /* Mandatory for only f_mkfs() */
+#define CTRL_POWER          4
+#define CTRL_LOCK           5
+#define CTRL_EJECT          6
 /* MMC/SDC command */
-#define MMC_GET_TYPE		10
-#define MMC_GET_CSD			11
-#define MMC_GET_CID			12
-#define MMC_GET_OCR			13
-#define MMC_GET_SDSTAT		14
+#define MMC_GET_TYPE        10
+#define MMC_GET_CSD         11
+#define MMC_GET_CID         12
+#define MMC_GET_OCR         13
+#define MMC_GET_SDSTAT      14
 /* ATA/CF command */
-#define ATA_GET_REV			20
-#define ATA_GET_MODEL		21
-#define ATA_GET_SN			22
+#define ATA_GET_REV         20
+#define ATA_GET_MODEL       21
+#define ATA_GET_SN          22
 
 /* Peripheral definitions for EK-LM3S6965 board */
 // SSI port
@@ -677,105 +677,105 @@ struct dfs_partition part;
 /* RT-Thread Device Driver Interface */
 static rt_err_t rt_sdcard_init(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_open(rt_device_t dev, rt_uint16_t oflag)
 {
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_close(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	DRESULT status;
+    DRESULT status;
 
-	status = sdcard_read(0, buffer, part.offset + pos, size);
-	if (status != RES_OK)
-	{
-		rt_kprintf("sd card read failed\n");
-		return 0;
-	}
+    status = sdcard_read(0, buffer, part.offset + pos, size);
+    if (status != RES_OK)
+    {
+        rt_kprintf("sd card read failed\n");
+        return 0;
+    }
 
-	return size;
+    return size;
 }
 
 static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-	DRESULT status;
+    DRESULT status;
 
-	status = sdcard_write(0, buffer, part.offset + pos, size);
-	if (status != RES_OK)
-	{
-		rt_kprintf("sd card write failed\n");
-		return 0;
-	}
+    status = sdcard_write(0, buffer, part.offset + pos, size);
+    if (status != RES_OK)
+    {
+        rt_kprintf("sd card write failed\n");
+        return 0;
+    }
 
-	return size;
+    return size;
 }
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 void rt_hw_sdcard_init(void)
 {
-	if (sdcard_initialize(0) == RES_OK)
-	{
-		DRESULT status;
-		rt_uint8_t *sector;
+    if (sdcard_initialize(0) == RES_OK)
+    {
+        DRESULT status;
+        rt_uint8_t *sector;
 
-		/* get the first sector to read partition table */
-		sector = (rt_uint8_t*) rt_malloc (512);
-		if (sector == RT_NULL) 
-		{
-			rt_kprintf("allocate partition sector buffer failed\n");
-			return;
-		}
-		status = sdcard_read(0, sector, 0, 1);
-		if (status == RES_OK)
-		{
-			/* get the first partition */
-			if (dfs_filesystem_get_partition(&part, sector, 0) != 0)
-			{
-			    /* there is no partition */
-			    part.offset = 0;
-			    part.size   = 0;
-			}
-		}
-		else
-		{
-			/* there is no partition table */
-			part.offset = 0;
-			part.size   = 0;
-		}
-		
-		/* release sector buffer */
-		rt_free(sector);
-		
-		/* register sdcard device */
-		sdcard_device.type  = RT_Device_Class_Block;
-		sdcard_device.init 	= rt_sdcard_init;
-		sdcard_device.open 	= rt_sdcard_open;
-		sdcard_device.close = rt_sdcard_close;
-		sdcard_device.read 	= rt_sdcard_read;
-		sdcard_device.write = rt_sdcard_write;
-		sdcard_device.control = rt_sdcard_control;
-		
-		/* no private */
-		sdcard_device.user_data = RT_NULL;
-		
-		rt_device_register(&sdcard_device, "sd0", 
-			RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
-		
-		return;
-	}
-	rt_kprintf("sdcard init failed\n");
+        /* get the first sector to read partition table */
+        sector = (rt_uint8_t*) rt_malloc (512);
+        if (sector == RT_NULL)
+        {
+            rt_kprintf("allocate partition sector buffer failed\n");
+            return;
+        }
+        status = sdcard_read(0, sector, 0, 1);
+        if (status == RES_OK)
+        {
+            /* get the first partition */
+            if (dfs_filesystem_get_partition(&part, sector, 0) != 0)
+            {
+                /* there is no partition */
+                part.offset = 0;
+                part.size   = 0;
+            }
+        }
+        else
+        {
+            /* there is no partition table */
+            part.offset = 0;
+            part.size   = 0;
+        }
+
+        /* release sector buffer */
+        rt_free(sector);
+
+        /* register sdcard device */
+        sdcard_device.type  = RT_Device_Class_Block;
+        sdcard_device.init  = rt_sdcard_init;
+        sdcard_device.open  = rt_sdcard_open;
+        sdcard_device.close = rt_sdcard_close;
+        sdcard_device.read  = rt_sdcard_read;
+        sdcard_device.write = rt_sdcard_write;
+        sdcard_device.control = rt_sdcard_control;
+
+        /* no private */
+        sdcard_device.user_data = RT_NULL;
+
+        rt_device_register(&sdcard_device, "sd0",
+            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
+
+        return;
+    }
+    rt_kprintf("sdcard init failed\n");
 }
 

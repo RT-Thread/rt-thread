@@ -33,8 +33,8 @@
 #include "io.h"
 #include <assert.h>
 
-#define MX6UL_PAD_UART1_TX_DATA__UART1_TX1	(IOMUXC_BASE_ADDR+0x084)
-#define MX6UL_PAD_UART1_RX_DATA__UART1_RX1	(IOMUXC_BASE_ADDR+0x088)
+#define MX6UL_PAD_UART1_TX_DATA__UART1_TX1  (IOMUXC_BASE_ADDR+0x084)
+#define MX6UL_PAD_UART1_RX_DATA__UART1_RX1  (IOMUXC_BASE_ADDR+0x088)
 #define IOMUXC_UART1_UART_RXD_MUX_SELECT_INPUT1 (IOMUXC_BASE_ADDR+0x624)
 
 void uart1_iomux_config(void)
@@ -97,11 +97,11 @@ void uart_iomux_config(int instance)
             return uart5_iomux_config();
 
         case HW_UART7:
-            return uart5_iomux_config();       
+            return uart5_iomux_config();
 
         case HW_UART8:
-            return uart5_iomux_config(); 
-                             
+            return uart5_iomux_config();
+
         default:
             assert(false);
     }

@@ -75,21 +75,21 @@ void rtthread_startup(void)
      *rt_hw_cpu_dcache_enable();
      */
 
-	/* init hardware interrupt */
-	rt_hw_interrupt_init();
+    /* init hardware interrupt */
+    rt_hw_interrupt_init();
 
-	/* init board */
-	rt_hw_board_init();
+    /* init board */
+    rt_hw_board_init();
 
-	rt_show_version();
+    rt_show_version();
 
-	/* init timer system */
-	rt_system_timer_init();
+    /* init timer system */
+    rt_system_timer_init();
 
-	/* init memory system */
+    /* init memory system */
 #ifdef RT_USING_HEAP
 #ifdef __CC_ARM
-	rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)MEMEND);
+    rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)MEMEND);
 #elif defined(__GNUC__)
     rt_system_heap_init((void*)&__bss_end, (void*)MEMEND);
 #elif defined(__TI_COMPILER_VERSION__)
@@ -99,40 +99,40 @@ void rtthread_startup(void)
 #endif
 #endif
 
-	/* init scheduler system */
-	rt_system_scheduler_init();
+    /* init scheduler system */
+    rt_system_scheduler_init();
 
-	/* init application */
-	rt_application_init();
+    /* init application */
+    rt_application_init();
 
 #ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
-	finsh_set_device("sci2");
+    /* init finsh */
+    finsh_system_init();
+    finsh_set_device("sci2");
 #endif
 
-	/* init soft timer thread */
-	rt_system_timer_thread_init();
+    /* init soft timer thread */
+    rt_system_timer_thread_init();
 
-	/* init idle thread */
-	rt_thread_idle_init();
+    /* init idle thread */
+    rt_thread_idle_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
-	return ;
+    /* never reach here */
+    return ;
 }
 
 int main(void)
 {
-	/* disable interrupt first */
-	rt_hw_interrupt_disable();
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
 
-	/* invoke rtthread_startup */
-	rtthread_startup();
+    /* invoke rtthread_startup */
+    rtthread_startup();
 
-	return 0;
+    return 0;
 }
 
 /*@}*/

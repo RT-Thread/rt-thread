@@ -69,45 +69,45 @@ typedef void * hugemem_ptr_t;
 
 static inline uint8_t hugemem_read8(const hugemem_ptr_t from)
 {
-	return *(uint8_t *)from;
+    return *(uint8_t *)from;
 }
 
 static inline uint16_t hugemem_read16(const hugemem_ptr_t from)
 {
-	return *(uint16_t *)from;
+    return *(uint16_t *)from;
 }
 
 static inline uint32_t hugemem_read32(const hugemem_ptr_t from)
 {
-	return *(uint32_t *)from;
+    return *(uint32_t *)from;
 }
 
 static inline void hugemem_read_block(void *to, const hugemem_ptr_t from,
-		size_t size)
+        size_t size)
 {
-	memcpy(to, from, size);
+    memcpy(to, from, size);
 }
 
 static inline void hugemem_write8(hugemem_ptr_t to, uint8_t val)
 {
-	*(uint8_t *)to = val;
+    *(uint8_t *)to = val;
 }
 
 static inline void hugemem_write16(hugemem_ptr_t to, uint16_t val)
 {
-	*(uint16_t *)to = val;
+    *(uint16_t *)to = val;
 }
 
 
 static inline void hugemem_write32(hugemem_ptr_t to, uint32_t val)
 {
-	*(uint32_t *)to = val;
+    *(uint32_t *)to = val;
 }
 
 static inline void hugemem_write_block(hugemem_ptr_t to, const void *from,
-		size_t size)
+        size_t size)
 {
-	memcpy(to, from, size);
+    memcpy(to, from, size);
 }
 
 //@}

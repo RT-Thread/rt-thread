@@ -133,8 +133,8 @@ REG[31]  : Load cmd
 #define SDXC_UPDATE_CLOCK_CMD    BIT(21)
 #define SDXC_LOAD_CMD            BIT(31)
 
-/* 
-    SD status reg 
+/*
+    SD status reg
 REG[0]   : FIFO_RX_LEVEL
 REG[1]   : FIFO_TX_LEVEL
 REG[2]   : FIFO_EMPTY
@@ -143,7 +143,7 @@ REG[4-7] : FSM_STA
 REG[8]   : CARD_PRESENT
 REG[9]   : CARD_BUSY
 REG[10]  : FSM_BUSY
-REG[11-16]: RESP_IDX 
+REG[11-16]: RESP_IDX
 REG[17-21]: FIFO_LEVEL
 REG[31]   : DMA_REQ
 */

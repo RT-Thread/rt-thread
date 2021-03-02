@@ -49,7 +49,7 @@ extern "C" {
     }
 #endif /* UART2_CONFIG */
 #endif /* BSP_USING_UART2 */
-    
+
 #if defined(BSP_UART2_RX_USING_DMA)
 #ifndef UART2_DMA_RX_CONFIG
 #define UART2_DMA_RX_CONFIG                                            \

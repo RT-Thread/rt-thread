@@ -2,7 +2,7 @@
 *   @brief SCI Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -55,21 +55,21 @@ enum sciPinSelect
     PIN_SCI_RX = 1U
 };
 
-/** 
+/**
  *  @defgroup SCI SCI
  *  @brief Serial Communication Interface Module.
- *  
+ *
  *  The SCI module is a universal asynchronous receiver-transmitter that implements the standard nonreturn
  *  to zero format. The SCI can be used to communicate, for example, through an RS-232 port or over a K-line.
  *
- *	Related Files
+ *  Related Files
  *   - reg_sci.h
  *   - sci.h
  *   - sci.c
  *  @addtogroup SCI
  *  @{
  */
- 
+
 /* SCI Interface Functions */
 void sciInit(void);
 void sciSetFunctional(sciBASE_t *sci, uint32 port);
@@ -93,7 +93,7 @@ void sciDisableLoopback(sciBASE_t *sci);
 *   @param[in] flags - copy of error interrupt flags
 *
 * This is a callback that is provided by the application and is called upon
-* an interrupt.  The parameter passed to the callback is a copy of the 
+* an interrupt.  The parameter passed to the callback is a copy of the
 * interrupt flag register.
 */
 void sciNotification(sciBASE_t *sci, uint32 flags);

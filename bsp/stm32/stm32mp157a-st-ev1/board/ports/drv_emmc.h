@@ -76,7 +76,7 @@ struct stm32_sdio
     volatile rt_uint32_t idmalar;
     volatile rt_uint32_t idmabar;
     volatile rt_uint32_t reserved2[5];
-    volatile rt_uint32_t fifo;          
+    volatile rt_uint32_t fifo;
     volatile rt_uint32_t reserved3[220];
     volatile rt_uint32_t verr;
     volatile rt_uint32_t ipidr;

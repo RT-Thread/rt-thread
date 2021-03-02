@@ -48,7 +48,7 @@
 
 void epit_reload_counter(uint32_t instance, uint32_t load_val)
 {
-    // set the load register especially if RLD=reload_mode=SET_AND_FORGET=1 
+    // set the load register especially if RLD=reload_mode=SET_AND_FORGET=1
     HW_EPIT_LR_WR(instance, load_val);
 }
 
@@ -66,16 +66,16 @@ uint32_t epit_get_compare_event(uint32_t instance)
 {
     uint32_t status_register;
 
-    // get the status 
+    // get the status
     status_register = HW_EPIT_SR_RD(instance);
-    
-    // clear it if found set 
+
+    // clear it if found set
     if (status_register & BM_EPIT_SR_OCIF)
     {
         HW_EPIT_SR_SET(instance, BM_EPIT_SR_OCIF);
     }
 
-    // return the read value before the bit was cleared 
+    // return the read value before the bit was cleared
     return status_register & BM_EPIT_SR_OCIF;
 }
 
@@ -88,14 +88,14 @@ void epit_counter_disable(uint32_t instance)
      */
     HW_EPIT_LR_WR(instance, 0xFFFFFFFF);
 
-    // disable the counter 
+    // disable the counter
     HW_EPIT_CR_CLR(instance, BM_EPIT_CR_EN);
 
     // ensure to leave the counter in a proper state
     // by disabling the output compare interrupt
     HW_EPIT_CR_CLR(instance, BM_EPIT_CR_OCIEN);
-    
-    // and clearing possible remaining compare event 
+
+    // and clearing possible remaining compare event
     HW_EPIT_SR_SET(instance, BM_EPIT_SR_OCIF);
 }
 
@@ -112,18 +112,18 @@ void epit_counter_enable(uint32_t instance, uint32_t load_val, uint32_t irq_mode
     // by clearing possible remaining compare event
     HW_EPIT_SR_SET(instance, BM_EPIT_SR_OCIF);
 
-    // set the mode when the output compare event occur: IRQ or polling 
+    // set the mode when the output compare event occur: IRQ or polling
     if (irq_mode == IRQ_MODE)
     {
         HW_EPIT_CR_SET(instance, BM_EPIT_CR_OCIEN);
     }
     else
     {
-        // polling 
+        // polling
         HW_EPIT_CR_CLR(instance, BM_EPIT_CR_OCIEN);
     }
 
-    // finally, enable the counter 
+    // finally, enable the counter
     HW_EPIT_CR_SET(instance, BM_EPIT_CR_EN);
 }
 
@@ -132,16 +132,16 @@ void epit_setup_interrupt(uint32_t instance, void (*irq_subroutine)(void), bool 
     uint32_t irq_id = EPIT_IRQS(instance);
 
     if (enableIt)
-    {    
-        // register the IRQ sub-routine 
+    {
+        // register the IRQ sub-routine
         register_interrupt_routine(irq_id, irq_subroutine);
-        
-        // enable the IRQ 
+
+        // enable the IRQ
         enable_interrupt(irq_id, CPU_0, 0);
     }
     else
     {
-        // disable the IRQ 
+        // disable the IRQ
         disable_interrupt(irq_id, CPU_0);
     }
 }
@@ -152,28 +152,28 @@ void epit_init(uint32_t instance, uint32_t clock_src, uint32_t prescaler,
     uint32_t control_reg_tmp = 0;
     uint32_t base = REGS_EPIT_BASE(instance);
 
-    // enable the source clocks to the EPIT port 
+    // enable the source clocks to the EPIT port
     clock_gating_config(base, CLOCK_ON);
 
-    // start with a known state by disabling and reseting the module 
+    // start with a known state by disabling and reseting the module
     HW_EPIT_CR_WR(instance, BM_EPIT_CR_SWR);
-    
-    // wait for the reset to complete 
+
+    // wait for the reset to complete
     while ((HW_EPIT_CR(instance).B.SWR) != 0) ;
 
-    // set the reference source clock for the counter 
+    // set the reference source clock for the counter
     control_reg_tmp |= BF_EPIT_CR_CLKSRC(clock_src);
 
-    // set the counter clock prescaler value - 0 to 4095 
+    // set the counter clock prescaler value - 0 to 4095
     control_reg_tmp |= BF_EPIT_CR_PRESCALAR(prescaler-1);
 
-    // set the reload mode 
+    // set the reload mode
     if (reload_mode == SET_AND_FORGET)
     {
         control_reg_tmp |= BM_EPIT_CR_RLD;
     }
 
-    // set behavior for low power mode 
+    // set behavior for low power mode
     if (low_power_mode & WAIT_MODE_EN)
     {
         control_reg_tmp |= BM_EPIT_CR_WAITEN;
@@ -187,10 +187,10 @@ void epit_init(uint32_t instance, uint32_t clock_src, uint32_t prescaler,
     // EPITLR register if RLD=reload_mode=1 or 0xFFFFFFFF if RLD=reload_mode=0
     control_reg_tmp |= BM_EPIT_CR_IOVW | BM_EPIT_CR_ENMOD;
 
-    // finally write the control register 
+    // finally write the control register
     HW_EPIT_CR_WR(instance, control_reg_tmp);
 
-    // initialize the load register especially if RLD=reload_mode=SET_AND_FORGET=1 
+    // initialize the load register especially if RLD=reload_mode=SET_AND_FORGET=1
     // and if the value is different from 0 which is the lowest counter value
     if (load_val != 0)
     {

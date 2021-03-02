@@ -276,7 +276,7 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
 
   /* MSI PLL OFF */
   LL_RCC_MSI_DisablePLLMode();
-  
+
   /* Set MSION bit */
   LL_RCC_MSI_Enable();
 
@@ -872,7 +872,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
   {
     const uint32_t temp_sysclksrc = __HAL_RCC_GET_SYSCLK_SOURCE();
     const uint32_t temp_pllconfig = RCC->PLLCFGR;
-    
+
     /* PLL On ? */
     if(RCC_OscInitStruct->PLL.PLLState == RCC_PLL_ON)
     {
@@ -883,7 +883,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
       assert_param(IS_RCC_PLLP_VALUE(RCC_OscInitStruct->PLL.PLLP));
       assert_param(IS_RCC_PLLQ_VALUE(RCC_OscInitStruct->PLL.PLLQ));
       assert_param(IS_RCC_PLLR_VALUE(RCC_OscInitStruct->PLL.PLLR));
-      
+
       /* Do nothing if PLL configuration is unchanged */
       if ((READ_BIT(temp_pllconfig, RCC_PLLCFGR_PLLSRC) != RCC_OscInitStruct->PLL.PLLSource) ||
           (READ_BIT(temp_pllconfig, RCC_PLLCFGR_PLLM) != RCC_OscInitStruct->PLL.PLLM) ||
@@ -908,10 +908,10 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
           {
             /* Disable the main PLL. */
             __HAL_RCC_PLL_DISABLE();
-            
+
             /* Get Start Tick*/
             tickstart = HAL_GetTick();
-            
+
             /* Wait till PLL is ready */
             while (READ_BIT(RCC->CR, RCC_CR_PLLRDY) != 0U)
             {
@@ -920,7 +920,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
                 return HAL_TIMEOUT;
               }
             }
-            
+
             /* Configure the main PLL clock source, multiplication and division factors. */
             __HAL_RCC_PLL_CONFIG(RCC_OscInitStruct->PLL.PLLSource,
                                  RCC_OscInitStruct->PLL.PLLM,
@@ -928,16 +928,16 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
                                  RCC_OscInitStruct->PLL.PLLP,
                                  RCC_OscInitStruct->PLL.PLLQ,
                                  RCC_OscInitStruct->PLL.PLLR);
-            
+
             /* Enable the main PLL. */
             __HAL_RCC_PLL_ENABLE();
-            
+
             /* Enable PLL System Clock output. */
             __HAL_RCC_PLLCLKOUT_ENABLE(RCC_PLL_SYSCLK);
-            
+
             /* Get Start Tick*/
             tickstart = HAL_GetTick();
-            
+
             /* Wait till PLL is ready */
             while (READ_BIT(RCC->CR, RCC_CR_PLLRDY) == 0U)
             {
@@ -987,7 +987,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
       {
         /* Disable the main PLL. */
         __HAL_RCC_PLL_DISABLE();
-        
+
 
         /* Disable all PLL outputs to save power */
         MODIFY_REG(RCC->PLLCFGR, RCC_PLLCFGR_PLLSRC, PLLSOURCE_NONE);
@@ -1000,7 +1000,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 
         /* Get Start Tick*/
         tickstart = HAL_GetTick();
-        
+
         /* Wait till PLL is disabled */
         while (READ_BIT(RCC->CR, RCC_CR_PLLRDY) != 0U)
         {

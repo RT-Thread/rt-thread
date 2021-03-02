@@ -11,8 +11,8 @@
 #include <stdint.h>
 #include "board.h"
 
-/************************************* 
- *  IVT Data 
+/*************************************
+ *  IVT Data
  *************************************/
 typedef struct _ivt_ {
     /** @ref hdr with tag #HAB_TAG_IVT, length and HAB version fields
@@ -50,7 +50,7 @@ typedef struct _ivt_ {
   ((((major) & IVT_MAJOR_VERSION_MASK) << IVT_MAJOR_VERSION_SHIFT) |  \
   (((minor) & IVT_MINOR_VERSION_MASK) << IVT_MINOR_VERSION_SHIFT))
 
-/* IVT header */  
+/* IVT header */
 #define IVT_TAG_HEADER        0xD1       /**< Image Vector Table */
 #define IVT_SIZE              0x2000
 #define IVT_PAR               IVT_VERSION(IVT_MAJOR_VERSION, IVT_MINOR_VERSION)
@@ -60,8 +60,8 @@ typedef struct _ivt_ {
 #if defined(__CC_ARM)
     extern uint32_t __Vectors[];
     extern uint32_t Image$$RW_m_config_text$$Base[];
-#define IMAGE_ENTRY_ADDRESS ((uint32_t)__Vectors) 
-#define FLASH_BASE ((uint32_t)Image$$RW_m_config_text$$Base)   
+#define IMAGE_ENTRY_ADDRESS ((uint32_t)__Vectors)
+#define FLASH_BASE ((uint32_t)Image$$RW_m_config_text$$Base)
 #elif defined(__MCUXPRESSO)
     extern uint32_t __Vectors[];
     extern uint32_t __boot_hdr_start__[];
@@ -70,13 +70,13 @@ typedef struct _ivt_ {
 #elif defined(__ICCARM__)
     extern uint32_t __VECTOR_TABLE[];
     extern uint32_t m_boot_hdr_conf_start[];
-#define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)    
-#define FLASH_BASE ((uint32_t)m_boot_hdr_conf_start)   
+#define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)
+#define FLASH_BASE ((uint32_t)m_boot_hdr_conf_start)
 #elif defined(__GNUC__)
     extern uint32_t __VECTOR_TABLE[];
     extern uint32_t __FLASH_BASE[];
-#define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)     
-#define FLASH_BASE ((uint32_t)__FLASH_BASE)   
+#define IMAGE_ENTRY_ADDRESS ((uint32_t)__VECTOR_TABLE)
+#define FLASH_BASE ((uint32_t)__FLASH_BASE)
 #endif
 
 #define DCD_ADDRESS           dcd_data
@@ -84,14 +84,14 @@ typedef struct _ivt_ {
 #define CSF_ADDRESS           0
 #define IVT_RSVD             (uint32_t)(0x00000000)
 
-/************************************* 
- *  Boot Data 
+/*************************************
+ *  Boot Data
  *************************************/
 typedef struct _boot_data_ {
   uint32_t start;           /* boot start location */
   uint32_t size;            /* size */
   uint32_t plugin;          /* plugin flag - 1 if downloaded application is plugin */
-  uint32_t placeholder;		/* placehoder to make even 0x10 size */
+  uint32_t placeholder;     /* placehoder to make even 0x10 size */
 }BOOT_DATA_T;
 
 #define FLASH_SIZE            BOARD_FLASH_SIZE

@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -44,7 +44,7 @@
 /** @addtogroup EMC
  * @{
  */
- 
+
 /** @defgroup EMC_Public_Functions
  * @{
  */
@@ -165,7 +165,7 @@ EMC_FUNC_CODE DynMem_Init(EMC_DYN_MEM_Config_Type* pConfig)
     LPC_SC->EMCDLYCTL |= (0x08 <<16);
 
     ret |= EMC_ConfigEndianMode(EMC_Config_Little_Endian_Mode);
-    
+
          /* Dynamic memory setting */
     ret |= EMC_DynCtrlSelfRefresh(EMC_DYNAMIC_CTRL_SR_NORMALMODE);
     ret |= EMC_DynCtrlPowerDownMode(EMC_DYNAMIC_CTRL_DP_NORMAL);
@@ -242,7 +242,7 @@ EMC_FUNC_CODE StaticMem_Init(EMC_STATIC_MEM_Config_Type* pConfig)
     }
 
      ret |= EMC_StaMemConfigMW(pConfig->CSn,pConfig->DataWidth);
-    
+
     if(pConfig->PageMode)
          ret |= EMC_StaMemConfigPM(pConfig->CSn,EMC_CFG_PM_ASYNC_ENABLE);
     else
@@ -519,51 +519,51 @@ EMC_FUNC_CODE EMC_SetDynMemoryParameter(EMC_DYN_MEM_PAR par, uint32_t val)
         case EMC_DYN_MEM_REFRESH_TIMER:
             LPC_EMC->DynamicRefresh = EMC_DynamicRefresh_REFRESH(val);
             break;
-        
+
         case EMC_DYN_MEM_READ_CONFIG:
             LPC_EMC->DynamicReadConfig = EMC_DynamicReadConfig_RD(val);
             break;
-        
+
         case EMC_DYN_MEM_TRP:
             LPC_EMC->DynamicRP = EMC_DynamictRP_tRP(val);
             break;
-        
+
         case EMC_DYN_MEM_TRAS:
             LPC_EMC->DynamicRAS = EMC_DynamictRP_tRAS(val);
             break;
-        
+
         case EMC_DYN_MEM_TSREX:
             LPC_EMC->DynamicSREX = EMC_DynamictRP_tSREX(val);
             break;
-        
+
         case EMC_DYN_MEM_TAPR:
             LPC_EMC->DynamicAPR = EMC_DynamictAPR_tAPR(val);
             break;
-        
+
         case EMC_DYN_MEM_TDAL:
             LPC_EMC->DynamicDAL =EMC_DynamictDAL_tDAL(val);
             break;
-        
+
         case EMC_DYN_MEM_TWR:
             LPC_EMC->DynamicWR = EMC_DynamictWR_tWR(val);
             break;
-        
+
         case EMC_DYN_MEM_TRC:
             LPC_EMC->DynamicRC = EMC_DynamictRC_tRC(val);
             break;
-        
+
         case EMC_DYN_MEM_TRFC:
             LPC_EMC->DynamicRFC = EMC_DynamictRFC_tRFC(val);
             break;
-        
+
         case EMC_DYN_MEM_TXSR:
             LPC_EMC->DynamicXSR = EMC_DynamictXSR_tXSR(val);
             break;
-        
+
         case EMC_DYN_MEM_TRRD:
             LPC_EMC->DynamicRRD = EMC_DynamictRRD_tRRD(val);
             break;
-        
+
         case EMC_DYN_MEM_TMRD:
             LPC_EMC->DynamicMRD = EMC_DynamictMRD_tMRD(val);
             break;
@@ -595,17 +595,17 @@ EMC_FUNC_CODE EMC_DynMemConfigMD(uint32_t index , uint32_t mem_dev)
             LPC_EMC->DynamicConfig0  &= ~EMC_DYNAMIC_CFG_MEMDEV_BMASK;
             LPC_EMC->DynamicConfig0 |=  mem_dev & EMC_DYNAMIC_CFG_MEMDEV_BMASK;
             break;
-        
+
         case 1:
             LPC_EMC->DynamicConfig1  &= ~EMC_DYNAMIC_CFG_MEMDEV_BMASK;
             LPC_EMC->DynamicConfig1 |= mem_dev & EMC_DYNAMIC_CFG_MEMDEV_BMASK;
             break;
-        
+
         case 2:
             LPC_EMC->DynamicConfig2  &= ~EMC_DYNAMIC_CFG_MEMDEV_BMASK;
             LPC_EMC->DynamicConfig2 |= mem_dev & EMC_DYNAMIC_CFG_MEMDEV_BMASK;
             break;
-        
+
         case 3:
             LPC_EMC->DynamicConfig3  &= ~EMC_DYNAMIC_CFG_MEMDEV_BMASK;
             LPC_EMC->DynamicConfig3 |=  mem_dev & EMC_DYNAMIC_CFG_MEMDEV_BMASK;
@@ -625,7 +625,7 @@ EMC_FUNC_CODE EMC_DynMemConfigMD(uint32_t index , uint32_t mem_dev)
  *
  * @return         EMC_FUNC_OK
  **********************************************************************/
-EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index , 
+EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
                                                                        uint8_t addr_bus_width, uint8_t addr_map,
                                                                        uint8_t data_bus_width,
                                                                        uint16_t chip_size)
@@ -662,7 +662,7 @@ EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
           else  if(data_bus_width == 16)
                add_mapped_p1 = 1;
           else
-         return EMC_FUNC_INVALID_PARAM;     
+         return EMC_FUNC_INVALID_PARAM;
      }
      else
      {
@@ -679,7 +679,7 @@ EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
                     }
                     if( (8<<j) > data_bus_max_size)
                          return EMC_FUNC_INVALID_PARAM;
-            
+
                     add_mapped_p1 = (i<<2) + j;
                     break;
                 }
@@ -689,7 +689,7 @@ EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
                 }
            }
        }
-      
+
     switch ( index)
     {
         case 0:
@@ -700,7 +700,7 @@ EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
             LPC_EMC->DynamicConfig0 &= ~EMC_DYNAMIC_CFG_ADD_MAP_P3_MASK;
             LPC_EMC->DynamicConfig0 |=  EMC_DYNAMIC_CFG_ADD_MAP_P3(add_mapped_p3);
             break;
-        
+
         case 1:
             LPC_EMC->DynamicConfig1 &= ~EMC_DYNAMIC_CFG_ADD_MAP_P1_MASK;
             LPC_EMC->DynamicConfig1 |=  EMC_DYNAMIC_CFG_ADD_MAP_P1(add_mapped_p1);
@@ -710,7 +710,7 @@ EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
             LPC_EMC->DynamicConfig1 |=  EMC_DYNAMIC_CFG_ADD_MAP_P3(add_mapped_p3);
 
             break;
-        
+
         case 2:
             LPC_EMC->DynamicConfig2 &= ~EMC_DYNAMIC_CFG_ADD_MAP_P1_MASK;
             LPC_EMC->DynamicConfig2 |=  EMC_DYNAMIC_CFG_ADD_MAP_P1(add_mapped_p1);
@@ -720,7 +720,7 @@ EMC_FUNC_CODE EMC_DynMemConfigAM(uint32_t index ,
             LPC_EMC->DynamicConfig2 |=  EMC_DYNAMIC_CFG_ADD_MAP_P3(add_mapped_p3);
 
             break;
-        
+
         case 3:
             LPC_EMC->DynamicConfig3 &= ~EMC_DYNAMIC_CFG_ADD_MAP_P1_MASK;
             LPC_EMC->DynamicConfig3 |=  EMC_DYNAMIC_CFG_ADD_MAP_P1(add_mapped_p1);
@@ -757,7 +757,7 @@ EMC_FUNC_CODE EMC_DynMemConfigB(uint32_t index , uint32_t buff_control)
             LPC_EMC->DynamicConfig0 &= ~EMC_DYNAMIC_CFG_BUFFENABLE_BMASK;
             LPC_EMC->DynamicConfig0 |=  buff_control & EMC_DYNAMIC_CFG_BUFFENABLE_BMASK;
             break;
-        
+
         case 1:
             LPC_EMC->DynamicConfig1 &= ~EMC_DYNAMIC_CFG_BUFFENABLE_BMASK;
             LPC_EMC->DynamicConfig1 |= buff_control& EMC_DYNAMIC_CFG_BUFFENABLE_BMASK;
@@ -801,17 +801,17 @@ EMC_FUNC_CODE EMC_DynMemConfigP(uint32_t index , uint32_t permission)
             LPC_EMC->DynamicConfig0 &= ~ EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             LPC_EMC->DynamicConfig0 |= permission&EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             break;
-        
+
         case 1:
             LPC_EMC->DynamicConfig1 &= ~ EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             LPC_EMC->DynamicConfig1 |= permission&EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             break;
-        
+
         case 2:
             LPC_EMC->DynamicConfig2 &= ~ EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             LPC_EMC->DynamicConfig2 |= permission&EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             break;
-        
+
         case 3:
             LPC_EMC->DynamicConfig3 &= ~ EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
             LPC_EMC->DynamicConfig3 |= permission&EMC_DYNAMIC_CFG_WRPROTECT_BMASK;
@@ -840,19 +840,19 @@ EMC_FUNC_CODE EMC_DynMemRAS(uint32_t index , uint32_t ras_val)
             LPC_EMC->DynamicRasCas0 |=( ras_val << EMC_DYNAMIC_RASCAS_RASCFG_POS)
                                                 &EMC_DYNAMIC_RASCAS_RASCFG_BMASK;
             break;
-        
+
         case 1:
             LPC_EMC->DynamicRasCas1 &= ~EMC_DYNAMIC_RASCAS_RASCFG_BMASK;
             LPC_EMC->DynamicRasCas1 |= ( ras_val << EMC_DYNAMIC_RASCAS_RASCFG_POS)
                                             &EMC_DYNAMIC_RASCAS_RASCFG_BMASK;
             break;
-        
+
         case 2:
             LPC_EMC->DynamicRasCas2 &= ~EMC_DYNAMIC_RASCAS_RASCFG_BMASK;
             LPC_EMC->DynamicRasCas2 |= ( ras_val << EMC_DYNAMIC_RASCAS_RASCFG_POS)
                                             &EMC_DYNAMIC_RASCAS_RASCFG_BMASK;
             break;
-        
+
         case 3:
             LPC_EMC->DynamicRasCas3 &= ~EMC_DYNAMIC_RASCAS_RASCFG_BMASK;
             LPC_EMC->DynamicRasCas3 |= ( ras_val << EMC_DYNAMIC_RASCAS_RASCFG_POS)
@@ -875,7 +875,7 @@ EMC_FUNC_CODE EMC_DynMemRAS(uint32_t index , uint32_t ras_val)
  * @return         EMC_FUNC_OK/EMC_FUNC_INVALID_PARAM
  **********************************************************************/
 EMC_FUNC_CODE EMC_DynMemCAS(uint32_t index , uint32_t cas_val)
-{    
+{
     switch ( index)
     {
         case 0:
@@ -883,19 +883,19 @@ EMC_FUNC_CODE EMC_DynMemCAS(uint32_t index , uint32_t cas_val)
             LPC_EMC->DynamicRasCas0 |= (cas_val<<EMC_DYNAMIC_RASCAS_CASCFG_POS)
                                             &EMC_DYNAMIC_RASCAS_CASCFG_BMASK;
             break;
-        
+
         case 1:
             LPC_EMC->DynamicRasCas1 &= ~EMC_DYNAMIC_RASCAS_CASCFG_BMASK;
             LPC_EMC->DynamicRasCas1 |= (cas_val<<EMC_DYNAMIC_RASCAS_CASCFG_POS)
                                             &EMC_DYNAMIC_RASCAS_CASCFG_BMASK;
             break;
-        
+
         case 2:
             LPC_EMC->DynamicRasCas2 &= ~EMC_DYNAMIC_RASCAS_CASCFG_BMASK;
             LPC_EMC->DynamicRasCas2 |= (cas_val<<EMC_DYNAMIC_RASCAS_CASCFG_POS)
                                             &EMC_DYNAMIC_RASCAS_CASCFG_BMASK;
             break;
-        
+
         case 3:
             LPC_EMC->DynamicRasCas3 &= ~EMC_DYNAMIC_RASCAS_CASCFG_BMASK;
             LPC_EMC->DynamicRasCas3 |= (cas_val<<EMC_DYNAMIC_RASCAS_CASCFG_POS)
@@ -958,17 +958,17 @@ EMC_FUNC_CODE EMC_StaMemConfigMW(uint32_t index , uint32_t mem_width)
             LPC_EMC->StaticConfig0 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
             LPC_EMC->StaticConfig0 |= mem_width_flg;
             break;
-        
+
         case 1:
             LPC_EMC->StaticConfig1 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
             LPC_EMC->StaticConfig1 |= mem_width_flg;
             break;
-        
+
         case 2:
             LPC_EMC->StaticConfig2 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
             LPC_EMC->StaticConfig2 |= mem_width_flg;
             break;
-        
+
         case 3:
             LPC_EMC->StaticConfig3 &= ~ EMC_STATIC_CFG_MEMWIDTH_BMASK;
             LPC_EMC->StaticConfig3 |= mem_width_flg;
@@ -999,17 +999,17 @@ EMC_FUNC_CODE EMC_StaMemConfigPM(uint32_t index , uint32_t page_mode)
             LPC_EMC->StaticConfig0  &= ~EMC_STATIC_CFG_PAGEMODE_MASK;
             LPC_EMC->StaticConfig0 |= page_mode&EMC_STATIC_CFG_PAGEMODE_MASK;
             break;
-        
+
         case 1:
             LPC_EMC->StaticConfig1  &= ~EMC_STATIC_CFG_PAGEMODE_MASK;
             LPC_EMC->StaticConfig1  |= page_mode&EMC_STATIC_CFG_PAGEMODE_MASK;
             break;
-        
+
         case 2:
             LPC_EMC->StaticConfig2  &= ~EMC_STATIC_CFG_PAGEMODE_MASK;
             LPC_EMC->StaticConfig2  |= page_mode&EMC_STATIC_CFG_PAGEMODE_MASK;
             break;
-        
+
         case 3:
             LPC_EMC->StaticConfig3  &= ~EMC_STATIC_CFG_PAGEMODE_MASK;
             LPC_EMC->StaticConfig3  |= page_mode&EMC_STATIC_CFG_PAGEMODE_MASK;
@@ -1042,17 +1042,17 @@ EMC_FUNC_CODE EMC_StaMemConfigPC(uint32_t index , uint32_t pol_val)
             LPC_EMC->StaticConfig0 &= ~EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             LPC_EMC->StaticConfig0  |=  pol_val&EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             break;
-            
+
         case 1:
             LPC_EMC->StaticConfig1 &= ~EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             LPC_EMC->StaticConfig1  |=  pol_val&EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             break;
-            
+
         case 2:
             LPC_EMC->StaticConfig2 &= ~EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             LPC_EMC->StaticConfig2 |=  pol_val&EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             break;
-            
+
         case 3:
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_CHIPPOLARITY_MASK;
             LPC_EMC->StaticConfig3  |=  pol_val&EMC_STATIC_CFG_CHIPPOLARITY_MASK;
@@ -1071,10 +1071,10 @@ EMC_FUNC_CODE EMC_StaMemConfigPC(uint32_t index , uint32_t pol_val)
  *
  * @param[in]     pb_val  Byte lane state, should be:
  *
- *                 - EMC_CFG_BYTELAND_READ_BITSHIGH: For reads all bits 
+ *                 - EMC_CFG_BYTELAND_READ_BITSHIGH: For reads all bits
  *                in BLSn[3:0] are HIGH.
  *
- *                 - EMC_CFG_BYTELAND_READ_BITSLOW: For reads all bits 
+ *                 - EMC_CFG_BYTELAND_READ_BITSLOW: For reads all bits
  *                in BLSn[3:0] are LOW.
  *
  * @return         EMC_FUNC_OK/EMC_FUNC_INVALID_PARAM
@@ -1129,17 +1129,17 @@ EMC_FUNC_CODE EMC_StaMemConfigEW(uint32_t index , uint32_t ex_wait)
             LPC_EMC->StaticConfig0 &= ~EMC_STATIC_CFG_EXTWAIT_MASK;
             LPC_EMC->StaticConfig0 |=  ex_wait&EMC_STATIC_CFG_EXTWAIT_MASK;
             break;
-        
+
         case 1:
             LPC_EMC->StaticConfig1 &= ~EMC_STATIC_CFG_EXTWAIT_MASK;
             LPC_EMC->StaticConfig1 |=  ex_wait&EMC_STATIC_CFG_EXTWAIT_MASK;
             break;
-        
+
         case 2:
             LPC_EMC->StaticConfig2 &= ~EMC_STATIC_CFG_EXTWAIT_MASK;
             LPC_EMC->StaticConfig2  |=  ex_wait&EMC_STATIC_CFG_EXTWAIT_MASK;
             break;
-        
+
         case 3:
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_EXTWAIT_MASK;
             LPC_EMC->StaticConfig3  |=  ex_wait&EMC_STATIC_CFG_EXTWAIT_MASK;
@@ -1164,24 +1164,24 @@ EMC_FUNC_CODE EMC_StaMemConfigEW(uint32_t index , uint32_t ex_wait)
  * @return         EMC_FUNC_OK/EMC_FUNC_INVALID_PARAM
  **********************************************************************/
 EMC_FUNC_CODE EMC_StaMemConfigB(uint32_t index , uint32_t buf_val)
-{    
+{
     switch ( index)
     {
         case 0:
             LPC_EMC->StaticConfig0 &= ~EMC_STATIC_CFG_BUFENABLE_MASK;
             LPC_EMC->StaticConfig0 |=  buf_val&EMC_STATIC_CFG_BUFENABLE_MASK;
             break;
-        
+
         case 1:
             LPC_EMC->StaticConfig1 &= ~EMC_STATIC_CFG_BUFENABLE_MASK;
             LPC_EMC->StaticConfig1  |=  buf_val&EMC_STATIC_CFG_BUFENABLE_MASK;
             break;
-        
+
         case 2:
             LPC_EMC->StaticConfig2 &= ~EMC_STATIC_CFG_BUFENABLE_MASK;
             LPC_EMC->StaticConfig2  |=  buf_val&EMC_STATIC_CFG_BUFENABLE_MASK;
             break;
-        
+
         case 3:
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_BUFENABLE_MASK;
             LPC_EMC->StaticConfig3  |=  buf_val&EMC_STATIC_CFG_BUFENABLE_MASK;
@@ -1213,17 +1213,17 @@ EMC_FUNC_CODE EMC_StaMemConfigpP(uint32_t index , uint32_t per_val)
             LPC_EMC->StaticConfig0 &= ~EMC_STATIC_CFG_WRIEPROTECT_MASK;
             LPC_EMC->StaticConfig0  |=  per_val&EMC_STATIC_CFG_WRIEPROTECT_MASK;
             break;
-        
+
         case 1:
             LPC_EMC->StaticConfig1 &= ~EMC_STATIC_CFG_WRIEPROTECT_MASK;
             LPC_EMC->StaticConfig1  |=  per_val&EMC_STATIC_CFG_WRIEPROTECT_MASK;
             break;
-        
+
         case 2:
             LPC_EMC->StaticConfig2 &= ~EMC_STATIC_CFG_WRIEPROTECT_MASK;
             LPC_EMC->StaticConfig2  |=  per_val&EMC_STATIC_CFG_WRIEPROTECT_MASK;
             break;
-        
+
         case 3:
             LPC_EMC->StaticConfig3 &= ~EMC_STATIC_CFG_WRIEPROTECT_MASK;
             LPC_EMC->StaticConfig3  |=  per_val&EMC_STATIC_CFG_WRIEPROTECT_MASK;
@@ -1259,24 +1259,24 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
             {
                 case EMC_STA_MEM_WAITWEN:
                     LPC_EMC->StaticWaitWen0 = EMC_StaticWaitWen_WAITWEN(val);
-                    break; 
-                
+                    break;
+
                 case EMC_STA_MEM_WAITOEN:
                     LPC_EMC->StaticWaitOen0 = EMC_StaticWaitOen_WAITOEN(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITRD:
                     LPC_EMC->StaticWaitRd0 = EMC_StaticWaitRd_WAITRD(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITPAGE:
                     LPC_EMC->StaticWaitPage0 = EMC_StaticwaitPage_WAITPAGE(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITWR:
                     LPC_EMC->StaticWaitWr0 = EMC_StaticWaitwr_WAITWR(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn0 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
@@ -1284,30 +1284,30 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
                     return EMC_FUNC_INVALID_PARAM;
             }
             break;
-            
+
         case 1:
             switch ( par)
             {
                 case EMC_STA_MEM_WAITWEN:
                     LPC_EMC->StaticWaitWen1 = EMC_StaticWaitWen_WAITWEN(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITOEN:
                     LPC_EMC->StaticWaitOen1 = EMC_StaticWaitOen_WAITOEN(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITRD:
                     LPC_EMC->StaticWaitRd1 = EMC_StaticWaitRd_WAITRD(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITPAGE:
                     LPC_EMC->StaticWaitPage1 = EMC_StaticwaitPage_WAITPAGE(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITWR:
                     LPC_EMC->StaticWaitWr1 = EMC_StaticWaitwr_WAITWR(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn1 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
@@ -1316,30 +1316,30 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
 
             }
             break;
-            
+
         case 2:
             switch ( par)
             {
                 case EMC_STA_MEM_WAITWEN:
                     LPC_EMC->StaticWaitWen2 = EMC_StaticWaitWen_WAITWEN(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITOEN:
                     LPC_EMC->StaticWaitOen2 = EMC_StaticWaitOen_WAITOEN(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITRD:
                     LPC_EMC->StaticWaitRd2 = EMC_StaticWaitRd_WAITRD(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITPAGE:
                     LPC_EMC->StaticWaitPage2 = EMC_StaticwaitPage_WAITPAGE(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITWR:
                     LPC_EMC->StaticWaitWr2 = EMC_StaticWaitwr_WAITWR(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn2 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
@@ -1348,30 +1348,30 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
 
             }
             break;
-        
+
         case 3:
             switch ( par)
             {
                 case EMC_STA_MEM_WAITWEN:
                     LPC_EMC->StaticWaitWen3 = EMC_StaticWaitWen_WAITWEN(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITOEN:
                     LPC_EMC->StaticWaitOen3 = EMC_StaticWaitOen_WAITOEN(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITRD:
                     LPC_EMC->StaticWaitRd3 = EMC_StaticWaitRd_WAITRD(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITPAGE:
                     LPC_EMC->StaticWaitPage3 = EMC_StaticwaitPage_WAITPAGE(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITWR:
                     LPC_EMC->StaticWaitWr3 = EMC_StaticWaitwr_WAITWR(val);
                     break;
-                
+
                 case EMC_STA_MEM_WAITTURN:
                     LPC_EMC->StaticWaitTurn3 =EMC_StaticWaitTurn_WAITTURN(val);
                     break;
@@ -1385,7 +1385,7 @@ EMC_FUNC_CODE EMC_SetStaMemoryParameter(uint32_t index ,EMC_STA_MEM_PAR par, uin
 /**
  * @}
  */
- 
+
  /**
  * @}
  */

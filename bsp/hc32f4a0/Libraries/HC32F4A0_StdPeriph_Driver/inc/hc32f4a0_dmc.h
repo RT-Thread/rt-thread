@@ -55,7 +55,7 @@ extern "C"
  */
 
 /**
- * @brief  EXMC DMC CS Configuration Structure definition 
+ * @brief  EXMC DMC CS Configuration Structure definition
  */
 typedef struct
 {

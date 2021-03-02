@@ -88,7 +88,7 @@ static rt_err_t drv_clcd_control(struct rt_device *device, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops clcd_ops = 
+const static struct rt_device_ops clcd_ops =
 {
     drv_clcd_init,
     RT_NULL,

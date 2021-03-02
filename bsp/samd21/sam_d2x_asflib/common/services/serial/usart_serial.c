@@ -56,14 +56,14 @@
  *
  */
 status_code_t usart_serial_write_packet(usart_if usart, const uint8_t *data,
-		size_t len)
+        size_t len)
 {
-	while (len) {
-		usart_serial_putchar(usart, *data);
-		len--;
-		data++;
-	}
-	return STATUS_OK;
+    while (len) {
+        usart_serial_putchar(usart, *data);
+        len--;
+        data++;
+    }
+    return STATUS_OK;
 }
 
 
@@ -76,12 +76,12 @@ status_code_t usart_serial_write_packet(usart_if usart, const uint8_t *data,
  *
  */
 status_code_t usart_serial_read_packet(usart_if usart, uint8_t *data,
-		size_t len)
+        size_t len)
 {
-	while (len) {
-		usart_serial_getchar(usart, data);
-		len--;
-		data++;
-	}
-	return STATUS_OK;
+    while (len) {
+        usart_serial_getchar(usart, data);
+        len--;
+        data++;
+    }
+    return STATUS_OK;
 }

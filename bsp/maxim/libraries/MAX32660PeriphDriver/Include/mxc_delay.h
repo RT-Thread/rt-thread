@@ -34,7 +34,7 @@
  * property whatsoever. Maxim Integrated Products, Inc. retains all
  * ownership rights.
  *
- * $Date: 2018-11-05 09:52:05 -0600 (Mon, 05 Nov 2018) $ 
+ * $Date: 2018-11-05 09:52:05 -0600 (Mon, 05 Nov 2018) $
  * $Revision: 38934 $
  *
  *************************************************************************** */
@@ -44,20 +44,20 @@
 #define _DELAY_H_
 
 /**
- * @defgroup    MXC_delay Delay Utility Functions 
- * @ingroup     devicelibs 
+ * @defgroup    MXC_delay Delay Utility Functions
+ * @ingroup     devicelibs
  * @brief       Asynchronous delay routines based on the SysTick Timer
  * @{
- */ 
+ */
 
 /***** Definitions *****/
 /**
  * Macro used to specify a microsecond timing parameter in seconds.
  * \code
- * x = SEC(3) // 3 seconds -> x = 3,000,000 
+ * x = SEC(3) // 3 seconds -> x = 3,000,000
  * \endcode
  */
-#define MXC_DELAY_SEC(s)            (((unsigned long)s) * 1000000UL)  
+#define MXC_DELAY_SEC(s)            (((unsigned long)s) * 1000000UL)
 /**
  * Macro used to specify a microsecond timing parameter in milliseconds.
  * \code

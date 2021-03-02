@@ -6,23 +6,23 @@
 
 /*************************  LL ************************************/
 
-#define CK8E            BIT(11)             //åœ¨å‘½ä»¤/æ•°æ®åŒ…åŽåŠ ä¸Š8CLK
+#define CK8E            BIT(11)             //ÔÚÃüÁî/Êý¾Ý°üºó¼ÓÉÏ8CLK
 #define CBUSY           BIT(10)             //Busy Check
 #define CLRSP           BIT(9)              //17Byte Long Rsp
 #define CRSP            BIT(8)              //Need Rsp
 
-//0x40æ˜¯CMDä¸­çš„ 01 å¼€å¤´ã€‚
+//0x40ÊÇCMDÖÐµÄ 01 ¿ªÍ·¡£
 #define RSP_NO          (0x40 | CK8E)
-#define RSP_1           (0x40 | CRSP | CK8E)                //æŽ¥æ”¶6BYTE
-#define RSP_1B          (0x40 | CBUSY | CRSP | CK8E)        //æŽ¥æ”¶6BYTEï¼Œå¹¶ç­‰å¾…BUSY
-#define RSP_2           (0x40 | CLRSP | CRSP | CK8E)        //æŽ¥æ”¶17BYTE
-#define RSP_3           (0x40 | CRSP | CK8E)                //æŽ¥æ”¶6BYTE
-#define RSP_6           (0x40 | CRSP | CK8E)                //æŽ¥æ”¶6BYTE
-#define RSP_7           (0x40 | CRSP | CK8E)                //æŽ¥æ”¶6BYTE
-#define REQ_MULTREAD    (18 | 0x40 | CRSP)                  //å¤šå—è¯»æ—¶ï¼Œä¸éœ€è¦å¢žåŠ 8CLKã€‚å…¶å®žï¼Œå¤šå—è¯»å…ˆKICK DATAï¼Œè¿™ä¸ªæ˜¯æ— æ‰€è°“çš„
+#define RSP_1           (0x40 | CRSP | CK8E)                //½ÓÊÕ6BYTE
+#define RSP_1B          (0x40 | CBUSY | CRSP | CK8E)        //½ÓÊÕ6BYTE£¬²¢µÈ´ýBUSY
+#define RSP_2           (0x40 | CLRSP | CRSP | CK8E)        //½ÓÊÕ17BYTE
+#define RSP_3           (0x40 | CRSP | CK8E)                //½ÓÊÕ6BYTE
+#define RSP_6           (0x40 | CRSP | CK8E)                //½ÓÊÕ6BYTE
+#define RSP_7           (0x40 | CRSP | CK8E)                //½ÓÊÕ6BYTE
+#define REQ_MULTREAD    (18 | 0x40 | CRSP)                  //¶à¿é¶ÁÊ±£¬²»ÐèÒªÔö¼Ó8CLK¡£ÆäÊµ£¬¶à¿é¶ÁÏÈKICK DATA£¬Õâ¸öÊÇÎÞËùÎ½µÄ
 
-#define RSP_BUSY_TIMEOUT            2400000     //å¤§çº¦2s
-#define RSP_TIMEOUT                 6000        //å¤§çº¦5ms
+#define RSP_BUSY_TIMEOUT            2400000     //´óÔ¼2s
+#define RSP_TIMEOUT                 6000        //´óÔ¼5ms
 
 uint8_t sysclk_update_baud(uint8_t baud);
 
@@ -232,7 +232,7 @@ static bool sd_go_ready_try(sd_handle_t hsd)
     case CARD_V1:
         sdmmc_acmd_op_cond(hsd, 0x00ff8000);
         break;
-    
+
     case CARD_V2:
         sdmmc_acmd_op_cond(hsd, 0x40ff8000);
         break;
@@ -389,8 +389,8 @@ bool hal_sd_read(sd_handle_t hsd, void *buf, uint32_t lba)
                 return true;
             }
         }
-        hsd->sdcard.state = HAL_SD_STATE_INVAL; 
-        
+        hsd->sdcard.state = HAL_SD_STATE_INVAL;
+
         hal_mdelay(20);
     }
 

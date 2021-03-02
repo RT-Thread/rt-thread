@@ -55,28 +55,28 @@
 
 int fifo_init(fifo_desc_t *fifo_desc, void *buffer, uint8_t size)
 {
-	// Check the size parameter. It must be not null...
-	Assert (size);
+    // Check the size parameter. It must be not null...
+    Assert (size);
 
-	// ... must be a 2-power ...
-	Assert (!(size & (size - 1)));
+    // ... must be a 2-power ...
+    Assert (!(size & (size - 1)));
 
-	// ... and must fit in a uint8_t. Since the read and write indexes are using a
-	// double-index range implementation, the max FIFO size is thus 128 items.
-	Assert (size <= 128);
+    // ... and must fit in a uint8_t. Since the read and write indexes are using a
+    // double-index range implementation, the max FIFO size is thus 128 items.
+    Assert (size <= 128);
 
-	// Fifo starts empty.
-	fifo_desc->read_index  = 0;
-	fifo_desc->write_index = 0;
+    // Fifo starts empty.
+    fifo_desc->read_index  = 0;
+    fifo_desc->write_index = 0;
 
-	// Save the size parameter.
-	fifo_desc->size = size;
+    // Save the size parameter.
+    fifo_desc->size = size;
 
-	// Create a mask to speed up the FIFO management (index swapping).
-	fifo_desc->mask = (2 * (uint16_t)size) - 1;
+    // Create a mask to speed up the FIFO management (index swapping).
+    fifo_desc->mask = (2 * (uint16_t)size) - 1;
 
-	// Save the buffer pointer.
-	fifo_desc->buffer.u8ptr = buffer;
+    // Save the buffer pointer.
+    fifo_desc->buffer.u8ptr = buffer;
 
-	return FIFO_OK;
+    return FIFO_OK;
 }

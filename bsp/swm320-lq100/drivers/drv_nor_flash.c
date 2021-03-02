@@ -92,7 +92,7 @@ static rt_err_t swm320_erase_block(struct rt_mtd_nor_device *device,
         rt_kprintf("Take mutex error.\n");
         return ret;
     }
-    
+
     NORFL_SectorErase(offset);
     rt_mutex_release(&flash_lock);
     return RT_EOK;

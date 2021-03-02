@@ -41,7 +41,7 @@ void rt_hw_board_init()
 {
     /* Hardware Initialization */
     CLOCK_EnableClock(kCLOCK_InputMux);
-	CLOCK_EnableClock(kCLOCK_Iocon);
+    CLOCK_EnableClock(kCLOCK_Iocon);
 
     /* NVIC Configuration */
 #define NVIC_VTOR_MASK              0x3FFFFF80
@@ -61,8 +61,8 @@ void rt_hw_board_init()
 
     /*init uart device*/
     rt_hw_uart_init();
-    
-#ifdef RT_USING_CONSOLE    
+
+#ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 

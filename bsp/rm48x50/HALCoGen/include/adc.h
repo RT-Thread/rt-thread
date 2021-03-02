@@ -2,7 +2,7 @@
 *   @brief ADC Driver Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -96,27 +96,27 @@ enum adcConversionStatus
 
 enum adc1HwTriggerSource
 {
-	ADC1_EVENT = 0U,       /**< Alias for event pin             */
-	ADC1_HET1_8 = 1U,      /**< Alias for HET1 pin 8            */
-	ADC1_HET1_10 = 2U,     /**< Alias for HET1 pin 10           */
-	ADC1_RTI_COMP0 = 3U,   /**< Alias for RTI compare 0 match   */
-	ADC1_HET1_12 = 4U,     /**< Alias for HET1 pin 12           */
-	ADC1_HET1_14 = 5U,     /**< Alias for HET1 pin 14           */
-	ADC1_GIOB0 = 6U,       /**< Alias for GIO port b pin 0      */
-	ADC1_GIOB1 = 7U,       /**< Alias for GIO port b pin 1      */
+    ADC1_EVENT = 0U,       /**< Alias for event pin             */
+    ADC1_HET1_8 = 1U,      /**< Alias for HET1 pin 8            */
+    ADC1_HET1_10 = 2U,     /**< Alias for HET1 pin 10           */
+    ADC1_RTI_COMP0 = 3U,   /**< Alias for RTI compare 0 match   */
+    ADC1_HET1_12 = 4U,     /**< Alias for HET1 pin 12           */
+    ADC1_HET1_14 = 5U,     /**< Alias for HET1 pin 14           */
+    ADC1_GIOB0 = 6U,       /**< Alias for GIO port b pin 0      */
+    ADC1_GIOB1 = 7U,       /**< Alias for GIO port b pin 1      */
 
-	ADC1_HET2_5 = 1U,      /**< Alias for HET2 pin 5            */
-	ADC1_HET1_27 = 2U,     /**< Alias for HET1 pin 27           */
-	ADC1_HET1_17 = 4U,     /**< Alias for HET1 pin 17           */
-	ADC1_HET1_19 = 5U,     /**< Alias for HET1 pin 19           */
-	ADC1_HET1_11 = 6U,     /**< Alias for HET1 pin 11           */
-	ADC1_HET2_13 = 7U,     /**< Alias for HET2 pin 13           */
+    ADC1_HET2_5 = 1U,      /**< Alias for HET2 pin 5            */
+    ADC1_HET1_27 = 2U,     /**< Alias for HET1 pin 27           */
+    ADC1_HET1_17 = 4U,     /**< Alias for HET1 pin 17           */
+    ADC1_HET1_19 = 5U,     /**< Alias for HET1 pin 19           */
+    ADC1_HET1_11 = 6U,     /**< Alias for HET1 pin 11           */
+    ADC1_HET2_13 = 7U,     /**< Alias for HET2 pin 13           */
 
-	ADC1_EPWM_B = 1U,      /**< Alias for B Signal EPWM         */
-	ADC1_EPWM_A1 = 3U,     /**< Alias for A1 Signal EPWM        */	
-	ADC1_HET2_1 = 5U,      /**< Alias for HET2 pin 1            */
-	ADC1_EPWM_A2 = 6U,     /**< Alias for A2 Signal EPWM        */
-	ADC1_EPWM_AB = 7U      /**< Alias for AB Signal EPWM        */	
+    ADC1_EPWM_B = 1U,      /**< Alias for B Signal EPWM         */
+    ADC1_EPWM_A1 = 3U,     /**< Alias for A1 Signal EPWM        */
+    ADC1_HET2_1 = 5U,      /**< Alias for HET2 pin 1            */
+    ADC1_EPWM_A2 = 6U,     /**< Alias for A2 Signal EPWM        */
+    ADC1_EPWM_AB = 7U      /**< Alias for AB Signal EPWM        */
 
 };
 
@@ -127,26 +127,26 @@ enum adc1HwTriggerSource
 
 enum adc2HwTriggerSource
 {
-	ADC2_EVENT = 0U,       /**< Alias for event pin             */
-	ADC2_HET1_8 = 1U,      /**< Alias for HET1 pin 8            */
-	ADC2_HET1_10 = 2U,     /**< Alias for HET1 pin 10           */
-	ADC2_RTI_COMP0 = 3U,   /**< Alias for RTI compare 0 match   */
-	ADC2_HET1_12 = 4U,     /**< Alias for HET1 pin 12           */
-	ADC2_HET1_14 = 5U,     /**< Alias for HET1 pin 14           */
-	ADC2_GIOB0 = 6U,       /**< Alias for GIO port b pin 0      */
-	ADC2_GIOB1 = 7U,       /**< Alias for GIO port b pin 1      */
-	ADC2_HET2_5 = 1U,      /**< Alias for HET2 pin 5            */
-	ADC2_HET1_27 = 2U,     /**< Alias for HET1 pin 27           */
-	ADC2_HET1_17 = 4U,     /**< Alias for HET1 pin 17           */
-	ADC2_HET1_19 = 5U,     /**< Alias for HET1 pin 19           */
-	ADC2_HET1_11 = 6U,     /**< Alias for HET1 pin 11           */
-	ADC2_HET2_13 = 7U,     /**< Alias for HET2 pin 13           */
-	
-	ADC2_EPWM_B = 1U,      /**< Alias for B Signal EPWM         */
-	ADC2_EPWM_A1 = 3U,     /**< Alias for A1 Signal EPWM        */	
-	ADC2_HET2_1 = 5U,      /**< Alias for HET2 pin 1            */
-	ADC2_EPWM_A2 = 6U,     /**< Alias for A2 Signal EPWM        */
-	ADC2_EPWM_AB = 7U      /**< Alias for AB Signal EPWM        */	
+    ADC2_EVENT = 0U,       /**< Alias for event pin             */
+    ADC2_HET1_8 = 1U,      /**< Alias for HET1 pin 8            */
+    ADC2_HET1_10 = 2U,     /**< Alias for HET1 pin 10           */
+    ADC2_RTI_COMP0 = 3U,   /**< Alias for RTI compare 0 match   */
+    ADC2_HET1_12 = 4U,     /**< Alias for HET1 pin 12           */
+    ADC2_HET1_14 = 5U,     /**< Alias for HET1 pin 14           */
+    ADC2_GIOB0 = 6U,       /**< Alias for GIO port b pin 0      */
+    ADC2_GIOB1 = 7U,       /**< Alias for GIO port b pin 1      */
+    ADC2_HET2_5 = 1U,      /**< Alias for HET2 pin 5            */
+    ADC2_HET1_27 = 2U,     /**< Alias for HET1 pin 27           */
+    ADC2_HET1_17 = 4U,     /**< Alias for HET1 pin 17           */
+    ADC2_HET1_19 = 5U,     /**< Alias for HET1 pin 19           */
+    ADC2_HET1_11 = 6U,     /**< Alias for HET1 pin 11           */
+    ADC2_HET2_13 = 7U,     /**< Alias for HET2 pin 13           */
+
+    ADC2_EPWM_B = 1U,      /**< Alias for B Signal EPWM         */
+    ADC2_EPWM_A1 = 3U,     /**< Alias for A1 Signal EPWM        */
+    ADC2_HET2_1 = 5U,      /**< Alias for HET2 pin 1            */
+    ADC2_EPWM_A2 = 6U,     /**< Alias for A2 Signal EPWM        */
+    ADC2_EPWM_AB = 7U      /**< Alias for AB Signal EPWM        */
 
 };
 
@@ -171,20 +171,20 @@ typedef struct adcData
 /* USER CODE BEGIN (2) */
 /* USER CODE END */
 
-/** 
+/**
  *  @defgroup ADC ADC
  *  @brief Analog To Digital Converter Module.
- *  
+ *
  *  The microcontroller includes two 12-bit ADC modules with selectable 10-bit or 12-bit resolution
  *
- *	Related Files
+ *  Related Files
  *   - reg_adc.h
  *   - adc.h
  *   - adc.c
  *  @addtogroup ADC
  *  @{
  */
- 
+
 /* ADC Interface Functions */
 
 void adcInit(void);

@@ -37,7 +37,7 @@
 #include "sdma_test.h"
 #include "sdk.h"
 
-#define SPI_LOOPBACK_TEST_BUF_SZ 	1024
+#define SPI_LOOPBACK_TEST_BUF_SZ    1024
 
 /* Uncacheable & unbufferable area start */
 static uint32_t src_buf[SPI_LOOPBACK_TEST_BUF_SZ];

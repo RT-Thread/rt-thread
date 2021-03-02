@@ -2,7 +2,7 @@
 *   @brief CAN Driver Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -26,62 +26,62 @@
 /* CAN General Definitions */
 
 /** @def canLEVEL_ACTIVE
-*   @brief Alias name for CAN error operation level active (Error counter 0-95)  
+*   @brief Alias name for CAN error operation level active (Error counter 0-95)
 */
 #define canLEVEL_ACTIVE 0x00U
 
 /** @def canLEVEL_WARNING
-*   @brief Alias name for CAN error operation level warning (Error counter 96-127)  
+*   @brief Alias name for CAN error operation level warning (Error counter 96-127)
 */
 #define canLEVEL_WARNING 0x40U
 
 /** @def canLEVEL_PASSIVE
-*   @brief Alias name for CAN error operation level passive (Error counter 128-255)  
+*   @brief Alias name for CAN error operation level passive (Error counter 128-255)
 */
 #define canLEVEL_PASSIVE 0x20U
 
 /** @def canLEVEL_BUS_OFF
-*   @brief Alias name for CAN error operation level bus off (Error counter 256)  
+*   @brief Alias name for CAN error operation level bus off (Error counter 256)
 */
 #define canLEVEL_BUS_OFF 0x80U
 
 /** @def canERROR_NO
-*   @brief Alias name for no CAN error occurred 
+*   @brief Alias name for no CAN error occurred
 */
 #define canERROR_OK 0U
 
 /** @def canERROR_STUFF
-*   @brief Alias name for CAN stuff error an RX message 
+*   @brief Alias name for CAN stuff error an RX message
 */
 #define canERROR_STUFF 1U
 
 /** @def canERROR_FORMAT
-*   @brief Alias name for CAN form/format error an RX message 
+*   @brief Alias name for CAN form/format error an RX message
 */
 #define canERROR_FORMAT 2U
 
 /** @def canERROR_ACKNOWLEDGE
-*   @brief Alias name for CAN TX message wasn't acknowledged  
+*   @brief Alias name for CAN TX message wasn't acknowledged
 */
 #define canERROR_ACKNOWLEDGE 3U
 
 /** @def canERROR_BIT1
-*   @brief Alias name for CAN TX message sending recessive level but monitoring dominant  
+*   @brief Alias name for CAN TX message sending recessive level but monitoring dominant
 */
 #define canERROR_BIT1 4U
 
 /** @def canERROR_BIT0
-*   @brief Alias name for CAN TX message sending dominant level but monitoring recessive  
+*   @brief Alias name for CAN TX message sending dominant level but monitoring recessive
 */
 #define canERROR_BIT0 5U
 
 /** @def canERROR_CRC
-*   @brief Alias name for CAN RX message received wrong CRC  
+*   @brief Alias name for CAN RX message received wrong CRC
 */
 #define canERROR_CRC 6U
 
 /** @def canERROR_NO
-*   @brief Alias name for CAN no message has send or received since last call of CANGetLastError  
+*   @brief Alias name for CAN no message has send or received since last call of CANGetLastError
 */
 #define canERROR_NO 7U
 
@@ -537,22 +537,22 @@
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
 
-/** 
+/**
  *  @defgroup CAN CAN
  *  @brief Controller Area Network Module.
- *  
+ *
  *  The Controller Area Network is a high-integrity, serial, multi-master communication protocol for distributed
  *  real-time applications. This CAN module is implemented according to ISO 11898-1 and is suitable for
  *  industrial, automotive and general embedded communications
  *
- *	Related Files
+ *  Related Files
  *   - reg_can.h
  *   - can.h
  *   - can.c
  *  @addtogroup CAN
  *  @{
  */
- 
+
 /* CAN Interface Functions */
 
 void     canInit(void);
@@ -577,8 +577,8 @@ uint32 canIoRxGetBit(canBASE_t *node);
 *              - canREG2: CAN2 node pointer
 *              - canREG3: CAN3 node pointer
 *   @param[in] notification Error notification code:
-*           - canLEVEL_WARNING (0x40): When RX- or TX error counter are between 96 and 127     
-*           - canLEVEL_BUS_OFF (0x80): When RX- or TX error counter are above 255     
+*           - canLEVEL_WARNING (0x40): When RX- or TX error counter are between 96 and 127
+*           - canLEVEL_BUS_OFF (0x80): When RX- or TX error counter are above 255
 *
 *   @note This function has to be provide by the user.
 */

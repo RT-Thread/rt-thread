@@ -64,8 +64,8 @@ static i2c_slave_state_t s_slaveState;
 void i2c_slave_interrupt_routine(void)
 {
     s_slaveState.statusRegister = HW_I2C_I2SR_RD(s_slaveState.slavePortInstance);
-    
-    // clear the status register 
+
+    // clear the status register
     HW_I2C_I2SR_WR(s_slaveState.slavePortInstance, 0);
 
     s_slaveState.waitForIrq = 0;
@@ -78,103 +78,103 @@ void i2c_slave_handler(const imx_i2c_request_t *rq)
     uint8_t data, offset;
     uint32_t instance = i2c_get_request_instance(rq);
 
-    // use a local version of the status updated during the last interrupt 
+    // use a local version of the status updated during the last interrupt
     i2sr = s_slaveState.statusRegister;
     s_slaveState.statusRegister = 0;
 
-    // if I2SR is cleared, there's nothing to do 
+    // if I2SR is cleared, there's nothing to do
     if (!i2sr)
     {
         return;
     }
 
-    // read the current state of the control register 
+    // read the current state of the control register
     i2cr = HW_I2C_I2CR_RD(instance);
 
-    // was the i.MX6 slave address matched <=> IAAS=1? 
+    // was the i.MX6 slave address matched <=> IAAS=1?
     if (i2sr & BM_I2C_I2SR_IAAS)
     {
-        // IAAS=1, so enter in an address cycle 
-        // is it a master read access <=> SRW=1? 
+        // IAAS=1, so enter in an address cycle
+        // is it a master read access <=> SRW=1?
         if (i2sr & BM_I2C_I2SR_SRW)
         {
-            // SRW=1, so this is a master read access 
-            // set transmit mode 
+            // SRW=1, so this is a master read access
+            // set transmit mode
             i2cr |= BM_I2C_I2CR_MTX;
             HW_I2C_I2CR_WR(instance, i2cr);
 
-            // set a flag to notify that this is a read from master 
+            // set a flag to notify that this is a read from master
             s_slaveState.readAccess = BM_I2C_I2SR_SRW;
 
-            // get the data from the application 
+            // get the data from the application
             rq->slave_transmit(rq);
-            
-            // first sent byte 
+
+            // first sent byte
             data = rq->buffer[s_slaveState.addressCycle];
             s_slaveState.dataCycle++;
-            
-            // transmit the data 
+
+            // transmit the data
             HW_I2C_I2DR_WR(instance, data);
        }
         else
         {
-            // SRW=0, this is a master write access 
-            // set receive mode 
+            // SRW=0, this is a master write access
+            // set receive mode
             i2cr &= ~BM_I2C_I2CR_MTX;
             HW_I2C_I2CR_WR(instance, i2cr);
-            
-            // dummy read of the received slave address 
+
+            // dummy read of the received slave address
             data = HW_I2C_I2DR_RD(instance);
         }
     }
     else
     {
-        // IAAS=0, so enter in a data cycle 
-        // is it in transmit mode? 
+        // IAAS=0, so enter in a data cycle
+        // is it in transmit mode?
         if (i2cr & BM_I2C_I2CR_MTX)
         {
-            // MTX=1, so this is in transmit mode 
-            // is ACK received <=> RXAK=0? 
+            // MTX=1, so this is in transmit mode
+            // is ACK received <=> RXAK=0?
             if (!(i2sr & BM_I2C_I2SR_RXAK))
             {
-                // RXAK=0, an acknowledge was received 
-                // get data from the application if not done 
+                // RXAK=0, an acknowledge was received
+                // get data from the application if not done
                 // already during the first data access above
-                // following sent bytes 
+                // following sent bytes
                 data = rq->buffer[s_slaveState.dataCycle + s_slaveState.addressCycle];
                 s_slaveState.dataCycle++;
-                
-                // transmit the data 
+
+                // transmit the data
                 HW_I2C_I2DR_WR(instance, data);
             }
             else
             {
-                // RXAK=1, no acknowledge was received 
-                // set receive mode 
+                // RXAK=1, no acknowledge was received
+                // set receive mode
                 i2cr &= ~BM_I2C_I2CR_MTX;
                 HW_I2C_I2CR_WR(instance, i2cr);
-                
-                // dummy read of the received data 
+
+                // dummy read of the received data
                 data = HW_I2C_I2DR_RD(instance);
             }
         }
         else
         {
-            // MTX=0, so this is in receive mode 
+            // MTX=0, so this is in receive mode
             if (s_slaveState.addressCycle < rq->reg_addr_sz)
             {
-                // this is an address that is read 
+                // this is an address that is read
                 offset = s_slaveState.addressCycle;
                 s_slaveState.addressCycle++;
             }
             else
             {
-                //this is a data that is read 
-                offset = s_slaveState.addressCycle + s_slaveState.dataCycle;               
+                //this is a data that is read
+                offset = s_slaveState.addressCycle + s_slaveState.dataCycle;
                 s_slaveState.dataCycle++;
             }
-            
-            // read the received data 
+
+            // read the received data
             rq->buffer[offset] = HW_I2C_I2DR_RD(instance);
         }
     }
@@ -184,26 +184,26 @@ void i2c_slave_xfer(imx_i2c_request_t *rq)
 {
     uint32_t instance = i2c_get_request_instance(rq);
 
-    // enable the I2C controller 
+    // enable the I2C controller
     HW_I2C_I2CR_WR(instance, BM_I2C_I2CR_IEN);
-    
-    // initialize the number of addr and data cycles for the transfer 
+
+    // initialize the number of addr and data cycles for the transfer
     s_slaveState.addressCycle = 0;
     s_slaveState.dataCycle = 0;
     s_slaveState.readAccess = 0;
 
-    // set the chosen I2C slave address 
+    // set the chosen I2C slave address
     HW_I2C_IADR_WR(instance, (rq->device ? rq->device->address : rq->dev_addr));
 
     s_slaveState.slavePortInstance = instance;
 
-    // Enable the interrupts for the I2C controller 
+    // Enable the interrupts for the I2C controller
     i2c_setup_interrupt(instance, &i2c_slave_interrupt_routine, true);
 
-    // The slave behaves like a EEPROM of rq.reg_addr_sz bytes for 
+    // The slave behaves like a EEPROM of rq.reg_addr_sz bytes for
     // and g_data_cycle bytes for data
 
-    // wait for the first 1 interrupt that should make the bus busy 
+    // wait for the first 1 interrupt that should make the bus busy
     s_slaveState.waitForIrq = 1;
     while (s_slaveState.waitForIrq == 1);
 
@@ -213,7 +213,7 @@ void i2c_slave_xfer(imx_i2c_request_t *rq)
         s_slaveState.waitForIrq = 1;
         while (s_slaveState.waitForIrq == 1)
         {
-            // the STOP condition can arrive late after the last transfer 
+            // the STOP condition can arrive late after the last transfer
             if (!HW_I2C_I2SR(instance).B.IBB)
             {
                 break;
@@ -221,10 +221,10 @@ void i2c_slave_xfer(imx_i2c_request_t *rq)
         }
     } while (HW_I2C_I2SR(instance).B.IBB);
 
-    // Provide to the application the data written by the master 
+    // Provide to the application the data written by the master
     if (s_slaveState.readAccess & BM_I2C_I2SR_SRW)
     {
-        // set the number of transmitted data 
+        // set the number of transmitted data
         rq->buffer_sz = s_slaveState.dataCycle;
 
 #ifdef DEBUG
@@ -241,9 +241,9 @@ void i2c_slave_xfer(imx_i2c_request_t *rq)
     }
     else
     {
-        // set the number of received data 
+        // set the number of received data
         rq->buffer_sz = s_slaveState.dataCycle;
-        
+
         // send the received data to the application
         if (rq->slave_receive)
         {
@@ -263,10 +263,10 @@ void i2c_slave_xfer(imx_i2c_request_t *rq)
 #endif
     }
 
-    // Disable the interrupts for the I2C controller 
+    // Disable the interrupts for the I2C controller
     i2c_setup_interrupt(instance, NULL, false);
 
-    // disable the controller 
+    // disable the controller
     HW_I2C_I2CR_WR(instance, 0);
 }
 

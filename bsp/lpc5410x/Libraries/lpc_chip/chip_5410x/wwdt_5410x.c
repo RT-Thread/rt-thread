@@ -50,24 +50,24 @@
 /* Initialize the Watchdog timer */
 void Chip_WWDT_Init(LPC_WWDT_T *pWWDT)
 {
-	Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_WWDT);
-	Chip_SYSCON_PeriphReset(RESET_WWDT);
+    Chip_Clock_EnablePeriphClock(SYSCON_CLOCK_WWDT);
+    Chip_SYSCON_PeriphReset(RESET_WWDT);
 
-	/* Disable watchdog */
-	pWWDT->MOD       = 0;
-	pWWDT->TC        = 0xFF;
-	pWWDT->WARNINT   = 0x3FF;
-	pWWDT->WINDOW    = 0xFFFFFF;
+    /* Disable watchdog */
+    pWWDT->MOD       = 0;
+    pWWDT->TC        = 0xFF;
+    pWWDT->WARNINT   = 0x3FF;
+    pWWDT->WINDOW    = 0xFFFFFF;
 }
 
 /* Clear WWDT interrupt status flags */
 void Chip_WWDT_ClearStatusFlag(LPC_WWDT_T *pWWDT, uint32_t status)
 {
-	if (status & WWDT_WDMOD_WDTOF) {
-		pWWDT->MOD &= (~WWDT_WDMOD_WDTOF) & WWDT_WDMOD_BITMASK;
-	}
-	/* Interrupt flag is cleared by writing a 1 */
-	if (status & WWDT_WDMOD_WDINT) {
-		pWWDT->MOD = (pWWDT->MOD & WWDT_WDMOD_BITMASK) | WWDT_WDMOD_WDINT;
-	}
+    if (status & WWDT_WDMOD_WDTOF) {
+        pWWDT->MOD &= (~WWDT_WDMOD_WDTOF) & WWDT_WDMOD_BITMASK;
+    }
+    /* Interrupt flag is cleared by writing a 1 */
+    if (status & WWDT_WDMOD_WDINT) {
+        pWWDT->MOD = (pWWDT->MOD & WWDT_WDMOD_BITMASK) | WWDT_WDMOD_WDINT;
+    }
 }

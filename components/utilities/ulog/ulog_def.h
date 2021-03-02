@@ -102,8 +102,8 @@ extern "C" {
     #define ulog_hex(TAG, width, buf, size)     ulog_hexdump(TAG, width, buf, size)
 #else
     #define ulog_hex(TAG, width, buf, size)
-#endif /* (LOG_LVL >= LOG_LVL_DBG) && (ULOG_OUTPUT_LVL >= LOG_LVL_DBG) */    
-    
+#endif /* (LOG_LVL >= LOG_LVL_DBG) && (ULOG_OUTPUT_LVL >= LOG_LVL_DBG) */
+
 /* assert for developer. */
 #ifdef ULOG_ASSERT_ENABLE
     #define ULOG_ASSERT(EXPR)                                                 \
@@ -142,7 +142,7 @@ extern "C" {
 #define log_d                          LOG_D
 #define log_v                          LOG_D
 #define log_raw                        LOG_RAW
-#define log_hex                        LOG_HEX    
+#define log_hex                        LOG_HEX
 #define ELOG_LVL_ASSERT                LOG_LVL_ASSERT
 #define ELOG_LVL_ERROR                 LOG_LVL_ERROR
 #define ELOG_LVL_WARN                  LOG_LVL_WARNING

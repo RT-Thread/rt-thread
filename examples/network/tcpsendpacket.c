@@ -1,7 +1,7 @@
 #include <rtthread.h>
 
-#include <netdb.h>   /* ä¸ºäº†è§£æä¸»æœºåï¼Œéœ€è¦åŒ…å«netdb.hå¤´æ–‡ä»¶ */
-#include <sys/socket.h> /* ä½¿ç”¨BSD socketï¼Œéœ€è¦åŒ…å«socket.hå¤´æ–‡ä»¶ */
+#include <netdb.h>   /* ÎªÁË½âÎöÖ÷»úÃû£¬ĞèÒª°üº¬netdb.hÍ·ÎÄ¼ş */
+#include <sys/socket.h> /* Ê¹ÓÃBSD socket£¬ĞèÒª°üº¬socket.hÍ·ÎÄ¼ş */
 
 void tcp_senddata(const char *url, int port, int length)
 {
@@ -10,52 +10,52 @@ void tcp_senddata(const char *url, int port, int length)
     struct sockaddr_in server_addr;
     rt_uint8_t *buffer_ptr;
 
-    /* é€šè¿‡å‡½æ•°å…¥å£å‚æ•°urlè·å¾—hoståœ°å€ï¼ˆå¦‚æœæ˜¯åŸŸåï¼Œä¼šåšåŸŸåè§£æï¼‰ */
+    /* Í¨¹ıº¯ÊıÈë¿Ú²ÎÊıurl»ñµÃhostµØÖ·£¨Èç¹ûÊÇÓòÃû£¬»á×öÓòÃû½âÎö£© */
     host = gethostbyname(url);
-    /* åˆ›å»ºä¸€ä¸ªsocketï¼Œç±»å‹æ˜¯SOCKET_STREAMï¼ŒTCPç±»å‹ */
+    /* ´´½¨Ò»¸ösocket£¬ÀàĞÍÊÇSOCKET_STREAM£¬TCPÀàĞÍ */
     if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
     {
-        /* åˆ›å»ºsocketå¤±è´¥ */
+        /* ´´½¨socketÊ§°Ü */
         rt_kprintf("Socket error\n");
         return;
     }
 
-    /* ç”³è¯·å†…å­˜ */
+    /* ÉêÇëÄÚ´æ */
     buffer_ptr = rt_malloc(length);
     if(RT_NULL == buffer_ptr)
     {
-        /* ç”³è¯·å†…å­˜å¤±è´¥ */
+        /* ÉêÇëÄÚ´æÊ§°Ü */
         rt_kprintf("No memory\n");
-        return;        
+        return;
     }
-    
-    /* æ„é€ å‘é€æ•°æ® */
+
+    /* ¹¹Ôì·¢ËÍÊı¾İ */
     for (index = 0; index < length; index ++)
         buffer_ptr[index] = index & 0xff;
 
     timeout = 100;
-    /* è®¾ç½®å‘é€è¶…æ—¶æ—¶é—´100ms */
+    /* ÉèÖÃ·¢ËÍ³¬Ê±Ê±¼ä100ms */
     setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
-    /* åˆå§‹åŒ–é¢„è¿æ¥çš„æœåŠ¡ç«¯åœ°å€ */
+    /* ³õÊ¼»¯Ô¤Á¬½ÓµÄ·şÎñ¶ËµØÖ· */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr = *((struct in_addr *)host->h_addr);
     rt_memset(&(server_addr.sin_zero), 0, sizeof(server_addr.sin_zero));
 
-    /* è¿æ¥åˆ°æœåŠ¡ç«¯ */
+    /* Á¬½Óµ½·şÎñ¶Ë */
     err = connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
     rt_kprintf("TCP thread connect error code: %d\n", err);
 
     while (1)
     {
-        /* å‘é€æ•°æ®åˆ°sockè¿æ¥ */
+        /* ·¢ËÍÊı¾İµ½sockÁ¬½Ó */
         result = send(sock, buffer_ptr, length, MSG_DONTWAIT);
-        if (result < 0) //æ•°æ®å‘é€é”™è¯¯å¤„ç†
+        if (result < 0) //Êı¾İ·¢ËÍ´íÎó´¦Àí
         {
             rt_kprintf("TCP thread send error: %d\n", result);
             closesocket(sock);
 
-            /* å…³é—­è¿æ¥ï¼Œé‡æ–°åˆ›å»ºè¿æ¥ */
+            /* ¹Ø±ÕÁ¬½Ó£¬ÖØĞÂ´´½¨Á¬½Ó */
             rt_thread_delay(10);
 
             if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
@@ -66,7 +66,7 @@ void tcp_senddata(const char *url, int port, int length)
         }
         else if (result == 0)
         {
-            /* æ‰“å°sendå‡½æ•°è¿”å›å€¼ä¸º0çš„è­¦å‘Šä¿¡æ¯ */
+            /* ´òÓ¡sendº¯Êı·µ»ØÖµÎª0µÄ¾¯¸æĞÅÏ¢ */
             rt_kprintf("\n Send warning,send function return 0.\r\n");
         }
     }
@@ -74,7 +74,7 @@ void tcp_senddata(const char *url, int port, int length)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-/* è¾“å‡ºtcpclientå‡½æ•°åˆ°finsh shellä¸­ */
+/* Êä³ötcpclientº¯Êıµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(tcp_senddata, send a packet through tcp connection);
 #endif
 

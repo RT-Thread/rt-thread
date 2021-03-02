@@ -69,8 +69,8 @@
 #define ARM_NAND_BUS_MODE               (0x01)      ///< Set Bus Mode as specified with arg
 #define ARM_NAND_BUS_DATA_WIDTH         (0x02)      ///< Set Bus Data Width as specified with arg
 #define ARM_NAND_DRIVER_STRENGTH        (0x03)      ///< Set Driver Strength as specified with arg
-#define ARM_NAND_DEVICE_READY_EVENT     (0x04)      ///< Generate \ref ARM_NAND_EVENT_DEVICE_READY; arg: 0=disabled (default), 1=enabled 
-#define ARM_NAND_DRIVER_READY_EVENT     (0x05)      ///< Generate \ref ARM_NAND_EVENT_DRIVER_READY; arg: 0=disabled (default), 1=enabled 
+#define ARM_NAND_DEVICE_READY_EVENT     (0x04)      ///< Generate \ref ARM_NAND_EVENT_DEVICE_READY; arg: 0=disabled (default), 1=enabled
+#define ARM_NAND_DRIVER_READY_EVENT     (0x05)      ///< Generate \ref ARM_NAND_EVENT_DRIVER_READY; arg: 0=disabled (default), 1=enabled
 
 /*----- NAND Bus Mode (ONFI - Open NAND Flash Interface) -----*/
 #define ARM_NAND_BUS_INTERFACE_Pos       4
@@ -179,7 +179,7 @@ typedef struct _ARM_NAND_ECC_INFO {
   uint32_t correctable_bits :  8;       ///< Number of correctable bits (based on 512 byte codeword size)
   uint16_t codeword_size [2];           ///< Number of bytes over which ECC is calculated
   uint16_t ecc_size      [2];           ///< ECC size in bytes (rounded up)
-  uint16_t ecc_offset    [2];           ///< ECC offset in bytes (where ECC starts in Spare area) 
+  uint16_t ecc_offset    [2];           ///< ECC offset in bytes (where ECC starts in Spare area)
 } ARM_NAND_ECC_INFO;
 
 
@@ -300,7 +300,7 @@ typedef struct _ARM_NAND_STATUS {
   \param[in]     cmd      Command(s)
   \param[in]     addr_col Column address
   \param[in]     addr_row Row address
-  \param[in,out] data     Pointer to data to be written or read 
+  \param[in,out] data     Pointer to data to be written or read
   \param[in]     data_cnt Number of data items in one iteration
   \param[out]    status   Pointer to status read
   \param[in,out] count    Number of iterations
@@ -394,10 +394,10 @@ typedef struct _ARM_DRIVER_NAND {
                                            uint32_t addr_col, uint32_t addr_row,
                                            void *data, uint32_t data_cnt,
                                            uint8_t *status, uint32_t *count);                                 ///< Pointer to \ref ARM_NAND_ExecuteSequence : Execute sequence of operations.
-  int32_t               (*AbortSequence)  (uint32_t dev_num);                                                 ///< Pointer to \ref ARM_NAND_AbortSequence : Abort sequence execution. 
+  int32_t               (*AbortSequence)  (uint32_t dev_num);                                                 ///< Pointer to \ref ARM_NAND_AbortSequence : Abort sequence execution.
   int32_t               (*Control)        (uint32_t dev_num, uint32_t control, uint32_t arg);                 ///< Pointer to \ref ARM_NAND_Control : Control NAND Interface.
   ARM_NAND_STATUS       (*GetStatus)      (uint32_t dev_num);                                                 ///< Pointer to \ref ARM_NAND_GetStatus : Get NAND status.
-  int32_t               (*InquireECC)     ( int32_t index, ARM_NAND_ECC_INFO *info);                          ///< Pointer to \ref ARM_NAND_InquireECC : Inquire about available ECC. 
+  int32_t               (*InquireECC)     ( int32_t index, ARM_NAND_ECC_INFO *info);                          ///< Pointer to \ref ARM_NAND_InquireECC : Inquire about available ECC.
 } const ARM_DRIVER_NAND;
 
 #endif /* __DRIVER_NAND_H */

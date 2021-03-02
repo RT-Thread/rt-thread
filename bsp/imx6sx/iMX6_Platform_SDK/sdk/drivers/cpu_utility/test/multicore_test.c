@@ -58,9 +58,9 @@ void SGI3_ISR(void)
 {
     uint32_t cpu_id = cpu_get_current();
     int cpuCount = cpu_get_cores();
-    
+
     //while(1); // debug
-    
+
     printf("Hello from CPU %d\n", cpu_id);
 
     if (cpu_id < (cpuCount - 1))
@@ -87,7 +87,7 @@ void multicore_entry(void * arg)
 {
     uint32_t cpu_id = cpu_get_current();
     int cpuCount = cpu_get_cores();
-    
+
     if (cpuCount == 1)
     {
         printf("This chip only has one CPU!\n");
@@ -116,12 +116,12 @@ void multicore_entry(void * arg)
 
         // cpu0 wait until test is done, that is until cpu3 completes its SGI.
         while (isTestDone);
-        
+
         // put other cores back into reset
         cpu_disable(1);
         cpu_disable(2);
         cpu_disable(3);
-        
+
         printf("\nEnd of test\n");
     }
     // other cpus
@@ -138,7 +138,7 @@ void multicore_entry(void * arg)
         {
             cpu_start_secondary(cpu_id + 1, &multicore_entry, 0);
         }
-        
+
         // do nothing wait to be interrupted
         while (1);
     }

@@ -26,7 +26,7 @@
 /*---------------------------------------------------------------------------*/
 #define GD_TIMER_MAX_SOFT_TIME          10
 
-#define RTOS_TICK_PER_SECOND			1000
+#define RTOS_TICK_PER_SECOND            1000
 /*---------------------------------------------------------------------------*/
 /* private datatypes (used by more than one driver module)                   */
 /*---------------------------------------------------------------------------*/
@@ -1156,8 +1156,8 @@ U32 GD_TIMER_ReadTimerStamp(void)
     }
     return (nStamp + temp);
 #else
-	//return gkosGetTicks();
-	return rt_tick_get();
+    //return gkosGetTicks();
+    return rt_tick_get();
 #endif
 }
 

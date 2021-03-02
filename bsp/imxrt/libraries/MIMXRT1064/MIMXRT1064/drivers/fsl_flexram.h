@@ -2,7 +2,7 @@
  * Copyright 2017 NXP
  * All rights reserved.
  *
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -278,7 +278,7 @@ static inline void FLEXRAM_SetITCMMagicAddr(FLEXRAM_Type *base, uint16_t magicAd
  * is needed.
  * @param config allocate configuration.
  * @retval kStatus_InvalidArgument the argument is invalid
- * 		   kStatus_Success allocate success
+ *         kStatus_Success allocate success
  */
 status_t FLEXRAM_AllocateRam(flexram_allocate_ram_t *config);
 

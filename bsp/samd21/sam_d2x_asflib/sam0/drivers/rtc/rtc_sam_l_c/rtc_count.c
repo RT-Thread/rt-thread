@@ -75,17 +75,17 @@ struct rtc_module *_rtc_instance[RTC_INST_NUM];
  */
 static bool rtc_count_is_syncing(struct rtc_module *const module)
 {
- 	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	if (rtc_module->MODE0.SYNCBUSY.reg) {
-		return true;
-	}
+    if (rtc_module->MODE0.SYNCBUSY.reg) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -98,26 +98,26 @@ static bool rtc_count_is_syncing(struct rtc_module *const module)
  */
 void rtc_count_enable(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
 #if RTC_COUNT_ASYNC == true
-	system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_RTC);
+    system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_RTC);
 #endif
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Enable RTC module. */
-	rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_ENABLE;
+    /* Enable RTC module. */
+    rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_ENABLE;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -129,31 +129,31 @@ void rtc_count_enable(struct rtc_module *const module)
  */
 void rtc_count_disable(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
 #if RTC_COUNT_ASYNC == true
-	system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_RTC);
+    system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_RTC);
 #endif
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Disbale interrupt */
-	rtc_module->MODE0.INTENCLR.reg = RTC_MODE0_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	rtc_module->MODE0.INTFLAG.reg = RTC_MODE0_INTFLAG_MASK;
+    /* Disbale interrupt */
+    rtc_module->MODE0.INTENCLR.reg = RTC_MODE0_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    rtc_module->MODE0.INTFLAG.reg = RTC_MODE0_INTFLAG_MASK;
 
-	/* Disable RTC module. */
-	rtc_module->MODE0.CTRLA.reg &= ~RTC_MODE0_CTRLA_ENABLE;
+    /* Disable RTC module. */
+    rtc_module->MODE0.CTRLA.reg &= ~RTC_MODE0_CTRLA_ENABLE;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -164,30 +164,30 @@ void rtc_count_disable(struct rtc_module *const module)
  */
 void rtc_count_reset(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Disable module before reset. */
-	rtc_count_disable(module);
+    /* Disable module before reset. */
+    rtc_count_disable(module);
 
 #if RTC_COUNT_ASYNC == true
-	module->registered_callback = 0;
-	module->enabled_callback    = 0;
+    module->registered_callback = 0;
+    module->enabled_callback    = 0;
 #endif
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Initiate software reset. */
-	rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_SWRST;
+    /* Initiate software reset. */
+    rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_SWRST;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -204,68 +204,68 @@ void rtc_count_reset(struct rtc_module *const module)
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were given
  */
 static enum status_code _rtc_count_set_config(
-		struct rtc_module *const module,
-		const struct rtc_count_config *const config)
+        struct rtc_module *const module,
+        const struct rtc_count_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
 #if SAML21 || SAMR30
-	rtc_module->MODE0.CTRLA.reg = RTC_MODE0_CTRLA_MODE(0)
+    rtc_module->MODE0.CTRLA.reg = RTC_MODE0_CTRLA_MODE(0)
 #if (SAML21XXXB) || (SAMR30)
-				    | (config->enable_read_sync << RTC_MODE0_CTRLA_COUNTSYNC_Pos)
+                    | (config->enable_read_sync << RTC_MODE0_CTRLA_COUNTSYNC_Pos)
 #endif
-				    | config->prescaler;
+                    | config->prescaler;
 #endif
 #if (SAMC20) || (SAMC21) || (SAML22)
-	rtc_module->MODE0.CTRLA.reg = RTC_MODE0_CTRLA_MODE(0) | config->prescaler
-			| (config->enable_read_sync << RTC_MODE0_CTRLA_COUNTSYNC_Pos);
+    rtc_module->MODE0.CTRLA.reg = RTC_MODE0_CTRLA_MODE(0) | config->prescaler
+            | (config->enable_read_sync << RTC_MODE0_CTRLA_COUNTSYNC_Pos);
 #endif
 
-	/* Set mode and clear on match if applicable. */
-	switch (config->mode) {
-		case RTC_COUNT_MODE_32BIT:
-			/* Set 32-bit mode and clear on match if applicable. */
-			rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_MODE(0);
+    /* Set mode and clear on match if applicable. */
+    switch (config->mode) {
+        case RTC_COUNT_MODE_32BIT:
+            /* Set 32-bit mode and clear on match if applicable. */
+            rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_MODE(0);
 
-			/* Check if clear on compare match should be set. */
-			if (config->clear_on_match) {
-				/* Set clear on match. */
-				rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_MATCHCLR;
-			}
-			/* Set compare values. */
-			for (uint8_t i = 0; i < RTC_COMP32_NUM; i++) {
-				rtc_count_set_compare(module, config->compare_values[i],
-						(enum rtc_count_compare)i);
-			}
-			break;
+            /* Check if clear on compare match should be set. */
+            if (config->clear_on_match) {
+                /* Set clear on match. */
+                rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_MATCHCLR;
+            }
+            /* Set compare values. */
+            for (uint8_t i = 0; i < RTC_COMP32_NUM; i++) {
+                rtc_count_set_compare(module, config->compare_values[i],
+                        (enum rtc_count_compare)i);
+            }
+            break;
 
-		case RTC_COUNT_MODE_16BIT:
-			/* Set 16bit mode. */
-			rtc_module->MODE1.CTRLA.reg |= RTC_MODE1_CTRLA_MODE(1);
+        case RTC_COUNT_MODE_16BIT:
+            /* Set 16bit mode. */
+            rtc_module->MODE1.CTRLA.reg |= RTC_MODE1_CTRLA_MODE(1);
 
-			/* Check if match on clear is set, and return invalid
-			 * argument if set. */
-			if (config->clear_on_match) {
-				Assert(false);
-				return STATUS_ERR_INVALID_ARG;
-			}
-			/* Set compare values. */
-			for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
-				rtc_count_set_compare(module, config->compare_values[i],
-						(enum rtc_count_compare)i);
-			}
-			break;
-		default:
-			Assert(false);
-			return STATUS_ERR_INVALID_ARG;
-	}
+            /* Check if match on clear is set, and return invalid
+             * argument if set. */
+            if (config->clear_on_match) {
+                Assert(false);
+                return STATUS_ERR_INVALID_ARG;
+            }
+            /* Set compare values. */
+            for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
+                rtc_count_set_compare(module, config->compare_values[i],
+                        (enum rtc_count_compare)i);
+            }
+            break;
+        default:
+            Assert(false);
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Return status OK if everything was configured. */
-	return STATUS_OK;
+    /* Return status OK if everything was configured. */
+    return STATUS_OK;
 }
 
 /**
@@ -283,39 +283,39 @@ static enum status_code _rtc_count_set_config(
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were given
  */
 enum status_code rtc_count_init(
-		struct rtc_module *const module,
-		Rtc *const hw,
-		const struct rtc_count_config *const config)
+        struct rtc_module *const module,
+        Rtc *const hw,
+        const struct rtc_count_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(hw);
+    Assert(config);
 
-	/* Initialize device instance */
-	module->hw = hw;
+    /* Initialize device instance */
+    module->hw = hw;
 
-	/* Turn on the digital interface clock */
-	system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBA, MCLK_APBAMASK_RTC);
+    /* Turn on the digital interface clock */
+    system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBA, MCLK_APBAMASK_RTC);
 
-	/* Select RTC clock */
-	OSC32KCTRL->RTCCTRL.reg = RTC_CLOCK_SOURCE;
+    /* Select RTC clock */
+    OSC32KCTRL->RTCCTRL.reg = RTC_CLOCK_SOURCE;
 
-	/* Reset module to hardware defaults. */
-	rtc_count_reset(module);
+    /* Reset module to hardware defaults. */
+    rtc_count_reset(module);
 
-	/* Save conf_struct internally for continued use. */
-	module->mode                = config->mode;
+    /* Save conf_struct internally for continued use. */
+    module->mode                = config->mode;
 
 #  if (RTC_INST_NUM == 1)
-	_rtc_instance[0] = module;
+    _rtc_instance[0] = module;
 #  else
-	/* Register this instance for callbacks*/
-	_rtc_instance[_rtc_get_inst_index(hw)] = module;
+    /* Register this instance for callbacks*/
+    _rtc_instance[_rtc_get_inst_index(hw)] = module;
 #  endif
 
-	/* Set config and return status. */
-	return _rtc_count_set_config(module, config);
+    /* Set config and return status. */
+    return _rtc_count_set_config(module, config);
 }
 
 /**
@@ -331,45 +331,45 @@ enum status_code rtc_count_init(
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were provided
  */
 enum status_code rtc_count_set_count(
-		struct rtc_module *const module,
-		const uint32_t count_value)
+        struct rtc_module *const module,
+        const uint32_t count_value)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Set count according to mode */
-	switch(module->mode){
-		case RTC_COUNT_MODE_32BIT:
-			/* Write value to register. */
-			rtc_module->MODE0.COUNT.reg = count_value;
-			break;
-		case RTC_COUNT_MODE_16BIT:
-			/* Check if 16-bit value is provided. */
-			if(count_value > 0xffff){
-				return STATUS_ERR_INVALID_ARG;
-			}
+    /* Set count according to mode */
+    switch(module->mode){
+        case RTC_COUNT_MODE_32BIT:
+            /* Write value to register. */
+            rtc_module->MODE0.COUNT.reg = count_value;
+            break;
+        case RTC_COUNT_MODE_16BIT:
+            /* Check if 16-bit value is provided. */
+            if(count_value > 0xffff){
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			/* Write value to register. */
-			rtc_module->MODE1.COUNT.reg = (uint32_t)count_value;
+            /* Write value to register. */
+            rtc_module->MODE1.COUNT.reg = (uint32_t)count_value;
 
-			break;
+            break;
 
-		default:
-			Assert(false);
-			return STATUS_ERR_INVALID_ARG;
-	}
+        default:
+            Assert(false);
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
-	return STATUS_OK;
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
+    return STATUS_OK;
 }
 
 /**
@@ -383,41 +383,41 @@ enum status_code rtc_count_set_count(
  */
 uint32_t rtc_count_get_count(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Initialize return value. */
-	uint32_t ret_val;
+    /* Initialize return value. */
+    uint32_t ret_val;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Read value based on mode. */
-	switch (module->mode) {
-		case RTC_COUNT_MODE_32BIT:
-			/* Return count value in 32-bit mode. */
-			ret_val = rtc_module->MODE0.COUNT.reg;
+    /* Read value based on mode. */
+    switch (module->mode) {
+        case RTC_COUNT_MODE_32BIT:
+            /* Return count value in 32-bit mode. */
+            ret_val = rtc_module->MODE0.COUNT.reg;
 
-			break;
+            break;
 
-		case RTC_COUNT_MODE_16BIT:
-			/* Return count value in 16-bit mode. */
-			ret_val = (uint32_t)rtc_module->MODE1.COUNT.reg;
+        case RTC_COUNT_MODE_16BIT:
+            /* Return count value in 16-bit mode. */
+            ret_val = (uint32_t)rtc_module->MODE1.COUNT.reg;
 
-			break;
+            break;
 
-		default:
-			Assert(false);
-			/* Counter not initialized. Assume counter value 0.*/
-			ret_val = 0;
-			break;
-	}
+        default:
+            Assert(false);
+            /* Counter not initialized. Assume counter value 0.*/
+            ret_val = 0;
+            break;
+    }
 
-	return ret_val;
+    return ret_val;
 }
 
 /**
@@ -437,61 +437,61 @@ uint32_t rtc_count_get_count(struct rtc_module *const module)
  * \retval STATUS_ERR_BAD_FORMAT   If the module was not initialized in a mode
  */
 enum status_code rtc_count_set_compare(
-		struct rtc_module *const module,
-		const uint32_t comp_value,
-		const enum rtc_count_compare comp_index)
+        struct rtc_module *const module,
+        const uint32_t comp_value,
+        const enum rtc_count_compare comp_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Set compare values based on operation mode. */
-	switch (module->mode) {
-		case RTC_COUNT_MODE_32BIT:
-			/* Check sanity of comp_index. */
-			if ((uint32_t)comp_index > RTC_COMP32_NUM) {
-				return STATUS_ERR_INVALID_ARG;
-			}
+    /* Set compare values based on operation mode. */
+    switch (module->mode) {
+        case RTC_COUNT_MODE_32BIT:
+            /* Check sanity of comp_index. */
+            if ((uint32_t)comp_index > RTC_COMP32_NUM) {
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			/* Set compare value for COMP. */
-			rtc_module->MODE0.COMP[comp_index].reg = comp_value;
+            /* Set compare value for COMP. */
+            rtc_module->MODE0.COMP[comp_index].reg = comp_value;
 
-			break;
+            break;
 
-		case RTC_COUNT_MODE_16BIT:
-			/* Check sanity of comp_index. */
-			if ((uint32_t)comp_index > RTC_NUM_OF_COMP16) {
-				return STATUS_ERR_INVALID_ARG;
-			}
+        case RTC_COUNT_MODE_16BIT:
+            /* Check sanity of comp_index. */
+            if ((uint32_t)comp_index > RTC_NUM_OF_COMP16) {
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			/* Check that 16-bit value is provided. */
-			if (comp_value > 0xffff) {
-				Assert(false);
-				return STATUS_ERR_INVALID_ARG;
-			}
+            /* Check that 16-bit value is provided. */
+            if (comp_value > 0xffff) {
+                Assert(false);
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			/* Set compare value for COMP. */
-			rtc_module->MODE1.COMP[comp_index].reg = comp_value & 0xffff;
+            /* Set compare value for COMP. */
+            rtc_module->MODE1.COMP[comp_index].reg = comp_value & 0xffff;
 
-			break;
+            break;
 
-		default:
-			Assert(false);
-			return STATUS_ERR_BAD_FORMAT;
-	}
+        default:
+            Assert(false);
+            return STATUS_ERR_BAD_FORMAT;
+    }
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Return status if everything is OK. */
-	return STATUS_OK;
+    /* Return status if everything is OK. */
+    return STATUS_OK;
 }
 
 /**
@@ -512,49 +512,49 @@ enum status_code rtc_count_set_compare(
  * \retval STATUS_ERR_BAD_FORMAT   If the module was not initialized in a mode
  */
 enum status_code rtc_count_get_compare(
-		struct rtc_module *const module,
-		uint32_t *const comp_value,
-		const enum rtc_count_compare comp_index)
+        struct rtc_module *const module,
+        uint32_t *const comp_value,
+        const enum rtc_count_compare comp_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	switch (module->mode) {
-		case RTC_COUNT_MODE_32BIT:
-			/* Check sanity of comp_index. */
-			if ((uint32_t)comp_index > RTC_COMP32_NUM) {
-				return STATUS_ERR_INVALID_ARG;
-			}
+    switch (module->mode) {
+        case RTC_COUNT_MODE_32BIT:
+            /* Check sanity of comp_index. */
+            if ((uint32_t)comp_index > RTC_COMP32_NUM) {
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			/* Get compare value for COMP. */
-			*comp_value = rtc_module->MODE0.COMP[comp_index].reg;
+            /* Get compare value for COMP. */
+            *comp_value = rtc_module->MODE0.COMP[comp_index].reg;
 
-			break;
+            break;
 
-		case RTC_COUNT_MODE_16BIT:
-			/* Check sanity of comp_index. */
-			if ((uint32_t)comp_index > RTC_NUM_OF_COMP16) {
-				return STATUS_ERR_INVALID_ARG;
-			}
+        case RTC_COUNT_MODE_16BIT:
+            /* Check sanity of comp_index. */
+            if ((uint32_t)comp_index > RTC_NUM_OF_COMP16) {
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			/* Get compare value for COMP. */
-			*comp_value = (uint32_t)rtc_module->MODE1.COMP[comp_index].reg;
+            /* Get compare value for COMP. */
+            *comp_value = (uint32_t)rtc_module->MODE1.COMP[comp_index].reg;
 
-			break;
+            break;
 
-		default:
-			Assert(false);
-			return STATUS_ERR_BAD_FORMAT;
-	}
-	/* Return status showing everything is OK. */
-	return STATUS_OK;
+        default:
+            Assert(false);
+            return STATUS_ERR_BAD_FORMAT;
+    }
+    /* Return status showing everything is OK. */
+    return STATUS_OK;
 }
 
 /**
@@ -572,28 +572,28 @@ enum status_code rtc_count_get_compare(
  * \retval STATUS_ERR_UNSUPPORTED_DEV  If incorrect mode was set
  */
 enum status_code rtc_count_get_period(
-		struct rtc_module *const module,
-		uint16_t *const period_value)
+        struct rtc_module *const module,
+        uint16_t *const period_value)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Check that correct mode is set. */
-	if (module->mode != RTC_COUNT_MODE_16BIT) {
-		return STATUS_ERR_UNSUPPORTED_DEV;
-	}
+    /* Check that correct mode is set. */
+    if (module->mode != RTC_COUNT_MODE_16BIT) {
+        return STATUS_ERR_UNSUPPORTED_DEV;
+    }
 
-	/* Returns the value. */
-	*period_value = rtc_module->MODE1.PER.reg;
+    /* Returns the value. */
+    *period_value = rtc_module->MODE1.PER.reg;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -611,32 +611,32 @@ enum status_code rtc_count_get_period(
  * \retval STATUS_ERR_UNSUPPORTED_DEV  If module is not operated in 16-bit mode
  */
 enum status_code rtc_count_set_period(
-		struct rtc_module *const module,
-		const uint16_t period_value)
+        struct rtc_module *const module,
+        const uint16_t period_value)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Check that correct mode is set. */
-	if (module->mode != RTC_COUNT_MODE_16BIT) {
-		return STATUS_ERR_UNSUPPORTED_DEV;
-	}
+    /* Check that correct mode is set. */
+    if (module->mode != RTC_COUNT_MODE_16BIT) {
+        return STATUS_ERR_UNSUPPORTED_DEV;
+    }
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Write value to register. */
-	rtc_module->MODE1.PER.reg = period_value;
+    /* Write value to register. */
+    rtc_module->MODE1.PER.reg = period_value;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -651,40 +651,40 @@ enum status_code rtc_count_set_period(
  * \param[in] comp_index  Index of compare to check current flag
  */
 bool rtc_count_is_compare_match(
-		struct rtc_module *const module,
-		const enum rtc_count_compare comp_index)
+        struct rtc_module *const module,
+        const enum rtc_count_compare comp_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Check sanity. */
-	switch (module->mode) {
-		case RTC_COUNT_MODE_32BIT:
-			/* Check sanity for 32-bit mode. */
-			if (comp_index > RTC_COMP32_NUM) {
-				return false;
-			}
+    /* Check sanity. */
+    switch (module->mode) {
+        case RTC_COUNT_MODE_32BIT:
+            /* Check sanity for 32-bit mode. */
+            if (comp_index > RTC_COMP32_NUM) {
+                return false;
+            }
 
-			break;
+            break;
 
-		case RTC_COUNT_MODE_16BIT:
-			/* Check sanity for 16-bit mode. */
-			if (comp_index > RTC_NUM_OF_COMP16) {
-				return false;
-			}
+        case RTC_COUNT_MODE_16BIT:
+            /* Check sanity for 16-bit mode. */
+            if (comp_index > RTC_NUM_OF_COMP16) {
+                return false;
+            }
 
-			break;
+            break;
 
-		default:
-			Assert(false);
-			return false;
-	}
+        default:
+            Assert(false);
+            return false;
+    }
 
-	/* Set status of INTFLAG as return argument. */
-	return (rtc_module->MODE0.INTFLAG.reg & RTC_MODE1_INTFLAG_CMP(1 << comp_index)) ? true : false;
+    /* Set status of INTFLAG as return argument. */
+    return (rtc_module->MODE0.INTFLAG.reg & RTC_MODE1_INTFLAG_CMP(1 << comp_index)) ? true : false;
 }
 
 /**
@@ -704,42 +704,42 @@ bool rtc_count_is_compare_match(
  * \retval STATUS_ERR_BAD_FORMAT   If the module was not initialized in a mode
  */
 enum status_code rtc_count_clear_compare_match(
-		struct rtc_module *const module,
-		const enum rtc_count_compare comp_index)
+        struct rtc_module *const module,
+        const enum rtc_count_compare comp_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Check sanity. */
-	switch (module->mode){
-		case RTC_COUNT_MODE_32BIT:
-			/* Check sanity for 32-bit mode. */
-			if (comp_index > RTC_COMP32_NUM) {
-				return STATUS_ERR_INVALID_ARG;
-			}
+    /* Check sanity. */
+    switch (module->mode){
+        case RTC_COUNT_MODE_32BIT:
+            /* Check sanity for 32-bit mode. */
+            if (comp_index > RTC_COMP32_NUM) {
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			break;
+            break;
 
-		case RTC_COUNT_MODE_16BIT:
-			/* Check sanity for 16-bit mode. */
-			if (comp_index > RTC_NUM_OF_COMP16) {
-				return STATUS_ERR_INVALID_ARG;
-			}
+        case RTC_COUNT_MODE_16BIT:
+            /* Check sanity for 16-bit mode. */
+            if (comp_index > RTC_NUM_OF_COMP16) {
+                return STATUS_ERR_INVALID_ARG;
+            }
 
-			break;
+            break;
 
-		default:
-			Assert(false);
-			return STATUS_ERR_BAD_FORMAT;
-	}
+        default:
+            Assert(false);
+            return STATUS_ERR_BAD_FORMAT;
+    }
 
-	/* Clear INTFLAG. */
-	rtc_module->MODE0.INTFLAG.reg = RTC_MODE1_INTFLAG_CMP(1 << comp_index);
+    /* Clear INTFLAG. */
+    rtc_module->MODE0.INTFLAG.reg = RTC_MODE1_INTFLAG_CMP(1 << comp_index);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -762,43 +762,43 @@ enum status_code rtc_count_clear_compare_match(
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were provided
  */
 enum status_code rtc_count_frequency_correction(
-		struct rtc_module *const module,
-		const int8_t value)
+        struct rtc_module *const module,
+        const int8_t value)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Check if valid argument. */
-	if (abs(value) > 0x7F) {
-		/* Value bigger than allowed, return invalid argument. */
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Check if valid argument. */
+    if (abs(value) > 0x7F) {
+        /* Value bigger than allowed, return invalid argument. */
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	uint32_t new_correction_value;
+    uint32_t new_correction_value;
 
-	/* Load the new correction value as a positive value, sign added later */
-	new_correction_value = abs(value);
+    /* Load the new correction value as a positive value, sign added later */
+    new_correction_value = abs(value);
 
-	/* Convert to positive value and adjust register sign bit. */
-	if (value < 0) {
-		new_correction_value |= RTC_FREQCORR_SIGN;
-	}
+    /* Convert to positive value and adjust register sign bit. */
+    if (value < 0) {
+        new_correction_value |= RTC_FREQCORR_SIGN;
+    }
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Set value. */
-	rtc_module->MODE0.FREQCORR.reg = new_correction_value;
+    /* Set value. */
+    rtc_module->MODE0.FREQCORR.reg = new_correction_value;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
@@ -806,7 +806,7 @@ enum status_code rtc_count_frequency_correction(
  * \brief Applies the given configuration.
  *
  * Sets the configurations given from the configuration structure to the
- * RTC tamper and it should be called before RTC module enable. 
+ * RTC tamper and it should be called before RTC module enable.
  *
  * \param[in,out]  module  Pointer to the software instance struct
  * \param[in] config  Pointer to the configuration structure
@@ -816,92 +816,92 @@ enum status_code rtc_count_frequency_correction(
  * \note If tamper input configured as active layer protection, RTC prescaler
  *       output automatically enabled in the function.
  */
-enum status_code rtc_tamper_set_config ( 
-		struct rtc_module *const module,
-		struct rtc_tamper_config *const tamper_cfg)
+enum status_code rtc_tamper_set_config (
+        struct rtc_module *const module,
+        struct rtc_tamper_config *const tamper_cfg)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(tamper_cfg);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(tamper_cfg);
 
-	Rtc *const rtc_module = module->hw;
-	uint16_t ctrl_b = 0;
+    Rtc *const rtc_module = module->hw;
+    uint16_t ctrl_b = 0;
 
-	/* Configure enable backup and GP register reset on tamper or not. */
-	if(tamper_cfg->bkup_reset_on_tamper) {
-		rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_BKTRST;
-	} else {
-		rtc_module->MODE0.CTRLA.reg &= ~RTC_MODE0_CTRLA_BKTRST;
-	}
-	
-	if (tamper_cfg->gp_reset_on_tamper) {
-		rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_GPTRST;
-	} else {
-		rtc_module->MODE0.CTRLA.reg &= ~RTC_MODE0_CTRLA_GPTRST;
-	}
+    /* Configure enable backup and GP register reset on tamper or not. */
+    if(tamper_cfg->bkup_reset_on_tamper) {
+        rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_BKTRST;
+    } else {
+        rtc_module->MODE0.CTRLA.reg &= ~RTC_MODE0_CTRLA_BKTRST;
+    }
 
-	/* Configure tamper detection of frequency and debounce setting. */
-	ctrl_b = tamper_cfg->actl_freq_div | tamper_cfg->deb_freq_div;
-	if(tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_ASYNC) {
-		ctrl_b |= RTC_MODE0_CTRLB_DEBASYNC;
-	} else if (tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_MAJORITY) {
-		ctrl_b |= RTC_MODE0_CTRLB_DEBMAJ;
-	}
-	if(tamper_cfg->dma_tamper_enable) {
-		ctrl_b |= RTC_MODE0_CTRLB_DMAEN;
-	}
-	if (tamper_cfg->gp0_enable) {
-		ctrl_b |= RTC_MODE0_CTRLB_GP0EN;
-	}
+    if (tamper_cfg->gp_reset_on_tamper) {
+        rtc_module->MODE0.CTRLA.reg |= RTC_MODE0_CTRLA_GPTRST;
+    } else {
+        rtc_module->MODE0.CTRLA.reg &= ~RTC_MODE0_CTRLA_GPTRST;
+    }
 
-	/* Configure tamper input. */
-	volatile RTC_TAMPCTRL_Type *tamper_ctrl = &(rtc_module->MODE0.TAMPCTRL);
+    /* Configure tamper detection of frequency and debounce setting. */
+    ctrl_b = tamper_cfg->actl_freq_div | tamper_cfg->deb_freq_div;
+    if(tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_ASYNC) {
+        ctrl_b |= RTC_MODE0_CTRLB_DEBASYNC;
+    } else if (tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_MAJORITY) {
+        ctrl_b |= RTC_MODE0_CTRLB_DEBMAJ;
+    }
+    if(tamper_cfg->dma_tamper_enable) {
+        ctrl_b |= RTC_MODE0_CTRLB_DMAEN;
+    }
+    if (tamper_cfg->gp0_enable) {
+        ctrl_b |= RTC_MODE0_CTRLB_GP0EN;
+    }
 
-	struct rtc_tamper_input_config in_cfg;
-	for (uint8_t tamper_id = 0; tamper_id < RTC_TAMPER_NUM; tamper_id++) {
-		in_cfg = tamper_cfg->in_cfg[tamper_id];
+    /* Configure tamper input. */
+    volatile RTC_TAMPCTRL_Type *tamper_ctrl = &(rtc_module->MODE0.TAMPCTRL);
 
-		if(in_cfg.action == RTC_TAMPER_INPUT_ACTION_ACTL) {
-			ctrl_b |= RTC_MODE0_CTRLB_RTCOUT;
-		}
-	
-		switch(tamper_id) {
-			case 0:
-				tamper_ctrl->bit.IN0ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL0 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC0 = in_cfg.debounce_enable;
-				break;
-			case 1:
-				tamper_ctrl->bit.IN1ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL1 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC1 = in_cfg.debounce_enable;
-				break;
-			case 2:
-				tamper_ctrl->bit.IN2ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL2 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC2 = in_cfg.debounce_enable;
-				break;
-			case 3:
-				tamper_ctrl->bit.IN3ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL3 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC3 = in_cfg.debounce_enable;
-				break;
-			case 4:
-				tamper_ctrl->bit.IN4ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL4 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC4 = in_cfg.debounce_enable;
-				break;
-			default:
-				Assert(false);
-				break;
-		}
-	}
+    struct rtc_tamper_input_config in_cfg;
+    for (uint8_t tamper_id = 0; tamper_id < RTC_TAMPER_NUM; tamper_id++) {
+        in_cfg = tamper_cfg->in_cfg[tamper_id];
 
-	rtc_module->MODE0.CTRLB.reg = ctrl_b;
+        if(in_cfg.action == RTC_TAMPER_INPUT_ACTION_ACTL) {
+            ctrl_b |= RTC_MODE0_CTRLB_RTCOUT;
+        }
 
-	/* Return status OK if everything was configured. */
-	return STATUS_OK;
+        switch(tamper_id) {
+            case 0:
+                tamper_ctrl->bit.IN0ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL0 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC0 = in_cfg.debounce_enable;
+                break;
+            case 1:
+                tamper_ctrl->bit.IN1ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL1 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC1 = in_cfg.debounce_enable;
+                break;
+            case 2:
+                tamper_ctrl->bit.IN2ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL2 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC2 = in_cfg.debounce_enable;
+                break;
+            case 3:
+                tamper_ctrl->bit.IN3ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL3 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC3 = in_cfg.debounce_enable;
+                break;
+            case 4:
+                tamper_ctrl->bit.IN4ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL4 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC4 = in_cfg.debounce_enable;
+                break;
+            default:
+                Assert(false);
+                break;
+        }
+    }
+
+    rtc_module->MODE0.CTRLB.reg = ctrl_b;
+
+    /* Return status OK if everything was configured. */
+    return STATUS_OK;
 }
 
 /**
@@ -913,39 +913,39 @@ enum status_code rtc_tamper_set_config (
  */
 uint32_t rtc_tamper_get_stamp (struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Initialize return value. */
-	uint32_t tamper_stamp = 0;
+    /* Initialize return value. */
+    uint32_t tamper_stamp = 0;
 
-	while (rtc_count_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_count_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Read value based on mode. */
-	switch (module->mode) {
-		case RTC_COUNT_MODE_32BIT:
-			/* Return stamp value in 32-bit mode. */
-			tamper_stamp = rtc_module->MODE0.TIMESTAMP.reg;
+    /* Read value based on mode. */
+    switch (module->mode) {
+        case RTC_COUNT_MODE_32BIT:
+            /* Return stamp value in 32-bit mode. */
+            tamper_stamp = rtc_module->MODE0.TIMESTAMP.reg;
 
-			break;
+            break;
 
-		case RTC_COUNT_MODE_16BIT:
-			/* Return stamp value in 16-bit mode. */
-			tamper_stamp = (uint32_t)rtc_module->MODE1.TIMESTAMP.reg;
+        case RTC_COUNT_MODE_16BIT:
+            /* Return stamp value in 16-bit mode. */
+            tamper_stamp = (uint32_t)rtc_module->MODE1.TIMESTAMP.reg;
 
-			break;
+            break;
 
-		default:
-			Assert(false);
-			break;
-	}
+        default:
+            Assert(false);
+            break;
+    }
 
-	return tamper_stamp;
+    return tamper_stamp;
 }
 
 #endif

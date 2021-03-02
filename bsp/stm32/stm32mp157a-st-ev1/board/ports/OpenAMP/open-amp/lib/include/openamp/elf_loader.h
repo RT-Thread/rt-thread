@@ -36,78 +36,78 @@ typedef int64_t Elf64_Sxword;
 
 /* ELF32 file header */
 typedef struct {
-	unsigned char e_ident[EI_NIDENT];
-	Elf32_Half e_type;
-	Elf32_Half e_machine;
-	Elf32_Word e_version;
-	Elf32_Addr e_entry;
-	Elf32_Off e_phoff;
-	Elf32_Off e_shoff;
-	Elf32_Word e_flags;
-	Elf32_Half e_ehsize;
-	Elf32_Half e_phentsize;
-	Elf32_Half e_phnum;
-	Elf32_Half e_shentsize;
-	Elf32_Half e_shnum;
-	Elf32_Half e_shstrndx;
+    unsigned char e_ident[EI_NIDENT];
+    Elf32_Half e_type;
+    Elf32_Half e_machine;
+    Elf32_Word e_version;
+    Elf32_Addr e_entry;
+    Elf32_Off e_phoff;
+    Elf32_Off e_shoff;
+    Elf32_Word e_flags;
+    Elf32_Half e_ehsize;
+    Elf32_Half e_phentsize;
+    Elf32_Half e_phnum;
+    Elf32_Half e_shentsize;
+    Elf32_Half e_shnum;
+    Elf32_Half e_shstrndx;
 } Elf32_Ehdr;
 
 /* ELF64 file header */
 typedef struct {
-	unsigned char e_ident[EI_NIDENT];
-	Elf64_Half e_type;
-	Elf64_Half e_machine;
-	Elf64_Word e_version;
-	Elf64_Addr e_entry;
-	Elf64_Off e_phoff;
-	Elf64_Off e_shoff;
-	Elf64_Word e_flags;
-	Elf64_Half e_ehsize;
-	Elf64_Half e_phentsize;
-	Elf64_Half e_phnum;
-	Elf64_Half e_shentsize;
-	Elf64_Half e_shnum;
-	Elf64_Half e_shstrndx;
+    unsigned char e_ident[EI_NIDENT];
+    Elf64_Half e_type;
+    Elf64_Half e_machine;
+    Elf64_Word e_version;
+    Elf64_Addr e_entry;
+    Elf64_Off e_phoff;
+    Elf64_Off e_shoff;
+    Elf64_Word e_flags;
+    Elf64_Half e_ehsize;
+    Elf64_Half e_phentsize;
+    Elf64_Half e_phnum;
+    Elf64_Half e_shentsize;
+    Elf64_Half e_shnum;
+    Elf64_Half e_shstrndx;
 } Elf64_Ehdr;
 
 /* e_ident */
 #define     ET_NONE         0
-#define     ET_REL          1	/* Re-locatable file         */
-#define     ET_EXEC         2	/* Executable file           */
-#define     ET_DYN          3	/* Shared object file        */
-#define     ET_CORE         4	/* Core file                 */
-#define     ET_LOOS         0xfe00	/* Operating system-specific */
-#define     ET_HIOS         0xfeff	/* Operating system-specific */
-#define     ET_LOPROC       0xff00	/* remote_proc-specific        */
-#define     ET_HIPROC       0xffff	/* remote_proc-specific        */
+#define     ET_REL          1   /* Re-locatable file         */
+#define     ET_EXEC         2   /* Executable file           */
+#define     ET_DYN          3   /* Shared object file        */
+#define     ET_CORE         4   /* Core file                 */
+#define     ET_LOOS         0xfe00  /* Operating system-specific */
+#define     ET_HIOS         0xfeff  /* Operating system-specific */
+#define     ET_LOPROC       0xff00  /* remote_proc-specific        */
+#define     ET_HIPROC       0xffff  /* remote_proc-specific        */
 
 /* e_machine */
-#define     EM_ARM          40	/* ARM/Thumb Architecture    */
+#define     EM_ARM          40  /* ARM/Thumb Architecture    */
 
 /* e_version */
-#define     EV_CURRENT      1	/* Current version           */
+#define     EV_CURRENT      1   /* Current version           */
 
 /* e_ident[] Identification Indexes */
-#define     EI_MAG0         0	/* File identification       */
-#define     EI_MAG1         1	/* File identification       */
-#define     EI_MAG2         2	/* File identification       */
-#define     EI_MAG3         3	/* File identification       */
-#define     EI_CLASS        4	/* File class                */
-#define     EI_DATA         5	/* Data encoding             */
-#define     EI_VERSION      6	/* File version              */
-#define     EI_OSABI        7	/* Operating system/ABI identification */
-#define     EI_ABIVERSION   8	/* ABI version               */
-#define     EI_PAD          9	/* Start of padding bytes    */
-#define     EI_NIDENT       16	/* Size of e_ident[]         */
+#define     EI_MAG0         0   /* File identification       */
+#define     EI_MAG1         1   /* File identification       */
+#define     EI_MAG2         2   /* File identification       */
+#define     EI_MAG3         3   /* File identification       */
+#define     EI_CLASS        4   /* File class                */
+#define     EI_DATA         5   /* Data encoding             */
+#define     EI_VERSION      6   /* File version              */
+#define     EI_OSABI        7   /* Operating system/ABI identification */
+#define     EI_ABIVERSION   8   /* ABI version               */
+#define     EI_PAD          9   /* Start of padding bytes    */
+#define     EI_NIDENT       16  /* Size of e_ident[]         */
 
 /*
  * EI_MAG0 to EI_MAG3 - A file's first 4 bytes hold amagic number, identifying
  * the file as an ELF object file
  */
 #define     ELFMAG0         0x7f /* e_ident[EI_MAG0]          */
-#define     ELFMAG1         'E'	/* e_ident[EI_MAG1]          */
-#define     ELFMAG2         'L'	/* e_ident[EI_MAG2]          */
-#define     ELFMAG3         'F'	/* e_ident[EI_MAG3]          */
+#define     ELFMAG1         'E' /* e_ident[EI_MAG1]          */
+#define     ELFMAG2         'L' /* e_ident[EI_MAG2]          */
+#define     ELFMAG3         'F' /* e_ident[EI_MAG3]          */
 #define     ELFMAG          "\177ELF"
 #define     SELFMAG         4
 
@@ -115,44 +115,44 @@ typedef struct {
  * EI_CLASS - The next byte, e_ident[EI_CLASS], identifies the file's class, or
  * capacity.
  */
-#define     ELFCLASSNONE    0	/* Invalid class             */
-#define     ELFCLASS32      1	/* 32-bit objects            */
-#define     ELFCLASS64      2	/* 64-bit objects            */
+#define     ELFCLASSNONE    0   /* Invalid class             */
+#define     ELFCLASS32      1   /* 32-bit objects            */
+#define     ELFCLASS64      2   /* 64-bit objects            */
 
 /*
  * EI_DATA - Byte e_ident[EI_DATA] specifies the data encoding of the
  * remote_proc-specific data in the object file. The following encodings are
  * currently defined.
  */
-#define     ELFDATANONE     0	/* Invalid data encoding     */
-#define     ELFDATA2LSB     1	/* See Data encodings, below */
-#define     ELFDATA2MSB     2	/* See Data encodings, below */
+#define     ELFDATANONE     0   /* Invalid data encoding     */
+#define     ELFDATA2LSB     1   /* See Data encodings, below */
+#define     ELFDATA2MSB     2   /* See Data encodings, below */
 
 /* EI_OSABI - We do not define an OS specific ABI */
 #define     ELFOSABI_NONE   0
 
 /* ELF32 program header */
 typedef struct elf32_phdr{
-	Elf32_Word p_type;
-	Elf32_Off p_offset;
-	Elf32_Addr p_vaddr;
-	Elf32_Addr p_paddr;
-	Elf32_Word p_filesz;
-	Elf32_Word p_memsz;
-	Elf32_Word p_flags;
-	Elf32_Word p_align;
+    Elf32_Word p_type;
+    Elf32_Off p_offset;
+    Elf32_Addr p_vaddr;
+    Elf32_Addr p_paddr;
+    Elf32_Word p_filesz;
+    Elf32_Word p_memsz;
+    Elf32_Word p_flags;
+    Elf32_Word p_align;
 } Elf32_Phdr;
 
 /* ELF64 program header */
 typedef struct elf64_phdr {
-	Elf64_Word p_type;
-	Elf64_Word p_flags;
-	Elf64_Off p_offset;
-	Elf64_Addr p_vaddr;
-	Elf64_Addr p_paddr;
-	Elf64_Xword p_filesz;
-	Elf64_Xword p_memsz;
-	Elf64_Xword p_align;
+    Elf64_Word p_type;
+    Elf64_Word p_flags;
+    Elf64_Off p_offset;
+    Elf64_Addr p_vaddr;
+    Elf64_Addr p_paddr;
+    Elf64_Xword p_filesz;
+    Elf64_Xword p_memsz;
+    Elf64_Xword p_align;
 } Elf64_Phdr;
 
 /* segment types */
@@ -171,30 +171,30 @@ typedef struct elf64_phdr {
 
 /* ELF32 section header. */
 typedef struct {
-	Elf32_Word sh_name;
-	Elf32_Word sh_type;
-	Elf32_Word sh_flags;
-	Elf32_Addr sh_addr;
-	Elf32_Off sh_offset;
-	Elf32_Word sh_size;
-	Elf32_Word sh_link;
-	Elf32_Word sh_info;
-	Elf32_Word sh_addralign;
-	Elf32_Word sh_entsize;
+    Elf32_Word sh_name;
+    Elf32_Word sh_type;
+    Elf32_Word sh_flags;
+    Elf32_Addr sh_addr;
+    Elf32_Off sh_offset;
+    Elf32_Word sh_size;
+    Elf32_Word sh_link;
+    Elf32_Word sh_info;
+    Elf32_Word sh_addralign;
+    Elf32_Word sh_entsize;
 } Elf32_Shdr;
 
 /* ELF64 section header. */
 typedef struct {
-	Elf64_Word sh_name;
-	Elf64_Word sh_type;
-	Elf64_Xword sh_flags;
-	Elf64_Addr sh_addr;
-	Elf64_Off sh_offset;
-	Elf64_Xword sh_size;
-	Elf64_Word sh_link;
-	Elf64_Word sh_info;
-	Elf64_Xword sh_addralign;
-	Elf64_Xword sh_entsize;
+    Elf64_Word sh_name;
+    Elf64_Word sh_type;
+    Elf64_Xword sh_flags;
+    Elf64_Addr sh_addr;
+    Elf64_Off sh_offset;
+    Elf64_Xword sh_size;
+    Elf64_Word sh_link;
+    Elf64_Word sh_info;
+    Elf64_Xword sh_addralign;
+    Elf64_Xword sh_entsize;
 } Elf64_Shdr;
 
 /* sh_type */
@@ -230,29 +230,29 @@ typedef struct {
 
 /* Relocation entry (without addend) */
 typedef struct {
-	Elf32_Addr r_offset;
-	Elf32_Word r_info;
+    Elf32_Addr r_offset;
+    Elf32_Word r_info;
 
 } Elf32_Rel;
 
 typedef struct {
-	Elf64_Addr r_offset;
-	Elf64_Xword r_info;
+    Elf64_Addr r_offset;
+    Elf64_Xword r_info;
 
 } Elf64_Rel;
 
 /* Relocation entry with addend */
 typedef struct {
-	Elf32_Addr r_offset;
-	Elf32_Word r_info;
-	Elf32_Sword r_addend;
+    Elf32_Addr r_offset;
+    Elf32_Word r_info;
+    Elf32_Sword r_addend;
 
 } Elf32_Rela;
 
 typedef struct elf64_rela {
-	Elf64_Addr r_offset;
-	Elf64_Xword r_info;
-	Elf64_Sxword r_addend;
+    Elf64_Addr r_offset;
+    Elf64_Xword r_info;
+    Elf64_Sxword r_addend;
 } Elf64_Rela;
 
 /* Macros to extract information from 'r_info' field of relocation entries */
@@ -263,45 +263,45 @@ typedef struct elf64_rela {
 
 /* Symbol table entry */
 typedef struct {
-	Elf32_Word st_name;
-	Elf32_Addr st_value;
-	Elf32_Word st_size;
-	unsigned char st_info;
-	unsigned char st_other;
-	Elf32_Half st_shndx;
+    Elf32_Word st_name;
+    Elf32_Addr st_value;
+    Elf32_Word st_size;
+    unsigned char st_info;
+    unsigned char st_other;
+    Elf32_Half st_shndx;
 
 } Elf32_Sym;
 
 typedef struct elf64_sym {
-	Elf64_Word st_name;
-	unsigned char	st_info;
-	unsigned char	st_other;
-	Elf64_Half st_shndx;
-	Elf64_Addr st_value;
-	Elf64_Xword st_size;
+    Elf64_Word st_name;
+    unsigned char   st_info;
+    unsigned char   st_other;
+    Elf64_Half st_shndx;
+    Elf64_Addr st_value;
+    Elf64_Xword st_size;
 } Elf64_Sym;
 
 /* ARM specific dynamic relocation codes */
-#define     R_ARM_GLOB_DAT	21	/* 0x15 */
-#define     R_ARM_JUMP_SLOT	22	/* 0x16 */
-#define     R_ARM_RELATIVE	23	/* 0x17 */
-#define     R_ARM_ABS32		2	/* 0x02 */
+#define     R_ARM_GLOB_DAT  21  /* 0x15 */
+#define     R_ARM_JUMP_SLOT 22  /* 0x16 */
+#define     R_ARM_RELATIVE  23  /* 0x17 */
+#define     R_ARM_ABS32     2   /* 0x02 */
 
 /* ELF decoding information */
 struct elf32_info {
-	Elf32_Ehdr ehdr;
-	unsigned int load_state;
-	Elf32_Phdr *phdrs;
-	Elf32_Shdr *shdrs;
-	void *shstrtab;
+    Elf32_Ehdr ehdr;
+    unsigned int load_state;
+    Elf32_Phdr *phdrs;
+    Elf32_Shdr *shdrs;
+    void *shstrtab;
 };
 
 struct elf64_info {
-	Elf64_Ehdr ehdr;
-	unsigned int load_state;
-	Elf64_Phdr *phdrs;
-	Elf64_Shdr *shdrs;
-	void *shstrtab;
+    Elf64_Ehdr ehdr;
+    unsigned int load_state;
+    Elf64_Phdr *phdrs;
+    Elf64_Shdr *shdrs;
+    void *shstrtab;
 };
 
 #define ELF_STATE_INIT              0x0UL
@@ -343,8 +343,8 @@ int elf_identify(const void *img_data, size_t len);
  * return ELF loading header state, or negative value for failure
  */
 int elf_load_header(const void *img_data, size_t offset, size_t len,
-		    void **img_info, int last_load_state,
-		    size_t *noffset, size_t *nlen);
+            void **img_info, int last_load_state,
+            size_t *noffset, size_t *nlen);
 
 /**
  * elf_load - load ELF data
@@ -377,11 +377,11 @@ int elf_load_header(const void *img_data, size_t offset, size_t len,
  * return 0 for success, otherwise negative value for failure
  */
 int elf_load(struct remoteproc *rproc, const void *img_data,
-	     size_t offset, size_t len,
-	     void **img_info, int last_load_state,
-	     metal_phys_addr_t *da,
-	     size_t *noffset, size_t *nlen,
-	     unsigned char *padding, size_t *nmemsize);
+         size_t offset, size_t len,
+         void **img_info, int last_load_state,
+         metal_phys_addr_t *da,
+         size_t *noffset, size_t *nlen,
+         unsigned char *padding, size_t *nmemsize);
 
 /**
  * elf_release - Release ELF image information
@@ -419,7 +419,7 @@ metal_phys_addr_t elf_get_entry(void *img_info);
  * failure.
  */
 int elf_locate_rsc_table(void *img_info, metal_phys_addr_t *da,
-			 size_t *offset, size_t *size);
+             size_t *offset, size_t *size);
 
 #if defined __cplusplus
 }

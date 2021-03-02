@@ -132,7 +132,7 @@ static inline void iap_entry(uint32_t *cmd_param, uint32_t *status_result)
 }
 
 /*!
- * @brief	Prepare sector for write operation
+ * @brief   Prepare sector for write operation
 
  * This function prepares sector(s) for write/erase operation. This function must be
  * called before calling the FLASHIAP_CopyRamToFlash() or FLASHIAP_EraseSector() or
@@ -152,7 +152,7 @@ static inline void iap_entry(uint32_t *cmd_param, uint32_t *status_result)
 status_t FLASHIAP_PrepareSectorForWrite(uint32_t startSector, uint32_t endSector);
 
 /*!
- * @brief	Copy RAM to flash.
+ * @brief   Copy RAM to flash.
 
  * This function programs the flash memory. Corresponding sectors must be prepared
  * via FLASHIAP_PrepareSectorForWrite before calling calling this function. The addresses
@@ -178,7 +178,7 @@ status_t FLASHIAP_PrepareSectorForWrite(uint32_t startSector, uint32_t endSector
 status_t FLASHIAP_CopyRamToFlash(uint32_t dstAddr, uint32_t *srcAddr, uint32_t numOfBytes, uint32_t systemCoreClock);
 
 /*!
- * @brief	Erase sector
+ * @brief   Erase sector
 
  * This function erases sector(s). The end sector must be greater than or equal to
  * start sector number. FLASHIAP_PrepareSectorForWrite must be called before
@@ -226,8 +226,8 @@ status_t FLASHIAP_ErasePage(uint32_t startPage, uint32_t endPage, uint32_t syste
  * Blank check single or multiples sectors of flash memory. The end sector must be greater than or equal to
  * start sector number. It can be used to verify the sector eraseure after FLASHIAP_EraseSector call.
  *
- * @param	startSector	: Start sector number. Must be greater than or equal to start sector number
- * @param	endSector	: End sector number
+ * @param   startSector : Start sector number. Must be greater than or equal to start sector number
+ * @param   endSector   : End sector number
  * @retval #kStatus_FLASHIAP_Success One or more sectors are in erased state.
  * @retval #kStatus_FLASHIAP_NoPower Flash memory block is powered down.
  * @retval #kStatus_FLASHIAP_NoClock Flash memory block or controller is not clocked.

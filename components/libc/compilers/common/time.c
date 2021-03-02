@@ -188,7 +188,7 @@ RTM_EXPORT(difftime);
  *
  * @param time_t * t the timestamp pointer, if not used, keep NULL.
  *
- * @return The value ((time_t)-1) is returned if the calendar time is not available. 
+ * @return The value ((time_t)-1) is returned if the calendar time is not available.
  *         If timer is not a NULL pointer, the return value is also stored in timer.
  *
  */

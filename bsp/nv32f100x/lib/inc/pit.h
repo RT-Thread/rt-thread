@@ -1,5 +1,5 @@
 /******************************************************************************
-* @brief    Periodic Interrupt ETMer (PIT) driver head file. 
+* @brief    Periodic Interrupt ETMer (PIT) driver head file.
 *
 ******************************************************************************/
 #ifndef PIT_H_
@@ -52,26 +52,26 @@ typedef void (*PIT_CallbackType)(void);             /*!< PIT callback type */
 
 /*! @} End of pit_callback                                                    */
 
-/* PIT configuration structure 
- */  
+/* PIT configuration structure
+ */
 /*!
  * @brief PIT configuration type.
  *
  */
 typedef struct
-{   
+{
     uint8_t bFreeze         : 1;    /*!< 1: stop in debug mode, 0: run in debug mode */
-    uint8_t bModuleDis      : 1;    /*!< 1: PIT module is disable, 0: PIT module is enable */    
-    uint8_t bReserved0      : 1;    /*!< reserved bit */ 
-    uint8_t bReserved1      : 5;    /*!< reserved bit */ 
-    uint8_t bETMerEn        : 1;    /*!< 1: channel ETMer is enable, 0: channel ETMer is disable */ 
-    uint8_t bInterruptEn    : 1;    /*!< 1: channel ETMer interrupt is enable, 0: channel ETMer interrupt is disable */ 
-    uint8_t bChainMode      : 1;    /*!< 1: chain mode is enable, 0: chain mode is disable */ 
-    uint8_t bReserved2      : 5;    /*!< reserved bit */ 
+    uint8_t bModuleDis      : 1;    /*!< 1: PIT module is disable, 0: PIT module is enable */
+    uint8_t bReserved0      : 1;    /*!< reserved bit */
+    uint8_t bReserved1      : 5;    /*!< reserved bit */
+    uint8_t bETMerEn        : 1;    /*!< 1: channel ETMer is enable, 0: channel ETMer is disable */
+    uint8_t bInterruptEn    : 1;    /*!< 1: channel ETMer interrupt is enable, 0: channel ETMer interrupt is disable */
+    uint8_t bChainMode      : 1;    /*!< 1: chain mode is enable, 0: chain mode is disable */
+    uint8_t bReserved2      : 5;    /*!< reserved bit */
     uint8_t bFlag           : 1;    /*!< 1: flag is set,and write 1 to clear flag, 0: no flag is set */
-    uint8_t bReserved3      : 7;    /*!< reserved bit */   
-    uint32_t u32LoadValue      ;    /*!< 32-bit channel load value */  
-} PIT_ConfigType, *PIT_ConfigPtr; 
+    uint8_t bReserved3      : 7;    /*!< reserved bit */
+    uint32_t u32LoadValue      ;    /*!< 32-bit channel load value */
+} PIT_ConfigType, *PIT_ConfigPtr;
 
 
 /******************************************************************************
@@ -93,7 +93,7 @@ typedef struct
 /*****************************************************************************//*!
 *
 * @brief enable pit module.
-*        
+*
 * @param   none
 *
 * @return none
@@ -103,15 +103,15 @@ typedef struct
 __STATIC_INLINE void PIT_Enable(void)
 {
 
-    PIT->MCR &= ~PIT_MCR_MDIS_MASK; 
-    
+    PIT->MCR &= ~PIT_MCR_MDIS_MASK;
+
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief disable pit module.
-*        
+*
 * @param   none
 *
 * @return none
@@ -121,14 +121,14 @@ __STATIC_INLINE void PIT_Enable(void)
 __STATIC_INLINE void PIT_Disable(void)
 {
 
-    PIT->MCR |= PIT_MCR_MDIS_MASK; 
+    PIT->MCR |= PIT_MCR_MDIS_MASK;
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief pit ETMers are stopped in debug mode.
-*        
+*
 * @param  none
 *
 * @return none
@@ -145,7 +145,7 @@ __STATIC_INLINE void PIT_SetDebugFreeze(void)
 /*****************************************************************************//*!
 *
 * @brief pit ETMers are running in debug mode.
-*        
+*
 * @param  none
 *
 * @return none
@@ -162,7 +162,7 @@ __STATIC_INLINE void PIT_SetDebugOn(void)
 /*****************************************************************************//*!
 *
 * @brief enable pit channel ETMer.
-*        
+*
 * @param[in]   u8Channel.
 *
 * @return none
@@ -173,14 +173,14 @@ __STATIC_INLINE void PIT_ChannelEnable(uint8_t u8Channel)
 
 {
 
-    PIT->CHANNEL[u8Channel].TCTRL |= PIT_TCTRL_TEN_MASK; 
+    PIT->CHANNEL[u8Channel].TCTRL |= PIT_TCTRL_TEN_MASK;
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief disable pit channel ETMer.
-*        
+*
 * @param[in]   u8Channel.
 *
 * @return none
@@ -190,14 +190,14 @@ __STATIC_INLINE void PIT_ChannelEnable(uint8_t u8Channel)
 __STATIC_INLINE void PIT_ChannelDisable(uint8_t u8Channel)
 {
 
-    PIT->CHANNEL[u8Channel].TCTRL &= ~PIT_TCTRL_TEN_MASK; 
+    PIT->CHANNEL[u8Channel].TCTRL &= ~PIT_TCTRL_TEN_MASK;
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief enable pit channel ETMer interrupt.
-*        
+*
 * @param[in]  u8Channel.
 *
 * @return none
@@ -208,14 +208,14 @@ __STATIC_INLINE void PIT_ChannelEnableInt(uint8_t u8Channel)
 
 {
 
-    PIT->CHANNEL[u8Channel].TCTRL |= PIT_TCTRL_TIE_MASK; 
+    PIT->CHANNEL[u8Channel].TCTRL |= PIT_TCTRL_TIE_MASK;
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief disable pit channel ETMer interrupt .
-*        
+*
 * @param[in]   u8Channel.
 *
 * @return none
@@ -226,14 +226,14 @@ __STATIC_INLINE void PIT_ChannelDisableInt(uint8_t u8Channel)
 
 {
 
-    PIT->CHANNEL[u8Channel].TCTRL &= ~PIT_TCTRL_TIE_MASK; 
+    PIT->CHANNEL[u8Channel].TCTRL &= ~PIT_TCTRL_TIE_MASK;
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief  enable pit channel ETMer chain mode.
-*        
+*
 * @param[in]   u8Channel.
 *
 * @return none
@@ -249,7 +249,7 @@ __STATIC_INLINE void PIT_ChannelEnableChain(uint8_t u8Channel)
 /*****************************************************************************//*!
 *
 * @brief  disable pit channel ETMer chain mode.
-*        
+*
 * @param[in]   u8Channel.
 *
 * @return none
@@ -266,7 +266,7 @@ __STATIC_INLINE void PIT_ChannelDisableChain(uint8_t u8Channel)
 /*****************************************************************************//*!
 *
 * @brief get pit channel ETMer interrrupt flag.
-*        
+*
 * @param[in]   u8Channel.
 *
 * @return bflag.
@@ -277,19 +277,19 @@ __STATIC_INLINE void PIT_ChannelDisableChain(uint8_t u8Channel)
 __STATIC_INLINE uint8_t PIT_ChannelGetFlags(uint8_t u8Channel)
 
 {
-    uint8_t bflag;  
-    
-    bflag = (PIT->CHANNEL[u8Channel].TFLG & PIT_TFLG_TIF_MASK);    
-    
+    uint8_t bflag;
+
+    bflag = (PIT->CHANNEL[u8Channel].TFLG & PIT_TFLG_TIF_MASK);
+
     return bflag;
-    
+
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief clear pit channel ETMer interrrupt flag.
-*        
+*
 * @param[in] u8Channel
 *
 * @return none
@@ -298,7 +298,7 @@ __STATIC_INLINE uint8_t PIT_ChannelGetFlags(uint8_t u8Channel)
 *****************************************************************************/
 __STATIC_INLINE void PIT_ChannelClrFlags(uint8_t u8Channel)
 {
-    PIT->CHANNEL[u8Channel].TFLG |= PIT_TFLG_TIF_MASK;       
+    PIT->CHANNEL[u8Channel].TFLG |= PIT_TFLG_TIF_MASK;
 }
 
 

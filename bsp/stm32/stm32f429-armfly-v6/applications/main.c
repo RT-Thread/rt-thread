@@ -18,10 +18,10 @@ int main(void)
     int count = 1;
 
     HC574_SetPin(LED1,0);
-    HC574_SetPin(LED2,0);   
+    HC574_SetPin(LED2,0);
     HC574_SetPin(LED3,0);
     HC574_SetPin(LED4,0);
-    
+
     while (count++)
     {
         HC574_SetPin(LED1,1);
@@ -29,6 +29,6 @@ int main(void)
         HC574_SetPin(LED1,0);
         rt_thread_mdelay(500);
     }
-    
+
     return RT_EOK;
 }

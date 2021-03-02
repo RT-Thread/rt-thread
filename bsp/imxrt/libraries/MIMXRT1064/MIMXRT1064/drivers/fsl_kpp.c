@@ -1,7 +1,7 @@
 /*
  * Copyright 2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -152,7 +152,7 @@ void KPP_keyPressScanning(KPP_Type *base, uint8_t *data, uint32_t clockSrc_Hz)
             }
         }
     }
-    
+
     /* Return all columns to 0 in preparation for standby mode. */
     base->KPDR &= ~KPP_KPDR_KCD_MASK;
 

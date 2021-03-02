@@ -282,9 +282,9 @@ status_t CLOCK_SetupFROClocking(uint32_t iFreq)
 
 /* Set the FLASH wait states for the passed frequency */
 /**
- * brief	Set the flash wait states for the input freuqency.
- * param	iFreq	: Input frequency
- * return	Nothing
+ * brief    Set the flash wait states for the input freuqency.
+ * param    iFreq   : Input frequency
+ * return   Nothing
  */
 void CLOCK_SetFLASHAccessCyclesForFreq(uint32_t iFreq)
 {

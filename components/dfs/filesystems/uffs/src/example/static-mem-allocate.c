@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,14 +25,14 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
 
 /**
  * \file static-mem-allocate.c
- * \brief demostrate how to use static memory allocation. This example use 
+ * \brief demostrate how to use static memory allocation. This example use
  *        file emulated NAND flash, one partition only.
  * \author Ricky Zheng
  */
@@ -54,8 +54,8 @@
 #if CONFIG_USE_STATIC_MEMORY_ALLOCATOR == 0
 int main()
 {
-	uffs_Perror(UFFS_MSG_NORMAL, "This example need CONFIG_USE_STATIC_MEMORY_ALLOCATOR = 1");
-	return 0;
+    uffs_Perror(UFFS_MSG_NORMAL, "This example need CONFIG_USE_STATIC_MEMORY_ALLOCATOR = 1");
+    return 0;
 }
 #else
 
@@ -67,22 +67,22 @@ extern struct cli_commandset * get_test_cmds(void);
 #define PAGES_PER_BLOCK   32
 #define TOTAL_BLOCKS      128
 
-#define PAGE_SIZE					(PAGE_DATA_SIZE + PAGE_SPARE_SIZE)
-#define BLOCK_DATA_SIZE				(PAGES_PER_BLOCK * PAGE_DATA_SIZE)
-#define TOTAL_DATA_SIZE				(TOTAL_BLOCKS * BLOCK_DATA_SIZE)
-#define BLOCK_SIZE					(PAGES_PER_BLOCK * PAGE_SIZE)
-#define TOTAL_SIZE					(BLOCK_SIZE * TOTAL_BLOCKS)
+#define PAGE_SIZE                   (PAGE_DATA_SIZE + PAGE_SPARE_SIZE)
+#define BLOCK_DATA_SIZE             (PAGES_PER_BLOCK * PAGE_DATA_SIZE)
+#define TOTAL_DATA_SIZE             (TOTAL_BLOCKS * BLOCK_DATA_SIZE)
+#define BLOCK_SIZE                  (PAGES_PER_BLOCK * PAGE_SIZE)
+#define TOTAL_SIZE                  (BLOCK_SIZE * TOTAL_BLOCKS)
 
-#define MAX_MOUNT_TABLES		10
-#define MAX_MOUNT_POINT_NAME	32
+#define MAX_MOUNT_TABLES        10
+#define MAX_MOUNT_POINT_NAME    32
 
 static uffs_Device demo_device = {0};
 static struct uffs_MountTableEntrySt demo_mount = {
-	&demo_device,
-	0,    /* start from block 0 */
-	-1,   /* use whole chip */
-	"/",  /* mount point */
-	NULL
+    &demo_device,
+    0,    /* start from block 0 */
+    -1,   /* use whole chip */
+    "/",  /* mount point */
+    NULL
 };
 
 /* static alloc the memory */
@@ -91,72 +91,72 @@ static int static_buffer_pool[UFFS_STATIC_BUFF_SIZE(PAGES_PER_BLOCK, PAGE_SIZE, 
 
 static void setup_storage(struct uffs_StorageAttrSt *attr)
 {
-	attr->total_blocks = TOTAL_BLOCKS;			/* total blocks */
-	attr->page_data_size = PAGE_DATA_SIZE;		/* page data size */
-	attr->spare_size = PAGE_SPARE_SIZE;		  	/* page spare size */
-	attr->pages_per_block = PAGES_PER_BLOCK;	/* pages per block */
-	attr->block_status_offs = 4;				/* block status offset is 5th byte in spare */
+    attr->total_blocks = TOTAL_BLOCKS;          /* total blocks */
+    attr->page_data_size = PAGE_DATA_SIZE;      /* page data size */
+    attr->spare_size = PAGE_SPARE_SIZE;         /* page spare size */
+    attr->pages_per_block = PAGES_PER_BLOCK;    /* pages per block */
+    attr->block_status_offs = 4;                /* block status offset is 5th byte in spare */
     attr->ecc_opt = UFFS_ECC_SOFT;              /* use UFFS software ecc */
-    attr->layout_opt = UFFS_LAYOUT_UFFS;        /* let UFFS do the spare layout */    
+    attr->layout_opt = UFFS_LAYOUT_UFFS;        /* let UFFS do the spare layout */
 }
 
 static void setup_device(uffs_Device *dev)
 {
-	// using file emulator device
-	dev->Init = femu_InitDevice;
-	dev->Release = femu_ReleaseDevice;
-	dev->attr = femu_GetStorage();
+    // using file emulator device
+    dev->Init = femu_InitDevice;
+    dev->Release = femu_ReleaseDevice;
+    dev->attr = femu_GetStorage();
 }
 
 static int init_uffs_fs(void)
 {
-	struct uffs_MountTableEntrySt *mtbl = &demo_mount;
+    struct uffs_MountTableEntrySt *mtbl = &demo_mount;
 
-	/* setup flash storage attributes */
-	setup_storage(femu_GetStorage());
+    /* setup flash storage attributes */
+    setup_storage(femu_GetStorage());
 
-	/* setup memory allocator */
-	uffs_MemSetupStaticAllocator(&mtbl->dev->mem, static_buffer_pool, sizeof(static_buffer_pool));
+    /* setup memory allocator */
+    uffs_MemSetupStaticAllocator(&mtbl->dev->mem, static_buffer_pool, sizeof(static_buffer_pool));
 
-	/* setup device: init, release, attr */
-	setup_device(mtbl->dev);
+    /* setup device: init, release, attr */
+    setup_device(mtbl->dev);
 
-	/* register mount table */
-	uffs_RegisterMountTable(mtbl);
+    /* register mount table */
+    uffs_RegisterMountTable(mtbl);
 
-	/* mount it */
-	uffs_Mount("/");
+    /* mount it */
+    uffs_Mount("/");
 
-	return uffs_InitFileSystemObjects() == U_SUCC ? 0 : -1;
+    return uffs_InitFileSystemObjects() == U_SUCC ? 0 : -1;
 }
 
 static int release_uffs_fs(void)
 {
-	uffs_UnMount("/");
+    uffs_UnMount("/");
 
-	return uffs_ReleaseFileSystemObjects();
+    return uffs_ReleaseFileSystemObjects();
 }
 
 int main(int argc, char *argv[])
 {
-	int ret;
+    int ret;
 
-	uffs_SetupDebugOutput(); 	// setup debug output as early as possible
+    uffs_SetupDebugOutput();    // setup debug output as early as possible
 
-	ret = init_uffs_fs();
+    ret = init_uffs_fs();
 
-	if (ret != 0) {
-		printf ("Init file system fail: %d\n", ret);
-		return -1;
-	}
+    if (ret != 0) {
+        printf ("Init file system fail: %d\n", ret);
+        return -1;
+    }
 
-	cli_add_commandset(get_helper_cmds());
-	cli_add_commandset(get_test_cmds());
-	cli_main_entry();
+    cli_add_commandset(get_helper_cmds());
+    cli_add_commandset(get_test_cmds());
+    cli_main_entry();
 
-	release_uffs_fs();
+    release_uffs_fs();
 
-	return 0;
+    return 0;
 }
 
 #endif

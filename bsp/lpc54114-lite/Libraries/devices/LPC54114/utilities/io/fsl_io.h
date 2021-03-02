@@ -3,7 +3,7 @@
  * Copyright 2017 NXP
  * All rights reserved.
  *
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -106,7 +106,7 @@ status_t IO_Deinit(void);
  * @endcode
  *
  * @param   ch  transfer buffer pointer
- * @param	size transfer size
+ * @param   size transfer size
  * @param   tx indicate the transfer is TX or RX
  */
 status_t IO_Transfer(uint8_t *ch, size_t size, bool tx);

@@ -8,37 +8,37 @@
 //      Standard types, and some useful coding macros.
 //
 //==========================================================================
-// ####ECOSGPLCOPYRIGHTBEGIN####                                            
-// -------------------------------------------                              
-// This file is part of eCos, the Embedded Configurable Operating System.   
+// ####ECOSGPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
 // Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
 //
-// eCos is free software; you can redistribute it and/or modify it under    
-// the terms of the GNU General Public License as published by the Free     
-// Software Foundation; either version 2 or (at your option) any later      
-// version.                                                                 
+// eCos is free software; you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 or (at your option) any later
+// version.
 //
-// eCos is distributed in the hope that it will be useful, but WITHOUT      
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
-// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
-// for more details.                                                        
+// eCos is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
 //
-// You should have received a copy of the GNU General Public License        
-// along with eCos; if not, write to the Free Software Foundation, Inc.,    
-// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+// You should have received a copy of the GNU General Public License
+// along with eCos; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// As a special exception, if other files instantiate templates or use      
-// macros or inline functions from this file, or you compile this file      
-// and link it with other works to produce a work based on this file,       
-// this file does not by itself cause the resulting work to be covered by   
-// the GNU General Public License. However the source code for this file    
-// must still be made available in accordance with section (3) of the GNU   
-// General Public License v2.                                               
+// As a special exception, if other files instantiate templates or use
+// macros or inline functions from this file, or you compile this file
+// and link it with other works to produce a work based on this file,
+// this file does not by itself cause the resulting work to be covered by
+// the GNU General Public License. However the source code for this file
+// must still be made available in accordance with section (3) of the GNU
+// General Public License v2.
 //
-// This exception does not invalidate any other reasons why a work based    
-// on this file might be covered by the GNU General Public License.         
-// -------------------------------------------                              
-// ####ECOSGPLCOPYRIGHTEND####                                              
+// This exception does not invalidate any other reasons why a work based
+// on this file might be covered by the GNU General Public License.
+// -------------------------------------------
+// ####ECOSGPLCOPYRIGHTEND####
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
@@ -50,7 +50,7 @@
 // Usage:       #include "cyg/infra/cyg_type.h"
 //              ...
 //              cyg_int32 my_32bit_integer;
-//              
+//
 //####DESCRIPTIONEND####
 //
 
@@ -279,7 +279,7 @@ typedef cyg_haladdrword CYG_ADDRWORD;
 // Not sure
 # define CYGBLD_ATTRIB_INIT_PRI( _pri_ )
 #endif
-    
+
 // The following will be removed eventually as it doesn't allow the use of
 // e.g. pri+5 format
 #define CYG_INIT_PRIORITY( _pri_ ) CYGBLD_ATTRIB_INIT_PRI( CYG_INIT_##_pri_ )
@@ -461,7 +461,7 @@ typedef cyg_haladdrword CYG_ADDRWORD;
 #  else
 #   define CYGBLD_ATTRIB_USED __attribute__((unused))
 #  endif
-# endif 
+# endif
 #else // non-GNU
 
 # define CYGBLD_ATTRIB_CONSTRUCTOR
@@ -527,15 +527,15 @@ typedef cyg_haladdrword CYG_ADDRWORD;
 #endif
 
 // -------------------------------------------------------------------------
-// Various "flavours" of memory regions that can be described by the 
+// Various "flavours" of memory regions that can be described by the
 // Memory Layout Tool (MLT).
 
 #define CYGMEM_REGION_ATTR_R  0x01  // Region can be read
 #define CYGMEM_REGION_ATTR_W  0x02  // Region can be written
 
-#if defined (__GNUC__) 
+#if defined (__GNUC__)
 #elif defined (MSVC)
-#define __inline__ __inline 
+#define __inline__ __inline
 #define inline __inline
 #else
 #endif

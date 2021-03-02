@@ -32,7 +32,7 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MFXSTM32L152_H
@@ -42,19 +42,19 @@
 
 #ifdef __cplusplus
  extern "C" {
-#endif   
-   
+#endif
+
 /** @addtogroup BSP
   * @{
-  */ 
+  */
 
 /** @addtogroup Component
   * @{
   */
-    
+
 /** @defgroup MFXSTM32L152
   * @{
-  */    
+  */
 
  /**
   * @brief  GPIO: IO Pins definition
@@ -140,21 +140,21 @@ typedef enum
   * @{
   */
 typedef struct
-{  
+{
   void       (*Init)(uint16_t);
   uint16_t   (*ReadID)(uint16_t);
   void       (*Reset)(uint16_t);
-  
+
   void       (*Start)(uint16_t, uint32_t);
   uint8_t    (*Config)(uint16_t, uint32_t, IO_ModeTypedef);
   void       (*WritePin)(uint16_t, uint32_t, uint8_t);
   uint32_t   (*ReadPin)(uint16_t, uint32_t);
-  
+
   void       (*EnableIT)(uint16_t);
   void       (*DisableIT)(uint16_t);
   uint32_t    (*ITStatus)(uint16_t, uint32_t);
   void       (*ClearIT)(uint16_t, uint32_t);
-    
+
 }IO_DrvTypeDef;
 
 typedef struct
@@ -191,11 +191,11 @@ typedef struct
                                  This parameter can be a value of @ref IDD_Vref_Measurement */
   uint8_t Calibration;      /*!< Specifies if calibration is done before each Idd measurement
                                   */
-  uint8_t PreDelayUnit;     /*!< Specifies Pre delay unit 
+  uint8_t PreDelayUnit;     /*!< Specifies Pre delay unit
                                  This parameter can be a value of @ref IDD_PreDelay */
   uint8_t PreDelayValue;    /*!< Specifies Pre delay value in selected unit
                                   */
-  uint8_t MeasureNb;        /*!< Specifies number of Measure to be performed 
+  uint8_t MeasureNb;        /*!< Specifies number of Measure to be performed
                                  This parameter can be a value between 1 and 256 */
   uint8_t DeltaDelayUnit;   /*!< Specifies Delta delay unit
                                   This parameter can be a value of @ref IDD_DeltaDelay */
@@ -233,7 +233,7 @@ typedef struct
 }IDD_DrvTypeDef;
 
 typedef struct
-{  
+{
   void       (*Init)(uint16_t);
   uint16_t   (*ReadID)(uint16_t);
   void       (*Reset)(uint16_t);
@@ -250,7 +250,7 @@ typedef struct
 
 /** @defgroup MFXSTM32L152_Exported_Types
   * @{
-  */ 
+  */
 typedef struct
 {
   uint8_t SYS_CTRL;
@@ -288,15 +288,15 @@ typedef struct
   */
 
 /* Exported constants --------------------------------------------------------*/
-  
+
 /** @defgroup MFXSTM32L152_Exported_Constants
   * @{
-  */ 
+  */
 
  /**
   * @brief  MFX COMMON defines
   */
-   
+
  /**
   * @brief  Register address: chip IDs (R)
   */
@@ -340,13 +340,13 @@ typedef struct
   * @brief  Reg Addr IRQs: the Main MCU must acknowledge it thanks to a writing access to the IRQ_ACK register
   */
 #define MFXSTM32L152_REG_ADR_IRQ_ACK            ((uint8_t)0x44)
-   
+
   /**
   * @brief  MFXSTM32L152_REG_ADR_ID choices
   */
 #define MFXSTM32L152_ID_1                    ((uint8_t)0x7B)
 #define MFXSTM32L152_ID_2                    ((uint8_t)0x79)
-   
+
   /**
   * @brief  MFXSTM32L152_REG_ADR_SYS_CTRL choices
   */
@@ -384,9 +384,9 @@ typedef struct
 #define MFXSTM32L152_IRQ_IDD                  ((uint8_t)0x02)  /* IDD function irq */
 #define MFXSTM32L152_IRQ_GPIO                 ((uint8_t)0x01)  /* General GPIO irq (only for SRC_EN and PENDING) */
 #define MFXSTM32L152_IRQ_ALL                  ((uint8_t)0xFF)  /* All global interrupts          */
-#define MFXSTM32L152_IRQ_TS                  (MFXSTM32L152_IRQ_TS_DET | MFXSTM32L152_IRQ_TS_NE |  MFXSTM32L152_IRQ_TS_TH | MFXSTM32L152_IRQ_TS_FULL | MFXSTM32L152_IRQ_TS_OVF ) 
+#define MFXSTM32L152_IRQ_TS                  (MFXSTM32L152_IRQ_TS_DET | MFXSTM32L152_IRQ_TS_NE |  MFXSTM32L152_IRQ_TS_TH | MFXSTM32L152_IRQ_TS_FULL | MFXSTM32L152_IRQ_TS_OVF )
 
-   
+
  /**
   * @brief  GPIO: 24 programmable input/output called MFXSTM32L152_GPIO[23:0] are provided
   */
@@ -465,7 +465,7 @@ typedef struct
 #define MFXSTM32L152_REG_ADR_IRQ_GPI_ACK2       ((uint8_t)0x55)  /* gpio [8:15] */
 #define MFXSTM32L152_REG_ADR_IRQ_GPI_ACK3       ((uint8_t)0x56)  /* agpio [0:7] */
 
-   
+
  /**
   * @brief  GPIO: IO Pins definition
   */
@@ -478,14 +478,14 @@ typedef struct
 #define MFXSTM32L152_GPIO_PIN_6                  ((uint32_t)0x0040)
 #define MFXSTM32L152_GPIO_PIN_7                  ((uint32_t)0x0080)
 
-#define MFXSTM32L152_GPIO_PIN_8                  ((uint32_t)0x0100) 
-#define MFXSTM32L152_GPIO_PIN_9                  ((uint32_t)0x0200) 
-#define MFXSTM32L152_GPIO_PIN_10                 ((uint32_t)0x0400) 
+#define MFXSTM32L152_GPIO_PIN_8                  ((uint32_t)0x0100)
+#define MFXSTM32L152_GPIO_PIN_9                  ((uint32_t)0x0200)
+#define MFXSTM32L152_GPIO_PIN_10                 ((uint32_t)0x0400)
 #define MFXSTM32L152_GPIO_PIN_11                 ((uint32_t)0x0800)
-#define MFXSTM32L152_GPIO_PIN_12                 ((uint32_t)0x1000) 
-#define MFXSTM32L152_GPIO_PIN_13                 ((uint32_t)0x2000) 
-#define MFXSTM32L152_GPIO_PIN_14                 ((uint32_t)0x4000) 
-#define MFXSTM32L152_GPIO_PIN_15                 ((uint32_t)0x8000) 
+#define MFXSTM32L152_GPIO_PIN_12                 ((uint32_t)0x1000)
+#define MFXSTM32L152_GPIO_PIN_13                 ((uint32_t)0x2000)
+#define MFXSTM32L152_GPIO_PIN_14                 ((uint32_t)0x4000)
+#define MFXSTM32L152_GPIO_PIN_15                 ((uint32_t)0x8000)
 
 #define MFXSTM32L152_GPIO_PIN_16               ((uint32_t)0x010000)
 #define MFXSTM32L152_GPIO_PIN_17               ((uint32_t)0x020000)
@@ -510,20 +510,20 @@ typedef struct
  /**
   * @brief  GPIO: constant
   */
-#define MFXSTM32L152_GPIO_DIR_IN                ((uint8_t)0x0)  
-#define MFXSTM32L152_GPIO_DIR_OUT               ((uint8_t)0x1)  
-#define MFXSTM32L152_IRQ_GPI_EVT_LEVEL          ((uint8_t)0x0)  
-#define MFXSTM32L152_IRQ_GPI_EVT_EDGE           ((uint8_t)0x1)  
+#define MFXSTM32L152_GPIO_DIR_IN                ((uint8_t)0x0)
+#define MFXSTM32L152_GPIO_DIR_OUT               ((uint8_t)0x1)
+#define MFXSTM32L152_IRQ_GPI_EVT_LEVEL          ((uint8_t)0x0)
+#define MFXSTM32L152_IRQ_GPI_EVT_EDGE           ((uint8_t)0x1)
 #define MFXSTM32L152_IRQ_GPI_TYPE_LLFE          ((uint8_t)0x0)  /* Low Level Falling Edge */
 #define MFXSTM32L152_IRQ_GPI_TYPE_HLRE          ((uint8_t)0x1)  /*High Level Raising Edge */
-#define MFXSTM32L152_GPI_WITHOUT_PULL_RESISTOR  ((uint8_t)0x0)  
-#define MFXSTM32L152_GPI_WITH_PULL_RESISTOR     ((uint8_t)0x1)  
-#define MFXSTM32L152_GPO_PUSH_PULL              ((uint8_t)0x0)  
-#define MFXSTM32L152_GPO_OPEN_DRAIN             ((uint8_t)0x1)  
-#define MFXSTM32L152_GPIO_PULL_DOWN             ((uint8_t)0x0)  
-#define MFXSTM32L152_GPIO_PULL_UP               ((uint8_t)0x1)   
-   
-   
+#define MFXSTM32L152_GPI_WITHOUT_PULL_RESISTOR  ((uint8_t)0x0)
+#define MFXSTM32L152_GPI_WITH_PULL_RESISTOR     ((uint8_t)0x1)
+#define MFXSTM32L152_GPO_PUSH_PULL              ((uint8_t)0x0)
+#define MFXSTM32L152_GPO_OPEN_DRAIN             ((uint8_t)0x1)
+#define MFXSTM32L152_GPIO_PULL_DOWN             ((uint8_t)0x0)
+#define MFXSTM32L152_GPIO_PULL_UP               ((uint8_t)0x1)
+
+
   /**
   * @brief  TOUCH SCREEN Registers
   */
@@ -625,7 +625,7 @@ typedef struct
   */
 #define MFXSTM32L152_REG_ADR_IDD_SHUNTS_ON_BOARD  ((uint8_t)0x98)
 
- 
+
 
 /** @defgroup IDD_Control_Register_Defines  IDD Control Register Defines
   * @{
@@ -706,24 +706,24 @@ typedef struct
   * @}
   */
 
- 
+
 /* Exported macro ------------------------------------------------------------*/
-   
+
 /** @defgroup MFXSTM32L152_Exported_Macros
   * @{
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /* Exported functions --------------------------------------------------------*/
-  
+
 /** @defgroup MFXSTM32L152_Exported_Functions
   * @{
   */
 
-/** 
+/**
   * @brief MFXSTM32L152 Control functions
   */
 void     mfxstm32l152_Init(uint16_t DeviceAddr);
@@ -743,7 +743,7 @@ void     mfxstm32l152_SetIrqOutPinPolarity(uint16_t DeviceAddr, uint8_t Polarity
 void     mfxstm32l152_SetIrqOutPinType(uint16_t DeviceAddr, uint8_t Type);
 
 
-/** 
+/**
   * @brief MFXSTM32L152 IO functionalities functions
   */
 void     mfxstm32l152_IO_Start(uint16_t DeviceAddr, uint32_t IO_Pin);
@@ -763,7 +763,7 @@ void     mfxstm32l152_IO_SetIrqEvtMode(uint16_t DeviceAddr, uint32_t IO_Pin, uin
 void     mfxstm32l152_IO_EnablePinIT(uint16_t DeviceAddr, uint32_t IO_Pin);
 void     mfxstm32l152_IO_DisablePinIT(uint16_t DeviceAddr, uint32_t IO_Pin);
 
-/** 
+/**
   * @brief MFXSTM32L152 Touch screen functionalities functions
   */
 void     mfxstm32l152_TS_Start(uint16_t DeviceAddr);
@@ -802,7 +802,7 @@ void     mfxstm32l152_WriteReg(uint16_t DeviceAddr, uint8_t RegAddr, uint8_t Val
 
 
 
-/** 
+/**
   * @brief iobus prototypes (they should be defined in common/stm32_iobus.h)
   */
 void     MFX_IO_Init(void);
@@ -817,7 +817,7 @@ uint16_t MFX_IO_ReadMultiple(uint16_t addr, uint8_t reg, uint8_t *buffer, uint16
 
 /**
   * @}
-  */ 
+  */
 
 /* Touch screen driver structure */
 extern TS_DrvTypeDef mfxstm32l152_ts_drv;
@@ -837,7 +837,7 @@ extern IDD_DrvTypeDef mfxstm32l152_idd_drv;
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
@@ -845,9 +845,9 @@ extern IDD_DrvTypeDef mfxstm32l152_idd_drv;
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */       
+  */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

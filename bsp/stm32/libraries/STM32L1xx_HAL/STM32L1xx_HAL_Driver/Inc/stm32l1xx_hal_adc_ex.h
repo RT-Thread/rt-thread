@@ -26,7 +26,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32l1xx_hal_def.h"  
+#include "stm32l1xx_hal_def.h"
 
 /** @addtogroup STM32L1xx_HAL_Driver
   * @{
@@ -34,14 +34,14 @@
 
 /** @addtogroup ADCEx
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup ADCEx_Exported_Types ADCEx Exported Types
   * @{
   */
 
-/** 
+/**
   * @brief  ADC Configuration injected Channel structure definition
   * @note   Parameters of this structure are shared within 2 scopes:
   *          - Scope channel: InjectedChannel, InjectedRank, InjectedSamplingTime, InjectedOffset
@@ -53,7 +53,7 @@
   *          - For all except parameters 'InjectedDiscontinuousConvMode' and 'AutoInjectedConv': ADC enabled without conversion on going on injected group.
   *          - For parameters 'ExternalTrigInjecConv' and 'ExternalTrigInjecConvEdge': ADC enabled, even with conversion on going on injected group.
   */
-typedef struct 
+typedef struct
 {
   uint32_t InjectedChannel;               /*!< Selection of ADC channel to configure
                                                This parameter can be a value of @ref ADC_channels
@@ -77,17 +77,17 @@ typedef struct
   uint32_t InjectedNbrOfConversion;       /*!< Specifies the number of ranks that will be converted within the injected group sequencer.
                                                To use the injected group sequencer and convert several ranks, parameter 'ScanConvMode' must be enabled.
                                                This parameter must be a number between Min_Data = 1 and Max_Data = 4.
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
+                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
                                                         configure a channel on injected group can impact the configuration of other channels previously set. */
   FunctionalState InjectedDiscontinuousConvMode; /*!< Specifies whether the conversions sequence of injected group is performed in Complete-sequence/Discontinuous-sequence (main sequence subdivided in successive parts).
                                                Discontinuous mode is used only if sequencer is enabled (parameter 'ScanConvMode'). If sequencer is disabled, this parameter is discarded.
                                                Discontinuous mode can be enabled only if continuous mode is disabled. If continuous mode is enabled, this parameter setting is discarded.
                                                This parameter can be set to ENABLE or DISABLE.
                                                Note: For injected group, number of discontinuous ranks increment is fixed to one-by-one.
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
+                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
                                                         configure a channel on injected group can impact the configuration of other channels previously set. */
   FunctionalState AutoInjectedConv;       /*!< Enables or disables the selected ADC automatic injected group conversion after regular one
-                                               This parameter can be set to ENABLE or DISABLE.      
+                                               This parameter can be set to ENABLE or DISABLE.
                                                Note: To use Automatic injected conversion, discontinuous mode must be disabled ('DiscontinuousConvMode' and 'InjectedDiscontinuousConvMode' set to DISABLE)
                                                Note: To use Automatic injected conversion, injected group external triggers must be disabled ('ExternalTrigInjecConv' set to ADC_SOFTWARE_START)
                                                Note: In case of DMA used with regular group: if DMA configured in normal mode (single shot) JAUTO will be stopped upon DMA transfer complete.
@@ -105,16 +105,16 @@ typedef struct
   uint32_t ExternalTrigInjecConvEdge;     /*!< Selects the external trigger edge of injected group.
                                                This parameter can be a value of @ref ADCEx_External_trigger_edge_Injected.
                                                If trigger is set to ADC_INJECTED_SOFTWARE_START, this parameter is discarded.
-                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to 
+                                               Caution: this setting impacts the entire injected group. Therefore, call of HAL_ADCEx_InjectedConfigChannel() to
                                                         configure a channel on injected group can impact the configuration of other channels previously set. */
-}ADC_InjectionConfTypeDef; 
+}ADC_InjectionConfTypeDef;
 /**
   * @}
   */
 
 
 /* Exported constants --------------------------------------------------------*/
-   
+
 /** @defgroup ADCEx_Exported_Constants ADCEx Exported Constants
   * @{
   */
@@ -198,8 +198,8 @@ typedef struct
 /**
   * @}
   */
-  
-  
+
+
 /* Exported macro ------------------------------------------------------------*/
 
 /** @defgroup ADCEx_Exported_Macros ADCEx Exported Macros
@@ -209,9 +209,9 @@ typedef struct
 /* final user.                                                                */
 
 /**
-  * @brief Selection of channels bank. 
+  * @brief Selection of channels bank.
   * Note: Banks availability depends on devices categories.
-  * This macro is intended to change bank selection quickly on the fly,   
+  * This macro is intended to change bank selection quickly on the fly,
   * without going through ADC init structure update and execution of function
   * 'HAL_ADC_Init()'.
   * @param __HANDLE__: ADC handle
@@ -229,8 +229,8 @@ typedef struct
  *    in power down mode.
  *  - For ADC_CHANNEL_8: Used as ADC direct channel (fast channel) if OPAMP2 is
  *    in power down mode.
- *  - For ADC_CHANNEL_13: Used as ADC re-routed channel if OPAMP3 is in 
- *    power down mode. Otherwise, channel 13 is connected to OPAMP3 output and 
+ *  - For ADC_CHANNEL_13: Used as ADC re-routed channel if OPAMP3 is in
+ *    power down mode. Otherwise, channel 13 is connected to OPAMP3 output and
  *    routed through switches COMP1_SW1 and VCOMP to ADC switch matrix.
  *    (Note: OPAMP3 is available on STM32L1 Cat.4 only).
  * @param __CHANNEL__: ADC channel
@@ -276,7 +276,7 @@ typedef struct
      )                                                                         \
   )
 #endif /* STM32L100xC || STM32L151xC || STM32L152xC || STM32L162xC || STM32L151xCA || STM32L151xD || STM32L152xCA || STM32L152xD || STM32L162xCA || STM32L162xD || STM32L151xE || STM32L151xDX || STM32L152xE || STM32L152xDX || STM32L162xE || STM32L162xDX */
-    
+
 /**
   * @}
   */
@@ -292,7 +292,7 @@ typedef struct
 /**
   * @brief Set ADC ranks available in register SQR1.
   * Register SQR1 bits availability depends on device category.
-  * @param _NbrOfConversion_: Regular channel sequence length 
+  * @param _NbrOfConversion_: Regular channel sequence length
   * @retval None
   */
 #if defined(STM32L100xC) || defined (STM32L151xC) || defined (STM32L152xC) || defined (STM32L162xC) || defined(STM32L151xCA) || defined (STM32L151xD) || defined (STM32L152xCA) || defined (STM32L152xD) || defined (STM32L162xCA) || defined (STM32L162xD) || defined(STM32L151xE) || defined(STM32L151xDX) || defined (STM32L152xE) || defined (STM32L152xDX) || defined (STM32L162xE) || defined (STM32L162xDX)
@@ -307,7 +307,7 @@ typedef struct
   * available on the current device, this macro does nothing.
   * @retval None
   * @param _SAMPLETIME_: Sample time parameter.
-  * @param _CHANNELNB_: Channel number.  
+  * @param _CHANNELNB_: Channel number.
   * @retval None
   */
 #if defined(STM32L151xCA) || defined (STM32L151xD) || defined (STM32L152xCA) || defined (STM32L152xD) || defined (STM32L162xCA) || defined (STM32L162xD) || defined(STM32L151xE) || defined(STM32L151xDX) || defined (STM32L152xE) || defined (STM32L152xDX) || defined (STM32L162xE) || defined (STM32L162xDX)
@@ -355,7 +355,7 @@ typedef struct
 
 /**
   * @brief Define mask of configuration bits of ADC and regular group in
-  * register CR2 (bits of ADC enable, conversion start and injected group are 
+  * register CR2 (bits of ADC enable, conversion start and injected group are
   * excluded of this mask).
   * @retval None
   */
@@ -469,7 +469,7 @@ typedef struct
                ADC_SMPR0((_SAMPLETIME_), (__CHANNEL__))  )
 #else
 #define ADC_SMPR0_CHANNEL_SET(__HANDLE__, _SAMPLETIME_, __CHANNEL__) __NOP()
-#endif /* STM32L151xCA || STM32L151xD || STM32L152xCA || STM32L152xD || STM32L162xCA || STM32L162xD || STM32L151xE || STM32L151xDX || STM32L152xE || STM32L152xDX || STM32L162xE || STM32L162xDX */     
+#endif /* STM32L151xCA || STM32L151xD || STM32L152xCA || STM32L152xD || STM32L162xCA || STM32L162xD || STM32L151xE || STM32L151xDX || STM32L152xE || STM32L152xDX || STM32L162xE || STM32L162xDX */
 
 
 #define IS_ADC_INJECTED_RANK(CHANNEL) (((CHANNEL) == ADC_INJECTED_RANK_1) || \
@@ -506,9 +506,9 @@ typedef struct
 
 /**
   * @}
-  */      
-   
-   
+  */
+
+
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup ADCEx_Exported_Functions
   * @{
@@ -556,12 +556,12 @@ HAL_StatusTypeDef       HAL_ADCEx_InjectedConfigChannel(ADC_HandleTypeDef* hadc,
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif

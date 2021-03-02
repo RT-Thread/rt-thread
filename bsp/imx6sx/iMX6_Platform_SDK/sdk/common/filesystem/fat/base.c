@@ -30,14 +30,14 @@
 /*----------------------------------------------------------------------------
  SigmaTel Inc
  $Archive: /Fatfs/FileSystem/Fat32/base/Fcreate.c $
- $Revision: 18 $                                       
+ $Revision: 18 $
  $Date: 9/18/03 7:14p $
  Description: Fcreate.c
- Notes:	
+ Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -226,7 +226,7 @@ RtStatus_t GetFileSize(int32_t HandleNumber)
                   2)Pointer to Buffer
                   3)Number of Bytes To Read
 
-   Outputs:       Returns Number of bytes read upon success or 
+   Outputs:       Returns Number of bytes read upon success or
                                  0 upon failures - ERROR_OS_FILESYSTEM_MAX_HANDLES_EXCEEDED,
                                                         ERROR_OS_FILESYSTEM_INVALID_MODE,
                                                         NumBytesToRead < 0,
@@ -247,7 +247,7 @@ RtStatus_t Fread_FAT(int32_t HandleNumber, uint8_t * Buffer, int32_t NumBytesToR
     uint32_t cacheToken;
 
     if ((HandleNumber < 0) || (HandleNumber >= maxhandles)) {
-        // Error - ERROR_OS_FILESYSTEM_MAX_HANDLES_EXCEEDED 
+        // Error - ERROR_OS_FILESYSTEM_MAX_HANDLES_EXCEEDED
         return 0;
     }
 
@@ -402,8 +402,8 @@ RtStatus_t Fread_FAT(int32_t HandleNumber, uint8_t * Buffer, int32_t NumBytesToR
 
 /*----------------------------------------------------------------------------
 
->  Function Name: RtStatus_t Fwrite(int32_t HandleNumber, 
-                       uint8_t *Buffer, 
+>  Function Name: RtStatus_t Fwrite(int32_t HandleNumber,
+                       uint8_t *Buffer,
                        int32_t NumBytesToWrite,
                       )
 
@@ -554,7 +554,7 @@ RtStatus_t Fwrite_FAT(int32_t HandleNumber, uint8_t * Buffer, int32_t NumBytesTo
             sectorNum = (sectorNum > 4096) ? 4096 : sectorNum;  // limit one access no more than 1M
 
             while (sectorNum--) {
-                Handle[HandleNumber].BytePosInSector = BytesPerSector;  //always aligned to sector                
+                Handle[HandleNumber].BytePosInSector = BytesPerSector;  //always aligned to sector
                 if ((RetValue = UpdateHandleOffsets(HandleNumber))) //update the sector information
                 {
                     if ((RetValue = GetNewcluster(HandleNumber)) < 0) {
@@ -593,7 +593,7 @@ RtStatus_t Fwrite_FAT(int32_t HandleNumber, uint8_t * Buffer, int32_t NumBytesTo
 
             }
             BytesToCopy = sectorToWrite * BytesPerSector;
-            if (read_usdhc_adma_mode() && (((uint32_t) Buffer + BuffOffset) & 0x3)) 
+            if (read_usdhc_adma_mode() && (((uint32_t) Buffer + BuffOffset) & 0x3))
              // in ADMA mode, the buffer address must be word-aligned
             {
                 uint8_t *tempBuffer = 0;
@@ -653,11 +653,11 @@ RtStatus_t Fwrite_FAT(int32_t HandleNumber, uint8_t * Buffer, int32_t NumBytesTo
    FunctionType:  Reentrant
 
    Inputs:        1)HandleNumber
-                  2)DeleteContentFlag (if it is set, Update the file size)   
+                  2)DeleteContentFlag (if it is set, Update the file size)
 
    Outputs:       Returns 0 on Success or ERROR Code if  Error Occurs
 
-   Description:   Updates the file size if data is written 
+   Description:   Updates the file size if data is written
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t UpdateFileSize(int32_t HandleNumber, int32_t DeleteContentFlag)
@@ -705,7 +705,7 @@ RtStatus_t UpdateFileSize(int32_t HandleNumber, int32_t DeleteContentFlag)
    Outputs:       Nil
 
    Description:   Initialize seekpoint buffer and seekpoint step
-   
+
 <
 ----------------------------------------------------------------------------*/
 void SeekPoint_InitializeBuffer(int32_t HandleNumber)
@@ -730,7 +730,7 @@ void SeekPoint_InitializeBuffer(int32_t HandleNumber)
    Outputs:       Nil
 
    Description:   Calculate seekpoint step according to the file size
-   
+
 <
 ----------------------------------------------------------------------------*/
 void SeekPoint_CalculateSeekPointStep(int32_t HandleNumber, int32_t oldFileSize,
@@ -739,7 +739,7 @@ void SeekPoint_CalculateSeekPointStep(int32_t HandleNumber, int32_t oldFileSize,
     if (Handle[HandleNumber].SeekPointsClusterStep == INVALID_CLUSTER || oldFileSize != newFileSize) {
         int32_t SeekPointsClusterStep, oldSeekPointsClusterStep;
 
-        //First calculate how many clusters the file uses              
+        //First calculate how many clusters the file uses
         SeekPointsClusterStep = newFileSize >> MediaTable[Handle[HandleNumber].Device].ClusterShift;
 
         // calculate the step of the seekpoint
@@ -753,7 +753,7 @@ void SeekPoint_CalculateSeekPointStep(int32_t HandleNumber, int32_t oldFileSize,
         Handle[HandleNumber].SeekPointsBaseFileSize = newFileSize;
 
         //if file size increases, we need adjust SeekPointsClusterStep and move the seekpoint buffer
-        //this case happens when file is opened with mode "w+", 
+        //this case happens when file is opened with mode "w+",
         if ((oldSeekPointsClusterStep != INVALID_CLUSTER)
             && (oldSeekPointsClusterStep != SeekPointsClusterStep)) {
             int32_t i, cnt;
@@ -793,12 +793,12 @@ void SeekPoint_CalculateSeekPointStep(int32_t HandleNumber, int32_t oldFileSize,
 
    Inputs:        1)Handle number
                   2)ClusterOffsetInFile: the cluster offset of the current cluster with the beginning of file
-                  3)CurrentCluster:  
+                  3)CurrentCluster:
 
    Outputs:       Nil
 
    Description:   Fill seekpoint cache buffer
-   
+
 <
 ----------------------------------------------------------------------------*/
 void SeekPoint_FillSeekPoint(int32_t HandleNumber, int32_t ClusterOffsetInFile,
@@ -898,7 +898,7 @@ RtStatus_t Fseek_FAT(int32_t HandleNumber, int32_t NumBytesToSeek, int32_t SeekP
 
     RelativeSeekByteoffset = SeekTargetByteOffset - CurrentClusterByteOffsetInFile;
 
-    // if RelativeSeekByteoffset is positive then seek from file's current position, else seek from begining    
+    // if RelativeSeekByteoffset is positive then seek from file's current position, else seek from begining
     if (RelativeSeekByteoffset >= 0) {
 
         NumClusterSeek = RelativeSeekByteoffset >> MediaTable[Device].ClusterShift;
@@ -925,7 +925,7 @@ RtStatus_t Fseek_FAT(int32_t HandleNumber, int32_t NumBytesToSeek, int32_t SeekP
 
     }
 
-    // we don't use seekpoint cache for directory 
+    // we don't use seekpoint cache for directory
     // for directory the value of SeekPointsClusterStep is INVALID_CLUSTER
     if ((NumClusterSeek > 0) && (Handle[HandleNumber].SeekPointsClusterStep != INVALID_CLUSTER)) {
         int32_t *pSeekPointsClusters = Handle[HandleNumber].SeekPointsClusters;
@@ -933,7 +933,7 @@ RtStatus_t Fseek_FAT(int32_t HandleNumber, int32_t NumBytesToSeek, int32_t SeekP
             (SeekTargetByteOffset >> MediaTable[Device].ClusterShift) /
             Handle[HandleNumber].SeekPointsClusterStep - 1;
 
-        // find closest seekpoint cluster. 
+        // find closest seekpoint cluster.
         // loopstart is the closest seekpoint to the target seek position.
         // we start search backward from loopstart whether there is valid seekpoint
         if (loopstart >= NUM_SEEKPOINTS_CACHED)

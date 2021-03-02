@@ -74,8 +74,8 @@ extern "C" {
  * Select sercom asynchronous operation mode
  */
 enum sercom_asynchronous_operation_mode {
-	SERCOM_ASYNC_OPERATION_MODE_ARITHMETIC = 0,
-	SERCOM_ASYNC_OPERATION_MODE_FRACTIONAL,
+    SERCOM_ASYNC_OPERATION_MODE_ARITHMETIC = 0,
+    SERCOM_ASYNC_OPERATION_MODE_FRACTIONAL,
 };
 
 /**
@@ -84,33 +84,33 @@ enum sercom_asynchronous_operation_mode {
  * Select number of samples per bit
  */
 enum sercom_asynchronous_sample_num {
-	SERCOM_ASYNC_SAMPLE_NUM_3 = 3,
-	SERCOM_ASYNC_SAMPLE_NUM_8 = 8,
-	SERCOM_ASYNC_SAMPLE_NUM_16 = 16,
+    SERCOM_ASYNC_SAMPLE_NUM_3 = 3,
+    SERCOM_ASYNC_SAMPLE_NUM_8 = 8,
+    SERCOM_ASYNC_SAMPLE_NUM_16 = 16,
 };
 
 enum status_code sercom_set_gclk_generator(
-		const enum gclk_generator generator_source,
-		const bool force_change);
+        const enum gclk_generator generator_source,
+        const bool force_change);
 
 enum status_code _sercom_get_sync_baud_val(
-		const uint32_t baudrate,
-		const uint32_t external_clock,
-		uint16_t *const baudval);
+        const uint32_t baudrate,
+        const uint32_t external_clock,
+        uint16_t *const baudval);
 
 enum status_code _sercom_get_async_baud_val(
-		const uint32_t baudrate,
-		const uint32_t peripheral_clock,
-		uint16_t *const baudval,
-		enum sercom_asynchronous_operation_mode mode,
-		enum sercom_asynchronous_sample_num sample_num);
+        const uint32_t baudrate,
+        const uint32_t peripheral_clock,
+        uint16_t *const baudval,
+        enum sercom_asynchronous_operation_mode mode,
+        enum sercom_asynchronous_sample_num sample_num);
 
 uint32_t _sercom_get_default_pad(
-		Sercom *const sercom_module,
-		const uint8_t pad);
+        Sercom *const sercom_module,
+        const uint8_t pad);
 
 uint8_t _sercom_get_sercom_inst_index(
-		Sercom *const sercom_instance);
+        Sercom *const sercom_instance);
 #ifdef __cplusplus
 }
 #endif

@@ -6,7 +6,7 @@
 * @version  1.0
 * @date     09 December. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -33,7 +33,7 @@
 /** @defgroup BOD BOD (Brown-Out Detector)
  * @ingroup LPC_CMSIS_FwLib_Drivers
  * @{
- */#ifndef __LPC_BOD_H 
+ */#ifndef __LPC_BOD_H
 #define __LPC_BOD_H
 #include "lpc_types.h"
 /** @defgroup BOD_Private_Macros BOD Private Macros
@@ -66,7 +66,7 @@
  * @brief The field to configurate BOD
  */
 
-typedef struct 
+typedef struct
 {
     uint8_t Enabled;            /**< Enable BOD Circuit */
     uint8_t PowerReduced;       /**< if ENABLE, BOD will be turned off in Power-down mode or Deep Sleep mode */

@@ -1,5 +1,5 @@
 /**
- * @file 
+ * @file
  * Transmission Control Protocol for IP
  * See also @ref tcp_raw
  *
@@ -1743,7 +1743,7 @@ tcp_sent(struct tcp_pcb *pcb, tcp_sent_fn sent)
  * has occurred on the connection.
  *
  * @note The corresponding pcb is already freed when this callback is called!
- * 
+ *
  * @param pcb tcp_pcb to set the err callback
  * @param err callback function to call for this pcb when a fatal error
  *        has occurred on the connection

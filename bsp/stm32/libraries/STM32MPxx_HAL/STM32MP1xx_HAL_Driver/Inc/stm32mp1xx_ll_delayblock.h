@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32MP1xx_LL_DLYB_H
@@ -34,18 +34,18 @@
 
 /** @addtogroup DELAYBLOCK_LL
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup DELAYBLOCK_LL_Exported_Types DELAYBLOCK_LL Exported Types
   * @{
   */
-  
+
 
 /**
   * @}
   */
-  
+
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup DLYB_Exported_Constants Delay Block Exported Constants
   * @{
@@ -66,8 +66,8 @@
 
 /**
   * @}
-  */ 
- 
+  */
+
 /* Peripheral Control functions  ************************************************/
 /** @addtogroup HAL_DELAYBLOCK_LL_Group3 Delay Block functions
   * @{
@@ -78,8 +78,8 @@ HAL_StatusTypeDef DelayBlock_Disable(DLYB_TypeDef *dlyb);
 /**
   * @}
   */
-  
-  
+
+
 /**
   * @}
   */

@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2019, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -51,18 +51,18 @@ static ErrStatus dma_periph_and_channel_check(uint32_t dma_periph, dma_channel_e
 */
 void dma_deinit(uint32_t dma_periph, dma_channel_enum channelx)
 {
-	if(ERROR == dma_periph_and_channel_check(dma_periph, channelx)){
-		DMA_WRONG_HANDLE
-	}
+    if(ERROR == dma_periph_and_channel_check(dma_periph, channelx)){
+        DMA_WRONG_HANDLE
+    }
 
-	/* disable DMA a channel */
-	DMA_CHCTL(dma_periph, channelx) &= ~DMA_CHXCTL_CHEN;
-	/* reset DMA channel registers */
-	DMA_CHCTL(dma_periph, channelx) = DMA_CHCTL_RESET_VALUE;
-	DMA_CHCNT(dma_periph, channelx) = DMA_CHCNT_RESET_VALUE;
-	DMA_CHPADDR(dma_periph, channelx) = DMA_CHPADDR_RESET_VALUE;
-	DMA_CHMADDR(dma_periph, channelx) = DMA_CHMADDR_RESET_VALUE;
-	DMA_INTC(dma_periph) |= DMA_FLAG_ADD(DMA_CHINTF_RESET_VALUE, channelx);
+    /* disable DMA a channel */
+    DMA_CHCTL(dma_periph, channelx) &= ~DMA_CHXCTL_CHEN;
+    /* reset DMA channel registers */
+    DMA_CHCTL(dma_periph, channelx) = DMA_CHCTL_RESET_VALUE;
+    DMA_CHCNT(dma_periph, channelx) = DMA_CHCNT_RESET_VALUE;
+    DMA_CHPADDR(dma_periph, channelx) = DMA_CHPADDR_RESET_VALUE;
+    DMA_CHMADDR(dma_periph, channelx) = DMA_CHMADDR_RESET_VALUE;
+    DMA_INTC(dma_periph) |= DMA_FLAG_ADD(DMA_CHINTF_RESET_VALUE, channelx);
 }
 
 /*!
@@ -607,34 +607,34 @@ void dma_flag_clear(uint32_t dma_periph, dma_channel_enum channelx, uint32_t fla
 */
 FlagStatus dma_interrupt_flag_get(uint32_t dma_periph, dma_channel_enum channelx, uint32_t flag)
 {
-	uint32_t interrupt_enable = 0U, interrupt_flag = 0U;
+    uint32_t interrupt_enable = 0U, interrupt_flag = 0U;
 
-	switch(flag){
-		case DMA_INT_FLAG_FTF:
-			/* check whether the full transfer finish interrupt flag is set and enabled */
-			interrupt_flag = DMA_INTF(dma_periph) & DMA_FLAG_ADD(flag, channelx);
-			interrupt_enable = DMA_CHCTL(dma_periph, channelx) & DMA_CHXCTL_FTFIE;
-			break;
-		case DMA_INT_FLAG_HTF:
-			/* check whether the half transfer finish interrupt flag is set and enabled */
-			interrupt_flag = DMA_INTF(dma_periph) & DMA_FLAG_ADD(flag, channelx);
-			interrupt_enable = DMA_CHCTL(dma_periph, channelx) & DMA_CHXCTL_HTFIE;
-			break;
-		case DMA_INT_FLAG_ERR:
-			/* check whether the error interrupt flag is set and enabled */
-			interrupt_flag = DMA_INTF(dma_periph) & DMA_FLAG_ADD(flag, channelx);
-			interrupt_enable = DMA_CHCTL(dma_periph, channelx) & DMA_CHXCTL_ERRIE;
-			break;
-		default:
-			DMA_WRONG_HANDLE
-	}
+    switch(flag){
+        case DMA_INT_FLAG_FTF:
+            /* check whether the full transfer finish interrupt flag is set and enabled */
+            interrupt_flag = DMA_INTF(dma_periph) & DMA_FLAG_ADD(flag, channelx);
+            interrupt_enable = DMA_CHCTL(dma_periph, channelx) & DMA_CHXCTL_FTFIE;
+            break;
+        case DMA_INT_FLAG_HTF:
+            /* check whether the half transfer finish interrupt flag is set and enabled */
+            interrupt_flag = DMA_INTF(dma_periph) & DMA_FLAG_ADD(flag, channelx);
+            interrupt_enable = DMA_CHCTL(dma_periph, channelx) & DMA_CHXCTL_HTFIE;
+            break;
+        case DMA_INT_FLAG_ERR:
+            /* check whether the error interrupt flag is set and enabled */
+            interrupt_flag = DMA_INTF(dma_periph) & DMA_FLAG_ADD(flag, channelx);
+            interrupt_enable = DMA_CHCTL(dma_periph, channelx) & DMA_CHXCTL_ERRIE;
+            break;
+        default:
+            DMA_WRONG_HANDLE
+    }
 
-	/* when the interrupt flag is set and enabled, return SET */
-	if(interrupt_flag && interrupt_enable){
-		return SET;
-	}else{
-		return RESET;
-	}
+    /* when the interrupt flag is set and enabled, return SET */
+    if(interrupt_flag && interrupt_enable){
+        return SET;
+    }else{
+        return RESET;
+    }
 }
 
 /*!

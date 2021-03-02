@@ -29,9 +29,9 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/device/Readdevicerecord.c $                                        
- $Revision: 11 $                                       
- $Date: 9/18/03 2:41p $                                           
+ $Archive: /Fatfs/FileSystem/Fat32/device/Readdevicerecord.c $
+ $Revision: 11 $
+ $Date: 9/18/03 2:41p $
  Description: Readdevicerecord.c
  Notes: This file read provides initialization of Media table
 ----------------------------------------------------------------------------*/
@@ -56,7 +56,7 @@
 /*----------------------------------------------------------------------------
 
 >  Function Name: RtStatus_t Readdevicerecord(int32_t DeviceNum)
- 
+
    FunctionType:  Reentrant
 
    Inputs:        1)Device number
@@ -114,7 +114,7 @@ RtStatus_t Readdevicerecord(int32_t DeviceNum, int32_t SectorNum)
 
     MediaTable[DeviceNum].MaxRootDirEntries = FSGetWord((uint8_t *) buf, ROOTDIRENTRYOFFSET);
     MediaTable[DeviceNum].TotalSectors = FSGetWord((uint8_t *) buf, TOTSECTOROFFSET);
-    /* if total sectors are zero then this is FAT32 and find total sectors 
+    /* if total sectors are zero then this is FAT32 and find total sectors
        from total big sector offset */
     if (MediaTable[DeviceNum].TotalSectors == 0)
         MediaTable[DeviceNum].TotalSectors = FSGetDWord((uint8_t *) buf, TOTBIGSECOFFSET);
@@ -126,7 +126,7 @@ RtStatus_t Readdevicerecord(int32_t DeviceNum, int32_t SectorNum)
     }
 
     MediaTable[DeviceNum].FATSize = FSGetWord((uint8_t *) buf, FATSIZEOFFSET);
-    /* if FAT size is zero then this is FAT32 and find FAT size 
+    /* if FAT size is zero then this is FAT32 and find FAT size
        from FAT32 size offset */
 
     MediaTable[DeviceNum].RootdirCluster = 0;
@@ -171,7 +171,7 @@ RtStatus_t Readdevicerecord(int32_t DeviceNum, int32_t SectorNum)
         (MediaTable[DeviceNum].MaxRootDirEntries *
          DIRRECORDSIZE) >> MediaTable[DeviceNum].SectorShift;
 
-    /* First data sector after reserved sectors, primary and secondary FAT table and 
+    /* First data sector after reserved sectors, primary and secondary FAT table and
        Root directory sectors */
     MediaTable[DeviceNum].FIRSTDataSector =
         MediaTable[DeviceNum].RsvdSectors +
@@ -212,12 +212,12 @@ RtStatus_t Readdevicerecord(int32_t DeviceNum, int32_t SectorNum)
         /* Add a fix here for the Win98 support */
         EnterNonReentrantSection();
 
-        /* Write undertermined FSinfo size into the FAT, so that we can force the Win98 
+        /* Write undertermined FSinfo size into the FAT, so that we can force the Win98
            to compute for free cluster count. This operation should not affect Win2000, WinXP */
         DataSec = 0xFFFFFFFFFFFF;   /* To save some memory let's reuse this variable */
 
-        /* Write FAT32FSIFREECOUNT with 0xffffffff to make it become unknown size for FAT32. 
-           Ignore the return code for FSWriteSector because this is not a crucial operation, 
+        /* Write FAT32FSIFREECOUNT with 0xffffffff to make it become unknown size for FAT32.
+           Ignore the return code for FSWriteSector because this is not a crucial operation,
            if it fails we are still OK */
 
         if (FSWriteSector(DeviceNum, MediaTable[DeviceNum].FSInfoSector, FAT32FSIFREECOUNTOFFSET, (uint8_t *) & DataSec, 0, FAT32FSIFREECOUNTSIZE, WRITE_TYPE_RANDOM) != 0) {;  /* (DebugBuildAssert(0); */
@@ -225,7 +225,7 @@ RtStatus_t Readdevicerecord(int32_t DeviceNum, int32_t SectorNum)
         LeaveNonReentrantSection();
     }
     /* end FAT32 case. */
-    /* if FAT Type is FAT12 or FAT16 then root directory starts after reserved sector 
+    /* if FAT Type is FAT12 or FAT16 then root directory starts after reserved sector
        and primary and secondary FAT table */
     else if ((MediaTable[DeviceNum].FATType == FAT12) || (MediaTable[DeviceNum].FATType == FAT16)) {
         MediaTable[DeviceNum].FirRootdirsec =
@@ -266,7 +266,7 @@ int32_t FSSize(int32_t DeviceNum)
    FunctionType:  Non-Reentrant
 
    Inputs:        1) Device number
-                   
+
    Outputs:       TotalFreeClusters
 <
 //----------------------------------------------------------------------------*/
@@ -281,7 +281,7 @@ int32_t FSFreeClusters(int32_t Device)
    FunctionType:  Non-Reentrant
 
    Inputs:        1) Device number
-                   
+
    Outputs:       BytesPerCluster
 <
 //----------------------------------------------------------------------------*/
@@ -296,7 +296,7 @@ int32_t BytesPerCluster(int32_t Device)
    FunctionType:  Non-Reentrant
 
    Inputs:        1) Device number
-                   
+
    Outputs:       ClusterShift
 <
 //----------------------------------------------------------------------------*/
@@ -311,7 +311,7 @@ int32_t FSClusterShift(int32_t Device)
    FunctionType:  Non-Reentrant
 
    Inputs:        1) Device number
-                   
+
    Outputs:       int64_t FSFreeSpace in bytes or a negative error code.
 <
 ----------------------------------------------------------------------------*/
@@ -344,12 +344,12 @@ int64_t FSFreeSpaceFromHandle(int32_t HandleNumber)
 }
 
 /*----------------------------------------------------------------------------
->  Function Name: int32_t FSMediaPresent(int32_t DeviceNum)  
+>  Function Name: int32_t FSMediaPresent(int32_t DeviceNum)
 
    FunctionType:  Non-Reentrant
 
-   Inputs:        1) DeviceNum 
-                   
+   Inputs:        1) DeviceNum
+
    Outputs:       returns device is present or not
 <
 ----------------------------------------------------------------------------*/
@@ -360,10 +360,10 @@ int32_t FSMediaPresent(int32_t DeviceNum)
 
 /*----------------------------------------------------------------------------
 >  Function Name: int32_t FSFATType (int32_t DeviceNum)
- 
+
    FunctionType:  Non-Reentrant
 
-   Inputs:        1) DeviceNum 
+   Inputs:        1) DeviceNum
 
    Outputs:       Returns FAT type.
 <
@@ -376,7 +376,7 @@ int32_t FSFATType(int32_t DeviceNum)
 /*----------------------------------------------------------------------------
 
 >  Function Name: RtStatus_t Cleardevicerecord(int32_t DeviceNum)
- 
+
    FunctionType:  Reentrant
 
    Inputs:        1)Device number
@@ -405,7 +405,7 @@ RtStatus_t Cleardevicerecord(int32_t DeviceNum)
 
    Inputs:        1) Device number
 
-   Outputs:       Returns 0, if file system found else 
+   Outputs:       Returns 0, if file system found else
                   ERROR_OS_FILESYSTEM_READSECTOR_FAIL if the PBS cannot be read.
                   or
                   ERROR_OS_FILESYSTEM_FILESYSTEM_NOT_FOUND if the PBS is missing.

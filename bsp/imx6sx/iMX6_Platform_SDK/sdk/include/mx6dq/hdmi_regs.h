@@ -48,7 +48,7 @@
 #define CREGS_DIGTXMODE                 0x1E
 
 //
-// Hdmi controller registers 
+// Hdmi controller registers
 //
 
 // Identification Registers
@@ -62,7 +62,7 @@
 #define HDMI_CONFIG3_ID             HDMI_BASE_ADDR+0x0007
 
 // Interrupt Registers
-#define HDMI_IH_FC_STAT0            HDMI_BASE_ADDR+0x0100     
+#define HDMI_IH_FC_STAT0            HDMI_BASE_ADDR+0x0100
 #define HDMI_IH_FC_STAT1            HDMI_BASE_ADDR+0x0101
 #define HDMI_IH_FC_STAT2            HDMI_BASE_ADDR+0x0102
 #define HDMI_IH_AS_STAT0            HDMI_BASE_ADDR+0x0103
@@ -402,14 +402,14 @@
 #define HDMI_PHY_I2CM_FS_SCL_LCNT_1_ADDR     HDMI_BASE_ADDR+0x3031
 #define HDMI_PHY_I2CM_FS_SCL_LCNT_0_ADDR     HDMI_BASE_ADDR+0x3032
 
-#define HDMI_AUD_N1							 HDMI_BASE_ADDR+0x3200
-#define HDMI_AUD_N2							 HDMI_BASE_ADDR+0x3201
-#define HDMI_AUD_N3							 HDMI_BASE_ADDR+0x3202
+#define HDMI_AUD_N1                          HDMI_BASE_ADDR+0x3200
+#define HDMI_AUD_N2                          HDMI_BASE_ADDR+0x3201
+#define HDMI_AUD_N3                          HDMI_BASE_ADDR+0x3202
 
-#define HDMI_AUD_CTS1						 HDMI_BASE_ADDR+0x3203
-#define HDMI_AUD_CTS2						 HDMI_BASE_ADDR+0x3204
-#define HDMI_AUD_CTS3						 HDMI_BASE_ADDR+0x3205
-#define HDMI_AUD_INPUTCLKFS			 HDMI_BASE_ADDR+0x3206
+#define HDMI_AUD_CTS1                        HDMI_BASE_ADDR+0x3203
+#define HDMI_AUD_CTS2                        HDMI_BASE_ADDR+0x3204
+#define HDMI_AUD_CTS3                        HDMI_BASE_ADDR+0x3205
+#define HDMI_AUD_INPUTCLKFS          HDMI_BASE_ADDR+0x3206
 
 // Generic Parallel Audio Interface Registers
 #define HDMI_GP_CONF0               HDMI_BASE_ADDR+0x3500
@@ -443,11 +443,11 @@
 #define HDMI_AHB_DMA_INT            HDMI_BASE_ADDR+0x3613
 #define HDMI_AHB_DMA_MASK           HDMI_BASE_ADDR+0x3614
 #define HDMI_AHB_DMA_POL            HDMI_BASE_ADDR+0x3615
-#define HDMI_AHB_DMA_CONF1	        HDMI_BASE_ADDR+0x3616	
-#define HDMI_AHB_DMA_BUFFSTAT	      HDMI_BASE_ADDR+0x3617	
-#define HDMI_AHB_DMA_BUFFINT	      HDMI_BASE_ADDR+0x3618	
-#define HDMI_AHB_DMA_BUFFMASK	      HDMI_BASE_ADDR+0x3619	
-#define HDMI_AHB_DMA_BUFFPOL	      HDMI_BASE_ADDR+0x361a	
+#define HDMI_AHB_DMA_CONF1          HDMI_BASE_ADDR+0x3616
+#define HDMI_AHB_DMA_BUFFSTAT         HDMI_BASE_ADDR+0x3617
+#define HDMI_AHB_DMA_BUFFINT          HDMI_BASE_ADDR+0x3618
+#define HDMI_AHB_DMA_BUFFMASK         HDMI_BASE_ADDR+0x3619
+#define HDMI_AHB_DMA_BUFFPOL          HDMI_BASE_ADDR+0x361a
 
 // Main Controller Registers
 #define HDMI_MC_SFRDIV              HDMI_BASE_ADDR+0x4000

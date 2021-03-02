@@ -9,7 +9,7 @@
   *          peripheral:
   *           + Extended Initialization and de-initialization functions
   *           + Extended Peripheral Control functions
-  *         
+  *
   ******************************************************************************
   * @attention
   *
@@ -59,7 +59,7 @@
               ##### Extended IO operation functions #####
  ===============================================================================
   [..]
-      (+) OPAMP Self calibration. 
+      (+) OPAMP Self calibration.
 
 @endverbatim
   * @{
@@ -72,13 +72,13 @@
 
 /**
   * @brief  Run the self calibration of the 3 OPAMPs in parallel.
-  * @note   Trimming values (PMOS & NMOS) are updated and user trimming is 
+  * @note   Trimming values (PMOS & NMOS) are updated and user trimming is
   *         enabled is calibration is succesful.
   * @note   Calibration is performed in the mode specified in OPAMP init
   *         structure (mode normal or low-power). To perform calibration for
   *         both modes, repeat this function twice after OPAMP init structure
   *         accordingly updated.
-  * @note   Calibration runs about 10 ms (5 dichotmy steps, repeated for P  
+  * @note   Calibration runs about 10 ms (5 dichotmy steps, repeated for P
   *         and N transistors: 10 steps with 1 ms for each step).
   * @param  hopamp1 handle
   * @param  hopamp2 handle
@@ -88,19 +88,19 @@
 HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPAMP_HandleTypeDef *hopamp2, OPAMP_HandleTypeDef *hopamp3)
 {
   HAL_StatusTypeDef status = HAL_OK;
-  
+
   uint32_t* opamp1_trimmingvalue;
   uint32_t opamp1_trimmingvaluen = 0;
   uint32_t opamp1_trimmingvaluep = 0;
-  
+
   uint32_t* opamp2_trimmingvalue;
   uint32_t opamp2_trimmingvaluen = 0;
   uint32_t opamp2_trimmingvaluep = 0;
-  
+
   uint32_t* opamp3_trimmingvalue;
   uint32_t opamp3_trimmingvaluen = 0;
   uint32_t opamp3_trimmingvaluep = 0;
-  
+
   uint32_t trimming_diff_pair;              /* Selection of differential transistors pair high or low */
 
   __IO uint32_t* tmp_opamp1_reg_trimming;   /* Selection of register of trimming depending on power mode: OTR or LPOTR */
@@ -109,13 +109,13 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
   uint32_t tmp_opamp1_otr_otuser;           /* Selection of bit OPAMP_OTR_OT_USER depending on trimming register pointed: OTR or LPOTR */
   uint32_t tmp_opamp2_otr_otuser;
   uint32_t tmp_opamp3_otr_otuser;
-  
+
   uint32_t tmp_Opa1calout_DefaultSate;      /* Bit OPAMP_CSR_OPA1CALOUT default state when trimming value is 00000b. Used to detect the bit toggling */
   uint32_t tmp_Opa2calout_DefaultSate;      /* Bit OPAMP_CSR_OPA2CALOUT default state when trimming value is 00000b. Used to detect the bit toggling */
   uint32_t tmp_Opa3calout_DefaultSate;      /* Bit OPAMP_CSR_OPA3CALOUT default state when trimming value is 00000b. Used to detect the bit toggling */
 
   uint32_t tmp_OpaxSwitchesContextBackup = 0x0U;
-  
+
   uint8_t trimming_diff_pair_iteration_count = 0x0U;    /* For calibration loop algorithm: to repeat the calibration loop for both differential transistors pair high and low */
   uint8_t delta;                                        /* For calibration loop algorithm: Variable for dichotomy steps value */
   uint8_t final_step_check = 0x0U;                      /* For calibration loop algorithm: Flag for additional check of last trimming step */
@@ -124,7 +124,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
   if((hopamp1 == NULL) || (hopamp2 == NULL) || (hopamp3 == NULL))
   {
     status = HAL_ERROR;
-  } 
+  }
   /* Check if OPAMP in calibration mode and calibration not yet enable */
   else if(hopamp1->State !=  HAL_OPAMP_STATE_READY)
   {
@@ -148,23 +148,23 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       assert_param(IS_OPAMP_POWERMODE(hopamp1->Init.PowerMode));
       assert_param(IS_OPAMP_POWERMODE(hopamp2->Init.PowerMode));
       assert_param(IS_OPAMP_POWERMODE(hopamp3->Init.PowerMode));
-      
+
       /* Update OPAMP state */
       hopamp1->State = HAL_OPAMP_STATE_CALIBBUSY;
       hopamp2->State = HAL_OPAMP_STATE_CALIBBUSY;
       hopamp3->State = HAL_OPAMP_STATE_CALIBBUSY;
-      
+
       /* Backup of switches configuration to restore it at the end of the     */
       /* calibration.                                                         */
       tmp_OpaxSwitchesContextBackup = READ_BIT(OPAMP->CSR, OPAMP_CSR_ALL_SWITCHES_ALL_OPAMPS);
-      
+
       /* Open all switches on non-inverting input, inverting input and output */
       /* feedback.                                                            */
       CLEAR_BIT(OPAMP->CSR, OPAMP_CSR_ALL_SWITCHES_ALL_OPAMPS);
-      
+
       /* Set calibration mode to user programmed trimming values */
       SET_BIT(OPAMP->OTR, OPAMP_OTR_OT_USER);
-      
+
       /* Select trimming settings depending on power mode */
       if (hopamp1->Init.PowerMode == OPAMP_POWERMODE_NORMAL)
       {
@@ -176,7 +176,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         tmp_opamp1_otr_otuser = 0x00000000;
         tmp_opamp1_reg_trimming = &OPAMP->LPOTR;
       }
-      
+
       if (hopamp2->Init.PowerMode == OPAMP_POWERMODE_NORMAL)
       {
         tmp_opamp2_otr_otuser = OPAMP_OTR_OT_USER;
@@ -187,7 +187,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         tmp_opamp2_otr_otuser = 0x00000000;
         tmp_opamp2_reg_trimming = &OPAMP->LPOTR;
       }
-      
+
       if (hopamp3->Init.PowerMode == OPAMP_POWERMODE_NORMAL)
       {
         tmp_opamp3_otr_otuser = OPAMP_OTR_OT_USER;
@@ -198,10 +198,10 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         tmp_opamp3_otr_otuser = 0x00000000;
         tmp_opamp3_reg_trimming = &OPAMP->LPOTR;
       }
-      
+
       /* Enable the selected opamp */
       CLEAR_BIT (OPAMP->CSR, OPAMP_CSR_OPAXPD_ALL);
-      
+
       /* Perform trimming for both differential transistors pair high and low */
       for (trimming_diff_pair_iteration_count = 0U; trimming_diff_pair_iteration_count <= 1U; trimming_diff_pair_iteration_count++)
       {
@@ -212,13 +212,13 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           opamp1_trimmingvalue = &opamp1_trimmingvaluen;
           opamp2_trimmingvalue = &opamp2_trimmingvaluen;
           opamp3_trimmingvalue = &opamp3_trimmingvaluen;
-          
+
           /* Set bit OPAMP_CSR_OPAXCALOUT default state when trimming value   */
           /* is 00000b. Used to detect the bit toggling during trimming.      */
           tmp_Opa1calout_DefaultSate = RESET;
           tmp_Opa2calout_DefaultSate = RESET;
           tmp_Opa3calout_DefaultSate = RESET;
-          
+
           /* Enable calibration for N differential pair */
           MODIFY_REG(OPAMP->CSR, OPAMP_CSR_OPAXCAL_L_ALL,
                                  OPAMP_CSR_OPAXCAL_H_ALL);
@@ -230,19 +230,19 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           opamp1_trimmingvalue = &opamp1_trimmingvaluep;
           opamp2_trimmingvalue = &opamp2_trimmingvaluep;
           opamp3_trimmingvalue = &opamp3_trimmingvaluep;
-          
+
           /* Set bit OPAMP_CSR_OPAXCALOUT default state when trimming value   */
           /* is 00000b. Used to detect the bit toggling during trimming.      */
           tmp_Opa1calout_DefaultSate = OPAMP_CSR_OPAXCALOUT(hopamp1);
           tmp_Opa2calout_DefaultSate = OPAMP_CSR_OPAXCALOUT(hopamp2);
           tmp_Opa3calout_DefaultSate = OPAMP_CSR_OPAXCALOUT(hopamp3);
-          
+
           /* Enable calibration for P differential pair */
           MODIFY_REG(OPAMP->CSR, OPAMP_CSR_OPAXCAL_H_ALL,
                                  OPAMP_CSR_OPAXCAL_L_ALL);
         }
-        
-      
+
+
         /* Perform calibration parameter search by dichotomy sweep */
         /*  - Delta initial value 16: for 5 dichotomy steps: 16 for the       */
         /*    initial range, then successive delta sweeps (8, 4, 2, 1).       */
@@ -258,7 +258,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         *opamp2_trimmingvalue = 15U;
         *opamp3_trimmingvalue = 15U;
         delta = 16U;
-        
+
         while ((delta != 0U) || (final_step_check == 1U))
         {
           /* Set candidate trimming */
@@ -270,19 +270,19 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
 
           MODIFY_REG(*tmp_opamp3_reg_trimming, OPAMP_OFFSET_TRIM_SET(hopamp3, trimming_diff_pair, OPAMP_TRIM_VALUE_MASK) ,
                                                OPAMP_OFFSET_TRIM_SET(hopamp3, trimming_diff_pair, *opamp3_trimmingvalue) | tmp_opamp3_otr_otuser);
-          
+
           /* Offset trimming time: during calibration, minimum time needed    */
           /* between two steps to have 1 mV accuracy.                         */
           HAL_Delay(OPAMP_TRIMMING_DELAY);
-          
+
           /* Set flag for additional check of last trimming step equal to     */
           /* dichotomy step before its division by 2 (equivalent to previous  */
           /* value of dichotomy step).                                        */
           final_step_check = delta;
-          
+
           /* Divide range by 2 to continue dichotomy sweep */
           delta >>= 1U;
-          
+
           /* Set trimming values for next iteration in function of trimming   */
           /* result toggle (versus initial state).                            */
           /* Trimming values update with dichotomy delta of previous          */
@@ -299,7 +299,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
             /* If calibration output is has not toggled, try higher trimming */
             *opamp1_trimmingvalue += delta;
           }
-          
+
           if (READ_BIT(OPAMP->CSR, OPAMP_CSR_OPAXCALOUT(hopamp2)) != tmp_Opa2calout_DefaultSate)
           {
             /* If calibration output is has toggled, try lower trimming */
@@ -322,7 +322,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           *opamp3_trimmingvalue += delta;
         }
       }
-      
+
       /* Check trimming result of the selected step and perform final fine  */
       /* trimming.                                                          */
       /*  - If calibration output is has toggled: the current step is       */
@@ -332,7 +332,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       if (READ_BIT(OPAMP->CSR, OPAMP_CSR_OPAXCALOUT(hopamp1)) == tmp_Opa1calout_DefaultSate)
       {
         *opamp1_trimmingvalue += 1U;
-        
+
         /* Set final fine trimming */
         MODIFY_REG(*tmp_opamp1_reg_trimming, OPAMP_OFFSET_TRIM_SET(hopamp1, trimming_diff_pair, OPAMP_TRIM_VALUE_MASK) ,
                                              OPAMP_OFFSET_TRIM_SET(hopamp1, trimming_diff_pair, *opamp1_trimmingvalue) | tmp_opamp1_otr_otuser);
@@ -340,7 +340,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       if (READ_BIT(OPAMP->CSR, OPAMP_CSR_OPAXCALOUT(hopamp2)) == tmp_Opa2calout_DefaultSate)
       {
         *opamp2_trimmingvalue += 1U;
-        
+
         /* Set final fine trimming */
         MODIFY_REG(*tmp_opamp2_reg_trimming, OPAMP_OFFSET_TRIM_SET(hopamp2, trimming_diff_pair, OPAMP_TRIM_VALUE_MASK) ,
                                              OPAMP_OFFSET_TRIM_SET(hopamp2, trimming_diff_pair, *opamp2_trimmingvalue) | tmp_opamp2_otr_otuser);
@@ -348,33 +348,33 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       if (READ_BIT(OPAMP->CSR, OPAMP_CSR_OPAXCALOUT(hopamp3)) == tmp_Opa3calout_DefaultSate)
       {
         *opamp3_trimmingvalue += 1U;
-        
+
         /* Set final fine trimming */
         MODIFY_REG(*tmp_opamp3_reg_trimming, OPAMP_OFFSET_TRIM_SET(hopamp3, trimming_diff_pair, OPAMP_TRIM_VALUE_MASK) ,
                                              OPAMP_OFFSET_TRIM_SET(hopamp3, trimming_diff_pair, *opamp3_trimmingvalue) | tmp_opamp3_otr_otuser);
       }
-      
+
     }
-     
+
 
     /* Disable calibration for P and N differential pairs */
     /* Disable the selected opamp */
-    CLEAR_BIT (OPAMP->CSR, (OPAMP_CSR_OPAXCAL_H_ALL | 
+    CLEAR_BIT (OPAMP->CSR, (OPAMP_CSR_OPAXCAL_H_ALL |
                             OPAMP_CSR_OPAXCAL_L_ALL |
                             OPAMP_CSR_OPAXPD_ALL     ));
-    
+
     /* Backup of switches configuration to restore it at the end of the     */
     /* calibration.                                                         */
     SET_BIT(OPAMP->CSR, tmp_OpaxSwitchesContextBackup);
-    
+
     /* Self calibration is successful */
     /* Store calibration (user trimming) results in init structure. */
-    
-    /* Set user trimming mode */  
+
+    /* Set user trimming mode */
     hopamp1->Init.UserTrimming = OPAMP_TRIMMING_USER;
     hopamp2->Init.UserTrimming = OPAMP_TRIMMING_USER;
     hopamp3->Init.UserTrimming = OPAMP_TRIMMING_USER;
-    
+
     /* Affect calibration parameters depending on mode normal/low power */
     if (hopamp1->Init.PowerMode != OPAMP_POWERMODE_LOWPOWER)
     {
@@ -390,7 +390,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       /* Write calibration result P */
       hopamp1->Init.TrimmingValuePLowPower = opamp1_trimmingvaluep;
     }
-    
+
     if (hopamp2->Init.PowerMode != OPAMP_POWERMODE_LOWPOWER)
     {
       /* Write calibration result N */
@@ -405,7 +405,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       /* Write calibration result P */
       hopamp2->Init.TrimmingValuePLowPower = opamp2_trimmingvaluep;
     }
-    
+
     if (hopamp3->Init.PowerMode != OPAMP_POWERMODE_LOWPOWER)
     {
       /* Write calibration result N */
@@ -436,13 +436,13 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
 
 /**
   * @brief  Run the self calibration of the 2 OPAMPs in parallel.
-  * @note   Trimming values (PMOS & NMOS) are updated and user trimming is 
+  * @note   Trimming values (PMOS & NMOS) are updated and user trimming is
   *         enabled is calibration is succesful.
   * @note   Calibration is performed in the mode specified in OPAMP init
   *         structure (mode normal or low-power). To perform calibration for
   *         both modes, repeat this function twice after OPAMP init structure
   *         accordingly updated.
-  * @note   Calibration runs about 10 ms (5 dichotmy steps, repeated for P  
+  * @note   Calibration runs about 10 ms (5 dichotmy steps, repeated for P
   *         and N transistors: 10 steps with 1 ms for each step).
   * @param  hopamp1 handle
   * @param  hopamp2 handle
@@ -451,27 +451,27 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
 HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPAMP_HandleTypeDef *hopamp2)
 {
   HAL_StatusTypeDef status = HAL_OK;
-  
+
   uint32_t* opamp1_trimmingvalue;
   uint32_t opamp1_trimmingvaluen = 0;
   uint32_t opamp1_trimmingvaluep = 0;
-  
+
   uint32_t* opamp2_trimmingvalue;
   uint32_t opamp2_trimmingvaluen = 0;
   uint32_t opamp2_trimmingvaluep = 0;
-  
+
   uint32_t trimming_diff_pair;          /* Selection of differential transistors pair high or low */
 
   __IO uint32_t* tmp_opamp1_reg_trimming;   /* Selection of register of trimming depending on power mode: OTR or LPOTR */
   __IO uint32_t* tmp_opamp2_reg_trimming;
   uint32_t tmp_opamp1_otr_otuser;       /* Selection of bit OPAMP_OTR_OT_USER depending on trimming register pointed: OTR or LPOTR */
   uint32_t tmp_opamp2_otr_otuser;
-  
+
   uint32_t tmp_Opa1calout_DefaultSate;  /* Bit OPAMP_CSR_OPA1CALOUT default state when trimming value is 00000b. Used to detect the bit toggling */
   uint32_t tmp_Opa2calout_DefaultSate;  /* Bit OPAMP_CSR_OPA2CALOUT default state when trimming value is 00000b. Used to detect the bit toggling */
 
   uint32_t tmp_OpaxSwitchesContextBackup;
-  
+
   uint8_t trimming_diff_pair_iteration_count;          /* For calibration loop algorithm: to repeat the calibration loop for both differential transistors pair high and low */
   uint8_t delta;                                       /* For calibration loop algorithm: Variable for dichotomy steps value */
   uint8_t final_step_check = 0x0U;                     /* For calibration loop algorithm: Flag for additional check of last trimming step */
@@ -497,22 +497,22 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
     assert_param(IS_OPAMP_ALL_INSTANCE(hopamp2->Instance));
     assert_param(IS_OPAMP_POWERMODE(hopamp1->Init.PowerMode));
     assert_param(IS_OPAMP_POWERMODE(hopamp2->Init.PowerMode));
-    
+
     /* Update OPAMP state */
     hopamp1->State = HAL_OPAMP_STATE_CALIBBUSY;
     hopamp2->State = HAL_OPAMP_STATE_CALIBBUSY;
-    
+
     /* Backup of switches configuration to restore it at the end of the     */
     /* calibration.                                                         */
     tmp_OpaxSwitchesContextBackup = READ_BIT(OPAMP->CSR, OPAMP_CSR_ALL_SWITCHES_ALL_OPAMPS);
-    
+
     /* Open all switches on non-inverting input, inverting input and output */
     /* feedback.                                                            */
     CLEAR_BIT(OPAMP->CSR, OPAMP_CSR_ALL_SWITCHES_ALL_OPAMPS);
-    
+
     /* Set calibration mode to user programmed trimming values */
     SET_BIT(OPAMP->OTR, OPAMP_OTR_OT_USER);
-    
+
     /* Select trimming settings depending on power mode */
     if (hopamp1->Init.PowerMode == OPAMP_POWERMODE_NORMAL)
     {
@@ -524,7 +524,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       tmp_opamp1_otr_otuser = 0x00000000U;
       tmp_opamp1_reg_trimming = &OPAMP->LPOTR;
     }
-    
+
     if (hopamp2->Init.PowerMode == OPAMP_POWERMODE_NORMAL)
     {
       tmp_opamp2_otr_otuser = OPAMP_OTR_OT_USER;
@@ -535,10 +535,10 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       tmp_opamp2_otr_otuser = 0x00000000U;
       tmp_opamp2_reg_trimming = &OPAMP->LPOTR;
     }
-    
+
     /* Enable the selected opamp */
     CLEAR_BIT (OPAMP->CSR, OPAMP_CSR_OPAXPD_ALL);
-    
+
     /* Perform trimming for both differential transistors pair high and low */
     for (trimming_diff_pair_iteration_count = 0U; trimming_diff_pair_iteration_count <= 1U; trimming_diff_pair_iteration_count++)
     {
@@ -548,12 +548,12 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         trimming_diff_pair = OPAMP_FACTORYTRIMMING_N;
         opamp1_trimmingvalue = &opamp1_trimmingvaluen;
         opamp2_trimmingvalue = &opamp2_trimmingvaluen;
-        
+
         /* Set bit OPAMP_CSR_OPAXCALOUT default state when trimming value   */
         /* is 00000b. Used to detect the bit toggling during trimming.      */
         tmp_Opa1calout_DefaultSate = 0U;
         tmp_Opa2calout_DefaultSate = 0U;
-        
+
         /* Enable calibration for N differential pair */
         MODIFY_REG(OPAMP->CSR, OPAMP_CSR_OPAXCAL_L_ALL,
                                OPAMP_CSR_OPAXCAL_H_ALL);
@@ -564,18 +564,18 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         trimming_diff_pair = OPAMP_FACTORYTRIMMING_P;
         opamp1_trimmingvalue = &opamp1_trimmingvaluep;
         opamp2_trimmingvalue = &opamp2_trimmingvaluep;
-        
+
         /* Set bit OPAMP_CSR_OPAXCALOUT default state when trimming value   */
         /* is 00000b. Used to detect the bit toggling during trimming.      */
         tmp_Opa1calout_DefaultSate = (uint32_t) OPAMP_CSR_OPAXCALOUT(hopamp1);
         tmp_Opa2calout_DefaultSate = OPAMP_CSR_OPAXCALOUT(hopamp2);
-        
+
         /* Enable calibration for P differential pair */
         MODIFY_REG(OPAMP->CSR, OPAMP_CSR_OPAXCAL_H_ALL,
                                OPAMP_CSR_OPAXCAL_L_ALL);
       }
-      
-    
+
+
       /* Perform calibration parameter search by dichotomy sweep */
       /*  - Delta initial value 16: for 5 dichotomy steps: 16 for the       */
       /*    initial range, then successive delta sweeps (8, 4, 2, 1).       */
@@ -590,7 +590,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       *opamp1_trimmingvalue = 15U;
       *opamp2_trimmingvalue = 15U;
       delta = 16U;
-      
+
       while ((delta != 0U) || (final_step_check == 1U))
       {
         /* Set candidate trimming */
@@ -600,19 +600,19 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         MODIFY_REG(*tmp_opamp2_reg_trimming, OPAMP_OFFSET_TRIM_SET(hopamp2, trimming_diff_pair, OPAMP_TRIM_VALUE_MASK) ,
                                              OPAMP_OFFSET_TRIM_SET(hopamp2, trimming_diff_pair, *opamp2_trimmingvalue) | tmp_opamp2_otr_otuser);
 
-        
+
         /* Offset trimming time: during calibration, minimum time needed    */
         /* between two steps to have 1 mV accuracy.                         */
         HAL_Delay(OPAMP_TRIMMING_DELAY);
-        
+
         /* Set flag for additional check of last trimming step equal to     */
         /* dichotomy step before its division by 2 (equivalent to previous  */
         /* value of dichotomy step).                                        */
         final_step_check = delta;
-        
+
         /* Divide range by 2 to continue dichotomy sweep */
         delta >>= 1U;
-        
+
         /* Set trimming values for next iteration in function of trimming   */
         /* result toggle (versus initial state).                            */
         /* Trimming values update with dichotomy delta of previous          */
@@ -629,7 +629,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           /* If calibration output is has not toggled, try higher trimming */
           *opamp1_trimmingvalue += delta;
         }
-        
+
         if (READ_BIT(OPAMP->CSR, OPAMP_CSR_OPAXCALOUT(hopamp2)) != tmp_Opa2calout_DefaultSate)
         {
           /* If calibration output is has toggled, try lower trimming */
@@ -641,7 +641,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           *opamp2_trimmingvalue += delta;
         }
       }
-      
+
       /* Check trimming result of the selected step and perform final fine  */
       /* trimming.                                                          */
       /*  - If calibration output is has toggled: the current step is       */
@@ -651,7 +651,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       if (READ_BIT(OPAMP->CSR, OPAMP_CSR_OPAXCALOUT(hopamp1)) == tmp_Opa1calout_DefaultSate)
       {
         *opamp1_trimmingvalue += 1U;
-        
+
         /* Set final fine trimming */
         MODIFY_REG(*tmp_opamp1_reg_trimming, OPAMP_OFFSET_TRIM_SET(hopamp1, trimming_diff_pair, OPAMP_TRIM_VALUE_MASK) ,
                                              OPAMP_OFFSET_TRIM_SET(hopamp1, trimming_diff_pair, *opamp1_trimmingvalue) | tmp_opamp1_otr_otuser);
@@ -659,33 +659,33 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       if (READ_BIT(OPAMP->CSR, OPAMP_CSR_OPAXCALOUT(hopamp2)) == tmp_Opa2calout_DefaultSate)
       {
         *opamp2_trimmingvalue += 1U;
-        
+
         /* Set final fine trimming */
         MODIFY_REG(*tmp_opamp2_reg_trimming, OPAMP_OFFSET_TRIM_SET(hopamp2, trimming_diff_pair, OPAMP_TRIM_VALUE_MASK) ,
                                              OPAMP_OFFSET_TRIM_SET(hopamp2, trimming_diff_pair, *opamp2_trimmingvalue) | tmp_opamp2_otr_otuser);
 
       }
-      
+
     }
-     
+
 
     /* Disable calibration for P and N differential pairs */
     /* Disable the selected opamp */
-    CLEAR_BIT (OPAMP->CSR, (OPAMP_CSR_OPAXCAL_H_ALL | 
+    CLEAR_BIT (OPAMP->CSR, (OPAMP_CSR_OPAXCAL_H_ALL |
                             OPAMP_CSR_OPAXCAL_L_ALL |
                             OPAMP_CSR_OPAXPD_ALL     ));
-    
+
     /* Backup of switches configuration to restore it at the end of the     */
     /* calibration.                                                         */
     SET_BIT(OPAMP->CSR, tmp_OpaxSwitchesContextBackup);
-    
+
     /* Self calibration is successful */
     /* Store calibration (user trimming) results in init structure. */
-    
-    /* Set user trimming mode */  
+
+    /* Set user trimming mode */
     hopamp1->Init.UserTrimming = OPAMP_TRIMMING_USER;
     hopamp2->Init.UserTrimming = OPAMP_TRIMMING_USER;
-    
+
     /* Affect calibration parameters depending on mode normal/low power */
     if (hopamp1->Init.PowerMode != OPAMP_POWERMODE_LOWPOWER)
     {
@@ -701,7 +701,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       /* Write calibration result P */
       hopamp1->Init.TrimmingValuePLowPower = opamp1_trimmingvaluep;
     }
-    
+
     if (hopamp2->Init.PowerMode != OPAMP_POWERMODE_LOWPOWER)
     {
       /* Write calibration result N */
@@ -730,15 +730,15 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
   * @}
   */
 
-/** @defgroup OPAMPEx_Exported_Functions_Group2 Extended Peripheral Control functions 
- *  @brief   Extended peripheral control functions 
+/** @defgroup OPAMPEx_Exported_Functions_Group2 Extended Peripheral Control functions
+ *  @brief   Extended peripheral control functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
              ##### Peripheral Control functions #####
  ===============================================================================
     [..]
-      (+) OPAMP unlock. 
+      (+) OPAMP unlock.
 
 @endverbatim
   * @{
@@ -766,7 +766,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_Unlock(OPAMP_HandleTypeDef* hopamp)
   {
     /* Check the parameter */
     assert_param(IS_OPAMP_ALL_INSTANCE(hopamp->Instance));
-  
+
    /* OPAMP state changed to locked */
     hopamp->State = HAL_OPAMP_STATE_BUSY;
   }
@@ -775,7 +775,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_Unlock(OPAMP_HandleTypeDef* hopamp)
     status = HAL_ERROR;
   }
 
-  return status; 
+  return status;
 }
 
 /**

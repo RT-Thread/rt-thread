@@ -1,25 +1,25 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šé‚®ç®±ä¾‹ç¨‹
+ * ³ÌĞòÇåµ¥£ºÓÊÏäÀı³Ì
  *
- * è¿™ä¸ªç¨‹åºä¼šåˆ›å»º2ä¸ªåŠ¨æ€çº¿ç¨‹ï¼Œä¸€ä¸ªé™æ€çš„é‚®ç®±å¯¹è±¡ï¼Œå…¶ä¸­ä¸€ä¸ªçº¿ç¨‹å¾€é‚®ç®±ä¸­å‘é€é‚®ä»¶ï¼Œ
- * ä¸€ä¸ªçº¿ç¨‹å¾€é‚®ç®±ä¸­æ”¶å–é‚®ä»¶ã€‚
+ * Õâ¸ö³ÌĞò»á´´½¨2¸ö¶¯Ì¬Ïß³Ì£¬Ò»¸ö¾²Ì¬µÄÓÊÏä¶ÔÏó£¬ÆäÖĞÒ»¸öÏß³ÌÍùÓÊÏäÖĞ·¢ËÍÓÊ¼ş£¬
+ * Ò»¸öÏß³ÌÍùÓÊÏäÖĞÊÕÈ¡ÓÊ¼ş¡£
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
 
-/* é‚®ç®±æ§åˆ¶å— */
+/* ÓÊÏä¿ØÖÆ¿é */
 static struct rt_mailbox mb;
-/* ç”¨äºæ”¾é‚®ä»¶çš„å†…å­˜æ±  */
+/* ÓÃÓÚ·ÅÓÊ¼şµÄÄÚ´æ³Ø */
 static char mb_pool[128];
 
 static char mb_str1[] = "I'm a mail!";
 static char mb_str2[] = "this is another mail!";
 
-/* çº¿ç¨‹1å…¥å£ */
+/* Ïß³Ì1Èë¿Ú */
 static void thread1_entry(void* parameter)
 {
     unsigned char* str;
@@ -28,18 +28,18 @@ static void thread1_entry(void* parameter)
     {
         rt_kprintf("thread1: try to recv a mail\n");
 
-        /* ä»é‚®ç®±ä¸­æ”¶å–é‚®ä»¶ */
+        /* ´ÓÓÊÏäÖĞÊÕÈ¡ÓÊ¼ş */
         if (rt_mb_recv(&mb, (rt_uint32_t*)&str, RT_WAITING_FOREVER) == RT_EOK)
         {
             rt_kprintf("thread1: get a mail from mailbox, the content:%s\n", str);
 
-            /* å»¶æ—¶10ä¸ªOS Tick */
+            /* ÑÓÊ±10¸öOS Tick */
             rt_thread_delay(10);
         }
     }
 }
 
-/* çº¿ç¨‹2å…¥å£ */
+/* Ïß³Ì2Èë¿Ú */
 static void thread2_entry(void* parameter)
 {
     rt_uint8_t count;
@@ -50,41 +50,41 @@ static void thread2_entry(void* parameter)
         count ++;
         if (count & 0x1)
         {
-            /* å‘é€mb_str1åœ°å€åˆ°é‚®ç®±ä¸­ */
+            /* ·¢ËÍmb_str1µØÖ·µ½ÓÊÏäÖĞ */
             rt_mb_send(&mb, (rt_uint32_t)&mb_str1[0]);
         }
         else
         {
-            /* å‘é€mb_str2åœ°å€åˆ°é‚®ç®±ä¸­ */
+            /* ·¢ËÍmb_str2µØÖ·µ½ÓÊÏäÖĞ */
             rt_mb_send(&mb, (rt_uint32_t)&mb_str2[0]);
         }
 
-        /* å»¶æ—¶20ä¸ªOS Tick */
+        /* ÑÓÊ±20¸öOS Tick */
         rt_thread_delay(20);
     }
 }
 
 int mbox_simple_init()
 {
-    /* åˆå§‹åŒ–ä¸€ä¸ªmailbox */
+    /* ³õÊ¼»¯Ò»¸ömailbox */
     rt_mb_init(&mb,
-               "mbt",             /* åç§°æ˜¯mbt */
-               &mb_pool[0],       /* é‚®ç®±ç”¨åˆ°çš„å†…å­˜æ± æ˜¯mb_pool */
-               sizeof(mb_pool)/4, /* å¤§å°æ˜¯mb_poolå¤§å°é™¤ä»¥4ï¼Œå› ä¸ºä¸€å°é‚®ä»¶çš„å¤§å°æ˜¯4å­—èŠ‚ */
-               RT_IPC_FLAG_FIFO); /* é‡‡ç”¨FIFOæ–¹å¼è¿›è¡Œçº¿ç¨‹ç­‰å¾… */
+               "mbt",             /* Ãû³ÆÊÇmbt */
+               &mb_pool[0],       /* ÓÊÏäÓÃµ½µÄÄÚ´æ³ØÊÇmb_pool */
+               sizeof(mb_pool)/4, /* ´óĞ¡ÊÇmb_pool´óĞ¡³ıÒÔ4£¬ÒòÎªÒ»·âÓÊ¼şµÄ´óĞ¡ÊÇ4×Ö½Ú */
+               RT_IPC_FLAG_FIFO); /* ²ÉÓÃFIFO·½Ê½½øĞĞÏß³ÌµÈ´ı */
 
-    /* åˆ›å»ºçº¿ç¨‹1 */
+    /* ´´½¨Ïß³Ì1 */
     tid1 = rt_thread_create("t1",
-                            thread1_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread1_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread1_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread1_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid1 != RT_NULL)
         rt_thread_startup(tid1);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹2 */
+    /* ´´½¨Ïß³Ì2 */
     tid2 = rt_thread_create("t2",
-                            thread2_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread2_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread2_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread2_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid2 != RT_NULL)
         rt_thread_startup(tid2);
@@ -97,38 +97,38 @@ int mbox_simple_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (tid1 != RT_NULL && tid1->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid1);
     if (tid2 != RT_NULL && tid2->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid2);
 
-    /* æ‰§è¡Œé‚®ç®±å¯¹è±¡è„±ç¦» */
+    /* Ö´ĞĞÓÊÏä¶ÔÏóÍÑÀë */
     rt_mb_detach(&mb);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_mbox_simple()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     mbox_simple_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_mbox_simple, a simple mailbox example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     mbox_simple_init();

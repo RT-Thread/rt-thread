@@ -161,8 +161,8 @@ typedef struct {
     codingType_t mCodingType; /** (audioParams_t *params, see InfoFrame) */
 
     unsigned char mChannelAllocation;
-                                    /** channel allocation (audioParams_t *params, 
-						   see InfoFrame) */
+                                    /** channel allocation (audioParams_t *params,
+                           see InfoFrame) */
     unsigned char mSampleSize;
                              /**  sample size (audioParams_t *params, 16 to 24) */
 
@@ -170,11 +170,11 @@ typedef struct {
                                    /** sampling frequency (audioParams_t *params, Hz) */
 
     unsigned char mLevelShiftValue;
-                                  /** level shift value (audioParams_t *params, 
-						 see InfoFrame) */
+                                  /** level shift value (audioParams_t *params,
+                         see InfoFrame) */
     unsigned char mDownMixInhibitFlag;
-                                     /** down-mix inhibit flag (audioParams_t *params, 
-							see InfoFrame) */
+                                     /** down-mix inhibit flag (audioParams_t *params,
+                            see InfoFrame) */
     unsigned int mOriginalSamplingFrequency; /** Original sampling frequency */
     unsigned char mIecCopyright; /** IEC copyright */
     unsigned char mIecCgmsA; /** IEC CGMS-A */
@@ -182,17 +182,17 @@ typedef struct {
     unsigned char mIecCategoryCode; /** IEC category code */
     unsigned char mIecSourceNumber; /** IEC source number */
     unsigned char mIecClockAccuracy; /** IEC clock accuracy */
-    packet_t mPacketType; /** packet type. currently only Audio Sample (AUDS) 
-						  and High Bit Rate (HBR) are supported */
-    unsigned short mClockFsFactor; /** Input audio clock Fs factor used at the audop 
-						packetizer to calculate the CTS value and ACR packet
-						insertion rate */
+    packet_t mPacketType; /** packet type. currently only Audio Sample (AUDS)
+                          and High Bit Rate (HBR) are supported */
+    unsigned short mClockFsFactor; /** Input audio clock Fs factor used at the audop
+                        packetizer to calculate the CTS value and ACR packet
+                        insertion rate */
     dmaIncrement_t mDmaBeatIncrement; /** Incremental burst modes: unspecified
-									lengths (upper limit is 1kB boundary) and
-									INCR4, INCR8, and INCR16 fixed-beat burst */
+                                    lengths (upper limit is 1kB boundary) and
+                                    INCR4, INCR8, and INCR16 fixed-beat burst */
     unsigned char mDmaThreshold; /** When the number of samples in the Audio FIFO is lower
-						than the threshold, the DMA engine requests a new burst
-						request to the AHB master interface */
+                        than the threshold, the DMA engine requests a new burst
+                        request to the AHB master interface */
     unsigned char mDmaHlock; /** Master burst lock mechanism */
 } audioParams_t;
 
@@ -210,7 +210,7 @@ void hdmi_set_video_mode(hdmi_vmode_s * vmode);
 /*!
  * @brief Check if color space conversion is needed
  *
- * @param hdmi_instance HDMI instance information containing all the parameters 
+ * @param hdmi_instance HDMI instance information containing all the parameters
  * of input and output
  */
 int isColorSpaceConversion(hdmi_data_info_s hdmi_instance);
@@ -218,7 +218,7 @@ int isColorSpaceConversion(hdmi_data_info_s hdmi_instance);
 /*!
  * @brief Check if color space decimition is needed
  *
- * @param hdmi_instance HDMI instance information containing all the parameters 
+ * @param hdmi_instance HDMI instance information containing all the parameters
  * of input and output
  */
 int isColorSpaceDecimation(hdmi_data_info_s hdmi_instance);
@@ -226,7 +226,7 @@ int isColorSpaceDecimation(hdmi_data_info_s hdmi_instance);
 /*!
  * @brief Check if color space interpolation is needed
  *
- * @param hdmi_instance HDMI instance information containing all the parameters 
+ * @param hdmi_instance HDMI instance information containing all the parameters
  * of input and output
  */
 int isColorSpaceInterpolation(hdmi_data_info_s hdmi_instance);
@@ -234,15 +234,15 @@ int isColorSpaceInterpolation(hdmi_data_info_s hdmi_instance);
 /*!
  * @brief Check if pixel repetition is needed
  *
- * @param hdmi_instance HDMI instance information containing all the parameters 
+ * @param hdmi_instance HDMI instance information containing all the parameters
  * of input and output
  */
 int isPixelRepetition(hdmi_data_info_s hdmi_instance);
 
-/*! 
+/*!
  * @brief program the input source mux for the hdmi input
  * this is set up in IOMUXC_GPR3 register
- * 
+ *
  * @param mux_value HDMI input source slection between the mux options
  */
 void hdmi_config_input_source(uint32_t mux_value);
@@ -250,9 +250,9 @@ void hdmi_config_input_source(uint32_t mux_value);
 /*!
  * @brief This is responsible for the video data synchronization.
  * for example, for RGB 4:4:4 input, the data map is defined as
- * 			pin{47~40} <==> R[7:0]
- * 			pin{31~24} <==> G[7:0]
- * 			pin{15~8}  <==> B[7:0]
+ *          pin{47~40} <==> R[7:0]
+ *          pin{31~24} <==> G[7:0]
+ *          pin{15~8}  <==> B[7:0]
  *
  * @param hdmi_instance Instance of the HDMI
  */
@@ -282,11 +282,11 @@ void hdmi_video_csc(hdmi_data_info_s hdmi_instance);
 void hdmi_video_packetize(hdmi_data_info_s hdmi_instance);
 
 /*!
- * @brief Preamble filter setting. this is used to indicate whether the 
+ * @brief Preamble filter setting. this is used to indicate whether the
  * upcoming data period is a VDP(video data period) or DI(data island)
  *
- * @param	value Data value for configuration
- * @param	channel Channel number, 0~2
+ * @param   value Data value for configuration
+ * @param   channel Channel number, 0~2
  */
 void preamble_filter_set(uint8_t value, uint8_t channel);
 
@@ -353,21 +353,21 @@ void hdmi_tx_hdcp_config(uint32_t de);
 /*!
  * @brief HDMI phy initialization
  *
- * @param	de Data enable polarity, 1 for positive and 0 for negative
- * @param	pclk Pixel clock
+ * @param   de Data enable polarity, 1 for positive and 0 for negative
+ * @param   pclk Pixel clock
  */
 void hdmi_phy_init(uint8_t de, uint16_t pclk);
 
 /*!
  * @brief Force the HDMI video output to be fixed value! from FC_DBGTMDSx registers
- * 
+ *
  * @param force True/false or enable/disable, if true enabled force video setting, if false disable it
  */
 void hdmi_config_force_video(uint8_t force);
 
-/*! 
+/*!
  * configure the RGB pixel settings to be used when fixed video mode is enabled
- * 
+ *
  * @param red Pixel settings for red component.
  * @param green Pixel settings for green component.
  * @param blue Pixel settings for blue component.

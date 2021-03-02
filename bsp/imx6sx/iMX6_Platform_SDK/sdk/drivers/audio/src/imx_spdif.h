@@ -69,7 +69,7 @@ enum spdif_gainsel {
     GAINSEL_MULTI_MAX,
 };
 
-#define SPDIF_DEFAULT_GAINSEL	GAINSEL_MULTI_8
+#define SPDIF_DEFAULT_GAINSEL   GAINSEL_MULTI_8
 
 
 //! @brief Clock source for TX
@@ -84,12 +84,12 @@ typedef enum {
     TX_CLK_SEL_MLB_PHY_CLK,
 } spdif_tx_clk_sel_e;
 
-#define SPDIF_CSTATUS_BYTE	6
-#define SPDIF_UBITS_SIZE	96
-#define SPDIF_QSUB_SIZE		(SPDIF_UBITS_SIZE/8)
+#define SPDIF_CSTATUS_BYTE  6
+#define SPDIF_UBITS_SIZE    96
+#define SPDIF_QSUB_SIZE     (SPDIF_UBITS_SIZE/8)
 
 //! @brief Channel Status for Consumer use according to IEC60959-3
-//! SPDIF controller will transmit MSB first. 
+//! SPDIF controller will transmit MSB first.
 typedef struct {
     union {
         uint32_t data;
@@ -172,7 +172,7 @@ typedef struct {
 #define IEC958_CON_SAMPLE_LENGTH_24_20   (0x5 << 0)
 #define IEC958_CON_SAMPLE_LENGTH_21_17   (0x3 << 0)
 
-//! @brief Setting types supported by the routine spdif_get_hw_setting 
+//! @brief Setting types supported by the routine spdif_get_hw_setting
 typedef enum {
     SPDIF_GET_FREQMEAS = 0,
     SPDIF_GET_GAIN_SEL,

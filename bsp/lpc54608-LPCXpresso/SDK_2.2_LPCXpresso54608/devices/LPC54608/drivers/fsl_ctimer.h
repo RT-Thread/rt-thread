@@ -126,9 +126,9 @@ typedef void (*ctimer_callback_t)(uint32_t flags);
  */
 typedef enum
 {
-    kCTIMER_SingleCallback,  /*!< Single Callback type where there is only one callback for the timer. 
+    kCTIMER_SingleCallback,  /*!< Single Callback type where there is only one callback for the timer.
                                  based on the status flags different channels needs to be handled differently */
-    kCTIMER_MultipleCallback /*!< Multiple Callback type where there can be 8 valid callbacks, one per channel. 
+    kCTIMER_MultipleCallback /*!< Multiple Callback type where there can be 8 valid callbacks, one per channel.
                                  for both match/capture */
 } ctimer_callback_type_t;
 

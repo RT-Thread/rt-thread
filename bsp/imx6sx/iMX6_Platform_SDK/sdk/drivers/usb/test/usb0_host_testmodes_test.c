@@ -46,9 +46,9 @@
 int get_menu_item(char *menu_table[]);
 
 
-void usb0_host_testmodes_test (usb_module_t	*usbPort)
+void usb0_host_testmodes_test (usb_module_t *usbPort)
 {
-	uint32_t core = (uint32_t)usbPort->controllerID;
+    uint32_t core = (uint32_t)usbPort->controllerID;
 
     static char *ehci_test_menu[] = {
         "normal mode",
@@ -65,8 +65,8 @@ void usb0_host_testmodes_test (usb_module_t	*usbPort)
 
     int test_mode;
 
-	//! Initialize the USB host controller.
-	usbh_init(usbPort);
+    //! Initialize the USB host controller.
+    usbh_init(usbPort);
 
     while (1) {
         /* request test mode */
@@ -74,24 +74,24 @@ void usb0_host_testmodes_test (usb_module_t	*usbPort)
         test_mode = get_menu_item(ehci_test_menu);
 
         if (test_mode == 8)
-            return;				// exit test
+            return;             // exit test
 
         if (test_mode < 5) {
             //! Set EHCI test mode in PORTSC register
             printf(("\nSetting test mode %s\n"), ehci_test_menu[test_mode]);
-		HW_USBC_PORTSC1_WR(core, (HW_USBC_PORTSC1_RD(core) & (~BM_USBC_UH1_PORTSC1_PTC)) 
-					| BF_USBC_UH1_PORTSC1_PTC(test_mode));
+        HW_USBC_PORTSC1_WR(core, (HW_USBC_PORTSC1_RD(core) & (~BM_USBC_UH1_PORTSC1_PTC))
+                    | BF_USBC_UH1_PORTSC1_PTC(test_mode));
         } else {
             //! The following are not EHCI test modes, but useful for compliance measurements.
             switch (test_mode) {
             case 5:            //! - Suspend
-		HW_USBC_PORTSC1_WR(core, HW_USBC_PORTSC1_RD(core) | BM_USBC_UH1_PORTSC1_SUSP);
+        HW_USBC_PORTSC1_WR(core, HW_USBC_PORTSC1_RD(core) | BM_USBC_UH1_PORTSC1_SUSP);
                 break;
             case 6:            //! - Resume
-		HW_USBC_PORTSC1_WR(core, HW_USBC_PORTSC1_RD(core) | BM_USBC_UH1_PORTSC1_FPR);
+        HW_USBC_PORTSC1_WR(core, HW_USBC_PORTSC1_RD(core) | BM_USBC_UH1_PORTSC1_FPR);
                 break;
             case 7:            //! - reset
-		HW_USBC_PORTSC1_WR(core, HW_USBC_PORTSC1_RD(core) | BM_USBC_UH1_PORTSC1_PR);
+        HW_USBC_PORTSC1_WR(core, HW_USBC_PORTSC1_RD(core) | BM_USBC_UH1_PORTSC1_PR);
                 break;
             }
         }

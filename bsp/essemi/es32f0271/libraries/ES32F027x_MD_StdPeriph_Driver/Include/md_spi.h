@@ -21,10 +21,10 @@
 extern "C" {
 #endif
 
-/* Includes -------------------------------------------------------------------*/ 
+/* Includes -------------------------------------------------------------------*/
 #include "es32f0271.h"
 #include "reg_spi.h"
-  
+
 /** @addtogroup Micro_Driver
   * @{
   */
@@ -35,7 +35,7 @@ extern "C" {
   * @brief SPI micro driver
   * @{
   */
-  
+
 /* Private types --------------------------------------------------------------*/
 /* Private variables ----------------------------------------------------------*/
 /* Private macros -------------------------------------------------------------*/
@@ -64,7 +64,7 @@ typedef struct
 
                                          This feature can be modified afterwards using unitary function @ref md_spi_set_con1_cpha().*/
 
-  uint32_t ClockPolarity;           /*!< Specifies the serial clock steady state. 
+  uint32_t ClockPolarity;           /*!< Specifies the serial clock steady state.
                                          This parameter can be a value of @ref MD_SPI_PC_POLARITY.
 
                                          This feature can be modified afterwards using unitary function @ref md_spi_get_con1_cpol().*/
@@ -232,7 +232,7 @@ typedef struct
 /**
   * @} MD_SPI_PC_NSS_MODE
   */
-  
+
 
 /** @defgroup MD_SPI_EC_CRC_CALCULATION SPI CRC Calculation
   * @{
@@ -252,7 +252,7 @@ typedef struct
 /**
   * @} MD_SPI_PC_CHANNEL_LENGTH
   */
-  
+
 /** @defgroup MD_SPI_PC_I2S_CLOCK_POLARITY I2S Clock polarity
   * @{
   */
@@ -273,7 +273,7 @@ typedef struct
 /**
   * @} MD_SPI_PC_I2S_DATA_LENGTH
   */
-  
+
 
 /** @defgroup MD_SPI_PC_I2S_STANDARD_SELECTION I2S standard selection
   * @{
@@ -285,7 +285,7 @@ typedef struct
 /**
   * @} MD_SPI_PC_I2S_standard_selection
   */
-  
+
 /** @defgroup MD_SPI_PC_I2S_FRAME_SYNCHRONIZATION I2S Frame Synchronization
   * @{
   */
@@ -294,7 +294,7 @@ typedef struct
 /**
   * @} MD_SPI_PC_I2S_FRAME_SYNCHRONIZATION
   */
-  
+
 /** @defgroup MD_SPI_PC_I2S_MODE_SELECTION I2S Mode Selection
   * @{
   */
@@ -313,9 +313,9 @@ typedef struct
 #define MD_I2S_MASTER_RX               (0x3U<<SPI_I2SCFG_I2SCFG_POSS)  /*!< I2S configuartion mode master receive  */
 /**
   * @} MD_SPI_PC_I2S_CFG_MODE
-  */ 
+  */
 
-/** @defgroup MD_SPI_PC_I2S_EXTERN_CLOCK I2S Extern Clock 
+/** @defgroup MD_SPI_PC_I2S_EXTERN_CLOCK I2S Extern Clock
   * @{
   */
 #define MD_I2S_EVEN                 0x00000000U               /*!< Real divider value is = (I2SDIV * 2) */
@@ -324,7 +324,7 @@ typedef struct
   * @} MD_SPI_PC_I2S_EXTERN_CLOCK
   */
 
-/** @defgroup MD_SPI_PC_I2S_EXTERN_CLOCK I2S Extern Clock 
+/** @defgroup MD_SPI_PC_I2S_EXTERN_CLOCK I2S Extern Clock
   * @{
   */
 #define MD_I2S_APB_CLOCK                0x00000000U                   /*!< APB clock is selection */
@@ -344,7 +344,7 @@ typedef struct ald_spi_handle_s
   uint8_t rx_count;
   uint8_t *tx_buf;
   uint8_t *rx_buf;
-  uint32_t ifm_buf; 
+  uint32_t ifm_buf;
 } md_spi_handle_t;
 
 /**
@@ -361,7 +361,7 @@ typedef struct ald_spi_handle_s
 
 /**
   * @brief  Set SPI control register (SPIx_CON1)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @param  value The value write in SPIx_CON1
   * @retval None
   */
@@ -372,7 +372,7 @@ __STATIC_INLINE void md_spi_set_con1(SPI_TypeDef *SPIx, uint32_t value)
 
 /**
   * @brief  Get SPI control register (SPIx_CON1)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_con1(SPI_TypeDef *SPIx)
@@ -561,7 +561,7 @@ __STATIC_INLINE uint32_t md_spi_get_con1_lsbfirst(SPI_TypeDef *SPIx)
   * @brief  Set SPI Internal slave select
   * @note   This bit has an effect only when the SSEN bit is set. The value of this bit is forced onto the NSS pin.
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg BIT_SET
   *         @arg BIT_RESET
   * @retval None
@@ -618,7 +618,7 @@ __STATIC_INLINE uint32_t md_spi_is_enable_con1_ssen(SPI_TypeDef *SPIx)
             Keep BIDEN bit clear when receive only mode is active.This bit is also useful in a multislave system \n
             in which this particular slave is not accessed, the output from the accessed slave is not corrupted.
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg  BIT_SET
   *         @arg  BIT_RESET
   * @retval None
@@ -667,7 +667,7 @@ __STATIC_INLINE uint32_t md_spi_get_con1_flen(SPI_TypeDef *SPIx)
   * @brief  Set CRCNext to transfer CRC on the line
   * @note   This bit has to be written as soon as the last data is written in the SPIx_DATA register.
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg  BIT_SET
   *         @arg  BIT_RESET
   * @retval None
@@ -756,7 +756,7 @@ __STATIC_INLINE uint32_t md_spi_is_enable_con1_bidoen(SPI_TypeDef *SPIx)
   * @note   Bidirectional data mode enable. This bit enables  half-duplex communication using common single bidirectional \n
             data line. Keep RXO bit clear when bidirectional mode is active.
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   * @arg @ref MD_SPI_FULL_DUPLEX
   * @arg @ref MD_SPI_HALF_DUPLEX
   * @retval None
@@ -792,7 +792,7 @@ __STATIC_INLINE uint32_t md_spi_get_con1_bidimode(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Set SPI control register 2 (SPIx_CON2)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @param  value The value write in SPIx_CON2
   * @retval None
   */
@@ -803,7 +803,7 @@ __STATIC_INLINE void md_spi_set_con2(SPI_TypeDef *SPIx, uint32_t value)
 
 /**
   * @brief  Get SPI control register 2(SPIx_CON2)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_con2(SPI_TypeDef *SPIx)
@@ -813,7 +813,7 @@ __STATIC_INLINE uint32_t md_spi_get_con2(SPI_TypeDef *SPIx)
 
 
 /**
-  * @brief  Enable Rx buffer DMA 
+  * @brief  Enable Rx buffer DMA
   * @note   When this bit is set, a DMA request is generated whenever the RXTH flag is set.
   * @param  SPIx SPI Instance
   * @retval None
@@ -824,7 +824,7 @@ __STATIC_INLINE void md_spi_enable_con2_rxdmaen(SPI_TypeDef *SPIx)
 }
 
 /**
-  * @brief  Disable Rx buffer DMA 
+  * @brief  Disable Rx buffer DMA
   * @param  SPIx SPI Instance
   * @retval None
   */
@@ -845,7 +845,7 @@ __STATIC_INLINE uint32_t md_spi_is_enabled_con2_rxdmaen(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Enable Tx buffer DMA enable
-  * @note   When this bit is set, a DMA request is generated whenever the TXTH flag is set. 
+  * @note   When this bit is set, a DMA request is generated whenever the TXTH flag is set.
   * @param  SPIx SPI Instance
   * @retval None
   */
@@ -910,7 +910,7 @@ __STATIC_INLINE uint32_t md_spi_is_enabled_con2_ssoe(SPI_TypeDef *SPIx)
   * @brief  Enable NSS pulse management
   * @note   This bit is used in master mode only. It allow the SPI to generate an NSS pulse between two consecutive \n
             data when doing continuous transfers. In the case of a single data transfer, it forces the NSS pin high \n
-            level after the transfer. It has no meaning if CPHA = â€™1â€™, or FRF = â€™1â€™.This bit should not be changed \n
+            level after the transfer. It has no meaning if CPHA = ¡¯1¡¯, or FRF = ¡¯1¡¯.This bit should not be changed \n
             when communication is ongoing. This bit is not used in SPI TI mode.
   * @param  SPIx SPI Instance
   * @retval None
@@ -1003,7 +1003,7 @@ __STATIC_INLINE uint32_t md_spi_get_con2_txfth(SPI_TypeDef *SPIx)
 /**
   * @brief  Set receive FIFO trigger threshold
   * @note   This is used to select the threshold level in the receiver FIFO at which the Receive FIFO \n
-            trigger threshold flag is generated. 
+            trigger threshold flag is generated.
   * @param  SPIx SPI Instance
   * @param  Threshold This parameter can be one of the following values:
   *         @arg @ref MD_SPI_RX_FIFO_TH_1BIT
@@ -1038,13 +1038,13 @@ __STATIC_INLINE uint32_t md_spi_get_con2_rxfth(SPI_TypeDef *SPIx)
 
 /**
   * @defgroup MD_SPI_STAT SPI Status Register
-  * @{ 
+  * @{
   */
 
 
 /**
   * @brief  Get SPI status register(SPIx_STAT)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_stat(SPI_TypeDef *SPIx)
@@ -1054,7 +1054,7 @@ __STATIC_INLINE uint32_t md_spi_get_stat(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI transmit buffer empty is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txe(SPI_TypeDef *SPIx)
@@ -1064,7 +1064,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txe(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI transmit buffer full is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txf(SPI_TypeDef *SPIx)
@@ -1074,7 +1074,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txf(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI transmit buffer overflow is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txov(SPI_TypeDef *SPIx)
@@ -1084,7 +1084,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txov(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI transmit buffer underflow is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txud(SPI_TypeDef *SPIx)
@@ -1094,7 +1094,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txud(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI Tx FIFO level under threshold is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txth(SPI_TypeDef *SPIx)
@@ -1104,7 +1104,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_txth(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI receive buffer empty is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxe(SPI_TypeDef *SPIx)
@@ -1114,7 +1114,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxe(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI receive buffer full is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxf(SPI_TypeDef *SPIx)
@@ -1124,7 +1124,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxf(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Get SPI receive buffer overflow
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxov(SPI_TypeDef *SPIx)
@@ -1134,7 +1134,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxov(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI receive buffer underflow is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxud(SPI_TypeDef *SPIx)
@@ -1144,7 +1144,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxud(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI Rx FIFO level over threshold is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxth(SPI_TypeDef *SPIx)
@@ -1154,7 +1154,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_rxth(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI channel side is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_chside(SPI_TypeDef *SPIx)
@@ -1164,7 +1164,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_chside(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if SPI busy flag is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_busy(SPI_TypeDef *SPIx)
@@ -1174,7 +1174,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_stat_busy(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Get SPI Tx FIFO level
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_stat_txflv(SPI_TypeDef *SPIx)
@@ -1184,7 +1184,7 @@ __STATIC_INLINE uint32_t md_spi_get_stat_txflv(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Get SPI Rx FIFO level
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_stat_rxflv(SPI_TypeDef *SPIx)
@@ -1243,7 +1243,7 @@ __STATIC_INLINE void md_spi_send_data16(SPI_TypeDef *SPIx, uint16_t TxData)
   SPIx->DATA = (uint16_t)TxData;
 }
 
-/** 
+/**
   * @} MD_SPI_DATA
   */
 
@@ -1258,7 +1258,7 @@ __STATIC_INLINE void md_spi_send_data16(SPI_TypeDef *SPIx, uint16_t TxData)
             calculated serially using the polynomial  programmed in the SPIx_CRCPLOY register. Only the 8 LSB bits are \n
             considered when the CRC frame format is set to be 8-bit length (CRCL bit in the SPIx_CON1 is cleared). CRC \n
             calculation is done based on any CRC8 standard. The entire 16-bits of this register are considered when a \n
-            16-bit CRC frame format is selected (CRCL bit in the SPIx_CR1 register is set). CRC calculation is done based \n 
+            16-bit CRC frame format is selected (CRCL bit in the SPIx_CR1 register is set). CRC calculation is done based \n
             on any CRC16 standard.
             Note: A read to this register when the BSY Flag is set could return an incorrect value. These bits are not \n
             used in I2S mode.
@@ -1334,7 +1334,7 @@ __STATIC_INLINE uint32_t md_spi_get_txcrc(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Set SPI I2S configuration register(SPIx_I2SCFG)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @param  value The value write in SPIx_I2SCFG
   * @retval None
   */
@@ -1345,7 +1345,7 @@ __STATIC_INLINE void md_spi_set_I2SCFG(SPI_TypeDef *SPIx, uint32_t value)
 
 /**
   * @brief  Get SPI I2S configuration register (SPIx_I2SCFG)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_I2SCFG(SPI_TypeDef *SPIx)
@@ -1359,7 +1359,7 @@ __STATIC_INLINE uint32_t md_spi_get_I2SCFG(SPI_TypeDef *SPIx)
             hardware whatever the value filled in.
             Note: For correct operation, this bit should be configured when the I2S is disabled. It is not used in SPI mode.
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg @ref MD_I2S_CHANNEL_LENGTH_16BIT
   *         @arg @ref MD_I2S_CHANNEL_LENGTH_32BIT
   * @retval None
@@ -1385,7 +1385,7 @@ __STATIC_INLINE uint32_t md_spi_get_i2scfg_chlen(SPI_TypeDef *SPIx)
 /**
   * @brief  Set Data length to be transferred
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg @ref MD_I2S_DATA_LENGTH_16BIT
   *         @arg @ref MD_I2S_DATA_LENGTH_24BIT
   *         @arg @ref MD_I2S_DATA_LENGTH_32BIT
@@ -1417,7 +1417,7 @@ __STATIC_INLINE uint32_t md_spi_get_i2scfg_datlen(SPI_TypeDef *SPIx)
             in SPI mode. The bit CKPOL does not affect the CK edge sensitivity used to receive or transmit the SD \n
             and WS signals.
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg @ref MD_I2S_POLARITY_LOW
   *         @arg @ref MD_I2S_POLARITY_HIGH
   * @retval None
@@ -1443,7 +1443,7 @@ __STATIC_INLINE uint32_t md_spi_get_i2scfg_ckpol(SPI_TypeDef *SPIx)
 /**
   * @brief  Set I2S standard selection
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg @ref MD_I2S_PHILIPS_STANDARD
   *         @arg @ref MD_I2S_MSB_STANDARD
   *         @arg @ref MD_I2S_LSB_STANDARD
@@ -1473,7 +1473,7 @@ __STATIC_INLINE uint32_t md_spi_get_i2scfg_i2sstd(SPI_TypeDef *SPIx)
 /**
   * @brief  Set PCM frame synchronization
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg @ref MD_I2S_FRAME_SYN_SHORT
   *         @arg @ref MD_I2S_FRAME_SYN_LONG
   * @retval None
@@ -1499,7 +1499,7 @@ __STATIC_INLINE uint32_t md_spi_get_i2scfg_pcmsync(SPI_TypeDef *SPIx)
 /**
   * @brief  Set I2S configuration mode
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg @ref MD_I2S_SLAVE_TX
   *         @arg @ref MD_I2S_SLAVE_RX
   *         @arg @ref MD_I2S_MASTER_TX
@@ -1560,7 +1560,7 @@ __STATIC_INLINE uint32_t md_spi_is_enable_i2scfg_i2se(SPI_TypeDef *SPIx)
 /**
   * @brief  Set I2S mode selection
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg @ref MD_I2S_MODE_SPI
   *         @arg @ref MD_I2S_MODE_I2S
   * @retval None
@@ -1589,14 +1589,14 @@ __STATIC_INLINE uint32_t md_spi_get_i2scfg_i2smod(SPI_TypeDef *SPIx)
   */
 
 /**@defgroup MD_SPI_I2SPR I2S Prescaler register
-  * @{ 
+  * @{
   */
 
 
 
 /**
   * @brief  Set SPI I2S configuration register(SPIx_I2SPR)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @param  value The value write in SPIx_I2SPR
   * @retval None
   */
@@ -1607,7 +1607,7 @@ __STATIC_INLINE void md_spi_set_I2SPR(SPI_TypeDef *SPIx, uint32_t value)
 
 /**
   * @brief  Get SPI I2S configuration register (SPIx_I2SPR)
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_get_I2SPR(SPI_TypeDef *SPIx)
@@ -1621,7 +1621,7 @@ __STATIC_INLINE uint32_t md_spi_get_I2SPR(SPI_TypeDef *SPIx)
             Note: These bits should be configured when the I2S is disabled. \n
             They are used only when the I2S is in master mode. They are not used in SPI mode.
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg Max:255
   *         @arg Min:2
   * @retval None
@@ -1649,7 +1649,7 @@ __STATIC_INLINE uint32_t md_spi_get_i2spr_i2sdiv(SPI_TypeDef *SPIx)
   * @brief  Set Odd factor for the prescaler
   * @note   0 or 1 are forbidden values
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg MD_I2S_EVEN
   *         @arg MD_I2S_ODD
   * @retval None
@@ -1708,7 +1708,7 @@ __STATIC_INLINE uint32_t md_spi_is_enable_i2spr_mckoe(SPI_TypeDef *SPIx)
   * @brief  Set External I2S Clock Enable
   * @note   0 or 1 are forbidden values
   * @param  SPIx SPI Instance
-  * @param  value This bit can be set to:   
+  * @param  value This bit can be set to:
   *         @arg MD_I2S_APB_CLOCK
   *         @arg MD_I2S_EXTERNAL_CLOCK
   * @retval None
@@ -1751,12 +1751,12 @@ __STATIC_INLINE uint32_t md_spi_get_i2spr_extcken(SPI_TypeDef *SPIx)
 /** @defgroup MD_SPI_PF_Interrupt_Management SPI Interrupt Management
   * @{
   */
-  
+
 /** @defgroup MD_SPI_IER SPI Interrupt Enable Register
   * @{
   */
-  
-  
+
+
 /**
   * @brief  Frame format error interrupt enable
   * @note   This bit controls the generation of an interrupt when an error condition occurs (CRCERR, OVR, MODF in SPI mode, FRE at TI mode).
@@ -2238,7 +2238,7 @@ __STATIC_INLINE uint32_t md_spi_is_enabled_ivs_txeiv(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer empty interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txeri(SPI_TypeDef *SPIx)
@@ -2248,7 +2248,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txeri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer overrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txovri(SPI_TypeDef *SPIx)
@@ -2258,7 +2258,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txovri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer underrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txudri(SPI_TypeDef *SPIx)
@@ -2268,7 +2268,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txudri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer under threshold interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txthri(SPI_TypeDef *SPIx)
@@ -2278,7 +2278,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_txthri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer full interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxfri(SPI_TypeDef *SPIx)
@@ -2288,7 +2288,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxfri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer overrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxovri(SPI_TypeDef *SPIx)
@@ -2298,7 +2298,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxovri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer underrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxudri(SPI_TypeDef *SPIx)
@@ -2308,7 +2308,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxudri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer over threshold interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxthri(SPI_TypeDef *SPIx)
@@ -2318,7 +2318,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_rxthri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if CRC error interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_crcerrri(SPI_TypeDef *SPIx)
@@ -2328,7 +2328,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_crcerrri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Mode fault interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_modfri(SPI_TypeDef *SPIx)
@@ -2338,7 +2338,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_modfri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Frame format error interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_freri(SPI_TypeDef *SPIx)
@@ -2356,7 +2356,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_rif_freri(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer empty interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txefm(SPI_TypeDef *SPIx)
@@ -2366,7 +2366,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txefm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer overrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txovfm(SPI_TypeDef *SPIx)
@@ -2376,7 +2376,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txovfm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer underrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txudfm(SPI_TypeDef *SPIx)
@@ -2386,7 +2386,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txudfm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Transmit buffer under threshold interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txthfm(SPI_TypeDef *SPIx)
@@ -2396,7 +2396,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_txthfm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer full interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxffm(SPI_TypeDef *SPIx)
@@ -2406,7 +2406,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxffm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer overrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxovfm(SPI_TypeDef *SPIx)
@@ -2416,7 +2416,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxovfm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer underrun interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxudfm(SPI_TypeDef *SPIx)
@@ -2426,7 +2426,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxudfm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Receive buffer over threshold interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxthfm(SPI_TypeDef *SPIx)
@@ -2436,7 +2436,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_rxthfm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if CRC error interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_crcerrfm(SPI_TypeDef *SPIx)
@@ -2446,7 +2446,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_crcerrfm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Mode fault interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_modffm(SPI_TypeDef *SPIx)
@@ -2456,7 +2456,7 @@ __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_modffm(SPI_TypeDef *SPIx)
 
 /**
   * @brief  Check if Frame format error interrupt flag status is actived
-  * @param  SPIx SPI Instance 
+  * @param  SPIx SPI Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_spi_is_active_flag_ifm_frefm(SPI_TypeDef *SPIx)

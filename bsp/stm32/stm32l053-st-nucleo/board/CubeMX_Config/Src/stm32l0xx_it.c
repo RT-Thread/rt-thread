@@ -43,7 +43,7 @@
 extern UART_HandleTypeDef huart2;
 
 /******************************************************************************/
-/*            Cortex-M0+ Processor Interruption and Exception Handlers         */ 
+/*            Cortex-M0+ Processor Interruption and Exception Handlers         */
 /******************************************************************************/
 
 /**

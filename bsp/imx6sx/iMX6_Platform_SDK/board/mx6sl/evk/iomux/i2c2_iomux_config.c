@@ -53,7 +53,7 @@ void i2c2_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO14
     //     ALT6 (6) - Select instance: ecspi1 signal: ECSPI1_RDY
     HW_IOMUXC_SW_MUX_CTL_PAD_I2C2_SCL_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_I2C2_SCL_SION_V(ENABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_I2C2_SCL_SION_V(ENABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_I2C2_SCL_MUX_MODE_V(ALT0));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL(0x020E0454)
@@ -97,14 +97,14 @@ void i2c2_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_LVE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_PUE_V(KEEP) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_LVE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_PUE_V(KEEP) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SCL_SRE_V(SLOW));
     // Pad I2C2_SCL is involved in Daisy Chain.
     // Input Select Register:
@@ -137,7 +137,7 @@ void i2c2_iomux_config(void)
     //     ALT4 (4) - Select instance: usdhc3 signal: SD3_CD_B
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO15
     HW_IOMUXC_SW_MUX_CTL_PAD_I2C2_SDA_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_I2C2_SDA_SION_V(ENABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_I2C2_SDA_SION_V(ENABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_I2C2_SDA_MUX_MODE_V(ALT0));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA(0x020E0458)
@@ -181,14 +181,14 @@ void i2c2_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_LVE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_PUE_V(KEEP) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_LVE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_PUE_V(KEEP) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_I2C2_SDA_SRE_V(SLOW));
     // Pad I2C2_SDA is involved in Daisy Chain.
     // Input Select Register:

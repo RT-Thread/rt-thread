@@ -40,7 +40,7 @@
 #define __SSI_H__
 
 
-//! @brief Settings supported by getting routine 
+//! @brief Settings supported by getting routine
 typedef enum {
     SSI_SETTING_TX_FIFO1_DATAS_CNT,
     SSI_SETTING_TX_FIFO2_DATAS_CNT,
@@ -63,7 +63,7 @@ typedef enum {
     SSI_CLK_FS_DIR_INPUT,
 } ssi_clk_fs_dir_e;
 
-//! @brief Settings supported by enable routine 
+//! @brief Settings supported by enable routine
 typedef enum {
     SSI_HW_ENABLE_SSI,
     SSI_HW_ENABLE_TX,
@@ -86,10 +86,10 @@ typedef enum{
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @brief Initialize the ssi module and set the ssi to default status. 
+ * @brief Initialize the ssi module and set the ssi to default status.
  *
- * @param       priv    a pointer passed by audio card driver, SSI driver should change it 
- *			to a audio_ctrl_p pointer which presents the SSI controller.
+ * @param       priv    a pointer passed by audio card driver, SSI driver should change it
+ *          to a audio_ctrl_p pointer which presents the SSI controller.
  *
  * @return      0 if succeeded
  *              -1 if failed
@@ -101,7 +101,7 @@ int32_t ssi_init(void *priv);
  *
  * @param       priv    a pointer passed by audio card driver, SSI driver should change it
  *                      to a audio_ctrl_p pointer which presents the SSI controller.
- * @param       para	a pointer passed by audio card driver, consists of configuration parameters
+ * @param       para    a pointer passed by audio card driver, consists of configuration parameters
  *                      for SSI controller.
  *
  * @return      0 if succeeded
@@ -113,9 +113,9 @@ int32_t ssi_config(void *priv, audio_dev_para_p para);
  * @brief Write datas to the ssi fifo in polling mode.
  * @param       priv    a pointer passed by audio card driver, SSI driver should change it
  *                      to a audio_ctrl_p pointer which presents the SSI controller.
- * @param       buf	points to the buffer which hold the data to be written to the SSI tx fifo
+ * @param       buf points to the buffer which hold the data to be written to the SSI tx fifo
  * @param       size    the size of the buffer pointed by buf.
- * @param       bytes_written	bytes be written to the SSI tx fifo
+ * @param       bytes_written   bytes be written to the SSI tx fifo
  *
  * @return      0 if succeeded
  *              -1 if failed
@@ -126,7 +126,7 @@ int32_t ssi_write_fifo(void *priv, uint8_t * buf, uint32_t size, uint32_t * byte
  * @brief Read datas from the ssi fifo in polling mode.
  * @param       priv    a pointer passed by audio card driver, SSI driver should change it
  *                      to a audio_ctrl_p pointer which presents the SSI controller.
- * @param       buf	points to the buffer which hold the data to be written to the SSI tx fifo
+ * @param       buf points to the buffer which hold the data to be written to the SSI tx fifo
  * @param       byte2read    bytes to read.
  * @param       bytesread    bytes be read.
  *

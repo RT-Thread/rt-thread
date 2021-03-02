@@ -164,17 +164,17 @@ typedef enum
                                                                          Write protection of page 58 to 59 */
 #define FLASH_WRPRT_PAGE_60to61             ((uint32_t)0x40000000) /*!< AT32F4xx High-density, XL-density and AT32F415xx devices:
                                                                          Write protection of page 60 to 61 */
-																		 
-#define FLASH_WRPRT_PAGE_62to63             ((uint32_t)0x80000000) /*!< AT32F415xx Medium-density devices: Write protection of page 62 to 63 */                                                                         
+
+#define FLASH_WRPRT_PAGE_62to63             ((uint32_t)0x80000000) /*!< AT32F415xx Medium-density devices: Write protection of page 62 to 63 */
 #define FLASH_WRPRT_PAGE_62to127            ((uint32_t)0x80000000) /*!< AT32F4xx High-density, AT32F415xx Medium-density, High-density devices:
                                                                          Write protection of page 62 to 127 */
-#define FLASH_WRPRT_PAGE_62to255            ((uint32_t)0x80000000) /*!< AT32F4xx High-density devices: Write protection of page 62 to 255 */                                                                         
+#define FLASH_WRPRT_PAGE_62to255            ((uint32_t)0x80000000) /*!< AT32F4xx High-density devices: Write protection of page 62 to 255 */
 #define FLASH_WRPRT_PAGE_62to511            ((uint32_t)0x80000000) /*!< AT32F4xx XL-density devices: Write protection of page 62 to 511 */
-                                            
+
 #define FLASH_WRPRT_AllPAGES                ((uint32_t)0xFFFFFFFF) /*!< Write protection of all Pages */
-                                            
+
 #define IS_FLASH_WRPRT_PAGES(PAGES)         (((PAGES) != 0x00000000))
-                                            
+
 #define IS_FLASH_ADDR(ADDR)                 (((ADDR) >= 0x08000000) && ((ADDR) <= FLASH_BANK3_ADDR_MAX))
 
 /**

@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief   This file contains all the functions prototypes for the SYSCFG firmware 
+* @brief   This file contains all the functions prototypes for the SYSCFG firmware
 *          library.
 ******************************************************************************
 * @attention
@@ -20,47 +20,47 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
     /*!< Includes ------------------------------------------------------------------*/
 #include "HAL_device.h"
-    
+
     /** @addtogroup StdPeriph_Driver
     * @{
     */
-    
+
     /** @addtogroup SYSCFG
     * @{
     */
     /* Exported types ------------------------------------------------------------*/
     /* Exported constants --------------------------------------------------------*/
-    
+
     /** @defgroup SYSCFG_Exported_Constants
     * @{
-    */ 
-    
-    /** @defgroup SYSCFG_EXTI_Port_Sources 
+    */
+
+    /** @defgroup SYSCFG_EXTI_Port_Sources
     * @{
-    */ 
+    */
 #define EXTI_PortSourceGPIOA       ((uint8_t)0x00)
 #define EXTI_PortSourceGPIOB       ((uint8_t)0x01)
 #define EXTI_PortSourceGPIOC       ((uint8_t)0x02)
-#define EXTI_PortSourceGPIOD       ((uint8_t)0x03) 
-#define EXTI_PortSourceGPIOE       ((uint8_t)0x04) 
+#define EXTI_PortSourceGPIOD       ((uint8_t)0x03)
+#define EXTI_PortSourceGPIOE       ((uint8_t)0x04)
 #define EXTI_PortSourceGPIOF       ((uint8_t)0x05)
-    
+
 #define IS_EXTI_PORT_SOURCE(PORTSOURCE) (((PORTSOURCE) == EXTI_PortSourceGPIOA) || \
     ((PORTSOURCE) == EXTI_PortSourceGPIOB) || \
         ((PORTSOURCE) == EXTI_PortSourceGPIOC) || \
             ((PORTSOURCE) == EXTI_PortSourceGPIOD) || \
                 ((PORTSOURCE) == EXTI_PortSourceGPIOE) || \
-                    ((PORTSOURCE) == EXTI_PortSourceGPIOF)) 
+                    ((PORTSOURCE) == EXTI_PortSourceGPIOF))
 /**
 * @}
 */
 
-/** @defgroup SYSCFG_EXTI_Pin_sources 
+/** @defgroup SYSCFG_EXTI_Pin_sources
 * @{
-*/ 
+*/
 #define EXTI_PinSource0            ((uint8_t)0x00)
 #define EXTI_PinSource1            ((uint8_t)0x01)
 #define EXTI_PinSource2            ((uint8_t)0x02)
@@ -98,9 +98,9 @@ extern "C" {
 * @}
 */
 
-/** @defgroup SYSCFG_Memory_Remap_Config 
+/** @defgroup SYSCFG_Memory_Remap_Config
 * @{
-*/ 
+*/
 #define SYSCFG_MemoryRemap_Flash                ((uint8_t)0x00)
 #define SYSCFG_MemoryRemap_SystemMemory         ((uint8_t)0x01)
 #define SYSCFG_MemoryRemap_SRAM                 ((uint8_t)0x03)
@@ -114,9 +114,9 @@ extern "C" {
 * @}
 */
 
-/** @defgroup SYSCFG_DMA_Remap_Config 
+/** @defgroup SYSCFG_DMA_Remap_Config
 * @{
-*/ 
+*/
 #define SYSCFG_DMARemap_TIM17       SYSCFG_CFGR_TIM17_DMA_RMP    /* Remap TIM17 DMA requests from channel1 to channel2 */
 #define SYSCFG_DMARemap_TIM16       SYSCFG_CFGR_TIM16_DMA_RMP    /* Remap TIM16 DMA requests from channel3 to channel4 */
 #define SYSCFG_DMARemap_UART1Rx    SYSCFG_CFGR_UART1RX_DMA_RMP /* Remap UART1 Rx DMA requests from channel3 to channel5 */
@@ -152,7 +152,7 @@ extern "C" {
 /*  Function used to set the SYSCFG configuration to the default reset state **/
 void SYSCFG_DeInit(void);
 
-/* SYSCFG configuration functions *********************************************/ 
+/* SYSCFG configuration functions *********************************************/
 void SYSCFG_MemoryRemapConfig(uint32_t SYSCFG_MemoryRemap);
 void SYSCFG_DMAChannelRemapConfig(uint32_t SYSCFG_DMARemap, FunctionalState NewState);
 void SYSCFG_I2CFastModePlusConfig(uint32_t SYSCFG_I2CFastModePlus, FunctionalState NewState);
@@ -171,10 +171,10 @@ void SYSCFG_ClearFlag(uint32_t SYSCFG_Flag);
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /*-------------------------(C) COPYRIGHT 2017 MindMotion ----------------------*/

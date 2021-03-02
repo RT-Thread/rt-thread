@@ -36,7 +36,7 @@ void crc_data_register_reset(void)
 }
 
 /*!
-    \brief      read the data register 
+    \brief      read the data register
     \param[in]  none
     \param[out] none
     \retval     32-bit value of the data register

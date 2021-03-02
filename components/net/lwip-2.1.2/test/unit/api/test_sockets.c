@@ -255,7 +255,7 @@ static void test_sockets_msgapi_update_iovs(struct msghdr *msg, size_t bytes)
   /* note: this modifies the underyling iov_base and iov_len for a partial
      read for an individual vector. This updates the msg->msg_iov pointer
      to skip fully consumed vecotrs */
-  
+
   /* process fully consumed vectors */
   for (i = 0; i < msg->msg_iovlen; i++) {
     if (msg->msg_iov[i].iov_len <= bytes) {
@@ -395,7 +395,7 @@ static void test_sockets_msgapi_tcp(int domain)
       /* note: since we always receive after sending, there will be open
          space in the send buffer */
       fail_unless(ret > 0);
-    
+
       bytes_written += ret;
       if (bytes_written < TOTAL_DATA_SZ) {
         test_sockets_msgapi_update_iovs(&smsg, (size_t)ret);
@@ -432,7 +432,7 @@ static void test_sockets_msgapi_tcp(int domain)
       }
     } while(ret > 0);
   }
-  
+
   ret = lwip_close(s1);
   fail_unless(ret == 0);
   ret = lwip_close(s2);
@@ -588,13 +588,13 @@ static void test_sockets_msgapi_cmsg(int domain)
   memset(rcv_buf, 0, sizeof(rcv_buf));
   ret = lwip_sendto(s, snd_buf, sizeof(snd_buf), 0, (struct sockaddr*)&addr_storage, addr_size);
   fail_unless(ret == sizeof(snd_buf));
-  
+
   tcpip_thread_poll_one();
 
   ret = lwip_recvmsg(s, &msg, 0);
   fail_unless(ret == sizeof(rcv_buf));
   fail_unless(!memcmp(rcv_buf, snd_buf, sizeof(rcv_buf)));
-  
+
   /* Verify message header */
   cmsg = CMSG_FIRSTHDR(&msg);
   fail_unless(cmsg != NULL);

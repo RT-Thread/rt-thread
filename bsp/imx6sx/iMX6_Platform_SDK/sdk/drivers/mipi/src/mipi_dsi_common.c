@@ -43,8 +43,8 @@
 /*
  * @brief Configure the DPHY PLL clock frequence through the TEST Interface.
  *
- * @param	testcode	test code number
- * @param	testwrite	test datain
+ * @param   testcode    test code number
+ * @param   testwrite   test datain
  */
 static void dphy_write_control(unsigned long testcode, unsigned long testwrite)
 {
@@ -76,7 +76,7 @@ static void dphy_write_control(unsigned long testcode, unsigned long testwrite)
 /*
  * @brief Configure the command through generic packet header register
  *
- * @param	gen_hdr	the value of packet data and type.(accoring to register structure)
+ * @param   gen_hdr the value of packet data and type.(accoring to register structure)
  */
 static void gen_write_cmd(unsigned long gen_hdr)
 {
@@ -89,7 +89,7 @@ static void gen_write_cmd(unsigned long gen_hdr)
 /*
  * @brief Write generic data through generic payload dta in/out register
  *
- * @param	gen_pld_data	generic packed data.
+ * @param   gen_pld_data    generic packed data.
  */
 static void gen_write_data(unsigned long gen_pld_data)
 {
@@ -100,11 +100,11 @@ static void gen_write_data(unsigned long gen_pld_data)
 /*
  * @brief Read generic data through generic payload dta in/out register
  *
- * @param	gen_pld_data	generic packed data.
+ * @param   gen_pld_data    generic packed data.
  */
 static int gen_read_data(uint32_t cmd)
 {
-	gen_write_cmd(cmd);
+    gen_write_cmd(cmd);
     while (!HW_MIPI_DSI_CMD_PKT_STATUS.B.GEN_RD_CMD_BUSY) ; // wait for busy
     while (HW_MIPI_DSI_CMD_PKT_STATUS.B.GEN_RD_CMD_BUSY) ; // wait for idle
     return HW_MIPI_DSI_GEN_PLD_DATA_RD();
@@ -130,12 +130,12 @@ static void mipi_lcd_init(void)
     hal_delay_us(1000);
 #if 0
     hal_delay_us(2000);
-	gen_write_cmd(0x00000437);  //
+    gen_write_cmd(0x00000437);  //
     hal_delay_us(1000);
-	val = gen_read_data((HX8369_CMD_GETHXID << 8) | MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM);
-	printf("ID is %d\n", val);
+    val = gen_read_data((HX8369_CMD_GETHXID << 8) | MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM);
+    printf("ID is %d\n", val);
 #endif
-    /* 
+    /*
      * set the TRULY MIPI panel
      * choose DPI mode, resolution is 480x800, RGB24 format
      * set the timings based on IPU output information
