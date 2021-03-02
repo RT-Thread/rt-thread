@@ -332,8 +332,8 @@ static GISR1 GI_IR_ISR(void)
                 RtcIndex = 0;
             }
         }
-        GH_PMU_RTC_set_IRQ_CLEAR(1);	//0811 hhl note: 0x90080020
-		GH_PMU_RTC_set_IRQ_CLEAR(0);	//0811 hhl note: 0x90080020
+        GH_PMU_RTC_set_IRQ_CLEAR(1);    //0811 hhl note: 0x90080020
+        GH_PMU_RTC_set_IRQ_CLEAR(0);    //0811 hhl note: 0x90080020
         //*(volatile U32 *)(0x90080000 + (0x8*4)) = 0x01;     // clear ir irq
         //*(volatile U32 *)(0x90080000 + (0x8*4)) = 0x00;     // clear ir irq
 

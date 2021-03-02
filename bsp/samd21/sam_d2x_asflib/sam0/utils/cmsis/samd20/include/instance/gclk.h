@@ -63,20 +63,20 @@
 #endif /* (defined(__ASSEMBLY__) || defined(__IAR_SYSTEMS_ASM__)) */
 
 /* ========== Instance parameters for GCLK peripheral ========== */
-#define GCLK_GENDIV_BITS            16      
+#define GCLK_GENDIV_BITS            16
 #define GCLK_GEN_NUM                8        // Number of Generic Clock Generators
 #define GCLK_GEN_NUM_MSB            7        // Number of Generic Clock Generators - 1
 #define GCLK_GEN_SOURCE_NUM_MSB     7        // Number of Generic Clock Sources - 1
 #define GCLK_NUM                    28       // Number of Generic Clock Users
-#define GCLK_SOURCE_DFLL48M         7       
-#define GCLK_SOURCE_FDPLL                   
-#define GCLK_SOURCE_GCLKGEN1        2       
-#define GCLK_SOURCE_GCLKIN          1       
+#define GCLK_SOURCE_DFLL48M         7
+#define GCLK_SOURCE_FDPLL
+#define GCLK_SOURCE_GCLKGEN1        2
+#define GCLK_SOURCE_GCLKIN          1
 #define GCLK_SOURCE_NUM             8        // Number of Generic Clock Sources
-#define GCLK_SOURCE_OSCULP32K       3       
-#define GCLK_SOURCE_OSC8M           6       
-#define GCLK_SOURCE_OSC32K          4       
-#define GCLK_SOURCE_XOSC            0       
-#define GCLK_SOURCE_XOSC32K         5       
+#define GCLK_SOURCE_OSCULP32K       3
+#define GCLK_SOURCE_OSC8M           6
+#define GCLK_SOURCE_OSC32K          4
+#define GCLK_SOURCE_XOSC            0
+#define GCLK_SOURCE_XOSC32K         5
 
 #endif /* _SAMD20_GCLK_INSTANCE_ */

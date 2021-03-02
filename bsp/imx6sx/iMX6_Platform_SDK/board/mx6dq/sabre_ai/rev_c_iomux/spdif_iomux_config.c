@@ -53,7 +53,7 @@ void spdif_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio4 signal: GPIO4_IO12
     //     ALT6 (6) - Select instance: spdif signal: SPDIF_IN
     HW_IOMUXC_SW_MUX_CTL_PAD_KEY_COL3_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_KEY_COL3_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_KEY_COL3_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_KEY_COL3_MUX_MODE_V(ALT6));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_KEY_COL3(0x020E05E0)
@@ -94,13 +94,13 @@ void spdif_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_SPEED_V(TBD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_DSE_V(HIZ) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_SPEED_V(TBD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_DSE_V(HIZ) |
             BF_IOMUXC_SW_PAD_CTL_PAD_KEY_COL3_SRE_V(SLOW));
     // Pad KEY_COL3 is involved in Daisy Chain.
     // Input Select Register:

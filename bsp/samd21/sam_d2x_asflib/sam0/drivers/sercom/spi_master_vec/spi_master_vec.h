@@ -126,26 +126,26 @@
  * \anchor asfdoc_sam0_vectored_io_example
  * \dot
 digraph bufptr_to_spiord {
-	rankdir=LR;
-	subgraph cluster_bufptr {
-		style=invis;
-		bufptr_label [shape=none, label="Buffer descriptors"];
-		bufptrs [shape=record, label="<bf1> [0]|<bf2> [1]|<bf3> [2]|<bf4> [3]"];
-	}
-	subgraph cluster_buf {
-		style=invis;
-		buf_label [shape=none, label="Memory layout"];
-		bufs [shape=record, label="...|<b1>&quot;yy&quot;|...|<b3>&quot;z&quot;|<b2>&quot;xxx&quot;|..."];
-	}
-	subgraph cluster_spiord {
-		style=invis;
-		spiord_label [shape=none, label="SPI transmission"];
-		spiord [shape=record, label="<s1>&quot;yy&quot;|<s2>&quot;xxx&quot;|<s3>&quot;z&quot;"];
-	}
-	bufptrs:bf1 -> bufs:b1 -> spiord:s1;
-	bufptrs:bf2 -> bufs:b2 -> spiord:s2;
-	bufptrs:bf3 -> bufs:b3 -> spiord:s3;
-	bufptrs:bf4 -> "none";
+    rankdir=LR;
+    subgraph cluster_bufptr {
+        style=invis;
+        bufptr_label [shape=none, label="Buffer descriptors"];
+        bufptrs [shape=record, label="<bf1> [0]|<bf2> [1]|<bf3> [2]|<bf4> [3]"];
+    }
+    subgraph cluster_buf {
+        style=invis;
+        buf_label [shape=none, label="Memory layout"];
+        bufs [shape=record, label="...|<b1>&quot;yy&quot;|...|<b3>&quot;z&quot;|<b2>&quot;xxx&quot;|..."];
+    }
+    subgraph cluster_spiord {
+        style=invis;
+        spiord_label [shape=none, label="SPI transmission"];
+        spiord [shape=record, label="<s1>&quot;yy&quot;|<s2>&quot;xxx&quot;|<s3>&quot;z&quot;"];
+    }
+    bufptrs:bf1 -> bufs:b1 -> spiord:s1;
+    bufptrs:bf2 -> bufs:b2 -> spiord:s2;
+    bufptrs:bf3 -> bufs:b3 -> spiord:s3;
+    bufptrs:bf4 -> "none";
 }
  * \enddot
  *
@@ -247,26 +247,26 @@ digraph bufptr_to_spiord {
  * information regarding SERCOM pad and pin MUX.
  */
 struct spi_master_vec_config {
-	/** Baud rate in Hertz. */
-	uint32_t baudrate;
-	/** GCLK generator to use for the SERCOM. */
-	enum gclk_generator gclk_generator;
-	/** Enabled in sleep modes. */
-	bool run_in_standby;
-	/** SERCOM pad MUX setting. */
-	enum spi_signal_mux_setting mux_setting;
-	/** Transfer mode. */
-	enum spi_transfer_mode transfer_mode;
-	/** Data order. */
-	enum spi_data_order data_order;
-	/** Pin MUX setting for SERCOM pad 0. */
-	uint32_t pinmux_pad0;
-	/** Pin MUX setting for SERCOM pad 1. */
-	uint32_t pinmux_pad1;
-	/** Pin MUX setting for SERCOM pad 2. */
-	uint32_t pinmux_pad2;
-	/** Pin MUX setting for SERCOM pad 4. */
-	uint32_t pinmux_pad3;
+    /** Baud rate in Hertz. */
+    uint32_t baudrate;
+    /** GCLK generator to use for the SERCOM. */
+    enum gclk_generator gclk_generator;
+    /** Enabled in sleep modes. */
+    bool run_in_standby;
+    /** SERCOM pad MUX setting. */
+    enum spi_signal_mux_setting mux_setting;
+    /** Transfer mode. */
+    enum spi_transfer_mode transfer_mode;
+    /** Data order. */
+    enum spi_data_order data_order;
+    /** Pin MUX setting for SERCOM pad 0. */
+    uint32_t pinmux_pad0;
+    /** Pin MUX setting for SERCOM pad 1. */
+    uint32_t pinmux_pad1;
+    /** Pin MUX setting for SERCOM pad 2. */
+    uint32_t pinmux_pad2;
+    /** Pin MUX setting for SERCOM pad 4. */
+    uint32_t pinmux_pad3;
 };
 
 /** Buffer length container. */
@@ -274,36 +274,36 @@ typedef uint16_t spi_master_vec_buflen_t;
 
 /** Buffer descriptor structure. */
 struct spi_master_vec_bufdesc {
-	/** Pointer to buffer start. */
-	void *data;
-	/** Length of buffer. */
-	spi_master_vec_buflen_t length;
+    /** Pointer to buffer start. */
+    void *data;
+    /** Length of buffer. */
+    spi_master_vec_buflen_t length;
 };
 
 /** Transfer direction */
 enum _spi_master_vec_direction {
-	SPI_MASTER_VEC_DIRECTION_READ,
-	SPI_MASTER_VEC_DIRECTION_WRITE,
-	SPI_MASTER_VEC_DIRECTION_BOTH,
-	SPI_MASTER_VEC_DIRECTION_IDLE,
+    SPI_MASTER_VEC_DIRECTION_READ,
+    SPI_MASTER_VEC_DIRECTION_WRITE,
+    SPI_MASTER_VEC_DIRECTION_BOTH,
+    SPI_MASTER_VEC_DIRECTION_IDLE,
 };
 
 /** Driver instance. */
 struct spi_master_vec_module {
 #if !defined(__DOXYGEN__)
-	Sercom *volatile sercom;
-	volatile bool locked;
-	volatile enum _spi_master_vec_direction direction;
-	volatile enum status_code status;
-	volatile spi_master_vec_buflen_t rx_length;
-	volatile spi_master_vec_buflen_t tx_length;
-	uint8_t *volatile rx_head_ptr;
-	uint8_t *volatile tx_head_ptr;
-	volatile uint_fast8_t tx_lead_on_rx;
-	struct spi_master_vec_bufdesc *volatile rx_bufdesc_ptr;
-	struct spi_master_vec_bufdesc *volatile tx_bufdesc_ptr;
+    Sercom *volatile sercom;
+    volatile bool locked;
+    volatile enum _spi_master_vec_direction direction;
+    volatile enum status_code status;
+    volatile spi_master_vec_buflen_t rx_length;
+    volatile spi_master_vec_buflen_t tx_length;
+    uint8_t *volatile rx_head_ptr;
+    uint8_t *volatile tx_head_ptr;
+    volatile uint_fast8_t tx_lead_on_rx;
+    struct spi_master_vec_bufdesc *volatile rx_bufdesc_ptr;
+    struct spi_master_vec_bufdesc *volatile tx_bufdesc_ptr;
 #  ifdef CONF_SPI_MASTER_VEC_OS_SUPPORT
-	CONF_SPI_MASTER_VEC_SEMAPHORE_TYPE busy_semaphore;
+    CONF_SPI_MASTER_VEC_SEMAPHORE_TYPE busy_semaphore;
 #  endif
 #endif
 };
@@ -319,18 +319,18 @@ struct spi_master_vec_module {
  * \param[out] config Configuration struct to initialize.
  */
 static inline void spi_master_vec_get_config_defaults(
-		struct spi_master_vec_config *const config)
+        struct spi_master_vec_config *const config)
 {
-	config->baudrate = 100000;
-	config->gclk_generator = GCLK_GENERATOR_0;
-	config->run_in_standby = false;
-	config->mux_setting = SPI_SIGNAL_MUX_SETTING_D;
-	config->transfer_mode = SPI_TRANSFER_MODE_0;
-	config->data_order = SPI_DATA_ORDER_MSB;
-	config->pinmux_pad0 = PINMUX_DEFAULT;
-	config->pinmux_pad1 = PINMUX_DEFAULT;
-	config->pinmux_pad2 = PINMUX_DEFAULT;
-	config->pinmux_pad3 = PINMUX_DEFAULT;
+    config->baudrate = 100000;
+    config->gclk_generator = GCLK_GENERATOR_0;
+    config->run_in_standby = false;
+    config->mux_setting = SPI_SIGNAL_MUX_SETTING_D;
+    config->transfer_mode = SPI_TRANSFER_MODE_0;
+    config->data_order = SPI_DATA_ORDER_MSB;
+    config->pinmux_pad0 = PINMUX_DEFAULT;
+    config->pinmux_pad1 = PINMUX_DEFAULT;
+    config->pinmux_pad2 = PINMUX_DEFAULT;
+    config->pinmux_pad3 = PINMUX_DEFAULT;
 }
 
 #ifdef __cplusplus
@@ -338,7 +338,7 @@ extern "C" {
 #endif
 
 enum status_code spi_master_vec_init(struct spi_master_vec_module *const module,
-		Sercom *const sercom, const struct spi_master_vec_config *const config);
+        Sercom *const sercom, const struct spi_master_vec_config *const config);
 
 /** @} */
 
@@ -374,22 +374,22 @@ void spi_master_vec_reset(struct spi_master_vec_module *const module);
  * \retval STATUS_BUSY if the module was already locked.
  */
 static inline enum status_code spi_master_vec_lock(
-		struct spi_master_vec_module *const module)
+        struct spi_master_vec_module *const module)
 {
-	enum status_code status;
+    enum status_code status;
 
-	system_interrupt_enter_critical_section();
+    system_interrupt_enter_critical_section();
 
-	if (module->locked) {
-		status = STATUS_BUSY;
-	} else {
-		module->locked = true;
-		status = STATUS_OK;
-	}
+    if (module->locked) {
+        status = STATUS_BUSY;
+    } else {
+        module->locked = true;
+        status = STATUS_OK;
+    }
 
-	system_interrupt_leave_critical_section();
+    system_interrupt_leave_critical_section();
 
-	return status;
+    return status;
 }
 
 /**
@@ -401,9 +401,9 @@ static inline enum status_code spi_master_vec_lock(
  * \param[in,out] module Pointer to the driver instance to lock.
  */
 static inline void spi_master_vec_unlock(
-		struct spi_master_vec_module *const module)
+        struct spi_master_vec_module *const module)
 {
-	module->locked = false;
+    module->locked = false;
 }
 
 /** @} */
@@ -414,9 +414,9 @@ static inline void spi_master_vec_unlock(
  */
 
 enum status_code spi_master_vec_transceive_buffer_job(
-		struct spi_master_vec_module *const module,
-		struct spi_master_vec_bufdesc tx_bufdescs[],
-		struct spi_master_vec_bufdesc rx_bufdescs[]);
+        struct spi_master_vec_module *const module,
+        struct spi_master_vec_bufdesc tx_bufdescs[],
+        struct spi_master_vec_bufdesc rx_bufdescs[]);
 
 /**
  * \brief Get current status of transfer.
@@ -429,9 +429,9 @@ enum status_code spi_master_vec_transceive_buffer_job(
  * \retval <other> if previous transfer failed.
  */
 static inline enum status_code spi_master_vec_get_job_status(
-		const struct spi_master_vec_module *const module)
+        const struct spi_master_vec_module *const module)
 {
-	return module->status;
+    return module->status;
 }
 
 /**
@@ -444,21 +444,21 @@ static inline enum status_code spi_master_vec_get_job_status(
  * \retval <other> if previous transfer failed.
  */
 static inline enum status_code spi_master_vec_get_job_status_wait(
-		const struct spi_master_vec_module *const module)
+        const struct spi_master_vec_module *const module)
 {
-	enum status_code status;
+    enum status_code status;
 
 #ifdef CONF_SPI_MASTER_VEC_OS_SUPPORT
-	CONF_SPI_MASTER_VEC_TAKE_SEMAPHORE(module->busy_semaphore);
-	status = spi_master_vec_get_job_status(module);
-	CONF_SPI_MASTER_VEC_GIVE_SEMAPHORE(module->busy_semaphore);
+    CONF_SPI_MASTER_VEC_TAKE_SEMAPHORE(module->busy_semaphore);
+    status = spi_master_vec_get_job_status(module);
+    CONF_SPI_MASTER_VEC_GIVE_SEMAPHORE(module->busy_semaphore);
 #else
-	do {
-		status = spi_master_vec_get_job_status(module);
-	} while (status == STATUS_BUSY);
+    do {
+        status = spi_master_vec_get_job_status(module);
+    } while (status == STATUS_BUSY);
 #endif
 
-	return status;
+    return status;
 }
 
 
@@ -479,20 +479,20 @@ static inline enum status_code spi_master_vec_get_job_status_wait(
  * \retval <other> if transfer failed.
  */
 static inline enum status_code spi_master_vec_transceive_buffer_wait(
-		struct spi_master_vec_module *const module,
-		struct spi_master_vec_bufdesc tx_bufdescs[],
-		struct spi_master_vec_bufdesc rx_bufdescs[])
+        struct spi_master_vec_module *const module,
+        struct spi_master_vec_bufdesc tx_bufdescs[],
+        struct spi_master_vec_bufdesc rx_bufdescs[])
 {
-	enum status_code status;
+    enum status_code status;
 
-	status = spi_master_vec_transceive_buffer_job(module, tx_bufdescs,
-			rx_bufdescs);
+    status = spi_master_vec_transceive_buffer_job(module, tx_bufdescs,
+            rx_bufdescs);
 
-	if (status == STATUS_BUSY) {
-		return status;
-	}
+    if (status == STATUS_BUSY) {
+        return status;
+    }
 
-	return spi_master_vec_get_job_status_wait(module);
+    return spi_master_vec_get_job_status_wait(module);
 }
 
 /** @} */

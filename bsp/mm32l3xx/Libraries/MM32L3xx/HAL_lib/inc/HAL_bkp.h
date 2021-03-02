@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version V1.0.0
 * @date    28/7/2017
-* @brief   This file contains all the functions prototypes for the BKP firmware 
+* @brief   This file contains all the functions prototypes for the BKP firmware
 *          library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_BKP_H
@@ -46,7 +46,7 @@
 * @{
 */
 
-/** @defgroup Tamper_Pin_active_level 
+/** @defgroup Tamper_Pin_active_level
 * @{
 */
 
@@ -58,7 +58,7 @@
 * @}
 */
 
-/** @defgroup RTC_output_source_to_output_on_the_Tamper_pin 
+/** @defgroup RTC_output_source_to_output_on_the_Tamper_pin
 * @{
 */
 
@@ -74,7 +74,7 @@
 * @}
 */
 
-/** @defgroup Data_Backup_Register 
+/** @defgroup Data_Backup_Register
 * @{
 */
 

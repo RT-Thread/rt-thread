@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,7 +25,7 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
@@ -48,38 +48,38 @@
 #ifdef CONFIG_USE_PER_DEVICE_LOCK
 void uffs_DeviceInitLock(uffs_Device *dev)
 {
-	uffs_SemCreate(&dev->lock.sem);
-	dev->lock.task_id = UFFS_TASK_ID_NOT_EXIST;
-	dev->lock.counter = 0;
+    uffs_SemCreate(&dev->lock.sem);
+    dev->lock.task_id = UFFS_TASK_ID_NOT_EXIST;
+    dev->lock.counter = 0;
 }
 
 void uffs_DeviceReleaseLock(uffs_Device *dev)
 {
-	uffs_SemDelete(&dev->lock.sem);
+    uffs_SemDelete(&dev->lock.sem);
 }
 
 void uffs_DeviceLock(uffs_Device *dev)
 {
-	uffs_SemWait(dev->lock.sem);
-	
-	if (dev->lock.counter != 0) {
-		uffs_Perror(UFFS_MSG_NORMAL,
-					"Lock device, counter %d NOT zero?!", dev->lock.counter);
-	}
+    uffs_SemWait(dev->lock.sem);
 
-	dev->lock.counter++;
+    if (dev->lock.counter != 0) {
+        uffs_Perror(UFFS_MSG_NORMAL,
+                    "Lock device, counter %d NOT zero?!", dev->lock.counter);
+    }
+
+    dev->lock.counter++;
 }
 
 void uffs_DeviceUnLock(uffs_Device *dev)
 {
-	dev->lock.counter--;
+    dev->lock.counter--;
 
-	if (dev->lock.counter != 0) {
-		uffs_Perror(UFFS_MSG_NORMAL,
-					"Unlock device, counter %d NOT zero?!", dev->lock.counter);
-	}
-	
-	uffs_SemSignal(dev->lock.sem);
+    if (dev->lock.counter != 0) {
+        uffs_Perror(UFFS_MSG_NORMAL,
+                    "Unlock device, counter %d NOT zero?!", dev->lock.counter);
+    }
+
+    uffs_SemSignal(dev->lock.sem);
 }
 
 #else

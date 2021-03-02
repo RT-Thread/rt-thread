@@ -52,7 +52,7 @@ void ccm_iomux_config(void)
     //     ALT6 (6) - Select instance: usb signal: USB_H1_PWR
     //     ALT7 (7) - Select instance: snvs signal: SNVS_VIO_5
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO00_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO00_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO00_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO00_MUX_MODE_V(ALT0));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO00(0x020E05DC)
@@ -95,11 +95,11 @@ void ccm_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO00_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO00_SRE_V(SLOW));
 }

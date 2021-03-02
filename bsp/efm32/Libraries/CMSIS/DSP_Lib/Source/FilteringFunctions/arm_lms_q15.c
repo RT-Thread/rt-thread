@@ -1,69 +1,69 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:	    arm_lms_q15.c    
-*    
-* Description:	Processing function for the Q15 LMS filter.    
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:     V1.1.0
+*
+* Project:         CMSIS DSP Library
+* Title:        arm_lms_q15.c
+*
+* Description:    Processing function for the Q15 LMS filter.
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated    
-*    
-* Version 0.0.7  2010/06/10     
-*    Misra-C changes done    
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.10 2011/7/15
+*    Big Endian support added and Merged M0 and M3/M4 Source code.
+*
+* Version 1.0.3 2010/11/29
+*    Re-organized the CMSIS folders and updated documentation.
+*
+* Version 1.0.2 2010/11/11
+*    Documentation updated.
+*
+* Version 1.0.1 2010/10/05
+*    Production release and review comments incorporated.
+*
+* Version 1.0.0 2010/09/20
+*    Production release and review comments incorporated
+*
+* Version 0.0.7  2010/06/10
+*    Misra-C changes done
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
-/**    
- * @ingroup groupFilters    
+/**
+ * @ingroup groupFilters
  */
 
-/**    
- * @addtogroup LMS    
- * @{    
+/**
+ * @addtogroup LMS
+ * @{
  */
 
- /**    
- * @brief Processing function for Q15 LMS filter.    
- * @param[in] *S points to an instance of the Q15 LMS filter structure.    
- * @param[in] *pSrc points to the block of input data.    
- * @param[in] *pRef points to the block of reference data.    
- * @param[out] *pOut points to the block of output data.    
- * @param[out] *pErr points to the block of error data.    
- * @param[in] blockSize number of samples to process.    
- * @return none.    
- *    
- * \par Scaling and Overflow Behavior:    
- * The function is implemented using a 64-bit internal accumulator.    
- * Both coefficients and state variables are represented in 1.15 format and multiplications yield a 2.30 result.    
- * The 2.30 intermediate results are accumulated in a 64-bit accumulator in 34.30 format.    
- * There is no risk of internal overflow with this approach and the full precision of intermediate multiplications is preserved.    
- * After all additions have been performed, the accumulator is truncated to 34.15 format by discarding low 15 bits.    
- * Lastly, the accumulator is saturated to yield a result in 1.15 format.    
- *   
- * \par   
- * 	In this filter, filter coefficients are updated for each sample and the updation of filter cofficients are saturted.   
- *    
+ /**
+ * @brief Processing function for Q15 LMS filter.
+ * @param[in] *S points to an instance of the Q15 LMS filter structure.
+ * @param[in] *pSrc points to the block of input data.
+ * @param[in] *pRef points to the block of reference data.
+ * @param[out] *pOut points to the block of output data.
+ * @param[out] *pErr points to the block of error data.
+ * @param[in] blockSize number of samples to process.
+ * @return none.
+ *
+ * \par Scaling and Overflow Behavior:
+ * The function is implemented using a 64-bit internal accumulator.
+ * Both coefficients and state variables are represented in 1.15 format and multiplications yield a 2.30 result.
+ * The 2.30 intermediate results are accumulated in a 64-bit accumulator in 34.30 format.
+ * There is no risk of internal overflow with this approach and the full precision of intermediate multiplications is preserved.
+ * After all additions have been performed, the accumulator is truncated to 34.15 format by discarding low 15 bits.
+ * Lastly, the accumulator is saturated to yield a result in 1.15 format.
+ *
+ * \par
+ *     In this filter, filter coefficients are updated for each sample and the updation of filter cofficients are saturted.
+ *
  */
 
 void arm_lms_q15(
@@ -137,7 +137,7 @@ void arm_lms_q15(
       acc += (q63_t) (((q31_t) (*px++) * (*pb++)));
 
 
-#endif	/*	#ifndef UNALIGNED_SUPPORT_DISABLE	*/
+#endif    /*    #ifndef UNALIGNED_SUPPORT_DISABLE    */
 
       /* Decrement the loop counter */
       tapCnt--;
@@ -222,8 +222,8 @@ void arm_lms_q15(
 
   }
 
-  /* Processing is complete. Now copy the last numTaps - 1 samples to the    
-     satrt of the state buffer. This prepares the state buffer for the    
+  /* Processing is complete. Now copy the last numTaps - 1 samples to the
+     satrt of the state buffer. This prepares the state buffer for the
      next function call. */
 
   /* Points to the start of the pState buffer */
@@ -346,8 +346,8 @@ void arm_lms_q15(
 
   }
 
-  /* Processing is complete. Now copy the last numTaps - 1 samples to the        
-     start of the state buffer. This prepares the state buffer for the   
+  /* Processing is complete. Now copy the last numTaps - 1 samples to the
+     start of the state buffer. This prepares the state buffer for the
      next function call. */
 
   /* Points to the start of the pState buffer */
@@ -369,6 +369,6 @@ void arm_lms_q15(
 
 }
 
-/**    
-   * @} end of LMS group    
+/**
+   * @} end of LMS group
    */

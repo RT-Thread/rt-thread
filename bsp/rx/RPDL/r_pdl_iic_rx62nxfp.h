@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: I²C API for RX62Nxx (FP suffix)
-* File Name		: r_pdl_iic_RX62NxFP.h
-* Version		: 1.02
-* Contents		: I²C API header
-* Customer		:
-* Model			:
-* Order			:
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	:
-* Note			:
+* System Name    : I²C API for RX62Nxx (FP suffix)
+* File Name        : r_pdl_iic_RX62NxFP.h
+* Version        : 1.02
+* Contents        : I²C API header
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_IIC_RX62NxFP_H
@@ -46,23 +46,23 @@ extern volatile uint8_t rpdl_IIC_tx_dmac_channel[IIC_CHANNELS];
 
 /* IIC state machine states */
 typedef enum {
-	IIC_SEND_START,
-	IIC_MASTER_SEND_SLAVE_ADDRESS_7,
-	IIC_MASTER_SEND_SLAVE_ADDRESS_10a,
-	IIC_MASTER_SEND_SLAVE_ADDRESS_10b,
-	IIC_MASTER_SEND_SLAVE_ADDRESS_10c,
-	IIC_MASTER_SEND_SLAVE_ADDRESS_10d,
-	IIC_MASTER_SEND_DATA,
-	IIC_MASTER_WAIT_FOR_TX_COMPLETE,
-	IIC_MASTER_WAIT_FOR_STOP,
-	IIC_EXIT_LOOP,
-	IIC_MASTER_START_READ,
-	IIC_MASTER_READ_DATA,
-	IIC_SEND_STOP,
-	IIC_SLAVE_MONITOR,
-	IIC_SLAVE_SEND_DATA,
-	IIC_SLAVE_READ_SLAVE_ADDRESS,
-	IIC_SLAVE_READ_DATA
+    IIC_SEND_START,
+    IIC_MASTER_SEND_SLAVE_ADDRESS_7,
+    IIC_MASTER_SEND_SLAVE_ADDRESS_10a,
+    IIC_MASTER_SEND_SLAVE_ADDRESS_10b,
+    IIC_MASTER_SEND_SLAVE_ADDRESS_10c,
+    IIC_MASTER_SEND_SLAVE_ADDRESS_10d,
+    IIC_MASTER_SEND_DATA,
+    IIC_MASTER_WAIT_FOR_TX_COMPLETE,
+    IIC_MASTER_WAIT_FOR_STOP,
+    IIC_EXIT_LOOP,
+    IIC_MASTER_START_READ,
+    IIC_MASTER_READ_DATA,
+    IIC_SEND_STOP,
+    IIC_SLAVE_MONITOR,
+    IIC_SLAVE_SEND_DATA,
+    IIC_SLAVE_READ_SLAVE_ADDRESS,
+    IIC_SLAVE_READ_DATA
 } iic_states;
 
 /* Transfer options */
@@ -71,66 +71,66 @@ typedef enum {
 #define IIC_TRANSFER_DTC  1
 
 /* Callback function prototype */
-extern VoidCallBackFunc	rpdl_IIC_callback_func[IIC_CHANNELS];
+extern VoidCallBackFunc    rpdl_IIC_callback_func[IIC_CHANNELS];
 
 /* Library prototypes */
 bool R_IIC_CreateAll(
-	const uint8_t,
-	const uint32_t,
-	const uint32_t,
-	const uint16_t,
-	const uint16_t,
-	const uint16_t,
-	const uint32_t,
-	const uint32_t
+    const uint8_t,
+    const uint32_t,
+    const uint32_t,
+    const uint16_t,
+    const uint16_t,
+    const uint16_t,
+    const uint32_t,
+    const uint32_t
 );
 bool R_IIC_DestroyAll(
-	const uint8_t
+    const uint8_t
 );
 bool R_IIC_MasterSendAll(
-	const uint8_t,
-	const uint16_t,
-	const uint16_t,
-	const volatile uint8_t * const,
-	const uint16_t,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint16_t,
+    const uint16_t,
+    const volatile uint8_t * const,
+    const uint16_t,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_IIC_MasterReceiveAll(
-	const uint8_t,
-	const uint16_t,
-	const uint16_t,
-	volatile uint8_t * const,
-	const uint16_t,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint16_t,
+    const uint16_t,
+    volatile uint8_t * const,
+    const uint16_t,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_IIC_MasterReceiveLastAll(
-	const uint8_t,
-	volatile uint8_t * const
+    const uint8_t,
+    volatile uint8_t * const
 );
 bool R_IIC_SlaveMonitorAll(
-	const uint8_t,
-	const uint16_t,
-	volatile uint8_t * const,
-	const uint16_t,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint16_t,
+    volatile uint8_t * const,
+    const uint16_t,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_IIC_SlaveSendAll(
-	const uint8_t,
-	const volatile uint8_t * const,
-	const uint16_t
+    const uint8_t,
+    const volatile uint8_t * const,
+    const uint16_t
 );
 bool R_IIC_ControlAll(
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t
 );
 bool R_IIC_GetStatusAll(
-	const uint8_t,
-	volatile uint32_t * const,
-	volatile uint16_t * const,
-	volatile uint16_t * const
+    const uint8_t,
+    volatile uint32_t * const,
+    volatile uint16_t * const,
+    volatile uint16_t * const
 );
 bool ReturnFalse(void);
 

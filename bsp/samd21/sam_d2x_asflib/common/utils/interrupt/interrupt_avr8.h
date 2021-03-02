@@ -65,10 +65,10 @@
  *
  * Usage:
  * \code
-	ISR(FOO_vect)
-	{
-	    ...
-	}
+    ISR(FOO_vect)
+    {
+        ...
+    }
 \endcode
  *
  * \param vect Interrupt vector name as found in the device header files.
@@ -90,7 +90,7 @@
  * and fixed priority scheduling.
  */
 #define irq_initialize_vectors() \
-	PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
+    PMIC.CTRL = PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_HILVLEN_bm;
 #elif MEGA_RF
 #define irq_initialize_vectors()
 #endif
@@ -107,27 +107,27 @@ typedef uint8_t irqflags_t;
 
 static inline irqflags_t cpu_irq_save(void)
 {
-	volatile irqflags_t flags = SREG;
-	cpu_irq_disable();
-	return flags;
+    volatile irqflags_t flags = SREG;
+    cpu_irq_disable();
+    return flags;
 }
 
 static inline void cpu_irq_restore(irqflags_t flags)
 {
-	barrier();
-	SREG = flags;
+    barrier();
+    SREG = flags;
 }
 
 static inline bool cpu_irq_is_enabled_flags(irqflags_t flags)
 {
 #if XMEGA
 #  ifdef __GNUC__
-	return flags & CPU_I_bm;
+    return flags & CPU_I_bm;
 #  else
-	return flags & I_bm;
+    return flags & I_bm;
 #  endif
 #elif MEGA || TINY
-	return flags & (1 << SREG_I);
+    return flags & (1 << SREG_I);
 #endif
 }
 

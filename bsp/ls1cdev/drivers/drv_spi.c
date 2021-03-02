@@ -19,7 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-02     å‹¤ä¸ºæœ¬       first version
+ * 2017-11-02     ÇÚÎª±¾       first version
  * 2018-06-09     zhuangwei    add spi0 cs0 support,remove msd_init
  */
 
@@ -71,28 +71,28 @@ static rt_err_t configure(struct rt_spi_device *device,
     spi_base = ls1c_spi_get_base(SPIx);
 
     {
-        // ä½¿èƒ½SPIæ§åˆ¶å™¨ï¼Œmasteræ¨¡å¼ï¼Œå…³é—­ä¸­æ–­
+        // Ê¹ÄÜSPI¿ØÖÆÆ÷£¬masterÄ£Ê½£¬¹Ø±ÕÖĞ¶Ï
         reg_write_8(0x53, spi_base + LS1C_SPI_SPCR_OFFSET);
 
-        // æ¸…ç©ºçŠ¶æ€å¯„å­˜å™¨
+        // Çå¿Õ×´Ì¬¼Ä´æÆ÷
         reg_write_8(0xc0, spi_base + LS1C_SPI_SPSR_OFFSET);
 
-        // 1å­—èŠ‚äº§ç”Ÿä¸­æ–­ï¼Œé‡‡æ ·(è¯»)ä¸å‘é€(å†™)æ—¶æœºåŒæ—¶
+        // 1×Ö½Ú²úÉúÖĞ¶Ï£¬²ÉÑù(¶Á)Óë·¢ËÍ(Ğ´)Ê±»úÍ¬Ê±
         reg_write_8(0x03, spi_base + LS1C_SPI_SPER_OFFSET);
 
-        // å…³é—­SPI flash
+        // ¹Ø±ÕSPI flash
         val = reg_read_8(spi_base + LS1C_SPI_SFC_PARAM_OFFSET);
         val &= 0xfe;
         reg_write_8(val, spi_base + LS1C_SPI_SFC_PARAM_OFFSET);
 
-        // spi flashæ—¶åºæ§åˆ¶å¯„å­˜å™¨
+        // spi flashÊ±Ğò¿ØÖÆ¼Ä´æÆ÷
         reg_write_8(0x05, spi_base + LS1C_SPI_SFC_TIMING_OFFSET);
     }
 
     // baudrate
     ls1c_spi_set_clock(spi_base, configuration->max_hz);
 
-    // è®¾ç½®é€šä¿¡æ¨¡å¼(æ—¶é’Ÿææ€§å’Œç›¸ä½)
+    // ÉèÖÃÍ¨ĞÅÄ£Ê½(Ê±ÖÓ¼«ĞÔºÍÏàÎ»)
     if (configuration->mode & RT_SPI_CPOL)      // cpol
     {
         cpol = SPI_CPOL_1;
@@ -150,7 +150,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device,
         ls1c_spi_set_cs(spi_base, cs, 0);
     }
 
-    // æ”¶å‘æ•°æ®
+    // ÊÕ·¢Êı¾İ
     send_ptr = message->send_buf;
     recv_ptr = message->recv_buf;
     while (size--)
@@ -202,9 +202,9 @@ static struct rt_spi_bus spi1_bus;
 
 
 /*
- * åˆå§‹åŒ–å¹¶æ³¨å†Œé¾™èŠ¯1cçš„spiæ€»çº¿
- * @SPI SPIæ€»çº¿ï¼Œæ¯”å¦‚LS1C_SPI_0ï¼Œ LS1C_SPI_1
- * @spi_bus_name æ€»çº¿åå­—
+ * ³õÊ¼»¯²¢×¢²áÁúĞ¾1cµÄspi×ÜÏß
+ * @SPI SPI×ÜÏß£¬±ÈÈçLS1C_SPI_0£¬ LS1C_SPI_1
+ * @spi_bus_name ×ÜÏßÃû×Ö
  * @ret
  */
 rt_err_t ls1c_spi_bus_register(rt_uint8_t SPI, const char *spi_bus_name)

@@ -88,8 +88,8 @@
 
 #define printd(mask, fmt...) if (cdebug & (mask)) printf(fmt)
 
-#define PRINTD		0x0001
-#define DEBUG_PARSE	0x0002
+#define PRINTD        0x0001
+#define DEBUG_PARSE    0x0002
 
 int cdebug = PRINTD;
 
@@ -223,12 +223,12 @@ union YYSTYPE
 {
 
 
-	char *string;
-	struct file *file;
-	struct symbol *symbol;
-	struct expr *expr;
-	struct menu *menu;
-	const struct kconf_id *id;
+    char *string;
+    struct file *file;
+    struct symbol *symbol;
+    struct expr *expr;
+    struct menu *menu;
+    const struct kconf_id *id;
 
 
 };
@@ -1251,10 +1251,10 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
           case 58: /* choice_entry  */
 
       {
-	fprintf(stderr, "%s:%d: missing end statement for this entry\n",
-		((*yyvaluep).menu)->file->name, ((*yyvaluep).menu)->lineno);
-	if (current_menu == ((*yyvaluep).menu))
-		menu_end_menu();
+    fprintf(stderr, "%s:%d: missing end statement for this entry\n",
+        ((*yyvaluep).menu)->file->name, ((*yyvaluep).menu)->lineno);
+    if (current_menu == ((*yyvaluep).menu))
+        menu_end_menu();
 }
 
         break;
@@ -1262,10 +1262,10 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
     case 64: /* if_entry  */
 
       {
-	fprintf(stderr, "%s:%d: missing end statement for this entry\n",
-		((*yyvaluep).menu)->file->name, ((*yyvaluep).menu)->lineno);
-	if (current_menu == ((*yyvaluep).menu))
-		menu_end_menu();
+    fprintf(stderr, "%s:%d: missing end statement for this entry\n",
+        ((*yyvaluep).menu)->file->name, ((*yyvaluep).menu)->lineno);
+    if (current_menu == ((*yyvaluep).menu))
+        menu_end_menu();
 }
 
         break;
@@ -1273,10 +1273,10 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)
     case 70: /* menu_entry  */
 
       {
-	fprintf(stderr, "%s:%d: missing end statement for this entry\n",
-		((*yyvaluep).menu)->file->name, ((*yyvaluep).menu)->lineno);
-	if (current_menu == ((*yyvaluep).menu))
-		menu_end_menu();
+    fprintf(stderr, "%s:%d: missing end statement for this entry\n",
+        ((*yyvaluep).menu)->file->name, ((*yyvaluep).menu)->lineno);
+    if (current_menu == ((*yyvaluep).menu))
+        menu_end_menu();
 }
 
         break;
@@ -1554,7 +1554,7 @@ yyreduce:
   case 12:
 
     {
-	zconf_error("unexpected option \"%s\"", kconf_id_strings + (yyvsp[-2].id)->name);
+    zconf_error("unexpected option \"%s\"", kconf_id_strings + (yyvsp[-2].id)->name);
 }
 
     break;
@@ -1580,10 +1580,10 @@ yyreduce:
   case 31:
 
     {
-	struct symbol *sym = sym_lookup((yyvsp[-1].string), 0);
-	sym->flags |= SYMBOL_OPTIONAL;
-	menu_add_entry(sym);
-	printd(DEBUG_PARSE, "%s:%d:config %s\n", zconf_curname(), zconf_lineno(), (yyvsp[-1].string));
+    struct symbol *sym = sym_lookup((yyvsp[-1].string), 0);
+    sym->flags |= SYMBOL_OPTIONAL;
+    menu_add_entry(sym);
+    printd(DEBUG_PARSE, "%s:%d:config %s\n", zconf_curname(), zconf_lineno(), (yyvsp[-1].string));
 }
 
     break;
@@ -1591,8 +1591,8 @@ yyreduce:
   case 32:
 
     {
-	menu_end_entry();
-	printd(DEBUG_PARSE, "%s:%d:endconfig\n", zconf_curname(), zconf_lineno());
+    menu_end_entry();
+    printd(DEBUG_PARSE, "%s:%d:endconfig\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1600,10 +1600,10 @@ yyreduce:
   case 33:
 
     {
-	struct symbol *sym = sym_lookup((yyvsp[-1].string), 0);
-	sym->flags |= SYMBOL_OPTIONAL;
-	menu_add_entry(sym);
-	printd(DEBUG_PARSE, "%s:%d:menuconfig %s\n", zconf_curname(), zconf_lineno(), (yyvsp[-1].string));
+    struct symbol *sym = sym_lookup((yyvsp[-1].string), 0);
+    sym->flags |= SYMBOL_OPTIONAL;
+    menu_add_entry(sym);
+    printd(DEBUG_PARSE, "%s:%d:menuconfig %s\n", zconf_curname(), zconf_lineno(), (yyvsp[-1].string));
 }
 
     break;
@@ -1611,12 +1611,12 @@ yyreduce:
   case 34:
 
     {
-	if (current_entry->prompt)
-		current_entry->prompt->type = P_MENU;
-	else
-		zconfprint("warning: menuconfig statement without prompt");
-	menu_end_entry();
-	printd(DEBUG_PARSE, "%s:%d:endconfig\n", zconf_curname(), zconf_lineno());
+    if (current_entry->prompt)
+        current_entry->prompt->type = P_MENU;
+    else
+        zconfprint("warning: menuconfig statement without prompt");
+    menu_end_entry();
+    printd(DEBUG_PARSE, "%s:%d:endconfig\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1624,10 +1624,10 @@ yyreduce:
   case 42:
 
     {
-	menu_set_type((yyvsp[-2].id)->stype);
-	printd(DEBUG_PARSE, "%s:%d:type(%u)\n",
-		zconf_curname(), zconf_lineno(),
-		(yyvsp[-2].id)->stype);
+    menu_set_type((yyvsp[-2].id)->stype);
+    printd(DEBUG_PARSE, "%s:%d:type(%u)\n",
+        zconf_curname(), zconf_lineno(),
+        (yyvsp[-2].id)->stype);
 }
 
     break;
@@ -1635,8 +1635,8 @@ yyreduce:
   case 43:
 
     {
-	menu_add_prompt(P_PROMPT, (yyvsp[-2].string), (yyvsp[-1].expr));
-	printd(DEBUG_PARSE, "%s:%d:prompt\n", zconf_curname(), zconf_lineno());
+    menu_add_prompt(P_PROMPT, (yyvsp[-2].string), (yyvsp[-1].expr));
+    printd(DEBUG_PARSE, "%s:%d:prompt\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1644,12 +1644,12 @@ yyreduce:
   case 44:
 
     {
-	menu_add_expr(P_DEFAULT, (yyvsp[-2].expr), (yyvsp[-1].expr));
-	if ((yyvsp[-3].id)->stype != S_UNKNOWN)
-		menu_set_type((yyvsp[-3].id)->stype);
-	printd(DEBUG_PARSE, "%s:%d:default(%u)\n",
-		zconf_curname(), zconf_lineno(),
-		(yyvsp[-3].id)->stype);
+    menu_add_expr(P_DEFAULT, (yyvsp[-2].expr), (yyvsp[-1].expr));
+    if ((yyvsp[-3].id)->stype != S_UNKNOWN)
+        menu_set_type((yyvsp[-3].id)->stype);
+    printd(DEBUG_PARSE, "%s:%d:default(%u)\n",
+        zconf_curname(), zconf_lineno(),
+        (yyvsp[-3].id)->stype);
 }
 
     break;
@@ -1657,8 +1657,8 @@ yyreduce:
   case 45:
 
     {
-	menu_add_symbol(P_SELECT, sym_lookup((yyvsp[-2].string), 0), (yyvsp[-1].expr));
-	printd(DEBUG_PARSE, "%s:%d:select\n", zconf_curname(), zconf_lineno());
+    menu_add_symbol(P_SELECT, sym_lookup((yyvsp[-2].string), 0), (yyvsp[-1].expr));
+    printd(DEBUG_PARSE, "%s:%d:select\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1666,8 +1666,8 @@ yyreduce:
   case 46:
 
     {
-	menu_add_symbol(P_IMPLY, sym_lookup((yyvsp[-2].string), 0), (yyvsp[-1].expr));
-	printd(DEBUG_PARSE, "%s:%d:imply\n", zconf_curname(), zconf_lineno());
+    menu_add_symbol(P_IMPLY, sym_lookup((yyvsp[-2].string), 0), (yyvsp[-1].expr));
+    printd(DEBUG_PARSE, "%s:%d:imply\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1675,8 +1675,8 @@ yyreduce:
   case 47:
 
     {
-	menu_add_expr(P_RANGE, expr_alloc_comp(E_RANGE,(yyvsp[-3].symbol), (yyvsp[-2].symbol)), (yyvsp[-1].expr));
-	printd(DEBUG_PARSE, "%s:%d:range\n", zconf_curname(), zconf_lineno());
+    menu_add_expr(P_RANGE, expr_alloc_comp(E_RANGE,(yyvsp[-3].symbol), (yyvsp[-2].symbol)), (yyvsp[-1].expr));
+    printd(DEBUG_PARSE, "%s:%d:range\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1684,12 +1684,12 @@ yyreduce:
   case 50:
 
     {
-	const struct kconf_id *id = kconf_id_lookup((yyvsp[-1].string), strlen((yyvsp[-1].string)));
-	if (id && id->flags & TF_OPTION)
-		menu_add_option(id->token, (yyvsp[0].string));
-	else
-		zconfprint("warning: ignoring unknown option %s", (yyvsp[-1].string));
-	free((yyvsp[-1].string));
+    const struct kconf_id *id = kconf_id_lookup((yyvsp[-1].string), strlen((yyvsp[-1].string)));
+    if (id && id->flags & TF_OPTION)
+        menu_add_option(id->token, (yyvsp[0].string));
+    else
+        zconfprint("warning: ignoring unknown option %s", (yyvsp[-1].string));
+    free((yyvsp[-1].string));
 }
 
     break;
@@ -1709,11 +1709,11 @@ yyreduce:
   case 53:
 
     {
-	struct symbol *sym = sym_lookup((yyvsp[-1].string), SYMBOL_CHOICE);
-	sym->flags |= SYMBOL_AUTO;
-	menu_add_entry(sym);
-	menu_add_expr(P_CHOICE, NULL, NULL);
-	printd(DEBUG_PARSE, "%s:%d:choice\n", zconf_curname(), zconf_lineno());
+    struct symbol *sym = sym_lookup((yyvsp[-1].string), SYMBOL_CHOICE);
+    sym->flags |= SYMBOL_AUTO;
+    menu_add_entry(sym);
+    menu_add_expr(P_CHOICE, NULL, NULL);
+    printd(DEBUG_PARSE, "%s:%d:choice\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1721,7 +1721,7 @@ yyreduce:
   case 54:
 
     {
-	(yyval.menu) = menu_add_menu();
+    (yyval.menu) = menu_add_menu();
 }
 
     break;
@@ -1729,10 +1729,10 @@ yyreduce:
   case 55:
 
     {
-	if (zconf_endtoken((yyvsp[0].id), T_CHOICE, T_ENDCHOICE)) {
-		menu_end_menu();
-		printd(DEBUG_PARSE, "%s:%d:endchoice\n", zconf_curname(), zconf_lineno());
-	}
+    if (zconf_endtoken((yyvsp[0].id), T_CHOICE, T_ENDCHOICE)) {
+        menu_end_menu();
+        printd(DEBUG_PARSE, "%s:%d:endchoice\n", zconf_curname(), zconf_lineno());
+    }
 }
 
     break;
@@ -1740,8 +1740,8 @@ yyreduce:
   case 63:
 
     {
-	menu_add_prompt(P_PROMPT, (yyvsp[-2].string), (yyvsp[-1].expr));
-	printd(DEBUG_PARSE, "%s:%d:prompt\n", zconf_curname(), zconf_lineno());
+    menu_add_prompt(P_PROMPT, (yyvsp[-2].string), (yyvsp[-1].expr));
+    printd(DEBUG_PARSE, "%s:%d:prompt\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1749,13 +1749,13 @@ yyreduce:
   case 64:
 
     {
-	if ((yyvsp[-2].id)->stype == S_BOOLEAN || (yyvsp[-2].id)->stype == S_TRISTATE) {
-		menu_set_type((yyvsp[-2].id)->stype);
-		printd(DEBUG_PARSE, "%s:%d:type(%u)\n",
-			zconf_curname(), zconf_lineno(),
-			(yyvsp[-2].id)->stype);
-	} else
-		YYERROR;
+    if ((yyvsp[-2].id)->stype == S_BOOLEAN || (yyvsp[-2].id)->stype == S_TRISTATE) {
+        menu_set_type((yyvsp[-2].id)->stype);
+        printd(DEBUG_PARSE, "%s:%d:type(%u)\n",
+            zconf_curname(), zconf_lineno(),
+            (yyvsp[-2].id)->stype);
+    } else
+        YYERROR;
 }
 
     break;
@@ -1763,8 +1763,8 @@ yyreduce:
   case 65:
 
     {
-	current_entry->sym->flags |= SYMBOL_OPTIONAL;
-	printd(DEBUG_PARSE, "%s:%d:optional\n", zconf_curname(), zconf_lineno());
+    current_entry->sym->flags |= SYMBOL_OPTIONAL;
+    printd(DEBUG_PARSE, "%s:%d:optional\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1772,12 +1772,12 @@ yyreduce:
   case 66:
 
     {
-	if ((yyvsp[-3].id)->stype == S_UNKNOWN) {
-		menu_add_symbol(P_DEFAULT, sym_lookup((yyvsp[-2].string), 0), (yyvsp[-1].expr));
-		printd(DEBUG_PARSE, "%s:%d:default\n",
-			zconf_curname(), zconf_lineno());
-	} else
-		YYERROR;
+    if ((yyvsp[-3].id)->stype == S_UNKNOWN) {
+        menu_add_symbol(P_DEFAULT, sym_lookup((yyvsp[-2].string), 0), (yyvsp[-1].expr));
+        printd(DEBUG_PARSE, "%s:%d:default\n",
+            zconf_curname(), zconf_lineno());
+    } else
+        YYERROR;
 }
 
     break;
@@ -1785,10 +1785,10 @@ yyreduce:
   case 69:
 
     {
-	printd(DEBUG_PARSE, "%s:%d:if\n", zconf_curname(), zconf_lineno());
-	menu_add_entry(NULL);
-	menu_add_dep((yyvsp[-1].expr));
-	(yyval.menu) = menu_add_menu();
+    printd(DEBUG_PARSE, "%s:%d:if\n", zconf_curname(), zconf_lineno());
+    menu_add_entry(NULL);
+    menu_add_dep((yyvsp[-1].expr));
+    (yyval.menu) = menu_add_menu();
 }
 
     break;
@@ -1796,10 +1796,10 @@ yyreduce:
   case 70:
 
     {
-	if (zconf_endtoken((yyvsp[0].id), T_IF, T_ENDIF)) {
-		menu_end_menu();
-		printd(DEBUG_PARSE, "%s:%d:endif\n", zconf_curname(), zconf_lineno());
-	}
+    if (zconf_endtoken((yyvsp[0].id), T_IF, T_ENDIF)) {
+        menu_end_menu();
+        printd(DEBUG_PARSE, "%s:%d:endif\n", zconf_curname(), zconf_lineno());
+    }
 }
 
     break;
@@ -1807,7 +1807,7 @@ yyreduce:
   case 76:
 
     {
-	menu_add_prompt(P_MENU, (yyvsp[-1].string), NULL);
+    menu_add_prompt(P_MENU, (yyvsp[-1].string), NULL);
 }
 
     break;
@@ -1815,9 +1815,9 @@ yyreduce:
   case 77:
 
     {
-	menu_add_entry(NULL);
-	menu_add_prompt(P_MENU, (yyvsp[-1].string), NULL);
-	printd(DEBUG_PARSE, "%s:%d:menu\n", zconf_curname(), zconf_lineno());
+    menu_add_entry(NULL);
+    menu_add_prompt(P_MENU, (yyvsp[-1].string), NULL);
+    printd(DEBUG_PARSE, "%s:%d:menu\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1825,7 +1825,7 @@ yyreduce:
   case 78:
 
     {
-	(yyval.menu) = menu_add_menu();
+    (yyval.menu) = menu_add_menu();
 }
 
     break;
@@ -1833,10 +1833,10 @@ yyreduce:
   case 79:
 
     {
-	if (zconf_endtoken((yyvsp[0].id), T_MENU, T_ENDMENU)) {
-		menu_end_menu();
-		printd(DEBUG_PARSE, "%s:%d:endmenu\n", zconf_curname(), zconf_lineno());
-	}
+    if (zconf_endtoken((yyvsp[0].id), T_MENU, T_ENDMENU)) {
+        menu_end_menu();
+        printd(DEBUG_PARSE, "%s:%d:endmenu\n", zconf_curname(), zconf_lineno());
+    }
 }
 
     break;
@@ -1844,8 +1844,8 @@ yyreduce:
   case 85:
 
     {
-	printd(DEBUG_PARSE, "%s:%d:source %s\n", zconf_curname(), zconf_lineno(), (yyvsp[-1].string));
-	zconf_nextfile((yyvsp[-1].string));
+    printd(DEBUG_PARSE, "%s:%d:source %s\n", zconf_curname(), zconf_lineno(), (yyvsp[-1].string));
+    zconf_nextfile((yyvsp[-1].string));
 }
 
     break;
@@ -1853,9 +1853,9 @@ yyreduce:
   case 86:
 
     {
-	menu_add_entry(NULL);
-	menu_add_prompt(P_COMMENT, (yyvsp[-1].string), NULL);
-	printd(DEBUG_PARSE, "%s:%d:comment\n", zconf_curname(), zconf_lineno());
+    menu_add_entry(NULL);
+    menu_add_prompt(P_COMMENT, (yyvsp[-1].string), NULL);
+    printd(DEBUG_PARSE, "%s:%d:comment\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1863,7 +1863,7 @@ yyreduce:
   case 87:
 
     {
-	menu_end_entry();
+    menu_end_entry();
 }
 
     break;
@@ -1871,8 +1871,8 @@ yyreduce:
   case 88:
 
     {
-	printd(DEBUG_PARSE, "%s:%d:help\n", zconf_curname(), zconf_lineno());
-	zconf_starthelp();
+    printd(DEBUG_PARSE, "%s:%d:help\n", zconf_curname(), zconf_lineno());
+    zconf_starthelp();
 }
 
     break;
@@ -1880,7 +1880,7 @@ yyreduce:
   case 89:
 
     {
-	current_entry->help = (yyvsp[0].string);
+    current_entry->help = (yyvsp[0].string);
 }
 
     break;
@@ -1888,8 +1888,8 @@ yyreduce:
   case 94:
 
     {
-	menu_add_dep((yyvsp[-1].expr));
-	printd(DEBUG_PARSE, "%s:%d:depends on\n", zconf_curname(), zconf_lineno());
+    menu_add_dep((yyvsp[-1].expr));
+    printd(DEBUG_PARSE, "%s:%d:depends on\n", zconf_curname(), zconf_lineno());
 }
 
     break;
@@ -1897,7 +1897,7 @@ yyreduce:
   case 98:
 
     {
-	menu_add_visibility((yyvsp[0].expr));
+    menu_add_visibility((yyvsp[0].expr));
 }
 
     break;
@@ -1905,7 +1905,7 @@ yyreduce:
   case 100:
 
     {
-	menu_add_prompt(P_PROMPT, (yyvsp[-1].string), (yyvsp[0].expr));
+    menu_add_prompt(P_PROMPT, (yyvsp[-1].string), (yyvsp[0].expr));
 }
 
     break;
@@ -2258,248 +2258,248 @@ yyreturn:
 
 void conf_parse(const char *name)
 {
-	struct symbol *sym;
-	int i;
+    struct symbol *sym;
+    int i;
 
-	zconf_initscan(name);
+    zconf_initscan(name);
 
-	sym_init();
-	_menu_init();
-	rootmenu.prompt = menu_add_prompt(P_MENU, ROOTMENU, NULL);
+    sym_init();
+    _menu_init();
+    rootmenu.prompt = menu_add_prompt(P_MENU, ROOTMENU, NULL);
 
-	if (getenv("ZCONF_DEBUG"))
-		zconfdebug = 1;
-	zconfparse();
-	if (zconfnerrs)
-		exit(1);
-	if (!modules_sym)
-		modules_sym = sym_find( "n" );
+    if (getenv("ZCONF_DEBUG"))
+        zconfdebug = 1;
+    zconfparse();
+    if (zconfnerrs)
+        exit(1);
+    if (!modules_sym)
+        modules_sym = sym_find( "n" );
 
-	rootmenu.prompt->text = _(rootmenu.prompt->text);
-	rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
+    rootmenu.prompt->text = _(rootmenu.prompt->text);
+    rootmenu.prompt->text = sym_expand_string_value(rootmenu.prompt->text);
 
-	menu_finalize(&rootmenu);
-	for_all_symbols(i, sym) {
-		if (sym_check_deps(sym))
-			zconfnerrs++;
-	}
-	if (zconfnerrs)
-		exit(1);
-	sym_set_change_count(1);
+    menu_finalize(&rootmenu);
+    for_all_symbols(i, sym) {
+        if (sym_check_deps(sym))
+            zconfnerrs++;
+    }
+    if (zconfnerrs)
+        exit(1);
+    sym_set_change_count(1);
 }
 
 static const char *zconf_tokenname(int token)
 {
-	switch (token) {
-	case T_MENU:		return "menu";
-	case T_ENDMENU:		return "endmenu";
-	case T_CHOICE:		return "choice";
-	case T_ENDCHOICE:	return "endchoice";
-	case T_IF:		return "if";
-	case T_ENDIF:		return "endif";
-	case T_DEPENDS:		return "depends";
-	case T_VISIBLE:		return "visible";
-	}
-	return "<token>";
+    switch (token) {
+    case T_MENU:        return "menu";
+    case T_ENDMENU:        return "endmenu";
+    case T_CHOICE:        return "choice";
+    case T_ENDCHOICE:    return "endchoice";
+    case T_IF:        return "if";
+    case T_ENDIF:        return "endif";
+    case T_DEPENDS:        return "depends";
+    case T_VISIBLE:        return "visible";
+    }
+    return "<token>";
 }
 
 static bool zconf_endtoken(const struct kconf_id *id, int starttoken, int endtoken)
 {
-	if (id->token != endtoken) {
-		zconf_error("unexpected '%s' within %s block",
-			kconf_id_strings + id->name, zconf_tokenname(starttoken));
-		zconfnerrs++;
-		return false;
-	}
-	if (current_menu->file != current_file) {
-		zconf_error("'%s' in different file than '%s'",
-			kconf_id_strings + id->name, zconf_tokenname(starttoken));
-		fprintf(stderr, "%s:%d: location of the '%s'\n",
-			current_menu->file->name, current_menu->lineno,
-			zconf_tokenname(starttoken));
-		zconfnerrs++;
-		return false;
-	}
-	return true;
+    if (id->token != endtoken) {
+        zconf_error("unexpected '%s' within %s block",
+            kconf_id_strings + id->name, zconf_tokenname(starttoken));
+        zconfnerrs++;
+        return false;
+    }
+    if (current_menu->file != current_file) {
+        zconf_error("'%s' in different file than '%s'",
+            kconf_id_strings + id->name, zconf_tokenname(starttoken));
+        fprintf(stderr, "%s:%d: location of the '%s'\n",
+            current_menu->file->name, current_menu->lineno,
+            zconf_tokenname(starttoken));
+        zconfnerrs++;
+        return false;
+    }
+    return true;
 }
 
 static void zconfprint(const char *err, ...)
 {
-	va_list ap;
+    va_list ap;
 
-	fprintf(stderr, "%s:%d: ", zconf_curname(), zconf_lineno());
-	va_start(ap, err);
-	vfprintf(stderr, err, ap);
-	va_end(ap);
-	fprintf(stderr, "\n");
+    fprintf(stderr, "%s:%d: ", zconf_curname(), zconf_lineno());
+    va_start(ap, err);
+    vfprintf(stderr, err, ap);
+    va_end(ap);
+    fprintf(stderr, "\n");
 }
 
 static void zconf_error(const char *err, ...)
 {
-	va_list ap;
+    va_list ap;
 
-	zconfnerrs++;
-	fprintf(stderr, "%s:%d: ", zconf_curname(), zconf_lineno());
-	va_start(ap, err);
-	vfprintf(stderr, err, ap);
-	va_end(ap);
-	fprintf(stderr, "\n");
+    zconfnerrs++;
+    fprintf(stderr, "%s:%d: ", zconf_curname(), zconf_lineno());
+    va_start(ap, err);
+    vfprintf(stderr, err, ap);
+    va_end(ap);
+    fprintf(stderr, "\n");
 }
 
 static void zconferror(const char *err)
 {
-	fprintf(stderr, "%s:%d: %s\n", zconf_curname(), zconf_lineno() + 1, err);
+    fprintf(stderr, "%s:%d: %s\n", zconf_curname(), zconf_lineno() + 1, err);
 }
 
 static void print_quoted_string(FILE *out, const char *str)
 {
-	const char *p;
-	int len;
+    const char *p;
+    int len;
 
-	putc('"', out);
-	while ((p = strchr(str, '"'))) {
-		len = p - str;
-		if (len)
-			fprintf(out, "%.*s", len, str);
-		fputs("\\\"", out);
-		str = p + 1;
-	}
-	fputs(str, out);
-	putc('"', out);
+    putc('"', out);
+    while ((p = strchr(str, '"'))) {
+        len = p - str;
+        if (len)
+            fprintf(out, "%.*s", len, str);
+        fputs("\\\"", out);
+        str = p + 1;
+    }
+    fputs(str, out);
+    putc('"', out);
 }
 
 static void print_symbol(FILE *out, struct menu *menu)
 {
-	struct symbol *sym = menu->sym;
-	struct property *prop;
+    struct symbol *sym = menu->sym;
+    struct property *prop;
 
-	if (sym_is_choice(sym))
-		fprintf(out, "\nchoice\n");
-	else
-		fprintf(out, "\nconfig %s\n", sym->name);
-	switch (sym->type) {
-	case S_BOOLEAN:
-		fputs("  boolean\n", out);
-		break;
-	case S_TRISTATE:
-		fputs("  tristate\n", out);
-		break;
-	case S_STRING:
-		fputs("  string\n", out);
-		break;
-	case S_INT:
-		fputs("  integer\n", out);
-		break;
-	case S_HEX:
-		fputs("  hex\n", out);
-		break;
-	default:
-		fputs("  ???\n", out);
-		break;
-	}
-	for (prop = sym->prop; prop; prop = prop->next) {
-		if (prop->menu != menu)
-			continue;
-		switch (prop->type) {
-		case P_PROMPT:
-			fputs("  prompt ", out);
-			print_quoted_string(out, prop->text);
-			if (!expr_is_yes(prop->visible.expr)) {
-				fputs(" if ", out);
-				expr_fprint(prop->visible.expr, out);
-			}
-			fputc('\n', out);
-			break;
-		case P_DEFAULT:
-			fputs( "  default ", out);
-			expr_fprint(prop->expr, out);
-			if (!expr_is_yes(prop->visible.expr)) {
-				fputs(" if ", out);
-				expr_fprint(prop->visible.expr, out);
-			}
-			fputc('\n', out);
-			break;
-		case P_CHOICE:
-			fputs("  #choice value\n", out);
-			break;
-		case P_SELECT:
-			fputs( "  select ", out);
-			expr_fprint(prop->expr, out);
-			fputc('\n', out);
-			break;
-		case P_IMPLY:
-			fputs( "  imply ", out);
-			expr_fprint(prop->expr, out);
-			fputc('\n', out);
-			break;
-		case P_RANGE:
-			fputs( "  range ", out);
-			expr_fprint(prop->expr, out);
-			fputc('\n', out);
-			break;
-		case P_MENU:
-			fputs( "  menu ", out);
-			print_quoted_string(out, prop->text);
-			fputc('\n', out);
-			break;
-		default:
-			fprintf(out, "  unknown prop %d!\n", prop->type);
-			break;
-		}
-	}
-	if (menu->help) {
-		int len = strlen(menu->help);
-		while (menu->help[--len] == '\n')
-			menu->help[len] = 0;
-		fprintf(out, "  help\n%s\n", menu->help);
-	}
+    if (sym_is_choice(sym))
+        fprintf(out, "\nchoice\n");
+    else
+        fprintf(out, "\nconfig %s\n", sym->name);
+    switch (sym->type) {
+    case S_BOOLEAN:
+        fputs("  boolean\n", out);
+        break;
+    case S_TRISTATE:
+        fputs("  tristate\n", out);
+        break;
+    case S_STRING:
+        fputs("  string\n", out);
+        break;
+    case S_INT:
+        fputs("  integer\n", out);
+        break;
+    case S_HEX:
+        fputs("  hex\n", out);
+        break;
+    default:
+        fputs("  ???\n", out);
+        break;
+    }
+    for (prop = sym->prop; prop; prop = prop->next) {
+        if (prop->menu != menu)
+            continue;
+        switch (prop->type) {
+        case P_PROMPT:
+            fputs("  prompt ", out);
+            print_quoted_string(out, prop->text);
+            if (!expr_is_yes(prop->visible.expr)) {
+                fputs(" if ", out);
+                expr_fprint(prop->visible.expr, out);
+            }
+            fputc('\n', out);
+            break;
+        case P_DEFAULT:
+            fputs( "  default ", out);
+            expr_fprint(prop->expr, out);
+            if (!expr_is_yes(prop->visible.expr)) {
+                fputs(" if ", out);
+                expr_fprint(prop->visible.expr, out);
+            }
+            fputc('\n', out);
+            break;
+        case P_CHOICE:
+            fputs("  #choice value\n", out);
+            break;
+        case P_SELECT:
+            fputs( "  select ", out);
+            expr_fprint(prop->expr, out);
+            fputc('\n', out);
+            break;
+        case P_IMPLY:
+            fputs( "  imply ", out);
+            expr_fprint(prop->expr, out);
+            fputc('\n', out);
+            break;
+        case P_RANGE:
+            fputs( "  range ", out);
+            expr_fprint(prop->expr, out);
+            fputc('\n', out);
+            break;
+        case P_MENU:
+            fputs( "  menu ", out);
+            print_quoted_string(out, prop->text);
+            fputc('\n', out);
+            break;
+        default:
+            fprintf(out, "  unknown prop %d!\n", prop->type);
+            break;
+        }
+    }
+    if (menu->help) {
+        int len = strlen(menu->help);
+        while (menu->help[--len] == '\n')
+            menu->help[len] = 0;
+        fprintf(out, "  help\n%s\n", menu->help);
+    }
 }
 
 void zconfdump(FILE *out)
 {
-	struct property *prop;
-	struct symbol *sym;
-	struct menu *menu;
+    struct property *prop;
+    struct symbol *sym;
+    struct menu *menu;
 
-	menu = rootmenu.list;
-	while (menu) {
-		if ((sym = menu->sym))
-			print_symbol(out, menu);
-		else if ((prop = menu->prompt)) {
-			switch (prop->type) {
-			case P_COMMENT:
-				fputs("\ncomment ", out);
-				print_quoted_string(out, prop->text);
-				fputs("\n", out);
-				break;
-			case P_MENU:
-				fputs("\nmenu ", out);
-				print_quoted_string(out, prop->text);
-				fputs("\n", out);
-				break;
-			default:
-				;
-			}
-			if (!expr_is_yes(prop->visible.expr)) {
-				fputs("  depends ", out);
-				expr_fprint(prop->visible.expr, out);
-				fputc('\n', out);
-			}
-		}
+    menu = rootmenu.list;
+    while (menu) {
+        if ((sym = menu->sym))
+            print_symbol(out, menu);
+        else if ((prop = menu->prompt)) {
+            switch (prop->type) {
+            case P_COMMENT:
+                fputs("\ncomment ", out);
+                print_quoted_string(out, prop->text);
+                fputs("\n", out);
+                break;
+            case P_MENU:
+                fputs("\nmenu ", out);
+                print_quoted_string(out, prop->text);
+                fputs("\n", out);
+                break;
+            default:
+                ;
+            }
+            if (!expr_is_yes(prop->visible.expr)) {
+                fputs("  depends ", out);
+                expr_fprint(prop->visible.expr, out);
+                fputc('\n', out);
+            }
+        }
 
-		if (menu->list)
-			menu = menu->list;
-		else if (menu->next)
-			menu = menu->next;
-		else while ((menu = menu->parent)) {
-			if (menu->prompt && menu->prompt->type == P_MENU)
-				fputs("\nendmenu\n", out);
-			if (menu->next) {
-				menu = menu->next;
-				break;
-			}
-		}
-	}
+        if (menu->list)
+            menu = menu->list;
+        else if (menu->next)
+            menu = menu->next;
+        else while ((menu = menu->parent)) {
+            if (menu->prompt && menu->prompt->type == P_MENU)
+                fputs("\nendmenu\n", out);
+            if (menu->next) {
+                menu = menu->next;
+                break;
+            }
+        }
+    }
 }
 
 #include "lconf.c"

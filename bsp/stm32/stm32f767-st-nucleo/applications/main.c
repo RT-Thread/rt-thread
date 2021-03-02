@@ -30,5 +30,5 @@ int main(void)
         rt_thread_mdelay(500);
     }
 
-    return RT_EOK;		
+    return RT_EOK;
 }

@@ -1,42 +1,42 @@
 /*******************************************************************************
-* Copyright (C) 2013 Spansion LLC. All Rights Reserved. 
+* Copyright (C) 2013 Spansion LLC. All Rights Reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Spansion LLC, 915 DeGuigne Dr. Sunnyvale, CA  94088-3453 ("Spansion").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with Spansion 
-* components. This software is licensed by Spansion to be adapted only 
-* for use in systems utilizing Spansion components. Spansion shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein.  Spansion is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with Spansion
+* components. This software is licensed by Spansion to be adapted only
+* for use in systems utilizing Spansion components. Spansion shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein.  Spansion is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * SPANSION MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* SPANSION SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF SPANSION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* SPANSION SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF SPANSION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.  
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /**
  ******************************************************************************
@@ -147,7 +147,7 @@ void SystemCoreClockUpdate (void) {
 void SystemInit (void) {
 
   static uint8_t u8IoRegisterRead;  // Workaround variable for MISRA C rule conformance
-  
+
 #if (HWWD_DISABLE)                                 /* HW Watchdog Disable */
   FM4_HWWDT->WDG_LCK = 0x1ACCE551u;                /* HW Watchdog Unlock */
   FM4_HWWDT->WDG_LCK = 0xE5331AAEu;
@@ -167,14 +167,14 @@ void SystemInit (void) {
   FM4_CRG->TTC_PSR   = (uint8_t)TTC_PSR_Val;                 /* set Trace Clock presacaler */
 
   FM4_CRG->CSW_TMR   = (uint8_t)CSW_TMR_Val;                 /* set oscillation stabilization wait time */
-  
+
   if (SCM_CTL_Val & (1ul << 1u)) {                 /* Main clock oscillator enabled ? */
-    FM4_CRG->SCM_CTL |= (uint8_t)(1ul << 1u);            /* enable main oscillator */ 
-    
-    while (!((FM4_CRG->SCM_STR) & (uint8_t)(1ul << 1u))) /* wait for Main clock oscillation stable */ 
+    FM4_CRG->SCM_CTL |= (uint8_t)(1ul << 1u);            /* enable main oscillator */
+
+    while (!((FM4_CRG->SCM_STR) & (uint8_t)(1ul << 1u))) /* wait for Main clock oscillation stable */
     {}
   }
-  
+
   if (SCM_CTL_Val & (1UL << 3)) {                    /* Sub clock oscillator enabled ? */
     // Initialize VBAT (Temporary process)
     FM4_RTC->VDET = 0x00;
@@ -196,32 +196,32 @@ void SystemInit (void) {
     // Wait to complete transmission
     while(0 != FM4_RTC->WTCR10_f.TRANS)
 
-    FM4_CRG->SCM_CTL |= (1UL << 3);                /* enable sub oscillator */ 
+    FM4_CRG->SCM_CTL |= (1UL << 3);                /* enable sub oscillator */
     while (!(FM4_CRG->SCM_STR & (1UL << 3)));      /* wait for Sub clock oscillation stable */
   }
 
   FM4_CRG->PSW_TMR   =  (uint8_t)PSW_TMR_Val;                /* set PLL stabilization wait time */
   FM4_CRG->PLL_CTL1  = (uint8_t) PLL_CTL1_Val;               /* set PLLM and PLLK */
   FM4_CRG->PLL_CTL2  =  (uint8_t)PLL_CTL2_Val;               /* set PLLN          */
-  
+
   if (SCM_CTL_Val &  (uint8_t)(1ul << 4u)) {                    /* PLL enabled ? */
-    FM4_CRG->SCM_CTL  |=  (uint8_t)(1ul << 4u);               /* enable PLL */ 
+    FM4_CRG->SCM_CTL  |=  (uint8_t)(1ul << 4u);               /* enable PLL */
     while (!(FM4_CRG->SCM_STR &  (uint8_t)(1ul << 4u)))      /* wait for PLL stable */
     {}
   }
 
-  FM4_CRG->SCM_CTL  |=  (uint8_t)(SCM_CTL_Val & 0xE0u);       /* Set Master Clock switch */ 
-  
+  FM4_CRG->SCM_CTL  |=  (uint8_t)(SCM_CTL_Val & 0xE0u);       /* Set Master Clock switch */
+
   // Workaround for preventing MISRA C:1998 Rule 46 (MISRA C:2004 Rule 12.2)
   // violations:
   //   "Unordered reads and writes to or from same location" and
   //   "Unordered accesses to a volatile location"
-  do                                              
-  {                                               
-    u8IoRegisterRead = (FM4_CRG->SCM_CTL & 0xE0u); 
+  do
+  {
+    u8IoRegisterRead = (FM4_CRG->SCM_CTL & 0xE0u);
   }while ((FM4_CRG->SCM_STR & 0xE0u) != u8IoRegisterRead);
 #endif // (CLOCK_SETUP)
-  
+
 #if (CR_TRIM_SETUP)
   /* CR Trimming Data  */
   if( 0x000003FFu != (FM4_FLASH_IF->CRTRMM & 0x000003FFu) )

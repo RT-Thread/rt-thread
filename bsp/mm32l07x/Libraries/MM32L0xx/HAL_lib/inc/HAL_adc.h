@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the ADC firmware 
+* @brief  This file contains all the functions prototypes for the ADC firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_ADC_H
@@ -38,15 +38,15 @@
 * @{
 */
 
-/** 
-* @brief  ADC Init structure definition  
+/**
+* @brief  ADC Init structure definition
 */
 
 /*
 typedef struct
 {
 uint32_t ADC_Mode;
-FunctionalState ADC_ScanConvMode; 
+FunctionalState ADC_ScanConvMode;
 FunctionalState ADC_ContinuousConvMode;
 uint32_t ADC_ExternalTrigConv;
 uint32_t ADC_DataAlign;
@@ -55,12 +55,12 @@ uint8_t ADC_NbrOfChannel;
 */
 typedef struct
 {
-    uint32_t ADC_Resolution;  
+    uint32_t ADC_Resolution;
     uint32_t ADC_PRESCARE;
     uint32_t ADC_Mode;
     FunctionalState ADC_ContinuousConvMode;
     uint32_t ADC_TRGEN;
-    uint32_t ADC_ExternalTrigConv;   
+    uint32_t ADC_ExternalTrigConv;
     uint32_t ADC_DataAlign;
 }ADC_InitTypeDef;
 /**
@@ -79,7 +79,7 @@ typedef struct
 
 /** @defgroup ADC_Resolution
 * @{
-*/ 
+*/
 #define ADC_Resolution_12b                         ((uint32_t)0x00000000)
 #define ADC_Resolution_11b                         ((uint32_t)0x00000080)
 #define ADC_Resolution_10b                         ((uint32_t)0x00000100)
@@ -91,22 +91,22 @@ typedef struct
     ((RESOLUTION) == ADC_Resolution_8b) || \
         ((RESOLUTION) == ADC_Resolution_6b))
 
-/** 
+/**
 * @brief  for ADC1, ADC2
 */
 
-#define ADC_PCLK2_PRESCARE_2						 ((uint32_t)0x00000000)
-#define ADC_PCLK2_PRESCARE_4						 ((uint32_t)0x00000010)
-#define ADC_PCLK2_PRESCARE_6						 ((uint32_t)0x00000020)
-#define ADC_PCLK2_PRESCARE_8						 ((uint32_t)0x00000030)
-#define ADC_PCLK2_PRESCARE_10						 ((uint32_t)0x00000040)
-#define ADC_PCLK2_PRESCARE_12						 ((uint32_t)0x00000050)
-#define ADC_PCLK2_PRESCARE_14						 ((uint32_t)0x00000060)
-#define ADC_PCLK2_PRESCARE_16						 ((uint32_t)0x00000070)
+#define ADC_PCLK2_PRESCARE_2                         ((uint32_t)0x00000000)
+#define ADC_PCLK2_PRESCARE_4                         ((uint32_t)0x00000010)
+#define ADC_PCLK2_PRESCARE_6                         ((uint32_t)0x00000020)
+#define ADC_PCLK2_PRESCARE_8                         ((uint32_t)0x00000030)
+#define ADC_PCLK2_PRESCARE_10                         ((uint32_t)0x00000040)
+#define ADC_PCLK2_PRESCARE_12                         ((uint32_t)0x00000050)
+#define ADC_PCLK2_PRESCARE_14                         ((uint32_t)0x00000060)
+#define ADC_PCLK2_PRESCARE_16                         ((uint32_t)0x00000070)
 
 
 
-/** @defgroup ADC_dual_mode 
+/** @defgroup ADC_dual_mode
 * @{
 */
 
@@ -124,21 +124,21 @@ typedef struct
 #define ADC_TRG_Disable   ((uint32_t)0xfffffffB)
 #define ADC_TRG_Enable    ((uint32_t)0x00000004)
 
-/** @defgroup ADC_extrenal_trigger_sources_for_regular_channels_conversion 
+/** @defgroup ADC_extrenal_trigger_sources_for_regular_channels_conversion
 * @{
 */
 
-/** 
-* @brief  for ADC1  
+/**
+* @brief  for ADC1
 */
 
-#define ADC_ExternalTrigConv_T1_CC1         	((uint32_t)0x00000000)
-#define ADC_ExternalTrigConv_T1_CC2   			  ((uint32_t)0x00000010)
-#define ADC_ExternalTrigConv_T1_CC3     		  ((uint32_t)0x00000020)
-#define ADC_ExternalTrigConv_T2_CC2  			    ((uint32_t)0x00000030)
-#define ADC_ExternalTrigConv_T3_TRGO      		((uint32_t)0x00000040)
-#define ADC_ExternalTrigConv_T3_CC1      		  ((uint32_t)0x00000060)
-#define ADC_ExternalTrigConv_EXTI_11     	    ((uint32_t)0x00000070)
+#define ADC_ExternalTrigConv_T1_CC1             ((uint32_t)0x00000000)
+#define ADC_ExternalTrigConv_T1_CC2                 ((uint32_t)0x00000010)
+#define ADC_ExternalTrigConv_T1_CC3               ((uint32_t)0x00000020)
+#define ADC_ExternalTrigConv_T2_CC2                  ((uint32_t)0x00000030)
+#define ADC_ExternalTrigConv_T3_TRGO              ((uint32_t)0x00000040)
+#define ADC_ExternalTrigConv_T3_CC1                ((uint32_t)0x00000060)
+#define ADC_ExternalTrigConv_EXTI_11             ((uint32_t)0x00000070)
 
 #define IS_ADC_EXT_TRIG(REGTRIG) (((REGTRIG) == ADC_ExternalTrigConv_T1_CC1) || \
 ((REGTRIG) == ADC_ExternalTrigConv_T1_CC2) || \
@@ -160,7 +160,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup ADC_data_align 
+/** @defgroup ADC_data_align
 * @{
 */
 
@@ -172,7 +172,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup ADC_channels 
+/** @defgroup ADC_channels
 * @{
 */
 
@@ -188,7 +188,7 @@ typedef struct
 #define ADC_Channel_9                               ((uint8_t)0x09)
 #define ADC_Channel_10                              ((uint8_t)0x0A) //tempsensor
 #define ADC_Channel_11                              ((uint8_t)0x0B)//vref 1.2V
-#define ADC_Channel_All															((uint8_t)0x0f)
+#define ADC_Channel_All                                                            ((uint8_t)0x0f)
 
 
 #define IS_ADC_CHANNEL(CHANNEL) (((CHANNEL) == ADC_Channel_0) || ((CHANNEL) == ADC_Channel_1) || \
@@ -199,9 +199,9 @@ typedef struct
 
 
 
-/** @defgroup ADC_sampling_times 
+/** @defgroup ADC_sampling_times
 * @{
-*/ 
+*/
 
 #define ADC_SampleTime_1_5Cycles                     ((uint8_t)0x00)
 #define ADC_SampleTime_7_5Cycles                     ((uint8_t)0x01)
@@ -224,7 +224,7 @@ typedef struct
 
 
 
-/** @defgroup ADC_analog_watchdog_selection 
+/** @defgroup ADC_analog_watchdog_selection
 * @{
 */
 
@@ -237,7 +237,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup ADC_interrupts_definition 
+/** @defgroup ADC_interrupts_definition
 * @{
 */
 
@@ -246,13 +246,13 @@ typedef struct
 
 #define IS_ADC_IT(IT) ((((IT) & (uint16_t)0xFFFC) == 0x00) && ((IT) != 0x00))
 
-#define IS_ADC_GET_IT(IT) (((IT) == ADC_IT_EOC) || ((IT) == ADC_IT_AWD)) 
+#define IS_ADC_GET_IT(IT) (((IT) == ADC_IT_EOC) || ((IT) == ADC_IT_AWD))
 
 /**
 * @}
 */
 
-/** @defgroup ADC_flags_definition 
+/** @defgroup ADC_flags_definition
 * @{
 */
 
@@ -263,7 +263,7 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
 
 /** @defgroup ADC_Exported_Functions

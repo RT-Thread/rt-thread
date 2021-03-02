@@ -1,28 +1,28 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šå”¤é†’çº¿ç¨‹
+ * ³ÌĞòÇåµ¥£º»½ĞÑÏß³Ì
  *
- * è¿™ä¸ªä¾‹å­ä¸­å°†åˆ›å»ºä¸¤ä¸ªåŠ¨æ€çº¿ç¨‹ï¼Œä½ä¼˜å…ˆçº§çº¿ç¨‹å°†æŒ‚èµ·è‡ªèº«ï¼Œç„¶å
- * é«˜ä¼˜å…ˆçº§çº¿ç¨‹å°†åœ¨ä¸€å®šæ—¶åˆ»åå”¤é†’ä½ä¼˜å…ˆçº§çº¿ç¨‹ã€‚
+ * Õâ¸öÀı×ÓÖĞ½«´´½¨Á½¸ö¶¯Ì¬Ïß³Ì£¬µÍÓÅÏÈ¼¶Ïß³Ì½«¹ÒÆğ×ÔÉí£¬È»ºó
+ * ¸ßÓÅÏÈ¼¶Ïß³Ì½«ÔÚÒ»¶¨Ê±¿Ìºó»½ĞÑµÍÓÅÏÈ¼¶Ïß³Ì¡£
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
-/* çº¿ç¨‹1å…¥å£ */
+/* Ïß³Ì1Èë¿Ú */
 static void thread1_entry(void* parameter)
 {
-    /* ä½ä¼˜å…ˆçº§çº¿ç¨‹1å¼€å§‹è¿è¡Œ */
+    /* µÍÓÅÏÈ¼¶Ïß³Ì1¿ªÊ¼ÔËĞĞ */
     rt_kprintf("thread1 startup%d\n");
 
-    /* æŒ‚èµ·è‡ªèº« */
+    /* ¹ÒÆğ×ÔÉí */
     rt_kprintf("suspend thread self\n");
     rt_thread_suspend(tid1);
-    /* ä¸»åŠ¨æ‰§è¡Œçº¿ç¨‹è°ƒåº¦ */
+    /* Ö÷¶¯Ö´ĞĞÏß³Ìµ÷¶È */
     rt_schedule();
 
-    /* å½“çº¿ç¨‹1è¢«å”¤é†’æ—¶ */
+    /* µ±Ïß³Ì1±»»½ĞÑÊ± */
     rt_kprintf("thread1 resumed\n");
 }
 static void thread_cleanup(rt_thread_t tid)
@@ -37,27 +37,27 @@ static void thread_cleanup(rt_thread_t tid)
     }
 }
 
-/* çº¿ç¨‹2å…¥å£ */
+/* Ïß³Ì2Èë¿Ú */
 static void thread2_entry(void* parameter)
 {
-    /* å»¶æ—¶10ä¸ªOS Tick */
+    /* ÑÓÊ±10¸öOS Tick */
     rt_thread_delay(10);
 
-    /* å”¤é†’çº¿ç¨‹1 */
+    /* »½ĞÑÏß³Ì1 */
     rt_thread_resume(tid1);
     rt_kprintf("thread2: to resume thread1\n");
 
-    /* å»¶æ—¶10ä¸ªOS Tick */
+    /* ÑÓÊ±10¸öOS Tick */
     rt_thread_delay(10);
 
-    /* çº¿ç¨‹2è‡ªåŠ¨é€€å‡º */
+    /* Ïß³Ì2×Ô¶¯ÍË³ö */
 }
 
 int thread_resume_init()
 {
-    /* åˆ›å»ºçº¿ç¨‹1 */
+    /* ´´½¨Ïß³Ì1 */
     tid1 = rt_thread_create("thread",
-        thread1_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread1_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+        thread1_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread1_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
         THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid1 != RT_NULL)
     {
@@ -67,9 +67,9 @@ int thread_resume_init()
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹2 */
+    /* ´´½¨Ïß³Ì2 */
     tid2 = rt_thread_create("thread",
-        thread2_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread2_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+        thread2_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread2_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
         THREAD_STACK_SIZE, THREAD_PRIORITY - 1, THREAD_TIMESLICE);
     if (tid2 != RT_NULL)
     {
@@ -85,35 +85,35 @@ int thread_resume_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (tid1 != RT_NULL && tid1->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid1);
     if (tid2 != RT_NULL && tid2->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid2);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_thread_resume()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     thread_resume_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 25;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_thread_resume, a thread resume example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     thread_resume_init();

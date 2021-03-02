@@ -65,24 +65,24 @@ struct trng_module *_trng_instance;
  * \retval STATUS_OK  The function exited successfully
  */
 enum status_code trng_register_callback(
-		struct trng_module *const module,
-		trng_callback_t callback_func,
-		const enum trng_callback callback_type)
+        struct trng_module *const module,
+        trng_callback_t callback_func,
+        const enum trng_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(callback_func);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(callback_func);
 
-	/* Register callback function */
-	module->callback[callback_type] = callback_func;
+    /* Register callback function */
+    module->callback[callback_type] = callback_func;
 
-	/* Set the bit corresponding to the callback_type */
-	module->register_callback_mask |= (1 << callback_type);
+    /* Set the bit corresponding to the callback_type */
+    module->register_callback_mask |= (1 << callback_type);
 
-	/* Enable interrupt for this TRNG module */
-	system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_TRNG);
+    /* Enable interrupt for this TRNG module */
+    system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_TRNG);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -97,24 +97,24 @@ enum status_code trng_register_callback(
  * \retval STATUS_OK  The function exited successfully
  */
 enum status_code trng_unregister_callback(
-		struct trng_module *const module,
-		const enum trng_callback callback_type)
+        struct trng_module *const module,
+        const enum trng_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Unregister callback function */
-	module->callback[callback_type] = NULL;
+    /* Unregister callback function */
+    module->callback[callback_type] = NULL;
 
-	/* Clear the bit corresponding to the callback_type */
-	module->register_callback_mask &= ~(1 << callback_type);
+    /* Clear the bit corresponding to the callback_type */
+    module->register_callback_mask &= ~(1 << callback_type);
 
-	/* Disable interrupt for this TRNG module */
-	if (module->register_callback_mask == 0) {
-		system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_TRNG);
-	}
+    /* Disable interrupt for this TRNG module */
+    if (module->register_callback_mask == 0) {
+        system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_TRNG);
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -124,35 +124,35 @@ enum status_code trng_unregister_callback(
  */
 void TRNG_Handler(void)
 {
-	/* Temporary variable */
-	uint8_t interrupt_and_callback_status_mask;
+    /* Temporary variable */
+    uint8_t interrupt_and_callback_status_mask;
 
-	/* Get device instance from the look-up table */
-	struct trng_module *module = _trng_instance;
+    /* Get device instance from the look-up table */
+    struct trng_module *module = _trng_instance;
 
-	/* Read and mask interrupt flag register */
-	interrupt_and_callback_status_mask = module->hw->INTFLAG.reg &
-			(module->register_callback_mask & module->enable_callback_mask);
+    /* Read and mask interrupt flag register */
+    interrupt_and_callback_status_mask = module->hw->INTFLAG.reg &
+            (module->register_callback_mask & module->enable_callback_mask);
 
-	/* Check if data ready needs to be serviced */
-	if (interrupt_and_callback_status_mask & TRNG_INTFLAG_DATARDY) {
-		/* Store random result in job buffer (it will clear data ready flag) */
-		*(module->job_buffer++) = module->hw->DATA.reg;
+    /* Check if data ready needs to be serviced */
+    if (interrupt_and_callback_status_mask & TRNG_INTFLAG_DATARDY) {
+        /* Store random result in job buffer (it will clear data ready flag) */
+        *(module->job_buffer++) = module->hw->DATA.reg;
 
-		module->remaining_number -= 1;
-		if (module->remaining_number == 0) {
-			if (module->job_status == STATUS_BUSY) {
-				/* Job is complete. Update status, disable interrupt
-				 * and call callback */
-				module->job_status = STATUS_OK;
-				module->hw->INTENCLR.reg = TRNG_INTENCLR_DATARDY;
-				(module->callback[TRNG_CALLBACK_READ_BUFFER])(module);
-			}
-		}
-	}
+        module->remaining_number -= 1;
+        if (module->remaining_number == 0) {
+            if (module->job_status == STATUS_BUSY) {
+                /* Job is complete. Update status, disable interrupt
+                 * and call callback */
+                module->job_status = STATUS_OK;
+                module->hw->INTENCLR.reg = TRNG_INTENCLR_DATARDY;
+                (module->callback[TRNG_CALLBACK_READ_BUFFER])(module);
+            }
+        }
+    }
 
-	/* Clear interrupt flag */
-	module->hw->INTFLAG.reg = TRNG_INTFLAG_DATARDY;
+    /* Clear interrupt flag */
+    module->hw->INTFLAG.reg = TRNG_INTFLAG_DATARDY;
 }
 
 /**
@@ -171,27 +171,27 @@ void TRNG_Handler(void)
  * \retval STATUS_BUSY      The TRNG is already busy with another job
  */
 enum status_code trng_read_buffer_job(
-		struct trng_module *const module_inst,
-		uint32_t *buffer,
-		uint32_t number)
+        struct trng_module *const module_inst,
+        uint32_t *buffer,
+        uint32_t number)
 {
-	Assert(module_inst);
-	Assert(number);
-	Assert(buffer);
+    Assert(module_inst);
+    Assert(number);
+    Assert(buffer);
 
-	if (module_inst->remaining_number != 0 ||
-			module_inst->job_status == STATUS_BUSY) {
-		return STATUS_BUSY;
-	}
+    if (module_inst->remaining_number != 0 ||
+            module_inst->job_status == STATUS_BUSY) {
+        return STATUS_BUSY;
+    }
 
-	module_inst->job_status = STATUS_BUSY;
-	module_inst->remaining_number = number;
-	module_inst->job_buffer = buffer;
+    module_inst->job_status = STATUS_BUSY;
+    module_inst->remaining_number = number;
+    module_inst->job_buffer = buffer;
 
-	/* Enable data ready interrupt */
-	module_inst->hw->INTENSET.reg = TRNG_INTENSET_DATARDY;
+    /* Enable data ready interrupt */
+    module_inst->hw->INTENSET.reg = TRNG_INTENSET_DATARDY;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -205,17 +205,17 @@ enum status_code trng_read_buffer_job(
  * \return Status of the job.
  */
 enum status_code trng_get_job_status(
-		struct trng_module *module_inst,
-		enum trng_job_type type)
+        struct trng_module *module_inst,
+        enum trng_job_type type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
+    /* Sanity check arguments */
+    Assert(module_inst);
 
-	if (type == TRNG_JOB_READ_BUFFER) {
-		return module_inst->job_status;
-	} else {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type == TRNG_JOB_READ_BUFFER) {
+        return module_inst->job_status;
+    } else {
+        return STATUS_ERR_INVALID_ARG;
+    }
 }
 
 /**
@@ -225,18 +225,18 @@ enum status_code trng_get_job_status(
  * \param [in]  type        Type of job to abort
  */
 void trng_abort_job(
-		struct trng_module *module_inst,
-		enum trng_job_type type)
+        struct trng_module *module_inst,
+        enum trng_job_type type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
+    /* Sanity check arguments */
+    Assert(module_inst);
 
-	if (type == TRNG_JOB_READ_BUFFER) {
-		/* Disable interrupt */
-		module_inst->hw->INTENCLR.reg = TRNG_INTENCLR_DATARDY;
-		/* Mark job as aborted */
-		module_inst->job_status = STATUS_ABORTED;
-		module_inst->remaining_number = 0;
-	}
+    if (type == TRNG_JOB_READ_BUFFER) {
+        /* Disable interrupt */
+        module_inst->hw->INTENCLR.reg = TRNG_INTENCLR_DATARDY;
+        /* Mark job as aborted */
+        module_inst->job_status = STATUS_ABORTED;
+        module_inst->remaining_number = 0;
+    }
 }
 

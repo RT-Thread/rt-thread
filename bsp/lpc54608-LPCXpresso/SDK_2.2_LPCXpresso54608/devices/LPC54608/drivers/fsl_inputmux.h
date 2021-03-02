@@ -61,7 +61,7 @@ extern "C" {
 #endif
 
 /*!
- * @brief	Initialize INPUTMUX peripheral.
+ * @brief    Initialize INPUTMUX peripheral.
 
  * This function enables the INPUTMUX clock.
  *
@@ -85,7 +85,7 @@ void INPUTMUX_Init(INPUTMUX_Type *base);
 void INPUTMUX_AttachSignal(INPUTMUX_Type *base, uint32_t index, inputmux_connection_t connection);
 
 /*!
- * @brief	Deinitialize INPUTMUX peripheral.
+ * @brief    Deinitialize INPUTMUX peripheral.
 
  * This function disables the INPUTMUX clock.
  *

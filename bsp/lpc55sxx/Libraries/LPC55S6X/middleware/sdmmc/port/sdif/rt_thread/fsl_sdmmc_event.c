@@ -3,7 +3,7 @@
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -91,7 +91,7 @@ static volatile uint32_t *SDMMCEVENT_GetInstance(sdmmc_event_t eventType)
 bool SDMMCEVENT_Create(sdmmc_event_t eventType)
 {
     volatile uint32_t *event = SDMMCEVENT_GetInstance(eventType);
-    
+
     if (event)
     {
         *event = 0;
@@ -107,7 +107,7 @@ bool SDMMCEVENT_Wait(sdmmc_event_t eventType, uint32_t timeoutMilliseconds)
 {
     volatile uint32_t *event = SDMMCEVENT_GetInstance(eventType);
     rt_thread_delay(timeoutMilliseconds);
-    
+
     if (event)
     {
         return true;

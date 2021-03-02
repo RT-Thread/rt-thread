@@ -1,4 +1,4 @@
-/** 
+/**
   ******************************************************************************
   * @file    mfxstm32l152.c
   * @author  MCD Application Team
@@ -32,7 +32,7 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
-  */  
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "mfxstm32l152.h"
@@ -43,66 +43,66 @@
 
 /** @addtogroup Component
   * @{
-  */ 
-  
+  */
+
 /** @defgroup MFXSTM32L152
   * @{
-  */   
-  
+  */
+
 /* Private typedef -----------------------------------------------------------*/
 
 /** @defgroup MFXSTM32L152_Private_Types_Definitions
   * @{
-  */ 
- 
+  */
+
 /* Private define ------------------------------------------------------------*/
 
 /** @defgroup MFXSTM32L152_Private_Defines
   * @{
-  */ 
+  */
 #define MFXSTM32L152_MAX_INSTANCE         3
 
 /* Private macro -------------------------------------------------------------*/
 
 /** @defgroup MFXSTM32L152_Private_Macros
   * @{
-  */ 
-  
+  */
+
 /* Private variables ---------------------------------------------------------*/
 
 /** @defgroup MFXSTM32L152_Private_Variables
   * @{
-  */ 
+  */
 
-/* Touch screen driver structure initialization */  
-TS_DrvTypeDef mfxstm32l152_ts_drv = 
+/* Touch screen driver structure initialization */
+TS_DrvTypeDef mfxstm32l152_ts_drv =
 {
   mfxstm32l152_Init,
   mfxstm32l152_ReadID,
   mfxstm32l152_Reset,
-  
+
   mfxstm32l152_TS_Start,
   mfxstm32l152_TS_DetectTouch,
   mfxstm32l152_TS_GetXY,
-  
+
   mfxstm32l152_TS_EnableIT,
   mfxstm32l152_TS_ClearIT,
   mfxstm32l152_TS_ITStatus,
   mfxstm32l152_TS_DisableIT,
 };
 
-/* IO driver structure initialization */ 
-IO_DrvTypeDef mfxstm32l152_io_drv = 
+/* IO driver structure initialization */
+IO_DrvTypeDef mfxstm32l152_io_drv =
 {
   mfxstm32l152_Init,
   mfxstm32l152_ReadID,
   mfxstm32l152_Reset,
-  
+
   mfxstm32l152_IO_Start,
   mfxstm32l152_IO_Config,
   mfxstm32l152_IO_WritePin,
   mfxstm32l152_IO_ReadPin,
-  
+
   mfxstm32l152_IO_EnableIT,
   mfxstm32l152_IO_DisableIT,
   mfxstm32l152_IO_ITStatus,
@@ -141,14 +141,14 @@ IDD_DrvTypeDef mfxstm32l152_idd_drv =
 uint8_t mfxstm32l152[MFXSTM32L152_MAX_INSTANCE] = {0};
 /**
   * @}
-  */ 
-    
+  */
+
 /* Private function prototypes -----------------------------------------------*/
 
 /** @defgroup MFXSTM32L152_Private_Function_Prototypes
   * @{
   */
-static uint8_t mfxstm32l152_GetInstance(uint16_t DeviceAddr); 
+static uint8_t mfxstm32l152_GetInstance(uint16_t DeviceAddr);
 static uint8_t  mfxstm32l152_ReleaseInstance(uint16_t DeviceAddr);
 static void mfxstm32l152_reg24_setPinValue(uint16_t DeviceAddr, uint8_t RegisterAddr, uint32_t PinPosition, uint8_t PinValue );
 
@@ -167,26 +167,26 @@ void mfxstm32l152_Init(uint16_t DeviceAddr)
 {
   uint8_t instance;
   uint8_t empty;
-  
+
   /* Check if device instance already exists */
   instance = mfxstm32l152_GetInstance(DeviceAddr);
-  
+
   /* To prevent double initialization */
   if(instance == 0xFF)
   {
     /* Look for empty instance */
     empty = mfxstm32l152_GetInstance(0);
-    
+
     if(empty < MFXSTM32L152_MAX_INSTANCE)
     {
       /* Register the current device instance */
       mfxstm32l152[empty] = DeviceAddr;
-      
+
       /* Initialize IO BUS layer */
       MFX_IO_Init();
     }
   }
-  
+
   mfxstm32l152_SetIrqOutPinPolarity(DeviceAddr, MFXSTM32L152_OUT_PIN_POLARITY_HIGH);
   mfxstm32l152_SetIrqOutPinType(DeviceAddr, MFXSTM32L152_OUT_PIN_TYPE_PUSHPULL);
 }
@@ -199,10 +199,10 @@ void mfxstm32l152_Init(uint16_t DeviceAddr)
 void mfxstm32l152_DeInit(uint16_t DeviceAddr)
 {
   uint8_t instance;
-  
+
   /* release existing instance */
   instance = mfxstm32l152_ReleaseInstance(DeviceAddr);
-  
+
   /* De-Init only if instance was previously registered */
   if(instance != 0xFF)
   {
@@ -213,12 +213,12 @@ void mfxstm32l152_DeInit(uint16_t DeviceAddr)
 
 /**
   * @brief  Reset the mfxstm32l152 by Software.
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
 void mfxstm32l152_Reset(uint16_t DeviceAddr)
 {
-  /* Soft Reset */  
+  /* Soft Reset */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL, MFXSTM32L152_SWRST);
 
   /* Wait for a delay to ensure registers erasing */
@@ -247,10 +247,10 @@ void  mfxstm32l152_LowPower(uint16_t DeviceAddr)
 void  mfxstm32l152_WakeUp(uint16_t DeviceAddr)
 {
   uint8_t instance;
-  
+
   /* Check if device instance already exists */
   instance = mfxstm32l152_GetInstance(DeviceAddr);
-  
+
   /* if instance does not exist, first initialize pins*/
   if(instance == 0xFF)
   {
@@ -264,28 +264,28 @@ void  mfxstm32l152_WakeUp(uint16_t DeviceAddr)
 
 /**
   * @brief  Read the MFXSTM32L152 IO Expander device ID.
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval The Device ID (two bytes).
   */
 uint16_t mfxstm32l152_ReadID(uint16_t DeviceAddr)
 {
   uint8_t id;
-  
+
   /* Wait for a delay to ensure the state of registers */
   rt_thread_mdelay(1);
 
   /* Initialize IO BUS layer */
   MFX_IO_Init();
-  
+
   id = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_ID);
-  
+
   /* Return the device ID value */
   return (id);
 }
 
 /**
   * @brief  Read the MFXSTM32L152 device firmware version.
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval The Device FW version (two bytes).
   */
 uint16_t mfxstm32l152_ReadFwVersion(uint16_t DeviceAddr)
@@ -300,56 +300,56 @@ uint16_t mfxstm32l152_ReadFwVersion(uint16_t DeviceAddr)
 
 /**
   * @brief  Enable the interrupt mode for the selected IT source
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @param Source: The interrupt source to be configured, could be:
-  *   @arg  MFXSTM32L152_IRQ_GPIO: IO interrupt 
-  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt    
-  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt    
-  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt  
-  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty  
-  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered  
-  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full  
-  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow  
+  *   @arg  MFXSTM32L152_IRQ_GPIO: IO interrupt
+  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt
+  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty
+  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered
+  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full
+  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow
   * @retval None
-  */  
+  */
 void mfxstm32l152_EnableITSource(uint16_t DeviceAddr, uint8_t Source)
 {
   uint8_t tmp = 0;
-  
+
   /* Get the current value of the INT_EN register */
   tmp = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_IRQ_SRC_EN);
 
-  /* Set the interrupts to be Enabled */    
-  tmp |= Source; 
-  
+  /* Set the interrupts to be Enabled */
+  tmp |= Source;
+
   /* Set the register */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_IRQ_SRC_EN, tmp);
 }
 
 /**
   * @brief  Disable the interrupt mode for the selected IT source
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @param  Source: The interrupt source to be configured, could be:
-  *   @arg  MFXSTM32L152_IRQ_GPIO: IO interrupt 
-  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt    
-  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt    
-  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt  
-  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty  
-  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered  
-  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full  
-  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow  
+  *   @arg  MFXSTM32L152_IRQ_GPIO: IO interrupt
+  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt
+  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty
+  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered
+  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full
+  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow
   * @retval None
   */
 void mfxstm32l152_DisableITSource(uint16_t DeviceAddr, uint8_t Source)
 {
   uint8_t tmp = 0;
-  
+
   /* Get the current value of the INT_EN register */
   tmp = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_IRQ_SRC_EN);
 
-  /* Set the interrupts to be Enabled */    
-  tmp &= ~Source; 
-  
+  /* Set the interrupts to be Enabled */
+  tmp &= ~Source;
+
   /* Set the register */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_IRQ_SRC_EN, tmp);
 }
@@ -357,16 +357,16 @@ void mfxstm32l152_DisableITSource(uint16_t DeviceAddr, uint8_t Source)
 
 /**
   * @brief  Returns the selected Global interrupt source pending bit value
-  * @param  DeviceAddr: Device address on communication Bus. 
+  * @param  DeviceAddr: Device address on communication Bus.
   * @param  Source: the Global interrupt source to be checked, could be:
-  *   @arg  MFXSTM32L152_IRQ_GPIO: IO interrupt 
-  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt    
-  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt    
-  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt  
-  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty  
-  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered  
-  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full  
-  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow  
+  *   @arg  MFXSTM32L152_IRQ_GPIO: IO interrupt
+  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt
+  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty
+  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered
+  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full
+  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow
   * @retval The value of the checked Global interrupt source status.
   */
 uint8_t mfxstm32l152_GlobalITStatus(uint16_t DeviceAddr, uint8_t Source)
@@ -377,18 +377,18 @@ uint8_t mfxstm32l152_GlobalITStatus(uint16_t DeviceAddr, uint8_t Source)
 
 /**
   * @brief  Clear the selected Global interrupt pending bit(s)
-  * @param  DeviceAddr: Device address on communication Bus. 
+  * @param  DeviceAddr: Device address on communication Bus.
   * @param  Source: the Global interrupt source to be cleared, could be any combination
-  *         of the below values. The acknowledge signal for MFXSTM32L152_GPIOs configured in input 
-  *         with interrupt is not on this register but in IRQ_GPI_ACK1, IRQ_GPI_ACK2 registers.          
-  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt    
-  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt    
-  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt  
-  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty  
-  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered  
-  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full  
-  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow  
-  *  /\/\ IMPORTANT NOTE /\/\ must not use MFXSTM32L152_IRQ_GPIO as argument, see IRQ_GPI_ACK1 and IRQ_GPI_ACK2 registers 
+  *         of the below values. The acknowledge signal for MFXSTM32L152_GPIOs configured in input
+  *         with interrupt is not on this register but in IRQ_GPI_ACK1, IRQ_GPI_ACK2 registers.
+  *   @arg  MFXSTM32L152_IRQ_IDD : IDD interrupt
+  *   @arg  MFXSTM32L152_IRQ_ERROR : Error interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_DET : Touch Screen Controller Touch Detected interrupt
+  *   @arg  MFXSTM32L152_IRQ_TS_NE : Touch Screen FIFO Not Empty
+  *   @arg  MFXSTM32L152_IRQ_TS_TH : Touch Screen FIFO threshold triggered
+  *   @arg  MFXSTM32L152_IRQ_TS_FULL : Touch Screen FIFO Full
+  *   @arg  MFXSTM32L152_IRQ_TS_OVF : Touch Screen FIFO Overflow
+  *  /\/\ IMPORTANT NOTE /\/\ must not use MFXSTM32L152_IRQ_GPIO as argument, see IRQ_GPI_ACK1 and IRQ_GPI_ACK2 registers
   * @retval None
   */
 void mfxstm32l152_ClearGlobalIT(uint16_t DeviceAddr, uint8_t Source)
@@ -399,60 +399,60 @@ void mfxstm32l152_ClearGlobalIT(uint16_t DeviceAddr, uint8_t Source)
 
 /**
   * @brief  Set the global interrupt Polarity of IRQ_OUT_PIN.
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @param  Polarity: the IT mode polarity, could be one of the following values:
-  *   @arg  MFXSTM32L152_OUT_PIN_POLARITY_LOW: Interrupt output line is active Low edge      
-  *   @arg  MFXSTM32L152_OUT_PIN_POLARITY_HIGH: Interrupt line output is active High edge              
+  *   @arg  MFXSTM32L152_OUT_PIN_POLARITY_LOW: Interrupt output line is active Low edge
+  *   @arg  MFXSTM32L152_OUT_PIN_POLARITY_HIGH: Interrupt line output is active High edge
   * @retval None
   */
 void mfxstm32l152_SetIrqOutPinPolarity(uint16_t DeviceAddr, uint8_t Polarity)
 {
   uint8_t tmp = 0;
-  
-  /* Get the current register value */ 
+
+  /* Get the current register value */
   tmp = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_MFX_IRQ_OUT);
-  
+
   /* Mask the polarity bits */
   tmp &= ~(uint8_t)0x02;
-    
+
   /* Modify the Interrupt Output line configuration */
   tmp |= Polarity;
-  
+
   /* Set the new register value */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_MFX_IRQ_OUT, tmp);
 
   /* Wait for 1 ms for MFX to change IRQ_out pin config, before activate it */
   rt_thread_delay(1);
-  
+
 }
 
 /**
-  * @brief  Set the global interrupt Type of IRQ_OUT_PIN. 
-  * @param  DeviceAddr: Device address on communication Bus.      
+  * @brief  Set the global interrupt Type of IRQ_OUT_PIN.
+  * @param  DeviceAddr: Device address on communication Bus.
   * @param  Type: Interrupt line activity type, could be one of the following values:
-  *   @arg  MFXSTM32L152_OUT_PIN_TYPE_OPENDRAIN: Open Drain output Interrupt line          
-  *   @arg  MFXSTM32L152_OUT_PIN_TYPE_PUSHPULL: Push Pull output Interrupt line            
+  *   @arg  MFXSTM32L152_OUT_PIN_TYPE_OPENDRAIN: Open Drain output Interrupt line
+  *   @arg  MFXSTM32L152_OUT_PIN_TYPE_PUSHPULL: Push Pull output Interrupt line
   * @retval None
   */
 void mfxstm32l152_SetIrqOutPinType(uint16_t DeviceAddr, uint8_t Type)
 {
   uint8_t tmp = 0;
-  
-  /* Get the current register value */ 
+
+  /* Get the current register value */
   tmp = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_MFX_IRQ_OUT);
-  
+
   /* Mask the type bits */
   tmp &= ~(uint8_t)0x01;
-    
+
   /* Modify the Interrupt Output line configuration */
   tmp |= Type;
-  
+
   /* Set the new register value */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_MFX_IRQ_OUT, tmp);
 
   /* Wait for 1 ms for MFX to change IRQ_out pin config, before activate it */
   rt_thread_delay(1);
-  
+
 }
 
 
@@ -463,49 +463,49 @@ void mfxstm32l152_SetIrqOutPinType(uint16_t DeviceAddr, uint8_t Type)
 
 /**
   * @brief  Start the IO functionality used and enable the AF for selected IO pin(s).
-  * @param  DeviceAddr: Device address on communication Bus.  
-  * @param  AF_en: 0 to disable, else enabled. 
+  * @param  DeviceAddr: Device address on communication Bus.
+  * @param  AF_en: 0 to disable, else enabled.
   * @retval None
   */
 void mfxstm32l152_IO_Start(uint16_t DeviceAddr, uint32_t IO_Pin)
 {
   uint8_t mode;
-  
+
   /* Get the current register value */
   mode = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL);
-  
-  /* Set the IO Functionalities to be Enabled */    
-  mode |= MFXSTM32L152_GPIO_EN;  
-  
+
+  /* Set the IO Functionalities to be Enabled */
+  mode |= MFXSTM32L152_GPIO_EN;
+
   /* Enable ALTERNATE functions */
-  /* AGPIO[0..3] can be either IDD or GPIO */ 
-  /* AGPIO[4..7] can be either TS or GPIO */ 
+  /* AGPIO[0..3] can be either IDD or GPIO */
+  /* AGPIO[4..7] can be either TS or GPIO */
   /* if IDD or TS are enabled no matter the value this bit GPIO are not available for those pins */
-  /*  however the MFX will waste some cycles to to handle these potential GPIO (pooling, etc) */ 
+  /*  however the MFX will waste some cycles to to handle these potential GPIO (pooling, etc) */
   /* so if IDD and TS are both active it is better to let ALTERNATE off (0) */
   /* if however IDD or TS are not connected then set it on gives more GPIOs availability */
   /* remind that AGPIO are less efficient then normal GPIO (They use pooling rather then EXTI */
   if (IO_Pin > 0xFFFF)
   {
-    mode |= MFXSTM32L152_ALTERNATE_GPIO_EN;  
+    mode |= MFXSTM32L152_ALTERNATE_GPIO_EN;
   }
   else
   {
-    mode &= ~MFXSTM32L152_ALTERNATE_GPIO_EN;  
-  }  
+    mode &= ~MFXSTM32L152_ALTERNATE_GPIO_EN;
+  }
 
-  /* Write the new register value */  
+  /* Write the new register value */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL, mode);
-  
+
   /* Wait for 1 ms for MFX to change IRQ_out pin config, before activate it */
   rt_thread_delay(1);
 }
 
 /**
   * @brief  Configures the IO pin(s) according to IO mode structure value.
-  * @param  DeviceAddr: Device address on communication Bus.  
-  * @param  IO_Pin: The output pin to be set or reset. This parameter can be one 
-  *         of the following values:   
+  * @param  DeviceAddr: Device address on communication Bus.
+  * @param  IO_Pin: The output pin to be set or reset. This parameter can be one
+  *         of the following values:
   *   @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23.
   * @param  IO_Mode: The IO pin mode to configure, could be one of the following values:
   *   @arg  IO_MODE_INPUT
@@ -513,7 +513,7 @@ void mfxstm32l152_IO_Start(uint16_t DeviceAddr, uint32_t IO_Pin)
   *   @arg  IO_MODE_IT_RISING_EDGE
   *   @arg  IO_MODE_IT_FALLING_EDGE
   *   @arg  IO_MODE_IT_LOW_LEVEL
-  *   @arg  IO_MODE_IT_HIGH_LEVEL            
+  *   @arg  IO_MODE_IT_HIGH_LEVEL
   *   @arg  IO_MODE_INPUT_PU,
   *   @arg  IO_MODE_INPUT_PD,
   *   @arg  IO_MODE_OUTPUT_OD_PU,
@@ -551,14 +551,14 @@ uint8_t mfxstm32l152_IO_Config(uint16_t DeviceAddr, uint32_t IO_Pin, IO_ModeType
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITHOUT_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_UP);
     break;
-    
+
   case IO_MODE_INPUT_PU: /* Input mode */
     mfxstm32l152_IO_DisablePinIT(DeviceAddr, IO_Pin); /* first disable IT */
     mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITH_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_UP);
     break;
-    
+
   case IO_MODE_INPUT_PD: /* Input mode */
     mfxstm32l152_IO_DisablePinIT(DeviceAddr, IO_Pin); /* first disable IT */
     mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN);
@@ -597,7 +597,7 @@ uint8_t mfxstm32l152_IO_Config(uint16_t DeviceAddr, uint32_t IO_Pin, IO_ModeType
 
   case IO_MODE_IT_RISING_EDGE: /* Interrupt rising edge mode */
     mfxstm32l152_IO_EnableIT(DeviceAddr);
-    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN); 
+    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITHOUT_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_UP);
     mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_EDGE);
@@ -620,8 +620,8 @@ uint8_t mfxstm32l152_IO_Config(uint16_t DeviceAddr, uint32_t IO_Pin, IO_ModeType
     mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITH_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_DOWN);
-    mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_EDGE);      
-    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_HLRE); 
+    mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_EDGE);
+    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_HLRE);
     mfxstm32l152_IO_EnablePinIT(DeviceAddr, IO_Pin);  /* last to do: enable IT */
     break;
 
@@ -647,17 +647,17 @@ uint8_t mfxstm32l152_IO_Config(uint16_t DeviceAddr, uint32_t IO_Pin, IO_ModeType
 
   case IO_MODE_IT_FALLING_EDGE_PD: /* Interrupt falling edge mode */
     mfxstm32l152_IO_EnableIT(DeviceAddr);
-    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN); 
+    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITH_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_DOWN);
-    mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_EDGE);    
-    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_LLFE); 
+    mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_EDGE);
+    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_LLFE);
     mfxstm32l152_IO_EnablePinIT(DeviceAddr, IO_Pin);  /* last to do: enable IT */
     break;
 
   case IO_MODE_IT_LOW_LEVEL: /* Low level interrupt mode */
     mfxstm32l152_IO_EnableIT(DeviceAddr);
-    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN); 
+    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITHOUT_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_UP);
     mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_LEVEL);
@@ -681,13 +681,13 @@ uint8_t mfxstm32l152_IO_Config(uint16_t DeviceAddr, uint32_t IO_Pin, IO_ModeType
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITH_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_DOWN);
     mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_LEVEL);
-    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_LLFE);      
+    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_LLFE);
     mfxstm32l152_IO_EnablePinIT(DeviceAddr, IO_Pin);  /* last to do: enable IT */
     break;
-    
+
   case IO_MODE_IT_HIGH_LEVEL: /* High level interrupt mode */
     mfxstm32l152_IO_EnableIT(DeviceAddr);
-    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN); 
+    mfxstm32l152_IO_InitPin(DeviceAddr, IO_Pin, MFXSTM32L152_GPIO_DIR_IN);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITHOUT_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_UP);
     mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_LEVEL);
@@ -711,14 +711,14 @@ uint8_t mfxstm32l152_IO_Config(uint16_t DeviceAddr, uint32_t IO_Pin, IO_ModeType
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_TYPE1, IO_Pin, MFXSTM32L152_GPI_WITH_PULL_RESISTOR);
     mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_PUPD1, IO_Pin, MFXSTM32L152_GPIO_PULL_DOWN);
     mfxstm32l152_IO_SetIrqEvtMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_EVT_LEVEL);
-    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_HLRE);  
+    mfxstm32l152_IO_SetIrqTypeMode(DeviceAddr, IO_Pin, MFXSTM32L152_IRQ_GPI_TYPE_HLRE);
     mfxstm32l152_IO_EnablePinIT(DeviceAddr, IO_Pin);  /* last to do: enable IT */
-    break;    
-  
+    break;
+
   default:
     error_code = (uint8_t) IO_Mode;
-    break;    
-  } 
+    break;
+  }
 
   return error_code;
 }
@@ -726,10 +726,10 @@ uint8_t mfxstm32l152_IO_Config(uint16_t DeviceAddr, uint32_t IO_Pin, IO_ModeType
 /**
   * @brief  Initialize the selected IO pin direction.
   * @param  DeviceAddr: Device address on communication Bus.
-  * @param  IO_Pin: The IO pin to be configured. This parameter could be any 
+  * @param  IO_Pin: The IO pin to be configured. This parameter could be any
   *         combination of the following values:
-  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.   
-  * @param  Direction: could be MFXSTM32L152_GPIO_DIR_IN or MFXSTM32L152_GPIO_DIR_OUT.      
+  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.
+  * @param  Direction: could be MFXSTM32L152_GPIO_DIR_IN or MFXSTM32L152_GPIO_DIR_OUT.
   * @retval None
   */
 void mfxstm32l152_IO_InitPin(uint16_t DeviceAddr, uint32_t IO_Pin, uint8_t Direction)
@@ -738,14 +738,14 @@ void mfxstm32l152_IO_InitPin(uint16_t DeviceAddr, uint32_t IO_Pin, uint8_t Direc
 }
 
 /**
-  * @brief  Set the global interrupt Type. 
-  * @param  DeviceAddr: Device address on communication Bus.      
-  * @param  IO_Pin: The IO pin to be configured. This parameter could be any 
+  * @brief  Set the global interrupt Type.
+  * @param  DeviceAddr: Device address on communication Bus.
+  * @param  IO_Pin: The IO pin to be configured. This parameter could be any
   *         combination of the following values:
-  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.   
+  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.
   * @param  Evt: Interrupt line activity type, could be one of the following values:
-  *   @arg  MFXSTM32L152_IRQ_GPI_EVT_LEVEL: Interrupt line is active in level model         
-  *   @arg  MFXSTM32L152_IRQ_GPI_EVT_EDGE: Interrupt line is active in edge model           
+  *   @arg  MFXSTM32L152_IRQ_GPI_EVT_LEVEL: Interrupt line is active in level model
+  *   @arg  MFXSTM32L152_IRQ_GPI_EVT_EDGE: Interrupt line is active in edge model
   * @retval None
   */
 void mfxstm32l152_IO_SetIrqEvtMode(uint16_t DeviceAddr, uint32_t IO_Pin, uint8_t Evt)
@@ -758,12 +758,12 @@ void mfxstm32l152_IO_SetIrqEvtMode(uint16_t DeviceAddr, uint32_t IO_Pin, uint8_t
   * @brief  Configure the Edge for which a transition is detectable for the
   *         selected pin.
   * @param  DeviceAddr: Device address on communication Bus.
-  * @param  IO_Pin: The IO pin to be configured. This parameter could be any 
+  * @param  IO_Pin: The IO pin to be configured. This parameter could be any
   *         combination of the following values:
-  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.  
+  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.
   * @param  Evt: Interrupt line activity type, could be one of the following values:
-  *   @arg  MFXSTM32L152_IRQ_GPI_TYPE_LLFE: Interrupt line is active in Low Level or Falling Edge         
-  *   @arg  MFXSTM32L152_IRQ_GPI_TYPE_HLRE: Interrupt line is active in High Level or Rising Edge           
+  *   @arg  MFXSTM32L152_IRQ_GPI_TYPE_LLFE: Interrupt line is active in Low Level or Falling Edge
+  *   @arg  MFXSTM32L152_IRQ_GPI_TYPE_HLRE: Interrupt line is active in High Level or Rising Edge
   * @retval None
   */
 void mfxstm32l152_IO_SetIrqTypeMode(uint16_t DeviceAddr, uint32_t IO_Pin, uint8_t Type)
@@ -774,10 +774,10 @@ void mfxstm32l152_IO_SetIrqTypeMode(uint16_t DeviceAddr, uint32_t IO_Pin, uint8_
 
 /**
   * @brief  When GPIO is in output mode, puts the corresponding GPO in High (1) or Low (0) level.
-  * @param  DeviceAddr: Device address on communication Bus.  
-  * @param  IO_Pin: The output pin to be set or reset. This parameter can be one 
+  * @param  DeviceAddr: Device address on communication Bus.
+  * @param  IO_Pin: The output pin to be set or reset. This parameter can be one
   *         of the following values:
-  *   @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23. 
+  *   @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23.
   * @param PinState: The new IO pin state.
   * @retval None
   */
@@ -787,21 +787,21 @@ void mfxstm32l152_IO_WritePin(uint16_t DeviceAddr, uint32_t IO_Pin, uint8_t PinS
   if (PinState != 0)
   {
     /* Set the SET register */
-	mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPO_SET1, IO_Pin, 1);
+    mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPO_SET1, IO_Pin, 1);
   }
   else
   {
     /* Set the CLEAR register */
-	mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPO_CLR1, IO_Pin, 1);
-  } 
+    mfxstm32l152_reg24_setPinValue(DeviceAddr, MFXSTM32L152_REG_ADR_GPO_CLR1, IO_Pin, 1);
+  }
 }
 
 /**
   * @brief  Return the state of the selected IO pin(s).
-  * @param  DeviceAddr: Device address on communication Bus.  
-  * @param  IO_Pin: The output pin to be set or reset. This parameter can be one 
+  * @param  DeviceAddr: Device address on communication Bus.
+  * @param  IO_Pin: The output pin to be set or reset. This parameter can be one
   *         of the following values:
-  *   @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23. 
+  *   @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23.
   * @retval IO pin(s) state.
   */
 uint32_t mfxstm32l152_IO_ReadPin(uint16_t DeviceAddr, uint32_t IO_Pin)
@@ -809,7 +809,7 @@ uint32_t mfxstm32l152_IO_ReadPin(uint16_t DeviceAddr, uint32_t IO_Pin)
   uint32_t  tmp1 = 0;
   uint32_t  tmp2 = 0;
   uint32_t  tmp3 = 0;
-  
+
   if(IO_Pin & 0x000000FF)
   {
     tmp1 = (uint32_t) MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_GPIO_STATE1);
@@ -824,38 +824,38 @@ uint32_t mfxstm32l152_IO_ReadPin(uint16_t DeviceAddr, uint32_t IO_Pin)
   }
 
   tmp3 = tmp1 + (tmp2 << 8) + (tmp3 << 16);
-  
+
   return(tmp3 & IO_Pin);
 }
 
 /**
   * @brief  Enable the global IO interrupt source.
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
 void mfxstm32l152_IO_EnableIT(uint16_t DeviceAddr)
-{ 
+{
   MFX_IO_ITConfig();
-    
+
   /* Enable global IO IT source */
   mfxstm32l152_EnableITSource(DeviceAddr, MFXSTM32L152_IRQ_GPIO);
 }
 
 /**
   * @brief  Disable the global IO interrupt source.
-  * @param  DeviceAddr: Device address on communication Bus.   
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
 void mfxstm32l152_IO_DisableIT(uint16_t DeviceAddr)
 {
   /* Disable global IO IT source */
-  mfxstm32l152_DisableITSource(DeviceAddr, MFXSTM32L152_IRQ_GPIO);    
+  mfxstm32l152_DisableITSource(DeviceAddr, MFXSTM32L152_IRQ_GPIO);
 }
-  
+
 /**
   * @brief  Enable interrupt mode for the selected IO pin(s).
   * @param  DeviceAddr: Device address on communication Bus.
-  * @param  IO_Pin: The IO interrupt to be enabled. This parameter could be any 
+  * @param  IO_Pin: The IO interrupt to be enabled. This parameter could be any
   *         combination of the following values:
   *   @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23.
   * @retval None
@@ -868,7 +868,7 @@ void mfxstm32l152_IO_EnablePinIT(uint16_t DeviceAddr, uint32_t IO_Pin)
 /**
   * @brief  Disable interrupt mode for the selected IO pin(s).
   * @param  DeviceAddr: Device address on communication Bus.
-  * @param  IO_Pin: The IO interrupt to be disabled. This parameter could be any 
+  * @param  IO_Pin: The IO interrupt to be disabled. This parameter could be any
   *         combination of the following values:
   *   @arg  MFXSTM32L152_GPIO_PIN_x: where x can be from 0 to 23.
   * @retval None
@@ -883,7 +883,7 @@ void mfxstm32l152_IO_DisablePinIT(uint16_t DeviceAddr, uint32_t IO_Pin)
   * @brief  Check the status of the selected IO interrupt pending bit
   * @param  DeviceAddr: Device address on communication Bus.
   * @param  IO_Pin: The IO interrupt to be checked could be:
-  *   @arg  MFXSTM32L152_GPIO_PIN_x Where x can be from 0 to 23.             
+  *   @arg  MFXSTM32L152_GPIO_PIN_x Where x can be from 0 to 23.
   * @retval Status of the checked IO pin(s).
   */
 uint32_t mfxstm32l152_IO_ITStatus(uint16_t DeviceAddr, uint32_t IO_Pin)
@@ -892,7 +892,7 @@ uint32_t mfxstm32l152_IO_ITStatus(uint16_t DeviceAddr, uint32_t IO_Pin)
   uint8_t   tmp1 = 0;
   uint16_t  tmp2 = 0;
   uint32_t  tmp3 = 0;
-  
+
   if(IO_Pin & 0xFF)
   {
     tmp1 = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_IRQ_GPI_PENDING1);
@@ -904,10 +904,10 @@ uint32_t mfxstm32l152_IO_ITStatus(uint16_t DeviceAddr, uint32_t IO_Pin)
   if(IO_Pin & 0xFFFF0000)
   {
     tmp3 = (uint32_t) MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_IRQ_GPI_PENDING3);
-  } 
-  
+  }
+
   tmp3 = tmp1 + (tmp2 << 8) + (tmp3 << 16);
-  
+
   return(tmp3 & IO_Pin);
 }
 
@@ -915,7 +915,7 @@ uint32_t mfxstm32l152_IO_ITStatus(uint16_t DeviceAddr, uint32_t IO_Pin)
   * @brief  Clear the selected IO interrupt pending bit(s). It clear automatically also the general MFXSTM32L152_REG_ADR_IRQ_PENDING
   * @param  DeviceAddr: Device address on communication Bus.
   * @param  IO_Pin: the IO interrupt to be cleared, could be:
-  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.            
+  *   @arg  MFXSTM32L152_GPIO_PIN_x: Where x can be from 0 to 23.
   * @retval None
   */
 void mfxstm32l152_IO_ClearIT(uint16_t DeviceAddr, uint32_t IO_Pin)
@@ -947,7 +947,7 @@ void mfxstm32l152_IO_ClearIT(uint16_t DeviceAddr, uint32_t IO_Pin)
 
 /**
   * @brief  Enable the AF for aGPIO.
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
 void mfxstm32l152_IO_EnableAF(uint16_t DeviceAddr)
@@ -956,24 +956,24 @@ void mfxstm32l152_IO_EnableAF(uint16_t DeviceAddr)
 
   /* Get the current register value */
   mode = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL);
-  
+
   /* Enable ALTERNATE functions */
-  /* AGPIO[0..3] can be either IDD or GPIO */ 
-  /* AGPIO[4..7] can be either TS or GPIO */ 
+  /* AGPIO[0..3] can be either IDD or GPIO */
+  /* AGPIO[4..7] can be either TS or GPIO */
   /* if IDD or TS are enabled no matter the value this bit GPIO are not available for those pins */
-  /*  however the MFX will waste some cycles to to handle these potential GPIO (pooling, etc) */ 
+  /*  however the MFX will waste some cycles to to handle these potential GPIO (pooling, etc) */
   /* so if IDD and TS are both active it is better to let ALTERNATE disabled (0) */
   /* if however IDD or TS are not connected then set it on gives more GPIOs availability */
   /* remind that AGPIO are less efficient then normal GPIO (they use pooling rather then EXTI) */
-  mode |= MFXSTM32L152_ALTERNATE_GPIO_EN;  
- 
-  /* Write the new register value */  
+  mode |= MFXSTM32L152_ALTERNATE_GPIO_EN;
+
+  /* Write the new register value */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL, mode);
 }
 
 /**
   * @brief  Disable the AF for aGPIO.
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
  void mfxstm32l152_IO_DisableAF(uint16_t DeviceAddr)
@@ -982,20 +982,20 @@ void mfxstm32l152_IO_EnableAF(uint16_t DeviceAddr)
 
   /* Get the current register value */
   mode = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL);
-  
+
   /* Enable ALTERNATE functions */
-  /* AGPIO[0..3] can be either IDD or GPIO */ 
-  /* AGPIO[4..7] can be either TS or GPIO */ 
+  /* AGPIO[0..3] can be either IDD or GPIO */
+  /* AGPIO[4..7] can be either TS or GPIO */
   /* if IDD or TS are enabled no matter the value this bit GPIO are not available for those pins */
-  /*  however the MFX will waste some cycles to to handle these potential GPIO (pooling, etc) */ 
+  /*  however the MFX will waste some cycles to to handle these potential GPIO (pooling, etc) */
   /* so if IDD and TS are both active it is better to let ALTERNATE disabled (0) */
   /* if however IDD or TS are not connected then set it on gives more GPIOs availability */
   /* remind that AGPIO are less efficient then normal GPIO (they use pooling rather then EXTI) */
-  mode &= ~MFXSTM32L152_ALTERNATE_GPIO_EN;  
- 
-  /* Write the new register value */  
+  mode &= ~MFXSTM32L152_ALTERNATE_GPIO_EN;
+
+  /* Write the new register value */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL, mode);
-  
+
 }
 
 
@@ -1014,29 +1014,29 @@ void mfxstm32l152_TS_Start(uint16_t DeviceAddr)
 
   /* Get the current register value */
   mode = MFX_IO_Read(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL);
-  
-  /* Set the Functionalities to be Enabled */    
-  mode |= MFXSTM32L152_TS_EN;  
-  
-  /* Set the new register value */  
+
+  /* Set the Functionalities to be Enabled */
+  mode |= MFXSTM32L152_TS_EN;
+
+  /* Set the new register value */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_REG_ADR_SYS_CTRL, mode);
-     
+
   /* Wait for 2 ms */
-  rt_thread_delay(2); 
-  
+  rt_thread_delay(2);
+
   /* Select 2 nF filter capacitor */
-  /* Configuration: 
+  /* Configuration:
      - Touch average control    : 4 samples
      - Touch delay time         : 500 uS
-     - Panel driver setting time: 500 uS 
+     - Panel driver setting time: 500 uS
   */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_TS_SETTLING, 0x32);
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_TS_TOUCH_DET_DELAY, 0x5);
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_TS_AVE, 0x04);
-  
+
   /* Configure the Touch FIFO threshold: single point reading */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_TS_FIFO_TH, 0x01);
-  
+
   /* Clear the FIFO memory content. */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_TS_FIFO_TH, MFXSTM32L152_TS_CLEAR_FIFO);
 
@@ -1044,8 +1044,8 @@ void mfxstm32l152_TS_Start(uint16_t DeviceAddr)
      - No window tracking index
    */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_TS_TRACK, 0x00);
-  
- 
+
+
   /*  Clear all the IT status pending bits if any */
   mfxstm32l152_IO_ClearIT(DeviceAddr, 0xFFFFFF);
 
@@ -1062,10 +1062,10 @@ uint8_t mfxstm32l152_TS_DetectTouch(uint16_t DeviceAddr)
 {
   uint8_t state;
   uint8_t ret = 0;
- 
+
   state = MFX_IO_Read(DeviceAddr, MFXSTM32L152_TS_FIFO_STA);
   state = ((state & (uint8_t)MFXSTM32L152_TS_CTRL_STATUS) == (uint8_t)MFXSTM32L152_TS_CTRL_STATUS);
-  
+
   if(state > 0)
   {
     if(MFX_IO_Read(DeviceAddr, MFXSTM32L152_TS_FIFO_LEVEL) > 0)
@@ -1073,7 +1073,7 @@ uint8_t mfxstm32l152_TS_DetectTouch(uint16_t DeviceAddr)
       ret = 1;
     }
   }
-  
+
   return ret;
 }
 
@@ -1081,7 +1081,7 @@ uint8_t mfxstm32l152_TS_DetectTouch(uint16_t DeviceAddr)
   * @brief  Get the touch screen X and Y positions values
   * @param  DeviceAddr: Device address on communication Bus.
   * @param  X: Pointer to X position value
-  * @param  Y: Pointer to Y position value   
+  * @param  Y: Pointer to Y position value
   * @retval None.
   */
 void mfxstm32l152_TS_GetXY(uint16_t DeviceAddr, uint16_t *X, uint16_t *Y)
@@ -1089,10 +1089,10 @@ void mfxstm32l152_TS_GetXY(uint16_t DeviceAddr, uint16_t *X, uint16_t *Y)
   uint8_t  data_xy[3];
 
   MFX_IO_ReadMultiple(DeviceAddr, MFXSTM32L152_TS_XY_DATA, data_xy, sizeof(data_xy)) ;
-  
+
   /* Calculate positions values */
-  *X = (data_xy[1]<<4) + (data_xy[0]>>4); 
-  *Y = (data_xy[2]<<4) + (data_xy[0]&4); 
+  *X = (data_xy[1]<<4) + (data_xy[0]>>4);
+  *Y = (data_xy[2]<<4) + (data_xy[0]&4);
 
   /* Reset the FIFO memory content. */
   MFX_IO_Write(DeviceAddr, MFXSTM32L152_TS_FIFO_TH, MFXSTM32L152_TS_CLEAR_FIFO);
@@ -1100,31 +1100,31 @@ void mfxstm32l152_TS_GetXY(uint16_t DeviceAddr, uint16_t *X, uint16_t *Y)
 
 /**
   * @brief  Configure the selected source to generate a global interrupt or not
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
 void mfxstm32l152_TS_EnableIT(uint16_t DeviceAddr)
 {
   MFX_IO_ITConfig();
-  
+
   /* Enable global TS IT source */
   mfxstm32l152_EnableITSource(DeviceAddr, MFXSTM32L152_IRQ_TS_DET);
 }
 
 /**
   * @brief  Configure the selected source to generate a global interrupt or not
-  * @param  DeviceAddr: Device address on communication Bus.    
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
 void mfxstm32l152_TS_DisableIT(uint16_t DeviceAddr)
 {
   /* Disable global TS IT source */
-  mfxstm32l152_DisableITSource(DeviceAddr, MFXSTM32L152_IRQ_TS_DET);    
+  mfxstm32l152_DisableITSource(DeviceAddr, MFXSTM32L152_IRQ_TS_DET);
 }
 
 /**
   * @brief  Configure the selected source to generate a global interrupt or not
-  * @param  DeviceAddr: Device address on communication Bus.    
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval TS interrupts status
   */
 uint8_t mfxstm32l152_TS_ITStatus(uint16_t DeviceAddr)
@@ -1135,7 +1135,7 @@ uint8_t mfxstm32l152_TS_ITStatus(uint16_t DeviceAddr)
 
 /**
   * @brief  Configure the selected source to generate a global interrupt or not
-  * @param  DeviceAddr: Device address on communication Bus.  
+  * @param  DeviceAddr: Device address on communication Bus.
   * @retval None
   */
 void mfxstm32l152_TS_ClearIT(uint16_t DeviceAddr)
@@ -1319,7 +1319,7 @@ void mfxstm32l152_IDD_GetValue(uint16_t DeviceAddr, uint32_t *ReadValue)
 /**
   * @brief  Get Last shunt used for measurement
   * @param  DeviceAddr: Device address on communication Bus
-  * @retval Last shunt used 
+  * @retval Last shunt used
   */
 uint8_t  mfxstm32l152_IDD_GetShuntUsed(uint16_t DeviceAddr)
 {
@@ -1451,13 +1451,13 @@ void mfxstm32l152_Error_DisableIT(uint16_t DeviceAddr)
   */
 uint8_t mfxstm32l152_ReadReg(uint16_t DeviceAddr, uint8_t RegAddr)
 {
-  /* Get the current register value */ 
+  /* Get the current register value */
   return(MFX_IO_Read((uint8_t) DeviceAddr, RegAddr));
 }
 
 void mfxstm32l152_WriteReg(uint16_t DeviceAddr, uint8_t RegAddr, uint8_t Value)
 {
-  /* set the current register value */ 
+  /* set the current register value */
   MFX_IO_Write((uint8_t) DeviceAddr, RegAddr, Value);
 }
 
@@ -1466,23 +1466,23 @@ void mfxstm32l152_WriteReg(uint16_t DeviceAddr, uint8_t RegAddr, uint8_t Value)
 /* ------------------------------------------------------------------ */
 /**
   * @brief  Check if the device instance of the selected address is already registered
-  *         and return its index  
+  *         and return its index
   * @param  DeviceAddr: Device address on communication Bus.
   * @retval Index of the device instance if registered, 0xFF if not.
   */
 static uint8_t mfxstm32l152_GetInstance(uint16_t DeviceAddr)
 {
   uint8_t idx = 0;
-  
+
   /* Check all the registered instances */
   for(idx = 0; idx < MFXSTM32L152_MAX_INSTANCE ; idx ++)
   {
     if(mfxstm32l152[idx] == DeviceAddr)
     {
-      return idx; 
+      return idx;
     }
   }
-  
+
   return 0xFF;
 }
 
@@ -1494,7 +1494,7 @@ static uint8_t mfxstm32l152_GetInstance(uint16_t DeviceAddr)
 static uint8_t mfxstm32l152_ReleaseInstance(uint16_t DeviceAddr)
 {
   uint8_t idx = 0;
-  
+
   /* Check for all the registered instances */
   for(idx = 0; idx < MFXSTM32L152_MAX_INSTANCE ; idx ++)
   {
@@ -1509,7 +1509,7 @@ static uint8_t mfxstm32l152_ReleaseInstance(uint16_t DeviceAddr)
 
 /**
   * @brief  Internal routine
-  * @param  DeviceAddr: Device address on communication Bus. 
+  * @param  DeviceAddr: Device address on communication Bus.
   * @param  RegisterAddr: Register Address
   * @param  PinPosition: Pin [0:23]
   * @param  PinValue: 0/1
@@ -1524,79 +1524,79 @@ void mfxstm32l152_reg24_setPinValue(uint16_t DeviceAddr, uint8_t RegisterAddr, u
   pin_8_15  = PinPosition >> 8;
   pin_8_15   = pin_8_15 & 0x00ff;
   pin_16_23 = PinPosition >> 16;
-  
+
   if (pin_0_7)
-  {  
-    /* Get the current register value */ 
+  {
+    /* Get the current register value */
     tmp = MFX_IO_Read(DeviceAddr, RegisterAddr);
-  
+
     /* Set the selected pin direction */
     if (PinValue != 0)
     {
       tmp |= (uint8_t)pin_0_7;
-    }  
-    else 
+    }
+    else
     {
       tmp &= ~(uint8_t)pin_0_7;
     }
-  
+
     /* Set the new register value */
     MFX_IO_Write(DeviceAddr, RegisterAddr, tmp);
   }
 
   if (pin_8_15)
   {
-    /* Get the current register value */ 
+    /* Get the current register value */
     tmp = MFX_IO_Read(DeviceAddr, RegisterAddr+1);
-  
+
     /* Set the selected pin direction */
     if (PinValue != 0)
     {
       tmp |= (uint8_t)pin_8_15;
-    }  
-    else 
+    }
+    else
     {
       tmp &= ~(uint8_t)pin_8_15;
     }
-  
+
     /* Set the new register value */
     MFX_IO_Write(DeviceAddr, RegisterAddr+1, tmp);
-  }  
+  }
 
   if (pin_16_23)
   {
-    /* Get the current register value */ 
+    /* Get the current register value */
     tmp = MFX_IO_Read(DeviceAddr, RegisterAddr+2);
-  
+
     /* Set the selected pin direction */
     if (PinValue != 0)
     {
       tmp |= (uint8_t)pin_16_23;
-    }  
-    else 
+    }
+    else
     {
       tmp &= ~(uint8_t)pin_16_23;
     }
-  
+
     /* Set the new register value */
     MFX_IO_Write(DeviceAddr, RegisterAddr+2, tmp);
-  } 
+  }
 }
 
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */      
+  */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

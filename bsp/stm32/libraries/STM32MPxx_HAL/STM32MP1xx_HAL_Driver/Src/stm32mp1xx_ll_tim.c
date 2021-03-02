@@ -268,7 +268,7 @@ ErrorStatus LL_TIM_DeInit(TIM_TypeDef *TIMx)
     LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_TIM6);
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_TIM6);
   }
-#endif  
+#endif
 #if defined (TIM7)
   else if (TIMx == TIM7)
   {

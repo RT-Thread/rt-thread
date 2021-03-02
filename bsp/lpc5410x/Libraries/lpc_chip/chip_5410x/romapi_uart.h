@@ -44,44 +44,44 @@ extern "C" {
  */
 
 /**
- * @brief	Get memory size in bytes needed for SPI master driver context
- * @return	Size in bytes needed for the ROM driver
+ * @brief    Get memory size in bytes needed for SPI master driver context
+ * @return    Size in bytes needed for the ROM driver
  */
 uint32_t ROM_UART_GetMemSize(void);
 
 /**
- * @brief	Initialize UART ROM Driver
- * @param	pMem		: Pointer to memory area for driver context
- * @param	baseAddr	: Base address of the UART peripheral
- * @param	pUserData	: Pointer to User Data
- * @return	Pointer to the device context handle or NULL on alignment failure
- * @note	Parameter @a pMem must be a pointer to word aligned memory
+ * @brief    Initialize UART ROM Driver
+ * @param    pMem        : Pointer to memory area for driver context
+ * @param    baseAddr    : Base address of the UART peripheral
+ * @param    pUserData    : Pointer to User Data
+ * @return    Pointer to the device context handle or NULL on alignment failure
+ * @note    Parameter @a pMem must be a pointer to word aligned memory
  *          if the pointer is not word aligned (4-Byte) the function returns
  *          NULL.
  */
 UART_HANDLE_T ROM_UART_Init(void *pMem, uint32_t baseAddr, void *pUserData);
 
 /**
- * @brief	Configure the UART peripheral
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @param	pCfg	: Pointer to configuration structure #UART_CFG_T
- * @return	LPC_OK on Success, ERR_UART_PARAM if any of cfg values are invalid
+ * @brief    Configure the UART peripheral
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @param    pCfg    : Pointer to configuration structure #UART_CFG_T
+ * @return    LPC_OK on Success, ERR_UART_PARAM if any of cfg values are invalid
  */
 ErrorCode_t ROM_UART_Configure(UART_HANDLE_T hUART, const UART_CFG_T *pCfg);
 
 /**
- * @brief	Calculate UART Baud rate parameters
- * @param	baud	: [IN/OUT] Pointer to baud rate structure
- * @return	LPC_OK on Success, ERR_UART_BAUDRATE baudrate for given frequency is not within limits
- * @sa		UART_BAUD_T
+ * @brief    Calculate UART Baud rate parameters
+ * @param    baud    : [IN/OUT] Pointer to baud rate structure
+ * @return    LPC_OK on Success, ERR_UART_BAUDRATE baudrate for given frequency is not within limits
+ * @sa        UART_BAUD_T
  */
 ErrorCode_t ROM_UART_CalBaud(UART_BAUD_T *baud);
 
 /**
- * @brief	Set UART Control operations
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @param	cfgVal	: Configuration value (one or more (OR'ed) values of #UART_BREAK_ON, #UART_TX_PAUSE etc)
- * @return	Nothing
+ * @brief    Set UART Control operations
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @param    cfgVal    : Configuration value (one or more (OR'ed) values of #UART_BREAK_ON, #UART_TX_PAUSE etc)
+ * @return    Nothing
  * @note
  * To set TX in BREAK state, use <b>ROM_UART_SetCtrl(hUART, UART_BREAK_ON)</b>, to bring TX out of BREAK state
  * use <b>ROM_UART_SetCtrl(hUART, UART_BREAK_OFF)</b>. Us the above method will set TX line to BREAK state even
@@ -95,54 +95,54 @@ ErrorCode_t ROM_UART_CalBaud(UART_BAUD_T *baud);
 void ROM_UART_SetCtrl(UART_HANDLE_T hUART, uint32_t cfgVal);
 
 /**
- * @brief	Registers a callback function associated with an event
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @param	cbIndex	: Index of the call-back function (Associated with an event)
- * @param	pCbFunc	: Pointer to callback function
- * @return	Success or failure
- * @retval	LPC_OK			Callback successfully registered
- * @retval	ERR_UART_PARAM	Invaild event parameter for @a cbIndex
+ * @brief    Registers a callback function associated with an event
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @param    cbIndex    : Index of the call-back function (Associated with an event)
+ * @param    pCbFunc    : Pointer to callback function
+ * @return    Success or failure
+ * @retval    LPC_OK            Callback successfully registered
+ * @retval    ERR_UART_PARAM    Invaild event parameter for @a cbIndex
  */
 ErrorCode_t ROM_UART_RegisterCB(UART_HANDLE_T hUART, UART_CBINDEX_T cbIndex, void (*pCbFunc)(UART_HANDLE_T,
-																							 UART_EVENT_T,
-																							 void *));
+                                                                                             UART_EVENT_T,
+                                                                                             void *));
 
 /**
- * @brief	UART Event handler function (Usually called from interrupt handler)
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @return	Nothing
+ * @brief    UART Event handler function (Usually called from interrupt handler)
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @return    Nothing
  */
 void ROM_UART_Handler(UART_HANDLE_T hUART);
 
 /**
- * @brief	Send data to UART
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @param	buffer	: Buffer to send
- * @param	size	: Number of items in buffer
- * @return	LPC_OK when buffer is queued successfully for sending
- * @note	If the UART Data size is 9, then buffer should be of type
+ * @brief    Send data to UART
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @param    buffer    : Buffer to send
+ * @param    size    : Number of items in buffer
+ * @return    LPC_OK when buffer is queued successfully for sending
+ * @note    If the UART Data size is 9, then buffer should be of type
  * uint16_t *, size should be number of uint16_t (not size in bytes).
  */
 ErrorCode_t ROM_UART_Send(UART_HANDLE_T hUART, const void *buffer, uint16_t size);
 
 /**
- * @brief	Receive data from UART
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @param	buffer	: Buffer to send
- * @param	size	: Number of items in buffer
- * @return	LPC_OK when buffer is queued successfully for receiving data
- * @note	If the UART Data size is 9, then buffer should be of type
+ * @brief    Receive data from UART
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @param    buffer    : Buffer to send
+ * @param    size    : Number of items in buffer
+ * @return    LPC_OK when buffer is queued successfully for receiving data
+ * @note    If the UART Data size is 9, then buffer should be of type
  * uint16_t *, size should be number of uint16_t (not size in bytes).
  */
 ErrorCode_t ROM_UART_Receive(UART_HANDLE_T hUART, void *buffer, uint16_t size);
 
 /**
- * @brief	Send data to UART [Blocking]
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @param	buffer	: Buffer to send
- * @param	size	: Number of items in buffer
- * @return	LPC_OK when buffer is queued successfully for sending
- * @note	If the UART Data size is 9, then buffer should be of type
+ * @brief    Send data to UART [Blocking]
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @param    buffer    : Buffer to send
+ * @param    size    : Number of items in buffer
+ * @return    LPC_OK when buffer is queued successfully for sending
+ * @note    If the UART Data size is 9, then buffer should be of type
  * uint16_t *, size should be number of uint16_t (not size in bytes).
  * <b> This API is not in the ROM this is a wrapper API, that uses
  * @a ROM_UART_Send() and @a ROM_UART_FlushTx()</b>
@@ -150,12 +150,12 @@ ErrorCode_t ROM_UART_Receive(UART_HANDLE_T hUART, void *buffer, uint16_t size);
 ErrorCode_t ROM_UART_SendBlock(UART_HANDLE_T hUART, const void *buffer, uint16_t size);
 
 /**
- * @brief	Receive data from UART [Blocking]
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @param	buffer	: Buffer to send
- * @param	size	: Number of items in buffer
- * @return	LPC_OK when buffer is queued successfully for receiving data
- * @note	If the UART Data size is 9, then buffer should be of type
+ * @brief    Receive data from UART [Blocking]
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @param    buffer    : Buffer to send
+ * @param    size    : Number of items in buffer
+ * @return    LPC_OK when buffer is queued successfully for receiving data
+ * @note    If the UART Data size is 9, then buffer should be of type
  * uint16_t *, size should be number of uint16_t (not size in bytes).
  * <b> This API is not in the ROM this is a wrapper API, that uses
  * @a ROM_UART_Receive() and @a ROM_UART_FetchRx()</b>
@@ -163,31 +163,31 @@ ErrorCode_t ROM_UART_SendBlock(UART_HANDLE_T hUART, const void *buffer, uint16_t
 ErrorCode_t ROM_UART_ReceiveBlock(UART_HANDLE_T hUART, void *buffer, uint16_t size);
 
 /**
- * @brief	Wait for the current TX buffer to be sent
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @return	Nothing
- * @note	This call will bock the excution till all the data bytes are sent.
- * @sa		ROM_UART_Send()
+ * @brief    Wait for the current TX buffer to be sent
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @return    Nothing
+ * @note    This call will bock the excution till all the data bytes are sent.
+ * @sa        ROM_UART_Send()
  */
 void ROM_UART_WaitTx(UART_HANDLE_T hUART);
 
 /**
- * @brief	Complete the current Receive transfer
- * @param	hUART	: Handle to UART obtained using ROM_UART_Init()
- * @return	Nothing
- * @note	This call will bock the excution till all the data bytes are read,
+ * @brief    Complete the current Receive transfer
+ * @param    hUART    : Handle to UART obtained using ROM_UART_Init()
+ * @return    Nothing
+ * @note    This call will bock the excution till all the data bytes are read,
  * if there is no RX in progress this call will read and discard the current
  * pending RX data and the incoming data until there is no data coming from uart
  * atleast for one data time, mainly used for discarding UART frames that had
  * started arriving and overflown before the ROM_UART_Receive was called.
- * @sa		ROM_UART_Receive()
+ * @sa        ROM_UART_Receive()
  */
 void ROM_UART_WaitRx(UART_HANDLE_T hUART);
 
 /**
- * @brief	Return the UART ROM driver version
- * @return	Driver version number
- * @note	The returned driver version number consists of a major and minor
+ * @brief    Return the UART ROM driver version
+ * @return    Driver version number
+ * @note    The returned driver version number consists of a major and minor
  * number, with the minor number in the lower 8 bits and the major number in
  * the upper 8 bits.
  */

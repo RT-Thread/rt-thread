@@ -1,7 +1,7 @@
 
 /******************************************************************************
 *
-* @brief providing APIs for system integration module (SIM). 
+* @brief providing APIs for system integration module (SIM).
 *
 *******************************************************************************
 *
@@ -48,8 +48,8 @@
 /*****************************************************************************//*!
    *
    * @brief initialize SIM registers.
-   * 
-   * @param[in]  pConfig    pointer to SIM configuration.  
+   *
+   * @param[in]  pConfig    pointer to SIM configuration.
    *
    * @return none
    *
@@ -72,31 +72,31 @@ void SIM_Init(SIM_ConfigType *pConfig)
     u32BusDiv = pConfig->sBits.bBusDiv;
     if(pConfig->sBits.bDisableNMI)
     {
-        u32Sopt &= ~SIM_SOPT_NMIE_MASK;        
+        u32Sopt &= ~SIM_SOPT_NMIE_MASK;
     }
     if(pConfig->sBits.bDisableRESET)
     {
-        u32Sopt &= ~SIM_SOPT_RSTPE_MASK;        
-    }   
+        u32Sopt &= ~SIM_SOPT_RSTPE_MASK;
+    }
     if(pConfig->sBits.bDisableSWD)
     {
-        u32Sopt &= ~SIM_SOPT_SWDE_MASK;        
-    } 
+        u32Sopt &= ~SIM_SOPT_SWDE_MASK;
+    }
     if(pConfig->sBits.bEnableCLKOUT)
     {
-        u32Sopt |= SIM_SOPT_CLKOE_MASK;        
-    } 
+        u32Sopt |= SIM_SOPT_CLKOE_MASK;
+    }
     if(pConfig->sBits.bETMSYNC)
     {
-        u32Sopt |= SIM_SOPT_ETMSYNC_MASK;        
-    }  
+        u32Sopt |= SIM_SOPT_ETMSYNC_MASK;
+    }
     if(pConfig->sBits.bRXDCE)
     {
-        u32Sopt |= SIM_SOPT_RXDCE_MASK;        
+        u32Sopt |= SIM_SOPT_RXDCE_MASK;
     }
     if(pConfig->sBits.bTXDME)
     {
-        u32Sopt |= SIM_SOPT_TXDME_MASK;        
+        u32Sopt |= SIM_SOPT_TXDME_MASK;
     }
     if(pConfig->sBits.bACIC)
     {
@@ -104,30 +104,30 @@ void SIM_Init(SIM_ConfigType *pConfig)
     }
         if(pConfig->sBits.bRTCC)
     {
-        u32Sopt |= SIM_SOPT_RTCC_MASK;        
+        u32Sopt |= SIM_SOPT_RTCC_MASK;
     }
         if(pConfig->sBits.bRXDFE)
     {
-        u32Sopt |= SIM_SOPT_RXDFE_MASK;        
+        u32Sopt |= SIM_SOPT_RXDFE_MASK;
     }
-    u32Sopt |= ((pConfig->u8BusRef & 0x07) << 16);        
-    u32Sopt |= ((pConfig->u8Delay) << 24);        
+    u32Sopt |= ((pConfig->u8BusRef & 0x07) << 16);
+    u32Sopt |= ((pConfig->u8Delay) << 24);
     u32Sopt |= ((pConfig->sBits.u8ADHWT & 0x03) << 8);
     u32PinSel = pConfig->u32PinSel;
-    u32Scgc = pConfig->u32SCGC;   
-    
+    u32Scgc = pConfig->u32SCGC;
+
 /* write SIM registers */
     SIM->SOPT = u32Sopt;
     SIM->PINSEL = u32PinSel;
-    SIM->SCGC = u32Scgc; 
+    SIM->SCGC = u32Scgc;
     SIM->BUSDIV = u32BusDiv;
 }
 #elif defined(CPU_NV32M3)
 /*****************************************************************************//*!
    *
    * @brief initialize SIM registers.
-   * 
-   * @param[in]  pConfig    pointer to SIM configuration.  
+   *
+   * @param[in]  pConfig    pointer to SIM configuration.
    *
    * @return none
    *
@@ -151,44 +151,44 @@ void SIM_Init(SIM_ConfigType *pConfig)
     u32ClockDiv = pConfig->u32CLKDIV;
     if(pConfig->sBits.bDisableNMI)
     {
-        u32Sopt &= ~SIM_SOPT_NMIE_MASK;        
+        u32Sopt &= ~SIM_SOPT_NMIE_MASK;
     }
     if(pConfig->sBits.bDisableRESET)
     {
-        u32Sopt &= ~SIM_SOPT_RSTPE_MASK;        
-    }   
+        u32Sopt &= ~SIM_SOPT_RSTPE_MASK;
+    }
     if(pConfig->sBits.bDisableSWD)
     {
-        u32Sopt &= ~SIM_SOPT_SWDE_MASK;        
-    } 
+        u32Sopt &= ~SIM_SOPT_SWDE_MASK;
+    }
     if(pConfig->sBits.bEnableCLKOUT)
     {
-        u32Sopt |= SIM_SOPT_CLKOE_MASK;        
-    } 
+        u32Sopt |= SIM_SOPT_CLKOE_MASK;
+    }
     if(pConfig->sBits.bETMSYNC)
     {
-        u32Sopt |= SIM_SOPT_ETMSYNC_MASK;        
-    }  
+        u32Sopt |= SIM_SOPT_ETMSYNC_MASK;
+    }
     if(pConfig->sBits.bRXDCE)
     {
-        u32Sopt |= SIM_SOPT_RXDCE_MASK;        
+        u32Sopt |= SIM_SOPT_RXDCE_MASK;
     }
     if(pConfig->sBits.bTXDME)
     {
-        u32Sopt |= SIM_SOPT_TXDME_MASK;        
+        u32Sopt |= SIM_SOPT_TXDME_MASK;
     }
     if(pConfig->sBits.bACTRG)
     {
         u32Sopt |= SIM_SOPT_ACTRG_MASK;
     }
-    u32Sopt |= ((pConfig->u8BusRef & 0x07) << 16);        
-    u32Sopt |= ((pConfig->u8Delay) << 24);        
+    u32Sopt |= ((pConfig->u8BusRef & 0x07) << 16);
+    u32Sopt |= ((pConfig->u8Delay) << 24);
     u32Sopt |= ((pConfig->sBits.u8ADHWT & 0x07) << 20);
     u32Sopt |= ((pConfig->sBits.bRXDFE)&0x03<<8);
     u32Sopt |= ((pConfig->sBits.bETMIC)&0x03<<6);
 
     u32PinSel = pConfig->u32PinSel;
-    u32Scgc = pConfig->u32SCGC;    
+    u32Scgc = pConfig->u32SCGC;
 /* write SIM registers */
     SIM->SOPT = u32Sopt;
     SIM->PINSEL = u32PinSel;
@@ -199,8 +199,8 @@ void SIM_Init(SIM_ConfigType *pConfig)
 /*****************************************************************************//*!
    *
    * @brief initialize SIM registers.
-   * 
-   * @param[in]  pConfig    pointer to SIM configuration.  
+   *
+   * @param[in]  pConfig    pointer to SIM configuration.
    *
    * @return none
    *
@@ -223,44 +223,44 @@ void SIM_Init(SIM_ConfigType *pConfig)
     u32ClockDiv = pConfig->u32CLKDIV;
     if(pConfig->sBits.bDisableNMI)
     {
-        u32Sopt &= ~SIM_SOPT0_NMIE_MASK;        
+        u32Sopt &= ~SIM_SOPT0_NMIE_MASK;
     }
     if(pConfig->sBits.bDisableRESET)
     {
-        u32Sopt &= ~SIM_SOPT0_RSTPE_MASK;        
-    }   
+        u32Sopt &= ~SIM_SOPT0_RSTPE_MASK;
+    }
     if(pConfig->sBits.bDisableSWD)
     {
-        u32Sopt &= ~SIM_SOPT0_SWDE_MASK;        
-    } 
+        u32Sopt &= ~SIM_SOPT0_SWDE_MASK;
+    }
     if(pConfig->sBits.bEnableCLKOUT)
     {
-        u32Sopt |= SIM_SOPT0_CLKOE_MASK;        
-    } 
+        u32Sopt |= SIM_SOPT0_CLKOE_MASK;
+    }
     if(pConfig->sBits.bETMSYNC)
     {
-        u32Sopt |= SIM_SOPT0_ETMSYNC_MASK;        
-    }  
+        u32Sopt |= SIM_SOPT0_ETMSYNC_MASK;
+    }
     if(pConfig->sBits.bRXDCE)
     {
-        u32Sopt |= SIM_SOPT0_RXDCE_MASK;        
+        u32Sopt |= SIM_SOPT0_RXDCE_MASK;
     }
     if(pConfig->sBits.bTXDME)
     {
-        u32Sopt |= SIM_SOPT0_TXDME_MASK;        
+        u32Sopt |= SIM_SOPT0_TXDME_MASK;
     }
     if(pConfig->sBits.bACTRG)
     {
         u32Sopt |= SIM_SOPT0_ACTRG_MASK;
     }
-    u32Sopt |= ((pConfig->u8BusRef & 0x07) << 16);        
-    u32Sopt |= ((pConfig->u8Delay) << 24);        
+    u32Sopt |= ((pConfig->u8BusRef & 0x07) << 16);
+    u32Sopt |= ((pConfig->u8Delay) << 24);
     u32Sopt |= ((pConfig->sBits.u8ADHWT & 0x07) << 20);
     u32Sopt |= ((pConfig->sBits.bRXDFE)&0x03<<8);
     //u32Sopt |= ((pConfig->sBits.bETMIC)&0x03<<6);
 
     u32PinSel = pConfig->u32PinSel;
-    u32Scgc = pConfig->u32SCGC;    
+    u32Scgc = pConfig->u32SCGC;
 /* write SIM registers */
     SIM->SOPT0 = u32Sopt;
     SIM->PINSEL = u32PinSel;
@@ -272,9 +272,9 @@ void SIM_Init(SIM_ConfigType *pConfig)
 /*****************************************************************************//*!
    *
    * @brief set SIM clock gating registers to enable or disable peripheral clocks.
-   * 
-   * @param[in]  u32PeripheralMask    peripherial bits mask.  
-   * @param[in]  u8GateOn             1: ON, 0: OFF.  
+   *
+   * @param[in]  u32PeripheralMask    peripherial bits mask.
+   * @param[in]  u8GateOn             1: ON, 0: OFF.
    *
    * @return none
    *
@@ -289,14 +289,14 @@ void SIM_SetClockGating(uint32_t u32PeripheralMask, uint8_t u8GateOn)
      * save original clock gating value
      */
     u32Scgc     = SIM->SCGC;
-    
+
     if(u8GateOn)
     {
         u32Scgc |= u32PeripheralMask;
     }
     else
     {
-        u32Scgc &= ~u32PeripheralMask;        
+        u32Scgc &= ~u32PeripheralMask;
     }
 
     SIM->SCGC = u32Scgc;
@@ -306,8 +306,8 @@ void SIM_SetClockGating(uint32_t u32PeripheralMask, uint8_t u8GateOn)
 /*****************************************************************************//*!
    *
    * @brief read the corresponding status flags.
-   * 
-   * @param[in]  u32StatusMask    indicates which status to be read. 
+   *
+   * @param[in]  u32StatusMask    indicates which status to be read.
    *
    * @return status.
    *
@@ -324,8 +324,8 @@ uint32_t SIM_GetStatus(uint32_t u32StatusMask)
 /*****************************************************************************//*!
    *
    * @brief read the corresponding ID.
-   * 
-   * @param[in]  u8ID    type of ID. 
+   *
+   * @param[in]  u8ID    type of ID.
    *
    * @return ID
    *
@@ -335,10 +335,10 @@ uint32_t SIM_GetStatus(uint32_t u32StatusMask)
 uint8_t SIM_ReadID(IDType sID)
 {
     uint32_t    u32ID;
-    uint8_t u8IDOffset[4] = 
-    { 
+    uint8_t u8IDOffset[4] =
+    {
         28, 24, 20,16
-    };  
+    };
     u32ID = (SIM->SRSID >> u8IDOffset[sID]) & 0x0F;
     return (u32ID);
 }

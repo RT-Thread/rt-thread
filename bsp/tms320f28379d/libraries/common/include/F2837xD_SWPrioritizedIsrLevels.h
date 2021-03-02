@@ -11,32 +11,32 @@
 // $Copyright:
 // Copyright (C) 2013-2018 Texas Instruments Incorporated - http://www.ti.com/
 //
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
 // are met:
-// 
-//   Redistributions of source code must retain the above copyright 
+//
+//   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
-//   notice, this list of conditions and the following disclaimer in the 
-//   documentation and/or other materials provided with the   
+//   notice, this list of conditions and the following disclaimer in the
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // $
 //###########################################################################
@@ -78,22 +78,22 @@ extern "C" {
 // ...
 // 16 = lowest priority
 //
-#define	INT1PL      2        // Group1 Interrupts (PIEIER1)
-#define	INT2PL      1        // Group2 Interrupts (PIEIER2)
-#define	INT3PL      4        // Group3 Interrupts (PIEIER3)
-#define	INT4PL      2        // Group4 Interrupts (PIEIER4)
-#define	INT5PL      2        // Group5 Interrupts (PIEIER5)
-#define	INT6PL      3        // Group6 Interrupts (PIEIER6)
-#define	INT7PL      5        // Group7 Interrupts (PIEIER6)
-#define	INT8PL      5        // Group8 Interrupts (PIEIER6)
-#define	INT9PL      3        // Group9 Interrupts (PIEIER9)
-#define	INT10PL     6        // Group10 Interrupts (PIEIER6)
-#define	INT11PL     6        // Group11 Interrupts (PIEIER6)
-#define	INT12PL     8        // Group12 Interrupts (PIEIER6)
-#define	INT13PL     4        // XINT13
-#define	INT14PL     4        // INT14 (TINT2)
-#define	INT15PL     4        // DATALOG
-#define	INT16PL     4        // RTOSINT
+#define    INT1PL      2        // Group1 Interrupts (PIEIER1)
+#define    INT2PL      1        // Group2 Interrupts (PIEIER2)
+#define    INT3PL      4        // Group3 Interrupts (PIEIER3)
+#define    INT4PL      2        // Group4 Interrupts (PIEIER4)
+#define    INT5PL      2        // Group5 Interrupts (PIEIER5)
+#define    INT6PL      3        // Group6 Interrupts (PIEIER6)
+#define    INT7PL      5        // Group7 Interrupts (PIEIER6)
+#define    INT8PL      5        // Group8 Interrupts (PIEIER6)
+#define    INT9PL      3        // Group9 Interrupts (PIEIER9)
+#define    INT10PL     6        // Group10 Interrupts (PIEIER6)
+#define    INT11PL     6        // Group11 Interrupts (PIEIER6)
+#define    INT12PL     8        // Group12 Interrupts (PIEIER6)
+#define    INT13PL     4        // XINT13
+#define    INT14PL     4        // INT14 (TINT2)
+#define    INT15PL     4        // DATALOG
+#define    INT16PL     4        // RTOSINT
 
 //
 // Set "Group" Interrupt Priority Level (PIEIER1 to PIEIER12 registers):
@@ -130,209 +130,209 @@ extern "C" {
 // ...
 // 16  = lowest priority
 //
-#define G1_1PL		5		// ADCA1_INT
-#define G1_2PL		3		// ADCB1_INT
-#define G1_3PL		1		// ADCC1_INT
-#define G1_4PL		4		// XINT1_INT
-#define G1_5PL		4		// XINT2_INT
-#define G1_6PL		1		// ADCD1_INT
-#define G1_7PL		12		// TIMER0_INT
-#define G1_8PL		5		// WAKE_INT
-#define G1_9PL		0   	// Reserved
-#define G1_10PL		0   	// Reserved
-#define G1_11PL		0   	// Reserved
-#define G1_12PL		0   	// Reserved
-#define G1_13PL		8		// IPC1_INT
-#define G1_14PL		13		// IPC2_INT
-#define G1_15PL		15		// IPC3_INT
-#define G1_16PL		9		// IPC4_INT
+#define G1_1PL        5        // ADCA1_INT
+#define G1_2PL        3        // ADCB1_INT
+#define G1_3PL        1        // ADCC1_INT
+#define G1_4PL        4        // XINT1_INT
+#define G1_5PL        4        // XINT2_INT
+#define G1_6PL        1        // ADCD1_INT
+#define G1_7PL        12        // TIMER0_INT
+#define G1_8PL        5        // WAKE_INT
+#define G1_9PL        0       // Reserved
+#define G1_10PL        0       // Reserved
+#define G1_11PL        0       // Reserved
+#define G1_12PL        0       // Reserved
+#define G1_13PL        8        // IPC1_INT
+#define G1_14PL        13        // IPC2_INT
+#define G1_15PL        15        // IPC3_INT
+#define G1_16PL        9        // IPC4_INT
 
-#define G2_1PL		13		// EPWM1_TZ_INT
-#define G2_2PL		1		// EPWM2_TZ_INT
-#define G2_3PL		1		// EPWM3_TZ_INT
-#define G2_4PL		9		// EPWM4_TZ_INT
-#define G2_5PL      3		// EPWM5_TZ_INT
-#define G2_6PL		13		// EPWM6_TZ_INT
-#define G2_7PL		9		// EPWM7_TZ_INT
-#define G2_8PL		13		// EPWM8_TZ_INT
-#define G2_9PL		15		// EPWM9_TZ_INT
-#define G2_10PL		11		// EPWM10_TZ_INT
-#define G2_11PL		7		// EPWM11_TZ_INT
-#define G2_12PL		10		// EPWM12_TZ_INT
-#define G2_13PL		0   	// Reserved
-#define G2_14PL		0   	// Reserved
-#define G2_15PL		0   	// Reserved
-#define G2_16PL		0   	// Reserved
+#define G2_1PL        13        // EPWM1_TZ_INT
+#define G2_2PL        1        // EPWM2_TZ_INT
+#define G2_3PL        1        // EPWM3_TZ_INT
+#define G2_4PL        9        // EPWM4_TZ_INT
+#define G2_5PL      3        // EPWM5_TZ_INT
+#define G2_6PL        13        // EPWM6_TZ_INT
+#define G2_7PL        9        // EPWM7_TZ_INT
+#define G2_8PL        13        // EPWM8_TZ_INT
+#define G2_9PL        15        // EPWM9_TZ_INT
+#define G2_10PL        11        // EPWM10_TZ_INT
+#define G2_11PL        7        // EPWM11_TZ_INT
+#define G2_12PL        10        // EPWM12_TZ_INT
+#define G2_13PL        0       // Reserved
+#define G2_14PL        0       // Reserved
+#define G2_15PL        0       // Reserved
+#define G2_16PL        0       // Reserved
 
-#define G3_1PL		5		// EPWM1_INT
-#define G3_2PL		9		// EPWM2_INT
-#define G3_3PL		5		// EPWM3_INT
-#define G3_4PL		2		// EPWM4_INT
-#define G3_5PL		12		// EPWM5_INT
-#define G3_6PL		4		// EPWM6_INT
-#define G3_7PL		2		// EPWM7_INT
-#define G3_8PL		13		// EPWM8_INT
-#define G3_9PL		4		// EPWM9_INT
-#define G3_10PL		12		// EPWM10_INT
-#define G3_11PL		4		// EPWM11_INT
-#define G3_12PL		14		// EPWM12_INT
-#define G3_13PL		0		// Reserved
-#define G3_14PL		0		// Reserved
-#define G3_15PL		0		// Reserved
-#define G3_16PL		0		// Reserved
+#define G3_1PL        5        // EPWM1_INT
+#define G3_2PL        9        // EPWM2_INT
+#define G3_3PL        5        // EPWM3_INT
+#define G3_4PL        2        // EPWM4_INT
+#define G3_5PL        12        // EPWM5_INT
+#define G3_6PL        4        // EPWM6_INT
+#define G3_7PL        2        // EPWM7_INT
+#define G3_8PL        13        // EPWM8_INT
+#define G3_9PL        4        // EPWM9_INT
+#define G3_10PL        12        // EPWM10_INT
+#define G3_11PL        4        // EPWM11_INT
+#define G3_12PL        14        // EPWM12_INT
+#define G3_13PL        0        // Reserved
+#define G3_14PL        0        // Reserved
+#define G3_15PL        0        // Reserved
+#define G3_16PL        0        // Reserved
 
-#define G4_1PL		3		// ECAP1_INT
-#define G4_2PL		3		// ECAP2_INT
-#define G4_3PL		3		// ECAP3_INT
-#define G4_4PL		6		// ECAP4_INT
-#define G4_5PL		7		// ECAP5_INT
-#define G4_6PL		7       // ECAP6_INT
-#define G4_7PL		0   	// Reserved
-#define G4_8PL		0   	// Reserved
-#define G4_9PL		0   	// Reserved
-#define G4_10PL		0   	// Reserved
-#define G4_11PL		0       // Reserved
-#define G4_12PL		0       // Reserved
-#define G4_13PL		0       // Reserved
-#define G4_14PL		0   	// Reserved
-#define G4_15PL		0   	// Reserved
-#define G4_16PL		0       // Reserved
+#define G4_1PL        3        // ECAP1_INT
+#define G4_2PL        3        // ECAP2_INT
+#define G4_3PL        3        // ECAP3_INT
+#define G4_4PL        6        // ECAP4_INT
+#define G4_5PL        7        // ECAP5_INT
+#define G4_6PL        7       // ECAP6_INT
+#define G4_7PL        0       // Reserved
+#define G4_8PL        0       // Reserved
+#define G4_9PL        0       // Reserved
+#define G4_10PL        0       // Reserved
+#define G4_11PL        0       // Reserved
+#define G4_12PL        0       // Reserved
+#define G4_13PL        0       // Reserved
+#define G4_14PL        0       // Reserved
+#define G4_15PL        0       // Reserved
+#define G4_16PL        0       // Reserved
 
-#define G5_1PL		6		// EQEP1_INT
-#define G5_2PL		5		// EQEP2_INT
-#define G5_3PL		5		// EQEP3_INT
-#define G5_4PL		1		// Reserved
-#define G5_5PL		9		// CLB1_INT
-#define G5_6PL		10		// CLB2_INT
-#define G5_7PL		15		// CLB3_INT
-#define G5_8PL		13		// CLB4_INT
-#define G5_9PL		12		// SD1_INT
-#define G5_10PL		9		// SD2_INT
-#define G5_11PL		0   	// Reserved
-#define G5_12PL		0   	// Reserved
-#define G5_13PL		0   	// Reserved
-#define G5_14PL		0   	// Reserved
-#define G5_15PL		0   	// Reserved
-#define G5_16PL		0   	// Reserved
+#define G5_1PL        6        // EQEP1_INT
+#define G5_2PL        5        // EQEP2_INT
+#define G5_3PL        5        // EQEP3_INT
+#define G5_4PL        1        // Reserved
+#define G5_5PL        9        // CLB1_INT
+#define G5_6PL        10        // CLB2_INT
+#define G5_7PL        15        // CLB3_INT
+#define G5_8PL        13        // CLB4_INT
+#define G5_9PL        12        // SD1_INT
+#define G5_10PL        9        // SD2_INT
+#define G5_11PL        0       // Reserved
+#define G5_12PL        0       // Reserved
+#define G5_13PL        0       // Reserved
+#define G5_14PL        0       // Reserved
+#define G5_15PL        0       // Reserved
+#define G5_16PL        0       // Reserved
 
-#define G6_1PL		1		// SPIA_RX_INT
-#define G6_2PL		7		// SPIA_TX_INT
-#define G6_3PL		3		// SPIB_RX_INT
-#define G6_4PL		3		// SPIB_TX_INT
-#define G6_5PL		10		// MCBSPA_RX_INT
-#define G6_6PL		7		// MCBSPA_TX_INT
-#define G6_7PL		6		// MCBSPB_RX_INT
-#define G6_8PL		13		// MCBSPB_TX_INT
-#define G6_9PL		14		// SPIC_RX_INT
-#define G6_10PL		3		// SPIC_TX_INT
-#define G6_11PL		0		// Reserved
-#define G6_12PL		0		// Reserved
-#define G6_13PL		0		// Reserved
-#define G6_14PL		0		// Reserved
-#define G6_15PL		0		// Reserved
-#define G6_16PL		0		// Reserved
+#define G6_1PL        1        // SPIA_RX_INT
+#define G6_2PL        7        // SPIA_TX_INT
+#define G6_3PL        3        // SPIB_RX_INT
+#define G6_4PL        3        // SPIB_TX_INT
+#define G6_5PL        10        // MCBSPA_RX_INT
+#define G6_6PL        7        // MCBSPA_TX_INT
+#define G6_7PL        6        // MCBSPB_RX_INT
+#define G6_8PL        13        // MCBSPB_TX_INT
+#define G6_9PL        14        // SPIC_RX_INT
+#define G6_10PL        3        // SPIC_TX_INT
+#define G6_11PL        0        // Reserved
+#define G6_12PL        0        // Reserved
+#define G6_13PL        0        // Reserved
+#define G6_14PL        0        // Reserved
+#define G6_15PL        0        // Reserved
+#define G6_16PL        0        // Reserved
 
-#define G7_1PL		1		// DMA_CH1_INT
-#define G7_2PL		11		// DMA_CH2_INT
-#define G7_3PL		14		// DMA_CH3_INT
-#define G7_4PL		3		// DMA_CH4_INT
-#define G7_5PL		13		// DMA_CH5_INT
-#define G7_6PL		14		// DMA_CH6_INT
-#define G7_7PL		0   	// Reserved
-#define G7_8PL		0   	// Reserved
-#define G7_9PL		0   	// Reserved
-#define G7_10PL		0   	// Reserved
-#define G7_11PL		0   	// Reserved
-#define G7_12PL		0   	// Reserved
-#define G7_13PL		0   	// Reserved
-#define G7_14PL		0   	// Reserved
-#define G7_15PL		0   	// Reserved
-#define G7_16PL		0   	// Reserved
+#define G7_1PL        1        // DMA_CH1_INT
+#define G7_2PL        11        // DMA_CH2_INT
+#define G7_3PL        14        // DMA_CH3_INT
+#define G7_4PL        3        // DMA_CH4_INT
+#define G7_5PL        13        // DMA_CH5_INT
+#define G7_6PL        14        // DMA_CH6_INT
+#define G7_7PL        0       // Reserved
+#define G7_8PL        0       // Reserved
+#define G7_9PL        0       // Reserved
+#define G7_10PL        0       // Reserved
+#define G7_11PL        0       // Reserved
+#define G7_12PL        0       // Reserved
+#define G7_13PL        0       // Reserved
+#define G7_14PL        0       // Reserved
+#define G7_15PL        0       // Reserved
+#define G7_16PL        0       // Reserved
 
-#define G8_1PL		14		// I2CA_INT
-#define G8_2PL		10		// I2CA_FIFO_INT
-#define G8_3PL		11		// I2CB_INT
-#define G8_4PL		9		// I2CB_FIFO_INT
-#define G8_5PL		12		// SCIC_RX_INT
-#define G8_6PL		2		// SCIC_TX_INT
-#define G8_7PL		8		// SCID_RX_INT
-#define G8_8PL		7		// SCID_TX_INT
-#define G8_9PL		0		// Reserved
-#define G8_10PL		0		// Reserved
-#define G8_11PL		0		// Reserved
-#define G8_12PL		0		// Reserved
-#define G8_13PL		0		// Reserved
-#define G8_14PL		0		// Reserved
-#define G8_15PL		1		// UPPA_INT
-#define G8_16PL		0		// Reserved
+#define G8_1PL        14        // I2CA_INT
+#define G8_2PL        10        // I2CA_FIFO_INT
+#define G8_3PL        11        // I2CB_INT
+#define G8_4PL        9        // I2CB_FIFO_INT
+#define G8_5PL        12        // SCIC_RX_INT
+#define G8_6PL        2        // SCIC_TX_INT
+#define G8_7PL        8        // SCID_RX_INT
+#define G8_8PL        7        // SCID_TX_INT
+#define G8_9PL        0        // Reserved
+#define G8_10PL        0        // Reserved
+#define G8_11PL        0        // Reserved
+#define G8_12PL        0        // Reserved
+#define G8_13PL        0        // Reserved
+#define G8_14PL        0        // Reserved
+#define G8_15PL        1        // UPPA_INT
+#define G8_16PL        0        // Reserved
 
-#define G9_1PL		12		// SCIA_RX_INT
-#define G9_2PL		14		// SCIA_TX_INT
-#define G9_3PL		11		// SCIB_RX_INT
-#define G9_4PL		6		// SCIB_TX_INT
-#define G9_5PL		14		// CANA0_INT
-#define G9_6PL		10		// CANA1_INT
-#define G9_7PL		10		// CANB0_INT
-#define G9_8PL		5		// CANB1_INT
-#define G9_9PL		0		// Reserved
-#define G9_10PL		0		// Reserved
-#define G9_11PL		0		// Reserved
-#define G9_12PL		0		// Reserved
-#define G9_13PL		0		// Reserved
-#define G9_14PL		0		// Reserved
-#define G9_15PL		12		// USBA_INT
-#define G9_16PL		0		// Reserved
+#define G9_1PL        12        // SCIA_RX_INT
+#define G9_2PL        14        // SCIA_TX_INT
+#define G9_3PL        11        // SCIB_RX_INT
+#define G9_4PL        6        // SCIB_TX_INT
+#define G9_5PL        14        // CANA0_INT
+#define G9_6PL        10        // CANA1_INT
+#define G9_7PL        10        // CANB0_INT
+#define G9_8PL        5        // CANB1_INT
+#define G9_9PL        0        // Reserved
+#define G9_10PL        0        // Reserved
+#define G9_11PL        0        // Reserved
+#define G9_12PL        0        // Reserved
+#define G9_13PL        0        // Reserved
+#define G9_14PL        0        // Reserved
+#define G9_15PL        12        // USBA_INT
+#define G9_16PL        0        // Reserved
 
-#define G10_1PL		14		// ADCA_EVT_INT
-#define G10_2PL		3		// ADCA2_INT
-#define G10_3PL		1		// ADCA3_INT
-#define G10_4PL		12		// ADCA4_INT
-#define G10_5PL		5		// ADCB_EVT_INT
-#define G10_6PL		11		// ADCB2_INT
-#define G10_7PL		12		// ADCB3_INT
-#define G10_8PL		13		// ADCB4_INT
-#define G10_9PL		7		// ADCC_EVT_INT
-#define G10_10PL	8		// ADCC2_INT
-#define G10_11PL	4		// ADCC3_INT
-#define G10_12PL	9		// ADCC4_INT
-#define G10_13PL	2		// ADCD_EVT_INT
-#define G10_14PL	10		// ADCD2_INT
-#define G10_15PL	11		// ADCD3_INT
-#define G10_16PL	5		// ADCD4_INT
+#define G10_1PL        14        // ADCA_EVT_INT
+#define G10_2PL        3        // ADCA2_INT
+#define G10_3PL        1        // ADCA3_INT
+#define G10_4PL        12        // ADCA4_INT
+#define G10_5PL        5        // ADCB_EVT_INT
+#define G10_6PL        11        // ADCB2_INT
+#define G10_7PL        12        // ADCB3_INT
+#define G10_8PL        13        // ADCB4_INT
+#define G10_9PL        7        // ADCC_EVT_INT
+#define G10_10PL    8        // ADCC2_INT
+#define G10_11PL    4        // ADCC3_INT
+#define G10_12PL    9        // ADCC4_INT
+#define G10_13PL    2        // ADCD_EVT_INT
+#define G10_14PL    10        // ADCD2_INT
+#define G10_15PL    11        // ADCD3_INT
+#define G10_16PL    5        // ADCD4_INT
 
-#define G11_1PL		9		// CLA1_1_INT
-#define G11_2PL		6		// CLA1_2_INT
-#define G11_3PL		9		// CLA1_3_INT
-#define G11_4PL		9		// CLA1_4_INT
-#define G11_5PL		6		// CLA1_5_INT
-#define G11_6PL		13		// CLA1_6_INT
-#define G11_7PL		10		// CLA1_7_INT
-#define G11_8PL		15		// CLA1_8_INT
-#define G11_9PL		0		// Reserved
-#define G11_10PL	0	    // Reserved
-#define G11_11PL	0	    // Reserved
-#define G11_12PL	0	    // Reserved
-#define G11_13PL	0	    // Reserved
-#define G11_14PL	0	    // Reserved
-#define G11_15PL	0	    // Reserved
-#define G11_16PL	0	    // Reserved
+#define G11_1PL        9        // CLA1_1_INT
+#define G11_2PL        6        // CLA1_2_INT
+#define G11_3PL        9        // CLA1_3_INT
+#define G11_4PL        9        // CLA1_4_INT
+#define G11_5PL        6        // CLA1_5_INT
+#define G11_6PL        13        // CLA1_6_INT
+#define G11_7PL        10        // CLA1_7_INT
+#define G11_8PL        15        // CLA1_8_INT
+#define G11_9PL        0        // Reserved
+#define G11_10PL    0        // Reserved
+#define G11_11PL    0        // Reserved
+#define G11_12PL    0        // Reserved
+#define G11_13PL    0        // Reserved
+#define G11_14PL    0        // Reserved
+#define G11_15PL    0        // Reserved
+#define G11_16PL    0        // Reserved
 
-#define G12_1PL		3		// XINT3_INT
-#define G12_2PL		6		// XINT4_INT
-#define G12_3PL		10		// XINT5_INT
-#define G12_4PL		5		// Reserved
-#define G12_5PL		2		// FMC_INT
-#define G12_6PL		11		// VCU_INT
-#define G12_7PL		14		// FPU_OVERFLOW_ISR
-#define G12_8PL		14  	// FPU_UNDERFLOW_ISR
-#define G12_9PL		6   	// EMIF_ERROR_ISR
-#define G12_10PL	5   	// RAM_CORRECTABLE_ERROR_ISR
-#define G12_11PL	4   	// FLASH_CORRECTABLE_ERROR_ISR
-#define G12_12PL	12		// RAM_ACCESS_VIOLATION_INT
-#define G12_13PL	8		// SYS_PLL_SLIP_INT
-#define G12_14PL	2		// AUX_PLL_SLIP_INT
-#define G12_15PL	12		// CLA_UNDERFLOW_INT
-#define G12_16PL	2		// CLA_OVERFLOW_INT
+#define G12_1PL        3        // XINT3_INT
+#define G12_2PL        6        // XINT4_INT
+#define G12_3PL        10        // XINT5_INT
+#define G12_4PL        5        // Reserved
+#define G12_5PL        2        // FMC_INT
+#define G12_6PL        11        // VCU_INT
+#define G12_7PL        14        // FPU_OVERFLOW_ISR
+#define G12_8PL        14      // FPU_UNDERFLOW_ISR
+#define G12_9PL        6       // EMIF_ERROR_ISR
+#define G12_10PL    5       // RAM_CORRECTABLE_ERROR_ISR
+#define G12_11PL    4       // FLASH_CORRECTABLE_ERROR_ISR
+#define G12_12PL    12        // RAM_ACCESS_VIOLATION_INT
+#define G12_13PL    8        // SYS_PLL_SLIP_INT
+#define G12_14PL    2        // AUX_PLL_SLIP_INT
+#define G12_15PL    12        // CLA_UNDERFLOW_INT
+#define G12_16PL    2        // CLA_OVERFLOW_INT
 
 //
 // There should be no need to modify code below this line
@@ -2070,7 +2070,7 @@ extern "C" {
 #define  MG1_1_116PL    0xFFFF
 #endif
 
-#define  MG1_1_11PL	0xFFFE
+#define  MG1_1_11PL    0xFFFE
 #define  MG1_1    (MG1_1_11PL & MG1_1_12PL & MG1_1_13PL & MG1_1_14PL & \
                     MG1_1_15PL & MG1_1_16PL & MG1_1_17PL & MG1_1_18PL & \
                     MG1_1_19PL & MG1_1_110PL & MG1_1_111PL & MG1_1_112PL & \
@@ -2167,7 +2167,7 @@ extern "C" {
 #define  MG1_2_116PL    0xFFFF
 #endif
 
-#define  MG1_2_12PL	0xFFFD
+#define  MG1_2_12PL    0xFFFD
 #define  MG1_2    (MG1_2_11PL & MG1_2_12PL & MG1_2_13PL & MG1_2_14PL & \
                     MG1_2_15PL & MG1_2_16PL & MG1_2_17PL & MG1_2_18PL & \
                     MG1_2_19PL & MG1_2_110PL & MG1_2_111PL & MG1_2_112PL & \
@@ -2264,7 +2264,7 @@ extern "C" {
 #define  MG1_3_116PL    0xFFFF
 #endif
 
-#define  MG1_3_13PL	0xFFFB
+#define  MG1_3_13PL    0xFFFB
 #define  MG1_3    (MG1_3_11PL & MG1_3_12PL & MG1_3_13PL & MG1_3_14PL & \
                     MG1_3_15PL & MG1_3_16PL & MG1_3_17PL & MG1_3_18PL & \
                     MG1_3_19PL & MG1_3_110PL & MG1_3_111PL & MG1_3_112PL & \
@@ -2361,7 +2361,7 @@ extern "C" {
 #define  MG1_4_116PL    0xFFFF
 #endif
 
-#define  MG1_4_14PL	0xFFF7
+#define  MG1_4_14PL    0xFFF7
 #define  MG1_4    (MG1_4_11PL & MG1_4_12PL & MG1_4_13PL & MG1_4_14PL & \
                     MG1_4_15PL & MG1_4_16PL & MG1_4_17PL & MG1_4_18PL & \
                     MG1_4_19PL & MG1_4_110PL & MG1_4_111PL & MG1_4_112PL & \
@@ -2458,7 +2458,7 @@ extern "C" {
 #define  MG1_5_116PL    0xFFFF
 #endif
 
-#define  MG1_5_15PL	0xFFEF
+#define  MG1_5_15PL    0xFFEF
 #define  MG1_5    (MG1_5_11PL & MG1_5_12PL & MG1_5_13PL & MG1_5_14PL & \
                     MG1_5_15PL & MG1_5_16PL & MG1_5_17PL & MG1_5_18PL & \
                     MG1_5_19PL & MG1_5_110PL & MG1_5_111PL & MG1_5_112PL & \
@@ -2555,7 +2555,7 @@ extern "C" {
 #define  MG1_6_116PL    0xFFFF
 #endif
 
-#define  MG1_6_16PL	0xFFDF
+#define  MG1_6_16PL    0xFFDF
 #define  MG1_6    (MG1_6_11PL & MG1_6_12PL & MG1_6_13PL & MG1_6_14PL & \
                     MG1_6_15PL & MG1_6_16PL & MG1_6_17PL & MG1_6_18PL & \
                     MG1_6_19PL & MG1_6_110PL & MG1_6_111PL & MG1_6_112PL & \
@@ -2652,7 +2652,7 @@ extern "C" {
 #define  MG1_7_116PL    0xFFFF
 #endif
 
-#define  MG1_7_17PL	0xFFBF
+#define  MG1_7_17PL    0xFFBF
 #define  MG1_7    (MG1_7_11PL & MG1_7_12PL & MG1_7_13PL & MG1_7_14PL & \
                     MG1_7_15PL & MG1_7_16PL & MG1_7_17PL & MG1_7_18PL & \
                     MG1_7_19PL & MG1_7_110PL & MG1_7_111PL & MG1_7_112PL & \
@@ -2749,7 +2749,7 @@ extern "C" {
 #define  MG1_8_116PL    0xFFFF
 #endif
 
-#define  MG1_8_18PL	0xFF7F
+#define  MG1_8_18PL    0xFF7F
 #define  MG1_8    (MG1_8_11PL & MG1_8_12PL & MG1_8_13PL & MG1_8_14PL & \
                     MG1_8_15PL & MG1_8_16PL & MG1_8_17PL & MG1_8_18PL & \
                     MG1_8_19PL & MG1_8_110PL & MG1_8_111PL & MG1_8_112PL & \
@@ -2846,7 +2846,7 @@ extern "C" {
 #define  MG1_9_116PL    0xFFFF
 #endif
 
-#define  MG1_9_19PL	0xFEFF
+#define  MG1_9_19PL    0xFEFF
 #define  MG1_9    (MG1_9_11PL & MG1_9_12PL & MG1_9_13PL & MG1_9_14PL & \
                     MG1_9_15PL & MG1_9_16PL & MG1_9_17PL & MG1_9_18PL & \
                     MG1_9_19PL & MG1_9_110PL & MG1_9_111PL & MG1_9_112PL & \
@@ -2943,7 +2943,7 @@ extern "C" {
 #define  MG1_10_116PL    0xFFFF
 #endif
 
-#define  MG1_10_110PL	0xFDFF
+#define  MG1_10_110PL    0xFDFF
 #define  MG1_10    (MG1_10_11PL & MG1_10_12PL & MG1_10_13PL & MG1_10_14PL & \
                     MG1_10_15PL & MG1_10_16PL & MG1_10_17PL & MG1_10_18PL & \
                     MG1_10_19PL & MG1_10_110PL & MG1_10_111PL & MG1_10_112PL & \
@@ -3040,7 +3040,7 @@ extern "C" {
 #define  MG1_11_116PL    0xFFFF
 #endif
 
-#define  MG1_11_111PL	0xFBFF
+#define  MG1_11_111PL    0xFBFF
 #define  MG1_11    (MG1_11_11PL & MG1_11_12PL & MG1_11_13PL & MG1_11_14PL & \
                     MG1_11_15PL & MG1_11_16PL & MG1_11_17PL & MG1_11_18PL & \
                     MG1_11_19PL & MG1_11_110PL & MG1_11_111PL & MG1_11_112PL & \
@@ -3137,7 +3137,7 @@ extern "C" {
 #define  MG1_12_116PL    0xFFFF
 #endif
 
-#define  MG1_12_112PL	0xF7FF
+#define  MG1_12_112PL    0xF7FF
 #define  MG1_12    (MG1_12_11PL & MG1_12_12PL & MG1_12_13PL & MG1_12_14PL & \
                     MG1_12_15PL & MG1_12_16PL & MG1_12_17PL & MG1_12_18PL & \
                     MG1_12_19PL & MG1_12_110PL & MG1_12_111PL & MG1_12_112PL & \
@@ -3234,7 +3234,7 @@ extern "C" {
 #define  MG1_13_116PL    0xFFFF
 #endif
 
-#define  MG1_13_113PL	0xEFFF
+#define  MG1_13_113PL    0xEFFF
 #define  MG1_13    (MG1_13_11PL & MG1_13_12PL & MG1_13_13PL & MG1_13_14PL & \
                     MG1_13_15PL & MG1_13_16PL & MG1_13_17PL & MG1_13_18PL & \
                     MG1_13_19PL & MG1_13_110PL & MG1_13_111PL & MG1_13_112PL & \
@@ -3331,7 +3331,7 @@ extern "C" {
 #define  MG1_14_116PL    0xFFFF
 #endif
 
-#define  MG1_14_114PL	0xDFFF
+#define  MG1_14_114PL    0xDFFF
 #define  MG1_14    (MG1_14_11PL & MG1_14_12PL & MG1_14_13PL & MG1_14_14PL & \
                     MG1_14_15PL & MG1_14_16PL & MG1_14_17PL & MG1_14_18PL & \
                     MG1_14_19PL & MG1_14_110PL & MG1_14_111PL & MG1_14_112PL & \
@@ -3428,7 +3428,7 @@ extern "C" {
 #define  MG1_15_116PL    0xFFFF
 #endif
 
-#define  MG1_15_115PL	0xBFFF
+#define  MG1_15_115PL    0xBFFF
 #define  MG1_15    (MG1_15_11PL & MG1_15_12PL & MG1_15_13PL & MG1_15_14PL & \
                     MG1_15_15PL & MG1_15_16PL & MG1_15_17PL & MG1_15_18PL & \
                     MG1_15_19PL & MG1_15_110PL & MG1_15_111PL & MG1_15_112PL & \
@@ -3525,7 +3525,7 @@ extern "C" {
 #define  MG1_16_115PL    0xFFFF
 #endif
 
-#define  MG1_16_116PL	0x7FFF
+#define  MG1_16_116PL    0x7FFF
 #define  MG1_16    (MG1_16_11PL & MG1_16_12PL & MG1_16_13PL & MG1_16_14PL & \
                     MG1_16_15PL & MG1_16_16PL & MG1_16_17PL & MG1_16_18PL & \
                     MG1_16_19PL & MG1_16_110PL & MG1_16_111PL & MG1_16_112PL & \
@@ -3628,7 +3628,7 @@ extern "C" {
 #define  MG2_1_116PL    0xFFFF
 #endif
 
-#define  MG2_1_11PL	0xFFFE
+#define  MG2_1_11PL    0xFFFE
 #define  MG2_1    (MG2_1_11PL & MG2_1_12PL & MG2_1_13PL & MG2_1_14PL & \
                     MG2_1_15PL & MG2_1_16PL & MG2_1_17PL & MG2_1_18PL & \
                     MG2_1_19PL & MG2_1_110PL & MG2_1_111PL & MG2_1_112PL & \
@@ -3725,7 +3725,7 @@ extern "C" {
 #define  MG2_2_116PL    0xFFFF
 #endif
 
-#define  MG2_2_12PL	0xFFFD
+#define  MG2_2_12PL    0xFFFD
 #define  MG2_2    (MG2_2_11PL & MG2_2_12PL & MG2_2_13PL & MG2_2_14PL & \
                     MG2_2_15PL & MG2_2_16PL & MG2_2_17PL & MG2_2_18PL & \
                     MG2_2_19PL & MG2_2_110PL & MG2_2_111PL & MG2_2_112PL & \
@@ -3822,7 +3822,7 @@ extern "C" {
 #define  MG2_3_116PL    0xFFFF
 #endif
 
-#define  MG2_3_13PL	0xFFFB
+#define  MG2_3_13PL    0xFFFB
 #define  MG2_3    (MG2_3_11PL & MG2_3_12PL & MG2_3_13PL & MG2_3_14PL & \
                     MG2_3_15PL & MG2_3_16PL & MG2_3_17PL & MG2_3_18PL & \
                     MG2_3_19PL & MG2_3_110PL & MG2_3_111PL & MG2_3_112PL & \
@@ -3919,7 +3919,7 @@ extern "C" {
 #define  MG2_4_116PL    0xFFFF
 #endif
 
-#define  MG2_4_14PL	0xFFF7
+#define  MG2_4_14PL    0xFFF7
 #define  MG2_4    (MG2_4_11PL & MG2_4_12PL & MG2_4_13PL & MG2_4_14PL & \
                     MG2_4_15PL & MG2_4_16PL & MG2_4_17PL & MG2_4_18PL & \
                     MG2_4_19PL & MG2_4_110PL & MG2_4_111PL & MG2_4_112PL & \
@@ -4016,7 +4016,7 @@ extern "C" {
 #define  MG2_5_116PL    0xFFFF
 #endif
 
-#define  MG2_5_15PL	0xFFEF
+#define  MG2_5_15PL    0xFFEF
 #define  MG2_5    (MG2_5_11PL & MG2_5_12PL & MG2_5_13PL & MG2_5_14PL & \
                     MG2_5_15PL & MG2_5_16PL & MG2_5_17PL & MG2_5_18PL & \
                     MG2_5_19PL & MG2_5_110PL & MG2_5_111PL & MG2_5_112PL & \
@@ -4113,7 +4113,7 @@ extern "C" {
 #define  MG2_6_116PL    0xFFFF
 #endif
 
-#define  MG2_6_16PL	0xFFDF
+#define  MG2_6_16PL    0xFFDF
 #define  MG2_6    (MG2_6_11PL & MG2_6_12PL & MG2_6_13PL & MG2_6_14PL & \
                     MG2_6_15PL & MG2_6_16PL & MG2_6_17PL & MG2_6_18PL & \
                     MG2_6_19PL & MG2_6_110PL & MG2_6_111PL & MG2_6_112PL & \
@@ -4210,7 +4210,7 @@ extern "C" {
 #define  MG2_7_116PL    0xFFFF
 #endif
 
-#define  MG2_7_17PL	0xFFBF
+#define  MG2_7_17PL    0xFFBF
 #define  MG2_7    (MG2_7_11PL & MG2_7_12PL & MG2_7_13PL & MG2_7_14PL & \
                     MG2_7_15PL & MG2_7_16PL & MG2_7_17PL & MG2_7_18PL & \
                     MG2_7_19PL & MG2_7_110PL & MG2_7_111PL & MG2_7_112PL & \
@@ -4307,7 +4307,7 @@ extern "C" {
 #define  MG2_8_116PL    0xFFFF
 #endif
 
-#define  MG2_8_18PL	0xFF7F
+#define  MG2_8_18PL    0xFF7F
 #define  MG2_8    (MG2_8_11PL & MG2_8_12PL & MG2_8_13PL & MG2_8_14PL & \
                     MG2_8_15PL & MG2_8_16PL & MG2_8_17PL & MG2_8_18PL & \
                     MG2_8_19PL & MG2_8_110PL & MG2_8_111PL & MG2_8_112PL & \
@@ -4404,7 +4404,7 @@ extern "C" {
 #define  MG2_9_116PL    0xFFFF
 #endif
 
-#define  MG2_9_19PL	0xFEFF
+#define  MG2_9_19PL    0xFEFF
 #define  MG2_9    (MG2_9_11PL & MG2_9_12PL & MG2_9_13PL & MG2_9_14PL & \
                     MG2_9_15PL & MG2_9_16PL & MG2_9_17PL & MG2_9_18PL & \
                     MG2_9_19PL & MG2_9_110PL & MG2_9_111PL & MG2_9_112PL & \
@@ -4501,7 +4501,7 @@ extern "C" {
 #define  MG2_10_116PL    0xFFFF
 #endif
 
-#define  MG2_10_110PL	0xFDFF
+#define  MG2_10_110PL    0xFDFF
 #define  MG2_10    (MG2_10_11PL & MG2_10_12PL & MG2_10_13PL & MG2_10_14PL & \
                     MG2_10_15PL & MG2_10_16PL & MG2_10_17PL & MG2_10_18PL & \
                     MG2_10_19PL & MG2_10_110PL & MG2_10_111PL & MG2_10_112PL & \
@@ -4598,7 +4598,7 @@ extern "C" {
 #define  MG2_11_116PL    0xFFFF
 #endif
 
-#define  MG2_11_111PL	0xFBFF
+#define  MG2_11_111PL    0xFBFF
 #define  MG2_11    (MG2_11_11PL & MG2_11_12PL & MG2_11_13PL & MG2_11_14PL & \
                     MG2_11_15PL & MG2_11_16PL & MG2_11_17PL & MG2_11_18PL & \
                     MG2_11_19PL & MG2_11_110PL & MG2_11_111PL & MG2_11_112PL & \
@@ -4695,7 +4695,7 @@ extern "C" {
 #define  MG2_12_116PL    0xFFFF
 #endif
 
-#define  MG2_12_112PL	0xF7FF
+#define  MG2_12_112PL    0xF7FF
 #define  MG2_12    (MG2_12_11PL & MG2_12_12PL & MG2_12_13PL & MG2_12_14PL & \
                     MG2_12_15PL & MG2_12_16PL & MG2_12_17PL & MG2_12_18PL & \
                     MG2_12_19PL & MG2_12_110PL & MG2_12_111PL & MG2_12_112PL & \
@@ -4792,7 +4792,7 @@ extern "C" {
 #define  MG2_13_116PL    0xFFFF
 #endif
 
-#define  MG2_13_113PL	0xEFFF
+#define  MG2_13_113PL    0xEFFF
 #define  MG2_13    (MG2_13_11PL & MG2_13_12PL & MG2_13_13PL & MG2_13_14PL & \
                     MG2_13_15PL & MG2_13_16PL & MG2_13_17PL & MG2_13_18PL & \
                     MG2_13_19PL & MG2_13_110PL & MG2_13_111PL & MG2_13_112PL & \
@@ -4889,7 +4889,7 @@ extern "C" {
 #define  MG2_14_116PL    0xFFFF
 #endif
 
-#define  MG2_14_114PL	0xDFFF
+#define  MG2_14_114PL    0xDFFF
 #define  MG2_14    (MG2_14_11PL & MG2_14_12PL & MG2_14_13PL & MG2_14_14PL & \
                     MG2_14_15PL & MG2_14_16PL & MG2_14_17PL & MG2_14_18PL & \
                     MG2_14_19PL & MG2_14_110PL & MG2_14_111PL & MG2_14_112PL & \
@@ -4986,7 +4986,7 @@ extern "C" {
 #define  MG2_15_116PL    0xFFFF
 #endif
 
-#define  MG2_15_115PL	0xBFFF
+#define  MG2_15_115PL    0xBFFF
 #define  MG2_15    (MG2_15_11PL & MG2_15_12PL & MG2_15_13PL & MG2_15_14PL & \
                     MG2_15_15PL & MG2_15_16PL & MG2_15_17PL & MG2_15_18PL & \
                     MG2_15_19PL & MG2_15_110PL & MG2_15_111PL & MG2_15_112PL & \
@@ -5083,7 +5083,7 @@ extern "C" {
 #define  MG2_16_115PL    0xFFFF
 #endif
 
-#define  MG2_16_116PL	0x7FFF
+#define  MG2_16_116PL    0x7FFF
 #define  MG2_16    (MG2_16_11PL & MG2_16_12PL & MG2_16_13PL & MG2_16_14PL & \
                     MG2_16_15PL & MG2_16_16PL & MG2_16_17PL & MG2_16_18PL & \
                     MG2_16_19PL & MG2_16_110PL & MG2_16_111PL & MG2_16_112PL & \
@@ -5186,7 +5186,7 @@ extern "C" {
 #define  MG3_1_116PL    0xFFFF
 #endif
 
-#define  MG3_1_11PL	0xFFFE
+#define  MG3_1_11PL    0xFFFE
 #define  MG3_1    (MG3_1_11PL & MG3_1_12PL & MG3_1_13PL & MG3_1_14PL & \
                     MG3_1_15PL & MG3_1_16PL & MG3_1_17PL & MG3_1_18PL & \
                     MG3_1_19PL & MG3_1_110PL & MG3_1_111PL & MG3_1_112PL & \
@@ -5283,7 +5283,7 @@ extern "C" {
 #define  MG3_2_116PL    0xFFFF
 #endif
 
-#define  MG3_2_12PL	0xFFFD
+#define  MG3_2_12PL    0xFFFD
 #define  MG3_2    (MG3_2_11PL & MG3_2_12PL & MG3_2_13PL & MG3_2_14PL & \
                     MG3_2_15PL & MG3_2_16PL & MG3_2_17PL & MG3_2_18PL & \
                     MG3_2_19PL & MG3_2_110PL & MG3_2_111PL & MG3_2_112PL & \
@@ -5380,7 +5380,7 @@ extern "C" {
 #define  MG3_3_116PL    0xFFFF
 #endif
 
-#define  MG3_3_13PL	0xFFFB
+#define  MG3_3_13PL    0xFFFB
 #define  MG3_3    (MG3_3_11PL & MG3_3_12PL & MG3_3_13PL & MG3_3_14PL & \
                     MG3_3_15PL & MG3_3_16PL & MG3_3_17PL & MG3_3_18PL & \
                     MG3_3_19PL & MG3_3_110PL & MG3_3_111PL & MG3_3_112PL & \
@@ -5477,7 +5477,7 @@ extern "C" {
 #define  MG3_4_116PL    0xFFFF
 #endif
 
-#define  MG3_4_14PL	0xFFF7
+#define  MG3_4_14PL    0xFFF7
 #define  MG3_4    (MG3_4_11PL & MG3_4_12PL & MG3_4_13PL & MG3_4_14PL & \
                     MG3_4_15PL & MG3_4_16PL & MG3_4_17PL & MG3_4_18PL & \
                     MG3_4_19PL & MG3_4_110PL & MG3_4_111PL & MG3_4_112PL & \
@@ -5574,7 +5574,7 @@ extern "C" {
 #define  MG3_5_116PL    0xFFFF
 #endif
 
-#define  MG3_5_15PL	0xFFEF
+#define  MG3_5_15PL    0xFFEF
 #define  MG3_5    (MG3_5_11PL & MG3_5_12PL & MG3_5_13PL & MG3_5_14PL & \
                     MG3_5_15PL & MG3_5_16PL & MG3_5_17PL & MG3_5_18PL & \
                     MG3_5_19PL & MG3_5_110PL & MG3_5_111PL & MG3_5_112PL & \
@@ -5671,7 +5671,7 @@ extern "C" {
 #define  MG3_6_116PL    0xFFFF
 #endif
 
-#define  MG3_6_16PL	0xFFDF
+#define  MG3_6_16PL    0xFFDF
 #define  MG3_6    (MG3_6_11PL & MG3_6_12PL & MG3_6_13PL & MG3_6_14PL & \
                     MG3_6_15PL & MG3_6_16PL & MG3_6_17PL & MG3_6_18PL & \
                     MG3_6_19PL & MG3_6_110PL & MG3_6_111PL & MG3_6_112PL & \
@@ -5768,7 +5768,7 @@ extern "C" {
 #define  MG3_7_116PL    0xFFFF
 #endif
 
-#define  MG3_7_17PL	0xFFBF
+#define  MG3_7_17PL    0xFFBF
 #define  MG3_7    (MG3_7_11PL & MG3_7_12PL & MG3_7_13PL & MG3_7_14PL & \
                     MG3_7_15PL & MG3_7_16PL & MG3_7_17PL & MG3_7_18PL & \
                     MG3_7_19PL & MG3_7_110PL & MG3_7_111PL & MG3_7_112PL & \
@@ -5865,7 +5865,7 @@ extern "C" {
 #define  MG3_8_116PL    0xFFFF
 #endif
 
-#define  MG3_8_18PL	0xFF7F
+#define  MG3_8_18PL    0xFF7F
 #define  MG3_8    (MG3_8_11PL & MG3_8_12PL & MG3_8_13PL & MG3_8_14PL & \
                     MG3_8_15PL & MG3_8_16PL & MG3_8_17PL & MG3_8_18PL & \
                     MG3_8_19PL & MG3_8_110PL & MG3_8_111PL & MG3_8_112PL & \
@@ -5962,7 +5962,7 @@ extern "C" {
 #define  MG3_9_116PL    0xFFFF
 #endif
 
-#define  MG3_9_19PL	0xFEFF
+#define  MG3_9_19PL    0xFEFF
 #define  MG3_9    (MG3_9_11PL & MG3_9_12PL & MG3_9_13PL & MG3_9_14PL & \
                     MG3_9_15PL & MG3_9_16PL & MG3_9_17PL & MG3_9_18PL & \
                     MG3_9_19PL & MG3_9_110PL & MG3_9_111PL & MG3_9_112PL & \
@@ -6059,7 +6059,7 @@ extern "C" {
 #define  MG3_10_116PL    0xFFFF
 #endif
 
-#define  MG3_10_110PL	0xFDFF
+#define  MG3_10_110PL    0xFDFF
 #define  MG3_10    (MG3_10_11PL & MG3_10_12PL & MG3_10_13PL & MG3_10_14PL & \
                     MG3_10_15PL & MG3_10_16PL & MG3_10_17PL & MG3_10_18PL & \
                     MG3_10_19PL & MG3_10_110PL & MG3_10_111PL & MG3_10_112PL & \
@@ -6156,7 +6156,7 @@ extern "C" {
 #define  MG3_11_116PL    0xFFFF
 #endif
 
-#define  MG3_11_111PL	0xFBFF
+#define  MG3_11_111PL    0xFBFF
 #define  MG3_11    (MG3_11_11PL & MG3_11_12PL & MG3_11_13PL & MG3_11_14PL & \
                     MG3_11_15PL & MG3_11_16PL & MG3_11_17PL & MG3_11_18PL & \
                     MG3_11_19PL & MG3_11_110PL & MG3_11_111PL & MG3_11_112PL & \
@@ -6253,7 +6253,7 @@ extern "C" {
 #define  MG3_12_116PL    0xFFFF
 #endif
 
-#define  MG3_12_112PL	0xF7FF
+#define  MG3_12_112PL    0xF7FF
 #define  MG3_12    (MG3_12_11PL & MG3_12_12PL & MG3_12_13PL & MG3_12_14PL & \
                     MG3_12_15PL & MG3_12_16PL & MG3_12_17PL & MG3_12_18PL & \
                     MG3_12_19PL & MG3_12_110PL & MG3_12_111PL & MG3_12_112PL & \
@@ -6350,7 +6350,7 @@ extern "C" {
 #define  MG3_13_116PL    0xFFFF
 #endif
 
-#define  MG3_13_113PL	0xEFFF
+#define  MG3_13_113PL    0xEFFF
 #define  MG3_13    (MG3_13_11PL & MG3_13_12PL & MG3_13_13PL & MG3_13_14PL & \
                     MG3_13_15PL & MG3_13_16PL & MG3_13_17PL & MG3_13_18PL & \
                     MG3_13_19PL & MG3_13_110PL & MG3_13_111PL & MG3_13_112PL & \
@@ -6447,7 +6447,7 @@ extern "C" {
 #define  MG3_14_116PL    0xFFFF
 #endif
 
-#define  MG3_14_114PL	0xDFFF
+#define  MG3_14_114PL    0xDFFF
 #define  MG3_14    (MG3_14_11PL & MG3_14_12PL & MG3_14_13PL & MG3_14_14PL & \
                     MG3_14_15PL & MG3_14_16PL & MG3_14_17PL & MG3_14_18PL & \
                     MG3_14_19PL & MG3_14_110PL & MG3_14_111PL & MG3_14_112PL & \
@@ -6544,7 +6544,7 @@ extern "C" {
 #define  MG3_15_116PL    0xFFFF
 #endif
 
-#define  MG3_15_115PL	0xBFFF
+#define  MG3_15_115PL    0xBFFF
 #define  MG3_15    (MG3_15_11PL & MG3_15_12PL & MG3_15_13PL & MG3_15_14PL & \
                     MG3_15_15PL & MG3_15_16PL & MG3_15_17PL & MG3_15_18PL & \
                     MG3_15_19PL & MG3_15_110PL & MG3_15_111PL & MG3_15_112PL & \
@@ -6641,7 +6641,7 @@ extern "C" {
 #define  MG3_16_115PL    0xFFFF
 #endif
 
-#define  MG3_16_116PL	0x7FFF
+#define  MG3_16_116PL    0x7FFF
 #define  MG3_16    (MG3_16_11PL & MG3_16_12PL & MG3_16_13PL & MG3_16_14PL & \
                     MG3_16_15PL & MG3_16_16PL & MG3_16_17PL & MG3_16_18PL & \
                     MG3_16_19PL & MG3_16_110PL & MG3_16_111PL & MG3_16_112PL & \
@@ -6744,7 +6744,7 @@ extern "C" {
 #define  MG4_1_116PL    0xFFFF
 #endif
 
-#define  MG4_1_11PL	0xFFFE
+#define  MG4_1_11PL    0xFFFE
 #define  MG4_1    (MG4_1_11PL & MG4_1_12PL & MG4_1_13PL & MG4_1_14PL & \
                     MG4_1_15PL & MG4_1_16PL & MG4_1_17PL & MG4_1_18PL & \
                     MG4_1_19PL & MG4_1_110PL & MG4_1_111PL & MG4_1_112PL & \
@@ -6841,7 +6841,7 @@ extern "C" {
 #define  MG4_2_116PL    0xFFFF
 #endif
 
-#define  MG4_2_12PL	0xFFFD
+#define  MG4_2_12PL    0xFFFD
 #define  MG4_2    (MG4_2_11PL & MG4_2_12PL & MG4_2_13PL & MG4_2_14PL & \
                     MG4_2_15PL & MG4_2_16PL & MG4_2_17PL & MG4_2_18PL & \
                     MG4_2_19PL & MG4_2_110PL & MG4_2_111PL & MG4_2_112PL & \
@@ -6938,7 +6938,7 @@ extern "C" {
 #define  MG4_3_116PL    0xFFFF
 #endif
 
-#define  MG4_3_13PL	0xFFFB
+#define  MG4_3_13PL    0xFFFB
 #define  MG4_3    (MG4_3_11PL & MG4_3_12PL & MG4_3_13PL & MG4_3_14PL & \
                     MG4_3_15PL & MG4_3_16PL & MG4_3_17PL & MG4_3_18PL & \
                     MG4_3_19PL & MG4_3_110PL & MG4_3_111PL & MG4_3_112PL & \
@@ -7035,7 +7035,7 @@ extern "C" {
 #define  MG4_4_116PL    0xFFFF
 #endif
 
-#define  MG4_4_14PL	0xFFF7
+#define  MG4_4_14PL    0xFFF7
 #define  MG4_4    (MG4_4_11PL & MG4_4_12PL & MG4_4_13PL & MG4_4_14PL & \
                     MG4_4_15PL & MG4_4_16PL & MG4_4_17PL & MG4_4_18PL & \
                     MG4_4_19PL & MG4_4_110PL & MG4_4_111PL & MG4_4_112PL & \
@@ -7132,7 +7132,7 @@ extern "C" {
 #define  MG4_5_116PL    0xFFFF
 #endif
 
-#define  MG4_5_15PL	0xFFEF
+#define  MG4_5_15PL    0xFFEF
 #define  MG4_5    (MG4_5_11PL & MG4_5_12PL & MG4_5_13PL & MG4_5_14PL & \
                     MG4_5_15PL & MG4_5_16PL & MG4_5_17PL & MG4_5_18PL & \
                     MG4_5_19PL & MG4_5_110PL & MG4_5_111PL & MG4_5_112PL & \
@@ -7229,7 +7229,7 @@ extern "C" {
 #define  MG4_6_116PL    0xFFFF
 #endif
 
-#define  MG4_6_16PL	0xFFDF
+#define  MG4_6_16PL    0xFFDF
 #define  MG4_6    (MG4_6_11PL & MG4_6_12PL & MG4_6_13PL & MG4_6_14PL & \
                     MG4_6_15PL & MG4_6_16PL & MG4_6_17PL & MG4_6_18PL & \
                     MG4_6_19PL & MG4_6_110PL & MG4_6_111PL & MG4_6_112PL & \
@@ -7326,7 +7326,7 @@ extern "C" {
 #define  MG4_7_116PL    0xFFFF
 #endif
 
-#define  MG4_7_17PL	0xFFBF
+#define  MG4_7_17PL    0xFFBF
 #define  MG4_7    (MG4_7_11PL & MG4_7_12PL & MG4_7_13PL & MG4_7_14PL & \
                     MG4_7_15PL & MG4_7_16PL & MG4_7_17PL & MG4_7_18PL & \
                     MG4_7_19PL & MG4_7_110PL & MG4_7_111PL & MG4_7_112PL & \
@@ -7423,7 +7423,7 @@ extern "C" {
 #define  MG4_8_116PL    0xFFFF
 #endif
 
-#define  MG4_8_18PL	0xFF7F
+#define  MG4_8_18PL    0xFF7F
 #define  MG4_8    (MG4_8_11PL & MG4_8_12PL & MG4_8_13PL & MG4_8_14PL & \
                     MG4_8_15PL & MG4_8_16PL & MG4_8_17PL & MG4_8_18PL & \
                     MG4_8_19PL & MG4_8_110PL & MG4_8_111PL & MG4_8_112PL & \
@@ -7520,7 +7520,7 @@ extern "C" {
 #define  MG4_9_116PL    0xFFFF
 #endif
 
-#define  MG4_9_19PL	0xFEFF
+#define  MG4_9_19PL    0xFEFF
 #define  MG4_9    (MG4_9_11PL & MG4_9_12PL & MG4_9_13PL & MG4_9_14PL & \
                     MG4_9_15PL & MG4_9_16PL & MG4_9_17PL & MG4_9_18PL & \
                     MG4_9_19PL & MG4_9_110PL & MG4_9_111PL & MG4_9_112PL & \
@@ -7617,7 +7617,7 @@ extern "C" {
 #define  MG4_10_116PL    0xFFFF
 #endif
 
-#define  MG4_10_110PL	0xFDFF
+#define  MG4_10_110PL    0xFDFF
 #define  MG4_10    (MG4_10_11PL & MG4_10_12PL & MG4_10_13PL & MG4_10_14PL & \
                     MG4_10_15PL & MG4_10_16PL & MG4_10_17PL & MG4_10_18PL & \
                     MG4_10_19PL & MG4_10_110PL & MG4_10_111PL & MG4_10_112PL & \
@@ -7714,7 +7714,7 @@ extern "C" {
 #define  MG4_11_116PL    0xFFFF
 #endif
 
-#define  MG4_11_111PL	0xFBFF
+#define  MG4_11_111PL    0xFBFF
 #define  MG4_11    (MG4_11_11PL & MG4_11_12PL & MG4_11_13PL & MG4_11_14PL & \
                     MG4_11_15PL & MG4_11_16PL & MG4_11_17PL & MG4_11_18PL & \
                     MG4_11_19PL & MG4_11_110PL & MG4_11_111PL & MG4_11_112PL & \
@@ -7811,7 +7811,7 @@ extern "C" {
 #define  MG4_12_116PL    0xFFFF
 #endif
 
-#define  MG4_12_112PL	0xF7FF
+#define  MG4_12_112PL    0xF7FF
 #define  MG4_12    (MG4_12_11PL & MG4_12_12PL & MG4_12_13PL & MG4_12_14PL & \
                     MG4_12_15PL & MG4_12_16PL & MG4_12_17PL & MG4_12_18PL & \
                     MG4_12_19PL & MG4_12_110PL & MG4_12_111PL & MG4_12_112PL & \
@@ -7908,7 +7908,7 @@ extern "C" {
 #define  MG4_13_116PL    0xFFFF
 #endif
 
-#define  MG4_13_113PL	0xEFFF
+#define  MG4_13_113PL    0xEFFF
 #define  MG4_13    (MG4_13_11PL & MG4_13_12PL & MG4_13_13PL & MG4_13_14PL & \
                     MG4_13_15PL & MG4_13_16PL & MG4_13_17PL & MG4_13_18PL & \
                     MG4_13_19PL & MG4_13_110PL & MG4_13_111PL & MG4_13_112PL & \
@@ -8005,7 +8005,7 @@ extern "C" {
 #define  MG4_14_116PL    0xFFFF
 #endif
 
-#define  MG4_14_114PL	0xDFFF
+#define  MG4_14_114PL    0xDFFF
 #define  MG4_14    (MG4_14_11PL & MG4_14_12PL & MG4_14_13PL & MG4_14_14PL & \
                     MG4_14_15PL & MG4_14_16PL & MG4_14_17PL & MG4_14_18PL & \
                     MG4_14_19PL & MG4_14_110PL & MG4_14_111PL & MG4_14_112PL & \
@@ -8102,7 +8102,7 @@ extern "C" {
 #define  MG4_15_116PL    0xFFFF
 #endif
 
-#define  MG4_15_115PL	0xBFFF
+#define  MG4_15_115PL    0xBFFF
 #define  MG4_15    (MG4_15_11PL & MG4_15_12PL & MG4_15_13PL & MG4_15_14PL & \
                     MG4_15_15PL & MG4_15_16PL & MG4_15_17PL & MG4_15_18PL & \
                     MG4_15_19PL & MG4_15_110PL & MG4_15_111PL & MG4_15_112PL & \
@@ -8199,7 +8199,7 @@ extern "C" {
 #define  MG4_16_115PL    0xFFFF
 #endif
 
-#define  MG4_16_116PL	0x7FFF
+#define  MG4_16_116PL    0x7FFF
 #define  MG4_16    (MG4_16_11PL & MG4_16_12PL & MG4_16_13PL & MG4_16_14PL & \
                     MG4_16_15PL & MG4_16_16PL & MG4_16_17PL & MG4_16_18PL & \
                     MG4_16_19PL & MG4_16_110PL & MG4_16_111PL & MG4_16_112PL & \
@@ -8302,7 +8302,7 @@ extern "C" {
 #define  MG5_1_116PL    0xFFFF
 #endif
 
-#define  MG5_1_11PL	0xFFFE
+#define  MG5_1_11PL    0xFFFE
 #define  MG5_1    (MG5_1_11PL & MG5_1_12PL & MG5_1_13PL & MG5_1_14PL & \
                     MG5_1_15PL & MG5_1_16PL & MG5_1_17PL & MG5_1_18PL & \
                     MG5_1_19PL & MG5_1_110PL & MG5_1_111PL & MG5_1_112PL & \
@@ -8399,7 +8399,7 @@ extern "C" {
 #define  MG5_2_116PL    0xFFFF
 #endif
 
-#define  MG5_2_12PL	0xFFFD
+#define  MG5_2_12PL    0xFFFD
 #define  MG5_2    (MG5_2_11PL & MG5_2_12PL & MG5_2_13PL & MG5_2_14PL & \
                     MG5_2_15PL & MG5_2_16PL & MG5_2_17PL & MG5_2_18PL & \
                     MG5_2_19PL & MG5_2_110PL & MG5_2_111PL & MG5_2_112PL & \
@@ -8496,7 +8496,7 @@ extern "C" {
 #define  MG5_3_116PL    0xFFFF
 #endif
 
-#define  MG5_3_13PL	0xFFFB
+#define  MG5_3_13PL    0xFFFB
 #define  MG5_3    (MG5_3_11PL & MG5_3_12PL & MG5_3_13PL & MG5_3_14PL & \
                     MG5_3_15PL & MG5_3_16PL & MG5_3_17PL & MG5_3_18PL & \
                     MG5_3_19PL & MG5_3_110PL & MG5_3_111PL & MG5_3_112PL & \
@@ -8593,7 +8593,7 @@ extern "C" {
 #define  MG5_4_116PL    0xFFFF
 #endif
 
-#define  MG5_4_14PL	0xFFF7
+#define  MG5_4_14PL    0xFFF7
 #define  MG5_4    (MG5_4_11PL & MG5_4_12PL & MG5_4_13PL & MG5_4_14PL & \
                     MG5_4_15PL & MG5_4_16PL & MG5_4_17PL & MG5_4_18PL & \
                     MG5_4_19PL & MG5_4_110PL & MG5_4_111PL & MG5_4_112PL & \
@@ -8690,7 +8690,7 @@ extern "C" {
 #define  MG5_5_116PL    0xFFFF
 #endif
 
-#define  MG5_5_15PL	0xFFEF
+#define  MG5_5_15PL    0xFFEF
 #define  MG5_5    (MG5_5_11PL & MG5_5_12PL & MG5_5_13PL & MG5_5_14PL & \
                     MG5_5_15PL & MG5_5_16PL & MG5_5_17PL & MG5_5_18PL & \
                     MG5_5_19PL & MG5_5_110PL & MG5_5_111PL & MG5_5_112PL & \
@@ -8787,7 +8787,7 @@ extern "C" {
 #define  MG5_6_116PL    0xFFFF
 #endif
 
-#define  MG5_6_16PL	0xFFDF
+#define  MG5_6_16PL    0xFFDF
 #define  MG5_6    (MG5_6_11PL & MG5_6_12PL & MG5_6_13PL & MG5_6_14PL & \
                     MG5_6_15PL & MG5_6_16PL & MG5_6_17PL & MG5_6_18PL & \
                     MG5_6_19PL & MG5_6_110PL & MG5_6_111PL & MG5_6_112PL & \
@@ -8884,7 +8884,7 @@ extern "C" {
 #define  MG5_7_116PL    0xFFFF
 #endif
 
-#define  MG5_7_17PL	0xFFBF
+#define  MG5_7_17PL    0xFFBF
 #define  MG5_7    (MG5_7_11PL & MG5_7_12PL & MG5_7_13PL & MG5_7_14PL & \
                     MG5_7_15PL & MG5_7_16PL & MG5_7_17PL & MG5_7_18PL & \
                     MG5_7_19PL & MG5_7_110PL & MG5_7_111PL & MG5_7_112PL & \
@@ -8981,7 +8981,7 @@ extern "C" {
 #define  MG5_8_116PL    0xFFFF
 #endif
 
-#define  MG5_8_18PL	0xFF7F
+#define  MG5_8_18PL    0xFF7F
 #define  MG5_8    (MG5_8_11PL & MG5_8_12PL & MG5_8_13PL & MG5_8_14PL & \
                     MG5_8_15PL & MG5_8_16PL & MG5_8_17PL & MG5_8_18PL & \
                     MG5_8_19PL & MG5_8_110PL & MG5_8_111PL & MG5_8_112PL & \
@@ -9078,7 +9078,7 @@ extern "C" {
 #define  MG5_9_116PL    0xFFFF
 #endif
 
-#define  MG5_9_19PL	0xFEFF
+#define  MG5_9_19PL    0xFEFF
 #define  MG5_9    (MG5_9_11PL & MG5_9_12PL & MG5_9_13PL & MG5_9_14PL & \
                     MG5_9_15PL & MG5_9_16PL & MG5_9_17PL & MG5_9_18PL & \
                     MG5_9_19PL & MG5_9_110PL & MG5_9_111PL & MG5_9_112PL & \
@@ -9175,7 +9175,7 @@ extern "C" {
 #define  MG5_10_116PL    0xFFFF
 #endif
 
-#define  MG5_10_110PL	0xFDFF
+#define  MG5_10_110PL    0xFDFF
 #define  MG5_10    (MG5_10_11PL & MG5_10_12PL & MG5_10_13PL & MG5_10_14PL & \
                     MG5_10_15PL & MG5_10_16PL & MG5_10_17PL & MG5_10_18PL & \
                     MG5_10_19PL & MG5_10_110PL & MG5_10_111PL & MG5_10_112PL & \
@@ -9272,7 +9272,7 @@ extern "C" {
 #define  MG5_11_116PL    0xFFFF
 #endif
 
-#define  MG5_11_111PL	0xFBFF
+#define  MG5_11_111PL    0xFBFF
 #define  MG5_11    (MG5_11_11PL & MG5_11_12PL & MG5_11_13PL & MG5_11_14PL & \
                     MG5_11_15PL & MG5_11_16PL & MG5_11_17PL & MG5_11_18PL & \
                     MG5_11_19PL & MG5_11_110PL & MG5_11_111PL & MG5_11_112PL & \
@@ -9369,7 +9369,7 @@ extern "C" {
 #define  MG5_12_116PL    0xFFFF
 #endif
 
-#define  MG5_12_112PL	0xF7FF
+#define  MG5_12_112PL    0xF7FF
 #define  MG5_12    (MG5_12_11PL & MG5_12_12PL & MG5_12_13PL & MG5_12_14PL & \
                     MG5_12_15PL & MG5_12_16PL & MG5_12_17PL & MG5_12_18PL & \
                     MG5_12_19PL & MG5_12_110PL & MG5_12_111PL & MG5_12_112PL & \
@@ -9466,7 +9466,7 @@ extern "C" {
 #define  MG5_13_116PL    0xFFFF
 #endif
 
-#define  MG5_13_113PL	0xEFFF
+#define  MG5_13_113PL    0xEFFF
 #define  MG5_13    (MG5_13_11PL & MG5_13_12PL & MG5_13_13PL & MG5_13_14PL & \
                     MG5_13_15PL & MG5_13_16PL & MG5_13_17PL & MG5_13_18PL & \
                     MG5_13_19PL & MG5_13_110PL & MG5_13_111PL & MG5_13_112PL & \
@@ -9563,7 +9563,7 @@ extern "C" {
 #define  MG5_14_116PL    0xFFFF
 #endif
 
-#define  MG5_14_114PL	0xDFFF
+#define  MG5_14_114PL    0xDFFF
 #define  MG5_14    (MG5_14_11PL & MG5_14_12PL & MG5_14_13PL & MG5_14_14PL & \
                     MG5_14_15PL & MG5_14_16PL & MG5_14_17PL & MG5_14_18PL & \
                     MG5_14_19PL & MG5_14_110PL & MG5_14_111PL & MG5_14_112PL & \
@@ -9660,7 +9660,7 @@ extern "C" {
 #define  MG5_15_116PL    0xFFFF
 #endif
 
-#define  MG5_15_115PL	0xBFFF
+#define  MG5_15_115PL    0xBFFF
 #define  MG5_15    (MG5_15_11PL & MG5_15_12PL & MG5_15_13PL & MG5_15_14PL & \
                     MG5_15_15PL & MG5_15_16PL & MG5_15_17PL & MG5_15_18PL & \
                     MG5_15_19PL & MG5_15_110PL & MG5_15_111PL & MG5_15_112PL & \
@@ -9757,7 +9757,7 @@ extern "C" {
 #define  MG5_16_115PL    0xFFFF
 #endif
 
-#define  MG5_16_116PL	0x7FFF
+#define  MG5_16_116PL    0x7FFF
 #define  MG5_16    (MG5_16_11PL & MG5_16_12PL & MG5_16_13PL & MG5_16_14PL & \
                     MG5_16_15PL & MG5_16_16PL & MG5_16_17PL & MG5_16_18PL & \
                     MG5_16_19PL & MG5_16_110PL & MG5_16_111PL & MG5_16_112PL & \
@@ -9860,7 +9860,7 @@ extern "C" {
 #define  MG6_1_116PL    0xFFFF
 #endif
 
-#define  MG6_1_11PL	0xFFFE
+#define  MG6_1_11PL    0xFFFE
 #define  MG6_1    (MG6_1_11PL & MG6_1_12PL & MG6_1_13PL & MG6_1_14PL & \
                     MG6_1_15PL & MG6_1_16PL & MG6_1_17PL & MG6_1_18PL & \
                     MG6_1_19PL & MG6_1_110PL & MG6_1_111PL & MG6_1_112PL & \
@@ -9957,7 +9957,7 @@ extern "C" {
 #define  MG6_2_116PL    0xFFFF
 #endif
 
-#define  MG6_2_12PL	0xFFFD
+#define  MG6_2_12PL    0xFFFD
 #define  MG6_2    (MG6_2_11PL & MG6_2_12PL & MG6_2_13PL & MG6_2_14PL & \
                     MG6_2_15PL & MG6_2_16PL & MG6_2_17PL & MG6_2_18PL & \
                     MG6_2_19PL & MG6_2_110PL & MG6_2_111PL & MG6_2_112PL & \
@@ -10054,7 +10054,7 @@ extern "C" {
 #define  MG6_3_116PL    0xFFFF
 #endif
 
-#define  MG6_3_13PL	0xFFFB
+#define  MG6_3_13PL    0xFFFB
 #define  MG6_3    (MG6_3_11PL & MG6_3_12PL & MG6_3_13PL & MG6_3_14PL & \
                     MG6_3_15PL & MG6_3_16PL & MG6_3_17PL & MG6_3_18PL & \
                     MG6_3_19PL & MG6_3_110PL & MG6_3_111PL & MG6_3_112PL & \
@@ -10151,7 +10151,7 @@ extern "C" {
 #define  MG6_4_116PL    0xFFFF
 #endif
 
-#define  MG6_4_14PL	0xFFF7
+#define  MG6_4_14PL    0xFFF7
 #define  MG6_4    (MG6_4_11PL & MG6_4_12PL & MG6_4_13PL & MG6_4_14PL & \
                     MG6_4_15PL & MG6_4_16PL & MG6_4_17PL & MG6_4_18PL & \
                     MG6_4_19PL & MG6_4_110PL & MG6_4_111PL & MG6_4_112PL & \
@@ -10248,7 +10248,7 @@ extern "C" {
 #define  MG6_5_116PL    0xFFFF
 #endif
 
-#define  MG6_5_15PL	0xFFEF
+#define  MG6_5_15PL    0xFFEF
 #define  MG6_5    (MG6_5_11PL & MG6_5_12PL & MG6_5_13PL & MG6_5_14PL & \
                     MG6_5_15PL & MG6_5_16PL & MG6_5_17PL & MG6_5_18PL & \
                     MG6_5_19PL & MG6_5_110PL & MG6_5_111PL & MG6_5_112PL & \
@@ -10345,7 +10345,7 @@ extern "C" {
 #define  MG6_6_116PL    0xFFFF
 #endif
 
-#define  MG6_6_16PL	0xFFDF
+#define  MG6_6_16PL    0xFFDF
 #define  MG6_6    (MG6_6_11PL & MG6_6_12PL & MG6_6_13PL & MG6_6_14PL & \
                     MG6_6_15PL & MG6_6_16PL & MG6_6_17PL & MG6_6_18PL & \
                     MG6_6_19PL & MG6_6_110PL & MG6_6_111PL & MG6_6_112PL & \
@@ -10442,7 +10442,7 @@ extern "C" {
 #define  MG6_7_116PL    0xFFFF
 #endif
 
-#define  MG6_7_17PL	0xFFBF
+#define  MG6_7_17PL    0xFFBF
 #define  MG6_7    (MG6_7_11PL & MG6_7_12PL & MG6_7_13PL & MG6_7_14PL & \
                     MG6_7_15PL & MG6_7_16PL & MG6_7_17PL & MG6_7_18PL & \
                     MG6_7_19PL & MG6_7_110PL & MG6_7_111PL & MG6_7_112PL & \
@@ -10539,7 +10539,7 @@ extern "C" {
 #define  MG6_8_116PL    0xFFFF
 #endif
 
-#define  MG6_8_18PL	0xFF7F
+#define  MG6_8_18PL    0xFF7F
 #define  MG6_8    (MG6_8_11PL & MG6_8_12PL & MG6_8_13PL & MG6_8_14PL & \
                     MG6_8_15PL & MG6_8_16PL & MG6_8_17PL & MG6_8_18PL & \
                     MG6_8_19PL & MG6_8_110PL & MG6_8_111PL & MG6_8_112PL & \
@@ -10636,7 +10636,7 @@ extern "C" {
 #define  MG6_9_116PL    0xFFFF
 #endif
 
-#define  MG6_9_19PL	0xFEFF
+#define  MG6_9_19PL    0xFEFF
 #define  MG6_9    (MG6_9_11PL & MG6_9_12PL & MG6_9_13PL & MG6_9_14PL & \
                     MG6_9_15PL & MG6_9_16PL & MG6_9_17PL & MG6_9_18PL & \
                     MG6_9_19PL & MG6_9_110PL & MG6_9_111PL & MG6_9_112PL & \
@@ -10733,7 +10733,7 @@ extern "C" {
 #define  MG6_10_116PL    0xFFFF
 #endif
 
-#define  MG6_10_110PL	0xFDFF
+#define  MG6_10_110PL    0xFDFF
 #define  MG6_10    (MG6_10_11PL & MG6_10_12PL & MG6_10_13PL & MG6_10_14PL & \
                     MG6_10_15PL & MG6_10_16PL & MG6_10_17PL & MG6_10_18PL & \
                     MG6_10_19PL & MG6_10_110PL & MG6_10_111PL & MG6_10_112PL & \
@@ -10830,7 +10830,7 @@ extern "C" {
 #define  MG6_11_116PL    0xFFFF
 #endif
 
-#define  MG6_11_111PL	0xFBFF
+#define  MG6_11_111PL    0xFBFF
 #define  MG6_11    (MG6_11_11PL & MG6_11_12PL & MG6_11_13PL & MG6_11_14PL & \
                     MG6_11_15PL & MG6_11_16PL & MG6_11_17PL & MG6_11_18PL & \
                     MG6_11_19PL & MG6_11_110PL & MG6_11_111PL & MG6_11_112PL & \
@@ -10927,7 +10927,7 @@ extern "C" {
 #define  MG6_12_116PL    0xFFFF
 #endif
 
-#define  MG6_12_112PL	0xF7FF
+#define  MG6_12_112PL    0xF7FF
 #define  MG6_12    (MG6_12_11PL & MG6_12_12PL & MG6_12_13PL & MG6_12_14PL & \
                     MG6_12_15PL & MG6_12_16PL & MG6_12_17PL & MG6_12_18PL & \
                     MG6_12_19PL & MG6_12_110PL & MG6_12_111PL & MG6_12_112PL & \
@@ -11024,7 +11024,7 @@ extern "C" {
 #define  MG6_13_116PL    0xFFFF
 #endif
 
-#define  MG6_13_113PL	0xEFFF
+#define  MG6_13_113PL    0xEFFF
 #define  MG6_13    (MG6_13_11PL & MG6_13_12PL & MG6_13_13PL & MG6_13_14PL & \
                     MG6_13_15PL & MG6_13_16PL & MG6_13_17PL & MG6_13_18PL & \
                     MG6_13_19PL & MG6_13_110PL & MG6_13_111PL & MG6_13_112PL & \
@@ -11121,7 +11121,7 @@ extern "C" {
 #define  MG6_14_116PL    0xFFFF
 #endif
 
-#define  MG6_14_114PL	0xDFFF
+#define  MG6_14_114PL    0xDFFF
 #define  MG6_14    (MG6_14_11PL & MG6_14_12PL & MG6_14_13PL & MG6_14_14PL & \
                     MG6_14_15PL & MG6_14_16PL & MG6_14_17PL & MG6_14_18PL & \
                     MG6_14_19PL & MG6_14_110PL & MG6_14_111PL & MG6_14_112PL & \
@@ -11218,7 +11218,7 @@ extern "C" {
 #define  MG6_15_116PL    0xFFFF
 #endif
 
-#define  MG6_15_115PL	0xBFFF
+#define  MG6_15_115PL    0xBFFF
 #define  MG6_15    (MG6_15_11PL & MG6_15_12PL & MG6_15_13PL & MG6_15_14PL & \
                     MG6_15_15PL & MG6_15_16PL & MG6_15_17PL & MG6_15_18PL & \
                     MG6_15_19PL & MG6_15_110PL & MG6_15_111PL & MG6_15_112PL & \
@@ -11315,7 +11315,7 @@ extern "C" {
 #define  MG6_16_115PL    0xFFFF
 #endif
 
-#define  MG6_16_116PL	0x7FFF
+#define  MG6_16_116PL    0x7FFF
 #define  MG6_16    (MG6_16_11PL & MG6_16_12PL & MG6_16_13PL & MG6_16_14PL & \
                     MG6_16_15PL & MG6_16_16PL & MG6_16_17PL & MG6_16_18PL & \
                     MG6_16_19PL & MG6_16_110PL & MG6_16_111PL & MG6_16_112PL & \
@@ -11418,7 +11418,7 @@ extern "C" {
 #define  MG7_1_116PL    0xFFFF
 #endif
 
-#define  MG7_1_11PL	0xFFFE
+#define  MG7_1_11PL    0xFFFE
 #define  MG7_1    (MG7_1_11PL & MG7_1_12PL & MG7_1_13PL & MG7_1_14PL & \
                     MG7_1_15PL & MG7_1_16PL & MG7_1_17PL & MG7_1_18PL & \
                     MG7_1_19PL & MG7_1_110PL & MG7_1_111PL & MG7_1_112PL & \
@@ -11515,7 +11515,7 @@ extern "C" {
 #define  MG7_2_116PL    0xFFFF
 #endif
 
-#define  MG7_2_12PL	0xFFFD
+#define  MG7_2_12PL    0xFFFD
 #define  MG7_2    (MG7_2_11PL & MG7_2_12PL & MG7_2_13PL & MG7_2_14PL & \
                     MG7_2_15PL & MG7_2_16PL & MG7_2_17PL & MG7_2_18PL & \
                     MG7_2_19PL & MG7_2_110PL & MG7_2_111PL & MG7_2_112PL & \
@@ -11612,7 +11612,7 @@ extern "C" {
 #define  MG7_3_116PL    0xFFFF
 #endif
 
-#define  MG7_3_13PL	0xFFFB
+#define  MG7_3_13PL    0xFFFB
 #define  MG7_3    (MG7_3_11PL & MG7_3_12PL & MG7_3_13PL & MG7_3_14PL & \
                     MG7_3_15PL & MG7_3_16PL & MG7_3_17PL & MG7_3_18PL & \
                     MG7_3_19PL & MG7_3_110PL & MG7_3_111PL & MG7_3_112PL & \
@@ -11709,7 +11709,7 @@ extern "C" {
 #define  MG7_4_116PL    0xFFFF
 #endif
 
-#define  MG7_4_14PL	0xFFF7
+#define  MG7_4_14PL    0xFFF7
 #define  MG7_4    (MG7_4_11PL & MG7_4_12PL & MG7_4_13PL & MG7_4_14PL & \
                     MG7_4_15PL & MG7_4_16PL & MG7_4_17PL & MG7_4_18PL & \
                     MG7_4_19PL & MG7_4_110PL & MG7_4_111PL & MG7_4_112PL & \
@@ -11806,7 +11806,7 @@ extern "C" {
 #define  MG7_5_116PL    0xFFFF
 #endif
 
-#define  MG7_5_15PL	0xFFEF
+#define  MG7_5_15PL    0xFFEF
 #define  MG7_5    (MG7_5_11PL & MG7_5_12PL & MG7_5_13PL & MG7_5_14PL & \
                     MG7_5_15PL & MG7_5_16PL & MG7_5_17PL & MG7_5_18PL & \
                     MG7_5_19PL & MG7_5_110PL & MG7_5_111PL & MG7_5_112PL & \
@@ -11903,7 +11903,7 @@ extern "C" {
 #define  MG7_6_116PL    0xFFFF
 #endif
 
-#define  MG7_6_16PL	0xFFDF
+#define  MG7_6_16PL    0xFFDF
 #define  MG7_6    (MG7_6_11PL & MG7_6_12PL & MG7_6_13PL & MG7_6_14PL & \
                     MG7_6_15PL & MG7_6_16PL & MG7_6_17PL & MG7_6_18PL & \
                     MG7_6_19PL & MG7_6_110PL & MG7_6_111PL & MG7_6_112PL & \
@@ -12000,7 +12000,7 @@ extern "C" {
 #define  MG7_7_116PL    0xFFFF
 #endif
 
-#define  MG7_7_17PL	0xFFBF
+#define  MG7_7_17PL    0xFFBF
 #define  MG7_7    (MG7_7_11PL & MG7_7_12PL & MG7_7_13PL & MG7_7_14PL & \
                     MG7_7_15PL & MG7_7_16PL & MG7_7_17PL & MG7_7_18PL & \
                     MG7_7_19PL & MG7_7_110PL & MG7_7_111PL & MG7_7_112PL & \
@@ -12097,7 +12097,7 @@ extern "C" {
 #define  MG7_8_116PL    0xFFFF
 #endif
 
-#define  MG7_8_18PL	0xFF7F
+#define  MG7_8_18PL    0xFF7F
 #define  MG7_8    (MG7_8_11PL & MG7_8_12PL & MG7_8_13PL & MG7_8_14PL & \
                     MG7_8_15PL & MG7_8_16PL & MG7_8_17PL & MG7_8_18PL & \
                     MG7_8_19PL & MG7_8_110PL & MG7_8_111PL & MG7_8_112PL & \
@@ -12194,7 +12194,7 @@ extern "C" {
 #define  MG7_9_116PL    0xFFFF
 #endif
 
-#define  MG7_9_19PL	0xFEFF
+#define  MG7_9_19PL    0xFEFF
 #define  MG7_9    (MG7_9_11PL & MG7_9_12PL & MG7_9_13PL & MG7_9_14PL & \
                     MG7_9_15PL & MG7_9_16PL & MG7_9_17PL & MG7_9_18PL & \
                     MG7_9_19PL & MG7_9_110PL & MG7_9_111PL & MG7_9_112PL & \
@@ -12291,7 +12291,7 @@ extern "C" {
 #define  MG7_10_116PL    0xFFFF
 #endif
 
-#define  MG7_10_110PL	0xFDFF
+#define  MG7_10_110PL    0xFDFF
 #define  MG7_10    (MG7_10_11PL & MG7_10_12PL & MG7_10_13PL & MG7_10_14PL & \
                     MG7_10_15PL & MG7_10_16PL & MG7_10_17PL & MG7_10_18PL & \
                     MG7_10_19PL & MG7_10_110PL & MG7_10_111PL & MG7_10_112PL & \
@@ -12388,7 +12388,7 @@ extern "C" {
 #define  MG7_11_116PL    0xFFFF
 #endif
 
-#define  MG7_11_111PL	0xFBFF
+#define  MG7_11_111PL    0xFBFF
 #define  MG7_11    (MG7_11_11PL & MG7_11_12PL & MG7_11_13PL & MG7_11_14PL & \
                     MG7_11_15PL & MG7_11_16PL & MG7_11_17PL & MG7_11_18PL & \
                     MG7_11_19PL & MG7_11_110PL & MG7_11_111PL & MG7_11_112PL & \
@@ -12485,7 +12485,7 @@ extern "C" {
 #define  MG7_12_116PL    0xFFFF
 #endif
 
-#define  MG7_12_112PL	0xF7FF
+#define  MG7_12_112PL    0xF7FF
 #define  MG7_12    (MG7_12_11PL & MG7_12_12PL & MG7_12_13PL & MG7_12_14PL & \
                     MG7_12_15PL & MG7_12_16PL & MG7_12_17PL & MG7_12_18PL & \
                     MG7_12_19PL & MG7_12_110PL & MG7_12_111PL & MG7_12_112PL & \
@@ -12582,7 +12582,7 @@ extern "C" {
 #define  MG7_13_116PL    0xFFFF
 #endif
 
-#define  MG7_13_113PL	0xEFFF
+#define  MG7_13_113PL    0xEFFF
 #define  MG7_13    (MG7_13_11PL & MG7_13_12PL & MG7_13_13PL & MG7_13_14PL & \
                     MG7_13_15PL & MG7_13_16PL & MG7_13_17PL & MG7_13_18PL & \
                     MG7_13_19PL & MG7_13_110PL & MG7_13_111PL & MG7_13_112PL & \
@@ -12679,7 +12679,7 @@ extern "C" {
 #define  MG7_14_116PL    0xFFFF
 #endif
 
-#define  MG7_14_114PL	0xDFFF
+#define  MG7_14_114PL    0xDFFF
 #define  MG7_14    (MG7_14_11PL & MG7_14_12PL & MG7_14_13PL & MG7_14_14PL & \
                     MG7_14_15PL & MG7_14_16PL & MG7_14_17PL & MG7_14_18PL & \
                     MG7_14_19PL & MG7_14_110PL & MG7_14_111PL & MG7_14_112PL & \
@@ -12776,7 +12776,7 @@ extern "C" {
 #define  MG7_15_116PL    0xFFFF
 #endif
 
-#define  MG7_15_115PL	0xBFFF
+#define  MG7_15_115PL    0xBFFF
 #define  MG7_15    (MG7_15_11PL & MG7_15_12PL & MG7_15_13PL & MG7_15_14PL & \
                     MG7_15_15PL & MG7_15_16PL & MG7_15_17PL & MG7_15_18PL & \
                     MG7_15_19PL & MG7_15_110PL & MG7_15_111PL & MG7_15_112PL & \
@@ -12873,7 +12873,7 @@ extern "C" {
 #define  MG7_16_115PL    0xFFFF
 #endif
 
-#define  MG7_16_116PL	0x7FFF
+#define  MG7_16_116PL    0x7FFF
 #define  MG7_16    (MG7_16_11PL & MG7_16_12PL & MG7_16_13PL & MG7_16_14PL & \
                     MG7_16_15PL & MG7_16_16PL & MG7_16_17PL & MG7_16_18PL & \
                     MG7_16_19PL & MG7_16_110PL & MG7_16_111PL & MG7_16_112PL & \
@@ -12976,7 +12976,7 @@ extern "C" {
 #define  MG8_1_116PL    0xFFFF
 #endif
 
-#define  MG8_1_11PL	0xFFFE
+#define  MG8_1_11PL    0xFFFE
 #define  MG8_1    (MG8_1_11PL & MG8_1_12PL & MG8_1_13PL & MG8_1_14PL & \
                     MG8_1_15PL & MG8_1_16PL & MG8_1_17PL & MG8_1_18PL & \
                     MG8_1_19PL & MG8_1_110PL & MG8_1_111PL & MG8_1_112PL & \
@@ -13073,7 +13073,7 @@ extern "C" {
 #define  MG8_2_116PL    0xFFFF
 #endif
 
-#define  MG8_2_12PL	0xFFFD
+#define  MG8_2_12PL    0xFFFD
 #define  MG8_2    (MG8_2_11PL & MG8_2_12PL & MG8_2_13PL & MG8_2_14PL & \
                     MG8_2_15PL & MG8_2_16PL & MG8_2_17PL & MG8_2_18PL & \
                     MG8_2_19PL & MG8_2_110PL & MG8_2_111PL & MG8_2_112PL & \
@@ -13170,7 +13170,7 @@ extern "C" {
 #define  MG8_3_116PL    0xFFFF
 #endif
 
-#define  MG8_3_13PL	0xFFFB
+#define  MG8_3_13PL    0xFFFB
 #define  MG8_3    (MG8_3_11PL & MG8_3_12PL & MG8_3_13PL & MG8_3_14PL & \
                     MG8_3_15PL & MG8_3_16PL & MG8_3_17PL & MG8_3_18PL & \
                     MG8_3_19PL & MG8_3_110PL & MG8_3_111PL & MG8_3_112PL & \
@@ -13267,7 +13267,7 @@ extern "C" {
 #define  MG8_4_116PL    0xFFFF
 #endif
 
-#define  MG8_4_14PL	0xFFF7
+#define  MG8_4_14PL    0xFFF7
 #define  MG8_4    (MG8_4_11PL & MG8_4_12PL & MG8_4_13PL & MG8_4_14PL & \
                     MG8_4_15PL & MG8_4_16PL & MG8_4_17PL & MG8_4_18PL & \
                     MG8_4_19PL & MG8_4_110PL & MG8_4_111PL & MG8_4_112PL & \
@@ -13364,7 +13364,7 @@ extern "C" {
 #define  MG8_5_116PL    0xFFFF
 #endif
 
-#define  MG8_5_15PL	0xFFEF
+#define  MG8_5_15PL    0xFFEF
 #define  MG8_5    (MG8_5_11PL & MG8_5_12PL & MG8_5_13PL & MG8_5_14PL & \
                     MG8_5_15PL & MG8_5_16PL & MG8_5_17PL & MG8_5_18PL & \
                     MG8_5_19PL & MG8_5_110PL & MG8_5_111PL & MG8_5_112PL & \
@@ -13461,7 +13461,7 @@ extern "C" {
 #define  MG8_6_116PL    0xFFFF
 #endif
 
-#define  MG8_6_16PL	0xFFDF
+#define  MG8_6_16PL    0xFFDF
 #define  MG8_6    (MG8_6_11PL & MG8_6_12PL & MG8_6_13PL & MG8_6_14PL & \
                     MG8_6_15PL & MG8_6_16PL & MG8_6_17PL & MG8_6_18PL & \
                     MG8_6_19PL & MG8_6_110PL & MG8_6_111PL & MG8_6_112PL & \
@@ -13558,7 +13558,7 @@ extern "C" {
 #define  MG8_7_116PL    0xFFFF
 #endif
 
-#define  MG8_7_17PL	0xFFBF
+#define  MG8_7_17PL    0xFFBF
 #define  MG8_7    (MG8_7_11PL & MG8_7_12PL & MG8_7_13PL & MG8_7_14PL & \
                     MG8_7_15PL & MG8_7_16PL & MG8_7_17PL & MG8_7_18PL & \
                     MG8_7_19PL & MG8_7_110PL & MG8_7_111PL & MG8_7_112PL & \
@@ -13655,7 +13655,7 @@ extern "C" {
 #define  MG8_8_116PL    0xFFFF
 #endif
 
-#define  MG8_8_18PL	0xFF7F
+#define  MG8_8_18PL    0xFF7F
 #define  MG8_8    (MG8_8_11PL & MG8_8_12PL & MG8_8_13PL & MG8_8_14PL & \
                     MG8_8_15PL & MG8_8_16PL & MG8_8_17PL & MG8_8_18PL & \
                     MG8_8_19PL & MG8_8_110PL & MG8_8_111PL & MG8_8_112PL & \
@@ -13752,7 +13752,7 @@ extern "C" {
 #define  MG8_9_116PL    0xFFFF
 #endif
 
-#define  MG8_9_19PL	0xFEFF
+#define  MG8_9_19PL    0xFEFF
 #define  MG8_9    (MG8_9_11PL & MG8_9_12PL & MG8_9_13PL & MG8_9_14PL & \
                     MG8_9_15PL & MG8_9_16PL & MG8_9_17PL & MG8_9_18PL & \
                     MG8_9_19PL & MG8_9_110PL & MG8_9_111PL & MG8_9_112PL & \
@@ -13849,7 +13849,7 @@ extern "C" {
 #define  MG8_10_116PL    0xFFFF
 #endif
 
-#define  MG8_10_110PL	0xFDFF
+#define  MG8_10_110PL    0xFDFF
 #define  MG8_10    (MG8_10_11PL & MG8_10_12PL & MG8_10_13PL & MG8_10_14PL & \
                     MG8_10_15PL & MG8_10_16PL & MG8_10_17PL & MG8_10_18PL & \
                     MG8_10_19PL & MG8_10_110PL & MG8_10_111PL & MG8_10_112PL & \
@@ -13946,7 +13946,7 @@ extern "C" {
 #define  MG8_11_116PL    0xFFFF
 #endif
 
-#define  MG8_11_111PL	0xFBFF
+#define  MG8_11_111PL    0xFBFF
 #define  MG8_11    (MG8_11_11PL & MG8_11_12PL & MG8_11_13PL & MG8_11_14PL & \
                     MG8_11_15PL & MG8_11_16PL & MG8_11_17PL & MG8_11_18PL & \
                     MG8_11_19PL & MG8_11_110PL & MG8_11_111PL & MG8_11_112PL & \
@@ -14043,7 +14043,7 @@ extern "C" {
 #define  MG8_12_116PL    0xFFFF
 #endif
 
-#define  MG8_12_112PL	0xF7FF
+#define  MG8_12_112PL    0xF7FF
 #define  MG8_12    (MG8_12_11PL & MG8_12_12PL & MG8_12_13PL & MG8_12_14PL & \
                     MG8_12_15PL & MG8_12_16PL & MG8_12_17PL & MG8_12_18PL & \
                     MG8_12_19PL & MG8_12_110PL & MG8_12_111PL & MG8_12_112PL & \
@@ -14140,7 +14140,7 @@ extern "C" {
 #define  MG8_13_116PL    0xFFFF
 #endif
 
-#define  MG8_13_113PL	0xEFFF
+#define  MG8_13_113PL    0xEFFF
 #define  MG8_13    (MG8_13_11PL & MG8_13_12PL & MG8_13_13PL & MG8_13_14PL & \
                     MG8_13_15PL & MG8_13_16PL & MG8_13_17PL & MG8_13_18PL & \
                     MG8_13_19PL & MG8_13_110PL & MG8_13_111PL & MG8_13_112PL & \
@@ -14237,7 +14237,7 @@ extern "C" {
 #define  MG8_14_116PL    0xFFFF
 #endif
 
-#define  MG8_14_114PL	0xDFFF
+#define  MG8_14_114PL    0xDFFF
 #define  MG8_14    (MG8_14_11PL & MG8_14_12PL & MG8_14_13PL & MG8_14_14PL & \
                     MG8_14_15PL & MG8_14_16PL & MG8_14_17PL & MG8_14_18PL & \
                     MG8_14_19PL & MG8_14_110PL & MG8_14_111PL & MG8_14_112PL & \
@@ -14334,7 +14334,7 @@ extern "C" {
 #define  MG8_15_116PL    0xFFFF
 #endif
 
-#define  MG8_15_115PL	0xBFFF
+#define  MG8_15_115PL    0xBFFF
 #define  MG8_15    (MG8_15_11PL & MG8_15_12PL & MG8_15_13PL & MG8_15_14PL & \
                     MG8_15_15PL & MG8_15_16PL & MG8_15_17PL & MG8_15_18PL & \
                     MG8_15_19PL & MG8_15_110PL & MG8_15_111PL & MG8_15_112PL & \
@@ -14431,7 +14431,7 @@ extern "C" {
 #define  MG8_16_115PL    0xFFFF
 #endif
 
-#define  MG8_16_116PL	0x7FFF
+#define  MG8_16_116PL    0x7FFF
 #define  MG8_16    (MG8_16_11PL & MG8_16_12PL & MG8_16_13PL & MG8_16_14PL & \
                     MG8_16_15PL & MG8_16_16PL & MG8_16_17PL & MG8_16_18PL & \
                     MG8_16_19PL & MG8_16_110PL & MG8_16_111PL & MG8_16_112PL & \
@@ -14534,7 +14534,7 @@ extern "C" {
 #define  MG9_1_116PL    0xFFFF
 #endif
 
-#define  MG9_1_11PL	0xFFFE
+#define  MG9_1_11PL    0xFFFE
 #define  MG9_1    (MG9_1_11PL & MG9_1_12PL & MG9_1_13PL & MG9_1_14PL & \
                     MG9_1_15PL & MG9_1_16PL & MG9_1_17PL & MG9_1_18PL & \
                     MG9_1_19PL & MG9_1_110PL & MG9_1_111PL & MG9_1_112PL & \
@@ -14631,7 +14631,7 @@ extern "C" {
 #define  MG9_2_116PL    0xFFFF
 #endif
 
-#define  MG9_2_12PL	0xFFFD
+#define  MG9_2_12PL    0xFFFD
 #define  MG9_2    (MG9_2_11PL & MG9_2_12PL & MG9_2_13PL & MG9_2_14PL & \
                     MG9_2_15PL & MG9_2_16PL & MG9_2_17PL & MG9_2_18PL & \
                     MG9_2_19PL & MG9_2_110PL & MG9_2_111PL & MG9_2_112PL & \
@@ -14728,7 +14728,7 @@ extern "C" {
 #define  MG9_3_116PL    0xFFFF
 #endif
 
-#define  MG9_3_13PL	0xFFFB
+#define  MG9_3_13PL    0xFFFB
 #define  MG9_3    (MG9_3_11PL & MG9_3_12PL & MG9_3_13PL & MG9_3_14PL & \
                     MG9_3_15PL & MG9_3_16PL & MG9_3_17PL & MG9_3_18PL & \
                     MG9_3_19PL & MG9_3_110PL & MG9_3_111PL & MG9_3_112PL & \
@@ -14825,7 +14825,7 @@ extern "C" {
 #define  MG9_4_116PL    0xFFFF
 #endif
 
-#define  MG9_4_14PL	0xFFF7
+#define  MG9_4_14PL    0xFFF7
 #define  MG9_4    (MG9_4_11PL & MG9_4_12PL & MG9_4_13PL & MG9_4_14PL & \
                     MG9_4_15PL & MG9_4_16PL & MG9_4_17PL & MG9_4_18PL & \
                     MG9_4_19PL & MG9_4_110PL & MG9_4_111PL & MG9_4_112PL & \
@@ -14922,7 +14922,7 @@ extern "C" {
 #define  MG9_5_116PL    0xFFFF
 #endif
 
-#define  MG9_5_15PL	0xFFEF
+#define  MG9_5_15PL    0xFFEF
 #define  MG9_5    (MG9_5_11PL & MG9_5_12PL & MG9_5_13PL & MG9_5_14PL & \
                     MG9_5_15PL & MG9_5_16PL & MG9_5_17PL & MG9_5_18PL & \
                     MG9_5_19PL & MG9_5_110PL & MG9_5_111PL & MG9_5_112PL & \
@@ -15019,7 +15019,7 @@ extern "C" {
 #define  MG9_6_116PL    0xFFFF
 #endif
 
-#define  MG9_6_16PL	0xFFDF
+#define  MG9_6_16PL    0xFFDF
 #define  MG9_6    (MG9_6_11PL & MG9_6_12PL & MG9_6_13PL & MG9_6_14PL & \
                     MG9_6_15PL & MG9_6_16PL & MG9_6_17PL & MG9_6_18PL & \
                     MG9_6_19PL & MG9_6_110PL & MG9_6_111PL & MG9_6_112PL & \
@@ -15116,7 +15116,7 @@ extern "C" {
 #define  MG9_7_116PL    0xFFFF
 #endif
 
-#define  MG9_7_17PL	0xFFBF
+#define  MG9_7_17PL    0xFFBF
 #define  MG9_7    (MG9_7_11PL & MG9_7_12PL & MG9_7_13PL & MG9_7_14PL & \
                     MG9_7_15PL & MG9_7_16PL & MG9_7_17PL & MG9_7_18PL & \
                     MG9_7_19PL & MG9_7_110PL & MG9_7_111PL & MG9_7_112PL & \
@@ -15213,7 +15213,7 @@ extern "C" {
 #define  MG9_8_116PL    0xFFFF
 #endif
 
-#define  MG9_8_18PL	0xFF7F
+#define  MG9_8_18PL    0xFF7F
 #define  MG9_8    (MG9_8_11PL & MG9_8_12PL & MG9_8_13PL & MG9_8_14PL & \
                     MG9_8_15PL & MG9_8_16PL & MG9_8_17PL & MG9_8_18PL & \
                     MG9_8_19PL & MG9_8_110PL & MG9_8_111PL & MG9_8_112PL & \
@@ -15310,7 +15310,7 @@ extern "C" {
 #define  MG9_9_116PL    0xFFFF
 #endif
 
-#define  MG9_9_19PL	0xFEFF
+#define  MG9_9_19PL    0xFEFF
 #define  MG9_9    (MG9_9_11PL & MG9_9_12PL & MG9_9_13PL & MG9_9_14PL & \
                     MG9_9_15PL & MG9_9_16PL & MG9_9_17PL & MG9_9_18PL & \
                     MG9_9_19PL & MG9_9_110PL & MG9_9_111PL & MG9_9_112PL & \
@@ -15407,7 +15407,7 @@ extern "C" {
 #define  MG9_10_116PL    0xFFFF
 #endif
 
-#define  MG9_10_110PL	0xFDFF
+#define  MG9_10_110PL    0xFDFF
 #define  MG9_10    (MG9_10_11PL & MG9_10_12PL & MG9_10_13PL & MG9_10_14PL & \
                     MG9_10_15PL & MG9_10_16PL & MG9_10_17PL & MG9_10_18PL & \
                     MG9_10_19PL & MG9_10_110PL & MG9_10_111PL & MG9_10_112PL & \
@@ -15504,7 +15504,7 @@ extern "C" {
 #define  MG9_11_116PL    0xFFFF
 #endif
 
-#define  MG9_11_111PL	0xFBFF
+#define  MG9_11_111PL    0xFBFF
 #define  MG9_11    (MG9_11_11PL & MG9_11_12PL & MG9_11_13PL & MG9_11_14PL & \
                     MG9_11_15PL & MG9_11_16PL & MG9_11_17PL & MG9_11_18PL & \
                     MG9_11_19PL & MG9_11_110PL & MG9_11_111PL & MG9_11_112PL & \
@@ -15601,7 +15601,7 @@ extern "C" {
 #define  MG9_12_116PL    0xFFFF
 #endif
 
-#define  MG9_12_112PL	0xF7FF
+#define  MG9_12_112PL    0xF7FF
 #define  MG9_12    (MG9_12_11PL & MG9_12_12PL & MG9_12_13PL & MG9_12_14PL & \
                     MG9_12_15PL & MG9_12_16PL & MG9_12_17PL & MG9_12_18PL & \
                     MG9_12_19PL & MG9_12_110PL & MG9_12_111PL & MG9_12_112PL & \
@@ -15698,7 +15698,7 @@ extern "C" {
 #define  MG9_13_116PL    0xFFFF
 #endif
 
-#define  MG9_13_113PL	0xEFFF
+#define  MG9_13_113PL    0xEFFF
 #define  MG9_13    (MG9_13_11PL & MG9_13_12PL & MG9_13_13PL & MG9_13_14PL & \
                     MG9_13_15PL & MG9_13_16PL & MG9_13_17PL & MG9_13_18PL & \
                     MG9_13_19PL & MG9_13_110PL & MG9_13_111PL & MG9_13_112PL & \
@@ -15795,7 +15795,7 @@ extern "C" {
 #define  MG9_14_116PL    0xFFFF
 #endif
 
-#define  MG9_14_114PL	0xDFFF
+#define  MG9_14_114PL    0xDFFF
 #define  MG9_14    (MG9_14_11PL & MG9_14_12PL & MG9_14_13PL & MG9_14_14PL & \
                     MG9_14_15PL & MG9_14_16PL & MG9_14_17PL & MG9_14_18PL & \
                     MG9_14_19PL & MG9_14_110PL & MG9_14_111PL & MG9_14_112PL & \
@@ -15892,7 +15892,7 @@ extern "C" {
 #define  MG9_15_116PL    0xFFFF
 #endif
 
-#define  MG9_15_115PL	0xBFFF
+#define  MG9_15_115PL    0xBFFF
 #define  MG9_15    (MG9_15_11PL & MG9_15_12PL & MG9_15_13PL & MG9_15_14PL & \
                     MG9_15_15PL & MG9_15_16PL & MG9_15_17PL & MG9_15_18PL & \
                     MG9_15_19PL & MG9_15_110PL & MG9_15_111PL & MG9_15_112PL & \
@@ -15989,7 +15989,7 @@ extern "C" {
 #define  MG9_16_115PL    0xFFFF
 #endif
 
-#define  MG9_16_116PL	0x7FFF
+#define  MG9_16_116PL    0x7FFF
 #define  MG9_16    (MG9_16_11PL & MG9_16_12PL & MG9_16_13PL & MG9_16_14PL & \
                     MG9_16_15PL & MG9_16_16PL & MG9_16_17PL & MG9_16_18PL & \
                     MG9_16_19PL & MG9_16_110PL & MG9_16_111PL & MG9_16_112PL & \
@@ -16092,7 +16092,7 @@ extern "C" {
 #define  MG10_1_116PL    0xFFFF
 #endif
 
-#define  MG10_1_11PL	0xFFFE
+#define  MG10_1_11PL    0xFFFE
 #define  MG10_1    (MG10_1_11PL & MG10_1_12PL & MG10_1_13PL & MG10_1_14PL & \
                     MG10_1_15PL & MG10_1_16PL & MG10_1_17PL & MG10_1_18PL & \
                     MG10_1_19PL & MG10_1_110PL & MG10_1_111PL & MG10_1_112PL & \
@@ -16189,7 +16189,7 @@ extern "C" {
 #define  MG10_2_116PL    0xFFFF
 #endif
 
-#define  MG10_2_12PL	0xFFFD
+#define  MG10_2_12PL    0xFFFD
 #define  MG10_2    (MG10_2_11PL & MG10_2_12PL & MG10_2_13PL & MG10_2_14PL & \
                     MG10_2_15PL & MG10_2_16PL & MG10_2_17PL & MG10_2_18PL & \
                     MG10_2_19PL & MG10_2_110PL & MG10_2_111PL & MG10_2_112PL & \
@@ -16286,7 +16286,7 @@ extern "C" {
 #define  MG10_3_116PL    0xFFFF
 #endif
 
-#define  MG10_3_13PL	0xFFFB
+#define  MG10_3_13PL    0xFFFB
 #define  MG10_3    (MG10_3_11PL & MG10_3_12PL & MG10_3_13PL & MG10_3_14PL & \
                     MG10_3_15PL & MG10_3_16PL & MG10_3_17PL & MG10_3_18PL & \
                     MG10_3_19PL & MG10_3_110PL & MG10_3_111PL & MG10_3_112PL & \
@@ -16383,7 +16383,7 @@ extern "C" {
 #define  MG10_4_116PL    0xFFFF
 #endif
 
-#define  MG10_4_14PL	0xFFF7
+#define  MG10_4_14PL    0xFFF7
 #define  MG10_4    (MG10_4_11PL & MG10_4_12PL & MG10_4_13PL & MG10_4_14PL & \
                     MG10_4_15PL & MG10_4_16PL & MG10_4_17PL & MG10_4_18PL & \
                     MG10_4_19PL & MG10_4_110PL & MG10_4_111PL & MG10_4_112PL & \
@@ -16480,7 +16480,7 @@ extern "C" {
 #define  MG10_5_116PL    0xFFFF
 #endif
 
-#define  MG10_5_15PL	0xFFEF
+#define  MG10_5_15PL    0xFFEF
 #define  MG10_5    (MG10_5_11PL & MG10_5_12PL & MG10_5_13PL & MG10_5_14PL & \
                     MG10_5_15PL & MG10_5_16PL & MG10_5_17PL & MG10_5_18PL & \
                     MG10_5_19PL & MG10_5_110PL & MG10_5_111PL & MG10_5_112PL & \
@@ -16577,7 +16577,7 @@ extern "C" {
 #define  MG10_6_116PL    0xFFFF
 #endif
 
-#define  MG10_6_16PL	0xFFDF
+#define  MG10_6_16PL    0xFFDF
 #define  MG10_6    (MG10_6_11PL & MG10_6_12PL & MG10_6_13PL & MG10_6_14PL & \
                     MG10_6_15PL & MG10_6_16PL & MG10_6_17PL & MG10_6_18PL & \
                     MG10_6_19PL & MG10_6_110PL & MG10_6_111PL & MG10_6_112PL & \
@@ -16674,7 +16674,7 @@ extern "C" {
 #define  MG10_7_116PL    0xFFFF
 #endif
 
-#define  MG10_7_17PL	0xFFBF
+#define  MG10_7_17PL    0xFFBF
 #define  MG10_7    (MG10_7_11PL & MG10_7_12PL & MG10_7_13PL & MG10_7_14PL & \
                     MG10_7_15PL & MG10_7_16PL & MG10_7_17PL & MG10_7_18PL & \
                     MG10_7_19PL & MG10_7_110PL & MG10_7_111PL & MG10_7_112PL & \
@@ -16771,7 +16771,7 @@ extern "C" {
 #define  MG10_8_116PL    0xFFFF
 #endif
 
-#define  MG10_8_18PL	0xFF7F
+#define  MG10_8_18PL    0xFF7F
 #define  MG10_8    (MG10_8_11PL & MG10_8_12PL & MG10_8_13PL & MG10_8_14PL & \
                     MG10_8_15PL & MG10_8_16PL & MG10_8_17PL & MG10_8_18PL & \
                     MG10_8_19PL & MG10_8_110PL & MG10_8_111PL & MG10_8_112PL & \
@@ -16868,7 +16868,7 @@ extern "C" {
 #define  MG10_9_116PL    0xFFFF
 #endif
 
-#define  MG10_9_19PL	0xFEFF
+#define  MG10_9_19PL    0xFEFF
 #define  MG10_9    (MG10_9_11PL & MG10_9_12PL & MG10_9_13PL & MG10_9_14PL & \
                     MG10_9_15PL & MG10_9_16PL & MG10_9_17PL & MG10_9_18PL & \
                     MG10_9_19PL & MG10_9_110PL & MG10_9_111PL & MG10_9_112PL & \
@@ -16965,7 +16965,7 @@ extern "C" {
 #define  MG10_10_116PL    0xFFFF
 #endif
 
-#define  MG10_10_110PL	0xFDFF
+#define  MG10_10_110PL    0xFDFF
 #define  MG10_10    (MG10_10_11PL & MG10_10_12PL & MG10_10_13PL & MG10_10_14PL & \
                     MG10_10_15PL & MG10_10_16PL & MG10_10_17PL & MG10_10_18PL & \
                     MG10_10_19PL & MG10_10_110PL & MG10_10_111PL & MG10_10_112PL & \
@@ -17062,7 +17062,7 @@ extern "C" {
 #define  MG10_11_116PL    0xFFFF
 #endif
 
-#define  MG10_11_111PL	0xFBFF
+#define  MG10_11_111PL    0xFBFF
 #define  MG10_11    (MG10_11_11PL & MG10_11_12PL & MG10_11_13PL & MG10_11_14PL & \
                     MG10_11_15PL & MG10_11_16PL & MG10_11_17PL & MG10_11_18PL & \
                     MG10_11_19PL & MG10_11_110PL & MG10_11_111PL & MG10_11_112PL & \
@@ -17159,7 +17159,7 @@ extern "C" {
 #define  MG10_12_116PL    0xFFFF
 #endif
 
-#define  MG10_12_112PL	0xF7FF
+#define  MG10_12_112PL    0xF7FF
 #define  MG10_12    (MG10_12_11PL & MG10_12_12PL & MG10_12_13PL & MG10_12_14PL & \
                     MG10_12_15PL & MG10_12_16PL & MG10_12_17PL & MG10_12_18PL & \
                     MG10_12_19PL & MG10_12_110PL & MG10_12_111PL & MG10_12_112PL & \
@@ -17256,7 +17256,7 @@ extern "C" {
 #define  MG10_13_116PL    0xFFFF
 #endif
 
-#define  MG10_13_113PL	0xEFFF
+#define  MG10_13_113PL    0xEFFF
 #define  MG10_13    (MG10_13_11PL & MG10_13_12PL & MG10_13_13PL & MG10_13_14PL & \
                     MG10_13_15PL & MG10_13_16PL & MG10_13_17PL & MG10_13_18PL & \
                     MG10_13_19PL & MG10_13_110PL & MG10_13_111PL & MG10_13_112PL & \
@@ -17353,7 +17353,7 @@ extern "C" {
 #define  MG10_14_116PL    0xFFFF
 #endif
 
-#define  MG10_14_114PL	0xDFFF
+#define  MG10_14_114PL    0xDFFF
 #define  MG10_14    (MG10_14_11PL & MG10_14_12PL & MG10_14_13PL & MG10_14_14PL & \
                     MG10_14_15PL & MG10_14_16PL & MG10_14_17PL & MG10_14_18PL & \
                     MG10_14_19PL & MG10_14_110PL & MG10_14_111PL & MG10_14_112PL & \
@@ -17450,7 +17450,7 @@ extern "C" {
 #define  MG10_15_116PL    0xFFFF
 #endif
 
-#define  MG10_15_115PL	0xBFFF
+#define  MG10_15_115PL    0xBFFF
 #define  MG10_15    (MG10_15_11PL & MG10_15_12PL & MG10_15_13PL & MG10_15_14PL & \
                     MG10_15_15PL & MG10_15_16PL & MG10_15_17PL & MG10_15_18PL & \
                     MG10_15_19PL & MG10_15_110PL & MG10_15_111PL & MG10_15_112PL & \
@@ -17547,7 +17547,7 @@ extern "C" {
 #define  MG10_16_115PL    0xFFFF
 #endif
 
-#define  MG10_16_116PL	0x7FFF
+#define  MG10_16_116PL    0x7FFF
 #define  MG10_16    (MG10_16_11PL & MG10_16_12PL & MG10_16_13PL & MG10_16_14PL & \
                     MG10_16_15PL & MG10_16_16PL & MG10_16_17PL & MG10_16_18PL & \
                     MG10_16_19PL & MG10_16_110PL & MG10_16_111PL & MG10_16_112PL & \
@@ -17650,7 +17650,7 @@ extern "C" {
 #define  MG11_1_116PL    0xFFFF
 #endif
 
-#define  MG11_1_11PL	0xFFFE
+#define  MG11_1_11PL    0xFFFE
 #define  MG11_1    (MG11_1_11PL & MG11_1_12PL & MG11_1_13PL & MG11_1_14PL & \
                     MG11_1_15PL & MG11_1_16PL & MG11_1_17PL & MG11_1_18PL & \
                     MG11_1_19PL & MG11_1_110PL & MG11_1_111PL & MG11_1_112PL & \
@@ -17747,7 +17747,7 @@ extern "C" {
 #define  MG11_2_116PL    0xFFFF
 #endif
 
-#define  MG11_2_12PL	0xFFFD
+#define  MG11_2_12PL    0xFFFD
 #define  MG11_2    (MG11_2_11PL & MG11_2_12PL & MG11_2_13PL & MG11_2_14PL & \
                     MG11_2_15PL & MG11_2_16PL & MG11_2_17PL & MG11_2_18PL & \
                     MG11_2_19PL & MG11_2_110PL & MG11_2_111PL & MG11_2_112PL & \
@@ -17844,7 +17844,7 @@ extern "C" {
 #define  MG11_3_116PL    0xFFFF
 #endif
 
-#define  MG11_3_13PL	0xFFFB
+#define  MG11_3_13PL    0xFFFB
 #define  MG11_3    (MG11_3_11PL & MG11_3_12PL & MG11_3_13PL & MG11_3_14PL & \
                     MG11_3_15PL & MG11_3_16PL & MG11_3_17PL & MG11_3_18PL & \
                     MG11_3_19PL & MG11_3_110PL & MG11_3_111PL & MG11_3_112PL & \
@@ -17941,7 +17941,7 @@ extern "C" {
 #define  MG11_4_116PL    0xFFFF
 #endif
 
-#define  MG11_4_14PL	0xFFF7
+#define  MG11_4_14PL    0xFFF7
 #define  MG11_4    (MG11_4_11PL & MG11_4_12PL & MG11_4_13PL & MG11_4_14PL & \
                     MG11_4_15PL & MG11_4_16PL & MG11_4_17PL & MG11_4_18PL & \
                     MG11_4_19PL & MG11_4_110PL & MG11_4_111PL & MG11_4_112PL & \
@@ -18038,7 +18038,7 @@ extern "C" {
 #define  MG11_5_116PL    0xFFFF
 #endif
 
-#define  MG11_5_15PL	0xFFEF
+#define  MG11_5_15PL    0xFFEF
 #define  MG11_5    (MG11_5_11PL & MG11_5_12PL & MG11_5_13PL & MG11_5_14PL & \
                     MG11_5_15PL & MG11_5_16PL & MG11_5_17PL & MG11_5_18PL & \
                     MG11_5_19PL & MG11_5_110PL & MG11_5_111PL & MG11_5_112PL & \
@@ -18135,7 +18135,7 @@ extern "C" {
 #define  MG11_6_116PL    0xFFFF
 #endif
 
-#define  MG11_6_16PL	0xFFDF
+#define  MG11_6_16PL    0xFFDF
 #define  MG11_6    (MG11_6_11PL & MG11_6_12PL & MG11_6_13PL & MG11_6_14PL & \
                     MG11_6_15PL & MG11_6_16PL & MG11_6_17PL & MG11_6_18PL & \
                     MG11_6_19PL & MG11_6_110PL & MG11_6_111PL & MG11_6_112PL & \
@@ -18232,7 +18232,7 @@ extern "C" {
 #define  MG11_7_116PL    0xFFFF
 #endif
 
-#define  MG11_7_17PL	0xFFBF
+#define  MG11_7_17PL    0xFFBF
 #define  MG11_7    (MG11_7_11PL & MG11_7_12PL & MG11_7_13PL & MG11_7_14PL & \
                     MG11_7_15PL & MG11_7_16PL & MG11_7_17PL & MG11_7_18PL & \
                     MG11_7_19PL & MG11_7_110PL & MG11_7_111PL & MG11_7_112PL & \
@@ -18329,7 +18329,7 @@ extern "C" {
 #define  MG11_8_116PL    0xFFFF
 #endif
 
-#define  MG11_8_18PL	0xFF7F
+#define  MG11_8_18PL    0xFF7F
 #define  MG11_8    (MG11_8_11PL & MG11_8_12PL & MG11_8_13PL & MG11_8_14PL & \
                     MG11_8_15PL & MG11_8_16PL & MG11_8_17PL & MG11_8_18PL & \
                     MG11_8_19PL & MG11_8_110PL & MG11_8_111PL & MG11_8_112PL & \
@@ -18426,7 +18426,7 @@ extern "C" {
 #define  MG11_9_116PL    0xFFFF
 #endif
 
-#define  MG11_9_19PL	0xFEFF
+#define  MG11_9_19PL    0xFEFF
 #define  MG11_9    (MG11_9_11PL & MG11_9_12PL & MG11_9_13PL & MG11_9_14PL & \
                     MG11_9_15PL & MG11_9_16PL & MG11_9_17PL & MG11_9_18PL & \
                     MG11_9_19PL & MG11_9_110PL & MG11_9_111PL & MG11_9_112PL & \
@@ -18523,7 +18523,7 @@ extern "C" {
 #define  MG11_10_116PL    0xFFFF
 #endif
 
-#define  MG11_10_110PL	0xFDFF
+#define  MG11_10_110PL    0xFDFF
 #define  MG11_10    (MG11_10_11PL & MG11_10_12PL & MG11_10_13PL & MG11_10_14PL & \
                     MG11_10_15PL & MG11_10_16PL & MG11_10_17PL & MG11_10_18PL & \
                     MG11_10_19PL & MG11_10_110PL & MG11_10_111PL & MG11_10_112PL & \
@@ -18620,7 +18620,7 @@ extern "C" {
 #define  MG11_11_116PL    0xFFFF
 #endif
 
-#define  MG11_11_111PL	0xFBFF
+#define  MG11_11_111PL    0xFBFF
 #define  MG11_11    (MG11_11_11PL & MG11_11_12PL & MG11_11_13PL & MG11_11_14PL & \
                     MG11_11_15PL & MG11_11_16PL & MG11_11_17PL & MG11_11_18PL & \
                     MG11_11_19PL & MG11_11_110PL & MG11_11_111PL & MG11_11_112PL & \
@@ -18717,7 +18717,7 @@ extern "C" {
 #define  MG11_12_116PL    0xFFFF
 #endif
 
-#define  MG11_12_112PL	0xF7FF
+#define  MG11_12_112PL    0xF7FF
 #define  MG11_12    (MG11_12_11PL & MG11_12_12PL & MG11_12_13PL & MG11_12_14PL & \
                     MG11_12_15PL & MG11_12_16PL & MG11_12_17PL & MG11_12_18PL & \
                     MG11_12_19PL & MG11_12_110PL & MG11_12_111PL & MG11_12_112PL & \
@@ -18814,7 +18814,7 @@ extern "C" {
 #define  MG11_13_116PL    0xFFFF
 #endif
 
-#define  MG11_13_113PL	0xEFFF
+#define  MG11_13_113PL    0xEFFF
 #define  MG11_13    (MG11_13_11PL & MG11_13_12PL & MG11_13_13PL & MG11_13_14PL & \
                     MG11_13_15PL & MG11_13_16PL & MG11_13_17PL & MG11_13_18PL & \
                     MG11_13_19PL & MG11_13_110PL & MG11_13_111PL & MG11_13_112PL & \
@@ -18911,7 +18911,7 @@ extern "C" {
 #define  MG11_14_116PL    0xFFFF
 #endif
 
-#define  MG11_14_114PL	0xDFFF
+#define  MG11_14_114PL    0xDFFF
 #define  MG11_14    (MG11_14_11PL & MG11_14_12PL & MG11_14_13PL & MG11_14_14PL & \
                     MG11_14_15PL & MG11_14_16PL & MG11_14_17PL & MG11_14_18PL & \
                     MG11_14_19PL & MG11_14_110PL & MG11_14_111PL & MG11_14_112PL & \
@@ -19008,7 +19008,7 @@ extern "C" {
 #define  MG11_15_116PL    0xFFFF
 #endif
 
-#define  MG11_15_115PL	0xBFFF
+#define  MG11_15_115PL    0xBFFF
 #define  MG11_15    (MG11_15_11PL & MG11_15_12PL & MG11_15_13PL & MG11_15_14PL & \
                     MG11_15_15PL & MG11_15_16PL & MG11_15_17PL & MG11_15_18PL & \
                     MG11_15_19PL & MG11_15_110PL & MG11_15_111PL & MG11_15_112PL & \
@@ -19105,7 +19105,7 @@ extern "C" {
 #define  MG11_16_115PL    0xFFFF
 #endif
 
-#define  MG11_16_116PL	0x7FFF
+#define  MG11_16_116PL    0x7FFF
 #define  MG11_16    (MG11_16_11PL & MG11_16_12PL & MG11_16_13PL & MG11_16_14PL & \
                     MG11_16_15PL & MG11_16_16PL & MG11_16_17PL & MG11_16_18PL & \
                     MG11_16_19PL & MG11_16_110PL & MG11_16_111PL & MG11_16_112PL & \
@@ -19208,7 +19208,7 @@ extern "C" {
 #define  MG12_1_116PL    0xFFFF
 #endif
 
-#define  MG12_1_11PL	0xFFFE
+#define  MG12_1_11PL    0xFFFE
 #define  MG12_1    (MG12_1_11PL & MG12_1_12PL & MG12_1_13PL & MG12_1_14PL & \
                     MG12_1_15PL & MG12_1_16PL & MG12_1_17PL & MG12_1_18PL & \
                     MG12_1_19PL & MG12_1_110PL & MG12_1_111PL & MG12_1_112PL & \
@@ -19305,7 +19305,7 @@ extern "C" {
 #define  MG12_2_116PL    0xFFFF
 #endif
 
-#define  MG12_2_12PL	0xFFFD
+#define  MG12_2_12PL    0xFFFD
 #define  MG12_2    (MG12_2_11PL & MG12_2_12PL & MG12_2_13PL & MG12_2_14PL & \
                     MG12_2_15PL & MG12_2_16PL & MG12_2_17PL & MG12_2_18PL & \
                     MG12_2_19PL & MG12_2_110PL & MG12_2_111PL & MG12_2_112PL & \
@@ -19402,7 +19402,7 @@ extern "C" {
 #define  MG12_3_116PL    0xFFFF
 #endif
 
-#define  MG12_3_13PL	0xFFFB
+#define  MG12_3_13PL    0xFFFB
 #define  MG12_3    (MG12_3_11PL & MG12_3_12PL & MG12_3_13PL & MG12_3_14PL & \
                     MG12_3_15PL & MG12_3_16PL & MG12_3_17PL & MG12_3_18PL & \
                     MG12_3_19PL & MG12_3_110PL & MG12_3_111PL & MG12_3_112PL & \
@@ -19499,7 +19499,7 @@ extern "C" {
 #define  MG12_4_116PL    0xFFFF
 #endif
 
-#define  MG12_4_14PL	0xFFF7
+#define  MG12_4_14PL    0xFFF7
 #define  MG12_4    (MG12_4_11PL & MG12_4_12PL & MG12_4_13PL & MG12_4_14PL & \
                     MG12_4_15PL & MG12_4_16PL & MG12_4_17PL & MG12_4_18PL & \
                     MG12_4_19PL & MG12_4_110PL & MG12_4_111PL & MG12_4_112PL & \
@@ -19596,7 +19596,7 @@ extern "C" {
 #define  MG12_5_116PL    0xFFFF
 #endif
 
-#define  MG12_5_15PL	0xFFEF
+#define  MG12_5_15PL    0xFFEF
 #define  MG12_5    (MG12_5_11PL & MG12_5_12PL & MG12_5_13PL & MG12_5_14PL & \
                     MG12_5_15PL & MG12_5_16PL & MG12_5_17PL & MG12_5_18PL & \
                     MG12_5_19PL & MG12_5_110PL & MG12_5_111PL & MG12_5_112PL & \
@@ -19693,7 +19693,7 @@ extern "C" {
 #define  MG12_6_116PL    0xFFFF
 #endif
 
-#define  MG12_6_16PL	0xFFDF
+#define  MG12_6_16PL    0xFFDF
 #define  MG12_6    (MG12_6_11PL & MG12_6_12PL & MG12_6_13PL & MG12_6_14PL & \
                     MG12_6_15PL & MG12_6_16PL & MG12_6_17PL & MG12_6_18PL & \
                     MG12_6_19PL & MG12_6_110PL & MG12_6_111PL & MG12_6_112PL & \
@@ -19790,7 +19790,7 @@ extern "C" {
 #define  MG12_7_116PL    0xFFFF
 #endif
 
-#define  MG12_7_17PL	0xFFBF
+#define  MG12_7_17PL    0xFFBF
 #define  MG12_7    (MG12_7_11PL & MG12_7_12PL & MG12_7_13PL & MG12_7_14PL & \
                     MG12_7_15PL & MG12_7_16PL & MG12_7_17PL & MG12_7_18PL & \
                     MG12_7_19PL & MG12_7_110PL & MG12_7_111PL & MG12_7_112PL & \
@@ -19887,7 +19887,7 @@ extern "C" {
 #define  MG12_8_116PL    0xFFFF
 #endif
 
-#define  MG12_8_18PL	0xFF7F
+#define  MG12_8_18PL    0xFF7F
 #define  MG12_8    (MG12_8_11PL & MG12_8_12PL & MG12_8_13PL & MG12_8_14PL & \
                     MG12_8_15PL & MG12_8_16PL & MG12_8_17PL & MG12_8_18PL & \
                     MG12_8_19PL & MG12_8_110PL & MG12_8_111PL & MG12_8_112PL & \
@@ -19984,7 +19984,7 @@ extern "C" {
 #define  MG12_9_116PL    0xFFFF
 #endif
 
-#define  MG12_9_19PL	0xFEFF
+#define  MG12_9_19PL    0xFEFF
 #define  MG12_9    (MG12_9_11PL & MG12_9_12PL & MG12_9_13PL & MG12_9_14PL & \
                     MG12_9_15PL & MG12_9_16PL & MG12_9_17PL & MG12_9_18PL & \
                     MG12_9_19PL & MG12_9_110PL & MG12_9_111PL & MG12_9_112PL & \
@@ -20081,7 +20081,7 @@ extern "C" {
 #define  MG12_10_116PL    0xFFFF
 #endif
 
-#define  MG12_10_110PL	0xFDFF
+#define  MG12_10_110PL    0xFDFF
 #define  MG12_10    (MG12_10_11PL & MG12_10_12PL & MG12_10_13PL & MG12_10_14PL & \
                     MG12_10_15PL & MG12_10_16PL & MG12_10_17PL & MG12_10_18PL & \
                     MG12_10_19PL & MG12_10_110PL & MG12_10_111PL & MG12_10_112PL & \
@@ -20178,7 +20178,7 @@ extern "C" {
 #define  MG12_11_116PL    0xFFFF
 #endif
 
-#define  MG12_11_111PL	0xFBFF
+#define  MG12_11_111PL    0xFBFF
 #define  MG12_11    (MG12_11_11PL & MG12_11_12PL & MG12_11_13PL & MG12_11_14PL & \
                     MG12_11_15PL & MG12_11_16PL & MG12_11_17PL & MG12_11_18PL & \
                     MG12_11_19PL & MG12_11_110PL & MG12_11_111PL & MG12_11_112PL & \
@@ -20275,7 +20275,7 @@ extern "C" {
 #define  MG12_12_116PL    0xFFFF
 #endif
 
-#define  MG12_12_112PL	0xF7FF
+#define  MG12_12_112PL    0xF7FF
 #define  MG12_12    (MG12_12_11PL & MG12_12_12PL & MG12_12_13PL & MG12_12_14PL & \
                     MG12_12_15PL & MG12_12_16PL & MG12_12_17PL & MG12_12_18PL & \
                     MG12_12_19PL & MG12_12_110PL & MG12_12_111PL & MG12_12_112PL & \
@@ -20372,7 +20372,7 @@ extern "C" {
 #define  MG12_13_116PL    0xFFFF
 #endif
 
-#define  MG12_13_113PL	0xEFFF
+#define  MG12_13_113PL    0xEFFF
 #define  MG12_13    (MG12_13_11PL & MG12_13_12PL & MG12_13_13PL & MG12_13_14PL & \
                     MG12_13_15PL & MG12_13_16PL & MG12_13_17PL & MG12_13_18PL & \
                     MG12_13_19PL & MG12_13_110PL & MG12_13_111PL & MG12_13_112PL & \
@@ -20469,7 +20469,7 @@ extern "C" {
 #define  MG12_14_116PL    0xFFFF
 #endif
 
-#define  MG12_14_114PL	0xDFFF
+#define  MG12_14_114PL    0xDFFF
 #define  MG12_14    (MG12_14_11PL & MG12_14_12PL & MG12_14_13PL & MG12_14_14PL & \
                     MG12_14_15PL & MG12_14_16PL & MG12_14_17PL & MG12_14_18PL & \
                     MG12_14_19PL & MG12_14_110PL & MG12_14_111PL & MG12_14_112PL & \
@@ -20566,7 +20566,7 @@ extern "C" {
 #define  MG12_15_116PL    0xFFFF
 #endif
 
-#define  MG12_15_115PL	0xBFFF
+#define  MG12_15_115PL    0xBFFF
 #define  MG12_15    (MG12_15_11PL & MG12_15_12PL & MG12_15_13PL & MG12_15_14PL & \
                     MG12_15_15PL & MG12_15_16PL & MG12_15_17PL & MG12_15_18PL & \
                     MG12_15_19PL & MG12_15_110PL & MG12_15_111PL & MG12_15_112PL & \
@@ -20663,7 +20663,7 @@ extern "C" {
 #define  MG12_16_115PL    0xFFFF
 #endif
 
-#define  MG12_16_116PL	0x7FFF
+#define  MG12_16_116PL    0x7FFF
 #define  MG12_16    (MG12_16_11PL & MG12_16_12PL & MG12_16_13PL & MG12_16_14PL & \
                     MG12_16_15PL & MG12_16_16PL & MG12_16_17PL & MG12_16_18PL & \
                     MG12_16_19PL & MG12_16_110PL & MG12_16_111PL & MG12_16_112PL & \

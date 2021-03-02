@@ -282,7 +282,7 @@
  * enabled when it is not needed, to ensure minimum power consumption.
  *
  * \subsection asfdoc_sam0_dac_special_considerations_conversion_time Conversion Time
- * DAC conversion time is approximately 2.85Î¼s. The user must ensure that new
+ * DAC conversion time is approximately 2.85¦Ìs. The user must ensure that new
  * data is not written to the DAC before the last conversion is complete.
  * Conversions should be triggered by a periodic event from a Timer/Counter or
  * another peripheral.
@@ -342,12 +342,12 @@ extern "C" {
  * Enum for the possible reference voltages for the DAC.
  */
 enum dac_reference {
-	/** 1V from the internal band-gap reference*/
-	DAC_REFERENCE_INT1V = DAC_CTRLB_REFSEL(0),
-	/** Analog V<SUB>CC</SUB> as reference */
-	DAC_REFERENCE_AVCC  = DAC_CTRLB_REFSEL(1),
-	/** External reference on AREF */
-	DAC_REFERENCE_AREF  = DAC_CTRLB_REFSEL(2),
+    /** 1V from the internal band-gap reference*/
+    DAC_REFERENCE_INT1V = DAC_CTRLB_REFSEL(0),
+    /** Analog V<SUB>CC</SUB> as reference */
+    DAC_REFERENCE_AVCC  = DAC_CTRLB_REFSEL(1),
+    /** External reference on AREF */
+    DAC_REFERENCE_AREF  = DAC_CTRLB_REFSEL(2),
 };
 
 /**
@@ -356,12 +356,12 @@ enum dac_reference {
  * Enum for the DAC output selection.
  */
 enum dac_output {
-	/** DAC output to VOUT pin */
-	DAC_OUTPUT_EXTERNAL = DAC_CTRLB_EOEN,
-	/** DAC output as internal reference */
-	DAC_OUTPUT_INTERNAL = DAC_CTRLB_IOEN,
-	/** No output */
-	DAC_OUTPUT_NONE     = 0,
+    /** DAC output to VOUT pin */
+    DAC_OUTPUT_EXTERNAL = DAC_CTRLB_EOEN,
+    /** DAC output as internal reference */
+    DAC_OUTPUT_INTERNAL = DAC_CTRLB_IOEN,
+    /** No output */
+    DAC_OUTPUT_NONE     = 0,
 };
 
 /**
@@ -370,8 +370,8 @@ enum dac_output {
  * Enum for the DAC channel selection.
  */
 enum dac_channel {
-	/** DAC output channel 0 */
-	DAC_CHANNEL_0,
+    /** DAC output channel 0 */
+    DAC_CHANNEL_0,
 };
 
 /**
@@ -385,27 +385,27 @@ enum dac_channel {
  */
 struct dac_module {
 #if !defined(__DOXYGEN__)
-	/** DAC hardware module */
-	Dac *hw;
-	/** DAC output selection */
-	enum dac_output output;
-	/** Reference selection */
-	enum dac_reference reference;
-	/** DAC event selection */
-	bool start_on_event;
+    /** DAC hardware module */
+    Dac *hw;
+    /** DAC output selection */
+    enum dac_output output;
+    /** Reference selection */
+    enum dac_reference reference;
+    /** DAC event selection */
+    bool start_on_event;
 #  if DAC_CALLBACK_MODE == true
-	/** Pointer to buffer used for ADC results */
-	volatile uint16_t *job_buffer;
-	/** Remaining number of conversions in current job */
-	volatile uint16_t remaining_conversions;
-	/** Transferred number of conversions in current job */
-	volatile uint16_t transferred_conversions;
-	/** DAC callback enable */
-	bool callback_enable[DAC_CALLBACK_N];
-	/** DAC registered callback functions */
-	dac_callback_t callback[DAC_CALLBACK_N];
-	/** Holds the status of the ongoing or last conversion job */
-	volatile enum status_code job_status;
+    /** Pointer to buffer used for ADC results */
+    volatile uint16_t *job_buffer;
+    /** Remaining number of conversions in current job */
+    volatile uint16_t remaining_conversions;
+    /** Transferred number of conversions in current job */
+    volatile uint16_t transferred_conversions;
+    /** DAC callback enable */
+    bool callback_enable[DAC_CALLBACK_N];
+    /** DAC registered callback functions */
+    dac_callback_t callback[DAC_CALLBACK_N];
+    /** Holds the status of the ongoing or last conversion job */
+    volatile enum status_code job_status;
 #  endif
 #endif
 };
@@ -418,28 +418,28 @@ struct dac_module {
  * function before being modified by the user application.
  */
 struct dac_config {
-	/** Reference voltage */
-	enum dac_reference reference;
-	/** Select DAC output */
-	enum dac_output output;
-	/** Left adjusted data */
-	bool left_adjust;
-	/** GCLK generator used to clock the peripheral */
-	enum gclk_generator clock_source;
+    /** Reference voltage */
+    enum dac_reference reference;
+    /** Select DAC output */
+    enum dac_output output;
+    /** Left adjusted data */
+    bool left_adjust;
+    /** GCLK generator used to clock the peripheral */
+    enum gclk_generator clock_source;
 #ifdef FEATURE_DAC_DATABUF_WRITE_PROTECTION
-	/** Bypass DATABUF write protection */
-	bool databuf_protection_bypass;
+    /** Bypass DATABUF write protection */
+    bool databuf_protection_bypass;
 #endif
-	/** Voltage pump disable */
-	bool voltage_pump_disable;
-	/**
-	 * The DAC behaves as in normal mode when the chip enters STANDBY sleep
-	 * mode
-	 */
-	bool run_in_standby;
+    /** Voltage pump disable */
+    bool voltage_pump_disable;
+    /**
+     * The DAC behaves as in normal mode when the chip enters STANDBY sleep
+     * mode
+     */
+    bool run_in_standby;
 #if (SAMC21)
-	/** Dither mode enable data */
-	bool dither_mode;
+    /** Dither mode enable data */
+    bool dither_mode;
 #endif
 };
 
@@ -450,13 +450,13 @@ struct dac_config {
  * disable events via \ref dac_enable_events() and \ref dac_disable_events().
  */
 struct dac_events {
-	/** Start a new DAC conversion */
-	bool on_event_start_conversion;
-	/** Enable event generation on data buffer empty */
-	bool generate_event_on_buffer_empty;
+    /** Start a new DAC conversion */
+    bool on_event_start_conversion;
+    /** Enable event generation on data buffer empty */
+    bool generate_event_on_buffer_empty;
 #if (SAMC21)
-	/** Enable the falling edge of the input event for DAC1 */
-	bool generate_event_on_chan_falling_edge;
+    /** Enable the falling edge of the input event for DAC1 */
+    bool generate_event_on_chan_falling_edge;
 #endif
 };
 
@@ -469,8 +469,8 @@ struct dac_events {
  */
 struct dac_chan_config {
 #if !defined(__DOXYGEN__)
-	/** Dummy value to ensure the struct has at least one member */
-	uint8_t _dummy;
+    /** Dummy value to ensure the struct has at least one member */
+    uint8_t _dummy;
 #endif
 };
 
@@ -480,12 +480,12 @@ struct dac_chan_config {
  */
 
 void dac_chan_enable_output_buffer(
-		struct dac_module *const dev_inst,
-		const enum dac_channel channel);
+        struct dac_module *const dev_inst,
+        const enum dac_channel channel);
 
 void dac_chan_disable_output_buffer(
-		struct dac_module *const dev_inst,
-		const enum dac_channel channel);
+        struct dac_module *const dev_inst,
+        const enum dac_channel channel);
 
 /** @} */
 
@@ -498,34 +498,34 @@ void dac_chan_disable_output_buffer(
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>ADC</td>
- *		<td>Analog-to-Digital Converter</td>
- *	</tr>
- *	<tr>
- *		<td>AC</td>
- *		<td>Analog Comparator</td>
- *	</tr>
- *	<tr>
- *		<td>DAC</td>
- *		<td>Digital-to-Analog Converter</td>
- *	</tr>
- *	<tr>
- *		<td>LSB</td>
- *		<td>Least Significant Bit</td>
- *	</tr>
- *	<tr>
- *		<td>MSB</td>
- *		<td>Most Significant Bit</td>
- *	</tr>
- *	<tr>
- *		<td>DMA</td>
- *		<td>Direct Memory Access</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+ *    <tr>
+ *        <td>ADC</td>
+ *        <td>Analog-to-Digital Converter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>AC</td>
+ *        <td>Analog Comparator</td>
+ *    </tr>
+ *    <tr>
+ *        <td>DAC</td>
+ *        <td>Digital-to-Analog Converter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>LSB</td>
+ *        <td>Least Significant Bit</td>
+ *    </tr>
+ *    <tr>
+ *        <td>MSB</td>
+ *        <td>Most Significant Bit</td>
+ *    </tr>
+ *    <tr>
+ *        <td>DMA</td>
+ *        <td>Direct Memory Access</td>
+ *    </tr>
  * </table>
  *
  *
@@ -546,23 +546,23 @@ void dac_chan_disable_output_buffer(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Add configuration for using 14-bit hardware dithering (SAMC21 support)</td>
- *	</tr>
- *	<tr>
- *		<td>Added new configuration parameters \c databuf_protection_bypass,
- *		\c voltage_pump_disable. Added new callback functions
- *		\c dac_chan_write_buffer_wait,
- *		\c dac_chan_write_buffer_job, \c dac_chan_write_job,
- *		\c dac_get_job_status, \c dac_abort_job and new callback type
- *		\c DAC_CALLBACK_TRANSFER_COMPLETE for DAC conversion job</td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Add configuration for using 14-bit hardware dithering (SAMC21 support)</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Added new configuration parameters \c databuf_protection_bypass,
+ *        \c voltage_pump_disable. Added new callback functions
+ *        \c dac_chan_write_buffer_wait,
+ *        \c dac_chan_write_buffer_job, \c dac_chan_write_job,
+ *        \c dac_get_job_status, \c dac_abort_job and new callback type
+ *        \c DAC_CALLBACK_TRANSFER_COMPLETE for DAC conversion job</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -592,37 +592,37 @@ void dac_chan_disable_output_buffer(
  * \page asfdoc_sam0_dac_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42110E</td>
- *		<td>09/2015</td>
- *		<td>Add SAM C21 and SAM DA1 support</td>
- *	</tr>
- *	<tr>
- *		<td>42110D</td>
- *		<td>12/2014</td>
- *		<td>Add SAM D10/D11 support</td>
- *	</tr>
- *	<tr>
- *		<td>42110C</td>
- *		<td>01/2014</td>
- *		<td>Add SAM D21 support</td>
- *	</tr>
- *	<tr>
- *		<td>42110B</td>
- *		<td>06/2013</td>
- *		<td>Added additional documentation on the event system. Corrected
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42110E</td>
+ *        <td>09/2015</td>
+ *        <td>Add SAM C21 and SAM DA1 support</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42110D</td>
+ *        <td>12/2014</td>
+ *        <td>Add SAM D10/D11 support</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42110C</td>
+ *        <td>01/2014</td>
+ *        <td>Add SAM D21 support</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42110B</td>
+ *        <td>06/2013</td>
+ *        <td>Added additional documentation on the event system. Corrected
  *          documentation typos.</td>
- *	</tr>
- *	<tr>
- *		<td>42110A</td>
- *		<td>06/2013</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    </tr>
+ *    <tr>
+ *        <td>42110A</td>
+ *        <td>06/2013</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

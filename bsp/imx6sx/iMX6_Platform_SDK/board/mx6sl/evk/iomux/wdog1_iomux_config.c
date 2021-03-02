@@ -49,7 +49,7 @@ void wdog1_iomux_config(void)
     //     ALT2 (2) - Select instance: uart5 signal: UART5_RI_B
     //     ALT5 (5) - Select instance: gpio3 signal: GPIO3_IO18
     HW_IOMUXC_SW_MUX_CTL_PAD_WDOG_B_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_WDOG_B_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_WDOG_B_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_WDOG_B_MUX_MODE_V(ALT0));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_WDOG_B(0x020E05A8)
@@ -93,13 +93,13 @@ void wdog1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_LVE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_PUE_V(KEEP) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_LVE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_PUE_V(KEEP) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_WDOG_B_SRE_V(SLOW));
 }

@@ -611,7 +611,7 @@ uint32_t               HAL_USART_GetError(USART_HandleTypeDef *husart);
 
   /* UART BRR = mantissa + overflow + fraction
               = (UART DIVMANT << 4) + ((UART DIVFRAQ & 0xF0) << 1) + (UART DIVFRAQ & 0x0FU) */
-            
+
 #define USART_BRR(_PCLK_, _BAUD_)      (((USART_DIVMANT((_PCLK_), (_BAUD_)) << 4U) + \
                                         ((USART_DIVFRAQ((_PCLK_), (_BAUD_)) & 0xF0U) << 1U)) + \
                                          (USART_DIVFRAQ((_PCLK_), (_BAUD_)) & 0x0FU))

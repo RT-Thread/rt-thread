@@ -1,22 +1,22 @@
 #ifndef __usb_event_h__
-#define __usb_event_h__ 
+#define __usb_event_h__
 /**HEADER********************************************************************
-* 
+*
 * Copyright (c) 2010 Freescale Semiconductor;
 * All Rights Reserved
 *
-*************************************************************************** 
+***************************************************************************
 *
-* THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
-* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
-* IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-* STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
-* IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+* THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+* IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+* STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+* IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 * THE POSSIBILITY OF SUCH DAMAGE.
 *
 **************************************************************************
@@ -27,7 +27,7 @@
 *
 * Comments:
 *
-*   
+*
 *
 *END************************************************************************/
 #include "types.h"
@@ -50,17 +50,17 @@
 **                            DATATYPE DECLARATIONS
 */
 #ifdef __CC_ARM
-	#pragma push
-	#pragma pack(1)
+    #pragma push
+    #pragma pack(1)
 #endif
-typedef struct usb_event 
+typedef struct usb_event
 {
-	boolean VALID;
-	uint_32 VALUE;
+    boolean VALID;
+    uint_32 VALUE;
 } USB_EVENT_STRUCT, _PTR_ USB_EVENT_STRUCT_PTR;
 /*---------------------------------------------------------------------
 **
-** 
+**
 */
 
 /*--------------------------------------------------------------------------*/
@@ -82,7 +82,7 @@ extern uint_16 _usb_event_wait_ticks(USB_EVENT_STRUCT_PTR, uint_32, uint_8, uint
 #endif
 
 #ifdef __CC_ARM
-	#pragma pop
+    #pragma pop
 #endif
 #endif
 /* EOF */

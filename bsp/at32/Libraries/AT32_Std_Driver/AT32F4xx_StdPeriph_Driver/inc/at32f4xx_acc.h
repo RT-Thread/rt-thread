@@ -37,7 +37,7 @@ extern "C" {
 
 #define ACC_CAL_HSICAL                        ((uint16_t)0x0000)
 #define ACC_CAL_HSITRIM                       ((uint16_t)0x0002)
-  
+
 #define ACC_FLAG_RSLOST                       ((uint16_t)0x0002)
 #define ACC_FLAG_CALRDY                       ((uint16_t)0x0001)
 
@@ -46,10 +46,10 @@ extern "C" {
 /**
   * @}
   */
-  
+
 /** @defgroup ACC_Exported_Functions
   * @{
-  */  
+  */
 
 void ACC_EnterCALMode(uint16_t ACC_ON, FunctionalState NewState);
 void ACC_ExitCALMode(void);
@@ -81,13 +81,13 @@ void ACC_ClearFlag(uint16_t ACC_FLAG);
 /**
   * @}
   */
-  
+
 /**
   * @}
-  */  
+  */
 /**
   * @}
-  */    
+  */
 
 
 

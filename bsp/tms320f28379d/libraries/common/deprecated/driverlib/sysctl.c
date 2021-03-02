@@ -10,32 +10,32 @@
 // $Copyright:
 // Copyright (C) 2013-2018 Texas Instruments Incorporated - http://www.ti.com/
 //
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
 // are met:
-// 
-//   Redistributions of source code must retain the above copyright 
+//
+//   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
-//   notice, this list of conditions and the following disclaimer in the 
-//   documentation and/or other materials provided with the   
+//   notice, this list of conditions and the following disclaimer in the
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // $
 //###########################################################################
@@ -389,7 +389,7 @@ SysCtlReset(void)
           "_SysCtlDelay:\n"
           " SUB    ACC,#1\n"
           " BF     _SysCtlDelay,GEQ\n"
-          " LRETR\n");    
+          " LRETR\n");
     #else
     __asm(" .def _SysCtlDelay\n"
           " .sect \"ramfuncs\"\n"
@@ -397,7 +397,7 @@ SysCtlReset(void)
           "_SysCtlDelay:\n"
           " SUB    ACC,#1\n"
           " BF     _SysCtlDelay,GEQ\n"
-          " LRETR\n");        
+          " LRETR\n");
     #endif
 #endif
 
@@ -503,19 +503,19 @@ SysCtlLowSpeedClockGet(uint32_t u32ClockIn)
 //!
 //! \param ui32Config is the required configuration of the device clocking.
 //!
-//! This function configures the clocking of the device.  The oscillator to be 
+//! This function configures the clocking of the device.  The oscillator to be
 //! used, SYSPLL fractional and integer multiplier, and the system clock
 //! divider are all configured with this function.
 //!
 //! The \e ui32Config parameter is the logical OR of four values:
 //! Clock divider, Integer multiplier, Fractional multiplier, and oscillator
-//! source. 
+//! source.
 //!
 //! The system clock divider is chosen with using the following macro:
 //! \b SYSCTL_SYSDIV(x) - "x" is an integer of value 1 or any even value
 //!                       up to 126
 //!
-//! The System PLL fractional multiplier is chosen with one of the following 
+//! The System PLL fractional multiplier is chosen with one of the following
 //! values:
 //! \b SYSCTL_FMULT_0, \b SYSCTL_FMULT_1_4, \b SYSCTL_FMULT_1_2,
 //! \b SYSCTL_FMULT_3_4
@@ -526,8 +526,8 @@ SysCtlLowSpeedClockGet(uint32_t u32ClockIn)
 //! The oscillator source is chosen with one of the following values:
 //! \b SYSCTL_OSCSRC_OSC2, \b SYSCTL_OSCSRC_XTAL, \b SYSCTL_OSCSRC_OSC1
 //!
-//! \note The external oscillator must be enabled in order to use an external 
-//! clock source.  Note that attempts to disable the oscillator used to clock 
+//! \note The external oscillator must be enabled in order to use an external
+//! clock source.  Note that attempts to disable the oscillator used to clock
 //! the device is prevented by the hardware.
 //!
 //! \return None.
@@ -540,7 +540,7 @@ SysCtlClockSet(uint32_t ui32Config)
     uint32_t imult = (ui32Config & SYSCTL_IMULT_M);
     uint32_t fmult = (ui32Config & SYSCTL_FMULT_M) >> SYSCTL_FMULT_S;
     uint32_t divsel = (ui32Config & SYSCTL_SYSDIV_M) >> SYSCTL_SYSDIV_S;
-    
+
     if((clock_source == ClkCfgRegs.CLKSRCCTL1.bit.OSCCLKSRCSEL)    &&
       (imult         == ClkCfgRegs.SYSPLLMULT.bit.IMULT)           &&
       (fmult         == ClkCfgRegs.SYSPLLMULT.bit.FMULT)           &&
@@ -548,8 +548,8 @@ SysCtlClockSet(uint32_t ui32Config)
     {
         //everything is set as required, so just return
         return;
-    }    
- 
+    }
+
     if(clock_source != ClkCfgRegs.CLKSRCCTL1.bit.OSCCLKSRCSEL)
     {
         //Configure Oscillator
@@ -559,7 +559,7 @@ SysCtlClockSet(uint32_t ui32Config)
             case ((uint32_t)SYSCTL_OSCSRC_OSC2 >> SYSCTL_OSCSRC_S):
                 ClkCfgRegs.CLKSRCCTL1.bit.INTOSC2OFF=0;     // Turn on INTOSC2
                 ClkCfgRegs.CLKSRCCTL1.bit.OSCCLKSRCSEL = 0; // Clk Src = INTOSC2
-				ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
+                ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
                 break;
 
             case ((uint32_t)SYSCTL_OSCSRC_XTAL >> SYSCTL_OSCSRC_S):
@@ -569,15 +569,15 @@ SysCtlClockSet(uint32_t ui32Config)
 
             case ((uint32_t)SYSCTL_OSCSRC_OSC1 >> SYSCTL_OSCSRC_S):
                 ClkCfgRegs.CLKSRCCTL1.bit.OSCCLKSRCSEL = 2; // Clk Src = INTOSC1
-				ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
+                ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
                 break;
         }
-        EDIS; 
+        EDIS;
     }
-    
+
     EALLOW;
     // first modify the PLL multipliers
-    if(imult != ClkCfgRegs.SYSPLLMULT.bit.IMULT || 
+    if(imult != ClkCfgRegs.SYSPLLMULT.bit.IMULT ||
        fmult != ClkCfgRegs.SYSPLLMULT.bit.FMULT)
     {
         // Bypass PLL and set dividers to /1
@@ -586,9 +586,9 @@ SysCtlClockSet(uint32_t ui32Config)
 
         // Program PLL multipliers
         uint32_t temp_syspllmult = ClkCfgRegs.SYSPLLMULT.all;
-        ClkCfgRegs.SYSPLLMULT.all = ((temp_syspllmult & ~(0x37FU)) | 
+        ClkCfgRegs.SYSPLLMULT.all = ((temp_syspllmult & ~(0x37FU)) |
                                      ((fmult << 8U) | imult));
-               
+
         ClkCfgRegs.SYSPLLCTL1.bit.PLLEN = 1;            // Enable SYSPLL
 
         // Wait for the SYSPLL lock
@@ -609,9 +609,9 @@ SysCtlClockSet(uint32_t ui32Config)
             // Uncomment to service the watchdog
             //WdRegs.WDKEY.bit.WDKEY = 0x0055;
             //WdRegs.WDKEY.bit.WDKEY = 0x00AA;
-        }        
+        }
     }
-    
+
     // Set divider to produce slower output frequency to limit current increase
     if(divsel != (126/2))
     {
@@ -620,7 +620,7 @@ SysCtlClockSet(uint32_t ui32Config)
     else
     {
         ClkCfgRegs.SYSCLKDIVSEL.bit.PLLSYSCLKDIV = divsel;
-    } 
+    }
 
     // Enable PLLSYSCLK is fed from system PLL clock
     ClkCfgRegs.SYSPLLCTL1.bit.PLLCLKEN = 1;
@@ -629,7 +629,7 @@ SysCtlClockSet(uint32_t ui32Config)
     asm(" RPT #100 || NOP");
 
     // Set the divider to user value
-    ClkCfgRegs.SYSCLKDIVSEL.bit.PLLSYSCLKDIV = divsel;    
+    ClkCfgRegs.SYSCLKDIVSEL.bit.PLLSYSCLKDIV = divsel;
 
     EDIS;
 }
@@ -715,7 +715,7 @@ SysCtlAuxClockSet(uint32_t ui32Config)
         case SYSCTL_OSCSRC_OSC2:
             ClkCfgRegs.CLKSRCCTL1.bit.INTOSC2OFF=0;     // Turn on INTOSC2
             ClkCfgRegs.CLKSRCCTL2.bit.AUXOSCCLKSRCSEL = 0; // Clk Src = INTOSC2
-			ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
+            ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
             break;
 
         case SYSCTL_OSCSRC_XTAL:
@@ -725,7 +725,7 @@ SysCtlAuxClockSet(uint32_t ui32Config)
 
         case SYSCTL_OSCSRC_OSC1:
             ClkCfgRegs.CLKSRCCTL2.bit.AUXOSCCLKSRCSEL = 2; // Clk Src = INTOSC1
-			ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
+            ClkCfgRegs.CLKSRCCTL1.bit.XTALOFF=1;        // Turn off XTALOSC
             break;
 
     }
@@ -740,7 +740,7 @@ SysCtlAuxClockSet(uint32_t ui32Config)
         //modify dividers to maximum to reduce the inrush current
         //set the integer fractional multipliers in one single write
         ClkCfgRegs.AUXPLLMULT.all = ((ui32Config & SYSCTL_IMULT_M) >> SYSCTL_IMULT_S) |
-        		                    (((ui32Config & SYSCTL_FMULT_M) >> SYSCTL_FMULT_S) << 8);
+                                    (((ui32Config & SYSCTL_FMULT_M) >> SYSCTL_FMULT_S) << 8);
         EDIS;
 
         __asm( " RPT #255 || NOP");

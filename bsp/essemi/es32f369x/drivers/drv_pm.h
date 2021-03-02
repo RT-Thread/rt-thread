@@ -21,7 +21,7 @@
 int rt_hw_pm_init(void);
 
 extern void save_register(void *p_head,uint32_t size,void *p_save);
- 
+
 extern void load_register(void *p_head,uint32_t size,void *p_load);
 
 #endif

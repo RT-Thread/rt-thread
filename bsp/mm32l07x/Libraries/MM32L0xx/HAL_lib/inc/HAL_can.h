@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V1.5.0
 * @date  02/08/2017
-* @brief  This file contains all the functions prototypes for the BKP firmware 
+* @brief  This file contains all the functions prototypes for the BKP firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_CAN_H
 #define __HAL_CAN_H
@@ -26,7 +26,7 @@
 #include "HAL_device.h"
 
 
-/** @defgroup CAN_sleep_constants 
+/** @defgroup CAN_sleep_constants
 * @{
 */
 
@@ -39,7 +39,7 @@
 
 
 
-/** @defgroup CAN_sleep_constants 
+/** @defgroup CAN_sleep_constants
 * @{
 */
 
@@ -51,7 +51,7 @@
 */
 
 
-/** @defgroup CAN_wake_up_constants 
+/** @defgroup CAN_wake_up_constants
 * @{
 */
 
@@ -63,80 +63,80 @@
 */
 
 /**
-* @brief  parasmeter of CAN Mode 
+* @brief  parasmeter of CAN Mode
 */
 #define CAN_BASICMode ((uint32_t)0x0)
 #define CAN_PELIMode  ((uint32_t)0x80)
-#define CAN_WorkMode		((uint32_t)0x80)
-#define CAN_ResetMode 		((uint32_t)0x1)
-#define CAN_ListenOnlyMode	((uint32_t)0x2)
-#define CAN_SeftTestMode	((uint32_t)0x4)
-#define CAN_FilterMode_Singal	((uint32_t)0x8)
-#define CAN_FilterMode_Double	((uint32_t)0xf7)
-#define CAN_SleepMode		((uint32_t)0x10)
+#define CAN_WorkMode        ((uint32_t)0x80)
+#define CAN_ResetMode         ((uint32_t)0x1)
+#define CAN_ListenOnlyMode    ((uint32_t)0x2)
+#define CAN_SeftTestMode    ((uint32_t)0x4)
+#define CAN_FilterMode_Singal    ((uint32_t)0x8)
+#define CAN_FilterMode_Double    ((uint32_t)0xf7)
+#define CAN_SleepMode        ((uint32_t)0x10)
 
 /**
 * @}
 */
 
 /**
-* @brief  parasmeter of BASIC CAN interrupt 
+* @brief  parasmeter of BASIC CAN interrupt
 */
-#define CAN_IT_RIE	((uint32_t)0x2)
-#define CAN_IT_TIE	((uint32_t)0x4)
-#define CAN_IT_EIE	((uint32_t)0x8)
-#define CAN_IT_OIE	((uint32_t)0x10)
+#define CAN_IT_RIE    ((uint32_t)0x2)
+#define CAN_IT_TIE    ((uint32_t)0x4)
+#define CAN_IT_EIE    ((uint32_t)0x8)
+#define CAN_IT_OIE    ((uint32_t)0x10)
 
 /**
 * @}
 */
 
 /**
-* @brief  parasmeter of PELI CAN interrupt 
+* @brief  parasmeter of PELI CAN interrupt
 */
-#define CAN_IT_RI	((uint32_t)0x1)
-#define CAN_IT_TI	((uint32_t)0x2)
-#define CAN_IT_EI	((uint32_t)0x4)
-#define CAN_IT_DOI	((uint32_t)0x8)
-#define CAN_IT_WUI	((uint32_t)0x10)
-#define CAN_IT_EPI	((uint32_t)0x20)
-#define CAN_IT_ALI	((uint32_t)0x40)
-#define CAN_IT_BEI	((uint32_t)0x80)
-#define CAN_IT_ALL	((uint32_t)0xff)
+#define CAN_IT_RI    ((uint32_t)0x1)
+#define CAN_IT_TI    ((uint32_t)0x2)
+#define CAN_IT_EI    ((uint32_t)0x4)
+#define CAN_IT_DOI    ((uint32_t)0x8)
+#define CAN_IT_WUI    ((uint32_t)0x10)
+#define CAN_IT_EPI    ((uint32_t)0x20)
+#define CAN_IT_ALI    ((uint32_t)0x40)
+#define CAN_IT_BEI    ((uint32_t)0x80)
+#define CAN_IT_ALL    ((uint32_t)0xff)
 
 /**
 * @}
 */
 
 /**
-* @brief  parasmeter of CAN Status 
+* @brief  parasmeter of CAN Status
 */
-#define CAN_STATUS_RBS	((uint32_t)0x1)
-#define CAN_STATUS_DOS	((uint32_t)0x2)
-#define CAN_STATUS_TBS	((uint32_t)0x4)
-#define CAN_STATUS_TCS	((uint32_t)0x8)
-#define CAN_STATUS_RS	((uint32_t)0x10)
-#define CAN_STATUS_TS	((uint32_t)0x20)
-#define CAN_STATUS_ES	((uint32_t)0x40)
-#define CAN_STATUS_BS	((uint32_t)0x80)
+#define CAN_STATUS_RBS    ((uint32_t)0x1)
+#define CAN_STATUS_DOS    ((uint32_t)0x2)
+#define CAN_STATUS_TBS    ((uint32_t)0x4)
+#define CAN_STATUS_TCS    ((uint32_t)0x8)
+#define CAN_STATUS_RS    ((uint32_t)0x10)
+#define CAN_STATUS_TS    ((uint32_t)0x20)
+#define CAN_STATUS_ES    ((uint32_t)0x40)
+#define CAN_STATUS_BS    ((uint32_t)0x80)
 
 /**
 * @}
 */
 
 /**
-* @brief  parasmeter of CAN Command register 
+* @brief  parasmeter of CAN Command register
 */
-#define CAN_TR	0x1
-#define CAN_AT	0x2
-#define CAN_RRB	0x4
-#define CAN_CDO	0x8
+#define CAN_TR    0x1
+#define CAN_AT    0x2
+#define CAN_RRB    0x4
+#define CAN_CDO    0x8
 
 /**
 * @}
 */
 
-/** 
+/**
 * @brief  CAN_Basic init structure definition
 */
 typedef struct
@@ -157,7 +157,7 @@ typedef struct
 * @}
 */
 
-/** 
+/**
 * @brief  CAN_Peli init structure definition
 */
 typedef struct
@@ -169,7 +169,7 @@ typedef struct
   uint8_t TESG1;
   FunctionalState LOM;
   FunctionalState STM;
-  FunctionalState SM; 
+  FunctionalState SM;
   FunctionalState SRR;
   uint32_t EWLR;
 }CAN_Peli_InitTypeDef;
@@ -178,14 +178,14 @@ typedef struct
 * @}
 */
 
-/** 
+/**
 * @brief  CAN_Basic filter init structure definition
 */
 typedef struct
 {
   uint8_t CAN_FilterId;         /*!< Specifies the filter identification number .
   This parameter can be a value between 0x00 and 0xFF */
-  
+
   uint8_t CAN_FilterMaskId;     /*!< Specifies the filter mask number or identification number,
   This parameter can be a value between 0x00 and 0xFF */
 } CAN_Basic_FilterInitTypeDef;
@@ -194,18 +194,18 @@ typedef struct
 * @}
 */
 
-/** 
+/**
 * @brief  CAN_Peli filter init structure definition
 */
 typedef struct
 {
   uint8_t AFM;
-  uint8_t CAN_FilterId0;         /*!< Specifies the filter identification number 
+  uint8_t CAN_FilterId0;         /*!< Specifies the filter identification number
   This parameter can be a value between 0x00 and 0xFF */
   uint8_t CAN_FilterId1;
   uint8_t CAN_FilterId2;
   uint8_t CAN_FilterId3;
-  
+
   uint8_t CAN_FilterMaskId0;     /*!< Specifies the filter mask number or identification number,
   This parameter can be a value between 0x00 and 0xFF */
   uint8_t CAN_FilterMaskId1;
@@ -217,8 +217,8 @@ typedef struct
 * @}
 */
 
-/** 
-* @brief  CAN_Peli transmit frame definition  
+/**
+* @brief  CAN_Peli transmit frame definition
 */
 typedef enum {DataFrame = 0,RemoteFrame = !DataFrame}TransFrame;
 
@@ -226,8 +226,8 @@ typedef enum {DataFrame = 0,RemoteFrame = !DataFrame}TransFrame;
 * @}
 */
 
-/** 
-* @brief  CAN_Basic Tx message structure definition  
+/**
+* @brief  CAN_Basic Tx message structure definition
 */
 typedef struct
 {
@@ -235,14 +235,14 @@ typedef struct
   This parameter can be a value between 0 to 0xFF. */
   uint8_t IDL;  /*!< Specifies the standard low identifier.
   This parameter can be a value between 0 to 0x7. */
-  uint8_t RTR;     /*!< Specifies the type of frame for the message that will 
+  uint8_t RTR;     /*!< Specifies the type of frame for the message that will
   be transmitted. This parameter can be @TransFrame */
-  
-  uint8_t DLC;     /*!< Specifies the length of the frame that will be 
-  transmitted. This parameter can be a value between 
+
+  uint8_t DLC;     /*!< Specifies the length of the frame that will be
+  transmitted. This parameter can be a value between
   0 to 8 */
-  
-  uint8_t Data[8]; /*!< Contains the data to be transmitted. It ranges from 0 
+
+  uint8_t Data[8]; /*!< Contains the data to be transmitted. It ranges from 0
   to 0xFF. */
 } CanBasicTxMsg;
 
@@ -250,31 +250,31 @@ typedef struct
 * @}
 */
 
-/** 
-* @brief  CAN_Basic Rx message structure definition  
+/**
+* @brief  CAN_Basic Rx message structure definition
 */
 typedef struct
 {
   uint16_t ID;  /*!< Specifies the standard identifier.
   This parameter can be a value between 0 to 0x7FF. */
   uint8_t RTR;     /*!< Specifies the type of frame for the received message.
-  This parameter can be a value of 
+  This parameter can be a value of
   @ref TransFrame */
-  
+
   uint8_t DLC;     /*!< Specifies the length of the frame that will be received.
   This parameter can be a value between 0 to 8 */
-  
-  uint8_t Data[8]; /*!< Contains the data to be received. It ranges from 0 to 
+
+  uint8_t Data[8]; /*!< Contains the data to be received. It ranges from 0 to
   0xFF. */
-  
+
 } CanBasicRxMsg;
 
 /**
 * @}
 */
 
-/** 
-* @brief  CAN_Peli_Tx message structure definition  
+/**
+* @brief  CAN_Peli_Tx message structure definition
 */
 typedef struct
 {
@@ -283,19 +283,19 @@ typedef struct
   uint8_t IDLH;
   uint8_t IDHL;
   uint8_t IDHH;
-  uint8_t FF;     /*!< Specifies the type of identifier for the message that 
-  will be transmitted. This parameter can be a value 
+  uint8_t FF;     /*!< Specifies the type of identifier for the message that
+  will be transmitted. This parameter can be a value
   of @ref CAN_identifier_type */
-  
-  uint8_t RTR;     /*!< Specifies the type of frame for the message that will 
-  be transmitted. This parameter can be a value of 
+
+  uint8_t RTR;     /*!< Specifies the type of frame for the message that will
+  be transmitted. This parameter can be a value of
   @ref TransFrame */
-  
-  uint8_t DLC;     /*!< Specifies the length of the frame that will be 
-  transmitted. This parameter can be a value between 
+
+  uint8_t DLC;     /*!< Specifies the length of the frame that will be
+  transmitted. This parameter can be a value between
   0 to 8 */
-  
-  uint8_t Data[8]; /*!< Contains the data to be transmitted. It ranges from 0 
+
+  uint8_t Data[8]; /*!< Contains the data to be transmitted. It ranges from 0
   to 0xFF. */
 } CanPeliTxMsg;
 
@@ -303,27 +303,27 @@ typedef struct
 * @}
 */
 
-/** 
-* @brief  CAN Rx message structure definition  
+/**
+* @brief  CAN Rx message structure definition
 */
 typedef struct
 {
   uint32_t ID;  /*!< Specifies the extended identifier.
   This parameter can be a value between 0 to 0x1FFFFFFF. */
-  uint8_t FF;     /*!< Specifies the type of identifier for the message that 
-  will be received. This parameter can be a value of 
+  uint8_t FF;     /*!< Specifies the type of identifier for the message that
+  will be received. This parameter can be a value of
   @ref CAN_identifier_type */
-  
+
   uint8_t RTR;     /*!< Specifies the type of frame for the received message.
-  This parameter can be a value of 
+  This parameter can be a value of
   @ref TransFrame */
-  
+
   uint8_t DLC;     /*!< Specifies the length of the frame that will be received.
   This parameter can be a value between 0 to 8 */
-  
-  uint8_t Data[8]; /*!< Contains the data to be received. It ranges from 0 to 
+
+  uint8_t Data[8]; /*!< Contains the data to be received. It ranges from 0 to
   0xFF. */
-  
+
 } CanPeliRxMsg;
 
 

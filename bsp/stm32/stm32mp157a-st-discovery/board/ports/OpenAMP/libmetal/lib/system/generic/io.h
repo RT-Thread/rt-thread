@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	generic/io.h
- * @brief	Generic specific io definitions.
+ * @file    generic/io.h
+ * @brief    Generic specific io definitions.
  */
 
 #ifndef __METAL_IO__H__
@@ -33,7 +33,7 @@ void metal_sys_io_mem_map(struct metal_io_region *io);
  * @brief memory mapping
  */
 void *metal_machine_io_mem_map(void *va, metal_phys_addr_t pa,
-			       size_t size, unsigned int flags);
+                   size_t size, unsigned int flags);
 
 #endif
 

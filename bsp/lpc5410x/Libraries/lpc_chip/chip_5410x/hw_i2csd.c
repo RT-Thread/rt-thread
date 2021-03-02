@@ -38,14 +38,14 @@
 /* Private data structure used for the I2C slave driver, holds the driver and
    peripheral context */
 typedef struct {
-	void                    *pUserData;		/*!< Pointer to user data used by driver instance, use NULL if not used */
-	LPC_I2C_T               *base;			/*!< Base address of I2C peripheral to use */
-	i2cSlaveStartCB         pXferStartCB;	/*!< Transfer start callback */
-	i2cSlaveTransmitCB      pTranTranCb;	/*!< Data transmit callback */
-	i2cSlaveReceiveCB       pTranRecvCb;	/*!< Data Receive callback */
-	i2cSlaveCompleteCB      pXferCompCB;	/*!< Transfer complete callback */
-	ROM_I2CS_XFER_T         *pXfer;			/*!< Pointer to current transfer */
-	ErrorCode_t             pendingStatus;	/*!< Pending transfer status */
+    void                    *pUserData;        /*!< Pointer to user data used by driver instance, use NULL if not used */
+    LPC_I2C_T               *base;            /*!< Base address of I2C peripheral to use */
+    i2cSlaveStartCB         pXferStartCB;    /*!< Transfer start callback */
+    i2cSlaveTransmitCB      pTranTranCb;    /*!< Data transmit callback */
+    i2cSlaveReceiveCB       pTranRecvCb;    /*!< Data Receive callback */
+    i2cSlaveCompleteCB      pXferCompCB;    /*!< Transfer complete callback */
+    ROM_I2CS_XFER_T         *pXfer;            /*!< Pointer to current transfer */
+    ErrorCode_t             pendingStatus;    /*!< Pending transfer status */
 } I2CS_DATACONTEXT_T;
 
 #define _rom_i2csEnable(pI2C)                   (pI2C->CFG |= I2C_CFG_SLVEN);
@@ -56,246 +56,246 @@ typedef struct {
 // **********************************************************
 uint32_t i2cs_get_mem_size(void)
 {
-	return sizeof(I2CS_DATACONTEXT_T);
+    return sizeof(I2CS_DATACONTEXT_T);
 }
 
 ROM_I2CS_HANDLE_T i2cs_init(void *mem, const ROM_I2CS_INIT_T *pInit)
 {
-	I2CS_DATACONTEXT_T *pDrv;
+    I2CS_DATACONTEXT_T *pDrv;
 
-	/* Verify alignment is at least 4 bytes */
-	if (((uint32_t) mem & 0x3) != 0) {
-		return NULL;
-	}
+    /* Verify alignment is at least 4 bytes */
+    if (((uint32_t) mem & 0x3) != 0) {
+        return NULL;
+    }
 
-	pDrv = (I2CS_DATACONTEXT_T *) mem;
-	memset(pDrv, 0, sizeof(I2CS_DATACONTEXT_T));
+    pDrv = (I2CS_DATACONTEXT_T *) mem;
+    memset(pDrv, 0, sizeof(I2CS_DATACONTEXT_T));
 
-	/* Save base of peripheral and pointer to user data */
-	pDrv->pUserData = pInit->pUserData;
-	pDrv->base = (LPC_I2C_T *) pInit->base;
+    /* Save base of peripheral and pointer to user data */
+    pDrv->pUserData = pInit->pUserData;
+    pDrv->base = (LPC_I2C_T *) pInit->base;
 
-	/* If this needs to be changed, it should be done in the app after
-	   this call. */
-	pDrv->base->CLKDIV = 2;
+    /* If this needs to be changed, it should be done in the app after
+       this call. */
+    pDrv->base->CLKDIV = 2;
 
-	/* Clear controller state */
-	pDrv->base->STAT = (I2C_STAT_SLVSEL | I2C_STAT_SLVDESEL);
+    /* Clear controller state */
+    pDrv->base->STAT = (I2C_STAT_SLVSEL | I2C_STAT_SLVDESEL);
 
-	/* Enable I2C slave interface */
-	_rom_i2csEnable(pDrv->base);
+    /* Enable I2C slave interface */
+    _rom_i2csEnable(pDrv->base);
 
-	return pDrv;
+    return pDrv;
 }
 
 void i2cs_setup_slave(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_SLAVE_T *pSlaveSetup)
 {
-	uint32_t sa, idx;
-	I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
+    uint32_t sa, idx;
+    I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
 
-	/* Limit usable slave address indexes to the maximum the controller can support */
-	if (pSlaveSetup->SlaveIndex <= 3) {
-		sa = (uint32_t) (pSlaveSetup->slaveAddr & 0x7F) << 1;
-		if (pSlaveSetup->EnableSlave == 0) {
-			sa |= I2C_SLVADR_SADISABLE;	/* Disable slave address */
-		}
+    /* Limit usable slave address indexes to the maximum the controller can support */
+    if (pSlaveSetup->SlaveIndex <= 3) {
+        sa = (uint32_t) (pSlaveSetup->slaveAddr & 0x7F) << 1;
+        if (pSlaveSetup->EnableSlave == 0) {
+            sa |= I2C_SLVADR_SADISABLE;    /* Disable slave address */
+        }
 
-		/* Setup slave address at index */
-		pDrv->base->SLVADR[pSlaveSetup->SlaveIndex] = sa;
-	}
+        /* Setup slave address at index */
+        pDrv->base->SLVADR[pSlaveSetup->SlaveIndex] = sa;
+    }
 
-	/* Check all slave indexes. If any are enabled, then enable the slave interrupts,
-	   else disable the slave interrupts. */
-	sa = 0;
-	for (idx = 0; ((idx <= 3) && (sa == 0)); idx++) {
-		if ((pDrv->base->SLVADR[idx] & I2C_SLVADR_SADISABLE) == 0) {
-			/* Slave is enabled */
-			sa = 1;
-		}
-	}
-	if (sa) {
-		pDrv->base->INTENSET = I2C_INTENSET_SLVPENDING;
+    /* Check all slave indexes. If any are enabled, then enable the slave interrupts,
+       else disable the slave interrupts. */
+    sa = 0;
+    for (idx = 0; ((idx <= 3) && (sa == 0)); idx++) {
+        if ((pDrv->base->SLVADR[idx] & I2C_SLVADR_SADISABLE) == 0) {
+            /* Slave is enabled */
+            sa = 1;
+        }
+    }
+    if (sa) {
+        pDrv->base->INTENSET = I2C_INTENSET_SLVPENDING;
 
-	}
-	else {
-		pDrv->base->INTENCLR = (I2C_INTENSET_SLVPENDING | I2C_INTENSET_SLVDESEL);
-	}
+    }
+    else {
+        pDrv->base->INTENCLR = (I2C_INTENSET_SLVPENDING | I2C_INTENSET_SLVDESEL);
+    }
 }
 
 void i2cs_register_callback(ROM_I2CS_HANDLE_T pHandle, uint32_t cbIndex, void *pCB)
 {
-	I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
+    I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
 
-	if (cbIndex == ROM_I2CS_START_CB) {
-		pDrv->pXferStartCB = (i2cSlaveStartCB) pCB;
-	}
-	else if (cbIndex == ROM_I2CS_XFERSEND_CB) {
-		pDrv->pTranTranCb = (i2cSlaveTransmitCB) pCB;
-	}
-	else if (cbIndex == ROM_I2CS_XFERRECV_CB) {
-		pDrv->pTranRecvCb = (i2cSlaveReceiveCB) pCB;
-	}
-	else if (cbIndex == ROM_I2CS_DONE_CB) {
-		pDrv->pXferCompCB = (i2cSlaveCompleteCB) pCB;
-	}
+    if (cbIndex == ROM_I2CS_START_CB) {
+        pDrv->pXferStartCB = (i2cSlaveStartCB) pCB;
+    }
+    else if (cbIndex == ROM_I2CS_XFERSEND_CB) {
+        pDrv->pTranTranCb = (i2cSlaveTransmitCB) pCB;
+    }
+    else if (cbIndex == ROM_I2CS_XFERRECV_CB) {
+        pDrv->pTranRecvCb = (i2cSlaveReceiveCB) pCB;
+    }
+    else if (cbIndex == ROM_I2CS_DONE_CB) {
+        pDrv->pXferCompCB = (i2cSlaveCompleteCB) pCB;
+    }
 }
 
 ErrorCode_t i2cs_transfer(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_XFER_T *pXfer)
 {
-	I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
+    I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
 
-	/* Is transfer NULL? */
-	if (pXfer == NULL) {
-		return ERR_I2C_PARAM;
-	}
+    /* Is transfer NULL? */
+    if (pXfer == NULL) {
+        return ERR_I2C_PARAM;
+    }
 
-	/* Save transfer descriptor */
-	pDrv->pXfer = pXfer;
-	pXfer->status = ERR_I2C_BUSY;
-	pDrv->pendingStatus = LPC_OK;
-	pXfer->bytesSent = 0;
-	pXfer->bytesRecv = 0;
+    /* Save transfer descriptor */
+    pDrv->pXfer = pXfer;
+    pXfer->status = ERR_I2C_BUSY;
+    pDrv->pendingStatus = LPC_OK;
+    pXfer->bytesSent = 0;
+    pXfer->bytesRecv = 0;
 
-	return pXfer->status;
+    return pXfer->status;
 }
 
 // Otime = "optimize for speed of code execution"
 // ...add this pragma 1 line above the interrupt service routine function.
 void i2cs_transfer_handler(ROM_I2CS_HANDLE_T pHandle)
 {
-	I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
-	ROM_I2CS_XFER_T *pXfer = pDrv->pXfer;
+    I2CS_DATACONTEXT_T *pDrv = (I2CS_DATACONTEXT_T *) pHandle;
+    ROM_I2CS_XFER_T *pXfer = pDrv->pXfer;
 
-	uint32_t done = 0;
-	uint16_t data = 0;
+    uint32_t done = 0;
+    uint16_t data = 0;
 
-	uint32_t status = pDrv->base->INTSTAT;
+    uint32_t status = pDrv->base->INTSTAT;
 
-	/* Transfer complete? */
-	if ((status & I2C_INTENSET_SLVDESEL) != 0) {
-		pDrv->base->INTENCLR = I2C_INTENSET_SLVDESEL;
-		pDrv->base->STAT = I2C_STAT_SLVDESEL;
-		if (pXfer) {
-			pXfer->status = pDrv->pendingStatus;
-			pDrv->pXfer = NULL;
-		}
-		if (pDrv->pXferCompCB) {
-			pDrv->pXferCompCB(pHandle, pXfer);
-		}
-		return;
-	}
-	else if ((status & I2C_INTENSET_SLVPENDING) != 0) {
-		/* Determine the current I2C slave state */
-		switch (_rom_i2csGetSlaveState(pDrv->base)) {
-		case I2C_STAT_SLVCODE_ADDR:
-			/* Get slave address that needs servicing */
-			data = _rom_i2csGetSlaveAddr(pDrv->base, _rom_i2csGetSlaveMatchIndex(pDrv->base));
+    /* Transfer complete? */
+    if ((status & I2C_INTENSET_SLVDESEL) != 0) {
+        pDrv->base->INTENCLR = I2C_INTENSET_SLVDESEL;
+        pDrv->base->STAT = I2C_STAT_SLVDESEL;
+        if (pXfer) {
+            pXfer->status = pDrv->pendingStatus;
+            pDrv->pXfer = NULL;
+        }
+        if (pDrv->pXferCompCB) {
+            pDrv->pXferCompCB(pHandle, pXfer);
+        }
+        return;
+    }
+    else if ((status & I2C_INTENSET_SLVPENDING) != 0) {
+        /* Determine the current I2C slave state */
+        switch (_rom_i2csGetSlaveState(pDrv->base)) {
+        case I2C_STAT_SLVCODE_ADDR:
+            /* Get slave address that needs servicing */
+            data = _rom_i2csGetSlaveAddr(pDrv->base, _rom_i2csGetSlaveMatchIndex(pDrv->base));
 
-			/* Call address callback */
-			if (pDrv->pXferStartCB) {
-				pDrv->pXferStartCB(pHandle, data);
+            /* Call address callback */
+            if (pDrv->pXferStartCB) {
+                pDrv->pXferStartCB(pHandle, data);
 
-				/* Update transfer descriptor */
-				pXfer = pDrv->pXfer;
-			}
-			pDrv->base->INTENSET = I2C_INTENSET_SLVDESEL;
-			break;
+                /* Update transfer descriptor */
+                pXfer = pDrv->pXfer;
+            }
+            pDrv->base->INTENSET = I2C_INTENSET_SLVDESEL;
+            break;
 
-		case I2C_STAT_SLVCODE_RX:
-			/* Receive from master */
-			/* A byte has been received in thee receive FIFO */
-			if ((pXfer == NULL) || (pXfer->bytesRecv >= pXfer->rxSz)) {
-				/* No more data, call receive data callback */
-				if (pDrv->pTranRecvCb) {
-					done = pDrv->pTranRecvCb(pHandle, pXfer);
-					if (pDrv->pXfer) {
-						pXfer = pDrv->pXfer;
-						pXfer->bytesRecv = 0;
-					}
-				}
-			}
+        case I2C_STAT_SLVCODE_RX:
+            /* Receive from master */
+            /* A byte has been received in thee receive FIFO */
+            if ((pXfer == NULL) || (pXfer->bytesRecv >= pXfer->rxSz)) {
+                /* No more data, call receive data callback */
+                if (pDrv->pTranRecvCb) {
+                    done = pDrv->pTranRecvCb(pHandle, pXfer);
+                    if (pDrv->pXfer) {
+                        pXfer = pDrv->pXfer;
+                        pXfer->bytesRecv = 0;
+                    }
+                }
+            }
 
-			/* Not using DMA */
-			if (!(done == ROM_I2CS_DMA)) {
-				data = (uint8_t) pDrv->base->SLVDAT;
-				if (pXfer == NULL) {
-					/* Toss data and NAK, no buffer space */
-					done = ROM_I2CS_NAK;
-					pDrv->pendingStatus = ERR_I2C_BUFFER_OVERFLOW;
-				}
-				else {
-					uint8_t *p8 = pXfer->rxBuff;
-					if ((p8 == NULL) || (pXfer->bytesRecv >= pXfer->rxSz)) {
-						/* Toss data and NAK, no buffer space */
-						done = ROM_I2CS_NAK;
-						pDrv->pendingStatus = ERR_I2C_BUFFER_OVERFLOW;
-					}
-					else {
-						p8[pXfer->bytesRecv] = (uint8_t) data;
-						pDrv->pXfer->bytesRecv++;
-					}
-				}
-			}
-			break;
+            /* Not using DMA */
+            if (!(done == ROM_I2CS_DMA)) {
+                data = (uint8_t) pDrv->base->SLVDAT;
+                if (pXfer == NULL) {
+                    /* Toss data and NAK, no buffer space */
+                    done = ROM_I2CS_NAK;
+                    pDrv->pendingStatus = ERR_I2C_BUFFER_OVERFLOW;
+                }
+                else {
+                    uint8_t *p8 = pXfer->rxBuff;
+                    if ((p8 == NULL) || (pXfer->bytesRecv >= pXfer->rxSz)) {
+                        /* Toss data and NAK, no buffer space */
+                        done = ROM_I2CS_NAK;
+                        pDrv->pendingStatus = ERR_I2C_BUFFER_OVERFLOW;
+                    }
+                    else {
+                        p8[pXfer->bytesRecv] = (uint8_t) data;
+                        pDrv->pXfer->bytesRecv++;
+                    }
+                }
+            }
+            break;
 
-		case I2C_STAT_SLVCODE_TX:
-			/* Send to master */
-			/* A byte needs to be placed into the transmit FIFO */
-			if ((pXfer == NULL) || (pXfer->bytesSent >= pXfer->txSz)) {
-				/* Does callback exist? */
-				if (pDrv->pTranTranCb) {
-					done = pDrv->pTranTranCb(pHandle, pXfer);
-					/* Can't really NAK on read, so switch to continue */
-					if (pDrv->pXfer) {
-						pXfer = pDrv->pXfer;
-						pXfer->bytesSent = 0;
-					}
-					if (done == ROM_I2CS_NAK) {
-						pDrv->base->SLVDAT = 0;
-					}
-				}
-			}
+        case I2C_STAT_SLVCODE_TX:
+            /* Send to master */
+            /* A byte needs to be placed into the transmit FIFO */
+            if ((pXfer == NULL) || (pXfer->bytesSent >= pXfer->txSz)) {
+                /* Does callback exist? */
+                if (pDrv->pTranTranCb) {
+                    done = pDrv->pTranTranCb(pHandle, pXfer);
+                    /* Can't really NAK on read, so switch to continue */
+                    if (pDrv->pXfer) {
+                        pXfer = pDrv->pXfer;
+                        pXfer->bytesSent = 0;
+                    }
+                    if (done == ROM_I2CS_NAK) {
+                        pDrv->base->SLVDAT = 0;
+                    }
+                }
+            }
 
-			/* Continue if not DMA or NAK */
-			if (!((done == ROM_I2CS_NAK) || (done == ROM_I2CS_DMA))) {
-				if (pXfer == NULL) {
-					pDrv->base->SLVDAT = 0;
-					pDrv->pendingStatus = ERR_I2C_BUFFER_UNDERFLOW;
-					done = 0;
-				}
-				else {
-					uint8_t *p8 = (uint8_t *) pXfer->txBuff;
-					/* Not using DMA, so this is a normal transfer */
-					if ((p8 == NULL) || (pXfer->bytesSent >= pXfer->txSz)) {
-						/* Have to send something, so NAK with 0 */
-						pDrv->base->SLVDAT = 0;
-						pDrv->pendingStatus = ERR_I2C_BUFFER_UNDERFLOW;
-						done = 0;
-					}
-					else {
-						pDrv->base->SLVDAT = (uint32_t) p8[pXfer->bytesSent];
-						pDrv->pXfer->bytesSent++;
-					}
-				}
-			}
-			break;
-		}
+            /* Continue if not DMA or NAK */
+            if (!((done == ROM_I2CS_NAK) || (done == ROM_I2CS_DMA))) {
+                if (pXfer == NULL) {
+                    pDrv->base->SLVDAT = 0;
+                    pDrv->pendingStatus = ERR_I2C_BUFFER_UNDERFLOW;
+                    done = 0;
+                }
+                else {
+                    uint8_t *p8 = (uint8_t *) pXfer->txBuff;
+                    /* Not using DMA, so this is a normal transfer */
+                    if ((p8 == NULL) || (pXfer->bytesSent >= pXfer->txSz)) {
+                        /* Have to send something, so NAK with 0 */
+                        pDrv->base->SLVDAT = 0;
+                        pDrv->pendingStatus = ERR_I2C_BUFFER_UNDERFLOW;
+                        done = 0;
+                    }
+                    else {
+                        pDrv->base->SLVDAT = (uint32_t) p8[pXfer->bytesSent];
+                        pDrv->pXfer->bytesSent++;
+                    }
+                }
+            }
+            break;
+        }
 
-		if (done == ROM_I2CS_NAK) {
-			pDrv->base->SLVCTL = I2C_SLVCTL_SLVNACK;
-		}
-		else if (done == ROM_I2CS_DMA) {
-			pDrv->base->SLVCTL = I2C_SLVCTL_SLVDMA;
-		}
-		else {
-			pDrv->base->SLVCTL = I2C_SLVCTL_SLVCONTINUE;
-		}
-	}
+        if (done == ROM_I2CS_NAK) {
+            pDrv->base->SLVCTL = I2C_SLVCTL_SLVNACK;
+        }
+        else if (done == ROM_I2CS_DMA) {
+            pDrv->base->SLVCTL = I2C_SLVCTL_SLVDMA;
+        }
+        else {
+            pDrv->base->SLVCTL = I2C_SLVCTL_SLVCONTINUE;
+        }
+    }
 }
 
 uint32_t i2cs_get_driver_version(void)
 {
-	return DRVVERSION;
+    return DRVVERSION;
 }
 
 // *********************************************************

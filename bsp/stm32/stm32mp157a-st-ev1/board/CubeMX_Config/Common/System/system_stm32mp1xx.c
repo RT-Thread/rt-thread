@@ -14,7 +14,7 @@
   *                                  be used by the user application to setup
   *                                  the SysTick timer or configure other
   *                                  parameters.
-  *                                     
+  *
   *      - SystemCoreClockUpdate(): Updates the variable SystemCoreClock and must
   *                                 be called whenever the core clock is changed
   *                                 during program execution.
@@ -76,7 +76,7 @@
 /*!< Uncomment the following line if you need to relocate your vector Table in
      Internal SRAM. */
 /* #define VECT_TAB_SRAM */
-#define VECT_TAB_OFFSET  0x00 /*!< Vector Table base offset field. 
+#define VECT_TAB_OFFSET  0x00 /*!< Vector Table base offset field.
                                    This value must be a multiple of 0x400. */
 /******************************************************************************/
 
@@ -112,8 +112,8 @@
   * @{
   */
 
-#if defined (DATA_IN_ExtSRAM) 
-  static void SystemInit_ExtMemCtl(void); 
+#if defined (DATA_IN_ExtSRAM)
+  static void SystemInit_ExtMemCtl(void);
 #endif /* DATA_IN_ExtSRAM */
 
 /**
@@ -126,7 +126,7 @@
 
   /**
   * @brief  Setup the microcontroller system
-  *         Initialize the FPU setting, vector table location and External memory 
+  *         Initialize the FPU setting, vector table location and External memory
   *         configuration.
   * @param  None
   * @retval None
@@ -152,7 +152,7 @@ void SystemInit (void)
   CLEAR_REG(EXTI_C2->EMR3);
 #else
 #error Please #define CORE_CM4
-#endif	                         
+#endif
 }
 
 /**
@@ -166,7 +166,7 @@ void SystemInit (void)
   *         based on this variable will be incorrect.
   *
   * @note   - The system frequency computed by this function is not the real
-  *           frequency in the chip. It is calculated based on the predefined 
+  *           frequency in the chip. It is calculated based on the predefined
   *           constant and the selected clock source:
   *
   *           - If SYSCLK source is HSI, SystemCoreClock will contain the
@@ -272,10 +272,10 @@ void SystemCoreClockUpdate (void)
   */
 void SystemInit_ExtMemCtl(void)
 {
-  
+
 }
 #endif /* DATA_IN_ExtSRAM */
-  
+
 /**
   * @}
   */

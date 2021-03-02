@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F4xx_HAL_SRAM_H
@@ -48,16 +48,16 @@
 
 /** @addtogroup SRAM
   * @{
-  */ 
+  */
 
 /* Exported typedef ----------------------------------------------------------*/
 
 /** @defgroup SRAM_Exported_Types SRAM Exported Types
   * @{
-  */ 
-/** 
-  * @brief  HAL SRAM State structures definition  
-  */ 
+  */
+/**
+  * @brief  HAL SRAM State structures definition
+  */
 typedef enum
 {
   HAL_SRAM_STATE_RESET     = 0x00U,  /*!< SRAM not yet initialized or disabled           */
@@ -75,18 +75,18 @@ typedef enum
 typedef struct __SRAM_HandleTypeDef
 #else
 typedef struct
-#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */	
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */
 {
-  FMC_NORSRAM_TypeDef           *Instance;  /*!< Register base address                        */ 
-  
+  FMC_NORSRAM_TypeDef           *Instance;  /*!< Register base address                        */
+
   FMC_NORSRAM_EXTENDED_TypeDef  *Extended;  /*!< Extended mode register base address          */
-  
+
   FMC_NORSRAM_InitTypeDef       Init;       /*!< SRAM device control configuration parameters */
 
-  HAL_LockTypeDef               Lock;       /*!< SRAM locking object                          */ 
-  
+  HAL_LockTypeDef               Lock;       /*!< SRAM locking object                          */
+
   __IO HAL_SRAM_StateTypeDef    State;      /*!< SRAM device access state                     */
-  
+
   DMA_HandleTypeDef             *hdma;      /*!< Pointer DMA handler                          */
 
 #if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
@@ -161,7 +161,7 @@ void              HAL_SRAM_DMA_XferCpltCallback(DMA_HandleTypeDef *hdma);
 void              HAL_SRAM_DMA_XferErrorCallback(DMA_HandleTypeDef *hdma);
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup SRAM_Exported_Functions_Group2
  *  @{
@@ -183,7 +183,7 @@ HAL_StatusTypeDef HAL_SRAM_RegisterDmaCallback(SRAM_HandleTypeDef *hsram, HAL_SR
 #endif
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup SRAM_Exported_Functions_Group3
  *  @{
@@ -193,7 +193,7 @@ HAL_StatusTypeDef HAL_SRAM_WriteOperation_Enable(SRAM_HandleTypeDef *hsram);
 HAL_StatusTypeDef HAL_SRAM_WriteOperation_Disable(SRAM_HandleTypeDef *hsram);
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup SRAM_Exported_Functions_Group4
  *  @{
@@ -215,7 +215,7 @@ HAL_SRAM_StateTypeDef HAL_SRAM_GetState(SRAM_HandleTypeDef *hsram);
 /* Private functions ---------------------------------------------------------*/
 /**
   * @}
-  */ 
+  */
 
 #endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx || STM32F427xx || STM32F437xx ||\
           STM32F429xx || STM32F439xx || STM32F446xx || STM32F469xx || STM32F479xx || STM32F412Zx ||\

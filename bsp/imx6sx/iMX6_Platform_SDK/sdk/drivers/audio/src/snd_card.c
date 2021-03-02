@@ -38,9 +38,9 @@
 #include "sdk.h"
 #include "audio/audio.h"
 
-#define DEBUG_ENABLE	1
+#define DEBUG_ENABLE    1
 #if DEBUG_ENABLE
-#define TRACE(fmt, args...)	printf(fmt,##args)
+#define TRACE(fmt, args...)    printf(fmt,##args)
 #else
 #define TRACE(fmt, args...)
 #endif
@@ -108,8 +108,8 @@ static int32_t snd_card_deinit(void *priv)
 
 /*!
  *  Default config function for sound card.
- * &para	para 	the parameters passed by the app, dedicated to the audio 
- *			controller, the parameters for codec should be set according it.
+ * &para    para     the parameters passed by the app, dedicated to the audio
+ *            controller, the parameters for codec should be set according it.
  */
 static int32_t snd_card_config(void *priv, audio_dev_para_p para)
 {
@@ -175,7 +175,7 @@ static int32_t snd_card_read(void *priv, uint8_t * buf, uint32_t bytes2read,
 {
     audio_card_p card = (audio_card_p) priv;
     audio_ctrl_p ctrl = card->ctrl;
-    
+
     ctrl->ops->read((void *)ctrl, buf, bytes2read, bytes_read);
 
     return 0;

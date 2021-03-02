@@ -4,23 +4,23 @@
 //
 // Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,7 +32,7 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
+//
 // This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -554,7 +554,7 @@ ADCSequenceConfigure(uint32_t ui32Base, uint32_t ui32SequenceNum,
         // Set the shift for the module and generator
         //
         ui32Gen = (ui32Gen - ADC_TRIGGER_PWM0) * 8;
-        
+
         HWREG(ui32Base + ADC_O_TSSEL) = ((HWREG(ui32Base + ADC_O_TSSEL) &
                                          ~(0x30 << ui32Gen)) |
                                          ((ui32Trigger & 0x30) << ui32Gen));
@@ -1010,9 +1010,9 @@ ADCSoftwareOversampleStepConfigure(uint32_t ui32Base, uint32_t ui32SequenceNum,
     ASSERT((ui32Base == ADC0_BASE) || (ui32Base == ADC1_BASE));
     ASSERT(ui32SequenceNum < 3);
     ASSERT(((ui32SequenceNum == 0) &&
-            (ui32Step < 
+            (ui32Step <
             (8 >> g_pui8OversampleFactor[ui32ADCInst][ui32SequenceNum]))) ||
-           (ui32Step < 
+           (ui32Step <
            (4 >> g_pui8OversampleFactor[ui32ADCInst][ui32SequenceNum])));
 
     //
@@ -1029,7 +1029,7 @@ ADCSoftwareOversampleStepConfigure(uint32_t ui32Base, uint32_t ui32SequenceNum,
     // Loop through the hardware steps that make up this step of the software
     // oversampled sequence.
     //
-    for(ui32SequenceNum = 
+    for(ui32SequenceNum =
         (1 << g_pui8OversampleFactor[ui32ADCInst][ui32SequenceNum]);
         ui32SequenceNum; ui32SequenceNum--)
     {
@@ -1114,9 +1114,9 @@ ADCSoftwareOversampleDataGet(uint32_t ui32Base, uint32_t ui32SequenceNum,
     ASSERT((ui32Base == ADC0_BASE) || (ui32Base == ADC1_BASE));
     ASSERT(ui32SequenceNum < 3);
     ASSERT(((ui32SequenceNum == 0) &&
-            (ui32Count < 
+            (ui32Count <
             (8 >> g_pui8OversampleFactor[ui32ADCInst][ui32SequenceNum]))) ||
-            (ui32Count < 
+            (ui32Count <
             (4 >> g_pui8OversampleFactor[ui32ADCInst][ui32SequenceNum])));
 
     //
@@ -1145,7 +1145,7 @@ ADCSoftwareOversampleDataGet(uint32_t ui32Base, uint32_t ui32SequenceNum,
         //
         // Write the averaged sample to the output buffer.
         //
-        *pui32Buffer++ = 
+        *pui32Buffer++ =
             ui32Accum >> g_pui8OversampleFactor[ui32ADCInst][ui32SequenceNum];
     }
 }
@@ -1678,7 +1678,7 @@ ADCIntClearEx(uint32_t ui32Base, uint32_t ui32IntFlags)
 //!
 //! The ADC reference is set as specified by \e ui32Ref.  It must be one of
 //! \b ADC_REF_INT, or \b ADC_REF_EXT_3V for internal or external reference
-//! If \b ADC_REF_INT is chosen, then an internal 3V reference is used and 
+//! If \b ADC_REF_INT is chosen, then an internal 3V reference is used and
 //! no external reference is needed.  If \b ADC_REF_EXT_3V is chosen, then
 //! a 3V reference must be supplied to the AVREF pin.
 //!

@@ -165,7 +165,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define COMP_INPUT_MINUS_DAC3_CH2      (COMP_CSR_INMSEL_2                                        )                                           /*!< Comparator input minus connected to DAC3 Channel 2 for COMP2/4. Note: For COMPx & DACx instances availability, please refer to datasheet */
 #define COMP_INPUT_MINUS_DAC4_CH1      (COMP_CSR_INMSEL_2                                        )                                           /*!< Comparator input minus connected to DAC4 Channel 1 for COMP5/7. Note: For COMPx & DACx instances availability, please refer to datasheet */
 #define COMP_INPUT_MINUS_DAC4_CH2      (COMP_CSR_INMSEL_2                                        )                                           /*!< Comparator input minus connected to DAC4 Channel 2 for COMP6. Note: For COMPx & DACx instances availability, please refer to datasheet */
-#define COMP_INPUT_MINUS_IO1           (COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1                    )                                           /*!< Comparator input minus connected to IO1 (pin PA4 for COMP1, pin PA5 for COMP2, pin PF1 for COMP3, pin PE8 for COMP4, pin PB10 for COMP5, pin PD10 for COMP6, pin PD15 for COMP7). Note: For COMPx instance availability, please refer to datasheet */ 
+#define COMP_INPUT_MINUS_IO1           (COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1                    )                                           /*!< Comparator input minus connected to IO1 (pin PA4 for COMP1, pin PA5 for COMP2, pin PF1 for COMP3, pin PE8 for COMP4, pin PB10 for COMP5, pin PD10 for COMP6, pin PD15 for COMP7). Note: For COMPx instance availability, please refer to datasheet */
 #define COMP_INPUT_MINUS_IO2           (COMP_CSR_INMSEL_2 | COMP_CSR_INMSEL_1 | COMP_CSR_INMSEL_0)                                           /*!< Comparator input minus connected to IO2 (pin PA0 for COMP1, pin PA2 for COMP2, pin PC0 for COMP3, pin PB2 for COMP4, pin PD13 for COMP5, pin PB15 for COMP6, pin PB12 for COMP7). Note: For COMPx instance availability, please refer to datasheet */
 /**
   * @}
@@ -463,7 +463,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP2 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                LL_EXTI_DisableRisingTrig_0_31(COMP_EXTI_LINE_COMP2); \
                                                                LL_EXTI_DisableFallingTrig_0_31(COMP_EXTI_LINE_COMP2); \
@@ -547,7 +547,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP3 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP3_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                LL_EXTI_DisableRisingTrig_0_31(COMP_EXTI_LINE_COMP3); \
                                                                LL_EXTI_DisableFallingTrig_0_31(COMP_EXTI_LINE_COMP3); \
@@ -631,7 +631,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP4 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP4_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                LL_EXTI_DisableRisingTrig_0_31(COMP_EXTI_LINE_COMP4); \
                                                                LL_EXTI_DisableFallingTrig_0_31(COMP_EXTI_LINE_COMP4); \
@@ -716,7 +716,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP5 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP5_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                LL_EXTI_DisableRisingTrig_0_31(COMP_EXTI_LINE_COMP5); \
                                                                LL_EXTI_DisableFallingTrig_0_31(COMP_EXTI_LINE_COMP5); \
@@ -802,7 +802,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP6 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP6_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                LL_EXTI_DisableRisingTrig_32_63(COMP_EXTI_LINE_COMP6); \
                                                                LL_EXTI_DisableFallingTrig_32_63(COMP_EXTI_LINE_COMP6); \
@@ -888,7 +888,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP7 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP7_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                LL_EXTI_DisableRisingTrig_32_63(COMP_EXTI_LINE_COMP7); \
                                                                LL_EXTI_DisableFallingTrig_32_63(COMP_EXTI_LINE_COMP7); \

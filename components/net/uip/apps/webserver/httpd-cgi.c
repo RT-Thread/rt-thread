@@ -95,7 +95,7 @@ PT_THREAD(file_stats(struct httpd_state *s, char *ptr))
   PSOCK_BEGIN(&s->sout);
 
   PSOCK_GENERATOR_SEND(&s->sout, generate_file_stats, strchr(ptr, ' ') + 1);
-  
+
   PSOCK_END(&s->sout);
 }
 /*---------------------------------------------------------------------------*/
@@ -136,34 +136,34 @@ static const char *states[] = {
   closing,
   time_wait,
   last_ack};
-  
+
 
 static unsigned short
 generate_tcp_stats(void *arg)
 {
   struct uip_conn *conn;
   struct httpd_state *s = (struct httpd_state *)arg;
-    
+
   conn = &uip_conns[s->count];
   return snprintf((char *)uip_appdata, UIP_APPDATA_SIZE,
-		 "<tr><td>%d</td><td>%u.%u.%u.%u:%u</td><td>%s</td><td>%u</td><td>%u</td><td>%c %c</td></tr>\r\n",
-		 htons(conn->lport),
-		 htons(conn->ripaddr[0]) >> 8,
-		 htons(conn->ripaddr[0]) & 0xff,
-		 htons(conn->ripaddr[1]) >> 8,
-		 htons(conn->ripaddr[1]) & 0xff,
-		 htons(conn->rport),
-		 states[conn->tcpstateflags & UIP_TS_MASK],
-		 conn->nrtx,
-		 conn->timer,
-		 (uip_outstanding(conn))? '*':' ',
-		 (uip_stopped(conn))? '!':' ');
+         "<tr><td>%d</td><td>%u.%u.%u.%u:%u</td><td>%s</td><td>%u</td><td>%u</td><td>%c %c</td></tr>\r\n",
+         htons(conn->lport),
+         htons(conn->ripaddr[0]) >> 8,
+         htons(conn->ripaddr[0]) & 0xff,
+         htons(conn->ripaddr[1]) >> 8,
+         htons(conn->ripaddr[1]) & 0xff,
+         htons(conn->rport),
+         states[conn->tcpstateflags & UIP_TS_MASK],
+         conn->nrtx,
+         conn->timer,
+         (uip_outstanding(conn))? '*':' ',
+         (uip_stopped(conn))? '!':' ');
 }
 /*---------------------------------------------------------------------------*/
 static
 PT_THREAD(tcp_stats(struct httpd_state *s, char *ptr))
 {
-  
+
   PSOCK_BEGIN(&s->sout);
 
   for(s->count = 0; s->count < UIP_CONNS; ++s->count) {
@@ -180,7 +180,7 @@ generate_net_stats(void *arg)
 {
   struct httpd_state *s = (struct httpd_state *)arg;
   return snprintf((char *)uip_appdata, UIP_APPDATA_SIZE,
-		  "%5u\n", ((uip_stats_t *)&uip_stat)[s->count]);
+          "%5u\n", ((uip_stats_t *)&uip_stat)[s->count]);
 }
 
 static
@@ -194,9 +194,9 @@ PT_THREAD(net_stats(struct httpd_state *s, char *ptr))
       ++s->count) {
     PSOCK_GENERATOR_SEND(&s->sout, generate_net_stats, s);
   }
-  
+
 #endif /* UIP_STATISTICS */
-  
+
   PSOCK_END(&s->sout);
 }
 /*---------------------------------------------------------------------------*/

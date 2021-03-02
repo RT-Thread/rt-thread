@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file contains all the functions prototypes for the CAN firmware 
+  * @brief   This file contains all the functions prototypes for the CAN firmware
   *          library.
   ******************************************************************************
   * @attention
@@ -44,36 +44,36 @@
 #define IS_CAN_ALL_PERIPH(PERIPH) (((PERIPH) == CAN1) || \
                                    ((PERIPH) == CAN2))
 
-/** 
+/**
   * @brief  CAN init structure definition
   */
 typedef struct
 {
-  uint16_t CAN_Prescaler;   /*!< Specifies the length of a time quantum. 
+  uint16_t CAN_Prescaler;   /*!< Specifies the length of a time quantum.
                                  It ranges from 1 to 1024. */
-  
+
   uint8_t CAN_Mode;         /*!< Specifies the CAN operating mode.
                                  This parameter can be a value of @ref CAN_operating_mode */
 
-  uint8_t CAN_SJW;          /*!< Specifies the maximum number of time quanta 
-                                 the CAN hardware is allowed to lengthen or 
+  uint8_t CAN_SJW;          /*!< Specifies the maximum number of time quanta
+                                 the CAN hardware is allowed to lengthen or
                                  shorten a bit to perform resynchronization.
                                  This parameter can be a value of @ref CAN_synchronisation_jump_width */
 
-  uint8_t CAN_BS1;          /*!< Specifies the number of time quanta in Bit 
-                                 Segment 1. This parameter can be a value of 
+  uint8_t CAN_BS1;          /*!< Specifies the number of time quanta in Bit
+                                 Segment 1. This parameter can be a value of
                                  @ref CAN_time_quantum_in_bit_segment_1 */
 
   uint8_t CAN_BS2;          /*!< Specifies the number of time quanta in Bit Segment 2.
                                  This parameter can be a value of @ref CAN_time_quantum_in_bit_segment_2 */
-  
+
   FunctionalState CAN_TTCM; /*!< Enable or disable the time triggered communication mode.
                                 This parameter can be set either to ENABLE or DISABLE. */
-  
+
   FunctionalState CAN_ABOM;  /*!< Enable or disable the automatic bus-off management.
                                   This parameter can be set either to ENABLE or DISABLE. */
 
-  FunctionalState CAN_AWUM;  /*!< Enable or disable the automatic wake-up mode. 
+  FunctionalState CAN_AWUM;  /*!< Enable or disable the automatic wake-up mode.
                                   This parameter can be set either to ENABLE or DISABLE. */
 
   FunctionalState CAN_NART;  /*!< Enable or disable the non-automatic retransmission mode.
@@ -86,7 +86,7 @@ typedef struct
                                   This parameter can be set either to ENABLE or DISABLE. */
 } CAN_InitTypeDef;
 
-/** 
+/**
   * @brief  CAN filter init structure definition
   */
 typedef struct
@@ -111,7 +111,7 @@ typedef struct
 
   uint16_t CAN_FilterFIFOAssignment; /*!< Specifies the FIFO (0 or 1) which will be assigned to the filter.
                                               This parameter can be a value of @ref CAN_filter_FIFO */
-  
+
   uint8_t CAN_FilterNumber;          /*!< Specifies the filter which will be initialized. It ranges from 0 to 13. */
 
   uint8_t CAN_FilterMode;            /*!< Specifies the filter mode to be initialized.
@@ -124,8 +124,8 @@ typedef struct
                                               This parameter can be set either to ENABLE or DISABLE. */
 } CAN_FilterInitTypeDef;
 
-/** 
-  * @brief  CAN Tx message structure definition  
+/**
+  * @brief  CAN Tx message structure definition
   */
 typedef struct
 {
@@ -135,24 +135,24 @@ typedef struct
   uint32_t ExtId;  /*!< Specifies the extended identifier.
                         This parameter can be a value between 0 to 0x1FFFFFFF. */
 
-  uint8_t IDE;     /*!< Specifies the type of identifier for the message that 
-                        will be transmitted. This parameter can be a value 
+  uint8_t IDE;     /*!< Specifies the type of identifier for the message that
+                        will be transmitted. This parameter can be a value
                         of @ref CAN_identifier_type */
 
-  uint8_t RTR;     /*!< Specifies the type of frame for the message that will 
-                        be transmitted. This parameter can be a value of 
+  uint8_t RTR;     /*!< Specifies the type of frame for the message that will
+                        be transmitted. This parameter can be a value of
                         @ref CAN_remote_transmission_request */
 
-  uint8_t DLC;     /*!< Specifies the length of the frame that will be 
-                        transmitted. This parameter can be a value between 
+  uint8_t DLC;     /*!< Specifies the length of the frame that will be
+                        transmitted. This parameter can be a value between
                         0 to 8 */
 
-  uint8_t Data[8]; /*!< Contains the data to be transmitted. It ranges from 0 
+  uint8_t Data[8]; /*!< Contains the data to be transmitted. It ranges from 0
                         to 0xFF. */
 } CanTxMsg;
 
-/** 
-  * @brief  CAN Rx message structure definition  
+/**
+  * @brief  CAN Rx message structure definition
   */
 typedef struct
 {
@@ -162,22 +162,22 @@ typedef struct
   uint32_t ExtId;  /*!< Specifies the extended identifier.
                         This parameter can be a value between 0 to 0x1FFFFFFF. */
 
-  uint8_t IDE;     /*!< Specifies the type of identifier for the message that 
-                        will be received. This parameter can be a value of 
+  uint8_t IDE;     /*!< Specifies the type of identifier for the message that
+                        will be received. This parameter can be a value of
                         @ref CAN_identifier_type */
 
   uint8_t RTR;     /*!< Specifies the type of frame for the received message.
-                        This parameter can be a value of 
+                        This parameter can be a value of
                         @ref CAN_remote_transmission_request */
 
   uint8_t DLC;     /*!< Specifies the length of the frame that will be received.
                         This parameter can be a value between 0 to 8 */
 
-  uint8_t Data[8]; /*!< Contains the data to be received. It ranges from 0 to 
+  uint8_t Data[8]; /*!< Contains the data to be received. It ranges from 0 to
                         0xFF. */
 
-  uint8_t FMI;     /*!< Specifies the index of the filter the message stored in 
-                        the mailbox passes through. This parameter can be a 
+  uint8_t FMI;     /*!< Specifies the index of the filter the message stored in
+                        the mailbox passes through. This parameter can be a
                         value between 0 to 0xFF */
 } CanRxMsg;
 
@@ -187,7 +187,7 @@ typedef struct
   * @{
   */
 
-/** @defgroup CAN_InitStatus 
+/** @defgroup CAN_InitStatus
   * @{
   */
 
@@ -202,7 +202,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_operating_mode 
+/** @defgroup CAN_operating_mode
   * @{
   */
 
@@ -221,9 +221,9 @@ typedef struct
 
 
  /**
-  * @defgroup CAN_operating_mode 
+  * @defgroup CAN_operating_mode
   * @{
-  */  
+  */
 #define CAN_OperatingMode_Initialization  ((uint8_t)0x00) /*!< Initialization mode */
 #define CAN_OperatingMode_Normal          ((uint8_t)0x01) /*!< Normal mode */
 #define CAN_OperatingMode_Sleep           ((uint8_t)0x02) /*!< sleep mode */
@@ -231,15 +231,15 @@ typedef struct
 
 #define IS_CAN_OPERATING_MODE(MODE) (((MODE) == CAN_OperatingMode_Initialization) ||\
                                     ((MODE) == CAN_OperatingMode_Normal)|| \
-																		((MODE) == CAN_OperatingMode_Sleep))
+                                                                        ((MODE) == CAN_OperatingMode_Sleep))
 /**
   * @}
   */
-  
+
 /**
   * @defgroup CAN_operating_mode_status
   * @{
-  */  
+  */
 
 #define CAN_ModeStatus_Failed    ((uint8_t)0x00)                /*!< CAN entering the specific mode failed */
 #define CAN_ModeStatus_Success   ((uint8_t)!CAN_ModeStatus_Failed)   /*!< CAN entering the specific mode Succeed */
@@ -247,7 +247,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_synchronisation_jump_width 
+/** @defgroup CAN_synchronisation_jump_width
   * @{
   */
 #define CAN_SJW_1tq                 ((uint8_t)0x00)  /*!< 1 time quantum */
@@ -261,7 +261,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_time_quantum_in_bit_segment_1 
+/** @defgroup CAN_time_quantum_in_bit_segment_1
   * @{
   */
 #define CAN_BS1_1tq                 ((uint8_t)0x00)  /*!< 1 time quantum */
@@ -286,7 +286,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_time_quantum_in_bit_segment_2 
+/** @defgroup CAN_time_quantum_in_bit_segment_2
   * @{
   */
 #define CAN_BS2_1tq                 ((uint8_t)0x00)  /*!< 1 time quantum */
@@ -303,7 +303,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_clock_prescaler 
+/** @defgroup CAN_clock_prescaler
   * @{
   */
 #define IS_CAN_PRESCALER(PRESCALER) (((PRESCALER) >= 1) && ((PRESCALER) <= 1024))
@@ -311,7 +311,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_filter_number 
+/** @defgroup CAN_filter_number
   * @{
   */
 #define IS_CAN_FILTER_NUMBER(NUMBER) ((NUMBER) <= 27)
@@ -319,7 +319,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_filter_mode 
+/** @defgroup CAN_filter_mode
   * @{
   */
 #define CAN_FilterMode_IdMask       ((uint8_t)0x00)  /*!< identifier/mask mode */
@@ -331,7 +331,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_filter_scale 
+/** @defgroup CAN_filter_scale
   * @{
   */
 #define CAN_FilterScale_16bit       ((uint8_t)0x00) /*!< Two 16-bit filters */
@@ -358,7 +358,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_Start_bank_filter_for_slave_CAN 
+/** @defgroup CAN_Start_bank_filter_for_slave_CAN
   * @{
   */
 #define IS_CAN_BANKNUMBER(BANKNUMBER) (((BANKNUMBER) >= 1) && ((BANKNUMBER) <= 27))
@@ -366,7 +366,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_Tx 
+/** @defgroup CAN_Tx
   * @{
   */
 #define IS_CAN_TRANSMITMAILBOX(TRANSMITMAILBOX) ((TRANSMITMAILBOX) <= ((uint8_t)0x02))
@@ -377,7 +377,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_identifier_type 
+/** @defgroup CAN_identifier_type
   * @{
   */
 #define CAN_Id_Standard             ((uint32_t)0x00000000)  /*!< Standard Id */
@@ -386,13 +386,13 @@ typedef struct
                                ((IDTYPE) == CAN_Id_Extended))
 
 /* Legacy defines */
-#define CAN_ID_STD      CAN_Id_Standard           
+#define CAN_ID_STD      CAN_Id_Standard
 #define CAN_ID_EXT      CAN_Id_Extended
 /**
   * @}
   */
 
-/** @defgroup CAN_remote_transmission_request 
+/** @defgroup CAN_remote_transmission_request
   * @{
   */
 #define CAN_RTR_Data                ((uint32_t)0x00000000)  /*!< Data frame */
@@ -400,21 +400,21 @@ typedef struct
 #define IS_CAN_RTR(RTR) (((RTR) == CAN_RTR_Data) || ((RTR) == CAN_RTR_Remote))
 
 /* Legacy defines */
-#define CAN_RTR_DATA     CAN_RTR_Data         
+#define CAN_RTR_DATA     CAN_RTR_Data
 #define CAN_RTR_REMOTE   CAN_RTR_Remote
 /**
   * @}
   */
 
-/** @defgroup CAN_transmit_constants 
+/** @defgroup CAN_transmit_constants
   * @{
   */
 #define CAN_TxStatus_Failed         ((uint8_t)0x00)/*!< CAN transmission failed */
 #define CAN_TxStatus_Ok             ((uint8_t)0x01) /*!< CAN transmission succeeded */
 #define CAN_TxStatus_Pending        ((uint8_t)0x02) /*!< CAN transmission pending */
-#define CAN_TxStatus_NoMailBox      ((uint8_t)0x04) /*!< CAN cell did not provide 
+#define CAN_TxStatus_NoMailBox      ((uint8_t)0x04) /*!< CAN cell did not provide
                                                          an empty mailbox */
-/* Legacy defines */	
+/* Legacy defines */
 #define CANTXFAILED                  CAN_TxStatus_Failed
 #define CANTXOK                      CAN_TxStatus_Ok
 #define CANTXPENDING                 CAN_TxStatus_Pending
@@ -423,7 +423,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_receive_FIFO_number_constants 
+/** @defgroup CAN_receive_FIFO_number_constants
   * @{
   */
 #define CAN_FIFO0                 ((uint8_t)0x00) /*!< CAN FIFO 0 used to receive */
@@ -434,28 +434,28 @@ typedef struct
   * @}
   */
 
-/** @defgroup CAN_sleep_constants 
+/** @defgroup CAN_sleep_constants
   * @{
   */
 #define CAN_Sleep_Failed     ((uint8_t)0x00) /*!< CAN did not enter the sleep mode */
 #define CAN_Sleep_Ok         ((uint8_t)0x01) /*!< CAN entered the sleep mode */
 
-/* Legacy defines */	
+/* Legacy defines */
 #define CANSLEEPFAILED   CAN_Sleep_Failed
 #define CANSLEEPOK       CAN_Sleep_Ok
 /**
   * @}
   */
 
-/** @defgroup CAN_wake_up_constants 
+/** @defgroup CAN_wake_up_constants
   * @{
   */
 #define CAN_WakeUp_Failed        ((uint8_t)0x00) /*!< CAN did not leave the sleep mode */
 #define CAN_WakeUp_Ok            ((uint8_t)0x01) /*!< CAN leaved the sleep mode */
 
 /* Legacy defines */
-#define CANWAKEUPFAILED   CAN_WakeUp_Failed        
-#define CANWAKEUPOK       CAN_WakeUp_Ok        
+#define CANWAKEUPFAILED   CAN_WakeUp_Failed
+#define CANWAKEUPOK       CAN_WakeUp_Ok
 /**
   * @}
   */
@@ -463,25 +463,25 @@ typedef struct
 /**
   * @defgroup CAN_Error_Code_constants
   * @{
-  */                                                         
-#define CAN_ErrorCode_NoErr           ((uint8_t)0x00) /*!< No Error */ 
-#define	CAN_ErrorCode_StuffErr        ((uint8_t)0x10) /*!< Stuff Error */ 
-#define	CAN_ErrorCode_FormErr         ((uint8_t)0x20) /*!< Form Error */ 
-#define	CAN_ErrorCode_ACKErr          ((uint8_t)0x30) /*!< Acknowledgment Error */ 
-#define	CAN_ErrorCode_BitRecessiveErr ((uint8_t)0x40) /*!< Bit Recessive Error */ 
-#define	CAN_ErrorCode_BitDominantErr  ((uint8_t)0x50) /*!< Bit Dominant Error */ 
-#define	CAN_ErrorCode_CRCErr          ((uint8_t)0x60) /*!< CRC Error  */ 
-#define	CAN_ErrorCode_SoftwareSetErr  ((uint8_t)0x70) /*!< Software Set Error */ 
+  */
+#define CAN_ErrorCode_NoErr           ((uint8_t)0x00) /*!< No Error */
+#define    CAN_ErrorCode_StuffErr        ((uint8_t)0x10) /*!< Stuff Error */
+#define    CAN_ErrorCode_FormErr         ((uint8_t)0x20) /*!< Form Error */
+#define    CAN_ErrorCode_ACKErr          ((uint8_t)0x30) /*!< Acknowledgment Error */
+#define    CAN_ErrorCode_BitRecessiveErr ((uint8_t)0x40) /*!< Bit Recessive Error */
+#define    CAN_ErrorCode_BitDominantErr  ((uint8_t)0x50) /*!< Bit Dominant Error */
+#define    CAN_ErrorCode_CRCErr          ((uint8_t)0x60) /*!< CRC Error  */
+#define    CAN_ErrorCode_SoftwareSetErr  ((uint8_t)0x70) /*!< Software Set Error */
 /**
   * @}
   */
 
-/** @defgroup CAN_flags 
+/** @defgroup CAN_flags
   * @{
   */
 /* If the flag is 0x3XXXXXXX, it means that it can be used with CAN_GetFlagStatus()
    and CAN_ClearFlag() functions. */
-/* If the flag is 0x1XXXXXXX, it means that it can only be used with 
+/* If the flag is 0x1XXXXXXX, it means that it can only be used with
    CAN_GetFlagStatus() function.  */
 
 /* Transmit Flags */
@@ -500,7 +500,7 @@ typedef struct
 /* Operating Mode Flags */
 #define CAN_FLAG_WKU               ((uint32_t)0x31000008) /*!< Wake up Flag */
 #define CAN_FLAG_SLAK              ((uint32_t)0x31000012) /*!< Sleep acknowledge Flag */
-/* @note When SLAK interrupt is disabled (SLKIE=0), no polling on SLAKI is possible. 
+/* @note When SLAK interrupt is disabled (SLKIE=0), no polling on SLAKI is possible.
          In this case the SLAK bit can be polled.*/
 
 /* Error Flags */
@@ -527,10 +527,10 @@ typedef struct
   * @}
   */
 
-  
-/** @defgroup CAN_interrupts 
+
+/** @defgroup CAN_interrupts
   * @{
-  */ 
+  */
 #define CAN_IT_TME                  ((uint32_t)0x00000001) /*!< Transmit mailbox empty Interrupt*/
 
 /* Receive Interrupts */
@@ -581,16 +581,16 @@ typedef struct
   */
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/  
+/* Exported functions --------------------------------------------------------*/
 
-/*  Function used to set the CAN configuration to the default reset state *****/ 
+/*  Function used to set the CAN configuration to the default reset state *****/
 void CAN_DeInit(CAN_TypeDef* CANx);
 
-/* Initialization and Configuration functions *********************************/ 
+/* Initialization and Configuration functions *********************************/
 uint8_t CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct);
 void CAN_FilterInit(CAN_FilterInitTypeDef* CAN_FilterInitStruct);
 void CAN_StructInit(CAN_InitTypeDef* CAN_InitStruct);
-void CAN_SlaveStartBank(uint8_t CAN_BankNumber); 
+void CAN_SlaveStartBank(uint8_t CAN_BankNumber);
 void CAN_DBGFreeze(CAN_TypeDef* CANx, FunctionalState NewState);
 void CAN_TTComModeCmd(CAN_TypeDef* CANx, FunctionalState NewState);
 

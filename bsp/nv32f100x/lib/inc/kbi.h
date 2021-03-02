@@ -1,6 +1,6 @@
 /******************************************************************************
 **
-* @brief header file for KBI. 
+* @brief header file for KBI.
 *
 *******************************************************************************
 *
@@ -25,7 +25,7 @@ extern "C" {
 */
 typedef enum
 {
-    KBI_MODE_EDGE_ONLY = 0,             /*!< select  edge only mode  */         
+    KBI_MODE_EDGE_ONLY = 0,             /*!< select  edge only mode  */
     KBI_MODE_EDGE_LEVEL                 /*!< select  both edge and level  mode */
 }KBI_ModeType;
 
@@ -66,7 +66,7 @@ typedef enum
 ******************************************************************************/
 
 /*! @brief KBI_CALLBACK function declaration                                  */
-typedef void (*KBI_CallbackType)(void);                     
+typedef void (*KBI_CallbackType)(void);
 /*! @} End of kbi_callback                                                    */
 
 
@@ -117,8 +117,8 @@ typedef struct
         uint32_t     bMode   : 1;                            /*!< KBI detection mode select */
         uint32_t     bIntEn  : 1;                            /*!< KBI interrupt enable bit */
         uint32_t     bRsvd2  : 2;                           /*!< reserved */
-        uint32_t     bKbspEn : 1;							  /*!<Real KBI_SP register enable*/
-		uint32_t     bRstKbsp: 1;                            /*!<Reset KBI_SP register*/
+        uint32_t     bKbspEn : 1;                              /*!<Real KBI_SP register enable*/
+        uint32_t     bRstKbsp: 1;                            /*!<Reset KBI_SP register*/
         uint32_t     bRsvd26 : 26;                           /*!< reserved */
     } sBits;
 #endif
@@ -141,7 +141,7 @@ typedef struct
 /*****************************************************************************//*!
 *
 * @brief set detect falling edge only.
-*        
+*
 * @param[in]   pKBI          pointer to KBI module.
 * @param[in]   PinMasks      indicate pin numbers.
 *
@@ -165,7 +165,7 @@ __STATIC_INLINE  void KBI_DetectFallingEdge(KBI_Type *pKBI, uint32_t PinMasks)
 /*****************************************************************************//*!
 *
 * @brief set detect falling edge only.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
 * @param[in]   PinMasks     indicate pin numbers.
 *
@@ -183,13 +183,13 @@ __STATIC_INLINE  void KBI_DetectRisingEdge(KBI_Type *pKBI, uint32_t PinMasks)
 #endif
 {
     pKBI->SC &= ~KBI_SC_KBMOD_MASK;
-    pKBI->ES |= (PinMasks);    
+    pKBI->ES |= (PinMasks);
 }
 
 /*****************************************************************************//*!
 *
 * @brief set detect falling edge only.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
 * @param[in]   PinMasks     indicate pin number/mask.
 *
@@ -207,13 +207,13 @@ __STATIC_INLINE  void KBI_DetectRisingEdgeHighLevel(KBI_Type *pKBI, uint32_t Pin
 #endif
 {
     pKBI->SC |= KBI_SC_KBMOD_MASK;
-    pKBI->ES |= (PinMasks);    
+    pKBI->ES |= (PinMasks);
 }
 
 /*****************************************************************************//*!
 *
 * @brief set detect falling edge only.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
 * @param[in]   PinMasks     indicate pin number/mask.
 *
@@ -231,13 +231,13 @@ __STATIC_INLINE  void KBI_DetectFallingEdgeLowLevel(KBI_Type *pKBI, uint32_t Pin
 #endif
 {
     pKBI->SC |= KBI_SC_KBMOD_MASK;
-    pKBI->ES &= ~(PinMasks);        
+    pKBI->ES &= ~(PinMasks);
 }
 
 /*****************************************************************************//*!
 *
 * @brief enable the pin specified.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
 * @param[in]   PinMasks     indicate pin number/mask.
 *
@@ -254,13 +254,13 @@ __STATIC_INLINE  void KBI_Enable(KBI_Type *pKBI, uint8_t PinMasks)
 __STATIC_INLINE  void KBI_Enable(KBI_Type *pKBI, uint32_t PinMasks)
 #endif
 {
-    pKBI->PE |= (PinMasks);        
+    pKBI->PE |= (PinMasks);
 }
 
 /*****************************************************************************//*!
 *
 * @brief disable the pin specified.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
 * @param[in]   PinMasks     indicate pin number/mask.
 *
@@ -277,15 +277,15 @@ __STATIC_INLINE  void KBI_Disable(KBI_Type *pKBI, uint8_t PinMasks)
 __STATIC_INLINE  void KBI_Disable(KBI_Type *pKBI, uint32_t PinMasks)
 #endif
 {
-    pKBI->PE &= ~(PinMasks);        
+    pKBI->PE &= ~(PinMasks);
 }
 
 /*****************************************************************************//*!
 *
 * @brief enable the corresponding interrupt.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
-*          
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
@@ -295,16 +295,16 @@ __STATIC_INLINE  void KBI_Disable(KBI_Type *pKBI, uint32_t PinMasks)
 *****************************************************************************/
 __STATIC_INLINE  void KBI_EnableInt(KBI_Type *pKBI)
 {
-    pKBI->SC |= KBI_SC_KBIE_MASK;        
+    pKBI->SC |= KBI_SC_KBIE_MASK;
 }
 
 
 /*****************************************************************************//*!
 *
 * @brief disable the corresponding interrupt.
-*        
+*
 * @param[in]  pKBI         pointer to KBI module.
-*          
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none
@@ -314,15 +314,15 @@ __STATIC_INLINE  void KBI_EnableInt(KBI_Type *pKBI)
 *****************************************************************************/
 __STATIC_INLINE  void KBI_DisableInt(KBI_Type *pKBI)
 {
-    pKBI->SC &= ~KBI_SC_KBIE_MASK;        
+    pKBI->SC &= ~KBI_SC_KBIE_MASK;
 }
 
 /*****************************************************************************//*!
 *
 * @brief Get the corresponding status flag bits.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
-*          
+*
 * @return uint8_t.
 *
 * @ Pass/ Fail criteria: none.
@@ -336,15 +336,15 @@ __STATIC_INLINE  uint8_t KBI_GetFlags(KBI_Type *pKBI)
 __STATIC_INLINE  uint32_t KBI_GetFlags(KBI_Type *pKBI)
 #endif
 {
-    return (pKBI->SC & KBI_SC_KBF_MASK);        
+    return (pKBI->SC & KBI_SC_KBF_MASK);
 }
 
 /*****************************************************************************//*!
 *
 * @brief clear the corresponding status flag bits.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module
-*          
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none
@@ -354,16 +354,16 @@ __STATIC_INLINE  uint32_t KBI_GetFlags(KBI_Type *pKBI)
 *****************************************************************************/
 __STATIC_INLINE  void KBI_ClrFlags(KBI_Type *pKBI)
 {
-    pKBI->SC |= KBI_SC_KBACK_MASK;        
+    pKBI->SC |= KBI_SC_KBACK_MASK;
 }
 
 #if defined(CPU_NV32M4)
 /*****************************************************************************//*!
 *
 * @brief Real KBI_SP register enable.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module
-*          
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none
@@ -373,15 +373,15 @@ __STATIC_INLINE  void KBI_ClrFlags(KBI_Type *pKBI)
 *****************************************************************************/
 __STATIC_INLINE  void KBI_SPEnable(KBI_Type *pKBI)
 {
-    pKBI->SC |= KBI_SC_KBSPEN_MASK;        
+    pKBI->SC |= KBI_SC_KBSPEN_MASK;
 }
 
 /*****************************************************************************//*!
 *
 * @brief Get KBI source pin register fields.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module.
-*          
+*
 * @return uint32_t.
 *
 * @ Pass/ Fail criteria: none.
@@ -391,15 +391,15 @@ __STATIC_INLINE  void KBI_SPEnable(KBI_Type *pKBI)
 *****************************************************************************/
 __STATIC_INLINE  uint32_t KBI_GetSP(KBI_Type *pKBI)
 {
-    return (pKBI->SP & KBI_SP_SP_MASK);        
+    return (pKBI->SP & KBI_SP_SP_MASK);
 }
 
 /*****************************************************************************//*!
 *
 * @brief Reset KBI_SP register.
-*        
+*
 * @param[in]   pKBI         pointer to KBI module
-*          
+*
 * @return none.
 *
 * @ Pass/ Fail criteria: none
@@ -409,7 +409,7 @@ __STATIC_INLINE  uint32_t KBI_GetSP(KBI_Type *pKBI)
 *****************************************************************************/
 __STATIC_INLINE  void KBI_RstSP(KBI_Type *pKBI)
 {
-    pKBI->SC |= KBI_SC_RSTKBSP_MASK;        
+    pKBI->SC |= KBI_SC_RSTKBSP_MASK;
 }
 #endif
 
@@ -425,4 +425,4 @@ void KBI_SetCallback(KBI_Type *pKBI, KBI_CallbackType pfnCallback);
 #ifdef __cplusplus
 }
 #endif
-#endif 
+#endif

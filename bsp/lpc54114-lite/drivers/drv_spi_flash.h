@@ -10,6 +10,6 @@
 #ifndef __DRV_SPI_FLASH_H_
 #define __DRV_SPI_FLASH_H_
 
-int rt_hw_w25qxx_init(void); 
+int rt_hw_w25qxx_init(void);
 
 #endif

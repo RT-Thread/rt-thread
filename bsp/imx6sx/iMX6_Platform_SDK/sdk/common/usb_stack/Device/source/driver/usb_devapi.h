@@ -56,7 +56,7 @@
 #endif
 
 #ifndef CONTROL_ENDPOINT
-#define CONTROL_ENDPOINT		(0)
+#define CONTROL_ENDPOINT        (0)
 #endif
 
 #define USB_SETUP_PKT_SIZE  (8)     /* Setup Packet Size */
@@ -196,13 +196,13 @@
 #define  USB_SERVICE_MAX                     (0x18)
 
 #if (defined(_MCF51JM128_H) ||defined(_MCF51MM256_H) || (defined _MCF51JE256_H))
-	#define  USB_SERVICE_MAX_EP         USB_SERVICE_EP15
+    #define  USB_SERVICE_MAX_EP         USB_SERVICE_EP15
 #else
-	#ifdef  DOUBLE_BUFFERING_USED
-		#define  USB_SERVICE_MAX_EP         USB_SERVICE_EP6
-	#else
-		#define  USB_SERVICE_MAX_EP         USB_SERVICE_EP4
-	#endif
+    #ifdef  DOUBLE_BUFFERING_USED
+        #define  USB_SERVICE_MAX_EP         USB_SERVICE_EP6
+    #else
+        #define  USB_SERVICE_MAX_EP         USB_SERVICE_EP4
+    #endif
 #endif
 
 /* Informational Request/Set Types */
@@ -217,10 +217,10 @@
 #define  USB_STATUS_DEVICE                   (0x06)
 
 // Endpoint attributes
-#define EP_TRANSFER_TYPE_CONTROL		(0x0<<0)
-#define EP_TRANSFER_TYPE_ISOCHRONOUS	(0x1<<0)
-#define EP_TRANSFER_TYPE_BULK			(0x2<<0)
-#define EP_TRANSFER_TYPE_INTERRUPT		(0x3<<0)
+#define EP_TRANSFER_TYPE_CONTROL        (0x0<<0)
+#define EP_TRANSFER_TYPE_ISOCHRONOUS    (0x1<<0)
+#define EP_TRANSFER_TYPE_BULK            (0x2<<0)
+#define EP_TRANSFER_TYPE_INTERRUPT        (0x3<<0)
 
 /* Standard Request Code */
 #define GET_STATUS         0x0
@@ -236,10 +236,10 @@
 #define SYNCH_FRAME        0xC
 
 #ifdef OTG_BUILD
-	#define  USB_STATUS_OTG                      (0x07)
-	#define  USB_STATUS_TEST_MODE                (0x08)
+    #define  USB_STATUS_OTG                      (0x07)
+    #define  USB_STATUS_TEST_MODE                (0x08)
 #else
-	#define  USB_STATUS_TEST_MODE                (0x07)
+    #define  USB_STATUS_TEST_MODE                (0x07)
 #endif
 
 #define  USB_STATUS_ENDPOINT                 (0x10)
@@ -248,17 +248,17 @@
 #define UNINITIALISED_VAL                    (0xffffffff)
 
 #if (defined MCU_MK40N512VMD100) || (defined MCU_MK53N512CMD100) || (defined MCU_MK60N512VMD100) || (defined MCU_MK70F12)
-	#define USB_DEVICE_ASSERT_RESUME()		USB0_CTL |= USB_CTL_RESUME_MASK;
-	#define USB_DEVICE_DEASSERT_RESUME()	USB0_CTL &= ~USB_CTL_RESUME_MASK;
+    #define USB_DEVICE_ASSERT_RESUME()        USB0_CTL |= USB_CTL_RESUME_MASK;
+    #define USB_DEVICE_DEASSERT_RESUME()    USB0_CTL &= ~USB_CTL_RESUME_MASK;
 #elif (defined _MC9S08JE128_H) || (defined _MC9S08JM16_H) || defined(_MC9S08JM60_H) || (defined _MC9S08JS16_H) || (defined _MC9S08MM128_H)
-	#define USB_DEVICE_ASSERT_RESUME()		CTL_CRESUME = 1;
-	#define USB_DEVICE_DEASSERT_RESUME()	CTL_CRESUME = 0;
+    #define USB_DEVICE_ASSERT_RESUME()        CTL_CRESUME = 1;
+    #define USB_DEVICE_DEASSERT_RESUME()    CTL_CRESUME = 0;
 #elif (defined _MCF51JE256_H) || (defined MCU_mcf51jf128) || defined(_MCF51MM256_H)
-	#define USB_DEVICE_ASSERT_RESUME()		USBTRC0_USBRESMEN = 1;
-	#define USB_DEVICE_DEASSERT_RESUME()	USBTRC0_USBRESMEN = 0;
+    #define USB_DEVICE_ASSERT_RESUME()        USBTRC0_USBRESMEN = 1;
+    #define USB_DEVICE_DEASSERT_RESUME()    USBTRC0_USBRESMEN = 0;
 #elif (defined __MCF52221_H__) || (defined __MCF52259_H__)
-	#define USB_DEVICE_ASSERT_RESUME()		CTL |= MCF_USB_OTG_CTL_RESUME;
-	#define USB_DEVICE_DEASSERT_RESUME()	CTL &= ~MCF_USB_OTG_CTL_RESUME;
+    #define USB_DEVICE_ASSERT_RESUME()        CTL |= MCF_USB_OTG_CTL_RESUME;
+    #define USB_DEVICE_DEASSERT_RESUME()    CTL &= ~MCF_USB_OTG_CTL_RESUME;
 #endif
 
 #define USB_PROCESS_PENDING()               ((gu8ProcessPendingFlag != 0) || (gtUSBEPEventFlags != 0))
@@ -271,51 +271,51 @@ typedef void _PTR_ _usb_device_handle;
 typedef uint_8   T_EP_BITFIELD;
 
 #if !(defined _MC9S08JE128_H) && !(defined _MC9S08JM16_H) && !defined(_MC9S08JM60_H) && !(defined _MC9S08JS16_H) && !(defined _MC9S08MM128_H)
-#pragma pack	(1)  		/* Enforce 1 byte struct alignment */
+#pragma pack    (1)          /* Enforce 1 byte struct alignment */
 #endif
 
 #ifdef __MK_xxx_H__
-	#if (defined(__CWCC__) || defined(__GNUC__))		
-    	#define ALIGN  __attribute__ ((packed))		
-	#elif((defined  __IAR_SYSTEMS_ICC__) || (defined __CC_ARM))		
-		#define ALIGN
+    #if (defined(__CWCC__) || defined(__GNUC__))
+        #define ALIGN  __attribute__ ((packed))
+    #elif((defined  __IAR_SYSTEMS_ICC__) || (defined __CC_ARM))
+        #define ALIGN
     #else
         #define ALIGN
-	#endif
-#else    
-	#define ALIGN
+    #endif
+#else
+    #define ALIGN
 #endif
 
 typedef struct _USB_DEV_EVENT_STRUCT
 {
-	uint_8          controller_ID;      /* controller ID           */
-	uint_8          ep_num;
-	boolean         setup;              /* is setup packet         */
-	boolean         direction;          /* direction of endpoint   */
-	uint_8*         buffer_ptr;         /* pointer to buffer       */
-	uint_8          errors;             /* Any errors              */
-	USB_PACKET_SIZE len;                /* buffer size of endpoint */	
+    uint_8          controller_ID;      /* controller ID           */
+    uint_8          ep_num;
+    boolean         setup;              /* is setup packet         */
+    boolean         direction;          /* direction of endpoint   */
+    uint_8*         buffer_ptr;         /* pointer to buffer       */
+    uint_8          errors;             /* Any errors              */
+    USB_PACKET_SIZE len;                /* buffer size of endpoint */
 }ALIGN USB_DEV_EVENT_STRUCT, *PTR_USB_DEV_EVENT_STRUCT;
 
 // Same endpoint can have multiple function assignments in g_usb_CB, depending on user input
 #ifndef MULTIPLE_DEVICES
-	typedef void(_CODE_PTR_ const USB_SERVICE_CALLBACK)(PTR_USB_DEV_EVENT_STRUCT);
+    typedef void(_CODE_PTR_ const USB_SERVICE_CALLBACK)(PTR_USB_DEV_EVENT_STRUCT);
 #else
-	typedef void(_CODE_PTR_ USB_SERVICE_CALLBACK)(PTR_USB_DEV_EVENT_STRUCT);
+    typedef void(_CODE_PTR_ USB_SERVICE_CALLBACK)(PTR_USB_DEV_EVENT_STRUCT);
 #endif
 
 typedef struct _USB_EP_STRUCT
 {
-	uint_8          ep_num;      /* endpoint number         */
-	uint_8          type;        /* type of endpoint        */
-	uint_8          direction;   /* direction of endpoint   */
-    USB_PACKET_SIZE	size ALIGN;  /* buffer size of endpoint */
+    uint_8          ep_num;      /* endpoint number         */
+    uint_8          type;        /* type of endpoint        */
+    uint_8          direction;   /* direction of endpoint   */
+    USB_PACKET_SIZE    size ALIGN;  /* buffer size of endpoint */
 }ALIGN USB_EP_STRUCT, *USB_EP_STRUCT_PTR;
 
 #if (defined(__CWCC__)||defined(__GNUC__))
-	#pragma options align = reset
+    #pragma options align = reset
 #elif defined(__IAR_SYSTEMS_ICC__) || defined(__CC_ARM)
-	#pragma pack()
+    #pragma pack()
 #endif
 
 
@@ -326,47 +326,47 @@ extern volatile T_EP_BITFIELD gtUSBEPEventFlags;
  * Global Functions
  *****************************************************************************/
 extern uint_8 _usb_device_init (
-		uint_8                      device_number,
-		_usb_device_handle _PTR_    handle,
-		uint_8                      number_of_endpoints,
-		uint_8    					bVregEn
+        uint_8                      device_number,
+        _usb_device_handle _PTR_    handle,
+        uint_8                      number_of_endpoints,
+        uint_8                        bVregEn
 );
 
 extern uint_8 _usb_device_deinit(void);
 
 extern uint_8 _usb_device_init_endpoint(
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uint_16                 max_packet_size,
-		uint_8                  direction,
-		uint_8                  endpoint_type,
-		uint_8                  flag
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uint_16                 max_packet_size,
+        uint_8                  direction,
+        uint_8                  endpoint_type,
+        uint_8                  flag
 );
 
 extern uint_8 _usb_device_cancel_transfer (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uint_8                  direction
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uint_8                  direction
 );
 
 extern uint_8 _usb_device_deinit_endpoint (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uint_8                  direction
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uint_8                  direction
 );
 
 extern uint_8 _usb_device_recv_data (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uchar_ptr               buffer_ptr,
-		uint_32                 size
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uchar_ptr               buffer_ptr,
+        uint_32                 size
 );
 
 extern uint_8 _usb_device_send_data (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uchar_ptr               buffer_ptr,
-		uint_32                 size
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uchar_ptr               buffer_ptr,
+        uint_32                 size
 );
 
 extern uint_8 _usb_device_get_send_buffer (
@@ -377,68 +377,68 @@ extern uint_8 _usb_device_get_send_buffer (
 );
 
 extern void _usb_device_shutdown (
-		_usb_device_handle      handle
+        _usb_device_handle      handle
 );
 
 extern void _usb_device_stall_endpoint (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uint_8                  direction
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uint_8                  direction
 );
 
 extern void _usb_device_unstall_endpoint (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uint_8                  direction
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uint_8                  direction
 );
 
 extern void _usb_device_read_setup_data (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uint_8_ptr              buffer_ptr
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uint_8_ptr              buffer_ptr
 );
 
 extern uint_8 _usb_device_get_status (
-		_usb_device_handle      handle,
-		uint_8                  component,
-		uint_8_ptr              status
+        _usb_device_handle      handle,
+        uint_8                  component,
+        uint_8_ptr              status
 );
 
 extern uint_8 _usb_device_set_status (
-		_usb_device_handle      handle,
-		uint_8                  component,
-		uint_8                  setting
+        _usb_device_handle      handle,
+        uint_8                  component,
+        uint_8                  setting
 );
 
 extern void _usb_device_assert_resume (
-		_usb_device_handle      handle
+        _usb_device_handle      handle
 );
 
 extern uint_8 _usb_device_register_service (
-		uint_8                  controller_ID,
-		uint_8                  type,
-		USB_SERVICE_CALLBACK    service
+        uint_8                  controller_ID,
+        uint_8                  type,
+        USB_SERVICE_CALLBACK    service
 );
 
 extern uint_8 _usb_device_unregister_service (
-		_usb_device_handle      handle,
-		uint_8                  event_endpoint
+        _usb_device_handle      handle,
+        uint_8                  event_endpoint
 );
 
 extern uint_8 _usb_device_get_transfer_status (
-		_usb_device_handle      handle,
-		uint_8                  endpoint_number,
-		uint_8                  direction
+        _usb_device_handle      handle,
+        uint_8                  endpoint_number,
+        uint_8                  direction
 );
 
 extern void  _usb_device_set_address (
-		_usb_device_handle      handle,
-		uint_8                  address
+        _usb_device_handle      handle,
+        uint_8                  address
 );
 
 extern uint_8 USB_Device_Call_Service(
-		uint_8                      type,
-		PTR_USB_DEV_EVENT_STRUCT    event
+        uint_8                      type,
+        PTR_USB_DEV_EVENT_STRUCT    event
 );
 
 extern void USB_Engine(void);

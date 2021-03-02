@@ -1,51 +1,51 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: PPG API for RX62Nxx
-* File Name		: r_pdl_ppg_RX62Nxx.h
-* Version		: 1.02
-* Contents		: PPG API header
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name    : PPG API for RX62Nxx
+* File Name        : r_pdl_ppg_RX62Nxx.h
+* Version        : 1.02
+* Contents        : PPG API header
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_PPG_RX62Nxx_H
 #define R_PDL_PPG_RX62Nxx_H
 
-#define PPG_UNITS			2
-#define PPG_GROUPS_PER_UNIT	4
-#define PPG_GROUPS	(uint8_t)(PPG_UNITS * PPG_GROUPS_PER_UNIT)
+#define PPG_UNITS            2
+#define PPG_GROUPS_PER_UNIT    4
+#define PPG_GROUPS    (uint8_t)(PPG_UNITS * PPG_GROUPS_PER_UNIT)
 
 /* Library prototypes */
 bool R_PPG_CreateAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint8_t,
-	const uint16_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint8_t,
+    const uint16_t,
+    const uint8_t
 );
 bool R_PPG_DestroyAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool R_PPG_ControlAll(
-	const uint8_t,
-	const uint8_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint8_t
 );
 bool ReturnFalse(void);
 

@@ -37,9 +37,9 @@
 uint32_t ROM_ADC_GetMemSize(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->GetMemSize();
+    return ROMAPI_ADC_API->GetMemSize();
 #else
-	return adcrom_api.GetMemSize();
+    return adcrom_api.GetMemSize();
 #endif
 }
 
@@ -47,9 +47,9 @@ uint32_t ROM_ADC_GetMemSize(void)
 ADC_HANDLE_T ROM_ADC_Init(void *pMem, uint32_t baseAddr, void *pUserData)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->Init(pMem, baseAddr, pUserData);
+    return ROMAPI_ADC_API->Init(pMem, baseAddr, pUserData);
 #else
-	return adcrom_api.Init(pMem, baseAddr, pUserData);
+    return adcrom_api.Init(pMem, baseAddr, pUserData);
 #endif
 }
 
@@ -57,9 +57,9 @@ ADC_HANDLE_T ROM_ADC_Init(void *pMem, uint32_t baseAddr, void *pUserData)
 ErrorCode_t ROM_ADC_Configure(ADC_HANDLE_T hADC, const ADC_CFG_T *pCfg)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->Configure(hADC, pCfg);
+    return ROMAPI_ADC_API->Configure(hADC, pCfg);
 #else
-	return adcrom_api.Configure(hADC, pCfg);
+    return adcrom_api.Configure(hADC, pCfg);
 #endif
 }
 
@@ -67,9 +67,9 @@ ErrorCode_t ROM_ADC_Configure(ADC_HANDLE_T hADC, const ADC_CFG_T *pCfg)
 ErrorCode_t ROM_ADC_Calibrate(ADC_HANDLE_T hADC, uint32_t sysclk_freq)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->Calibrate(hADC, sysclk_freq);
+    return ROMAPI_ADC_API->Calibrate(hADC, sysclk_freq);
 #else
-	return adcrom_api.Calibrate(hADC, sysclk_freq);
+    return adcrom_api.Calibrate(hADC, sysclk_freq);
 #endif
 }
 
@@ -77,13 +77,13 @@ ErrorCode_t ROM_ADC_Calibrate(ADC_HANDLE_T hADC, uint32_t sysclk_freq)
 ErrorCode_t ROM_ADC_StartConversion(ADC_HANDLE_T hADC, ADC_SEQ_INDEX_T seqIndex, void *pBuf, size_t bufCount)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	/* Correct index adjust bug */
-	uint32_t *ptr = &((uint32_t *)hADC)[9 + seqIndex * 6];
-	if (*ptr != 2) *(ptr - 1) = 0;
+    /* Correct index adjust bug */
+    uint32_t *ptr = &((uint32_t *)hADC)[9 + seqIndex * 6];
+    if (*ptr != 2) *(ptr - 1) = 0;
 
-	return ROMAPI_ADC_API->StartConversion(hADC, seqIndex, pBuf, bufCount);
+    return ROMAPI_ADC_API->StartConversion(hADC, seqIndex, pBuf, bufCount);
 #else
-	return adcrom_api.StartConversion(hADC, seqIndex, pBuf, bufCount);
+    return adcrom_api.StartConversion(hADC, seqIndex, pBuf, bufCount);
 #endif
 }
 
@@ -91,21 +91,21 @@ ErrorCode_t ROM_ADC_StartConversion(ADC_HANDLE_T hADC, ADC_SEQ_INDEX_T seqIndex,
 ErrorCode_t ROM_ADC_Handler(ADC_HANDLE_T hADC, ADC_HEVENT_T hEvent)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->Handler(hADC, hEvent);
+    return ROMAPI_ADC_API->Handler(hADC, hEvent);
 #else
-	return adcrom_api.Handler(hADC, hEvent);
+    return adcrom_api.Handler(hADC, hEvent);
 #endif
 }
 
 /* ADC Callback register */
 ErrorCode_t ROM_ADC_RegisterCB(ADC_HANDLE_T hADC, ADC_CBINDEX_T cbIndex, void (*pCbFunc)(ADC_HANDLE_T,
-																						 ADC_CBINDEX_T,
-																						 void *))
+                                                                                         ADC_CBINDEX_T,
+                                                                                         void *))
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->RegisterCB(hADC, cbIndex, pCbFunc);
+    return ROMAPI_ADC_API->RegisterCB(hADC, cbIndex, pCbFunc);
 #else
-	return adcrom_api.RegisterCB(hADC, cbIndex, pCbFunc);
+    return adcrom_api.RegisterCB(hADC, cbIndex, pCbFunc);
 #endif
 }
 
@@ -113,9 +113,9 @@ ErrorCode_t ROM_ADC_RegisterCB(ADC_HANDLE_T hADC, ADC_CBINDEX_T cbIndex, void (*
 void ROM_ADC_SetThreshold(ADC_HANDLE_T hADC, uint32_t valThr0, uint32_t valThr1)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_ADC_API->SetThreshold(hADC, valThr0, valThr1);
+    ROMAPI_ADC_API->SetThreshold(hADC, valThr0, valThr1);
 #else
-	adcrom_api.SetThreshold(hADC, valThr0, valThr1);
+    adcrom_api.SetThreshold(hADC, valThr0, valThr1);
 #endif
 }
 
@@ -123,9 +123,9 @@ void ROM_ADC_SetThreshold(ADC_HANDLE_T hADC, uint32_t valThr0, uint32_t valThr1)
 ErrorCode_t ROM_ADC_ConfigureCh(ADC_HANDLE_T hADC, uint32_t chanNum, uint32_t chanOpts)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->ConfigureCh(hADC, chanNum, chanOpts);
+    return ROMAPI_ADC_API->ConfigureCh(hADC, chanNum, chanOpts);
 #else
-	return adcrom_api.ConfigureCh(hADC, chanNum, chanOpts);
+    return adcrom_api.ConfigureCh(hADC, chanNum, chanOpts);
 #endif
 }
 
@@ -133,9 +133,9 @@ ErrorCode_t ROM_ADC_ConfigureCh(ADC_HANDLE_T hADC, uint32_t chanNum, uint32_t ch
 ErrorCode_t ROM_ADC_StopConversion(ADC_HANDLE_T hADC, ADC_SEQ_INDEX_T seqIndex)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->StopConversion(hADC, seqIndex);
+    return ROMAPI_ADC_API->StopConversion(hADC, seqIndex);
 #else
-	return adcrom_api.StopConversion(hADC, seqIndex);
+    return adcrom_api.StopConversion(hADC, seqIndex);
 #endif
 }
 
@@ -143,9 +143,9 @@ ErrorCode_t ROM_ADC_StopConversion(ADC_HANDLE_T hADC, ADC_SEQ_INDEX_T seqIndex)
 ErrorCode_t ROM_ADC_SwTrigger(ADC_HANDLE_T hADC, ADC_SEQ_INDEX_T seqIndex)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->SwTrigger(hADC, seqIndex);
+    return ROMAPI_ADC_API->SwTrigger(hADC, seqIndex);
 #else
-	return adcrom_api.SwTrigger(hADC, seqIndex);
+    return adcrom_api.SwTrigger(hADC, seqIndex);
 #endif
 }
 
@@ -153,8 +153,8 @@ ErrorCode_t ROM_ADC_SwTrigger(ADC_HANDLE_T hADC, ADC_SEQ_INDEX_T seqIndex)
 uint16_t ROM_ADC_GetDriverVersion(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_ADC_API->GetDriverVersion();
+    return ROMAPI_ADC_API->GetDriverVersion();
 #else
-	return adcrom_api.GetDriverVersion();
+    return adcrom_api.GetDriverVersion();
 #endif
 }

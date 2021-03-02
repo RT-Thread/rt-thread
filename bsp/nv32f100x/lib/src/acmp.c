@@ -1,7 +1,7 @@
 
 /******************************************************************************
 *
-* @brief providing APIs for configuring ACMP. 
+* @brief providing APIs for configuring ACMP.
 *
 *******************************************************************************
 *
@@ -50,24 +50,24 @@ void ACMP1_Isr(void);
 /*****************************************************************************//*!
 *
 * @brief initialize ACMP as per control field.
-*        
+*
 * @param   pACMPx         pointer to an ACMP register base.
-* @param   pConfig        control parameters.  
+* @param   pConfig        control parameters.
 *
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
 *
-* @see   ACMP_DeInit.  
+* @see   ACMP_DeInit.
 *
 *****************************************************************************/
-void ACMP_Init(ACMP_Type *pACMPx, ACMP_ConfigType *pConfig) 
+void ACMP_Init(ACMP_Type *pACMPx, ACMP_ConfigType *pConfig)
 {
     if(ACMP0 == pACMPx)
-    {    
+    {
         /* enable clock to ACMP */
         SIM->SCGC |= SIM_SCGC_ACMP0_MASK;
- 
+
         /* enable ACMP interrupt */
         if(pConfig->sCtrlStatus.bits.bIntEn)
             NVIC_EnableIRQ(ACMP0_IRQn);
@@ -76,7 +76,7 @@ void ACMP_Init(ACMP_Type *pACMPx, ACMP_ConfigType *pConfig)
     {
         SIM->SCGC |= SIM_SCGC_ACMP1_MASK;
         if(pConfig->sCtrlStatus.bits.bIntEn)
-            NVIC_EnableIRQ(ACMP1_IRQn);            
+            NVIC_EnableIRQ(ACMP1_IRQn);
     }
     /* neg and pos pin are not equal */
     pACMPx->C0 = pConfig->sPinSelect.byte;
@@ -90,7 +90,7 @@ void ACMP_Init(ACMP_Type *pACMPx, ACMP_ConfigType *pConfig)
 /*****************************************************************************//*!
 *
 * @brief write ACMP register bits.
-*        
+*
 * @param   pACMPx      pointer to an ACMP register base.
 * @param   pDACConfig   pointer to an ACMP DAC control structure.
 *
@@ -99,57 +99,57 @@ void ACMP_Init(ACMP_Type *pACMPx, ACMP_ConfigType *pConfig)
 * @ Pass/ Fail criteria: none.
 *
 *****************************************************************************/
-void ACMP_ConfigDAC(ACMP_Type *pACMPx, ACMP_DACType *pDACConfig) 
+void ACMP_ConfigDAC(ACMP_Type *pACMPx, ACMP_DACType *pDACConfig)
 {
-    pACMPx->C1 = pDACConfig->byte;  
+    pACMPx->C1 = pDACConfig->byte;
 }
 
 /*****************************************************************************//*!
 *
 * @brief deinit ACMP module.
-*        
+*
 * @param   pACMPx      pointer to an ACMP register base.
 *
 * @return none.
 *
 * @ Pass/ Fail criteria: none.
 *
-* @see   ACMP_Init.  
+* @see   ACMP_Init.
 *
 *****************************************************************************/
-void ACMP_DeInit(ACMP_Type *pACMPx) 
+void ACMP_DeInit(ACMP_Type *pACMPx)
 {
     if(ACMP0 == pACMPx)
-    {    
+    {
         if(pACMPx->CS & ACMP_CS_ACIE_MASK)
             NVIC_DisableIRQ(ACMP0_IRQn);
     }
     else
     {
         if(pACMPx->CS & ACMP_CS_ACIE_MASK)
-            NVIC_DisableIRQ(ACMP1_IRQn);            
+            NVIC_DisableIRQ(ACMP1_IRQn);
     }
-    
+
     pACMPx->CS = 0;
     pACMPx->C0 = 0;
     pACMPx->C1 = 0;
     pACMPx->C2 = 0;
-    
+
     if(ACMP0 == pACMPx)
-    {    
+    {
         SIM->SCGC &= ~SIM_SCGC_ACMP0_MASK;
     }
     else
     {
-        SIM->SCGC &= ~SIM_SCGC_ACMP1_MASK;           
-    } 
+        SIM->SCGC &= ~SIM_SCGC_ACMP1_MASK;
+    }
 }
 
 /*****************************************************************************//*!
 *
 * @brief  set up ACMP callback routines to be called by interrupt service routine.
-*        
-* @param  pACMPx       pointer to an ACMP register base. 
+*
+* @param  pACMPx       pointer to an ACMP register base.
 * @param   pfnCallback  callback routine.
 *
 * @return none.
@@ -175,8 +175,8 @@ void ACMP_SetCallback(ACMP_Type *pACMPx, ACMP_CallbackPtr pfnCallback)
 /*****************************************************************************//*!
 *
 * @brief  ACMP0 interrupt service routine.
-*        
-* @param  none. 
+*
+* @param  none.
 *
 * @return none.
 *
@@ -195,8 +195,8 @@ void ACMP0_Isr(void)
 /*****************************************************************************//*!
 *
 * @brief  ACMP1 interrupt service routine.
-*        
-* @param  none. 
+*
+* @param  none.
 *
 * @return none.
 *

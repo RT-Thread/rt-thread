@@ -1,10 +1,10 @@
 /******************************************************************************************************************************************
-* æ–‡ä»¶åç§°: system_SWM320.c
-* åŠŸèƒ½è¯´æ˜Ž: SWM320å•ç‰‡æœºçš„æ—¶é’Ÿè®¾ç½®
-* æŠ€æœ¯æ”¯æŒ: http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* æ³¨æ„äº‹é¡¹:
-* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0      2017å¹´10æœˆ25æ—¥
-* å‡çº§è®°å½•:
+* ÎÄ¼þÃû³Æ: system_SWM320.c
+* ¹¦ÄÜËµÃ÷: SWM320µ¥Æ¬»úµÄÊ±ÖÓÉèÖÃ
+* ¼¼ÊõÖ§³Ö: http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* ×¢ÒâÊÂÏî:
+* °æ±¾ÈÕÆÚ: V1.1.0      2017Äê10ÔÂ25ÈÕ
+* Éý¼¶¼ÇÂ¼:
 *
 *
 *******************************************************************************************************************************************
@@ -22,13 +22,13 @@
 #include "SWM320.h"
 
 /******************************************************************************************************************************************
- * ç³»ç»Ÿæ—¶é’Ÿè®¾å®š
+ * ÏµÍ³Ê±ÖÓÉè¶¨
  *****************************************************************************************************************************************/
-#define SYS_CLK_20MHz 0 //0 å†…éƒ¨é«˜é¢‘20MHz RCæŒ¯è¡å™¨
-#define SYS_CLK_40MHz 1 //1 å†…éƒ¨é«˜é¢‘40MHz RCæŒ¯è¡å™¨
-#define SYS_CLK_32KHz 2 //2 å†…éƒ¨ä½Žé¢‘32KHz RCæŒ¯è¡å™¨
-#define SYS_CLK_XTAL 3  //3 å¤–éƒ¨æ™¶ä½“æŒ¯è¡å™¨ï¼ˆ2-30MHzï¼‰
-#define SYS_CLK_PLL 4   //4 ç‰‡å†…é”ç›¸çŽ¯è¾“å‡º
+#define SYS_CLK_20MHz 0 //0 ÄÚ²¿¸ßÆµ20MHz RCÕñµ´Æ÷
+#define SYS_CLK_40MHz 1 //1 ÄÚ²¿¸ßÆµ40MHz RCÕñµ´Æ÷
+#define SYS_CLK_32KHz 2 //2 ÄÚ²¿µÍÆµ32KHz RCÕñµ´Æ÷
+#define SYS_CLK_XTAL 3  //3 Íâ²¿¾§ÌåÕñµ´Æ÷£¨2-30MHz£©
+#define SYS_CLK_PLL 4   //4 Æ¬ÄÚËøÏà»·Êä³ö
 
 #define SYS_CLK SYS_CLK_PLL
 
@@ -37,15 +37,15 @@
 
 #define SYS_CLK_DIV SYS_CLK_DIV_1
 
-#define __HSI (20000000UL) //é«˜é€Ÿå†…éƒ¨æ—¶é’Ÿ
-#define __LSI (32000UL) //ä½Žé€Ÿå†…éƒ¨æ—¶é’Ÿ
-#define __HSE (20000000UL) //é«˜é€Ÿå¤–éƒ¨æ—¶é’Ÿ
+#define __HSI (20000000UL) //¸ßËÙÄÚ²¿Ê±ÖÓ
+#define __LSI (32000UL) //µÍËÙÄÚ²¿Ê±ÖÓ
+#define __HSE (20000000UL) //¸ßËÙÍâ²¿Ê±ÖÓ
 
-/********************************** PLL è®¾å®š **********************************************
- * VCOè¾“å‡ºé¢‘çŽ‡ = PLLè¾“å…¥æ—¶é’Ÿ / INDIV * 4 * FBDIV
- * PLLè¾“å‡ºé¢‘çŽ‡ = PLLè¾“å…¥æ—¶é’Ÿ / INDIV * 4 * FBDIV / OUTDIV = VCOè¾“å‡ºé¢‘çŽ‡ / OUTDIV
+/********************************** PLL Éè¶¨ **********************************************
+ * VCOÊä³öÆµÂÊ = PLLÊäÈëÊ±ÖÓ / INDIV * 4 * FBDIV
+ * PLLÊä³öÆµÂÊ = PLLÊäÈëÊ±ÖÓ / INDIV * 4 * FBDIV / OUTDIV = VCOÊä³öÆµÂÊ / OUTDIV
  *****************************************************************************************/
-#define SYS_PLL_SRC SYS_CLK_XTAL //å¯å–å€¼SYS_CLK_20MHzã€SYS_CLK_XTAL
+#define SYS_PLL_SRC SYS_CLK_XTAL //¿ÉÈ¡ÖµSYS_CLK_20MHz¡¢SYS_CLK_XTAL
 
 #define PLL_IN_DIV 5
 
@@ -61,11 +61,11 @@ uint32_t SystemCoreClock = (120000000UL);         //System Clock Frequency (Core
 uint32_t CyclesPerUs = ((120000000UL) / 1000000); //Cycles per micro second
 
 /******************************************************************************************************************************************
-* å‡½æ•°åç§°:
-* åŠŸèƒ½è¯´æ˜Ž: This function is used to update the variable SystemCoreClock and must be called whenever the core clock is changed
-* è¾“    å…¥:
-* è¾“    å‡º:
-* æ³¨æ„äº‹é¡¹:
+* º¯ÊýÃû³Æ:
+* ¹¦ÄÜËµÃ÷: This function is used to update the variable SystemCoreClock and must be called whenever the core clock is changed
+* Êä    Èë:
+* Êä    ³ö:
+* ×¢ÒâÊÂÏî:
 ******************************************************************************************************************************************/
 void SystemCoreClockUpdate(void)
 {
@@ -113,11 +113,11 @@ void SystemCoreClockUpdate(void)
 }
 
 /******************************************************************************************************************************************
-* å‡½æ•°åç§°:
-* åŠŸèƒ½è¯´æ˜Ž: The necessary initializaiton of systerm
-* è¾“    å…¥:
-* è¾“    å‡º:
-* æ³¨æ„äº‹é¡¹:
+* º¯ÊýÃû³Æ:
+* ¹¦ÄÜËµÃ÷: The necessary initializaiton of systerm
+* Êä    Èë:
+* Êä    ³ö:
+* ×¢ÒâÊÂÏî:
 ******************************************************************************************************************************************/
 void SystemInit(void)
 {
@@ -127,7 +127,7 @@ void SystemInit(void)
 
     switch (SYS_CLK)
     {
-    case SYS_CLK_20MHz: //0 å†…éƒ¨é«˜é¢‘20MHz RCæŒ¯è¡å™¨
+    case SYS_CLK_20MHz: //0 ÄÚ²¿¸ßÆµ20MHz RCÕñµ´Æ÷
         SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
                      (0 << SYS_HRCCR_DBL_Pos); //HRC = 20MHz
 
@@ -135,7 +135,7 @@ void SystemInit(void)
         SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
         break;
 
-    case SYS_CLK_40MHz: //1 å†…éƒ¨é«˜é¢‘40MHz RCæŒ¯è¡å™¨
+    case SYS_CLK_40MHz: //1 ÄÚ²¿¸ßÆµ40MHz RCÕñµ´Æ÷
         SYS->HRCCR = (0 << SYS_HRCCR_OFF_Pos) |
                      (1 << SYS_HRCCR_DBL_Pos); //HRC = 40MHz
 
@@ -143,7 +143,7 @@ void SystemInit(void)
         SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos); //SYS_CLK  <= HFCK
         break;
 
-    case SYS_CLK_32KHz: //2 å†…éƒ¨ä½Žé¢‘32KHz RCæŒ¯è¡å™¨
+    case SYS_CLK_32KHz: //2 ÄÚ²¿µÍÆµ32KHz RCÕñµ´Æ÷
         SYS->CLKEN |= (1 << SYS_CLKEN_RTCBKP_Pos);
 
         SYS->LRCCR &= ~(1 << SYS_LRCCR_OFF_Pos);
@@ -155,7 +155,7 @@ void SystemInit(void)
         SYS->CLKSEL &= ~SYS_CLKSEL_SYS_Msk;  //SYS_CLK  <= LFCK
         break;
 
-    case SYS_CLK_XTAL: //3 å¤–éƒ¨æ™¶ä½“æŒ¯è¡å™¨ï¼ˆ2-30MHzï¼‰
+    case SYS_CLK_XTAL: //3 Íâ²¿¾§ÌåÕñµ´Æ÷£¨2-30MHz£©
         SYS->XTALCR = (1 << SYS_XTALCR_EN_Pos);
 
         for (i = 0; i < 20000; i++)
@@ -165,7 +165,7 @@ void SystemInit(void)
         SYS->CLKSEL |= (1 << SYS_CLKSEL_SYS_Pos);  //SYS_CLK  <= HFCK
         break;
 
-    case SYS_CLK_PLL: //4 ç‰‡å†…é”ç›¸çŽ¯è¾“å‡º
+    case SYS_CLK_PLL: //4 Æ¬ÄÚËøÏà»·Êä³ö
         PLLInit();
         SYS->PLLCR |= (1 << SYS_PLLCR_OUTEN_Pos);
 
@@ -211,5 +211,5 @@ void PLLInit(void)
     SYS->PLLCR &= ~(1 << SYS_PLLCR_OFF_Pos);
 
     while (SYS->PLLLOCK == 0)
-        ; //ç­‰å¾…PLLé”å®š
+        ; //µÈ´ýPLLËø¶¨
 }

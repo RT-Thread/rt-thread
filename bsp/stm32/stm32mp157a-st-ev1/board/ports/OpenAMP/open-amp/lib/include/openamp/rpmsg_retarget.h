@@ -26,27 +26,27 @@ typedef int (*rpmsg_rpc_poll)(void *arg);
 typedef void (*rpmsg_rpc_shutdown_cb)(struct rpmsg_rpc_data *rpc);
 
 struct rpmsg_rpc_syscall_header {
-	int32_t int_field1;
-	int32_t int_field2;
-	uint32_t data_len;
+    int32_t int_field1;
+    int32_t int_field2;
+    uint32_t data_len;
 };
 
 struct rpmsg_rpc_syscall {
-	uint32_t id;
-	struct rpmsg_rpc_syscall_header args;
+    uint32_t id;
+    struct rpmsg_rpc_syscall_header args;
 };
 
 struct rpmsg_rpc_data {
-	struct rpmsg_endpoint ept;
-	int ept_destroyed;
-	atomic_int nacked;
-	void *respbuf;
-	size_t respbuf_len;
-	rpmsg_rpc_poll poll;
-	void *poll_arg;
-	rpmsg_rpc_shutdown_cb shutdown_cb;
-	metal_mutex_t lock;
-	struct metal_spinlock buflock;
+    struct rpmsg_endpoint ept;
+    int ept_destroyed;
+    atomic_int nacked;
+    void *respbuf;
+    size_t respbuf_len;
+    rpmsg_rpc_poll poll;
+    void *poll_arg;
+    rpmsg_rpc_shutdown_cb shutdown_cb;
+    metal_mutex_t lock;
+    struct metal_spinlock buflock;
 };
 
 /**
@@ -68,11 +68,11 @@ struct rpmsg_rpc_data {
  * return 0 for success, and negative value for failure.
  */
 int rpmsg_rpc_init(struct rpmsg_rpc_data *rpc,
-		   struct rpmsg_device *rdev,
-		   const char *ept_name, uint32_t ept_addr,
-		   uint32_t ept_raddr,
-		   void *poll_arg, rpmsg_rpc_poll poll,
-		   rpmsg_rpc_shutdown_cb shutdown_cb);
+           struct rpmsg_device *rdev,
+           const char *ept_name, uint32_t ept_addr,
+           uint32_t ept_raddr,
+           void *poll_arg, rpmsg_rpc_poll poll,
+           rpmsg_rpc_shutdown_cb shutdown_cb);
 
 /**
  * rpmsg_rpc_release - release RPMsg remote procedure call
@@ -99,8 +99,8 @@ void rpmsg_rpc_release(struct rpmsg_rpc_data *rpc);
  * return length of the received response, negative value for failure.
  */
 int rpmsg_rpc_send(struct rpmsg_rpc_data *rpc,
-		   void *req, size_t len,
-		   void *resp, size_t resp_len);
+           void *req, size_t len,
+           void *resp, size_t resp_len);
 
 /**
  * rpmsg_set_default_rpc - set default RPMsg RPC data

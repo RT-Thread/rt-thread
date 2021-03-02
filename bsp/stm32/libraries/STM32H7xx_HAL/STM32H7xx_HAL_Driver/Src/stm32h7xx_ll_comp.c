@@ -100,7 +100,7 @@
    || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM8_OC5)           \
    || ((__OUTPUT_BLANKING_SOURCE__) == LL_COMP_BLANKINGSRC_TIM15_OC1)          \
   )
-  
+
 /**
   * @}
   */
@@ -131,10 +131,10 @@
 ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
-  
+
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       COMP instance must not be locked.                                  */
   if(LL_COMP_IsLocked(COMPx) == 0UL)
@@ -149,7 +149,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
     /* The only way to unlock the comparator is a device hardware reset.       */
     status = ERROR;
   }
-  
+
   return status;
 }
 
@@ -168,7 +168,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
   assert_param(IS_LL_COMP_POWER_MODE(COMP_InitStruct->PowerMode));
@@ -177,7 +177,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
   assert_param(IS_LL_COMP_INPUT_HYSTERESIS(COMP_InitStruct->InputHysteresis));
   assert_param(IS_LL_COMP_OUTPUT_POLARITY(COMP_InitStruct->OutputPolarity));
   assert_param(IS_LL_COMP_OUTPUT_BLANKING_SOURCE(COMP_InitStruct->OutputBlankingSource));
-  
+
   /* Note: Hardware constraint (refer to description of this function)        */
   /*       COMP instance must not be locked.                                  */
   if(LL_COMP_IsLocked(COMPx) == 0UL)
@@ -213,7 +213,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
     /* Initialization error: COMP instance is locked.                         */
     status = ERROR;
   }
-  
+
   return status;
 }
 

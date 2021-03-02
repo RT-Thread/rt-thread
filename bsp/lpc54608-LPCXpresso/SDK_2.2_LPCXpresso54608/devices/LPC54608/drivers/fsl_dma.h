@@ -123,7 +123,7 @@ typedef enum _dma_trigger_burst {
     kDMA_EdgeBurstTransfer256 = DMA_CHANNEL_CFG_TRIGBURST(1) | DMA_CHANNEL_CFG_BURSTPOWER(8),   /*!< Perform 256 transfers by edge trigger */
     kDMA_EdgeBurstTransfer512 = DMA_CHANNEL_CFG_TRIGBURST(1) | DMA_CHANNEL_CFG_BURSTPOWER(9),   /*!< Perform 512 transfers by edge trigger */
     kDMA_EdgeBurstTransfer1024 = DMA_CHANNEL_CFG_TRIGBURST(1) | DMA_CHANNEL_CFG_BURSTPOWER(10), /*!< Perform 1024 transfers by edge trigger */
-} dma_trigger_burst_t;  
+} dma_trigger_burst_t;
 
 /*! @brief DMA burst wrapping */
 typedef enum _dma_burst_wrap {
@@ -175,7 +175,7 @@ typedef void (*dma_callback)(struct _dma_handle *handle, void *userData, bool tr
 /*! @brief DMA transfer handle structure */
 typedef struct _dma_handle
 {
-    dma_callback callback;  /*!< Callback function. Invoked when transfer 
+    dma_callback callback;  /*!< Callback function. Invoked when transfer
                                 of descriptor with interrupt flag finishes */
     void *userData;         /*!< Callback function parameter */
     DMA_Type *base;         /*!< DMA peripheral base address */
@@ -350,7 +350,7 @@ static inline dma_priority_t DMA_GetChannelPriority(DMA_Type *base, uint32_t cha
 }
 
 /*!
- * @brief Create application specific DMA descriptor 
+ * @brief Create application specific DMA descriptor
  *        to be used in a chain in transfer
  *
  * @param desc DMA descriptor address.
@@ -379,7 +379,7 @@ void DMA_CreateDescriptor(
  *
  * This function aborts DMA transfer specified by handle.
  *
- * @param handle DMA handle pointer. 
+ * @param handle DMA handle pointer.
  */
 void DMA_AbortTransfer(dma_handle_t *handle);
 

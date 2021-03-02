@@ -36,14 +36,14 @@
 
 /** @addtogroup DBGMCU
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 
 /** @defgroup DBGMCU_Exported_Constants
   * @{
-  */ 
+  */
 #define DBGMCU_SLEEP                 ((uint32_t)0x00000001)
 #define DBGMCU_STOP                  ((uint32_t)0x00000002)
 #define DBGMCU_STANDBY               ((uint32_t)0x00000004)
@@ -76,10 +76,10 @@
 #define IS_DBGMCU_APB2PERIPH(PERIPH) ((((PERIPH) & 0xFFF8FFFC) == 0x00) && ((PERIPH) != 0x00))
 /**
   * @}
-  */ 
+  */
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/ 
+/* Exported functions --------------------------------------------------------*/
 uint32_t DBGMCU_GetREVID(void);
 uint32_t DBGMCU_GetDEVID(void);
 void DBGMCU_Config(uint32_t DBGMCU_Periph, FunctionalState NewState);
@@ -94,10 +94,10 @@ void DBGMCU_APB2PeriphConfig(uint32_t DBGMCU_Periph, FunctionalState NewState);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

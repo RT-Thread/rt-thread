@@ -170,7 +170,7 @@
 
 /* TLI parameter struct definitions */
 typedef struct
-{   
+{
     uint32_t synpsz_vpsz;                     /*!< size of the vertical synchronous pulse */
     uint32_t synpsz_hpsz;                     /*!< size of the horizontal synchronous pulse */
     uint32_t backpsz_vbpsz;                   /*!< size of the vertical back porch plus synchronous pulse */
@@ -186,11 +186,11 @@ typedef struct
     uint32_t signalpolarity_vs;               /*!< vertical pulse polarity selection */
     uint32_t signalpolarity_de;               /*!< data enable polarity selection */
     uint32_t signalpolarity_pixelck;          /*!< pixel clock polarity selection */
-}tli_parameter_struct; 
+}tli_parameter_struct;
 
 /* TLI Layer parameter struct definitions */
 typedef struct
-{   
+{
     uint32_t layer_window_rightpos;           /*!< window right position */
     uint32_t layer_window_leftpos;            /*!< window left position */
     uint32_t layer_window_bottompos;          /*!< window bottom position */
@@ -207,19 +207,19 @@ typedef struct
     uint32_t layer_frame_buf_stride_offset;   /*!< frame buffer stride offset */
     uint32_t layer_frame_line_length;         /*!< frame line length */
     uint32_t layer_frame_total_line_number;   /*!< frame total line number */
-}tli_layer_parameter_struct; 
+}tli_layer_parameter_struct;
 
 /* TLI layer LUT parameter struct definitions */
 typedef struct
-{                                                       
+{
     uint32_t layer_table_addr;                /*!< look up table write address */
     uint32_t layer_lut_channel_red;           /*!< red channel of a LUT entry */
     uint32_t layer_lut_channel_green;         /*!< green channel of a LUT entry */
-    uint32_t layer_lut_channel_blue;          /*!< blue channel of a LUT entry */                                                       
-}tli_layer_lut_parameter_struct; 
+    uint32_t layer_lut_channel_blue;          /*!< blue channel of a LUT entry */
+}tli_layer_lut_parameter_struct;
 
 /* packeted pixel format */
-typedef enum 
+typedef enum
 {
      LAYER_PPF_ARGB8888,                          /*!< layerx pixel format ARGB8888 */
      LAYER_PPF_RGB888,                            /*!< layerx pixel format RGB888 */

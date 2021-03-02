@@ -18,45 +18,45 @@
 
 
 /******************************************************************************/
-/*                              ËÆæÂ§áÁâπÊÆäÂØÑÂ≠òÂô®ÁªìÊûÑÂÆö‰πâ                        */
+/*                              …Ë±∏Ãÿ ‚ºƒ¥Ê∆˜Ω·ππ∂®“Â                        */
 /******************************************************************************/
 
-/*   ÂÖÅËÆ∏ÂåøÂêçÁªìÊûÑÂíåÂåøÂêçËÅîÂêà    */
+/*   ‘ –Ìƒ‰√˚Ω·ππ∫Õƒ‰√˚¡™∫œ    */
 /* #pragma anon_unions */
 
 /****************** Bit definition for HDIV_DIVDR register ************************/
 
-#define  HDIV_DIVDR_DIVS_POSS  0U 
-#define  HDIV_DIVDR_DIVS_POSE  31U 
+#define  HDIV_DIVDR_DIVS_POSS  0U
+#define  HDIV_DIVDR_DIVS_POSE  31U
 #define  HDIV_DIVDR_DIVD_MSK  BITS(HDIV_DIVDR_DIVD_POSS,HDIV_DIVDR_DIVD_POSE)
 
 /****************** Bit definition for HDIV_DIVSR register ************************/
 
-#define  HDIV_DIVSR_DIVS_POSS  0U 
-#define  HDIV_DIVSR_DIVS_POSE  31U 
+#define  HDIV_DIVSR_DIVS_POSS  0U
+#define  HDIV_DIVSR_DIVS_POSE  31U
 #define  HDIV_DIVSR_DIVS_MSK  BITS(HDIV_DIVSR_DIVS_POSS,HDIV_DIVSR_DIVS_POSE)
 
 /****************** Bit definition for HDIV_DIVQR register ************************/
 
-#define  HDIV_DIVQR_DIVQ_POSS  0U 
-#define  HDIV_DIVQR_DIVQ_POSE  31U 
+#define  HDIV_DIVQR_DIVQ_POSS  0U
+#define  HDIV_DIVQR_DIVQ_POSE  31U
 #define  HDIV_DIVQR_DIVQ_MSK  BITS(HDIV_DIVQR_DIVQ_POSS,HDIV_DIVQR_DIVQ_POSE)
 
 /****************** Bit definition for HDIV_DIVRR register ************************/
 
-#define  HDIV_DIVRR_DIVR_POSS  0U 
-#define  HDIV_DIVRR_DIVR_POSE  31U 
+#define  HDIV_DIVRR_DIVR_POSS  0U
+#define  HDIV_DIVRR_DIVR_POSE  31U
 #define  HDIV_DIVRR_DIVR_MSK  BITS(HDIV_DIVRR_DIVR_POSS,HDIV_DIVRR_DIVR_POSE)
 
 /****************** Bit definition for HDIV_DIVSTAT register ************************/
 
-#define  HDIV_DIVSTAT_SIGN_POS  2U 
+#define  HDIV_DIVSTAT_SIGN_POS  2U
 #define  HDIV_DIVSTAT_SIGN_MSK  BIT(HDIV_DIVSTAT_SIGN_POS)
 
-#define  HDIV_DIVSTAT_DIV0_POS  1U 
+#define  HDIV_DIVSTAT_DIV0_POS  1U
 #define  HDIV_DIVSTAT_DIV0_MSK  BIT(HDIV_DIVSTAT_DIV0_POS)
 
-#define  HDIV_DIVSTAT_BUSY_POS  0U 
+#define  HDIV_DIVSTAT_BUSY_POS  0U
 #define  HDIV_DIVSTAT_BUSY_MSK  BIT(HDIV_DIVSTAT_BUSY_POS)
 
 typedef struct

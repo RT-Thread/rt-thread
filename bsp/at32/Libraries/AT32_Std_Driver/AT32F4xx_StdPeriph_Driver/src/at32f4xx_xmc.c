@@ -467,10 +467,10 @@ void XMC_PCCARDStructInit(XMC_PCCARDInitType* XMC_PCCARDInitStruct)
   */
 void XMC_ExtTimingConfig(uint32_t XMC_SubBank, uint8_t W2W_Timing, uint8_t R2R_Timing)
 {
-  assert_param(IS_XMC_Sub_NORSRAM_REGION(XMC_SubBank)); 
-  
+  assert_param(IS_XMC_Sub_NORSRAM_REGION(XMC_SubBank));
+
   XMC_Bank1H->BK1EXT[XMC_SubBank] &= 0;
-  XMC_Bank1H->BK1EXT[XMC_SubBank] |= (W2W_Timing|(R2R_Timing<<8));  
+  XMC_Bank1H->BK1EXT[XMC_SubBank] |= (W2W_Timing|(R2R_Timing<<8));
 }
 
 /**

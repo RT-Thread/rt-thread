@@ -15,7 +15,7 @@
   *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32L4xx_HAL_MMC_H
@@ -393,12 +393,12 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 #else
 #define __HAL_MMC_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_MMC_STATE_RESET)
 #endif
- 
+
 #if !defined(STM32L4R5xx) && !defined(STM32L4R7xx) && !defined(STM32L4R9xx) && !defined(STM32L4S5xx) && !defined(STM32L4S7xx) && !defined(STM32L4S9xx)
 /**
   * @brief  Enable the MMC device.
   * @retval None
-  */ 
+  */
 #define __HAL_MMC_ENABLE(__HANDLE__) __SDMMC_ENABLE((__HANDLE__)->Instance)
 
 /**
@@ -410,7 +410,7 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
 /**
   * @brief  Enable the SDMMC DMA transfer.
   * @retval None
-  */ 
+  */
 #define __HAL_MMC_DMA_ENABLE(__HANDLE__) __SDMMC_DMA_ENABLE((__HANDLE__)->Instance)
 
 /**
@@ -419,7 +419,7 @@ typedef void (*pMMC_CallbackTypeDef)           (MMC_HandleTypeDef *hmmc);
   */
 #define __HAL_MMC_DMA_DISABLE(__HANDLE__)  __SDMMC_DMA_DISABLE((__HANDLE__)->Instance)
 #endif
- 
+
 /**
   * @brief  Enable the MMC device interrupt.
   * @param  __HANDLE__: MMC Handle

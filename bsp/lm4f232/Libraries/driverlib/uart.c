@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -97,7 +97,7 @@ UARTBaseValid(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the UART port.
 //!
-//! Given a UART base address, this function returns the corresponding 
+//! Given a UART base address, this function returns the corresponding
 //! interrupt number.
 //!
 //! \return Returns a UART interrupt number, or -1 if \e ulBase is invalid.
@@ -140,11 +140,11 @@ UARTIntNumberGet(unsigned long ulBase)
 //! \param ulBase is the base address of the UART port.
 //! \param ulParity specifies the type of parity to use.
 //!
-//! This function configures the type of parity to use for transmitting and 
+//! This function configures the type of parity to use for transmitting and
 //! expect when receiving.  The \e ulParity parameter must be one of
 //! \b UART_CONFIG_PAR_NONE, \b UART_CONFIG_PAR_EVEN, \b UART_CONFIG_PAR_ODD,
-//! \b UART_CONFIG_PAR_ONE, or \b UART_CONFIG_PAR_ZERO.  The last two 
-//! parameters allow direct control of the parity bit; it is always either one 
+//! \b UART_CONFIG_PAR_ONE, or \b UART_CONFIG_PAR_ZERO.  The last two
+//! parameters allow direct control of the parity bit; it is always either one
 //! or zero based on the mode.
 //!
 //! \return None.
@@ -404,7 +404,7 @@ UARTConfigSetExpClk(unsigned long ulBase, unsigned long ulUARTClk,
 //! \param pulBaud is a pointer to storage for the baud rate.
 //! \param pulConfig is a pointer to storage for the data format.
 //!
-//! This function determines the baud rate and data format for the UART, given 
+//! This function determines the baud rate and data format for the UART, given
 //! an explicitly provided peripheral clock (hence the ExpClk suffix).  The
 //! returned baud rate is the actual baud rate; it may not be the exact baud
 //! rate requested or an ``official'' baud rate.  The data format returned in
@@ -672,7 +672,7 @@ UARTDisableSIR(unsigned long ulBase)
 //!
 //! \param ulBase is the base address of the UART port.
 //!
-//! This function enables the SMART control bit for the ISO7816 smart card mode 
+//! This function enables the SMART control bit for the ISO7816 smart card mode
 //! on the UART.  This call also sets 8-bit word length and even parity as
 //! required by ISO7816.
 //!
@@ -695,8 +695,8 @@ UARTSmartCardEnable(unsigned long ulBase)
     ASSERT(UARTBaseValid(ulBase));
 
     //
-    // Set 8-bit word length, even parity, 2 stop bits (note that although the 
-    // STP2 bit is ignored when in smartcard mode, this code lets the caller 
+    // Set 8-bit word length, even parity, 2 stop bits (note that although the
+    // STP2 bit is ignored when in smartcard mode, this code lets the caller
     // read back the actual setting in use).
     //
     ulVal = HWREG(ulBase + UART_O_LCRH);
@@ -750,7 +750,7 @@ UARTSmartCardDisable(unsigned long ulBase)
 //! \param ulControl is a bit-mapped flag indicating which modem control bits
 //! should be set.
 //!
-//! This function configures the states of the DTR or RTS modem handshake 
+//! This function configures the states of the DTR or RTS modem handshake
 //! outputs from the UART.
 //!
 //! The \e ulControl parameter is the logical OR of any of the following:
@@ -841,7 +841,7 @@ UARTModemControlClear(unsigned long ulBase, unsigned long ulControl)
 //! Stellaris part and UART in use.  Please consult the datasheet for the part
 //! you are using to determine whether this support is available.
 //!
-//! \return Returns the states of the handshake output signals.  This value is 
+//! \return Returns the states of the handshake output signals.  This value is
 //! a logical OR combination of values \b UART_OUTPUT_RTS and
 //! \b UART_OUTPUT_DTR where the presence of each flag indicates that the
 //! associated signal is asserted.
@@ -901,7 +901,7 @@ UARTModemStatusGet(unsigned long ulBase)
 //! \b UART_FLOWCONTROL_RX to enable hardware transmit (CTS) and receive (RTS)
 //! flow control or \b UART_FLOWCONTROL_NONE to disable hardware flow control.
 //!
-//! This function configures the required hardware flow control modes.  If 
+//! This function configures the required hardware flow control modes.  If
 //! \e ulMode contains flag \b UART_FLOWCONTROL_TX, data is only transmitted
 //! if the incoming CTS signal is asserted. If \e ulMode contains flag
 //! \b UART_FLOWCONTROL_RX, the RTS output is controlled by the hardware and is
@@ -1020,7 +1020,7 @@ UARTTxIntModeSet(unsigned long ulBase, unsigned long ulMode)
 //! interrupt is currently configured to be asserted once the transmitter is
 //! completely idle - the transmit FIFO is empty and all bits, including any
 //! stop bits, have cleared the transmitter.  The return value is
-//! \b UART_TXINT_MODE_FIFO if the interrupt is configured to be asserted based 
+//! \b UART_TXINT_MODE_FIFO if the interrupt is configured to be asserted based
 //! on the level of the transmit FIFO.
 //!
 //! \note The availability of end-of-transmission mode varies with the
@@ -1306,9 +1306,9 @@ UARTBreakCtl(unsigned long ulBase, tBoolean bBreakState)
 //!
 //! \param ulBase is the base address of the UART port.
 //!
-//! This function allows the caller to determine whether all transmitted bytes 
-//! have cleared the transmitter hardware.  If \b false is returned, the 
-//! transmit FIFO is empty and all bits of the last transmitted character, 
+//! This function allows the caller to determine whether all transmitted bytes
+//! have cleared the transmitter hardware.  If \b false is returned, the
+//! transmit FIFO is empty and all bits of the last transmitted character,
 //! including all stop bits, have left the hardware shift register.
 //!
 //! \return Returns \b true if the UART is transmitting or \b false if all
@@ -1646,7 +1646,7 @@ UARTDMADisable(unsigned long ulBase, unsigned long ulDMAFlags)
 //! This function returns the current state of each of the 4 receiver error
 //! sources.  The returned errors are equivalent to the four error bits
 //! returned via the previous call to UARTCharGet() or UARTCharGetNonBlocking()
-//! with the exception that the overrun error is set immediately when the 
+//! with the exception that the overrun error is set immediately when the
 //! overrun occurs rather than when a character is next read.
 //!
 //! \return Returns a logical OR combination of the receiver error flags,
@@ -1774,7 +1774,7 @@ UARTClockSourceGet(unsigned long ulBase)
 //! This function enables the 9-bit operational mode of the UART.
 //!
 //! \note The availability of 9-bit mode varies with the Stellaris part in use.
-//! Please consult the datasheet for the part you are using to determine 
+//! Please consult the datasheet for the part you are using to determine
 //! whether this support is available.
 //!
 //! \return None.
@@ -1803,7 +1803,7 @@ UART9BitEnable(unsigned long ulBase)
 //! This function disables the 9-bit operational mode of the UART.
 //!
 //! \note The availability of 9-bit mode varies with the Stellaris part in use.
-//! Please consult the datasheet for the part you are using to determine 
+//! Please consult the datasheet for the part you are using to determine
 //! whether this support is available.
 //!
 //! \return None.
@@ -1831,14 +1831,14 @@ UART9BitDisable(unsigned long ulBase)
 //! \param ucAddr is the device address.
 //! \param ucMask is the device address mask.
 //!
-//! This function configures the device address or range of device addresses 
-//! that respond to requests on the 9-bit UART port.  The received address is 
-//! masked with the mask and then compared against the given address, allowing 
+//! This function configures the device address or range of device addresses
+//! that respond to requests on the 9-bit UART port.  The received address is
+//! masked with the mask and then compared against the given address, allowing
 //! either a single address (if \b ucMask is 0xff) or a set of addresses to be
 //! matched.
 //!
 //! \note The availability of 9-bit mode varies with the Stellaris part in use.
-//! Please consult the datasheet for the part you are using to determine 
+//! Please consult the datasheet for the part you are using to determine
 //! whether this support is available.
 //!
 //! \return None.
@@ -1877,7 +1877,7 @@ UART9BitAddrSet(unsigned long ulBase, unsigned char ucAddr,
 //! data characters in 9-bit mode.
 //!
 //! \note The availability of 9-bit mode varies with the Stellaris part in use.
-//! Please consult the datasheet for the part you are using to determine 
+//! Please consult the datasheet for the part you are using to determine
 //! whether this support is available.
 //!
 //! \return None.

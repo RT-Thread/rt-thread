@@ -51,31 +51,31 @@
 void Chip_PININT_SetPatternMatchSrc(LPC_PININT_T *pPININT, uint8_t chan, Chip_PININT_BITSLICE_T slice)
 {
     uint32_t pmsrc_reg;
-    
-    /* Source source for pattern matching */ 
+
+    /* Source source for pattern matching */
     pmsrc_reg = pPININT->PMSRC & ~((PININT_SRC_BITSOURCE_MASK << (PININT_SRC_BITSOURCE_START + (slice * 3)))
-		| PININT_PMSRC_RESERVED);
-	pPININT->PMSRC = pmsrc_reg | (chan << (PININT_SRC_BITSOURCE_START + (slice * 3)));
+        | PININT_PMSRC_RESERVED);
+    pPININT->PMSRC = pmsrc_reg | (chan << (PININT_SRC_BITSOURCE_START + (slice * 3)));
 }
 
 /* Configure Pattern match engine */
-void Chip_PININT_SetPatternMatchConfig(LPC_PININT_T *pPININT, Chip_PININT_BITSLICE_T slice, 
+void Chip_PININT_SetPatternMatchConfig(LPC_PININT_T *pPININT, Chip_PININT_BITSLICE_T slice,
         Chip_PININT_BITSLICE_CFG_T slice_cfg, bool end_point)
 {
     uint32_t pmcfg_reg;
-    
+
     /* Configure bit slice configuration */
     pmcfg_reg = pPININT->PMCFG & ~((PININT_SRC_BITCFG_MASK << (PININT_SRC_BITCFG_START + (slice * 3)))
-		| PININT_PMCFG_RESERVED);
+        | PININT_PMCFG_RESERVED);
     pPININT->PMCFG = pmcfg_reg | (slice_cfg << (PININT_SRC_BITCFG_START + (slice * 3)));
 
     /* If end point is true, enable the bits */
-	if (end_point == true)
-	{
+    if (end_point == true)
+    {
         /* By default slice 7 is final component */
-		if (slice != PININTBITSLICE7)
+        if (slice != PININTBITSLICE7)
         {
-			pPININT->PMCFG = (0x1 << slice) | (pPININT->PMCFG & ~PININT_PMCFG_RESERVED);
-		}
-	}
+            pPININT->PMCFG = (0x1 << slice) | (pPININT->PMCFG & ~PININT_PMCFG_RESERVED);
+        }
+    }
 }

@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -680,7 +680,7 @@ typedef enum
 /**
  * @brief CAN ID format definition
  */
-typedef enum 
+typedef enum
 {
     STD_ID_FORMAT = 0,  /**< Use standard ID format (11 bit ID) */
     EXT_ID_FORMAT = 1   /**< Use extended ID format (29 bit ID) */
@@ -689,7 +689,7 @@ typedef enum
 /**
  * @brief AFLUT Entry type definition
  */
-typedef enum 
+typedef enum
 {
     FULLCAN_ENTRY = 0,
     EXPLICIT_STANDARD_ENTRY,
@@ -701,7 +701,7 @@ typedef enum
 /**
  * @brief Symbolic names for type of CAN message
  */
-typedef enum 
+typedef enum
 {
     DATA_FRAME = 0,     /**< Data frame */
     REMOTE_FRAME = 1    /**< Remote frame */
@@ -710,7 +710,7 @@ typedef enum
 /**
  * @brief CAN Control status definition
  */
-typedef enum 
+typedef enum
 {
     CANCTRL_GLOBAL_STS = 0, /**< CAN Global Status */
     CANCTRL_INT_CAP,        /**< CAN Interrupt and Capture */
@@ -721,7 +721,7 @@ typedef enum
 /**
  * @brief Central CAN status type definition
  */
-typedef enum 
+typedef enum
 {
     CANCR_TX_STS = 0,   /**< Central CAN Tx Status */
     CANCR_RX_STS,       /**< Central CAN Rx Status */
@@ -740,7 +740,7 @@ typedef enum
 /**
  * @brief CAN interrupt enable type definition
  */
-typedef enum 
+typedef enum
 {
     CANINT_RIE = 0,     /**< CAN Receiver Interrupt Enable */
     CANINT_TIE1,        /**< CAN Transmit Interrupt Enable */
@@ -759,7 +759,7 @@ typedef enum
 /**
  * @brief Acceptance Filter Mode type definition
  */
-typedef enum 
+typedef enum
 {
     CAN_NORMAL = 0,     /**< Normal Mode */
     CAN_ACC_OFF,        /**< Acceptance Filter Off Mode */
@@ -770,7 +770,7 @@ typedef enum
 /**
  * @brief CAN Mode Type definition
  */
-typedef enum 
+typedef enum
 {
     CAN_OPERATING_MODE = 0,     /**< Operating Mode */
     CAN_RESET_MODE,             /**< Reset Mode */
@@ -785,7 +785,7 @@ typedef enum
 /**
  * @brief Error values that functions can return
  */
-typedef enum 
+typedef enum
 {
     CAN_OK = 1,                 /**< No error */
     CAN_OBJECTS_FULL_ERROR,     /**< No more rx or tx objects available */
@@ -799,7 +799,7 @@ typedef enum
 /**
  * @brief Pin Configuration structure
  */
-typedef struct 
+typedef struct
 {
     uint8_t RD;             /**< Serial Inputs, from CAN transceivers, should be:
                              ** For CAN1:
@@ -822,7 +822,7 @@ typedef struct
 /**
  * @brief CAN message object structure
  */
-typedef struct 
+typedef struct
 {
     uint32_t id;            /**< 29 bit identifier, it depend on "format" value
                                  - if format = STD_ID_FORMAT, id should be 11 bit identifier
@@ -848,7 +848,7 @@ typedef struct
 /**
  * @brief FullCAN Entry structure
  */
-typedef struct 
+typedef struct
 {
     uint8_t controller;     /**< CAN Controller, should be:
                                  - CAN1_CTRL: CAN1 Controller
@@ -864,7 +864,7 @@ typedef struct
 /**
  * @brief Standard ID Frame Format Entry structure
  */
-typedef struct 
+typedef struct
 {
     uint8_t controller;     /**< CAN Controller, should be:
                                  - CAN1_CTRL: CAN1 Controller
@@ -880,7 +880,7 @@ typedef struct
 /**
  * @brief Group of Standard ID Frame Format Entry structure
  */
-typedef struct 
+typedef struct
 {
     uint8_t controller1;    /**< First CAN Controller, should be:
                                  - CAN1_CTRL: CAN1 Controller
@@ -907,7 +907,7 @@ typedef struct
 /**
  * @brief Extended ID Frame Format Entry structure
  */
-typedef struct 
+typedef struct
 {
     uint8_t controller;     /**< CAN Controller, should be:
                                  - CAN1_CTRL: CAN1 Controller
@@ -920,7 +920,7 @@ typedef struct
 /**
  * @brief Group of Extended ID Frame Format Entry structure
  */
-typedef struct 
+typedef struct
 {
     uint8_t controller1;    /**< First CAN Controller, should be:
                                  - CAN1_CTRL: CAN1 Controller
@@ -938,7 +938,7 @@ typedef struct
 /**
  * @brief Acceptance Filter Section Table structure
  */
-typedef struct 
+typedef struct
 {
     FullCAN_Entry* FullCAN_Sec;     /**< The pointer point to FullCAN_Entry */
     uint8_t FC_NumEntry;            /**< FullCAN Entry Number */

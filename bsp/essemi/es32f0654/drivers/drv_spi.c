@@ -150,7 +150,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     hspi = (spi_handle_t *)device->bus->parent.user_data;
     cs = device->parent.user_data;
-    
+
     if(message->send_buf != RT_NULL || message->recv_buf != RT_NULL)
     {
     /* send & receive */
@@ -210,7 +210,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             rt_pin_write(cs->pin, 0);
         }
-        
+
         if (message->cs_release)
         {
             rt_pin_write(cs->pin, 1);
@@ -218,7 +218,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             return RT_EOK;
     }
     return message->length;
-    
+
 }
 
 const struct rt_spi_ops es32f0_spi_ops =
@@ -285,17 +285,17 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     rt_device_register(spi_bus_dev0, "spi00", RT_DEVICE_FLAG_RDWR);
-    
+
     /* SPI0_NSS = PA15 = PIN 50 */
     result = es32f0_spi_device_attach(50, "spi0", "spi00");
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
 
 #ifdef BSP_USING_SPI1
@@ -324,17 +324,17 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     rt_device_register(spi_bus_dev0, "spi10", RT_DEVICE_FLAG_RDWR);
-    
+
     /* SPI1_NSS = PC00 = PIN 8 */
     result = es32f0_spi_device_attach(8, "spi1", "spi10");
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
 
     return result;

@@ -1,56 +1,56 @@
 /*
- * ç¨‹åºæ¸…å•ï¼š
+ * ³ÌĞòÇåµ¥£º
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
-/* çº¿ç¨‹1å…¥å£ */
+/* Ïß³Ì1Èë¿Ú */
 static void thread1_entry(void* parameter)
 {
     rt_uint32_t count = 0;
 
     while (1)
     {
-        /* æ‰“å°çº¿ç¨‹1çš„è¾“å‡º */
+        /* ´òÓ¡Ïß³Ì1µÄÊä³ö */
         rt_kprintf("thread1: count = %d\n", count ++);
 
-        /* æ‰§è¡Œyieldååº”è¯¥åˆ‡æ¢åˆ°thread2æ‰§è¡Œ */
+        /* Ö´ĞĞyieldºóÓ¦¸ÃÇĞ»»µ½thread2Ö´ĞĞ */
         rt_thread_yield();
     }
 }
 
-/* çº¿ç¨‹2å…¥å£ */
+/* Ïß³Ì2Èë¿Ú */
 static void thread2_entry(void* parameter)
 {
     rt_uint32_t count = 0;
 
     while (1)
     {
-        /* æ‰“å°çº¿ç¨‹2çš„è¾“å‡º */
+        /* ´òÓ¡Ïß³Ì2µÄÊä³ö */
         rt_kprintf("thread2: count = %d\n", count ++);
 
-        /* æ‰§è¡Œyieldååº”è¯¥åˆ‡æ¢åˆ°thread1æ‰§è¡Œ */
+        /* Ö´ĞĞyieldºóÓ¦¸ÃÇĞ»»µ½thread1Ö´ĞĞ */
         rt_thread_yield();
     }
 }
 
 int thread_yield_init()
 {
-    /* åˆ›å»ºçº¿ç¨‹1 */
+    /* ´´½¨Ïß³Ì1 */
     tid1 = rt_thread_create("thread",
-        thread1_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread1_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+        thread1_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread1_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
         THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid1 != RT_NULL)
         rt_thread_startup(tid1);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹2 */
+    /* ´´½¨Ïß³Ì2 */
     tid2 = rt_thread_create("thread",
-        thread2_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread2_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+        thread2_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread2_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
         THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid2 != RT_NULL)
         rt_thread_startup(tid2);
@@ -63,35 +63,35 @@ int thread_yield_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (tid1 != RT_NULL && tid1->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid1);
     if (tid2 != RT_NULL && tid2->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid2);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_thread_yield()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     thread_yield_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 30;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_thread_yield, a thread yield example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     thread_yield_init();

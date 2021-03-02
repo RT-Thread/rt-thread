@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -26,9 +26,9 @@
  *
  * @version
  *
- * @date    
+ * @date
  *
- * @brief   This file configures Timer 
+ * @brief   This file configures Timer
  *
  *****************************************************************************/
 
@@ -48,9 +48,9 @@ extern uint_8 audio_data_recv[8];
 extern uint_8 g_cur_mute[USB_MAX_SUPPORTED_INTERFACES];
 
 /******************************************************************************
- * @name   rtc_init    
+ * @name   rtc_init
  *
- * @brief   Init real-time counter   
+ * @brief   Init real-time counter
  *
  * @param       None
  *
@@ -66,9 +66,9 @@ void rtc_init(void)
 }
 
 /******************************************************************************
- * @name  rtc_isr     
+ * @name  rtc_isr
  *
- * @brief  Interrupt service routine of real-time counter 
+ * @brief  Interrupt service routine of real-time counter
  *
  * @param       None
  *
@@ -91,6 +91,6 @@ void interrupt VectorNumber_Vrtc cmt_isr(void)
       audio_event = 0;
     }
   }
-  RTCSC_RTIF = 1; 
+  RTCSC_RTIF = 1;
 }
 

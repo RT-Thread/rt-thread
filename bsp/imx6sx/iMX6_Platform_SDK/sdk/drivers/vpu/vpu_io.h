@@ -84,7 +84,7 @@ int vpu_io_init(void);
  * close the codec device.
  *
  * @return
- * @li   0	IO init success.
+ * @li   0    IO init success.
  * @li   -1 IO uninit failure.
  */
 int vpu_io_uninit(void);
@@ -97,11 +97,11 @@ int vpu_io_uninit(void);
  * phy_addr of buff structure. If the function fails and return -1,
  * the phy_addr remains the same as before.
  *
- * @param buff	the structure contains the memory information to be retrieved;
+ * @param buff    the structure contains the memory information to be retrieved;
  *
  * @return
- * @li 0		Allocation memory success.
- * @li -1		Allocation memory failure.
+ * @li 0        Allocation memory success.
+ * @li -1        Allocation memory failure.
  */
 int vpu_malloc(vpu_mem_desc * buff);
 
@@ -111,17 +111,17 @@ int vpu_malloc(vpu_mem_desc * buff);
  * they needs to fill the physical address and size to be freed
  * in buff structure.
  *
- * @param buff	the structure containing memory information to be freed;
+ * @param buff    the structure containing memory information to be freed;
  *
  * @return
  * @li 0            Freeing memory success.
- * @li -1		Freeing memory failure.
+ * @li -1        Freeing memory failure.
  */
 int vpu_codec_io_deinit(void);
 
 /*!
  * @brief Write VPU registers
- * 
+ *
  * @param addr register address
  * @param data register value
  */
@@ -129,7 +129,7 @@ void vpu_reg_write(uint32_t addr, uint32_t data);
 
 /*!
  * @brief Write VPU registers
- * 
+ *
  * @param addr register address
  *
  * @return data register value

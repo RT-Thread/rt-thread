@@ -55,7 +55,7 @@
 extern int errno;
 
 //! @name Malloc heap extents
-//! 
+//!
 //! Defined in the linker script.
 //@{
 extern int free_memory_start;
@@ -180,7 +180,7 @@ int _write(int fd, char *buf, int nbytes)
     {
 #if CONVERT_LF_TO_CRLF
         static bool lastCharWasCR = false;
-        
+
         // Insert a CR before the LF, unless the previous char in the source
         // buffer was a CR. This is to prevent converting a CRLF to CRCRLF.
         if (*buf == '\n' && !lastCharWasCR)
@@ -189,10 +189,10 @@ int _write(int fd, char *buf, int nbytes)
             uart_putchar(g_debug_uart_port, &cr);
         }
 #endif // CONVERT_LF_TO_CRLF
-        
+
         // Send the char out the debug UART.
         uart_putchar(g_debug_uart_port, (uint8_t *)buf);
-        
+
 #if CONVERT_LF_TO_CRLF
         lastCharWasCR = (*buf == '\r');
 #endif // CONVERT_LF_TO_CRLF
@@ -213,9 +213,9 @@ int _raw_puts(char str[])
     int i;
 
     int len = strlen(str);
-    
+
     for (i = 0; i < len; i++)
-    {        
+    {
         // Send the char out the debug UART.
         uart_putchar(g_debug_uart_port, (uint8_t *)&str[i]);
     }
@@ -247,14 +247,14 @@ caddr_t _sbrk(int nbytes)
 
     base = heap_ptr;
     heap_ptr += nbytes;
-    
+
     // Abort if we run out of memory.
     if (heap_ptr > (caddr_t)&free_memory_end)
     {
         _write(1, "** Heap ran out of memory! **\n", 24);
         abort();
     }
-    
+
     return base;
 }
 
@@ -284,7 +284,7 @@ int _link(char *old, char *new)
 int _unlink(char *name)
 {
     errno = ENOENT;
-    return -1; 
+    return -1;
 }
 
 int _stat(const char *file, struct stat *st)
@@ -306,7 +306,7 @@ int _gettimeofday(struct timeval *ptimeval, void *ptimezone)
         ptimeval->tv_sec = us / 1000000;
         ptimeval->tv_usec = us - ptimeval->tv_sec;
     }
-    
+
     return 0;
 }
 
@@ -321,4 +321,4 @@ int _wait(int *status)
 ////////////////////////////////////////////////////////////////////////////////
 
 
-    
+

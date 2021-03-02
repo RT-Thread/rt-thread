@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/fatapi/FATsector.c $                                        
- $Revision: 5 $                                       
- $Date: 9/13/03 12:21p $                                           
+ $Archive: /Fatfs/FileSystem/Fat32/fatapi/FATsector.c $
+ $Revision: 5 $
+ $Date: 9/13/03 12:21p $
  Description: FATsector.c
- Notes:	This file read provides FAT sector no and FATentry offset for the given cluster no.
+ Notes:    This file read provides FAT sector no and FATentry offset for the given cluster no.
  ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -62,8 +62,8 @@
    FunctionType:  Reentrant
 
    Inputs:        1) Device number
-				  2) clusterno
-				  3) pointer to a variable to receive the FAT entry offset
+                  2) clusterno
+                  3) pointer to a variable to receive the FAT entry offset
 
    Outputs:       Returns a sector-offset (in sectors) from the start of the device.
                   Also, *FATNtryOffsetInBytes is modified to be the offset of the associated FAT entry,
@@ -71,7 +71,7 @@
 
    Description:   Background: Entries in the FAT refer to clusters on the device.
 
-                  Given a cluster on the device designated by "clusterno", this 
+                  Given a cluster on the device designated by "clusterno", this
                   function computes the sector on the device that contains
                   the FAT entry that refers to that cluster.
                   An offset to that sector from the start of the device
@@ -110,9 +110,9 @@ int32_t FATsectorno(int32_t DeviceNum, int32_t clusterno, int32_t * FATNtryOffse
 
    Inputs:         1) Device number
 
-   Outputs:        SUCCESS or negative error code. Writes static media table struct. 
+   Outputs:        SUCCESS or negative error code. Writes static media table struct.
 
-   Description:    Determines & sets MediaTable[DeviceNumber].TotalFreeClusters 
+   Description:    Determines & sets MediaTable[DeviceNumber].TotalFreeClusters
                    by first checking FAT type (16|32)
 <
 ----------------------------------------------------------------------------*/
@@ -139,7 +139,7 @@ int32_t Computefreecluster(int32_t DeviceNumber)
 #endif
     } else {
 #if VERBOSE_CFC_LOGGING
-        tss_logtext_Print(LOGTEXT_EVENT_OS_FILESYSTEM_GROUP | LOGTEXT_VERBOSITY_3, "Compfreecx: no device\r\n");    // should this case return error? 
+        tss_logtext_Print(LOGTEXT_EVENT_OS_FILESYSTEM_GROUP | LOGTEXT_VERBOSITY_3, "Compfreecx: no device\r\n");    // should this case return error?
 #endif
     }
 
@@ -148,7 +148,7 @@ int32_t Computefreecluster(int32_t DeviceNumber)
 
 /*----------------------------------------------------------------------------
 >  Function Name:  int32_t Findnextcluster(int32_t DeviceNum,int32_t clusterno)
-  
+
    FunctionType:   Reentrant
 
    Inputs:         1) Device number
@@ -157,7 +157,7 @@ int32_t Computefreecluster(int32_t DeviceNumber)
    Outputs:        Returns Next cluster no.
 
    Description:    Determines Next cluster no. by first finding the FAT sector and offset
-                   in that sector for the entry of the given cluster no. 
+                   in that sector for the entry of the given cluster no.
 <
 ----------------------------------------------------------------------------*/
 int32_t Findnextcluster(int32_t DeviceNum, int32_t clusterno)
@@ -183,7 +183,7 @@ int32_t Findnextcluster(int32_t DeviceNum, int32_t clusterno)
 
    Inputs:         1) Device number
 
-   Outputs:        Returns Cluster no. of free cluster 
+   Outputs:        Returns Cluster no. of free cluster
 
    Description:    Determines free cluster by checking FAT entry in FAT table
 <
@@ -330,7 +330,7 @@ REENTRANT int32_t FirstfreeAndallocate(int32_t DeviceNum)
                    4)pointer to buffer
                    5)pointer to FATvalue
 
-   Outputs:        Returns cluster no. of free cluster 
+   Outputs:        Returns cluster no. of free cluster
 
    Description:    Determines free cluster depending upon the entry in FAT Table
 <
@@ -390,12 +390,12 @@ uint8_t *FirstfreeAndallocateFAT32(int32_t DeviceNum, int32_t FATsectorNo, int32
    FunctionType:  Reentrant
 
    Inputs:        1) Device number
-				  2) cluster no.
+                  2) cluster no.
 
-   Outputs:       Returns First sector no. of given cluster 
+   Outputs:       Returns First sector no. of given cluster
 
    Description:   Determines First sector of given cluster by considering sector per cluter
-                  and first data sector 
+                  and first data sector
 <
 ----------------------------------------------------------------------------*/
 int32_t Firstsectorofcluster(int32_t DeviceNum, int32_t clusterno)
@@ -425,7 +425,7 @@ int32_t Firstsectorofcluster(int32_t DeviceNum, int32_t clusterno)
                    Returns ERROR_OS_FILESYSTEM_NO_FREE_CLUSTER if no free cluster is available else error NOSPACEINROOTDIRECTORY
 
    Description:    Finds a new free cluster and writes its value in the FAT table
-                   for current cluster's entry.  
+                   for current cluster's entry.
 ----------------------------------------------------------------------------*/
 RtStatus_t GetNewcluster(int32_t Handlenumber)
 {
@@ -472,19 +472,19 @@ RtStatus_t GetNewcluster(int32_t Handlenumber)
 
 /*----------------------------------------------------------------------------
 >  Function Name: uint8_t *ReadFAT12Entry(int32_t DeviceNum,int32_t *FATsectorNo,int32_t FATntryoffset,int32_t clusterNum,uint8_t *buf,int32_t *FATentry)
- 
+
    FunctionType:  Reentrant
 
    Inputs:        1) Device number
-				  2) FATsectorNo
-				  3) FATntryoffset
-				  4) cluster no.
+                  2) FATsectorNo
+                  3) FATntryoffset
+                  4) cluster no.
                   5) pointer to buffer
-                  6) pointer to FATentry 
+                  6) pointer to FATentry
 
-   Outputs:       Returns FATentry of the given cluster no. 
+   Outputs:       Returns FATentry of the given cluster no.
 
-   Description:   Determines FATentry for the given cluster no. from the FAT sector 
+   Description:   Determines FATentry for the given cluster no. from the FAT sector
                   and FATentryoffset depending upon FAT type.
 <
 ----------------------------------------------------------------------------*/
@@ -540,17 +540,17 @@ uint8_t *ReadFAT12Entry(int32_t DeviceNum, int32_t * FATsectorNo, int32_t FATntr
 
 /*----------------------------------------------------------------------------
 >  Function Name:  int32_t ReadFATentry(int32_t Devicenum,int32_t FATsector,int32_t FATNtryoffset,int32_t clusterno)
- 
+
    FunctionType:   Reentrant
 
    Inputs:         1) Device number
-				   2) FATsector
-				   3) FATNtryoffset
-				   4) cluster no.
+                   2) FATsector
+                   3) FATNtryoffset
+                   4) cluster no.
 
    Outputs:        Returns FATentry of the given cluster no.
 
-   Description:    Determines FATentry for the given cluster no. from the FAT sector 
+   Description:    Determines FATentry for the given cluster no. from the FAT sector
                    and FATentryoffset depending upon FAT type.
 <
 ----------------------------------------------------------------------------*/
@@ -700,9 +700,9 @@ int32_t Totalfreecluster(int32_t DeviceNum)
         free(buf);              // release the cache buffer
     } else {
         totalfreeclusters = TotalfreeclusterFAT16(DeviceNum);
-        MODULE_ASSERT(totalfreeclusters >= 0);  // catch error code in DEBUG builds. 
+        MODULE_ASSERT(totalfreeclusters >= 0);  // catch error code in DEBUG builds.
     }
-    MODULE_ASSERT(totalfreeclusters >= 0);  // catch error code in DEBUG builds. 
+    MODULE_ASSERT(totalfreeclusters >= 0);  // catch error code in DEBUG builds.
     return (totalfreeclusters);
 
 }
@@ -827,18 +827,18 @@ int32_t TotalfreeclusterFAT16(int32_t DeviceNum)
 /*----------------------------------------------------------------------------
 >  Function Name: RtStatus_t  WriteFATentry(int32_t DeviceNum,
     int32_t FATsector,int32_t FATNtryoffset,int32_t clusterno,int32_t writentry)
- 
+
    FunctionType:  Reentrant
 
    Inputs:        1) Device number
-				  2) FATsector
-				  3) FATNtryoffset
-				  4) cluster no.
-				  5) write entry
+                  2) FATsector
+                  3) FATNtryoffset
+                  4) cluster no.
+                  5) write entry
 
    Outputs:       Returns SUCCESS else an error code
 
-   Description:   Writes FAT entry  for the given cluster no. at the given FAT sector 
+   Description:   Writes FAT entry  for the given cluster no. at the given FAT sector
                   and FATentryoffset depending upon FAT type.
 <
 ----------------------------------------------------------------------------*/
@@ -897,7 +897,7 @@ RtStatus_t WriteFATentry(int32_t DeviceNum, int32_t FATsector, int32_t FATNtryof
            of this sector and high byte to the first byte of next sector */
 
         if (FATNtryoffset == (MediaTable[DeviceNum].BytesPerSector - 1)) {
-            FATentry = writeFATntry & 0x00FF;   // low byte 
+            FATentry = writeFATntry & 0x00FF;   // low byte
             if ((RetValue =
                  FSWriteSector(DeviceNum, FATsector, FATNtryoffset, (uint8_t *) & FATentry, 0, 1,
                                WRITE_TYPE_RANDOM)) < 0) {

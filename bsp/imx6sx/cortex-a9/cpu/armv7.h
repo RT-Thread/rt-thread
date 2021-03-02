@@ -4,43 +4,43 @@
 /* the exception stack without VFP registers */
 struct rt_hw_exp_stack
 {
-	unsigned long r0;
-	unsigned long r1;
-	unsigned long r2;
-	unsigned long r3;
-	unsigned long r4;
-	unsigned long r5;
-	unsigned long r6;
-	unsigned long r7;
-	unsigned long r8;
-	unsigned long r9;
-	unsigned long r10;
-	unsigned long fp;
-	unsigned long ip;
-	unsigned long sp;
-	unsigned long lr;
-	unsigned long pc;
-	unsigned long cpsr;
+    unsigned long r0;
+    unsigned long r1;
+    unsigned long r2;
+    unsigned long r3;
+    unsigned long r4;
+    unsigned long r5;
+    unsigned long r6;
+    unsigned long r7;
+    unsigned long r8;
+    unsigned long r9;
+    unsigned long r10;
+    unsigned long fp;
+    unsigned long ip;
+    unsigned long sp;
+    unsigned long lr;
+    unsigned long pc;
+    unsigned long cpsr;
 };
 
 struct rt_hw_stack
 {
-	unsigned long cpsr;
-	unsigned long r0;
-	unsigned long r1;
-	unsigned long r2;
-	unsigned long r3;
-	unsigned long r4;
-	unsigned long r5;
-	unsigned long r6;
-	unsigned long r7;
-	unsigned long r8;
-	unsigned long r9;
-	unsigned long r10;
-	unsigned long fp;
-	unsigned long ip;
-	unsigned long lr;
-	unsigned long pc;
+    unsigned long cpsr;
+    unsigned long r0;
+    unsigned long r1;
+    unsigned long r2;
+    unsigned long r3;
+    unsigned long r4;
+    unsigned long r5;
+    unsigned long r6;
+    unsigned long r7;
+    unsigned long r8;
+    unsigned long r9;
+    unsigned long r10;
+    unsigned long fp;
+    unsigned long ip;
+    unsigned long lr;
+    unsigned long pc;
 };
 
 #define USERMODE    0x10

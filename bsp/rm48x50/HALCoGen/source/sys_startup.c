@@ -68,19 +68,19 @@ extern void main(void);
 */
 void memoryInit(uint32 ram)
 {
-	/* Enable Memory Hardware Initialization */
-	systemREG1->MINITGCR = 0xAU;
+    /* Enable Memory Hardware Initialization */
+    systemREG1->MINITGCR = 0xAU;
 
     /* Enable Memory Hardware Initialization for selected RAM's */
-	systemREG1->MSINENA  = ram;
+    systemREG1->MSINENA  = ram;
 
-	/* Wait until Memory Hardware Initialization complete */
-	while((systemREG1->MSTCGSTAT & 0x00000100U) != 0x00000100U)
-	{
-	}/* Wait */
+    /* Wait until Memory Hardware Initialization complete */
+    while((systemREG1->MSTCGSTAT & 0x00000100U) != 0x00000100U)
+    {
+    }/* Wait */
 
-	/* Disable Memory Hardware Initialization */
-	systemREG1->MINITGCR = 0x5U;
+    /* Disable Memory Hardware Initialization */
+    systemREG1->MINITGCR = 0x5U;
 }
 
 void _c_int00(void)

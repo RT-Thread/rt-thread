@@ -53,11 +53,11 @@
 
 #define FS_USE_MALLOC 1
 
-#define SEEK_SET           	0
+#define SEEK_SET               0
 #define SEEK_CUR            1
 #define SEEK_END            2
 
-#define INVALID_FILESYSTEM	      (WORD)(3)
+#define INVALID_FILESYSTEM          (WORD)(3)
 
 #ifndef MAX_FILENAME_LENGTH
 #define MAX_FILENAME_LENGTH 256
@@ -113,28 +113,28 @@ typedef struct {
 // Externs
 ////////////////////////////////////////////////////////////////////////////////
 
-//! \brief Maximum number of drives supported by the file system. 
-//! 
+//! \brief Maximum number of drives supported by the file system.
+//!
 //! Typically, \c maxdevices is 2.
 extern const int32_t maxdevices;
 
 //! \brief Maximum number of handles available in the file system.
-//! 
-//! The number of handles available to the user is maxhandles - 2. 
-//! Two handles are reserved by the file system for internal use only. 
-//! The number of handles decides the number of files, which can 
+//!
+//! The number of handles available to the user is maxhandles - 2.
+//! Two handles are reserved by the file system for internal use only.
+//! The number of handles decides the number of files, which can
 //! simultaneously be open. Typically, \c maxhandles is 16.
 extern const int32_t maxhandles;
 
-//! \brief Total number of cache buffers. 
-//! 
-//! Increasing the number of cache buffers improves the performance of 
-//! the file system when several threads are accessing the file system. 
+//! \brief Total number of cache buffers.
+//!
+//! Increasing the number of cache buffers improves the performance of
+//! the file system when several threads are accessing the file system.
 //! Typically, \c maxcaches is 8.
 extern const int32_t maxcaches;
 
 //! \brief Assigns a drive letter to a drive.
-//! 
+//!
 //! For example, in the following sample code, \n
 //!
 //! \c A is assigned to drive 0,\n
@@ -171,14 +171,14 @@ extern "C" {
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Redirects an Fclose request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fclose request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber Handle of the file to close
-//!         
+//!
 //! \return Value of the steering function or an error.
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //!
@@ -189,16 +189,16 @@ extern "C" {
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Redirects an Fread request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fread request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber   Handle of the file to read from
 //! \param[out] pBuffer        Buffer in which the data to be read is placed
 //! \param[in]  numBytesToRead Number of bytes to read from the file
-//!                  
+//!
 //! \return Number of bytes read if the steering function was successful or an RtStatus_t error.
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //!
@@ -209,16 +209,16 @@ extern "C" {
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Redirects an Fwrite request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fwrite request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber   Handle of the file to write to
 //! \param[in]  pBuffer        Buffer holding the data to be written
 //! \param[in]  numBytesToWrite Number of bytes to write to the file
-//!                  
+//!
 //! \return Number of bytes read if the steering function was successful or an RtStatus_t error.
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //!
@@ -229,16 +229,16 @@ extern "C" {
 
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief Redirects an Fseek request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fseek request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber   Handle of the file to seek
 //! \param[in]  numBytesToSeek Relative number of bytes to seek
 //! \param[in]  seekPosition   Value indicating where to seek from
-//!                  
+//!
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //! \retval RtStatus_t The return value of the steering function
 //! \internal
@@ -256,7 +256,7 @@ extern "C" {
 //!
 //!     -   "r"     =   open for reading only
 //!     -   "r+"        =   same as "r", also allows writing
-//!     -   "w"     =   open for writing only, file will be created if it does 
+//!     -   "w"     =   open for writing only, file will be created if it does
 //!                     not exist, and will be overwritten if it does exist
 //!     -   "w+"        =   same as "w", also allows reading
 //!     -   "a"     =   open for appending to end of file, upon opening
@@ -270,7 +270,7 @@ extern "C" {
 //!
 //!  Long file name considerations
 //!
-//!    
+//!
 //!  When creating a file (opening it with either "w" or "w+" modes) the
 //!  FAT file system uses the following considerations to determine whether
 //!  the file name will be stored on the media with a short name only (older
@@ -287,7 +287,7 @@ extern "C" {
 //! -   If the filespec or the extension contains a space character or any one of +,;=[](plus-sign,comma,semi-colon,
 //!     equal-sign,open-brace,close-brace) then a long file name is created.
 //!
-//! -   If a long file name is not used, the filepec and extension are converted 
+//! -   If a long file name is not used, the filepec and extension are converted
 //!     to upper case, and the resulting short file name is created.
 //!
 //!
@@ -309,7 +309,7 @@ extern "C" {
 //!
 //!     -   "r"     =   open for reading only
 //!     -   "r+"        =   same as "r", also allows writing
-//!     -   "w"     =   open for writing only, file will be created if it does 
+//!     -   "w"     =   open for writing only, file will be created if it does
 //!                     not exist, and will be overwritten if it does exist
 //!     -   "w+"        =   same as "w", also allows reading
 //!     -   "a"     =   open for appending to end of file, upon opening
@@ -365,7 +365,7 @@ extern "C" {
     int32_t FSDriveShutdown(int32_t DeviceNumber);
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief Determines free space by reading the all records 
+//! \brief Determines free space by reading the all records
 //!
 //! \return Status of the call.
 //! \retval 0 If successful.
@@ -432,7 +432,7 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief Searches for the given directoy path and if the path is found 
+//! \brief Searches for the given directoy path and if the path is found
 //!        then changes the current working directoy to the given directory path.
 //!
 //! \param[in] filepath Pointer to file name.
@@ -444,7 +444,7 @@ extern "C" {
     RtStatus_t Chdir(uint8_t * filepath);
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief Searches for the given directoy path for UNICODE string and if the path is found 
+//! \brief Searches for the given directoy path for UNICODE string and if the path is found
 //!        then changes the current working directoy to the given directory path.
 //!
 //! \param[in] filepath Pointer to the file name.
@@ -459,7 +459,7 @@ extern "C" {
     RtStatus_t Mkdirw(uint8_t * filepath);
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief Searches for the given directory, and if it is found, empties and 
+//! \brief Searches for the given directory, and if it is found, empties and
 //!        deletes the directory.
 //!
 //! \param[in] filepath Pointer to the file name.
@@ -471,8 +471,8 @@ extern "C" {
     RtStatus_t Rmdir(uint8_t * filepath);
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief Searches for the given directory, and if it is found, empties and 
-//!        deletes the directory. 
+//! \brief Searches for the given directory, and if it is found, empties and
+//!        deletes the directory.
 //!
 //! \param[in] filepath Pointer to the file name.
 //!
@@ -525,7 +525,7 @@ extern "C" {
 //!
 //! \return Status of the call.
 //! \retval 0 If successful.
-//! \retval Error 
+//! \retval Error
 //!
 //! \note This function should not be called from multiple tasks.
 ///////////////////////////////////////////////////////////////////////////////
@@ -541,7 +541,7 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief Finds the creation or modification date or time of 
+//! \brief Finds the creation or modification date or time of
 //!                  the file referenced by the given handle number.
 //!
 //! \param[in] HandleNumber           Handle number.
@@ -557,7 +557,7 @@ extern "C" {
                            DIR_TIME * dirtime);
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief Sets the creation or modification date or time of 
+//! \brief Sets the creation or modification date or time of
 //!                  the file referenced by the given handle to the specified date or time.
 //!
 //! \param[in] FilePath               Pointer to the file path.
@@ -567,7 +567,7 @@ extern "C" {
 //!
 //! \return Status of the call.
 //! \retval 0 If successful.
-//! \retval Error 
+//! \retval Error
 ///////////////////////////////////////////////////////////////////////////////
     RtStatus_t filesetdate(uint8_t * FilePath, int32_t crt_mod_date_time_para, DIR_DATE * dirdate,
                            DIR_TIME * dirtime);

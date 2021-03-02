@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	sleep.h
- * @brief	Sleep primitives for libmetal.
+ * @file    sleep.h
+ * @brief    Sleep primitives for libmetal.
  */
 
 #ifndef __METAL_SLEEP__H__
@@ -31,7 +31,7 @@ extern "C" {
  */
 static inline int metal_sleep_usec(unsigned int usec)
 {
-	return __metal_sleep_usec(usec);
+    return __metal_sleep_usec(usec);
 }
 
 /** @} */

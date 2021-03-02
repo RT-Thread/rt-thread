@@ -50,24 +50,24 @@
 /* Setup UTICK */
 void Chip_UTICK_SetTick(LPC_UTICK_T *pUTICK, uint32_t tick_value, bool repeat)
 {
-	if (repeat) {
-		tick_value |= UTICK_CTRL_REPEAT;
-	}
+    if (repeat) {
+        tick_value |= UTICK_CTRL_REPEAT;
+    }
 
-	pUTICK->CTRL = tick_value;
+    pUTICK->CTRL = tick_value;
 }
 
 /* Setup UTICK for the passed delay */
 void Chip_UTICK_SetDelayMs(LPC_UTICK_T *pUTICK, uint32_t delayMs, bool repeat)
 {
-	uint32_t tick_value = (delayMs * Chip_Clock_GetWDTOSCRate()) / 1000;
+    uint32_t tick_value = (delayMs * Chip_Clock_GetWDTOSCRate()) / 1000;
 
-	if (repeat) {
-		tick_value |= UTICK_CTRL_REPEAT;
-	}
-	else {
-		tick_value &= ~UTICK_CTRL_REPEAT;
-	}
+    if (repeat) {
+        tick_value |= UTICK_CTRL_REPEAT;
+    }
+    else {
+        tick_value &= ~UTICK_CTRL_REPEAT;
+    }
 
-	pUTICK->CTRL = tick_value;
+    pUTICK->CTRL = tick_value;
 }

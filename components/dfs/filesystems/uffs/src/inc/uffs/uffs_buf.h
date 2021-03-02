@@ -1,10 +1,10 @@
 /*
   This file is part of UFFS, the Ultra-low-cost Flash File System.
-  
+
   Copyright (C) 2005-2009 Ricky Zheng <ricky_gz_zheng@yahoo.co.nz>
 
   UFFS is free software; you can redistribute it and/or modify it under
-  the GNU Library General Public License as published by the Free Software 
+  the GNU Library General Public License as published by the Free Software
   Foundation; either version 2 of the License, or (at your option) any
   later version.
 
@@ -12,7 +12,7 @@
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
   or GNU Library General Public License, as applicable, for more details.
- 
+
   You should have received a copy of the GNU General Public License
   and GNU Library General Public License along with UFFS; if not, write
   to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
@@ -25,12 +25,12 @@
   by the GNU General Public License. However the source code for this
   file must still be made available in accordance with section (3) of
   the GNU General Public License v2.
- 
+
   This exception does not invalidate any other reasons why a work based
   on this file might be covered by the GNU General Public License.
 */
 
-/** 
+/**
  * \file uffs_buf.h
  * \brief page buffers
  * \author Ricky Zheng
@@ -47,34 +47,34 @@
 #ifdef __cplusplus
 extern "C"{
 #endif
-	
-#define CLONE_BUF_MARK		0xffff		//!< set uffs_BufSt::ref_count to this for a 'cloned' buffer
+
+#define CLONE_BUF_MARK        0xffff        //!< set uffs_BufSt::ref_count to this for a 'cloned' buffer
 
 /** for uffs_BufSt::mark */
-#define UFFS_BUF_EMPTY		0			//!< buffer is empty
-#define UFFS_BUF_VALID		1			//!< buffer is holding valid data
-#define UFFS_BUF_DIRTY		2			//!< buffer data is modified
+#define UFFS_BUF_EMPTY        0            //!< buffer is empty
+#define UFFS_BUF_VALID        1            //!< buffer is holding valid data
+#define UFFS_BUF_DIRTY        2            //!< buffer data is modified
 
 /** for uffs_BufSt::ext_mark */
-#define UFFS_BUF_EXT_MARK_TRUNC_TAIL 1	//!< the last page of file (when truncating a file)
+#define UFFS_BUF_EXT_MARK_TRUNC_TAIL 1    //!< the last page of file (when truncating a file)
 
 /** uffs page buffer */
 struct uffs_BufSt{
-	struct uffs_BufSt *next;			//!< link to next buffer
-	struct uffs_BufSt *prev;			//!< link to previous buffer
-	struct uffs_BufSt *next_dirty;		//!< link to next dirty buffer
-	struct uffs_BufSt *prev_dirty;		//!< link to previous dirty buffer
-	u8 type;							//!< #UFFS_TYPE_DIR or #UFFS_TYPE_FILE or #UFFS_TYPE_DATA
-	u8 ext_mark;						//!< extension mark. 
-	u16 parent;							//!< parent serial
-	u16 serial;							//!< serial 
-	u16 page_id;						//!< page id 
-	u16 mark;							//!< #UFFS_BUF_EMPTY or #UFFS_BUF_VALID, or #UFFS_BUF_DIRTY ?
-	u16 ref_count;						//!< reference counter, or #CLONE_BUF_MARK for a cloned buffer
-	u16 data_len;						//!< length of data
-	u16 check_sum;						//!< checksum field
-	u8 * data;							//!< data buffer
-	u8 * header;						//!< header
+    struct uffs_BufSt *next;            //!< link to next buffer
+    struct uffs_BufSt *prev;            //!< link to previous buffer
+    struct uffs_BufSt *next_dirty;        //!< link to next dirty buffer
+    struct uffs_BufSt *prev_dirty;        //!< link to previous dirty buffer
+    u8 type;                            //!< #UFFS_TYPE_DIR or #UFFS_TYPE_FILE or #UFFS_TYPE_DATA
+    u8 ext_mark;                        //!< extension mark.
+    u16 parent;                            //!< parent serial
+    u16 serial;                            //!< serial
+    u16 page_id;                        //!< page id
+    u16 mark;                            //!< #UFFS_BUF_EMPTY or #UFFS_BUF_VALID, or #UFFS_BUF_DIRTY ?
+    u16 ref_count;                        //!< reference counter, or #CLONE_BUF_MARK for a cloned buffer
+    u16 data_len;                        //!< length of data
+    u16 check_sum;                        //!< checksum field
+    u8 * data;                            //!< data buffer
+    u8 * header;                        //!< header
 };
 
 #define uffs_BufIsFree(buf) (buf->ref_count == 0 ? U_TRUE : U_FALSE)
@@ -97,7 +97,7 @@ uffs_Buf * uffs_BufFind(uffs_Device *dev, u16 parent, u16 serial, u16 page_id);
 
 /** find the page buffer from #start (not affect the reference counter) */
 uffs_Buf * uffs_BufFindFrom(uffs_Device *dev, uffs_Buf *start,
-						u16 parent, u16 serial, u16 page_id);
+                        u16 parent, u16 serial, u16 page_id);
 
 /** put page buffer back to pool, called in pair with #uffs_Get,#uffs_GetEx or #uffs_BufNew */
 URET uffs_BufPut(uffs_Device *dev, uffs_Buf *buf);

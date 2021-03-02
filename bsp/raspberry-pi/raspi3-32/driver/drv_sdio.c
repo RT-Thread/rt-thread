@@ -125,7 +125,7 @@ rt_err_t sd_status(struct sdhci_pdata_t * pdat, unsigned int mask)
     else if (read32(pdat->virt + EMMC_INTERRUPT) & INT_ERROR_MASK)
     {
         return  -RT_ERROR;
-    }  
+    }
     return RT_EOK;
 }
 

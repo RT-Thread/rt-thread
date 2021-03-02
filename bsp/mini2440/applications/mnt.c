@@ -19,9 +19,9 @@ int mnt_init(void)
         rt_thread_mdelay(500);
     }
 
-    if(dfs_mount("sd0", "/", "elm", 0, 0) == 0)                                                                                                                                                        
+    if(dfs_mount("sd0", "/", "elm", 0, 0) == 0)
     {
-        rt_kprintf("File System initialized!\n");                                                                                                                                                       
+        rt_kprintf("File System initialized!\n");
     }
     else
     {

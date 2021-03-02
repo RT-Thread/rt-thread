@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/higherapi/Chdir.c $                                        
- $Revision: 7 $                                       
- $Date: 9/13/03 12:22p $                                           
+ $Archive: /Fatfs/FileSystem/Fat32/higherapi/Chdir.c $
+ $Revision: 7 $
+ $Date: 9/13/03 12:22p $
  Description: Chdir.c
- Notes:	This file read provides higherlevel API function to change the current working directory
+ Notes:    This file read provides higherlevel API function to change the current working directory
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -47,7 +47,7 @@
 #include "diroffset.h"
 #include <string.h>
 
-// Previously the size of the following global variable was 
+// Previously the size of the following global variable was
 // MAX_FILENAME_LENGTH*2.  That's not nearly enough since
 // Artist name and Album name can both be of size
 // MAX_FILENAME_LENGTH.
@@ -56,7 +56,7 @@
 // This padding is here to provide a safety buffer if code writes to negative offsets
 // from the start of gCurrentWorkingdirectory. This is a possibility because the cwd
 // is treated as both ASCII and UTF-16 at the same time, interchangeably even
-// within a single function. Not good.  
+// within a single function. Not good.
 uint8_t __fs_padding[4];
 
 uint8_t gCurrentWorkingdirectory[MAX_FILENAME_LENGTH * 2];
@@ -69,11 +69,11 @@ uint8_t gCurrentWorkingdirectory[MAX_FILENAME_LENGTH * 2];
    FunctionType:   Reentrant
 
    Inputs:         1) Pointer to file name
-				   
-   Outputs:        SUCCESS or error code if error occurs      
-   
-   Description:    Searches for the given directoy path and if the path is found 
-                   then changes the current working directoy to the given directory path 
+
+   Outputs:        SUCCESS or error code if error occurs
+
+   Description:    Searches for the given directoy path and if the path is found
+                   then changes the current working directoy to the given directory path
 ----------------------------------------------------------------------------*/
 RtStatus_t Chdir(uint8_t * filepath)
 {
@@ -190,11 +190,11 @@ RtStatus_t Chdir(uint8_t * filepath)
    FunctionType:   Reentrant
 
    Inputs:         1) Pointer to file name
-				   
-   Outputs:        SUCCESS or error code if error occurs      
-   
-   Description:    Searches for the given directoy path for UTF16 string and if the path is found 
-                   then changes the current working directoy to the given directory path 
+
+   Outputs:        SUCCESS or error code if error occurs
+
+   Description:    Searches for the given directoy path for UTF16 string and if the path is found
+                   then changes the current working directoy to the given directory path
 ----------------------------------------------------------------------------*/
 RtStatus_t Chdirw(uint8_t * filepath)
 {
@@ -304,9 +304,9 @@ RtStatus_t Chdirw(uint8_t * filepath)
    FunctionType:  Reentrant
 
    Inputs:        void
-				   
-   Outputs:       Pointer to current working directory buffer      
-   
+
+   Outputs:       Pointer to current working directory buffer
+
    Description:   This function returns the pointer to the gCurrentWorkingdirectory
                   string buffer.
 ----------------------------------------------------------------------------*/
@@ -327,7 +327,7 @@ uint8_t *Getcwd(void)
 
    Inputs:         1) Handle number
                    2) Pointer to file name
-				   3) string type
+                   3) string type
                    4) start position
                    5) index
 
@@ -408,11 +408,11 @@ RtStatus_t Changepath(int32_t HandleNumber, uint8_t * filepath, int32_t stringty
    FunctionType:  Reentrant
 
    Inputs:        1)HandleNumber
-                 
+
    Outputs:       Returns SUCCESS or an error code if an Error occurs
 
    Description:   Sets the handle to Root directory of given device number
-<	 
+<
 ----------------------------------------------------------------------------*/
 RtStatus_t ChangeToRootdirectory(int32_t HandleNumber)
 {
@@ -454,18 +454,18 @@ RtStatus_t ChangeToRootdirectory(int32_t HandleNumber)
 
    Inputs:         1) Handle Number
                    2) Pointer to file name
-				   3) String type
+                   3) String type
                    4) Flag
                    5) Length
                    6) Index
-                   7) Pointer to buffer 
-                   8) bInputIsSFN 
-				   
+                   7) Pointer to buffer
+                   8) bInputIsSFN
+
    Outputs:        Starting cluster of the directory found or an error code
-                   if function fails. 
-   
-   Description:    This function checks the directory record from record number 0 
-                   to the end of directory for matching the file/directory name.  
+                   if function fails.
+
+   Description:    This function checks the directory record from record number 0
+                   to the end of directory for matching the file/directory name.
 ----------------------------------------------------------------------------*/
 int32_t Searchdirectory(int32_t HandleNumber, uint8_t * file, int32_t stringtype, int32_t Flag,
                         int32_t length, int32_t index, uint8_t * Buffer, bool bSearchFlag,
@@ -508,7 +508,7 @@ int32_t Searchdirectory(int32_t HandleNumber, uint8_t * file, int32_t stringtype
         PutWord(Shortname, 0x2e2e, 0);
         PutByte(Shortname, 0, 2);
     } else {
-        if (stringtype == kDBCSEncoding)    //Check whether string type is kDBCSEncoding or kUTF16Encoding 
+        if (stringtype == kDBCSEncoding)    //Check whether string type is kDBCSEncoding or kUTF16Encoding
         {
             length = DiscardTrailigPeriods(file, length, index, 1);
             Flag1 = ConverToShortname(file, (uint8_t *) Shortname, index, length);
@@ -610,13 +610,13 @@ int32_t Searchdirectory(int32_t HandleNumber, uint8_t * file, int32_t stringtype
     free(Shortname);
 #endif
 
-    //change is applied upto end of file    
+    //change is applied upto end of file
     // changes added to support special short file names  16/9/2004
     // When five or more files exist that can result in duplicate short file names, Windows XP Professional
     // uses a slightly different method for creating short file names.
     // For the fifth and subsequent files, Windows XP Professional:
-    //    Uses only the first two letters of the long file name. 
-    //Generates the next four letters of the short file name by mathematically manipulating the remaining letters of the long file name. 
+    //    Uses only the first two letters of the long file name.
+    //Generates the next four letters of the short file name by mathematically manipulating the remaining letters of the long file name.
     // to support this we have to again go for long directory name match if string type is kDBCSEncoding and if this function is not called from setshortfilename()
 
     if (stringtype == kDBCSEncoding && Flag == 1) {
@@ -671,15 +671,15 @@ int32_t Searchdirectory(int32_t HandleNumber, uint8_t * file, int32_t stringtype
 
    FunctionType:  Reentrant
 
-   Inputs:        1) Handle Number 
+   Inputs:        1) Handle Number
                   2) Pointer to file name
                   3) Stringtype
                   4) Index
-				   
-   Outputs:       Fields of Handle is set according to the given file path. 
+
+   Outputs:       Fields of Handle is set according to the given file path.
 
    Description:   This function searches whether the file path is from root directory,
-                  current working directory or parent directory based on the 
+                  current working directory or parent directory based on the
                   file path given. It sets the given handle based on this search.
 ----------------------------------------------------------------------------*/
 int32_t SetHandleforsearch(int32_t HandleNumber, uint8_t * filepath, int32_t stringtype,
@@ -748,7 +748,7 @@ int32_t SetHandleforsearch(int32_t HandleNumber, uint8_t * filepath, int32_t str
         if (Handle[HandleNumber].Device < 0)
             return ERROR_OS_FILESYSTEM_INVALID_DIR_PATH;
 
-        Handle[HandleNumber].Mode = (FileSystemModeTypes_t) (DIRECTORY_MODE + READ_MODE + WRITE_MODE);  // set mode to directory to read the directory 
+        Handle[HandleNumber].Mode = (FileSystemModeTypes_t) (DIRECTORY_MODE + READ_MODE + WRITE_MODE);  // set mode to directory to read the directory
         if ((ChangeToRootdirectory(HandleNumber)) < 0)
             return ERROR_OS_FILESYSTEM_INVALID_DIR_PATH;
         if (stringtype == kDBCSEncoding) {
@@ -763,7 +763,7 @@ int32_t SetHandleforsearch(int32_t HandleNumber, uint8_t * filepath, int32_t str
 
     else if (Firstchar == '/' || Firstword == '/') {
         Handle[HandleNumber].Device = Handle[0].Device;
-        Handle[HandleNumber].Mode = (FileSystemModeTypes_t) (DIRECTORY_MODE + READ_MODE + WRITE_MODE);  // set mode to directory to read the directory 
+        Handle[HandleNumber].Mode = (FileSystemModeTypes_t) (DIRECTORY_MODE + READ_MODE + WRITE_MODE);  // set mode to directory to read the directory
         if ((ChangeToRootdirectory(HandleNumber)) < 0)
             return ERROR_OS_FILESYSTEM_INVALID_DIR_PATH;
         if (stringtype == kDBCSEncoding) {
@@ -778,7 +778,7 @@ int32_t SetHandleforsearch(int32_t HandleNumber, uint8_t * filepath, int32_t str
 
     else {
         Handle[HandleNumber] = Handle[CWD_HANDLE];
-        Handle[CWD_HANDLE].Mode = (FileSystemModeTypes_t) (DIRECTORY_MODE + READ_MODE + WRITE_MODE);    // set mode to directory to read the directory 
+        Handle[CWD_HANDLE].Mode = (FileSystemModeTypes_t) (DIRECTORY_MODE + READ_MODE + WRITE_MODE);    // set mode to directory to read the directory
 
         if (Firstchar == 0x2E || Firstword == 0x2E) {
             if (secondchar == 0x2E || secondword == 0x2E) {
@@ -814,9 +814,9 @@ int32_t SetHandleforsearch(int32_t HandleNumber, uint8_t * filepath, int32_t str
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name
-				   
-   Outputs:       SUCCESS or an error code if error occurs      
-   
+
+   Outputs:       SUCCESS or an error code if error occurs
+
    Description:   Searches for given directory path, if path is found then creates
                   given directory in the directoy path.
 ----------------------------------------------------------------------------*/
@@ -867,7 +867,7 @@ RtStatus_t Mkdir(uint8_t * filepath)
     /* remove this, not required, due to compiler problem */
     index = 0;
     /* create given directory in the directory referenced by the handle */
-    // Modified by SGTL_HK 
+    // Modified by SGTL_HK
     //if((Retvalue = CreateDirectory(HandleNumber,filepath,strlen1,currentposition))< 0)
     if ((Retvalue =
          CreateDirectory(HandleNumber, filepath, strlen1, currentposition, kDBCSEncoding)) < 0) {
@@ -886,9 +886,9 @@ RtStatus_t Mkdir(uint8_t * filepath)
    FunctionType:   Reentrant
 
    Inputs:        1) Pointer to file name (uint8_t)
-				   
-   Outputs:       FS_SUCCESS OR error code if error occurs      
-   
+
+   Outputs:       FS_SUCCESS OR error code if error occurs
+
    Description:   Searches for given directory path, if path is found then creates
                   given directory in the directoy path.
 ----------------------------------------------------------------------------*/
@@ -973,10 +973,10 @@ RtStatus_t Mkdirw(uint8_t * filepath)
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name
-				   
-   Outputs:       SUCCESS or an error code if error occurs      
-   
-   Description:   Searches for the given directory and if it is found empty 
+
+   Outputs:       SUCCESS or an error code if error occurs
+
+   Description:   Searches for the given directory and if it is found empty
                   then delete the directory.
 ----------------------------------------------------------------------------*/
 RtStatus_t Rmdir(uint8_t * filepath)
@@ -1004,7 +1004,7 @@ RtStatus_t Rmdir(uint8_t * filepath)
     }
 
     Strlen = Strlength(filepath);
-    /* If directory is root directory or parent directory then it can not be 
+    /* If directory is root directory or parent directory then it can not be
        removed. Return Error */
     if ((Retval == END_OF_DIR_PATH) || (Strlen == index)) {
         Freehandle(HandleNumber);
@@ -1080,7 +1080,7 @@ RtStatus_t Rmdir(uint8_t * filepath)
     }
     /* update the handle to associate with the directory to be deleted */
     UpdateHandle(HandleNumber, clusterno);
-    /* Delete the contents of the directory (i.e. Mark all the clusters occupied by 
+    /* Delete the contents of the directory (i.e. Mark all the clusters occupied by
        the directory as zero in FAT Table). */
     if ((Retval = DeleteContent(HandleNumber, 0)) < 0) {
         Freehandle(HandleNumber);
@@ -1098,9 +1098,9 @@ RtStatus_t Rmdir(uint8_t * filepath)
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name
-				   
-   Outputs:       SUCCESS or an error code if error occurs      
-   
+
+   Outputs:       SUCCESS or an error code if error occurs
+
    Description:   Searches for the given directory and if it is found empty then
                   delete the directory. It considers the string as UTF16.
 ----------------------------------------------------------------------------*/
@@ -1126,7 +1126,7 @@ RtStatus_t Rmdirw(uint8_t * filepath)
         return ERROR_OS_FILESYSTEM_INVALID_DIR_PATH;
     }
     Strlen = StrlengthW(filepath);
-    /* If directoy is root directory or parent directory then it can not be 
+    /* If directoy is root directory or parent directory then it can not be
        removed. Return Error  */
     if ((Retval == END_OF_DIR_PATH) || (Strlen == index)) {
         Freehandle(HandleNumber);
@@ -1195,7 +1195,7 @@ RtStatus_t Rmdirw(uint8_t * filepath)
     }
     /* update the handle to associate with the directory to be deleted */
     UpdateHandle(HandleNumber, clusterno);
-    /* Delete the contents of the directory (i.e. Mark all the clusters occupied by 
+    /* Delete the contents of the directory (i.e. Mark all the clusters occupied by
        the directory as zero in FAT Table). */
     if ((Retval = DeleteContent(HandleNumber, 0)) < 0) {
         Freehandle(HandleNumber);
@@ -1215,8 +1215,8 @@ RtStatus_t Rmdirw(uint8_t * filepath)
    Inputs:        1)HandleNumber
                   2)Pointer to File Name
                   3)length(end of string from file path)
-                  4)index(points to start of the string from file path)  
-		          5)stringtype(kUTF16Encoding or kDBCSEncoding)    
+                  4)index(points to start of the string from file path)
+                  5)stringtype(kUTF16Encoding or kDBCSEncoding)
    Outputs:       Return HandleNumber if Success, or ERROR CODE if  Error Occurs
 
    Description:   Creates a new Directory  in a given directory
@@ -1350,7 +1350,7 @@ RtStatus_t CreateDirectory(int32_t HandleNumber, uint8_t * Filepath, int32_t len
 #endif
         return ClusterNumber;
     }
-    //Copy the handle    
+    //Copy the handle
     TempHandleActive = Handle[HandleNumber].HandleActive;
     TempDevice = Handle[HandleNumber].Device;
     TempMode = (FileSystemModeTypes_t) Handle[HandleNumber].Mode;
@@ -1457,13 +1457,13 @@ RtStatus_t CreateDirectory(int32_t HandleNumber, uint8_t * Filepath, int32_t len
 
 >  Function Name:  int32_t SetCWDHandle (int32_t DeviceNo)
 
-   FunctionType:  
+   FunctionType:
 
    Inputs:         Device number to set the cwd handle to root dir of
 
    Outputs:        Returns 0 for SUCCESS
 
-   Description:     
+   Description:
 <
 --------- -------------------------------------------------------------------*/
 int32_t SetCWDHandle(int32_t DeviceNo)

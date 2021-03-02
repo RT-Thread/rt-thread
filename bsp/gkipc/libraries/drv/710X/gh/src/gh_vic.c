@@ -70,7 +70,7 @@ GH_INLINE U32 GH_VIC_REG_ENCRYPT(U32 reg)
         : "0" (reg)\
         : "memory");
 #endif
-	return reg;
+    return reg;
 }
 
 GH_INLINE U32 GH_VIC_REG_DECRYPT(U32 reg)
@@ -87,7 +87,7 @@ GH_INLINE U32 GH_VIC_REG_DECRYPT(U32 reg)
         : "0" (reg)\
         : "memory");
 #endif
-	return reg;
+    return reg;
 }
 
 
@@ -138,7 +138,7 @@ GH_INLINE U32  GH_VIC_get_RawSts(U8 index)
 /*----------------------------------------------------------------------------*/
 GH_INLINE void GH_VIC_set_Select(U8 index, U32 data)
 {
-		data=GH_VIC_REG_DECRYPT(data);
+        data=GH_VIC_REG_DECRYPT(data);
     *(volatile U32 *)(REG_VIC_SELECT_REAL + index * FIO_MOFFSET(VIC,0x0000D000)) = data;
     #if GH_VIC_ENABLE_DEBUG_PRINT
     GH_VIC_DEBUG_PRINT_FUNCTION( "WRREG(0x%08x,0x%08x); \\\\ [GH_VIC_set_Select] <-- 0x%08x\n",

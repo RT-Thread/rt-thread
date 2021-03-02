@@ -233,13 +233,13 @@ HAL_StatusTypeDef HAL_PCD_Init(PCD_HandleTypeDef *hpcd)
 
   hpcd->USB_Address = 0U;
   hpcd->State = HAL_PCD_STATE_READY;
-  
+
   /* Activate LPM */
   if (hpcd->Init.lpm_enable == 1U)
   {
     (void)HAL_PCDEx_ActivateLPM(hpcd);
   }
-  
+
   (void)USB_DevDisconnect(hpcd->Instance);
 
   return HAL_OK;
@@ -1207,7 +1207,7 @@ void HAL_PCD_IRQHandler(PCD_HandleTypeDef *hpcd)
       }
       __HAL_PCD_CLEAR_FLAG(hpcd, USB_OTG_GINTSTS_USBSUSP);
     }
-    
+
     /* Handle LPM Interrupt */
     if (__HAL_PCD_GET_FLAG(hpcd, USB_OTG_GINTSTS_LPMINT))
     {
@@ -1233,7 +1233,7 @@ void HAL_PCD_IRQHandler(PCD_HandleTypeDef *hpcd)
 #endif /* USE_HAL_PCD_REGISTER_CALLBACKS */
       }
     }
-    
+
     /* Handle Reset Interrupt */
     if (__HAL_PCD_GET_FLAG(hpcd, USB_OTG_GINTSTS_USBRST))
     {

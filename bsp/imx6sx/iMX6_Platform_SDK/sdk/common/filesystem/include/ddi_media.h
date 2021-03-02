@@ -96,14 +96,14 @@ typedef enum {
     kMediaStateAllocated
 } MediaState_t;
 
-//! \brief This initialization state type can be used to signify if media or drive 
+//! \brief This initialization state type can be used to signify if media or drive
 //! or FS init has been attempted yet and whether it succeeded.
-//! Note: See related SCSI_MEDIA_STATE (logical drive state) & its state machine 
+//! Note: See related SCSI_MEDIA_STATE (logical drive state) & its state machine
 //!       spec in scsi.h. and see g_eMtpExternalStoreState.
 typedef enum {
     eInitPending = 0,           // Default state indicates that init attempt hasn't completed yet, so can wait on it.
     eInitFailed,
-    eInitSucceeded,             // Initialized. 
+    eInitSucceeded,             // Initialized.
     eInitTerminated             // After a shutdown, the state of entity initialization is terminated.
 } InitializationState_t;
 
@@ -162,7 +162,7 @@ enum _logical_media_info {
 
     //! \brief The serial number value.
     //!
-    //! The length of this property is the value returned by getting the 
+    //! The length of this property is the value returned by getting the
     //! #kMediaInfoSizeOfSerialNumberInBytes selector.
     kMediaInfoSerialNumber = 8,
 
@@ -211,7 +211,7 @@ enum _logical_media_info {
     //! \brief Size in bytes of metadata portion of media sector. (uint32_t)
     //!
     //! If the media has sectors with metadata, such as with NAND pages, this value will be
-    //! the size in bytes of that metadata. 
+    //! the size in bytes of that metadata.
     kMediaInfoSectorMetadataSizeInBytes = 19,
 
     //! \brief Full size of the media's sectors in bytes. (uint32_t)
@@ -471,7 +471,7 @@ extern bool g_bFrameworkExternalDriveOrFsInit;
 extern InitializationState_t g_eFrameworkExternalMediaInit;
 
 ///////////////////////////////////////////////////////////////////////////////
-// 4 Public API accessor macros to check external 'media, drive, and FS' init status. 
+// 4 Public API accessor macros to check external 'media, drive, and FS' init status.
 ///////////////////////////////////////////////////////////////////////////////
 #if (!defined(WIN32))
 
@@ -481,11 +481,11 @@ extern InitializationState_t g_eFrameworkExternalMediaInit;
 // Returns true if the external drive is init and present, else returns false.
 #define IsExternalDriveInit() (g_bFrameworkExternalDriveOrFsInit)
 
-// After exiting the media init pending state (can poll for media init no longer pending), 
+// After exiting the media init pending state (can poll for media init no longer pending),
 // then this becomes valid so check this to see if media init result.
 #define IsExternalMediaPresentAndInit() ((g_eFrameworkExternalMediaInit==eInitSucceeded)?true:false)
 
-// if the external media's init attempt has not yet completed, returns true; 
+// if the external media's init attempt has not yet completed, returns true;
 // else the init attempt is complete so return false.
 #define IsExternalMediaInitPending()  ((g_eFrameworkExternalMediaInit==eInitPending)? true:false)
 
@@ -515,7 +515,7 @@ extern "C" {
 //! \retval SUCCESS     Initialization completed.
 //! \retval ERROR_DDI_LDL_LMEDIA_MEDIA_NOT_INITIALIZED
 //! \retval ERROR_OS_FILESYSTEM_FILESYSTEM_NOT_FOUND
-//! \retval ERROR_DDI_MEDIABUFMGR_ALLOC_FAILED 
+//! \retval ERROR_DDI_MEDIABUFMGR_ALLOC_FAILED
 //! \retval ERROR_OS_FILESYSTEM_MAX_DEVICES_EXCEEDED
 ////////////////////////////////////////////////////////////////////////////////
     RtStatus_t FSDataDriveInit(DriveTag_t tag);
@@ -702,7 +702,7 @@ extern "C" {
 ///////////////////////////////////////////////////////////////////////////////
 //! \brief For the requested logical drive, get the info Type into *pInfo.
 //!
-//! The Type must be supported by the media driver implementation such as  
+//! The Type must be supported by the media driver implementation such as
 //! NANDDataDriveGetInfo or ddi_mmc_DataDriveGetInfo.
 //!
 //! \param[in] tag Unique tag for the drive to operate on.
@@ -714,9 +714,9 @@ extern "C" {
     RtStatus_t DriveGetInfo(DriveTag_t tag, uint32_t Type, void *pInfo);
 
 ///////////////////////////////////////////////////////////////////////////////
-//! \brief For the requested logical drive, set the *pInfo of Type specified. 
+//! \brief For the requested logical drive, set the *pInfo of Type specified.
 //!
-//! Type must be supported by the media driver implementation such as  
+//! Type must be supported by the media driver implementation such as
 //! NANDDataDriveSetInfo or ddi_mmc_DataDriveSetInfo.
 //!
 //! \param[in] tag Unique tag for the drive to operate on.
@@ -816,10 +816,10 @@ extern "C" {
 //!
 //! \param[in] tag Unique tag for the drive to operate on.
 //!
-//! \retval SUCCESS 
-//! \retval ERROR_DDI_LDL_LDRIVE_INVALID_DRIVE_NUMBER 
+//! \retval SUCCESS
+//! \retval ERROR_DDI_LDL_LDRIVE_INVALID_DRIVE_NUMBER
 //! \retval ERROR_DDI_LDL_LDRIVE_NOT_INITIALIZED         NAND: this or above.
-//! \retval ERROR_DDI_LDL_LMEDIA_MEDIA_NOT_INITIALIZED   Possible for SD or MMC. 
+//! \retval ERROR_DDI_LDL_LMEDIA_MEDIA_NOT_INITIALIZED   Possible for SD or MMC.
 //! \retval MMC_DATA_DRIVE_ERROR_WRITE_SECTOR_FAIL       Possible for SD or MMC.
 //! \retval ERROR_DDI_LDL_LDRIVE_HARDWARE_FAILURE        Possible for SD or MMC.
 ////////////////////////////////////////////////////////////////////////////////

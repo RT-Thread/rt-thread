@@ -2,7 +2,7 @@
 *   @brief System Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -84,7 +84,7 @@ typedef volatile struct systemBase1
     uint32 BMMCR1;                 /* 0x00C4 */
     uint32 BMMCR2;                 /* 0x00C8 */
     uint32 MMUGCR;                 /* 0x00CC */
-	uint32 CLKCNTL;                /* 0x00D0 */
+    uint32 CLKCNTL;                /* 0x00D0 */
     uint32 ECPCNTL;                /* 0x00D4 */
     uint32 DSPGCR;                 /* 0x00D8 */
     uint32 DEVCR1;                 /* 0x00DC */
@@ -95,7 +95,7 @@ typedef volatile struct systemBase1
     uint32 DEV;                    /* 0x00F0 */
     uint32 SSIVEC;                 /* 0x00F4 */
     uint32 SSIF;                   /* 0x00F8 */
-    uint32 SSIR1;                  /* 0x00FC */	
+    uint32 SSIR1;                  /* 0x00FC */
 } systemBASE1_t;
 
 
@@ -136,11 +136,11 @@ typedef volatile struct systemBase2
     uint32   rsvd2[6U];     /* 0x000C */
     uint32 ECPCNTRL0;      /* 0x0024 */
     uint32   rsvd3[5U];     /* 0x0028 */
-    uint32 CLK2CNTL;       /* 0x003C */	
+    uint32 CLK2CNTL;       /* 0x003C */
     uint32 VCLKACON1;      /* 0x0040 */
     uint32  rsvd4[11U];     /* 0x0044 */
     uint32  CLKSLIP;       /* 0x0070 */
-    uint32  rsvd5[30U];   	 /* 0x0074 */
+    uint32  rsvd5[30U];        /* 0x0074 */
     uint32  EFC_CTLEN;     /* 0x00EC */
     uint32  DIEIDL_REG0;   /* 0x00F0 */
     uint32  DIEIDH_REG1;   /* 0x00F4 */

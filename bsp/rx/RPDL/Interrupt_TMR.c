@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62Nxx
-* File Name		: Interrupt_TMR.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for the Timer units
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name    : Interrupt program for RX62Nxx
+* File Name        : Interrupt_TMR.c
+* Version        : 1.02
+* Contents        : Interrupt handlers for the Timer units
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_tmr.h"
@@ -27,25 +27,25 @@
 /*""FUNC COMMENT""***************************************************
 * Module outline : Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_TMRn_XXX(void)
+* Declaration    : void Interrupt_TMRn_XXX(void)
 *-------------------------------------------------------------------
-* Function		: Interrupt processing function for Timer TMR channel n
+* Function        : Interrupt processing function for Timer TMR channel n
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: R_TmrOverflowFunc[n](), R_TmrCMAFunc[n]() or
-*				: R_TmrCMBFunc[n]() as appropriate.
+* Use function    : R_TmrOverflowFunc[n](), R_TmrCMAFunc[n]() or
+*                : R_TmrCMBFunc[n]() as appropriate.
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_TMR0_CMIA0

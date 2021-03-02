@@ -43,7 +43,7 @@ void show_freq(void)
     printf("CPU: %d kHz\n", get_main_clock(CPU_CLK)/1000);
     printf("DDR: %d kHz\n", get_main_clock(MMDC_CH0_AXI_CLK)/1000);
     printf("IPG: %d kHz\n", get_main_clock(IPG_CLK)/1000);
-    
+
     peri_clocks_t clk = UART1_MODULE_CLK + (g_debug_uart_port - HW_UART1);
     printf("Debug UART: %d Hz\n", get_peri_clock(clk));
 

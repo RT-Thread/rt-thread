@@ -2,7 +2,7 @@
 *   @brief LIN Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -159,22 +159,22 @@ enum linPinSelect
     PIN_LIN_RX = 1U
 };
 
-/** 
+/**
  *  @defgroup LIN LIN
  *  @brief Local Interconnect Network Module.
- *  
+ *
  *  The LIN standard is based on the SCI (UART) serial data link format. The communication concept is
  *  single-master/multiple-slave with a message identification for multi-cast transmission between any network
  *  nodes.
  *
- *	Related Files
+ *    Related Files
  *   - reg_lin.h
  *   - lin.h
  *   - lin.c
  *  @addtogroup LIN
  *  @{
  */
- 
+
 /* LIN Interface Functions */
 void     linInit(void);
 void     linSetFunctional(linBASE_t *lin, uint32 port);
@@ -200,7 +200,7 @@ void     linDisableLoopback(linBASE_t *lin);
 *   @param[in] flags - copy of error interrupt flags
 *
 * This is a callback that is provided by the application and is called upon
-* an interrupt.  The parameter passed to the callback is a copy of the 
+* an interrupt.  The parameter passed to the callback is a copy of the
 * interrupt flag register.
 */
 void linNotification(linBASE_t *lin, uint32 flags);

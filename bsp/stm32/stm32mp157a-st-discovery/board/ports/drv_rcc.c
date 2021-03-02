@@ -31,7 +31,7 @@ static int rcc_sample(int argc, char *argv[])
     if (argc > 1)
     {
         if (!strcmp(argv[1], "enable"))
-        { 
+        {
            enable_clock();
            return RT_EOK;
         }

@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -82,14 +82,14 @@ static Status uart_set_divisors(UART_ID_Type UartID, uint32_t baudrate)
     * BaudRate= uClk * (mulFracDiv/(mulFracDiv+dividerAddFracDiv) / (16 * (DLL)
     * It involves floating point calculations. That's the reason the formulae are adjusted with
     * Multiply and divide method.*/
-    
+
     /* The value of mulFracDiv and dividerAddFracDiv should comply to the following expressions:
     * 0 < mulFracDiv <= 15, 0 <= dividerAddFracDiv <= 15 */
     best_error = 0xFFFFFFFF; /* Worst case */
     bestd = 0;
     bestm = 0;
     best_divisor = 0;
-    
+
     for (m = 1 ; m <= 15 ;m++)
     {
         for (d = 0 ; d < m ; d++)
@@ -116,8 +116,8 @@ static Status uart_set_divisors(UART_ID_Type UartID, uint32_t baudrate)
                 best_divisor = tmp;
                 bestd = d;
                 bestm = m;
-                
-                if(best_error == 0) 
+
+                if(best_error == 0)
                     break;
             }
         } /* end of inner for loop */
@@ -127,15 +127,15 @@ static Status uart_set_divisors(UART_ID_Type UartID, uint32_t baudrate)
     } /* end of outer for loop  */
 
     /* can not find best match */
-    if(best_divisor == 0) 
+    if(best_divisor == 0)
         return ERROR;
 
     recalcbaud = (uClk >> 4) * bestm / (best_divisor * (bestm + bestd));
 
     /* reuse best_error to evaluate baud error*/
-    if(baudrate > recalcbaud) 
+    if(baudrate > recalcbaud)
         best_error = baudrate - recalcbaud;
-    else 
+    else
         best_error = recalcbaud -baudrate;
 
     best_error = best_error * 100 / baudrate;
@@ -145,44 +145,44 @@ static Status uart_set_divisors(UART_ID_Type UartID, uint32_t baudrate)
         if (UartID == UART_1)
         {
             LPC_UART1->LCR |= UART_LCR_DLAB_EN;
-            
+
             LPC_UART1->DLM = UART_LOAD_DLM(best_divisor);
-            
+
             LPC_UART1->DLL = UART_LOAD_DLL(best_divisor);
-            
+
             /* Then reset DLAB bit */
             LPC_UART1->LCR &= (~UART_LCR_DLAB_EN) & UART_LCR_BITMASK;
-            
+
             LPC_UART1->FDR = (UART_FDR_MULVAL(bestm)
                                                     | UART_FDR_DIVADDVAL(bestd)) & UART_FDR_BITMASK;
         }
         else if (UartID == UART_4)
         {
             LPC_UART4->LCR |= UART_LCR_DLAB_EN;
-            
+
             LPC_UART4->DLM = UART_LOAD_DLM(best_divisor);
-            
+
             LPC_UART4->DLL = UART_LOAD_DLL(best_divisor);
-            
+
             /* Then reset DLAB bit */
             LPC_UART4->LCR &= (~UART_LCR_DLAB_EN) & UART_LCR_BITMASK;
-            
+
             LPC_UART4->FDR = (UART_FDR_MULVAL(bestm)
                                                     | UART_FDR_DIVADDVAL(bestd)) & UART_FDR_BITMASK;
         }
-            
+
         else
         {
             LPC_UART_TypeDef *UARTx = uart_get_pointer(UartID);
             UARTx->LCR |= UART_LCR_DLAB_EN;
-            
+
             UARTx->DLM = UART_LOAD_DLM(best_divisor);
-            
+
             UARTx->DLL = UART_LOAD_DLL(best_divisor);
-            
+
             /* Then reset DLAB bit */
             UARTx->LCR &= (~UART_LCR_DLAB_EN) & UART_LCR_BITMASK;
-            
+
             UARTx->FDR = (UART_FDR_MULVAL(bestm) \
                             | UART_FDR_DIVADDVAL(bestd)) & UART_FDR_BITMASK;
         }
@@ -422,7 +422,7 @@ void UART_Init(UART_ID_Type UartID, UART_CFG_Type *UART_ConfigStruct)
     {
         tmp = (LPC_UART4->LCR & (UART_LCR_DLAB_EN | UART_LCR_BREAK_EN)) \
                                                     & UART_LCR_BITMASK;
-    }   
+    }
     else
     {
         LPC_UART_TypeDef *UARTx = uart_get_pointer(UartID);
@@ -502,7 +502,7 @@ void UART_Init(UART_ID_Type UartID, UART_CFG_Type *UART_ConfigStruct)
     else if (UartID == UART_4)
     {
         LPC_UART4->LCR = (uint8_t)(tmp & UART_LCR_BITMASK);
-    }   
+    }
     else
     {
         LPC_UART_TypeDef *UARTx = uart_get_pointer(UartID);
@@ -596,7 +596,7 @@ void UART_SendByte(UART_ID_Type UartID, uint8_t Data)
             break;
         case UART_1:
             LPC_UART1->THR = Data & UART_THR_MASKBIT;
-            break;  
+            break;
         case UART_2:
             LPC_UART2->THR = Data & UART_THR_MASKBIT;
             break;
@@ -628,7 +628,7 @@ uint8_t UART_ReceiveByte(UART_ID_Type UartID)
         case UART_0:
             return (LPC_UART0->RBR & UART_RBR_MASKBIT);
         case UART_1:
-            return (LPC_UART1->RBR & UART_RBR_MASKBIT); 
+            return (LPC_UART1->RBR & UART_RBR_MASKBIT);
         case UART_2:
             return (LPC_UART2->RBR & UART_RBR_MASKBIT);
         case UART_3:
@@ -795,7 +795,7 @@ uint32_t UART_Receive(UART_ID_Type UartID, uint8_t *rxbuf,
             LSR = (__IO uint32_t *)&LPC_UART4->LSR;
             break;
     }
-    
+
     bToRecv = buflen;
 
     // Blocking mode
@@ -1073,7 +1073,7 @@ FlagStatus UART_CheckBusy(UART_ID_Type UartID)
             LSR = (LPC_UART4)->LSR & UART_LSR_TEMT;
             break;
     }
-    
+
     if (LSR & UART_LSR_TEMT)
     {
         return RESET;
@@ -1313,7 +1313,7 @@ void UART_ABClearIntPending(UART_ID_Type UartID, UART_ABEO_Type ABIntType)
         LPC_UART4->ACR |= ABIntType;
     }
     else
-    {   
+    {
         LPC_UART_TypeDef *UARTx = uart_get_pointer(UartID);
         UARTx->ACR |= ABIntType;
     }
@@ -1352,7 +1352,7 @@ void UART_TxCmd(UART_ID_Type UartID, FunctionalState NewState)
     }
     else
     {
-        if (UartID == UART_1)                     
+        if (UartID == UART_1)
         {
             LPC_UART1->TER &= (~UART_TER_TXEN) & UART_TER_BITMASK;
         }
@@ -1382,7 +1382,7 @@ void UART_IrDAInvtInputCmd(UART_ID_Type UartID, FunctionalState NewState)
 {
     if (UartID != UART_4)
         return;
-    
+
     if (NewState == ENABLE)
     {
         LPC_UART4->ICR |= UART_ICR_IRDAINV;
@@ -1391,7 +1391,7 @@ void UART_IrDAInvtInputCmd(UART_ID_Type UartID, FunctionalState NewState)
     {
         LPC_UART4->ICR &= (~UART_ICR_IRDAINV) & UART_ICR_BITMASK;
     }
-    
+
 }
 
 
@@ -1407,7 +1407,7 @@ void UART_IrDACmd(UART_ID_Type UartID, FunctionalState NewState)
 {
     if (UartID != UART_4)
         return;
-    
+
     if (NewState == ENABLE)
     {
         LPC_UART4->ICR |= UART_ICR_IRDAEN;
@@ -1515,7 +1515,7 @@ void UART_FullModemConfigMode(UART_ID_Type UartID, UART_MODEM_MODE_Type Mode,
 
     if(UartID != UART_1)
         return;
-    
+
     switch(Mode)
     {
         case UART1_MODEM_MODE_LOOPBACK:
@@ -1561,7 +1561,7 @@ uint8_t UART_FullModemGetStatus(UART_ID_Type UartID)
 {
     if(UartID != UART_1)
         return  0;
-    
+
     return ((LPC_UART1->MSR) & UART1_MSR_BITMASK);
 }
 
@@ -1626,7 +1626,7 @@ void UART_RS485Config(UART_ID_Type UartID, UART1_RS485_CTRLCFG_Type *RS485Config
         // Fill delay time
         *RS485DLY = RS485ConfigStruct->DelayValue & UART_RS485DLY_BITMASK;
     }
-     
+
     // MultiDrop mode is enable
     if (RS485ConfigStruct->NormalMultiDropMode_State == ENABLE)
     {
@@ -1647,7 +1647,7 @@ void UART_RS485Config(UART_ID_Type UartID, UART1_RS485_CTRLCFG_Type *RS485Config
     {
         tmp |= UART_RS485CTRL_RX_DIS;
     }
-     
+
     // write back to RS485 control register
     *RS485CTRL = tmp & UART_RS485CTRL_BITMASK;
 

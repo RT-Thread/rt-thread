@@ -34,8 +34,8 @@ static void delay(void)
     do{
         i++;
     }
-    while (i < 10000); 
-    
+    while (i < 10000);
+
     rt_hw_interrupt_enable(level);
 }
 
@@ -131,7 +131,7 @@ static void run(struct rt_pm *pm, uint8_t mode)
         break;
     }
 
-    /* 4. 鏇存柊澶栬鏃堕挓 */
+    /* 4. 更新外设时钟 */
     uart_console_reconfig();
     /* Re-Configure the Systick time */
     SysTick_Config(ald_cmu_get_sys_clock() / RT_TICK_PER_SECOND);

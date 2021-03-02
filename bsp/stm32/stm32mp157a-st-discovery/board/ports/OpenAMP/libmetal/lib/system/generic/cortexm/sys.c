@@ -29,8 +29,8 @@
  */
 
 /*
- * @file	generic/sys.c
- * @brief	machine specific system primitives implementation.
+ * @file    generic/sys.c
+ * @brief    machine specific system primitives implementation.
  */
 
 
@@ -48,14 +48,14 @@ unsigned int sys_irq_save_disable(void)
 
 void metal_machine_cache_flush(void *addr, unsigned int len)
 {
-	(void)addr;
-	(void)len;
+    (void)addr;
+    (void)len;
 }
 
 void metal_machine_cache_invalidate(void *addr, unsigned int len)
 {
-	(void)addr;
-	(void)len;
+    (void)addr;
+    (void)len;
 }
 
 /**
@@ -66,12 +66,12 @@ void __attribute__((weak)) metal_generic_default_poll(void)
 }
 
 void *metal_machine_io_mem_map(void *va, metal_phys_addr_t pa,
-			       size_t size, unsigned int flags)
+                   size_t size, unsigned int flags)
 {
-	(void)va;
-	(void)pa;
-	(void)size;
-	(void)flags;
+    (void)va;
+    (void)pa;
+    (void)size;
+    (void)flags;
 
-	return va;
+    return va;
 }

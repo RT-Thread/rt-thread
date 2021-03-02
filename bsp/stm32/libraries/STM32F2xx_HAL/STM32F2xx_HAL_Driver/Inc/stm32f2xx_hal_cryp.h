@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F2xx_HAL_CRYP_H
@@ -59,7 +59,7 @@ typedef struct
   uint32_t* pInitVect;                 /*!< The initialization vector used also as initialization
                                          counter in CTR mode */
   uint32_t Algorithm;                  /*!<  DES/ TDES Algorithm ECB/CBC*/
- 
+
   uint32_t DataWidthUnit;             /*!< Data With Unit, this parameter can be value of @ref CRYP_Data_Width_Unit*/
 }CRYP_ConfigTypeDef;
 
@@ -90,7 +90,7 @@ typedef struct __CRYP_HandleTypeDef
       uint32_t                          *pCrypInBuffPtr;  /*!< Pointer to CRYP processing (encryption, decryption,...) buffer */
 
       uint32_t                          *pCrypOutBuffPtr; /*!< Pointer to CRYP processing (encryption, decryption,...) buffer */
-      
+
       __IO uint16_t                     CrypInCount;      /*!< Counter of input data */
 
       __IO uint16_t                     CrypOutCount;     /*!< Counter of output data */

@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ *
  */
 
 #include <rthw.h>
@@ -69,7 +69,7 @@ void rt_hw_board_init()
 {
     /* NVIC Configuration */
     NVIC_Configuration();
-    
+
     BOARD_BootClockRUN();
 
     /* Configure the SysTick */

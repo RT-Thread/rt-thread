@@ -47,8 +47,8 @@
 
 //! @brief Available GPIO ports.
 typedef enum {
-	GPIO_NONE  = 0,
-	GPIO_PORT1 = 1,
+    GPIO_NONE  = 0,
+    GPIO_PORT1 = 1,
     GPIO_PORT2 = 2,
     GPIO_PORT3 = 3,
     GPIO_PORT4 = 4,
@@ -135,9 +135,9 @@ int32_t gpio_get_direction(int32_t port, int32_t pin);
 int32_t gpio_set_level(int32_t port, int32_t pin, uint32_t level);
 
 /*!
- *	Gets the GPIO level(high or low) for the specified pin.
+ *    Gets the GPIO level(high or low) for the specified pin.
  *
- *	@note Returns level for both input and output configured pins.
+ *    @note Returns level for both input and output configured pins.
  *
  * @param   port GPIO module instance, GPIO_PORT1, GPIO_PORT2, ... gpio_get_port_count().
  * @param   pin GPIO pin 0 to 31.

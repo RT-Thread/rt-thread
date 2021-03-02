@@ -1,4 +1,4 @@
-/** @file rti.c 
+/** @file rti.c
 *   @brief RTI Driver Source File
 *   @date 29.May.2013
 *   @version 03.05.02
@@ -58,7 +58,7 @@ void rtiInit(void)
     /** - Reset free running counter 0 */
     rtiREG1->CNT[0U].FRCx = 0x00000000U;
 
-    /** - Setup up counter 0 compare value 
+    /** - Setup up counter 0 compare value
     *     - 0x00000000: Divide by 2^32
     *     - 0x00000001-0xFFFFFFFF: Divide by (CPUC0 + 1)
     */
@@ -70,7 +70,7 @@ void rtiInit(void)
     /** - Reset free running counter 1 */
     rtiREG1->CNT[1U].FRCx  = 0x00000000U;
 
-    /** - Setup up counter 1 compare value 
+    /** - Setup up counter 1 compare value
     *     - 0x00000000: Divide by 2^32
     *     - 0x00000001-0xFFFFFFFF: Divide by (CPUC1 + 1)
     */
@@ -187,8 +187,8 @@ void rtiStopCounter(uint32 counter)
 *              - rtiCOUNTER_BLOCK0: RTI counter block 0 will be reset
 *              - rtiCOUNTER_BLOCK1: RTI counter block 1 will be reset
 *   @return The function will return:
-*           - 0: When the counter reset wasn't successful   
-*           - 1: When the counter reset was successful   
+*           - 0: When the counter reset wasn't successful
+*           - 1: When the counter reset was successful
 *
 *   This function resets selected counter block of the selected RTI module.
 */
@@ -341,13 +341,13 @@ uint32 rtiGetCurrentTick(uint32 compare)
 /* USER CODE END */
 
 /** @fn void dwdInit(uint16 dwdPreload)
-*   @brief Initialize DWD Expiration Period 
+*   @brief Initialize DWD Expiration Period
 *   @param[in] dwdPreload DWD Preload value for expiration time.
 *              - Texp = (dwdPreload +1) / RTICLK
 *              - n: Divide by n + 1
 *
 *   This function can be called to set the DWD expiration
-*   
+*
 */
 void dwdInit(uint16 dwdPreload)
 {
@@ -355,10 +355,10 @@ void dwdInit(uint16 dwdPreload)
 /* USER CODE END */
 
     /* Clear the violations if already present */
-	rtiREG1->WDSTATUS = 0xFFU;
-	
-	rtiREG1->DWDPRLD = dwdPreload;
-	
+    rtiREG1->WDSTATUS = 0xFFU;
+
+    rtiREG1->DWDPRLD = dwdPreload;
+
 /* USER CODE BEGIN (31) */
 /* USER CODE END */
 }
@@ -367,9 +367,9 @@ void dwdInit(uint16 dwdPreload)
 /* USER CODE END */
 
 /** @fn void dwwdInit(dwwdReaction_t Reaction, uint16 dwdPreload, dwwdWindowSize_t Window_Size)
-*   @brief Initialize DWD Expiration Period 
+*   @brief Initialize DWD Expiration Period
 *   @param[in] Reaction DWWD reaction if the watchdog is serviced outside the time window.
-*              - Generate_Reset  
+*              - Generate_Reset
 *              - Generate_NMI
 *   @param[in] dwdPreload DWWD Preload value for the watchdog expiration time.
 *              - Texp = (dwdPreload +1) / RTICLK
@@ -383,7 +383,7 @@ void dwdInit(uint16 dwdPreload)
 *              - Size_3_125_Percent
 *
 *   This function can be called to set the DWD expiration
-*   
+*
 */
 void dwwdInit(dwwdReaction_t Reaction, uint16 dwdPreload, dwwdWindowSize_t Window_Size)
 {
@@ -391,11 +391,11 @@ void dwwdInit(dwwdReaction_t Reaction, uint16 dwdPreload, dwwdWindowSize_t Windo
 /* USER CODE END */
 
     /* Clear the violations if already present */
-	rtiREG1->WDSTATUS = 0xFFU;
+    rtiREG1->WDSTATUS = 0xFFU;
 
     rtiREG1->WWDSIZECTRL = (uint32) Window_Size;
-	rtiREG1->DWDPRLD     = (uint32) dwdPreload;
-	rtiREG1->WWDRXNCTRL  = (uint32) Reaction;
+    rtiREG1->DWDPRLD     = (uint32) dwdPreload;
+    rtiREG1->WWDRXNCTRL  = (uint32) Reaction;
 
 /* USER CODE BEGIN (34) */
 /* USER CODE END */
@@ -405,11 +405,11 @@ void dwwdInit(dwwdReaction_t Reaction, uint16 dwdPreload, dwwdWindowSize_t Windo
 /* USER CODE END */
 
 /** @fn uint32 dwwdGetCurrentDownCounter(void)
-*   @brief Get the current DWWD Down Counter 
+*   @brief Get the current DWWD Down Counter
 *   @return Current tick of selected compare
 *
 *   This function will get the current DWWD down counter value.
-*   
+*
 */
 uint32 dwwdGetCurrentDownCounter(void)
 {
@@ -429,15 +429,15 @@ uint32 dwwdGetCurrentDownCounter(void)
 *   @brief Enable DWD
 *
 *   This function will Enable the DWD counter.
-*   
+*
 */
 void dwdCounterEnable(void)
 {
 /* USER CODE BEGIN (39) */
 /* USER CODE END */
 
-	rtiREG1->DWDCTRL = 0xA98559DAU;
-	
+    rtiREG1->DWDCTRL = 0xA98559DAU;
+
 /* USER CODE BEGIN (40) */
 /* USER CODE END */
 }
@@ -452,19 +452,19 @@ void dwdCounterEnable(void)
 /* USER CODE BEGIN (44) */
 /* USER CODE END */
 /** @fn void dwdSetPreload(uint16 dwdPreload)
-*   @brief Initialize DWD Expiration Period 
+*   @brief Initialize DWD Expiration Period
 *   @param[in] dwdPreload DWD Preload value for the watchdog expiration time.
 *              - Texp = (dwdPreload +1) / RTICLK
 *              - n: Divide by n + 1
 *
 *   This function can be called to set the Preload value for the watchdog expiration time.
-*   
+*
 */
 void dwdSetPreload(uint16 dwdPreload)
 {
 /* USER CODE BEGIN (45) */
 /* USER CODE END */
-	rtiREG1->DWDPRLD = dwdPreload;
+    rtiREG1->DWDPRLD = dwdPreload;
 /* USER CODE BEGIN (46) */
 /* USER CODE END */
 }
@@ -473,17 +473,17 @@ void dwdSetPreload(uint16 dwdPreload)
 /* USER CODE END */
 
 /** @fn void dwdReset(void)
-*   @brief Reset Digital Watchdog 
+*   @brief Reset Digital Watchdog
 *
 *   This function can be called to reset Digital Watchdog.
-*   
+*
 */
 void dwdReset(void)
 {
 /* USER CODE BEGIN (48) */
 /* USER CODE END */
-	rtiREG1->WDKEY = 0x0000E51AU;
-	rtiREG1->WDKEY = 0x0000A35CU;
+    rtiREG1->WDKEY = 0x0000E51AU;
+    rtiREG1->WDKEY = 0x0000A35CU;
 /* USER CODE BEGIN (49) */
 /* USER CODE END */
 }
@@ -492,14 +492,14 @@ void dwdReset(void)
 *   @brief Generate System Reset through DWD
 *
 *   This function can be called to generate system reset using DWD.
-*   
+*
 */
 void dwdGenerateSysReset(void)
 {
 /* USER CODE BEGIN (50) */
 /* USER CODE END */
-	rtiREG1->WDKEY = 0x0000E51AU;
-	rtiREG1->WDKEY = 0x00002345U;
+    rtiREG1->WDKEY = 0x0000E51AU;
+    rtiREG1->WDKEY = 0x00002345U;
 /* USER CODE BEGIN (51) */
 /* USER CODE END */
 }
@@ -514,28 +514,28 @@ void dwdGenerateSysReset(void)
 *           - FALSE: When the DWD key sequence is written incorrectly / not written.
 *
 *   This function will get status of the DWD Key sequence.
-*   
+*
 */
 boolean IsdwdKeySequenceCorrect(void)
 {
-	boolean Status;
+    boolean Status;
 
 /* USER CODE BEGIN (53) */
 /* USER CODE END */
 
-	if((rtiREG1->WDSTATUS & 0x4U) == 0x4U)
-	{
-		Status = FALSE;
-	}
-	else
-	{
-		Status = TRUE;
-	}
+    if((rtiREG1->WDSTATUS & 0x4U) == 0x4U)
+    {
+        Status = FALSE;
+    }
+    else
+    {
+        Status = TRUE;
+    }
 
 /* USER CODE BEGIN (54) */
 /* USER CODE END */
 
-	return Status;
+    return Status;
 }
 
 /* USER CODE BEGIN (55) */
@@ -548,25 +548,25 @@ boolean IsdwdKeySequenceCorrect(void)
 *           - No_Reset_Generated: No Reset is generated due to DWD.
 *
 *   This function will get dwd Reset status.
-*   
+*
 */
 dwdResetStatus_t dwdGetStatus(void)
 {
 /* USER CODE BEGIN (56) */
 /* USER CODE END */
-	dwdResetStatus_t Reset_Status;
-	if((rtiREG1->WDSTATUS & 0x2U) == 0x2U)
-	{
-		Reset_Status = Reset_Generated;
-	}
-	else
-	{
-		Reset_Status = No_Reset_Generated;
-	}
+    dwdResetStatus_t Reset_Status;
+    if((rtiREG1->WDSTATUS & 0x2U) == 0x2U)
+    {
+        Reset_Status = Reset_Generated;
+    }
+    else
+    {
+        Reset_Status = No_Reset_Generated;
+    }
 
 /* USER CODE BEGIN (57) */
 /* USER CODE END */
-	return Reset_Status;
+    return Reset_Status;
 }
 
 /* USER CODE BEGIN (58) */
@@ -576,14 +576,14 @@ dwdResetStatus_t dwdGetStatus(void)
 *   @brief Clear the DWD violation flag.
 *
 *   This function will clear dwd status register.
-*   
+*
 */
 void dwdClearFlag(void)
 {
 /* USER CODE BEGIN (59) */
 /* USER CODE END */
 
-	rtiREG1->WDSTATUS = 0xFFU;
+    rtiREG1->WDSTATUS = 0xFFU;
 
 /* USER CODE BEGIN (60) */
 /* USER CODE END */
@@ -602,39 +602,39 @@ void dwdClearFlag(void)
 *           - StartTime_Window_Violation
 *
 *   This function will get status of the DWD or DWWD violation status.
-*   
+*
 */
 dwdViolation_t dwdGetViolationStatus(void)
 {
 /* USER CODE BEGIN (62) */
 /* USER CODE END */
-	dwdViolation_t Violation_Status;
+    dwdViolation_t Violation_Status;
 
-	if ((rtiREG1->WDSTATUS & 0x20U) == 0x20U)
-	{
-		Violation_Status = Time_Window_Violation;
-	}
-	else if ((rtiREG1->WDSTATUS & 0x04U) == 0x04U)
-	{
-		Violation_Status = Key_Seq_Violation;
-	}	
-	else if((rtiREG1->WDSTATUS & 0x8U) == 0x8U)
-	{
-		Violation_Status = StartTime_Window_Violation;
-	}
-	else if ((rtiREG1->WDSTATUS & 0x10U) == 0x10U)
-	{
-		Violation_Status = EndTime_Window_Violation;
-	}
-	else
-	{
-		Violation_Status = NoTime_Violation;
-	}
-	
+    if ((rtiREG1->WDSTATUS & 0x20U) == 0x20U)
+    {
+        Violation_Status = Time_Window_Violation;
+    }
+    else if ((rtiREG1->WDSTATUS & 0x04U) == 0x04U)
+    {
+        Violation_Status = Key_Seq_Violation;
+    }
+    else if((rtiREG1->WDSTATUS & 0x8U) == 0x8U)
+    {
+        Violation_Status = StartTime_Window_Violation;
+    }
+    else if ((rtiREG1->WDSTATUS & 0x10U) == 0x10U)
+    {
+        Violation_Status = EndTime_Window_Violation;
+    }
+    else
+    {
+        Violation_Status = NoTime_Violation;
+    }
+
 /* USER CODE BEGIN (63) */
 /* USER CODE END */
 
-	return Violation_Status;
+    return Violation_Status;
 }
 
 /* USER CODE BEGIN (64) */
@@ -716,51 +716,51 @@ void rtiDisableNotification(uint32 notification)
 /** @fn void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
 *   @brief Get the initial or current values of the configuration registers
 *
-*	@param[in] *config_reg: pointer to the struct to which the initial or current value of the configuration registers need to be stored
-*	@param[in] type: 	whether initial or current value of the configuration registers need to be stored
-*						- InitialValue: initial value of the configuration registers will be stored in the struct pointed by config_reg
-*						- CurrentValue: initial value of the configuration registers will be stored in the struct pointed by config_reg
+*    @param[in] *config_reg: pointer to the struct to which the initial or current value of the configuration registers need to be stored
+*    @param[in] type:     whether initial or current value of the configuration registers need to be stored
+*                        - InitialValue: initial value of the configuration registers will be stored in the struct pointed by config_reg
+*                        - CurrentValue: initial value of the configuration registers will be stored in the struct pointed by config_reg
 *
 *   This function will copy the initial or current value (depending on the parameter 'type') of the configuration registers to the struct pointed by config_reg
 *
 */
 void rtiGetConfigValue(rti_config_reg_t *config_reg, config_value_type_t type)
 {
-	if (type == InitialValue)
-	{
-		config_reg->CONFIG_GCTRL = RTI_GCTRL_CONFIGVALUE;
-		config_reg->CONFIG_TBCTRL = RTI_TBCTRL_CONFIGVALUE;
-		config_reg->CONFIG_CAPCTRL = RTI_CAPCTRL_CONFIGVALUE;
-		config_reg->CONFIG_COMPCTRL = RTI_COMPCTRL_CONFIGVALUE;
-		config_reg->CONFIG_UDCP0 = RTI_UDCP0_CONFIGVALUE;
-		config_reg->CONFIG_UDCP1 = RTI_UDCP1_CONFIGVALUE;
-		config_reg->CONFIG_UDCP2 = RTI_UDCP2_CONFIGVALUE;
-		config_reg->CONFIG_UDCP3 = RTI_UDCP3_CONFIGVALUE;
-		config_reg->CONFIG_TBLCOMP = RTI_TBLCOMP_CONFIGVALUE;
-		config_reg->CONFIG_TBHCOMP = RTI_TBHCOMP_CONFIGVALUE;
-		config_reg->CONFIG_SETINT = RTI_SETINT_CONFIGVALUE;
-		config_reg->CONFIG_DWDCTRL = RTI_DWDCTRL_CONFIGVALUE;
-		config_reg->CONFIG_DWDPRLD = RTI_DWDPRLD_CONFIGVALUE;
-		config_reg->CONFIG_WWDRXNCTRL = RTI_WWDRXNCTRL_CONFIGVALUE;
-		config_reg->CONFIG_WWDSIZECTRL = RTI_WWDSIZECTRL_CONFIGVALUE;
-	}
-	else
-	{	 
-		config_reg->CONFIG_GCTRL = rtiREG1->GCTRL;
-		config_reg->CONFIG_TBCTRL = rtiREG1->TBCTRL;
-		config_reg->CONFIG_CAPCTRL = rtiREG1->CAPCTRL;
-		config_reg->CONFIG_COMPCTRL = rtiREG1->COMPCTRL;
-		config_reg->CONFIG_UDCP0 = rtiREG1->CMP[0U].UDCPx;
-		config_reg->CONFIG_UDCP1 = rtiREG1->CMP[1U].UDCPx;
-		config_reg->CONFIG_UDCP2 = rtiREG1->CMP[2U].UDCPx;
-		config_reg->CONFIG_UDCP3 = rtiREG1->CMP[3U].UDCPx;
-		config_reg->CONFIG_TBLCOMP = rtiREG1->TBLCOMP;
-		config_reg->CONFIG_TBHCOMP = rtiREG1->TBHCOMP;
-		config_reg->CONFIG_SETINT = rtiREG1->SETINT;
-		config_reg->CONFIG_DWDCTRL = rtiREG1->DWDCTRL;
-		config_reg->CONFIG_DWDPRLD = rtiREG1->DWDPRLD;
-		config_reg->CONFIG_WWDRXNCTRL = rtiREG1->WWDRXNCTRL;
-		config_reg->CONFIG_WWDSIZECTRL = rtiREG1->WWDSIZECTRL;
-	}
+    if (type == InitialValue)
+    {
+        config_reg->CONFIG_GCTRL = RTI_GCTRL_CONFIGVALUE;
+        config_reg->CONFIG_TBCTRL = RTI_TBCTRL_CONFIGVALUE;
+        config_reg->CONFIG_CAPCTRL = RTI_CAPCTRL_CONFIGVALUE;
+        config_reg->CONFIG_COMPCTRL = RTI_COMPCTRL_CONFIGVALUE;
+        config_reg->CONFIG_UDCP0 = RTI_UDCP0_CONFIGVALUE;
+        config_reg->CONFIG_UDCP1 = RTI_UDCP1_CONFIGVALUE;
+        config_reg->CONFIG_UDCP2 = RTI_UDCP2_CONFIGVALUE;
+        config_reg->CONFIG_UDCP3 = RTI_UDCP3_CONFIGVALUE;
+        config_reg->CONFIG_TBLCOMP = RTI_TBLCOMP_CONFIGVALUE;
+        config_reg->CONFIG_TBHCOMP = RTI_TBHCOMP_CONFIGVALUE;
+        config_reg->CONFIG_SETINT = RTI_SETINT_CONFIGVALUE;
+        config_reg->CONFIG_DWDCTRL = RTI_DWDCTRL_CONFIGVALUE;
+        config_reg->CONFIG_DWDPRLD = RTI_DWDPRLD_CONFIGVALUE;
+        config_reg->CONFIG_WWDRXNCTRL = RTI_WWDRXNCTRL_CONFIGVALUE;
+        config_reg->CONFIG_WWDSIZECTRL = RTI_WWDSIZECTRL_CONFIGVALUE;
+    }
+    else
+    {
+        config_reg->CONFIG_GCTRL = rtiREG1->GCTRL;
+        config_reg->CONFIG_TBCTRL = rtiREG1->TBCTRL;
+        config_reg->CONFIG_CAPCTRL = rtiREG1->CAPCTRL;
+        config_reg->CONFIG_COMPCTRL = rtiREG1->COMPCTRL;
+        config_reg->CONFIG_UDCP0 = rtiREG1->CMP[0U].UDCPx;
+        config_reg->CONFIG_UDCP1 = rtiREG1->CMP[1U].UDCPx;
+        config_reg->CONFIG_UDCP2 = rtiREG1->CMP[2U].UDCPx;
+        config_reg->CONFIG_UDCP3 = rtiREG1->CMP[3U].UDCPx;
+        config_reg->CONFIG_TBLCOMP = rtiREG1->TBLCOMP;
+        config_reg->CONFIG_TBHCOMP = rtiREG1->TBHCOMP;
+        config_reg->CONFIG_SETINT = rtiREG1->SETINT;
+        config_reg->CONFIG_DWDCTRL = rtiREG1->DWDCTRL;
+        config_reg->CONFIG_DWDPRLD = rtiREG1->DWDPRLD;
+        config_reg->CONFIG_WWDRXNCTRL = rtiREG1->WWDRXNCTRL;
+        config_reg->CONFIG_WWDSIZECTRL = rtiREG1->WWDSIZECTRL;
+    }
 }
 

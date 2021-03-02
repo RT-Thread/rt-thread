@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62Nxx
-* File Name		: Interrupt_MTU2.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for the MTU channels
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name    : Interrupt program for RX62Nxx
+* File Name        : Interrupt_MTU2.c
+* Version        : 1.02
+* Contents        : Interrupt handlers for the MTU channels
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_mtu2.h"
@@ -27,24 +27,24 @@
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIA0(void)
+* Declaration    : void Interrupt_MTUn_TGIA0(void)
 *-------------------------------------------------------------------
-* Function		: TGIAn interrupt processing
+* Function        : TGIAn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_func1_callback_func[n]
+* Use function    : rpdl_MTU2_func1_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU0_TGIA0
@@ -190,24 +190,24 @@ __interrupt void Interrupt_MTU10_TGIA10(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIBn(void)
+* Declaration    : void Interrupt_MTUn_TGIBn(void)
 *-------------------------------------------------------------------
-* Function		: TGIBn interrupt processing
+* Function        : TGIBn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_func2_callback_func[n]
+* Use function    : rpdl_MTU2_func2_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU0_TGIB0
@@ -353,24 +353,24 @@ __interrupt void Interrupt_MTU10_TGIB10(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGICn(void)
+* Declaration    : void Interrupt_MTUn_TGICn(void)
 *-------------------------------------------------------------------
-* Function		: TGICn interrupt processing
+* Function        : TGICn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_func3_callback_func[n]
+* Use function    : rpdl_MTU2_func3_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU0_TGIC0
@@ -460,24 +460,24 @@ __interrupt void Interrupt_MTU10_TGIC10(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIDn(void)
+* Declaration    : void Interrupt_MTUn_TGIDn(void)
 *-------------------------------------------------------------------
-* Function		: TGIDn interrupt processing
+* Function        : TGIDn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_func4_callback_func[n]
+* Use function    : rpdl_MTU2_func4_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU0_TGID0
@@ -567,24 +567,24 @@ __interrupt void Interrupt_MTU10_TGID10(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIEn(void)
+* Declaration    : void Interrupt_MTUn_TGIEn(void)
 *-------------------------------------------------------------------
-* Function		: TGIEn interrupt processing
+* Function        : TGIEn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_TGRE_callback_func[n]
+* Use function    : rpdl_MTU2_TGRE_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU0_TGIE0
@@ -618,24 +618,24 @@ __interrupt void Interrupt_MTU6_TGIE6(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIFn(void)
+* Declaration    : void Interrupt_MTUn_TGIFn(void)
 *-------------------------------------------------------------------
-* Function		: TGIFn interrupt processing
+* Function        : TGIFn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_TGRF_callback_func[n]
+* Use function    : rpdl_MTU2_TGRF_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU0_TGIF0
@@ -669,24 +669,24 @@ __interrupt void Interrupt_MTU6_TGIF6(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TCIVn(void)
+* Declaration    : void Interrupt_MTUn_TCIVn(void)
 *-------------------------------------------------------------------
-* Function		: TCIVn interrupt processing
+* Function        : TCIVn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_Overflow_callback_func[n]
+* Use function    : rpdl_MTU2_Overflow_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU0_TCIV0
@@ -832,24 +832,24 @@ __interrupt void Interrupt_MTU10_TCIV10(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TCIUn(void)
+* Declaration    : void Interrupt_MTUn_TCIUn(void)
 *-------------------------------------------------------------------
-* Function		: TCIUn interrupt processing
+* Function        : TCIUn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_Underflow_callback_func[n]
+* Use function    : rpdl_MTU2_Underflow_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU1_TCIU1
@@ -911,24 +911,24 @@ __interrupt void Interrupt_MTU8_TCIU8(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIUn(void)
+* Declaration    : void Interrupt_MTUn_TGIUn(void)
 *-------------------------------------------------------------------
-* Function		: TGIUn interrupt processing
+* Function        : TGIUn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_func1_callback_func[n]
+* Use function    : rpdl_MTU2_func1_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU5_TGIU5
@@ -962,24 +962,24 @@ __interrupt void Interrupt_MTU11_TGIU11(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIVn(void)
+* Declaration    : void Interrupt_MTUn_TGIVn(void)
 *-------------------------------------------------------------------
-* Function		: TGIVn interrupt processing
+* Function        : TGIVn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_func2_callback_func[n]
+* Use function    : rpdl_MTU2_func2_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU5_TGIV5
@@ -1013,24 +1013,24 @@ __interrupt void Interrupt_MTU11_TGIV11(void)
 /*""FUNC COMMENT""***************************************************
 * Module outline: Timer interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_MTUn_TGIWn(void)
+* Declaration    : void Interrupt_MTUn_TGIWn(void)
 *-------------------------------------------------------------------
-* Function		: TGIWn interrupt processing
+* Function        : TGIWn interrupt processing
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: rpdl_MTU2_func3_callback_func[n]
+* Use function    : rpdl_MTU2_func3_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_MTU5_TGIW5

@@ -62,7 +62,7 @@ typedef enum
 typedef struct __SRAM_HandleTypeDef
 #else
 typedef struct
-#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */	
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */
 {
   FSMC_NORSRAM_TypeDef           *Instance;  /*!< Register base address                        */
 

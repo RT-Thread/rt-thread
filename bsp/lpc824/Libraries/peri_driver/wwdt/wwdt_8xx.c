@@ -50,29 +50,29 @@
 /* Initialize the Watchdog timer */
 void Chip_WWDT_Init(LPC_WWDT_T *pWWDT)
 {
-	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_WWDT);
+    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_WWDT);
 
-	/* Disable watchdog */
-	pWWDT->MOD       = 0;
-	pWWDT->TC        = 0xFF;
-	pWWDT->WARNINT   = 0xFFFF;
-	pWWDT->WINDOW    = 0xFFFFFF;
+    /* Disable watchdog */
+    pWWDT->MOD       = 0;
+    pWWDT->TC        = 0xFF;
+    pWWDT->WARNINT   = 0xFFFF;
+    pWWDT->WINDOW    = 0xFFFFFF;
 }
 
 /* Shutdown the Watchdog timer */
 void Chip_WWDT_DeInit(LPC_WWDT_T *pWWDT)
 {
-	Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_WWDT);
+    Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_WWDT);
 }
 
 /* Clear WWDT interrupt status flags */
 void Chip_WWDT_ClearStatusFlag(LPC_WWDT_T *pWWDT, uint32_t status)
 {
-	if (status & WWDT_WDMOD_WDTOF) {
-		pWWDT->MOD &= (~WWDT_WDMOD_WDTOF) & WWDT_WDMOD_BITMASK;
-	}
+    if (status & WWDT_WDMOD_WDTOF) {
+        pWWDT->MOD &= (~WWDT_WDMOD_WDTOF) & WWDT_WDMOD_BITMASK;
+    }
 
-	if (status & WWDT_WDMOD_WDINT) {
-		pWWDT->MOD = WWDT_WDMOD_WDINT | (pWWDT->MOD & ~WWDT_MOD_RESERVED);
-	}
+    if (status & WWDT_WDMOD_WDINT) {
+        pWWDT->MOD = WWDT_WDMOD_WDINT | (pWWDT->MOD & ~WWDT_MOD_RESERVED);
+    }
 }

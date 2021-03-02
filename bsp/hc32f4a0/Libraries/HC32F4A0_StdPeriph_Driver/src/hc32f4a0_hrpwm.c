@@ -7,9 +7,9 @@
    Change Logs:
    Date             Author          Notes
    2020-06-12       Wangmin         First version
-   2020-09-07       Wangmin         Modify channel delay configure function 
+   2020-09-07       Wangmin         Modify channel delay configure function
                                     parameter type.
-   2020-10-13       Wangmin         Define variable for count as __IO type 
+   2020-10-13       Wangmin         Define variable for count as __IO type
  @endverbatim
  *******************************************************************************
  * Copyright (C) 2020, Huada Semiconductor Co., Ltd. All rights reserved.

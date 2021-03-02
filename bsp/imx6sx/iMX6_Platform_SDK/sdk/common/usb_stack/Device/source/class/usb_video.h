@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -52,10 +52,10 @@
  * Macro's
  *****************************************************************************/
 #define  KBI_STAT_MASK                  (0x0F)
-#define  BUTTON_0                       (0x01) 
-#define  BUTTON_1                       (0x02) 
-#define  BUTTON_2                       (0x04) 
-#define  BUTTON_3                       (0x08) 
+#define  BUTTON_0                       (0x01)
+#define  BUTTON_1                       (0x02)
+#define  BUTTON_2                       (0x04)
+#define  BUTTON_3                       (0x08)
 
 #define MAX_QUEUE_ELEMS                 (4)
 
@@ -101,7 +101,7 @@ typedef struct _usb_class_video_endpoint_data
 #ifndef COMPOSITE_DEV
     USB_CLASS_VIDEO_ENDPOINT ep[VIDEO_DESC_ENDPOINT_COUNT];
 #else
-	USB_CLASS_VIDEO_ENDPOINT ep[COMPOSITE_DESC_ENDPOINT_COUNT];
+    USB_CLASS_VIDEO_ENDPOINT ep[COMPOSITE_DESC_ENDPOINT_COUNT];
 #endif
 }USB_CLASS_VIDEO_ENDPOINT_DATA, *PTR_USB_CLASS_VIDEO_ENDPOINT_DATA;
 
@@ -118,9 +118,9 @@ extern uint_8 USB_Class_Video_Init (
 );
 
 extern void USB_Class_Video_Event(
-    uint_8 controller_ID,  
-    uint_8 event,          
-    void* val                
+    uint_8 controller_ID,
+    uint_8 event,
+    void* val
 );
 
 #ifdef COMPOSITE_DEV
@@ -130,10 +130,10 @@ uint_8 USB_Video_Other_Requests(uint_8 controller_ID,
                           USB_PACKET_SIZE *size);
 #endif
 
-extern uint_8 USB_Class_Video_DeInit 
+extern uint_8 USB_Class_Video_DeInit
 (
     uint_8 controller_ID              /* [IN] Controller ID */
-); 						  
+);
 extern uint_8 USB_Class_Video_Send_Data (
     uint_8           controller_ID,
     uint_8           ep_num,

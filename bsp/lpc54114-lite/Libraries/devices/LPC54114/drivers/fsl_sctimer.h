@@ -3,7 +3,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -358,7 +358,7 @@ void SCTIMER_GetDefaultConfig(sctimer_config_t *config);
  * @note When setting PWM output from multiple output pins, they all should use the same PWM mode
  * i.e all PWM's should be either edge-aligned or center-aligned.
  * When using this API, the PWM signal frequency of all the initialized channels must be the same.
- * Otherwise all the initialized channels' PWM signal frequency is equal to the last call to the 
+ * Otherwise all the initialized channels' PWM signal frequency is equal to the last call to the
  * API's pwmFreq_Hz.
  *
  * @param base        SCTimer peripheral base address

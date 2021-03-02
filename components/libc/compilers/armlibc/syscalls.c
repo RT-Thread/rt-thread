@@ -9,7 +9,7 @@
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
  * 2014-08-03     bernard      If using msh, use system() implementation
  *                             in msh.
- * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
+ * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when
  *                             RT_USING_DFS is not defined
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-14     Meco Man     implement _sys_tmpnam()
@@ -346,7 +346,7 @@ int system(const char *string)
 #ifdef __MICROLIB
 #include <stdio.h>
 
-int fputc(int c, FILE *f) 
+int fputc(int c, FILE *f)
 {
     char ch[2] = {0};
 
@@ -355,7 +355,7 @@ int fputc(int c, FILE *f)
     return 1;
 }
 
-int fgetc(FILE *f) 
+int fgetc(FILE *f)
 {
 #ifdef RT_USING_POSIX
     char ch;

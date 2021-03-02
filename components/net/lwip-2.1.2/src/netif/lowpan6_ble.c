@@ -6,7 +6,7 @@
 /*
  * Copyright (c) 2017 Benjamin Aigner
  * Copyright (c) 2015 Inico Technologies Ltd. , Author: Ivan Delamer <delamer@inicotech.com>
- * 
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -32,7 +32,7 @@
  * OF SUCH DAMAGE.
  *
  * Author: Benjamin Aigner <aignerb@technikum-wien.at>
- * 
+ *
  * Based on the original 6lowpan implementation of lwIP ( @see 6lowpan.c)
  */
 
@@ -95,15 +95,15 @@ static struct lowpan6_link_addr rfc7668_peer_addr;
 /**
  * @ingroup rfc7668if
  *  convert BT address to EUI64 addr
- * 
+ *
  * This method converts a Bluetooth MAC address to an EUI64 address,
  * which is used within IPv6 communication
- * 
+ *
  * @param dst IPv6 destination space
  * @param src BLE MAC address source
  * @param public_addr If the LWIP_RFC7668_LINUX_WORKAROUND_PUBLIC_ADDRESS
  * option is set, bit 0x02 will be set if param=0 (no public addr); cleared otherwise
- * 
+ *
  * @see LWIP_RFC7668_LINUX_WORKAROUND_PUBLIC_ADDRESS
  */
 void
@@ -128,12 +128,12 @@ ble_addr_to_eui64(uint8_t *dst, const uint8_t *src, int public_addr)
 /**
  * @ingroup rfc7668if
  *  convert EUI64 address to Bluetooth MAC addr
- * 
+ *
  * This method converts an EUI64 address to a Bluetooth MAC address,
- * 
+ *
  * @param dst BLE MAC address destination
  * @param src IPv6 source
- * 
+ *
  */
 void
 eui64_to_ble_addr(uint8_t *dst, const uint8_t *src)
@@ -214,16 +214,16 @@ rfc7668_set_peer_addr_mac48(struct netif *netif, const u8_t *peer_addr, size_t p
 }
 
 /** Encapsulate IPv6 frames for BLE transmission
- * 
+ *
  * This method implements the IPv6 header compression:
  *  *) According to RFC6282
  *  *) See Figure 2, contains base format of bit positions
  *  *) Fragmentation not necessary (done at L2CAP layer of BLE)
  * @note Currently the pbuf allocation uses 256 bytes. If longer packets are used (possible due to MTU=1480Bytes), increase it here!
- * 
+ *
  * @param p Pbuf struct, containing the payload data
  * @param netif Output network interface. Should be of RFC7668 type
- * 
+ *
  * @return Same as netif->output.
  */
 static err_t
@@ -340,7 +340,7 @@ rfc7668_output(struct netif *netif, struct pbuf *q, const ip6_addr_t *ip6addr)
  * @param p the received packet, p->payload pointing to the
  *        IPv6 header (maybe compressed)
  * @param netif the network interface on which the packet was received
- * 
+ *
  * @return ERR_OK if everything was fine
  */
 err_t
@@ -352,7 +352,7 @@ rfc7668_input(struct pbuf * p, struct netif *netif)
 
   /* Load first header byte */
   puc = (u8_t*)p->payload;
-  
+
   /* no IP header compression */
   if (*puc == 0x41) {
     LWIP_DEBUGF(LWIP_LOWPAN6_DECOMPRESSION_DEBUG, ("Completed packet, removing dispatch: 0x%2x \n", *puc));
@@ -398,12 +398,12 @@ rfc7668_input(struct pbuf * p, struct netif *netif)
 /**
  * @ingroup rfc7668if
  * Initialize the netif
- * 
+ *
  * No flags are used (broadcast not possible, not ethernet, ...)
  * The shortname for this netif is "BT"
  *
  * @param netif the network interface to be initialized as RFC7668 netif
- * 
+ *
  * @return ERR_OK if everything went fine
  */
 err_t
@@ -433,7 +433,7 @@ rfc7668_if_init(struct netif *netif)
  * @param p the received packet, p->payload pointing to the
  *          IEEE 802.15.4 header.
  * @param inp the network interface on which the packet was received
- * 
+ *
  * @return see @ref tcpip_inpkt, same return values
  */
 err_t

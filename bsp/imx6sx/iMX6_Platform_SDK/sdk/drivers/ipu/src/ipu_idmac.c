@@ -79,9 +79,9 @@ inline uint32_t ipu_cpmem_read_field(uint32_t base, int32_t w, int32_t bit, int3
 /*!
  * set the ipu channel buffer ready signal
  *
- * @param 	ipu_index: 	ipu index
- * @param 	channel: IPU dma channel index
- * @param 	buf: choose the buffer number, 0 or 1
+ * @param     ipu_index:     ipu index
+ * @param     channel: IPU dma channel index
+ * @param     buf: choose the buffer number, 0 or 1
  */
 void ipu_channel_buf_ready(int32_t ipu_index, int32_t channel, int32_t buf)
 {
@@ -110,9 +110,9 @@ void ipu_channel_buf_ready(int32_t ipu_index, int32_t channel, int32_t buf)
 /*!
  * unset the ipu channel buffer ready signal
  *
- * @param 	ipu_index: 	ipu index
- * @param 	channel: IPU dma channel index
- * @param 	buf: choose the buffer number, 0 or 1
+ * @param     ipu_index:     ipu index
+ * @param     channel: IPU dma channel index
+ * @param     buf: choose the buffer number, 0 or 1
  */
 void ipu_channel_buf_not_ready(int32_t ipu_index, int32_t channel, int32_t buf)
 {
@@ -141,9 +141,9 @@ void ipu_channel_buf_not_ready(int32_t ipu_index, int32_t channel, int32_t buf)
 /*!
  * set the ipu channel buffer mode, single or double
  *
- * @param 	ipu_index:      ipu index
- * @param 	channel:        IPU dma channel index
- * @param 	double_buf_en:  enable double buffer 
+ * @param     ipu_index:      ipu index
+ * @param     channel:        IPU dma channel index
+ * @param     double_buf_en:  enable double buffer
  *
  */
 void ipu_idmac_channel_mode_sel(int32_t ipu_index, int32_t channel, int32_t double_buf_en)
@@ -157,9 +157,9 @@ void ipu_idmac_channel_mode_sel(int32_t ipu_index, int32_t channel, int32_t doub
 /*!
  * set the ipu channel buffer mode, single or double
  *
- * @param 	ipu_index:  ipu index
- * @param 	channel:    IPU dma channel index
- * @param 	enable:     enable channel  
+ * @param     ipu_index:  ipu index
+ * @param     channel:    IPU dma channel index
+ * @param     enable:     enable channel
  *
  */
 void ipu_idmac_channel_enable(int32_t ipu_index, int32_t channel, int32_t enable)
@@ -172,10 +172,10 @@ void ipu_idmac_channel_enable(int32_t ipu_index, int32_t channel, int32_t enable
 /*!
  * query the ipu channel buffer busy status
  *
- * @param 	ipu_index:  ipu index
- * @param 	channel:    IPU dma channel index
+ * @param     ipu_index:  ipu index
+ * @param     channel:    IPU dma channel index
  *
- * @return 	1 for busy, 0 for idle
+ * @return     1 for busy, 0 for idle
  */
 int32_t ipu_idmac_channel_busy(int32_t ipu_index, int32_t channel)
 {
@@ -190,8 +190,8 @@ int32_t ipu_idmac_channel_busy(int32_t ipu_index, int32_t channel)
 /*!
  * Generic IPU DMA channel config
  *
- * @param	ipu_index:	ipu index
- * @param	conf:		ipu configuration data structure
+ * @param    ipu_index:    ipu index
+ * @param    conf:        ipu configuration data structure
  */
 void ipu_general_idmac_config(uint32_t ipu_index, ipu_idmac_info_t * idmac_info)
 {
@@ -232,10 +232,10 @@ void ipu_general_idmac_config(uint32_t ipu_index, ipu_idmac_info_t * idmac_info)
 /*!
  * IPU background display DMA channel config (CH23)
  *
- * @param	ipu_index:  ipu index
- * @param	width:		background width
- * @param	height:		background height
- * @param	pixel_format:   background pixel format
+ * @param    ipu_index:  ipu index
+ * @param    width:        background width
+ * @param    height:        background height
+ * @param    pixel_format:   background pixel format
  */
 void ipu_disp_bg_idmac_config(uint32_t ipu_index, uint32_t addr0, uint32_t addr1, uint32_t width,
                               uint32_t height, uint32_t pixel_format)
@@ -270,10 +270,10 @@ void ipu_disp_bg_idmac_config(uint32_t ipu_index, uint32_t addr0, uint32_t addr1
 /*!
  * IPU foreground display DMA channel config (CH23)
  *
- * @param	ipu_index:  ipu index
- * @param	width:		background width
- * @param	height:		background height
- * @param	pixel_format:   background pixel format
+ * @param    ipu_index:  ipu index
+ * @param    width:        background width
+ * @param    height:        background height
+ * @param    pixel_format:   background pixel format
  */
 void ipu_disp_fg_idmac_config(uint32_t ipu_index, uint32_t addr0, uint32_t addr1, uint32_t width,
                               uint32_t height, uint32_t pixel_format)

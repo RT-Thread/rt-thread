@@ -31,7 +31,7 @@
 //! @addtogroup diag_audio
 //! @{
 
-/*! 
+/*!
  * @file imx-audmux-priv.h
  * @brief imx-audmux private macros.
  */
@@ -140,41 +140,41 @@
 #define AUDMUX_PDCR_RXDSEL_PORT6            5   // Port6 is source for RxD data
 #define AUDMUX_PDCR_RXDSEL_PORT7            6   // Port7 is source for RxD data
 
-#define AUDMUX_PORT_INDEX_MIN		1
-#define AUDMUX_PORT_INDEX_MAX		7
+#define AUDMUX_PORT_INDEX_MIN        1
+#define AUDMUX_PORT_INDEX_MAX        7
 
 //! Macro for PTCR reading
-#define HW_AUDMUX_PTCR_RD(port)		(port) == AUDMUX_PORT_1 ? HW_AUDMUX_PTCR1_RD() : \
-					(port) == AUDMUX_PORT_2 ? HW_AUDMUX_PTCR2_RD() : \
-					(port) == AUDMUX_PORT_3 ? HW_AUDMUX_PTCR3_RD() : \
-					(port) == AUDMUX_PORT_4 ? HW_AUDMUX_PTCR4_RD() : \
-					(port) == AUDMUX_PORT_5 ? HW_AUDMUX_PTCR5_RD() : \
-					(port) == AUDMUX_PORT_6 ? HW_AUDMUX_PTCR6_RD() : \
-					HW_AUDMUX_PTCR7_RD()
+#define HW_AUDMUX_PTCR_RD(port)        (port) == AUDMUX_PORT_1 ? HW_AUDMUX_PTCR1_RD() : \
+                    (port) == AUDMUX_PORT_2 ? HW_AUDMUX_PTCR2_RD() : \
+                    (port) == AUDMUX_PORT_3 ? HW_AUDMUX_PTCR3_RD() : \
+                    (port) == AUDMUX_PORT_4 ? HW_AUDMUX_PTCR4_RD() : \
+                    (port) == AUDMUX_PORT_5 ? HW_AUDMUX_PTCR5_RD() : \
+                    (port) == AUDMUX_PORT_6 ? HW_AUDMUX_PTCR6_RD() : \
+                    HW_AUDMUX_PTCR7_RD()
 
 //! Macro for PTCR writting
-#define HW_AUDMUX_PTCR_WR(port, v)	(port) == AUDMUX_PORT_1 ? HW_AUDMUX_PTCR1_WR((v)) : \
-					(port) == AUDMUX_PORT_2 ? HW_AUDMUX_PTCR2_WR((v)) : \
-					(port) == AUDMUX_PORT_3 ? HW_AUDMUX_PTCR3_WR((v)) : \
-					(port) == AUDMUX_PORT_4 ? HW_AUDMUX_PTCR4_WR((v)) : \
-					(port) == AUDMUX_PORT_5 ? HW_AUDMUX_PTCR5_WR((v)) : \
-					(port) == AUDMUX_PORT_6 ? HW_AUDMUX_PTCR6_WR((v)) : \
-					HW_AUDMUX_PTCR7_WR((v))
+#define HW_AUDMUX_PTCR_WR(port, v)    (port) == AUDMUX_PORT_1 ? HW_AUDMUX_PTCR1_WR((v)) : \
+                    (port) == AUDMUX_PORT_2 ? HW_AUDMUX_PTCR2_WR((v)) : \
+                    (port) == AUDMUX_PORT_3 ? HW_AUDMUX_PTCR3_WR((v)) : \
+                    (port) == AUDMUX_PORT_4 ? HW_AUDMUX_PTCR4_WR((v)) : \
+                    (port) == AUDMUX_PORT_5 ? HW_AUDMUX_PTCR5_WR((v)) : \
+                    (port) == AUDMUX_PORT_6 ? HW_AUDMUX_PTCR6_WR((v)) : \
+                    HW_AUDMUX_PTCR7_WR((v))
 
 //! Macro for PDCR reading
-#define HW_AUDMUX_PDCR_RD(port)		(port) == AUDMUX_PORT_1 ? HW_AUDMUX_PDCR1_RD() : \
-					(port) == AUDMUX_PORT_2 ? HW_AUDMUX_PDCR2_RD() : \
-					(port) == AUDMUX_PORT_3 ? HW_AUDMUX_PDCR3_RD() : \
-					(port) == AUDMUX_PORT_4 ? HW_AUDMUX_PDCR4_RD() : \
-					(port) == AUDMUX_PORT_5 ? HW_AUDMUX_PDCR5_RD() : \
-					(port) == AUDMUX_PORT_6 ? HW_AUDMUX_PDCR6_RD() : \
-					HW_AUDMUX_PDCR7_RD()
+#define HW_AUDMUX_PDCR_RD(port)        (port) == AUDMUX_PORT_1 ? HW_AUDMUX_PDCR1_RD() : \
+                    (port) == AUDMUX_PORT_2 ? HW_AUDMUX_PDCR2_RD() : \
+                    (port) == AUDMUX_PORT_3 ? HW_AUDMUX_PDCR3_RD() : \
+                    (port) == AUDMUX_PORT_4 ? HW_AUDMUX_PDCR4_RD() : \
+                    (port) == AUDMUX_PORT_5 ? HW_AUDMUX_PDCR5_RD() : \
+                    (port) == AUDMUX_PORT_6 ? HW_AUDMUX_PDCR6_RD() : \
+                    HW_AUDMUX_PDCR7_RD()
 
 //! Macro for PDCR writting
-#define HW_AUDMUX_PDCR_WR(port, v)	(port) == AUDMUX_PORT_1 ? HW_AUDMUX_PDCR1_WR((v)) : \
-					(port) == AUDMUX_PORT_2 ? HW_AUDMUX_PDCR2_WR((v)) : \
-					(port) == AUDMUX_PORT_3 ? HW_AUDMUX_PDCR3_WR((v)) : \
-					(port) == AUDMUX_PORT_4 ? HW_AUDMUX_PDCR4_WR((v)) : \
-					(port) == AUDMUX_PORT_5 ? HW_AUDMUX_PDCR5_WR((v)) : \
-					(port) == AUDMUX_PORT_6 ? HW_AUDMUX_PDCR6_WR((v)) : \
-					HW_AUDMUX_PDCR7_WR((v))
+#define HW_AUDMUX_PDCR_WR(port, v)    (port) == AUDMUX_PORT_1 ? HW_AUDMUX_PDCR1_WR((v)) : \
+                    (port) == AUDMUX_PORT_2 ? HW_AUDMUX_PDCR2_WR((v)) : \
+                    (port) == AUDMUX_PORT_3 ? HW_AUDMUX_PDCR3_WR((v)) : \
+                    (port) == AUDMUX_PORT_4 ? HW_AUDMUX_PDCR4_WR((v)) : \
+                    (port) == AUDMUX_PORT_5 ? HW_AUDMUX_PDCR5_WR((v)) : \
+                    (port) == AUDMUX_PORT_6 ? HW_AUDMUX_PDCR6_WR((v)) : \
+                    HW_AUDMUX_PDCR7_WR((v))

@@ -4200,9 +4200,9 @@ typedef union _hw_hdmi_tx_instuffing
     reg8_t U;
     struct _hw_hdmi_tx_instuffing_bitfields
     {
-        unsigned char GYDATA_STUFFING : 1; //!< [0] 
-        unsigned char RCRDATA_STUFFING : 1; //!< [1] 
-        unsigned char BCBDATA_STUFFING : 1; //!< [2] 
+        unsigned char GYDATA_STUFFING : 1; //!< [0]
+        unsigned char RCRDATA_STUFFING : 1; //!< [1]
+        unsigned char BCBDATA_STUFFING : 1; //!< [2]
         unsigned char RESERVED0 : 5; //!< [7:3] Reserved
     } B;
 } hw_hdmi_tx_instuffing_t;
@@ -5098,7 +5098,7 @@ typedef union _hw_hdmi_vp_conf
     struct _hw_hdmi_vp_conf_bitfields
     {
         unsigned char OUTPUT_SELECTOR : 2; //!< [1:0] Video packetizer output selection.
-        unsigned char BYPASS_SELECT : 1; //!< [2] 
+        unsigned char BYPASS_SELECT : 1; //!< [2]
         unsigned char YCC422_EN : 1; //!< [3] YCC 422 select enable.
         unsigned char PR_EN : 1; //!< [4] Pixel repeater enable.
         unsigned char PP_EN : 1; //!< [5] Pixel packing enable.
@@ -7249,7 +7249,7 @@ typedef union _hw_hdmi_fc_aviconf0
         unsigned char FC_AVICONF01 : 2; //!< [3:2] Bar information
         unsigned char FC_AVICONF02 : 2; //!< [5:4] Scan information
         unsigned char FC_AVICONF03 : 1; //!< [6] Active format present
-        unsigned char FC_AVICONF04 : 1; //!< [7] 
+        unsigned char FC_AVICONF04 : 1; //!< [7]
     } B;
 } hw_hdmi_fc_aviconf0_t;
 #endif
@@ -18730,7 +18730,7 @@ typedef union _hw_hdmi_ahb_dma_conf0
     reg8_t U;
     struct _hw_hdmi_ahb_dma_conf0_bitfields
     {
-        unsigned char BURST_MODE : 1; //!< [0] 
+        unsigned char BURST_MODE : 1; //!< [0]
         unsigned char INCR_TYPE : 2; //!< [2:1] Forced size burst mode.
         unsigned char ENABLE_HLOCK : 1; //!< [3] Enable request of locked burst AHB mechanism.
         unsigned char HBR : 1; //!< [4] HBR packets enable.
@@ -25826,10 +25826,10 @@ typedef union _hw_hdmi_cec_ctrl
     reg8_t U;
     struct _hw_hdmi_cec_ctrl_bitfields
     {
-        unsigned char SEND : 1; //!< [0] 
-        unsigned char FRAME_TYP : 2; //!< [2:1] 
-        unsigned char BC_NACK : 1; //!< [3] 
-        unsigned char STANDBY : 1; //!< [4] 
+        unsigned char SEND : 1; //!< [0]
+        unsigned char FRAME_TYP : 2; //!< [2:1]
+        unsigned char BC_NACK : 1; //!< [3]
+        unsigned char STANDBY : 1; //!< [4]
         unsigned char RESERVED0 : 3; //!< [7:5] Reserved
     } B;
 } hw_hdmi_cec_ctrl_t;

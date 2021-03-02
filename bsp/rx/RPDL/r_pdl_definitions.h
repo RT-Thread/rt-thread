@@ -1,29 +1,29 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: PDL driver API
-* File Name		: r_pdl_definitions.h
-* Version		: 1.02
-* Contents		: API headers for RX62N (100-pin package)
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			:
-* Programmer	: 
-* Note			: 
+* System Name    : PDL driver API
+* File Name        : r_pdl_definitions.h
+* Version        : 1.02
+* Contents        : API headers for RX62N (100-pin package)
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            :
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_DEFS_H
 #define R_PDL_DEFS_H
 
-#define PDL_VERSION	0x0102u	/* v01.02 in BCD format */
+#define PDL_VERSION    0x0102u    /* v01.02 in BCD format */
 #define DEVICE_PACKAGE_LQFP_100
 
 /* Peripiherals that are common to all device packages */

@@ -60,7 +60,7 @@
 void *i2c_get_base(ls1c_i2c_t I2Cx)
 {
     void *base = NULL;
-    
+
     switch (I2Cx)
     {
         case LS1C_I2C_0:
@@ -218,7 +218,7 @@ void i2c_init(ls1c_i2c_info_t *i2c_info_p)
     prescale = (prescale / (5 * i2c_clock)) - 1;
     reg_write_8(prescale & 0xff, i2c_base + LS1C_I2C_PRER_LOW_OFFSET);
     reg_write_8(prescale >> 8, i2c_base + LS1C_I2C_PRER_HIGH_OFFSET);
-    
+
     // 使能
     i2c_cmd_iack(i2c_info_p);
     ctrl = ctrl | LS1C_I2C_CONTROL_EN;
@@ -236,7 +236,7 @@ void i2c_init(ls1c_i2c_info_t *i2c_info_p)
 ls1c_i2c_ack_t i2c_receive_ack(ls1c_i2c_info_t *i2c_info_p)
 {
     ls1c_i2c_ack_t ret = LS1C_I2C_NACK;
-    
+
     if (LS1C_I2C_STATUS_NACK & i2c_get_status(i2c_info_p))
     {
         ret = LS1C_I2C_NACK;
@@ -266,7 +266,7 @@ ls1c_i2c_ret_t i2c_receive_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *buf,
         // 开始接收
         if (i != (len - 1))
             i2c_cmd_read_ack(i2c_info_p);
-        else 
+        else
             i2c_cmd_read_nack(i2c_info_p);
 
         // 等待，直到接收完成
@@ -287,13 +287,13 @@ ls1c_i2c_ret_t i2c_receive_data(ls1c_i2c_info_t *i2c_info_p, unsigned char *buf,
  * @slave_addr 从机地址
  * @direction 数据传输方向(读、写)
  */
-ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p, 
+ls1c_i2c_ret_t i2c_send_start_and_addr(ls1c_i2c_info_t *i2c_info_p,
                                        unsigned char slave_addr,
                                        ls1c_i2c_direction_t direction)
 {
     void *i2c_base = i2c_get_base(i2c_info_p->I2Cx);
     unsigned char data = 0;
-    
+
     // 等待i2c总线空闲
     if (!i2c_poll_status(i2c_info_p, LS1C_I2C_STATUS_BUSY))
         return LS1C_I2C_RET_TIMEOUT;

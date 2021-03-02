@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-24     å‹¤ä¸ºæœ¬          first version
+ * 2017-11-24     ÇÚÎª±¾          first version
  * 2018-05-11     zhuangwei    add gpio interrupt ops
  */
 
@@ -90,7 +90,7 @@ rt_err_t ls1c_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
       break;
     }
     gpio_set_irq_type(gpio, type);
-	
+
     rt_sprintf(irq_name, "PIN_%d", gpio);
     rt_hw_interrupt_install(LS1C_GPIO_TO_IRQ(gpio), (rt_isr_handler_t)hdr, args, irq_name);
 

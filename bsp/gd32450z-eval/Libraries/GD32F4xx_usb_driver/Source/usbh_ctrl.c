@@ -1,5 +1,5 @@
 /*!
-    \file  usbh_ctrl.c 
+    \file  usbh_ctrl.c
     \brief this file implements the functions for the control transmit process
 */
 
@@ -28,8 +28,8 @@ static void ctrl_stalled_handle   (usb_core_handle_struct *pudev, usbh_host_stru
 static void ctrl_complete_handle  (usb_core_handle_struct *pudev, usbh_host_struct *puhost, usbh_state_handle_struct *pustate);
 
 /* the ctrl state handle function array */
-void (*ctrl_state_handle[]) (usb_core_handle_struct *pudev, 
-                             usbh_host_struct *puhost, 
+void (*ctrl_state_handle[]) (usb_core_handle_struct *pudev,
+                             usbh_host_struct *puhost,
                              usbh_state_handle_struct *pustate) =
 {
     ctrl_idle_handle,
@@ -42,7 +42,7 @@ void (*ctrl_state_handle[]) (usb_core_handle_struct *pudev,
 };
 
 /* the ctrl state handle table */
-state_table_struct ctrl_handle_table[CTRL_HANDLE_TABLE_SIZE] = 
+state_table_struct ctrl_handle_table[CTRL_HANDLE_TABLE_SIZE] =
 {
     /* the current state   the current event           the next state        the event function */
     {CTRL_IDLE,            CTRL_EVENT_SETUP,           CTRL_SETUP,           only_state_move     },
@@ -68,15 +68,15 @@ state_table_struct ctrl_handle_table[CTRL_HANDLE_TABLE_SIZE] =
     \param[out] none
     \retval     none
 */
-usbh_status_enum ctrl_state_polling_fun (usb_core_handle_struct *pudev, 
-                                    usbh_host_struct *puhost, 
+usbh_status_enum ctrl_state_polling_fun (usb_core_handle_struct *pudev,
+                                    usbh_host_struct *puhost,
                                     void *pustate)
 {
     usbh_status_enum exe_state = USBH_BUSY;
     usbh_state_handle_struct *p_state;
 
     p_state = (usbh_state_handle_struct *)pustate;
-  
+
     /* if first enter this function, begin the ctrl state */
     if (0U == ctrl_polling_handle_flag) {
         ctrl_polling_handle_flag = 1U;
@@ -121,8 +121,8 @@ usbh_status_enum ctrl_state_polling_fun (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void ctrl_idle_handle (usb_core_handle_struct *pudev, 
-                              usbh_host_struct *puhost, 
+static void ctrl_idle_handle (usb_core_handle_struct *pudev,
+                              usbh_host_struct *puhost,
                               usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.ctrl_backup_state = CTRL_IDLE;
@@ -137,8 +137,8 @@ static void ctrl_idle_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void ctrl_setup_handle (usb_core_handle_struct *pudev, 
-                               usbh_host_struct *puhost, 
+static void ctrl_setup_handle (usb_core_handle_struct *pudev,
+                               usbh_host_struct *puhost,
                                usbh_state_handle_struct *pustate)
 {
     urb_state_enum urb_status = URB_IDLE;
@@ -148,8 +148,8 @@ static void ctrl_setup_handle (usb_core_handle_struct *pudev,
         ctrl_setup_wait_flag = 1U;
 
         /* send a setup packet */
-        usbh_ctltx_setup (pudev, 
-                          puhost->control.setup.data, 
+        usbh_ctltx_setup (pudev,
+                          puhost->control.setup.data,
                           puhost->control.hc_out_num);
     } else {
         urb_status = hcd_urb_state_get(pudev, puhost->control.hc_out_num);
@@ -165,10 +165,10 @@ static void ctrl_setup_handle (usb_core_handle_struct *pudev,
             } else {
                 timeout = NODATA_STAGE_TIMEOUT;
                 ctrl_setup_wait_flag = 0U;
-                scd_event_handle(pudev, 
-                                 puhost, 
-                                 pustate, 
-                                 CTRL_EVENT_STATUS, 
+                scd_event_handle(pudev,
+                                 puhost,
+                                 pustate,
+                                 CTRL_EVENT_STATUS,
                                  pustate->usbh_current_state);
             }
 
@@ -191,21 +191,21 @@ static void ctrl_setup_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void ctrl_data_handle (usb_core_handle_struct *pudev, 
-                              usbh_host_struct *puhost, 
+static void ctrl_data_handle (usb_core_handle_struct *pudev,
+                              usbh_host_struct *puhost,
                               usbh_state_handle_struct *pustate)
 {
-    uint8_t direction;  
+    uint8_t direction;
     urb_state_enum urb_status = URB_IDLE;
     puhost->usbh_backup_state.ctrl_backup_state = CTRL_DATA;
-  
+
     direction = (puhost->control.setup.b.bmRequestType & USB_DIR_MASK);
-    
+
     if (USB_DIR_IN == direction) {
         if (0U == ctrl_data_wait_flag) {
             ctrl_data_wait_flag = 1U;
 
-            /* issue an IN token */ 
+            /* issue an IN token */
             usbh_xfer(pudev,
                       puhost->control.buff,
                       puhost->control.hc_in_num,
@@ -218,29 +218,29 @@ static void ctrl_data_handle (usb_core_handle_struct *pudev,
                 case URB_DONE:
                     ctrl_data_wait_flag = 0U;
 
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_STATUS, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_STATUS,
                                      pustate->usbh_current_state);
                     break;
                 case URB_STALL:
                     ctrl_data_wait_flag = 0U;
-   
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_STALLED, 
+
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_STALLED,
                                      pustate->usbh_current_state);
                     break;
                 case URB_ERROR:
                     ctrl_data_wait_flag = 0U;
 
                     /* device error */
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_ERROR, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_ERROR,
                                      pustate->usbh_current_state);
                     break;
                 default:
@@ -248,10 +248,10 @@ static void ctrl_data_handle (usb_core_handle_struct *pudev,
                         ctrl_data_wait_flag = 0U;
 
                         /* timeout for IN transfer */
-                        scd_event_handle(pudev, 
-                                         puhost, 
-                                         pustate, 
-                                         CTRL_EVENT_ERROR, 
+                        scd_event_handle(pudev,
+                                         puhost,
+                                         pustate,
+                                         CTRL_EVENT_ERROR,
                                          pustate->usbh_current_state);
                     }
                     break;
@@ -262,7 +262,7 @@ static void ctrl_data_handle (usb_core_handle_struct *pudev,
             ctrl_data_wait_flag = 1U;
 
             /* start DATA out transfer (only one DATA packet)*/
-            pudev->host.host_channel[puhost->control.hc_out_num].data_tg_out = 1U; 
+            pudev->host.host_channel[puhost->control.hc_out_num].data_tg_out = 1U;
 
             usbh_xfer(pudev,
                       puhost->control.buff,
@@ -276,19 +276,19 @@ static void ctrl_data_handle (usb_core_handle_struct *pudev,
                     ctrl_data_wait_flag = 0U;
 
                     /* if the setup pkt is sent successful, then change the state */
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_STATUS, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_STATUS,
                                      pustate->usbh_current_state);
                     break;
                 case URB_STALL:
                     ctrl_data_wait_flag = 0U;
 
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_STALLED, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_STALLED,
                                      pustate->usbh_current_state);
                     break;
                 case URB_NOTREADY:
@@ -299,10 +299,10 @@ static void ctrl_data_handle (usb_core_handle_struct *pudev,
                     ctrl_data_wait_flag = 0U;
 
                     /* device error */
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_ERROR, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_ERROR,
                                      pustate->usbh_current_state);
                     break;
                 default:
@@ -320,13 +320,13 @@ static void ctrl_data_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void ctrl_status_handle (usb_core_handle_struct *pudev, 
-                                usbh_host_struct *puhost, 
+static void ctrl_status_handle (usb_core_handle_struct *pudev,
+                                usbh_host_struct *puhost,
                                 usbh_state_handle_struct *pustate)
 {
-    uint8_t direction;  
+    uint8_t direction;
     urb_state_enum urb_status = URB_IDLE;
-  
+
     puhost->usbh_backup_state.ctrl_backup_state = CTRL_STATUS;
 
     /* get the transfer direction in the data state, but the transfer direction in the status state is opposite */
@@ -338,37 +338,37 @@ static void ctrl_status_handle (usb_core_handle_struct *pudev,
             ctrl_status_wait_flag = 1U;
             usbh_xfer (pudev, 0U, puhost->control.hc_in_num, 0U);
         } else {
-            urb_status = hcd_urb_state_get(pudev, puhost->control.hc_in_num); 
+            urb_status = hcd_urb_state_get(pudev, puhost->control.hc_in_num);
 
             switch (urb_status) {
                 case URB_DONE:
                     ctrl_status_wait_flag = 0U;
 
                     /* handle URB_DONE status */
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_COMPLETE, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_COMPLETE,
                                      pustate->usbh_current_state);
                     break;
                 case URB_ERROR:
                     ctrl_status_wait_flag = 0U;
 
                     /* handle URB_STALL status*/
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_ERROR, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_ERROR,
                                      pustate->usbh_current_state);
                     break;
                 case URB_STALL:
                     ctrl_status_wait_flag = 0U;
 
                     /* handle URB_STALL status */
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_STALLED, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_STALLED,
                                      pustate->usbh_current_state);
                     break;
                 default:
@@ -376,10 +376,10 @@ static void ctrl_status_handle (usb_core_handle_struct *pudev,
                         ctrl_status_wait_flag = 0U;
 
                         /* handle timeout */
-                        scd_event_handle(pudev, 
-                                         puhost, 
-                                         pustate, 
-                                         CTRL_EVENT_ERROR, 
+                        scd_event_handle(pudev,
+                                         puhost,
+                                         pustate,
+                                         CTRL_EVENT_ERROR,
                                          pustate->usbh_current_state);
                     }
                     break;
@@ -408,10 +408,10 @@ static void ctrl_status_handle (usb_core_handle_struct *pudev,
                     ctrl_status_wait_flag = 0U;
 
                     /* handle URB_DONE status */
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_COMPLETE, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_COMPLETE,
                                      pustate->usbh_current_state);
                     break;
                 case URB_NOTREADY:
@@ -422,10 +422,10 @@ static void ctrl_status_handle (usb_core_handle_struct *pudev,
                     ctrl_status_wait_flag = 0U;
 
                     /* handle URB_ERROR status */
-                    scd_event_handle(pudev, 
-                                     puhost, 
-                                     pustate, 
-                                     CTRL_EVENT_ERROR, 
+                    scd_event_handle(pudev,
+                                     puhost,
+                                     pustate,
+                                     CTRL_EVENT_ERROR,
                                      pustate->usbh_current_state);
                     break;
                 default:
@@ -443,8 +443,8 @@ static void ctrl_status_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void ctrl_error_handle (usb_core_handle_struct *pudev, 
-                               usbh_host_struct *puhost, 
+static void ctrl_error_handle (usb_core_handle_struct *pudev,
+                               usbh_host_struct *puhost,
                                usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.ctrl_backup_state = CTRL_ERROR;
@@ -465,8 +465,8 @@ static void ctrl_error_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void ctrl_stalled_handle (usb_core_handle_struct *pudev, 
-                                 usbh_host_struct *puhost, 
+static void ctrl_stalled_handle (usb_core_handle_struct *pudev,
+                                 usbh_host_struct *puhost,
                                  usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.ctrl_backup_state = CTRL_STALLED;
@@ -481,8 +481,8 @@ static void ctrl_stalled_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     none
 */
-static void ctrl_complete_handle (usb_core_handle_struct *pudev, 
-                                  usbh_host_struct *puhost, 
+static void ctrl_complete_handle (usb_core_handle_struct *pudev,
+                                  usbh_host_struct *puhost,
                                   usbh_state_handle_struct *pustate)
 {
     puhost->usbh_backup_state.ctrl_backup_state = CTRL_COMPLETE;
@@ -498,8 +498,8 @@ static void ctrl_complete_handle (usb_core_handle_struct *pudev,
     \param[out] none
     \retval     host operation status
 */
-usbh_status_enum usbh_xfer (usb_core_handle_struct *pudev, 
-                       uint8_t *buf, 
+usbh_status_enum usbh_xfer (usb_core_handle_struct *pudev,
+                       uint8_t *buf,
                        uint8_t  hc_num,
                        uint16_t len)
 {
@@ -609,7 +609,7 @@ usbh_status_enum usbh_ctltx_setup (usb_core_handle_struct *pudev, uint8_t *buf, 
     \param[out] none
     \retval     host operation status
 */
-uint32_t hcd_submit_request (usb_core_handle_struct *pudev, uint8_t channel_num) 
+uint32_t hcd_submit_request (usb_core_handle_struct *pudev, uint8_t channel_num)
 {
     usb_hostchannel_struct *puhc = &pudev->host.host_channel[channel_num];
 

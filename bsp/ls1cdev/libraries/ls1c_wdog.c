@@ -12,23 +12,23 @@
 #include "ls1c_wdog.h"
 
 /*
-ç³»ç»Ÿå…ˆé…ç½®çœ‹é—¨ç‹—ä½¿èƒ½ä½ WDT_EN;
-ç„¶åé…ç½®çœ‹é—¨ç‹—è®¡æ•°å™¨çš„åˆå§‹å€¼ WDT_TIMER;
-å½“è®¾ç½® WDT_SET åï¼Œè®¡æ•°å™¨å¼€å§‹å‡è®¡æ•°;
-å½“è¿˜æ²¡æœ‰å‡åˆ° 0 æ—¶ï¼Œé‡ç½®çœ‹é—¨ç‹—è®¡æ•°å™¨ï¼Œç³»ç»Ÿä¸ä¼šé‡å¯;
-å½“çœ‹é—¨ç‹—è®¡æ•°å™¨å‡åˆ° 0 æ—¶ï¼Œåˆ™ç³»ç»Ÿé‡å¯ã€‚
+ÏµÍ³ÏÈÅäÖÃ¿´ÃÅ¹·Ê¹ÄÜÎ» WDT_EN;
+È»ºóÅäÖÃ¿´ÃÅ¹·¼ÆÊıÆ÷µÄ³õÊ¼Öµ WDT_TIMER;
+µ±ÉèÖÃ WDT_SET ºó£¬¼ÆÊıÆ÷¿ªÊ¼¼õ¼ÆÊı;
+µ±»¹Ã»ÓĞ¼õµ½ 0 Ê±£¬ÖØÖÃ¿´ÃÅ¹·¼ÆÊıÆ÷£¬ÏµÍ³²»»áÖØÆô;
+µ±¿´ÃÅ¹·¼ÆÊıÆ÷¼õµ½ 0 Ê±£¬ÔòÏµÍ³ÖØÆô¡£
 */
 
 static unsigned int WDT_timer = 0;
 
-/* æš‚æ—¶ä¸ºç©º */
-unsigned int Wdog_Init(void)              
+/* ÔİÊ±Îª¿Õ */
+unsigned int Wdog_Init(void)
 {
     return 0;
 }
 
-/* é…ç½®çœ‹é—¨ç‹—ä½¿èƒ½å¯„å­˜å™¨(WDT_EN) */
-unsigned int Wdog_Enable(void)       
+/* ÅäÖÃ¿´ÃÅ¹·Ê¹ÄÜ¼Ä´æÆ÷(WDT_EN) */
+unsigned int Wdog_Enable(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_EN);
@@ -38,8 +38,8 @@ unsigned int Wdog_Enable(void)
     return 0;
 }
 
-/* é…ç½®çœ‹é—¨ç‹—å¤±èƒ½å¯„å­˜å™¨(WDT_EN) */
-unsigned int Wdog_Disable(void)           
+/* ÅäÖÃ¿´ÃÅ¹·Ê§ÄÜ¼Ä´æÆ÷(WDT_EN) */
+unsigned int Wdog_Disable(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_EN);
@@ -48,8 +48,8 @@ unsigned int Wdog_Disable(void)
     return 0;
 }
 
-/* é…ç½®çœ‹é—¨ç‹—è®¾ç½®å¯„å­˜å™¨ (WDT_SET) */
-unsigned int Wdog_Set(void)               
+/* ÅäÖÃ¿´ÃÅ¹·ÉèÖÃ¼Ä´æÆ÷ (WDT_SET) */
+unsigned int Wdog_Set(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_SET);
@@ -58,8 +58,8 @@ unsigned int Wdog_Set(void)
     return 0;
 }
 
-/* é…ç½®çœ‹é—¨ç‹—è®¾ç½®å¯„å­˜å™¨ (WDT_SET) */
-unsigned int Wdog_Reset(void)             
+/* ÅäÖÃ¿´ÃÅ¹·ÉèÖÃ¼Ä´æÆ÷ (WDT_SET) */
+unsigned int Wdog_Reset(void)
 {
     unsigned int ctrl;
     ctrl = (WDT_SET);
@@ -68,24 +68,24 @@ unsigned int Wdog_Reset(void)
     return 0;
 }
 
-/* è·å¾—çœ‹é—¨ç‹—è®¡æ•°å™¨(WDT_timer) çš„å€¼*/
-unsigned int Wdog_GetValue(void)          
+/* »ñµÃ¿´ÃÅ¹·¼ÆÊıÆ÷(WDT_timer) µÄÖµ*/
+unsigned int Wdog_GetValue(void)
 {
     unsigned int cnt;
     cnt = (WDT_TIMER);
     return cnt;
 }
 
-/* é…ç½®çœ‹é—¨ç‹—è®¡æ•°å™¨(WDT_timer)çš„å€¼*/
-unsigned int Wdog_LoadValue(unsigned int cnt)    
+/* ÅäÖÃ¿´ÃÅ¹·¼ÆÊıÆ÷(WDT_timer)µÄÖµ*/
+unsigned int Wdog_LoadValue(unsigned int cnt)
 {
     WDT_TIMER = cnt;
     WDT_timer = cnt;
     return 0;
 }
 
-/* è·å¾—çœ‹é—¨ç‹—è®¡æ•°å™¨è®¾å®šå€¼ */
-unsigned int Wdog_GetPreValue(void)    
+/* »ñµÃ¿´ÃÅ¹·¼ÆÊıÆ÷Éè¶¨Öµ */
+unsigned int Wdog_GetPreValue(void)
 {
     return WDT_timer;
 }

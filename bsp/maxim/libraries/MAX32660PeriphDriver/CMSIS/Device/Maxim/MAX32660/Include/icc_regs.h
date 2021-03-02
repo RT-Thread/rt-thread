@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -98,13 +98,13 @@ typedef struct {
 /**
  * @ingroup    icc_registers
  * @defgroup   ICC_Register_Offsets Register Offsets
- * @brief      ICC Peripheral Register Offsets from the ICC Base Peripheral Address. 
+ * @brief      ICC Peripheral Register Offsets from the ICC Base Peripheral Address.
  * @{
  */
- #define MXC_R_ICC_CACHE_ID                 ((uint32_t)0x00000000UL) /**< Offset from ICC Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_ICC_MEMCFG                   ((uint32_t)0x00000004UL) /**< Offset from ICC Base Address: <tt> 0x0004</tt> */ 
- #define MXC_R_ICC_CACHE_CTRL               ((uint32_t)0x00000100UL) /**< Offset from ICC Base Address: <tt> 0x0100</tt> */ 
- #define MXC_R_ICC_INVALIDATE               ((uint32_t)0x00000700UL) /**< Offset from ICC Base Address: <tt> 0x0700</tt> */ 
+ #define MXC_R_ICC_CACHE_ID                 ((uint32_t)0x00000000UL) /**< Offset from ICC Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_ICC_MEMCFG                   ((uint32_t)0x00000004UL) /**< Offset from ICC Base Address: <tt> 0x0004</tt> */
+ #define MXC_R_ICC_CACHE_CTRL               ((uint32_t)0x00000100UL) /**< Offset from ICC Base Address: <tt> 0x0100</tt> */
+ #define MXC_R_ICC_INVALIDATE               ((uint32_t)0x00000700UL) /**< Offset from ICC Base Address: <tt> 0x0700</tt> */
 /**@} end of group icc_registers */
 
 /**

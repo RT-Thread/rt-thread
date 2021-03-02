@@ -214,9 +214,9 @@ void POWER_EnterDeepSleep(uint64_t exclude_from_pd);
 /*!
  * @brief Power Library API to enter deep power down mode.
  *
- * @param exclude_from_pd   Bit mask of the PDRUNCFG0(low 32bits) and PDRUNCFG1(high 32bits) that needs to be powered on during deep power 
+ * @param exclude_from_pd   Bit mask of the PDRUNCFG0(low 32bits) and PDRUNCFG1(high 32bits) that needs to be powered on during deep power
  *                          down mode, but this is has no effect as the voltages are cut off.
- 
+
  * @return none
  */
 void POWER_EnterDeepPowerDown(uint64_t exclude_from_pd);
@@ -224,7 +224,7 @@ void POWER_EnterDeepPowerDown(uint64_t exclude_from_pd);
 /*!
  * @brief Power Library API to choose normal regulation and set the voltage for the desired operating frequency.
  *
- * @param freq  - The desired frequency at which the part would like to operate, 
+ * @param freq  - The desired frequency at which the part would like to operate,
  *                note that the voltage and flash wait states should be set before changing frequency
  * @return none
  */

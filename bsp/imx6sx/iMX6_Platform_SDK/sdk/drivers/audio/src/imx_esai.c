@@ -42,7 +42,7 @@
 #include "registers/regsesai.h"
 #include "profile/profile.h"
 
-#define ESAI_DEBUG	1
+#define ESAI_DEBUG    1
 #if ESAI_DEBUG
 #define TRACE(fmt,args...) printf(fmt, ## args)
 #else
@@ -53,13 +53,13 @@
 
 extern void esai_clk_sel_gate_on(void);
 
-////////////////////////////////////Local variables and functions/////////////////////////// 
+////////////////////////////////////Local variables and functions///////////////////////////
 /*!
- * Dump the esai registers which can be readable. 
- * @param  	ctrl	a pointer of audio controller(audio_ctrl_t) which presents the esai module itself
- *			
- * @return	0 if succeeded
- *		-1 if failed   
+ * Dump the esai registers which can be readable.
+ * @param      ctrl    a pointer of audio controller(audio_ctrl_t) which presents the esai module itself
+ *
+ * @return    0 if succeeded
+ *        -1 if failed
  */
 static int32_t esai_dump(audio_ctrl_p ctrl)
 {
@@ -81,7 +81,7 @@ static int32_t esai_dump(audio_ctrl_p ctrl)
     return 0;
 }
 
-/*! 
+/*!
  * Put the esai to soft-reset mode, and then can be configured.
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the esai module
  *
@@ -228,11 +228,11 @@ static uint32_t esai_get_hw_para(audio_ctrl_p ctrl, uint32_t type)
         val = ((HW_ESAI_RSMB_RD() << 16) & 0xFFFF0000) | (HW_ESAI_RSMA_RD() & 0xFFFF);
         break;
     case ESAI_HW_PARA_TX_WL:
-	val = BG_ESAI_TFCR_TWA(HW_ESAI_TFCR_RD());
+    val = BG_ESAI_TFCR_TWA(HW_ESAI_TFCR_RD());
         val = 32 - val * 4;
         break;
     case ESAI_HW_PARA_RX_WL:
-	val = BG_ESAI_RFCR_RWA(HW_ESAI_RFCR_RD());
+    val = BG_ESAI_RFCR_RWA(HW_ESAI_RFCR_RD());
         val = 32 - val * 4;
         break;
     }
@@ -292,7 +292,7 @@ static int32_t esai_sub_enable(audio_ctrl_p ctrl, uint32_t type, uint32_t val)
     case ESAI_SUB_ENABLE_TYPE_TX:
         v = HW_ESAI_TCR_RD();
         v &= ~(BM_ESAI_TCR_TE0 | BM_ESAI_TCR_TE1 | BM_ESAI_TCR_TE2 |
-		BM_ESAI_TCR_TE3 | BM_ESAI_TCR_TE4 | BM_ESAI_TCR_TE5);
+        BM_ESAI_TCR_TE3 | BM_ESAI_TCR_TE4 | BM_ESAI_TCR_TE5);
         v |= ESAI_TCR_TE(val);
         HW_ESAI_TCR_WR(v);
         break;
@@ -308,10 +308,10 @@ static int32_t esai_sub_enable(audio_ctrl_p ctrl, uint32_t type, uint32_t val)
 }
 
 /*!
- * Connect all ESAI pins, and this will make the ESAI out of personal reset state. 
+ * Connect all ESAI pins, and this will make the ESAI out of personal reset state.
  *
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the esai module
- * 
+ *
  * @return      0 if succeeded
  *              -1 if failed
  */
@@ -331,7 +331,7 @@ static int32_t esai_connect_pins(audio_ctrl_p ctrl)
  * Fill zeros to esai tx fifo to avoid noise data transfered.
  *
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the esai module
- * 
+ *
  * @return      0 if succeeded
  *              -1 if failed
  */
@@ -365,7 +365,7 @@ int32_t esai_config(void *priv, audio_dev_para_p para)
          * Just for customer support purpose, since no mx6x reference board consists of AC97 codec
          *
          * For AC97:
-         *  48KHz sample rate, so the frame sync freq should be 48KHz and the bit freq should be 48K*256 = 12.288 MHz. 
+         *  48KHz sample rate, so the frame sync freq should be 48KHz and the bit freq should be 48K*256 = 12.288 MHz.
          *  13 slots;
          *  20bits per slot except slot0(16bit);
          *  word width: 20bit except slot0;
@@ -378,7 +378,7 @@ int32_t esai_config(void *priv, audio_dev_para_p para)
         esai_set_hw_para(ctrl, ESAI_HW_PARA_TCR, val);
 
         val = BM_ESAI_TCCR_THCKD |  //HCKT is output (bit23=1)
-            BM_ESAI_TCCR_TFSD | //FST is output (bit22=1) 
+            BM_ESAI_TCCR_TFSD | //FST is output (bit22=1)
             BM_ESAI_TCCR_TCKD | //SCKT is output (bit21=1)
             BM_ESAI_TCCR_TCKP | //tX clock polarity bit 18, clock out on falling edge
             ESAI_TCCR_TDC(12);  //frame rate devider
@@ -414,18 +414,18 @@ int32_t esai_config(void *priv, audio_dev_para_p para)
     esai_set_hw_para(ctrl, ESAI_HW_PARA_TCR, val);
 
     /*
-     * FixMe: CS42888 driver supports 48/44.1KHz only, although it was 
+     * FixMe: CS42888 driver supports 48/44.1KHz only, although it was
      * expected to support all sample rates.  When lower sample rate used,
      * no audio input.
      */
     if (AUDIO_BUS_MODE_MASTER == para->bus_mode) {
         val = BM_ESAI_TCCR_THCKD | //HCKT is output (bit23=1)
-            BM_ESAI_TCCR_TFSD |    //FST is output (bit22=1) 
+            BM_ESAI_TCCR_TFSD |    //FST is output (bit22=1)
             BM_ESAI_TCCR_TCKD |    //SCKT is output (bit21=1)
             BM_ESAI_TCCR_TCKP |    //tX clock polarity bit 18, clock out on falling edge
             ESAI_TCCR_TDC(para->channel_number - 1);    //frame rate devider
         if (SAMPLERATE_44_1KHz == para->sample_rate) {
-  	    /*
+          /*
              * So the Tx_CLK = Fsys/2/((TPM+1) + (TFP+1)) = 133/2/(6*4) = 2.771MHz.
              * the HCKT = Fsys/2/((TPM+1) = 133/2/6 = 11.08MHz.
              * The Tx_CLK is not very accurate for 44.1K sample rate(2.822MHz).
@@ -434,23 +434,23 @@ int32_t esai_config(void *priv, audio_dev_para_p para)
                 ESAI_TCCR_TPSR_BYPASS | //bypass
                 ESAI_TCCR_TPM(5);
         } else if(SAMPLERATE_16KHz == para->sample_rate){
-	    /*
-	     * Tx_Clk = 133/2/(13*5) = 1.023MHz(1.024MHz expected), HCKT = 133/2/5 = 13.2MHz 
+        /*
+         * Tx_Clk = 133/2/(13*5) = 1.023MHz(1.024MHz expected), HCKT = 133/2/5 = 13.2MHz
              */
             val |= ESAI_TCCR_TFP(12) |   // clk div 11
-		ESAI_TCCR_TPSR_BYPASS | //bypass
-		ESAI_TCCR_TPM(4);
+        ESAI_TCCR_TPSR_BYPASS | //bypass
+        ESAI_TCCR_TPM(4);
         }else if(SAMPLERATE_32KHz == para->sample_rate){
-	    /*
- 	     * Tx_Clk = 133/2/(4*8) = 2.031MHz(32*2*32 = 2.048MHz was expected). HCKT = 133/2/4 = 16.625MHz
-	     */
+        /*
+          * Tx_Clk = 133/2/(4*8) = 2.031MHz(32*2*32 = 2.048MHz was expected). HCKT = 133/2/4 = 16.625MHz
+         */
                 val |= ESAI_TCCR_TFP(7) | ESAI_TCCR_TPSR_BYPASS | ESAI_TCCR_TPM(3);
-	}else if(SAMPLERATE_48KHz == para->sample_rate){
+    }else if(SAMPLERATE_48KHz == para->sample_rate){
             /*
              * Tx_Clk = 133/2/(5*4) = 3.3MHz(48*2*32 = 3.08MHz was expected). HCKT = 133/2/5 = 13.3MHz
              */
                 val |= ESAI_TCCR_TFP(3) | ESAI_TCCR_TPSR_BYPASS | ESAI_TCCR_TPM(4);
-	}
+    }
     } else {
         val = BM_ESAI_TCCR_TCKP | ESAI_TCCR_TDC(para->channel_number - 1); //frame rate devider
     }

@@ -35,28 +35,28 @@
 struct imx_i2c_request wm8958_i2c_req;
 
 ////////////////////////////// Macros  ///////////////////////////////////////////
-#define DEBUG_ENABLE	1
+#define DEBUG_ENABLE    1
 #if DEBUG_ENABLE
-#define TRACE(fmt, args...)	printf(fmt,##args)
+#define TRACE(fmt, args...)    printf(fmt,##args)
 #else
 #define TRACE(fmt, args...)
 #endif
 
-#define WM8958_REG_WRITE(codec, reg_addr, reg_val)	\
- 	do{     \
-		if(0 != WM8958_i2c_write(codec, reg_addr, reg_val)){   \
+#define WM8958_REG_WRITE(codec, reg_addr, reg_val)    \
+     do{     \
+        if(0 != WM8958_i2c_write(codec, reg_addr, reg_val)){   \
             printf("Write %s  failed.\n", #reg_addr);   \
-            return -1;	\
+            return -1;    \
         } \
-	}while(0)
+    }while(0)
 
-#define WM8958_REG_READ(codec, reg_addr, reg_val)	\
- 	do{     \
-		if(0 != WM8958_i2c_read(codec, reg_addr, &reg_val)){   \
+#define WM8958_REG_READ(codec, reg_addr, reg_val)    \
+     do{     \
+        if(0 != WM8958_i2c_read(codec, reg_addr, &reg_val)){   \
             printf("Read %s  failed.\n", #reg_addr);   \
-			return -1;	\
+            return -1;    \
         }   \
-	}while(0)
+    }while(0)
 
 
 static void wm8958_i2c_init(audio_codec_p codec)
@@ -150,7 +150,7 @@ static int32_t WM8958_DAC_disable(void *priv)
     hal_delay_us(600 * 1000);
     WM8958_REG_WRITE(codec, WM8958_REG_OUTPUT_MIXER_1, 0x0000);    //disable path from DAC1L to HPOUT1L
     WM8958_REG_WRITE(codec, WM8958_REG_OUTPUT_MIXER_2, 0x0000);    //disable path from DAC1R to HPOUT1R
-    WM8958_REG_WRITE(codec, WM8958_REG_POWER_MANAGEMENT4, 0x0000); //disable DAC1L and DAC1R   
+    WM8958_REG_WRITE(codec, WM8958_REG_POWER_MANAGEMENT4, 0x0000); //disable DAC1L and DAC1R
 
     return 0;
 }
@@ -163,10 +163,10 @@ static int32_t WM8958_Soft_Reset(void *priv)
     return 0;
 }
 
-/* 
- *	Since there are tow FLLs within WM8958, the external osc is not necessary.
- *	So the osc can be saved if WM8958 works at SLAVE mode.
- *	Slave mode was tested on sbrth_tablet board, while master mode not yet.
+/*
+ *    Since there are tow FLLs within WM8958, the external osc is not necessary.
+ *    So the osc can be saved if WM8958 works at SLAVE mode.
+ *    Slave mode was tested on sbrth_tablet board, while master mode not yet.
  */
 int32_t WM8958_DAC_configure(void *priv, audio_dev_para_p para)
 {
@@ -176,7 +176,7 @@ int32_t WM8958_DAC_configure(void *priv, audio_dev_para_p para)
     if (AUDIO_BUS_MODE_MASTER != para->bus_mode)  {
         TRACE("The WM8958 was configured as slave. \n");
         /*
-         * The FLL must be configured in slave mode, and the BCLK, LRCLK was supposed to be povided by the master. 
+         * The FLL must be configured in slave mode, and the BCLK, LRCLK was supposed to be povided by the master.
          *
          * Config the FLL. For BCLK = 2.8224M, Fout = (BCLK/1)*32.0/8 = 11.2896
          */

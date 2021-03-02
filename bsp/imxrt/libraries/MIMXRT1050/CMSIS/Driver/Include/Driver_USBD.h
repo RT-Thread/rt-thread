@@ -243,8 +243,8 @@ typedef struct _ARM_USBD_CAPABILITIES {
 typedef struct _ARM_DRIVER_USBD {
   ARM_DRIVER_VERSION    (*GetVersion)                (void);                                              ///< Pointer to \ref ARM_USBD_GetVersion : Get driver version.
   ARM_USBD_CAPABILITIES (*GetCapabilities)           (void);                                              ///< Pointer to \ref ARM_USBD_GetCapabilities : Get driver capabilities.
-  int32_t               (*Initialize)                (ARM_USBD_SignalDeviceEvent_t   cb_device_event,                     
-                                                      ARM_USBD_SignalEndpointEvent_t cb_endpoint_event);  ///< Pointer to \ref ARM_USBD_Initialize : Initialize USB Device Interface. 
+  int32_t               (*Initialize)                (ARM_USBD_SignalDeviceEvent_t   cb_device_event,
+                                                      ARM_USBD_SignalEndpointEvent_t cb_endpoint_event);  ///< Pointer to \ref ARM_USBD_Initialize : Initialize USB Device Interface.
   int32_t               (*Uninitialize)              (void);                                              ///< Pointer to \ref ARM_USBD_Uninitialize : De-initialize USB Device Interface.
   int32_t               (*PowerControl)              (ARM_POWER_STATE state);                             ///< Pointer to \ref ARM_USBD_PowerControl : Control USB Device Interface Power.
   int32_t               (*DeviceConnect)             (void);                                              ///< Pointer to \ref ARM_USBD_DeviceConnect : Connect USB Device.

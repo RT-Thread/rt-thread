@@ -71,30 +71,30 @@ extern "C" {
 
 //! Calendar structure to hold a date
 struct calendar_date {
-	uint8_t second;        //!< 0-59
-	uint8_t minute;        //!< 0-59
-	uint8_t hour;          //!< 0-23
-	uint8_t date;          //!< 0-30 \note First day of month is 0, not 1.
-	uint8_t month;         //!< 0 January - 11 December
-	uint16_t year;         //!< 1970-2105
-	uint8_t dayofweek;     //!< 0 Sunday  - 6 Saturday
+    uint8_t second;        //!< 0-59
+    uint8_t minute;        //!< 0-59
+    uint8_t hour;          //!< 0-23
+    uint8_t date;          //!< 0-30 \note First day of month is 0, not 1.
+    uint8_t month;         //!< 0 January - 11 December
+    uint16_t year;         //!< 1970-2105
+    uint8_t dayofweek;     //!< 0 Sunday  - 6 Saturday
 };
 
 bool calendar_is_date_valid(struct calendar_date *date);
 
 void calendar_timestamp_to_date(uint32_t timestamp, struct calendar_date
-		*date_out);
+        *date_out);
 
 void calendar_timestamp_to_date_tz(uint32_t timestamp, int8_t hour,
-		uint8_t min, struct calendar_date *date_out);
+        uint8_t min, struct calendar_date *date_out);
 
 uint32_t calendar_date_to_timestamp(struct calendar_date *date);
 
 uint32_t calendar_date_to_timestamp_tz(struct calendar_date *date, int8_t hour,
-		uint8_t min);
+        uint8_t min);
 
 void calendar_time_between_dates(struct calendar_date *date_end,
-		struct calendar_date *date_start, struct calendar_date *date_out);
+        struct calendar_date *date_start, struct calendar_date *date_out);
 
 void calendar_add_second_to_date(struct calendar_date *date);
 
@@ -132,14 +132,14 @@ void calendar_add_second_to_date(struct calendar_date *date);
  * be added to the project:
  * -# A date struct with a date:
  * \code
-	struct calendar_date date = {
-	    .second = 12,
-	    .minute = 1,
-	    .hour = 22,
-	    .date = 8,
-	    .month = 2,
-	    .year = 1985
-	};
+    struct calendar_date date = {
+        .second = 12,
+        .minute = 1,
+        .hour = 22,
+        .date = 8,
+        .month = 2,
+        .year = 1985
+    };
 \endcode
  *
  * \subsection calendar_basic_use_case_setup_code Example code
@@ -169,14 +169,14 @@ void calendar_add_second_to_date(struct calendar_date *date);
  * be added to the project:
  * -# Three date structs:
  * \code
-	struct calendar_date result;
-	struct calendar_date end_date;
-	struct calendar_date start_date;
+    struct calendar_date result;
+    struct calendar_date end_date;
+    struct calendar_date start_date;
 \endcode
  * -# Two timestamps:
  * \code
-	uint32_t end_timestamp = 1309174659;
-	uint32_t start_timestamp = 123456789;
+    uint32_t end_timestamp = 1309174659;
+    uint32_t start_timestamp = 123456789;
 \endcode
  *
  * \subsection calendar_use_case_1_setup_code Example code
@@ -187,9 +187,9 @@ void calendar_add_second_to_date(struct calendar_date *date);
  * \subsection calendar_use_case_1_usage_code Example code
  * Add to, e.g. the main loop in the application C-file:
  * \code
-	calendar_timestamp_to_date(end_timestamp, &end_date);
-	calendar_timestamp_to_date(start_timestamp, &start_date);
-	calendar_time_between_dates(&end_date, &start_date, &result);
+    calendar_timestamp_to_date(end_timestamp, &end_date);
+    calendar_timestamp_to_date(start_timestamp, &start_date);
+    calendar_time_between_dates(&end_date, &start_date, &result);
 \endcode
  *
  * \subsection calendar_use_case_1_usage_flow Workflow

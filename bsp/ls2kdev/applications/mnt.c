@@ -33,7 +33,7 @@ int mount_ssd(void)
         rt_kprintf("dwc_ahsata_blk not found!\n");
         return;
     }
-    
+
     ext4_dmask_set(EXT4_DEBUG_NO);
     blk_device_init(blkdev);
     dfs_mount("dwc_ahsata_blk","/","ext",0,(void *)1);

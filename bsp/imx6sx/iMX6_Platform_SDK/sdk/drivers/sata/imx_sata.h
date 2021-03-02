@@ -259,7 +259,7 @@ typedef enum SATA_RETURN {
     SATA_FAIL = 1,
 } sata_return_t;
 
-//! @brief Enumeration of sata phy reference clock 
+//! @brief Enumeration of sata phy reference clock
 typedef enum sata_phy_ref_clk {
     FREQ_100MHZ = 0,
     OSC_25MHZ,
@@ -338,7 +338,7 @@ typedef struct ata_dev_signature {
 /*
 //! @brief sata AHCI registers
 typedef struct sata_ahci_regs {
-    //Generic Host Control 
+    //Generic Host Control
     volatile u32 cap;           //0x00, HBA Capabilities Register
     volatile u32 ghc;           //0x04, Global HBA Control Register
     volatile u32 is;            //0x08, Interrupt Status Register
@@ -350,7 +350,7 @@ typedef struct sata_ahci_regs {
     volatile u32 cap2;          //0x24, HBA Capabilities Extended Register
     volatile u32 rsv1[30];      //0x28~0x9f, reserved
 
-    // Vendor Specific Registers 
+    // Vendor Specific Registers
     volatile u32 bistafis;      //0xa0, BIST Activate FIS Register
     volatile u32 bistctrl;      //0xa4, BIST Control Register
     volatile u32 bistfcnt;      //0xa8, BIST FIS Count Register

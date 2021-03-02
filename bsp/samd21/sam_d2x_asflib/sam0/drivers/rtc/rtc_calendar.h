@@ -412,20 +412,20 @@ extern "C" {
  * RTC clock source.
  */
 enum rtc_clock_sel {
-	/** 1.024kHz from 32KHz internal ULP oscillator */
-	RTC_CLOCK_SELECTION_ULP1K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP1K_Val,
-	/** 32.768kHz from 32KHz internal ULP oscillator */
-	RTC_CLOCK_SELECTION_ULP32K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP32K_Val,
+    /** 1.024kHz from 32KHz internal ULP oscillator */
+    RTC_CLOCK_SELECTION_ULP1K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP1K_Val,
+    /** 32.768kHz from 32KHz internal ULP oscillator */
+    RTC_CLOCK_SELECTION_ULP32K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP32K_Val,
 #if !(SAML22)
-	/** 1.024kHz from 32KHz internal oscillator */
-	RTC_CLOCK_SELECTION_OSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC1K_Val,
-	/** 32.768kHz from 32KHz internal oscillator */
-	RTC_CLOCK_SELECTION_OSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC32K_Val,
+    /** 1.024kHz from 32KHz internal oscillator */
+    RTC_CLOCK_SELECTION_OSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC1K_Val,
+    /** 32.768kHz from 32KHz internal oscillator */
+    RTC_CLOCK_SELECTION_OSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC32K_Val,
 #endif
-	/** 1.024kHz from 32KHz internal oscillator */
-	RTC_CLOCK_SELECTION_XOSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC1K_Val,
-	/** 32.768kHz from 32.768kHz external crystal oscillator */
-	RTC_CLOCK_SELECTION_XOSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC32K_Val,
+    /** 1.024kHz from 32KHz internal oscillator */
+    RTC_CLOCK_SELECTION_XOSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC1K_Val,
+    /** 32.768kHz from 32.768kHz external crystal oscillator */
+    RTC_CLOCK_SELECTION_XOSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC32K_Val,
 };
 #endif
 
@@ -441,19 +441,19 @@ enum rtc_clock_sel {
  * \note Not all alarm channels are available on all devices.
  */
 enum rtc_calendar_alarm {
-	/** Alarm channel 0 */
-	RTC_CALENDAR_ALARM_0 = 0,
+    /** Alarm channel 0 */
+    RTC_CALENDAR_ALARM_0 = 0,
 #if (RTC_NUM_OF_ALARMS > 1) || defined(__DOXYGEN__)
-	/** Alarm channel 1 */
-	RTC_CALENDAR_ALARM_1 = 1,
+    /** Alarm channel 1 */
+    RTC_CALENDAR_ALARM_1 = 1,
 #endif
 #if (RTC_NUM_OF_ALARMS > 2) || defined(__DOXYGEN__)
-	/** Alarm channel 2 */
-	RTC_CALENDAR_ALARM_2 = 2,
+    /** Alarm channel 2 */
+    RTC_CALENDAR_ALARM_2 = 2,
 #endif
 #if (RTC_NUM_OF_ALARMS > 3) || defined(__DOXYGEN__)
-	/** Alarm channel 3 */
-	RTC_CALENDAR_ALARM_3 = 3,
+    /** Alarm channel 3 */
+    RTC_CALENDAR_ALARM_3 = 3,
 #endif
 };
 
@@ -462,22 +462,22 @@ enum rtc_calendar_alarm {
  * \brief Available periodic interval source.
  */
 enum rtc_calendar_periodic_interval{
-	/** Periodic interval 0 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_0 = 0,
-	/** Periodic interval 1 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_1 = 1,
-	/** Periodic interval 2 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_2 = 2,
-	/** Periodic interval 3 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_3 = 3,
-	/** Periodic interval 4 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_4 = 4,
-	/** Periodic interval 5 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_5 = 5,
-	/** Periodic interval 6 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_6 = 6,
-	/** Periodic interval 7 */
-	RTC_CALENDAR_PERIODIC_INTERVAL_7 = 7,
+    /** Periodic interval 0 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_0 = 0,
+    /** Periodic interval 1 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_1 = 1,
+    /** Periodic interval 2 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_2 = 2,
+    /** Periodic interval 3 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_3 = 3,
+    /** Periodic interval 4 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_4 = 4,
+    /** Periodic interval 5 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_5 = 5,
+    /** Periodic interval 6 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_6 = 6,
+    /** Periodic interval 7 */
+    RTC_CALENDAR_PERIODIC_INTERVAL_7 = 7,
 };
 #endif
 
@@ -489,45 +489,45 @@ enum rtc_calendar_periodic_interval{
  * The available callback types for the RTC calendar module.
  */
 enum rtc_calendar_callback {
-	/** Callback for Periodic Interval 0 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_0 = 0,
-	/** Callback for Periodic Interval 1 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_1,
-	/** Callback for Periodic Interval 2 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_2,
-	/** Callback for Periodic Interval 3 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_3,
-	/** Callback for Periodic Interval 4 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_4,
-	/** Callback for Periodic Interval 5 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_5,
-	/** Callback for Periodic Interval 6 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_6,
-	/** Callback for Periodic Interval 7 Interrupt */
-	RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_7,
-	/** Callback for alarm 0 */
-	RTC_CALENDAR_CALLBACK_ALARM_0,
+    /** Callback for Periodic Interval 0 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_0 = 0,
+    /** Callback for Periodic Interval 1 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_1,
+    /** Callback for Periodic Interval 2 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_2,
+    /** Callback for Periodic Interval 3 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_3,
+    /** Callback for Periodic Interval 4 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_4,
+    /** Callback for Periodic Interval 5 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_5,
+    /** Callback for Periodic Interval 6 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_6,
+    /** Callback for Periodic Interval 7 Interrupt */
+    RTC_CALENDAR_CALLBACK_PERIODIC_INTERVAL_7,
+    /** Callback for alarm 0 */
+    RTC_CALENDAR_CALLBACK_ALARM_0,
 #  if (RTC_NUM_OF_ALARMS > 1) || defined(__DOXYGEN__)
-	/** Callback for alarm 1 */
-	RTC_CALENDAR_CALLBACK_ALARM_1,
+    /** Callback for alarm 1 */
+    RTC_CALENDAR_CALLBACK_ALARM_1,
 #  endif
 #  if (RTC_NUM_OF_ALARMS > 2) || defined(__DOXYGEN__)
-	/** Callback for alarm 2 */
-	RTC_CALENDAR_CALLBACK_ALARM_2,
+    /** Callback for alarm 2 */
+    RTC_CALENDAR_CALLBACK_ALARM_2,
 #  endif
 #  if (RTC_NUM_OF_ALARMS > 3) || defined(__DOXYGEN__)
-	/** Callback for alarm 3 */
-	RTC_CALENDAR_CALLBACK_ALARM_3,
+    /** Callback for alarm 3 */
+    RTC_CALENDAR_CALLBACK_ALARM_3,
 #  endif
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/** Callback for tamper */
-	RTC_CALENDAR_CALLBACK_TAMPER,
+    /** Callback for tamper */
+    RTC_CALENDAR_CALLBACK_TAMPER,
 #endif
-	/** Callback for  overflow */
-	RTC_CALENDAR_CALLBACK_OVERFLOW,
+    /** Callback for  overflow */
+    RTC_CALENDAR_CALLBACK_OVERFLOW,
 #  if !defined(__DOXYGEN__)
-	/** Total number of callbacks */
-	_RTC_CALENDAR_CALLBACK_N
+    /** Total number of callbacks */
+    _RTC_CALENDAR_CALLBACK_N
 #  endif
 };
 #else
@@ -537,29 +537,29 @@ enum rtc_calendar_callback {
  * The available callback types for the RTC calendar module.
  */
 enum rtc_calendar_callback {
-	/** Callback for alarm 0 */
-	RTC_CALENDAR_CALLBACK_ALARM_0 = 0,
+    /** Callback for alarm 0 */
+    RTC_CALENDAR_CALLBACK_ALARM_0 = 0,
 #  if (RTC_NUM_OF_ALARMS > 1) || defined(__DOXYGEN__)
-	/** Callback for alarm 1 */
-	RTC_CALENDAR_CALLBACK_ALARM_1,
+    /** Callback for alarm 1 */
+    RTC_CALENDAR_CALLBACK_ALARM_1,
 #  endif
 #  if (RTC_NUM_OF_ALARMS > 2) || defined(__DOXYGEN__)
-	/** Callback for alarm 2 */
-	RTC_CALENDAR_CALLBACK_ALARM_2,
+    /** Callback for alarm 2 */
+    RTC_CALENDAR_CALLBACK_ALARM_2,
 #  endif
 #  if (RTC_NUM_OF_ALARMS > 3) || defined(__DOXYGEN__)
-	/** Callback for alarm 3 */
-	RTC_CALENDAR_CALLBACK_ALARM_3,
+    /** Callback for alarm 3 */
+    RTC_CALENDAR_CALLBACK_ALARM_3,
 #  endif
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/** Callback for tamper */
-	RTC_CALENDAR_CALLBACK_TAMPER,
+    /** Callback for tamper */
+    RTC_CALENDAR_CALLBACK_TAMPER,
 #endif
-	/** Callback for  overflow */
-	RTC_CALENDAR_CALLBACK_OVERFLOW,
+    /** Callback for  overflow */
+    RTC_CALENDAR_CALLBACK_OVERFLOW,
 #  if !defined(__DOXYGEN__)
-	/** Total number of callbacks */
-	_RTC_CALENDAR_CALLBACK_N
+    /** Total number of callbacks */
+    _RTC_CALENDAR_CALLBACK_N
 #  endif
 };
 #endif
@@ -576,31 +576,31 @@ typedef void (*rtc_calendar_callback_t)(void);
  * The available input clock prescaler values for the RTC calendar module.
  */
 enum rtc_calendar_prescaler {
-	/** RTC prescaler is off, and the input clock frequency is
-	prescaled by a factor of 1 */
-	RTC_CALENDAR_PRESCALER_OFF      = RTC_MODE2_CTRLA_PRESCALER_OFF,
-	/** RTC input clock frequency is prescaled by a factor of 1 */
-	RTC_CALENDAR_PRESCALER_DIV_1    = RTC_MODE2_CTRLA_PRESCALER_DIV1,
-	/** RTC input clock frequency is prescaled by a factor of 2 */
-	RTC_CALENDAR_PRESCALER_DIV_2    = RTC_MODE2_CTRLA_PRESCALER_DIV2,
-	/** RTC input clock frequency is prescaled by a factor of 4 */
-	RTC_CALENDAR_PRESCALER_DIV_4    = RTC_MODE2_CTRLA_PRESCALER_DIV4,
-	/** RTC input clock frequency is prescaled by a factor of 8 */
-	RTC_CALENDAR_PRESCALER_DIV_8    = RTC_MODE2_CTRLA_PRESCALER_DIV8,
-	/** RTC input clock frequency is prescaled by a factor of 16 */
-	RTC_CALENDAR_PRESCALER_DIV_16   = RTC_MODE2_CTRLA_PRESCALER_DIV16,
-	/** RTC input clock frequency is prescaled by a factor of 32 */
-	RTC_CALENDAR_PRESCALER_DIV_32   = RTC_MODE2_CTRLA_PRESCALER_DIV32,
-	/** RTC input clock frequency is prescaled by a factor of 64 */
-	RTC_CALENDAR_PRESCALER_DIV_64   = RTC_MODE2_CTRLA_PRESCALER_DIV64,
-	/** RTC input clock frequency is prescaled by a factor of 128 */
-	RTC_CALENDAR_PRESCALER_DIV_128  = RTC_MODE2_CTRLA_PRESCALER_DIV128,
-	/** RTC input clock frequency is prescaled by a factor of 256 */
-	RTC_CALENDAR_PRESCALER_DIV_256  = RTC_MODE2_CTRLA_PRESCALER_DIV256,
-	/** RTC input clock frequency is prescaled by a factor of 512 */
-	RTC_CALENDAR_PRESCALER_DIV_512  = RTC_MODE2_CTRLA_PRESCALER_DIV512,
-	/** RTC input clock frequency is prescaled by a factor of 1024 */
-	RTC_CALENDAR_PRESCALER_DIV_1024 = RTC_MODE2_CTRLA_PRESCALER_DIV1024,
+    /** RTC prescaler is off, and the input clock frequency is
+    prescaled by a factor of 1 */
+    RTC_CALENDAR_PRESCALER_OFF      = RTC_MODE2_CTRLA_PRESCALER_OFF,
+    /** RTC input clock frequency is prescaled by a factor of 1 */
+    RTC_CALENDAR_PRESCALER_DIV_1    = RTC_MODE2_CTRLA_PRESCALER_DIV1,
+    /** RTC input clock frequency is prescaled by a factor of 2 */
+    RTC_CALENDAR_PRESCALER_DIV_2    = RTC_MODE2_CTRLA_PRESCALER_DIV2,
+    /** RTC input clock frequency is prescaled by a factor of 4 */
+    RTC_CALENDAR_PRESCALER_DIV_4    = RTC_MODE2_CTRLA_PRESCALER_DIV4,
+    /** RTC input clock frequency is prescaled by a factor of 8 */
+    RTC_CALENDAR_PRESCALER_DIV_8    = RTC_MODE2_CTRLA_PRESCALER_DIV8,
+    /** RTC input clock frequency is prescaled by a factor of 16 */
+    RTC_CALENDAR_PRESCALER_DIV_16   = RTC_MODE2_CTRLA_PRESCALER_DIV16,
+    /** RTC input clock frequency is prescaled by a factor of 32 */
+    RTC_CALENDAR_PRESCALER_DIV_32   = RTC_MODE2_CTRLA_PRESCALER_DIV32,
+    /** RTC input clock frequency is prescaled by a factor of 64 */
+    RTC_CALENDAR_PRESCALER_DIV_64   = RTC_MODE2_CTRLA_PRESCALER_DIV64,
+    /** RTC input clock frequency is prescaled by a factor of 128 */
+    RTC_CALENDAR_PRESCALER_DIV_128  = RTC_MODE2_CTRLA_PRESCALER_DIV128,
+    /** RTC input clock frequency is prescaled by a factor of 256 */
+    RTC_CALENDAR_PRESCALER_DIV_256  = RTC_MODE2_CTRLA_PRESCALER_DIV256,
+    /** RTC input clock frequency is prescaled by a factor of 512 */
+    RTC_CALENDAR_PRESCALER_DIV_512  = RTC_MODE2_CTRLA_PRESCALER_DIV512,
+    /** RTC input clock frequency is prescaled by a factor of 1024 */
+    RTC_CALENDAR_PRESCALER_DIV_1024 = RTC_MODE2_CTRLA_PRESCALER_DIV1024,
 };
 
 #else
@@ -610,28 +610,28 @@ enum rtc_calendar_prescaler {
  * The available input clock prescaler values for the RTC calendar module.
  */
 enum rtc_calendar_prescaler {
-	/** RTC input clock frequency is prescaled by a factor of 1 */
-	RTC_CALENDAR_PRESCALER_DIV_1    = RTC_MODE2_CTRL_PRESCALER_DIV1,
-	/** RTC input clock frequency is prescaled by a factor of 2 */
-	RTC_CALENDAR_PRESCALER_DIV_2    = RTC_MODE2_CTRL_PRESCALER_DIV2,
-	/** RTC input clock frequency is prescaled by a factor of 4 */
-	RTC_CALENDAR_PRESCALER_DIV_4    = RTC_MODE2_CTRL_PRESCALER_DIV4,
-	/** RTC input clock frequency is prescaled by a factor of 8 */
-	RTC_CALENDAR_PRESCALER_DIV_8    = RTC_MODE2_CTRL_PRESCALER_DIV8,
-	/** RTC input clock frequency is prescaled by a factor of 16 */
-	RTC_CALENDAR_PRESCALER_DIV_16   = RTC_MODE2_CTRL_PRESCALER_DIV16,
-	/** RTC input clock frequency is prescaled by a factor of 32 */
-	RTC_CALENDAR_PRESCALER_DIV_32   = RTC_MODE2_CTRL_PRESCALER_DIV32,
-	/** RTC input clock frequency is prescaled by a factor of 64 */
-	RTC_CALENDAR_PRESCALER_DIV_64   = RTC_MODE2_CTRL_PRESCALER_DIV64,
-	/** RTC input clock frequency is prescaled by a factor of 128 */
-	RTC_CALENDAR_PRESCALER_DIV_128  = RTC_MODE2_CTRL_PRESCALER_DIV128,
-	/** RTC input clock frequency is prescaled by a factor of 256 */
-	RTC_CALENDAR_PRESCALER_DIV_256  = RTC_MODE2_CTRL_PRESCALER_DIV256,
-	/** RTC input clock frequency is prescaled by a factor of 512 */
-	RTC_CALENDAR_PRESCALER_DIV_512  = RTC_MODE2_CTRL_PRESCALER_DIV512,
-	/** RTC input clock frequency is prescaled by a factor of 1024 */
-	RTC_CALENDAR_PRESCALER_DIV_1024 = RTC_MODE2_CTRL_PRESCALER_DIV1024,
+    /** RTC input clock frequency is prescaled by a factor of 1 */
+    RTC_CALENDAR_PRESCALER_DIV_1    = RTC_MODE2_CTRL_PRESCALER_DIV1,
+    /** RTC input clock frequency is prescaled by a factor of 2 */
+    RTC_CALENDAR_PRESCALER_DIV_2    = RTC_MODE2_CTRL_PRESCALER_DIV2,
+    /** RTC input clock frequency is prescaled by a factor of 4 */
+    RTC_CALENDAR_PRESCALER_DIV_4    = RTC_MODE2_CTRL_PRESCALER_DIV4,
+    /** RTC input clock frequency is prescaled by a factor of 8 */
+    RTC_CALENDAR_PRESCALER_DIV_8    = RTC_MODE2_CTRL_PRESCALER_DIV8,
+    /** RTC input clock frequency is prescaled by a factor of 16 */
+    RTC_CALENDAR_PRESCALER_DIV_16   = RTC_MODE2_CTRL_PRESCALER_DIV16,
+    /** RTC input clock frequency is prescaled by a factor of 32 */
+    RTC_CALENDAR_PRESCALER_DIV_32   = RTC_MODE2_CTRL_PRESCALER_DIV32,
+    /** RTC input clock frequency is prescaled by a factor of 64 */
+    RTC_CALENDAR_PRESCALER_DIV_64   = RTC_MODE2_CTRL_PRESCALER_DIV64,
+    /** RTC input clock frequency is prescaled by a factor of 128 */
+    RTC_CALENDAR_PRESCALER_DIV_128  = RTC_MODE2_CTRL_PRESCALER_DIV128,
+    /** RTC input clock frequency is prescaled by a factor of 256 */
+    RTC_CALENDAR_PRESCALER_DIV_256  = RTC_MODE2_CTRL_PRESCALER_DIV256,
+    /** RTC input clock frequency is prescaled by a factor of 512 */
+    RTC_CALENDAR_PRESCALER_DIV_512  = RTC_MODE2_CTRL_PRESCALER_DIV512,
+    /** RTC input clock frequency is prescaled by a factor of 1024 */
+    RTC_CALENDAR_PRESCALER_DIV_1024 = RTC_MODE2_CTRL_PRESCALER_DIV1024,
 };
 #endif
 
@@ -640,23 +640,23 @@ enum rtc_calendar_prescaler {
  * \brief Device structure.
  */
 struct rtc_module {
-	/** RTC hardware module */
-	Rtc *hw;
-	/** If clock mode 24h */
-	bool clock_24h;
+    /** RTC hardware module */
+    Rtc *hw;
+    /** If clock mode 24h */
+    bool clock_24h;
 #ifdef FEATURE_RTC_CONTINUOUSLY_UPDATED
-	/** If continuously update clock register */
-	bool continuously_update;
+    /** If continuously update clock register */
+    bool continuously_update;
 #endif
-	/** Initial year for counter value 0 */
-	uint16_t year_init_value;
+    /** Initial year for counter value 0 */
+    uint16_t year_init_value;
 #  if RTC_CALENDAR_ASYNC == true
-	/** Pointers to callback functions */
-	volatile rtc_calendar_callback_t callbacks[_RTC_CALENDAR_CALLBACK_N];
-	/** Mask for registered callbacks */
-	volatile uint16_t registered_callback;
-	/** Mask for enabled callbacks */
-	volatile uint16_t enabled_callback;
+    /** Pointers to callback functions */
+    volatile rtc_calendar_callback_t callbacks[_RTC_CALENDAR_CALLBACK_N];
+    /** Mask for registered callbacks */
+    volatile uint16_t registered_callback;
+    /** Mask for enabled callbacks */
+    volatile uint16_t enabled_callback;
 #  endif
 };
 #endif
@@ -667,20 +667,20 @@ struct rtc_module {
  * Available mask options for alarms.
  */
 enum rtc_calendar_alarm_mask {
-	/** Alarm disabled */
-	RTC_CALENDAR_ALARM_MASK_DISABLED = RTC_MODE2_MASK_SEL_OFF,
-	/** Alarm match on second */
-	RTC_CALENDAR_ALARM_MASK_SEC      = RTC_MODE2_MASK_SEL_SS,
-	/** Alarm match on second and minute */
-	RTC_CALENDAR_ALARM_MASK_MIN      = RTC_MODE2_MASK_SEL_MMSS,
-	/** Alarm match on second, minute, and hour */
-	RTC_CALENDAR_ALARM_MASK_HOUR     = RTC_MODE2_MASK_SEL_HHMMSS,
-	/** Alarm match on second, minute, hour, and day */
-	RTC_CALENDAR_ALARM_MASK_DAY      = RTC_MODE2_MASK_SEL_DDHHMMSS,
-	/** Alarm match on second, minute, hour, day, and month */
-	RTC_CALENDAR_ALARM_MASK_MONTH    = RTC_MODE2_MASK_SEL_MMDDHHMMSS,
-	/** Alarm match on second, minute, hour, day, month, and year */
-	RTC_CALENDAR_ALARM_MASK_YEAR     = RTC_MODE2_MASK_SEL_YYMMDDHHMMSS,
+    /** Alarm disabled */
+    RTC_CALENDAR_ALARM_MASK_DISABLED = RTC_MODE2_MASK_SEL_OFF,
+    /** Alarm match on second */
+    RTC_CALENDAR_ALARM_MASK_SEC      = RTC_MODE2_MASK_SEL_SS,
+    /** Alarm match on second and minute */
+    RTC_CALENDAR_ALARM_MASK_MIN      = RTC_MODE2_MASK_SEL_MMSS,
+    /** Alarm match on second, minute, and hour */
+    RTC_CALENDAR_ALARM_MASK_HOUR     = RTC_MODE2_MASK_SEL_HHMMSS,
+    /** Alarm match on second, minute, hour, and day */
+    RTC_CALENDAR_ALARM_MASK_DAY      = RTC_MODE2_MASK_SEL_DDHHMMSS,
+    /** Alarm match on second, minute, hour, day, and month */
+    RTC_CALENDAR_ALARM_MASK_MONTH    = RTC_MODE2_MASK_SEL_MMDDHHMMSS,
+    /** Alarm match on second, minute, hour, day, month, and year */
+    RTC_CALENDAR_ALARM_MASK_YEAR     = RTC_MODE2_MASK_SEL_YYMMDDHHMMSS,
 };
 
 /**
@@ -690,20 +690,20 @@ enum rtc_calendar_alarm_mask {
  * \ref rtc_calendar_disable_events().
  */
 struct rtc_calendar_events {
-	/** Generate an output event on each overflow of the RTC count */
-	bool generate_event_on_overflow;
-	/** Generate an output event on an alarm channel match against the RTC
-	 *  count */
-	bool generate_event_on_alarm[RTC_NUM_OF_ALARMS];
-	/** Generate an output event periodically at a binary division of the RTC
-	 *  counter frequency
-	 */
-	bool generate_event_on_periodic[8];
+    /** Generate an output event on each overflow of the RTC count */
+    bool generate_event_on_overflow;
+    /** Generate an output event on an alarm channel match against the RTC
+     *  count */
+    bool generate_event_on_alarm[RTC_NUM_OF_ALARMS];
+    /** Generate an output event periodically at a binary division of the RTC
+     *  counter frequency
+     */
+    bool generate_event_on_periodic[8];
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/** Generate an output event on every tamper input */
-	bool generate_event_on_tamper;
-	/** Tamper input event and capture the CLOCK value */
-	bool on_event_to_tamper;
+    /** Generate an output event on every tamper input */
+    bool generate_event_on_tamper;
+    /** Tamper input event and capture the CLOCK value */
+    bool on_event_to_tamper;
 #endif
 };
 
@@ -716,20 +716,20 @@ struct rtc_calendar_events {
  * \ref rtc_calendar_get_time_defaults() function before use.
  */
 struct rtc_calendar_time {
-	/** Second value */
-	uint8_t  second;
-	/** Minute value */
-	uint8_t  minute;
-	/** Hour value */
-	uint8_t  hour;
-	/** PM/AM value, \c true for PM, or \c false for AM */
-	bool     pm;
-	/** Day value, where day 1 is the first day of the month */
-	uint8_t  day;
-	/** Month value, where month 1 is January */
-	uint8_t  month;
-	/** Year value */
-	uint16_t year;
+    /** Second value */
+    uint8_t  second;
+    /** Minute value */
+    uint8_t  minute;
+    /** Hour value */
+    uint8_t  hour;
+    /** PM/AM value, \c true for PM, or \c false for AM */
+    bool     pm;
+    /** Day value, where day 1 is the first day of the month */
+    uint8_t  day;
+    /** Month value, where month 1 is January */
+    uint8_t  month;
+    /** Year value */
+    uint16_t year;
 };
 
 /**
@@ -739,10 +739,10 @@ struct rtc_calendar_time {
  * the alarm will trigger.
  */
 struct rtc_calendar_alarm_time {
-	/** Alarm time */
-	struct rtc_calendar_time time;
-	/** Alarm mask to determine on what precision the alarm will match */
-	enum rtc_calendar_alarm_mask mask;
+    /** Alarm time */
+    struct rtc_calendar_time time;
+    /** Alarm mask to determine on what precision the alarm will match */
+    enum rtc_calendar_alarm_mask mask;
 };
 
 /**
@@ -753,28 +753,28 @@ struct rtc_calendar_alarm_time {
  * user configurations are set.
  */
 struct rtc_calendar_config {
-	/** Input clock prescaler for the RTC module */
-	enum rtc_calendar_prescaler prescaler;
-	/** If \c true, clears the clock on alarm match */
-	bool clear_on_match;
+    /** Input clock prescaler for the RTC module */
+    enum rtc_calendar_prescaler prescaler;
+    /** If \c true, clears the clock on alarm match */
+    bool clear_on_match;
 #ifdef FEATURE_RTC_CONTINUOUSLY_UPDATED
-	/** If \c true, the digital counter registers will be continuously updated
-	 *  so that internal synchronization is not needed when reading the current
-	 *  count */
-	bool continuously_update;
+    /** If \c true, the digital counter registers will be continuously updated
+     *  so that internal synchronization is not needed when reading the current
+     *  count */
+    bool continuously_update;
 #endif
-	/** If \c true, time is represented in 24 hour mode */
-	bool clock_24h;
-	/** Initial year for counter value 0 */
-	uint16_t year_init_value;
+    /** If \c true, time is represented in 24 hour mode */
+    bool clock_24h;
+    /** Initial year for counter value 0 */
+    uint16_t year_init_value;
 #if (SAML21XXXB) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	/** Enable count read synchronization. The CLOCK value requires
-	 * synchronization when reading. Disabling the synchronization
-	 * will prevent the CLOCK value from displaying the current value. */
-	bool enable_read_sync;
+    /** Enable count read synchronization. The CLOCK value requires
+     * synchronization when reading. Disabling the synchronization
+     * will prevent the CLOCK value from displaying the current value. */
+    bool enable_read_sync;
 #endif
-	/** Alarm values */
-	struct rtc_calendar_alarm_time alarm[RTC_NUM_OF_ALARMS];
+    /** Alarm values */
+    struct rtc_calendar_alarm_time alarm[RTC_NUM_OF_ALARMS];
 };
 
 
@@ -792,15 +792,15 @@ struct rtc_calendar_config {
  * \param[out] time  Time structure to initialize
  */
 static inline void rtc_calendar_get_time_defaults(
-		struct rtc_calendar_time *const time)
+        struct rtc_calendar_time *const time)
 {
-	time->second = 0;
-	time->minute = 0;
-	time->hour   = 0;
-	time->pm     = 0;
-	time->day    = 1;
-	time->month  = 1;
-	time->year   = 2000;
+    time->second = 0;
+    time->minute = 0;
+    time->hour   = 0;
+    time->pm     = 0;
+    time->day    = 1;
+    time->month  = 1;
+    time->year   = 2000;
 }
 
 /**
@@ -824,30 +824,30 @@ static inline void rtc_calendar_get_time_defaults(
  *                      values
  */
 static inline void rtc_calendar_get_config_defaults(
-		struct rtc_calendar_config *const config)
+        struct rtc_calendar_config *const config)
 {
-	/* Sanity check argument */
-	Assert(config);
+    /* Sanity check argument */
+    Assert(config);
 
-	/* Initialize and set time structure to default */
-	struct rtc_calendar_time time;
-	rtc_calendar_get_time_defaults(&time);
+    /* Initialize and set time structure to default */
+    struct rtc_calendar_time time;
+    rtc_calendar_get_time_defaults(&time);
 
-	/* Set defaults into configuration structure */
-	config->prescaler           = RTC_CALENDAR_PRESCALER_DIV_1024;
-	config->clear_on_match      = false;
+    /* Set defaults into configuration structure */
+    config->prescaler           = RTC_CALENDAR_PRESCALER_DIV_1024;
+    config->clear_on_match      = false;
 #ifdef FEATURE_RTC_CONTINUOUSLY_UPDATED
-	config->continuously_update = false;
+    config->continuously_update = false;
 #endif
-	config->clock_24h           = false;
-	config->year_init_value     = 2000;
+    config->clock_24h           = false;
+    config->year_init_value     = 2000;
 #if (SAML21XXXB) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	config->enable_read_sync    = true;
+    config->enable_read_sync    = true;
 #endif
-	for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
-		config->alarm[i].time = time;
-		config->alarm[i].mask = RTC_CALENDAR_ALARM_MASK_YEAR;
-	}
+    for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
+        config->alarm[i].time = time;
+        config->alarm[i].mask = RTC_CALENDAR_ALARM_MASK_YEAR;
+    }
 }
 
 void rtc_calendar_reset(struct rtc_module *const module);
@@ -863,34 +863,34 @@ void rtc_calendar_disable(struct rtc_module *const module);
  * \return Index of the given RTC module instance.
  */
 uint8_t _rtc_get_inst_index(
-		Rtc *const hw)
+        Rtc *const hw)
 {
-	/* List of available RTC modules */
-	static Rtc *const rtc_modules[RTC_INST_NUM] = RTC_INSTS;
+    /* List of available RTC modules */
+    static Rtc *const rtc_modules[RTC_INST_NUM] = RTC_INSTS;
 
-	/* Find index for RTC instance */
-	for (uint32_t i = 0; i < RTC_INST_NUM; i++) {
-		if (hw == rtc_modules[i]) {
-			return i;
-		}
-	}
+    /* Find index for RTC instance */
+    for (uint32_t i = 0; i < RTC_INST_NUM; i++) {
+        if (hw == rtc_modules[i]) {
+            return i;
+        }
+    }
 
-	/* Invalid data given */
-	Assert(false);
-	return 0;
+    /* Invalid data given */
+    Assert(false);
+    return 0;
 }
 #endif /* (RTC_INST_NUM > 1) && !defined(__DOXYGEN__) */
 
 void rtc_calendar_init(
-		struct rtc_module *const module,
-		Rtc *const hw,
-		const struct rtc_calendar_config *const config);
+        struct rtc_module *const module,
+        Rtc *const hw,
+        const struct rtc_calendar_config *const config);
 
 void rtc_calendar_swap_time_mode(struct rtc_module *const module);
 
 enum status_code rtc_calendar_frequency_correction(
-		struct rtc_module *const module,
-		const int8_t value);
+        struct rtc_module *const module,
+        const int8_t value);
 
 /** @} */
 
@@ -899,30 +899,30 @@ enum status_code rtc_calendar_frequency_correction(
  * @{
  */
 uint32_t rtc_calendar_time_to_register_value(
-		struct rtc_module *const module,
-		const struct rtc_calendar_time *const time);
+        struct rtc_module *const module,
+        const struct rtc_calendar_time *const time);
 void rtc_calendar_register_value_to_time(
-		struct rtc_module *const module,
-		const uint32_t register_value,
-		struct rtc_calendar_time *const time);
+        struct rtc_module *const module,
+        const uint32_t register_value,
+        struct rtc_calendar_time *const time);
 
 void rtc_calendar_set_time(
-		struct rtc_module *const module,
-		const struct rtc_calendar_time *const time);
+        struct rtc_module *const module,
+        const struct rtc_calendar_time *const time);
 
 void rtc_calendar_get_time(
-		struct rtc_module *const module,
-		struct rtc_calendar_time *const time);
+        struct rtc_module *const module,
+        struct rtc_calendar_time *const time);
 
 enum status_code rtc_calendar_set_alarm(
-		struct rtc_module *const module,
-		const struct rtc_calendar_alarm_time *const alarm,
-		const enum rtc_calendar_alarm alarm_index);
+        struct rtc_module *const module,
+        const struct rtc_calendar_alarm_time *const alarm,
+        const enum rtc_calendar_alarm alarm_index);
 
 enum status_code rtc_calendar_get_alarm(
-		struct rtc_module *const module,
-		struct rtc_calendar_alarm_time *const alarm,
-		const enum rtc_calendar_alarm alarm_index);
+        struct rtc_module *const module,
+        struct rtc_calendar_alarm_time *const alarm,
+        const enum rtc_calendar_alarm alarm_index);
 
 /** @} */
 
@@ -946,14 +946,14 @@ enum status_code rtc_calendar_get_alarm(
  */
 static inline bool rtc_calendar_is_overflow(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Return status of flag */
-	return (rtc_module->MODE2.INTFLAG.reg & RTC_MODE2_INTFLAG_OVF);
+    /* Return status of flag */
+    return (rtc_module->MODE2.INTFLAG.reg & RTC_MODE2_INTFLAG_OVF);
 }
 
 /**
@@ -966,14 +966,14 @@ static inline bool rtc_calendar_is_overflow(struct rtc_module *const module)
  */
 static inline void rtc_calendar_clear_overflow(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Clear flag */
-	rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_OVF;
+    /* Clear flag */
+    rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_OVF;
 }
 
 #ifdef FEATURE_RTC_PERIODIC_INT
@@ -991,16 +991,16 @@ static inline void rtc_calendar_clear_overflow(struct rtc_module *const module)
  * \retval false  RTC periodic interval interrupt doesn't occur
  */
 static inline bool rtc_calendar_is_periodic_interval(struct rtc_module *const module,
-										enum rtc_calendar_periodic_interval n)
+                                        enum rtc_calendar_periodic_interval n)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Return status of flag */
-	return (rtc_module->MODE2.INTFLAG.reg & RTC_MODE2_INTFLAG_PER(1 << n));
+    /* Return status of flag */
+    return (rtc_module->MODE2.INTFLAG.reg & RTC_MODE2_INTFLAG_PER(1 << n));
 }
 
 /**
@@ -1013,16 +1013,16 @@ static inline bool rtc_calendar_is_periodic_interval(struct rtc_module *const mo
  * \param[in]  n  RTC periodic interval interrupt
  */
 static inline void rtc_calendar_clear_periodic_interval(struct rtc_module *const module,
-											enum rtc_calendar_periodic_interval n)
+                                            enum rtc_calendar_periodic_interval n)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Clear periodic interval flag */
-	rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_PER(1 << n);
+    /* Clear periodic interval flag */
+    rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_PER(1 << n);
 }
 #endif
 
@@ -1041,23 +1041,23 @@ static inline void rtc_calendar_clear_periodic_interval(struct rtc_module *const
  * \retval false  If the specified alarm has not matched the current time
  */
 static inline bool rtc_calendar_is_alarm_match(
-		struct rtc_module *const module,
-		const enum rtc_calendar_alarm alarm_index)
+        struct rtc_module *const module,
+        const enum rtc_calendar_alarm alarm_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Sanity check */
-	if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
-		Assert(false);
-		return false;
-	}
+    /* Sanity check */
+    if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
+        Assert(false);
+        return false;
+    }
 
-	/* Return int flag status */
-	return (rtc_module->MODE2.INTFLAG.reg & RTC_MODE2_INTFLAG_ALARM(1 << alarm_index));
+    /* Return int flag status */
+    return (rtc_module->MODE2.INTFLAG.reg & RTC_MODE2_INTFLAG_ALARM(1 << alarm_index));
 }
 
 /**
@@ -1075,25 +1075,25 @@ static inline bool rtc_calendar_is_alarm_match(
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were provided
  */
 static inline enum status_code rtc_calendar_clear_alarm_match(
-		struct rtc_module *const module,
-		const enum rtc_calendar_alarm alarm_index)
+        struct rtc_module *const module,
+        const enum rtc_calendar_alarm alarm_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Sanity check */
-	if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Sanity check */
+    if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Clear flag */
-	rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << alarm_index);
+    /* Clear flag */
+    rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_ALARM(1 << alarm_index);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /** @} */
@@ -1116,50 +1116,50 @@ static inline enum status_code rtc_calendar_clear_alarm_match(
  *  \param[in] events    Struct containing flags of events to enable
  */
 static inline void rtc_calendar_enable_events(
-		struct rtc_module *const module,
-		struct rtc_calendar_events *const events)
+        struct rtc_module *const module,
+        struct rtc_calendar_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Check if the user has requested an overflow event */
-	if (events->generate_event_on_overflow) {
-		event_mask |= RTC_MODE2_EVCTRL_OVFEO;
-	}
+    /* Check if the user has requested an overflow event */
+    if (events->generate_event_on_overflow) {
+        event_mask |= RTC_MODE2_EVCTRL_OVFEO;
+    }
 
-	/* Check if the user has requested any alarm events */
-	for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
-		if (events->generate_event_on_alarm[i]) {
-			event_mask |= RTC_MODE2_EVCTRL_ALARMEO(1 << i);
-		}
-	}
+    /* Check if the user has requested any alarm events */
+    for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
+        if (events->generate_event_on_alarm[i]) {
+            event_mask |= RTC_MODE2_EVCTRL_ALARMEO(1 << i);
+        }
+    }
 
-	/* Check if the user has requested any periodic events */
-	for (uint8_t i = 0; i < 8; i++) {
-		if (events->generate_event_on_periodic[i]) {
-			event_mask |= RTC_MODE2_EVCTRL_PEREO(1 << i);
-		}
-	}
+    /* Check if the user has requested any periodic events */
+    for (uint8_t i = 0; i < 8; i++) {
+        if (events->generate_event_on_periodic[i]) {
+            event_mask |= RTC_MODE2_EVCTRL_PEREO(1 << i);
+        }
+    }
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/* Check if the user has requested a tamper event output */
-	if (events->generate_event_on_tamper) {
-		event_mask |= RTC_MODE2_EVCTRL_TAMPEREO;
-	}
+    /* Check if the user has requested a tamper event output */
+    if (events->generate_event_on_tamper) {
+        event_mask |= RTC_MODE2_EVCTRL_TAMPEREO;
+    }
 
-	/* Check if the user has requested a tamper event input */
-	if (events->on_event_to_tamper) {
-		event_mask |= RTC_MODE2_EVCTRL_TAMPEVEI;
-	}
+    /* Check if the user has requested a tamper event input */
+    if (events->on_event_to_tamper) {
+        event_mask |= RTC_MODE2_EVCTRL_TAMPEVEI;
+    }
 #endif
 
-	/* Enable given event(s) */
-	rtc_module->MODE2.EVCTRL.reg |= event_mask;
+    /* Enable given event(s) */
+    rtc_module->MODE2.EVCTRL.reg |= event_mask;
 }
 
 /**
@@ -1174,50 +1174,50 @@ static inline void rtc_calendar_enable_events(
  *  \param[in] events    Struct containing flags of events to disable
  */
 static inline void rtc_calendar_disable_events(
-		struct rtc_module *const module,
-		struct rtc_calendar_events *const events)
+        struct rtc_module *const module,
+        struct rtc_calendar_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Check if the user has requested an overflow event */
-	if (events->generate_event_on_overflow) {
-		event_mask |= RTC_MODE2_EVCTRL_OVFEO;
-	}
+    /* Check if the user has requested an overflow event */
+    if (events->generate_event_on_overflow) {
+        event_mask |= RTC_MODE2_EVCTRL_OVFEO;
+    }
 
-	/* Check if the user has requested any alarm events */
-	for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
-		if (events->generate_event_on_alarm[i]) {
-			event_mask |= RTC_MODE2_EVCTRL_ALARMEO(1 << i);
-		}
-	}
+    /* Check if the user has requested any alarm events */
+    for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
+        if (events->generate_event_on_alarm[i]) {
+            event_mask |= RTC_MODE2_EVCTRL_ALARMEO(1 << i);
+        }
+    }
 
-	/* Check if the user has requested any periodic events */
-	for (uint8_t i = 0; i < 8; i++) {
-		if (events->generate_event_on_periodic[i]) {
-			event_mask |= RTC_MODE2_EVCTRL_PEREO(1 << i);
-		}
-	}
+    /* Check if the user has requested any periodic events */
+    for (uint8_t i = 0; i < 8; i++) {
+        if (events->generate_event_on_periodic[i]) {
+            event_mask |= RTC_MODE2_EVCTRL_PEREO(1 << i);
+        }
+    }
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/* Check if the user has requested a tamper event output */
-	if (events->generate_event_on_tamper) {
-		event_mask |= RTC_MODE2_EVCTRL_TAMPEREO;
-	}
+    /* Check if the user has requested a tamper event output */
+    if (events->generate_event_on_tamper) {
+        event_mask |= RTC_MODE2_EVCTRL_TAMPEREO;
+    }
 
-	/* Check if the user has requested a tamper event input */
-	if (events->on_event_to_tamper) {
-		event_mask |= RTC_MODE2_EVCTRL_TAMPEVEI;
-	}
+    /* Check if the user has requested a tamper event input */
+    if (events->on_event_to_tamper) {
+        event_mask |= RTC_MODE2_EVCTRL_TAMPEVEI;
+    }
 #endif
 
-	/* Disable given event(s) */
-	rtc_module->MODE2.EVCTRL.reg &= ~event_mask;
+    /* Disable given event(s) */
+    rtc_module->MODE2.EVCTRL.reg &= ~event_mask;
 }
 
 /** @} */
@@ -1237,18 +1237,18 @@ static inline void rtc_calendar_disable_events(
  *
  */
 static inline void rtc_write_general_purpose_reg(
-	struct rtc_module *const module,
-	const  uint8_t index,
-	uint32_t value)
+    struct rtc_module *const module,
+    const  uint8_t index,
+    uint32_t value)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(index <= 3);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(index <= 3);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	rtc_module->MODE0.GP[index].reg = value;
+    rtc_module->MODE0.GP[index].reg = value;
 }
 
 /**
@@ -1260,17 +1260,17 @@ static inline void rtc_write_general_purpose_reg(
  * \return Value of general purpose register.
  */
 static inline uint32_t rtc_read_general_purpose_reg(
-	struct rtc_module *const module,
-	const  uint8_t index)
+    struct rtc_module *const module,
+    const  uint8_t index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(index <= 3);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(index <= 3);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	return rtc_module->MODE0.GP[index].reg;
+    return rtc_module->MODE0.GP[index].reg;
 }
 
 /** @} */
@@ -1285,7 +1285,7 @@ static inline uint32_t rtc_read_general_purpose_reg(
  * \param[out] time  Pointer to value that filled with tamper stamp time
  */
 void rtc_tamper_get_stamp (struct rtc_module *const module,
-		struct rtc_calendar_time *const time);
+        struct rtc_calendar_time *const time);
 #endif
 
 /** @} */
@@ -1303,22 +1303,22 @@ void rtc_tamper_get_stamp (struct rtc_module *const module,
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</td>
- *		<th>Description</td>
- *	</tr>
- *	<tr>
- *		<td>RTC</td>
- *		<td>Real Time Counter</td>
- *	</tr>
- *	<tr>
- *		<td>PPM</td>
- *		<td>Part Per Million</td>
- *	</tr>
- *	<tr>
- *		<td>RC</td>
- *		<td>Resistor/Capacitor</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</td>
+ *        <th>Description</td>
+ *    </tr>
+ *    <tr>
+ *        <td>RTC</td>
+ *        <td>Real Time Counter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>PPM</td>
+ *        <td>Part Per Million</td>
+ *    </tr>
+ *    <tr>
+ *        <td>RC</td>
+ *        <td>Resistor/Capacitor</td>
+ *    </tr>
  * </table>
  *
  *
@@ -1339,23 +1339,23 @@ void rtc_tamper_get_stamp (struct rtc_module *const module,
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Added support for RTC tamper feature</td>
- *	</tr>
- *	<tr>
- *		<td>Added driver instance parameter to all API function calls, except
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Added support for RTC tamper feature</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Added driver instance parameter to all API function calls, except
  *          get_config_defaults</td>
- *	</tr>
- *	<tr>
- *		<td>Updated initialization function to also enable the digital interface
+ *    </tr>
+ *    <tr>
+ *        <td>Updated initialization function to also enable the digital interface
  *          clock to the module if it is disabled</td>
- *	</tr>
- *	<tr>
- *		<td>Initial release</td>
- *	</tr>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial release</td>
+ *    </tr>
  * </table>
  */
 
@@ -1376,37 +1376,37 @@ void rtc_tamper_get_stamp (struct rtc_module *const module,
  * \page asfdoc_sam0_rtc_calendar_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42126E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAMR30, SAM C21, SAM D09, and SAM DA1</td>
- *	</tr>
- *	<tr>
- *		<td>42126D</td>
- *		<td>12/2014</td>
- *		<td>Added support for SAM R21 and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42126C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42126B</td>
- *		<td>06/2013</td>
- *		<td>Added additional documentation on the event system. Corrected
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42126E</td>
+ *        <td>12/2015</td>
+ *        <td>Added support for SAM L21/L22, SAMR30, SAM C21, SAM D09, and SAM DA1</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42126D</td>
+ *        <td>12/2014</td>
+ *        <td>Added support for SAM R21 and SAM D10/D11</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42126C</td>
+ *        <td>01/2014</td>
+ *        <td>Added support for SAM D21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42126B</td>
+ *        <td>06/2013</td>
+ *        <td>Added additional documentation on the event system. Corrected
  *          documentation typos</td>
- *	</tr>
- *	<tr>
- *		<td>42126A</td>
- *		<td>06/2013</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    </tr>
+ *    <tr>
+ *        <td>42126A</td>
+ *        <td>06/2013</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

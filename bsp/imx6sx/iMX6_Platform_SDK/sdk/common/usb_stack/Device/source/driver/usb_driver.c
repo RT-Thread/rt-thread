@@ -38,10 +38,10 @@
 #include "usb_devapi.h" /* USB Device Layer API Header File */
 #include "usb_dciapi.h" /* USB Controller API Header File */
 #ifdef _MK_xxx_H_
-	#include "usb_dci_kinetis.h"
+    #include "usb_dci_kinetis.h"
 #endif
 #ifndef MULTIPLE_DEVICES
-	#include "USB_Config.h"
+    #include "USB_Config.h"
 #endif
 
 /*****************************************************************************
@@ -63,33 +63,33 @@ extern void USB_NULL_CALLBACK (PTR_USB_DEV_EVENT_STRUCT event);
 
 /* Array of USB Service pointers */
 #ifdef MULTIPLE_DEVICES
-	static USB_SERVICE_CALLBACK g_usb_CB[USB_SERVICE_MAX];
+    static USB_SERVICE_CALLBACK g_usb_CB[USB_SERVICE_MAX];
 #else
-	static USB_SERVICE_CALLBACK g_usb_CB[USB_SERVICE_MAX] = {
-		USB_EP0_CALLBACK,
-		USB_EP1_CALLBACK,
-		USB_EP2_CALLBACK,
-		USB_EP3_CALLBACK,
-		USB_EP4_CALLBACK,
-		USB_EP5_CALLBACK,
-		USB_EP6_CALLBACK,
-		USB_EP7_CALLBACK,
-		USB_EP8_CALLBACK,
-		USB_EP9_CALLBACK,
-		USB_EP10_CALLBACK,
-		USB_EP11_CALLBACK,
-		USB_EP12_CALLBACK,
-		USB_EP13_CALLBACK,
-		USB_EP14_CALLBACK,
-		USB_EP15_CALLBACK,
-		USB_BUS_RESET_CALLBACK,
-		USB_SUSPEND_CALLBACK,
-		USB_SOF_CALLBACK,
-		USB_RESUME_CALLBACK,
-		USB_SLEEP_CALLBACK,
-		USB_SPEED_DETECTION_CALLBACK,
-		USB_ERROR_CALLBACK,
-		USB_STALL_CALLBACK
+    static USB_SERVICE_CALLBACK g_usb_CB[USB_SERVICE_MAX] = {
+        USB_EP0_CALLBACK,
+        USB_EP1_CALLBACK,
+        USB_EP2_CALLBACK,
+        USB_EP3_CALLBACK,
+        USB_EP4_CALLBACK,
+        USB_EP5_CALLBACK,
+        USB_EP6_CALLBACK,
+        USB_EP7_CALLBACK,
+        USB_EP8_CALLBACK,
+        USB_EP9_CALLBACK,
+        USB_EP10_CALLBACK,
+        USB_EP11_CALLBACK,
+        USB_EP12_CALLBACK,
+        USB_EP13_CALLBACK,
+        USB_EP14_CALLBACK,
+        USB_EP15_CALLBACK,
+        USB_BUS_RESET_CALLBACK,
+        USB_SUSPEND_CALLBACK,
+        USB_SOF_CALLBACK,
+        USB_RESUME_CALLBACK,
+        USB_SLEEP_CALLBACK,
+        USB_SPEED_DETECTION_CALLBACK,
+        USB_ERROR_CALLBACK,
+        USB_STALL_CALLBACK
 };
 #endif
 /* Array of USB Component Status */
@@ -196,13 +196,13 @@ static void USB_Device_Init_Params(void)
  * calls the controller layer initialize function
  *****************************************************************************/
 uint_8 _usb_device_init (
-    uint_8    device_number,			/* [IN] USB Device controller to initialize */
-    _usb_device_handle _PTR_  handle,	/* [IN] Pointer to USB Device handle */
-    uint_8    number_of_endpoints,		/* [IN] Number of endpoints to initialize */
-    uint_8    bVregEn        			/* Enables or disables internal regulator */
+    uint_8    device_number,            /* [IN] USB Device controller to initialize */
+    _usb_device_handle _PTR_  handle,    /* [IN] Pointer to USB Device handle */
+    uint_8    number_of_endpoints,        /* [IN] Number of endpoints to initialize */
+    uint_8    bVregEn                    /* Enables or disables internal regulator */
 )
 {
-	UNUSED(handle);
+    UNUSED(handle);
 
     /* validate endpoints param */
     if((number_of_endpoints > MAX_SUPPORTED_ENDPOINTS) ||
@@ -240,9 +240,9 @@ uint_8 _usb_device_init (
  *****************************************************************************/
 uint_8 _usb_device_deinit(void)
 {
-	g_EPn_max = 0;
-	/* Call controller layer de-initialization function */
-	return USB_DCI_DeInit();
+    g_EPn_max = 0;
+    /* Call controller layer de-initialization function */
+    return USB_DCI_DeInit();
 }
 
 /**************************************************************************//*!
@@ -271,15 +271,15 @@ uint_8 _usb_device_deinit(void)
  *****************************************************************************/
 uint_8 _usb_device_init_endpoint (
     _usb_device_handle    handle,             /* [IN] USB Device handle */
-    uint_8                endpoint_number,    /* [IN] Endpoint number*/	
-    uint_16               max_packet_size,    /* [IN] Maximum packet size (in bytes) for the endpoint */		
+    uint_8                endpoint_number,    /* [IN] Endpoint number*/
+    uint_16               max_packet_size,    /* [IN] Maximum packet size (in bytes) for the endpoint */
     uint_8                direction,          /* [IN] Direction of transfer */
     uint_8                endpoint_type,      /* [IN] Type of endpoint */
     uint_8                flag                /* [IN] Zero termination flag */
 )
 {
-	USB_EP_STRUCT ep_str;
-		
+    USB_EP_STRUCT ep_str;
+
     uint_8 status = USB_OK;
 
     /* check if all endpoint have already been initialised */
@@ -290,12 +290,12 @@ uint_8 _usb_device_init_endpoint (
 
     ep_str.direction = direction;
     ep_str.ep_num = endpoint_number;
-    
-#ifndef _MC9S08JS16_H    
+
+#ifndef _MC9S08JS16_H
     ep_str.size = max_packet_size;
 #else
     ep_str.size = (char)max_packet_size;
-#endif    
+#endif
     ep_str.type = endpoint_type;
 
     /* call controller layer for initiazation */
@@ -455,12 +455,12 @@ uint_8 _usb_device_set_status(
         /* HALT Endpoint */
         if(setting == USB_STATUS_STALLED)
         {
-        	_usb_device_stall_endpoint(handle, ep_num, direction);
+            _usb_device_stall_endpoint(handle, ep_num, direction);
         }
         else if((setting == USB_STATUS_IDLE) &&
             (g_usb_ep_status[ep_num] == USB_STATUS_STALLED))
         {
-        	_usb_device_unstall_endpoint(handle, ep_num, direction);
+            _usb_device_unstall_endpoint(handle, ep_num, direction);
 
             if(ep_num == CONTROL_ENDPOINT)
             {
@@ -528,7 +528,7 @@ uint_8 _usb_device_register_service(
     UNUSED(type);
     return USB_OK;
 #endif
-    
+
 }
 
 /**************************************************************************//*!
@@ -614,11 +614,11 @@ uint_8 USB_Device_Call_Service(
 
 void USB_NULL_CALLBACK (PTR_USB_DEV_EVENT_STRUCT event)
 {
-	UNUSED(event)
-	
-	#if (defined(__CWCC__) || defined(__IAR_SYSTEMS_ICC__) || defined(__GNUC__))
-		asm("nop");
-	#elif defined (__CC_ARM)
-		__nop();
-	#endif	   
+    UNUSED(event)
+
+    #if (defined(__CWCC__) || defined(__IAR_SYSTEMS_ICC__) || defined(__GNUC__))
+        asm("nop");
+    #elif defined (__CC_ARM)
+        __nop();
+    #endif
 }

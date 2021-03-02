@@ -14,7 +14,7 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -36,18 +36,18 @@
 
 /** @addtogroup OPAMP
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 
 /** @defgroup OPAMP_Exported_Types OPAMP Exported Types
   * @{
   */
 
-/** 
-  * @brief  OPAMP Init structure definition  
+/**
+  * @brief  OPAMP Init structure definition
   */
-  
+
 typedef struct
 {
   uint32_t PowerSupplyRange;            /*!< Specifies the power supply range: above or under 2.4V.
@@ -58,15 +58,15 @@ typedef struct
                                              This parameter must be a value of @ref OPAMP_PowerMode */
 
   uint32_t Mode;                        /*!< Specifies the OPAMP mode
-                                             This parameter must be a value of @ref OPAMP_Mode 
+                                             This parameter must be a value of @ref OPAMP_Mode
                                              mode is either Standalone or Follower */
 
   uint32_t InvertingInput;              /*!< Specifies the inverting input in Standalone mode
                                                - In Standalone mode:   i.e when mode is OPAMP_STANDALONE_MODE
-                                                 This parameter must be a value of @ref OPAMP_InvertingInput 
+                                                 This parameter must be a value of @ref OPAMP_InvertingInput
                                                  InvertingInput is either VM0 or VM1
                                                - In Follower mode:     i.e when mode is OPAMP_FOLLOWER_MODE
-                                                 This parameter is Not Applicable */ 
+                                                 This parameter is Not Applicable */
 
   uint32_t NonInvertingInput;           /*!< Specifies the non inverting input of the opamp:
                                              This parameter must be a value of @ref OPAMP_NonInvertingInput
@@ -75,53 +75,53 @@ typedef struct
                                                    OPAMP2: Non-inverting input is either IO0, DAC_Channel1, DAC_Channel2
                                                    OPAMP3: Non-inverting input is either IO0, DAC_Channel2 (OPAMP3 availability depends on STM32L1 devices) */
 
-  uint32_t UserTrimming;                /*!< Specifies the trimming mode 
-                                             This parameter must be a value of @ref OPAMP_UserTrimming 
+  uint32_t UserTrimming;                /*!< Specifies the trimming mode
+                                             This parameter must be a value of @ref OPAMP_UserTrimming
                                              UserTrimming is either factory or user trimming.
                                              Caution: This parameter is common to all OPAMP instances: a modification of this parameter for the selected OPAMP impacts the other OPAMP instances. */
 
   uint32_t TrimmingValueP;              /*!< Specifies the offset trimming value (PMOS)
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
                                              This parameter must be a number between Min_Data = 0 and Max_Data = 30 (Trimming value 31 is forbidden)
                                              16 is typical default value */
-  
+
   uint32_t TrimmingValueN;              /*!< Specifies the offset trimming value (NMOS)
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
                                              This parameter must be a number between Min_Data = 0 and Max_Data = 30 (Trimming value 31 is forbidden)
                                              16 is typical default value */
-  
+
   uint32_t TrimmingValuePLowPower;      /*!< Specifies the offset trimming value (PMOS)
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
                                              This parameter must be a number between Min_Data = 0 and Max_Data = 30 (Trimming value 31 is forbidden)
                                              16 is typical default value */
 
   uint32_t TrimmingValueNLowPower;      /*!< Specifies the offset trimming value (NMOS)
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
                                              This parameter must be a number between Min_Data = 0 and Max_Data = 30 (Trimming value 31 is forbidden)
                                              16 is typical default value */
 
 }OPAMP_InitTypeDef;
 
-/** 
-  * @brief  HAL State structures definition  
-  */ 
+/**
+  * @brief  HAL State structures definition
+  */
 
 typedef enum
 {
   HAL_OPAMP_STATE_RESET               = 0x00000000, /*!< OPAMP is not yet Initialized          */
-  
+
   HAL_OPAMP_STATE_READY               = 0x00000001, /*!< OPAMP is initialized and ready for use */
   HAL_OPAMP_STATE_CALIBBUSY           = 0x00000002, /*!< OPAMP is enabled in auto calibration mode */
- 
-  HAL_OPAMP_STATE_BUSY                = 0x00000004, /*!< OPAMP is enabled and running in normal mode */                                                                           
+
+  HAL_OPAMP_STATE_BUSY                = 0x00000004, /*!< OPAMP is enabled and running in normal mode */
   HAL_OPAMP_STATE_BUSYLOCKED          = 0x00000005  /*!< OPAMP is locked
                                                          only system reset allows reconfiguring the opamp. */
-    
+
 }HAL_OPAMP_StateTypeDef;
 
-/** 
+/**
   * @brief OPAMP Handle Structure definition
-  */ 
+  */
 #if (USE_HAL_OPAMP_REGISTER_CALLBACKS == 1)
 typedef struct __OPAMP_HandleTypeDef
 #else
@@ -133,7 +133,7 @@ typedef struct
   HAL_StatusTypeDef Status;                         /*!< OPAMP peripheral status   */
   HAL_LockTypeDef   Lock;                           /*!< Locking object          */
   __IO HAL_OPAMP_StateTypeDef  State;               /*!< OPAMP communication state */
-  
+
 #if (USE_HAL_OPAMP_REGISTER_CALLBACKS == 1)
 void (* MspInitCallback)                (struct __OPAMP_HandleTypeDef *hopamp);
 void (* MspDeInitCallback)              (struct __OPAMP_HandleTypeDef *hopamp);
@@ -141,9 +141,9 @@ void (* MspDeInitCallback)              (struct __OPAMP_HandleTypeDef *hopamp);
 
 } OPAMP_HandleTypeDef;
 
-/** 
-  * @brief HAl_OPAMP_TrimmingValueTypeDef definition 
-  */ 
+/**
+  * @brief HAl_OPAMP_TrimmingValueTypeDef definition
+  */
 
 typedef  uint32_t HAL_OPAMP_TrimmingValueTypeDef;
 
@@ -176,17 +176,17 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   */
 
 /**
-  * OTR register Mask 
+  * OTR register Mask
   */
 #define OPAMP_TRIM_VALUE_MASK   OPAMP_OTR_AO1_OPT_OFFSET_TRIM_LOW
-    
+
 /**
-  * CSR register Mask 
+  * CSR register Mask
   */
 #define OPAMP_CSR_INSTANCE_OFFSET   ( 8U) /* Offset of each OPAMP instance into register CSR */
 #define OPAMP_OTR_INSTANCE_OFFSET   (10U) /* Offset of each OPAMP instance into register OTR */
-    
-        
+
+
 /** @defgroup OPAMP_Mode OPAMP Mode
   * @{
   */
@@ -237,7 +237,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup OPAMP_UserTrimming OPAMP User Trimming
   * @{
@@ -310,7 +310,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   */
 #define OPAMP_CSR_OPAXPD(__HANDLE__)                                           \
   (OPAMP_CSR_OPA1PD << (OPAMP_INSTANCE_DECIMAL(__HANDLE__) * OPAMP_CSR_INSTANCE_OFFSET))
-    
+
 /**
   * @brief Select the OPAMP bit S3SELx (switch 3) corresponding to the
   * selected OPAMP instance.
@@ -348,16 +348,16 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   (OPAMP_CSR_S6SEL1 << (OPAMP_INSTANCE_DECIMAL(__HANDLE__) * OPAMP_CSR_INSTANCE_OFFSET))
 
 /**
-  * @brief Select the OPAMP bit OPAxCAL_L (offset calibration for differential 
+  * @brief Select the OPAMP bit OPAxCAL_L (offset calibration for differential
   * pair P) corresponding to the selected OPAMP instance.
   * @param __HANDLE__: OPAMP handle
   * @retval None
   */
 #define OPAMP_CSR_OPAXCAL_L(__HANDLE__)                                        \
   (OPAMP_CSR_OPA1CAL_L << (OPAMP_INSTANCE_DECIMAL(__HANDLE__) * OPAMP_CSR_INSTANCE_OFFSET))
-    
+
 /**
-  * @brief Select the OPAMP bit OPAxCAL_H (offset calibration for differential 
+  * @brief Select the OPAMP bit OPAxCAL_H (offset calibration for differential
   * pair N) corresponding to the selected OPAMP instance.
   * @param __HANDLE__: OPAMP handle
   * @retval None
@@ -373,7 +373,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   */
 #define OPAMP_CSR_OPAXLPM(__HANDLE__)                                          \
   (OPAMP_CSR_OPA1LPM << (OPAMP_INSTANCE_DECIMAL(__HANDLE__) * OPAMP_CSR_INSTANCE_OFFSET))
-    
+
 /**
   * @brief Select the OPAMP bits of all switches corresponding to the
   * selected OPAMP instance.
@@ -397,7 +397,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
        (OPAMP_CSR_S7SEL2)                                                      \
      )                                                                         \
   )
-    
+
 /**
   * @brief Select the OPAMP bit ANAWSELx (switch SanA) corresponding to the
   * selected OPAMP instance.
@@ -408,7 +408,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   (OPAMP_CSR_ANAWSEL1 << (OPAMP_INSTANCE_DECIMAL(__HANDLE__)))
 
 /**
-  * @brief Select the OPAMP bit OPAxCALOUT in function of the selected 
+  * @brief Select the OPAMP bit OPAxCALOUT in function of the selected
   * OPAMP instance.
   * @param __HANDLE__: OPAMP handle
   * @retval None
@@ -417,9 +417,9 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   (OPAMP_CSR_OPA1CALOUT << (OPAMP_INSTANCE_DECIMAL(__HANDLE__)))
 
 /**
-  * @brief Select the OPAMP trimming bits position value (position of LSB) 
+  * @brief Select the OPAMP trimming bits position value (position of LSB)
   * in register OPAMP_OTR or register OPAMP_LPOTR in function of the selected
-  * OPAMP instance and the transistors differential pair high (PMOS) or 
+  * OPAMP instance and the transistors differential pair high (PMOS) or
   * low (NMOS).
   * @param __HANDLE__: OPAMP handle
   * @param __TRIM_HIGH_LOW__: transistors differential pair high or low.
@@ -428,9 +428,9 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   */
 #define OPAMP_OFFSET_TRIM_BITSPOSITION(__HANDLE__, __TRIM_HIGH_LOW__)          \
   ((OPAMP_INSTANCE_DECIMAL((__HANDLE__)) * OPAMP_OTR_INSTANCE_OFFSET) + (__TRIM_HIGH_LOW__))
-    
+
 /**
-  * @brief Shift the OPAMP trimming bits to register OPAMP_OTR or register 
+  * @brief Shift the OPAMP trimming bits to register OPAMP_OTR or register
   * OPAMP_LPOTR in function of the selected OPAMP instance and the transistors
   * differential pair high (PMOS) or low (NMOS).
   * @param __HANDLE__: OPAMP handle
@@ -441,7 +441,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   */
 #define OPAMP_OFFSET_TRIM_SET(__HANDLE__, __TRIM_HIGH_LOW__, __TRIMMING_VALUE__) \
   ((__TRIMMING_VALUE__) << (OPAMP_OFFSET_TRIM_BITSPOSITION((__HANDLE__), (__TRIM_HIGH_LOW__))))
-    
+
 /**
   * @brief Check that trimming value is within correct range
   * @param TRIMMINGVALUE: OPAMP trimming value
@@ -540,11 +540,11 @@ HAL_OPAMP_StateTypeDef HAL_OPAMP_GetState(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 #endif /* STM32L151xCA || STM32L151xD || STM32L152xCA || STM32L152xD || STM32L162xCA || STM32L162xD || STM32L151xE || STM32L151xDX || STM32L152xE || STM32L152xDX || STM32L162xE || STM32L162xDX || STM32L162xC || STM32L152xC || STM32L151xC */
 #ifdef __cplusplus

@@ -234,7 +234,7 @@ __STATIC_INLINE uint32_t LL_GetFlashSize(void)
   *         @arg @ref LL_UTILS_PACKAGETYPE_LQFP100_LQFP208_TFBGA216 (*)
   *         @arg @ref LL_UTILS_PACKAGETYPE_LQFP208_TFBGA216 (*)
   *         @arg @ref LL_UTILS_PACKAGETYPE_TQFP64_UFBGA144_LQFP144 (*)
-  * 
+  *
   *         (*) value not defined in all devices.
   */
 __STATIC_INLINE uint32_t LL_GetPackageType(void)

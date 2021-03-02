@@ -118,7 +118,7 @@ extern "C" {
 
 
 /* ISR RAM table address, definition from rom code, */
-#define ISR_RAM_MAP_START_ADDRESS	(0x10000000)
+#define ISR_RAM_MAP_START_ADDRESS    (0x10000000)
 /* ISR initialization status located in offset 0, definition from rom code*/
 #define ISR_RAM_MAP_INITIALIZED (0x20101985)
 
@@ -129,44 +129,44 @@ extern "C" {
  *
  */
 enum ram_isr_table_index {
-	RAM_ISR_TABLE_RESET_INDEX              = 1,
-	RAM_ISR_TABLE_NMI_INDEX                = 2,
-	RAM_ISR_TABLE_HARDFAULT_INDEX          = 3,
-	RAM_ISR_TABLE_SVC_INDEX                = 11,
-	RAM_ISR_TABLE_PENDSV_INDEX             = 14,
-	RAM_ISR_TABLE_SYSTICK_INDEX            = 15,
-	RAM_ISR_TABLE_UARTRX0_INDEX            = 16,
-	RAM_ISR_TABLE_UARTTX0_INDEX            = 17,
-	RAM_ISR_TABLE_UARTRX1_INDEX            = 18,
-	RAM_ISR_TABLE_UARTTX1_INDEX            = 19,
-	RAM_ISR_TABLE_SPIRX0_INDEX             = 20,
-	RAM_ISR_TABLE_SPITX0_INDEX             = 21,
-	RAM_ISR_TABLE_SPIRX1_INDEX             = 22,
-	RAM_ISR_TABLE_SPITX1_INDEX             = 23,
-	RAM_ISR_TABLE_I2CRX0_INDEX             = 24,
-	RAM_ISR_TABLE_I2CTX0_INDEX             = 25,
-	RAM_ISR_TABLE_I2CRX1_INDEX             = 26,
-	RAM_ISR_TABLE_I2CTX1_INDEX             = 27,
-	RAM_ISR_TABLE_WDT0_INDEX               = 28,
-	RAM_ISR_TABLE_WDT1_INDEX               = 29,
-	RAM_ISR_TABLE_DUALTIMER_INDEX          = 30,
-	RAM_ISR_TABLE_BLE_PERIPH_REGS_INDEX    = 31,
-	RAM_ISR_TABLE_SECURITY_INDEX           = 32,
-	RAM_ISR_TABLE_EFUSE_OUT_OF_RESET_INDEX = 33,
-	RAM_ISR_TABLE_SPI_FLASH_INDEX          = 34,
-	RAM_ISR_TABLE_LP_CLK_CAL_DONE_INDEX    = 35,	
-	RAM_ISR_TABLE_BROWNOUT_DETECTED_INDEX  = 36,	
-	RAM_ISR_TABLE_BLE_CORE_RESET_INDEX     = 37,
-	RAM_ISR_TABLE_BLE_LP_CORE_RESET_INDEX  = 38,
-	RAM_ISR_TABLE_PORT0_COMB_INDEX         = 39,
-	RAM_ISR_TABLE_PORT1_COMB_INDEX         = 40,
-	RAM_ISR_TABLE_PORT2_COMB_INDEX         = 41,
-	RAM_ISR_TABLE_TIMER0_INDEX             = 42,
-	RAM_ISR_TABLE_AON_SLEEP_TIMER_INDEX    = 43,
-	RAM_ISR_TABLE_BLE_OSC_EN_INDEX         = 44,
-	RAM_ISR_TABLE_BLE_WAKEUP_LP_INDEX      = 45,
-	RAM_ISR_TABLE_RXTX_SEQ_SLEEP_INDEX     = 46,
-	RAM_ISR_TABLE_BLE_CORE_INDEX           = 47,
+    RAM_ISR_TABLE_RESET_INDEX              = 1,
+    RAM_ISR_TABLE_NMI_INDEX                = 2,
+    RAM_ISR_TABLE_HARDFAULT_INDEX          = 3,
+    RAM_ISR_TABLE_SVC_INDEX                = 11,
+    RAM_ISR_TABLE_PENDSV_INDEX             = 14,
+    RAM_ISR_TABLE_SYSTICK_INDEX            = 15,
+    RAM_ISR_TABLE_UARTRX0_INDEX            = 16,
+    RAM_ISR_TABLE_UARTTX0_INDEX            = 17,
+    RAM_ISR_TABLE_UARTRX1_INDEX            = 18,
+    RAM_ISR_TABLE_UARTTX1_INDEX            = 19,
+    RAM_ISR_TABLE_SPIRX0_INDEX             = 20,
+    RAM_ISR_TABLE_SPITX0_INDEX             = 21,
+    RAM_ISR_TABLE_SPIRX1_INDEX             = 22,
+    RAM_ISR_TABLE_SPITX1_INDEX             = 23,
+    RAM_ISR_TABLE_I2CRX0_INDEX             = 24,
+    RAM_ISR_TABLE_I2CTX0_INDEX             = 25,
+    RAM_ISR_TABLE_I2CRX1_INDEX             = 26,
+    RAM_ISR_TABLE_I2CTX1_INDEX             = 27,
+    RAM_ISR_TABLE_WDT0_INDEX               = 28,
+    RAM_ISR_TABLE_WDT1_INDEX               = 29,
+    RAM_ISR_TABLE_DUALTIMER_INDEX          = 30,
+    RAM_ISR_TABLE_BLE_PERIPH_REGS_INDEX    = 31,
+    RAM_ISR_TABLE_SECURITY_INDEX           = 32,
+    RAM_ISR_TABLE_EFUSE_OUT_OF_RESET_INDEX = 33,
+    RAM_ISR_TABLE_SPI_FLASH_INDEX          = 34,
+    RAM_ISR_TABLE_LP_CLK_CAL_DONE_INDEX    = 35,
+    RAM_ISR_TABLE_BROWNOUT_DETECTED_INDEX  = 36,
+    RAM_ISR_TABLE_BLE_CORE_RESET_INDEX     = 37,
+    RAM_ISR_TABLE_BLE_LP_CORE_RESET_INDEX  = 38,
+    RAM_ISR_TABLE_PORT0_COMB_INDEX         = 39,
+    RAM_ISR_TABLE_PORT1_COMB_INDEX         = 40,
+    RAM_ISR_TABLE_PORT2_COMB_INDEX         = 41,
+    RAM_ISR_TABLE_TIMER0_INDEX             = 42,
+    RAM_ISR_TABLE_AON_SLEEP_TIMER_INDEX    = 43,
+    RAM_ISR_TABLE_BLE_OSC_EN_INDEX         = 44,
+    RAM_ISR_TABLE_BLE_WAKEUP_LP_INDEX      = 45,
+    RAM_ISR_TABLE_RXTX_SEQ_SLEEP_INDEX     = 46,
+    RAM_ISR_TABLE_BLE_CORE_INDEX           = 47,
 };
 
 /**
@@ -176,148 +176,148 @@ enum ram_isr_table_index {
  *
  */
 enum system_peripheral {
-	/** SPI Flash */
-	PERIPHERAL_SPI_FLASH,
-	/** SPI0 Core */
-	PERIPHERAL_SPI0_CORE,
-	/** SPI1 Core */
-	PERIPHERAL_SPI1_CORE,
-	/** I2C0 Core */
-	PERIPHERAL_I2C0_CORE,
-	/** ARM Dual Timer */
-	PERIPHERAL_DUALT_TIMER,
-	/** GPIO Controller */
-	PERIPHERAL_GPIO_CLK,
-	/** ARM Timer */
-	PERIPHERAL_TIMER,
-	/** WDT0 */
-	PERIPHERAL_WDT0,
-	/** WDT1 */
-	PERIPHERAL_WDT1,
-	/** UART0 Core */
-	PERIPHERAL_UART0_CORE,
-	/** UART0 Interface */
-	PERIPHERAL_UART0_IF,
-	/** UART1 Core */
-	PERIPHERAL_UART1_CORE,
-	/** UART1 Interface */
-	PERIPHERAL_UART1_IF,
-	/** NVIC */
-	PERIPHERAL_NVIC,
-	/** IDRAM1 Glue Logic */
-	PERIPHERAL_IDRAM1,
-	/** IDRAM2 Glue Logic */
-	PERIPHERAL_IDRAM2,
-	/** ROM */
-	PERIPHERAL_ROM,
-	/** Low Power Clock Calibration Interface */
-	PERIPHERAL_LOW_POWER_IF,
-	/** AON Wrapper */
-	PERIPHERAL_AON_WRAPPER,
-	/** ARM PCLK */
-	PERIPHERAL_ARM_PCLK,
-	/** ARM Gated PCLK */
-	PERIPHERAL_ARM_GATED_PCLK,
-	/** ARM BLE 8K Retention Memory */
-	PERIPHERAL_ARM_BLE,
-	/** Quad Decoder 0 */
-	PERIPHERAL_QDEC0,
-	/** Quad Decoder 1 */
-	PERIPHERAL_QDEC1,
-	/** Quad Decoder 2 */
-	PERIPHERAL_QDEC2,
-	/** I2C1 Core */
-	PERIPHERAL_I2C1_CORE,
-	/** Low Power Clock Calibration Core */
-	PERIPHERAL_LOW_POWER_CORE,
+    /** SPI Flash */
+    PERIPHERAL_SPI_FLASH,
+    /** SPI0 Core */
+    PERIPHERAL_SPI0_CORE,
+    /** SPI1 Core */
+    PERIPHERAL_SPI1_CORE,
+    /** I2C0 Core */
+    PERIPHERAL_I2C0_CORE,
+    /** ARM Dual Timer */
+    PERIPHERAL_DUALT_TIMER,
+    /** GPIO Controller */
+    PERIPHERAL_GPIO_CLK,
+    /** ARM Timer */
+    PERIPHERAL_TIMER,
+    /** WDT0 */
+    PERIPHERAL_WDT0,
+    /** WDT1 */
+    PERIPHERAL_WDT1,
+    /** UART0 Core */
+    PERIPHERAL_UART0_CORE,
+    /** UART0 Interface */
+    PERIPHERAL_UART0_IF,
+    /** UART1 Core */
+    PERIPHERAL_UART1_CORE,
+    /** UART1 Interface */
+    PERIPHERAL_UART1_IF,
+    /** NVIC */
+    PERIPHERAL_NVIC,
+    /** IDRAM1 Glue Logic */
+    PERIPHERAL_IDRAM1,
+    /** IDRAM2 Glue Logic */
+    PERIPHERAL_IDRAM2,
+    /** ROM */
+    PERIPHERAL_ROM,
+    /** Low Power Clock Calibration Interface */
+    PERIPHERAL_LOW_POWER_IF,
+    /** AON Wrapper */
+    PERIPHERAL_AON_WRAPPER,
+    /** ARM PCLK */
+    PERIPHERAL_ARM_PCLK,
+    /** ARM Gated PCLK */
+    PERIPHERAL_ARM_GATED_PCLK,
+    /** ARM BLE 8K Retention Memory */
+    PERIPHERAL_ARM_BLE,
+    /** Quad Decoder 0 */
+    PERIPHERAL_QDEC0,
+    /** Quad Decoder 1 */
+    PERIPHERAL_QDEC1,
+    /** Quad Decoder 2 */
+    PERIPHERAL_QDEC2,
+    /** I2C1 Core */
+    PERIPHERAL_I2C1_CORE,
+    /** Low Power Clock Calibration Core */
+    PERIPHERAL_LOW_POWER_CORE,
 
-	/* LPMCU_MISC_REGS_LPMCU_CLOCK_ENABLES_1 */
-	/** EFUSE1 */
-	PERIPHERAL_EFUSE1,
-	/** EFUSE2 */
-	PERIPHERAL_EFUSE2,
-	/** EFUSE3 */
-	PERIPHERAL_EFUSE3,
-	/** EFUSE4 */
-	PERIPHERAL_EFUSE4,
-	/** EFUSE5 */
-	PERIPHERAL_EFUSE5,
-	/** EFUSE6 */
-	PERIPHERAL_EFUSE6,
-	/** PWM0 */
-	PERIPHERAL_PWM0,
-	/** PWM1 */
-	PERIPHERAL_PWM1,
-	/** PWM2 */
-	PERIPHERAL_PWM2,
-	/** PWM3 */
-	PERIPHERAL_PWM3,
-	/** PMU Sensor ADC */
-	PERIPHERAL_ADC,
-	/** SPI0 SCK Phase Internal */
-	PERIPHERAL_SPI0_SCK_PHASE,
-	/** SPI1 SCK Phase Internal */
-	PERIPHERAL_SPI1_SCK_PHASE,
-	/** GPIO Controller */
-	PERIPHERAL_GPIO_GCLK,
-	/** ARM Timer 0 Gated APB */
-	PERIPHERAL_TIMER0_GATE,
-	/** SHA Core */
-	PERIPHERAL_SHA_CORE,
-	/** SHA AHB */
-	PERIPHERAL_SHA_AHB,
-	/** AES Core */
-	PERIPHERAL_AES_CORE,
-	/** AES AHB */
-	PERIPHERAL_AES_AHB,
-	/** IDRAM1_0 Memory */
-	PERIPHERAL_IDRAM1_0,
-	/** IDRAM1_1 Memory */
-	PERIPHERAL_IDRAM1_1,
-	/** IDRAM1_2 Memory */
-	PERIPHERAL_IDRAM1_2,
-	/** IDRAM2_0 Memory */
-	PERIPHERAL_IDRAM2_0,
-	/** IDRAM2_1 Memory */
-	PERIPHERAL_IDRAM2_1,
+    /* LPMCU_MISC_REGS_LPMCU_CLOCK_ENABLES_1 */
+    /** EFUSE1 */
+    PERIPHERAL_EFUSE1,
+    /** EFUSE2 */
+    PERIPHERAL_EFUSE2,
+    /** EFUSE3 */
+    PERIPHERAL_EFUSE3,
+    /** EFUSE4 */
+    PERIPHERAL_EFUSE4,
+    /** EFUSE5 */
+    PERIPHERAL_EFUSE5,
+    /** EFUSE6 */
+    PERIPHERAL_EFUSE6,
+    /** PWM0 */
+    PERIPHERAL_PWM0,
+    /** PWM1 */
+    PERIPHERAL_PWM1,
+    /** PWM2 */
+    PERIPHERAL_PWM2,
+    /** PWM3 */
+    PERIPHERAL_PWM3,
+    /** PMU Sensor ADC */
+    PERIPHERAL_ADC,
+    /** SPI0 SCK Phase Internal */
+    PERIPHERAL_SPI0_SCK_PHASE,
+    /** SPI1 SCK Phase Internal */
+    PERIPHERAL_SPI1_SCK_PHASE,
+    /** GPIO Controller */
+    PERIPHERAL_GPIO_GCLK,
+    /** ARM Timer 0 Gated APB */
+    PERIPHERAL_TIMER0_GATE,
+    /** SHA Core */
+    PERIPHERAL_SHA_CORE,
+    /** SHA AHB */
+    PERIPHERAL_SHA_AHB,
+    /** AES Core */
+    PERIPHERAL_AES_CORE,
+    /** AES AHB */
+    PERIPHERAL_AES_AHB,
+    /** IDRAM1_0 Memory */
+    PERIPHERAL_IDRAM1_0,
+    /** IDRAM1_1 Memory */
+    PERIPHERAL_IDRAM1_1,
+    /** IDRAM1_2 Memory */
+    PERIPHERAL_IDRAM1_2,
+    /** IDRAM2_0 Memory */
+    PERIPHERAL_IDRAM2_0,
+    /** IDRAM2_1 Memory */
+    PERIPHERAL_IDRAM2_1,
 
-	/** BLE RXTX Sequencer */
-	PERIPHERAL_BLE_RXTX,
-	/** BLE HAB */
-	PERIPHERAL_BLE_AHB,
-	/** BLE Periph Regs */
-	PERIPHERAL_BLE_PERIPH_REGS,
+    /** BLE RXTX Sequencer */
+    PERIPHERAL_BLE_RXTX,
+    /** BLE HAB */
+    PERIPHERAL_BLE_AHB,
+    /** BLE Periph Regs */
+    PERIPHERAL_BLE_PERIPH_REGS,
 
-	/** LPMCU CPU */
-	PERIPHERAL_LPMCU_CPU,
-	/** SPI Flash Interface */
-	PERIPHERAL_SPI_FLASH_IF,
-	/** SPI0 Interface */
-	PERIPHERAL_SPI0_IF,
-	/** SPI1 Interface */
-	PERIPHERAL_SPI1_IF,
-	/** I2C0 Interface */
-	PERIPHERAL_I2C0_IF,
-	/** MBIST Logic */
-	PERIPHERAL_MBIST,
-	/** Low Power Clock Calibration APB */
-	PERIPHERAL_LOW_POWER_APB,
-	/** LPMCU Debug */
-	PERIPHERAL_LPMCU_DEBUG,
-	/** Free Running ARM Clock */
-	PERIPHERAL_ARM_FREE_CLK,
-	/** ARM APB */
-	PERIPHERAL_ARM_APB,
-	/** I2C1 Interface */
-	PERIPHERAL_I2C1_IF,
-	/** SPI0 SCK Clock */
-	PERIPHERAL_SPI0_SCK_CLK,
-	/** SPI1 SCK Clock */
-	PERIPHERAL_SPI1_SCK_CLK,
-	/** DMA Controller */
-	PERIPHERAL_DMA,
+    /** LPMCU CPU */
+    PERIPHERAL_LPMCU_CPU,
+    /** SPI Flash Interface */
+    PERIPHERAL_SPI_FLASH_IF,
+    /** SPI0 Interface */
+    PERIPHERAL_SPI0_IF,
+    /** SPI1 Interface */
+    PERIPHERAL_SPI1_IF,
+    /** I2C0 Interface */
+    PERIPHERAL_I2C0_IF,
+    /** MBIST Logic */
+    PERIPHERAL_MBIST,
+    /** Low Power Clock Calibration APB */
+    PERIPHERAL_LOW_POWER_APB,
+    /** LPMCU Debug */
+    PERIPHERAL_LPMCU_DEBUG,
+    /** Free Running ARM Clock */
+    PERIPHERAL_ARM_FREE_CLK,
+    /** ARM APB */
+    PERIPHERAL_ARM_APB,
+    /** I2C1 Interface */
+    PERIPHERAL_I2C1_IF,
+    /** SPI0 SCK Clock */
+    PERIPHERAL_SPI0_SCK_CLK,
+    /** SPI1 SCK Clock */
+    PERIPHERAL_SPI1_SCK_CLK,
+    /** DMA Controller */
+    PERIPHERAL_DMA,
 
-	PERIPHERAL_SLEEP_TIMER,
+    PERIPHERAL_SLEEP_TIMER,
 };
 
 /**
@@ -327,12 +327,12 @@ enum system_peripheral {
  *
  */
 enum system_peripheral_aon {
-	/** Sleep timer */
-	PERIPHERAL_AON_SLEEP_TIMER,
-	/** Power sequencer */
-	PERIPHERAL_AON_POWER_SEQUENCER,
-	/** PD0 */
-	PERIPHERAL_AON_PD,
+    /** Sleep timer */
+    PERIPHERAL_AON_SLEEP_TIMER,
+    /** Power sequencer */
+    PERIPHERAL_AON_POWER_SEQUENCER,
+    /** PD0 */
+    PERIPHERAL_AON_PD,
 };
 
 /**
@@ -342,14 +342,14 @@ enum system_peripheral_aon {
  *
  */
 enum system_clock_freq {
-	/** 26MHz */
-	CLOCK_FREQ_26_MHZ,
-	/** 13MHz */
-	CLOCK_FREQ_13_MHZ,
-	/** 6.5MHz */
-	CLOCK_FREQ_6_5_MHZ,
-	/** 3.25MHz */
-	CLOCK_FREQ_3_25_MHZ,
+    /** 26MHz */
+    CLOCK_FREQ_26_MHZ,
+    /** 13MHz */
+    CLOCK_FREQ_13_MHZ,
+    /** 6.5MHz */
+    CLOCK_FREQ_6_5_MHZ,
+    /** 3.25MHz */
+    CLOCK_FREQ_3_25_MHZ,
 };
 
 /**
@@ -359,12 +359,12 @@ enum system_clock_freq {
  *
  */
 enum system_clock_resource {
-	/** Use 26MHz Crystal Oscillator XO as ARM clock */
-	CLOCK_RESOURCE_XO_26_MHZ,
-	/** Use either LP 2MHz clock */
-	CLOCK_RESOURCE_LP_2_MHZ,
-	/** 26MHz integrated RC Oscillator */
-	CLOCK_RESOURCE_RC_26_MHZ,
+    /** Use 26MHz Crystal Oscillator XO as ARM clock */
+    CLOCK_RESOURCE_XO_26_MHZ,
+    /** Use either LP 2MHz clock */
+    CLOCK_RESOURCE_LP_2_MHZ,
+    /** 26MHz integrated RC Oscillator */
+    CLOCK_RESOURCE_RC_26_MHZ,
 };
 
 /**
@@ -374,14 +374,14 @@ enum system_clock_resource {
  *
  */
 enum system_clock_aon_resource {
-	/** OSC 2MHz */
-	CLOCK_AON_RESOURCE_2_MHZ,
-	/** OSC 2MHz/64 = 31.25KHz */
-	CLOCK_AON_RESOURCE_31_25_KHZ,
-	/** RTC XO 32.768KHz */
-	CLOCK_AON_RESOURCE_32_768_KHZ,
-	/** Use default clock */
-	CLOCK_AON_DEFAULT,
+    /** OSC 2MHz */
+    CLOCK_AON_RESOURCE_2_MHZ,
+    /** OSC 2MHz/64 = 31.25KHz */
+    CLOCK_AON_RESOURCE_31_25_KHZ,
+    /** RTC XO 32.768KHz */
+    CLOCK_AON_RESOURCE_32_768_KHZ,
+    /** Use default clock */
+    CLOCK_AON_DEFAULT,
 };
 
 /**
@@ -391,38 +391,38 @@ enum system_clock_aon_resource {
  *
  */
 enum system_calibration_clk_num {
-	/** 1 clock */
-	CALIBRATION_CLK_NUM_1,
-	/** 2 clocks */
-	CALIBRATION_CLK_NUM_2,
-	/** 4 clocks */
-	CALIBRATION_CLK_NUM_4,
-	/** 8 clocks */
-	CALIBRATION_CLK_NUM_8,
-	/** 16 clocks */
-	CALIBRATION_CLK_NUM_16,
-	/** 32 clocks */
-	CALIBRATION_CLK_NUM_32,
-	/** 64 clocks */
-	CALIBRATION_CLK_NUM_64,
-	/** 128 clocks */
-	CALIBRATION_CLK_NUM_128,
-	/** 256 clocks */
-	CALIBRATION_CLK_NUM_256,
-	/** 512 clocks */
-	CALIBRATION_CLK_NUM_512,
-	/** 1024 clocks */
-	CALIBRATION_CLK_NUM_1024,
-	/** 2048 clocks */
-	CALIBRATION_CLK_NUM_2048,
-	/** 4096 clocks */
-	CALIBRATION_CLK_NUM_4096,
-	/** 8192 clocks */
-	CALIBRATION_CLK_NUM_8192,
-	/** 16384 clocks */
-	CALIBRATION_CLK_NUM_16384,
-	/** 32768 clocks */
-	CALIBRATION_CLK_NUM_32768,
+    /** 1 clock */
+    CALIBRATION_CLK_NUM_1,
+    /** 2 clocks */
+    CALIBRATION_CLK_NUM_2,
+    /** 4 clocks */
+    CALIBRATION_CLK_NUM_4,
+    /** 8 clocks */
+    CALIBRATION_CLK_NUM_8,
+    /** 16 clocks */
+    CALIBRATION_CLK_NUM_16,
+    /** 32 clocks */
+    CALIBRATION_CLK_NUM_32,
+    /** 64 clocks */
+    CALIBRATION_CLK_NUM_64,
+    /** 128 clocks */
+    CALIBRATION_CLK_NUM_128,
+    /** 256 clocks */
+    CALIBRATION_CLK_NUM_256,
+    /** 512 clocks */
+    CALIBRATION_CLK_NUM_512,
+    /** 1024 clocks */
+    CALIBRATION_CLK_NUM_1024,
+    /** 2048 clocks */
+    CALIBRATION_CLK_NUM_2048,
+    /** 4096 clocks */
+    CALIBRATION_CLK_NUM_4096,
+    /** 8192 clocks */
+    CALIBRATION_CLK_NUM_8192,
+    /** 16384 clocks */
+    CALIBRATION_CLK_NUM_16384,
+    /** 32768 clocks */
+    CALIBRATION_CLK_NUM_32768,
 };
 
 /**
@@ -432,32 +432,32 @@ enum system_calibration_clk_num {
  *
  */
 enum system_calibration_interrput_control {
-	/** IRQ when OSC calibration done */
-	CALIBRATION_INTERRUPT_OSC_DONE,
-	/** IRQ when RTC calibration done */
-	CALIBRATION_INTERRUPT_RTC_DONE,
-	/** IRQ when OSC or RTC calibration done */
-	CALIBRATION_INTERRUPT_OSC_OR_RTC_DONE,
-	/** IRQ when OSC and RTC calibration done */
-	CALIBRATION_INTERRUPT_OSC_AND_RTC_DONE,
+    /** IRQ when OSC calibration done */
+    CALIBRATION_INTERRUPT_OSC_DONE,
+    /** IRQ when RTC calibration done */
+    CALIBRATION_INTERRUPT_RTC_DONE,
+    /** IRQ when OSC or RTC calibration done */
+    CALIBRATION_INTERRUPT_OSC_OR_RTC_DONE,
+    /** IRQ when OSC and RTC calibration done */
+    CALIBRATION_INTERRUPT_OSC_AND_RTC_DONE,
 };
 
 enum system_calibration_status {
-	/** No calibration in progress */
-	CALBRATION_NO_IN_PROGRESS,
-	/** Calibration in progress */
-	CALBRATION_IN_PROGRESS,
-	/** Calibration done */
-	CALBRATION_DONE,
+    /** No calibration in progress */
+    CALBRATION_NO_IN_PROGRESS,
+    /** Calibration in progress */
+    CALBRATION_IN_PROGRESS,
+    /** Calibration done */
+    CALBRATION_DONE,
 };
 
 struct system_calibration_config {
-	enum system_calibration_clk_num clk_num;
-	enum system_calibration_interrput_control interrupt_control;
-	uint16_t osc_fractional_part;
-	uint16_t osc_integer_part;
-	uint16_t rtc_fractional_part;
-	uint16_t rtc_integer_part;
+    enum system_calibration_clk_num clk_num;
+    enum system_calibration_interrput_control interrupt_control;
+    uint16_t osc_fractional_part;
+    uint16_t osc_integer_part;
+    uint16_t rtc_fractional_part;
+    uint16_t rtc_integer_part;
 };
 
 /**
@@ -465,14 +465,14 @@ struct system_calibration_config {
  * @{
  */
 enum status_code system_clock_config( \
-				enum system_clock_resource resoure, \
-				enum system_clock_freq freq);
+                enum system_clock_resource resoure, \
+                enum system_clock_freq freq);
 uint32_t system_clock_get_value(void);
 enum status_code system_clock_peripheral_enable(enum system_peripheral peripheral);
 enum status_code system_clock_peripheral_disable(enum system_peripheral peripheral);
 enum status_code system_clock_peripheral_freq_config( \
-				enum system_peripheral peripheral, \
-				enum system_clock_freq freq);
+                enum system_peripheral peripheral, \
+                enum system_clock_freq freq);
 //void system_init(void);
 /** @} */
 
@@ -489,7 +489,7 @@ enum status_code system_peripheral_reset(enum system_peripheral peripheral);
  * @{
  */
 void system_register_isr(enum ram_isr_table_index isr_index,
-		uint32_t isr_address);
+        uint32_t isr_address);
 void system_unregister_isr(enum ram_isr_table_index isr_index);
 /** @} */
 
@@ -500,7 +500,7 @@ void system_unregister_isr(enum ram_isr_table_index isr_index);
 void system_calibration_get_config_defaults(struct system_calibration_config *config);
 void system_calibration_set_config(struct system_calibration_config *config);
 enum system_calibration_status system_calibration_get_interrupt_status( \
-				struct system_calibration_config *config);
+                struct system_calibration_config *config);
 
 void system_osc_calibration_enable(void);
 void system_osc_calibration_disable(void);
@@ -520,8 +520,8 @@ void system_rtc_calibration_result(struct system_calibration_config *config);
  * @{
  */
 enum status_code system_clock_aon_config( \
-				enum system_peripheral_aon peripheral_aon, \
-				enum system_clock_aon_resource aon_resource);
+                enum system_peripheral_aon peripheral_aon, \
+                enum system_clock_aon_resource aon_resource);
 enum status_code system_clock_peripheral_aon_enable(enum system_peripheral_aon peripheral_aon);
 enum status_code system_clock_peripheral_aon_disable(enum system_peripheral_aon peripheral_aon);
 /** @} */

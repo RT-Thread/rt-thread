@@ -106,7 +106,7 @@ typedef enum
 /* ¶ÁÐ´Ä£Ê½ */
 typedef enum
 {
-    I2C_Mode_Write = 0x0 , 
+    I2C_Mode_Write = 0x0 ,
     I2C_Mode_Read = 0x1 ,
 }I2C_TYPE_RWMODE;
 

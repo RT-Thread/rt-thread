@@ -124,7 +124,7 @@ int rt_hw_pwm_init(void)
     PWM_InitStructure PWM_initStruct;
 
     PWM_initStruct.clk_div = PWM_CLKDIV_1; /* F_PWM = 120M/1 = 120M */
-    PWM_initStruct.mode = PWM_MODE_INDEP;  /* Aè·¯å’ŒBè·¯ç‹¬ç«‹è¾“å‡º */
+    PWM_initStruct.mode = PWM_MODE_INDEP;  /* AÂ·ºÍBÂ·¶ÀÁ¢Êä³ö */
     PWM_initStruct.cycleA = SWM320_PWM_TIMER_SET(1000);
     PWM_initStruct.hdutyA = SWM320_PWM_TIMER_SET(500);
     PWM_initStruct.initLevelA = 1;

@@ -94,10 +94,10 @@ public:
     //! A previously created port object will be returned if it exists. If no object has been
     //! created for the specified port number, one will be dynamically allocated for you.
     static I2CMasterPort * getPort(int port);
-    
+
     //! @brief Constructor.
     I2CMasterPort(int port);
-    
+
     //! @brief Destructor.
     virtual ~I2CMasterPort();
 
@@ -118,10 +118,10 @@ public:
 protected:
 
     int m_port; //!< This port number.
-    
+
     //! Table of port objects.
     static I2CMasterPort * s_ports[];
-    
+
 };
 
 /*!
@@ -133,32 +133,32 @@ protected:
 class I2CDevice
 {
 public:
-    
+
     //! @brief Constructor.
     //!
     //! The I2CMasterPort object will be created dynamically if it does not already exist.
     I2CDevice(int port, uint8_t address, uint32_t busFrequencyKHz=100);
-    
+
     //! @brief Constructor.
     //!
     //! This version of init() takes a pointer to the I2CMasterPort object to use, instead of just a
     //! port number.
     I2CDevice(I2CMasterPort * port, uint8_t address, uint32_t busFrequencyKHz=100);
-    
+
     //! @brief Constructor that takes a device info struct.
     I2CDevice(const i2c_device_info_t * deviceInfo);
-    
+
     //! @name Bus frequency
     //@{
     uint32_t getBusFrequency() const { return m_freq; }
     void setBusFrequency(uint32_t busFrequencyKHz) { m_freq = busFrequencyKHz; }
     //@}
-    
+
     //! @name Transfers
     //@{
     int send(uint32_t subaddress, uint32_t subaddressLength, const void * data, uint32_t dataLength);
     int send(const void * data, uint32_t dataLength) { return send(0, 0, data, dataLength); }
-    
+
     int receive(uint32_t subaddress, uint32_t subaddressLength, void * data, uint32_t dataLength);
     int receive(void * data, uint32_t dataLength) { return receive(0, 0, data, dataLength); }
     //@}

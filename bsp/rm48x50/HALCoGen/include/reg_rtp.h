@@ -2,7 +2,7 @@
 *   @brief RTP Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -38,13 +38,13 @@
 typedef volatile struct rtpBase
 {
     uint32  GLBCTRL;   /**< 0x0000: RTP Global Control Register             */
-    uint32  TRENA;     /**< 0x0004: RTP Trace Enable Register               */	
+    uint32  TRENA;     /**< 0x0004: RTP Trace Enable Register               */
     uint32  GSR;       /**< 0x0008: RTP Global Status Register              */
     uint32  RAM1REG1;  /**< 0x000C: RTP RAM 1 Trace Region 1 Register       */
     uint32  RAM1REG2;  /**< 0x0010: RTP RAM 1 Trace Region 2 Register       */
     uint32  RAM2REG1;  /**< 0x0014: RTP RAM 2 Trace Region 1  Register      */
-    uint32  RAM2REG2;	 /**< 0x0018: RTP RAM 2 Trace Region 2  Register      */
-    uint32   rsvd1[2U]; /**< 0x001C: Reserved																																*/
+    uint32  RAM2REG2;     /**< 0x0018: RTP RAM 2 Trace Region 2  Register      */
+    uint32   rsvd1[2U]; /**< 0x001C: Reserved                                                                                                                                */
     uint32  ERREG1;    /**< 0x0024: RTP Peripheral Trace Region 1 Register  */
     uint32  ERREG2;    /**< 0x0028: RTP Peripheral Trace Region 2 Register  */
     uint32  DDMW;      /**< 0x002C: RTP Direct Data Mode Write Register     */

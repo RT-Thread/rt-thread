@@ -12,7 +12,7 @@
   * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd. ALL rights reserved.
   *******************************************************************************
   */
-  
+
   /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MD_CMP_H__
 #define __MD_CMP_H__
@@ -46,7 +46,7 @@ extern "C" {
 /** @defgroup MD_CMP_Public_Constants CMP Public Constants
   * @{
   */
-  
+
 /** @defgroup MD_CMP_PC_CARS CMP Reference voltage
   * @{
   */
@@ -55,13 +55,13 @@ extern "C" {
 #define MD_CMP_CARS_3_75V                 (0x00000002UL)       /*!< @brief Select CARS for 0.75*5V */
 #define MD_CMP_CARS_5_00V                  (0x00000003UL)       /*!< @brief Select CARS for 5V */
 
-/**  
-  * @} MD_CMP_PC_CARS 
+/**
+  * @} MD_CMP_PC_CARS
   */
 
-  
-/**  
-  * @} MD_CMP_Public_Constants 
+
+/**
+  * @} MD_CMP_Public_Constants
   */
 
 /* Public macro ---------------------------------------------------------------*/
@@ -74,7 +74,7 @@ extern "C" {
   */
 /**
   * @brief  Set CMP control register (CMP_CON)
-  * @param  cmp CMP Instance 
+  * @param  cmp CMP Instance
   * @param  value The value write in CMP_CON
   * @retval None
   */
@@ -85,7 +85,7 @@ __STATIC_INLINE void md_cmp_set_con(CMP_TypeDef *cmp, uint32_t value)
 
 /**
   * @brief  Get CMP control register (CMP_CON)
-  * @param  cmp CMP Instance 
+  * @param  cmp CMP Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_cmp_get_con(CMP_TypeDef *cmp)
@@ -163,7 +163,7 @@ __STATIC_INLINE uint32_t md_cmp_is_enable_con_caon2(CMP_TypeDef *cmp)
 
 /**
   * @brief  Set CMP control register 1(CMP_CFG1)
-  * @param  cmp CMP Instance 
+  * @param  cmp CMP Instance
   * @param  value The value write in CMP_CFG1
   * @retval None
   */
@@ -173,7 +173,7 @@ __STATIC_INLINE void md_cmp_set_cfg1(CMP_TypeDef *cmp, uint32_t value)
 }
 /**
   * @brief  Get CMP control register 1(CMP_CFG1)
-  * @param  cmp CMP Instance 
+  * @param  cmp CMP Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_cmp_get_cfg1(CMP_TypeDef *cmp)
@@ -213,7 +213,7 @@ __STATIC_INLINE uint32_t md_cmp_get_cfg1_rs(CMP_TypeDef *cmp)
 
 
 /**
-  * @brief  Enable Comparator 1 Filter circuit 
+  * @brief  Enable Comparator 1 Filter circuit
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -222,7 +222,7 @@ __STATIC_INLINE void md_cmp_enable_cfg1_fen(CMP_TypeDef *cmp)
   SET_BIT(cmp->CFG1, CMP_CFG1_FEN_MSK);
 }
 /**
-  * @brief  Disable Comparator 1 Filter circuit 
+  * @brief  Disable Comparator 1 Filter circuit
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -232,7 +232,7 @@ __STATIC_INLINE void md_cmp_disable_cfg1_fen(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if Comparator 1 Filter circuit is enable 
+  * @brief  Check if Comparator 1 Filter circuit is enable
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -262,7 +262,7 @@ __STATIC_INLINE void md_cmp_disable_cfg1_psen(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if comparator 1 reverse circuit enable is enable 
+  * @brief  Check if comparator 1 reverse circuit enable is enable
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -273,7 +273,7 @@ __STATIC_INLINE uint32_t md_cmp_is_enable_cfg1_capsen(CMP_TypeDef *cmp)
 
 
 /**
-  * @brief  Enable Comparator 1 Negative input select 
+  * @brief  Enable Comparator 1 Negative input select
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -282,7 +282,7 @@ __STATIC_INLINE void md_cmp_enable_cfg1_insel(CMP_TypeDef *cmp)
   SET_BIT(cmp->CFG1, CMP_CFG1_INSEL_MSK);
 }
 /**
-  * @brief  Disable Comparator 1 Negative input select 
+  * @brief  Disable Comparator 1 Negative input select
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -292,7 +292,7 @@ __STATIC_INLINE void md_cmp_disable_cfg1_insel(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if comparator 1 Negative input select is enable 
+  * @brief  Check if comparator 1 Negative input select is enable
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -322,7 +322,7 @@ __STATIC_INLINE void md_cmp_disable_cfg1_ipsel(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if comparator 1 Positive input select is enable 
+  * @brief  Check if comparator 1 Positive input select is enable
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -334,7 +334,7 @@ __STATIC_INLINE uint32_t md_cmp_is_enable_cfg1_ipsel(CMP_TypeDef *cmp)
 
 /**
   * @brief  Set CMP control register 2(CMP_CFG2)
-  * @param  cmp CMP Instance 
+  * @param  cmp CMP Instance
   * @param  value The value write in CMP_CFG2
   * @retval None
   */
@@ -344,7 +344,7 @@ __STATIC_INLINE void md_cmp_set_cfg2(CMP_TypeDef *cmp, uint32_t value)
 }
 /**
   * @brief  Get CMP control register 2(CMP_CFG2)
-  * @param  cmp CMP Instance 
+  * @param  cmp CMP Instance
   * @retval None
   */
 __STATIC_INLINE uint32_t md_cmp_get_cfg2(CMP_TypeDef *cmp)
@@ -384,7 +384,7 @@ __STATIC_INLINE uint32_t md_cmp_get_cfg2_rs(CMP_TypeDef *cmp)
 
 
 /**
-  * @brief  Enable Comparator 2 Filter circuit 
+  * @brief  Enable Comparator 2 Filter circuit
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -393,7 +393,7 @@ __STATIC_INLINE void md_cmp_enable_cfg2_fen(CMP_TypeDef *cmp)
   SET_BIT(cmp->CFG2, CMP_CFG2_FEN_MSK);
 }
 /**
-  * @brief  Disable Comparator 2 Filter circuit 
+  * @brief  Disable Comparator 2 Filter circuit
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -403,7 +403,7 @@ __STATIC_INLINE void md_cmp_disable_cfg2_fen(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if Comparator 2 Filter circuit is enable 
+  * @brief  Check if Comparator 2 Filter circuit is enable
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -433,7 +433,7 @@ __STATIC_INLINE void md_cmp_disable_cfg2_psen(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if comparator 2 reverse circuit enable is enable 
+  * @brief  Check if comparator 2 reverse circuit enable is enable
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -444,7 +444,7 @@ __STATIC_INLINE uint32_t md_cmp_is_enable_cfg2_psen(CMP_TypeDef *cmp)
 
 
 /**
-  * @brief  Enable Comparator 2 Negative input select 
+  * @brief  Enable Comparator 2 Negative input select
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -453,7 +453,7 @@ __STATIC_INLINE void md_cmp_enable_cfg2_insel(CMP_TypeDef *cmp)
   SET_BIT(cmp->CFG2, CMP_CFG2_INSEL_MSK);
 }
 /**
-  * @brief  Disable Comparator 2 Negative input select 
+  * @brief  Disable Comparator 2 Negative input select
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -463,7 +463,7 @@ __STATIC_INLINE void md_cmp_disable_cfg2_insel(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if comparator 2 Negative input select is enable 
+  * @brief  Check if comparator 2 Negative input select is enable
   * @param  cmp CMP Instance
   * @retval None
   */
@@ -493,7 +493,7 @@ __STATIC_INLINE void md_cmp_disable_cfg2_ipsel(CMP_TypeDef *cmp)
 }
 
 /**
-  * @brief  Check if comparator 2 Positive input select is enable 
+  * @brief  Check if comparator 2 Positive input select is enable
   * @param  cmp CMP Instance
   * @retval None
   */

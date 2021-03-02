@@ -38,7 +38,7 @@
       (#) External event: EXTI Line 9 (any GPIOx_PIN_9) using DAC_TRIGGER_EXT_IT9.
           The used pin (GPIOx_PIN_9) must be configured in input mode.
 
-      (#) Timers TRGO: TIM2, TIM4, TIM5, TIM6, TIM7 and TIM8 
+      (#) Timers TRGO: TIM2, TIM4, TIM5, TIM6, TIM7 and TIM8
           (DAC_TRIGGER_T2_TRGO, DAC_TRIGGER_T4_TRGO...)
 
       (#) Software using DAC_TRIGGER_SOFTWARE
@@ -959,7 +959,7 @@ HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConf
   tmpreg1 &= ~(((uint32_t)(DAC_CR_MAMP1 | DAC_CR_WAVE1 | DAC_CR_TSEL1 | DAC_CR_TEN1 | DAC_CR_BOFF1)) << (Channel & 0x10UL));
   /* Configure for the selected DAC channel: buffer output, trigger */
   /* Set TSELx and TENx bits according to DAC_Trigger value */
-  /* Set BOFFx bit according to DAC_OutputBuffer value */   
+  /* Set BOFFx bit according to DAC_OutputBuffer value */
   tmpreg2 = (sConfig->DAC_Trigger | sConfig->DAC_OutputBuffer);
   /* Calculate CR register value depending on DAC_Channel */
   tmpreg1 |= tmpreg2 << (Channel & 0x10UL);

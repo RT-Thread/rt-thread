@@ -187,7 +187,7 @@ void mipi_clock_set(void)
 
 void mipi_csi2_clock_set(void)
 {
-    //set VIDPLL(PLL5) to 596MHz 
+    //set VIDPLL(PLL5) to 596MHz
     HW_CCM_ANALOG_PLL_VIDEO_WR(BF_CCM_ANALOG_PLL_VIDEO_DIV_SELECT(0) |
                                BF_CCM_ANALOG_PLL_VIDEO_ENABLE(1));
     HW_CCM_ANALOG_PLL_VIDEO_NUM_WR(0x00000000);

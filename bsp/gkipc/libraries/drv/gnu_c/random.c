@@ -9,8 +9,8 @@ static uint32_t seed;
 
 int32_t rand()
 {
-	next = next * 1103515245L + 12345;
-	return (uint32_t) (next / 65536L) % 32768L;
+    next = next * 1103515245L + 12345;
+    return (uint32_t) (next / 65536L) % 32768L;
 }
 
 /* Set seed for random generator */
@@ -18,13 +18,13 @@ int32_t rand()
 void srand(seed)
   uint32_t seed;
 {
-	next = seed;
+    next = seed;
 }
 
 void srandom(seed)
   uint32_t seed;
 {
-	srand(seed);
+    srand(seed);
 }
 
 int32_t random()

@@ -3238,9 +3238,9 @@
 #define  __HAL_SD_SDIO_CLEAR_FLAG   __HAL_SD_SDMMC_CLEAR_FLAG
 #define  __HAL_SD_SDIO_GET_IT       __HAL_SD_SDMMC_GET_IT
 #define  __HAL_SD_SDIO_CLEAR_IT     __HAL_SD_SDMMC_CLEAR_IT
-#define  SDIO_STATIC_FLAGS	        SDMMC_STATIC_FLAGS
-#define  SDIO_CMD0TIMEOUT	          SDMMC_CMD0TIMEOUT
-#define  SD_SDIO_SEND_IF_COND	      SD_SDMMC_SEND_IF_COND
+#define  SDIO_STATIC_FLAGS            SDMMC_STATIC_FLAGS
+#define  SDIO_CMD0TIMEOUT              SDMMC_CMD0TIMEOUT
+#define  SD_SDIO_SEND_IF_COND          SD_SDMMC_SEND_IF_COND
 /* alias CMSIS for compatibilities */
 #define  SDIO_IRQn                  SDMMC1_IRQn
 #define  SDIO_IRQHandler            SDMMC1_IRQHandler

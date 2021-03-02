@@ -324,14 +324,14 @@ extern "C" {
  *
  */
 enum events_edge_detect {
-	/** No event output */
-	EVENTS_EDGE_DETECT_NONE,
-	/** Event on rising edge */
-	EVENTS_EDGE_DETECT_RISING,
-	/** Event on falling edge */
-	EVENTS_EDGE_DETECT_FALLING,
-	/** Event on both edges */
-	EVENTS_EDGE_DETECT_BOTH,
+    /** No event output */
+    EVENTS_EDGE_DETECT_NONE,
+    /** Event on rising edge */
+    EVENTS_EDGE_DETECT_RISING,
+    /** Event on falling edge */
+    EVENTS_EDGE_DETECT_FALLING,
+    /** Event on both edges */
+    EVENTS_EDGE_DETECT_BOTH,
 };
 
 /**
@@ -341,12 +341,12 @@ enum events_edge_detect {
  *
  */
 enum events_path_selection {
-	/** Select the synchronous path for this event channel */
-	EVENTS_PATH_SYNCHRONOUS,
-	/** Select the resynchronizer path for this event channel */
-	EVENTS_PATH_RESYNCHRONIZED,
-	/** Select the asynchronous path for this event channel */
-	EVENTS_PATH_ASYNCHRONOUS,
+    /** Select the synchronous path for this event channel */
+    EVENTS_PATH_SYNCHRONOUS,
+    /** Select the resynchronizer path for this event channel */
+    EVENTS_PATH_RESYNCHRONIZED,
+    /** Select the asynchronous path for this event channel */
+    EVENTS_PATH_ASYNCHRONOUS,
 };
 
 /**
@@ -356,19 +356,19 @@ enum events_path_selection {
  *
  */
 struct events_config {
-	/** Select edge detection mode */
-	enum events_edge_detect    edge_detect;
-	/** Select events channel path */
-	enum events_path_selection path;
-	/** Set event generator for the channel */
-	uint8_t                    generator;
-	/** Clock source for the event channel */
-	uint8_t                    clock_source;
+    /** Select edge detection mode */
+    enum events_edge_detect    edge_detect;
+    /** Select events channel path */
+    enum events_path_selection path;
+    /** Set event generator for the channel */
+    uint8_t                    generator;
+    /** Clock source for the event channel */
+    uint8_t                    clock_source;
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	/** Run in standby mode for the channel */
-	bool                       run_in_standby;
-	/** Run On Demand */
-	bool                       on_demand;
+    /** Run in standby mode for the channel */
+    bool                       run_in_standby;
+    /** Run On Demand */
+    bool                       on_demand;
 #endif
 };
 
@@ -416,10 +416,10 @@ struct events_config {
  */
 struct events_resource {
 #if !defined(__DOXYGEN__)
-	/** Channel allocated for the event resource */
-	uint8_t channel;
-	/** Channel setting in CHANNEL register */
-	uint32_t channel_reg;
+    /** Channel allocated for the event resource */
+    uint8_t channel;
+    /** Channel setting in CHANNEL register */
+    uint32_t channel_reg;
 #endif
 };
 
@@ -433,12 +433,12 @@ typedef void (*events_interrupt_hook)(struct events_resource *resource);
  *
  */
 struct events_hook {
-	/** Event resource */
-	struct events_resource *resource;
-	/** Event hook function */
-	events_interrupt_hook hook_func;
-	/** Next event hook */
-	struct events_hook *next;
+    /** Event resource */
+    struct events_resource *resource;
+    /** Event hook function */
+    events_interrupt_hook hook_func;
+    /** Next event hook */
+    struct events_hook *next;
 };
 #endif
 

@@ -120,38 +120,38 @@ extern "C" {
  * speed of a BODVDD to lower the power consumption.
  */
 enum bodvdd_prescale {
-	/** Divide input prescaler clock by 2 */
-	BODVDD_PRESCALE_DIV_2       = SUPC_BODVDD_PSEL(0),
-	/** Divide input prescaler clock by 4 */
-	BODVDD_PRESCALE_DIV_4       = SUPC_BODVDD_PSEL(1),
-	/** Divide input prescaler clock by 8 */
-	BODVDD_PRESCALE_DIV_8       = SUPC_BODVDD_PSEL(2),
-	/** Divide input prescaler clock by 16 */
-	BODVDD_PRESCALE_DIV_16      = SUPC_BODVDD_PSEL(3),
-	/** Divide input prescaler clock by 32 */
-	BODVDD_PRESCALE_DIV_32      = SUPC_BODVDD_PSEL(4),
-	/** Divide input prescaler clock by 64 */
-	BODVDD_PRESCALE_DIV_64      = SUPC_BODVDD_PSEL(5),
-	/** Divide input prescaler clock by 128 */
-	BODVDD_PRESCALE_DIV_128     = SUPC_BODVDD_PSEL(6),
-	/** Divide input prescaler clock by 256 */
-	BODVDD_PRESCALE_DIV_256     = SUPC_BODVDD_PSEL(7),
-	/** Divide input prescaler clock by 512 */
-	BODVDD_PRESCALE_DIV_512     = SUPC_BODVDD_PSEL(8),
-	/** Divide input prescaler clock by 1024 */
-	BODVDD_PRESCALE_DIV_1024    = SUPC_BODVDD_PSEL(9),
-	/** Divide input prescaler clock by 2048 */
-	BODVDD_PRESCALE_DIV_2048    = SUPC_BODVDD_PSEL(10),
-	/** Divide input prescaler clock by 4096 */
-	BODVDD_PRESCALE_DIV_4096    = SUPC_BODVDD_PSEL(11),
-	/** Divide input prescaler clock by 8192 */
-	BODVDD_PRESCALE_DIV_8192    = SUPC_BODVDD_PSEL(12),
-	/** Divide input prescaler clock by 16384 */
-	BODVDD_PRESCALE_DIV_16384   = SUPC_BODVDD_PSEL(13),
-	/** Divide input prescaler clock by 32768 */
-	BODVDD_PRESCALE_DIV_32768   = SUPC_BODVDD_PSEL(14),
-	/** Divide input prescaler clock by 65536 */
-	BODVDD_PRESCALE_DIV_65536   = SUPC_BODVDD_PSEL(15),
+    /** Divide input prescaler clock by 2 */
+    BODVDD_PRESCALE_DIV_2       = SUPC_BODVDD_PSEL(0),
+    /** Divide input prescaler clock by 4 */
+    BODVDD_PRESCALE_DIV_4       = SUPC_BODVDD_PSEL(1),
+    /** Divide input prescaler clock by 8 */
+    BODVDD_PRESCALE_DIV_8       = SUPC_BODVDD_PSEL(2),
+    /** Divide input prescaler clock by 16 */
+    BODVDD_PRESCALE_DIV_16      = SUPC_BODVDD_PSEL(3),
+    /** Divide input prescaler clock by 32 */
+    BODVDD_PRESCALE_DIV_32      = SUPC_BODVDD_PSEL(4),
+    /** Divide input prescaler clock by 64 */
+    BODVDD_PRESCALE_DIV_64      = SUPC_BODVDD_PSEL(5),
+    /** Divide input prescaler clock by 128 */
+    BODVDD_PRESCALE_DIV_128     = SUPC_BODVDD_PSEL(6),
+    /** Divide input prescaler clock by 256 */
+    BODVDD_PRESCALE_DIV_256     = SUPC_BODVDD_PSEL(7),
+    /** Divide input prescaler clock by 512 */
+    BODVDD_PRESCALE_DIV_512     = SUPC_BODVDD_PSEL(8),
+    /** Divide input prescaler clock by 1024 */
+    BODVDD_PRESCALE_DIV_1024    = SUPC_BODVDD_PSEL(9),
+    /** Divide input prescaler clock by 2048 */
+    BODVDD_PRESCALE_DIV_2048    = SUPC_BODVDD_PSEL(10),
+    /** Divide input prescaler clock by 4096 */
+    BODVDD_PRESCALE_DIV_4096    = SUPC_BODVDD_PSEL(11),
+    /** Divide input prescaler clock by 8192 */
+    BODVDD_PRESCALE_DIV_8192    = SUPC_BODVDD_PSEL(12),
+    /** Divide input prescaler clock by 16384 */
+    BODVDD_PRESCALE_DIV_16384   = SUPC_BODVDD_PSEL(13),
+    /** Divide input prescaler clock by 32768 */
+    BODVDD_PRESCALE_DIV_32768   = SUPC_BODVDD_PSEL(14),
+    /** Divide input prescaler clock by 65536 */
+    BODVDD_PRESCALE_DIV_65536   = SUPC_BODVDD_PSEL(15),
 };
 
 /**
@@ -160,10 +160,10 @@ enum bodvdd_prescale {
  * List of possible BODVDD module voltage sampling modes in active sleep mode.
  */
 enum bodvdd_mode_in_active {
-	/** BODVDD will sample the supply line continuously */
-	BODVDD_ACTCFG_CONTINUOUS = 0,
-	/** BODVDD will use the BODVDD sampling clock (1kHz) to sample the supply line */
-	BODVDD_ACTCFG_SAMPLED    = SUPC_BODVDD_ACTCFG,
+    /** BODVDD will sample the supply line continuously */
+    BODVDD_ACTCFG_CONTINUOUS = 0,
+    /** BODVDD will use the BODVDD sampling clock (1kHz) to sample the supply line */
+    BODVDD_ACTCFG_SAMPLED    = SUPC_BODVDD_ACTCFG,
 };
 
 /**
@@ -172,10 +172,10 @@ enum bodvdd_mode_in_active {
  * List of possible BODVDD module voltage sampling modes in standby sleep mode.
  */
 enum bodvdd_mode_in_standby {
-	/** BODVDD will sample the supply line continuously */
-	BODVDD_STDBYCFG_CONTINUOUS = 0,
-	/** BODVDD will use the BODVDD sampling clock (1kHz) to sample the supply line */
-	BODVDD_STDBYCFG_SAMPLED    = SUPC_BODVDD_STDBYCFG,
+    /** BODVDD will sample the supply line continuously */
+    BODVDD_STDBYCFG_CONTINUOUS = 0,
+    /** BODVDD will use the BODVDD sampling clock (1kHz) to sample the supply line */
+    BODVDD_STDBYCFG_SAMPLED    = SUPC_BODVDD_STDBYCFG,
 };
 
 /**
@@ -184,33 +184,33 @@ enum bodvdd_mode_in_standby {
  * List of possible BODVDD actions when a BODVDD module detects a brown-out condition.
  */
 enum bodvdd_action {
-	/** A BODVDD detect will do nothing, and the BODVDD state must be polled */
-	BODVDD_ACTION_NONE      = SUPC_BODVDD_ACTION(0),
-	/** A BODVDD detect will reset the device */
-	BODVDD_ACTION_RESET     = SUPC_BODVDD_ACTION(1),
-	/** A BODVDD detect will fire an interrupt */
-	BODVDD_ACTION_INTERRUPT = SUPC_BODVDD_ACTION(2),
-	/** A BODVDD detect will put the device in backup sleep mode */
-	BODVDD_ACTION_BACKUP    = SUPC_BODVDD_ACTION(3),
+    /** A BODVDD detect will do nothing, and the BODVDD state must be polled */
+    BODVDD_ACTION_NONE      = SUPC_BODVDD_ACTION(0),
+    /** A BODVDD detect will reset the device */
+    BODVDD_ACTION_RESET     = SUPC_BODVDD_ACTION(1),
+    /** A BODVDD detect will fire an interrupt */
+    BODVDD_ACTION_INTERRUPT = SUPC_BODVDD_ACTION(2),
+    /** A BODVDD detect will put the device in backup sleep mode */
+    BODVDD_ACTION_BACKUP    = SUPC_BODVDD_ACTION(3),
 };
 
 /** Configuration structure for a BODVDD module. */
 struct bodvdd_config {
-	/** Input sampler clock prescaler factor, to reduce the 1kHz clock from the
-	 *  ULP32K to lower the sampling rate of the BODVDD */
-	enum bodvdd_prescale prescaler;
-	/** BODVDD configuration in active mode */
-	enum bodvdd_mode_in_active mode_in_active;
-	/** BODVDD configuration in backup sleep mode */
-	enum bodvdd_mode_in_standby mode_in_standby;
-	/** Action to perform when a low power detection is made */
-	enum bodvdd_action action;
-	/** BODVDD level to trigger at when monitors VDD except in backup sleep mode */
-	uint8_t level;
-	/** If \c true, the BODVDD is kept enabled and sampled during standby */
-	bool run_in_standby;
-	/** If \c true, enables detection hysteresis */
-	bool hysteresis;
+    /** Input sampler clock prescaler factor, to reduce the 1kHz clock from the
+     *  ULP32K to lower the sampling rate of the BODVDD */
+    enum bodvdd_prescale prescaler;
+    /** BODVDD configuration in active mode */
+    enum bodvdd_mode_in_active mode_in_active;
+    /** BODVDD configuration in backup sleep mode */
+    enum bodvdd_mode_in_standby mode_in_standby;
+    /** Action to perform when a low power detection is made */
+    enum bodvdd_action action;
+    /** BODVDD level to trigger at when monitors VDD except in backup sleep mode */
+    uint8_t level;
+    /** If \c true, the BODVDD is kept enabled and sampled during standby */
+    bool run_in_standby;
+    /** If \c true, enables detection hysteresis */
+    bool hysteresis;
 };
 
 /**
@@ -233,22 +233,22 @@ struct bodvdd_config {
  * \param[out] conf  BODVDD configuration struct to set to default settings
  */
 static inline void bodvdd_get_config_defaults(
-		struct bodvdd_config *const conf)
+        struct bodvdd_config *const conf)
 {
-	/* Sanity check arguments */
-	Assert(conf);
+    /* Sanity check arguments */
+    Assert(conf);
 
-	conf->prescaler       = BODVDD_PRESCALE_DIV_2;
-	conf->mode_in_active  = BODVDD_ACTCFG_CONTINUOUS;
-	conf->mode_in_standby = BODVDD_STDBYCFG_CONTINUOUS;
-	conf->action          = BODVDD_ACTION_RESET;
-	conf->level           = 0x2A;
-	conf->run_in_standby  = true;
-	conf->hysteresis      = true;
+    conf->prescaler       = BODVDD_PRESCALE_DIV_2;
+    conf->mode_in_active  = BODVDD_ACTCFG_CONTINUOUS;
+    conf->mode_in_standby = BODVDD_STDBYCFG_CONTINUOUS;
+    conf->action          = BODVDD_ACTION_RESET;
+    conf->level           = 0x2A;
+    conf->run_in_standby  = true;
+    conf->hysteresis      = true;
 }
 
 enum status_code bodvdd_set_config(
-		struct bodvdd_config *const conf);
+        struct bodvdd_config *const conf);
 
 /**
  * \brief Enables a configured BODVDD module.
@@ -261,12 +261,12 @@ enum status_code bodvdd_set_config(
  */
 static inline enum status_code bodvdd_enable(void)
 {
-	SUPC->BODVDD.reg |= SUPC_BODVDD_ENABLE;
-	while (!(SUPC->STATUS.reg & SUPC_STATUS_BVDDSRDY)) {
-		/* Wait for BODVDD register sync ready */
-	}
+    SUPC->BODVDD.reg |= SUPC_BODVDD_ENABLE;
+    while (!(SUPC->STATUS.reg & SUPC_STATUS_BVDDSRDY)) {
+        /* Wait for BODVDD register sync ready */
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -280,10 +280,10 @@ static inline enum status_code bodvdd_enable(void)
  */
 static inline enum status_code bodvdd_disable(void)
 {
-	SUPC->INTENCLR.reg = SUPC_INTENCLR_BODVDDRDY | SUPC_INTENCLR_BODVDDDET | SUPC_INTENCLR_BVDDSRDY;
-	SUPC->INTFLAG.reg = SUPC_INTFLAG_BODVDDRDY | SUPC_INTFLAG_BODVDDDET | SUPC_INTFLAG_BVDDSRDY;
-	SUPC->BODVDD.reg &= ~SUPC_BODVDD_ENABLE;
-	return STATUS_OK;
+    SUPC->INTENCLR.reg = SUPC_INTENCLR_BODVDDRDY | SUPC_INTENCLR_BODVDDDET | SUPC_INTENCLR_BVDDSRDY;
+    SUPC->INTFLAG.reg = SUPC_INTFLAG_BODVDDRDY | SUPC_INTFLAG_BODVDDDET | SUPC_INTFLAG_BVDDSRDY;
+    SUPC->BODVDD.reg &= ~SUPC_BODVDD_ENABLE;
+    return STATUS_OK;
 }
 
 /**
@@ -299,7 +299,7 @@ static inline enum status_code bodvdd_disable(void)
  */
 static inline bool bodvdd_is_detected(void)
 {
-	return SUPC->STATUS.bit.BODVDDDET;
+    return SUPC->STATUS.bit.BODVDDDET;
 }
 
 /**
@@ -311,8 +311,8 @@ static inline bool bodvdd_is_detected(void)
  */
 static inline void bodvdd_clear_detected(void)
 {
-	SUPC->INTFLAG.reg = SUPC_INTFLAG_BODVDDDET;
-	return;
+    SUPC->INTFLAG.reg = SUPC_INTFLAG_BODVDDDET;
+    return;
 }
 
 
@@ -358,12 +358,12 @@ static inline void bodvdd_clear_detected(void)
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -393,16 +393,16 @@ static inline void bodvdd_clear_detected(void)
  * \page asfdoc_sam0_bod_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42701A</td>
- *		<td>07/2016</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42701A</td>
+ *        <td>07/2016</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

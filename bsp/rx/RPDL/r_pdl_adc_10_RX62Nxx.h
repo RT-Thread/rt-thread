@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: A/D converter API for RX62Nxx
-* File Name		: r_pdl_adc_10_RX62Nxx.h
-* Version		: 1.02
-* Contents		: ADC header
-* Customer		:
-* Model			:
-* Order			:
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	:
-* Note			:
+* System Name    : A/D converter API for RX62Nxx
+* File Name        : r_pdl_adc_10_RX62Nxx.h
+* Version        : 1.02
+* Contents        : ADC header
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_ADC_10_RX62Nxx_H
@@ -29,22 +29,22 @@ extern VoidCallBackFunc rpdl_ADC_10_callback_func[];
 
 /* Library prototypes */
 bool R_ADC_10_CreateAll(
-	const uint8_t,
-	const uint32_t,
-	const uint32_t,
-	const float,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint32_t,
+    const uint32_t,
+    const float,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_ADC_10_DestroyAll(
-	const uint8_t
+    const uint8_t
 );
 bool R_ADC_10_ControlAll(
-	const uint16_t
+    const uint16_t
 );
 bool R_ADC_10_ReadAll(
-	const uint8_t,
-	volatile uint16_t * const
+    const uint8_t,
+    volatile uint16_t * const
 );
 bool ReturnFalse(void);
 

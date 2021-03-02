@@ -71,7 +71,7 @@ typedef struct
     GD_ETH_IpT          ipaddr;
     GD_HANDLE           phyreset;
     GD_HANDLE           phyhandle;
-	U8                  phyType;
+    U8                  phyType;
 
     U32 TxDesStartAddr;
     U32 RxDesStartAddr;

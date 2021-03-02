@@ -133,10 +133,10 @@ typedef void (*aon_sleep_timer_callback_t)(void);
  * This enum specifies counter with reload or single mode.
  */
 enum aon_sleep_timer_mode {
-	/** Counter in reload mode */
-	AON_SLEEP_TIMER_RELOAD_MODE = 0,
-	/** Counter in single mode */
-	AON_SLEEP_TIMER_SINGLE_MODE,
+    /** Counter in reload mode */
+    AON_SLEEP_TIMER_RELOAD_MODE = 0,
+    /** Counter in single mode */
+    AON_SLEEP_TIMER_SINGLE_MODE,
 };
 
 /**
@@ -145,12 +145,12 @@ enum aon_sleep_timer_mode {
  * This enum specifies arm wakeup enable or disable.
  */
 enum aon_sleep_timer_wakeup {
-	/** Wakeup disable */
-	AON_SLEEP_TIMER_WAKEUP_DIS = 0,
-	/** Arm wakeup */
-	AON_SLEEP_TIMER_WAKEUP_ARM,
-	/** Arm and blue-tooth wakeup */
-	AON_SLEEP_TIMER_WAKEUP_ARM_BLE,
+    /** Wakeup disable */
+    AON_SLEEP_TIMER_WAKEUP_DIS = 0,
+    /** Arm wakeup */
+    AON_SLEEP_TIMER_WAKEUP_ARM,
+    /** Arm and blue-tooth wakeup */
+    AON_SLEEP_TIMER_WAKEUP_ARM_BLE,
 };
 
 /**
@@ -161,13 +161,13 @@ enum aon_sleep_timer_wakeup {
  *  modified by the user application.
  */
 struct aon_sleep_timer_config {
-	/** Enable wakeup arm or wakeup arm and blue-tooth 
-	  * or disable arm wakeup */
-	enum aon_sleep_timer_wakeup wakeup;
-	/** Counter is reload or single mode */
-	enum aon_sleep_timer_mode mode;
-	/** Counter value */
-	uint32_t counter;
+    /** Enable wakeup arm or wakeup arm and blue-tooth
+      * or disable arm wakeup */
+    enum aon_sleep_timer_wakeup wakeup;
+    /** Counter is reload or single mode */
+    enum aon_sleep_timer_mode mode;
+    /** Counter value */
+    uint32_t counter;
 };
 
 /**
@@ -209,14 +209,14 @@ void aon_sleep_timer_unregister_callback(void);
  * Below is a table listing the acronyms used in this module, along with their
  * intended meanings.
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>AON SLEEP TIMER</td>
- *		<td>    </td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+ *    <tr>
+ *        <td>AON SLEEP TIMER</td>
+ *        <td>    </td>
+ *    </tr>
  * </table>
  *
  * \section asfdoc_samb_aon_sleep_timer_extra_dependencies Dependencies

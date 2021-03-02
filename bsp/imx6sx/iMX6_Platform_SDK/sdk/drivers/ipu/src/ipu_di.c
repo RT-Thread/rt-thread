@@ -44,18 +44,18 @@
  *
  * @param   ipu_index ipu index
  * @param   di used display interface
- * @param	panel:      ipu panel configuration data structure
+ * @param    panel:      ipu panel configuration data structure
  */
 void ipu_di_config(uint32_t ipu_index, uint32_t di, ips_dev_panel_t * panel)
 {
     /*********************************************************************
-    *	DI0 configuration:
-    *	hsync   	------	 DI0 pin 2
-    *	vsync   	------	 DI0 pin 3
-    *	data_en 	------	 DI0 pin 15
-    *	clk     	------	 DI0 disp clk
-    *	COUNTER 2  	------	 VSYNC
-    *	COUNTER 3  	------	 HSYNC
+    *    DI0 configuration:
+    *    hsync       ------     DI0 pin 2
+    *    vsync       ------     DI0 pin 3
+    *    data_en     ------     DI0 pin 15
+    *    clk         ------     DI0 disp clk
+    *    COUNTER 2      ------     VSYNC
+    *    COUNTER 3      ------     HSYNC
     **********************************************************************/
     uint32_t hsync_sel = 1;
     uint32_t vsync_sel = 2;
@@ -74,7 +74,7 @@ void ipu_di_config(uint32_t ipu_index, uint32_t di, ips_dev_panel_t * panel)
     };
 
     /**********************************************************************
-    *	these reference values are all got from panel spec.Typical
+    *    these reference values are all got from panel spec.Typical
     * values are selected. BE CAREFUL to config the waveform generators!
     ***********************************************************************/
 
@@ -201,8 +201,8 @@ void ipu_di_config(uint32_t ipu_index, uint32_t di, ips_dev_panel_t * panel)
 /*!
  * set di waveform up/down attributes.
  *
- * @param   ipu_index 	ipu index
- * @param   di 			display interface selection
+ * @param   ipu_index     ipu index
+ * @param   di             display interface selection
  * @param   pointer waveform pointer
  * @param   set waveform set
  * @param   up raising edge
@@ -219,7 +219,7 @@ void ipu_di_waveform_config(int32_t ipu_index, int32_t di, int32_t pointer, int3
 /*!
  * set di waveform up/down attributes.
  *
- * @param   ipu_index 	ipu index
+ * @param   ipu_index     ipu index
  * @param   di display interface selection
  * @param   screen_height height of the screen
  */
@@ -282,7 +282,7 @@ void ipu_di_pointer_config(int32_t ipu_index, int32_t di, int32_t pointer, int32
  * @param   up raising edge
  * @param   down falling edge
  *
- * @return 	true for success and false for failure
+ * @return     true for success and false for failure
  */
 int32_t ipu_di_bsclk_gen(int32_t ipu_index, int32_t di, int32_t division, int32_t up, int32_t down)
 {
@@ -312,10 +312,10 @@ int32_t ipu_di_bsclk_gen(int32_t ipu_index, int32_t di, int32_t division, int32_
 /*!
  * This function is used to config the waveform generator in the DI
  *
- * @param	ipu_index:	ipu index
- * @param	di:			display interface selection
- * @param	pointer:		waveform pointer
- * @param	sync_waveform_gen:		waveform information
+ * @param    ipu_index:    ipu index
+ * @param    di:            display interface selection
+ * @param    pointer:        waveform pointer
+ * @param    sync_waveform_gen:        waveform information
  */
 void ipu_di_sync_config(int32_t ipu_index, int32_t di, int32_t pointer,
                         di_sync_wave_gen_t sync_waveform_gen)

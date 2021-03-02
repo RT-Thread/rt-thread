@@ -54,7 +54,7 @@ void srtc_one_time_timer_test(void)
     onetime_tick = 0;
 
     srtc_init();
-    
+
     srtc_setup_onetime_timer(1, srtc_one_time_tick_callback, 0);
 
     while(loop--)

@@ -2,7 +2,7 @@
 *   @brief emif Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -71,10 +71,10 @@ enum emif_wait_polarity
 
 #define PTR (uint32 *)(0x80000000U)
 
-/** 
+/**
  *  @defgroup EMIF EMIF
  *  @brief Error Signaling Module.
- *  
+ *
  *  This EMIF memory controller is compliant with the JESD21-C SDR SDRAM memories utilizing a 16-bit
  *  data bus. The purpose of this EMIF is to provide a means for the CPU to connect to a variety of external
  *  devices including:
@@ -83,7 +83,7 @@ enum emif_wait_polarity
  *  The most common use for the EMIF is to interface with both a flash device and an SDRAM device
  *  simultaneously. contains an example of operating the EMIF in this configuration.
  *
- *	Related Files
+ *    Related Files
  *   - reg_emif.h
  *   - emif.h
  *   - emif.c

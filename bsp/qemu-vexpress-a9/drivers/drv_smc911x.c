@@ -330,7 +330,7 @@ static void smc911x_isr(int vector, void *param)
     emac = SMC911X_EMAC_DEVICE(param);
 
     status = smc911x_reg_read(emac, INT_STS);
-    
+
     if (status & INT_STS_RSFL)
     {
         eth_device_ready(&emac->parent);
@@ -497,7 +497,7 @@ struct pbuf *smc911x_emac_rx(rt_device_t dev)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops smc911x_emac_ops = 
+const static struct rt_device_ops smc911x_emac_ops =
 {
     smc911x_emac_init,
     RT_NULL,

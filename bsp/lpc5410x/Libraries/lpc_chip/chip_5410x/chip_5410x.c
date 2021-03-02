@@ -54,6 +54,6 @@ uint32_t SystemCoreClock;
    a clock rate change */
 void SystemCoreClockUpdate(void)
 {
-	/* CPU core speed (main clock speed adjusted by system clock divider) */
-	SystemCoreClock = Chip_Clock_GetSystemClockRate();
+    /* CPU core speed (main clock speed adjusted by system clock divider) */
+    SystemCoreClock = Chip_Clock_GetSystemClockRate();
 }

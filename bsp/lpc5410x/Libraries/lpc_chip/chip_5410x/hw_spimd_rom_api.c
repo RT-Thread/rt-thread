@@ -34,12 +34,12 @@
 // This creates a table with the addresses of all the SPI functions
 // This table of function pointers is the API interface.
 const ROM_SPIMD_API_T spim_api = {
-	&spim_get_mem_size,
-	&spim_init,
-	&spim_register_callback,
-	&spim_setup_transfer,
-	&spim_transfer,
-	&spim_transfer_handler,
-	&spim_close_pending_transfer,
-	&spim_get_driver_version,
-};		// end of table ************************************
+    &spim_get_mem_size,
+    &spim_init,
+    &spim_register_callback,
+    &spim_setup_transfer,
+    &spim_transfer,
+    &spim_transfer_handler,
+    &spim_close_pending_transfer,
+    &spim_get_driver_version,
+};        // end of table ************************************

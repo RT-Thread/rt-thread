@@ -1,8 +1,8 @@
 /*
  * Interrupt handle for GS232
- * 
+ *
  * Copyright (c) 2006-2019, RT-Thread Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -52,7 +52,7 @@ void rt_hw_interrupt_init(void)
         /* Disable */
         (gs232_hw0_icregs+i)->int_en = 0x0;
         /* Trigger active low */
-        (gs232_hw0_icregs+i)->int_pol = -1;	   /* Must be done here */
+        (gs232_hw0_icregs+i)->int_pol = -1;       /* Must be done here */
         /* Make all interrupts level triggered */
         (gs232_hw0_icregs+i)->int_edge = 0x00000000;
         /* Mask all interrupts */

@@ -523,9 +523,9 @@ typedef union _hw_snvs_hpcomr
  *
  * SSM State Transition Transition state of the system security monitor. This self-clearing bit is
  * always read as zero. This command results only in the following transitions of the SSM: Check
- * State â†’ Non-Secure (when Non-Secure Boot and not in Fab Configuration ) Check State â†’ Trusted
- * (when Secure Boot or in Fab Configuration ) Trusted State â†’ Secure Secure State â†’ Trusted (if not
- * disabled by SSM_ST_DIS bit) Soft Fail â†’ Non-Secure (if not disabled by SSM_SFNS_DIS bit)
+ * State ¡ú Non-Secure (when Non-Secure Boot and not in Fab Configuration ) Check State ¡ú Trusted
+ * (when Secure Boot or in Fab Configuration ) Trusted State ¡ú Secure Secure State ¡ú Trusted (if not
+ * disabled by SSM_ST_DIS bit) Soft Fail ¡ú Non-Secure (if not disabled by SSM_SFNS_DIS bit)
  */
 //@{
 #define BP_SNVS_HPCOMR_SSM_ST      (0)      //!< Bit position for SNVS_HPCOMR_SSM_ST.
@@ -637,7 +637,7 @@ typedef union _hw_snvs_hpcomr
  *
  * Software Security Violation When set, the system security monitor treats this bit as a non-fatal
  * security violation. This security violation has no effect on the LP section. This command results
- * only in the following transitions of the SSM: Check â†’ Non-Secure Trusted â†’ Soft Fail Secure â†’
+ * only in the following transitions of the SSM: Check ¡ú Non-Secure Trusted ¡ú Soft Fail Secure ¡ú
  * Soft Fail
  */
 //@{
@@ -660,8 +660,8 @@ typedef union _hw_snvs_hpcomr
  *
  * Software Fatal Security Violation When set, the system security monitor treats this bit as a
  * fatal security violation. This security violation has no effect on the LP section. This command
- * results only in the following transitions of the SSM: Check State â†’ Soft Fail Non-Secure State â†’
- * Soft Fail Trusted State â†’ Soft Fail Secure State â†’ Soft Fail
+ * results only in the following transitions of the SSM: Check State ¡ú Soft Fail Non-Secure State ¡ú
+ * Soft Fail Trusted State ¡ú Soft Fail Secure State ¡ú Soft Fail
  */
 //@{
 #define BP_SNVS_HPCOMR_SW_FSV      (9)      //!< Bit position for SNVS_HPCOMR_SW_FSV.
@@ -3003,7 +3003,7 @@ typedef union _hw_snvs_lpcr
  * Dumb PMIC Enabled
  *
  * Values:
- * - 0 - 
+ * - 0 -
  * - 1 - Dumb PMIC enabled.
  */
 //@{

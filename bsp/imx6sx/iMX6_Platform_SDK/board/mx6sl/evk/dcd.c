@@ -100,16 +100,16 @@ uint8_t input_dcd[] __attribute__ ((section (".dcd_data")))= {
     /*========================================================================*/
     /* DDR Controller Registers*/
     /*========================================================================*/
-    /* Manufacturer:	Samsung*/
-    /* Device Part Number:	K4P8G304EB-AGC1*/
-    /* Clock Freq.: 	400MMHz*/
+    /* Manufacturer:    Samsung*/
+    /* Device Part Number:    K4P8G304EB-AGC1*/
+    /* Clock Freq.:     400MMHz*/
     /* MMDC channels:       MMDC0*/
-    /* Density per CS in Gb: 	512M*/
-    /* Chip Selects used:	2*/
-    /* Number of Banks:	8*/
-    /* Row address:    	14*/
-    /* Column address: 	10*/
-    /* Data bus width	32*/
+    /* Density per CS in Gb:     512M*/
+    /* Chip Selects used:    2*/
+    /* Number of Banks:    8*/
+    /* Row address:        14*/
+    /* Column address:     10*/
+    /* Data bus width    32*/
     /*========================================================================*/
     /*MMDC_P0_BASE_ADDR = 0x021b0000*/
     /*MMDC0_MDSCR, set the Configuration request bit during MMDC set up*/
@@ -130,7 +130,7 @@ uint8_t input_dcd[] __attribute__ ((section (".dcd_data")))= {
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x890), EXPAND_UINT32(0x00300000),
     /* values of 20,40,50,60,7f tried. no difference seen*/
     /* Megrez note: This is also for CA bus. A bit-bit fine tuning.*/
-    /*setmem /32	0x021b48bc =	0x00055555*/
+    /*setmem /32    0x021b48bc =    0x00055555*/
     /*DDR_PHY_P1_MPWRCADL*/
     /*frc_msr.*/
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x8b8), EXPAND_UINT32(0x00000800),
@@ -182,7 +182,7 @@ uint8_t input_dcd[] __attribute__ ((section (".dcd_data")))= {
     /* Calibration setup end*/
     /*========================================================================*/
     /* Channel0 - startng address 0x80000000*/
-    /*setmem /32	0x021b000c =	0x3f436133*/
+    /*setmem /32    0x021b000c =    0x3f436133*/
     /* MMDC0_MDCFG0*/
     /*MMDC0_MDCFG0*/
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x00c), EXPAND_UINT32(0x33374133),
@@ -199,7 +199,7 @@ uint8_t input_dcd[] __attribute__ ((section (".dcd_data")))= {
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x02c), EXPAND_UINT32(0x0f9f26d2),
     /*MMDC0_MDOR*/
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x030), EXPAND_UINT32(0x0000020e),
-    /*setmem /32	0x021b0038 =	0x001a099a*/
+    /*setmem /32    0x021b0038 =    0x001a099a*/
     /* MMDC0_MDCFG3LP*/
     /*MMDC0_MDCFG3LP*/
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x038), EXPAND_UINT32(0x00190778),
@@ -242,7 +242,7 @@ uint8_t input_dcd[] __attribute__ ((section (".dcd_data")))= {
     /*MMDC0_MDREF*/
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x020), EXPAND_UINT32(0x00001800),
     /*DDR_PHY_P0_MPODTCTRL*/
-    /*setmem /32	0x021b0818 =	0*/
+    /*setmem /32    0x021b0818 =    0*/
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x818), EXPAND_UINT32(0x00000000),
     /*DDR_PHY_P0_MPMUR0, frc_msr*/
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x8b8), EXPAND_UINT32(0x00000800),
@@ -255,18 +255,18 @@ uint8_t input_dcd[] __attribute__ ((section (".dcd_data")))= {
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x01c), EXPAND_UINT32(0x00000000),
 };
 
-//! @brief HAB command write data header, with tag, 
-//!        size of dcd data with hdr, 
+//! @brief HAB command write data header, with tag,
+//!        size of dcd data with hdr,
 //!        parameter field (size of register value and flag)
 uint8_t input_dcd_wrt_cmd[] __attribute__ ((section (".dcd_wrt_cmd")))= {
-    HAB_CMD_WRT_DAT, 
+    HAB_CMD_WRT_DAT,
     EXPAND_UINT16(sizeof(input_dcd) + HDR_BYTES),
     WRT_DAT_PAR(0, HAB_DATA_WIDTH_WORD) //!< flag 0, width 4
 };
 
 //! @brief HAB dcd header with dcd tag, size of entire dcd and version.
 uint8_t input_dcd_hdr[] __attribute__ ((section (".dcd_hdr")))= {
-    HAB_TAG_DCD, 
+    HAB_TAG_DCD,
     EXPAND_UINT16(sizeof(input_dcd) + sizeof(input_dcd_wrt_cmd) + HDR_BYTES),
     HAB_VER(4,0)
 };

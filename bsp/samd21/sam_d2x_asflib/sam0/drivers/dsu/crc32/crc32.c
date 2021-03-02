@@ -67,36 +67,36 @@
  *
  * \retval STATUS_OK      If CRC32 calculation OK
  * \retval STATUS_ERR_BAD_ADDRESS  The address was not aligned with 4 bytes.
- 
+
  * \retval STATUS_ERR_IO  A bus error is detected
  */
 enum status_code dsu_crc32_cal(const uint32_t addr, const uint32_t len, uint32_t *pcrc32)
 {
-	if (addr & 0x00000003) {
-		return STATUS_ERR_BAD_ADDRESS;
-	}
+    if (addr & 0x00000003) {
+        return STATUS_ERR_BAD_ADDRESS;
+    }
 
-	system_interrupt_disable_global();
-	system_peripheral_unlock(SYSTEM_PERIPHERAL_ID(DSU), ~SYSTEM_PERIPHERAL_ID(DSU));
+    system_interrupt_disable_global();
+    system_peripheral_unlock(SYSTEM_PERIPHERAL_ID(DSU), ~SYSTEM_PERIPHERAL_ID(DSU));
 
-	DSU->DATA.reg = *pcrc32;
-	DSU->ADDR.reg = addr;
-	DSU->LENGTH.reg = len;
+    DSU->DATA.reg = *pcrc32;
+    DSU->ADDR.reg = addr;
+    DSU->LENGTH.reg = len;
 
-	DSU->CTRL.bit.CRC = 1;
-	while ((DSU->STATUSA.reg & DSU_STATUSA_DONE) != 1) {	
-	}
+    DSU->CTRL.bit.CRC = 1;
+    while ((DSU->STATUSA.reg & DSU_STATUSA_DONE) != 1) {
+    }
 
-	if (DSU->STATUSA.reg & DSU_STATUSA_BERR) {
-		system_peripheral_lock(SYSTEM_PERIPHERAL_ID(DSU), ~SYSTEM_PERIPHERAL_ID(DSU));
-		system_interrupt_enable_global();
-		return STATUS_ERR_IO;
-	}
+    if (DSU->STATUSA.reg & DSU_STATUSA_BERR) {
+        system_peripheral_lock(SYSTEM_PERIPHERAL_ID(DSU), ~SYSTEM_PERIPHERAL_ID(DSU));
+        system_interrupt_enable_global();
+        return STATUS_ERR_IO;
+    }
 
-	*pcrc32 = DSU->DATA.reg;
-	DSU->STATUSA.reg = DSU_STATUSA_DONE;
+    *pcrc32 = DSU->DATA.reg;
+    DSU->STATUSA.reg = DSU_STATUSA_DONE;
 
-	system_peripheral_lock(SYSTEM_PERIPHERAL_ID(DSU), ~SYSTEM_PERIPHERAL_ID(DSU));
-	system_interrupt_enable_global();
-	return STATUS_OK;
+    system_peripheral_lock(SYSTEM_PERIPHERAL_ID(DSU), ~SYSTEM_PERIPHERAL_ID(DSU));
+    system_interrupt_enable_global();
+    return STATUS_OK;
 }

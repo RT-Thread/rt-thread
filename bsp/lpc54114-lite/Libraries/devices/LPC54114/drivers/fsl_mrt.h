@@ -3,7 +3,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -115,7 +115,7 @@ extern "C" {
  * @note This API should be called at the beginning of the application using the MRT driver.
  *
  * @param base   Multi-Rate timer peripheral base address
- * @param config Pointer to user's MRT config structure. If MRT has  MULTITASK bit field in            
+ * @param config Pointer to user's MRT config structure. If MRT has  MULTITASK bit field in
  *               MODCFG reigster, param config is useless.
  */
 void MRT_Init(MRT_Type *base, const mrt_config_t *config);

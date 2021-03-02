@@ -68,7 +68,7 @@
 #define ADC_CTL0_IWDEN                  BIT(22)                          /*!< analog watchdog enable on inserted channels */
 #define ADC_CTL0_RWDEN                  BIT(23)                          /*!< analog watchdog enable on regular channels */
 #define ADC_CTL0_DRES                   BITS(24,25)                      /*!< ADC data resolution */
-#define ADC_CTL0_ROVFIE                 BIT(26)                          /*!< interrupt enable for ROVF */ 
+#define ADC_CTL0_ROVFIE                 BIT(26)                          /*!< interrupt enable for ROVF */
 
 /* ADC_CTL1 */
 #define ADC_CTL1_ADCON                  BIT(0)                           /*!< ADC converter on */

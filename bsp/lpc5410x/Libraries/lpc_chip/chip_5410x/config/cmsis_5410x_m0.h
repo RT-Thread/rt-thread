@@ -76,47 +76,47 @@ extern "C" {
  */
 
 typedef enum {
-	/******  Cortex-M0 Processor Exceptions Numbers ***************************************************/
-	Reset_IRQn                    = -15,	/*!< 1 Reset Vector, invoked on Power up and warm reset */
-	NonMaskableInt_IRQn           = -14,	/*!< 2 Non Maskable Interrupt                           */
-	HardFault_IRQn                = -13,	/*!< 3 Cortex-M0 Hard Fault Interrupt                   */
-	SVCall_IRQn                   = -5,		/*!< 11 Cortex-M0 SV Call Interrupt                     */
-	PendSV_IRQn                   = -2,		/*!< 14 Cortex-M0 Pend SV Interrupt                     */
-	SysTick_IRQn                  = -1,		/*!< 15 Cortex-M0 System Tick Interrupt                 */
+    /******  Cortex-M0 Processor Exceptions Numbers ***************************************************/
+    Reset_IRQn                    = -15,    /*!< 1 Reset Vector, invoked on Power up and warm reset */
+    NonMaskableInt_IRQn           = -14,    /*!< 2 Non Maskable Interrupt                           */
+    HardFault_IRQn                = -13,    /*!< 3 Cortex-M0 Hard Fault Interrupt                   */
+    SVCall_IRQn                   = -5,        /*!< 11 Cortex-M0 SV Call Interrupt                     */
+    PendSV_IRQn                   = -2,        /*!< 14 Cortex-M0 Pend SV Interrupt                     */
+    SysTick_IRQn                  = -1,        /*!< 15 Cortex-M0 System Tick Interrupt                 */
 
-	/******  LPC5410X Specific Interrupt Numbers ********************************************************/
-	WDT_IRQn                      = 0,		/*!< WWDT                                             */
-	BOD_IRQn                      = 1,		/*!< BOD                                              */
-	Reserved2_IRQn                = 2,		/*!< Reserved Interrupt                               */
-	DMA_IRQn                      = 3,		/*!< DMA                                              */
-	GINT0_IRQn                    = 4,		/*!< GINT0                                            */
-	PIN_INT0_IRQn                 = 5,		/*!< PININT0                                          */
-	PIN_INT1_IRQn                 = 6,		/*!< PININT1                                          */
-	PIN_INT2_IRQn                 = 7,		/*!< PININT2                                          */
-	PIN_INT3_IRQn                 = 8,		/*!< PININT3                                          */
-	UTICK_IRQn                    = 9,		/*!< Micro-tick Timer interrupt                       */
-	MRT_IRQn                      = 10,		/*!< Multi-rate timer interrupt                       */
-	CT32B0_IRQn                   = 11,		/*!< CTMR0                                            */
-	CT32B1_IRQn                   = 12,		/*!< CTMR1                                            */
-	CT32B2_IRQn                   = 13,		/*!< CTMR2                                            */
-	CT32B3_IRQn                   = 14,		/*!< CTMR3                                            */
-	CT32B4_IRQn                   = 15,		/*!< CTMR4                                            */
-	SCT0_IRQn                     = 16,		/*!< SCT                                              */
-	UART0_IRQn                    = 17,		/*!< UART0                                            */
-	UART1_IRQn                    = 18,		/*!< UART1                                            */
-	UART2_IRQn                    = 19,		/*!< UART2                                            */
-	UART3_IRQn                    = 20,		/*!< UART3                                            */
-	I2C0_IRQn                     = 21,		/*!< I2C0                                             */
-	I2C1_IRQn                     = 22,		/*!< I2C1                                             */
-	I2C2_IRQn                     = 23,		/*!< I2C2                                             */
-	SPI0_IRQn                     = 24,		/*!< SPI0                                             */
-	SPI1_IRQn                     = 25,		/*!< SPI1                                             */
-	ADC_SEQA_IRQn                 = 26,		/*!< ADC0 sequence A completion                       */
-	ADC_SEQB_IRQn                 = 27,		/*!< ADC0 sequence B completion                       */
-	ADC_THCMP_IRQn                = 28,		/*!< ADC0 threshold compare and error                 */
-	RTC_IRQn                      = 29,		/*!< RTC alarm and wake-up interrupts                 */
-	Reserved30_IRQn               = 30,		/*!< Reserved Interrupt                               */
-	MAILBOX_IRQn                  = 31,		/*!< Mailbox                                          */
+    /******  LPC5410X Specific Interrupt Numbers ********************************************************/
+    WDT_IRQn                      = 0,        /*!< WWDT                                             */
+    BOD_IRQn                      = 1,        /*!< BOD                                              */
+    Reserved2_IRQn                = 2,        /*!< Reserved Interrupt                               */
+    DMA_IRQn                      = 3,        /*!< DMA                                              */
+    GINT0_IRQn                    = 4,        /*!< GINT0                                            */
+    PIN_INT0_IRQn                 = 5,        /*!< PININT0                                          */
+    PIN_INT1_IRQn                 = 6,        /*!< PININT1                                          */
+    PIN_INT2_IRQn                 = 7,        /*!< PININT2                                          */
+    PIN_INT3_IRQn                 = 8,        /*!< PININT3                                          */
+    UTICK_IRQn                    = 9,        /*!< Micro-tick Timer interrupt                       */
+    MRT_IRQn                      = 10,        /*!< Multi-rate timer interrupt                       */
+    CT32B0_IRQn                   = 11,        /*!< CTMR0                                            */
+    CT32B1_IRQn                   = 12,        /*!< CTMR1                                            */
+    CT32B2_IRQn                   = 13,        /*!< CTMR2                                            */
+    CT32B3_IRQn                   = 14,        /*!< CTMR3                                            */
+    CT32B4_IRQn                   = 15,        /*!< CTMR4                                            */
+    SCT0_IRQn                     = 16,        /*!< SCT                                              */
+    UART0_IRQn                    = 17,        /*!< UART0                                            */
+    UART1_IRQn                    = 18,        /*!< UART1                                            */
+    UART2_IRQn                    = 19,        /*!< UART2                                            */
+    UART3_IRQn                    = 20,        /*!< UART3                                            */
+    I2C0_IRQn                     = 21,        /*!< I2C0                                             */
+    I2C1_IRQn                     = 22,        /*!< I2C1                                             */
+    I2C2_IRQn                     = 23,        /*!< I2C2                                             */
+    SPI0_IRQn                     = 24,        /*!< SPI0                                             */
+    SPI1_IRQn                     = 25,        /*!< SPI1                                             */
+    ADC_SEQA_IRQn                 = 26,        /*!< ADC0 sequence A completion                       */
+    ADC_SEQB_IRQn                 = 27,        /*!< ADC0 sequence B completion                       */
+    ADC_THCMP_IRQn                = 28,        /*!< ADC0 threshold compare and error                 */
+    RTC_IRQn                      = 29,        /*!< RTC alarm and wake-up interrupts                 */
+    Reserved30_IRQn               = 30,        /*!< Reserved Interrupt                               */
+    MAILBOX_IRQn                  = 31,        /*!< Mailbox                                          */
 } LPC5410X_M0_IRQn_Type;
 
 /**
@@ -134,10 +134,10 @@ typedef enum {
  */
 
 /* Configuration of the Cortex-M0+ Processor and Core Peripherals */
-#define __CM0PLUS_REV             0x0001	/*!< Cortex-M0PLUS Core Revision                      */
-#define __MPU_PRESENT             0			/*!< MPU present or not                               */
-#define __NVIC_PRIO_BITS          2			/*!< Number of Bits used for Priority Levels          */
-#define __Vendor_SysTickConfig    0			/*!< Set to 1 if different SysTick Config is used     */
+#define __CM0PLUS_REV             0x0001    /*!< Cortex-M0PLUS Core Revision                      */
+#define __MPU_PRESENT             0            /*!< MPU present or not                               */
+#define __NVIC_PRIO_BITS          2            /*!< Number of Bits used for Priority Levels          */
+#define __Vendor_SysTickConfig    0            /*!< Set to 1 if different SysTick Config is used     */
 #define __VTOR_PRESENT            1
 
 /**

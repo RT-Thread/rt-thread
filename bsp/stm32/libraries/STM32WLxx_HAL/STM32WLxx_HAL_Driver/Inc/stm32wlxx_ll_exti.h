@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -1407,7 +1407,7 @@ __STATIC_INLINE uint32_t LL_EXTI_IsActiveFlag_0_31(uint32_t ExtiLine)
   *         @arg @ref LL_EXTI_LINE_34
   *         @arg @ref LL_EXTI_LINE_40
   *         @arg @ref LL_EXTI_LINE_41
-  *         @arg @ref LL_EXTI_LINE_45  
+  *         @arg @ref LL_EXTI_LINE_45
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_EXTI_IsActiveFlag_32_63(uint32_t ExtiLine)

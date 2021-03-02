@@ -22,9 +22,9 @@ __weak uint8_t  sendchar(uint8_t ui8char)
 
 int  ITM_fputc(int ch);  /* ITM debug */
 
-struct __FILE 
-{ 
-int handle; /* Add whatever you need here */ 
+struct __FILE
+{
+int handle; /* Add whatever you need here */
 };
 FILE __stdout;
 

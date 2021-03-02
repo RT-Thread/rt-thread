@@ -154,24 +154,24 @@ HAL_StatusTypeDef HAL_EXTI_SetConfigLine(EXTI_HandleTypeDef *hexti, EXTI_ConfigT
   /* Check parameters */
   assert_param(IS_EXTI_LINE(pExtiConfig->Line));
   assert_param(IS_EXTI_MODE(pExtiConfig->Mode));
-  assert_param(IS_EXTI_TRIGGER(pExtiConfig->Trigger));  
-  
+  assert_param(IS_EXTI_TRIGGER(pExtiConfig->Trigger));
+
   /* Assign line number to handle */
   hexti->Line = pExtiConfig->Line;
-  
+
   /* Clear EXTI line configuration */
   EXTI->IMR &= ~pExtiConfig->Line;
   EXTI->EMR &= ~pExtiConfig->Line;
-  
+
   /* Select the Mode for the selected external interrupts */
   regval = (uint32_t)EXTI_BASE;
   regval += pExtiConfig->Mode;
   *(__IO uint32_t *) regval |= pExtiConfig->Line;
-  
+
   /* Clear Rising Falling edge configuration */
   EXTI->RTSR &= ~pExtiConfig->Line;
   EXTI->FTSR &= ~pExtiConfig->Line;
-  
+
   /* Select the trigger for the selected external interrupts */
   if (pExtiConfig->Trigger == EXTI_TRIGGER_RISING_FALLING)
   {
@@ -413,7 +413,7 @@ void HAL_EXTI_ClearPending(EXTI_HandleTypeDef *hexti, uint32_t Edge)
   /* Check parameters */
   assert_param(IS_EXTI_LINE(hexti->Line));
   assert_param(IS_EXTI_PENDING_EDGE(Edge));
-  
+
   /* Clear Pending bit */
   EXTI->PR =  hexti->Line;
 }

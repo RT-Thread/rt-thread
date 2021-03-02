@@ -198,13 +198,13 @@ HAL_StatusTypeDef HAL_PCD_Init(PCD_HandleTypeDef *hpcd)
 
   hpcd->USB_Address = 0U;
   hpcd->State = HAL_PCD_STATE_READY;
-  
+
   /* Activate LPM */
   if (hpcd->Init.lpm_enable == 1U)
   {
     (void)HAL_PCDEx_ActivateLPM(hpcd);
   }
-  
+
   return HAL_OK;
 }
 

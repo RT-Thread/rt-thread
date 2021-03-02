@@ -7,7 +7,7 @@
  * Date           Author           Notes
  * 2011-08-09     lgnq         first version for LS1B DC
  * 2015-07-06    chinesebear   modified for loongson 1c
- * 2018-01-06    sundm75       modified for smartloong 
+ * 2018-01-06    sundm75       modified for smartloong
  */
  #include <rtthread.h>
 
@@ -52,15 +52,15 @@ static struct rt_device_graphic_info _dc_info;
 static void pwminit(void)
 {
     pwm_info_t pwm_info;
-    pwm_info.gpio = LS1C_PWM0_GPIO06;           // pwmå¼•è„šä½gpio06
-    pwm_info.mode = PWM_MODE_NORMAL;            // æ­£å¸¸æ¨¡å¼--è¿žç»­è¾“å‡ºpwmæ³¢å½¢
-    pwm_info.duty = 0.85;                       // pwmå ç©ºæ¯” 85%
-    pwm_info.period_ns = 5*1000*1000;            // pwmå‘¨æœŸ5ms
+    pwm_info.gpio = LS1C_PWM0_GPIO06;           // pwmÒý½ÅÎ»gpio06
+    pwm_info.mode = PWM_MODE_NORMAL;            // Õý³£Ä£Ê½--Á¬ÐøÊä³öpwm²¨ÐÎ
+    pwm_info.duty = 0.85;                       // pwmÕ¼¿Õ±È 85%
+    pwm_info.period_ns = 5*1000*1000;            // pwmÖÜÆÚ5ms
 
-    /*pwmåˆå§‹åŒ–ï¼Œåˆå§‹åŒ–åŽç«‹å³äº§ç”Ÿpwmæ³¢å½¢*/
+    /*pwm³õÊ¼»¯£¬³õÊ¼»¯ºóÁ¢¼´²úÉúpwm²¨ÐÎ*/
     pwm_init(&pwm_info);
 
-    /* ä½¿èƒ½pwm */
+    /* Ê¹ÄÜpwm */
     pwm_enable(&pwm_info);
 }
 int caclulate_freq(rt_uint32_t  XIN, rt_uint32_t PCLK)
@@ -71,20 +71,20 @@ int caclulate_freq(rt_uint32_t  XIN, rt_uint32_t PCLK)
     rt_uint32_t  regval;
 
 
-    pll_clk = PLL_FREQ; // è¯»CPUçš„ PLLåŠSDRAM åˆ†é¢‘ç³»æ•°
+    pll_clk = PLL_FREQ; // ¶ÁCPUµÄ PLL¼°SDRAM ·ÖÆµÏµÊý
     pll_clk =( pll_clk>>8 )& 0xff;
     pll_clk = XIN *  pll_clk / 4 ;
-    pix_div = PLL_DIV_PARAM;//è¯»CPUçš„ CPU/CAMERA/DC åˆ†é¢‘ç³»æ•°
+    pix_div = PLL_DIV_PARAM;//¶ÁCPUµÄ CPU/CAMERA/DC ·ÖÆµÏµÊý
     pix_div = (pix_div>>24)&0xff;
     rt_kprintf("old pll_clk=%d, pix_div=%d\n", pll_clk, pix_div);
 
-    divider_int = pll_clk/(1000000) *PCLK/1000; 
+    divider_int = pll_clk/(1000000) *PCLK/1000;
     if(divider_int%1000>=500)
         divider_int = divider_int/1000+1;
     else
         divider_int = divider_int/1000;
     rt_kprintf("divider_int = %d\n", divider_int);
-    
+
     /* check whether divisor is too small. */
     if (divider_int < 1) {
         rt_kprintf("Warning: clock source is too slow.Try smaller resolution\n");
@@ -94,17 +94,17 @@ int caclulate_freq(rt_uint32_t  XIN, rt_uint32_t PCLK)
         rt_kprintf("Warning: clock source is too fast.Try smaller resolution\n");
         divider_int = 100;
     }
-    /* é…ç½®åˆ†é¢‘å¯„å­˜å™¨ */
+    /* ÅäÖÃ·ÖÆµ¼Ä´æÆ÷ */
     {
         rt_uint32_t regval = 0;
         regval = PLL_DIV_PARAM;
-        /*é¦–å…ˆéœ€è¦æŠŠåˆ†é¢‘ä½¿èƒ½ä½æ¸…é›¶ */
-        regval &= ~0x80000030;    //PIX_DIV_VALID  PIX_SEL  ç½®0
-        regval &= ~(0x3f<<24);    //PIX_DIV æ¸…é›¶
+        /*Ê×ÏÈÐèÒª°Ñ·ÖÆµÊ¹ÄÜÎ»ÇåÁã */
+        regval &= ~0x80000030;    //PIX_DIV_VALID  PIX_SEL  ÖÃ0
+        regval &= ~(0x3f<<24);    //PIX_DIV ÇåÁã
         regval |= divider_int << 24;
-        PLL_DIV_PARAM = regval; 
-        regval |= 0x80000030;    //PIX_DIV_VALID  PIX_SEL  ç½®1
-        PLL_DIV_PARAM = regval; 
+        PLL_DIV_PARAM = regval;
+        regval |= 0x80000030;    //PIX_DIV_VALID  PIX_SEL  ÖÃ1
+        PLL_DIV_PARAM = regval;
     }
     rt_kprintf("new PLL_FREQ=0x%x, PLL_DIV_PARAM=0x%x\n", PLL_FREQ, PLL_DIV_PARAM);
     rt_thread_delay(10);
@@ -115,17 +115,17 @@ static rt_err_t rt_dc_init(rt_device_t dev)
 {
     int i, out, mode=-1;
     int val;
-    
+
     rt_kprintf("PWM initied\n");
     /* Set the back light PWM. */
     pwminit();
-    
+
     for (i=0; i<sizeof(vga_mode)/sizeof(struct vga_struct); i++)
     {
         if (vga_mode[i].hr == FB_XSIZE && vga_mode[i].vr == FB_YSIZE)
         {
             mode=i;
-            /* è®¡ç®—æ—¶é’Ÿ é…ç½®é¢‘çŽ‡*/
+            /* ¼ÆËãÊ±ÖÓ ÅäÖÃÆµÂÊ*/
             caclulate_freq(OSC, vga_mode[i].pclk);
             break;
         }
@@ -139,10 +139,10 @@ static rt_err_t rt_dc_init(rt_device_t dev)
 
     DC_FB_CONFIG = 0x0;
     DC_FB_CONFIG = 0x3; //    // framebuffer configuration RGB565
-    DC_DITHER_CONFIG = 0x0;  //é¢œè‰²æŠ–åŠ¨é…ç½®å¯„å­˜å™¨
-    DC_DITHER_TABLE_LOW = 0x0; //é¢œè‰²æŠ–åŠ¨æŸ¥æ‰¾è¡¨ä½Žä½å¯„å­˜å™¨ 
-    DC_DITHER_TABLE_HIGH = 0x0; //é¢œè‰²æŠ–åŠ¨æŸ¥æ‰¾è¡¨é«˜ä½å¯„å­˜å™¨
-    DC_PANEL_CONFIG = 0x80001311; //æ¶²æ™¶é¢æ¿é…ç½®å¯„å­˜å™¨
+    DC_DITHER_CONFIG = 0x0;  //ÑÕÉ«¶¶¶¯ÅäÖÃ¼Ä´æÆ÷
+    DC_DITHER_TABLE_LOW = 0x0; //ÑÕÉ«¶¶¶¯²éÕÒ±íµÍÎ»¼Ä´æÆ÷
+    DC_DITHER_TABLE_HIGH = 0x0; //ÑÕÉ«¶¶¶¯²éÕÒ±í¸ßÎ»¼Ä´æÆ÷
+    DC_PANEL_CONFIG = 0x80001311; //Òº¾§Ãæ°åÅäÖÃ¼Ä´æÆ÷
     DC_PANEL_TIMING = 0x0;
 
     DC_HDISPLAY = (vga_mode[mode].hfl<<16) | vga_mode[mode].hr;
@@ -156,7 +156,7 @@ static rt_err_t rt_dc_init(rt_device_t dev)
 #elif defined(CONFIG_VIDEO_24BPP)
     DC_FB_CONFIG = 0x00100104;
     DC_FB_BUFFER_STRIDE = (FB_XSIZE*4+255)&(~255);
-#elif defined(CONFIG_VIDEO_16BPP)// ä½¿ç”¨è¿™ä¸ªé€‰é¡¹
+#elif defined(CONFIG_VIDEO_16BPP)// Ê¹ÓÃÕâ¸öÑ¡Ïî
     DC_FB_CONFIG = 0x00100103;
     DC_FB_BUFFER_STRIDE = (FB_XSIZE*2+0x7f)&(~0x7f);
 #elif defined(CONFIG_VIDEO_15BPP)
@@ -165,10 +165,10 @@ static rt_err_t rt_dc_init(rt_device_t dev)
 #elif defined(CONFIG_VIDEO_12BPP)
     DC_FB_CONFIG = 0x00100101;
     DC_FB_BUFFER_STRIDE =  (FB_XSIZE*2+255)&(~255);
-#else  
+#else
     DC_FB_CONFIG = 0x00100104;
     DC_FB_BUFFER_STRIDE = (FB_XSIZE*4+255)&(~255);
-#endif 
+#endif
     return RT_EOK;
 }
 
@@ -200,7 +200,7 @@ static rt_err_t rt_dc_control(rt_device_t dev, int cmd, void *args)
         break;
     case RTGRAPHIC_CTRL_POWEROFF:
         break;
-    case RTGRAPHIC_CTRL_GET_INFO:        
+    case RTGRAPHIC_CTRL_GET_INFO:
         rt_memcpy(args, &_dc_info, sizeof(_dc_info));
         break;
     case RTGRAPHIC_CTRL_SET_MODE:
@@ -213,7 +213,7 @@ static rt_err_t rt_dc_control(rt_device_t dev, int cmd, void *args)
 void rt_hw_dc_init(void)
 {
     rt_device_t dc = rt_malloc(sizeof(struct rt_device));
-    if (dc == RT_NULL) 
+    if (dc == RT_NULL)
     {
         rt_kprintf("dc == RT_NULL\n");
         return; /* no memory yet */
@@ -232,10 +232,10 @@ void rt_hw_dc_init(void)
     dc->close = RT_NULL;
     dc->control = rt_dc_control;
     dc->user_data = (void*)&_dc_info;
-    
+
     /* register Display Controller device to RT-Thread */
     rt_device_register(dc, "dc", RT_DEVICE_FLAG_RDWR);
-    
+
     rt_device_init(dc);
 }
 
@@ -250,7 +250,7 @@ int rtgui_lcd_init(void)
 
     pin_set_purpose(76, PIN_PURPOSE_OTHER);
     pin_set_remap(76, PIN_REMAP_DEFAULT);
-    
+
      /* init Display Controller */
     rt_hw_dc_init();
 
@@ -259,7 +259,7 @@ int rtgui_lcd_init(void)
 
     /* set Display Controller device as rtgui graphic driver */
     rtgui_graphic_set_device(dc);
-    
+
     return 0;
 }
 

@@ -19,11 +19,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -99,7 +99,7 @@ extern "C" {
 #define LL_SYSCFG_IR_MOD_USART1      (SYSCFG_CFGR1_IR_MOD_0)                            /*!< 01: USART1 is selected as IRDA Modulation enveloppe source */
 #if defined(USART4)
 #define LL_SYSCFG_IR_MOD_USART4      (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART4 is selected as IRDA Modulation enveloppe source */
-#else  
+#else
 #define LL_SYSCFG_IR_MOD_USART2      (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART2 is selected as IRDA Modulation enveloppe source */
 #endif
 /**
@@ -180,14 +180,14 @@ extern "C" {
 #if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
 /** @defgroup SYSTEM_LL_EC_CLAMPING_DIODE SYSCFG CLAMPING DIODE
   * @{
-  */  
+  */
 #define LL_SYSCFG_CFGR2_PA1_CDEN         SYSCFG_CFGR2_PA1_CDEN     /*!< Enables Clamping diode of PA1 */
 #define LL_SYSCFG_CFGR2_PA3_CDEN         SYSCFG_CFGR2_PA3_CDEN     /*!< Enables Clamping diode of PA3 */
 #define LL_SYSCFG_CFGR2_PA5_CDEN         SYSCFG_CFGR2_PA5_CDEN     /*!< Enables Clamping diode of PA5 */
 #define LL_SYSCFG_CFGR2_PA6_CDEN         SYSCFG_CFGR2_PA6_CDEN     /*!< Enables Clamping diode of PA6 */
 #define LL_SYSCFG_CFGR2_PA13_CDEN        SYSCFG_CFGR2_PA13_CDEN    /*!< Enables Clamping diode of PA13 */
 #define LL_SYSCFG_CFGR2_PB0_CDEN         SYSCFG_CFGR2_PB0_CDEN     /*!< Enables Clamping diode of PB0 */
-#define LL_SYSCFG_CFGR2_PB1_CDEN         SYSCFG_CFGR2_PB1_CDEN     /*!< Enables Clamping diode of PB1 */  
+#define LL_SYSCFG_CFGR2_PB1_CDEN         SYSCFG_CFGR2_PB1_CDEN     /*!< Enables Clamping diode of PB1 */
 #define LL_SYSCFG_CFGR2_PB2_CDEN         SYSCFG_CFGR2_PB2_CDEN     /*!< Enables Clamping diode of PB2 */
 /**
   * @}
@@ -1351,7 +1351,7 @@ __STATIC_INLINE void LL_SYSCFG_ClearFlag_SP(void)
   SET_BIT(SYSCFG->CFGR2, SYSCFG_CFGR2_SPF);
 }
 
-#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx) 
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
 /**
   * @brief  Enable Clamping Diode on specific pin
   * @rmtoll SYSCFG_CFGR2 PA1_CDEN   LL_SYSCFG_EnableClampingDiode\n

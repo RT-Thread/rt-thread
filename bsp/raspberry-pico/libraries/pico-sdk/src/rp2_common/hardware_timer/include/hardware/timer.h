@@ -32,8 +32,8 @@ extern "C" {
  *
  * The timer has 4 alarms, and can output a separate interrupt for each alarm. The alarms match on the lower 32 bits of the 64
  * bit counter which means they can be fired a maximum of 2^32 microseconds into the future. This is equivalent to:
- *  - 2^32 Ã· 10^6: ~4295 seconds
- *  - 4295 Ã· 60: ~72 minutes
+ *  - 2^32 ¡Â 10^6: ~4295 seconds
+ *  - 4295 ¡Â 60: ~72 minutes
  *
  * The timer is expected to be used for short sleeps, if you want a longer alarm see the \ref hardware_rtc functions.
  *

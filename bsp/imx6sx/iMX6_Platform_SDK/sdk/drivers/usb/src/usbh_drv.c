@@ -135,28 +135,28 @@ uint32_t usbh_periodic_schedule_init(struct usb_module * port, uint32_t frame_li
     //! Set the new size
     switch (frame_list_size) {
     case 1024:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_1024);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_1024);
         break;
     case 512:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_512);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_512);
         break;
     case 256:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_256);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_256);
         break;
     case 128:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_128);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_128);
         break;
     case 64:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_64);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_64);
         break;
     case 32:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_32);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_32);
         break;
     case 16:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_16);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_16);
         break;
     case 8:
-    	HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_8);
+        HW_USBC_USBCMD_WR(core, HW_USBC_USBCMD_RD(core) | USB_USBCMD_FS_8);
         break;
     default:
         // Invalid frame list size
@@ -363,7 +363,7 @@ usbhTransferDescriptor_t *usbh_qtd_init(uint32_t transferSize, uint32_t ioc, uin
  * Initialize the QH.
  * This function assumes the QH is the only one in the horizontal list so
  * the horizontal link pointer points to the queue head. This function
- * doesn't initialize the qTD pointer either. This must be done later. 
+ * doesn't initialize the qTD pointer either. This must be done later.
  *
  * Parameters:
  * @param max_packet maximum packet length for the endpoint

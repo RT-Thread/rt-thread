@@ -9,9 +9,9 @@
  * Copyright (C) 2009 ARM Limited. All rights reserved.
  *
  * @par
- * ARM Limited (ARM) is supplying this software for use with Cortex-M 
- * processor based microcontrollers.  This file can be freely distributed 
- * within development tools that are supporting such ARM based processors. 
+ * ARM Limited (ARM) is supplying this software for use with Cortex-M
+ * processor based microcontrollers.  This file can be freely distributed
+ * within development tools that are supporting such ARM based processors.
  *
  * @par
  * THIS SOFTWARE IS PROVIDED "AS IS".  NO WARRANTIES, WHETHER EXPRESS, IMPLIED
@@ -383,7 +383,7 @@
 /*----------------------------------------------------------------------------
   DEFINES
  *----------------------------------------------------------------------------*/
-    
+
 /*----------------------------------------------------------------------------
   Define clocks
  *----------------------------------------------------------------------------*/
@@ -396,7 +396,7 @@
 /* F_cco0 = (2 * M * F_in) / N  */
 #define __M               (((PLL0CFG_Val      ) & 0x7FFF) + 1)
 #define __N               (((PLL0CFG_Val >> 16) & 0x00FF) + 1)
-#define __FCCO(__F_IN)    ((2 * __M * __F_IN) / __N) 
+#define __FCCO(__F_IN)    ((2 * __M * __F_IN) / __N)
 #define __CCLK_DIV        (((CCLKCFG_Val      ) & 0x00FF) + 1)
 
 /* Determine core clock frequency according to settings */
@@ -405,7 +405,7 @@
         #define __CORE_CLK (__FCCO(OSC_CLK) / __CCLK_DIV)
     #elif ((CLKSRCSEL_Val & 0x03) == 2)
         #define __CORE_CLK (__FCCO(RTC_CLK) / __CCLK_DIV)
-    #else 
+    #else
         #define __CORE_CLK (__FCCO(IRC_OSC) / __CCLK_DIV)
     #endif
  #else
@@ -435,19 +435,19 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
     switch (LPC_SC->CLKSRCSEL & 0x03) {
       case 0:                                /* Int. RC oscillator => PLL0    */
       case 3:                                /* Reserved, default to Int. RC  */
-        SystemCoreClock = (IRC_OSC * 
+        SystemCoreClock = (IRC_OSC *
                           ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
                           (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
                           ((LPC_SC->CCLKCFG & 0xFF)+ 1));
         break;
       case 1:                                /* Main oscillator => PLL0       */
-        SystemCoreClock = (OSC_CLK * 
+        SystemCoreClock = (OSC_CLK *
                           ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
                           (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
                           ((LPC_SC->CCLKCFG & 0xFF)+ 1));
         break;
       case 2:                                /* RTC oscillator => PLL0        */
-        SystemCoreClock = (RTC_CLK * 
+        SystemCoreClock = (RTC_CLK *
                           ((2 * ((LPC_SC->PLL0STAT & 0x7FFF) + 1)))  /
                           (((LPC_SC->PLL0STAT >> 16) & 0xFF) + 1)    /
                           ((LPC_SC->CCLKCFG & 0xFF)+ 1));

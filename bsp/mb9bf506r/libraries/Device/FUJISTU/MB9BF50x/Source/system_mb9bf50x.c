@@ -136,7 +136,7 @@ void SystemCoreClockUpdate (void) {
 void SystemInit (void) {
 
   static uint32_t u32IoRegisterRead;  // Workaround variable for MISRA C rule conformance
-  
+
 #if (HWWD_DISABLE)                                 /* HW Watchdog Disable */
   FM3_HWWDT->WDG_LCK = 0x1ACCE551;                 /* HW Watchdog Unlock */
   FM3_HWWDT->WDG_LCK = 0xE5331AAE;
@@ -152,38 +152,38 @@ void SystemInit (void) {
   FM3_CRG->TTC_PSR   = TTC_PSR_Val;                /* set Trace Clock presacaler */
 
   FM3_CRG->CSW_TMR   = CSW_TMR_Val;                /* set oscillation stabilization wait time */
-  
+
   if (SCM_CTL_Val & (1UL << 1)) {                    /* Main clock oscillator enabled ? */
-    FM3_CRG->SCM_CTL |= (1UL << 1);                /* enable main oscillator */ 
+    FM3_CRG->SCM_CTL |= (1UL << 1);                /* enable main oscillator */
     while (!(FM3_CRG->SCM_STR & (1UL << 1)));      /* wait for Main clock oscillation stable */
   }
-  
+
   if (SCM_CTL_Val & (1UL << 3)) {                    /* Sub clock oscillator enabled ? */
-    FM3_CRG->SCM_CTL |= (1UL << 3);                /* enable sub oscillator */ 
+    FM3_CRG->SCM_CTL |= (1UL << 3);                /* enable sub oscillator */
     while (!(FM3_CRG->SCM_STR & (1UL << 3)));      /* wait for Sub clock oscillation stable */
   }
 
   FM3_CRG->PSW_TMR   = PSW_TMR_Val;                /* set PLL stabilization wait time */
   FM3_CRG->PLL_CTL1  = PLL_CTL1_Val;               /* set PLLM and PLLK */
   FM3_CRG->PLL_CTL2  = PLL_CTL2_Val;               /* set PLLN          */
-  
+
   if (SCM_CTL_Val & (1UL << 4)) {                    /* PLL enabled ? */
-    FM3_CRG->SCM_CTL  |= (1UL << 4);               /* enable PLL */ 
+    FM3_CRG->SCM_CTL  |= (1UL << 4);               /* enable PLL */
     while (!(FM3_CRG->SCM_STR & (1UL << 4)));      /* wait for PLL stable */
   }
 
-  FM3_CRG->SCM_CTL  |= (SCM_CTL_Val & 0xE0);       /* Set Master Clock switch */ 
-  
+  FM3_CRG->SCM_CTL  |= (SCM_CTL_Val & 0xE0);       /* Set Master Clock switch */
+
   // Workaround for preventing MISRA C:1998 Rule 46 (MISRA C:2004 Rule 12.2)
   // violations:
   //   "Unordered reads and writes to or from same location" and
   //   "Unordered accesses to a volatile location"
-  do                                              
-  {                                               
-    u32IoRegisterRead = (FM3_CRG->SCM_CTL & 0xE0); 
+  do
+  {
+    u32IoRegisterRead = (FM3_CRG->SCM_CTL & 0xE0);
   }while ((FM3_CRG->SCM_STR & 0xE0) != u32IoRegisterRead);
 #endif // (CLOCK_SETUP)
-  
+
 #if (CR_TRIM_SETUP)
   /* CR Trimming Data  */
   if( 0x000003FF != (FM3_FLASH_IF->CRTRMM & 0x000003FF) )

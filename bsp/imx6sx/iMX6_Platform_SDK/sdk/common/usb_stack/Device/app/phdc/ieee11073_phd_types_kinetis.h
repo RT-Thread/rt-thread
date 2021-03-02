@@ -8,34 +8,34 @@
  *
  * @file ieee11073_phd_types_kinetis.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date Jan-29-2010
  *
- * @brief This file contains definitions of the data types and the structures 
+ * @brief This file contains definitions of the data types and the structures
  *        for the data that appears on the network (specific to IEEE_11073)
  *****************************************************************************/
 #ifndef PHD_TYPES
 #define PHD_TYPES
 
 
-#pragma pack	(push)   	/* Save current memory alignment configuration */
-#pragma pack	(1)  		/* Enforce 1 byte struct alignment */
+#pragma pack    (push)       /* Save current memory alignment configuration */
+#pragma pack    (1)          /* Enforce 1 byte struct alignment */
 
 /*
 The following typedefs may need to be changed depending on the
 Compiler and machine architecture.
 */
-typedef unsigned char 		intu8;
-typedef unsigned short 		intu16;
-typedef unsigned long 		intu32;
+typedef unsigned char         intu8;
+typedef unsigned short         intu16;
+typedef unsigned long         intu32;
 
 typedef struct _Any
-{    
+{
     intu16 length;
-    intu8 value[1]; 		/* first element of the array */
+    intu8 value[1];         /* first element of the array */
 } Any;
 
 typedef intu16 OID_Type;
@@ -67,11 +67,11 @@ typedef intu16 NomPartition;
 #define NOM_PART_PRIV 1024
 
 #if defined(__CWCC__)
-	#define ALIGN	__attribute__ ((packed))
+    #define ALIGN    __attribute__ ((packed))
 #elif defined(__IAR_SYSTEMS_ICC__) || defined(__CC_ARM) || defined(__GNUC__)
-	#pragma pack(1)
+    #pragma pack(1)
 
-	#define ALIGN
+    #define ALIGN
 #endif
 
 typedef struct _TYPE
@@ -137,7 +137,7 @@ typedef struct _octet_string
     intu8 value[1]; /* first element of the array */
 } ALIGN octet_string;
 
-typedef struct _SystemModel 
+typedef struct _SystemModel
 {
     octet_string manufacturer;
     octet_string model_number;
@@ -181,16 +181,16 @@ typedef struct _BatMeasure
 
 typedef intu16 MeasurementStatus;
 
-#define MS_INVALID 					0x8000
-#define MS_QUESTIONABLE 			0x4000
-#define MS_NOT_AVAILABLE 			0x2000
-#define MS_CALIBRATION_ONGOING 		0x1000
-#define MS_TEST_DATA 				0x0800
-#define MS_DEMO_DATA 				0x0400
-#define MS_VALIDATED_DATA 			0x0080
+#define MS_INVALID                     0x8000
+#define MS_QUESTIONABLE             0x4000
+#define MS_NOT_AVAILABLE             0x2000
+#define MS_CALIBRATION_ONGOING         0x1000
+#define MS_TEST_DATA                 0x0800
+#define MS_DEMO_DATA                 0x0400
+#define MS_VALIDATED_DATA             0x0080
 
-#define MS_EARLY_INDICATION 		0x0040
-#define MS_MSMT_ONGOING 			0x0020
+#define MS_EARLY_INDICATION         0x0040
+#define MS_MSMT_ONGOING             0x0020
 
 typedef struct _NuObsValue
 {
@@ -204,7 +204,7 @@ typedef struct _NuObsValueCmp
 {
     intu16 count;
     intu16 length;
-    NuObsValue value[1]; 	/* first element of the array */
+    NuObsValue value[1];     /* first element of the array */
 } ALIGN NuObsValueCmp;
 
 typedef struct _SampleType
@@ -217,16 +217,16 @@ typedef struct _SampleType
 
 typedef intu16 SaFlags;
 
-#define SMOOTH_CURVE 			0x8000
-#define DELAYED_CURVE 			0x4000
-#define STATIC_SCALE 			0x2000
-#define SA_EXT_VAL_RANGE 		0x1000
+#define SMOOTH_CURVE             0x8000
+#define DELAYED_CURVE             0x4000
+#define STATIC_SCALE             0x2000
+#define SA_EXT_VAL_RANGE         0x1000
 
 typedef struct _SaSpec
 {
-    intu16 			array_size;
-    SampleType 		sample_type;
-    SaFlags 		flags;
+    intu16             array_size;
+    SampleType         sample_type;
+    SaFlags         flags;
 } ALIGN SaSpec;
 
 typedef struct _ScaleRangeSpec8
@@ -507,7 +507,7 @@ typedef struct _UUID_Ident
 } ALIGN UUID_Ident;
 
 #if defined(__IAR_SYSTEMS_ICC__)
-	#pragma pack()
+    #pragma pack()
 #endif
 
 typedef intu16 DataProtoId;
@@ -521,7 +521,7 @@ typedef struct _DataProto
 } DataProto;
 
 #if defined(__IAR_SYSTEMS_ICC__)
-	#pragma pack(1)
+    #pragma pack(1)
 #endif
 
 typedef struct _DataProtoList
@@ -742,7 +742,7 @@ typedef struct _DATA_apdu
 } DATA_apdu;
 
 #if defined(__IAR_SYSTEMS_ICC__)
-	#pragma pack()
+    #pragma pack()
 #endif
 
 typedef struct _APDU
@@ -782,7 +782,7 @@ typedef intu16 ConfigId;
 #define MANAGER_CONFIG_RESPONSE 0x0000
 #define STANDARD_CONFIG_START 0x0100
 #define STANDARD_CONFIG_END 0xFF3F
-#define EXTENDED_CONFIG_START 0xDC05 
+#define EXTENDED_CONFIG_START 0xDC05
 
 #define EXTENDED_CONFIG_END 0xFF7F
 #define RESERVED_START 0x0080
@@ -813,10 +813,10 @@ typedef struct _PhdAssociationInformation
     NomenclatureVersion nomenclatureVersion;
     FunctionalUnits functionalUnits;
     SystemType systemType;
-    octet_string system_id; 
+    octet_string system_id;
     intu16 dev_config_id;
     DataReqModeCapab data_req_mode_capab;
-    AttributeList optionList; 
+    AttributeList optionList;
 } PhdAssociationInformation;
 
 typedef struct _ManufSpecAssociationInformation

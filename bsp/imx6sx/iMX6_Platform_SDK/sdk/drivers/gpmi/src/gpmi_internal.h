@@ -56,7 +56,7 @@ typedef struct GpmiDmaInfo {
 
     //! @brief Index of the chip-enable for this DMA.  Range [0..number-of-CEs).
     uint16_t u16CurrentChip;
-    
+
     //! @brief The DMA channel currently in use.
     uint16_t dmaChannel;
 
@@ -80,13 +80,13 @@ typedef struct GpmiDmaInfo {
 typedef struct GpmiState {
     //! Current GPMI timings.
     GpmiNandTimings_t currentTimings;
-    
+
     //! Minimum propagation delay in nanosecnds of GPMI signals to and from the NAND.
     uint32_t propDelayMin_ns;
-    
+
     //! Maximum propagation delay in nanosecnds of GPMI signals to and from the NAND.
     uint32_t propDelayMax_ns;
-    
+
     //! Information about the active DMA transaction.
     GpmiDmaInfo_t dmaInfo;
 } GpmiState_t;

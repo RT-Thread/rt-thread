@@ -1080,9 +1080,9 @@ USB_PACKET_SIZE *size               /* [OUT] Pointer to Size of Data */
 )
 {
   uint_8 i;
-	
-	UNUSED(controller_ID);
-  UNUSED(size);  
+
+    UNUSED(controller_ID);
+  UNUSED(size);
 
     for(i=0;i<26;i++){
         g_cur_video_probe[i]=*(*data+i);
@@ -1160,8 +1160,8 @@ uint_8 g_info_video_probe[1] = {0x03};
  * @brief The function gets the information probe value
  *
  * @param controller_ID : Controller ID
- * @param data		    : Pointer to Data
- * @param size			: Pointer to Size of Data
+ * @param data            : Pointer to Data
+ * @param size            : Pointer to Size of Data
  *
  * @return USB_OK                              When Successfull
  *         USBERR_INVALID_REQ_TYPE             when Error
@@ -1193,8 +1193,8 @@ uint_8 g_cur_video_commit[26] = {0x00,0x00,0x01,0x01,0x15,0x16,
  * @brief The function sets current commit value
  *
  * @param controller_ID : Controller ID
- * @param data		    : Pointer to data
- * @param size			: Pointer to Size of Data
+ * @param data            : Pointer to data
+ * @param size            : Pointer to Size of Data
  *
  * @return USB_OK                              When Successfull
  *         USBERR_INVALID_REQ_TYPE             when Error
@@ -1226,8 +1226,8 @@ uint_8 USB_Desc_Set_Cur_Video_Commit(
  * @brief The function gets the current commit value
  *
  * @param controller_ID : Controller ID
- * @param data		    : Pointer to Data
- * @param size			: Pointer to Size of Data
+ * @param data            : Pointer to Data
+ * @param size            : Pointer to Size of Data
  *
  * @return USB_OK                              When Successfull
  *         USBERR_INVALID_REQ_TYPE             when Error
@@ -1259,8 +1259,8 @@ uint_8 g_len_video_commit[26] = {0x1a,0x00,0x01,0x01,0x15,0x16,
  * @brief The function gets the length Commit value
  *
  * @param controller_ID : Controller ID
- * @param data		    : Pointer to Data
- * @param size			: Pointer to Size of Data
+ * @param data            : Pointer to Data
+ * @param size            : Pointer to Size of Data
  *
  * @return USB_OK                              When Successfull
  *         USBERR_INVALID_REQ_TYPE             when Error
@@ -1289,8 +1289,8 @@ uint_8 g_info_video_commit[1] = {0x03};
  * @brief The function gets the information commit value
  *
  * @param controller_ID : Controller ID
- * @param data		    : Pointer to Data
- * @param size			: Pointer to Size of Data
+ * @param data            : Pointer to Data
+ * @param size            : Pointer to Size of Data
  *
  * @return USB_OK                              When Successfull
  *         USBERR_INVALID_REQ_TYPE             when Error

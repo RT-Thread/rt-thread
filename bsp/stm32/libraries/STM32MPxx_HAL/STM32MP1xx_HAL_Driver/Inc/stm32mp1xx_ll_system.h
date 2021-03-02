@@ -173,7 +173,7 @@ extern "C" {
 /** @defgroup SYSTEM_LL_EC_TRIGGER_OUTPUT DBGMCU TRIGGER output direction
   * @{
   */
-#define LL_DBGMCU_TRGIO_INPUT_DIRECTION   0U			/*!< Disable External trigger output */
+#define LL_DBGMCU_TRGIO_INPUT_DIRECTION   0U            /*!< Disable External trigger output */
 #define LL_DBGMCU_TRGIO_OUTPUT_DIRECTION  DBGMCU_CR_DBG_TRGOEN  /*!< Enable External trigger output */
 /**
   * @}
@@ -407,7 +407,7 @@ __STATIC_INLINE void LL_SYSCFG_CloseAnalogSwitch(uint32_t AnalogSwitch)
 }
 
 /**
-  * @brief  Enable the Analog GPIO switch to control voltage selection 
+  * @brief  Enable the Analog GPIO switch to control voltage selection
   *         when the supply voltage is supplied by VDDA
   * @rmtoll SYSCFG_PMCSETR   ANASWVDD   LL_SYSCFG_EnableAnalogGpioSwitch
   * @note   Activating the gpio switch enable IOs analog switches supplied by VDDA
@@ -419,7 +419,7 @@ __STATIC_INLINE void LL_SYSCFG_EnableAnalogGpioSwitch(void)
 }
 
 /**
-  * @brief  Disable the Analog GPIO switch to control voltage selection 
+  * @brief  Disable the Analog GPIO switch to control voltage selection
   *         when the supply voltage is supplied by VDDA
   * @rmtoll SYSCFG_PMCCLRR   ANASWVDD   LL_SYSCFG_DisableAnalogGpioSwitch
   * @note   Activating the gpio switch enable IOs analog switches supplied by VDDA
@@ -869,7 +869,7 @@ __STATIC_INLINE void LL_SYSCFG_SetTIMBreakInputs(uint32_t Break)
 /**
   * @brief  Get connections to TIM1/8/15/16/17 Break inputs
   * @note this feature is available on STM32MP1 rev.B and above
-  * @rmtoll 
+  * @rmtoll
   *         SYSCFG_CBR   PVDL   LL_SYSCFG_GetTIMBreakInputs\n
   *         SYSCFG_CBR   CLL    LL_SYSCFG_GetTIMBreakInputs
   *         @arg @ref LL_SYSCFG_TIMBREAK_PVD

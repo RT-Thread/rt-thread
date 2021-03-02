@@ -47,7 +47,7 @@ extern "C" {
 /** @defgroup MD_DAC_Public_Constants DAC Public Constants
   * @{
   */
-  
+
 /** @defgroup MD_DAC_CON DAC_CON Register
   * @{
   */

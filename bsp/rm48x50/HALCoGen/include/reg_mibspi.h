@@ -2,7 +2,7 @@
 *   @brief MIBSPI Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -38,10 +38,10 @@
 typedef volatile struct mibspiBase
 {
     uint32  GCR0;                 /**< 0x0000: Global Control 0 */
-    uint32  GCR1;                 /**< 0x0004: Global Control 1 */	
-    uint32  INT0;                 /**< 0x0008: Interrupt Register */	
+    uint32  GCR1;                 /**< 0x0004: Global Control 1 */
+    uint32  INT0;                 /**< 0x0008: Interrupt Register */
     uint32  LVL;                  /**< 0x000C: Interrupt Level */
-    uint32  FLG;                  /**< 0x0010: Interrupt flags */	
+    uint32  FLG;                  /**< 0x0010: Interrupt flags */
     uint32  PCFUN;                /**< 0x0014: Function Pin Enable */
     uint32  PCDIR;                /**< 0x0018: Pin Direction */
     uint32  PCDIN;                /**< 0x001C: Pin Input Latch */
@@ -70,19 +70,19 @@ typedef volatile struct mibspiBase
     uint32  TGITENCR;             /**< 0x0078: TG Interrupt Enable Clear */
     uint32  TGITLVST;             /**< 0x007C: Transfer Group Interrupt Level Set */
     uint32  TGITLVCR;             /**< 0x0080: Transfer Group Interrupt Level Clear */
-    uint32  TGINTFLG;             /**< 0x0084: Transfer Group Interrupt Flag */	
+    uint32  TGINTFLG;             /**< 0x0084: Transfer Group Interrupt Flag */
     uint32    rsvd1[2U];           /**< 0x0088: Reserved */
     uint32  TICKCNT;              /**< 0x0090: Tick Counter */
-    uint32  LTGPEND;              /**< 0x0090: Last TG End Pointer */	
+    uint32  LTGPEND;              /**< 0x0090: Last TG End Pointer */
     uint32  TGCTRL[16U];          /**< 0x0098 - 0x00D4: Transfer Group Control */
     uint32  DMACTRL[8U];          /**< 0x00D8 - 0x00F4: DMA Control */
     uint32  DMACOUNT[8U];         /**< 0x00F8 - 0x0114: DMA Count */
     uint32  DMACNTLEN;            /**< 0x0118 - 0x0114: DMA Control length */
     uint32    rsvd2;              /**< 0x011C: Reserved */
-    uint32  UERRCTRL;             /**< 0x0120: Multi-buffer RAM Uncorrectable Parity Error Control */	
-    uint32  UERRSTAT;             /**< 0x0124: Multi-buffer RAM Uncorrectable Parity Error Status */	  
-    uint32  UERRADDRRX;           /**< 0x0128: RXRAM Uncorrectable Parity Error Address */	
-    uint32  UERRADDRTX;           /**< 0x012C: TXRAM Uncorrectable Parity Error Address */	
+    uint32  UERRCTRL;             /**< 0x0120: Multi-buffer RAM Uncorrectable Parity Error Control */
+    uint32  UERRSTAT;             /**< 0x0124: Multi-buffer RAM Uncorrectable Parity Error Status */
+    uint32  UERRADDRRX;           /**< 0x0128: RXRAM Uncorrectable Parity Error Address */
+    uint32  UERRADDRTX;           /**< 0x012C: TXRAM Uncorrectable Parity Error Address */
     uint32  RXOVRN_BUF_ADDR;      /**< 0x0130: RXRAM Overrun Buffer Address */
     uint32  IOLPKTSTCR;           /**< 0x0134: IO loopback */
     uint32  EXT_PRESCALE1;        /**< 0x0138: */
@@ -151,11 +151,11 @@ typedef volatile struct mibspiBase
 */
 typedef volatile struct mibspiRamBase
 {
-    struct 
+    struct
     {
 #if ((__little_endian__ == 1) || (__LITTLE_ENDIAN__ == 1))
-     uint16  data;     /**< tx buffer data    */   
-     uint16  control;  /**< tx buffer control */  
+     uint16  data;     /**< tx buffer data    */
+     uint16  control;  /**< tx buffer control */
 #else
      uint16  control;  /**< tx buffer control */
      uint16  data;     /**< tx buffer data    */
@@ -165,9 +165,9 @@ typedef volatile struct mibspiRamBase
     {
 #if ((__little_endian__ == 1) || (__LITTLE_ENDIAN__ == 1))
      uint16 data;     /**< rx buffer data  */
-	 uint16 flags;    /**< rx buffer flags */
+     uint16 flags;    /**< rx buffer flags */
 #else
-	 uint16 flags;    /**< rx buffer flags */
+     uint16 flags;    /**< rx buffer flags */
      uint16 data;     /**< rx buffer data  */
 #endif
     } rx[128];

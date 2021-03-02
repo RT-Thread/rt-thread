@@ -9,7 +9,7 @@
 
 #define PageLocked(pg) 1
 #define Page_Uptodate(pg) 0
-#define UnlockPage(pg) 
+#define UnlockPage(pg)
 #define PAGE_BUG(pg) BUG()
 #define ClearPageUptodate(pg)
 #define SetPageError(pg)

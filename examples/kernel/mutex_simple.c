@@ -1,57 +1,57 @@
 /*
- * ç¨‹åºæ¸…å•ï¼š
+ * ³ÌĞòÇåµ¥£º
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
 static rt_thread_t tid3 = RT_NULL;
 static rt_mutex_t mutex = RT_NULL;
 
-/* çº¿ç¨‹1å…¥å£ */
+/* Ïß³Ì1Èë¿Ú */
 static void thread1_entry(void* parameter)
 {
-    /* å…ˆè®©ä½ä¼˜å…ˆçº§çº¿ç¨‹è¿è¡Œ */
+    /* ÏÈÈÃµÍÓÅÏÈ¼¶Ïß³ÌÔËĞĞ */
     rt_thread_delay(10);
 
-    /* æ­¤æ—¶thread3æŒæœ‰mutexï¼Œå¹¶ä¸”thread2ç­‰å¾…æŒæœ‰mutex */
+    /* ´ËÊ±thread3³ÖÓĞmutex£¬²¢ÇÒthread2µÈ´ı³ÖÓĞmutex */
 
-    /* æ£€æŸ¥thread2ä¸thread3çš„ä¼˜å…ˆçº§æƒ…å†µ */
+    /* ¼ì²éthread2Óëthread3µÄÓÅÏÈ¼¶Çé¿ö */
     if (tid2->current_priority != tid3->current_priority)
     {
-        /* ä¼˜å…ˆçº§ä¸ç›¸åŒï¼Œæµ‹è¯•å¤±è´¥ */
+        /* ÓÅÏÈ¼¶²»ÏàÍ¬£¬²âÊÔÊ§°Ü */
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
         return;
     }
 }
 
-/* çº¿ç¨‹2å…¥å£ */
+/* Ïß³Ì2Èë¿Ú */
 static void thread2_entry(void* parameter)
 {
     rt_err_t result;
 
-    /* å…ˆè®©ä½ä¼˜å…ˆçº§çº¿ç¨‹è¿è¡Œ */
+    /* ÏÈÈÃµÍÓÅÏÈ¼¶Ïß³ÌÔËĞĞ */
     rt_thread_delay(5);
 
     while (1)
     {
         /*
-         * è¯•å›¾æŒæœ‰äº’æ–¥é”ï¼Œæ­¤æ—¶thread3æŒæœ‰ï¼Œåº”æŠŠthread3çš„ä¼˜å…ˆçº§æå‡åˆ°thread2ç›¸åŒ
-         * çš„ä¼˜å…ˆçº§
+         * ÊÔÍ¼³ÖÓĞ»¥³âËø£¬´ËÊ±thread3³ÖÓĞ£¬Ó¦°Ñthread3µÄÓÅÏÈ¼¶ÌáÉıµ½thread2ÏàÍ¬
+         * µÄÓÅÏÈ¼¶
          */
         result = rt_mutex_take(mutex, RT_WAITING_FOREVER);
 
         if (result == RT_EOK)
         {
-            /* é‡Šæ”¾äº’æ–¥é” */
+            /* ÊÍ·Å»¥³âËø */
             rt_mutex_release(mutex);
         }
     }
 }
 
-/* çº¿ç¨‹3å…¥å£ */
+/* Ïß³Ì3Èë¿Ú */
 static void thread3_entry(void* parameter)
 {
     rt_tick_t tick;
@@ -70,7 +70,7 @@ static void thread3_entry(void* parameter)
             tc_stat(TC_STAT_END | TC_STAT_FAILED);
         }
 
-        /* åšä¸€ä¸ªé•¿æ—¶é—´çš„å¾ªç¯ï¼Œæ€»å…±50ä¸ªOS Tick */
+        /* ×öÒ»¸ö³¤Ê±¼äµÄÑ­»·£¬×Ü¹²50¸öOS Tick */
         tick = rt_tick_get();
         while (rt_tick_get() - tick < 50) ;
 
@@ -81,7 +81,7 @@ static void thread3_entry(void* parameter)
 
 int mutex_simple_init()
 {
-    /* åˆ›å»ºäº’æ–¥é” */
+    /* ´´½¨»¥³âËø */
     mutex = rt_mutex_create("mutex", RT_IPC_FLAG_FIFO);
     if (mutex == RT_NULL)
     {
@@ -89,27 +89,27 @@ int mutex_simple_init()
         return 0;
     }
 
-    /* åˆ›å»ºçº¿ç¨‹1 */
+    /* ´´½¨Ïß³Ì1 */
     tid1 = rt_thread_create("t1",
-                            thread1_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread1_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread1_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread1_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY - 1, THREAD_TIMESLICE);
     if (tid1 != RT_NULL)
         rt_thread_startup(tid1);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹2 */
+    /* ´´½¨Ïß³Ì2 */
     tid2 = rt_thread_create("t2",
-                            thread2_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread2_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread2_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread2_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid2 != RT_NULL)
         rt_thread_startup(tid2);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹3 */
+    /* ´´½¨Ïß³Ì3 */
     tid3 = rt_thread_create("t3",
-                            thread3_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread3_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread3_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread3_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
     if (tid3 != RT_NULL)
         rt_thread_startup(tid3);
@@ -122,10 +122,10 @@ int mutex_simple_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (tid1 != RT_NULL && tid1->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid1);
     if (tid2 != RT_NULL && tid2->stat != RT_THREAD_CLOSE)
@@ -138,26 +138,26 @@ static void _tc_cleanup()
         rt_mutex_delete(mutex);
     }
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_mutex_simple()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     mutex_simple_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_mutex_simple, sime mutex example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     mutex_simple_init();

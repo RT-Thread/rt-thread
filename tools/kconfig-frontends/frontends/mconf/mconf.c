@@ -973,11 +973,11 @@ static int handle_exit(void)
                          "(Press <ESC><ESC> to continue kernel configuration.)"),
                        6, 60);
         }
-        
+
     }
     else
         res = -1;
-    
+
     if (!silent) end_dialog(saved_x, saved_y);
 
     switch (res) {
@@ -1049,17 +1049,17 @@ int main(int ac, char **av)
 
     set_config_filename(conf_get_configname());
     conf_set_message_callback(conf_message_callback);
-    
+
     if (ac > 2 && strcmp(av[2], "-n") == 0)
     {
         fprintf(stderr, N_("Debug mode,don't display menuconfig window.\n"));
         silent = 1;
         /* Silence conf_read() until the real callback is set up */
         conf_set_message_callback(NULL);
-        av++; 
+        av++;
         res = handle_exit();
         return res;
-     } 
+     }
 
     do {
         conf(&rootmenu, NULL);

@@ -158,7 +158,7 @@ void push_event_touch_end(int x, int y)
     emouse.y = y;
     emouse.ts = rt_tick_get();
     emouse.id = emouse_id;
-    
+
     LOG_D("[line]:%d up event id:%d x:%d y:%d", __LINE__, emouse.id, x, y);
     rtgui_server_post_event(&emouse.parent, sizeof(emouse));
 }
@@ -243,7 +243,7 @@ int rt_hw_mouse_init(void)
                 ((read32(virt + 0xfe8) & 0xff) << 16) |
                 ((read32(virt + 0xfe4) & 0xff) <<  8) |
                 ((read32(virt + 0xfe0) & 0xff) <<  0));
-    
+
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x050)
     {
         LOG_E("read id fail id:0x%08x", id);

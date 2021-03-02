@@ -801,7 +801,7 @@ typedef struct
   * @}
   */
 #endif /*FDCAN1*/
-  
+
 /** @defgroup RCC_LL_EC_SPDIFRX_CLKSOURCE  Peripheral SPDIFRX clock source selection
   * @{
   */

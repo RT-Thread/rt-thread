@@ -168,7 +168,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 #define DAC_TRIGGER_T5_TRGO             (                 DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM3 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T6_TRGO             (                                                   DAC_CR_TEN1) /*!< Conversion started by software trigger for DAC channel */
 #define DAC_TRIGGER_T7_TRGO             (                 DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< TIM7 TRGO selected as external conversion trigger for DAC channel */
-#define DAC_TRIGGER_T8_TRGO             (                                  DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel */                                                                       
+#define DAC_TRIGGER_T8_TRGO             (                                  DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_EXT_IT9             (DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1                  | DAC_CR_TEN1) /*!< EXTI Line9 event selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_SOFTWARE            (DAC_CR_TSEL1                                     | DAC_CR_TEN1) /*!< Conversion started by software trigger for DAC channel */
 

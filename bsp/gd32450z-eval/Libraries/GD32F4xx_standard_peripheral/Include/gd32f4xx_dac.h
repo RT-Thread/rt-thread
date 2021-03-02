@@ -45,7 +45,7 @@
 #define DAC_CTL_DWBW0           BITS(8,11)           /*!< DAC0 noise wave bit width */
 #define DAC_CTL_DDMAEN0         BIT(12)              /*!< DAC0 DMA enable/disanle bit */
 #define DAC_CTL_DDUDRIE0        BIT(13)              /*!< DAC0 DMA underrun interrupt enable/disable bit */
-#define DAC_CTL_DEN1            BIT(16)              /*!< DAC1 enable/disable bit */ 
+#define DAC_CTL_DEN1            BIT(16)              /*!< DAC1 enable/disable bit */
 #define DAC_CTL_DBOFF1          BIT(17)              /*!< DAC1 output buffer turn on/turn off bit */
 #define DAC_CTL_DTEN1           BIT(18)              /*!< DAC1 trigger enable/disable bit */
 #define DAC_CTL_DTSEL1          BITS(19,21)          /*!< DAC1 trigger source selection enable/disable bits */
@@ -175,7 +175,7 @@ void dac_disable(uint32_t dac_periph);
 /* enable DAC DMA */
 void dac_dma_enable(uint32_t dac_periph);
 /* disable DAC DMA */
-void dac_dma_disable(uint32_t dac_periph); 
+void dac_dma_disable(uint32_t dac_periph);
 /* enable DAC output buffer */
 void dac_output_buffer_enable(uint32_t dac_periph);
 /* disable DAC output buffer */
@@ -209,7 +209,7 @@ uint16_t dac_output_value_get(uint32_t dac_periph);
 /* set DAC data holding register value */
 void dac_data_set(uint32_t dac_periph, uint32_t dac_align, uint16_t data);
 /* set DAC concurrent mode data holding register value */
-void dac_concurrent_data_set(uint32_t dac_align, uint16_t data0, uint16_t data1); 
+void dac_concurrent_data_set(uint32_t dac_align, uint16_t data0, uint16_t data1);
 
 /* enable DAC concurrent mode */
 void dac_concurrent_enable(void);

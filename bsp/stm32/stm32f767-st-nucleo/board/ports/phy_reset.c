@@ -16,6 +16,6 @@ void phy_reset(void)
      * The PHY reset pin of NUCLEO-F767ZI is connected to the MCU reset pin,
      * so no additional reset is required.
      */
-    
+
     return ;
 }

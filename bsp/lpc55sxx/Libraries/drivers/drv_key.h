@@ -7,12 +7,12 @@
  * Date           Author       Notes
  * 2019-07-19     Magicoe      The first version for LPC55S6x, refered github.com/Guozhanxin/RTT-BeepPlayer-pkg
  */
- 
+
 #ifndef __DRV_KEY_H__
 #define __DRV_KEY_H__
 
-#include <rtthread.h> 
-#include <rtdevice.h> 
+#include <rtthread.h>
+#include <rtdevice.h>
 
 #define MY_BUTTON_DOWN_MS        50
 #define MY_BUTTON_HOLD_MS        700

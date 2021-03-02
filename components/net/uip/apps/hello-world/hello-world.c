@@ -91,13 +91,13 @@ static int rt_show_info(struct hello_world_state *s)
   PSOCK_SEND_STR(&s->p,"RT-Thread RTOS");
   PSOCK_READTO(&s->p, '\n');
   PSOCK_END(&s->p);
-  
+
 }
 static int
 handle_connection(struct hello_world_state *s)
 {
   int i;
-  for (i=0;i<BUF_SIZE;i++) 
+  for (i=0;i<BUF_SIZE;i++)
   {
       s->name[i] = 0;
       s->inputbuffer[i] = 0;
@@ -109,7 +109,7 @@ handle_connection(struct hello_world_state *s)
   //PSOCK_SEND_STR(&s->p, "Hello ");
   PSOCK_SEND_STR(&s->p, s->name);
   //PSOCK_CLOSE(&s->p);
-  
+
   PSOCK_END(&s->p);
 }
 /*---------------------------------------------------------------------------*/

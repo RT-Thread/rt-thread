@@ -74,17 +74,17 @@ struct rtc_module *_rtc_instance[RTC_INST_NUM];
  */
 static inline bool rtc_calendar_is_syncing(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	if (rtc_module->MODE2.SYNCBUSY.reg) {
-		return true;
-	}
+    if (rtc_module->MODE2.SYNCBUSY.reg) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -97,26 +97,26 @@ static inline bool rtc_calendar_is_syncing(struct rtc_module *const module)
  */
 void rtc_calendar_enable(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
 #if RTC_CALENDAR_ASYNC == true
-	system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_RTC);
+    system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_RTC);
 #endif
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Enable RTC module. */
-	rtc_module->MODE2.CTRLA.reg |= RTC_MODE2_CTRLA_ENABLE;
+    /* Enable RTC module. */
+    rtc_module->MODE2.CTRLA.reg |= RTC_MODE2_CTRLA_ENABLE;
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -128,31 +128,31 @@ void rtc_calendar_enable(struct rtc_module *const module)
  */
 void rtc_calendar_disable(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
 #if RTC_CALENDAR_ASYNC == true
-	system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_RTC);
+    system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_RTC);
 #endif
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Disbale interrupt */
-	rtc_module->MODE2.INTENCLR.reg = RTC_MODE2_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_MASK;
+    /* Disbale interrupt */
+    rtc_module->MODE2.INTENCLR.reg = RTC_MODE2_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    rtc_module->MODE2.INTFLAG.reg = RTC_MODE2_INTFLAG_MASK;
 
-	/* Disable RTC module. */
-	rtc_module->MODE2.CTRLA.reg &= ~RTC_MODE2_CTRLA_ENABLE;
+    /* Disable RTC module. */
+    rtc_module->MODE2.CTRLA.reg &= ~RTC_MODE2_CTRLA_ENABLE;
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -164,30 +164,30 @@ void rtc_calendar_disable(struct rtc_module *const module)
  */
 void rtc_calendar_reset(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Disable module before reset. */
-	rtc_calendar_disable(module);
+    /* Disable module before reset. */
+    rtc_calendar_disable(module);
 
 #if RTC_CALENDAR_ASYNC == true
-	module->registered_callback = 0;
-	module->enabled_callback    = 0;
+    module->registered_callback = 0;
+    module->enabled_callback    = 0;
 #endif
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Initiate software reset. */
-	rtc_module->MODE2.CTRLA.reg |= RTC_MODE2_CTRLA_SWRST;
+    /* Initiate software reset. */
+    rtc_module->MODE2.CTRLA.reg |= RTC_MODE2_CTRLA_SWRST;
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -200,38 +200,38 @@ void rtc_calendar_reset(struct rtc_module *const module)
  * \return 32-bit value.
  */
 uint32_t rtc_calendar_time_to_register_value(
-		struct rtc_module *const module,
-		const struct rtc_calendar_time *const time)
+        struct rtc_module *const module,
+        const struct rtc_calendar_time *const time)
 {
-	/* Initialize return value. */
-	uint32_t register_value;
+    /* Initialize return value. */
+    uint32_t register_value;
 
-	/* Set year value into register_value minus initial year. */
-	register_value = (time->year - module->year_init_value) <<
-			RTC_MODE2_CLOCK_YEAR_Pos;
+    /* Set year value into register_value minus initial year. */
+    register_value = (time->year - module->year_init_value) <<
+            RTC_MODE2_CLOCK_YEAR_Pos;
 
-	/* Set month value into register_value. */
-	register_value |= (time->month << RTC_MODE2_CLOCK_MONTH_Pos);
+    /* Set month value into register_value. */
+    register_value |= (time->month << RTC_MODE2_CLOCK_MONTH_Pos);
 
-	/* Set day value into register_value. */
-	register_value |= (time->day << RTC_MODE2_CLOCK_DAY_Pos);
+    /* Set day value into register_value. */
+    register_value |= (time->day << RTC_MODE2_CLOCK_DAY_Pos);
 
-	/* Set 24 hour value into register_value. */
-	register_value |= (time->hour << RTC_MODE2_CLOCK_HOUR_Pos);
+    /* Set 24 hour value into register_value. */
+    register_value |= (time->hour << RTC_MODE2_CLOCK_HOUR_Pos);
 
-	/* Check if 24h clock and set pm flag. */
-	if (!(module->clock_24h) && (time->pm)) {
-		/* Set pm flag. */
-		register_value |= (0x10u << RTC_MODE2_CLOCK_HOUR_Pos);
-	}
+    /* Check if 24h clock and set pm flag. */
+    if (!(module->clock_24h) && (time->pm)) {
+        /* Set pm flag. */
+        register_value |= (0x10u << RTC_MODE2_CLOCK_HOUR_Pos);
+    }
 
-	/* Set minute value into register_value. */
-	register_value |= (time->minute << RTC_MODE2_CLOCK_MINUTE_Pos);
+    /* Set minute value into register_value. */
+    register_value |= (time->minute << RTC_MODE2_CLOCK_MINUTE_Pos);
 
-	/* Set second value into register_value. */
-	register_value |= (time->second << RTC_MODE2_CLOCK_SECOND_Pos);
+    /* Set second value into register_value. */
+    register_value |= (time->second << RTC_MODE2_CLOCK_SECOND_Pos);
 
-	return register_value;
+    return register_value;
 }
 
 /**
@@ -243,43 +243,43 @@ uint32_t rtc_calendar_time_to_register_value(
  * \param[out] time  Pointer to the time structure
  */
 void rtc_calendar_register_value_to_time(
-		struct rtc_module *const module,
-		const uint32_t register_value,
-		struct rtc_calendar_time *const time)
+        struct rtc_module *const module,
+        const uint32_t register_value,
+        struct rtc_calendar_time *const time)
 {
-	/* Set year plus value of initial year. */
-	time->year = ((register_value & RTC_MODE2_CLOCK_YEAR_Msk) >>
-			RTC_MODE2_CLOCK_YEAR_Pos) + module->year_init_value;
+    /* Set year plus value of initial year. */
+    time->year = ((register_value & RTC_MODE2_CLOCK_YEAR_Msk) >>
+            RTC_MODE2_CLOCK_YEAR_Pos) + module->year_init_value;
 
-	/* Set month value into time struct. */
-	time->month = ((register_value & RTC_MODE2_CLOCK_MONTH_Msk) >>
-			RTC_MODE2_CLOCK_MONTH_Pos);
+    /* Set month value into time struct. */
+    time->month = ((register_value & RTC_MODE2_CLOCK_MONTH_Msk) >>
+            RTC_MODE2_CLOCK_MONTH_Pos);
 
-	/* Set day value into time struct. */
-	time->day = ((register_value & RTC_MODE2_CLOCK_DAY_Msk) >>
-			RTC_MODE2_CLOCK_DAY_Pos);
+    /* Set day value into time struct. */
+    time->day = ((register_value & RTC_MODE2_CLOCK_DAY_Msk) >>
+            RTC_MODE2_CLOCK_DAY_Pos);
 
-	if (module->clock_24h) {
-		/* Set hour in 24h mode. */
-		time->hour = ((register_value & RTC_MODE2_CLOCK_HOUR_Msk) >>
-				RTC_MODE2_CLOCK_HOUR_Pos);
-	} else {
-		/* Set hour in 12h mode. */
-		time->hour = ((register_value &
-				(RTC_MODE2_CLOCK_HOUR_Msk & ~(0x10u << RTC_MODE2_CLOCK_HOUR_Pos))) >>
-				RTC_MODE2_CLOCK_HOUR_Pos);
+    if (module->clock_24h) {
+        /* Set hour in 24h mode. */
+        time->hour = ((register_value & RTC_MODE2_CLOCK_HOUR_Msk) >>
+                RTC_MODE2_CLOCK_HOUR_Pos);
+    } else {
+        /* Set hour in 12h mode. */
+        time->hour = ((register_value &
+                (RTC_MODE2_CLOCK_HOUR_Msk & ~(0x10u << RTC_MODE2_CLOCK_HOUR_Pos))) >>
+                RTC_MODE2_CLOCK_HOUR_Pos);
 
-		/* Set pm flag */
-		time->pm = ((register_value & (0x10u << RTC_MODE2_CLOCK_HOUR_Pos)) != 0);
-	}
+        /* Set pm flag */
+        time->pm = ((register_value & (0x10u << RTC_MODE2_CLOCK_HOUR_Pos)) != 0);
+    }
 
-	/* Set minute value into time struct. */
-	time->minute = ((register_value & RTC_MODE2_CLOCK_MINUTE_Msk) >>
-			RTC_MODE2_CLOCK_MINUTE_Pos);
+    /* Set minute value into time struct. */
+    time->minute = ((register_value & RTC_MODE2_CLOCK_MINUTE_Msk) >>
+            RTC_MODE2_CLOCK_MINUTE_Pos);
 
-	/* Set second value into time struct. */
-	time->second = ((register_value & RTC_MODE2_CLOCK_SECOND_Msk) >>
-			RTC_MODE2_CLOCK_SECOND_Pos);
+    /* Set second value into time struct. */
+    time->second = ((register_value & RTC_MODE2_CLOCK_SECOND_Msk) >>
+            RTC_MODE2_CLOCK_SECOND_Pos);
 }
 
 /**
@@ -292,46 +292,46 @@ void rtc_calendar_register_value_to_time(
  * \param[in] config  Pointer to the configuration structure
  */
 static void _rtc_calendar_set_config(
-		struct rtc_module *const module,
-		const struct rtc_calendar_config *const config)
+        struct rtc_module *const module,
+        const struct rtc_calendar_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Set up temporary register value. */
-	uint16_t tmp_reg;
+    /* Set up temporary register value. */
+    uint16_t tmp_reg;
 
-	/* Set to calendar mode and set the prescaler. */
-	tmp_reg = RTC_MODE2_CTRLA_MODE(2) | config->prescaler;
+    /* Set to calendar mode and set the prescaler. */
+    tmp_reg = RTC_MODE2_CTRLA_MODE(2) | config->prescaler;
 
 #if (SAML21XXXB) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	if(config->enable_read_sync) {
-		tmp_reg |= RTC_MODE2_CTRLA_CLOCKSYNC;
-	}
+    if(config->enable_read_sync) {
+        tmp_reg |= RTC_MODE2_CTRLA_CLOCKSYNC;
+    }
 #endif
 
-	/* Check clock mode. */
-	if (!(config->clock_24h)) {
-		/* Set clock mode 12h. */
-		tmp_reg |= RTC_MODE2_CTRLA_CLKREP;
-	}
+    /* Check clock mode. */
+    if (!(config->clock_24h)) {
+        /* Set clock mode 12h. */
+        tmp_reg |= RTC_MODE2_CTRLA_CLKREP;
+    }
 
-	/* Check for clear on compare match. */
-	if (config->clear_on_match) {
-		/* Set clear on compare match. */
-		tmp_reg |= RTC_MODE2_CTRLA_MATCHCLR;
-	}
+    /* Check for clear on compare match. */
+    if (config->clear_on_match) {
+        /* Set clear on compare match. */
+        tmp_reg |= RTC_MODE2_CTRLA_MATCHCLR;
+    }
 
-	/* Set temporary value to register. */
-	rtc_module->MODE2.CTRLA.reg = tmp_reg;
+    /* Set temporary value to register. */
+    rtc_module->MODE2.CTRLA.reg = tmp_reg;
 
-	/* Set alarm time registers. */
-	for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
-		rtc_calendar_set_alarm(module, &(config->alarm[i]), (enum rtc_calendar_alarm)i);
-	}
+    /* Set alarm time registers. */
+    for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
+        rtc_calendar_set_alarm(module, &(config->alarm[i]), (enum rtc_calendar_alarm)i);
+    }
 }
 
 /**
@@ -345,40 +345,40 @@ static void _rtc_calendar_set_config(
  * \param[in]   config  Pointer to the configuration structure
  */
 void rtc_calendar_init(
-		struct rtc_module *const module,
-		Rtc *const hw,
-		const struct rtc_calendar_config *const config)
+        struct rtc_module *const module,
+        Rtc *const hw,
+        const struct rtc_calendar_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(hw);
+    Assert(config);
 
-	/* Initialize device instance */
-	module->hw = hw;
+    /* Initialize device instance */
+    module->hw = hw;
 
-	/* Turn on the digital interface clock */
-	system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBA, MCLK_APBAMASK_RTC);
+    /* Turn on the digital interface clock */
+    system_apb_clock_set_mask(SYSTEM_CLOCK_APB_APBA, MCLK_APBAMASK_RTC);
 
-	/* Select RTC clock */
-	OSC32KCTRL->RTCCTRL.reg = RTC_CLOCK_SOURCE;
+    /* Select RTC clock */
+    OSC32KCTRL->RTCCTRL.reg = RTC_CLOCK_SOURCE;
 
-	/* Reset module to hardware defaults. */
-	rtc_calendar_reset(module);
+    /* Reset module to hardware defaults. */
+    rtc_calendar_reset(module);
 
-	/* Save conf_struct internally for continued use. */
-	module->clock_24h           = config->clock_24h;
-	module->year_init_value     = config->year_init_value;
+    /* Save conf_struct internally for continued use. */
+    module->clock_24h           = config->clock_24h;
+    module->year_init_value     = config->year_init_value;
 
 #if (RTC_INST_NUM == 1)
-	_rtc_instance[0] = module;
+    _rtc_instance[0] = module;
 #else
-	/* Register this instance for callbacks*/
-	_rtc_instance[_rtc_get_inst_index(hw)] = module;
+    /* Register this instance for callbacks*/
+    _rtc_instance[_rtc_get_inst_index(hw)] = module;
 #endif
 
-	/* Set config. */
-	_rtc_calendar_set_config(module, config);
+    /* Set config. */
+    _rtc_calendar_set_config(module, config);
 }
 
 /**
@@ -394,84 +394,84 @@ void rtc_calendar_init(
  */
 void rtc_calendar_swap_time_mode(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Initialize time structure. */
-	struct rtc_calendar_time time;
-	struct rtc_calendar_alarm_time alarm;
+    /* Initialize time structure. */
+    struct rtc_calendar_time time;
+    struct rtc_calendar_alarm_time alarm;
 
-	/* Get current time. */
-	rtc_calendar_get_time(module, &time);
+    /* Get current time. */
+    rtc_calendar_get_time(module, &time);
 
-	/* Check current mode. */
-	if (module->clock_24h) {
-		/* Set pm flag. */
-		time.pm = (uint8_t)(time.hour / 12);
+    /* Check current mode. */
+    if (module->clock_24h) {
+        /* Set pm flag. */
+        time.pm = (uint8_t)(time.hour / 12);
 
-		/* Set 12h clock hour value. */
-		time.hour = time.hour % 12;
-		if (time.hour == 0) {
-			time.hour = 12;
-		}
+        /* Set 12h clock hour value. */
+        time.hour = time.hour % 12;
+        if (time.hour == 0) {
+            time.hour = 12;
+        }
 
-		/* Update alarms */
-		for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
-			rtc_calendar_get_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
-			alarm.time.pm = (uint8_t)(alarm.time.hour / 12);
-			alarm.time.hour = alarm.time.hour % 12;
-			if (alarm.time.hour == 0) {
-				alarm.time.hour = 12;
-			}
-			module->clock_24h = false;
-			rtc_calendar_set_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
-			module->clock_24h = true;
-		}
+        /* Update alarms */
+        for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
+            rtc_calendar_get_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
+            alarm.time.pm = (uint8_t)(alarm.time.hour / 12);
+            alarm.time.hour = alarm.time.hour % 12;
+            if (alarm.time.hour == 0) {
+                alarm.time.hour = 12;
+            }
+            module->clock_24h = false;
+            rtc_calendar_set_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
+            module->clock_24h = true;
+        }
 
-		/* Change value in configuration structure. */
-		module->clock_24h = false;
-	} else {
-		/* Set hour value based on pm flag. */
-		if (time.pm == 1) {
-			time.hour = time.hour + 12;
+        /* Change value in configuration structure. */
+        module->clock_24h = false;
+    } else {
+        /* Set hour value based on pm flag. */
+        if (time.pm == 1) {
+            time.hour = time.hour + 12;
 
-			time.pm = 0;
-		} else if (time.hour == 12) {
-			time.hour = 0;
-		}
+            time.pm = 0;
+        } else if (time.hour == 12) {
+            time.hour = 0;
+        }
 
-		/* Update alarms */
-		for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
-			rtc_calendar_get_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
-			if (alarm.time.pm == 1) {
-				alarm.time.hour = alarm.time.hour + 12;
-				alarm.time.pm = 0;
-				module->clock_24h = true;
-				rtc_calendar_set_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
-				module->clock_24h = false;
-			} else if (alarm.time.hour == 12) {
-				alarm.time.hour = 0;
-			}
-		}
+        /* Update alarms */
+        for (uint8_t i = 0; i < RTC_NUM_OF_ALARMS; i++) {
+            rtc_calendar_get_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
+            if (alarm.time.pm == 1) {
+                alarm.time.hour = alarm.time.hour + 12;
+                alarm.time.pm = 0;
+                module->clock_24h = true;
+                rtc_calendar_set_alarm(module, &alarm, (enum rtc_calendar_alarm)i);
+                module->clock_24h = false;
+            } else if (alarm.time.hour == 12) {
+                alarm.time.hour = 0;
+            }
+        }
 
-		/* Change value in configuration structure. */
-		module->clock_24h = true;
-	}
+        /* Change value in configuration structure. */
+        module->clock_24h = true;
+    }
 
-	/* Disable RTC so new configuration can be set. */
-	rtc_calendar_disable(module);
+    /* Disable RTC so new configuration can be set. */
+    rtc_calendar_disable(module);
 
-	/* Toggle mode. */
-	rtc_module->MODE2.CTRLA.reg ^= RTC_MODE2_CTRLA_CLKREP;
+    /* Toggle mode. */
+    rtc_module->MODE2.CTRLA.reg ^= RTC_MODE2_CTRLA_CLKREP;
 
-	/* Enable RTC. */
-	rtc_calendar_enable(module);
+    /* Enable RTC. */
+    rtc_calendar_enable(module);
 
-	/* Set new time format in CLOCK register. */
-	rtc_calendar_set_time(module, &time);
+    /* Set new time format in CLOCK register. */
+    rtc_calendar_set_time(module, &time);
 }
 
 /**
@@ -483,27 +483,27 @@ void rtc_calendar_swap_time_mode(struct rtc_module *const module)
  * \param[in] time  The time to set in the calendar
  */
 void rtc_calendar_set_time(
-		struct rtc_module *const module,
-		const struct rtc_calendar_time *const time)
+        struct rtc_module *const module,
+        const struct rtc_calendar_time *const time)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	uint32_t register_value = rtc_calendar_time_to_register_value(module, time);
+    uint32_t register_value = rtc_calendar_time_to_register_value(module, time);
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Write value to register. */
-	rtc_module->MODE2.CLOCK.reg = register_value;
+    /* Write value to register. */
+    rtc_module->MODE2.CLOCK.reg = register_value;
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -515,24 +515,24 @@ void rtc_calendar_set_time(
  * \param[out] time  Pointer to value that will be filled with current time
  */
 void rtc_calendar_get_time(
-		struct rtc_module *const module,
-		struct rtc_calendar_time *const time)
+        struct rtc_module *const module,
+        struct rtc_calendar_time *const time)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Read value. */
-	uint32_t register_value = rtc_module->MODE2.CLOCK.reg;
+    /* Read value. */
+    uint32_t register_value = rtc_module->MODE2.CLOCK.reg;
 
-	/* Convert value to time structure. */
-	rtc_calendar_register_value_to_time(module, register_value, time);
+    /* Convert value to time structure. */
+    rtc_calendar_register_value_to_time(module, register_value, time);
 }
 
 /**
@@ -549,43 +549,43 @@ void rtc_calendar_get_time(
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were provided
  */
 enum status_code rtc_calendar_set_alarm(
-		struct rtc_module *const module,
-		const struct rtc_calendar_alarm_time *const alarm,
-		const enum rtc_calendar_alarm alarm_index)
+        struct rtc_module *const module,
+        const struct rtc_calendar_alarm_time *const alarm,
+        const enum rtc_calendar_alarm alarm_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Sanity check. */
-	if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Sanity check. */
+    if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Get register_value from time. */
-	uint32_t register_value = rtc_calendar_time_to_register_value(module, &(alarm->time));
+    /* Get register_value from time. */
+    uint32_t register_value = rtc_calendar_time_to_register_value(module, &(alarm->time));
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Set alarm value. */
-	rtc_module->MODE2.Mode2Alarm[alarm_index].ALARM.reg = register_value;
+    /* Set alarm value. */
+    rtc_module->MODE2.Mode2Alarm[alarm_index].ALARM.reg = register_value;
 
-	while (rtc_calendar_is_syncing(module)) {
-			/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+            /* Wait for synchronization */
+    }
 
-	/* Set alarm mask */
-	rtc_module->MODE2.Mode2Alarm[alarm_index].MASK.reg = alarm->mask;
+    /* Set alarm mask */
+    rtc_module->MODE2.Mode2Alarm[alarm_index].MASK.reg = alarm->mask;
 
-	while (rtc_calendar_is_syncing(module)) {
-			/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+            /* Wait for synchronization */
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -603,32 +603,32 @@ enum status_code rtc_calendar_set_alarm(
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were provided
  */
 enum status_code rtc_calendar_get_alarm(
-		struct rtc_module *const module,
-		struct rtc_calendar_alarm_time *const alarm,
-		const enum rtc_calendar_alarm alarm_index)
+        struct rtc_module *const module,
+        struct rtc_calendar_alarm_time *const alarm,
+        const enum rtc_calendar_alarm alarm_index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Sanity check. */
-	if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Sanity check. */
+    if ((uint32_t)alarm_index > RTC_NUM_OF_ALARMS) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	/* Read alarm value. */
-	uint32_t register_value =
-			rtc_module->MODE2.Mode2Alarm[alarm_index].ALARM.reg;
+    /* Read alarm value. */
+    uint32_t register_value =
+            rtc_module->MODE2.Mode2Alarm[alarm_index].ALARM.reg;
 
-	/* Convert to time structure. */
-	rtc_calendar_register_value_to_time(module, register_value, &(alarm->time));
+    /* Convert to time structure. */
+    rtc_calendar_register_value_to_time(module, register_value, &(alarm->time));
 
-	/* Read alarm mask */
-	alarm->mask = (enum rtc_calendar_alarm_mask)rtc_module->MODE2.Mode2Alarm[alarm_index].MASK.reg;
+    /* Read alarm mask */
+    alarm->mask = (enum rtc_calendar_alarm_mask)rtc_module->MODE2.Mode2Alarm[alarm_index].MASK.reg;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -652,43 +652,43 @@ enum status_code rtc_calendar_get_alarm(
  * \retval STATUS_ERR_INVALID_ARG  If invalid argument(s) were provided
  */
 enum status_code rtc_calendar_frequency_correction(
-		struct rtc_module *const module,
-		const int8_t value)
+        struct rtc_module *const module,
+        const int8_t value)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Check if valid argument. */
-	if (abs(value) > 0x7F) {
-		/* Value bigger than allowed, return invalid argument. */
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Check if valid argument. */
+    if (abs(value) > 0x7F) {
+        /* Value bigger than allowed, return invalid argument. */
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	uint32_t new_correction_value;
+    uint32_t new_correction_value;
 
-	/* Load the new correction value as a positive value, sign added later */
-	new_correction_value = abs(value);
+    /* Load the new correction value as a positive value, sign added later */
+    new_correction_value = abs(value);
 
-	/* Convert to positive value and adjust register sign bit. */
-	if (value < 0) {
-		new_correction_value |= RTC_FREQCORR_SIGN;
-	}
+    /* Convert to positive value and adjust register sign bit. */
+    if (value < 0) {
+        new_correction_value |= RTC_FREQCORR_SIGN;
+    }
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Set value. */
-	rtc_module->MODE2.FREQCORR.reg = new_correction_value;
+    /* Set value. */
+    rtc_module->MODE2.FREQCORR.reg = new_correction_value;
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
@@ -707,92 +707,92 @@ enum status_code rtc_calendar_frequency_correction(
  * \note If tamper input configured as active layer protection, RTC prescaler
  *       output automatically enabled in the function.
  */
-enum status_code rtc_tamper_set_config ( 
-		struct rtc_module *const module,
-		struct rtc_tamper_config *const tamper_cfg)
+enum status_code rtc_tamper_set_config (
+        struct rtc_module *const module,
+        struct rtc_tamper_config *const tamper_cfg)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(tamper_cfg);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(tamper_cfg);
 
-	Rtc *const rtc_module = module->hw;
-	uint16_t ctrl_b = 0;
+    Rtc *const rtc_module = module->hw;
+    uint16_t ctrl_b = 0;
 
-	/* Configure enable backup and GP register reset on tamper or not. */
-	if(tamper_cfg->bkup_reset_on_tamper) {
-		rtc_module->MODE2.CTRLA.reg |= RTC_MODE0_CTRLA_BKTRST;
-	} else {
-		rtc_module->MODE2.CTRLA.reg &= ~RTC_MODE0_CTRLA_BKTRST;
-	}
-	
-	if (tamper_cfg->gp_reset_on_tamper) {
-		rtc_module->MODE2.CTRLA.reg |= RTC_MODE0_CTRLA_GPTRST;
-	} else {
-		rtc_module->MODE2.CTRLA.reg &= ~RTC_MODE0_CTRLA_GPTRST;
-	}
+    /* Configure enable backup and GP register reset on tamper or not. */
+    if(tamper_cfg->bkup_reset_on_tamper) {
+        rtc_module->MODE2.CTRLA.reg |= RTC_MODE0_CTRLA_BKTRST;
+    } else {
+        rtc_module->MODE2.CTRLA.reg &= ~RTC_MODE0_CTRLA_BKTRST;
+    }
 
-	/* Configure tamper detection of frequency and debounce setting. */
-	ctrl_b = tamper_cfg->actl_freq_div | tamper_cfg->deb_freq_div;
-	if(tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_ASYNC) {
-		ctrl_b |= RTC_MODE0_CTRLB_DEBASYNC;
-	} else if (tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_MAJORITY) {
-		ctrl_b |= RTC_MODE0_CTRLB_DEBMAJ;
-	}
-	if(tamper_cfg->dma_tamper_enable) {
-		ctrl_b |= RTC_MODE0_CTRLB_DMAEN;
-	}
-	if (tamper_cfg->gp0_enable) {
-		ctrl_b |= RTC_MODE0_CTRLB_GP0EN;
-	}
+    if (tamper_cfg->gp_reset_on_tamper) {
+        rtc_module->MODE2.CTRLA.reg |= RTC_MODE0_CTRLA_GPTRST;
+    } else {
+        rtc_module->MODE2.CTRLA.reg &= ~RTC_MODE0_CTRLA_GPTRST;
+    }
 
-	/* Configure tamper input. */
-	volatile RTC_TAMPCTRL_Type *tamper_ctrl = &(rtc_module->MODE2.TAMPCTRL);
+    /* Configure tamper detection of frequency and debounce setting. */
+    ctrl_b = tamper_cfg->actl_freq_div | tamper_cfg->deb_freq_div;
+    if(tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_ASYNC) {
+        ctrl_b |= RTC_MODE0_CTRLB_DEBASYNC;
+    } else if (tamper_cfg->deb_seq == RTC_TAMPER_DEBOUNCE_MAJORITY) {
+        ctrl_b |= RTC_MODE0_CTRLB_DEBMAJ;
+    }
+    if(tamper_cfg->dma_tamper_enable) {
+        ctrl_b |= RTC_MODE0_CTRLB_DMAEN;
+    }
+    if (tamper_cfg->gp0_enable) {
+        ctrl_b |= RTC_MODE0_CTRLB_GP0EN;
+    }
 
-	struct rtc_tamper_input_config in_cfg;
-	for (uint8_t tamper_id = 0; tamper_id < RTC_TAMPER_NUM; tamper_id++) {
-		in_cfg = tamper_cfg->in_cfg[tamper_id];
+    /* Configure tamper input. */
+    volatile RTC_TAMPCTRL_Type *tamper_ctrl = &(rtc_module->MODE2.TAMPCTRL);
 
-		if(in_cfg.action == RTC_TAMPER_INPUT_ACTION_ACTL) {
-			ctrl_b |= RTC_MODE0_CTRLB_RTCOUT;
-		}
-	
-		switch(tamper_id) {
-			case 0:
-				tamper_ctrl->bit.IN0ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL0 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC0 = in_cfg.debounce_enable;
-				break;
-			case 1:
-				tamper_ctrl->bit.IN1ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL1 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC1 = in_cfg.debounce_enable;
-				break;
-			case 2:
-				tamper_ctrl->bit.IN2ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL2 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC2 = in_cfg.debounce_enable;
-				break;
-			case 3:
-				tamper_ctrl->bit.IN3ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL3 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC3 = in_cfg.debounce_enable;
-				break;
-			case 4:
-				tamper_ctrl->bit.IN4ACT = in_cfg.action;
-				tamper_ctrl->bit.TAMLVL4 = in_cfg.level;
-				tamper_ctrl->bit.DEBNC4 = in_cfg.debounce_enable;
-				break;
-			default:
-				Assert(false);
-				break;
-		}
-	}
+    struct rtc_tamper_input_config in_cfg;
+    for (uint8_t tamper_id = 0; tamper_id < RTC_TAMPER_NUM; tamper_id++) {
+        in_cfg = tamper_cfg->in_cfg[tamper_id];
 
-	rtc_module->MODE2.CTRLB.reg = ctrl_b;
+        if(in_cfg.action == RTC_TAMPER_INPUT_ACTION_ACTL) {
+            ctrl_b |= RTC_MODE0_CTRLB_RTCOUT;
+        }
 
-	/* Return status OK if everything was configured. */
-	return STATUS_OK;
+        switch(tamper_id) {
+            case 0:
+                tamper_ctrl->bit.IN0ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL0 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC0 = in_cfg.debounce_enable;
+                break;
+            case 1:
+                tamper_ctrl->bit.IN1ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL1 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC1 = in_cfg.debounce_enable;
+                break;
+            case 2:
+                tamper_ctrl->bit.IN2ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL2 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC2 = in_cfg.debounce_enable;
+                break;
+            case 3:
+                tamper_ctrl->bit.IN3ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL3 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC3 = in_cfg.debounce_enable;
+                break;
+            case 4:
+                tamper_ctrl->bit.IN4ACT = in_cfg.action;
+                tamper_ctrl->bit.TAMLVL4 = in_cfg.level;
+                tamper_ctrl->bit.DEBNC4 = in_cfg.debounce_enable;
+                break;
+            default:
+                Assert(false);
+                break;
+        }
+    }
+
+    rtc_module->MODE2.CTRLB.reg = ctrl_b;
+
+    /* Return status OK if everything was configured. */
+    return STATUS_OK;
 }
 
 /**
@@ -802,23 +802,23 @@ enum status_code rtc_tamper_set_config (
  * \param[out] time  Pointer to value that filled with tamper stamp time
  */
 void rtc_tamper_get_stamp (struct rtc_module *const module,
-		struct rtc_calendar_time *const time)
+        struct rtc_calendar_time *const time)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	while (rtc_calendar_is_syncing(module)) {
-		/* Wait for synchronization */
-	}
+    while (rtc_calendar_is_syncing(module)) {
+        /* Wait for synchronization */
+    }
 
-	/* Initialize return value. */
-	uint32_t tamper_stamp = rtc_module->MODE2.TIMESTAMP.reg;
+    /* Initialize return value. */
+    uint32_t tamper_stamp = rtc_module->MODE2.TIMESTAMP.reg;
 
-	/* Convert value to time structure. */
-	rtc_calendar_register_value_to_time(module, tamper_stamp, time);
+    /* Convert value to time structure. */
+    rtc_calendar_register_value_to_time(module, tamper_stamp, time);
 }
 
 #endif

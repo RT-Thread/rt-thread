@@ -65,9 +65,9 @@ extern "C" {
  */
 
 void i2c_slave_enable_nack_on_address(
-		struct i2c_slave_module *const module);
+        struct i2c_slave_module *const module);
 void i2c_slave_disable_nack_on_address(
-		struct i2c_slave_module *const module);
+        struct i2c_slave_module *const module);
 
 /** @} */
 
@@ -80,13 +80,13 @@ void _i2c_slave_interrupt_handler(uint8_t instance);
 #endif
 
 void i2c_slave_register_callback(
-		struct i2c_slave_module *const module,
-		i2c_slave_callback_t callback,
-		enum i2c_slave_callback callback_type);
+        struct i2c_slave_module *const module,
+        i2c_slave_callback_t callback,
+        enum i2c_slave_callback callback_type);
 
 void i2c_slave_unregister_callback(
-		struct i2c_slave_module *const module,
-		enum i2c_slave_callback callback_type);
+        struct i2c_slave_module *const module,
+        enum i2c_slave_callback callback_type);
 
 /**
  * \brief Enables callback
@@ -97,22 +97,22 @@ void i2c_slave_unregister_callback(
  * \param[in]      callback_type  Callback type to enable
  */
 static inline void i2c_slave_enable_callback(
-		struct i2c_slave_module *const module,
-		enum i2c_slave_callback callback_type)
+        struct i2c_slave_module *const module,
+        enum i2c_slave_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as enabled */
-	module->enabled_callback |= (1 << callback_type);
+    /* Mark callback as enabled */
+    module->enabled_callback |= (1 << callback_type);
 
-	/* Enable address callback */
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
-	if (callback_type == I2C_SLAVE_CALLBACK_READ_REQUEST ||
-			callback_type == I2C_SLAVE_CALLBACK_WRITE_REQUEST) {
-		i2c_hw->INTENSET.reg = SERCOM_I2CS_INTFLAG_AMATCH;
-	}
+    /* Enable address callback */
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    if (callback_type == I2C_SLAVE_CALLBACK_READ_REQUEST ||
+            callback_type == I2C_SLAVE_CALLBACK_WRITE_REQUEST) {
+        i2c_hw->INTENSET.reg = SERCOM_I2CS_INTFLAG_AMATCH;
+    }
 }
 
 /**
@@ -124,21 +124,21 @@ static inline void i2c_slave_enable_callback(
  * \param[in]      callback_type  Callback type to disable
  */
 static inline void i2c_slave_disable_callback(
-		struct i2c_slave_module *const module,
-		enum i2c_slave_callback callback_type)
+        struct i2c_slave_module *const module,
+        enum i2c_slave_callback callback_type)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Mark callback as disabled */
-	module->enabled_callback &= ~(1 << callback_type);
-	SercomI2cs *const i2c_hw = &(module->hw->I2CS);
-	if (callback_type == I2C_SLAVE_CALLBACK_READ_REQUEST ||
-			callback_type == I2C_SLAVE_CALLBACK_WRITE_REQUEST ||
-			module->status != STATUS_BUSY) {
-		i2c_hw->INTENCLR.reg = SERCOM_I2CS_INTFLAG_AMATCH;
-	}
+    /* Mark callback as disabled */
+    module->enabled_callback &= ~(1 << callback_type);
+    SercomI2cs *const i2c_hw = &(module->hw->I2CS);
+    if (callback_type == I2C_SLAVE_CALLBACK_READ_REQUEST ||
+            callback_type == I2C_SLAVE_CALLBACK_WRITE_REQUEST ||
+            module->status != STATUS_BUSY) {
+        i2c_hw->INTENCLR.reg = SERCOM_I2CS_INTFLAG_AMATCH;
+    }
 }
 
 /** @} */
@@ -150,12 +150,12 @@ static inline void i2c_slave_disable_callback(
 
 
 enum status_code i2c_slave_read_packet_job(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet);
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet);
 
 enum status_code i2c_slave_write_packet_job(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet);
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet);
 
 /**
  * \brief Cancels any currently ongoing operation
@@ -165,15 +165,15 @@ enum status_code i2c_slave_write_packet_job(
  * \param[in,out] module  Pointer to software module structure
  */
 static inline void i2c_slave_cancel_job(
-		struct i2c_slave_module *const module)
+        struct i2c_slave_module *const module)
 {
-	/* Sanity check. */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check. */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Set buffer to 0. */
-	module->buffer_remaining = 0;
-	module->buffer_length = 0;
+    /* Set buffer to 0. */
+    module->buffer_remaining = 0;
+    module->buffer_length = 0;
 }
 
 /**
@@ -194,14 +194,14 @@ static inline void i2c_slave_cancel_job(
  * \retval STATUS_ERR_OVERFLOW  Data from master overflows receive buffer
  */
 static inline enum status_code i2c_slave_get_job_status(
-		struct i2c_slave_module *const module)
+        struct i2c_slave_module *const module)
 {
-	/* Check sanity. */
-	Assert(module);
-	Assert(module->hw);
+    /* Check sanity. */
+    Assert(module);
+    Assert(module->hw);
 
-	/* Return current status code. */
-	return module->status;
+    /* Return current status code. */
+    return module->status;
 }
 
 /** @} */

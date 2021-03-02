@@ -1,33 +1,33 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:	    arm_bitreversal.c    
-*    
-* Description:	This file has common tables like Bitreverse, reciprocal etc which are used across different functions    
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:     V1.1.0
+*
+* Project:         CMSIS DSP Library
+* Title:        arm_bitreversal.c
+*
+* Description:    This file has common tables like Bitreverse, reciprocal etc which are used across different functions
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Initial Version  
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.10 2011/7/15
+*    Initial Version
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
 #include "arm_common_tables.h"
 
-/*    
- * @brief  In-place bit reversal function.   
- * @param[in, out] *pSrc        points to the in-place buffer of floating-point data type.   
- * @param[in]      fftSize      length of the FFT.   
- * @param[in]      bitRevFactor bit reversal modifier that supports different size FFTs with the same bit reversal table.   
- * @param[in]      *pBitRevTab  points to the bit reversal table.   
- * @return none.   
+/*
+ * @brief  In-place bit reversal function.
+ * @param[in, out] *pSrc        points to the in-place buffer of floating-point data type.
+ * @param[in]      fftSize      length of the FFT.
+ * @param[in]      bitRevFactor bit reversal modifier that supports different size FFTs with the same bit reversal table.
+ * @param[in]      *pBitRevTab  points to the bit reversal table.
+ * @return none.
  */
 
 void arm_bitreversal_f32(
@@ -93,13 +93,13 @@ void arm_bitreversal_f32(
 
 
 
-/*    
- * @brief  In-place bit reversal function.   
- * @param[in, out] *pSrc        points to the in-place buffer of Q31 data type.   
- * @param[in]      fftLen       length of the FFT.   
- * @param[in]      bitRevFactor bit reversal modifier that supports different size FFTs with the same bit reversal table   
- * @param[in]      *pBitRevTab  points to bit reversal table.   
- * @return none.   
+/*
+ * @brief  In-place bit reversal function.
+ * @param[in, out] *pSrc        points to the in-place buffer of Q31 data type.
+ * @param[in]      fftLen       length of the FFT.
+ * @param[in]      bitRevFactor bit reversal modifier that supports different size FFTs with the same bit reversal table
+ * @param[in]      *pBitRevTab  points to bit reversal table.
+ * @return none.
  */
 
 void arm_bitreversal_q31(
@@ -164,13 +164,13 @@ void arm_bitreversal_q31(
 
 
 
-/*    
-   * @brief  In-place bit reversal function.   
-   * @param[in, out] *pSrc        points to the in-place buffer of Q15 data type.   
-   * @param[in]      fftLen       length of the FFT.   
-   * @param[in]      bitRevFactor bit reversal modifier that supports different size FFTs with the same bit reversal table   
-   * @param[in]      *pBitRevTab  points to bit reversal table.   
-   * @return none.   
+/*
+   * @brief  In-place bit reversal function.
+   * @param[in, out] *pSrc        points to the in-place buffer of Q15 data type.
+   * @param[in]      fftLen       length of the FFT.
+   * @param[in]      bitRevFactor bit reversal modifier that supports different size FFTs with the same bit reversal table
+   * @param[in]      *pBitRevTab  points to bit reversal table.
+   * @return none.
  */
 
 void arm_bitreversal_q15(

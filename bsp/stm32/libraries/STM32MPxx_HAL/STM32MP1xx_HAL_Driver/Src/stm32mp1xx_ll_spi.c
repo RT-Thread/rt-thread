@@ -436,11 +436,11 @@ void LL_SPI_StructInit(LL_SPI_InitTypeDef *SPI_InitStruct)
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
-  
+
 /**
   * @}
   */

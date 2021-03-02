@@ -2981,7 +2981,7 @@ HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart)
       }
       else
       {
-        /* Check computed UsartDiv value is in allocated range 
+        /* Check computed UsartDiv value is in allocated range
            (it is forbidden to write values lower than 0x300 in the LPUART_BRR register) */
         usartdiv = (uint32_t)(UART_DIV_LPUART(pclk, (uint64_t)huart->Init.BaudRate, huart->Init.ClockPrescaler));
         if ((usartdiv >= LPUART_BRR_MIN) && (usartdiv <= LPUART_BRR_MAX))
@@ -3243,7 +3243,7 @@ HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, uint32_
         {
           /* Clear Receiver Timeout flag*/
           __HAL_UART_CLEAR_FLAG(huart, UART_CLEAR_RTOF);
-          
+
           /* Disable TXE, RXNE, PE and ERR (Frame error, noise error, overrun error) interrupts for the interrupt process */
           CLEAR_BIT(huart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE));
           CLEAR_BIT(huart->Instance->CR3, USART_CR3_EIE);
@@ -3251,10 +3251,10 @@ HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, uint32_
           huart->gState = HAL_UART_STATE_READY;
           huart->RxState = HAL_UART_STATE_READY;
           huart->ErrorCode = HAL_UART_ERROR_RTO;
-          
+
           /* Process Unlocked */
           __HAL_UNLOCK(huart);
-          
+
           return HAL_TIMEOUT;
         }
       }

@@ -15,6 +15,6 @@ struct rw_semaphore;
 #define down_write_trylock(sem) cyg_drv_mutex_trylock((cyg_drv_mutex_t *)sem)
 #define up_read(sem) cyg_drv_mutex_unlock((cyg_drv_mutex_t *)sem)
 #define up_write(sem) cyg_drv_mutex_unlock((cyg_drv_mutex_t *)sem)
-#define downgrade_write(sem) 
+#define downgrade_write(sem)
 
-#endif // __LINUX_RWSEM_H__ 
+#endif // __LINUX_RWSEM_H__

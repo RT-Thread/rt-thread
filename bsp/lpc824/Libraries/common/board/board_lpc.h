@@ -52,25 +52,25 @@ extern "C" {
  * @{
  */
 
-/** Define the frequency in Hz, of the main oscillator (from Xtal) 
+/** Define the frequency in Hz, of the main oscillator (from Xtal)
  * Note that it only takes effect if main oscillator is selected as clock source
  */
-#define MAIN_OSC_XTAL_FREQ_HZ		12000000
+#define MAIN_OSC_XTAL_FREQ_HZ        12000000
 /** Define the frequency in Hz, of the external clock input.
  * Note that it only takes effect if external clock is selected as clock source
  */
-#define EXT_CLOCK_IN_FREQ_HZ		0
+#define EXT_CLOCK_IN_FREQ_HZ        0
 
-//#define USE_IRC_AS_ROOT_CLOCK /*æ³¨é‡ŠæŽ‰ä½¿ç”¨å¤–éƒ¨æ™¶ä½“ æ‰“å¼€å®šä¹‰åˆ™æ˜¯ä½¿ç”¨å†…éƒ¨IRC*/
+//#define USE_IRC_AS_ROOT_CLOCK /*×¢ÊÍµôÊ¹ÓÃÍâ²¿¾§Ìå ´ò¿ª¶¨ÒåÔòÊÇÊ¹ÓÃÄÚ²¿IRC*/
 
 #define BOARD_LED_CNT 8
 #define BOARD_KEY_CNT 3
 
 typedef enum _enum_boardKeys
 {
-	BOARD_KEY_0 = 0,
-	BOARD_KEY_1 = 1,
-	BOARD_KEY_2 = 2,
+    BOARD_KEY_0 = 0,
+    BOARD_KEY_1 = 1,
+    BOARD_KEY_2 = 2,
 }enum_boardKeys;
 
 // define LED bits (bit <--> pin on port 0) only if in board.c file
@@ -79,24 +79,24 @@ static const uint8_t ledBits[BOARD_LED_CNT] = {7, 13, 16, 17, 19, 27, 28, 18};
 static const uint8_t cs_keyBits[BOARD_KEY_CNT] = {12, 4 , 1};
 static const uint8_t cs_keyIoConNdce[BOARD_KEY_CNT] = {IOCON_PIO12, IOCON_PIO4, IOCON_PIO1};
 #endif
- 
+
 /** Define DEBUG_ENABLE to enable IO via the DEBUGSTR, DEBUGOUT, and
     DEBUGIN macros. If not defined, DEBUG* functions will be optimized
-	out of the code at build time.
+    out of the code at build time.
  */
 #define DEBUG_ENABLE
 
 /** Define DEBUG_SEMIHOSTING along with DEBUG_ENABLE to enable IO support
     via semihosting. You may need to use a C library that supports
-	semihosting with this option.
+    semihosting with this option.
  */
 //#define DEBUG_SEMIHOSTING
 
 /** Board UART used for debug output and input using the DEBUG* macros. This
     is also the port used for Board_UARTPutChar, Board_UARTGetChar, and
-	Board_UARTPutSTR functions. Although you can setup multiple UARTs here,
-	the board code only supoprts UART0 in the Board_UART_Init() fucntion,
-	so be sure to change it there too if not using UART0.
+    Board_UARTPutSTR functions. Although you can setup multiple UARTs here,
+    the board code only supoprts UART0 in the Board_UART_Init() fucntion,
+    so be sure to change it there too if not using UART0.
  */
 #define DEBUG_UART LPC_USART1
 

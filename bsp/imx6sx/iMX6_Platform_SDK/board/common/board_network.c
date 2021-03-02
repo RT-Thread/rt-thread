@@ -102,7 +102,7 @@ void imx_enet_iomux(void)
 
 void imx_enet_phy_reset(void)
 {
-	imx_ar8031_reset();
+    imx_ar8031_reset();
 }
 ////////////////////////////////////////////////////////////////////////////////
 // EOF

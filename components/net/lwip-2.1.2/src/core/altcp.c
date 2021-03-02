@@ -158,7 +158,7 @@ altcp_free(struct altcp_pcb *conn)
 
 /**
  * @ingroup altcp
- * altcp_new_ip6: @ref altcp_new for IPv6 
+ * altcp_new_ip6: @ref altcp_new for IPv6
  */
 struct altcp_pcb *
 altcp_new_ip6(altcp_allocator_t *allocator)
@@ -166,9 +166,9 @@ altcp_new_ip6(altcp_allocator_t *allocator)
   return altcp_new_ip_type(allocator, IPADDR_TYPE_V6);
 }
 
-/** 
+/**
  * @ingroup altcp
- * altcp_new: @ref altcp_new for IPv4 
+ * altcp_new: @ref altcp_new for IPv4
  */
 struct altcp_pcb *
 altcp_new(altcp_allocator_t *allocator)

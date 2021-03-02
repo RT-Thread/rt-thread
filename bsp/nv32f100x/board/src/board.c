@@ -54,11 +54,11 @@ extern int __bss_end;
 *******************************************************************************/
 void assert_failed(uint8_t* file, uint32_t line)
 {
-	rt_kprintf("\n\r Wrong parameter value detected on\r\n");
-	rt_kprintf("       file  %s\r\n", file);
-	rt_kprintf("       line  %d\r\n", line);
+    rt_kprintf("\n\r Wrong parameter value detected on\r\n");
+    rt_kprintf("       file  %s\r\n", file);
+    rt_kprintf("       line  %d\r\n", line);
 
-	while (1) ;
+    while (1) ;
 }
 
 /**
@@ -98,7 +98,7 @@ void rt_hw_board_init()
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-    
+
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void*)NV32_SRAM_BEGIN, (void*)NV32_SRAM_END);
 #endif

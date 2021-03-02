@@ -38,7 +38,7 @@ typedef struct mips32_core_cfg
     uint16_t dcache_ways;
     uint16_t dcache_size;
 
-    uint16_t max_tlb_entries;	/* number of tlb entry */
+    uint16_t max_tlb_entries;    /* number of tlb entry */
 } mips32_core_cfg_t;
 
 extern mips32_core_cfg_t g_mips_core;

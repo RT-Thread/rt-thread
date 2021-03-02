@@ -58,42 +58,42 @@
  * \retval STATUS_ERR_INVALID_OPTION  The requested BOD level was outside the acceptable range
  */
 enum status_code bod33_set_config(
-		struct bod33_config *const conf)
+        struct bod33_config *const conf)
 {
-	/* Sanity check arguments */
-	Assert(conf);
+    /* Sanity check arguments */
+    Assert(conf);
 
-	uint32_t temp = 0;
+    uint32_t temp = 0;
 
-	/* Check if module is enabled. */
-	if (SUPC->BOD33.reg & SUPC_BOD33_ENABLE) {
-		SUPC->BOD33.reg &= ~SUPC_BOD33_ENABLE;
-	}
+    /* Check if module is enabled. */
+    if (SUPC->BOD33.reg & SUPC_BOD33_ENABLE) {
+        SUPC->BOD33.reg &= ~SUPC_BOD33_ENABLE;
+    }
 
-	/* Convert BOD prescaler, trigger action and mode to a bitmask */
-	temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action | (uint32_t)conf->monitor |
-			(uint32_t)conf->mode_in_active | (uint32_t)conf->mode_in_standby;
+    /* Convert BOD prescaler, trigger action and mode to a bitmask */
+    temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action | (uint32_t)conf->monitor |
+            (uint32_t)conf->mode_in_active | (uint32_t)conf->mode_in_standby;
 
-	if (conf->hysteresis == true) {
-		temp |= SUPC_BOD33_HYST;
-	}
+    if (conf->hysteresis == true) {
+        temp |= SUPC_BOD33_HYST;
+    }
 
-	if (conf->run_in_standby == true) {
-		temp |= SUPC_BOD33_RUNSTDBY;
-	}
+    if (conf->run_in_standby == true) {
+        temp |= SUPC_BOD33_RUNSTDBY;
+    }
 
-	if (conf->run_in_backup == true) {
-		temp |= SUPC_BOD33_RUNBKUP;
-	}
+    if (conf->run_in_backup == true) {
+        temp |= SUPC_BOD33_RUNBKUP;
+    }
 
-	if (conf->level > 0x3F || conf->backuplevel > 0x3F) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (conf->level > 0x3F || conf->backuplevel > 0x3F) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	SUPC->BOD33.reg = SUPC_BOD33_LEVEL(conf->level) |
-			SUPC_BOD33_BKUPLEVEL(conf->backuplevel) | temp;
+    SUPC->BOD33.reg = SUPC_BOD33_LEVEL(conf->level) |
+            SUPC_BOD33_BKUPLEVEL(conf->backuplevel) | temp;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -109,35 +109,35 @@ enum status_code bod33_set_config(
  * \retval STATUS_ERR_INVALID_OPTION  The requested BOD level was outside the acceptable range
  */
 enum status_code bod12_set_config(
-		struct bod12_config *const conf)
+        struct bod12_config *const conf)
 {
-	/* Sanity check arguments */
-	Assert(conf);
+    /* Sanity check arguments */
+    Assert(conf);
 
-	uint32_t temp = 0;
+    uint32_t temp = 0;
 
-	/* Check if module is enabled. */
-	if (SUPC->BOD12.reg & SUPC_BOD12_ENABLE) {
-		SUPC->BOD12.reg &= ~SUPC_BOD12_ENABLE;
-	}
+    /* Check if module is enabled. */
+    if (SUPC->BOD12.reg & SUPC_BOD12_ENABLE) {
+        SUPC->BOD12.reg &= ~SUPC_BOD12_ENABLE;
+    }
 
 /* Convert BOD prescaler, trigger action and mode to a bitmask */
-	temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action |
-			(uint32_t)conf->mode_in_active | (uint32_t)conf->mode_in_standby;
+    temp |= (uint32_t)conf->prescaler | (uint32_t)conf->action |
+            (uint32_t)conf->mode_in_active | (uint32_t)conf->mode_in_standby;
 
-	if (conf->hysteresis == true) {
-		temp |= SUPC_BOD12_HYST;
-	}
+    if (conf->hysteresis == true) {
+        temp |= SUPC_BOD12_HYST;
+    }
 
-	if (conf->run_in_standby == true) {
-		temp |= SUPC_BOD12_RUNSTDBY;
-	}
+    if (conf->run_in_standby == true) {
+        temp |= SUPC_BOD12_RUNSTDBY;
+    }
 
-	if (conf->level > 0x3F) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (conf->level > 0x3F) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	SUPC->BOD12.reg = SUPC_BOD12_LEVEL(conf->level) | temp;
+    SUPC->BOD12.reg = SUPC_BOD12_LEVEL(conf->level) | temp;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

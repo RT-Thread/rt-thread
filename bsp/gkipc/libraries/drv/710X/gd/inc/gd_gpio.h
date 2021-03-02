@@ -379,7 +379,7 @@ typedef struct
     ** either #GD_INT_LOW_PRIORITY or #GD_INT_MID_PRIORITY.
     */
     S8              irqPriority;
-    U8              phyType;	
+    U8              phyType;
     U8              Reserve;
     U16             xrefTableCount;
     GD_GPIO_XREF_S* xrefTable;

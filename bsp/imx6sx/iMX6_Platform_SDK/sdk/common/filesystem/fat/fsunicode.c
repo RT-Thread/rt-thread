@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/FSUnicode.c $                                        
- $Revision: 10 $                                       
- $Date: 9/13/03 7:07p $                                           
+ $Archive: /Fatfs/FileSystem/FSUnicode.c $
+ $Revision: 10 $
+ $Date: 9/13/03 7:07p $
  Description: FSUnicode.c
  Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -45,7 +45,7 @@
 #include "fat_internal.h"
 
 /*----------------------------------------------------------------------------
-		Global Declarations
+        Global Declarations
 ----------------------------------------------------------------------------*/
 const uint8_t Long_NameRes_Ch[10] = { 0x22, 0x2A, 0x2F, 0x3A, 0x3C, 0x3E, 0x3F, 0x5C, 0x7C };
 const uint8_t Short_NameRes_Ch[6] = { 0x2B, 0x2C, 0x3B, 0x3D, 0x5B, 0x5D };
@@ -56,12 +56,12 @@ const uint8_t Short_NameRes_Ch[6] = { 0x2B, 0x2C, 0x3B, 0x3D, 0x5B, 0x5D };
    FunctionType:   Reentrant
 
    Inputs:         1) Pointer to file name
-				   2) Pointer to buffer
-				   3) Index   (starting point for string)
+                   2) Pointer to buffer
+                   3) Index   (starting point for string)
                    4) Length  (Ending point for string)
 
   Outputs:         Nil
-     
+
   Description:     Converts the given DBCS string to kUTF16Encoding.
 <
 ----------------------------------------------------------------------------*/
@@ -90,7 +90,7 @@ void DBCStoUnicode(uint8_t * filepath, uint8_t * buf, int32_t index, int32_t len
                    2) Pointer to Character
                    3) Length  (Ending point for string)
                    4) Index   (strating point for string)
-   
+
    Outputs:        None
 
    Description:    Converts the given UTF16 string to OEM.
@@ -123,13 +123,13 @@ void UnicodeToOEM(uint8_t * file, uint8_t * shortname, int32_t length, int32_t i
    FunctionType:   Reentrant
 
    Inputs:         1) Pointer to filename
-                   2) Pointer to string 
+                   2) Pointer to string
                    3) Length
                    4) Index
-                   
+
    Outputs:        Nil
-      
-   Description:    This function converts each character of the given string in two 
+
+   Description:    This function converts each character of the given string in two
                    byte character and stores it in the second string.
 <
 ----------------------------------------------------------------------------*/

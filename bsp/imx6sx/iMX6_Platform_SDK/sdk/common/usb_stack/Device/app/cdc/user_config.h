@@ -21,22 +21,22 @@
 #include "derivative.h"
 
 #if (defined MCU_MK70F12) || (defined __MCF52277_H__)
-	#define  HIGH_SPEED_DEVICE	(0)
+    #define  HIGH_SPEED_DEVICE    (0)
 #else
-	#define  HIGH_SPEED_DEVICE	(0)
+    #define  HIGH_SPEED_DEVICE    (0)
 #endif
 
 #if (defined MCU_MK20D7) || (defined MCU_MK40D7)
-	#define MCGOUTCLK_72_MHZ
+    #define MCGOUTCLK_72_MHZ
 #endif
 
 #if ((defined __MK_xxx_H__)||(defined MCU_mcf51jf128))
-    #define  KEY_PRESS_SIM_TMR_INTERVAL		(1000)        /* 2s between simulated key press events */
+    #define  KEY_PRESS_SIM_TMR_INTERVAL        (1000)        /* 2s between simulated key press events */
 #else
-	#ifdef __MCF52277_H__
-		#define  BUTTON_PRESS_SIMULATION	(1)
-		#define  KEY_PRESS_SIM_TMR_INTERVAL	(2000)        /* 2s between simulated key press events */
-	#endif
+    #ifdef __MCF52277_H__
+        #define  BUTTON_PRESS_SIMULATION    (1)
+        #define  KEY_PRESS_SIM_TMR_INTERVAL    (2000)        /* 2s between simulated key press events */
+    #endif
 #endif
 /*
    Below two MACROS are required for Virtual COM Loopback
@@ -46,7 +46,7 @@
 #define LONG_RECEIVE_TRANSACTION    /* support to receive large data pkts */
 
 /* User Defined MACRO to set number of Timer Objects */
-#define MAX_TIMER_OBJECTS		   5
+#define MAX_TIMER_OBJECTS           5
 
 #if MAX_TIMER_OBJECTS
 /* When Enabled Timer Callback is invoked with an argument */

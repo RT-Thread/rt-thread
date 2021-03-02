@@ -49,9 +49,9 @@
 #define HW_GPT_INSTANCE_COUNT (2) //!< Number of instances of the GPT module.
 #define REGS_GPT1_BASE (0x02098000) //!< Base address for GPT.
 #define REGS_GPT2_BASE (0x20E8000U) /*!< Base address for GPT2. */
-#define REGS_GPT_BASE	REGS_GPT1_BASE
-#define IMX_INT_GPT		IMX_INT_GPT1
-#define GPT_BASE_ADDR	REGS_GPT1_BASE
+#define REGS_GPT_BASE    REGS_GPT1_BASE
+#define IMX_INT_GPT        IMX_INT_GPT1
+#define GPT_BASE_ADDR    REGS_GPT1_BASE
 #endif
 //@}
 

@@ -56,56 +56,56 @@ static uint32_t ticksPerUs;
 /* Initialize stopwatch */
 void StopWatch_Init(void)
 {
-	Chip_MRT_Init();
-	Chip_MRT_SetMode(LPC_MRT_CH1, MRT_MODE_REPEAT);
-	Chip_MRT_SetInterval(LPC_MRT_CH1, 0x7ffffff | MRT_INTVAL_LOAD);
-	Chip_MRT_GetEnabled(LPC_MRT_CH1);
+    Chip_MRT_Init();
+    Chip_MRT_SetMode(LPC_MRT_CH1, MRT_MODE_REPEAT);
+    Chip_MRT_SetInterval(LPC_MRT_CH1, 0x7ffffff | MRT_INTVAL_LOAD);
+    Chip_MRT_GetEnabled(LPC_MRT_CH1);
 
-	/* Pre-compute tick rate. */
-	ticksPerSecond = Chip_Clock_GetSystemClockRate();
-	ticksPerMs = ticksPerSecond / 1000;
-	ticksPerUs = ticksPerSecond / 1000000;
+    /* Pre-compute tick rate. */
+    ticksPerSecond = Chip_Clock_GetSystemClockRate();
+    ticksPerMs = ticksPerSecond / 1000;
+    ticksPerUs = ticksPerSecond / 1000000;
 }
 /* reset stopwatch */
 void StopWatch_Reset(void)
 {
-	Chip_MRT_SetInterval(LPC_MRT_CH1, 0x7ffffff | MRT_INTVAL_LOAD);
+    Chip_MRT_SetInterval(LPC_MRT_CH1, 0x7ffffff | MRT_INTVAL_LOAD);
 }
 
 
 /* Start a stopwatch */
 uint32_t StopWatch_Start(void)
 {
-	/* Return the current timer count. */
-	return 0x7ffffff - Chip_MRT_GetTimer(LPC_MRT_CH1);
+    /* Return the current timer count. */
+    return 0x7ffffff - Chip_MRT_GetTimer(LPC_MRT_CH1);
 }
 
 /* Returns number of ticks per second of the stopwatch timer */
 uint32_t StopWatch_TicksPerSecond(void)
 {
-	return ticksPerSecond;
+    return ticksPerSecond;
 }
 
 /* Converts from stopwatch ticks to mS. */
 uint32_t StopWatch_TicksToMs(uint32_t ticks)
 {
-	return ticks / ticksPerMs;
+    return ticks / ticksPerMs;
 }
 
 /* Converts from stopwatch ticks to uS. */
 uint32_t StopWatch_TicksToUs(uint32_t ticks)
 {
-	return ticks / ticksPerUs;
+    return ticks / ticksPerUs;
 }
 
 /* Converts from mS to stopwatch ticks. */
 uint32_t StopWatch_MsToTicks(uint32_t mS)
 {
-	return mS * ticksPerMs;
+    return mS * ticksPerMs;
 }
 
 /* Converts from uS to stopwatch ticks. */
 uint32_t StopWatch_UsToTicks(uint32_t uS)
 {
-	return uS * ticksPerUs;
+    return uS * ticksPerUs;
 }

@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62Nxx
-* File Name 	: Interrupt_ADC_10.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for the ADC units
-* Customer		: 
-* Model			: 
-* Order			: 
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name    : Interrupt program for RX62Nxx
+* File Name     : Interrupt_ADC_10.c
+* Version        : 1.02
+* Contents        : Interrupt handlers for the ADC units
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_adc_10.h"
@@ -27,24 +27,24 @@
 /*""FUNC COMMENT""***************************************************
 * Module outline: ADC interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_ADCn(void)
+* Declaration    : void Interrupt_ADCn(void)
 *-------------------------------------------------------------------
-* Function		: Interrupt processing function for ADC unit n
+* Function        : Interrupt processing function for ADC unit n
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: ADC_callback_func[n]()
+* Use function    : ADC_callback_func[n]()
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_AD0_ADI0

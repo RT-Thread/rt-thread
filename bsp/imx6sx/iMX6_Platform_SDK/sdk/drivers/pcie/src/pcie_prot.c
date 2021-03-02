@@ -39,8 +39,8 @@
 #include "pcie/pcie_common.h"
 #include "pcie/pcie_prot.h"
 
-#define FIELD_OFFSET(type, fld)	((uint32_t)(&(((type*)0)->fld)))
-#define FIELD_ADDRESS(var, type, fld)	((uint32_t)(&var + FIELD_OFFSET))
+#define FIELD_OFFSET(type, fld)    ((uint32_t)(&(((type*)0)->fld)))
+#define FIELD_ADDRESS(var, type, fld)    ((uint32_t)(&var + FIELD_OFFSET))
 
 static int pcie_dump_cfg_hdr_type0(pcie_cfg_hdr_type0_p header)
 {

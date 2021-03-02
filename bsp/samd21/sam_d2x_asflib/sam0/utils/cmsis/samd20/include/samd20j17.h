@@ -220,7 +220,7 @@ void PTC_Handler                 ( void );
  * \brief Configuration of the Cortex-M0+ Processor and Core Peripherals
  */
 
-#define LITTLE_ENDIAN          1        
+#define LITTLE_ENDIAN          1
 #define __CM0PLUS_REV          1         /*!< Core revision r0p1 */
 #define __MPU_PRESENT          0         /*!< MPU present or not */
 #define __NVIC_PRIO_BITS       2         /*!< Number of bits used for Priority Levels */

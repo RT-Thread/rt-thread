@@ -49,121 +49,121 @@ extern "C" {
  */
 
 /**
- * @brief	Setup and initialize hardware prior to call to main()
- * @return	None
- * @note	Board_SystemInit() is called prior to the application and sets up system
+ * @brief    Setup and initialize hardware prior to call to main()
+ * @return    None
+ * @note    Board_SystemInit() is called prior to the application and sets up system
  * clocking, memory, and any resources needed prior to the application
  * starting.
  */
 void Board_SystemInit(void);
 
 /**
- * @brief	Setup pin multiplexer per board schematics
- * @return	None
- * @note	Board_SetupMuxing() should be called from SystemInit() prior to application
+ * @brief    Setup pin multiplexer per board schematics
+ * @return    None
+ * @note    Board_SetupMuxing() should be called from SystemInit() prior to application
  * main() is called. So that the PINs are set in proper state.
  */
 void Board_SetupMuxing(void);
 
 /**
- * @brief	Setup system clocking
- * @return	None
- * @note	This sets up board clocking.
+ * @brief    Setup system clocking
+ * @return    None
+ * @note    This sets up board clocking.
  */
 void Board_SetupClocking(void);
 
 /**
- * @brief	Setup external system memory
- * @return	None
- * @note	This function is typically called after pin mux setup and clock setup and
+ * @brief    Setup external system memory
+ * @return    None
+ * @note    This function is typically called after pin mux setup and clock setup and
  * sets up any external memory needed by the system (DRAM, SRAM, etc.). Not all
  * boards need this function.
  */
 void Board_SetupExtMemory(void);
 
 /**
- * @brief	Set up and initialize all required blocks and functions related to the board hardware.
- * @return	None
+ * @brief    Set up and initialize all required blocks and functions related to the board hardware.
+ * @return    None
  */
 void Board_Init(void);
 
 /**
- * @brief	Initializes board UART for output, required for printf redirection
- * @return	None
+ * @brief    Initializes board UART for output, required for printf redirection
+ * @return    None
  */
 void Board_Debug_Init(void);
 
 /**
- * @brief	Sends a single character on the UART, required for printf redirection
- * @param	ch	: character to send
- * @return	None
+ * @brief    Sends a single character on the UART, required for printf redirection
+ * @param    ch    : character to send
+ * @return    None
  */
 void Board_UARTPutChar(char ch);
 
 /**
- * @brief	Sends a single character on the UART, automatic process '\n' -> '\r\n'
- * @param	ch	: character to send
- * @return	None
+ * @brief    Sends a single character on the UART, automatic process '\n' -> '\r\n'
+ * @param    ch    : character to send
+ * @return    None
  */
 void Board_UARTPutTextChar(char ch);
 
 
 /**
- * @brief	Classic implementation of itoa -- integer to ASCII
- * @param	value	: value to convert
- * @param	result	: result string
- * @param	base	: output radix
- * @return	result string or NULL
+ * @brief    Classic implementation of itoa -- integer to ASCII
+ * @param    value    : value to convert
+ * @param    result    : result string
+ * @param    base    : output radix
+ * @return    result string or NULL
  */
 char *Board_itoa(int value, char *result, int base);
 
 /**
- * @brief	Get a single character from the UART, required for scanf input
- * @return	EOF if not character was received, or character value
+ * @brief    Get a single character from the UART, required for scanf input
+ * @return    EOF if not character was received, or character value
  */
 int Board_UARTGetChar(void);
 
 /**
- * @brief	Prints a string to the UART
- * @param	str	: Terminated string to output
- * @return	None
+ * @brief    Prints a string to the UART
+ * @param    str    : Terminated string to output
+ * @return    None
  */
 void Board_UARTPutSTR(const char *str);
 
 /**
- * @brief	Get if a key is down
- * @param	keyIndex : The index of the key to detect
- * @return	1 = key is down , 0 = key is up
+ * @brief    Get if a key is down
+ * @param    keyIndex : The index of the key to detect
+ * @return    1 = key is down , 0 = key is up
  */
 uint32_t Board_Key_GetKeyDown(uint32_t keyIndex);
 
 /**
- * @brief	Sets the state of a board LED to on or off
- * @param	LEDNumber	: LED number to set state for
- * @param	State		: true for on, false for off
- * @return	None
+ * @brief    Sets the state of a board LED to on or off
+ * @param    LEDNumber    : LED number to set state for
+ * @param    State        : true for on, false for off
+ * @return    None
  */
 void Board_LED_Set(uint8_t LEDNumber, bool State);
 
 /**
- * @brief	Returns the current state of a board LED
- * @param	LEDNumber	: LED number to set state for
- * @return	true if the LED is on, otherwise false
+ * @brief    Returns the current state of a board LED
+ * @param    LEDNumber    : LED number to set state for
+ * @return    true if the LED is on, otherwise false
  */
 bool Board_LED_Test(uint8_t LEDNumber);
 
 /**
- * @brief	Toggles the current state of a board LED
- * @param	LEDNumber	: LED number to change state for
- * @return	None
+ * @brief    Toggles the current state of a board LED
+ * @param    LEDNumber    : LED number to change state for
+ * @return    None
  */
 void Board_LED_Toggle(uint8_t LEDNumber);
 
 /**
- * @brief	Turn on Board LCD Backlight
- * @param	Intensity	: Backlight intensity (0 = off, >=1 = on)
- * @return	None
- * @note	On boards where a GPIO is used to control backlight on/off state, a '0' or '1'
+ * @brief    Turn on Board LCD Backlight
+ * @param    Intensity    : Backlight intensity (0 = off, >=1 = on)
+ * @return    None
+ * @note    On boards where a GPIO is used to control backlight on/off state, a '0' or '1'
  * value will turn off or on the backlight. On some boards, a non-0 value will
  * control backlight intensity via a PWN. For PWM systems, the intensity value
  * is a percentage value between 0 and 100%.

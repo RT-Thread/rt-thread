@@ -125,7 +125,7 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
     rt_hw_cpu_shutdown();
 }
 
-#define GIC_ACK_INTID_MASK					0x000003ff
+#define GIC_ACK_INTID_MASK                    0x000003ff
 
 void rt_hw_trap_irq()
 {

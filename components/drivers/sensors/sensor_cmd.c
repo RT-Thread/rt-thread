@@ -92,7 +92,7 @@ static void sensor_fifo_rx_entry(void *parameter)
     struct rt_sensor_data *data = RT_NULL;
     struct rt_sensor_info info;
     rt_size_t res, i;
-    
+
     rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
 
     data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
@@ -126,7 +126,7 @@ static void sensor_fifo(int argc, char **argv)
         return;
     }
     sensor = (rt_sensor_t)dev;
-    
+
     if (rt_device_open(dev, RT_DEVICE_FLAG_FIFO_RX) != RT_EOK)
     {
         LOG_E("open device failed!");

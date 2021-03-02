@@ -33,7 +33,7 @@
 
 /****************************************************************************
  * #define section
- *	add constant #define here if any
+ *    add constant #define here if any
  ***************************************************************************/
 #define MAX_CHANNEL_NO (2)
 #define ADC_INIT_ALREADY (0x33)
@@ -43,7 +43,7 @@
 
 /****************************************************************************
  * ADT section
- *	add Abstract Data Type definition here
+ *    add Abstract Data Type definition here
  ***************************************************************************/
 
 struct wrap_adc_obj
@@ -70,7 +70,7 @@ typedef struct
 
 /****************************************************************************
  *  section
- *	add function prototype here if any
+ *    add function prototype here if any
  ***************************************************************************/
 void rt_hw_adc_init(void);
 #endif

@@ -35,9 +35,9 @@
 uint32_t ROM_SPIS_GetMemSize(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIS_API->GetMemSize();
+    return ROMAPI_SPIS_API->GetMemSize();
 #else
-	return spis_api.GetMemSize();
+    return spis_api.GetMemSize();
 #endif
 }
 
@@ -45,45 +45,45 @@ uint32_t ROM_SPIS_GetMemSize(void)
 ROM_SPIS_HANDLE_T ROM_SPIS_Init(void *mem, ROM_SPIS_INIT_T *pInit)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIS_API->Init(mem, pInit);
+    return ROMAPI_SPIS_API->Init(mem, pInit);
 #else
-	return spis_api.Init(mem, pInit);
+    return spis_api.Init(mem, pInit);
 #endif
 }
 
 void ROM_SPIS_RegisterCallback(ROM_SPIS_HANDLE_T pHandle, ROM_SPIS_CALLBACK_T cbIndex, void *pCB)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_SPIS_API->RegisterCallback(pHandle, cbIndex, pCB);
+    ROMAPI_SPIS_API->RegisterCallback(pHandle, cbIndex, pCB);
 #else
-	spis_api.RegisterCallback(pHandle, cbIndex, pCB);
+    spis_api.RegisterCallback(pHandle, cbIndex, pCB);
 #endif
 }
 
 ErrorCode_t ROM_SPIS_SetupSlave(ROM_SPIS_HANDLE_T pHandle, ROM_SPIS_SLAVE_T *pSlaveSetup)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIS_API->SetupSlave(pHandle, pSlaveSetup);
+    return ROMAPI_SPIS_API->SetupSlave(pHandle, pSlaveSetup);
 #else
-	return spis_api.SetupSlave(pHandle, pSlaveSetup);
+    return spis_api.SetupSlave(pHandle, pSlaveSetup);
 #endif
 }
 
 ErrorCode_t ROM_SPIS_Transfer(ROM_SPIS_HANDLE_T pHandle, ROM_SPIS_XFER_T *pXfer)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIS_API->Transfer(pHandle, pXfer);
+    return ROMAPI_SPIS_API->Transfer(pHandle, pXfer);
 #else
-	return spis_api.Transfer(pHandle, pXfer);
+    return spis_api.Transfer(pHandle, pXfer);
 #endif
 }
 
 void ROM_SPIS_TransferHandler(ROM_SPIS_HANDLE_T pHandle)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_SPIS_API->TransferHandler(pHandle);
+    ROMAPI_SPIS_API->TransferHandler(pHandle);
 #else
-	spis_api.TransferHandler(pHandle);
+    spis_api.TransferHandler(pHandle);
 #endif
 }
 
@@ -91,8 +91,8 @@ void ROM_SPIS_TransferHandler(ROM_SPIS_HANDLE_T pHandle)
 uint16_t ROM_SPIS_GetDriverVersion(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIS_API->GetDriverVersion();
+    return ROMAPI_SPIS_API->GetDriverVersion();
 #else
-	return spis_api.GetDriverVersion();
+    return spis_api.GetDriverVersion();
 #endif
 }

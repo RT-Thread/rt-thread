@@ -1,34 +1,34 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šé™æ€ä¿¡å·é‡
+ * ³ÌĞòÇåµ¥£º¾²Ì¬ĞÅºÅÁ¿
  *
- * è¿™ä¸ªä¾‹å­ä¸­å°†åˆ›å»ºä¸€ä¸ªé™æ€ä¿¡å·é‡ï¼ˆåˆå§‹å€¼ä¸º0 ï¼‰åŠä¸€ä¸ªé™æ€çº¿ç¨‹ï¼Œåœ¨è¿™ä¸ªé™æ€çº¿ç¨‹ä¸­
- * å°†è¯•å›¾é‡‡ç”¨è¶…æ—¶æ–¹å¼å»æŒæœ‰ä¿¡å·é‡ï¼Œåº”è¯¥è¶…æ—¶è¿”å›ã€‚ç„¶åè¿™ä¸ªçº¿ç¨‹é‡Šæ”¾ä¸€æ¬¡ä¿¡å·é‡ï¼Œå¹¶
- * åœ¨åé¢ç»§ç»­é‡‡ç”¨æ°¸ä¹…ç­‰å¾…æ–¹å¼å»æŒæœ‰ä¿¡å·é‡ï¼Œ æˆåŠŸè·å¾—ä¿¡å·é‡åè¿”å›ã€‚
+ * Õâ¸öÀı×ÓÖĞ½«´´½¨Ò»¸ö¾²Ì¬ĞÅºÅÁ¿£¨³õÊ¼ÖµÎª0 £©¼°Ò»¸ö¾²Ì¬Ïß³Ì£¬ÔÚÕâ¸ö¾²Ì¬Ïß³ÌÖĞ
+ * ½«ÊÔÍ¼²ÉÓÃ³¬Ê±·½Ê½È¥³ÖÓĞĞÅºÅÁ¿£¬Ó¦¸Ã³¬Ê±·µ»Ø¡£È»ºóÕâ¸öÏß³ÌÊÍ·ÅÒ»´ÎĞÅºÅÁ¿£¬²¢
+ * ÔÚºóÃæ¼ÌĞø²ÉÓÃÓÀ¾ÃµÈ´ı·½Ê½È¥³ÖÓĞĞÅºÅÁ¿£¬ ³É¹¦»ñµÃĞÅºÅÁ¿ºó·µ»Ø¡£
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* çº¿ç¨‹æ§åˆ¶å—åŠæ ˆ */
+/* Ïß³Ì¿ØÖÆ¿é¼°Õ» */
 static struct rt_thread thread;
 static rt_uint8_t thread_stack[THREAD_STACK_SIZE];
-/* ä¿¡å·é‡æ§åˆ¶å— */
+/* ĞÅºÅÁ¿¿ØÖÆ¿é */
 static struct rt_semaphore sem;
 
-/* çº¿ç¨‹å…¥å£ */
+/* Ïß³ÌÈë¿Ú */
 static void thread_entry(void* parameter)
 {
     rt_err_t result;
     rt_tick_t tick;
 
-    /* è·å¾—å½“å‰çš„OS Tick */
+    /* »ñµÃµ±Ç°µÄOS Tick */
     tick = rt_tick_get();
 
-    /* è¯•å›¾æŒæœ‰ä¿¡å·é‡ï¼Œæœ€å¤§ç­‰å¾…10ä¸ªOS Tickåè¿”å› */
+    /* ÊÔÍ¼³ÖÓĞĞÅºÅÁ¿£¬×î´óµÈ´ı10¸öOS Tickºó·µ»Ø */
     result = rt_sem_take(&sem, 10);
     if (result == -RT_ETIMEOUT)
     {
         rt_tick_t new_tick = rt_tick_get();
-        /* å¯ä»¥æœ‰ä¸¤ä¸ª tick çš„è¯¯å·® */
+        /* ¿ÉÒÔÓĞÁ½¸ö tick µÄÎó²î */
         if (new_tick - tick >= 12)
         {
             rt_kprintf("tick error to large: expect: 10, get %d\n",
@@ -42,28 +42,28 @@ static void thread_entry(void* parameter)
     }
     else
     {
-        /* å› ä¸ºæ²¡æœ‰å…¶ä»–åœ°æ–¹æ˜¯å¦ä¿¡å·é‡ï¼Œæ‰€ä»¥ä¸åº”è¯¥æˆåŠŸæŒæœ‰ä¿¡å·é‡ï¼Œå¦åˆ™æµ‹è¯•å¤±è´¥ */
+        /* ÒòÎªÃ»ÓĞÆäËûµØ·½ÊÇ·ñĞÅºÅÁ¿£¬ËùÒÔ²»Ó¦¸Ã³É¹¦³ÖÓĞĞÅºÅÁ¿£¬·ñÔò²âÊÔÊ§°Ü */
         tc_done(TC_STAT_FAILED);
         rt_sem_detach(&sem);
         return;
     }
 
-    /* é‡Šæ”¾ä¸€æ¬¡ä¿¡å·é‡ */
+    /* ÊÍ·ÅÒ»´ÎĞÅºÅÁ¿ */
     rt_sem_release(&sem);
 
-    /* æ°¸ä¹…ç­‰å¾…æ–¹å¼æŒæœ‰ä¿¡å·é‡ */
+    /* ÓÀ¾ÃµÈ´ı·½Ê½³ÖÓĞĞÅºÅÁ¿ */
     result = rt_sem_take(&sem, RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
-        /* ä¸æˆåŠŸåˆ™æµ‹è¯•å¤±è´¥ */
+        /* ²»³É¹¦Ôò²âÊÔÊ§°Ü */
         tc_done(TC_STAT_FAILED);
         rt_sem_detach(&sem);
         return;
     }
 
-    /* æµ‹è¯•é€šè¿‡ */
+    /* ²âÊÔÍ¨¹ı */
     tc_done(TC_STAT_PASSED);
-    /* è„±ç¦»ä¿¡å·é‡å¯¹è±¡ */
+    /* ÍÑÀëĞÅºÅÁ¿¶ÔÏó */
     rt_sem_detach(&sem);
 }
 
@@ -71,7 +71,7 @@ int semaphore_static_init(void)
 {
     rt_err_t result;
 
-    /* åˆå§‹åŒ–ä¿¡å·é‡ï¼Œåˆå§‹å€¼æ˜¯0 */
+    /* ³õÊ¼»¯ĞÅºÅÁ¿£¬³õÊ¼ÖµÊÇ0 */
     result = rt_sem_init(&sem, "sem", 0, RT_IPC_FLAG_FIFO);
     if (result != RT_EOK)
     {
@@ -79,12 +79,12 @@ int semaphore_static_init(void)
         return 0;
     }
 
-    /* åˆå§‹åŒ–çº¿ç¨‹1 */
-    result = rt_thread_init(&thread, "thread", /* çº¿ç¨‹åï¼šthread */
-                            thread_entry, RT_NULL, /* çº¿ç¨‹çš„å…¥å£æ˜¯thread_entryï¼Œå…¥å£å‚æ•°æ˜¯RT_NULL*/
-                            &thread_stack[0], sizeof(thread_stack), /* çº¿ç¨‹æ ˆæ˜¯thread_stack */
+    /* ³õÊ¼»¯Ïß³Ì1 */
+    result = rt_thread_init(&thread, "thread", /* Ïß³ÌÃû£ºthread */
+                            thread_entry, RT_NULL, /* Ïß³ÌµÄÈë¿ÚÊÇthread_entry£¬Èë¿Ú²ÎÊıÊÇRT_NULL*/
+                            &thread_stack[0], sizeof(thread_stack), /* Ïß³ÌÕ»ÊÇthread_stack */
                             THREAD_PRIORITY, 10);
-    if (result == RT_EOK) /* å¦‚æœè¿”å›æ­£ç¡®ï¼Œå¯åŠ¨çº¿ç¨‹1 */
+    if (result == RT_EOK) /* Èç¹û·µ»ØÕıÈ·£¬Æô¶¯Ïß³Ì1 */
         rt_thread_startup(&thread);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
@@ -95,38 +95,38 @@ int semaphore_static_init(void)
 #ifdef RT_USING_TC
 static void _tc_cleanup(void)
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* æ‰§è¡Œçº¿ç¨‹è„±ç¦» */
+    /* Ö´ĞĞÏß³ÌÍÑÀë */
     if (thread.stat != RT_THREAD_CLOSE)
     {
         rt_thread_detach(&thread);
 
-        /* æ‰§è¡Œä¿¡å·é‡å¯¹è±¡è„±ç¦» */
+        /* Ö´ĞĞĞÅºÅÁ¿¶ÔÏóÍÑÀë */
         rt_sem_detach(&sem);
     }
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_semaphore_static(void)
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     semaphore_static_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_semaphore_static, a static semaphore example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init(void)
 {
     semaphore_static_init();

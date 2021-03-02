@@ -14,7 +14,7 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -34,15 +34,15 @@
 
 /** @addtogroup COMP
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup COMP_Exported_Types COMP Exported Types
   * @{
   */
-    
-/** 
-  * @brief  COMP Init structure definition  
+
+/**
+  * @brief  COMP Init structure definition
   */
 typedef struct
 {
@@ -63,7 +63,7 @@ typedef struct
                                        to adjust the speed/consumption.
                                        This parameter can be a value of @ref COMP_Mode
                                        Note: This feature is available on COMP2 only. If COMP1 is selected, this parameter is discarded. */
-                                         
+
   uint32_t WindowMode;            /*!< Selects the window mode of the 2 comparators.
                                        If enabled, non-inverting inputs of the 2 comparators are connected together and are using inputs of COMP2 only (COMP1 non-inverting input is no more accessible, even from ADC channel VCOMP).
                                        This parameter can be a value of @ref COMP_WindowMode
@@ -77,12 +77,12 @@ typedef struct
                                        This parameter can be a value of @ref COMP_NonInvertingInputPull
                                        Note: To avoid extra power consumption, only one resistor should be enabled at a time.
                                        Note: This feature is available on COMP1 only. If COMP2 is selected, this parameter is discarded. */
-  
+
 }COMP_InitTypeDef;
 
-/** 
-  * @brief  HAL State structures definition  
-  */ 
+/**
+  * @brief  HAL State structures definition
+  */
 typedef enum
 {
   HAL_COMP_STATE_RESET             = 0x00,    /*!< COMP not yet initialized or disabled             */
@@ -92,9 +92,9 @@ typedef enum
   HAL_COMP_STATE_BUSY_LOCKED       = 0x12     /*!< COMP is running and the configuration is locked  */
 }HAL_COMP_StateTypeDef;
 
-/** 
-  * @brief  COMP Handle Structure definition  
-  */ 
+/**
+  * @brief  COMP Handle Structure definition
+  */
 typedef struct __COMP_HandleTypeDef
 {
   COMP_TypeDef       *Instance;       /*!< Register base address    */
@@ -169,7 +169,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                 ((OUTPUT) == COMP_OUTPUT_NONE)           )
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup COMP_InvertingInput COMP InvertingInput
   * @{
@@ -222,7 +222,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 
 /** @defgroup COMP_OutputLevel COMP OutputLevel
   * @{
-  */ 
+  */
 /* Comparator output is low when the non-inverting input is at a lower        */
 /* voltage than the inverting input.                                          */
 #define COMP_OUTPUTLEVEL_LOW                   (0x00000000U)
@@ -232,9 +232,9 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 #define COMP_OUTPUTLEVEL_HIGH                  (0x00000001U)
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup COMP_TriggerMode COMP TriggerMode 
+/** @defgroup COMP_TriggerMode COMP TriggerMode
   * @{
   */
 #define COMP_TRIGGERMODE_NONE                  (0x00000000U)   /*!< No External Interrupt trigger detection */
@@ -248,7 +248,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                     ((MODE) == COMP_TRIGGERMODE_IT_RISING_FALLING)  )
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup COMP_ExtiLineEvent COMP ExtiLineEvent
   * @{
@@ -276,11 +276,11 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
                                               ((INPUT) == COMP_NONINVERTINGINPUT_400KPD)   )
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 
 /* Exported macro ------------------------------------------------------------*/
@@ -312,7 +312,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @param __HANDLE__ COMP handle
   * @retval None
   */
-#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE) 
+#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE)
 
 /**
   * @brief Enables the specified comparator
@@ -347,36 +347,36 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   *            @arg COMP_FLAG_LOCK:  lock flag
   * @retval The new state of __FLAG__ (TRUE or FALSE).
   */
-#define __HAL_COMP_GET_FLAG(__HANDLE__, __FLAG__) (READ_BIT((__HANDLE__)->Instance->CSR, (__FLAG__)) == (__FLAG__))   
+#define __HAL_COMP_GET_FLAG(__HANDLE__, __FLAG__) (READ_BIT((__HANDLE__)->Instance->CSR, (__FLAG__)) == (__FLAG__))
 
 /**
   * @brief  Enable the COMP1 EXTI line rising edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_ENABLE_RISING_EDGE()    SET_BIT(EXTI->RTSR, COMP_EXTI_LINE_COMP1)
 
 /**
   * @brief  Disable the COMP1 EXTI line rising edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_DISABLE_RISING_EDGE()   CLEAR_BIT(EXTI->RTSR, COMP_EXTI_LINE_COMP1)
 
 /**
   * @brief  Enable the COMP1 EXTI line falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_ENABLE_FALLING_EDGE()   SET_BIT(EXTI->FTSR, COMP_EXTI_LINE_COMP1)
 
 /**
   * @brief  Disable the COMP1 EXTI line falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_DISABLE_FALLING_EDGE()  CLEAR_BIT(EXTI->FTSR, COMP_EXTI_LINE_COMP1)
 
 /**
   * @brief  Enable the COMP1 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_ENABLE_RISING_FALLING_EDGE()   do { \
                                                                __HAL_COMP_COMP1_EXTI_ENABLE_RISING_EDGE(); \
                                                                __HAL_COMP_COMP1_EXTI_ENABLE_FALLING_EDGE(); \
@@ -385,7 +385,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP1 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                __HAL_COMP_COMP1_EXTI_DISABLE_RISING_EDGE(); \
                                                                __HAL_COMP_COMP1_EXTI_DISABLE_FALLING_EDGE(); \
@@ -394,7 +394,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Enable the COMP1 EXTI line in interrupt mode.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_ENABLE_IT()             SET_BIT(EXTI->IMR, COMP_EXTI_LINE_COMP1)
 
 /**
@@ -420,7 +420,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @retval RESET or SET
   */
 #define __HAL_COMP_COMP1_EXTI_GET_FLAG()              READ_BIT(EXTI->PR, COMP_EXTI_LINE_COMP1)
-     
+
 /**
   * @brief  Clear the the COMP1 EXTI flag.
   * @retval None
@@ -436,31 +436,31 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Enable the COMP2 EXTI line rising edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_ENABLE_RISING_EDGE()    SET_BIT(EXTI->RTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Disable the COMP2 EXTI line rising edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_DISABLE_RISING_EDGE()   CLEAR_BIT(EXTI->RTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Enable the COMP2 EXTI line falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_ENABLE_FALLING_EDGE()   SET_BIT(EXTI->FTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Disable the COMP2 EXTI line falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_DISABLE_FALLING_EDGE()  CLEAR_BIT(EXTI->FTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Enable the COMP2 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_ENABLE_RISING_FALLING_EDGE()   do { \
                                                                __HAL_COMP_COMP2_EXTI_ENABLE_RISING_EDGE(); \
                                                                __HAL_COMP_COMP2_EXTI_ENABLE_FALLING_EDGE(); \
@@ -469,7 +469,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP2 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_DISABLE_RISING_FALLING_EDGE()   do { \
                                                                __HAL_COMP_COMP2_EXTI_DISABLE_RISING_EDGE(); \
                                                                __HAL_COMP_COMP2_EXTI_DISABLE_FALLING_EDGE(); \
@@ -478,7 +478,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Enable the COMP2 EXTI line.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_ENABLE_IT()             SET_BIT(EXTI->IMR, COMP_EXTI_LINE_COMP2)
 
 /**
@@ -504,7 +504,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @retval RESET or SET
   */
 #define __HAL_COMP_COMP2_EXTI_GET_FLAG()              READ_BIT(EXTI->PR, COMP_EXTI_LINE_COMP2)
-     
+
 /**
   * @brief  Clear the the COMP2 EXTI flag.
   * @retval None
@@ -519,8 +519,8 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 
 /**
   * @}
-  */ 
-    
+  */
+
 /* Private macro -------------------------------------------------------------*/
 
 /** @defgroup COMP_Private_Macro COMP Private Macro
@@ -541,7 +541,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   )
 
 /**
-  * @brief Select the COMP register CSR bit CMPxOUT corresponding to the 
+  * @brief Select the COMP register CSR bit CMPxOUT corresponding to the
   * selected COMP instance.
   * @param __HANDLE__: COMP handle
   * @retval Comparator register CSR bit COMP_CSR_CMP1OUT or COMP_CSR_CMP2OUT
@@ -568,12 +568,12 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
      (((READ_BIT(COMP->CSR , COMP_CSR_INSEL) != RESET)                         \
       ) ? SET : RESET)                                                         \
   )
-    
+
 /**
   * @}
-  */ 
+  */
 
-    
+
 /* Include COMP HAL Extension module */
 #include "stm32l1xx_hal_comp_ex.h"
 
@@ -643,7 +643,7 @@ uint32_t              HAL_COMP_GetError(COMP_HandleTypeDef *hcomp);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}

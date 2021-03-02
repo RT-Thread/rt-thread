@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	cache.h
- * @brief	CACHE operation primitives for libmetal.
+ * @file    cache.h
+ * @brief    CACHE operation primitives for libmetal.
  */
 
 #ifndef __METAL_CACHE__H__
@@ -32,7 +32,7 @@ extern "C" {
  */
 static inline void metal_cache_flush(void *addr, unsigned int len)
 {
-	__metal_cache_flush(addr, len);
+    __metal_cache_flush(addr, len);
 }
 
 /**
@@ -45,7 +45,7 @@ static inline void metal_cache_flush(void *addr, unsigned int len)
  */
 static inline void metal_cache_invalidate(void *addr, unsigned int len)
 {
-	__metal_cache_invalidate(addr, len);
+    __metal_cache_invalidate(addr, len);
 }
 
 /** @} */

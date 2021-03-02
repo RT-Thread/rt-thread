@@ -62,13 +62,13 @@ rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 void rt_hw_interrupt_init(void)
 {
     int idx;
-    
+
     /*  config interrupt vector*/
     asm volatile(
         "la t0, trap_entry\n"
         "csrw mtvec, t0"
     );
-    
+
     /*  enable global interrupt*/
     PLIC_init(&g_plic,
             PLIC_CTRL_ADDR,
@@ -86,8 +86,8 @@ void rt_hw_interrupt_init(void)
         irq_desc[idx].counter = 0;
 #endif
     }
-    
-    // enable machine external interrupt 
+
+    // enable machine external interrupt
     set_csr(mie, MIP_MEIP);
 }
 
@@ -132,7 +132,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 }
 
 /**
- * This function will be call when external machine-level 
+ * This function will be call when external machine-level
  * interrupt from PLIC occurred.
  */
 void handle_m_ext_interrupt(void)

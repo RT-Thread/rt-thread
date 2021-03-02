@@ -8,7 +8,7 @@
  * 2018-11-27     zylx         first version
  * 2019-04-11     ZYH          port from stm32f7serial
  */
- 
+
 #include <board.h>
 #include <drv_qspi.h>
 #include <rtdevice.h>
@@ -64,7 +64,7 @@ void n25qxxa_enter_qspi_mode(struct rt_qspi_device *device)
 static int rt_hw_qspi_flash_with_sfud_init(void)
 {
     stm32_qspi_bus_attach_device("qspi1", "qspi10", RT_NULL, 4, n25qxxa_enter_qspi_mode, RT_NULL);
-    
+
     /* init n25qxx */
     if (RT_NULL == rt_sfud_flash_probe(FAL_USING_NOR_FLASH_DEV_NAME, "qspi10"))
     {

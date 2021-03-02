@@ -12,7 +12,7 @@
  * Clock configuration
  */
 #include "sys_config_mss_clocks.h"
- 
+
 /*==============================================================================
  * Memory remapping configuration
  */

@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     å‹¤ä¸ºæœ¬       first version
+ * 2017-09-06     ÇÚÎª±¾       first version
  * 2021-02-02     michael5hzg@gmail.com       adapt to ls1b
  */
 
@@ -15,25 +15,25 @@
 #include "ls1b_public.h"
 
 
-// æ™¶æŒ¯çš„é¢‘ç‡
+// ¾§ÕñµÄÆµÂÊ
 #define AHB_CLK                 (RT_OSC_CLK)
 #define APB_CLK                 (AHB_CLK)
 
-#define DIV_DC_EN			(0x1 << 31)
-#define DIV_DC				(0x1f << 26)
-#define DIV_CPU_EN			(0x1 << 25)
-#define DIV_CPU				(0x1f << 20)
-#define DIV_DDR_EN			(0x1 << 19)
-#define DIV_DDR				(0x1f << 14)
+#define DIV_DC_EN            (0x1 << 31)
+#define DIV_DC                (0x1f << 26)
+#define DIV_CPU_EN            (0x1 << 25)
+#define DIV_CPU                (0x1f << 20)
+#define DIV_DDR_EN            (0x1 << 19)
+#define DIV_DDR                (0x1f << 14)
 
-#define DIV_DC_SHIFT			26
-#define DIV_CPU_SHIFT			20
-#define DIV_DDR_SHIFT			14
+#define DIV_DC_SHIFT            26
+#define DIV_CPU_SHIFT            20
+#define DIV_DDR_SHIFT            14
 
 
 /*
- * è·å–PLLé¢‘ç‡
- * @ret PLLé¢‘ç‡
+ * »ñÈ¡PLLÆµÂÊ
+ * @ret PLLÆµÂÊ
  */
 unsigned long clk_get_pll_rate(void)
 {
@@ -41,16 +41,16 @@ unsigned long clk_get_pll_rate(void)
     unsigned long pll_rate = 0;
 
     ctrl = reg_read_32((volatile unsigned int *)LS1B_START_FREQ);
-	pll_rate = (12 + (ctrl & 0x3f)) * APB_CLK / 2
-		+ ((ctrl >> 8) & 0x3ff) * APB_CLK / 1024 / 2;
+    pll_rate = (12 + (ctrl & 0x3f)) * APB_CLK / 2
+        + ((ctrl >> 8) & 0x3ff) * APB_CLK / 1024 / 2;
 
     return pll_rate;
 }
 
 
 /*
- * è·å–CPUé¢‘ç‡
- * @ret CPUé¢‘ç‡
+ * »ñÈ¡CPUÆµÂÊ
+ * @ret CPUÆµÂÊ
  */
 unsigned long clk_get_cpu_rate(void)
 {
@@ -59,33 +59,33 @@ unsigned long clk_get_cpu_rate(void)
 
     pll_rate = clk_get_pll_rate();
     ctrl = reg_read_32((volatile unsigned int *)LS1B_CLK_DIV_PARAM);
-	cpu_rate = pll_rate / ((ctrl & DIV_CPU) >> DIV_CPU_SHIFT);
+    cpu_rate = pll_rate / ((ctrl & DIV_CPU) >> DIV_CPU_SHIFT);
 
     return cpu_rate;
 }
 
 
 /*
- * è·å–DDRé¢‘ç‡
- * @ret DDRé¢‘ç‡
+ * »ñÈ¡DDRÆµÂÊ
+ * @ret DDRÆµÂÊ
  */
 unsigned long clk_get_ddr_rate(void)
 {
     unsigned long pll_rate, ddr_rate;
-	unsigned int ctrl;
+    unsigned int ctrl;
 
-	pll_rate = clk_get_pll_rate();
-	ctrl = reg_read_32((volatile unsigned int *)LS1B_CLK_DIV_PARAM);
+    pll_rate = clk_get_pll_rate();
+    ctrl = reg_read_32((volatile unsigned int *)LS1B_CLK_DIV_PARAM);
 
-	ddr_rate = pll_rate / ((ctrl & DIV_DDR) >> DIV_DDR_SHIFT);
+    ddr_rate = pll_rate / ((ctrl & DIV_DDR) >> DIV_DDR_SHIFT);
 
     return ddr_rate;
 }
 
 
 /*
- * è·å–APBé¢‘ç‡
- * @ret APBé¢‘ç‡
+ * »ñÈ¡APBÆµÂÊ
+ * @ret APBÆµÂÊ
  */
 unsigned long clk_get_apb_rate(void)
 {
@@ -94,8 +94,8 @@ unsigned long clk_get_apb_rate(void)
 
 
 /*
- * è·å–DCé¢‘ç‡
- * @ret DCé¢‘ç‡
+ * »ñÈ¡DCÆµÂÊ
+ * @ret DCÆµÂÊ
  */
 unsigned long clk_get_dc_rate(void)
 {

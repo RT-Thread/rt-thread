@@ -41,11 +41,11 @@
 #define WRSR        0x01
 #define READ        0x03
 #define FAST_READ   0x0B
-#define PP	        0x02
-#define SE   	    0xD8
-#define BE	        0xC7
-#define DP	        0xB9
-#define RES	        0xAB
+#define PP            0x02
+#define SE           0xD8
+#define BE            0xC7
+#define DP            0xB9
+#define RES            0xAB
 
 #define RDSR_BUSY   (1 << 0)
 #define RDSR_WEL    (1 << 1)

@@ -5,8 +5,8 @@
 
 #define FILE_PATH_MAX                128  /* the longest file path */
 #define CONFIG_JFFS2_ENTRY_NAME_MAX  23
-#define	JFFS2_NAME_MAX   CONFIG_JFFS2_ENTRY_NAME_MAX  
-#define	JFFS2_PATH_MAX   FILE_PATH_MAX
+#define    JFFS2_NAME_MAX   CONFIG_JFFS2_ENTRY_NAME_MAX
+#define    JFFS2_PATH_MAX   FILE_PATH_MAX
 
 #define DEVICE_PART_MAX   1  /* the max partions on a nand deivce*/
 
@@ -27,13 +27,13 @@
 
 //#define CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE
 #if defined(CYGPKG_FS_JFFS2_RET_DIRENT_DTYPE)
-	#define CYGPKG_FILEIO_DIRENT_DTYPE
+    #define CYGPKG_FILEIO_DIRENT_DTYPE
 #endif
 
 #define CYGOPT_FS_JFFS2_WRITE /* if not defined, jffs2 is read only*/
 
 /* jffs2 debug output opion */
-#define CONFIG_JFFS2_FS_DEBUG 		0  /* 1 or 2 */
+#define CONFIG_JFFS2_FS_DEBUG         0  /* 1 or 2 */
 
 /* jffs2 gc thread section */
 //#define CYGOPT_FS_JFFS2_GCTHREAD

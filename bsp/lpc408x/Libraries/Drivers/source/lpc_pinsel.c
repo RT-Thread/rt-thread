@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -73,7 +73,7 @@ static uint32_t * PIN_GetPointer(uint8_t portnum, uint8_t pinnum)
  *              - PINSEL_PIN_TYPE_A
  *              - PINSEL_PIN_TYPE_I
  *              - PINSEL_PIN_TYPE_W
- *              - PINSEL_PIN_TYPE_U   
+ *              - PINSEL_PIN_TYPE_U
  *              - PINSEL_PIN_TYPE_UNKNOWN: Invalid pin
  **********************************************************************/
 PinSel_PinType PINSEL_GetPinType(uint8_t portnum, uint8_t pinnum)
@@ -142,7 +142,7 @@ PINSEL_RET_CODE PINSEL_ConfigPin ( uint8_t portnum, uint8_t pinnum, uint8_t func
 
     if(type == PINSEL_PIN_TYPE_UNKNOWN)
         return PINSEL_RET_INVALID_PIN;
-    
+
     pPIN = PIN_GetPointer(portnum, pinnum);
     *pPIN &= ~IOCON_FUNC_MASK;//Clear function bits
     *pPIN |= funcnum&IOCON_FUNC_MASK;
@@ -176,7 +176,7 @@ PINSEL_RET_CODE PINSEL_SetPinMode ( uint8_t portnum, uint8_t pinnum, PinSel_Basi
         (type != PINSEL_PIN_TYPE_A )&&
         (type != PINSEL_PIN_TYPE_W))
         return PINSEL_RET_NOT_SUPPORT;
-    
+
     pPIN = PIN_GetPointer(portnum, pinnum);
     *(uint32_t *)pPIN &= ~(IOCON_MODE_MASK);//Clear function bits
     *(uint32_t *)pPIN |= (modenum << IOCON_MODE_POS)&IOCON_MODE_MASK;
@@ -206,7 +206,7 @@ PINSEL_RET_CODE PINSEL_SetHysMode(uint8_t portnum, uint8_t pinnum, FunctionalSta
     if((type != PINSEL_PIN_TYPE_D )&&
         (type != PINSEL_PIN_TYPE_W))
         return PINSEL_RET_NOT_SUPPORT;
-    
+
     pPIN = PIN_GetPointer(portnum, pinnum);
     if(NewState == DISABLE)
     {
@@ -238,7 +238,7 @@ PINSEL_RET_CODE PINSEL_SetInvertInput(uint8_t portnum, uint8_t pinnum, Functiona
         return PINSEL_RET_INVALID_PIN;
     if(type== PINSEL_PIN_TYPE_U)
         return PINSEL_RET_NOT_SUPPORT;
-    
+
     pPIN = PIN_GetPointer(portnum, pinnum);
     if(NewState == DISABLE)
     {
@@ -272,7 +272,7 @@ PINSEL_RET_CODE PINSEL_SetSlewMode(uint8_t portnum, uint8_t pinnum, FunctionalSt
     if((type!= PINSEL_PIN_TYPE_D) &&
         (type!= PINSEL_PIN_TYPE_W))
         return PINSEL_RET_NOT_SUPPORT;
-    
+
     pPIN = PIN_GetPointer(portnum, pinnum);
     if(NewState == DISABLE)
     {
@@ -306,13 +306,13 @@ PINSEL_RET_CODE PINSEL_SetI2CMode(uint8_t portnum, uint8_t pinnum, PinSel_I2cMod
         return PINSEL_RET_INVALID_PIN;
     if(type != PINSEL_PIN_TYPE_I )
         return PINSEL_RET_NOT_SUPPORT;
-    
+
     pPIN = PIN_GetPointer(portnum, pinnum);
 
     switch(I2CMode)
     {
         // Standard/Fast Mode I2C: HS = HIDRIVE = 0
-        case PINSEL_I2CMODE_FAST_STANDARD: 
+        case PINSEL_I2CMODE_FAST_STANDARD:
             PINSEL_SetI2CFilter(portnum,pinnum,ENABLE);
             *(uint32_t *)pPIN &= ~(IOCON_I2CMODE_FASTPLUS);
             break;
@@ -324,7 +324,7 @@ PINSEL_RET_CODE PINSEL_SetI2CMode(uint8_t portnum, uint8_t pinnum, PinSel_I2cMod
             break;
 
         // Fast Mode Plus I2C: HS = 0, HIDRIVE =1
-        case PINSEL_I2CMODE_FASTMODEPLUS:   
+        case PINSEL_I2CMODE_FASTMODEPLUS:
             PINSEL_SetI2CFilter(portnum,pinnum,ENABLE);
             *(uint32_t *)pPIN |= (IOCON_I2CMODE_FASTPLUS);
             break;
@@ -358,7 +358,7 @@ PINSEL_RET_CODE PINSEL_SetOpenDrainMode(uint8_t portnum, uint8_t pinnum, Functio
         (type != PINSEL_PIN_TYPE_A ) &&
         (type != PINSEL_PIN_TYPE_W ))
         return PINSEL_RET_NOT_SUPPORT;
-    
+
     pPIN = PIN_GetPointer(portnum, pinnum);
     if(NewState == DISABLE)
     {
@@ -424,9 +424,9 @@ PINSEL_RET_CODE PINSEL_SetAnalogPinMode (uint8_t portnum, uint8_t pinnum, uint8_
 PINSEL_RET_CODE PINSEL_DacEnable (uint8_t portnum, uint8_t pinnum, uint8_t enable)
 {
     uint32_t *pPIN = NULL;
-    
+
     PinSel_PinType type = PINSEL_GetPinType(portnum,pinnum);
-    
+
     if(type == PINSEL_PIN_TYPE_UNKNOWN)
         return PINSEL_RET_INVALID_PIN;
 
@@ -467,7 +467,7 @@ PINSEL_RET_CODE PINSEL_SetFilter (uint8_t portnum, uint8_t pinnum, uint8_t enabl
 {
     uint32_t *pPIN = NULL;
     PinSel_PinType type = PINSEL_GetPinType(portnum,pinnum);
-    
+
     if(type == PINSEL_PIN_TYPE_UNKNOWN)
         return PINSEL_RET_INVALID_PIN;
     if((type != PINSEL_PIN_TYPE_A ) &&
@@ -505,7 +505,7 @@ PINSEL_RET_CODE PINSEL_SetI2CFilter (uint8_t portnum, uint8_t pinnum, uint8_t en
 {
     uint32_t *pPIN = NULL;
     PinSel_PinType type = PINSEL_GetPinType(portnum,pinnum);
-    
+
     if(type == PINSEL_PIN_TYPE_UNKNOWN)
         return PINSEL_RET_INVALID_PIN;
     if(type != PINSEL_PIN_TYPE_I)

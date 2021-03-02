@@ -20,9 +20,9 @@
 // #include "mx28.h"
 
 // #include "mx28_regsusbctrl.h"
-// 
+//
 // #include "mx28_regsusbphy.h"
-// 
+//
 // #include "usb_ch9.h"
 
 
@@ -31,7 +31,7 @@ typedef uint8_t bool_8;
 
 #define MAX_USB_STACKS                  2
 
-#define USB_MAX_DEVICE_ADDR 		127
+#define USB_MAX_DEVICE_ADDR         127
 
 #define USB_DEFAULT_ADDR            0x00
 
@@ -49,23 +49,23 @@ typedef enum {
 
 /***********************usb_descriptor_definitions*************************/
 
-#define VID	0x15A2
+#define VID    0x15A2
 
-#define	PID	0x004F
+#define    PID    0x004F
 
 /* String SUB DESCRIPTOR type */
 
-#define STR_DES0		0x0
+#define STR_DES0        0x0
 
-#define STR_DES1		0x1
+#define STR_DES1        0x1
 
-#define STR_DES2		0x2
+#define STR_DES2        0x2
 
-#define STR_DES3		0x3
+#define STR_DES3        0x3
 
-#define STR_DES4		0x4
+#define STR_DES4        0x4
 
-#define STR_DES5		0x5
+#define STR_DES5        0x5
 
 /* Constants defined to represent device descriptor elements. */
 
@@ -81,7 +81,7 @@ typedef enum {
 
 #define USB_DEV_DESC_DEV_CLASS                           0x00  /*ROM Code definition*/  //0x02    /* Fisher: CDC bDeviceClass */
 
-#define USB_DEV_DESC_DEV_SUBCLASS						 0x00   //0x02  /* Fisher: Abstract Control Model*/
+#define USB_DEV_DESC_DEV_SUBCLASS                         0x00   //0x02  /* Fisher: Abstract Control Model*/
 
 #define USB_DEV_DESC_DEV_PROTOCOL                        0x00
 
@@ -165,11 +165,11 @@ typedef enum {
 
 /* Constants defined to represent the endpoint descriptor elements. */
 
-#define USB_MAX_PACKET_SIZE			0x0200
+#define USB_MAX_PACKET_SIZE            0x0200
 
-#define USB_MAX_PACKET_SIZE_LO		(USB_MAX_PACKET_SIZE&0xFF)
+#define USB_MAX_PACKET_SIZE_LO        (USB_MAX_PACKET_SIZE&0xFF)
 
-#define USB_MAX_PACKET_SIZE_HI		((USB_MAX_PACKET_SIZE>>8)&0xFF)
+#define USB_MAX_PACKET_SIZE_HI        ((USB_MAX_PACKET_SIZE>>8)&0xFF)
 
 /* Endpoint 1 descriptor. */
 
@@ -193,7 +193,7 @@ typedef enum {
 
 #define USB_EP1_DESC_INTERVAL                            0x00   /* Interval, ignored. */
 
-#define USB_EP1_DESC_INTERVAL_HS                      	 0x01   /* at most 1NAK. */
+#define USB_EP1_DESC_INTERVAL_HS                           0x01   /* at most 1NAK. */
 
 /* Endpoint 2 descriptor. */
 
@@ -253,9 +253,9 @@ typedef enum {
 
 /* Serial number string descriptor */
 
-#define USB_SN_DESC_LEN		   							  0x1A  /* Size of descriptor length */
+#define USB_SN_DESC_LEN                                         0x1A  /* Size of descriptor length */
 
-#define USB_SN_DESC_TYPE								  0x03  /* type of descriptor */
+#define USB_SN_DESC_TYPE                                  0x03  /* type of descriptor */
 
 /* USB string Descriptor structure 0 according to USB2.0 Specification */
 
@@ -394,7 +394,7 @@ typedef struct dqh_t {
 
     unsigned char status;
 
-	unsigned char mult;
+    unsigned char mult;
 
 } dqh_t;
 
@@ -444,69 +444,69 @@ typedef struct {
 
 } buffer_map_t;
 
-#define BIT0 	0x00000001
+#define BIT0     0x00000001
 
-#define BIT1 	0x00000002
+#define BIT1     0x00000002
 
-#define BIT2 	0x00000004
+#define BIT2     0x00000004
 
-#define BIT3 	0x00000008
+#define BIT3     0x00000008
 
-#define BIT4	0x00000010
+#define BIT4    0x00000010
 
-#define BIT5 	0x00000020
+#define BIT5     0x00000020
 
-#define BIT6	0x00000040
+#define BIT6    0x00000040
 
-#define BIT7	0x00000080
+#define BIT7    0x00000080
 
-#define BIT8	0x00000100
+#define BIT8    0x00000100
 
-#define BIT9 	0x00000200
+#define BIT9     0x00000200
 
-#define BIT10 	0x00000400
+#define BIT10     0x00000400
 
-#define BIT11 	0x00000800
+#define BIT11     0x00000800
 
-#define BIT12 	0x00001000
+#define BIT12     0x00001000
 
-#define BIT13 	0x00002000
+#define BIT13     0x00002000
 
-#define BIT14 	0x00004000
+#define BIT14     0x00004000
 
-#define BIT15 	0x00008000
+#define BIT15     0x00008000
 
-#define BIT16 	0x00010000
+#define BIT16     0x00010000
 
-#define BIT17 	0x00020000
+#define BIT17     0x00020000
 
-#define BIT18 	0x00040000
+#define BIT18     0x00040000
 
-#define BIT19 	0x00080000
+#define BIT19     0x00080000
 
-#define BIT20 	0x00100000
+#define BIT20     0x00100000
 
-#define BIT21 	0x00200000
+#define BIT21     0x00200000
 
-#define BIT22 	0x00400000
+#define BIT22     0x00400000
 
-#define BIT23 	0x00800000
+#define BIT23     0x00800000
 
-#define BIT24 	0x01000000
+#define BIT24     0x01000000
 
-#define BIT25 	0x02000000
+#define BIT25     0x02000000
 
-#define BIT26 	0x04000000
+#define BIT26     0x04000000
 
-#define BIT27 	0x08000000
+#define BIT27     0x08000000
 
-#define BIT28 	0x10000000
+#define BIT28     0x10000000
 
-#define BIT29 	0x20000000
+#define BIT29     0x20000000
 
-#define BIT30 	0x40000000
+#define BIT30     0x40000000
 
-#define BIT31 	0x80000000
+#define BIT31     0x80000000
 
 /* Device Queue Head and Device Transfer Descriptor Related Defination */
 
@@ -560,9 +560,9 @@ typedef struct {
 
 /* Maximum packet size defination */
 
-#define MPS_8	8
+#define MPS_8    8
 
-#define MPS_64	64
+#define MPS_64    64
 
 /* enum for endpoint numbers */
 
@@ -682,6 +682,6 @@ typedef struct usb_mx6_hardware {
 #endif                          /* */
 } usb_mx6_hardware_t;
 
-#define USBD_ADDR_MASK (0xFE000000) 
+#define USBD_ADDR_MASK (0xFE000000)
 
 #endif //__USB_MX28_H

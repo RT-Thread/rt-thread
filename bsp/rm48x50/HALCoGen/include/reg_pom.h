@@ -2,7 +2,7 @@
 *   @brief POM Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -41,10 +41,10 @@ typedef struct
   }RESERVED_REG[124U];
   struct                    /* 0x200 ...    */
   {
-    uint32 POMPROGSTART_UL; 
-    uint32 POMOVLSTART_UL; 
-    uint32 POMREGSIZE_UL; 
-    uint32   rsdv2; 
+    uint32 POMPROGSTART_UL;
+    uint32 POMOVLSTART_UL;
+    uint32 POMREGSIZE_UL;
+    uint32   rsdv2;
   }POMRGNCONF_ST[32U];
 }pomBASE_t;
 
@@ -57,7 +57,7 @@ typedef struct
 typedef struct
 {
     uint32 POMITCTRL_UL;                  /* 0xF00            */
-    struct                                  /* 0xF04 to 0xF9C   */                     
+    struct                                  /* 0xF04 to 0xF9C   */
     {
         uint32 Reserved_Reg_UL;
     }Reserved1_ST[39U];
@@ -77,7 +77,7 @@ typedef struct
     uint32 POMPERIPHERALID0_UL;           /* 0xFE0      */
     uint32 POMPERIPHERALID1_UL;           /* 0xFE4      */
     uint32 POMPERIPHERALID2_UL;           /* 0xFE8      */
-    uint32 POMPERIPHERALID3_UL;           /* 0xFEC      */            
+    uint32 POMPERIPHERALID3_UL;           /* 0xFEC      */
     uint32 POMCOMPONENTID0_UL;            /* 0xFF0      */
     uint32 POMCOMPONENTID1_UL;            /* 0xFF4      */
     uint32 POMCOMPONENTID2_UL;            /* 0xFF8      */

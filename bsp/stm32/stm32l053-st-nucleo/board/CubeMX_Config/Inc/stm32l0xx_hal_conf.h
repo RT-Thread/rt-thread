@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
   * @file    stm32l0xx_hal_conf.h
-  * @brief   HAL configuration file.             
+  * @brief   HAL configuration file.
   ******************************************************************************
   * @attention
   *
@@ -30,7 +30,7 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32L0xx_HAL_CONF_H
@@ -46,10 +46,10 @@
 
 /* ########################## Module Selection ############################## */
 /**
-  * @brief This is the list of modules to be used in the HAL driver 
+  * @brief This is the list of modules to be used in the HAL driver
   */
 
-#define HAL_MODULE_ENABLED  
+#define HAL_MODULE_ENABLED
 /*#define HAL_ADC_MODULE_ENABLED   */
 /*#define HAL_CRYP_MODULE_ENABLED   */
 /*#define HAL_COMP_MODULE_ENABLED   */
@@ -86,9 +86,9 @@
 /**
   * @brief Adjust the value of External High Speed oscillator (HSE) used in your application.
   *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSE is used as system clock source, directly or through the PLL).  
+  *        (when HSE is used as system clock source, directly or through the PLL).
   */
-#if !defined  (HSE_VALUE) 
+#if !defined  (HSE_VALUE)
   #define HSE_VALUE    ((uint32_t)8000000U) /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
 
@@ -103,11 +103,11 @@
 #if !defined  (MSI_VALUE)
   #define MSI_VALUE    ((uint32_t)4194000U) /*!< Value of the Internal oscillator in Hz*/
 #endif /* MSI_VALUE */
-   
+
 /**
   * @brief Internal High Speed oscillator (HSI) value.
   *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSI is used as system clock source, directly or through the PLL). 
+  *        (when HSI is used as system clock source, directly or through the PLL).
   */
 #if !defined  (HSI_VALUE)
   #define HSI_VALUE    ((uint32_t)16000000U) /*!< Value of the Internal oscillator in Hz*/
@@ -116,7 +116,7 @@
 /**
   * @brief Internal High Speed oscillator for USB (HSI48) value.
   */
-#if !defined  (HSI48_VALUE) 
+#if !defined  (HSI48_VALUE)
 #define HSI48_VALUE ((uint32_t)48000000U) /*!< Value of the Internal High Speed oscillator for USB in Hz.
                                              The real value may vary depending on the variations
                                              in voltage and temperature.  */
@@ -125,11 +125,11 @@
 /**
   * @brief Internal Low Speed oscillator (LSI) value.
   */
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
  #define LSI_VALUE  ((uint32_t)37000U)       /*!< LSI Typical Value in Hz*/
 #endif /* LSI_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
                                              The real value may vary depending on the variations
-                                             in voltage and temperature.*/   
+                                             in voltage and temperature.*/
 /**
   * @brief External Low Speed oscillator (LSE) value.
   *        This value is used by the UART, RTC HAL module to compute the system frequency
@@ -148,24 +148,24 @@
 /* ########################### System Configuration ######################### */
 /**
   * @brief This is the HAL system configuration section
-  */     
-#define  VDD_VALUE                    ((uint32_t)3300U) /*!< Value of VDD in mv */           
-#define  TICK_INT_PRIORITY            ((uint32_t)0U)    /*!< tick interrupt priority */            
-#define  USE_RTOS                     0U     
-#define  PREFETCH_ENABLE              0U              
+  */
+#define  VDD_VALUE                    ((uint32_t)3300U) /*!< Value of VDD in mv */
+#define  TICK_INT_PRIORITY            ((uint32_t)0U)    /*!< tick interrupt priority */
+#define  USE_RTOS                     0U
+#define  PREFETCH_ENABLE              0U
 #define  PREREAD_ENABLE               1U
 #define  BUFFER_CACHE_DISABLE         0U
 
 /* ########################## Assert Selection ############################## */
 /**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
+  * @brief Uncomment the line below to expanse the "assert_param" macro in the
   *        HAL drivers code
   */
 /* #define USE_FULL_ASSERT    1U */
 
 /* Includes ------------------------------------------------------------------*/
 /**
-  * @brief Include module's header file 
+  * @brief Include module's header file
   */
 
 #ifdef HAL_RCC_MODULE_ENABLED
@@ -183,7 +183,7 @@
 #ifdef HAL_DMA_MODULE_ENABLED
   #include "stm32l0xx_hal_dma.h"
 #endif /* HAL_DMA_MODULE_ENABLED */
-   
+
 #ifdef HAL_CORTEX_MODULE_ENABLED
   #include "stm32l0xx_hal_cortex.h"
 #endif /* HAL_CORTEX_MODULE_ENABLED */
@@ -195,7 +195,7 @@
 #ifdef HAL_COMP_MODULE_ENABLED
   #include "stm32l0xx_hal_comp.h"
 #endif /* HAL_COMP_MODULE_ENABLED */
-   
+
 #ifdef HAL_CRC_MODULE_ENABLED
   #include "stm32l0xx_hal_crc.h"
 #endif /* HAL_CRC_MODULE_ENABLED */
@@ -215,7 +215,7 @@
 #ifdef HAL_FLASH_MODULE_ENABLED
   #include "stm32l0xx_hal_flash.h"
 #endif /* HAL_FLASH_MODULE_ENABLED */
- 
+
 #ifdef HAL_I2C_MODULE_ENABLED
  #include "stm32l0xx_hal_i2c.h"
 #endif /* HAL_I2C_MODULE_ENABLED */
@@ -235,7 +235,7 @@
 #ifdef HAL_LPTIM_MODULE_ENABLED
 #include "stm32l0xx_hal_lptim.h"
 #endif /* HAL_LPTIM_MODULE_ENABLED */
-   
+
 #ifdef HAL_PWR_MODULE_ENABLED
  #include "stm32l0xx_hal_pwr.h"
 #endif /* HAL_PWR_MODULE_ENABLED */
@@ -295,7 +295,7 @@
   * @brief  The assert_param macro is used for function's parameters check.
   * @param  expr: If expr is false, it calls assert_failed function
   *         which reports the name of the source file and the source
-  *         line number of the call that failed. 
+  *         line number of the call that failed.
   *         If expr is true, it returns no value.
   * @retval None
   */
@@ -311,6 +311,6 @@
 #endif
 
 #endif /* __STM32L0xx_HAL_CONF_H */
- 
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

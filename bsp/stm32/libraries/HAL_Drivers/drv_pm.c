@@ -87,10 +87,10 @@ static void run(struct rt_pm *pm, uint8_t mode)
         return;
     last_mode = mode;
 
-    /* 1. è®¾ç½® MSI ä½œä¸º SYSCLK æ—¶é’Ÿæº,ä»¥ä¿®æ”¹ PLL */
+    /* 1. ÉèÖÃ MSI ×÷Îª SYSCLK Ê±ÖÓÔ´,ÒÔĞŞ¸Ä PLL */
     SystemClock_MSI_ON();
 
-    /* 2. æ ¹æ®RUNæ¨¡å¼åˆ‡æ¢æ—¶é’Ÿé¢‘ç‡(HSI) */
+    /* 2. ¸ù¾İRUNÄ£Ê½ÇĞ»»Ê±ÖÓÆµÂÊ(HSI) */
     switch (mode)
     {
     case PM_RUN_MODE_HIGH_SPEED:
@@ -115,10 +115,10 @@ static void run(struct rt_pm *pm, uint8_t mode)
         break;
     }
 
-    /* 3. å…³é—­ MSI æ—¶é’Ÿ */
+    /* 3. ¹Ø±Õ MSI Ê±ÖÓ */
     // SystemClock_MSI_OFF();
 
-    /* 4. æ›´æ–°å¤–è®¾æ—¶é’Ÿ */
+    /* 4. ¸üĞÂÍâÉèÊ±ÖÓ */
     uart_console_reconfig();
     /* Re-Configure the Systick time */
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);

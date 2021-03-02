@@ -1,84 +1,84 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šç”Ÿäº§è€…æ¶ˆè´¹è€…ä¾‹å­
+ * ³ÌĞòÇåµ¥£ºÉú²úÕßÏû·ÑÕßÀı×Ó
  *
- * è¿™ä¸ªä¾‹å­ä¸­å°†åˆ›å»ºä¸¤ä¸ªçº¿ç¨‹ç”¨äºå®ç°ç”Ÿäº§è€…æ¶ˆè´¹è€…é—®é¢˜
+ * Õâ¸öÀı×ÓÖĞ½«´´½¨Á½¸öÏß³ÌÓÃÓÚÊµÏÖÉú²úÕßÏû·ÑÕßÎÊÌâ
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* å®šä¹‰æœ€å¤§5ä¸ªå…ƒç´ èƒ½å¤Ÿè¢«äº§ç”Ÿ */
+/* ¶¨Òå×î´ó5¸öÔªËØÄÜ¹»±»²úÉú */
 #define MAXSEM 5
 
-/* ç”¨äºæ”¾ç½®ç”Ÿäº§çš„æ•´æ•°æ•°ç»„ */
+/* ÓÃÓÚ·ÅÖÃÉú²úµÄÕûÊıÊı×é */
 rt_uint32_t array[MAXSEM];
-/* æŒ‡å‘ç”Ÿäº§è€…ã€æ¶ˆè´¹è€…åœ¨arrayæ•°ç»„ä¸­çš„è¯»å†™ä½ç½® */
+/* Ö¸ÏòÉú²úÕß¡¢Ïû·ÑÕßÔÚarrayÊı×éÖĞµÄ¶ÁĞ´Î»ÖÃ */
 static rt_uint32_t set, get;
 
-/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_thread_t producer_tid = RT_NULL;
 static rt_thread_t consumer_tid = RT_NULL;
 
 struct rt_semaphore sem_lock;
 struct rt_semaphore sem_empty, sem_full;
 
-/* ç”Ÿæˆè€…çº¿ç¨‹å…¥å£ */
+/* Éú³ÉÕßÏß³ÌÈë¿Ú */
 void producer_thread_entry(void* parameter)
 {
     int cnt = 0;
 
-    /* è¿è¡Œ100æ¬¡ */
+    /* ÔËĞĞ100´Î */
     while( cnt < 100)
     {
-        /* è·å–ä¸€ä¸ªç©ºä½ */
+        /* »ñÈ¡Ò»¸ö¿ÕÎ» */
         rt_sem_take(&sem_empty, RT_WAITING_FOREVER);
 
-        /* ä¿®æ”¹arrayå†…å®¹ï¼Œä¸Šé” */
+        /* ĞŞ¸ÄarrayÄÚÈİ£¬ÉÏËø */
         rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
         array[set%MAXSEM] = cnt + 1;
         rt_kprintf("the producer generates a number: %d\n", array[set%MAXSEM]);
         set++;
         rt_sem_release(&sem_lock);
 
-        /* å‘å¸ƒä¸€ä¸ªæ»¡ä½ */
+        /* ·¢²¼Ò»¸öÂúÎ» */
         rt_sem_release(&sem_full);
         cnt++;
 
-        /* æš‚åœä¸€æ®µæ—¶é—´ */
+        /* ÔİÍ£Ò»¶ÎÊ±¼ä */
         rt_thread_delay(50);
     }
 
     rt_kprintf("the producer exit!\n");
 }
 
-/* æ¶ˆè´¹è€…çº¿ç¨‹å…¥å£ */
+/* Ïû·ÑÕßÏß³ÌÈë¿Ú */
 void consumer_thread_entry(void* parameter)
 {
     rt_uint32_t no;
     rt_uint32_t sum;
 
-    /* ç¬¬nä¸ªçº¿ç¨‹ï¼Œç”±å…¥å£å‚æ•°ä¼ è¿›æ¥ */
+    /* µÚn¸öÏß³Ì£¬ÓÉÈë¿Ú²ÎÊı´«½øÀ´ */
     no = (rt_uint32_t)parameter;
 
     sum = 0;
     while(1)
     {
-        /* è·å–ä¸€ä¸ªæ»¡ä½ */
+        /* »ñÈ¡Ò»¸öÂúÎ» */
         rt_sem_take(&sem_full, RT_WAITING_FOREVER);
 
-        /* ä¸´ç•ŒåŒºï¼Œä¸Šé”è¿›è¡Œæ“ä½œ */
+        /* ÁÙ½çÇø£¬ÉÏËø½øĞĞ²Ù×÷ */
         rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
         sum += array[get%MAXSEM];
         rt_kprintf("the consumer[%d] get a number: %d\n", no, array[get%MAXSEM] );
         get++;
         rt_sem_release(&sem_lock);
 
-        /* é‡Šæ”¾ä¸€ä¸ªç©ºä½ */
+        /* ÊÍ·ÅÒ»¸ö¿ÕÎ» */
         rt_sem_release(&sem_empty);
 
-        /* ç”Ÿäº§è€…ç”Ÿäº§åˆ°100ä¸ªæ•°ç›®ï¼Œåœæ­¢ï¼Œæ¶ˆè´¹è€…çº¿ç¨‹ç›¸åº”åœæ­¢ */
+        /* Éú²úÕßÉú²úµ½100¸öÊıÄ¿£¬Í£Ö¹£¬Ïû·ÑÕßÏß³ÌÏàÓ¦Í£Ö¹ */
         if (get == 100) break;
 
-        /* æš‚åœä¸€å°ä¼šæ—¶é—´ */
+        /* ÔİÍ£Ò»Ğ¡»áÊ±¼ä */
         rt_thread_delay(10);
     }
 
@@ -88,23 +88,23 @@ void consumer_thread_entry(void* parameter)
 
 int semaphore_producer_consumer_init()
 {
-    /* åˆå§‹åŒ–3ä¸ªä¿¡å·é‡ */
+    /* ³õÊ¼»¯3¸öĞÅºÅÁ¿ */
     rt_sem_init(&sem_lock , "lock",     1,      RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_empty, "empty",    MAXSEM, RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_full , "full",     0,      RT_IPC_FLAG_FIFO);
 
-    /* åˆ›å»ºçº¿ç¨‹1 */
+    /* ´´½¨Ïß³Ì1 */
     producer_tid = rt_thread_create("producer",
-                                    producer_thread_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯producer_thread_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                                    producer_thread_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇproducer_thread_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                                     THREAD_STACK_SIZE, THREAD_PRIORITY - 1, THREAD_TIMESLICE);
     if (producer_tid != RT_NULL)
         rt_thread_startup(producer_tid);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹2 */
+    /* ´´½¨Ïß³Ì2 */
     consumer_tid = rt_thread_create("consumer",
-                                    consumer_thread_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯consumer_thread_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                                    consumer_thread_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇconsumer_thread_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                                     THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
     if (consumer_tid != RT_NULL)
         rt_thread_startup(consumer_tid);
@@ -117,39 +117,39 @@ int semaphore_producer_consumer_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
     rt_sem_detach(&sem_lock);
     rt_sem_detach(&sem_empty);
     rt_sem_detach(&sem_full);
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (producer_tid != RT_NULL && producer_tid->stat != RT_THREAD_CLOSE)
         rt_thread_delete(producer_tid);
     if (consumer_tid != RT_NULL && consumer_tid->stat != RT_THREAD_CLOSE)
         rt_thread_delete(consumer_tid);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_semaphore_producer_consumer()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     semaphore_producer_consumer_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_semaphore_producer_consumer, producer and consumer example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     semaphore_producer_consumer_init();

@@ -626,7 +626,7 @@ void HAL_DMA_IRQHandler(DMA_HandleTypeDef *hdma)
   /* Transfer Complete Interrupt management ***********************************/
   else if (((flag_it & (DMA_FLAG_TC1 << (hdma->ChannelIndex & 0x1CU))) != 0U) && ((source_it & DMA_IT_TC) != 0U))
   {
-    
+
     if((hdma->Instance->CCR & DMA_CCR_CIRC) == 0U)
     {
       /* Disable the transfer complete interrupt if the DMA mode is not CIRCULAR */

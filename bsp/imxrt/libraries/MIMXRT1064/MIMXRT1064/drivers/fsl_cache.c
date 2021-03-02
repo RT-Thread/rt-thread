@@ -2,7 +2,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -169,7 +169,7 @@ static void L2CACHE_GetWayNumSize(uint32_t *num_ways, uint32_t *size_way)
 void L2CACHE_Init(l2cache_config_t *config)
 {
     assert (config);
-    
+
     uint16_t waysNum = 0xFFU; /* Default use the 8-way mask. */
     uint8_t count;
     uint32_t auxReg = 0;
@@ -180,7 +180,7 @@ void L2CACHE_Init(l2cache_config_t *config)
     if (L2CACHEC->REG1_CONTROL & L2CACHEC_REG1_CONTROL_CE_MASK)
     {
         L2CACHE_Disable();
-    }    
+    }
 
     /* Unlock all entries. */
     if (L2CACHEC->REG1_AUX_CONTROL & L2CACHEC_REG1_AUX_CONTROL_ASSOCIATIVITY_MASK)
@@ -190,12 +190,12 @@ void L2CACHE_Init(l2cache_config_t *config)
 
     for (count = 0; count < L2CACHE_LOCKDOWN_REGNUM; count ++)
     {
-        L2CACHE_LockdownByWayEnable(count, waysNum, false);    
+        L2CACHE_LockdownByWayEnable(count, waysNum, false);
     }
-    
+
     /* Set the ways and way-size etc. */
     auxReg = L2CACHEC_REG1_AUX_CONTROL_ASSOCIATIVITY(config->wayNum) |
-            L2CACHEC_REG1_AUX_CONTROL_WAYSIZE(config->waySize) | 
+            L2CACHEC_REG1_AUX_CONTROL_WAYSIZE(config->waySize) |
             L2CACHEC_REG1_AUX_CONTROL_CRP(config->repacePolicy) |
             L2CACHEC_REG1_AUX_CONTROL_IPE(config->istrPrefetchEnable) |
             L2CACHEC_REG1_AUX_CONTROL_DPE(config->dataPrefetchEnable) |
@@ -239,7 +239,7 @@ void L2CACHE_GetDefaultConfig(l2cache_config_t *config)
     config->istrPrefetchEnable = false;
     config->dataPrefetchEnable = false;
     config->nsLockdownEnable = false;
-    config->writeAlloc = kL2CACHE_UseAwcache; 
+    config->writeAlloc = kL2CACHE_UseAwcache;
 }
 
 void L2CACHE_Enable(void)
@@ -399,7 +399,7 @@ void L1CACHE_InvalidateICacheByRange(uint32_t address, uint32_t size_byte)
     }
     __DSB();
     __ISB();
-#endif    
+#endif
 }
 
 void ICACHE_InvalidateByRange(uint32_t address, uint32_t size_byte)

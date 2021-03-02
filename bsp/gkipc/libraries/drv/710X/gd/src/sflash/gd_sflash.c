@@ -357,7 +357,7 @@ GD_SFLASH_CMD_S sd_sflash_commands_wb_spi_nand =
     /* programExecute*/ 0x10
 };
 
-GD_SFLASH_CMD_S sd_sflash_commands_mx_spi_nand = 
+GD_SFLASH_CMD_S sd_sflash_commands_mx_spi_nand =
 {
     /* readID        */ 0x9F,
     /* writeEnable   */ 0x06,
@@ -376,7 +376,7 @@ GD_SFLASH_CMD_S sd_sflash_commands_mx_spi_nand =
     /* programPage2  */ 0x00, // no such function
     /* programPage4  */ 0x32,
     /* pageRead      */ 0x13,
-    /* programExecute*/ 0x10   
+    /* programExecute*/ 0x10
 };
 
 /*
@@ -748,7 +748,7 @@ GD_SFLASH_DEV_S gd_sflash_devices_supported[] =
         /* feature          */ GD_SFLASH_1X_WRITE | GD_SFLASH_4X_READ,
         /* type            */ GD_SPI_NOR,
         /* channel          */ GD_SFLASH_CHANNEL_0,
-    },    
+    },
     {
         /* manufactureID   */ 0x1c,
         /* deviceID        */ 0x7018,
@@ -1031,7 +1031,7 @@ static GERR sflashWelDoneWait(GD_HANDLE handle)
     {
         cmdBitSet |= (SFLASH_CMD_MODE_1X | SFLASH_DATA_CYCLE_NUM_0);
     }
-    
+
     sflashCmdBitSet(&SflashCmd, &cmdBitSet);
 
 
@@ -1054,7 +1054,7 @@ static GERR sflashWelDoneWait(GD_HANDLE handle)
     {
         cmdBitSet |= (SFLASH_CMD_MODE_1X | SFLASH_DATA_CYCLE_NUM_0);
     }
-    
+
     sflashCmdBitSet(&SflashCmd_2, &cmdBitSet_2);
 
     welMask = device->commands->statusMaskWEL;
@@ -1064,14 +1064,14 @@ static GERR sflashWelDoneWait(GD_HANDLE handle)
         status1 = gd_sflash_func[device->channel].GH_SFLASH_get_Data()&0xff;
 
         gd_sflash_func[device->channel].GH_SFLASH_set_Command(SflashCmd_2.all);
-        status2 = gd_sflash_func[device->channel].GH_SFLASH_get_Data()&0xff;        
+        status2 = gd_sflash_func[device->channel].GH_SFLASH_get_Data()&0xff;
 
 
         if((status1& welMask) == welMask) // flash device ready
         {
             // If use IO4 can not release this
             //sflashReleaseDevice(handle);
-            return(GD_OK);           
+            return(GD_OK);
         }
     }
 }
@@ -1112,7 +1112,7 @@ static GERR sflashWipDoneWait(GD_HANDLE handle)
     {
         cmdBitSet |= (SFLASH_CMD_MODE_1X | SFLASH_DATA_CYCLE_NUM_0);
     }
-    
+
     sflashCmdBitSet(&SflashCmd, &cmdBitSet);
 
 //#else
@@ -1128,7 +1128,7 @@ static GERR sflashWipDoneWait(GD_HANDLE handle)
             // If use IO4 can not release this
             //sflashReleaseDevice(handle);
             return(GD_OK);
-            
+
         }
     }
 }
@@ -1301,7 +1301,7 @@ static GERR spiNandFlashRead(GD_HANDLE handle,
         {
             *buffer++ = get_Data();
         }
-        
+
         if((device->ioMode & 0x0F) == GD_SFLASH_4X_READ)
         {
             sflashEnableIO4Hw(handle,GFALSE);
@@ -1414,7 +1414,7 @@ static GERR spiNandFlashRead(GD_HANDLE handle,
         {
             sflashEnableIO4Hw(handle,GFALSE);
         }
-        
+
         sflashReleaseDevice(handle);
     }
     return GD_OK;
@@ -1527,7 +1527,7 @@ static GERR spiNandFlashWrite(GD_HANDLE handle,
         gd_sflash_func[device->channel].GH_SFLASH_set_Data(start_addr);
 
         length = (device->pageBytes - start_addr) /  sizeof(U32);
-        
+
         if((device->ioMode & 0xF0) == GD_SFLASH_4X_WRITE)
         {
             sflashEnableIO4Hw(handle,GTRUE);
@@ -1536,12 +1536,12 @@ static GERR spiNandFlashWrite(GD_HANDLE handle,
         {
             set_Data(*buffer++);
         }
-        
+
         if((device->ioMode & 0xF0) == GD_SFLASH_4X_WRITE)
         {
             sflashEnableIO4Hw(handle,GFALSE);
         }
-        
+
         sflashReleaseDevice(handle);
         sflashGetDevice(handle);
 
@@ -2125,7 +2125,7 @@ GERR GD_SFLASH_Open(GD_HANDLE* pHandle, GD_SFLASH_SPEED_MODE speed_mode, GD_SFLA
                 prot1 = gd_sflash_func[channel].GH_SFLASH_get_Data();
                 prot2 = gd_sflash_func[channel].GH_SFLASH_get_Data();
             }
-            
+
             else if(device->manufactureID == 0x0c2)
             {
                 cmdBitSet |= (0x2b|                  // command
@@ -2174,25 +2174,25 @@ GERR GD_SFLASH_Open(GD_HANDLE* pHandle, GD_SFLASH_SPEED_MODE speed_mode, GD_SFLA
                         status = gd_sflash_func[channel].GH_SFLASH_get_Data() & 0xff;
                     }while((status & 0x01) == 0x01);
                 }
-				if(device->ioMode & GD_SFLASH_4X_READ)
-				{
-	                    // check if the chip support 4X read mode?
-	                cmdBitSet |= (0x5A|                           /*command RDSFDP*/
-		                        SFLASH_SEND_CMD|                            /*transfer the command*/
-	                        SFLASH_SEND_ADDR_BYTE_NUM_3|                /*address num*/
-	                        SFLASH_SEND_DUMMY_BYTE_NUM_1|               /*dummy cycle*/
-	                        SFLASH_RWN_READ|                            /*read data*/
-	                        SFLASH_CMD_MODE_1X|                         /*set the sflash cmd mode*/
-	                        SFLASH_ADDR_DUMMY_CYCLE_NUM_0|              /*set the sflash adr mode*/
-	                        SFLASH_DATA_CYCLE_NUM_0|                    /*set the sflash data mode*/
-	                        SFLASH_TRANSFER_BYTE_NUM_4|                 /*transfer data number*/
-	                        SFLASH_HOLD_TIME_100ns
-	                        );
+                if(device->ioMode & GD_SFLASH_4X_READ)
+                {
+                        // check if the chip support 4X read mode?
+                    cmdBitSet |= (0x5A|                           /*command RDSFDP*/
+                                SFLASH_SEND_CMD|                            /*transfer the command*/
+                            SFLASH_SEND_ADDR_BYTE_NUM_3|                /*address num*/
+                            SFLASH_SEND_DUMMY_BYTE_NUM_1|               /*dummy cycle*/
+                            SFLASH_RWN_READ|                            /*read data*/
+                            SFLASH_CMD_MODE_1X|                         /*set the sflash cmd mode*/
+                            SFLASH_ADDR_DUMMY_CYCLE_NUM_0|              /*set the sflash adr mode*/
+                            SFLASH_DATA_CYCLE_NUM_0|                    /*set the sflash data mode*/
+                            SFLASH_TRANSFER_BYTE_NUM_4|                 /*transfer data number*/
+                            SFLASH_HOLD_TIME_100ns
+                            );
 
-	                sflashCmdBitSet(&SflashCmd,&cmdBitSet);
-	                gd_sflash_func[channel].GH_SFLASH_set_Command( SflashCmd.all );
-	                gd_sflash_func[channel].GH_SFLASH_set_Data( 0x30 );
-	                sflash_data = gd_sflash_func[channel].GH_SFLASH_get_Data();
+                    sflashCmdBitSet(&SflashCmd,&cmdBitSet);
+                    gd_sflash_func[channel].GH_SFLASH_set_Command( SflashCmd.all );
+                    gd_sflash_func[channel].GH_SFLASH_set_Data( 0x30 );
+                    sflash_data = gd_sflash_func[channel].GH_SFLASH_get_Data();
 
 
                     // command-address-data
@@ -2202,21 +2202,21 @@ GERR GD_SFLASH_Open(GD_HANDLE* pHandle, GD_SFLASH_SPEED_MODE speed_mode, GD_SFLA
                     // sflash_data=0x30 31 32 33
                     if((sflash_data != 0x00000000) || (sflash_data != 0xFFFFFFFF))
                     {
-                		device->ioMode &= 0xFFFFFFF8;
+                        device->ioMode &= 0xFFFFFFF8;
                         if(sflash_data & 0x00006000)
                         {
-                    		device->ioMode |= GD_SFLASH_4X_READ;
+                            device->ioMode |= GD_SFLASH_4X_READ;
 
-                        	GM_Printf("support 4X mode read:0x%08x\n", sflash_data);
+                            GM_Printf("support 4X mode read:0x%08x\n", sflash_data);
                         }
                         else
                         {
                             device->ioMode |= GD_SFLASH_1X_READ;
-							device->ioMode &= ~GD_SFLASH_4X_READ;
-	                        GM_Printf("not support 4X mode read:0x%08x\n", sflash_data);
+                            device->ioMode &= ~GD_SFLASH_4X_READ;
+                            GM_Printf("not support 4X mode read:0x%08x\n", sflash_data);
                         }
                     }
-				}
+                }
             }
             device->devicechannel = devicechannel;
             device->channel       = channel;
@@ -2410,7 +2410,7 @@ GERR GD_SFLASH_EnableIO4(GD_HANDLE* pHandle)
     {
         return(GD_ERR_BAD_PARAMETER);
     }
-    
+
     if(device->type == GD_SPI_NOR)                      // check if spi-nor flash
     {
         // after initialization, the SST enter IO4 mode automatically!
@@ -2453,7 +2453,7 @@ GERR GD_SFLASH_EnableIO4(GD_HANDLE* pHandle)
         gd_sflash_func[device->channel].GH_SFLASH_set_Command(SflashCmd.all);
         status1 = gd_sflash_func[device->channel].GH_SFLASH_get_Data() & 0xff;
 
-        
+
         if((device->manufactureID == 0xef)  ||              // winbond read status2
            (device->manufactureID == 0x01)  ||              // for FL064P;Tom.wang;2010-10-21
            (device->manufactureID == 0xc8))                 // for GD liujinyng2011-10-12
@@ -2531,7 +2531,7 @@ GERR GD_SFLASH_EnableIO4(GD_HANDLE* pHandle)
                           (1<<SFLASH_TRANSFER_BYTE_LOC)         // transfer data number
                          );
         }
-        
+
         sflashCmdBitSet(&SflashCmd, &cmdBitSet);
         gd_sflash_func[device->channel].GH_SFLASH_set_Command(SflashCmd.all);
         gd_sflash_func[device->channel].GH_SFLASH_set_Data(data);
@@ -2690,7 +2690,7 @@ GERR GD_SFLASH_DisEnableIO4( GD_HANDLE* pHandle )
         if(device->manufactureID == 0xc2)
         {
             //data = status1 & (~0x40);                       // clear quad //for GK7101 workaround do not enable reset mode otherwise code can not bootup
-            data = status1;                                                  
+            data = status1;
         }
         else if(device->manufactureID == 0xef)
         {
@@ -3021,7 +3021,7 @@ static GERR GD_SFLASH_ReadIO4(GD_HANDLE handle, U32 address, U32* buffer, U32 wo
                           SFLASH_TRANSFER_BYTE_NUM_4        // transfer data number
                          );
         }
-        
+
         else
         {
            cmdBitSet |= (device->commands->readData4    |   // command
@@ -3125,7 +3125,7 @@ GERR GD_SFLASH_Read(GD_HANDLE handle, U32 address, U32* buffer, U32 words)
             {
                 return gerr;
             }
-        }    
+        }
         gerr = GD_SFLASH_ReadIO4(handle, address, buffer, words);
     }
     else if((device->ioMode & 0x0F) == GD_SFLASH_2X_READ)
@@ -3157,7 +3157,7 @@ GERR GD_SFLASH_Read(GD_HANDLE handle, U32 address, U32* buffer, U32 words)
             {
                 return gerr;
             }
-        }    
+        }
         gerr = GD_SFLASH_ReadIO1(handle, address, buffer, words);
     }
     else
@@ -4106,7 +4106,7 @@ GERR GD_SFLASH_EraseSector(GD_HANDLE handle, U16 sectorIndex)
         return(GD_ERR_INVALID_HANDLE);
     }
 
-    
+
     CESetting = CESetting | ((U32)device->devicechannel << 6);
 
     if(sectorIndex >= device->sectorCount)
@@ -4131,7 +4131,7 @@ GERR GD_SFLASH_EraseSector(GD_HANDLE handle, U16 sectorIndex)
 
     if(device->type == GD_SPI_NOR)                        // check if spi-nor flash
     {
-    
+
         GD_SFLASH_SetResetMode(handle,GTRUE);
 
         cmdBitSet |= (device->commands->writeEnable     | // command
@@ -4186,7 +4186,7 @@ GERR GD_SFLASH_EraseSector(GD_HANDLE handle, U16 sectorIndex)
         result = spiNandFlashEraseSector(handle, address);
     }
 
-    
+
     sflashReleaseDevice(handle);
     return(result);
 }
@@ -5559,7 +5559,7 @@ GERR GD_SFLASH_SetResetMode(GD_HANDLE handle, GBOOL mode)
     GD_SFLASH_DEV_S* device;
     U32 command     = 0;
     device = sflashGetDevice(handle);
-    
+
     if(device == NULL)
     {
         return(GD_ERR_INVALID_HANDLE);

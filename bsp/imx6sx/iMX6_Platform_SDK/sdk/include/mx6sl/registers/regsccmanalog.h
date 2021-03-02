@@ -179,8 +179,8 @@ typedef union _hw_ccm_analog_pll_arm
  * Values:
  * - REF_CLK_24M = 0x0 - Select the 24MHz oscillator as source.
  * - CLK1 = 0x1 - Select the CLK1_N / CLK1_P as source.
- * - RESERVED = 0x2 - 
- * - RESERVED1 = 0x3 - 
+ * - RESERVED = 0x2 -
+ * - RESERVED1 = 0x3 -
  */
 //@{
 #define BP_CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC      (14)      //!< Bit position for CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC.
@@ -202,8 +202,8 @@ typedef union _hw_ccm_analog_pll_arm
 
 #define BV_CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC__REF_CLK_24M (0x0) //!< Select the 24MHz oscillator as source.
 #define BV_CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC__CLK1 (0x1) //!< Select the CLK1_N / CLK1_P as source.
-#define BV_CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC__RESERVED (0x2) //!< 
-#define BV_CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC__RESERVED1 (0x3) //!< 
+#define BV_CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC__RESERVED (0x2) //!<
+#define BV_CCM_ANALOG_PLL_ARM_BYPASS_CLK_SRC__RESERVED1 (0x3) //!<
 //@}
 
 /*! @name Register CCM_ANALOG_PLL_ARM, field BYPASS[16] (RW)
@@ -445,8 +445,8 @@ typedef union _hw_ccm_analog_pll_usb1
  * Values:
  * - REF_CLK_24M = 0x0 - Select the 24MHz oscillator as source.
  * - CLK1 = 0x1 - Select the CLK1_N / CLK1_P as source.
- * - GPANAIO = 0x2 - 
- * - CHRG_DET_B = 0x3 - 
+ * - GPANAIO = 0x2 -
+ * - CHRG_DET_B = 0x3 -
  */
 //@{
 #define BP_CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC      (14)      //!< Bit position for CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC.
@@ -468,8 +468,8 @@ typedef union _hw_ccm_analog_pll_usb1
 
 #define BV_CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC__REF_CLK_24M (0x0) //!< Select the 24MHz oscillator as source.
 #define BV_CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC__CLK1 (0x1) //!< Select the CLK1_N / CLK1_P as source.
-#define BV_CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC__GPANAIO (0x2) //!< 
-#define BV_CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC__CHRG_DET_B (0x3) //!< 
+#define BV_CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC__GPANAIO (0x2) //!<
+#define BV_CCM_ANALOG_PLL_USB1_BYPASS_CLK_SRC__CHRG_DET_B (0x3) //!<
 //@}
 
 /*! @name Register CCM_ANALOG_PLL_USB1, field BYPASS[16] (RW)
@@ -648,8 +648,8 @@ typedef union _hw_ccm_analog_pll_usb2
  * Values:
  * - REF_CLK_24M = 0x0 - Select the 24MHz oscillator as source.
  * - CLK1 = 0x1 - Select the CLK1_N / CLK1_P as source.
- * - RESERVED = 0x2 - 
- * - RESERVED1 = 0x3 - 
+ * - RESERVED = 0x2 -
+ * - RESERVED1 = 0x3 -
  */
 //@{
 #define BP_CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC      (14)      //!< Bit position for CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC.
@@ -671,8 +671,8 @@ typedef union _hw_ccm_analog_pll_usb2
 
 #define BV_CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC__REF_CLK_24M (0x0) //!< Select the 24MHz oscillator as source.
 #define BV_CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC__CLK1 (0x1) //!< Select the CLK1_N / CLK1_P as source.
-#define BV_CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC__RESERVED (0x2) //!< 
-#define BV_CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC__RESERVED1 (0x3) //!< 
+#define BV_CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC__RESERVED (0x2) //!<
+#define BV_CCM_ANALOG_PLL_USB2_BYPASS_CLK_SRC__RESERVED1 (0x3) //!<
 //@}
 
 /*! @name Register CCM_ANALOG_PLL_USB2, field BYPASS[16] (RW)
@@ -828,8 +828,8 @@ typedef union _hw_ccm_analog_pll_sys
  * Values:
  * - REF_CLK_24M = 0x0 - Select the 24MHz oscillator as source.
  * - CLK1 = 0x1 - Select the CLK1_N / CLK1_P as source.
- * - GPANAIO = 0x2 - 
- * - CHRG_DET_B = 0x3 - 
+ * - GPANAIO = 0x2 -
+ * - CHRG_DET_B = 0x3 -
  */
 //@{
 #define BP_CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC      (14)      //!< Bit position for CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC.
@@ -851,8 +851,8 @@ typedef union _hw_ccm_analog_pll_sys
 
 #define BV_CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC__REF_CLK_24M (0x0) //!< Select the 24MHz oscillator as source.
 #define BV_CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC__CLK1 (0x1) //!< Select the CLK1_N / CLK1_P as source.
-#define BV_CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC__GPANAIO (0x2) //!< 
-#define BV_CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC__CHRG_DET_B (0x3) //!< 
+#define BV_CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC__GPANAIO (0x2) //!<
+#define BV_CCM_ANALOG_PLL_SYS_BYPASS_CLK_SRC__CHRG_DET_B (0x3) //!<
 //@}
 
 /*! @name Register CCM_ANALOG_PLL_SYS, field BYPASS[16] (RW)
@@ -1030,8 +1030,8 @@ typedef union _hw_ccm_analog_pll_audio
  * Values:
  * - REF_CLK_24M = 0x0 - Select the 24MHz oscillator as source.
  * - CLK1 = 0x1 - Select the CLK1_N / CLK1_P as source.
- * - RESERVED = 0x2 - 
- * - RESERVED1 = 0x3 - 
+ * - RESERVED = 0x2 -
+ * - RESERVED1 = 0x3 -
  */
 //@{
 #define BP_CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC      (14)      //!< Bit position for CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC.
@@ -1053,8 +1053,8 @@ typedef union _hw_ccm_analog_pll_audio
 
 #define BV_CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC__REF_CLK_24M (0x0) //!< Select the 24MHz oscillator as source.
 #define BV_CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC__CLK1 (0x1) //!< Select the CLK1_N / CLK1_P as source.
-#define BV_CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC__RESERVED (0x2) //!< 
-#define BV_CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC__RESERVED1 (0x3) //!< 
+#define BV_CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC__RESERVED (0x2) //!<
+#define BV_CCM_ANALOG_PLL_AUDIO_BYPASS_CLK_SRC__RESERVED1 (0x3) //!<
 //@}
 
 /*! @name Register CCM_ANALOG_PLL_AUDIO, field BYPASS[16] (RW)
@@ -1405,8 +1405,8 @@ typedef union _hw_ccm_analog_pll_video
  * Values:
  * - REF_CLK_24M = 0x0 - Select the 24MHz oscillator as source.
  * - CLK1 = 0x1 - Select the CLK1_N / CLK1_P as source.
- * - RESERVED = 0x2 - 
- * - RESERVED1 = 0x3 - 
+ * - RESERVED = 0x2 -
+ * - RESERVED1 = 0x3 -
  */
 //@{
 #define BP_CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC      (14)      //!< Bit position for CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC.
@@ -1428,8 +1428,8 @@ typedef union _hw_ccm_analog_pll_video
 
 #define BV_CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC__REF_CLK_24M (0x0) //!< Select the 24MHz oscillator as source.
 #define BV_CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC__CLK1 (0x1) //!< Select the CLK1_N / CLK1_P as source.
-#define BV_CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC__RESERVED (0x2) //!< 
-#define BV_CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC__RESERVED1 (0x3) //!< 
+#define BV_CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC__RESERVED (0x2) //!<
+#define BV_CCM_ANALOG_PLL_VIDEO_BYPASS_CLK_SRC__RESERVED1 (0x3) //!<
 //@}
 
 /*! @name Register CCM_ANALOG_PLL_VIDEO, field BYPASS[16] (RW)
@@ -1782,8 +1782,8 @@ typedef union _hw_ccm_analog_pll_enet
  * Values:
  * - REF_CLK_24M = 0x0 - Select the 24MHz oscillator as source.
  * - CLK1 = 0x1 - Select the CLK1_N / CLK1_P as source.
- * - RESERVED = 0x2 - 
- * - RESERVED1 = 0x3 - 
+ * - RESERVED = 0x2 -
+ * - RESERVED1 = 0x3 -
  */
 //@{
 #define BP_CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC      (14)      //!< Bit position for CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC.
@@ -1805,8 +1805,8 @@ typedef union _hw_ccm_analog_pll_enet
 
 #define BV_CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC__REF_CLK_24M (0x0) //!< Select the 24MHz oscillator as source.
 #define BV_CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC__CLK1 (0x1) //!< Select the CLK1_N / CLK1_P as source.
-#define BV_CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC__RESERVED (0x2) //!< 
-#define BV_CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC__RESERVED1 (0x3) //!< 
+#define BV_CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC__RESERVED (0x2) //!<
+#define BV_CCM_ANALOG_PLL_ENET_BYPASS_CLK_SRC__RESERVED1 (0x3) //!<
 //@}
 
 /*! @name Register CCM_ANALOG_PLL_ENET, field BYPASS[16] (RW)
@@ -2512,9 +2512,9 @@ typedef union _hw_ccm_analog_misc0
     reg32_t U;
     struct _hw_ccm_analog_misc0_bitfields
     {
-        unsigned RESERVED0 : 11; //!< [10:0] 
+        unsigned RESERVED0 : 11; //!< [10:0]
         unsigned STOP_MODE_CONFIG : 2; //!< [12:11] Configure the analog behavior in stop mode.
-        unsigned RESERVED1 : 19; //!< [31:13] 
+        unsigned RESERVED1 : 19; //!< [31:13]
     } B;
 } hw_ccm_analog_misc0_t;
 #endif
@@ -2586,13 +2586,13 @@ typedef union _hw_ccm_analog_misc2
     reg32_t U;
     struct _hw_ccm_analog_misc2_bitfields
     {
-        unsigned RESERVED0 : 7; //!< [6:0] 
+        unsigned RESERVED0 : 7; //!< [6:0]
         unsigned PLL3_DISABLE : 1; //!< [7] Default value of "0".
-        unsigned RESERVED1 : 7; //!< [14:8] 
+        unsigned RESERVED1 : 7; //!< [14:8]
         unsigned AUDIO_DIV_LSB : 1; //!< [15] LSB of Post-divider for Audio PLL.
-        unsigned RESERVED2 : 7; //!< [22:16] 
+        unsigned RESERVED2 : 7; //!< [22:16]
         unsigned AUDIO_DIV_MSB : 1; //!< [23] MSB of Post-divider for Audio PLL.
-        unsigned RESERVED3 : 6; //!< [29:24] 
+        unsigned RESERVED3 : 6; //!< [29:24]
         unsigned VIDEO_DIV : 2; //!< [31:30] Post-divider for video.
     } B;
 } hw_ccm_analog_misc2_t;

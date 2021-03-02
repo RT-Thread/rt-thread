@@ -44,59 +44,59 @@ extern "C" {
  */
 
 /**
- * @brief	Get memory size in bytes needed for I2C slave driver context
- * @return	Size in bytes needed for the ROM driver
+ * @brief    Get memory size in bytes needed for I2C slave driver context
+ * @return    Size in bytes needed for the ROM driver
  */
 uint32_t ROM_I2CS_GetMemSize(void);
 
 /**
- * @brief	Initialize I2C slave peripheral
- * @param	mem		: Pointer to memory area used to driver context
- * @param	pInit	: Pointer to I2C slave init data
- * @return	NULL on error, or a pointer to the device context handle
+ * @brief    Initialize I2C slave peripheral
+ * @param    mem        : Pointer to memory area used to driver context
+ * @param    pInit    : Pointer to I2C slave init data
+ * @return    NULL on error, or a pointer to the device context handle
  */
 ROM_I2CS_HANDLE_T ROM_I2CS_Init(void *mem, ROM_I2CS_INIT_T *pInit);
 
 /**
- * @brief	Set I2C slave clock rate
- * @param	pHandle		: Pointer to driver context handle
- * @param	pSlaveSetup	: Slave setup data
- * @return	Nothing
- * @note	See the use model for more information on how to setup slave addresses.
+ * @brief    Set I2C slave clock rate
+ * @param    pHandle        : Pointer to driver context handle
+ * @param    pSlaveSetup    : Slave setup data
+ * @return    Nothing
+ * @note    See the use model for more information on how to setup slave addresses.
  */
 void ROM_I2CS_SetupSlave(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_SLAVE_T *pSlaveSetup);
 
 /**
- * @brief	Register a I2C slave callback
- * @param	pHandle	: Pointer to driver context handle
- * @param	cbIndex	: Callback to register
- * @param	pCB		: Pointer to callback function
- * @return	Nothing
+ * @brief    Register a I2C slave callback
+ * @param    pHandle    : Pointer to driver context handle
+ * @param    cbIndex    : Callback to register
+ * @param    pCB        : Pointer to callback function
+ * @return    Nothing
  */
 void ROM_I2CS_RegisterCallback(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_CALLBACK_T cbIndex, void *pCB);
 
 /**
- * @brief	Queues an I2C slave transfer
- * @param	pHandle	: Pointer to driver context handle
- * @param	pXfer	: Pointer to slave transfer configuration
- * @return	Always returns LPC_OK
- * @note	This functions never blocks.
+ * @brief    Queues an I2C slave transfer
+ * @param    pHandle    : Pointer to driver context handle
+ * @param    pXfer    : Pointer to slave transfer configuration
+ * @return    Always returns LPC_OK
+ * @note    This functions never blocks.
  */
 ErrorCode_t ROM_I2CS_Transfer(ROM_I2CS_HANDLE_T pHandle, ROM_I2CS_XFER_T *pXfer);
 
 /**
- * @brief	I2C slave transfer (interrupt) handler
- * @param	pHandle	: Pointer to driver context handle
- * @return	Nothing
- * @note	This function should be called from the I2C interrupt handler and
+ * @brief    I2C slave transfer (interrupt) handler
+ * @param    pHandle    : Pointer to driver context handle
+ * @return    Nothing
+ * @note    This function should be called from the I2C interrupt handler and
  * is used in interrupt and DMA modes.
  */
 void ROM_I2CS_TransferHandler(ROM_I2CS_HANDLE_T pHandle);
 
 /**
- * @brief	Return the I2C slave ROM driver version
- * @return	Driver version number
- * @note	The returned driver version number consists of a major and minor
+ * @brief    Return the I2C slave ROM driver version
+ * @return    Driver version number
+ * @note    The returned driver version number consists of a major and minor
  * number, with the minor number in the lower 8 bits and the major number in
  * the upper 8 bits.
  */

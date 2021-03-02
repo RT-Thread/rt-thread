@@ -2,7 +2,7 @@
 *   @brief GIO Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -13,22 +13,22 @@
 #include "reg_gio.h"
 
 
-/** 
+/**
  *  @defgroup GIO GIO
  *  @brief General-Purpose Input/Output Module.
- *  
- *  The GIO module provides the family of devices with input/output (I/O) capability. 
+ *
+ *  The GIO module provides the family of devices with input/output (I/O) capability.
  *  The I/O pins are bidirectional and bit-programmable.
  *  The GIO module also supports external interrupt capability.
  *
- *	Related Files
+ *    Related Files
  *   - reg_gio.h
  *   - gio.h
  *   - gio.c
  *  @addtogroup GIO
  *  @{
  */
- 
+
 /* GIO Interface Functions */
 void gioInit(void);
 void gioSetDirection(gioPORT_t *port, uint32 dir);

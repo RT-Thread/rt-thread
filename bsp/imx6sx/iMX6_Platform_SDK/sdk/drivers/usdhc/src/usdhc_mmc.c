@@ -42,10 +42,10 @@ static uint32_t mmc_version = MMC_CARD_INV;
 
 /********************************************* Static Function ******************************************/
 /*!
- * @brief Set the mmc card a RCA 
- * 
+ * @brief Set the mmc card a RCA
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int mmc_set_rca(uint32_t instance)
@@ -87,11 +87,11 @@ static int mmc_set_rca(uint32_t instance)
 }
 
 /*!
- * @brief Check switch ability and switch function 
- * 
+ * @brief Check switch ability and switch function
+ *
  * @param instance     Instance number of the uSDHC module.
- * @param arg          Argument to command 6 
- * 
+ * @param arg          Argument to command 6
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int mmc_switch(uint32_t instance, uint32_t arg)
@@ -113,7 +113,7 @@ static int mmc_switch(uint32_t instance, uint32_t arg)
 }
 
 /*!
- * @brief Set data transfer width. 
+ * @brief Set data transfer width.
  * Possible data transfer width is 1-bit, 4-bits or 8-bits
  *
  * @param instance     Instance number of the uSDHC module.
@@ -126,9 +126,9 @@ static int mmc_set_bus_width(uint32_t instance, int bus_width)
 
 /*!
  * @brief Read card specified data (CSD)
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int mmc_read_csd(uint32_t instance)
@@ -167,9 +167,9 @@ static int mmc_read_csd(uint32_t instance)
 
 /*!
  * @brief Send CMD8 to get EXT_CSD value of MMC;
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int mmc_read_esd(uint32_t instance)
@@ -203,9 +203,9 @@ static int mmc_read_esd(uint32_t instance)
 
 /*!
  * @brief Read CSD and EXT_CSD value of MMC;
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             CSD value if successful; 0 otherwise
  */
 static uint32_t mmc_get_spec_ver(uint32_t instance)
@@ -236,10 +236,10 @@ static uint32_t mmc_get_spec_ver(uint32_t instance)
 /********************************************* Global Function ******************************************/
 /*!
  * @brief Initialize MMC - Get Card ID, Set RCA, Frequency and bus width.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    bus width to be configured.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int mmc_init(uint32_t instance, int bus_width)
@@ -285,9 +285,9 @@ int mmc_init(uint32_t instance, int bus_width)
 
 /*!
  * @brief Initialize eMMC - Get Card ID, Set RCA, Frequency and bus width.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int emmc_init(uint32_t instance)
@@ -342,9 +342,9 @@ int emmc_init(uint32_t instance)
 
 /*!
  * @brief Print out eMMC configuration information.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  */
 void emmc_print_cfg_info(uint32_t instance)
 {
@@ -395,10 +395,10 @@ void emmc_print_cfg_info(uint32_t instance)
 
 /*!
  * @brief Set bus width.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param width        Bus width
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int mmc_set_boot_bus_width(uint32_t instance, emmc_bus_width_e width)
@@ -422,10 +422,10 @@ int mmc_set_boot_bus_width(uint32_t instance, emmc_bus_width_e width)
 
 /*!
  * @brief Set boot partition.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param part         Partition number
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int mmc_set_boot_partition(uint32_t instance, emmc_part_e part)
@@ -456,10 +456,10 @@ int mmc_set_boot_partition(uint32_t instance, emmc_part_e part)
 
 /*!
  * @brief Set boot ACK.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param enable       0 no ACK, otherwise set ACK
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int mmc_set_boot_ack(uint32_t instance, int enable)
@@ -483,9 +483,9 @@ int mmc_set_boot_ack(uint32_t instance, int enable)
 
 /*!
  * @brief Valid the voltage.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int mmc_voltage_validation(uint32_t instance)

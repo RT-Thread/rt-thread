@@ -200,7 +200,7 @@
 
 
 /* Various descriptor sizes */
-#define DEVICE_DESCRIPTOR_SIZE            (0x12) //18 
+#define DEVICE_DESCRIPTOR_SIZE            (0x12) //18
 #define CONFIG_DESC_SIZE                  (0xAB) //Video
 #define CONFIG_ONLY_DESC_SIZE             (9)
 #define IFACE_ONLY_DESC_SIZE              (9)
@@ -273,7 +273,7 @@ typedef struct _USB_VIDEO_UT_STRUCT
   uint_8          type;        /* type of endpoint        */
 }USB_UT_STRUCT, *USB_UT_STRUCT_PTR;
 
-typedef const struct _USB_VIDEO_UNITS 
+typedef const struct _USB_VIDEO_UNITS
 {
    /* Number of entities of this application */
    uint_8         count;
@@ -317,132 +317,132 @@ extern void* USB_Desc_Get_Endpoints(uint_8 controller_ID);
 extern void* USB_Desc_Get_Video_Entities(uint_8 controller_ID);
 
 extern uint_8 USB_Desc_Set_Cur_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Cur_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Min_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 
 extern uint_8 USB_Desc_Get_Max_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 
 extern uint_8 USB_Desc_Get_Res_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 #if 0
 extern uint_8 USB_Desc_Get_Len_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 #endif
 
 extern uint_8 USB_Desc_Get_Info_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 
 extern uint_8 USB_Desc_Get_Def_Brightness(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Set_Cur_Power_Mode(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Cur_Power_Mode(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Info_Power_Mode(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Cur_Error_Code(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Info_Error_Code(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Set_Cur_Video_Probe(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Cur_Video_Probe(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Len_Video_Probe(
-    uint_8 controller_ID,              
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Info_Video_Probe(
-    uint_8 controller_ID,              
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Set_Cur_Video_Commit(
-    uint_8 controller_ID,              
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size              
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Cur_Video_Commit(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Len_Video_Commit(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 extern uint_8 USB_Desc_Get_Info_Video_Commit(
-    uint_8 controller_ID,               
-    uint_8_ptr *data,                  
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 
 #endif

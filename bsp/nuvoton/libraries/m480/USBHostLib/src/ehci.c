@@ -1222,7 +1222,7 @@ static int ehci_rh_polling(void)
     /*  Port de-bounce                                                                */
     /*--------------------------------------------------------------------------------*/
     t0 = usbh_get_ticks();
-	debounce_tick = usbh_tick_from_millisecond(HUB_DEBOUNCE_TIME);
+    debounce_tick = usbh_tick_from_millisecond(HUB_DEBOUNCE_TIME);
     connect_status = _ehci->UPSCR[0] & HSUSBH_UPSCR_CCS_Msk;
     while (usbh_get_ticks() - t0 < debounce_tick)
     {

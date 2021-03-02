@@ -129,11 +129,11 @@ typedef void (*trng_callback_t)(struct trng_module *const module_inst);
 
 /** Enum for possible callback types for the TRNG module. */
 enum trng_callback {
-	/** Callback for specific number of random data ready */
-	TRNG_CALLBACK_READ_BUFFER = 0,
-	/** Number of available callbacks */
+    /** Callback for specific number of random data ready */
+    TRNG_CALLBACK_READ_BUFFER = 0,
+    /** Number of available callbacks */
 #if !defined(__DOXYGEN__)
-	TRNG_CALLBACK_N,
+    TRNG_CALLBACK_N,
 #endif
 };
 #endif
@@ -149,21 +149,21 @@ enum trng_callback {
  */
 struct trng_module {
 #if !defined(__DOXYGEN__)
-	/** Hardware module pointer of the associated TRNG peripheral */
-	Trng *hw;
+    /** Hardware module pointer of the associated TRNG peripheral */
+    Trng *hw;
 #  if TRNG_CALLBACK_MODE == true
-	/** Array of callbacks */
-	trng_callback_t callback[TRNG_CALLBACK_N];
-	/** Bit mask for callbacks registered */
-	uint8_t register_callback_mask;
-	/** Bit mask for callbacks enabled */
-	uint8_t enable_callback_mask;
-	/** Holds the status of the ongoing or last read job */
-	volatile enum status_code job_status;
-	/** Pointer to buffer used for TRNG results */
-	volatile uint32_t *job_buffer;
-	/** Remaining number of TRNG results in current job */
-	volatile uint32_t remaining_number;
+    /** Array of callbacks */
+    trng_callback_t callback[TRNG_CALLBACK_N];
+    /** Bit mask for callbacks registered */
+    uint8_t register_callback_mask;
+    /** Bit mask for callbacks enabled */
+    uint8_t enable_callback_mask;
+    /** Holds the status of the ongoing or last read job */
+    volatile enum status_code job_status;
+    /** Pointer to buffer used for TRNG results */
+    volatile uint32_t *job_buffer;
+    /** Remaining number of TRNG results in current job */
+    volatile uint32_t remaining_number;
 #  endif
 #endif
 };
@@ -174,9 +174,9 @@ struct trng_module {
  *  Configuration structure for a True Random Number Generator.
  */
 struct trng_config {
-	/** If \c true, the True Random Number Generator will not be stopped in
-	 *  standby sleep mode */
-	bool run_in_standby;
+    /** If \c true, the True Random Number Generator will not be stopped in
+     *  standby sleep mode */
+    bool run_in_standby;
 };
 
 /**
@@ -186,8 +186,8 @@ struct trng_config {
  * disable events via \ref trng_enable_events() and \ref trng_disable_events().
  */
 struct trng_events {
-	/** Enable event generation on random data ready */
-	bool generate_event_on_data_ready;
+    /** Enable event generation on random data ready */
+    bool generate_event_on_data_ready;
 };
 
 
@@ -196,9 +196,9 @@ struct trng_events {
  * @{
  */
 enum status_code trng_init(
-		struct trng_module *const module_inst,
-		Trng *const hw,
-		struct trng_config *const config);
+        struct trng_module *const module_inst,
+        Trng *const hw,
+        struct trng_config *const config);
 
 /**
  * \brief Initializes all members of a TRNG configuration structure
@@ -215,13 +215,13 @@ enum status_code trng_init(
  *  \param[out] config  Configuration structure to initialize to default values
  */
 static inline void trng_get_config_defaults(
-		struct trng_config *const config)
+        struct trng_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Default configuration values */
-	config->run_in_standby = false;
+    /* Default configuration values */
+    config->run_in_standby = false;
 }
 
 /**
@@ -234,16 +234,16 @@ static inline void trng_get_config_defaults(
  *                         Generator peripheral
  */
 static inline void trng_enable(
-		struct trng_module *const module_inst)
+        struct trng_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Trng *const trng_module = module_inst->hw;
+    Trng *const trng_module = module_inst->hw;
 
-	/* Enable TRNG */
-	trng_module->CTRLA.reg |= TRNG_CTRLA_ENABLE;
+    /* Enable TRNG */
+    trng_module->CTRLA.reg |= TRNG_CTRLA_ENABLE;
 }
 
 /**
@@ -256,21 +256,21 @@ static inline void trng_enable(
  *                         Generator peripheral
  */
 static inline void trng_disable(
-		struct trng_module *const module_inst)
+        struct trng_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Trng *const trng_module = module_inst->hw;
+    Trng *const trng_module = module_inst->hw;
 
-	/* Disbale interrupt */
-	trng_module->INTENCLR.reg = TRNG_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	trng_module->INTFLAG.reg = TRNG_INTFLAG_MASK;
+    /* Disbale interrupt */
+    trng_module->INTENCLR.reg = TRNG_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    trng_module->INTFLAG.reg = TRNG_INTFLAG_MASK;
 
-	/* Disable TRNG */
-	trng_module->CTRLA.reg &= ~TRNG_CTRLA_ENABLE;
+    /* Disable TRNG */
+    trng_module->CTRLA.reg &= ~TRNG_CTRLA_ENABLE;
 }
 
 /**
@@ -286,19 +286,19 @@ static inline void trng_disable(
  *  \param[in] events       Struct containing flags of events to enable
  */
 static inline void trng_enable_events(
-		struct trng_module *const module_inst,
-		struct trng_events *const events)
+        struct trng_module *const module_inst,
+        struct trng_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Trng *const trng_module = module_inst->hw;
+    Trng *const trng_module = module_inst->hw;
 
-	if (events->generate_event_on_data_ready) {
-		/* Enable data ready event output */
-		trng_module->EVCTRL.reg |= TRNG_EVCTRL_DATARDYEO;
-	}
+    if (events->generate_event_on_data_ready) {
+        /* Enable data ready event output */
+        trng_module->EVCTRL.reg |= TRNG_EVCTRL_DATARDYEO;
+    }
 }
 
 /**
@@ -314,19 +314,19 @@ static inline void trng_enable_events(
  *  \param[in] events       Struct containing flags of events to disable
  */
 static inline void trng_disable_events(
-		struct trng_module *const module_inst,
-		struct trng_events *const events)
+        struct trng_module *const module_inst,
+        struct trng_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Trng *const trng_module = module_inst->hw;
+    Trng *const trng_module = module_inst->hw;
 
-	if (events->generate_event_on_data_ready) {
-		/* Disable data ready event output */
-		trng_module->EVCTRL.reg &= ~TRNG_EVCTRL_DATARDYEO;
-	}
+    if (events->generate_event_on_data_ready) {
+        /* Disable data ready event output */
+        trng_module->EVCTRL.reg &= ~TRNG_EVCTRL_DATARDYEO;
+    }
 }
 /** @} */
 
@@ -348,25 +348,25 @@ static inline void trng_disable_events(
  * \retval STATUS_BUSY         A random result was not ready
  */
 static inline enum status_code trng_read(
-		struct trng_module *const module_inst,
-		uint32_t *result)
+        struct trng_module *const module_inst,
+        uint32_t *result)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(result);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(result);
 
-	Trng *const trng_hw = module_inst->hw;
+    Trng *const trng_hw = module_inst->hw;
 
-	if (!(trng_hw->INTFLAG.reg & TRNG_INTFLAG_DATARDY)) {
-		/* Result not ready */
-		return STATUS_BUSY;
-	}
+    if (!(trng_hw->INTFLAG.reg & TRNG_INTFLAG_DATARDY)) {
+        /* Result not ready */
+        return STATUS_BUSY;
+    }
 
-	/* Get randomly generated output data (it will clear data ready flag) */
-	*result = trng_hw->DATA.reg;
+    /* Get randomly generated output data (it will clear data ready flag) */
+    *result = trng_hw->DATA.reg;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 /** @} */
 
@@ -382,14 +382,14 @@ static inline enum status_code trng_read(
  * \section asfdoc_sam0_trng_extra_acronyms Acronyms
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
  *  <tr>
- *		<td>TRNG</td>
- *		<td>True Random Number Generator</td>
- *	</tr>
+ *        <td>TRNG</td>
+ *        <td>True Random Number Generator</td>
+ *    </tr>
  * </table>
  *
  *
@@ -408,12 +408,12 @@ static inline enum status_code trng_read(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
-  *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+  *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -434,21 +434,21 @@ static inline enum status_code trng_read(
  * \page asfdoc_sam0_trng_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42444B</td>
- *		<td>01/2016</td>
- *		<td>Added support for SAM L22</td>
- *	</tr>
- *	<tr>
- *		<td>42444A</td>
- *		<td>06/2015</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42444B</td>
+ *        <td>01/2016</td>
+ *        <td>Added support for SAM L22</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42444A</td>
+ *        <td>06/2015</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

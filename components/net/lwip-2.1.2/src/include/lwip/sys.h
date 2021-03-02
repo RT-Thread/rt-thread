@@ -130,7 +130,7 @@ typedef void (*lwip_thread_fn)(void *arg);
  * If the mutex has been created, ERR_OK should be returned. Returning any
  * other error will provide a hint what went wrong, but except for assertions,
  * no real error handling is implemented.
- * 
+ *
  * @param mutex pointer to the mutex to create
  * @return ERR_OK if successful, another err_t otherwise
  */
@@ -205,13 +205,13 @@ void sys_sem_signal(sys_sem_t *sem);
  * "timeout" argument is non-zero, the thread should only be blocked for the
  * specified time (measured in milliseconds). If the "timeout" argument is zero,
  * the thread should be blocked until the semaphore is signalled.
- * 
+ *
  * The return value is SYS_ARCH_TIMEOUT if the semaphore wasn't signaled within
  * the specified time or any other value if it was signaled (with or without
  * waiting).
  * Notice that lwIP implements a function with a similar name,
  * sys_sem_wait(), that uses the sys_arch_sem_wait() function.
- * 
+ *
  * @param sem the semaphore to wait for
  * @param timeout timeout in milliseconds to wait (0 = wait forever)
  * @return SYS_ARCH_TIMEOUT on timeout, any other value on success
@@ -277,7 +277,7 @@ void sys_msleep(u32_t ms); /* only has a (close to) 1 ms resolution. */
  * If the mailbox has been created, ERR_OK should be returned. Returning any
  * other error will provide a hint what went wrong, but except for assertions,
  * no real error handling is implemented.
- * 
+ *
  * @param mbox pointer to the mbox to create
  * @param size (minimum) number of messages in this mbox
  * @return ERR_OK if successful, another err_t otherwise
@@ -287,7 +287,7 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size);
  * @ingroup sys_mbox
  * Post a message to an mbox - may not fail
  * -> blocks if full, only to be used from tasks NOT from ISR!
- * 
+ *
  * @param mbox mbox to posts the message
  * @param msg message to post (ATTENTION: can be NULL)
  */
@@ -297,7 +297,7 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg);
  * Try to post a message to an mbox - may fail if full.
  * Can be used from ISR (if the sys arch layer allows this).
  * Returns ERR_MEM if it is full, else, ERR_OK if the "msg" is posted.
- * 
+ *
  * @param mbox mbox to posts the message
  * @param msg message to post (ATTENTION: can be NULL)
  */
@@ -307,7 +307,7 @@ err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg);
  * Try to post a message to an mbox - may fail if full.
  * To be be used from ISR.
  * Returns ERR_MEM if it is full, else, ERR_OK if the "msg" is posted.
- * 
+ *
  * @param mbox mbox to posts the message
  * @param msg message to post (ATTENTION: can be NULL)
  */
@@ -324,10 +324,10 @@ err_t sys_mbox_trypost_fromisr(sys_mbox_t *mbox, void *msg);
  * The return values are the same as for the sys_arch_sem_wait() function:
  * SYS_ARCH_TIMEOUT if there was a timeout, any other value if a messages
  * is received.
- * 
+ *
  * Note that a function with a similar name, sys_mbox_fetch(), is
- * implemented by lwIP. 
- * 
+ * implemented by lwIP.
+ *
  * @param mbox mbox to get a message from
  * @param msg pointer where the message is stored
  * @param timeout maximum time (in milliseconds) to wait for a message (0 = wait forever)
@@ -346,7 +346,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout);
  * example, a naive implementation could be:
  * \#define sys_arch_mbox_tryfetch(mbox,msg) sys_arch_mbox_fetch(mbox,msg,1)
  * although this would introduce unnecessary delays.
- * 
+ *
  * @param mbox mbox to get a message from
  * @param msg pointer where the message is stored
  * @return 0 (milliseconds) if a message has been received
@@ -363,7 +363,7 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg);
  * Deallocates a mailbox. If there are messages still present in the
  * mailbox when the mailbox is deallocated, it is an indication of a
  * programming error in lwIP and the developer should be notified.
- * 
+ *
  * @param mbox mbox to delete
  */
 void sys_mbox_free(sys_mbox_t *mbox);
@@ -411,7 +411,7 @@ void sys_mbox_set_invalid(sys_mbox_t *mbox);
  * the "stacksize" parameter. The id of the new thread is returned. Both the id
  * and the priority are system dependent.
  * ATTENTION: although this function returns a value, it MUST NOT FAIL (ports have to assert this!)
- * 
+ *
  * @param name human-readable name for the thread (used for debugging purposes)
  * @param thread thread-function
  * @param arg parameter passed to 'thread'

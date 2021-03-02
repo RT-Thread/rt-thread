@@ -40,7 +40,7 @@ void adc_enable(uint32_t adc_periph)
 {
   if(RESET == (ADC_CTL1(adc_periph) & ADC_CTL1_ADCON)){
       ADC_CTL1(adc_periph) |= (uint32_t)ADC_CTL1_ADCON;
-  }       
+  }
 }
 
 /*!
@@ -231,7 +231,7 @@ void adc_clock_config(uint32_t prescaler)
 
 /*!
     \brief      configure the ADC clock for all the ADCs
-    \param[in]  function: temperature sensor and internal reference voltage channel or VBAT channel 
+    \param[in]  function: temperature sensor and internal reference voltage channel or VBAT channel
       \arg        ADC_VBAT_CHANNEL_SWITCH: channel 18 (1/4 voltate of external battery) switch of ADC0
       \arg        ADC_TEMP_VREF_CHANNEL_SWITCH: channel 16 (temperature sensor) and 17 (internal reference voltage) switch of ADC0
     \param[in]  newvalue: ENABLE or DISABLE
@@ -335,44 +335,44 @@ void adc_external_trigger_config(uint32_t adc_periph , uint8_t adc_channel_group
       \arg        ADC_INSERTED_CHANNEL: inserted channel group
     \param[in]  external_trigger_source: regular or inserted group trigger source
                 for regular channel:
-      \arg        ADC_EXTTRIG_REGULAR_T0_CH0: external trigger timer 0 CC0 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T0_CH1: external trigger timer 0 CC1 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T0_CH2: external trigger timer 0 CC2 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T1_CH1: external trigger timer 1 CC1 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T1_CH2: external trigger timer 1 CC2 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T1_CH3: external trigger timer 1 CC3 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T1_TRGO: external trigger timer 1 TRGO event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T2_CH0 : external trigger timer 2 CC0 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T2_TRGO : external trigger timer 2 TRGO event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T3_CH3: external trigger timer 3 CC3 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T4_CH0: external trigger timer 4 CC0 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T4_CH1: external trigger timer 4 CC1 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T4_CH2: external trigger timer 4 CC2 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T7_CH0: external trigger timer 7 CC0 event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_T7_TRGO: external trigger timer 7 TRGO event select for regular channel 
-      \arg        ADC_EXTTRIG_REGULAR_EXTI_11: external trigger extiline 11 select for regular channel 
+      \arg        ADC_EXTTRIG_REGULAR_T0_CH0: external trigger timer 0 CC0 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T0_CH1: external trigger timer 0 CC1 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T0_CH2: external trigger timer 0 CC2 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T1_CH1: external trigger timer 1 CC1 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T1_CH2: external trigger timer 1 CC2 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T1_CH3: external trigger timer 1 CC3 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T1_TRGO: external trigger timer 1 TRGO event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T2_CH0 : external trigger timer 2 CC0 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T2_TRGO : external trigger timer 2 TRGO event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T3_CH3: external trigger timer 3 CC3 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T4_CH0: external trigger timer 4 CC0 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T4_CH1: external trigger timer 4 CC1 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T4_CH2: external trigger timer 4 CC2 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T7_CH0: external trigger timer 7 CC0 event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_T7_TRGO: external trigger timer 7 TRGO event select for regular channel
+      \arg        ADC_EXTTRIG_REGULAR_EXTI_11: external trigger extiline 11 select for regular channel
                 for inserted channel:
-      \arg        ADC_EXTTRIG_INSERTED_T0_CH3: timer0 capture compare 3 
-      \arg        ADC_EXTTRIG_INSERTED_T0_TRGO: timer0 TRGO event 
-      \arg        ADC_EXTTRIG_INSERTED_T1_CH0: timer1 capture compare 0 
-      \arg        ADC_EXTTRIG_INSERTED_T1_TRGO: timer1 TRGO event 
-      \arg        ADC_EXTTRIG_INSERTED_T2_CH1: timer2 capture compare 1 
-      \arg        ADC_EXTTRIG_INSERTED_T2_CH3: timer2 capture compare 3 
-      \arg        ADC_EXTTRIG_INSERTED_T3_CH0: timer3 capture compare 0 
-      \arg        ADC_EXTTRIG_INSERTED_T3_CH1: timer3 capture compare 1 
-      \arg        ADC_EXTTRIG_INSERTED_T3_CH2: timer3 capture compare 2 
-      \arg        ADC_EXTTRIG_INSERTED_T3_TRGO: timer3 capture compare TRGO 
-      \arg        ADC_EXTTRIG_INSERTED_T4_CH3: timer4 capture compare 3 
-      \arg        ADC_EXTTRIG_INSERTED_T4_TRGO: timer4 capture compare TRGO 
-      \arg        ADC_EXTTRIG_INSERTED_T7_CH1: timer7 capture compare 1 
-      \arg        ADC_EXTTRIG_INSERTED_T7_CH2: timer7 capture compare 2 
-      \arg        ADC_EXTTRIG_INSERTED_T7_CH3: timer7 capture compare 3 
-      \arg        ADC_EXTTRIG_INSERTED_EXTI_15: external interrupt line 15 
+      \arg        ADC_EXTTRIG_INSERTED_T0_CH3: timer0 capture compare 3
+      \arg        ADC_EXTTRIG_INSERTED_T0_TRGO: timer0 TRGO event
+      \arg        ADC_EXTTRIG_INSERTED_T1_CH0: timer1 capture compare 0
+      \arg        ADC_EXTTRIG_INSERTED_T1_TRGO: timer1 TRGO event
+      \arg        ADC_EXTTRIG_INSERTED_T2_CH1: timer2 capture compare 1
+      \arg        ADC_EXTTRIG_INSERTED_T2_CH3: timer2 capture compare 3
+      \arg        ADC_EXTTRIG_INSERTED_T3_CH0: timer3 capture compare 0
+      \arg        ADC_EXTTRIG_INSERTED_T3_CH1: timer3 capture compare 1
+      \arg        ADC_EXTTRIG_INSERTED_T3_CH2: timer3 capture compare 2
+      \arg        ADC_EXTTRIG_INSERTED_T3_TRGO: timer3 capture compare TRGO
+      \arg        ADC_EXTTRIG_INSERTED_T4_CH3: timer4 capture compare 3
+      \arg        ADC_EXTTRIG_INSERTED_T4_TRGO: timer4 capture compare TRGO
+      \arg        ADC_EXTTRIG_INSERTED_T7_CH1: timer7 capture compare 1
+      \arg        ADC_EXTTRIG_INSERTED_T7_CH2: timer7 capture compare 2
+      \arg        ADC_EXTTRIG_INSERTED_T7_CH3: timer7 capture compare 3
+      \arg        ADC_EXTTRIG_INSERTED_EXTI_15: external interrupt line 15
     \param[out] none
     \retval     none
 */
 void adc_external_trigger_source_config(uint32_t adc_periph , uint8_t adc_channel_group , uint32_t external_trigger_source)
-{   
+{
     switch(adc_channel_group){
     case ADC_REGULAR_CHANNEL:
         ADC_CTL1(adc_periph) &= ~((uint32_t)ADC_CTL1_ETSRC);
@@ -606,7 +606,7 @@ void adc_watchdog_single_channel_enable(uint32_t adc_periph , uint8_t adc_channe
 /*!
     \brief      adc analog watchdog group channel config
     \param[in]  adc_periph: ADCx,x=0,1,2
-    \param[in]  adc_channel_group: the channel group use analog watchdog 
+    \param[in]  adc_channel_group: the channel group use analog watchdog
       \arg        ADC_REGULAR_CHANNEL: regular channel group
       \arg        ADC_INSERTED_CHANNEL: inserted channel group
       \arg        ADC_REGULAR_INSERTED_CHANNEL: both regular and inserted group
@@ -635,7 +635,7 @@ void adc_watchdog_enable(uint32_t adc_periph , uint8_t adc_channel_group)
 /*!
     \brief      ADC analog watchdog disable
     \param[in]  adc_periph: ADCx,x=0,1,2
-    \param[in]  adc_channel_group: the channel group use analog watchdog 
+    \param[in]  adc_channel_group: the channel group use analog watchdog
       \arg        ADC_REGULAR_CHANNEL: regular channel group
       \arg        ADC_INSERTED_CHANNEL: inserted channel group
       \arg        ADC_REGULAR_INSERTED_CHANNEL: both regular and inserted group
@@ -695,7 +695,7 @@ void adc_watchdog_threshold_config(uint32_t adc_periph , uint16_t low_threshold 
 void adc_regular_channel_config(uint32_t adc_periph , uint8_t rank , uint8_t adc_channel , uint32_t sample_time)
 {
     uint32_t rsq,sampt;
-    
+
     /* ADC regular sequence config */
     if(rank < 6U){
         rsq = ADC_RSQ2(adc_periph);
@@ -714,7 +714,7 @@ void adc_regular_channel_config(uint32_t adc_periph , uint8_t rank , uint8_t adc
         ADC_RSQ0(adc_periph) = rsq;
     }else{
     }
-    
+
     /* ADC sampling time config */
     if(adc_channel < 10U){
         sampt = ADC_SAMPT1(adc_periph);
@@ -957,7 +957,7 @@ void adc_oversample_mode_disable(uint32_t adc_periph)
 
 /*!
     \brief      configure the ADC sync mode
-    \param[in]  sync_mode: ADC sync mode 
+    \param[in]  sync_mode: ADC sync mode
       \arg        ADC_SYNC_MODE_INDEPENDENT: all the ADCs work independently
       \arg        ADC_DAUL_REGULAL_PARALLEL_INSERTED_PARALLEL: ADC0 and ADC1 work in combined regular parallel & inserted parallel mode
       \arg        ADC_DAUL_REGULAL_PARALLEL_INSERTED_ROTATION: ADC0 and ADC1 work in combined regular parallel & trigger rotation mode
@@ -982,7 +982,7 @@ void adc_sync_mode_config(uint32_t sync_mode)
 
 /*!
     \brief      configure the delay between 2 sampling phases in ADC sync modes
-    \param[in]  sample_delay:  the delay between 2 sampling phases in ADC sync modes 
+    \param[in]  sample_delay:  the delay between 2 sampling phases in ADC sync modes
       \arg        ADC_SYNC_DELAY_xCYCLE: x=5..20,the delay between 2 sampling phases in ADC sync modes is x ADC clock cycles
     \param[out] none
     \retval     none

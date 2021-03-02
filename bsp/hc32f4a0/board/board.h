@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2020-10-30     CDT          first version
  */
- 
+
 
 #ifndef __BOARD_H__
 #define __BOARD_H__

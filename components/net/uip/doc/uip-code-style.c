@@ -74,7 +74,7 @@ code_style_example_function(void)
    * function.
    */
   int i;                   /* Use short variable names for loop
-			      counters. */
+                  counters. */
 
   /*
    * There should be no space between keywords and the first
@@ -94,7 +94,7 @@ code_style_example_function(void)
     if(i == c) {
       return c;           /* No parentesis around return values. */
     } else {              /* The else keyword is placed inbetween
-			     curly brackers, always on its own line. */
+                 curly brackers, always on its own line. */
       c++;
     }
   }
@@ -108,7 +108,7 @@ code_style_example_function(void)
 static void
 an_example_function(void)
 {
-  
+
 }
 /*---------------------------------------------------------------------------*/
 

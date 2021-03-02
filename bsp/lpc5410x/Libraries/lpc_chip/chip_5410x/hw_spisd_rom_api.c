@@ -34,11 +34,11 @@
 // This creates a table with the addresses of all the SPI functions
 // This table of function pointers is the API interface.
 const ROM_SPISD_API_T spis_api = {
-	&spis_get_mem_size,
-	&spis_init,
-	&spis_register_callback,
-	&spis_setup_slave,
-	&spis_transfer,
-	&spis_transfer_handler,
-	&spis_get_driver_version,
-};		// end of table ************************************
+    &spis_get_mem_size,
+    &spis_init,
+    &spis_register_callback,
+    &spis_setup_slave,
+    &spis_transfer,
+    &spis_transfer_handler,
+    &spis_get_driver_version,
+};        // end of table ************************************

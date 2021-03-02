@@ -1,8 +1,8 @@
 /*
- * åˆ›å»º7ä¸ªè¿›ç¨‹ï¼Œtid20ã€tid21ã€tid22ã€tid23ã€tid24ã€tid25ã€tid26ã€tid27ã€tid28ã€tid29
- * å„ä»»åŠ¡ä¼˜å…ˆçº§åˆ†åˆ«ä¸º20ã€21ã€22ã€23ã€24ã€25ã€26ã€27ã€28ã€29ï¼Œ
- * å…¶ä¸­tid26æœ€å…ˆè·å¾—é”ï¼Œtid22ä¸éœ€è¦ä½¿ç”¨åˆ°äº’æ–¥é”ï¼Œå…¶ä»–æ‰€æœ‰è¿›ç¨‹å‡éœ€è¦ä½¿ç”¨äº’æ–¥é”ï¼Œ
- * é€šè¿‡å„ä¸ªè¿›ç¨‹çš„æ‰“å°ä¿¡æ¯ï¼Œè§‚å¯Ÿå„ä¸ªè¿›ç¨‹è·å–åˆ°äº’æ–¥é”åï¼Œä¼˜å…ˆçº§å˜åŒ–æƒ…å†µ
+ * ´´½¨7¸ö½ø³Ì£¬tid20¡¢tid21¡¢tid22¡¢tid23¡¢tid24¡¢tid25¡¢tid26¡¢tid27¡¢tid28¡¢tid29
+ * ¸÷ÈÎÎñÓÅÏÈ¼¶·Ö±ğÎª20¡¢21¡¢22¡¢23¡¢24¡¢25¡¢26¡¢27¡¢28¡¢29£¬
+ * ÆäÖĞtid26×îÏÈ»ñµÃËø£¬tid22²»ĞèÒªÊ¹ÓÃµ½»¥³âËø£¬ÆäËûËùÓĞ½ø³Ì¾ùĞèÒªÊ¹ÓÃ»¥³âËø£¬
+ * Í¨¹ı¸÷¸ö½ø³ÌµÄ´òÓ¡ĞÅÏ¢£¬¹Û²ì¸÷¸ö½ø³Ì»ñÈ¡µ½»¥³âËøºó£¬ÓÅÏÈ¼¶±ä»¯Çé¿ö
  */
 #include <rtthread.h>
 #include "tc_comm.h"
@@ -271,7 +271,7 @@ static void thread29_entry(void* parameter)
 
 static int mutex_simple_init()
 {
-    /* åˆ›å»ºäº’æ–¥é” */
+    /* ´´½¨»¥³âËø */
     mutex = rt_mutex_create("mutex", RT_IPC_FLAG_FIFO);
     if (mutex == RT_NULL)
     {
@@ -365,10 +365,10 @@ static int mutex_simple_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (tid20 != RT_NULL && tid20->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid20);
     if (tid21 != RT_NULL && tid21->stat != RT_THREAD_CLOSE)
@@ -396,26 +396,26 @@ static void _tc_cleanup()
     }
     rt_kprintf("test_done!\n");
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_mutex_priority()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     mutex_simple_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_mutex_priority, a priority rollover example of mutex);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     mutex_simple_init();

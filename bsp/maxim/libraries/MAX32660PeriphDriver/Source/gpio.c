@@ -53,13 +53,13 @@ int GPIO_Init(void)
 {
     int i;
     int j;
-    
+
     // Initialize call back arrays
     for(i = 0; i < MXC_CFG_GPIO_INSTANCES; i++) {
         for(j = 0; j < MXC_CFG_GPIO_PINS_PORT; j++) {
             callback[i][j] = NULL;
         }
-    }            
+    }
     return E_NO_ERROR;
 }
 

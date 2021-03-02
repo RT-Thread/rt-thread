@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	assert.h
- * @brief	Assertion support.
+ * @file    assert.h
+ * @brief    Assertion support.
  */
 
 #ifndef __METAL_ASSERT__H__

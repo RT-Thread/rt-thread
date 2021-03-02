@@ -35,21 +35,21 @@ typedef struct
 {
     uint32_t SDIO_ClkEdge;                  /*!< Specifies the clock transition on which the bit capture is made.
                                                  This parameter can be a value of @ref SDIO_Clock_Edge */
-                                            
+
     uint32_t SDIO_ClkBypass;                /*!< Specifies whether the SDIO Clock divider bypass is
                                                  enabled or disabled.
                                                  This parameter can be a value of @ref SDIO_Clock_Bypass */
-                                            
+
     uint32_t SDIO_ClkPowerSave;             /*!< Specifies whether SDIO Clock output is enabled or
                                                  disabled when the bus is idle.
                                                  This parameter can be a value of @ref SDIO_Clock_Power_Save */
-                                            
+
     uint32_t SDIO_BusWidth;                 /*!< Specifies the SDIO bus width.
                                                  This parameter can be a value of @ref SDIO_Bus_Wide */
-                                            
+
     uint32_t SDIO_FlowCtrl;                 /*!< Specifies whether the SDIO hardware flow control is enabled or disabled.
                                                  This parameter can be a value of @ref SDIO_Hardware_Flow_Control */
-                                            
+
     uint16_t SDIO_ClkPsc;                    /*!< Specifies the clock frequency of the SDIO controller.
                                                  This parameter can be a value between 0x00 and 0x3FF. */
 
@@ -61,15 +61,15 @@ typedef struct
                                                  to a card as part of a command message. If a command
                                                  contains an argument, it must be loaded into this register
                                                  before writing the command to the command register */
-                                            
+
     uint32_t SDIO_CmdIdx;                   /*!< Specifies the SDIO command index. It must be lower than 0x40. */
-                                            
+
     uint32_t SDIO_Resp;                     /*!< Specifies the SDIO response type.
                                                  This parameter can be a value of @ref SDIO_Response_Type */
-                                            
+
     uint32_t SDIO_Wait;                     /*!< Specifies whether SDIO wait-for-interrupt request is enabled or disabled.
                                                  This parameter can be a value of @ref SDIO_Wait_Interrupt_State */
-                                            
+
     uint32_t SDIO_CPSM;                     /*!< Specifies whether SDIO Command path state machine (CPSM)
                                                  is enabled or disabled.
                                                  This parameter can be a value of @ref SDIO_CPSM_State */
@@ -78,19 +78,19 @@ typedef struct
 typedef struct
 {
     uint32_t SDIO_DataTimeOut;              /*!< Specifies the data timeout period in card bus clock periods. */
-                                            
+
     uint32_t SDIO_DataLen;                  /*!< Specifies the number of data bytes to be transferred. */
-                                            
+
     uint32_t SDIO_DataBlkSize;              /*!< Specifies the data block size for block transfer.
                                                This parameter can be a value of @ref SDIO_Data_Block_Size */
-                                            
+
     uint32_t SDIO_TransferDir;              /*!< Specifies the data transfer direction, whether the transfer
                                                is a read or write.
                                                This parameter can be a value of @ref SDIO_Transfer_Direction */
-                                            
+
     uint32_t SDIO_TransferMode;             /*!< Specifies whether data transfer is in stream or block mode.
                                                This parameter can be a value of @ref SDIO_Transfer_Type */
-                                            
+
     uint32_t SDIO_DPSM;                     /*!< Specifies whether SDIO Data path state machine (DPSM)
                                                is enabled or disabled.
                                                This parameter can be a value of @ref SDIO_DPSM_State */

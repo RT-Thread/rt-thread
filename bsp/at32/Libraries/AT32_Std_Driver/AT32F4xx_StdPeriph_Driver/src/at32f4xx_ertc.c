@@ -14,7 +14,7 @@
   * @{
   */
 
-/** @defgroup ERTC 
+/** @defgroup ERTC
   * @brief ERTC driver modules
   * @{
   */
@@ -26,8 +26,8 @@
 
 /* Masks Definition */
 #define ERTC_TIME_RESERVED_MASK    ((uint32_t)0x007F7F7F)
-#define ERTC_DATE_RESERVED_MASK    ((uint32_t)0x00FFFF3F) 
-#define ERTC_INIT_MASK             ((uint32_t)0xFFFFFFFF)  
+#define ERTC_DATE_RESERVED_MASK    ((uint32_t)0x00FFFF3F)
+#define ERTC_INIT_MASK             ((uint32_t)0xFFFFFFFF)
 #define ERTC_RSF_MASK              ((uint32_t)0xFFFFFF5F)
 #define ERTC_FLAGS_MASK            ((uint32_t)(ERTC_FLAG_TSOF | ERTC_FLAG_TSF | ERTC_FLAG_WATF | \
                                             ERTC_FLAG_ALBF | ERTC_FLAG_ALAF | ERTC_FLAG_INITF | \
@@ -50,13 +50,13 @@ static uint8_t ERTC_Bcd2ToByte(uint8_t Value);
 
 /** @defgroup RTC_Private_Functions
   * @{
-  */ 
+  */
 
 
 /**
   * @brief  Deinitializes the ERTC registers to their default reset values.
   * @note   This function doesn't reset the ERTC Clock source and ERTC Backup Data
-  *         registers.       
+  *         registers.
   * @param  None
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC registers are deinitialized
@@ -67,7 +67,7 @@ ErrorStatus ERTC_Reset(void)
   __IO uint32_t wutcounter = 0x00;
   uint32_t wutwfstatus = 0x00;
   ErrorStatus status = ERROR;
-  
+
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
@@ -76,7 +76,7 @@ ErrorStatus ERTC_Reset(void)
   if (ERTC_EnterInitMode() == ERROR)
   {
     status = ERROR;
-  }  
+  }
   else
   {
     /* Reset TIME, DATE and CTRL registers */
@@ -84,14 +84,14 @@ ErrorStatus ERTC_Reset(void)
     ERTC->DATE = (uint32_t)0x00002101;
     /* Reset All CTRL bits except CTRL[2:0] */
     ERTC->CTRL &= (uint32_t)0x00000007;
-  
+
     /* Wait till ERTC WUTWF flag is set and if Time out is reached exit */
     do
     {
       wutwfstatus = ERTC->ISTS & ERTC_ISTS_WATWF;
-      wutcounter++;  
+      wutcounter++;
     } while((wutcounter != INITMODE_TMROUT) && (wutwfstatus == 0x00));
-    
+
     if ((ERTC->ISTS & ERTC_ISTS_WATWF) == RESET)
     {
       status = ERROR;
@@ -103,51 +103,51 @@ ErrorStatus ERTC_Reset(void)
       ERTC->WATR  = (uint32_t)0x0000FFFF;
       ERTC->PSC   = (uint32_t)0x007F00FF;
       ERTC->CAL   = (uint32_t)0x00000000;
-      ERTC->ALA   = (uint32_t)0x00000000;        
+      ERTC->ALA   = (uint32_t)0x00000000;
       ERTC->ALB   = (uint32_t)0x00000000;
       ERTC->SFCTR = (uint32_t)0x00000000;
       ERTC->CCR   = (uint32_t)0x00000000;
       ERTC->ALASBS = (uint32_t)0x00000000;
       ERTC->ALBSBS = (uint32_t)0x00000000;
-      
+
       /* Reset ISTS register and exit initialization mode */
       ERTC->ISTS = (uint32_t)0x00000000;
-      
+
       /* Reset Tamper and alternate functions configuration register */
       ERTC->TPAF = 0x00000000;
-  
+
       if(ERTC_WaitForSynchro() == ERROR)
       {
         status = ERROR;
       }
       else
       {
-        status = SUCCESS;      
+        status = SUCCESS;
       }
     }
   }
-  
+
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF;  
-  
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
 /**
-  * @brief  Initializes the ERTC registers according to the specified parameters 
+  * @brief  Initializes the ERTC registers according to the specified parameters
   *         in ERTC_InitStruct.
-  * @param  ERTC_InitStruct: pointer to a ERTC_InitType structure that contains 
+  * @param  ERTC_InitStruct: pointer to a ERTC_InitType structure that contains
   *         the configuration information for the ERTC peripheral.
-  * @note   The ERTC Prescaler register is write protected and can be written in 
-  *         initialization mode only.  
+  * @note   The ERTC Prescaler register is write protected and can be written in
+  *         initialization mode only.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC registers are initialized
-  *          - ERROR: ERTC registers are not initialized  
+  *          - ERROR: ERTC registers are not initialized
   */
 ErrorStatus ERTC_Init(ERTC_InitType* ERTC_InitStruct)
 {
   ErrorStatus status = ERROR;
-  
+
   /* Check the parameters */
   assert_param(IS_ERTC_HOUR_FORMAT(ERTC_InitStruct->ERTC_HourFormat));
   assert_param(IS_ERTC_ASYNCH_PRDIV(ERTC_InitStruct->ERTC_AsynchPrediv));
@@ -161,14 +161,14 @@ ErrorStatus ERTC_Init(ERTC_InitType* ERTC_InitStruct)
   if (ERTC_EnterInitMode() == ERROR)
   {
     status = ERROR;
-  } 
+  }
   else
   {
     /* Clear ERTC CTRL FMT Bit */
     ERTC->CTRL &= ((uint32_t)~(ERTC_CTRL_HFM));
     /* Set RTC_CR register */
     ERTC->CTRL |=  ((uint32_t)(ERTC_InitStruct->ERTC_HourFormat));
-  
+
     /* Configure the ERTC PSC */
     ERTC->PSC = (uint32_t)(ERTC_InitStruct->ERTC_SynchPrediv);
     ERTC->PSC |= (uint32_t)(ERTC_InitStruct->ERTC_AsynchPrediv << 16);
@@ -176,17 +176,17 @@ ErrorStatus ERTC_Init(ERTC_InitType* ERTC_InitStruct)
     /* Exit Initialization mode */
     ERTC_ExitInitMode();
 
-    status = SUCCESS;    
+    status = SUCCESS;
   }
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
-  
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
 /**
   * @brief  Fills each ERTC_InitStruct member with its default value.
-  * @param  ERTC_InitStruct: pointer to a ERTC_InitType structure which will be 
+  * @param  ERTC_InitStruct: pointer to a ERTC_InitType structure which will be
   *         initialized.
   * @retval None
   */
@@ -194,20 +194,20 @@ void ERTC_StructInit(ERTC_InitType* ERTC_InitStruct)
 {
   /* Initialize the ERTC_HourFormat member */
   ERTC_InitStruct->ERTC_HourFormat = ERTC_HourFormat_24;
-    
+
   /* Initialize the ERTC_AsynchPrediv member */
   ERTC_InitStruct->ERTC_AsynchPrediv = (uint32_t)0x7F;
 
   /* Initialize the ERTC_SynchPrediv member */
-  ERTC_InitStruct->ERTC_SynchPrediv = (uint32_t)0xFF; 
+  ERTC_InitStruct->ERTC_SynchPrediv = (uint32_t)0xFF;
 }
 
 /**
   * @brief  Enables or disables the ERTC registers write protection.
-  * @note   All the ERTC registers are write protected except for RTC_ISR[13:8], 
+  * @note   All the ERTC registers are write protected except for RTC_ISR[13:8],
   *         RTC_TAFCR and RTC_BKPxR.
   * @note   Writing a wrong key reactivates the write protection.
-  * @note   The protection mechanism is not affected by system reset.  
+  * @note   The protection mechanism is not affected by system reset.
   * @param  NewState: new state of the write protection.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -216,48 +216,48 @@ void ERTC_WriteProtectionCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
   if (NewState != DISABLE)
   {
     /* Enable the write protection for ERTC registers */
-    ERTC->WPR = 0xFF;   
+    ERTC->WPR = 0xFF;
   }
   else
   {
     /* Disable the write protection for ERTC registers */
     ERTC->WPR = 0xCA;
-    ERTC->WPR = 0x53;    
+    ERTC->WPR = 0x53;
   }
 }
 
 /**
   * @brief  Enters the ERTC Initialization mode.
-  * @note   The ERTC Initialization mode is write protected, use the 
-  *         ERTC_WriteProtectionCmd(DISABLE) before calling this function.    
+  * @note   The ERTC Initialization mode is write protected, use the
+  *         ERTC_WriteProtectionCmd(DISABLE) before calling this function.
   * @param  None
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC is in Init mode
-  *          - ERROR: ERTC is not in Init mode  
+  *          - ERROR: ERTC is not in Init mode
   */
 ErrorStatus ERTC_EnterInitMode(void)
 {
   __IO uint32_t initcounter = 0x00;
   ErrorStatus status = ERROR;
   uint32_t initstatus = 0x00;
-     
+
   /* Check if the Initialization mode is set */
   if ((ERTC->ISTS & ERTC_ISTS_INITF) == (uint32_t)RESET)
   {
     /* Set the Initialization mode */
     ERTC->ISTS = (uint32_t)ERTC_INIT_MASK;
-    
+
     /* Wait till ERTC is in INIT state and if Time out is reached exit */
     do
     {
       initstatus = ERTC->ISTS & ERTC_ISTS_INITF;
-      initcounter++;  
+      initcounter++;
     } while((initcounter != INITMODE_TMROUT) && (initstatus == 0x00));
-    
+
     if ((ERTC->ISTS & ERTC_ISTS_INITF) != RESET)
     {
       status = SUCCESS;
@@ -265,42 +265,42 @@ ErrorStatus ERTC_EnterInitMode(void)
     else
     {
       status = ERROR;
-    }        
+    }
   }
   else
   {
-    status = SUCCESS;  
-  } 
-    
-  return (status);  
+    status = SUCCESS;
+  }
+
+  return (status);
 }
 
 /**
   * @brief  Exits the ERTC Initialization mode.
-  * @note   When the initialization sequence is complete, the calendar restarts 
-  *         counting after 4 RTCCLK cycles.  
-  * @note   The ERTC Initialization mode is write protected, use the 
-  *         ERTC_WriteProtectionCmd(DISABLE) before calling this function.      
+  * @note   When the initialization sequence is complete, the calendar restarts
+  *         counting after 4 RTCCLK cycles.
+  * @note   The ERTC Initialization mode is write protected, use the
+  *         ERTC_WriteProtectionCmd(DISABLE) before calling this function.
   * @param  None
   * @retval None
   */
 void ERTC_ExitInitMode(void)
-{ 
+{
   /* Exit Initialization mode */
-  ERTC->ISTS &= (uint32_t)~ERTC_ISTS_INITM;  
+  ERTC->ISTS &= (uint32_t)~ERTC_ISTS_INITM;
 }
 
 /**
-  * @brief  Waits until the ERTC Time and Date registers (RTC_TR and RTC_DR) are 
+  * @brief  Waits until the ERTC Time and Date registers (RTC_TR and RTC_DR) are
   *         synchronized with ERTC APB clock.
-  * @note   The ERTC Resynchronization mode is write protected, use the 
-  *         ERTC_WriteProtectionCmd(DISABLE) before calling this function. 
-  * @note   To read the calendar through the shadow registers after Calendar 
-  *         initialization, calendar update or after wakeup from low power modes 
-  *         the software must first clear the RSF flag. 
-  *         The software must then wait until it is set again before reading 
-  *         the calendar, which means that the calendar registers have been 
-  *         correctly copied into the RTC_TR and RTC_DR shadow registers.   
+  * @note   The ERTC Resynchronization mode is write protected, use the
+  *         ERTC_WriteProtectionCmd(DISABLE) before calling this function.
+  * @note   To read the calendar through the shadow registers after Calendar
+  *         initialization, calendar update or after wakeup from low power modes
+  *         the software must first clear the RSF flag.
+  *         The software must then wait until it is set again before reading
+  *         the calendar, which means that the calendar registers have been
+  *         correctly copied into the RTC_TR and RTC_DR shadow registers.
   * @param  None
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC registers are synchronised
@@ -315,17 +315,17 @@ ErrorStatus ERTC_WaitForSynchro(void)
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-    
+
   /* Clear RSF flag */
   ERTC->ISTS &= (uint32_t)ERTC_RSF_MASK;
-    
+
   /* Wait the registers to be synchronised */
   do
   {
     synchrostatus = ERTC->ISTS & ERTC_ISTS_RSF;
-    synchrocounter++;  
+    synchrocounter++;
   } while((synchrocounter != SYNCHRO_TMROUT) && (synchrostatus == 0x00));
-    
+
   if ((ERTC->ISTS & ERTC_ISTS_RSF) != RESET)
   {
     status = SUCCESS;
@@ -333,12 +333,12 @@ ErrorStatus ERTC_WaitForSynchro(void)
   else
   {
     status = ERROR;
-  }        
+  }
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
-    
-  return (status); 
+  ERTC->WPR = 0xFF;
+
+  return (status);
 }
 
 /**
@@ -347,51 +347,51 @@ ErrorStatus ERTC_WaitForSynchro(void)
   *          This parameter can be: ENABLE or DISABLE.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC reference clock detection is enabled
-  *          - ERROR: ERTC reference clock detection is disabled  
+  *          - ERROR: ERTC reference clock detection is disabled
   */
 ErrorStatus ERTC_RefClockCmd(FunctionalState NewState)
-{ 
+{
   ErrorStatus status = ERROR;
-  
+
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
+
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-    
+
   /* Set Initialization mode */
   if (ERTC_EnterInitMode() == ERROR)
   {
     status = ERROR;
-  } 
+  }
   else
-  {  
+  {
     if (NewState != DISABLE)
     {
       /* Enable the ERTC reference clock detection */
-      ERTC->CTRL |= ERTC_CTRL_RFCKON;   
+      ERTC->CTRL |= ERTC_CTRL_RFCKON;
     }
     else
     {
       /* Disable the ERTC reference clock detection */
-      ERTC->CTRL &= ~ERTC_CTRL_RFCKON;    
+      ERTC->CTRL &= ~ERTC_CTRL_RFCKON;
     }
     /* Exit Initialization mode */
     ERTC_ExitInitMode();
-    
+
     status = SUCCESS;
   }
-  
+
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF;  
-  
-  return status; 
+  ERTC->WPR = 0xFF;
+
+  return status;
 }
 
 /**
   * @brief  Enables or Disables the Bypass Shadow feature.
-  * @note   When the Bypass Shadow is enabled the calendar value are taken 
+  * @note   When the Bypass Shadow is enabled the calendar value are taken
   *         directly from the Calendar counter.
   * @param  NewState: new state of the Bypass Shadow feature.
   *         This parameter can be: ENABLE or DISABLE.
@@ -405,7 +405,7 @@ void ERTC_BypassShadowCmd(FunctionalState NewState)
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   if (NewState != DISABLE)
   {
     /* Set the BYPSHAD bit */
@@ -426,13 +426,13 @@ void ERTC_BypassShadowCmd(FunctionalState NewState)
   */
 
 /** @defgroup RTC_Group2 Time and Date configuration functions
- *  @brief   Time and Date configuration functions 
+ *  @brief   Time and Date configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                  ##### Time and Date configuration functions #####
- ===============================================================================  
- 
+ ===============================================================================
+
  [..] This section provide functions allowing to program and read the ERTC Calendar
       (Time and Date).
 
@@ -444,10 +444,10 @@ void ERTC_BypassShadowCmd(FunctionalState NewState)
   * @brief  Set the ERTC current time.
   * @param  ERTC_Format: specifies the format of the entered parameters.
   *          This parameter can be  one of the following values:
-  *            @arg ERTC_Format_BIN:  Binary data format 
+  *            @arg ERTC_Format_BIN:  Binary data format
   *            @arg ERTC_Format_BCD:  BCD data format
-  * @param  ERTC_TimeStruct: pointer to a ERTC_TimeType structure that contains 
-  *                        the time configuration information for the ERTC.     
+  * @param  ERTC_TimeStruct: pointer to a ERTC_TimeType structure that contains
+  *                        the time configuration information for the ERTC.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC Time register is configured
   *          - ERROR: ERTC Time register is not configured
@@ -456,17 +456,17 @@ ErrorStatus ERTC_SetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStru
 {
   uint32_t tmpreg = 0;
   ErrorStatus status = ERROR;
-    
+
   /* Check the parameters */
   assert_param(IS_ERTC_FORMAT(ERTC_Format));
-  
+
   if (ERTC_Format == ERTC_Format_BIN)
   {
     if ((ERTC->CTRL & ERTC_CTRL_HFM) != (uint32_t)RESET)
     {
       assert_param(IS_ERTC_HOUR12(ERTC_TimeStruct->ERTC_Hours));
       assert_param(IS_ERTC_H12(ERTC_TimeStruct->ERTC_AMPM));
-    } 
+    }
     else
     {
       ERTC_TimeStruct->ERTC_AMPM = 0x00;
@@ -481,8 +481,8 @@ ErrorStatus ERTC_SetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStru
     {
       tmpreg = ERTC_Bcd2ToByte(ERTC_TimeStruct->ERTC_Hours);
       assert_param(IS_ERTC_HOUR12(tmpreg));
-      assert_param(IS_ERTC_H12(ERTC_TimeStruct->ERTC_AMPM)); 
-    } 
+      assert_param(IS_ERTC_H12(ERTC_TimeStruct->ERTC_AMPM));
+    }
     else
     {
       ERTC_TimeStruct->ERTC_AMPM = 0x00;
@@ -491,22 +491,22 @@ ErrorStatus ERTC_SetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStru
     assert_param(IS_ERTC_MINUTES(ERTC_Bcd2ToByte(ERTC_TimeStruct->ERTC_Minutes)));
     assert_param(IS_ERTC_SECONDS(ERTC_Bcd2ToByte(ERTC_TimeStruct->ERTC_Seconds)));
   }
-  
+
   /* Check the input parameters format */
   if (ERTC_Format != ERTC_Format_BIN)
   {
     tmpreg = (((uint32_t)(ERTC_TimeStruct->ERTC_Hours) << 16) | \
              ((uint32_t)(ERTC_TimeStruct->ERTC_Minutes) << 8) | \
              ((uint32_t)ERTC_TimeStruct->ERTC_Seconds) | \
-             ((uint32_t)(ERTC_TimeStruct->ERTC_AMPM) << 16)); 
-  }  
+             ((uint32_t)(ERTC_TimeStruct->ERTC_AMPM) << 16));
+  }
   else
   {
     tmpreg = (uint32_t)(((uint32_t)ERTC_ByteToBcd2(ERTC_TimeStruct->ERTC_Hours) << 16) | \
                    ((uint32_t)ERTC_ByteToBcd2(ERTC_TimeStruct->ERTC_Minutes) << 8) | \
                    ((uint32_t)ERTC_ByteToBcd2(ERTC_TimeStruct->ERTC_Seconds)) | \
                    (((uint32_t)ERTC_TimeStruct->ERTC_AMPM) << 16));
-  }  
+  }
 
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
@@ -516,14 +516,14 @@ ErrorStatus ERTC_SetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStru
   if (ERTC_EnterInitMode() == ERROR)
   {
     status = ERROR;
-  } 
+  }
   else
   {
     /* Set the RTC_TR register */
     ERTC->TIME = (uint32_t)(tmpreg & ERTC_TIME_RESERVED_MASK);
 
     /* Exit Initialization mode */
-    ERTC_ExitInitMode(); 
+    ERTC_ExitInitMode();
 
     /* If  ERTC_CTRL_BYPSHDW bit = 0, wait for synchro else this check is not needed */
     if ((ERTC->CTRL & ERTC_CTRL_BYPSHDW) == RESET)
@@ -543,15 +543,15 @@ ErrorStatus ERTC_SetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStru
     }
   }
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
-    
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
 /**
   * @brief  Fills each ERTC_TimeStruct member with its default value
   *         (Time = 00h:00min:00sec).
-  * @param  ERTC_TimeStruct: pointer to a ERTC_TimeType structure which will be 
+  * @param  ERTC_TimeStruct: pointer to a ERTC_TimeType structure which will be
   *         initialized.
   * @retval None
   */
@@ -561,17 +561,17 @@ void ERTC_TimeStructInit(ERTC_TimeType* ERTC_TimeStruct)
   ERTC_TimeStruct->ERTC_AMPM = ERTC_H12_AM;
   ERTC_TimeStruct->ERTC_Hours = 0;
   ERTC_TimeStruct->ERTC_Minutes = 0;
-  ERTC_TimeStruct->ERTC_Seconds = 0; 
+  ERTC_TimeStruct->ERTC_Seconds = 0;
 }
 
 /**
   * @brief  Get the ERTC current Time.
   * @param  ERTC_Format: specifies the format of the returned parameters.
   *          This parameter can be  one of the following values:
-  *            @arg ERTC_Format_BIN:  Binary data format 
+  *            @arg ERTC_Format_BIN:  Binary data format
   *            @arg ERTC_Format_BCD:  BCD data format
-  * @param  ERTC_TimeStruct: pointer to a ERTC_TimeType structure that will 
-  *                        contain the returned current time configuration.     
+  * @param  ERTC_TimeStruct: pointer to a ERTC_TimeType structure that will
+  *                        contain the returned current time configuration.
   * @retval None
   */
 void ERTC_GetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStruct)
@@ -582,13 +582,13 @@ void ERTC_GetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStruct)
   assert_param(IS_ERTC_FORMAT(ERTC_Format));
 
   /* Get the RTC_TR register */
-  tmpreg = (uint32_t)(ERTC->TIME & ERTC_TIME_RESERVED_MASK); 
-  
+  tmpreg = (uint32_t)(ERTC->TIME & ERTC_TIME_RESERVED_MASK);
+
   /* Fill the structure fields with the read parameters */
   ERTC_TimeStruct->ERTC_Hours = (uint8_t)((tmpreg & (ERTC_TIME_HT | ERTC_TIME_HU)) >> 16);
   ERTC_TimeStruct->ERTC_Minutes = (uint8_t)((tmpreg & (ERTC_TIME_MT | ERTC_TIME_MU)) >>8);
   ERTC_TimeStruct->ERTC_Seconds = (uint8_t)(tmpreg & (ERTC_TIME_ST | ERTC_TIME_SU));
-  ERTC_TimeStruct->ERTC_AMPM = (uint8_t)((tmpreg & (ERTC_TIME_AMPM)) >> 16);  
+  ERTC_TimeStruct->ERTC_AMPM = (uint8_t)((tmpreg & (ERTC_TIME_AMPM)) >> 16);
 
   /* Check the input parameters format */
   if (ERTC_Format == ERTC_Format_BIN)
@@ -596,13 +596,13 @@ void ERTC_GetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStruct)
     /* Convert the structure parameters to Binary format */
     ERTC_TimeStruct->ERTC_Hours = (uint8_t)ERTC_Bcd2ToByte(ERTC_TimeStruct->ERTC_Hours);
     ERTC_TimeStruct->ERTC_Minutes = (uint8_t)ERTC_Bcd2ToByte(ERTC_TimeStruct->ERTC_Minutes);
-    ERTC_TimeStruct->ERTC_Seconds = (uint8_t)ERTC_Bcd2ToByte(ERTC_TimeStruct->ERTC_Seconds);   
+    ERTC_TimeStruct->ERTC_Seconds = (uint8_t)ERTC_Bcd2ToByte(ERTC_TimeStruct->ERTC_Seconds);
   }
 }
 
 /**
   * @brief  Gets the ERTC current Calendar Sub seconds value.
-  * @note   This function freeze the Time and Date registers after reading the 
+  * @note   This function freeze the Time and Date registers after reading the
   *         SBSR register.
   * @param  None
   * @retval ERTC current Calendar Sub seconds value.
@@ -610,13 +610,13 @@ void ERTC_GetTimeValue(uint32_t ERTC_Format, ERTC_TimeType* ERTC_TimeStruct)
 uint32_t ERTC_GetSubSecondValue(void)
 {
   uint32_t tmpreg = 0;
-  
+
   /* Get sub seconds values from the correspondent registers*/
   tmpreg = (uint32_t)(ERTC->SBSR);
-  
+
   /* Read DATE register to unfroze calendar registers */
   (void) (ERTC->DATE);
-  
+
   return (tmpreg);
 }
 
@@ -624,9 +624,9 @@ uint32_t ERTC_GetSubSecondValue(void)
   * @brief  Set the ERTC current date.
   * @param  ERTC_Format: specifies the format of the entered parameters.
   *          This parameter can be  one of the following values:
-  *            @arg ERTC_Format_BIN:  Binary data format 
+  *            @arg ERTC_Format_BIN:  Binary data format
   *            @arg ERTC_Format_BCD:  BCD data format
-  * @param  ERTC_DateStruct: pointer to a ERTC_DateType structure that contains 
+  * @param  ERTC_DateStruct: pointer to a ERTC_DateType structure that contains
   *                         the date configuration information for the ERTC.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC Date register is configured
@@ -636,14 +636,14 @@ ErrorStatus ERTC_SetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStru
 {
   uint32_t tmpreg = 0;
   ErrorStatus status = ERROR;
-  
+
   /* Check the parameters */
   assert_param(IS_ERTC_FORMAT(ERTC_Format));
 
   if ((ERTC_Format == ERTC_Format_BIN) && ((ERTC_DateStruct->ERTC_Month & 0x10) == 0x10))
   {
     ERTC_DateStruct->ERTC_Month = (ERTC_DateStruct->ERTC_Month & (uint32_t)~(0x10)) + 0x0A;
-  }  
+  }
   if (ERTC_Format == ERTC_Format_BIN)
   {
     assert_param(IS_ERTC_YEAR(ERTC_DateStruct->ERTC_Year));
@@ -666,8 +666,8 @@ ErrorStatus ERTC_SetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStru
     tmpreg = ((((uint32_t)ERTC_DateStruct->ERTC_Year) << 16) | \
               (((uint32_t)ERTC_DateStruct->ERTC_Month) << 8) | \
               ((uint32_t)ERTC_DateStruct->ERTC_Date) | \
-              (((uint32_t)ERTC_DateStruct->ERTC_WeekDay) << 13)); 
-  }  
+              (((uint32_t)ERTC_DateStruct->ERTC_WeekDay) << 13));
+  }
   else
   {
     tmpreg = (((uint32_t)ERTC_ByteToBcd2(ERTC_DateStruct->ERTC_Year) << 16) | \
@@ -684,14 +684,14 @@ ErrorStatus ERTC_SetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStru
   if (ERTC_EnterInitMode() == ERROR)
   {
     status = ERROR;
-  } 
+  }
   else
   {
     /* Set the RTC_DR register */
     ERTC->DATE = (uint32_t)(tmpreg & ERTC_DATE_RESERVED_MASK);
 
     /* Exit Initialization mode */
-    ERTC_ExitInitMode(); 
+    ERTC_ExitInitMode();
 
     /* If  ERTC_CTRL_BYPSHDW bit = 0, wait for synchro else this check is not needed */
     if ((ERTC->CTRL & ERTC_CTRL_BYPSHDW) == RESET)
@@ -711,15 +711,15 @@ ErrorStatus ERTC_SetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStru
     }
   }
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF;   
-  
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
 /**
   * @brief  Fills each ERTC_DateStruct member with its default value
   *         (Monday, January 01 xx00).
-  * @param  ERTC_DateStruct: pointer to a ERTC_DateType structure which will be 
+  * @param  ERTC_DateStruct: pointer to a ERTC_DateType structure which will be
   *         initialized.
   * @retval None
   */
@@ -733,13 +733,13 @@ void ERTC_DateStructInit(ERTC_DateType* ERTC_DateStruct)
 }
 
 /**
-  * @brief  Get the ERTC current date. 
+  * @brief  Get the ERTC current date.
   * @param  ERTC_Format: specifies the format of the returned parameters.
   *          This parameter can be one of the following values:
-  *            @arg ERTC_Format_BIN: Binary data format 
+  *            @arg ERTC_Format_BIN: Binary data format
   *            @arg ERTC_Format_BCD: BCD data format
-  * @param ERTC_DateStruct: pointer to a ERTC_DateType structure that will 
-  *                        contain the returned current date configuration.     
+  * @param ERTC_DateStruct: pointer to a ERTC_DateType structure that will
+  *                        contain the returned current date configuration.
   * @retval None
   */
 void ERTC_GetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStruct)
@@ -748,9 +748,9 @@ void ERTC_GetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStruct)
 
   /* Check the parameters */
   assert_param(IS_ERTC_FORMAT(ERTC_Format));
-  
+
   /* Get the RTC_TR register */
-  tmpreg = (uint32_t)(ERTC->DATE & ERTC_DATE_RESERVED_MASK); 
+  tmpreg = (uint32_t)(ERTC->DATE & ERTC_DATE_RESERVED_MASK);
 
   /* Fill the structure fields with the read parameters */
   ERTC_DateStruct->ERTC_Year = (uint8_t)((tmpreg & (ERTC_DATE_YT | ERTC_DATE_YU)) >> 16);
@@ -773,13 +773,13 @@ void ERTC_GetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStruct)
   */
 
 /** @defgroup RTC_Group3 Alarms configuration functions
- *  @brief   Alarms (Alarm A and Alarm B) configuration functions 
+ *  @brief   Alarms (Alarm A and Alarm B) configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
          ##### Alarms A and B configuration functions #####
- ===============================================================================  
- 
+ ===============================================================================
+
  [..] This section provide functions allowing to program and read the ERTC Alarms.
 
 @endverbatim
@@ -789,23 +789,23 @@ void ERTC_GetDateValue(uint32_t ERTC_Format, ERTC_DateType* ERTC_DateStruct)
 /**
   * @brief  Set the specified ERTC Alarm.
   * @note   The Alarm register can only be written when the corresponding Alarm
-  *         is disabled (Use the ERTC_AlarmCmd(DISABLE)).    
+  *         is disabled (Use the ERTC_AlarmCmd(DISABLE)).
   * @param  ERTC_Format: specifies the format of the returned parameters.
   *          This parameter can be one of the following values:
-  *            @arg ERTC_Format_BIN: Binary data format 
+  *            @arg ERTC_Format_BIN: Binary data format
   *            @arg ERTC_Format_BCD: BCD data format
   * @param  ERTC_Alarm: specifies the alarm to be configured.
   *          This parameter can be one of the following values:
   *            @arg ERTC_AlA: to select Alarm A
-  *            @arg ERTC_AlB: to select Alarm B  
-  * @param  ERTC_AlarmStruct: pointer to a ERTC_AlarmType structure that 
-  *                          contains the alarm configuration parameters.     
+  *            @arg ERTC_AlB: to select Alarm B
+  * @param  ERTC_AlarmStruct: pointer to a ERTC_AlarmType structure that
+  *                          contains the alarm configuration parameters.
   * @retval None
   */
 void ERTC_SetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmType* ERTC_AlarmStruct)
 {
   uint32_t tmpreg = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_ERTC_FORMAT(ERTC_Format));
   assert_param(IS_ERTC_ALARM(ERTC_Alarm));
@@ -818,7 +818,7 @@ void ERTC_SetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
     {
       assert_param(IS_ERTC_HOUR12(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Hours));
       assert_param(IS_ERTC_H12(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_AMPM));
-    } 
+    }
     else
     {
       ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_AMPM = 0x00;
@@ -826,7 +826,7 @@ void ERTC_SetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
     }
     assert_param(IS_ERTC_MINUTES(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Minutes));
     assert_param(IS_ERTC_SECONDS(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Seconds));
-    
+
     if(ERTC_AlarmStruct->ERTC_AlarmDateWeekSel == ERTC_AlarmDateWeekSel_Date)
     {
       assert_param(IS_ERTC_ALARM_DATE_WEEK_DATE(ERTC_AlarmStruct->ERTC_AlarmDateWeek));
@@ -843,26 +843,26 @@ void ERTC_SetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
       tmpreg = ERTC_Bcd2ToByte(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Hours);
       assert_param(IS_ERTC_HOUR12(tmpreg));
       assert_param(IS_ERTC_H12(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_AMPM));
-    } 
+    }
     else
     {
       ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_AMPM = 0x00;
       assert_param(IS_ERTC_HOUR24(ERTC_Bcd2ToByte(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Hours)));
     }
-    
+
     assert_param(IS_ERTC_MINUTES(ERTC_Bcd2ToByte(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Minutes)));
     assert_param(IS_ERTC_SECONDS(ERTC_Bcd2ToByte(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Seconds)));
-    
+
     if(ERTC_AlarmStruct->ERTC_AlarmDateWeekSel == ERTC_AlarmDateWeekSel_Date)
     {
       tmpreg = ERTC_Bcd2ToByte(ERTC_AlarmStruct->ERTC_AlarmDateWeek);
-      assert_param(IS_ERTC_ALARM_DATE_WEEK_DATE(tmpreg));    
+      assert_param(IS_ERTC_ALARM_DATE_WEEK_DATE(tmpreg));
     }
     else
     {
       tmpreg = ERTC_Bcd2ToByte(ERTC_AlarmStruct->ERTC_AlarmDateWeek);
-      assert_param(IS_ERTC_ALARM_DATE_WEEK_WEEK(tmpreg));      
-    }    
+      assert_param(IS_ERTC_ALARM_DATE_WEEK_WEEK(tmpreg));
+    }
   }
 
   /* Check the input parameters format */
@@ -874,8 +874,8 @@ void ERTC_SetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
               ((uint32_t)(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_AMPM) << 16) | \
               ((uint32_t)(ERTC_AlarmStruct->ERTC_AlarmDateWeek) << 24) | \
               ((uint32_t)ERTC_AlarmStruct->ERTC_AlarmDateWeekSel) | \
-              ((uint32_t)ERTC_AlarmStruct->ERTC_AlarmMask)); 
-  }  
+              ((uint32_t)ERTC_AlarmStruct->ERTC_AlarmMask));
+  }
   else
   {
     tmpreg = (((uint32_t)ERTC_ByteToBcd2(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Hours) << 16) | \
@@ -884,8 +884,8 @@ void ERTC_SetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
               ((uint32_t)(ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_AMPM) << 16) | \
               ((uint32_t)ERTC_ByteToBcd2(ERTC_AlarmStruct->ERTC_AlarmDateWeek) << 24) | \
               ((uint32_t)ERTC_AlarmStruct->ERTC_AlarmDateWeekSel) | \
-              ((uint32_t)ERTC_AlarmStruct->ERTC_AlarmMask)); 
-  } 
+              ((uint32_t)ERTC_AlarmStruct->ERTC_AlarmMask));
+  }
 
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
@@ -902,7 +902,7 @@ void ERTC_SetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
   }
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF;   
+  ERTC->WPR = 0xFF;
 }
 
 /**
@@ -933,14 +933,14 @@ void ERTC_AlarmStructInit(ERTC_AlarmType* ERTC_AlarmStruct)
   * @brief  Get the ERTC Alarm value and masks.
   * @param  ERTC_Format: specifies the format of the output parameters.
   *          This parameter can be one of the following values:
-  *            @arg ERTC_Format_BIN: Binary data format 
+  *            @arg ERTC_Format_BIN: Binary data format
   *            @arg ERTC_Format_BCD: BCD data format
   * @param  ERTC_Alarm: specifies the alarm to be read.
   *          This parameter can be one of the following values:
   *            @arg ERTC_AlA: to select Alarm A
-  *            @arg ERTC_AlB: to select Alarm B  
-  * @param  ERTC_AlarmStruct: pointer to a ERTC_AlarmType structure that will 
-  *                          contains the output alarm configuration values.     
+  *            @arg ERTC_AlB: to select Alarm B
+  * @param  ERTC_AlarmStruct: pointer to a ERTC_AlarmType structure that will
+  *                          contains the output alarm configuration values.
   * @retval None
   */
 void ERTC_GetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmType* ERTC_AlarmStruct)
@@ -949,7 +949,7 @@ void ERTC_GetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
 
   /* Check the parameters */
   assert_param(IS_ERTC_FORMAT(ERTC_Format));
-  assert_param(IS_ERTC_ALARM(ERTC_Alarm)); 
+  assert_param(IS_ERTC_ALARM(ERTC_Alarm));
 
   /* Get the RTC_ALRMxR register */
   if (ERTC_Alarm == ERTC_AlA)
@@ -982,7 +982,7 @@ void ERTC_GetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
     ERTC_AlarmStruct->ERTC_AlarmTime.ERTC_Seconds = ERTC_Bcd2ToByte(ERTC_AlarmStruct-> \
                                                         ERTC_AlarmTime.ERTC_Seconds);
     ERTC_AlarmStruct->ERTC_AlarmDateWeek = ERTC_Bcd2ToByte(ERTC_AlarmStruct->ERTC_AlarmDateWeek);
-  }  
+  }
 }
 
 /**
@@ -990,19 +990,19 @@ void ERTC_GetAlarmValue(uint32_t ERTC_Format, uint32_t ERTC_Alarm, ERTC_AlarmTyp
   * @param  ERTC_Alarm: specifies the alarm to be configured.
   *          This parameter can be any combination of the following values:
   *            @arg ERTC_AlA: to select Alarm A
-  *            @arg ERTC_AlB: to select Alarm B  
+  *            @arg ERTC_AlB: to select Alarm B
   * @param  NewState: new state of the specified alarm.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC Alarm is enabled/disabled
-  *          - ERROR: ERTC Alarm is not enabled/disabled  
+  *          - ERROR: ERTC Alarm is not enabled/disabled
   */
 ErrorStatus ERTC_AlarmCmd(uint32_t ERTC_Alarm, FunctionalState NewState)
 {
   __IO uint32_t alarmcounter = 0x00;
   uint32_t alarmstatus = 0x00;
   ErrorStatus status = ERROR;
-    
+
   /* Check the parameters */
   assert_param(IS_ERTC_CMD_ALARM(ERTC_Alarm));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
@@ -1016,39 +1016,39 @@ ErrorStatus ERTC_AlarmCmd(uint32_t ERTC_Alarm, FunctionalState NewState)
   {
     ERTC->CTRL |= (uint32_t)ERTC_Alarm;
 
-    status = SUCCESS;    
+    status = SUCCESS;
   }
   else
-  { 
+  {
     /* Disable the Alarm in RTC_CR register */
     ERTC->CTRL &= (uint32_t)~ERTC_Alarm;
-   
+
     /* Wait till ERTC ALRxWF flag is set and if Time out is reached exit */
     do
     {
       alarmstatus = ERTC->ISTS & (ERTC_Alarm >> 8);
-      alarmcounter++;  
+      alarmcounter++;
     } while((alarmcounter != INITMODE_TMROUT) && (alarmstatus == 0x00));
-    
+
     if ((ERTC->ISTS & (ERTC_Alarm >> 8)) == RESET)
     {
       status = ERROR;
-    } 
+    }
     else
     {
       status = SUCCESS;
-    }        
-  } 
+    }
+  }
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
-  
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
 /**
   * @brief  Configure the ERTC AlarmA/B Sub seconds value and mask.*
-  * @note   This function is performed only when the Alarm is disabled. 
+  * @note   This function is performed only when the Alarm is disabled.
   * @param  ERTC_Alarm: specifies the alarm to be configured.
   *   This parameter can be one of the following values:
   *     @arg ERTC_AlA: to select Alarm A
@@ -1099,14 +1099,14 @@ void ERTC_AlarmSubSecondConfig(uint32_t ERTC_Alarm, uint32_t ERTC_AlarmSubSecond
   assert_param(IS_ERTC_ALARM(ERTC_Alarm));
   assert_param(IS_ERTC_ALARM_SUB_SECOND_VALUE(ERTC_AlarmSubSecondValue));
   assert_param(IS_ERTC_ALARM_SUB_SECOND_MASK(ERTC_AlarmSubSecondMask));
-  
+
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   /* Configure the Alarm A or Alarm B Sub Second registers */
   tmpreg = (uint32_t) (uint32_t)(ERTC_AlarmSubSecondValue) | (uint32_t)(ERTC_AlarmSubSecondMask);
-  
+
   if (ERTC_Alarm == ERTC_AlA)
   {
     /* Configure the Alarm A Sub Second register */
@@ -1135,7 +1135,7 @@ void ERTC_AlarmSubSecondConfig(uint32_t ERTC_Alarm, uint32_t ERTC_AlarmSubSecond
 uint32_t ERTC_GetAlarmSubSecond(uint32_t ERTC_Alarm)
 {
   uint32_t tmpreg = 0;
-  
+
   /* Get the RTC_ALRMxR register */
   if (ERTC_Alarm == ERTC_AlA)
   {
@@ -1144,8 +1144,8 @@ uint32_t ERTC_GetAlarmSubSecond(uint32_t ERTC_Alarm)
   else
   {
     tmpreg = (uint32_t)((ERTC->ALBSBS) & ERTC_ALBSBS_SBS);
-  } 
-  
+  }
+
   return (tmpreg);
 }
 
@@ -1154,12 +1154,12 @@ uint32_t ERTC_GetAlarmSubSecond(uint32_t ERTC_Alarm)
   */
 
 /** @defgroup RTC_Group4 WakeUp Timer configuration functions
- *  @brief   WakeUp Timer configuration functions 
+ *  @brief   WakeUp Timer configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                  ##### WakeUp Timer configuration functions #####
- ===============================================================================  
+ ===============================================================================
 
  [..] This section provide functions allowing to program and read the ERTC WakeUp.
 
@@ -1170,7 +1170,7 @@ uint32_t ERTC_GetAlarmSubSecond(uint32_t ERTC_Alarm)
 /**
   * @brief  Configures the ERTC Wakeup clock source.
   * @note   The WakeUp Clock source can only be changed when the ERTC WakeUp
-  *         is disabled (Use the ERTC_WakeUpCmd(DISABLE)).      
+  *         is disabled (Use the ERTC_WakeUpCmd(DISABLE)).
   * @param  ERTC_WakeUpClock: Wakeup Clock source.
   *          This parameter can be one of the following values:
   *            @arg ERTC_WakeUpClockSelect_RTCCLK_Div16: ERTC Wakeup Counter Clock = RTCCLK/16
@@ -1195,33 +1195,33 @@ void ERTC_WakeUpClockConfig(uint32_t ERTC_WakeUpClock)
 
   /* Configure the clock source */
   ERTC->CTRL |= (uint32_t)ERTC_WakeUpClock;
-  
+
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
+  ERTC->WPR = 0xFF;
 }
 
 /**
   * @brief  Configures the ERTC Wakeup counter.
   * @note   The ERTC WakeUp counter can only be written when the ERTC WakeUp
-  *         is disabled (Use the ERTC_WakeUpCmd(DISABLE)).        
+  *         is disabled (Use the ERTC_WakeUpCmd(DISABLE)).
   * @param  ERTC_WakeUpCounter: specifies the WakeUp counter.
-  *          This parameter can be a value from 0x0000 to 0xFFFF. 
+  *          This parameter can be a value from 0x0000 to 0xFFFF.
   * @retval None
   */
 void ERTC_SetWakeUpCounter(uint32_t ERTC_WakeUpCounter)
 {
   /* Check the parameters */
   assert_param(IS_ERTC_WAKEUP_COUNTER(ERTC_WakeUpCounter));
-  
+
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   /* Configure the Wakeup Timer counter */
   ERTC->WATR = (uint32_t)ERTC_WakeUpCounter;
-  
+
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
+  ERTC->WPR = 0xFF;
 }
 
 /**
@@ -1246,7 +1246,7 @@ ErrorStatus ERTC_WakeUpCmd(FunctionalState NewState)
   __IO uint32_t wutcounter = 0x00;
   uint32_t wutwfstatus = 0x00;
   ErrorStatus status = ERROR;
-  
+
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
 
@@ -1258,7 +1258,7 @@ ErrorStatus ERTC_WakeUpCmd(FunctionalState NewState)
   {
     /* Enable the Wakeup Timer */
     ERTC->CTRL |= (uint32_t)ERTC_CTRL_WATE;
-    status = SUCCESS;    
+    status = SUCCESS;
   }
   else
   {
@@ -1268,9 +1268,9 @@ ErrorStatus ERTC_WakeUpCmd(FunctionalState NewState)
     do
     {
       wutwfstatus = ERTC->ISTS & ERTC_ISTS_WATWF;
-      wutcounter++;  
+      wutcounter++;
     } while((wutcounter != INITMODE_TMROUT) && (wutwfstatus == 0x00));
-    
+
     if ((ERTC->ISTS & ERTC_ISTS_WATWF) == RESET)
     {
       status = ERROR;
@@ -1278,12 +1278,12 @@ ErrorStatus ERTC_WakeUpCmd(FunctionalState NewState)
     else
     {
       status = SUCCESS;
-    }    
+    }
   }
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
-  
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
@@ -1292,12 +1292,12 @@ ErrorStatus ERTC_WakeUpCmd(FunctionalState NewState)
   */
 
 /** @defgroup RTC_Group5 Daylight Saving configuration functions
- *  @brief   Daylight Saving configuration functions 
+ *  @brief   Daylight Saving configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
               ##### Daylight Saving configuration functions #####
- ===============================================================================  
+ ===============================================================================
 
  [..] This section provide functions allowing to configure the ERTC DayLight Saving.
 
@@ -1307,11 +1307,11 @@ ErrorStatus ERTC_WakeUpCmd(FunctionalState NewState)
 
 /**
   * @brief  Adds or substract one hour from the current time.
-  * @param  RTC_DayLightSaveOperation: the value of hour adjustment. 
+  * @param  RTC_DayLightSaveOperation: the value of hour adjustment.
   *          This parameter can be one of the following values:
   *            @arg ERTC_DayLightSaving_SUB1H: Substract one hour (winter time)
   *            @arg ERTC_DayLightSaving_ADD1H: Add one hour (summer time)
-  * @param  ERTC_StoreOperation: Specifies the value to be written in the BCK bit 
+  * @param  ERTC_StoreOperation: Specifies the value to be written in the BCK bit
   *                            in CTRL register to store the operation.
   *          This parameter can be one of the following values:
   *            @arg ERTC_StoreOperation_Reset: BCK Bit Reset
@@ -1335,7 +1335,7 @@ void ERTC_DayLightSavingConfig(uint32_t ERTC_DayLightSaving, uint32_t ERTC_Store
   ERTC->CTRL |= (uint32_t)(ERTC_DayLightSaving | ERTC_StoreOperation);
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
+  ERTC->WPR = 0xFF;
 }
 
 /**
@@ -1343,7 +1343,7 @@ void ERTC_DayLightSavingConfig(uint32_t ERTC_DayLightSaving, uint32_t ERTC_Store
   * @param  None
   * @retval ERTC Day Light Saving stored operation.
   *          - ERTC_StoreOperation_Reset
-  *          - ERTC_StoreOperation_Set       
+  *          - ERTC_StoreOperation_Set
   */
 uint32_t ERTC_GetStoreOperation(void)
 {
@@ -1355,12 +1355,12 @@ uint32_t ERTC_GetStoreOperation(void)
   */
 
 /** @defgroup RTC_Group6 Output pin Configuration function
- *  @brief   Output pin Configuration function 
+ *  @brief   Output pin Configuration function
  *
-@verbatim   
+@verbatim
  ===============================================================================
                  ##### Output pin Configuration function #####
- ===============================================================================  
+ ===============================================================================
 
  [..] This section provide functions allowing to configure the ERTC Output source.
 
@@ -1370,17 +1370,17 @@ uint32_t ERTC_GetStoreOperation(void)
 
 /**
   * @brief  Configures the ERTC output source (AFO_ALARM).
-  * @param  ERTC_Output: Specifies which signal will be routed to the ERTC output. 
+  * @param  ERTC_Output: Specifies which signal will be routed to the ERTC output.
   *          This parameter can be one of the following values:
   *            @arg ERTC_Output_Disable: No output selected
   *            @arg ERTC_Output_AlarmA: signal of AlarmA mapped to output
   *            @arg ERTC_Output_AlarmB: signal of AlarmB mapped to output
   *            @arg ERTC_Output_WakeUp: signal of WakeUp mapped to output
-  * @param  ERTC_OutputPolarity: Specifies the polarity of the output signal. 
+  * @param  ERTC_OutputPolarity: Specifies the polarity of the output signal.
   *          This parameter can be one of the following:
-  *            @arg ERTC_OutputPolarity_High: The output pin is high when the 
+  *            @arg ERTC_OutputPolarity_High: The output pin is high when the
   *                                 ALRAF/ALRBF/WUTF is high (depending on OSEL)
-  *            @arg ERTC_OutputPolarity_Low: The output pin is low when the 
+  *            @arg ERTC_OutputPolarity_Low: The output pin is low when the
   *                                 ALRAF/ALRBF/WUTF is high (depending on OSEL)
   * @retval None
   */
@@ -1401,7 +1401,7 @@ void ERTC_OutputConfig(uint32_t ERTC_Output, uint32_t ERTC_OutputPolarity)
   ERTC->CTRL |= (uint32_t)(ERTC_Output | ERTC_OutputPolarity);
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
+  ERTC->WPR = 0xFF;
 }
 
 /**
@@ -1409,12 +1409,12 @@ void ERTC_OutputConfig(uint32_t ERTC_Output, uint32_t ERTC_OutputPolarity)
   */
 
 /** @defgroup RTC_Group7 Digital Calibration configuration functions
- *  @brief   Coarse Calibration configuration functions 
+ *  @brief   Coarse Calibration configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
               ##### Digital Calibration configuration functions #####
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -1424,27 +1424,27 @@ void ERTC_OutputConfig(uint32_t ERTC_Output, uint32_t ERTC_OutputPolarity)
   * @brief  Configures the Coarse calibration parameters.
   * @param  ERTC_CalSign: specifies the sign of the coarse calibration value.
   *          This parameter can be  one of the following values:
-  *            @arg ERTC_DataCalSign_Positive: The value sign is positive 
+  *            @arg ERTC_DataCalSign_Positive: The value sign is positive
   *            @arg ERTC_DataCalSign_Negative: The value sign is negative
   * @param  Value: value of coarse calibration expressed in ppm (coded on 5 bits).
-  *    
+  *
   * @note   This Calibration value should be between 0 and 63 when using negative
   *         sign with a 2-ppm step.
-  *           
+  *
   * @note   This Calibration value should be between 0 and 126 when using positive
   *         sign with a 4-ppm step.
-  *           
+  *
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC Coarse calibration are initialized
-  *          - ERROR: ERTC Coarse calibration are not initialized     
+  *          - ERROR: ERTC Coarse calibration are not initialized
   */
 ErrorStatus ERTC_CoarseCalConfig(uint32_t ERTC_CalSign, uint32_t Value)
 {
   ErrorStatus status = ERROR;
-   
+
   /* Check the parameters */
   assert_param(IS_ERTC_DATACAL_SIGN(ERTC_CalSign));
-  assert_param(IS_ERTC_DATACAL_VALUE(Value)); 
+  assert_param(IS_ERTC_DATACAL_VALUE(Value));
 
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
@@ -1454,20 +1454,20 @@ ErrorStatus ERTC_CoarseCalConfig(uint32_t ERTC_CalSign, uint32_t Value)
   if (ERTC_EnterInitMode() == ERROR)
   {
     status = ERROR;
-  } 
+  }
   else
   {
     /* Set the coarse calibration value */
     ERTC->CAL = (uint32_t)(ERTC_CalSign | Value);
     /* Exit Initialization mode */
     ERTC_ExitInitMode();
-    
+
     status = SUCCESS;
-  } 
+  }
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
-  
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
@@ -1477,19 +1477,19 @@ ErrorStatus ERTC_CoarseCalConfig(uint32_t ERTC_CalSign, uint32_t Value)
   *          This parameter can be: ENABLE or DISABLE.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: ERTC Coarse calibration are enabled/disabled
-  *          - ERROR: ERTC Coarse calibration are not enabled/disabled    
+  *          - ERROR: ERTC Coarse calibration are not enabled/disabled
   */
 ErrorStatus ERTC_CoarseCalCmd(FunctionalState NewState)
 {
   ErrorStatus status = ERROR;
-  
+
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
 
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   /* Set Initialization mode */
   if (ERTC_EnterInitMode() == ERROR)
   {
@@ -1503,19 +1503,19 @@ ErrorStatus ERTC_CoarseCalCmd(FunctionalState NewState)
       ERTC->CTRL |= (uint32_t)ERTC_CTRL_CDCE;
     }
     else
-    { 
+    {
       /* Disable the Coarse Calibration */
       ERTC->CTRL &= (uint32_t)~ERTC_CTRL_CDCE;
     }
     /* Exit Initialization mode */
     ERTC_ExitInitMode();
-    
+
     status = SUCCESS;
-  } 
-  
+  }
+
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
-  
+  ERTC->WPR = 0xFF;
+
   return status;
 }
 
@@ -1529,31 +1529,31 @@ void ERTC_CalOutputCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
+
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   if (NewState != DISABLE)
   {
     /* Enable the ERTC clock output */
     ERTC->CTRL |= (uint32_t)ERTC_CTRL_CALOE;
   }
   else
-  { 
+  {
     /* Disable the ERTC clock output */
     ERTC->CTRL &= (uint32_t)~ERTC_CTRL_CALOE;
   }
-  
+
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
+  ERTC->WPR = 0xFF;
 }
 
 /**
   * @brief  Configure the Calibration Pinout (RTC_CALIB) Selection (1Hz or 512Hz).
   * @param  ERTC_CalOutput : Select the Calibration output Selection .
   *   This parameter can be one of the following values:
-  *     @arg ERTC_CalOutput_512Hz: A signal has a regular waveform at 512Hz. 
+  *     @arg ERTC_CalOutput_512Hz: A signal has a regular waveform at 512Hz.
   *     @arg ERTC_CalOutput_1Hz  : A signal has a regular waveform at 1Hz.
   * @retval None
 */
@@ -1565,7 +1565,7 @@ void ERTC_CalOutputConfig(uint32_t ERTC_CalOutput)
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   /*clear flags before configuration */
   ERTC->CTRL &= (uint32_t)~(ERTC_CTRL_CALSEL);
 
@@ -1608,7 +1608,7 @@ ErrorStatus ERTC_SmoothCalConfig(uint32_t ERTC_SmoothCalPeriod,
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   /* check if a calibration is pending*/
   if ((ERTC->ISTS & ERTC_ISTS_RECALPDF) != RESET)
   {
@@ -1634,7 +1634,7 @@ ErrorStatus ERTC_SmoothCalConfig(uint32_t ERTC_SmoothCalPeriod,
 
   /* Enable the write protection for ERTC registers */
   ERTC->WPR = 0xFF;
-  
+
   return (ErrorStatus)(status);
 }
 
@@ -1644,26 +1644,26 @@ ErrorStatus ERTC_SmoothCalConfig(uint32_t ERTC_SmoothCalPeriod,
 
 
 /** @defgroup RTC_Group8 TimeStamp configuration functions
- *  @brief   TimeStamp configuration functions 
+ *  @brief   TimeStamp configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                  ##### TimeStamp configuration functions #####
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  Enables or Disables the ERTC TimeStamp functionality with the 
+  * @brief  Enables or Disables the ERTC TimeStamp functionality with the
   *         specified time stamp pin stimulating edge.
-  * @param  ERTC_TimeStampEdge: Specifies the pin edge on which the TimeStamp is 
+  * @param  ERTC_TimeStampEdge: Specifies the pin edge on which the TimeStamp is
   *         activated.
   *          This parameter can be one of the following:
-  *            @arg ERTC_TimeStampEdge_Rising: the Time stamp event occurs on the rising 
+  *            @arg ERTC_TimeStampEdge_Rising: the Time stamp event occurs on the rising
   *                                    edge of the related pin.
-  *            @arg ERTC_TimeStampEdge_Falling: the Time stamp event occurs on the 
+  *            @arg ERTC_TimeStampEdge_Falling: the Time stamp event occurs on the
   *                                     falling edge of the related pin.
   * @param  NewState: new state of the TimeStamp.
   *          This parameter can be: ENABLE or DISABLE.
@@ -1698,22 +1698,22 @@ void ERTC_TimeStampCmd(uint32_t ERTC_TimeStampEdge, FunctionalState NewState)
   ERTC->CTRL = (uint32_t)tmpreg;
 
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
+  ERTC->WPR = 0xFF;
 }
 
 /**
   * @brief  Get the ERTC TimeStamp value and masks.
   * @param  ERTC_Format: specifies the format of the output parameters.
   *          This parameter can be one of the following values:
-  *            @arg ERTC_Format_BIN: Binary data format 
+  *            @arg ERTC_Format_BIN: Binary data format
   *            @arg ERTC_Format_BCD: BCD data format
-  * @param ERTC_StampTimeStruct: pointer to a ERTC_TimeType structure that will 
-  *                             contains the TimeStamp time values. 
-  * @param ERTC_StampDateStruct: pointer to a ERTC_DateType structure that will 
-  *                             contains the TimeStamp date values.     
+  * @param ERTC_StampTimeStruct: pointer to a ERTC_TimeType structure that will
+  *                             contains the TimeStamp time values.
+  * @param ERTC_StampDateStruct: pointer to a ERTC_DateType structure that will
+  *                             contains the TimeStamp date values.
   * @retval None
   */
-void ERTC_GetTimeStamp(uint32_t ERTC_Format, ERTC_TimeType* ERTC_StampTimeStruct, 
+void ERTC_GetTimeStamp(uint32_t ERTC_Format, ERTC_TimeType* ERTC_StampTimeStruct,
                                       ERTC_DateType* ERTC_StampDateStruct)
 {
   uint32_t tmptime = 0, tmpdate = 0;
@@ -1729,7 +1729,7 @@ void ERTC_GetTimeStamp(uint32_t ERTC_Format, ERTC_TimeType* ERTC_StampTimeStruct
   ERTC_StampTimeStruct->ERTC_Hours = (uint8_t)((tmptime & (ERTC_TIME_HT | ERTC_TIME_HU)) >> 16);
   ERTC_StampTimeStruct->ERTC_Minutes = (uint8_t)((tmptime & (ERTC_TIME_MT | ERTC_TIME_MU)) >> 8);
   ERTC_StampTimeStruct->ERTC_Seconds = (uint8_t)(tmptime & (ERTC_TIME_ST | ERTC_TIME_SU));
-  ERTC_StampTimeStruct->ERTC_AMPM = (uint8_t)((tmptime & (ERTC_TIME_AMPM)) >> 16);  
+  ERTC_StampTimeStruct->ERTC_AMPM = (uint8_t)((tmptime & (ERTC_TIME_AMPM)) >> 16);
 
   /* Fill the Date structure fields with the read parameters */
   ERTC_StampDateStruct->ERTC_Year = 0;
@@ -1768,12 +1768,12 @@ uint32_t ERTC_GetTimeStampSubSecond(void)
   */
 
 /** @defgroup RTC_Group9 Tampers configuration functions
- *  @brief   Tampers configuration functions 
+ *  @brief   Tampers configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                  ##### Tampers configuration functions #####
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -1783,8 +1783,8 @@ uint32_t ERTC_GetTimeStampSubSecond(void)
   * @brief  Configures the select Tamper pin edge.
   * @param  ERTC_Tamper: Selected tamper pin.
   *          This parameter can be ERTC_TAMP_1 or ERTC_Tamper 2
-  * @param  ERTC_TamperTrigger: Specifies the trigger on the tamper pin that 
-  *         stimulates tamper event. 
+  * @param  ERTC_TamperTrigger: Specifies the trigger on the tamper pin that
+  *         stimulates tamper event.
   *   This parameter can be one of the following values:
   *     @arg ERTC_TamperTrig_RisingEdge: Rising Edge of the tamper pin causes tamper event.
   *     @arg ERTC_TamperTrig_FallingEdge: Falling Edge of the tamper pin causes tamper event.
@@ -1795,19 +1795,19 @@ uint32_t ERTC_GetTimeStampSubSecond(void)
 void ERTC_TamperTriggerConfig(uint32_t ERTC_Tamper, uint32_t ERTC_TamperTrigger)
 {
   /* Check the parameters */
-  assert_param(IS_ERTC_TAMP(ERTC_Tamper)); 
+  assert_param(IS_ERTC_TAMP(ERTC_Tamper));
   assert_param(IS_ERTC_TAMPER_TRIG(ERTC_TamperTrigger));
- 
+
   if (ERTC_TamperTrigger == ERTC_TamperTrig_RisingEdge)
-  {  
+  {
     /* Configure the RTC_TAFCR register */
-    ERTC->TPAF &= (uint32_t)((uint32_t)~(ERTC_Tamper << 1));	
+    ERTC->TPAF &= (uint32_t)((uint32_t)~(ERTC_Tamper << 1));
   }
   else
-  { 
+  {
     /* Configure the RTC_TAFCR register */
-    ERTC->TPAF |= (uint32_t)(ERTC_Tamper << 1);  
-  }  
+    ERTC->TPAF |= (uint32_t)(ERTC_Tamper << 1);
+  }
 }
 
 /**
@@ -1815,15 +1815,15 @@ void ERTC_TamperTriggerConfig(uint32_t ERTC_Tamper, uint32_t ERTC_TamperTrigger)
   * @param  ERTC_Tamper: Selected tamper pin.
   *          This parameter can be ERTC_TAMP_1 or ERTC_TAMP_2
   * @param  NewState: new state of the tamper pin.
-  *          This parameter can be: ENABLE or DISABLE.                   
+  *          This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
 void ERTC_TamperCmd(uint32_t ERTC_Tamper, FunctionalState NewState)
 {
   /* Check the parameters */
-  assert_param(IS_ERTC_TAMP(ERTC_Tamper));  
+  assert_param(IS_ERTC_TAMP(ERTC_Tamper));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
+
   if (NewState != DISABLE)
   {
     /* Enable the selected Tamper pin */
@@ -1832,8 +1832,8 @@ void ERTC_TamperCmd(uint32_t ERTC_Tamper, FunctionalState NewState)
   else
   {
     /* Disable the selected Tamper pin */
-    ERTC->TPAF &= (uint32_t)~ERTC_Tamper;    
-  }  
+    ERTC->TPAF &= (uint32_t)~ERTC_Tamper;
+  }
 }
 
 /**
@@ -1841,19 +1841,19 @@ void ERTC_TamperCmd(uint32_t ERTC_Tamper, FunctionalState NewState)
   * @param  ERTC_TamperFilter: Specifies the tampers filter.
   *   This parameter can be one of the following values:
   *     @arg ERTC_TamperFilter_Disable: Tamper filter is disabled.
-  *     @arg ERTC_TamperFilter_2Sample: Tamper is activated after 2 consecutive 
-  *                                    samples at the active level 
-  *     @arg ERTC_TamperFilter_4Sample: Tamper is activated after 4 consecutive 
+  *     @arg ERTC_TamperFilter_2Sample: Tamper is activated after 2 consecutive
   *                                    samples at the active level
-  *     @arg ERTC_TamperFilter_8Sample: Tamper is activated after 8 consecutive 
-  *                                    samples at the active level 
+  *     @arg ERTC_TamperFilter_4Sample: Tamper is activated after 4 consecutive
+  *                                    samples at the active level
+  *     @arg ERTC_TamperFilter_8Sample: Tamper is activated after 8 consecutive
+  *                                    samples at the active level
   * @retval None
   */
 void ERTC_TamperFilterConfig(uint32_t ERTC_TamperFilter)
 {
   /* Check the parameters */
   assert_param(IS_ERTC_TAMPER_FILTER(ERTC_TamperFilter));
-   
+
   /* Clear TAMPFLT[1:0] bits in the RTC_TAFCR register */
   ERTC->TPAF &= (uint32_t)~(ERTC_TPAF_TMFLT);
 
@@ -1878,16 +1878,16 @@ void ERTC_TamperFilterConfig(uint32_t ERTC_TamperFilter)
   *     @arg ERTC_TamperSamplingFreq_CLK_Div1024: Each of the tamper inputs are sampled
   *                                           with a frequency =  RTCCLK / 1024
   *     @arg ERTC_TamperSamplingFreq_CLK_Div512: Each of the tamper inputs are sampled
-  *                                           with a frequency =  RTCCLK / 512  
+  *                                           with a frequency =  RTCCLK / 512
   *     @arg ERTC_TamperSamplingFreq_CLK_Div256: Each of the tamper inputs are sampled
-  *                                           with a frequency =  RTCCLK / 256  
+  *                                           with a frequency =  RTCCLK / 256
   * @retval None
   */
 void ERTC_TamperSamplingFreqConfig(uint32_t ERTC_TamperSamplingFreq)
 {
   /* Check the parameters */
   assert_param(IS_ERTC_TAMPER_SAMPLING_FREQ(ERTC_TamperSamplingFreq));
- 
+
   /* Clear TAMPFREQ[2:0] bits in the RTC_TAFCR register */
   ERTC->TPAF &= (uint32_t)~(ERTC_TPAF_TMFREQ);
 
@@ -1902,7 +1902,7 @@ void ERTC_TamperSamplingFreqConfig(uint32_t ERTC_TamperSamplingFreq)
   *   This parameter can be one of the following values:
   *     @arg ERTC_TamperPrechargeDuration_1RTCCLK: Tamper pins are precharged before sampling during 1 RTCCLK cycle
   *     @arg ERTC_TamperPrechargeDuration_2RTCCLK: Tamper pins are precharged before sampling during 2 RTCCLK cycle
-  *     @arg ERTC_TamperPrechargeDuration_4RTCCLK: Tamper pins are precharged before sampling during 4 RTCCLK cycle    
+  *     @arg ERTC_TamperPrechargeDuration_4RTCCLK: Tamper pins are precharged before sampling during 4 RTCCLK cycle
   *     @arg ERTC_TamperPrechargeDuration_8RTCCLK: Tamper pins are precharged before sampling during 8 RTCCLK cycle
   * @retval None
   */
@@ -1910,7 +1910,7 @@ void ERTC_TamperPinsPrechargeDuration(uint32_t ERTC_TamperPrechargeDuration)
 {
   /* Check the parameters */
   assert_param(IS_ERTC_TAMPER_PRECHARGE_DURATION(ERTC_TamperPrechargeDuration));
-   
+
   /* Clear TAMPPRCH[1:0] bits in the RTC_TAFCR register */
   ERTC->TPAF &= (uint32_t)~(ERTC_TPAF_TMPRCH);
 
@@ -1920,8 +1920,8 @@ void ERTC_TamperPinsPrechargeDuration(uint32_t ERTC_TamperPrechargeDuration)
 
 /**
   * @brief  Enables or Disables the TimeStamp on Tamper Detection Event.
-  * @note   The timestamp is valid even the TSE bit in tamper control register 
-  *         is reset.   
+  * @note   The timestamp is valid even the TSE bit in tamper control register
+  *         is reset.
   * @param  NewState: new state of the timestamp on tamper event.
   *         This parameter can be: ENABLE or DISABLE.
   * @retval None
@@ -1930,7 +1930,7 @@ void ERTC_TimeStampOnTamperDetectionCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-   
+
   if (NewState != DISABLE)
   {
     /* Save timestamp on tamper detection event */
@@ -1939,31 +1939,31 @@ void ERTC_TimeStampOnTamperDetectionCmd(FunctionalState NewState)
   else
   {
     /* Tamper detection does not cause a timestamp to be saved */
-    ERTC->TPAF &= (uint32_t)~ERTC_TPAF_TMTS;    
+    ERTC->TPAF &= (uint32_t)~ERTC_TPAF_TMTS;
   }
 }
 
 /**
   * @brief  Enables or Disables the Precharge of Tamper pin.
   * @param  NewState: new state of tamper pull up.
-  *   This parameter can be: ENABLE or DISABLE.                   
+  *   This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
 void ERTC_TamperPullUpCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
+
  if (NewState != DISABLE)
   {
     /* Enable precharge of the selected Tamper pin */
-    ERTC->TPAF &= (uint32_t)~ERTC_TPAF_TMPUDIS; 
+    ERTC->TPAF &= (uint32_t)~ERTC_TPAF_TMPUDIS;
   }
   else
   {
     /* Disable precharge of the selected Tamper pin */
-    ERTC->TPAF |= (uint32_t)ERTC_TPAF_TMPUDIS;    
-  } 
+    ERTC->TPAF |= (uint32_t)ERTC_TPAF_TMPUDIS;
+  }
 }
 
 /**
@@ -1971,12 +1971,12 @@ void ERTC_TamperPullUpCmd(FunctionalState NewState)
   */
 
 /** @defgroup RTC_Group10 Backup Data Registers configuration functions
- *  @brief   Backup Data Registers configuration functions  
+ *  @brief   Backup Data Registers configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
-             ##### Backup Data Registers configuration functions ##### 
- ===============================================================================  
+             ##### Backup Data Registers configuration functions #####
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -1985,15 +1985,15 @@ void ERTC_TamperPullUpCmd(FunctionalState NewState)
 /**
   * @brief  Writes a data in a specified ERTC Backup data register.
   * @param  ERTC_BKP_DT: ERTC Backup data Register number.
-  *          This parameter can be: ERTC_BKP_DTx where x can be from 0 to 19 to 
+  *          This parameter can be: ERTC_BKP_DTx where x can be from 0 to 19 to
   *                          specify the register.
-  * @param  Data: Data to be written in the specified ERTC Backup data register.                     
+  * @param  Data: Data to be written in the specified ERTC Backup data register.
   * @retval None
   */
 void ERTC_WriteBackupRegister(uint32_t ERTC_BKP_DT, uint32_t Data)
 {
   __IO uint32_t tmp = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_ERTC_BKP(ERTC_BKP_DT));
 
@@ -2007,20 +2007,20 @@ void ERTC_WriteBackupRegister(uint32_t ERTC_BKP_DT, uint32_t Data)
 /**
   * @brief  Reads data from the specified ERTC Backup data Register.
   * @param  ERTC_BKP_DT: ERTC Backup data Register number.
-  *          This parameter can be: ERTC_BKP_DTx where x can be from 0 to 19 to 
-  *                          specify the register.                   
+  *          This parameter can be: ERTC_BKP_DTx where x can be from 0 to 19 to
+  *                          specify the register.
   * @retval None
   */
 uint32_t ERTC_ReadBackupRegister(uint32_t ERTC_BKP_DT)
 {
   __IO uint32_t tmp = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_ERTC_BKP(ERTC_BKP_DT));
 
   tmp = ERTC_BASE + 0x50;
   tmp += (ERTC_BKP_DT * 4);
-  
+
   /* Read the specified register */
   return (*(__IO uint32_t *)tmp);
 }
@@ -2030,13 +2030,13 @@ uint32_t ERTC_ReadBackupRegister(uint32_t ERTC_BKP_DT)
   */
 
 /** @defgroup RTC_Group11 ERTC Tamper and TimeStamp Pins Selection and Output Type Config configuration functions
- *  @brief   ERTC Tamper and TimeStamp Pins Selection and Output Type Config 
- *           configuration functions  
+ *  @brief   ERTC Tamper and TimeStamp Pins Selection and Output Type Config
+ *           configuration functions
  *
-@verbatim   
+@verbatim
  ==================================================================================================
- ##### ERTC Tamper and TimeStamp Pins Selection and Output Type Config configuration functions ##### 
- ==================================================================================================  
+ ##### ERTC Tamper and TimeStamp Pins Selection and Output Type Config configuration functions #####
+ ==================================================================================================
 
 @endverbatim
   * @{
@@ -2047,16 +2047,16 @@ uint32_t ERTC_ReadBackupRegister(uint32_t ERTC_BKP_DT)
   * @param  ERTC_TamperPin: specifies the ERTC Tamper Pin.
   *          This parameter can be one of the following values:
   *            @arg ERTC_TAMPPIN_Default: RTC_AF1 is used as ERTC Tamper Pin.
-  *            @arg ERTC_TAMPPIN_Pos1: RTC_AF2 is selected as ERTC Tamper Pin.    
+  *            @arg ERTC_TAMPPIN_Pos1: RTC_AF2 is selected as ERTC Tamper Pin.
   * @retval None
   */
 void ERTC_TamperPinSelection(uint32_t ERTC_TamperPin)
 {
   /* Check the parameters */
   assert_param(IS_ERTC_TAMP_PIN(ERTC_TamperPin));
-  
+
   ERTC->TPAF &= (uint32_t)~(ERTC_TPAF_TMPINSEL);
-  ERTC->TPAF |= (uint32_t)(ERTC_TamperPin);  
+  ERTC->TPAF |= (uint32_t)(ERTC_TamperPin);
 }
 
 /**
@@ -2064,35 +2064,35 @@ void ERTC_TamperPinSelection(uint32_t ERTC_TamperPin)
   * @param  ERTC_TimeStampPin: specifies the ERTC TimeStamp Pin.
   *          This parameter can be one of the following values:
   *            @arg ERTC_TimeStampPin_PC13: PC13 is selected as ERTC TimeStamp Pin.
-  *            @arg ERTC_TimeStampPin_PI8: PI8 is selected as ERTC TimeStamp Pin.    
+  *            @arg ERTC_TimeStampPin_PI8: PI8 is selected as ERTC TimeStamp Pin.
   * @retval None
   */
 void ERTC_TimeStampPinSelection(uint32_t ERTC_TimeStampPin)
 {
   /* Check the parameters */
   assert_param(IS_ERTC_TIMESTAMP_PIN(ERTC_TimeStampPin));
-  
+
   ERTC->TPAF &= (uint32_t)~(ERTC_TPAF_TSINSEL);
-  ERTC->TPAF |= (uint32_t)(ERTC_TimeStampPin);  
+  ERTC->TPAF |= (uint32_t)(ERTC_TimeStampPin);
 }
 
 /**
-  * @brief  Configures the ERTC Output Pin mode. 
+  * @brief  Configures the ERTC Output Pin mode.
   * @param  ERTC_OutputType: specifies the ERTC Output (PC13) pin mode.
   *          This parameter can be one of the following values:
-  *            @arg ERTC_OutputType_OpenDrain: ERTC Output (PC13) is configured in 
+  *            @arg ERTC_OutputType_OpenDrain: ERTC Output (PC13) is configured in
   *                                    Open Drain mode.
-  *            @arg ERTC_OutputType_PushPull:  ERTC Output (PC13) is configured in 
-  *                                    Push Pull mode.    
+  *            @arg ERTC_OutputType_PushPull:  ERTC Output (PC13) is configured in
+  *                                    Push Pull mode.
   * @retval None
   */
 void ERTC_OutputTypeConfig(uint32_t ERTC_OutputType)
 {
   /* Check the parameters */
   assert_param(IS_ERTC_OUTPUT_TYPE(ERTC_OutputType));
-  
+
   ERTC->TPAF &= (uint32_t)~(ERTC_TPAF_ALAOUTTYPE);
-  ERTC->TPAF |= (uint32_t)(ERTC_OutputType);  
+  ERTC->TPAF |= (uint32_t)(ERTC_OutputType);
 }
 
 /**
@@ -2100,12 +2100,12 @@ void ERTC_OutputTypeConfig(uint32_t ERTC_OutputType)
   */
 
 /** @defgroup RTC_Group12 Shift control synchronisation functions
- *  @brief   Shift control synchronisation functions 
+ *  @brief   Shift control synchronisation functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
               ##### Shift control synchronisation functions #####
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -2113,10 +2113,10 @@ void ERTC_OutputTypeConfig(uint32_t ERTC_OutputType)
 
 /**
   * @brief  Configures the Synchronization Shift Control Settings.
-  * @note   When REFCKON is set, firmware must not write to Shift control register 
+  * @note   When REFCKON is set, firmware must not write to Shift control register
   * @param  ERTC_ShiftAdd1S : Select to add or not 1 second to the time Calendar.
   *   This parameter can be one of the following values :
-  *     @arg ERTC_ShiftAdd1S_Set  : Add one second to the clock calendar. 
+  *     @arg ERTC_ShiftAdd1S_Set  : Add one second to the clock calendar.
   *     @arg ERTC_ShiftAdd1S_Reset: No effect.
   * @param  ERTC_ShiftSubFS: Select the number of Second Fractions to Substitute.
   *         This parameter can be one any value from 0 to 0x7FFF.
@@ -2136,7 +2136,7 @@ ErrorStatus ERTC_SynchroShiftConfig(uint32_t ERTC_ShiftAdd1S, uint32_t ERTC_Shif
   /* Disable the write protection for ERTC registers */
   ERTC->WPR = 0xCA;
   ERTC->WPR = 0x53;
-  
+
   /* Check if a Shift is pending*/
   if ((ERTC->ISTS & ERTC_ISTS_SFP) != RESET)
   {
@@ -2155,7 +2155,7 @@ ErrorStatus ERTC_SynchroShiftConfig(uint32_t ERTC_ShiftAdd1S, uint32_t ERTC_Shif
     {
       /* Configure the Shift settings */
       ERTC->SFCTR = (uint32_t)(uint32_t)(ERTC_ShiftSubFS) | (uint32_t)(ERTC_ShiftAdd1S);
-    
+
       if(ERTC_WaitForSynchro() == ERROR)
       {
         status = ERROR;
@@ -2177,7 +2177,7 @@ ErrorStatus ERTC_SynchroShiftConfig(uint32_t ERTC_ShiftAdd1S, uint32_t ERTC_Shif
 
   /* Enable the write protection for ERTC registers */
   ERTC->WPR = 0xFF;
-  
+
   return (ErrorStatus)(status);
 }
 
@@ -2186,18 +2186,18 @@ ErrorStatus ERTC_SynchroShiftConfig(uint32_t ERTC_ShiftAdd1S, uint32_t ERTC_Shif
   */
 
 /** @defgroup RTC_Group13 Interrupts and flags management functions
- *  @brief   Interrupts and flags management functions  
+ *  @brief   Interrupts and flags management functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
               ##### Interrupts and flags management functions #####
- ===============================================================================  
+ ===============================================================================
  [..] All ERTC interrupts are connected to the EXTI controller.
- 
+
    (+) To enable the ERTC Alarm interrupt, the following sequence is required:
-       (++) Configure and enable the EXTI Line 17 in interrupt mode and select 
+       (++) Configure and enable the EXTI Line 17 in interrupt mode and select
             the rising edge sensitivity using the EXTI_Init() function.
-       (++) Configure and enable the ERTC_Alarm IRQ channel in the NVIC using the 
+       (++) Configure and enable the ERTC_Alarm IRQ channel in the NVIC using the
             NVIC_Init() function.
        (++) Configure the ERTC to generate ERTC alarms (Alarm A and/or Alarm B) using
             the ERTC_SetAlarmValue() and ERTC_AlarmCmd() functions.
@@ -2205,26 +2205,26 @@ ErrorStatus ERTC_SynchroShiftConfig(uint32_t ERTC_ShiftAdd1S, uint32_t ERTC_Shif
    (+) To enable the ERTC Wakeup interrupt, the following sequence is required:
        (++) Configure and enable the EXTI Line 22 in interrupt mode and select the
             rising edge sensitivity using the EXTI_Init() function.
-       (++) Configure and enable the RTC_WKUP IRQ channel in the NVIC using the 
+       (++) Configure and enable the RTC_WKUP IRQ channel in the NVIC using the
             NVIC_Init() function.
-       (++) Configure the ERTC to generate the ERTC wakeup timer event using the 
-            ERTC_WakeUpClockConfig(), ERTC_SetWakeUpCounter() and ERTC_WakeUpCmd() 
+       (++) Configure the ERTC to generate the ERTC wakeup timer event using the
+            ERTC_WakeUpClockConfig(), ERTC_SetWakeUpCounter() and ERTC_WakeUpCmd()
             functions.
 
    (+) To enable the ERTC Tamper interrupt, the following sequence is required:
-       (++) Configure and enable the EXTI Line 21 in interrupt mode and select 
+       (++) Configure and enable the EXTI Line 21 in interrupt mode and select
             the rising edge sensitivity using the EXTI_Init() function.
        (++) Configure and enable the TAMP_STAMP IRQ channel in the NVIC using the
             NVIC_Init() function.
-       (++) Configure the ERTC to detect the ERTC tamper event using the 
+       (++) Configure the ERTC to detect the ERTC tamper event using the
             ERTC_TamperTriggerConfig() and ERTC_TamperCmd() functions.
 
    (+) To enable the ERTC TimeStamp interrupt, the following sequence is required:
        (++) Configure and enable the EXTI Line 21 in interrupt mode and select the
             rising edge sensitivity using the EXTI_Init() function.
-       (++) Configure and enable the TAMP_STAMP IRQ channel in the NVIC using the 
+       (++) Configure and enable the TAMP_STAMP IRQ channel in the NVIC using the
             NVIC_Init() function.
-       (++) Configure the ERTC to detect the ERTC time stamp event using the 
+       (++) Configure the ERTC to detect the ERTC time stamp event using the
             ERTC_TimeStampCmd() functions.
 
 @endverbatim
@@ -2233,7 +2233,7 @@ ErrorStatus ERTC_SynchroShiftConfig(uint32_t ERTC_ShiftAdd1S, uint32_t ERTC_Shif
 
 /**
   * @brief  Enables or disables the specified ERTC interrupts.
-  * @param  ERTC_INT: specifies the ERTC interrupt sources to be enabled or disabled. 
+  * @param  ERTC_INT: specifies the ERTC interrupt sources to be enabled or disabled.
   *          This parameter can be any combination of the following values:
   *            @arg ERTC_INT_TS:  Time Stamp interrupt mask
   *            @arg ERTC_INT_WAT:  WakeUp Timer interrupt mask
@@ -2269,7 +2269,7 @@ void ERTC_INTConfig(uint32_t ERTC_INT, FunctionalState NewState)
     ERTC->TPAF &= (uint32_t)~(ERTC_INT & ERTC_TPAF_TMIE);
   }
   /* Enable the write protection for ERTC registers */
-  ERTC->WPR = 0xFF; 
+  ERTC->WPR = 0xFF;
 }
 
 /**
@@ -2297,13 +2297,13 @@ FlagStatus ERTC_GetFlagStatus(uint32_t ERTC_FLAG)
 {
   FlagStatus bitstatus = RESET;
   uint32_t tmpreg = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_ERTC_GET_FLAG(ERTC_FLAG));
-  
+
   /* Get all the flags */
   tmpreg = (uint32_t)(ERTC->ISTS & ERTC_FLAGS_MASK);
-  
+
   /* Return the status of the flag */
   if ((tmpreg & ERTC_FLAG) != (uint32_t)RESET)
   {
@@ -2322,7 +2322,7 @@ FlagStatus ERTC_GetFlagStatus(uint32_t ERTC_FLAG)
   *          This parameter can be any combination of the following values:
   *            @arg ERTC_FLAG_TP1F: Tamper 1 event flag
   *            @arg ERTC_FLAG_TP2F: Tamper 2 event flag
-  *            @arg ERTC_FLAG_TSOF: Time Stamp Overflow flag 
+  *            @arg ERTC_FLAG_TSOF: Time Stamp Overflow flag
   *            @arg ERTC_FLAG_TSF: Time Stamp event flag
   *            @arg ERTC_FLAG_WATF: WakeUp Timer flag
   *            @arg ERTC_FLAG_ALBF: Alarm B flag
@@ -2336,17 +2336,17 @@ void ERTC_ClearFlag(uint32_t ERTC_FLAG)
   assert_param(IS_ERTC_CLEAR_FLAG(ERTC_FLAG));
 
   /* Clear the Flags in the RTC_ISR register */
-  ERTC->ISTS = (uint32_t)((uint32_t)(~((ERTC_FLAG | ERTC_ISTS_INITM)& 0x0000FFFF) | (uint32_t)(ERTC->ISTS & ERTC_ISTS_INITM)));  
+  ERTC->ISTS = (uint32_t)((uint32_t)(~((ERTC_FLAG | ERTC_ISTS_INITM)& 0x0000FFFF) | (uint32_t)(ERTC->ISTS & ERTC_ISTS_INITM)));
 }
 
 /**
   * @brief  Checks whether the specified ERTC interrupt has occurred or not.
   * @param  ERTC_INT: specifies the ERTC interrupt source to check.
   *          This parameter can be one of the following values:
-  *            @arg ERTC_INT_TS: Time Stamp interrupt 
-  *            @arg ERTC_INT_WAT: WakeUp Timer interrupt 
-  *            @arg ERTC_INT_ALB: Alarm B interrupt 
-  *            @arg ERTC_INT_ALA: Alarm A interrupt 
+  *            @arg ERTC_INT_TS: Time Stamp interrupt
+  *            @arg ERTC_INT_WAT: WakeUp Timer interrupt
+  *            @arg ERTC_INT_ALB: Alarm B interrupt
+  *            @arg ERTC_INT_ALA: Alarm A interrupt
   *            @arg ERTC_INT_TAMP1: Tamper 1 event interrupt
   *            @arg ERTC_INT_TAMP2: Tamper 2 event interrupt
   * @retval The new state of ERTC_INT (SET or RESET).
@@ -2355,19 +2355,19 @@ ITStatus ERTC_GetINTStatus(uint32_t ERTC_INT)
 {
   ITStatus bitstatus = RESET;
   uint32_t tmpreg = 0, enablestatus = 0;
- 
+
   /* Check the parameters */
   assert_param(IS_ERTC_GET_INT(ERTC_INT));
-  
+
   /* Get the TAMPER Interrupt enable bit and pending bit */
   tmpreg = (uint32_t)(ERTC->TPAF & (ERTC_TPAF_TMIE));
- 
+
   /* Get the Interrupt enable Status */
   enablestatus = (uint32_t)((ERTC->CTRL & ERTC_INT) | (tmpreg & (ERTC_INT >> 15)) | (tmpreg & (ERTC_INT >> 16)));
-  
+
   /* Get the Interrupt pending bit */
   tmpreg = (uint32_t)((ERTC->ISTS & (uint32_t)(ERTC_INT >> 4)));
-  
+
   /* Get the status of the Interrupt */
   if ((enablestatus != (uint32_t)RESET) && ((tmpreg & 0x0000FFFF) != (uint32_t)RESET))
   {
@@ -2384,12 +2384,12 @@ ITStatus ERTC_GetINTStatus(uint32_t ERTC_INT)
   * @brief  Clears the ERTC's interrupt pending bits.
   * @param  ERTC_INT: specifies the ERTC interrupt pending bit to clear.
   *          This parameter can be any combination of the following values:
-  *            @arg ERTC_INT_TS: Time Stamp interrupt 
-  *            @arg ERTC_INT_WAT: WakeUp Timer interrupt 
-  *            @arg ERTC_INT_ALB: Alarm B interrupt 
-  *            @arg ERTC_INT_ALA: Alarm A interrupt 
+  *            @arg ERTC_INT_TS: Time Stamp interrupt
+  *            @arg ERTC_INT_WAT: WakeUp Timer interrupt
+  *            @arg ERTC_INT_ALB: Alarm B interrupt
+  *            @arg ERTC_INT_ALA: Alarm A interrupt
   *            @arg ERTC_INT_TAMP1: Tamper 1 event interrupt
-  *            @arg ERTC_INT_TAMP2: Tamper 2 event interrupt 
+  *            @arg ERTC_INT_TAMP2: Tamper 2 event interrupt
   * @retval None
   */
 void ERTC_ClearINTPendingBINT(uint32_t ERTC_INT)
@@ -2403,7 +2403,7 @@ void ERTC_ClearINTPendingBINT(uint32_t ERTC_INT)
   tmpreg = (uint32_t)(ERTC_INT >> 4);
 
   /* Clear the interrupt pending bits in the RTC_ISR register */
-  ERTC->ISTS = (uint32_t)((uint32_t)(~((tmpreg | ERTC_ISTS_INITM)& 0x0000FFFF) | (uint32_t)(ERTC->ISTS & ERTC_ISTS_INITM))); 
+  ERTC->ISTS = (uint32_t)((uint32_t)(~((tmpreg | ERTC_ISTS_INITM)& 0x0000FFFF) | (uint32_t)(ERTC->ISTS & ERTC_ISTS_INITM)));
 }
 
 /**
@@ -2418,13 +2418,13 @@ void ERTC_ClearINTPendingBINT(uint32_t ERTC_INT)
 static uint8_t ERTC_ByteToBcd2(uint8_t Value)
 {
   uint8_t bcdhigh = 0;
-  
+
   while (Value >= 10)
   {
     bcdhigh++;
     Value -= 10;
   }
-  
+
   return  ((uint8_t)(bcdhigh << 4) | Value);
 }
 
@@ -2442,15 +2442,15 @@ static uint8_t ERTC_Bcd2ToByte(uint8_t Value)
 
 /**
   * @}
-  */ 
+  */
 
 #endif /* AT32F415xx */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 

@@ -38,11 +38,11 @@
 /**
   * @brief ALD version number
   */
-#define __ALD_VERSION_MAIN	(0x01) /**< [31:24] main version */
-#define __ALD_VERSION_SUB1	(0x00) /**< [23:16] sub1 version */
-#define __ALD_VERSION_SUB2	(0x00) /**< [15:8]  sub2 version */
-#define __ALD_VERSION_RC	(0x00) /**< [7:0]  release candidate */
-#define __ALD_VERSION		((__ALD_VERSION_MAIN << 24) | \
+#define __ALD_VERSION_MAIN    (0x01) /**< [31:24] main version */
+#define __ALD_VERSION_SUB1    (0x00) /**< [23:16] sub1 version */
+#define __ALD_VERSION_SUB2    (0x00) /**< [15:8]  sub2 version */
+#define __ALD_VERSION_RC    (0x00) /**< [7:0]  release candidate */
+#define __ALD_VERSION        ((__ALD_VERSION_MAIN << 24) | \
                                  (__ALD_VERSION_SUB1 << 16) | \
                                  (__ALD_VERSION_SUB2 << 8 ) | \
                                  (__ALD_VERSION_RC))
@@ -85,7 +85,7 @@ uint32_t __systick_interval = SYSTICK_INTERVAL_1MS;
              duration should be kept 1ms.
         (++) Time base configuration function (ald_tick_init()) is called automatically
              at the beginning of the program after reset by ald_cmu_init() or at
-	     any time when clock is configured.
+         any time when clock is configured.
         (++) Source of time base is configured  to generate interrupts at regular
              time intervals. Care must be taken if ald_delay_ms() is called from a
              peripheral ISR process, the Tick interrupt line must have higher priority
@@ -111,14 +111,14 @@ uint32_t __systick_interval = SYSTICK_INTERVAL_1MS;
   */
 void ald_cmu_init(void)
 {
-	NVIC_SetPriorityGrouping(NVIC_PRIORITY_GROUP_2);
-	ald_cmu_clock_config_default();
-	ald_tick_init(TICK_INT_PRIORITY);
+    NVIC_SetPriorityGrouping(NVIC_PRIORITY_GROUP_2);
+    ald_cmu_clock_config_default();
+    ald_tick_init(TICK_INT_PRIORITY);
 #ifdef ALD_DMA
-	ald_cmu_perh_clock_config(CMU_PERH_DMA, ENABLE);
-	ald_dma_init(DMA0);
+    ald_cmu_perh_clock_config(CMU_PERH_DMA, ENABLE);
+    ald_dma_init(DMA0);
 #endif
-	return;
+    return;
 }
 
 /**
@@ -137,11 +137,11 @@ void ald_cmu_init(void)
   */
 __weak void ald_tick_init(uint32_t prio)
 {
-	/* Configure the SysTick IRQ */
-	NVIC_SetPriority(SysTick_IRQn, prio);
-	SysTick_Config(ald_cmu_get_sys_clock() / SYSTICK_INTERVAL_1MS);
+    /* Configure the SysTick IRQ */
+    NVIC_SetPriority(SysTick_IRQn, prio);
+    SysTick_Config(ald_cmu_get_sys_clock() / SYSTICK_INTERVAL_1MS);
 
-	return;
+    return;
 }
 
 /**
@@ -155,15 +155,15 @@ __weak void ald_tick_init(uint32_t prio)
   */
 void ald_systick_interval_select(systick_interval_t value)
 {
-	assert_param(IS_SYSTICK_INTERVAL(value));
+    assert_param(IS_SYSTICK_INTERVAL(value));
 
-	SysTick_Config(ald_cmu_get_sys_clock() / value);
-	__systick_interval = value;
+    SysTick_Config(ald_cmu_get_sys_clock() / value);
+    __systick_interval = value;
 
-	if (TICK_INT_PRIORITY != 15)
-		NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
+    if (TICK_INT_PRIORITY != 15)
+        NVIC_SetPriority(SysTick_IRQn, TICK_INT_PRIORITY);
 
-	return;
+    return;
 }
 /**
   * @}
@@ -203,8 +203,8 @@ void ald_systick_interval_select(systick_interval_t value)
   */
 __weak void ald_systick_irq_cbk(void)
 {
-	/* do nothing */
-	return;
+    /* do nothing */
+    return;
 }
 
 /**
@@ -218,8 +218,8 @@ __weak void ald_systick_irq_cbk(void)
   */
 __weak void ald_inc_tick(void)
 {
-	++lib_tick;
-	ald_systick_irq_cbk();
+    ++lib_tick;
+    ald_systick_irq_cbk();
 }
 
 /**
@@ -230,7 +230,7 @@ __weak void ald_inc_tick(void)
   */
 __weak uint32_t ald_get_tick(void)
 {
-	return lib_tick;
+    return lib_tick;
 }
 
 /**
@@ -246,35 +246,35 @@ __weak uint32_t ald_get_tick(void)
   */
 __weak void ald_delay_ms(__IO uint32_t delay)
 {
-	uint32_t tick, __delay;
+    uint32_t tick, __delay;
 
-	switch (__systick_interval) {
-	case SYSTICK_INTERVAL_1MS:
-		__delay = delay;
-		break;
+    switch (__systick_interval) {
+    case SYSTICK_INTERVAL_1MS:
+        __delay = delay;
+        break;
 
-	case SYSTICK_INTERVAL_10MS:
-		__delay = delay / 10;
-		break;
+    case SYSTICK_INTERVAL_10MS:
+        __delay = delay / 10;
+        break;
 
-	case SYSTICK_INTERVAL_100MS:
-		__delay = delay / 100;
-		break;
+    case SYSTICK_INTERVAL_100MS:
+        __delay = delay / 100;
+        break;
 
-	case SYSTICK_INTERVAL_1000MS:
-		__delay = delay / 1000;
-		break;
+    case SYSTICK_INTERVAL_1000MS:
+        __delay = delay / 1000;
+        break;
 
-	default:
-		__delay = delay;
-		break;
-	}
+    default:
+        __delay = delay;
+        break;
+    }
 
-	tick    = ald_get_tick();
-	__delay = __delay == 0 ? 1 : __delay;
+    tick    = ald_get_tick();
+    __delay = __delay == 0 ? 1 : __delay;
 
-	while ((ald_get_tick() - tick) < __delay)
-		;
+    while ((ald_get_tick() - tick) < __delay)
+        ;
 }
 
 /**
@@ -289,7 +289,7 @@ __weak void ald_delay_ms(__IO uint32_t delay)
   */
 __weak void ald_suspend_tick(void)
 {
-	CLEAR_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
+    CLEAR_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
 }
 
 /**
@@ -304,7 +304,7 @@ __weak void ald_suspend_tick(void)
   */
 __weak void ald_resume_tick(void)
 {
-	SET_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
+    SET_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
 }
 
 /**
@@ -313,7 +313,7 @@ __weak void ald_resume_tick(void)
   */
 uint32_t ald_get_ald_version(void)
 {
-	return __ALD_VERSION;
+    return __ALD_VERSION;
 }
 
 /**
@@ -323,13 +323,13 @@ uint32_t ald_get_ald_version(void)
   */
 void ald_flash_wait_config(uint8_t cycle)
 {
-	uint32_t tmp;
+    uint32_t tmp;
 
-	tmp = MSC->MEMWAIT;
-	MODIFY_REG(tmp, MSC_MEMWAIT_FLASH_W_MSK, (0x30U | cycle) << MSC_MEMWAIT_FLASH_W_POSS);
-	MSC->MEMWAIT = tmp;
+    tmp = MSC->MEMWAIT;
+    MODIFY_REG(tmp, MSC_MEMWAIT_FLASH_W_MSK, (0x30U | cycle) << MSC_MEMWAIT_FLASH_W_POSS);
+    MSC->MEMWAIT = tmp;
 
-	return;
+    return;
 }
 
 /**
@@ -342,24 +342,24 @@ void ald_flash_wait_config(uint8_t cycle)
   */
 ald_status_t ald_wait_flag(uint32_t *reg, uint32_t bit, flag_status_t status, uint32_t timeout)
 {
-	uint32_t tick = ald_get_tick();
+    uint32_t tick = ald_get_tick();
 
-	assert_param(timeout > 0);
+    assert_param(timeout > 0);
 
-	if (status == SET) {
-		while (!(IS_BIT_SET(*reg, bit))) {
-			if (((ald_get_tick()) - tick) > timeout)
-				return TIMEOUT;
-		}
-	}
-	else {
-		while ((IS_BIT_SET(*reg, bit))) {
-			if (((ald_get_tick()) - tick) > timeout)
-				return TIMEOUT;
-		}
-	}
+    if (status == SET) {
+        while (!(IS_BIT_SET(*reg, bit))) {
+            if (((ald_get_tick()) - tick) > timeout)
+                return TIMEOUT;
+        }
+    }
+    else {
+        while ((IS_BIT_SET(*reg, bit))) {
+            if (((ald_get_tick()) - tick) > timeout)
+                return TIMEOUT;
+        }
+    }
 
-	return OK;
+    return OK;
 }
 
 /**
@@ -374,30 +374,30 @@ ald_status_t ald_wait_flag(uint32_t *reg, uint32_t bit, flag_status_t status, ui
   */
 void ald_mcu_irq_config(IRQn_Type irq, uint8_t preempt_prio, uint8_t sub_prio, type_func_t status)
 {
-	uint32_t pri;
-	uint8_t sub_bw, pre_bw;
-	uint8_t sub_mask = 0xF;
+    uint32_t pri;
+    uint8_t sub_bw, pre_bw;
+    uint8_t sub_mask = 0xF;
 
-	assert_param(IS_FUNC_STATE(status));
-	assert_param(IS_PREEMPT_PRIO(preempt_prio));
-	assert_param(IS_SUB_PRIO(sub_prio));
+    assert_param(IS_FUNC_STATE(status));
+    assert_param(IS_PREEMPT_PRIO(preempt_prio));
+    assert_param(IS_SUB_PRIO(sub_prio));
 
-	if (status == ENABLE) {
-		pre_bw     = 7 - (((SCB->AIRCR) >> 8) & 7);
-		sub_bw     = 4 - pre_bw;
-		sub_mask >>= pre_bw;
+    if (status == ENABLE) {
+        pre_bw     = 7 - (((SCB->AIRCR) >> 8) & 7);
+        sub_bw     = 4 - pre_bw;
+        sub_mask >>= pre_bw;
 
-		pri  = preempt_prio << sub_bw;
-		pri |= sub_prio & sub_mask;
+        pri  = preempt_prio << sub_bw;
+        pri |= sub_prio & sub_mask;
 
-		NVIC_SetPriority(irq, pri);
-		NVIC_EnableIRQ(irq);
-	}
-	else {
-		NVIC_DisableIRQ(irq);
-	}
+        NVIC_SetPriority(irq, pri);
+        NVIC_EnableIRQ(irq);
+    }
+    else {
+        NVIC_DisableIRQ(irq);
+    }
 
-	return;
+    return;
 }
 
 /**
@@ -406,11 +406,11 @@ void ald_mcu_irq_config(IRQn_Type irq, uint8_t preempt_prio, uint8_t sub_prio, t
   */
 void ald_mcu_timestamp_init(void)
 {
-	DEM_CR    |= (uint32_t)DEM_CR_TRCENA;
-	DWT_CYCCNT = 0x0;
-	DWT_CR    |= (uint32_t)DWT_CR_CYCCNTEA;
+    DEM_CR    |= (uint32_t)DEM_CR_TRCENA;
+    DWT_CYCCNT = 0x0;
+    DWT_CR    |= (uint32_t)DWT_CR_CYCCNTEA;
 
-	return;
+    return;
 }
 
 /**
@@ -419,7 +419,7 @@ void ald_mcu_timestamp_init(void)
   */
 uint32_t ald_mcu_get_timestamp(void)
 {
-	return (uint32_t)DWT_CYCCNT;
+    return (uint32_t)DWT_CYCCNT;
 }
 
 /**
@@ -428,7 +428,7 @@ uint32_t ald_mcu_get_timestamp(void)
   */
 uint32_t ald_mcu_get_cpu_id(void)
 {
-	return SCB->CPUID;
+    return SCB->CPUID;
 }
 
 /**
@@ -438,11 +438,11 @@ uint32_t ald_mcu_get_cpu_id(void)
   */
 void ald_mcu_get_uid(uint8_t *buf)
 {
-	memcpy(&buf[0], (void *)MCU_UID0_ADDR, 4);
-	memcpy(&buf[4], (void *)MCU_UID1_ADDR, 4);
-	memcpy(&buf[8], (void *)MCU_UID2_ADDR, 4);
+    memcpy(&buf[0], (void *)MCU_UID0_ADDR, 4);
+    memcpy(&buf[4], (void *)MCU_UID1_ADDR, 4);
+    memcpy(&buf[8], (void *)MCU_UID2_ADDR, 4);
 
-	return;
+    return;
 }
 
 /**
@@ -451,7 +451,7 @@ void ald_mcu_get_uid(uint8_t *buf)
   */
 uint32_t ald_mcu_get_chipid(void)
 {
-	return (uint32_t)*(uint32_t *)MCU_CHIPID_ADDR;
+    return (uint32_t)*(uint32_t *)MCU_CHIPID_ADDR;
 }
 /**
   * @}

@@ -64,18 +64,18 @@
 /* Do not define variable if HF crystal oscillator not present */
 #if (EFM32_HFXO_FREQ > 0)
 /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
-/** System HFXO clock. */ 
+/** System HFXO clock. */
 static uint32_t SystemHFXOClock = EFM32_HFXO_FREQ;
 /** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
 #endif
 
-#ifndef EFM32_LFXO_FREQ 
+#ifndef EFM32_LFXO_FREQ
 #define EFM32_LFXO_FREQ (EFM32_LFRCO_FREQ)
 #endif
 /* Do not define variable if LF crystal oscillator not present */
 #if (EFM32_LFXO_FREQ > 0)
 /** @cond DO_NOT_INCLUDE_WITH_DOXYGEN */
-/** System LFXO clock. */ 
+/** System LFXO clock. */
 static uint32_t SystemLFXOClock = EFM32_LFXO_FREQ;
 /** @endcond (DO_NOT_INCLUDE_WITH_DOXYGEN) */
 #endif
@@ -118,13 +118,13 @@ uint32_t SystemCoreClock;
 uint32_t SystemCoreClockGet(void)
 {
   uint32_t ret;
-  
+
   ret = SystemHFClockGet();
 #if defined (_EFM32_GIANT_FAMILY)
   /* Leopard/Giant Gecko has an additional divider */
   ret =  ret / (1 + ((CMU->CTRL & _CMU_CTRL_HFCLKDIV_MASK)>>_CMU_CTRL_HFCLKDIV_SHIFT));
 #endif
-  ret >>= (CMU->HFCORECLKDIV & _CMU_HFCORECLKDIV_HFCORECLKDIV_MASK) >> 
+  ret >>= (CMU->HFCORECLKDIV & _CMU_HFCORECLKDIV_HFCORECLKDIV_MASK) >>
           _CMU_HFCORECLKDIV_HFCORECLKDIV_SHIFT;
 
   /* Keep CMSIS variable up-to-date just in case */
@@ -147,7 +147,7 @@ uint32_t SystemCoreClockGet(void)
 uint32_t SystemHFClockGet(void)
 {
   uint32_t ret;
-  
+
   switch (CMU->STATUS & (CMU_STATUS_HFRCOSEL | CMU_STATUS_HFXOSEL |
                          CMU_STATUS_LFRCOSEL | CMU_STATUS_LFXOSEL))
   {
@@ -160,11 +160,11 @@ uint32_t SystemHFClockGet(void)
       ret = 0;
 #endif
       break;
-      
+
     case CMU_STATUS_LFRCOSEL:
       ret = EFM32_LFRCO_FREQ;
       break;
-      
+
     case CMU_STATUS_HFXOSEL:
 #if (EFM32_HFXO_FREQ > 0)
       ret = SystemHFXOClock;
@@ -174,7 +174,7 @@ uint32_t SystemHFClockGet(void)
       ret = 0;
 #endif
       break;
-      
+
     default: /* CMU_STATUS_HFRCOSEL */
       switch (CMU->HFRCOCTRL & _CMU_HFRCOCTRL_BAND_MASK)
       {

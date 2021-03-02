@@ -130,14 +130,14 @@ extern "C" {
  * \brief OPAMP ID number enum.
  */
 enum opamp_id {
-	/** OPAMP 0  */
-	OPAMP_0 = 0,
-	/** OPAMP 1  */
-	OPAMP_1 = 1,
-	/** OPAMP 2  */
-	OPAMP_2 = 2,
-	/** OPAMP number  */
-	OPAMP_NUM,
+    /** OPAMP 0  */
+    OPAMP_0 = 0,
+    /** OPAMP 1  */
+    OPAMP_1 = 1,
+    /** OPAMP 2  */
+    OPAMP_2 = 2,
+    /** OPAMP number  */
+    OPAMP_NUM,
 };
 
 /**
@@ -146,14 +146,14 @@ enum opamp_id {
  * Enum for the negative input of OPAMP0.
  */
 enum opamp0_neg_mux {
-	/** Negative I/O pin 0 */
-	OPAMP0_NEG_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXNEG(0),
-	/** Resistor ladder 0 taps */
-	OPAMP0_NEG_MUX_TAP0 = OPAMP_OPAMPCTRL_MUXNEG(1),
-	/** OPAMP output */
-	OPAMP0_NEG_MUX_OUT0 = OPAMP_OPAMPCTRL_MUXNEG(2),
-	/** DAC output */
-	OPAMP0_NEG_MUX_DAC = OPAMP_OPAMPCTRL_MUXNEG(3),
+    /** Negative I/O pin 0 */
+    OPAMP0_NEG_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXNEG(0),
+    /** Resistor ladder 0 taps */
+    OPAMP0_NEG_MUX_TAP0 = OPAMP_OPAMPCTRL_MUXNEG(1),
+    /** OPAMP output */
+    OPAMP0_NEG_MUX_OUT0 = OPAMP_OPAMPCTRL_MUXNEG(2),
+    /** DAC output */
+    OPAMP0_NEG_MUX_DAC = OPAMP_OPAMPCTRL_MUXNEG(3),
 };
 
 /**
@@ -162,14 +162,14 @@ enum opamp0_neg_mux {
  * Enum for the negative input of OPAMP1.
  */
 enum opamp1_neg_mux {
-	/** Negative I/O pin 1 */
-	OPAMP1_NEG_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXNEG(0),
-	/** Resistor ladder 1 taps */
-	OPAMP1_NEG_MUX_TAP1 = OPAMP_OPAMPCTRL_MUXNEG(1),
-	/** OPAMP output */
-	OPAMP1_NEG_MUX_OUT1 = OPAMP_OPAMPCTRL_MUXNEG(2),
-	/** DAC output */
-	OPAMP1_NEG_MUX_DAC = OPAMP_OPAMPCTRL_MUXNEG(3),
+    /** Negative I/O pin 1 */
+    OPAMP1_NEG_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXNEG(0),
+    /** Resistor ladder 1 taps */
+    OPAMP1_NEG_MUX_TAP1 = OPAMP_OPAMPCTRL_MUXNEG(1),
+    /** OPAMP output */
+    OPAMP1_NEG_MUX_OUT1 = OPAMP_OPAMPCTRL_MUXNEG(2),
+    /** DAC output */
+    OPAMP1_NEG_MUX_DAC = OPAMP_OPAMPCTRL_MUXNEG(3),
 };
 
 /**
@@ -178,18 +178,18 @@ enum opamp1_neg_mux {
  * Enum for the negative input of OPAMP2.
  */
 enum opamp2_neg_mux {
-	/** Negative I/O pin 2 */
-	OPAMP2_NEG_MUX_PIN2 = OPAMP_OPAMPCTRL_MUXNEG(0),
-	/** Resistor ladder 2 taps */
-	OPAMP2_NEG_MUX_TAP2 = OPAMP_OPAMPCTRL_MUXNEG(1),
-	/** OPAMP output */
-	OPAMP2_NEG_MUX_OUT2 = OPAMP_OPAMPCTRL_MUXNEG(2),
-	/** Negative I/O pin 0 */
-	OPAMP2_NEG_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXNEG(3),
-	/** Negative I/O pin 1 */
-	OPAMP2_NEG_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXNEG(4),
-	/** DAC output */
-	OPAMP2_NEG_MUX_DAC = OPAMP_OPAMPCTRL_MUXNEG(5),
+    /** Negative I/O pin 2 */
+    OPAMP2_NEG_MUX_PIN2 = OPAMP_OPAMPCTRL_MUXNEG(0),
+    /** Resistor ladder 2 taps */
+    OPAMP2_NEG_MUX_TAP2 = OPAMP_OPAMPCTRL_MUXNEG(1),
+    /** OPAMP output */
+    OPAMP2_NEG_MUX_OUT2 = OPAMP_OPAMPCTRL_MUXNEG(2),
+    /** Negative I/O pin 0 */
+    OPAMP2_NEG_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXNEG(3),
+    /** Negative I/O pin 1 */
+    OPAMP2_NEG_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXNEG(4),
+    /** DAC output */
+    OPAMP2_NEG_MUX_DAC = OPAMP_OPAMPCTRL_MUXNEG(5),
 };
 
 /**
@@ -198,14 +198,14 @@ enum opamp2_neg_mux {
  * Enum for the positive input of OPAMP0.
  */
 enum opamp0_pos_mux {
-	/** Positive I/O pin 0 */
-	OPAMP0_POS_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXPOS(0),
-	/** Resistor ladder 0 taps */
-	OPAMP0_POS_MUX_TAP0 = OPAMP_OPAMPCTRL_MUXPOS(1),
-	/** DAC output */
-	OPAMP0_POS_MUX_DAC = OPAMP_OPAMPCTRL_MUXPOS(2),
-	/** Ground */
-	OPAMP0_POS_MUX_GND = OPAMP_OPAMPCTRL_MUXPOS(3),
+    /** Positive I/O pin 0 */
+    OPAMP0_POS_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXPOS(0),
+    /** Resistor ladder 0 taps */
+    OPAMP0_POS_MUX_TAP0 = OPAMP_OPAMPCTRL_MUXPOS(1),
+    /** DAC output */
+    OPAMP0_POS_MUX_DAC = OPAMP_OPAMPCTRL_MUXPOS(2),
+    /** Ground */
+    OPAMP0_POS_MUX_GND = OPAMP_OPAMPCTRL_MUXPOS(3),
 };
 
 /**
@@ -214,14 +214,14 @@ enum opamp0_pos_mux {
  * Enum for the positive input of OPAMP1.
  */
 enum opamp1_pos_mux {
-	/** Positive I/O pin 1 */
-	OPAMP1_POS_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXPOS(0),
-	/** Resistor ladder 1 taps */
-	OPAMP1_POS_MUX_TAP1 = OPAMP_OPAMPCTRL_MUXPOS(1),
-	/** OPAMP0 output */
-	OPAMP1_POS_MUX_OUT0 = OPAMP_OPAMPCTRL_MUXPOS(2),
-	/** Ground */
-	OPAMP1_POS_MUX_GND = OPAMP_OPAMPCTRL_MUXPOS(3),
+    /** Positive I/O pin 1 */
+    OPAMP1_POS_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXPOS(0),
+    /** Resistor ladder 1 taps */
+    OPAMP1_POS_MUX_TAP1 = OPAMP_OPAMPCTRL_MUXPOS(1),
+    /** OPAMP0 output */
+    OPAMP1_POS_MUX_OUT0 = OPAMP_OPAMPCTRL_MUXPOS(2),
+    /** Ground */
+    OPAMP1_POS_MUX_GND = OPAMP_OPAMPCTRL_MUXPOS(3),
 };
 
 /**
@@ -230,20 +230,20 @@ enum opamp1_pos_mux {
  * Enum for the positive input of OPAMP2.
  */
 enum opamp2_pos_mux {
-	/** Positive I/O pin 2 */
-	OPAMP2_POS_MUX_PIN2 = OPAMP_OPAMPCTRL_MUXPOS(0),
-	/** Resistor ladder 2 taps */
-	OPAMP2_POS_MUX_TAP2 = OPAMP_OPAMPCTRL_MUXPOS(1),
-	/** OPAMP1 output */
-	OPAMP2_POS_MUX_OUT1 = OPAMP_OPAMPCTRL_MUXPOS(2),
-	/** Ground */
-	OPAMP2_POS_MUX_GND = OPAMP_OPAMPCTRL_MUXPOS(3),
-	/** Positive I/O pin 0 */
-	OPAMP2_POS_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXPOS(4),
-	/** Positive I/O pin 1 */
-	OPAMP2_POS_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXPOS(5),
-	/** Resistor ladder 0 taps */
-	OPAMP2_POS_MUX_TAP0 = OPAMP_OPAMPCTRL_MUXPOS(6),
+    /** Positive I/O pin 2 */
+    OPAMP2_POS_MUX_PIN2 = OPAMP_OPAMPCTRL_MUXPOS(0),
+    /** Resistor ladder 2 taps */
+    OPAMP2_POS_MUX_TAP2 = OPAMP_OPAMPCTRL_MUXPOS(1),
+    /** OPAMP1 output */
+    OPAMP2_POS_MUX_OUT1 = OPAMP_OPAMPCTRL_MUXPOS(2),
+    /** Ground */
+    OPAMP2_POS_MUX_GND = OPAMP_OPAMPCTRL_MUXPOS(3),
+    /** Positive I/O pin 0 */
+    OPAMP2_POS_MUX_PIN0 = OPAMP_OPAMPCTRL_MUXPOS(4),
+    /** Positive I/O pin 1 */
+    OPAMP2_POS_MUX_PIN1 = OPAMP_OPAMPCTRL_MUXPOS(5),
+    /** Resistor ladder 0 taps */
+    OPAMP2_POS_MUX_TAP0 = OPAMP_OPAMPCTRL_MUXPOS(6),
 };
 
 /**
@@ -252,22 +252,22 @@ enum opamp2_pos_mux {
  * Enum for the potentiometer selection of OPAMP 0 to 2.
  */
 enum opamp_pot_mux {
-	/** Gain = R2/R1 = 1/7 */
-	OPAMP_POT_MUX_14R_2R = OPAMP_OPAMPCTRL_POTMUX(0),
-	/** Gain = R2/R1 = 1/3 */
-	OPAMP_POT_MUX_12R_4R = OPAMP_OPAMPCTRL_POTMUX(1),
-	/** Gain = R2/R1 = 1 */
-	OPAMP_POT_MUX_8R_8R = OPAMP_OPAMPCTRL_POTMUX(2),
-	/** Gain = R2/R1 = 1 + 2/3 */
-	OPAMP_POT_MUX_6R_10R = OPAMP_OPAMPCTRL_POTMUX(3),
-	/** Gain = R2/R1 = 3 */
-	OPAMP_POT_MUX_4R_12R = OPAMP_OPAMPCTRL_POTMUX(4),
-	/** Gain = R2/R1 = 4 + 1/3 */
-	OPAMP_POT_MUX_3R_13R = OPAMP_OPAMPCTRL_POTMUX(5),
-	/** Gain = R2/R1 = 7 */
-	OPAMP_POT_MUX_2R_14R = OPAMP_OPAMPCTRL_POTMUX(6),
-	/** Gain = R2/R1 = 15 */
-	OPAMP_POT_MUX_R_15R = OPAMP_OPAMPCTRL_POTMUX(7),
+    /** Gain = R2/R1 = 1/7 */
+    OPAMP_POT_MUX_14R_2R = OPAMP_OPAMPCTRL_POTMUX(0),
+    /** Gain = R2/R1 = 1/3 */
+    OPAMP_POT_MUX_12R_4R = OPAMP_OPAMPCTRL_POTMUX(1),
+    /** Gain = R2/R1 = 1 */
+    OPAMP_POT_MUX_8R_8R = OPAMP_OPAMPCTRL_POTMUX(2),
+    /** Gain = R2/R1 = 1 + 2/3 */
+    OPAMP_POT_MUX_6R_10R = OPAMP_OPAMPCTRL_POTMUX(3),
+    /** Gain = R2/R1 = 3 */
+    OPAMP_POT_MUX_4R_12R = OPAMP_OPAMPCTRL_POTMUX(4),
+    /** Gain = R2/R1 = 4 + 1/3 */
+    OPAMP_POT_MUX_3R_13R = OPAMP_OPAMPCTRL_POTMUX(5),
+    /** Gain = R2/R1 = 7 */
+    OPAMP_POT_MUX_2R_14R = OPAMP_OPAMPCTRL_POTMUX(6),
+    /** Gain = R2/R1 = 15 */
+    OPAMP_POT_MUX_R_15R = OPAMP_OPAMPCTRL_POTMUX(7),
 };
 
 /**
@@ -276,14 +276,14 @@ enum opamp_pot_mux {
  * Enum for the Resistor 1 of OPAMP0.
  */
 enum opamp0_res1_mux {
-	/** Positive input of OPAMP0 */
-	OPAMP0_RES1_MUX_POS_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(0),
-	/** Negative input of OPAMP0 */
-	OPAMP0_RES1_MUX_NEG_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(1),
-	/** DAC output */
-	OPAMP0_RES1_MUX_DAC = OPAMP_OPAMPCTRL_RES1MUX(2),
-	/** Ground */
-	OPAMP0_RES1_MUX_GND = OPAMP_OPAMPCTRL_RES1MUX(3),
+    /** Positive input of OPAMP0 */
+    OPAMP0_RES1_MUX_POS_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(0),
+    /** Negative input of OPAMP0 */
+    OPAMP0_RES1_MUX_NEG_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(1),
+    /** DAC output */
+    OPAMP0_RES1_MUX_DAC = OPAMP_OPAMPCTRL_RES1MUX(2),
+    /** Ground */
+    OPAMP0_RES1_MUX_GND = OPAMP_OPAMPCTRL_RES1MUX(3),
 };
 
 /**
@@ -292,14 +292,14 @@ enum opamp0_res1_mux {
  * Enum for the Resistor 1 of OPAMP1.
  */
 enum opamp1_res1_mux {
-	/** Positive input of OPAMP1 */
-	OPAMP1_RES1_MUX_POS_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(0),
-	/** Negative input of OPAMP1 */
-	OPAMP1_RES1_MUX_NEG_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(1),
-	/** OPAMP0 output */
-	OPAMP1_RES1_MUX_OUT0 = OPAMP_OPAMPCTRL_RES1MUX(2),
-	/** Ground */
-	OPAMP1_RES1_MUX_GND = OPAMP_OPAMPCTRL_RES1MUX(3),
+    /** Positive input of OPAMP1 */
+    OPAMP1_RES1_MUX_POS_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(0),
+    /** Negative input of OPAMP1 */
+    OPAMP1_RES1_MUX_NEG_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(1),
+    /** OPAMP0 output */
+    OPAMP1_RES1_MUX_OUT0 = OPAMP_OPAMPCTRL_RES1MUX(2),
+    /** Ground */
+    OPAMP1_RES1_MUX_GND = OPAMP_OPAMPCTRL_RES1MUX(3),
 };
 
 /**
@@ -308,14 +308,14 @@ enum opamp1_res1_mux {
  * Enum for the Resistor 1 of OPAMP2.
  */
 enum opamp2_res1_mux {
-	/** Positive input of OPAMP2 */
-	OPAMP2_RES1_MUX_POS_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(0),
-	/** Negative input of OPAMP2 */
-	OPAMP2_RES1_MUX_NEG_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(1),
-	/** OPAMP1 output */
-	OPAMP2_RES1_MUX_OUT1 = OPAMP_OPAMPCTRL_RES1MUX(2),
-	/** Ground */
-	OPAMP2_RES1_MUX_GND = OPAMP_OPAMPCTRL_RES1MUX(3),
+    /** Positive input of OPAMP2 */
+    OPAMP2_RES1_MUX_POS_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(0),
+    /** Negative input of OPAMP2 */
+    OPAMP2_RES1_MUX_NEG_PIN0 = OPAMP_OPAMPCTRL_RES1MUX(1),
+    /** OPAMP1 output */
+    OPAMP2_RES1_MUX_OUT1 = OPAMP_OPAMPCTRL_RES1MUX(2),
+    /** Ground */
+    OPAMP2_RES1_MUX_GND = OPAMP_OPAMPCTRL_RES1MUX(3),
 };
 
 /**
@@ -324,14 +324,14 @@ enum opamp2_res1_mux {
  * Enum for the Bias mode selection of OPAMP 0 to 2.
  */
 enum opamp_bias_selection {
-	/** Minimum current consumption but the slowest mode */
-	OPAMP_BIAS_MODE_0 = OPAMP_OPAMPCTRL_BIAS(0),
-	/** Low current consumption, slow speed */
-	OPAMP_BIAS_MODE_1 = OPAMP_OPAMPCTRL_BIAS(1),
-	/** High current consumption, fast speed */
-	OPAMP_BIAS_MODE_2 = OPAMP_OPAMPCTRL_BIAS(2),
-	/** Maximum current consumption but the fastest mode */
-	OPAMP_BIAS_MODE_3 = OPAMP_OPAMPCTRL_BIAS(3),
+    /** Minimum current consumption but the slowest mode */
+    OPAMP_BIAS_MODE_0 = OPAMP_OPAMPCTRL_BIAS(0),
+    /** Low current consumption, slow speed */
+    OPAMP_BIAS_MODE_1 = OPAMP_OPAMPCTRL_BIAS(1),
+    /** High current consumption, fast speed */
+    OPAMP_BIAS_MODE_2 = OPAMP_OPAMPCTRL_BIAS(2),
+    /** Maximum current consumption but the fastest mode */
+    OPAMP_BIAS_MODE_3 = OPAMP_OPAMPCTRL_BIAS(3),
 };
 
 /**
@@ -340,25 +340,25 @@ enum opamp_bias_selection {
  *  Common configuration structure for OPAMP 0 to 2.
  */
 struct opamp_config_common {
-	/**  Potentiometer selection */
-	enum opamp_pot_mux potentiometer_selection;
-	/** If \c true, R1 connected to RES1MUX */
-	bool r1_enable;
-	/** If \c true, resistor ladder to V<SUB>CC</SUB> */
-	bool r2_vcc;
-	/** If \c true, resistor ladder to output */
-	bool r2_out;
-	/** If \c true, the OPAMPx is enabled when a peripheral is requesting
-	 * the OPAMPx to be used as an input. The OPAMPx is
+    /**  Potentiometer selection */
+    enum opamp_pot_mux potentiometer_selection;
+    /** If \c true, R1 connected to RES1MUX */
+    bool r1_enable;
+    /** If \c true, resistor ladder to V<SUB>CC</SUB> */
+    bool r2_vcc;
+    /** If \c true, resistor ladder to output */
+    bool r2_out;
+    /** If \c true, the OPAMPx is enabled when a peripheral is requesting
+     * the OPAMPx to be used as an input. The OPAMPx is
         * disabled if no peripheral is requesting it as an input. */
-	bool on_demand;
-	/** If \c true, the OPAMPx is not stopped during sleep
-	 *  mode when triggered */
-	bool run_in_standby;
-	/**  Bias mode selection */
-	enum opamp_bias_selection bias_value;
-	/** If \c true, OPAMP output is connected to the ADC or AC input */
-	bool analog_out;
+    bool on_demand;
+    /** If \c true, the OPAMPx is not stopped during sleep
+     *  mode when triggered */
+    bool run_in_standby;
+    /**  Bias mode selection */
+    enum opamp_bias_selection bias_value;
+    /** If \c true, OPAMP output is connected to the ADC or AC input */
+    bool analog_out;
 };
 
 /**
@@ -367,15 +367,15 @@ struct opamp_config_common {
  *  Configuration structure for OPAMP 0.
  */
 struct opamp0_config {
-	/** Negative input MUX selection */
-	enum opamp0_neg_mux negative_input;
-	/** Positive input MUX selection */
-	enum opamp0_pos_mux positive_input;
-	/** Resistor 1 MUX selection */
-	enum opamp0_res1_mux r1_connection;
-	/** If \c true, the comparator will continue to sample during sleep
-	 *  mode when triggered */
-	struct opamp_config_common config_common;
+    /** Negative input MUX selection */
+    enum opamp0_neg_mux negative_input;
+    /** Positive input MUX selection */
+    enum opamp0_pos_mux positive_input;
+    /** Resistor 1 MUX selection */
+    enum opamp0_res1_mux r1_connection;
+    /** If \c true, the comparator will continue to sample during sleep
+     *  mode when triggered */
+    struct opamp_config_common config_common;
 };
 
 /**
@@ -384,15 +384,15 @@ struct opamp0_config {
  *  Configuration structure for OPAMP 1.
  */
 struct opamp1_config {
-	/** Negative input MUX selection */
-	enum opamp1_neg_mux negative_input;
-	/** Positive input MUX selection */
-	enum opamp1_pos_mux positive_input;
-	/** Resistor 1 MUX selection */
-	enum opamp1_res1_mux r1_connection;
-	/** If \c true, the comparator will continue to sample during sleep
-	 *  mode when triggered */
-	struct opamp_config_common config_common;
+    /** Negative input MUX selection */
+    enum opamp1_neg_mux negative_input;
+    /** Positive input MUX selection */
+    enum opamp1_pos_mux positive_input;
+    /** Resistor 1 MUX selection */
+    enum opamp1_res1_mux r1_connection;
+    /** If \c true, the comparator will continue to sample during sleep
+     *  mode when triggered */
+    struct opamp_config_common config_common;
 };
 
 /**
@@ -401,15 +401,15 @@ struct opamp1_config {
  *  Configuration structure for OPAMP 2.
  */
 struct opamp2_config {
-	/** Negative input MUX selection */
-	enum opamp2_neg_mux negative_input;
-	/** Positive input MUX selection */
-	enum opamp2_pos_mux positive_input;
-	/** Resistor 1 MUX selection */
-	enum opamp2_res1_mux r1_connection;
-	/** If \c true, the comparator will continue to sample during sleep
-	 *  mode when triggered */
-	struct opamp_config_common config_common;
+    /** Negative input MUX selection */
+    enum opamp2_neg_mux negative_input;
+    /** Positive input MUX selection */
+    enum opamp2_pos_mux positive_input;
+    /** Resistor 1 MUX selection */
+    enum opamp2_res1_mux r1_connection;
+    /** If \c true, the comparator will continue to sample during sleep
+     *  mode when triggered */
+    struct opamp_config_common config_common;
 };
 
 /**
@@ -428,8 +428,8 @@ void opamp_module_init(void);
  */
 static inline void opamp_module_reset(void)
 {
-	/* Reset OPAMP. */
-	OPAMP->CTRLA.reg |= OPAMP_CTRLA_SWRST;
+    /* Reset OPAMP. */
+    OPAMP->CTRLA.reg |= OPAMP_CTRLA_SWRST;
 }
 
 /**
@@ -441,8 +441,8 @@ static inline void opamp_module_reset(void)
  */
 static inline void opamp_module_enable(void)
 {
-	/* Enable OPAMP. */
-	OPAMP->CTRLA.reg |= OPAMP_CTRLA_ENABLE;
+    /* Enable OPAMP. */
+    OPAMP->CTRLA.reg |= OPAMP_CTRLA_ENABLE;
 }
 
 /**
@@ -452,8 +452,8 @@ static inline void opamp_module_enable(void)
  */
 static inline void opamp_module_disable(void)
 {
-	/* Disable OPAMP. */
-	OPAMP->CTRLA.reg &= ~OPAMP_CTRLA_ENABLE;
+    /* Disable OPAMP. */
+    OPAMP->CTRLA.reg &= ~OPAMP_CTRLA_ENABLE;
 }
 
 /**
@@ -465,14 +465,14 @@ static inline void opamp_module_disable(void)
  */
 static inline void opamp_voltage_doubler_enable(void)
 {
-	struct system_clock_source_osculp32k_config config;
+    struct system_clock_source_osculp32k_config config;
 
-	/* Enable the OSCULP32K clock. */
-	system_clock_source_osculp32k_get_config_defaults(&config);
-	system_clock_source_osculp32k_set_config(&config);
+    /* Enable the OSCULP32K clock. */
+    system_clock_source_osculp32k_get_config_defaults(&config);
+    system_clock_source_osculp32k_set_config(&config);
 
-	/* Enable Voltage Doubler. */
-	OPAMP->CTRLA.reg &= ~ OPAMP_CTRLA_LPMUX;
+    /* Enable Voltage Doubler. */
+    OPAMP->CTRLA.reg &= ~ OPAMP_CTRLA_LPMUX;
 }
 
 /**
@@ -483,8 +483,8 @@ static inline void opamp_voltage_doubler_enable(void)
  */
 static inline void opamp_voltage_doubler_disable(void)
 {
-	/* Disable Voltage Doubler. */
-	OPAMP->CTRLA.reg |= OPAMP_CTRLA_LPMUX;
+    /* Disable Voltage Doubler. */
+    OPAMP->CTRLA.reg |= OPAMP_CTRLA_LPMUX;
 }
 
 /**
@@ -612,14 +612,14 @@ bool opamp_is_ready(const enum opamp_id number);
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
  *  <tr>
- *		<td>OPAMP</td>
- *		<td>Operational Amplifier Controller</td>
- *	</tr>
+ *        <td>OPAMP</td>
+ *        <td>Operational Amplifier Controller</td>
+ *    </tr>
  * </table>
  *
  *
@@ -638,12 +638,12 @@ bool opamp_is_ready(const enum opamp_id number);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
-  *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+  *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -661,16 +661,16 @@ bool opamp_is_ready(const enum opamp_id number);
  * \page asfdoc_sam0_opamp_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42446A</td>
- *		<td>07/2015</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42446A</td>
+ *        <td>07/2015</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

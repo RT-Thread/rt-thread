@@ -1,63 +1,63 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:		arm_cmplx_dot_prod_q31.c    
-*    
-* Description:	Q31 complex dot product    
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:     V1.1.0
+*
+* Project:         CMSIS DSP Library
+* Title:        arm_cmplx_dot_prod_q31.c
+*
+* Description:    Q31 complex dot product
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated.    
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.10 2011/7/15
+*    Big Endian support added and Merged M0 and M3/M4 Source code.
+*
+* Version 1.0.3 2010/11/29
+*    Re-organized the CMSIS folders and updated documentation.
+*
+* Version 1.0.2 2010/11/11
+*    Documentation updated.
+*
+* Version 1.0.1 2010/10/05
+*    Production release and review comments incorporated.
+*
+* Version 1.0.0 2010/09/20
+*    Production release and review comments incorporated.
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
 
-/**    
- * @ingroup groupCmplxMath    
+/**
+ * @ingroup groupCmplxMath
  */
 
-/**    
- * @addtogroup cmplx_dot_prod    
- * @{    
+/**
+ * @addtogroup cmplx_dot_prod
+ * @{
  */
 
-/**    
- * @brief  Q31 complex dot product    
- * @param  *pSrcA points to the first input vector    
- * @param  *pSrcB points to the second input vector    
- * @param  numSamples number of complex samples in each vector    
- * @param  *realResult real part of the result returned here    
- * @param  *imagResult imaginary part of the result returned here    
- * @return none.    
- *    
- * <b>Scaling and Overflow Behavior:</b>    
- * \par    
- * The function is implemented using an internal 64-bit accumulator.    
- * The intermediate 1.31 by 1.31 multiplications are performed with 64-bit precision and then shifted to 16.48 format.    
- * The internal real and imaginary accumulators are in 16.48 format and provide 15 guard bits.    
- * Additions are nonsaturating and no overflow will occur as long as <code>numSamples</code> is less than 32768.    
- * The return results <code>realResult</code> and <code>imagResult</code> are in 16.48 format.    
- * Input down scaling is not required.    
+/**
+ * @brief  Q31 complex dot product
+ * @param  *pSrcA points to the first input vector
+ * @param  *pSrcB points to the second input vector
+ * @param  numSamples number of complex samples in each vector
+ * @param  *realResult real part of the result returned here
+ * @param  *imagResult imaginary part of the result returned here
+ * @return none.
+ *
+ * <b>Scaling and Overflow Behavior:</b>
+ * \par
+ * The function is implemented using an internal 64-bit accumulator.
+ * The intermediate 1.31 by 1.31 multiplications are performed with 64-bit precision and then shifted to 16.48 format.
+ * The internal real and imaginary accumulators are in 16.48 format and provide 15 guard bits.
+ * Additions are nonsaturating and no overflow will occur as long as <code>numSamples</code> is less than 32768.
+ * The return results <code>realResult</code> and <code>imagResult</code> are in 16.48 format.
+ * Input down scaling is not required.
  */
 
 void arm_cmplx_dot_prod_q31(
@@ -78,7 +78,7 @@ void arm_cmplx_dot_prod_q31(
   /*loop Unrolling */
   blkCnt = numSamples >> 2u;
 
-  /* First part of the processing with loop unrolling.  Compute 4 outputs at a time.    
+  /* First part of the processing with loop unrolling.  Compute 4 outputs at a time.
    ** a second loop below computes the remaining 1 to 3 samples. */
   while(blkCnt > 0u)
   {
@@ -103,7 +103,7 @@ void arm_cmplx_dot_prod_q31(
     blkCnt--;
   }
 
-  /* If the numSamples  is not a multiple of 4, compute any remaining output samples here.    
+  /* If the numSamples  is not a multiple of 4, compute any remaining output samples here.
    ** No loop unrolling is used. */
   blkCnt = numSamples % 0x4u;
 
@@ -140,6 +140,6 @@ void arm_cmplx_dot_prod_q31(
   *imagResult = imag_sum;
 }
 
-/**    
- * @} end of cmplx_dot_prod group    
+/**
+ * @} end of cmplx_dot_prod group
  */

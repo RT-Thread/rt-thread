@@ -5,47 +5,47 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-09-06     å‹¤ä¸ºæœ¬       first version
+ * 2017-09-06     ÇÚÎª±¾       first version
  */
 
-// å¼•è„šåŠŸèƒ½(æ™®é€šgpioï¼Œpwmï¼Œå¤ç”¨ç­‰)ç›¸å…³æŽ¥å£
+// Òý½Å¹¦ÄÜ(ÆÕÍ¨gpio£¬pwm£¬¸´ÓÃµÈ)Ïà¹Ø½Ó¿Ú
 
 #ifndef __LOONGSON_PIN_H
 #define __LOONGSON_PIN_H
 
 
-// å¼•è„šç”¨é€”
+// Òý½ÅÓÃÍ¾
 typedef enum
 {
-    PIN_PURPOSE_GPIO = 0,               // å¼•è„šç”¨ä½œæ™®é€šgpio
-    PIN_PURPOSE_OTHER,                  // å¼•è„šç”¨ä½œå…¶å®ƒåŠŸèƒ½(éžgpio)
+    PIN_PURPOSE_GPIO = 0,               // Òý½ÅÓÃ×÷ÆÕÍ¨gpio
+    PIN_PURPOSE_OTHER,                  // Òý½ÅÓÃ×÷ÆäËü¹¦ÄÜ(·Çgpio)
 }pin_purpose_t;
 
 
-// å¼•è„šå¤ç”¨
+// Òý½Å¸´ÓÃ
 typedef enum
 {
-    PIN_REMAP_FIRST = 0,                // ç¬¬ä¸€å¤ç”¨
-    PIN_REMAP_SECOND,                   // ç¬¬äºŒå¤ç”¨
-    PIN_REMAP_THIRD,                    // ç¬¬ä¸‰å¤ç”¨
-    PIN_REMAP_FOURTH,                   // ç¬¬å››å¤ç”¨
-    PIN_REMAP_FIFTH,                    // ç¬¬äº”å¤ç”¨
-    PIN_REMAP_DEFAULT,                //ç¼ºçœå¤ç”¨
+    PIN_REMAP_FIRST = 0,                // µÚÒ»¸´ÓÃ
+    PIN_REMAP_SECOND,                   // µÚ¶þ¸´ÓÃ
+    PIN_REMAP_THIRD,                    // µÚÈý¸´ÓÃ
+    PIN_REMAP_FOURTH,                   // µÚËÄ¸´ÓÃ
+    PIN_REMAP_FIFTH,                    // µÚÎå¸´ÓÃ
+    PIN_REMAP_DEFAULT,                //È±Ê¡¸´ÓÃ
 }pin_remap_t;
 
 
 /*
- * æŠŠæŒ‡å®špinè®¾ç½®ä¸ºæŒ‡å®šç”¨é€”(æ™®é€šgpioï¼Œéžgpio)
- * @gpio gpioå¼•è„šç¼–å·
- * @purpose ç”¨é€”
+ * °ÑÖ¸¶¨pinÉèÖÃÎªÖ¸¶¨ÓÃÍ¾(ÆÕÍ¨gpio£¬·Çgpio)
+ * @gpio gpioÒý½Å±àºÅ
+ * @purpose ÓÃÍ¾
  */
 void pin_set_purpose(unsigned int gpio, pin_purpose_t purpose);
 
 
 /*
- * è®¾ç½®æŒ‡å®špinä¸ºç¬¬nå¤ç”¨
- * @gpio gpioç¼–å·
- * @remap ç¬¬nå¤ç”¨
+ * ÉèÖÃÖ¸¶¨pinÎªµÚn¸´ÓÃ
+ * @gpio gpio±àºÅ
+ * @remap µÚn¸´ÓÃ
  */
 void pin_set_remap(unsigned int gpio, pin_remap_t remap);
 

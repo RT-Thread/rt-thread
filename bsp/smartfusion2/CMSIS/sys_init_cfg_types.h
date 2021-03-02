@@ -1,18 +1,18 @@
 /*******************************************************************************
  * (c) Copyright 2012 Microsemi SoC Products Group.  All rights reserved.
- * 
- *  
+ *
+ *
  *
  * SVN $Revision: 4410 $
  * SVN $Date: 2012-07-16 14:36:17 +0100 (Mon, 16 Jul 2012) $
  */
- 
+
 #ifndef SYSTEM_INIT_CFG_TYPES_H_
 #define SYSTEM_INIT_CFG_TYPES_H_
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 /*============================================================================*/
 /*                              DDR Configuration                             */
@@ -82,11 +82,11 @@ typedef struct
         uint16_t DYN_SOFT_RESET_CR2;
         uint16_t AXI_FABRIC_PRI_ID_CR;
     } ddrc;
-    
+
     /*--------------------------------------------------------------------------
      * DDR PHY configuration registers
      */
-    struct 
+    struct
     {
         uint16_t LOOPBACK_TEST_CR;
         uint16_t BOARD_LOOPBACK_CR;
@@ -154,12 +154,12 @@ typedef struct
         uint16_t RD_WR_GATE_LVL_CR;
         uint16_t DYN_RESET_CR;
     } phy;
-    
+
     /*--------------------------------------------------------------------------
      * FIC-64 registers
      * These registers are 16-bit wide and 32-bit aligned.
      */
-    struct 
+    struct
     {
         uint16_t NB_ADDR_CR;
         uint16_t NBRWB_SIZE_CR;
@@ -179,7 +179,7 @@ typedef struct
 /*                             FDDR Configuration                             */
 /*============================================================================*/
 
-typedef struct 
+typedef struct
 {
     uint16_t PLL_CONFIG_LOW_1;
     uint16_t PLL_CONFIG_LOW_2;
@@ -188,7 +188,7 @@ typedef struct
     uint16_t FACC_MUX_CONFIG;
     uint16_t FACC_DIVISOR_RATIO;
     uint16_t PLL_DELAY_LINE_SEL;
-    uint16_t SOFT_RESET; 
+    uint16_t SOFT_RESET;
     uint16_t IO_CALIB;
     uint16_t INTERRUPT_ENABLE;
     uint16_t AXI_AHB_MODE_SEL;

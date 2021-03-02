@@ -303,7 +303,7 @@ typedef struct _ARM_USBH_CAPABILITIES {
 typedef struct _ARM_DRIVER_USBH {
   ARM_DRIVER_VERSION    (*GetVersion)            (void);                                     ///< Pointer to \ref ARM_USBH_GetVersion : Get driver version.
   ARM_USBH_CAPABILITIES (*GetCapabilities)       (void);                                     ///< Pointer to \ref ARM_USBH_GetCapabilities : Get driver capabilities.
-  int32_t               (*Initialize)            (ARM_USBH_SignalPortEvent_t cb_port_event,            
+  int32_t               (*Initialize)            (ARM_USBH_SignalPortEvent_t cb_port_event,
                                                   ARM_USBH_SignalPipeEvent_t cb_pipe_event); ///< Pointer to \ref ARM_USBH_Initialize : Initialize USB Host Interface.
   int32_t               (*Uninitialize)          (void);                                     ///< Pointer to \ref ARM_USBH_Uninitialize : De-initialize USB Host Interface.
   int32_t               (*PowerControl)          (ARM_POWER_STATE state);                    ///< Pointer to \ref ARM_USBH_PowerControl : Control USB Host Interface Power.
@@ -328,13 +328,13 @@ typedef struct _ARM_DRIVER_USBH {
                                                   uint16_t ep_max_packet_size);              ///< Pointer to \ref ARM_USBH_PipeModify : Modify Pipe in System.
   int32_t               (*PipeDelete)            (ARM_USBH_PIPE_HANDLE pipe_hndl);           ///< Pointer to \ref ARM_USBH_PipeDelete : Delete Pipe from System.
   int32_t               (*PipeReset)             (ARM_USBH_PIPE_HANDLE pipe_hndl);           ///< Pointer to \ref ARM_USBH_PipeReset : Reset Pipe.
-  int32_t               (*PipeTransfer)          (ARM_USBH_PIPE_HANDLE pipe_hndl, 
+  int32_t               (*PipeTransfer)          (ARM_USBH_PIPE_HANDLE pipe_hndl,
                                                   uint32_t packet,
                                                   uint8_t *data,
                                                   uint32_t num);                             ///< Pointer to \ref ARM_USBH_PipeTransfer : Transfer packets through USB Pipe.
   uint32_t              (*PipeTransferGetResult) (ARM_USBH_PIPE_HANDLE pipe_hndl);           ///< Pointer to \ref ARM_USBH_PipeTransferGetResult : Get result of USB Pipe transfer.
   int32_t               (*PipeTransferAbort)     (ARM_USBH_PIPE_HANDLE pipe_hndl);           ///< Pointer to \ref ARM_USBH_PipeTransferAbort : Abort current USB Pipe transfer.
-  uint16_t              (*GetFrameNumber)        (void);                                     ///< Pointer to \ref ARM_USBH_GetFrameNumber : Get current USB Frame Number.                    
+  uint16_t              (*GetFrameNumber)        (void);                                     ///< Pointer to \ref ARM_USBH_GetFrameNumber : Get current USB Frame Number.
 } const ARM_DRIVER_USBH;
 
 

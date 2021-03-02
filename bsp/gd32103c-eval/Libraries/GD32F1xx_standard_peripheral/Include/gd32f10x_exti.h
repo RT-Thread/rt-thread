@@ -82,11 +82,11 @@ typedef struct {
 #define EXTI_LINE14      ((uint32_t)0x00004000)        /*!< External interrupt line 14 */
 #define EXTI_LINE15      ((uint32_t)0x00008000)        /*!< External interrupt line 15 */
 
-#define EXTI_LINE16      ((uint32_t)0x00010000)        /*!< External interrupt line 16 
+#define EXTI_LINE16      ((uint32_t)0x00010000)        /*!< External interrupt line 16
                                                             Connected to the LVD */
-#define EXTI_LINE17      ((uint32_t)0x00020000)        /*!< External interrupt line 17 
+#define EXTI_LINE17      ((uint32_t)0x00020000)        /*!< External interrupt line 17
                                                             Connected to the RTC Alarm */
-#define EXTI_LINE18      ((uint32_t)0x00040000)        /*!< External interrupt line 18 
+#define EXTI_LINE18      ((uint32_t)0x00040000)        /*!< External interrupt line 18
                                                             Connected to the USB Wakeup */
 #define EXTI_LINE19      ((uint32_t)0x00080000)        /*!< External interrupt line 19
                                                             Connected to the Ethernet Wakeup */

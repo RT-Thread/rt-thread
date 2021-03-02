@@ -357,8 +357,8 @@ bool ADC_DoSelfCalibration(ADC_Type *base);
  * @retval false Calibration failed.
  */
 bool ADC_DoSelfCalibration(ADC_Type *base, uint32_t frequency);
-#endif/* FSL_FEATURE_ADC_HAS_CALIB_REG */ 
-#endif/* FSL_FEATURE_ADC_HAS_NO_CALIB_FUNC */   
+#endif/* FSL_FEATURE_ADC_HAS_CALIB_REG */
+#endif/* FSL_FEATURE_ADC_HAS_NO_CALIB_FUNC */
 
 #if !(defined(FSL_FEATURE_ADC_HAS_NO_INSEL) && FSL_FEATURE_ADC_HAS_NO_INSEL)
 /*!

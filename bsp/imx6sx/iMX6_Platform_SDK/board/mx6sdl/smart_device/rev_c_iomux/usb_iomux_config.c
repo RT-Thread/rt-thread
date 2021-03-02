@@ -54,7 +54,7 @@ void usb_iomux_config(void)
     //     ALT6 (6) - Select instance: usb signal: USB_H1_OC
     //     ALT8 (8) - Select instance: epdc signal: EPDC_SDOEZ
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_MUX_MODE_V(ALT6));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30(0x020E054C)
@@ -95,13 +95,13 @@ void usb_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_SRE_V(SLOW));
     // Pad EIM_DATA30 is involved in Daisy Chain.
     // Input Select Register:
@@ -134,7 +134,7 @@ void usb_iomux_config(void)
     //     ALT6 (6) - Select instance: i2c1 signal: I2C1_SCL
     //     ALT7 (7) - Select instance: spdif signal: SPDIF_IN
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA21_MUX_MODE_V(ALT4));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21(0x020E0528)
@@ -175,13 +175,13 @@ void usb_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA21_SRE_V(SLOW));
     // Pad EIM_DATA21 is involved in Daisy Chain.
     // Input Select Register:

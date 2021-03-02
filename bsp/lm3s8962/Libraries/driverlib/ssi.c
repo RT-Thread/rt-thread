@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2005-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -143,7 +143,7 @@ SSIIntNumberGet(unsigned long ulBase)
 //! </pre>
 //!
 //! The \e ulMode parameter defines the operating mode of the SSI module.  The
-//! SSI module can operate as a master or slave; if it is a slave, the SSI can 
+//! SSI module can operate as a master or slave; if it is a slave, the SSI can
 //! be configured to disable output on its serial output line.  The \e ulMode
 //! parameter can be one of the following values: \b SSI_MODE_MASTER,
 //! \b SSI_MODE_SLAVE, or \b SSI_MODE_SLAVE_OD.
@@ -290,9 +290,9 @@ SSIDisable(unsigned long ulBase)
 //! synchronous serial interface interrupt occurs.
 //!
 //! This function registers the handler to be called when an SSI interrupt
-//! occurs.  This function enables the global interrupt in the interrupt 
-//! controller; specific SSI interrupts must be enabled via SSIIntEnable().  If 
-//! necessary, it is the interrupt handler's responsibility to clear the 
+//! occurs.  This function enables the global interrupt in the interrupt
+//! controller; specific SSI interrupts must be enabled via SSIIntEnable().  If
+//! necessary, it is the interrupt handler's responsibility to clear the
 //! interrupt source via SSIIntClear().
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -333,7 +333,7 @@ SSIIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //!
 //! \param ulBase specifies the SSI module base address.
 //!
-//! This function clears the handler to be called when an SSI interrupt 
+//! This function clears the handler to be called when an SSI interrupt
 //! occurs.  This function also masks off the interrupt in the interrupt
 //! controller so that the interrupt handler no longer is called.
 //!
@@ -376,10 +376,10 @@ SSIIntUnregister(unsigned long ulBase)
 //! \param ulBase specifies the SSI module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be enabled.
 //!
-//! This function enables the indicated SSI interrupt sources.  Only the 
-//! sources that are enabled can be reflected to the processor interrupt; 
-//! disabled sources have no effect on the processor.  The \e ulIntFlags 
-//! parameter can be any of the \b SSI_TXFF, \b SSI_RXFF, \b SSI_RXTO, or 
+//! This function enables the indicated SSI interrupt sources.  Only the
+//! sources that are enabled can be reflected to the processor interrupt;
+//! disabled sources have no effect on the processor.  The \e ulIntFlags
+//! parameter can be any of the \b SSI_TXFF, \b SSI_RXFF, \b SSI_RXTO, or
 //! \b SSI_RXOR values.
 //!
 //! \return None.
@@ -472,7 +472,7 @@ SSIIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param ulBase specifies the SSI module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
-//! This function clears the specified SSI interrupt sources so that they no 
+//! This function clears the specified SSI interrupt sources so that they no
 //! longer assert.  This function must be called in the interrupt handler to
 //! keep the interrupts from being triggered again immediately upon exit.  The
 //! \e ulIntFlags parameter can consist of either or both the \b SSI_RXTO and
@@ -754,9 +754,9 @@ SSIDMADisable(unsigned long ulBase, unsigned long ulDMAFlags)
 //!
 //! \param ulBase is the base address of the SSI port.
 //!
-//! This function allows the caller to determine whether all transmitted bytes 
-//! have cleared the transmitter hardware.  If \b false is returned, then the 
-//! transmit FIFO is empty and all bits of the last transmitted word have left 
+//! This function allows the caller to determine whether all transmitted bytes
+//! have cleared the transmitter hardware.  If \b false is returned, then the
+//! transmit FIFO is empty and all bits of the last transmitted word have left
 //! the hardware shift register.
 //!
 //! \return Returns \b true if the SSI is transmitting or \b false if all

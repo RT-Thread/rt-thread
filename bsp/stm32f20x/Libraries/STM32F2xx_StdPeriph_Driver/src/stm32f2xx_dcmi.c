@@ -4,66 +4,66 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file provides firmware functions to manage the following 
-  *          functionalities of the DCMI peripheral:           
+  * @brief   This file provides firmware functions to manage the following
+  *          functionalities of the DCMI peripheral:
   *           - Initialization and Configuration
-  *           - Image capture functions  
+  *           - Image capture functions
   *           - Interrupts and flags management
   *
-  *  @verbatim  
-  *  
-  *        
+  *  @verbatim
+  *
+  *
   *          ===================================================================
   *                                 How to use this driver
-  *          ===================================================================  
-  *         
+  *          ===================================================================
+  *
   *         The sequence below describes how to use this driver to capture image
   *         from a camera module connected to the DCMI Interface.
-  *         This sequence does not take into account the configuration of the  
+  *         This sequence does not take into account the configuration of the
   *         camera module, which should be made before to configure and enable
   *         the DCMI to capture images.
-  *           
+  *
   *          1. Enable the clock for the DCMI and associated GPIOs using the following functions:
   *                 RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_DCMI, ENABLE);
   *                 RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOx, ENABLE);
   *
-  *          2. DCMI pins configuration 
-  *             - Connect the involved DCMI pins to AF13 using the following function 
-  *                 GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_DCMI); 
+  *          2. DCMI pins configuration
+  *             - Connect the involved DCMI pins to AF13 using the following function
+  *                 GPIO_PinAFConfig(GPIOx, GPIO_PinSourcex, GPIO_AF_DCMI);
   *             - Configure these DCMI pins in alternate function mode by calling the function
   *                 GPIO_Init();
-  *    
+  *
   *          3. Declare a DCMI_InitTypeDef structure, for example:
   *                 DCMI_InitTypeDef  DCMI_InitStructure;
   *             and fill the DCMI_InitStructure variable with the allowed values
   *             of the structure member.
-  *  
+  *
   *          4. Initialize the DCMI interface by calling the function
-  *                 DCMI_Init(&DCMI_InitStructure); 
-  *  
+  *                 DCMI_Init(&DCMI_InitStructure);
+  *
   *          5. Configure the DMA2_Stream1 channel1 to transfer Data from DCMI DR
   *             register to the destination memory buffer.
-  *  
+  *
   *          6. Enable DCMI interface using the function
   *                 DCMI_Cmd(ENABLE);
-  *                 
+  *
   *         7. Start the image capture using the function
   *                 DCMI_CaptureCmd(ENABLE);
-  *                 
+  *
   *         8. At this stage the DCMI interface waits for the first start of frame,
   *            then a DMA request is generated continuously/once (depending on the
   *            mode used, Continuous/Snapshot) to transfer the received data into
-  *            the destination memory. 
-  *   
+  *            the destination memory.
+  *
   *  @note  If you need to capture only a rectangular window from the received
-  *         image, you have to use the DCMI_CROPConfig() function to configure 
-  *         the coordinates and size of the window to be captured, then enable 
-  *         the Crop feature using DCMI_CROPCmd(ENABLE);  
+  *         image, you have to use the DCMI_CROPConfig() function to configure
+  *         the coordinates and size of the window to be captured, then enable
+  *         the Crop feature using DCMI_CROPCmd(ENABLE);
   *         In this case, the Crop configuration should be made before to enable
-  *         and start the DCMI interface. 
-  *        
-  *  @endverbatim   
-  *  
+  *         and start the DCMI interface.
+  *
+  *  @endverbatim
+  *
   ******************************************************************************
   * @attention
   *
@@ -86,10 +86,10 @@
   * @{
   */
 
-/** @defgroup DCMI 
+/** @defgroup DCMI
   * @brief DCMI driver modules
   * @{
-  */ 
+  */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -100,15 +100,15 @@
 
 /** @defgroup DCMI_Private_Functions
   * @{
-  */ 
+  */
 
 /** @defgroup DCMI_Group1 Initialization and Configuration functions
- *  @brief   Initialization and Configuration functions 
+ *  @brief   Initialization and Configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                   Initialization and Configuration functions
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -132,14 +132,14 @@ void DCMI_DeInit(void)
 
 /**
   * @brief  Initializes the DCMI according to the specified parameters in the DCMI_InitStruct.
-  * @param  DCMI_InitStruct: pointer to a DCMI_InitTypeDef structure that contains 
+  * @param  DCMI_InitStruct: pointer to a DCMI_InitTypeDef structure that contains
   *         the configuration information for the DCMI.
   * @retval None
   */
 void DCMI_Init(DCMI_InitTypeDef* DCMI_InitStruct)
 {
   uint32_t temp = 0x0;
-  
+
   /* Check the parameters */
   assert_param(IS_DCMI_CAPTURE_MODE(DCMI_InitStruct->DCMI_CaptureMode));
   assert_param(IS_DCMI_SYNCHRO(DCMI_InitStruct->DCMI_SynchroMode));
@@ -149,17 +149,17 @@ void DCMI_Init(DCMI_InitTypeDef* DCMI_InitStruct)
   assert_param(IS_DCMI_CAPTURE_RATE(DCMI_InitStruct->DCMI_CaptureRate));
   assert_param(IS_DCMI_EXTENDED_DATA(DCMI_InitStruct->DCMI_ExtendedDataMode));
 
-  /* The DCMI configuration registers should be programmed correctly before 
+  /* The DCMI configuration registers should be programmed correctly before
   enabling the CR_ENABLE Bit and the CR_CAPTURE Bit */
   DCMI->CR &= ~(DCMI_CR_ENABLE | DCMI_CR_CAPTURE);
-   
+
   /* Reset the old DCMI configuration */
   temp = DCMI->CR;
-  
+
   temp &= ~((uint32_t)DCMI_CR_CM     | DCMI_CR_ESS   | DCMI_CR_PCKPOL |
-                      DCMI_CR_HSPOL  | DCMI_CR_VSPOL | DCMI_CR_FCRC_0 | 
-                      DCMI_CR_FCRC_1 | DCMI_CR_EDM_0 | DCMI_CR_EDM_1); 
-                  
+                      DCMI_CR_HSPOL  | DCMI_CR_VSPOL | DCMI_CR_FCRC_0 |
+                      DCMI_CR_FCRC_1 | DCMI_CR_EDM_0 | DCMI_CR_EDM_1);
+
   /* Sets the new configuration of the DCMI peripheral */
   temp |= ((uint32_t)DCMI_InitStruct->DCMI_CaptureMode |
                      DCMI_InitStruct->DCMI_SynchroMode |
@@ -169,7 +169,7 @@ void DCMI_Init(DCMI_InitTypeDef* DCMI_InitStruct)
                      DCMI_InitStruct->DCMI_CaptureRate |
                      DCMI_InitStruct->DCMI_ExtendedDataMode);
 
-  DCMI->CR = temp;                              
+  DCMI->CR = temp;
 }
 
 /**
@@ -193,13 +193,13 @@ void DCMI_StructInit(DCMI_InitTypeDef* DCMI_InitStruct)
 /**
   * @brief  Initializes the DCMI peripheral CROP mode according to the specified
   *         parameters in the DCMI_CROPInitStruct.
-  * @note   This function should be called before to enable and start the DCMI interface.   
-  * @param  DCMI_CROPInitStruct:  pointer to a DCMI_CROPInitTypeDef structure that 
+  * @note   This function should be called before to enable and start the DCMI interface.
+  * @param  DCMI_CROPInitStruct:  pointer to a DCMI_CROPInitTypeDef structure that
   *         contains the configuration information for the DCMI peripheral CROP mode.
   * @retval None
   */
 void DCMI_CROPConfig(DCMI_CROPInitTypeDef* DCMI_CROPInitStruct)
-{  
+{
   /* Sets the CROP window coordinates */
   DCMI->CWSTRTR = (uint32_t)((uint32_t)DCMI_CROPInitStruct->DCMI_HorizontalOffsetCount |
                   ((uint32_t)DCMI_CROPInitStruct->DCMI_VerticalStartLine << 16));
@@ -212,7 +212,7 @@ void DCMI_CROPConfig(DCMI_CROPInitTypeDef* DCMI_CROPInitStruct)
 /**
   * @brief  Enables or disables the DCMI Crop feature.
   * @note   This function should be called before to enable and start the DCMI interface.
-  * @param  NewState: new state of the DCMI Crop feature. 
+  * @param  NewState: new state of the DCMI Crop feature.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
@@ -220,7 +220,7 @@ void DCMI_CROPCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
   if (NewState != DISABLE)
   {
     /* Enable the DCMI Crop feature */
@@ -249,8 +249,8 @@ void DCMI_SetEmbeddedSynchroCodes(DCMI_CodesInitTypeDef* DCMI_CodesInitStruct)
 
 /**
   * @brief  Enables or disables the DCMI JPEG format.
-  * @note   The Crop and Embedded Synchronization features cannot be used in this mode.  
-  * @param  NewState: new state of the DCMI JPEG format. 
+  * @note   The Crop and Embedded Synchronization features cannot be used in this mode.
+  * @param  NewState: new state of the DCMI JPEG format.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
@@ -258,7 +258,7 @@ void DCMI_JPEGCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
- 
+
   if (NewState != DISABLE)
   {
     /* Enable the DCMI JPEG format */
@@ -277,18 +277,18 @@ void DCMI_JPEGCmd(FunctionalState NewState)
 /** @defgroup DCMI_Group2 Image capture functions
  *  @brief   Image capture functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                                  Image capture functions
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
   */
-  
+
 /**
   * @brief  Enables or disables the DCMI interface.
-  * @param  NewState: new state of the DCMI interface. 
+  * @param  NewState: new state of the DCMI interface.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
@@ -296,7 +296,7 @@ void DCMI_Cmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
+
   if (NewState != DISABLE)
   {
     /* Enable the DCMI by setting ENABLE bit */
@@ -311,7 +311,7 @@ void DCMI_Cmd(FunctionalState NewState)
 
 /**
   * @brief  Enables or disables the DCMI Capture.
-  * @param  NewState: new state of the DCMI capture. 
+  * @param  NewState: new state of the DCMI capture.
   *          This parameter can be: ENABLE or DISABLE.
   * @retval None
   */
@@ -319,7 +319,7 @@ void DCMI_CaptureCmd(FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
   if (NewState != DISABLE)
   {
     /* Enable the DCMI Capture */
@@ -334,7 +334,7 @@ void DCMI_CaptureCmd(FunctionalState NewState)
 
 /**
   * @brief  Reads the data stored in the DR register.
-  * @param  None 
+  * @param  None
   * @retval Data register value
   */
 uint32_t DCMI_ReadData(void)
@@ -348,10 +348,10 @@ uint32_t DCMI_ReadData(void)
 /** @defgroup DCMI_Group3 Interrupts and flags management functions
  *  @brief   Interrupts and flags management functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                   Interrupts and flags management functions
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -359,7 +359,7 @@ uint32_t DCMI_ReadData(void)
 
 /**
   * @brief  Enables or disables the DCMI interface interrupts.
-  * @param  DCMI_IT: specifies the DCMI interrupt sources to be enabled or disabled. 
+  * @param  DCMI_IT: specifies the DCMI interrupt sources to be enabled or disabled.
   *          This parameter can be any combination of the following values:
   *            @arg DCMI_IT_FRAME: Frame capture complete interrupt mask
   *            @arg DCMI_IT_OVF: Overflow interrupt mask
@@ -375,7 +375,7 @@ void DCMI_ITConfig(uint16_t DCMI_IT, FunctionalState NewState)
   /* Check the parameters */
   assert_param(IS_DCMI_CONFIG_IT(DCMI_IT));
   assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
+
   if (NewState != DISABLE)
   {
     /* Enable the Interrupt sources */
@@ -385,7 +385,7 @@ void DCMI_ITConfig(uint16_t DCMI_IT, FunctionalState NewState)
   {
     /* Disable the Interrupt sources */
     DCMI->IER &= (uint16_t)(~DCMI_IT);
-  }  
+  }
 }
 
 /**
@@ -414,10 +414,10 @@ FlagStatus DCMI_GetFlagStatus(uint16_t DCMI_FLAG)
 
   /* Check the parameters */
   assert_param(IS_DCMI_GET_FLAG(DCMI_FLAG));
-  
+
   /* Get the DCMI register index */
   dcmireg = (((uint16_t)DCMI_FLAG) >> 12);
-  
+
   if (dcmireg == 0x01) /* The FLAG is in RISR register */
   {
     tempreg= DCMI->RISR;
@@ -430,7 +430,7 @@ FlagStatus DCMI_GetFlagStatus(uint16_t DCMI_FLAG)
   {
     tempreg = DCMI->MISR;
   }
-  
+
   if ((tempreg & DCMI_FLAG) != (uint16_t)RESET )
   {
     bitstatus = SET;
@@ -458,10 +458,10 @@ void DCMI_ClearFlag(uint16_t DCMI_FLAG)
 {
   /* Check the parameters */
   assert_param(IS_DCMI_CLEAR_FLAG(DCMI_FLAG));
-  
-  /* Clear the flag by writing in the ICR register 1 in the corresponding 
+
+  /* Clear the flag by writing in the ICR register 1 in the corresponding
   Flag position*/
-  
+
   DCMI->ICR = DCMI_FLAG;
 }
 
@@ -480,12 +480,12 @@ ITStatus DCMI_GetITStatus(uint16_t DCMI_IT)
 {
   ITStatus bitstatus = RESET;
   uint32_t itstatus = 0;
-  
+
   /* Check the parameters */
   assert_param(IS_DCMI_GET_IT(DCMI_IT));
-  
+
   itstatus = DCMI->MISR & DCMI_IT; /* Only masked interrupts are checked */
-  
+
   if ((itstatus != (uint16_t)RESET))
   {
     bitstatus = SET;
@@ -510,25 +510,25 @@ ITStatus DCMI_GetITStatus(uint16_t DCMI_IT)
   */
 void DCMI_ClearITPendingBit(uint16_t DCMI_IT)
 {
-  /* Clear the interrupt pending Bit by writing in the ICR register 1 in the 
+  /* Clear the interrupt pending Bit by writing in the ICR register 1 in the
   corresponding pending Bit position*/
-  
+
   DCMI->ICR = DCMI_IT;
 }
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

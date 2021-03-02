@@ -73,7 +73,7 @@ typedef enum
 {
     SPI_POLARITY_MODE0 = 0,//!< Sclk low level,fisrt edge get data.
     SPI_POLARITY_MODE1,//!< Sclk low level,second edge get data.
-    SPI_POLARITY_MODE2,//!< Sclk high level,first edge get data. 
+    SPI_POLARITY_MODE2,//!< Sclk high level,first edge get data.
     SPI_POLARITY_MODE3,//!< Sclk high level,second edge get data.
 }GD_SPI_POLARITY_MODE;
 /*!

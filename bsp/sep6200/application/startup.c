@@ -54,44 +54,44 @@ extern void sd_init(void);
 
 void rtthread_startup()
 {
-	/* init hardware interrupt */
-	rt_hw_interrupt_init();
+    /* init hardware interrupt */
+    rt_hw_interrupt_init();
 
-	/* init board */
-	rt_hw_board_init();
+    /* init board */
+    rt_hw_board_init();
 
-	/* show version */
-	rt_show_version();
+    /* show version */
+    rt_show_version();
 
-	/* init timer system */
-	rt_system_timer_init();
+    /* init timer system */
+    rt_system_timer_init();
 
-	/* init heap memory system */
-	rt_system_heap_init(&__bss_end, (void*)0x45000000);
+    /* init heap memory system */
+    rt_system_heap_init(&__bss_end, (void*)0x45000000);
 
-	/* init scheduler system */
-	rt_system_scheduler_init();
+    /* init scheduler system */
+    rt_system_scheduler_init();
 
-	/* init application */
-	rt_application_init();
+    /* init application */
+    rt_application_init();
 
 #ifdef RT_USING_FINSH
-	/* init finsh */
-	finsh_system_init();
+    /* init finsh */
+    finsh_system_init();
 #ifdef RT_USING_DEVICE
-	finsh_set_device("uart0");
+    finsh_set_device("uart0");
 #endif
 #endif
 
   rt_system_timer_thread_init();
 
-	/* init idle thread */
-	rt_thread_idle_init();
+    /* init idle thread */
+    rt_thread_idle_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
-	return ;
+    /* never reach here */
+    return ;
 
 }

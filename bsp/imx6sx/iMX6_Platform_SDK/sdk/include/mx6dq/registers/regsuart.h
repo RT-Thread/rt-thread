@@ -1959,8 +1959,8 @@ typedef union _hw_uart_ucr4
  *
  * Values:
  * - 000000 - 0 characters received
- * - ... - 
- * - ... - 
+ * - ... -
+ * - ... -
  * - 000001 - 1 characters in the RxFIFO
  * - 100000 - 32 characters in the RxFIFO (maximum)
  */
@@ -2033,8 +2033,8 @@ typedef union _hw_uart_ufcr
  *
  * Values:
  * - 000000 - 0 characters received
- * - ... - 
- * - ... - 
+ * - ... -
+ * - ... -
  * - 000001 - RxFIFO has 1 character
  * - 011111 - RxFIFO has 31 characters
  * - 100000 - RxFIFO has 32 characters (maximum)
@@ -2121,8 +2121,8 @@ typedef union _hw_uart_ufcr
  *
  * Values:
  * - 000000 - Reserved
- * - ... - 
- * - ... - 
+ * - ... -
+ * - ... -
  * - 000001 - Reserved
  * - 000010 - TxFIFO has 2 or fewer characters
  * - 011111 - TxFIFO has 31 or fewer characters
@@ -3357,9 +3357,9 @@ typedef union _hw_uart_uts
         unsigned RXEMPTY : 1; //!< [5] RxFIFO Empty.
         unsigned TXEMPTY : 1; //!< [6] TxFIFO Empty.
         unsigned RESERVED1 : 2; //!< [8:7] Reserved
-        unsigned RXDBG : 1; //!< [9] 
+        unsigned RXDBG : 1; //!< [9]
         unsigned LOOPIR : 1; //!< [10] Loop TX and RX for IR Test (LOOPIR) .
-        unsigned DBGEN : 1; //!< [11] 
+        unsigned DBGEN : 1; //!< [11]
         unsigned LOOP : 1; //!< [12] Loop TX and RX for Test.
         unsigned FRCPERR : 1; //!< [13] Force Parity Error.
         unsigned RESERVED2 : 18; //!< [31:14] Reserved

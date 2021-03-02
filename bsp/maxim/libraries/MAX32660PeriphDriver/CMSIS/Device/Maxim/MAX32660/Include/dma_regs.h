@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -107,20 +107,20 @@ typedef struct {
 /**
  * @ingroup    dma_registers
  * @defgroup   DMA_Register_Offsets Register Offsets
- * @brief      DMA Peripheral Register Offsets from the DMA Base Peripheral Address. 
+ * @brief      DMA Peripheral Register Offsets from the DMA Base Peripheral Address.
  * @{
  */
- #define MXC_R_DMA_CFG                      ((uint32_t)0x00000100UL) /**< Offset from DMA Base Address: <tt> 0x0100</tt> */ 
- #define MXC_R_DMA_ST                       ((uint32_t)0x00000104UL) /**< Offset from DMA Base Address: <tt> 0x0104</tt> */ 
- #define MXC_R_DMA_SRC                      ((uint32_t)0x00000108UL) /**< Offset from DMA Base Address: <tt> 0x0108</tt> */ 
- #define MXC_R_DMA_DST                      ((uint32_t)0x0000010CUL) /**< Offset from DMA Base Address: <tt> 0x010C</tt> */ 
- #define MXC_R_DMA_CNT                      ((uint32_t)0x00000110UL) /**< Offset from DMA Base Address: <tt> 0x0110</tt> */ 
- #define MXC_R_DMA_SRC_RLD                  ((uint32_t)0x00000114UL) /**< Offset from DMA Base Address: <tt> 0x0114</tt> */ 
- #define MXC_R_DMA_DST_RLD                  ((uint32_t)0x00000118UL) /**< Offset from DMA Base Address: <tt> 0x0118</tt> */ 
- #define MXC_R_DMA_CNT_RLD                  ((uint32_t)0x0000011CUL) /**< Offset from DMA Base Address: <tt> 0x011C</tt> */ 
- #define MXC_R_DMA_CN                       ((uint32_t)0x00000000UL) /**< Offset from DMA Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_DMA_INTR                     ((uint32_t)0x00000004UL) /**< Offset from DMA Base Address: <tt> 0x0004</tt> */ 
- #define MXC_R_DMA_CH                       ((uint32_t)0x00000100UL) /**< Offset from DMA Base Address: <tt> 0x0100</tt> */ 
+ #define MXC_R_DMA_CFG                      ((uint32_t)0x00000100UL) /**< Offset from DMA Base Address: <tt> 0x0100</tt> */
+ #define MXC_R_DMA_ST                       ((uint32_t)0x00000104UL) /**< Offset from DMA Base Address: <tt> 0x0104</tt> */
+ #define MXC_R_DMA_SRC                      ((uint32_t)0x00000108UL) /**< Offset from DMA Base Address: <tt> 0x0108</tt> */
+ #define MXC_R_DMA_DST                      ((uint32_t)0x0000010CUL) /**< Offset from DMA Base Address: <tt> 0x010C</tt> */
+ #define MXC_R_DMA_CNT                      ((uint32_t)0x00000110UL) /**< Offset from DMA Base Address: <tt> 0x0110</tt> */
+ #define MXC_R_DMA_SRC_RLD                  ((uint32_t)0x00000114UL) /**< Offset from DMA Base Address: <tt> 0x0114</tt> */
+ #define MXC_R_DMA_DST_RLD                  ((uint32_t)0x00000118UL) /**< Offset from DMA Base Address: <tt> 0x0118</tt> */
+ #define MXC_R_DMA_CNT_RLD                  ((uint32_t)0x0000011CUL) /**< Offset from DMA Base Address: <tt> 0x011C</tt> */
+ #define MXC_R_DMA_CN                       ((uint32_t)0x00000000UL) /**< Offset from DMA Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_DMA_INTR                     ((uint32_t)0x00000004UL) /**< Offset from DMA Base Address: <tt> 0x0004</tt> */
+ #define MXC_R_DMA_CH                       ((uint32_t)0x00000100UL) /**< Offset from DMA Base Address: <tt> 0x0100</tt> */
 /**@} end of group dma_registers */
 
 /**

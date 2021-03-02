@@ -35,7 +35,7 @@
  * ownership rights.
  *
  *
- * $Date: 2018-08-09 18:45:02 -0500 (Thu, 09 Aug 2018) $ 
+ * $Date: 2018-08-09 18:45:02 -0500 (Thu, 09 Aug 2018) $
  * $Revision: 36818 $
  *
  *************************************************************************** */
@@ -56,11 +56,11 @@ extern "C" {
  * @defgroup   mxc_assertions Assertion Checks for Debugging
  * @brief      Assertion checks for debugging.
  * @{
- */ 
+ */
 /* **** Definitions **** */
 /**
  * @note       To use debug assertions, the symbol @c MXC_ASSERT_ENABLE must be
- *             defined. 
+ *             defined.
  */
 ///@cond
 #ifdef MXC_ASSERT_ENABLE
@@ -95,12 +95,12 @@ if (!(expr))                                            \
  * @param      file  File containing the failed assertion.
  * @param      line  Line number for the failed assertion.
  * @note       This is defined as a weak function and can be overridden at the
- *             application layer to print the debugging information. 
- *             @code 
+ *             application layer to print the debugging information.
+ *             @code
  *             printf("%s, file: %s, line %d\n", expr, file, line);
  *             @endcode
  * @note       To use debug assertions, the symbol @c MXC_ASSERT_ENABLE must be
- *             defined. 
+ *             defined.
  */
 void mxc_assert(const char *expr, const char *file, int line);
 

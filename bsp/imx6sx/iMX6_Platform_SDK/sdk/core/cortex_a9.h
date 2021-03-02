@@ -50,10 +50,10 @@
 #define _ARM_DSB()  asm volatile ("dsb\n\t")
 #define _ARM_ISB()  asm volatile ("isb\n\t")
 
-#define _ARM_MRC(coproc, opcode1, Rt, CRn, CRm, opcode2)	\
+#define _ARM_MRC(coproc, opcode1, Rt, CRn, CRm, opcode2)    \
     asm volatile ("mrc p" #coproc ", " #opcode1 ", %[output], c" #CRn ", c" #CRm ", " #opcode2 "\n" : [output] "=r" (Rt))
-    
-#define _ARM_MCR(coproc, opcode1, Rt, CRn, CRm, opcode2)	\
+
+#define _ARM_MCR(coproc, opcode1, Rt, CRn, CRm, opcode2)    \
     asm volatile ("mcr p" #coproc ", " #opcode1 ", %[input], c" #CRn ", c" #CRm ", " #opcode2 "\n" :: [input] "r" (Rt))
 //@}
 
@@ -80,7 +80,7 @@ void enable_neon_fpu(void);
 void disable_strict_align_check(void);
 
 //! @brief Get base address of private perpherial space.
-//! 
+//!
 //! @return The address of the ARM CPU's private peripherals.
 uint32_t get_arm_private_peripheral_base(void);
 //@}

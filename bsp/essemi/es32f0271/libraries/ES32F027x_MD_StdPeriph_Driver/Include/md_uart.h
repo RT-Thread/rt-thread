@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-/* Includes -------------------------------------------------------------------*/ 
+/* Includes -------------------------------------------------------------------*/
 #include <stdbool.h>
 #include "es32f0271.h"
 #include "reg_uart.h"
@@ -152,7 +152,7 @@ typedef struct
   * @} UART_FCON UART_FCON Register
   */
 
-/** 
+/**
   * @} MD_UART_Public_Constants UART Public Constants
   */
 
@@ -680,7 +680,7 @@ __STATIC_INLINE uint32_t md_uart_is_enabled_mcon_rxdmaen(UART_TypeDef *UARTx)
 
 /**
   * @brief  UARTx Auto baud rate detection repeat enable.
-  * @note   This bit is set to enable baud rate detection repeat one more time 
+  * @note   This bit is set to enable baud rate detection repeat one more time
   *         after the first failure of auto-baud rate detection.
   * @param  UARTx UART Instance.
   * @retval None.
@@ -924,11 +924,11 @@ __STATIC_INLINE uint32_t md_uart_get_mcon_rtsset(UART_TypeDef *UARTx)
 
 /**
   * @brief  UARTx LoopBack enable.
-  * @note   This is used to put the UART into a diagnostic mode for test purpose. 
-  *         If operating in UART mode, data on the TXD line is held high, 
-  *         while serial data output is looped back to the RXD line, internally. 
-  *         In this mode, all the interrupts are fully functional. 
-  *         If operating in infrared mode, data on the TXD with IrDA line is held low, 
+  * @note   This is used to put the UART into a diagnostic mode for test purpose.
+  *         If operating in UART mode, data on the TXD line is held high,
+  *         while serial data output is looped back to the RXD line, internally.
+  *         In this mode, all the interrupts are fully functional.
+  *         If operating in infrared mode, data on the TXD with IrDA line is held low,
   *         while serial data output is inverted and looped back to the RXD line.
   * @param  UARTx UART Instance.
   * @retval None.
@@ -1421,11 +1421,11 @@ __STATIC_INLINE uint32_t md_uart_is_enabled_rtor_rtoen(UART_TypeDef *UARTx)
   * @brief  Set UARTx receiver timeout value.
   * @note   This bit-field gives the Receiver timeout value in terms of number of bit duration.
   *         In standard mode:
-  *           the RTOF flag is set if, after the last received character, 
+  *           the RTOF flag is set if, after the last received character,
   *           no new start bit is detected for more than the RTO value.
   *         In Smartcard mode:
   *           this value is used to implement the CWT and BWT. See Smartcard section for more details.
-  *           In this case, the timeout measurement is done starting from the Stop Bit of the last 
+  *           In this case, the timeout measurement is done starting from the Stop Bit of the last
   *           received character.
   * @param  UARTx UART Instance.
   * @param  timeout UART timeout value.
@@ -1448,7 +1448,7 @@ __STATIC_INLINE uint32_t md_uart_get_rtor_rto(UART_TypeDef *UARTx)
 
 /**
   * @brief  Set UARTx Transmit FIFO level.
-  * @note   This is used to indicate the number of data entries in the Transmit FIFO. 
+  * @note   This is used to indicate the number of data entries in the Transmit FIFO.
   *         It's value from 0 to 16.
   * @param  UARTx UART Instance.
   * @param  Value between Min_Data=0x00 and Max_Data=0x010.

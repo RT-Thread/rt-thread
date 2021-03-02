@@ -82,21 +82,21 @@ typedef unsigned int word_t;
  * \attention This implementation assumes a little-endian architecture.
  */
 static inline crc32_t _crc32_recalculate_bytes_helper(word_t data,
-		crc32_t crc, uint_fast8_t bytes)
+        crc32_t crc, uint_fast8_t bytes)
 {
-	uint_fast8_t bit;
+    uint_fast8_t bit;
 
-	crc ^= data;
+    crc ^= data;
 
-	for (bit = 8 * bytes; bit > 0; bit--) {
-		if (crc & 1) {
-			crc = (crc >> 1) ^ CRC32_POLYNOMIAL;
-		} else {
-			crc >>= 1;
-		}
-	}
+    for (bit = 8 * bytes; bit > 0; bit--) {
+        if (crc & 1) {
+            crc = (crc >> 1) ^ CRC32_POLYNOMIAL;
+        } else {
+            crc >>= 1;
+        }
+    }
 
-	return crc;
+    return crc;
 }
 
 /**
@@ -124,48 +124,48 @@ static inline crc32_t _crc32_recalculate_bytes_helper(word_t data,
  */
 enum status_code crc32_recalculate(const void *data, size_t length, crc32_t *crc)
 {
-	const word_t *word_ptr =
-			(word_t *)((uintptr_t)data & WORD_ALIGNMENT_MASK);
-	size_t temp_length;
-	crc32_t temp_crc = COMPLEMENT_CRC(*crc);
-	word_t word;
+    const word_t *word_ptr =
+            (word_t *)((uintptr_t)data & WORD_ALIGNMENT_MASK);
+    size_t temp_length;
+    crc32_t temp_crc = COMPLEMENT_CRC(*crc);
+    word_t word;
 
-	// Calculate for initial bytes to get word-aligned
-	if (length < WORD_SIZE) {
-		temp_length = length;
-	} else {
-		temp_length = ~WORD_ALIGNMENT_MASK & (WORD_SIZE - (uintptr_t)data);
-	}
+    // Calculate for initial bytes to get word-aligned
+    if (length < WORD_SIZE) {
+        temp_length = length;
+    } else {
+        temp_length = ~WORD_ALIGNMENT_MASK & (WORD_SIZE - (uintptr_t)data);
+    }
 
-	if (temp_length) {
-		length -= temp_length;
+    if (temp_length) {
+        length -= temp_length;
 
-		word = *(word_ptr++);
-		word >>= 8 * (WORD_SIZE - temp_length);
-		temp_crc = _crc32_recalculate_bytes_helper(word, temp_crc, temp_length);
-	}
+        word = *(word_ptr++);
+        word >>= 8 * (WORD_SIZE - temp_length);
+        temp_crc = _crc32_recalculate_bytes_helper(word, temp_crc, temp_length);
+    }
 
-	// Calculate for whole words, if any
-	temp_length = length & WORD_ALIGNMENT_MASK;
+    // Calculate for whole words, if any
+    temp_length = length & WORD_ALIGNMENT_MASK;
 
-	if (temp_length) {
-		length -= temp_length;
-		temp_length /= WORD_SIZE;
+    if (temp_length) {
+        length -= temp_length;
+        temp_length /= WORD_SIZE;
 
-		while (temp_length--) {
-			word = *(word_ptr++);
-			temp_crc = _crc32_recalculate_bytes_helper(word, temp_crc, WORD_SIZE);
-		}
-	}
+        while (temp_length--) {
+            word = *(word_ptr++);
+            temp_crc = _crc32_recalculate_bytes_helper(word, temp_crc, WORD_SIZE);
+        }
+    }
 
-	// Calculate for tailing bytes
-	if (length) {
-		word = *word_ptr;
-		word &= 0xffffffffUL >> (8 * (WORD_SIZE - length));
-		temp_crc = _crc32_recalculate_bytes_helper(word, temp_crc, length);
-	}
+    // Calculate for tailing bytes
+    if (length) {
+        word = *word_ptr;
+        word &= 0xffffffffUL >> (8 * (WORD_SIZE - length));
+        temp_crc = _crc32_recalculate_bytes_helper(word, temp_crc, length);
+    }
 
-	*crc = COMPLEMENT_CRC(temp_crc);
+    *crc = COMPLEMENT_CRC(temp_crc);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }

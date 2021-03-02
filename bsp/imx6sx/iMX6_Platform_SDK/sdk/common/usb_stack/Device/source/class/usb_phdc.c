@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -116,12 +116,12 @@ static void USB_Class_PHDC_Event (
     uint_8 ep_count;
     USB_EP_STRUCT ep_struct;
     uint_8 index_num = 0;
-    
+
 #ifdef COMPOSITE_DEV
     uint_8 count;
     DEV_ARCHITECTURE_STRUCT_PTR dev_arc_ptr;
-    CLASS_ARC_STRUCT_PTR dev_class_ptr;   
-    dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);    
+    CLASS_ARC_STRUCT_PTR dev_class_ptr;
+    dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);
     for(count = 0; count < dev_arc_ptr->cl_count; count++)
     {
         dev_class_ptr = (CLASS_ARC_STRUCT_PTR)dev_arc_ptr->value[count];
@@ -129,27 +129,27 @@ static void USB_Class_PHDC_Event (
         if(dev_class_ptr->class_type == 0x0F/*PHDC_CC*/)
             break;
         index_num +=dev_class_ptr->value[0];
-    }   
-#endif         
+    }
+#endif
 
     if(event == USB_APP_ENUM_COMPLETE) /* if enum is complete initialize
                                           non-control endpoints */
     {
-	    /* deinitialize all RECV endpoints in case they were initialized */
-	    for(ep_count = g_phdc_endpoint_data.count_rx; 
-	          ep_count > index_num; ep_count--) 
-	    {   
-		    ep_struct.ep_num = 
-		        g_phdc_endpoint_data.ep_rx[ep_count - 1].endpoint;
-		    (void)_usb_device_deinit_endpoint(&controller_ID,
-		        ep_struct.ep_num, USB_RECV);
-	    }        
-        
+        /* deinitialize all RECV endpoints in case they were initialized */
+        for(ep_count = g_phdc_endpoint_data.count_rx;
+              ep_count > index_num; ep_count--)
+        {
+            ep_struct.ep_num =
+                g_phdc_endpoint_data.ep_rx[ep_count - 1].endpoint;
+            (void)_usb_device_deinit_endpoint(&controller_ID,
+                ep_struct.ep_num, USB_RECV);
+        }
+
         /* initialize all receive endpoints */
         for(ep_count = index_num; ep_count < g_phdc_endpoint_data.count_rx; ep_count++)
         {
             USB_CLASS_PHDC_RX_ENDPOINT *phdc_rx_endpoint = &g_phdc_endpoint_data.ep_rx[ep_count];
-            
+
             /* initialize ep_struct */
             ep_struct.ep_num = phdc_rx_endpoint->endpoint;
             ep_struct.size = phdc_rx_endpoint->size;
@@ -157,8 +157,8 @@ static void USB_Class_PHDC_Event (
             ep_struct.direction = USB_RECV;
 
             /* intialize endpoint */
-            (void)_usb_device_init_endpoint(&controller_ID, ep_struct.ep_num, 
-            		ep_struct.size, ep_struct.direction, ep_struct.type, FALSE); //testing
+            (void)_usb_device_init_endpoint(&controller_ID, ep_struct.ep_num,
+                    ep_struct.size, ep_struct.direction, ep_struct.type, FALSE); //testing
 
             /* set endpt status as idle in the device layer */
             (void)_usb_device_set_status(&controller_ID,
@@ -175,19 +175,19 @@ static void USB_Class_PHDC_Event (
         }
 
         /* deinitialize all SEND endpoints in case they were initialized */
-	    for(ep_count = g_phdc_endpoint_data.count_tx; ep_count > index_num; ep_count--)
-	    {   
-	        ep_struct.ep_num = 
-	            g_phdc_endpoint_data.ep_tx[ep_count - 1].endpoint;
-	        (void)_usb_device_deinit_endpoint(&controller_ID,
-	            ep_struct.ep_num, USB_SEND);
-	    }
- 		    
+        for(ep_count = g_phdc_endpoint_data.count_tx; ep_count > index_num; ep_count--)
+        {
+            ep_struct.ep_num =
+                g_phdc_endpoint_data.ep_tx[ep_count - 1].endpoint;
+            (void)_usb_device_deinit_endpoint(&controller_ID,
+                ep_struct.ep_num, USB_SEND);
+        }
+
         /* initialize all transmit endpoints */
         for(ep_count = index_num; ep_count < g_phdc_endpoint_data.count_tx; ep_count++)
         {
             USB_CLASS_PHDC_TX_ENDPOINT *ep_tx_ptr = &g_phdc_endpoint_data.ep_tx[ep_count];
-            
+
             /* initialize ep_struct */
             ep_struct.ep_num = ep_tx_ptr->endpoint;
             ep_struct.size = ep_tx_ptr->size;
@@ -195,13 +195,13 @@ static void USB_Class_PHDC_Event (
             ep_struct.direction = USB_SEND;
 
             /* intialize endpoint */
-            (void)_usb_device_init_endpoint(&controller_ID, ep_struct.ep_num, 
-            		ep_struct.size, ep_struct.direction, ep_struct.type, FALSE);
+            (void)_usb_device_init_endpoint(&controller_ID, ep_struct.ep_num,
+                    ep_struct.size, ep_struct.direction, ep_struct.type, FALSE);
 
             /* Initialize the transmit queue (producer,consumer,transfer_size and current_offset to zero)
-             * for transmit endpoints 
+             * for transmit endpoints
              */
-            USB_Class_PHDC_TxEndpoint_InitQueue(ep_tx_ptr); 
+            USB_Class_PHDC_TxEndpoint_InitQueue(ep_tx_ptr);
 
             /* set endpt status as idle in the device layer */
             (void)_usb_device_set_status(&controller_ID,
@@ -212,22 +212,22 @@ static void USB_Class_PHDC_Event (
                 USB_STATUS_IDLE);
         }
     }
-    else 
-    {      
+    else
+    {
      if(event == USB_APP_BUS_RESET)
      {
         /* Initialize the transmit queue (producer,consumer,transfer_size and current_offset to zero)
-         * for transmit endpoints 
+         * for transmit endpoints
          */
         for(ep_count = index_num; ep_count < g_phdc_endpoint_data.count_tx; ep_count++)
         {
-            USB_Class_PHDC_TxEndpoint_InitQueue(&g_phdc_endpoint_data.ep_tx[ep_count]);            
+            USB_Class_PHDC_TxEndpoint_InitQueue(&g_phdc_endpoint_data.ep_tx[ep_count]);
         }
 
      }
     }
-    
-    
+
+
     if(g_phdc_class_callback != NULL)
     {
         /* notify the application of the event */
@@ -249,9 +249,9 @@ static void USB_Class_PHDC_Event (
  ******************************************************************************
  * Initializes the Tx Endpoint Queue
  *****************************************************************************/
-static void USB_Class_PHDC_TxEndpoint_InitQueue(USB_CLASS_PHDC_TX_ENDPOINT *ep_tx) 
+static void USB_Class_PHDC_TxEndpoint_InitQueue(USB_CLASS_PHDC_TX_ENDPOINT *ep_tx)
 {
-  if(ep_tx != NULL) 
+  if(ep_tx != NULL)
   {
    ep_tx->bin_consumer = 0;
    ep_tx->bin_producer = 0;
@@ -281,9 +281,9 @@ static void USB_Class_PHDC_Stall_Endpoint (
 )
 {
     DisableInterrupts;
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_dis();
-    #endif			
+    #endif
     /* Empty Queue */
     if(direction == USB_SEND)
     {
@@ -299,9 +299,9 @@ static void USB_Class_PHDC_Stall_Endpoint (
         ep_num | (direction << USB_COMPONENT_DIRECTION_SHIFT)),
         USB_STATUS_STALLED);
     EnableInterrupts;
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_en();
-    #endif		
+    #endif
     return;
 }
 
@@ -326,7 +326,7 @@ static void USB_Class_PHDC_Stall_Endpoint (
  * application
  *****************************************************************************/
 #ifndef COMPOSITE_DEV
-static uint_8 USB_Other_Requests 
+static uint_8 USB_Other_Requests
 #else
 uint_8 USB_Phdc_Other_Requests
 #endif
@@ -375,10 +375,10 @@ uint_8 USB_Phdc_Other_Requests
             }
             case GET_STATUS_REQUEST:
             {
-                /* 
-                   implement get status request to get which endpoint has data 
+                /*
+                   implement get status request to get which endpoint has data
                 */
-                if( setup_packet->value != 0 ) 
+                if( setup_packet->value != 0 )
                 {
                   status = USBERR_INVALID_REQ_TYPE;
                   break;
@@ -393,7 +393,7 @@ uint_8 USB_Phdc_Other_Requests
     }
     else if((setup_packet->request_type & USB_REQUEST_CLASS_MASK) ==
         USB_REQUEST_CLASS_VENDOR)
-    {    
+    {
         /* vendor specific request  */
         if(g_vendor_req_callback != NULL)
         {
@@ -435,43 +435,43 @@ void USB_Class_PHDC_Endpoint_Service (
     if(event->direction == USB_SEND)
     {
         USB_CLASS_PHDC_TX_ENDPOINT *phdc_tx_endpoint;
-        
+
         /* get the index for the corresponding endpoint(channel) */
         for(index = 0; index < PHDC_TX_ENDPOINTS; index++)
         {
             if(g_phdc_endpoint_data.ep_tx[index].endpoint == event->ep_num)
             break;
         }
-        
+
         phdc_tx_endpoint = &g_phdc_endpoint_data.ep_tx[index];
-        
+
         /* initialize producer with the num of queued transfers */
         producer = phdc_tx_endpoint->bin_producer;
         /* initialize consumer with the num of de-queued transfers */
         consumer = phdc_tx_endpoint->bin_consumer;
 
-        /* 
-           if there are no errors de-queue the queue and decrement 
-           the no. of transfers left, else send the same data again 
+        /*
+           if there are no errors de-queue the queue and decrement
+           the no. of transfers left, else send the same data again
         */
-        
+
         if(event->errors == 0)
         {
             phdc_tx_endpoint->current_offset += event->len;
-            
-            if((phdc_tx_endpoint->current_offset == 
+
+            if((phdc_tx_endpoint->current_offset ==
                 phdc_tx_endpoint->transfer_size) &&
                 (event->len != 0))
             {
-                if(phdc_tx_endpoint->transfer_size % phdc_tx_endpoint->size == 0) 
+                if(phdc_tx_endpoint->transfer_size % phdc_tx_endpoint->size == 0)
                 {
                     /* send Zero Byte Data */
                     (void)USB_Class_Send_Data(event->controller_ID, event->ep_num,
-                        NULL, 0);   
-                    return; 
+                        NULL, 0);
+                    return;
                 }
             }
-            
+
             /* de-queue the queue */
             phdc_tx_endpoint->bin_consumer++;
         }
@@ -486,32 +486,32 @@ void USB_Class_PHDC_Endpoint_Service (
 #if USB_METADATA_SUPPORTED
             if(qos_bin.meta_data == TRUE)
             {
-                /* 
-                   initialize current_qos of the transfers 
-                   that follow the meta data packet 
+                /*
+                   initialize current_qos of the transfers
+                   that follow the meta data packet
                 */
                 phdc_tx_endpoint->current_qos = qos_bin.qos;
             }
 #endif
             /* Get new transfer Size from already queued Transfer */
-            if(phdc_tx_endpoint->current_offset == 
-                phdc_tx_endpoint->transfer_size) 
+            if(phdc_tx_endpoint->current_offset ==
+                phdc_tx_endpoint->transfer_size)
             {
                 USB_CLASS_PHDC_XFER_SIZE xfer_size;
-                
+
                 xfer_size.in_buff = event->buffer_ptr;
                 xfer_size.in_size = event->len;
                 xfer_size.transfer_size = 0;
                 xfer_size.direction = USB_SEND;
 #if USB_METADATA_SUPPORTED
                 xfer_size.meta_data_packet = qos_bin.meta_data;
-#endif               
-                g_phdc_class_callback(event->controller_ID, 
+#endif
+                g_phdc_class_callback(event->controller_ID,
                     USB_APP_GET_TRANSFER_SIZE, (void*)(&xfer_size));
 
                 phdc_tx_endpoint->transfer_size = xfer_size.transfer_size;
                 phdc_tx_endpoint->current_offset = 0;
-                
+
             }
             /* send data */
             (void)USB_Class_Send_Data(qos_bin.controller_ID, qos_bin.channel,
@@ -551,7 +551,7 @@ void USB_Class_PHDC_Endpoint_Service (
             break;
         }
         phdc_rx_endpoint = &g_phdc_endpoint_data.ep_rx[index];
-        
+
 
         /* if there is an error notify the application of the error and
            return */
@@ -559,12 +559,12 @@ void USB_Class_PHDC_Endpoint_Service (
         {
             usb_phdc_error_struct.error_code = (USB_PHDC_ERROR)event->errors;
             usb_phdc_error_struct.qos = phdc_rx_endpoint->qos;
-            
+
             phdc_rx_endpoint->buffer_size = 0;
             phdc_rx_endpoint->buff_ptr = NULL;
             phdc_rx_endpoint->transfer_size = 0;
             phdc_rx_endpoint->cur_offset = 0;
-            
+
 
             /* notify the application of the error */
             g_phdc_class_callback(event->controller_ID, USB_APP_ERROR,
@@ -578,22 +578,22 @@ void USB_Class_PHDC_Endpoint_Service (
         if(phdc_rx_endpoint->transfer_size == 0)
         {
 #if USB_METADATA_SUPPORTED
-            /* 
+            /*
                in case of meta data packet, the packet is received
                as a short packet, so will not have to recv another packet to
                complete this transaction. Hence value of meta_data_packet
-               variable will be valid at line no. 445 
+               variable will be valid at line no. 445
              */
 
-            /* 
+            /*
                compare the received signature with the string for preamble
                verifiability. if meta_data_packet = 0(both signatures match)
-               the incoming packet is a meta data 
+               the incoming packet is a meta data
             */
             if(g_phdc_metadata == TRUE)
             {
                 boolean logical_meta_data_packet, logical_trans_left;
-                meta_data_packet = (uint_8)strncmp(event->buffer_ptr, 
+                meta_data_packet = (uint_8)strncmp(event->buffer_ptr,
                     msg_preamble_signature, METADATA_PREAMBLE_SIGNATURE);
 
                 logical_trans_left = (boolean)(transfers_left ? 1 : 0);
@@ -629,7 +629,7 @@ void USB_Class_PHDC_Endpoint_Service (
                     /* notify the application of the error*/
                     g_phdc_class_callback(event->controller_ID,USB_APP_ERROR,
                         (void*)(&usb_phdc_error_struct));
-                    
+
                     return;
 
                 }
@@ -647,13 +647,13 @@ void USB_Class_PHDC_Endpoint_Service (
             xfer_size.transfer_size = 0;
 #if USB_METADATA_SUPPORTED
             xfer_size.meta_data_packet = rx_buff.meta_data_packet;
-#endif            
-            g_phdc_class_callback(event->controller_ID, 
+#endif
+            g_phdc_class_callback(event->controller_ID,
                 USB_APP_GET_TRANSFER_SIZE, (void*)(&xfer_size));
 
             phdc_rx_endpoint->transfer_size = xfer_size.transfer_size;
             phdc_rx_endpoint->cur_offset = 0;
-        } 
+        }
 
         /* Increment Current Offset */
         phdc_rx_endpoint->cur_offset += event->len;
@@ -669,25 +669,25 @@ void USB_Class_PHDC_Endpoint_Service (
             /* Callback application to copy data buffer */
             g_phdc_class_callback(event->controller_ID, USB_APP_GET_DATA_BUFF,
                 (void*)(&rx_buff));
-                
+
             return;
-            
+
         }
 
         if((phdc_rx_endpoint->cur_offset >= phdc_rx_endpoint->transfer_size) ||
             (event->len % phdc_rx_endpoint->size != 0))
         {
             /* Check for Zero Byte Receive */
-            if((phdc_rx_endpoint->transfer_size % phdc_rx_endpoint->size == 0) 
+            if((phdc_rx_endpoint->transfer_size % phdc_rx_endpoint->size == 0)
                 && (event->len != 0))
             {
                 (void)_usb_device_recv_data(&(event->controller_ID), event->ep_num, NULL, 0);
-                return; 
+                return;
             }
              /* Complete Data Packet is received */
 #if USB_METADATA_SUPPORTED
-            /* 
-                Message Data Preamble is received in first packet call 
+            /*
+                Message Data Preamble is received in first packet call
                 so event->Buffer_ptr is valid
             */
             g_meta_data_msg_preamble =
@@ -707,7 +707,7 @@ void USB_Class_PHDC_Endpoint_Service (
                 event_data_received.qos = phdc_rx_endpoint->qos;
                 event_data_received.buffer_ptr = event->buffer_ptr;
                 event_data_received.size = event->len;
-                event_data_received.transfer_size = 
+                event_data_received.transfer_size =
                     phdc_rx_endpoint->transfer_size;
                 /* when complete packet is received
                    reset the buffer_size and buff_ptr */
@@ -721,11 +721,11 @@ void USB_Class_PHDC_Endpoint_Service (
                     USB_APP_DATA_RECEIVED, (void*)(&event_data_received));
             }
             else if((transfers_left == 0 ) && (meta_data_packet == 0))
-            {   
-                /* 
+            {
+                /*
                    if number of transfers left is zero and the packet is meta
                    data msg preamble initialize the endpoint data structure
-                   from the meta data msg preamble data structure 
+                   from the meta data msg preamble data structure
                 */
 
                 if(!g_meta_data_msg_preamble->num_tfr ||
@@ -774,7 +774,7 @@ void USB_Class_PHDC_Endpoint_Service (
 
                 /* notify the application that meta data params has changed */
                 g_phdc_class_callback(event->controller_ID,
-                    USB_APP_META_DATA_PARAMS_CHANGED, 
+                    USB_APP_META_DATA_PARAMS_CHANGED,
                     (void*)(&metadata_params));
 
             }
@@ -783,9 +783,9 @@ void USB_Class_PHDC_Endpoint_Service (
             event_data_received.qos = phdc_rx_endpoint->qos;
             event_data_received.buffer_ptr = event->buffer_ptr;
             event_data_received.size = event->len;
-            event_data_received.transfer_size = 
+            event_data_received.transfer_size =
                 phdc_rx_endpoint->transfer_size;
-        
+
             /* when complete packet is received
                reset the buffer_size and buff_ptr */
             phdc_rx_endpoint->buffer_size = 0;
@@ -808,7 +808,7 @@ void USB_Class_PHDC_Endpoint_Service (
  *
  * @name  USB_Class_PHDC_Recv_Data
  *
- * @brief This function is used by Application to receive data through PHDC 
+ * @brief This function is used by Application to receive data through PHDC
  *        class
  *
  * @param controller_ID         : Controller ID
@@ -851,7 +851,7 @@ uint_8 USB_Class_PHDC_Recv_Data (
     phdc_rx_endpoint->buff_ptr = app_buff;
     status = _usb_device_recv_data(&controller_ID, phdc_rx_endpoint->endpoint, app_buff,
         size);
-    
+
     return status;
 }
 /**************************************************************************//*!
@@ -915,7 +915,7 @@ uint_8 USB_Class_PHDC_Send_Data (
         {
             return USBERR_TX_FAILED;
         }
-                    
+
         if(meta_data == TRUE)
         {
             /* Prepare Meta Data PReamble Packet based on input information */
@@ -927,9 +927,9 @@ uint_8 USB_Class_PHDC_Send_Data (
                 return USBERR_TX_FAILED;
             }
 
-            /* 
+            /*
                if num of transfers is zero &/or qos is zero or multiple qos
-               bits are set, return with an error 
+               bits are set, return with an error
             */
             if( !num_tfr || !qos || (  (qos & (qos - 1))  ) )
             {
@@ -941,7 +941,7 @@ uint_8 USB_Class_PHDC_Send_Data (
                 return USBERR_TX_FAILED;
             }
 
-            
+
             phdc_tx_endpoint->transfers_queued = (uint_8)
                 (num_tfr + 1);
             /* Copy Meta Data Preamble Signature */
@@ -950,13 +950,13 @@ uint_8 USB_Class_PHDC_Send_Data (
             metadata_preamble->num_tfr = num_tfr;
             metadata_preamble->version = METADATA_QOSENCODING_VERSION;
             metadata_preamble->qos = qos;
-            metadata_preamble->opaque_data_size = (uint_8)(size - 
+            metadata_preamble->opaque_data_size = (uint_8)(size -
                 METADATA_HEADER_SIZE);
         }
 #endif
 
     }/* if(transfer_size == 0) */
-    
+
     channel = phdc_tx_endpoint->endpoint;
 
     /* set channel active-- set bit map for
@@ -996,21 +996,21 @@ uint_8 USB_Class_PHDC_Send_Data (
             /* bin has only this packet to send */
             if(phdc_tx_endpoint->transfer_size == 0)
             {
-                /* 
-                    Get Total Transfer Size 
+                /*
+                    Get Total Transfer Size
                     This is required for Bridges that send APDU fragmented
                 */
                 USB_CLASS_PHDC_XFER_SIZE xfer_size;
-                
+
                 xfer_size.in_buff = app_buff;
                 xfer_size.in_size = size;
                 xfer_size.transfer_size = 0;
                 xfer_size.direction = USB_SEND;
 #if USB_METADATA_SUPPORTED
-                xfer_size.meta_data_packet = 
+                xfer_size.meta_data_packet =
                     phdc_tx_endpoint->qos_bin[queue_num].meta_data;
-#endif               
-                g_phdc_class_callback(controller_ID, 
+#endif
+                g_phdc_class_callback(controller_ID,
                     USB_APP_GET_TRANSFER_SIZE, (void*)(&xfer_size));
 
                 phdc_tx_endpoint->transfer_size = xfer_size.transfer_size;
@@ -1067,8 +1067,8 @@ uint_8 USB_Class_PHDC_Init(
 
 #ifdef COMPOSITE_DEV
     DEV_ARCHITECTURE_STRUCT_PTR dev_arc_ptr;
-    CLASS_ARC_STRUCT_PTR dev_class_ptr;   
-    dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);    
+    CLASS_ARC_STRUCT_PTR dev_class_ptr;
+    dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);
     for(count = 0; count < dev_arc_ptr->cl_count; count++)
     {
         dev_class_ptr = (CLASS_ARC_STRUCT_PTR)dev_arc_ptr->value[count];
@@ -1158,7 +1158,7 @@ uint_8 USB_Class_PHDC_Init(
                     /* register endpoint service on the endpoint*/
                     (void)_usb_device_register_service(controller_ID,
                         g_phdc_endpoint_data.ep_tx
-                        [g_phdc_endpoint_data.count_tx].endpoint, 
+                        [g_phdc_endpoint_data.count_tx].endpoint,
                         USB_Class_PHDC_Endpoint_Service);
 
                     /* increment count_tx by 1 */
@@ -1203,28 +1203,28 @@ uint_8 USB_Class_PHDC_Init(
  ******************************************************************************
  *This function de-initializes the PHDC Class layer
  *****************************************************************************/
-uint_8 USB_Class_PHDC_DeInit 
+uint_8 USB_Class_PHDC_DeInit
 (
     uint_8 controller_ID              /* [IN] Controller ID */
-) 
+)
 {
     uint_8 status;
-#ifdef COMPOSITE_DEV  
+#ifdef COMPOSITE_DEV
     UNUSED(controller_ID)
-#endif  
+#endif
     /* free the PHDC class callback pointer */
     g_phdc_class_callback = NULL;
-    
+
     /* free the vendor request callback pointer */
     g_vendor_req_callback = NULL;
-    
+
 #ifndef COMPOSITE_DEV
     /* Call common class deinit function */
     status = USB_Class_DeInit(controller_ID);
-    
+
     if(status == USB_OK)
     /* Call device deinit function */
-    	status = _usb_device_deinit();
-#endif    
+        status = _usb_device_deinit();
+#endif
     return status;
-} 
+}

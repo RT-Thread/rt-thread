@@ -56,10 +56,10 @@
 
 /// @brief I2C Speed Modes
 typedef enum {
-    I2C_STD_MODE        = 100000,       //!< 100KHz Bus Speed 
-    I2C_FAST_MODE       = 400000,       //!< 400KHz Bus Speed 
+    I2C_STD_MODE        = 100000,       //!< 100KHz Bus Speed
+    I2C_FAST_MODE       = 400000,       //!< 400KHz Bus Speed
     I2C_FASTPLUS_MODE   = 1000000,      //!< 1MHz   Bus Speed
-    I2C_HS_MODE         = 3400000       //!< 3.4MHz Bus Speed 
+    I2C_HS_MODE         = 3400000       //!< 3.4MHz Bus Speed
 } i2c_speed_t;
 
 //State for Master
@@ -71,7 +71,7 @@ typedef enum {
 // @brief Enable/Disable TXFIFO Autoflush mode
 typedef enum {
     I2C_AUTOFLUSH_ENABLE   = 0,
-    I2C_AUTOFLUSH_DISABLE  = 1 
+    I2C_AUTOFLUSH_DISABLE  = 1
 } i2c_autoflush_disable_t;
 
 // @brief I2C Transaction request.
@@ -80,8 +80,8 @@ struct i2c_req {
 
     uint8_t addr;                  /**< @parblock I2C 7-bit Address left aligned, bit 7 to bit 1.
                                      *     Only supports 7-bit addressing. LSb of the given address
-                                     *     will be used as the read/write bit, the @p addr <b>will 
-                                     *     not be shifted</b>. Used for <em>both master</em> and 
+                                     *     will be used as the read/write bit, the @p addr <b>will
+                                     *     not be shifted</b>. Used for <em>both master</em> and
                                      *     @em slave transactions. @endparblock
                                      */
     const uint8_t *tx_data;          ///< Data for mater write/slave read.
@@ -93,15 +93,15 @@ struct i2c_req {
     i2c_state_t state;               ///< Read or Write.
 
     /**
-     * @details     0 to send a stop bit at the end of the transaction, 
+     * @details     0 to send a stop bit at the end of the transaction,
                     otherwise send a restart. Only used in master trasnactions.
      */
-    int restart;                   /**< @parblock Restart or stop bit indicator. 
+    int restart;                   /**< @parblock Restart or stop bit indicator.
                                      *    @arg 0 to send a stop bit at the end of the transaction
                                      *    @arg Non-zero to send a restart at end of the transaction
                                      *    @note Only used for Master transactions.
                                      *    @endparblock
-                                     */ 
+                                     */
     i2c_autoflush_disable_t sw_autoflush_disable;       ///< Enable/Disable autoflush.
 
     /**
@@ -119,7 +119,7 @@ struct i2c_req {
  * @param      i2c     Pointer to I2C peripheral registers.
  * @param      i2cspeed desired speed (I2C mode)
  * @param      sys_cfg System configuration object
- * @returns \c #E_NO_ERROR if everything is successful, 
+ * @returns \c #E_NO_ERROR if everything is successful,
  *             @ref MXC_Error_Codes if an error occurred.
  */
 int I2C_Init(mxc_i2c_regs_t * i2c, i2c_speed_t i2cspeed, const sys_cfg_i2c_t* sys_cfg);
@@ -137,14 +137,14 @@ int I2C_Shutdown(mxc_i2c_regs_t *i2c);
  * @param   i2c         Pointer to I2C regs.
  * @param   addr        @parblock I2C 7-bit Address left aligned, bit 7 to bit 1.
  *                          Only supports 7-bit addressing. LSb of the given address
- *                          will be used as the read/write bit, the \p addr <b>will 
- *                          not be shifted</b>. Used for <em>both master</em> and 
- *                          @em slave transactions.    @endparblock                                 
+ *                          will be used as the read/write bit, the \p addr <b>will
+ *                          not be shifted</b>. Used for <em>both master</em> and
+ *                          @em slave transactions.    @endparblock
  * @param   data        Data to be written.
  * @param   len         Number of bytes to Write.
- * @param   restart     0 to send a stop bit at the end of the transaction, 
+ * @param   restart     0 to send a stop bit at the end of the transaction,
                         otherwise send a restart.
- * @returns Bytes transacted if everything is successful, 
+ * @returns Bytes transacted if everything is successful,
  *              @ref MXC_Error_Codes if an error occurred.
  */
 int I2C_MasterWrite(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* data, int len, int restart);
@@ -154,12 +154,12 @@ int I2C_MasterWrite(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* data, int 
  * @param   i2c         Pointer to I2C regs.
  * @param   addr        @parblock I2C 7-bit Address left aligned, bit 7 to bit 1.
  *                          Only supports 7-bit addressing. LSb of the given address
- *                          will be used as the read/write bit, the @p addr <b>will 
- *                          not be shifted</b>. Used for <em>both master</em> and 
+ *                          will be used as the read/write bit, the @p addr <b>will
+ *                          not be shifted</b>. Used for <em>both master</em> and
  *                          @em slave transactions.  @endparblock
  * @param   data        Data to be written.
  * @param   len         Number of bytes to Write.
- * @param   restart     0 to send a stop bit at the end of the transaction, 
+ * @param   restart     0 to send a stop bit at the end of the transaction,
                         otherwise send a restart.
  * @returns Bytes transacted if everything is successful, @ref MXC_Error_Codes if an error occurred.
  */
@@ -170,8 +170,8 @@ int I2C_MasterRead(mxc_i2c_regs_t *i2c, uint8_t addr, uint8_t* data, int len, in
  * @param   i2c         Pointer to I2C regs.
  * @param   addr        @parblock I2C 7-bit Address left aligned, bit 7 to bit 1.
  *                          Only supports 7-bit addressing. LSb of the given address
- *                          will be used as the read/write bit, the @p addr <b>will 
- *                          not be shifted</b>. Used for <em>both master</em> and 
+ *                          will be used as the read/write bit, the @p addr <b>will
+ *                          not be shifted</b>. Used for <em>both master</em> and
  *                          @em slave transactions.  @endparblock
  * @param   read_data   Buffer that the master will read from.
  * @param   read_len    Number of bytes the master can read.
@@ -182,8 +182,8 @@ int I2C_MasterRead(mxc_i2c_regs_t *i2c, uint8_t addr, uint8_t* data, int len, in
  * @param   sw_autoflush_disable      TX Autoflush enabled by default.Set this bit to disable autoflush manually.
  * @returns #E_NO_ERROR if everything is successful, @ref MXC_Error_Codes if an error occurred.
  */
-int I2C_Slave(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* read_data, 
-              int read_len, uint8_t* write_data, int write_len, int* tx_num, 
+int I2C_Slave(mxc_i2c_regs_t *i2c, uint8_t addr, const uint8_t* read_data,
+              int read_len, uint8_t* write_data, int write_len, int* tx_num,
               int* rx_num, i2c_autoflush_disable_t sw_autoflush_disable);
 
 /**
@@ -230,7 +230,7 @@ void I2C_DrainTX(mxc_i2c_regs_t *i2c);
 int I2C_AbortAsync(i2c_req_t *req);
 
 /**
- * @brief      Enable and Set Timeout 
+ * @brief      Enable and Set Timeout
  *
  * @param      i2c   pointer to I2C regs
  * @param[in]  us    micro seconds to delay

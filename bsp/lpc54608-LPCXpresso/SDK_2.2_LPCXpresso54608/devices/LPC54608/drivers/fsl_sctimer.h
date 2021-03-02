@@ -352,7 +352,7 @@ void SCTIMER_GetDefaultConfig(sctimer_config_t *config);
  * @note When setting PWM output from multiple output pins, they all should use the same PWM mode
  * i.e all PWM's should be either edge-aligned or center-aligned.
  * When using this API, the PWM signal frequency of all the initialized channels must be the same.
- * Otherwise all the initialized channels' PWM signal frequency is equal to the last call to the 
+ * Otherwise all the initialized channels' PWM signal frequency is equal to the last call to the
  * API's pwmFreq_Hz.
  *
  * @param base        SCTimer peripheral base address

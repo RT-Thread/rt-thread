@@ -14,7 +14,7 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -37,13 +37,13 @@
   * @{
   */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup COMP_Exported_Types COMP Exported Types
   * @{
   */
 
-/** 
-  * @brief  COMP Init structure definition  
+/**
+  * @brief  COMP Init structure definition
   */
 typedef struct
 {
@@ -89,7 +89,7 @@ typedef enum
   HAL_COMP_STATE_BUSY_LOCKED       = (HAL_COMP_STATE_BUSY | COMP_STATE_BITFIELD_LOCK)   /*!< COMP is running and configuration is locked          */
 }HAL_COMP_StateTypeDef;
 
-/** 
+/**
   * @brief  COMP Handle Structure definition
   */
 typedef struct __COMP_HandleTypeDef
@@ -279,7 +279,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @param __HANDLE__ COMP handle
   * @retval None
   */
-#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE) 
+#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE)
 
 /**
   * @brief  Enable the specified comparator.
@@ -357,7 +357,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP1 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                __HAL_COMP_COMP1_EXTI_DISABLE_RISING_EDGE(); \
                                                                __HAL_COMP_COMP1_EXTI_DISABLE_FALLING_EDGE(); \
@@ -408,31 +408,31 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Enable the COMP2 EXTI line rising edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_ENABLE_RISING_EDGE()    SET_BIT(EXTI->RTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Disable the COMP2 EXTI line rising edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_DISABLE_RISING_EDGE()   CLEAR_BIT(EXTI->RTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Enable the COMP2 EXTI line falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_ENABLE_FALLING_EDGE()   SET_BIT(EXTI->FTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Disable the COMP2 EXTI line falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_DISABLE_FALLING_EDGE()  CLEAR_BIT(EXTI->FTSR, COMP_EXTI_LINE_COMP2)
 
 /**
   * @brief  Enable the COMP2 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_ENABLE_RISING_FALLING_EDGE()   do { \
                                                                __HAL_COMP_COMP2_EXTI_ENABLE_RISING_EDGE(); \
                                                                __HAL_COMP_COMP2_EXTI_ENABLE_FALLING_EDGE(); \
@@ -441,7 +441,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP2 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP2_EXTI_DISABLE_RISING_FALLING_EDGE()   do { \
                                                                __HAL_COMP_COMP2_EXTI_DISABLE_RISING_EDGE(); \
                                                                __HAL_COMP_COMP2_EXTI_DISABLE_FALLING_EDGE(); \
@@ -532,7 +532,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @{
   */
 
-/** @defgroup COMP_GET_EXTI_LINE COMP private macros to get EXTI line associated with comparators 
+/** @defgroup COMP_GET_EXTI_LINE COMP private macros to get EXTI line associated with comparators
   * @{
   */
 /**

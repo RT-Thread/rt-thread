@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -124,7 +124,7 @@
 /**
   * @brief Internal Low Speed oscillator (LSI1) value.
   */
-#if !defined  (LSI1_VALUE) 
+#if !defined  (LSI1_VALUE)
  #define LSI1_VALUE  (32000UL)       /*!< LSI1 Typical Value in Hz*/
 #endif /* LSI1_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
                                              The real value may vary depending on the variations
@@ -132,7 +132,7 @@
 /**
   * @brief Internal Low Speed oscillator (LSI2) value.
   */
-#if !defined  (LSI2_VALUE) 
+#if !defined  (LSI2_VALUE)
  #define LSI2_VALUE  (32000UL)       /*!< LSI2 Typical Value in Hz*/
 #endif /* LSI2_VALUE */                      /*!< Value of the Internal Low Speed oscillator in Hz
                                              The real value may vary depending on the variations
@@ -153,7 +153,7 @@
 #if !defined (HSI48_VALUE)
   #define HSI48_VALUE    (48000000UL) /*!< Value of the Internal oscillator in Hz*/
 #endif /* HSI48_VALUE */
-   
+
 #if !defined (LSE_STARTUP_TIMEOUT)
   #define LSE_STARTUP_TIMEOUT    (5000UL)   /*!< Time out for LSE start up, in ms */
 #endif /* LSE_STARTUP_TIMEOUT */
@@ -169,7 +169,7 @@
 
 /**
   * @brief External clock source for SAI1 peripheral
-  *        This value is used by the RCC HAL module to compute the SAI1 & SAI2 clock source 
+  *        This value is used by the RCC HAL module to compute the SAI1 & SAI2 clock source
   *        frequency.
   */
 #if !defined (EXTERNAL_SAI1_CLOCK_VALUE)
@@ -237,7 +237,7 @@
 #ifdef HAL_EXTI_MODULE_ENABLED
   #include "stm32wbxx_hal_exti.h"
 #endif /* HAL_EXTI_MODULE_ENABLED */
-   
+
 #ifdef HAL_FLASH_MODULE_ENABLED
   #include "stm32wbxx_hal_flash.h"
 #endif /* HAL_FLASH_MODULE_ENABLED */
@@ -301,7 +301,7 @@
 #ifdef HAL_RNG_MODULE_ENABLED
   #include "stm32wbxx_hal_rng.h"
 #endif /* HAL_RNG_MODULE_ENABLED */
-    
+
 #ifdef HAL_RTC_MODULE_ENABLED
  #include "stm32wbxx_hal_rtc.h"
 #endif /* HAL_RTC_MODULE_ENABLED */

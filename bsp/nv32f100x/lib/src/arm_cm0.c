@@ -1,5 +1,5 @@
 /******************************************************************************
-* @brief provide generic high-level routines for ARM Cortex M0/M0+ processors. 
+* @brief provide generic high-level routines for ARM Cortex M0/M0+ processors.
 *
 *******************************************************************************/
 
@@ -19,16 +19,16 @@
 
 void stop (void)
 {
-	/* Set the SLEEPDEEP bit to enable deep sleep mode (STOP) */
-	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;	
+    /* Set the SLEEPDEEP bit to enable deep sleep mode (STOP) */
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
-	/* WFI instruction will start entry into STOP mode */
+    /* WFI instruction will start entry into STOP mode */
 #ifndef KEIL
         // If not using KEIL's uVision use the standard assembly command
-	asm("WFI");
+    asm("WFI");
 #else
         // If using KEIL's uVision, use the CMSIS intrinsic
-	__wfi();
+    __wfi();
 #endif
 }
 /***********************************************************************/
@@ -45,15 +45,15 @@ void stop (void)
 
 void wait (void)
 {
-	/* Clear the SLEEPDEEP bit to make sure we go into WAIT (sleep) mode instead
-	 * of deep sleep.
-	 */
-	SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;	
+    /* Clear the SLEEPDEEP bit to make sure we go into WAIT (sleep) mode instead
+     * of deep sleep.
+     */
+    SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
 
-	/* WFI instruction will start entry into WAIT mode */
+    /* WFI instruction will start entry into WAIT mode */
 #ifndef KEIL
         // If not using KEIL's uVision use the standard assembly command
-	asm("WFI");
+    asm("WFI");
 #else
         // If using KEIL's uVision, use the CMSIS intrinsic
     __wfi();
@@ -70,7 +70,7 @@ void wait (void)
 void write_vtor (int vtor)
 {
         /* Write the VTOR with the new value */
-        SCB->VTOR = vtor;	
+        SCB->VTOR = vtor;
 }
 
 /***********************************************************************/

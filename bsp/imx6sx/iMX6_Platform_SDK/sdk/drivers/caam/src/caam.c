@@ -37,10 +37,10 @@
 /* Input job ring - single entry input ring */
 uint32_t g_input_ring[JOB_RING_ENTRIES] = {0};
 
-/* Output job ring - single entry output ring (consists of two words) */    
+/* Output job ring - single entry output ring (consists of two words) */
 uint32_t g_output_ring[2*JOB_RING_ENTRIES] = {0, 0};
 
-uint32_t decap_dsc[] = 
+uint32_t decap_dsc[] =
 {
     DECAP_BLOB_DESC1,
     DECAP_BLOB_DESC2,
@@ -53,7 +53,7 @@ uint32_t decap_dsc[] =
     DECAP_BLOB_DESC9
 };
 
-uint32_t encap_dsc[] = 
+uint32_t encap_dsc[] =
 {
     ENCAP_BLOB_DESC1,
     ENCAP_BLOB_DESC2,
@@ -66,7 +66,7 @@ uint32_t encap_dsc[] =
     ENCAP_BLOB_DESC9
 };
 
-uint32_t rng_inst_dsc[] = 
+uint32_t rng_inst_dsc[] =
 {
     RNG_INST_DESC1,
     RNG_INST_DESC2,
@@ -79,7 +79,7 @@ uint32_t rng_inst_dsc[] =
     RNG_INST_DESC9
 };
 
-uint32_t encrypt_dsc[] = 
+uint32_t encrypt_dsc[] =
 {
     ENCRYPT_DESC1,
     ENCRYPT_DESC2,
@@ -103,7 +103,7 @@ void caam_interrupt_routine(void)
  * Setup CAAM interrupt. It enables or disables the related HW module
  * interrupt, and attached the related sub-routine into the vector table.
  *
- * @param   irq_id  ID of the interrupt. 
+ * @param   irq_id  ID of the interrupt.
  * @param   state  ENABLE or DISABLE the interrupt.
  */
 void caam_setup_interrupt(uint32_t irq_id, uint8_t state)
@@ -145,7 +145,7 @@ static uint32_t caam_page_alloc(uint8_t page_num, uint8_t partition_num)
 {
     uint32_t temp_reg;
 
-    /* 
+    /*
      * De-Allocate partition_num if already allocated to ARM core
      */
     if(reg32_read(CAAM_SMPO_0) & PARTITION_OWNER(partition_num))
@@ -158,12 +158,12 @@ static uint32_t caam_page_alloc(uint8_t page_num, uint8_t partition_num)
         }
     }
 
-    /* set the access rights to allow full access */ 
+    /* set the access rights to allow full access */
     reg32_write(CAAM_SMAG1JR0(partition_num), 0xF);
     reg32_write(CAAM_SMAG2JR0(partition_num), 0xF);
     reg32_write(CAAM_SMAPJR0(partition_num), 0xFF);
 
-    /* Now need to allocate partition_num of secure RAM. */    
+    /* Now need to allocate partition_num of secure RAM. */
     /* De-Allocate page_num by starting with a page inquiry command */
     temp_reg = secmem_set_cmd(PAGE(page_num) | CMD_INQUIRY);
     /* if the page is owned, de-allocate it */
@@ -206,7 +206,7 @@ static uint32_t caam_page_alloc(uint8_t page_num, uint8_t partition_num)
  * @param   cipher_text_addr  Location address of the cipher text.
  * @param   key_addr  Location address of the encryption key (ignored for now).
  *
- * @return  SUCCESS or ERROR_XXX 
+ * @return  SUCCESS or ERROR_XXX
  */
 uint32_t caam_enc_data(uint32_t plain_text_addr, uint32_t cipher_text_addr,
                    uint32_t key_addr)
@@ -266,7 +266,7 @@ uint32_t caam_enc_data(uint32_t plain_text_addr, uint32_t cipher_text_addr,
     /* Remove job from Job Ring Output Queue */
     reg32_write(CAAM_ORJRR0, 1);
 
-	return ret;
+    return ret;
 }
 
 /*!
@@ -327,7 +327,7 @@ uint32_t caam_decap_blob(uint32_t blob_addr)
     /* Remove job from Job Ring Output Queue */
     reg32_write(CAAM_ORJRR0, 1);
 
-	return ret;
+    return ret;
 }
 
 /*!
@@ -393,7 +393,7 @@ uint32_t caam_gen_blob(uint32_t plain_data_addr, uint32_t blob_addr)
     /* Remove job from Job Ring Output Queue */
     reg32_write(CAAM_ORJRR0, 1);
 
-	return ret;
+    return ret;
 }
 
 /*!
@@ -413,7 +413,7 @@ void caam_open(void)
      *
      * However, still need to initialize Job Rings as these are torn
      * down by HAB for each command
-     */    
+     */
 
     /* Initialize job ring addresses */
     reg32_write(CAAM_IRBAR0, (uint32_t)g_input_ring);   // input ring address
@@ -425,7 +425,7 @@ void caam_open(void)
 
     /* HAB disables interrupts for JR0 so do the same here */
     temp_reg = reg32_read(CAAM_JRCFGR0_LS) | JRCFG_LS_IMSK;
-    reg32_write(CAAM_JRCFGR0_LS, temp_reg);    
+    reg32_write(CAAM_JRCFGR0_LS, temp_reg);
 
     /********* Initialize and instantiate the RNG *******************/
     /* if RNG already instantiated then skip it */
@@ -433,20 +433,20 @@ void caam_open(void)
     {
         /* Enter TRNG Program mode */
         reg32_write(CAAM_RTMCTL,RTMCTL_PGM);
-    
+
         /* Set OSC_DIV field to TRNG */
         temp_reg = reg32_read(CAAM_RTMCTL) | (RNG_TRIM_OSC_DIV << 2);
         reg32_write(CAAM_RTMCTL,temp_reg);
-    
+
         /* Set delay */
-        reg32_write(CAAM_RTSDCTL, ((RNG_TRIM_ENT_DLY << 16) | 0x09C4));   
+        reg32_write(CAAM_RTSDCTL, ((RNG_TRIM_ENT_DLY << 16) | 0x09C4));
         reg32_write(CAAM_RTFRQMIN, (RNG_TRIM_ENT_DLY >> 1));
         reg32_write(CAAM_RTFRQMAX, (RNG_TRIM_ENT_DLY << 3));
-    
+
         /* Resume TRNG Run mode */
         temp_reg = reg32_read(CAAM_RTMCTL) ^ RTMCTL_PGM;
-        reg32_write(CAAM_RTMCTL,temp_reg);   
-    
+        reg32_write(CAAM_RTMCTL,temp_reg);
+
         /* Clear the ERR bit in RTMCTL if set. The TRNG error can occur when the
         * RNG clock is not within 1/2x to 8x the system clock.
         * This error is possible if ROM code does not initialize the system PLLs
@@ -454,13 +454,13 @@ void caam_open(void)
         */
         temp_reg = reg32_read(CAAM_RTMCTL) | RTMCTL_ERR;
         reg32_write(CAAM_RTMCTL,temp_reg);
-    
+
         /* Run descriptor to instantiate the RNG */
         /* Add job to input ring */
         g_input_ring[0] = (uint32_t)rng_inst_dsc;
         /* Increment jobs added */
-        reg32_write(CAAM_IRJAR0, 1); 
-    
+        reg32_write(CAAM_IRJAR0, 1);
+
         /* Wait for job ring to complete the job: 1 completed job expected */
         while(reg32_read(CAAM_ORSFR0) != 1);
         /* check that descriptor address is the one expected in the out ring */
@@ -483,7 +483,7 @@ void caam_open(void)
         temp_reg = reg32_read(CAAM_RDSTA);
         if (temp_reg != (RDSTA_IF0 | RDSTA_SKVN))
         {
-    
+
             printf("Error: RNG instantiation failed 0x%X\n", temp_reg);
         }
 
@@ -491,5 +491,5 @@ void caam_open(void)
         reg32_write(CAAM_ORJRR0, 1);
     }
 
-	return;
+    return;
 }

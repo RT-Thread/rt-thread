@@ -35,7 +35,7 @@
 //! \brief Filesystem steering support
 //! \version 1.0
 //! \date June-2005
-//! 
+//!
 //! Implementation of functions which support filesystem steering.
 //! The SDK assigns file handles of different values depending on the type
 //! of filesystem being used.  The steering mechanism looks at the value
@@ -52,7 +52,7 @@
 //! code which calls the non-steered versions (Fclose, Fread, etc,) the
 //! non-steered functions' implementations have been modified to call
 //! the steering functions if the file handle warrants.
-//! 
+//!
 //! \see Declarations in fs_steering.h
 //! \see Fclose, Fread, Fwrite, Fseek
 
@@ -105,19 +105,19 @@ Fread_t const pRedirectFread[FS_TYPE_MAX + 1] = {
 };
 
 //! \brief Determines the FsType_t of a file handle
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Determines the FsType_t of the specified file handle and returns
 //! it to the caller.
-//!                  
-//! \param[in]  handleNumber The file handle of interest      
-//!                  
+//!
+//! \param[in]  handleNumber The file handle of interest
+//!
 //! \retval FS_TYPE_FAT      If \c handleNumber is for the default filesystem
 //! \retval FS_TYPE_RESOURCE If \c handleNumber is for the resource filesystem
 //! \retval FS_TYPE_MAX      If \c handleNumber is of an unknown value
-//!                  
-//                  
+//!
+//
 FsType_t FileSystemType(int32_t handleNumber)
 {
     // Is the handle within the range for FAT
@@ -137,19 +137,19 @@ FsType_t FileSystemType(int32_t handleNumber)
     }
 }
 
-//                  
+//
 //! \brief Redirects an Fclose request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fclose request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber Handle of the file to close
-//!                  
+//!
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //! \retval The return value of the steering function
-//                  
+//
 RtStatus_t Fclose(int32_t handleNumber)
 {
     RtStatus_t result = ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION;
@@ -172,23 +172,23 @@ RtStatus_t Fclose(int32_t handleNumber)
     return result;
 }
 
-//                  
+//
 //! \brief Redirects an Fwrite request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fwrite request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber   Handle of the file to write to
 //! \param[in]  pBuffer        Buffer holding the data to be written
 //! \param[in]  numBytesToWrite Number of bytes to write to the file
-//!                  
+//!
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //! \retval RtStatus_t If the steering function encountered an error
 //! \retval Number of bytes written if the steering function was successful
-//!                  
-//                  
+//!
+//
 int32_t Fwrite(int32_t handleNumber, uint8_t * pBuffer, int32_t numBytesToWrite)
 {
     int32_t result = ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION;
@@ -215,21 +215,21 @@ int32_t Fwrite(int32_t handleNumber, uint8_t * pBuffer, int32_t numBytesToWrite)
     return result;
 }
 
-//                  
+//
 //! \brief Redirects an Fseek request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fseek request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber   Handle of the file to seek
 //! \param[in]  numBytesToSeek Relative number of bytes to seek
 //! \param[in]  seekPosition   Value indicating where to seek from
-//!                  
+//!
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //! \retval RtStatus_t The return value of the steering function
-//                  
+//
 RtStatus_t Fseek(int32_t handleNumber, int32_t numBytesToSeek, int32_t seekPosition)
 {
     RtStatus_t result = ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION;
@@ -251,21 +251,21 @@ RtStatus_t Fseek(int32_t handleNumber, int32_t numBytesToSeek, int32_t seekPosit
 }
 
 //! \brief Redirects an Fread request
-//!                  
-//! \fntype Function                  
-//!                  
+//!
+//! \fntype Function
+//!
 //! Redirects an Fread request to the appropriate handler based on the
 //! specified file handle.
-//!                  
+//!
 //! \param[in]  handleNumber   Handle of the file to read from
 //! \param[out] pBuffer        Buffer in which the data to be read is placed
 //! \param[in]  numBytesToRead Number of bytes to read from the file
-//!                  
+//!
 //! \retval ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION If there is no steering function defined for \c filehandle
 //! \retval RtStatus_t If the steering function encountered an error
 //! \retval Number of bytes read if the steering function was successful
-//!                  
-//                  
+//!
+//
 int32_t Fread(int32_t handleNumber, uint8_t * pBuffer, int32_t numBytesToRead)
 {
     int32_t result = ERROR_OS_FILESYSTEM_NO_STEERING_FUNCTION;

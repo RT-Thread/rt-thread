@@ -32,7 +32,7 @@
     { GADI_GPIO_35, GADI_GPIO_TYPE_INPUT_SD_CD_N                 }, \
     { GADI_GPIO_36, GADI_GPIO_TYPE_INOUT_SD_DATA_1               }, \
     { GADI_GPIO_40, GADI_GPIO_TYPE_OUTPUT_1    /*power enable */ }, \
-    { GADI_GPIO_54, GADI_GPIO_TYPE_INOUT_SD_DATA_2               }, 
+    { GADI_GPIO_54, GADI_GPIO_TYPE_INOUT_SD_DATA_2               },
 #else
 #define SYSTEM_GADI_GPIO_SD_TABLE                         \
     { GADI_GPIO_2,  GADI_GPIO_TYPE_INPUT_0                       }, \
@@ -42,16 +42,16 @@
     { GADI_GPIO_35, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_36, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_40, GADI_GPIO_TYPE_INPUT_0                       }, \
-    { GADI_GPIO_54, GADI_GPIO_TYPE_INPUT_0                       },  
+    { GADI_GPIO_54, GADI_GPIO_TYPE_INPUT_0                       },
 #endif
 
 #define SYSTEM_GPIO_EXTPHY_TABLE                          \
     { GADI_GPIO_19, GADI_GPIO_TYPE_INPUT_0                       }, \
-    { GADI_GPIO_47, GADI_GPIO_TYPE_INPUT_0                       }, 
+    { GADI_GPIO_47, GADI_GPIO_TYPE_INPUT_0                       },
 
 #define SYSTEM_GPIO_INTPHY_TABLE                          \
     { GADI_GPIO_19, GADI_GPIO_TYPE_OUTPUT_EPHY_LED_3             }, \
-    { GADI_GPIO_47, GADI_GPIO_TYPE_OUTPUT_AOMCLK                 }, 
+    { GADI_GPIO_47, GADI_GPIO_TYPE_OUTPUT_AOMCLK                 },
 
 //------------------------system gpio map---------------------------
 #define SYSTEM_GPIO_XREF_TABLE                            \
@@ -89,19 +89,19 @@
     SYSTEM_GPIO_INTPHY_TABLE                          \
     { GADI_GPIO_48, GADI_GPIO_TYPE_OUTPUT_0            /* PTZ  */}, \
     { GADI_GPIO_49, GADI_GPIO_TYPE_OUTPUT_0            /* PTZ  */}, \
-    SYSTEM_GADI_GPIO_SD_TABLE                         
+    SYSTEM_GADI_GPIO_SD_TABLE
 
 #define SYSTEM_GPIO_IR_CUT1                    GADI_GPIO_20
 #define SYSTEM_GPIO_IR_CUT2                    0xFF
 
 #define SYSTEM_ETH_PHY_RESET_GPIO              0xFF
-#define SYSTEM_GPIO_SENSOR_RESET    		   GADI_GPIO_27
+#define SYSTEM_GPIO_SENSOR_RESET               GADI_GPIO_27
 
 #define SYSTEM_GPIO_SENSOR_ENABLE              GADI_GPIO_8
 #define SYSTEM_GPIO_SENSOR_PWDNF               GADI_GPIO_13
 #define SYSTEM_GPIO_WIFI_ENABLE                GADI_GPIO_7
 #define SYSTEM_GPIO_LED_CTRL                   GADI_GPIO_10
-#define SYSTEM_GPIO_SPI_SETDEFAULT             GADI_GPIO_11 
-#define SYSTEM_GPIO_SPK_ENABLE                 GADI_GPIO_17 
-#define SYSTEM_GPIO_SD_POWER                   GADI_GPIO_40 
+#define SYSTEM_GPIO_SPI_SETDEFAULT             GADI_GPIO_11
+#define SYSTEM_GPIO_SPK_ENABLE                 GADI_GPIO_17
+#define SYSTEM_GPIO_SD_POWER                   GADI_GPIO_40
 #endif

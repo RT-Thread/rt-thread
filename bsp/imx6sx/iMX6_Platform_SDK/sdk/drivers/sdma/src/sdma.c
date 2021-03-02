@@ -180,7 +180,7 @@ static void sdma_interrupt_handler(void)
 
 /*---------------------------------------- global functions --------------------------------------------*/
 
-/*! 
+/*!
  * Initialize the system environment for SDMA. In this function will:
  *    1. Reset SDMA controller
  *    2. Setup configurations like AP DMA/SDMA clock ratio, CCB base address etc
@@ -210,7 +210,7 @@ int32_t sdma_init(uint32_t *env_buf, uint32_t base_addr)
     HW_SDMAARM_RESET.B.RESET = 1;
     while(HW_SDMAARM_RESET.B.RESET == 1);
     HW_SDMAARM_CONFIG.B.ACR = 0;//AP DMA/SDMA clock ratio: 2:1
-    HW_SDMAARM_MC0PTR_WR((uint32_t)sdma_envp->sdma_ccb);  //Set CCB base address    
+    HW_SDMAARM_MC0PTR_WR((uint32_t)sdma_envp->sdma_ccb);  //Set CCB base address
 
     sdma_envp->sdma_ccb[0].baseBDptr = (uint32_t)&sdma_envp->chan0BD;
 
@@ -268,9 +268,9 @@ void sdma_deinit(void)
 }
 
 /*!
- * Start the channel selected. The channel start condition is: (EO or EP) and DO and (HO or HE). 
+ * Start the channel selected. The channel start condition is: (EO or EP) and DO and (HO or HE).
  * In this function HE is set. There're 2 cases to consider:
- *    1. Channel started by DMA event(EP). In this case, EO should not be set and to start the 
+ *    1. Channel started by DMA event(EP). In this case, EO should not be set and to start the
  *       channel, need to enable the peripheral DMA then set the HE
  *    2. Channel started by the bit in HSTART(HE). In this case, there's no DMA event binding to
  *       the channel. Thus EO is set first, then set the HE
@@ -322,17 +322,17 @@ int32_t sdma_channel_stop(uint32_t channel)
  * @param
  *    cdp: A pointer to user provided data. It includes necessary channel descriptors of:
  *        script_addr: script address in SDMA defined in sdma_script_code.h
- *        gpr[8]:      normally it includes the FIFO address, DMA mask, watermark etc. User 
+ *        gpr[8]:      normally it includes the FIFO address, DMA mask, watermark etc. User
  *                     could refer to the script manual released with the sdma_script_code.h
  *                     for details
- *        dma_mask[2]: DMA mask to set in register of channel enable. Normally it's also 
- *                     provided in gpr[8]. We separate it here is to support some special 
+ *        dma_mask[2]: DMA mask to set in register of channel enable. Normally it's also
+ *                     provided in gpr[8]. We separate it here is to support some special
  *                     script that may have some different usage of GPRs
  *        priority:    the channel priority
  *
  * @param
- *    bdp: A pointer to the un-cacheable and un-bufferable buffer descriptor table allocated by user. User could refer to the 
- *    script manual on how to set the fields inside according to different scripts. To know 
+ *    bdp: A pointer to the un-cacheable and un-bufferable buffer descriptor table allocated by user. User could refer to the
+ *    script manual on how to set the fields inside according to different scripts. To know
  *    the details user may look into the "Application Notes" section of "SDMA controller"
  *    paragraph of the i.MX user guide.
  *
@@ -395,7 +395,7 @@ int32_t sdma_channel_request(sdma_chan_desc_p cdp, sdma_bd_p bdp)
         for (idx = 0; idx < (SDMA_NUM_REQUESTS - 32); idx++) {
             if ((cdp->dma_mask[1] & (1 << idx)) != 0) {
             HW_SDMAARM_CHNENBLn_SET(idx+32,1 << channel);
-		}
+        }
         }
 
         set_channel_override(channel, FALSE, TRUE, FALSE);
@@ -477,13 +477,13 @@ int32_t sdma_channel_release(uint32_t channel)
     return SDMA_RETV_SUCCESS;
 }
 
-/*! 
- * Get the channel's status had been started. 
+/*!
+ * Get the channel's status had been started.
  *
  * @param   channel the channel which status to be check
  * @param   status a pointer hold the status of the channel: ERROR, BUSY and DONE
  *
- * @return   0 on success, -1 when failed 
+ * @return   0 on success, -1 when failed
  */
 uint32_t sdma_channel_status(uint32_t channel, uint32_t *status)
 {
@@ -513,13 +513,13 @@ uint32_t sdma_channel_status(uint32_t channel, uint32_t *status)
     return SDMA_RETV_SUCCESS;
 }
 
-/*! 
- * Lookup the script's address mapped in the SDMA's memory. 
+/*!
+ * Lookup the script's address mapped in the SDMA's memory.
  *
  * @param    script the script to be lookup
  * @param    addr a pointer hold the script's address.
  *
- * @return   0 on success, -1 when failed 
+ * @return   0 on success, -1 when failed
  */
 int32_t sdma_lookup_script(script_name_e script, uint32_t *addr)
 {
@@ -541,9 +541,9 @@ int32_t sdma_lookup_script(script_name_e script, uint32_t *addr)
     return SDMA_RETV_FAIL;
 }
 
-/*! 
- * Setup sdma interrupt. This function attach sdma_interrupt_handler to system and 
- * set the isr for every single channel to default one. 
+/*!
+ * Setup sdma interrupt. This function attach sdma_interrupt_handler to system and
+ * set the isr for every single channel to default one.
  *
  * @return   none
  */
@@ -559,10 +559,10 @@ void sdma_setup_interrupt(void)
     enable_interrupt(IMX_INT_SDMA, CPU_0, 0);
 }
 
-/*! 
- * This function attach isr for the channel to SDMA lib. The isr will be called  
+/*!
+ * This function attach isr for the channel to SDMA lib. The isr will be called
  * in sdma_interrupt_handler.
- * @param    channel channel number to be attached.	
+ * @param    channel channel number to be attached.
  * @param    isr the interrupt service routine for the channel
  * @return   0 on success,
  *           -1 if invalid channel number

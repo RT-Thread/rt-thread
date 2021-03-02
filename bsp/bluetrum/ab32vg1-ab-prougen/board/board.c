@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020-2021, Bluetrum Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -65,16 +65,16 @@ void timer0_isr(int vector, void *param)
 
 void timer0_init(void)
 {
-	TMR0CON =  BIT(7); //TIE
-	TMR0CNT = 0;
+    TMR0CON =  BIT(7); //TIE
+    TMR0CNT = 0;
 
-	rt_hw_interrupt_install(IRQ_TMR0_VECTOR, timer0_isr, RT_NULL, "tick");
+    rt_hw_interrupt_install(IRQ_TMR0_VECTOR, timer0_isr, RT_NULL, "tick");
 }
 
 void timer0_cfg(uint32_t ticks)
 {
-	TMR0PR  = (uint32_t)(ticks - 1UL);       //1ms interrupt
-	TMR0CON |= BIT(0); // EN
+    TMR0PR  = (uint32_t)(ticks - 1UL);       //1ms interrupt
+    TMR0CON |= BIT(0); // EN
 }
 
 void hal_mdelay(uint32_t ms)
@@ -85,7 +85,7 @@ void hal_mdelay(uint32_t ms)
 void rt_hw_systick_init(void)
 {
     CLKCON2 &= 0x00ffffff;
-    CLKCON2 |= (25 << 24);                                  //é…ç½®x26m_div_clk = 1M (timer, ir, fmam ...ç”¨åˆ°)
+    CLKCON2 |= (25 << 24);                                  //ÅäÖÃx26m_div_clk = 1M (timer, ir, fmam ...ÓÃµ½)
     CLKCON0 &= ~(7 << 23);
     CLKCON0 |= BIT(24);                                     //tmr_inc select x26m_div_clk = 1M
 

@@ -809,10 +809,10 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
     GD_ETH_MAC_DesT* p_RxDesTmp;
     volatile GD_ETH_MAC_DesT* p;
     volatile GD_ETH_MAC_DesT* p_FrameStart;
-    GBOOL  b_FrameStart=GFALSE; 
+    GBOOL  b_FrameStart=GFALSE;
     volatile U8* revbuf;
-    volatile U8* p_RxCopyBuf;    
-    volatile U8* p_RxSrcBuf;    
+    volatile U8* p_RxCopyBuf;
+    volatile U8* p_RxSrcBuf;
     U16 m_RxDesLoopBackNum=0;
     U16 n_RxFrameLen=0;
     //U8* des;
@@ -857,13 +857,13 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
             b_FrameStart=GTRUE;
             m_RxDesLoopBackNum=0;
             n_RxFrameLen=0;
-            
+
             p_RxDesTmp=(volatile GD_ETH_MAC_DesT*)((device->RxDesStartAddr) + (device->RxbufferNum-1) * sizeof(GD_ETH_MAC_DesT));
             p_RxCopyBuf=(volatile U8 *)(p_RxDesTmp->des2+device->SizePerRxBuffer);
 
         }
         else if(b_FrameStart==GTRUE)//not only one buffer
-        {  
+        {
             if(p==(volatile GD_ETH_MAC_DesT*)device->RxDesStartAddr)//(device->CurRxDesSite == 0)//loopback
             {
                 m_RxDesLoopBackNum++;
@@ -891,15 +891,15 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
             {
 #ifdef DEBUG_PRINT
                 GM_Printf("memcpy:SRC_ADDR=0x%08x\tDST_ADDR=0x%08x\tLEN=%d\n!",p_RxCopyBuf,p->des2,len-n_RxFrameLen);
-#endif            
+#endif
                 p_RxSrcBuf=(U8 *)(p->des2);
                 for(i=0;i<len-n_RxFrameLen;i++)
                 {
                     *p_RxCopyBuf++=*p_RxSrcBuf++;
                 }
 
-/*                memcpy((void *)p_RxCopyBuf,(const void *)p_RxSrcBuf,len-n_RxFrameLen);               
-                p_RxCopyBuf=p_RxCopyBuf+(len-n_RxFrameLen);    */ 
+/*                memcpy((void *)p_RxCopyBuf,(const void *)p_RxSrcBuf,len-n_RxFrameLen);
+                p_RxCopyBuf=p_RxCopyBuf+(len-n_RxFrameLen);    */
 
             }
 
@@ -909,7 +909,7 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
             {
                 device->eth_rcve(revbuf,len);
             }
-           
+
             while(p_FrameStart!=p) //Host release all the Rx descriptors to FMAC3
             {
 
@@ -917,7 +917,7 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
                 p_FrameStart->des2 = (U32)device->Rxbufferstart + device->CurRxDesSite * device->SizePerRxBuffer;
                 p_FrameStart->des3 = 0x0;
                 p_FrameStart->des0 = ETH_DES_R0_OWN;//owned by mac
-				
+
                 device->CurRxDesSite++;
                 p_FrameStart++;
                 if(device->CurRxDesSite == device->RxbufferNum)
@@ -925,7 +925,7 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
                     device->CurRxDesSite = 0;
                     p_FrameStart =(GD_ETH_MAC_DesT*) (device->RxDesStartAddr);
                 }
-                
+
             }
 
 
@@ -933,22 +933,22 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
             p->des2 = (U32)device->Rxbufferstart + device->CurRxDesSite * device->SizePerRxBuffer;
             p->des3 = 0x0;
             p->des0 = ETH_DES_R0_OWN;//owned by mac
-			            
+
             device->CurRxDesSite++;
             if(device->CurRxDesSite == device->RxbufferNum)
             {
                 device->CurRxDesSite = 0;
             }
-            
+
             p = (volatile GD_ETH_MAC_DesT*)((device->RxDesStartAddr) + device->CurRxDesSite * sizeof(GD_ETH_MAC_DesT));
-            
+
             b_FrameStart=GFALSE;
             m_RxDesLoopBackNum=0;
-            n_RxFrameLen=0;          
+            n_RxFrameLen=0;
         }
         else if(b_FrameStart==GTRUE)//not last buffer, the frame has two buffer at least
         {
-            ethGetRxDescriptorDataSize(p,&len);//len==device->SizePerRxBuffer ,except for last buffer               
+            ethGetRxDescriptorDataSize(p,&len);//len==device->SizePerRxBuffer ,except for last buffer
             n_RxFrameLen=n_RxFrameLen+len;
             if(m_RxDesLoopBackNum!=0)//copy buffer
             {
@@ -960,10 +960,10 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
                 {
                     *p_RxCopyBuf++=*p_RxSrcBuf++;
                 }
- 
-/*                memcpy((void *)p_RxCopyBuf,(const void *)p_RxSrcBuf,len);               
-                p_RxCopyBuf=p_RxCopyBuf+len; */               
-            }     
+
+/*                memcpy((void *)p_RxCopyBuf,(const void *)p_RxSrcBuf,len);
+                p_RxCopyBuf=p_RxCopyBuf+len; */
+            }
 
             if(p==p_RxDesTmp)
             {
@@ -973,7 +973,7 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
             {
                 p++;
             }
-            //continue;    
+            //continue;
         }
         else//error
         {
@@ -990,10 +990,10 @@ void ETH_MAC_RxDataProcess(GD_HANDLE handle)
                 device->CurRxDesSite = 0;
             }
             p = (volatile GD_ETH_MAC_DesT*)((device->RxDesStartAddr) + device->CurRxDesSite * sizeof(GD_ETH_MAC_DesT));
-            
+
             b_FrameStart=GFALSE;
             m_RxDesLoopBackNum=0;
-            n_RxFrameLen=0;    
+            n_RxFrameLen=0;
         }
     }
 }

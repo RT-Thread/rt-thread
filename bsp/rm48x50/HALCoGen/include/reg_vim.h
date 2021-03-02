@@ -2,7 +2,7 @@
 *   @brief VIM Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -34,7 +34,7 @@
 typedef volatile struct vimBase
 {
     uint32      IRQINDEX;         /* 0x0000        */
-    uint32      FIQINDEX;         /* 0x0004        */	
+    uint32      FIQINDEX;         /* 0x0004        */
     uint32        rsvd1;          /* 0x0008        */
     uint32        rsvd2;          /* 0x000C        */
     uint32      FIRQPR0;          /* 0x0010        */
@@ -63,7 +63,7 @@ typedef volatile struct vimBase
     uint32      WAKEMASKCLR3;     /* 0x006C        */
     uint32      IRQVECREG;        /* 0x0070        */
     uint32      FIQVECREG;        /* 0x0074        */
-    uint32      CAPEVT;           /* 0x0078        */	
+    uint32      CAPEVT;           /* 0x0078        */
     uint32        rsvd3;          /* 0x007C        */
     uint32      CHANCTRL[24U];    /* 0x0080-0x017C */
 } vimBASE_t;

@@ -49,7 +49,7 @@
     #define GD_USB_MODULE_ID            18
     #define GD_ICC_MODULE_ID            19
     #define GD_WDOG_MODULE_ID           20
-	#define GD_AUDIO_MODULE_ID          21
+    #define GD_AUDIO_MODULE_ID          21
     /*
     ************************************************************
     **

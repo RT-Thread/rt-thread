@@ -66,10 +66,10 @@ extern "C" {
  * Structure to be used when transferring I<SUP>2</SUP>C slave packets.
  */
 struct i2c_slave_packet {
-	/** Length of data array */
-	uint16_t data_length;
-	/** Data array containing all data to be transferred */
-	uint8_t *data;
+    /** Length of data array */
+    uint16_t data_length;
+    /** Data array containing all data to be transferred */
+    uint8_t *data;
 };
 
 #if I2C_SLAVE_CALLBACK_MODE == true
@@ -79,24 +79,24 @@ struct i2c_slave_packet {
  * The available callback types for the I<SUP>2</SUP>C slave.
  */
 enum i2c_slave_callback {
-	/** Callback for packet write complete */
-	I2C_SLAVE_CALLBACK_WRITE_COMPLETE,
-	/** Callback for packet read complete */
-	I2C_SLAVE_CALLBACK_READ_COMPLETE,
-	/**
-	 * Callback for read request from master - can be used to
-	 * issue a write
-	 */
-	I2C_SLAVE_CALLBACK_READ_REQUEST,
-	/**
-	 * Callback for write request from master - can be used to issue a read
-	 */
-	I2C_SLAVE_CALLBACK_WRITE_REQUEST,
-	/** Callback for error */
-	I2C_SLAVE_CALLBACK_ERROR,
+    /** Callback for packet write complete */
+    I2C_SLAVE_CALLBACK_WRITE_COMPLETE,
+    /** Callback for packet read complete */
+    I2C_SLAVE_CALLBACK_READ_COMPLETE,
+    /**
+     * Callback for read request from master - can be used to
+     * issue a write
+     */
+    I2C_SLAVE_CALLBACK_READ_REQUEST,
+    /**
+     * Callback for write request from master - can be used to issue a read
+     */
+    I2C_SLAVE_CALLBACK_WRITE_REQUEST,
+    /** Callback for error */
+    I2C_SLAVE_CALLBACK_ERROR,
 #  if !defined(__DOXYGEN__)
-	/** Total number of callbacks */
-	_I2C_SLAVE_CALLBACK_N,
+    /** Total number of callbacks */
+    _I2C_SLAVE_CALLBACK_N,
 #  endif
 };
 
@@ -106,7 +106,7 @@ struct i2c_slave_module;
 
 /** Callback type. */
 typedef void (*i2c_slave_callback_t)(
-		struct i2c_slave_module *const module);
+        struct i2c_slave_module *const module);
 #  endif
 #endif
 
@@ -116,12 +116,12 @@ typedef void (*i2c_slave_callback_t)(
  * Enum for the direction of a request.
  */
 enum i2c_slave_direction {
-	/** Read */
-	I2C_SLAVE_DIRECTION_READ,
-	/** Write */
-	I2C_SLAVE_DIRECTION_WRITE,
-	/** No direction */
-	I2C_SLAVE_DIRECTION_NONE,
+    /** Read */
+    I2C_SLAVE_DIRECTION_READ,
+    /** Write */
+    I2C_SLAVE_DIRECTION_WRITE,
+    /** No direction */
+    I2C_SLAVE_DIRECTION_NONE,
 };
 
 /**
@@ -135,32 +135,32 @@ enum i2c_slave_direction {
  */
 struct i2c_slave_module {
 #if !defined(__DOXYGEN__)
-	/** Hardware instance initialized for the struct */
-	I2c *hw;
-	/** Module lock */
-	volatile bool locked;
-	/** Timeout value for polled functions */
-	uint16_t buffer_timeout;
+    /** Hardware instance initialized for the struct */
+    I2c *hw;
+    /** Module lock */
+    volatile bool locked;
+    /** Timeout value for polled functions */
+    uint16_t buffer_timeout;
 #  if I2C_SLAVE_CALLBACK_MODE == true
-	/** Pointers to callback functions */
-	volatile i2c_slave_callback_t callbacks[_I2C_SLAVE_CALLBACK_N];
-	/** Mask for registered callbacks */
-	volatile uint8_t registered_callback;
-	/** Mask for enabled callbacks */
-	volatile uint8_t enabled_callback;
-	/** The total number of bytes to transfer */
-	volatile uint16_t buffer_length;
-	/**
-	 * Counter used for bytes left to send in write and to count number of
-	 * obtained bytes in read
-	 */
-	uint16_t buffer_remaining;
-	/** Data buffer for packet write and read */
-	volatile uint8_t *buffer;
-	/** Save direction of request from master. 1 = read, 0 = write. */
-	volatile enum i2c_transfer_direction transfer_direction;
-	/** Status for status read back in error callback */
-	volatile enum status_code status;
+    /** Pointers to callback functions */
+    volatile i2c_slave_callback_t callbacks[_I2C_SLAVE_CALLBACK_N];
+    /** Mask for registered callbacks */
+    volatile uint8_t registered_callback;
+    /** Mask for enabled callbacks */
+    volatile uint8_t enabled_callback;
+    /** The total number of bytes to transfer */
+    volatile uint16_t buffer_length;
+    /**
+     * Counter used for bytes left to send in write and to count number of
+     * obtained bytes in read
+     */
+    uint16_t buffer_remaining;
+    /** Data buffer for packet write and read */
+    volatile uint8_t *buffer;
+    /** Save direction of request from master. 1 = read, 0 = write. */
+    volatile enum i2c_transfer_direction transfer_direction;
+    /** Status for status read back in error callback */
+    volatile enum status_code status;
 #  endif
 #endif
 };
@@ -174,22 +174,22 @@ struct i2c_slave_module {
  * \ref i2c_slave_get_config_defaults.
  */
 struct i2c_slave_config {
-	/** Timeout to wait for master in polled functions */
-	uint16_t buffer_timeout;
-	/** Address or upper limit of address range */
-	uint16_t address;
-	/** CLOCK INPUT to use as clock source */
-	enum i2c_clock_input clock_source;
-	/** Divide ratio used to generate the sck clock */
-	uint16_t clock_divider;
-	/** PAD0 (SDA) pin number */
-	uint32_t pin_number_pad0;
-	/** PAD0 (SDA) pinmux selection */
-	uint32_t pinmux_sel_pad0;
-	/** PAD1 (SCL) pin numer */
-	uint32_t pin_number_pad1;
-	/** PAD1 (SCL) pinmux selection */
-	uint32_t pinmux_sel_pad1;
+    /** Timeout to wait for master in polled functions */
+    uint16_t buffer_timeout;
+    /** Address or upper limit of address range */
+    uint16_t address;
+    /** CLOCK INPUT to use as clock source */
+    enum i2c_clock_input clock_source;
+    /** Divide ratio used to generate the sck clock */
+    uint16_t clock_divider;
+    /** PAD0 (SDA) pin number */
+    uint32_t pin_number_pad0;
+    /** PAD0 (SDA) pinmux selection */
+    uint32_t pinmux_sel_pad0;
+    /** PAD1 (SCL) pin numer */
+    uint32_t pin_number_pad1;
+    /** PAD1 (SCL) pinmux selection */
+    uint32_t pinmux_sel_pad1;
 };
 
 /**
@@ -198,16 +198,16 @@ struct i2c_slave_config {
  */
 
 void i2c_slave_get_config_defaults(
-		struct i2c_slave_config *const config);
+        struct i2c_slave_config *const config);
 enum status_code i2c_slave_init(struct i2c_slave_module *const module,
-		I2c *const hw,
-		const struct i2c_slave_config *const config);
+        I2c *const hw,
+        const struct i2c_slave_config *const config);
 enum status_code i2c_slave_write_packet_wait(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet);
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet);
 enum status_code i2c_slave_read_packet_wait(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet);
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet);
 
 /** @} */
 
@@ -216,10 +216,10 @@ enum status_code i2c_slave_read_packet_wait(
  * @{
  */
 uint32_t i2c_slave_get_status(
-		struct i2c_slave_module *const module);
+        struct i2c_slave_module *const module);
 void i2c_slave_clear_status(
-		struct i2c_slave_module *const module,
-		uint32_t status_flags);
+        struct i2c_slave_module *const module,
+        uint32_t status_flags);
 /** @} */
 
 /** @} */

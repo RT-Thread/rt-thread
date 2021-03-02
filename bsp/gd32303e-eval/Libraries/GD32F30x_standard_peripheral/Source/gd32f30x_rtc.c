@@ -51,7 +51,7 @@ void rtc_configuration_mode_enter(void)
 }
 
 /*!
-    \brief      exit RTC configuration mode 
+    \brief      exit RTC configuration mode
     \param[in]  none
     \param[out] none
     \retval     none
@@ -166,7 +166,7 @@ uint32_t rtc_divider_get(void)
 }
 
 /*!
-    \brief      get RTC flag status 
+    \brief      get RTC flag status
     \param[in]  flag: specify which flag status to get
           \arg    RTC_FLAG_SECOND: second interrupt flag
           \arg    RTC_FLAG_ALARM: alarm interrupt flag

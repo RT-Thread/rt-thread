@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/higherapi/Fopen.c $                                        
- $Revision: 18 $                                       
- $Date: 9/18/03 11:50a $                                           
+ $Archive: /Fatfs/FileSystem/Fat32/higherapi/Fopen.c $
+ $Revision: 18 $
+ $Date: 9/18/03 11:50a $
  Description: Fopen.c
- Notes:	This file read provides higherlevel API function to open a file
+ Notes:    This file read provides higherlevel API function to open a file
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -55,11 +55,11 @@ int totalFileOpened = 0;
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name
-                  2) Mode 
-				   
-   Outputs:       HandleNumber of free handle populated by the given filename 
-                  or error if function fails      
-   
+                  2) Mode
+
+   Outputs:       HandleNumber of free handle populated by the given filename
+                  or error if function fails
+
    Description:   Opens the specified file in specified mode. It considers
                   the string as DBCS.
 ----------------------------------------------------------------------------*/
@@ -126,8 +126,8 @@ int32_t Fopen(uint8_t * filepath, uint8_t * mode)
             Freehandle(HandleNumber);
             return (ERROR_OS_FILESYSTEM_FILE_NOT_FOUND);
         }
-        /* If the file is to be opened in w, w+(write), a or a+(append) mode and 
-           if the file is not found then create a new file of the name 
+        /* If the file is to be opened in w, w+(write), a or a+(append) mode and
+           if the file is not found then create a new file of the name
            specified in the specified directory */
         if ((Retval = Fcreate(HandleNumber, filepath, kDBCSEncoding, strlen, currentposition)) < 0) {
             Freehandle(HandleNumber);
@@ -174,7 +174,7 @@ int32_t Fopen(uint8_t * filepath, uint8_t * mode)
                 return (ERROR_OS_FILESYSTEM_FILE_WRITE_FAILED);
             }
 
-            /* If file is to be opened in write mode (i.e. W or WPLUS) then 
+            /* If file is to be opened in write mode (i.e. W or WPLUS) then
                delete the contents of the file. */
 
             if (Mode == WRITE_MODE || Mode == WPLUS) {
@@ -246,11 +246,11 @@ int32_t Fopen(uint8_t * filepath, uint8_t * mode)
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name
-                  2) Open mode 
-				   
-   Outputs:       HandleNumber of free handle populated by the given filename 
-                  or error if function fails      
-   
+                  2) Open mode
+
+   Outputs:       HandleNumber of free handle populated by the given filename
+                  or error if function fails
+
    Description:   Opens the specified file in specified mode. It considers
                   the string as UTF16.
 <
@@ -319,8 +319,8 @@ int32_t Fopenw(uint8_t * filepath, uint8_t * mode)
             Freehandle(HandleNumber);
             return (ERROR_OS_FILESYSTEM_FILE_NOT_FOUND);
         }
-        /* If file is to be opened in w, w+(write), a or a+(append) mode and 
-           if the file is not found then create a new file of the name 
+        /* If file is to be opened in w, w+(write), a or a+(append) mode and
+           if the file is not found then create a new file of the name
            specified in the specified directory */
 
         if ((Retval =
@@ -351,14 +351,14 @@ int32_t Fopenw(uint8_t * filepath, uint8_t * mode)
             UpdateHandle(HandleNumber, clusterno);
             Updatehandlemode(HandleNumber, READ_MODE + WRITE_MODE);
             /* If file is found and is to be opened for w, w+(write), a or a+(append)
-               mode then check if the file is already opened for write mode. If file is 
+               mode then check if the file is already opened for write mode. If file is
                already opened for write mode then return error 'File can not be opened in write mode' */
 
             if (IsHandleWriteAllocated(HandleNumber) == WRITE_MODE) {
                 Freehandle(HandleNumber);
                 return (ERROR_OS_FILESYSTEM_FILE_WRITE_FAILED);
             }
-            /* If file is to be opened in write mode (i.e. W or WPLUS) then 
+            /* If file is to be opened in write mode (i.e. W or WPLUS) then
                delete the contents of the file. */
             if (Mode == WRITE_MODE || Mode == WPLUS) {
                 if (Handle[HandleNumber].StartingCluster != 0) {
@@ -426,11 +426,11 @@ int32_t Fopenw(uint8_t * filepath, uint8_t * mode)
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name
-				   
+
    Outputs:       SUCCESS or an error code if error occurs
-   
-   Description:   This function marks the specified file as deleted by making 
-                  the first byte (character) of the file name in the directory 
+
+   Description:   This function marks the specified file as deleted by making
+                  the first byte (character) of the file name in the directory
                   entry as 0xE5.
 ----------------------------------------------------------------------------*/
 RtStatus_t Fremove(const uint8_t * filepath)
@@ -474,7 +474,7 @@ RtStatus_t Fremove(const uint8_t * filepath)
         }
     }
 
-    /* Check file attribute, if file attribute is system, volume 
+    /* Check file attribute, if file attribute is system, volume
        or directory then file can not be deleted. Return error */
     RecordNo = Handle[HandleNumber].CurrentOffset >> 5;
     /* check for root directory */
@@ -499,7 +499,7 @@ RtStatus_t Fremove(const uint8_t * filepath)
             return Retval;
         }
     }
-    /* Check whether the file is opened, if file is opened it can not be 
+    /* Check whether the file is opened, if file is opened it can not be
        deleted. Return error */
 
     if (Isfileopen(HandleNumber) == ERROR_OS_FILESYSTEM_FILE_OPEN) {
@@ -525,7 +525,7 @@ RtStatus_t Fremove(const uint8_t * filepath)
         Freehandle(HandleNumber);
         return (SUCCESS);
     }
-    /* Delete the contents of the file (i.e. mark all the clusters occupied by 
+    /* Delete the contents of the file (i.e. mark all the clusters occupied by
        the file as zero in FAT Table). */
     if ((Retval = DeleteContent(HandleNumber, 0)) < 0) {
         Freehandle(HandleNumber);
@@ -544,11 +544,11 @@ RtStatus_t Fremove(const uint8_t * filepath)
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name
-				   
+
    Outputs:       SUCCESS or an error code if error occurs
-   
-   Description:   This function marks the specified file as deleted by making 
-                  the first byte (character) of the file name in the directory 
+
+   Description:   This function marks the specified file as deleted by making
+                  the first byte (character) of the file name in the directory
                   entry as 0xE5. It considers the string as UTF16.
 ----------------------------------------------------------------------------*/
 RtStatus_t Fremovew(uint8_t * filepath)
@@ -580,7 +580,7 @@ RtStatus_t Fremovew(uint8_t * filepath)
         return ERROR_OS_FILESYSTEM_FILE_NOT_FOUND;
     }
 
-    /* Check file attribute, if file attribute is system, volume 
+    /* Check file attribute, if file attribute is system, volume
        or directory then file can not be deleted. Return error */
     RecordNo = Handle[HandleNumber].CurrentOffset >> 5;
 
@@ -606,7 +606,7 @@ RtStatus_t Fremovew(uint8_t * filepath)
             return Retval;
         }
     }
-    /* Check whether the file is opened, if file is opened it can not be 
+    /* Check whether the file is opened, if file is opened it can not be
        deleted. Return error */
     if (Isfileopen(HandleNumber) == ERROR_OS_FILESYSTEM_FILE_OPEN) {
         Freehandle(HandleNumber);
@@ -623,7 +623,7 @@ RtStatus_t Fremovew(uint8_t * filepath)
     /* update the handle to associate with the file to be deleted */
     UpdateHandle(HandleNumber, clusterno);
 
-    /* Delete the contents of the file (i.e. Mark all the clusters occupied by 
+    /* Delete the contents of the file (i.e. Mark all the clusters occupied by
        the file as zero in FAT Table). */
     if ((Retval = DeleteContent(HandleNumber, 0)) < 0) {
         Freehandle(HandleNumber);
@@ -640,7 +640,7 @@ RtStatus_t Fremovew(uint8_t * filepath)
 //!
 //! \fntype Function
 //!
-//! This function renames given file.  
+//! This function renames given file.
 //!
 //! \param[in]  oldFilename
 //! \param[in]  newFilename
@@ -856,7 +856,7 @@ RtStatus_t DeleteContent(int32_t HandleNumber, int32_t bUseVestigialClusterErase
         //
         // What's needed is a "ceiling" calculation.  We can have that calculation by adding
         // "clustersize-in-bytes - 1" to the file size, then truncating to the integer quantity
-        // of clusters.  ClusterMask happens to equal "clustersize-in-bytes - 1". 
+        // of clusters.  ClusterMask happens to equal "clustersize-in-bytes - 1".
         //
         // This way, 0.5 clusters becomes 1, 1 cluster is unchanged, 1.5 clusters becomes 2, etc.
     } else {

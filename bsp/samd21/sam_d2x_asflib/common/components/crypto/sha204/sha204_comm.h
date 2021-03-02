@@ -82,15 +82,15 @@
 //! communication error
 #define SHA204_STATUS_BYTE_COMM      ((uint8_t) 0xFF)
 
-/** 
+/**
  * \brief This structure contains the parameters for the \ref sha204c_send_and_receive function.
  */
 struct sha204_send_and_receive_parameters {
-	uint8_t *tx_buffer;         //!< pointer to send buffer
-	uint8_t rx_size;            //!< size of receive buffer
-	uint8_t *rx_buffer;         //!< pointer to receive buffer
-	uint8_t poll_delay;         //!< how long to wait before polling for response-ready
-	uint8_t poll_timeout;       //!< how long to poll before timing out
+    uint8_t *tx_buffer;         //!< pointer to send buffer
+    uint8_t rx_size;            //!< size of receive buffer
+    uint8_t *rx_buffer;         //!< pointer to receive buffer
+    uint8_t poll_delay;         //!< how long to wait before polling for response-ready
+    uint8_t poll_timeout;       //!< how long to poll before timing out
 };
 
 /**

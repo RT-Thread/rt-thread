@@ -53,7 +53,7 @@
 #define FALSE       0
 //@}
 
-//! @brief 
+//! @brief
 #define NONE_CHAR   (0xFF)
 
 //! @brief A parameter was out of range or otherwise invalid.
@@ -71,7 +71,7 @@
 //@}
 
 //! @brief Computes the number of elements in an array.
-#define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
+#define ARRAY_SIZE(x)    (sizeof(x) / sizeof((x)[0]))
 
 //! @brief Debug print utility.
 //!

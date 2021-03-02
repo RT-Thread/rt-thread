@@ -29,7 +29,7 @@
 
 /* skip the inclusion in dependency statge */
 #ifndef __NO_SETJMP
-	#include <stdio.h>
+    #include <stdio.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
@@ -109,30 +109,30 @@ void USB_Prepare_Data(void)
     wav_buff[0]=0x0C;
     wav_buff[1]=odd_img;
 
-	    for(j=2;j<HEADER_PACKET_SIZE;j++)
-	    {
-	   		wav_buff[j]=0x00;
-	    }
-	
-    /* copy data to buffer */
-  	for(k=HEADER_PACKET_SIZE;k<VIDEO_PACKET_SIZE;k++,video_position++)
-  	{
-  		if((0xff==video_data[video_position-1])&&(0xd9==video_data[video_position]))
-  		{
-  			wav_buff[1]|=0x02;
-  			odd_img=(uint_8)(1-odd_img);
-  			
-  			video_position++;
-			
-  			break;
-  		}
-  		else
-  		{
-  			wav_buff[k]	= video_data[video_position];
+        for(j=2;j<HEADER_PACKET_SIZE;j++)
+        {
+               wav_buff[j]=0x00;
+        }
 
-  		}
-  		
-  	}
+    /* copy data to buffer */
+      for(k=HEADER_PACKET_SIZE;k<VIDEO_PACKET_SIZE;k++,video_position++)
+      {
+          if((0xff==video_data[video_position-1])&&(0xd9==video_data[video_position]))
+          {
+              wav_buff[1]|=0x02;
+              odd_img=(uint_8)(1-odd_img);
+
+              video_position++;
+
+              break;
+          }
+          else
+          {
+              wav_buff[k]    = video_data[video_position];
+
+          }
+
+      }
 }
 
  /******************************************************************************
@@ -154,7 +154,7 @@ void TestApp_Init(void)
 
     DisableInterrupts;
 
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_dis();
     #endif
 
@@ -164,7 +164,7 @@ void TestApp_Init(void)
     error = USB_Class_Video_Init(CONTROLLER_ID,USB_App_Callback,
                                 NULL,NULL);
 
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
      usb_int_en();
     #endif
     EnableInterrupts;
@@ -214,16 +214,16 @@ static void USB_App_Callback (
         //(void)printf("Virtual camera is working ...\r\n");
     }
     else if((event_type == USB_APP_SEND_COMPLETE) && (TRUE == start_app))
-    {	
+    {
 
-		if(video_position > video_size)
-		{
-			video_position = 0;
-		}
-		
-		USB_Prepare_Data();
-		    	
-    	(void)USB_Class_Video_Send_Data(controller_ID,VIDEO_ENDPOINT,wav_buff,VIDEO_PACKET_SIZE);
+        if(video_position > video_size)
+        {
+            video_position = 0;
+        }
+
+        USB_Prepare_Data();
+
+        (void)USB_Class_Video_Send_Data(controller_ID,VIDEO_ENDPOINT,wav_buff,VIDEO_PACKET_SIZE);
      }
 
     return;
@@ -251,7 +251,7 @@ void TestApp_Task(void)
       start_send = FALSE;
 
       USB_Prepare_Data();
- 	(void)USB_Class_Video_Send_Data(CONTROLLER_ID,VIDEO_ENDPOINT,wav_buff,VIDEO_PACKET_SIZE) ;
+     (void)USB_Class_Video_Send_Data(CONTROLLER_ID,VIDEO_ENDPOINT,wav_buff,VIDEO_PACKET_SIZE) ;
     }
 }
 

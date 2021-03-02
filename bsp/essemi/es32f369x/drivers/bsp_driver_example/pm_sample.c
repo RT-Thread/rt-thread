@@ -8,77 +8,77 @@
  * 2020-12-15     liuhy       first implementation.
  */
 /*
- * ç¨‹åºæ¸…å•ï¼šè¿™æ˜¯ä¸€ä¸ª pmç¡çœ å”¤é†’çš„ä½¿ç”¨ä¾‹ç¨‹
- * ä¾‹ç¨‹å¯¼å‡ºäº† pm_sample å‘½ä»¤åˆ°æ§åˆ¶ç»ˆç«¯
- * å‘½ä»¤è°ƒç”¨æ ¼å¼ï¼špm_sample
- * å‘½ä»¤è§£é‡Šï¼šè¿›å…¥ä¸åŒçš„ç¡çœ æ¨¡å¼ï¼Œç„¶åç”¨æŒ‰é”®å”¤é†’
- * ç¨‹åºåŠŸèƒ½ï¼šé€šè¿‡ä¸²å£è¾“å‡ºå­—ç¬¦ä¸²ï¼Œå‘ŠçŸ¥è¿›å…¥ç¡çœ å’Œå”¤é†’ç¡çœ çš„æƒ…å†µã€‚
+ * ³ÌĞòÇåµ¥£ºÕâÊÇÒ»¸ö pmË¯Ãß»½ĞÑµÄÊ¹ÓÃÀı³Ì
+ * Àı³Ìµ¼³öÁË pm_sample ÃüÁîµ½¿ØÖÆÖÕ¶Ë
+ * ÃüÁîµ÷ÓÃ¸ñÊ½£ºpm_sample
+ * ÃüÁî½âÊÍ£º½øÈë²»Í¬µÄË¯ÃßÄ£Ê½£¬È»ºóÓÃ°´¼ü»½ĞÑ
+ * ³ÌĞò¹¦ÄÜ£ºÍ¨¹ı´®¿ÚÊä³ö×Ö·û´®£¬¸æÖª½øÈëË¯ÃßºÍ»½ĞÑË¯ÃßµÄÇé¿ö¡£
 */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_pm.h"
 
-#define PM_NAME       "pm"      /* è®¾å¤‡åç§° */
-#define WAKE_UP_PIN     51      /* å”¤é†’æº */
-#define SLEEP_TIMES     12      /* è¿›å…¥ç¡çœ æ¬¡æ•°ï¼Œè½®æµè¿›å…¥ä¸åŒçš„ç¡çœ æ¨¡å¼ï¼ŒåŒ…æ‹¬æ— ç¡çœ æ¨¡å¼ */
+#define PM_NAME       "pm"      /* Éè±¸Ãû³Æ */
+#define WAKE_UP_PIN     51      /* »½ĞÑÔ´ */
+#define SLEEP_TIMES     12      /* ½øÈëË¯Ãß´ÎÊı£¬ÂÖÁ÷½øÈë²»Í¬µÄË¯ÃßÄ£Ê½£¬°üÀ¨ÎŞË¯ÃßÄ£Ê½ */
 
 
 struct pm_callback_t
 {
-     volatile int in_fun_times;   /*è¿›å…¥å‡½æ•°çš„æ¬¡æ•°*/
-     volatile char flag;          /*æ ‡å¿—*/
-     volatile int mode;           /*éœ€è¦æ‰“å°çš„æ¨¡å¼*/
+     volatile int in_fun_times;   /*½øÈëº¯ÊıµÄ´ÎÊı*/
+     volatile char flag;          /*±êÖ¾*/
+     volatile int mode;           /*ĞèÒª´òÓ¡µÄÄ£Ê½*/
 };
 
 volatile struct pm_callback_t g_pm_data;
- 
-uint32_t save_load_mem[1024] __attribute__ ((aligned(4)));  /*å¤‡ä»½çš„ç©ºé—´*/
 
-/*è¿›å…¥ç¡çœ å‰ï¼Œç¡çœ å”¤é†’åï¼Œéƒ½ä¼šè¿›å…¥ã€‚*/
-/*å‡½æ•°æ‰“å°ç¡çœ ç›¸å…³çš„ä¿¡æ¯*/
+uint32_t save_load_mem[1024] __attribute__ ((aligned(4)));  /*±¸·İµÄ¿Õ¼ä*/
+
+/*½øÈëË¯ÃßÇ°£¬Ë¯Ãß»½ĞÑºó£¬¶¼»á½øÈë¡£*/
+/*º¯Êı´òÓ¡Ë¯ÃßÏà¹ØµÄĞÅÏ¢*/
 void sleep_in_out_callback(rt_uint8_t event, rt_uint8_t mode, void *data)
 {
-    /*æ²¡æœ‰æ ‡å¿—ï¼Œä¸å¤„ç†*/
+    /*Ã»ÓĞ±êÖ¾£¬²»´¦Àí*/
     if(!(g_pm_data.flag))
     {
         return;
     }
-    
-    /*æ ‡å¿—ä¸æ­£å¸¸ï¼Œæ¸…ç©ºæ ‡å¿—*/
+
+    /*±êÖ¾²»Õı³££¬Çå¿Õ±êÖ¾*/
     if((g_pm_data.flag) > 2)
     {
         (g_pm_data.flag) = 0;
         return;
     }
-    
-    /*æ¨¡å¼ä¸åŒ¹é…*/
+
+    /*Ä£Ê½²»Æ¥Åä*/
     if(g_pm_data.mode != mode )
     {
         return;
     }
- 
-    /*è¿›å…¥çš„äº‹ä»¶*/
+
+    /*½øÈëµÄÊÂ¼ş*/
     switch(event)
     {
-        /*è¿›å…¥ç¡çœ å‰*/
+        /*½øÈëË¯ÃßÇ°*/
         case RT_PM_ENTER_SLEEP: g_pm_data.flag = 1;
                                 rt_kprintf("\n\r##%d :  ENTER  ",g_pm_data.in_fun_times);
-                                save_register(UART0,sizeof(UART_TypeDef),save_load_mem);    /*å¤‡ä»½å¯„å­˜å™¨çš„å€¼*/
-                                g_pm_data.in_fun_times++;     /*è¿›å…¥ç¡çœ æ¬¡æ•°+1*/
+                                save_register(UART0,sizeof(UART_TypeDef),save_load_mem);    /*±¸·İ¼Ä´æÆ÷µÄÖµ*/
+                                g_pm_data.in_fun_times++;     /*½øÈëË¯Ãß´ÎÊı+1*/
                                 break;
-        /*ç¡çœ å”¤é†’å*/
-        case RT_PM_EXIT_SLEEP:  g_pm_data.flag = 0;  /*ç¡çœ å”¤é†’å*/
-                                load_register(UART0,sizeof(UART_TypeDef),save_load_mem);    /*è¿˜åŸå¯„å­˜å™¨çš„å€¼*/
+        /*Ë¯Ãß»½ĞÑºó*/
+        case RT_PM_EXIT_SLEEP:  g_pm_data.flag = 0;  /*Ë¯Ãß»½ĞÑºó*/
+                                load_register(UART0,sizeof(UART_TypeDef),save_load_mem);    /*»¹Ô­¼Ä´æÆ÷µÄÖµ*/
                                 rt_kprintf("\n\rEXIT\n\r");
-                                rt_pm_release(mode);   /*é‡Šæ”¾ä¼‘çœ æ¨¡å¼*/
+                                rt_pm_release(mode);   /*ÊÍ·ÅĞİÃßÄ£Ê½*/
                                 return;
-        
+
         default: break;
-        
+
     };
-    
-    /*å½“å‰çš„ç¡çœ æ¨¡å¼*/
+
+    /*µ±Ç°µÄË¯ÃßÄ£Ê½*/
     switch(mode)
     {
         case PM_SLEEP_MODE_NONE: rt_kprintf("PM_SLEEP_MODE_NONE\n\r");
@@ -92,22 +92,22 @@ void sleep_in_out_callback(rt_uint8_t event, rt_uint8_t mode, void *data)
         case PM_SLEEP_MODE_STANDBY: rt_kprintf("PM_SLEEP_MODE_STANDBY\n\r");
                                 break;
         case PM_SLEEP_MODE_SHUTDOWN:  rt_kprintf("PM_SLEEP_MODE_SHUTDOWN\n\r");
-                                break;      
+                                break;
         case PM_SLEEP_MODE_MAX:  rt_kprintf("PM_SLEEP_MODE_MAX\n\r");
                                 break;
-        default: break;           
+        default: break;
     }
-    
+
 }
 
-/* pmæµ‹è¯•å‡½æ•° */
+/* pm²âÊÔº¯Êı */
 static void pm_test(void *parameter)
 {
     int in_mode[7],i = 0;
-    
+
         g_pm_data.in_fun_times = 0;
         g_pm_data.flag = 0;
-    
+
         in_mode[0] = PM_SLEEP_MODE_NONE;
         in_mode[1] = PM_SLEEP_MODE_IDLE;
         in_mode[2] = PM_SLEEP_MODE_LIGHT;
@@ -115,46 +115,46 @@ static void pm_test(void *parameter)
         in_mode[4] = PM_SLEEP_MODE_STANDBY;
         in_mode[5] = PM_SLEEP_MODE_SHUTDOWN;
         in_mode[6] = PM_SLEEP_MODE_MAX;
-    
-    /*è®¾ç½®å›è°ƒå‡½æ•°å’Œç§æœ‰æ•°æ®*/
+
+    /*ÉèÖÃ»Øµ÷º¯ÊıºÍË½ÓĞÊı¾İ*/
     rt_pm_notify_set(sleep_in_out_callback,RT_NULL);
-       
+
     while(i < SLEEP_TIMES)
    {
-       
+
        g_pm_data.mode = in_mode[i%6];
-       
-       /*æ— ä¼‘çœ æ¨¡å¼ï¼Œä¸èµ‹äºˆæ ‡å¿—*/
+
+       /*ÎŞĞİÃßÄ£Ê½£¬²»¸³Óè±êÖ¾*/
        if(g_pm_data.mode != PM_SLEEP_MODE_NONE)
        {
-            g_pm_data.flag = 2;  
-       
+            g_pm_data.flag = 2;
+
        }
-       
-       /*è¯·æ±‚é€‰æ‹©çš„ä¼‘çœ æ¨¡å¼*/
+
+       /*ÇëÇóÑ¡ÔñµÄĞİÃßÄ£Ê½*/
        rt_pm_request(in_mode[i%6]);
 
        rt_thread_mdelay(500);
-       
-       /*æ— ä¼‘çœ æ¨¡å¼ï¼Œä¸éœ€è¦é¢å¤–çš„ç­‰å¾…*/
+
+       /*ÎŞĞİÃßÄ£Ê½£¬²»ĞèÒª¶îÍâµÄµÈ´ı*/
        while(( g_pm_data.flag != 0 )&&(g_pm_data.mode != PM_SLEEP_MODE_NONE))
        {
            rt_thread_mdelay(500);
        }
-       
-       /*é‡Šæ”¾é€‰æ‹©çš„ä¼‘çœ æ¨¡å¼*/
+
+       /*ÊÍ·ÅÑ¡ÔñµÄĞİÃßÄ£Ê½*/
        rt_pm_release(in_mode[i%6]);
-       
+
        i++;
-       
+
    }
-      /*æ¸…é™¤å›è°ƒå‡½æ•°å’Œç§æœ‰æ•°æ®*/
+      /*Çå³ı»Øµ÷º¯ÊıºÍË½ÓĞÊı¾İ*/
     rt_pm_notify_set(RT_NULL,RT_NULL);
     rt_kprintf("thread pm_test close\n\r");
-   
+
 }
 
-/*æŒ‰é”®å”¤é†’çš„å›è°ƒå‡½æ•°*/
+/*°´¼ü»½ĞÑµÄ»Øµ÷º¯Êı*/
 void wake_by_pin(void *args)
 {
 
@@ -163,17 +163,17 @@ void wake_by_pin(void *args)
 static int pm_sample(int argc, char *argv[])
 {
     rt_thread_t thread;
-    
-    /* æŒ‰é”®å¼•è„šä¸ºè¾“å…¥æ¨¡å¼ */
+
+    /* °´¼üÒı½ÅÎªÊäÈëÄ£Ê½ */
     rt_pin_mode(WAKE_UP_PIN, PIN_MODE_INPUT_PULLUP);
-    
-    /* ç»‘å®šä¸­æ–­ï¼Œä¸‹é™æ²¿æ¨¡å¼ï¼Œå›è°ƒå‡½æ•°åä¸ºwake_by_pin */
+
+    /* °ó¶¨ÖĞ¶Ï£¬ÏÂ½µÑØÄ£Ê½£¬»Øµ÷º¯ÊıÃûÎªwake_by_pin */
     rt_pin_attach_irq(WAKE_UP_PIN, PIN_IRQ_MODE_RISING, wake_by_pin, RT_NULL);
-    /* ä½¿èƒ½ä¸­æ–­ */
+    /* Ê¹ÄÜÖĞ¶Ï */
     rt_pin_irq_enable(WAKE_UP_PIN, PIN_IRQ_ENABLE);
-    
+
     thread = rt_thread_create("pm_test", pm_test, RT_NULL, 1024, 25, 10);
-    
+
     if (thread != RT_NULL)
     {
         rt_thread_startup(thread);
@@ -182,8 +182,8 @@ static int pm_sample(int argc, char *argv[])
     {
         rt_kprintf("create pm_test thread failed!\n\r");
     }
-    
+
     return RT_EOK;
 }
-/* å¯¼å‡ºåˆ° msh å‘½ä»¤åˆ—è¡¨ä¸­ */
+/* µ¼³öµ½ msh ÃüÁîÁĞ±íÖĞ */
 MSH_CMD_EXPORT(pm_sample, pm sample);

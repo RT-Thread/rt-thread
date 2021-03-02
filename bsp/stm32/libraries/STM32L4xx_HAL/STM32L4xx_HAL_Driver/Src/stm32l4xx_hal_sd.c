@@ -1592,7 +1592,7 @@ HAL_StatusTypeDef HAL_SD_WriteBlocks_DMA(SD_HandleTypeDef *hsd, uint8_t *pData, 
     /* Enable the DMA Channel */
     if(HAL_DMA_Start_IT(hsd->hdmatx, (uint32_t)pData, (uint32_t)&hsd->Instance->FIFO, (uint32_t)(BLOCKSIZE * NumberOfBlocks)/4U) != HAL_OK)
     {
-      __HAL_SD_DISABLE_IT(hsd, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR));   
+      __HAL_SD_DISABLE_IT(hsd, (SDMMC_IT_DCRCFAIL | SDMMC_IT_DTIMEOUT | SDMMC_IT_TXUNDERR));
       __HAL_SD_CLEAR_FLAG(hsd, SDMMC_STATIC_FLAGS);
       hsd->ErrorCode |= HAL_SD_ERROR_DMA;
       hsd->State = HAL_SD_STATE_READY;
@@ -2421,7 +2421,7 @@ HAL_StatusTypeDef HAL_SD_UnRegisterTransceiverCallback(SD_HandleTypeDef *hsd)
   * @brief  Returns information the information of the card which are stored on
   *         the CID register.
   * @param  hsd: Pointer to SD handle
-  * @param  pCID: Pointer to a HAL_SD_CardCIDTypeDef structure that  
+  * @param  pCID: Pointer to a HAL_SD_CardCIDTypeDef structure that
   *         contains all CID register parameters
   * @retval HAL status
   */
@@ -2454,7 +2454,7 @@ HAL_StatusTypeDef HAL_SD_GetCardCID(SD_HandleTypeDef *hsd, HAL_SD_CardCIDTypeDef
   * @brief  Returns information the information of the card which are stored on
   *         the CSD register.
   * @param  hsd: Pointer to SD handle
-  * @param  pCSD: Pointer to a HAL_SD_CardCSDTypeDef structure that  
+  * @param  pCSD: Pointer to a HAL_SD_CardCSDTypeDef structure that
   *         contains all CSD register parameters
   * @retval HAL status
   */
@@ -2568,7 +2568,7 @@ HAL_StatusTypeDef HAL_SD_GetCardCSD(SD_HandleTypeDef *hsd, HAL_SD_CardCSDTypeDef
 /**
   * @brief  Gets the SD status info.
   * @param  hsd: Pointer to SD handle
-  * @param  pStatus: Pointer to the HAL_SD_CardStatusTypeDef structure that 
+  * @param  pStatus: Pointer to the HAL_SD_CardStatusTypeDef structure that
   *         will contain the SD card status information
   * @retval HAL status
   */

@@ -74,7 +74,7 @@ uip_split_output(void)
     BUF->len[0] = uip_len >> 8;
     BUF->len[1] = uip_len & 0xff;
 #endif /* UIP_CONF_IPV6 */
-    
+
     /* Recalculate the TCP checksum. */
     BUF->tcpchksum = 0;
     BUF->tcpchksum = ~(uip_tcpchksum());
@@ -84,7 +84,7 @@ uip_split_output(void)
     BUF->ipchksum = 0;
     BUF->ipchksum = ~(uip_ipchksum());
 #endif /* UIP_CONF_IPV6 */
-    
+
     /* Transmit the first packet. */
     /*    uip_fw_output();*/
     tcpip_output();
@@ -104,7 +104,7 @@ uip_split_output(void)
     BUF->len[0] = uip_len >> 8;
     BUF->len[1] = uip_len & 0xff;
 #endif /* UIP_CONF_IPV6 */
-    
+
     /*    uip_appdata += len1;*/
     memcpy(uip_appdata, (u8_t *)uip_appdata + len1, len2);
 
@@ -113,7 +113,7 @@ uip_split_output(void)
     BUF->seqno[1] = uip_acc32[1];
     BUF->seqno[2] = uip_acc32[2];
     BUF->seqno[3] = uip_acc32[3];
-    
+
     /* Recalculate the TCP checksum. */
     BUF->tcpchksum = 0;
     BUF->tcpchksum = ~(uip_tcpchksum());
@@ -131,6 +131,6 @@ uip_split_output(void)
     /*    uip_fw_output();*/
     tcpip_output();
   }
-     
+
 }
 /*-----------------------------------------------------------------------------*/

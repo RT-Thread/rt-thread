@@ -181,53 +181,53 @@ typedef volatile unsigned int AT91S_REG;// Hardware register definition
 //              SOFTWARE API DEFINITION  FOR Serial Parallel Interface
 // *****************************************************************************
 typedef struct _AT91S_SPI {
-	AT91S_REG	 SPI_CR; 	// Control Register
-	AT91S_REG	 SPI_MR; 	// Mode Register
-	AT91S_REG	 SPI_RDR; 	// Receive Data Register
-	AT91S_REG	 SPI_TDR; 	// Transmit Data Register
-	AT91S_REG	 SPI_SR; 	// Status Register
-	AT91S_REG	 SPI_IER; 	// Interrupt Enable Register
-	AT91S_REG	 SPI_IDR; 	// Interrupt Disable Register
-	AT91S_REG	 SPI_IMR; 	// Interrupt Mask Register
-	AT91S_REG	 Reserved0[4]; 	// 
-	AT91S_REG	 SPI_CSR[4]; 	// Chip Select Register
-	AT91S_REG	 Reserved1[48]; 	// 
-	AT91S_REG	 SPI_RPR; 	// Receive Pointer Register
-	AT91S_REG	 SPI_RCR; 	// Receive Counter Register
-	AT91S_REG	 SPI_TPR; 	// Transmit Pointer Register
-	AT91S_REG	 SPI_TCR; 	// Transmit Counter Register
-	AT91S_REG	 SPI_RNPR; 	// Receive Next Pointer Register
-	AT91S_REG	 SPI_RNCR; 	// Receive Next Counter Register
-	AT91S_REG	 SPI_TNPR; 	// Transmit Next Pointer Register
-	AT91S_REG	 SPI_TNCR; 	// Transmit Next Counter Register
-	AT91S_REG	 SPI_PTCR; 	// PDC Transfer Control Register
-	AT91S_REG	 SPI_PTSR; 	// PDC Transfer Status Register
+    AT91S_REG     SPI_CR;     // Control Register
+    AT91S_REG     SPI_MR;     // Mode Register
+    AT91S_REG     SPI_RDR;     // Receive Data Register
+    AT91S_REG     SPI_TDR;     // Transmit Data Register
+    AT91S_REG     SPI_SR;     // Status Register
+    AT91S_REG     SPI_IER;     // Interrupt Enable Register
+    AT91S_REG     SPI_IDR;     // Interrupt Disable Register
+    AT91S_REG     SPI_IMR;     // Interrupt Mask Register
+    AT91S_REG     Reserved0[4];     //
+    AT91S_REG     SPI_CSR[4];     // Chip Select Register
+    AT91S_REG     Reserved1[48];     //
+    AT91S_REG     SPI_RPR;     // Receive Pointer Register
+    AT91S_REG     SPI_RCR;     // Receive Counter Register
+    AT91S_REG     SPI_TPR;     // Transmit Pointer Register
+    AT91S_REG     SPI_TCR;     // Transmit Counter Register
+    AT91S_REG     SPI_RNPR;     // Receive Next Pointer Register
+    AT91S_REG     SPI_RNCR;     // Receive Next Counter Register
+    AT91S_REG     SPI_TNPR;     // Transmit Next Pointer Register
+    AT91S_REG     SPI_TNCR;     // Transmit Next Counter Register
+    AT91S_REG     SPI_PTCR;     // PDC Transfer Control Register
+    AT91S_REG     SPI_PTSR;     // PDC Transfer Status Register
 } AT91S_SPI, *AT91PS_SPI;
 static AT91PS_SPI pSPI  = ((AT91PS_SPI) 0xFFFE0000);
 
-// -------- SPI_CR : (SPI Offset: 0x0) SPI Control Register -------- 
+// -------- SPI_CR : (SPI Offset: 0x0) SPI Control Register --------
 #define AT91C_SPI_SPIEN       ((unsigned int) 0x1 <<  0) // (SPI) SPI Enable
 #define AT91C_SPI_SPIDIS      ((unsigned int) 0x1 <<  1) // (SPI) SPI Disable
 #define AT91C_SPI_SWRST       ((unsigned int) 0x1 <<  7) // (SPI) SPI Software reset
 #define AT91C_SPI_LASTXFER    ((unsigned int) 0x1 << 24) // (SPI) SPI Last Transfer
-// -------- SPI_MR : (SPI Offset: 0x4) SPI Mode Register -------- 
+// -------- SPI_MR : (SPI Offset: 0x4) SPI Mode Register --------
 #define AT91C_SPI_MSTR        ((unsigned int) 0x1 <<  0) // (SPI) Master/Slave Mode
 #define AT91C_SPI_PS          ((unsigned int) 0x1 <<  1) // (SPI) Peripheral Select
-#define 	AT91C_SPI_PS_FIXED                ((unsigned int) 0x0 <<  1) // (SPI) Fixed Peripheral Select
-#define 	AT91C_SPI_PS_VARIABLE             ((unsigned int) 0x1 <<  1) // (SPI) Variable Peripheral Select
+#define     AT91C_SPI_PS_FIXED                ((unsigned int) 0x0 <<  1) // (SPI) Fixed Peripheral Select
+#define     AT91C_SPI_PS_VARIABLE             ((unsigned int) 0x1 <<  1) // (SPI) Variable Peripheral Select
 #define AT91C_SPI_PCSDEC      ((unsigned int) 0x1 <<  2) // (SPI) Chip Select Decode
 #define AT91C_SPI_FDIV        ((unsigned int) 0x1 <<  3) // (SPI) Clock Selection
 #define AT91C_SPI_MODFDIS     ((unsigned int) 0x1 <<  4) // (SPI) Mode Fault Detection
 #define AT91C_SPI_LLB         ((unsigned int) 0x1 <<  7) // (SPI) Clock Selection
 #define AT91C_SPI_PCS         ((unsigned int) 0xF << 16) // (SPI) Peripheral Chip Select
 #define AT91C_SPI_DLYBCS      ((unsigned int) 0xFF << 24) // (SPI) Delay Between Chip Selects
-// -------- SPI_RDR : (SPI Offset: 0x8) Receive Data Register -------- 
+// -------- SPI_RDR : (SPI Offset: 0x8) Receive Data Register --------
 #define AT91C_SPI_RD          ((unsigned int) 0xFFFF <<  0) // (SPI) Receive Data
 #define AT91C_SPI_RPCS        ((unsigned int) 0xF << 16) // (SPI) Peripheral Chip Select Status
-// -------- SPI_TDR : (SPI Offset: 0xc) Transmit Data Register -------- 
+// -------- SPI_TDR : (SPI Offset: 0xc) Transmit Data Register --------
 #define AT91C_SPI_TD          ((unsigned int) 0xFFFF <<  0) // (SPI) Transmit Data
 #define AT91C_SPI_TPCS        ((unsigned int) 0xF << 16) // (SPI) Peripheral Chip Select Status
-// -------- SPI_SR : (SPI Offset: 0x10) Status Register -------- 
+// -------- SPI_SR : (SPI Offset: 0x10) Status Register --------
 #define AT91C_SPI_RDRF        ((unsigned int) 0x1 <<  0) // (SPI) Receive Data Register Full
 #define AT91C_SPI_TDRE        ((unsigned int) 0x1 <<  1) // (SPI) Transmit Data Register Empty
 #define AT91C_SPI_MODF        ((unsigned int) 0x1 <<  2) // (SPI) Mode Fault Error
@@ -239,23 +239,23 @@ static AT91PS_SPI pSPI  = ((AT91PS_SPI) 0xFFFE0000);
 #define AT91C_SPI_NSSR        ((unsigned int) 0x1 <<  8) // (SPI) NSSR Interrupt
 #define AT91C_SPI_TXEMPTY     ((unsigned int) 0x1 <<  9) // (SPI) TXEMPTY Interrupt
 #define AT91C_SPI_SPIENS      ((unsigned int) 0x1 << 16) // (SPI) Enable Status
-// -------- SPI_IER : (SPI Offset: 0x14) Interrupt Enable Register -------- 
-// -------- SPI_IDR : (SPI Offset: 0x18) Interrupt Disable Register -------- 
-// -------- SPI_IMR : (SPI Offset: 0x1c) Interrupt Mask Register -------- 
-// -------- SPI_CSR : (SPI Offset: 0x30) Chip Select Register -------- 
+// -------- SPI_IER : (SPI Offset: 0x14) Interrupt Enable Register --------
+// -------- SPI_IDR : (SPI Offset: 0x18) Interrupt Disable Register --------
+// -------- SPI_IMR : (SPI Offset: 0x1c) Interrupt Mask Register --------
+// -------- SPI_CSR : (SPI Offset: 0x30) Chip Select Register --------
 #define AT91C_SPI_CPOL        ((unsigned int) 0x1 <<  0) // (SPI) Clock Polarity
 #define AT91C_SPI_NCPHA       ((unsigned int) 0x1 <<  1) // (SPI) Clock Phase
 #define AT91C_SPI_CSAAT       ((unsigned int) 0x1 <<  3) // (SPI) Chip Select Active After Transfer
 #define AT91C_SPI_BITS        ((unsigned int) 0xF <<  4) // (SPI) Bits Per Transfer
-#define 	AT91C_SPI_BITS_8                    ((unsigned int) 0x0 <<  4) // (SPI) 8 Bits Per transfer
-#define 	AT91C_SPI_BITS_9                    ((unsigned int) 0x1 <<  4) // (SPI) 9 Bits Per transfer
-#define 	AT91C_SPI_BITS_10                   ((unsigned int) 0x2 <<  4) // (SPI) 10 Bits Per transfer
-#define 	AT91C_SPI_BITS_11                   ((unsigned int) 0x3 <<  4) // (SPI) 11 Bits Per transfer
-#define 	AT91C_SPI_BITS_12                   ((unsigned int) 0x4 <<  4) // (SPI) 12 Bits Per transfer
-#define 	AT91C_SPI_BITS_13                   ((unsigned int) 0x5 <<  4) // (SPI) 13 Bits Per transfer
-#define 	AT91C_SPI_BITS_14                   ((unsigned int) 0x6 <<  4) // (SPI) 14 Bits Per transfer
-#define 	AT91C_SPI_BITS_15                   ((unsigned int) 0x7 <<  4) // (SPI) 15 Bits Per transfer
-#define 	AT91C_SPI_BITS_16                   ((unsigned int) 0x8 <<  4) // (SPI) 16 Bits Per transfer
+#define     AT91C_SPI_BITS_8                    ((unsigned int) 0x0 <<  4) // (SPI) 8 Bits Per transfer
+#define     AT91C_SPI_BITS_9                    ((unsigned int) 0x1 <<  4) // (SPI) 9 Bits Per transfer
+#define     AT91C_SPI_BITS_10                   ((unsigned int) 0x2 <<  4) // (SPI) 10 Bits Per transfer
+#define     AT91C_SPI_BITS_11                   ((unsigned int) 0x3 <<  4) // (SPI) 11 Bits Per transfer
+#define     AT91C_SPI_BITS_12                   ((unsigned int) 0x4 <<  4) // (SPI) 12 Bits Per transfer
+#define     AT91C_SPI_BITS_13                   ((unsigned int) 0x5 <<  4) // (SPI) 13 Bits Per transfer
+#define     AT91C_SPI_BITS_14                   ((unsigned int) 0x6 <<  4) // (SPI) 14 Bits Per transfer
+#define     AT91C_SPI_BITS_15                   ((unsigned int) 0x7 <<  4) // (SPI) 15 Bits Per transfer
+#define     AT91C_SPI_BITS_16                   ((unsigned int) 0x8 <<  4) // (SPI) 16 Bits Per transfer
 #define AT91C_SPI_SCBR        ((unsigned int) 0xFF <<  8) // (SPI) Serial Clock Baud Rate
 #define AT91C_SPI_DLYBS       ((unsigned int) 0xFF << 16) // (SPI) Delay Before SPCK
 #define AT91C_SPI_DLYBCT      ((unsigned int) 0xFF << 24) // (SPI) Delay Between Consecutive Transfers
@@ -292,27 +292,27 @@ static struct dfs_partition part;
 
 static void AT91_spiSetSpeed(rt_uint8_t speed)
 {
-	rt_uint32_t reg;
+    rt_uint32_t reg;
 
-	if ( speed < SPI_SCBR_MIN ) speed = SPI_SCBR_MIN;
-	if ( speed > 1 ) speed &= 0xFE;
+    if ( speed < SPI_SCBR_MIN ) speed = SPI_SCBR_MIN;
+    if ( speed > 1 ) speed &= 0xFE;
 
-	reg = pSPI->SPI_CSR[SPI_CSR_NUM];
-	reg = ( reg & ~(AT91C_SPI_SCBR) ) | ( (rt_uint32_t)speed << 8 );
-	pSPI->SPI_CSR[SPI_CSR_NUM] = reg;
+    reg = pSPI->SPI_CSR[SPI_CSR_NUM];
+    reg = ( reg & ~(AT91C_SPI_SCBR) ) | ( (rt_uint32_t)speed << 8 );
+    pSPI->SPI_CSR[SPI_CSR_NUM] = reg;
 }
 
 static rt_uint8_t AT91_spi(rt_uint8_t outgoing)
 {
-	rt_uint8_t incoming;
+    rt_uint8_t incoming;
 
-	while( !( pSPI->SPI_SR & AT91C_SPI_TDRE ) ); // transfer compl. wait
-	pSPI->SPI_TDR = (rt_uint16_t)( outgoing );
+    while( !( pSPI->SPI_SR & AT91C_SPI_TDRE ) ); // transfer compl. wait
+    pSPI->SPI_TDR = (rt_uint16_t)( outgoing );
 
-	while( !( pSPI->SPI_SR & AT91C_SPI_RDRF ) ); // wait for char
-	incoming = (rt_uint8_t)( pSPI->SPI_RDR );
+    while( !( pSPI->SPI_SR & AT91C_SPI_RDRF ) ); // wait for char
+    incoming = (rt_uint8_t)( pSPI->SPI_RDR );
 
-	return incoming;
+    return incoming;
 }
 
 /*--------------------------------*/
@@ -320,7 +320,7 @@ static rt_uint8_t AT91_spi(rt_uint8_t outgoing)
 /* (Platform dependent)           */
 rt_inline void xmit_spi(rt_uint8_t dat)
 {
-	AT91_spi(dat);
+    AT91_spi(dat);
 }
 
 /*---------------------------------*/
@@ -328,28 +328,28 @@ rt_inline void xmit_spi(rt_uint8_t dat)
 /* (Platform dependent)            */
 rt_inline rt_uint8_t rcvr_spi(void)
 {
-	return AT91_spi(0xff);
+    return AT91_spi(0xff);
 }
 
 /* Alternative "macro" (not at AT91 so far) to receive data fast */
 static void rcvr_spi_m(rt_uint8_t *dst)
 {
-	*dst = rcvr_spi();
+    *dst = rcvr_spi();
 }
 
 /*---------------------*/
 /* Wait for card ready */
 static rt_uint8_t wait_ready ()
 {
-	rt_uint8_t res;
+    rt_uint8_t res;
 
-	rcvr_spi();
-	do
-	{
-		res = rcvr_spi();
-	} while ((res != 0xFF));
+    rcvr_spi();
+    do
+    {
+        res = rcvr_spi();
+    } while ((res != 0xFF));
 
-	return res;
+    return res;
 }
 
 /*--------------------------------*/
@@ -357,306 +357,306 @@ static rt_uint8_t wait_ready ()
 
 rt_bool_t rcvr_datablock (rt_uint8_t *buff, rt_uint8_t wc)
 {
-	rt_uint8_t token;
+    rt_uint8_t token;
 
-	{
-	    /* Wait for data packet in timeout of 100ms */
-		token = rcvr_spi();
-	}while ((token == 0xFF));
+    {
+        /* Wait for data packet in timeout of 100ms */
+        token = rcvr_spi();
+    }while ((token == 0xFF));
 
-	if(token != 0xFE) return RT_FALSE;   /* If not valid data token, retutn with error */
+    if(token != 0xFE) return RT_FALSE;   /* If not valid data token, retutn with error */
 
-	do
-	{
-	    /* Receive the data block into buffer */
-		rcvr_spi_m(buff++);
-		rcvr_spi_m(buff++);
-	} while (--wc);
+    do
+    {
+        /* Receive the data block into buffer */
+        rcvr_spi_m(buff++);
+        rcvr_spi_m(buff++);
+    } while (--wc);
 
-	rcvr_spi();                  /* Discard CRC */
-	rcvr_spi();
+    rcvr_spi();                  /* Discard CRC */
+    rcvr_spi();
 
-	return RT_TRUE;               /* Return with success */
+    return RT_TRUE;               /* Return with success */
 }
 
 /*---------------------------*/
 /* Send a data packet to MMC */
 static rt_bool_t xmit_datablock(const rt_uint8_t *buff, rt_uint8_t token)
 {
-	rt_uint8_t resp, wc = 0;
+    rt_uint8_t resp, wc = 0;
 
-	if (wait_ready() != 0xFF) return RT_FALSE;
+    if (wait_ready() != 0xFF) return RT_FALSE;
 
-	xmit_spi(token);                    /* Xmit data token */
-	if (token != 0xFD)
-	{   /* Is data token */
-		do
-		{
-		    /* Xmit the 512 rt_uint8_t data block to MMC */
-			xmit_spi(*buff++);
-			xmit_spi(*buff++);
-		} while (--wc);
+    xmit_spi(token);                    /* Xmit data token */
+    if (token != 0xFD)
+    {   /* Is data token */
+        do
+        {
+            /* Xmit the 512 rt_uint8_t data block to MMC */
+            xmit_spi(*buff++);
+            xmit_spi(*buff++);
+        } while (--wc);
 
-		xmit_spi(0xFF);                 /* CRC (Dummy) */
-		xmit_spi(0xFF);
-		resp = rcvr_spi();              /* Reveive data response */
+        xmit_spi(0xFF);                 /* CRC (Dummy) */
+        xmit_spi(0xFF);
+        resp = rcvr_spi();              /* Reveive data response */
 
-		if ((resp & 0x1F) != 0x05)      /* If not accepted, return with error */
-			return RT_FALSE;
-	}
+        if ((resp & 0x1F) != 0x05)      /* If not accepted, return with error */
+            return RT_FALSE;
+    }
 
-	return RT_TRUE;
+    return RT_TRUE;
 }
 
 /*------------------------------*/
 /* Send a command packet to MMC */
 rt_uint8_t send_cmd (rt_uint8_t cmd, rt_uint32_t arg)
 {
-	rt_uint8_t n, res;
+    rt_uint8_t n, res;
 
-	if (wait_ready() != 0xFF) return 0xFF;
+    if (wait_ready() != 0xFF) return 0xFF;
 
-	/* Send command packet */
-	xmit_spi(cmd);                      /* Command */
-	xmit_spi((rt_uint8_t)(arg >> 24));  /* Argument[31..24] */
-	xmit_spi((rt_uint8_t)(arg >> 16));  /* Argument[23..16] */
-	xmit_spi((rt_uint8_t)(arg >> 8));   /* Argument[15..8] */
-	xmit_spi((rt_uint8_t)arg);          /* Argument[7..0] */
-	xmit_spi(0x95);                     /* CRC (valid for only CMD0) */
+    /* Send command packet */
+    xmit_spi(cmd);                      /* Command */
+    xmit_spi((rt_uint8_t)(arg >> 24));  /* Argument[31..24] */
+    xmit_spi((rt_uint8_t)(arg >> 16));  /* Argument[23..16] */
+    xmit_spi((rt_uint8_t)(arg >> 8));   /* Argument[15..8] */
+    xmit_spi((rt_uint8_t)arg);          /* Argument[7..0] */
+    xmit_spi(0x95);                     /* CRC (valid for only CMD0) */
 
-	/* Receive command response */
-	if (cmd == CMD12) rcvr_spi();       /* Skip a stuff rt_uint8_t when stop reading */
-	n = 10;                             /* Wait for a valid response in timeout of 10 attempts */
-	do
-	{
-		res = rcvr_spi();
-	}
-	while ((res & 0x80) && --n);
+    /* Receive command response */
+    if (cmd == CMD12) rcvr_spi();       /* Skip a stuff rt_uint8_t when stop reading */
+    n = 10;                             /* Wait for a valid response in timeout of 10 attempts */
+    do
+    {
+        res = rcvr_spi();
+    }
+    while ((res & 0x80) && --n);
 
-	return res;         /* Return with the response value */
+    return res;         /* Return with the response value */
 }
 
 static rt_err_t rt_sdcard_init(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_close(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	rt_uint8_t count;
+    rt_uint8_t count;
 
-	count  = size / 512;
+    count  = size / 512;
 
-	/* CS = L */
-	SELECT();
-	
-	/* append partition offset */
-	pos += part.offset * 512;
+    /* CS = L */
+    SELECT();
 
-	if (count == 1)
-	{   /* Single block read */
-		if ((send_cmd(CMD17, pos) == 0)   /* READ_SINGLE_BLOCK */
-				&& rcvr_datablock(buffer, (rt_uint8_t)(512/2)))
-			count = 0;
-		else
-			count = 1;
-	}
-	else
-	{            /* Multiple block read */
-		if (send_cmd(CMD18, pos) == 0)
-		{
-			rt_uint8_t* ptr;
-			
-			ptr = buffer;
-			do
-			{
-				if (!rcvr_datablock(ptr, (rt_uint8_t)(512/2))) break;
-				ptr += 512;
-			} while (--count);
+    /* append partition offset */
+    pos += part.offset * 512;
 
-			send_cmd(CMD12, 0);            /* STOP_TRANSMISSION */
-		}
-	}
+    if (count == 1)
+    {   /* Single block read */
+        if ((send_cmd(CMD17, pos) == 0)   /* READ_SINGLE_BLOCK */
+                && rcvr_datablock(buffer, (rt_uint8_t)(512/2)))
+            count = 0;
+        else
+            count = 1;
+    }
+    else
+    {            /* Multiple block read */
+        if (send_cmd(CMD18, pos) == 0)
+        {
+            rt_uint8_t* ptr;
 
-	DESELECT();         /* CS = H */
-	rcvr_spi();         /* Idle (Release DO) */
+            ptr = buffer;
+            do
+            {
+                if (!rcvr_datablock(ptr, (rt_uint8_t)(512/2))) break;
+                ptr += 512;
+            } while (--count);
 
-	if (count)
-	{
-		// rt_set_errno(-RT_ERROR);
-		return 0;
-	}
-	
-	return size / 512;
+            send_cmd(CMD12, 0);            /* STOP_TRANSMISSION */
+        }
+    }
+
+    DESELECT();         /* CS = H */
+    rcvr_spi();         /* Idle (Release DO) */
+
+    if (count)
+    {
+        // rt_set_errno(-RT_ERROR);
+        return 0;
+    }
+
+    return size / 512;
 }
 
 static rt_size_t rt_sdcard_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-	rt_uint8_t count;
+    rt_uint8_t count;
 
-	count = size / 512;
+    count = size / 512;
 
-	/* CS = L */
-	SELECT();
+    /* CS = L */
+    SELECT();
 
-	/* append partition offset */
-	pos += part.offset * 512;
+    /* append partition offset */
+    pos += part.offset * 512;
 
-	if (count == 1)
-	{
-	    /* Single block write */
-		if ((send_cmd(CMD24, pos) == 0)   /* WRITE_BLOCK */
-				&& xmit_datablock(buffer, 0xFE))
-			count = 0;
-		else
-			count = 1;
-	}
-	else
-	{
-	    /* Multiple block write */
-		if (send_cmd(CMD25, pos) == 0)
-		{
-			rt_uint8_t *ptr;
-			
-			ptr = (rt_uint8_t *)buffer;
-			do
-			{
-				if (!xmit_datablock(ptr, 0xFC)) break;
-				ptr += 512;
-			} while (--count);
+    if (count == 1)
+    {
+        /* Single block write */
+        if ((send_cmd(CMD24, pos) == 0)   /* WRITE_BLOCK */
+                && xmit_datablock(buffer, 0xFE))
+            count = 0;
+        else
+            count = 1;
+    }
+    else
+    {
+        /* Multiple block write */
+        if (send_cmd(CMD25, pos) == 0)
+        {
+            rt_uint8_t *ptr;
 
-			if (!xmit_datablock(0, 0xFD))   /* STOP_TRAN token */
-				count = 1;
-		}
-	}
+            ptr = (rt_uint8_t *)buffer;
+            do
+            {
+                if (!xmit_datablock(ptr, 0xFC)) break;
+                ptr += 512;
+            } while (--count);
 
-	DESELECT();         /* CS = H */
-	rcvr_spi();         /* Idle (Release DO) */
+            if (!xmit_datablock(0, 0xFD))   /* STOP_TRAN token */
+                count = 1;
+        }
+    }
 
-	if (count)
-	{
-		rt_set_errno(-RT_ERROR);
-		return 0;
-	}
+    DESELECT();         /* CS = H */
+    rcvr_spi();         /* Idle (Release DO) */
 
-	return size;
+    if (count)
+    {
+        rt_set_errno(-RT_ERROR);
+        return 0;
+    }
+
+    return size;
 }
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 void rt_hw_sdcard_init()
 {
-	rt_uint32_t n;
-	rt_uint8_t* sector;
-	
-	sd.type     = RT_Device_Class_Block;
-	sd.init 	= rt_sdcard_init;
-	sd.open 	= rt_sdcard_open;
-	sd.close    = rt_sdcard_close;
-	sd.read 	= rt_sdcard_read;
-	sd.write    = rt_sdcard_write;
-	sd.control  = rt_sdcard_control;
-	sd.user_data = RT_NULL;
+    rt_uint32_t n;
+    rt_uint8_t* sector;
 
-	AT91C_PIOA_PER  = CARD_PWR_PIN; // enable GPIO of CS-pin
-	AT91C_PIOA_CODR = CARD_PWR_PIN; // set high
-	AT91C_PIOA_OER  = CARD_PWR_PIN; // output enable
+    sd.type     = RT_Device_Class_Block;
+    sd.init     = rt_sdcard_init;
+    sd.open     = rt_sdcard_open;
+    sd.close    = rt_sdcard_close;
+    sd.read     = rt_sdcard_read;
+    sd.write    = rt_sdcard_write;
+    sd.control  = rt_sdcard_control;
+    sd.user_data = RT_NULL;
 
-	for (n = 0; n < 3000; n ++) ;
+    AT91C_PIOA_PER  = CARD_PWR_PIN; // enable GPIO of CS-pin
+    AT91C_PIOA_CODR = CARD_PWR_PIN; // set high
+    AT91C_PIOA_OER  = CARD_PWR_PIN; // output enable
 
-	// disable PIO from controlling MOSI, MISO, SCK (=hand over to SPI)
-	// keep CS untouched - used as GPIO pin during init
-	AT91C_PIOA_PDR = AT91C_PA16_SPI0_MISO | AT91C_PA17_SPI0_MOSI | AT91C_PA18_SPI0_SPCK; //  | NCPS_PDR_BIT;
-	// set pin-functions in PIO Controller
-	AT91C_PIOA_ASR = AT91C_PA16_SPI0_MISO | AT91C_PA17_SPI0_MOSI | AT91C_PA18_SPI0_SPCK; /// not here: | NCPS_ASR_BIT;
+    for (n = 0; n < 3000; n ++) ;
 
-	// set chip-select as output high (unselect card)
-	AT91C_PIOA_PER  = CARD_SELECT_PIN; // enable GPIO of CS-pin
-	AT91C_PIOA_SODR = CARD_SELECT_PIN; // set high
-	AT91C_PIOA_OER  = CARD_SELECT_PIN; // output enable
+    // disable PIO from controlling MOSI, MISO, SCK (=hand over to SPI)
+    // keep CS untouched - used as GPIO pin during init
+    AT91C_PIOA_PDR = AT91C_PA16_SPI0_MISO | AT91C_PA17_SPI0_MOSI | AT91C_PA18_SPI0_SPCK; //  | NCPS_PDR_BIT;
+    // set pin-functions in PIO Controller
+    AT91C_PIOA_ASR = AT91C_PA16_SPI0_MISO | AT91C_PA17_SPI0_MOSI | AT91C_PA18_SPI0_SPCK; /// not here: | NCPS_ASR_BIT;
 
-	// enable peripheral clock for SPI ( PID Bit 5 )
-	AT91C_PMC_PCER = ( (rt_uint32_t) 1 << AT91C_ID_SPI0 ); // n.b. IDs are just bit-numbers
+    // set chip-select as output high (unselect card)
+    AT91C_PIOA_PER  = CARD_SELECT_PIN; // enable GPIO of CS-pin
+    AT91C_PIOA_SODR = CARD_SELECT_PIN; // set high
+    AT91C_PIOA_OER  = CARD_SELECT_PIN; // output enable
 
-	// SPI enable and reset
-	pSPI->SPI_CR = AT91C_SPI_SPIEN | AT91C_SPI_SWRST;
+    // enable peripheral clock for SPI ( PID Bit 5 )
+    AT91C_PMC_PCER = ( (rt_uint32_t) 1 << AT91C_ID_SPI0 ); // n.b. IDs are just bit-numbers
 
-	// SPI mode: master, FDIV=0, fault detection disabled
-	pSPI->SPI_MR  = AT91C_SPI_MSTR | AT91C_SPI_MODFDIS;
+    // SPI enable and reset
+    pSPI->SPI_CR = AT91C_SPI_SPIEN | AT91C_SPI_SWRST;
 
-	// set chip-select-register
-	// 8 bits per transfer, CPOL=1, ClockPhase=0, DLYBCT = 0
-	pSPI->SPI_CSR[SPI_CSR_NUM] = AT91C_SPI_CPOL | AT91C_SPI_BITS_8;
+    // SPI mode: master, FDIV=0, fault detection disabled
+    pSPI->SPI_MR  = AT91C_SPI_MSTR | AT91C_SPI_MODFDIS;
 
-	// slow during init
-	AT91_spiSetSpeed(0xFE);
+    // set chip-select-register
+    // 8 bits per transfer, CPOL=1, ClockPhase=0, DLYBCT = 0
+    pSPI->SPI_CSR[SPI_CSR_NUM] = AT91C_SPI_CPOL | AT91C_SPI_BITS_8;
 
-	// enable
-	pSPI->SPI_CR = AT91C_SPI_SPIEN;
+    // slow during init
+    AT91_spiSetSpeed(0xFE);
 
-	n = 10;                  /* Dummy clock */
-	do
-	{
-		rcvr_spi();
-	} while (--n);
+    // enable
+    pSPI->SPI_CR = AT91C_SPI_SPIEN;
 
-	SELECT();         /* CS = L */
-	if (send_cmd(CMD0, 0) == 1)
-	{
-		/* Enter Idle state */
-		while (send_cmd(CMD1, 0));
-	}
+    n = 10;                  /* Dummy clock */
+    do
+    {
+        rcvr_spi();
+    } while (--n);
 
-	DESELECT();         /* CS = H */
-	rcvr_spi();         /* Idle (Release DO) */
+    SELECT();         /* CS = L */
+    if (send_cmd(CMD0, 0) == 1)
+    {
+        /* Enter Idle state */
+        while (send_cmd(CMD1, 0));
+    }
 
-	AT91_spiSetSpeed(SPI_SCBR_MIN);
+    DESELECT();         /* CS = H */
+    rcvr_spi();         /* Idle (Release DO) */
 
-	/* get the first sector to read partition table */
-	sector = (rt_uint8_t*) rt_malloc (512);
-	if (sector == RT_NULL)
-	{
-		rt_kprintf("allocate partition sector buffer failed\n");
-		return;
-	}
+    AT91_spiSetSpeed(SPI_SCBR_MIN);
 
-	n = rt_sdcard_read((rt_device_t)&sd, 0, sector, 512);
-	if (n == 512)
-	{
-		rt_err_t status;
-		
-		/* get the first partition */
-		status = dfs_filesystem_get_partition(&part, sector, 0);
-		if (status != RT_EOK)
-		{
-			/* there is no partition table */
-			part.offset = 0;
-			part.size   = 0;
-		}
-	}
-	else
-	{
-		/* there is no partition table */
-		part.offset = 0;
-		part.size   = 0;
-	}
+    /* get the first sector to read partition table */
+    sector = (rt_uint8_t*) rt_malloc (512);
+    if (sector == RT_NULL)
+    {
+        rt_kprintf("allocate partition sector buffer failed\n");
+        return;
+    }
 
-	/* release sector buffer */
-	rt_free(sector);
+    n = rt_sdcard_read((rt_device_t)&sd, 0, sector, 512);
+    if (n == 512)
+    {
+        rt_err_t status;
 
-	/* register sd device */
-	rt_device_register(&sd, "sd", RT_DEVICE_FLAG_RDWR);
+        /* get the first partition */
+        status = dfs_filesystem_get_partition(&part, sector, 0);
+        if (status != RT_EOK)
+        {
+            /* there is no partition table */
+            part.offset = 0;
+            part.size   = 0;
+        }
+    }
+    else
+    {
+        /* there is no partition table */
+        part.offset = 0;
+        part.size   = 0;
+    }
+
+    /* release sector buffer */
+    rt_free(sector);
+
+    /* register sd device */
+    rt_device_register(&sd, "sd", RT_DEVICE_FLAG_RDWR);
 }

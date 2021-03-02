@@ -34,11 +34,11 @@
 
 #define SEND_MEASUREMENT    (0x02)
 #ifndef __MCF52221_H__
-	#define DISCONNECT          (0x04)
-	#define SELECT_DEVICE_SPEC  (0x08)
+    #define DISCONNECT          (0x04)
+    #define SELECT_DEVICE_SPEC  (0x08)
 #else
-	#define SELECT_DEVICE_SPEC  (0x04)
-	#define DISCONNECT          (0x08)
+    #define SELECT_DEVICE_SPEC  (0x04)
+    #define DISCONNECT          (0x08)
 #endif
 
 #define CONTROLLER_ID       (0)         /* Controller ID */

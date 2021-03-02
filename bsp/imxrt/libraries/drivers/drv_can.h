@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2019-06-28     misonyo     the first version.
  */
- 
+
 #ifndef DRV_CAN_H__
 #define DRV_CAN_H__
 

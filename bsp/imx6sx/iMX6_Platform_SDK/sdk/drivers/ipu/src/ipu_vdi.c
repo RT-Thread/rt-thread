@@ -30,7 +30,7 @@
 
 /*!
  * @file  ipu_vdi.c
- * @brief IPU Software Firmware, VDI is used for video de-interlacer. 
+ * @brief IPU Software Firmware, VDI is used for video de-interlacer.
  * @ingroup diag_ipu
  */
 
@@ -91,11 +91,11 @@ static void ipu_disable_vdi(int ipu_index)
 /*!
  * ipu_vdi_init
  *
- * @param	ipu		ipu handler
- * @param	channel      IDMAC channel
- * @param	params	    vdi input parameters
+ * @param    ipu        ipu handler
+ * @param    channel      IDMAC channel
+ * @param    params        vdi input parameters
  *
- * @return	Returns 0 on success or negative error code on fail
+ * @return    Returns 0 on success or negative error code on fail
  */
 void ipu_vdi_init(int ipu_index, int fmt, int field_mode, int width, int height,
                   ips_motion_sel_e motion_sel)

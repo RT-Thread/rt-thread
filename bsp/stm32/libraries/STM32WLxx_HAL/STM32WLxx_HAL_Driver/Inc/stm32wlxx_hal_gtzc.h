@@ -46,7 +46,7 @@ extern "C" {
   */
 typedef struct
 {
-  uint32_t AreaId; /*!< Area identifier field. It can be a value of @ref 
+  uint32_t AreaId; /*!< Area identifier field. It can be a value of @ref
                         GTZC_MPCWM_AreaId */
   uint32_t Length; /*!< length of the unprivileged area starting from selected
                         memory base address. It must be aligned on 2kB for Flash
@@ -63,7 +63,7 @@ typedef struct
   */
 /**
   * @brief  GTZC structure definitions for IP identifier parameter (PeriphId)
-  *         used in HAL_GTZC_TZSC_ConfigPeriphAttributes and 
+  *         used in HAL_GTZC_TZSC_ConfigPeriphAttributes and
   *         HAL_GTZC_TZSC_GetConfigPeriphAttributes functions and also in all
   *        HAL_GTZC_TZIC related functions bitmap:
   *         bits[31:28] Field "register". Define the register an IP belongs to.

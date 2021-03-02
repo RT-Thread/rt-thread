@@ -27,8 +27,8 @@
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_UART0
-	rt_hw_uart_init();
-	rt_console_set_device("uart0");
+    rt_hw_uart_init();
+    rt_console_set_device("uart0");
 #endif
 
     rt_kprintf("\r\n\r\nSystemInit......\r\n");

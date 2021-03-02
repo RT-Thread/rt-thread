@@ -38,7 +38,7 @@
 #include "ioexpander/max7310.h"
 #include "max7310_registers.h"
 
-/*! 
+/*!
  * @note In hardware.h an array of I2C requests is created as multiple I/O expanders
  *       could be used on a board.
  *       Thanks to board_init() in hardware.c, the requests are populated with addresses.
@@ -84,12 +84,12 @@ int32_t max7310_init(uint32_t slave_id, uint32_t io_default_dir, uint32_t out_de
 {
     max7310_i2c_req = &max7310_i2c_req_array[slave_id];
 
-    // I2C controller init 
+    // I2C controller init
     i2c_init(max7310_i2c_req->ctl_addr, 170000);
-    // initialize I2C request fixed elements 
+    // initialize I2C request fixed elements
     max7310_i2c_req->reg_addr_sz = 1;
     max7310_i2c_req->buffer_sz = 1;
-    // initialize I/O to output with all outputs at 0 
+    // initialize I/O to output with all outputs at 0
     max7310_reg_write(polarity_reg, 0x00);  // non-inverted polarity
     max7310_reg_write(output_port_reg, out_default_val);
     max7310_reg_write(config_reg, io_default_dir);
@@ -105,12 +105,12 @@ void max7310_set_gpio_output(uint32_t slave_id, uint32_t io_x, uint32_t level)
     uint8_t data;
 
     max7310_i2c_req = &max7310_i2c_req_array[slave_id];
-    // read output state first through the input register 
+    // read output state first through the input register
     data = max7310_reg_read(input_port_reg);
-    // process it 
+    // process it
     data &= ~(1 << io_x);
     data |= (level << io_x);
-    // write result in output register 
+    // write result in output register
     max7310_reg_write(output_port_reg, data);
 }
 

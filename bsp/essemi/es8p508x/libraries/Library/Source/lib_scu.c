@@ -19,11 +19,11 @@
  ***************************************************************/
 void SCU_OpenXTAL(void)
 {
-	SCU_RegUnLock();
-	SCU->SCLKEN1.XTAL_EN = 1;
-	SCU->SCLKEN0.XTAL_LP = 0;
-	while(SCU->SCLKEN1.XTAL_RDY == 0); //等待外部时钟稳定
-	SCU_RegLock() ;
+    SCU_RegUnLock();
+    SCU->SCLKEN1.XTAL_EN = 1;
+    SCU->SCLKEN0.XTAL_LP = 0;
+    while(SCU->SCLKEN1.XTAL_RDY == 0); //等待外部时钟稳定
+    SCU_RegLock() ;
 }
 
 /***************************************************************
@@ -35,9 +35,9 @@ void SCU_OpenXTAL(void)
  ***************************************************************/
 void SCU_NMISelect(SCU_TYPE_NMICS NMI_Type)
 {
-	  SCU_RegUnLock();
+      SCU_RegUnLock();
     SCU->NMICON.NMICS = NMI_Type;
-	  SCU_RegLock() ;
+      SCU_RegLock() ;
 }
 
 /***************************************************************
@@ -67,9 +67,9 @@ FlagStatus  SCU_GetPWRCFlagStatus(SCU_TYPE_PWRC PWRC_Flag)
  ***************************************************************/
 void SCU_ClearPWRCFlagBit(SCU_TYPE_PWRC PWRC_Flag)
 {
-	  SCU_RegUnLock() ;
+      SCU_RegUnLock() ;
     SCU->PWRC.Word &= ~((uint32_t)PWRC_Flag);
-	  SCU_RegLock() ;
+      SCU_RegLock() ;
 }
 
 /***************************************************************
@@ -100,9 +100,9 @@ FlagStatus  SCU_GetLVDFlagStatus(SCU_TYPE_LVD0CON LVD_Flag)
  ***************************************************************/
 void SCU_SysClkSelect(SCU_TYPE_SYSCLK Sysclk)
 {
-	  SCU_RegUnLock() ;
+      SCU_RegUnLock() ;
     SCU->SCLKEN0.CLK_SEL = Sysclk;
-	  SCU_RegLock() ;
+      SCU_RegLock() ;
 }
 
 /***************************************************************
@@ -193,9 +193,9 @@ void SystemClockConfig(void)
     SCU_HRC_Enable();                       //使能内部20MHZ
     while(SCU_HRCReadyFlag() != SET);       //等待时钟开启
     SCU_SysClkSelect(SCU_SysClk_HRC);       //选择内部20MHZ为系统时钟
-	
-    SCU_SysClk_Div1();                      //系统时钟后分频1:1    
-    
+
+    SCU_SysClk_Div1();                      //系统时钟后分频1:1
+
     SystemCoreClock = 20000000;
 
     if(Prot_Temp != 0)                      //写保护了
@@ -319,7 +319,7 @@ void PLLClock_Config(TYPE_FUNCEN pll_en , SCU_PLL_Origin  pll_origin ,SCU_PLL_Ou
         if(SCU->SCLKEN1.XTAL_RDY == 0)
         {
             SCU->SCLKEN1.XTAL_EN = 1;
-					  SCU->SCLKEN0.XTAL_LP = 0;
+                      SCU->SCLKEN0.XTAL_LP = 0;
             while(SCU->SCLKEN1.XTAL_RDY == 0);  //等待XTAL开启
         }
     }
@@ -378,7 +378,7 @@ void PLLClock_Config(TYPE_FUNCEN pll_en , SCU_PLL_Origin  pll_origin ,SCU_PLL_Ou
         SCU->SCLKEN0.CLKFLT_BY = 0x00;
     }
 
-    SCU_RegLock(); 
+    SCU_RegLock();
 }
 
 /*************************END OF FILE**********************/

@@ -853,7 +853,7 @@ __STATIC_INLINE uint32_t LL_DMA_GetMemoryIncMode(DMA_TypeDef *DMAx, uint32_t Cha
 __STATIC_INLINE void LL_DMA_SetPeriphSize(DMA_TypeDef *DMAx, uint32_t Channel, uint32_t PeriphOrM2MSrcDataSize)
 {
   uint32_t dma_base_addr = (uint32_t)DMAx;
-  MODIFY_REG(((DMA_Channel_TypeDef *)(dma_base_addr + CHANNEL_OFFSET_TAB[Channel]))->CCR, DMA_CCR_PSIZE, 
+  MODIFY_REG(((DMA_Channel_TypeDef *)(dma_base_addr + CHANNEL_OFFSET_TAB[Channel]))->CCR, DMA_CCR_PSIZE,
              PeriphOrM2MSrcDataSize);
 }
 
@@ -2197,7 +2197,7 @@ __STATIC_INLINE void LL_DMA_ClearFlag_TE7(DMA_TypeDef *DMAx)
   */
 __STATIC_INLINE void LL_DMA_EnableIT_TC(DMA_TypeDef *DMAx, uint32_t Channel)
 {
-  uint32_t dma_base_addr = (uint32_t)DMAx;    
+  uint32_t dma_base_addr = (uint32_t)DMAx;
   SET_BIT(((DMA_Channel_TypeDef *)(dma_base_addr + CHANNEL_OFFSET_TAB[Channel]))->CCR, DMA_CCR_TCIE);
 }
 

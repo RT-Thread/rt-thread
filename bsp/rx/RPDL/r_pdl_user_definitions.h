@@ -1,7 +1,7 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: RPDL driver API
-* File Name		: r_pdl_user_definitions.h
-* Contents		: User-modifiable definitions
+* System Name    : RPDL driver API
+* File Name        : r_pdl_user_definitions.h
+* Contents        : User-modifiable definitions
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_USER_DEFS_H

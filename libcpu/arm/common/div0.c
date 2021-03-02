@@ -8,5 +8,5 @@
  */
 void __div0 (void)
 {
-	while (1) ;
+    while (1) ;
 }

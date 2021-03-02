@@ -70,7 +70,7 @@ typedef enum _SYSCON_RSTn
     kCRC_RST_SHIFT_RSTn = 0 | 21U,           /**< CRC reset control */
     kWWDT_RST_SHIFT_RSTn = 0 | 22U,          /**< Watchdog timer reset control */
     kADC0_RST_SHIFT_RSTn = 0 | 27U,          /**< ADC0 reset control */
-    
+
     kMRT_RST_SHIFT_RSTn = 65536 | 0U,        /**< Multi-rate timer (MRT) reset control */
     kSCT0_RST_SHIFT_RSTn = 65536 | 2U,       /**< SCTimer/PWM 0 (SCT0) reset control */
     kMCAN0_RST_SHIFT_RSTn = 65536 | 7U,      /**< MCAN0 reset control */
@@ -89,19 +89,19 @@ typedef enum _SYSCON_RSTn
     kUSB0D_RST_SHIFT_RSTn = 65536 | 25U,     /**< USB0D reset control */
     kCT32B0_RST_SHIFT_RSTn = 65536 | 26U,    /**< CT32B0 reset control */
     kCT32B1_RST_SHIFT_RSTn = 65536 | 27U,    /**< CT32B1 reset control */
-    
+
     kLCD_RST_SHIFT_RSTn = 131072 | 2U,       /**< LCD reset control */
     kSDIO_RST_SHIFT_RSTn = 131072 | 3U,      /**< SDIO reset control */
     kUSB1H_RST_SHIFT_RSTn = 131072 | 4U,     /**< USB1H reset control */
-    kUSB1D_RST_SHIFT_RSTn = 131072 | 5U,     /**< USB1D reset control */    
+    kUSB1D_RST_SHIFT_RSTn = 131072 | 5U,     /**< USB1D reset control */
     kUSB1RAM_RST_SHIFT_RSTn = 131072 | 6U,   /**< USB1RAM reset control */
     kEMC_RST_SHIFT_RSTn = 131072 | 7U,       /**< EMC reset control */
     kETH_RST_SHIFT_RSTn = 131072 | 8U,       /**< ETH reset control */
-    kGPIO4_RST_SHIFT_RSTn = 131072 | 9U,     /**< GPIO4 reset control */ 
+    kGPIO4_RST_SHIFT_RSTn = 131072 | 9U,     /**< GPIO4 reset control */
     kGPIO5_RST_SHIFT_RSTn = 131072 | 10U,    /**< GPIO5 reset control */
     kAES_RST_SHIFT_RSTn = 131072 | 11U,      /**< AES reset control */
     kOTP_RST_SHIFT_RSTn = 131072 | 12U,      /**< OTP reset control */
-    kRNG_RST_SHIFT_RSTn = 131072 | 13U,      /**< RNG  reset control */ 
+    kRNG_RST_SHIFT_RSTn = 131072 | 13U,      /**< RNG  reset control */
     kFC8_RST_SHIFT_RSTn = 131072 | 14U,      /**< Flexcomm Interface 8 reset control */
     kFC9_RST_SHIFT_RSTn = 131072 | 15U,      /**< Flexcomm Interface 9 reset control */
     kUSB0HMR_RST_SHIFT_RSTn = 131072 | 16U,  /**< USB0HMR reset control */
@@ -109,7 +109,7 @@ typedef enum _SYSCON_RSTn
     kSHA_RST_SHIFT_RSTn = 131072 | 18U,      /**< SHA reset control */
     kSC0_RST_SHIFT_RSTn = 131072 | 19U,      /**< SC0 reset control */
     kSC1_RST_SHIFT_RSTn = 131072 | 20U,      /**< SC1 reset control */
-    
+
     kCT32B3_RST_SHIFT_RSTn = 67108864 | 13U, /**< CT32B3 reset control */
     kCT32B4_RST_SHIFT_RSTn = 67108864 | 14U, /**< CT32B4 reset control */
 } SYSCON_RSTn_t;

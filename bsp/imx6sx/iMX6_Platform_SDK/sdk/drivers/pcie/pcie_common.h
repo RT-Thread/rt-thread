@@ -41,22 +41,22 @@
 
 #include "sdk.h"
 
-#define SZ_1K	0x400
-#define SZ_2K	0x800
-#define SZ_4K	0x1000
-#define SZ_8K	0x2000
-#define SZ_16K	0x4000
-#define SZ_32K	0x8000
-#define SZ_64K	0x10000
+#define SZ_1K    0x400
+#define SZ_2K    0x800
+#define SZ_4K    0x1000
+#define SZ_8K    0x2000
+#define SZ_16K    0x4000
+#define SZ_32K    0x8000
+#define SZ_64K    0x10000
 
-#define PCIE_DBI_BASE_ADDR 		0x01FFC000
-#define PCIE_DBI_ADDR_END		0x01FFFFFF
-#define PCIE_ARB_BASE_ADDR		0x01000000
-#define PCIE_ARB_ADDR_END		0x01FFBFFF
+#define PCIE_DBI_BASE_ADDR         0x01FFC000
+#define PCIE_DBI_ADDR_END        0x01FFFFFF
+#define PCIE_ARB_BASE_ADDR        0x01000000
+#define PCIE_ARB_ADDR_END        0x01FFBFFF
 
 //! @brief Structure for GPR field
 typedef struct {
-    uint32_t addr;              // field register address 
+    uint32_t addr;              // field register address
     uint32_t mask;              // field mask
     uint32_t offset;            // field offset
 } pcie_iomux_gpr_field_t, *pcie_iomux_gpr_field_p;
@@ -151,23 +151,23 @@ typedef enum {
 // API
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! 
+/*!
  * @brief This function initialized the PCIE controller.
  *
- * @param    dev_mode the Mode of the PCIE controller, root complex or endpoint	
+ * @param    dev_mode the Mode of the PCIE controller, root complex or endpoint
  *
  * @return   0 if succeed, -1 if failed
  */
 int pcie_init(pcie_dm_mode_e dev_mode);
 
-/*! 
+/*!
  * @brief Map endpoint's space to CPU side.
  *
- * @param    viewport 	the viewport number of iATU	
- * @param    tlp_type 	the type of the transaction layer package
- * @param	 addr_base_cpu_side: base address in CPU side
- * @param	 addr_base_pcie_side: base address in PCIE side
- * @param	 size: the size of the space to be mapped
+ * @param    viewport     the viewport number of iATU
+ * @param    tlp_type     the type of the transaction layer package
+ * @param     addr_base_cpu_side: base address in CPU side
+ * @param     addr_base_pcie_side: base address in PCIE side
+ * @param     size: the size of the space to be mapped
  *
  * @return   base address in CPU side
  */

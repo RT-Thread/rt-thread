@@ -541,7 +541,7 @@ uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac)
 /**
   * @}
   */
-  
+
 /* Private functions ---------------------------------------------------------*/
 /** @defgroup DACEx_Private_Functions DACEx private functions
  *  @brief    Extended private functions

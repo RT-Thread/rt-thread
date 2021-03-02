@@ -12,7 +12,7 @@
  *
  * @version
  *
- * @date 
+ * @date
  *
  * @brief The file is a header file for USB Descriptors required for speaker
  *        Application
@@ -111,7 +111,7 @@
 
 /* Max string descriptors supported by the Application */
 #define USB_MAX_STRING_DESCRIPTORS                  (4)
-    
+
 /* Max language codes supported by the USB */
 #define USB_MAX_LANGUAGES_SUPPORTED                 (1)
 
@@ -166,8 +166,8 @@
 #define EP03_IN                                     (0x83)
 #define EP03_OUT                                    (0x03)
 
-/* 
- * Interface delay: number of frames approximately needed by device to process 
+/*
+ * Interface delay: number of frames approximately needed by device to process
  * a packet */
 #define INTERFACE_DELAY                             (0x01)
 
@@ -205,7 +205,7 @@ typedef struct _USB_AUDIO_UT_STRUCT
   uint_8          type;        /* type of endpoint        */
 }USB_UT_STRUCT, *USB_UT_STRUCT_PTR;
 
-typedef const struct _USB_AUDIO_UNITS 
+typedef const struct _USB_AUDIO_UNITS
 {
    /* Number of entities of this application */
    uint_8         count;
@@ -249,425 +249,425 @@ extern void* USB_Desc_Get_Endpoints(uint_8 controller_ID);
 extern void* USB_Desc_Get_Audio_Entities(uint_8 controller_ID);
 
 extern uint_8 USB_Desc_Set_Copy_Protect(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Copy_Protect(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Mute(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Min_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Max_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Res_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Mute(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Max_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Min_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Res_Volume(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Min_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Min_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Max_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Max_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Res_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Res_Bass(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Min_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Max_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Res_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Min_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Max_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Res_Mid(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Res_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Min_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Max_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Res_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Min_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Max_Treble(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Res_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Min_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Max_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Res_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Min_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Max_Graphic_Equalizer(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Automatic_Gain(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Automatic_Gain(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Min_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Max_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Res_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Min_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Max_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Res_Delay(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Bass_Boost(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Bass_Boost(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Loudness(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Loudness(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Min_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Max_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Res_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Min_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Max_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Res_Sampling_Frequency(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Cur_Pitch(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Cur_Pitch(
-    uint_8 controller_ID,               
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Set_Mem_Endpoint(
-    uint_8 controller_ID, 
-    uint_16 offset,              
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 controller_ID,
+    uint_16 offset,
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 extern uint_8 USB_Desc_Get_Mem_Endpoint(
-    uint_8 controller_ID,               
+    uint_8 controller_ID,
     uint_16 offset,
-    uint_8 interface,                   
-    uint_8_ptr *data,                   
-    USB_PACKET_SIZE *size               
+    uint_8 interface,
+    uint_8_ptr *data,
+    USB_PACKET_SIZE *size
 );
 #endif

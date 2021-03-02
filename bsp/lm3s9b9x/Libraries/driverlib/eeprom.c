@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2010-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -147,7 +147,7 @@ EEPROMWaitForDone(void)
 //! rewriting this data.  If \b EEPROM_INIT_ERROR is returned, the EEPROM was
 //! unable to recover its state.  This condition may or may not be resolved on
 //! future resets depending upon the cause of the fault. For example, if the
-//! supply voltage is unstable, retrying the operation once the voltage is 
+//! supply voltage is unstable, retrying the operation once the voltage is
 //! stabilized may clear the error.
 //!
 //! Failure to call this function after a reset may lead to permanent data loss
@@ -626,9 +626,9 @@ EEPROMBlockProtectGet(unsigned long ulBlock)
 //! access to the EEPROM peripheral as a whole.  Protection settings applied to
 //! blocks numbered 1 and above are layered above any protection set on block 0
 //! such that the effective protection on each block is the logical OR of the
-//! protection flags set for block 0 and for the target block.  This protocol 
-//! allows global protection options to be set for the whole device via block 
-//! 0 and more restrictive protection settings to be set on a block-by-block 
+//! protection flags set for block 0 and for the target block.  This protocol
+//! allows global protection options to be set for the whole device via block
+//! 0 and more restrictive protection settings to be set on a block-by-block
 //! basis.
 //!
 //! The protection flags indicate access permissions as follow:

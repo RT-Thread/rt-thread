@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  *
- * Change Logs:  (Pelican Mode) 
+ * Change Logs:  (Pelican Mode)
  * Date           Author       Notes
  * 2018-01-06     sundm75       first version
  */
@@ -58,63 +58,63 @@
 #define CAN_MODE_LOOPBACK            2
 #define CAN_MODE_LOOPBACKANLISEN     3
 
-/*!< CAN æŽ§åˆ¶çŠ¶æ€å¯„å­˜å™¨ */
-/************************** CAN_MOD å¯„å­˜å™¨ä½å®šä¹‰*******************************/
-#define CAN_Mode_RM                 ((unsigned char)0x01)  /*!< å¤ä½æ¨¡å¼ */
-#define CAN_Mode_LOM                ((unsigned char)0x02)  /*!< åªå¬æ¨¡å¼ 1:åªå¬  0:æ­£å¸¸  */
-#define CAN_Mode_STM                ((unsigned char)0x04)  /*!< æ­£å¸¸å·¥ä½œæ¨¡å¼1:è‡ªæ£€æµ‹  0:æ­£å¸¸  */
-#define CAN_Mode_AFM                ((unsigned char)0x08)  /*!< å•/åŒæ»¤æ³¢æ¨¡å¼ 1:å• 0: åŒ*/
-#define CAN_Mode_SM                 ((unsigned char)0x10)  /*!< ç¡çœ æ¨¡å¼1: ç¡çœ  0: å”¤é†’ */
+/*!< CAN ¿ØÖÆ×´Ì¬¼Ä´æÆ÷ */
+/************************** CAN_MOD ¼Ä´æÆ÷Î»¶¨Òå*******************************/
+#define CAN_Mode_RM                 ((unsigned char)0x01)  /*!< ¸´Î»Ä£Ê½ */
+#define CAN_Mode_LOM                ((unsigned char)0x02)  /*!< Ö»ÌýÄ£Ê½ 1:Ö»Ìý  0:Õý³£  */
+#define CAN_Mode_STM                ((unsigned char)0x04)  /*!< Õý³£¹¤×÷Ä£Ê½1:×Ô¼ì²â  0:Õý³£  */
+#define CAN_Mode_AFM                ((unsigned char)0x08)  /*!< µ¥/Ë«ÂË²¨Ä£Ê½ 1:µ¥ 0: Ë«*/
+#define CAN_Mode_SM                 ((unsigned char)0x10)  /*!< Ë¯ÃßÄ£Ê½1: Ë¯Ãß 0: »½ÐÑ */
 
-/************************** CAN_CMR å¯„å­˜å™¨ä½å®šä¹‰*******************************/
- #define  CAN_CMR_TR                         ((unsigned char)0x01)         /*!< å‘é€è¯·æ±‚ 1: å½“å‰ä¿¡æ¯è¢«å‘é€  0: ç©º */
- #define  CAN_CMR_AT                         ((unsigned char)0x02)         /*!< ä¸­æ­¢å‘é€ 1: ç­‰å¾…å‘é€çš„ä¿¡æ¯å–æ¶ˆ  0: ç©ºç¼º  */
- #define  CAN_CMR_RRB                        ((unsigned char)0x04)         /*!< é‡Šæ”¾æŽ¥æ”¶ç¼“å†²å™¨  1:é‡Šæ”¾  0: æ— åŠ¨ä½œ */
- #define  CAN_CMR_CDO                        ((unsigned char)0x08)         /*!< æ¸…é™¤æ•°æ®æº¢å‡º  1:æ¸…é™¤  0: æ— åŠ¨ä½œ    */
-//#define  CAN_CMR_GTS                        ((unsigned char)0x10)        /*!< STDæ¨¡å¼< ç¡çœ : 1:è¿›å…¥ç¡çœ   0: å”¤é†’  */
- #define  CAN_CMR_SRR                        ((unsigned char)0x10)         /*!< è‡ªæŽ¥æ”¶è¯·æ±‚  1:  0:   */
- #define  CAN_CMR_EFF                        ((unsigned char)0x80)         /*!< æ‰©å±•æ¨¡å¼ 1:æ‰©å±•å¸§ 0: æ ‡å‡†å¸§  */
+/************************** CAN_CMR ¼Ä´æÆ÷Î»¶¨Òå*******************************/
+ #define  CAN_CMR_TR                         ((unsigned char)0x01)         /*!< ·¢ËÍÇëÇó 1: µ±Ç°ÐÅÏ¢±»·¢ËÍ  0: ¿Õ */
+ #define  CAN_CMR_AT                         ((unsigned char)0x02)         /*!< ÖÐÖ¹·¢ËÍ 1: µÈ´ý·¢ËÍµÄÐÅÏ¢È¡Ïû  0: ¿ÕÈ±  */
+ #define  CAN_CMR_RRB                        ((unsigned char)0x04)         /*!< ÊÍ·Å½ÓÊÕ»º³åÆ÷  1:ÊÍ·Å  0: ÎÞ¶¯×÷ */
+ #define  CAN_CMR_CDO                        ((unsigned char)0x08)         /*!< Çå³ýÊý¾ÝÒç³ö  1:Çå³ý  0: ÎÞ¶¯×÷    */
+//#define  CAN_CMR_GTS                        ((unsigned char)0x10)        /*!< STDÄ£Ê½< Ë¯Ãß: 1:½øÈëË¯Ãß  0: »½ÐÑ  */
+ #define  CAN_CMR_SRR                        ((unsigned char)0x10)         /*!< ×Ô½ÓÊÕÇëÇó  1:  0:   */
+ #define  CAN_CMR_EFF                        ((unsigned char)0x80)         /*!< À©Õ¹Ä£Ê½ 1:À©Õ¹Ö¡ 0: ±ê×¼Ö¡  */
 
-/************************** CAN_SR å¯„å­˜å™¨ä½å®šä¹‰********************************/
- #define  CAN_SR_BBS                         ((unsigned char)0x01)         /*!< æŽ¥æ”¶ç¼“å­˜å™¨çŠ¶æ€1: æ»¡  0: ç©º */
- #define  CAN_SR_DOS                         ((unsigned char)0x02)         /*!< æ•°æ®æº¢å‡ºçŠ¶æ€ 1: æº¢å‡º  0: ç©ºç¼º  */
- #define  CAN_SR_TBS                         ((unsigned char)0x04)         /*!< å‘é€ç¼“å­˜å™¨çŠ¶æ€1: é‡Šæ”¾  0: é”å®š */
- #define  CAN_SR_TCS                         ((unsigned char)0x08)         /*!< å‘é€å®Œæ¯•çŠ¶æ€1: å®Œæ¯•  0: æœªå®Œæ¯•    */
- #define  CAN_SR_RS                          ((unsigned char)0x10)         /*!< æŽ¥æ”¶çŠ¶æ€1: æŽ¥æ”¶  0: ç©ºé—²  */
- #define  CAN_SR_TS                          ((unsigned char)0x20)         /*!< å‘é€çŠ¶æ€1:  å‘é€ 0:  ç©ºé—²*/
- #define  CAN_SR_ES                          ((unsigned char)0x40)         /*!< å‡ºé”™çŠ¶æ€1:å‡ºé”™ 0: æ­£å¸¸ */
- #define  CAN_SR_BS                          ((unsigned char)0x80)         /*!< æ€»çº¿çŠ¶æ€1: å…³é—­  0: å¼€å¯  */
- 
-/************************** CAN_IR ä¸­æ–­å¯„å­˜å™¨ä½å®šä¹‰****************************/
- #define  CAN_IR_RI                          ((unsigned char)0x01)         /*!< æŽ¥æ”¶ä¸­æ–­ */
- #define  CAN_IR_TI                          ((unsigned char)0x02)         /*!< å‘é€ä¸­æ–­ */
- #define  CAN_IR_EI                          ((unsigned char)0x04)         /*!< é”™è¯¯ä¸­æ–­ */
- #define  CAN_IR_DOI                         ((unsigned char)0x08)         /*!< æ•°æ®æº¢å‡ºä¸­æ–­  */
- #define  CAN_IR_WUI                         ((unsigned char)0x10)         /*!< å”¤é†’ä¸­æ–­ */
- #define  CAN_IR_EPI                         ((unsigned char)0x20)         /*!< é”™è¯¯æ¶ˆæžä¸­æ–­ */
- #define  CAN_IR_ALI                         ((unsigned char)0x40)         /*!< ä»²è£ä¸¢å¤±ä¸­æ–­ */
- #define  CAN_IR_BEI                         ((unsigned char)0x80)         /*!< æ€»çº¿é”™è¯¯ä¸­æ–­  */
- 
-/************************* CAN_IER ä¸­æ–­ä½¿èƒ½å¯„å­˜å™¨ä½å®šä¹‰************************/
- #define  CAN_IER_RIE                         ((unsigned char)0x01)        /*!< æŽ¥æ”¶ä¸­æ–­ä½¿èƒ½ */
- #define  CAN_IER_TIE                         ((unsigned char)0x02)        /*!< å‘é€ä¸­æ–­ä½¿èƒ½ */
- #define  CAN_IER_EIE                         ((unsigned char)0x04)        /*!< é”™è¯¯ä¸­æ–­ä½¿èƒ½ */
- #define  CAN_IER_DOIE                        ((unsigned char)0x08)        /*!< æ•°æ®æº¢å‡ºä¸­æ–­ä½¿èƒ½  */
- #define  CAN_IER_WUIE                        ((unsigned char)0x10)        /*!< å”¤é†’ä¸­æ–­ä½¿èƒ½ */
- #define  CAN_IER_EPIE                        ((unsigned char)0x20)        /*!< é”™è¯¯æ¶ˆæžä¸­æ–­ä½¿èƒ½ */
- #define  CAN_IER_ALIE                        ((unsigned char)0x40)        /*!< ä»²è£ä¸¢å¤±ä¸­æ–­ä½¿èƒ½ */
- #define  CAN_IER_BEIE                        ((unsigned char)0x80)        /*!< æ€»çº¿é”™è¯¯ä¸­æ–­ä½¿èƒ½  */
- 
-typedef enum 
+/************************** CAN_SR ¼Ä´æÆ÷Î»¶¨Òå********************************/
+ #define  CAN_SR_BBS                         ((unsigned char)0x01)         /*!< ½ÓÊÕ»º´æÆ÷×´Ì¬1: Âú  0: ¿Õ */
+ #define  CAN_SR_DOS                         ((unsigned char)0x02)         /*!< Êý¾ÝÒç³ö×´Ì¬ 1: Òç³ö  0: ¿ÕÈ±  */
+ #define  CAN_SR_TBS                         ((unsigned char)0x04)         /*!< ·¢ËÍ»º´æÆ÷×´Ì¬1: ÊÍ·Å  0: Ëø¶¨ */
+ #define  CAN_SR_TCS                         ((unsigned char)0x08)         /*!< ·¢ËÍÍê±Ï×´Ì¬1: Íê±Ï  0: Î´Íê±Ï    */
+ #define  CAN_SR_RS                          ((unsigned char)0x10)         /*!< ½ÓÊÕ×´Ì¬1: ½ÓÊÕ  0: ¿ÕÏÐ  */
+ #define  CAN_SR_TS                          ((unsigned char)0x20)         /*!< ·¢ËÍ×´Ì¬1:  ·¢ËÍ 0:  ¿ÕÏÐ*/
+ #define  CAN_SR_ES                          ((unsigned char)0x40)         /*!< ³ö´í×´Ì¬1:³ö´í 0: Õý³£ */
+ #define  CAN_SR_BS                          ((unsigned char)0x80)         /*!< ×ÜÏß×´Ì¬1: ¹Ø±Õ  0: ¿ªÆô  */
+
+/************************** CAN_IR ÖÐ¶Ï¼Ä´æÆ÷Î»¶¨Òå****************************/
+ #define  CAN_IR_RI                          ((unsigned char)0x01)         /*!< ½ÓÊÕÖÐ¶Ï */
+ #define  CAN_IR_TI                          ((unsigned char)0x02)         /*!< ·¢ËÍÖÐ¶Ï */
+ #define  CAN_IR_EI                          ((unsigned char)0x04)         /*!< ´íÎóÖÐ¶Ï */
+ #define  CAN_IR_DOI                         ((unsigned char)0x08)         /*!< Êý¾ÝÒç³öÖÐ¶Ï  */
+ #define  CAN_IR_WUI                         ((unsigned char)0x10)         /*!< »½ÐÑÖÐ¶Ï */
+ #define  CAN_IR_EPI                         ((unsigned char)0x20)         /*!< ´íÎóÏû¼«ÖÐ¶Ï */
+ #define  CAN_IR_ALI                         ((unsigned char)0x40)         /*!< ÖÙ²Ã¶ªÊ§ÖÐ¶Ï */
+ #define  CAN_IR_BEI                         ((unsigned char)0x80)         /*!< ×ÜÏß´íÎóÖÐ¶Ï  */
+
+/************************* CAN_IER ÖÐ¶ÏÊ¹ÄÜ¼Ä´æÆ÷Î»¶¨Òå************************/
+ #define  CAN_IER_RIE                         ((unsigned char)0x01)        /*!< ½ÓÊÕÖÐ¶ÏÊ¹ÄÜ */
+ #define  CAN_IER_TIE                         ((unsigned char)0x02)        /*!< ·¢ËÍÖÐ¶ÏÊ¹ÄÜ */
+ #define  CAN_IER_EIE                         ((unsigned char)0x04)        /*!< ´íÎóÖÐ¶ÏÊ¹ÄÜ */
+ #define  CAN_IER_DOIE                        ((unsigned char)0x08)        /*!< Êý¾ÝÒç³öÖÐ¶ÏÊ¹ÄÜ  */
+ #define  CAN_IER_WUIE                        ((unsigned char)0x10)        /*!< »½ÐÑÖÐ¶ÏÊ¹ÄÜ */
+ #define  CAN_IER_EPIE                        ((unsigned char)0x20)        /*!< ´íÎóÏû¼«ÖÐ¶ÏÊ¹ÄÜ */
+ #define  CAN_IER_ALIE                        ((unsigned char)0x40)        /*!< ÖÙ²Ã¶ªÊ§ÖÐ¶ÏÊ¹ÄÜ */
+ #define  CAN_IER_BEIE                        ((unsigned char)0x80)        /*!< ×ÜÏß´íÎóÖÐ¶ÏÊ¹ÄÜ  */
+
+typedef enum
 {
-	LS1C_CAN1MBaud=0,    // 1 MBit/sec
-	LS1C_CAN800kBaud,    // 800 kBit/sec
-	LS1C_CAN500kBaud,    // 500 kBit/sec
-	LS1C_CAN250kBaud,    // 250 kBit/sec
-	LS1C_CAN125kBaud,    // 125 kBit/sec
-	LS1C_CAN100kBaud,    // 100 kBit/sec
-	LS1C_CAN50kBaud,     // 50 kBit/sec
-	LS1C_CAN40kBaud,     // 40 kBit/sec
+    LS1C_CAN1MBaud=0,    // 1 MBit/sec
+    LS1C_CAN800kBaud,    // 800 kBit/sec
+    LS1C_CAN500kBaud,    // 500 kBit/sec
+    LS1C_CAN250kBaud,    // 250 kBit/sec
+    LS1C_CAN125kBaud,    // 125 kBit/sec
+    LS1C_CAN100kBaud,    // 100 kBit/sec
+    LS1C_CAN50kBaud,     // 50 kBit/sec
+    LS1C_CAN40kBaud,     // 40 kBit/sec
 }Ls1c_CanBPS_t;
 
 typedef struct
@@ -143,59 +143,59 @@ typedef struct
 
 typedef struct
 {
-  unsigned char  CAN_Prescaler;    /* æ³¢ç‰¹çŽ‡åˆ†é¢‘ç³»æ•°1 to 31. */  
-  unsigned char  CAN_Mode;         /*0x10:ç¡çœ 0x08:å•,åŒæ»¤æ³¢ 0x40:æ­£å¸¸å·¥ä½œ0x20:åªå¬ 0x01:å¤ä½*/
-  unsigned char  CAN_SJW;          /*åŒæ­¥è·³è½¬å®½åº¦ */
-  unsigned char  CAN_BS1;          /*æ—¶é—´æ®µ1è®¡æ•°å€¼*/
-  unsigned char  CAN_BS2;          /*æ—¶é—´æ®µ2è®¡æ•°å€¼*/ 
-  
+  unsigned char  CAN_Prescaler;    /* ²¨ÌØÂÊ·ÖÆµÏµÊý1 to 31. */
+  unsigned char  CAN_Mode;         /*0x10:Ë¯Ãß0x08:µ¥,Ë«ÂË²¨ 0x40:Õý³£¹¤×÷0x20:Ö»Ìý 0x01:¸´Î»*/
+  unsigned char  CAN_SJW;          /*Í¬²½Ìø×ª¿í¶È */
+  unsigned char  CAN_BS1;          /*Ê±¼ä¶Î1¼ÆÊýÖµ*/
+  unsigned char  CAN_BS2;          /*Ê±¼ä¶Î2¼ÆÊýÖµ*/
+
 } CAN_InitTypeDef;
 
 typedef struct
 {
-  unsigned char  IDE;        /*0: ä½¿ç”¨æ ‡å‡†æ ‡è¯†ç¬¦1: ä½¿ç”¨æ‰©å±•æ ‡è¯†ç¬¦*/
-  unsigned char  RTR;    /*0: æ•°æ®å¸§     1: è¿œç¨‹å¸§*/
-  unsigned char  MODE;        /* 0- åŒæ»¤æ³¢å™¨æ¨¡å¼;1-å•æ»¤æ³¢å™¨æ¨¡å¼*/
-  unsigned long  First_Data;    /*åŒæ»¤æ³¢å™¨æ¨¡å¼ä¸‹ä¿¡æ¯ç¬¬ä¸€ä¸ªæ•°æ®å­—èŠ‚*/
-  unsigned long  Data_Mask;    /*åŒæ»¤æ³¢å™¨æ¨¡å¼ä¸‹ä¿¡æ¯ç¬¬ä¸€ä¸ªæ•°æ®å­—èŠ‚å±è”½*/
-  unsigned long  ID;        /*éªŒæ”¶ä»£ç */
+  unsigned char  IDE;        /*0: Ê¹ÓÃ±ê×¼±êÊ¶·û1: Ê¹ÓÃÀ©Õ¹±êÊ¶·û*/
+  unsigned char  RTR;    /*0: Êý¾ÝÖ¡     1: Ô¶³ÌÖ¡*/
+  unsigned char  MODE;        /* 0- Ë«ÂË²¨Æ÷Ä£Ê½;1-µ¥ÂË²¨Æ÷Ä£Ê½*/
+  unsigned long  First_Data;    /*Ë«ÂË²¨Æ÷Ä£Ê½ÏÂÐÅÏ¢µÚÒ»¸öÊý¾Ý×Ö½Ú*/
+  unsigned long  Data_Mask;    /*Ë«ÂË²¨Æ÷Ä£Ê½ÏÂÐÅÏ¢µÚÒ»¸öÊý¾Ý×Ö½ÚÆÁ±Î*/
+  unsigned long  ID;        /*ÑéÊÕ´úÂë*/
   /*
- åŒæ»¤æ³¢å™¨-  æ‰©å±•å¸§: 2ä¸ªæ»¤æ³¢å™¨çš„å‰16ä½,åˆ†åˆ«æ”¾åœ¨ID çš„å‰16ä½å’Œ IDçš„åŽ16ä½.
- åŒæ»¤æ³¢å™¨-  æ ‡å‡†å¸§: 2ä¸ªæ»¤æ³¢å™¨çš„11ä½,åˆ†åˆ«æ”¾åœ¨ID çš„å‰16ä½å’Œ IDçš„åŽ16ä½,ç¬¬1ä¸ªæ»¤æ³¢å™¨åŒæ—¶ä½¿ç”¨First_Dataå’ŒData_Mask
- å•æ»¤æ³¢å™¨-  æ‰©å±•å¸§: ä½¿ç”¨29ä½, æ”¾åœ¨ID çš„åŽ29ä½.
- å•æ»¤æ³¢å™¨-  æ ‡å‡†å¸§: ä½¿ç”¨11ä½, æ”¾åœ¨ID çš„åŽ11ä½.
+ Ë«ÂË²¨Æ÷-  À©Õ¹Ö¡: 2¸öÂË²¨Æ÷µÄÇ°16Î»,·Ö±ð·ÅÔÚID µÄÇ°16Î»ºÍ IDµÄºó16Î».
+ Ë«ÂË²¨Æ÷-  ±ê×¼Ö¡: 2¸öÂË²¨Æ÷µÄ11Î»,·Ö±ð·ÅÔÚID µÄÇ°16Î»ºÍ IDµÄºó16Î»,µÚ1¸öÂË²¨Æ÷Í¬Ê±Ê¹ÓÃFirst_DataºÍData_Mask
+ µ¥ÂË²¨Æ÷-  À©Õ¹Ö¡: Ê¹ÓÃ29Î», ·ÅÔÚID µÄºó29Î».
+ µ¥ÂË²¨Æ÷-  ±ê×¼Ö¡: Ê¹ÓÃ11Î», ·ÅÔÚID µÄºó11Î».
   */
-  unsigned long  IDMASK;    /*éªŒæ”¶å±è”½*/
+  unsigned long  IDMASK;    /*ÑéÊÕÆÁ±Î*/
 } CAN_FilterInitTypeDef;
 
 typedef struct
 {
-  unsigned long StdId;  /* 11ä½ID*/
-  unsigned long ExtId;  /*29ä½ID**/
-  unsigned char IDE;    /*IDE: æ ‡è¯†ç¬¦é€‰æ‹©
-                                     è¯¥ä½å†³å®šå‘é€é‚®ç®±ä¸­æŠ¥æ–‡ä½¿ç”¨çš„æ ‡è¯†ç¬¦ç±»åž‹
-                                     0: ä½¿ç”¨æ ‡å‡†æ ‡è¯†ç¬¦
-                                     1: ä½¿ç”¨æ‰©å±•æ ‡è¯†ç¬¦*/
-  unsigned char RTR;     /*è¿œç¨‹å‘é€è¯·æ±‚
-                                       0: æ•°æ®å¸§
-                                       1: è¿œç¨‹å¸§*/
-  unsigned char DLC;     /*æ•°æ®å¸§é•¿åº¦*/
-  unsigned char Data[8]; /*8å­—èŠ‚æ•°æ®*/
+  unsigned long StdId;  /* 11Î»ID*/
+  unsigned long ExtId;  /*29Î»ID**/
+  unsigned char IDE;    /*IDE: ±êÊ¶·ûÑ¡Ôñ
+                                     ¸ÃÎ»¾ö¶¨·¢ËÍÓÊÏäÖÐ±¨ÎÄÊ¹ÓÃµÄ±êÊ¶·ûÀàÐÍ
+                                     0: Ê¹ÓÃ±ê×¼±êÊ¶·û
+                                     1: Ê¹ÓÃÀ©Õ¹±êÊ¶·û*/
+  unsigned char RTR;     /*Ô¶³Ì·¢ËÍÇëÇó
+                                       0: Êý¾ÝÖ¡
+                                       1: Ô¶³ÌÖ¡*/
+  unsigned char DLC;     /*Êý¾ÝÖ¡³¤¶È*/
+  unsigned char Data[8]; /*8×Ö½ÚÊý¾Ý*/
 } CanRxMsg;
 
 typedef struct
 {
-  unsigned long StdId;  /* 11ä½ID*/
-  unsigned long ExtId;  /*29ä½ID**/
-  unsigned char IDE;    /*IDE: æ ‡è¯†ç¬¦é€‰æ‹©
-                                     è¯¥ä½å†³å®šå‘é€é‚®ç®±ä¸­æŠ¥æ–‡ä½¿ç”¨çš„æ ‡è¯†ç¬¦ç±»åž‹
-                                     0: ä½¿ç”¨æ ‡å‡†æ ‡è¯†ç¬¦
-                                     1: ä½¿ç”¨æ‰©å±•æ ‡è¯†ç¬¦*/
-  unsigned char RTR;     /*è¿œç¨‹å‘é€è¯·æ±‚
-                                       0: æ•°æ®å¸§
-                                       1: è¿œç¨‹å¸§*/
-  unsigned char DLC;     /*æ•°æ®å¸§é•¿åº¦*/
-  unsigned char Data[8]; /*8å­—èŠ‚æ•°æ®*/
+  unsigned long StdId;  /* 11Î»ID*/
+  unsigned long ExtId;  /*29Î»ID**/
+  unsigned char IDE;    /*IDE: ±êÊ¶·ûÑ¡Ôñ
+                                     ¸ÃÎ»¾ö¶¨·¢ËÍÓÊÏäÖÐ±¨ÎÄÊ¹ÓÃµÄ±êÊ¶·ûÀàÐÍ
+                                     0: Ê¹ÓÃ±ê×¼±êÊ¶·û
+                                     1: Ê¹ÓÃÀ©Õ¹±êÊ¶·û*/
+  unsigned char RTR;     /*Ô¶³Ì·¢ËÍÇëÇó
+                                       0: Êý¾ÝÖ¡
+                                       1: Ô¶³ÌÖ¡*/
+  unsigned char DLC;     /*Êý¾ÝÖ¡³¤¶È*/
+  unsigned char Data[8]; /*8×Ö½ÚÊý¾Ý*/
 } CanTxMsg;
 
 unsigned char CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct);

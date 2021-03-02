@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -42,9 +42,9 @@
 //! exception interrupt occurs.
 //!
 //! This function places the address of the system exception interrupt handler
-//! into the interrupt vector table in SRAM.  This function also enables the 
-//! global interrupt in the interrupt controller; specific system exception 
-//! interrupts must be enabled via SysExcIntEnable().  It is the interrupt 
+//! into the interrupt vector table in SRAM.  This function also enables the
+//! global interrupt in the interrupt controller; specific system exception
+//! interrupts must be enabled via SysExcIntEnable().  It is the interrupt
 //! handler's responsibility to clear the interrupt source.
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -72,8 +72,8 @@ SysExcIntRegister(void (*pfnHandler)(void))
 //! Unregisters the system exception interrupt handler.
 //!
 //! This function removes the system exception interrupt handler from the
-//! vector table in SRAM.  This function also masks off the system exception 
-//! interrupt in the interrupt controller so that the interrupt handler is no 
+//! vector table in SRAM.  This function also masks off the system exception
+//! interrupt in the interrupt controller so that the interrupt handler is no
 //! longer called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -198,9 +198,9 @@ SysExcIntStatus(tBoolean bMasked)
 //!
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
-//! This function clears the specified system exception interrupt sources, so 
+//! This function clears the specified system exception interrupt sources, so
 //! that they no longer assert.  This function must be called in the interrupt
-//! handler to keep the interrupt from being recognized again immediately upon 
+//! handler to keep the interrupt from being recognized again immediately upon
 //! exit.
 //!
 //! The \e ulIntFlags parameter is the logical OR of any of the following:

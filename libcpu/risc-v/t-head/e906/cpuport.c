@@ -131,7 +131,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 
 
 /**
- * This function will disable global interrupt 
+ * This function will disable global interrupt
  *
  * @param none
  *
@@ -145,7 +145,7 @@ rt_base_t rt_hw_interrupt_disable(void)
 }
 
 /**
- * This function will ennable global interrupt 
+ * This function will ennable global interrupt
  *
  * @param level not used
  *

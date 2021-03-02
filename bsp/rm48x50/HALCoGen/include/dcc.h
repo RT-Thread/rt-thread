@@ -2,7 +2,7 @@
 *   @brief DCC Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -177,18 +177,18 @@
 */
 enum dcc1clocksource
 {
-    DCC1_CNT0_HF_LPO	= 0x5U,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
-	DCC1_CNT0_TCK		= 0xAU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 1*/
-	DCC1_CNT0_OSCIN		= 0xFU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
+    DCC1_CNT0_HF_LPO    = 0x5U,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
+    DCC1_CNT0_TCK        = 0xAU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 1*/
+    DCC1_CNT0_OSCIN        = 0xFU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
 
-    DCC1_CNT1_PLL1		= 0x0U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 0*/
-    DCC1_CNT1_PLL2		= 0x1U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 1*/
-	DCC1_CNT1_LF_LPO	= 0x2U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 2*/
-	DCC1_CNT1_HF_LPO	= 0x3U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 3*/
-	DCC1_CNT1_EXTCLKIN1 = 0x5U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 4*/
-	DCC1_CNT1_EXTCLKIN2 = 0x6U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 6*/
-	DCC1_CNT1_VCLK		= 0x8U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
-	DCC1_CNT1_N2HET1_31	= 0xAU	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
+    DCC1_CNT1_PLL1        = 0x0U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 0*/
+    DCC1_CNT1_PLL2        = 0x1U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 1*/
+    DCC1_CNT1_LF_LPO    = 0x2U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 2*/
+    DCC1_CNT1_HF_LPO    = 0x3U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 3*/
+    DCC1_CNT1_EXTCLKIN1 = 0x5U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 4*/
+    DCC1_CNT1_EXTCLKIN2 = 0x6U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 6*/
+    DCC1_CNT1_VCLK        = 0x8U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
+    DCC1_CNT1_N2HET1_31    = 0xAU    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
 };
 
 /** @enum dcc2clocksource
@@ -198,11 +198,11 @@ enum dcc1clocksource
 */
 enum dcc2clocksource
 {
-    DCC2_CNT0_OSCIN		= 0xFU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
-    DCC2_CNT0_TCK		= 0xAU,	/**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
+    DCC2_CNT0_OSCIN        = 0xFU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 0*/
+    DCC2_CNT0_TCK        = 0xAU,    /**< Alias for DCC1 CNT 0 CLOCK SOURCE 2*/
 
-   	DCC2_CNT1_VCLK		= 0x8U,	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
-	DCC2_CNT1_N2HET2_0	= 0xAU	/**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
+       DCC2_CNT1_VCLK        = 0x8U,    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 8*/
+    DCC2_CNT1_N2HET2_0    = 0xAU    /**< Alias for DCC1 CNT 1 CLOCK SOURCE 9*/
 };
 
 /* Configuration registers */
@@ -217,21 +217,21 @@ typedef struct dcc_config_reg
 } dcc_config_reg_t;
 
 /* Configuration registers initial value */
-#define DCC1_GCTRL_CONFIGVALUE		0xAU | (0xAU << 4U) | (0x5U << 8U) | (0xAU << 12U)
-#define DCC1_CNT0SEED_CONFIGVALUE	39204U
-#define DCC1_VALID0SEED_CONFIGVALUE	792U
-#define DCC1_CNT1SEED_CONFIGVALUE	495000U
-#define DCC1_CLKSRC1_CONFIGVALUE	(10U << 12U) | DCC1_CNT1_PLL1
+#define DCC1_GCTRL_CONFIGVALUE        0xAU | (0xAU << 4U) | (0x5U << 8U) | (0xAU << 12U)
+#define DCC1_CNT0SEED_CONFIGVALUE    39204U
+#define DCC1_VALID0SEED_CONFIGVALUE    792U
+#define DCC1_CNT1SEED_CONFIGVALUE    495000U
+#define DCC1_CLKSRC1_CONFIGVALUE    (10U << 12U) | DCC1_CNT1_PLL1
 /*SAFETYMCUSW 79 S MR:19.4 <REVIEWED> "Macro filled using GUI parameter cannot be avoided" */
-#define DCC1_CLKSRC0_CONFIGVALUE	DCC1_CNT0_OSCIN
+#define DCC1_CLKSRC0_CONFIGVALUE    DCC1_CNT0_OSCIN
 
-#define DCC2_GCTRL_CONFIGVALUE		0xAU | (0xAU << 4U) | (0x5U << 8U) | (0xAU << 12U)
-#define DCC2_CNT0SEED_CONFIGVALUE	0U
-#define DCC2_VALID0SEED_CONFIGVALUE	0U
-#define DCC2_CNT1SEED_CONFIGVALUE	0U
-#define DCC2_CLKSRC1_CONFIGVALUE	(0x5U << 12U) | DCC2_CNT1_VCLK
+#define DCC2_GCTRL_CONFIGVALUE        0xAU | (0xAU << 4U) | (0x5U << 8U) | (0xAU << 12U)
+#define DCC2_CNT0SEED_CONFIGVALUE    0U
+#define DCC2_VALID0SEED_CONFIGVALUE    0U
+#define DCC2_CNT1SEED_CONFIGVALUE    0U
+#define DCC2_CLKSRC1_CONFIGVALUE    (0x5U << 12U) | DCC2_CNT1_VCLK
 /*SAFETYMCUSW 79 S MR:19.4 <REVIEWED> "Macro filled using GUI parameter cannot be avoided" */
-#define DCC2_CLKSRC0_CONFIGVALUE		DCC2_CNT0_OSCIN
+#define DCC2_CLKSRC0_CONFIGVALUE        DCC2_CNT0_OSCIN
 
 /**
  *  @defgroup DCC DCC
@@ -241,7 +241,7 @@ typedef struct dcc_config_reg
  *  known clock signal as a reference. This capability can be used to ensure the correct frequency range for
  *  several different device clock sources, thereby enhancing the system safety metrics.
  *
- *	Related Files
+ *    Related Files
  *   - reg_dcc.h
  *   - dcc.h
  *   - dcc.c

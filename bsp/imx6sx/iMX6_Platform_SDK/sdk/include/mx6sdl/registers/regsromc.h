@@ -289,7 +289,7 @@ typedef union _hw_romc_rompatchenl
     struct _hw_romc_rompatchenl_bitfields
     {
         unsigned ENABLE : 16; //!< [15:0] Enable Address Comparator - This bit enables the corresponding address comparator to trigger an event.
-        unsigned RESERVED0 : 16; //!< [31:16] 
+        unsigned RESERVED0 : 16; //!< [31:16]
     } B;
 } hw_romc_rompatchenl_t;
 #endif

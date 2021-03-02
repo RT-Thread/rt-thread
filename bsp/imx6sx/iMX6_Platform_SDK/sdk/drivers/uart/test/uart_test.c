@@ -46,7 +46,7 @@ static uint32_t uart_loopback_instance = HW_UART3;
 
 static volatile uint8_t g_wait_for_irq;
 
-/*! 
+/*!
  * UART interrupt handler.
  *
  * @return  none
@@ -60,20 +60,20 @@ void uart_interrupt_handler(void)
     g_wait_for_irq = 0;
 }
 
-/*! 
+/*!
  * UART test. The tested port is configured to generate an IRQ everytime
  * a data is received. The port is configured in loopback.
  * The debug/console port is used to receive a character typed in a terminal.
  * This character is sent to the tested UART Tx FIFO, and the IRQ routine
  * triggered when the data is received display this character to the terminal.
  * It is like an echo test which uses the tested UART for the echo.
- * 
+ *
  * @return TEST_PASSED or TEST_FAILED
  */
 test_return_t uart_test(void)
 {
     uint8_t sel;
-	const char* const indent = menu_get_indent();
+    const char* const indent = menu_get_indent();
 
     printf("\n%sTest will echo characters to the terminal.\n\n%sType 'x' to exit.\n", indent, indent);
 

@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file contains all the functions prototypes for the I2C firmware 
+  * @brief   This file contains all the functions prototypes for the I2C firmware
   *          library.
   ******************************************************************************
   * @attention
@@ -17,8 +17,8 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
-  */ 
+  ******************************************************************************
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F2xx_I2C_H
@@ -41,8 +41,8 @@
 
 /* Exported types ------------------------------------------------------------*/
 
-/** 
-  * @brief  I2C Init structure definition  
+/**
+  * @brief  I2C Init structure definition
   */
 
 typedef struct
@@ -75,12 +75,12 @@ typedef struct
 
 #define IS_I2C_ALL_PERIPH(PERIPH) (((PERIPH) == I2C1) || \
                                    ((PERIPH) == I2C2))
-/** @defgroup I2C_mode 
+/** @defgroup I2C_mode
   * @{
   */
 
 #define I2C_Mode_I2C                    ((uint16_t)0x0000)
-#define I2C_Mode_SMBusDevice            ((uint16_t)0x0002)  
+#define I2C_Mode_SMBusDevice            ((uint16_t)0x0002)
 #define I2C_Mode_SMBusHost              ((uint16_t)0x000A)
 #define IS_I2C_MODE(MODE) (((MODE) == I2C_Mode_I2C) || \
                            ((MODE) == I2C_Mode_SMBusDevice) || \
@@ -89,7 +89,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_duty_cycle_in_fast_mode 
+/** @defgroup I2C_duty_cycle_in_fast_mode
   * @{
   */
 
@@ -99,7 +99,7 @@ typedef struct
                                   ((CYCLE) == I2C_DutyCycle_2))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup I2C_acknowledgement
   * @{
@@ -113,7 +113,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_transfer_direction 
+/** @defgroup I2C_transfer_direction
   * @{
   */
 
@@ -125,7 +125,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_acknowledged_address 
+/** @defgroup I2C_acknowledged_address
   * @{
   */
 
@@ -135,9 +135,9 @@ typedef struct
                                              ((ADDRESS) == I2C_AcknowledgedAddress_10bit))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup I2C_registers 
+/** @defgroup I2C_registers
   * @{
   */
 
@@ -163,7 +163,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_NACK_position 
+/** @defgroup I2C_NACK_position
   * @{
   */
 
@@ -173,9 +173,9 @@ typedef struct
                                          ((POSITION) == I2C_NACKPosition_Current))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup I2C_SMBus_alert_pin_level 
+/** @defgroup I2C_SMBus_alert_pin_level
   * @{
   */
 
@@ -187,7 +187,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_PEC_position 
+/** @defgroup I2C_PEC_position
   * @{
   */
 
@@ -197,9 +197,9 @@ typedef struct
                                        ((POSITION) == I2C_PECPosition_Current))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup I2C_interrupts_definition 
+/** @defgroup I2C_interrupts_definition
   * @{
   */
 
@@ -209,9 +209,9 @@ typedef struct
 #define IS_I2C_CONFIG_IT(IT) ((((IT) & (uint16_t)0xF8FF) == 0x00) && ((IT) != 0x00))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup I2C_interrupts_definition 
+/** @defgroup I2C_interrupts_definition
   * @{
   */
 
@@ -243,12 +243,12 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_flags_definition 
+/** @defgroup I2C_flags_definition
   * @{
   */
 
-/** 
-  * @brief  SR2 register flags  
+/**
+  * @brief  SR2 register flags
   */
 
 #define I2C_FLAG_DUALF                  ((uint32_t)0x00800000)
@@ -259,8 +259,8 @@ typedef struct
 #define I2C_FLAG_BUSY                   ((uint32_t)0x00020000)
 #define I2C_FLAG_MSL                    ((uint32_t)0x00010000)
 
-/** 
-  * @brief  SR1 register flags  
+/**
+  * @brief  SR1 register flags
   */
 
 #define I2C_FLAG_SMBALERT               ((uint32_t)0x10008000)
@@ -295,7 +295,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_Events 
+/** @defgroup I2C_Events
   * @{
   */
 
@@ -305,40 +305,40 @@ typedef struct
  ===============================================================================
  */
 
-/** 
+/**
   * @brief  Communication start
-  * 
-  * After sending the START condition (I2C_GenerateSTART() function) the master 
-  * has to wait for this event. It means that the Start condition has been correctly 
+  *
+  * After sending the START condition (I2C_GenerateSTART() function) the master
+  * has to wait for this event. It means that the Start condition has been correctly
   * released on the I2C bus (the bus is free, no other devices is communicating).
-  * 
+  *
   */
 /* --EV5 */
 #define  I2C_EVENT_MASTER_MODE_SELECT                      ((uint32_t)0x00030001)  /* BUSY, MSL and SB flag */
 
-/** 
+/**
   * @brief  Address Acknowledge
-  * 
-  * After checking on EV5 (start condition correctly released on the bus), the 
-  * master sends the address of the slave(s) with which it will communicate 
-  * (I2C_Send7bitAddress() function, it also determines the direction of the communication: 
-  * Master transmitter or Receiver). Then the master has to wait that a slave acknowledges 
-  * his address. If an acknowledge is sent on the bus, one of the following events will 
+  *
+  * After checking on EV5 (start condition correctly released on the bus), the
+  * master sends the address of the slave(s) with which it will communicate
+  * (I2C_Send7bitAddress() function, it also determines the direction of the communication:
+  * Master transmitter or Receiver). Then the master has to wait that a slave acknowledges
+  * his address. If an acknowledge is sent on the bus, one of the following events will
   * be set:
-  * 
-  *  1) In case of Master Receiver (7-bit addressing): the I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED 
+  *
+  *  1) In case of Master Receiver (7-bit addressing): the I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED
   *     event is set.
-  *  
-  *  2) In case of Master Transmitter (7-bit addressing): the I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED 
+  *
+  *  2) In case of Master Transmitter (7-bit addressing): the I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED
   *     is set
-  *  
-  *  3) In case of 10-Bit addressing mode, the master (just after generating the START 
-  *  and checking on EV5) has to send the header of 10-bit addressing mode (I2C_SendData() 
-  *  function). Then master should wait on EV9. It means that the 10-bit addressing 
-  *  header has been correctly sent on the bus. Then master should send the second part of 
-  *  the 10-bit address (LSB) using the function I2C_Send7bitAddress(). Then master 
-  *  should wait for event EV6. 
-  *     
+  *
+  *  3) In case of 10-Bit addressing mode, the master (just after generating the START
+  *  and checking on EV5) has to send the header of 10-bit addressing mode (I2C_SendData()
+  *  function). Then master should wait on EV9. It means that the 10-bit addressing
+  *  header has been correctly sent on the bus. Then master should send the second part of
+  *  the 10-bit address (LSB) using the function I2C_Send7bitAddress(). Then master
+  *  should wait for event EV6.
+  *
   */
 
 /* --EV6 */
@@ -347,36 +347,36 @@ typedef struct
 /* --EV9 */
 #define  I2C_EVENT_MASTER_MODE_ADDRESS10                   ((uint32_t)0x00030008)  /* BUSY, MSL and ADD10 flags */
 
-/** 
+/**
   * @brief Communication events
-  * 
-  * If a communication is established (START condition generated and slave address 
-  * acknowledged) then the master has to check on one of the following events for 
+  *
+  * If a communication is established (START condition generated and slave address
+  * acknowledged) then the master has to check on one of the following events for
   * communication procedures:
-  *  
-  * 1) Master Receiver mode: The master has to wait on the event EV7 then to read 
+  *
+  * 1) Master Receiver mode: The master has to wait on the event EV7 then to read
   *    the data received from the slave (I2C_ReceiveData() function).
-  * 
-  * 2) Master Transmitter mode: The master has to send data (I2C_SendData() 
+  *
+  * 2) Master Transmitter mode: The master has to send data (I2C_SendData()
   *    function) then to wait on event EV8 or EV8_2.
-  *    These two events are similar: 
-  *     - EV8 means that the data has been written in the data register and is 
+  *    These two events are similar:
+  *     - EV8 means that the data has been written in the data register and is
   *       being shifted out.
-  *     - EV8_2 means that the data has been physically shifted out and output 
+  *     - EV8_2 means that the data has been physically shifted out and output
   *       on the bus.
   *     In most cases, using EV8 is sufficient for the application.
   *     Using EV8_2 leads to a slower communication but ensure more reliable test.
-  *     EV8_2 is also more suitable than EV8 for testing on the last data transmission 
+  *     EV8_2 is also more suitable than EV8 for testing on the last data transmission
   *     (before Stop condition generation).
-  *     
-  *  @note In case the  user software does not guarantee that this event EV7 is 
-  *        managed before the current byte end of transfer, then user may check on EV7 
+  *
+  *  @note In case the  user software does not guarantee that this event EV7 is
+  *        managed before the current byte end of transfer, then user may check on EV7
   *        and BTF flag at the same time (ie. (I2C_EVENT_MASTER_BYTE_RECEIVED | I2C_FLAG_BTF)).
   *        In this case the communication may be slower.
-  * 
+  *
   */
 
-/* Master RECEIVER mode -----------------------------*/ 
+/* Master RECEIVER mode -----------------------------*/
 /* --EV7 */
 #define  I2C_EVENT_MASTER_BYTE_RECEIVED                    ((uint32_t)0x00030040)  /* BUSY, MSL and RXNE flags */
 
@@ -394,32 +394,32 @@ typedef struct
  */
 
 
-/** 
+/**
   * @brief  Communication start events
-  * 
-  * Wait on one of these events at the start of the communication. It means that 
-  * the I2C peripheral detected a Start condition on the bus (generated by master 
-  * device) followed by the peripheral address. The peripheral generates an ACK 
-  * condition on the bus (if the acknowledge feature is enabled through function 
+  *
+  * Wait on one of these events at the start of the communication. It means that
+  * the I2C peripheral detected a Start condition on the bus (generated by master
+  * device) followed by the peripheral address. The peripheral generates an ACK
+  * condition on the bus (if the acknowledge feature is enabled through function
   * I2C_AcknowledgeConfig()) and the events listed above are set :
-  *  
-  * 1) In normal case (only one address managed by the slave), when the address 
-  *   sent by the master matches the own address of the peripheral (configured by 
-  *   I2C_OwnAddress1 field) the I2C_EVENT_SLAVE_XXX_ADDRESS_MATCHED event is set 
+  *
+  * 1) In normal case (only one address managed by the slave), when the address
+  *   sent by the master matches the own address of the peripheral (configured by
+  *   I2C_OwnAddress1 field) the I2C_EVENT_SLAVE_XXX_ADDRESS_MATCHED event is set
   *   (where XXX could be TRANSMITTER or RECEIVER).
-  *    
-  * 2) In case the address sent by the master matches the second address of the 
-  *   peripheral (configured by the function I2C_OwnAddress2Config() and enabled 
-  *   by the function I2C_DualAddressCmd()) the events I2C_EVENT_SLAVE_XXX_SECONDADDRESS_MATCHED 
+  *
+  * 2) In case the address sent by the master matches the second address of the
+  *   peripheral (configured by the function I2C_OwnAddress2Config() and enabled
+  *   by the function I2C_DualAddressCmd()) the events I2C_EVENT_SLAVE_XXX_SECONDADDRESS_MATCHED
   *   (where XXX could be TRANSMITTER or RECEIVER) are set.
-  *   
-  * 3) In case the address sent by the master is General Call (address 0x00) and 
-  *   if the General Call is enabled for the peripheral (using function I2C_GeneralCallCmd()) 
-  *   the following event is set I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED.   
-  * 
+  *
+  * 3) In case the address sent by the master is General Call (address 0x00) and
+  *   if the General Call is enabled for the peripheral (using function I2C_GeneralCallCmd())
+  *   the following event is set I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED.
+  *
   */
 
-/* --EV1  (all the events below are variants of EV1) */   
+/* --EV1  (all the events below are variants of EV1) */
 /* 1) Case of One Single Address managed by the slave */
 #define  I2C_EVENT_SLAVE_RECEIVER_ADDRESS_MATCHED          ((uint32_t)0x00020002) /* BUSY and ADDR flags */
 #define  I2C_EVENT_SLAVE_TRANSMITTER_ADDRESS_MATCHED       ((uint32_t)0x00060082) /* TRA, BUSY, TXE and ADDR flags */
@@ -431,34 +431,34 @@ typedef struct
 /* 3) Case of General Call enabled for the slave */
 #define  I2C_EVENT_SLAVE_GENERALCALLADDRESS_MATCHED        ((uint32_t)0x00120000)  /* GENCALL and BUSY flags */
 
-/** 
+/**
   * @brief  Communication events
-  * 
-  * Wait on one of these events when EV1 has already been checked and: 
-  * 
+  *
+  * Wait on one of these events when EV1 has already been checked and:
+  *
   * - Slave RECEIVER mode:
-  *     - EV2: When the application is expecting a data byte to be received. 
-  *     - EV4: When the application is expecting the end of the communication: master 
+  *     - EV2: When the application is expecting a data byte to be received.
+  *     - EV4: When the application is expecting the end of the communication: master
   *       sends a stop condition and data transmission is stopped.
-  *    
+  *
   * - Slave Transmitter mode:
-  *    - EV3: When a byte has been transmitted by the slave and the application is expecting 
+  *    - EV3: When a byte has been transmitted by the slave and the application is expecting
   *      the end of the byte transmission. The two events I2C_EVENT_SLAVE_BYTE_TRANSMITTED and
-  *      I2C_EVENT_SLAVE_BYTE_TRANSMITTING are similar. The second one can optionally be 
+  *      I2C_EVENT_SLAVE_BYTE_TRANSMITTING are similar. The second one can optionally be
   *      used when the user software doesn't guarantee the EV3 is managed before the
   *      current byte end of transfer.
-  *    - EV3_2: When the master sends a NACK in order to tell slave that data transmission 
-  *      shall end (before sending the STOP condition). In this case slave has to stop sending 
+  *    - EV3_2: When the master sends a NACK in order to tell slave that data transmission
+  *      shall end (before sending the STOP condition). In this case slave has to stop sending
   *      data bytes and expect a Stop condition on the bus.
-  *      
-  *  @note In case the  user software does not guarantee that the event EV2 is 
-  *        managed before the current byte end of transfer, then user may check on EV2 
+  *
+  *  @note In case the  user software does not guarantee that the event EV2 is
+  *        managed before the current byte end of transfer, then user may check on EV2
   *        and BTF flag at the same time (ie. (I2C_EVENT_SLAVE_BYTE_RECEIVED | I2C_FLAG_BTF)).
   *        In this case the communication may be slower.
   *
   */
 
-/* Slave RECEIVER mode --------------------------*/ 
+/* Slave RECEIVER mode --------------------------*/
 /* --EV2 */
 #define  I2C_EVENT_SLAVE_BYTE_RECEIVED                     ((uint32_t)0x00020040)  /* BUSY and RXNE flags */
 /* --EV4  */
@@ -501,7 +501,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_own_address1 
+/** @defgroup I2C_own_address1
   * @{
   */
 
@@ -510,7 +510,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup I2C_clock_speed 
+/** @defgroup I2C_clock_speed
   * @{
   */
 
@@ -524,7 +524,7 @@ typedef struct
   */
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/ 
+/* Exported functions --------------------------------------------------------*/
 
 /*  Function used to set the I2C configuration to the default reset state *****/
 void I2C_DeInit(I2C_TypeDef* I2Cx);
@@ -547,11 +547,11 @@ void I2C_NACKPositionConfig(I2C_TypeDef* I2Cx, uint16_t I2C_NACKPosition);
 void I2C_SMBusAlertConfig(I2C_TypeDef* I2Cx, uint16_t I2C_SMBusAlert);
 void I2C_ARPCmd(I2C_TypeDef* I2Cx, FunctionalState NewState);
 
-/* Data transfers functions ***************************************************/ 
+/* Data transfers functions ***************************************************/
 void I2C_SendData(I2C_TypeDef* I2Cx, uint8_t Data);
 uint8_t I2C_ReceiveData(I2C_TypeDef* I2Cx);
 
-/* PEC management functions ***************************************************/ 
+/* PEC management functions ***************************************************/
 void I2C_TransmitPEC(I2C_TypeDef* I2Cx, FunctionalState NewState);
 void I2C_PECPositionConfig(I2C_TypeDef* I2Cx, uint16_t I2C_PECPosition);
 void I2C_CalculatePEC(I2C_TypeDef* I2Cx, FunctionalState NewState);
@@ -565,89 +565,89 @@ void I2C_DMALastTransferCmd(I2C_TypeDef* I2Cx, FunctionalState NewState);
 uint16_t I2C_ReadRegister(I2C_TypeDef* I2Cx, uint8_t I2C_Register);
 void I2C_ITConfig(I2C_TypeDef* I2Cx, uint16_t I2C_IT, FunctionalState NewState);
 
-/* 
+/*
  ===============================================================================
                           I2C State Monitoring Functions
  ===============================================================================
   This I2C driver provides three different ways for I2C state monitoring
   depending on the application requirements and constraints:
-         
-   
+
+
      1. Basic state monitoring (Using I2C_CheckEvent() function)
      -----------------------------------------------------------
         It compares the status registers (SR1 and SR2) content to a given event
         (can be the combination of one or more flags).
-        It returns SUCCESS if the current status includes the given flags 
+        It returns SUCCESS if the current status includes the given flags
         and returns ERROR if one or more flags are missing in the current status.
 
           - When to use
-             - This function is suitable for most applications as well as for startup 
-               activity since the events are fully described in the product reference 
+             - This function is suitable for most applications as well as for startup
+               activity since the events are fully described in the product reference
                manual (RM0033).
              - It is also suitable for users who need to define their own events.
 
           - Limitations
-             - If an error occurs (ie. error flags are set besides to the monitored 
-               flags), the I2C_CheckEvent() function may return SUCCESS despite 
-               the communication hold or corrupted real state. 
-               In this case, it is advised to use error interrupts to monitor 
+             - If an error occurs (ie. error flags are set besides to the monitored
+               flags), the I2C_CheckEvent() function may return SUCCESS despite
+               the communication hold or corrupted real state.
+               In this case, it is advised to use error interrupts to monitor
                the error events and handle them in the interrupt IRQ handler.
-         
-     Note 
+
+     Note
          For error management, it is advised to use the following functions:
            - I2C_ITConfig() to configure and enable the error interrupts (I2C_IT_ERR).
            - I2Cx_ER_IRQHandler() which is called when the error interrupt occurs.
              Where x is the peripheral instance (I2C1, I2C2 ...)
-           - I2C_GetFlagStatus() or I2C_GetITStatus()  to be called into the 
+           - I2C_GetFlagStatus() or I2C_GetITStatus()  to be called into the
              I2Cx_ER_IRQHandler() function in order to determine which error occurred.
-           - I2C_ClearFlag() or I2C_ClearITPendingBit() and/or I2C_SoftwareResetCmd() 
-             and/or I2C_GenerateStop() in order to clear the error flag and source 
+           - I2C_ClearFlag() or I2C_ClearITPendingBit() and/or I2C_SoftwareResetCmd()
+             and/or I2C_GenerateStop() in order to clear the error flag and source
              and return to correct  communication status.
-             
- 
+
+
      2. Advanced state monitoring (Using the function I2C_GetLastEvent())
-     -------------------------------------------------------------------- 
-        Using the function I2C_GetLastEvent() which returns the image of both status 
-        registers in a single word (uint32_t) (Status Register 2 value is shifted left 
+     --------------------------------------------------------------------
+        Using the function I2C_GetLastEvent() which returns the image of both status
+        registers in a single word (uint32_t) (Status Register 2 value is shifted left
         by 16 bits and concatenated to Status Register 1).
 
           - When to use
-             - This function is suitable for the same applications above but it 
-               allows to overcome the mentioned limitation of I2C_GetFlagStatus() 
+             - This function is suitable for the same applications above but it
+               allows to overcome the mentioned limitation of I2C_GetFlagStatus()
                function.
-             - The returned value could be compared to events already defined in 
+             - The returned value could be compared to events already defined in
                this file or to custom values defined by user.
-               This function is suitable when multiple flags are monitored at the 
+               This function is suitable when multiple flags are monitored at the
                same time.
-             - At the opposite of I2C_CheckEvent() function, this function allows 
-               user to choose when an event is accepted (when all events flags are 
-               set and no other flags are set or just when the needed flags are set 
+             - At the opposite of I2C_CheckEvent() function, this function allows
+               user to choose when an event is accepted (when all events flags are
+               set and no other flags are set or just when the needed flags are set
                like I2C_CheckEvent() function.
 
           - Limitations
              - User may need to define his own events.
-             - Same remark concerning the error management is applicable for this 
-               function if user decides to check only regular communication flags 
+             - Same remark concerning the error management is applicable for this
+               function if user decides to check only regular communication flags
                (and ignores error flags).
-      
- 
+
+
      3. Flag-based state monitoring (Using the function I2C_GetFlagStatus())
      -----------------------------------------------------------------------
-     
-      Using the function I2C_GetFlagStatus() which simply returns the status of 
-      one single flag (ie. I2C_FLAG_RXNE ...). 
+
+      Using the function I2C_GetFlagStatus() which simply returns the status of
+      one single flag (ie. I2C_FLAG_RXNE ...).
 
           - When to use
-             - This function could be used for specific applications or in debug 
+             - This function could be used for specific applications or in debug
                phase.
-             - It is suitable when only one flag checking is needed (most I2C 
+             - It is suitable when only one flag checking is needed (most I2C
                events are monitored through multiple flags).
-          - Limitations: 
-             - When calling this function, the Status register is accessed. 
-               Some flags are cleared when the status register is accessed. 
+          - Limitations:
+             - When calling this function, the Status register is accessed.
+               Some flags are cleared when the status register is accessed.
                So checking the status of one Flag, may clear other ones.
-             - Function may need to be called twice or more in order to monitor 
-               one single event.           
+             - Function may need to be called twice or more in order to monitor
+               one single event.
  */
 
 /*
@@ -682,10 +682,10 @@ void I2C_ClearITPendingBit(I2C_TypeDef* I2Cx, uint32_t I2C_IT);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

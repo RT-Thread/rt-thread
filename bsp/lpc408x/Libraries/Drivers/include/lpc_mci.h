@@ -7,7 +7,7 @@
 * @version     2.0
 * @date        29. June. 2011
 * @author      NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -330,7 +330,7 @@ of FIFO_SIZE */
 /**
  * @}
  */
- 
+
 
 /** @defgroup MCI_Public_Types MCI Public Types
  * @{

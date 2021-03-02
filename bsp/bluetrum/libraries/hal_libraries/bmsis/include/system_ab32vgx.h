@@ -26,7 +26,7 @@ enum {
     //select adpll
 };
 
-//éœ€è¦ä¸sysclk_sel_tblå¯¹åº”, æŒ‰æ—¶é’Ÿé¢‘ç‡å‡åº
+//ĞèÒªÓësysclk_sel_tbl¶ÔÓ¦, °´Ê±ÖÓÆµÂÊÉıĞò
 enum {
     SYSCLK_2M,
     SYSCLK_12M,

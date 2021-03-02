@@ -85,7 +85,7 @@ struct sdhci_t
     rt_uint32_t width;
     rt_uint32_t clock;
     rt_err_t removeable;
-    void * sdcard; 
+    void * sdcard;
 
     rt_err_t (*detect)(struct sdhci_t * sdhci);
     rt_err_t (*setwidth)(struct sdhci_t * sdhci, rt_uint32_t width);

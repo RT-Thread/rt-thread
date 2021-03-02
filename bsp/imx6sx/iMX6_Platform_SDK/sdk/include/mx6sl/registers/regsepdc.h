@@ -1115,7 +1115,7 @@ typedef union _hw_epdc_upd_size
  * Width (in pixels)
  *
  * Values:
- * -  - 
+ * -  -
  */
 //@{
 #define BP_EPDC_UPD_SIZE_WIDTH      (0)      //!< Bit position for EPDC_UPD_SIZE_WIDTH.
@@ -1173,7 +1173,7 @@ typedef union _hw_epdc_upd_ctrl
         unsigned UPDATE_MODE : 1; //!< [0] Update Mode
         unsigned DRY_RUN : 1; //!< [1] Enable Dry Run mode(set to 1).
         unsigned AUTOWV : 1; //!< [2] enable automatical waveform mode selection
-        unsigned AUTOWV_PAUSE : 1; //!< [3] 
+        unsigned AUTOWV_PAUSE : 1; //!< [3]
         unsigned NO_LUT_CANCEL : 1; //!< [4] EPDC will cancel LUT loading for void update (no real update needed because of partial or collision), set this bit to 1 to disable this feature
         unsigned RESERVED0 : 3; //!< [7:5] Reserved.
         unsigned WAVEFORM_MODE : 8; //!< [15:8] Waveform Mode 0-255
@@ -1334,7 +1334,7 @@ typedef union _hw_epdc_upd_ctrl
  * Waveform Mode 0-255
  *
  * Values:
- * -  - 
+ * -  -
  */
 //@{
 #define BP_EPDC_UPD_CTRL_WAVEFORM_MODE      (8)      //!< Bit position for EPDC_UPD_CTRL_WAVEFORM_MODE.

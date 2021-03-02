@@ -92,7 +92,7 @@ void NVIC_Init(NVIC_IRQChannel Channel,NVIC_IRQPriority Priority,TYPE_FUNCEN Cmd
 void SCB_SystemLPConfig(SCB_TYPE_SCR LowPowerMode, TYPE_FUNCEN NewState);
 uint32_t SCB_GetCpuID(void);
 void SysTick_Init(SYSTICK_InitStruType* SysT_InitStruct);
- 
+
 #endif
 
 /*************************END OF FILE**********************/

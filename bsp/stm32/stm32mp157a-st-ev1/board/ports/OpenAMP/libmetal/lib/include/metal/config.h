@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	config.h
- * @brief	Generated configuration settings for libmetal.
+ * @file    config.h
+ * @brief    Generated configuration settings for libmetal.
  */
 
 #ifndef __METAL_CONFIG__H__
@@ -17,27 +17,27 @@ extern "C" {
 #endif
 
 /** Library major version number. */
-#define METAL_VER_MAJOR		0
+#define METAL_VER_MAJOR        0
 
 /** Library minor version number. */
-#define METAL_VER_MINOR		1
+#define METAL_VER_MINOR        1
 
 /** Library patch level. */
-#define METAL_VER_PATCH		0
+#define METAL_VER_PATCH        0
 
 /** Library version string. */
-#define METAL_VER		"0.1.0"
+#define METAL_VER        "0.1.0"
 
 /** System type (linux, generic, ...). */
-#define METAL_SYSTEM		"generic"
+#define METAL_SYSTEM        "generic"
 #define METAL_SYSTEM_GENERIC
 
 /** Processor type (arm, x86_64, ...). */
-#define METAL_PROCESSOR		"arm"
+#define METAL_PROCESSOR        "arm"
 #define METAL_PROCESSOR_ARM
 
 /** Machine type (zynq, zynqmp, ...). */
-#define METAL_MACHINE		"cortexm"
+#define METAL_MACHINE        "cortexm"
 #define METAL_MACHINE_CORTEXM
 
 #define HAVE_STDATOMIC_H

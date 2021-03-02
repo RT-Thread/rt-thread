@@ -39,33 +39,33 @@ extern "C" {
 #endif
 static inline const char *CONFIG_prefix(void)
 {
-	return getenv( "CONFIG_" ) ?: CONFIG_;
+    return getenv( "CONFIG_" ) ?: CONFIG_;
 }
 #undef CONFIG_
 #define CONFIG_ CONFIG_prefix()
 
-#define TF_COMMAND	0x0001
-#define TF_PARAM	0x0002
-#define TF_OPTION	0x0004
+#define TF_COMMAND    0x0001
+#define TF_PARAM    0x0002
+#define TF_OPTION    0x0004
 
 enum conf_def_mode {
-	def_default,
-	def_yes,
-	def_mod,
-	def_no,
-	def_random
+    def_default,
+    def_yes,
+    def_mod,
+    def_no,
+    def_random
 };
 
-#define T_OPT_MODULES		1
-#define T_OPT_DEFCONFIG_LIST	2
-#define T_OPT_ENV		3
-#define T_OPT_ALLNOCONFIG_Y	4
+#define T_OPT_MODULES        1
+#define T_OPT_DEFCONFIG_LIST    2
+#define T_OPT_ENV        3
+#define T_OPT_ALLNOCONFIG_Y    4
 
 struct kconf_id {
-	int name;
-	int token;
-	unsigned int flags;
-	enum symbol_type stype;
+    int name;
+    int token;
+    unsigned int flags;
+    enum symbol_type stype;
 };
 
 void zconfdump(FILE *out);
@@ -88,10 +88,10 @@ void set_all_choice_values(struct symbol *csym);
 /* confdata.c and expr.c */
 static inline void xfwrite(const void *str, size_t len, size_t count, FILE *out)
 {
-	assert(len != 0);
+    assert(len != 0);
 
-	if (fwrite(str, len, count, out) != count)
-		fprintf(stderr, "Error in writing or end of file.\n");
+    if (fwrite(str, len, count, out) != count)
+        fprintf(stderr, "Error in writing or end of file.\n");
 }
 
 /* menu.c */
@@ -117,13 +117,13 @@ void *xmalloc(size_t size);
 void *xcalloc(size_t nmemb, size_t size);
 
 struct gstr {
-	size_t len;
-	char  *s;
-	/*
-	* when max_width is not zero long lines in string s (if any) get
-	* wrapped not to exceed the max_width value
-	*/
-	int max_width;
+    size_t len;
+    char  *s;
+    /*
+    * when max_width is not zero long lines in string s (if any) get
+    * wrapped not to exceed the max_width value
+    */
+    int max_width;
 };
 struct gstr str_new(void);
 void str_free(struct gstr *gs);
@@ -145,38 +145,38 @@ struct property *sym_get_env_prop(struct symbol *sym);
 
 static inline tristate sym_get_tristate_value(struct symbol *sym)
 {
-	return sym->curr.tri;
+    return sym->curr.tri;
 }
 
 
 static inline struct symbol *sym_get_choice_value(struct symbol *sym)
 {
-	return (struct symbol *)sym->curr.val;
+    return (struct symbol *)sym->curr.val;
 }
 
 static inline bool sym_set_choice_value(struct symbol *ch, struct symbol *chval)
 {
-	return sym_set_tristate_value(chval, yes);
+    return sym_set_tristate_value(chval, yes);
 }
 
 static inline bool sym_is_choice(struct symbol *sym)
 {
-	return sym->flags & SYMBOL_CHOICE ? true : false;
+    return sym->flags & SYMBOL_CHOICE ? true : false;
 }
 
 static inline bool sym_is_choice_value(struct symbol *sym)
 {
-	return sym->flags & SYMBOL_CHOICEVAL ? true : false;
+    return sym->flags & SYMBOL_CHOICEVAL ? true : false;
 }
 
 static inline bool sym_is_optional(struct symbol *sym)
 {
-	return sym->flags & SYMBOL_OPTIONAL ? true : false;
+    return sym->flags & SYMBOL_OPTIONAL ? true : false;
 }
 
 static inline bool sym_has_value(struct symbol *sym)
 {
-	return sym->flags & SYMBOL_DEF_USER ? true : false;
+    return sym->flags & SYMBOL_DEF_USER ? true : false;
 }
 
 #ifdef __cplusplus

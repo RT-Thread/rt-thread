@@ -38,7 +38,7 @@ enum _bch_constants
 {
     //! Maximum value for the erase threshold.
     kMaxEraseThreshold = 0xff,
-    
+
     kNandPayloadSize_GF13 = 512,
     kNandPayloadSize_GF14 = 1024,
     kNandMetadataSize = 10
@@ -59,10 +59,10 @@ void bch_init()
 //     while (!(HW_BCH_CTRL_RD() & BM_BCH_CTRL_CLKGATE));
 
 //     bch_enable();
-    
+
     HW_BCH_CTRL_CLR(BM_BCH_CTRL_SFTRST);
     HW_BCH_CTRL_CLR(BM_BCH_CTRL_CLKGATE);
-    
+
     HW_BCH_CTRL_SET(BM_BCH_CTRL_SFTRST);
     while (!HW_BCH_CTRL.B.CLKGATE);
 
@@ -76,16 +76,16 @@ void bch_enable(void)
 
     // Remove the clock gate.
 //     HW_BCH_CTRL_CLR( BM_BCH_CTRL_CLKGATE);
-// 
+//
 //     // Poll until clock is in the NON-gated state.
 //     while (HW_BCH_CTRL.B.CLKGATE)
 //     {
 //         ; // busy wait
 //     }
-// 
+//
 //     // Remove Soft Reset.
 //     HW_BCH_CTRL_CLR( BM_BCH_CTRL_SFTRST );
-// 
+//
 //     // Poll until soft reset is clear.
 //     while (HW_BCH_CTRL.B.SFTRST)
 //     {
@@ -106,7 +106,7 @@ void bch_set_erase_threshold(unsigned threshold)
     {
         threshold = kMaxEraseThreshold;
     }
-    
+
     // This is the only field of the register, so just write it all.
     HW_BCH_MODE_WR(BF_BCH_MODE_ERASE_THRESHOLD(threshold));
 }
@@ -126,7 +126,7 @@ void bch_set_layout(const BchEccLayout_t * ecc)
         | BF_BCH_FLASH0LAYOUT1_GF13_0_GF14_1(ecc->blockNGaloisField == kGaloisField_14bit)
         | BF_BCH_FLASH0LAYOUT1_ECCN(ecc->blockNLevel / 2)
         | BF_BCH_FLASH0LAYOUT1_PAGE_SIZE(ecc->fullPageSize) );
-    
+
     // Set all chip enables to use layout 0 by clearing the layout select register.
     HW_BCH_LAYOUTSELECT_WR(0);
 }
@@ -137,7 +137,7 @@ int bch_calculate_best_level(uint32_t pageDataSize, uint32_t pageMetadataSize, B
     unsigned blockNCount = (pageDataSize / kNandPayloadSize_GF13) - 1;
     unsigned block0Size = kNandPayloadSize_GF13 + kNandMetadataSize;
     unsigned bchLevel = kMaxBchLevel;
-    
+
     while (bchLevel > 0)
     {
         uint32_t totalSize = BITS_TO_BYTES((bchLevel * kGaloisField_13bit) + (blockNCount * bchLevel * kGaloisField_13bit)) + block0Size + (blockNCount * kNandPayloadSize_GF13);
@@ -145,16 +145,16 @@ int bch_calculate_best_level(uint32_t pageDataSize, uint32_t pageMetadataSize, B
         {
             break;
         }
-        
+
         bchLevel -= 2;
     }
-    
+
     // Return an error if nothing fits in the page.
     if (bchLevel == 0)
     {
         return -1; //ERROR_GENERIC;
     }
-    
+
     // Fill in the resulting ECC descriptor.
     resultEcc->fullPageSize = pageDataSize + pageMetadataSize;
     resultEcc->block0GaloisField = kGaloisField_13bit;
@@ -165,7 +165,7 @@ int bch_calculate_best_level(uint32_t pageDataSize, uint32_t pageMetadataSize, B
     resultEcc->blockNLevel = bchLevel;
     resultEcc->blockNSize = kNandPayloadSize_GF13;
     resultEcc->blockNCount = blockNCount;
-    
+
     return SUCCESS;
 }
 
@@ -186,13 +186,13 @@ int bch_read_correction_status(const uint8_t * auxBuffer, BchEccCorrectionInfo_t
     unsigned maxErrors = 0;
     unsigned indexToAuxBuffer;
 //     uint32_t payload;
-    
+
     // Get payload directly from flash layout register. We look up which chip select just finished,
     // then get its flash layout number.
     unsigned completedChip = HW_BCH_STATUS0.B.COMPLETED_CE;
     unsigned whichLayout = (HW_BCH_LAYOUTSELECT_RD() >> (completedChip * BP_BCH_LAYOUTSELECT_CS1_SELECT)) & BM_BCH_LAYOUTSELECT_CS0_SELECT;
     assert(whichLayout <= 3);
-    
+
     unsigned payloadCount;
     unsigned metadataLength;
     switch (whichLayout)
@@ -220,11 +220,11 @@ int bch_read_correction_status(const uint8_t * auxBuffer, BchEccCorrectionInfo_t
     // Get the status of Blocks. Each block's status is in a byte, starts at the beginning of a
     // new word where metadata ends.
     indexToAuxBuffer = metadataLength + (metadataLength % sizeof(uint32_t));
-    
+
     // Now get the max ecc corrections of data blocks including metadata ecc.
     bool wasUncorrectable = false;
     bool isAllOnes = true;
-    for (i = 0; i < payloadCount; i++) 
+    for (i = 0; i < payloadCount; i++)
     {
         uint8_t payload = auxBuffer[indexToAuxBuffer + i];
 
@@ -237,11 +237,11 @@ int bch_read_correction_status(const uint8_t * auxBuffer, BchEccCorrectionInfo_t
                 wasUncorrectable = true;
                 isAllOnes = false;
                 break;
-                
+
             case BV_BCH_STATUS0_STATUS_BLK0__ERASED:
                 payload = kAllOnes;
                 break;
-            
+
             default:
                 isAllOnes = false;
 
@@ -251,20 +251,20 @@ int bch_read_correction_status(const uint8_t * auxBuffer, BchEccCorrectionInfo_t
                     maxErrors = payload;
                 }
         }
-        
+
         // Fill in correction info structure.
         if (correctionInfo)
         {
             correctionInfo->payloadStatus[i] = payload;
         }
     }
-    
+
     // Figure out the return status.
     uint8_t combinedStatus =
         (wasUncorrectable ? kUncorrectableBitErrors :
             (isAllOnes ? kAllOnes :
                 (maxErrors > 0 ? kCorrectedBitErrors : kNoBitErrors)));
-    
+
     // Fill in correction info.
     if (correctionInfo)
     {
@@ -272,7 +272,7 @@ int bch_read_correction_status(const uint8_t * auxBuffer, BchEccCorrectionInfo_t
         correctionInfo->maxBitErrors = maxErrors;
         correctionInfo->payloadCount = payloadCount;
     }
-    
+
     return combinedStatus;
 }
 
@@ -291,7 +291,7 @@ uint16_t bch_get_buffer_mask(bool isWrite, uint32_t dataSize, const BchEccLayout
     {
         return BV_GPMI_ECCCTRL_BUFFER_MASK__BCH_AUXONLY;
     }
-    
+
     // Otherwise...
     return BV_GPMI_ECCCTRL_BUFFER_MASK__BCH_PAGE;
 }

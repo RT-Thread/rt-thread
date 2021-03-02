@@ -21,11 +21,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -162,7 +162,7 @@ HAL_StatusTypeDef HAL_Init(void)
 
   /* Set Interrupt Group Priority */
   HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
-  
+
   /* Use SysTick as time base source and configure 1ms tick (default clock after Reset is MSI) */
   if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
   {
@@ -194,7 +194,7 @@ HAL_StatusTypeDef HAL_DeInit(void)
 
   __HAL_RCC_APB3_FORCE_RESET();
   __HAL_RCC_APB3_RELEASE_RESET();
-  
+
   __HAL_RCC_AHB1_FORCE_RESET();
   __HAL_RCC_AHB1_RELEASE_RESET();
 
@@ -216,7 +216,7 @@ HAL_StatusTypeDef HAL_DeInit(void)
   * @retval None
   */
 __weak void HAL_MspInit(void)
-{   
+{
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_MspInit could be implemented in the user file
    */
@@ -227,7 +227,7 @@ __weak void HAL_MspInit(void)
   * @retval None
   */
 __weak void HAL_MspDeInit(void)
-{     
+{
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_MspDeInit could be implemented in the user file
    */
@@ -270,7 +270,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
       }
     }
     else
-    {  
+    {
       status = HAL_ERROR;
     }
   }
@@ -384,8 +384,8 @@ HAL_TickFreqTypeDef HAL_GetTickFreq(void)
 }
 
 /**
-  * @brief This function provides minimum delay (in milliseconds) based 
-  *        on variable incremented. 
+  * @brief This function provides minimum delay (in milliseconds) based
+  *        on variable incremented.
   * @note In the default implementation , SysTick timer is the source of time base.
   *       It is used to generate interrupts at regular time intervals where uwTick
   *       is incremented.
@@ -398,13 +398,13 @@ HAL_TickFreqTypeDef HAL_GetTickFreq(void)
   {
     uint32_t tickstart = HAL_GetTick();
     uint32_t wait = Delay;
-  
+
     /* Add a freq to guarantee minimum wait */
     if (wait < HAL_MAX_DELAY)
     {
       wait += (uint32_t)(uwTickFreq);
     }
-  
+
     while ((HAL_GetTick() - tickstart) < wait)
     {
     }
@@ -634,9 +634,9 @@ uint32_t HAL_SYSCFG_IsEnabledSRAMFetch(void)
   * @brief Configure the internal voltage reference buffer voltage scale.
   * @param VoltageScaling  specifies the output voltage to achieve
   *          This parameter can be one of the following values:
-  *            @arg @ref SYSCFG_VREFBUF_VOLTAGE_SCALE0 : VREF_OUT1 around 2.048 V. 
+  *            @arg @ref SYSCFG_VREFBUF_VOLTAGE_SCALE0 : VREF_OUT1 around 2.048 V.
   *                                                This requires VDDA equal to or higher than 2.4 V.
-  *            @arg @ref SYSCFG_VREFBUF_VOLTAGE_SCALE1 : VREF_OUT1 around 2.5 V. 
+  *            @arg @ref SYSCFG_VREFBUF_VOLTAGE_SCALE1 : VREF_OUT1 around 2.5 V.
   *                                                This requires VDDA equal to or higher than 2.8 V.
   * @note   Retrieve the TrimmingValue from factory located at
   *         VREFBUF_SC0_CAL_ADDR or VREFBUF_SC1_CAL_ADDR addresses.
@@ -648,9 +648,9 @@ void HAL_SYSCFG_VREFBUF_VoltageScalingConfig(uint32_t VoltageScaling)
 
   /* Check the parameters */
   assert_param(IS_SYSCFG_VREFBUF_VOLTAGE_SCALE(VoltageScaling));
-  
+
   LL_VREFBUF_SetVoltageScaling(VoltageScaling);
-  
+
   /* Restrieve Calibration data and store them into trimming field */
   if (VoltageScaling == SYSCFG_VREFBUF_VOLTAGE_SCALE0)
   {
@@ -686,7 +686,7 @@ void HAL_SYSCFG_VREFBUF_HighImpedanceConfig(uint32_t Mode)
   * @brief Tune the Internal Voltage Reference buffer (VREFBUF).
   * @note  Each VrefBuf voltage scale is calibrated in production for each device,
   *        data stored in flash memory.
-  *        Function @ref HAL_SYSCFG_VREFBUF_VoltageScalingConfig retrieves and 
+  *        Function @ref HAL_SYSCFG_VREFBUF_VoltageScalingConfig retrieves and
   *        applies this calibration data as trimming value at each scale change.
   *        Therefore, optionally, function @ref HAL_SYSCFG_VREFBUF_TrimmingConfig
   *        can be used in a second time to fine tune the trimming.
@@ -698,7 +698,7 @@ void HAL_SYSCFG_VREFBUF_TrimmingConfig(uint32_t TrimmingValue)
 {
   /* Check the parameters */
   assert_param(IS_SYSCFG_VREFBUF_TRIMMING(TrimmingValue));
-  
+
   LL_VREFBUF_SetTrimming(TrimmingValue);
 
 }
@@ -710,9 +710,9 @@ void HAL_SYSCFG_VREFBUF_TrimmingConfig(uint32_t TrimmingValue)
 HAL_StatusTypeDef HAL_SYSCFG_EnableVREFBUF(void)
 {
   uint32_t tickstart;
-  
+
   LL_VREFBUF_Enable();
-  
+
   /* Get Start Tick*/
   tickstart = HAL_GetTick();
 

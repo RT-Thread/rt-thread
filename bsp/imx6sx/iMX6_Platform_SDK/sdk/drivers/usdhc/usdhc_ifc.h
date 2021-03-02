@@ -33,7 +33,7 @@
 
 /*!
  * @file usdhc_ifc.h
- * @brief uSDHC driver public interface. 
+ * @brief uSDHC driver public interface.
  */
 
 #ifndef __USDHC_IFC_H__
@@ -95,44 +95,44 @@ extern uint32_t read_usdhc_adma_mode();
 /*!
  * @brief Returns whether interrupt mode is currently enabled.
  */
-extern uint32_t read_usdhc_intr_mode(); 
+extern uint32_t read_usdhc_intr_mode();
 
 /*!
  * @brief Initialize usdhc controller and card inserted
  *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    Bus width that card would be accessed: 1 bit, 4 bits, 8 bits(MMC only)
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_init(uint32_t instance, int bus_width);
 /*!
  * @brief Read data from card
- * 
+ *
  * @param   instance       Instance number of the uSDHC module.
  * @param   dst_ptr        Buffer to store data read
  * @param   length         Size in bytes of data to be read
  * @param   offset         Which sector in card should data be started to read
  *
- * @return   0 if successful; non-zero otherwise 
+ * @return   0 if successful; non-zero otherwise
 */
 extern int card_data_read(uint32_t instance, int *dst_ptr,  int length, uint32_t offset);
 
 /*!
  * @brief Write data to card
- * 
+ *
  * @param   instance       Instance number of the uSDHC module.
  * @param   src_ptr        Buffer that store the source data
  * @param   length         Size in bytes of data to be written
  * @param   offset         Which sector in card should data be started to written
  *
- * @return  0 if successful; non-zero otherwise 
+ * @return  0 if successful; non-zero otherwise
 */
 extern int card_data_write(uint32_t instance, int *src_ptr, int length, int offset);
 
 /*!
  * @brief Read the data transfer status(only in interrupt mode)
- * 
+ *
  * @param   instance       Instance number of the uSDHC module.
  * @param   status         Store the readback status. 0: busy, 1: success, 2: error
  *
@@ -144,7 +144,7 @@ extern int card_xfer_result(uint32_t instance, int *status);
  * @brief Wait for the transfer complete. It covers the interrupt mode, DMA mode and PIO mode
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 extern int card_wait_xfer_done(uint32_t instance);
@@ -152,50 +152,50 @@ extern int card_wait_xfer_done(uint32_t instance);
 /*!
  * eMMC specific functions
  */
- 
+
 /*!
  * @brief Initialize the eMMC card
- * 
+ *
  * @param   instance     Instance number of the uSDHC module.
  *
  * @return 0 if successful; non-zero otherwise
- */ 
+ */
 extern int card_emmc_init(uint32_t instance);
 
 /*!
  * @brief Print out configuration information
- * 
+ *
  * @param   instance     Instance number of the uSDHC module.
  *
  * @return 0 if successful; non-zero otherwise
- */ 
+ */
 extern void emmc_print_cfg_info(uint32_t instance);
 
 /*!
- * @brief Acknowledge the boot 
- * 
+ * @brief Acknowledge the boot
+ *
  * @param   instance     Instance number of the uSDHC module.
  *
  * @return 0 if successful; non-zero otherwise
- */ 
+ */
 extern int mmc_set_boot_ack(uint32_t instance, int enable);
 
 /*!
  * @brief Set partition
- * 
+ *
  * @param   instance     Instance number of the uSDHC module.
  *
  * @return 0 if successful; non-zero otherwise
- */ 
+ */
 extern int mmc_set_boot_partition(uint32_t instance, emmc_part_e part);
 
 /*!
  * @brief Set bus width
- * 
+ *
  * @param   instance     Instance number of the uSDHC module.
  *
  * @return 0 if successful; non-zero otherwise
- */ 
+ */
 extern int mmc_set_boot_bus_width(uint32_t instance, emmc_bus_width_e width);
 
 //! @name Board support functions
@@ -213,7 +213,7 @@ void usdhc_iomux_config(int instance);
 #endif
 
 //! @}
-#endif  /*__USDHC_IFC_H__ */ 
+#endif  /*__USDHC_IFC_H__ */
 /////////////////////////////////////////////////////////////////////////////////
 // EOF
 /////////////////////////////////////////////////////////////////////////////////

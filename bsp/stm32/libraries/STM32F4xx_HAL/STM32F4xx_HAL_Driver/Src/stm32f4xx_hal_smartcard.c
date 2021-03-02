@@ -796,7 +796,7 @@ HAL_StatusTypeDef HAL_SMARTCARD_Transmit(SMARTCARD_HandleTypeDef *hsc, uint8_t *
       return HAL_TIMEOUT;
     }
 
-	/* At end of Tx process, restore hsc->gState to Ready */
+    /* At end of Tx process, restore hsc->gState to Ready */
     hsc->gState = HAL_SMARTCARD_STATE_READY;
 
     /* Process Unlocked */

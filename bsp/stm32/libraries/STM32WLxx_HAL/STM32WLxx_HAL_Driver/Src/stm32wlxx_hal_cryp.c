@@ -48,7 +48,7 @@
                algorithms) is in words or bytes.
          (##) The Header used only in AES GCM and CCM Algorithm for authentication.
          (##) The HeaderSize providing the size of the header buffer in words or bytes, depending upon HeaderWidthUnit field.
-         (##) The HeaderWidthUnit field. It specifies whether the header length (for authentication algorithms) is in words or bytes.         
+         (##) The HeaderWidthUnit field. It specifies whether the header length (for authentication algorithms) is in words or bytes.
          (##) The B0 block is the first authentication block used only in AES CCM mode.
          (##) The KeyIVConfigSkip used to process several messages in a row (please see more information below).
 

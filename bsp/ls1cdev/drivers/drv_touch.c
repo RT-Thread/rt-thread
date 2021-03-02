@@ -9,7 +9,7 @@
  * 2018-10-29     XY
  * 2019-04-11     sundm75      modify for ls1c300 & RTGUI
  */
- 
+
 #include "drv_touch.h"
 
 #define TOUCH_I2C_NAME  "i2c1"

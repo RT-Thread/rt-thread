@@ -40,8 +40,8 @@
  */
 
 /**
- * @brief	Early initialization of the FPU
- * @return	Nothing
+ * @brief    Early initialization of the FPU
+ * @return    Nothing
  */
 void fpuInit(void);
 

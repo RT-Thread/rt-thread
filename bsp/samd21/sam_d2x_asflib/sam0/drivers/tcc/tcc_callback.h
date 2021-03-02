@@ -66,21 +66,21 @@ extern void *_tcc_instances[TCC_INST_NUM];
  */
 
 enum status_code tcc_register_callback(
-		struct tcc_module *const module,
-		tcc_callback_t callback_func,
-		const enum tcc_callback callback_type);
+        struct tcc_module *const module,
+        tcc_callback_t callback_func,
+        const enum tcc_callback callback_type);
 
 enum status_code tcc_unregister_callback(
-		struct tcc_module *const module,
-		const enum tcc_callback callback_type);
+        struct tcc_module *const module,
+        const enum tcc_callback callback_type);
 
 void tcc_enable_callback(
-		struct tcc_module *const module,
-		const enum tcc_callback callback_type);
+        struct tcc_module *const module,
+        const enum tcc_callback callback_type);
 
 void tcc_disable_callback(
-		struct tcc_module *const module,
-		const enum tcc_callback callback_type);
+        struct tcc_module *const module,
+        const enum tcc_callback callback_type);
 
 /**
  * @}

@@ -127,7 +127,7 @@ void kpp_scan_matrix(uint16_t *keypad_state)
             if (col_mask)
             {
                 HW_KPP_KPDR_WR(~col_mask << 8);
-				hal_delay_us(1);
+                hal_delay_us(1);
                 port_state[tested_col] = ~HW_KPP_KPDR_RD();
             }
             else
@@ -152,13 +152,13 @@ void kpp_scan_matrix(uint16_t *keypad_state)
         }
     }
 
-    // copy the result into the global keypad state variable 
+    // copy the result into the global keypad state variable
     memcpy(keypad_state, port_state_1, sizeof(port_state_1));
 }
 
 void kpp_get_keypad_state(uint16_t *rd_keys, bool returnImmediately)
 {
-    // Clear status flags and synchronizer chains 
+    // Clear status flags and synchronizer chains
     kpp_clear_status();
 
     // Either the application waits for a pressed key event
@@ -166,37 +166,37 @@ void kpp_get_keypad_state(uint16_t *rd_keys, bool returnImmediately)
     if (!returnImmediately)
     {
         HW_KPP_KPSR_SET(BM_KPP_KPSR_KDIE);
-        
+
         spinlock_lock(&s_kpp.irqLock, kSpinlockWaitForever);
     }
 
-    // Start the scanning routine 
-    // Set a high level on each columns 
+    // Start the scanning routine
+    // Set a high level on each columns
     HW_KPP_KPDR_WR(BF_KPP_KPDR_KCD(ALL_COLUMNS));
 
-    // For quick discharging of keypad capacitance 
-    // configure the column in totem pole 
+    // For quick discharging of keypad capacitance
+    // configure the column in totem pole
     HW_KPP_KPCR.B.KCO = 0;
 
-    // re-configure the column to open-drain 
+    // re-configure the column to open-drain
     HW_KPP_KPCR.B.KCO = ALL_COLUMNS;
 
-    // Scan sequence function 
+    // Scan sequence function
      kpp_scan_matrix(rd_keys);
 
-    // Set a low level on each columns 
+    // Set a low level on each columns
     HW_KPP_KPDR_WR(0);
 }
 
 void kpp_wait_for_release_state(void)
 {
-    // Clear status flags and synchronizer chains 
+    // Clear status flags and synchronizer chains
     kpp_clear_status();
 
     // There's nothing to return. This event only occurs
     // when all key are released.
     HW_KPP_KPSR_SET(BM_KPP_KPSR_KRIE);
-    
+
     spinlock_lock(&s_kpp.irqLock, kSpinlockWaitForever);
 }
 
@@ -221,65 +221,65 @@ void kpp_interrupt_routine(void)
 void kpp_setup_interrupt(bool state)
 {
     if (state)
-    {    
-        // clear status flags and synchronizer chains 
+    {
+        // clear status flags and synchronizer chains
         kpp_clear_status();
-        
-        // register the IRQ sub-routine 
+
+        // register the IRQ sub-routine
         register_interrupt_routine(IMX_INT_KPP, &kpp_interrupt_routine);
-        
-        // enable the IRQ 
+
+        // enable the IRQ
         enable_interrupt(IMX_INT_KPP, CPU_0, 0);
     }
     else
     {
-        // disable the IRQ 
+        // disable the IRQ
         disable_interrupt(IMX_INT_KPP, CPU_0);
-        
-        // clear status flags and synchronizer chains 
+
+        // clear status flags and synchronizer chains
         kpp_clear_status();
     }
 }
 
 void kpp_open(uint8_t kpp_col, uint8_t kpp_row)
 {
-    // Initialize global variables to store the board's keypad usage 
+    // Initialize global variables to store the board's keypad usage
     s_kpp.activeColumns = kpp_col;
     s_kpp.activeRows = kpp_row;
-    
+
     // Init the spinlock used for interrupt synchronization and lock it.
     spinlock_init(&s_kpp.irqLock);
     spinlock_lock(&s_kpp.irqLock, kSpinlockNoWait);
 
-    // there's no clock to enable for the keypad port 
+    // there's no clock to enable for the keypad port
 
-    // configure the IOMUX 
+    // configure the IOMUX
     kpp_iomux_config();
 
-    // configure the columns in open-drain & set the active rows 
+    // configure the columns in open-drain & set the active rows
     HW_KPP_KPCR_WR(BF_KPP_KPCR_KCO(ALL_COLUMNS)
                 | BF_KPP_KPCR_KRE(s_kpp.activeRows));
 
     // Set a low level on each columns. Must do this before configuring outputs.
     HW_KPP_KPDR_WR(0);
 
-    // configure columns as outputs and rows as inputs 
+    // configure columns as outputs and rows as inputs
     HW_KPP_KDDR_WR(BF_KPP_KDDR_KCDD(s_kpp.activeColumns) | BF_KPP_KDDR_KRDD(0));
 
-    // clear status flags and synchronizer chains 
+    // clear status flags and synchronizer chains
     kpp_clear_status();
 
-    // set up the interrupt 
+    // set up the interrupt
     kpp_setup_interrupt(true);
 }
 
 void kpp_close(void)
 {
-    // disable the interrupts 
+    // disable the interrupts
     HW_KPP_KPSR_CLR(BM_KPP_KPSR_KDIE | BM_KPP_KPSR_KRIE);
-    
+
     kpp_setup_interrupt(false);
-    
+
     // Disable all rows.
     HW_KPP_KPCR_WR(0);
 }

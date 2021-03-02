@@ -86,7 +86,7 @@
  *
  *   1. Clearing the one-shot count bit in the control register, in which case the
  *     count proceeds according to the selection of Free-running or Periodic mode.
- *   
+ *
  *   2. Writing a new value to the Load Value register.
  * - Free-running Mode
  *
@@ -131,7 +131,7 @@
  * clock, and is used by the register interface. TIMCLK is the input to the prescale
  * units and the decrementing counters.
  *
- * This provision of two clock inputs enables the counters to continue to run while 
+ * This provision of two clock inputs enables the counters to continue to run while
  * the APB system is in a sleep state when PCLK is disabled. External system control
  * logic must handle the changeover periods when PCLK is disabled and enabled to ensure
  * that the PCLK and TIMCLK inputs are fed with synchronous signals when any register
@@ -182,10 +182,10 @@ typedef void (*dualtimer_callback_t)(void);
  * This enum specifies duatimer timer1 or timer2.
  */
 enum dualtimer_timer {
-	/** Dualtimer timer1 */
-	DUALTIMER_TIMER1 = 0,
-	/** Dualtimer timer2 */
-	DUALTIMER_TIMER2,
+    /** Dualtimer timer1 */
+    DUALTIMER_TIMER1 = 0,
+    /** Dualtimer timer2 */
+    DUALTIMER_TIMER2,
 };
 
 /**
@@ -194,14 +194,14 @@ enum dualtimer_timer {
  * DUALTIMER module clock.
  */
 enum dualtimer_clock_input {
-	/** source from clock input 0: 26MHz */
-	DUALTIMER_CLK_INPUT_0 = 0,
-	/** source from clock input 1: 13MHz */
-	DUALTIMER_CLK_INPUT_1,
-	/** source from clock input 2: 6.5MHz */
-	DUALTIMER_CLK_INPUT_2,
-	/** source from clock input 3: 3MHz*/
-	DUALTIMER_CLK_INPUT_3,
+    /** source from clock input 0: 26MHz */
+    DUALTIMER_CLK_INPUT_0 = 0,
+    /** source from clock input 1: 13MHz */
+    DUALTIMER_CLK_INPUT_1,
+    /** source from clock input 2: 6.5MHz */
+    DUALTIMER_CLK_INPUT_2,
+    /** source from clock input 3: 3MHz*/
+    DUALTIMER_CLK_INPUT_3,
 };
 
 /**
@@ -210,12 +210,12 @@ enum dualtimer_clock_input {
  * This enum specifies counter with one-shot, free running or periodic counter mode.
  */
 enum dualtimer_counter_mode {
-	/** Counter in one-shot mode */
-	DUALTIMER_ONE_SHOT_MODE = 0,
-	/** Counter is in free-running mode */
-	DUALTIMER_FREE_RUNNING_MODE,
-	/** Counter is in periodic mode */
-	DUALTIMER_PERIODIC_MODE,
+    /** Counter in one-shot mode */
+    DUALTIMER_ONE_SHOT_MODE = 0,
+    /** Counter is in free-running mode */
+    DUALTIMER_FREE_RUNNING_MODE,
+    /** Counter is in periodic mode */
+    DUALTIMER_PERIODIC_MODE,
 };
 
 /**
@@ -224,10 +224,10 @@ enum dualtimer_counter_mode {
  * This enum specify the maximum value it is possible to count to.
  */
 enum dualtimer_counter_size {
-	/** 16-bit counter */
-	DUALTIMER_COUNTER_SIZE_16BIT = 0,
-	/** 32-bit counter */
-	DUALTIMER_COUNTER_SIZE_32BIT,
+    /** 16-bit counter */
+    DUALTIMER_COUNTER_SIZE_16BIT = 0,
+    /** 32-bit counter */
+    DUALTIMER_COUNTER_SIZE_32BIT,
 };
 
 /**
@@ -238,12 +238,12 @@ enum dualtimer_counter_size {
  * Dual Timer module to make the counter count slower.
  */
 enum dualtimer_clock_prescaler {
-	/** Divide clock by 1 */
-	DUALTIMER_CLOCK_PRESCALER_DIV1 = 0,
-	/** Divide clock by 16 */
-	DUALTIMER_CLOCK_PRESCALER_DIV16,
-	/** Divide clock by 256 */
-	DUALTIMER_CLOCK_PRESCALER_DIV256,
+    /** Divide clock by 1 */
+    DUALTIMER_CLOCK_PRESCALER_DIV1 = 0,
+    /** Divide clock by 16 */
+    DUALTIMER_CLOCK_PRESCALER_DIV16,
+    /** Divide clock by 256 */
+    DUALTIMER_CLOCK_PRESCALER_DIV256,
 };
 
 /**
@@ -255,10 +255,10 @@ enum dualtimer_clock_prescaler {
  * cause the counter to immediately restart from the new value.
  */
 enum dualtimer_set_register {
-	/** Set current counter */
-	DUALTIMER_SET_CURRUNT_REG = 0,
-	/** Set background counter */
-	DUALTIMER_SET_BG_REG,
+    /** Set current counter */
+    DUALTIMER_SET_CURRUNT_REG = 0,
+    /** Set background counter */
+    DUALTIMER_SET_BG_REG,
 };
 
 /**
@@ -267,18 +267,18 @@ enum dualtimer_set_register {
  * Private configuration struct for Dualtimer instance.
  */
 struct dualtimer_private_config {
-	/** Enable timer */
-	bool timer_enable;
-	/** Selects one-shot or wrapping counter mode */
-	enum dualtimer_counter_mode counter_mode;
-	/** Selects 16-bit or 32- bit counter size */
-	enum dualtimer_counter_size counter_size;
-	/** Selects the prescaler value */
-	enum dualtimer_clock_prescaler clock_prescaler;
-	/** Enable the interrupt */
-	bool interrup_enable;
-	/** Counter load value */
-	uint32_t load_value;
+    /** Enable timer */
+    bool timer_enable;
+    /** Selects one-shot or wrapping counter mode */
+    enum dualtimer_counter_mode counter_mode;
+    /** Selects 16-bit or 32- bit counter size */
+    enum dualtimer_counter_size counter_size;
+    /** Selects the prescaler value */
+    enum dualtimer_clock_prescaler clock_prescaler;
+    /** Enable the interrupt */
+    bool interrup_enable;
+    /** Counter load value */
+    uint32_t load_value;
 };
 
 /**
@@ -289,12 +289,12 @@ struct dualtimer_private_config {
  * modified by the user application.
  */
 struct dualtimer_config {
-	/** Timer1 private configuration */
-	struct dualtimer_private_config timer1;
-	/** Timer2 private configuration */
-	struct dualtimer_private_config timer2;
-	/** Selects Dualtimer clock frequency */
-	enum dualtimer_clock_input clock_source;
+    /** Timer1 private configuration */
+    struct dualtimer_private_config timer1;
+    /** Timer2 private configuration */
+    struct dualtimer_private_config timer2;
+    /** Selects Dualtimer clock frequency */
+    enum dualtimer_clock_input clock_source;
 };
 
 /**
@@ -311,7 +311,7 @@ void dualtimer_init(const struct dualtimer_config *config);
  */
 uint32_t dualtimer_get_value(enum dualtimer_timer timer);
 void dualtimer_set_counter(enum dualtimer_timer timer,
-		enum dualtimer_set_register cur_bg, uint32_t value);
+        enum dualtimer_set_register cur_bg, uint32_t value);
 /** @} */
 
 /**
@@ -352,14 +352,14 @@ void dualtimer_unregister_callback(enum dualtimer_timer timer);
  * Below is a table listing the acronyms used in this module, along with their
  * intended meanings.
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>DUALTIMER</td>
- *		<td>Dualtimer</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+ *    <tr>
+ *        <td>DUALTIMER</td>
+ *        <td>Dualtimer</td>
+ *    </tr>
  * </table>
  *
  * \section asfdoc_samb_dualtimer_extra_dependencies Dependencies

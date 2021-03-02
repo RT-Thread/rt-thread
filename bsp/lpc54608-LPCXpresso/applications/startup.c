@@ -39,10 +39,10 @@ void rtthread_startup(void)
 
     /* initialize scheduler system */
     rt_system_scheduler_init();
-	
+
     /* initialize system timer*/
     rt_system_timer_init();
-	
+
     /* initialize application */
     rt_application_init();
 

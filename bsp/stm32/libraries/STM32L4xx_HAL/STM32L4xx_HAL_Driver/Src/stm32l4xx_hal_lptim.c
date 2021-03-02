@@ -559,7 +559,7 @@ HAL_StatusTypeDef HAL_LPTIM_PWM_Start_IT(LPTIM_HandleTypeDef *hlptim, uint32_t P
     __HAL_LPTIM_ENABLE_IT(hlptim, (LPTIM_IT_UPDATE | LPTIM_IT_REPOK));
   }
 #endif
-  
+
   /* Enable the Peripheral */
   __HAL_LPTIM_ENABLE(hlptim);
 
@@ -1755,7 +1755,7 @@ void HAL_LPTIM_IRQHandler(LPTIM_HandleTypeDef *hlptim)
       hlptim->UpdateEventCallback(hlptim);
 #else
       HAL_LPTIM_UpdateEventCallback(hlptim);
-#endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */      
+#endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
     }
   }
 
@@ -1772,7 +1772,7 @@ void HAL_LPTIM_IRQHandler(LPTIM_HandleTypeDef *hlptim)
       hlptim->RepCounterWriteCallback(hlptim);
 #else
       HAL_LPTIM_RepCounterWriteCallback(hlptim);
-#endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */      
+#endif /* USE_HAL_LPTIM_REGISTER_CALLBACKS */
     }
   }
 #endif

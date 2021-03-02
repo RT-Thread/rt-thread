@@ -85,33 +85,33 @@ typedef enum
 
 /* 引脚信号类型 */
 typedef enum {
-	GPIO_Pin_Signal_Digital = 0,	// 数字信号引脚
-	GPIO_Pin_Signal_Analog = 1,	  // 模拟信号引脚
-} GPIO_Pin_Signal;	
+    GPIO_Pin_Signal_Digital = 0,    // 数字信号引脚
+    GPIO_Pin_Signal_Analog = 1,      // 模拟信号引脚
+} GPIO_Pin_Signal;
 
 /* 引脚输入弱上拉使能 */
 typedef enum {
-	GPIO_PUE_Input_Disable = 0,	// 弱上拉禁止
-	GPIO_PUE_Input_Enable = 1,	// 弱上拉使能
+    GPIO_PUE_Input_Disable = 0,    // 弱上拉禁止
+    GPIO_PUE_Input_Enable = 1,    // 弱上拉使能
 } GPIO_PUE_Input;
 
 /* 引脚输入弱下拉使能 */
 typedef enum {
-	GPIO_PDE_Input_Disable = 0,	// 弱下拉禁止
-	GPIO_PDE_Input_Enable = 1,	// 弱下拉使能
+    GPIO_PDE_Input_Disable = 0,    // 弱下拉禁止
+    GPIO_PDE_Input_Enable = 1,    // 弱下拉使能
 } GPIO_PDE_Input;
 
 
 /* 引脚输出开漏使能位 */
 typedef enum {
-	GPIO_ODE_Output_Disable = 0,	// 开漏禁止
-	GPIO_ODE_Output_Enable = 1,	// 开漏使能
+    GPIO_ODE_Output_Disable = 0,    // 开漏禁止
+    GPIO_ODE_Output_Enable = 1,    // 开漏使能
 } GPIO_ODE_Output;
 
 /* GPIO初始化配置结构体定义 */
 typedef struct
 {
-	  GPIO_Pin_Signal GPIO_Signal;		/* 引脚上的信号类型，只有模拟和数字两种 */
+      GPIO_Pin_Signal GPIO_Signal;        /* 引脚上的信号类型，只有模拟和数字两种 */
     GPIO_TYPE_FUNC GPIO_Func;       //引脚功能选择
     GPIO_TYPE_DIR GPIO_Direction;   //方向选择
     GPIO_PUE_Input GPIO_PUEN;          //上拉使能

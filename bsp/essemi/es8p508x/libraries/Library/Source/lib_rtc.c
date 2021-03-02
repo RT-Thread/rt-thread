@@ -21,23 +21,23 @@
 void RTC_Init(RTC_TYPE_CLKS CLKx,RTC_TYPE_TIME HOURx)
 {
     uint32_t flag;
-	
-		if(CLKx == RTC_LOSC )
-	  {
-		  uint32_t Prot_Temp;
+
+        if(CLKx == RTC_LOSC )
+      {
+          uint32_t Prot_Temp;
 
         Prot_Temp = SCU->PROT.PROT;
 
         if(Prot_Temp != 0)         //写保护了
             SCU_RegUnLock();       //解锁
 
-        SCU_XTAL_Enable();         //使能外部32kHZ			
+        SCU_XTAL_Enable();         //使能外部32kHZ
         while(SCU_XTALReadyFlag() != SET);      //等待时钟开启
-        
-				if(Prot_Temp != 0)     
-				    SCU_RegLock();        //打开写保护
-	  }
-		
+
+                if(Prot_Temp != 0)
+                    SCU_RegLock();        //打开写保护
+      }
+
     /* 解除RTC写保护 */
     flag = RTC->WP.WP;
     if (flag == 0x00000000)
@@ -492,22 +492,22 @@ ErrorStatus RTC_WriteMinute(uint32_t minute)
         RTC->WP.WP = 0x55AAAA55;
 
     /* 设置新的值 */
-    if (minute >= 40) 
+    if (minute >= 40)
     {
         min_buf |= (uint32_t)1<<6;
         minute -= 40;
-    } 
-    else 
+    }
+    else
     {
         min_buf &= ~(uint32_t)1<<6;
     }
 
-    if (minute >= 20) 
+    if (minute >= 20)
     {
         min_buf |= (uint32_t)1<<5;
         minute -= 20;
-    } 
-    else 
+    }
+    else
     {
         min_buf &= ~(uint32_t)1<<5;
     }
@@ -516,48 +516,48 @@ ErrorStatus RTC_WriteMinute(uint32_t minute)
     {
         min_buf |= (uint32_t)1<<4;
         minute -= 10;
-    } 
-    else 
+    }
+    else
     {
         min_buf &= ~(uint32_t)1<<4;
     }
 
-    if (minute >= 8) 
+    if (minute >= 8)
     {
         min_buf |= (uint32_t)1<<3;
         minute -= 8;
-    } 
-    else 
+    }
+    else
     {
         min_buf &= ~(uint32_t)1<<3;
     }
 
-    if (minute >= 4) 
+    if (minute >= 4)
     {
         min_buf |= (uint32_t)1<<2;
         minute -= 4;
-    } 
-    else 
+    }
+    else
     {
         min_buf &= ~(uint32_t)1<<2;
     }
 
-    if (minute >= 2) 
+    if (minute >= 2)
     {
         min_buf |= (uint32_t)1<<1;
         minute -= 2;
-    } 
-    else 
+    }
+    else
     {
         min_buf &= ~(uint32_t)1<<1;
     }
 
-    if (minute >= 1) 
+    if (minute >= 1)
     {
         min_buf |= (uint32_t)1;
         minute -= 1;
-    } 
-    else 
+    }
+    else
     {
         min_buf &= ~(uint32_t)1;
     }
@@ -704,12 +704,12 @@ ErrorStatus RTC_WriteDay(uint32_t day)
         RTC->WP.WP = 0x55AAAA55;
 
     /* 设置新的值 */
-    if (day >= 20) 
+    if (day >= 20)
     {
         day_buf |= (uint32_t)1<<5;
         day -= 20;
-    } 
-    else 
+    }
+    else
     {
         day_buf &= ~((uint32_t)1<<5);
     }
@@ -718,38 +718,38 @@ ErrorStatus RTC_WriteDay(uint32_t day)
     {
         day_buf |= (uint32_t)1<<4;
         day -= 10;
-    } 
-    else 
+    }
+    else
     {
         day_buf &= ~((uint32_t)1<<4);
     }
 
-    if (day >= 8) 
+    if (day >= 8)
     {
         day_buf |= (uint32_t)1<<3;
         day -= 8;
-    } 
-    else 
+    }
+    else
     {
         day_buf &= ~((uint32_t)1<<3);
     }
 
-    if (day >= 4) 
+    if (day >= 4)
     {
         day_buf |= (uint32_t)1<<2;
         day -= 4;
-    } 
-    else 
+    }
+    else
     {
         day_buf &= ~((uint32_t)1<<2);
     }
 
-    if (day >= 2) 
+    if (day >= 2)
     {
         day_buf |= (uint32_t)1<<1;
         day -= 2;
-    } 
-    else 
+    }
+    else
     {
         day_buf &= ~((uint32_t)1<<1);
     }
@@ -758,8 +758,8 @@ ErrorStatus RTC_WriteDay(uint32_t day)
     {
         day_buf |= (uint32_t)1;
         day -= 1;
-    } 
-    else 
+    }
+    else
     {
         day_buf &= ~(uint32_t)1;
     }
@@ -1371,7 +1371,7 @@ ErrorStatus RTC_WriteWeekAlarmHour(uint32_t hour, uint32_t meridiem)
     {
         hour_buf |= (uint32_t)1<<3;
         hour -= 8;
-    } 
+    }
     else
     {
         hour_buf &= ~((uint32_t)1<<3);
@@ -1381,7 +1381,7 @@ ErrorStatus RTC_WriteWeekAlarmHour(uint32_t hour, uint32_t meridiem)
     {
         hour_buf |= (uint32_t)1<<2;
         hour -= 4;
-    } 
+    }
     else
     {
         hour_buf &= ~((uint32_t)1<<2);
@@ -1391,7 +1391,7 @@ ErrorStatus RTC_WriteWeekAlarmHour(uint32_t hour, uint32_t meridiem)
     {
         hour_buf |= (uint32_t)1<<1;
         hour -= 2;
-    } 
+    }
     else
     {
         hour_buf &= ~((uint32_t)1<<1);
@@ -1401,7 +1401,7 @@ ErrorStatus RTC_WriteWeekAlarmHour(uint32_t hour, uint32_t meridiem)
     {
         hour_buf |= (uint32_t)1;
         hour -= 1;
-    } 
+    }
     else
     {
         hour_buf &= ~(uint32_t)1;
@@ -1603,7 +1603,7 @@ ErrorStatus RTC_WriteDayAlarmHour(uint32_t hour, uint32_t meridiem)
         hour_buf &= ~((uint32_t)1<<4);
     }
 
-    if (hour >= 8) 
+    if (hour >= 8)
     {
         hour_buf |= (uint32_t)1<<3;
         hour -= 8;
@@ -1613,7 +1613,7 @@ ErrorStatus RTC_WriteDayAlarmHour(uint32_t hour, uint32_t meridiem)
         hour_buf &= ~((uint32_t)1<<3);
     }
 
-    if (hour >= 4) 
+    if (hour >= 4)
     {
         hour_buf |= (uint32_t)1<<2;
         hour -= 4;
@@ -1623,7 +1623,7 @@ ErrorStatus RTC_WriteDayAlarmHour(uint32_t hour, uint32_t meridiem)
         hour_buf &= ~((uint32_t)1<<2);
     }
 
-    if (hour >= 2) 
+    if (hour >= 2)
     {
         hour_buf |= (uint32_t)1<<1;
         hour -= 2;
@@ -1633,7 +1633,7 @@ ErrorStatus RTC_WriteDayAlarmHour(uint32_t hour, uint32_t meridiem)
         hour_buf &= ~((uint32_t)1<<1);
     }
 
-    if (hour >= 1) 
+    if (hour >= 1)
     {
         hour_buf |= (uint32_t)1;
         hour -= 1;
@@ -1764,7 +1764,7 @@ ITStatus RTC_GetITStatus(RTC_Interrupt_Source src)
 {
     ITStatus result = RESET;
 
-    switch (src) 
+    switch (src)
     {
         case RTC_Interrupt_Source_Second:
             if(RTC->IE.SCDIE)
@@ -1813,7 +1813,7 @@ FlagStatus RTC_GetFlagStatus(RTC_Interrupt_Source src)
 {
     FlagStatus result = RESET;
 
-    switch (src) 
+    switch (src)
     {
         case RTC_Interrupt_Source_Second:
             if(RTC->IF.SCDIF)

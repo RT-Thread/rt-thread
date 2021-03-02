@@ -744,8 +744,8 @@ static ARM_USART_STATUS USART_NonBlockingGetStatus(cmsis_usart_non_blocking_driv
 
 #if defined(USART0) && RTE_USART0
 
-/* User needs to provide the implementation for USART0_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART0_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART0_GetFreq(void);
 extern void USART0_InitPins(void);
 extern void USART0_DeinitPins(void);
@@ -944,8 +944,8 @@ ARM_DRIVER_USART Driver_USART0 = {
 
 #if defined(USART1) && RTE_USART1
 
-/* User needs to provide the implementation for USART1_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART1_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART1_GetFreq(void);
 extern void USART1_InitPins(void);
 extern void USART1_DeinitPins(void);
@@ -1142,8 +1142,8 @@ ARM_DRIVER_USART Driver_USART1 = {
 
 #if defined(USART2) && RTE_USART2
 
-/* User needs to provide the implementation for USART2_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART2_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART2_GetFreq(void);
 extern void USART2_InitPins(void);
 extern void USART2_DeinitPins(void);
@@ -1342,8 +1342,8 @@ ARM_DRIVER_USART Driver_USART2 = {
 
 #if defined(USART3) && RTE_USART3
 
-/* User needs to provide the implementation for USART3_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART3_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART3_GetFreq(void);
 extern void USART3_InitPins(void);
 extern void USART3_DeinitPins(void);
@@ -1541,8 +1541,8 @@ ARM_DRIVER_USART Driver_USART3 = {
 
 #if defined(USART4) && RTE_USART4
 
-/* User needs to provide the implementation for USART4_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART4_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART4_GetFreq(void);
 extern void USART4_InitPins(void);
 extern void USART4_DeinitPins(void);
@@ -1739,8 +1739,8 @@ ARM_DRIVER_USART Driver_USART4 = {
 
 #if defined(USART5) && RTE_USART5
 
-/* User needs to provide the implementation for USART5_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART5_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART5_GetFreq(void);
 extern void USART5_InitPins(void);
 extern void USART5_DeinitPins(void);
@@ -1937,8 +1937,8 @@ ARM_DRIVER_USART Driver_USART5 = {
 
 #if defined(USART6) && RTE_USART6
 
-/* User needs to provide the implementation for USART6_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART6_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART6_GetFreq(void);
 extern void USART6_InitPins(void);
 extern void USART6_DeinitPins(void);
@@ -2135,8 +2135,8 @@ ARM_DRIVER_USART Driver_USART6 = {
 
 #if defined(USART7) && RTE_USART7
 
-/* User needs to provide the implementation for USART7_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART7_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART7_GetFreq(void);
 extern void USART7_InitPins(void);
 extern void USART7_DeinitPins(void);
@@ -2333,8 +2333,8 @@ ARM_DRIVER_USART Driver_USART7 = {
 
 #if defined(USART8) && RTE_USART8
 
-/* User needs to provide the implementation for USART8_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART8_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART8_GetFreq(void);
 extern void USART8_InitPins(void);
 extern void USART8_DeinitPins(void);
@@ -2533,8 +2533,8 @@ ARM_DRIVER_USART Driver_USART8 = {
 
 #if defined(USART9) && RTE_USART9
 
-/* User needs to provide the implementation for USART9_GetFreq/InitPins/DeinitPins 
-in the application for enabling according instance. */ 
+/* User needs to provide the implementation for USART9_GetFreq/InitPins/DeinitPins
+in the application for enabling according instance. */
 extern uint32_t USART9_GetFreq(void);
 extern void USART9_InitPins(void);
 extern void USART9_DeinitPins(void);

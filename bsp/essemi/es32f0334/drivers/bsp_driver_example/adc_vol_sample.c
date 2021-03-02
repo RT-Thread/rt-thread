@@ -8,20 +8,20 @@
  * 2018-11-29     misonyo      first implementation.
  */
 /*
- * 程序清单： ADC 设备使用例程
- * 例程导出了 adc_sample 命令到控制终端
- * 命令调用格式：adc_sample
- * 程序功能：通过 ADC 设备采样电压值并转换为数值。
- *           示例代码参考电压为3.3V,转换位数为12位。
+ * �����嵥�� ADC �豸ʹ������
+ * ���̵����� adc_sample ��������ն�
+ * ������ø�ʽ��adc_sample
+ * �����ܣ�ͨ�� ADC �豸������ѹֵ��ת��Ϊ��ֵ��
+ *           ʾ������ο���ѹΪ3.3V,ת��λ��Ϊ12λ��
 */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define ADC_DEV_NAME        "adc0"      /* ADC 设备名称 */
-#define ADC_DEV_CHANNEL     5           /* PA1 ADC 通道 */
-#define REFER_VOLTAGE       330         /* 参考电压 3.3V,数据精度乘以100保留2位小数*/
-#define CONVERT_BITS        (1 << 12)   /* 转换位数为12位 */
+#define ADC_DEV_NAME        "adc0"      /* ADC �豸���� */
+#define ADC_DEV_CHANNEL     5           /* PA1 ADC ͨ�� */
+#define REFER_VOLTAGE       330         /* �ο���ѹ 3.3V,���ݾ��ȳ���100����2λС��*/
+#define CONVERT_BITS        (1 << 12)   /* ת��λ��Ϊ12λ */
 
 static int adc_vol_sample(int argc, char *argv[])
 {
@@ -29,7 +29,7 @@ static int adc_vol_sample(int argc, char *argv[])
     rt_uint32_t value, vol;
     rt_err_t ret = RT_EOK;
 
-    /* 查找设备 */
+    /* �����豸 */
     adc_dev = (rt_adc_device_t)rt_device_find(ADC_DEV_NAME);
     if (adc_dev == RT_NULL)
     {
@@ -37,21 +37,21 @@ static int adc_vol_sample(int argc, char *argv[])
         return RT_ERROR;
     }
 
-    /* 使能设备 */
+    /* ʹ���豸 */
     ret = rt_adc_enable(adc_dev, ADC_DEV_CHANNEL);
 
-    /* 读取采样值 */
+    /* ��ȡ����ֵ */
     value = rt_adc_read(adc_dev, ADC_DEV_CHANNEL);
     rt_kprintf("the value is :%d \n", value);
 
-    /* 转换为对应电压值 */
+    /* ת��Ϊ��Ӧ��ѹֵ */
     vol = value * REFER_VOLTAGE / CONVERT_BITS;
     rt_kprintf("the voltage is :%d.%02d \n", vol / 100, vol % 100);
 
-    /* 关闭通道 */
+    /* �ر�ͨ�� */
     ret = rt_adc_disable(adc_dev, ADC_DEV_CHANNEL);
 
     return ret;
 }
-/* 导出到 msh 命令列表中 */
+/* ������ msh �����б��� */
 MSH_CMD_EXPORT(adc_vol_sample, adc voltage convert sample);

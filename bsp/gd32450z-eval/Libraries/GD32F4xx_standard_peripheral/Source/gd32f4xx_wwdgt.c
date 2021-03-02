@@ -37,10 +37,10 @@ void wwdgt_deinit(void)
 void wwdgt_counter_update(uint16_t counter_value)
 {
     uint32_t reg = 0U;
-    
+
     reg = (WWDGT_CTL & (~WWDGT_CTL_CNT));
     reg |= CTL_CNT(counter_value);
-    
+
     WWDGT_CTL = reg;
 }
 
@@ -56,8 +56,8 @@ void wwdgt_enable(void)
 }
 
 /*!
-    \brief      configure counter value, window value, and prescaler divider value  
-    \param[in]  counter: 0x00 - 0x7F   
+    \brief      configure counter value, window value, and prescaler divider value
+    \param[in]  counter: 0x00 - 0x7F
     \param[in]  window: 0x00 - 0x7F
     \param[in]  prescaler: wwdgt prescaler value
       \arg        WWDGT_CFG_PSC_DIV1: the time base of window watchdog counter = (PCLK1/4096)/1
@@ -74,12 +74,12 @@ void wwdgt_config(uint16_t counter, uint16_t window, uint32_t prescaler)
     /* clear WIN and PSC bits, clear CNT bit */
     reg_cfg = (WWDGT_CFG &(~(WWDGT_CFG_WIN|WWDGT_CFG_PSC)));
     reg_ctl = (WWDGT_CTL &(~WWDGT_CTL_CNT));
-  
+
     /* configure WIN and PSC bits, configure CNT bit */
     reg_cfg |= CFG_WIN(window);
     reg_cfg |= prescaler;
     reg_ctl |= CTL_CNT(counter);
-    
+
     WWDGT_CTL = reg_ctl;
     WWDGT_CFG = reg_cfg;
 }

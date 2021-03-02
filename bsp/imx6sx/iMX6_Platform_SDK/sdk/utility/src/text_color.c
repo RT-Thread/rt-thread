@@ -67,10 +67,10 @@ void printf_color(const char* const attrib, const char* const color, const char*
 {
     if ( is_color_supported )
     {
-		if (attrib)
-			printf(attrib);
-		if (color)
-			printf(color);
+        if (attrib)
+            printf(attrib);
+        if (color)
+            printf(color);
     }
 
     va_list args;
@@ -79,30 +79,30 @@ void printf_color(const char* const attrib, const char* const color, const char*
     va_end(args);
 
     if ( is_color_supported )
-    	printf(g_TextAttributeDefault);
+        printf(g_TextAttributeDefault);
 }
 
 int get_color_supported()
 {
-	if ( is_color_supported == INVALID_PARAMETER )
-	{
-//		<http://invisible-island.net/xterm/ctlseqs/ctlseqs.html>
+    if ( is_color_supported == INVALID_PARAMETER )
+    {
+//        <http://invisible-island.net/xterm/ctlseqs/ctlseqs.html>
 //
-//		Search for "Send Device Attributes" in the page above.
+//        Search for "Send Device Attributes" in the page above.
 //
-//		Send this to query: "\033[>0c"
+//        Send this to query: "\033[>0c"
 //
-//		A terminal emulator should respond with one of:
-//		CSI ? 1 ; 2 c (‘‘VT100 with Advanced Video Option’’)
-//		CSI ? 1 ; 0 c (‘‘VT101 with No Options’’)
-//		CSI ? 6 c (‘‘VT102’’)
-//		CSI ? 6 0 ; 1 ; 2 ; 6 ; 8 ; 9 ; 1 5 ; c (‘‘VT220’’)
+//        A terminal emulator should respond with one of:
+//        CSI ? 1 ; 2 c (‘‘VT100 with Advanced Video Option’’)
+//        CSI ? 1 ; 0 c (‘‘VT101 with No Options’’)
+//        CSI ? 6 c (‘‘VT102’’)
+//        CSI ? 6 0 ; 1 ; 2 ; 6 ; 8 ; 9 ; 1 5 ; c (‘‘VT220’’)
 //
-//		The first response is what I get from Terminal.app on OS X. The equivalent string in C is "\033[?1;2c". (CSI is "ESC[".)
+//        The first response is what I get from Terminal.app on OS X. The equivalent string in C is "\033[?1;2c". (CSI is "ESC[".)
 //
-//		But basically any response is good enough.
-		is_color_supported = TRUE;
-	}
+//        But basically any response is good enough.
+        is_color_supported = TRUE;
+    }
 
   return is_color_supported;
 }

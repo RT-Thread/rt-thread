@@ -16,7 +16,7 @@
   *
   ******************************************************************************
   */
-  
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32H7xx_HAL_DAC_H
 #define STM32H7xx_HAL_DAC_H
@@ -28,7 +28,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_def.h"
-   
+
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
   */
@@ -43,9 +43,9 @@
   * @{
   */
 
-/** 
-  * @brief  HAL State structures definition  
-  */ 
+/**
+  * @brief  HAL State structures definition
+  */
 typedef enum
 {
   HAL_DAC_STATE_RESET             = 0x00U,  /*!< DAC not yet initialized or disabled  */
@@ -53,11 +53,11 @@ typedef enum
   HAL_DAC_STATE_BUSY              = 0x02U,  /*!< DAC internal processing is ongoing   */
   HAL_DAC_STATE_TIMEOUT           = 0x03U,  /*!< DAC timeout state                    */
   HAL_DAC_STATE_ERROR             = 0x04U   /*!< DAC error state                      */
- 
+
 }HAL_DAC_StateTypeDef;
- 
-/** 
-  * @brief  DAC handle Structure definition  
+
+/**
+  * @brief  DAC handle Structure definition
   */
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
 typedef struct __DAC_HandleTypeDef
@@ -66,17 +66,17 @@ typedef struct
 #endif /* USE_HAL_DAC_REGISTER_CALLBACKS */
 {
   DAC_TypeDef                 *Instance;     /*!< Register base address             */
-  
+
   __IO HAL_DAC_StateTypeDef   State;         /*!< DAC communication state           */
 
   HAL_LockTypeDef             Lock;          /*!< DAC locking object                */
-  
+
   DMA_HandleTypeDef           *DMA_Handle1;  /*!< Pointer DMA handler for channel 1 */
-  
-  DMA_HandleTypeDef           *DMA_Handle2;  /*!< Pointer DMA handler for channel 2 */ 
-  
+
+  DMA_HandleTypeDef           *DMA_Handle2;  /*!< Pointer DMA handler for channel 2 */
+
   __IO uint32_t               ErrorCode;     /*!< DAC Error code                    */
-  
+
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
   void (* ConvCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
   void (* ConvHalfCpltCallbackCh1)(struct __DAC_HandleTypeDef *hdac);
@@ -93,52 +93,52 @@ typedef struct
 
 }DAC_HandleTypeDef;
 
-/** 
-  * @brief   DAC Configuration sample and hold Channel structure definition  
-  */ 
+/**
+  * @brief   DAC Configuration sample and hold Channel structure definition
+  */
 typedef struct
 {
   uint32_t DAC_SampleTime ;          /*!< Specifies the Sample time for the selected channel.
-                                          This parameter applies when DAC_SampleAndHold is DAC_SAMPLEANDHOLD_ENABLE. 
-                                          This parameter must be a number between Min_Data = 0 and Max_Data = 1023 */  
+                                          This parameter applies when DAC_SampleAndHold is DAC_SAMPLEANDHOLD_ENABLE.
+                                          This parameter must be a number between Min_Data = 0 and Max_Data = 1023 */
 
   uint32_t DAC_HoldTime ;            /*!< Specifies the hold time for the selected channel
-                                          This parameter applies when DAC_SampleAndHold is DAC_SAMPLEANDHOLD_ENABLE. 
-                                          This parameter must be a number between Min_Data = 0 and Max_Data = 1023 */    
-  
+                                          This parameter applies when DAC_SampleAndHold is DAC_SAMPLEANDHOLD_ENABLE.
+                                          This parameter must be a number between Min_Data = 0 and Max_Data = 1023 */
+
   uint32_t DAC_RefreshTime ;         /*!< Specifies the refresh time for the selected channel
-                                          This parameter applies when DAC_SampleAndHold is DAC_SAMPLEANDHOLD_ENABLE. 
-                                          This parameter must be a number between Min_Data = 0 and Max_Data = 255 */  
+                                          This parameter applies when DAC_SampleAndHold is DAC_SAMPLEANDHOLD_ENABLE.
+                                          This parameter must be a number between Min_Data = 0 and Max_Data = 255 */
 }
 DAC_SampleAndHoldConfTypeDef;
 
-/** 
-  * @brief   DAC Configuration regular Channel structure definition  
-  */ 
+/**
+  * @brief   DAC Configuration regular Channel structure definition
+  */
 typedef struct
 {
   uint32_t DAC_SampleAndHold;            /*!< Specifies whether the DAC mode.
                                               This parameter can be a value of @ref DAC_SampleAndHold */
-  
+
   uint32_t DAC_Trigger;                  /*!< Specifies the external trigger for the selected DAC channel.
                                               This parameter can be a value of @ref DAC_trigger_selection */
-  
+
   uint32_t DAC_OutputBuffer;             /*!< Specifies whether the DAC channel output buffer is enabled or disabled.
                                                This parameter can be a value of @ref DAC_output_buffer */
 
   uint32_t DAC_ConnectOnChipPeripheral ; /*!< Specifies whether the DAC output is connected or not to on chip peripheral .
                                               This parameter can be a value of @ref DAC_ConnectOnChipPeripheral */
-  
-  uint32_t DAC_UserTrimming;             /*!< Specifies the trimming mode 
-                                              This parameter must be a value of @ref DAC_UserTrimming 
+
+  uint32_t DAC_UserTrimming;             /*!< Specifies the trimming mode
+                                              This parameter must be a value of @ref DAC_UserTrimming
                                               DAC_UserTrimming is either factory or user trimming */
-                                        
-  uint32_t DAC_TrimmingValue;             /*!< Specifies the offset trimming value 
-                                               i.e. when DAC_SampleAndHold is DAC_TRIMMING_USER. 
+
+  uint32_t DAC_TrimmingValue;             /*!< Specifies the offset trimming value
+                                               i.e. when DAC_SampleAndHold is DAC_TRIMMING_USER.
                                                This parameter must be a number between Min_Data = 1 and Max_Data = 31 */
 
-  DAC_SampleAndHoldConfTypeDef  DAC_SampleAndHoldConfig;  /*!< Sample and Hold settings */ 
-      
+  DAC_SampleAndHoldConfTypeDef  DAC_SampleAndHoldConfig;  /*!< Sample and Hold settings */
+
 }DAC_ChannelConfTypeDef;
 
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
@@ -194,8 +194,8 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 /** @defgroup DAC_trigger_selection DAC trigger selection
   * @{
   */
-#define DAC_TRIGGER_NONE                   0x00000000U        /*!< Conversion is automatic once the DAC_DHRxxxx register has been loaded, and not by external trigger */                                                                     
-#define DAC_TRIGGER_SOFTWARE               (DAC_CR_TEN1)     /*!< Conversion started by software trigger for DAC channel */                                                                   
+#define DAC_TRIGGER_NONE                   0x00000000U        /*!< Conversion is automatic once the DAC_DHRxxxx register has been loaded, and not by external trigger */
+#define DAC_TRIGGER_SOFTWARE               (DAC_CR_TEN1)     /*!< Conversion started by software trigger for DAC channel */
 #define DAC_TRIGGER_T1_TRGO                (DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM1 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T2_TRGO                (DAC_CR_TSEL1_1 | DAC_CR_TEN1) /*!< TIM2 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T4_TRGO                (DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1) /*!< TIM4 TRGO selected as external conversion trigger for DAC channel */
@@ -239,12 +239,12 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 
 #define DAC_TRIMMING_FACTORY        0x00000000U           /*!< Factory trimming */
 #define DAC_TRIMMING_USER           0x00000001U           /*!< User trimming */
-    
+
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup DAC_SampleAndHold DAC Sample and hold 
+/** @defgroup DAC_SampleAndHold DAC Sample and hold
   * @{
   */
 #define DAC_SAMPLEANDHOLD_DISABLE     0x00000000U
@@ -255,7 +255,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @}
   */
 
-    
+
 /** @defgroup DAC_Channel_selection DAC Channel selection
   * @{
   */
@@ -278,24 +278,24 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 
 /** @defgroup DAC_flags_definition DAC flags definition
   * @{
-  */ 
+  */
 #define DAC_FLAG_DMAUDR1                    DAC_SR_DMAUDR1
-#define DAC_FLAG_DMAUDR2                    DAC_SR_DMAUDR2   
- 
+#define DAC_FLAG_DMAUDR2                    DAC_SR_DMAUDR2
+
 /**
   * @}
   */
 
 /** @defgroup DAC_IT_definition  DAC IT definition
   * @{
-  */ 
+  */
 #define DAC_IT_DMAUDR1                    DAC_SR_DMAUDR1
-#define DAC_IT_DMAUDR2                    DAC_SR_DMAUDR2   
+#define DAC_IT_DMAUDR2                    DAC_SR_DMAUDR2
 
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
@@ -335,7 +335,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   */
 #define __HAL_DAC_DISABLE(__HANDLE__, __DAC_Channel__) \
 ((__HANDLE__)->Instance->CR &=  ~(DAC_CR_EN1 << ((__DAC_Channel__) & 0x10UL)))
- 
+
 /** @brief Set DHR12R1 alignment.
   * @param  __ALIGNMENT__ specifies the DAC alignment
   * @retval None
@@ -428,13 +428,13 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 #define IS_DAC_REFRESHTIME(TIME)   ((TIME) <= 0x000000FFU)
 
 /**
-  * @} 
+  * @}
   */
 
 /* Include DAC HAL Extended module */
-#include "stm32h7xx_hal_dac_ex.h"   
+#include "stm32h7xx_hal_dac_ex.h"
 
-/* Exported functions --------------------------------------------------------*/  
+/* Exported functions --------------------------------------------------------*/
 
 /** @addtogroup DAC_Exported_Functions
   * @{
@@ -442,8 +442,8 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 
 /** @addtogroup DAC_Exported_Functions_Group1
   * @{
-  */  
-/* Initialization and de-initialization functions *****************************/ 
+  */
+/* Initialization and de-initialization functions *****************************/
 HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef* hdac);
 HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac);
 void HAL_DAC_MspInit(DAC_HandleTypeDef* hdac);
@@ -455,7 +455,7 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef* hdac);
 
 /** @addtogroup DAC_Exported_Functions_Group2
  * @{
- */    
+ */
 /* IO operation functions *****************************************************/
 HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef* hdac, uint32_t Channel);
 HAL_StatusTypeDef HAL_DAC_Stop(DAC_HandleTypeDef* hdac, uint32_t Channel);
@@ -479,7 +479,7 @@ HAL_StatusTypeDef     HAL_DAC_UnRegisterCallback(DAC_HandleTypeDef *hdac, HAL_DA
 
 /** @addtogroup DAC_Exported_Functions_Group3
   * @{
-  */ 
+  */
 /* Peripheral Control functions ***********************************************/
 HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConfTypeDef* sConfig, uint32_t Channel);
 uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef* hdac, uint32_t Channel);
@@ -489,7 +489,7 @@ uint32_t HAL_DAC_GetValue(DAC_HandleTypeDef* hdac, uint32_t Channel);
 
 /** @addtogroup DAC_Exported_Functions_Group4
   * @{
-  */     
+  */
 /* Peripheral State and Error functions ***************************************/
 HAL_DAC_StateTypeDef HAL_DAC_GetState(DAC_HandleTypeDef* hdac);
 uint32_t HAL_DAC_GetError(DAC_HandleTypeDef *hdac);
@@ -505,15 +505,15 @@ uint32_t HAL_DAC_GetError(DAC_HandleTypeDef *hdac);
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
-#endif 
-  
+#endif
+
 
 #endif /*STM32H7xx_HAL_DAC_H */
 

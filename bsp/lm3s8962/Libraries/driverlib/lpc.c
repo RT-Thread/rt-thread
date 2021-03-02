@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2010-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -478,10 +478,10 @@ LPCIRQSend(unsigned long ulBase)
 //! \param pfnHandler is a pointer to the function to be called when the
 //! LPC interrupt occurs.
 //!
-//! This function registers the handler to be called when an LPC interrupt   
-//! occurs. This function enables the global interrupt in the interrupt  
-//! controller; specific LPC interrupts must be enabled via LPCIntEnable().  If  
-//! necessary, it is the interrupt handler's responsibility to clear the  
+//! This function registers the handler to be called when an LPC interrupt
+//! occurs. This function enables the global interrupt in the interrupt
+//! controller; specific LPC interrupts must be enabled via LPCIntEnable().  If
+//! necessary, it is the interrupt handler's responsibility to clear the
 //! interrupt source via LPCIntClear().
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -517,7 +517,7 @@ LPCIntRegister(unsigned long ulBase, void (*pfnHandler)(void))
 //! \param ulBase specifies the LPC module base address.
 //!
 //! This function unregisters the handler to be called when an LPC interrupt
-//! occurs.  This fucntion also masks off the interrupt in the interrupt 
+//! occurs.  This fucntion also masks off the interrupt in the interrupt
 //! controller so that the interrupt handler is no longer called.
 //!
 //! \sa IntRegister() for important information about registering interrupt
@@ -552,8 +552,8 @@ LPCIntUnregister(unsigned long ulBase)
 //! \param ulBase specifies the LPC module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be enabled.
 //!
-//! This function enables the indicated LPC interrupt sources.  Only the 
-//! sources that are enabled can be reflected to the processor interrupt; 
+//! This function enables the indicated LPC interrupt sources.  Only the
+//! sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
 //! The \e ulIntFlags parameter can be any of the following values:
@@ -588,8 +588,8 @@ LPCIntEnable(unsigned long ulBase, unsigned long ulIntFlags)
 //! \param ulBase specifies the LPC module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be disabled.
 //!
-//! This funciton disables the indicated LPC interrupt sources.  Only the 
-//! sources that are enabled can be reflected to the processor interrupt; 
+//! This funciton disables the indicated LPC interrupt sources.  Only the
+//! sources that are enabled can be reflected to the processor interrupt;
 //! disabled sources have no effect on the processor.
 //!
 //! \sa The description of the LPCIntEnable() function provides detailed
@@ -946,7 +946,7 @@ LPCChannelConfigCOMxSet(unsigned long ulBase, unsigned long ulChannel,
 //! \param pulAddress is a pointer to storage for the channel bus address.
 //! \param pulCOMxMode is a pointer to storage for the channel COMx mode.
 //!
-//! This function determines and returns the configuration for the specified 
+//! This function determines and returns the configuration for the specified
 //! channel.
 //!
 //! \return Returns the bit-mapped channel control register value.
@@ -1008,7 +1008,7 @@ LPCChannelConfigGet(unsigned long ulBase, unsigned long ulChannel,
 //! \param ulBase specifies the LPC module base address.
 //! \param ulChannel specifies the LPC channel to configure.
 //!
-//! Thos function calculates the absolute address of the channel pool from the 
+//! Thos function calculates the absolute address of the channel pool from the
 //! channel configuration setting and returns it.
 //!
 //! \return Returns the absolute base address of the channel pool.
@@ -1056,7 +1056,7 @@ LPCChannelPoolAddressGet(unsigned long ulBase, unsigned long ulChannel)
 //! \param ulBase specifies the LPC module base address.
 //! \param ulChannel specifies the LPC Channel.
 //!
-//! This function reads the status word from an LPC channel and returns it to 
+//! This function reads the status word from an LPC channel and returns it to
 //! the caller.
 //!
 //! \return content of the channel status register.
@@ -1085,7 +1085,7 @@ LPCChannelStatusGet(unsigned long ulBase, unsigned long ulChannel)
 //! \param ulChannel specifies the LPC Channel.
 //! \param ulStatus is the user bit values to set.
 //!
-//! This function sets the selected user bits of the status word for an LPC 
+//! This function sets the selected user bits of the status word for an LPC
 //! channel.
 //!
 //! \return None
@@ -1121,7 +1121,7 @@ LPCChannelStatusSet(unsigned long ulBase, unsigned long ulChannel,
 //! \param ulChannel specifies the LPC Channel.
 //! \param ulStatus is the user bit values to clear.
 //!
-//! This function sets the selected user bits of the status word for an LPC 
+//! This function sets the selected user bits of the status word for an LPC
 //! channel.
 //!
 //! \return None
@@ -1157,7 +1157,7 @@ LPCChannelStatusClear(unsigned long ulBase, unsigned long ulChannel,
 //! \param ulConfig specifies the DMA channel configuration.
 //! \param ulMask specifies the configuration mask to be used.
 //!
-//! This function sets the specified DMA channel operation based on the 
+//! This function sets the specified DMA channel operation based on the
 //! \e ulConfig parameter.
 //!
 //! \return None.
@@ -1409,7 +1409,7 @@ LPCWordWrite(unsigned long ulBase, unsigned long ulOffset,
 //! \param ulBase specifies the LPC module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be enabled.
 //!
-//! This function enables the indicated COMx interrupt sources to trigger the 
+//! This function enables the indicated COMx interrupt sources to trigger the
 //! COMx interrupt in the primary LPC interrupt registers.
 //!
 //! \return None.
@@ -1503,7 +1503,7 @@ LPCCOMxIntStatus(unsigned long ulBase, tBoolean bMasked)
 //! \param ulBase specifies the LPC module base address.
 //! \param ulIntFlags is a bit mask of the interrupt sources to be cleared.
 //!
-//! This function clears the specified COMx interrupt sources so that they no 
+//! This function clears the specified COMx interrupt sources so that they no
 //! longer assert.
 //!
 //! \return None.

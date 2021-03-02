@@ -48,32 +48,32 @@ typedef uint32_t PhysicalAddress;
 typedef uint32_t VirtualAddress;
 
 #define STREAM_FULL_EMPTY_CHECK_DISABLE 0
-#define BUF_PIC_FLUSH			1
-#define BUF_PIC_RESET			0
+#define BUF_PIC_FLUSH            1
+#define BUF_PIC_RESET            0
 
-#define BIT_REG_MARGIN			0x4000
+#define BIT_REG_MARGIN            0x4000
 
 //!@brief List all the VPU internal versions
-#define PRJ_TRISTAN     		0xF000
-#define PRJ_TRISTAN_REV			0xF001
-#define PRJ_PRISM_CX			0xF002
-#define PRJ_SHIVA       		0xF003
-#define PRJ_PRISM_EX			0xF004
-#define PRJ_BODA_CX_4			0xF005
-#define PRJ_CODA_DX_6M			0xF100
-#define PRJ_CODA_DX_8			0xF306
-#define PRJ_BODA_DX_4V			0xF405
-#define PRJ_BODADX7X			0xF009
-#define	PRJ_CODAHX_14			0xF00A
-#define PRJ_CODA7541			0xF012
-#define PRJ_CODA_960			0xF020
+#define PRJ_TRISTAN             0xF000
+#define PRJ_TRISTAN_REV            0xF001
+#define PRJ_PRISM_CX            0xF002
+#define PRJ_SHIVA               0xF003
+#define PRJ_PRISM_EX            0xF004
+#define PRJ_BODA_CX_4            0xF005
+#define PRJ_CODA_DX_6M            0xF100
+#define PRJ_CODA_DX_8            0xF306
+#define PRJ_BODA_DX_4V            0xF405
+#define PRJ_BODADX7X            0xF009
+#define    PRJ_CODAHX_14            0xF00A
+#define PRJ_CODA7541            0xF012
+#define PRJ_CODA_960            0xF020
 
-#define MAX_NUM_INSTANCE		8
+#define MAX_NUM_INSTANCE        8
 
-#define DC_TABLE_INDEX0		    0
-#define AC_TABLE_INDEX0		    1
-#define DC_TABLE_INDEX1		    2
-#define AC_TABLE_INDEX1		    3
+#define DC_TABLE_INDEX0            0
+#define AC_TABLE_INDEX0            1
+#define DC_TABLE_INDEX1            2
+#define AC_TABLE_INDEX1            3
 
 //! @brief Enumeration for all video codec standards
 typedef enum {
@@ -390,7 +390,7 @@ typedef struct {
     unsigned refIdxGold:8;
 } Vp8PicInfo;
 
-//! @brief MVC specific picture information 
+//! @brief MVC specific picture information
 typedef struct {
     int32_t viewIdxDisplay;
     int32_t viewIdxDecoded;
@@ -672,17 +672,17 @@ typedef struct vpu_versioninfo {
     int32_t fw_code;            /* firmware checkin code number */
 } vpu_versioninfo;
 
-#define VPU_FW_VERSION(major, minor, release)	 \
-	(((major) << 12) + ((minor) << 8) + (release))
+#define VPU_FW_VERSION(major, minor, release)     \
+    (((major) << 12) + ((minor) << 8) + (release))
 
-#define VPU_LIB_VERSION(major, minor, release)	 \
-	(((major) << 12) + ((minor) << 8) + (release))
+#define VPU_LIB_VERSION(major, minor, release)     \
+    (((major) << 12) + ((minor) << 8) + (release))
 
 extern uint32_t system_rev;
 
-#define CHIP_REV_1_0            	0x10
-#define CHIP_REV_2_0			0x20
-#define CHIP_REV_2_1            	0x21
+#define CHIP_REV_1_0                0x10
+#define CHIP_REV_2_0            0x20
+#define CHIP_REV_2_1                0x21
 
 #define mxc_cpu()               (system_rev >> 12)
 #define mxc_is_cpu(part)        ((mxc_cpu() == part) ? 1 : 0)
@@ -695,15 +695,15 @@ static inline int32_t type## _rev (int32_t rev)         \
         return (type() ? mxc_cpu_is_rev(rev) : 0);      \
 }
 
-#define cpu_is_mx5x()		(mxc_is_cpu(0x51) || mxc_is_cpu(0x53))
-#define cpu_is_mx6()		(mxc_is_cpu(0x61) || mxc_is_cpu(0x63))
+#define cpu_is_mx5x()        (mxc_is_cpu(0x51) || mxc_is_cpu(0x53))
+#define cpu_is_mx6()        (mxc_is_cpu(0x61) || mxc_is_cpu(0x63))
 
 //////////////////////////////////////////////////////////////////////////////
 // API
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
- * @brief VPU initialization. This function initializes VPU hardware and proper data 
+ * @brief VPU initialization. This function initializes VPU hardware and proper data
  * structures/resources. It must be called only once before using VPU codec.
  *
  * @return  RETCODE_SUCCESS.
@@ -711,7 +711,7 @@ static inline int32_t type## _rev (int32_t rev)         \
 RetCode VPU_Init(void);
 
 /*!
- * @brief VPU un-initialization. This function release all the resources that VPU 
+ * @brief VPU un-initialization. This function release all the resources that VPU
  * allocated/occupied. It must be called after VPU codec done.
  */
 void VPU_UnInit(void);
@@ -778,7 +778,7 @@ RetCode VPU_EncGetInitialInfo(EncHandle, EncInitialInfo *);
  *
  * @param handle  The handle obtained from VPU_EncOpen().
  * @param bufArray  Pointer to the first element of an array
- *			of FrameBuffer data structures.
+ *            of FrameBuffer data structures.
  * @param num  Number of elements of the array.
  * @param frameBufStride  Stride value of frame buffers being registered.
  * @param sourceBufStride  Stride value of source buffers being registered.
@@ -1017,7 +1017,7 @@ RetCode VPU_DecGetOutputInfo(DecHandle handle, DecOutputInfo * info);
 RetCode VPU_DecBitBufferFlush(DecHandle handle);
 
 /*!
- * @brief Clear the display buffer flag. This is important! once the 
+ * @brief Clear the display buffer flag. This is important! once the
  *   flag is cleared, it means the buffer is available to use. and if
  *   all the buffers were tagged, there would be no buffer available
  *   so the VPU codec would be blocked untill one is released.
@@ -1034,7 +1034,7 @@ RetCode VPU_DecClrDispFlag(DecHandle handle, int32_t index);
 
 /*!
  * @brief Check the VPU decoder buffer status. if there is avaible buffer for output,
- *  VPU can start to decode the next frame, or else, skip this loop and wait 
+ *  VPU can start to decode the next frame, or else, skip this loop and wait
  *  untill available.
  *
  * @param handle  The handle obtained from VPU_DecOpen().
@@ -1058,7 +1058,7 @@ RetCode VPU_DecBufferCheck(DecHandle handle);
  * @li RETCODE_INVALID_HANDLE decHandle is invalid.
  * @li RETCODE_FRAME_NOT_COMPLETE A frame has not been finished.
  * @li RETCODE_SUCCESS Successful operation.
- * @li RETCODE_FAILURE Failed operation. 
+ * @li RETCODE_FAILURE Failed operation.
  */
 RetCode VPU_DecGiveCommand(DecHandle handle, CodecCommand cmd, void *parameter);
 

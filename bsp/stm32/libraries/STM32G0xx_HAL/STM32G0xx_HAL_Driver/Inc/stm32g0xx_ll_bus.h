@@ -23,11 +23,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -933,7 +933,7 @@ __STATIC_INLINE void LL_APB2_GRP1_ReleaseReset(uint32_t Periphs)
   *         @arg @ref LL_APB2_GRP1_PERIPH_TIM16
   *         @arg @ref LL_APB2_GRP1_PERIPH_TIM17
   *         @arg @ref LL_APB2_GRP1_PERIPH_ADC
-  * @note (*) peripheral not available on all devices 
+  * @note (*) peripheral not available on all devices
   * @retval None
 */
 __STATIC_INLINE void LL_APB2_GRP1_EnableClockStopSleep(uint32_t Periphs)

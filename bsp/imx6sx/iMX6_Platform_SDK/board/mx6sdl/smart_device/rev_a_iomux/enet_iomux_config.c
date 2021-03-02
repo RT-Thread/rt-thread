@@ -50,7 +50,7 @@ void enet_iomux_config(void)
     //     ALT4 (4) - Select instance: enet signal: ENET_1588_EVENT1_IN
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO31
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDC_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_MDC(0x020E05B8)
@@ -91,13 +91,13 @@ void enet_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDC_SRE_V(SLOW));
 
     // Config enet.ENET_MDIO to pad ENET_MDIO(V23)
@@ -118,7 +118,7 @@ void enet_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO22
     //     ALT6 (6) - Select instance: spdif signal: SPDIF_LOCK
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_MDIO_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO(0x020E05BC)
@@ -159,13 +159,13 @@ void enet_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_MDIO_SRE_V(SLOW));
     // Pad ENET_MDIO is involved in Daisy Chain.
     // Input Select Register:
@@ -193,7 +193,7 @@ void enet_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio1 signal: GPIO1_IO23
     //     ALT6 (6) - Select instance: spdif signal: SPDIF_SR_CLK
     HW_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_ENET_REF_CLK_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK(0x020E05C0)
@@ -234,13 +234,13 @@ void enet_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_ENET_REF_CLK_SRE_V(SLOW));
 
     // Config enet.RGMII_RD0 to pad RGMII_RD0(C24)
@@ -261,7 +261,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_RD0
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO25
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD0_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD0_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD0_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD0_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0(0x020E0694)
@@ -312,11 +312,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD0_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -368,7 +368,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_RD1
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO27
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD1_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD1_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD1_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD1_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1(0x020E0698)
@@ -419,11 +419,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD1_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -475,7 +475,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_RD2
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO28
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD2_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD2_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD2_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD2_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2(0x020E069C)
@@ -526,11 +526,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD2_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -582,7 +582,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_RD3
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO29
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD3_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD3_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD3_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RD3_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3(0x020E06A0)
@@ -633,11 +633,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RD3_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -689,7 +689,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_RXC
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO30
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_RXC_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RXC_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RXC_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RXC_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC(0x020E06A8)
@@ -740,11 +740,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RXC_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -796,7 +796,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_RX_CTL
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO24
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_RX_CTL_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RX_CTL_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RX_CTL_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_RX_CTL_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL(0x020E06A4)
@@ -847,11 +847,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_RX_CTL_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -901,7 +901,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_TD0
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO20
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD0_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD0_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD0_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD0_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0(0x020E06AC)
@@ -951,11 +951,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD0_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -983,7 +983,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_TD1
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO21
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD1_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD1_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD1_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD1_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1(0x020E06B0)
@@ -1033,11 +1033,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD1_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -1065,7 +1065,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_TD2
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO22
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD2_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD2_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD2_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD2_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2(0x020E06B4)
@@ -1115,11 +1115,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD2_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -1147,7 +1147,7 @@ void enet_iomux_config(void)
     //     ALT1 (1) - Select instance: enet signal: RGMII_TD3
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO23
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD3_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD3_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD3_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TD3_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3(0x020E06B8)
@@ -1197,11 +1197,11 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_DDR_INPUT_V(CMOS) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_DDR_INPUT_V(CMOS) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TD3_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -1231,7 +1231,7 @@ void enet_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO19
     //     ALT7 (7) - Select instance: xtalosc signal: XTALOSC_REF_CLK_24M
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_TXC_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TXC_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TXC_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TXC_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC(0x020E06C0)
@@ -1283,10 +1283,10 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TXC_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)
@@ -1315,7 +1315,7 @@ void enet_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio6 signal: GPIO6_IO26
     //     ALT7 (7) - Select instance: enet signal: ENET_REF_CLK
     HW_IOMUXC_SW_MUX_CTL_PAD_RGMII_TX_CTL_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TX_CTL_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TX_CTL_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_RGMII_TX_CTL_MUX_MODE_V(ALT1));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL(0x020E06BC)
@@ -1367,10 +1367,10 @@ void enet_iomux_config(void)
     //     40_OHM (6) - 40 Ohm
     //     34_OHM (7) - 34 Ohm
     HW_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_PUS_V(100K_OHM_PD) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_PKE_V(ENABLED) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_PUS_V(100K_OHM_PD) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_PKE_V(ENABLED) |
             BF_IOMUXC_SW_PAD_CTL_PAD_RGMII_TX_CTL_DSE_V(40_OHM));
     // Pad Group Control Register:
     // IOMUXC_SW_PAD_CTL_GRP_DDR_TYPE_RGMII(0x020E0768)

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020-2021, Bluetrum Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -226,7 +226,7 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     /* save pkg */
     sdio->pkg = pkg;
 
-    #define CK8E            BIT(11)             //åœ¨å‘½ä»¤/æ•°æ®åŒ…ååŠ ä¸Š8CLK
+    #define CK8E            BIT(11)             //ÔÚÃüÁî/Êı¾İ°üºó¼ÓÉÏ8CLK
     #define CBUSY           BIT(10)             //Busy Check
     #define CLRSP           BIT(9)              //17Byte Long Rsp
     #define CRSP            BIT(8)              //Need Rsp

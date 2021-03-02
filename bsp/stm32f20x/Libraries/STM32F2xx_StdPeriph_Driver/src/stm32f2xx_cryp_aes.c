@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file provides high level functions to encrypt and decrypt an 
+  * @brief   This file provides high level functions to encrypt and decrypt an
   *          input message using AES in ECB/CBC/CTR modes.
   *          It uses the stm32f2xx_cryp.c/.h drivers to access the STM32F2xx CRYP
   *          peripheral.
@@ -14,7 +14,7 @@
   *          ===================================================================
   *                                   How to use this driver
   *          ===================================================================
-  *          1. Enable The CRYP controller clock using 
+  *          1. Enable The CRYP controller clock using
   *            RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_CRYP, ENABLE); function.
   *
   *          2. Encrypt and decrypt using AES in ECB Mode using CRYP_AES_ECB()
@@ -39,7 +39,7 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -49,7 +49,7 @@
   * @{
   */
 
-/** @defgroup CRYP 
+/** @defgroup CRYP
   * @brief CRYP driver modules
   * @{
   */
@@ -65,12 +65,12 @@
 
 /** @defgroup CRYP_Private_Functions
   * @{
-  */ 
+  */
 
 /** @defgroup CRYP_Group6 High Level AES functions
- *  @brief   High Level AES functions 
+ *  @brief   High Level AES functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                           High Level AES functions
  ===============================================================================
@@ -190,7 +190,7 @@ ErrorStatus CRYP_AES_ECB(uint8_t Mode, uint8_t* Key, uint16_t Keysize,
     }
     else
     {
-      /* Crypto Init for decryption process */  
+      /* Crypto Init for decryption process */
       AES_CRYP_InitStructure.CRYP_AlgoDir = CRYP_AlgoDir_Decrypt;
     }
   }
@@ -249,7 +249,7 @@ ErrorStatus CRYP_AES_ECB(uint8_t Mode, uint8_t* Key, uint16_t Keysize,
       outputaddr+=4;
       *(uint32_t*)(outputaddr) = CRYP_DataOut();
       outputaddr+=4;
-      *(uint32_t*)(outputaddr) = CRYP_DataOut(); 
+      *(uint32_t*)(outputaddr) = CRYP_DataOut();
       outputaddr+=4;
     }
   }
@@ -257,7 +257,7 @@ ErrorStatus CRYP_AES_ECB(uint8_t Mode, uint8_t* Key, uint16_t Keysize,
   /* Disable Crypto */
   CRYP_Cmd(DISABLE);
 
-  return status; 
+  return status;
 }
 
 /**
@@ -385,7 +385,7 @@ ErrorStatus CRYP_AES_CBC(uint8_t Mode, uint8_t InitVectors[16], uint8_t *Key,
     }
     else
     {
-      /* Crypto Init for decryption process */  
+      /* Crypto Init for decryption process */
       AES_CRYP_InitStructure.CRYP_AlgoDir = CRYP_AlgoDir_Decrypt;
     }
   }
@@ -472,7 +472,7 @@ ErrorStatus CRYP_AES_CBC(uint8_t Mode, uint8_t InitVectors[16], uint8_t *Key,
   *          - SUCCESS: Operation done
   *          - ERROR: Operation failed
   */
-ErrorStatus CRYP_AES_CTR(uint8_t Mode, uint8_t InitVectors[16], uint8_t *Key, 
+ErrorStatus CRYP_AES_CTR(uint8_t Mode, uint8_t InitVectors[16], uint8_t *Key,
                          uint16_t Keysize, uint8_t *Input, uint32_t Ilength,
                          uint8_t *Output)
 {
@@ -620,19 +620,19 @@ ErrorStatus CRYP_AES_CTR(uint8_t Mode, uint8_t InitVectors[16], uint8_t *Key,
 }
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
 

@@ -8,13 +8,13 @@
 // Version        : 1
 // Bus type       : apb
 // Description    : DW_apb_ssi has the following features:
-//                  * APB interface â€“ Allows for easy integration into a
+//                  * APB interface ¨C Allows for easy integration into a
 //                  DesignWare Synthesizable Components for AMBA 2
 //                  implementation.
 //                  * APB3 and APB4 protocol support.
-//                  * Scalable APB data bus width â€“ Supports APB data bus widths
+//                  * Scalable APB data bus width ¨C Supports APB data bus widths
 //                  of 8, 16, and 32 bits.
-//                  * Serial-master or serial-slave operation â€“ Enables serial
+//                  * Serial-master or serial-slave operation ¨C Enables serial
 //                  communication with serial-master or serial-slave peripheral
 //                  devices.
 //                  * Programmable Dual/Quad/Octal SPI support in Master Mode.
@@ -29,17 +29,17 @@
 //                  master to behave as a memory mapped I/O and fetches the data
 //                  from the device based on the APB read request. This feature
 //                  is applicable only in enhanced SPI modes.
-//                  * DMA Controller Interface â€“ Enables the DW_apb_ssi to
+//                  * DMA Controller Interface ¨C Enables the DW_apb_ssi to
 //                  interface to a DMA controller over the bus using a
 //                  handshaking interface for transfer requests.
-//                  * Independent masking of interrupts â€“ Master collision,
+//                  * Independent masking of interrupts ¨C Master collision,
 //                  transmit FIFO overflow, transmit FIFO empty, receive FIFO
 //                  full, receive FIFO underflow, and receive FIFO overflow
 //                  interrupts can all be masked independently.
-//                  * Multi-master contention detection â€“ Informs the processor
+//                  * Multi-master contention detection ¨C Informs the processor
 //                  of multiple serial-master accesses on the serial bus.
 //                  * Bypass of meta-stability flip-flops for synchronous clocks
-//                  â€“ When the APB clock (pclk) and the DW_apb_ssi serial clock
+//                  ¨C When the APB clock (pclk) and the DW_apb_ssi serial clock
 //                  (ssi_clk) are synchronous, meta-stable flip-flops are not
 //                  used when transferring control signals across these clock
 //                  domains.
@@ -47,26 +47,26 @@
 //                  serial data bit (rxd); enables programmable control of
 //                  routing delays resulting in higher serial data-bit rates.
 //                  * Programmable features:
-//                  - Serial interface operation â€“ Choice of Motorola SPI, Texas
+//                  - Serial interface operation ¨C Choice of Motorola SPI, Texas
 //                  Instruments Synchronous Serial Protocol or National
 //                  Semiconductor Microwire.
-//                  - Clock bit-rate â€“ Dynamic control of the serial bit rate of
+//                  - Clock bit-rate ¨C Dynamic control of the serial bit rate of
 //                  the data transfer; used in only serial-master mode of
 //                  operation.
-//                  - Data Item size (4 to 32 bits) â€“ Item size of each data
+//                  - Data Item size (4 to 32 bits) ¨C Item size of each data
 //                  transfer under the control of the programmer.
 //                  * Configured features:
-//                  - FIFO depth â€“ 16 words deep. The FIFO width is fixed at 32
+//                  - FIFO depth ¨C 16 words deep. The FIFO width is fixed at 32
 //                  bits.
 //                  - 1 slave select output.
-//                  - Hardware slave-select â€“ Dedicated hardware slave-select
+//                  - Hardware slave-select ¨C Dedicated hardware slave-select
 //                  line.
 //                  - Combined interrupt line - one combined interrupt line from
 //                  the DW_apb_ssi to the interrupt controller.
-//                  - Interrupt polarity â€“ active high interrupt lines.
-//                  - Serial clock polarity â€“ low serial-clock polarity directly
+//                  - Interrupt polarity ¨C active high interrupt lines.
+//                  - Serial clock polarity ¨C low serial-clock polarity directly
 //                  after reset.
-//                  - Serial clock phase â€“ capture on first edge of serial-clock
+//                  - Serial clock phase ¨C capture on first edge of serial-clock
 //                  directly after reset.
 // =============================================================================
 #ifndef HARDWARE_REGS_SSI_DEFINED

@@ -53,13 +53,13 @@
                                     ((PERIPH) == GPIOE))
 #endif
 
-                                     
-/** 
-  * @brief  Output Maximum frequency selection  
+
+/**
+  * @brief  Output Maximum frequency selection
   */
 
 typedef enum
-{ 
+{
   GPIO_MaxSpeed_10MHz = 1,
   GPIO_MaxSpeed_2MHz,
   GPIO_MaxSpeed_50MHz = 2
@@ -68,8 +68,8 @@ typedef enum
                                     ((MAXSPEED) == GPIO_MaxSpeed_2MHz)  || \
                                     ((MAXSPEED) == GPIO_MaxSpeed_50MHz))
 
-/** 
-  * @brief  Configuration Mode enumeration  
+/**
+  * @brief  Configuration Mode enumeration
   */
 
 typedef enum
@@ -88,8 +88,8 @@ typedef enum
                           ((MDE) == GPIO_Mode_OUT_OD)    || ((MDE) == GPIO_Mode_OUT_PP)      || \
                           ((MDE) == GPIO_Mode_AF_OD)     || ((MDE) == GPIO_Mode_AF_PP))
 
-/** 
-  * @brief  GPIO Init structure definition  
+/**
+  * @brief  GPIO Init structure definition
   */
 
 typedef struct
@@ -105,8 +105,8 @@ typedef struct
 }GPIO_InitType;
 
 
-/** 
-  * @brief  Bit_SET and Bit_RESET enumeration  
+/**
+  * @brief  Bit_SET and Bit_RESET enumeration
   */
 
 typedef enum
@@ -124,7 +124,7 @@ typedef enum
   * @{
   */
 
-/** @defgroup GPIO_pins_define 
+/** @defgroup GPIO_pins_define
   * @{
   */
 
@@ -170,10 +170,10 @@ typedef enum
   */
 
 #if defined (AT32F403xx) || defined (AT32F413xx)|| defined (AT32F415xx) || defined (AT32F403Axx) || defined (AT32F407xx)
-/** @defgroup GPIO_Remap_define 
+/** @defgroup GPIO_Remap_define
   * @{
   */
-  
+
 /** @defgroup AFIO_MAP_define
   * @{
   */
@@ -228,7 +228,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 /** @defgroup AFIO_MAP2_define
   * @{
   */
@@ -264,7 +264,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 #ifdef AT32F403xx
 #define IS_GPIO_REMAP(REMAP)        (((REMAP) == GPIO_Remap01_SPI1)         || ((REMAP) == GPIO_Remap_I2C1)           || \
                                      ((REMAP) == GPIO_Remap_USART1)         || ((REMAP) == GPIO_Remap_USART2)         || \
@@ -331,12 +331,12 @@ typedef enum
                                      ((REMAP) == GPIO_Remap_SPI4)           || ((REMAP) == GPIO_Remap_I2C3)           || \
                                      ((REMAP) == GPIO_Remap01_SDIO2)        || ((REMAP) == GPIO_Remap10_SDIO2)        || \
                                      ((REMAP) == GPIO_Remap11_SDIO2))
-                                     
+
 #endif
-                              
+
 /**
   * @}
-  */ 
+  */
 #endif
 
 #if !defined(AT32F403xx)
@@ -368,8 +368,8 @@ typedef enum
 #define OFFSET_MASK6  0xF0FFFFFF
 #define OFFSET_MASK7  0x0FFFFFFF
 
-/** @defgroup AFIO_MAP3_4_5_6_7_8_define 
-  * @{ 
+/** @defgroup AFIO_MAP3_4_5_6_7_8_define
+  * @{
   */
 #define AFIO_MAP3_TMR9_0010         ((uint32_t)0x80000002)  /*!< TMR9 Alternate Function mapping  */
 #define AFIO_MAP3_TMR10_0010        ((uint32_t)0x80000012)  /*!< TMR10 Alternate Function mapping  */
@@ -415,8 +415,8 @@ typedef enum
 #define AFIO_MAP6_USART3_0011       ((uint32_t)0x800001E3)  /*!< USART3 Alternate Function mapping 0011*/
 #define AFIO_MAP6_UART4_0001        ((uint32_t)0x800001F1)  /*!< UART4 Alternate Function mapping */
 
-#define AFIO_MAP7_SPIF_1000         ((uint32_t)0x80000208)  /*!< EXT_FLASH Alternate Function mapping */ 
-#define AFIO_MAP7_SPIF_1001         ((uint32_t)0x80000209)  /*!< EXT_FLASH Alternate Function enable */ 
+#define AFIO_MAP7_SPIF_1000         ((uint32_t)0x80000208)  /*!< EXT_FLASH Alternate Function mapping */
+#define AFIO_MAP7_SPIF_1001         ((uint32_t)0x80000209)  /*!< EXT_FLASH Alternate Function enable */
 #define AFIO_MAP7_ADC1_0001         ((uint32_t)0x80000211)  /*!< ADC1 External Trigger Injected Conversion remapping */
 #define AFIO_MAP7_ADC1_0010         ((uint32_t)0x80000212)  /*!< ADC1 External Trigger Regular Conversion remapping */
 #define AFIO_MAP7_ADC1_0011         ((uint32_t)0x80000213)  /*!< ADC1 External Trigger Regular & Injected Conversion remapping */
@@ -426,7 +426,7 @@ typedef enum
 #define AFIO_MAP7_SWJTAG_0001       ((uint32_t)0x80000241)  /*!< Full SWJ Enabled (JTAG-DP + SW-DP) but without JTRST */
 #define AFIO_MAP7_SWJTAG_0010       ((uint32_t)0x80000242)  /*!< JTAG-DP Disabled and SW-DP Enabled */
 #define AFIO_MAP7_SWJTAG_0100       ((uint32_t)0x80000244)  /*!< Full SWJ Disabled (JTAG-DP + SW-DP) */
-#define AFIO_MAP7_PD01_0001         ((uint32_t)0x80000251)  /*!< PD01 Alternate Function mapping */  
+#define AFIO_MAP7_PD01_0001         ((uint32_t)0x80000251)  /*!< PD01 Alternate Function mapping */
 #define AFIO_MAP7_XMC_0001          ((uint32_t)0x80000261)  /*!< XMC Alternate Function mapping 0001 */
 #define AFIO_MAP7_XMC_0010          ((uint32_t)0x80000262)  /*!< XMC Alternate Function mapping 0010 */
 #define AFIO_MAP7_XMC_1000          ((uint32_t)0x80000268)  /*!< XMC Alternate Function mapping 1000 */
@@ -536,13 +536,13 @@ typedef enum
                                      ((REMAP) == AFIO_MAP8_USART6_0001)   || ((REMAP) == AFIO_MAP8_UART7_0001)    || \
                                      ((REMAP) == AFIO_MAP8_UART8_0001)    || ((REMAP) == AFIO_MAP4_TIM2ITR1_1000) || \
                                      ((REMAP) == AFIO_MAP4_TIM2ITR1_1100) || ((REMAP) == AFIO_MAP7_XMC_1000))
-                                     
+
 /**
   * @}
-  */ 
+  */
 #endif
 
-/** @defgroup GPIO_Port_Sources 
+/** @defgroup GPIO_Port_Sources
   * @{
   */
 
@@ -571,7 +571,7 @@ typedef enum
   * @}
   */
 
-/** @defgroup GPIO_Pin_sources 
+/** @defgroup GPIO_Pin_sources
   * @{
   */
 
@@ -612,16 +612,16 @@ typedef enum
 /**
   * @}
   */
-                                             
-/** @defgroup Ethernet_Media_Interface 
+
+/** @defgroup Ethernet_Media_Interface
   * @{
-  */ 
-#define GPIO_ETH_MediaInterface_MII    ((uint32_t)0x00000000) 
-#define GPIO_ETH_MediaInterface_RMII   ((uint32_t)0x00000001)                                       
+  */
+#define GPIO_ETH_MediaInterface_MII    ((uint32_t)0x00000000)
+#define GPIO_ETH_MediaInterface_RMII   ((uint32_t)0x00000001)
 
 #define IS_GPIO_ETH_MEDIA_INTERFACE(INTERFACE) (((INTERFACE) == GPIO_ETH_MediaInterface_MII) || \
                                                 ((INTERFACE) == GPIO_ETH_MediaInterface_RMII))
-                                                
+
 /**
   * @}
   */

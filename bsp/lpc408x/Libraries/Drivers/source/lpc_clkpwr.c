@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -40,7 +40,7 @@
 #include "lpc_libcfg_default.h"
 #endif /* __BUILD_WITH_EXAMPLE__ */
 #ifdef _CLKPWR
- 
+
 /* Includes ------------------------------------------------------------------- */
 #include "lpc_clkpwr.h"
 
@@ -316,7 +316,7 @@ void CLKPWR_DeepPowerDown(void)
 /**
  * @}
  */
- 
+
 #endif /*_CLKPWR*/
 
 /**

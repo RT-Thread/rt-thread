@@ -2,7 +2,7 @@
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -214,10 +214,10 @@ void RTC_Init(RTC_Type *base, const rtc_config_t *config)
 
     /* Configure the RTC time compensation register */
     base->TCR = (RTC_TCR_CIR(config->compensationInterval) | RTC_TCR_TCR(config->compensationTime));
-	
+
 #if defined(FSL_FEATURE_RTC_HAS_TSIC) && FSL_FEATURE_RTC_HAS_TSIC
-	/* Configure RTC timer seconds interrupt to be generated once per second */
-	base->IER &= ~(RTC_IER_TSIC_MASK | RTC_IER_TSIE_MASK);
+    /* Configure RTC timer seconds interrupt to be generated once per second */
+    base->IER &= ~(RTC_IER_TSIC_MASK | RTC_IER_TSIE_MASK);
 #endif
 }
 

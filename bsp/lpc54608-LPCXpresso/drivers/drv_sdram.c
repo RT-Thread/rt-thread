@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-08-02     Yang        the first version
  */
- 
+
 #include "drv_sdram.h"
 
 #include <fsl_emc.h>

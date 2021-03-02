@@ -121,110 +121,110 @@ extern "C" {
 
 /** Enum for the speed status for the USB module */
 enum usb_speed {
-	USB_SPEED_LOW,
-	USB_SPEED_FULL,
+    USB_SPEED_LOW,
+    USB_SPEED_FULL,
 };
 
 /** Enum for the possible callback types for the USB in host module */
 enum usb_host_callback {
-	USB_HOST_CALLBACK_SOF,
-	USB_HOST_CALLBACK_RESET,
-	USB_HOST_CALLBACK_WAKEUP,
-	USB_HOST_CALLBACK_DNRSM,
-	USB_HOST_CALLBACK_UPRSM,
-	USB_HOST_CALLBACK_RAMACER,
-	USB_HOST_CALLBACK_CONNECT,
-	USB_HOST_CALLBACK_DISCONNECT,
-	USB_HOST_CALLBACK_N,
+    USB_HOST_CALLBACK_SOF,
+    USB_HOST_CALLBACK_RESET,
+    USB_HOST_CALLBACK_WAKEUP,
+    USB_HOST_CALLBACK_DNRSM,
+    USB_HOST_CALLBACK_UPRSM,
+    USB_HOST_CALLBACK_RAMACER,
+    USB_HOST_CALLBACK_CONNECT,
+    USB_HOST_CALLBACK_DISCONNECT,
+    USB_HOST_CALLBACK_N,
 };
 
 /** Enum for the possible callback types for the USB pipe in host module */
 enum usb_host_pipe_callback {
-	USB_HOST_PIPE_CALLBACK_TRANSFER_COMPLETE,
-	USB_HOST_PIPE_CALLBACK_ERROR,
-	USB_HOST_PIPE_CALLBACK_SETUP,
-	USB_HOST_PIPE_CALLBACK_STALL,
-	USB_HOST_PIPE_CALLBACK_N,
+    USB_HOST_PIPE_CALLBACK_TRANSFER_COMPLETE,
+    USB_HOST_PIPE_CALLBACK_ERROR,
+    USB_HOST_PIPE_CALLBACK_SETUP,
+    USB_HOST_PIPE_CALLBACK_STALL,
+    USB_HOST_PIPE_CALLBACK_N,
 };
 
 /**
  * \brief Host pipe types.
  */
 enum usb_host_pipe_type {
-	USB_HOST_PIPE_TYPE_DISABLE,
-	USB_HOST_PIPE_TYPE_CONTROL,
-	USB_HOST_PIPE_TYPE_ISO,
-	USB_HOST_PIPE_TYPE_BULK,
-	USB_HOST_PIPE_TYPE_INTERRUPT,
-	USB_HOST_PIPE_TYPE_EXTENDED,
+    USB_HOST_PIPE_TYPE_DISABLE,
+    USB_HOST_PIPE_TYPE_CONTROL,
+    USB_HOST_PIPE_TYPE_ISO,
+    USB_HOST_PIPE_TYPE_BULK,
+    USB_HOST_PIPE_TYPE_INTERRUPT,
+    USB_HOST_PIPE_TYPE_EXTENDED,
 };
 
 /**
  * \brief Host pipe token types.
  */
 enum usb_host_pipe_token {
-	USB_HOST_PIPE_TOKEN_SETUP,
-	USB_HOST_PIPE_TOKEN_IN,
-	USB_HOST_PIPE_TOKEN_OUT,
+    USB_HOST_PIPE_TOKEN_SETUP,
+    USB_HOST_PIPE_TOKEN_IN,
+    USB_HOST_PIPE_TOKEN_OUT,
 };
 
 /**
  * \brief Enumeration for the possible callback types for the USB in device module
  */
 enum usb_device_callback {
-	USB_DEVICE_CALLBACK_SOF,
-	USB_DEVICE_CALLBACK_RESET,
-	USB_DEVICE_CALLBACK_WAKEUP,
-	USB_DEVICE_CALLBACK_RAMACER,
-	USB_DEVICE_CALLBACK_SUSPEND,
-	USB_DEVICE_CALLBACK_LPMNYET,
-	USB_DEVICE_CALLBACK_LPMSUSP,
-	USB_DEVICE_CALLBACK_N,
+    USB_DEVICE_CALLBACK_SOF,
+    USB_DEVICE_CALLBACK_RESET,
+    USB_DEVICE_CALLBACK_WAKEUP,
+    USB_DEVICE_CALLBACK_RAMACER,
+    USB_DEVICE_CALLBACK_SUSPEND,
+    USB_DEVICE_CALLBACK_LPMNYET,
+    USB_DEVICE_CALLBACK_LPMSUSP,
+    USB_DEVICE_CALLBACK_N,
 };
 
 /**
  * \brief Enumeration for the possible callback types for the USB endpoint in device module
  */
 enum usb_device_endpoint_callback {
-	USB_DEVICE_ENDPOINT_CALLBACK_TRCPT,
-	USB_DEVICE_ENDPOINT_CALLBACK_TRFAIL,
-	USB_DEVICE_ENDPOINT_CALLBACK_RXSTP,
-	USB_DEVICE_ENDPOINT_CALLBACK_STALL,
-	USB_DEVICE_EP_CALLBACK_N,
+    USB_DEVICE_ENDPOINT_CALLBACK_TRCPT,
+    USB_DEVICE_ENDPOINT_CALLBACK_TRFAIL,
+    USB_DEVICE_ENDPOINT_CALLBACK_RXSTP,
+    USB_DEVICE_ENDPOINT_CALLBACK_STALL,
+    USB_DEVICE_EP_CALLBACK_N,
 };
 
 /**
  * \brief Device Endpoint types.
  */
 enum usb_device_endpoint_type {
-	USB_DEVICE_ENDPOINT_TYPE_DISABLE,
-	USB_DEVICE_ENDPOINT_TYPE_CONTROL,
-	USB_DEVICE_ENDPOINT_TYPE_ISOCHRONOUS,
-	USB_DEVICE_ENDPOINT_TYPE_BULK,
-	USB_DEVICE_ENDPOINT_TYPE_INTERRUPT,
+    USB_DEVICE_ENDPOINT_TYPE_DISABLE,
+    USB_DEVICE_ENDPOINT_TYPE_CONTROL,
+    USB_DEVICE_ENDPOINT_TYPE_ISOCHRONOUS,
+    USB_DEVICE_ENDPOINT_TYPE_BULK,
+    USB_DEVICE_ENDPOINT_TYPE_INTERRUPT,
 };
 
 /**
  * \brief Endpoint Size
  */
 enum usb_endpoint_size {
-	USB_ENDPOINT_8_BYTE,
-	USB_ENDPOINT_16_BYTE,
-	USB_ENDPOINT_32_BYTE,
+    USB_ENDPOINT_8_BYTE,
+    USB_ENDPOINT_16_BYTE,
+    USB_ENDPOINT_32_BYTE,
     USB_ENDPOINT_64_BYTE,
-	USB_ENDPOINT_128_BYTE,
-	USB_ENDPOINT_256_BYTE,
-	USB_ENDPOINT_512_BYTE,
-	USB_ENDPOINT_1023_BYTE,
+    USB_ENDPOINT_128_BYTE,
+    USB_ENDPOINT_256_BYTE,
+    USB_ENDPOINT_512_BYTE,
+    USB_ENDPOINT_1023_BYTE,
 };
 
 /**
  * \brief Link Power Management Handshake.
  */
 enum usb_device_lpm_mode {
-	USB_DEVICE_LPM_NOT_SUPPORT,
-	USB_DEVICE_LPM_ACK,
-	USB_DEVICE_LPM_NYET,
+    USB_DEVICE_LPM_NOT_SUPPORT,
+    USB_DEVICE_LPM_ACK,
+    USB_DEVICE_LPM_NYET,
 };
 
 /**
@@ -251,14 +251,14 @@ typedef void (*usb_device_endpoint_callback_t)(struct usb_module *module_inst, v
 
 /** USB configurations */
 struct usb_config {
-	/** \c true for host, \c false for device. */
-	bool select_host_mode;
-	/** When \c true the module is enabled during standby. */
-	bool run_in_standby;
-	/** Generic Clock Generator source channel. */
-	enum gclk_generator source_generator;
-	/** Speed mode */
-	enum usb_speed speed_mode;
+    /** \c true for host, \c false for device. */
+    bool select_host_mode;
+    /** When \c true the module is enabled during standby. */
+    bool run_in_standby;
+    /** Generic Clock Generator source channel. */
+    enum gclk_generator source_generator;
+    /** Speed mode */
+    enum usb_speed speed_mode;
 };
 
 /**
@@ -269,80 +269,80 @@ struct usb_config {
  *
  */
 struct usb_module {
-	/** Hardware module pointer of the associated USB peripheral. */
-	Usb *hw;
+    /** Hardware module pointer of the associated USB peripheral. */
+    Usb *hw;
 
 #if !SAMD11 && !SAML22
-	/** Array to store host related callback functions */
-	usb_host_callback_t host_callback[USB_HOST_CALLBACK_N];
-	usb_host_pipe_callback_t host_pipe_callback[USB_PIPE_NUM][USB_HOST_PIPE_CALLBACK_N];
-	/** Bit mask for host callbacks registered */
-	uint8_t host_registered_callback_mask;
-	/** Bit mask for host callbacks enabled */
-	uint8_t host_enabled_callback_mask;
-	/** Bit mask for host pipe callbacks registered */
-	uint8_t host_pipe_registered_callback_mask[USB_PIPE_NUM];
-	/** Bit mask for host pipe callbacks enabled */
-	uint8_t host_pipe_enabled_callback_mask[USB_PIPE_NUM];
+    /** Array to store host related callback functions */
+    usb_host_callback_t host_callback[USB_HOST_CALLBACK_N];
+    usb_host_pipe_callback_t host_pipe_callback[USB_PIPE_NUM][USB_HOST_PIPE_CALLBACK_N];
+    /** Bit mask for host callbacks registered */
+    uint8_t host_registered_callback_mask;
+    /** Bit mask for host callbacks enabled */
+    uint8_t host_enabled_callback_mask;
+    /** Bit mask for host pipe callbacks registered */
+    uint8_t host_pipe_registered_callback_mask[USB_PIPE_NUM];
+    /** Bit mask for host pipe callbacks enabled */
+    uint8_t host_pipe_enabled_callback_mask[USB_PIPE_NUM];
 #endif
 
-	/** Array to store device related callback functions */
-	usb_device_callback_t device_callback[USB_DEVICE_CALLBACK_N];
-	usb_device_endpoint_callback_t device_endpoint_callback[USB_EPT_NUM][USB_DEVICE_EP_CALLBACK_N];
-	/** Bit mask for device callbacks registered */
-	uint16_t device_registered_callback_mask;
-	/** Bit mask for device callbacks enabled */
-	uint16_t device_enabled_callback_mask;
-	/** Bit mask for device endpoint callbacks registered */
-	uint8_t device_endpoint_registered_callback_mask[USB_EPT_NUM];
-	/** Bit mask for device endpoint callbacks enabled */
-	uint8_t device_endpoint_enabled_callback_mask[USB_EPT_NUM];
+    /** Array to store device related callback functions */
+    usb_device_callback_t device_callback[USB_DEVICE_CALLBACK_N];
+    usb_device_endpoint_callback_t device_endpoint_callback[USB_EPT_NUM][USB_DEVICE_EP_CALLBACK_N];
+    /** Bit mask for device callbacks registered */
+    uint16_t device_registered_callback_mask;
+    /** Bit mask for device callbacks enabled */
+    uint16_t device_enabled_callback_mask;
+    /** Bit mask for device endpoint callbacks registered */
+    uint8_t device_endpoint_registered_callback_mask[USB_EPT_NUM];
+    /** Bit mask for device endpoint callbacks enabled */
+    uint8_t device_endpoint_enabled_callback_mask[USB_EPT_NUM];
 };
 
 /** USB host pipe configurations */
 struct usb_host_pipe_config {
-	/** device address */
-	uint8_t device_address;
-	/** endpoint address  */
-	uint8_t endpoint_address;
-	/** Pipe type */
-	enum usb_host_pipe_type pipe_type;
-	/** interval */
-	uint8_t binterval;
-	/** pipe size */
-	uint16_t size;
+    /** device address */
+    uint8_t device_address;
+    /** endpoint address  */
+    uint8_t endpoint_address;
+    /** Pipe type */
+    enum usb_host_pipe_type pipe_type;
+    /** interval */
+    uint8_t binterval;
+    /** pipe size */
+    uint16_t size;
 };
 
 /** USB device endpoint configurations */
 struct usb_device_endpoint_config {
-	/** device address */
-	uint8_t ep_address;
-	/** endpoint size */
-	enum usb_endpoint_size ep_size;
-	/** automatic zero length packet mode, \c true to enable */
-	bool auto_zlp;
-	/** type of endpoint with Bank */
-	enum usb_device_endpoint_type ep_type;
+    /** device address */
+    uint8_t ep_address;
+    /** endpoint size */
+    enum usb_endpoint_size ep_size;
+    /** automatic zero length packet mode, \c true to enable */
+    bool auto_zlp;
+    /** type of endpoint with Bank */
+    enum usb_device_endpoint_type ep_type;
 };
 
 /** USB host pipe callback status parameter structure */
 struct usb_pipe_callback_parameter {
-	/** current pipe number */
-	uint8_t pipe_num;
-	/** pipe error status */
-	uint8_t pipe_error_status;
-	/** actual transferred data size */
-	uint16_t transfered_size;
-	/** required data size */
-	uint16_t required_size;
+    /** current pipe number */
+    uint8_t pipe_num;
+    /** pipe error status */
+    uint8_t pipe_error_status;
+    /** actual transferred data size */
+    uint16_t transfered_size;
+    /** required data size */
+    uint16_t required_size;
 };
 
 /** USB device endpoint callback status parameter structure */
 struct usb_endpoint_callback_parameter {
-	uint16_t received_bytes;
-	uint16_t sent_bytes;
-	uint16_t out_buffer_size;
-	uint8_t endpoint_address;
+    uint16_t received_bytes;
+    uint16_t sent_bytes;
+    uint16_t out_buffer_size;
+    uint8_t endpoint_address;
 };
 
 void usb_enable(struct usb_module *module_inst);
@@ -355,16 +355,16 @@ void usb_disable(struct usb_module *module_inst);
  */
 static inline uint8_t usb_get_state_machine_status(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	return module_inst->hw->DEVICE.FSMSTATUS.reg;
+    return module_inst->hw->DEVICE.FSMSTATUS.reg;
 }
 
 void usb_get_config_defaults(struct usb_config *module_config);
 enum status_code usb_init(struct usb_module *module_inst, Usb *const hw,
-		struct usb_config *module_config);
+        struct usb_config *module_config);
 
 #if !SAMD11 && !SAML22
 /**
@@ -374,11 +374,11 @@ enum status_code usb_init(struct usb_module *module_inst, Usb *const hw,
  */
 static inline void usb_host_enable(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.CTRLB.bit.VBUSOK = 1;
+    module_inst->hw->HOST.CTRLB.bit.VBUSOK = 1;
 }
 
 /**
@@ -388,11 +388,11 @@ static inline void usb_host_enable(struct usb_module *module_inst)
  */
 static inline void usb_host_send_reset(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.CTRLB.bit.BUSRESET = 1;
+    module_inst->hw->HOST.CTRLB.bit.BUSRESET = 1;
 }
 
 /**
@@ -402,11 +402,11 @@ static inline void usb_host_send_reset(struct usb_module *module_inst)
  */
 static inline void usb_host_enable_sof(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.CTRLB.bit.SOFE = 1;
+    module_inst->hw->HOST.CTRLB.bit.SOFE = 1;
 }
 
 /**
@@ -416,11 +416,11 @@ static inline void usb_host_enable_sof(struct usb_module *module_inst)
  */
 static inline void usb_host_disable_sof(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.CTRLB.bit.SOFE = 0;
+    module_inst->hw->HOST.CTRLB.bit.SOFE = 0;
 }
 
 /**
@@ -432,11 +432,11 @@ static inline void usb_host_disable_sof(struct usb_module *module_inst)
  */
 static inline bool usb_host_is_sof_enabled(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	return module_inst->hw->HOST.CTRLB.bit.SOFE;
+    return module_inst->hw->HOST.CTRLB.bit.SOFE;
 }
 
 /**
@@ -446,11 +446,11 @@ static inline bool usb_host_is_sof_enabled(struct usb_module *module_inst)
  */
 static inline void usb_host_send_resume(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.CTRLB.bit.RESUME= 1;
+    module_inst->hw->HOST.CTRLB.bit.RESUME= 1;
 }
 
 /**
@@ -460,11 +460,11 @@ static inline void usb_host_send_resume(struct usb_module *module_inst)
  */
 static inline void usb_host_send_l1_resume(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.CTRLB.bit.L1RESUME = 1;
+    module_inst->hw->HOST.CTRLB.bit.L1RESUME = 1;
 }
 
 /**
@@ -476,15 +476,15 @@ static inline void usb_host_send_l1_resume(struct usb_module *module_inst)
  */
 static inline enum usb_speed usb_host_get_speed(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	if (module_inst->hw->HOST.STATUS.bit.SPEED == 0) {
-		return USB_SPEED_FULL;
-	} else {
-		return USB_SPEED_LOW;
-	}
+    if (module_inst->hw->HOST.STATUS.bit.SPEED == 0) {
+        return USB_SPEED_FULL;
+    } else {
+        return USB_SPEED_LOW;
+    }
 }
 
 /**
@@ -496,11 +496,11 @@ static inline enum usb_speed usb_host_get_speed(struct usb_module *module_inst)
  */
 static inline uint16_t usb_host_get_frame_number(struct usb_module *module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	return (uint16_t)(module_inst->hw->HOST.FNUM.bit.FNUM);
+    return (uint16_t)(module_inst->hw->HOST.FNUM.bit.FNUM);
 }
 #endif
 
@@ -511,7 +511,7 @@ static inline uint16_t usb_host_get_frame_number(struct usb_module *module_inst)
  */
 static inline void usb_device_attach(struct usb_module *module_inst)
 {
-	module_inst->hw->DEVICE.CTRLB.reg &= ~USB_DEVICE_CTRLB_DETACH;
+    module_inst->hw->DEVICE.CTRLB.reg &= ~USB_DEVICE_CTRLB_DETACH;
 }
 
 /**
@@ -521,7 +521,7 @@ static inline void usb_device_attach(struct usb_module *module_inst)
  */
 static inline void usb_device_detach(struct usb_module *module_inst)
 {
-	module_inst->hw->DEVICE.CTRLB.reg |= USB_DEVICE_CTRLB_DETACH;
+    module_inst->hw->DEVICE.CTRLB.reg |= USB_DEVICE_CTRLB_DETACH;
 }
 
 /**
@@ -532,11 +532,11 @@ static inline void usb_device_detach(struct usb_module *module_inst)
  */
 static inline enum usb_speed usb_device_get_speed(struct usb_module *module_inst)
 {
-	if (!(module_inst->hw->DEVICE.STATUS.reg & USB_DEVICE_STATUS_SPEED_Msk)) {
-		return USB_SPEED_FULL;
-	} else {
-		return USB_SPEED_LOW;
-	}
+    if (!(module_inst->hw->DEVICE.STATUS.reg & USB_DEVICE_STATUS_SPEED_Msk)) {
+        return USB_SPEED_FULL;
+    } else {
+        return USB_SPEED_LOW;
+    }
 }
 
 /**
@@ -547,7 +547,7 @@ static inline enum usb_speed usb_device_get_speed(struct usb_module *module_inst
  */
 static inline uint8_t usb_device_get_address(struct usb_module *module_inst)
 {
-	return ((uint8_t)(module_inst->hw->DEVICE.DADD.bit.DADD));
+    return ((uint8_t)(module_inst->hw->DEVICE.DADD.bit.DADD));
 }
 
 /**
@@ -558,7 +558,7 @@ static inline uint8_t usb_device_get_address(struct usb_module *module_inst)
  */
 static inline void usb_device_set_address(struct usb_module *module_inst, uint8_t address)
 {
-	module_inst->hw->DEVICE.DADD.reg = USB_DEVICE_DADD_ADDEN | address;
+    module_inst->hw->DEVICE.DADD.reg = USB_DEVICE_DADD_ADDEN | address;
 }
 
 /**
@@ -569,7 +569,7 @@ static inline void usb_device_set_address(struct usb_module *module_inst, uint8_
  */
 static inline uint16_t usb_device_get_frame_number(struct usb_module *module_inst)
 {
-	return ((uint16_t)(module_inst->hw->DEVICE.FNUM.bit.FNUM));
+    return ((uint16_t)(module_inst->hw->DEVICE.FNUM.bit.FNUM));
 }
 
 /**
@@ -580,7 +580,7 @@ static inline uint16_t usb_device_get_frame_number(struct usb_module *module_ins
  */
 static inline uint16_t usb_device_get_micro_frame_number(struct usb_module *module_inst)
 {
-	return ((uint16_t)(module_inst->hw->DEVICE.FNUM.reg));
+    return ((uint16_t)(module_inst->hw->DEVICE.FNUM.reg));
 }
 
 /**
@@ -590,7 +590,7 @@ static inline uint16_t usb_device_get_micro_frame_number(struct usb_module *modu
  */
 static inline void usb_device_send_remote_wake_up(struct usb_module *module_inst)
 {
-	module_inst->hw->DEVICE.CTRLB.reg |= USB_DEVICE_CTRLB_UPRSM;
+    module_inst->hw->DEVICE.CTRLB.reg |= USB_DEVICE_CTRLB_UPRSM;
 }
 
 /**
@@ -600,9 +600,9 @@ static inline void usb_device_send_remote_wake_up(struct usb_module *module_inst
  * \param lpm_mode    LPM mode
  */
 static inline void usb_device_set_lpm_mode(struct usb_module *module_inst,
-		enum usb_device_lpm_mode lpm_mode)
+        enum usb_device_lpm_mode lpm_mode)
 {
-	module_inst->hw->DEVICE.CTRLB.bit.LPMHDSK = lpm_mode;
+    module_inst->hw->DEVICE.CTRLB.bit.LPMHDSK = lpm_mode;
 }
 
 /**
@@ -610,14 +610,14 @@ static inline void usb_device_set_lpm_mode(struct usb_module *module_inst,
  * @{
  */
 enum status_code usb_host_register_callback(struct usb_module *module_inst,
-		enum usb_host_callback callback_type,
-		usb_host_callback_t callback_func);
+        enum usb_host_callback callback_type,
+        usb_host_callback_t callback_func);
 enum status_code usb_host_unregister_callback(struct usb_module *module_inst,
-		enum usb_host_callback callback_type);
+        enum usb_host_callback callback_type);
 enum status_code usb_host_enable_callback(struct usb_module *module_inst,
-		enum usb_host_callback callback_type);
+        enum usb_host_callback callback_type);
 enum status_code usb_host_disable_callback(struct usb_module *module_inst,
-		enum usb_host_callback callback_type);
+        enum usb_host_callback callback_type);
 /** @} */
 
 /**
@@ -625,14 +625,14 @@ enum status_code usb_host_disable_callback(struct usb_module *module_inst,
  * @{
  */
 enum status_code usb_device_register_callback(struct usb_module *module_inst,
-		enum usb_device_callback callback_type,
-		usb_device_callback_t callback_func);
+        enum usb_device_callback callback_type,
+        usb_device_callback_t callback_func);
 enum status_code usb_device_unregister_callback(struct usb_module *module_inst,
-		enum usb_device_callback callback_type);
+        enum usb_device_callback callback_type);
 enum status_code usb_device_enable_callback(struct usb_module *module_inst,
-		enum usb_device_callback callback_type);
+        enum usb_device_callback callback_type);
 enum status_code usb_device_disable_callback(struct usb_module *module_inst,
-		enum usb_device_callback callback_type);
+        enum usb_device_callback callback_type);
 /** @} */
 
 /**
@@ -641,9 +641,9 @@ enum status_code usb_device_disable_callback(struct usb_module *module_inst,
  */
 void usb_host_pipe_get_config_defaults(struct usb_host_pipe_config *ep_config);
 enum status_code usb_host_pipe_set_config(struct usb_module *module_inst, uint8_t pipe_num,
-		struct usb_host_pipe_config *ep_config);
+        struct usb_host_pipe_config *ep_config);
 enum status_code usb_host_pipe_get_config(struct usb_module *module_inst, uint8_t pipe_num,
-		struct usb_host_pipe_config *ep_config);
+        struct usb_host_pipe_config *ep_config);
 /** @} */
 
 /**
@@ -652,7 +652,7 @@ enum status_code usb_host_pipe_get_config(struct usb_module *module_inst, uint8_
  */
 void usb_device_endpoint_get_config_defaults(struct usb_device_endpoint_config *ep_config);
 enum status_code usb_device_endpoint_set_config(struct usb_module *module_inst,
-		struct usb_device_endpoint_config *ep_config);
+        struct usb_device_endpoint_config *ep_config);
 bool usb_device_endpoint_is_configured(struct usb_module *module_inst, uint8_t ep);
 /** @} */
 
@@ -661,18 +661,18 @@ bool usb_device_endpoint_is_configured(struct usb_module *module_inst, uint8_t e
  * @{
  */
 enum status_code usb_host_pipe_register_callback(
-		struct usb_module *module_inst, uint8_t pipe_num,
-		enum usb_host_pipe_callback callback_type,
-		usb_host_pipe_callback_t callback_func);
+        struct usb_module *module_inst, uint8_t pipe_num,
+        enum usb_host_pipe_callback callback_type,
+        usb_host_pipe_callback_t callback_func);
 enum status_code usb_host_pipe_unregister_callback(
-		struct usb_module *module_inst, uint8_t pipe_num,
-		enum usb_host_pipe_callback callback_type);
+        struct usb_module *module_inst, uint8_t pipe_num,
+        enum usb_host_pipe_callback callback_type);
 enum status_code usb_host_pipe_enable_callback(
-		struct usb_module *module_inst, uint8_t pipe_num,
-		enum usb_host_pipe_callback callback_type);
+        struct usb_module *module_inst, uint8_t pipe_num,
+        enum usb_host_pipe_callback callback_type);
 enum status_code usb_host_pipe_disable_callback(
-		struct usb_module *module_inst, uint8_t pipe_num,
-		enum usb_host_pipe_callback callback_type);
+        struct usb_module *module_inst, uint8_t pipe_num,
+        enum usb_host_pipe_callback callback_type);
 /** @} */
 
 /**
@@ -680,18 +680,18 @@ enum status_code usb_host_pipe_disable_callback(
  * @{
  */
 enum status_code usb_device_endpoint_register_callback(
-		struct usb_module *module_inst, uint8_t ep_num,
-		enum usb_device_endpoint_callback callback_type,
-		usb_device_endpoint_callback_t callback_func);
+        struct usb_module *module_inst, uint8_t ep_num,
+        enum usb_device_endpoint_callback callback_type,
+        usb_device_endpoint_callback_t callback_func);
 enum status_code usb_device_endpoint_unregister_callback(
-		struct usb_module *module_inst, uint8_t ep_num,
-		enum usb_device_endpoint_callback callback_type);
+        struct usb_module *module_inst, uint8_t ep_num,
+        enum usb_device_endpoint_callback callback_type);
 enum status_code usb_device_endpoint_enable_callback(
-		struct usb_module *module_inst, uint8_t ep,
-		enum usb_device_endpoint_callback callback_type);
+        struct usb_module *module_inst, uint8_t ep,
+        enum usb_device_endpoint_callback callback_type);
 enum status_code usb_device_endpoint_disable_callback(
-		struct usb_module *module_inst, uint8_t ep,
-		enum usb_device_endpoint_callback callback_type);
+        struct usb_module *module_inst, uint8_t ep,
+        enum usb_device_endpoint_callback callback_type);
 /** @} */
 
 /**
@@ -699,14 +699,14 @@ enum status_code usb_device_endpoint_disable_callback(
  * @{
  */
 enum status_code usb_host_pipe_setup_job(struct usb_module *module_inst,
-		uint8_t pipe_num, uint8_t *buf);
+        uint8_t pipe_num, uint8_t *buf);
 enum status_code usb_host_pipe_read_job(struct usb_module *module_inst,
-		uint8_t pipe_num, uint8_t *buf, uint32_t buf_size);
+        uint8_t pipe_num, uint8_t *buf, uint32_t buf_size);
 enum status_code usb_host_pipe_write_job(struct usb_module *module_inst,
-		uint8_t pipe_num, uint8_t *buf, uint32_t buf_size);
+        uint8_t pipe_num, uint8_t *buf, uint32_t buf_size);
 enum status_code usb_host_pipe_abort_job(struct usb_module *module_inst, uint8_t pipe_num);
 enum status_code usb_host_pipe_lpm_job(struct usb_module *module_inst,
-		uint8_t pipe_num, bool b_remotewakeup, uint8_t hird);
+        uint8_t pipe_num, bool b_remotewakeup, uint8_t hird);
 /** @} */
 
 /**
@@ -714,11 +714,11 @@ enum status_code usb_host_pipe_lpm_job(struct usb_module *module_inst,
  * @{
  */
 enum status_code usb_device_endpoint_write_buffer_job(struct usb_module *module_inst,uint8_t ep_num,
-		uint8_t* pbuf, uint32_t buf_size);
+        uint8_t* pbuf, uint32_t buf_size);
 enum status_code usb_device_endpoint_read_buffer_job(struct usb_module *module_inst,uint8_t ep_num,
-		uint8_t* pbuf, uint32_t buf_size);
+        uint8_t* pbuf, uint32_t buf_size);
 enum status_code usb_device_endpoint_setup_buffer_job(struct usb_module *module_inst,
-		uint8_t* pbuf);
+        uint8_t* pbuf);
 void usb_device_endpoint_abort_job(struct usb_module *module_inst, uint8_t ep);
 /** @} */
 
@@ -736,11 +736,11 @@ void usb_device_endpoint_abort_job(struct usb_module *module_inst, uint8_t ep);
  */
 static inline void usb_host_pipe_freeze(struct usb_module *module_inst, uint8_t pipe_num)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSSET.reg = USB_HOST_PSTATUSSET_PFREEZE;
+    module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSSET.reg = USB_HOST_PSTATUSSET_PFREEZE;
 }
 
 /**
@@ -751,11 +751,11 @@ static inline void usb_host_pipe_freeze(struct usb_module *module_inst, uint8_t 
  */
 static inline void usb_host_pipe_unfreeze(struct usb_module *module_inst, uint8_t pipe_num)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSCLR.reg = USB_HOST_PSTATUSCLR_PFREEZE;
+    module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSCLR.reg = USB_HOST_PSTATUSCLR_PFREEZE;
 }
 
 /**
@@ -766,11 +766,11 @@ static inline void usb_host_pipe_unfreeze(struct usb_module *module_inst, uint8_
  */
 static inline bool usb_host_pipe_is_frozen(struct usb_module *module_inst, uint8_t pipe_num)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	return (module_inst->hw->HOST.HostPipe[pipe_num].PSTATUS.bit.PFREEZE == 1);
+    return (module_inst->hw->HOST.HostPipe[pipe_num].PSTATUS.bit.PFREEZE == 1);
 }
 
 /**
@@ -781,11 +781,11 @@ static inline bool usb_host_pipe_is_frozen(struct usb_module *module_inst, uint8
  */
 static inline void usb_host_pipe_set_toggle(struct usb_module *module_inst, uint8_t pipe_num)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSSET.reg = USB_HOST_PSTATUSSET_DTGL;
+    module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSSET.reg = USB_HOST_PSTATUSSET_DTGL;
 }
 
 /**
@@ -796,11 +796,11 @@ static inline void usb_host_pipe_set_toggle(struct usb_module *module_inst, uint
  */
 static inline void usb_host_pipe_clear_toggle(struct usb_module *module_inst, uint8_t pipe_num)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSCLR.reg = USB_HOST_PSTATUSCLR_DTGL;
+    module_inst->hw->HOST.HostPipe[pipe_num].PSTATUSCLR.reg = USB_HOST_PSTATUSCLR_DTGL;
 }
 
 /**

@@ -68,41 +68,41 @@ void usart_spi_init(Usart *p_usart)
 {
 #if (!SAMG55)
 
-	uint8_t uc_id;
+    uint8_t uc_id;
 
 #ifdef USART0
-	if (p_usart == USART0) {
-		uc_id = ID_USART0;
-	}
+    if (p_usart == USART0) {
+        uc_id = ID_USART0;
+    }
 #endif
 
 #ifdef USART1
-	else if(p_usart == USART1) {
-		uc_id = ID_USART1;
-	}
+    else if(p_usart == USART1) {
+        uc_id = ID_USART1;
+    }
 #endif
 
 #ifdef USART2
-	else if(p_usart == USART2) {
-		uc_id = ID_USART2;
-	}
+    else if(p_usart == USART2) {
+        uc_id = ID_USART2;
+    }
 #endif
 
 #ifdef USART3
-	else if(p_usart == USART3) {
-		uc_id = ID_USART3;
-	}
+    else if(p_usart == USART3) {
+        uc_id = ID_USART3;
+    }
 #endif
 
 #endif
 
 #if SAM4L
-	sysclk_enable_peripheral_clock(p_usart);
+    sysclk_enable_peripheral_clock(p_usart);
 #elif SAMG55
-	flexcom_enable(BOARD_FLEXCOM_USART);
-	flexcom_set_opmode(BOARD_FLEXCOM_USART, FLEXCOM_USART);
+    flexcom_enable(BOARD_FLEXCOM_USART);
+    flexcom_set_opmode(BOARD_FLEXCOM_USART, FLEXCOM_USART);
 #else
-	sysclk_enable_peripheral_clock(uc_id);
+    sysclk_enable_peripheral_clock(uc_id);
 #endif
 }
 
@@ -120,42 +120,42 @@ void usart_spi_init(Usart *p_usart)
  * \param baud_rate Baud rate for communication with slave device in Hz.
  * \param sel_id    Board specific select id.
  */
-void usart_spi_setup_device(Usart *p_usart, struct usart_spi_device *device, 
+void usart_spi_setup_device(Usart *p_usart, struct usart_spi_device *device,
      spi_flags_t flags, unsigned long baud_rate,
      board_spi_select_id_t sel_id)
 {
-	usart_spi_opt_t opt;
+    usart_spi_opt_t opt;
 
-	/* avoid Cppcheck Warning */
-	UNUSED(device);
-	UNUSED(sel_id);
+    /* avoid Cppcheck Warning */
+    UNUSED(device);
+    UNUSED(sel_id);
 
-	/* Basic usart SPI configuration. */
-	opt.baudrate = baud_rate;
-	opt.char_length = US_MR_CHRL_8_BIT;
-	opt.spi_mode = flags;
-	opt.channel_mode = US_MR_CHMODE_NORMAL;
-	
-	/* Initialize the USART module as SPI master. */
+    /* Basic usart SPI configuration. */
+    opt.baudrate = baud_rate;
+    opt.char_length = US_MR_CHRL_8_BIT;
+    opt.spi_mode = flags;
+    opt.channel_mode = US_MR_CHMODE_NORMAL;
+
+    /* Initialize the USART module as SPI master. */
 #if (SAM4L)
-	usart_init_spi_master(p_usart, &opt, sysclk_get_pba_hz());
+    usart_init_spi_master(p_usart, &opt, sysclk_get_pba_hz());
 #else
-	usart_init_spi_master(p_usart, &opt, sysclk_get_peripheral_hz());
+    usart_init_spi_master(p_usart, &opt, sysclk_get_peripheral_hz());
 #endif
 
-	usart_enable_rx(p_usart);
-	usart_enable_tx(p_usart);
+    usart_enable_rx(p_usart);
+    usart_enable_tx(p_usart);
 }
 
 /*! \brief Write one byte to an SPI device using USART in SPI mode.
  *
  * \param p_usart Base address of the USART instance.
- * \param data    The data to be sent out. 
+ * \param data    The data to be sent out.
  *
  */
 void usart_spi_write_single(Usart *p_usart, uint8_t data)
 {
-	usart_putchar(p_usart, data);
+    usart_putchar(p_usart, data);
 }
 
 /**
@@ -173,15 +173,15 @@ void usart_spi_write_single(Usart *p_usart, uint8_t data)
  */
 uint32_t usart_spi_write_packet(Usart *p_usart, const uint8_t *data, size_t len)
 {
-	uint32_t dummy_data;
-	size_t i=0;
-	while(len) {
-		usart_putchar(p_usart, *(data+i));
-		usart_getchar(p_usart, &dummy_data);
-		len--;
-		i++;
-	}
-	return 0;
+    uint32_t dummy_data;
+    size_t i=0;
+    while(len) {
+        usart_putchar(p_usart, *(data+i));
+        usart_getchar(p_usart, &dummy_data);
+        len--;
+        i++;
+    }
+    return 0;
 }
 
 /*! \brief Receive one byte from an SPI device using USART in SPI mode.
@@ -193,12 +193,12 @@ uint32_t usart_spi_write_packet(Usart *p_usart, const uint8_t *data, size_t len)
  */
 void usart_spi_read_single(Usart *p_usart, uint8_t *data)
 {
-	uint32_t temp_data = 0;
-	/* Dummy write one data to slave in order to read data. */
-	usart_putchar(p_usart, CONFIG_USART_SPI_DUMMY);
+    uint32_t temp_data = 0;
+    /* Dummy write one data to slave in order to read data. */
+    usart_putchar(p_usart, CONFIG_USART_SPI_DUMMY);
 
-	usart_getchar(p_usart, &temp_data);
-	*data = (uint8_t)temp_data;
+    usart_getchar(p_usart, &temp_data);
+    *data = (uint8_t)temp_data;
 }
 
 /**
@@ -216,20 +216,20 @@ void usart_spi_read_single(Usart *p_usart, uint8_t *data)
  */
 uint32_t usart_spi_read_packet(Usart *p_usart, uint8_t *data, size_t len)
 {
-	uint32_t val;
-	uint32_t i = 0;
+    uint32_t val;
+    uint32_t i = 0;
 
-	while(len) {
-		/* Dummy write one data to slave in order to read data. */
-		usart_putchar(p_usart, CONFIG_USART_SPI_DUMMY);
-		usart_getchar(p_usart, &val);
+    while(len) {
+        /* Dummy write one data to slave in order to read data. */
+        usart_putchar(p_usart, CONFIG_USART_SPI_DUMMY);
+        usart_getchar(p_usart, &val);
 
-		data[i] = (uint8_t)(val & 0xFF);
-		i++;
-		len--;
-	}
-	
-	return 0;
+        data[i] = (uint8_t)(val & 0xFF);
+        i++;
+        len--;
+    }
+
+    return 0;
 }
 
 /**
@@ -241,10 +241,10 @@ uint32_t usart_spi_read_packet(Usart *p_usart, uint8_t *data, size_t len)
  */
 void usart_spi_select_device(Usart *p_usart, struct usart_spi_device *device)
 {
-	/* avoid Cppcheck Warning */
-	UNUSED(device);
-	
-	usart_spi_force_chip_select(p_usart);
+    /* avoid Cppcheck Warning */
+    UNUSED(device);
+
+    usart_spi_force_chip_select(p_usart);
 }
 
 /**
@@ -255,10 +255,10 @@ void usart_spi_select_device(Usart *p_usart, struct usart_spi_device *device)
  */
 void usart_spi_deselect_device(Usart *p_usart, struct usart_spi_device *device)
 {
-	/* avoid Cppcheck Warning */
-	UNUSED(device);
-	
-	usart_spi_release_chip_select(p_usart);
+    /* avoid Cppcheck Warning */
+    UNUSED(device);
+
+    usart_spi_release_chip_select(p_usart);
 }
 
 /*! \brief Check whether there are data in Transmit Holding Register or
@@ -271,7 +271,7 @@ void usart_spi_deselect_device(Usart *p_usart, struct usart_spi_device *device)
  */
 uint32_t usart_spi_is_tx_empty(Usart *p_usart)
 {
-	return usart_is_tx_empty(p_usart);
+    return usart_is_tx_empty(p_usart);
 }
 
 /*! \brief Check whether the USART in SPI master mode contains a received character.
@@ -283,7 +283,7 @@ uint32_t usart_spi_is_tx_empty(Usart *p_usart)
  */
 uint32_t usart_spi_is_rx_ready(Usart *p_usart)
 {
-	return usart_is_rx_ready(p_usart);
+    return usart_is_rx_ready(p_usart);
 }
 
 /*! \brief Check if the USART Transmit Holding Register is empty or not in SPI mode.
@@ -295,7 +295,7 @@ uint32_t usart_spi_is_rx_ready(Usart *p_usart)
  */
 uint32_t usart_spi_is_tx_ready(Usart *p_usart)
 {
-	return usart_is_tx_ready(p_usart);
+    return usart_is_tx_ready(p_usart);
 }
 
 /*! \brief Check if both receive buffers are full.
@@ -308,7 +308,7 @@ uint32_t usart_spi_is_tx_ready(Usart *p_usart)
 uint32_t usart_spi_is_rx_full(Usart *p_usart)
 {
 #if (!SAMV71 && !SAMV70 && !SAME70 && !SAMS70)
-	return usart_is_rx_buf_full(p_usart);
+    return usart_is_rx_buf_full(p_usart);
 #endif
 }
 
@@ -318,8 +318,8 @@ uint32_t usart_spi_is_rx_full(Usart *p_usart)
  */
 void usart_spi_enable(Usart *p_usart)
 {
-	usart_enable_tx(p_usart);
-	usart_enable_rx(p_usart);
+    usart_enable_tx(p_usart);
+    usart_enable_rx(p_usart);
 }
 
 /*! \brief Disable the USART for the specified USART in SPI mode.
@@ -331,8 +331,8 @@ void usart_spi_enable(Usart *p_usart)
  */
 void usart_spi_disable(Usart *p_usart)
 {
-	usart_disable_tx(p_usart);
-	usart_disable_rx(p_usart);
+    usart_disable_tx(p_usart);
+    usart_disable_rx(p_usart);
 }
 
 /// @cond 0

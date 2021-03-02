@@ -122,7 +122,7 @@ void vdoa_start(uint32_t src, uint32_t vubo, uint32_t dst, uint32_t iubo)
     vdoa_set_vpu_buffer(src);
     vdoa_set_vpu_ubo(vubo);
 
-	// set the destination
+    // set the destination
     vdoa_set_ipu_buffer(dst);
     vdoa_set_ipu_ubo(iubo);
 

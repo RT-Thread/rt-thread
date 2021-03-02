@@ -30,7 +30,7 @@
   [..] The backup domain reset sets all RTC registers and the RCC_BDCR register
        to their reset values.
        A backup domain reset is generated when one of the following events occurs:
-    (+) Software reset, triggered by setting the BDRST bit in the 
+    (+) Software reset, triggered by setting the BDRST bit in the
         RCC Backup domain control register (RCC_BDCR).
     (+) VDD or VBAT power on, if both supplies have previously been powered off.
     (+) Tamper detection event resets all data backup registers.
@@ -803,7 +803,7 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
 
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
-  
+
   if (status == HAL_OK)
   {
    hrtc->State = HAL_RTC_STATE_READY;
@@ -883,7 +883,7 @@ HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
 HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)
 {
   uint32_t datetmpreg;
-  HAL_StatusTypeDef status;  
+  HAL_StatusTypeDef status;
 
  /* Check the parameters */
   assert_param(IS_RTC_FORMAT(Format));
@@ -1730,7 +1730,7 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef* hrtc)
 HAL_StatusTypeDef RTC_EnterInitMode(RTC_HandleTypeDef* hrtc)
 {
   uint32_t tickstart;
-  HAL_StatusTypeDef status = HAL_OK;  
+  HAL_StatusTypeDef status = HAL_OK;
 
   /* Check if the Initialization mode is set */
   if((hrtc->Instance->ICSR & RTC_ICSR_INITF) == 0U)

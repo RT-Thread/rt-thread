@@ -39,7 +39,7 @@
 //! top of the LDL (Logical Drive Layer) but below the filesystem. In addition
 //! to the obvious caching of sectors, the media cache is where support comes
 //! in for sector sizes smaller than the native block or page size of the
-//! underlying media. 
+//! underlying media.
 //!
 //! \section owners Ownership
 //!
@@ -122,7 +122,7 @@ enum media_cache_flags {
 
     //! Set this flag when calling media_cache_flush() to flush the entire cache.
     //! If this flag is not set, the \a drive parameter is used to determine which
-    //! drive to flush. 
+    //! drive to flush.
     kMediaCacheFlag_FlushAllDrives = 1 << 3,
 
     //! When set, a write operation will cause the cache entry to immediately be flushed

@@ -6,7 +6,7 @@
 * @version  1.0
 * @date     09 December. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *

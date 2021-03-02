@@ -1,24 +1,24 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62Nxx
-* File Name		: Interrupt_not_RPDL.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for peripherals outside the scope
-*				: of RPDL
-* Customer		: 
-* Model		 	:
-* Order		 	:
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name    : Interrupt program for RX62Nxx
+* File Name        : Interrupt_not_RPDL.c
+* Version        : 1.02
+* Contents        : Interrupt handlers for peripherals outside the scope
+*                : of RPDL
+* Customer        :
+* Model             :
+* Order             :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_common_defs_RX62Nxx.h"

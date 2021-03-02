@@ -73,7 +73,7 @@ void multiple_key_press_test(void)
     uint8_t row, col, exit_test, kppcol, kpprow;
     uint16_t read_keys[8] = {0};
 
-    // this is a 3x3 matrix - col[7:5] x row[7:5] 
+    // this is a 3x3 matrix - col[7:5] x row[7:5]
     kppcol = kpprow = 0xF0;
 
     kpp_open(kppcol, kpprow);
@@ -83,7 +83,7 @@ void multiple_key_press_test(void)
     {
         printf("Please press any key (SW19 to exit):\n");
 
-        // get the first pressed key(s) 
+        // get the first pressed key(s)
         kpp_get_keypad_state(read_keys, false);
 
         /* a delay is required between 2 captures to detect that
@@ -94,10 +94,10 @@ void multiple_key_press_test(void)
          */
         hal_delay_us(50000);
 
-        // get the next pressed key(s) after half a second 
+        // get the next pressed key(s) after half a second
         kpp_get_keypad_state(read_keys, false);
 
-        // wait for no key pressed 
+        // wait for no key pressed
         kpp_wait_for_release_state();
 
         for(col=0;col<8;col++)
@@ -109,7 +109,7 @@ void multiple_key_press_test(void)
                     if((read_keys[col] & (1 << row)) != 0)
                     {
                         printf("Key %s was pressed.\n",KEYPAD_MAP[row][col]);
-                        // exit test if key on row=col=7 is pressed 
+                        // exit test if key on row=col=7 is pressed
                         if((row & col) == 7)
                             exit_test = 0;
                     }

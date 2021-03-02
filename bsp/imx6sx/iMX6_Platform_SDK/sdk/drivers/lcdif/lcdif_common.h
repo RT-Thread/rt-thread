@@ -34,30 +34,30 @@
 
 //! @{
 
-#define VGA_FW 			640
-#define VGA_FH 			480
+#define VGA_FW             640
+#define VGA_FH             480
 
-#define WVGA_FW 		800
-#define WVGA_FH 		480
+#define WVGA_FW         800
+#define WVGA_FH         480
 
-#define SVGA_FW 		800
-#define SVGA_FH 		600
+#define SVGA_FW         800
+#define SVGA_FH         600
 
-#define WQVGA_FW		480
-#define WQVGA_FH		272
+#define WQVGA_FW        480
+#define WQVGA_FH        272
 
-#define FRAME_WIDTH 	WVGA_FW
-#define FRAME_HEIGHT	WVGA_FH
+#define FRAME_WIDTH     WVGA_FW
+#define FRAME_HEIGHT    WVGA_FH
 
 #define is_yuv_format(fmt) (fmt>=0x100) ? 1 : 0
 #define PXP_CROP_NEEDED(w,h) (w==FRAME_WIDTH\
-	&& h==FRAME_HEIGHT) ? 0 : 1
+    && h==FRAME_HEIGHT) ? 0 : 1
 
-#define DDR_LCD_BASE1				0x90000000
-#define DDR_LCD_BASE2				0x90100000
+#define DDR_LCD_BASE1                0x90000000
+#define DDR_LCD_BASE2                0x90100000
 
-#define DDR_PXP_PS_BASE1			0x90200000
-#define DDR_PXP_PS_BASE2			0x90300000
+#define DDR_PXP_PS_BASE1            0x90200000
+#define DDR_PXP_PS_BASE2            0x90300000
 
 //! @brief color space definition for csi and lcdif
 enum color_space {
@@ -164,23 +164,23 @@ typedef struct pxp_s0_proc_params {
 //!
 //! The information include frame size, signal polarity and timing
 typedef struct lcdif_sync_waveform {
-	unsigned int frameWidth;		//!< Frame width
-	unsigned int frameHeight;		//!< Frame height
-	unsigned int enPresent;			//!< Whether to hardware generate the ENABLE signal
-	unsigned int hsyncPol;			//!< Polarity of hsync
-	unsigned int vSyncPol;			//!< Polarity of vsync
-	unsigned int dotclkPol;			//!< Edge of DOTCLK at which data is launched
-	unsigned int enablePol;			//!< Polarity of enable
-	unsigned int vSyncPulseUnit;	//!< Unit to count vsync pulse width. 1 to count in terms of horizontal lines, 0 to count in CLK_DIS_LCDIF cycles.
-	unsigned int vSyncPeriodUnit;	//!< Unit to count vsync [eropd. 1 to count in terms of horizontal lines, 0 to count in CLK_DIS_LCDIF cycles.
-	unsigned int vSyncPulseWidth;	//!< Vsync pulse width.
-	unsigned int vSyncPeriod;		//!< Vsync period.
-	unsigned int hSyncPulseWidth;	//!< Hsync pulse width.
-	unsigned int hSyncPeriod;		//!< Hsync period.
+    unsigned int frameWidth;        //!< Frame width
+    unsigned int frameHeight;        //!< Frame height
+    unsigned int enPresent;            //!< Whether to hardware generate the ENABLE signal
+    unsigned int hsyncPol;            //!< Polarity of hsync
+    unsigned int vSyncPol;            //!< Polarity of vsync
+    unsigned int dotclkPol;            //!< Edge of DOTCLK at which data is launched
+    unsigned int enablePol;            //!< Polarity of enable
+    unsigned int vSyncPulseUnit;    //!< Unit to count vsync pulse width. 1 to count in terms of horizontal lines, 0 to count in CLK_DIS_LCDIF cycles.
+    unsigned int vSyncPeriodUnit;    //!< Unit to count vsync [eropd. 1 to count in terms of horizontal lines, 0 to count in CLK_DIS_LCDIF cycles.
+    unsigned int vSyncPulseWidth;    //!< Vsync pulse width.
+    unsigned int vSyncPeriod;        //!< Vsync period.
+    unsigned int hSyncPulseWidth;    //!< Hsync pulse width.
+    unsigned int hSyncPeriod;        //!< Hsync period.
 
-	unsigned int hWaitCount;		//!< Horizontal back porch plus number of DOTCLKs before moving picture begins.
-	unsigned int vWaitCount;		//!< Vertical back porch line plus number of horizontal lines before moving picture begins.
-	unsigned int hValidDataCount;	//!< Number of horizontal lines that carry valid data
+    unsigned int hWaitCount;        //!< Horizontal back porch plus number of DOTCLKs before moving picture begins.
+    unsigned int vWaitCount;        //!< Vertical back porch line plus number of horizontal lines before moving picture begins.
+    unsigned int hValidDataCount;    //!< Number of horizontal lines that carry valid data
 } lcdif_sync_waveform_t;
 
 //! @name Board support functions
@@ -222,7 +222,7 @@ void lcdif_display_setup(void);
 /*!
  * @brief Configure color space conversion(CSC) parameter, from RGB to YUV
  *
- * @param   enable	enable or disable the CSC process
+ * @param   enable    enable or disable the CSC process
  */
 void lcdif_csc_config(int enable);
 /*!

@@ -145,30 +145,30 @@
  * \brief List of reset causes in bit-mask format
  */
 enum reset_cause {
-	/** \brief Brown-out detected on CPU power domain reset cause */
-	RESET_CAUSE_BOD_CPU     = CHIP_RESET_CAUSE_BOD_CPU,
-	/** \brief Brown-out detected on I/O power domain reset cause */
-	RESET_CAUSE_BOD_IO      = CHIP_RESET_CAUSE_BOD_IO,
-	/** \brief CPU error reset cause */
-	RESET_CAUSE_CPU_ERROR   = CHIP_RESET_CAUSE_CPU_ERROR,
-	/** \brief External reset cause */
-	RESET_CAUSE_EXTRST      = CHIP_RESET_CAUSE_EXTRST,
-	/** \brief JTAG reset cause */
-	RESET_CAUSE_JTAG        = CHIP_RESET_CAUSE_JTAG,
-	/** \brief On-chip debug system reset cause */
-	RESET_CAUSE_OCD         = CHIP_RESET_CAUSE_OCD,
-	/** \brief Power-on-reset reset cause */
-	RESET_CAUSE_POR         = CHIP_RESET_CAUSE_POR,
-	/** \brief Power-on-reset reset cause */
-	RESET_CAUSE_POR_IO         = CHIP_RESET_CAUSE_POR_IO,
-	/** \brief Wake from Shutdown sleep mode reset cause */
-	RESET_CAUSE_SLEEP       = CHIP_RESET_CAUSE_SLEEP,
-	/** \brief Software reset reset cause */
-	RESET_CAUSE_SOFT        = CHIP_RESET_CAUSE_SOFT,
-	/** \brief Spike detected reset cause */
-	RESET_CAUSE_SPIKE       = CHIP_RESET_CAUSE_SPIKE,
-	/** \brief Watchdog timeout reset cause */
-	RESET_CAUSE_WDT         = CHIP_RESET_CAUSE_WDT,
+    /** \brief Brown-out detected on CPU power domain reset cause */
+    RESET_CAUSE_BOD_CPU     = CHIP_RESET_CAUSE_BOD_CPU,
+    /** \brief Brown-out detected on I/O power domain reset cause */
+    RESET_CAUSE_BOD_IO      = CHIP_RESET_CAUSE_BOD_IO,
+    /** \brief CPU error reset cause */
+    RESET_CAUSE_CPU_ERROR   = CHIP_RESET_CAUSE_CPU_ERROR,
+    /** \brief External reset cause */
+    RESET_CAUSE_EXTRST      = CHIP_RESET_CAUSE_EXTRST,
+    /** \brief JTAG reset cause */
+    RESET_CAUSE_JTAG        = CHIP_RESET_CAUSE_JTAG,
+    /** \brief On-chip debug system reset cause */
+    RESET_CAUSE_OCD         = CHIP_RESET_CAUSE_OCD,
+    /** \brief Power-on-reset reset cause */
+    RESET_CAUSE_POR         = CHIP_RESET_CAUSE_POR,
+    /** \brief Power-on-reset reset cause */
+    RESET_CAUSE_POR_IO         = CHIP_RESET_CAUSE_POR_IO,
+    /** \brief Wake from Shutdown sleep mode reset cause */
+    RESET_CAUSE_SLEEP       = CHIP_RESET_CAUSE_SLEEP,
+    /** \brief Software reset reset cause */
+    RESET_CAUSE_SOFT        = CHIP_RESET_CAUSE_SOFT,
+    /** \brief Spike detected reset cause */
+    RESET_CAUSE_SPIKE       = CHIP_RESET_CAUSE_SPIKE,
+    /** \brief Watchdog timeout reset cause */
+    RESET_CAUSE_WDT         = CHIP_RESET_CAUSE_WDT,
 };
 
 //! \name Management
@@ -213,7 +213,7 @@ enum reset_cause {
  */
 static inline bool reset_cause_is_cpu_brown_out_detected(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_BOD_CPU);
+    return (reset_cause_get_causes() & RESET_CAUSE_BOD_CPU);
 }
 
 /**
@@ -223,7 +223,7 @@ static inline bool reset_cause_is_cpu_brown_out_detected(void)
  */
 static inline bool reset_cause_is_io_brown_out_detected(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_BOD_IO);
+    return (reset_cause_get_causes() & RESET_CAUSE_BOD_IO);
 }
 
 /**
@@ -234,8 +234,8 @@ static inline bool reset_cause_is_io_brown_out_detected(void)
  */
 static inline bool reset_cause_is_brown_out_detected(void)
 {
-	return (reset_cause_is_cpu_brown_out_detected() ||
-			reset_cause_is_io_brown_out_detected());
+    return (reset_cause_is_cpu_brown_out_detected() ||
+            reset_cause_is_io_brown_out_detected());
 }
 
 /**
@@ -245,7 +245,7 @@ static inline bool reset_cause_is_brown_out_detected(void)
  */
 static inline bool reset_cause_is_cpu_error(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_CPU_ERROR);
+    return (reset_cause_get_causes() & RESET_CAUSE_CPU_ERROR);
 }
 
 /**
@@ -255,7 +255,7 @@ static inline bool reset_cause_is_cpu_error(void)
  */
 static inline bool reset_cause_is_external_reset(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_EXTRST);
+    return (reset_cause_get_causes() & RESET_CAUSE_EXTRST);
 }
 
 /**
@@ -265,7 +265,7 @@ static inline bool reset_cause_is_external_reset(void)
  */
 static inline bool reset_cause_is_jtag(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_JTAG);
+    return (reset_cause_get_causes() & RESET_CAUSE_JTAG);
 }
 
 /**
@@ -275,7 +275,7 @@ static inline bool reset_cause_is_jtag(void)
  */
 static inline bool reset_cause_is_ocd(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_OCD);
+    return (reset_cause_get_causes() & RESET_CAUSE_OCD);
 }
 
 /**
@@ -285,7 +285,7 @@ static inline bool reset_cause_is_ocd(void)
  */
 static inline bool reset_cause_is_power_on_reset(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_POR);
+    return (reset_cause_get_causes() & RESET_CAUSE_POR);
 }
 
 /**
@@ -295,7 +295,7 @@ static inline bool reset_cause_is_power_on_reset(void)
  */
 static inline bool reset_cause_is_io_power_on_reset(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_POR_IO);
+    return (reset_cause_get_causes() & RESET_CAUSE_POR_IO);
 }
 
 /**
@@ -305,7 +305,7 @@ static inline bool reset_cause_is_io_power_on_reset(void)
  */
 static inline bool reset_cause_is_wake_from_shutdown_sleep(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_SLEEP);
+    return (reset_cause_get_causes() & RESET_CAUSE_SLEEP);
 }
 
 /**
@@ -315,7 +315,7 @@ static inline bool reset_cause_is_wake_from_shutdown_sleep(void)
  */
 static inline bool reset_cause_is_software_reset(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_SOFT);
+    return (reset_cause_get_causes() & RESET_CAUSE_SOFT);
 }
 
 /**
@@ -325,7 +325,7 @@ static inline bool reset_cause_is_software_reset(void)
  */
 static inline bool reset_cause_is_spike_detected(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_SPIKE);
+    return (reset_cause_get_causes() & RESET_CAUSE_SPIKE);
 }
 
 /**
@@ -335,7 +335,7 @@ static inline bool reset_cause_is_spike_detected(void)
  */
 static inline bool reset_cause_is_watchdog(void)
 {
-	return (reset_cause_get_causes() & RESET_CAUSE_WDT);
+    return (reset_cause_get_causes() & RESET_CAUSE_WDT);
 }
 
 //@}
@@ -362,10 +362,10 @@ static inline bool reset_cause_is_watchdog(void)
  * \subsection reset_cause_basic_use_case_setup_code Example code
  * Add to application C-file:
  * \code
-	 if (reset_cause_is_watchdog()) {
-		// Do action due to last reset being a watchdog reset
-		reset_cause_clear_causes(RESET_CAUSE_WDT);
-	 }
+     if (reset_cause_is_watchdog()) {
+        // Do action due to last reset being a watchdog reset
+        reset_cause_clear_causes(RESET_CAUSE_WDT);
+     }
 \endcode
  *
  * \subsection reset_cause_basic_use_case_setup_flow Workflow

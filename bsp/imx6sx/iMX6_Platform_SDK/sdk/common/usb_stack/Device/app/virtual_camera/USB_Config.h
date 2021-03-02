@@ -45,7 +45,7 @@
 
 
 /*****************************************************************************/
-/* 								Function's Prototypes						 */
+/*                                 Function's Prototypes                         */
 /*****************************************************************************/
 /* HID class services */
 extern void USB_Service_Video_Isochronous (PTR_USB_DEV_EVENT_STRUCT event);
@@ -55,7 +55,7 @@ extern void USB_NULL_CALLBACK (PTR_USB_DEV_EVENT_STRUCT event);
 /*                          Defines & Macros Section                         */
 /*****************************************************************************/
 #define REMOTE_WAKEUP_SUPPORT            (TRUE)
-		
+
 /* Hardware components configuration */
 #define USB_HW_VREG_EN                   TRUE
 #define USB_HW_PU_EN                     TRUE

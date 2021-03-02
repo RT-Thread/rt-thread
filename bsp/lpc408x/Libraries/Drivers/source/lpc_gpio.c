@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -194,11 +194,11 @@ static GPIO_Byte_TypeDef *FIO_ByteGetPointer(uint8_t portNum)
 /* GPIO ------------------------------------------------------------------------------ */
 
 /*********************************************************************//**
- * @brief       Initialize the GPIO component by power on the clock 
+ * @brief       Initialize the GPIO component by power on the clock
  *              supplied to it.
  * @return      None
  *
- * Note: 
+ * Note:
  **********************************************************************/
 void GPIO_Init(void)
 {
@@ -209,11 +209,11 @@ void GPIO_Init(void)
 
 
 /*********************************************************************//**
- * @brief       De-initialize the GPIO component by power off the clock 
+ * @brief       De-initialize the GPIO component by power off the clock
  *              supplied to it.
  * @return      None
  *
- * Note: 
+ * Note:
  **********************************************************************/
 void GPIO_Deinit(void)
 {

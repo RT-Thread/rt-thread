@@ -159,14 +159,14 @@ extern "C" {
  *  Enum for the possible settings of pwm device configuration.
  */
 enum pwm_device_select {
-	/** PWM module 0 */
-	PWM0 = 0,
-	/** PWM module 1 */
-	PWM1,
-	/** PWM module 2 */
-	PWM2,
-	/** PWM module 3 */
-	PWM3,
+    /** PWM module 0 */
+    PWM0 = 0,
+    /** PWM module 1 */
+    PWM1,
+    /** PWM module 2 */
+    PWM2,
+    /** PWM module 3 */
+    PWM3,
 };
 
 /**
@@ -175,10 +175,10 @@ enum pwm_device_select {
  *  Enum for the possible settings of pwm sample method configuration.
  */
 enum pwm_sample_method {
-	/** Samples agcdata at >= 1024 cycles and does not lose precision */
-	PWM_SAMPLE_METHOD_0 = 0,
-	/** Samples at PWM period but will lose LSBs if less than 1024 */
-	PWM_SAMPLE_METHOD_1,
+    /** Samples agcdata at >= 1024 cycles and does not lose precision */
+    PWM_SAMPLE_METHOD_0 = 0,
+    /** Samples at PWM period but will lose LSBs if less than 1024 */
+    PWM_SAMPLE_METHOD_1,
 };
 
 /**
@@ -187,24 +187,24 @@ enum pwm_sample_method {
  *  Enum for the possible settings of pwm period configuration.
  */
 enum pwm_period {
-	/** PWM perid 0 */
-	PWM_PERIOD_0 = 0,
-	/** PWM perid 1 */
-	PWM_PERIOD_1,
-	/** PWM perid 2 */
-	PWM_PERIOD_2,
-	/** PWM perid 3 */
-	PWM_PERIOD_3,
-	/** PWM perid 4 */
-	PWM_PERIOD_4,
-	/** PWM perid 5 */
-	PWM_PERIOD_5,
-	/** PWM perid 6 */
-	PWM_PERIOD_6,
-	/** PWM perid 7 */
-	PWM_PERIOD_7,
-	/** PWM perid 8 */
-	PWM_PERIOD_8,
+    /** PWM perid 0 */
+    PWM_PERIOD_0 = 0,
+    /** PWM perid 1 */
+    PWM_PERIOD_1,
+    /** PWM perid 2 */
+    PWM_PERIOD_2,
+    /** PWM perid 3 */
+    PWM_PERIOD_3,
+    /** PWM perid 4 */
+    PWM_PERIOD_4,
+    /** PWM perid 5 */
+    PWM_PERIOD_5,
+    /** PWM perid 6 */
+    PWM_PERIOD_6,
+    /** PWM perid 7 */
+    PWM_PERIOD_7,
+    /** PWM perid 8 */
+    PWM_PERIOD_8,
 };
 
 /**
@@ -213,14 +213,14 @@ enum pwm_period {
  *  Enum for the possible settings of pwm clock select configuration.
  */
 enum pwm_clock_select {
-	/** Clock 26MHz */
-	PWM_CLOCK_SELECT_26_0 = 0,
-	/** Clock 13MHz */
-	PWM_CLOCK_SELECT_13_0,
-	/** Clock 6.5MHz */
-	PWM_CLOCK_SELECT_6_5,
-	/** Clock 3.25MHz */
-	PWM_CLOCK_SELECT_3_25,
+    /** Clock 26MHz */
+    PWM_CLOCK_SELECT_26_0 = 0,
+    /** Clock 13MHz */
+    PWM_CLOCK_SELECT_13_0,
+    /** Clock 6.5MHz */
+    PWM_CLOCK_SELECT_6_5,
+    /** Clock 3.25MHz */
+    PWM_CLOCK_SELECT_3_25,
 };
 
 /**
@@ -231,22 +231,22 @@ enum pwm_clock_select {
  *  modified by the user application.
  */
 struct pwm_config {
-	/** 1 to inverse the polarity */
-	bool output_polarity;
-	/** AGC data format */
-	bool agcdata_format;
-	/** Sample method */
-	enum pwm_sample_method sample_method;
-	/** Programmable PWM update period */
-	enum pwm_period period;
-	/** This value specifies the duty cycle(%) */
-	uint8_t duty_cycle;
-	/** PWM Source Clock Frequency Select */
-	enum pwm_clock_select clock_select;
-	/** PWM PAD pin number */
-	uint32_t pin_number_pad;
-	/** PWM PAD pinmux selection */
-	uint32_t pinmux_sel_pad;
+    /** 1 to inverse the polarity */
+    bool output_polarity;
+    /** AGC data format */
+    bool agcdata_format;
+    /** Sample method */
+    enum pwm_sample_method sample_method;
+    /** Programmable PWM update period */
+    enum pwm_period period;
+    /** This value specifies the duty cycle(%) */
+    uint8_t duty_cycle;
+    /** PWM Source Clock Frequency Select */
+    enum pwm_clock_select clock_select;
+    /** PWM PAD pin number */
+    uint32_t pin_number_pad;
+    /** PWM PAD pinmux selection */
+    uint32_t pinmux_sel_pad;
 };
 
 /** \name Configuration and initialization
@@ -255,11 +255,11 @@ struct pwm_config {
 
 void pwm_get_config_defaults(struct pwm_config *const config);
 void pwm_set_duty_cycle(enum pwm_device_select device_select, \
-					uint8_t duty_cycle);
+                    uint8_t duty_cycle);
 void pwm_set_period(enum pwm_device_select device_select, \
-					enum pwm_period period);
+                    enum pwm_period period);
 enum status_code pwm_init(enum pwm_device_select device_select, \
-					const struct pwm_config *const config);
+                    const struct pwm_config *const config);
 
 /** @} */
 
@@ -289,14 +289,14 @@ void pwm_reset(enum pwm_device_select device_select);
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>PWM</td>
- *		<td>Pulse Width Modulation</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+ *    <tr>
+ *        <td>PWM</td>
+ *        <td>Pulse Width Modulation</td>
+ *    </tr>
  * </table>
  *
  *

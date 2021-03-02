@@ -17,7 +17,7 @@ extern "C" {
 
 #define RS485_SEND_MODE      0
 #define RS485_RECV_MODE      1
-    
+
 #ifdef __cplusplus
 }
 #endif

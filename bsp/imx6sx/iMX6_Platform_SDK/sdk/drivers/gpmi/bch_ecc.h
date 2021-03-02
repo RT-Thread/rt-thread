@@ -61,7 +61,7 @@ enum _bch_levels
 //! The BCH engine supports two options for transferring page data. The most common option is
 //! to simply read or write the entire page. But in order to support fast reading of a page's
 //! metadata (auxiliary area), there is an option to read only block 0 as defined in the BCH
-//! page layout (see #BchEccLayout). 
+//! page layout (see #BchEccLayout).
 enum _bch_buffer_masks
 {
     kBchBufferMask_AuxOnly = 0x100, //!< Read of only block 0. This option cannot be used for writes.
@@ -106,24 +106,24 @@ enum _ecc_correction_constants
     //!
     //! For 512-byte payloads, a maximum of 32 will support 16 kB pages.
     kMaxPayloadCount = 32,
-    
+
     //! Sentinel value used to indicate that an ECC payload had too many errors to correct.
     kUncorrectableBitErrors = 0xff,
-    
+
     //! Sentinel value that indicates that a payload contained all ones. A number of zero bits
     //! up to the erase threshold specified in the call to bch_set_erase_threshold() is allowed.
     kAllOnes = 0xfe,
-    
+
     //! Sentinel value meaning one or more bit errors were corrected.
     //!
     //! This value is only used for #BchEccCorrectionInfo::combinedStatus or for the return
     //! value of bch_read_correction_status().
     kCorrectedBitErrors = 0xfd,
-    
+
     //! Value for no bit errors corrected in a payload or the combined status.
     kNoBitErrors = 0
 };
-    
+
 /*!
  * @brief ECC correction information.
  */
@@ -242,7 +242,7 @@ int bch_read_correction_status(const uint8_t * auxBuffer, BchEccCorrectionInfo_t
 //! The BCH engine supports two options for transferring page data. The most common
 //! option is to simply read or write the entire page. But in order to support fast
 //! reading of a page's metadata (auxiliary area), there is an option to read only
-//! block 0 as defined in the BCH page layout (see #BchEccLayout_t). 
+//! block 0 as defined in the BCH page layout (see #BchEccLayout_t).
 //!
 //! The GPMI register HW_GPMI_ECCCTRL has a BUFFER_MASK field that is used to
 //! specify what part of the NAND page is being read or written. This function

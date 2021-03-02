@@ -40,7 +40,7 @@ void microseconds_test(void)
     printf("---- Microsecond Tick Counter Test ----\n\n");
 
     printf("timing 20 millisecond delay using EPIT...\n");
-    
+
     uint64_t startTime = time_get_microseconds();
     hal_delay_us(20000);
     uint64_t endTime = time_get_microseconds();

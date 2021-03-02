@@ -59,8 +59,8 @@
 #define SPI_BAUDRATE          1500000
 
 struct spi_device SPI_DEVICE = {
-	/** Board specific select id */
-	.id = SPI_DEVICE_ID
+    /** Board specific select id */
+    .id = SPI_DEVICE_ID
 };
 
 /**
@@ -69,7 +69,7 @@ struct spi_device SPI_DEVICE = {
 */
 static void adp_interface_send_start(void)
 {
-	spi_select_device(EDBG_SPI_MODULE, &SPI_DEVICE);
+    spi_select_device(EDBG_SPI_MODULE, &SPI_DEVICE);
 }
 
 /**
@@ -78,7 +78,7 @@ static void adp_interface_send_start(void)
 */
 static void adp_interface_send_stop(void)
 {
-	spi_deselect_device(EDBG_SPI_MODULE, &SPI_DEVICE);
+    spi_deselect_device(EDBG_SPI_MODULE, &SPI_DEVICE);
 }
 
 /**
@@ -90,7 +90,7 @@ static void adp_interface_send_stop(void)
 */
 static void adp_interface_transceive(uint8_t *tx_data, uint8_t *rx_data, uint16_t length)
 {
-	spi_transceive_packet(EDBG_SPI_MODULE, tx_data, rx_data, length);
+    spi_transceive_packet(EDBG_SPI_MODULE, tx_data, rx_data, length);
 }
 
 /**
@@ -99,15 +99,15 @@ static void adp_interface_transceive(uint8_t *tx_data, uint8_t *rx_data, uint16_
 */
 enum status_code adp_interface_init(void)
 {
-	sysclk_init();
+    sysclk_init();
 
-	/* Configure the SPI interface */
-	spi_master_init(EDBG_SPI_MODULE);
-	spi_master_setup_device(EDBG_SPI_MODULE, &SPI_DEVICE, SPI_MODE_0,
-			SPI_BAUDRATE, 0);
-	spi_enable(EDBG_SPI_MODULE);
+    /* Configure the SPI interface */
+    spi_master_init(EDBG_SPI_MODULE);
+    spi_master_setup_device(EDBG_SPI_MODULE, &SPI_DEVICE, SPI_MODE_0,
+            SPI_BAUDRATE, 0);
+    spi_enable(EDBG_SPI_MODULE);
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -119,13 +119,13 @@ enum status_code adp_interface_init(void)
 */
 void adp_interface_transceive_procotol(uint8_t* tx_buf, uint16_t length, uint8_t* rx_buf)
 {
-	/* Send SPI start condition */
-	adp_interface_send_start();
+    /* Send SPI start condition */
+    adp_interface_send_start();
 
-	adp_interface_transceive(tx_buf, rx_buf, length);
-	
-	/* Send SPI end condition */
-	adp_interface_send_stop();
+    adp_interface_transceive(tx_buf, rx_buf, length);
+
+    /* Send SPI end condition */
+    adp_interface_send_stop();
 }
 
 /**
@@ -138,13 +138,13 @@ void adp_interface_transceive_procotol(uint8_t* tx_buf, uint16_t length, uint8_t
 */
 enum status_code adp_interface_read_response(uint8_t* rx_buf, uint16_t length)
 {
-	enum status_code status;
+    enum status_code status;
 
-	/* Send SPI start condition */
-	adp_interface_send_start();	
-	status = spi_read_packet(EDBG_SPI_MODULE, rx_buf, length);
-	/* Send SPI end condition */
-	adp_interface_send_stop();
+    /* Send SPI start condition */
+    adp_interface_send_start();
+    status = spi_read_packet(EDBG_SPI_MODULE, rx_buf, length);
+    /* Send SPI end condition */
+    adp_interface_send_stop();
 
-	return status;
+    return status;
 }

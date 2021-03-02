@@ -141,38 +141,38 @@ static char *itoa(int value, char *string, int radix)
    只支持\r  \n  %d   %s */
 ErrorStatus UART_printf(uint8_t *Data,...)
 {
-		UART_TypeDef *UARTx;
+        UART_TypeDef *UARTx;
     const char *s;
-    int d;   
+    int d;
     char buf[16];
     ErrorStatus RET = SUCCESS;
     FlagStatus Status = RESET;
     uint32_t Count=0;
     va_list ap;
-	
+
 /**
-	**
-	**使用宏定义选择使用哪一个串口
-	**
+    **
+    **使用宏定义选择使用哪一个串口
+    **
 ***/
 #if defined  __PRINTF_USE_UART3__
-	
-	UARTx = UART3;
-	
+
+    UARTx = UART3;
+
 #elif defined __PRINTF_USE_UART2__
-	
-	UARTx = UART2;
-	
+
+    UARTx = UART2;
+
 #elif defined __PRINTF_USE_UART1__
 
-	UARTx = UART1;
-	
+    UARTx = UART1;
+
 #else
 
-	UARTx = UART0;
-	
-#endif		
-		
+    UARTx = UART0;
+
+#endif
+
     va_start(ap, Data);
 
     while ( *Data != 0)                           // 判断是否到达字符串结束符
@@ -198,7 +198,7 @@ ErrorStatus UART_printf(uint8_t *Data,...)
 
                 case 'n':                         //换行符
                     Count=0;
-                    UART_SendByte(UARTx, 0x0a);    
+                    UART_SendByte(UARTx, 0x0a);
                     do
                     {
                         Status = UART_GetFlagStatus(UARTx,UART_FLAG_TXIDLE);
@@ -214,15 +214,15 @@ ErrorStatus UART_printf(uint8_t *Data,...)
                 default:
                     Data ++;
                     break;
-            }             
+            }
         }
         else if ( *Data == '%')
         {
             switch ( *++Data )
-            {                
+            {
                 case 's':                         //字符串
                     s = va_arg(ap, const char *);
-                    for ( ; *s; s++) 
+                    for ( ; *s; s++)
                     {
                         Count=0;
                         UART_SendByte(UARTx,*s);
@@ -241,7 +241,7 @@ ErrorStatus UART_printf(uint8_t *Data,...)
                 case 'd':                         //十进制
                     d = va_arg(ap, int);
                     itoa(d, buf, 10);
-                    for (s = buf; *s; s++)  
+                    for (s = buf; *s; s++)
                     {
                         Count=0;
                         UART_SendByte(UARTx,*s);
@@ -261,7 +261,7 @@ ErrorStatus UART_printf(uint8_t *Data,...)
                     break;
             }
         } /* end of else if */
-        else 
+        else
         {
             Count=0;
             UART_SendByte(UARTx, *Data++);

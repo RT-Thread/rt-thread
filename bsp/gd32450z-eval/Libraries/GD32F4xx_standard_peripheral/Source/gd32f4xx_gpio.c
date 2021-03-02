@@ -72,7 +72,7 @@ void gpio_deinit(uint32_t gpio_periph)
 
 /*!
     \brief      set GPIO output mode
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  mode: gpio pin mode
       \arg        GPIO_MODE_INPUT: input mode
       \arg        GPIO_MODE_OUTPUT: output mode
@@ -114,13 +114,13 @@ void gpio_mode_set(uint32_t gpio_periph,uint32_t mode,uint32_t pull_up_down,uint
 
 /*!
     \brief      set GPIO output type and speed
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  otype: gpio pin output mode
       \arg        GPIO_OTYPE_PP: push pull mode
       \arg        GPIO_OTYPE_OD: open drain mode
     \param[in]  speed: gpio pin output max speed
-      \arg        GPIO_OSPEED_2MHZ: output max speed 2M 
-      \arg        GPIO_OSPEED_25MHZ: output max speed 25M 
+      \arg        GPIO_OSPEED_2MHZ: output max speed 2M
+      \arg        GPIO_OSPEED_25MHZ: output max speed 25M
       \arg        GPIO_OSPEED_50MHZ: output max speed 50M
       \arg        GPIO_OSPEED_200MHZ: output max speed 200M
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
@@ -154,7 +154,7 @@ void gpio_output_options_set(uint32_t gpio_periph,uint8_t otype,uint32_t speed,u
 
 /*!
     \brief      set GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     none
@@ -166,7 +166,7 @@ void gpio_bit_set(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      reset GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     none
@@ -178,7 +178,7 @@ void gpio_bit_reset(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      write data to the specified GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[in]  bitvalue: SET or RESET
       \arg        RESET: clear the port pin
@@ -197,7 +197,7 @@ void gpio_bit_write(uint32_t gpio_periph,uint32_t pin,bit_status bit_value)
 
 /*!
     \brief      write data to the specified GPIO port
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  data: specify the value to be written to the port output data register
     \param[out] none
     \retval     none
@@ -209,7 +209,7 @@ void gpio_port_write(uint32_t gpio_periph,uint16_t data)
 
 /*!
     \brief      get GPIO pin input status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     input state of gpio pin: SET or RESET
@@ -217,7 +217,7 @@ void gpio_port_write(uint32_t gpio_periph,uint16_t data)
 FlagStatus gpio_input_bit_get(uint32_t gpio_periph,uint32_t pin)
 {
     if((uint32_t)RESET != (GPIO_ISTAT(gpio_periph)&(pin))){
-        return SET; 
+        return SET;
     }else{
         return RESET;
     }
@@ -225,7 +225,7 @@ FlagStatus gpio_input_bit_get(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      get GPIO all pins input status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[out] none
     \retval     input state of gpio all pins
 */
@@ -236,7 +236,7 @@ uint16_t gpio_input_port_get(uint32_t gpio_periph)
 
 /*!
     \brief      get GPIO pin output status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     output state of gpio pin: SET or RESET
@@ -252,7 +252,7 @@ FlagStatus gpio_output_bit_get(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      get GPIO all pins output status
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[out] none
     \retval     output state of gpio all pins
 */
@@ -263,7 +263,7 @@ uint16_t gpio_output_port_get(uint32_t gpio_periph)
 
 /*!
     \brief      set GPIO alternate function
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  alt_func_num: gpio pin af function
       \arg        GPIO_AF_0: SYSTEM
       \arg        GPIO_AF_1: TIMER0, TIMER1
@@ -271,7 +271,7 @@ uint16_t gpio_output_port_get(uint32_t gpio_periph)
       \arg        GPIO_AF_3: TIMER7, TIMER8, TIMER9, TIMER10
       \arg        GPIO_AF_4: I2C0, I2C1, I2C2
       \arg        GPIO_AF_5: SPI0, SPI1, SPI2, SPI3, SPI4, SPI5
-      \arg        GPIO_AF_6: SPI1, SPI2, SAI0 
+      \arg        GPIO_AF_6: SPI1, SPI2, SAI0
       \arg        GPIO_AF_7: USART0, USART1, USART2
       \arg        GPIO_AF_8: UART3, UART4, USART5, UART6, UART7
       \arg        GPIO_AF_9: CAN0,CAN1, TLI, TIMER11, TIMER12, TIMER13
@@ -315,7 +315,7 @@ void gpio_af_set(uint32_t gpio_periph,uint32_t alt_func_num,uint32_t pin)
 
 /*!
     \brief      lock GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     none
@@ -335,7 +335,7 @@ void gpio_pin_lock(uint32_t gpio_periph,uint32_t pin)
 
 /*!
     \brief      toggle GPIO pin
-    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I) 
+    \param[in]  gpio_periph: GPIOx(x = A,B,C,D,E,F,G,H,I)
     \param[in]  pin: GPIO_PIN_x(x=0..15), GPIO_PIN_ALL
     \param[out] none
     \retval     none

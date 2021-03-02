@@ -60,7 +60,7 @@ struct hab_ivt input_ivt __attribute__ ((section (".ivt"))) ={
     &__start_boot_data,
     /** Absolute address of the IVT.*/
     (const void*) (&input_ivt),
-    
+
     /** Absolute address of the image CSF.*/
     (const void*) &__hab_data,
 

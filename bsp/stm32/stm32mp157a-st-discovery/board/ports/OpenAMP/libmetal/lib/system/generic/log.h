@@ -30,8 +30,8 @@
  */
 
 /*
- * @file	generic/log.h
- * @brief	Generic libmetal log handler definition.
+ * @file    generic/log.h
+ * @brief    Generic libmetal log handler definition.
  */
 
 #ifndef __METAL_METAL_LOG__H__

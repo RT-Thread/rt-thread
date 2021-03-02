@@ -49,7 +49,7 @@ void gpio7_iomux_config(void)
     //     ALT1 (1) - Select instance: uart3 signal: UART3_RTS_B
     //     ALT5 (5) - Select instance: gpio7 signal: GPIO7_IO08
     HW_IOMUXC_SW_MUX_CTL_PAD_SD3_RESET_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_SD3_RESET_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_SD3_RESET_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_SD3_RESET_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_SD3_RESET(0x020E06B8)
@@ -90,13 +90,13 @@ void gpio7_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_SD3_RESET_SRE_V(SLOW));
 
     // Config gpio7.GPIO7_IO12 to pad GPIO17(R1)
@@ -118,7 +118,7 @@ void gpio7_iomux_config(void)
     //     ALT4 (4) - Select instance: spdif signal: SPDIF_OUT
     //     ALT5 (5) - Select instance: gpio7 signal: GPIO7_IO12
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO17_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO17_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO17_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO17_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO17(0x020E061C)
@@ -161,12 +161,12 @@ void gpio7_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO17_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO17_SRE_V(SLOW));
 
     // Config gpio7.GPIO7_IO13 to pad GPIO18(P6)
@@ -189,7 +189,7 @@ void gpio7_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio7 signal: GPIO7_IO13
     //     ALT6 (6) - Select instance: snvs signal: SNVS_VIO_5_CTL
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO18_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO18_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO18_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO18_MUX_MODE_V(ALT5));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO18(0x020E0620)
@@ -230,12 +230,12 @@ void gpio7_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO18_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO18_SRE_V(SLOW));
 }

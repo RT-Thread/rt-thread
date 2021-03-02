@@ -44,7 +44,7 @@
 /*!
  * Dump the registers of audmux
  *
- * @return  always 0 
+ * @return  always 0
  */
 static uint32_t audmux_dump(void)
 {
@@ -92,14 +92,14 @@ uint32_t audmux_route(uint32_t intPort, uint32_t extPort, uint32_t is_master)
     if (AUDMUX_SSI_MASTER == is_master) {
         // All clock signals for the internal port are input signals for
         // SSI master mode.
-	HW_AUDMUX_PTCR_WR(intPort, BF_AUDMUX_PTCR1_RFS_DIR(AUDMUX_PTCR_TFSDIR_INPUT) |
+    HW_AUDMUX_PTCR_WR(intPort, BF_AUDMUX_PTCR1_RFS_DIR(AUDMUX_PTCR_TFSDIR_INPUT) |
                BF_AUDMUX_PTCR1_TCLKDIR(AUDMUX_PTCR_TCLKDIR_INPUT) |
                BF_AUDMUX_PTCR1_SYN(AUDMUX_PTCR_SYN_SYNC));
     } else {
         // All clock signals for the internal port are all output signals for
         //  slave mode. The source of the clock signals is the external
         // port that is connected to the PMIC.
-	HW_AUDMUX_PTCR_WR(intPort, BF_AUDMUX_PTCR1_TFS_DIR(AUDMUX_PTCR_TFSDIR_OUTPUT) |
+    HW_AUDMUX_PTCR_WR(intPort, BF_AUDMUX_PTCR1_TFS_DIR(AUDMUX_PTCR_TFSDIR_OUTPUT) |
                BF_AUDMUX_PTCR1_TFSEL(extPort - 1) |
                BF_AUDMUX_PTCR1_TCLKDIR(AUDMUX_PTCR_TCLKDIR_OUTPUT) |
                BF_AUDMUX_PTCR1_TCSEL(extPort - 1) |
@@ -121,7 +121,7 @@ uint32_t audmux_route(uint32_t intPort, uint32_t extPort, uint32_t is_master)
         // All clock signals for the external port are output signals for
         // SSI master mode. The source of the clock signals is the internal
         // port that is connected to the SSI.
-	HW_AUDMUX_PTCR_WR(extPort, BF_AUDMUX_PTCR1_TFS_DIR(AUDMUX_PTCR_TFSDIR_OUTPUT) |
+    HW_AUDMUX_PTCR_WR(extPort, BF_AUDMUX_PTCR1_TFS_DIR(AUDMUX_PTCR_TFSDIR_OUTPUT) |
                BF_AUDMUX_PTCR1_TFSEL(intPort - 1) |
                BF_AUDMUX_PTCR1_TCLKDIR(AUDMUX_PTCR_TCLKDIR_OUTPUT) |
                BF_AUDMUX_PTCR1_TCSEL(intPort - 1) |
@@ -129,7 +129,7 @@ uint32_t audmux_route(uint32_t intPort, uint32_t extPort, uint32_t is_master)
     } else {
         // All clock signals for the external port are input signals for
         // PMIC master mode.
-	HW_AUDMUX_PTCR_WR(extPort, BF_AUDMUX_PTCR1_TFS_DIR(AUDMUX_PTCR_TFSDIR_INPUT) |
+    HW_AUDMUX_PTCR_WR(extPort, BF_AUDMUX_PTCR1_TFS_DIR(AUDMUX_PTCR_TFSDIR_INPUT) |
                BF_AUDMUX_PTCR1_TCLKDIR(AUDMUX_PTCR_TCLKDIR_INPUT) |
                BF_AUDMUX_PTCR1_SYN(AUDMUX_PTCR_SYN_SYNC));
     }

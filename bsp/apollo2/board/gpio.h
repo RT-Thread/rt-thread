@@ -21,7 +21,7 @@
  * Date           Author       Notes
  * 2017-09-16     Haley        the first version
  */
- 
+
 #ifndef __GPIO_H
 #define __GPIO_H
 

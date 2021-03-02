@@ -200,7 +200,7 @@ static int read_cfg(void *buff, int len)
     {
         return 0;
     }
-    
+
     return len;
 }
 

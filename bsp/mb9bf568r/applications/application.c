@@ -28,7 +28,7 @@ void rt_init_thread_entry(void *parameter)
 #endif
 
 
-		//finsh_system_init();
+        //finsh_system_init();
     finsh_set_device(RT_CONSOLE_DEVICE_NAME);
 
 
@@ -37,7 +37,7 @@ void rt_init_thread_entry(void *parameter)
         extern void rt_led_hw_init(void);
         rt_led_hw_init();
     }
-		{
+        {
         extern int demo_init(void);
         demo_init();
     }

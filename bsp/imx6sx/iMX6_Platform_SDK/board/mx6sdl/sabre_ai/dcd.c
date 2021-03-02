@@ -37,7 +37,7 @@ uint8_t input_dcd[] __attribute__ ((section(".dcd_data"))) = {
  * The DDR init commands below are based on MX6_series_boards/Auto_Infotainment/RevC_and_RevB/MX6DL_ARD_DDR3_register_programming_aid_v0.3.inc.
  * This file can be found at ddr-script-rel git with commit dfde48ed72f0d43bff72bd372df54d5043b855c8
  */
-	EXPAND_UINT32(IOMUXC_BASE_ADDR + 0x774), EXPAND_UINT32(0x000C0000),
+    EXPAND_UINT32(IOMUXC_BASE_ADDR + 0x774), EXPAND_UINT32(0x000C0000),
         EXPAND_UINT32(IOMUXC_BASE_ADDR + 0x754), EXPAND_UINT32(0x00000000),
         EXPAND_UINT32(IOMUXC_BASE_ADDR + 0x4ac), EXPAND_UINT32(0x00000030),
         EXPAND_UINT32(IOMUXC_BASE_ADDR + 0x4b0), EXPAND_UINT32(0x00000030),
@@ -122,8 +122,8 @@ uint8_t input_dcd[] __attribute__ ((section(".dcd_data"))) = {
         EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x01c), EXPAND_UINT32(0x00000000),
 };
 
-//! @brief HAB command write data header, with tag, 
-//!        size of dcd data with hdr, 
+//! @brief HAB command write data header, with tag,
+//!        size of dcd data with hdr,
 //!        parameter field (size of register value and flag)
 uint8_t input_dcd_wrt_cmd[] __attribute__ ((section(".dcd_wrt_cmd"))) = {
     HAB_CMD_WRT_DAT, EXPAND_UINT16(sizeof(input_dcd) + HDR_BYTES), WRT_DAT_PAR(0, HAB_DATA_WIDTH_WORD)  //!< flag 0, width 4

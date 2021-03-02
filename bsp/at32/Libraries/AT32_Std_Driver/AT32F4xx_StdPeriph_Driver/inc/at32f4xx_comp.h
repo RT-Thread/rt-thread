@@ -4,7 +4,7 @@
   * @author  Artery
   * @version V1.0.1
   * @date    20-April-2012
-  * @brief   This file contains all the functions prototypes for the COMP firmware 
+  * @brief   This file contains all the functions prototypes for the COMP firmware
   *          library.
   ******************************************************************************
   * @attention
@@ -14,8 +14,8 @@
   * Licensed under Artery Liberty SW License Agreement V2, (the "License");
   * You may not use this file except in compliance with the License.
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -44,10 +44,10 @@
 
 /* Exported types ------------------------------------------------------------*/
 
-/** 
-  * @brief  COMP Init structure definition  
+/**
+  * @brief  COMP Init structure definition
   */
-  
+
 typedef struct
 {
 
@@ -70,10 +70,10 @@ typedef struct
 }COMP_InitType;
 
 /* Exported constants --------------------------------------------------------*/
-   
+
 /** @defgroup COMP_Exported_Constants
   * @{
-  */ 
+  */
 
 /** @defgroup COMP_Selection
   * @{
@@ -84,10 +84,10 @@ typedef struct
 
 #define IS_COMP_ALL_PERIPH(PERIPH) (((PERIPH) == COMP1_Selection) || \
                                     ((PERIPH) == COMP2_Selection))
- 
+
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup COMP_NonInvertingInput
   * @{
@@ -122,8 +122,8 @@ typedef struct
                                         ((INPUT) == COMP_INMInput_IN3))
 /**
   * @}
-  */ 
-  
+  */
+
 /** @defgroup COMP_Output
   * @{
   */
@@ -148,7 +148,7 @@ typedef struct
                                 ((OUTPUT) == COMP_Output_TMR3OCREFCLR))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup COMP_OutputPolarity
   * @{
@@ -161,7 +161,7 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup COMP_Hysteresis
   * @{
@@ -197,7 +197,7 @@ typedef struct
 
 /** @defgroup COMP_OutputLevel
   * @{
-  */ 
+  */
 /* When output polarity is not inverted, comparator output is high when
    the non-inverting input is at a higher voltage than the inverting input */
 #define COMP_OutputState_High                   COMP_CTRLSTS_COMP1OUT
@@ -207,29 +207,29 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup COMP_High_Pulse_Filter
   * @{
-  */        
-  
+  */
+
 #define IS_COMP_HighPulseCnt(HighPulse)          ((HighPulse) <= 0x3F)
 /**
   * @}
   */
-  
+
 /** @defgroup COMP_Low_Pulse_Filter
   * @{
-  */        
-  
+  */
+
 #define IS_COMP_LowPulseCnt(LowPulse)            ((LowPulse) <= 0x3F)
 /**
   * @}
   */
-  
+
 /**
   * @}
-  */ 
+  */
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
@@ -262,7 +262,7 @@ void COMP_FilterConfig(uint16_t COMP_HighPulseCnt, uint16_t COMP_LowPulseCnt, Fu
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}

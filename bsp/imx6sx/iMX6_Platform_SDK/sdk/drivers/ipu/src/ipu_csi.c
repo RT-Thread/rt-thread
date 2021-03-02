@@ -128,7 +128,7 @@ void ipu_csi_config(uint32_t ipu_index, uint32_t csi_interface, uint32_t raw_wid
     if(csi_interface == CSI_TEST_MODE)
         ipu_write_field(ipu_index, IPU_CSI0_SENS_CONF__CSI0_DIV_RATIO, 0x9F);  //division ratio of HSP_CLK into SENSOR_MCLK to slow down the frame rate in test mode
     else
-        ipu_write_field(ipu_index, IPU_CSI0_SENS_CONF__CSI0_DIV_RATIO, 0);  
+        ipu_write_field(ipu_index, IPU_CSI0_SENS_CONF__CSI0_DIV_RATIO, 0);
     ipu_write_field(ipu_index, IPU_CSI0_SENS_CONF__CSI0_DATA_WIDTH, 1); //8bits per color
     ipu_write_field(ipu_index, IPU_CSI0_SENS_CONF__CSI0_PACK_TIGHT, 0); //only when data format is RGB/YUV, and data_width > 8
     ipu_write_field(ipu_index, IPU_CSI0_SENS_CONF__CSI0_SENS_DATA_FORMAT, data_fmt);    // YUV422
@@ -173,10 +173,10 @@ void ipu_csi_config(uint32_t ipu_index, uint32_t csi_interface, uint32_t raw_wid
 /*!
  * set the SMFC(fifo for camera input) property
  *
- * @param	ipu_index: ipu index
- * @param 	channel: select the channel number out of 0~3
- * @param 	map: choose the map between channel and fifo
- * @param 	burst_size: set the burst size of fifo input.
+ * @param    ipu_index: ipu index
+ * @param     channel: select the channel number out of 0~3
+ * @param     map: choose the map between channel and fifo
+ * @param     burst_size: set the burst size of fifo input.
  *
  * @return -1 means channel not found, 0 means configuration is ok.
  */
@@ -214,10 +214,10 @@ uint32_t ipu_smfc_fifo_allocate(uint32_t ipu_index, uint32_t channel, uint32_t m
 }
 
 /*!
- * link CSI channel smfc with display 
+ * link CSI channel smfc with display
  *
- * @param	ipu_index: ipu index
- * @param 	smfc: select the smfc number out of 0/2
+ * @param    ipu_index: ipu index
+ * @param     smfc: select the smfc number out of 0/2
  *
  * @return -1 means channel not found, 0 means configuration is ok.
  */
@@ -239,7 +239,7 @@ void ipu_capture_disp_link(uint32_t ipu_index, uint32_t smfc)
         }
     } else {
         ipu_write_field(ipu_index, IPU_IPU_FS_PROC_FLOW1__VDI_SRC_SEL, 0x01);   // csi
-        ipu_write_field(ipu_index, IPU_IPU_FS_PROC_FLOW2__PRPVF_DEST_SEL, 0x09);    // DP sync0     
+        ipu_write_field(ipu_index, IPU_IPU_FS_PROC_FLOW2__PRPVF_DEST_SEL, 0x09);    // DP sync0
         ipu_write_field(ipu_index, IPU_IPU_FS_DISP_FLOW1__DP_SYNC0_SRC_SEL, 0x04);  // VF
     }
 }
@@ -247,7 +247,7 @@ void ipu_capture_disp_link(uint32_t ipu_index, uint32_t smfc)
 /*!
  * @brief Disable csi module
  *
- * @param	csi csi id
+ * @param    csi csi id
  *
  */
 void ipu_disable_csi(uint32_t ipu_index, uint32_t csi)
@@ -272,8 +272,8 @@ void ipu_disable_smfc(uint32_t ipu_index)
  * @brief Set the color of csi test mode
  *
  *
- * @param	ipu_index	ipu id
- * @param	color_mode 	the number of color to show on chessboard
+ * @param    ipu_index    ipu id
+ * @param    color_mode     the number of color to show on chessboard
  *
  */
 void ipu_csi_test_mode_color(uint32_t ipu_index, int32_t color_mode)

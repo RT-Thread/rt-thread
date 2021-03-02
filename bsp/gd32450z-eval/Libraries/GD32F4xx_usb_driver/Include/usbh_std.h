@@ -26,7 +26,7 @@ extern uint8_t                         usbh_cfg_desc[512];
 extern uint8_t                         enum_polling_handle_flag;
 extern state_table_struct              enum_handle_table[ENUM_HANDLE_TABLE_SIZE];
 
-typedef enum 
+typedef enum
 {
     ENUN_EVENT_IDLE = 0,                   /* the enum idle event */
     ENUM_EVENT_SET_ADDR,                   /* the enum set address event */
@@ -44,11 +44,11 @@ typedef enum
 /* the polling function of enumeration state */
 usbh_status_enum enum_state_polling_fun (usb_core_handle_struct *pudev, usbh_host_struct *puhost, void *pustate);
 /* get descriptor in usb host enumeration stage */
-void usbh_enum_desc_get (usb_core_handle_struct *pudev, 
-                         usbh_host_struct *puhost, 
-                         uint8_t *buf, 
-                         uint8_t  req_type, 
-                         uint16_t value_idx, 
+void usbh_enum_desc_get (usb_core_handle_struct *pudev,
+                         usbh_host_struct *puhost,
+                         uint8_t *buf,
+                         uint8_t  req_type,
+                         uint16_t value_idx,
                          uint16_t len);
 /* set address in usb host enumeration stage */
 void usbh_enum_addr_set (usb_core_handle_struct *pudev, usbh_host_struct *puhost, uint8_t device_address);

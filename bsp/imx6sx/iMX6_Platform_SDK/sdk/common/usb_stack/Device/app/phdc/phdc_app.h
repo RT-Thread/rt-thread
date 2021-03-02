@@ -32,21 +32,21 @@
  *****************************************************************************/
 #define  KBI_STAT_MASK      (0x0F)
 
-#if(defined __MCF52259_H__) 
+#if(defined __MCF52259_H__)
 #if(defined(__MCF52259_DEMO_) || defined(__MCF52221_H__))
-	 #define SEND_MEASUREMENT_INT     (0x02)
-	 #define SEND_MEASUREMENT_BULK    (0x08) 
-	 #define DISCONNECT               (0x04)
+     #define SEND_MEASUREMENT_INT     (0x02)
+     #define SEND_MEASUREMENT_BULK    (0x08)
+     #define DISCONNECT               (0x04)
 #else
-	 #define SEND_MEASUREMENT_INT     (0x02)
-	 #define SEND_MEASUREMENT_BULK    (0x04)
-	 #define DISCONNECT               (0x08)
+     #define SEND_MEASUREMENT_INT     (0x02)
+     #define SEND_MEASUREMENT_BULK    (0x04)
+     #define DISCONNECT               (0x08)
 #endif
 #else
  #define SEND_MEASUREMENT_INT     (0x01)
  #define SEND_MEASUREMENT_BULK    (0x02)
  #define DISCONNECT               (0x04)
-#endif 
+#endif
 
 #define CONTROLLER_ID       (0)         /* Controller ID */
 

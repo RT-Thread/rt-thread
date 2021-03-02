@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Interrupt program for RX62N
-* File Name		: Interrupt_POE.c
-* Version		: 1.02
-* Contents		: Interrupt handlers for the Port Output Enable module
-* Customer		: 
-* Model			:
-* Order			:
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	: 
-* Note			: 
+* System Name    : Interrupt program for RX62N
+* File Name        : Interrupt_POE.c
+* Version        : 1.02
+* Contents        : Interrupt handlers for the Port Output Enable module
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #include "r_pdl_poe.h"
@@ -27,24 +27,24 @@
 /*""FUNC COMMENT""***************************************************
 * Module outline : POE interrupt processing
 *-------------------------------------------------------------------
-* Declaration	: void Interrupt_OEIn(void)
+* Declaration    : void Interrupt_OEIn(void)
 *-------------------------------------------------------------------
-* Function		: Interrupt processing function for POE interrupt n
+* Function        : Interrupt processing function for POE interrupt n
 *-------------------------------------------------------------------
-* Argument		: Nothing
+* Argument        : Nothing
 *-------------------------------------------------------------------
-* Return value	: Nothing
+* Return value    : Nothing
 *-------------------------------------------------------------------
-* Input			: 
-* Output		: 
+* Input            :
+* Output        :
 *-------------------------------------------------------------------
-* Use function	: POE_callback_func[n]
+* Use function    : POE_callback_func[n]
 *-------------------------------------------------------------------
-* Notes			: 
+* Notes            :
 *-------------------------------------------------------------------
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FUNC COMMENT END""**********************************************/
 
 #if FAST_INTC_VECTOR == VECT_POE_OEI1

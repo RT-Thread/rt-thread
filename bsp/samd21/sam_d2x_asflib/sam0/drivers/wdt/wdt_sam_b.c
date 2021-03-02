@@ -49,28 +49,28 @@ struct wdt_module *_wdt_instances[WDT_INST_NUM];
 
 static void wdt_isr_handler(void)
 {
-	struct wdt_module *module = NULL;
-	
-	if (WDT0->WDOGMIS.reg) {
-		module = _wdt_instances[0];
-		if (!(module->hw->WDOGCONTROL.reg & WDT_WDOGCONTROL_RESEN)) {
-			module->hw->WDOGINTCLR.reg = 0x01;
-		}
-		if ((module->callback_enable_mask & (1 << WDT_CALLBACK_EARLY_WARNING)) &&
-			(module->callback_reg_mask & (1 << WDT_CALLBACK_EARLY_WARNING))) {
-			(module->callback[WDT_CALLBACK_EARLY_WARNING])();
-		}
-	}
-	if (WDT1->WDOGMIS.reg) {
-		module = _wdt_instances[1];
-		if (!(module->hw->WDOGCONTROL.reg & WDT_WDOGCONTROL_RESEN)) {
-			module->hw->WDOGINTCLR.reg = 0x01;
-		}
-		if ((module->callback_enable_mask & (1 << WDT_CALLBACK_EARLY_WARNING)) &&
-			(module->callback_reg_mask & (1 << WDT_CALLBACK_EARLY_WARNING))) {
-			(module->callback[WDT_CALLBACK_EARLY_WARNING])();
-		}
-	}
+    struct wdt_module *module = NULL;
+
+    if (WDT0->WDOGMIS.reg) {
+        module = _wdt_instances[0];
+        if (!(module->hw->WDOGCONTROL.reg & WDT_WDOGCONTROL_RESEN)) {
+            module->hw->WDOGINTCLR.reg = 0x01;
+        }
+        if ((module->callback_enable_mask & (1 << WDT_CALLBACK_EARLY_WARNING)) &&
+            (module->callback_reg_mask & (1 << WDT_CALLBACK_EARLY_WARNING))) {
+            (module->callback[WDT_CALLBACK_EARLY_WARNING])();
+        }
+    }
+    if (WDT1->WDOGMIS.reg) {
+        module = _wdt_instances[1];
+        if (!(module->hw->WDOGCONTROL.reg & WDT_WDOGCONTROL_RESEN)) {
+            module->hw->WDOGINTCLR.reg = 0x01;
+        }
+        if ((module->callback_enable_mask & (1 << WDT_CALLBACK_EARLY_WARNING)) &&
+            (module->callback_reg_mask & (1 << WDT_CALLBACK_EARLY_WARNING))) {
+            (module->callback[WDT_CALLBACK_EARLY_WARNING])();
+        }
+    }
 }
 
 /**
@@ -90,12 +90,12 @@ static void wdt_isr_handler(void)
  */
 void wdt_get_config_defaults(struct wdt_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	config->load_value = 0xFFFFFFFF;
-	config->enable_reset = true;
-	config->write_access = true;
+    config->load_value = 0xFFFFFFFF;
+    config->enable_reset = true;
+    config->write_access = true;
 }
 
 /**
@@ -114,53 +114,53 @@ void wdt_get_config_defaults(struct wdt_config *const config)
  * \retval STATUS_ERR_BAD_DATA  If the value isn't available
  */
 enum status_code wdt_set_config(struct wdt_module *const module, Wdt * const hw,
-		const struct wdt_config *const config)
+        const struct wdt_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(hw);
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(hw);
+    Assert(config);
 
-	/* Assign module pointer to software instance struct */
-	module->hw = hw;
+    /* Assign module pointer to software instance struct */
+    module->hw = hw;
 
-	if (config->load_value == 0) {
-		return STATUS_ERR_BAD_DATA;
-	}
-	
-	if (module->hw == WDT0) {
-		system_clock_peripheral_disable(PERIPHERAL_WDT0);
-	} else if (module->hw ==WDT1) {
-		system_clock_peripheral_disable(PERIPHERAL_WDT1);
-	}
+    if (config->load_value == 0) {
+        return STATUS_ERR_BAD_DATA;
+    }
 
-	/* Unlock register */
-	module->hw->WDOGLOCK.reg = WDT_WRITE_ACCESS_KEY;
+    if (module->hw == WDT0) {
+        system_clock_peripheral_disable(PERIPHERAL_WDT0);
+    } else if (module->hw ==WDT1) {
+        system_clock_peripheral_disable(PERIPHERAL_WDT1);
+    }
 
-	module->hw->WDOGLOAD.reg = config->load_value;
+    /* Unlock register */
+    module->hw->WDOGLOCK.reg = WDT_WRITE_ACCESS_KEY;
 
-	if (config->enable_reset) {
-		module->hw->WDOGCONTROL.reg |= WDT_WDOGCONTROL_RESEN;
-	}
-	module->hw->WDOGCONTROL.reg |= WDT_WDOGCONTROL_INTEN;
-	
-	/* Lock register */
-	if (config->write_access == false) {
-		module->hw->WDOGLOCK.reg = WDT_WDOGLOCK_ENABLE_STATUS;
-	}
-	
-	system_register_isr(RAM_ISR_TABLE_NMI_INDEX, (uint32_t)wdt_isr_handler);
-	
-	/* Enable WDT clock */
-	if (module->hw == WDT0) {
-		_wdt_instances[0] = module;
-		system_clock_peripheral_enable(PERIPHERAL_WDT0);
-	} else if (module->hw == WDT1) {
-		_wdt_instances[1] = module;
-		system_clock_peripheral_enable(PERIPHERAL_WDT1);
-	}
+    module->hw->WDOGLOAD.reg = config->load_value;
 
-	return STATUS_OK;
+    if (config->enable_reset) {
+        module->hw->WDOGCONTROL.reg |= WDT_WDOGCONTROL_RESEN;
+    }
+    module->hw->WDOGCONTROL.reg |= WDT_WDOGCONTROL_INTEN;
+
+    /* Lock register */
+    if (config->write_access == false) {
+        module->hw->WDOGLOCK.reg = WDT_WDOGLOCK_ENABLE_STATUS;
+    }
+
+    system_register_isr(RAM_ISR_TABLE_NMI_INDEX, (uint32_t)wdt_isr_handler);
+
+    /* Enable WDT clock */
+    if (module->hw == WDT0) {
+        _wdt_instances[0] = module;
+        system_clock_peripheral_enable(PERIPHERAL_WDT0);
+    } else if (module->hw == WDT1) {
+        _wdt_instances[1] = module;
+        system_clock_peripheral_enable(PERIPHERAL_WDT1);
+    }
+
+    return STATUS_OK;
 }
 
 /**
@@ -172,11 +172,11 @@ enum status_code wdt_set_config(struct wdt_module *const module, Wdt * const hw,
  */
 void wdt_reset(struct wdt_module *const module)
 {
-	if (module->hw == WDT0) {
-		system_peripheral_reset(PERIPHERAL_WDT0);
-	} else if (module->hw == WDT1) {
-		system_peripheral_reset(PERIPHERAL_WDT1);
-	}
+    if (module->hw == WDT0) {
+        system_peripheral_reset(PERIPHERAL_WDT0);
+    } else if (module->hw == WDT1) {
+        system_peripheral_reset(PERIPHERAL_WDT1);
+    }
 }
 
 /**
@@ -188,7 +188,7 @@ void wdt_reset(struct wdt_module *const module)
  */
 uint8_t wdt_get_interrupt_status(struct wdt_module *const module)
 {
-	return module->hw->WDOGMIS.reg;
+    return module->hw->WDOGMIS.reg;
 }
 
 /**
@@ -200,7 +200,7 @@ uint8_t wdt_get_interrupt_status(struct wdt_module *const module)
  */
 uint8_t wdt_get_status(struct wdt_module *const module)
 {
-	return module->hw->WDOGRIS.reg;
+    return module->hw->WDOGRIS.reg;
 }
 
 /**
@@ -212,7 +212,7 @@ uint8_t wdt_get_status(struct wdt_module *const module)
  */
 void wdt_clear_status(struct wdt_module *const module)
 {
-	module->hw->WDOGINTCLR.reg = 0x01;
+    module->hw->WDOGINTCLR.reg = 0x01;
 }
 
 /**
@@ -230,19 +230,19 @@ void wdt_clear_status(struct wdt_module *const module)
  */
 enum status_code wdt_set_reload_count(struct wdt_module *const module, uint32_t load_value)
 {
-	if (load_value == 0) {
-		return STATUS_ERR_BAD_DATA;
-	} else {
-		if (module->hw->WDOGLOCK.bit.ENABLE_STATUS) {
-			module->hw->WDOGLOCK.reg = WDT_WRITE_ACCESS_KEY;
-			module->hw->WDOGLOAD.reg = load_value;
-			module->hw->WDOGLOCK.reg = WDT_WDOGLOCK_ENABLE_STATUS;
-		} else {
-			module->hw->WDOGLOAD.reg = load_value;
-		}
-	}
+    if (load_value == 0) {
+        return STATUS_ERR_BAD_DATA;
+    } else {
+        if (module->hw->WDOGLOCK.bit.ENABLE_STATUS) {
+            module->hw->WDOGLOCK.reg = WDT_WRITE_ACCESS_KEY;
+            module->hw->WDOGLOAD.reg = load_value;
+            module->hw->WDOGLOCK.reg = WDT_WDOGLOCK_ENABLE_STATUS;
+        } else {
+            module->hw->WDOGLOAD.reg = load_value;
+        }
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -255,9 +255,9 @@ enum status_code wdt_set_reload_count(struct wdt_module *const module, uint32_t 
  *
  */
 void wdt_get_current_count(struct wdt_module *const module, \
-			uint32_t * count_value)
+            uint32_t * count_value)
 {
-	*count_value = module->hw->WDOGVALUE.reg;
+    *count_value = module->hw->WDOGVALUE.reg;
 }
 
 /**
@@ -275,17 +275,17 @@ void wdt_get_current_count(struct wdt_module *const module, \
  *
  */
 void wdt_register_callback(struct wdt_module *const module,
-		wdt_callback_t callback_func,
-		enum wdt_callback callback_type)
+        wdt_callback_t callback_func,
+        enum wdt_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(callback_func);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(callback_func);
 
-	/* Register callback function */
-	module->callback[callback_type] = callback_func;
-	/* Set the bit corresponding to the callback_type */
-	module->callback_reg_mask |= (1 << callback_type);
+    /* Register callback function */
+    module->callback[callback_type] = callback_func;
+    /* Set the bit corresponding to the callback_type */
+    module->callback_reg_mask |= (1 << callback_type);
 }
 
 /**
@@ -298,15 +298,15 @@ void wdt_register_callback(struct wdt_module *const module,
  *
  */
 void wdt_unregister_callback(struct wdt_module *module,
-		enum wdt_callback callback_type)
+        enum wdt_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Unregister callback function */
-	module->callback[callback_type] = NULL;
-	/* Clear the bit corresponding to the callback_type */
-	module->callback_reg_mask &= ~(1 << callback_type);
+    /* Unregister callback function */
+    module->callback[callback_type] = NULL;
+    /* Clear the bit corresponding to the callback_type */
+    module->callback_reg_mask &= ~(1 << callback_type);
 }
 
 /**
@@ -320,13 +320,13 @@ void wdt_unregister_callback(struct wdt_module *module,
  * \param[in]  callback_type  Callback type given by an enum
  */
 void wdt_enable_callback(struct wdt_module *const module,
-		enum wdt_callback callback_type)
+        enum wdt_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Enable callback */
-	module->callback_enable_mask |= (1 << callback_type);
+    /* Enable callback */
+    module->callback_enable_mask |= (1 << callback_type);
 }
 
 /**
@@ -339,11 +339,11 @@ void wdt_enable_callback(struct wdt_module *const module,
  * \param[in]  callback_type  Callback type given by an enum
  */
 void wdt_disable_callback(struct wdt_module *const module,
-		enum wdt_callback callback_type)
+        enum wdt_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module);
+    /* Sanity check arguments */
+    Assert(module);
 
-	/* Disable callback */
-	module->callback_enable_mask &= ~(1 << callback_type);
+    /* Disable callback */
+    module->callback_enable_mask &= ~(1 << callback_type);
 }

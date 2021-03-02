@@ -32,7 +32,7 @@
 #ifndef __HW_I2CMOND_ROM_API_H
 #define __HW_I2CMOND_ROM_API_H
 
-#include "stdint.h"		// added to define uint32_t, etc.
+#include "stdint.h"        // added to define uint32_t, etc.
 #include "error.h"
 #include "packing.h"
 #include "hw_i2c_common.h"
@@ -54,24 +54,24 @@ typedef void *ROM_I2CMON_HANDLE_T;
 #define ROM_I2CMON_HANDLE_TOUDATA(p)            (void *) (*(uint32_t *) p)
 
 /** @brief I2C monitor optional transfer flags */
-#define ROM_I2CMON_FLAG_BLOCKING    (1UL << 31)		/*!< Capture function will block until complete */
-#define ROM_I2CMON_FLAG_DMARX       (1UL << 29)		/*!< DMA will be used for RX, requires DMA setup outside of the driver */
-#define ROM_I2CMON_FLAG_FLUSH       (1UL << 25)		/*!< Force monitor FIFO flush */
-#define ROM_I2CMON_FLAG_USERBITS    (0xFFFF)		/*!< Application can safely use the flag bits designated by this mask */
+#define ROM_I2CMON_FLAG_BLOCKING    (1UL << 31)        /*!< Capture function will block until complete */
+#define ROM_I2CMON_FLAG_DMARX       (1UL << 29)        /*!< DMA will be used for RX, requires DMA setup outside of the driver */
+#define ROM_I2CMON_FLAG_FLUSH       (1UL << 25)        /*!< Force monitor FIFO flush */
+#define ROM_I2CMON_FLAG_USERBITS    (0xFFFF)        /*!< Application can safely use the flag bits designated by this mask */
 
 /** @brief Monitor transfer descriptor */
 typedef PRE_PACK struct POST_PACK {
-	const void      *startBuff;			/*!< Pointer to a buffer for capturing data after start, msy be 16-bit aligned */
-	uint16_t        startBuffSz;		/*!< Number of bytes in startBuff buffer, data will be tossed if not big enough */
-	uint16_t        capStartBuffSz;		/*!< Number of bytes captured in startBuff buffer */
-	uint32_t        flags;				/*!< Optional transfer flags of type ROM_I2CMON_FLAG_* */
-	volatile ErrorCode_t status;		/*!< LPC_OK, busy status, or error code */
+    const void      *startBuff;            /*!< Pointer to a buffer for capturing data after start, msy be 16-bit aligned */
+    uint16_t        startBuffSz;        /*!< Number of bytes in startBuff buffer, data will be tossed if not big enough */
+    uint16_t        capStartBuffSz;        /*!< Number of bytes captured in startBuff buffer */
+    uint32_t        flags;                /*!< Optional transfer flags of type ROM_I2CMON_FLAG_* */
+    volatile ErrorCode_t status;        /*!< LPC_OK, busy status, or error code */
 } ROM_I2CMON_CAP_T;
 
 /** I2C monitor callback IDs */
 typedef enum {
-	ROM_I2CMON_CAPTUREREADY_CB = 0,		/*!< Callback ID for I2C monitor capture ready */
-	ROM_I2CMON_DMASETUP_CB				/*!< Callback for DMA setup */
+    ROM_I2CMON_CAPTUREREADY_CB = 0,        /*!< Callback ID for I2C monitor capture ready */
+    ROM_I2CMON_DMASETUP_CB                /*!< Callback for DMA setup */
 } ROM_I2CMON_CALLBACK_T;
 
 /** @brief I2C monitor capture complete callback prototype
@@ -87,26 +87,26 @@ typedef void (*i2cMonSetupDMACB)(ROM_I2CMON_HANDLE_T i2cmonHandle, ROM_I2CMON_CA
 
 /** @brief I2C monitor initialization structure */
 typedef PRE_PACK struct POST_PACK {
-	void        *pUserData;			/*!< Pointer to user data used by driver instance, use NULL if not used */
-	uint32_t    base;				/*!< Base address of I2C peripheral to use */
-	uint8_t     stretch;			/*!< 0 = disable monitor clock stretching, !0 = enable */
+    void        *pUserData;            /*!< Pointer to user data used by driver instance, use NULL if not used */
+    uint32_t    base;                /*!< Base address of I2C peripheral to use */
+    uint8_t     stretch;            /*!< 0 = disable monitor clock stretching, !0 = enable */
 } ROM_I2CMON_INIT_T;
 
 /** @brief I2C monitor ROM indirect function structure */
 typedef PRE_PACK struct POST_PACK {
-	uint32_t (*GetMemSize)(void);	/*!< Returns needed memory size required for run-time context of I2C monitor driver */
-	ROM_I2CMON_HANDLE_T (*Init)(void *mem, const ROM_I2CMON_INIT_T *pInit);	/*!< Initializes the I2C monitor driver and peripheral */
-	void (*RegisterCallback)(ROM_I2CMON_HANDLE_T pHandle, uint32_t cbIndex, void *pCB);	/*!< Registers an I2C monitor callback */
-	ErrorCode_t (*StartLog)(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CAP_T *pCap);	/*!< Start/queue a log descriptor */
-	void (*TransferHandler)(ROM_I2CMON_HANDLE_T pHandle);		/*!< I2C monitor transfer (interrupt) handler */
-	uint32_t (*GetDriverVersion)(void);
+    uint32_t (*GetMemSize)(void);    /*!< Returns needed memory size required for run-time context of I2C monitor driver */
+    ROM_I2CMON_HANDLE_T (*Init)(void *mem, const ROM_I2CMON_INIT_T *pInit);    /*!< Initializes the I2C monitor driver and peripheral */
+    void (*RegisterCallback)(ROM_I2CMON_HANDLE_T pHandle, uint32_t cbIndex, void *pCB);    /*!< Registers an I2C monitor callback */
+    ErrorCode_t (*StartLog)(ROM_I2CMON_HANDLE_T pHandle, ROM_I2CMON_CAP_T *pCap);    /*!< Start/queue a log descriptor */
+    void (*TransferHandler)(ROM_I2CMON_HANDLE_T pHandle);        /*!< I2C monitor transfer (interrupt) handler */
+    uint32_t (*GetDriverVersion)(void);
 } ROM_I2CMOND_API_T;
 
 /**
  * @}
  */
 
-extern const ROM_I2CMOND_API_T i2cmon_api;	// so application program can access	pointer to
+extern const ROM_I2CMOND_API_T i2cmon_api;    // so application program can access    pointer to
 // function table
 
 #endif /* __HW_I2CMOND_ROM_API_H */

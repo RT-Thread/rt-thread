@@ -351,14 +351,14 @@ extern "C" {
  * Enum for the possible reference voltages for the DAC.
  */
 enum dac_reference {
-	/** Unbuffered external voltage reference */
-	DAC_REFERENCE_VREFPU = DAC_CTRLB_REFSEL(0),
-	/** Analog VCC as reference */
-	DAC_REFERENCE_VDDANA = DAC_CTRLB_REFSEL(1),
-	/** Buffered external voltage reference */
-	DAC_REFERENCE_VREFPB = DAC_CTRLB_REFSEL(2),
-	/** Internal bandgap reference */
-	DAC_REFERENCE_INTREF = DAC_CTRLB_REFSEL(3),
+    /** Unbuffered external voltage reference */
+    DAC_REFERENCE_VREFPU = DAC_CTRLB_REFSEL(0),
+    /** Analog VCC as reference */
+    DAC_REFERENCE_VDDANA = DAC_CTRLB_REFSEL(1),
+    /** Buffered external voltage reference */
+    DAC_REFERENCE_VREFPB = DAC_CTRLB_REFSEL(2),
+    /** Internal bandgap reference */
+    DAC_REFERENCE_INTREF = DAC_CTRLB_REFSEL(3),
 };
 
 /**
@@ -367,14 +367,14 @@ enum dac_reference {
  * Enum for the current in output buffer according the conversion rate.
  */
 enum dac_current_ctrl {
-	/** GCLK_DAC <= 1.2MHz */
-	DAC_CURRENT_100K  = DAC_DACCTRL_CCTRL(0),
-	/** 1.2MHz < GCLK_DAC <= 6MHz */
-	DAC_CURRENT_1M   = DAC_DACCTRL_CCTRL(1),
-	/** 6MHz < GCLK_DAC <= 12MHz */
-	DAC_CURRENT_12M = DAC_DACCTRL_CCTRL(2),
-	/** Reserved */
-	DAC_CURRENT_RESERVED  = DAC_DACCTRL_CCTRL(3),
+    /** GCLK_DAC <= 1.2MHz */
+    DAC_CURRENT_100K  = DAC_DACCTRL_CCTRL(0),
+    /** 1.2MHz < GCLK_DAC <= 6MHz */
+    DAC_CURRENT_1M   = DAC_DACCTRL_CCTRL(1),
+    /** 6MHz < GCLK_DAC <= 12MHz */
+    DAC_CURRENT_12M = DAC_DACCTRL_CCTRL(2),
+    /** Reserved */
+    DAC_CURRENT_RESERVED  = DAC_DACCTRL_CCTRL(3),
 };
 
 /**
@@ -383,12 +383,12 @@ enum dac_current_ctrl {
  * Enum for the DAC channel selection.
  */
 enum dac_channel {
-	/** DAC output channel 0 */
-	DAC_CHANNEL_0,
-	/** DAC output channel 1 */
-	DAC_CHANNEL_1,
+    /** DAC output channel 0 */
+    DAC_CHANNEL_0,
+    /** DAC output channel 1 */
+    DAC_CHANNEL_1,
 #if !defined(__DOXYGEN__)
-	DAC_CHANNEL_N,
+    DAC_CHANNEL_N,
 #endif
 };
 
@@ -403,25 +403,25 @@ enum dac_channel {
  */
 struct dac_module {
 #if !defined(__DOXYGEN__)
-	/** DAC hardware module */
-	Dac *hw;
-	/** Reference selection */
-	enum dac_reference reference;
-	/** DAC event selection */
-	bool start_on_event[DAC_CHANNEL_N];
+    /** DAC hardware module */
+    Dac *hw;
+    /** Reference selection */
+    enum dac_reference reference;
+    /** DAC event selection */
+    bool start_on_event[DAC_CHANNEL_N];
 #  if DAC_CALLBACK_MODE == true
-	/** Pointer to buffer used for ADC results */
-	volatile uint16_t *job_buffer[DAC_CHANNEL_N];
-	/** Remaining number of conversions in current job */
-	volatile uint16_t remaining_conversions[DAC_CHANNEL_N];
-	/** Transferred number of conversions in current job */
-	volatile uint16_t transferred_conversions[DAC_CHANNEL_N];
-	/** DAC callback enable */
-	bool callback_enable[DAC_CHANNEL_N][DAC_CALLBACK_N];
-	/** DAC registered callback functions */
-	dac_callback_t callback[DAC_CHANNEL_N][DAC_CALLBACK_N];
-	/** Holds the status of the ongoing or last conversion job */
-	volatile enum status_code job_status[DAC_CHANNEL_N];
+    /** Pointer to buffer used for ADC results */
+    volatile uint16_t *job_buffer[DAC_CHANNEL_N];
+    /** Remaining number of conversions in current job */
+    volatile uint16_t remaining_conversions[DAC_CHANNEL_N];
+    /** Transferred number of conversions in current job */
+    volatile uint16_t transferred_conversions[DAC_CHANNEL_N];
+    /** DAC callback enable */
+    bool callback_enable[DAC_CHANNEL_N][DAC_CALLBACK_N];
+    /** DAC registered callback functions */
+    dac_callback_t callback[DAC_CHANNEL_N][DAC_CALLBACK_N];
+    /** Holds the status of the ongoing or last conversion job */
+    volatile enum status_code job_status[DAC_CHANNEL_N];
 #  endif
 #endif
 };
@@ -434,12 +434,12 @@ struct dac_module {
  * function before being modified by the user application.
  */
 struct dac_config {
-	/** Differential mode enable data */
-	bool differential_mode;
-	/** Reference voltage */
-	enum dac_reference reference;
-	/** GCLK generator used to clock the peripheral */
-	enum gclk_generator clock_source;
+    /** Differential mode enable data */
+    bool differential_mode;
+    /** Reference voltage */
+    enum dac_reference reference;
+    /** GCLK generator used to clock the peripheral */
+    enum gclk_generator clock_source;
 };
 
 /**
@@ -450,22 +450,22 @@ struct dac_config {
  * user application.
  */
 struct dac_chan_config {
-	/** Left adjusted data */
-	bool left_adjust;
-	/** Current control data */
-	enum dac_current_ctrl current;
-	/**
-	 * The DAC behaves as in normal mode when the chip enters STANDBY sleep
-	 * mode
-	 */
-	bool run_in_standby;
-	/** Dither mode enable data */
-	bool dither_mode;
-	/**
-	 * The DAC conversion refreshed periodically when used to generate a static
-	 * voltage
-	 */
-	uint8_t refresh_period;
+    /** Left adjusted data */
+    bool left_adjust;
+    /** Current control data */
+    enum dac_current_ctrl current;
+    /**
+     * The DAC behaves as in normal mode when the chip enters STANDBY sleep
+     * mode
+     */
+    bool run_in_standby;
+    /** Dither mode enable data */
+    bool dither_mode;
+    /**
+     * The DAC conversion refreshed periodically when used to generate a static
+     * voltage
+     */
+    uint8_t refresh_period;
 };
 
 /**
@@ -475,18 +475,18 @@ struct dac_chan_config {
  * disable events via \ref dac_enable_events() and \ref dac_disable_events().
  */
 struct dac_events {
-	/** Start a new DAC0 conversion */
-	bool on_event_chan0_start_conversion;
-	/** Start a new DAC1 conversion */
-	bool on_event_chan1_start_conversion;
-	/** Enable event generation on DAC0 data buffer empty */
-	bool generate_event_on_chan0_buffer_empty;
-	/** Enable event generation on DAC1 data buffer empty */
-	bool generate_event_on_chan1_buffer_empty;
-	/** Enable the falling edge of the input event for DAC0 */
-	bool generate_event_on_chan0_falling_edge;
-	/** Enable the falling edge of the input event for DAC1 */
-	bool generate_event_on_chan1_falling_edge;
+    /** Start a new DAC0 conversion */
+    bool on_event_chan0_start_conversion;
+    /** Start a new DAC1 conversion */
+    bool on_event_chan1_start_conversion;
+    /** Enable event generation on DAC0 data buffer empty */
+    bool generate_event_on_chan0_buffer_empty;
+    /** Enable event generation on DAC1 data buffer empty */
+    bool generate_event_on_chan1_buffer_empty;
+    /** Enable the falling edge of the input event for DAC0 */
+    bool generate_event_on_chan0_falling_edge;
+    /** Enable the falling edge of the input event for DAC1 */
+    bool generate_event_on_chan1_falling_edge;
 };
 
 /**
@@ -494,8 +494,8 @@ struct dac_events {
  * @{
  */
 bool dac_chan_is_end_of_conversion(
-		struct dac_module *const module_inst,
-		enum dac_channel channel);
+        struct dac_module *const module_inst,
+        enum dac_channel channel);
 /** @} */
 
 /** @} */
@@ -507,34 +507,34 @@ bool dac_chan_is_end_of_conversion(
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>ADC</td>
- *		<td>Analog-to-Digital Converter</td>
- *	</tr>
- *	<tr>
- *		<td>AC</td>
- *		<td>Analog Comparator</td>
- *	</tr>
- *	<tr>
- *		<td>DAC</td>
- *		<td>Digital-to-Analog Converter</td>
- *	</tr>
- *	<tr>
- *		<td>LSB</td>
- *		<td>Least Significant Bit</td>
- *	</tr>
- *	<tr>
- *		<td>MSB</td>
- *		<td>Most Significant Bit</td>
- *	</tr>
- *	<tr>
- *		<td>DMA</td>
- *		<td>Direct Memory Access</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+ *    <tr>
+ *        <td>ADC</td>
+ *        <td>Analog-to-Digital Converter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>AC</td>
+ *        <td>Analog Comparator</td>
+ *    </tr>
+ *    <tr>
+ *        <td>DAC</td>
+ *        <td>Digital-to-Analog Converter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>LSB</td>
+ *        <td>Least Significant Bit</td>
+ *    </tr>
+ *    <tr>
+ *        <td>MSB</td>
+ *        <td>Most Significant Bit</td>
+ *    </tr>
+ *    <tr>
+ *        <td>DMA</td>
+ *        <td>Direct Memory Access</td>
+ *    </tr>
  * </table>
  *
  *
@@ -555,12 +555,12 @@ bool dac_chan_is_end_of_conversion(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -590,16 +590,16 @@ bool dac_chan_is_end_of_conversion(
  * \page asfdoc_sam0_dac_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42450A</td>
- *		<td>07/2015</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42450A</td>
+ *        <td>07/2015</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 #ifdef __cplusplus

@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_wwdg.h"
@@ -26,7 +26,7 @@
 * @{
 */
 
-/** @defgroup WWDG 
+/** @defgroup WWDG
 * @brief WWDG driver modules
 * @{
 */
@@ -156,7 +156,7 @@ void WWDG_SetWindowValue(uint8_t WindowValue)
 void WWDG_EnableIT(void)
 {
     WWDG->CFR |= (uint32_t)0x200;
-} 
+}
 
 /**
 * @brief  Sets the WWDG counter value.
@@ -174,7 +174,7 @@ void WWDG_SetCounter(uint8_t Counter)
 }
 
 /**
-* @brief  Enables WWDG and load the counter value.                  
+* @brief  Enables WWDG and load the counter value.
 * @param Counter: specifies the watchdog counter value.
 *   This parameter must be a number between 0x40 and 0x7F.
 * @retval : None

@@ -55,7 +55,7 @@ uint32_t g_actualBufferBytes = sizeof(s_page_buffer);
 void fill_data_buffer(uint8_t * buffer, uint32_t sectorNumber, void * p)
 {
     uint32_t i;
-    
+
     for (i=0; i < SIZE_IN_WORDS(g_actualBufferBytes); ++i)
     {
         buffer[i] = (sectorNumber ^ ((~sectorNumber) << 8) ^ (sectorNumber << 16) ^ ((~sectorNumber) << 24)) ^ (uint32_t)p ^ 0x96f187e2 ^ i ^ (i << 8) ^ (i << 16) ^ (i << 24);
@@ -75,13 +75,13 @@ void clear_aux()
 void fill_aux(uint8_t * buffer, uint32_t sectorNumber)
 {
     memset(buffer, 0xff, sizeof(s_aux_buffer));
-    
+
     int i;
     for (i=0; i<3; ++i)
     {
         buffer[i] = (sectorNumber ^ ((~sectorNumber) << 8) ^ (sectorNumber << 16) ^ ((~sectorNumber) << 24)) ^ 0x2e781f69;
     }
-    
+
     // Make sure it doesn't look like a bad block
     ((uint8_t *)buffer)[0] = 0xff;
 }
@@ -101,7 +101,7 @@ bool compare_buffers(const void * a, const void * b, uint32_t count)
             printf("buffer mismatch at offset %u (actual:0x%02x != expected:0x%02x)\n", offset, *(ca - 1), *(cb - 1));
             return false;
         }
-        
+
         offset++;
     }
 #else
@@ -116,23 +116,23 @@ bool compare_buffers(const void * a, const void * b, uint32_t count)
             printf("buffer mismatch at word %u (actual:0x%08x != expected:0x%08x)\n", offset, *(ca - 1), *(cb - 1));
             return false;
         }
-        
+
         offset++;
     }
 #endif
-    
+
     return true;
 }
 
 int gpmi_test(void)
 {
     int status;
-    
+
     printf("---- GPMI driver unit test ----\n\n");
-    
+
     BchEccLayout_t ecc;
     status = bch_calculate_best_level(4096, 218, &ecc);
-    
+
     g_actualBufferBytes = 4096;
 
     status = gpmi_init(0, 0);
@@ -141,16 +141,16 @@ int gpmi_test(void)
         printf("GPMI init failed with error %d\n", status);
         return status;
     }
-    
+
     status = gpmi_nand_configure(3, 2, 128, &ecc);
     if (status)
     {
         printf("gpmi_nand_configure failed with error %d\n", status);
         return status;
     }
-    
+
     // ----------
-    
+
     printf("Sending reset...\n");
     status = gpmi_nand_reset(0);
     if (status)
@@ -158,7 +158,7 @@ int gpmi_test(void)
         printf("Reset failed with error %d\n", status);
         return status;
     }
-    
+
     printf("Reading ID...\n");
     uint8_t idResult[6];
     status = gpmi_nand_read_id(0, (uint8_t *)&idResult);
@@ -168,9 +168,9 @@ int gpmi_test(void)
         return status;
     }
     printf("NAND ID = %02x-%02x-%02x-%02x-%02x-%02x\n", idResult[0], idResult[1], idResult[2], idResult[3], idResult[4], idResult[5]);
-    
+
     // ----------
-    
+
     // Erase block 0.
     printf("Erasing block 0...\n");
     status = gpmi_nand_erase_block(0, 0);
@@ -179,7 +179,7 @@ int gpmi_test(void)
         printf("Failed to erase with error %d\n", status);
         return status;
     }
-    
+
     // Read page 0 of erased block. Compare against erased page.
     printf("Raw read from page 0...\n");
     status = gpmi_nand_read_raw(0, 0, (uint8_t *)&s_read_buffer, 0, 4096);
@@ -198,11 +198,11 @@ int gpmi_test(void)
     {
         printf("Raw read back comparison failed (may be due to bit errors and not a real problem)!\n");
     }
-    
+
     // Fill buffer with pattern.
     fill_data_buffer((uint8_t *)&s_page_buffer, 0, 0);
     fill_aux((uint8_t *)&s_aux_buffer, 0);
-    
+
     // Raw write to page 0.
     printf("Raw write to page 0...\n");
     status = gpmi_nand_write_raw(0, 0, (uint8_t *)&s_page_buffer, 0, 4096);
@@ -211,7 +211,7 @@ int gpmi_test(void)
         printf("Raw write failed with error %d\n", status);
         return status;
     }
-    
+
     // Raw read from page 0 and compare (which may fail due to bit errors).
     printf("Raw read from page 0...\n");
     status = gpmi_nand_read_raw(0, 0, (uint8_t *)&s_read_buffer, 0, 4096);
@@ -229,9 +229,9 @@ int gpmi_test(void)
     {
         printf("Raw read back comparison failed (may be due to bit errors and not a real problem)!\n");
     }
-    
+
     // ---------- ECC r/w test
-    
+
 #if ENABLE_ECC_TEST
     // Erase block 0.
     printf("Erasing block 0...\n");
@@ -241,11 +241,11 @@ int gpmi_test(void)
         printf("Failed to erase with error %d\n", status);
         return status;
     }
-    
+
     // Write pattern to page 0.
     fill_data_buffer((uint8_t *)&s_page_buffer, 0, 0);
     fill_aux((uint8_t *)&s_aux_buffer, 0);
-    
+
     // Write page 0.
     printf("Writing page 0...\n");
     status = gpmi_nand_write_page(0, 0, (uint8_t *)&s_page_buffer, (uint8_t *)&s_aux_buffer);
@@ -254,7 +254,7 @@ int gpmi_test(void)
         printf("Failed to write page with error %d\n", status);
         return status;
     }
-    
+
     // Read back page 0 and compare.
     printf("Reading page 0...\n");
     status = gpmi_nand_read_page(0, 0, (uint8_t *)&s_read_buffer, (uint8_t *)&s_aux_buffer);
@@ -263,7 +263,7 @@ int gpmi_test(void)
         printf("Failed to read page with error %d\n", status);
         return status;
     }
-    
+
     if (!compare_buffers((uint8_t *)&s_page_buffer, (uint8_t *)&s_read_buffer, g_actualBufferBytes))
     {
         printf("Read back comparison failed!\n");
@@ -272,7 +272,7 @@ int gpmi_test(void)
 #endif // ENABLE_ECC_TEST
 
     printf("Done!\n");
-    
+
     return status;
 }
 

@@ -44,11 +44,11 @@
 #include "ldb/ldb_def.h"
 #include "registers/regsipu.h"
 
-#define FRAME_MAX_WIDTH		1920
-#define FRAME_MAX_HEIGHT	1088
+#define FRAME_MAX_WIDTH        1920
+#define FRAME_MAX_HEIGHT    1088
 
-#define CPMEM_WORD0_OFFSET	0x0
-#define CPMEM_WORD1_OFFSET	0x20
+#define CPMEM_WORD0_OFFSET    0x0
+#define CPMEM_WORD1_OFFSET    0x20
 
 enum {
     IDMAC_SINGLE_BUFFER = 0x0,
@@ -79,22 +79,22 @@ enum {
 };
 
 // DI counter definitions
-#define DI_COUNTER_BASECLK 	 	0
-#define DI_COUNTER_IHSYNC   	1
-#define DI_COUNTER_OHSYNC   	2
-#define DI_COUNTER_OVSYNC   	3
-#define DI_COUNTER_ALINE    	4
-#define DI_COUNTER_ACLOCK   	5
+#define DI_COUNTER_BASECLK          0
+#define DI_COUNTER_IHSYNC       1
+#define DI_COUNTER_OHSYNC       2
+#define DI_COUNTER_OVSYNC       3
+#define DI_COUNTER_ALINE        4
+#define DI_COUNTER_ACLOCK       5
 
 // IDMAC defines
-#define INTERLEAVED_MODE 		0
-#define NON_INTERLEAVED_MODE 	1
+#define INTERLEAVED_MODE         0
+#define NON_INTERLEAVED_MODE     1
 
-#define SHIFT_DISABLE 			0
-#define SHIFT_ENABLE  			1
+#define SHIFT_DISABLE             0
+#define SHIFT_ENABLE              1
 
-#define CSC_ENABLE				1
-#define CSC_DISABLE				0
+#define CSC_ENABLE                1
+#define CSC_DISABLE                0
 
 enum {
     VDI_C_CH_420 = 0x00000000,
@@ -134,138 +134,138 @@ typedef struct ipu_cpmem {
 } ipu_cpmem_t;
 
 #define ipu_cpmem_addr(ipu, ch) ({ \
-	uint32_t temp = (uint32_t)(((struct ipu_cpmem *)(REGS_IPU_BASE(ipu)+IPU_MEMORY_OFFSET)) + (ch)); \
-		temp;\
+    uint32_t temp = (uint32_t)(((struct ipu_cpmem *)(REGS_IPU_BASE(ipu)+IPU_MEMORY_OFFSET)) + (ch)); \
+        temp;\
 })
 
 #define _param_word(base, w) \
-	(((struct ipu_cpmem *)(base))->word[(w)].data)
+    (((struct ipu_cpmem *)(base))->word[(w)].data)
 
 /*define non-interleaved channel descriptor.
-	p1 - word 0 or 1
-	p2 - offset
-	p3 - width
+    p1 - word 0 or 1
+    p2 - offset
+    p3 - width
 */
-#define NON_INTERLEAVED_XV 		0, 0, 10
-#define NON_INTERLEAVED_YV 		0, 10, 9
-#define NON_INTERLEAVED_XB 		0, 19,13
-#define NON_INTERLEAVED_YB 		0, 32,12
-#define NON_INTERLEAVED_NSBB 	0, 44, 1
-#define NON_INTERLEAVED_CF 		0, 45, 1
-#define NON_INTERLEAVED_UBO 	0, 46,22
-#define NON_INTERLEAVED_VBO 	0, 68,22
-#define NON_INTERLEAVED_IOX 	0, 90, 4
-#define NON_INTERLEAVED_RDRW 	0, 94, 1
-#define NON_INTERLEAVED_SO 		0, 113,1
-#define NON_INTERLEAVED_BNDM  	0, 114,3
-#define NON_INTERLEAVED_BM 		0, 117,2
-#define NON_INTERLEAVED_ROT 	0, 119,1
-#define NON_INTERLEAVED_HF 		0, 120,1
-#define NON_INTERLEAVED_VF 		0, 121,1
-#define NON_INTERLEAVED_THE 	0, 122,1
-#define NON_INTERLEAVED_CAP 	0, 123,1
-#define NON_INTERLEAVED_CAE 	0, 124,1
-#define NON_INTERLEAVED_FW 		0, 125,13
-#define NON_INTERLEAVED_FH 		0, 138,12
-#define NON_INTERLEAVED_EBA0 	1, 0, 29
-#define NON_INTERLEAVED_EBA1 	1, 29,29
-#define NON_INTERLEAVED_ILO 	1, 58,20
-#define NON_INTERLEAVED_NPB 	1, 78, 7
-#define NON_INTERLEAVED_PFS 	1, 85, 4
-#define NON_INTERLEAVED_ALU 	1, 89, 1
-#define NON_INTERLEAVED_ALBM 	1, 90, 2
-#define NON_INTERLEAVED_ID 		1, 93, 2
-#define NON_INTERLEAVED_TH 		1, 95, 7
-#define NON_INTERLEAVED_SLY 	1, 102,14
-#define NON_INTERLEAVED_WID3 	1, 125,3
-#define NON_INTERLEAVED_SLUV 	1, 128,14
-#define NON_INTERLEAVED_CRE 	1, 149,1
+#define NON_INTERLEAVED_XV         0, 0, 10
+#define NON_INTERLEAVED_YV         0, 10, 9
+#define NON_INTERLEAVED_XB         0, 19,13
+#define NON_INTERLEAVED_YB         0, 32,12
+#define NON_INTERLEAVED_NSBB     0, 44, 1
+#define NON_INTERLEAVED_CF         0, 45, 1
+#define NON_INTERLEAVED_UBO     0, 46,22
+#define NON_INTERLEAVED_VBO     0, 68,22
+#define NON_INTERLEAVED_IOX     0, 90, 4
+#define NON_INTERLEAVED_RDRW     0, 94, 1
+#define NON_INTERLEAVED_SO         0, 113,1
+#define NON_INTERLEAVED_BNDM      0, 114,3
+#define NON_INTERLEAVED_BM         0, 117,2
+#define NON_INTERLEAVED_ROT     0, 119,1
+#define NON_INTERLEAVED_HF         0, 120,1
+#define NON_INTERLEAVED_VF         0, 121,1
+#define NON_INTERLEAVED_THE     0, 122,1
+#define NON_INTERLEAVED_CAP     0, 123,1
+#define NON_INTERLEAVED_CAE     0, 124,1
+#define NON_INTERLEAVED_FW         0, 125,13
+#define NON_INTERLEAVED_FH         0, 138,12
+#define NON_INTERLEAVED_EBA0     1, 0, 29
+#define NON_INTERLEAVED_EBA1     1, 29,29
+#define NON_INTERLEAVED_ILO     1, 58,20
+#define NON_INTERLEAVED_NPB     1, 78, 7
+#define NON_INTERLEAVED_PFS     1, 85, 4
+#define NON_INTERLEAVED_ALU     1, 89, 1
+#define NON_INTERLEAVED_ALBM     1, 90, 2
+#define NON_INTERLEAVED_ID         1, 93, 2
+#define NON_INTERLEAVED_TH         1, 95, 7
+#define NON_INTERLEAVED_SLY     1, 102,14
+#define NON_INTERLEAVED_WID3     1, 125,3
+#define NON_INTERLEAVED_SLUV     1, 128,14
+#define NON_INTERLEAVED_CRE     1, 149,1
 
 /*define interleaved channel descriptor.
-	p1 - word 0 or 1
-	p2 - offset
-	p3 - width
+    p1 - word 0 or 1
+    p2 - offset
+    p3 - width
 */
-#define INTERLEAVED_XV 		0, 0, 10
-#define INTERLEAVED_YV 		0, 10, 9
-#define INTERLEAVED_XB 		0, 19,13
-#define INTERLEAVED_YB 		0, 32,12
-#define INTERLEAVED_NSBB 	0, 44, 1
-#define INTERLEAVED_CF 		0, 45, 1
-#define INTERLEAVED_SX 		0, 46,12
-#define INTERLEAVED_SY 		0, 58,11
-#define INTERLEAVED_NS 		0, 69,10
-#define INTERLEAVED_SDX 	0, 79, 7
-#define INTERLEAVED_SM 		0, 86,10
-#define INTERLEAVED_SCC 	0, 96, 1
-#define INTERLEAVED_SCE 	0, 97, 1
-#define INTERLEAVED_SDY 	0, 98, 7
-#define INTERLEAVED_SDRX 	0, 105,1
-#define INTERLEAVED_SDRY 	0, 106,1
-#define INTERLEAVED_BPP 	0, 107,3
-#define INTERLEAVED_DECSEL 	0, 110,2
-#define INTERLEAVED_DIM 	0, 112,1
-#define INTERLEAVED_SO 		0, 113,1
-#define INTERLEAVED_BNDM  	0, 114,3
-#define INTERLEAVED_BM 		0, 117,2
-#define INTERLEAVED_ROT 	0, 119,1
-#define INTERLEAVED_HF 		0, 120,1
-#define INTERLEAVED_VF 		0, 121,1
-#define INTERLEAVED_THE 	0, 122,1
-#define INTERLEAVED_CAP 	0, 123,1
-#define INTERLEAVED_CAE 	0, 124,1
-#define INTERLEAVED_FW 		0, 125,13
-#define INTERLEAVED_FH 		0, 138,12
-#define INTERLEAVED_EBA0 	1, 0, 29
-#define INTERLEAVED_EBA1 	1, 29,29
-#define INTERLEAVED_ILO 	1, 58,20
-#define INTERLEAVED_NPB 	1, 78, 7
-#define INTERLEAVED_PFS 	1, 85, 4
-#define INTERLEAVED_ALU 	1, 89, 1
-#define INTERLEAVED_ALBM 	1, 90, 3
-#define INTERLEAVED_ID 		1, 93, 2
-#define INTERLEAVED_TH 		1, 95, 7
-#define INTERLEAVED_SL 		1, 102,14
-#define INTERLEAVED_WID0 	1, 116,3
-#define INTERLEAVED_WID1 	1, 119,3
-#define INTERLEAVED_WID2 	1, 122,3
-#define INTERLEAVED_WID3 	1, 125,3
-#define INTERLEAVED_OFF0 	1, 128,5
-#define INTERLEAVED_OFF1 	1, 133,5
-#define INTERLEAVED_OFF2 	1, 138,5
-#define INTERLEAVED_OFF3 	1, 143,5
-#define INTERLEAVED_SXYS 	1, 148,1
-#define INTERLEAVED_CRE 	1, 149,1
-#define INTERLEAVED_DECSEL2	1, 150,1
+#define INTERLEAVED_XV         0, 0, 10
+#define INTERLEAVED_YV         0, 10, 9
+#define INTERLEAVED_XB         0, 19,13
+#define INTERLEAVED_YB         0, 32,12
+#define INTERLEAVED_NSBB     0, 44, 1
+#define INTERLEAVED_CF         0, 45, 1
+#define INTERLEAVED_SX         0, 46,12
+#define INTERLEAVED_SY         0, 58,11
+#define INTERLEAVED_NS         0, 69,10
+#define INTERLEAVED_SDX     0, 79, 7
+#define INTERLEAVED_SM         0, 86,10
+#define INTERLEAVED_SCC     0, 96, 1
+#define INTERLEAVED_SCE     0, 97, 1
+#define INTERLEAVED_SDY     0, 98, 7
+#define INTERLEAVED_SDRX     0, 105,1
+#define INTERLEAVED_SDRY     0, 106,1
+#define INTERLEAVED_BPP     0, 107,3
+#define INTERLEAVED_DECSEL     0, 110,2
+#define INTERLEAVED_DIM     0, 112,1
+#define INTERLEAVED_SO         0, 113,1
+#define INTERLEAVED_BNDM      0, 114,3
+#define INTERLEAVED_BM         0, 117,2
+#define INTERLEAVED_ROT     0, 119,1
+#define INTERLEAVED_HF         0, 120,1
+#define INTERLEAVED_VF         0, 121,1
+#define INTERLEAVED_THE     0, 122,1
+#define INTERLEAVED_CAP     0, 123,1
+#define INTERLEAVED_CAE     0, 124,1
+#define INTERLEAVED_FW         0, 125,13
+#define INTERLEAVED_FH         0, 138,12
+#define INTERLEAVED_EBA0     1, 0, 29
+#define INTERLEAVED_EBA1     1, 29,29
+#define INTERLEAVED_ILO     1, 58,20
+#define INTERLEAVED_NPB     1, 78, 7
+#define INTERLEAVED_PFS     1, 85, 4
+#define INTERLEAVED_ALU     1, 89, 1
+#define INTERLEAVED_ALBM     1, 90, 3
+#define INTERLEAVED_ID         1, 93, 2
+#define INTERLEAVED_TH         1, 95, 7
+#define INTERLEAVED_SL         1, 102,14
+#define INTERLEAVED_WID0     1, 116,3
+#define INTERLEAVED_WID1     1, 119,3
+#define INTERLEAVED_WID2     1, 122,3
+#define INTERLEAVED_WID3     1, 125,3
+#define INTERLEAVED_OFF0     1, 128,5
+#define INTERLEAVED_OFF1     1, 133,5
+#define INTERLEAVED_OFF2     1, 138,5
+#define INTERLEAVED_OFF3     1, 143,5
+#define INTERLEAVED_SXYS     1, 148,1
+#define INTERLEAVED_CRE     1, 149,1
+#define INTERLEAVED_DECSEL2    1, 150,1
 
 /*common definition for interleaved and non-interleaved channel descriptor.*/
-#define CPMEM_XV 		NON_INTERLEAVED_XV
-#define CPMEM_YV 		NON_INTERLEAVED_YV
-#define CPMEM_XB 		NON_INTERLEAVED_XB
-#define CPMEM_YB 		NON_INTERLEAVED_YB
-#define CPMEM_NSBB 		NON_INTERLEAVED_NSBB
-#define CPMEM_CF 		NON_INTERLEAVED_CF
-#define CPMEM_SO 		NON_INTERLEAVED_SO
-#define CPMEM_BNDM  	NON_INTERLEAVED_BNDM
-#define CPMEM_BM 		NON_INTERLEAVED_BM
-#define CPMEM_ROT 		NON_INTERLEAVED_ROT
-#define CPMEM_HF 		NON_INTERLEAVED_HF
-#define CPMEM_VF 		NON_INTERLEAVED_VF
-#define CPMEM_THE 		NON_INTERLEAVED_THE
-#define CPMEM_CAP 		NON_INTERLEAVED_CAP
-#define CPMEM_CAE 		NON_INTERLEAVED_CAE
-#define CPMEM_FW 		NON_INTERLEAVED_FW
-#define CPMEM_FH 		NON_INTERLEAVED_FH
-#define CPMEM_EBA0 		NON_INTERLEAVED_EBA0
-#define CPMEM_EBA1 		NON_INTERLEAVED_EBA1
-#define CPMEM_ILO 		NON_INTERLEAVED_ILO
-#define CPMEM_NPB 		NON_INTERLEAVED_NPB
-#define CPMEM_PFS 		NON_INTERLEAVED_PFS
-#define CPMEM_ALU 		NON_INTERLEAVED_ALU
-#define CPMEM_ALBM 		NON_INTERLEAVED_ALBM
-#define CPMEM_ID 		NON_INTERLEAVED_ID
-#define CPMEM_TH 		NON_INTERLEAVED_TH
-#define CPMEM_CRE 		NON_INTERLEAVED_CRE
+#define CPMEM_XV         NON_INTERLEAVED_XV
+#define CPMEM_YV         NON_INTERLEAVED_YV
+#define CPMEM_XB         NON_INTERLEAVED_XB
+#define CPMEM_YB         NON_INTERLEAVED_YB
+#define CPMEM_NSBB         NON_INTERLEAVED_NSBB
+#define CPMEM_CF         NON_INTERLEAVED_CF
+#define CPMEM_SO         NON_INTERLEAVED_SO
+#define CPMEM_BNDM      NON_INTERLEAVED_BNDM
+#define CPMEM_BM         NON_INTERLEAVED_BM
+#define CPMEM_ROT         NON_INTERLEAVED_ROT
+#define CPMEM_HF         NON_INTERLEAVED_HF
+#define CPMEM_VF         NON_INTERLEAVED_VF
+#define CPMEM_THE         NON_INTERLEAVED_THE
+#define CPMEM_CAP         NON_INTERLEAVED_CAP
+#define CPMEM_CAE         NON_INTERLEAVED_CAE
+#define CPMEM_FW         NON_INTERLEAVED_FW
+#define CPMEM_FH         NON_INTERLEAVED_FH
+#define CPMEM_EBA0         NON_INTERLEAVED_EBA0
+#define CPMEM_EBA1         NON_INTERLEAVED_EBA1
+#define CPMEM_ILO         NON_INTERLEAVED_ILO
+#define CPMEM_NPB         NON_INTERLEAVED_NPB
+#define CPMEM_PFS         NON_INTERLEAVED_PFS
+#define CPMEM_ALU         NON_INTERLEAVED_ALU
+#define CPMEM_ALBM         NON_INTERLEAVED_ALBM
+#define CPMEM_ID         NON_INTERLEAVED_ID
+#define CPMEM_TH         NON_INTERLEAVED_TH
+#define CPMEM_CRE         NON_INTERLEAVED_CRE
 
 enum disp_port {
     IPU1_DI0,

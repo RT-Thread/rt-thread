@@ -8,13 +8,13 @@
  *
  * @file disk.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date May-08-2009
  *
- * @brief The file contains Macro's and functions needed by the disk 
+ * @brief The file contains Macro's and functions needed by the disk
  *        application
  *
  *****************************************************************************/
@@ -56,7 +56,7 @@
 /*****************************************************************************
  * Global variables
  *****************************************************************************/
- 
+
 /******************************************************************************
  * Types
  *****************************************************************************/
@@ -66,10 +66,10 @@ typedef struct _disk_variable_struct
 {
     uint_8 app_controller_ID;
     boolean start_app;
-    /* disk space reserved */ 
-    uint_8 storage_disk[512]; 
+    /* disk space reserved */
+    uint_8 storage_disk[512];
     uint_8 disk_lock;
-}DISK_GLOBAL_VARIABLE_STRUCT, *PTR_DISK_GLOBAL_VARIABLE_STRUCT; 
+}DISK_GLOBAL_VARIABLE_STRUCT, *PTR_DISK_GLOBAL_VARIABLE_STRUCT;
 
 /*****************************************************************************
  * Global Functions

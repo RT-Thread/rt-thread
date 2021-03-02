@@ -24,6 +24,6 @@ int main(void)
         rt_pin_write(2, PIN_LOW);
         rt_thread_mdelay(500);
     }
-    
+
     return RT_EOK;
 }

@@ -4,20 +4,20 @@
 //
 // Copyright (c) 2007-2011 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 // Texas Instruments (TI) is supplying this software for use solely and
 // exclusively on TI's microcontroller products. The software is owned by
 // TI and/or its suppliers, and is protected under applicable copyright
 // laws. You may not combine this software with "viral" open-source
 // software in order to form a larger program.
-// 
+//
 // THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
 // NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
 // NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
-// 
+//
 // This is part of revision 8264 of the Stellaris Peripheral Driver Library.
 //
 //*****************************************************************************
@@ -98,8 +98,8 @@ uDMAErrorStatusGet(void)
 //
 //! Clears the uDMA error interrupt.
 //!
-//! This function clears a pending uDMA error interrupt.  This function should 
-//! be called from within the uDMA error interrupt handler to clear the 
+//! This function clears a pending uDMA error interrupt.  This function should
+//! be called from within the uDMA error interrupt handler to clear the
 //! interrupt.
 //!
 //! \return None.
@@ -207,8 +207,8 @@ uDMAChannelIsEnabled(unsigned long ulChannelNum)
 //! \param pControlTable is a pointer to the 1024-byte-aligned base address
 //! of the uDMA channel control table.
 //!
-//! This function configures the base address of the channel control table.  
-//! This table resides in system memory and holds control information for each 
+//! This function configures the base address of the channel control table.
+//! This table resides in system memory and holds control information for each
 //! uDMA channel.  The table must be aligned on a 1024-byte boundary.  The base
 //! address must be configured before any of the channel functions can be used.
 //!
@@ -286,8 +286,8 @@ uDMAControlAlternateBaseGet(void)
 //! transfer.
 //!
 //! This function allows software to request a uDMA channel to begin a
-//! transfer.  This function could be used for performing a memory-to-memory 
-//! transfer or if for some reason, a transfer needs to be initiated by software 
+//! transfer.  This function could be used for performing a memory-to-memory
+//! transfer or if for some reason, a transfer needs to be initiated by software
 //! instead of the peripheral associated with that channel.
 //!
 //! \note If the channel is \b UDMA_CHANNEL_SW and interrupts are used, then
@@ -631,7 +631,7 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //! \param pvDstAddr is the destination address for the transfer.
 //! \param ulTransferSize is the number of data items to transfer.
 //!
-//! This function is used to configure the parameters for a uDMA transfer.  
+//! This function is used to configure the parameters for a uDMA transfer.
 //! These parameters are typically changed often.  The function
 //! uDMAChannelControlSet() MUST be called at least once for this channel prior
 //! to calling this function.
@@ -648,7 +648,7 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //! - \b UDMA_MODE_AUTO to perform a transfer that always completes once
 //!   started even if the request is removed.
 //! - \b UDMA_MODE_PINGPONG to set up a transfer that switches between the
-//!   primary and alternate control structures for the channel.  This mode 
+//!   primary and alternate control structures for the channel.  This mode
 //!   allows use of ping-pong buffering for uDMA transfers.
 //! - \b UDMA_MODE_MEM_SCATTER_GATHER to set up a memory scatter-gather
 //!   transfer.
@@ -657,7 +657,7 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //!
 //! The \e pvSrcAddr and \e pvDstAddr parameters are pointers to the first
 //! location of the data to be transferred.  These addresses should be aligned
-//! according to the item size.  The compiler takes care of this alignment if 
+//! according to the item size.  The compiler takes care of this alignment if
 //! the pointers are pointing to storage of the appropriate data type.
 //!
 //! The \e ulTransferSize parameter is the number of data items, not the number
@@ -671,9 +671,9 @@ uDMAChannelControlSet(unsigned long ulChannelStructIndex,
 //! structure.
 //!
 //! The channel must also be enabled using uDMAChannelEnable() after calling
-//! this function.  The transfer does not begin until the channel has been 
-//! configured and enabled.  Note that the channel is automatically disabled 
-//! after the transfer is completed, meaning that uDMAChannelEnable() must be 
+//! this function.  The transfer does not begin until the channel has been
+//! configured and enabled.  Note that the channel is automatically disabled
+//! after the transfer is completed, meaning that uDMAChannelEnable() must be
 //! called again after setting up the next transfer.
 //!
 //! \note Great care must be taken to not modify a channel control structure
@@ -874,14 +874,14 @@ uDMAChannelScatterGatherSet(unsigned long ulChannelNum, unsigned ulTaskCount,
     pTaskTable = (tDMAControlTable *)pvTaskList;
 
     //
-    // Compute the ending address for the source pointer.  This address is the 
+    // Compute the ending address for the source pointer.  This address is the
     // last element of the last task in the task table
     //
     pControlTable[ulChannelNum].pvSrcEndAddr =
         &pTaskTable[ulTaskCount - 1].ulSpare;
 
     //
-    // Compute the ending address for the destination pointer.  This address 
+    // Compute the ending address for the destination pointer.  This address
     // is the end of the alternate structure for this channel.
     //
     pControlTable[ulChannelNum].pvDstEndAddr =
@@ -1157,8 +1157,8 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
 //! \param pfnHandler is a pointer to the function to be called when the
 //! interrupt is activated.
 //!
-//! This function registers and enables the handler to be called when the uDMA 
-//! controller generates an interrupt.  The \e ulIntChannel parameter should be 
+//! This function registers and enables the handler to be called when the uDMA
+//! controller generates an interrupt.  The \e ulIntChannel parameter should be
 //! one of the following:
 //!
 //! - \b UDMA_INT_SW to register an interrupt handler to process interrupts
@@ -1169,7 +1169,7 @@ uDMAChannelSelectDefault(unsigned long ulDefPeriphs)
 //! \sa IntRegister() for important information about registering interrupt
 //! handlers.
 //!
-//! \note The interrupt handler for the uDMA is for transfer completion when 
+//! \note The interrupt handler for the uDMA is for transfer completion when
 //! the channel UDMA_CHANNEL_SW is used and for error interrupts.  The
 //! interrupts for each peripheral channel are handled through the individual
 //! peripheral interrupt handlers.
@@ -1271,8 +1271,8 @@ uDMAIntStatus(void)
 //! \param ulChanMask is a 32-bit mask with one bit for each uDMA channel.
 //!
 //! This function clears bits in the uDMA interrupt status register according
-//! to which bits are set in \e ulChanMask. There is one bit for each channel. 
-//! If a a bit is set in \e ulChanMask, then that corresponding channel's 
+//! to which bits are set in \e ulChanMask. There is one bit for each channel.
+//! If a a bit is set in \e ulChanMask, then that corresponding channel's
 //! interrupt status is cleared (if it was set).
 //!
 //! \note This function is only available on devices that have the DMA Channel

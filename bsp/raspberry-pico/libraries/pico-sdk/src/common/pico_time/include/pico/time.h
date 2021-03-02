@@ -245,7 +245,7 @@ void sleep_ms(uint32_t ms);
  *             // do something
  *             return true;
  *         }
- *         // will try to sleep until timeout or the next processor event 
+ *         // will try to sleep until timeout or the next processor event
  *     } while (!best_effort_wfe_or_timeout(timeout_time));
  *     return false; // timed out
  * }

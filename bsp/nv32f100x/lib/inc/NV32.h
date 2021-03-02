@@ -1039,21 +1039,21 @@ typedef struct {
    ---------------------------------------------------------------------------- */
 typedef struct ETMRA_MemMap {
   volatile unsigned long EFMCR;
-	volatile unsigned long EFMSEC0;
-	volatile unsigned long EFMSEC1;
-	volatile unsigned long EFMSEC2;
-	volatile unsigned long EFMETM0;
-	volatile unsigned long EFMETM1;
-	volatile unsigned long EFMCMD;
+    volatile unsigned long EFMSEC0;
+    volatile unsigned long EFMSEC1;
+    volatile unsigned long EFMSEC2;
+    volatile unsigned long EFMETM0;
+    volatile unsigned long EFMETM1;
+    volatile unsigned long EFMCMD;
 } *ETMRH_MemMapPtr;
 
 #define EFM_CR_reg(base)    ((base)->EFMCR)
 #define EFM_SEC0_reg(base)  ((base)->EFMSEC0)
 #define EFM_SEC1_reg(base)  ((base)->EFMSEC1)
-#define EFM_SEC2_reg(base)  ((base)->EFMSEC2)   
+#define EFM_SEC2_reg(base)  ((base)->EFMSEC2)
 #define EFM_ETM0_reg(base)  ((base)->EFMETM0)
 #define EFM_ETM1_reg(base)  ((base)->EFMETM1)
-#define EFM_CMD_reg(base)		((base)->EFMCMD)
+#define EFM_CMD_reg(base)        ((base)->EFMCMD)
 
 /** Peripheral Map **/
 #define ETMRH                           ((ETMRH_MemMapPtr)0x40020000u)
@@ -1076,7 +1076,7 @@ typedef struct ETMRA_MemMap {
 #define EFMCMD     EFM_CMD_reg(ETMRH)
 
 typedef struct NVR_BKDOOR_MemMap{
-	  volatile unsigned long Custombkd;
+      volatile unsigned long Custombkd;
 } *NVR_BKDOOR_MemMapPtr;
 
 
@@ -2203,7 +2203,7 @@ typedef struct {
   __IO uint32_t PINSEL;                            /**< Pin Selection Register, offset: 0x8 */
   __IO uint32_t SCGC;                              /**< System Clock Gating Control Register, offset: 0xC */
   __I  uint32_t UUIDL;                             /**< Universally Unique Identifier Low Register, offset: 0x10 */
-  __I  uint32_t UUIDM; 
+  __I  uint32_t UUIDM;
   __I  uint32_t UUIDH;                             /**< Universally Unique Identifier High Register, offset: 0x14 */
   __IO uint32_t BUSDIV;                            /**< BUS Clock Divider Register, offset: 0x18 */
 } SIM_Type;

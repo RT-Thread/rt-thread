@@ -8,7 +8,7 @@
  * @version  V1.0
  * @date     5. January 2015
  *
- * @note     Generated with SVDConv V2.75 
+ * @note     Generated with SVDConv V2.75
  *           from CMSIS SVD File 'SVDConv_CME_M7.svd' Version 1.0,
  *******************************************************************************************************/
 
@@ -152,10 +152,10 @@ typedef struct {                                    /*!< UART0 Structure        
   __I  uint16_t  RESERVED1;
   __I  uint16_t  RX_BUF;                            /*!< receive buffer Register                                               */
   __I  uint16_t  RESERVED2;
-  
+
   union {
     __IO uint32_t  CTRL;                            /*!< control Register                                                      */
-    
+
     struct {
       __IO uint32_t  MODE       :  3;               /*!< asc mode control                                                      */
       __IO uint32_t  STOP       :  2;               /*!< number of stop bits selection                                         */
@@ -171,10 +171,10 @@ typedef struct {                                    /*!< UART0 Structure        
       __IO uint32_t  RX_HALF_FULL:  5;              /*!< receive fifi half full level                                          */
     } CTRL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_MASK;                        /*!< interrupt mask register                                               */
-    
+
     struct {
       __IO uint32_t  RNE        :  1;               /*!< Receive FIFO not empty interrupt                                      */
       __IO uint32_t  TE         :  1;               /*!< Transmitter FIFO empty interrupt                                      */
@@ -189,10 +189,10 @@ typedef struct {                                    /*!< UART0 Structure        
       __IO uint32_t  RX_THRE_REACH:  1;             /*!< Receive threshold reach interrupt                                     */
     } INT_MASK_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  STATUS;                          /*!< status register                                                       */
-    
+
     struct {
       __IO uint32_t  RNE        :  1;               /*!< receiver FIFO not empty                                               */
       __IO uint32_t  TE         :  1;               /*!< Transmitter FIFO empty                                                */
@@ -205,34 +205,34 @@ typedef struct {                                    /*!< UART0 Structure        
   };
   __IO uint8_t   TIMEOUT;                           /*!< timeout Register                                                      */
   __I  uint8_t   RESERVED3[3];
-  
+
   union {
     __IO uint32_t  TX_RESET;                        /*!< transmit reset Register                                               */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< enable                                                                */
     } TX_RESET_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RX_RESET;                        /*!< receive reset Register                                                */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< enable                                                                */
     } RX_RESET_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RUN;                             /*!< uart enable register                                                  */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< enable                                                                */
     } RUN_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_RAW;                         /*!< raw interrupt before mask register                                    */
-    
+
     struct {
       __IO uint32_t  RNE        :  1;               /*!< Receive FIFO not empty interrupt                                      */
       __IO uint32_t  TE         :  1;               /*!< Transmitter FIFO empty interrupt                                      */
@@ -247,10 +247,10 @@ typedef struct {                                    /*!< UART0 Structure        
       __IO uint32_t  RX_THRE_REACH:  1;             /*!< Receive threshold reach interrupt                                     */
     } INT_RAW_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_SEEN;                        /*!< interrupt after mask register                                         */
-    
+
     struct {
       __IO uint32_t  RNE        :  1;               /*!< Receive FIFO not empty interrupt                                      */
       __IO uint32_t  TE         :  1;               /*!< Transmitter FIFO empty interrupt                                      */
@@ -278,37 +278,37 @@ typedef struct {                                    /*!< UART0 Structure        
   */
 
 typedef struct {                                    /*!< WDG Structure                                                         */
-  
+
   union {
     __IO uint32_t  CTRL;                            /*!< control Register                                                      */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< flag indicates if watchdog is enabled or not                          */
       __IO uint32_t  INT_LEN    :  1;               /*!< watchdog report interrupt when COUNTER is 1/4 or 1/2 of LENGTH        */
     } CTRL_b;                                       /*!< BitSize                                                               */
   };
   __IO uint32_t  LEN;                               /*!< Ticks decrease down to 25% or 50% to trigger an interrupt             */
-  
+
   union {
     __IO uint32_t  INT_CTRL;                        /*!< interrupt control                                                     */
-    
+
     struct {
       __IO uint32_t  MASK       :  1;               /*!< mask register                                                         */
       __IO uint32_t  TRIGGER_MODE:  1;              /*!< trigger mode                                                          */
     } INT_CTRL_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_STA;                         /*!< interrupt status register                                             */
-    
+
     struct {
       __IO uint32_t  STA        :  1;               /*!< interrupt status                                                      */
     } INT_STA_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_RAW;                         /*!< interrupt raw register                                                */
-    
+
     struct {
       __IO uint32_t  STA        :  1;               /*!< interrupt status                                                      */
     } INT_RAW_b;                                    /*!< BitSize                                                               */
@@ -327,43 +327,43 @@ typedef struct {                                    /*!< WDG Structure          
   */
 
 typedef struct {                                    /*!< TIMER0 Structure                                                      */
-  
+
   union {
     __IO uint32_t  CTRL;                            /*!< control Register                                                      */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< flag indicates if timer is enabled or not                             */
     } CTRL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TYPE;                            /*!< type Register                                                         */
-    
+
     struct {
       __IO uint32_t  SIGNLE_SHOT:  1;               /*!< indicate timer generate only one interrupt if not reload              */
     } TYPE_b;                                       /*!< BitSize                                                               */
   };
   __IO uint32_t  LEN;                               /*!< length                                                                */
-  
+
   union {
     __IO uint32_t  INT_EN;                          /*!< interrupt enable                                                      */
-    
+
     struct {
       __IO uint32_t  EN_REVERSE :  1;               /*!< flag indicates if timer is disable or not                             */
     } INT_EN_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_STA;                         /*!< interrupt status                                                      */
-    
+
     struct {
       __IO uint32_t  STA        :  1;               /*!< interrupt status                                                      */
     } INT_STA_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_RAW;                         /*!< interrupt raw register                                                */
-    
+
     struct {
       __IO uint32_t  STA        :  1;               /*!< interrupt status                                                      */
     } INT_RAW_b;                                    /*!< BitSize                                                               */
@@ -382,10 +382,10 @@ typedef struct {                                    /*!< TIMER0 Structure       
   */
 
 typedef struct {                                    /*!< SPI0 Structure                                                        */
-  
+
   union {
     __I  uint32_t  STATUS;                          /*!< status Register                                                       */
-    
+
     struct {
       __I  uint32_t  RFIFO_EMPTY:  1;               /*!< receive fifo is empty                                                 */
       __I  uint32_t  RFIFO_FULL :  1;               /*!< receive fifo is full                                                  */
@@ -398,10 +398,10 @@ typedef struct {                                    /*!< SPI0 Structure         
       __I  uint32_t  BUSY       :  1;               /*!< indecates if SPI is idle or busy                                      */
     } STATUS_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTRL;                            /*!< control Register                                                      */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< indicates if SPI is enabled or not                                    */
       __IO uint32_t  RX_EN      :  1;               /*!< indicates if SPI receiver is enabled or not                           */
@@ -412,10 +412,10 @@ typedef struct {                                    /*!< SPI0 Structure         
       __IO uint32_t  RX_BIT_SEQUENCE:  1;           /*!< receive bit sequence. 0: MSB is received first                        */
     } CTRL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_MASK;                        /*!< interrupt mask Register                                               */
-    
+
     struct {
       __IO uint32_t  RFIFO_UNDERFLOW:  1;           /*!< receive fifo underflow interrupt                                      */
       __IO uint32_t  RFIFO_OVERFLOW:  1;            /*!< receive fifo overflow interrupt                                       */
@@ -426,10 +426,10 @@ typedef struct {                                    /*!< SPI0 Structure         
       __IO uint32_t  DONE       :  1;               /*!< transmit done interrupt                                               */
     } INT_MASK_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_STATUS;                      /*!< interrupt Register                                                    */
-    
+
     struct {
       __IO uint32_t  RFIFO_UNDERFLOW:  1;           /*!< receive fifo underflow interrupt                                      */
       __IO uint32_t  RFIFO_OVERFLOW:  1;            /*!< receive fifo overflow interrupt                                       */
@@ -440,10 +440,10 @@ typedef struct {                                    /*!< SPI0 Structure         
       __IO uint32_t  DONE       :  1;               /*!< transmit done interrupt                                               */
     } INT_STATUS_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_RAW;                         /*!< interrupt raw Register                                                */
-    
+
     struct {
       __IO uint32_t  RFIFO_UNDERFLOW:  1;           /*!< receive fifo underflow interrupt                                      */
       __IO uint32_t  RFIFO_OVERFLOW:  1;            /*!< receive fifo overflow interrupt                                       */
@@ -454,10 +454,10 @@ typedef struct {                                    /*!< SPI0 Structure         
       __IO uint32_t  DONE       :  1;               /*!< transmit done interrupt                                               */
     } INT_RAW_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  BCNT;                            /*!< bit length while transmitting and receiving                           */
-    
+
     struct {
       __IO uint32_t  CNT        :  5;               /*!< bit length while transmitting and receiving, BCNT + 1                 */
     } BCNT_b;                                       /*!< BitSize                                                               */
@@ -467,10 +467,10 @@ typedef struct {                                    /*!< SPI0 Structure         
   __IO uint16_t  DIV;                               /*!< frequency division register, fsck = fclk_io / (DIV + 1) / 2           */
   __I  uint16_t  RESERVED1;
   __IO uint32_t  TRANS_CNT;                         /*!< transmit data length, data number = TRANS_CNT + 1                     */
-  
+
   union {
     __O  uint32_t  TRANS_START;                     /*!< transmit startup register, write 1 to trigger transmision once        */
-    
+
     struct {
       __O  uint32_t  TX_TRIGGER :  1;               /*!< write 1 to trigger transmision once                                   */
     } TRANS_START_b;                                /*!< BitSize                                                               */
@@ -489,39 +489,39 @@ typedef struct {                                    /*!< SPI0 Structure         
   */
 
 typedef struct {                                    /*!< I2C0 Structure                                                        */
-  
+
   union {
     __IO uint32_t  CTRL;                            /*!< control Register                                                      */
-    
+
     struct {
       __IO uint32_t  MODE       :  1;               /*!< master or slave mode                                                  */
       __IO uint32_t  MASTER_ADDR_WIDTH:  1;         /*!< 7- or 10-bits address as a master                                     */
       __IO uint32_t  SLAVE_ADDR_WIDTH:  1;          /*!< 7- or 10-bits address width as a slave                                */
     } CTRL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint16_t  TAR;                             /*!< target address Register                                               */
-    
+
     struct {
       __IO uint16_t  ADDR10     : 10;               /*!< 7- or 10-bits address                                                 */
       __IO uint16_t  START_BYTE :  1;               /*!< Enable start Byte for each transfer                                   */
     } TAR_b;                                        /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED0;
-  
+
   union {
     __IO uint16_t  SAR;                             /*!< slave address Register                                                */
-    
+
     struct {
       __IO uint16_t  ADDR10     : 10;               /*!< 7- or 10-bits address                                                 */
     } SAR_b;                                        /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED1;
-  
+
   union {
     __IO uint32_t  DATA_CMD;                        /*!< I2C transfer data/command entry                                       */
-    
+
     struct {
       __IO uint32_t  DATA       :  8;               /*!< 8-bits data                                                           */
       __O  uint32_t  RD_CMD     :  1;               /*!< read command for master mode only, write 0 if slave mode              */
@@ -529,30 +529,30 @@ typedef struct {                                    /*!< I2C0 Structure         
       __O  uint32_t  WR_RD_CMD  :  1;               /*!< write and read command for master mode only                           */
     } DATA_CMD_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  WRITE_READ_CNT;                  /*!< I2C write and read data byte counter Register                         */
-    
+
     struct {
       __IO uint32_t  RD_BYTE_CNT:  9;               /*!< Decide the number of bytes read back as a master-receiver             */
            uint32_t             :  7;
       __IO uint32_t  WR_BYTE_CNT:  9;               /*!< Decide the number of byte to send as a master-transmitter             */
     } WRITE_READ_CNT_b;                             /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SCL_CNT;                         /*!< I2C clk pulse counter                                                 */
-    
+
     struct {
       __IO uint32_t  HIGH_LEVEL_TICK: 16;           /*!< the SCL clock high-period count                                       */
       __IO uint32_t  LOW_LEVEL_TICK: 16;            /*!< the SCL clock low-period count                                        */
     } SCL_CNT_b;                                    /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED2;
-  
+
   union {
     __I  uint32_t  INT_STATUS;                      /*!< I2C interrupt sources                                                 */
-    
+
     struct {
       __I  uint32_t  RX_UNDER   :  1;               /*!< receiver underflow                                                    */
       __I  uint32_t  RX_OVER    :  1;               /*!< receiver overflow                                                     */
@@ -566,10 +566,10 @@ typedef struct {                                    /*!< I2C0 Structure         
       __I  uint32_t  WR_REQ     :  1;               /*!< write request                                                         */
     } INT_STATUS_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_MASK;                        /*!< I2C interrupt mask register                                           */
-    
+
     struct {
       __I  uint32_t  RX_UNDER   :  1;               /*!< receiver underflow                                                    */
       __I  uint32_t  RX_OVER    :  1;               /*!< receiver overflow                                                     */
@@ -584,88 +584,88 @@ typedef struct {                                    /*!< I2C0 Structure         
     } INT_MASK_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED3;
-  
+
   union {
     __IO uint32_t  RX_TL;                           /*!< I2C receive FIFO threshold                                            */
-    
+
     struct {
       __IO uint32_t  THRESHOLD  :  5;               /*!< FIFO threashold                                                       */
     } RX_TL_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TX_TL;                           /*!< I2C transmit FIFO threshold                                           */
-    
+
     struct {
       __IO uint32_t  THRESHOLD  :  5;               /*!< FIFO threashold                                                       */
     } TX_TL_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_ALL_INT;                     /*!< I2C clear all interrupt register                                      */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear all individual interrupts                 */
     } CLR_ALL_INT_b;                                /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_RX_UNDER;                    /*!< I2C clear RX_UNDER interrupt                                          */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear the RX_UNDER interrupt (bit 19)
                                                          of the I2C_STATUS register                                            */
     } CLR_RX_UNDER_b;                               /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_RX_OVER;                     /*!< I2C clear RX_OVER interrupt                                           */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear the RX_OVER interrupt (bit 20) of
                                                          the I2C_STATUS register                                               */
     } CLR_RX_OVER_b;                                /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_TX_OVER;                     /*!< I2C clear TX_OVER interrupt                                           */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear the TX_OVER interrupt (bit 22) of
                                                          the I2C_STATUS register                                               */
     } CLR_TX_OVER_b;                                /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_RD_REQ;                      /*!< I2C clear RD_REQ interrupt                                            */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear the RD_REQ interrupt (bit 24) of
                                                          the I2C_STATUS register                                               */
     } CLR_RD_REQ_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_TX_ABRT;                     /*!< I2C clear TX_ABRT interrupt                                           */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear the TX_ABRT interrupts (bit 25 ,
                                                          bit 18, bit 17, bit 16 and bit 15) of the I2C_STATUS register.        */
     } CLR_TX_ABRT_b;                                /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_RX_DONE;                     /*!< I2C clear RX_DONE interrupt                                           */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear the RX_DONE interrupt (bit 26) of
                                                          the I2C_STATUS register                                               */
     } CLR_RX_DONE_b;                                /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ENABLE;                          /*!< I2C enable register                                                   */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< enable device                                                         */
            uint32_t             : 30;
@@ -673,10 +673,10 @@ typedef struct {                                    /*!< I2C0 Structure         
                                                          interrupts deserted                                                   */
     } ENABLE_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  STATUS;                          /*!< I2C status register                                                   */
-    
+
     struct {
       __I  uint32_t  BUSY       :  1;               /*!< I2C busy Status                                                       */
       __I  uint32_t  TX_FIFO_NOT_FULL:  1;          /*!< transmit FIFO is not full                                             */
@@ -709,36 +709,36 @@ typedef struct {                                    /*!< I2C0 Structure         
       __I  uint32_t  MST_WR_RD_FLAG:  1;            /*!< Master is executing write-read command                                */
     } STATUS_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  TX_FIFO_LEVEL;                   /*!< I2C transmit FIFO level                                               */
-    
+
     struct {
       __I  uint32_t  LEVEL      :  5;               /*!< FIFO level                                                            */
     } TX_FIFO_LEVEL_b;                              /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  RX_FIFO_LEVEL;                   /*!< I2C receive FIFO level                                                */
-    
+
     struct {
       __I  uint32_t  LEVEL      :  5;               /*!< FIFO level                                                            */
     } RX_FIFO_LEVEL_b;                              /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED4;
-  
+
   union {
     __O  uint32_t  SLAVE_NACK;                      /*!< I2C slave send a data NACK                                            */
-    
+
     struct {
       __O  uint32_t  NACK       :  1;               /*!< data NACK                                                             */
     } SLAVE_NACK_b;                                 /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED5;
-  
+
   union {
     __IO uint32_t  SDA_SETUP;                       /*!< I2C SDA setup timer                                                   */
-    
+
     struct {
       __IO uint32_t  TSETUP     : 10;               /*!< This counter defines the max value of the following constrains:THD:STA
                                                          TSU:STO,TSETUP: T / INPUT_CLK_PERIOD                                  */
@@ -746,10 +746,10 @@ typedef struct {                                    /*!< I2C0 Structure         
                                                          / INPUT_CLK_PERIOD                                                    */
     } SDA_SETUP_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TSU_STA_SETUP;                   /*!< I2C Tsu_sta and Tbuf_free timer                                       */
-    
+
     struct {
       __IO uint32_t  TBUF       : 10;               /*!< This counter defines the constrain of bus free interval: Tbuf,
                                                          Tbuf : Tbus_free / INPUT_CLK_PERIOD                                   */
@@ -761,10 +761,10 @@ typedef struct {                                    /*!< I2C0 Structure         
       __IO uint32_t  SCL_FILTER_EN:  1;             /*!< SCL filter enable bit                                                 */
     } TSU_STA_SETUP_b;                              /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CLR_TX_DONE;                     /*!< I2C clear TX_DONE interrupt                                           */
-    
+
     struct {
       __I  uint32_t  CLEAR      :  1;               /*!< Read this register to clear the TX_DONE interrupt (bit 27) of
                                                          the I2C_STATUS register                                               */
@@ -783,20 +783,20 @@ typedef struct {                                    /*!< I2C0 Structure         
   */
 
 typedef struct {                                    /*!< RTC Structure                                                         */
-  
+
   union {
     __IO uint32_t  INT_STATUS;                      /*!< interrupt Register                                                    */
-    
+
     struct {
       __IO uint32_t  SECOND     :  1;               /*!< 1s interrupt, write 1 clear 0                                         */
       __IO uint32_t  MILLSECOND :  1;               /*!< 1ms interrupt, write 1 clear 0                                        */
     } INT_STATUS_b;                                 /*!< BitSize                                                               */
   };
   __IO uint32_t  SECOND;                            /*!< current seconds of system time                                        */
-  
+
   union {
     __IO uint16_t  MILLSECOND;                      /*!< current millseconds of system time                                    */
-    
+
     struct {
       __IO uint16_t  MS         : 10;               /*!< micro seconds                                                         */
     } MILLSECOND_b;                                 /*!< BitSize                                                               */
@@ -822,10 +822,10 @@ typedef struct {                                    /*!< GPIO Structure         
   __IO uint32_t  GPIO_INT_STATUS;                   /*!< GPIO input interrupt status                                           */
   __IO uint32_t  GPIO_INT_RAW;                      /*!< GPIO input interrupt raw                                              */
   __IO uint32_t  GPIO_POSITIVE_EDGE_INT_TRIGGER;    /*!< triggers an interrupt while a positive edge, else negitive edge       */
-  
+
   union {
     __IO uint32_t  PWM_OUT_SEL;                     /*!< Select gpio output from PWM                                           */
-    
+
     struct {
       __IO uint32_t  GPIO_31    :  1;               /*!< GPIO[31] is selected to output PWM                                    */
       __IO uint32_t  GPIO_H_9   :  1;               /*!< GPIO_H[9] is selected to output PWM                                   */
@@ -833,46 +833,46 @@ typedef struct {                                    /*!< GPIO Structure         
       __IO uint32_t  GPIO_H_20  :  1;               /*!< GPIO_H[20] is selected to output PWM                                  */
     } PWM_OUT_SEL_b;                                /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  PWM_OUT0_LEN;                    /*!< Pwm channel 0 paramters                                               */
-    
+
     struct {
       __IO uint32_t  LOW_LEVEL_TICK: 16;            /*!< low level width = ticks + 1                                           */
       __IO uint32_t  HIGH_LEVEL_TICK: 16;           /*!< high level width = ticks + 1                                          */
     } PWM_OUT0_LEN_b;                               /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  PWM_OUT1_LEN;                    /*!< Pwm channel 1 paramters                                               */
-    
+
     struct {
       __IO uint32_t  LOW_LEVEL_TICK: 16;            /*!< low level width = ticks + 1                                           */
       __IO uint32_t  HIGH_LEVEL_TICK: 16;           /*!< high level width = ticks + 1                                          */
     } PWM_OUT1_LEN_b;                               /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  PWM_OUT2_LEN;                    /*!< Pwm channel 2 paramters                                               */
-    
+
     struct {
       __IO uint32_t  LOW_LEVEL_TICK: 16;            /*!< low level width = ticks + 1                                           */
       __IO uint32_t  HIGH_LEVEL_TICK: 16;           /*!< high level width = ticks + 1                                          */
     } PWM_OUT2_LEN_b;                               /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  PWM_OUT3_LEN;                    /*!< Pwm channel 3 paramters                                               */
-    
+
     struct {
       __IO uint32_t  LOW_LEVEL_TICK: 16;            /*!< low level width = ticks + 1                                           */
       __IO uint32_t  HIGH_LEVEL_TICK: 16;           /*!< high level width = ticks + 1                                          */
     } PWM_OUT3_LEN_b;                               /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  PWM_OUT_EN;                      /*!< Pwm enable                                                            */
-    
+
     struct {
       __IO uint32_t  GPIO_31    :  1;               /*!< GPIO[31] is selected to output PWM                                    */
       __IO uint32_t  GPIO_H_9   :  1;               /*!< GPIO_H[9] is selected to output PWM                                   */
@@ -909,10 +909,10 @@ typedef struct {                                    /*!< GPIO Structure         
   */
 
 typedef struct {                                    /*!< NOR_FLASH Structure                                                   */
-  
+
   union {
     __IO uint32_t  CTRL0;                           /*!< control Register 0                                                    */
-    
+
     struct {
       __IO uint32_t  DIV        :  8;               /*!< frequency division register, fsck = fclk_io / (DIV + 1) / 2           */
       __IO uint32_t  CS_REVALID_INTERVAL:  8;       /*!< interval from CS invalid to valid, number of half cycle of SCK        */
@@ -920,19 +920,19 @@ typedef struct {                                    /*!< NOR_FLASH Structure    
                                                          contains all in transparent state. 0 is unlimited                     */
     } CTRL0_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTRL1;                           /*!< control Register 1                                                    */
-    
+
     struct {
       __IO uint32_t  CMD        :  8;               /*!< operated command                                                      */
       __IO uint32_t  ADDRESS    : 24;               /*!< RW address                                                            */
     } CTRL1_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TRIGGER;                         /*!< trigger register                                                      */
-    
+
     struct {
       __O  uint32_t  OP_START   :  1;               /*!< operation start.                                                      */
       __IO uint32_t  OP_CLEAN   :  1;               /*!< operation clean, stop current opration and clean FIFO                 */
@@ -940,10 +940,10 @@ typedef struct {                                    /*!< NOR_FLASH Structure    
       __IO uint32_t  TRSP_EN    :  1;               /*!< enable transparent operation                                          */
     } TRIGGER_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  STATUS;                          /*!< status register                                                       */
-    
+
     struct {
       __I  uint32_t  BUSY       :  1;               /*!< reading or writting                                                   */
       __I  uint32_t  RD_FIFO_ALMOST_FULL:  1;       /*!< read FIFO is almost full                                              */
@@ -956,10 +956,10 @@ typedef struct {                                    /*!< NOR_FLASH Structure    
   };
   __IO uint32_t  DATA;                              /*!< data register. lower bits are significant in read and higher
                                                          bits are significant in writting                                      */
-  
+
   union {
     __IO uint32_t  BYPASS;                          /*!< bypass Register, is used for JTAG connecting FLASH directly           */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< enable bypass                                                         */
     } BYPASS_b;                                     /*!< BitSize                                                               */
@@ -977,10 +977,10 @@ typedef struct {                                    /*!< NOR_FLASH Structure    
   */
 
 typedef struct {                                    /*!< ADC Structure                                                         */
-  
+
   union {
     __IO uint32_t  POWERDOWN_RESET;                 /*!< power down and reset Register                                         */
-    
+
     struct {
       __IO uint32_t  RESET_ADC2 :  1;               /*!< ADC2, reset, active high                                              */
       __IO uint32_t  RESET_ADC1 :  1;               /*!< ADC1, reset, active high                                              */
@@ -988,19 +988,19 @@ typedef struct {                                    /*!< ADC Structure          
       __IO uint32_t  POWERDOWN_ADC1:  1;            /*!< ADC1, power down, active high                                         */
     } POWERDOWN_RESET_b;                            /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG0;                            /*!< config Register                                                       */
-    
+
     struct {
       __IO uint32_t  VSEN       :  3;               /*!< ADC-1 VSEN Selection                                                  */
       __IO uint32_t  PHASE_CTRL :  2;               /*!< ADC-1 and ADC-2 CLK Phase Control                                     */
     } CFG0_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_ADC1;                        /*!< config ADC1 register                                                  */
-    
+
     struct {
       __IO uint32_t  SYSTEM_MODE:  3;               /*!< system mode selection                                                 */
       __IO uint32_t  CHANNEL_SEL:  4;               /*!< channel selection                                                     */
@@ -1008,10 +1008,10 @@ typedef struct {                                    /*!< ADC Structure          
       __IO uint32_t  MULTI_CHANNEL_BIT:  8;         /*!< each bit represents each channel                                      */
     } CFG_ADC1_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_ADC2;                        /*!< config ADC1 register                                                  */
-    
+
     struct {
       __IO uint32_t  SYSTEM_MODE:  3;               /*!< system mode selection                                                 */
       __IO uint32_t  CHANNEL_SEL:  4;               /*!< channel selection                                                     */
@@ -1019,34 +1019,34 @@ typedef struct {                                    /*!< ADC Structure          
       __IO uint32_t  MULTI_CHANNEL_BIT:  8;         /*!< each bit represents each channel                                      */
     } CFG_ADC2_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ADC1_FIFO_CLEAR;                 /*!< clear adc1 fifo data                                                  */
-    
+
     struct {
       __IO uint32_t  CLEAR      :  1;               /*!< clear fifo data, active high                                          */
     } ADC1_FIFO_CLEAR_b;                            /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ADC2_FIFO_CLEAR;                 /*!< clear adc2 fifo data                                                  */
-    
+
     struct {
       __IO uint32_t  CLEAR      :  1;               /*!< clear fifo data, active high                                          */
     } ADC2_FIFO_CLEAR_b;                            /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ALL_ADC_FIFO_CLEAR;              /*!< clear adc1 and adc2 fifo data                                         */
-    
+
     struct {
       __IO uint32_t  CLEAR      :  1;               /*!< clear fifo data, active high                                          */
     } ALL_ADC_FIFO_CLEAR_b;                         /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_MASK;                        /*!< interrupt mask register                                               */
-    
+
     struct {
       __IO uint32_t  ADC1_ALMOST_FULL:  1;          /*!< ADC 1 almost full                                                     */
       __IO uint32_t  ADC1_OVERFLOW:  1;             /*!< ADC 1 is overflow                                                     */
@@ -1056,10 +1056,10 @@ typedef struct {                                    /*!< ADC Structure          
       __IO uint32_t  ADC2_EMPTY_ERR:  1;            /*!< ADC 2 read empty error                                                */
     } INT_MASK_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_RAW;                         /*!< interrupt raw register                                                */
-    
+
     struct {
       __IO uint32_t  ADC1_ALMOST_FULL:  1;          /*!< ADC 1 almost full                                                     */
       __IO uint32_t  ADC1_OVERFLOW:  1;             /*!< ADC 1 is overflow                                                     */
@@ -1069,10 +1069,10 @@ typedef struct {                                    /*!< ADC Structure          
       __IO uint32_t  ADC2_EMPTY_ERR:  1;            /*!< ADC 2 read empty error                                                */
     } INT_RAW_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_STATUS;                      /*!< interrupt status register                                             */
-    
+
     struct {
       __IO uint32_t  ADC1_ALMOST_FULL:  1;          /*!< ADC 1 almost full                                                     */
       __IO uint32_t  ADC1_OVERFLOW:  1;             /*!< ADC 1 is overflow                                                     */
@@ -1090,10 +1090,10 @@ typedef struct {                                    /*!< ADC Structure          
   __I  uint32_t  ADC2_OUT_NEGTIVE_GAIN_CALIBRATION; /*!< ADC-2 Output in gain calibration when Input=-FS, Ideally DAO[11:0]=801h */
   __I  uint32_t  ADC1_OUT_POSITIVE_GAIN_CALIBRATION;/*!< ADC-1 Output in gain calibration when Input=FS, Ideally DAO[11:0]=7FFh */
   __I  uint32_t  ADC2_OUT_POSITIVE_GAIN_CALIBRATION;/*!< ADC-2 Output in gain calibration when Input=FS, Ideally DAO[11:0]=7FFh */
-  
+
   union {
     __I  uint32_t  EOC;                             /*!< Conversion End Indicator                                              */
-    
+
     struct {
       __I  uint32_t  ADC2_EOC_GAIN:  1;             /*!< ADC2 EOC_GAIN signal, conversion is done                              */
       __I  uint32_t  ADC2_EOC_OFF:  1;              /*!< ADC2 EOC_OFF signal, conversion is done                               */
@@ -1103,87 +1103,87 @@ typedef struct {                                    /*!< ADC Structure          
       __I  uint32_t  ADC1_EOC   :  1;               /*!< ADC1 EOC signal, conversion is done                                   */
     } EOC_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  BUSY;                            /*!< ADC is busy                                                           */
-    
+
     struct {
       __I  uint32_t  ADC1_BUSY  :  1;               /*!< ADC1 is busy                                                          */
       __I  uint32_t  ADC2_BUSY  :  1;               /*!< ADC2 is busy                                                          */
     } BUSY_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  ADC1_START;                      /*!< ADC1 startup enable                                                   */
-    
+
     struct {
       __O  uint32_t  EN         :  1;               /*!< start                                                                 */
     } ADC1_START_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  ADC1_STOP;                       /*!< ADC1 stop enable                                                      */
-    
+
     struct {
       __O  uint32_t  EN         :  1;               /*!< start                                                                 */
     } ADC1_STOP_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint16_t  ADC1_FIFO_READ;                  /*!< ADC1 FIFO read data                                                   */
-    
+
     struct {
       __O  uint16_t  DATA       : 12;               /*!< data                                                                  */
       __O  uint16_t  CHANNEL    :  4;               /*!< channel number                                                        */
     } ADC1_FIFO_READ_b;                             /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED0;
-  
+
   union {
     __O  uint32_t  ADC2_START;                      /*!< ADC2 startup enable, only for single-conversion                       */
-    
+
     struct {
       __O  uint32_t  EN         :  1;               /*!< start                                                                 */
     } ADC2_START_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  ADC2_STOP;                       /*!< ADC1 stop enable, only for single-conversion                          */
-    
+
     struct {
       __O  uint32_t  EN         :  1;               /*!< start                                                                 */
     } ADC2_STOP_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint16_t  ADC2_FIFO_READ;                  /*!< ADC2 FIFO read data                                                   */
-    
+
     struct {
       __O  uint16_t  DATA       : 12;               /*!< data                                                                  */
       __O  uint16_t  CHANNEL    :  4;               /*!< channel number                                                        */
     } ADC2_FIFO_READ_b;                             /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED1;
-  
+
   union {
     __O  uint32_t  ALL_ADC_START;                   /*!< all ADCs start                                                        */
-    
+
     struct {
       __O  uint32_t  EN         :  1;               /*!< start                                                                 */
     } ALL_ADC_START_b;                              /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  ALL_ADC_STOP;                    /*!< all ADCs stop                                                         */
-    
+
     struct {
       __O  uint32_t  EN         :  1;               /*!< start                                                                 */
     } ALL_ADC_STOP_b;                               /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  ALL_ADC_FIFO_READ;               /*!< all ADCs FIFO read data                                               */
-    
+
     struct {
       __I  uint32_t  ADC1_DATA  : 12;               /*!< ADC1 data                                                             */
       __I  uint32_t  ADC1_CHANNEL:  4;              /*!< ADC1 channel number                                                   */
@@ -1191,10 +1191,10 @@ typedef struct {                                    /*!< ADC Structure          
       __I  uint32_t  ADC2_CHANNEL:  4;              /*!< ADC2 channel number                                                   */
     } ALL_ADC_FIFO_READ_b;                          /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  STATUS;                          /*!< status register                                                       */
-    
+
     struct {
       __I  uint32_t  ADC1_READ_EMPTY:  1;           /*!< ADC1 read empty                                                       */
       __I  uint32_t  ADC2_READ_EMPTY:  1;           /*!< ADC2 read empty                                                       */
@@ -1219,10 +1219,10 @@ typedef struct {                                    /*!< ADC Structure          
   */
 
 typedef struct {                                    /*!< EFUSE Structure                                                       */
-  
+
   union {
     __IO uint32_t  USER_CTRL_LOW;                   /*!< low user region control                                               */
-    
+
     struct {
       __IO uint32_t  WR_EN      :  1;               /*!< write enable. 1 : write data into EFUSE. clear 0 after read           */
       __IO uint32_t  RD_EN      :  1;               /*!< read enable. 1 : write data into EFUSE. clear 0 after read            */
@@ -1234,10 +1234,10 @@ typedef struct {                                    /*!< EFUSE Structure        
       __IO uint32_t  TMRF       :  2;               /*!< Reference resistor select, 1200ohm is recommended                     */
     } USER_CTRL_LOW_b;                              /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TIMING_0;                        /*!< timing 0                                                              */
-    
+
     struct {
       __IO uint32_t  TPRS       :  7;               /*!< TPRS                                                                  */
       __IO uint32_t  TESR       :  2;               /*!< TESR                                                                  */
@@ -1249,10 +1249,10 @@ typedef struct {                                    /*!< EFUSE Structure        
       __IO uint32_t  TPWPH      :  5;               /*!< TPWPH[6:2]                                                            */
     } TIMING_0_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TIMING_1;                        /*!< timing 1                                                              */
-    
+
     struct {
       __IO uint32_t  TPWPS      :  7;               /*!< TPWPS                                                                 */
       __IO uint32_t  TEPS       :  4;               /*!< TEPS                                                                  */
@@ -1265,10 +1265,10 @@ typedef struct {                                    /*!< EFUSE Structure        
   __IO uint32_t  USER_DATA1_LOW;                    /*!< user data [63:32]                                                     */
   __IO uint32_t  USER_DATA2_LOW;                    /*!< user data [95:64]                                                     */
   __IO uint32_t  USER_DATA3_LOW;                    /*!< user data [127:96]                                                    */
-  
+
   union {
     __IO uint32_t  USER_DATA4_LOW;                  /*!< crc and lock bit                                                      */
-    
+
     struct {
       __IO uint32_t  LOCK       :  1;               /*!< write protection if true                                              */
            uint32_t             : 23;
@@ -1276,10 +1276,10 @@ typedef struct {                                    /*!< EFUSE Structure        
     } USER_DATA4_LOW_b;                             /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED0[3];
-  
+
   union {
     __IO uint32_t  USER_CTRL_HI;                    /*!< high user region control                                              */
-    
+
     struct {
       __IO uint32_t  WR_EN      :  1;               /*!< write enable. 1 : write data into EFUSE. clear 0 after read           */
       __IO uint32_t  RD_EN      :  1;               /*!< read enable. 1 : write data into EFUSE. clear 0 after read            */
@@ -1295,10 +1295,10 @@ typedef struct {                                    /*!< EFUSE Structure        
   __IO uint32_t  USER_DATA1_HI;                     /*!< user data [191:160]                                                   */
   __IO uint32_t  USER_DATA2_HI;                     /*!< user data [223:192]                                                   */
   __IO uint32_t  USER_DATA3_HI;                     /*!< user data [255:224]                                                   */
-  
+
   union {
     __IO uint32_t  USER_DATA4_HI;                   /*!< crc and lock bit                                                      */
-    
+
     struct {
       __IO uint32_t  LOCK       :  1;               /*!< write protection if true                                              */
            uint32_t             : 23;
@@ -1318,10 +1318,10 @@ typedef struct {                                    /*!< EFUSE Structure        
   */
 
 typedef struct {                                    /*!< CAN0 Structure                                                        */
-  
+
   union {
     __IO uint8_t   MODE;                            /*!< mode Register                                                         */
-    
+
     struct {
       __IO uint8_t   RM         :  1;               /*!< reset mode if 1 or operation mode                                     */
       __IO uint8_t   LOM        :  1;               /*!< Listen only mode                                                      */
@@ -1331,10 +1331,10 @@ typedef struct {                                    /*!< CAN0 Structure         
     } MODE_b;                                       /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED0[3];
-  
+
   union {
     __O  uint8_t   CMD;                             /*!< command Register                                                      */
-    
+
     struct {
       __O  uint8_t   TR         :  1;               /*!< Set to 1 when a message is to be transmitted                          */
       __O  uint8_t   AT         :  1;               /*!< Set to 1 to cancel the next transmission request                      */
@@ -1345,10 +1345,10 @@ typedef struct {                                    /*!< CAN0 Structure         
     } CMD_b;                                        /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED1[3];
-  
+
   union {
     __I  uint8_t   STATUS;                          /*!< status Register                                                       */
-    
+
     struct {
       __I  uint8_t   RBNE       :  1;               /*!< Receive Buffer not empty                                              */
       __I  uint8_t   DO         :  1;               /*!< Data Overrun Status                                                   */
@@ -1362,10 +1362,10 @@ typedef struct {                                    /*!< CAN0 Structure         
     } STATUS_b;                                     /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED2[3];
-  
+
   union {
     __I  uint8_t   INT;                             /*!< interrupt Register                                                    */
-    
+
     struct {
       __I  uint8_t   RBNF       :  1;               /*!< Receive Buffer not empty                                              */
       __I  uint8_t   TB_UNLOCK  :  1;               /*!< Transmit Buffer is unlocked and not in transmitting                   */
@@ -1381,10 +1381,10 @@ typedef struct {                                    /*!< CAN0 Structure         
     } INT_b;                                        /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED3[3];
-  
+
   union {
     __IO uint8_t   INT_EN;                          /*!< interrupt enabled Register                                            */
-    
+
     struct {
       __I  uint8_t   RBNF       :  1;               /*!< Receive Buffer not empty                                              */
       __I  uint8_t   TB_UNLOCK  :  1;               /*!< Transmit Buffer is unlocked and not in transmitting                   */
@@ -1400,10 +1400,10 @@ typedef struct {                                    /*!< CAN0 Structure         
     } INT_EN_b;                                     /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED4[7];
-  
+
   union {
     __IO uint8_t   BTR0;                            /*!< Bus Timing 0                                                          */
-    
+
     struct {
       __IO uint8_t   BRP        :  6;               /*!< TQ =2 x Txtal1 x (32 x BRP.5 + 16 x BRP.4 + 8 x BRP.3 + 4 x
                                                          BRP.2 + 2 x BRP.1 + BRP.0 + 1)                                        */
@@ -1411,10 +1411,10 @@ typedef struct {                                    /*!< CAN0 Structure         
     } BTR0_b;                                       /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED5[3];
-  
+
   union {
     __IO uint8_t   BTR1;                            /*!< Bus Timing 1                                                          */
-    
+
     struct {
       __IO uint8_t   TSEG1      :  4;               /*!< the maximum number of time quanta of propagation and 1st phase
                                                          segment                                                               */
@@ -1423,29 +1423,29 @@ typedef struct {                                    /*!< CAN0 Structure         
     } BTR1_b;                                       /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED6[3];
-  
+
   union {
     __IO uint8_t   OCR;                             /*!< Output Control Register                                               */
-    
+
     struct {
       __IO uint8_t   MODE       :  2;               /*!< output control mode                                                   */
     } OCR_b;                                        /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED7[11];
-  
+
   union {
     __I  uint8_t   ALC;                             /*!< Arbitration Lost Capture                                              */
-    
+
     struct {
       __I  uint8_t   BIT        :  5;               /*!< the current position of the Bit Processor when bus arbitration
                                                          lost, 1st bit (ID.28) if 0                                            */
     } ALC_b;                                        /*!< BitSize                                                               */
   };
   __I  uint8_t   RESERVED8[3];
-  
+
   union {
     __I  uint8_t   ECC;                             /*!< Error Code Capture                                                    */
-    
+
     struct {
       __I  uint8_t   SEGMENT    :  5;               /*!< segment code                                                          */
       __I  uint8_t   DIRECTION  :  1;               /*!< If 1, the error occurred during reception. If 0, the error occurred
@@ -1460,11 +1460,11 @@ typedef struct {                                    /*!< CAN0 Structure         
   __I  uint8_t   RESERVED11[3];
   __IO uint8_t   TXERR;                             /*!< Transmit Error Counter                                                */
   __I  uint8_t   RESERVED12[3];
-  
+
   union {
     __IO uint8_t   FI_OR_ACR0;                      /*!< Transmit Frame Information if writting or Receive Frame Information
                                                          if reading, ACR[0] if reset mode                                      */
-    
+
     struct {
       __IO uint8_t   DLC        :  4;               /*!< byte number in the data                                               */
            uint8_t              :  2;
@@ -1512,10 +1512,10 @@ typedef struct {                                    /*!< CAN0 Structure         
   __I  uint8_t   RESERVED25[3];
   __IO uint8_t   RMC;                               /*!< Receive Message Counter                                               */
   __I  uint8_t   RESERVED26[7];
-  
+
   union {
     __IO uint8_t   CDR;                             /*!< Clock Divider Register                                                */
-    
+
     struct {
       __IO uint8_t   DIVIDER    :  3;               /*!< divider of XTAL1                                                      */
       __IO uint8_t   OFF        :  1;               /*!< disable XTAL1                                                         */
@@ -1538,10 +1538,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED0;
   __IO uint32_t  DAR0;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED1;
-  
+
   union {
     __IO uint32_t  LLP0;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -1550,10 +1550,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP0_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED2;
-  
+
   union {
     __IO uint32_t  CTL_LOW0;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -1572,10 +1572,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW0_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI0;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -1590,10 +1590,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED5;
   __IO uint32_t  DSTATAR0;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED6;
-  
+
   union {
     __IO uint32_t  CFG_LOW0;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -1613,10 +1613,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW0_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI0;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -1628,20 +1628,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI0_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR0;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR0_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED7;
-  
+
   union {
     __IO uint32_t  DSR0;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -1653,10 +1653,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED9;
   __IO uint32_t  DAR1;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED10;
-  
+
   union {
     __IO uint32_t  LLP1;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -1665,10 +1665,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP1_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED11;
-  
+
   union {
     __IO uint32_t  CTL_LOW1;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -1687,10 +1687,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW1_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI1;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -1705,10 +1705,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED14;
   __IO uint32_t  DSTATAR1;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED15;
-  
+
   union {
     __IO uint32_t  CFG_LOW1;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -1728,10 +1728,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW1_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI1;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -1743,20 +1743,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI1_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR1;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR1_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED16;
-  
+
   union {
     __IO uint32_t  DSR1;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -1768,10 +1768,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED18;
   __IO uint32_t  DAR2;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED19;
-  
+
   union {
     __IO uint32_t  LLP2;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -1780,10 +1780,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP2_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED20;
-  
+
   union {
     __IO uint32_t  CTL_LOW2;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -1802,10 +1802,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW2_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI2;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -1820,10 +1820,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED23;
   __IO uint32_t  DSTATAR2;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED24;
-  
+
   union {
     __IO uint32_t  CFG_LOW2;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -1843,10 +1843,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW2_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI2;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -1858,20 +1858,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI2_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR2;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR2_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED25;
-  
+
   union {
     __IO uint32_t  DSR2;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -1883,10 +1883,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED27;
   __IO uint32_t  DAR3;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED28;
-  
+
   union {
     __IO uint32_t  LLP3;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -1895,10 +1895,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP3_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED29;
-  
+
   union {
     __IO uint32_t  CTL_LOW3;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -1917,10 +1917,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW3_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI3;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -1935,10 +1935,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED32;
   __IO uint32_t  DSTATAR3;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED33;
-  
+
   union {
     __IO uint32_t  CFG_LOW3;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -1958,10 +1958,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW3_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI3;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -1973,20 +1973,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI3_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR3;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR3_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED34;
-  
+
   union {
     __IO uint32_t  DSR3;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -1998,10 +1998,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED36;
   __IO uint32_t  DAR4;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED37;
-  
+
   union {
     __IO uint32_t  LLP4;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -2010,10 +2010,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP4_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED38;
-  
+
   union {
     __IO uint32_t  CTL_LOW4;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -2032,10 +2032,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW4_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI4;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -2050,10 +2050,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED41;
   __IO uint32_t  DSTATAR4;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED42;
-  
+
   union {
     __IO uint32_t  CFG_LOW4;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -2073,10 +2073,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW4_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI4;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -2088,20 +2088,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI4_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR4;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR4_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED43;
-  
+
   union {
     __IO uint32_t  DSR4;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -2113,10 +2113,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED45;
   __IO uint32_t  DAR5;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED46;
-  
+
   union {
     __IO uint32_t  LLP5;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -2125,10 +2125,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP5_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED47;
-  
+
   union {
     __IO uint32_t  CTL_LOW5;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -2147,10 +2147,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW5_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI5;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -2165,10 +2165,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED50;
   __IO uint32_t  DSTATAR5;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED51;
-  
+
   union {
     __IO uint32_t  CFG_LOW5;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -2188,10 +2188,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW5_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI5;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -2203,20 +2203,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI5_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR5;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR5_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED52;
-  
+
   union {
     __IO uint32_t  DSR5;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -2228,10 +2228,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED54;
   __IO uint32_t  DAR6;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED55;
-  
+
   union {
     __IO uint32_t  LLP6;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -2240,10 +2240,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP6_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED56;
-  
+
   union {
     __IO uint32_t  CTL_LOW6;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -2262,10 +2262,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW6_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI6;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -2280,10 +2280,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED59;
   __IO uint32_t  DSTATAR6;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED60;
-  
+
   union {
     __IO uint32_t  CFG_LOW6;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -2303,10 +2303,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW6_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI6;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -2318,20 +2318,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI6_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR6;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR6_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED61;
-  
+
   union {
     __IO uint32_t  DSR6;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -2343,10 +2343,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED63;
   __IO uint32_t  DAR7;                              /*!< Current Destination Address of DMA transfer                           */
   __I  uint32_t  RESERVED64;
-  
+
   union {
     __IO uint32_t  LLP7;                            /*!< Linked List Pointer Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  LMS        :  2;               /*!< Identifies the AHB layer/interface where the memory device that
                                                          stores the next linked list item resides.                             */
@@ -2355,10 +2355,10 @@ typedef struct {                                    /*!< DMA Structure          
     } LLP7_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED65;
-  
+
   union {
     __IO uint32_t  CTL_LOW7;                        /*!< Lower 32-bits Control Register for Channel                            */
-    
+
     struct {
       __IO uint32_t  INT_EN     :  1;               /*!< Interrupt Enable Bit                                                  */
       __IO uint32_t  DST_TR_WIDTH:  3;              /*!< Destination Transfer Width                                            */
@@ -2377,10 +2377,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  LLP_SRC_EN :  1;               /*!< Block chaining is enabled on the source side                          */
     } CTL_LOW7_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CTL_HI7;                         /*!< Higher 32-bits Control Register for Channel                           */
-    
+
     struct {
       __IO uint32_t  BLOCK_TS   : 12;               /*!< indicates the total number of single transactions to perform
                                                          for every block transfer                                              */
@@ -2395,10 +2395,10 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint32_t  RESERVED68;
   __IO uint32_t  DSTATAR7;                          /*!< Destination Status Address Register for Channel                       */
   __I  uint32_t  RESERVED69;
-  
+
   union {
     __IO uint32_t  CFG_LOW7;                        /*!< Lower 32-bit Configuration Register for Channel                       */
-    
+
     struct {
            uint32_t             :  5;
       __IO uint32_t  CH_PRIOR   :  3;               /*!< Channel priority. A priority of 7 is the highest priority             */
@@ -2418,10 +2418,10 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  RELOAD_DST :  1;               /*!< Automatic Destination Reload                                          */
     } CFG_LOW7_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CFG_HI7;                         /*!< Higher 32-bit Configuration Register for Channel                      */
-    
+
     struct {
       __IO uint32_t  FCMODE     :  1;               /*!< if source transaction requests aren't serviced when the Destination
                                                          Peripheral is the flow controller.                                    */
@@ -2433,20 +2433,20 @@ typedef struct {                                    /*!< DMA Structure          
       __IO uint32_t  SS_UPD_EN  :  1;               /*!< STATx is only updated from STATARx                                    */
     } CFG_HI7_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  SGR7;                            /*!< Source Gather Register for Channel                                    */
-    
+
     struct {
       __IO uint32_t  SGI        : 20;               /*!< Source gather interval                                                */
       __IO uint32_t  SGC        : 12;               /*!< Specifies the number of contiguous source transfers of CTLx.SRC_TR_WIDTH */
     } SGR7_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED70;
-  
+
   union {
     __IO uint32_t  DSR7;                            /*!< Destination Scatter Register for Channel                              */
-    
+
     struct {
       __IO uint32_t  DSI        : 20;               /*!< Destination scatter interval                                          */
       __IO uint32_t  DSC        : 12;               /*!< Specifies the number of contiguous destination transfers of
@@ -2464,50 +2464,50 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint8_t   RESERVED75[7];
   __I  uint8_t   INT_ERR;                           /*!< Error                                                                 */
   __I  uint8_t   RESERVED76[7];
-  
+
   union {
     __IO uint16_t  INT_EN_TFR;                      /*!< DMA Transfer Complete                                                 */
-    
+
     struct {
       __IO uint16_t  EN         :  8;               /*!< interrupt enable                                                      */
       __IO uint16_t  WE         :  8;               /*!< interrupt enable write enable                                         */
     } INT_EN_TFR_b;                                 /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED77[3];
-  
+
   union {
     __IO uint16_t  INT_EN_BLOCK;                    /*!< Block Transfer Complete                                               */
-    
+
     struct {
       __IO uint16_t  EN         :  8;               /*!< interrupt enable                                                      */
       __IO uint16_t  WE         :  8;               /*!< interrupt enable write enable                                         */
     } INT_EN_BLOCK_b;                               /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED78[3];
-  
+
   union {
     __IO uint16_t  INT_EN_SRC_TRAN;                 /*!< Source Transaction Complete                                           */
-    
+
     struct {
       __IO uint16_t  EN         :  8;               /*!< interrupt enable                                                      */
       __IO uint16_t  WE         :  8;               /*!< interrupt enable write enable                                         */
     } INT_EN_SRC_TRAN_b;                            /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED79[3];
-  
+
   union {
     __IO uint16_t  INT_EN_DST_TRAN;                 /*!< Destination Transaction Complete                                      */
-    
+
     struct {
       __IO uint16_t  EN         :  8;               /*!< interrupt enable                                                      */
       __IO uint16_t  WE         :  8;               /*!< interrupt enable write enable                                         */
     } INT_EN_DST_TRAN_b;                            /*!< BitSize                                                               */
   };
   __I  uint16_t  RESERVED80[3];
-  
+
   union {
     __IO uint16_t  INT_EN_ERR;                      /*!< Error                                                                 */
-    
+
     struct {
       __IO uint16_t  EN         :  8;               /*!< interrupt enable                                                      */
       __IO uint16_t  WE         :  8;               /*!< interrupt enable write enable                                         */
@@ -2524,29 +2524,29 @@ typedef struct {                                    /*!< DMA Structure          
   __I  uint8_t   RESERVED85[7];
   __O  uint8_t   INT_CLEAR_ERR;                     /*!< Error                                                                 */
   __I  uint8_t   RESERVED86[63];
-  
+
   union {
     __IO uint32_t  DMA_EN;                          /*!< DW_ahb_dmac Configuration Register                                    */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< enable                                                                */
     } DMA_EN_b;                                     /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED87;
-  
+
   union {
     __IO uint32_t  CH_EN;                           /*!< DW_ahb_dmac Channel Enable Register                                   */
-    
+
     struct {
       __IO uint32_t  EN         :  8;               /*!< enable                                                                */
       __IO uint32_t  WE         :  8;               /*!< enable write enable                                                   */
     } CH_EN_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED88[10];
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_6_HI;            /*!< Component Parameters for channel 7                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2569,10 +2569,10 @@ typedef struct {                                    /*!< DMA Structure          
       __I  uint32_t  FIFO_DEPTH :  3;               /*!< FIFO depth in bytes                                                   */
     } DMA_COMP_PARAMS_6_HI_b;                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_5_LOW;           /*!< Component Parameters for channel 6                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2595,10 +2595,10 @@ typedef struct {                                    /*!< DMA Structure          
       __I  uint32_t  FIFO_DEPTH :  3;               /*!< FIFO depth in bytes                                                   */
     } DMA_COMP_PARAMS_5_LOW_b;                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_5_HI;            /*!< Component Parameters for channel 5                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2621,10 +2621,10 @@ typedef struct {                                    /*!< DMA Structure          
       __I  uint32_t  FIFO_DEPTH :  3;               /*!< FIFO depth in bytes                                                   */
     } DMA_COMP_PARAMS_5_HI_b;                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_4_LOW;           /*!< Component Parameters for channel 4                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2647,10 +2647,10 @@ typedef struct {                                    /*!< DMA Structure          
       __I  uint32_t  FIFO_DEPTH :  3;               /*!< FIFO depth in bytes                                                   */
     } DMA_COMP_PARAMS_4_LOW_b;                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_4_HI;            /*!< Component Parameters for channel 3                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2673,10 +2673,10 @@ typedef struct {                                    /*!< DMA Structure          
       __I  uint32_t  FIFO_DEPTH :  3;               /*!< FIFO depth in bytes                                                   */
     } DMA_COMP_PARAMS_4_HI_b;                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_3_LOW;           /*!< Component Parameters for channel 2                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2699,10 +2699,10 @@ typedef struct {                                    /*!< DMA Structure          
       __I  uint32_t  FIFO_DEPTH :  3;               /*!< FIFO depth in bytes                                                   */
     } DMA_COMP_PARAMS_3_LOW_b;                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_3_HI;            /*!< Component Parameters for channel 1                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2725,10 +2725,10 @@ typedef struct {                                    /*!< DMA Structure          
       __I  uint32_t  FIFO_DEPTH :  3;               /*!< FIFO depth in bytes                                                   */
     } DMA_COMP_PARAMS_3_HI_b;                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_2_LOW;           /*!< Component Parameters for channel 0                                    */
-    
+
     struct {
       __I  uint32_t  DTW        :  3;               /*!< If this is not hardcoded, then software can program the destination
                                                          transfer width.                                                       */
@@ -2752,10 +2752,10 @@ typedef struct {                                    /*!< DMA Structure          
     } DMA_COMP_PARAMS_2_LOW_b;                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED89;
-  
+
   union {
     __I  uint32_t  DMA_COMP_PARAMS_1_LOW;           /*!< Maximum block size for channel                                        */
-    
+
     struct {
       __I  uint32_t  CH0_MAX_BLK_SIZE:  4;          /*!< Maximum block size for channel 0.                                     */
       __I  uint32_t  CH1_MAX_BLK_SIZE:  4;          /*!< Maximum block size for channel 1                                      */
@@ -2780,10 +2780,10 @@ typedef struct {                                    /*!< DMA Structure          
   */
 
 typedef struct {                                    /*!< ETH Structure                                                         */
-  
+
   union {
     __IO uint32_t  CONFIG;                          /*!< MAC Configuration Register                                            */
-    
+
     struct {
       __IO uint32_t  PRELEN     :  2;               /*!< Preamble Length for Transmit frames                                   */
       __IO uint32_t  RX_EN      :  1;               /*!< Receiver Enable                                                       */
@@ -2813,10 +2813,10 @@ typedef struct {                                    /*!< ETH Structure          
       __IO uint32_t  SARC       :  3;               /*!< Source Address Insertion or Replacement Control                       */
     } CONFIG_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  FF;                              /*!< MAC Frame Filter                                                      */
-    
+
     struct {
       __IO uint32_t  PR         :  1;               /*!< Receive all frames in spite of source and destination address         */
       __IO uint32_t  HUC        :  1;               /*!< if 1, don't compare DA field in destination address filtering
@@ -2843,10 +2843,10 @@ typedef struct {                                    /*!< ETH Structure          
   };
   __IO uint32_t  HTH;                               /*!< Hash Table High Register                                              */
   __IO uint32_t  HTL;                               /*!< Hash Table Low Register                                               */
-  
+
   union {
     __IO uint32_t  GMII_ADDR;                       /*!< GMII Address Register                                                 */
-    
+
     struct {
       __IO uint32_t  BUSY       :  1;               /*!< GMII Busy                                                             */
       __IO uint32_t  GW         :  1;               /*!< GMII write or read                                                    */
@@ -2858,10 +2858,10 @@ typedef struct {                                    /*!< ETH Structure          
     } GMII_ADDR_b;                                  /*!< BitSize                                                               */
   };
   __IO uint32_t  GMII_DATA;                         /*!< GMII Data Register                                                    */
-  
+
   union {
     __IO uint32_t  FC;                              /*!< Flow Control Register                                                 */
-    
+
     struct {
       __IO uint32_t  FCB        :  1;               /*!< This bit initiates a Pause frame in the full-duplex mode              */
       __IO uint32_t  TFE        :  1;               /*!< MAC enables the flow control operation to transmit Pause frames       */
@@ -2869,10 +2869,10 @@ typedef struct {                                    /*!< ETH Structure          
       __IO uint32_t  UP         :  1;               /*!< MAC can detect Pause frames with unicast address of the station       */
     } FC_b;                                         /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  VLAN_TAG;                        /*!< VLAN Tag Register                                                     */
-    
+
     struct {
       __IO uint32_t  VL         : 16;               /*!< VLAN Tag Identifier for Receive Frames                                */
       __IO uint32_t  ETV        :  1;               /*!< Enable 12-Bit VLAN Tag Comparison                                     */
@@ -2886,10 +2886,10 @@ typedef struct {                                    /*!< ETH Structure          
   };
   __I  uint32_t  RESERVED0[2];
   __IO uint32_t  RWUFFR;                            /*!< Remote Wake-Up Frame Filter Register                                  */
-  
+
   union {
     __IO uint32_t  PMTCSR;                          /*!< PMT Control and Status Register                                       */
-    
+
     struct {
       __IO uint32_t  PWRDWN     :  1;               /*!< Power Down                                                            */
       __IO uint32_t  MGKPKTEN   :  1;               /*!< Magic Packet Enable                                                   */
@@ -2914,10 +2914,10 @@ typedef struct {                                    /*!< ETH Structure          
   __IO uint16_t  ADDR0_HIGH;                        /*!< MAC Address0 High Register                                            */
   __I  uint16_t  RESERVED2;
   __IO uint32_t  ADDR0_LOW;                         /*!< MAC Address0 LOW Register                                             */
-  
+
   union {
     __IO uint32_t  ADDR1_HIGH;                      /*!< MAC Address0 High Register                                            */
-    
+
     struct {
       __IO uint32_t  ADDR       : 16;               /*!< MAC Address1 [47:32]                                                  */
            uint32_t             : 14;
@@ -2928,10 +2928,10 @@ typedef struct {                                    /*!< ETH Structure          
   };
   __IO uint32_t  ADDR1_LOW;                         /*!< MAC Address1 LOW Register                                             */
   __I  uint32_t  RESERVED3[44];
-  
+
   union {
     __IO uint32_t  MMCCR;                           /*!< MMC Control Register                                                  */
-    
+
     struct {
       __IO uint32_t  CNTRST     :  1;               /*!< Counters Reset                                                        */
       __IO uint32_t  CNTSTOPRO  :  1;               /*!< Counter Stop Rollover                                                 */
@@ -2950,10 +2950,10 @@ typedef struct {                                    /*!< ETH Structure          
   __I  uint32_t  RESERVED4[59];
   __IO uint32_t  MMCIRCOIM;                         /*!< MMC IPC Receive Checksum Offload Interrupt Mask                       */
   __I  uint32_t  RESERVED5[319];
-  
+
   union {
     __IO uint32_t  PTPTSCR;                         /*!< Timestamp Control Register                                            */
-    
+
     struct {
       __IO uint32_t  TSENA      :  1;               /*!< Timestamp Enable                                                      */
       __IO uint32_t  TSCFUPDT   :  1;               /*!< Timestamp Fine or Coarse Update                                       */
@@ -2972,10 +2972,10 @@ typedef struct {                                    /*!< ETH Structure          
   __IO uint32_t  PTPTTHR;                           /*!< Target Time Seconds Register                                          */
   __IO uint32_t  PTPTTLR;                           /*!< Target Time Nanoseconds Register                                      */
   __I  uint32_t  RESERVED6[567];
-  
+
   union {
     __IO uint32_t  BUS_MODE;                        /*!< Flow Control Register                                                 */
-    
+
     struct {
       __IO uint32_t  SWR        :  1;               /*!< Software Reset                                                        */
       __IO uint32_t  DA         :  1;               /*!< This bit specifies the arbitration scheme between the transmit
@@ -3006,10 +3006,10 @@ typedef struct {                                    /*!< ETH Structure          
   __IO uint32_t  RPD;                               /*!< Receive Poll Demand                                                   */
   __IO uint32_t  RDESLA;                            /*!< Receive Descriptor List Address                                       */
   __IO uint32_t  TDESLA;                            /*!< Transmit Descriptor List Address                                      */
-  
+
   union {
     __IO uint32_t  STATUS;                          /*!< Status Register                                                       */
-    
+
     struct {
       __IO uint32_t  TI         :  1;               /*!< This bit indicates that the frame transmission is complete            */
       __IO uint32_t  TPS        :  1;               /*!< Transmit Process Stopped                                              */
@@ -3038,10 +3038,10 @@ typedef struct {                                    /*!< ETH Structure          
       __I  uint32_t  TTI        :  1;               /*!< Timestamp Trigger Interrupt                                           */
     } STATUS_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  OPERATION;                       /*!< Operation Mode Register                                               */
-    
+
     struct {
            uint32_t             :  1;
       __IO uint32_t  SR         :  1;               /*!< Start or Stop Receive                                                 */
@@ -3063,10 +3063,10 @@ typedef struct {                                    /*!< ETH Structure          
                                                          frame has been written to it,                                         */
     } OPERATION_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INT_EN;                          /*!< Interrupt Enable Register                                             */
-    
+
     struct {
       __IO uint32_t  TIE        :  1;               /*!< Transmit Interrupt Enable                                             */
       __IO uint32_t  TSE        :  1;               /*!< Transmit Stopped Enable                                               */
@@ -3087,10 +3087,10 @@ typedef struct {                                    /*!< ETH Structure          
     } INT_EN_b;                                     /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED7[3];
-  
+
   union {
     __IO uint32_t  AHB_STATUS;                      /*!< AHB Status Register                                                   */
-    
+
     struct {
       __IO uint32_t  BUSY       :  1;               /*!< If set, it indicates that the AHB master interface FSMs are
                                                          in the non-idle state                                                 */
@@ -3114,10 +3114,10 @@ typedef struct {                                    /*!< ETH Structure          
   */
 
 typedef struct {                                    /*!< USB Structure                                                         */
-  
+
   union {
     __IO uint32_t  GOTGCTL;                         /*!< Control and Status register                                           */
-    
+
     struct {
       __I  uint32_t  SES_REQ_SCS:  1;               /*!< set when a session request initiation is successful as a device       */
       __IO uint32_t  SES_SEQ    :  1;               /*!< set to initiate a session request on the USB as a device              */
@@ -3146,10 +3146,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  OTG_VER    :  1;               /*!< If 0, OTG Version 1.3. If 1, OTG Version 2.0.                         */
     } GOTGCTL_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GOTGINT;                         /*!< OTG interrupt Register                                                */
-    
+
     struct {
            uint32_t             :  2;
       __IO uint32_t  SES_END_DET:  1;               /*!< Set when the utmiotg_bvalid signal is deasserted                      */
@@ -3162,10 +3162,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DBNCE_DONE :  1;               /*!< debounce is completed after the device connect as a host              */
     } GOTGINT_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GAHBCFG;                         /*!< AHB Configuration Register                                            */
-    
+
     struct {
       __IO uint32_t  GLBL_INTR_EN:  1;              /*!< Global Interrupt Enable                                               */
       __IO uint32_t  BST_LEN    :  4;               /*!< Burst Length/Type                                                     */
@@ -3178,10 +3178,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  AHB_SINGLE :  1;               /*!< supports Single transfers for the remaining data in a transfer        */
     } GAHBCFG_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GUSBCFG;                         /*!< USB Configuration Register                                            */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  PHY_IF     :  1;               /*!< PHY Interface                                                         */
@@ -3203,10 +3203,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  FORCE_DEVICE_MODE:  1;         /*!< Force Device Mode                                                     */
     } GUSBCFG_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GRSTCTL;                         /*!< Reset Register                                                        */
-    
+
     struct {
       __IO uint32_t  CORE_SOFT_RST:  1;             /*!< Core Soft Reset                                                       */
            uint32_t             :  1;
@@ -3222,10 +3222,10 @@ typedef struct {                                    /*!< USB Structure          
       __I  uint32_t  AHB_IDLE   :  1;               /*!< Indicates that the AHB Master State Machine is in the IDLE condition  */
     } GRSTCTL_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GINTSTS;                         /*!< Interrupt Register                                                    */
-    
+
     struct {
       __I  uint32_t  CUR_MOD    :  1;               /*!< Current Mode of Operation                                             */
       __IO uint32_t  MODE_MIS   :  1;               /*!< Mode Mismatch Interrupt                                               */
@@ -3264,10 +3264,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  WAKEUP     :  1;               /*!< Resume/Remote Wakeup Detected Interrupt                               */
     } GINTSTS_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GINTEN;                          /*!< Interrupt enable Register                                             */
-    
+
     struct {
            uint32_t             :  1;
       __IO uint32_t  MODE_MIS   :  1;               /*!< Mode Mismatch                                                         */
@@ -3306,10 +3306,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  WAKEUP     :  1;               /*!< Resume/Remote Wakeup Detected Interrupt                               */
     } GINTEN_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  GRXSTSR;                         /*!< Returns the contents of the top of the Receive FIFO                   */
-    
+
     struct {
       __I  uint32_t  CH_EP_NUM  :  4;               /*!< channel number as a host or EP number as a device                     */
       __I  uint32_t  BCNT       : 11;               /*!< byte count of the received packet                                     */
@@ -3319,10 +3319,10 @@ typedef struct {                                    /*!< USB Structure          
                                                          the packet is received on the USB                                     */
     } GRXSTSR_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  GRXSTSP;                         /*!< Pop the contents of the top of the Receive FIFO                       */
-    
+
     struct {
       __I  uint32_t  CH_EP_NUM  :  4;               /*!< channel number as a host or EP number as a device                     */
       __I  uint32_t  BCNT       : 11;               /*!< byte count of the received packet                                     */
@@ -3335,10 +3335,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  GRXFSIZ;                           /*!< This value is in terms of 32-bit words, 16 is minimize and 32768
                                                          is max                                                                */
   __I  uint16_t  RESERVED0;
-  
+
   union {
     __IO uint32_t  GNPTXFSIZ;                       /*!< Non-Periodic Transmit FIFO Size Register                              */
-    
+
     struct {
       __IO uint32_t  NTRSA_INEF0TRSA: 16;           /*!< start address for Non-periodic Transmit FIFO RAM as a host or
                                                          IN Endpoint FIFO0 Transmit RAM as a device                            */
@@ -3347,10 +3347,10 @@ typedef struct {                                    /*!< USB Structure          
                                                           0 Depth as a device                                                  */
     } GNPTXFSIZ_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  GNPTXSTS;                        /*!< Non-Periodic Transmit FIFO/Queue Status Register                      */
-    
+
     struct {
       __I  uint32_t  NTSA       : 16;               /*!< the amount of free space available in the Non-periodic TxFIFO,
                                                          max is 32768.                                                         */
@@ -3364,10 +3364,10 @@ typedef struct {                                    /*!< USB Structure          
     } GNPTXSTS_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED1[5];
-  
+
   union {
     __I  uint32_t  GHWCFG1;                         /*!< User HW Config1 Register                                              */
-    
+
     struct {
       __I  uint32_t  EP0_DIR    :  2;               /*!< Endpoint 0 direction, always Bidirection                              */
       __I  uint32_t  EP1_DIR    :  2;               /*!< Endpoint 1 direction                                                  */
@@ -3388,18 +3388,18 @@ typedef struct {                                    /*!< USB Structure          
     } GHWCFG1_b;                                    /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED2[3];
-  
+
   union {
     __IO uint32_t  GLPMCFG;                         /*!< Core LPM Configuration Register                                       */
-    
+
     struct {
       __IO uint32_t  EP0_DIR    :  1;               /*!< LPM capability is enabled                                             */
     } GLPMCFG_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GPWRDN;                          /*!< Global Power Down Register                                            */
-    
+
     struct {
            uint32_t             :  1;
       __IO uint32_t  PMU_ACTIVE :  1;               /*!< PMU Active is enabled                                                 */
@@ -3420,165 +3420,165 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  ADP_INT    :  1;               /*!< set whenever there is a ADP event                                     */
     } GPWRDN_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  GDFIFOCFG;                       /*!< Global DFIFO Software Config Register                                 */
-    
+
     struct {
       __IO uint32_t  GDFIFOCFG  : 16;               /*!< This field is for dynamic programming of the DFIFO Size.              */
       __IO uint32_t  EPIBA      : 16;               /*!< This field provides the start address of the EP info controller       */
     } GDFIFOCFG_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED3[40];
-  
+
   union {
     __IO uint32_t  HPTXFSIZ;                        /*!< Host Periodic Transmit FIFO Size Register                             */
-    
+
     struct {
       __IO uint32_t  HPTSA      : 16;               /*!< start address of the Periodic TxFIFO                                  */
       __IO uint32_t  EPIBA      : 16;               /*!< the size of the Periodic TxFIFO                                       */
     } HPTXFSIZ_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF1;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF1_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF2;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF2_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF3;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF3_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF4;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF4_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF5;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF5_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF6;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF6_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF7;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF7_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF8;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF8_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF9;                        /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF9_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF10;                       /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF10_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF11;                       /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF11_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF12;                       /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF12_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF13;                       /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF13_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF14;                       /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF14_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DIEPTXF15;                       /*!< Device In Endpoint Transmit FIFO Size Register                        */
-    
+
     struct {
       __IO uint32_t  INEFTRSA   : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  INETFD     : 16;               /*!< IN Endpoint TxFIFO Depth                                              */
     } DIEPTXF15_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED4[176];
-  
+
   union {
     __IO uint32_t  HCFG;                            /*!< Host Configuration Register                                           */
-    
+
     struct {
       __IO uint32_t  FS_LS_PCS  :  2;               /*!< FS/LS PHY Clock Select as a host                                      */
       __IO uint32_t  FS_LS_SUPPORT:  1;             /*!< If set, FS/LS-only, even If the connected device can support
@@ -3596,19 +3596,19 @@ typedef struct {                                    /*!< USB Structure          
                                                           00 after Suspend or LPM.                                             */
     } HCFG_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HFIR;                            /*!< Host Frame Interval Register                                          */
-    
+
     struct {
       __IO uint32_t  FI         : 16;               /*!< IN Endpoint FIFOn Transmit RAM Start Address                          */
       __IO uint32_t  RC         :  1;               /*!< The HFIR can be dynamically reloaded during runtime if set            */
     } HFIR_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  HFNUM;                           /*!< Host Frame Number/Frame Time Remaining Register                       */
-    
+
     struct {
       __I  uint32_t  FN         : 16;               /*!< This field increments when a new SOF is transmitted on the USB        */
       __I  uint32_t  FTR        : 16;               /*!< amount of time remaining in the current microframe (HS) or Frame
@@ -3616,10 +3616,10 @@ typedef struct {                                    /*!< USB Structure          
     } HFNUM_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED5;
-  
+
   union {
     __I  uint32_t  HPTXSTS;                         /*!< Host Periodic Transmit FIFO/Queue Status Register                     */
-    
+
     struct {
       __I  uint32_t  PTDFSA     : 16;               /*!< Indicates the number of free locations available to be written
                                                          to in the Periodic TxFIFO, max is 32768                               */
@@ -3633,28 +3633,28 @@ typedef struct {                                    /*!< USB Structure          
       __I  uint32_t  TPTRQ_ODD_FRAME:  1;           /*!< If set, send in odd (micro)Frame                                      */
     } HPTXSTS_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  HAINT;                           /*!< Host All Channels Interrupt Register                                  */
-    
+
     struct {
       __I  uint32_t  INT        : 16;               /*!< Channel Interrupts, from 0 to 15.                                     */
     } HAINT_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HAINT_EN;                        /*!< Host All Channels Interrupt Enable Register                           */
-    
+
     struct {
       __IO uint32_t  EN         : 16;               /*!< Channel Interrupts Enable, from 0 to 15.                              */
     } HAINT_EN_b;                                   /*!< BitSize                                                               */
   };
   __IO uint32_t  HFLBA;                             /*!< The starting address of the Frame list                                */
   __I  uint32_t  RESERVED6[8];
-  
+
   union {
     __IO uint32_t  __HPRT;                          /*!< Host Port Control and Status Register                                 */
-    
+
     struct {
       __I  uint32_t  PCS        :  1;               /*!< If a device is attached to the port                                   */
       __IO uint32_t  PCD        :  1;               /*!< A device connection is detected                                       */
@@ -3678,10 +3678,10 @@ typedef struct {                                    /*!< USB Structure          
     } __HPRT_b;                                     /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED7[47];
-  
+
   union {
     __IO uint32_t  HCC0;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3700,10 +3700,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC0_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED8;
-  
+
   union {
     __IO uint32_t  HCINT0;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3715,10 +3715,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT0_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN0;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3730,10 +3730,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN0_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ0;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -3744,10 +3744,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ0_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA0;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -3756,10 +3756,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED9;
   __IO uint32_t  HCDMAB0;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC1;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3778,10 +3778,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC1_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED10;
-  
+
   union {
     __IO uint32_t  HCINT1;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3793,10 +3793,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT1_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN1;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3808,10 +3808,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN1_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ1;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -3822,10 +3822,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ1_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA1;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -3834,10 +3834,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED11;
   __IO uint32_t  HCDMAB1;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC2;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3856,10 +3856,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC2_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED12;
-  
+
   union {
     __IO uint32_t  HCINT2;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3871,10 +3871,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT2_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN2;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3886,10 +3886,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN2_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ2;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -3900,10 +3900,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ2_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA2;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -3912,10 +3912,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED13;
   __IO uint32_t  HCDMAB2;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC3;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3934,10 +3934,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC3_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED14;
-  
+
   union {
     __IO uint32_t  HCINT3;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3949,10 +3949,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT3_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN3;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -3964,10 +3964,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN3_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ3;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -3978,10 +3978,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ3_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA3;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -3990,10 +3990,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED15;
   __IO uint32_t  HCDMAB3;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC4;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4012,10 +4012,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC4_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED16;
-  
+
   union {
     __IO uint32_t  HCINT4;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4027,10 +4027,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT4_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN4;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4042,10 +4042,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN4_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ4;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4056,10 +4056,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ4_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA4;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4068,10 +4068,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED17;
   __IO uint32_t  HCDMAB4;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC5;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4090,10 +4090,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC5_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED18;
-  
+
   union {
     __IO uint32_t  HCINT5;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4105,10 +4105,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT5_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN5;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4120,10 +4120,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN5_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ5;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4134,10 +4134,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ5_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA5;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4146,10 +4146,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED19;
   __IO uint32_t  HCDMAB5;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC6;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4168,10 +4168,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC6_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED20;
-  
+
   union {
     __IO uint32_t  HCINT6;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4183,10 +4183,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT6_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN6;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4198,10 +4198,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN6_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ6;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4212,10 +4212,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ6_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA6;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4224,10 +4224,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED21;
   __IO uint32_t  HCDMAB6;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC7;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4246,10 +4246,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC7_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED22;
-  
+
   union {
     __IO uint32_t  HCINT7;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4261,10 +4261,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT7_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN7;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4276,10 +4276,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN7_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ7;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4290,10 +4290,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ7_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA7;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4302,10 +4302,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED23;
   __IO uint32_t  HCDMAB7;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC8;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4324,10 +4324,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC8_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED24;
-  
+
   union {
     __IO uint32_t  HCINT8;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4339,10 +4339,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT8_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN8;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4354,10 +4354,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN8_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ8;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4368,10 +4368,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ8_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA8;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4380,10 +4380,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED25;
   __IO uint32_t  HCDMAB8;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC9;                            /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4402,10 +4402,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC9_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED26;
-  
+
   union {
     __IO uint32_t  HCINT9;                          /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4417,10 +4417,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT9_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN9;                       /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4432,10 +4432,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN9_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ9;                         /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4446,10 +4446,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ9_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA9;                          /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4458,10 +4458,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED27;
   __IO uint32_t  HCDMAB9;                           /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC10;                           /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4480,10 +4480,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC10_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED28;
-  
+
   union {
     __IO uint32_t  HCINT10;                         /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4495,10 +4495,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT10_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN10;                      /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4510,10 +4510,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN10_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ10;                        /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4524,10 +4524,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ10_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA10;                         /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4536,10 +4536,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED29;
   __IO uint32_t  HCDMAB10;                          /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC11;                           /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4558,10 +4558,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC11_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED30;
-  
+
   union {
     __IO uint32_t  HCINT11;                         /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4573,10 +4573,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT11_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN11;                      /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4588,10 +4588,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN11_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ11;                        /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4602,10 +4602,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ11_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA11;                         /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4614,10 +4614,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED31;
   __IO uint32_t  HCDMAB11;                          /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC12;                           /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4636,10 +4636,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC12_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED32;
-  
+
   union {
     __IO uint32_t  HCINT12;                         /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4651,10 +4651,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT12_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN12;                      /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4666,10 +4666,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN12_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ12;                        /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4680,10 +4680,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ12_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA12;                         /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4692,10 +4692,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED33;
   __IO uint32_t  HCDMAB12;                          /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC13;                           /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4714,10 +4714,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC13_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED34;
-  
+
   union {
     __IO uint32_t  HCINT13;                         /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4729,10 +4729,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT13_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN13;                      /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4744,10 +4744,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN13_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ13;                        /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4758,10 +4758,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ13_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA13;                         /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4770,10 +4770,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED35;
   __IO uint32_t  HCDMAB13;                          /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC14;                           /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4792,10 +4792,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC14_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED36;
-  
+
   union {
     __IO uint32_t  HCINT14;                         /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4807,10 +4807,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT14_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN14;                      /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4822,10 +4822,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN14_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ14;                        /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4836,10 +4836,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ14_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA14;                         /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4848,10 +4848,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __I  uint32_t  RESERVED37;
   __IO uint32_t  HCDMAB14;                          /*!< Host Channel-n DMA Buffer Address Register                            */
-  
+
   union {
     __IO uint32_t  HCC15;                           /*!< Host Channel Characteristics Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
       __IO uint32_t  EP_NUM     :  4;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4870,10 +4870,10 @@ typedef struct {                                    /*!< USB Structure          
     } HCC15_b;                                      /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED38;
-  
+
   union {
     __IO uint32_t  HCINT15;                         /*!< Host Channel Interrupt Register                                       */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4885,10 +4885,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT15_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCINT_EN15;                      /*!< Host Channel Interrupt Enable Register                                */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  CH_HALT    :  1;               /*!< Indicates the endpoint number on the device serving as the data
@@ -4900,10 +4900,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  DR         :  1;               /*!< the corresponding channel's descriptor list rolls over                */
     } HCINT_EN15_b;                                 /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCTSIZ15;                        /*!< Host Channel Transfer Size Register                                   */
-    
+
     struct {
       __IO uint32_t  SCHED_INFO :  8;               /*!< Every bit in this 8 bit register indicates scheduling for that
                                                          microframe.Bit N indicates scheduling for Nth microframe scheduling
@@ -4914,10 +4914,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  PING       :  1;               /*!< Setting this field to 1 directs the host to do PING protocol          */
     } HCTSIZ15_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  HCDMA15;                         /*!< Host Channel-n DMA Address Register                                   */
-    
+
     struct {
            uint32_t             :  3;
       __IO uint32_t  CTD        :  6;               /*!< Number of Transfer Descriptors for Non-Isochronous                    */
@@ -4927,10 +4927,10 @@ typedef struct {                                    /*!< USB Structure          
   __I  uint32_t  RESERVED39;
   __IO uint32_t  HCDMAB15;                          /*!< Host Channel-n DMA Buffer Address Register                            */
   __I  uint32_t  RESERVED40[64];
-  
+
   union {
     __IO uint32_t  DCFG;                            /*!< Device Configuration Register                                         */
-    
+
     struct {
       __IO uint32_t  DSPEED     :  2;               /*!< the maximum speed the application can support                         */
       __IO uint32_t  NZLSOH     :  1;               /*!< select the handshake the core sends on receiving a non zero-length
@@ -4948,10 +4948,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  RVP        :  6;               /*!< It controls the resume period when the core resumes from suspend      */
     } DCFG_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DCTL;                            /*!< Device Control Register                                               */
-    
+
     struct {
       __IO uint32_t  RWS        :  1;               /*!< If set, the core initiates remote signaling to wake the USB
                                                          hosts                                                                 */
@@ -4974,10 +4974,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  ECBNA      :  1;               /*!< After receiving BNA interrupt, the core disables the endpoint         */
     } DCTL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DSTS;                            /*!< Device Status Register                                                */
-    
+
     struct {
       __I  uint32_t  SUSPEND    :  1;               /*!< this bit is set as long as a Suspend condition is detected on
                                                          the USB                                                               */
@@ -4991,10 +4991,10 @@ typedef struct {                                    /*!< USB Structure          
     } DSTS_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED41;
-  
+
   union {
     __IO uint32_t  DIEPEN;                          /*!< Device IN Endpoint Common Interrupt Enable Register                   */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer Completed Interrupt                                          */
       __IO uint32_t  ED         :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5010,10 +5010,10 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  NAK        :  1;               /*!< NAK interrupt                                                         */
     } DIEPEN_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DOEPEN;                          /*!< Device OUT Endpoint Common Interrupt Enable Register                  */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer Completed Interrupt                                          */
       __IO uint32_t  ED         :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5033,29 +5033,29 @@ typedef struct {                                    /*!< USB Structure          
       __IO uint32_t  NYET       :  1;               /*!< NYET interrupt                                                        */
     } DOEPEN_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  DAINT;                           /*!< Device All Channels Interrupt Register                                */
-    
+
     struct {
       __I  uint32_t  INT        : 16;               /*!< IN Endpoint Interrupt Bits, from 0 to 15.                             */
       __I  uint32_t  OUT_INT    : 16;               /*!< OUT Endpoint Interrupt Bits, from 0 to 15.                            */
     } DAINT_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DAINT_EN;                        /*!< Device All Channels Interrupt Enable Register                         */
-    
+
     struct {
       __IO uint32_t  IN_EN      : 16;               /*!< IN EP Interrupt Enable, from 0 to 15.                                 */
       __IO uint32_t  OUT_EN     : 16;               /*!< OUT EP Interrupt Enable, from 0 to 15.                                */
     } DAINT_EN_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED42[4];
-  
+
   union {
     __IO uint32_t  DTHRCTL;                         /*!< Device Threshold Control Register                                     */
-    
+
     struct {
       __IO uint32_t  NISOINETE  :  1;               /*!< Non-ISO IN Endpoints Threshold Enable                                 */
       __IO uint32_t  ISOINETE   :  1;               /*!< ISO IN Endpoints Threshold Enable                                     */
@@ -5071,10 +5071,10 @@ typedef struct {                                    /*!< USB Structure          
   };
   __IO uint16_t  DIEPEMPEN;                         /*!< Device IN Endpoint FIFO Empty Interrupt Enable Register               */
   __I  uint16_t  RESERVED43[101];
-  
+
   union {
     __IO uint32_t  DIEPCTL0;                        /*!< Device Control IN Endpoint 0 Control Register                         */
-    
+
     struct {
       __IO uint32_t  MPS        :  2;               /*!< Indicates the maximum packet size of the associated endpoint,
                                                          applies to IN and OUT endpoints                                       */
@@ -5098,10 +5098,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL0_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED44;
-  
+
   union {
     __IO uint32_t  DIEPINT0;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5121,10 +5121,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT0_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED45;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ0;                       /*!< Device IN Endpoint 0 Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       :  7;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
            uint32_t             : 12;
@@ -5135,10 +5135,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA0;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED46;
   __I  uint32_t  DIEPDMAB0;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL1;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5162,10 +5162,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL1_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED47;
-  
+
   union {
     __IO uint32_t  DIEPINT1;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5185,10 +5185,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT1_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED48;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ1;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5200,10 +5200,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA1;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED49;
   __I  uint32_t  DIEPDMAB1;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL2;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5227,10 +5227,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL2_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED50;
-  
+
   union {
     __IO uint32_t  DIEPINT2;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5250,10 +5250,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT2_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED51;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ2;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5265,10 +5265,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA2;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED52;
   __I  uint32_t  DIEPDMAB2;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL3;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5292,10 +5292,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL3_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED53;
-  
+
   union {
     __IO uint32_t  DIEPINT3;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5315,10 +5315,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT3_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED54;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ3;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5330,10 +5330,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA3;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED55;
   __I  uint32_t  DIEPDMAB3;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL4;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5357,10 +5357,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL4_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED56;
-  
+
   union {
     __IO uint32_t  DIEPINT4;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5380,10 +5380,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT4_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED57;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ4;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5395,10 +5395,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA4;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED58;
   __I  uint32_t  DIEPDMAB4;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL5;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5422,10 +5422,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL5_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED59;
-  
+
   union {
     __IO uint32_t  DIEPINT5;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5445,10 +5445,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT5_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED60;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ5;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5460,10 +5460,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA5;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED61;
   __I  uint32_t  DIEPDMAB5;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL6;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5487,10 +5487,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL6_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED62;
-  
+
   union {
     __IO uint32_t  DIEPINT6;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5510,10 +5510,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT6_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED63;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ6;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5525,10 +5525,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA6;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED64;
   __I  uint32_t  DIEPDMAB6;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL7;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5552,10 +5552,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL7_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED65;
-  
+
   union {
     __IO uint32_t  DIEPINT7;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5575,10 +5575,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT7_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED66;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ7;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5590,10 +5590,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA7;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED67;
   __I  uint32_t  DIEPDMAB7;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL8;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5617,10 +5617,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL8_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED68;
-  
+
   union {
     __IO uint32_t  DIEPINT8;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5640,10 +5640,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT8_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED69;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ8;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5655,10 +5655,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA8;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED70;
   __I  uint32_t  DIEPDMAB8;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL9;                        /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5682,10 +5682,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL9_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED71;
-  
+
   union {
     __IO uint32_t  DIEPINT9;                        /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5705,10 +5705,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT9_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED72;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ9;                       /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5720,10 +5720,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA9;                           /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED73;
   __I  uint32_t  DIEPDMAB9;                         /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL10;                       /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5747,10 +5747,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL10_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED74;
-  
+
   union {
     __IO uint32_t  DIEPINT10;                       /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5770,10 +5770,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT10_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED75;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ10;                      /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5785,10 +5785,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA10;                          /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED76;
   __I  uint32_t  DIEPDMAB10;                        /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL11;                       /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5812,10 +5812,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL11_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED77;
-  
+
   union {
     __IO uint32_t  DIEPINT11;                       /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5835,10 +5835,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT11_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED78;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ11;                      /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5850,10 +5850,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA11;                          /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED79;
   __I  uint32_t  DIEPDMAB11;                        /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL12;                       /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5877,10 +5877,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL12_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED80;
-  
+
   union {
     __IO uint32_t  DIEPINT12;                       /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5900,10 +5900,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT12_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED81;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ12;                      /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5915,10 +5915,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA12;                          /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED82;
   __I  uint32_t  DIEPDMAB12;                        /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL13;                       /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -5942,10 +5942,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL13_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED83;
-  
+
   union {
     __IO uint32_t  DIEPINT13;                       /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -5965,10 +5965,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT13_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED84;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ13;                      /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -5980,10 +5980,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA13;                          /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED85;
   __I  uint32_t  DIEPDMAB13;                        /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL14;                       /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6007,10 +6007,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL14_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED86;
-  
+
   union {
     __IO uint32_t  DIEPINT14;                       /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6030,10 +6030,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT14_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED87;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ14;                      /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6045,10 +6045,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA14;                          /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED88;
   __I  uint32_t  DIEPDMAB14;                        /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DIEPCTL15;                       /*!< Device IN Endpoint N Control Register                                 */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6072,10 +6072,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPCTL15_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED89;
-  
+
   union {
     __IO uint32_t  DIEPINT15;                       /*!< Device IN Endpoint-n Interrupt Register                               */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6095,10 +6095,10 @@ typedef struct {                                    /*!< USB Structure          
     } DIEPINT15_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED90;
-  
+
   union {
     __IO uint32_t  DIEPTSIZ15;                      /*!< Device IN Endpoint-n Transfer Size Register                           */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6110,10 +6110,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint16_t  DTXFSA15;                          /*!< Device IN Endpoint-n Transmit FIFO Space Avail Register               */
   __I  uint16_t  RESERVED91;
   __I  uint32_t  DIEPDMAB15;                        /*!< Device IN Endpoint-n DMA Buffer Address Register                      */
-  
+
   union {
     __IO uint32_t  DOEPCTL0;                        /*!< Device Control OUT Endpoint 0 Control Register                        */
-    
+
     struct {
       __IO uint32_t  MPS        :  2;               /*!< Indicates the maximum packet size of the associated endpoint,
                                                          applies to IN and OUT endpoints                                       */
@@ -6136,10 +6136,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL0_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED92;
-  
+
   union {
     __IO uint32_t  DOEPINT0;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6161,10 +6161,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT0_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED93;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ0;                       /*!< Device OUT Endpoint 0 Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       :  7;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
            uint32_t             : 12;
@@ -6178,10 +6178,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA0;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED94;
   __I  uint32_t  DOEPDMAB0;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL1;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6205,10 +6205,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL1_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED95;
-  
+
   union {
     __IO uint32_t  DOEPINT1;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6230,10 +6230,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT1_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED96;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ1;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6245,10 +6245,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA1;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED97;
   __I  uint32_t  DOEPDMAB1;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL2;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6272,10 +6272,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL2_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED98;
-  
+
   union {
     __IO uint32_t  DOEPINT2;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6297,10 +6297,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT2_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED99;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ2;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6312,10 +6312,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA2;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED100;
   __I  uint32_t  DOEPDMAB2;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL3;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6339,10 +6339,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL3_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED101;
-  
+
   union {
     __IO uint32_t  DOEPINT3;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6364,10 +6364,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT3_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED102;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ3;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6379,10 +6379,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA3;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED103;
   __I  uint32_t  DOEPDMAB3;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL4;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6406,10 +6406,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL4_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED104;
-  
+
   union {
     __IO uint32_t  DOEPINT4;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6431,10 +6431,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT4_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED105;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ4;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6446,10 +6446,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA4;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED106;
   __I  uint32_t  DOEPDMAB4;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL5;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6473,10 +6473,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL5_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED107;
-  
+
   union {
     __IO uint32_t  DOEPINT5;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6498,10 +6498,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT5_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED108;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ5;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6513,10 +6513,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA5;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED109;
   __I  uint32_t  DOEPDMAB5;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL6;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6540,10 +6540,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL6_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED110;
-  
+
   union {
     __IO uint32_t  DOEPINT6;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6565,10 +6565,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT6_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED111;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ6;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6580,10 +6580,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA6;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED112;
   __I  uint32_t  DOEPDMAB6;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL7;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6607,10 +6607,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL7_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED113;
-  
+
   union {
     __IO uint32_t  DOEPINT7;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6632,10 +6632,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT7_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED114;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ7;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6647,10 +6647,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA7;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED115;
   __I  uint32_t  DOEPDMAB7;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL8;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6674,10 +6674,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL8_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED116;
-  
+
   union {
     __IO uint32_t  DOEPINT8;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6699,10 +6699,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT8_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED117;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ8;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6714,10 +6714,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA8;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED118;
   __I  uint32_t  DOEPDMAB8;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL9;                        /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6741,10 +6741,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL9_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED119;
-  
+
   union {
     __IO uint32_t  DOEPINT9;                        /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6766,10 +6766,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT9_b;                                   /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED120;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ9;                       /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6781,10 +6781,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA9;                          /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED121;
   __I  uint32_t  DOEPDMAB9;                         /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL10;                       /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6808,10 +6808,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL10_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED122;
-  
+
   union {
     __IO uint32_t  DOEPINT10;                       /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6833,10 +6833,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT10_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED123;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ10;                      /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6848,10 +6848,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA10;                         /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED124;
   __I  uint32_t  DOEPDMAB10;                        /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL11;                       /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6875,10 +6875,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL11_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED125;
-  
+
   union {
     __IO uint32_t  DOEPINT11;                       /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6900,10 +6900,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT11_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED126;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ11;                      /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6915,10 +6915,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA11;                         /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED127;
   __I  uint32_t  DOEPDMAB11;                        /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL12;                       /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -6942,10 +6942,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL12_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED128;
-  
+
   union {
     __IO uint32_t  DOEPINT12;                       /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -6967,10 +6967,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT12_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED129;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ12;                      /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -6982,10 +6982,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA12;                         /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED130;
   __I  uint32_t  DOEPDMAB12;                        /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL13;                       /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -7009,10 +7009,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL13_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED131;
-  
+
   union {
     __IO uint32_t  DOEPINT13;                       /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -7034,10 +7034,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT13_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED132;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ13;                      /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -7049,10 +7049,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA13;                         /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED133;
   __I  uint32_t  DOEPDMAB13;                        /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL14;                       /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -7076,10 +7076,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL14_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED134;
-  
+
   union {
     __IO uint32_t  DOEPINT14;                       /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -7101,10 +7101,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT14_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED135;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ14;                      /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -7116,10 +7116,10 @@ typedef struct {                                    /*!< USB Structure          
   __IO uint32_t  DOEPDMA14;                         /*!< Device OUT Endpoint-n DMA Address Register                            */
   __I  uint32_t  RESERVED136;
   __I  uint32_t  DOEPDMAB14;                        /*!< Device OUT Endpoint-n DMA Buffer Address Register                     */
-  
+
   union {
     __IO uint32_t  DOEPCTL15;                       /*!< Device OUT Endpoint N Control Register                                */
-    
+
     struct {
       __IO uint32_t  MPS        : 11;               /*!< Indicates the maximum packet size of the associated endpoint          */
            uint32_t             :  4;
@@ -7143,10 +7143,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPCTL15_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED137;
-  
+
   union {
     __IO uint32_t  DOEPINT15;                       /*!< Device OUT Endpoint-n Interrupt Register                              */
-    
+
     struct {
       __IO uint32_t  TC         :  1;               /*!< Transfer completed normally without any errors                        */
       __IO uint32_t  EPD        :  1;               /*!< Endpoint Disabled Interrupt                                           */
@@ -7168,10 +7168,10 @@ typedef struct {                                    /*!< USB Structure          
     } DOEPINT15_b;                                  /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED138;
-  
+
   union {
     __IO uint32_t  DOEPTSIZ15;                      /*!< Device OUT Endpoint-n Transfer Size Register                          */
-    
+
     struct {
       __IO uint32_t  SIZE       : 19;               /*!< Indicates the transfer size in bytes for endpoint 0                   */
       __IO uint32_t  PACKET_CNT : 10;               /*!< the total number of USB packets                                       */
@@ -7196,10 +7196,10 @@ typedef struct {                                    /*!< USB Structure          
   */
 
 typedef struct {                                    /*!< GLOBAL_CTRL Structure                                                 */
-  
+
   union {
     __I  uint32_t  AES_STATUS;                      /*!< AES status                                                            */
-    
+
     struct {
       __I  uint32_t  RD_ALMOST_EMPTY:  1;           /*!< FIFO read almost empty                                                */
       __I  uint32_t  RD_EMPTY   :  1;               /*!< FIFO read empty                                                       */
@@ -7209,10 +7209,10 @@ typedef struct {                                    /*!< GLOBAL_CTRL Structure  
     } AES_STATUS_b;                                 /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED0[253];
-  
+
   union {
     __IO uint32_t  CLK_SEL_0;                       /*!< clock select 0                                                        */
-    
+
     struct {
       __IO uint32_t  CAN1_CLK   :  2;               /*!< CAN1 clock frequency dividor based on system clock, which should
                                                          be 1/32, 1/4, 1/8, 1/16 from 0 to 3                                   */
@@ -7247,10 +7247,10 @@ typedef struct {                                    /*!< GLOBAL_CTRL Structure  
                                                          should be 1/1, 1/2, 1/4, 1/8 from 0 to 3                              */
     } CLK_SEL_0_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CLK_SEL_1;                       /*!< clock select 1                                                        */
-    
+
     struct {
       __IO uint32_t  ETH_AHB_CLK:  2;               /*!< ETH_AHB clock frequency dividor based on system clock, which
                                                          should be 1/1, 1/2, 1/4, 1/8 from 0 to 3                              */
@@ -7269,10 +7269,10 @@ typedef struct {                                    /*!< GLOBAL_CTRL Structure  
       __IO uint32_t  UTMI_CLK   :  1;               /*!< UTMI clock came from on-chip usb phy(0) or off-chip usb phy(1)        */
     } CLK_SEL_1_b;                                  /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  USB_PHY_CTRL;                    /*!< USB Phy Control Register                                              */
-    
+
     struct {
       __IO uint32_t  BITSTUFF   :  1;               /*!< 0: No bit stuff                                                       */
       __IO uint32_t  XTLSEL     :  1;               /*!< 0: 12MHz                                                              */
@@ -7288,39 +7288,39 @@ typedef struct {                                    /*!< GLOBAL_CTRL Structure  
       __IO uint32_t  RSTPRT     :  1;               /*!< 0: The reverse of usb_rst_n will reset, 1: Reset OTG PHY              */
     } USB_PHY_CTRL_b;                               /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RTC_INT_EN;                      /*!< RTC interrupt enable Register                                         */
-    
+
     struct {
       __IO uint32_t  SECOND     :  1;               /*!< 1s interrupt enable                                                   */
       __IO uint32_t  MILLSECOND :  1;               /*!< 1ms interrupt enable                                                  */
     } RTC_INT_EN_b;                                 /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED1;
-  
+
   union {
     __IO uint32_t  NMI_SEL;                         /*!< nmi interrupt selection                                               */
-    
+
     struct {
       __IO uint32_t  NMI        :  7;               /*!< NMI interrupt ID                                                      */
     } NMI_SEL_b;                                    /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED2;
   __IO uint32_t  AES_TARGET_ADDR;                   /*!< AES target address, default is frame decoder address(0x41800000)      */
-  
+
   union {
     __IO uint32_t  AES_BURST_TYPE;                  /*!< AES burst type                                                        */
-    
+
     struct {
       __IO uint32_t  TYPE       :  2;               /*!< burst type, fixed(0), incr(1)                                         */
     } AES_BURST_TYPE_b;                             /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED3[3];
-  
+
   union {
     __IO uint32_t  ICACHE;                          /*!< ICACHE Enable                                                         */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< ICACHE Enable                                                         */
     } ICACHE_b;                                     /*!< BitSize                                                               */
@@ -7342,10 +7342,10 @@ typedef struct {                                    /*!< GLOBAL_CTRL Structure  
 
 typedef struct {                                    /*!< AES Structure                                                         */
   __IO uint32_t  FIFO;                              /*!< data FIFO to be decoded                                               */
-  
+
   union {
     __O  uint32_t  FIFO_CLEAR;                      /*!< clear data FIFO                                                       */
-    
+
     struct {
       __O  uint32_t  CLEAR      :  1;               /*!< clear after write 1 and write 0                                       */
     } FIFO_CLEAR_b;                                 /*!< BitSize                                                               */
@@ -7364,20 +7364,20 @@ typedef struct {                                    /*!< AES Structure          
 
 typedef struct {                                    /*!< DDRC Structure                                                        */
   __IO uint32_t  CMD;                               /*!< DDR commands to program                                               */
-  
+
   union {
     __IO uint32_t  CTRL;                            /*!< DDR Control                                                           */
-    
+
     struct {
       __IO uint32_t  TO         :  1;               /*!< Take over DDRC siggen                                                 */
       __IO uint32_t  CLR        :  1;               /*!< Clear commands in FIFO                                                */
       __O  uint32_t  STR        :  1;               /*!< Start to execute the commands in FIFO                                 */
     } CTRL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  MODE;                            /*!< DDR mode                                                              */
-    
+
     struct {
       __IO uint32_t  MODE       :  6;               /*!< DDRC Mode                                                             */
            uint32_t             :  2;
@@ -7390,18 +7390,18 @@ typedef struct {                                    /*!< DDRC Structure         
       __IO uint32_t  CLKPOL     :  2;               /*!< DQS clkpol set by user on the PHY                                     */
     } MODE_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  QUE;                             /*!< DDRC queue depth                                                      */
-    
+
     struct {
       __IO uint32_t  DEPTH      :  1;               /*!< DDRC queue depth                                                      */
     } QUE_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  REF;                             /*!< Refresh control                                                       */
-    
+
     struct {
       __IO uint32_t  THRD       :  5;               /*!< Number of refresh requests which can be postponed                     */
            uint32_t             :  3;
@@ -7410,266 +7410,266 @@ typedef struct {                                    /*!< DDRC Structure         
       __IO uint32_t  TIME       : 16;               /*!< Refresh interval time                                                 */
     } REF_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  REF_TRIG;                        /*!< Refresh trigger                                                       */
-    
+
     struct {
       __O  uint32_t  GO         :  1;               /*!< Write 1 to trigger one refresh request by cbus                        */
     } REF_TRIG_b;                                   /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  ZQ_TRIG;                         /*!< ZQCTL trigger                                                         */
-    
+
     struct {
       __O  uint32_t  CS         :  1;               /*!< Write 1 to trigger one ZQCS request by cbus                           */
       __O  uint32_t  CL         :  1;               /*!< Write 1 to trigger one ZQCL request by cbus                           */
     } ZQ_TRIG_b;                                    /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ZQCSR;                           /*!< ZQCSR                                                                 */
-    
+
     struct {
       __IO uint32_t  EN         :  1;               /*!< Enable ZQCS request                                                   */
       __IO uint32_t  PRI        :  1;               /*!< 0: DMA access prior to ZQCS, 1: ZQCS prior to DMA access              */
     } ZQCSR_b;                                      /*!< BitSize                                                               */
   };
   __IO uint32_t  ZQCSI;                             /*!< ZQCS interval time                                                    */
-  
+
   union {
     __IO uint32_t  RCD;                             /*!< t(RCD)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  5;               /*!< t(RCD), delay from ACT command to RW command of same bank             */
     } RCD_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RAS;                             /*!< t(RAS)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  6;               /*!< t(RAS), delay from ACT command to PRE command of same bank            */
     } RAS_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RP;                              /*!< t(RP)                                                                 */
-    
+
     struct {
       __IO uint32_t  DI         :  5;               /*!< t(RP), delay from PRE command to ACT/REF/ZQ command                   */
            uint32_t             :  3;
       __IO uint32_t  RPA        :  1;               /*!< 0: t(RP) delay for PREA command; 1: t(RP)+1 delay for PREA command    */
     } RP_b;                                         /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RC;                              /*!< t(RC)                                                                 */
-    
+
     struct {
       __IO uint32_t  DI         :  7;               /*!< t(RC), delay from ACT command to ACT command of same bank             */
     } RC_b;                                         /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RRD;                             /*!< t(RRD)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  4;               /*!< t(RRD), delay from ACT command to ACT command                         */
     } RRD_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  CCD;                             /*!< t(CCD)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  3;               /*!< t(CCD), delay from RW command to RW command                           */
     } CCD_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RTW;                             /*!< t(RTW)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  5;               /*!< t(RTW), delay from RD command to WR command                           */
     } RTW_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  WTR;                             /*!< t(WTR)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  5;               /*!< t(WTR), delay from WR command to RD command                           */
     } WTR_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RTP;                             /*!< t(RTP)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  3;               /*!< t(RTP), delay from RD command to PRE command of same bank             */
     } RTP_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  WTP;                             /*!< t(WTP)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  6;               /*!< t(WTP), delay from WR command to PRE command of same bank             */
     } WTP_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RFC;                             /*!< t(RFC)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  8;               /*!< t(WTP), delay from WR command to PRE command of same bank             */
     } RFC_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ZQCL;                            /*!< t(ZQoper)                                                             */
-    
+
     struct {
       __IO uint32_t  DI         :  9;               /*!< t(ZQoper), delay from ZQCL command to REF/ZQ/ACT command              */
     } ZQCL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ZQCS;                            /*!< t(ZQCS)                                                               */
-    
+
     struct {
       __IO uint32_t  DI         :  7;               /*!< t(ZQCS), delay from ZQCS command to REF/ZQ/ACT command                */
     } ZQCS_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  FAW;                             /*!< t(FAW)                                                                */
-    
+
     struct {
       __IO uint32_t  DI         :  6;               /*!< t(FAW), 4 act command window time                                     */
     } FAW_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  BURST;                           /*!< BURST                                                                 */
-    
+
     struct {
       __IO uint32_t  LEN        :  1;               /*!< 0: length 8, 1: length 4                                              */
     } BURST_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  PHUNG;                           /*!< PHUNG                                                                 */
-    
+
     struct {
       __IO uint32_t  MODE       :  1;               /*!< 0: normal mode, 1: prevent read hang mode                             */
       __IO uint32_t  LPM        :  1;               /*!< 1: stop the IO clk                                                    */
     } PHUNG_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RL;                              /*!< READ Latency                                                          */
-    
+
     struct {
       __IO uint32_t  VAL        :  5;               /*!< READ Latency                                                          */
     } RL_b;                                         /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  WL;                              /*!< WRITE Latency                                                         */
-    
+
     struct {
       __IO uint32_t  VAL        :  5;               /*!< WRITE Latency                                                         */
     } WL_b;                                         /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TRAIN;                           /*!< TRAIN                                                                 */
-    
+
     struct {
       __IO uint32_t  EN         :  4;               /*!< Enable lane N training mode                                           */
     } TRAIN_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DQSEN0;                          /*!< Delay cycles of dqsen of byte lane 0                                  */
-    
+
     struct {
       __IO uint32_t  DL         :  3;               /*!< Delay cycles of dqsen of byte lane 0                                  */
     } DQSEN0_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DQSEN1;                          /*!< Delay cycles of dqsen of byte lane 1                                  */
-    
+
     struct {
       __IO uint32_t  DL         :  3;               /*!< Delay cycles of dqsen of byte lane 1                                  */
     } DQSEN1_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DQSEN2;                          /*!< Delay cycles of dqsen of byte lane 2                                  */
-    
+
     struct {
       __IO uint32_t  DL         :  3;               /*!< Delay cycles of dqsen of byte lane 2                                  */
     } DQSEN2_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  DQSEN3;                          /*!< Delay cycles of dqsen of byte lane 0                                  */
-    
+
     struct {
       __IO uint32_t  DL         :  3;               /*!< Delay cycles of dqsen of byte lane 3                                  */
     } DQSEN3_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ODTH;                            /*!< Delay from WR command to odt high transition                          */
-    
+
     struct {
       __IO uint32_t  DL         :  5;               /*!< Delay from WR command to odt high transition                          */
     } ODTH_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ODTL;                            /*!< Delay from WR command to odt low transition                           */
-    
+
     struct {
       __IO uint32_t  DL         :  5;               /*!< Delay from WR command to odt low transition                           */
     } ODTL_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  ODT;                             /*!< Used in write leveling mode                                           */
-    
+
     struct {
       __O  uint32_t  TRIG       :  1;               /*!< 0: trigger odt low, 1: trigger odt high                               */
     } ODT_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __O  uint32_t  DQS;                             /*!< Used in write leveling mode                                           */
-    
+
     struct {
       __O  uint32_t  TRIG       :  1;               /*!< Writing 1 to this register triggers a dqs pulse                       */
     } DQS_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  STA;                             /*!< Commands FIFO                                                         */
-    
+
     struct {
       __I  uint32_t  MODE       :  1;               /*!< DDRC in sw_proc mode                                                  */
       __I  uint32_t  EMPTY      :  1;               /*!< Sw_proc command fifo empty                                            */
       __I  uint32_t  FULL       :  1;               /*!< Sw_proc command fifo full                                             */
     } STA_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INTCTL;                          /*!< Interrupt Control                                                     */
-    
+
     struct {
       __IO uint32_t  DONE       :  1;               /*!< 0: the sw_proc_done int will not be masked, 1: the sw_proc_done
                                                          int will be masked                                                    */
@@ -7679,36 +7679,36 @@ typedef struct {                                    /*!< DDRC Structure         
                                                          edge active                                                           */
     } INTCTL_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INTRAW;                          /*!< Interrupt RAW                                                         */
-    
+
     struct {
       __IO uint32_t  DONE       :  1;               /*!< Int register of sw_proc_done before mask                              */
       __IO uint32_t  ERR        :  1;               /*!< int reg of the lane sync error before masked                          */
     } INTRAW_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  INTSTA;                          /*!< Interrupt STA                                                         */
-    
+
     struct {
       __IO uint32_t  DONE       :  1;               /*!< Int register of sw_proc_done after mask                               */
       __IO uint32_t  ERR        :  1;               /*!< int register of lane sync error after masked                          */
     } INTSTA_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  PHY;                             /*!< PHY                                                                   */
-    
+
     struct {
       __IO uint32_t  RST        :  1;               /*!< FPGA version, reset read dq fifo. Low active                          */
     } PHY_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RDQ;                             /*!< FPGA version, read dq delay of byte lane N                            */
-    
+
     struct {
       __IO uint32_t  L3         :  6;               /*!< FPGA version, read dq delay of byte lane3                             */
            uint32_t             :  2;
@@ -7719,10 +7719,10 @@ typedef struct {                                    /*!< DDRC Structure         
       __IO uint32_t  L0         :  7;               /*!< FPGA version, read dq delay of byte lane0                             */
     } RDQ_b;                                        /*!< BitSize                                                               */
   };
-  
+
   union {
     __I  uint32_t  CALIB;                           /*!< calibration                                                           */
-    
+
     struct {
       __I  uint32_t  TPU        :  8;               /*!< calibration result values, if fail then 0x40                          */
       __I  uint32_t  TPD        :  8;               /*!< calibration result values, if fail then 0x40                          */
@@ -7733,12 +7733,12 @@ typedef struct {                                    /*!< DDRC Structure         
                                                          positive edge                                                         */
     } CALIB_b;                                      /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  ITMDLY;                          /*!< "itmdly" is the fine delay trim to the read path "dq", "itmsdly"
                                                          is to the read path of "dqs". From 000 to 111 increasingly,
                                                           each step is about 40ps                                              */
-    
+
     struct {
       __IO uint32_t  I0         :  4;               /*!< itmdly0                                                               */
       __IO uint32_t  IS0        :  4;               /*!< itmsdly0                                                              */
@@ -7750,10 +7750,10 @@ typedef struct {                                    /*!< DDRC Structure         
       __IO uint32_t  IS3        :  4;               /*!< itmsdly3                                                              */
     } ITMDLY_b;                                     /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  TUNE;                            /*!< CALIB_TUNE                                                            */
-    
+
     struct {
       __IO uint32_t  TPU        :  4;               /*!< tpu_tune, finial val = tune[3] ? val - tune : val + tune              */
       __IO uint32_t  TPD        :  4;               /*!< tpd_tune, tune[3:0] for TPD/TPU, [2:0] is the tune val                */
@@ -7761,10 +7761,10 @@ typedef struct {                                    /*!< DDRC Structure         
       __IO uint32_t  NDR        :  4;               /*!< ndr_tune, tune[2:0] for NDR/PDR, [1:0] is the tune val                */
     } TUNE_b;                                       /*!< BitSize                                                               */
   };
-  
+
   union {
     __IO uint32_t  RD_SEL;                          /*!< RD_WINDOWS_SEL                                                        */
-    
+
     struct {
       __IO uint32_t  PHY_SEL    :  3;               /*!< To fix the phy read valid issue, this is to adjust the read
                                                          data valid window to match the phy read valid by cycle level          */
@@ -7783,10 +7783,10 @@ typedef struct {                                    /*!< DDRC Structure         
   */
 
 typedef struct {                                    /*!< PDLOCK Structure                                                      */
-  
+
   union {
     __I  uint32_t  GCLK;                            /*!< GCLK                                                                  */
-    
+
     struct {
       __I  uint32_t  C1R2P      :  1;               /*!< gclk_c1r2_pll_lock                                                    */
       __I  uint32_t  C1R1P      :  1;               /*!< gclk_c1r1_pll_lock                                                    */
@@ -7811,10 +7811,10 @@ typedef struct {                                    /*!< PDLOCK Structure       
   */
 
 typedef struct {                                    /*!< PDPROT Structure                                                      */
-  
+
   union {
     __O  uint32_t  LOCK;                            /*!< LOCK                                                                  */
-    
+
     struct {
       __O  uint32_t  EN         :  1;               /*!< Enable the PLL DLL Lock to Protect it                                 */
     } LOCK_b;                                       /*!< BitSize                                                               */
@@ -7833,20 +7833,20 @@ typedef struct {                                    /*!< PDPROT Structure       
 
 typedef struct {                                    /*!< CFG_CTRL Structure                                                    */
   __I  uint32_t  RESERVED0[3];
-  
+
   union {
     __IO uint32_t  DONE;                            /*!< DONE CFG                                                              */
-    
+
     struct {
       __IO uint32_t  CMD        :  1;               /*!< Write 1 indicate all chain data write over                            */
       __IO uint32_t  STA        :  1;               /*!< 1= all chain config process over, chip is in user mode                */
     } DONE_b;                                       /*!< BitSize                                                               */
   };
   __I  uint32_t  RESERVED1[34];
-  
+
   union {
     __IO uint32_t  PDLLSTR;                         /*!< PLL DLL RESET                                                         */
-    
+
     struct {
       __IO uint32_t  C1R1P      :  1;               /*!< C1r1_rstpll_n, low active                                             */
       __IO uint32_t  C1R2P      :  1;               /*!< C1r2_rstpll_n, low active                                             */
@@ -7871,10 +7871,10 @@ typedef struct {                                    /*!< CFG_CTRL Structure     
   */
 
 typedef struct {                                    /*!< SOFT_RESET Structure                                                  */
-  
+
   union {
     __IO uint32_t  SOFTRST;                         /*!< SOFTRST                                                               */
-    
+
     struct {
       __IO uint32_t  CAN1_n     :  1;               /*!< soft_rst_can1_n                                                       */
       __IO uint32_t  CAN0_n     :  1;               /*!< soft_rst_can0_n                                                       */

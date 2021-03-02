@@ -3864,9 +3864,9 @@ HAL_StatusTypeDef HAL_TIM_OnePulse_ConfigChannel(TIM_HandleTypeDef *htim,  TIM_O
   *            @arg TIM_DMABASE_CCR4
   *            @arg TIM_DMABASE_BDTR
   *            @arg TIM_DMABASE_OR
-  *            @arg TIM_DMABASE_CCMR3 
-  *            @arg TIM_DMABASE_CCR5 
-  *            @arg TIM_DMABASE_CCR6 
+  *            @arg TIM_DMABASE_CCMR3
+  *            @arg TIM_DMABASE_CCR5
+  *            @arg TIM_DMABASE_CCR6
   *            @arg TIM_DMABASE_AF1  (*)
   *            @arg TIM_DMABASE_AF2  (*)
   *         (*) value not defined in all devices
@@ -4130,9 +4130,9 @@ HAL_StatusTypeDef HAL_TIM_DMABurst_WriteStop(TIM_HandleTypeDef *htim, uint32_t B
   *            @arg TIM_DMABASE_CCR4
   *            @arg TIM_DMABASE_BDTR
   *            @arg TIM_DMABASE_OR
-  *            @arg TIM_DMABASE_CCMR3 
-  *            @arg TIM_DMABASE_CCR5 
-  *            @arg TIM_DMABASE_CCR6 
+  *            @arg TIM_DMABASE_CCMR3
+  *            @arg TIM_DMABASE_CCR5
+  *            @arg TIM_DMABASE_CCR6
   *            @arg TIM_DMABASE_AF1  (*)
   *            @arg TIM_DMABASE_AF2  (*)
   *         (*) value not defined in all devices

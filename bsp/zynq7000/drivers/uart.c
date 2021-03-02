@@ -56,24 +56,24 @@
 
 static void UartEnable(UART_Registers* uart)
 {
-	uint32_t tmp = uart->CR;
-	tmp &= ~UART_CR_EN_DIS_MASK;
-	tmp |= (UART_CR_TX_EN | UART_CR_RX_EN);
+    uint32_t tmp = uart->CR;
+    tmp &= ~UART_CR_EN_DIS_MASK;
+    tmp |= (UART_CR_TX_EN | UART_CR_RX_EN);
 
-	uart->CR = tmp;
+    uart->CR = tmp;
 }
 
 static void UartDisable(UART_Registers* uart)
 {
-	uint32_t tmp = uart->CR;
-	tmp &= ~UART_CR_EN_DIS_MASK;
-	tmp |= (UART_CR_TX_DIS | UART_CR_RX_DIS);
-	uart->CR = tmp;
+    uint32_t tmp = uart->CR;
+    tmp &= ~UART_CR_EN_DIS_MASK;
+    tmp |= (UART_CR_TX_DIS | UART_CR_RX_DIS);
+    uart->CR = tmp;
 }
 
 static void UartResetTXRXLogic(UART_Registers* uart)
 {
-	uart->CR |= 0x03;
+    uart->CR |= 0x03;
     while (uart->CR & 0x03)
         ;
 }
@@ -164,7 +164,7 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     else
         return -RT_ERROR;
 
-	uart->MR = mr;
+    uart->MR = mr;
 
     uart->TXWM = 8;
     uart->RXWM = 1;
@@ -280,7 +280,7 @@ int rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-	config.bufsz     = RT_SERIAL_RB_BUFSZ;
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     _serial0.ops    = &_uart_ops;
     _serial0.config = config;

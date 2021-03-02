@@ -34,9 +34,9 @@ static rt_size_t phy_device_write(rt_device_t dev, rt_off_t pos, const void *buf
 
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops phy_ops = 
+const static struct rt_device_ops phy_ops =
 {
-    RT_NULL, 
+    RT_NULL,
     RT_NULL,
     RT_NULL,
     phy_device_read,

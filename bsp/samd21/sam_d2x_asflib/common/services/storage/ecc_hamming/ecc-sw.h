@@ -72,8 +72,8 @@
 
 
 void hamming_compute_256x(const uint8_t *puc_data, uint32_t dw_size,
-		uint8_t *puc_code);
+        uint8_t *puc_code);
 uint32_t hamming_verify_256x(uint8_t *puc_data, uint32_t dw_size,
-		const uint8_t *puc_code);
+        const uint8_t *puc_code);
 
 #endif /* ECC_SW_H_INCLUDED */

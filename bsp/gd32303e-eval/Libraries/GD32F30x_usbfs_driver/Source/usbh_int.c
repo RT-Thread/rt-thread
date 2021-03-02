@@ -42,7 +42,7 @@ uint32_t usbh_isr (usb_core_handle_struct *pudev)
         if (!int_flag) {
             return 0U;
         }
-        
+
         /* start of frame interrupt handle */
         if (int_flag & GINTF_SOF) {
             retval |= usbh_intf_sof (pudev);
@@ -191,7 +191,7 @@ static uint32_t usbh_intf_ptxfifo_empty (usb_core_handle_struct *pudev)
 {
     uint8_t channel_num = 0U;
     uint32_t dword_len = 0U, len = 0U;
-    usb_hostchannel_struct *puhc; 
+    usb_hostchannel_struct *puhc;
 
     channel_num = (uint8_t)((USB_HPTFQSTAT & HPTFQSTAT_CNUM) >> 27U);
     puhc = &pudev->host.host_channel[channel_num];
@@ -354,7 +354,7 @@ static uint32_t usbh_intf_hc_out (usb_core_handle_struct *pudev, uint8_t channel
                 puhc->urb_state = URB_DONE;
 
                 if (USB_EPTYPE_BULK == ((USB_HCHxCTL((uint16_t)channel_num) & HCHCTL_EPTYPE) >> 18)) {
-                    puhc->data_tg_out ^= 1U; 
+                    puhc->data_tg_out ^= 1U;
                 }
                 break;
             case HC_NAK:
@@ -420,7 +420,7 @@ static uint32_t usbh_intf_hc_in (usb_core_handle_struct *pudev, uint8_t channel_
         USB_HCHxINTEN((uint16_t)channel_num) |= HCHINTEN_CHIE;
         usb_hostchannel_halt(pudev, channel_num);
         USB_HCHxINTF((uint16_t)channel_num) = HCHINTF_NAK;
-        puhc->status = HC_DTGERR; 
+        puhc->status = HC_DTGERR;
         USB_HCHxINTF((uint16_t)channel_num) = HCHINTF_DTER;
     } else {
         /* no operation */

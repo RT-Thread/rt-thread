@@ -64,7 +64,7 @@ enum _gpt_events
     kGPTOutputCompare1 = 1 << 0,   //!< Output compare 1 event.
     kGPTOutputCompare2 = 1 << 1,   //!< Output compare 2 event.
     kGPTOutputCompare3 = 1 << 2,   //!< Output compare 3 event.
-    
+
     //! Combined mask of all GPT events.
     kGPTAllEvents = kGPTRollover | kGPTInputCapture1 | kGPTInputCapture2
                     | kGPTOutputCompare1 | kGPTOutputCompare2 | kGPTOutputCompare3
@@ -201,7 +201,7 @@ void gpt_set_capture_event(uint8_t cap_input, uint8_t cap_input_mode);
 uint32_t gpt_get_compare_event(uint8_t flag);
 
 /*!
- * @brief Set a compare event by programming the compare register and 
+ * @brief Set a compare event by programming the compare register and
  * compare output mode.
  *
  * @param   cmp_output The channel to configure. Must be one of #kGPTOutputCompare1,

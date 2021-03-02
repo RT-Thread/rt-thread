@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -112,26 +112,26 @@ typedef struct {
 /**
  * @ingroup    gcr_registers
  * @defgroup   GCR_Register_Offsets Register Offsets
- * @brief      GCR Peripheral Register Offsets from the GCR Base Peripheral Address. 
+ * @brief      GCR Peripheral Register Offsets from the GCR Base Peripheral Address.
  * @{
  */
- #define MXC_R_GCR_SCON                     ((uint32_t)0x00000000UL) /**< Offset from GCR Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_GCR_RSTR0                    ((uint32_t)0x00000004UL) /**< Offset from GCR Base Address: <tt> 0x0004</tt> */ 
- #define MXC_R_GCR_CLKCN                    ((uint32_t)0x00000008UL) /**< Offset from GCR Base Address: <tt> 0x0008</tt> */ 
- #define MXC_R_GCR_PM                       ((uint32_t)0x0000000CUL) /**< Offset from GCR Base Address: <tt> 0x000C</tt> */ 
- #define MXC_R_GCR_PCKDIV                   ((uint32_t)0x00000018UL) /**< Offset from GCR Base Address: <tt> 0x0018</tt> */ 
- #define MXC_R_GCR_PERCKCN0                 ((uint32_t)0x00000024UL) /**< Offset from GCR Base Address: <tt> 0x0024</tt> */ 
- #define MXC_R_GCR_MEMCKCN                  ((uint32_t)0x00000028UL) /**< Offset from GCR Base Address: <tt> 0x0028</tt> */ 
- #define MXC_R_GCR_MEMZCN                   ((uint32_t)0x0000002CUL) /**< Offset from GCR Base Address: <tt> 0x002C</tt> */ 
- #define MXC_R_GCR_SCCK                     ((uint32_t)0x00000034UL) /**< Offset from GCR Base Address: <tt> 0x0034</tt> */ 
- #define MXC_R_GCR_MPRI0                    ((uint32_t)0x00000038UL) /**< Offset from GCR Base Address: <tt> 0x0038</tt> */ 
- #define MXC_R_GCR_MPRI1                    ((uint32_t)0x0000003CUL) /**< Offset from GCR Base Address: <tt> 0x003C</tt> */ 
- #define MXC_R_GCR_SYSST                    ((uint32_t)0x00000040UL) /**< Offset from GCR Base Address: <tt> 0x0040</tt> */ 
- #define MXC_R_GCR_RSTR1                    ((uint32_t)0x00000044UL) /**< Offset from GCR Base Address: <tt> 0x0044</tt> */ 
- #define MXC_R_GCR_PERCKCN1                 ((uint32_t)0x00000048UL) /**< Offset from GCR Base Address: <tt> 0x0048</tt> */ 
- #define MXC_R_GCR_EVTEN                    ((uint32_t)0x0000004CUL) /**< Offset from GCR Base Address: <tt> 0x004C</tt> */ 
- #define MXC_R_GCR_REVISION                 ((uint32_t)0x00000050UL) /**< Offset from GCR Base Address: <tt> 0x0050</tt> */ 
- #define MXC_R_GCR_SYSSIE                   ((uint32_t)0x00000054UL) /**< Offset from GCR Base Address: <tt> 0x0054</tt> */ 
+ #define MXC_R_GCR_SCON                     ((uint32_t)0x00000000UL) /**< Offset from GCR Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_GCR_RSTR0                    ((uint32_t)0x00000004UL) /**< Offset from GCR Base Address: <tt> 0x0004</tt> */
+ #define MXC_R_GCR_CLKCN                    ((uint32_t)0x00000008UL) /**< Offset from GCR Base Address: <tt> 0x0008</tt> */
+ #define MXC_R_GCR_PM                       ((uint32_t)0x0000000CUL) /**< Offset from GCR Base Address: <tt> 0x000C</tt> */
+ #define MXC_R_GCR_PCKDIV                   ((uint32_t)0x00000018UL) /**< Offset from GCR Base Address: <tt> 0x0018</tt> */
+ #define MXC_R_GCR_PERCKCN0                 ((uint32_t)0x00000024UL) /**< Offset from GCR Base Address: <tt> 0x0024</tt> */
+ #define MXC_R_GCR_MEMCKCN                  ((uint32_t)0x00000028UL) /**< Offset from GCR Base Address: <tt> 0x0028</tt> */
+ #define MXC_R_GCR_MEMZCN                   ((uint32_t)0x0000002CUL) /**< Offset from GCR Base Address: <tt> 0x002C</tt> */
+ #define MXC_R_GCR_SCCK                     ((uint32_t)0x00000034UL) /**< Offset from GCR Base Address: <tt> 0x0034</tt> */
+ #define MXC_R_GCR_MPRI0                    ((uint32_t)0x00000038UL) /**< Offset from GCR Base Address: <tt> 0x0038</tt> */
+ #define MXC_R_GCR_MPRI1                    ((uint32_t)0x0000003CUL) /**< Offset from GCR Base Address: <tt> 0x003C</tt> */
+ #define MXC_R_GCR_SYSST                    ((uint32_t)0x00000040UL) /**< Offset from GCR Base Address: <tt> 0x0040</tt> */
+ #define MXC_R_GCR_RSTR1                    ((uint32_t)0x00000044UL) /**< Offset from GCR Base Address: <tt> 0x0044</tt> */
+ #define MXC_R_GCR_PERCKCN1                 ((uint32_t)0x00000048UL) /**< Offset from GCR Base Address: <tt> 0x0048</tt> */
+ #define MXC_R_GCR_EVTEN                    ((uint32_t)0x0000004CUL) /**< Offset from GCR Base Address: <tt> 0x004C</tt> */
+ #define MXC_R_GCR_REVISION                 ((uint32_t)0x00000050UL) /**< Offset from GCR Base Address: <tt> 0x0050</tt> */
+ #define MXC_R_GCR_SYSSIE                   ((uint32_t)0x00000054UL) /**< Offset from GCR Base Address: <tt> 0x0054</tt> */
 /**@} end of group gcr_registers */
 
 /**

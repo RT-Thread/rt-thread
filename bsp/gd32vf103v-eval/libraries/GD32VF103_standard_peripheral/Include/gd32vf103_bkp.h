@@ -110,7 +110,7 @@ OF SUCH DAMAGE.
 
 /* constants definitions */
 /* BKP data register number */
-typedef enum 
+typedef enum
 {
     BKP_DATA_0 = 1,                                              /*!< BKP data register 0 */
     BKP_DATA_1,                                                  /*!< BKP data register 1 */

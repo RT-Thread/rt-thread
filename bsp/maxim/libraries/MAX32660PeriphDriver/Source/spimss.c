@@ -39,7 +39,7 @@
  * $Revision: 43157 $
  *
  **************************************************************************** */
- 
+
 /* **** Includes **** */
 #include <string.h>
 #include <stdio.h>
@@ -91,7 +91,7 @@ int SPIMSS_Init(mxc_spimss_regs_t *spi, unsigned mode, unsigned freq, const sys_
     }
 
     states[spi_num].req = NULL;
-    spi->ctrl &=  ~(MXC_F_SPIMSS_CTRL_SPIEN);  // Keep the SPI Disabled (This is the SPI Start) 
+    spi->ctrl &=  ~(MXC_F_SPIMSS_CTRL_SPIEN);  // Keep the SPI Disabled (This is the SPI Start)
 
     // Check if frequency is too high
     if (freq > PeripheralClock) {
@@ -107,7 +107,7 @@ int SPIMSS_Init(mxc_spimss_regs_t *spi, unsigned mode, unsigned freq, const sys_
     pha = mode &  1;  // Get the phase out of the mode input value
 
     spi->ctrl = (spi->ctrl & ~(MXC_F_SPIMSS_CTRL_CLKPOL)) | (pol << MXC_F_SPIMSS_CTRL_CLKPOL_POS);  // polarity
-					  
+
     spi->ctrl = (spi->ctrl & ~(MXC_F_SPIMSS_CTRL_PHASE))  | (pha << MXC_F_SPIMSS_CTRL_PHASE_POS);   // phase
 
     spi->status &= ~(MXC_F_SPIMSS_STATUS_IRQ);
@@ -159,11 +159,11 @@ int SPIMSS_TransSetup(mxc_spimss_regs_t *spi, spimss_req_t *req, int master)
 {
     int spi_num;
 
-    spi->ctrl &= ~(MXC_F_SPIMSS_CTRL_SPIEN);  // Make sure the Initiation 
-	                                          // of SPI Start is disabled.
+    spi->ctrl &= ~(MXC_F_SPIMSS_CTRL_SPIEN);  // Make sure the Initiation
+                                              // of SPI Start is disabled.
 
-    spi->mod |= MXC_F_SPIMSS_MOD_TX_LJ;       // Making sure data is left 
-	                                          // justified.
+    spi->mod |= MXC_F_SPIMSS_MOD_TX_LJ;       // Making sure data is left
+                                              // justified.
 
     if ((req->tx_data == NULL) && (req->rx_data == NULL)) {
         return -1;
@@ -185,20 +185,20 @@ int SPIMSS_TransSetup(mxc_spimss_regs_t *spi, spimss_req_t *req, int master)
 
     if (master) { // Enable master mode
         spi->ctrl |= MXC_F_SPIMSS_CTRL_MMEN;     // SPI configured as master.
-        spi->mod |= MXC_F_SPIMSS_CTRL_MMEN;       // SSEL pin is an output.		
+        spi->mod |= MXC_F_SPIMSS_CTRL_MMEN;       // SSEL pin is an output.
     } else { // Enable slave mode
         spi->ctrl &= ~(MXC_F_SPIMSS_CTRL_MMEN);  // SPI configured as slave.
-        spi->mod &= ~(MXC_F_SPIMSS_CTRL_MMEN);    // SSEL pin is an input.		
+        spi->mod &= ~(MXC_F_SPIMSS_CTRL_MMEN);    // SSEL pin is an input.
     }
 
     // Setup the character size
 
     if (req->bits <16) {
         MXC_SETFIELD(spi->mod, MXC_F_SPIMSS_MOD_NUMBITS , req->bits <<  MXC_F_SPIMSS_MOD_NUMBITS_POS);
-		
+
     } else {
         MXC_SETFIELD(spi->mod, MXC_F_SPIMSS_MOD_NUMBITS , 0 <<  MXC_F_SPIMSS_MOD_NUMBITS_POS);
-		
+
     }
 
     // Setup the slave select
@@ -228,15 +228,15 @@ void SPIMSS_Handler(mxc_spimss_regs_t *spi)  // From the IRQ
     if (states[spi_num].req != NULL) {
         if ((spi->ctrl  & MXC_F_SPIMSS_CTRL_MMEN) >> MXC_F_SPIMSS_CTRL_MMEN_POS) {
             int_enable = SPIMSS_MasterTransHandler(spi, states[spi_num].req);
-			
+
         } else {
-            int_enable = SPIMSS_SlaveTransHandler(spi, states[spi_num].req);			
+            int_enable = SPIMSS_SlaveTransHandler(spi, states[spi_num].req);
         }
     }
 
     if (int_enable==1) {
         spi->ctrl |= (MXC_F_SPIMSS_CTRL_IRQE );
-		
+
     }
 }
 
@@ -248,12 +248,12 @@ int SPIMSS_MasterTrans(mxc_spimss_regs_t *spi, spimss_req_t *req)
     if ((error = SPIMSS_TransSetup(spi, req, 1)) != E_NO_ERROR) {
         return error;
     }
-	
+
     req->callback = NULL;
 
     spi->mod &= ~(MXC_F_SPIMSS_MOD_SSV);  // This will assert the Slave Select.
     spi->ctrl |= MXC_F_SPIMSS_CTRL_SPIEN;  // Enable/Start SPI
-    
+
     while (SPIMSS_MasterTransHandler(spi,req)!=0) {
     }
 
@@ -269,14 +269,14 @@ int SPIMSS_MasterTrans(mxc_spimss_regs_t *spi, spimss_req_t *req)
 int SPIMSS_SlaveTrans(mxc_spimss_regs_t *spi, spimss_req_t *req)
 {
     int error;
- 
+
     if ((error = SPIMSS_TransSetup(spi, req,0)) != E_NO_ERROR) {
         return error;
     }
 
     while (SPIMSS_SlaveTransHandler(spi,req)!=0) {
         spi->ctrl |= MXC_F_SPIMSS_CTRL_SPIEN;  // Enable/Start SPI
-        while ((spi->status & MXC_F_SPIMSS_STATUS_TXST) == MXC_F_SPIMSS_STATUS_TXST) {}		
+        while ((spi->status & MXC_F_SPIMSS_STATUS_TXST) == MXC_F_SPIMSS_STATUS_TXST) {}
      }
 
     spi->ctrl &= ~(MXC_F_SPIMSS_CTRL_SPIEN);  // Last of the SPIMSS value has been transmitted...
@@ -290,7 +290,7 @@ int SPIMSS_MasterTransAsync(mxc_spimss_regs_t *spi, spimss_req_t *req)
     int error;
     uint8_t int_enable;
     if ((error = SPIMSS_TransSetup(spi, req, 1) )!= E_NO_ERROR) {
-        return error;		
+        return error;
     }
 
     int_enable = SPIMSS_MasterTransHandler(spi,req);
@@ -382,7 +382,7 @@ uint32_t SPIMSS_TransHandler(mxc_spimss_regs_t *spi, spimss_req_t *req)
                 rx_avail = (length - req->rx_num);
             }
         }
-        
+
         remain = length - req->rx_num;
 
         if (remain) {
@@ -391,7 +391,7 @@ uint32_t SPIMSS_TransHandler(mxc_spimss_regs_t *spi, spimss_req_t *req)
             } else {
                 spi->dma = ((spi->dma & ~MXC_F_SPIMSS_DMA_RX_FIFO_CNT) | ((remain-1) << MXC_F_SPIMSS_DMA_RX_FIFO_CNT_POS));
             }
-            
+
             int_en = 1;
         }
 
@@ -496,7 +496,7 @@ int SPIMSS_AbortAsync(spimss_req_t *req)
             spi->ctrl &= ~(MXC_F_SPIMSS_CTRL_IRQE | MXC_F_SPIMSS_CTRL_STR);
 
             // Disable and turn off the SPI transaction.
-        	spi->ctrl &= ~(MXC_F_SPIMSS_CTRL_SPIEN);
+            spi->ctrl &= ~(MXC_F_SPIMSS_CTRL_SPIEN);
 
             // Unlock this SPI
             mxc_free_lock((uint32_t*)&states[spi_num].req);

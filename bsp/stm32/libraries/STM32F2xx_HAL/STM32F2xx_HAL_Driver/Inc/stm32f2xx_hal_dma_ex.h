@@ -34,17 +34,17 @@
 
 /** @addtogroup DMAEx
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup DMAEx_Exported_Types DMAEx Exported Types
   * @brief DMAEx Exported types
   * @{
   */
-   
-/** 
-  * @brief  HAL DMA Memory definition  
-  */ 
+
+/**
+  * @brief  HAL DMA Memory definition
+  */
 typedef enum
 {
   MEMORY0      = 0x00U,    /*!< Memory 0     */
@@ -77,7 +77,7 @@ HAL_StatusTypeDef HAL_DMAEx_ChangeMemory(DMA_HandleTypeDef *hdma, uint32_t Addre
 /**
   * @}
   */
-         
+
 /* Private functions ---------------------------------------------------------*/
 /** @defgroup DMAEx_Private_Functions DMAEx Private Functions
   * @brief DMAEx Private functions

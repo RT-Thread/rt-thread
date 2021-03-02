@@ -189,17 +189,17 @@ GERR GD_ETH_Init(GD_ETH_InitParamsT* pInitParams)
     {
         GD_ETH_PHY_HWReset((GD_HANDLE)&ethdevice);
     }
-	
-	if(pInitParams->phyType != 0)
-	{
-		ethDelay(); //100ms delay 
-		ethdevice.workmode.mode = GD_ETH_PHY_IF_MODE_RMII;
-	}
-	else
-	{
-		ethdevice.workmode.mode = GD_ETH_PHY_IF_MODE_MII;
-	}
-	
+
+    if(pInitParams->phyType != 0)
+    {
+        ethDelay(); //100ms delay
+        ethdevice.workmode.mode = GD_ETH_PHY_IF_MODE_RMII;
+    }
+    else
+    {
+        ethdevice.workmode.mode = GD_ETH_PHY_IF_MODE_MII;
+    }
+
 #if 0
     if (pInitParams->phyreset != GD_GPIO_0) {
         GD_GPIO_Close(&ethdevice.phyreset);
@@ -320,8 +320,8 @@ GERR GD_ETH_Open(GD_ETH_OpenParamsT* pOpenParams, GD_HANDLE* pHandle)
     // move to here for RMII mode, must config phy clk output first,
     // otherwise, the EMAC can not work.
     if(ethdevice.workmode.mode == GD_ETH_PHY_IF_MODE_RMII)
-    	GD_TIMER_Delay(500); 
-	
+        GD_TIMER_Delay(500);
+
     gerr = GD_ETH_PHY_Open(&ethdevice.addr, &ethdevice.phyhandle);
     if(gerr!=GD_OK)
     {

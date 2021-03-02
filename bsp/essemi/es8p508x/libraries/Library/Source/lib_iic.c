@@ -37,7 +37,7 @@ void I2C_Init(I2C_InitStruType* I2C_InitStruct)
     }
 
     I2C0->CON.SDASE = I2C_InitStruct->I2C_16XSamp;  //16倍采样设置
-    I2C0->CON.SCKSE = I2C_InitStruct->I2C_16XSamp; 
+    I2C0->CON.SCKSE = I2C_InitStruct->I2C_16XSamp;
     I2C0->CON.SCKOD = I2C_InitStruct->I2C_SclOd;    //端口开漏设置
     I2C0->CON.SDAOD = I2C_InitStruct->I2C_SdaOd;
     I2C0->MOD.MS = I2C_InitStruct->I2C_Mode;       //主从模式设置

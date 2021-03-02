@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -501,7 +501,7 @@ void TIM_UpdateMatchValue(LPC_TIM_TypeDef *TIMx,uint8_t MatchChannel, uint32_t M
  *              - CaptureChannel: set the channel to capture data
  *              - RisingEdge    : if SET, Capture at rising edge
  *              - FallingEdge   : if SET, Capture at falling edge
- *              - IntOnCaption  : if SET, Capture generate interrupt 
+ *              - IntOnCaption  : if SET, Capture generate interrupt
  * @return      None
  **********************************************************************/
 void TIM_ConfigCapture(LPC_TIM_TypeDef *TIMx, TIM_CAPTURECFG_Type *TIM_CaptureConfigStruct)

@@ -30,7 +30,7 @@ struct dma_config {
 
     struct hc32_irq_config irq_config;
 };
-                                   
+
 #ifdef __cplusplus
 }
 #endif

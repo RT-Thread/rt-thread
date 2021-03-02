@@ -40,43 +40,43 @@
 #include "usdhc/usdhc_ifc.h"
 #include "registers/regsusdhc.h"
 
-#define MAX_FIFO_SIZE 		32
-#define NUM_FRAME_BUFS	64
-#define FB_INDEX_MASK		(NUM_FRAME_BUFS - 1)
+#define MAX_FIFO_SIZE         32
+#define NUM_FRAME_BUFS    64
+#define FB_INDEX_MASK        (NUM_FRAME_BUFS - 1)
 
 enum {
     ENDLESS_LOOP_PLAY,
     VIDEO_FILE_PLAY,
 };
 
-#define SD_PORT_INDEX	HW_USDHC3
-#define SZ_4K			4 * 1024
+#define SD_PORT_INDEX    HW_USDHC3
+#define SZ_4K            4 * 1024
 
-#define STREAM_BUF_SIZE		0x200000
-#define STREAM_FILL_SIZE	0x40000
-#define STREAM_READ_SIZE	(512 * 8)
-#define STREAM_END_SIZE		0
-#define PS_SAVE_SIZE		0x080000
-#define VP8_MB_SAVE_SIZE	0x080000
-#define MPEG4_SCRATCH_SIZE	0x080000
+#define STREAM_BUF_SIZE        0x200000
+#define STREAM_FILL_SIZE    0x40000
+#define STREAM_READ_SIZE    (512 * 8)
+#define STREAM_END_SIZE        0
+#define PS_SAVE_SIZE        0x080000
+#define VP8_MB_SAVE_SIZE    0x080000
+#define MPEG4_SCRATCH_SIZE    0x080000
 
-#define ENCODER_OUTPUT_SIZE	0x2000000
+#define ENCODER_OUTPUT_SIZE    0x2000000
 
-#define STREAM_ENC_PIC_RESET 	1
+#define STREAM_ENC_PIC_RESET     1
 
-#define PATH_V4L2	0
-#define PATH_FILE	1
-#define PATH_NET	2
-#define PATH_IPU	3
-#define PATH_MEM	4
+#define PATH_V4L2    0
+#define PATH_FILE    1
+#define PATH_NET    2
+#define PATH_IPU    3
+#define PATH_MEM    4
 
 /* Test operations */
-#define ENCODE		1
-#define DECODE		2
-#define LOOPBACK	3
+#define ENCODE        1
+#define DECODE        2
+#define LOOPBACK    3
 
-#define DEFAULT_PORT		5555
-#define DEFAULT_PKT_SIZE	0x28000
+#define DEFAULT_PORT        5555
+#define DEFAULT_PKT_SIZE    0x28000
 
 #define SIZE_USER_BUF            0x1000
 #define USER_DATA_INFO_OFFSET    8*17
@@ -114,8 +114,8 @@ struct v4l_buf {
     size_t length;
 };
 
-#define MAX_BUF_NUM	32
-#define QUEUE_SIZE	(MAX_BUF_NUM + 1)
+#define MAX_BUF_NUM    32
+#define QUEUE_SIZE    (MAX_BUF_NUM + 1)
 struct ipu_queue {
     int32_t list[MAX_BUF_NUM + 1];
     int32_t head;
@@ -139,7 +139,7 @@ struct rot {
     int32_t rot_angle;
 };
 
-#define MAX_PATH	256
+#define MAX_PATH    256
 typedef struct codec_control {
     int32_t input;              /* Input file name */
     uint32_t input_mem_addr;    /*active only if the input is stored in memory */

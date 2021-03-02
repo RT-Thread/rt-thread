@@ -233,7 +233,7 @@ typedef struct
     S8          gpioCtsPin;
     U8          channel;
     void (*NotifyFunction)(U32);
-	GBOOL       interruptEnable;
+    GBOOL       interruptEnable;
 } GD_UART_OPEN_PARAMS_S;
 
 /*!

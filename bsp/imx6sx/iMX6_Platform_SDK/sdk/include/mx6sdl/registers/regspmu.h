@@ -1000,14 +1000,14 @@ typedef union _hw_pmu_misc0
         unsigned REFTOP_PWD : 1; //!< [0] Control bit to power-down the analog bandgap reference circuitry.
         unsigned RESERVED0 : 2; //!< [2:1] Reserved
         unsigned REFTOP_SELFBIASOFF : 1; //!< [3] Control bit to disable the self-bias circuit in the analog bandgap.
-        unsigned REFTOP_VBGADJ : 3; //!< [6:4] 
+        unsigned REFTOP_VBGADJ : 3; //!< [6:4]
         unsigned REFTOP_VBGUP : 1; //!< [7] Status bit which signals that the analog bandgap voltage is up and stable.
         unsigned RESERVED1 : 4; //!< [11:8] Reserved
         unsigned STOP_MODE_CONFIG : 1; //!< [12] Configure the analog behavior in stop mode.
         unsigned DISCON_HIGH_SNVS : 1; //!< [13] This bit forces the short between VDDHIGH_IN and VSNVS_IN to open when asserted.
         unsigned OSC_I : 2; //!< [15:14] This bit field determines the bias current in the 24MHz oscillator.
         unsigned OSC_XTALOK : 1; //!< [16] Status bit which signals that the output of the 24MHz crystal oscillator is stable.
-        unsigned OSC_XTALOK_EN : 1; //!< [17] 
+        unsigned OSC_XTALOK_EN : 1; //!< [17]
         unsigned WBCP_VPW_THRESH : 2; //!< [19:18] This signal alters the voltage that the pwell is charged pumped to.
         unsigned RESERVED2 : 5; //!< [24:20] Reserved.
         unsigned CLKGATE_CTRL : 1; //!< [25] This bit allows disabling the clock gate (always un-gated) for the xtal 24MHz clock that clocks the digital logic in the analog block.

@@ -65,14 +65,14 @@ extern "C" {
  * different sleep modes can be found in \ref asfdoc_sam0_system_module_overview_sleep_mode.
  */
 enum system_sleepmode {
-	/** IDLE sleep mode */
-	SYSTEM_SLEEPMODE_IDLE       = PM_SLEEPCFG_SLEEPMODE(0x2),
-	/** STANDBY sleep mode */
-	SYSTEM_SLEEPMODE_STANDBY    = PM_SLEEPCFG_SLEEPMODE_STANDBY,
-	/** BACKUP sleep mode */
-	SYSTEM_SLEEPMODE_BACKUP     = PM_SLEEPCFG_SLEEPMODE_BACKUP,
-	/** OFF sleep mode */
-	SYSTEM_SLEEPMODE_OFF        = PM_SLEEPCFG_SLEEPMODE_OFF,
+    /** IDLE sleep mode */
+    SYSTEM_SLEEPMODE_IDLE       = PM_SLEEPCFG_SLEEPMODE(0x2),
+    /** STANDBY sleep mode */
+    SYSTEM_SLEEPMODE_STANDBY    = PM_SLEEPCFG_SLEEPMODE_STANDBY,
+    /** BACKUP sleep mode */
+    SYSTEM_SLEEPMODE_BACKUP     = PM_SLEEPCFG_SLEEPMODE_BACKUP,
+    /** OFF sleep mode */
+    SYSTEM_SLEEPMODE_OFF        = PM_SLEEPCFG_SLEEPMODE_OFF,
 };
 
 /**
@@ -82,10 +82,10 @@ enum system_sleepmode {
  * adjusting the regulator output voltage to reduce power consumption.
  */
 enum system_performance_level {
-	/** Performance level 0 */
-	SYSTEM_PERFORMANCE_LEVEL_0  = PM_PLCFG_PLSEL_PL0,
-	/** Performance level 2 */
-	SYSTEM_PERFORMANCE_LEVEL_2  = PM_PLCFG_PLSEL_PL2,
+    /** Performance level 0 */
+    SYSTEM_PERFORMANCE_LEVEL_0  = PM_PLCFG_PLSEL_PL0,
+    /** Performance level 2 */
+    SYSTEM_PERFORMANCE_LEVEL_2  = PM_PLCFG_PLSEL_PL2,
 };
 
 /**
@@ -97,14 +97,14 @@ enum system_performance_level {
  * bit groups in STDBYCFG(STDBYCFG.BBIASxx).
  */
 enum system_ram_back_bias_mode {
-	/** Retention Back biasing mode */
-	SYSTEM_RAM_BACK_BIAS_RETENTION = 0,
-	/** Standby Back Biasing mode */
-	SYSTEM_RAM_BACK_BIAS_STANDBY,
-	/** Standby OFF mode */
-	SYSTEM_RAM_BACK_BIAS_STANDBY_OFF,
-	/** Always OFF mode */
-	SYSTEM_RAM_BACK_BIAS_OFF,
+    /** Retention Back biasing mode */
+    SYSTEM_RAM_BACK_BIAS_RETENTION = 0,
+    /** Standby Back Biasing mode */
+    SYSTEM_RAM_BACK_BIAS_STANDBY,
+    /** Standby OFF mode */
+    SYSTEM_RAM_BACK_BIAS_STANDBY_OFF,
+    /** Always OFF mode */
+    SYSTEM_RAM_BACK_BIAS_OFF,
 };
 
 #if SAML21 || SAMR30
@@ -116,14 +116,14 @@ enum system_ram_back_bias_mode {
  * power domain (PDn-1) is in active state too.
  */
 enum system_linked_power_domain {
-	/** Power domains PD0/PD1/PD2 are not linked */
-	SYSTEM_LINKED_POWER_DOMAIN_DEFAULT   = PM_STDBYCFG_LINKPD_DEFAULT_Val,
-	/** Power domains PD0 and PD1 are linked */
-	SYSTEM_LINKED_POWER_DOMAIN_PD01      = PM_STDBYCFG_LINKPD_PD01_Val,
-	/** Power domains PD1 and PD2 are linked */
-	SYSTEM_LINKED_POWER_DOMAIN_PD12      = PM_STDBYCFG_LINKPD_PD12_Val,
-	/** All Power domains are linked */
-	SYSTEM_LINKED_POWER_DOMAIN_PD012     = PM_STDBYCFG_LINKPD_PD012_Val,
+    /** Power domains PD0/PD1/PD2 are not linked */
+    SYSTEM_LINKED_POWER_DOMAIN_DEFAULT   = PM_STDBYCFG_LINKPD_DEFAULT_Val,
+    /** Power domains PD0 and PD1 are linked */
+    SYSTEM_LINKED_POWER_DOMAIN_PD01      = PM_STDBYCFG_LINKPD_PD01_Val,
+    /** Power domains PD1 and PD2 are linked */
+    SYSTEM_LINKED_POWER_DOMAIN_PD12      = PM_STDBYCFG_LINKPD_PD12_Val,
+    /** All Power domains are linked */
+    SYSTEM_LINKED_POWER_DOMAIN_PD012     = PM_STDBYCFG_LINKPD_PD012_Val,
 };
 
 #if (SAML21XXXB) || (SAMR30)
@@ -133,12 +133,12 @@ enum system_linked_power_domain {
  * List of VREG switching modes.
  */
 enum system_vreg_switch_mode {
-	/** Automatic mode. */
-	SYSTEM_SYSTEM_VREG_SWITCH_AUTO = 0,
-	/** Performance oriented. */
-	SYSTEM_SYSTEM_VREG_SWITCH_PERFORMANCE,
-	/** Low Power consumption oriented. */
-	SYSTEM_SYSTEM_VREG_SWITCH_LP,
+    /** Automatic mode. */
+    SYSTEM_SYSTEM_VREG_SWITCH_AUTO = 0,
+    /** Performance oriented. */
+    SYSTEM_SYSTEM_VREG_SWITCH_PERFORMANCE,
+    /** Low Power consumption oriented. */
+    SYSTEM_SYSTEM_VREG_SWITCH_LP,
 };
 #endif
 
@@ -150,14 +150,14 @@ enum system_vreg_switch_mode {
  * powered up.
  */
 enum system_power_domain {
-	/** All power domains switching are handled by hardware */
-	SYSTEM_POWER_DOMAIN_DEFAULT = PM_STDBYCFG_PDCFG_DEFAULT_Val,
-	/** Power domain 0 (PD0) is forced ACTIVE */
-	SYSTEM_POWER_DOMAIN_PD0     = PM_STDBYCFG_PDCFG_PD0_Val,
-	/** Power domain 0 and 1 (PD0 and PD1) are forced ACTIVE */
-	SYSTEM_POWER_DOMAIN_PD01    = PM_STDBYCFG_PDCFG_PD01_Val,
-	/** All power domains are forced ACTIVE */
-	SYSTEM_POWER_DOMAIN_PD012   = PM_STDBYCFG_PDCFG_PD012_Val,
+    /** All power domains switching are handled by hardware */
+    SYSTEM_POWER_DOMAIN_DEFAULT = PM_STDBYCFG_PDCFG_DEFAULT_Val,
+    /** Power domain 0 (PD0) is forced ACTIVE */
+    SYSTEM_POWER_DOMAIN_PD0     = PM_STDBYCFG_PDCFG_PD0_Val,
+    /** Power domain 0 and 1 (PD0 and PD1) are forced ACTIVE */
+    SYSTEM_POWER_DOMAIN_PD01    = PM_STDBYCFG_PDCFG_PD01_Val,
+    /** All power domains are forced ACTIVE */
+    SYSTEM_POWER_DOMAIN_PD012   = PM_STDBYCFG_PDCFG_PD012_Val,
 };
 #endif
 
@@ -167,12 +167,12 @@ enum system_power_domain {
  *
  */
 enum system_vreg_switch_mode {
-	/** Automatic mode. */
-	SYSTEM_VREG_SWITCH_AUTO        = PM_STDBYCFG_VREGSMOD_AUTO_Val,
-	/** Performance oriented. */
-	SYSTEM_VREG_SWITCH_PERFORMANCE = PM_STDBYCFG_VREGSMOD_PERFORMANCE_Val,
-	/** Low Power consumption oriented. */
-	SYSTEM_VREG_SWITCH_LP          = PM_STDBYCFG_VREGSMOD_LP_Val,
+    /** Automatic mode. */
+    SYSTEM_VREG_SWITCH_AUTO        = PM_STDBYCFG_VREGSMOD_AUTO_Val,
+    /** Performance oriented. */
+    SYSTEM_VREG_SWITCH_PERFORMANCE = PM_STDBYCFG_VREGSMOD_PERFORMANCE_Val,
+    /** Low Power consumption oriented. */
+    SYSTEM_VREG_SWITCH_LP          = PM_STDBYCFG_VREGSMOD_LP_Val,
 };
 
 #endif
@@ -184,10 +184,10 @@ enum system_vreg_switch_mode {
  * can be chosen on the fly between a LDO or a Buck converter.
  */
 enum system_voltage_regulator_sel {
-	/** The voltage regulator in active mode is a LDO voltage regulator */
-	SYSTEM_VOLTAGE_REGULATOR_LDO    = SUPC_VREG_SEL_LDO_Val,
-	/** The voltage regulator in active mode is a buck converter */
-	SYSTEM_VOLTAGE_REGULATOR_BUCK   = SUPC_VREG_SEL_BUCK_Val,
+    /** The voltage regulator in active mode is a LDO voltage regulator */
+    SYSTEM_VOLTAGE_REGULATOR_LDO    = SUPC_VREG_SEL_LDO_Val,
+    /** The voltage regulator in active mode is a buck converter */
+    SYSTEM_VOLTAGE_REGULATOR_BUCK   = SUPC_VREG_SEL_BUCK_Val,
 };
 
 /**
@@ -196,12 +196,12 @@ enum system_voltage_regulator_sel {
  * Low power mode efficiency.
  */
 enum system_voltage_regulator_low_power_efficiency {
-	/** The voltage regulator in Low power mode has the default efficiency and
-		support the whole VDD range (1.62V to 3.6V) */
-	SYSTEM_VOLTAGE_REGULATOR_LOW_POWER_EFFICIENCY_DEFAULT,
-	/** The voltage regulator in Low power mode has the highest efficiency and
-		support the limited VDD range (2.5V to 3.6V) */
-	SYSTEM_VOLTAGE_REGULATOR_LOW_POWER_EFFICIENCY_HIGHTEST,
+    /** The voltage regulator in Low power mode has the default efficiency and
+        support the whole VDD range (1.62V to 3.6V) */
+    SYSTEM_VOLTAGE_REGULATOR_LOW_POWER_EFFICIENCY_DEFAULT,
+    /** The voltage regulator in Low power mode has the highest efficiency and
+        support the limited VDD range (2.5V to 3.6V) */
+    SYSTEM_VOLTAGE_REGULATOR_LOW_POWER_EFFICIENCY_HIGHTEST,
 };
 
 /**
@@ -210,22 +210,22 @@ enum system_voltage_regulator_low_power_efficiency {
  * Voltage references selection.
  */
 enum system_voltage_references_sel {
-	/** 1.0V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_1V0    = SUPC_VREF_SEL_1V0_Val,
-	/** 1.1V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_1V1    = SUPC_VREF_SEL_1V1_Val,
-	/** 1.2V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_1V2    = SUPC_VREF_SEL_1V2_Val,
-	/** 1.25V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_1V25   = SUPC_VREF_SEL_1V25_Val,
-	/** 2.0V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_2V0    = SUPC_VREF_SEL_2V0_Val,
-	/** 2.2V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_2V2    = SUPC_VREF_SEL_2V2_Val,
-	/** 2.4V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_2V4    = SUPC_VREF_SEL_2V4_Val,
-	/** 2.5V voltage reference typical value */
-	SYSTEM_VOLTAGE_REFERENCE_2V5    = SUPC_VREF_SEL_2V5_Val,
+    /** 1.0V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_1V0    = SUPC_VREF_SEL_1V0_Val,
+    /** 1.1V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_1V1    = SUPC_VREF_SEL_1V1_Val,
+    /** 1.2V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_1V2    = SUPC_VREF_SEL_1V2_Val,
+    /** 1.25V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_1V25   = SUPC_VREF_SEL_1V25_Val,
+    /** 2.0V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_2V0    = SUPC_VREF_SEL_2V0_Val,
+    /** 2.2V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_2V2    = SUPC_VREF_SEL_2V2_Val,
+    /** 2.4V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_2V4    = SUPC_VREF_SEL_2V4_Val,
+    /** 2.5V voltage reference typical value */
+    SYSTEM_VOLTAGE_REFERENCE_2V5    = SUPC_VREF_SEL_2V5_Val,
 };
 
 /**
@@ -234,14 +234,14 @@ enum system_voltage_references_sel {
  * Enum for Battery power switch modes.
  */
 enum system_battery_power_switch {
-	/** The backup domain is always supplied by main power */
-	SYSTEM_BATTERY_POWER_SWITCH_NONE      = SUPC_BBPS_CONF_NONE_Val,
-	/** The power switch is handled by the automatic power switch */
-	SYSTEM_BATTERY_POWER_SWITCH_AUTOMATIC = SUPC_BBPS_CONF_APWS_Val,
-	/** The backup domain is always supplied by battery backup power */
-	SYSTEM_BATTERY_POWER_SWITCH_FORCED    = SUPC_BBPS_CONF_FORCED_Val,
-	/** The power switch is handled by the BOD33 */
-	SYSTEM_BATTERY_POWER_SWITCH_BOD33     = SUPC_BBPS_CONF_BOD33_Val,
+    /** The backup domain is always supplied by main power */
+    SYSTEM_BATTERY_POWER_SWITCH_NONE      = SUPC_BBPS_CONF_NONE_Val,
+    /** The power switch is handled by the automatic power switch */
+    SYSTEM_BATTERY_POWER_SWITCH_AUTOMATIC = SUPC_BBPS_CONF_APWS_Val,
+    /** The backup domain is always supplied by battery backup power */
+    SYSTEM_BATTERY_POWER_SWITCH_FORCED    = SUPC_BBPS_CONF_FORCED_Val,
+    /** The power switch is handled by the BOD33 */
+    SYSTEM_BATTERY_POWER_SWITCH_BOD33     = SUPC_BBPS_CONF_BOD33_Val,
 };
 
 /**
@@ -251,10 +251,10 @@ enum system_battery_power_switch {
  * device.
  */
 enum system_voltage_reference {
-	/** Temperature sensor voltage reference */
-	SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE,
-	/** Voltage reference output */
-	SYSTEM_VOLTAGE_REFERENCE_OUTPUT,
+    /** Temperature sensor voltage reference */
+    SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE,
+    /** Voltage reference output */
+    SYSTEM_VOLTAGE_REFERENCE_OUTPUT,
 };
 
 /**
@@ -265,12 +265,12 @@ enum system_voltage_reference {
  * by the SUPC.
  */
 enum system_backup_pin {
-	/** Power Supply OK status pin */
-	SYSTEM_BACKUP_PIN_PSOK  = (0x1 << 0),
-	/** Backup output pin 0  */
-	SYSTEM_BACKUP_PIN_OUT_0 = (0x1 << 1),
-	/** Backup output pin 1  */
-	SYSTEM_BACKUP_PIN_OUT_1 = (0x1 << 2)
+    /** Power Supply OK status pin */
+    SYSTEM_BACKUP_PIN_PSOK  = (0x1 << 0),
+    /** Backup output pin 0  */
+    SYSTEM_BACKUP_PIN_OUT_0 = (0x1 << 1),
+    /** Backup output pin 1  */
+    SYSTEM_BACKUP_PIN_OUT_1 = (0x1 << 2)
 };
 
 /**
@@ -280,29 +280,29 @@ enum system_backup_pin {
  */
 struct system_standby_config {
 #if SAML21 || SAMR30
-	/** Power domain. */
-	enum system_power_domain  power_domain;
-	/** Enable dynamic power gating for power domain 0 */
-	bool enable_dpgpd0;
-	/** Enable dynamic power gating for power domain 1 */
-	bool enable_dpgpd1;
+    /** Power domain. */
+    enum system_power_domain  power_domain;
+    /** Enable dynamic power gating for power domain 0 */
+    bool enable_dpgpd0;
+    /** Enable dynamic power gating for power domain 1 */
+    bool enable_dpgpd1;
 #if (SAML21XXXA)
-	/** Automatic VREG switching disable. */
-	bool disable_avregsd;
+    /** Automatic VREG switching disable. */
+    bool disable_avregsd;
 #else
-	/** VREG switching mode */
-	enum system_vreg_switch_mode vregs_mode;
+    /** VREG switching mode */
+    enum system_vreg_switch_mode vregs_mode;
 #endif
-	/** Linked power domain */
-	enum system_linked_power_domain linked_power_domain;
+    /** Linked power domain */
+    enum system_linked_power_domain linked_power_domain;
 #elif SAML22
-	/** Regulator switch mode in standby. */
-	enum system_vreg_switch_mode vreg_switch_mode;
+    /** Regulator switch mode in standby. */
+    enum system_vreg_switch_mode vreg_switch_mode;
 #endif
-	/** Back bias for HMCRAMCHS. */
-	enum system_ram_back_bias_mode hmcramchs_back_bias;
-	/** Back bias for HMCRAMCLP */
-	enum system_ram_back_bias_mode hmcramclp_back_bias;
+    /** Back bias for HMCRAMCHS. */
+    enum system_ram_back_bias_mode hmcramchs_back_bias;
+    /** Back bias for HMCRAMCLP */
+    enum system_ram_back_bias_mode hmcramclp_back_bias;
 };
 
 /**
@@ -311,19 +311,19 @@ struct system_standby_config {
  * Configuration structure for VREG.
  */
 struct system_voltage_regulator_config {
-	/** Voltage scaling period */
-	uint8_t  voltage_scale_period;
-	/** Voltage scaling voltage step */
-	uint8_t voltage_scale_step;
-	/** Run in standby in standby sleep mode */
-	bool run_in_standby;
-	/** Voltage Regulator Selection */
-	enum system_voltage_regulator_sel  regulator_sel;
-	/** Low power efficiency */
-	enum system_voltage_regulator_low_power_efficiency low_power_efficiency;
+    /** Voltage scaling period */
+    uint8_t  voltage_scale_period;
+    /** Voltage scaling voltage step */
+    uint8_t voltage_scale_step;
+    /** Run in standby in standby sleep mode */
+    bool run_in_standby;
+    /** Voltage Regulator Selection */
+    enum system_voltage_regulator_sel  regulator_sel;
+    /** Low power efficiency */
+    enum system_voltage_regulator_low_power_efficiency low_power_efficiency;
 #if SAML22 || SAML21XXXB
-	/** Run in standby in performance level 0. */
-	bool run_in_standby_pl0;
+    /** Run in standby in performance level 0. */
+    bool run_in_standby_pl0;
 #endif
 };
 
@@ -333,15 +333,15 @@ struct system_voltage_regulator_config {
  * Configuration structure for VREF.
  */
 struct system_voltage_references_config {
-	/** Voltage References Selection */
-	enum system_voltage_references_sel  sel;
-	/** On Demand Control */
-	bool on_demand;
-	/** Run in standby */
-	bool run_in_standby;
+    /** Voltage References Selection */
+    enum system_voltage_references_sel  sel;
+    /** On Demand Control */
+    bool on_demand;
+    /** Run in standby */
+    bool run_in_standby;
 #if SAML22
-	/** Temperature Sensor Selection. */
-	bool temperature_sensor_sel;
+    /** Temperature Sensor Selection. */
+    bool temperature_sensor_sel;
 #endif
 };
 
@@ -351,11 +351,11 @@ struct system_voltage_references_config {
  * Configuration structure for Battery Backup Power Switch (BBPS).
  */
 struct system_battery_backup_power_switch_config {
-	/** Enable device wake up when BBPS switches from
-		battery backup power to main power */
-	bool wake_enabled;
-	/** Battery backup power switch configuration */
-	enum system_battery_power_switch battery_power_switch;
+    /** Enable device wake up when BBPS switches from
+        battery backup power to main power */
+    bool wake_enabled;
+    /** Battery backup power switch configuration */
+    enum system_battery_power_switch battery_power_switch;
 };
 
 /**
@@ -367,7 +367,7 @@ struct system_battery_backup_power_switch_config {
  * \brief Retrieve the default configuration for voltage regulator.
  *
  * Fills a configuration structure with the default configuration:
- *   - Voltage scaling period is 1Î¼s
+ *   - Voltage scaling period is 1¦Ìs
  *   - Voltage scaling voltage step is 2*min_step
  *   - The voltage regulator is in low power mode in Standby sleep mode
  *   - The voltage regulator in active mode is an LDO voltage regulator
@@ -376,16 +376,16 @@ struct system_battery_backup_power_switch_config {
  * \param[out] config  Configuration structure to fill with default values
  */
 static inline void system_voltage_regulator_get_config_defaults(
-		struct system_voltage_regulator_config *const config)
+        struct system_voltage_regulator_config *const config)
 {
-	Assert(config);
-	config->voltage_scale_period = 0;
-	config->voltage_scale_step   = 0;
-	config->run_in_standby       = false;
-	config->regulator_sel        = SYSTEM_VOLTAGE_REGULATOR_LDO;
-	config->low_power_efficiency = SYSTEM_VOLTAGE_REGULATOR_LOW_POWER_EFFICIENCY_DEFAULT;
+    Assert(config);
+    config->voltage_scale_period = 0;
+    config->voltage_scale_step   = 0;
+    config->run_in_standby       = false;
+    config->regulator_sel        = SYSTEM_VOLTAGE_REGULATOR_LDO;
+    config->low_power_efficiency = SYSTEM_VOLTAGE_REGULATOR_LOW_POWER_EFFICIENCY_DEFAULT;
 #if SAML22 || SAML21XXXB
-	config->run_in_standby_pl0   = false;
+    config->run_in_standby_pl0   = false;
 #endif
 }
 
@@ -398,22 +398,22 @@ static inline void system_voltage_regulator_get_config_defaults(
  *                    the new config
  */
 static inline void system_voltage_regulator_set_config(
-		struct system_voltage_regulator_config *const config)
+        struct system_voltage_regulator_config *const config)
 {
-	Assert(config);
-	SUPC->VREG.bit.VSPER    = config->voltage_scale_period;
-	SUPC->VREG.bit.VSVSTEP  = config->voltage_scale_step;
-	SUPC->VREG.bit.RUNSTDBY = config->run_in_standby;
-	SUPC->VREG.bit.SEL      = config->regulator_sel;
+    Assert(config);
+    SUPC->VREG.bit.VSPER    = config->voltage_scale_period;
+    SUPC->VREG.bit.VSVSTEP  = config->voltage_scale_step;
+    SUPC->VREG.bit.RUNSTDBY = config->run_in_standby;
+    SUPC->VREG.bit.SEL      = config->regulator_sel;
 #if (SAML21XXXB) || (SAMR30)
-	SUPC->VREG.bit.LPEFF    = config->low_power_efficiency;
+    SUPC->VREG.bit.LPEFF    = config->low_power_efficiency;
 #endif
 #if SAML22 || SAML21XXXB
-	SUPC->VREG.bit.STDBYPL0 = config->run_in_standby_pl0;
+    SUPC->VREG.bit.STDBYPL0 = config->run_in_standby_pl0;
 #endif
-	while(!(SUPC->STATUS.reg & SUPC_STATUS_VREGRDY)) {
-		;
-	}
+    while(!(SUPC->STATUS.reg & SUPC_STATUS_VREGRDY)) {
+        ;
+    }
 }
 
 /**
@@ -423,7 +423,7 @@ static inline void system_voltage_regulator_set_config(
  */
 static inline void system_voltage_regulator_enable(void)
 {
-	SUPC->VREG.reg |= SUPC_VREG_ENABLE;
+    SUPC->VREG.reg |= SUPC_VREG_ENABLE;
 }
 
 /**
@@ -433,7 +433,7 @@ static inline void system_voltage_regulator_enable(void)
  */
 static inline void system_voltage_regulator_disable(void)
 {
-	SUPC->VREG.reg &= ~SUPC_VREG_ENABLE;
+    SUPC->VREG.reg &= ~SUPC_VREG_ENABLE;
 }
 
 /**
@@ -456,14 +456,14 @@ static inline void system_voltage_regulator_disable(void)
  * \param[out] config  Configuration structure to fill with default values
  */
 static inline void system_voltage_reference_get_config_defaults(
-		struct system_voltage_references_config *const config)
+        struct system_voltage_references_config *const config)
 {
-	Assert(config);
-	config->sel            = SYSTEM_VOLTAGE_REFERENCE_1V0;
-	config->on_demand      = false;
-	config->run_in_standby = false;
+    Assert(config);
+    config->sel            = SYSTEM_VOLTAGE_REFERENCE_1V0;
+    config->on_demand      = false;
+    config->run_in_standby = false;
 #if SAML22
-	config->temperature_sensor_sel = false;
+    config->temperature_sensor_sel = false;
 #endif
 }
 
@@ -476,14 +476,14 @@ static inline void system_voltage_reference_get_config_defaults(
  *                    the new config
  */
 static inline void system_voltage_reference_set_config(
-		struct system_voltage_references_config *const config)
+        struct system_voltage_references_config *const config)
 {
-	Assert(config);
-	SUPC->VREF.bit.SEL      = config->sel;
-	SUPC->VREF.bit.ONDEMAND = config->on_demand;
-	SUPC->VREF.bit.RUNSTDBY = config->run_in_standby;
+    Assert(config);
+    SUPC->VREF.bit.SEL      = config->sel;
+    SUPC->VREF.bit.ONDEMAND = config->on_demand;
+    SUPC->VREF.bit.RUNSTDBY = config->run_in_standby;
 #if SAML22
-	SUPC->VREF.bit.TSSEL    = config->temperature_sensor_sel;
+    SUPC->VREF.bit.TSSEL    = config->temperature_sensor_sel;
 #endif
 }
 
@@ -496,19 +496,19 @@ static inline void system_voltage_reference_set_config(
  * \param[in] vref  Voltage reference to enable
  */
 static inline void system_voltage_reference_enable(
-		const enum system_voltage_reference vref)
+        const enum system_voltage_reference vref)
 {
-	switch (vref) {
-		case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
-			SUPC->VREF.reg |= SUPC_VREF_TSEN;
-			break;
-		case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
-			SUPC->VREF.reg |= SUPC_VREF_VREFOE;
-			break;
-		default:
-			Assert(false);
-			return;
-	}
+    switch (vref) {
+        case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
+            SUPC->VREF.reg |= SUPC_VREF_TSEN;
+            break;
+        case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
+            SUPC->VREF.reg |= SUPC_VREF_VREFOE;
+            break;
+        default:
+            Assert(false);
+            return;
+    }
 }
 
 /**
@@ -519,19 +519,19 @@ static inline void system_voltage_reference_enable(
  * \param[in] vref  Voltage reference to disable
  */
 static inline void system_voltage_reference_disable(
-		const enum system_voltage_reference vref)
+        const enum system_voltage_reference vref)
 {
-	switch (vref) {
-		case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
-			SUPC->VREF.reg &= ~SUPC_VREF_TSEN;
-			break;
-		case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
-			SUPC->VREF.reg &= ~SUPC_VREF_VREFOE;
-			break;
-		default:
-			Assert(false);
-			return;
-	}
+    switch (vref) {
+        case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
+            SUPC->VREF.reg &= ~SUPC_VREF_TSEN;
+            break;
+        case SYSTEM_VOLTAGE_REFERENCE_OUTPUT:
+            SUPC->VREF.reg &= ~SUPC_VREF_VREFOE;
+            break;
+        default:
+            Assert(false);
+            return;
+    }
 }
 
 /**
@@ -554,11 +554,11 @@ static inline void system_voltage_reference_disable(
  * \param[out] config  Configuration structure to fill with default values
  */
 static inline void system_battery_backup_power_switch_get_config_defaults(
-		struct system_battery_backup_power_switch_config *const config)
+        struct system_battery_backup_power_switch_config *const config)
 {
-	Assert(config);
-	config->wake_enabled         = false;
-	config->battery_power_switch = SYSTEM_BATTERY_POWER_SWITCH_NONE;
+    Assert(config);
+    config->wake_enabled         = false;
+    config->battery_power_switch = SYSTEM_BATTERY_POWER_SWITCH_NONE;
 }
 
 /**
@@ -570,24 +570,24 @@ static inline void system_battery_backup_power_switch_get_config_defaults(
  *                    the new config
  */
 static inline void system_battery_backup_power_switch_set_config(
-		struct system_battery_backup_power_switch_config *const config)
+        struct system_battery_backup_power_switch_config *const config)
 {
-	Assert(config);
-	uint32_t new_config = SUPC->BBPS.reg & SUPC_BBPS_PSOKEN;
+    Assert(config);
+    uint32_t new_config = SUPC->BBPS.reg & SUPC_BBPS_PSOKEN;
 
-	if(config->wake_enabled) {
-		new_config |= SUPC_BBPS_WAKEEN;
-	}
+    if(config->wake_enabled) {
+        new_config |= SUPC_BBPS_WAKEEN;
+    }
 
-	new_config |= SUPC_BBPS_CONF(config->battery_power_switch);
+    new_config |= SUPC_BBPS_CONF(config->battery_power_switch);
 
-	SUPC->BBPS.reg = new_config;
+    SUPC->BBPS.reg = new_config;
 
-	if (config->battery_power_switch == SYSTEM_BATTERY_POWER_SWITCH_AUTOMATIC) {
-		while (!(SUPC->STATUS.reg & SUPC_STATUS_APWSRDY)) {
-			;
-		}
-	}
+    if (config->battery_power_switch == SYSTEM_BATTERY_POWER_SWITCH_AUTOMATIC) {
+        while (!(SUPC->STATUS.reg & SUPC_STATUS_APWSRDY)) {
+            ;
+        }
+    }
 }
 
 /**
@@ -607,13 +607,13 @@ static inline void system_battery_backup_power_switch_set_config(
  *  \param[in] pin Backup pin index
  */
 static inline void system_backup_pin_output_enable(
-		enum system_backup_pin pin)
+        enum system_backup_pin pin)
 {
-	if (pin == SYSTEM_BACKUP_PIN_PSOK) {
-		SUPC->BBPS.reg |= SUPC_BBPS_PSOKEN;
-	} else {
-		SUPC->BKOUT.reg |= SUPC_BKOUT_EN(pin >> 1);
-	}
+    if (pin == SYSTEM_BACKUP_PIN_PSOK) {
+        SUPC->BBPS.reg |= SUPC_BBPS_PSOKEN;
+    } else {
+        SUPC->BKOUT.reg |= SUPC_BKOUT_EN(pin >> 1);
+    }
 }
 
 /**
@@ -624,13 +624,13 @@ static inline void system_backup_pin_output_enable(
  *  \param[in] pin Backup pin index
  */
 static inline void system_backup_pin_output_disable(
-		enum system_backup_pin pin)
+        enum system_backup_pin pin)
 {
-	if (pin == SYSTEM_BACKUP_PIN_PSOK) {
-		SUPC->BBPS.reg &= ~SUPC_BBPS_PSOKEN;
-	} else {
-		SUPC->BKOUT.reg &= ~SUPC_BKOUT_EN(pin >> 1);
-	}
+    if (pin == SYSTEM_BACKUP_PIN_PSOK) {
+        SUPC->BBPS.reg &= ~SUPC_BBPS_PSOKEN;
+    } else {
+        SUPC->BKOUT.reg &= ~SUPC_BKOUT_EN(pin >> 1);
+    }
 }
 
 /**
@@ -643,20 +643,20 @@ static inline void system_backup_pin_output_disable(
  * \retval false The output is not enabled
  */
 static inline bool system_backup_pin_output_is_enabled(
-		enum system_backup_pin pin)
+        enum system_backup_pin pin)
 {
-	bool enabled = false;
+    bool enabled = false;
 
-	if (pin == SYSTEM_BACKUP_PIN_PSOK) {
-		if (SUPC->BBPS.reg & SUPC_BBPS_PSOKEN) {
-			enabled = true;
-		}
-	} else {
-		if (SUPC->BKOUT.reg & SUPC_BKOUT_EN(pin >> 1)) {
-			enabled = true;
-		}
-	}
-	return enabled;
+    if (pin == SYSTEM_BACKUP_PIN_PSOK) {
+        if (SUPC->BBPS.reg & SUPC_BBPS_PSOKEN) {
+            enabled = true;
+        }
+    } else {
+        if (SUPC->BKOUT.reg & SUPC_BKOUT_EN(pin >> 1)) {
+            enabled = true;
+        }
+    }
+    return enabled;
 }
 
 /**
@@ -667,11 +667,11 @@ static inline bool system_backup_pin_output_is_enabled(
  *  \param[in] pin Backup pin index
  */
 static inline void system_backup_pin_output_enable_rtc_toggle(
-		enum system_backup_pin pin)
+        enum system_backup_pin pin)
 {
-	Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
+    Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
 
-	SUPC->BKOUT.reg |= SUPC_BKOUT_RTCTGL(pin >> 1);
+    SUPC->BKOUT.reg |= SUPC_BKOUT_RTCTGL(pin >> 1);
 }
 
 /**
@@ -682,11 +682,11 @@ static inline void system_backup_pin_output_enable_rtc_toggle(
  *  \param[in] pin Backup pin index
  */
 static inline void system_backup_pin_output_disable_rtc_toggle(
-		enum system_backup_pin pin)
+        enum system_backup_pin pin)
 {
-	Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
+    Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
 
-	SUPC->BKOUT.reg &= ~SUPC_BKOUT_RTCTGL(pin >> 1);
+    SUPC->BKOUT.reg &= ~SUPC_BKOUT_RTCTGL(pin >> 1);
 }
 
 /**
@@ -697,11 +697,11 @@ static inline void system_backup_pin_output_disable_rtc_toggle(
  *  \param[in] pin Backup pin index
  */
 static inline void system_backup_pin_output_set(
-		enum system_backup_pin pin)
+        enum system_backup_pin pin)
 {
-	Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
+    Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
 
-	SUPC->BKOUT.reg |= SUPC_BKOUT_SET(pin >> 1);
+    SUPC->BKOUT.reg |= SUPC_BKOUT_SET(pin >> 1);
 }
 
 /**
@@ -712,11 +712,11 @@ static inline void system_backup_pin_output_set(
  *  \param[in] pin Backup pin index
  */
 static inline void system_backup_pin_output_clear(
-		enum system_backup_pin pin)
+        enum system_backup_pin pin)
 {
-	Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
+    Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
 
-	SUPC->BKOUT.reg |= SUPC_BKOUT_CLR(pin >> 1);
+    SUPC->BKOUT.reg |= SUPC_BKOUT_CLR(pin >> 1);
 }
 
 /**
@@ -731,9 +731,9 @@ static inline void system_backup_pin_output_clear(
  */
 static inline bool system_backup_pin_output_get(enum system_backup_pin pin)
 {
-	Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
+    Assert(pin != SYSTEM_BACKUP_PIN_PSOK);
 
-	return (SUPC->BKIN.reg & SUPC_BKIN_BKIN(pin >> 1));
+    return (SUPC->BKIN.reg & SUPC_BKIN_BKIN(pin >> 1));
 }
 
 /**
@@ -757,10 +757,10 @@ static inline bool system_backup_pin_output_get(enum system_backup_pin pin)
  * \param[in] sleep_mode  Sleep mode to configure for the next sleep operation
  */
 static inline void system_set_sleepmode(
-	const enum system_sleepmode sleep_mode)
+    const enum system_sleepmode sleep_mode)
 {
-	PM->SLEEPCFG.reg = sleep_mode;
-	while(PM->SLEEPCFG.reg != sleep_mode) ;
+    PM->SLEEPCFG.reg = sleep_mode;
+    while(PM->SLEEPCFG.reg != sleep_mode) ;
 }
 
 /**
@@ -773,8 +773,8 @@ static inline void system_set_sleepmode(
  */
 static inline void system_sleep(void)
 {
-	__DSB();
-	__WFI();
+    __DSB();
+    __WFI();
 }
 
 /**
@@ -802,30 +802,30 @@ static inline void system_sleep(void)
  * \retval STATUS_OK               Successfully
  */
 static inline enum status_code system_switch_performance_level(
-					const enum system_performance_level performance_level)
+                    const enum system_performance_level performance_level)
 {
 
-	if (performance_level == (enum system_performance_level)PM->PLCFG.reg) {
-		return STATUS_OK;
-	}
+    if (performance_level == (enum system_performance_level)PM->PLCFG.reg) {
+        return STATUS_OK;
+    }
 
 #if SAML22 || SAML21XXXB
-	if (PM->PLCFG.reg & PM_PLCFG_PLDIS) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (PM->PLCFG.reg & PM_PLCFG_PLDIS) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 #endif
 
-	/* Clear performance level status */
-	PM->INTFLAG.reg = PM_INTFLAG_PLRDY;
+    /* Clear performance level status */
+    PM->INTFLAG.reg = PM_INTFLAG_PLRDY;
 
-	/* Switch performance level */
-	PM->PLCFG.reg = performance_level;
+    /* Switch performance level */
+    PM->PLCFG.reg = performance_level;
 
-	/* Waiting performance level ready */
-	while (!PM->INTFLAG.reg) {
-		;
-	}
-	return STATUS_OK;
+    /* Waiting performance level ready */
+    while (!PM->INTFLAG.reg) {
+        ;
+    }
+    return STATUS_OK;
 }
 
 #if SAML22 || SAML21XXXB
@@ -836,7 +836,7 @@ static inline enum status_code system_switch_performance_level(
  */
 static inline void system_performance_level_enable(void)
 {
-	PM->PLCFG.reg &= ~PM_PLCFG_PLDIS;
+    PM->PLCFG.reg &= ~PM_PLCFG_PLDIS;
 }
 
 /**
@@ -846,7 +846,7 @@ static inline void system_performance_level_enable(void)
  */
 static inline void system_performance_level_disable(void)
 {
-	PM->PLCFG.reg |= PM_PLCFG_PLDIS;
+    PM->PLCFG.reg |= PM_PLCFG_PLDIS;
 }
 #endif
 
@@ -859,7 +859,7 @@ static inline void system_performance_level_disable(void)
  */
 static inline enum system_performance_level system_get_performance_level(void)
 {
-	return (enum system_performance_level)PM->PLCFG.reg;
+    return (enum system_performance_level)PM->PLCFG.reg;
 }
 
 /**
@@ -870,7 +870,7 @@ static inline enum system_performance_level system_get_performance_level(void)
  */
 static inline uint8_t system_get_performance_level_status(void)
 {
-	return PM->INTFLAG.reg;
+    return PM->INTFLAG.reg;
 }
 
 /**
@@ -880,7 +880,7 @@ static inline uint8_t system_get_performance_level_status(void)
  */
 static inline void system_clear_performance_level_status(void)
 {
-	PM->INTFLAG.reg = PM_INTFLAG_PLRDY;
+    PM->INTFLAG.reg = PM_INTFLAG_PLRDY;
 }
 
 /**
@@ -907,24 +907,24 @@ static inline void system_clear_performance_level_status(void)
  * \param[out] config  Configuration structure to fill with default values
  */
 static inline void system_standby_get_config_defaults(
-		struct system_standby_config *const config)
+        struct system_standby_config *const config)
 {
-	Assert(config);
+    Assert(config);
 #if SAML21 || SAMR30
-	config->power_domain        = SYSTEM_POWER_DOMAIN_DEFAULT;
-	config->enable_dpgpd0       = false;
-	config->enable_dpgpd1       = false;
+    config->power_domain        = SYSTEM_POWER_DOMAIN_DEFAULT;
+    config->enable_dpgpd0       = false;
+    config->enable_dpgpd1       = false;
 #if (SAML21XXXB) || (SAMR30)
-	config->vregs_mode          = SYSTEM_SYSTEM_VREG_SWITCH_AUTO;
+    config->vregs_mode          = SYSTEM_SYSTEM_VREG_SWITCH_AUTO;
 #else
-	config->disable_avregsd     = false;
+    config->disable_avregsd     = false;
 #endif
-	config->linked_power_domain = SYSTEM_LINKED_POWER_DOMAIN_DEFAULT;
+    config->linked_power_domain = SYSTEM_LINKED_POWER_DOMAIN_DEFAULT;
 #elif SAML22
-	config->vreg_switch_mode    = SYSTEM_VREG_SWITCH_AUTO;
+    config->vreg_switch_mode    = SYSTEM_VREG_SWITCH_AUTO;
 #endif
-	config->hmcramchs_back_bias = SYSTEM_RAM_BACK_BIAS_RETENTION;
-	config->hmcramclp_back_bias = SYSTEM_RAM_BACK_BIAS_RETENTION;
+    config->hmcramchs_back_bias = SYSTEM_RAM_BACK_BIAS_RETENTION;
+    config->hmcramclp_back_bias = SYSTEM_RAM_BACK_BIAS_RETENTION;
 }
 
 /**
@@ -936,24 +936,24 @@ static inline void system_standby_get_config_defaults(
  *                    the new config
  */
 static inline void system_standby_set_config(
-		struct system_standby_config *const config)
+        struct system_standby_config *const config)
 {
-	Assert(config);
+    Assert(config);
 #if SAML21 || SAMR30
-	PM->STDBYCFG.reg = PM_STDBYCFG_PDCFG(config->power_domain)
-					 | (config->enable_dpgpd0 << PM_STDBYCFG_DPGPD0_Pos)
-					 | (config->enable_dpgpd1 << PM_STDBYCFG_DPGPD1_Pos)
+    PM->STDBYCFG.reg = PM_STDBYCFG_PDCFG(config->power_domain)
+                     | (config->enable_dpgpd0 << PM_STDBYCFG_DPGPD0_Pos)
+                     | (config->enable_dpgpd1 << PM_STDBYCFG_DPGPD1_Pos)
 #if (SAML21XXXB) || (SAMR30)
-					 | PM_STDBYCFG_VREGSMOD(config->vregs_mode)
+                     | PM_STDBYCFG_VREGSMOD(config->vregs_mode)
 #else
-					 | (config->disable_avregsd << PM_STDBYCFG_AVREGSD_Pos)
+                     | (config->disable_avregsd << PM_STDBYCFG_AVREGSD_Pos)
 #endif
-					 | PM_STDBYCFG_LINKPD(config->linked_power_domain)
-					 | PM_STDBYCFG_BBIASHS(config->hmcramchs_back_bias)
-					 | PM_STDBYCFG_BBIASLP(config->hmcramclp_back_bias);
+                     | PM_STDBYCFG_LINKPD(config->linked_power_domain)
+                     | PM_STDBYCFG_BBIASHS(config->hmcramchs_back_bias)
+                     | PM_STDBYCFG_BBIASLP(config->hmcramclp_back_bias);
 #elif SAML22
-	PM->STDBYCFG.reg = PM_STDBYCFG_VREGSMOD(config->vreg_switch_mode) |
-					 PM_STDBYCFG_BBIASHS(config->hmcramchs_back_bias);
+    PM->STDBYCFG.reg = PM_STDBYCFG_VREGSMOD(config->vreg_switch_mode) |
+                     PM_STDBYCFG_BBIASHS(config->hmcramchs_back_bias);
 #endif
 }
 
@@ -974,7 +974,7 @@ static inline void system_standby_set_config(
  */
 static inline void system_io_retension_enable(void)
 {
-	PM->CTRLA.reg = PM_CTRLA_IORET;
+    PM->CTRLA.reg = PM_CTRLA_IORET;
 }
 
 /**
@@ -984,7 +984,7 @@ static inline void system_io_retension_enable(void)
  */
 static inline void system_io_retension_disable(void)
 {
-	PM->CTRLA.reg = PM_CTRLA_MASK & (~PM_CTRLA_IORET);
+    PM->CTRLA.reg = PM_CTRLA_MASK & (~PM_CTRLA_IORET);
 }
 
 /**

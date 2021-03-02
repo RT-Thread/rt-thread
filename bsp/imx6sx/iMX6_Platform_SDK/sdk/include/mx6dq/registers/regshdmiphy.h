@@ -1132,7 +1132,7 @@ typedef union _hw_hdmi_phy_cksymtxctrl
         unsigned short TX_TRAON : 1; //!< [2] Transmitter Trailer A On
         unsigned short TX_SYMON : 1; //!< [3] Transmitter Symbol On
         unsigned short RESERVED0 : 11; //!< [14:4] Reserved
-        unsigned short OVERRIDE : 1; //!< [15] 
+        unsigned short OVERRIDE : 1; //!< [15]
     } B;
 } hw_hdmi_phy_cksymtxctrl_t;
 #endif

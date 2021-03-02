@@ -37,7 +37,7 @@
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -47,13 +47,13 @@
 #include "diroffset.h"
 
 /*----------------------------------------------------------------------------
-		Extern Declarations
+        Extern Declarations
 ----------------------------------------------------------------------------*/
 extern FileSpecs_t *filespec;
 // extern RtStatus_t FindNext(int32_t HandleNumber,FindData_t *_finddata);
 
 /*----------------------------------------------------------------------------
-		Global Declarations
+        Global Declarations
 ----------------------------------------------------------------------------*/
 static uint8_t *CharacterSearch(uint8_t * buf, uint8_t Character);
 static int32_t StringCompare(uint8_t * Buffer, uint8_t * DestBufffer, int32_t StringLength,
@@ -65,12 +65,12 @@ static int32_t StringCompare(uint8_t * Buffer, uint8_t * DestBufffer, int32_t St
    FunctionType:  Reentrant but this function should not be called from multiple task
 
    Inputs:        1) File Specification(Structure)
-				  2) Pointer to file name
+                  2) Pointer to file name
 
    Outputs:       Returns 0 on Success else an ErrorCode if Error occurs
 
    Description:   It provides base, the file name and the extension of the file
-   				  to the FindNext() function
+                     to the FindNext() function
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t FindFirst(FindData_t * _finddata, uint8_t * FileName)
@@ -167,10 +167,10 @@ uint8_t *CharacterSearch(uint8_t * buf, uint8_t Character)
    Inputs:        1)Handle Number
                   2)File Specification Structure
 
-   Outputs:       Returns 0 on Success else an ErrorCode if Error occurs 
+   Outputs:       Returns 0 on Success else an ErrorCode if Error occurs
 
-   Description:   It reads the directory record from the given record and finds 
-   				  the first file or directory which matches the specifications.
+   Description:   It reads the directory record from the given record and finds
+                     the first file or directory which matches the specifications.
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t FindNext(int32_t HandleNumber, FindData_t * _finddata)
@@ -253,7 +253,7 @@ RtStatus_t FindNext(int32_t HandleNumber, FindData_t * _finddata)
 >  Function Name: int32_t StringCompare(uint8_t *Buffer,uint8_t *DestBufffer,int32_t StringLength,int32_t Offset)
 
    FunctionType:  Non-Reentrant
-   
+
    Inputs:        1)Pointer to buffer
                   2)Pointer to destination buffer
                   3)String length

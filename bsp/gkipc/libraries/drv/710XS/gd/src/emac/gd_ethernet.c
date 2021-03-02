@@ -301,7 +301,7 @@ GERR GD_ETH_Open(GD_ETH_OpenParamsT* pOpenParams, GD_HANDLE* pHandle)
     {
         return GD_ERR_ALREADY_OPEN;
     }
-    
+
     if(ethdevice.phyType != 0)
     {
         ethdevice.workmode.mode = pOpenParams->workmode.mode;
@@ -310,7 +310,7 @@ GERR GD_ETH_Open(GD_ETH_OpenParamsT* pOpenParams, GD_HANDLE* pHandle)
     {
         ethdevice.workmode.mode = GD_ETH_PHY_IF_MODE_MII;
     }
-    
+
     ethdevice.addr                  = pOpenParams->addr;
     ethdevice.workmode.bEnAutoNeg   = pOpenParams->workmode.bEnAutoNeg;
     ethdevice.workmode.speed        = pOpenParams->workmode.speed;
@@ -400,22 +400,22 @@ GERR GD_ETH_Open(GD_ETH_OpenParamsT* pOpenParams, GD_HANDLE* pHandle)
     /* set TDLAR(descriptor base) current desc */
     GH_ETH_set_TDLAR((U32)(ethdevice.TxDesStartAddr));
 #ifdef PERFECT_DISCARD_ALL_OTHER_MACADDR
-	/* set MFFR (Address Filtering)*/
-	GH_ETH_set_MFFR_PR(0);		//PM
-	GH_ETH_set_MFFR_HUC(0);		//HU
-	GH_ETH_set_MFFR_HMC(0);		//HM
-	GH_ETH_set_MFFR_IFT(0);		//DAIF
-	GH_ETH_set_MFFR_PM(0);		//PAM
-	GH_ETH_set_MFFR_DB(1);		//BFD --1:DISABLE BROADCAST FRAME
-	GH_ETH_set_MFFR_PCF(3);		//PCF--0_x:never pass any control frame  1_1:... 
-	GH_ETH_set_MFFR_SAIF(0);	//SAIF
-	GH_ETH_set_MFFR_SAF(0);		//SAF
-	GH_ETH_set_MFFR_HPF(1);		//HPF--0: Hash or perfect filter
-	GH_ETH_set_MFFR_RA(0);		//RA --receive all
+    /* set MFFR (Address Filtering)*/
+    GH_ETH_set_MFFR_PR(0);        //PM
+    GH_ETH_set_MFFR_HUC(0);        //HU
+    GH_ETH_set_MFFR_HMC(0);        //HM
+    GH_ETH_set_MFFR_IFT(0);        //DAIF
+    GH_ETH_set_MFFR_PM(0);        //PAM
+    GH_ETH_set_MFFR_DB(1);        //BFD --1:DISABLE BROADCAST FRAME
+    GH_ETH_set_MFFR_PCF(3);        //PCF--0_x:never pass any control frame  1_1:...
+    GH_ETH_set_MFFR_SAIF(0);    //SAIF
+    GH_ETH_set_MFFR_SAF(0);        //SAF
+    GH_ETH_set_MFFR_HPF(1);        //HPF--0: Hash or perfect filter
+    GH_ETH_set_MFFR_RA(0);        //RA --receive all
 #else
     /* set MFFR (Address Filtering)*/
     GH_ETH_set_MFFR((U32)ETH_REG_MFFR_RA);//disable broadcast frame
-#endif	
+#endif
     /* set MHTRH (Address Filtering)*/
     GH_ETH_set_MHTRH((U32)0xFFFFFFFF);
     /* set MHTRL (Address Filtering)*/
@@ -750,10 +750,10 @@ S32 GD_ETH_Write_Enhance(GD_HANDLE handle, const char* buffer, S32 len, GD_ETH_F
         {
             //GM_Printf("No valid descriptor!\n");
             return GFALSE;
-        }   
-        
+        }
+
         p->des1 = (p->des1)&ETH_DES_T1_TER; //clear DES1,except for bit[25]
-        
+
         if(i==0)//First Frame
         {
             p->des1 |= ETH_DES_T1_IC | ETH_DES_T1_FS |(ETH_DES_T1_TBS1 & buffsize);//buffer0-->0x7f0  buffer1-->0
@@ -796,15 +796,15 @@ S32 GD_ETH_Write_Enhance(GD_HANDLE handle, const char* buffer, S32 len, GD_ETH_F
     {
         //GM_Printf("No valid descriptor!\n");
         return GFALSE;
-    }  
+    }
 
     if(i==0)//one buffer including the whole frame
-    {         
-        p->des1  = ((p->des1)&ETH_DES_T1_TER) | ETH_DES_T1_IC | ETH_DES_T1_FS |ETH_DES_T1_LS |(ETH_DES_T1_TBS1 & dlen);//<64bytes, stuffed by hardware automatically             
+    {
+        p->des1  = ((p->des1)&ETH_DES_T1_TER) | ETH_DES_T1_IC | ETH_DES_T1_FS |ETH_DES_T1_LS |(ETH_DES_T1_TBS1 & dlen);//<64bytes, stuffed by hardware automatically
     }
     else//the last buffer including the last fragment of  frame
-    {       
-        p->des1 = ((p->des1)&ETH_DES_T1_TER) | ETH_DES_T1_IC |ETH_DES_T1_LS |(ETH_DES_T1_TBS1 & dlen);//buffer0-->xxx  buffer1-->0            
+    {
+        p->des1 = ((p->des1)&ETH_DES_T1_TER) | ETH_DES_T1_IC |ETH_DES_T1_LS |(ETH_DES_T1_TBS1 & dlen);//buffer0-->xxx  buffer1-->0
     }
 
     //use cpu to copy data--------->memory copy or dma copy
@@ -818,8 +818,8 @@ S32 GD_ETH_Write_Enhance(GD_HANDLE handle, const char* buffer, S32 len, GD_ETH_F
     buffer=buffer+dlen;*/
 
     p->des3 = 0;
-    p->des0 = ETH_DES_T0_OWN;       
-    
+    p->des0 = ETH_DES_T0_OWN;
+
    /*update the CurWriteDesSite index*/
    if(device->CurWriteDesSite == device->TxbufferNum - 1)
    {
@@ -833,7 +833,7 @@ S32 GD_ETH_Write_Enhance(GD_HANDLE handle, const char* buffer, S32 len, GD_ETH_F
     GD_ETH_StartDevice(handle, GD_ETH_W);//make it in tx state
 
     GD_INT_Enable(&ethIntHandle, 1);//enable the interrupt of ethernet agin
-    
+
     return 0;
 }
 
@@ -862,7 +862,7 @@ GERR GD_ETH_Write_HD(GD_HANDLE handle, const char* HbufPtr, S32 Hsize, const cha
     }
 
     GD_INT_Enable(&ethIntHandle, 0);//the isr of ethernet  may call the current function agin
-    
+
     p=(volatile GD_ETH_MAC_DesT*)((device->TxDesStartAddr) + device->CurWriteDesSite*sizeof(GD_ETH_MAC_DesT));
     if(((p->des0)&ETH_DES_T0_OWN) != 0 )
     {
@@ -948,14 +948,14 @@ GERR GD_ETH_Write_HD_Enhance(GD_HANDLE handle, const char* HbufPtr, S32 Hsize, c
     volatile U8* des;
     S32 len;
     S32 buffsize;
-    
+
     GD_ETH_HandleT* device = (GD_ETH_HandleT*)handle;
     if(device == NULL)
     {
         return GD_ERR_INVALID_HANDLE;
     }
 
-    buffsize = ethdevice.SizePerTxBuffer;    
+    buffsize = ethdevice.SizePerTxBuffer;
     len = buffsize + Dsize;//len = Hsize + Dsize;
     if(len > MAX_TX_MTU_SIZE)
     {
@@ -975,10 +975,10 @@ GERR GD_ETH_Write_HD_Enhance(GD_HANDLE handle, const char* HbufPtr, S32 Hsize, c
         {
             printf("No valid descriptor!\n");
             //return GFALSE;
-        }   
-        
+        }
+
         p->des1 = (p->des1)&ETH_DES_T1_TER; //clear DES1,except for bit[25]
-        
+
         if(i==0)//First Frame
         {
             p->des1 |= ETH_DES_T1_IC | ETH_DES_T1_FS |(ETH_DES_T1_TBS1 & Hsize) | ( (ETH_DES_T1_TBS2 & (buffsize<<11)) );//buffer0-->0x7f0  buffer1-->DbufPtr
@@ -988,10 +988,10 @@ GERR GD_ETH_Write_HD_Enhance(GD_HANDLE handle, const char* HbufPtr, S32 Hsize, c
             for(j=0;j<Hsize;j++)
             {
                 *des++=*HbufPtr++;
-            }   
+            }
 
-            p->des3 = (U32)DbufPtr;       
-            
+            p->des3 = (U32)DbufPtr;
+
         }
         else//mid Frame
         {
@@ -1000,7 +1000,7 @@ GERR GD_ETH_Write_HD_Enhance(GD_HANDLE handle, const char* HbufPtr, S32 Hsize, c
             p->des3 = (U32)(DbufPtr+2*i*buffsize);
         }
         p->des0 = ETH_DES_T0_OWN;
-        
+
         /*update the CurWriteDesSite index*/
         if(device->CurWriteDesSite == device->TxbufferNum - 1)
         {
@@ -1012,30 +1012,30 @@ GERR GD_ETH_Write_HD_Enhance(GD_HANDLE handle, const char* HbufPtr, S32 Hsize, c
             device->CurWriteDesSite++;
             p++;//next descriptor
         }
-        
+
         len -= (buffsize<<1);
-        i++;     
+        i++;
     }
 
     while(((p->des0)&ETH_DES_T0_OWN) != 0 )
     {
         printf("No valid descriptor!\n");
         //return GFALSE;
-    }  
+    }
 
     if(i==0)//one buffer including the whole frame
     {
-        //>des1 = (p->des1)&ETH_DES_T1_TER; //clear DES1,except for bit[25] 
+        //>des1 = (p->des1)&ETH_DES_T1_TER; //clear DES1,except for bit[25]
         p->des1  = ((p->des1)&ETH_DES_T1_TER) | ETH_DES_T1_IC | ETH_DES_T1_FS | ETH_DES_T1_LS \
-                   |(ETH_DES_T1_TBS1 & Hsize) | (ETH_DES_T1_TBS2 & (Dsize<<11));//<64bytes, stuffed by hardware automatically         
+                   |(ETH_DES_T1_TBS1 & Hsize) | (ETH_DES_T1_TBS2 & (Dsize<<11));//<64bytes, stuffed by hardware automatically
 
         //use cpu to copy data--------->memory copy or dma copy
         des=(volatile U8*)(p->des2);////point to data buffer
         for(j=0;j<Hsize;j++)
         {
             *des++=*HbufPtr++;
-        }   
-        
+        }
+
         p->des3 = (U32)DbufPtr;
     }
     else//the last buffer including the last fragment of  frame
@@ -1043,20 +1043,20 @@ GERR GD_ETH_Write_HD_Enhance(GD_HANDLE handle, const char* HbufPtr, S32 Hsize, c
         if(len<=buffsize)
         {
             p->des1 =  ((p->des1)&ETH_DES_T1_TER) | ETH_DES_T1_IC | ETH_DES_T1_LS \
-                        | (ETH_DES_T1_TBS1 & len);//buffer0-->len  buffer1-->0       
+                        | (ETH_DES_T1_TBS1 & len);//buffer0-->len  buffer1-->0
             p->des2 = (U32)(DbufPtr+(2*i-1)*buffsize);
-            p->des3 = 0;                
+            p->des3 = 0;
         }
         else
         {
             p->des1 = ((p->des1)&ETH_DES_T1_TER) | ETH_DES_T1_IC | ETH_DES_T1_LS \
-                        | (ETH_DES_T1_TBS1 & buffsize) | (ETH_DES_T1_TBS2 & ((len-buffsize)<<11));//buffer0-->buffsize  buffer1-->last fragment  
+                        | (ETH_DES_T1_TBS1 & buffsize) | (ETH_DES_T1_TBS2 & ((len-buffsize)<<11));//buffer0-->buffsize  buffer1-->last fragment
             p->des2 = (U32)(DbufPtr+(2*i-1)*buffsize);
-            p->des3 = (U32)(DbufPtr+2*i*buffsize);                        
-        }     
+            p->des3 = (U32)(DbufPtr+2*i*buffsize);
+        }
     }
-    
-    p->des0 = ETH_DES_T0_OWN;   
+
+    p->des0 = ETH_DES_T0_OWN;
 
     /*update the CurWriteDesSite index*/
     if(device->CurWriteDesSite == device->TxbufferNum - 1)

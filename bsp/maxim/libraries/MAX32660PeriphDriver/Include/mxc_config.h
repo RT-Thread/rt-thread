@@ -2,7 +2,7 @@
  * @file       mxc_config.h
  * @brief      Top-level include file for device configuration.
  */
- 
+
 /*******************************************************************************
  * Copyright (C) 2016 Maxim Integrated Products, Inc., All Rights Reserved.
  *

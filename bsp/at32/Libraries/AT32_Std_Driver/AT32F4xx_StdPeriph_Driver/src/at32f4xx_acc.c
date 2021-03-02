@@ -25,10 +25,10 @@
 /** @defgroup ACC_Private_Functions
   * @{
   */
-  
+
 /**
   * @brief  Stores Calibration Step data in ACC's CTRL1 register.
-  * @param  StepValue:  value to be stored in the ACC's CTRL1 register 					
+  * @param  StepValue:  value to be stored in the ACC's CTRL1 register
   * @retval None
   */
 void ACC_SetStep(uint8_t StepValue)
@@ -47,9 +47,9 @@ void ACC_SetStep(uint8_t StepValue)
 void ACC_CAL_Choose(uint16_t ACC_CAL)
 {
   ACC->CTRL1 &= ~0x2;
-  
+
   ACC->CTRL1 |= ACC_CAL;
-  
+
 }
 
 /**
@@ -110,8 +110,8 @@ void ACC_ExitCALMode(void)
   */
 FlagStatus ACC_GetFlagStatus(uint16_t ACC_FLAG)
 {
-  FlagStatus bitstatus = RESET;  
-  
+  FlagStatus bitstatus = RESET;
+
   if ((ACC->STS & ACC_FLAG) != (uint16_t)RESET)
   {
     bitstatus = SET;
@@ -210,13 +210,13 @@ uint16_t ACC_ReadC3(void)
   *     @arg ACC_FLAG_CALRDY:  Internal high-speed clock calibration ready
   * @retval None.
   */
-void ACC_ClearFlag(uint16_t ACC_FLAG)            
+void ACC_ClearFlag(uint16_t ACC_FLAG)
 {
   if(ACC_FLAG == ACC_FLAG_CALRDY)
   {
     ACC->STS &= ~1;
   }
-  
+
   if(ACC_FLAG == ACC_FLAG_RSLOST)
   {
     ACC->STS &= ~2;

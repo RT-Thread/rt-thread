@@ -51,11 +51,11 @@ OPTIMIZE_HIGH
 RAMFUNC
 void portable_delay_cycles(unsigned long n)
 {
-	UNUSED(n);
+    UNUSED(n);
 
-	__asm (
-		"loop: DMB	\n"
-		"SUBS R0, R0, #1  \n"
-		"BNE.N loop         "
-	);
+    __asm (
+        "loop: DMB    \n"
+        "SUBS R0, R0, #1  \n"
+        "BNE.N loop         "
+    );
 }

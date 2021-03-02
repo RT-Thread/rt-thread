@@ -74,7 +74,7 @@
         HAL_GPIO_WritePin()/HAL_GPIO_TogglePin().
 
    (#) To lock pin configuration until next reset use HAL_GPIO_LockPin().
-  
+
     (#) During and just after reset, the alternate functions are not
         active and the GPIO pins are configured in input floating mode (except JTAG
         pins).
@@ -91,11 +91,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -138,7 +138,7 @@
 /**
   * @}
   */
-  
+
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -277,7 +277,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         EXTI->FTSR1 = temp;
       }
     }
-    
+
     position++;
   }
 }
@@ -309,7 +309,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
     {
       /*------------------------- EXTI Mode Configuration --------------------*/
       /* Clear the External Interrupt or Event for the current IO */
-      
+
       tmp = SYSCFG->EXTICR[position >> 2u];
       tmp &= (0x0FUL << (4u * (position & 0x03u)));
       if (tmp == (GPIO_GET_INDEX(GPIOx) << (4u * (position & 0x03u))))
@@ -342,7 +342,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
       /* Configure the default value for IO Speed */
       GPIOx->OSPEEDR &= ~(GPIO_OSPEEDR_OSPEED0 << (position * 2u));
     }
-    
+
     position++;
   }
 }

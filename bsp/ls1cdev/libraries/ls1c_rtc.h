@@ -22,7 +22,7 @@ typedef struct
   unsigned char Hours;    /*0 ~ 23 */
   unsigned char Minutes;  /*0 ~ 59 */
   unsigned char Seconds;  /*0 ~ 59 */
-}RTC_TimeTypeDef; 
+}RTC_TimeTypeDef;
 
 typedef struct
 {

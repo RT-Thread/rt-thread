@@ -377,7 +377,7 @@ typedef union _hw_ecspi_conreg
  *
  * Values:
  * - 0000 - Divide by 1.
- * - ... - 
+ * - ... -
  * - 0001 - Divide by 2.
  * - 0010 - Divide by 4.
  * - 1110 - Divide by 2 14 .
@@ -406,7 +406,7 @@ typedef union _hw_ecspi_conreg
  *
  * Values:
  * - 0000 - Divide by 1.
- * - ... - 
+ * - ... -
  * - 0001 - Divide by 2.
  * - 0010 - Divide by 3.
  * - 1101 - Divide by 14.
@@ -497,8 +497,8 @@ typedef union _hw_ecspi_conreg
  *
  * Values:
  * - 0x000 - A SPI burst contains the 1 LSB in a word.
- * - ... - 
- * - ... - 
+ * - ... -
+ * - ... -
  * - 0x001 - A SPI burst contains the 2 LSB in a word.
  * - 0x002 - A SPI burst contains the 3 LSB in a word.
  * - 0x01F - A SPI burst contains all 32 bits in a word.

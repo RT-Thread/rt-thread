@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -44,7 +44,7 @@
 /** @addtogroup EMAC
  * @{
  */
- 
+
 /************************** PRIVATE VARIABLES *************************/
 
 
@@ -445,10 +445,10 @@ EMAC_BUFF_STATUS EMAC_GetBufferSts(EMAC_BUFF_IDX idx)
     if(consume_idx == 0 &&
         produce_idx == max_frag_num - 1)
         return EMAC_BUFF_FULL;
-    
+
     // Wrap-around
     if(consume_idx == produce_idx + 1)
-        return EMAC_BUFF_FULL;  
+        return EMAC_BUFF_FULL;
 
     return EMAC_BUFF_PARTIAL_FULL;
 }
@@ -468,7 +468,7 @@ EMAC_BUFF_STATUS EMAC_GetBufferSts(EMAC_BUFF_IDX idx)
 
     while(EMAC_GetBufferSts(EMAC_TX_BUFF) == EMAC_BUFF_FULL)
     {
-      for(i = 0; i < 1000000; i++) ; 
+      for(i = 0; i < 1000000; i++) ;
     }
 
     dp = TX_DESC_PACKET(idx);
@@ -500,7 +500,7 @@ void EMAC_UpdateTxProduceIndex(void)
 
 /*********************************************************************//**
  * @brief   Get current status value of receive data (due to TxProduceIndex)
- * @param[in]   None    
+ * @param[in]   None
  * @return  Current value of receive data (due to TxProduceIndex)
  **********************************************************************/
 uint32_t EMAC_GetTxFrameStatus(void)
@@ -525,7 +525,7 @@ void EMAC_WritePacketBuffer(EMAC_PACKETBUF_Type *pDataStruct)
    int32_t  frame_num;
    uint32_t tmp;
    uint32_t max_frame_size = LPC_EMAC->MAXF;
-   
+
    size = (size + 1) & 0xFFFE;    // round Size up to next even number
    frame_num = size/max_frame_size;
 
@@ -538,13 +538,13 @@ void EMAC_WritePacketBuffer(EMAC_PACKETBUF_Type *pDataStruct)
 
      if(tmp == 0)
         break;
-     
+
      // Setup descriptors and data
      if(frame_num == 0)
        pDest = (uint16_t*)EMAC_AllocTxBuff(tmp, 1);  // last frame
      else
        pDest = (uint16_t*)EMAC_AllocTxBuff(tmp, 0);
-     
+
      // Copy data
      while (tmp > 0)
      {
@@ -556,13 +556,13 @@ void EMAC_WritePacketBuffer(EMAC_PACKETBUF_Type *pDataStruct)
 
      // Update produce index
      EMAC_UpdateTxProduceIndex();
-   } 
+   }
 }
 
 
 /*********************************************************************//**
  * @brief       Get current status value of receive data (due to RxConsumeIndex)
- * @param[in]   None    
+ * @param[in]   None
  * @return  Current value of receive data (due to RxConsumeIndex)
  **********************************************************************/
 uint32_t EMAC_GetRxFrameStatus(void)
@@ -648,13 +648,13 @@ void ENET_IRQHandler(void)
     /* EMAC Ethernet Controller Interrupt function. */
     uint32_t int_stat;
     int32_t RxLen;
-    
+
     // Get EMAC interrupt status
     while ((int_stat = (LPC_EMAC->IntStatus & LPC_EMAC->IntEnable)) != 0)
     {
         // Clear interrupt status
         LPC_EMAC->IntClear = int_stat;
-     
+
         if(int_stat & (EMAC_INT_RX_OVERRUN |EMAC_INT_RX_ERR ))
         {
            uint32_t ulFrameSts = EMAC_GetRxFrameStatus();
@@ -667,7 +667,7 @@ void ENET_IRQHandler(void)
            ulErrCode |= (ulFrameSts & EMAC_RINFO_OVERRUN) ? EMAC_OVERRUN_ERR:0;
            ulErrCode |= (ulFrameSts & EMAC_RINFO_NO_DESCR) ? EMAC_RX_NO_DESC_ERR:0;
            ulErrCode |= (ulFrameSts & EMAC_RINFO_FAIL_FILT) ? EMAC_FILTER_FAILED_ERR:0;
-           
+
            if(ulErrCode == 0)
            {
               /* Note:
@@ -700,7 +700,7 @@ void ENET_IRQHandler(void)
            if(EMAC_Configs.pfnErrorReceive != NULL)
               EMAC_Configs.pfnErrorReceive(ulErrCode);
         }
-   
+
         if(int_stat & EMAC_INT_RX_DONE)
         {
 
@@ -713,13 +713,13 @@ void ENET_IRQHandler(void)
          {
             // trip out 4-bytes CRC field, note that length in (-1) style format
             RxLen -= 3;
-              
+
             if((EMAC_GetRxFrameStatus() & EMAC_RINFO_ERR_MASK )== 0)
                     {
             uint16_t *pDest = (uint16_t*) &saFrameBuffers[sbCurrFrameID][sulCurrFrameSz];
             uint16_t *pSource = (uint16_t*)EMAC_GetRxBuffer();
                         sulCurrFrameSz += RxLen;
-                 
+
             if(sulCurrFrameSz >= EMAC_MAX_FRAME_SIZE)
             {
               sulCurrFrameSz = 0;
@@ -733,10 +733,10 @@ void ENET_IRQHandler(void)
                 {
                             *pDest++ = *pSource++;
                             RxLen -= 2;
-                            } 
+                            }
                 if(EMAC_GetRxFrameStatus() & EMAC_RINFO_LAST_FLAG)
                 {
-                  
+
                     if(EMAC_Configs.pfnFrameReceive != NULL)
                     {
                   EMAC_Configs.pfnFrameReceive((uint16_t*)saFrameBuffers[sbCurrFrameID], sulCurrFrameSz);
@@ -745,16 +745,16 @@ void ENET_IRQHandler(void)
                     sbCurrFrameID ++;
                     if(sbCurrFrameID >= EMAC_MAX_FRAME_NUM)
                     sbCurrFrameID = 0;
-                }   
+                }
                 /* Release frame from EMAC buffer */
                 EMAC_UpdateRxConsumeIndex();
             }
             }
-        }            
         }
-        
+        }
+
     }
-        
+
         if(int_stat & EMAC_INT_TX_FIN && (EMAC_Configs.pfnTransmitFinish != NULL))
         {
              EMAC_Configs.pfnTransmitFinish();
@@ -769,7 +769,7 @@ void ENET_IRQHandler(void)
         {
              EMAC_Configs.pfnWakeup();
         }
-     
+
     }
 }
 
@@ -815,7 +815,7 @@ void EMAC_SetHashFilter(uint8_t dstMAC_addr[], FunctionalState NewState)
     {
         (*pReg) &= ~(1UL << tmp);
     }
-    
+
 }
 
 

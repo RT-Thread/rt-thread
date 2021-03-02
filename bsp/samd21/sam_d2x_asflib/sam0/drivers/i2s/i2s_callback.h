@@ -64,10 +64,10 @@ extern "C" {
  * the driver.
  */
 enum i2s_job_type {
-	/** Asynchronous I<SUP>2</SUP>S write from a user provided buffer */
-	I2S_JOB_WRITE_BUFFER,
-	/** Asynchronous I<SUP>2</SUP>S read into a user provided buffer */
-	I2S_JOB_READ_BUFFER
+    /** Asynchronous I<SUP>2</SUP>S write from a user provided buffer */
+    I2S_JOB_WRITE_BUFFER,
+    /** Asynchronous I<SUP>2</SUP>S read into a user provided buffer */
+    I2S_JOB_READ_BUFFER
 };
 
 /**
@@ -90,18 +90,18 @@ enum i2s_job_type {
  *
  */
 static inline void i2s_serializer_register_callback(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const i2s_serializer_callback_t callback_func,
-		const enum i2s_serializer_callback callback_type)
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const i2s_serializer_callback_t callback_func,
+        const enum i2s_serializer_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(serializer < I2S_SERIALIZER_N);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(serializer < I2S_SERIALIZER_N);
 
-	module_inst->serializer[serializer].callback[callback_type] = callback_func;
-	module_inst->serializer[serializer].registered_callback_mask |=
-			(1u << callback_type);
+    module_inst->serializer[serializer].callback[callback_type] = callback_func;
+    module_inst->serializer[serializer].registered_callback_mask |=
+            (1u << callback_type);
 }
 
 /**
@@ -115,17 +115,17 @@ static inline void i2s_serializer_register_callback(
  *
  */
 static inline void i2s_serializer_unregister_callback(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const enum i2s_serializer_callback callback_type)
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const enum i2s_serializer_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(serializer < I2S_SERIALIZER_N);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(serializer < I2S_SERIALIZER_N);
 
-	module_inst->serializer[serializer].callback[callback_type] = NULL;
-	module_inst->serializer[serializer].registered_callback_mask &=
-			~(1u << callback_type);
+    module_inst->serializer[serializer].callback[callback_type] = NULL;
+    module_inst->serializer[serializer].registered_callback_mask &=
+            ~(1u << callback_type);
 }
 
 /**
@@ -141,24 +141,24 @@ static inline void i2s_serializer_unregister_callback(
  *
  */
 static inline void i2s_serializer_enable_callback(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const enum i2s_serializer_callback callback_type)
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const enum i2s_serializer_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(serializer < I2S_SERIALIZER_N);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(serializer < I2S_SERIALIZER_N);
 
-	module_inst->serializer[serializer].enabled_callback_mask |=
-			(1u << callback_type);
-	if (I2S_SERIALIZER_CALLBACK_OVER_UNDER_RUN != callback_type) {
-		return;
-	}
-	module_inst->hw->INTENSET.reg =
-		(module_inst->serializer[serializer].mode == I2S_SERIALIZER_TRANSMIT) ?
-			(I2S_INTFLAG_TXUR0 << serializer) :
-			(I2S_INTFLAG_RXOR0 << serializer);
+    module_inst->serializer[serializer].enabled_callback_mask |=
+            (1u << callback_type);
+    if (I2S_SERIALIZER_CALLBACK_OVER_UNDER_RUN != callback_type) {
+        return;
+    }
+    module_inst->hw->INTENSET.reg =
+        (module_inst->serializer[serializer].mode == I2S_SERIALIZER_TRANSMIT) ?
+            (I2S_INTFLAG_TXUR0 << serializer) :
+            (I2S_INTFLAG_RXOR0 << serializer);
 }
 
 /**
@@ -173,24 +173,24 @@ static inline void i2s_serializer_enable_callback(
  *
  */
 static inline void i2s_serializer_disable_callback(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const enum i2s_serializer_callback callback_type)
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const enum i2s_serializer_callback callback_type)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(serializer < I2S_SERIALIZER_N);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(serializer < I2S_SERIALIZER_N);
 
-	module_inst->serializer[serializer].enabled_callback_mask &=
-			~(1u << callback_type);
-	if (I2S_SERIALIZER_CALLBACK_OVER_UNDER_RUN != callback_type) {
-		return;
-	}
-	module_inst->hw->INTENCLR.reg =
-		(module_inst->serializer[serializer].mode == I2S_SERIALIZER_TRANSMIT) ?
-			(I2S_INTFLAG_TXUR0 << serializer) :
-			(I2S_INTFLAG_RXOR0 << serializer);
+    module_inst->serializer[serializer].enabled_callback_mask &=
+            ~(1u << callback_type);
+    if (I2S_SERIALIZER_CALLBACK_OVER_UNDER_RUN != callback_type) {
+        return;
+    }
+    module_inst->hw->INTENCLR.reg =
+        (module_inst->serializer[serializer].mode == I2S_SERIALIZER_TRANSMIT) ?
+            (I2S_INTFLAG_TXUR0 << serializer) :
+            (I2S_INTFLAG_RXOR0 << serializer);
 }
 
 /** @} */
@@ -202,26 +202,26 @@ static inline void i2s_serializer_disable_callback(
  */
 
 enum status_code i2s_serializer_write_buffer_job(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const void *buffer,
-		const uint32_t size);
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const void *buffer,
+        const uint32_t size);
 
 enum status_code i2s_serializer_read_buffer_job(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		void *buffer,
-		const uint32_t size);
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        void *buffer,
+        const uint32_t size);
 
 void i2s_serializer_abort_job(
-		struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const enum i2s_job_type job_type);
+        struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const enum i2s_job_type job_type);
 
 enum status_code i2s_serializer_get_job_status(
-		const struct i2s_module *const module_inst,
-		const enum i2s_serializer serializer,
-		const enum i2s_job_type job_type);
+        const struct i2s_module *const module_inst,
+        const enum i2s_serializer serializer,
+        const enum i2s_job_type job_type);
 
 /** @} */
 

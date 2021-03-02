@@ -3,7 +3,7 @@
 
 /* Not yet */
 
-#if defined (__GNUC__)    
+#if defined (__GNUC__)
 struct timer_list { } ;
 #elif defined (MSVC)
 struct timer_list {int no; } ;

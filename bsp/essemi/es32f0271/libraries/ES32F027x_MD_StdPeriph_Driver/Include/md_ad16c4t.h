@@ -23,7 +23,7 @@ extern "C"{
 /* Includes -------------------------------------------------------*/
 #include "es32f0271.h"
 #include "reg_ad16c4t.h"
- 
+
 
 /** @addtogroup Micro_Driver
   * @{
@@ -165,8 +165,8 @@ extern "C"{
 #define MD_AD16C4T_INTERRUPTFALG_UI         (1 << AD16C4T_IER_UI_POS)           /*!<  Update interrupt*/
 
 /* AD16C4T_SGE macros define*/
-#define MD_AD16C4T_EVENTGENERATION_BG       (1 << AD16C4T_SGE_SGBRK_POS)        /*!<  Break generation*/  
-#define MD_AD16C4T_EVENTGENERATION_TG       (1 << AD16C4T_SGE_SGTRG_POS)        /*!<  Trigger generation*/  
+#define MD_AD16C4T_EVENTGENERATION_BG       (1 << AD16C4T_SGE_SGBRK_POS)        /*!<  Break generation*/
+#define MD_AD16C4T_EVENTGENERATION_TG       (1 << AD16C4T_SGE_SGTRG_POS)        /*!<  Trigger generation*/
 #define MD_AD16C4T_EVENTGENERATION_COMG     (1 << AD16C4T_SGE_SGCOM_POS)        /*!<  Capture/Compare control update generation*/
 #define MD_AD16C4T_EVENTGENERATION_CC4G     (1 << AD16C4T_SGE_SGCH4_POS)        /*!<  Capture/Compare 4 generation*/
 #define MD_AD16C4T_EVENTGENERATION_CC3G     (1 << AD16C4T_SGE_SGCH3_POS)        /*!<  Capture/Compare 3 generation*/
@@ -240,7 +240,7 @@ extern "C"{
   * @brief AD16C4T module driver
   * @{
   */
-  
+
 /**
   * @brief  Timer CON1 setup.
   * @param  timx AD16C4T instance
@@ -554,7 +554,7 @@ __STATIC_INLINE void md_ad16c4t_enable_con1_cnten(AD16C4T_TypeDef *timx)
 {
   SET_BIT(timx->CON1, AD16C4T_CON1_CNTEN_MSK);
 }
-  
+
 
 /**
   * @brief  Timer counter disable.
@@ -973,7 +973,7 @@ __STATIC_INLINE void md_ad16c4t_enable_smcon_ecm2en(AD16C4T_TypeDef *timx)
 {
   SET_BIT(timx->SMCON, AD16C4T_SMCON_ECM2EN_MSK);
 }
-  
+
 
 /**
   * @brief  Timer external clock disable.
@@ -999,7 +999,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_smcon_ecm2en(AD16C4T_TypeDef *tim
 
 /**
   * @brief  Timer external trigger filter setup.
-  * @param  timx AD16C4T instance 
+  * @param  timx AD16C4T instance
   * @param  ETRFilter External trigger filter
             @arg @ref MD_AD16C4T_ETRFILTER_FDIV1
             @arg @ref MD_AD16C4T_ETRFILTER_FDIV1N2
@@ -1038,7 +1038,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_smcon_etflt(AD16C4T_TypeDef *timx)
 
 /**
   * @brief  Timer master/slave mode setup.
-  * @param  timx AD16C4T instance 
+  * @param  timx AD16C4T instance
   * @param  MSMode master/slave mode
             @arg @ref MD_AD16C4T_MASTERSLAVE_NODELAY
             @arg @ref MD_AD16C4T_MASTERSLAVE_DELAY
@@ -1063,7 +1063,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_smcon_mscfg(AD16C4T_TypeDef *timx)
 
 /**
   * @brief  Timer trigger selection setup.
-  * @param  timx AD16C4T instance 
+  * @param  timx AD16C4T instance
   * @param  TriggerSelect Trigger selection
             @arg @ref MD_AD16C4T_TRIGGERSELECT_ITR0
             @arg @ref MD_AD16C4T_TRIGGERSELECT_ITR1
@@ -1094,7 +1094,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_smcon_tssel(AD16C4T_TypeDef *timx)
 
 /**
   * @brief  Timer OCREF clear selection setup.
-  * @param  timx AD16C4T instance 
+  * @param  timx AD16C4T instance
   * @param  OCREFSelect OCREF clear selection
             @arg @ref MD_AD16C4T_OCREFCLEAR_CMP
             @arg @ref MD_AD16C4T_OCREFCLEAR_ETRF
@@ -1119,7 +1119,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_smcon_chcsel(AD16C4T_TypeDef *timx)
 
 /**
   * @brief  Timer slave mode selection setup.
-  * @param  timx AD16C4T instance 
+  * @param  timx AD16C4T instance
   * @param  SlaveMode Slave mode selection
             @arg @ref MD_AD16C4T_SLAVEMODE_DISABLE
             @arg @ref MD_AD16C4T_SLAVEMODE_ENCODER1
@@ -1631,7 +1631,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_ch1ovi(AD16C4T_TypeDef *t
 }
 
 /**
-  * @brief  Get timer break interrupt flag. 
+  * @brief  Get timer break interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1641,7 +1641,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_brki(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer trigger interrupt flag. 
+  * @brief  Get timer trigger interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1651,7 +1651,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_trgi(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer COM interrupt flag. 
+  * @brief  Get timer COM interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1661,7 +1661,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_comi(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 4 interrupt flag.  
+  * @brief  Get timer capture/compare 4 interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1671,7 +1671,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_ch4i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 3 interrupt flag.  
+  * @brief  Get timer capture/compare 3 interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1681,7 +1681,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_ch3i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 2 interrupt flag.  
+  * @brief  Get timer capture/compare 2 interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1691,7 +1691,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_ch2i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 1 interrupt flag.  
+  * @brief  Get timer capture/compare 1 interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1701,7 +1701,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_rif_ch1i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer update interrupt flag.  
+  * @brief  Get timer update interrupt flag.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1762,7 +1762,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_ch1ovi(AD16C4T_TypeDef *t
 }
 
 /**
-  * @brief  Get timer break interrupt flag masked. 
+  * @brief  Get timer break interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1772,7 +1772,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_brki(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer trigger interrupt flag masked. 
+  * @brief  Get timer trigger interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1782,7 +1782,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_trgi(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer COM interrupt flag masked. 
+  * @brief  Get timer COM interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1792,7 +1792,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_comi(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 4 interrupt flag masked.  
+  * @brief  Get timer capture/compare 4 interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1802,7 +1802,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_ch4i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 3 interrupt flag masked.  
+  * @brief  Get timer capture/compare 3 interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1812,7 +1812,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_ch3i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 2 interrupt flag masked.  
+  * @brief  Get timer capture/compare 2 interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1822,7 +1822,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_ch2i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer capture/compare 1 interrupt flag masked.  
+  * @brief  Get timer capture/compare 1 interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -1832,7 +1832,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_active_flag_ifm_ch1i(AD16C4T_TypeDef *tim
 }
 
 /**
-  * @brief  Get timer update interrupt flag masked.  
+  * @brief  Get timer update interrupt flag masked.
   * @param  timx AD16C4T instance
   * @retval State of bit (1 or 0).
   */
@@ -2239,7 +2239,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_chmr1_output_ch2fen(AD16C4T_TypeD
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_OUTPUT_CH2FEN_MSK) == (AD16C4T_CHMR1_OUTPUT_CH2FEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 2 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -2396,7 +2396,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_chmr1_output_ch1fen(AD16C4T_TypeD
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_OUTPUT_CH1FEN_MSK) == (AD16C4T_CHMR1_OUTPUT_CH1FEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 1 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -2423,7 +2423,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr1_output_cc1ssel(AD16C4T_TypeDef *ti
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_OUTPUT_CC1SSEL_MSK) >> AD16C4T_CHMR1_OUTPUT_CC1SSEL_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 2 filter setup.
   * @param  timx AD16C4T instance
   * @param  InputFliter Input capture filter
@@ -2462,7 +2462,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr1_input_i2flt(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_INPUT_I2FLT_MSK) >> AD16C4T_CHMR1_INPUT_I2FLT_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 2 prescaler setup.
   * @param  timx AD16C4T instance
   * @param  InputPrescale Input capture prescaler
@@ -2489,7 +2489,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr1_input_i2pres(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_INPUT_I2PRES_MSK) >> AD16C4T_CHMR1_INPUT_I2PRES_POSS);
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 2 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -2516,7 +2516,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr1_input_cc2ssel(AD16C4T_TypeDef *tim
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_INPUT_CC2SSEL_MSK) >> AD16C4T_CHMR1_INPUT_CC2SSEL_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 1 filter setup.
   * @param  timx AD16C4T instance
   * @param  InputFliter Input capture filter
@@ -2555,7 +2555,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr1_input_i1flt(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_INPUT_I1FLT_MSK) >> AD16C4T_CHMR1_INPUT_I1FLT_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 1 prescaler setup.
   * @param  timx AD16C4T instance
   * @param  InputPrescale Input capture prescaler
@@ -2582,7 +2582,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr1_input_i1pres(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->CHMR1, AD16C4T_CHMR1_INPUT_I1PRES_MSK) >> AD16C4T_CHMR1_INPUT_I1PRES_POSS);
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 1 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -2764,7 +2764,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_chmr2_output_ch4fen(AD16C4T_TypeD
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_OUTPUT_CH4FEN_MSK) == (AD16C4T_CHMR2_OUTPUT_CH4FEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 4 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -2921,7 +2921,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_chmr2_output_ch3fen(AD16C4T_TypeD
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_OUTPUT_CH3FEN_MSK) == (AD16C4T_CHMR2_OUTPUT_CH3FEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 3 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -2948,7 +2948,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr2_output_cc3ssel(AD16C4T_TypeDef *ti
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_OUTPUT_CC3SSEL_MSK) >> AD16C4T_CHMR2_OUTPUT_CC3SSEL_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 4 filter setup.
   * @param  timx AD16C4T instance
   * @param  InputFliter Input capture filter
@@ -2987,7 +2987,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr2_input_i4flt(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_INPUT_I4FLT_MSK) >> AD16C4T_CHMR2_INPUT_I4FLT_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 4 prescaler setup.
   * @param  timx AD16C4T instance
   * @param  InputPrescale Input capture prescaler
@@ -3014,7 +3014,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr2_input_i4pres(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_INPUT_I4PRES_MSK) >> AD16C4T_CHMR2_INPUT_I4PRES_POSS);
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 4 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -3041,7 +3041,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr2_input_cc4ssel(AD16C4T_TypeDef *tim
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_INPUT_CC4SSEL_MSK) >> AD16C4T_CHMR2_INPUT_CC4SSEL_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 3 filter setup.
   * @param  timx AD16C4T instance
   * @param  InputFliter Input capture filter
@@ -3080,7 +3080,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr2_input_i3flt(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_INPUT_I3FLT_MSK) >> AD16C4T_CHMR2_INPUT_I3FLT_POSS);
 }
 
-/** 
+/**
   * @brief  Timer input capture 3 prescaler setup.
   * @param  timx AD16C4T instance
   * @param  InputPrescale Input capture prescaler
@@ -3107,7 +3107,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_chmr2_input_i3pres(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->CHMR2, AD16C4T_CHMR2_INPUT_I3PRES_MSK) >> AD16C4T_CHMR2_INPUT_I3PRES_POSS);
 }
 
-/** 
+/**
   * @brief  Timer cpture/compare 3 selection setup.
   * @param  timx AD16C4T instance
   * @param  ChannelMode Channel mode selection
@@ -3158,7 +3158,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_ccep(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->CCEP));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 4 complementary output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3183,7 +3183,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_ccep_cc4npol(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CCEP, AD16C4T_CCEP_CC4NPOL_MSK) >> AD16C4T_CCEP_CC4NPOL_POS);
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 4 output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3241,7 +3241,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_ccep_cc4en(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CCEP, AD16C4T_CCEP_CC4EN_MSK) == (AD16C4T_CCEP_CC4EN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 3 complementary output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3299,7 +3299,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_ccep_cc3nen(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->CCEP, AD16C4T_CCEP_CC3NEN_MSK) == (AD16C4T_CCEP_CC3NEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 3 output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3357,7 +3357,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_ccep_cc3en(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CCEP, AD16C4T_CCEP_CC3EN_MSK) == (AD16C4T_CCEP_CC3EN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 2 complementary output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3415,7 +3415,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_ccep_cc2nen(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->CCEP, AD16C4T_CCEP_CC2NEN_MSK) == (AD16C4T_CCEP_CC2NEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 2 output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3473,7 +3473,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_ccep_cc2en(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->CCEP, AD16C4T_CCEP_CC2EN_MSK) == (AD16C4T_CCEP_CC2EN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 1 complementary output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3531,7 +3531,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_ccep_cc1nen(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->CCEP, AD16C4T_CCEP_CC1NEN_MSK) == (AD16C4T_CCEP_CC1NEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare 1 output polarity setup.
   * @param  timx AD16C4T instance
   * @param  OutputPolarity Output polarity
@@ -3612,7 +3612,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_count(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->COUNT));
 }
 
-/** 
+/**
   * @brief  Timer counter value setup.
   * @param  timx AD16C4T instance
   * @param  counter Counter value (between Min_Data=0 and Max_Data=0xFFFF)
@@ -3658,7 +3658,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_pres(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->PRES));
 }
 
-/** 
+/**
   * @brief  Timer prescaler value setup.
   * @param  timx AD16C4T instance
   * @param  prescaler Prescaler value (between Min_Data=0 and Max_Data=0xFFFF)
@@ -3704,7 +3704,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_ar(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->AR));
 }
 
-/** 
+/**
   * @brief  Timer auto-reload value setup.
   * @param  timx AD16C4T instance
   * @param  reload Auto-reload value (between Min_Data=0 and Max_Data=0xFFFF)
@@ -3750,7 +3750,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_repar(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->REPAR));
 }
 
-/** 
+/**
   * @brief  Timer repetition counter value setup.
   * @param  timx AD16C4T instance
   * @param  repetition Repetition counter value (between Min_Data=0 and Max_Data=0xFF)
@@ -3796,7 +3796,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_ccval1(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->CCVAL1));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare value 1 setup.
   * @param  timx AD16C4T instance
   * @param  CapCompValue Capture/Compare value 1 (between Min_Data=0 and Max_Data=0xFFFF)
@@ -3842,7 +3842,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_ccval2(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->CCVAL2));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare value 2 setup.
   * @param  timx AD16C4T instance
   * @param  CapCompValue Capture/Compare value 2 (between Min_Data=0 and Max_Data=0xFFFF)
@@ -3888,7 +3888,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_ccval3(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->CCVAL3));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare value 3 setup.
   * @param  timx AD16C4T instance
   * @param  CapCompValue Capture/Compare value 3 (between Min_Data=0 and Max_Data=0xFFFF)
@@ -3934,7 +3934,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_ccval4(AD16C4T_TypeDef *timx)
   return (READ_REG(timx->CCVAL4));
 }
 
-/** 
+/**
   * @brief  Timer capture/compare value 4 setup.
   * @param  timx AD16C4T instance
   * @param  CapCompValue Capture/Compare value 4 (between Min_Data=0 and Max_Data=0xFFFF)
@@ -4046,7 +4046,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_bdcfg_aoen(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->BDCFG, AD16C4T_BDCFG_AOEN_MSK) == (AD16C4T_BDCFG_AOEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer break polarity setup.
   * @param  timx AD16C4T instance
   * @param  BreakPolarity Break polarity
@@ -4104,7 +4104,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_is_enabled_bdcfg_brken(AD16C4T_TypeDef *timx
   return (READ_BIT(timx->BDCFG, AD16C4T_BDCFG_BRKEN_MSK) == (AD16C4T_BDCFG_BRKEN_MSK));
 }
 
-/** 
+/**
   * @brief  Timer off-state selection for run mode setup.
   * @param  timx AD16C4T instance
   * @param  OffStateRun Off-state selection for run mode
@@ -4129,7 +4129,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_bdcfg_offssr(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->BDCFG, AD16C4T_BDCFG_OFFSSR_MSK) >> AD16C4T_BDCFG_OFFSSR_POS);
 }
 
-/** 
+/**
   * @brief  Timer off-state selection for idle mode setup.
   * @param  timx AD16C4T instance
   * @param  OffStateIdle Off-state selection for idle mode
@@ -4154,7 +4154,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_bdcfg_offssi(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->BDCFG, AD16C4T_BDCFG_OFFSSI_MSK) >> AD16C4T_BDCFG_OFFSSI_POS);
 }
 
-/** 
+/**
   * @brief  Timer lock configuration setup.
   * @param  timx AD16C4T instance
   * @param  LockLevel Lock configuration
@@ -4181,7 +4181,7 @@ __STATIC_INLINE uint32_t md_ad16c4t_get_bdcfg_locklvl(AD16C4T_TypeDef *timx)
   return (READ_BIT(timx->BDCFG, AD16C4T_BDCFG_LOCKLVL_MSK) >> AD16C4T_BDCFG_LOCKLVL_POSS);
 }
 
-/** 
+/**
   * @brief  Timer dead-time generator setup.
   * @param  timx AD16C4T instance
   * @param  DeadTime Dead-time generator (between Min_Data=0 and Max_Data=0xFF)

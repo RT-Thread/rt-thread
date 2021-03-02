@@ -7,7 +7,7 @@
 * @version     2.0
 * @date        29. June. 2011
 * @author      NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -118,7 +118,7 @@ volatile uint32_t txBlockCnt=0, rxBlockCnt=0;
  *                        to peripheral (M2P) or peripheral to memory (P2M)
  *                        in MCI working
  *
- * @param[in]    ChannelNum    which channel is used for current transfer with 
+ * @param[in]    ChannelNum    which channel is used for current transfer with
  *                        DMA compent
  *
  * @param[in]    memBuf    point to a UINT8 buffer. In 2 cases of DMAMode
@@ -144,13 +144,13 @@ uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
     GPDMACfg.TransferType = DMAMode;
     // Linker List Item - unused
     GPDMACfg.DMALLI = 0;
-    
+
     /* USB RAM is used for test.
     Please note, Ethernet has its own SRAM, but GPDMA can't access
-    that. GPDMA can access USB SRAM and IRAM. Ethernet DMA controller can 
+    that. GPDMA can access USB SRAM and IRAM. Ethernet DMA controller can
     access both IRAM and Ethernet SRAM. */
     GPDMACfg.ChannelNum = ChannelNum;
-    
+
     if ( DMAMode == GPDMA_TRANSFERTYPE_M2P_DEST_CTRL )
     {
         /* Ch0 set for M2P transfer from mempry to MCI FIFO. */
@@ -159,11 +159,11 @@ uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
         // Destination memory
         GPDMACfg.DstMemAddr = (uint32_t)LPC_MCI->FIFO;
 
-        // Source connection 
+        // Source connection
         GPDMACfg.SrcConn = 0;
-        // Destination connection 
+        // Destination connection
         GPDMACfg.DstConn = GPDMA_CONN_MCI;
-            
+
     }
     else if ( DMAMode == GPDMA_TRANSFERTYPE_P2M_SRC_CTRL )
     {
@@ -173,7 +173,7 @@ uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
         // Destination memory
         GPDMACfg.DstMemAddr = (uint32_t)memBuf;
 
-        // Source connection 
+        // Source connection
         GPDMACfg.SrcConn = GPDMA_CONN_MCI;
         // Destination connection
         GPDMACfg.DstConn = 0;
@@ -186,12 +186,12 @@ uint32_t MCI_SettingDma(uint8_t* memBuf, uint32_t ChannelNum, uint32_t DMAMode )
     // Setup channel with given parameter
     GPDMA_Setup(&GPDMACfg);
 
-    // Enable GPDMA channel 
+    // Enable GPDMA channel
     GPDMA_ChannelCmd(ChannelNum, ENABLE);
 
     /* Enable GPDMA interrupt */
     NVIC_EnableIRQ(DMA_IRQn);
-    
+
     return (TRUE);
 }
 
@@ -258,7 +258,7 @@ void MCI_DMA_IRQHandler (void)
  *
  * @return       MCI_FUNC_OK
  *************************************************************************/
-int32_t MCI_ReadFifo(uint32_t * dest) 
+int32_t MCI_ReadFifo(uint32_t * dest)
 {
     uint8_t i;
     uint8_t start, end;
@@ -275,13 +275,13 @@ int32_t MCI_ReadFifo(uint32_t * dest)
     }
     fifo_plane = (fifo_plane) ? 0:1;
 
-    for (i = start; i <= end; i++) 
+    for (i = start; i <= end; i++)
     {
         *dest = LPC_MCI->FIFO[i];
-        
+
         dest++;
     }
-    
+
     return MCI_FUNC_OK;
 }
 
@@ -310,13 +310,13 @@ int32_t MCI_WriteFifo(uint32_t * src)
     }
     fifo_plane = (fifo_plane) ? 0:1;
 
-    for (i = start; i <= end; i++) 
+    for (i = start; i <= end; i++)
     {
         LPC_MCI->FIFO[i] = *src;
-        
+
         src++;
     }
-    
+
     return MCI_FUNC_OK;
 }
 
@@ -399,7 +399,7 @@ void MCI_RXDisable( void )
 /*********************************************************************//**
  * @brief      Check if the card is in the given state.
  *@param       expect_status    expected status
- * @details    Continuously get the card status until the card is ready. if its status matches 
+ * @details    Continuously get the card status until the card is ready. if its status matches
  *             with the given state, return with success. Else, return MCI_FUNC_ERR_STATE.
  *             If the card is still not ready, return MCI_FUNC_NOT_READY.
  *
@@ -434,7 +434,7 @@ int32_t MCI_CheckStatus(uint8_t expect_status)
               if(CARDSTATEOF(respValue) != CARD_STATE_PRG)
               {
                 return MCI_FUNC_ERR_STATE;
-              }    
+              }
             }
             else
             {
@@ -443,7 +443,7 @@ int32_t MCI_CheckStatus(uint8_t expect_status)
         }
         retryCnt--;
         for(i = 0; i < 0x20; i++);
-        
+
     }
 
     return retval;
@@ -544,11 +544,11 @@ void MCI_DataErrorProcess( void )
 
 /*********************************************************************//**
  * @brief         Called by MCI interrupt handler. This is the last interrupt
- *                manipulates the process of the data-block write and read 
+ *                manipulates the process of the data-block write and read
  *                to/with card
  *
  * @details       This service is also used with/without DMA support. It simply
- *                clears the flag messages the in-process data-block transfer 
+ *                clears the flag messages the in-process data-block transfer
  *                has been done/ended
  *
  * @param         None
@@ -569,7 +569,7 @@ void MCI_DATA_END_InterruptService( void )
         Mci_Data_Xfer_ERR = 0;
 
         MCI_TXDisable();
-        
+
         MCI_RXDisable();
 
         return;
@@ -674,10 +674,10 @@ void MCI_FIFOInterruptService( void )
 }
 
 /*********************************************************************//**
- * @brief        MCI_IRQHandler is to manage the reasons that cause the 
+ * @brief        MCI_IRQHandler is to manage the reasons that cause the
  *               interrupt.
  *
- * @details      It controls the data-block writing and reading by access 
+ * @details      It controls the data-block writing and reading by access
  *               the FIFO register.
  *               It handle the state changes on the MCI bus...
  *
@@ -743,10 +743,10 @@ void MCI_Set_MCIClock( uint32_t ClockRate )
     volatile uint32_t i;
     uint32_t ClkValue = 0;
     uint32_t pclk;
-    
+
     pclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
 
-    ClkValue = (pclk + 2*ClockRate - 1) /(2*ClockRate); 
+    ClkValue = (pclk + 2*ClockRate - 1) /(2*ClockRate);
     if(ClkValue)
         ClkValue -= 1;
 
@@ -781,10 +781,10 @@ int32_t MCI_SetBusWidth( uint32_t width )
     }
 
     for ( i = 0; i < 0x10; i++ );    /* delay 3MCLK + 2PCLK  */
-    
+
     if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
         (MCI_CardType == MCI_SDSC_V2_CARD) ||
-        (MCI_CardType == MCI_SDHC_SDXC_CARD)) 
+        (MCI_CardType == MCI_SDHC_SDXC_CARD))
     {
         if ( MCI_Acmd_SendBusWidth( bus_width ) != MCI_FUNC_OK )
         {
@@ -797,7 +797,7 @@ int32_t MCI_SetBusWidth( uint32_t width )
 
 /************************************************************************//**
  * @brief        Do initialization the MCI block as set its clock, registers,
- *                setup NVIC for interrupts, configure the pins used for MCI 
+ *                setup NVIC for interrupts, configure the pins used for MCI
  *                function, do initialize the card in slot...
  *
  * @param[in]    powerActiveLevel the power level to activate the card in slot
@@ -812,7 +812,7 @@ int32_t MCI_Init(uint8_t powerActiveLevel )
 
     // Following block of code added to ensure card VCC drops to zero
     // before card is initialized
-  
+
     // Force all MCI control pins to basic I/O mode
     LPC_IOCON->P1_2  &= ~0x1F; /* SD_CLK @ P1.2 */
     LPC_IOCON->P1_3  &= ~0x1F; /* SD_CMD @ P1.3 */
@@ -824,15 +824,15 @@ int32_t MCI_Init(uint8_t powerActiveLevel )
 
     // Set all MCI pins to outputs
     LPC_GPIO1->DIR |= 0x18EC;
-  
+
     // Force all pins low (except power control pin)
     LPC_GPIO1->CLR = 0x1000;
     LPC_GPIO1->CLR = 0x0800;
     LPC_GPIO1->CLR = 0x0080;
     LPC_GPIO1->CLR = 0x0040;
-  
+
     LPC_GPIO1->SET = 0x0020;
-  
+
     LPC_GPIO1->CLR = 0x0008;
     LPC_GPIO1->CLR = 0x0004;
 
@@ -900,10 +900,10 @@ int32_t MCI_Init(uint8_t powerActiveLevel )
     LPC_MCI->POWER = 0x02;        /* power up */
     for ( i = 0; i < 0x10; i++ );    /* delay 3MCLK + 2PCLK  */
 
-    
+
     /* delays for the supply output is stable*/
     for ( i = 0; i < 0x80000; i++ );
-    
+
     /* During identification phase, the clock should be less than
     400Khz. Once we pass this phase, the normal clock can be set up
     to 25Mhz on SD card and 20Mhz on MMC card. */
@@ -976,7 +976,7 @@ void MCI_SendCmd(st_Mci_CmdInfo* pCmdIf)
     uint32_t Argument = pCmdIf->Argument;
     uint32_t ExpectResp = pCmdIf->ExpectResp;
     uint32_t AllowTimeout = pCmdIf->AllowTimeout;
-    
+
     /* the command engine must be disabled when we modify the argument
     or the peripheral resends */
     while ( (CmdStatus = LPC_MCI->STATUS) & MCI_CMD_ACTIVE )    /* Command in progress. */
@@ -1026,10 +1026,10 @@ void MCI_SendCmd(st_Mci_CmdInfo* pCmdIf)
 
     // Wait until command is processed
     while(!LPC_MCI->STATUS);
-    
+
     // Wait until command sent
     while(LPC_MCI->STATUS & MCI_CMD_ACTIVE);
-    
+
     return;
 }
 
@@ -1075,7 +1075,7 @@ int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *Cm
             LPC_MCI->ARGUMENT = 0xFFFFFFFF;
 
             for ( i = 0; i < 0x10; i++ );    /* delay 3MCLK + 2PCLK  */
-            
+
             return (CmdRespStatus);
         }
 
@@ -1103,7 +1103,7 @@ int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *Cm
             LPC_MCI->CLEAR = CmdRespStatus | MCI_CMD_RESP_END;
             break;    /* cmd response is received, expecting response */
         }
-        
+
     }
 
     if ((LPC_MCI->RESP_CMD & 0x3F) != ExpectCmdData)
@@ -1141,7 +1141,7 @@ int32_t MCI_GetCmdResp(uint32_t ExpectCmdData, uint32_t ExpectResp, uint32_t *Cm
 
 
 /************************************************************************//**
- * @brief        The routine is to send command to cards then get back the 
+ * @brief        The routine is to send command to cards then get back the
  *               reponses (if required).
  *
  * @param[in]    CmdIndex the command to be sent to cards
@@ -1165,7 +1165,7 @@ int32_t MCI_CmdResp(st_Mci_CmdInfo* pCmdIf)
     uint32_t CmdIndex = pCmdIf->CmdIndex;
     uint32_t ExpectResp = pCmdIf->ExpectResp;
     uint32_t *CmdResp = pCmdIf->CmdResp;
-    
+
 
     MCI_SendCmd(pCmdIf);
 
@@ -1194,7 +1194,7 @@ int32_t MCI_CmdResp(st_Mci_CmdInfo* pCmdIf)
 int32_t MCI_CardReset(void)
 {
     st_Mci_CmdInfo cmdIf;
-    /* Because CMD0 command to put the device to idle state does not need response 
+    /* Because CMD0 command to put the device to idle state does not need response
     since, it's only sending commad */
     cmdIf.CmdIndex = CMD0_GO_IDLE_STATE;
     cmdIf.Argument = 0x00000000;
@@ -1231,7 +1231,7 @@ int32_t MCI_Cmd_SendOpCond( void )
     cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
     cmdIf.CmdResp = (uint32_t *)&respValue[0];
     /* continuously sends until the busy bit is cleared */
-    while ( retryCount > 0 ) 
+    while ( retryCount > 0 )
     {
         respStatus = MCI_CmdResp(&cmdIf);
 
@@ -1279,7 +1279,7 @@ int32_t MCI_Cmd_SendIfCond(void)
     uint8_t voltageSupplied = MCI_CMD8_VOLATAGESUPPLIED_27_36;//in range 2.7-3.6V
     uint8_t checkPattern = 0xAA;
     st_Mci_CmdInfo cmdIf;
-   
+
     CmdArgument = (voltageSupplied << MCI_CMD8_VOLTAGESUPPLIED_POS) | (checkPattern << MCI_CMD8_CHECKPATTERN_POS);
 
     retryCount = 20;
@@ -1323,7 +1323,7 @@ int32_t MCI_Cmd_SendIfCond(void)
 
 /************************************************************************//**
  * @brief        Send CMD55 (APP_CMD) to indicate to the card that the next
- *               command is an application specific command rather than a 
+ *               command is an application specific command rather than a
  *               standard command. Before an ACMD, call this routine first
  *
  * @param        None
@@ -1342,7 +1342,7 @@ int32_t MCI_Cmd_SendACMD( void )
 
     if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
         (MCI_CardType == MCI_SDSC_V2_CARD) ||
-        (MCI_CardType == MCI_SDHC_SDXC_CARD)) 
+        (MCI_CardType == MCI_SDHC_SDXC_CARD))
     {
         CmdArgument = CardRCA;    /* Use the address from SET_RELATIVE_ADDR cmd */
     }
@@ -1413,7 +1413,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
     /* timeout on SEND_OP_COND command on MMC, now, try SEND_APP_OP_COND
     command to SD */
     retryCount = 0x2000;            /* reset retry counter */
-    
+
     cmdIf.CmdIndex = ACMD41_SEND_APP_OP_COND;
     cmdIf.Argument = argument;
     cmdIf.ExpectResp = EXPECT_SHORT_RESP;
@@ -1428,7 +1428,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
     while ( retryCount > 0 )
     {
         if ((retval = MCI_Cmd_SendACMD()) == MCI_FUNC_OK)
-        {   
+        {
             respStatus = MCI_CmdResp(&cmdIf);
 
             if(respStatus & MCI_CMD_TIMEOUT)
@@ -1469,7 +1469,7 @@ int32_t MCI_Acmd_SendOpCond(uint8_t hcsVal)
  *
  *                This is followed Figure 4-2: Card Initialization and
  *                Identification Flow (SD mode) in Physical Layer Simplified
- *                Specification Version 2.00 document        
+ *                Specification Version 2.00 document
  *
  * @param         None
  *
@@ -1506,10 +1506,10 @@ int32_t MCI_CardInit( void )
         if ((retval = MCI_Acmd_SendOpCond(1)) == MCI_FUNC_OK)
         {
             MCI_CardType = MCI_SDSC_V2_CARD;//SDSC
-            
+
             if(CCS )
             {
-                MCI_CardType = MCI_SDHC_SDXC_CARD;//SDHC or SDXC 
+                MCI_CardType = MCI_SDHC_SDXC_CARD;//SDHC or SDXC
             }
 
             return MCI_FUNC_OK;    /* Found the card, it's a hD */
@@ -1518,7 +1518,7 @@ int32_t MCI_CardInit( void )
 
     if(retval != MCI_FUNC_OK) /* voltage mismatch (ver2.00)or ver1.X SD Card or not SD Card*/
     {
-        
+
         //Check in case of Standard Capacity Supporting Host
         if ((retval = MCI_Acmd_SendOpCond(0)) == MCI_FUNC_OK)
         {
@@ -1564,9 +1564,9 @@ en_Mci_CardType MCI_GetCardType(void)
 
 
 /************************************************************************//**
- * @brief         Get the all the Identifier (CID) of the card by sending the 
+ * @brief         Get the all the Identifier (CID) of the card by sending the
  *                CMD2 (ALL_SEND_CID) command. Then parse 4-byte data obtained
- *                from the card by the CID meaning.    
+ *                from the card by the CID meaning.
  *
  * @param[out]    cidValue the CID Result after parsing the data from the card
  *
@@ -1579,10 +1579,10 @@ int32_t MCI_GetCID(st_Mci_CardId* cidValue)
     uint32_t respStatus;
     uint32_t respValue[4];
     st_Mci_CmdInfo cmdIf;
-    
+
     /* This command is normally after CMD1(MMC) or ACMD41(SD). */
     retryCount = 0x200;// 0x20;            /* reset retry counter */
-    
+
     cmdIf.CmdIndex = CMD2_ALL_SEND_CID;
     cmdIf.Argument = 0;
     cmdIf.ExpectResp = EXPECT_LONG_RESP;
@@ -1636,7 +1636,7 @@ int32_t MCI_GetCID(st_Mci_CardId* cidValue)
 
 
 /************************************************************************//**
- * @brief        Set the address for the card in the slot by sending CMD3 
+ * @brief        Set the address for the card in the slot by sending CMD3
  *                (SET_RELATIVE_ADDR) command. To get the address of the card
  *                currently in used, needs to call MCI_GetCardAddress()
  *
@@ -1653,7 +1653,7 @@ int32_t MCI_SetCardAddress( void )
     uint32_t CmdArgument;
     st_Mci_CmdInfo cmdIf;
     int32_t retval = MCI_FUNC_FAILED;
-    
+
     /* If it's a SD card, SET_RELATIVE_ADDR is to get the address
     from the card and use this value in RCA, if it's a MMC, set default
     RCA addr. 0x00010000. */
@@ -1698,7 +1698,7 @@ int32_t MCI_SetCardAddress( void )
             CardRCA <<= RCA_ARGUMENT_POS;
 
             MCI_SetOutputMode(MCI_OUTPUT_MODE_PUSHPULL);
-            
+
             return (MCI_FUNC_OK);    /* response is back and correct. */
         }
 
@@ -1734,7 +1734,7 @@ uint32_t MCI_GetCardAddress(void)
  *
  * @return      MCI_FUNC_OK if all success
  *
- * @note        CMD9 (SEND_CSD) command should be sent only at standby state 
+ * @note        CMD9 (SEND_CSD) command should be sent only at standby state
  *                (STBY) after CMD3
  ****************************************************************************/
 int32_t MCI_GetCSD(uint32_t* csdVal)
@@ -1802,7 +1802,7 @@ int32_t MCI_GetCSD(uint32_t* csdVal)
  * @return      MCI_FUNC_OK if all success
  *
  * @note        CMD7 (SELECT_CARD) command should be sent after CMD9 ((SEND_CSD).
- *                The state will be inter-changed between STBY to TRANS by this 
+ *                The state will be inter-changed between STBY to TRANS by this
  *                CMD7 command
  ****************************************************************************/
 int32_t MCI_Cmd_SelectCard( void )
@@ -1817,7 +1817,7 @@ int32_t MCI_Cmd_SelectCard( void )
 
     if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
             (MCI_CardType == MCI_SDSC_V2_CARD) ||
-            (MCI_CardType == MCI_SDHC_SDXC_CARD)) 
+            (MCI_CardType == MCI_SDHC_SDXC_CARD))
     {
         CmdArgument = CardRCA;
     }
@@ -1892,10 +1892,10 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
 
     if(cardStatus == NULL)
         return MCI_FUNC_OK;
-    
+
     if ((MCI_CardType == MCI_SDSC_V1_CARD) ||
         (MCI_CardType == MCI_SDSC_V2_CARD) ||
-        (MCI_CardType == MCI_SDHC_SDXC_CARD)) 
+        (MCI_CardType == MCI_SDHC_SDXC_CARD))
     {
         CmdArgument = CardRCA;
     }
@@ -1933,7 +1933,7 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
 }
 
 /************************************************************************//**
- * @brief        Set the length for the blocks in the next action on data 
+ * @brief        Set the length for the blocks in the next action on data
  *                manipulation (as read, write, erase). This function is to
  *                send CMD16 (SET_BLOCK_LEN) to cards.
  *
@@ -1941,10 +1941,10 @@ int32_t MCI_GetCardStatus(int32_t* cardStatus)
  *
  * @return         MCI_FUNC_OK if all success
  *
- * @note         CMD16 command should be sent after the card is selected by CMD7 
+ * @note         CMD16 command should be sent after the card is selected by CMD7
  *                (SELECT_CARD).
- *  In the case of SDHC and SDXC Cards, block length set by CMD16 command doen't 
- *  affect memory read and write commands. Always 512 Bytes fixed block length is 
+ *  In the case of SDHC and SDXC Cards, block length set by CMD16 command doen't
+ *  affect memory read and write commands. Always 512 Bytes fixed block length is
  *  used. This command is effective for LOCK_UNLOCK command..
  ****************************************************************************/
 int32_t MCI_SetBlockLen(uint32_t blockLength)
@@ -1982,7 +1982,7 @@ int32_t MCI_SetBlockLen(uint32_t blockLength)
         {
             return MCI_CheckStatus(CARD_STATE_TRAN);
         }
-        
+
 
         for ( i = 0; i < 0x20; i++ );
 
@@ -2003,7 +2003,7 @@ int32_t MCI_SetBlockLen(uint32_t blockLength)
  *
  * @return         MCI_FUNC_OK if all success
  *
- * @note        
+ * @note
  *                - If SD card is currently in used, it's possible to enable 4-bit
  *                bus-width instead of 1-bit to speed up.
  *                - This command can only be transferred during TRANS state.
@@ -2030,7 +2030,7 @@ int32_t MCI_Acmd_SendBusWidth( uint32_t buswidth )
         retval = MCI_CheckStatus(CARD_STATE_TRAN);
         if(retval!= MCI_FUNC_OK)
             return retval;
-    
+
         if (MCI_Cmd_SendACMD() == MCI_FUNC_OK)
         {
             respStatus = MCI_CmdResp(&cmdIf);
@@ -2100,11 +2100,11 @@ int32_t MCI_Cmd_StopTransmission( void )
     int32_t retval = MCI_FUNC_FAILED;
 
     /* do nothing when the card is in tran state */
-    if(MCI_CheckStatus(CARD_STATE_TRAN) == MCI_FUNC_OK) 
+    if(MCI_CheckStatus(CARD_STATE_TRAN) == MCI_FUNC_OK)
     {
         return MCI_FUNC_OK;
     }
-    
+
     retryCount = 0x20;
     cmdIf.CmdIndex = CMD12_STOP_TRANSMISSION;
     cmdIf.Argument = 0x00000000;
@@ -2117,7 +2117,7 @@ int32_t MCI_Cmd_StopTransmission( void )
          if((MCI_CheckStatus(CARD_STATE_DATA) != MCI_FUNC_OK) &&
               (MCI_CheckStatus(CARD_STATE_RCV) != MCI_FUNC_OK))
               return MCI_FUNC_ERR_STATE;
-         
+
         respStatus = MCI_CmdResp(&cmdIf);
 
         if(respStatus)
@@ -2178,27 +2178,27 @@ int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
     {
         commandID = CMD24_WRITE_BLOCK;
     }
-    
+
     retryCount = 0x20;
     cmdIf.CmdIndex = commandID;
     if (MCI_CardType == MCI_SDHC_SDXC_CARD)
     {
         cmdIf.Argument = blockNum;                      /* Block Address */
     }
-    else            
+    else
     {
         cmdIf.Argument = blockNum * BLOCK_LENGTH;       /* Byte Address */
-    }     
+    }
     cmdIf.ExpectResp = EXPECT_SHORT_RESP;
     cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
     cmdIf.CmdResp =  (uint32_t *)&respValue[0];
-    
+
     while ( retryCount > 0 )
     {
          /* Check current status */
         if((MCI_CheckStatus(CARD_STATE_TRAN) != MCI_FUNC_OK))
             return MCI_FUNC_ERR_STATE;
-   
+
         respStatus = MCI_CmdResp(&cmdIf);
 
         if(respStatus)
@@ -2209,14 +2209,14 @@ int32_t MCI_Cmd_WriteBlock(uint32_t blockNum, uint32_t numOfBlock)
         {
             return MCI_FUNC_BAD_PARAMETERS;
         }
-        else 
+        else
         {
             if((MCI_CheckStatus(CARD_STATE_RCV) != MCI_FUNC_OK) &&
               (MCI_CheckStatus(CARD_STATE_TRAN) != MCI_FUNC_OK))
               return MCI_FUNC_ERR_STATE;
             return MCI_FUNC_OK;
         }
-        
+
 
         for ( i = 0; i < 0x20; i++ );
 
@@ -2253,7 +2253,7 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
     uint32_t commandID;
     st_Mci_CmdInfo cmdIf;
     int32_t retval = MCI_FUNC_FAILED;
-  
+
     // To Do: Read Multi-Block
     if (numOfBlock > 1)
         commandID = CMD18_READ_MULTIPLE_BLOCK;
@@ -2266,10 +2266,10 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
     {
         cmdIf.Argument = blockNum;                      /* Block Address */
     }
-    else            
+    else
     {
         cmdIf.Argument = blockNum * BLOCK_LENGTH;       /* Byte Address */
-    }    
+    }
     cmdIf.ExpectResp = EXPECT_SHORT_RESP;
     cmdIf.AllowTimeout = ALLOW_CMD_TIMER;
     cmdIf.CmdResp =  (uint32_t *)&respValue[0];
@@ -2278,7 +2278,7 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
          /* Check current status */
         if((MCI_CheckStatus(CARD_STATE_TRAN) != MCI_FUNC_OK))
             return MCI_FUNC_ERR_STATE;
-        
+
         respStatus = MCI_CmdResp(&cmdIf);
 
         if(respStatus)
@@ -2296,12 +2296,12 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
               return MCI_FUNC_ERR_STATE;
             return MCI_FUNC_OK;
         }
-       
+
 
         for ( i = 0; i < 0x20; i++ );
 
         retryCount--;
-         
+
     }
 
     return retval;
@@ -2311,7 +2311,7 @@ int32_t MCI_Cmd_ReadBlock(uint32_t blockNum, uint32_t numOfBlock)
 /************************************************************************//**
  * @brief         Write data at a specific address to starting block with number
  *                of blocks will be written from first block
- * @details        
+ * @details
  *                - At preparation
  *                    - Set MCI data control register, data length and data timeout
  *                    - Send CMD24 (WRITE_BLOCK) or CMD25 (WRITE_MULTIPLE_BLOCK)
@@ -2339,7 +2339,7 @@ int32_t MCI_WriteBlock(volatile uint8_t* memblock, uint32_t blockNum, uint32_t n
 
     if(BLOCK_LENGTH*numOfBlock > DATA_RW_MAX_LEN)
         return MCI_FUNC_BAD_PARAMETERS;
-    
+
     dataSrcBlock = memblock;
 
     LPC_MCI->CLEAR = 0x7FF;
@@ -2351,7 +2351,7 @@ int32_t MCI_WriteBlock(volatile uint8_t* memblock, uint32_t blockNum, uint32_t n
     /* Wait the SD Card enters to TRANS state. */
     if (MCI_CheckStatus(CARD_STATE_TRAN) != MCI_FUNC_OK)
         return MCI_FUNC_ERR_STATE;
-    
+
     LPC_MCI->DATATMR = DATA_TIMER_VALUE_W;
 
     LPC_MCI->DATALEN = BLOCK_LENGTH*numOfBlock;
@@ -2373,9 +2373,9 @@ int32_t MCI_WriteBlock(volatile uint8_t* memblock, uint32_t blockNum, uint32_t n
     {
 #if MCI_DMA_ENABLED
         MCI_SettingDma((uint8_t*) dataSrcBlock, MCI_DMA_WRITE_CHANNEL, GPDMA_TRANSFERTYPE_M2P_DEST_CTRL);
-        
+
         /* Write, block transfer, DMA, and data length */
-        DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_TO_CARD 
+        DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_TO_CARD
                         | MCI_DATACTRL_DMA_ENABLE | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
 #else
         /* Write, block transfer, and data length */
@@ -2395,7 +2395,7 @@ int32_t MCI_WriteBlock(volatile uint8_t* memblock, uint32_t blockNum, uint32_t n
  * @brief         Read data at a specific address to starting block with number
  *                of blocks will be read from first block
  *
- * @details        
+ * @details
  *                - At preparation
  *                    - Set MCI data control register, data length and data timeout
  *                    - Send CMD17 (READ_SINGLE_BLOCK) or CMD18 (READ_MULTIPLE_BLOCK)
@@ -2423,7 +2423,7 @@ int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t n
 
     if(BLOCK_LENGTH*numOfBlock > DATA_RW_MAX_LEN)
         return MCI_FUNC_BAD_PARAMETERS;
-    
+
     dataDestBlock = destBlock;
 
     LPC_MCI->CLEAR = 0x7FF;
@@ -2435,7 +2435,7 @@ int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t n
     /* Wait the SD Card enters to TRANS state. */
     if (MCI_CheckStatus(CARD_STATE_TRAN) != MCI_FUNC_OK)
         return MCI_FUNC_ERR_STATE;
-    
+
     MCI_RXEnable();
 
     LPC_MCI->DATATMR = DATA_TIMER_VALUE_R;
@@ -2449,7 +2449,7 @@ int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t n
 
 
     // Start data engine on READ before command to avoid overflow of the FIFO.
-    {        
+    {
 #if MCI_DMA_ENABLED
         MCI_SettingDma((uint8_t*) dataDestBlock, MCI_DMA_READ_CHANNEL, GPDMA_TRANSFERTYPE_P2M_SRC_CTRL);
 
@@ -2458,13 +2458,13 @@ int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t n
                         | MCI_DATACTRL_DMA_ENABLE | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
 #else
         //Retrieving the result after reading the card is done by the FIFO handling for interrupt
-        
+
         /* Read, enable, block transfer, and data length */
         DataCtrl |= MCI_DATACTRL_ENABLE | MCI_DATACTRL_DIR_FROM_CARD | MCI_DTATCTRL_BLOCKSIZE(DATA_BLOCK_LEN);
 
 #endif
     }
-    
+
     LPC_MCI->DATACTRL = DataCtrl;
 
     for ( i = 0; i < 0x10; i++ );
@@ -2485,14 +2485,14 @@ int32_t MCI_ReadBlock(volatile uint8_t* destBlock, uint32_t blockNum, uint32_t n
  *
  * @return       None
  ****************************************************************************/
-void MCI_PowerOff(void) 
+void MCI_PowerOff(void)
 {
     volatile uint32_t i;
 
     LPC_MCI->POWER = 0;
-    
+
     for (i = 0; i < 0x100; i++);
-    
+
     return;
 }
 

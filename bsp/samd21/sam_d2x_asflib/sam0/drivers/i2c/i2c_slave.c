@@ -64,17 +64,17 @@
  * \param[out] config  Pointer to configuration structure to be initiated
  */
 void i2c_slave_get_config_defaults(
-		struct i2c_slave_config *const config)
+        struct i2c_slave_config *const config)
 {
-	/* Sanity check */
-	Assert(config);
-	
-	config->clock_source    = I2C_CLK_INPUT_3;
-	config->clock_divider   = 0x10;
-	config->pin_number_pad0 = PIN_LP_GPIO_8;
-	config->pin_number_pad1 = PIN_LP_GPIO_9;
-	config->pinmux_sel_pad0 = ((PIN_LP_GPIO_8 << 16) | MUX_LP_GPIO_8_I2C0_SDA);
-	config->pinmux_sel_pad1 = ((PIN_LP_GPIO_9 << 16) | MUX_LP_GPIO_9_I2C0_SCL);
+    /* Sanity check */
+    Assert(config);
+
+    config->clock_source    = I2C_CLK_INPUT_3;
+    config->clock_divider   = 0x10;
+    config->pin_number_pad0 = PIN_LP_GPIO_8;
+    config->pin_number_pad1 = PIN_LP_GPIO_9;
+    config->pinmux_sel_pad0 = ((PIN_LP_GPIO_8 << 16) | MUX_LP_GPIO_8_I2C0_SDA);
+    config->pinmux_sel_pad1 = ((PIN_LP_GPIO_9 << 16) | MUX_LP_GPIO_9_I2C0_SCL);
 }
 
 /**
@@ -91,29 +91,29 @@ void i2c_slave_get_config_defaults(
  *                                          with set GCLK frequency
  */
 static enum status_code _i2c_slave_set_config(
-		struct i2c_slave_module *const module,
-		const struct i2c_slave_config *const config)
+        struct i2c_slave_module *const module,
+        const struct i2c_slave_config *const config)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(config);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(config);
 
-	enum status_code status = STATUS_OK;
-	I2c *const i2c_module = (module->hw);
+    enum status_code status = STATUS_OK;
+    I2c *const i2c_module = (module->hw);
 
-	/* Set the pinmux for this i2c module. */
-	gpio_pinmux_cofiguration(config->pin_number_pad0, (uint16_t)(config->pinmux_sel_pad0));
-	gpio_pinmux_cofiguration(config->pin_number_pad1, (uint16_t)(config->pinmux_sel_pad1));
+    /* Set the pinmux for this i2c module. */
+    gpio_pinmux_cofiguration(config->pin_number_pad0, (uint16_t)(config->pinmux_sel_pad0));
+    gpio_pinmux_cofiguration(config->pin_number_pad1, (uint16_t)(config->pinmux_sel_pad1));
 
-	/* Find and set baudrate. */
-	i2c_module->CLOCK_SOURCE_SELECT.reg = config->clock_source;
-	i2c_module->I2C_CLK_DIVIDER.reg = I2C_CLK_DIVIDER_I2C_DIVIDE_RATIO(config->clock_divider);
-	/* I2C slave address */
-	i2c_module->I2C_SLAVE_ADDRESS.reg = I2C_SLAVE_ADDRESS_ADDRESS(config->address);
-	/* I2C slave mode */
-	i2c_module->I2C_MASTER_MODE.reg = I2C_MASTER_MODE_MASTER_ENABLE_0;
-	return status;
+    /* Find and set baudrate. */
+    i2c_module->CLOCK_SOURCE_SELECT.reg = config->clock_source;
+    i2c_module->I2C_CLK_DIVIDER.reg = I2C_CLK_DIVIDER_I2C_DIVIDE_RATIO(config->clock_divider);
+    /* I2C slave address */
+    i2c_module->I2C_SLAVE_ADDRESS.reg = I2C_SLAVE_ADDRESS_ADDRESS(config->address);
+    /* I2C slave mode */
+    i2c_module->I2C_MASTER_MODE.reg = I2C_MASTER_MODE_MASTER_ENABLE_0;
+    return status;
 }
 
 /**
@@ -133,59 +133,59 @@ static enum status_code _i2c_slave_set_config(
  *
  */
 enum status_code i2c_slave_init(
-		struct i2c_slave_module *const module,
-		I2c *const hw,
-		const struct i2c_slave_config *const config)
+        struct i2c_slave_module *const module,
+        I2c *const hw,
+        const struct i2c_slave_config *const config)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(config);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(config);
 
-	module->hw = hw;
-	
-	/* Sanity check arguments. */
-	if ((module == NULL) || (config == NULL))
-		return STATUS_ERR_INVALID_ARG;
+    module->hw = hw;
 
-	i2c_disable(module->hw);
-	
-	if (module->hw == I2C0)
-		system_peripheral_reset(PERIPHERAL_I2C0_CORE);
-	else if (module->hw == I2C1) {
-		system_peripheral_reset(PERIPHERAL_I2C1_CORE);
-	} else {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    /* Sanity check arguments. */
+    if ((module == NULL) || (config == NULL))
+        return STATUS_ERR_INVALID_ARG;
+
+    i2c_disable(module->hw);
+
+    if (module->hw == I2C0)
+        system_peripheral_reset(PERIPHERAL_I2C0_CORE);
+    else if (module->hw == I2C1) {
+        system_peripheral_reset(PERIPHERAL_I2C1_CORE);
+    } else {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
 #if I2C_SLAVE_CALLBACK_MODE == true
-	/* Initialize values in module. */
-	module->registered_callback = 0;
-	module->enabled_callback    = 0;
-	module->buffer_length       = 0;
-	module->buffer_remaining    = 0;
-	module->buffer              = NULL;
-	module->status              = STATUS_OK;
+    /* Initialize values in module. */
+    module->registered_callback = 0;
+    module->enabled_callback    = 0;
+    module->buffer_length       = 0;
+    module->buffer_remaining    = 0;
+    module->buffer              = NULL;
+    module->status              = STATUS_OK;
 
-	_i2c_instances = (void*)module;
-	if (module->hw == I2C0) {
-		system_register_isr(RAM_ISR_TABLE_I2CRX0_INDEX, (uint32_t)_i2c_slave_rx_isr_handler);
-		system_register_isr(RAM_ISR_TABLE_I2CTX0_INDEX, (uint32_t)_i2c_slave_tx_isr_handler);
-		NVIC_EnableIRQ(I2C0_RX_IRQn);
-		NVIC_EnableIRQ(I2C0_TX_IRQn);
-	} else if (module->hw == I2C1) {
-		system_register_isr(RAM_ISR_TABLE_I2CRX1_INDEX, (uint32_t)_i2c_slave_rx_isr_handler);
-		system_register_isr(RAM_ISR_TABLE_I2CTX1_INDEX, (uint32_t)_i2c_slave_tx_isr_handler);
-		NVIC_EnableIRQ(I2C1_RX_IRQn);
-		NVIC_EnableIRQ(I2C1_TX_IRQn);
-	}
+    _i2c_instances = (void*)module;
+    if (module->hw == I2C0) {
+        system_register_isr(RAM_ISR_TABLE_I2CRX0_INDEX, (uint32_t)_i2c_slave_rx_isr_handler);
+        system_register_isr(RAM_ISR_TABLE_I2CTX0_INDEX, (uint32_t)_i2c_slave_tx_isr_handler);
+        NVIC_EnableIRQ(I2C0_RX_IRQn);
+        NVIC_EnableIRQ(I2C0_TX_IRQn);
+    } else if (module->hw == I2C1) {
+        system_register_isr(RAM_ISR_TABLE_I2CRX1_INDEX, (uint32_t)_i2c_slave_rx_isr_handler);
+        system_register_isr(RAM_ISR_TABLE_I2CTX1_INDEX, (uint32_t)_i2c_slave_tx_isr_handler);
+        NVIC_EnableIRQ(I2C1_RX_IRQn);
+        NVIC_EnableIRQ(I2C1_TX_IRQn);
+    }
 #endif
 
-	/* Set config and return status. */
-	if(_i2c_slave_set_config(module, config) != STATUS_OK)
-		return STATUS_ERR_NOT_INITIALIZED;
+    /* Set config and return status. */
+    if(_i2c_slave_set_config(module, config) != STATUS_OK)
+        return STATUS_ERR_NOT_INITIALIZED;
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -202,35 +202,35 @@ enum status_code i2c_slave_init(
  * \retval STATUS_ERR_INVALID_ARG   Invalid argument(s) was provided
  */
 enum status_code i2c_slave_read_packet_wait(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet)
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet)
 {
-	/* Sanity check */
-	Assert(module);
-	Assert(module->hw);
-	Assert(packet);
+    /* Sanity check */
+    Assert(module);
+    Assert(module->hw);
+    Assert(packet);
 
-	I2c *const i2c_module = (module->hw);
-	uint16_t counter = 0;
-	uint32_t status  = 0;
-	uint16_t length  = packet->data_length;
+    I2c *const i2c_module = (module->hw);
+    uint16_t counter = 0;
+    uint32_t status  = 0;
+    uint16_t length  = packet->data_length;
 
-	if (length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	do {
-		status = i2c_module->RECEIVE_STATUS.reg;
-		if (status & I2C_RECEIVE_STATUS_RX_FIFO_NOT_EMPTY)
-			packet->data[counter++] = i2c_module->RECEIVE_DATA.reg;
-	} while (counter < length);
+    do {
+        status = i2c_module->RECEIVE_STATUS.reg;
+        if (status & I2C_RECEIVE_STATUS_RX_FIFO_NOT_EMPTY)
+            packet->data[counter++] = i2c_module->RECEIVE_DATA.reg;
+    } while (counter < length);
 
-	/* Now check whether the core has sent the data out and free the bus. */
-	while (!(status & I2C_TRANSMIT_STATUS_TX_FIFO_EMPTY)) {
-		status = i2c_module->TRANSMIT_STATUS.reg;
-	}
+    /* Now check whether the core has sent the data out and free the bus. */
+    while (!(status & I2C_TRANSMIT_STATUS_TX_FIFO_EMPTY)) {
+        status = i2c_module->TRANSMIT_STATUS.reg;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -247,34 +247,34 @@ enum status_code i2c_slave_read_packet_wait(
  * \retval STATUS_ERR_INVALID_ARG   Invalid argument(s) was provided
  */
 enum status_code i2c_slave_write_packet_wait(
-		struct i2c_slave_module *const module,
-		struct i2c_slave_packet *const packet)
+        struct i2c_slave_module *const module,
+        struct i2c_slave_packet *const packet)
 {
-	I2c *const i2c_module = (module->hw);
-	uint16_t i = 0;
-	uint32_t status = 0;
-	uint16_t length = packet->data_length;
+    I2c *const i2c_module = (module->hw);
+    uint16_t i = 0;
+    uint32_t status = 0;
+    uint16_t length = packet->data_length;
 
-	if (length == 0) {
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (length == 0) {
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	i2c_wait_for_idle(i2c_module);
-	
-	/* Flush the FIFO */
-	i2c_module->I2C_FLUSH.reg = 1;
+    i2c_wait_for_idle(i2c_module);
 
-	do {
-		status = i2c_module->TRANSMIT_STATUS.reg;
-		if (status & I2C_TRANSMIT_STATUS_TX_FIFO_NOT_FULL_Msk) {
-			i2c_module->TRANSMIT_DATA.reg = packet->data[i++];
-		}
-	} while (i < length);
+    /* Flush the FIFO */
+    i2c_module->I2C_FLUSH.reg = 1;
 
-	/* Now check whether the core has sent the data out and its good to free the bus */
-	while (!(status & I2C_TRANSMIT_STATUS_TX_FIFO_EMPTY)) {
-		status = i2c_module->TRANSMIT_STATUS.reg;
-	}
+    do {
+        status = i2c_module->TRANSMIT_STATUS.reg;
+        if (status & I2C_TRANSMIT_STATUS_TX_FIFO_NOT_FULL_Msk) {
+            i2c_module->TRANSMIT_DATA.reg = packet->data[i++];
+        }
+    } while (i < length);
 
-	return STATUS_OK;
+    /* Now check whether the core has sent the data out and its good to free the bus */
+    while (!(status & I2C_TRANSMIT_STATUS_TX_FIFO_EMPTY)) {
+        status = i2c_module->TRANSMIT_STATUS.reg;
+    }
+
+    return STATUS_OK;
 }

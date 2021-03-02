@@ -52,7 +52,7 @@
 #include "sha204_lib_return_codes.h"    // declarations of function return codes
 #include "sha204_timer.h"               // definitions for delay functions
 
-/** 
+/**
  * \brief This enumeration lists all packet types sent to a SHA204 device.
  *
  * The following byte stream is sent to a SHA204 TWI device:
@@ -60,10 +60,10 @@
  * Data are only sent after a word address of value #SHA204_I2C_PACKET_FUNCTION_NORMAL.
  */
 enum i2c_word_address {
-	SHA204_I2C_PACKET_FUNCTION_RESET,  //!< Reset device.
-	SHA204_I2C_PACKET_FUNCTION_SLEEP,  //!< Put device into Sleep mode.
-	SHA204_I2C_PACKET_FUNCTION_IDLE,   //!< Put device into Idle mode.
-	SHA204_I2C_PACKET_FUNCTION_NORMAL  //!< Write / evaluate data that follow this word address byte.
+    SHA204_I2C_PACKET_FUNCTION_RESET,  //!< Reset device.
+    SHA204_I2C_PACKET_FUNCTION_SLEEP,  //!< Put device into Sleep mode.
+    SHA204_I2C_PACKET_FUNCTION_IDLE,   //!< Put device into Idle mode.
+    SHA204_I2C_PACKET_FUNCTION_NORMAL  //!< Write / evaluate data that follow this word address byte.
 };
 
 
@@ -75,18 +75,18 @@ static uint8_t device_address = SHA204_I2C_DEFAULT_ADDRESS >> 1;
  */
 void sha204p_init(void)
 {
-	// Initialize timer.
-	sha204h_timer_init();
+    // Initialize timer.
+    sha204h_timer_init();
 
-	// Initialize interrupt vectors.
-	irq_initialize_vectors();
+    // Initialize interrupt vectors.
+    irq_initialize_vectors();
 
-	// Enable interrupts.
-	cpu_irq_enable();
+    // Enable interrupts.
+    cpu_irq_enable();
 }
 
 
-/** 
+/**
  * \brief This I2C function sets the I2C address.
  *         Communication functions will use this address.
  *
@@ -94,45 +94,45 @@ void sha204p_init(void)
  */
 void sha204p_set_device_id(uint8_t id)
 {
-	device_address = id >> 1;
+    device_address = id >> 1;
 }
 
 
-/** 
+/**
  * \brief This I2C function generates a Wake-up pulse and delays.
  * \return status of the operation
  */
 uint8_t sha204p_wakeup(void)
 {
-	twi_package_t twi_package;
-	twi_options_t twi_options = {.speed = 133333};
-   
-	// Set SDA low for 60 us. Speed is therefore: f = 1 / 0.00006 / 8 = 133,333.
-	// Generating the Stop condition adds 20 us for this particular implementation / target,
-	// but a longer wake pulse is okay.
-	twi_master_disable(ATSHA204_TWI_PORT);
-	int twi_master_setup_status = twi_master_setup(ATSHA204_TWI_PORT, &twi_options);
-	if (twi_master_setup_status != STATUS_OK)
-		return SHA204_COMM_FAIL;
+    twi_package_t twi_package;
+    twi_options_t twi_options = {.speed = 133333};
 
-	twi_package.chip = 0;
-	twi_package.addr_length = 0;
-	twi_package.length = 0;
-	twi_package.buffer = NULL;
+    // Set SDA low for 60 us. Speed is therefore: f = 1 / 0.00006 / 8 = 133,333.
+    // Generating the Stop condition adds 20 us for this particular implementation / target,
+    // but a longer wake pulse is okay.
+    twi_master_disable(ATSHA204_TWI_PORT);
+    int twi_master_setup_status = twi_master_setup(ATSHA204_TWI_PORT, &twi_options);
+    if (twi_master_setup_status != STATUS_OK)
+        return SHA204_COMM_FAIL;
 
-	// This call will return a nack error.
-	(void) twi_master_write(ATSHA204_TWI_PORT, &twi_package);
+    twi_package.chip = 0;
+    twi_package.addr_length = 0;
+    twi_package.length = 0;
+    twi_package.buffer = NULL;
 
-	sha204h_delay_ms(SHA204_WAKEUP_DELAY);
-	
-	// Set I2C speed back to communication speed.
-	twi_master_enable(ATSHA204_TWI_PORT);
-	twi_options.speed = ATSHA204_TWI_SPEED;
-	return (uint8_t) twi_master_setup(ATSHA204_TWI_PORT, &twi_options);
+    // This call will return a nack error.
+    (void) twi_master_write(ATSHA204_TWI_PORT, &twi_package);
+
+    sha204h_delay_ms(SHA204_WAKEUP_DELAY);
+
+    // Set I2C speed back to communication speed.
+    twi_master_enable(ATSHA204_TWI_PORT);
+    twi_options.speed = ATSHA204_TWI_SPEED;
+    return (uint8_t) twi_master_setup(ATSHA204_TWI_PORT, &twi_options);
 }
 
 
-/** 
+/**
  * \brief This function sends a I2C packet enclosed by a I2C start and stop to a SHA204 device.
  *
  *         This function combines a I2C packet send sequence that is common to all packet types.
@@ -145,18 +145,18 @@ uint8_t sha204p_wakeup(void)
  */
 static uint8_t sha204p_send(uint8_t word_address, uint8_t count, uint8_t *buffer)
 {
-	twi_package_t twi_package = {
-		.chip = device_address,
-		.addr_length = 1,
-		.length = count,
-		.buffer = (void *) buffer,
-		.addr[0] = word_address
-	};
-	return (twi_master_write(ATSHA204_TWI_PORT, &twi_package) ? SHA204_COMM_FAIL : SHA204_SUCCESS);
+    twi_package_t twi_package = {
+        .chip = device_address,
+        .addr_length = 1,
+        .length = count,
+        .buffer = (void *) buffer,
+        .addr[0] = word_address
+    };
+    return (twi_master_write(ATSHA204_TWI_PORT, &twi_package) ? SHA204_COMM_FAIL : SHA204_SUCCESS);
 }
 
 
-/** 
+/**
  * \brief This I2C function sends a command to the device.
  * \param[in] count number of bytes to send
  * \param[in] command pointer to command buffer
@@ -164,41 +164,41 @@ static uint8_t sha204p_send(uint8_t word_address, uint8_t count, uint8_t *buffer
  */
 uint8_t sha204p_send_command(uint8_t count, uint8_t *command)
 {
-	return sha204p_send(SHA204_I2C_PACKET_FUNCTION_NORMAL, count, command);
+    return sha204p_send(SHA204_I2C_PACKET_FUNCTION_NORMAL, count, command);
 }
 
 
-/** 
+/**
  * \brief This I2C function puts the SHA204 device into idle state.
  * \return status of the operation
  */
 uint8_t sha204p_idle(void)
 {
-	return sha204p_send(SHA204_I2C_PACKET_FUNCTION_IDLE, 0, NULL);
+    return sha204p_send(SHA204_I2C_PACKET_FUNCTION_IDLE, 0, NULL);
 }
 
 
-/** 
+/**
  * \brief This I2C function puts the SHA204 device into low-power state.
  * \return status of the operation
  */
 uint8_t sha204p_sleep(void)
 {
-	return sha204p_send(SHA204_I2C_PACKET_FUNCTION_SLEEP, 0, NULL);
+    return sha204p_send(SHA204_I2C_PACKET_FUNCTION_SLEEP, 0, NULL);
 }
 
 
-/** 
+/**
  * \brief This I2C function resets the I/O buffer of the SHA204 device.
  * \return status of the operation
  */
 uint8_t sha204p_reset_io(void)
 {
-	return sha204p_send(SHA204_I2C_PACKET_FUNCTION_RESET, 0, NULL);
+    return sha204p_send(SHA204_I2C_PACKET_FUNCTION_RESET, 0, NULL);
 }
 
 
-/** 
+/**
  * \brief This I2C function receives a response from the SHA204 device.
  *
  * \param[in] size size of receive buffer
@@ -208,21 +208,21 @@ uint8_t sha204p_reset_io(void)
 uint8_t sha204p_receive_response(uint8_t size, uint8_t *response)
 {
     // Read count.
-	twi_package_t twi_package = {
-		.chip = device_address,
-		.addr_length = 0,
-		.length = 1,
-		.buffer = (void *) response
-	};
-	status_code_t i2c_status = twi_master_read(ATSHA204_TWI_PORT, &twi_package);
-	if (i2c_status != STATUS_OK)
-	    return (i2c_status == ERR_TIMEOUT ? SHA204_TIMEOUT : SHA204_RX_NO_RESPONSE);
+    twi_package_t twi_package = {
+        .chip = device_address,
+        .addr_length = 0,
+        .length = 1,
+        .buffer = (void *) response
+    };
+    status_code_t i2c_status = twi_master_read(ATSHA204_TWI_PORT, &twi_package);
+    if (i2c_status != STATUS_OK)
+        return (i2c_status == ERR_TIMEOUT ? SHA204_TIMEOUT : SHA204_RX_NO_RESPONSE);
 
-	uint8_t count = response[SHA204_BUFFER_POS_COUNT];
-	if ((count < SHA204_RSP_SIZE_MIN) || (count > SHA204_RSP_SIZE_MAX))
-		return SHA204_INVALID_SIZE;
-	   
-	// Read packet remainder.
+    uint8_t count = response[SHA204_BUFFER_POS_COUNT];
+    if ((count < SHA204_RSP_SIZE_MIN) || (count > SHA204_RSP_SIZE_MAX))
+        return SHA204_INVALID_SIZE;
+
+    // Read packet remainder.
     twi_package.length = (count > size) ? size : count;
     twi_package.length--;
     twi_package.buffer = response + 1;
@@ -230,7 +230,7 @@ uint8_t sha204p_receive_response(uint8_t size, uint8_t *response)
 }
 
 
-/** 
+/**
  * \brief This I2C function resynchronizes communication.
  *
  * Parameters are not used for I2C.\n
@@ -282,19 +282,19 @@ uint8_t sha204p_receive_response(uint8_t size, uint8_t *response)
  */
 uint8_t sha204p_resync(uint8_t size, uint8_t *response)
 {
-	// Generate Start, nine clocks, Stop.
-	// (Adding a Repeat Start before the Stop would additionally
-	// prevent erroneously writing a byte, but a Stop right after a
-	// Start is not "legal" for I2C and the SHA204 will not write
-	// anything without a successful CRC check.)
-	twi_package_t twi_package = {
-		.chip = (uint8_t) 0xFF,
-		.addr_length = 1,
-		.length = 0,
-		.buffer = (void *) response,
-		.addr[0] = 0
-	};
-	(void) twi_master_read(ATSHA204_TWI_PORT, &twi_package);
+    // Generate Start, nine clocks, Stop.
+    // (Adding a Repeat Start before the Stop would additionally
+    // prevent erroneously writing a byte, but a Stop right after a
+    // Start is not "legal" for I2C and the SHA204 will not write
+    // anything without a successful CRC check.)
+    twi_package_t twi_package = {
+        .chip = (uint8_t) 0xFF,
+        .addr_length = 1,
+        .length = 0,
+        .buffer = (void *) response,
+        .addr[0] = 0
+    };
+    (void) twi_master_read(ATSHA204_TWI_PORT, &twi_package);
 
-	return sha204p_reset_io();
+    return sha204p_reset_io();
 }

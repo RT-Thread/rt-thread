@@ -118,8 +118,8 @@
  * procedure is used on all platforms, the parameter to osc_enable()
  * will be different from device to device.
  * \code
-	osc_enable(OSC_ID_XOSC);
-	osc_wait_ready(OSC_ID_XOSC); \endcode
+    osc_enable(OSC_ID_XOSC);
+    osc_wait_ready(OSC_ID_XOSC); \endcode
  *
  * \section osc_group_board Board-specific Definitions
  * If external oscillators are used, the board code must provide the
@@ -171,9 +171,9 @@
  */
 static inline void osc_wait_ready(uint8_t id)
 {
-	while (!osc_is_ready(id)) {
-		/* Do nothing */
-	}
+    while (!osc_is_ready(id)) {
+        /* Do nothing */
+    }
 }
 
 #endif /* __ASSEMBLY__ */

@@ -2,10 +2,10 @@
 #define STARTUP_INTERNAL_H
 
 #include "gtypes.h"
-typedef U8		        uint8_t;
-typedef U16		        uint16_t;
-typedef U32		        uint32_t;
-typedef S32			    int32_t;
+typedef U8                uint8_t;
+typedef U16                uint16_t;
+typedef U32                uint32_t;
+typedef S32                int32_t;
 
 typedef char            char_t;
 typedef U64             uint64_t;

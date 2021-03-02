@@ -11,12 +11,12 @@
 #define __DTS_IMX6UL_PINFUNC_H
 
 #define PIN_CFG(mux_ctl_offset, pad_ctl_offset, select_input_offset, mux_mode, daisy, pad_setting) \
-	do {\
-		writel(mux_mode, IOMUXC_BASE_ADDR + mux_ctl_offset);\
-		if (select_input_offset != 0)\
-			writel(daisy, IOMUXC_BASE_ADDR + select_input_offset);\
-		writel(pad_setting, IOMUXC_BASE_ADDR + pad_ctl_offset);\
-	} while(0);
+    do {\
+        writel(mux_mode, IOMUXC_BASE_ADDR + mux_ctl_offset);\
+        if (select_input_offset != 0)\
+            writel(daisy, IOMUXC_BASE_ADDR + select_input_offset);\
+        writel(pad_setting, IOMUXC_BASE_ADDR + pad_ctl_offset);\
+    } while(0);
 
 /*
  * The pin function ID is a tuple of

@@ -6,16 +6,16 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32WBxx_HAL_RTC_EX_H
@@ -36,7 +36,7 @@
   * @{
   */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 
 /** @defgroup RTCEx_Exported_Types RTCEx Exported Types
   * @{
@@ -85,7 +85,7 @@ typedef struct
 /** @defgroup RTCEx_Exported_Constants RTCEx Exported Constants
   * @{
   */
-  
+
 /** @defgroup RTCEx_Output_selection_Definitions RTCEx Output Selection Definition
   * @{
   */
@@ -97,7 +97,7 @@ typedef struct
 /**
   * @}
   */
- 
+
 /** @defgroup RTCEx_Backup_Registers_Definitions RTCEx Backup Registers Definition
   * @{
   */
@@ -121,15 +121,15 @@ typedef struct
 #define RTC_BKP_DR17                      ((uint32_t)0x00000011U)
 #define RTC_BKP_DR18                      ((uint32_t)0x00000012U)
 #define RTC_BKP_DR19                      ((uint32_t)0x00000013U)
-    
+
 /**
   * @}
   */
-  
-  
+
+
 /** @defgroup RTCEx_Time_Stamp_Edges_definitions RTCEx Time Stamp Edges definition
   * @{
-  */ 
+  */
 #define RTC_TIMESTAMPEDGE_RISING        ((uint32_t)0x00000000U)
 #define RTC_TIMESTAMPEDGE_FALLING       RTC_CR_TSEDGE
 
@@ -146,7 +146,7 @@ typedef struct
   * @}
   */
 
-  
+
 /** @defgroup RTCEx_Tamper_Pins_Definitions RTCEx Tamper Pins Definition
   * @{
   */
@@ -180,7 +180,7 @@ typedef struct
 #define RTC_ALL_TAMPER_INTERRUPT             RTC_TAMPCR_TAMPIE
 /**
   * @}
-  */        
+  */
 
 /** @defgroup RTCEx_Tamper_Trigger_Definitions RTCEx Tamper Trigger Definitions
   * @{
@@ -357,7 +357,7 @@ typedef struct
 /**
   * @}
   */
-    
+
 /** @defgroup RTCEx_Flags_Definitions RTCEx Flags Definitions
   * @{
   */
@@ -366,8 +366,8 @@ typedef struct
 #endif
 /**
   * @}
-  */  
-  
+  */
+
 /**
   * @}
   */
@@ -623,7 +623,7 @@ typedef struct
 /**
   * @brief  Disable the RTC TimeStamp interrupt.
   * @param __HANDLE__ specifies the RTC handle.
-  * @param __INTERRUPT__ specifies the RTC TimeStamp interrupt source to be disabled. 
+  * @param __INTERRUPT__ specifies the RTC TimeStamp interrupt source to be disabled.
   *         This parameter can be:
   *            @arg RTC_IT_TS: TimeStamp interrupt
   * @retval None
@@ -645,7 +645,7 @@ typedef struct
   * @param __HANDLE__ specifies the RTC handle.
   * @param __INTERRUPT__ specifies the RTC Time Stamp interrupt source to check.
   *         This parameter can be:
-  *            @arg RTC_IT_TS: TimeStamp interrupt           
+  *            @arg RTC_IT_TS: TimeStamp interrupt
   * @retval None
   */
 #define __HAL_RTC_TIMESTAMP_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)     (((((__HANDLE__)->Instance->CR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
@@ -680,7 +680,7 @@ typedef struct
 /* ---------------------------------TAMPER------------------------------------*/
 /** @defgroup RTCEx_Tamper RTC Tamper
   * @{
-  */ 
+  */
 
 #if defined(RTC_TAMPER1_SUPPORT)
 /**
@@ -730,7 +730,7 @@ typedef struct
 
 
 /**************************************************************************************************/
-        
+
 /**
   * @brief  Enable the RTC Tamper interrupt.
   * @param __HANDLE__ specifies the RTC handle.
@@ -744,13 +744,13 @@ typedef struct
   *         (*)  Value not defined in all devices. \n
   *
   * @retval None
-  */   
+  */
 #define __HAL_RTC_TAMPER_ENABLE_IT(__HANDLE__, __INTERRUPT__)        ((__HANDLE__)->Instance->TAMPCR |= (__INTERRUPT__))
 
 /**
   * @brief  Disable the RTC Tamper interrupt.
   * @param __HANDLE__ specifies the RTC handle.
-  * @param __INTERRUPT__ specifies the RTC Tamper interrupt sources to be disabled. 
+  * @param __INTERRUPT__ specifies the RTC Tamper interrupt sources to be disabled.
   *         This parameter can be any combination of the following values:
   *             @arg  RTC_IT_TAMP: All tampers interrupts
   *             @arg  RTC_IT_TAMP1: Tamper1 interrupt (*)
@@ -787,7 +787,7 @@ typedef struct
 #endif
 
 /**************************************************************************************************/
-       
+
 /**
   * @brief  Check whether the specified RTC Tamper interrupt has been enabled or not.
   * @param __HANDLE__ specifies the RTC handle.
@@ -834,10 +834,10 @@ typedef struct
   * @retval None
   */
 #define __HAL_RTC_TAMPER_CLEAR_FLAG(__HANDLE__, __FLAG__)      ((__HANDLE__)->Instance->ISR) = (~((__FLAG__) | RTC_ISR_INIT)|((__HANDLE__)->Instance->ISR & RTC_ISR_INIT))
-       
-        
-/**************************************************************************************************/ 
- 
+
+
+/**************************************************************************************************/
+
 
 #if defined(RTC_INTERNALTS_SUPPORT)
 /**
@@ -874,8 +874,8 @@ typedef struct
   */
 #define __HAL_RTC_INTERNAL_TIMESTAMP_CLEAR_FLAG(__HANDLE__, __FLAG__)  ((__HANDLE__)->Instance->ISR) = (~((__FLAG__) | RTC_ISR_INIT)|((__HANDLE__)->Instance->ISR & RTC_ISR_INIT))
 #endif
-/**************************************************************************************************/ 
-       
+/**************************************************************************************************/
+
 /**
   * @}
   */
@@ -884,7 +884,7 @@ typedef struct
 /** @defgroup RTCEx_Tamper_Timestamp EXTI RTC Tamper Timestamp EXTI
   * @{
   */
-  
+
 /* TAMPER TIMESTAMP EXTI */
 /* --------------------- */
 
@@ -1077,7 +1077,7 @@ typedef struct
 /* RTC TimeStamp and Tamper functions *****************************************/
 /** @defgroup RTCEx_Exported_Functions_Group1 Extended RTC TimeStamp and Tamper functions
  * @{
- */ 
+ */
 
 HAL_StatusTypeDef HAL_RTCEx_SetTimeStamp(RTC_HandleTypeDef *hrtc, uint32_t TimeStampEdge, uint32_t RTC_TimeStampPin);
 HAL_StatusTypeDef HAL_RTCEx_SetTimeStamp_IT(RTC_HandleTypeDef *hrtc, uint32_t TimeStampEdge, uint32_t RTC_TimeStampPin);
@@ -1116,7 +1116,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForTamper3Event(RTC_HandleTypeDef *hrtc, uint32_
 /* RTC Wake-up functions ******************************************************/
 /** @defgroup RTCEx_Exported_Functions_Group2 Extended RTC Wake-up functions
  * @{
- */ 
+ */
 
 HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer(RTC_HandleTypeDef *hrtc, uint32_t WakeUpCounter, uint32_t WakeUpClock);
 HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer_IT(RTC_HandleTypeDef *hrtc, uint32_t WakeUpCounter, uint32_t WakeUpClock);
@@ -1132,7 +1132,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForWakeUpTimerEvent(RTC_HandleTypeDef *hrtc, uin
 /* Extended Control functions ************************************************/
 /** @defgroup RTCEx_Exported_Functions_Group3 Extended Peripheral Control functions
  * @{
- */ 
+ */
 
 void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data);
 uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister);
@@ -1152,8 +1152,8 @@ HAL_StatusTypeDef HAL_RTCEx_DisableBypassShadow(RTC_HandleTypeDef *hrtc);
 /* Extended RTC features functions *******************************************/
 /** @defgroup RTCEx_Exported_Functions_Group4 Extended features functions
  * @{
- */ 
-void              HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc); 
+ */
+void              HAL_RTCEx_AlarmBEventCallback(RTC_HandleTypeDef *hrtc);
 HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t Timeout);
 /**
   * @}
@@ -1163,30 +1163,30 @@ HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t
   * @}
   */
 
-/* Private types -------------------------------------------------------------*/ 
+/* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup RTCEx_Private_Constants RTCEx Private Constants
   * @{
   */
-  
+
 /* Masks Definition */
-                                      
+
 #if defined(RTC_TAMPER1_SUPPORT) && defined(RTC_TAMPER3_SUPPORT)
-       
+
 #define RTC_FLAGS_MASK          ((uint32_t) (RTC_FLAG_RECALPF | RTC_FLAG_TAMP3F | RTC_FLAG_TAMP2F | \
                                              RTC_FLAG_TAMP1F| RTC_FLAG_TSOVF | RTC_FLAG_TSF       | \
                                              RTC_FLAG_WUTF | RTC_FLAG_ALRBF | RTC_FLAG_ALRAF      | \
                                              RTC_FLAG_INITF | RTC_FLAG_RSF                        | \
                                              RTC_FLAG_INITS | RTC_FLAG_SHPF | RTC_FLAG_WUTWF      | \
                                              RTC_FLAG_ALRBWF | RTC_FLAG_ALRAWF))
-                                             
+
 #define RTC_TAMPCR_TAMPXE     ((uint32_t) (RTC_TAMPCR_TAMP3E | RTC_TAMPCR_TAMP2E | RTC_TAMPCR_TAMP1E))
 #define RTC_TAMPCR_TAMPXIE    ((uint32_t) (RTC_TAMPER1_INTERRUPT | RTC_TAMPER2_INTERRUPT | \
                                            RTC_TAMPER3_INTERRUPT | RTC_ALL_TAMPER_INTERRUPT))
-       
+
 #else
-    
+
 #define RTC_FLAGS_MASK          ((uint32_t) (RTC_FLAG_RECALPF | RTC_FLAG_TAMP2F                  |  \
                                              RTC_FLAG_TSOVF | RTC_FLAG_TSF | RTC_FLAG_WUTF       | \
                                              RTC_FLAG_ALRBF | RTC_FLAG_ALRAF                     | \
@@ -1196,8 +1196,8 @@ HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t
 
 #define RTC_TAMPCR_TAMPXE     ((uint32_t) (RTC_TAMPCR_TAMP2E))
 #define RTC_TAMPCR_TAMPXIE    ((uint32_t) (RTC_TAMPER2_INTERRUPT | RTC_ALL_TAMPER_INTERRUPT))
-                                        
-#endif      
+
+#endif
 
 #define RTC_EXTI_LINE_TAMPER_TIMESTAMP_EVENT  (EXTI_IMR1_IM18)    /*!< External interrupt line 18 Connected to the RTC Tamper and Time Stamp events */
 #define RTC_EXTI_LINE_WAKEUPTIMER_EVENT       (EXTI_IMR1_IM19)    /*!< External interrupt line 19 Connected to the RTC Wakeup event */
@@ -1213,7 +1213,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t
 
 /** @defgroup RTCEx_IS_RTC_Definitions Private macros to check input parameters
   * @{
-  */ 
+  */
 
 #define IS_RTC_OUTPUT(OUTPUT) (((OUTPUT) == RTC_OUTPUT_DISABLE) || \
                                ((OUTPUT) == RTC_OUTPUT_ALARMA)  || \
@@ -1234,7 +1234,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t
 #define IS_RTC_TAMPER_TRIGGER(TRIGGER) (((TRIGGER) == RTC_TAMPERTRIGGER_RISINGEDGE) || \
                                         ((TRIGGER) == RTC_TAMPERTRIGGER_FALLINGEDGE) || \
                                         ((TRIGGER) == RTC_TAMPERTRIGGER_LOWLEVEL) || \
-                                        ((TRIGGER) == RTC_TAMPERTRIGGER_HIGHLEVEL)) 
+                                        ((TRIGGER) == RTC_TAMPERTRIGGER_HIGHLEVEL))
 
 #define IS_RTC_TAMPER_ERASE_MODE(MODE)             (((MODE) == RTC_TAMPER_ERASE_BACKUP_ENABLE) || \
                                                     ((MODE) == RTC_TAMPER_ERASE_BACKUP_DISABLE))
@@ -1291,7 +1291,7 @@ HAL_StatusTypeDef HAL_RTCEx_PollForAlarmBEvent(RTC_HandleTypeDef *hrtc, uint32_t
 /**
   * @}
   */
-  
+
 
 #define IS_RTC_SHIFT_ADD1S(SEL) (((SEL) == RTC_SHIFTADD1S_RESET) || \
                                  ((SEL) == RTC_SHIFTADD1S_SET))

@@ -22,7 +22,7 @@ static struct io_config
     int io_num;
     fpioa_function_t func;
     const char * func_name;
-} io_config[] = 
+} io_config[] =
 {
 #ifdef BSP_USING_LCD
     IOCONFIG(BSP_LCD_CS_PIN, FUNC_SPI0_SS0),                 /* LCD CS PIN */
@@ -81,14 +81,14 @@ static int print_io_config()
 {
     int i;
     rt_kprintf("IO Configuration Table\n");
-    rt_kprintf("â”Œâ”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”\n");
-    rt_kprintf("â”‚Pin    â”‚Function                â”‚\n");
-    rt_kprintf("â”œâ”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤\n");
+    rt_kprintf("©°©¤©¤©¤©¤©¤©¤©¤©Ğ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©´\n");
+    rt_kprintf("©¦Pin    ©¦Function                ©¦\n");
+    rt_kprintf("©À©¤©¤©¤©¤©¤©¤©¤©à©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©È\n");
     for(i = 0; i < sizeof io_config / sizeof io_config[0]; i++)
     {
-        rt_kprintf("â”‚%-2d     â”‚%-24.24sâ”‚\n", io_config[i].io_num, io_config[i].func_name);
+        rt_kprintf("©¦%-2d     ©¦%-24.24s©¦\n", io_config[i].io_num, io_config[i].func_name);
     }
-    rt_kprintf("â””â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜\n");
+    rt_kprintf("©¸©¤©¤©¤©¤©¤©¤©¤©Ø©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¼\n");
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(print_io_config, io, print io config);

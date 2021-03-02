@@ -68,27 +68,27 @@ public:
         kInput = 0,
         kOutput = 1
     } pin_direction_t;
-    
+
     //! @brief Default constructor.
     //!
     //! The bank and pin numbers are both set to 0. This constructor is really meant to allow
     //! instances to be created and initialized later, such as in structs or as globals.
     GpioPin() : m_bank(0), m_pin(0) {}
-    
+
     //! @brief Constructor to set the bank and pin.
     //!
     //! Configures the pin mux setting to be a GPIO.
     GpioPin(uint8_t bank, uint8_t pin, pin_direction_t dir=kOutput);
-    
+
     //! @brief Constructor taking a combined bank and pin value.
     GpioPin(uint32_t combinedPin, pin_direction_t dir=kOutput);
-    
+
     //! @brief Copy constructor.
     GpioPin(const GpioPin & other) : m_bank(other.m_bank), m_pin(other.m_pin) {}
-    
+
     //! @brief Assignment operator.
     GpioPin & operator = (const GpioPin & rhs) { setPin(rhs.getBank(), rhs.getPin()); return *this; }
-    
+
     //! @name Pin number
     //@{
     void setPin(uint8_t bank, uint8_t pin);
@@ -96,7 +96,7 @@ public:
     uint8_t getBank() const { return m_bank; }
     uint8_t getPin() const { return m_pin; }
     //@}
-    
+
     //! @name I/O direction
     //@{
     void setDirection(pin_direction_t direction);
@@ -110,7 +110,7 @@ public:
     void clear();
     bool get() const;
     //@}
-    
+
     //! @name Operators
     //@{
     operator bool () const { return get(); }
@@ -125,7 +125,7 @@ protected:
 
     uint8_t m_bank; //!< Bank number.
     uint8_t m_pin;  //!< Pin number.
-    
+
 };
 
 /*!
@@ -136,21 +136,21 @@ class GpioOutput : public GpioPin
 public:
     //! @brief Default constructor.
     GpioOutput() : GpioPin() {}
-    
+
     //! @brief Constructor to set the bank and pin.
     //!
     //! Configures the pin mux setting to be a GPIO.
     GpioOutput(uint8_t bank, uint8_t pin) : GpioPin(bank, pin, kOutput) {}
-    
+
     //! @brief Constructor taking a combined bank and pin value.
     GpioOutput(uint32_t combinedPin) : GpioPin(combinedPin, kOutput) {}
-    
+
     //! @brief Copy constructor.
     GpioOutput(const GpioPin & other) : GpioPin(other.getBank(), other.getPin(), kOutput) {}
-    
+
     //! @brief Assignment operator.
     GpioOutput & operator = (const GpioPin & rhs);
-    
+
     //! @name Operators
     //@{
     operator bool () const { return get(); }
@@ -170,21 +170,21 @@ class GpioInput : public GpioPin
 public:
     //! @brief Default constructor.
     GpioInput() : GpioPin() {}
-    
+
     //! @brief Constructor to set the bank and pin.
     //!
     //! Configures the pin mux setting to be a GPIO.
     GpioInput(uint8_t bank, uint8_t pin) : GpioPin(bank, pin, kInput) {}
-    
+
     //! @brief Constructor taking a combined bank and pin value.
     GpioInput(uint32_t combinedPin) : GpioPin(combinedPin, kInput) {}
-    
+
     //! @brief Copy constructor.
     GpioInput(const GpioPin & other) : GpioPin(other.getBank(), other.getPin(), kInput) {}
-    
+
     //! @brief Assignment operator.
     GpioInput & operator = (const GpioPin & rhs);
-    
+
     //! @name Operators
     //@{
     operator bool () const { return get(); }

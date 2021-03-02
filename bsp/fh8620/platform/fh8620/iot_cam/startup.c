@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *    Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *    All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *    Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <mmu.h>
@@ -50,13 +50,13 @@ extern void rt_system_heap_init(void*, void*);
 extern void rt_hw_finsh_init(void);
 extern void rt_application_init(void);
 
-static struct mem_desc fh_mem_desc[] = 
+static struct mem_desc fh_mem_desc[] =
 {
-		{ 0xA0000000, FH_RTT_OS_MEM_END-1, 0xA0000000, SECT_RWX_CB, 0, SECT_MAPPED },
-		{ FH_RTT_OS_MEM_END, FH_DDR_END-1, FH_RTT_OS_MEM_END, SECT_RWNX_NCNB, 0, SECT_MAPPED },
-		{ 0xFFFF0000, 0xFFFF1000-1, 0xA0000000, SECT_TO_PAGE, PAGE_ROX_CB, PAGE_MAPPED }, /* isr vector table */
-		{ 0xE0000000, 0xF1300000-1, 0xE0000000, SECT_RWNX_NCNB, 0, SECT_MAPPED },       /* io table */
-		{ 0xF4000000, 0xF4100000-1, 0xF4000000, SECT_RWNX_NCNB, 0, SECT_MAPPED },       /* GPIO#1 io table */
+        { 0xA0000000, FH_RTT_OS_MEM_END-1, 0xA0000000, SECT_RWX_CB, 0, SECT_MAPPED },
+        { FH_RTT_OS_MEM_END, FH_DDR_END-1, FH_RTT_OS_MEM_END, SECT_RWNX_NCNB, 0, SECT_MAPPED },
+        { 0xFFFF0000, 0xFFFF1000-1, 0xA0000000, SECT_TO_PAGE, PAGE_ROX_CB, PAGE_MAPPED }, /* isr vector table */
+        { 0xE0000000, 0xF1300000-1, 0xE0000000, SECT_RWNX_NCNB, 0, SECT_MAPPED },       /* io table */
+        { 0xF4000000, 0xF4100000-1, 0xF4000000, SECT_RWNX_NCNB, 0, SECT_MAPPED },       /* GPIO#1 io table */
 };
 
 rt_uint8_t _irq_stack_start[1024];
@@ -72,46 +72,46 @@ extern unsigned char __bss_end;
  */
 void rtthread_startup(void)
 {
-	/* disable interrupt first */
-	rt_hw_interrupt_disable();
-	/* initialize hardware interrupt */
-	rt_hw_interrupt_init();
+    /* disable interrupt first */
+    rt_hw_interrupt_disable();
+    /* initialize hardware interrupt */
+    rt_hw_interrupt_init();
 
-	/* initialize mmu */
-	rt_hw_mmu_init(fh_mem_desc, sizeof(fh_mem_desc)/sizeof(fh_mem_desc[0]));
+    /* initialize mmu */
+    rt_hw_mmu_init(fh_mem_desc, sizeof(fh_mem_desc)/sizeof(fh_mem_desc[0]));
 
-	rt_system_heap_init((void*)&__bss_end, (void*)FH_RTT_OS_MEM_END);
+    rt_system_heap_init((void*)&__bss_end, (void*)FH_RTT_OS_MEM_END);
 
 #ifdef RT_USING_DMA_MEM
-	//just use the last 100KB
-	fh_dma_mem_init((rt_uint32_t *)FH_RTT_OS_MEM_END, FH_DMA_MEM_SIZE);
+    //just use the last 100KB
+    fh_dma_mem_init((rt_uint32_t *)FH_RTT_OS_MEM_END, FH_DMA_MEM_SIZE);
 #endif
 
-	/* initialize board */
-	rt_hw_board_init();
+    /* initialize board */
+    rt_hw_board_init();
 
-	/* show version */
-	rt_show_version();
+    /* show version */
+    rt_show_version();
 
-	/* initialize timer system */
-	rt_system_timer_init();
+    /* initialize timer system */
+    rt_system_timer_init();
 
-	/* initialize scheduler system */
-	rt_system_scheduler_init();
+    /* initialize scheduler system */
+    rt_system_scheduler_init();
 
-	/* initialize application */
-	rt_application_init();
+    /* initialize application */
+    rt_application_init();
 
-	/* initialize system timer thread */
-	rt_system_timer_thread_init();
+    /* initialize system timer thread */
+    rt_system_timer_thread_init();
 
-	/* initialize idle thread */
-	rt_thread_idle_init();
+    /* initialize idle thread */
+    rt_thread_idle_init();
 
-	/* start scheduler */
-	rt_system_scheduler_start();
+    /* start scheduler */
+    rt_system_scheduler_start();
 
-	/* never reach here */
+    /* never reach here */
 
-	return ;
+    return ;
 }

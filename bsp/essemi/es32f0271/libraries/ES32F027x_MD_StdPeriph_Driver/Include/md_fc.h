@@ -60,10 +60,10 @@ typedef struct
   uint16_t BCnt;      /*!< Specifies the control byte count.
                 For program, this parameter should be aligned with 8 and smaller than 0x400
                 For read, this parameter should be aligned with 4*/
-                
+
   uint32_t *pU32Buf;    /*!< Specifies the uint32_t data buffer to program.
                 This parameter should be the pointer to uint32_t*/
-                
+
 } md_fc_ControlTypeDef;
 
 /**
@@ -79,10 +79,10 @@ typedef struct
 
   uint32_t ClearL;    /*!< Specifies the reserve page bit mapping low byte (page 31~0) (0=reserve, 1=erase).
                 This parameter can be any value between 0~65535*/
-                
+
   uint32_t ClearH;    /*!< Specifies the reserve page bit mapping high byte (page 63~32) (0=reserve, 1=erase).
                 This parameter can be any value between 0~65535*/
-                
+
 } md_fc_UpdProtTypeDef;
 
 /**
@@ -216,7 +216,7 @@ __STATIC_INLINE uint32_t md_fc_get_cmd(void)
   *         @arg @ref MD_FC_PC_CMD_UPDATE_LV1_PROTECT(0xF3) : Update Lv1 Protect
   *         @arg @ref MD_FC_PC_CMD_UPDATE_LV2_PROTECT(0xF4) : Update Lv2 Protect
   *         @arg @ref MD_FC_PC_CMD_OPTION_BYTE_ERASE(0xF5) : Option Byte Erase(Only for ISP)
-  *         @arg Else : Reserved 
+  *         @arg Else : Reserved
   * @retval None
   */
 __STATIC_INLINE void md_fc_set_fc_cmd(uint32_t Cmd)
@@ -235,7 +235,7 @@ __STATIC_INLINE void md_fc_set_fc_cmd(uint32_t Cmd)
   *         @arg @ref MD_FC_PC_CMD_UPDATE_LV1_PROTECT(0xF3) : Update Lv1 Protect
   *         @arg @ref MD_FC_PC_CMD_UPDATE_LV2_PROTECT(0xF4) : Update Lv2 Protect
   *         @arg @ref MD_FC_PC_CMD_OPTION_BYTE_ERASE(0xF5) : Option Byte Erase(Only for ISP)
-  *         @arg Else:Reserved 
+  *         @arg Else:Reserved
   */
 __STATIC_INLINE uint32_t md_fc_get_fc_cmd(void)
 {
@@ -782,7 +782,7 @@ __STATIC_INLINE uint8_t md_fc_get_op_remap_sremap(void)
   * @retval The retval can be one of the following values:
   *         @arg Max Value 0xf
   *         @arg Min Value 0x0
-  * @note  This value is invalid if the value in SREMAP field is 0x3  
+  * @note  This value is invalid if the value in SREMAP field is 0x3
   */
 __STATIC_INLINE uint8_t md_fc_get_op_remap_sefbase(void)
 {
@@ -818,7 +818,7 @@ ErrorStatus  md_fc_updremap(uint8_t UpdRemap);
   * @}  FC
   */
 
-/** 
+/**
   * @}  Micro_Driver
   */
 

@@ -429,7 +429,7 @@ int32_t *FSReadSector(int32_t deviceNumber, int32_t sectorNumber, int32_t writeT
 }
 
 /*! Note: multiple sectors reading is only for big data chunks, ignoring the FAT table fetching
- *	the buffer is reused from outside allocation, so need to use the token for further memory recycling.
+ *    the buffer is reused from outside allocation, so need to use the token for further memory recycling.
  */
 int32_t *FSReadMultiSectors(int32_t deviceNumber, int32_t sectorNumber, int32_t writeType,
                             uint8_t * buffer, int size)
@@ -476,7 +476,7 @@ RtStatus_t FSFlushDriveCache(int32_t deviceNumber)
 //! \param[in] pSectorBuffer - Sector Data (presumably of a Partition Boot Sector)
 //!
 //! \retval SUCCESS
-//! \retval ERROR_OS_FILESYSTEM_FILESYSTEM_NOT_FOUND 
+//! \retval ERROR_OS_FILESYSTEM_FILESYSTEM_NOT_FOUND
 //! \internal
 ////////////////////////////////////////////////////////////////////////////////
 RtStatus_t VerifyPBS(uint8_t * pSectorData)

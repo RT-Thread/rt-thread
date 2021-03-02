@@ -2,7 +2,7 @@
 *   @brief Error Signaling Module Driver Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -632,11 +632,11 @@
 *
 *   This type is used to represent ESM Self-Test Status.
 */
-typedef enum esmSelfTestFlag 
+typedef enum esmSelfTestFlag
 {
     esmSelfTest_Passed = 0U,
-	esmSelfTest_Active = 1U,
-	esmSelfTest_NotStarted = 2U,
+    esmSelfTest_Active = 1U,
+    esmSelfTest_NotStarted = 2U,
     esmSelfTest_Failed = 3U
 }esmSelfTestFlag_t;
 
@@ -647,14 +647,14 @@ typedef struct esm_config_reg
     uint32 CONFIG_INTENASET1;
     uint32 CONFIG_INTLVLSET1;
     uint32 CONFIG_LTCPRELOAD;
-	uint32 CONFIG_KEY;  
+    uint32 CONFIG_KEY;
     uint32 CONFIG_EPENASET4;
     uint32 CONFIG_INTENASET4;
     uint32 CONFIG_INTLVLSET4;
 } esm_config_reg_t;
 
 /* Configuration registers initial value */
-#define ESM_EPENASET1_CONFIGVALUE	(0U << 31U)\
+#define ESM_EPENASET1_CONFIGVALUE    (0U << 31U)\
                       | (0U << 30U)\
                       | (0U << 29U)\
                       | (0U << 28U)\
@@ -686,7 +686,7 @@ typedef struct esm_config_reg
                       | (0U <<  2U)\
                       | (0U <<  1U)\
                       | (0U)
-#define ESM_INTENASET1_CONFIGVALUE	(0U << 31U)\
+#define ESM_INTENASET1_CONFIGVALUE    (0U << 31U)\
                        | (0U << 30U)\
                        | (0U << 29U)\
                        | (0U << 28U)\
@@ -750,8 +750,8 @@ typedef struct esm_config_reg
                        | (0U <<  2U)\
                        | (0U <<  1U)\
                        | (0U)
-#define ESM_LTCPRELOAD_CONFIGVALUE	16384U - 1U
-#define ESM_KEY_CONFIGVALUE 		0U
+#define ESM_LTCPRELOAD_CONFIGVALUE    16384U - 1U
+#define ESM_KEY_CONFIGVALUE         0U
 #define ESM_EPENASET4_CONFIGVALUE (0U << 31U)\
                       | (0U << 30U)\
                       | (0U << 29U)\
@@ -853,20 +853,20 @@ typedef struct esm_config_reg
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
 
-/** 
+/**
  *  @defgroup ESM ESM
  *  @brief Error Signaling Module.
- *  
+ *
  *  The ESM module aggregates device errors and provides internal and external error response based on error severity.
  *
- *	Related Files
+ *    Related Files
  *   - reg_esm.h
  *   - esm.h
  *   - esm.c
  *  @addtogroup ESM
  *  @{
  */
- 
+
 /* Esm Interface Functions */
 void     esmInit(void);
 uint32 esmError(void);

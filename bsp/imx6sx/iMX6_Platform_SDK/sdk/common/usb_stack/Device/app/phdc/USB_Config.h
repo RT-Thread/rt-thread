@@ -45,7 +45,7 @@
 
 
 /*****************************************************************************/
-/* 								Function's Prototypes						 */
+/*                                 Function's Prototypes                         */
 /*****************************************************************************/
 /* PHDC class services */
 extern void USB_Class_PHDC_Endpoint_Service (PTR_USB_DEV_EVENT_STRUCT event);

@@ -121,11 +121,11 @@
 #define TCC0_DTI                    1        // Dead-Time-Insertion feature implemented
 #define TCC0_EXT                    31       // (@_DITHERING*16+@_PG*8+@_SWAP*4+@_DTI*2+@_OTMX*1)
 #define TCC0_GCLK_ID                26       // Index of Generic Clock
-#define TCC0_MASTER                 0       
+#define TCC0_MASTER                 0
 #define TCC0_OTMX                   1        // Output Matrix feature implemented
 #define TCC0_OW_NUM                 8        // Number of Output Waveforms
 #define TCC0_PG                     1        // Pattern Generation feature implemented
-#define TCC0_SIZE                   24      
+#define TCC0_SIZE                   24
 #define TCC0_SWAP                   1        // DTI outputs swap feature implemented
 #define TCC0_TYPE                   1        // TCC type 0 : NA, 1 : Master, 2 : Slave
 

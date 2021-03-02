@@ -35,143 +35,143 @@
 
 int32_t RingBuf_Init(ring_buffer_t* pRB, uint8_t* buffer, uint32_t size )
 {
-	pRB->pBuf	 = (uint8_t*)buffer;
-	pRB->size		 = size;
-	pRB->rNdx		 = 0;
-	pRB->wNdx		 = 0;
-	pRB->cnt = 0;
-	return 0;
+    pRB->pBuf     = (uint8_t*)buffer;
+    pRB->size         = size;
+    pRB->rNdx         = 0;
+    pRB->wNdx         = 0;
+    pRB->cnt = 0;
+    return 0;
 }
 
 int32_t RingBuf_Deinit(ring_buffer_t* pRB )
 {
-	pRB = pRB;;
-	return 0;
+    pRB = pRB;;
+    return 0;
 }
 
 int32_t RingBuf_GetFreeBytes(ring_buffer_t* pRB )
 {
-	return pRB->size - pRB->cnt;
+    return pRB->size - pRB->cnt;
 }
 
 int32_t RingBuf_GetUsedBytes(ring_buffer_t* pRB)
 {
-	return pRB->cnt;
+    return pRB->cnt;
 }
 
 int32_t RingBuf_Write(ring_buffer_t* pRB, const uint8_t* data, uint32_t dataBytes)
 {
-	uint32_t writeToEnd, bytesToCopy;
-	INIT_CRITICAL();
-	ENTER_CRITICAL();
-	/* Calculate the maximum amount we can copy */
-	writeToEnd = pRB->size - pRB->wNdx;
-	bytesToCopy = MIN(dataBytes, pRB->size - pRB->cnt);
-	
-	if (bytesToCopy != 0)
-	{
-		/* Copy as much as we can until we fall off the end of the buffer */
-		memcpy(&pRB->pBuf[pRB->wNdx], data, MIN(bytesToCopy, writeToEnd));
+    uint32_t writeToEnd, bytesToCopy;
+    INIT_CRITICAL();
+    ENTER_CRITICAL();
+    /* Calculate the maximum amount we can copy */
+    writeToEnd = pRB->size - pRB->wNdx;
+    bytesToCopy = MIN(dataBytes, pRB->size - pRB->cnt);
 
-		/* Check if we have more to copy to the front of the buffer */
-		if (writeToEnd < bytesToCopy)
-		{
-			memcpy(pRB->pBuf, data + writeToEnd, bytesToCopy - writeToEnd);
-		}
+    if (bytesToCopy != 0)
+    {
+        /* Copy as much as we can until we fall off the end of the buffer */
+        memcpy(&pRB->pBuf[pRB->wNdx], data, MIN(bytesToCopy, writeToEnd));
 
-		/* Update the wNdx */
-		
-		pRB->wNdx = (pRB->wNdx + bytesToCopy) % pRB->size;
-		pRB->cnt += dataBytes;
-	}
-	LEAVE_CRITICAL();
-	return bytesToCopy;
+        /* Check if we have more to copy to the front of the buffer */
+        if (writeToEnd < bytesToCopy)
+        {
+            memcpy(pRB->pBuf, data + writeToEnd, bytesToCopy - writeToEnd);
+        }
+
+        /* Update the wNdx */
+
+        pRB->wNdx = (pRB->wNdx + bytesToCopy) % pRB->size;
+        pRB->cnt += dataBytes;
+    }
+    LEAVE_CRITICAL();
+    return bytesToCopy;
 }
 
 int32_t RingBuf_Write1Byte(ring_buffer_t* pRB, const uint8_t *pcData)
 {
-	uint32_t ret = 0;
-	INIT_CRITICAL();
-	ENTER_CRITICAL();
-	if (pRB->cnt < pRB->size)
-	{
-		pRB->pBuf[pRB->wNdx] = pcData[0];
-		pRB->wNdx = (pRB->wNdx + 1) % pRB->size;
-		pRB->cnt++;
-		ret = 1;
-	}
-	LEAVE_CRITICAL();
-	return ret;
+    uint32_t ret = 0;
+    INIT_CRITICAL();
+    ENTER_CRITICAL();
+    if (pRB->cnt < pRB->size)
+    {
+        pRB->pBuf[pRB->wNdx] = pcData[0];
+        pRB->wNdx = (pRB->wNdx + 1) % pRB->size;
+        pRB->cnt++;
+        ret = 1;
+    }
+    LEAVE_CRITICAL();
+    return ret;
 }
 
 int32_t _prvRingBuf_Read(ring_buffer_t* pRB, uint8_t* data, uint32_t dataBytes, uint32_t isToFree)
 {
-	uint32_t readToEnd, bytesToCopy;
-	INIT_CRITICAL();
-	ENTER_CRITICAL();
-	readToEnd = pRB->size - pRB->rNdx;
-	bytesToCopy = MIN(dataBytes, pRB->cnt);
-	if (bytesToCopy != 0)
-	{
-		memcpy(data, &pRB->pBuf[pRB->rNdx], MIN(bytesToCopy, readToEnd));
-		
-		if (readToEnd < bytesToCopy)
-			memcpy(data + readToEnd, &pRB->pBuf[0], bytesToCopy - readToEnd);
+    uint32_t readToEnd, bytesToCopy;
+    INIT_CRITICAL();
+    ENTER_CRITICAL();
+    readToEnd = pRB->size - pRB->rNdx;
+    bytesToCopy = MIN(dataBytes, pRB->cnt);
+    if (bytesToCopy != 0)
+    {
+        memcpy(data, &pRB->pBuf[pRB->rNdx], MIN(bytesToCopy, readToEnd));
 
-		if (isToFree)
-		{
-			pRB->rNdx = (pRB->rNdx + bytesToCopy) % pRB->size;
-			pRB->cnt -= bytesToCopy;	
-		}
-	}
-	LEAVE_CRITICAL();
-	
-	return bytesToCopy;
+        if (readToEnd < bytesToCopy)
+            memcpy(data + readToEnd, &pRB->pBuf[0], bytesToCopy - readToEnd);
+
+        if (isToFree)
+        {
+            pRB->rNdx = (pRB->rNdx + bytesToCopy) % pRB->size;
+            pRB->cnt -= bytesToCopy;
+        }
+    }
+    LEAVE_CRITICAL();
+
+    return bytesToCopy;
 }
 
 int32_t RingBuf_Read(ring_buffer_t* pRB, uint8_t* data, uint32_t dataBytes)
 {
-	return _prvRingBuf_Read(pRB, data, dataBytes, 1);
+    return _prvRingBuf_Read(pRB, data, dataBytes, 1);
 }
 
 int32_t RingBuf_Copy(ring_buffer_t* pRB, uint8_t* data, uint32_t dataBytes)
 {
-	return _prvRingBuf_Read(pRB, data, dataBytes, 0);
+    return _prvRingBuf_Read(pRB, data, dataBytes, 0);
 }
 
 int32_t RingBuf_Read1Byte(ring_buffer_t* pRB, uint8_t *pData)
 {
-	uint32_t ret = 0;
-	INIT_CRITICAL();
-	ENTER_CRITICAL();
-	if (pRB->cnt != 0)
-	{
-		pData[0] = pRB->pBuf[pRB->rNdx];
-		pRB->rNdx = (pRB->rNdx + 1) % pRB->size;
-		pRB->cnt--;
-		ret = 1;
-	}
-	LEAVE_CRITICAL();
-	return ret;
+    uint32_t ret = 0;
+    INIT_CRITICAL();
+    ENTER_CRITICAL();
+    if (pRB->cnt != 0)
+    {
+        pData[0] = pRB->pBuf[pRB->rNdx];
+        pRB->rNdx = (pRB->rNdx + 1) % pRB->size;
+        pRB->cnt--;
+        ret = 1;
+    }
+    LEAVE_CRITICAL();
+    return ret;
 }
 
 int32_t RingBuf_Peek(ring_buffer_t* pRB, uint8_t **ppData)
 {
-	uint32_t readToEnd = pRB->size - pRB->rNdx;
-	uint32_t contiguousBytes;
-	*ppData = &(pRB->pBuf[pRB->rNdx]);
-	contiguousBytes = MIN(readToEnd, (readToEnd + pRB->wNdx) % pRB->size);
-	return contiguousBytes;
+    uint32_t readToEnd = pRB->size - pRB->rNdx;
+    uint32_t contiguousBytes;
+    *ppData = &(pRB->pBuf[pRB->rNdx]);
+    contiguousBytes = MIN(readToEnd, (readToEnd + pRB->wNdx) % pRB->size);
+    return contiguousBytes;
 }
 
 int32_t RingBuf_Free(ring_buffer_t* pRB, uint32_t bytesToFree)
 {
-	INIT_CRITICAL();
-	ENTER_CRITICAL();
-	pRB->rNdx = (pRB->rNdx + bytesToFree) % pRB->size;
-	pRB->cnt -= bytesToFree;
-	LEAVE_CRITICAL();
-	return bytesToFree;
+    INIT_CRITICAL();
+    ENTER_CRITICAL();
+    pRB->rNdx = (pRB->rNdx + bytesToFree) % pRB->size;
+    pRB->cnt -= bytesToFree;
+    LEAVE_CRITICAL();
+    return bytesToFree;
 }
 
 

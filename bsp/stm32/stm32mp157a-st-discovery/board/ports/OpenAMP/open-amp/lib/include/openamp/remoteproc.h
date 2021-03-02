@@ -51,10 +51,10 @@ extern "C" {
  */
 OPENAMP_PACKED_BEGIN
 struct resource_table {
-	uint32_t ver;
-	uint32_t num;
-	uint32_t reserved[2];
-	uint32_t offset[0];
+    uint32_t ver;
+    uint32_t num;
+    uint32_t reserved[2];
+    uint32_t offset[0];
 } OPENAMP_PACKED_END;
 
 /**
@@ -68,8 +68,8 @@ struct resource_table {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_hdr {
-	uint32_t type;
-	uint8_t data[0];
+    uint32_t type;
+    uint8_t data[0];
 } OPENAMP_PACKED_END;
 
 /**
@@ -95,15 +95,15 @@ struct fw_rsc_hdr {
  * please update it as needed.
  */
 enum fw_resource_type {
-	RSC_CARVEOUT = 0,
-	RSC_DEVMEM = 1,
-	RSC_TRACE = 2,
-	RSC_VDEV = 3,
-	RSC_RPROC_MEM = 4,
-	RSC_FW_CHKSUM = 5,
-	RSC_LAST = 6,
-	RSC_VENDOR_START = 128,
-	RSC_VENDOR_END = 512,
+    RSC_CARVEOUT = 0,
+    RSC_DEVMEM = 1,
+    RSC_TRACE = 2,
+    RSC_VDEV = 3,
+    RSC_RPROC_MEM = 4,
+    RSC_FW_CHKSUM = 5,
+    RSC_LAST = 6,
+    RSC_VENDOR_START = 128,
+    RSC_VENDOR_END = 512,
 };
 
 #define FW_RSC_ADDR_ANY (0xFFFFFFFFFFFFFFFF)
@@ -154,13 +154,13 @@ enum fw_resource_type {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_carveout {
-	uint32_t type;
-	uint32_t da;
-	uint32_t pa;
-	uint32_t len;
-	uint32_t flags;
-	uint32_t reserved;
-	uint8_t name[32];
+    uint32_t type;
+    uint32_t da;
+    uint32_t pa;
+    uint32_t len;
+    uint32_t flags;
+    uint32_t reserved;
+    uint8_t name[32];
 } OPENAMP_PACKED_END;
 
 /**
@@ -194,13 +194,13 @@ struct fw_rsc_carveout {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_devmem {
-	uint32_t type;
-	uint32_t da;
-	uint32_t pa;
-	uint32_t len;
-	uint32_t flags;
-	uint32_t reserved;
-	uint8_t name[32];
+    uint32_t type;
+    uint32_t da;
+    uint32_t pa;
+    uint32_t len;
+    uint32_t flags;
+    uint32_t reserved;
+    uint8_t name[32];
 } OPENAMP_PACKED_END;
 
 /**
@@ -221,11 +221,11 @@ struct fw_rsc_devmem {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_trace {
-	uint32_t type;
-	uint32_t da;
-	uint32_t len;
-	uint32_t reserved;
-	uint8_t name[32];
+    uint32_t type;
+    uint32_t da;
+    uint32_t len;
+    uint32_t reserved;
+    uint8_t name[32];
 } OPENAMP_PACKED_END;
 
 /**
@@ -247,11 +247,11 @@ struct fw_rsc_trace {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_vdev_vring {
-	uint32_t da;
-	uint32_t align;
-	uint32_t num;
-	uint32_t notifyid;
-	uint32_t reserved;
+    uint32_t da;
+    uint32_t align;
+    uint32_t num;
+    uint32_t notifyid;
+    uint32_t reserved;
 } OPENAMP_PACKED_END;
 
 /**
@@ -291,16 +291,16 @@ struct fw_rsc_vdev_vring {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_vdev {
-	uint32_t type;
-	uint32_t id;
-	uint32_t notifyid;
-	uint32_t dfeatures;
-	uint32_t gfeatures;
-	uint32_t config_len;
-	uint8_t status;
-	uint8_t num_of_vrings;
-	uint8_t reserved[2];
-	struct fw_rsc_vdev_vring vring[0];
+    uint32_t type;
+    uint32_t id;
+    uint32_t notifyid;
+    uint32_t dfeatures;
+    uint32_t gfeatures;
+    uint32_t config_len;
+    uint8_t status;
+    uint8_t num_of_vrings;
+    uint8_t reserved[2];
+    struct fw_rsc_vdev_vring vring[0];
 } OPENAMP_PACKED_END;
 
 /**
@@ -315,8 +315,8 @@ struct fw_rsc_vdev {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_vendor {
-	uint32_t type;
-	uint32_t len;
+    uint32_t type;
+    uint32_t len;
 } OPENAMP_PACKED_END;
 
 /**
@@ -334,11 +334,11 @@ struct fw_rsc_vendor {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_rproc_mem {
-	uint32_t type;
-	uint32_t da;
-	uint32_t pa;
-	uint32_t len;
-	uint32_t reserved;
+    uint32_t type;
+    uint32_t da;
+    uint32_t pa;
+    uint32_t len;
+    uint32_t reserved;
 } OPENAMP_PACKED_END;
 
 /*
@@ -352,9 +352,9 @@ struct fw_rsc_rproc_mem {
  */
 OPENAMP_PACKED_BEGIN
 struct fw_rsc_fw_chksum {
-	uint32_t type;
-	uint8_t algo[16];
-	uint8_t chksum[64];
+    uint32_t type;
+    uint8_t algo[16];
+    uint8_t chksum[64];
 } OPENAMP_PACKED_END;
 
 struct loader_ops;
@@ -373,12 +373,12 @@ struct remoteproc_ops;
  * @node: list node
  */
 struct remoteproc_mem {
-	metal_phys_addr_t da;
-	metal_phys_addr_t pa;
-	size_t size;
-	char name[32];
-	struct metal_io_region *io;
-	struct metal_list node;
+    metal_phys_addr_t da;
+    metal_phys_addr_t pa;
+    size_t size;
+    char name[32];
+    struct metal_io_region *io;
+    struct metal_list node;
 };
 
 /**
@@ -402,18 +402,18 @@ struct remoteproc_mem {
  * @priv: private data
  */
 struct remoteproc {
-	metal_mutex_t lock;
-	void *rsc_table;
-	size_t rsc_len;
-	struct metal_io_region *rsc_io;
-	struct metal_list mems;
-	struct metal_list vdevs;
-	unsigned long bitmap;
-	struct remoteproc_ops *ops;
-	metal_phys_addr_t bootaddr;
-	struct loader_ops *loader;
-	unsigned int state;
-	void *priv;
+    metal_mutex_t lock;
+    void *rsc_table;
+    size_t rsc_len;
+    struct metal_io_region *rsc_io;
+    struct metal_list mems;
+    struct metal_list vdevs;
+    unsigned long bitmap;
+    struct remoteproc_ops *ops;
+    metal_phys_addr_t bootaddr;
+    struct loader_ops *loader;
+    unsigned int state;
+    void *priv;
 };
 
 /**
@@ -435,27 +435,27 @@ struct remoteproc {
  * @notify: notify the remote
  */
 struct remoteproc_ops {
-	struct remoteproc *(*init)(struct remoteproc *rproc,
-				   struct remoteproc_ops *ops, void *arg);
-	void (*remove)(struct remoteproc *rproc);
-	void *(*mmap)(struct remoteproc *rproc,
-		      metal_phys_addr_t *pa, metal_phys_addr_t *da,
-		      size_t size, unsigned int attribute,
-		      struct metal_io_region **io);
-	int (*handle_rsc)(struct remoteproc *rproc, void *rsc, size_t len);
-	int (*config)(struct remoteproc *rproc, void *data);
-	int (*start)(struct remoteproc *rproc);
-	int (*stop)(struct remoteproc *rproc);
-	int (*shutdown)(struct remoteproc *rproc);
-	int (*notify)(struct remoteproc *rproc, uint32_t id);
+    struct remoteproc *(*init)(struct remoteproc *rproc,
+                   struct remoteproc_ops *ops, void *arg);
+    void (*remove)(struct remoteproc *rproc);
+    void *(*mmap)(struct remoteproc *rproc,
+              metal_phys_addr_t *pa, metal_phys_addr_t *da,
+              size_t size, unsigned int attribute,
+              struct metal_io_region **io);
+    int (*handle_rsc)(struct remoteproc *rproc, void *rsc, size_t len);
+    int (*config)(struct remoteproc *rproc, void *data);
+    int (*start)(struct remoteproc *rproc);
+    int (*stop)(struct remoteproc *rproc);
+    int (*shutdown)(struct remoteproc *rproc);
+    int (*notify)(struct remoteproc *rproc, uint32_t id);
 };
 
 /* Remoteproc error codes */
-#define RPROC_EBASE	0
-#define RPROC_ENOMEM	(RPROC_EBASE + 1)
-#define RPROC_EINVAL	(RPROC_EBASE + 2)
-#define RPROC_ENODEV	(RPROC_EBASE + 3)
-#define RPROC_EAGAIN	(RPROC_EBASE + 4)
+#define RPROC_EBASE    0
+#define RPROC_ENOMEM    (RPROC_EBASE + 1)
+#define RPROC_EINVAL    (RPROC_EBASE + 2)
+#define RPROC_ENODEV    (RPROC_EBASE + 3)
+#define RPROC_EAGAIN    (RPROC_EBASE + 4)
 #define RPROC_ERR_RSC_TAB_TRUNC (RPROC_EBASE + 5)
 #define RPROC_ERR_RSC_TAB_VER   (RPROC_EBASE + 6)
 #define RPROC_ERR_RSC_TAB_RSVD  (RPROC_EBASE + 7)
@@ -463,47 +463,47 @@ struct remoteproc_ops {
 #define RPROC_ERR_RSC_TAB_NP          (RPROC_EBASE + 10)
 #define RPROC_ERR_RSC_TAB_NS          (RPROC_EBASE + 11)
 #define RPROC_ERR_LOADER_STATE (RPROC_EBASE + 12)
-#define RPROC_EMAX	(RPROC_EBASE + 16)
-#define RPROC_EPTR	(void *)(-1)
-#define RPROC_EOF	(void *)(-1)
+#define RPROC_EMAX    (RPROC_EBASE + 16)
+#define RPROC_EPTR    (void *)(-1)
+#define RPROC_EOF    (void *)(-1)
 
 static inline long RPROC_PTR_ERR(const void *ptr)
 {
-	return (long)ptr;
+    return (long)ptr;
 }
 
 static inline int RPROC_IS_ERR(const void *ptr)
 {
-	if ((unsigned long)ptr >= (unsigned long)(-RPROC_EMAX))
-		return 1;
-	else
-		return 0;
+    if ((unsigned long)ptr >= (unsigned long)(-RPROC_EMAX))
+        return 1;
+    else
+        return 0;
 }
 
 static inline void *RPROC_ERR_PTR(long error)
 {
-	return (void *)error;
+    return (void *)error;
 }
 
 /**
  * enum rproc_state - remote processor states
- * @RPROC_OFFLINE:	remote is offline
- * @RPROC_READY:	remote is ready to start
- * @RPROC_RUNNING:	remote is up and running
- * @RPROC_SUSPENDED:	remote is suspended
- * @RPROC_ERROR:	remote has error; need to recover
- * @RPROC_STOPPED:	remote is stopped
- * @RPROC_LAST:		just keep this one at the end
+ * @RPROC_OFFLINE:    remote is offline
+ * @RPROC_READY:    remote is ready to start
+ * @RPROC_RUNNING:    remote is up and running
+ * @RPROC_SUSPENDED:    remote is suspended
+ * @RPROC_ERROR:    remote has error; need to recover
+ * @RPROC_STOPPED:    remote is stopped
+ * @RPROC_LAST:        just keep this one at the end
  */
 enum remoteproc_state {
-	RPROC_OFFLINE		= 0,
-	RPROC_CONFIGURED	= 1,
-	RPROC_READY		= 2,
-	RPROC_RUNNING		= 3,
-	RPROC_SUSPENDED		= 4,
-	RPROC_ERROR		= 5,
-	RPROC_STOPPED		= 6,
-	RPROC_LAST		= 7,
+    RPROC_OFFLINE        = 0,
+    RPROC_CONFIGURED    = 1,
+    RPROC_READY        = 2,
+    RPROC_RUNNING        = 3,
+    RPROC_SUSPENDED        = 4,
+    RPROC_ERROR        = 5,
+    RPROC_STOPPED        = 6,
+    RPROC_LAST        = 7,
 };
 
 /**
@@ -518,7 +518,7 @@ enum remoteproc_state {
  * @returns created remoteproc pointer
  */
 struct remoteproc *remoteproc_init(struct remoteproc *rproc,
-				   struct remoteproc_ops *ops, void *priv);
+                   struct remoteproc_ops *ops, void *priv);
 
 /**
  * remoteproc_remove
@@ -545,19 +545,19 @@ int remoteproc_remove(struct remoteproc *rproc);
  */
 static inline void
 remoteproc_init_mem(struct remoteproc_mem *mem, const char *name,
-		    metal_phys_addr_t pa, metal_phys_addr_t da,
-		    size_t size, struct metal_io_region *io)
+            metal_phys_addr_t pa, metal_phys_addr_t da,
+            size_t size, struct metal_io_region *io)
 {
-	if (!mem)
-		return;
-	if (name)
-		strncpy(mem->name, name, sizeof(mem->name));
-	else
-		mem->name[0] = 0;
-	mem->pa = pa;
-	mem->da = da;
-	mem->io = io;
-	mem->size = size;
+    if (!mem)
+        return;
+    if (name)
+        strncpy(mem->name, name, sizeof(mem->name));
+    else
+        mem->name[0] = 0;
+    mem->pa = pa;
+    mem->da = da;
+    mem->io = io;
+    mem->size = size;
 }
 
 /**
@@ -571,9 +571,9 @@ remoteproc_init_mem(struct remoteproc_mem *mem, const char *name,
 static inline void
 remoteproc_add_mem(struct remoteproc *rproc, struct remoteproc_mem *mem)
 {
-	if (!rproc || !mem)
-		return;
-	metal_list_add_tail(&rproc->mems, &mem->node);
+    if (!rproc || !mem)
+        return;
+    metal_list_add_tail(&rproc->mems, &mem->node);
 }
 
 /**
@@ -589,7 +589,7 @@ remoteproc_add_mem(struct remoteproc *rproc, struct remoteproc_mem *mem)
  */
 struct metal_io_region *
 remoteproc_get_io_with_name(struct remoteproc *rproc,
-			    const char *name);
+                const char *name);
 
 /**
  * remoteproc_get_io_with_pa
@@ -603,7 +603,7 @@ remoteproc_get_io_with_name(struct remoteproc *rproc,
  */
 struct metal_io_region *
 remoteproc_get_io_with_pa(struct remoteproc *rproc,
-			  metal_phys_addr_t pa);
+              metal_phys_addr_t pa);
 
 /**
  * remoteproc_get_io_with_da
@@ -618,8 +618,8 @@ remoteproc_get_io_with_pa(struct remoteproc *rproc,
  */
 struct metal_io_region *
 remoteproc_get_io_with_da(struct remoteproc *rproc,
-			  metal_phys_addr_t da,
-			  unsigned long *offset);
+              metal_phys_addr_t da,
+              unsigned long *offset);
 
 /**
  * remoteproc_get_io_with_va
@@ -633,7 +633,7 @@ remoteproc_get_io_with_da(struct remoteproc *rproc,
  */
 struct metal_io_region *
 remoteproc_get_io_with_va(struct remoteproc *rproc,
-			  void *va);
+              void *va);
 
 /**
  * remoteproc_mmap
@@ -650,9 +650,9 @@ remoteproc_get_io_with_va(struct remoteproc *rproc,
  * returns pointer to the memory
  */
 void *remoteproc_mmap(struct remoteproc *rproc,
-		      metal_phys_addr_t *pa, metal_phys_addr_t *da,
-		      size_t size, unsigned int attribute,
-		      struct metal_io_region **io);
+              metal_phys_addr_t *pa, metal_phys_addr_t *da,
+              size_t size, unsigned int attribute,
+              struct metal_io_region **io);
 
 /**
  * remoteproc_parse_rsc_table
@@ -666,8 +666,8 @@ void *remoteproc_mmap(struct remoteproc *rproc,
  * returns 0 for success and negative value for errors
  */
 int remoteproc_parse_rsc_table(struct remoteproc *rproc,
-			       struct resource_table *rsc_table,
-			       size_t rsc_size);
+                   struct resource_table *rsc_table,
+                   size_t rsc_size);
 
 /**
  * remoteproc_set_rsc_table
@@ -681,8 +681,8 @@ int remoteproc_parse_rsc_table(struct remoteproc *rproc,
  * returns 0 for success and negative value for errors
  */
 int remoteproc_set_rsc_table(struct remoteproc *rproc,
-			     struct resource_table *rsc_table,
-			     size_t rsc_size);
+                 struct resource_table *rsc_table,
+                 size_t rsc_size);
 
 /**
  * remoteproc_config
@@ -750,8 +750,8 @@ int remoteproc_shutdown(struct remoteproc *rproc);
  * return 0 for success and negative value for failure
  */
 int remoteproc_load(struct remoteproc *rproc, const char *path,
-		    void *store, struct image_store_ops *store_ops,
-		    void **img_info);
+            void *store, struct image_store_ops *store_ops,
+            void **img_info);
 
 /**
  * remoteproc_load_noblock
@@ -804,11 +804,11 @@ int remoteproc_load(struct remoteproc *rproc, const char *path,
  * return 0 for success and negative value for failure
  */
 int remoteproc_load_noblock(struct remoteproc *rproc,
-			    const void *img_data, size_t offset, size_t len,
-			    void **img_info,
-			    metal_phys_addr_t *pa, struct metal_io_region **io,
-			    size_t *noffset, size_t *nlen,
-			    size_t *nmlen, unsigned char *padding);
+                const void *img_data, size_t offset, size_t len,
+                void **img_info,
+                metal_phys_addr_t *pa, struct metal_io_region **io,
+                size_t *noffset, size_t *nlen,
+                size_t *nmlen, unsigned char *padding);
 
 /**
  * remoteproc_allocate_id
@@ -822,8 +822,8 @@ int remoteproc_load_noblock(struct remoteproc *rproc,
  * return allocated notify id
  */
 unsigned int remoteproc_allocate_id(struct remoteproc *rproc,
-				    unsigned int start,
-				    unsigned int end);
+                    unsigned int start,
+                    unsigned int end);
 
 /* remoteproc_create_virtio
  *
@@ -838,8 +838,8 @@ unsigned int remoteproc_allocate_id(struct remoteproc *rproc,
  */
 struct virtio_device *
 remoteproc_create_virtio(struct remoteproc *rproc,
-			 int vdev_id, unsigned int role,
-			 void (*rst_cb)(struct virtio_device *vdev));
+             int vdev_id, unsigned int role,
+             void (*rst_cb)(struct virtio_device *vdev));
 
 /* remoteproc_remove_virtio
  *
@@ -850,7 +850,7 @@ remoteproc_create_virtio(struct remoteproc *rproc,
  *
  */
 void remoteproc_remove_virtio(struct remoteproc *rproc,
-			      struct virtio_device *vdev);
+                  struct virtio_device *vdev);
 
 /* remoteproc_get_notification
  *
@@ -863,7 +863,7 @@ void remoteproc_remove_virtio(struct remoteproc *rproc,
  * return 0 for succeed, negative value for failure
  */
 int remoteproc_get_notification(struct remoteproc *rproc,
-				uint32_t notifyid);
+                uint32_t notifyid);
 #if defined __cplusplus
 }
 #endif

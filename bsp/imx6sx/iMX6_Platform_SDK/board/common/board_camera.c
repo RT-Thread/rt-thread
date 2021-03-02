@@ -815,7 +815,7 @@ void camera_ipu1_iomux_config(void)
 }
 
 /*!
- * reset camera sensor through GPIO on SMD board 
+ * reset camera sensor through GPIO on SMD board
  *
  */
 void sensor_reset(void)
@@ -825,35 +825,35 @@ void sensor_reset(void)
     sensor_standby(0);
 
     /* MX6DQ/SDL_SMART_DEVICE: camera reset through GPIO1_17 */
-	BW_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA1_MUX_MODE(BV_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA1_MUX_MODE__ALT5);
-	gpio_set_direction(GPIO_PORT1, 17, GPIO_GDIR_OUTPUT);
+    BW_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA1_MUX_MODE(BV_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA1_MUX_MODE__ALT5);
+    gpio_set_direction(GPIO_PORT1, 17, GPIO_GDIR_OUTPUT);
 
-	gpio_set_level(GPIO_PORT1, 17, GPIO_LOW_LEVEL);
+    gpio_set_level(GPIO_PORT1, 17, GPIO_LOW_LEVEL);
     hal_delay_us(reset_occupy);
 
-	gpio_set_level(GPIO_PORT1, 17, GPIO_HIGH_LEVEL);
+    gpio_set_level(GPIO_PORT1, 17, GPIO_HIGH_LEVEL);
     hal_delay_us(reset_delay);
 }
 
 /*!
  * set camera sensor to standby mode.
  *
- * @param	enable: specify whether set camera sensor to standby mode
- * 
+ * @param    enable: specify whether set camera sensor to standby mode
+ *
  */
 void sensor_standby(int32_t enable)
 {
     /* MX6DQ/SDL_SMART_DEVICE: setting to gpio1_16, power down high active */
-	BW_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA0_MUX_MODE(BV_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA0_MUX_MODE__ALT5);
-	gpio_set_direction(GPIO_PORT1, 16, GPIO_GDIR_OUTPUT);
+    BW_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA0_MUX_MODE(BV_IOMUXC_SW_MUX_CTL_PAD_SD1_DATA0_MUX_MODE__ALT5);
+    gpio_set_direction(GPIO_PORT1, 16, GPIO_GDIR_OUTPUT);
     if (enable)
-		gpio_set_level(GPIO_PORT1, 16, GPIO_HIGH_LEVEL);
+        gpio_set_level(GPIO_PORT1, 16, GPIO_HIGH_LEVEL);
     else
-		gpio_set_level(GPIO_PORT1, 16, GPIO_LOW_LEVEL);
+        gpio_set_level(GPIO_PORT1, 16, GPIO_LOW_LEVEL);
 }
 
 /*!
- * set camera sensor clock to 24MHz. 
+ * set camera sensor clock to 24MHz.
  *
  */
 void sensor_clock_setting(void)
@@ -862,19 +862,19 @@ void sensor_clock_setting(void)
 
     /*MX6DQ/SDL_SMART_DEVICE: config clko */
     /*config gpio_0 to be clko */
-	BW_IOMUXC_SW_MUX_CTL_PAD_GPIO00_MUX_MODE(BV_IOMUXC_SW_MUX_CTL_PAD_GPIO00_MUX_MODE__ALT0);
+    BW_IOMUXC_SW_MUX_CTL_PAD_GPIO00_MUX_MODE(BV_IOMUXC_SW_MUX_CTL_PAD_GPIO00_MUX_MODE__ALT0);
 
-	BW_IOMUXC_SW_PAD_CTL_PAD_GPIO00_SRE(BV_IOMUXC_SW_PAD_CTL_PAD_GPIO00_SRE__FAST);
-	BW_IOMUXC_SW_PAD_CTL_PAD_GPIO00_DSE(BV_IOMUXC_SW_PAD_CTL_PAD_GPIO00_DSE__80_OHM);
+    BW_IOMUXC_SW_PAD_CTL_PAD_GPIO00_SRE(BV_IOMUXC_SW_PAD_CTL_PAD_GPIO00_SRE__FAST);
+    BW_IOMUXC_SW_PAD_CTL_PAD_GPIO00_DSE(BV_IOMUXC_SW_PAD_CTL_PAD_GPIO00_DSE__80_OHM);
 
     /*select osc_clk 24MHz, CKO1 output drives cko2 clock */
-	HW_CCM_CCOSR_WR(
-			BF_CCM_CCOSR_CLKO2_EN(1) |
-			BF_CCM_CCOSR_CLKO2_DIV(0) | /*div 1*/
-			BF_CCM_CCOSR_CLKO2_SEL(0xe) | /*osc_clk*/
-			BF_CCM_CCOSR_CLKO_SEL(1) |
-			BF_CCM_CCOSR_CLKO1_EN(1) |
-			BF_CCM_CCOSR_CLKO1_DIV(0)); /*div 1*/
+    HW_CCM_CCOSR_WR(
+            BF_CCM_CCOSR_CLKO2_EN(1) |
+            BF_CCM_CCOSR_CLKO2_DIV(0) | /*div 1*/
+            BF_CCM_CCOSR_CLKO2_SEL(0xe) | /*osc_clk*/
+            BF_CCM_CCOSR_CLKO_SEL(1) |
+            BF_CCM_CCOSR_CLKO1_EN(1) |
+            BF_CCM_CCOSR_CLKO1_DIV(0)); /*div 1*/
 
     hal_delay_us(clock_delay);
 }

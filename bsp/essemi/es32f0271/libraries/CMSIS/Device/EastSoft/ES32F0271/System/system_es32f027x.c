@@ -56,7 +56,7 @@ unsigned int PLL0Frequency = 4000000;
   */
 
 /**
-  * @brief:SystemInit. 
+  * @brief:SystemInit.
   * @param:none
   * @retval:none
   */

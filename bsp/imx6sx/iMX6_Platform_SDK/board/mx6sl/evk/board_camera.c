@@ -78,30 +78,30 @@ void sensor_reset(void)
 
     /* MX6SL: cmos_reset_b through EPDC_SDSHR (GPIO1_26) */
     gpio_set_gpio(GPIO_PORT1, 26);
-	gpio_set_direction(GPIO_PORT1, 26, GPIO_GDIR_OUTPUT);
+    gpio_set_direction(GPIO_PORT1, 26, GPIO_GDIR_OUTPUT);
 
-	gpio_set_level(GPIO_PORT1, 26, GPIO_LOW_LEVEL);
+    gpio_set_level(GPIO_PORT1, 26, GPIO_LOW_LEVEL);
     hal_delay_us(reset_occupy);
 
-	gpio_set_level(GPIO_PORT1, 26, GPIO_HIGH_LEVEL);
+    gpio_set_level(GPIO_PORT1, 26, GPIO_HIGH_LEVEL);
     hal_delay_us(reset_delay);
 }
 
 /*!
  * set camera sensor to standby mode.
  *
- * @param	enable: specify whether set camera sensor to standby mode
+ * @param    enable: specify whether set camera sensor to standby mode
  *
  */
 void sensor_standby(int32_t enable)
 {
     /* MX6SL:setting cmos_pwdn to EPDC_SDOE(gpio1_25), power down high active */
     gpio_set_gpio(GPIO_PORT1, 25);
-	gpio_set_direction(GPIO_PORT1, 25, GPIO_GDIR_OUTPUT);
+    gpio_set_direction(GPIO_PORT1, 25, GPIO_GDIR_OUTPUT);
     if (enable)
-		gpio_set_level(GPIO_PORT1, 25, GPIO_HIGH_LEVEL);
+        gpio_set_level(GPIO_PORT1, 25, GPIO_HIGH_LEVEL);
     else
-		gpio_set_level(GPIO_PORT1, 25, GPIO_LOW_LEVEL);
+        gpio_set_level(GPIO_PORT1, 25, GPIO_LOW_LEVEL);
 }
 
 /*!
@@ -113,14 +113,14 @@ void sensor_clock_setting(void)
     int32_t clock_delay = 1000;
 
     /* CMOS_XCLK through EPDC_GDRL (MCLK) */
-	/* Document and register header is not consistent with what I set.
-	 * measured the config perclk to OSC clock: 24MHz
-	 */
-	HW_IOMUXC_SW_MUX_CTL_PAD_EPDC_GDRL.B.MUX_MODE = ALT3;
+    /* Document and register header is not consistent with what I set.
+     * measured the config perclk to OSC clock: 24MHz
+     */
+    HW_IOMUXC_SW_MUX_CTL_PAD_EPDC_GDRL.B.MUX_MODE = ALT3;
 
-	HW_CCM_CSCDR3.B.CSI_CORE_PODF = 0;
-	HW_CCM_CSCDR3.B.CSI_CORE_CLK_SEL = 0;
-	HW_CCM_CSCDR3.B.RESERVED0 = 0x41;
+    HW_CCM_CSCDR3.B.CSI_CORE_PODF = 0;
+    HW_CCM_CSCDR3.B.CSI_CORE_CLK_SEL = 0;
+    HW_CCM_CSCDR3.B.RESERVED0 = 0x41;
 
     hal_delay_us(clock_delay);
 }

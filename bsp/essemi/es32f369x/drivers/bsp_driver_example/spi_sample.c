@@ -8,10 +8,10 @@
  * 2020-12-15     liuhy       first implementation.
  */
 /*
- * ç¨‹åºæ¸…å•ï¼šè¿™æ˜¯ä¸€ä¸ª SPI è®¾å¤‡ä½¿ç”¨ä¾‹ç¨‹
- * ä¾‹ç¨‹å¯¼å‡ºäº† spi_io_sample å‘½ä»¤åˆ°æ§åˆ¶ç»ˆç«¯
- * å‘½ä»¤è°ƒç”¨æ ¼å¼ï¼šspi_io_sample
- * ç¨‹åºåŠŸèƒ½ï¼šé€šè¿‡SPIè®¾å¤‡å…ˆè¯»å–æ•°æ®ï¼Œç„¶åæ¯ä¸ªå­—ç¬¦åŠ 1åè¾“å‡ºã€‚
+ * ³ÌĞòÇåµ¥£ºÕâÊÇÒ»¸ö SPI Éè±¸Ê¹ÓÃÀı³Ì
+ * Àı³Ìµ¼³öÁË spi_io_sample ÃüÁîµ½¿ØÖÆÖÕ¶Ë
+ * ÃüÁîµ÷ÓÃ¸ñÊ½£ºspi_io_sample
+ * ³ÌĞò¹¦ÄÜ£ºÍ¨¹ıSPIÉè±¸ÏÈ¶ÁÈ¡Êı¾İ£¬È»ºóÃ¿¸ö×Ö·û¼Ó1ºóÊä³ö¡£
 */
 
 #include <rtthread.h>
@@ -22,131 +22,131 @@
 
 static void spi_io_sample(int argc, char *argv[])
 {
-    struct rt_spi_device * spi_dev;          /* spiè®¾å¤‡çš„å¥æŸ„ */
+    struct rt_spi_device * spi_dev;          /* spiÉè±¸µÄ¾ä±ú */
     struct rt_spi_configuration spi_config;
     rt_uint8_t i,buffer[BUF_LEN] = { 0U };
     rt_err_t s_stat;
     rt_err_t result;
-    
-     /* æŸ¥æ‰¾ spiè®¾å¤‡ è·å–spiè®¾å¤‡å¥æŸ„ */
+
+     /* ²éÕÒ spiÉè±¸ »ñÈ¡spiÉè±¸¾ä±ú */
     spi_dev = (struct rt_spi_device *)rt_device_find(SPI_DEVICE_NAME);
-    
+
     if (spi_dev == RT_NULL)
     {
         rt_kprintf("spi sample run failed! can't find %s device!\n", SPI_DEVICE_NAME);
         return;
     }
-    
-    
-    /* æ¸…ç©ºé…ç½®ç»“æ„ä½“ */
+
+
+    /* Çå¿ÕÅäÖÃ½á¹¹Ìå */
     rt_memset(&spi_config,0,sizeof(struct rt_spi_configuration));
-    
-    spi_config.mode &= ~RT_SPI_SLAVE; /* ä¸»æœºæ¨¡å¼ */
-    spi_config.mode &= ~RT_SPI_3WIRE; /* 4çº¿ï¼ŒåŒå‘ä¼ è¾“ */
-    spi_config.mode |= RT_SPI_CPHA;   /* ç¬¬äºŒè¾¹æ²¿é‡‡æ · */
-    spi_config.mode |= RT_SPI_CPOL;   /* ç©ºé—²é«˜ç”µå¹³ */
-    spi_config.mode |= RT_SPI_NO_CS;  /* ç¦ç”¨è½¯ä»¶ä»æœºé€‰æ‹©ç®¡ç† */
-    spi_config.mode |= RT_SPI_MSB;    /* é«˜ä½åœ¨å‰ */
-    
-    spi_config.data_width = 8;        /* æ•°æ®é•¿åº¦ï¼š8 */
-    
-    spi_config.max_hz = 2000000;      /* æœ€å¿«æ—¶é’Ÿé¢‘ç‡ */
-    
-    /* é…ç½®SPIè®¾å¤‡ */
+
+    spi_config.mode &= ~RT_SPI_SLAVE; /* Ö÷»úÄ£Ê½ */
+    spi_config.mode &= ~RT_SPI_3WIRE; /* 4Ïß£¬Ë«Ïò´«Êä */
+    spi_config.mode |= RT_SPI_CPHA;   /* µÚ¶ş±ßÑØ²ÉÑù */
+    spi_config.mode |= RT_SPI_CPOL;   /* ¿ÕÏĞ¸ßµçÆ½ */
+    spi_config.mode |= RT_SPI_NO_CS;  /* ½ûÓÃÈí¼ş´Ó»úÑ¡Ôñ¹ÜÀí */
+    spi_config.mode |= RT_SPI_MSB;    /* ¸ßÎ»ÔÚÇ° */
+
+    spi_config.data_width = 8;        /* Êı¾İ³¤¶È£º8 */
+
+    spi_config.max_hz = 2000000;      /* ×î¿ìÊ±ÖÓÆµÂÊ */
+
+    /* ÅäÖÃSPIÉè±¸ */
     s_stat = rt_spi_configure(spi_dev,&spi_config);
-    
+
     if(s_stat != RT_EOK)
     {
         rt_kprintf(" spi config fail !\n ");
         return;
     }
-    
-    
-    /* è·å–æ€»çº¿ ï¼Œé˜²æ­¢æ€»çº¿è¢«å¤šä¸ªçº¿ç¨‹åŒæ—¶ä½¿ç”¨ */
+
+
+    /* »ñÈ¡×ÜÏß £¬·ÀÖ¹×ÜÏß±»¶à¸öÏß³ÌÍ¬Ê±Ê¹ÓÃ */
     result = rt_spi_take_bus(spi_dev);
-    
+
     if (result != RT_EOK)
     {
         rt_kprintf(" %s take spi bus  failed! \n", SPI_DEVICE_NAME);
         return;
     }
-    
-    /* é€‰ä¸­ç‰‡é€‰ */
+
+    /* Ñ¡ÖĞÆ¬Ñ¡ */
     result = rt_spi_take(spi_dev);
-    
+
     if (result != RT_EOK)
     {
         rt_kprintf(" %s take spi cs  failed! \n", SPI_DEVICE_NAME);
         return;
     }
-    
-    
-    /*æ¥æ”¶ä¸€æ¬¡æ•°æ®*/
+
+
+    /*½ÓÊÕÒ»´ÎÊı¾İ*/
     result = rt_spi_recv(spi_dev,buffer,BUF_LEN);
-    
+
     if(result != BUF_LEN)
     {
         rt_kprintf("receive fail. \n buffer is : %s \n:",buffer);
-            
+
         for( i = 0 ; i < BUF_LEN ; i++)
          rt_kprintf(" %x",(unsigned int)buffer[i]);
-            
+
         rt_kprintf("\n");
-        
+
         return;
     }
-    
+
     rt_kprintf("receive successful. \n buffer is : %s \n:",buffer);
-            
+
     for( i = 0 ; i < BUF_LEN ; i++)
     rt_kprintf(" %x",(unsigned int)buffer[i]);
-            
+
     rt_kprintf("\n");
-    
-    /* å°†æ¥æ”¶åˆ°çš„æ•°æ®åŠ 1 */
+
+    /* ½«½ÓÊÕµ½µÄÊı¾İ¼Ó1 */
     for( i = 0 ; i < BUF_LEN ; i++)
       buffer[i]++;
-    
-    /*å‘é€æ•°æ®*/
+
+    /*·¢ËÍÊı¾İ*/
     result = rt_spi_send(spi_dev,buffer,BUF_LEN);
-    
+
     if(result != BUF_LEN)
     {
         rt_kprintf("send fail. \n buffer is : %s \n:",buffer);
-            
+
         for( i = 0 ; i < BUF_LEN ; i++)
          rt_kprintf(" %x",(unsigned int)buffer[i]);
-            
+
         rt_kprintf("\n");
-        
+
         return;
     }
-    
+
     rt_kprintf("send successful. \n buffer is : %s \n:",buffer);
-            
+
     for( i = 0 ; i < BUF_LEN ; i++)
     rt_kprintf(" %x",(unsigned int)buffer[i]);
-            
+
     rt_kprintf("\n");
-   
-    /* é‡Šæ”¾ç‰‡é€‰ */
+
+    /* ÊÍ·ÅÆ¬Ñ¡ */
     result = rt_spi_release(spi_dev);
-    
+
     if (result != RT_EOK)
     {
         rt_kprintf(" %s release spi cs failed! \n", SPI_DEVICE_NAME);
         return;
-    } 
-    
-    /* é‡Šæ”¾æ€»çº¿ */
+    }
+
+    /* ÊÍ·Å×ÜÏß */
     result = rt_spi_release_bus(spi_dev);
-    
+
     if (result != RT_EOK)
     {
         rt_kprintf(" %s release spi bus  failed! \n", SPI_DEVICE_NAME);
         return;
     }
-    
+
 }
-/* å¯¼å‡ºåˆ° msh å‘½ä»¤åˆ—è¡¨ä¸­ */
+/* µ¼³öµ½ msh ÃüÁîÁĞ±íÖĞ */
 MSH_CMD_EXPORT(spi_io_sample, spi  sample);

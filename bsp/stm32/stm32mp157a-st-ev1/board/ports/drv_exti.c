@@ -28,7 +28,7 @@ static int exti_sample(void)
     rt_pin_mode(KEY2_PIN, PIN_MODE_INPUT_PULLUP);
     rt_pin_attach_irq(KEY2_PIN, PIN_IRQ_MODE_FALLING, key2_on, RT_NULL);
     rt_pin_irq_enable(KEY2_PIN, PIN_IRQ_ENABLE);
-    
+
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(exti_sample);

@@ -31,7 +31,7 @@
 //#include <cyg/infra/cyg_trac.h>        // tracing macros
 //#include <cyg/infra/cyg_ass.h>         // assertion macros
 
-//#if defined (__GNUC__) 
+//#if defined (__GNUC__)
 //#include <unistd.h>
 //#elif defined (MSVC)
 //#else
@@ -48,12 +48,12 @@ struct dirent
 {
 #ifdef CYGPKG_FILEIO_DIRENT_DTYPE
 
-	mode_t      d_type; // Only supported with FATFS, RAMFS, ROMFS,
-	// and JFFS2.
-	// d_type is not part of POSIX so
-	// should be used with caution.
+    mode_t      d_type; // Only supported with FATFS, RAMFS, ROMFS,
+    // and JFFS2.
+    // d_type is not part of POSIX so
+    // should be used with caution.
 #endif
-	char        d_name[JFFS2_NAME_MAX+1];
+    char        d_name[JFFS2_NAME_MAX+1];
 };
 
 
@@ -83,12 +83,12 @@ struct iovec {
 
 static inline unsigned int full_name_hash(const unsigned char * name, unsigned int len) {
 
-	unsigned hash = 0;
- 	while (len--) {
-		hash = (hash << 4) | (hash >> 28);
-		hash ^= *(name++);
-	}
-	return hash;
+    unsigned hash = 0;
+     while (len--) {
+        hash = (hash << 4) | (hash >> 28);
+        hash ^= *(name++);
+    }
+    return hash;
 }
 
 #ifdef CYGOPT_FS_JFFS2_WRITE
@@ -118,43 +118,43 @@ static inline unsigned int full_name_hash(const unsigned char * name, unsigned i
 #define get_seconds jffs2_get_timestamp
 
 struct _inode {
-	cyg_uint32		i_ino;
+    cyg_uint32        i_ino;
 
-	int			i_count;
-	mode_t			i_mode;
-	nlink_t			i_nlink; // Could we dispense with this?
-	uid_t			i_uid;
-	gid_t			i_gid;
-	time_t			i_atime;
-	time_t			i_mtime;
-	time_t			i_ctime;
-//	union {
-		unsigned short	i_rdev; // For devices only
-		struct _inode *	i_parent; // For directories only
-		off_t		i_size; // For files only
-//	};
-	struct super_block *	i_sb;
+    int            i_count;
+    mode_t            i_mode;
+    nlink_t            i_nlink; // Could we dispense with this?
+    uid_t            i_uid;
+    gid_t            i_gid;
+    time_t            i_atime;
+    time_t            i_mtime;
+    time_t            i_ctime;
+//    union {
+        unsigned short    i_rdev; // For devices only
+        struct _inode *    i_parent; // For directories only
+        off_t        i_size; // For files only
+//    };
+    struct super_block *    i_sb;
 
-	struct jffs2_inode_info	jffs2_i;
+    struct jffs2_inode_info    jffs2_i;
 
-        struct _inode *		i_cache_prev; // We need doubly-linked?
-        struct _inode *		i_cache_next;
+        struct _inode *        i_cache_prev; // We need doubly-linked?
+        struct _inode *        i_cache_next;
 };
 
 #define JFFS2_SB_INFO(sb) (&(sb)->jffs2_sb)
 #define OFNI_BS_2SFFJ(c)  ((struct super_block *) ( ((char *)c) - ((char *)(&((struct super_block *)NULL)->jffs2_sb)) ) )
 
 struct super_block {
-	struct jffs2_sb_info	jffs2_sb;
-	struct _inode *		s_root;
-    unsigned long		s_mount_count;
-	cyg_io_handle_t		s_dev;
+    struct jffs2_sb_info    jffs2_sb;
+    struct _inode *        s_root;
+    unsigned long        s_mount_count;
+    cyg_io_handle_t        s_dev;
 
 //#ifdef CYGOPT_FS_JFFS2_GCTHREAD
-//	cyg_mutex_t s_lock;             // Lock the inode cache
-//	cyg_flag_t  s_gc_thread_flags;  // Communication with the gcthread
-//	cyg_handle_t s_gc_thread_handle;
-//	cyg_thread s_gc_thread;
+//    cyg_mutex_t s_lock;             // Lock the inode cache
+//    cyg_flag_t  s_gc_thread_flags;  // Communication with the gcthread
+//    cyg_handle_t s_gc_thread_handle;
+//    cyg_thread s_gc_thread;
 //#if (CYGNUM_JFFS2_GC_THREAD_STACK_SIZE >= CYGNUM_HAL_STACK_SIZE_MINIMUM)
 //    char s_gc_thread_stack[CYGNUM_JFFS2_GC_THREAD_STACK_SIZE];
 //#else
@@ -164,16 +164,16 @@ struct super_block {
 //#endif
 
 #ifdef CYGOPT_FS_JFFS2_GCTHREAD
-	struct rt_mutex s_lock;             // Lock the inode cache
-	struct rt_event s_gc_thread_flags;  // Communication with the gcthread
-	//void (*s_gc_thread_handle)(void *parameter);
-	struct rt_thread s_gc_thread;
+    struct rt_mutex s_lock;             // Lock the inode cache
+    struct rt_event s_gc_thread_flags;  // Communication with the gcthread
+    //void (*s_gc_thread_handle)(void *parameter);
+    struct rt_thread s_gc_thread;
 //#if (CYGNUM_JFFS2_GC_THREAD_STACK_SIZE >= CYGNUM_HAL_STACK_SIZE_MINIMUM)
 //    char s_gc_thread_stack[CYGNUM_JFFS2_GC_THREAD_STACK_SIZE];
 //#else
 //    char s_gc_thread_stack[CYGNUM_HAL_STACK_SIZE_MINIMUM];
 //#endif
-	#define CYGNUM_JFFS2_GC_THREAD_STACK_SIZE  (1024*4)
+    #define CYGNUM_JFFS2_GC_THREAD_STACK_SIZE  (1024*4)
     char s_gc_thread_stack[CYGNUM_JFFS2_GC_THREAD_STACK_SIZE];
 
     cyg_mtab_entry *mte;
@@ -192,7 +192,7 @@ void jffs2_stop_garbage_collect_thread(struct jffs2_sb_info *c);
 #else
 static inline void jffs2_garbage_collect_trigger(struct jffs2_sb_info *c)
 {
-	/* We don't have a GC thread in eCos (yet) */
+    /* We don't have a GC thread in eCos (yet) */
 }
 #endif
 
@@ -203,7 +203,7 @@ void jffs2_iput(struct _inode * i);
 void jffs2_gc_release_inode(struct jffs2_sb_info *c, struct jffs2_inode_info *f);
 struct jffs2_inode_info *jffs2_gc_fetch_inode(struct jffs2_sb_info *c, int inum, int nlink);
 unsigned char *jffs2_gc_fetch_page(struct jffs2_sb_info *c, struct jffs2_inode_info *f,
-				   unsigned long offset, unsigned long *priv);
+                   unsigned long offset, unsigned long *priv);
 void jffs2_gc_release_page(struct jffs2_sb_info *c, unsigned char *pg, unsigned long *priv);
 
 /* Avoid polluting eCos namespace with names not starting in jffs2_ */
@@ -214,11 +214,11 @@ uint32_t jffs2_to_os_mode (uint32_t jmode);
 
 /* flashio.c */
 int jffs2_flash_read(struct jffs2_sb_info *c, cyg_uint32 read_buffer_offset,
-			  const size_t size, size_t * return_size, unsigned char * write_buffer);
+              const size_t size, size_t * return_size, unsigned char * write_buffer);
 int jffs2_flash_write(struct jffs2_sb_info *c, cyg_uint32 write_buffer_offset,
-			   const size_t size, size_t * return_size, unsigned char * read_buffer);
+               const size_t size, size_t * return_size, unsigned char * read_buffer);
 int jffs2_flash_direct_writev(struct jffs2_sb_info *c, const struct iovec *vecs,
-			      unsigned long count, loff_t to, size_t *retlen);
+                  unsigned long count, loff_t to, size_t *retlen);
 int jffs2_flash_erase(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb);
 
 // dir-ecos.c
@@ -229,7 +229,7 @@ int jffs2_link (struct _inode *old_d_inode, struct _inode *dir_i, const unsigned
 int jffs2_unlink(struct _inode *dir_i, struct _inode *d_inode, const unsigned char *d_name);
 int jffs2_rmdir (struct _inode *dir_i, struct _inode *d_inode, const unsigned char *d_name);
 int jffs2_rename (struct _inode *old_dir_i, struct _inode *d_inode, const unsigned char *old_d_name,
-		  struct _inode *new_dir_i, const unsigned char *new_d_name);
+          struct _inode *new_dir_i, const unsigned char *new_d_name);
 
 /* erase.c */
 static inline void jffs2_erase_pending_trigger(struct jffs2_sb_info *c)

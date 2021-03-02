@@ -61,7 +61,7 @@ extern "C" {
 #define LL_SYSCFG_EXTI_REGISTER_PINPOS_SHFT     16U   /*!< Define used to shift pin position in EXTICR register */
 
 /**
- * @brief VREFBUF VREF_SC0 & VREF_SC1 calibration values 
+ * @brief VREFBUF VREF_SC0 & VREF_SC1 calibration values
  */
 #define VREFBUF_SC0_CAL_ADDR   ((uint8_t*) (0x1FFF75F0UL)) /*!<  Address of VREFBUF trimming value for VRS=0,
                                                                  VREF_SC0 in STM32WL datasheet */
@@ -1548,7 +1548,7 @@ __STATIC_INLINE uint32_t LL_VREFBUF_GetTrimming(void)
   * @brief  Set the trimming code for VREFBUF calibration (Tune the internal reference buffer voltage)
   * @note   Each VrefBuf voltage scale is calibrated in production for each device,
   *         data stored in flash memory.
-  *         Functions @ref LL_VREFBUF_SC0_GetCalibration and 
+  *         Functions @ref LL_VREFBUF_SC0_GetCalibration and
   *         @ref LL_VREFBUF_SC0_GetCalibration can be used to retrieve
   *         these calibration data.
   * @rmtoll VREFBUF_CCR  TRIM          LL_VREFBUF_SetTrimming

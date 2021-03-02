@@ -276,8 +276,8 @@ extern unsigned int __bss_section_table_end;
 
 #if defined (__MULTICORE_MASTER)
 //#define  cpu_ctrl 0x40000300
-//#define coproc_boot	0x40000304
-//#define set coproc_stack	0x40000308
+//#define coproc_boot    0x40000304
+//#define set coproc_stack    0x40000308
 __attribute__ ((naked, section(".after_vectors.reset")))
 void ResetISR(void) {
     asm volatile(

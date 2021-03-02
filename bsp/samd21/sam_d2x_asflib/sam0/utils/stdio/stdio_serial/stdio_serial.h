@@ -88,23 +88,23 @@ extern void (*ptr_get)(void volatile*, char*);
  *
  */
 static inline void stdio_serial_init(
-		struct usart_module *const module,
-		usart_inst_t const hw,
-		const struct usart_config *const config)
+        struct usart_module *const module,
+        usart_inst_t const hw,
+        const struct usart_config *const config)
 {
-	stdio_base = (void *)module;
-	ptr_put = (int (*)(void volatile*,char))&usart_serial_putchar;
-	ptr_get = (void (*)(void volatile*,char*))&usart_serial_getchar;
+    stdio_base = (void *)module;
+    ptr_put = (int (*)(void volatile*,char))&usart_serial_putchar;
+    ptr_get = (void (*)(void volatile*,char*))&usart_serial_getchar;
 
-	usart_serial_init(module, hw, config);
+    usart_serial_init(module, hw, config);
 # if defined(__GNUC__)
-	// Specify that stdout and stdin should not be buffered.
-	setbuf(stdout, NULL);
-	setbuf(stdin, NULL);
-	// Note: Already the case in IAR's Normal DLIB default configuration
-	// and AVR GCC library:
-	// - printf() emits one character at a time.
-	// - getchar() requests only 1 byte to exit.
+    // Specify that stdout and stdin should not be buffered.
+    setbuf(stdout, NULL);
+    setbuf(stdin, NULL);
+    // Note: Already the case in IAR's Normal DLIB default configuration
+    // and AVR GCC library:
+    // - printf() emits one character at a time.
+    // - getchar() requests only 1 byte to exit.
 #  endif
 }
 #endif
@@ -118,23 +118,23 @@ static inline void stdio_serial_init(
  *
  */
 static inline void stdio_serial_init(
-		struct uart_module *const module,
-		Uart * const hw,
-		const struct uart_config *const config)
+        struct uart_module *const module,
+        Uart * const hw,
+        const struct uart_config *const config)
 {
-	stdio_base = (void *)module;
-	ptr_put = (int (*)(void volatile*,char))&usart_serial_putchar;
-	ptr_get = (void (*)(void volatile*,char*))&usart_serial_getchar;
+    stdio_base = (void *)module;
+    ptr_put = (int (*)(void volatile*,char))&usart_serial_putchar;
+    ptr_get = (void (*)(void volatile*,char*))&usart_serial_getchar;
 
-	usart_serial_init(module, hw, config);
+    usart_serial_init(module, hw, config);
 # if defined(__GNUC__)
-	// Specify that stdout and stdin should not be buffered.
-	setbuf(stdout, NULL);
-	setbuf(stdin, NULL);
-	// Note: Already the case in IAR's Normal DLIB default configuration
-	// and AVR GCC library:
-	// - printf() emits one character at a time.
-	// - getchar() requests only 1 byte to exit.
+    // Specify that stdout and stdin should not be buffered.
+    setbuf(stdout, NULL);
+    setbuf(stdin, NULL);
+    // Note: Already the case in IAR's Normal DLIB default configuration
+    // and AVR GCC library:
+    // - printf() emits one character at a time.
+    // - getchar() requests only 1 byte to exit.
 #  endif
 }
 #endif

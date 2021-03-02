@@ -1,23 +1,23 @@
 /*""FILE COMMENT""*******************************************************
-* System Name	: Serial Peripheral Interface API for RX62Nxx
-* File Name		: r_pdl_spi_RX62Nxx.h
-* Version		: 1.02
-* Contents		: SPI API header
-* Customer		:
-* Model			:
-* Order			:
-* CPU			: RX
-* Compiler		: RXC
-* OS			: Nothing
-* Programmer	:
-* Note			:
+* System Name    : Serial Peripheral Interface API for RX62Nxx
+* File Name        : r_pdl_spi_RX62Nxx.h
+* Version        : 1.02
+* Contents        : SPI API header
+* Customer        :
+* Model            :
+* Order            :
+* CPU            : RX
+* Compiler        : RXC
+* OS            : Nothing
+* Programmer    :
+* Note            :
 ************************************************************************
 * Copyright, 2011. Renesas Electronics Corporation
 * and Renesas Solutions Corporation
 ************************************************************************
-* History		: 2011.04.08
-*				: Ver 1.02
-*				: CS-5 release.
+* History        : 2011.04.08
+*                : Ver 1.02
+*                : CS-5 release.
 *""FILE COMMENT END""**************************************************/
 
 #ifndef R_PDL_SPI_RX62Nxx_H
@@ -42,45 +42,45 @@ extern VoidCallBackFunc rpdl_SPI_callback_func[SPI_CHANNELS];
 
 /* Request trigger options */
 typedef enum {
-	SPI_USING_POLLING,
-	SPI_USING_IRQ,
-	SPI_USING_DMAC_DTC
+    SPI_USING_POLLING,
+    SPI_USING_IRQ,
+    SPI_USING_DMAC_DTC
 } rpdl_spi_transfer_options;
 
 bool R_SPI_CreateAll(
-	const uint8_t,
-	const uint32_t,
-	const uint32_t,
-	const uint32_t,
-	const uint32_t
+    const uint8_t,
+    const uint32_t,
+    const uint32_t,
+    const uint32_t,
+    const uint32_t
 );
 bool R_SPI_DestroyAll(
-	const uint8_t
+    const uint8_t
 );
 bool R_SPI_CommandAll(
-	const uint8_t,
-	const uint8_t,
-	const uint32_t,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    const uint32_t,
+    const uint8_t
 );
 bool R_SPI_TransferAll(
-	const uint8_t,
-	const uint8_t,
-	volatile const uint32_t * const,
-	volatile uint32_t * const,
-	const uint16_t,
-	VoidCallBackFunc const,
-	const uint8_t
+    const uint8_t,
+    const uint8_t,
+    volatile const uint32_t * const,
+    volatile uint32_t * const,
+    const uint16_t,
+    VoidCallBackFunc const,
+    const uint8_t
 );
 bool R_SPI_ControlAll(
-	const uint8_t,
-	const uint8_t,
-	const uint32_t
+    const uint8_t,
+    const uint8_t,
+    const uint32_t
 );
 bool R_SPI_GetStatusAll(
-	const uint8_t,
-	volatile uint16_t * const,
-	volatile uint16_t * const
+    const uint8_t,
+    volatile uint16_t * const,
+    volatile uint16_t * const
 );
 bool ReturnFalse(void);
 

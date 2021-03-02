@@ -49,12 +49,12 @@
 
 typedef struct
 {
-	uint8_t *pBuf;
-	uint32_t size;
-	uint32_t cnt;
-	uint32_t rNdx;
-	uint32_t wNdx;
-  
+    uint8_t *pBuf;
+    uint32_t size;
+    uint32_t cnt;
+    uint32_t rNdx;
+    uint32_t wNdx;
+
 } ring_buffer_t, RINGBUFF_T;
 
 #ifndef MIN
@@ -62,91 +62,91 @@ typedef struct
 #endif /* ifndef MIN */
 
 /**
- * @brief	Create and initialize a ring buffer
- * @param	pRB	: pointer to ring buffer instance
- * @param	pBuffer: pointer to the buffer for ring buffer data
+ * @brief    Create and initialize a ring buffer
+ * @param    pRB    : pointer to ring buffer instance
+ * @param    pBuffer: pointer to the buffer for ring buffer data
  * @param   size: The size of buffer pointed by pBuffer
- * @return	>=0:Success ; <0:Failed
+ * @return    >=0:Success ; <0:Failed
  */
 int32_t RingBuf_Init(ring_buffer_t *pRB, uint8_t *pBuffer, uint32_t size);
 
 /**
- * @brief	Write new data to buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @param	pcData: point to data array that will be written to ring buffer
+ * @brief    Write new data to buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @param    pcData: point to data array that will be written to ring buffer
  * @param   dataBytes: bytes to write
- * @return	>=0:Bytes written ; <0:Failed
+ * @return    >=0:Bytes written ; <0:Failed
  * @remark  This function updates the ring buffer
  */
 int32_t RingBuf_Write(ring_buffer_t* pRB, const uint8_t *pcData, uint32_t dataBytes);
 
 /**
- * @brief	Write 1 new byte data to buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @param	pcData: point to data byte that will be written to ring buffer
- * @return	1:success; otherwise failed
+ * @brief    Write 1 new byte data to buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @param    pcData: point to data byte that will be written to ring buffer
+ * @return    1:success; otherwise failed
  * @remark  This function updates the ring buffer. Optimized for byte-by-byte write
  */
 int32_t RingBuf_Write1Byte(ring_buffer_t* pRB, const uint8_t *pcData);
 
 /**
- * @brief	Read (copy and remove) data from ring buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @param	pData : pointer to data array that receives read data
+ * @brief    Read (copy and remove) data from ring buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @param    pData : pointer to data array that receives read data
  * @param   dataBytes: bytes to copy
- * @return	>=0:Bytes read ; <0:Failed
- * @remark  This function updates the ring buffer. 
+ * @return    >=0:Bytes read ; <0:Failed
+ * @remark  This function updates the ring buffer.
  */
 int32_t RingBuf_Read(ring_buffer_t* pRB, uint8_t *pData, uint32_t dataBytes);
 
 /**
- * @brief	Read (copy and remove) 1 oldest byte data from buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @param	pData: point to data byte that will receive the oldest byte
- * @return	1:success ; otherwise failed
+ * @brief    Read (copy and remove) 1 oldest byte data from buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @param    pData: point to data byte that will receive the oldest byte
+ * @return    1:success ; otherwise failed
  * @remark  This function updates the ring buffer. Optimized for byte-by-byte read
  */
 int32_t RingBuf_Read1Byte(ring_buffer_t* pRB, uint8_t *pData);
 
 /**
- * @brief	Copy but does NOT remove data from ring buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @param	pData : pointer to data array that receives read data
+ * @brief    Copy but does NOT remove data from ring buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @param    pData : pointer to data array that receives read data
  * @param   dataBytes: bytes to read
- * @return	>=0:Read bytes ; <0:Failed
+ * @return    >=0:Read bytes ; <0:Failed
  */
 int32_t RingBuf_Copy(ring_buffer_t* pRB, uint8_t *pData, uint32_t dataBytes);
 
 /**
- * @brief	Get data pointer to oldest byte in ring buffer, and contigous byte count 
- * @param	pRB	: pointer to the ring buffer instance
- * @param	ppData : pointer to pointer variable that will be updated to point to oldest byte
+ * @brief    Get data pointer to oldest byte in ring buffer, and contigous byte count
+ * @param    pRB    : pointer to the ring buffer instance
+ * @param    ppData : pointer to pointer variable that will be updated to point to oldest byte
  * @param   contiguous_bytes: Congigous bytes until roll back
- * @return	>=0:Contiuous bytes until roll back or whole data (if roll back won't happen) ; <0:Failed
+ * @return    >=0:Contiuous bytes until roll back or whole data (if roll back won't happen) ; <0:Failed
  * @remak   Use this function if performance is critical since it does NOT copy data
  *          Use RingBuf_Free() to free (remove) data after use
  */
 int32_t RingBuf_Peek(ring_buffer_t* pRB, uint8_t **ppData);
 
 /**
- * @brief	Free (remove) data from ring buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @param	bytesToFree : Bytes to free (remove)
+ * @brief    Free (remove) data from ring buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @param    bytesToFree : Bytes to free (remove)
  * @remak  Use this function to free data after data get from RingBuf_Peek() is used
  */
 int32_t RingBuf_Free(ring_buffer_t* pRB, uint32_t bytesToFree);
 
 /**
- * @brief	Get free bytes of ring buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @return	>=0:Free bytes ; <0:Failed
+ * @brief    Get free bytes of ring buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @return    >=0:Free bytes ; <0:Failed
  */
 int32_t RingBuf_GetFreeBytes(ring_buffer_t* pRB);
 
 /**
- * @brief	Get free bytes of ring buffer
- * @param	pRB	: pointer to the ring buffer instance
- * @return	>=0:Used bytes ; <0:Failed
+ * @brief    Get free bytes of ring buffer
+ * @param    pRB    : pointer to the ring buffer instance
+ * @return    >=0:Used bytes ; <0:Failed
  */
 int32_t RingBuf_GetUsedBytes(ring_buffer_t* pRB);
 

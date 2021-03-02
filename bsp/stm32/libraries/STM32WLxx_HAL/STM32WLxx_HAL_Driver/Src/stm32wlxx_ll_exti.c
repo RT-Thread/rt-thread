@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -82,56 +82,56 @@ ErrorStatus LL_EXTI_DeInit(void)
 {
   /* Rising Trigger selection register set to default reset values */
   LL_EXTI_WriteReg(RTSR1, 0x00000000U);
-  
+
   /* Falling Trigger selection register set to default reset values */
   LL_EXTI_WriteReg(FTSR1, 0x00000000U);
-  
+
   /* Software interrupt event register set to default reset values */
   LL_EXTI_WriteReg(SWIER1, 0x00000000U);
-  
+
   /* Pending register set to default reset values */
   LL_EXTI_WriteReg(PR1, 0xFFFFFFFFU);
 
   /* Rising Trigger selection register 2 set to default reset values */
   LL_EXTI_WriteReg(RTSR2, 0x00000000U);
-  
+
   /* Falling Trigger selection register 2 set to default reset values */
   LL_EXTI_WriteReg(FTSR2, 0x00000000U);
-  
+
   /* Software interrupt event register 2 set to default reset values */
   LL_EXTI_WriteReg(SWIER2, 0x00000000U);
-  
+
   /* Pending register 2 set to default reset values */
   LL_EXTI_WriteReg(PR2, 0xFFFFFFFFU);
-  
+
   /* Interrupt mask register set to default reset values */
 #if defined(DUAL_CORE) && defined (CORE_CM0PLUS)
   LL_EXTI_WriteReg(C2IMR1, 0x00000000U);
 #else
   LL_EXTI_WriteReg(IMR1, 0x00000000U);
 #endif
-  
+
   /* Event mask register set to default reset values */
 #if defined(DUAL_CORE) && defined (CORE_CM0PLUS)
   LL_EXTI_WriteReg(C2EMR1, 0x00000000U);
 #else
   LL_EXTI_WriteReg(EMR1, 0x00000000U);
 #endif
-  
+
   /* Interrupt mask register 2 set to default reset values */
 #if defined(DUAL_CORE) && defined (CORE_CM0PLUS)
   LL_EXTI_WriteReg(C2IMR2, 0x00000000U);
 #else
   LL_EXTI_WriteReg(IMR2, 0x00000000U);
 #endif
-  
+
   /* Event mask register 2 set to default reset values */
 #if defined(DUAL_CORE) && defined (CORE_CM0PLUS)
   LL_EXTI_WriteReg(C2EMR2, 0x00000000U);
 #else
   LL_EXTI_WriteReg(EMR2, 0x00000000U);
 #endif
-  
+
   return SUCCESS;
 }
 

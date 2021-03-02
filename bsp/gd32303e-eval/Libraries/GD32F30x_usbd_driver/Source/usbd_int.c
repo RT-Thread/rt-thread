@@ -113,7 +113,7 @@ void  usbd_isr (void)
 }
 
 /*!
-    \brief      handle USB low priority successful transfer event 
+    \brief      handle USB low priority successful transfer event
     \param[in]  pudev: pointer to USB device instance
     \param[out] none
     \retval     USB device operation status
@@ -191,7 +191,7 @@ static uint8_t  usbd_intf_lpst (usbd_core_handle_struct *pudev)
                     usbd_ep_rx(pudev, ep_num, ep->trs_buf, (uint16_t)ep->trs_len);
                 }
             }
-        }   
+        }
     }
 
     return USBD_OK;

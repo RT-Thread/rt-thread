@@ -103,7 +103,7 @@
 #define TC3_DMAC_ID_MC_SIZE         2
 #define TC3_DMAC_ID_OVF             24       // Indexes of DMA Overflow trigger
 #define TC3_GCLK_ID                 27       // Index of Generic Clock
-#define TC3_MASTER                  0       
+#define TC3_MASTER                  0
 #define TC3_OW_NUM                  2        // Number of Output Waveforms
 #define TC3_PERIOD_EXT              0        // Period feature implemented
 #define TC3_SHADOW_EXT              0        // Shadow feature implemented

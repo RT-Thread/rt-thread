@@ -95,7 +95,7 @@
     { GADI_GPIO_39, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_40, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_42, GADI_GPIO_TYPE_INPUT_0                       }, \
-	SYSTEM_GPIO_INTPHY_TABLE\
+    SYSTEM_GPIO_INTPHY_TABLE\
     { GADI_GPIO_45, GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_53, GADI_GPIO_TYPE_INPUT_0        /* ALARM_OUT */}, \
     { GADI_GPIO_54, GADI_GPIO_TYPE_INPUT_0         /* ALARM_IN */}, \

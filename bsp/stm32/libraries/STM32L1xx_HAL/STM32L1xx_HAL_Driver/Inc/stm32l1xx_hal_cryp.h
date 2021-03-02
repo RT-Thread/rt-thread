@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32L1xx_HAL_CRYP_H
@@ -24,7 +24,7 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
-   
+
 #if defined(STM32L162xC) || defined(STM32L162xCA) || defined(STM32L162xD) || defined(STM32L162xE) || defined(STM32L162xDX)
 
 /* Includes ------------------------------------------------------------------*/
@@ -36,54 +36,54 @@
 
 /** @addtogroup CRYP
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 
 /** @defgroup CRYP_Exported_Types CRYP Exported Types
   * @{
   */
 
-/** 
-  * @brief  CRYP Configuration Structure definition  
+/**
+  * @brief  CRYP Configuration Structure definition
   */
 typedef struct
-{  
+{
   uint32_t DataType;    /*!< 32-bit data, 16-bit data, 8-bit data or 1-bit string.
                              This parameter can be a value of @ref CRYP_Data_Type */
-  
+
   uint8_t* pKey;        /*!< The key used for encryption/decryption */
-  
+
   uint8_t* pInitVect;   /*!< The initialization vector used also as initialization
                              counter in CTR mode */
-  
+
 }CRYP_InitTypeDef;
 
-/** 
-  * @brief HAL CRYP State structures definition  
-  */ 
+/**
+  * @brief HAL CRYP State structures definition
+  */
 typedef enum
 {
   HAL_CRYP_STATE_RESET             = 0x00,  /*!< CRYP not yet initialized or disabled  */
   HAL_CRYP_STATE_READY             = 0x01,  /*!< CRYP initialized and ready for use    */
   HAL_CRYP_STATE_BUSY              = 0x02,  /*!< CRYP internal processing is ongoing   */
   HAL_CRYP_STATE_TIMEOUT           = 0x03,  /*!< CRYP timeout state                    */
-  HAL_CRYP_STATE_ERROR             = 0x04   /*!< CRYP error state                      */ 
-    
+  HAL_CRYP_STATE_ERROR             = 0x04   /*!< CRYP error state                      */
+
 }HAL_CRYP_STATETypeDef;
 
-/** 
-  * @brief HAL CRYP phase structures definition  
-  */ 
+/**
+  * @brief HAL CRYP phase structures definition
+  */
 typedef enum
 {
   HAL_CRYP_PHASE_READY             = 0x01,    /*!< CRYP peripheral is ready for initialization. */
   HAL_CRYP_PHASE_PROCESS           = 0x02,    /*!< CRYP peripheral is in processing phase */
 }HAL_PhaseTypeDef;
 
-/** 
-  * @brief  CRYP handle Structure definition  
-  */ 
+/**
+  * @brief  CRYP handle Structure definition
+  */
 typedef struct
 {
   AES_TypeDef                 *Instance;        /*!< Register base address        */
@@ -133,14 +133,14 @@ typedef struct
 #define IS_CRYP_DATATYPE(DATATYPE) (((DATATYPE) == CRYP_DATATYPE_32B) || \
                                     ((DATATYPE) == CRYP_DATATYPE_16B) || \
                                     ((DATATYPE) == CRYP_DATATYPE_8B)  || \
-                                    ((DATATYPE) == CRYP_DATATYPE_1B))  
+                                    ((DATATYPE) == CRYP_DATATYPE_1B))
 /**
   * @}
   */
 
 /** @defgroup CRYP_AlgoModeDirection CRYP Algo Mode Direction
   * @{
-  */ 
+  */
 #define CRYP_CR_ALGOMODE_DIRECTION              (uint32_t)(AES_CR_MODE|AES_CR_CHMOD)
 
 #define CRYP_CR_ALGOMODE_AES_ECB_ENCRYPT        (0x00000000U)
@@ -152,10 +152,10 @@ typedef struct
 /**
   * @}
   */
-  
+
 /** @defgroup CRYP_AES_Interrupts AES Interrupts
   * @{
-  */ 
+  */
 #define CRYP_IT_CC                          AES_CR_CCIE  /*!< Computation Complete interrupt */
 #define CRYP_IT_ERR                         AES_CR_ERRIE /*!< Error interrupt                */
 
@@ -166,25 +166,25 @@ typedef struct
 
 /** @defgroup CRYP_AES_Flags AES Flags
   * @{
-  */ 
+  */
 #define CRYP_FLAG_CCF                       AES_SR_CCF    /*!< Computation Complete Flag */
 #define CRYP_FLAG_RDERR                     AES_SR_RDERR  /*!< Read Error Flag           */
 #define CRYP_FLAG_WRERR                     AES_SR_WRERR  /*!< Write Error Flag          */
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup CRYP_AES_Clear_Flags AES Clear Flags
   * @{
-  */ 
+  */
 #define CRYP_CLEARFLAG_CCF                       AES_CR_CCFC   /*!< Computation Complete Flag Clear */
 #define CRYP_CLEARFLAG_RDERR                     AES_CR_ERRC   /*!< Read Error Clear           */
 #define CRYP_CLEARFLAG_WRERR                     AES_CR_ERRC   /*!< Write Error Clear          */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
@@ -269,7 +269,7 @@ typedef struct
     (( ((__HANDLE__)->Instance->CR & (__INTERRUPT__)) == (__INTERRUPT__)       \
      )? SET : RESET                                         \
     )
-         
+
 /** @brief  Clear the CRYP pending IT.
   * @param  __HANDLE__ specifies the CRYP handle.
   * @param  __IT__ specifies the IT to clear.
@@ -308,7 +308,7 @@ void                  HAL_CRYP_MspDeInit(CRYP_HandleTypeDef *hcryp);
 
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup CRYP_Exported_Functions_Group2
   * @{
@@ -340,7 +340,7 @@ HAL_StatusTypeDef     HAL_CRYP_AESCTR_Decrypt_DMA(CRYP_HandleTypeDef *hcryp, uin
 
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup CRYP_Exported_Functions_Group3
   * @{
@@ -353,7 +353,7 @@ void                  HAL_CRYP_ErrorCallback(CRYP_HandleTypeDef *hcryp);
 
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup CRYP_Exported_Functions_Group4
   * @{
@@ -364,7 +364,7 @@ void                  HAL_CRYP_IRQHandler(CRYP_HandleTypeDef *hcryp);
 
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup CRYP_Exported_Functions_Group5
   * @{
@@ -375,20 +375,20 @@ HAL_CRYP_STATETypeDef HAL_CRYP_GetState(CRYP_HandleTypeDef *hcryp);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
-  
+  */
+
 #endif /* STM32L162xC || STM32L162xCA || STM32L162xD || STM32L162xE || STM32L162xDX*/
 
 #ifdef __cplusplus

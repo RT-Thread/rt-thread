@@ -50,13 +50,13 @@
 #include <membag.h>
 
 #define CONF_MEMBAG_ARRAY\
-	MEMBAG(16, 5),\
-	MEMBAG(64, 2),\
-	MEMBAG(128, 10),
+    MEMBAG(16, 5),\
+    MEMBAG(64, 2),\
+    MEMBAG(128, 10),
 
 #define CONF_MEMBAG_POOL_SIZE\
-	MEMBAG_SIZE(16, 5) +\
-	MEMBAG_SIZE(64, 2) +\
-	MEMBAG_SIZE(128, 10)
+    MEMBAG_SIZE(16, 5) +\
+    MEMBAG_SIZE(64, 2) +\
+    MEMBAG_SIZE(128, 10)
 
 #endif /* CONF_MEMBAG_H */

@@ -80,26 +80,26 @@ _STD_BEGIN
  */
 size_t __write(int handle, const unsigned char *buffer, size_t size)
 {
-	size_t nChars = 0;
+    size_t nChars = 0;
 
-	if (buffer == 0) {
-		// This means that we should flush internal buffers.
-		return 0;
-	}
+    if (buffer == 0) {
+        // This means that we should flush internal buffers.
+        return 0;
+    }
 
-	// This implementation only writes to stdout and stderr.
-	// For all other file handles, it returns failure.
-	if (handle != _LLIO_STDOUT && handle != _LLIO_STDERR) {
-		return _LLIO_ERROR;
-	}
+    // This implementation only writes to stdout and stderr.
+    // For all other file handles, it returns failure.
+    if (handle != _LLIO_STDOUT && handle != _LLIO_STDERR) {
+        return _LLIO_ERROR;
+    }
 
-	for (; size != 0; --size) {
-		if (ptr_put(stdio_base, *buffer++) < 0) {
-			return _LLIO_ERROR;
-		}
-		++nChars;
-	}
-	return nChars;
+    for (; size != 0; --size) {
+        if (ptr_put(stdio_base, *buffer++) < 0) {
+            return _LLIO_ERROR;
+        }
+        ++nChars;
+    }
+    return nChars;
 }
 
 _STD_END
@@ -113,19 +113,19 @@ _write (int file, char * ptr, int len);
 int __attribute__((weak))
 _write (int file, char * ptr, int len)
 {
-	int nChars = 0;
+    int nChars = 0;
 
-	if ((file != 1) && (file != 2) && (file!=3)) {
-		return -1;
-	}
+    if ((file != 1) && (file != 2) && (file!=3)) {
+        return -1;
+    }
 
-	for (; len != 0; --len) {
-		if (ptr_put(stdio_base, *ptr++) < 0) {
-			return -1;
-		}
-		++nChars;
-	}
-	return nChars;
+    for (; len != 0; --len) {
+        if (ptr_put(stdio_base, *ptr++) < 0) {
+            return -1;
+        }
+        ++nChars;
+    }
+    return nChars;
 }
 
 #endif

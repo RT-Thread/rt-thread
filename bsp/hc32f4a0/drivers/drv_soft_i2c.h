@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2020-10-30     CDT          first version
  */
- 
+
 
 #ifndef __DRV_I2C_H__
 #define __DRV_I2C_H__
@@ -51,7 +51,7 @@ struct hc32_soft_i2c_config
         .bus_name = "i2c2",                              \
     }
 #endif
-    
+
 #ifdef BSP_USING_I2C3
 #define I2C3_BUS_CONFIG                                  \
     {                                                    \
@@ -60,7 +60,7 @@ struct hc32_soft_i2c_config
         .bus_name = "i2c3",                              \
     }
 #endif
-		
+
 #ifdef BSP_USING_I2C4
 #define I2C4_BUS_CONFIG                                  \
     {                                                    \
@@ -78,7 +78,7 @@ struct hc32_soft_i2c_config
         .bus_name = "i2c5",                              \
     }
 #endif
-		
+
 #ifdef BSP_USING_I2C6
 #define I2C6_BUS_CONFIG                                  \
     {                                                    \

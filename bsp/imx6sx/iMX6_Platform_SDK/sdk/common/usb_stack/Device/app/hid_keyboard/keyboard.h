@@ -8,13 +8,13 @@
  *
  * @file keyboard.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date May-28-2009
  *
- * @brief The file contains Macro's and functions needed by the keyboard 
+ * @brief The file contains Macro's and functions needed by the keyboard
  *        application
  *
  *****************************************************************************/
@@ -264,7 +264,7 @@
 #define MODIFERKEYS_RIGHT_ALT                     0x40
 #define MODIFERKEYS_RIGHT_GUI                     0x80
 
-#define  CONTROLLER_ID         (0)   /* ID to identify USB Device Controller */ 
+#define  CONTROLLER_ID         (0)   /* ID to identify USB Device Controller */
 
 #define  KEYBOARD_BUFF_SIZE    (8)   /* report buffer size */
 #define  REQ_DATA_SIZE         (1)
@@ -285,4 +285,4 @@ extern uint_8 kbi_stat; /* records the status of the buttons (PTG0-PTG3)
 extern void TestApp_Init(void);
 extern void TestApp_Task(void);
 
-#endif 
+#endif

@@ -3,8 +3,8 @@
  * Auto generated Run-Time-Environment Component Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'Hello_World' 
- * Target:  'Debug' 
+ * Project: 'Hello_World'
+ * Target:  'Debug'
  */
 
 #ifndef RTE_COMPONENTS_H
@@ -12,7 +12,7 @@
 
 
 /*
- * Define the Device Header File: 
+ * Define the Device Header File:
  */
 #define CMSIS_device_header "max32660.h"
 

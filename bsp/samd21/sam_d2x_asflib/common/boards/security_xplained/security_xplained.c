@@ -60,7 +60,7 @@
  */
 void security_board_init(void)
 {
-	sha204p_init();
+    sha204p_init();
 }
 
 
@@ -70,7 +70,7 @@ void security_board_init(void)
  */
 uint8_t sha204_i2c_address(uint8_t index)
 {
-	static uint8_t i2c_addresses[SHA204_DEVICE_COUNT] = {SHA204_I2C_DEFAULT_ADDRESS, 0xCC, 0xCE, 0xF8};
-	return i2c_addresses[index % SHA204_DEVICE_COUNT];
+    static uint8_t i2c_addresses[SHA204_DEVICE_COUNT] = {SHA204_I2C_DEFAULT_ADDRESS, 0xCC, 0xCE, 0xF8};
+    return i2c_addresses[index % SHA204_DEVICE_COUNT];
 }
 

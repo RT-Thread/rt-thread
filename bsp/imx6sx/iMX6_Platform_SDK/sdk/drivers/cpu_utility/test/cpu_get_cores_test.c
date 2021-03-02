@@ -59,6 +59,6 @@ void cpu_get_cores_test(void)
     else
     {
         printf("\n There are %d accessible cores. \n", num_cores);
-    }    
+    }
 }
 

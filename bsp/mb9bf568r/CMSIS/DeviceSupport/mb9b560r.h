@@ -1,42 +1,42 @@
 /*******************************************************************************
-* Copyright (C) 2013 Spansion LLC. All Rights Reserved. 
+* Copyright (C) 2013 Spansion LLC. All Rights Reserved.
 *
-* This software is owned and published by: 
+* This software is owned and published by:
 * Spansion LLC, 915 DeGuigne Dr. Sunnyvale, CA  94088-3453 ("Spansion").
 *
-* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND 
+* BY DOWNLOADING, INSTALLING OR USING THIS SOFTWARE, YOU AGREE TO BE BOUND
 * BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 *
-* This software contains source code for use with Spansion 
-* components. This software is licensed by Spansion to be adapted only 
-* for use in systems utilizing Spansion components. Spansion shall not be 
-* responsible for misuse or illegal use of this software for devices not 
-* supported herein.  Spansion is providing this software "AS IS" and will 
-* not be responsible for issues arising from incorrect user implementation 
-* of the software.  
+* This software contains source code for use with Spansion
+* components. This software is licensed by Spansion to be adapted only
+* for use in systems utilizing Spansion components. Spansion shall not be
+* responsible for misuse or illegal use of this software for devices not
+* supported herein.  Spansion is providing this software "AS IS" and will
+* not be responsible for issues arising from incorrect user implementation
+* of the software.
 *
 * SPANSION MAKES NO WARRANTY, EXPRESS OR IMPLIED, ARISING BY LAW OR OTHERWISE,
-* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS), 
-* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING, 
-* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED 
-* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED 
-* WARRANTY OF NONINFRINGEMENT.  
-* SPANSION SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT, 
-* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT 
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, 
-* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR 
-* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT, 
-* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA, 
-* SAVINGS OR PROFITS, 
-* EVEN IF SPANSION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. 
+* REGARDING THE SOFTWARE (INCLUDING ANY ACOOMPANYING WRITTEN MATERIALS),
+* ITS PERFORMANCE OR SUITABILITY FOR YOUR INTENDED USE, INCLUDING,
+* WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, THE IMPLIED
+* WARRANTY OF FITNESS FOR A PARTICULAR PURPOSE OR USE, AND THE IMPLIED
+* WARRANTY OF NONINFRINGEMENT.
+* SPANSION SHALL HAVE NO LIABILITY (WHETHER IN CONTRACT, WARRANTY, TORT,
+* NEGLIGENCE OR OTHERWISE) FOR ANY DAMAGES WHATSOEVER (INCLUDING, WITHOUT
+* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION,
+* LOSS OF BUSINESS INFORMATION, OR OTHER PECUNIARY LOSS) ARISING FROM USE OR
+* INABILITY TO USE THE SOFTWARE, INCLUDING, WITHOUT LIMITATION, ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR LOSS OF DATA,
+* SAVINGS OR PROFITS,
+* EVEN IF SPANSION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 * YOU ASSUME ALL RESPONSIBILITIES FOR SELECTION OF THE SOFTWARE TO ACHIEVE YOUR
-* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED 
-* FROM, THE SOFTWARE.  
+* INTENDED RESULTS, AND FOR THE INSTALLATION OF, USE OF, AND RESULTS OBTAINED
+* FROM, THE SOFTWARE.
 *
-* This software may be replicated in part or whole for the licensed use, 
-* with the restriction that this Disclaimer and Copyright notice must be 
-* included with each copy of this software, whether used in part or whole, 
-* at all times.  
+* This software may be replicated in part or whole for the licensed use,
+* with the restriction that this Disclaimer and Copyright notice must be
+* included with each copy of this software, whether used in part or whole,
+* at all times.
 */
 /******************************************************************************/
 /** \file mb9b560r.h
@@ -86,182 +86,182 @@ extern "C" {
 #if (PDL_MCU_INT_TYPE == PDL_INT_TYPE_A)
 typedef enum IRQn
 {
-	NMI_IRQn          = -14, /*  2 Non Maskable      */
-	HardFault_IRQn    = -13, /*  3 Hard Fault        */
-	MemManage_IRQn    = -12, /*  4 Memory Management */
-	BusFault_IRQn     = -11, /*  5 Bus Fault         */
-	UsageFault_IRQn   = -10, /*  6 Usage Fault       */
-	SVC_IRQn          = -5,  /* 11 SV Call           */
-	DebugMonitor_IRQn = -4,  /* 12 Debug Monitor     */
-	PendSV_IRQn       = -2,  /* 14 Pend SV           */
-	SysTick_IRQn      = -1,  /* 15 System Tick       */
+    NMI_IRQn          = -14, /*  2 Non Maskable      */
+    HardFault_IRQn    = -13, /*  3 Hard Fault        */
+    MemManage_IRQn    = -12, /*  4 Memory Management */
+    BusFault_IRQn     = -11, /*  5 Bus Fault         */
+    UsageFault_IRQn   = -10, /*  6 Usage Fault       */
+    SVC_IRQn          = -5,  /* 11 SV Call           */
+    DebugMonitor_IRQn = -4,  /* 12 Debug Monitor     */
+    PendSV_IRQn       = -2,  /* 14 Pend SV           */
+    SysTick_IRQn      = -1,  /* 15 System Tick       */
 
-	CSV_IRQn              =   0,  /* Clock Supervisor                             */
-	SWDT_IRQn             =   1,  /* Software Watchdog Timer                      */
-	LVD_IRQn              =   2,  /* Low Voltage Detection                        */
-	IRQ003SEL_IRQn        =   3,  /* Interrupt Selection IRQ003SEL                */
-	IRQ004SEL_IRQn        =   4,  /* Interrupt Selection IRQ004SEL                */
-	IRQ005SEL_IRQn        =   5,  /* Interrupt Selection IRQ005SEL                */
-	IRQ006SEL_IRQn        =   6,  /* Interrupt Selection IRQ006SEL                */
-	IRQ007SEL_IRQn        =   7,  /* Interrupt Selection IRQ007SEL                */
-	IRQ008SEL_IRQn        =   8,  /* Interrupt Selection IRQ008SEL                */
-	IRQ009SEL_IRQn        =   9,  /* Interrupt Selection IRQ009SEL                */
-	IRQ010SEL_IRQn        =  10,  /* Interrupt Selection IRQ010SEL                */
-	EXINT0_IRQn           =  11,  /* External Interrupt Ch. 0                     */
-	EXINT1_IRQn           =  12,  /* External Interrupt Ch. 1                     */
-	EXINT2_IRQn           =  13,  /* External Interrupt Ch. 2                     */
-	EXINT3_IRQn           =  14,  /* External Interrupt Ch. 3                     */
-	EXINT4_IRQn           =  15,  /* External Interrupt Ch. 4                     */
-	EXINT5_IRQn           =  16,  /* External Interrupt Ch. 5                     */
-	EXINT6_IRQn           =  17,  /* External Interrupt Ch. 6                     */
-	EXINT7_IRQn           =  18,  /* External Interrupt Ch. 7                     */
-	QPRC0_IRQn            =  19,  /* Quad Decoder and Revolution Counter Ch. 0    */
-	QPRC1_IRQn            =  20,  /* Quad Decoder and Revolution Counter Ch. 1    */
-	WFG0_DTIF0_IRQn       =  21,  /* MFT0 Wave Form Generator / DTIF              */
-	WFG1_DTIF1_IRQn       =  22,  /* MFT1 Wave Form Generator / DTIF              */
-	WFG2_DTIF2_IRQn       =  23,  /* MFT2 Wave Form Generator / DTIF              */
-	FRT0_PEAK_IRQn        =  24,  /* MFT0 Free Running Timer Peak Detection       */
-	FRT0_ZERO_IRQn        =  25,  /* MFT0 Free Running Timer Zero Detection       */
-	ICU0_IRQn             =  26,  /* MFT0 Input Capture Unit                      */
-	OCU0_IRQn             =  27,  /* MFT0 Output Compare Unit                     */
-	FRT1_PEAK_IRQn        =  28,  /* MFT1 Free Running Timer Peak Detection       */
-	FRT1_ZERO_IRQn        =  29,  /* MFT1 Free Running Timer Zero Detection       */
-	ICU1_IRQn             =  30,  /* MFT1 Input Capture Unit                      */
-	OCU1_IRQn             =  31,  /* MFT1 Output Compare Unit                     */
-	FRT2_PEAK_IRQn        =  32,  /* MFT2 Free Running Timer Peak Detection       */
-	FRT2_ZERO_IRQn        =  33,  /* MFT2 Free Running Timer Zero Detection       */
-	ICU2_IRQn             =  34,  /* MFT2 Input Capture Unit                      */
-	OCU2_IRQn             =  35,  /* MFT2 Output Compare Unit                     */
-	PPG00_02_04_IRQn      =  36,  /* Programmable Pulse Generator Ch. 0, 2, 4     */
-	PPG08_10_12_IRQn      =  37,  /* Programmable Pulse Generator Ch. 8, 10, 12   */
-	PPG16_18_20_IRQn      =  38,  /* Programmable Pulse Generator Ch. 16, 18, 20  */
-	BT0_IRQn              =  39,  /* Base Timer Ch. 0                             */
-	BT1_IRQn              =  40,  /* Base Timer Ch. 1                             */
-	BT2_IRQn              =  41,  /* Base Timer Ch. 2                             */
-	BT3_IRQn              =  42,  /* Base Timer Ch. 3                             */
-	BT4_IRQn              =  43,  /* Base Timer Ch. 4                             */
-	BT5_IRQn              =  44,  /* Base Timer Ch. 5                             */
-	BT6_IRQn              =  45,  /* Base Timer Ch. 6                             */
-	BT7_IRQn              =  46,  /* Base Timer Ch. 7                             */
-	DT1_2_IRQn            =  47,  /* Dual Timmer Ch. 1, 2                         */
-	WC_IRQn               =  48,  /* Watch Counter                                */
-	EXTBUS_ERR_IRQn       =  49,  /* External Bus Error                           */
-	RTC_IRQn              =  50,  /* Realtime Clock                               */
-	EXINT8_IRQn           =  51,  /* External Interrupt Ch. 8                     */
-	EXINT9_IRQn           =  52,  /* External Interrupt Ch. 9                     */
-	EXINT10_IRQn          =  53,  /* External Interrupt Ch. 10                    */
-	EXINT11_IRQn          =  54,  /* External Interrupt Ch. 11                    */
-	EXINT12_IRQn          =  55,  /* External Interrupt Ch. 12                    */
-	EXINT13_IRQn          =  56,  /* External Interrupt Ch. 13                    */
-	EXINT14_IRQn          =  57,  /* External Interrupt Ch. 14                    */
-	EXINT15_IRQn          =  58,  /* External Interrupt Ch. 15                    */
-	TIM_IRQn              =  59,  /* Clock/PLL Timer                              */
-	MFS0_RX_IRQn          =  60,  /* Multifunction Serial I/F Reception Ch. 0     */
-	MFS0_TX_IRQn          =  61,  /* Multifunction Serial I/F Transmission Ch. 0  */
-	MFS1_RX_IRQn          =  62,  /* Multifunction Serial I/F Reception Ch. 1     */
-	MFS1_TX_IRQn          =  63,  /* Multifunction Serial I/F Transmission Ch. 1  */
-	MFS2_RX_IRQn          =  64,  /* Multifunction Serial I/F Reception Ch. 2     */
-	MFS2_TX_IRQn          =  65,  /* Multifunction Serial I/F Transmission Ch. 2  */
-	MFS3_RX_IRQn          =  66,  /* Multifunction Serial I/F Reception Ch. 3     */
-	MFS3_TX_IRQn          =  67,  /* Multifunction Serial I/F Transmission Ch. 3  */
-	MFS4_RX_IRQn          =  68,  /* Multifunction Serial I/F Reception Ch. 4     */
-	MFS4_TX_IRQn          =  69,  /* Multifunction Serial I/F Transmission Ch. 4  */
-	MFS5_RX_IRQn          =  70,  /* Multifunction Serial I/F Reception Ch. 5     */
-	MFS5_TX_IRQn          =  71,  /* Multifunction Serial I/F Transmission Ch. 5  */
-	MFS6_RX_IRQn          =  72,  /* Multifunction Serial I/F Reception Ch. 6     */
-	MFS6_TX_IRQn          =  73,  /* Multifunction Serial I/F Transmission Ch. 6  */
-	MFS7_RX_IRQn          =  74,  /* Multifunction Serial I/F Reception Ch. 7     */
-	MFS7_TX_IRQn          =  75,  /* Multifunction Serial I/F Transmission Ch. 7  */
-	ADC0_IRQn             =  76,  /* Analog Digital Converter Unit 0              */
-	ADC1_IRQn             =  77,  /* Analog Digital Converter Unit 1              */
-	USB0_IRQn             =  78,  /* USB0 Function                                */
-	USB0_HOST_IRQn        =  79,  /* USB0 Function and Host                       */
-	CAN0_IRQn             =  80,  /* CAN I/F Ch. 0                                */
-	CAN1_IRQn             =  81,  /* CAN I/F Ch. 1                                */
-	ETHER0_IRQn           =  82,  /* Ethernet                                     */
-	DMAC0_IRQn            =  83,  /* Direct Memory Access Controller Ch. 0        */
-	DMAC1_IRQn            =  84,  /* Direct Memory Access Controller Ch. 1        */
-	DMAC2_IRQn            =  85,  /* Direct Memory Access Controller Ch. 2        */
-	DMAC3_IRQn            =  86,  /* Direct Memory Access Controller Ch. 3        */
-	DMAC4_IRQn            =  87,  /* Direct Memory Access Controller Ch. 4        */
-	DMAC5_IRQn            =  88,  /* Direct Memory Access Controller Ch. 5        */
-	DMAC6_IRQn            =  89,  /* Direct Memory Access Controller Ch. 6        */
-	DMAC7_IRQn            =  90,  /* Direct Memory Access Controller Ch. 7        */
-	DSTC_IRQn             =  91,  /* DSTC SW Transfer                             */
-	EXINT16_17_18_19_IRQn =  92,  /* External Interrupt Ch. 16 - 19               */
-	EXINT20_21_22_23_IRQn =  93,  /* External Interrupt Ch. 20 - 23               */
-	EXINT24_25_26_27_IRQn =  94,  /* External Interrupt Ch. 24 - 27               */
-	EXINT28_29_30_31_IRQn =  95,  /* External Interrupt Ch. 28 - 31               */
-	QPRC2_IRQn            =  96,  /* Quad Decoder and Revolution Counter Ch. 2    */
-	QPRC3_IRQn            =  97,  /* Quad Decoder and Revolution Counter Ch. 3    */
-	BT8_IRQn              =  98,  /* Base Timer Ch. 8                             */
-	BT9_IRQn              =  99,  /* Base Timer Ch. 9                             */
-	BT10_IRQn             = 100,  /* Base Timer Ch. 10                            */
-	BT11_IRQn             = 101,  /* Base Timer Ch. 11                            */
-	BT12_IRQn             = 102,  /* Base Timer Ch. 12                            */
-	MFS8_RX_IRQn          = 103,  /* Multifunction Serial I/F Reception Ch. 8     */
-	MFS8_TX_IRQn          = 104,  /* Multifunction Serial I/F Transmission Ch. 8  */
-	MFS9_RX_IRQn          = 105,  /* Multifunction Serial I/F Reception Ch. 9     */
-	MFS9_TX_IRQn          = 106,  /* Multifunction Serial I/F Transmission Ch. 9  */
-	MFS10_RX_IRQn         = 107,  /* Multifunction Serial I/F Reception Ch. 10    */
-	MFS10_TX_IRQn         = 108,  /* Multifunction Serial I/F Transmission Ch. 10 */
-	MFS11_RX_IRQn         = 109,  /* Multifunction Serial I/F Reception Ch. 11    */
-	MFS11_TX_IRQn         = 110,  /* Multifunction Serial I/F Transmission Ch. 11 */
-	ADC2_IRQn             = 111,  /* Analog Digital Converter Unit 2              */
-	USB1_IRQn             = 113,  /* USB1 Function                                */
-	USB1_HOST_IRQn        = 114,  /* USB1 Function and Host                       */
-	SD_IRQn               = 118,  /* SD Card I/F                                  */
-	FLASH_IRQn            = 119   /* Flash                                        */
+    CSV_IRQn              =   0,  /* Clock Supervisor                             */
+    SWDT_IRQn             =   1,  /* Software Watchdog Timer                      */
+    LVD_IRQn              =   2,  /* Low Voltage Detection                        */
+    IRQ003SEL_IRQn        =   3,  /* Interrupt Selection IRQ003SEL                */
+    IRQ004SEL_IRQn        =   4,  /* Interrupt Selection IRQ004SEL                */
+    IRQ005SEL_IRQn        =   5,  /* Interrupt Selection IRQ005SEL                */
+    IRQ006SEL_IRQn        =   6,  /* Interrupt Selection IRQ006SEL                */
+    IRQ007SEL_IRQn        =   7,  /* Interrupt Selection IRQ007SEL                */
+    IRQ008SEL_IRQn        =   8,  /* Interrupt Selection IRQ008SEL                */
+    IRQ009SEL_IRQn        =   9,  /* Interrupt Selection IRQ009SEL                */
+    IRQ010SEL_IRQn        =  10,  /* Interrupt Selection IRQ010SEL                */
+    EXINT0_IRQn           =  11,  /* External Interrupt Ch. 0                     */
+    EXINT1_IRQn           =  12,  /* External Interrupt Ch. 1                     */
+    EXINT2_IRQn           =  13,  /* External Interrupt Ch. 2                     */
+    EXINT3_IRQn           =  14,  /* External Interrupt Ch. 3                     */
+    EXINT4_IRQn           =  15,  /* External Interrupt Ch. 4                     */
+    EXINT5_IRQn           =  16,  /* External Interrupt Ch. 5                     */
+    EXINT6_IRQn           =  17,  /* External Interrupt Ch. 6                     */
+    EXINT7_IRQn           =  18,  /* External Interrupt Ch. 7                     */
+    QPRC0_IRQn            =  19,  /* Quad Decoder and Revolution Counter Ch. 0    */
+    QPRC1_IRQn            =  20,  /* Quad Decoder and Revolution Counter Ch. 1    */
+    WFG0_DTIF0_IRQn       =  21,  /* MFT0 Wave Form Generator / DTIF              */
+    WFG1_DTIF1_IRQn       =  22,  /* MFT1 Wave Form Generator / DTIF              */
+    WFG2_DTIF2_IRQn       =  23,  /* MFT2 Wave Form Generator / DTIF              */
+    FRT0_PEAK_IRQn        =  24,  /* MFT0 Free Running Timer Peak Detection       */
+    FRT0_ZERO_IRQn        =  25,  /* MFT0 Free Running Timer Zero Detection       */
+    ICU0_IRQn             =  26,  /* MFT0 Input Capture Unit                      */
+    OCU0_IRQn             =  27,  /* MFT0 Output Compare Unit                     */
+    FRT1_PEAK_IRQn        =  28,  /* MFT1 Free Running Timer Peak Detection       */
+    FRT1_ZERO_IRQn        =  29,  /* MFT1 Free Running Timer Zero Detection       */
+    ICU1_IRQn             =  30,  /* MFT1 Input Capture Unit                      */
+    OCU1_IRQn             =  31,  /* MFT1 Output Compare Unit                     */
+    FRT2_PEAK_IRQn        =  32,  /* MFT2 Free Running Timer Peak Detection       */
+    FRT2_ZERO_IRQn        =  33,  /* MFT2 Free Running Timer Zero Detection       */
+    ICU2_IRQn             =  34,  /* MFT2 Input Capture Unit                      */
+    OCU2_IRQn             =  35,  /* MFT2 Output Compare Unit                     */
+    PPG00_02_04_IRQn      =  36,  /* Programmable Pulse Generator Ch. 0, 2, 4     */
+    PPG08_10_12_IRQn      =  37,  /* Programmable Pulse Generator Ch. 8, 10, 12   */
+    PPG16_18_20_IRQn      =  38,  /* Programmable Pulse Generator Ch. 16, 18, 20  */
+    BT0_IRQn              =  39,  /* Base Timer Ch. 0                             */
+    BT1_IRQn              =  40,  /* Base Timer Ch. 1                             */
+    BT2_IRQn              =  41,  /* Base Timer Ch. 2                             */
+    BT3_IRQn              =  42,  /* Base Timer Ch. 3                             */
+    BT4_IRQn              =  43,  /* Base Timer Ch. 4                             */
+    BT5_IRQn              =  44,  /* Base Timer Ch. 5                             */
+    BT6_IRQn              =  45,  /* Base Timer Ch. 6                             */
+    BT7_IRQn              =  46,  /* Base Timer Ch. 7                             */
+    DT1_2_IRQn            =  47,  /* Dual Timmer Ch. 1, 2                         */
+    WC_IRQn               =  48,  /* Watch Counter                                */
+    EXTBUS_ERR_IRQn       =  49,  /* External Bus Error                           */
+    RTC_IRQn              =  50,  /* Realtime Clock                               */
+    EXINT8_IRQn           =  51,  /* External Interrupt Ch. 8                     */
+    EXINT9_IRQn           =  52,  /* External Interrupt Ch. 9                     */
+    EXINT10_IRQn          =  53,  /* External Interrupt Ch. 10                    */
+    EXINT11_IRQn          =  54,  /* External Interrupt Ch. 11                    */
+    EXINT12_IRQn          =  55,  /* External Interrupt Ch. 12                    */
+    EXINT13_IRQn          =  56,  /* External Interrupt Ch. 13                    */
+    EXINT14_IRQn          =  57,  /* External Interrupt Ch. 14                    */
+    EXINT15_IRQn          =  58,  /* External Interrupt Ch. 15                    */
+    TIM_IRQn              =  59,  /* Clock/PLL Timer                              */
+    MFS0_RX_IRQn          =  60,  /* Multifunction Serial I/F Reception Ch. 0     */
+    MFS0_TX_IRQn          =  61,  /* Multifunction Serial I/F Transmission Ch. 0  */
+    MFS1_RX_IRQn          =  62,  /* Multifunction Serial I/F Reception Ch. 1     */
+    MFS1_TX_IRQn          =  63,  /* Multifunction Serial I/F Transmission Ch. 1  */
+    MFS2_RX_IRQn          =  64,  /* Multifunction Serial I/F Reception Ch. 2     */
+    MFS2_TX_IRQn          =  65,  /* Multifunction Serial I/F Transmission Ch. 2  */
+    MFS3_RX_IRQn          =  66,  /* Multifunction Serial I/F Reception Ch. 3     */
+    MFS3_TX_IRQn          =  67,  /* Multifunction Serial I/F Transmission Ch. 3  */
+    MFS4_RX_IRQn          =  68,  /* Multifunction Serial I/F Reception Ch. 4     */
+    MFS4_TX_IRQn          =  69,  /* Multifunction Serial I/F Transmission Ch. 4  */
+    MFS5_RX_IRQn          =  70,  /* Multifunction Serial I/F Reception Ch. 5     */
+    MFS5_TX_IRQn          =  71,  /* Multifunction Serial I/F Transmission Ch. 5  */
+    MFS6_RX_IRQn          =  72,  /* Multifunction Serial I/F Reception Ch. 6     */
+    MFS6_TX_IRQn          =  73,  /* Multifunction Serial I/F Transmission Ch. 6  */
+    MFS7_RX_IRQn          =  74,  /* Multifunction Serial I/F Reception Ch. 7     */
+    MFS7_TX_IRQn          =  75,  /* Multifunction Serial I/F Transmission Ch. 7  */
+    ADC0_IRQn             =  76,  /* Analog Digital Converter Unit 0              */
+    ADC1_IRQn             =  77,  /* Analog Digital Converter Unit 1              */
+    USB0_IRQn             =  78,  /* USB0 Function                                */
+    USB0_HOST_IRQn        =  79,  /* USB0 Function and Host                       */
+    CAN0_IRQn             =  80,  /* CAN I/F Ch. 0                                */
+    CAN1_IRQn             =  81,  /* CAN I/F Ch. 1                                */
+    ETHER0_IRQn           =  82,  /* Ethernet                                     */
+    DMAC0_IRQn            =  83,  /* Direct Memory Access Controller Ch. 0        */
+    DMAC1_IRQn            =  84,  /* Direct Memory Access Controller Ch. 1        */
+    DMAC2_IRQn            =  85,  /* Direct Memory Access Controller Ch. 2        */
+    DMAC3_IRQn            =  86,  /* Direct Memory Access Controller Ch. 3        */
+    DMAC4_IRQn            =  87,  /* Direct Memory Access Controller Ch. 4        */
+    DMAC5_IRQn            =  88,  /* Direct Memory Access Controller Ch. 5        */
+    DMAC6_IRQn            =  89,  /* Direct Memory Access Controller Ch. 6        */
+    DMAC7_IRQn            =  90,  /* Direct Memory Access Controller Ch. 7        */
+    DSTC_IRQn             =  91,  /* DSTC SW Transfer                             */
+    EXINT16_17_18_19_IRQn =  92,  /* External Interrupt Ch. 16 - 19               */
+    EXINT20_21_22_23_IRQn =  93,  /* External Interrupt Ch. 20 - 23               */
+    EXINT24_25_26_27_IRQn =  94,  /* External Interrupt Ch. 24 - 27               */
+    EXINT28_29_30_31_IRQn =  95,  /* External Interrupt Ch. 28 - 31               */
+    QPRC2_IRQn            =  96,  /* Quad Decoder and Revolution Counter Ch. 2    */
+    QPRC3_IRQn            =  97,  /* Quad Decoder and Revolution Counter Ch. 3    */
+    BT8_IRQn              =  98,  /* Base Timer Ch. 8                             */
+    BT9_IRQn              =  99,  /* Base Timer Ch. 9                             */
+    BT10_IRQn             = 100,  /* Base Timer Ch. 10                            */
+    BT11_IRQn             = 101,  /* Base Timer Ch. 11                            */
+    BT12_IRQn             = 102,  /* Base Timer Ch. 12                            */
+    MFS8_RX_IRQn          = 103,  /* Multifunction Serial I/F Reception Ch. 8     */
+    MFS8_TX_IRQn          = 104,  /* Multifunction Serial I/F Transmission Ch. 8  */
+    MFS9_RX_IRQn          = 105,  /* Multifunction Serial I/F Reception Ch. 9     */
+    MFS9_TX_IRQn          = 106,  /* Multifunction Serial I/F Transmission Ch. 9  */
+    MFS10_RX_IRQn         = 107,  /* Multifunction Serial I/F Reception Ch. 10    */
+    MFS10_TX_IRQn         = 108,  /* Multifunction Serial I/F Transmission Ch. 10 */
+    MFS11_RX_IRQn         = 109,  /* Multifunction Serial I/F Reception Ch. 11    */
+    MFS11_TX_IRQn         = 110,  /* Multifunction Serial I/F Transmission Ch. 11 */
+    ADC2_IRQn             = 111,  /* Analog Digital Converter Unit 2              */
+    USB1_IRQn             = 113,  /* USB1 Function                                */
+    USB1_HOST_IRQn        = 114,  /* USB1 Function and Host                       */
+    SD_IRQn               = 118,  /* SD Card I/F                                  */
+    FLASH_IRQn            = 119   /* Flash                                        */
 } IRQn_Type;
 
 #elif (PDL_MCU_INT_TYPE == PDL_INT_TYPE_C)
 typedef enum IRQn
 {
-	NMI_IRQn          = -14, /* A<- */
-	HardFault_IRQn    = -13, /* A<- */
-	MemManage_IRQn    = -12, /* A<- */
-	BusFault_IRQn     = -11, /* A<- */
-	UsageFault_IRQn   = -10, /* A<- */
-	SVC_IRQn          = -5,  /* A<- */
-	DebugMonitor_IRQn = -4,  /* A<- */
-	PendSV_IRQn       = -2,  /* A<- */
-	SysTick_IRQn      = -1,  /* A<- */
+    NMI_IRQn          = -14, /* A<- */
+    HardFault_IRQn    = -13, /* A<- */
+    MemManage_IRQn    = -12, /* A<- */
+    BusFault_IRQn     = -11, /* A<- */
+    UsageFault_IRQn   = -10, /* A<- */
+    SVC_IRQn          = -5,  /* A<- */
+    DebugMonitor_IRQn = -4,  /* A<- */
+    PendSV_IRQn       = -2,  /* A<- */
+    SysTick_IRQn      = -1,  /* A<- */
 
-	CSV_IRQn          =  0, /* A<- */
-	SWDT_IRQn         =  1, /* A<- */
-	LVD_IRQn          =  2, /* A<- */
-	WFG_IRQn          =  3, /* A<- */
-	EXINT0_7_IRQn     =  4, /* A<- */
-	EXINT8_31_IRQn    =  5, /* A<- */
-	MFS0_8_RX_IRQn    =  6, /* A<- */
-	MFS0_8_TX_IRQn    =  7, /* A<- */
-	MFS1_9_RX_IRQn    =  8, /* A<- */
-	MFS1_9_TX_IRQn    =  9, /* A<- */
-	MFS2_10_RX_IRQn   =  10,/* A<- */
-	MFS2_10_TX_IRQn   =  11,/* A<- */
-	MFS3_11_RX_IRQn   =  12, /* A<- */
-	MFS3_11_TX_IRQn   =  13, /* A<- */
-	MFS4_12_RX_IRQn   =  14, /* A<- */
-	MFS4_12_TX_IRQn   =  15, /* A<- */
-	MFS5_13_RX_IRQn   =  16, /* A<- */
-	MFS5_13_TX_IRQn   =  17, /* A<- */
-	MFS6_14_RX_IRQn   =  18, /* A<- */
-	MFS6_14_TX_IRQn   =  19, /* A<- */
-	MFS7_15_RX_IRQn   =  20, /* A<- */
-	MFS7_15_TX_IRQn   =  21, /* A<- */
-	PPG_IRQn          =  22, /* A<- */
-	OSC_PLL_WC_RTC_IRQn   = 23, /* A<- */
-	ADC0_IRQn         = 24, /* A<- */
-	FRTIM_IRQn        = 25, /* A<- */
-	INCAP_IRQn        = 26, /* A<- */
-	OUTCOMP_IRQn      = 27, /* A<- */
-	BTIM0_7_IRQn      = 28, /* A<- */
-	ADC2_LCD_IRQn     = 29, /* A<- */
-	USB1F_HDMICEC0_IRQn        = 30, /* A<- */
-	USB1F_USB1H_HDMICEC1_IRQn  = 31, /* A<- */
+    CSV_IRQn          =  0, /* A<- */
+    SWDT_IRQn         =  1, /* A<- */
+    LVD_IRQn          =  2, /* A<- */
+    WFG_IRQn          =  3, /* A<- */
+    EXINT0_7_IRQn     =  4, /* A<- */
+    EXINT8_31_IRQn    =  5, /* A<- */
+    MFS0_8_RX_IRQn    =  6, /* A<- */
+    MFS0_8_TX_IRQn    =  7, /* A<- */
+    MFS1_9_RX_IRQn    =  8, /* A<- */
+    MFS1_9_TX_IRQn    =  9, /* A<- */
+    MFS2_10_RX_IRQn   =  10,/* A<- */
+    MFS2_10_TX_IRQn   =  11,/* A<- */
+    MFS3_11_RX_IRQn   =  12, /* A<- */
+    MFS3_11_TX_IRQn   =  13, /* A<- */
+    MFS4_12_RX_IRQn   =  14, /* A<- */
+    MFS4_12_TX_IRQn   =  15, /* A<- */
+    MFS5_13_RX_IRQn   =  16, /* A<- */
+    MFS5_13_TX_IRQn   =  17, /* A<- */
+    MFS6_14_RX_IRQn   =  18, /* A<- */
+    MFS6_14_TX_IRQn   =  19, /* A<- */
+    MFS7_15_RX_IRQn   =  20, /* A<- */
+    MFS7_15_TX_IRQn   =  21, /* A<- */
+    PPG_IRQn          =  22, /* A<- */
+    OSC_PLL_WC_RTC_IRQn   = 23, /* A<- */
+    ADC0_IRQn         = 24, /* A<- */
+    FRTIM_IRQn        = 25, /* A<- */
+    INCAP_IRQn        = 26, /* A<- */
+    OUTCOMP_IRQn      = 27, /* A<- */
+    BTIM0_7_IRQn      = 28, /* A<- */
+    ADC2_LCD_IRQn     = 29, /* A<- */
+    USB1F_HDMICEC0_IRQn        = 30, /* A<- */
+    USB1F_USB1H_HDMICEC1_IRQn  = 31, /* A<- */
 } IRQn_Type;
 #else
-	#error Interrupt Type not found!
+    #error Interrupt Type not found!
 #endif // PDL_INT_TYPE
 
 #include "core_cm4.h"
@@ -292,57 +292,57 @@ typedef enum IRQn
 /* Interrupt request read registers */
 typedef struct
 {
-	__IO uint32_t DRQSEL;
-	uint8_t RESERVED0[12];
-	__IO uint32_t EXC02MON;
-	__IO uint32_t IRQ00MON;
-	__IO uint32_t IRQ01MON;
-	__IO uint32_t IRQ02MON;
-	__IO uint32_t IRQ03MON;
-	__IO uint32_t IRQ04MON;
-	__IO uint32_t IRQ05MON;
-	__IO uint32_t IRQ06MON;
-	__IO uint32_t IRQ07MON;
-	__IO uint32_t IRQ08MON;
-	__IO uint32_t IRQ09MON;
-	__IO uint32_t IRQ10MON;
-	__IO uint32_t IRQ11MON;
-	__IO uint32_t IRQ12MON;
-	__IO uint32_t IRQ13MON;
-	__IO uint32_t IRQ14MON;
-	__IO uint32_t IRQ15MON;
-	__IO uint32_t IRQ16MON;
-	__IO uint32_t IRQ17MON;
-	__IO uint32_t IRQ18MON;
-	__IO uint32_t IRQ19MON;
-	__IO uint32_t IRQ20MON;
-	__IO uint32_t IRQ21MON;
-	__IO uint32_t IRQ22MON;
-	__IO uint32_t IRQ23MON;
-	__IO uint32_t IRQ24MON;
-	__IO uint32_t IRQ25MON;
-	__IO uint32_t IRQ26MON;
-	__IO uint32_t IRQ27MON;
-	__IO uint32_t IRQ28MON;
-	__IO uint32_t IRQ29MON;
-	__IO uint32_t IRQ30MON;
-	__IO uint32_t IRQ31MON;
-	__IO uint32_t IRQ32MON;
-	__IO uint32_t IRQ33MON;
-	__IO uint32_t IRQ34MON;
-	__IO uint32_t IRQ35MON;
-	__IO uint32_t IRQ36MON;
-	__IO uint32_t IRQ37MON;
-	__IO uint32_t IRQ38MON;
-	__IO uint32_t IRQ39MON;
-	__IO uint32_t IRQ40MON;
-	__IO uint32_t IRQ41MON;
-	__IO uint32_t IRQ42MON;
-	__IO uint32_t IRQ43MON;
-	__IO uint32_t IRQ44MON;
-	__IO uint32_t IRQ45MON;
-	__IO uint32_t IRQ46MON;
-	__IO uint32_t IRQ47MON;
+    __IO uint32_t DRQSEL;
+    uint8_t RESERVED0[12];
+    __IO uint32_t EXC02MON;
+    __IO uint32_t IRQ00MON;
+    __IO uint32_t IRQ01MON;
+    __IO uint32_t IRQ02MON;
+    __IO uint32_t IRQ03MON;
+    __IO uint32_t IRQ04MON;
+    __IO uint32_t IRQ05MON;
+    __IO uint32_t IRQ06MON;
+    __IO uint32_t IRQ07MON;
+    __IO uint32_t IRQ08MON;
+    __IO uint32_t IRQ09MON;
+    __IO uint32_t IRQ10MON;
+    __IO uint32_t IRQ11MON;
+    __IO uint32_t IRQ12MON;
+    __IO uint32_t IRQ13MON;
+    __IO uint32_t IRQ14MON;
+    __IO uint32_t IRQ15MON;
+    __IO uint32_t IRQ16MON;
+    __IO uint32_t IRQ17MON;
+    __IO uint32_t IRQ18MON;
+    __IO uint32_t IRQ19MON;
+    __IO uint32_t IRQ20MON;
+    __IO uint32_t IRQ21MON;
+    __IO uint32_t IRQ22MON;
+    __IO uint32_t IRQ23MON;
+    __IO uint32_t IRQ24MON;
+    __IO uint32_t IRQ25MON;
+    __IO uint32_t IRQ26MON;
+    __IO uint32_t IRQ27MON;
+    __IO uint32_t IRQ28MON;
+    __IO uint32_t IRQ29MON;
+    __IO uint32_t IRQ30MON;
+    __IO uint32_t IRQ31MON;
+    __IO uint32_t IRQ32MON;
+    __IO uint32_t IRQ33MON;
+    __IO uint32_t IRQ34MON;
+    __IO uint32_t IRQ35MON;
+    __IO uint32_t IRQ36MON;
+    __IO uint32_t IRQ37MON;
+    __IO uint32_t IRQ38MON;
+    __IO uint32_t IRQ39MON;
+    __IO uint32_t IRQ40MON;
+    __IO uint32_t IRQ41MON;
+    __IO uint32_t IRQ42MON;
+    __IO uint32_t IRQ43MON;
+    __IO uint32_t IRQ44MON;
+    __IO uint32_t IRQ45MON;
+    __IO uint32_t IRQ46MON;
+    __IO uint32_t IRQ47MON;
 }PDL_INTREQ_TypeDef;
 
 #define PDL_INTREQ_BASE     (PDL_PERIPH_BASE + 0x31000UL)  // Interrupt request read registers
@@ -353,40 +353,40 @@ typedef struct
 /* Interrupt request read registers */
 typedef struct
 {
-	uint8_t RESERVED0[16];
-	__IO uint32_t EXC02MON;
-	__IO uint32_t IRQ00MON;
-	__IO uint32_t IRQ01MON;
-	__IO uint32_t IRQ02MON;
-	__IO uint32_t IRQ03MON;
-	__IO uint32_t IRQ04MON;
-	__IO uint32_t IRQ05MON;
-	__IO uint32_t IRQ06MON;
-	__IO uint32_t IRQ07MON;
-	__IO uint32_t IRQ08MON;
-	__IO uint32_t IRQ09MON;
-	__IO uint32_t IRQ10MON;
-	__IO uint32_t IRQ11MON;
-	__IO uint32_t IRQ12MON;
-	__IO uint32_t IRQ13MON;
-	__IO uint32_t IRQ14MON;
-	__IO uint32_t IRQ15MON;
-	__IO uint32_t IRQ16MON;
-	__IO uint32_t IRQ17MON;
-	__IO uint32_t IRQ18MON;
-	__IO uint32_t IRQ19MON;
-	__IO uint32_t IRQ20MON;
-	__IO uint32_t IRQ21MON;
-	__IO uint32_t IRQ22MON;
-	__IO uint32_t IRQ23MON;
-	__IO uint32_t IRQ24MON;
-	__IO uint32_t IRQ25MON;
-	__IO uint32_t IRQ26MON;
-	__IO uint32_t IRQ27MON;
-	__IO uint32_t IRQ28MON;
-	__IO uint32_t IRQ29MON;
-	__IO uint32_t IRQ30MON;
-	__IO uint32_t IRQ31MON;
+    uint8_t RESERVED0[16];
+    __IO uint32_t EXC02MON;
+    __IO uint32_t IRQ00MON;
+    __IO uint32_t IRQ01MON;
+    __IO uint32_t IRQ02MON;
+    __IO uint32_t IRQ03MON;
+    __IO uint32_t IRQ04MON;
+    __IO uint32_t IRQ05MON;
+    __IO uint32_t IRQ06MON;
+    __IO uint32_t IRQ07MON;
+    __IO uint32_t IRQ08MON;
+    __IO uint32_t IRQ09MON;
+    __IO uint32_t IRQ10MON;
+    __IO uint32_t IRQ11MON;
+    __IO uint32_t IRQ12MON;
+    __IO uint32_t IRQ13MON;
+    __IO uint32_t IRQ14MON;
+    __IO uint32_t IRQ15MON;
+    __IO uint32_t IRQ16MON;
+    __IO uint32_t IRQ17MON;
+    __IO uint32_t IRQ18MON;
+    __IO uint32_t IRQ19MON;
+    __IO uint32_t IRQ20MON;
+    __IO uint32_t IRQ21MON;
+    __IO uint32_t IRQ22MON;
+    __IO uint32_t IRQ23MON;
+    __IO uint32_t IRQ24MON;
+    __IO uint32_t IRQ25MON;
+    __IO uint32_t IRQ26MON;
+    __IO uint32_t IRQ27MON;
+    __IO uint32_t IRQ28MON;
+    __IO uint32_t IRQ29MON;
+    __IO uint32_t IRQ30MON;
+    __IO uint32_t IRQ31MON;
 }PDL_INTREQ_TypeDef;
 
 #define PDL_INTREQ_BASE   (PDL_PERIPH_BASE + 0x31000UL)  // Interrupt request read registers
@@ -475,7 +475,7 @@ typedef struct stc_flash_if_ficlr_field
 typedef struct stc_flash_if_crtrmm_field
 {
   __IO uint32_t TRMM       :10;
-	   uint32_t RESERVED10 : 6;
+       uint32_t RESERVED10 : 6;
   __IO uint32_t TTRMM      : 5;
 } stc_flash_if_crtrmm_field_t;
 
@@ -485,7 +485,7 @@ typedef struct stc_flash_if_crtrmm_field
 /* UNIQUE_ID_MODULE register bit fields */
 typedef struct stc_unique_id_uidr0_field
 {
-	   uint32_t RESERVED0  : 4;
+       uint32_t RESERVED0  : 4;
   __IO uint32_t UID        :28;
 } stc_unique_id_uidr0_field_t;
 
@@ -509,9 +509,9 @@ typedef struct stc_ecc_capture_ferrad_field
 /* Clock_Reset_MODULE register bit fields */
 typedef struct stc_crg_scm_ctl_field
 {
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t MOSCE      : 1;
-		uint8_t RESERVED2  : 1;
+        uint8_t RESERVED2  : 1;
   __IO  uint8_t SOSCE      : 1;
   __IO  uint8_t PLLE       : 1;
   __IO  uint8_t RCS        : 3;
@@ -519,9 +519,9 @@ typedef struct stc_crg_scm_ctl_field
 
 typedef struct stc_crg_scm_str_field
 {
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t MORDY      : 1;
-		uint8_t RESERVED2  : 1;
+        uint8_t RESERVED2  : 1;
   __IO  uint8_t SORDY      : 1;
   __IO  uint8_t PLRDY      : 1;
   __IO  uint8_t RCM0       : 1;
@@ -534,7 +534,7 @@ typedef struct stc_crg_rst_str_field
   __IO uint16_t PONR       : 1;
   __IO uint16_t INITX      : 1;
   __IO uint16_t LVDH       : 1;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t SWDT       : 1;
   __IO uint16_t HWDT       : 1;
   __IO uint16_t CSVR       : 1;
@@ -559,9 +559,9 @@ typedef struct stc_crg_apbc1_psr_field
 {
   __IO  uint8_t APBC10     : 1;
   __IO  uint8_t APBC11     : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t APBC1RST   : 1;
-		uint8_t RESERVED2  : 2;
+        uint8_t RESERVED2  : 2;
   __IO  uint8_t APBC1EN    : 1;
 } stc_crg_apbc1_psr_field_t;
 
@@ -569,9 +569,9 @@ typedef struct stc_crg_apbc2_psr_field
 {
   __IO  uint8_t APBC20     : 1;
   __IO  uint8_t APBC21     : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t APBC2RST   : 1;
-		uint8_t RESERVED2  : 2;
+        uint8_t RESERVED2  : 2;
   __IO  uint8_t APBC2EN    : 1;
 } stc_crg_apbc2_psr_field_t;
 
@@ -579,7 +579,7 @@ typedef struct stc_crg_swc_psr_field
 {
   __IO  uint8_t SWDS0      : 1;
   __IO  uint8_t SWDS1      : 1;
-		uint8_t RESERVED1  : 5;
+        uint8_t RESERVED1  : 5;
   __IO  uint8_t TESTB      : 1;
 } stc_crg_swc_psr_field_t;
 
@@ -605,7 +605,7 @@ typedef struct stc_crg_psw_tmr_field
   __IO  uint8_t POWT0      : 1;
   __IO  uint8_t POWT1      : 1;
   __IO  uint8_t POWT2      : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t PINC       : 1;
 } stc_crg_psw_tmr_field_t;
 
@@ -635,10 +635,10 @@ typedef struct stc_crg_csv_ctl_field
 {
   __IO uint16_t MCSVE      : 1;
   __IO uint16_t SCSVE      : 1;
-	   uint16_t RESERVED1  : 6;
+       uint16_t RESERVED1  : 6;
   __IO uint16_t FCSDE      : 1;
   __IO uint16_t FCSRE      : 1;
-	   uint16_t RESERVED2  : 2;
+       uint16_t RESERVED2  : 2;
   __IO uint16_t FCD0       : 1;
   __IO uint16_t FCD1       : 1;
   __IO uint16_t FCD2       : 1;
@@ -652,9 +652,9 @@ typedef struct stc_crg_csv_str_field
 
 typedef struct stc_crg_dbwdt_ctl_field
 {
-		uint8_t RESERVED1  : 5;
+        uint8_t RESERVED1  : 5;
   __IO  uint8_t DPSWBE     : 1;
-		uint8_t RESERVED2  : 1;
+        uint8_t RESERVED2  : 1;
   __IO  uint8_t DPHWBE     : 1;
 } stc_crg_dbwdt_ctl_field_t;
 
@@ -663,7 +663,7 @@ typedef struct stc_crg_int_enr_field
   __IO  uint8_t MCSE       : 1;
   __IO  uint8_t SCSE       : 1;
   __IO  uint8_t PCSE       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t FCSE       : 1;
 } stc_crg_int_enr_field_t;
 
@@ -672,7 +672,7 @@ typedef struct stc_crg_int_str_field
   __IO  uint8_t MCSI       : 1;
   __IO  uint8_t SCSI       : 1;
   __IO  uint8_t PCSI       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t FCSI       : 1;
 } stc_crg_int_str_field_t;
 
@@ -681,7 +681,7 @@ typedef struct stc_crg_int_clr_field
   __IO  uint8_t MCSC       : 1;
   __IO  uint8_t SCSC       : 1;
   __IO  uint8_t PCSC       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t FCSC       : 1;
 } stc_crg_int_clr_field_t;
 
@@ -707,32 +707,32 @@ typedef struct stc_hwwdt_wdg_ris_field
 typedef struct stc_swwdt_wdogcontrol_field
 {
   union {
-	struct {
-	  __IO  uint8_t INTEN      : 1;
-	  __IO  uint8_t RESEN      : 1;
-	  __IO  uint8_t TWD        : 2;
-	  __IO  uint8_t SPM        : 1;
-			uint8_t RESERVED1  : 3;
-	};
-	struct {
-			uint8_t RESERVED2  : 2;
-	  __IO  uint8_t TWD0       : 1;
-	  __IO  uint8_t TWD1       : 1;
-			uint8_t RESERVED3  : 4;
-	};
+    struct {
+      __IO  uint8_t INTEN      : 1;
+      __IO  uint8_t RESEN      : 1;
+      __IO  uint8_t TWD        : 2;
+      __IO  uint8_t SPM        : 1;
+            uint8_t RESERVED1  : 3;
+    };
+    struct {
+            uint8_t RESERVED2  : 2;
+      __IO  uint8_t TWD0       : 1;
+      __IO  uint8_t TWD1       : 1;
+            uint8_t RESERVED3  : 4;
+    };
   };
 } stc_swwdt_wdogcontrol_field_t;
 
 typedef struct stc_swwdt_wdogris_field
 {
   __IO  uint8_t RIS        : 1;
-		uint8_t RESERVED1  : 7;
+        uint8_t RESERVED1  : 7;
 } stc_swwdt_wdogris_field_t;
 
 typedef struct stc_swwdt_wdogspmc_field
 {
   __IO  uint8_t TGR        : 1;
-		uint8_t RESERVED1  : 7;
+        uint8_t RESERVED1  : 7;
 } stc_swwdt_wdogspmc_field_t;
 
 /******************************************************************************
@@ -742,35 +742,35 @@ typedef struct stc_swwdt_wdogspmc_field
 typedef struct stc_dtim_timerXcontrol_field
 {
   union {
-	struct {
-	  __IO uint32_t ONESHOT    : 1;
-	  __IO uint32_t TIMERSIZE  : 1;
-	  __IO uint32_t TIMERPRE   : 2;
-		   uint32_t RESERVED1  : 1;
-	  __IO uint32_t INTENABLE  : 1;
-	  __IO uint32_t TIMERMODE  : 1;
-	  __IO uint32_t TIMEREN    : 1;
-		   uint32_t RESERVED2  : 24;
-	};
-	struct {
-		   uint32_t RESERVED3  : 2;
-	  __IO uint32_t TIMERPRE0  : 1;
-	  __IO uint32_t TIMERPRE1  : 1;
-		   uint32_t RESERVED4  : 28;
-	};
+    struct {
+      __IO uint32_t ONESHOT    : 1;
+      __IO uint32_t TIMERSIZE  : 1;
+      __IO uint32_t TIMERPRE   : 2;
+           uint32_t RESERVED1  : 1;
+      __IO uint32_t INTENABLE  : 1;
+      __IO uint32_t TIMERMODE  : 1;
+      __IO uint32_t TIMEREN    : 1;
+           uint32_t RESERVED2  : 24;
+    };
+    struct {
+           uint32_t RESERVED3  : 2;
+      __IO uint32_t TIMERPRE0  : 1;
+      __IO uint32_t TIMERPRE1  : 1;
+           uint32_t RESERVED4  : 28;
+    };
   };
 } stc_dtim_timerXcontrol_field_t;
 
 typedef struct stc_dtim_timerXris_field
 {
   __IO uint32_t TIMERXRIS  : 1;
-	   uint32_t RESERVED1  : 31;
+       uint32_t RESERVED1  : 31;
 } stc_dtim_timerXris_field_t;
 
 typedef struct stc_dtim_timerXmis_field
 {
   __IO uint32_t TIMERXMIS  : 1;
-	   uint32_t RESERVED1  : 31;
+       uint32_t RESERVED1  : 31;
 } stc_dtim_timerXmis_field_t;
 
 /******************************************************************************
@@ -789,7 +789,7 @@ typedef struct stc_mft_frt_tcsa0_field
   __IO uint16_t BFE        : 1;
   __IO uint16_t ICRE       : 1;
   __IO uint16_t ICLR       : 1;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t IRQZE      : 1;
   __IO uint16_t IRQZF      : 1;
   __IO uint16_t ECKE       : 1;
@@ -815,7 +815,7 @@ typedef struct stc_mft_frt_tcsa1_field
   __IO uint16_t BFE        : 1;
   __IO uint16_t ICRE       : 1;
   __IO uint16_t ICLR       : 1;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t IRQZE      : 1;
   __IO uint16_t IRQZF      : 1;
   __IO uint16_t ECKE       : 1;
@@ -841,7 +841,7 @@ typedef struct stc_mft_frt_tcsa2_field
   __IO uint16_t BFE        : 1;
   __IO uint16_t ICRE       : 1;
   __IO uint16_t ICLR       : 1;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t IRQZE      : 1;
   __IO uint16_t IRQZF      : 1;
   __IO uint16_t ECKE       : 1;
@@ -898,9 +898,9 @@ typedef struct stc_mft_ocu_ocsb10_field
 {
   __IO  uint8_t OTD0       : 1;
   __IO  uint8_t OTD1       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t CMOD       : 1;
-		uint8_t RESERVED2  : 2;
+        uint8_t RESERVED2  : 2;
   __IO  uint8_t FM4        : 1;
 } stc_mft_ocu_ocsb10_field_t;
 
@@ -919,9 +919,9 @@ typedef struct stc_mft_ocu_ocsb32_field
 {
   __IO  uint8_t OTD0       : 1;
   __IO  uint8_t OTD1       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t CMOD       : 1;
-		uint8_t RESERVED2  : 2;
+        uint8_t RESERVED2  : 2;
   __IO  uint8_t FM4        : 1;
 } stc_mft_ocu_ocsb32_field_t;
 
@@ -940,9 +940,9 @@ typedef struct stc_mft_ocu_ocsb54_field
 {
   __IO  uint8_t OTD0       : 1;
   __IO  uint8_t OTD1       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t CMOD       : 1;
-		uint8_t RESERVED2  : 2;
+        uint8_t RESERVED2  : 2;
   __IO  uint8_t FM4        : 1;
 } stc_mft_ocu_ocsb54_field_t;
 
@@ -1123,14 +1123,14 @@ typedef struct stc_mft_wfg_nzcl_field
   __IO uint16_t NWS2       : 1;
   __IO uint16_t SDTI       : 1;
   __IO uint16_t DTIEB      : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t DIMA       : 1;
   __IO uint16_t DIMB       : 1;
-	   uint16_t RESERVED2  : 2;
+       uint16_t RESERVED2  : 2;
   __IO uint16_t WIM10      : 1;
   __IO uint16_t WIM32      : 1;
   __IO uint16_t WIM54      : 1;
-	   uint16_t RESERVED3  : 1;
+       uint16_t RESERVED3  : 1;
 } stc_mft_wfg_nzcl_field_t;
 
 /******************************************************************************
@@ -1224,7 +1224,7 @@ typedef struct stc_mft_adcmp_acsa_field
   __IO uint16_t CE10       : 2;
   __IO uint16_t CE32       : 2;
   __IO uint16_t CE54       : 2;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t SEL10      : 2;
   __IO uint16_t SEL32      : 2;
   __IO uint16_t SEL54      : 2;
@@ -1234,14 +1234,14 @@ typedef struct stc_mft_adcmp_acsc_field
 {
   __IO uint8_t BUFE        : 2;
   __IO uint8_t ADSEL       : 3;
-	   uint8_t RESERVED1   : 3;
+       uint8_t RESERVED1   : 3;
 } stc_mft_adcmp_acsc_field_t;
 
 typedef struct stc_mft_adcmp_acsd_field
 {
   __IO uint8_t AMOD        : 1;
   __IO uint8_t OCUS        : 1;
-	   uint8_t RESERVED1   : 2;
+       uint8_t RESERVED1   : 2;
   __IO uint8_t DE          : 1;
   __IO uint8_t PE          : 1;
   __IO uint8_t UE          : 1;
@@ -1255,7 +1255,7 @@ typedef struct stc_dacr_field
 {
   __IO  uint8_t DAE        : 1;
   __IO  uint8_t DRDY       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t DAC10      : 1;
   __IO  uint8_t DDAS       : 1;
   __IO  uint8_t RESERVED2  : 2;
@@ -1419,7 +1419,7 @@ typedef struct stc_mft_ppg_gatec0_field
 {
   __IO  uint8_t EDGE0      : 1;
   __IO  uint8_t STRG0      : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t EDGE2      : 1;
   __IO  uint8_t STRG2      : 1;
 } stc_mft_ppg_gatec0_field_t;
@@ -1472,7 +1472,7 @@ typedef struct stc_mft_ppg_gatec4_field
 {
   __IO  uint8_t EDGE4      : 1;
   __IO  uint8_t STRG4      : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t EDGE6      : 1;
   __IO  uint8_t STRG6      : 1;
 } stc_mft_ppg_gatec4_field_t;
@@ -1525,7 +1525,7 @@ typedef struct stc_mft_ppg_gatec8_field
 {
   __IO  uint8_t EDGE8      : 1;
   __IO  uint8_t STRG8      : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t EDGE10     : 1;
   __IO  uint8_t STRG10     : 1;
 } stc_mft_ppg_gatec8_field_t;
@@ -1578,7 +1578,7 @@ typedef struct stc_mft_ppg_gatec12_field
 {
   __IO  uint8_t EDGE12     : 1;
   __IO  uint8_t STRG12     : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t EDGE14     : 1;
   __IO  uint8_t STRG14     : 1;
 } stc_mft_ppg_gatec12_field_t;
@@ -1631,7 +1631,7 @@ typedef struct stc_mft_ppg_gatec16_field
 {
   __IO  uint8_t EDGE16     : 1;
   __IO  uint8_t STRG16     : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t EDGE18     : 1;
   __IO  uint8_t STRG18     : 1;
 } stc_mft_ppg_gatec16_field_t;
@@ -1684,7 +1684,7 @@ typedef struct stc_mft_ppg_gatec20_field
 {
   __IO  uint8_t EDGE20     : 1;
   __IO  uint8_t STRG20     : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t EDGE22     : 1;
   __IO  uint8_t STRG22     : 1;
 } stc_mft_ppg_gatec20_field_t;
@@ -1702,7 +1702,7 @@ typedef struct stc_bt_ppg_tmcr_field
   __IO uint16_t FMD0       : 1;
   __IO uint16_t FMD1       : 1;
   __IO uint16_t FMD2       : 1;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t EGS0       : 1;
   __IO uint16_t EGS1       : 1;
   __IO uint16_t PMSK       : 1;
@@ -1715,11 +1715,11 @@ typedef struct stc_bt_ppg_tmcr_field
 typedef struct stc_bt_ppg_stc_field
 {
   __IO  uint8_t UDIR       : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t TGIR       : 1;
-		uint8_t RESERVED2  : 1;
+        uint8_t RESERVED2  : 1;
   __IO  uint8_t UDIE       : 1;
-		uint8_t RESERVED3  : 1;
+        uint8_t RESERVED3  : 1;
   __IO  uint8_t TGIE       : 1;
 } stc_bt_ppg_stc_field_t;
 
@@ -1741,7 +1741,7 @@ typedef struct stc_bt_pwm_tmcr_field
   __IO uint16_t FMD0       : 1;
   __IO uint16_t FMD1       : 1;
   __IO uint16_t FMD2       : 1;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t EGS0       : 1;
   __IO uint16_t EGS1       : 1;
   __IO uint16_t PMSK       : 1;
@@ -1756,7 +1756,7 @@ typedef struct stc_bt_pwm_stc_field
   __IO  uint8_t UDIR       : 1;
   __IO  uint8_t DTIR       : 1;
   __IO  uint8_t TGIR       : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t UDIE       : 1;
   __IO  uint8_t DTIE       : 1;
   __IO  uint8_t TGIE       : 1;
@@ -1783,7 +1783,7 @@ typedef struct stc_bt_rt_tmcr_field
   __IO uint16_t T32        : 1;
   __IO uint16_t EGS0       : 1;
   __IO uint16_t EGS1       : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t CKS0       : 1;
   __IO uint16_t CKS1       : 1;
   __IO uint16_t CKS2       : 1;
@@ -1792,11 +1792,11 @@ typedef struct stc_bt_rt_tmcr_field
 typedef struct stc_bt_rt_stc_field
 {
   __IO  uint8_t UDIR       : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t TGIR       : 1;
-		uint8_t RESERVED2  : 1;
+        uint8_t RESERVED2  : 1;
   __IO  uint8_t UDIE       : 1;
-		uint8_t RESERVED3  : 1;
+        uint8_t RESERVED3  : 1;
   __IO  uint8_t TGIE       : 1;
 } stc_bt_rt_stc_field_t;
 
@@ -1813,10 +1813,10 @@ typedef struct stc_bt_rt_tmcr2_field
 /* BT_PWC_MODULE register bit fields */
 typedef struct stc_bt_pwc_tmcr_field
 {
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t CTEN       : 1;
   __IO uint16_t MDSE       : 1;
-	   uint16_t RESERVED2  : 1;
+       uint16_t RESERVED2  : 1;
   __IO uint16_t FMD0       : 1;
   __IO uint16_t FMD1       : 1;
   __IO uint16_t FMD2       : 1;
@@ -1824,7 +1824,7 @@ typedef struct stc_bt_pwc_tmcr_field
   __IO uint16_t EGS0       : 1;
   __IO uint16_t EGS1       : 1;
   __IO uint16_t EGS2       : 1;
-	   uint16_t RESERVED3  : 1;
+       uint16_t RESERVED3  : 1;
   __IO uint16_t CKS0       : 1;
   __IO uint16_t CKS1       : 1;
   __IO uint16_t CKS2       : 1;
@@ -1833,11 +1833,11 @@ typedef struct stc_bt_pwc_tmcr_field
 typedef struct stc_bt_pwc_stc_field
 {
   __IO  uint8_t OVIR       : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t EDIR       : 1;
-		uint8_t RESERVED2  : 1;
+        uint8_t RESERVED2  : 1;
   __IO  uint8_t OVIE       : 1;
-		uint8_t RESERVED3  : 1;
+        uint8_t RESERVED3  : 1;
   __IO  uint8_t EDIE       : 1;
   __IO  uint8_t ERR        : 1;
 } stc_bt_pwc_stc_field_t;
@@ -2037,7 +2037,7 @@ typedef struct stc_qprc_qecr_field
 typedef struct stc_qprc_nf_nfctla_field
 {
   __IO uint8_t AINNWS     : 3;
-	   uint8_t RESERVED1  : 1;
+       uint8_t RESERVED1  : 1;
   __IO uint8_t AINLV      : 1;
   __IO uint8_t AINMD      : 1;
 } stc_qprc_nf_nfctla_field_t;
@@ -2045,7 +2045,7 @@ typedef struct stc_qprc_nf_nfctla_field
 typedef struct stc_qprc_nf_nfctlb_field
 {
   __IO uint8_t BINNWS     : 3;
-	   uint8_t RESERVED1  : 1;
+       uint8_t RESERVED1  : 1;
   __IO uint8_t BINLV      : 1;
   __IO uint8_t BINMD      : 1;
 } stc_qprc_nf_nfctlb_field_t;
@@ -2053,7 +2053,7 @@ typedef struct stc_qprc_nf_nfctlb_field
 typedef struct stc_qprc_nf_nfrctlz_field
 {
   __IO uint8_t ZINNWS     : 3;
-	   uint8_t RESERVED1  : 1;
+       uint8_t RESERVED1  : 1;
   __IO uint8_t ZINLV      : 1;
   __IO uint8_t ZINMD      : 1;
 } stc_qprc_nf_nfrctlz_field_t;
@@ -2067,7 +2067,7 @@ typedef struct stc_adc_adsr_field
   __IO  uint8_t SCS        : 1;
   __IO  uint8_t PCS        : 1;
   __IO  uint8_t PCNS       : 1;
-		uint8_t RESERVED1  : 3;
+        uint8_t RESERVED1  : 3;
   __IO  uint8_t FDAS       : 1;
   __IO  uint8_t ADSTP      : 1;
 } stc_adc_adsr_field_t;
@@ -2078,7 +2078,7 @@ typedef struct stc_adc_adcr_field
   __IO  uint8_t CMPIE      : 1;
   __IO  uint8_t PCIE       : 1;
   __IO  uint8_t SCIE       : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t CMPIF      : 1;
   __IO  uint8_t PCIF       : 1;
   __IO  uint8_t SCIF       : 1;
@@ -2097,7 +2097,7 @@ typedef struct stc_adc_sccr_field
   __IO  uint8_t SSTR       : 1;
   __IO  uint8_t SHEN       : 1;
   __IO  uint8_t RPT        : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t SFCLR      : 1;
   __IO  uint8_t SOVR       : 1;
   __IO  uint8_t SFUL       : 1;
@@ -2111,12 +2111,12 @@ typedef struct stc_adc_scfd_field
   __IO uint32_t SC2        : 1;
   __IO uint32_t SC3        : 1;
   __IO uint32_t SC4        : 1;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t RS0        : 1;
   __IO uint32_t RS1        : 1;
-	   uint32_t RESERVED2  : 2;
+       uint32_t RESERVED2  : 2;
   __IO uint32_t INVL       : 1;
-	   uint32_t RESERVED3  : 7;
+       uint32_t RESERVED3  : 7;
   __IO uint32_t SD0        : 1;
   __IO uint32_t SD1        : 1;
   __IO uint32_t SD2        : 1;
@@ -2138,16 +2138,16 @@ typedef struct stc_adc_scfdl_field
   __IO uint16_t SC2        : 1;
   __IO uint16_t SC3        : 1;
   __IO uint16_t SC4        : 1;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t RS0        : 1;
   __IO uint16_t RS1        : 1;
-	   uint16_t RESERVED2  : 2;
+       uint16_t RESERVED2  : 2;
   __IO uint16_t INVL       : 1;
 } stc_adc_scfdl_field_t;
 
 typedef struct stc_adc_scfdh_field
 {
-	   uint16_t RESERVED1  : 4;
+       uint16_t RESERVED1  : 4;
   __IO uint16_t SD0        : 1;
   __IO uint16_t SD1        : 1;
   __IO uint16_t SD2        : 1;
@@ -2253,7 +2253,7 @@ typedef struct stc_adc_scis1_field
 typedef struct stc_adc_pfns_field
 {
   __IO  uint8_t PFS        : 2;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t TEST0      : 1;
   __IO  uint8_t TEST1      : 1;
 } stc_adc_pfns_field_t;
@@ -2277,13 +2277,13 @@ typedef struct stc_adc_pcfd_field
   __IO uint32_t PC2        : 1;
   __IO uint32_t PC3        : 1;
   __IO uint32_t PC4        : 1;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t RS0        : 1;
   __IO uint32_t RS1        : 1;
   __IO uint32_t RS2        : 1;
-	   uint32_t RESERVED2  : 1;
+       uint32_t RESERVED2  : 1;
   __IO uint32_t INVL       : 1;
-	   uint32_t RESERVED3  : 7;
+       uint32_t RESERVED3  : 7;
   __IO uint32_t PD0        : 1;
   __IO uint32_t PD1        : 1;
   __IO uint32_t PD2        : 1;
@@ -2305,17 +2305,17 @@ typedef struct stc_adc_pcfdl_field
   __IO uint16_t PC2        : 1;
   __IO uint16_t PC3        : 1;
   __IO uint16_t PC4        : 1;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t RS0        : 1;
   __IO uint16_t RS1        : 1;
   __IO uint16_t RS2        : 1;
-	   uint16_t RESERVED2  : 1;
+       uint16_t RESERVED2  : 1;
   __IO uint16_t INVL       : 1;
 } stc_adc_pcfdl_field_t;
 
 typedef struct stc_adc_pcfdh_field
 {
-	   uint16_t RESERVED1  : 4;
+       uint16_t RESERVED1  : 4;
   __IO uint16_t PD0        : 1;
   __IO uint16_t PD1        : 1;
   __IO uint16_t PD2        : 1;
@@ -2346,7 +2346,7 @@ typedef struct stc_adc_cmpcr_field
 
 typedef struct stc_adc_cmpd_field
 {
-	   uint16_t RESERVED1  : 6;
+       uint16_t RESERVED1  : 6;
   __IO uint16_t CMAD2      : 1;
   __IO uint16_t CMAD3      : 1;
   __IO uint16_t CMAD4      : 1;
@@ -2512,13 +2512,13 @@ typedef struct stc_adc_adcen_field
 
 typedef struct stc_adc_wcmpdh_field
 {
-		uint16_t RESERVED   : 6;
+        uint16_t RESERVED   : 6;
   __IO  uint16_t CMHD       : 10;
 } stc_adc_wcmpdh_field_t;
 
 typedef struct stc_adc_wcmpcr_field
 {
-		uint8_t  RESERVED   : 2;
+        uint8_t  RESERVED   : 2;
   __IO  uint8_t  RCOE       : 1;
   __IO  uint8_t  RCOIE      : 1;
   __IO  uint8_t  RCOIRRS    : 1;
@@ -2527,7 +2527,7 @@ typedef struct stc_adc_wcmpcr_field
 
 typedef struct stc_adc_wcmpdl_field
 {
-		uint16_t RESERVED   : 6;
+        uint16_t RESERVED   : 6;
   __IO  uint16_t CMLD       : 10;
 } stc_adc_wcmpdl_field_t;
 
@@ -2541,13 +2541,13 @@ typedef struct stc_adc_wcmpsr_field
 typedef struct stc_adc_wcmrcot_field
 {
   __IO  uint32_t RCOOF      : 1;
-		uint32_t RESERVED   : 31;
+        uint32_t RESERVED   : 31;
 } stc_adc_wcmrcot_field_t;
 
 typedef struct stc_adc_wcmrcif_field
 {
   __IO  uint32_t RCINT      : 1;
-		uint32_t RESERVED   : 31;
+        uint32_t RESERVED   : 31;
 } stc_adc_wcmrcif_field_t;
 
 /******************************************************************************
@@ -2820,56 +2820,56 @@ typedef struct stc_intreq_oddpks_field
 typedef struct stc_intreq_irq003sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq003sel_field_t;
 
 typedef struct stc_intreq_irq004sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq004sel_field_t;
 
 typedef struct stc_intreq_irq005sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq005sel_field_t;
 
 typedef struct stc_intreq_irq006sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq006sel_field_t;
 
 typedef struct stc_intreq_irq007sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq007sel_field_t;
 
 typedef struct stc_intreq_irq008sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq008sel_field_t;
 
 typedef struct stc_intreq_irq009sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq009sel_field_t;
 
 typedef struct stc_intreq_irq010sel_field
 {
   __IO uint32_t SELIRQ     : 8;
-	   uint32_t RESERVED8  : 8;
+       uint32_t RESERVED8  : 8;
   __IO uint32_t SELBIT     : 8;
 } stc_intreq_irq010sel_field_t;
 
@@ -3729,9 +3729,9 @@ typedef struct stc_irqsel_field
 typedef struct stc_dstc_hwdesp_field
 {
   __IO uint32_t CHANNEL    : 8;
-	   uint32_t RESERVED1  : 8;
+       uint32_t RESERVED1  : 8;
   __IO uint32_t HWDESP     : 14;
-	   uint32_t RESERVED2  : 2;
+       uint32_t RESERVED2  : 2;
 } stc_dstc_hwdesp_field_t;
 
 typedef struct stc_dstc_cfg_field
@@ -3741,7 +3741,7 @@ typedef struct stc_dstc_cfg_field
   __IO uint8_t  RBDIS      : 1;
   __IO uint8_t  ESTE       : 1;
   __IO uint8_t  SWPR       : 3;
-	   uint8_t  RESERVED   : 1;
+       uint8_t  RESERVED   : 1;
 } stc_dstc_cfg_field_t;
 
 typedef struct stc_dstc_swtr_field
@@ -3756,12 +3756,12 @@ typedef struct stc_dstc_moners_field
   __IO uint32_t EST        : 3;
   __IO uint32_t DER        : 1;
   __IO uint32_t ESTOP      : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t EHS        : 1;
   __IO uint32_t RESERVED2  : 1;
   __IO uint32_t ECH        : 8;
   __IO uint32_t EDESP      : 14;
-	   uint32_t RESERVED3  : 2;
+       uint32_t RESERVED3  : 2;
 } stc_dstc_moners_field_t;
 
 /******************************************************************************
@@ -3905,7 +3905,7 @@ typedef struct stc_gpio_pfr8_field
 typedef struct stc_gpio_pfre_field
 {
   __IO uint32_t PE0        : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t PE2        : 1;
   __IO uint32_t PE3        : 1;
 } stc_gpio_pfre_field_t;
@@ -4047,7 +4047,7 @@ typedef struct stc_gpio_pcr8_field
 typedef struct stc_gpio_pcre_field
 {
   __IO uint32_t PE0        : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t PE2        : 1;
   __IO uint32_t PE3        : 1;
 } stc_gpio_pcre_field_t;
@@ -4190,7 +4190,7 @@ typedef struct stc_gpio_ddr8_field
 typedef struct stc_gpio_ddre_field
 {
   __IO uint32_t PE0        : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t PE2        : 1;
   __IO uint32_t PE3        : 1;
 } stc_gpio_ddre_field_t;
@@ -4333,7 +4333,7 @@ typedef struct stc_gpio_pdir8_field
 typedef struct stc_gpio_pdire_field
 {
   __IO uint32_t PE0        : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t PE2        : 1;
   __IO uint32_t PE3        : 1;
 } stc_gpio_pdire_field_t;
@@ -4476,7 +4476,7 @@ typedef struct stc_gpio_pdor8_field
 typedef struct stc_gpio_pdore_field
 {
   __IO uint32_t PE0        : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t PE2        : 1;
   __IO uint32_t PE3        : 1;
 } stc_gpio_pdore_field_t;
@@ -4519,7 +4519,7 @@ typedef struct stc_gpio_ade_field
 
 typedef struct stc_gpio_spsr_field
 {
-	   uint32_t RESERVED0  : 2;
+       uint32_t RESERVED0  : 2;
   __IO uint32_t MAINXC     : 2;
   __IO uint32_t USB0C      : 1;
   __IO uint32_t USB1C      : 1;
@@ -4529,17 +4529,17 @@ typedef struct stc_gpio_epfr00_field
 {
   __IO uint32_t NMIS       : 1;
   __IO uint32_t CROUTE     : 2;
-	   uint32_t RESERVED3  : 1;
+       uint32_t RESERVED3  : 1;
   __IO uint32_t RTCCOE     : 2;
   __IO uint32_t SUBOUTE    : 2;
-	   uint32_t RESERVED8  : 1;
+       uint32_t RESERVED8  : 1;
   __IO uint32_t USBP0E     : 1;
-	   uint32_t RESERVED10 : 3;
+       uint32_t RESERVED10 : 3;
   __IO uint32_t USBP1E     : 1;
-	   uint32_t RESERVED14 : 2;
+       uint32_t RESERVED14 : 2;
   __IO uint32_t JTAGEN0B   : 1;
   __IO uint32_t JTAGEN1S   : 1;
-	   uint32_t RESERVED18 : 6;
+       uint32_t RESERVED18 : 6;
   __IO uint32_t TRC0E      : 1;
   __IO uint32_t TRC1E      : 1;
 } stc_gpio_epfr00_field_t;
@@ -4553,7 +4553,7 @@ typedef struct stc_gpio_epfr01_field
   __IO uint32_t RTO04E     : 2;
   __IO uint32_t RTO05E     : 2;
   __IO uint32_t DTTI0C     : 1;
-	   uint32_t RESERVED13 : 3;
+       uint32_t RESERVED13 : 3;
   __IO uint32_t DTTI0S     : 2;
   __IO uint32_t FRCK0S     : 2;
   __IO uint32_t IC00S      : 3;
@@ -4571,7 +4571,7 @@ typedef struct stc_gpio_epfr02_field
   __IO uint32_t RTO14E     : 2;
   __IO uint32_t RTO15E     : 2;
   __IO uint32_t DTTI1C     : 1;
-	   uint32_t RESERVED13 : 3;
+       uint32_t RESERVED13 : 3;
   __IO uint32_t DTTI1S     : 2;
   __IO uint32_t FRCK1S     : 2;
   __IO uint32_t IC10S      : 3;
@@ -4589,7 +4589,7 @@ typedef struct stc_gpio_epfr03_field
   __IO uint32_t RTO24E     : 2;
   __IO uint32_t RTO25E     : 2;
   __IO uint32_t DTTI2C     : 1;
-	   uint32_t RESERVED13 : 3;
+       uint32_t RESERVED13 : 3;
   __IO uint32_t DTTI2S     : 2;
   __IO uint32_t FRCK2S     : 2;
   __IO uint32_t IC20S      : 3;
@@ -4600,17 +4600,17 @@ typedef struct stc_gpio_epfr03_field
 
 typedef struct stc_gpio_epfr04_field
 {
-	   uint32_t RESERVED0  : 2;
+       uint32_t RESERVED0  : 2;
   __IO uint32_t TIOA0E     : 2;
   __IO uint32_t TIOB0S     : 3;
-	   uint32_t RESERVED7  : 1;
+       uint32_t RESERVED7  : 1;
   __IO uint32_t TIOA1S     : 2;
   __IO uint32_t TIOA1E     : 2;
   __IO uint32_t TIOB1S     : 2;
-	   uint32_t RESERVED14 : 4;
+       uint32_t RESERVED14 : 4;
   __IO uint32_t TIOA2E     : 2;
   __IO uint32_t TIOB2S     : 2;
-	   uint32_t RESERVED22 : 2;
+       uint32_t RESERVED22 : 2;
   __IO uint32_t TIOA3S     : 2;
   __IO uint32_t TIOA3E     : 2;
   __IO uint32_t TIOB3S     : 2;
@@ -4618,17 +4618,17 @@ typedef struct stc_gpio_epfr04_field
 
 typedef struct stc_gpio_epfr05_field
 {
-	   uint32_t RESERVED0  : 2;
+       uint32_t RESERVED0  : 2;
   __IO uint32_t TIOA4E     : 2;
   __IO uint32_t TIOB4S     : 2;
-	   uint32_t RESERVED6  : 2;
+       uint32_t RESERVED6  : 2;
   __IO uint32_t TIOA5S     : 2;
   __IO uint32_t TIOA5E     : 2;
   __IO uint32_t TIOB5S     : 2;
-	   uint32_t RESERVED14 : 4;
+       uint32_t RESERVED14 : 4;
   __IO uint32_t TIOA6E     : 2;
   __IO uint32_t TIOB6S     : 2;
-	   uint32_t RESERVED22 : 2;
+       uint32_t RESERVED22 : 2;
   __IO uint32_t TIOA7S     : 2;
   __IO uint32_t TIOA7E     : 2;
   __IO uint32_t TIOB7S     : 2;
@@ -4656,7 +4656,7 @@ typedef struct stc_gpio_epfr06_field
 
 typedef struct stc_gpio_epfr07_field
 {
-	   uint32_t RESERVED0  : 4;
+       uint32_t RESERVED0  : 4;
   __IO uint32_t SIN0S      : 2;
   __IO uint32_t SOT0B      : 2;
   __IO uint32_t SCK0B      : 2;
@@ -4776,17 +4776,17 @@ typedef struct stc_gpio_epfr11_field
 
 typedef struct stc_gpio_epfr12_field
 {
-	   uint32_t RESERVED0  : 2;
+       uint32_t RESERVED0  : 2;
   __IO uint32_t TIOA8E     : 2;
   __IO uint32_t TIOB8S     : 2;
-	   uint32_t RESERVED6  : 2;
+       uint32_t RESERVED6  : 2;
   __IO uint32_t TIOA9S     : 2;
   __IO uint32_t TIOA9E     : 2;
   __IO uint32_t TIOB9S     : 2;
-	   uint32_t RESERVED14 : 4;
+       uint32_t RESERVED14 : 4;
   __IO uint32_t TIOA10E    : 2;
   __IO uint32_t TIOB10S    : 2;
-	   uint32_t RESERVED22 : 2;
+       uint32_t RESERVED22 : 2;
   __IO uint32_t TIOA11S    : 2;
   __IO uint32_t TIOA11E    : 2;
   __IO uint32_t TIOB11S    : 2;
@@ -4794,17 +4794,17 @@ typedef struct stc_gpio_epfr12_field
 
 typedef struct stc_gpio_epfr13_field
 {
-	   uint32_t RESERVED0  : 2;
+       uint32_t RESERVED0  : 2;
   __IO uint32_t TIOA12E    : 2;
   __IO uint32_t TIOB12S    : 2;
-	   uint32_t RESERVED6  : 2;
+       uint32_t RESERVED6  : 2;
   __IO uint32_t TIOA13S    : 2;
   __IO uint32_t TIOA13E    : 2;
   __IO uint32_t TIOB13S    : 2;
-	   uint32_t RESERVED14 : 4;
+       uint32_t RESERVED14 : 4;
   __IO uint32_t TIOA14E    : 2;
   __IO uint32_t TIOB14S    : 2;
-	   uint32_t RESERVED22 : 2;
+       uint32_t RESERVED22 : 2;
   __IO uint32_t TIOA15S    : 2;
   __IO uint32_t TIOA15E    : 2;
   __IO uint32_t TIOB15S    : 2;
@@ -4815,7 +4815,7 @@ typedef struct stc_gpio_epfr14_field
   __IO uint32_t QAIN2S     : 2;
   __IO uint32_t QBIN2S     : 2;
   __IO uint32_t QZIN2S     : 2;
-	   uint32_t RESERVED6  :12;
+       uint32_t RESERVED6  :12;
   __IO uint32_t E_TD0E     : 1;
   __IO uint32_t E_TD1E     : 1;
   __IO uint32_t E_TE0E     : 1;
@@ -4871,7 +4871,7 @@ typedef struct stc_gpio_epfr16_field
 
 typedef struct stc_gpio_epfr17_field
 {
-	   uint32_t RESERVED0  : 4;
+       uint32_t RESERVED0  : 4;
   __IO uint32_t SIN12S     : 2;
   __IO uint32_t SOT12B     : 2;
   __IO uint32_t SCK12B     : 2;
@@ -4888,11 +4888,11 @@ typedef struct stc_gpio_epfr17_field
 
 typedef struct stc_gpio_epfr18_field
 {
-	   uint32_t RESERVED0  : 4;
+       uint32_t RESERVED0  : 4;
   __IO uint32_t QAIN3S     : 2;
   __IO uint32_t QBIN3S     : 2;
   __IO uint32_t QZIN3S     : 2;
-	   uint32_t RESERVED10 : 4;
+       uint32_t RESERVED10 : 4;
   __IO uint32_t SDCLKE     : 2;
   __IO uint32_t SDCMDB     : 2;
   __IO uint32_t SDDATA0B   : 2;
@@ -5070,7 +5070,7 @@ typedef struct stc_gpio_pzr8_field
 typedef struct stc_gpio_pzre_field
 {
   __IO uint32_t PE0        : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t PE2        : 1;
   __IO uint32_t PE3        : 1;
 } stc_gpio_pzre_field_t;
@@ -5082,38 +5082,38 @@ typedef struct stc_gpio_pzre_field
 typedef struct stc_lvd_lvd_ctl_field
 {
   union {
-	struct {
-			uint8_t RESERVED1  : 2;
-	  __IO  uint8_t SVHI       : 4;
-			uint8_t RESERVED2  : 1;
-	  __IO  uint8_t LVDIE      : 1;
-	};
-	struct {
-			uint8_t RESERVED3  : 2;
-	  __IO  uint8_t SVHI0      : 1;
-	  __IO  uint8_t SVHI1      : 1;
-	  __IO  uint8_t SVHI2      : 1;
-	  __IO  uint8_t SVHI3      : 1;
-			uint8_t RESERVED4  : 2;
-	};
+    struct {
+            uint8_t RESERVED1  : 2;
+      __IO  uint8_t SVHI       : 4;
+            uint8_t RESERVED2  : 1;
+      __IO  uint8_t LVDIE      : 1;
+    };
+    struct {
+            uint8_t RESERVED3  : 2;
+      __IO  uint8_t SVHI0      : 1;
+      __IO  uint8_t SVHI1      : 1;
+      __IO  uint8_t SVHI2      : 1;
+      __IO  uint8_t SVHI3      : 1;
+            uint8_t RESERVED4  : 2;
+    };
   };
 } stc_lvd_lvd_ctl_field_t;
 
 typedef struct stc_lvd_lvd_str_field
 {
-		uint8_t RESERVED1  : 7;
+        uint8_t RESERVED1  : 7;
   __IO  uint8_t LVDIR      : 1;
 } stc_lvd_lvd_str_field_t;
 
 typedef struct stc_lvd_lvd_clr_field
 {
-		uint8_t RESERVED1  : 7;
+        uint8_t RESERVED1  : 7;
   __IO  uint8_t LVDCL      : 1;
 } stc_lvd_lvd_clr_field_t;
 
 typedef struct stc_lvd_lvd_str2_field
 {
-		uint8_t RESERVED1  : 6;
+        uint8_t RESERVED1  : 6;
   __IO  uint8_t LVDRRDY    : 1;
   __IO  uint8_t LVDIRDY    : 1;
 } stc_lvd_lvd_str2_field_t;
@@ -5154,7 +5154,7 @@ typedef struct stc_ds_wier_field
 {
   __IO uint16_t WRTCE      : 1;
   __IO uint16_t WLVDE      : 1;
-	   uint16_t RESERVED2  : 1;
+       uint16_t RESERVED2  : 1;
   __IO uint16_t WUI1E      : 1;
   __IO uint16_t WUI2E      : 1;
   __IO uint16_t WUI3E      : 1;
@@ -5361,140 +5361,140 @@ typedef struct stc_canpre_canpre_field
 typedef struct stc_mfs_smr_field
 {
   union {
-	struct {
-	  __IO  uint8_t SOE        : 1; /* for UART/CSIO/LIN */
-			uint8_t RESERVED1  : 1;
-	  __IO  uint8_t BDS        : 1; /* for UART/CSIO */
-	  __IO  uint8_t SBL        : 1; /* for UART/LIN */
-	  __IO  uint8_t WUCR       : 1; /* for UART/LIN */
-	  __IO  uint8_t MD         : 3; /* for UART/CSIO/LIN/I2C */
-	};
-	struct {
-			uint8_t RESERVED2  : 1;
-	  __IO  uint8_t SCKE       : 1; /* for CSIO */
-			uint8_t RESERVED3  : 1;
-	  __IO  uint8_t SCINV      : 1; /* for CSIO */
-			uint8_t RESERVED4  : 4;
-	};
-	struct {
-			uint8_t RESERVED5  : 2;
-	  __IO  uint8_t TIE        : 1; /* for I2C */
-	  __IO  uint8_t RIE        : 1; /* for I2C */
-			uint8_t RESERVED6  : 4;
-	};
+    struct {
+      __IO  uint8_t SOE        : 1; /* for UART/CSIO/LIN */
+            uint8_t RESERVED1  : 1;
+      __IO  uint8_t BDS        : 1; /* for UART/CSIO */
+      __IO  uint8_t SBL        : 1; /* for UART/LIN */
+      __IO  uint8_t WUCR       : 1; /* for UART/LIN */
+      __IO  uint8_t MD         : 3; /* for UART/CSIO/LIN/I2C */
+    };
+    struct {
+            uint8_t RESERVED2  : 1;
+      __IO  uint8_t SCKE       : 1; /* for CSIO */
+            uint8_t RESERVED3  : 1;
+      __IO  uint8_t SCINV      : 1; /* for CSIO */
+            uint8_t RESERVED4  : 4;
+    };
+    struct {
+            uint8_t RESERVED5  : 2;
+      __IO  uint8_t TIE        : 1; /* for I2C */
+      __IO  uint8_t RIE        : 1; /* for I2C */
+            uint8_t RESERVED6  : 4;
+    };
   };
 } stc_mfs_smr_field_t;
 
 typedef struct stc_mfs_scr_field
 {
   union {
-	struct {
-	  __IO  uint8_t TXE        : 1; /* for UART/CSIO/LIN */
-	  __IO  uint8_t RXE        : 1; /* for UART/CSIO/LIN */
-	  __IO  uint8_t TBIE       : 1; /* for UART/CSIO/LIN */
-	  __IO  uint8_t TIE        : 1; /* for UART/CSIO/LIN */
-	  __IO  uint8_t RIE        : 1; /* for UART/CSIO/LIN */
-			uint8_t RESERVED1  : 2;
-	  __IO  uint8_t UPCL       : 1; /* for UART/CSIO/LIN */
-	};
-	struct {
-			uint8_t RESERVED2  : 5;
-	  __IO  uint8_t SPI        : 1; /* for CSIO */
-	  __IO  uint8_t MS         : 1; /* for CSIO/LIN */
-			uint8_t RESERVED3  : 1;
-	};
-	struct {
-			uint8_t RESERVED4  : 5;
-	  __IO  uint8_t LBR        : 1; /* for LIN */
-			uint8_t RESERVED5  : 2;
-	};
+    struct {
+      __IO  uint8_t TXE        : 1; /* for UART/CSIO/LIN */
+      __IO  uint8_t RXE        : 1; /* for UART/CSIO/LIN */
+      __IO  uint8_t TBIE       : 1; /* for UART/CSIO/LIN */
+      __IO  uint8_t TIE        : 1; /* for UART/CSIO/LIN */
+      __IO  uint8_t RIE        : 1; /* for UART/CSIO/LIN */
+            uint8_t RESERVED1  : 2;
+      __IO  uint8_t UPCL       : 1; /* for UART/CSIO/LIN */
+    };
+    struct {
+            uint8_t RESERVED2  : 5;
+      __IO  uint8_t SPI        : 1; /* for CSIO */
+      __IO  uint8_t MS         : 1; /* for CSIO/LIN */
+            uint8_t RESERVED3  : 1;
+    };
+    struct {
+            uint8_t RESERVED4  : 5;
+      __IO  uint8_t LBR        : 1; /* for LIN */
+            uint8_t RESERVED5  : 2;
+    };
   };
 } stc_mfs_scr_field_t;
 
 typedef struct stc_mfs_escr_field
 {
   union {
-	struct {
-	  __IO  uint8_t L          : 3; /* for UART/CSIO */
-	  __IO  uint8_t P          : 1; /* for UART */
-	  __IO  uint8_t PEN        : 1; /* for UART */
-	  __IO  uint8_t INV        : 1; /* for UART */
-	  __IO  uint8_t ESBL       : 1; /* for UART/LIN */
-	  __IO  uint8_t FLWEN      : 1; /* for UART */
-	};
-	struct {
-	  __IO  uint8_t L0         : 1; /* for UART/CSIO */
-	  __IO  uint8_t L1         : 1; /* for UART/CSIO */
-	  __IO  uint8_t L2         : 1; /* for UART/CSIO */
-	  __IO  uint8_t WT         : 2; /* for CSIO */
-			uint8_t RESERVED2  : 1;
-	  __IO  uint8_t L3         : 1; /* for CSIO */
-	  __IO  uint8_t SOP        : 1; /* for CSIO */
-	};
-	struct {
-			uint8_t RESERVED3  : 3;
-	  __IO  uint8_t WT0        : 1; /* for CSIO */
-	  __IO  uint8_t WT1        : 1; /* for CSIO */
-			uint8_t RESERVED4  : 3;
-	};
-	struct {
-	  __IO  uint8_t DEL        : 2; /* for LIN */
-	  __IO  uint8_t LBL        : 2; /* for LIN */
-	  __IO  uint8_t LBIE       : 1; /* for LIN */
-			uint8_t RESERVED5  : 3;
-	};
-	struct {
-	  __IO  uint8_t DEL0       : 1; /* for LIN */
-	  __IO  uint8_t DEL1       : 1; /* for LIN */
-	  __IO  uint8_t LBL0       : 1; /* for LIN */
-	  __IO  uint8_t LBL1       : 1; /* for LIN */
-			uint8_t RESERVED6  : 4;
-	};
+    struct {
+      __IO  uint8_t L          : 3; /* for UART/CSIO */
+      __IO  uint8_t P          : 1; /* for UART */
+      __IO  uint8_t PEN        : 1; /* for UART */
+      __IO  uint8_t INV        : 1; /* for UART */
+      __IO  uint8_t ESBL       : 1; /* for UART/LIN */
+      __IO  uint8_t FLWEN      : 1; /* for UART */
+    };
+    struct {
+      __IO  uint8_t L0         : 1; /* for UART/CSIO */
+      __IO  uint8_t L1         : 1; /* for UART/CSIO */
+      __IO  uint8_t L2         : 1; /* for UART/CSIO */
+      __IO  uint8_t WT         : 2; /* for CSIO */
+            uint8_t RESERVED2  : 1;
+      __IO  uint8_t L3         : 1; /* for CSIO */
+      __IO  uint8_t SOP        : 1; /* for CSIO */
+    };
+    struct {
+            uint8_t RESERVED3  : 3;
+      __IO  uint8_t WT0        : 1; /* for CSIO */
+      __IO  uint8_t WT1        : 1; /* for CSIO */
+            uint8_t RESERVED4  : 3;
+    };
+    struct {
+      __IO  uint8_t DEL        : 2; /* for LIN */
+      __IO  uint8_t LBL        : 2; /* for LIN */
+      __IO  uint8_t LBIE       : 1; /* for LIN */
+            uint8_t RESERVED5  : 3;
+    };
+    struct {
+      __IO  uint8_t DEL0       : 1; /* for LIN */
+      __IO  uint8_t DEL1       : 1; /* for LIN */
+      __IO  uint8_t LBL0       : 1; /* for LIN */
+      __IO  uint8_t LBL1       : 1; /* for LIN */
+            uint8_t RESERVED6  : 4;
+    };
   };
 } stc_mfs_escr_field_t;
 
 typedef struct stc_mfs_ssr_field
 {
   union {
-	struct {
-	  __IO  uint8_t TBI        : 1; /* for UART/CSIO/LIN/I2C */
-	  __IO  uint8_t TDRE       : 1; /* for UART/CSIO/LIN/I2C */
-	  __IO  uint8_t RDRF       : 1; /* for UART/CSIO/LIN/I2C */
-	  __IO  uint8_t ORE        : 1; /* for UART/CSIO/LIN/I2C */
-	  __IO  uint8_t FRE        : 1; /* for UART/LIN */
-	  __IO  uint8_t PE         : 1; /* for UART */
-			uint8_t RESERVED1  : 1;
-	  __IO  uint8_t REC        : 1; /* for UART/CSIO/LIN/I2C */
-	};
-	struct {
-			uint8_t RESERVED2  : 4;
-	  __IO  uint8_t AWC        : 1; /* for CSIO */
-			uint8_t RESERVED3  : 3;
-	};
-	struct {
-			uint8_t RESERVED4  : 5;
-	  __IO  uint8_t LBD        : 1; /* for LIN */
-			uint8_t RESERVED5  : 2;
-	};
-	struct {
-			uint8_t RESERVED6  : 4;
-	  __IO  uint8_t TBIE       : 1; /* for I2C */
-	  __IO  uint8_t DMA        : 1; /* for I2C */
-	  __IO  uint8_t TSET       : 1; /* for I2C */
-			uint8_t RESERVED7  : 1;
-	};
+    struct {
+      __IO  uint8_t TBI        : 1; /* for UART/CSIO/LIN/I2C */
+      __IO  uint8_t TDRE       : 1; /* for UART/CSIO/LIN/I2C */
+      __IO  uint8_t RDRF       : 1; /* for UART/CSIO/LIN/I2C */
+      __IO  uint8_t ORE        : 1; /* for UART/CSIO/LIN/I2C */
+      __IO  uint8_t FRE        : 1; /* for UART/LIN */
+      __IO  uint8_t PE         : 1; /* for UART */
+            uint8_t RESERVED1  : 1;
+      __IO  uint8_t REC        : 1; /* for UART/CSIO/LIN/I2C */
+    };
+    struct {
+            uint8_t RESERVED2  : 4;
+      __IO  uint8_t AWC        : 1; /* for CSIO */
+            uint8_t RESERVED3  : 3;
+    };
+    struct {
+            uint8_t RESERVED4  : 5;
+      __IO  uint8_t LBD        : 1; /* for LIN */
+            uint8_t RESERVED5  : 2;
+    };
+    struct {
+            uint8_t RESERVED6  : 4;
+      __IO  uint8_t TBIE       : 1; /* for I2C */
+      __IO  uint8_t DMA        : 1; /* for I2C */
+      __IO  uint8_t TSET       : 1; /* for I2C */
+            uint8_t RESERVED7  : 1;
+    };
   };
 } stc_mfs_ssr_field_t;
 
 typedef struct stc_mfs_bgr_field
 {
-	   uint16_t RESERVED1  : 15;
+       uint16_t RESERVED1  : 15;
   __IO uint16_t EXT        : 1;
 } stc_mfs_bgr_field_t;
 
 typedef struct stc_mfs_bgr1_field
 {
-		uint8_t RESERVED1  : 7;
+        uint8_t RESERVED1  : 7;
   __IO  uint8_t EXT        : 1;
 } stc_mfs_bgr1_field_t;
 
@@ -5507,13 +5507,13 @@ typedef struct stc_mfs_fcr_field
   __IO uint16_t FSET       : 1;
   __IO uint16_t FLD        : 1;
   __IO uint16_t FLST       : 1;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t FSEL       : 1;
   __IO uint16_t FTIE       : 1;
   __IO uint16_t FDRQ       : 1;
   __IO uint16_t FRIIE      : 1;
   __IO uint16_t FLSTE      : 1;
-	   uint16_t RESERVED2  : 1;
+       uint16_t RESERVED2  : 1;
   __IO uint16_t FTST0      : 1;
   __IO uint16_t FTST1      : 1;
 } stc_mfs_fcr_field_t;
@@ -5527,7 +5527,7 @@ typedef struct stc_mfs_fcr0_field
   __IO  uint8_t FSET       : 1;
   __IO  uint8_t FLD        : 1;
   __IO  uint8_t FLST       : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
 } stc_mfs_fcr0_field_t;
 
 typedef struct stc_mfs_fcr1_field
@@ -5537,7 +5537,7 @@ typedef struct stc_mfs_fcr1_field
   __IO  uint8_t FDRQ       : 1;
   __IO  uint8_t FRIIE      : 1;
   __IO  uint8_t FLSTE      : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t FTST0      : 1;
   __IO  uint8_t FTST1      : 1;
 } stc_mfs_fcr1_field_t;
@@ -5592,16 +5592,16 @@ typedef struct stc_mfs_fbyte2_field
 /* MFS_MODULE(UART) register bit fields */
 typedef struct stc_mfs_uart_rdr_field
 {
-	   uint16_t RESERVED1  : 8;
+       uint16_t RESERVED1  : 8;
   __IO uint16_t AD         : 1;
-	   uint16_t RESERVED2  : 7;
+       uint16_t RESERVED2  : 7;
 } stc_mfs_uart_rdr_field_t;
 
 typedef struct stc_mfs_uart_tdr_field
 {
-	   uint16_t RESERVED1  : 8;
+       uint16_t RESERVED1  : 8;
   __IO uint16_t AD         : 1;
-	   uint16_t RESERVED2  : 7;
+       uint16_t RESERVED2  : 7;
 } stc_mfs_uart_tdr_field_t;
 
 /******************************************************************************
@@ -5700,22 +5700,22 @@ typedef struct stc_mfs_csio_sacsr_field
 {
   __IO uint16_t TMRE       : 1;
   __IO uint16_t TDIV       : 4;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t TSYNE      : 1;
   __IO uint16_t TINTE      : 1;
   __IO uint16_t TINT       : 1;
-	   uint16_t RESERVED2  : 2;
+       uint16_t RESERVED2  : 2;
   __IO uint16_t CSE        : 1;
   __IO uint16_t CSEIE      : 1;
   __IO uint16_t TBEEN      : 1;
-	   uint16_t RESERVED3  : 2;
+       uint16_t RESERVED3  : 2;
 } stc_mfs_csio_sacsr_field_t;
 
 typedef struct stc_mfs_csio_sacsr0_field
 {
   __IO  uint8_t TMRE       : 1;
   __IO  uint8_t TDIV       : 4;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t TSYNE      : 1;
   __IO  uint8_t TINTE      : 1;
 } stc_mfs_csio_sacsr0_field_t;
@@ -5723,11 +5723,11 @@ typedef struct stc_mfs_csio_sacsr0_field
 typedef struct stc_mfs_csio_sacsr1_field
 {
   __IO  uint8_t TINT       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t CSE        : 1;
   __IO  uint8_t CSEIE      : 1;
   __IO  uint8_t TBEEN      : 1;
-		uint8_t RESERVED2  : 2;
+        uint8_t RESERVED2  : 2;
 } stc_mfs_csio_sacsr1_field_t;
 
 typedef struct stc_mfs_csio_stmr_field
@@ -5822,11 +5822,11 @@ typedef struct stc_mfs_csio_scscr_field
 {
   __IO uint16_t CSOE       : 1;
   __IO uint16_t CSEN0      : 1;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t CSLVL      : 1;
   __IO uint16_t CDIV       : 3;
   __IO uint16_t SCAM       : 1;
-	   uint16_t RESERVED2  : 6;
+       uint16_t RESERVED2  : 6;
 } stc_mfs_csio_scscr_field_t;
 
 /******************************************************************************
@@ -5860,47 +5860,47 @@ typedef struct stc_mfs_i2c_ibsr_field
 typedef struct stc_mfs_i2c_isba_field
 {
   union {
-	struct {
-	  __IO  uint8_t SA         : 7;
-	  __IO  uint8_t SAEN       : 1;
-	};
-	struct {
-	  __IO  uint8_t SA0        : 1;
-	  __IO  uint8_t SA1        : 1;
-	  __IO  uint8_t SA2        : 1;
-	  __IO  uint8_t SA3        : 1;
-	  __IO  uint8_t SA4        : 1;
-	  __IO  uint8_t SA5        : 1;
-	  __IO  uint8_t SA6        : 1;
-			uint8_t RESERVED1  : 1;
-	};
+    struct {
+      __IO  uint8_t SA         : 7;
+      __IO  uint8_t SAEN       : 1;
+    };
+    struct {
+      __IO  uint8_t SA0        : 1;
+      __IO  uint8_t SA1        : 1;
+      __IO  uint8_t SA2        : 1;
+      __IO  uint8_t SA3        : 1;
+      __IO  uint8_t SA4        : 1;
+      __IO  uint8_t SA5        : 1;
+      __IO  uint8_t SA6        : 1;
+            uint8_t RESERVED1  : 1;
+    };
   };
 } stc_mfs_i2c_isba_field_t;
 
 typedef struct stc_mfs_i2c_ismk_field
 {
   union {
-	struct {
-	  __IO  uint8_t SM         : 7;
-	  __IO  uint8_t EN         : 1;
-	};
-	struct {
-	  __IO  uint8_t SM0        : 1;
-	  __IO  uint8_t SM1        : 1;
-	  __IO  uint8_t SM2        : 1;
-	  __IO  uint8_t SM3        : 1;
-	  __IO  uint8_t SM4        : 1;
-	  __IO  uint8_t SM5        : 1;
-	  __IO  uint8_t SM6        : 1;
-			uint8_t RESERVED1  : 1;
-	};
+    struct {
+      __IO  uint8_t SM         : 7;
+      __IO  uint8_t EN         : 1;
+    };
+    struct {
+      __IO  uint8_t SM0        : 1;
+      __IO  uint8_t SM1        : 1;
+      __IO  uint8_t SM2        : 1;
+      __IO  uint8_t SM3        : 1;
+      __IO  uint8_t SM4        : 1;
+      __IO  uint8_t SM5        : 1;
+      __IO  uint8_t SM6        : 1;
+            uint8_t RESERVED1  : 1;
+    };
   };
 } stc_mfs_i2c_ismk_field_t;
 
 typedef struct stc_mfs_i2c_nfcr_field
 {
   __IO  uint8_t NFT        : 5;
-		uint8_t RESERVED1  : 3;
+        uint8_t RESERVED1  : 3;
 } stc_mfs_i2c_nfcr_field_t;
 
 typedef struct stc_mfs_i2c_eibcr_field
@@ -5911,7 +5911,7 @@ typedef struct stc_mfs_i2c_eibcr_field
   __IO  uint8_t SDAC       : 1;
   __IO  uint8_t SCLS       : 1;
   __IO  uint8_t SDAS       : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
 } stc_mfs_i2c_eibcr_field_t;
 
 /******************************************************************************
@@ -5959,7 +5959,7 @@ typedef struct stc_wc_wccr_field
   __IO  uint8_t WCIE       : 1;
   __IO  uint8_t CS0        : 1;
   __IO  uint8_t CS1        : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
   __IO  uint8_t WCOP       : 1;
   __IO  uint8_t WCEN       : 1;
 } stc_wc_wccr_field_t;
@@ -5967,7 +5967,7 @@ typedef struct stc_wc_wccr_field
 typedef struct stc_wc_clk_sel_field
 {
   __IO uint16_t SEL_IN     : 2;
-	   uint16_t RESERVED1  : 6;
+       uint16_t RESERVED1  : 6;
   __IO uint16_t SEL_OUT    : 3;
 } stc_wc_clk_sel_field_t;
 
@@ -5985,7 +5985,7 @@ typedef struct stc_wc_clk_en_field
 typedef struct stc_rtc_wtcr10_field
 {
   __IO  uint8_t ST         : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t RUN        : 1;
   __IO  uint8_t SRST       : 1;
   __IO  uint8_t SCST       : 1;
@@ -6001,7 +6001,7 @@ typedef struct stc_rtc_wtcr11_field
   __IO  uint8_t DEN        : 1;
   __IO  uint8_t MOEN       : 1;
   __IO  uint8_t YEN        : 1;
-		uint8_t RESERVED1  : 3;
+        uint8_t RESERVED1  : 3;
 } stc_rtc_wtcr11_field_t;
 
 typedef struct stc_rtc_wtcr12_field
@@ -6036,7 +6036,7 @@ typedef struct stc_rtc_wtcr20_field
   __IO  uint8_t BWRITE     : 1;
   __IO  uint8_t PREAD      : 1;
   __IO  uint8_t PWRITE     : 1;
-		uint8_t RESERVED1  : 2;
+        uint8_t RESERVED1  : 2;
 } stc_rtc_wtcr20_field_t;
 
 typedef struct stc_rtc_wtcr21_field
@@ -6044,241 +6044,241 @@ typedef struct stc_rtc_wtcr21_field
   __IO  uint8_t TMST       : 1;
   __IO  uint8_t TMEN       : 1;
   __IO  uint8_t TMRUN      : 1;
-		uint8_t RESERVED1  : 5;
+        uint8_t RESERVED1  : 5;
 } stc_rtc_wtcr21_field_t;
 
 typedef struct stc_rtc_wtsr_field
 {
   union {
-	struct {
-	  __IO  uint8_t S          : 4;
-	  __IO  uint8_t TS         : 3;
-			uint8_t RESERVED1  : 1;
-	};
-	struct {
-	  __IO  uint8_t S0         : 1;
-	  __IO  uint8_t S1         : 1;
-	  __IO  uint8_t S2         : 1;
-	  __IO  uint8_t S3         : 1;
-	  __IO  uint8_t TS0        : 1;
-	  __IO  uint8_t TS1        : 1;
-	  __IO  uint8_t TS2        : 1;
-			uint8_t RESERVED2  : 1;
-	};
+    struct {
+      __IO  uint8_t S          : 4;
+      __IO  uint8_t TS         : 3;
+            uint8_t RESERVED1  : 1;
+    };
+    struct {
+      __IO  uint8_t S0         : 1;
+      __IO  uint8_t S1         : 1;
+      __IO  uint8_t S2         : 1;
+      __IO  uint8_t S3         : 1;
+      __IO  uint8_t TS0        : 1;
+      __IO  uint8_t TS1        : 1;
+      __IO  uint8_t TS2        : 1;
+            uint8_t RESERVED2  : 1;
+    };
   };
 } stc_rtc_wtsr_field_t;
 
 typedef struct stc_rtc_wtmir_field
 {
   union {
-	struct {
-	  __IO  uint8_t MI         : 4;
-	  __IO  uint8_t TMI        : 3;
-			uint8_t RESERVED1  : 1;
-	};
-	struct {
-	  __IO  uint8_t MI0        : 1;
-	  __IO  uint8_t MI1        : 1;
-	  __IO  uint8_t MI2        : 1;
-	  __IO  uint8_t MI3        : 1;
-	  __IO  uint8_t TMI0       : 1;
-	  __IO  uint8_t TMI1       : 1;
-	  __IO  uint8_t TMI2       : 1;
-			uint8_t RESERVED2  : 1;
-	};
+    struct {
+      __IO  uint8_t MI         : 4;
+      __IO  uint8_t TMI        : 3;
+            uint8_t RESERVED1  : 1;
+    };
+    struct {
+      __IO  uint8_t MI0        : 1;
+      __IO  uint8_t MI1        : 1;
+      __IO  uint8_t MI2        : 1;
+      __IO  uint8_t MI3        : 1;
+      __IO  uint8_t TMI0       : 1;
+      __IO  uint8_t TMI1       : 1;
+      __IO  uint8_t TMI2       : 1;
+            uint8_t RESERVED2  : 1;
+    };
   };
 } stc_rtc_wtmir_field_t;
 
 typedef struct stc_rtc_wthr_field
 {
   union {
-	struct {
-	  __IO  uint8_t H          : 4;
-	  __IO  uint8_t TH         : 2;
-			uint8_t RESERVED1  : 2;
-	};
-	struct {
-	  __IO  uint8_t H0         : 1;
-	  __IO  uint8_t H1         : 1;
-	  __IO  uint8_t H2         : 1;
-	  __IO  uint8_t H3         : 1;
-	  __IO  uint8_t TH0        : 1;
-	  __IO  uint8_t TH1        : 1;
-			uint8_t RESERVED2  : 2;
-	};
+    struct {
+      __IO  uint8_t H          : 4;
+      __IO  uint8_t TH         : 2;
+            uint8_t RESERVED1  : 2;
+    };
+    struct {
+      __IO  uint8_t H0         : 1;
+      __IO  uint8_t H1         : 1;
+      __IO  uint8_t H2         : 1;
+      __IO  uint8_t H3         : 1;
+      __IO  uint8_t TH0        : 1;
+      __IO  uint8_t TH1        : 1;
+            uint8_t RESERVED2  : 2;
+    };
   };
 } stc_rtc_wthr_field_t;
 
 typedef struct stc_rtc_wtdr_field
 {
   union {
-	struct {
-	  __IO  uint8_t D          : 4;
-	  __IO  uint8_t TD         : 2;
-			uint8_t RESERVED1  : 2;
-	};
-	struct {
-	  __IO  uint8_t D0         : 1;
-	  __IO  uint8_t D1         : 1;
-	  __IO  uint8_t D2         : 1;
-	  __IO  uint8_t D3         : 1;
-	  __IO  uint8_t TD0        : 1;
-	  __IO  uint8_t TD1        : 1;
-			uint8_t RESERVED2  : 2;
-	};
+    struct {
+      __IO  uint8_t D          : 4;
+      __IO  uint8_t TD         : 2;
+            uint8_t RESERVED1  : 2;
+    };
+    struct {
+      __IO  uint8_t D0         : 1;
+      __IO  uint8_t D1         : 1;
+      __IO  uint8_t D2         : 1;
+      __IO  uint8_t D3         : 1;
+      __IO  uint8_t TD0        : 1;
+      __IO  uint8_t TD1        : 1;
+            uint8_t RESERVED2  : 2;
+    };
   };
 } stc_rtc_wtdr_field_t;
 
 typedef struct stc_rtc_wtdw_field
 {
   union {
-	struct {
-	  __IO  uint8_t DW         : 3;
-			uint8_t RESERVED1  : 5;
-	};
-	struct {
-	  __IO  uint8_t DW0        : 1;
-	  __IO  uint8_t DW1        : 1;
-	  __IO  uint8_t DW2        : 1;
-			uint8_t RESERVED2  : 5;
-	};
+    struct {
+      __IO  uint8_t DW         : 3;
+            uint8_t RESERVED1  : 5;
+    };
+    struct {
+      __IO  uint8_t DW0        : 1;
+      __IO  uint8_t DW1        : 1;
+      __IO  uint8_t DW2        : 1;
+            uint8_t RESERVED2  : 5;
+    };
   };
 } stc_rtc_wtdw_field_t;
 
 typedef struct stc_rtc_wtmor_field
 {
   union {
-	struct {
-	  __IO  uint8_t MO         : 4;
-	  __IO  uint8_t TMO        : 1;
-			uint8_t RESERVED1  : 3;
-	};
-	struct {
-	  __IO  uint8_t MO0        : 1;
-	  __IO  uint8_t MO1        : 1;
-	  __IO  uint8_t MO2        : 1;
-	  __IO  uint8_t MO3        : 1;
-			uint8_t RESERVED2  : 4;
-	};
+    struct {
+      __IO  uint8_t MO         : 4;
+      __IO  uint8_t TMO        : 1;
+            uint8_t RESERVED1  : 3;
+    };
+    struct {
+      __IO  uint8_t MO0        : 1;
+      __IO  uint8_t MO1        : 1;
+      __IO  uint8_t MO2        : 1;
+      __IO  uint8_t MO3        : 1;
+            uint8_t RESERVED2  : 4;
+    };
   };
 } stc_rtc_wtmor_field_t;
 
 typedef struct stc_rtc_wtyr_field
 {
   union {
-	struct {
-	  __IO  uint8_t Y          : 4;
-	  __IO  uint8_t TY         : 4;
-	};
-	struct {
-	  __IO  uint8_t Y0         : 1;
-	  __IO  uint8_t Y1         : 1;
-	  __IO  uint8_t Y2         : 1;
-	  __IO  uint8_t Y3         : 1;
-	  __IO  uint8_t TY0        : 1;
-	  __IO  uint8_t TY1        : 1;
-	  __IO  uint8_t TY2        : 1;
-	  __IO  uint8_t TY3        : 1;
-	};
+    struct {
+      __IO  uint8_t Y          : 4;
+      __IO  uint8_t TY         : 4;
+    };
+    struct {
+      __IO  uint8_t Y0         : 1;
+      __IO  uint8_t Y1         : 1;
+      __IO  uint8_t Y2         : 1;
+      __IO  uint8_t Y3         : 1;
+      __IO  uint8_t TY0        : 1;
+      __IO  uint8_t TY1        : 1;
+      __IO  uint8_t TY2        : 1;
+      __IO  uint8_t TY3        : 1;
+    };
   };
 } stc_rtc_wtyr_field_t;
 
 typedef struct stc_rtc_almir_field
 {
   union {
-	struct {
-	  __IO  uint8_t AMI        : 4;
-	  __IO  uint8_t TAMI       : 3;
-			uint8_t RESERVED1  : 1;
-	};
-	struct {
-	  __IO  uint8_t AMI0       : 1;
-	  __IO  uint8_t AMI1       : 1;
-	  __IO  uint8_t AMI2       : 1;
-	  __IO  uint8_t AMI3       : 1;
-	  __IO  uint8_t TAMI0      : 1;
-	  __IO  uint8_t TAMI1      : 1;
-	  __IO  uint8_t TAMI2      : 1;
-			uint8_t RESERVED2  : 1;
-	};
+    struct {
+      __IO  uint8_t AMI        : 4;
+      __IO  uint8_t TAMI       : 3;
+            uint8_t RESERVED1  : 1;
+    };
+    struct {
+      __IO  uint8_t AMI0       : 1;
+      __IO  uint8_t AMI1       : 1;
+      __IO  uint8_t AMI2       : 1;
+      __IO  uint8_t AMI3       : 1;
+      __IO  uint8_t TAMI0      : 1;
+      __IO  uint8_t TAMI1      : 1;
+      __IO  uint8_t TAMI2      : 1;
+            uint8_t RESERVED2  : 1;
+    };
   };
 } stc_rtc_almir_field_t;
 
 typedef struct stc_rtc_alhr_field
 {
   union {
-	struct {
-	  __IO  uint8_t AH         : 4;
-	  __IO  uint8_t TAH        : 2;
-			uint8_t RESERVED1  : 2;
-	};
-	struct {
-	  __IO  uint8_t AH0        : 1;
-	  __IO  uint8_t AH1        : 1;
-	  __IO  uint8_t AH2        : 1;
-	  __IO  uint8_t AH3        : 1;
-	  __IO  uint8_t TAH0       : 1;
-	  __IO  uint8_t TAH1       : 1;
-			uint8_t RESERVED2  : 2;
-	};
+    struct {
+      __IO  uint8_t AH         : 4;
+      __IO  uint8_t TAH        : 2;
+            uint8_t RESERVED1  : 2;
+    };
+    struct {
+      __IO  uint8_t AH0        : 1;
+      __IO  uint8_t AH1        : 1;
+      __IO  uint8_t AH2        : 1;
+      __IO  uint8_t AH3        : 1;
+      __IO  uint8_t TAH0       : 1;
+      __IO  uint8_t TAH1       : 1;
+            uint8_t RESERVED2  : 2;
+    };
   };
 } stc_rtc_alhr_field_t;
 
 typedef struct stc_rtc_aldr_field
 {
   union {
-	struct {
-	  __IO  uint8_t AD         : 4;
-	  __IO  uint8_t TAD        : 2;
-			uint8_t RESERVED1  : 2;
-	};
-	struct {
-	  __IO  uint8_t AD0        : 1;
-	  __IO  uint8_t AD1        : 1;
-	  __IO  uint8_t AD2        : 1;
-	  __IO  uint8_t AD3        : 1;
-	  __IO  uint8_t TAD0       : 1;
-	  __IO  uint8_t TAD1       : 1;
-			uint8_t RESERVED2  : 2;
-	};
+    struct {
+      __IO  uint8_t AD         : 4;
+      __IO  uint8_t TAD        : 2;
+            uint8_t RESERVED1  : 2;
+    };
+    struct {
+      __IO  uint8_t AD0        : 1;
+      __IO  uint8_t AD1        : 1;
+      __IO  uint8_t AD2        : 1;
+      __IO  uint8_t AD3        : 1;
+      __IO  uint8_t TAD0       : 1;
+      __IO  uint8_t TAD1       : 1;
+            uint8_t RESERVED2  : 2;
+    };
   };
 } stc_rtc_aldr_field_t;
 
 typedef struct stc_rtc_almor_field
 {
   union {
-	struct {
-	  __IO  uint8_t AMO        : 4;
-	  __IO  uint8_t TAMO       : 1;
-			uint8_t RESERVED1  : 3;
-	};
-	struct {
-	  __IO  uint8_t AMO0       : 1;
-	  __IO  uint8_t AMO1       : 1;
-	  __IO  uint8_t AMO2       : 1;
-	  __IO  uint8_t AMO3       : 1;
-			uint8_t RESERVED2  : 4;
-	};
+    struct {
+      __IO  uint8_t AMO        : 4;
+      __IO  uint8_t TAMO       : 1;
+            uint8_t RESERVED1  : 3;
+    };
+    struct {
+      __IO  uint8_t AMO0       : 1;
+      __IO  uint8_t AMO1       : 1;
+      __IO  uint8_t AMO2       : 1;
+      __IO  uint8_t AMO3       : 1;
+            uint8_t RESERVED2  : 4;
+    };
   };
 } stc_rtc_almor_field_t;
 
 typedef struct stc_rtc_alyr_field
 {
   union {
-	struct {
-	  __IO  uint8_t AY         : 4;
-	  __IO  uint8_t TAY        : 4;
-	};
-	struct {
-	  __IO  uint8_t AY0        : 1;
-	  __IO  uint8_t AY1        : 1;
-	  __IO  uint8_t AY2        : 1;
-	  __IO  uint8_t AY3        : 1;
-	  __IO  uint8_t TAY0       : 1;
-	  __IO  uint8_t TAY1       : 1;
-	  __IO  uint8_t TAY2       : 1;
-	  __IO  uint8_t TAY3       : 1;
-	};
+    struct {
+      __IO  uint8_t AY         : 4;
+      __IO  uint8_t TAY        : 4;
+    };
+    struct {
+      __IO  uint8_t AY0        : 1;
+      __IO  uint8_t AY1        : 1;
+      __IO  uint8_t AY2        : 1;
+      __IO  uint8_t AY3        : 1;
+      __IO  uint8_t TAY0       : 1;
+      __IO  uint8_t TAY1       : 1;
+      __IO  uint8_t TAY2       : 1;
+      __IO  uint8_t TAY3       : 1;
+    };
   };
 } stc_rtc_alyr_field_t;
 
@@ -6310,45 +6310,45 @@ typedef struct stc_rtc_wttr2_field
 {
   __IO  uint8_t TM16       : 1;
   __IO  uint8_t TM17       : 1;
-		uint8_t RESERVED1  : 6;
+        uint8_t RESERVED1  : 6;
 } stc_rtc_wttr2_field_t;
 
 /* RTC CLK */
 typedef struct stc_rtc_wtcal1_field
 {
   union {
-	struct {
-	  __IO  uint8_t WTCAL1     : 2;
-			uint8_t RESERVED1  : 6;
-	};
-	struct {
-	  __IO  uint8_t WTCAL10    : 1;
-	  __IO  uint8_t WTCAL11    : 1;
-			uint8_t RESERVED2  : 6;
-	};
+    struct {
+      __IO  uint8_t WTCAL1     : 2;
+            uint8_t RESERVED1  : 6;
+    };
+    struct {
+      __IO  uint8_t WTCAL10    : 1;
+      __IO  uint8_t WTCAL11    : 1;
+            uint8_t RESERVED2  : 6;
+    };
   };
 } stc_rtc_wtcal1_field_t;
 
 typedef struct stc_rtc_wtcalen_field
 {
   __IO  uint8_t WTCALEN    : 1;
-		uint8_t RESERVED1  : 7;
+        uint8_t RESERVED1  : 7;
 } stc_rtc_wtcalen_field_t;
 
 typedef struct stc_rtc_wtdiv_field
 {
   union {
-	struct {
-	  __IO  uint8_t WTDIV      : 4;
-			uint8_t RESERVED1  : 4;
-	};
-	struct {
-	  __IO  uint8_t WTDIV0     : 1;
-	  __IO  uint8_t WTDIV1     : 1;
-	  __IO  uint8_t WTDIV2     : 1;
-	  __IO  uint8_t WTDIV3     : 1;
-			uint8_t RESERVED2  : 4;
-	};
+    struct {
+      __IO  uint8_t WTDIV      : 4;
+            uint8_t RESERVED1  : 4;
+    };
+    struct {
+      __IO  uint8_t WTDIV0     : 1;
+      __IO  uint8_t WTDIV1     : 1;
+      __IO  uint8_t WTDIV2     : 1;
+      __IO  uint8_t WTDIV3     : 1;
+            uint8_t RESERVED2  : 4;
+    };
   };
 } stc_rtc_wtdiv_field_t;
 
@@ -6356,25 +6356,25 @@ typedef struct stc_rtc_wtdiven_field
 {
   __IO  uint8_t WTDIVEN    : 1;
   __IO  uint8_t WTDIVRDY   : 1;
-		uint8_t RESERVED1  : 6;
+        uint8_t RESERVED1  : 6;
 } stc_rtc_wtdiven_field_t;
 
 typedef struct stc_rtc_wtcalprd_field
 {
   union {
-	struct {
-	  __IO  uint8_t WTCALPRD   : 6;
-			uint8_t RESERVED1  : 2;
-	};
-	struct {
-	  __IO  uint8_t WTCALPRD0  : 1;
-	  __IO  uint8_t WTCALPRD1  : 1;
-	  __IO  uint8_t WTCALPRD2  : 1;
-	  __IO  uint8_t WTCALPRD3  : 1;
-	  __IO  uint8_t WTCALPRD4  : 1;
-	  __IO  uint8_t WTCALPRD5  : 1;
-			uint8_t RESERVED2  : 2;
-	};
+    struct {
+      __IO  uint8_t WTCALPRD   : 6;
+            uint8_t RESERVED1  : 2;
+    };
+    struct {
+      __IO  uint8_t WTCALPRD0  : 1;
+      __IO  uint8_t WTCALPRD1  : 1;
+      __IO  uint8_t WTCALPRD2  : 1;
+      __IO  uint8_t WTCALPRD3  : 1;
+      __IO  uint8_t WTCALPRD4  : 1;
+      __IO  uint8_t WTCALPRD5  : 1;
+            uint8_t RESERVED2  : 2;
+    };
   };
 } stc_rtc_wtcalprd_field_t;
 
@@ -6408,7 +6408,7 @@ typedef struct stc_rtc_ewkup_field
 
 typedef struct stc_rtc_vdet_field
 {
-		uint8_t RESERVED0  : 7;
+        uint8_t RESERVED0  : 7;
   __IO  uint8_t PON        : 1;
 } stc_rtc_vdet_field_t;
 
@@ -6500,11 +6500,11 @@ typedef struct stc_clk_gating_cken0_field
   __IO uint32_t ADCCK1     : 1;
   __IO uint32_t ADCCK2     : 1;
   __IO uint32_t ADCCK3     : 1;
-	   uint32_t RESERVED20 : 4;
+       uint32_t RESERVED20 : 4;
   __IO uint32_t DMACK      : 1;
-	   uint32_t RESERVED25 : 1;
+       uint32_t RESERVED25 : 1;
   __IO uint32_t EXBCK      : 1;
-	   uint32_t RESERVED27 : 1;
+       uint32_t RESERVED27 : 1;
   __IO uint32_t GIOCK      : 1;
 } stc_clk_gating_cken0_field_t;
 
@@ -6530,9 +6530,9 @@ typedef struct stc_clk_gating_mrst0_field
   __IO uint32_t ADCRST1    : 1;
   __IO uint32_t ADCRST2    : 1;
   __IO uint32_t ADCRST3    : 1;
-	   uint32_t RESERVED20 : 4;
+       uint32_t RESERVED20 : 4;
   __IO uint32_t DMARST     : 1;
-	   uint32_t RESERVED25 : 1;
+       uint32_t RESERVED25 : 1;
   __IO uint32_t EXBRST     : 1;
 } stc_clk_gating_mrst0_field_t;
 
@@ -6542,12 +6542,12 @@ typedef struct stc_clk_gating_cken1_field
   __IO uint32_t BTMCK1     : 1;
   __IO uint32_t BTMCK2     : 1;
   __IO uint32_t BTMCK3     : 1;
-	   uint32_t RESERVED4  : 4;
+       uint32_t RESERVED4  : 4;
   __IO uint32_t MFTCK0     : 1;
   __IO uint32_t MFTCK1     : 1;
   __IO uint32_t MFTCK2     : 1;
   __IO uint32_t MFTCK3     : 1;
-	   uint32_t RESERVED12 : 4;
+       uint32_t RESERVED12 : 4;
   __IO uint32_t QDUCK0     : 1;
   __IO uint32_t QDUCK1     : 1;
   __IO uint32_t QDUCK2     : 1;
@@ -6560,12 +6560,12 @@ typedef struct stc_clk_gating_mrst1_field
   __IO uint32_t BTMRST1    : 1;
   __IO uint32_t BTMRST2    : 1;
   __IO uint32_t BTMRST3    : 1;
-	   uint32_t RESERVED4  : 4;
+       uint32_t RESERVED4  : 4;
   __IO uint32_t MFTRST0    : 1;
   __IO uint32_t MFTRST1    : 1;
   __IO uint32_t MFTRST2    : 1;
   __IO uint32_t MFTRST3    : 1;
-	   uint32_t RESERVED12 : 4;
+       uint32_t RESERVED12 : 4;
   __IO uint32_t QDURST0    : 1;
   __IO uint32_t QDURST1    : 1;
   __IO uint32_t QDURST2    : 1;
@@ -6576,10 +6576,10 @@ typedef struct stc_clk_gating_cken2_field
 {
   __IO uint32_t USBCK0     : 1;
   __IO uint32_t USBCK1     : 1;
-	   uint32_t RESERVED2  : 2;
+       uint32_t RESERVED2  : 2;
   __IO uint32_t CANCK0     : 1;
   __IO uint32_t CANCK1     : 1;
-	   uint32_t RESERVED6  : 2;
+       uint32_t RESERVED6  : 2;
   __IO uint32_t SDCCK      : 1;
 } stc_clk_gating_cken2_field_t;
 
@@ -6587,10 +6587,10 @@ typedef struct stc_clk_gating_mrst2_field
 {
   __IO uint32_t USBRST0    : 1;
   __IO uint32_t USBRST1    : 1;
-	   uint32_t RESERVED2  : 2;
+       uint32_t RESERVED2  : 2;
   __IO uint32_t CANRST0    : 1;
   __IO uint32_t CANRST1    : 1;
-	   uint32_t RESERVED6  : 2;
+       uint32_t RESERVED6  : 2;
   __IO uint32_t SDCRST     : 1;
 } stc_clk_gating_mrst2_field_t;
 
@@ -6613,7 +6613,7 @@ typedef struct stc_exbus_mode_field
   __IO uint32_t MPXDOFF    : 1;
   __IO uint32_t MPXCSOF    : 1;
   __IO uint32_t MOEXEUP    : 1;
-	   uint32_t RESERVED   : 18;
+       uint32_t RESERVED   : 18;
 } stc_exbus_mode_field_t;
 
 typedef struct stc_exbus_tim_field
@@ -6631,9 +6631,9 @@ typedef struct stc_exbus_tim_field
 typedef struct stc_exbus_area_field
 {
   __IO uint32_t ADDR       : 8;
-	   uint32_t RESERVED1  : 8;
+       uint32_t RESERVED1  : 8;
   __IO uint32_t MASK       : 7;
-	   uint32_t RESERVED2  : 9;
+       uint32_t RESERVED2  : 9;
 } stc_exbus_area_field_t;
 
 typedef struct stc_exbus_atim_field
@@ -6641,7 +6641,7 @@ typedef struct stc_exbus_atim_field
   __IO uint32_t ALC        : 4;
   __IO uint32_t ALES       : 4;
   __IO uint32_t ALEW       : 4;
-	   uint32_t RESERVED   : 20;
+       uint32_t RESERVED   : 20;
 } stc_exbus_atim_field_t;
 
 typedef struct stc_exbus_sdmode_field
@@ -6649,13 +6649,13 @@ typedef struct stc_exbus_sdmode_field
   __IO uint32_t SDON       : 1;
   __IO uint32_t PDON       : 1;
   __IO uint32_t ROFF       : 1;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t CASEL      : 2;
-	   uint32_t RESERVED2  : 2;
+       uint32_t RESERVED2  : 2;
   __IO uint32_t RASEL      : 4;
   __IO uint32_t BASEL      : 4;
   __IO uint32_t MSDCLK     : 1;
-	   uint32_t RESERVED3  : 15;
+       uint32_t RESERVED3  : 15;
 } stc_exbus_sdmode_field_t;
 
 typedef struct stc_exbus_reftim_field
@@ -6663,26 +6663,26 @@ typedef struct stc_exbus_reftim_field
   __IO uint32_t REFC       : 16;
   __IO uint32_t NREF       : 8;
   __IO uint32_t PREF       : 1;
-	   uint32_t RESERVED   : 7;
+       uint32_t RESERVED   : 7;
 } stc_exbus_reftim_field_t;
 
 typedef struct stc_exbus_pwrdwn_field
 {
   __IO uint32_t PDC        : 16;
-	   uint32_t RESERVED   : 16;
+       uint32_t RESERVED   : 16;
 } stc_exbus_pwrdwn_field_t;
 
 typedef struct stc_exbus_sdtim_field
 {
   __IO uint32_t CL         : 2;
-	   uint32_t RESERVED1  : 2;
+       uint32_t RESERVED1  : 2;
   __IO uint32_t TRC        : 4;
   __IO uint32_t TRP        : 4;
   __IO uint32_t TRCD       : 4;
   __IO uint32_t TRAS       : 4;
   __IO uint32_t TREFC      : 4;
   __IO uint32_t TDPL       : 2;
-	   uint32_t RESERVED2  : 6;
+       uint32_t RESERVED2  : 6;
 } stc_exbus_sdtim_field_t;
 
 typedef struct stc_exbus_sdcmd_field
@@ -6693,7 +6693,7 @@ typedef struct stc_exbus_sdcmd_field
   __IO uint32_t SDRAS      : 1;
   __IO uint32_t SDCS       : 1;
   __IO uint32_t SDCKE      : 1;
-	   uint32_t RESERVED2  : 10;
+       uint32_t RESERVED2  : 10;
   __IO uint32_t PEND       : 1;
 } stc_exbus_sdcmd_field_t;
 
@@ -6703,20 +6703,20 @@ typedef struct stc_exbus_memcerr_field
   __IO uint32_t SDER       : 1;
   __IO uint32_t SFION      : 1;
   __IO uint32_t SDION      : 1;
-	   uint32_t RESERVED   : 28;
+       uint32_t RESERVED   : 28;
 } stc_exbus_memcerr_field_t;
 
 typedef struct stc_exbus_dclkr_field
 {
   __IO uint32_t MDIV       : 4;
   __IO uint32_t MCLKON     : 1;
-	   uint32_t RESERVED   : 27;
+       uint32_t RESERVED   : 27;
 } stc_exbus_dclkr_field_t;
 
 typedef struct stc_exbus_est_field
 {
   __IO uint32_t WERR       : 1;
-	   uint32_t RESERVED   : 31;
+       uint32_t RESERVED   : 31;
 } stc_exbus_est_field_t;
 
 typedef struct stc_exbus_wead_field
@@ -6727,13 +6727,13 @@ typedef struct stc_exbus_wead_field
 typedef struct stc_exbus_esclr_field
 {
   __IO uint32_t WERRCLR    : 1;
-	   uint32_t RESERVED   : 31;
+       uint32_t RESERVED   : 31;
 } stc_exbus_esclr_field_t;
 
 typedef struct stc_exbus_amode_field
 {
   __IO uint32_t WAEN       : 1;
-	   uint32_t RESERVED   : 31;
+       uint32_t RESERVED   : 31;
 } stc_exbus_amode_field_t;
 
 /******************************************************************************
@@ -6782,7 +6782,7 @@ typedef struct stc_usb_hirq_field
   __IO  uint8_t CMPIRQ     : 1;
   __IO  uint8_t URIRQ      : 1;
   __IO  uint8_t RWKIRQ     : 1;
-		uint8_t RESERVED1  : 1;
+        uint8_t RESERVED1  : 1;
   __IO  uint8_t TCAN       : 1;
 } stc_usb_hirq_field_t;
 
@@ -6975,7 +6975,7 @@ typedef struct stc_usb_udcc_field
 {
   __IO uint16_t PWC        : 1;
   __IO uint16_t RFBK       : 1;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t STALCLREN  : 1;
   __IO uint16_t USTP       : 1;
   __IO uint16_t HCONX      : 1;
@@ -6992,7 +6992,7 @@ typedef struct stc_usb_ep0c_field
   __IO uint16_t PKS04      : 1;
   __IO uint16_t PKS05      : 1;
   __IO uint16_t PKS06      : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t STAL       : 1;
 } stc_usb_ep0c_field_t;
 
@@ -7025,7 +7025,7 @@ typedef struct stc_usb_ep2c_field
   __IO uint16_t PKS24      : 1;
   __IO uint16_t PKS25      : 1;
   __IO uint16_t PKS26      : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t STAL       : 1;
   __IO uint16_t NULE       : 1;
   __IO uint16_t DMAE       : 1;
@@ -7044,7 +7044,7 @@ typedef struct stc_usb_ep3c_field
   __IO uint16_t PKS34      : 1;
   __IO uint16_t PKS35      : 1;
   __IO uint16_t PKS36      : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t STAL       : 1;
   __IO uint16_t NULE       : 1;
   __IO uint16_t DMAE       : 1;
@@ -7063,7 +7063,7 @@ typedef struct stc_usb_ep4c_field
   __IO uint16_t PKS44      : 1;
   __IO uint16_t PKS45      : 1;
   __IO uint16_t PKS46      : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t STAL       : 1;
   __IO uint16_t NULE       : 1;
   __IO uint16_t DMAE       : 1;
@@ -7082,7 +7082,7 @@ typedef struct stc_usb_ep5c_field
   __IO uint16_t PKS54      : 1;
   __IO uint16_t PKS55      : 1;
   __IO uint16_t PKS56      : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t STAL       : 1;
   __IO uint16_t NULE       : 1;
   __IO uint16_t DMAE       : 1;
@@ -7129,9 +7129,9 @@ typedef struct stc_usb_udcie_field
 
 typedef struct stc_usb_ep0is_field
 {
-	   uint16_t RESERVED1  : 10;
+       uint16_t RESERVED1  : 10;
   __IO uint16_t DRQI       : 1;
-	   uint16_t RESERVED2  : 3;
+       uint16_t RESERVED2  : 3;
   __IO uint16_t DRQIIE     : 1;
   __IO uint16_t BFINI      : 1;
 } stc_usb_ep0is_field_t;
@@ -7145,10 +7145,10 @@ typedef struct stc_usb_ep0os_field
   __IO uint16_t SIZE4      : 1;
   __IO uint16_t SIZE5      : 1;
   __IO uint16_t SIZE6      : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t SPK        : 1;
   __IO uint16_t DRQO       : 1;
-	   uint16_t RESERVED2  : 2;
+       uint16_t RESERVED2  : 2;
   __IO uint16_t SPKIE      : 1;
   __IO uint16_t DRQOIE     : 1;
   __IO uint16_t BFINI      : 1;
@@ -7168,7 +7168,7 @@ typedef struct stc_usb_ep1s_field
   __IO uint16_t SPK        : 1;
   __IO uint16_t DRQ        : 1;
   __IO uint16_t BUSY       : 1;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t SPKIE      : 1;
   __IO uint16_t DRQIE      : 1;
   __IO uint16_t BFINI      : 1;
@@ -7183,11 +7183,11 @@ typedef struct stc_usb_ep2s_field
   __IO uint16_t SIZE24     : 1;
   __IO uint16_t SIZE25     : 1;
   __IO uint16_t SIZE26     : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t SPK        : 1;
   __IO uint16_t DRQ        : 1;
   __IO uint16_t BUSY       : 1;
-	   uint16_t RESERVED2  : 1;
+       uint16_t RESERVED2  : 1;
   __IO uint16_t SPKIE      : 1;
   __IO uint16_t DRQIE      : 1;
   __IO uint16_t BFINI      : 1;
@@ -7202,11 +7202,11 @@ typedef struct stc_usb_ep4s_field
   __IO uint16_t SIZE44     : 1;
   __IO uint16_t SIZE45     : 1;
   __IO uint16_t SIZE46     : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t SPK        : 1;
   __IO uint16_t DRQ        : 1;
   __IO uint16_t BUSY       : 1;
-	   uint16_t RESERVED2  : 1;
+       uint16_t RESERVED2  : 1;
   __IO uint16_t SPKIE      : 1;
   __IO uint16_t DRQIE      : 1;
   __IO uint16_t BFINI      : 1;
@@ -7221,11 +7221,11 @@ typedef struct stc_usb_ep5s_field
   __IO uint16_t SIZE54     : 1;
   __IO uint16_t SIZE55     : 1;
   __IO uint16_t SIZE56     : 1;
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t SPK        : 1;
   __IO uint16_t DRQ        : 1;
   __IO uint16_t BUSY       : 1;
-	   uint16_t RESERVED2  : 1;
+       uint16_t RESERVED2  : 1;
   __IO uint16_t SPKIE      : 1;
   __IO uint16_t DRQIE      : 1;
   __IO uint16_t BFINI      : 1;
@@ -7237,13 +7237,13 @@ typedef struct stc_usb_ep5s_field
 /* DMAC_MODULE register bit fields */
 typedef struct stc_dmac_dmacr_field
 {
-	   uint32_t RESERVED1  : 24;
+       uint32_t RESERVED1  : 24;
   __IO uint32_t DH0        : 1;
   __IO uint32_t DH1        : 1;
   __IO uint32_t DH2        : 1;
   __IO uint32_t DH3        : 1;
   __IO uint32_t PR         : 1;
-	   uint32_t RESERVED2  : 1;
+       uint32_t RESERVED2  : 1;
   __IO uint32_t DS         : 1;
   __IO uint32_t DE         : 1;
 } stc_dmac_dmacr_field_t;
@@ -7252,7 +7252,7 @@ typedef struct stc_dmac_dmaca0_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7262,7 +7262,7 @@ typedef struct stc_dmac_dmaca0_field
 typedef struct stc_dmac_dmacb0_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7279,7 +7279,7 @@ typedef struct stc_dmac_dmaca1_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7289,7 +7289,7 @@ typedef struct stc_dmac_dmaca1_field
 typedef struct stc_dmac_dmacb1_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7306,7 +7306,7 @@ typedef struct stc_dmac_dmaca2_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7316,7 +7316,7 @@ typedef struct stc_dmac_dmaca2_field
 typedef struct stc_dmac_dmacb2_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7333,7 +7333,7 @@ typedef struct stc_dmac_dmaca3_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7343,7 +7343,7 @@ typedef struct stc_dmac_dmaca3_field
 typedef struct stc_dmac_dmacb3_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7359,7 +7359,7 @@ typedef struct stc_dmac_dmaca4_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7369,7 +7369,7 @@ typedef struct stc_dmac_dmaca4_field
 typedef struct stc_dmac_dmacb4_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7386,7 +7386,7 @@ typedef struct stc_dmac_dmaca5_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7396,7 +7396,7 @@ typedef struct stc_dmac_dmaca5_field
 typedef struct stc_dmac_dmacb5_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7413,7 +7413,7 @@ typedef struct stc_dmac_dmaca6_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7423,7 +7423,7 @@ typedef struct stc_dmac_dmaca6_field
 typedef struct stc_dmac_dmacb6_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7440,7 +7440,7 @@ typedef struct stc_dmac_dmaca7_field
 {
   __IO uint32_t TC         : 16;
   __IO uint32_t BC         : 4;
-	   uint32_t RESERVED1  : 3;
+       uint32_t RESERVED1  : 3;
   __IO uint32_t IS         : 6;
   __IO uint32_t ST         : 1;
   __IO uint32_t PB         : 1;
@@ -7450,7 +7450,7 @@ typedef struct stc_dmac_dmaca7_field
 typedef struct stc_dmac_dmacb7_field
 {
   __IO uint32_t EM         : 1;
-	   uint32_t RESERVED1  : 15;
+       uint32_t RESERVED1  : 15;
   __IO uint32_t SS         : 3;
   __IO uint32_t CI         : 1;
   __IO uint32_t EI         : 1;
@@ -7473,7 +7473,7 @@ typedef struct stc_can_ctrlr_field
   __IO uint16_t IE         : 1;
   __IO uint16_t SIE        : 1;
   __IO uint16_t EIE        : 1;
-	   uint16_t RESERVED1  : 1;
+       uint16_t RESERVED1  : 1;
   __IO uint16_t DAR        : 1;
   __IO uint16_t CCE        : 1;
   __IO uint16_t TEST       : 1;
@@ -7539,7 +7539,7 @@ typedef struct stc_can_intr_field
 
 typedef struct stc_can_testr_field
 {
-	   uint16_t RESERVED1  : 2;
+       uint16_t RESERVED1  : 2;
   __IO uint16_t BASIC      : 1;
   __IO uint16_t SILENT     : 1;
   __IO uint16_t LBACK      : 1;
@@ -7558,7 +7558,7 @@ typedef struct stc_can_brper_field
 
 typedef struct stc_can_if1creq_field
 {
-	   uint16_t RESERVED1  : 15;
+       uint16_t RESERVED1  : 15;
   __IO uint16_t BUSY       : 1;
 } stc_can_if1creq_field_t;
 
@@ -7577,14 +7577,14 @@ typedef struct stc_can_if1cmsk_field
 typedef struct stc_can_if1msk_field
 {
   __IO uint32_t MSK        : 29;
-	   uint32_t RESERVED1  : 1;
+       uint32_t RESERVED1  : 1;
   __IO uint32_t MDIR       : 1;
   __IO uint32_t MXTD       : 1;
 } stc_can_if1msk_field_t;
 
 typedef struct stc_can_if1msk2_field
 {
-	   uint16_t RESERVED1  : 14;
+       uint16_t RESERVED1  : 14;
   __IO uint16_t MDIR       : 1;
   __IO uint16_t MXTD       : 1;
 } stc_can_if1msk2_field_t;
@@ -7599,7 +7599,7 @@ typedef struct stc_can_if1arb_field
 
 typedef struct stc_can_if1arb2_field
 {
-	   uint16_t RESERVED1  : 13;
+       uint16_t RESERVED1  : 13;
   __IO uint16_t DIR        : 1;
   __IO uint16_t XTD        : 1;
   __IO uint16_t MSGVAL     : 1;
@@ -7608,7 +7608,7 @@ typedef struct stc_can_if1arb2_field
 typedef struct stc_can_if1mctr_field
 {
   __IO uint16_t DLC        : 4;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t EOB        : 1;
   __IO uint16_t TXRQST     : 1;
   __IO uint16_t RMTEN      : 1;
@@ -7622,7 +7622,7 @@ typedef struct stc_can_if1mctr_field
 
 typedef struct stc_can_if2creq_field
 {
-	   uint16_t RESERVED1  : 15;
+       uint16_t RESERVED1  : 15;
   __IO uint16_t BUSY       : 1;
 } stc_can_if2creq_field_t;
 
@@ -7640,21 +7640,21 @@ typedef struct stc_can_if2cmsk_field
 
 typedef struct stc_can_if2msk_field
 {
-	   uint32_t RESERVED1  : 30;
+       uint32_t RESERVED1  : 30;
   __IO uint32_t MDIR       : 1;
   __IO uint32_t MXTD       : 1;
 } stc_can_if2msk_field_t;
 
 typedef struct stc_can_if2msk2_field
 {
-	   uint16_t RESERVED1  : 14;
+       uint16_t RESERVED1  : 14;
   __IO uint16_t MDIR       : 1;
   __IO uint16_t MXTD       : 1;
 } stc_can_if2msk2_field_t;
 
 typedef struct stc_can_if2arb2_field
 {
-	   uint16_t RESERVED1  : 13;
+       uint16_t RESERVED1  : 13;
   __IO uint16_t DIR        : 1;
   __IO uint16_t XTD        : 1;
   __IO uint16_t MSGVAL     : 1;
@@ -7663,7 +7663,7 @@ typedef struct stc_can_if2arb2_field
 typedef struct stc_can_if2mctr_field
 {
   __IO uint16_t DLC        : 4;
-	   uint16_t RESERVED1  : 3;
+       uint16_t RESERVED1  : 3;
   __IO uint16_t EOB        : 1;
   __IO uint16_t TXRQST     : 1;
   __IO uint16_t RMTEN      : 1;
@@ -8603,16 +8603,16 @@ typedef struct stc_can_msgval2_field
 typedef struct
 {
   union {
-	__IO uint32_t WFASZR;
-	stc_workflash_if_wfaszr_field_t WFASZR_f;
+    __IO uint32_t WFASZR;
+    stc_workflash_if_wfaszr_field_t WFASZR_f;
   };
   union {
-	__IO uint32_t WFRWTR;
-	stc_workflash_if_wfrwtr_field_t WFRWTR_f;
+    __IO uint32_t WFRWTR;
+    stc_workflash_if_wfrwtr_field_t WFRWTR_f;
   };
   union {
-	__IO uint32_t WFSTR;
-	stc_workflash_if_wfstr_field_t WFSTR_f;
+    __IO uint32_t WFSTR;
+    stc_workflash_if_wfstr_field_t WFSTR_f;
   };
 }FM4_WORKFLASH_IF_TypeDef;
 
@@ -8623,43 +8623,43 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t FASZR;
-	stc_flash_if_faszr_field_t FASZR_f;
+    __IO uint32_t FASZR;
+    stc_flash_if_faszr_field_t FASZR_f;
   };
   union {
-	__IO uint32_t FRWTR;
-	stc_flash_if_frwtr_field_t FRWTR_f;
+    __IO uint32_t FRWTR;
+    stc_flash_if_frwtr_field_t FRWTR_f;
   };
   union {
-	__IO uint32_t FSTR;
-	stc_flash_if_fstr_field_t FSTR_f;
+    __IO uint32_t FSTR;
+    stc_flash_if_fstr_field_t FSTR_f;
   };
-	   uint8_t RESERVED2[4];
+       uint8_t RESERVED2[4];
   union {
-	__IO uint32_t FSYNDN;
-	stc_flash_if_fsyndn_field_t FSYNDN_f;
-  };
-  union {
-	__IO uint32_t FBFCR;
-	stc_flash_if_fbfcr_field_t FBFCR_f;
-  };
-	   uint8_t RESERVED4[8];
-  union {
-	__IO uint32_t FICR;
-	stc_flash_if_ficr_field_t FICR_f;
+    __IO uint32_t FSYNDN;
+    stc_flash_if_fsyndn_field_t FSYNDN_f;
   };
   union {
-	__IO uint32_t FISR;
-	stc_flash_if_fisr_field_t FISR_f;
+    __IO uint32_t FBFCR;
+    stc_flash_if_fbfcr_field_t FBFCR_f;
+  };
+       uint8_t RESERVED4[8];
+  union {
+    __IO uint32_t FICR;
+    stc_flash_if_ficr_field_t FICR_f;
   };
   union {
-	__IO uint32_t FICLR;
-	stc_flash_if_ficlr_field_t FICLR_f;
+    __IO uint32_t FISR;
+    stc_flash_if_fisr_field_t FISR_f;
   };
-	   uint8_t RESERVED7[212];
   union {
-	__IO uint32_t CRTRMM;
-	stc_flash_if_crtrmm_field_t CRTRMM_f;
+    __IO uint32_t FICLR;
+    stc_flash_if_ficlr_field_t FICLR_f;
+  };
+       uint8_t RESERVED7[212];
+  union {
+    __IO uint32_t CRTRMM;
+    stc_flash_if_crtrmm_field_t CRTRMM_f;
   };
 }FM4_FLASH_IF_TypeDef;
 
@@ -8670,12 +8670,12 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t UIDR0;
-	stc_unique_id_uidr0_field_t UIDR0_f;
+    __IO uint32_t UIDR0;
+    stc_unique_id_uidr0_field_t UIDR0_f;
   };
   union {
-	__IO uint32_t UIDR1;
-	stc_unique_id_uidr1_field_t UIDR1_f;
+    __IO uint32_t UIDR1;
+    stc_unique_id_uidr1_field_t UIDR1_f;
   };
 }FM4_UNIQUE_ID_TypeDef;
 
@@ -8686,8 +8686,8 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t FERRAD;
-	stc_ecc_capture_ferrad_field_t FERRAD_f;
+    __IO uint32_t FERRAD;
+    stc_ecc_capture_ferrad_field_t FERRAD_f;
   };
 }FM4_ECC_CAPTURE_TypeDef;
 
@@ -8698,105 +8698,105 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t SCM_CTL;
-	stc_crg_scm_ctl_field_t SCM_CTL_f;
+    __IO  uint8_t SCM_CTL;
+    stc_crg_scm_ctl_field_t SCM_CTL_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   union {
-	__IO  uint8_t SCM_STR;
-	stc_crg_scm_str_field_t SCM_STR_f;
+    __IO  uint8_t SCM_STR;
+    stc_crg_scm_str_field_t SCM_STR_f;
   };
-		uint8_t RESERVED1[3];
+        uint8_t RESERVED1[3];
   __IO uint32_t STB_CTL;
   union {
-	__IO uint16_t RST_STR;
-	stc_crg_rst_str_field_t RST_STR_f;
+    __IO uint16_t RST_STR;
+    stc_crg_rst_str_field_t RST_STR_f;
   };
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   union {
-	__IO  uint8_t BSC_PSR;
-	stc_crg_bsc_psr_field_t BSC_PSR_f;
+    __IO  uint8_t BSC_PSR;
+    stc_crg_bsc_psr_field_t BSC_PSR_f;
   };
-		uint8_t RESERVED3[3];
+        uint8_t RESERVED3[3];
   union {
-	__IO  uint8_t APBC0_PSR;
-	stc_crg_apbc0_psr_field_t APBC0_PSR_f;
+    __IO  uint8_t APBC0_PSR;
+    stc_crg_apbc0_psr_field_t APBC0_PSR_f;
   };
-		uint8_t RESERVED4[3];
+        uint8_t RESERVED4[3];
   union {
-	__IO  uint8_t APBC1_PSR;
-	stc_crg_apbc1_psr_field_t APBC1_PSR_f;
+    __IO  uint8_t APBC1_PSR;
+    stc_crg_apbc1_psr_field_t APBC1_PSR_f;
   };
-		uint8_t RESERVED5[3];
+        uint8_t RESERVED5[3];
   union {
-	__IO  uint8_t APBC2_PSR;
-	stc_crg_apbc2_psr_field_t APBC2_PSR_f;
+    __IO  uint8_t APBC2_PSR;
+    stc_crg_apbc2_psr_field_t APBC2_PSR_f;
   };
-		uint8_t RESERVED6[3];
+        uint8_t RESERVED6[3];
   union {
-	__IO  uint8_t SWC_PSR;
-	stc_crg_swc_psr_field_t SWC_PSR_f;
+    __IO  uint8_t SWC_PSR;
+    stc_crg_swc_psr_field_t SWC_PSR_f;
   };
-		uint8_t RESERVED7[7];
+        uint8_t RESERVED7[7];
   union {
-	__IO  uint8_t TTC_PSR;
-	stc_crg_ttc_psr_field_t TTC_PSR_f;
+    __IO  uint8_t TTC_PSR;
+    stc_crg_ttc_psr_field_t TTC_PSR_f;
   };
-		uint8_t RESERVED8[7];
+        uint8_t RESERVED8[7];
   union {
-	__IO  uint8_t CSW_TMR;
-	stc_crg_csw_tmr_field_t CSW_TMR_f;
+    __IO  uint8_t CSW_TMR;
+    stc_crg_csw_tmr_field_t CSW_TMR_f;
   };
-		uint8_t RESERVED9[3];
+        uint8_t RESERVED9[3];
   union {
-	__IO  uint8_t PSW_TMR;
-	stc_crg_psw_tmr_field_t PSW_TMR_f;
+    __IO  uint8_t PSW_TMR;
+    stc_crg_psw_tmr_field_t PSW_TMR_f;
   };
-		uint8_t RESERVED10[3];
+        uint8_t RESERVED10[3];
   union {
-	__IO  uint8_t PLL_CTL1;
-	stc_crg_pll_ctl1_field_t PLL_CTL1_f;
+    __IO  uint8_t PLL_CTL1;
+    stc_crg_pll_ctl1_field_t PLL_CTL1_f;
   };
-		uint8_t RESERVED11[3];
+        uint8_t RESERVED11[3];
   union {
-	__IO  uint8_t PLL_CTL2;
-	stc_crg_pll_ctl2_field_t PLL_CTL2_f;
+    __IO  uint8_t PLL_CTL2;
+    stc_crg_pll_ctl2_field_t PLL_CTL2_f;
   };
-		uint8_t RESERVED12[3];
+        uint8_t RESERVED12[3];
   union {
-	__IO uint16_t CSV_CTL;
-	stc_crg_csv_ctl_field_t CSV_CTL_f;
+    __IO uint16_t CSV_CTL;
+    stc_crg_csv_ctl_field_t CSV_CTL_f;
   };
-		uint8_t RESERVED13[2];
+        uint8_t RESERVED13[2];
   union {
-	__IO  uint8_t CSV_STR;
-	stc_crg_csv_str_field_t CSV_STR_f;
+    __IO  uint8_t CSV_STR;
+    stc_crg_csv_str_field_t CSV_STR_f;
   };
-		uint8_t RESERVED14[3];
+        uint8_t RESERVED14[3];
   __IO uint16_t FCSWH_CTL;
-		uint8_t RESERVED15[2];
+        uint8_t RESERVED15[2];
   __IO uint16_t FCSWL_CTL;
-		uint8_t RESERVED16[2];
+        uint8_t RESERVED16[2];
   __IO uint16_t FCSWD_CTL;
-		uint8_t RESERVED17[2];
+        uint8_t RESERVED17[2];
   union {
-	__IO  uint8_t DBWDT_CTL;
-	stc_crg_dbwdt_ctl_field_t DBWDT_CTL_f;
+    __IO  uint8_t DBWDT_CTL;
+    stc_crg_dbwdt_ctl_field_t DBWDT_CTL_f;
   };
-		uint8_t RESERVED18[11];
+        uint8_t RESERVED18[11];
   union {
-	__IO  uint8_t INT_ENR;
-	stc_crg_int_enr_field_t INT_ENR_f;
+    __IO  uint8_t INT_ENR;
+    stc_crg_int_enr_field_t INT_ENR_f;
   };
-		uint8_t RESERVED19[3];
+        uint8_t RESERVED19[3];
   union {
-	__IO  uint8_t INT_STR;
-	stc_crg_int_str_field_t INT_STR_f;
+    __IO  uint8_t INT_STR;
+    stc_crg_int_str_field_t INT_STR_f;
   };
-		uint8_t RESERVED20[3];
+        uint8_t RESERVED20[3];
   union {
-	__IO  uint8_t INT_CLR;
-	stc_crg_int_clr_field_t INT_CLR_f;
+    __IO  uint8_t INT_CLR;
+    stc_crg_int_clr_field_t INT_CLR_f;
   };
 }FM4_CRG_TypeDef;
 
@@ -8809,17 +8809,17 @@ typedef struct
   __IO uint32_t WDG_LDR;
   __IO uint32_t WDG_VLR;
   union {
-	__IO  uint8_t WDG_CTL;
-	stc_hwwdt_wdg_ctl_field_t WDG_CTL_f;
+    __IO  uint8_t WDG_CTL;
+    stc_hwwdt_wdg_ctl_field_t WDG_CTL_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   __IO  uint8_t WDG_ICL;
-		uint8_t RESERVED1[3];
+        uint8_t RESERVED1[3];
   union {
-	__IO  uint8_t WDG_RIS;
-	stc_hwwdt_wdg_ris_field_t WDG_RIS_f;
+    __IO  uint8_t WDG_RIS;
+    stc_hwwdt_wdg_ris_field_t WDG_RIS_f;
   };
-		uint8_t RESERVED2[3055];
+        uint8_t RESERVED2[3055];
   __IO uint32_t WDG_LCK;
 }FM4_HWWDT_TypeDef;
 
@@ -8832,21 +8832,21 @@ typedef struct
   __IO uint32_t WDOGLOAD;
   __IO uint32_t WDOGVALUE;
   union {
-	__IO  uint8_t                 WDOGCONTROL;
-	stc_swwdt_wdogcontrol_field_t WDOGCONTROL_f;
+    __IO  uint8_t                 WDOGCONTROL;
+    stc_swwdt_wdogcontrol_field_t WDOGCONTROL_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   __IO uint32_t WDOGINTCLR;
   union {
-	__IO  uint8_t             WDOGRIS;
-	stc_swwdt_wdogris_field_t WDOGRIS_f;
+    __IO  uint8_t             WDOGRIS;
+    stc_swwdt_wdogris_field_t WDOGRIS_f;
   };
-		uint8_t RESERVED1[7];
+        uint8_t RESERVED1[7];
   union {
-	__IO  uint8_t              WDOGSPMC;
-	stc_swwdt_wdogspmc_field_t WDOGSPMC_f;
+    __IO  uint8_t              WDOGSPMC;
+    stc_swwdt_wdogspmc_field_t WDOGSPMC_f;
   };
-		uint8_t RESERVED2[3047];
+        uint8_t RESERVED2[3047];
   __IO uint32_t WDOGLOCK;
 }FM4_SWWDT_TypeDef;
 
@@ -8859,20 +8859,20 @@ typedef struct
   __IO uint32_t TIMERXLOAD;
   __IO uint32_t TIMERXVALUE;
   union {
-	__IO uint32_t                  TIMERXCONTROL;
-	stc_dtim_timerXcontrol_field_t TIMERXCONTROL_f;
+    __IO uint32_t                  TIMERXCONTROL;
+    stc_dtim_timerXcontrol_field_t TIMERXCONTROL_f;
   };
   __IO uint32_t TIMERXINTCLR;
   union {
-	__IO uint32_t              TIMERXRIS;
-	stc_dtim_timerXris_field_t TIMERXRIS_f;
+    __IO uint32_t              TIMERXRIS;
+    stc_dtim_timerXris_field_t TIMERXRIS_f;
   };
   union {
-	__IO uint32_t              TIMERXMIS;
-	stc_dtim_timerXmis_field_t TIMERXMIS_f;
+    __IO uint32_t              TIMERXMIS;
+    stc_dtim_timerXmis_field_t TIMERXMIS_f;
   };
   __IO uint32_t TIMERXBGLOAD;
-		uint8_t RESERVED0[4];
+        uint8_t RESERVED0[4];
 }FM4_DTIM_TypeDef;
 
 /******************************************************************************
@@ -8881,45 +8881,45 @@ typedef struct
 /* Multifunction Timer unit 0 Free Running Timer registers */
 typedef struct
 {
-		uint8_t RESERVED0[66];
+        uint8_t RESERVED0[66];
   __IO uint16_t TCCP0;
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   __IO uint16_t TCDT0;
   union {
-	__IO uint16_t TCSA0;
-	stc_mft_frt_tcsa0_field_t TCSA0_f;
+    __IO uint16_t TCSA0;
+    stc_mft_frt_tcsa0_field_t TCSA0_f;
   };
   union {
-	__IO uint16_t TCSC0;
-	stc_mft_frt_tcsc0_field_t TCSC0_f;
+    __IO uint16_t TCSC0;
+    stc_mft_frt_tcsc0_field_t TCSC0_f;
   };
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   __IO uint16_t TCCP1;
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   __IO uint16_t TCDT1;
   union {
-	__IO uint16_t TCSA1;
-	stc_mft_frt_tcsa1_field_t TCSA1_f;
+    __IO uint16_t TCSA1;
+    stc_mft_frt_tcsa1_field_t TCSA1_f;
   };
   union {
-	__IO uint16_t TCSC1;
-	stc_mft_frt_tcsc1_field_t TCSC1_f;
+    __IO uint16_t TCSC1;
+    stc_mft_frt_tcsc1_field_t TCSC1_f;
   };
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED4[2];
   __IO uint16_t TCCP2;
-		uint8_t RESERVED5[2];
+        uint8_t RESERVED5[2];
   __IO uint16_t TCDT2;
   union {
-	__IO uint16_t TCSA2;
-	stc_mft_frt_tcsa2_field_t TCSA2_f;
+    __IO uint16_t TCSA2;
+    stc_mft_frt_tcsa2_field_t TCSA2_f;
   };
   union {
-	__IO uint16_t TCSC2;
-	stc_mft_frt_tcsc2_field_t TCSC2_f;
+    __IO uint16_t TCSC2;
+    stc_mft_frt_tcsc2_field_t TCSC2_f;
   };
   union {
-	__IO uint32_t TCAL;
-	stc_mft_frt_tcal_field_t TCAL_f;
+    __IO uint32_t TCAL;
+    stc_mft_frt_tcal_field_t TCAL_f;
   };
 }FM4_MFT_FRT_TypeDef;
 
@@ -8929,101 +8929,101 @@ typedef struct
 /* Multifunction Timer unit 0 Output Compare Unit registers */
 typedef struct
 {
-		uint8_t RESERVED0[2];
+        uint8_t RESERVED0[2];
   __IO uint16_t OCCP0;
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   __IO uint16_t OCCP1;
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   __IO uint16_t OCCP2;
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   __IO uint16_t OCCP3;
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED4[2];
   __IO uint16_t OCCP4;
-		uint8_t RESERVED5[2];
+        uint8_t RESERVED5[2];
   __IO uint16_t OCCP5;
   union {
-	__IO  uint8_t OCSA10;
-	stc_mft_ocu_ocsa10_field_t OCSA10_f;
+    __IO  uint8_t OCSA10;
+    stc_mft_ocu_ocsa10_field_t OCSA10_f;
   };
   union {
-	__IO  uint8_t OCSB10;
-	stc_mft_ocu_ocsb10_field_t OCSB10_f;
+    __IO  uint8_t OCSB10;
+    stc_mft_ocu_ocsb10_field_t OCSB10_f;
   };
   union {
-	__IO  uint8_t OCSD10;
-	stc_mft_ocu_ocsd10_field_t OCSD10_f;
+    __IO  uint8_t OCSD10;
+    stc_mft_ocu_ocsd10_field_t OCSD10_f;
   };
-		uint8_t RESERVED6;
+        uint8_t RESERVED6;
   union {
-	__IO  uint8_t OCSA32;
-	stc_mft_ocu_ocsa32_field_t OCSA32_f;
-  };
-  union {
-	__IO  uint8_t OCSB32;
-	stc_mft_ocu_ocsb32_field_t OCSB32_f;
+    __IO  uint8_t OCSA32;
+    stc_mft_ocu_ocsa32_field_t OCSA32_f;
   };
   union {
-	__IO  uint8_t OCSD32;
-	stc_mft_ocu_ocsd32_field_t OCSD32_f;
-  };
-		uint8_t RESERVED7;
-  union {
-	__IO  uint8_t OCSA54;
-	stc_mft_ocu_ocsa54_field_t OCSA54_f;
+    __IO  uint8_t OCSB32;
+    stc_mft_ocu_ocsb32_field_t OCSB32_f;
   };
   union {
-	__IO  uint8_t OCSB54;
-	stc_mft_ocu_ocsb54_field_t OCSB54_f;
+    __IO  uint8_t OCSD32;
+    stc_mft_ocu_ocsd32_field_t OCSD32_f;
+  };
+        uint8_t RESERVED7;
+  union {
+    __IO  uint8_t OCSA54;
+    stc_mft_ocu_ocsa54_field_t OCSA54_f;
   };
   union {
-	__IO  uint8_t OCSD54;
-	stc_mft_ocu_ocsd54_field_t OCSD54_f;
-  };
-		uint8_t RESERVED8[2];
-  union {
-	__IO  uint8_t OCSC;
-	stc_mft_ocu_ocsc_field_t OCSC_f;
-  };
-		uint8_t RESERVED9[2];
-  union {
-	__IO  uint16_t OCSE0;
-	stc_mft_ocu_ocse0_field_t OCSE0_f;
-  };
-		uint8_t RESERVED10[2];
-  union {
-	__IO  uint32_t OCSE1;
-	stc_mft_ocu_ocse1_field_t OCSE1_f;
+    __IO  uint8_t OCSB54;
+    stc_mft_ocu_ocsb54_field_t OCSB54_f;
   };
   union {
-	__IO  uint16_t OCSE2;
-	stc_mft_ocu_ocse2_field_t OCSE2_f;
+    __IO  uint8_t OCSD54;
+    stc_mft_ocu_ocsd54_field_t OCSD54_f;
   };
-		uint8_t RESERVED11[2];
+        uint8_t RESERVED8[2];
   union {
-	__IO  uint32_t OCSE3;
-	stc_mft_ocu_ocse3_field_t OCSE3_f;
+    __IO  uint8_t OCSC;
+    stc_mft_ocu_ocsc_field_t OCSC_f;
   };
+        uint8_t RESERVED9[2];
   union {
-	__IO  uint16_t OCSE4;
-	stc_mft_ocu_ocse4_field_t OCSE4_f;
+    __IO  uint16_t OCSE0;
+    stc_mft_ocu_ocse0_field_t OCSE0_f;
   };
-		uint8_t RESERVED12[2];
+        uint8_t RESERVED10[2];
   union {
-	__IO  uint32_t OCSE5;
-	stc_mft_ocu_ocse5_field_t OCSE5_f;
-  };
-		uint8_t RESERVED13[40];
-  union {
-	__IO  uint8_t OCFS10;
-	stc_mft_ocu_ocfs10_field_t OCFS10_f;
+    __IO  uint32_t OCSE1;
+    stc_mft_ocu_ocse1_field_t OCSE1_f;
   };
   union {
-	__IO  uint8_t OCFS32;
-	stc_mft_ocu_ocfs32_field_t OCFS32_f;
+    __IO  uint16_t OCSE2;
+    stc_mft_ocu_ocse2_field_t OCSE2_f;
+  };
+        uint8_t RESERVED11[2];
+  union {
+    __IO  uint32_t OCSE3;
+    stc_mft_ocu_ocse3_field_t OCSE3_f;
   };
   union {
-	__IO  uint8_t OCFS54;
-	stc_mft_ocu_ocfs54_field_t OCFS54_f;
+    __IO  uint16_t OCSE4;
+    stc_mft_ocu_ocse4_field_t OCSE4_f;
+  };
+        uint8_t RESERVED12[2];
+  union {
+    __IO  uint32_t OCSE5;
+    stc_mft_ocu_ocse5_field_t OCSE5_f;
+  };
+        uint8_t RESERVED13[40];
+  union {
+    __IO  uint8_t OCFS10;
+    stc_mft_ocu_ocfs10_field_t OCFS10_f;
+  };
+  union {
+    __IO  uint8_t OCFS32;
+    stc_mft_ocu_ocfs32_field_t OCFS32_f;
+  };
+  union {
+    __IO  uint8_t OCFS54;
+    stc_mft_ocu_ocfs54_field_t OCFS54_f;
   };
 }FM4_MFT_OCU_TypeDef;
 
@@ -9033,41 +9033,41 @@ typedef struct
 /* Multifunction Timer unit 0 Waveform Generator and Noise Canceler registers */
 typedef struct
 {
-		uint8_t RESERVED0[142];
+        uint8_t RESERVED0[142];
   __IO uint16_t WFTF10;
   __IO uint16_t WFTA10;
   __IO uint16_t WFTB10;
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   __IO uint16_t WFTF32;
   __IO uint16_t WFTA32;
   __IO uint16_t WFTB32;
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   __IO uint16_t WFTF54;
   __IO uint16_t WFTA54;
   __IO uint16_t WFTB54;
   union {
-	__IO uint16_t WFSA10;
-	stc_mft_wfg_wfsa10_field_t WFSA10_f;
+    __IO uint16_t WFSA10;
+    stc_mft_wfg_wfsa10_field_t WFSA10_f;
   };
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   union {
-	__IO uint16_t WFSA32;
-	stc_mft_wfg_wfsa32_field_t WFSA32_f;
+    __IO uint16_t WFSA32;
+    stc_mft_wfg_wfsa32_field_t WFSA32_f;
   };
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED4[2];
   union {
-	__IO uint16_t WFSA54;
-	stc_mft_wfg_wfsa54_field_t WFSA54_f;
+    __IO uint16_t WFSA54;
+    stc_mft_wfg_wfsa54_field_t WFSA54_f;
   };
-		uint8_t RESERVED5[2];
+        uint8_t RESERVED5[2];
   union {
-	__IO uint16_t WFIR;
-	stc_mft_wfg_wfir_field_t WFIR_f;
+    __IO uint16_t WFIR;
+    stc_mft_wfg_wfir_field_t WFIR_f;
   };
-		uint8_t RESERVED6[2];
+        uint8_t RESERVED6[2];
   union {
-	__IO uint16_t NZCL;
-	stc_mft_wfg_nzcl_field_t NZCL_f;
+    __IO uint16_t NZCL;
+    stc_mft_wfg_nzcl_field_t NZCL_f;
   };
 }FM4_MFT_WFG_TypeDef;
 
@@ -9077,39 +9077,39 @@ typedef struct
 /* Multifunction Timer unit 0 Input Capture Unit registers */
 typedef struct
 {
-		uint8_t RESERVED0[108];
+        uint8_t RESERVED0[108];
   union {
-	__IO  uint8_t ICFS10;
-	stc_mft_icu_icfs10_field_t ICFS10_f;
+    __IO  uint8_t ICFS10;
+    stc_mft_icu_icfs10_field_t ICFS10_f;
   };
   union {
-	__IO  uint8_t ICFS32;
-	stc_mft_icu_icfs32_field_t ICFS32_f;
+    __IO  uint8_t ICFS32;
+    stc_mft_icu_icfs32_field_t ICFS32_f;
   };
-		uint8_t RESERVED1[8];
+        uint8_t RESERVED1[8];
   __IO uint16_t ICCP0;
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   __IO uint16_t ICCP1;
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   __IO uint16_t ICCP2;
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED4[2];
   __IO uint16_t ICCP3;
   union {
-	__IO  uint8_t ICSA10;
-	stc_mft_icu_icsa10_field_t ICSA10_f;
+    __IO  uint8_t ICSA10;
+    stc_mft_icu_icsa10_field_t ICSA10_f;
   };
   union {
-	__IO  uint8_t ICSB10;
-	stc_mft_icu_icsb10_field_t ICSB10_f;
+    __IO  uint8_t ICSB10;
+    stc_mft_icu_icsb10_field_t ICSB10_f;
   };
-		uint8_t RESERVED6[2];
+        uint8_t RESERVED6[2];
   union {
-	__IO  uint8_t ICSA32;
-	stc_mft_icu_icsa32_field_t ICSA32_f;
+    __IO  uint8_t ICSA32;
+    stc_mft_icu_icsa32_field_t ICSA32_f;
   };
   union {
-	__IO  uint8_t ICSB32;
-	stc_mft_icu_icsb32_field_t ICSB32_f;
+    __IO  uint8_t ICSB32;
+    stc_mft_icu_icsb32_field_t ICSB32_f;
   };
 }FM4_MFT_ICU_TypeDef;
 
@@ -9119,90 +9119,90 @@ typedef struct
 /* Multifunction Timer unit 0 ADC Start Compare Unit registers */
 typedef struct
 {
-		uint8_t RESERVED0[112];
+        uint8_t RESERVED0[112];
   union {
-	__IO  uint8_t ACFS10;
-	stc_mft_adcmp_acfs10_field_t ACFS10_f;
+    __IO  uint8_t ACFS10;
+    stc_mft_adcmp_acfs10_field_t ACFS10_f;
   };
   union {
-	__IO  uint8_t ACFS32;
-	stc_mft_adcmp_acfs32_field_t ACFS32_f;
+    __IO  uint8_t ACFS32;
+    stc_mft_adcmp_acfs32_field_t ACFS32_f;
   };
   union {
-	__IO  uint8_t ACFS54;
-	stc_mft_adcmp_acfs54_field_t ACFS54_f;
+    __IO  uint8_t ACFS54;
+    stc_mft_adcmp_acfs54_field_t ACFS54_f;
   };
-		uint8_t RESERVED1[71];
+        uint8_t RESERVED1[71];
   __IO uint16_t ACMP0;
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   __IO uint16_t ACMP1;
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   __IO uint16_t ACMP2;
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED4[2];
   __IO uint16_t ACMP3;
-		uint8_t RESERVED5[2];
+        uint8_t RESERVED5[2];
   __IO uint16_t ACMP4;
-		uint8_t RESERVED6[2];
+        uint8_t RESERVED6[2];
   __IO uint16_t ACMP5;
   union {
-	__IO  uint16_t ACSA;
-	stc_mft_adcmp_acsa_field_t ACSA_f;
+    __IO  uint16_t ACSA;
+    stc_mft_adcmp_acsa_field_t ACSA_f;
   };
-		uint8_t RESERVED7[2];
+        uint8_t RESERVED7[2];
   union {
-	__IO  uint8_t ACSC0;
-	stc_mft_adcmp_acsc_field_t ACSC0_f;
-  };
-  union {
-	__IO  uint8_t ACSD0;
-	stc_mft_adcmp_acsd_field_t ACSD0_f;
-  };
-		uint8_t RESERVED8[2];
-  union {
-	__IO  uint8_t ACSC1;
-	stc_mft_adcmp_acsc_field_t ACSC1_f;
+    __IO  uint8_t ACSC0;
+    stc_mft_adcmp_acsc_field_t ACSC0_f;
   };
   union {
-	__IO  uint8_t ACSD1;
-	stc_mft_adcmp_acsd_field_t ACSD1_f;
+    __IO  uint8_t ACSD0;
+    stc_mft_adcmp_acsd_field_t ACSD0_f;
   };
-		uint8_t RESERVED9[2];
+        uint8_t RESERVED8[2];
   union {
-	__IO  uint8_t ACSC2;
-	stc_mft_adcmp_acsc_field_t ACSC2_f;
-  };
-  union {
-	__IO  uint8_t ACSD2;
-	stc_mft_adcmp_acsd_field_t ACSD2_f;
-  };
-		uint8_t RESERVED10[2];
-  union {
-	__IO  uint8_t ACSC3;
-	stc_mft_adcmp_acsc_field_t ACSC3_f;
+    __IO  uint8_t ACSC1;
+    stc_mft_adcmp_acsc_field_t ACSC1_f;
   };
   union {
-	__IO  uint8_t ACSD3;
-	stc_mft_adcmp_acsd_field_t ACSD3_f;
+    __IO  uint8_t ACSD1;
+    stc_mft_adcmp_acsd_field_t ACSD1_f;
   };
-		uint8_t RESERVED11[2];
+        uint8_t RESERVED9[2];
   union {
-	__IO  uint8_t ACSC4;
-	stc_mft_adcmp_acsc_field_t ACSC4_f;
-  };
-  union {
-	__IO  uint8_t ACSD4;
-	stc_mft_adcmp_acsd_field_t ACSD4_f;
-  };
-		uint8_t RESERVED12[2];
-  union {
-	__IO  uint8_t ACSC5;
-	stc_mft_adcmp_acsc_field_t ACSC5_f;
+    __IO  uint8_t ACSC2;
+    stc_mft_adcmp_acsc_field_t ACSC2_f;
   };
   union {
-	__IO  uint8_t ACSD5;
-	stc_mft_adcmp_acsd_field_t ACSD5_f;
+    __IO  uint8_t ACSD2;
+    stc_mft_adcmp_acsd_field_t ACSD2_f;
   };
-		uint8_t RESERVED13[2];
+        uint8_t RESERVED10[2];
+  union {
+    __IO  uint8_t ACSC3;
+    stc_mft_adcmp_acsc_field_t ACSC3_f;
+  };
+  union {
+    __IO  uint8_t ACSD3;
+    stc_mft_adcmp_acsd_field_t ACSD3_f;
+  };
+        uint8_t RESERVED11[2];
+  union {
+    __IO  uint8_t ACSC4;
+    stc_mft_adcmp_acsc_field_t ACSC4_f;
+  };
+  union {
+    __IO  uint8_t ACSD4;
+    stc_mft_adcmp_acsd_field_t ACSD4_f;
+  };
+        uint8_t RESERVED12[2];
+  union {
+    __IO  uint8_t ACSC5;
+    stc_mft_adcmp_acsc_field_t ACSC5_f;
+  };
+  union {
+    __IO  uint8_t ACSD5;
+    stc_mft_adcmp_acsd_field_t ACSD5_f;
+  };
+        uint8_t RESERVED13[2];
 }FM4_MFT_ADCMP_TypeDef;
 
 /******************************************************************************
@@ -9211,404 +9211,404 @@ typedef struct
 /* Multifunction Timer PPG registers */
 typedef struct
 {
-		uint8_t RESERVED0;
+        uint8_t RESERVED0;
   union {
-	__IO  uint8_t TTCR0;
-	stc_mft_ppg_ttcr0_field_t TTCR0_f;
+    __IO  uint8_t TTCR0;
+    stc_mft_ppg_ttcr0_field_t TTCR0_f;
   };
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   __IO  uint8_t TSTPR0;
-		uint8_t RESERVED3[4];
+        uint8_t RESERVED3[4];
   __IO  uint8_t COMP0;
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED4[2];
   __IO  uint8_t COMP2;
-		uint8_t RESERVED5[4];
+        uint8_t RESERVED5[4];
   __IO  uint8_t COMP4;
-		uint8_t RESERVED6[2];
+        uint8_t RESERVED6[2];
   __IO  uint8_t COMP6;
-		uint8_t RESERVED7[12];
+        uint8_t RESERVED7[12];
   union {
-	__IO  uint8_t TTCR1;
-	stc_mft_ppg_ttcr1_field_t TTCR1_f;
+    __IO  uint8_t TTCR1;
+    stc_mft_ppg_ttcr1_field_t TTCR1_f;
   };
-		uint8_t RESERVED8[2];
+        uint8_t RESERVED8[2];
   __IO  uint8_t TSTPR1;
-		uint8_t RESERVED9[4];
+        uint8_t RESERVED9[4];
   __IO  uint8_t COMP1;
-		uint8_t RESERVED10[2];
+        uint8_t RESERVED10[2];
   __IO  uint8_t COMP3;
-		uint8_t RESERVED11[4];
+        uint8_t RESERVED11[4];
   __IO  uint8_t COMP5;
-		uint8_t RESERVED12[2];
+        uint8_t RESERVED12[2];
   __IO  uint8_t COMP7;
-		uint8_t RESERVED13[12];
+        uint8_t RESERVED13[12];
   union {
-	__IO  uint8_t TTCR2;
-	stc_mft_ppg_ttcr2_field_t TTCR2_f;
+    __IO  uint8_t TTCR2;
+    stc_mft_ppg_ttcr2_field_t TTCR2_f;
   };
-		uint8_t RESERVED14[2];
+        uint8_t RESERVED14[2];
   __IO  uint8_t TSTPR2;
-		uint8_t RESERVED15[4];
+        uint8_t RESERVED15[4];
   __IO  uint8_t COMP8;
-		uint8_t RESERVED16[2];
+        uint8_t RESERVED16[2];
   __IO  uint8_t COMP10;
-		uint8_t RESERVED17[4];
+        uint8_t RESERVED17[4];
   __IO  uint8_t COMP12;
-		uint8_t RESERVED18[2];
+        uint8_t RESERVED18[2];
   __IO  uint8_t COMP14;
-		uint8_t RESERVED19[171];
+        uint8_t RESERVED19[171];
   union {
-	__IO uint16_t TRG0;
-	stc_mft_ppg_trg0_field_t TRG0_f;
+    __IO uint16_t TRG0;
+    stc_mft_ppg_trg0_field_t TRG0_f;
   };
-		uint8_t RESERVED20[2];
+        uint8_t RESERVED20[2];
   union {
-	__IO uint16_t REVC0;
-	stc_mft_ppg_revc0_field_t REVC0_f;
+    __IO uint16_t REVC0;
+    stc_mft_ppg_revc0_field_t REVC0_f;
   };
-		uint8_t RESERVED21[58];
+        uint8_t RESERVED21[58];
   union {
-	__IO uint16_t TRG1;
-	stc_mft_ppg_trg1_field_t TRG1_f;
+    __IO uint16_t TRG1;
+    stc_mft_ppg_trg1_field_t TRG1_f;
   };
-		uint8_t RESERVED22[2];
+        uint8_t RESERVED22[2];
   union {
-	__IO uint16_t REVC1;
-	stc_mft_ppg_revc1_field_t REVC1_f;
+    __IO uint16_t REVC1;
+    stc_mft_ppg_revc1_field_t REVC1_f;
   };
-		uint8_t RESERVED23[186];
+        uint8_t RESERVED23[186];
   union {
-	__IO  uint8_t PPGC1;
-	stc_mft_ppg_ppgc1_field_t PPGC1_f;
-  };
-  union {
-	__IO  uint8_t PPGC0;
-	stc_mft_ppg_ppgc0_field_t PPGC0_f;
-  };
-		uint8_t RESERVED24[2];
-  union {
-	__IO  uint8_t PPGC3;
-	stc_mft_ppg_ppgc3_field_t PPGC3_f;
+    __IO  uint8_t PPGC1;
+    stc_mft_ppg_ppgc1_field_t PPGC1_f;
   };
   union {
-	__IO  uint8_t PPGC2;
-	stc_mft_ppg_ppgc2_field_t PPGC2_f;
+    __IO  uint8_t PPGC0;
+    stc_mft_ppg_ppgc0_field_t PPGC0_f;
   };
-		uint8_t RESERVED25[2];
+        uint8_t RESERVED24[2];
   union {
-	__IO uint16_t PRL0;
-	struct {
-	  __IO  uint8_t PRLL0;
-	  __IO  uint8_t PRLH0;
-	};
-  };
-		uint8_t RESERVED26[2];
-  union {
-	__IO uint16_t PRL1;
-	struct {
-	  __IO  uint8_t PRLL1;
-	  __IO  uint8_t PRLH1;
-	};
-  };
-		uint8_t RESERVED27[2];
-  union {
-	__IO uint16_t PRL2;
-	struct {
-	  __IO  uint8_t PRLL2;
-	  __IO  uint8_t PRLH2;
-	};
-  };
-		uint8_t RESERVED28[2];
-  union {
-	__IO uint16_t PRL3;
-	struct {
-	  __IO  uint8_t PRLL3;
-	  __IO  uint8_t PRLH3;
-	};
-  };
-		uint8_t RESERVED29[2];
-  union {
-	__IO  uint8_t GATEC0;
-	stc_mft_ppg_gatec0_field_t GATEC0_f;
-  };
-		uint8_t RESERVED30[39];
-  union {
-	__IO  uint8_t PPGC5;
-	stc_mft_ppg_ppgc5_field_t PPGC5_f;
+    __IO  uint8_t PPGC3;
+    stc_mft_ppg_ppgc3_field_t PPGC3_f;
   };
   union {
-	__IO  uint8_t PPGC4;
-	stc_mft_ppg_ppgc4_field_t PPGC4_f;
+    __IO  uint8_t PPGC2;
+    stc_mft_ppg_ppgc2_field_t PPGC2_f;
   };
-		uint8_t RESERVED31[2];
+        uint8_t RESERVED25[2];
   union {
-	__IO  uint8_t PPGC7;
-	stc_mft_ppg_ppgc7_field_t PPGC7_f;
+    __IO uint16_t PRL0;
+    struct {
+      __IO  uint8_t PRLL0;
+      __IO  uint8_t PRLH0;
+    };
   };
+        uint8_t RESERVED26[2];
   union {
-	__IO  uint8_t PPGC6;
-	stc_mft_ppg_ppgc6_field_t PPGC6_f;
+    __IO uint16_t PRL1;
+    struct {
+      __IO  uint8_t PRLL1;
+      __IO  uint8_t PRLH1;
+    };
   };
-		uint8_t RESERVED32[2];
+        uint8_t RESERVED27[2];
   union {
-	__IO uint16_t PRL4;
-	struct {
-	  __IO  uint8_t PRLL4;
-	  __IO  uint8_t PRLH4;
-	};
+    __IO uint16_t PRL2;
+    struct {
+      __IO  uint8_t PRLL2;
+      __IO  uint8_t PRLH2;
+    };
   };
-		uint8_t RESERVED33[2];
+        uint8_t RESERVED28[2];
   union {
-	__IO uint16_t PRL5;
-	struct {
-	  __IO  uint8_t PRLL5;
-	  __IO  uint8_t PRLH5;
-	};
+    __IO uint16_t PRL3;
+    struct {
+      __IO  uint8_t PRLL3;
+      __IO  uint8_t PRLH3;
+    };
   };
-		uint8_t RESERVED34[2];
+        uint8_t RESERVED29[2];
   union {
-	__IO uint16_t PRL6;
-	struct {
-	  __IO  uint8_t PRLL6;
-	  __IO  uint8_t PRLH6;
-	};
+    __IO  uint8_t GATEC0;
+    stc_mft_ppg_gatec0_field_t GATEC0_f;
   };
-		uint8_t RESERVED35[2];
+        uint8_t RESERVED30[39];
   union {
-	__IO uint16_t PRL7;
-	struct {
-	  __IO  uint8_t PRLL7;
-	  __IO  uint8_t PRLH7;
-	};
-  };
-		uint8_t RESERVED36[2];
-  union {
-	__IO  uint8_t GATEC4;
-	stc_mft_ppg_gatec4_field_t GATEC4_f;
-  };
-		uint8_t RESERVED37[39];
-  union {
-	__IO  uint8_t PPGC9;
-	stc_mft_ppg_ppgc9_field_t PPGC9_f;
+    __IO  uint8_t PPGC5;
+    stc_mft_ppg_ppgc5_field_t PPGC5_f;
   };
   union {
-	__IO  uint8_t PPGC8;
-	stc_mft_ppg_ppgc8_field_t PPGC8_f;
+    __IO  uint8_t PPGC4;
+    stc_mft_ppg_ppgc4_field_t PPGC4_f;
   };
-		uint8_t RESERVED38[2];
+        uint8_t RESERVED31[2];
   union {
-	__IO  uint8_t PPGC11;
-	stc_mft_ppg_ppgc11_field_t PPGC11_f;
-  };
-  union {
-	__IO  uint8_t PPGC10;
-	stc_mft_ppg_ppgc10_field_t PPGC10_f;
-  };
-		uint8_t RESERVED39[2];
-  union {
-	__IO uint16_t PRL8;
-	struct {
-	  __IO  uint8_t PRLL8;
-	  __IO  uint8_t PRLH8;
-	};
-  };
-		uint8_t RESERVED40[2];
-  union {
-	__IO uint16_t PRL9;
-	struct {
-	  __IO  uint8_t PRLL9;
-	  __IO  uint8_t PRLH9;
-	};
-  };
-		uint8_t RESERVED41[2];
-  union {
-	__IO uint16_t PRL10;
-	struct {
-	  __IO  uint8_t PRLL10;
-	  __IO  uint8_t PRLH10;
-	};
-  };
-		uint8_t RESERVED42[2];
-  union {
-	__IO uint16_t PRL11;
-	struct {
-	  __IO  uint8_t PRLL11;
-	  __IO  uint8_t PRLH11;
-	};
-  };
-		uint8_t RESERVED43[2];
-  union {
-	__IO  uint8_t GATEC8;
-	stc_mft_ppg_gatec8_field_t GATEC8_f;
-  };
-		uint8_t RESERVED44[39];
-  union {
-	__IO  uint8_t PPGC13;
-	stc_mft_ppg_ppgc13_field_t PPGC13_f;
+    __IO  uint8_t PPGC7;
+    stc_mft_ppg_ppgc7_field_t PPGC7_f;
   };
   union {
-	__IO  uint8_t PPGC12;
-	stc_mft_ppg_ppgc12_field_t PPGC12_f;
+    __IO  uint8_t PPGC6;
+    stc_mft_ppg_ppgc6_field_t PPGC6_f;
   };
-		uint8_t RESERVED45[2];
+        uint8_t RESERVED32[2];
   union {
-	__IO  uint8_t PPGC15;
-	stc_mft_ppg_ppgc15_field_t PPGC15_f;
+    __IO uint16_t PRL4;
+    struct {
+      __IO  uint8_t PRLL4;
+      __IO  uint8_t PRLH4;
+    };
   };
+        uint8_t RESERVED33[2];
   union {
-	__IO  uint8_t PPGC14;
-	stc_mft_ppg_ppgc14_field_t PPGC14_f;
+    __IO uint16_t PRL5;
+    struct {
+      __IO  uint8_t PRLL5;
+      __IO  uint8_t PRLH5;
+    };
   };
-		uint8_t RESERVED46[2];
+        uint8_t RESERVED34[2];
   union {
-	__IO uint16_t PRL12;
-	struct {
-	  __IO  uint8_t PRLL12;
-	  __IO  uint8_t PRLH12;
-	};
+    __IO uint16_t PRL6;
+    struct {
+      __IO  uint8_t PRLL6;
+      __IO  uint8_t PRLH6;
+    };
   };
-		uint8_t RESERVED47[2];
+        uint8_t RESERVED35[2];
   union {
-	__IO uint16_t PRL13;
-	struct {
-	  __IO  uint8_t PRLL13;
-	  __IO  uint8_t PRLH13;
-	};
+    __IO uint16_t PRL7;
+    struct {
+      __IO  uint8_t PRLL7;
+      __IO  uint8_t PRLH7;
+    };
   };
-		uint8_t RESERVED48[2];
+        uint8_t RESERVED36[2];
   union {
-	__IO uint16_t PRL14;
-	struct {
-	  __IO  uint8_t PRLL14;
-	  __IO  uint8_t PRLH14;
-	};
+    __IO  uint8_t GATEC4;
+    stc_mft_ppg_gatec4_field_t GATEC4_f;
   };
-		uint8_t RESERVED49[2];
+        uint8_t RESERVED37[39];
   union {
-	__IO uint16_t PRL15;
-	struct {
-	  __IO  uint8_t PRLL15;
-	  __IO  uint8_t PRLH15;
-	};
-  };
-		uint8_t RESERVED50[2];
-  union {
-	__IO  uint8_t GATEC12;
-	stc_mft_ppg_gatec12_field_t GATEC12_f;
-  };
-		uint8_t RESERVED51[39];
-  union {
-	__IO  uint8_t PPGC17;
-	stc_mft_ppg_ppgc17_field_t PPGC17_f;
+    __IO  uint8_t PPGC9;
+    stc_mft_ppg_ppgc9_field_t PPGC9_f;
   };
   union {
-	__IO  uint8_t PPGC16;
-	stc_mft_ppg_ppgc16_field_t PPGC16_f;
+    __IO  uint8_t PPGC8;
+    stc_mft_ppg_ppgc8_field_t PPGC8_f;
   };
-		uint8_t RESERVED52[2];
+        uint8_t RESERVED38[2];
   union {
-	__IO  uint8_t PPGC19;
-	stc_mft_ppg_ppgc19_field_t PPGC19_f;
-  };
-  union {
-	__IO  uint8_t PPGC18;
-	stc_mft_ppg_ppgc18_field_t PPGC18_f;
-  };
-		uint8_t RESERVED53[2];
-  union {
-	__IO uint16_t PRL16;
-	struct {
-	  __IO  uint8_t PRLL16;
-	  __IO  uint8_t PRLH16;
-	};
-  };
-		uint8_t RESERVED54[2];
-  union {
-	__IO uint16_t PRL17;
-	struct {
-	  __IO  uint8_t PRLL17;
-	  __IO  uint8_t PRLH17;
-	};
-  };
-		uint8_t RESERVED55[2];
-  union {
-	__IO uint16_t PRL18;
-	struct {
-	  __IO  uint8_t PRLL18;
-	  __IO  uint8_t PRLH18;
-	};
-  };
-		uint8_t RESERVED56[2];
-  union {
-	__IO uint16_t PRL19;
-	struct {
-	  __IO  uint8_t PRLL19;
-	  __IO  uint8_t PRLH19;
-	};
-  };
-		uint8_t RESERVED57[2];
-  union {
-	__IO  uint8_t GATEC16;
-	stc_mft_ppg_gatec16_field_t GATEC16_f;
-  };
-		uint8_t RESERVED58[39];
-  union {
-	__IO  uint8_t PPGC21;
-	stc_mft_ppg_ppgc21_field_t PPGC21_f;
+    __IO  uint8_t PPGC11;
+    stc_mft_ppg_ppgc11_field_t PPGC11_f;
   };
   union {
-	__IO  uint8_t PPGC20;
-	stc_mft_ppg_ppgc20_field_t PPGC20_f;
+    __IO  uint8_t PPGC10;
+    stc_mft_ppg_ppgc10_field_t PPGC10_f;
   };
-		uint8_t RESERVED59[2];
+        uint8_t RESERVED39[2];
   union {
-	__IO  uint8_t PPGC23;
-	stc_mft_ppg_ppgc23_field_t PPGC23_f;
+    __IO uint16_t PRL8;
+    struct {
+      __IO  uint8_t PRLL8;
+      __IO  uint8_t PRLH8;
+    };
+  };
+        uint8_t RESERVED40[2];
+  union {
+    __IO uint16_t PRL9;
+    struct {
+      __IO  uint8_t PRLL9;
+      __IO  uint8_t PRLH9;
+    };
+  };
+        uint8_t RESERVED41[2];
+  union {
+    __IO uint16_t PRL10;
+    struct {
+      __IO  uint8_t PRLL10;
+      __IO  uint8_t PRLH10;
+    };
+  };
+        uint8_t RESERVED42[2];
+  union {
+    __IO uint16_t PRL11;
+    struct {
+      __IO  uint8_t PRLL11;
+      __IO  uint8_t PRLH11;
+    };
+  };
+        uint8_t RESERVED43[2];
+  union {
+    __IO  uint8_t GATEC8;
+    stc_mft_ppg_gatec8_field_t GATEC8_f;
+  };
+        uint8_t RESERVED44[39];
+  union {
+    __IO  uint8_t PPGC13;
+    stc_mft_ppg_ppgc13_field_t PPGC13_f;
   };
   union {
-	__IO  uint8_t PPGC22;
-	stc_mft_ppg_ppgc22_field_t PPGC22_f;
+    __IO  uint8_t PPGC12;
+    stc_mft_ppg_ppgc12_field_t PPGC12_f;
   };
-		uint8_t RESERVED60[2];
+        uint8_t RESERVED45[2];
   union {
-	__IO uint16_t PRL20;
-	struct {
-	  __IO  uint8_t PRLL20;
-	  __IO  uint8_t PRLH20;
-	};
+    __IO  uint8_t PPGC15;
+    stc_mft_ppg_ppgc15_field_t PPGC15_f;
   };
-		uint8_t RESERVED61[2];
   union {
-	__IO uint16_t PRL21;
-	struct {
-	  __IO  uint8_t PRLL21;
-	  __IO  uint8_t PRLH21;
-	};
+    __IO  uint8_t PPGC14;
+    stc_mft_ppg_ppgc14_field_t PPGC14_f;
   };
-		uint8_t RESERVED62[2];
+        uint8_t RESERVED46[2];
   union {
-	__IO uint16_t PRL22;
-	struct {
-	  __IO  uint8_t PRLL22;
-	  __IO  uint8_t PRLH22;
-	};
+    __IO uint16_t PRL12;
+    struct {
+      __IO  uint8_t PRLL12;
+      __IO  uint8_t PRLH12;
+    };
   };
-		uint8_t RESERVED63[2];
+        uint8_t RESERVED47[2];
   union {
-	__IO uint16_t PRL23;
-	struct {
-	  __IO  uint8_t PRLL23;
-	  __IO  uint8_t PRLH23;
-	};
+    __IO uint16_t PRL13;
+    struct {
+      __IO  uint8_t PRLL13;
+      __IO  uint8_t PRLH13;
+    };
   };
-		uint8_t RESERVED64[2];
+        uint8_t RESERVED48[2];
   union {
-	__IO  uint8_t GATEC20;
-	stc_mft_ppg_gatec20_field_t GATEC20_f;
+    __IO uint16_t PRL14;
+    struct {
+      __IO  uint8_t PRLL14;
+      __IO  uint8_t PRLH14;
+    };
   };
-		uint8_t RESERVED65[39];
+        uint8_t RESERVED49[2];
+  union {
+    __IO uint16_t PRL15;
+    struct {
+      __IO  uint8_t PRLL15;
+      __IO  uint8_t PRLH15;
+    };
+  };
+        uint8_t RESERVED50[2];
+  union {
+    __IO  uint8_t GATEC12;
+    stc_mft_ppg_gatec12_field_t GATEC12_f;
+  };
+        uint8_t RESERVED51[39];
+  union {
+    __IO  uint8_t PPGC17;
+    stc_mft_ppg_ppgc17_field_t PPGC17_f;
+  };
+  union {
+    __IO  uint8_t PPGC16;
+    stc_mft_ppg_ppgc16_field_t PPGC16_f;
+  };
+        uint8_t RESERVED52[2];
+  union {
+    __IO  uint8_t PPGC19;
+    stc_mft_ppg_ppgc19_field_t PPGC19_f;
+  };
+  union {
+    __IO  uint8_t PPGC18;
+    stc_mft_ppg_ppgc18_field_t PPGC18_f;
+  };
+        uint8_t RESERVED53[2];
+  union {
+    __IO uint16_t PRL16;
+    struct {
+      __IO  uint8_t PRLL16;
+      __IO  uint8_t PRLH16;
+    };
+  };
+        uint8_t RESERVED54[2];
+  union {
+    __IO uint16_t PRL17;
+    struct {
+      __IO  uint8_t PRLL17;
+      __IO  uint8_t PRLH17;
+    };
+  };
+        uint8_t RESERVED55[2];
+  union {
+    __IO uint16_t PRL18;
+    struct {
+      __IO  uint8_t PRLL18;
+      __IO  uint8_t PRLH18;
+    };
+  };
+        uint8_t RESERVED56[2];
+  union {
+    __IO uint16_t PRL19;
+    struct {
+      __IO  uint8_t PRLL19;
+      __IO  uint8_t PRLH19;
+    };
+  };
+        uint8_t RESERVED57[2];
+  union {
+    __IO  uint8_t GATEC16;
+    stc_mft_ppg_gatec16_field_t GATEC16_f;
+  };
+        uint8_t RESERVED58[39];
+  union {
+    __IO  uint8_t PPGC21;
+    stc_mft_ppg_ppgc21_field_t PPGC21_f;
+  };
+  union {
+    __IO  uint8_t PPGC20;
+    stc_mft_ppg_ppgc20_field_t PPGC20_f;
+  };
+        uint8_t RESERVED59[2];
+  union {
+    __IO  uint8_t PPGC23;
+    stc_mft_ppg_ppgc23_field_t PPGC23_f;
+  };
+  union {
+    __IO  uint8_t PPGC22;
+    stc_mft_ppg_ppgc22_field_t PPGC22_f;
+  };
+        uint8_t RESERVED60[2];
+  union {
+    __IO uint16_t PRL20;
+    struct {
+      __IO  uint8_t PRLL20;
+      __IO  uint8_t PRLH20;
+    };
+  };
+        uint8_t RESERVED61[2];
+  union {
+    __IO uint16_t PRL21;
+    struct {
+      __IO  uint8_t PRLL21;
+      __IO  uint8_t PRLH21;
+    };
+  };
+        uint8_t RESERVED62[2];
+  union {
+    __IO uint16_t PRL22;
+    struct {
+      __IO  uint8_t PRLL22;
+      __IO  uint8_t PRLH22;
+    };
+  };
+        uint8_t RESERVED63[2];
+  union {
+    __IO uint16_t PRL23;
+    struct {
+      __IO  uint8_t PRLL23;
+      __IO  uint8_t PRLH23;
+    };
+  };
+        uint8_t RESERVED64[2];
+  union {
+    __IO  uint8_t GATEC20;
+    stc_mft_ppg_gatec20_field_t GATEC20_f;
+  };
+        uint8_t RESERVED65[39];
   __IO  uint8_t IGBTC;
-		uint8_t RESERVED66[39];
+        uint8_t RESERVED66[39];
 }FM4_MFT_PPG_TypeDef;
 
 /******************************************************************************
@@ -9618,23 +9618,23 @@ typedef struct
 typedef struct
 {
   __IO uint16_t PRLL;
-		uint8_t RESERVED0[2];
+        uint8_t RESERVED0[2];
   __IO uint16_t PRLH;
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   __IO uint16_t TMR;
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   union {
-	__IO uint16_t TMCR;
-	stc_bt_ppg_tmcr_field_t TMCR_f;
+    __IO uint16_t TMCR;
+    stc_bt_ppg_tmcr_field_t TMCR_f;
   };
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   union {
-	__IO  uint8_t STC;
-	stc_bt_ppg_stc_field_t STC_f;
+    __IO  uint8_t STC;
+    stc_bt_ppg_stc_field_t STC_f;
   };
   union {
-	__IO  uint8_t TMCR2;
-	stc_bt_ppg_tmcr2_field_t TMCR2_f;
+    __IO  uint8_t TMCR2;
+    stc_bt_ppg_tmcr2_field_t TMCR2_f;
   };
 }FM4_BT_PPG_TypeDef;
 
@@ -9645,23 +9645,23 @@ typedef struct
 typedef struct
 {
   __IO uint16_t PCSR;
-		uint8_t RESERVED0[2];
+        uint8_t RESERVED0[2];
   __IO uint16_t PDUT;
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   __IO uint16_t TMR;
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   union {
-	__IO uint16_t TMCR;
-	stc_bt_pwm_tmcr_field_t TMCR_f;
+    __IO uint16_t TMCR;
+    stc_bt_pwm_tmcr_field_t TMCR_f;
   };
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   union {
-	__IO  uint8_t STC;
-	stc_bt_pwm_stc_field_t STC_f;
+    __IO  uint8_t STC;
+    stc_bt_pwm_stc_field_t STC_f;
   };
   union {
-	__IO  uint8_t TMCR2;
-	stc_bt_pwm_tmcr2_field_t TMCR2_f;
+    __IO  uint8_t TMCR2;
+    stc_bt_pwm_tmcr2_field_t TMCR2_f;
   };
 }FM4_BT_PWM_TypeDef;
 
@@ -9672,21 +9672,21 @@ typedef struct
 typedef struct
 {
   __IO uint16_t PCSR;
-		uint8_t RESERVED0[6];
+        uint8_t RESERVED0[6];
   __IO uint16_t TMR;
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   union {
-	__IO uint16_t TMCR;
-	stc_bt_rt_tmcr_field_t TMCR_f;
+    __IO uint16_t TMCR;
+    stc_bt_rt_tmcr_field_t TMCR_f;
   };
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   union {
-	__IO  uint8_t STC;
-	stc_bt_rt_stc_field_t STC_f;
+    __IO  uint8_t STC;
+    stc_bt_rt_stc_field_t STC_f;
   };
   union {
-	__IO  uint8_t TMCR2;
-	stc_bt_rt_tmcr2_field_t TMCR2_f;
+    __IO  uint8_t TMCR2;
+    stc_bt_rt_tmcr2_field_t TMCR2_f;
   };
 }FM4_BT_RT_TypeDef;
 
@@ -9696,21 +9696,21 @@ typedef struct
 /* Base Timer 0 PWC registers */
 typedef struct
 {
-		uint8_t RESERVED0[4];
+        uint8_t RESERVED0[4];
   __IO uint16_t DTBF;
-		uint8_t RESERVED1[6];
+        uint8_t RESERVED1[6];
   union {
-	__IO uint16_t TMCR;
-	stc_bt_pwc_tmcr_field_t TMCR_f;
+    __IO uint16_t TMCR;
+    stc_bt_pwc_tmcr_field_t TMCR_f;
   };
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   union {
-	__IO  uint8_t STC;
-	stc_bt_pwc_stc_field_t STC_f;
+    __IO  uint8_t STC;
+    stc_bt_pwc_stc_field_t STC_f;
   };
   union {
-	__IO  uint8_t TMCR2;
-	stc_bt_pwc_tmcr2_field_t TMCR2_f;
+    __IO  uint8_t TMCR2;
+    stc_bt_pwc_tmcr2_field_t TMCR2_f;
   };
 }FM4_BT_PWC_TypeDef;
 
@@ -9720,10 +9720,10 @@ typedef struct
 /* Base Timer I/O selector channel 0 - channel 3 registers */
 typedef struct
 {
-		uint8_t RESERVED0;
+        uint8_t RESERVED0;
   union {
-	__IO  uint8_t BTSEL0123;
-	stc_btiosel03_btsel0123_field_t BTSEL0123_f;
+    __IO  uint8_t BTSEL0123;
+    stc_btiosel03_btsel0123_field_t BTSEL0123_f;
   };
 }FM4_BTIOSEL03_TypeDef;
 
@@ -9733,10 +9733,10 @@ typedef struct
 /* Base Timer I/O selector channel 4 - channel 7 registers */
 typedef struct
 {
-		uint8_t RESERVED0;
+        uint8_t RESERVED0;
   union {
-	__IO  uint8_t BTSEL4567;
-	stc_btiosel47_btsel4567_field_t BTSEL4567_f;
+    __IO  uint8_t BTSEL4567;
+    stc_btiosel47_btsel4567_field_t BTSEL4567_f;
   };
 }FM4_BTIOSEL47_TypeDef;
 
@@ -9746,10 +9746,10 @@ typedef struct
 /* Base Timer I/O selector channel 8 - channel 11 registers */
 typedef struct
 {
-		uint8_t RESERVED0;
+        uint8_t RESERVED0;
   union {
-	__IO  uint8_t BTSEL89AB;
-	stc_btiosel8b_btsel89ab_field_t BTSEL89AB_f;
+    __IO  uint8_t BTSEL89AB;
+    stc_btiosel8b_btsel89ab_field_t BTSEL89AB_f;
   };
 }FM4_BTIOSEL8B_TypeDef;
 
@@ -9759,10 +9759,10 @@ typedef struct
 /* Base Timer I/O selector channel 12 - channel 15 registers */
 typedef struct
 {
-		uint8_t RESERVED0;
+        uint8_t RESERVED0;
   union {
-	__IO  uint8_t BTSELCDEF;
-	stc_btioselcf_btselcdef_field_t BTSELCDEF_f;
+    __IO  uint8_t BTSELCDEF;
+    stc_btioselcf_btselcdef_field_t BTSELCDEF_f;
   };
 }FM4_BTIOSELCF_TypeDef;
 
@@ -9773,8 +9773,8 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint16_t BTSSSR;
-	stc_sbssr_btsssr_field_t BTSSSR_f;
+    __IO uint16_t BTSSSR;
+    stc_sbssr_btsssr_field_t BTSSSR_f;
   };
 }FM4_SBSSR_TypeDef;
 
@@ -9785,52 +9785,52 @@ typedef struct
 typedef struct
 {
   __IO uint16_t QPCR;
-		uint8_t RESERVED0[2];
+        uint8_t RESERVED0[2];
   __IO uint16_t QRCR;
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   __IO uint16_t QPCCR;
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED2[2];
   __IO uint16_t QPRCR;
-		uint8_t RESERVED3[2];
+        uint8_t RESERVED3[2];
   __IO uint16_t QMPR;
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED4[2];
   union {
-	union {
-	  __IO uint16_t QICR;
-	  stc_qprc_qicr_field_t QICR_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t QICRL;
-		stc_qprc_qicrl_field_t QICRL_f;
-	  };
-	  union {
-		__IO  uint8_t QICRH;
-		stc_qprc_qicrh_field_t QICRH_f;
-	  };
-	};
+    union {
+      __IO uint16_t QICR;
+      stc_qprc_qicr_field_t QICR_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t QICRL;
+        stc_qprc_qicrl_field_t QICRL_f;
+      };
+      union {
+        __IO  uint8_t QICRH;
+        stc_qprc_qicrh_field_t QICRH_f;
+      };
+    };
   };
-		uint8_t RESERVED5[2];
+        uint8_t RESERVED5[2];
   union {
-	union {
-	  __IO uint16_t QCR;
-	  stc_qprc_qcr_field_t QCR_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t QCRL;
-		stc_qprc_qcrl_field_t QCRL_f;
-	  };
-	  union {
-		__IO  uint8_t QCRH;
-		stc_qprc_qcrh_field_t QCRH_f;
-	  };
-	};
+    union {
+      __IO uint16_t QCR;
+      stc_qprc_qcr_field_t QCR_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t QCRL;
+        stc_qprc_qcrl_field_t QCRL_f;
+      };
+      union {
+        __IO  uint8_t QCRH;
+        stc_qprc_qcrh_field_t QCRH_f;
+      };
+    };
   };
-		uint8_t RESERVED6[2];
+        uint8_t RESERVED6[2];
   union {
-	__IO uint16_t QECR;
-	stc_qprc_qecr_field_t QECR_f;
+    __IO uint16_t QECR;
+    stc_qprc_qecr_field_t QECR_f;
   };
 }FM4_QPRC_TypeDef;
 
@@ -9841,20 +9841,20 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t NFCTLA;
-	stc_qprc_nf_nfctla_field_t NFCTLA_f;
+    __IO  uint8_t NFCTLA;
+    stc_qprc_nf_nfctla_field_t NFCTLA_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   union {
-	__IO  uint8_t NFCTLB;
-	stc_qprc_nf_nfctlb_field_t NFCTLB_f;
+    __IO  uint8_t NFCTLB;
+    stc_qprc_nf_nfctlb_field_t NFCTLB_f;
   };
-		uint8_t RESERVED1[3];
+        uint8_t RESERVED1[3];
   union {
-	__IO  uint8_t NFRCTLZ;
-	stc_qprc_nf_nfrctlz_field_t NFRCTLZ_f;
+    __IO  uint8_t NFRCTLZ;
+    stc_qprc_nf_nfrctlz_field_t NFRCTLZ_f;
   };
-		uint8_t RESERVED2[7];
+        uint8_t RESERVED2[7];
 }FM4_QPRC_NF_TypeDef;
 
 /******************************************************************************
@@ -9864,209 +9864,209 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t ADSR;
-	stc_adc_adsr_field_t ADSR_f;
+    __IO  uint8_t ADSR;
+    stc_adc_adsr_field_t ADSR_f;
   };
   union {
-	__IO  uint8_t ADCR;
-	stc_adc_adcr_field_t ADCR_f;
+    __IO  uint8_t ADCR;
+    stc_adc_adcr_field_t ADCR_f;
   };
-		uint8_t RESERVED0[6];
+        uint8_t RESERVED0[6];
   union {
-	__IO  uint8_t SFNS;
-	stc_adc_sfns_field_t SFNS_f;
-  };
-  union {
-	__IO  uint8_t SCCR;
-	stc_adc_sccr_field_t SCCR_f;
-  };
-		uint8_t RESERVED1[2];
-  union {
-	union {
-	  __IO uint32_t SCFD;
-	  stc_adc_scfd_field_t SCFD_f;
-	};
-	struct {
-	  union {
-		__IO uint16_t SCFDL;
-		stc_adc_scfdl_field_t SCFDL_f;
-	  };
-	  union {
-		__IO uint16_t SCFDH;
-		stc_adc_scfdh_field_t SCFDH_f;
-	  };
-	};
+    __IO  uint8_t SFNS;
+    stc_adc_sfns_field_t SFNS_f;
   };
   union {
-	union {
-	  __IO uint16_t SCIS23;
-	  stc_adc_scis23_field_t SCIS23_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t SCIS2;
-		stc_adc_scis2_field_t SCIS2_f;
-	  };
-	  union {
-		__IO  uint8_t SCIS3;
-		stc_adc_scis3_field_t SCIS3_f;
-	  };
-	};
+    __IO  uint8_t SCCR;
+    stc_adc_sccr_field_t SCCR_f;
   };
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED1[2];
   union {
-	union {
-	  __IO uint16_t SCIS01;
-	  stc_adc_scis01_field_t SCIS01_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t SCIS0;
-		stc_adc_scis0_field_t SCIS0_f;
-	  };
-	  union {
-		__IO  uint8_t SCIS1;
-		stc_adc_scis1_field_t SCIS1_f;
-	  };
-	};
-  };
-		uint8_t RESERVED3[2];
-  union {
-	__IO  uint8_t PFNS;
-	stc_adc_pfns_field_t PFNS_f;
+    union {
+      __IO uint32_t SCFD;
+      stc_adc_scfd_field_t SCFD_f;
+    };
+    struct {
+      union {
+        __IO uint16_t SCFDL;
+        stc_adc_scfdl_field_t SCFDL_f;
+      };
+      union {
+        __IO uint16_t SCFDH;
+        stc_adc_scfdh_field_t SCFDH_f;
+      };
+    };
   };
   union {
-	__IO  uint8_t PCCR;
-	stc_adc_pccr_field_t PCCR_f;
+    union {
+      __IO uint16_t SCIS23;
+      stc_adc_scis23_field_t SCIS23_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t SCIS2;
+        stc_adc_scis2_field_t SCIS2_f;
+      };
+      union {
+        __IO  uint8_t SCIS3;
+        stc_adc_scis3_field_t SCIS3_f;
+      };
+    };
   };
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED2[2];
   union {
-	union {
-	  __IO uint32_t PCFD;
-	  stc_adc_pcfd_field_t PCFD_f;
-	};
-	struct {
-	  union {
-		__IO uint16_t PCFDL;
-		stc_adc_pcfdl_field_t PCFDL_f;
-	  };
-	  union {
-		__IO uint16_t PCFDH;
-		stc_adc_pcfdh_field_t PCFDH_f;
-	  };
-	};
+    union {
+      __IO uint16_t SCIS01;
+      stc_adc_scis01_field_t SCIS01_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t SCIS0;
+        stc_adc_scis0_field_t SCIS0_f;
+      };
+      union {
+        __IO  uint8_t SCIS1;
+        stc_adc_scis1_field_t SCIS1_f;
+      };
+    };
   };
+        uint8_t RESERVED3[2];
   union {
-	__IO  uint8_t PCIS;
-	stc_adc_pcis_field_t PCIS_f;
-  };
-		uint8_t RESERVED5[3];
-  union {
-	__IO  uint8_t CMPCR;
-	stc_adc_cmpcr_field_t CMPCR_f;
-  };
-		uint8_t RESERVED6;
-  union {
-	__IO uint16_t CMPD;
-	stc_adc_cmpd_field_t CMPD_f;
-  };
-  union {
-	union {
-	  __IO uint16_t ADSS23;
-	  stc_adc_adss23_field_t ADSS23_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t ADSS2;
-		stc_adc_adss2_field_t ADSS2_f;
-	  };
-	  union {
-		__IO  uint8_t ADSS3;
-		stc_adc_adss3_field_t ADSS3_f;
-	  };
-	};
-  };
-		uint8_t RESERVED7[2];
-  union {
-	union {
-	  __IO uint16_t ADSS01;
-	  stc_adc_adss01_field_t ADSS01_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t ADSS0;
-		stc_adc_adss0_field_t ADSS0_f;
-	  };
-	  union {
-		__IO  uint8_t ADSS1;
-		stc_adc_adss1_field_t ADSS1_f;
-	  };
-	};
-  };
-		uint8_t RESERVED8[2];
-  union {
-	union {
-	  __IO uint16_t ADST01;
-	  stc_adc_adst01_field_t ADST01_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t ADST1;
-		stc_adc_adst1_field_t ADST1_f;
-	  };
-	  union {
-		__IO  uint8_t ADST0;
-		stc_adc_adst0_field_t ADST0_f;
-	  };
-	};
-  };
-		uint8_t RESERVED9[2];
-  union {
-	__IO  uint8_t ADCT;
-	stc_adc_adct_field_t ADCT_f;
-  };
-		uint8_t RESERVED10[3];
-  union {
-	__IO  uint8_t PRTSL;
-	stc_adc_prtsl_field_t PRTSL_f;
+    __IO  uint8_t PFNS;
+    stc_adc_pfns_field_t PFNS_f;
   };
   union {
-	__IO  uint8_t SCTSL;
-	stc_adc_sctsl_field_t SCTSL_f;
+    __IO  uint8_t PCCR;
+    stc_adc_pccr_field_t PCCR_f;
   };
-		uint8_t RESERVED11[2];
+        uint8_t RESERVED4[2];
   union {
-	__IO  uint16_t ADCEN;
-	stc_adc_adcen_field_t ADCEN_f;
-  };
-		uint8_t  RESERVED12[2];
-		uint32_t OFFESET;
-  union {
-	__IO uint8_t WCMRCOT;
-	stc_adc_wcmrcot_field_t WCMRCOT_f;
-  };
-		uint8_t  RESERVED13[3];
-  union {
-	__IO uint8_t WCMRCIF;
-	stc_adc_wcmrcif_field_t WCMRCIF_f;
-  };
-		uint8_t  RESERVED14[3];
-  union {
-	__IO uint8_t WCMPCR;
-	stc_adc_wcmpcr_field_t WCMPCR_f;
+    union {
+      __IO uint32_t PCFD;
+      stc_adc_pcfd_field_t PCFD_f;
+    };
+    struct {
+      union {
+        __IO uint16_t PCFDL;
+        stc_adc_pcfdl_field_t PCFDL_f;
+      };
+      union {
+        __IO uint16_t PCFDH;
+        stc_adc_pcfdh_field_t PCFDH_f;
+      };
+    };
   };
   union {
-	__IO uint8_t WCMPSR;
-	stc_adc_wcmpsr_field_t WCMPSR_f;
+    __IO  uint8_t PCIS;
+    stc_adc_pcis_field_t PCIS_f;
   };
-		uint8_t  RESERVED15[2];
+        uint8_t RESERVED5[3];
   union {
-	__IO uint16_t WCMPDL;
-	stc_adc_wcmpdl_field_t WCMPDL_f;
+    __IO  uint8_t CMPCR;
+    stc_adc_cmpcr_field_t CMPCR_f;
+  };
+        uint8_t RESERVED6;
+  union {
+    __IO uint16_t CMPD;
+    stc_adc_cmpd_field_t CMPD_f;
   };
   union {
-	__IO uint16_t WCMPDH;
-	stc_adc_wcmpdh_field_t WCMPDH_f;
+    union {
+      __IO uint16_t ADSS23;
+      stc_adc_adss23_field_t ADSS23_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t ADSS2;
+        stc_adc_adss2_field_t ADSS2_f;
+      };
+      union {
+        __IO  uint8_t ADSS3;
+        stc_adc_adss3_field_t ADSS3_f;
+      };
+    };
+  };
+        uint8_t RESERVED7[2];
+  union {
+    union {
+      __IO uint16_t ADSS01;
+      stc_adc_adss01_field_t ADSS01_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t ADSS0;
+        stc_adc_adss0_field_t ADSS0_f;
+      };
+      union {
+        __IO  uint8_t ADSS1;
+        stc_adc_adss1_field_t ADSS1_f;
+      };
+    };
+  };
+        uint8_t RESERVED8[2];
+  union {
+    union {
+      __IO uint16_t ADST01;
+      stc_adc_adst01_field_t ADST01_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t ADST1;
+        stc_adc_adst1_field_t ADST1_f;
+      };
+      union {
+        __IO  uint8_t ADST0;
+        stc_adc_adst0_field_t ADST0_f;
+      };
+    };
+  };
+        uint8_t RESERVED9[2];
+  union {
+    __IO  uint8_t ADCT;
+    stc_adc_adct_field_t ADCT_f;
+  };
+        uint8_t RESERVED10[3];
+  union {
+    __IO  uint8_t PRTSL;
+    stc_adc_prtsl_field_t PRTSL_f;
+  };
+  union {
+    __IO  uint8_t SCTSL;
+    stc_adc_sctsl_field_t SCTSL_f;
+  };
+        uint8_t RESERVED11[2];
+  union {
+    __IO  uint16_t ADCEN;
+    stc_adc_adcen_field_t ADCEN_f;
+  };
+        uint8_t  RESERVED12[2];
+        uint32_t OFFESET;
+  union {
+    __IO uint8_t WCMRCOT;
+    stc_adc_wcmrcot_field_t WCMRCOT_f;
+  };
+        uint8_t  RESERVED13[3];
+  union {
+    __IO uint8_t WCMRCIF;
+    stc_adc_wcmrcif_field_t WCMRCIF_f;
+  };
+        uint8_t  RESERVED14[3];
+  union {
+    __IO uint8_t WCMPCR;
+    stc_adc_wcmpcr_field_t WCMPCR_f;
+  };
+  union {
+    __IO uint8_t WCMPSR;
+    stc_adc_wcmpsr_field_t WCMPSR_f;
+  };
+        uint8_t  RESERVED15[2];
+  union {
+    __IO uint16_t WCMPDL;
+    stc_adc_wcmpdl_field_t WCMPDL_f;
+  };
+  union {
+    __IO uint16_t WCMPDH;
+    stc_adc_wcmpdh_field_t WCMPDH_f;
   };
 }FM4_ADC_TypeDef;
 
@@ -10077,13 +10077,13 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint8_t      DACR;
-	stc_dacr_field_t  DACR_f;
+    __IO uint8_t      DACR;
+    stc_dacr_field_t  DACR_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   union {
-	__IO uint16_t     DADR;
-	stc_dadr_field_t  DADR_f;
+    __IO uint16_t     DADR;
+    stc_dadr_field_t  DADR_f;
   };
 }FM4_DAC_TypeDef;
 
@@ -10094,23 +10094,23 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t MCR_PSR;
-	stc_crtrim_mcr_psr_field_t MCR_PSR_f;
+    __IO  uint8_t MCR_PSR;
+    stc_crtrim_mcr_psr_field_t MCR_PSR_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   union {
-	__IO uint16_t MCR_FTRM;
-	stc_crtrim_mcr_ftrm_field_t MCR_FTRM_f;
+    __IO uint16_t MCR_FTRM;
+    stc_crtrim_mcr_ftrm_field_t MCR_FTRM_f;
   };
-	   uint8_t RESERVED1[2];
+       uint8_t RESERVED1[2];
   union {
-	__IO  uint8_t MCR_TTRM;
-	stc_crtrim_mcr_ttrm_field_t MCR_TTRM_f;
+    __IO  uint8_t MCR_TTRM;
+    stc_crtrim_mcr_ttrm_field_t MCR_TTRM_f;
   };
-	   uint8_t RESERVED2[3];
+       uint8_t RESERVED2[3];
   union {
-	__IO uint32_t MCR_RLR;
-	stc_crtrim_mcr_rlr_field_t MCR_RLR_f;
+    __IO uint32_t MCR_RLR;
+    stc_crtrim_mcr_rlr_field_t MCR_RLR_f;
   };
 }FM4_CRTRIM_TypeDef;
 
@@ -10121,33 +10121,33 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t ENIR;
-	stc_exti_enir_field_t ENIR_f;
+    __IO uint32_t ENIR;
+    stc_exti_enir_field_t ENIR_f;
   };
   union {
-	__IO uint32_t EIRR;
-	stc_exti_eirr_field_t EIRR_f;
+    __IO uint32_t EIRR;
+    stc_exti_eirr_field_t EIRR_f;
   };
   union {
-	__IO uint32_t EICL;
-	stc_exti_eicl_field_t EICL_f;
+    __IO uint32_t EICL;
+    stc_exti_eicl_field_t EICL_f;
   };
   union {
-	__IO uint32_t ELVR;
-	stc_exti_elvr_field_t ELVR_f;
+    __IO uint32_t ELVR;
+    stc_exti_elvr_field_t ELVR_f;
   };
   union {
-	__IO uint32_t ELVR1;
-	stc_exti_elvr1_field_t ELVR1_f;
+    __IO uint32_t ELVR1;
+    stc_exti_elvr1_field_t ELVR1_f;
   };
   union {
-	__IO  uint8_t NMIRR;
-	stc_exti_nmirr_field_t NMIRR_f;
+    __IO  uint8_t NMIRR;
+    stc_exti_nmirr_field_t NMIRR_f;
   };
-	   uint8_t RESERVED5[3];
+       uint8_t RESERVED5[3];
   union {
-	__IO  uint8_t NMICL;
-	stc_exti_nmicl_field_t NMICL_f;
+    __IO  uint8_t NMICL;
+    stc_exti_nmicl_field_t NMICL_f;
   };
 }FM4_EXTI_TypeDef;
 
@@ -10158,551 +10158,551 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t DRQSEL;
-	stc_intreq_drqsel_field_t DRQSEL_f;
+    __IO uint32_t DRQSEL;
+    stc_intreq_drqsel_field_t DRQSEL_f;
   };
-	   uint8_t RESERVED0[12];
+       uint8_t RESERVED0[12];
   union {
-	__IO  uint8_t ODDPKS;
-	stc_intreq_oddpks_field_t ODDPKS_f;
+    __IO  uint8_t ODDPKS;
+    stc_intreq_oddpks_field_t ODDPKS_f;
   };
-	   uint8_t RESERVED1[255];
+       uint8_t RESERVED1[255];
   union {
-	__IO uint32_t IRQ003SEL;
-	stc_intreq_irq003sel_field_t IRQ003SEL_f;
+    __IO uint32_t IRQ003SEL;
+    stc_intreq_irq003sel_field_t IRQ003SEL_f;
   };
   union {
-	__IO uint32_t IRQ004SEL;
-	stc_intreq_irq004sel_field_t IRQ004SEL_f;
+    __IO uint32_t IRQ004SEL;
+    stc_intreq_irq004sel_field_t IRQ004SEL_f;
   };
   union {
-	__IO uint32_t IRQ005SEL;
-	stc_intreq_irq005sel_field_t IRQ005SEL_f;
+    __IO uint32_t IRQ005SEL;
+    stc_intreq_irq005sel_field_t IRQ005SEL_f;
   };
   union {
-	__IO uint32_t IRQ006SEL;
-	stc_intreq_irq006sel_field_t IRQ006SEL_f;
+    __IO uint32_t IRQ006SEL;
+    stc_intreq_irq006sel_field_t IRQ006SEL_f;
   };
   union {
-	__IO uint32_t IRQ007SEL;
-	stc_intreq_irq007sel_field_t IRQ007SEL_f;
+    __IO uint32_t IRQ007SEL;
+    stc_intreq_irq007sel_field_t IRQ007SEL_f;
   };
   union {
-	__IO uint32_t IRQ008SEL;
-	stc_intreq_irq008sel_field_t IRQ008SEL_f;
+    __IO uint32_t IRQ008SEL;
+    stc_intreq_irq008sel_field_t IRQ008SEL_f;
   };
   union {
-	__IO uint32_t IRQ009SEL;
-	stc_intreq_irq009sel_field_t IRQ009SEL_f;
+    __IO uint32_t IRQ009SEL;
+    stc_intreq_irq009sel_field_t IRQ009SEL_f;
   };
   union {
-	__IO uint32_t IRQ010SEL;
-	stc_intreq_irq010sel_field_t IRQ010SEL_f;
+    __IO uint32_t IRQ010SEL;
+    stc_intreq_irq010sel_field_t IRQ010SEL_f;
   };
-	   uint8_t RESERVED9[208];
+       uint8_t RESERVED9[208];
   union {
-	__IO uint32_t EXC02MON;
-	stc_intreq_exc02mon_field_t EXC02MON_f;
+    __IO uint32_t EXC02MON;
+    stc_intreq_exc02mon_field_t EXC02MON_f;
   };
   union {
-	__IO uint32_t IRQ000MON;
-	stc_intreq_irq000mon_field_t IRQ000MON_f;
+    __IO uint32_t IRQ000MON;
+    stc_intreq_irq000mon_field_t IRQ000MON_f;
   };
   union {
-	__IO uint32_t IRQ001MON;
-	stc_intreq_irq001mon_field_t IRQ001MON_f;
+    __IO uint32_t IRQ001MON;
+    stc_intreq_irq001mon_field_t IRQ001MON_f;
   };
   union {
-	__IO uint32_t IRQ002MON;
-	stc_intreq_irq002mon_field_t IRQ002MON_f;
+    __IO uint32_t IRQ002MON;
+    stc_intreq_irq002mon_field_t IRQ002MON_f;
   };
   union {
-	__IO uint32_t IRQ003MON;
-	stc_intreq_irq003mon_field_t IRQ003MON_f;
+    __IO uint32_t IRQ003MON;
+    stc_intreq_irq003mon_field_t IRQ003MON_f;
   };
   union {
-	__IO uint32_t IRQ004MON;
-	stc_intreq_irq004mon_field_t IRQ004MON_f;
+    __IO uint32_t IRQ004MON;
+    stc_intreq_irq004mon_field_t IRQ004MON_f;
   };
   union {
-	__IO uint32_t IRQ005MON;
-	stc_intreq_irq005mon_field_t IRQ005MON_f;
+    __IO uint32_t IRQ005MON;
+    stc_intreq_irq005mon_field_t IRQ005MON_f;
   };
   union {
-	__IO uint32_t IRQ006MON;
-	stc_intreq_irq006mon_field_t IRQ006MON_f;
+    __IO uint32_t IRQ006MON;
+    stc_intreq_irq006mon_field_t IRQ006MON_f;
   };
   union {
-	__IO uint32_t IRQ007MON;
-	stc_intreq_irq007mon_field_t IRQ007MON_f;
+    __IO uint32_t IRQ007MON;
+    stc_intreq_irq007mon_field_t IRQ007MON_f;
   };
   union {
-	__IO uint32_t IRQ008MON;
-	stc_intreq_irq008mon_field_t IRQ008MON_f;
+    __IO uint32_t IRQ008MON;
+    stc_intreq_irq008mon_field_t IRQ008MON_f;
   };
   union {
-	__IO uint32_t IRQ009MON;
-	stc_intreq_irq009mon_field_t IRQ009MON_f;
+    __IO uint32_t IRQ009MON;
+    stc_intreq_irq009mon_field_t IRQ009MON_f;
   };
   union {
-	__IO uint32_t IRQ010MON;
-	stc_intreq_irq010mon_field_t IRQ010MON_f;
+    __IO uint32_t IRQ010MON;
+    stc_intreq_irq010mon_field_t IRQ010MON_f;
   };
   union {
-	__IO uint32_t IRQ011MON;
-	stc_intreq_irq011mon_field_t IRQ011MON_f;
+    __IO uint32_t IRQ011MON;
+    stc_intreq_irq011mon_field_t IRQ011MON_f;
   };
   union {
-	__IO uint32_t IRQ012MON;
-	stc_intreq_irq012mon_field_t IRQ012MON_f;
+    __IO uint32_t IRQ012MON;
+    stc_intreq_irq012mon_field_t IRQ012MON_f;
   };
   union {
-	__IO uint32_t IRQ013MON;
-	stc_intreq_irq013mon_field_t IRQ013MON_f;
+    __IO uint32_t IRQ013MON;
+    stc_intreq_irq013mon_field_t IRQ013MON_f;
   };
   union {
-	__IO uint32_t IRQ014MON;
-	stc_intreq_irq014mon_field_t IRQ014MON_f;
+    __IO uint32_t IRQ014MON;
+    stc_intreq_irq014mon_field_t IRQ014MON_f;
   };
   union {
-	__IO uint32_t IRQ015MON;
-	stc_intreq_irq015mon_field_t IRQ015MON_f;
+    __IO uint32_t IRQ015MON;
+    stc_intreq_irq015mon_field_t IRQ015MON_f;
   };
   union {
-	__IO uint32_t IRQ016MON;
-	stc_intreq_irq016mon_field_t IRQ016MON_f;
+    __IO uint32_t IRQ016MON;
+    stc_intreq_irq016mon_field_t IRQ016MON_f;
   };
   union {
-	__IO uint32_t IRQ017MON;
-	stc_intreq_irq017mon_field_t IRQ017MON_f;
+    __IO uint32_t IRQ017MON;
+    stc_intreq_irq017mon_field_t IRQ017MON_f;
   };
   union {
-	__IO uint32_t IRQ018MON;
-	stc_intreq_irq018mon_field_t IRQ018MON_f;
+    __IO uint32_t IRQ018MON;
+    stc_intreq_irq018mon_field_t IRQ018MON_f;
   };
   union {
-	__IO uint32_t IRQ019MON;
-	stc_intreq_irq019mon_field_t IRQ019MON_f;
+    __IO uint32_t IRQ019MON;
+    stc_intreq_irq019mon_field_t IRQ019MON_f;
   };
   union {
-	__IO uint32_t IRQ020MON;
-	stc_intreq_irq020mon_field_t IRQ020MON_f;
+    __IO uint32_t IRQ020MON;
+    stc_intreq_irq020mon_field_t IRQ020MON_f;
   };
   union {
-	__IO uint32_t IRQ021MON;
-	stc_intreq_irq021mon_field_t IRQ021MON_f;
+    __IO uint32_t IRQ021MON;
+    stc_intreq_irq021mon_field_t IRQ021MON_f;
   };
   union {
-	__IO uint32_t IRQ022MON;
-	stc_intreq_irq022mon_field_t IRQ022MON_f;
+    __IO uint32_t IRQ022MON;
+    stc_intreq_irq022mon_field_t IRQ022MON_f;
   };
   union {
-	__IO uint32_t IRQ023MON;
-	stc_intreq_irq023mon_field_t IRQ023MON_f;
+    __IO uint32_t IRQ023MON;
+    stc_intreq_irq023mon_field_t IRQ023MON_f;
   };
   union {
-	__IO uint32_t IRQ024MON;
-	stc_intreq_irq024mon_field_t IRQ024MON_f;
+    __IO uint32_t IRQ024MON;
+    stc_intreq_irq024mon_field_t IRQ024MON_f;
   };
   union {
-	__IO uint32_t IRQ025MON;
-	stc_intreq_irq025mon_field_t IRQ025MON_f;
+    __IO uint32_t IRQ025MON;
+    stc_intreq_irq025mon_field_t IRQ025MON_f;
   };
   union {
-	__IO uint32_t IRQ026MON;
-	stc_intreq_irq026mon_field_t IRQ026MON_f;
+    __IO uint32_t IRQ026MON;
+    stc_intreq_irq026mon_field_t IRQ026MON_f;
   };
   union {
-	__IO uint32_t IRQ027MON;
-	stc_intreq_irq027mon_field_t IRQ027MON_f;
+    __IO uint32_t IRQ027MON;
+    stc_intreq_irq027mon_field_t IRQ027MON_f;
   };
   union {
-	__IO uint32_t IRQ028MON;
-	stc_intreq_irq028mon_field_t IRQ028MON_f;
+    __IO uint32_t IRQ028MON;
+    stc_intreq_irq028mon_field_t IRQ028MON_f;
   };
   union {
-	__IO uint32_t IRQ029MON;
-	stc_intreq_irq029mon_field_t IRQ029MON_f;
+    __IO uint32_t IRQ029MON;
+    stc_intreq_irq029mon_field_t IRQ029MON_f;
   };
   union {
-	__IO uint32_t IRQ030MON;
-	stc_intreq_irq030mon_field_t IRQ030MON_f;
+    __IO uint32_t IRQ030MON;
+    stc_intreq_irq030mon_field_t IRQ030MON_f;
   };
   union {
-	__IO uint32_t IRQ031MON;
-	stc_intreq_irq031mon_field_t IRQ031MON_f;
+    __IO uint32_t IRQ031MON;
+    stc_intreq_irq031mon_field_t IRQ031MON_f;
   };
   union {
-	__IO uint32_t IRQ032MON;
-	stc_intreq_irq032mon_field_t IRQ032MON_f;
+    __IO uint32_t IRQ032MON;
+    stc_intreq_irq032mon_field_t IRQ032MON_f;
   };
   union {
-	__IO uint32_t IRQ033MON;
-	stc_intreq_irq033mon_field_t IRQ033MON_f;
+    __IO uint32_t IRQ033MON;
+    stc_intreq_irq033mon_field_t IRQ033MON_f;
   };
   union {
-	__IO uint32_t IRQ034MON;
-	stc_intreq_irq034mon_field_t IRQ034MON_f;
+    __IO uint32_t IRQ034MON;
+    stc_intreq_irq034mon_field_t IRQ034MON_f;
   };
   union {
-	__IO uint32_t IRQ035MON;
-	stc_intreq_irq035mon_field_t IRQ035MON_f;
+    __IO uint32_t IRQ035MON;
+    stc_intreq_irq035mon_field_t IRQ035MON_f;
   };
   union {
-	__IO uint32_t IRQ036MON;
-	stc_intreq_irq036mon_field_t IRQ036MON_f;
+    __IO uint32_t IRQ036MON;
+    stc_intreq_irq036mon_field_t IRQ036MON_f;
   };
   union {
-	__IO uint32_t IRQ037MON;
-	stc_intreq_irq037mon_field_t IRQ037MON_f;
+    __IO uint32_t IRQ037MON;
+    stc_intreq_irq037mon_field_t IRQ037MON_f;
   };
   union {
-	__IO uint32_t IRQ038MON;
-	stc_intreq_irq038mon_field_t IRQ038MON_f;
+    __IO uint32_t IRQ038MON;
+    stc_intreq_irq038mon_field_t IRQ038MON_f;
   };
   union {
-	__IO uint32_t IRQ039MON;
-	stc_intreq_irq039mon_field_t IRQ039MON_f;
+    __IO uint32_t IRQ039MON;
+    stc_intreq_irq039mon_field_t IRQ039MON_f;
   };
   union {
-	__IO uint32_t IRQ040MON;
-	stc_intreq_irq040mon_field_t IRQ040MON_f;
+    __IO uint32_t IRQ040MON;
+    stc_intreq_irq040mon_field_t IRQ040MON_f;
   };
   union {
-	__IO uint32_t IRQ041MON;
-	stc_intreq_irq041mon_field_t IRQ041MON_f;
+    __IO uint32_t IRQ041MON;
+    stc_intreq_irq041mon_field_t IRQ041MON_f;
   };
   union {
-	__IO uint32_t IRQ042MON;
-	stc_intreq_irq042mon_field_t IRQ042MON_f;
+    __IO uint32_t IRQ042MON;
+    stc_intreq_irq042mon_field_t IRQ042MON_f;
   };
   union {
-	__IO uint32_t IRQ043MON;
-	stc_intreq_irq043mon_field_t IRQ043MON_f;
+    __IO uint32_t IRQ043MON;
+    stc_intreq_irq043mon_field_t IRQ043MON_f;
   };
   union {
-	__IO uint32_t IRQ044MON;
-	stc_intreq_irq044mon_field_t IRQ044MON_f;
+    __IO uint32_t IRQ044MON;
+    stc_intreq_irq044mon_field_t IRQ044MON_f;
   };
   union {
-	__IO uint32_t IRQ045MON;
-	stc_intreq_irq045mon_field_t IRQ045MON_f;
+    __IO uint32_t IRQ045MON;
+    stc_intreq_irq045mon_field_t IRQ045MON_f;
   };
   union {
-	__IO uint32_t IRQ046MON;
-	stc_intreq_irq046mon_field_t IRQ046MON_f;
+    __IO uint32_t IRQ046MON;
+    stc_intreq_irq046mon_field_t IRQ046MON_f;
   };
   union {
-	__IO uint32_t IRQ047MON;
-	stc_intreq_irq047mon_field_t IRQ047MON_f;
+    __IO uint32_t IRQ047MON;
+    stc_intreq_irq047mon_field_t IRQ047MON_f;
   };
   union {
-	__IO uint32_t IRQ048MON;
-	stc_intreq_irq048mon_field_t IRQ048MON_f;
+    __IO uint32_t IRQ048MON;
+    stc_intreq_irq048mon_field_t IRQ048MON_f;
   };
   union {
-	__IO uint32_t IRQ049MON;
-	stc_intreq_irq049mon_field_t IRQ049MON_f;
+    __IO uint32_t IRQ049MON;
+    stc_intreq_irq049mon_field_t IRQ049MON_f;
   };
   union {
-	__IO uint32_t IRQ050MON;
-	stc_intreq_irq050mon_field_t IRQ050MON_f;
+    __IO uint32_t IRQ050MON;
+    stc_intreq_irq050mon_field_t IRQ050MON_f;
   };
   union {
-	__IO uint32_t IRQ051MON;
-	stc_intreq_irq051mon_field_t IRQ051MON_f;
+    __IO uint32_t IRQ051MON;
+    stc_intreq_irq051mon_field_t IRQ051MON_f;
   };
   union {
-	__IO uint32_t IRQ052MON;
-	stc_intreq_irq052mon_field_t IRQ052MON_f;
+    __IO uint32_t IRQ052MON;
+    stc_intreq_irq052mon_field_t IRQ052MON_f;
   };
   union {
-	__IO uint32_t IRQ053MON;
-	stc_intreq_irq053mon_field_t IRQ053MON_f;
+    __IO uint32_t IRQ053MON;
+    stc_intreq_irq053mon_field_t IRQ053MON_f;
   };
   union {
-	__IO uint32_t IRQ054MON;
-	stc_intreq_irq054mon_field_t IRQ054MON_f;
+    __IO uint32_t IRQ054MON;
+    stc_intreq_irq054mon_field_t IRQ054MON_f;
   };
   union {
-	__IO uint32_t IRQ055MON;
-	stc_intreq_irq055mon_field_t IRQ055MON_f;
+    __IO uint32_t IRQ055MON;
+    stc_intreq_irq055mon_field_t IRQ055MON_f;
   };
   union {
-	__IO uint32_t IRQ056MON;
-	stc_intreq_irq056mon_field_t IRQ056MON_f;
+    __IO uint32_t IRQ056MON;
+    stc_intreq_irq056mon_field_t IRQ056MON_f;
   };
   union {
-	__IO uint32_t IRQ057MON;
-	stc_intreq_irq057mon_field_t IRQ057MON_f;
+    __IO uint32_t IRQ057MON;
+    stc_intreq_irq057mon_field_t IRQ057MON_f;
   };
   union {
-	__IO uint32_t IRQ058MON;
-	stc_intreq_irq058mon_field_t IRQ058MON_f;
+    __IO uint32_t IRQ058MON;
+    stc_intreq_irq058mon_field_t IRQ058MON_f;
   };
   union {
-	__IO uint32_t IRQ059MON;
-	stc_intreq_irq059mon_field_t IRQ059MON_f;
+    __IO uint32_t IRQ059MON;
+    stc_intreq_irq059mon_field_t IRQ059MON_f;
   };
   union {
-	__IO uint32_t IRQ060MON;
-	stc_intreq_irq060mon_field_t IRQ060MON_f;
+    __IO uint32_t IRQ060MON;
+    stc_intreq_irq060mon_field_t IRQ060MON_f;
   };
   union {
-	__IO uint32_t IRQ061MON;
-	stc_intreq_irq061mon_field_t IRQ061MON_f;
+    __IO uint32_t IRQ061MON;
+    stc_intreq_irq061mon_field_t IRQ061MON_f;
   };
   union {
-	__IO uint32_t IRQ062MON;
-	stc_intreq_irq062mon_field_t IRQ062MON_f;
+    __IO uint32_t IRQ062MON;
+    stc_intreq_irq062mon_field_t IRQ062MON_f;
   };
   union {
-	__IO uint32_t IRQ063MON;
-	stc_intreq_irq063mon_field_t IRQ063MON_f;
+    __IO uint32_t IRQ063MON;
+    stc_intreq_irq063mon_field_t IRQ063MON_f;
   };
   union {
-	__IO uint32_t IRQ064MON;
-	stc_intreq_irq064mon_field_t IRQ064MON_f;
+    __IO uint32_t IRQ064MON;
+    stc_intreq_irq064mon_field_t IRQ064MON_f;
   };
   union {
-	__IO uint32_t IRQ065MON;
-	stc_intreq_irq065mon_field_t IRQ065MON_f;
+    __IO uint32_t IRQ065MON;
+    stc_intreq_irq065mon_field_t IRQ065MON_f;
   };
   union {
-	__IO uint32_t IRQ066MON;
-	stc_intreq_irq066mon_field_t IRQ066MON_f;
+    __IO uint32_t IRQ066MON;
+    stc_intreq_irq066mon_field_t IRQ066MON_f;
   };
   union {
-	__IO uint32_t IRQ067MON;
-	stc_intreq_irq067mon_field_t IRQ067MON_f;
+    __IO uint32_t IRQ067MON;
+    stc_intreq_irq067mon_field_t IRQ067MON_f;
   };
   union {
-	__IO uint32_t IRQ068MON;
-	stc_intreq_irq068mon_field_t IRQ068MON_f;
+    __IO uint32_t IRQ068MON;
+    stc_intreq_irq068mon_field_t IRQ068MON_f;
   };
   union {
-	__IO uint32_t IRQ069MON;
-	stc_intreq_irq069mon_field_t IRQ069MON_f;
+    __IO uint32_t IRQ069MON;
+    stc_intreq_irq069mon_field_t IRQ069MON_f;
   };
   union {
-	__IO uint32_t IRQ070MON;
-	stc_intreq_irq070mon_field_t IRQ070MON_f;
+    __IO uint32_t IRQ070MON;
+    stc_intreq_irq070mon_field_t IRQ070MON_f;
   };
   union {
-	__IO uint32_t IRQ071MON;
-	stc_intreq_irq071mon_field_t IRQ071MON_f;
+    __IO uint32_t IRQ071MON;
+    stc_intreq_irq071mon_field_t IRQ071MON_f;
   };
   union {
-	__IO uint32_t IRQ072MON;
-	stc_intreq_irq072mon_field_t IRQ072MON_f;
+    __IO uint32_t IRQ072MON;
+    stc_intreq_irq072mon_field_t IRQ072MON_f;
   };
   union {
-	__IO uint32_t IRQ073MON;
-	stc_intreq_irq073mon_field_t IRQ073MON_f;
+    __IO uint32_t IRQ073MON;
+    stc_intreq_irq073mon_field_t IRQ073MON_f;
   };
   union {
-	__IO uint32_t IRQ074MON;
-	stc_intreq_irq074mon_field_t IRQ074MON_f;
+    __IO uint32_t IRQ074MON;
+    stc_intreq_irq074mon_field_t IRQ074MON_f;
   };
   union {
-	__IO uint32_t IRQ075MON;
-	stc_intreq_irq075mon_field_t IRQ075MON_f;
+    __IO uint32_t IRQ075MON;
+    stc_intreq_irq075mon_field_t IRQ075MON_f;
   };
   union {
-	__IO uint32_t IRQ076MON;
-	stc_intreq_irq076mon_field_t IRQ076MON_f;
+    __IO uint32_t IRQ076MON;
+    stc_intreq_irq076mon_field_t IRQ076MON_f;
   };
   union {
-	__IO uint32_t IRQ077MON;
-	stc_intreq_irq077mon_field_t IRQ077MON_f;
+    __IO uint32_t IRQ077MON;
+    stc_intreq_irq077mon_field_t IRQ077MON_f;
   };
   union {
-	__IO uint32_t IRQ078MON;
-	stc_intreq_irq078mon_field_t IRQ078MON_f;
+    __IO uint32_t IRQ078MON;
+    stc_intreq_irq078mon_field_t IRQ078MON_f;
   };
   union {
-	__IO uint32_t IRQ079MON;
-	stc_intreq_irq079mon_field_t IRQ079MON_f;
+    __IO uint32_t IRQ079MON;
+    stc_intreq_irq079mon_field_t IRQ079MON_f;
   };
   union {
-	__IO uint32_t IRQ080MON;
-	stc_intreq_irq080mon_field_t IRQ080MON_f;
+    __IO uint32_t IRQ080MON;
+    stc_intreq_irq080mon_field_t IRQ080MON_f;
   };
   union {
-	__IO uint32_t IRQ081MON;
-	stc_intreq_irq081mon_field_t IRQ081MON_f;
+    __IO uint32_t IRQ081MON;
+    stc_intreq_irq081mon_field_t IRQ081MON_f;
   };
   union {
-	__IO uint32_t IRQ082MON;
-	stc_intreq_irq082mon_field_t IRQ082MON_f;
+    __IO uint32_t IRQ082MON;
+    stc_intreq_irq082mon_field_t IRQ082MON_f;
   };
   union {
-	__IO uint32_t IRQ083MON;
-	stc_intreq_irq083mon_field_t IRQ083MON_f;
+    __IO uint32_t IRQ083MON;
+    stc_intreq_irq083mon_field_t IRQ083MON_f;
   };
   union {
-	__IO uint32_t IRQ084MON;
-	stc_intreq_irq084mon_field_t IRQ084MON_f;
+    __IO uint32_t IRQ084MON;
+    stc_intreq_irq084mon_field_t IRQ084MON_f;
   };
   union {
-	__IO uint32_t IRQ085MON;
-	stc_intreq_irq085mon_field_t IRQ085MON_f;
+    __IO uint32_t IRQ085MON;
+    stc_intreq_irq085mon_field_t IRQ085MON_f;
   };
   union {
-	__IO uint32_t IRQ086MON;
-	stc_intreq_irq086mon_field_t IRQ086MON_f;
+    __IO uint32_t IRQ086MON;
+    stc_intreq_irq086mon_field_t IRQ086MON_f;
   };
   union {
-	__IO uint32_t IRQ087MON;
-	stc_intreq_irq087mon_field_t IRQ087MON_f;
+    __IO uint32_t IRQ087MON;
+    stc_intreq_irq087mon_field_t IRQ087MON_f;
   };
   union {
-	__IO uint32_t IRQ088MON;
-	stc_intreq_irq088mon_field_t IRQ088MON_f;
+    __IO uint32_t IRQ088MON;
+    stc_intreq_irq088mon_field_t IRQ088MON_f;
   };
   union {
-	__IO uint32_t IRQ089MON;
-	stc_intreq_irq089mon_field_t IRQ089MON_f;
+    __IO uint32_t IRQ089MON;
+    stc_intreq_irq089mon_field_t IRQ089MON_f;
   };
   union {
-	__IO uint32_t IRQ090MON;
-	stc_intreq_irq090mon_field_t IRQ090MON_f;
+    __IO uint32_t IRQ090MON;
+    stc_intreq_irq090mon_field_t IRQ090MON_f;
   };
   union {
-	__IO uint32_t IRQ091MON;
-	stc_intreq_irq091mon_field_t IRQ091MON_f;
+    __IO uint32_t IRQ091MON;
+    stc_intreq_irq091mon_field_t IRQ091MON_f;
   };
   union {
-	__IO uint32_t IRQ092MON;
-	stc_intreq_irq092mon_field_t IRQ092MON_f;
+    __IO uint32_t IRQ092MON;
+    stc_intreq_irq092mon_field_t IRQ092MON_f;
   };
   union {
-	__IO uint32_t IRQ093MON;
-	stc_intreq_irq093mon_field_t IRQ093MON_f;
+    __IO uint32_t IRQ093MON;
+    stc_intreq_irq093mon_field_t IRQ093MON_f;
   };
   union {
-	__IO uint32_t IRQ094MON;
-	stc_intreq_irq094mon_field_t IRQ094MON_f;
+    __IO uint32_t IRQ094MON;
+    stc_intreq_irq094mon_field_t IRQ094MON_f;
   };
   union {
-	__IO uint32_t IRQ095MON;
-	stc_intreq_irq095mon_field_t IRQ095MON_f;
+    __IO uint32_t IRQ095MON;
+    stc_intreq_irq095mon_field_t IRQ095MON_f;
   };
   union {
-	__IO uint32_t IRQ096MON;
-	stc_intreq_irq096mon_field_t IRQ096MON_f;
+    __IO uint32_t IRQ096MON;
+    stc_intreq_irq096mon_field_t IRQ096MON_f;
   };
   union {
-	__IO uint32_t IRQ097MON;
-	stc_intreq_irq097mon_field_t IRQ097MON_f;
+    __IO uint32_t IRQ097MON;
+    stc_intreq_irq097mon_field_t IRQ097MON_f;
   };
   union {
-	__IO uint32_t IRQ098MON;
-	stc_intreq_irq098mon_field_t IRQ098MON_f;
+    __IO uint32_t IRQ098MON;
+    stc_intreq_irq098mon_field_t IRQ098MON_f;
   };
   union {
-	__IO uint32_t IRQ099MON;
-	stc_intreq_irq099mon_field_t IRQ099MON_f;
+    __IO uint32_t IRQ099MON;
+    stc_intreq_irq099mon_field_t IRQ099MON_f;
   };
   union {
-	__IO uint32_t IRQ100MON;
-	stc_intreq_irq100mon_field_t IRQ100MON_f;
+    __IO uint32_t IRQ100MON;
+    stc_intreq_irq100mon_field_t IRQ100MON_f;
   };
   union {
-	__IO uint32_t IRQ101MON;
-	stc_intreq_irq101mon_field_t IRQ101MON_f;
+    __IO uint32_t IRQ101MON;
+    stc_intreq_irq101mon_field_t IRQ101MON_f;
   };
   union {
-	__IO uint32_t IRQ102MON;
-	stc_intreq_irq102mon_field_t IRQ102MON_f;
+    __IO uint32_t IRQ102MON;
+    stc_intreq_irq102mon_field_t IRQ102MON_f;
   };
   union {
-	__IO uint32_t IRQ103MON;
-	stc_intreq_irq103mon_field_t IRQ103MON_f;
+    __IO uint32_t IRQ103MON;
+    stc_intreq_irq103mon_field_t IRQ103MON_f;
   };
   union {
-	__IO uint32_t IRQ104MON;
-	stc_intreq_irq104mon_field_t IRQ104MON_f;
+    __IO uint32_t IRQ104MON;
+    stc_intreq_irq104mon_field_t IRQ104MON_f;
   };
   union {
-	__IO uint32_t IRQ105MON;
-	stc_intreq_irq105mon_field_t IRQ105MON_f;
+    __IO uint32_t IRQ105MON;
+    stc_intreq_irq105mon_field_t IRQ105MON_f;
   };
   union {
-	__IO uint32_t IRQ106MON;
-	stc_intreq_irq106mon_field_t IRQ106MON_f;
+    __IO uint32_t IRQ106MON;
+    stc_intreq_irq106mon_field_t IRQ106MON_f;
   };
   union {
-	__IO uint32_t IRQ107MON;
-	stc_intreq_irq107mon_field_t IRQ107MON_f;
+    __IO uint32_t IRQ107MON;
+    stc_intreq_irq107mon_field_t IRQ107MON_f;
   };
   union {
-	__IO uint32_t IRQ108MON;
-	stc_intreq_irq108mon_field_t IRQ108MON_f;
+    __IO uint32_t IRQ108MON;
+    stc_intreq_irq108mon_field_t IRQ108MON_f;
   };
   union {
-	__IO uint32_t IRQ109MON;
-	stc_intreq_irq109mon_field_t IRQ109MON_f;
+    __IO uint32_t IRQ109MON;
+    stc_intreq_irq109mon_field_t IRQ109MON_f;
   };
   union {
-	__IO uint32_t IRQ110MON;
-	stc_intreq_irq110mon_field_t IRQ110MON_f;
+    __IO uint32_t IRQ110MON;
+    stc_intreq_irq110mon_field_t IRQ110MON_f;
   };
   union {
-	__IO uint32_t IRQ111MON;
-	stc_intreq_irq111mon_field_t IRQ111MON_f;
+    __IO uint32_t IRQ111MON;
+    stc_intreq_irq111mon_field_t IRQ111MON_f;
   };
   __IO uint32_t IRQ112MON;
   union {
-	__IO uint32_t IRQ113MON;
-	stc_intreq_irq113mon_field_t IRQ113MON_f;
+    __IO uint32_t IRQ113MON;
+    stc_intreq_irq113mon_field_t IRQ113MON_f;
   };
   union {
-	__IO uint32_t IRQ114MON;
-	stc_intreq_irq114mon_field_t IRQ114MON_f;
+    __IO uint32_t IRQ114MON;
+    stc_intreq_irq114mon_field_t IRQ114MON_f;
   };
   __IO uint32_t IRQ115MON;
   __IO uint32_t IRQ116MON;
   __IO uint32_t IRQ117MON;
   union {
-	__IO uint32_t IRQ118MON;
-	stc_intreq_irq118mon_field_t IRQ118MON_f;
+    __IO uint32_t IRQ118MON;
+    stc_intreq_irq118mon_field_t IRQ118MON_f;
   };
   union {
-	__IO uint32_t IRQ119MON;
-	stc_intreq_irq119mon_field_t IRQ119MON_f;
+    __IO uint32_t IRQ119MON;
+    stc_intreq_irq119mon_field_t IRQ119MON_f;
   };
   union {
-	__IO uint32_t IRQ120MON;
-	stc_intreq_irq120mon_field_t IRQ120MON_f;
+    __IO uint32_t IRQ120MON;
+    stc_intreq_irq120mon_field_t IRQ120MON_f;
   };
   union {
-	__IO uint32_t IRQ121MON;
-	stc_intreq_irq121mon_field_t IRQ121MON_f;
+    __IO uint32_t IRQ121MON;
+    stc_intreq_irq121mon_field_t IRQ121MON_f;
   };
   union {
-	__IO uint32_t IRQ122MON;
-	stc_intreq_irq122mon_field_t IRQ122MON_f;
+    __IO uint32_t IRQ122MON;
+    stc_intreq_irq122mon_field_t IRQ122MON_f;
   };
   union {
-	__IO uint32_t IRQ123MON;
-	stc_intreq_irq123mon_field_t IRQ123MON_f;
+    __IO uint32_t IRQ123MON;
+    stc_intreq_irq123mon_field_t IRQ123MON_f;
   };
   union {
-	__IO uint32_t IRQ124MON;
-	stc_intreq_irq124mon_field_t IRQ124MON_f;
+    __IO uint32_t IRQ124MON;
+    stc_intreq_irq124mon_field_t IRQ124MON_f;
   };
   union {
-	__IO uint32_t IRQ125MON;
-	stc_intreq_irq125mon_field_t IRQ125MON_f;
+    __IO uint32_t IRQ125MON;
+    stc_intreq_irq125mon_field_t IRQ125MON_f;
   };
   union {
-	__IO uint32_t IRQ126MON;
-	stc_intreq_irq126mon_field_t IRQ126MON_f;
+    __IO uint32_t IRQ126MON;
+    stc_intreq_irq126mon_field_t IRQ126MON_f;
   };
   union {
-	__IO uint32_t IRQ127MON;
-	stc_intreq_irq127mon_field_t IRQ127MON_f;
+    __IO uint32_t IRQ127MON;
+    stc_intreq_irq127mon_field_t IRQ127MON_f;
   };
 }FM4_INTREQ_TypeDef;
 
@@ -10752,347 +10752,347 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t PFR0;
-	stc_gpio_pfr0_field_t PFR0_f;
+    __IO uint32_t PFR0;
+    stc_gpio_pfr0_field_t PFR0_f;
   };
   union {
-	__IO uint32_t PFR1;
-	stc_gpio_pfr1_field_t PFR1_f;
+    __IO uint32_t PFR1;
+    stc_gpio_pfr1_field_t PFR1_f;
   };
   union {
-	__IO uint32_t PFR2;
-	stc_gpio_pfr2_field_t PFR2_f;
+    __IO uint32_t PFR2;
+    stc_gpio_pfr2_field_t PFR2_f;
   };
   union {
-	__IO uint32_t PFR3;
-	stc_gpio_pfr3_field_t PFR3_f;
+    __IO uint32_t PFR3;
+    stc_gpio_pfr3_field_t PFR3_f;
   };
   union {
-	__IO uint32_t PFR4;
-	stc_gpio_pfr4_field_t PFR4_f;
+    __IO uint32_t PFR4;
+    stc_gpio_pfr4_field_t PFR4_f;
   };
   union {
-	__IO uint32_t PFR5;
-	stc_gpio_pfr5_field_t PFR5_f;
+    __IO uint32_t PFR5;
+    stc_gpio_pfr5_field_t PFR5_f;
   };
   union {
-	__IO uint32_t PFR6;
-	stc_gpio_pfr6_field_t PFR6_f;
+    __IO uint32_t PFR6;
+    stc_gpio_pfr6_field_t PFR6_f;
   };
   union {
-	__IO uint32_t PFR7;
-	stc_gpio_pfr7_field_t PFR7_f;
+    __IO uint32_t PFR7;
+    stc_gpio_pfr7_field_t PFR7_f;
   };
   union {
-	__IO uint32_t PFR8;
-	stc_gpio_pfr8_field_t PFR8_f;
+    __IO uint32_t PFR8;
+    stc_gpio_pfr8_field_t PFR8_f;
   };
-	   uint8_t RESERVED8[20];
+       uint8_t RESERVED8[20];
   union {
-	__IO uint32_t PFRE;
-	stc_gpio_pfre_field_t PFRE_f;
+    __IO uint32_t PFRE;
+    stc_gpio_pfre_field_t PFRE_f;
   };
-	   uint8_t RESERVED9[196];
+       uint8_t RESERVED9[196];
   union {
-	__IO uint32_t PCR0;
-	stc_gpio_pcr0_field_t PCR0_f;
+    __IO uint32_t PCR0;
+    stc_gpio_pcr0_field_t PCR0_f;
   };
   union {
-	__IO uint32_t PCR1;
-	stc_gpio_pcr1_field_t PCR1_f;
+    __IO uint32_t PCR1;
+    stc_gpio_pcr1_field_t PCR1_f;
   };
   union {
-	__IO uint32_t PCR2;
-	stc_gpio_pcr2_field_t PCR2_f;
+    __IO uint32_t PCR2;
+    stc_gpio_pcr2_field_t PCR2_f;
   };
   union {
-	__IO uint32_t PCR3;
-	stc_gpio_pcr3_field_t PCR3_f;
+    __IO uint32_t PCR3;
+    stc_gpio_pcr3_field_t PCR3_f;
   };
   union {
-	__IO uint32_t PCR4;
-	stc_gpio_pcr4_field_t PCR4_f;
+    __IO uint32_t PCR4;
+    stc_gpio_pcr4_field_t PCR4_f;
   };
   union {
-	__IO uint32_t PCR5;
-	stc_gpio_pcr5_field_t PCR5_f;
+    __IO uint32_t PCR5;
+    stc_gpio_pcr5_field_t PCR5_f;
   };
   union {
-	__IO uint32_t PCR6;
-	stc_gpio_pcr6_field_t PCR6_f;
+    __IO uint32_t PCR6;
+    stc_gpio_pcr6_field_t PCR6_f;
   };
   union {
-	__IO uint32_t PCR7;
-	stc_gpio_pcr7_field_t PCR7_f;
+    __IO uint32_t PCR7;
+    stc_gpio_pcr7_field_t PCR7_f;
   };
   union {
-	__IO uint32_t PCR8;
-	stc_gpio_pcr8_field_t PCR8_f;
+    __IO uint32_t PCR8;
+    stc_gpio_pcr8_field_t PCR8_f;
   };
-	   uint8_t RESERVED18[20];
+       uint8_t RESERVED18[20];
   union {
-	__IO uint32_t PCRE;
-	stc_gpio_pcre_field_t PCRE_f;
+    __IO uint32_t PCRE;
+    stc_gpio_pcre_field_t PCRE_f;
   };
-	   uint8_t RESERVED19[196];
+       uint8_t RESERVED19[196];
   union {
-	__IO uint32_t DDR0;
-	stc_gpio_ddr0_field_t DDR0_f;
+    __IO uint32_t DDR0;
+    stc_gpio_ddr0_field_t DDR0_f;
   };
   union {
-	__IO uint32_t DDR1;
-	stc_gpio_ddr1_field_t DDR1_f;
+    __IO uint32_t DDR1;
+    stc_gpio_ddr1_field_t DDR1_f;
   };
   union {
-	__IO uint32_t DDR2;
-	stc_gpio_ddr2_field_t DDR2_f;
+    __IO uint32_t DDR2;
+    stc_gpio_ddr2_field_t DDR2_f;
   };
   union {
-	__IO uint32_t DDR3;
-	stc_gpio_ddr3_field_t DDR3_f;
+    __IO uint32_t DDR3;
+    stc_gpio_ddr3_field_t DDR3_f;
   };
   union {
-	__IO uint32_t DDR4;
-	stc_gpio_ddr4_field_t DDR4_f;
+    __IO uint32_t DDR4;
+    stc_gpio_ddr4_field_t DDR4_f;
   };
   union {
-	__IO uint32_t DDR5;
-	stc_gpio_ddr5_field_t DDR5_f;
+    __IO uint32_t DDR5;
+    stc_gpio_ddr5_field_t DDR5_f;
   };
   union {
-	__IO uint32_t DDR6;
-	stc_gpio_ddr6_field_t DDR6_f;
+    __IO uint32_t DDR6;
+    stc_gpio_ddr6_field_t DDR6_f;
   };
   union {
-	__IO uint32_t DDR7;
-	stc_gpio_ddr7_field_t DDR7_f;
+    __IO uint32_t DDR7;
+    stc_gpio_ddr7_field_t DDR7_f;
   };
   union {
-	__IO uint32_t DDR8;
-	stc_gpio_ddr8_field_t DDR8_f;
+    __IO uint32_t DDR8;
+    stc_gpio_ddr8_field_t DDR8_f;
   };
-	   uint8_t RESERVED28[20];
+       uint8_t RESERVED28[20];
   union {
-	__IO uint32_t DDRE;
-	stc_gpio_ddre_field_t DDRE_f;
+    __IO uint32_t DDRE;
+    stc_gpio_ddre_field_t DDRE_f;
   };
-	   uint8_t RESERVED29[196];
+       uint8_t RESERVED29[196];
   union {
-	__IO uint32_t PDIR0;
-	stc_gpio_pdir0_field_t PDIR0_f;
+    __IO uint32_t PDIR0;
+    stc_gpio_pdir0_field_t PDIR0_f;
   };
   union {
-	__IO uint32_t PDIR1;
-	stc_gpio_pdir1_field_t PDIR1_f;
+    __IO uint32_t PDIR1;
+    stc_gpio_pdir1_field_t PDIR1_f;
   };
   union {
-	__IO uint32_t PDIR2;
-	stc_gpio_pdir2_field_t PDIR2_f;
+    __IO uint32_t PDIR2;
+    stc_gpio_pdir2_field_t PDIR2_f;
   };
   union {
-	__IO uint32_t PDIR3;
-	stc_gpio_pdir3_field_t PDIR3_f;
+    __IO uint32_t PDIR3;
+    stc_gpio_pdir3_field_t PDIR3_f;
   };
   union {
-	__IO uint32_t PDIR4;
-	stc_gpio_pdir4_field_t PDIR4_f;
+    __IO uint32_t PDIR4;
+    stc_gpio_pdir4_field_t PDIR4_f;
   };
   union {
-	__IO uint32_t PDIR5;
-	stc_gpio_pdir5_field_t PDIR5_f;
+    __IO uint32_t PDIR5;
+    stc_gpio_pdir5_field_t PDIR5_f;
   };
   union {
-	__IO uint32_t PDIR6;
-	stc_gpio_pdir6_field_t PDIR6_f;
+    __IO uint32_t PDIR6;
+    stc_gpio_pdir6_field_t PDIR6_f;
   };
   union {
-	__IO uint32_t PDIR7;
-	stc_gpio_pdir7_field_t PDIR7_f;
+    __IO uint32_t PDIR7;
+    stc_gpio_pdir7_field_t PDIR7_f;
   };
   union {
-	__IO uint32_t PDIR8;
-	stc_gpio_pdir8_field_t PDIR8_f;
+    __IO uint32_t PDIR8;
+    stc_gpio_pdir8_field_t PDIR8_f;
   };
-	   uint8_t RESERVED38[20];
+       uint8_t RESERVED38[20];
   union {
-	__IO uint32_t PDIRE;
-	stc_gpio_pdire_field_t PDIRE_f;
+    __IO uint32_t PDIRE;
+    stc_gpio_pdire_field_t PDIRE_f;
   };
-	   uint8_t RESERVED39[196];
+       uint8_t RESERVED39[196];
   union {
-	__IO uint32_t PDOR0;
-	stc_gpio_pdor0_field_t PDOR0_f;
+    __IO uint32_t PDOR0;
+    stc_gpio_pdor0_field_t PDOR0_f;
   };
   union {
-	__IO uint32_t PDOR1;
-	stc_gpio_pdor1_field_t PDOR1_f;
+    __IO uint32_t PDOR1;
+    stc_gpio_pdor1_field_t PDOR1_f;
   };
   union {
-	__IO uint32_t PDOR2;
-	stc_gpio_pdor2_field_t PDOR2_f;
+    __IO uint32_t PDOR2;
+    stc_gpio_pdor2_field_t PDOR2_f;
   };
   union {
-	__IO uint32_t PDOR3;
-	stc_gpio_pdor3_field_t PDOR3_f;
+    __IO uint32_t PDOR3;
+    stc_gpio_pdor3_field_t PDOR3_f;
   };
   union {
-	__IO uint32_t PDOR4;
-	stc_gpio_pdor4_field_t PDOR4_f;
+    __IO uint32_t PDOR4;
+    stc_gpio_pdor4_field_t PDOR4_f;
   };
   union {
-	__IO uint32_t PDOR5;
-	stc_gpio_pdor5_field_t PDOR5_f;
+    __IO uint32_t PDOR5;
+    stc_gpio_pdor5_field_t PDOR5_f;
   };
   union {
-	__IO uint32_t PDOR6;
-	stc_gpio_pdor6_field_t PDOR6_f;
+    __IO uint32_t PDOR6;
+    stc_gpio_pdor6_field_t PDOR6_f;
   };
   union {
-	__IO uint32_t PDOR7;
-	stc_gpio_pdor7_field_t PDOR7_f;
+    __IO uint32_t PDOR7;
+    stc_gpio_pdor7_field_t PDOR7_f;
   };
   union {
-	__IO uint32_t PDOR8;
-	stc_gpio_pdor8_field_t PDOR8_f;
+    __IO uint32_t PDOR8;
+    stc_gpio_pdor8_field_t PDOR8_f;
   };
-	   uint8_t RESERVED48[20];
+       uint8_t RESERVED48[20];
   union {
-	__IO uint32_t PDORE;
-	stc_gpio_pdore_field_t PDORE_f;
+    __IO uint32_t PDORE;
+    stc_gpio_pdore_field_t PDORE_f;
   };
-	   uint8_t RESERVED49[196];
+       uint8_t RESERVED49[196];
   union {
-	__IO uint32_t ADE;
-	stc_gpio_ade_field_t ADE_f;
+    __IO uint32_t ADE;
+    stc_gpio_ade_field_t ADE_f;
   };
-	   uint8_t RESERVED50[124];
+       uint8_t RESERVED50[124];
   union {
-	__IO uint32_t SPSR;
-	stc_gpio_spsr_field_t SPSR_f;
+    __IO uint32_t SPSR;
+    stc_gpio_spsr_field_t SPSR_f;
   };
-	   uint8_t RESERVED51[124];
+       uint8_t RESERVED51[124];
   union {
-	__IO uint32_t EPFR00;
-	stc_gpio_epfr00_field_t EPFR00_f;
+    __IO uint32_t EPFR00;
+    stc_gpio_epfr00_field_t EPFR00_f;
   };
   union {
-	__IO uint32_t EPFR01;
-	stc_gpio_epfr01_field_t EPFR01_f;
+    __IO uint32_t EPFR01;
+    stc_gpio_epfr01_field_t EPFR01_f;
   };
   union {
-	__IO uint32_t EPFR02;
-	stc_gpio_epfr02_field_t EPFR02_f;
+    __IO uint32_t EPFR02;
+    stc_gpio_epfr02_field_t EPFR02_f;
   };
   union {
-	__IO uint32_t EPFR03;
-	stc_gpio_epfr03_field_t EPFR03_f;
+    __IO uint32_t EPFR03;
+    stc_gpio_epfr03_field_t EPFR03_f;
   };
   union {
-	__IO uint32_t EPFR04;
-	stc_gpio_epfr04_field_t EPFR04_f;
+    __IO uint32_t EPFR04;
+    stc_gpio_epfr04_field_t EPFR04_f;
   };
   union {
-	__IO uint32_t EPFR05;
-	stc_gpio_epfr05_field_t EPFR05_f;
+    __IO uint32_t EPFR05;
+    stc_gpio_epfr05_field_t EPFR05_f;
   };
   union {
-	__IO uint32_t EPFR06;
-	stc_gpio_epfr06_field_t EPFR06_f;
+    __IO uint32_t EPFR06;
+    stc_gpio_epfr06_field_t EPFR06_f;
   };
   union {
-	__IO uint32_t EPFR07;
-	stc_gpio_epfr07_field_t EPFR07_f;
+    __IO uint32_t EPFR07;
+    stc_gpio_epfr07_field_t EPFR07_f;
   };
   union {
-	__IO uint32_t EPFR08;
-	stc_gpio_epfr08_field_t EPFR08_f;
+    __IO uint32_t EPFR08;
+    stc_gpio_epfr08_field_t EPFR08_f;
   };
   union {
-	__IO uint32_t EPFR09;
-	stc_gpio_epfr09_field_t EPFR09_f;
+    __IO uint32_t EPFR09;
+    stc_gpio_epfr09_field_t EPFR09_f;
   };
   union {
-	__IO uint32_t EPFR10;
-	stc_gpio_epfr10_field_t EPFR10_f;
+    __IO uint32_t EPFR10;
+    stc_gpio_epfr10_field_t EPFR10_f;
   };
   union {
-	__IO uint32_t EPFR11;
-	stc_gpio_epfr11_field_t EPFR11_f;
+    __IO uint32_t EPFR11;
+    stc_gpio_epfr11_field_t EPFR11_f;
   };
   union {
-	__IO uint32_t EPFR12;
-	stc_gpio_epfr12_field_t EPFR12_f;
+    __IO uint32_t EPFR12;
+    stc_gpio_epfr12_field_t EPFR12_f;
   };
   union {
-	__IO uint32_t EPFR13;
-	stc_gpio_epfr13_field_t EPFR13_f;
+    __IO uint32_t EPFR13;
+    stc_gpio_epfr13_field_t EPFR13_f;
   };
   union {
-	__IO uint32_t EPFR14;
-	stc_gpio_epfr14_field_t EPFR14_f;
+    __IO uint32_t EPFR14;
+    stc_gpio_epfr14_field_t EPFR14_f;
   };
   union {
-	__IO uint32_t EPFR15;
-	stc_gpio_epfr15_field_t EPFR15_f;
+    __IO uint32_t EPFR15;
+    stc_gpio_epfr15_field_t EPFR15_f;
   };
   union {
-	__IO uint32_t EPFR16;
-	stc_gpio_epfr16_field_t EPFR16_f;
+    __IO uint32_t EPFR16;
+    stc_gpio_epfr16_field_t EPFR16_f;
   };
   union {
-	__IO uint32_t EPFR17;
-	stc_gpio_epfr17_field_t EPFR17_f;
+    __IO uint32_t EPFR17;
+    stc_gpio_epfr17_field_t EPFR17_f;
   };
   union {
-	__IO uint32_t EPFR18;
-	stc_gpio_epfr18_field_t EPFR18_f;
+    __IO uint32_t EPFR18;
+    stc_gpio_epfr18_field_t EPFR18_f;
   };
   __IO uint32_t EPFR19;
   union {
-	__IO uint32_t EPFR20;
-	stc_gpio_epfr20_field_t EPFR20_f;
+    __IO uint32_t EPFR20;
+    stc_gpio_epfr20_field_t EPFR20_f;
   };
-	   uint8_t RESERVED72[172];
+       uint8_t RESERVED72[172];
   union {
-	__IO uint32_t PZR0;
-	stc_gpio_pzr0_field_t PZR0_f;
-  };
-  union {
-	__IO uint32_t PZR1;
-	stc_gpio_pzr1_field_t PZR1_f;
+    __IO uint32_t PZR0;
+    stc_gpio_pzr0_field_t PZR0_f;
   };
   union {
-	__IO uint32_t PZR2;
-	stc_gpio_pzr2_field_t PZR2_f;
+    __IO uint32_t PZR1;
+    stc_gpio_pzr1_field_t PZR1_f;
   };
   union {
-	__IO uint32_t PZR3;
-	stc_gpio_pzr3_field_t PZR3_f;
+    __IO uint32_t PZR2;
+    stc_gpio_pzr2_field_t PZR2_f;
   };
   union {
-	__IO uint32_t PZR4;
-	stc_gpio_pzr4_field_t PZR4_f;
+    __IO uint32_t PZR3;
+    stc_gpio_pzr3_field_t PZR3_f;
   };
   union {
-	__IO uint32_t PZR5;
-	stc_gpio_pzr5_field_t PZR5_f;
+    __IO uint32_t PZR4;
+    stc_gpio_pzr4_field_t PZR4_f;
   };
   union {
-	__IO uint32_t PZR6;
-	stc_gpio_pzr6_field_t PZR6_f;
+    __IO uint32_t PZR5;
+    stc_gpio_pzr5_field_t PZR5_f;
   };
   union {
-	__IO uint32_t PZR7;
-	stc_gpio_pzr7_field_t PZR7_f;
+    __IO uint32_t PZR6;
+    stc_gpio_pzr6_field_t PZR6_f;
   };
   union {
-	__IO uint32_t PZR8;
-	stc_gpio_pzr8_field_t PZR8_f;
+    __IO uint32_t PZR7;
+    stc_gpio_pzr7_field_t PZR7_f;
   };
-	   uint8_t RESERVED81[20];
   union {
-	__IO uint32_t PZRE;
-	stc_gpio_pzre_field_t PZRE_f;
+    __IO uint32_t PZR8;
+    stc_gpio_pzr8_field_t PZR8_f;
+  };
+       uint8_t RESERVED81[20];
+  union {
+    __IO uint32_t PZRE;
+    stc_gpio_pzre_field_t PZRE_f;
   };
 }FM4_GPIO_TypeDef;
 
@@ -11103,24 +11103,24 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t LVD_CTL;
-	stc_lvd_lvd_ctl_field_t LVD_CTL_f;
+    __IO  uint8_t LVD_CTL;
+    stc_lvd_lvd_ctl_field_t LVD_CTL_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   union {
-	__IO  uint8_t LVD_STR;
-	stc_lvd_lvd_str_field_t LVD_STR_f;
+    __IO  uint8_t LVD_STR;
+    stc_lvd_lvd_str_field_t LVD_STR_f;
   };
-		uint8_t RESERVED1[3];
+        uint8_t RESERVED1[3];
   union {
-	__IO  uint8_t LVD_CLR;
-	stc_lvd_lvd_clr_field_t LVD_CLR_f;
+    __IO  uint8_t LVD_CLR;
+    stc_lvd_lvd_clr_field_t LVD_CLR_f;
   };
-		uint8_t RESERVED2[3];
+        uint8_t RESERVED2[3];
   __IO uint32_t LVD_RLR;
   union {
-	__IO  uint8_t LVD_STR2;
-	stc_lvd_lvd_str2_field_t LVD_STR2_f;
+    __IO  uint8_t LVD_STR2;
+    stc_lvd_lvd_str2_field_t LVD_STR2_f;
   };
 }FM4_LVD_TypeDef;
 
@@ -11130,42 +11130,42 @@ typedef struct
 /* Deep standby mode registers */
 typedef struct
 {
-	   uint8_t RESERVED10[4];
+       uint8_t RESERVED10[4];
   union {
-	__IO  uint8_t RCK_CTL;
-	stc_ds_rck_ctl_field_t RCK_CTL_f;
+    __IO  uint8_t RCK_CTL;
+    stc_ds_rck_ctl_field_t RCK_CTL_f;
   };
-	   uint8_t RESERVED0[1787];
+       uint8_t RESERVED0[1787];
   union {
-	__IO  uint8_t PMD_CTL;
-	stc_ds_pmd_ctl_field_t PMD_CTL_f;
+    __IO  uint8_t PMD_CTL;
+    stc_ds_pmd_ctl_field_t PMD_CTL_f;
   };
-	   uint8_t RESERVED1[3];
+       uint8_t RESERVED1[3];
   union {
-	__IO  uint8_t WRFSR;
-	stc_ds_wrfsr_field_t WRFSR_f;
+    __IO  uint8_t WRFSR;
+    stc_ds_wrfsr_field_t WRFSR_f;
   };
-	   uint8_t RESERVED2[3];
+       uint8_t RESERVED2[3];
   union {
-	__IO uint16_t WIFSR;
-	stc_ds_wifsr_field_t WIFSR_f;
+    __IO uint16_t WIFSR;
+    stc_ds_wifsr_field_t WIFSR_f;
   };
-	   uint8_t RESERVED3[2];
+       uint8_t RESERVED3[2];
   union {
-	__IO uint16_t WIER;
-	stc_ds_wier_field_t WIER_f;
+    __IO uint16_t WIER;
+    stc_ds_wier_field_t WIER_f;
   };
-	   uint8_t RESERVED4[2];
+       uint8_t RESERVED4[2];
   union {
-	__IO  uint8_t WILVR;
-	stc_ds_wilvr_field_t WILVR_f;
+    __IO  uint8_t WILVR;
+    stc_ds_wilvr_field_t WILVR_f;
   };
-	   uint8_t RESERVED5[3];
+       uint8_t RESERVED5[3];
   union {
-	__IO  uint8_t DSRAMR;
-	stc_ds_dsramr_field_t DSRAMR_f;
+    __IO  uint8_t DSRAMR;
+    stc_ds_dsramr_field_t DSRAMR_f;
   };
-	   uint8_t RESERVED6[235];
+       uint8_t RESERVED6[235];
   __IO  uint8_t BUR01;
   __IO  uint8_t BUR02;
   __IO  uint8_t BUR03;
@@ -11192,53 +11192,53 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t UCCR;
-	stc_usbclk_uccr_field_t UCCR_f;
+    __IO  uint8_t UCCR;
+    stc_usbclk_uccr_field_t UCCR_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   union {
-	__IO  uint8_t UPCR1;
-	stc_usbclk_upcr1_field_t UPCR1_f;
+    __IO  uint8_t UPCR1;
+    stc_usbclk_upcr1_field_t UPCR1_f;
   };
-		uint8_t RESERVED1[3];
+        uint8_t RESERVED1[3];
   union {
-	__IO  uint8_t UPCR2;
-	stc_usbclk_upcr2_field_t UPCR2_f;
+    __IO  uint8_t UPCR2;
+    stc_usbclk_upcr2_field_t UPCR2_f;
   };
-		uint8_t RESERVED2[3];
+        uint8_t RESERVED2[3];
   union {
-	__IO  uint8_t UPCR3;
-	stc_usbclk_upcr3_field_t UPCR3_f;
+    __IO  uint8_t UPCR3;
+    stc_usbclk_upcr3_field_t UPCR3_f;
   };
-		uint8_t RESERVED3[3];
+        uint8_t RESERVED3[3];
   union {
-	__IO  uint8_t UPCR4;
-	stc_usbclk_upcr4_field_t UPCR4_f;
+    __IO  uint8_t UPCR4;
+    stc_usbclk_upcr4_field_t UPCR4_f;
   };
-		uint8_t RESERVED4[3];
+        uint8_t RESERVED4[3];
   union {
-	__IO  uint8_t UP_STR;
-	stc_usbclk_up_str_field_t UP_STR_f;
+    __IO  uint8_t UP_STR;
+    stc_usbclk_up_str_field_t UP_STR_f;
   };
-		uint8_t RESERVED5[3];
+        uint8_t RESERVED5[3];
   union {
-	__IO  uint8_t UPINT_ENR;
-	stc_usbclk_upint_enr_field_t UPINT_ENR_f;
+    __IO  uint8_t UPINT_ENR;
+    stc_usbclk_upint_enr_field_t UPINT_ENR_f;
   };
-		uint8_t RESERVED6[3];
+        uint8_t RESERVED6[3];
   union {
-	__IO  uint8_t UPINT_CLR;
-	stc_usbclk_upint_clr_field_t UPINT_CLR_f;
+    __IO  uint8_t UPINT_CLR;
+    stc_usbclk_upint_clr_field_t UPINT_CLR_f;
   };
-		uint8_t RESERVED7[3];
+        uint8_t RESERVED7[3];
   union {
-	__IO  uint8_t UPINT_STR;
-	stc_usbclk_upint_str_field_t UPINT_STR_f;
+    __IO  uint8_t UPINT_STR;
+    stc_usbclk_upint_str_field_t UPINT_STR_f;
   };
-		uint8_t RESERVED8[15];
+        uint8_t RESERVED8[15];
   union {
-	__IO  uint8_t USBEN;
-	stc_usbclk_usben_field_t USBEN_f;
+    __IO  uint8_t USBEN;
+    stc_usbclk_usben_field_t USBEN_f;
   };
 }FM4_USBCLK_TypeDef;
 */
@@ -11250,8 +11250,8 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t CANPRE;
-	stc_canpre_canpre_field_t CANPRE_f;
+    __IO  uint8_t CANPRE;
+    stc_canpre_canpre_field_t CANPRE_f;
   };
 }FM4_CANPRE_TypeDef;
 
@@ -11262,73 +11262,73 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t UCCR;
-	stc_usbethernetclk_uccr_field_t UCCR_f;
+    __IO  uint8_t UCCR;
+    stc_usbethernetclk_uccr_field_t UCCR_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   union {
-	__IO  uint8_t UPCR1;
-	stc_usbethernetclk_upcr1_field_t UPCR1_f;
+    __IO  uint8_t UPCR1;
+    stc_usbethernetclk_upcr1_field_t UPCR1_f;
   };
-		uint8_t RESERVED1[3];
+        uint8_t RESERVED1[3];
   union {
-	__IO  uint8_t UPCR2;
-	stc_usbethernetclk_upcr2_field_t UPCR2_f;
+    __IO  uint8_t UPCR2;
+    stc_usbethernetclk_upcr2_field_t UPCR2_f;
   };
-		uint8_t RESERVED2[3];
+        uint8_t RESERVED2[3];
   union {
-	__IO  uint8_t UPCR3;
-	stc_usbethernetclk_upcr3_field_t UPCR3_f;
+    __IO  uint8_t UPCR3;
+    stc_usbethernetclk_upcr3_field_t UPCR3_f;
   };
-		uint8_t RESERVED3[3];
+        uint8_t RESERVED3[3];
   union {
-	__IO  uint8_t UPCR4;
-	stc_usbethernetclk_upcr4_field_t UPCR4_f;
+    __IO  uint8_t UPCR4;
+    stc_usbethernetclk_upcr4_field_t UPCR4_f;
   };
-		uint8_t RESERVED4[3];
+        uint8_t RESERVED4[3];
   union {
-	__IO  uint8_t UP_STR;
-	stc_usbethernetclk_up_str_field_t UP_STR_f;
+    __IO  uint8_t UP_STR;
+    stc_usbethernetclk_up_str_field_t UP_STR_f;
   };
-		uint8_t RESERVED5[3];
+        uint8_t RESERVED5[3];
   union {
-	__IO  uint8_t UPINT_ENR;
-	stc_usbethernetclk_upint_enr_field_t UPINT_ENR_f;
+    __IO  uint8_t UPINT_ENR;
+    stc_usbethernetclk_upint_enr_field_t UPINT_ENR_f;
   };
-		uint8_t RESERVED6[3];
+        uint8_t RESERVED6[3];
   union {
-	__IO  uint8_t UPINT_CLR;
-	stc_usbethernetclk_upint_clr_field_t UPINT_CLR_f;
+    __IO  uint8_t UPINT_CLR;
+    stc_usbethernetclk_upint_clr_field_t UPINT_CLR_f;
   };
-		uint8_t RESERVED7[3];
+        uint8_t RESERVED7[3];
   union {
-	__IO  uint8_t UPINT_STR;
-	stc_usbethernetclk_upint_str_field_t UPINT_STR_f;
+    __IO  uint8_t UPINT_STR;
+    stc_usbethernetclk_upint_str_field_t UPINT_STR_f;
   };
-		uint8_t RESERVED8[3];
+        uint8_t RESERVED8[3];
   union {
-	__IO  uint8_t UPCR5;
-	stc_usbethernetclk_upcr5_field_t UPCR5_f;
+    __IO  uint8_t UPCR5;
+    stc_usbethernetclk_upcr5_field_t UPCR5_f;
   };
-		uint8_t RESERVED9[3];
+        uint8_t RESERVED9[3];
   union {
-	__IO  uint8_t UPCR6;
-	stc_usbethernetclk_upcr6_field_t UPCR6_f;
+    __IO  uint8_t UPCR6;
+    stc_usbethernetclk_upcr6_field_t UPCR6_f;
   };
-		uint8_t RESERVED10[3];
+        uint8_t RESERVED10[3];
   union {
-	__IO  uint8_t UPCR7;
-	stc_usbethernetclk_upcr7_field_t UPCR7_f;
+    __IO  uint8_t UPCR7;
+    stc_usbethernetclk_upcr7_field_t UPCR7_f;
   };
-		uint8_t RESERVED11[3];
+        uint8_t RESERVED11[3];
   union {
-	__IO  uint8_t USBEN0;
-	stc_usbethernetclk_usben0_field_t USBEN0_f;
+    __IO  uint8_t USBEN0;
+    stc_usbethernetclk_usben0_field_t USBEN0_f;
   };
-		uint8_t RESERVED12[3];
+        uint8_t RESERVED12[3];
   union {
-	__IO  uint8_t USBEN1;
-	stc_usbethernetclk_usben1_field_t USBEN1_f;
+    __IO  uint8_t USBEN1;
+    stc_usbethernetclk_usben1_field_t USBEN1_f;
   };
 }FM4_USBETHERNETCLK_TypeDef;
 
@@ -11338,210 +11338,210 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t       SMR;
-	stc_mfs_smr_field_t SMR_f;
+    __IO  uint8_t       SMR;
+    stc_mfs_smr_field_t SMR_f;
   };
   union {
-	__IO  uint8_t            SCR;
-	stc_mfs_scr_field_t      SCR_f;
-	__IO  uint8_t            IBCR;
-	stc_mfs_i2c_ibcr_field_t IBCR_f;
+    __IO  uint8_t            SCR;
+    stc_mfs_scr_field_t      SCR_f;
+    __IO  uint8_t            IBCR;
+    stc_mfs_i2c_ibcr_field_t IBCR_f;
   };
-		uint8_t RESERVED0[2];
+        uint8_t RESERVED0[2];
   union {
-	__IO  uint8_t            ESCR;
-	stc_mfs_escr_field_t     ESCR_f;
-	__IO  uint8_t            IBSR;
-	stc_mfs_i2c_ibsr_field_t IBSR_f;
-  };
-  union {
-	__IO  uint8_t       SSR;
-	stc_mfs_ssr_field_t SSR_f;
-  };
-		uint8_t RESERVED1[2];
-  union {
-	__IO uint32_t RDR32;
-	__IO uint32_t TDR32;
-	struct {
-	  union {
-		__IO uint16_t            RDR;
-		stc_mfs_uart_rdr_field_t RDR_f;
-	  };
-			 uint8_t RESERVED2[2];
-	};
-	struct {
-	  union {
-		__IO uint16_t            TDR;
-		stc_mfs_uart_tdr_field_t TDR_f;
-	  };
-			 uint8_t RESERVED3[2];
-	};
+    __IO  uint8_t            ESCR;
+    stc_mfs_escr_field_t     ESCR_f;
+    __IO  uint8_t            IBSR;
+    stc_mfs_i2c_ibsr_field_t IBSR_f;
   };
   union {
-	union {
-	  __IO uint16_t       BGR;
-	  stc_mfs_bgr_field_t BGR_f;
-	};
-	struct {
-	  __IO  uint8_t BGR0;
-	  union {
-		__IO  uint8_t        BGR1;
-		stc_mfs_bgr1_field_t BGR1_f;
-	  };
-	};
+    __IO  uint8_t       SSR;
+    stc_mfs_ssr_field_t SSR_f;
   };
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED1[2];
   union {
-	__IO  uint8_t            ISBA;
-	stc_mfs_i2c_isba_field_t ISBA_f;
+    __IO uint32_t RDR32;
+    __IO uint32_t TDR32;
+    struct {
+      union {
+        __IO uint16_t            RDR;
+        stc_mfs_uart_rdr_field_t RDR_f;
+      };
+             uint8_t RESERVED2[2];
+    };
+    struct {
+      union {
+        __IO uint16_t            TDR;
+        stc_mfs_uart_tdr_field_t TDR_f;
+      };
+             uint8_t RESERVED3[2];
+    };
   };
   union {
-	__IO  uint8_t            ISMK;
-	stc_mfs_i2c_ismk_field_t ISMK_f;
+    union {
+      __IO uint16_t       BGR;
+      stc_mfs_bgr_field_t BGR_f;
+    };
+    struct {
+      __IO  uint8_t BGR0;
+      union {
+        __IO  uint8_t        BGR1;
+        stc_mfs_bgr1_field_t BGR1_f;
+      };
+    };
   };
-		uint8_t RESERVED5[2];
+        uint8_t RESERVED4[2];
   union {
-	union {
-	  __IO uint16_t       FCR;
-	  stc_mfs_fcr_field_t FCR_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t        FCR0;
-		stc_mfs_fcr0_field_t FCR0_f;
-	  };
-	  union {
-		__IO  uint8_t        FCR1;
-		stc_mfs_fcr1_field_t FCR1_f;
-	  };
-	};
+    __IO  uint8_t            ISBA;
+    stc_mfs_i2c_isba_field_t ISBA_f;
   };
-		uint8_t RESERVED6[2];
   union {
-	union {
-	  __IO uint16_t         FBYTE;
-	  stc_mfs_fbyte_field_t FBYTE_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t          FBYTE1;
-		stc_mfs_fbyte1_field_t FBYTE1_f;
-	  };
-	  union {
-		__IO  uint8_t          FBYTE2;
-		stc_mfs_fbyte2_field_t FBYTE2_f;
-	  };
-	};
+    __IO  uint8_t            ISMK;
+    stc_mfs_i2c_ismk_field_t ISMK_f;
   };
-		uint8_t RESERVED7[2];
+        uint8_t RESERVED5[2];
   union {
-	__IO uint16_t                SCSTR10;
-	stc_mfs_csio_scstr10_field_t SCSTR10_f;
-	struct {
-	  union {
-		__IO  uint8_t               SCSTR0;
-		stc_mfs_csio_scstr0_field_t SCSTR0_f;
-		__IO  uint8_t NFCR;
-		stc_mfs_i2c_nfcr_field_t NFCR_f;
-	  };
-	  union {
-		__IO  uint8_t               SCSTR1;
-		stc_mfs_csio_scstr1_field_t SCSTR1_f;
-		__IO  uint8_t               EIBCR;
-		stc_mfs_i2c_eibcr_field_t   EIBCR_f;
-	  };
-	};
+    union {
+      __IO uint16_t       FCR;
+      stc_mfs_fcr_field_t FCR_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t        FCR0;
+        stc_mfs_fcr0_field_t FCR0_f;
+      };
+      union {
+        __IO  uint8_t        FCR1;
+        stc_mfs_fcr1_field_t FCR1_f;
+      };
+    };
   };
-		uint8_t RESERVED8[2];
+        uint8_t RESERVED6[2];
   union {
-	__IO uint16_t                SCSTR32;
-	stc_mfs_csio_scstr32_field_t SCSTR32_f;
-	struct {
-	  union {
-		__IO  uint8_t               SCSTR2;
-		stc_mfs_csio_scstr2_field_t SCSTR2_f;
-	  };
-	  union {
-		__IO  uint8_t               SCSTR3;
-		stc_mfs_csio_scstr3_field_t SCSTR3_f;
-	  };
-	};
+    union {
+      __IO uint16_t         FBYTE;
+      stc_mfs_fbyte_field_t FBYTE_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t          FBYTE1;
+        stc_mfs_fbyte1_field_t FBYTE1_f;
+      };
+      union {
+        __IO  uint8_t          FBYTE2;
+        stc_mfs_fbyte2_field_t FBYTE2_f;
+      };
+    };
   };
-		uint8_t RESERVED9[2];
+        uint8_t RESERVED7[2];
   union {
-	__IO uint16_t              SACSR;
-	stc_mfs_csio_sacsr_field_t SACSR_f;
-	struct {
-	  union {
-		__IO  uint8_t               SACSR0;
-		stc_mfs_csio_sacsr0_field_t SACSR0_f;
-	  };
-	  union {
-		__IO  uint8_t               SACSR1;
-		stc_mfs_csio_sacsr1_field_t SACSR1_f;
-	  };
-	};
+    __IO uint16_t                SCSTR10;
+    stc_mfs_csio_scstr10_field_t SCSTR10_f;
+    struct {
+      union {
+        __IO  uint8_t               SCSTR0;
+        stc_mfs_csio_scstr0_field_t SCSTR0_f;
+        __IO  uint8_t NFCR;
+        stc_mfs_i2c_nfcr_field_t NFCR_f;
+      };
+      union {
+        __IO  uint8_t               SCSTR1;
+        stc_mfs_csio_scstr1_field_t SCSTR1_f;
+        __IO  uint8_t               EIBCR;
+        stc_mfs_i2c_eibcr_field_t   EIBCR_f;
+      };
+    };
   };
-		uint8_t RESERVED10[2];
+        uint8_t RESERVED8[2];
   union {
-	__IO uint16_t             STMR;
-	stc_mfs_csio_stmr_field_t STMR_f;
-	struct {
-	  union {
-		__IO  uint8_t              STMR0;
-		stc_mfs_csio_stmr0_field_t STMR0_f;
-	  };
-	  union {
-		__IO  uint8_t              STMR1;
-		stc_mfs_csio_stmr1_field_t STMR1_f;
-	  };
-	};
+    __IO uint16_t                SCSTR32;
+    stc_mfs_csio_scstr32_field_t SCSTR32_f;
+    struct {
+      union {
+        __IO  uint8_t               SCSTR2;
+        stc_mfs_csio_scstr2_field_t SCSTR2_f;
+      };
+      union {
+        __IO  uint8_t               SCSTR3;
+        stc_mfs_csio_scstr3_field_t SCSTR3_f;
+      };
+    };
   };
-		uint8_t RESERVED11[2];
+        uint8_t RESERVED9[2];
   union {
-	__IO uint16_t              STMCR;
-	stc_mfs_csio_stmcr_field_t STMCR_f;
-	struct {
-	  union {
-		__IO  uint8_t               STMCR0;
-		stc_mfs_csio_stmcr0_field_t STMCR0_f;
-	  };
-	  union {
-		__IO  uint8_t               STMCR1;
-		stc_mfs_csio_stmcr1_field_t STMCR1_f;
-	  };
-	};
+    __IO uint16_t              SACSR;
+    stc_mfs_csio_sacsr_field_t SACSR_f;
+    struct {
+      union {
+        __IO  uint8_t               SACSR0;
+        stc_mfs_csio_sacsr0_field_t SACSR0_f;
+      };
+      union {
+        __IO  uint8_t               SACSR1;
+        stc_mfs_csio_sacsr1_field_t SACSR1_f;
+      };
+    };
   };
-		uint8_t RESERVED12[2];
+        uint8_t RESERVED10[2];
   union {
-	__IO uint16_t              SCSCR;
-	stc_mfs_csio_scscr_field_t SCSCR_f;
+    __IO uint16_t             STMR;
+    stc_mfs_csio_stmr_field_t STMR_f;
+    struct {
+      union {
+        __IO  uint8_t              STMR0;
+        stc_mfs_csio_stmr0_field_t STMR0_f;
+      };
+      union {
+        __IO  uint8_t              STMR1;
+        stc_mfs_csio_stmr1_field_t STMR1_f;
+      };
+    };
   };
-		uint8_t RESERVED13[2];
+        uint8_t RESERVED11[2];
   union {
-	__IO uint16_t SCSFR;
-	struct {
-	  __IO  uint8_t SCSFR0;
-	  __IO  uint8_t SCSFR1;
-	};
+    __IO uint16_t              STMCR;
+    stc_mfs_csio_stmcr_field_t STMCR_f;
+    struct {
+      union {
+        __IO  uint8_t               STMCR0;
+        stc_mfs_csio_stmcr0_field_t STMCR0_f;
+      };
+      union {
+        __IO  uint8_t               STMCR1;
+        stc_mfs_csio_stmcr1_field_t STMCR1_f;
+      };
+    };
   };
-		uint8_t RESERVED14[2];
+        uint8_t RESERVED12[2];
+  union {
+    __IO uint16_t              SCSCR;
+    stc_mfs_csio_scscr_field_t SCSCR_f;
+  };
+        uint8_t RESERVED13[2];
+  union {
+    __IO uint16_t SCSFR;
+    struct {
+      __IO  uint8_t SCSFR0;
+      __IO  uint8_t SCSFR1;
+    };
+  };
+        uint8_t RESERVED14[2];
   __IO  uint8_t SCSFR2;
-		uint8_t RESERVED15[3];
+        uint8_t RESERVED15[3];
   union {
-	__IO uint16_t TBYTE10;
-	struct {
-	  __IO  uint8_t TBYTE0;
-	  __IO  uint8_t TBYTE1;
-	};
+    __IO uint16_t TBYTE10;
+    struct {
+      __IO  uint8_t TBYTE0;
+      __IO  uint8_t TBYTE1;
+    };
   };
-		uint8_t RESERVED16[2];
+        uint8_t RESERVED16[2];
   union {
-	__IO uint16_t TBYTE32;
-	struct {
-	  __IO  uint8_t TBYTE2;
-	  __IO  uint8_t TBYTE3;
-	};
+    __IO uint16_t TBYTE32;
+    struct {
+      __IO  uint8_t TBYTE2;
+      __IO  uint8_t TBYTE3;
+    };
   };
 }FM4_MFS_TypeDef;
 
@@ -11552,29 +11552,29 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t CRCCR;
-	stc_crc_crccr_field_t CRCCR_f;
+    __IO  uint8_t CRCCR;
+    stc_crc_crccr_field_t CRCCR_f;
   };
-		uint8_t RESERVED0[3];
+        uint8_t RESERVED0[3];
   __IO uint32_t CRCINIT;
   union {
-	__IO uint32_t CRCIN;
-	struct {
-	  union {
-		__IO uint16_t CRCINL;
-		struct {
-		  __IO  uint8_t CRCINLL;
-		  __IO  uint8_t CRCINLH;
-		};
-	  };
-	  union {
-		__IO uint16_t CRCINH;
-		struct {
-		  __IO  uint8_t CRCINHL;
-		  __IO  uint8_t CRCINHH;
-		};
-	  };
-	};
+    __IO uint32_t CRCIN;
+    struct {
+      union {
+        __IO uint16_t CRCINL;
+        struct {
+          __IO  uint8_t CRCINLL;
+          __IO  uint8_t CRCINLH;
+        };
+      };
+      union {
+        __IO uint16_t CRCINH;
+        struct {
+          __IO  uint8_t CRCINHL;
+          __IO  uint8_t CRCINHH;
+        };
+      };
+    };
   };
   __IO uint32_t CRCR;
 }FM4_CRC_TypeDef;
@@ -11587,21 +11587,21 @@ typedef struct
 {
   __IO uint32_t DESTP;
   union {
-	__IO uint32_t HWDESP;
-	stc_dstc_hwdesp_field_t HWDESP_f;
+    __IO uint32_t HWDESP;
+    stc_dstc_hwdesp_field_t HWDESP_f;
   };
   __IO uint8_t CMD;
   union {
-	__IO uint8_t CFG;
-	stc_dstc_cfg_field_t CFG_f;
+    __IO uint8_t CFG;
+    stc_dstc_cfg_field_t CFG_f;
   };
   union {
-	__IO uint16_t SWTR;
-	stc_dstc_swtr_field_t SWTR_f;
+    __IO uint16_t SWTR;
+    stc_dstc_swtr_field_t SWTR_f;
   };
   union {
-	__IO uint32_t MONERS;
-	stc_dstc_moners_field_t MONERS_f;
+    __IO uint32_t MONERS;
+    stc_dstc_moners_field_t MONERS_f;
   };
   __IO uint32_t DREQENB0;
   __IO uint32_t DREQENB1;
@@ -11652,26 +11652,26 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t WCRD;
-	stc_wc_wcrd_field_t WCRD_f;
+    __IO  uint8_t WCRD;
+    stc_wc_wcrd_field_t WCRD_f;
   };
   union {
-	__IO  uint8_t WCRL;
-	stc_wc_wcrl_field_t WCRL_f;
+    __IO  uint8_t WCRL;
+    stc_wc_wcrl_field_t WCRL_f;
   };
   union {
-	__IO  uint8_t WCCR;
-	stc_wc_wccr_field_t WCCR_f;
+    __IO  uint8_t WCCR;
+    stc_wc_wccr_field_t WCCR_f;
   };
-		uint8_t RESERVED0[13];
+        uint8_t RESERVED0[13];
   union {
-	__IO uint16_t CLK_SEL;
-	stc_wc_clk_sel_field_t CLK_SEL_f;
+    __IO uint16_t CLK_SEL;
+    stc_wc_clk_sel_field_t CLK_SEL_f;
   };
-		uint8_t RESERVED1[2];
+        uint8_t RESERVED1[2];
   union {
-	__IO  uint8_t CLK_EN;
-	stc_wc_clk_en_field_t CLK_EN_f;
+    __IO  uint8_t CLK_EN;
+    stc_wc_clk_en_field_t CLK_EN_f;
   };
 }FM4_WC_TypeDef;
 
@@ -11682,629 +11682,629 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t WTCR10;
-	stc_rtc_wtcr10_field_t WTCR10_f;
+    __IO  uint8_t WTCR10;
+    stc_rtc_wtcr10_field_t WTCR10_f;
   };
-		uint8_t RESERVED1[3];
+        uint8_t RESERVED1[3];
   union {
-	__IO  uint8_t WTCR11;
-	stc_rtc_wtcr11_field_t WTCR11_f;
+    __IO  uint8_t WTCR11;
+    stc_rtc_wtcr11_field_t WTCR11_f;
   };
-		uint8_t RESERVED2[3];
+        uint8_t RESERVED2[3];
   union {
-	__IO  uint8_t WTCR12;
-	stc_rtc_wtcr12_field_t WTCR12_f;
+    __IO  uint8_t WTCR12;
+    stc_rtc_wtcr12_field_t WTCR12_f;
   };
-		uint8_t RESERVED3[3];
+        uint8_t RESERVED3[3];
   union {
-	__IO  uint8_t WTCR13;
-	stc_rtc_wtcr13_field_t WTCR13_f;
+    __IO  uint8_t WTCR13;
+    stc_rtc_wtcr13_field_t WTCR13_f;
   };
-		uint8_t RESERVED4[3];
+        uint8_t RESERVED4[3];
   union {
-	__IO  uint8_t WTCR20;
-	stc_rtc_wtcr20_field_t WTCR20_f;
+    __IO  uint8_t WTCR20;
+    stc_rtc_wtcr20_field_t WTCR20_f;
   };
-		uint8_t RESERVED5[3];
+        uint8_t RESERVED5[3];
   union {
-	__IO  uint8_t WTCR21;
-	stc_rtc_wtcr21_field_t WTCR21_f;
+    __IO  uint8_t WTCR21;
+    stc_rtc_wtcr21_field_t WTCR21_f;
   };
-		uint8_t RESERVED6[3];
+        uint8_t RESERVED6[3];
   __IO  uint8_t WTCR22;
-		uint8_t RESERVED7[3];
+        uint8_t RESERVED7[3];
   union {
-	__IO  uint8_t WTSR;
-	stc_rtc_wtsr_field_t WTSR_f;
+    __IO  uint8_t WTSR;
+    stc_rtc_wtsr_field_t WTSR_f;
   };
-		uint8_t RESERVED8[3];
+        uint8_t RESERVED8[3];
   union {
-	__IO  uint8_t WTMIR;
-	stc_rtc_wtmir_field_t WTMIR_f;
+    __IO  uint8_t WTMIR;
+    stc_rtc_wtmir_field_t WTMIR_f;
   };
-		uint8_t RESERVED9[3];
+        uint8_t RESERVED9[3];
   union {
-	__IO  uint8_t WTHR;
-	stc_rtc_wthr_field_t WTHR_f;
+    __IO  uint8_t WTHR;
+    stc_rtc_wthr_field_t WTHR_f;
   };
-		uint8_t RESERVED10[3];
+        uint8_t RESERVED10[3];
   union {
-	__IO  uint8_t WTDR;
-	stc_rtc_wtdr_field_t WTDR_f;
+    __IO  uint8_t WTDR;
+    stc_rtc_wtdr_field_t WTDR_f;
   };
-		uint8_t RESERVED11[3];
+        uint8_t RESERVED11[3];
   union {
-	__IO  uint8_t WTDW;
-	stc_rtc_wtdw_field_t WTDW_f;
+    __IO  uint8_t WTDW;
+    stc_rtc_wtdw_field_t WTDW_f;
   };
-		uint8_t RESERVED12[3];
+        uint8_t RESERVED12[3];
   union {
-	__IO  uint8_t WTMOR;
-	stc_rtc_wtmor_field_t WTMOR_f;
+    __IO  uint8_t WTMOR;
+    stc_rtc_wtmor_field_t WTMOR_f;
   };
-		uint8_t RESERVED13[3];
+        uint8_t RESERVED13[3];
   union {
-	__IO  uint8_t WTYR;
-	stc_rtc_wtyr_field_t WTYR_f;
+    __IO  uint8_t WTYR;
+    stc_rtc_wtyr_field_t WTYR_f;
   };
-		uint8_t RESERVED14[3];
+        uint8_t RESERVED14[3];
   union {
-	__IO  uint8_t ALMIR;
-	stc_rtc_almir_field_t ALMIR_f;
+    __IO  uint8_t ALMIR;
+    stc_rtc_almir_field_t ALMIR_f;
   };
-		uint8_t RESERVED15[3];
+        uint8_t RESERVED15[3];
   union {
-	__IO  uint8_t ALHR;
-	stc_rtc_alhr_field_t ALHR_f;
+    __IO  uint8_t ALHR;
+    stc_rtc_alhr_field_t ALHR_f;
   };
-		uint8_t RESERVED16[3];
+        uint8_t RESERVED16[3];
   union {
-	__IO  uint8_t ALDR;
-	stc_rtc_aldr_field_t ALDR_f;
+    __IO  uint8_t ALDR;
+    stc_rtc_aldr_field_t ALDR_f;
   };
-		uint8_t RESERVED17[3];
+        uint8_t RESERVED17[3];
   union {
-	__IO  uint8_t ALMOR;
-	stc_rtc_almor_field_t ALMOR_f;
+    __IO  uint8_t ALMOR;
+    stc_rtc_almor_field_t ALMOR_f;
   };
-		uint8_t RESERVED18[3];
+        uint8_t RESERVED18[3];
   union {
-	__IO  uint8_t ALYR;
-	stc_rtc_alyr_field_t ALYR_f;
+    __IO  uint8_t ALYR;
+    stc_rtc_alyr_field_t ALYR_f;
   };
-		uint8_t RESERVED19[3];
+        uint8_t RESERVED19[3];
   union {
-	__IO  uint8_t WTTR0;
-	stc_rtc_wttr0_field_t WTTR0_f;
+    __IO  uint8_t WTTR0;
+    stc_rtc_wttr0_field_t WTTR0_f;
   };
-		uint8_t RESERVED20[3];
+        uint8_t RESERVED20[3];
   union {
-	__IO  uint8_t WTTR1;
-	stc_rtc_wttr1_field_t WTTR1_f;
+    __IO  uint8_t WTTR1;
+    stc_rtc_wttr1_field_t WTTR1_f;
   };
-		uint8_t RESERVED21[3];
+        uint8_t RESERVED21[3];
   union {
-	__IO  uint8_t WTTR2;
-	stc_rtc_wttr2_field_t WTTR2_f;
+    __IO  uint8_t WTTR2;
+    stc_rtc_wttr2_field_t WTTR2_f;
   };
-		uint8_t RESERVED22[3];
+        uint8_t RESERVED22[3];
   __IO  uint8_t WTCAL0;
-		uint8_t RESERVED23[3];
+        uint8_t RESERVED23[3];
   union {
-	__IO  uint8_t WTCAL1;
-	stc_rtc_wtcal1_field_t WTCAL1_f;
+    __IO  uint8_t WTCAL1;
+    stc_rtc_wtcal1_field_t WTCAL1_f;
   };
-		uint8_t RESERVED24[3];
+        uint8_t RESERVED24[3];
   union {
-	__IO  uint8_t WTCALEN;
-	stc_rtc_wtcalen_field_t WTCALEN_f;
+    __IO  uint8_t WTCALEN;
+    stc_rtc_wtcalen_field_t WTCALEN_f;
   };
-		uint8_t RESERVED25[3];
+        uint8_t RESERVED25[3];
   union {
-	__IO  uint8_t WTDIV;
-	stc_rtc_wtdiv_field_t WTDIV_f;
+    __IO  uint8_t WTDIV;
+    stc_rtc_wtdiv_field_t WTDIV_f;
   };
-		uint8_t RESERVED26[3];
+        uint8_t RESERVED26[3];
   union {
-	__IO  uint8_t WTDIVEN;
-	stc_rtc_wtdiven_field_t WTDIVEN_f;
+    __IO  uint8_t WTDIVEN;
+    stc_rtc_wtdiven_field_t WTDIVEN_f;
   };
-		uint8_t RESERVED27[3];
+        uint8_t RESERVED27[3];
   union {
-	__IO  uint8_t WTCALPRD;
-	stc_rtc_wtcalprd_field_t WTCALPRD_f;
+    __IO  uint8_t WTCALPRD;
+    stc_rtc_wtcalprd_field_t WTCALPRD_f;
   };
-		uint8_t RESERVED28[3];
+        uint8_t RESERVED28[3];
   union {
-	__IO  uint8_t WTCOSEL;
-	stc_rtc_wtcosel_field_t WTCOSEL_f;
+    __IO  uint8_t WTCOSEL;
+    stc_rtc_wtcosel_field_t WTCOSEL_f;
   };
-		uint8_t RESERVED29[3];
+        uint8_t RESERVED29[3];
   union {
-	__IO  uint8_t VB_CLKDIV;
-	stc_rtc_vb_clkdiv_field_t VB_CLKDIV_f;
+    __IO  uint8_t VB_CLKDIV;
+    stc_rtc_vb_clkdiv_field_t VB_CLKDIV_f;
   };
-		uint8_t RESERVED30[3];
+        uint8_t RESERVED30[3];
   union {
-	__IO  uint8_t WTOSCCNT;
-	stc_rtc_wtosccnt_field_t WTOSCCNT_f;
+    __IO  uint8_t WTOSCCNT;
+    stc_rtc_wtosccnt_field_t WTOSCCNT_f;
   };
-		uint8_t RESERVED31[3];
+        uint8_t RESERVED31[3];
   __IO  uint8_t CCS;
-		uint8_t RESERVED32[3];
+        uint8_t RESERVED32[3];
   __IO  uint8_t CCB;
-		uint8_t RESERVED33[3];
+        uint8_t RESERVED33[3];
   /* Don't exist on peripheral manual */
   __IO  uint8_t TRIM;
-		uint8_t RESERVED34[3];
+        uint8_t RESERVED34[3];
   union {
-	__IO  uint8_t BOOST;
-	stc_rtc_boost_field_t BOOST_f;
+    __IO  uint8_t BOOST;
+    stc_rtc_boost_field_t BOOST_f;
   };
-		uint8_t RESERVED35[3];
+        uint8_t RESERVED35[3];
   union {
-	__IO  uint8_t EWKUP;
-	stc_rtc_ewkup_field_t EWKUP_f;
+    __IO  uint8_t EWKUP;
+    stc_rtc_ewkup_field_t EWKUP_f;
   };
-		uint8_t RESERVED36[3];
+        uint8_t RESERVED36[3];
   union {
-	__IO  uint8_t VDET;
-	stc_rtc_vdet_field_t VDET_f;
+    __IO  uint8_t VDET;
+    stc_rtc_vdet_field_t VDET_f;
   };
-		uint8_t RESERVED37[3];
+        uint8_t RESERVED37[3];
   /* Don't exist on peripheral manual */
   __IO  uint8_t FDET;
-		uint8_t RESERVED38[3];
+        uint8_t RESERVED38[3];
   union {
-	__IO  uint8_t HIBRST;
-	stc_rtc_hibrst_field_t HIBRST_f;
+    __IO  uint8_t HIBRST;
+    stc_rtc_hibrst_field_t HIBRST_f;
   };
-		uint8_t RESERVED39[3];
+        uint8_t RESERVED39[3];
   union {
-	__IO  uint8_t VBPFR;
-	stc_rtc_vbpfr_field_t VBPFR_f;
+    __IO  uint8_t VBPFR;
+    stc_rtc_vbpfr_field_t VBPFR_f;
   };
-		uint8_t RESERVED40[3];
+        uint8_t RESERVED40[3];
   union {
-	__IO  uint8_t VBPCR;
-	stc_rtc_vbpcr_field_t VBPCR_f;
+    __IO  uint8_t VBPCR;
+    stc_rtc_vbpcr_field_t VBPCR_f;
   };
-		uint8_t RESERVED41[3];
+        uint8_t RESERVED41[3];
   union {
-	__IO  uint8_t VBDDR;
-	stc_rtc_vbddr_field_t VBDDR_f;
+    __IO  uint8_t VBDDR;
+    stc_rtc_vbddr_field_t VBDDR_f;
   };
-		uint8_t RESERVED42[3];
+        uint8_t RESERVED42[3];
   union {
-	__IO  uint8_t VBDIR;
-	stc_rtc_vbdir_field_t VBDIR_f;
+    __IO  uint8_t VBDIR;
+    stc_rtc_vbdir_field_t VBDIR_f;
   };
-		uint8_t RESERVED43[3];
+        uint8_t RESERVED43[3];
   union {
-	__IO  uint8_t VBDOR;
-	stc_rtc_vbdor_field_t VBDOR_f;
+    __IO  uint8_t VBDOR;
+    stc_rtc_vbdor_field_t VBDOR_f;
   };
-		uint8_t RESERVED44[3];
+        uint8_t RESERVED44[3];
   union {
-	__IO  uint8_t VBPZR;
-	stc_rtc_vbpzr_field_t VBPZR_f;
+    __IO  uint8_t VBPZR;
+    stc_rtc_vbpzr_field_t VBPZR_f;
   };
-		uint8_t RESERVED45[87];
+        uint8_t RESERVED45[87];
   union {
-	__IO uint32_t BREG00_03;
-	struct {
-	  __IO uint16_t BREG00_01;
-	  __IO uint16_t BREG02_03;
-	};
-	struct {
-	  __IO  uint8_t BREG00;
-	  __IO  uint8_t BREG01;
-	  __IO  uint8_t BREG02;
-	  __IO  uint8_t BREG03;
-	};
-  };
-  union {
-	__IO uint32_t BREG04_07;
-	struct {
-	  __IO uint16_t BREG04_05;
-	  __IO uint16_t BREG06_07;
-	};
-	struct {
-	  __IO  uint8_t BREG04;
-	  __IO  uint8_t BREG05;
-	  __IO  uint8_t BREG06;
-	  __IO  uint8_t BREG07;
-	};
+    __IO uint32_t BREG00_03;
+    struct {
+      __IO uint16_t BREG00_01;
+      __IO uint16_t BREG02_03;
+    };
+    struct {
+      __IO  uint8_t BREG00;
+      __IO  uint8_t BREG01;
+      __IO  uint8_t BREG02;
+      __IO  uint8_t BREG03;
+    };
   };
   union {
-	__IO uint32_t BREG08_0B;
-	struct {
-	  __IO uint16_t BREG08_09;
-	  __IO uint16_t BREG0A_0B;
-	};
-	struct {
-	  __IO  uint8_t BREG08;
-	  __IO  uint8_t BREG09;
-	  __IO  uint8_t BREG0A;
-	  __IO  uint8_t BREG0B;
-	};
+    __IO uint32_t BREG04_07;
+    struct {
+      __IO uint16_t BREG04_05;
+      __IO uint16_t BREG06_07;
+    };
+    struct {
+      __IO  uint8_t BREG04;
+      __IO  uint8_t BREG05;
+      __IO  uint8_t BREG06;
+      __IO  uint8_t BREG07;
+    };
   };
   union {
-	__IO uint32_t BREG0C_0F;
-	struct {
-	  __IO uint16_t BREG0C_0D;
-	  __IO uint16_t BREG0E_0F;
-	};
-	struct {
-	  __IO  uint8_t BREG0C;
-	  __IO  uint8_t BREG0D;
-	  __IO  uint8_t BREG0E;
-	  __IO  uint8_t BREG0F;
-	};
+    __IO uint32_t BREG08_0B;
+    struct {
+      __IO uint16_t BREG08_09;
+      __IO uint16_t BREG0A_0B;
+    };
+    struct {
+      __IO  uint8_t BREG08;
+      __IO  uint8_t BREG09;
+      __IO  uint8_t BREG0A;
+      __IO  uint8_t BREG0B;
+    };
   };
   union {
-	__IO uint32_t BREG10_13;
-	struct {
-	  __IO uint16_t BREG10_11;
-	  __IO uint16_t BREG12_13;
-	};
-	struct {
-	  __IO  uint8_t BREG10;
-	  __IO  uint8_t BREG11;
-	  __IO  uint8_t BREG12;
-	  __IO  uint8_t BREG13;
-	};
+    __IO uint32_t BREG0C_0F;
+    struct {
+      __IO uint16_t BREG0C_0D;
+      __IO uint16_t BREG0E_0F;
+    };
+    struct {
+      __IO  uint8_t BREG0C;
+      __IO  uint8_t BREG0D;
+      __IO  uint8_t BREG0E;
+      __IO  uint8_t BREG0F;
+    };
   };
   union {
-	__IO uint32_t BREG14_17;
-	struct {
-	  __IO uint16_t BREG14_15;
-	  __IO uint16_t BREG16_17;
-	};
-	struct {
-	  __IO  uint8_t BREG14;
-	  __IO  uint8_t BREG15;
-	  __IO  uint8_t BREG16;
-	  __IO  uint8_t BREG17;
-	};
+    __IO uint32_t BREG10_13;
+    struct {
+      __IO uint16_t BREG10_11;
+      __IO uint16_t BREG12_13;
+    };
+    struct {
+      __IO  uint8_t BREG10;
+      __IO  uint8_t BREG11;
+      __IO  uint8_t BREG12;
+      __IO  uint8_t BREG13;
+    };
   };
   union {
-	__IO uint32_t BREG18_1B;
-	struct {
-	  __IO uint16_t BREG18_19;
-	  __IO uint16_t BREG1A_1B;
-	};
-	struct {
-	  __IO  uint8_t BREG18;
-	  __IO  uint8_t BREG19;
-	  __IO  uint8_t BREG1A;
-	  __IO  uint8_t BREG1B;
-	};
+    __IO uint32_t BREG14_17;
+    struct {
+      __IO uint16_t BREG14_15;
+      __IO uint16_t BREG16_17;
+    };
+    struct {
+      __IO  uint8_t BREG14;
+      __IO  uint8_t BREG15;
+      __IO  uint8_t BREG16;
+      __IO  uint8_t BREG17;
+    };
   };
   union {
-	__IO uint32_t BREG1C_1F;
-	struct {
-	  __IO uint16_t BREG1C_1D;
-	  __IO uint16_t BREG1E_1F;
-	};
-	struct {
-	  __IO  uint8_t BREG1C;
-	  __IO  uint8_t BREG1D;
-	  __IO  uint8_t BREG1E;
-	  __IO  uint8_t BREG1F;
-	};
+    __IO uint32_t BREG18_1B;
+    struct {
+      __IO uint16_t BREG18_19;
+      __IO uint16_t BREG1A_1B;
+    };
+    struct {
+      __IO  uint8_t BREG18;
+      __IO  uint8_t BREG19;
+      __IO  uint8_t BREG1A;
+      __IO  uint8_t BREG1B;
+    };
   };
   union {
-	__IO uint32_t BREG20_23;
-	struct {
-	  __IO uint16_t BREG20_21;
-	  __IO uint16_t BREG22_23;
-	};
-	struct {
-	  __IO  uint8_t BREG20;
-	  __IO  uint8_t BREG21;
-	  __IO  uint8_t BREG22;
-	  __IO  uint8_t BREG23;
-	};
+    __IO uint32_t BREG1C_1F;
+    struct {
+      __IO uint16_t BREG1C_1D;
+      __IO uint16_t BREG1E_1F;
+    };
+    struct {
+      __IO  uint8_t BREG1C;
+      __IO  uint8_t BREG1D;
+      __IO  uint8_t BREG1E;
+      __IO  uint8_t BREG1F;
+    };
   };
   union {
-	__IO uint32_t BREG24_27;
-	struct {
-	  __IO uint16_t BREG24_25;
-	  __IO uint16_t BREG26_27;
-	};
-	struct {
-	  __IO  uint8_t BREG24;
-	  __IO  uint8_t BREG25;
-	  __IO  uint8_t BREG26;
-	  __IO  uint8_t BREG27;
-	};
+    __IO uint32_t BREG20_23;
+    struct {
+      __IO uint16_t BREG20_21;
+      __IO uint16_t BREG22_23;
+    };
+    struct {
+      __IO  uint8_t BREG20;
+      __IO  uint8_t BREG21;
+      __IO  uint8_t BREG22;
+      __IO  uint8_t BREG23;
+    };
   };
   union {
-	__IO uint32_t BREG28_2B;
-	struct {
-	  __IO uint16_t BREG28_29;
-	  __IO uint16_t BREG2A_2B;
-	};
-	struct {
-	  __IO  uint8_t BREG28;
-	  __IO  uint8_t BREG29;
-	  __IO  uint8_t BREG2A;
-	  __IO  uint8_t BREG2B;
-	};
+    __IO uint32_t BREG24_27;
+    struct {
+      __IO uint16_t BREG24_25;
+      __IO uint16_t BREG26_27;
+    };
+    struct {
+      __IO  uint8_t BREG24;
+      __IO  uint8_t BREG25;
+      __IO  uint8_t BREG26;
+      __IO  uint8_t BREG27;
+    };
   };
   union {
-	__IO uint32_t BREG2C_2F;
-	struct {
-	  __IO uint16_t BREG2C_2D;
-	  __IO uint16_t BREG2E_2F;
-	};
-	struct {
-	  __IO  uint8_t BREG2C;
-	  __IO  uint8_t BREG2D;
-	  __IO  uint8_t BREG2E;
-	  __IO  uint8_t BREG2F;
-	};
+    __IO uint32_t BREG28_2B;
+    struct {
+      __IO uint16_t BREG28_29;
+      __IO uint16_t BREG2A_2B;
+    };
+    struct {
+      __IO  uint8_t BREG28;
+      __IO  uint8_t BREG29;
+      __IO  uint8_t BREG2A;
+      __IO  uint8_t BREG2B;
+    };
   };
   union {
-	__IO uint32_t BREG30_33;
-	struct {
-	  __IO uint16_t BREG30_31;
-	  __IO uint16_t BREG32_33;
-	};
-	struct {
-	  __IO  uint8_t BREG30;
-	  __IO  uint8_t BREG31;
-	  __IO  uint8_t BREG32;
-	  __IO  uint8_t BREG33;
-	};
+    __IO uint32_t BREG2C_2F;
+    struct {
+      __IO uint16_t BREG2C_2D;
+      __IO uint16_t BREG2E_2F;
+    };
+    struct {
+      __IO  uint8_t BREG2C;
+      __IO  uint8_t BREG2D;
+      __IO  uint8_t BREG2E;
+      __IO  uint8_t BREG2F;
+    };
   };
   union {
-	__IO uint32_t BREG34_37;
-	struct {
-	  __IO uint16_t BREG34_35;
-	  __IO uint16_t BREG36_37;
-	};
-	struct {
-	  __IO  uint8_t BREG34;
-	  __IO  uint8_t BREG35;
-	  __IO  uint8_t BREG36;
-	  __IO  uint8_t BREG37;
-	};
+    __IO uint32_t BREG30_33;
+    struct {
+      __IO uint16_t BREG30_31;
+      __IO uint16_t BREG32_33;
+    };
+    struct {
+      __IO  uint8_t BREG30;
+      __IO  uint8_t BREG31;
+      __IO  uint8_t BREG32;
+      __IO  uint8_t BREG33;
+    };
   };
   union {
-	__IO uint32_t BREG38_3B;
-	struct {
-	  __IO uint16_t BREG38_39;
-	  __IO uint16_t BREG3A_3B;
-	};
-	struct {
-	  __IO  uint8_t BREG38;
-	  __IO  uint8_t BREG39;
-	  __IO  uint8_t BREG3A;
-	  __IO  uint8_t BREG3B;
-	};
+    __IO uint32_t BREG34_37;
+    struct {
+      __IO uint16_t BREG34_35;
+      __IO uint16_t BREG36_37;
+    };
+    struct {
+      __IO  uint8_t BREG34;
+      __IO  uint8_t BREG35;
+      __IO  uint8_t BREG36;
+      __IO  uint8_t BREG37;
+    };
   };
   union {
-	__IO uint32_t BREG3C_3F;
-	struct {
-	  __IO uint16_t BREG3C_3D;
-	  __IO uint16_t BREG3E_3F;
-	};
-	struct {
-	  __IO  uint8_t BREG3C;
-	  __IO  uint8_t BREG3D;
-	  __IO  uint8_t BREG3E;
-	  __IO  uint8_t BREG3F;
-	};
+    __IO uint32_t BREG38_3B;
+    struct {
+      __IO uint16_t BREG38_39;
+      __IO uint16_t BREG3A_3B;
+    };
+    struct {
+      __IO  uint8_t BREG38;
+      __IO  uint8_t BREG39;
+      __IO  uint8_t BREG3A;
+      __IO  uint8_t BREG3B;
+    };
   };
   union {
-	__IO uint32_t BREG40_43;
-	struct {
-	  __IO uint16_t BREG40_41;
-	  __IO uint16_t BREG42_43;
-	};
-	struct {
-	  __IO  uint8_t BREG40;
-	  __IO  uint8_t BREG41;
-	  __IO  uint8_t BREG42;
-	  __IO  uint8_t BREG43;
-	};
+    __IO uint32_t BREG3C_3F;
+    struct {
+      __IO uint16_t BREG3C_3D;
+      __IO uint16_t BREG3E_3F;
+    };
+    struct {
+      __IO  uint8_t BREG3C;
+      __IO  uint8_t BREG3D;
+      __IO  uint8_t BREG3E;
+      __IO  uint8_t BREG3F;
+    };
   };
   union {
-	__IO uint32_t BREG44_47;
-	struct {
-	  __IO uint16_t BREG44_45;
-	  __IO uint16_t BREG46_47;
-	};
-	struct {
-	  __IO  uint8_t BREG44;
-	  __IO  uint8_t BREG45;
-	  __IO  uint8_t BREG46;
-	  __IO  uint8_t BREG47;
-	};
+    __IO uint32_t BREG40_43;
+    struct {
+      __IO uint16_t BREG40_41;
+      __IO uint16_t BREG42_43;
+    };
+    struct {
+      __IO  uint8_t BREG40;
+      __IO  uint8_t BREG41;
+      __IO  uint8_t BREG42;
+      __IO  uint8_t BREG43;
+    };
   };
   union {
-	__IO uint32_t BREG48_4B;
-	struct {
-	  __IO uint16_t BREG48_49;
-	  __IO uint16_t BREG4A_4B;
-	};
-	struct {
-	  __IO  uint8_t BREG48;
-	  __IO  uint8_t BREG49;
-	  __IO  uint8_t BREG4A;
-	  __IO  uint8_t BREG4B;
-	};
+    __IO uint32_t BREG44_47;
+    struct {
+      __IO uint16_t BREG44_45;
+      __IO uint16_t BREG46_47;
+    };
+    struct {
+      __IO  uint8_t BREG44;
+      __IO  uint8_t BREG45;
+      __IO  uint8_t BREG46;
+      __IO  uint8_t BREG47;
+    };
   };
   union {
-	__IO uint32_t BREG4C_4F;
-	struct {
-	  __IO uint16_t BREG4C_4D;
-	  __IO uint16_t BREG4E_4F;
-	};
-	struct {
-	  __IO  uint8_t BREG4C;
-	  __IO  uint8_t BREG4D;
-	  __IO  uint8_t BREG4E;
-	  __IO  uint8_t BREG4F;
-	};
+    __IO uint32_t BREG48_4B;
+    struct {
+      __IO uint16_t BREG48_49;
+      __IO uint16_t BREG4A_4B;
+    };
+    struct {
+      __IO  uint8_t BREG48;
+      __IO  uint8_t BREG49;
+      __IO  uint8_t BREG4A;
+      __IO  uint8_t BREG4B;
+    };
   };
   union {
-	__IO uint32_t BREG50_53;
-	struct {
-	  __IO uint16_t BREG50_51;
-	  __IO uint16_t BREG52_53;
-	};
-	struct {
-	  __IO  uint8_t BREG50;
-	  __IO  uint8_t BREG51;
-	  __IO  uint8_t BREG52;
-	  __IO  uint8_t BREG53;
-	};
+    __IO uint32_t BREG4C_4F;
+    struct {
+      __IO uint16_t BREG4C_4D;
+      __IO uint16_t BREG4E_4F;
+    };
+    struct {
+      __IO  uint8_t BREG4C;
+      __IO  uint8_t BREG4D;
+      __IO  uint8_t BREG4E;
+      __IO  uint8_t BREG4F;
+    };
   };
   union {
-	__IO uint32_t BREG54_57;
-	struct {
-	  __IO uint16_t BREG54_55;
-	  __IO uint16_t BREG56_57;
-	};
-	struct {
-	  __IO  uint8_t BREG54;
-	  __IO  uint8_t BREG55;
-	  __IO  uint8_t BREG56;
-	  __IO  uint8_t BREG57;
-	};
+    __IO uint32_t BREG50_53;
+    struct {
+      __IO uint16_t BREG50_51;
+      __IO uint16_t BREG52_53;
+    };
+    struct {
+      __IO  uint8_t BREG50;
+      __IO  uint8_t BREG51;
+      __IO  uint8_t BREG52;
+      __IO  uint8_t BREG53;
+    };
   };
   union {
-	__IO uint32_t BREG58_5B;
-	struct {
-	  __IO uint16_t BREG58_59;
-	  __IO uint16_t BREG5A_5B;
-	};
-	struct {
-	  __IO  uint8_t BREG58;
-	  __IO  uint8_t BREG59;
-	  __IO  uint8_t BREG5A;
-	  __IO  uint8_t BREG5B;
-	};
+    __IO uint32_t BREG54_57;
+    struct {
+      __IO uint16_t BREG54_55;
+      __IO uint16_t BREG56_57;
+    };
+    struct {
+      __IO  uint8_t BREG54;
+      __IO  uint8_t BREG55;
+      __IO  uint8_t BREG56;
+      __IO  uint8_t BREG57;
+    };
   };
   union {
-	__IO uint32_t BREG5C_5F;
-	struct {
-	  __IO uint16_t BREG5C_5D;
-	  __IO uint16_t BREG5E_5F;
-	};
-	struct {
-	  __IO  uint8_t BREG5C;
-	  __IO  uint8_t BREG5D;
-	  __IO  uint8_t BREG5E;
-	  __IO  uint8_t BREG5F;
-	};
+    __IO uint32_t BREG58_5B;
+    struct {
+      __IO uint16_t BREG58_59;
+      __IO uint16_t BREG5A_5B;
+    };
+    struct {
+      __IO  uint8_t BREG58;
+      __IO  uint8_t BREG59;
+      __IO  uint8_t BREG5A;
+      __IO  uint8_t BREG5B;
+    };
   };
   union {
-	__IO uint32_t BREG60_63;
-	struct {
-	  __IO uint16_t BREG60_61;
-	  __IO uint16_t BREG62_63;
-	};
-	struct {
-	  __IO  uint8_t BREG60;
-	  __IO  uint8_t BREG61;
-	  __IO  uint8_t BREG62;
-	  __IO  uint8_t BREG63;
-	};
+    __IO uint32_t BREG5C_5F;
+    struct {
+      __IO uint16_t BREG5C_5D;
+      __IO uint16_t BREG5E_5F;
+    };
+    struct {
+      __IO  uint8_t BREG5C;
+      __IO  uint8_t BREG5D;
+      __IO  uint8_t BREG5E;
+      __IO  uint8_t BREG5F;
+    };
   };
   union {
-	__IO uint32_t BREG64_67;
-	struct {
-	  __IO uint16_t BREG64_65;
-	  __IO uint16_t BREG66_67;
-	};
-	struct {
-	  __IO  uint8_t BREG64;
-	  __IO  uint8_t BREG65;
-	  __IO  uint8_t BREG66;
-	  __IO  uint8_t BREG67;
-	};
+    __IO uint32_t BREG60_63;
+    struct {
+      __IO uint16_t BREG60_61;
+      __IO uint16_t BREG62_63;
+    };
+    struct {
+      __IO  uint8_t BREG60;
+      __IO  uint8_t BREG61;
+      __IO  uint8_t BREG62;
+      __IO  uint8_t BREG63;
+    };
   };
   union {
-	__IO uint32_t BREG68_6B;
-	struct {
-	  __IO uint16_t BREG68_69;
-	  __IO uint16_t BREG6A_6B;
-	};
-	struct {
-	  __IO  uint8_t BREG68;
-	  __IO  uint8_t BREG69;
-	  __IO  uint8_t BREG6A;
-	  __IO  uint8_t BREG6B;
-	};
+    __IO uint32_t BREG64_67;
+    struct {
+      __IO uint16_t BREG64_65;
+      __IO uint16_t BREG66_67;
+    };
+    struct {
+      __IO  uint8_t BREG64;
+      __IO  uint8_t BREG65;
+      __IO  uint8_t BREG66;
+      __IO  uint8_t BREG67;
+    };
   };
   union {
-	__IO uint32_t BREG6C_6F;
-	struct {
-	  __IO uint16_t BREG6C_6D;
-	  __IO uint16_t BREG6E_6F;
-	};
-	struct {
-	  __IO  uint8_t BREG6C;
-	  __IO  uint8_t BREG6D;
-	  __IO  uint8_t BREG6E;
-	  __IO  uint8_t BREG6F;
-	};
+    __IO uint32_t BREG68_6B;
+    struct {
+      __IO uint16_t BREG68_69;
+      __IO uint16_t BREG6A_6B;
+    };
+    struct {
+      __IO  uint8_t BREG68;
+      __IO  uint8_t BREG69;
+      __IO  uint8_t BREG6A;
+      __IO  uint8_t BREG6B;
+    };
   };
   union {
-	__IO uint32_t BREG70_73;
-	struct {
-	  __IO uint16_t BREG70_71;
-	  __IO uint16_t BREG72_73;
-	};
-	struct {
-	  __IO  uint8_t BREG70;
-	  __IO  uint8_t BREG71;
-	  __IO  uint8_t BREG72;
-	  __IO  uint8_t BREG73;
-	};
+    __IO uint32_t BREG6C_6F;
+    struct {
+      __IO uint16_t BREG6C_6D;
+      __IO uint16_t BREG6E_6F;
+    };
+    struct {
+      __IO  uint8_t BREG6C;
+      __IO  uint8_t BREG6D;
+      __IO  uint8_t BREG6E;
+      __IO  uint8_t BREG6F;
+    };
   };
   union {
-	__IO uint32_t BREG74_77;
-	struct {
-	  __IO uint16_t BREG74_75;
-	  __IO uint16_t BREG76_77;
-	};
-	struct {
-	  __IO  uint8_t BREG74;
-	  __IO  uint8_t BREG75;
-	  __IO  uint8_t BREG76;
-	  __IO  uint8_t BREG77;
-	};
+    __IO uint32_t BREG70_73;
+    struct {
+      __IO uint16_t BREG70_71;
+      __IO uint16_t BREG72_73;
+    };
+    struct {
+      __IO  uint8_t BREG70;
+      __IO  uint8_t BREG71;
+      __IO  uint8_t BREG72;
+      __IO  uint8_t BREG73;
+    };
   };
   union {
-	__IO uint32_t BREG78_7B;
-	struct {
-	  __IO uint16_t BREG78_79;
-	  __IO uint16_t BREG7A_7B;
-	};
-	struct {
-	  __IO  uint8_t BREG78;
-	  __IO  uint8_t BREG79;
-	  __IO  uint8_t BREG7A;
-	  __IO  uint8_t BREG7B;
-	};
+    __IO uint32_t BREG74_77;
+    struct {
+      __IO uint16_t BREG74_75;
+      __IO uint16_t BREG76_77;
+    };
+    struct {
+      __IO  uint8_t BREG74;
+      __IO  uint8_t BREG75;
+      __IO  uint8_t BREG76;
+      __IO  uint8_t BREG77;
+    };
   };
   union {
-	__IO uint32_t BREG7C_7F;
-	struct {
-	  __IO uint16_t BREG7C_7D;
-	  __IO uint16_t BREG7E_7F;
-	};
-	struct {
-	  __IO  uint8_t BREG7C;
-	  __IO  uint8_t BREG7D;
-	  __IO  uint8_t BREG7E;
-	  __IO  uint8_t BREG7F;
-	};
+    __IO uint32_t BREG78_7B;
+    struct {
+      __IO uint16_t BREG78_79;
+      __IO uint16_t BREG7A_7B;
+    };
+    struct {
+      __IO  uint8_t BREG78;
+      __IO  uint8_t BREG79;
+      __IO  uint8_t BREG7A;
+      __IO  uint8_t BREG7B;
+    };
+  };
+  union {
+    __IO uint32_t BREG7C_7F;
+    struct {
+      __IO uint16_t BREG7C_7D;
+      __IO uint16_t BREG7E_7F;
+    };
+    struct {
+      __IO  uint8_t BREG7C;
+      __IO  uint8_t BREG7D;
+      __IO  uint8_t BREG7E;
+      __IO  uint8_t BREG7F;
+    };
   };
 }FM4_RTC_TypeDef;
 
@@ -12315,8 +12315,8 @@ typedef struct
 typedef struct
 {
   union {
-	__IO  uint8_t LCR_PRSLD;
-	stc_lcr_lcr_prsld_field_t LCR_PRSLD_f;
+    __IO  uint8_t LCR_PRSLD;
+    stc_lcr_lcr_prsld_field_t LCR_PRSLD_f;
   };
 }FM4_LCR_TypeDef;
 
@@ -12327,30 +12327,30 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t CKEN0;
-	stc_clk_gating_cken0_field_t CKEN0_f;
+    __IO uint32_t CKEN0;
+    stc_clk_gating_cken0_field_t CKEN0_f;
   };
   union {
-	__IO uint32_t MRST0;
-	stc_clk_gating_mrst0_field_t MRST0_f;
+    __IO uint32_t MRST0;
+    stc_clk_gating_mrst0_field_t MRST0_f;
   };
-	   uint8_t RESERVED1[8];
+       uint8_t RESERVED1[8];
   union {
-	__IO uint32_t CKEN1;
-	stc_clk_gating_cken1_field_t CKEN1_f;
-  };
-  union {
-	__IO uint32_t MRST1;
-	stc_clk_gating_mrst1_field_t MRST1_f;
-  };
-	   uint8_t RESERVED3[8];
-  union {
-	__IO uint32_t CKEN2;
-	stc_clk_gating_cken2_field_t CKEN2_f;
+    __IO uint32_t CKEN1;
+    stc_clk_gating_cken1_field_t CKEN1_f;
   };
   union {
-	__IO uint32_t MRST2;
-	stc_clk_gating_mrst2_field_t MRST2_f;
+    __IO uint32_t MRST1;
+    stc_clk_gating_mrst1_field_t MRST1_f;
+  };
+       uint8_t RESERVED3[8];
+  union {
+    __IO uint32_t CKEN2;
+    stc_clk_gating_cken2_field_t CKEN2_f;
+  };
+  union {
+    __IO uint32_t MRST2;
+    stc_clk_gating_mrst2_field_t MRST2_f;
   };
 }FM4_CLK_GATING_TypeDef;
 
@@ -12371,176 +12371,176 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t MODE0;
-	stc_exbus_mode_field_t MODE0_f;
+    __IO uint32_t MODE0;
+    stc_exbus_mode_field_t MODE0_f;
   };
   union {
-	__IO uint32_t MODE1;
-	stc_exbus_mode_field_t MODE1_f;
+    __IO uint32_t MODE1;
+    stc_exbus_mode_field_t MODE1_f;
   };
   union {
-	__IO uint32_t MODE2;
-	stc_exbus_mode_field_t MODE2_f;
+    __IO uint32_t MODE2;
+    stc_exbus_mode_field_t MODE2_f;
   };
   union {
-	__IO uint32_t MODE3;
-	stc_exbus_mode_field_t MODE3_f;
+    __IO uint32_t MODE3;
+    stc_exbus_mode_field_t MODE3_f;
   };
   union {
-	__IO uint32_t MODE4;
-	stc_exbus_mode_field_t MODE4_f;
+    __IO uint32_t MODE4;
+    stc_exbus_mode_field_t MODE4_f;
   };
   union {
-	__IO uint32_t MODE5;
-	stc_exbus_mode_field_t MODE5_f;
+    __IO uint32_t MODE5;
+    stc_exbus_mode_field_t MODE5_f;
   };
   union {
-	__IO uint32_t MODE6;
-	stc_exbus_mode_field_t MODE6_f;
+    __IO uint32_t MODE6;
+    stc_exbus_mode_field_t MODE6_f;
   };
   union {
-	__IO uint32_t MODE7;
-	stc_exbus_mode_field_t MODE7_f;
+    __IO uint32_t MODE7;
+    stc_exbus_mode_field_t MODE7_f;
   };
   union {
-	__IO uint32_t TIM0;
-	stc_exbus_tim_field_t TIM0_f;
+    __IO uint32_t TIM0;
+    stc_exbus_tim_field_t TIM0_f;
   };
   __IO uint32_t TIM1;
   union {
-	__IO uint32_t TIM2;
-	stc_exbus_tim_field_t TIM2_f;
+    __IO uint32_t TIM2;
+    stc_exbus_tim_field_t TIM2_f;
   };
   union {
-	__IO uint32_t TIM3;
-	stc_exbus_tim_field_t TIM3_f;
+    __IO uint32_t TIM3;
+    stc_exbus_tim_field_t TIM3_f;
   };
   union {
-	__IO uint32_t TIM4;
-	stc_exbus_tim_field_t TIM4_f;
+    __IO uint32_t TIM4;
+    stc_exbus_tim_field_t TIM4_f;
   };
   union {
-	__IO uint32_t TIM5;
-	stc_exbus_tim_field_t TIM5_f;
+    __IO uint32_t TIM5;
+    stc_exbus_tim_field_t TIM5_f;
   };
   union {
-	__IO uint32_t TIM6;
-	stc_exbus_tim_field_t TIM6_f;
+    __IO uint32_t TIM6;
+    stc_exbus_tim_field_t TIM6_f;
   };
   union {
-	__IO uint32_t TIM7;
-	stc_exbus_tim_field_t TIM7_f;
+    __IO uint32_t TIM7;
+    stc_exbus_tim_field_t TIM7_f;
   };
   union {
-	__IO uint32_t AREA0;
-	stc_exbus_area_field_t AREA0_f;
+    __IO uint32_t AREA0;
+    stc_exbus_area_field_t AREA0_f;
   };
   union {
-	__IO uint32_t AREA1;
-	stc_exbus_area_field_t AREA1_f;
+    __IO uint32_t AREA1;
+    stc_exbus_area_field_t AREA1_f;
   };
   union {
-	__IO uint32_t AREA2;
-	stc_exbus_area_field_t AREA2_f;
+    __IO uint32_t AREA2;
+    stc_exbus_area_field_t AREA2_f;
   };
   union {
-	__IO uint32_t AREA3;
-	stc_exbus_area_field_t AREA3_f;
+    __IO uint32_t AREA3;
+    stc_exbus_area_field_t AREA3_f;
   };
   union {
-	__IO uint32_t AREA4;
-	stc_exbus_area_field_t AREA4_f;
+    __IO uint32_t AREA4;
+    stc_exbus_area_field_t AREA4_f;
   };
   union {
-	__IO uint32_t AREA5;
-	stc_exbus_area_field_t AREA5_f;
+    __IO uint32_t AREA5;
+    stc_exbus_area_field_t AREA5_f;
   };
   union {
-	__IO uint32_t AREA6;
-	stc_exbus_area_field_t AREA6_f;
+    __IO uint32_t AREA6;
+    stc_exbus_area_field_t AREA6_f;
   };
   union {
-	__IO uint32_t AREA7;
-	stc_exbus_area_field_t AREA7_f;
+    __IO uint32_t AREA7;
+    stc_exbus_area_field_t AREA7_f;
   };
   union {
-	__IO uint32_t ATIM0;
-	stc_exbus_atim_field_t ATIM0_f;
+    __IO uint32_t ATIM0;
+    stc_exbus_atim_field_t ATIM0_f;
   };
   union {
-	__IO uint32_t ATIM1;
-	stc_exbus_atim_field_t ATIM1_f;
+    __IO uint32_t ATIM1;
+    stc_exbus_atim_field_t ATIM1_f;
   };
   union {
-	__IO uint32_t ATIM2;
-	stc_exbus_atim_field_t ATIM2_f;
+    __IO uint32_t ATIM2;
+    stc_exbus_atim_field_t ATIM2_f;
   };
   union {
-	__IO uint32_t ATIM3;
-	stc_exbus_atim_field_t ATIM3_f;
+    __IO uint32_t ATIM3;
+    stc_exbus_atim_field_t ATIM3_f;
   };
   union {
-	__IO uint32_t ATIM4;
-	stc_exbus_atim_field_t ATIM4_f;
+    __IO uint32_t ATIM4;
+    stc_exbus_atim_field_t ATIM4_f;
   };
   union {
-	__IO uint32_t ATIM5;
-	stc_exbus_atim_field_t ATIM5_f;
+    __IO uint32_t ATIM5;
+    stc_exbus_atim_field_t ATIM5_f;
   };
   union {
-	__IO uint32_t ATIM6;
-	stc_exbus_atim_field_t ATIM6_f;
+    __IO uint32_t ATIM6;
+    stc_exbus_atim_field_t ATIM6_f;
   };
   union {
-	__IO uint32_t ATIM7;
-	stc_exbus_atim_field_t ATIM7_f;
+    __IO uint32_t ATIM7;
+    stc_exbus_atim_field_t ATIM7_f;
   };
-	uint8_t RESERVED1[128];
+    uint8_t RESERVED1[128];
   union {
-	__IO uint32_t SDMODE;
-	stc_exbus_sdmode_field_t SDMODE_f;
-  };
-  union {
-	__IO uint32_t REFTIM;
-	stc_exbus_reftim_field_t REFTIM_f;
+    __IO uint32_t SDMODE;
+    stc_exbus_sdmode_field_t SDMODE_f;
   };
   union {
-	__IO uint32_t PWRDWN;
-	stc_exbus_pwrdwn_field_t PWRDWN_f;
+    __IO uint32_t REFTIM;
+    stc_exbus_reftim_field_t REFTIM_f;
   };
   union {
-	__IO uint32_t SDTIM;
-	stc_exbus_sdtim_field_t SDTIM_f;
+    __IO uint32_t PWRDWN;
+    stc_exbus_pwrdwn_field_t PWRDWN_f;
   };
   union {
-	__IO uint32_t SDCMD;
-	stc_exbus_sdcmd_field_t SDCMD_f;
-  };
-	uint8_t RESERVED2[236];
-  union {
-	__IO uint32_t MEMCERR;
-	stc_exbus_memcerr_field_t MEMCERR_f;
-  };
-	uint8_t RESERVED3[252];
-  union {
-	__IO uint32_t DCLKR;
-	stc_exbus_dclkr_field_t DCLKR_f;
+    __IO uint32_t SDTIM;
+    stc_exbus_sdtim_field_t SDTIM_f;
   };
   union {
-	__IO uint32_t EST;
-	stc_exbus_est_field_t EST_f;
+    __IO uint32_t SDCMD;
+    stc_exbus_sdcmd_field_t SDCMD_f;
+  };
+    uint8_t RESERVED2[236];
+  union {
+    __IO uint32_t MEMCERR;
+    stc_exbus_memcerr_field_t MEMCERR_f;
+  };
+    uint8_t RESERVED3[252];
+  union {
+    __IO uint32_t DCLKR;
+    stc_exbus_dclkr_field_t DCLKR_f;
   };
   union {
-	__IO uint32_t WEAD;
-	stc_exbus_wead_field_t WEAD_f;
+    __IO uint32_t EST;
+    stc_exbus_est_field_t EST_f;
   };
   union {
-	__IO uint32_t ESCLR;
-	stc_exbus_esclr_field_t ESCLR_f;
+    __IO uint32_t WEAD;
+    stc_exbus_wead_field_t WEAD_f;
   };
   union {
-	__IO uint32_t AMODE;
-	stc_exbus_amode_field_t AMODE_f;
+    __IO uint32_t ESCLR;
+    stc_exbus_esclr_field_t ESCLR_f;
+  };
+  union {
+    __IO uint32_t AMODE;
+    stc_exbus_amode_field_t AMODE_f;
   };
 }FM4_EXBUS_TypeDef;
 
@@ -12551,232 +12551,232 @@ typedef struct
 typedef struct
 {
   union {
-	union {
-	  __IO uint16_t HCNT;
-	  stc_usb_hcnt_field_t HCNT_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t HCNT0;
-		stc_usb_hcnt0_field_t HCNT0_f;
-	  };
-	  union {
-		__IO  uint8_t HCNT1;
-		stc_usb_hcnt1_field_t HCNT1_f;
-	  };
-	};
+    union {
+      __IO uint16_t HCNT;
+      stc_usb_hcnt_field_t HCNT_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t HCNT0;
+        stc_usb_hcnt0_field_t HCNT0_f;
+      };
+      union {
+        __IO  uint8_t HCNT1;
+        stc_usb_hcnt1_field_t HCNT1_f;
+      };
+    };
   };
-		uint8_t RESERVED0[2];
+        uint8_t RESERVED0[2];
   union {
-	__IO  uint8_t HIRQ;
-	stc_usb_hirq_field_t HIRQ_f;
-  };
-  union {
-	__IO  uint8_t HERR;
-	stc_usb_herr_field_t HERR_f;
-  };
-		uint8_t RESERVED1[2];
-  union {
-	__IO  uint8_t HSTATE;
-	stc_usb_hstate_field_t HSTATE_f;
+    __IO  uint8_t HIRQ;
+    stc_usb_hirq_field_t HIRQ_f;
   };
   union {
-	__IO  uint8_t HFCOMP;
-	stc_usb_hfcomp_field_t HFCOMP_f;
+    __IO  uint8_t HERR;
+    stc_usb_herr_field_t HERR_f;
   };
-		uint8_t RESERVED2[2];
+        uint8_t RESERVED1[2];
   union {
-	union {
-	  __IO uint16_t HRTIMER;
-	  stc_usb_hrtimer_field_t HRTIMER_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t HRTIMER0;
-		stc_usb_hrtimer0_field_t HRTIMER0_f;
-	  };
-	  union {
-		__IO  uint8_t HRTIMER1;
-		stc_usb_hrtimer1_field_t HRTIMER1_f;
-	  };
-	};
-  };
-		uint8_t RESERVED3[2];
-  union {
-	__IO  uint8_t HRTIMER2;
-	stc_usb_hrtimer2_field_t HRTIMER2_f;
+    __IO  uint8_t HSTATE;
+    stc_usb_hstate_field_t HSTATE_f;
   };
   union {
-	__IO  uint8_t HADR;
-	stc_usb_hadr_field_t HADR_f;
+    __IO  uint8_t HFCOMP;
+    stc_usb_hfcomp_field_t HFCOMP_f;
   };
-		uint8_t RESERVED4[2];
+        uint8_t RESERVED2[2];
   union {
-	union {
-	  __IO uint16_t HEOF;
-	  stc_usb_heof_field_t HEOF_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t HEOF0;
-		stc_usb_heof0_field_t HEOF0_f;
-	  };
-	  union {
-		__IO  uint8_t HEOF1;
-		stc_usb_heof1_field_t HEOF1_f;
-	  };
-	};
+    union {
+      __IO uint16_t HRTIMER;
+      stc_usb_hrtimer_field_t HRTIMER_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t HRTIMER0;
+        stc_usb_hrtimer0_field_t HRTIMER0_f;
+      };
+      union {
+        __IO  uint8_t HRTIMER1;
+        stc_usb_hrtimer1_field_t HRTIMER1_f;
+      };
+    };
   };
-		uint8_t RESERVED5[2];
+        uint8_t RESERVED3[2];
   union {
-	union {
-	  __IO uint16_t HFRAME;
-	  stc_usb_hframe_field_t HFRAME_f;
-	};
-	struct {
-	  union {
-		__IO  uint8_t HFRAME0;
-		stc_usb_hframe0_field_t HFRAME0_f;
-	  };
-	  union {
-		__IO  uint8_t HFRAME1;
-		stc_usb_hframe1_field_t HFRAME1_f;
-	  };
-	};
-  };
-		uint8_t RESERVED6[2];
-  union {
-	__IO  uint8_t HTOKEN;
-	stc_usb_htoken_field_t HTOKEN_f;
-  };
-		uint8_t RESERVED7[3];
-  union {
-	__IO uint16_t UDCC;
-	stc_usb_udcc_field_t UDCC_f;
-  };
-		uint8_t RESERVED8[2];
-  union {
-	__IO uint16_t EP0C;
-	stc_usb_ep0c_field_t EP0C_f;
-  };
-		uint8_t RESERVED9[2];
-  union {
-	__IO uint16_t EP1C;
-	stc_usb_ep1c_field_t EP1C_f;
-  };
-		uint8_t RESERVED10[2];
-  union {
-	__IO uint16_t EP2C;
-	stc_usb_ep2c_field_t EP2C_f;
-  };
-		uint8_t RESERVED11[2];
-  union {
-	__IO uint16_t EP3C;
-	stc_usb_ep3c_field_t EP3C_f;
-  };
-		uint8_t RESERVED12[2];
-  union {
-	__IO uint16_t EP4C;
-	stc_usb_ep4c_field_t EP4C_f;
-  };
-		uint8_t RESERVED13[2];
-  union {
-	__IO uint16_t EP5C;
-	stc_usb_ep5c_field_t EP5C_f;
-  };
-		uint8_t RESERVED14[2];
-  union {
-	__IO uint16_t TMSP;
-	stc_usb_tmsp_field_t TMSP_f;
-  };
-		uint8_t RESERVED15[2];
-  union {
-	__IO  uint8_t UDCS;
-	stc_usb_udcs_field_t UDCS_f;
+    __IO  uint8_t HRTIMER2;
+    stc_usb_hrtimer2_field_t HRTIMER2_f;
   };
   union {
-	__IO  uint8_t UDCIE;
-	stc_usb_udcie_field_t UDCIE_f;
+    __IO  uint8_t HADR;
+    stc_usb_hadr_field_t HADR_f;
   };
-		uint8_t RESERVED16[2];
+        uint8_t RESERVED4[2];
   union {
-	__IO uint16_t EP0IS;
-	stc_usb_ep0is_field_t EP0IS_f;
+    union {
+      __IO uint16_t HEOF;
+      stc_usb_heof_field_t HEOF_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t HEOF0;
+        stc_usb_heof0_field_t HEOF0_f;
+      };
+      union {
+        __IO  uint8_t HEOF1;
+        stc_usb_heof1_field_t HEOF1_f;
+      };
+    };
   };
-		uint8_t RESERVED17[2];
+        uint8_t RESERVED5[2];
   union {
-	__IO uint16_t EP0OS;
-	stc_usb_ep0os_field_t EP0OS_f;
+    union {
+      __IO uint16_t HFRAME;
+      stc_usb_hframe_field_t HFRAME_f;
+    };
+    struct {
+      union {
+        __IO  uint8_t HFRAME0;
+        stc_usb_hframe0_field_t HFRAME0_f;
+      };
+      union {
+        __IO  uint8_t HFRAME1;
+        stc_usb_hframe1_field_t HFRAME1_f;
+      };
+    };
   };
-		uint8_t RESERVED18[2];
+        uint8_t RESERVED6[2];
   union {
-	__IO uint16_t EP1S;
-	stc_usb_ep1s_field_t EP1S_f;
+    __IO  uint8_t HTOKEN;
+    stc_usb_htoken_field_t HTOKEN_f;
   };
-		uint8_t RESERVED19[2];
+        uint8_t RESERVED7[3];
   union {
-	__IO uint16_t EP2S;
-	stc_usb_ep2s_field_t EP2S_f;
+    __IO uint16_t UDCC;
+    stc_usb_udcc_field_t UDCC_f;
   };
-		uint8_t RESERVED20[2];
+        uint8_t RESERVED8[2];
+  union {
+    __IO uint16_t EP0C;
+    stc_usb_ep0c_field_t EP0C_f;
+  };
+        uint8_t RESERVED9[2];
+  union {
+    __IO uint16_t EP1C;
+    stc_usb_ep1c_field_t EP1C_f;
+  };
+        uint8_t RESERVED10[2];
+  union {
+    __IO uint16_t EP2C;
+    stc_usb_ep2c_field_t EP2C_f;
+  };
+        uint8_t RESERVED11[2];
+  union {
+    __IO uint16_t EP3C;
+    stc_usb_ep3c_field_t EP3C_f;
+  };
+        uint8_t RESERVED12[2];
+  union {
+    __IO uint16_t EP4C;
+    stc_usb_ep4c_field_t EP4C_f;
+  };
+        uint8_t RESERVED13[2];
+  union {
+    __IO uint16_t EP5C;
+    stc_usb_ep5c_field_t EP5C_f;
+  };
+        uint8_t RESERVED14[2];
+  union {
+    __IO uint16_t TMSP;
+    stc_usb_tmsp_field_t TMSP_f;
+  };
+        uint8_t RESERVED15[2];
+  union {
+    __IO  uint8_t UDCS;
+    stc_usb_udcs_field_t UDCS_f;
+  };
+  union {
+    __IO  uint8_t UDCIE;
+    stc_usb_udcie_field_t UDCIE_f;
+  };
+        uint8_t RESERVED16[2];
+  union {
+    __IO uint16_t EP0IS;
+    stc_usb_ep0is_field_t EP0IS_f;
+  };
+        uint8_t RESERVED17[2];
+  union {
+    __IO uint16_t EP0OS;
+    stc_usb_ep0os_field_t EP0OS_f;
+  };
+        uint8_t RESERVED18[2];
+  union {
+    __IO uint16_t EP1S;
+    stc_usb_ep1s_field_t EP1S_f;
+  };
+        uint8_t RESERVED19[2];
+  union {
+    __IO uint16_t EP2S;
+    stc_usb_ep2s_field_t EP2S_f;
+  };
+        uint8_t RESERVED20[2];
   __IO uint16_t EP3S;
-		uint8_t RESERVED21[2];
+        uint8_t RESERVED21[2];
   union {
-	__IO uint16_t EP4S;
-	stc_usb_ep4s_field_t EP4S_f;
+    __IO uint16_t EP4S;
+    stc_usb_ep4s_field_t EP4S_f;
   };
-		uint8_t RESERVED22[2];
+        uint8_t RESERVED22[2];
   union {
-	__IO uint16_t EP5S;
-	stc_usb_ep5s_field_t EP5S_f;
+    __IO uint16_t EP5S;
+    stc_usb_ep5s_field_t EP5S_f;
   };
-		uint8_t RESERVED23[2];
+        uint8_t RESERVED23[2];
   union {
-	__IO uint16_t EP0DT;
-	struct {
-	  __IO  uint8_t EP0DTL;
-	  __IO  uint8_t EP0DTH;
-	};
+    __IO uint16_t EP0DT;
+    struct {
+      __IO  uint8_t EP0DTL;
+      __IO  uint8_t EP0DTH;
+    };
   };
-		uint8_t RESERVED24[2];
+        uint8_t RESERVED24[2];
   union {
-	__IO uint16_t EP1DT;
-	struct {
-	  __IO  uint8_t EP1DTL;
-	  __IO  uint8_t EP1DTH;
-	};
+    __IO uint16_t EP1DT;
+    struct {
+      __IO  uint8_t EP1DTL;
+      __IO  uint8_t EP1DTH;
+    };
   };
-		uint8_t RESERVED25[2];
+        uint8_t RESERVED25[2];
   union {
-	__IO uint16_t EP2DT;
-	struct {
-	  __IO  uint8_t EP2DTL;
-	  __IO  uint8_t EP2DTH;
-	};
+    __IO uint16_t EP2DT;
+    struct {
+      __IO  uint8_t EP2DTL;
+      __IO  uint8_t EP2DTH;
+    };
   };
-		uint8_t RESERVED26[2];
+        uint8_t RESERVED26[2];
   union {
-	__IO uint16_t EP3DT;
-	struct {
-	  __IO  uint8_t EP3DTL;
-	  __IO  uint8_t EP3DTH;
-	};
+    __IO uint16_t EP3DT;
+    struct {
+      __IO  uint8_t EP3DTL;
+      __IO  uint8_t EP3DTH;
+    };
   };
-		uint8_t RESERVED27[2];
+        uint8_t RESERVED27[2];
   union {
-	__IO uint16_t EP4DT;
-	struct {
-	  __IO  uint8_t EP4DTL;
-	  __IO  uint8_t EP4DTH;
-	};
+    __IO uint16_t EP4DT;
+    struct {
+      __IO  uint8_t EP4DTL;
+      __IO  uint8_t EP4DTH;
+    };
   };
-		uint8_t RESERVED28[2];
+        uint8_t RESERVED28[2];
   union {
-	__IO uint16_t EP5DT;
-	struct {
-	  __IO  uint8_t EP5DTL;
-	  __IO  uint8_t EP5DTH;
-	};
+    __IO uint16_t EP5DT;
+    struct {
+      __IO  uint8_t EP5DTL;
+      __IO  uint8_t EP5DTH;
+    };
   };
 }FM4_USB_TypeDef;
 
@@ -12787,87 +12787,87 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint32_t DMACR;
-	stc_dmac_dmacr_field_t DMACR_f;
+    __IO uint32_t DMACR;
+    stc_dmac_dmacr_field_t DMACR_f;
   };
-		uint8_t RESERVED0[12];
+        uint8_t RESERVED0[12];
   union {
-	__IO uint32_t DMACA0;
-	stc_dmac_dmaca0_field_t DMACA0_f;
+    __IO uint32_t DMACA0;
+    stc_dmac_dmaca0_field_t DMACA0_f;
   };
   union {
-	__IO uint32_t DMACB0;
-	stc_dmac_dmacb0_field_t DMACB0_f;
+    __IO uint32_t DMACB0;
+    stc_dmac_dmacb0_field_t DMACB0_f;
   };
   __IO uint32_t DMACSA0;
   __IO uint32_t DMACDA0;
   union {
-	__IO uint32_t DMACA1;
-	stc_dmac_dmaca1_field_t DMACA1_f;
+    __IO uint32_t DMACA1;
+    stc_dmac_dmaca1_field_t DMACA1_f;
   };
   union {
-	__IO uint32_t DMACB1;
-	stc_dmac_dmacb1_field_t DMACB1_f;
+    __IO uint32_t DMACB1;
+    stc_dmac_dmacb1_field_t DMACB1_f;
   };
   __IO uint32_t DMACSA1;
   __IO uint32_t DMACDA1;
   union {
-	__IO uint32_t DMACA2;
-	stc_dmac_dmaca2_field_t DMACA2_f;
+    __IO uint32_t DMACA2;
+    stc_dmac_dmaca2_field_t DMACA2_f;
   };
   union {
-	__IO uint32_t DMACB2;
-	stc_dmac_dmacb2_field_t DMACB2_f;
+    __IO uint32_t DMACB2;
+    stc_dmac_dmacb2_field_t DMACB2_f;
   };
   __IO uint32_t DMACSA2;
   __IO uint32_t DMACDA2;
   union {
-	__IO uint32_t DMACA3;
-	stc_dmac_dmaca3_field_t DMACA3_f;
+    __IO uint32_t DMACA3;
+    stc_dmac_dmaca3_field_t DMACA3_f;
   };
   union {
-	__IO uint32_t DMACB3;
-	stc_dmac_dmacb3_field_t DMACB3_f;
+    __IO uint32_t DMACB3;
+    stc_dmac_dmacb3_field_t DMACB3_f;
   };
   __IO uint32_t DMACSA3;
   __IO uint32_t DMACDA3;
   union {
-	__IO uint32_t DMACA4;
-	stc_dmac_dmaca4_field_t DMACA4_f;
+    __IO uint32_t DMACA4;
+    stc_dmac_dmaca4_field_t DMACA4_f;
   };
   union {
-	__IO uint32_t DMACB4;
-	stc_dmac_dmacb4_field_t DMACB4_f;
+    __IO uint32_t DMACB4;
+    stc_dmac_dmacb4_field_t DMACB4_f;
   };
   __IO uint32_t DMACSA4;
   __IO uint32_t DMACDA4;
   union {
-	__IO uint32_t DMACA5;
-	stc_dmac_dmaca5_field_t DMACA5_f;
+    __IO uint32_t DMACA5;
+    stc_dmac_dmaca5_field_t DMACA5_f;
   };
   union {
-	__IO uint32_t DMACB5;
-	stc_dmac_dmacb5_field_t DMACB5_f;
+    __IO uint32_t DMACB5;
+    stc_dmac_dmacb5_field_t DMACB5_f;
   };
   __IO uint32_t DMACSA5;
   __IO uint32_t DMACDA5;
   union {
-	__IO uint32_t DMACA6;
-	stc_dmac_dmaca6_field_t DMACA6_f;
+    __IO uint32_t DMACA6;
+    stc_dmac_dmaca6_field_t DMACA6_f;
   };
   union {
-	__IO uint32_t DMACB6;
-	stc_dmac_dmacb6_field_t DMACB6_f;
+    __IO uint32_t DMACB6;
+    stc_dmac_dmacb6_field_t DMACB6_f;
   };
   __IO uint32_t DMACSA6;
   __IO uint32_t DMACDA6;
   union {
-	__IO uint32_t DMACA7;
-	stc_dmac_dmaca7_field_t DMACA7_f;
+    __IO uint32_t DMACA7;
+    stc_dmac_dmaca7_field_t DMACA7_f;
   };
   union {
-	__IO uint32_t DMACB7;
-	stc_dmac_dmacb7_field_t DMACB7_f;
+    __IO uint32_t DMACB7;
+    stc_dmac_dmacb7_field_t DMACB7_f;
   };
   __IO uint32_t DMACSA7;
   __IO uint32_t DMACDA7;
@@ -12880,232 +12880,232 @@ typedef struct
 typedef struct
 {
   union {
-	__IO uint16_t CTRLR;
-	stc_can_ctrlr_field_t CTRLR_f;
+    __IO uint16_t CTRLR;
+    stc_can_ctrlr_field_t CTRLR_f;
   };
   union {
-	__IO uint16_t STATR;
-	stc_can_statr_field_t STATR_f;
+    __IO uint16_t STATR;
+    stc_can_statr_field_t STATR_f;
   };
   union {
-	__IO uint16_t ERRCNT;
-	stc_can_errcnt_field_t ERRCNT_f;
+    __IO uint16_t ERRCNT;
+    stc_can_errcnt_field_t ERRCNT_f;
   };
   union {
-	__IO uint16_t BTR;
-	stc_can_btr_field_t BTR_f;
+    __IO uint16_t BTR;
+    stc_can_btr_field_t BTR_f;
   };
   union {
-	__IO uint16_t INTR;
-	stc_can_intr_field_t INTR_f;
+    __IO uint16_t INTR;
+    stc_can_intr_field_t INTR_f;
   };
   union {
-	__IO uint16_t TESTR;
-	stc_can_testr_field_t TESTR_f;
+    __IO uint16_t TESTR;
+    stc_can_testr_field_t TESTR_f;
   };
   union {
-	__IO uint16_t BRPER;
-	stc_can_brper_field_t BRPER_f;
+    __IO uint16_t BRPER;
+    stc_can_brper_field_t BRPER_f;
   };
-		uint8_t RESERVED0[2];
+        uint8_t RESERVED0[2];
   union {
-	__IO uint16_t IF1CREQ;
-	stc_can_if1creq_field_t IF1CREQ_f;
-  };
-  union {
-	__IO uint16_t IF1CMSK;
-	stc_can_if1cmsk_field_t IF1CMSK_f;
+    __IO uint16_t IF1CREQ;
+    stc_can_if1creq_field_t IF1CREQ_f;
   };
   union {
-	union {
-	  __IO uint32_t IF1MSK;
-	  stc_can_if1msk_field_t IF1MSK_f;
-	};
-	struct {
-	  __IO uint16_t IF1MSK1;
-	  union {
-		__IO uint16_t IF1MSK2;
-		stc_can_if1msk2_field_t IF1MSK2_f;
-	  };
-	};
+    __IO uint16_t IF1CMSK;
+    stc_can_if1cmsk_field_t IF1CMSK_f;
   };
   union {
-	union {
-	  __IO uint32_t IF1ARB;
-	  stc_can_if1arb_field_t IF1ARB_f;
-	};
-	struct {
-	  __IO uint16_t IF1ARB1;
-	  union {
-		__IO uint16_t IF1ARB2;
-		stc_can_if1arb2_field_t IF1ARB2_f;
-	  };
-	};
+    union {
+      __IO uint32_t IF1MSK;
+      stc_can_if1msk_field_t IF1MSK_f;
+    };
+    struct {
+      __IO uint16_t IF1MSK1;
+      union {
+        __IO uint16_t IF1MSK2;
+        stc_can_if1msk2_field_t IF1MSK2_f;
+      };
+    };
   };
   union {
-	__IO uint16_t IF1MCTR;
-	stc_can_if1mctr_field_t IF1MCTR_f;
-  };
-		uint8_t RESERVED1[2];
-  union {
-	__IO uint32_t IF1DTA_L;
-	struct {
-	  __IO uint16_t IF1DTA1_L;
-	  __IO uint16_t IF1DTA2_L;
-	};
-  };
-  union {
-	__IO uint32_t IF1DTB_L;
-	struct {
-	  __IO uint16_t IF1DTB1_L;
-	  __IO uint16_t IF1DTB2_L;
-	};
-  };
-		uint8_t RESERVED2[8];
-  union {
-	__IO uint32_t IF1DTA_B;
-	struct {
-	  __IO uint16_t IF1DTA2_B;
-	  __IO uint16_t IF1DTA1_B;
-	};
+    union {
+      __IO uint32_t IF1ARB;
+      stc_can_if1arb_field_t IF1ARB_f;
+    };
+    struct {
+      __IO uint16_t IF1ARB1;
+      union {
+        __IO uint16_t IF1ARB2;
+        stc_can_if1arb2_field_t IF1ARB2_f;
+      };
+    };
   };
   union {
-	__IO uint32_t IF1DTB_B;
-	struct {
-	  __IO uint16_t IF1DTB2_B;
-	  __IO uint16_t IF1DTB1_B;
-	};
+    __IO uint16_t IF1MCTR;
+    stc_can_if1mctr_field_t IF1MCTR_f;
   };
-		uint8_t RESERVED3[8];
+        uint8_t RESERVED1[2];
   union {
-	__IO uint16_t IF2CREQ;
-	stc_can_if2creq_field_t IF2CREQ_f;
-  };
-  union {
-	__IO uint16_t IF2CMSK;
-	stc_can_if2cmsk_field_t IF2CMSK_f;
+    __IO uint32_t IF1DTA_L;
+    struct {
+      __IO uint16_t IF1DTA1_L;
+      __IO uint16_t IF1DTA2_L;
+    };
   };
   union {
-	union {
-	  __IO uint32_t IF2MSK;
-	  stc_can_if2msk_field_t IF2MSK_f;
-	};
-	struct {
-	  __IO uint16_t IF2MSK1;
-	  union {
-		__IO uint16_t IF2MSK2;
-		stc_can_if2msk2_field_t IF2MSK2_f;
-	  };
-	};
+    __IO uint32_t IF1DTB_L;
+    struct {
+      __IO uint16_t IF1DTB1_L;
+      __IO uint16_t IF1DTB2_L;
+    };
+  };
+        uint8_t RESERVED2[8];
+  union {
+    __IO uint32_t IF1DTA_B;
+    struct {
+      __IO uint16_t IF1DTA2_B;
+      __IO uint16_t IF1DTA1_B;
+    };
   };
   union {
-	__IO uint32_t IF2ARB;
-	struct {
-	  __IO uint16_t IF2ARB1;
-	  union {
-		__IO uint16_t IF2ARB2;
-		stc_can_if2arb2_field_t IF2ARB2_f;
-	  };
-	};
+    __IO uint32_t IF1DTB_B;
+    struct {
+      __IO uint16_t IF1DTB2_B;
+      __IO uint16_t IF1DTB1_B;
+    };
+  };
+        uint8_t RESERVED3[8];
+  union {
+    __IO uint16_t IF2CREQ;
+    stc_can_if2creq_field_t IF2CREQ_f;
   };
   union {
-	__IO uint16_t IF2MCTR;
-	stc_can_if2mctr_field_t IF2MCTR_f;
-  };
-		uint8_t RESERVED4[2];
-  union {
-	__IO uint32_t IF2DTA_L;
-	struct {
-	  __IO uint16_t IF2DTA1_L;
-	  __IO uint16_t IF2DTA2_L;
-	};
+    __IO uint16_t IF2CMSK;
+    stc_can_if2cmsk_field_t IF2CMSK_f;
   };
   union {
-	__IO uint32_t IF2DTB_L;
-	struct {
-	  __IO uint16_t IF2DTB1_L;
-	  __IO uint16_t IF2DTB2_L;
-	};
-  };
-		uint8_t RESERVED5[8];
-  union {
-	__IO uint32_t IF2DTA_B;
-	struct {
-	  __IO uint16_t IF2DTA2_B;
-	  __IO uint16_t IF2DTA1_B;
-	};
+    union {
+      __IO uint32_t IF2MSK;
+      stc_can_if2msk_field_t IF2MSK_f;
+    };
+    struct {
+      __IO uint16_t IF2MSK1;
+      union {
+        __IO uint16_t IF2MSK2;
+        stc_can_if2msk2_field_t IF2MSK2_f;
+      };
+    };
   };
   union {
-	__IO uint32_t IF2DTB_B;
-	struct {
-	  __IO uint16_t IF2DTB2_B;
-	  __IO uint16_t IF2DTB1_B;
-	};
+    __IO uint32_t IF2ARB;
+    struct {
+      __IO uint16_t IF2ARB1;
+      union {
+        __IO uint16_t IF2ARB2;
+        stc_can_if2arb2_field_t IF2ARB2_f;
+      };
+    };
   };
-		uint8_t RESERVED6[24];
   union {
-	union {
-	  __IO uint32_t TREQR;
-	  stc_can_treqr_field_t TREQR_f;
-	};
-	struct {
-	  union {
-		__IO uint16_t TREQR1;
-		stc_can_treqr1_field_t TREQR1_f;
-	  };
-	  union {
-		__IO uint16_t TREQR2;
-		stc_can_treqr2_field_t TREQR2_f;
-	  };
-	};
+    __IO uint16_t IF2MCTR;
+    stc_can_if2mctr_field_t IF2MCTR_f;
   };
-		uint8_t RESERVED7[12];
+        uint8_t RESERVED4[2];
   union {
-	union {
-	  __IO uint32_t NEWDT;
-	  stc_can_newdt_field_t NEWDT_f;
-	};
-	struct {
-	  union {
-		__IO uint16_t NEWDT1;
-		stc_can_newdt1_field_t NEWDT1_f;
-	  };
-	  __IO uint16_t NEWDT2;
-	};
+    __IO uint32_t IF2DTA_L;
+    struct {
+      __IO uint16_t IF2DTA1_L;
+      __IO uint16_t IF2DTA2_L;
+    };
   };
-		uint8_t RESERVED8[12];
   union {
-	union {
-	  __IO uint32_t INTPND;
-	  stc_can_intpnd_field_t INTPND_f;
-	};
-	struct {
-	  union {
-		__IO uint16_t INTPND1;
-		stc_can_intpnd1_field_t INTPND1_f;
-	  };
-	  union {
-		__IO uint16_t INTPND2;
-		stc_can_intpnd2_field_t INTPND2_f;
-	  };
-	};
+    __IO uint32_t IF2DTB_L;
+    struct {
+      __IO uint16_t IF2DTB1_L;
+      __IO uint16_t IF2DTB2_L;
+    };
   };
-		uint8_t RESERVED9[12];
+        uint8_t RESERVED5[8];
   union {
-	union {
-	  __IO uint32_t MSGVAL;
-	  stc_can_msgval_field_t MSGVAL_f;
-	};
-	struct {
-	  union {
-		__IO uint16_t MSGVAL1;
-		stc_can_msgval1_field_t MSGVAL1_f;
-	  };
-	  union {
-		__IO uint16_t MSGVAL2;
-		stc_can_msgval2_field_t MSGVAL2_f;
-	  };
-	};
+    __IO uint32_t IF2DTA_B;
+    struct {
+      __IO uint16_t IF2DTA2_B;
+      __IO uint16_t IF2DTA1_B;
+    };
+  };
+  union {
+    __IO uint32_t IF2DTB_B;
+    struct {
+      __IO uint16_t IF2DTB2_B;
+      __IO uint16_t IF2DTB1_B;
+    };
+  };
+        uint8_t RESERVED6[24];
+  union {
+    union {
+      __IO uint32_t TREQR;
+      stc_can_treqr_field_t TREQR_f;
+    };
+    struct {
+      union {
+        __IO uint16_t TREQR1;
+        stc_can_treqr1_field_t TREQR1_f;
+      };
+      union {
+        __IO uint16_t TREQR2;
+        stc_can_treqr2_field_t TREQR2_f;
+      };
+    };
+  };
+        uint8_t RESERVED7[12];
+  union {
+    union {
+      __IO uint32_t NEWDT;
+      stc_can_newdt_field_t NEWDT_f;
+    };
+    struct {
+      union {
+        __IO uint16_t NEWDT1;
+        stc_can_newdt1_field_t NEWDT1_f;
+      };
+      __IO uint16_t NEWDT2;
+    };
+  };
+        uint8_t RESERVED8[12];
+  union {
+    union {
+      __IO uint32_t INTPND;
+      stc_can_intpnd_field_t INTPND_f;
+    };
+    struct {
+      union {
+        __IO uint16_t INTPND1;
+        stc_can_intpnd1_field_t INTPND1_f;
+      };
+      union {
+        __IO uint16_t INTPND2;
+        stc_can_intpnd2_field_t INTPND2_f;
+      };
+    };
+  };
+        uint8_t RESERVED9[12];
+  union {
+    union {
+      __IO uint32_t MSGVAL;
+      stc_can_msgval_field_t MSGVAL_f;
+    };
+    struct {
+      union {
+        __IO uint16_t MSGVAL1;
+        stc_can_msgval1_field_t MSGVAL1_f;
+      };
+      union {
+        __IO uint16_t MSGVAL2;
+        stc_can_msgval2_field_t MSGVAL2_f;
+      };
+    };
   };
 }FM4_CAN_TypeDef;
 

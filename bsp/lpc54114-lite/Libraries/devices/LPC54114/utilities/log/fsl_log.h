@@ -3,7 +3,7 @@
  * Copyright 2017 NXP
  * All rights reserved.
  *
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -63,7 +63,7 @@ extern "C" {
  * @param baudRate, device communicate baudrate
  * @param clkSrcFreq, device source clock freq
  *
- * @return              	Indicates whether initialization was successful or not.
+ * @return                  Indicates whether initialization was successful or not.
  * @retval kStatus_Success  Execution successfully
  * @retval kStatus_Fail     Execution failure
  */

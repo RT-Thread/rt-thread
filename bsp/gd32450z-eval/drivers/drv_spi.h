@@ -36,7 +36,7 @@ struct gd32_spi_cs
 
 /* public function */
 rt_err_t gd32_spi_bus_register(uint32_t spi_periph,
-								//struct gd32_spi_bus * gd32_spi,
-								const char * spi_bus_name);
+                                //struct gd32_spi_bus * gd32_spi,
+                                const char * spi_bus_name);
 
 #endif // gd32F20X_40X_SPI_H_INCLUDED

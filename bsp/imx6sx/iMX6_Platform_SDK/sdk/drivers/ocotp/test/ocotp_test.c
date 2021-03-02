@@ -38,7 +38,7 @@
 #include "sdk.h"
 #include "ocotp/ocotp.h"
 
-/*! 
+/*!
  * OCOTP test.
  * This test allows to read or write a fuse location.
  *
@@ -74,7 +74,7 @@ int32_t ocotp_test(void)
         do {
             bank = getchar();
         } while (bank == NONE_CHAR);
-        /* move from received ASCII code to real value */ 
+        /* move from received ASCII code to real value */
         bank -= 0x30;
         printf("  %d\n",bank);
 

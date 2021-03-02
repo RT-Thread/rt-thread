@@ -266,19 +266,19 @@ GBOOL GD_SDIO_Get_inserted_flag(U32 index);
 #if 0
 static void printf_buff(char *function, unsigned char *ptr)
 {
-	int i = 0;
+    int i = 0;
 
-	GM_Printf("===================%s start===================\n", function);
-	for(i = 0; i < 0x200; i++)
-	{
-		if(i%16 == 0)
-		{
-			GM_Printf("\n");
-		}
-		GM_Printf("%02x ", ptr[i]);
+    GM_Printf("===================%s start===================\n", function);
+    for(i = 0; i < 0x200; i++)
+    {
+        if(i%16 == 0)
+        {
+            GM_Printf("\n");
+        }
+        GM_Printf("%02x ", ptr[i]);
 
-	}
-	GM_Printf("\n===================%s end===================\n", function);
+    }
+    GM_Printf("\n===================%s end===================\n", function);
 }
 #endif
 
@@ -497,7 +497,7 @@ void GD_SDIO_Rest(U32 index)
 
     /*card remove*/
 
-	GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_REMOVED);
+    GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_REMOVED);
     g_sdioError  = SDIO_OK;
     g_cmdStatus  = SDIO_WAIT;
     g_transferStatus = SDIO_WAIT;
@@ -593,29 +593,29 @@ static int  sdioIssueCmd(U32 index,U32 cmd, U32 arg, U32 data, U32 flags)
             break;
         GD_TIMER_Delay(10);
     }
-	if (i >= 0x1000)
-	{
-		printf("Error! Wait for cmd line free time out!\n");
-		return -1;
-	}
+    if (i >= 0x1000)
+    {
+        printf("Error! Wait for cmd line free time out!\n");
+        return -1;
+    }
 
     /*wait for data line free */
     if(flags & MMC_REP_48_BUSY)
     {
-		 if(cmd != MMC_STOP_TRANSMISSION)
-		 {
-			 for(i = 0; i < 0x1000; i++)
-			 {
-				 if(!(GH_SDIO_get_PresentStateReg_CmdInhibitData(index)))
-					 break;
-				 GD_TIMER_Delay(10);
-			 }
-		 }
-		 if (i >= 0x1000)
-		 {
-			printf("Error! Wait for data line free time out!\n");
-			return -1;
-		 }
+         if(cmd != MMC_STOP_TRANSMISSION)
+         {
+             for(i = 0; i < 0x1000; i++)
+             {
+                 if(!(GH_SDIO_get_PresentStateReg_CmdInhibitData(index)))
+                     break;
+                 GD_TIMER_Delay(10);
+             }
+         }
+         if (i >= 0x1000)
+         {
+            printf("Error! Wait for data line free time out!\n");
+            return -1;
+         }
     }
     GH_SDIO_set_ArgReg(index, arg);
     g_cmdStatus=SDIO_WAIT;
@@ -623,12 +623,12 @@ static int  sdioIssueCmd(U32 index,U32 cmd, U32 arg, U32 data, U32 flags)
     sdioSetCmdReg(index,cmd,data,flags);
      while(g_cmdStatus !=SDIO_ERR_CMD && g_cmdStatus != SDIO_CMD_COMPLETE)
      {
-		if(!GD_SDIO_Get_inserted_flag(index))
-		{
-		 	return -1;
-		}
-	 	rt_thread_yield();
-		//msleep(1);
+        if(!GD_SDIO_Get_inserted_flag(index))
+        {
+             return -1;
+        }
+         rt_thread_yield();
+        //msleep(1);
      }
     g_cmdStatus=SDIO_WAIT;
     if(g_sdioError != GD_OK)
@@ -813,12 +813,12 @@ static int GD_SDIO_GetScr(sdioBlockT *cardInfo)
         }
         while(g_transferStatus !=SDIO_ERR_CMD && g_transferStatus != SDIO_TRANSFER_COMPLETE)
         {
-			if(!GD_SDIO_Get_inserted_flag(cardInfo->index))
-			{
-				return -1;
-			}
-			rt_thread_yield();
-			//msleep(1);
+            if(!GD_SDIO_Get_inserted_flag(cardInfo->index))
+            {
+                return -1;
+            }
+            rt_thread_yield();
+            //msleep(1);
         }
         g_transferStatus=SDIO_WAIT;
         addr1=buffer[0];
@@ -837,27 +837,27 @@ static int GD_SDIO_GetScr(sdioBlockT *cardInfo)
     }
 
 #ifdef DEBUG_PRINT
-	switch (cardInfo->scr.sdSpec)
-	{
-		case 0:
-			printf("sd card 1.0\n");
-			break;
-		case 1:
-			printf("sd card 1.1\n");
-			break;
-		case 2:
-			if ((buffer[0] >> 15) & 0x1)
-			{
-				printf("sd card 3.0\n");
-			}
-			else
-			{
-				printf("sd card 2.0\n");
-			}
-			break;
-		default:
-			break;
-	}
+    switch (cardInfo->scr.sdSpec)
+    {
+        case 0:
+            printf("sd card 1.0\n");
+            break;
+        case 1:
+            printf("sd card 1.1\n");
+            break;
+        case 2:
+            if ((buffer[0] >> 15) & 0x1)
+            {
+                printf("sd card 3.0\n");
+            }
+            else
+            {
+                printf("sd card 2.0\n");
+            }
+            break;
+        default:
+            break;
+    }
 #endif
 
    return GD_OK;
@@ -875,10 +875,10 @@ static int GD_SDIO_GetScr(sdioBlockT *cardInfo)
 */
 static GERR    GD_SDIO_HandleCheck(sdioHandleT *sdioHandle)
 {
-	U32 index = 0;
+    U32 index = 0;
 
-	index = sdioHandle->index;
-	if (index >= SDIO_HANDLE_COUNT || sdioHandleArray[index].inUse == 0)
+    index = sdioHandle->index;
+    if (index >= SDIO_HANDLE_COUNT || sdioHandleArray[index].inUse == 0)
     {
         return GD_ERR_INVALID_HANDLE;
     }
@@ -925,12 +925,12 @@ static int GD_SDIO_Switch(sdioBlockT *cardInfo,int mode, int group, U8 value, U3
     }
     while(g_transferStatus !=SDIO_ERR_CMD && g_transferStatus != SDIO_TRANSFER_COMPLETE)
     {
-		if(!GD_SDIO_Get_inserted_flag(cardInfo->index))
-		{
-			return -1;
-		}
-		rt_thread_yield();
-		//msleep(1);
+        if(!GD_SDIO_Get_inserted_flag(cardInfo->index))
+        {
+            return -1;
+        }
+        rt_thread_yield();
+        //msleep(1);
     }
     g_transferStatus=SDIO_WAIT;
     return GD_OK;
@@ -1349,11 +1349,11 @@ static GERR GD_SDIO_CardBsr(U32 index, U32 privData)
                 GD_SDIO_Rest(index);
                 return GD_ERR_SDIO_CARD_INIT_FAILED;
             }
-			GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_READY);
+            GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_READY);
             return GD_OK;
         }
 
-		GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_REMOVED);
+        GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_REMOVED);
         return GD_ERR_SDIO_NO_CARD;
     }
 
@@ -1485,15 +1485,15 @@ static int GD_SDIO_WriteBlocks(sdioBlockT *cardInfo, U32 isusedma,void *scr, U32
               g_transferStatus != SDIO_TRANSFER_COMPLETE)
         {
 
-			if(GD_SDIO_GetSdState(cardInfo->index) == SDIO_COM_STATE_CARD_REMOVED)
-			{
+            if(GD_SDIO_GetSdState(cardInfo->index) == SDIO_COM_STATE_CARD_REMOVED)
+            {
 
-				printf("\n GD_SDIO_WriteBlocks failed in card removed status !\n");
-				return -1;
-			}
+                printf("\n GD_SDIO_WriteBlocks failed in card removed status !\n");
+                return -1;
+            }
 
-			rt_thread_yield();
-			//msleep(1);
+            rt_thread_yield();
+            //msleep(1);
         }
         g_transferStatus=SDIO_WAIT;
     }
@@ -1698,15 +1698,15 @@ static GERR GD_SDIO_ReadBlocks(sdioBlockT *cardInfo,U32 isusedma,void *dst, U32 
         while(g_transferStatus != SDIO_ERR_CMD &&
               g_transferStatus != SDIO_TRANSFER_COMPLETE)
         {
-			if(GD_SDIO_GetSdState(cardInfo->index) == SDIO_COM_STATE_CARD_REMOVED)
-			{
+            if(GD_SDIO_GetSdState(cardInfo->index) == SDIO_COM_STATE_CARD_REMOVED)
+            {
 
-				printf("\n GD_SDIO_ReadBlocks failed in card removed status !\n");
-				return GD_ERR_SDIO_READ_FAILED;
-			}
+                printf("\n GD_SDIO_ReadBlocks failed in card removed status !\n");
+                return GD_ERR_SDIO_READ_FAILED;
+            }
 
-			rt_thread_yield();
-			//msleep(1);
+            rt_thread_yield();
+            //msleep(1);
         }
         g_transferStatus=SDIO_WAIT;
     }
@@ -1765,7 +1765,7 @@ GERR GD_SDIO_ReadSector(sdioHandleT *sdiohandle, U32 startblk, void* buffer, U32
     U32 cur, blocks_todo = blkcount;
     U8 *des=(U8 *)buffer;
     U32 *dma_buf = dma_buffer;
-	int usedma = sdiohandle->openParams.isUseDmaWay;
+    int usedma = sdiohandle->openParams.isUseDmaWay;
 
     sdioBlockT  *cardInfo   = &sdiohandle->devicePtr;
     //dma_buf = (U32 *)(((U32)dma_buf + 0x10000)&0xFFFF0000);
@@ -1819,7 +1819,7 @@ GERR GD_SDIO_ReadSector(sdioHandleT *sdiohandle, U32 startblk, void* buffer, U32
         des += cur * cardInfo->read_bl_len;
     } while (blocks_todo > 0);
 
-	//printf_buff(__FUNCTION__, buffer);
+    //printf_buff(__FUNCTION__, buffer);
 
     return GD_OK;
 }
@@ -1842,25 +1842,25 @@ void GD_SDIO_SetTranStatus( int uTranStatus)
 
 void GD_SDIO_SetSdState( U32 index, U32 uSdioState)
 {
-	if(index < 0 || index >= SDIO_HANDLE_COUNT)
-	{
-		return;
-	}
-	if(sdioComState[index] == uSdioState)
-	{
-		return;
-	}
+    if(index < 0 || index >= SDIO_HANDLE_COUNT)
+    {
+        return;
+    }
+    if(sdioComState[index] == uSdioState)
+    {
+        return;
+    }
     sdioComState[index] = uSdioState;
-	sdioExecuteHandleCallback(index, uSdioState);
+    sdioExecuteHandleCallback(index, uSdioState);
 }
 
 U32 GD_SDIO_GetSdState( U32 index)
 {
-	if(index < 0 || index >= SDIO_HANDLE_COUNT)
-	{
-		return SDIO_COM_STATE_CARD_REMOVED;
-	}
-	return sdioComState[index];
+    if(index < 0 || index >= SDIO_HANDLE_COUNT)
+    {
+        return SDIO_COM_STATE_CARD_REMOVED;
+    }
+    return sdioComState[index];
 }
 
 
@@ -1921,9 +1921,9 @@ static GISR1 GD_SDIO_ISR0(void)
     U32  index = 0;
     U32  data= 0,i=0;
     U32  bufferpos= 0;
-	#ifdef DEBUG_PRINT
+    #ifdef DEBUG_PRINT
     static int ts=0;
-	#endif
+    #endif
     void *pdata = NULL;
     U32  irq_status_reg =(GH_SDIO_get_NorIntStaReg(index)| GH_SDIO_get_ErrIntStaReg(index)<<16);
     g_sdioError    = 0;
@@ -1966,7 +1966,7 @@ static GISR1 GD_SDIO_ISR0(void)
     }
     else if( irq_status_reg & SDIO_IRQ_CMD_COMPLETE )
     {
-		//GM_Printf("irq_status_reg:%x\n",irq_status_reg);
+        //GM_Printf("irq_status_reg:%x\n",irq_status_reg);
         if(GH_SDIO_get_CmdReg_RepTypeSelect(index)==1)
         {
             resp[index][0]=GH_SDIO_get_Resp3Reg(index)<<8 | (GH_SDIO_get_Resp2Reg(index) & 0xff000000)>>24;
@@ -1997,7 +1997,7 @@ static GISR1 GD_SDIO_ISR0(void)
 #ifdef DEBUG_PRINT
         printf(" - Card inserted IRQ\n");
 #endif
-		GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_DETECTION);
+        GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_DETECTION);
         GH_SDIO_set_NorIntStaReg(index, SDIO_IRQ_CARD_INSERTED);
     }
     else if( irq_status_reg & SDIO_IRQ_READ_READY )
@@ -2066,9 +2066,9 @@ static GISR1 GD_SDIO_ISR0(void)
         g_sdioError        = 0;
         g_transferStatus    = SDIO_TRANSFER_COMPLETE;
         GH_SDIO_set_NorIntStaReg(index, SDIO_IRQ_TRANSFER_COMPLETE);
-		#ifdef DEBUG_PRINT
+        #ifdef DEBUG_PRINT
         ts=0;
-		#endif
+        #endif
     }
 }
 
@@ -2160,7 +2160,7 @@ static GISR1 GD_SDIO_ISR1(void)
 #ifdef DEBUG_PRINT
         printf(" - Card inserted IRQ\n");
 #endif
-		GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_DETECTION);
+        GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_DETECTION);
         GH_SDIO_set_NorIntStaReg(index, SDIO_IRQ_CARD_INSERTED);
     }
     else if( irq_status_reg & SDIO_IRQ_READ_READY )
@@ -2251,7 +2251,7 @@ GERR GD_SDIO_Init(GD_SDIO_OpenParamsT* openParamsP, U32 index)
 {
     int i;
     GERR                     ret;
-    
+
     GD_INT_OPEN_PARAMS_S     intParams0;
     GD_INT_OPEN_PARAMS_S     intParams1;
 #ifdef GK7101S
@@ -2261,77 +2261,77 @@ GERR GD_SDIO_Init(GD_SDIO_OpenParamsT* openParamsP, U32 index)
     // don't config gpio at here, please use include/GK7101/BOARD_XXX.h.
     // GD_SDIO_GpioConfig();
     /*open the sdio control interrupt*/
-	if(index == GD_SDIO0)
-	{
-		intParams0.type           = (S8)GD_INT_SD_CONTROLLER_IRQ;
-	    intParams0.sensitivity    = GD_INT_LEVEL_HIGH;
-	    intParams0.active         = GD_INT_INVERT_IRQ;
-	    intParams0.priority       = GD_INT_MID_PRIORITY;
-	    intParams0.isrFct.lowPrio = openParamsP->irqFunc;
-	    ret = GD_INT_Open(&intParams0, &sdioHandle0);
-	    if(ret != GD_OK)
-	    {
-	        return GD_ERR_SDIO_INT_ERR;
-	    }
-	    //GD_INT_SetHandler(intParams0.type, GD_SDIO_ISR);
-	    GD_INT_Enable(&sdioHandle0,GD_INT_ENABLED);
-	    /*open the sdio detec interrupt*/
-	    intParams1.type           = (S8)GD_INT_SD_CARD_DETECT_IRQ;
-	    intParams1.sensitivity    = GD_INT_BOTH_EDGES;
-	    intParams1.active         = GD_INT_INVERT_IRQ;
-	    intParams1.priority       = GD_INT_MID_PRIORITY;
-	    intParams1.isrFct.lowPrio = openParamsP->irqFunc;
-	    ret = GD_INT_Open(&intParams1, &sdioHandle1);
-	    if(ret != GD_OK)
-	    {
-	        return GD_ERR_SDIO_INT_ERR;
-	    }
-	    //GD_INT_SetHandler(intParams1.type, GD_SDIO_ISR);
-	    GD_INT_Enable(&sdioHandle1,GD_INT_ENABLED);
-	    if(ret != GD_OK)
-	    {
-	        return GD_ERR_SDIO_INT_ERR;
-	    }
-		openParamsP->resetFunc(GD_SDIO0);
-	}
-	#ifdef GK7101S
-	else
-	{
+    if(index == GD_SDIO0)
+    {
+        intParams0.type           = (S8)GD_INT_SD_CONTROLLER_IRQ;
+        intParams0.sensitivity    = GD_INT_LEVEL_HIGH;
+        intParams0.active         = GD_INT_INVERT_IRQ;
+        intParams0.priority       = GD_INT_MID_PRIORITY;
+        intParams0.isrFct.lowPrio = openParamsP->irqFunc;
+        ret = GD_INT_Open(&intParams0, &sdioHandle0);
+        if(ret != GD_OK)
+        {
+            return GD_ERR_SDIO_INT_ERR;
+        }
+        //GD_INT_SetHandler(intParams0.type, GD_SDIO_ISR);
+        GD_INT_Enable(&sdioHandle0,GD_INT_ENABLED);
+        /*open the sdio detec interrupt*/
+        intParams1.type           = (S8)GD_INT_SD_CARD_DETECT_IRQ;
+        intParams1.sensitivity    = GD_INT_BOTH_EDGES;
+        intParams1.active         = GD_INT_INVERT_IRQ;
+        intParams1.priority       = GD_INT_MID_PRIORITY;
+        intParams1.isrFct.lowPrio = openParamsP->irqFunc;
+        ret = GD_INT_Open(&intParams1, &sdioHandle1);
+        if(ret != GD_OK)
+        {
+            return GD_ERR_SDIO_INT_ERR;
+        }
+        //GD_INT_SetHandler(intParams1.type, GD_SDIO_ISR);
+        GD_INT_Enable(&sdioHandle1,GD_INT_ENABLED);
+        if(ret != GD_OK)
+        {
+            return GD_ERR_SDIO_INT_ERR;
+        }
+        openParamsP->resetFunc(GD_SDIO0);
+    }
+    #ifdef GK7101S
+    else
+    {
 
 
-	    intParams2.type           = (S8)GD_INT_SD2_CONTROLLER_IRQ;
-	    intParams2.sensitivity    = GD_INT_LEVEL_HIGH;
-	    intParams2.active         = GD_INT_INVERT_IRQ;
-	    intParams2.priority       = GD_INT_MID_PRIORITY;
-	    intParams2.isrFct.lowPrio = openParamsP->irqFunc;
-	    ret = GD_INT_Open(&intParams2, &sdioHandle2);
-	    if(ret != GD_OK)
-	    {
-	        return GD_ERR_SDIO_INT_ERR;
-	    }
-	    //GD_INT_SetHandler(intParams0.type, GD_SDIO_ISR);
-	    GD_INT_Enable(&sdioHandle2,GD_INT_ENABLED);
-	    /*open the sdio detec interrupt*/
-	    intParams3.type           = (S8)GD_INT_SD2_CARD_DETECT_IRQ;
-	    intParams3.sensitivity    = GD_INT_BOTH_EDGES;
-	    intParams3.active         = GD_INT_INVERT_IRQ;
-	    intParams3.priority       = GD_INT_MID_PRIORITY;
-	    intParams3.isrFct.lowPrio = openParamsP->irqFunc;
-	    ret = GD_INT_Open(&intParams3, &sdioHandle3);
-	    if(ret != GD_OK)
-	    {
-	        return GD_ERR_SDIO_INT_ERR;
-	    }
-	    GD_INT_Enable(&sdioHandle3,GD_INT_ENABLED);
+        intParams2.type           = (S8)GD_INT_SD2_CONTROLLER_IRQ;
+        intParams2.sensitivity    = GD_INT_LEVEL_HIGH;
+        intParams2.active         = GD_INT_INVERT_IRQ;
+        intParams2.priority       = GD_INT_MID_PRIORITY;
+        intParams2.isrFct.lowPrio = openParamsP->irqFunc;
+        ret = GD_INT_Open(&intParams2, &sdioHandle2);
+        if(ret != GD_OK)
+        {
+            return GD_ERR_SDIO_INT_ERR;
+        }
+        //GD_INT_SetHandler(intParams0.type, GD_SDIO_ISR);
+        GD_INT_Enable(&sdioHandle2,GD_INT_ENABLED);
+        /*open the sdio detec interrupt*/
+        intParams3.type           = (S8)GD_INT_SD2_CARD_DETECT_IRQ;
+        intParams3.sensitivity    = GD_INT_BOTH_EDGES;
+        intParams3.active         = GD_INT_INVERT_IRQ;
+        intParams3.priority       = GD_INT_MID_PRIORITY;
+        intParams3.isrFct.lowPrio = openParamsP->irqFunc;
+        ret = GD_INT_Open(&intParams3, &sdioHandle3);
+        if(ret != GD_OK)
+        {
+            return GD_ERR_SDIO_INT_ERR;
+        }
+        GD_INT_Enable(&sdioHandle3,GD_INT_ENABLED);
 
-	    for(i=0;i<SDIO_HANDLE_COUNT;i++)
-	    {
-	        sdioHandleArray[i].inUse=0;
-	    }
+        for(i=0;i<SDIO_HANDLE_COUNT;i++)
+        {
+            sdioHandleArray[i].inUse=0;
+        }
 
-	    openParamsP->resetFunc(GD_SDIO1);
-	}
-	#endif
+        openParamsP->resetFunc(GD_SDIO1);
+    }
+    #endif
     return GD_OK;
 }
 
@@ -2384,47 +2384,47 @@ GERR GD_SDIO_Open(GD_SDIO_OpenParamsT* openParamsP, sdioHandleT *pHandle, U32 in
         return GD_ERR_BAD_PARAMETER;
     }
 
-	if(openParamsP->type == GAPI_SDIO_TRANSFER_TYPE_WIFI)
-	{
-		ret = GD_SDIO_Init(openParamsP, index);
-		sdioptr=sdioAllocateHandle(index);
-		if(sdioptr==NULL || sdioptr->inUse==0)
-	    {
-	        return GD_ERR_OUT_OF_MEMORY;
-	    }
-		wifiIndex = index;
-		
-		return ret;
-	}
-	else
-	{
-		if(index == GD_SDIO0)
-			openParamsP->irqFunc = GD_SDIO_ISR0;
-		#ifdef Gk7101S
-		else
-			openParamsP->irqFunc = GD_SDIO_ISR1;
-		#endif
-		openParamsP->resetFunc = GD_SDIO_Rest;
-		GD_SDIO_Init(openParamsP, index);
-	    sdioptr=sdioAllocateHandle(index);
-	    if(sdioptr==NULL || sdioptr->inUse==0)
-	    {
-	        return GD_ERR_OUT_OF_MEMORY;
-	    }
+    if(openParamsP->type == GAPI_SDIO_TRANSFER_TYPE_WIFI)
+    {
+        ret = GD_SDIO_Init(openParamsP, index);
+        sdioptr=sdioAllocateHandle(index);
+        if(sdioptr==NULL || sdioptr->inUse==0)
+        {
+            return GD_ERR_OUT_OF_MEMORY;
+        }
+        wifiIndex = index;
 
-	    memcpy(&(sdioptr->openParams),openParamsP,sizeof(GD_SDIO_OpenParamsT));
+        return ret;
+    }
+    else
+    {
+        if(index == GD_SDIO0)
+            openParamsP->irqFunc = GD_SDIO_ISR0;
+        #ifdef Gk7101S
+        else
+            openParamsP->irqFunc = GD_SDIO_ISR1;
+        #endif
+        openParamsP->resetFunc = GD_SDIO_Rest;
+        GD_SDIO_Init(openParamsP, index);
+        sdioptr=sdioAllocateHandle(index);
+        if(sdioptr==NULL || sdioptr->inUse==0)
+        {
+            return GD_ERR_OUT_OF_MEMORY;
+        }
 
-	    if((GD_SDIO_GetSdState(index) !=SDIO_COM_STATE_CARD_READY) && (GH_SDIO_get_PresentStateReg(index) & 0x00070000))
-	    {
-			GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_DETECTION);
+        memcpy(&(sdioptr->openParams),openParamsP,sizeof(GD_SDIO_OpenParamsT));
 
-	        ret=GD_SDIO_CardBsr(index, 1);
-	        if(ret!= GD_OK)
-	        {
-	            return ret;
-	        }
-	    }
-	}
+        if((GD_SDIO_GetSdState(index) !=SDIO_COM_STATE_CARD_READY) && (GH_SDIO_get_PresentStateReg(index) & 0x00070000))
+        {
+            GD_SDIO_SetSdState(index, SDIO_COM_STATE_CARD_DETECTION);
+
+            ret=GD_SDIO_CardBsr(index, 1);
+            if(ret!= GD_OK)
+            {
+                return ret;
+            }
+        }
+    }
 
     //pHandle=sdioptr;
     memcpy((void*)pHandle,(void*)sdioptr,sizeof(sdioHandleT));
@@ -2446,25 +2446,25 @@ GERR GD_SDIO_Close(sdioHandleT *sdiohandle, U32 index)
     {
         return GD_ERR_BAD_PARAMETER;
     }
-	
-	if(wifiIndex == index)//only close sdio wifi interrupt.
-	{
-		 wifiIndex = 0xFF;
-		 
-		if(index == GD_SDIO0)
-		{
-			GD_INT_Close(&sdioHandle0);
-			GD_INT_Close(&sdioHandle1);
-		}
-		#ifdef GK7101S
-		else
-		{
-			GD_INT_Close(&sdioHandle2);
-			GD_INT_Close(&sdioHandle3);
-		}
-		#endif
-	}
-	
+
+    if(wifiIndex == index)//only close sdio wifi interrupt.
+    {
+         wifiIndex = 0xFF;
+
+        if(index == GD_SDIO0)
+        {
+            GD_INT_Close(&sdioHandle0);
+            GD_INT_Close(&sdioHandle1);
+        }
+        #ifdef GK7101S
+        else
+        {
+            GD_INT_Close(&sdioHandle2);
+            GD_INT_Close(&sdioHandle3);
+        }
+        #endif
+    }
+
     ret=GD_SDIO_HandleCheck(sdiohandle);
     if(GD_OK!=ret)
     {

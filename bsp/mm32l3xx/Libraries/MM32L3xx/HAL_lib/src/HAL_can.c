@@ -38,11 +38,11 @@ void CAN_DeInit(CAN_TypeDef* CANx)
         RCC_APB1PeriphResetCmd(RCC_APB1Periph_CAN1, ENABLE);
         /* Release CAN1 from reset state */
         RCC_APB1PeriphResetCmd(RCC_APB1Periph_CAN1, DISABLE);
-        break;        
+        break;
     default:
         break;
     }
-    
+
 }
 
 /**
@@ -51,20 +51,20 @@ void CAN_DeInit(CAN_TypeDef* CANx)
 * @param CANx: where x can be 1 to select the CAN peripheral.
 * @param CAN_InitStruct: pointer to a CAN_InitTypeDef structure that
 *   contains the configuration information for the CAN peripheral.
-* @retval : Constant indicates initialization succeed which will be 
+* @retval : Constant indicates initialization succeed which will be
 *   CANINITFAILED or CANINITOK.
 */
 uint8_t CAN_Init(CAN_TypeDef* CANx, CAN_Basic_InitTypeDef* CAN_Basic_InitStruct)
 {
     uint8_t InitStatus = CANINITFAILED;
-    
+
     /* Check the parameters */
     assert_param(IS_FUNCTIONAL_STATE(CAN_Basic_InitStruct->SJW));
     assert_param(IS_FUNCTIONAL_STATE(CAN_Basic_InitStruct->BRP));
     assert_param(IS_FUNCTIONAL_STATE(CAN_Basic_InitStruct->SAM));
     assert_param(IS_FUNCTIONAL_STATE(CAN_Basic_InitStruct->TESG2));
     assert_param(IS_FUNCTIONAL_STATE(CAN_Basic_InitStruct->TESG1));
-    
+
     CANx->BTR0 = ((uint32_t)(CAN_Basic_InitStruct->SJW)<<6)|((uint32_t)(CAN_Basic_InitStruct->BRP));
     CANx->BTR1 = ((uint32_t)(CAN_Basic_InitStruct->SAM)<<7)|((uint32_t)(CAN_Basic_InitStruct->TESG2)<<4)|\
         ((uint32_t)(CAN_Basic_InitStruct->TESG1));
@@ -76,10 +76,10 @@ uint8_t CAN_Init(CAN_TypeDef* CANx, CAN_Basic_InitTypeDef* CAN_Basic_InitStruct)
     {
         CANx->CMR &= ~(uint32_t)CAN_SleepMode;
     }
-    
+
     CANx->CDR |= ((CAN_Basic_InitStruct->CBP)<<6) | ((CAN_Basic_InitStruct->RXINTEN)<<5) | \
         ((CAN_Basic_InitStruct->CLOSE_OPEN_CLK)<<3) | (CAN_Basic_InitStruct->CDCLK);
-    
+
     InitStatus = CANINITOK;
     return InitStatus;
 }
@@ -108,8 +108,8 @@ void CAN_FilterInit(CAN_Basic_FilterInitTypeDef* CAN_Basic_FilterInitStruct)
 void CAN_StructInit(CAN_Basic_InitTypeDef* CAN_Basic_InitStruct)
 {
     /*--------------- Reset CAN_Basic init structure parameters values -----------------*/
-    
-    
+
+
     /* initialize the BRP member(where can be set with (0..63))*/
     CAN_Basic_InitStruct->BRP = 0x0;
     /* initialize the SJW member(where can be set with (0..3)) */
@@ -175,7 +175,7 @@ uint8_t CAN_Transmit(CAN_TypeDef* CANx,CanBasicTxMsg* BasicTxMessage)
     /* Check the parameters */
     assert_param(IS_CAN_RTR(BasicTxMessage->RTR));
     assert_param(IS_CAN_DLC(BasicTxMessage->DLC));
-    
+
     CANx->TXID0 = (BasicTxMessage->IDH);
     CANx->TXID1 = (BasicTxMessage->IDL<<5)|(BasicTxMessage->RTR<<4)|(BasicTxMessage->DLC);
     if((FunctionalState)(BasicTxMessage->RTR) != ENABLE)
@@ -189,15 +189,15 @@ uint8_t CAN_Transmit(CAN_TypeDef* CANx,CanBasicTxMsg* BasicTxMessage)
         CANx->TXDR6 = BasicTxMessage->Data[6];
         CANx->TXDR7 = BasicTxMessage->Data[7];
     }
-    
+
     CANx->CMR = CAN_CMR_TR;
-    
+
     return state;
 }
 
 /**
 * @brief  Cancels a transmit request.
-* @param CANx: where x can be 1 to select the CAN peripheral. 
+* @param CANx: where x can be 1 to select the CAN peripheral.
 
 * @retval None
 */
@@ -208,22 +208,22 @@ void CAN_CancelTransmit(CAN_TypeDef* CANx)
     assert_param(IS_CAN_TRANSMITMAILBOX(Mailbox));
     /* abort transmission */
     CANx->CMR = CAN_AT;
-    
+
 }
 
 /**
 * @brief  Releases the specified receive FIFO.
-* @param CANx: where x can be 1 to select the CAN peripheral. 
+* @param CANx: where x can be 1 to select the CAN peripheral.
 * @retval None
 */
 void CAN_FIFORelease(CAN_TypeDef* CANx)
 {
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-    
+
     /* Release FIFO */
     CANx->CMR |= (uint32_t)CAN_RRB;
-    
+
 }
 
 /**
@@ -263,7 +263,7 @@ void CAN_Receive(CAN_TypeDef* CANx,CanBasicRxMsg* BasicRxMessage)
 uint8_t CAN_Sleep(CAN_TypeDef* CANx)
 {
     uint8_t sleepstatus = CANSLEEPFAILED;
-    
+
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
     CANx->CMR |= CAN_SleepMode;
@@ -273,7 +273,7 @@ uint8_t CAN_Sleep(CAN_TypeDef* CANx)
     }
     /* At this step, sleep mode status */
     return (uint8_t)sleepstatus;
-    
+
 }
 
 /**
@@ -285,13 +285,13 @@ uint8_t CAN_Sleep(CAN_TypeDef* CANx)
 uint8_t CAN_WakeUp(CAN_TypeDef* CANx)
 {
     uint8_t wakeupstatus = CANWAKEUPFAILED;
-    
+
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-    
+
     /* Wake up request */
     CANx->CMR &= ~CAN_SleepMode;
-    
+
     /* Sleep mode status */
     if((CANx->CMR&0x01)==0)
     {
@@ -311,22 +311,22 @@ uint8_t CAN_WakeUp(CAN_TypeDef* CANx)
 *            @arg CAN_STATUS_RBS: Receive buffer status
 *            @arg CAN_STATUS_DOS: Data overflow status
 *            @arg CAN_STATUS_TBS: Transmit buffer status
-*            @arg CAN_STATUS_TCS: Transmit complete status   
-*            @arg CAN_STATUS_RS: Receiving status       
-*            @arg CAN_STATUS_TS: Transmiting status 
-*            @arg CAN_STATUS_ES: Error status 
-*            @arg CAN_STATUS_BS: bus status, close or open       
+*            @arg CAN_STATUS_TCS: Transmit complete status
+*            @arg CAN_STATUS_RS: Receiving status
+*            @arg CAN_STATUS_TS: Transmiting status
+*            @arg CAN_STATUS_ES: Error status
+*            @arg CAN_STATUS_BS: bus status, close or open
 * @retval The new state of CAN_FLAG (SET or RESET).
 */
 FlagStatus CAN_GetFlagStatus(CAN_TypeDef* CANx,uint32_t CAN_FLAG)
 {
     FlagStatus bitstatus = RESET;
-    
+
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
     assert_param(IS_CAN_GET_FLAG(CAN_FLAG));
-    
-    
+
+
     if((CANx->SR & CAN_FLAG) == CAN_FLAG)
     {
         /* CAN_FLAG is set */
@@ -346,38 +346,38 @@ FlagStatus CAN_GetFlagStatus(CAN_TypeDef* CANx,uint32_t CAN_FLAG)
 * @param CANx: where x can be 1 to select the CAN peripheral.
 * @param  CAN_IT: specifies the CAN interrupt source to check.
 *          This parameter can be one of the following values:
-*            @arg CAN_IT_RI: Receive FIFO not empty Interrupt 
-*            @arg CAN_IT_TI: Transmit Interrupt 
+*            @arg CAN_IT_RI: Receive FIFO not empty Interrupt
+*            @arg CAN_IT_TI: Transmit Interrupt
 *            @arg CAN_IT_EI: ERROR Interrupt
 *            @arg CAN_IT_DOI: Data voerflow Interrupt
-*            @arg CAN_IT_WUI: Wakeup Interrupt 
+*            @arg CAN_IT_WUI: Wakeup Interrupt
 *            @arg CAN_IT_ALL: use it can enble all Interrupt
 * @retval The current state of CAN_IT (SET or RESET).
 */
 ITStatus CAN_GetITStatus(CAN_TypeDef* CANx, uint32_t CAN_IT)
 {
     ITStatus itstatus = RESET;
-    
+
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
     assert_param(IS_CAN_IT(CAN_IT));
-    
+
     /* check the interrupt enable bit */
     if((CANx->IR & CAN_IT) != CAN_IT)
     {
         itstatus = RESET;
     }
-    else 
+    else
     {
         itstatus = SET;
     }
-    
+
     return itstatus;
 }
 
 
 /**
-* @brief: Select the can work as peli mode or basic mode 
+* @brief: Select the can work as peli mode or basic mode
 * @param  CANx: where x can be 1 or 2 to to select the CAN peripheral.
 * @param  CAN_MODE: specifies the work mode:CAN_BASICMode,CAN_PELIMode
 * @retval: None
@@ -386,7 +386,7 @@ void CAN_Mode_Cmd(CAN_TypeDef* CANx, uint32_t CAN_MODE)
 {
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-    
+
     CANx->CDR |= CAN_MODE;
 }
 
@@ -401,12 +401,12 @@ void CAN_ResetMode_Cmd(CAN_TypeDef* CANx,FunctionalState NewState)
 {
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-    
+
     if(NewState == ENABLE)
     {
         CANx->CR |= CAN_ResetMode;
     }
-    else 
+    else
     {
         CANx->CR &= ~CAN_ResetMode;
     }
@@ -421,9 +421,9 @@ void CAN_ClearDataOverflow(CAN_TypeDef* CANx)
 {
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-    
+
     CANx->CMR |= (uint32_t)CAN_CDO;
-    
+
 }
 
 /**
@@ -436,7 +436,7 @@ void CAN_ClearITPendingBit(CAN_TypeDef* CANx)
     uint32_t temp=0;
     temp = temp;
     temp = CANx->IR; //read this register clear all interrupt
-    
+
 }
 
 
@@ -450,7 +450,7 @@ void CAN_Peli_SleepMode_Cmd(FunctionalState NewState)
 {
     if(NewState == ENABLE)
         CAN1_PELI->MOD |= CAN_SleepMode;
-    else 
+    else
         CAN1_PELI->MOD &= ~CAN_SleepMode;
 }
 
@@ -464,7 +464,7 @@ void CAN_Peli_SleepMode_Cmd(FunctionalState NewState)
 void CAN_Peli_StructInit(CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
 {
     /*--------------- Reset CAN_Peli init structure parameters values -----------------*/
-    
+
     /* initialize the BRP member(where can be set with (0..63))*/
     CAN_Peli_InitStruct->BRP = 0x0;
     /* initialize the SJW member(where can be set with (0..3)) */
@@ -476,12 +476,12 @@ void CAN_Peli_StructInit(CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
     /* Initialize the SAM member(where can be set (SET or RESET)) */
     CAN_Peli_InitStruct->SAM = RESET;
     /* Initialize the LOM member*/
-    CAN_Peli_InitStruct->LOM = DISABLE; 
+    CAN_Peli_InitStruct->LOM = DISABLE;
     /* Initialize the STM member*/
     CAN_Peli_InitStruct->STM = DISABLE;
     /* Initialize the SM member*/
     CAN_Peli_InitStruct->SM = DISABLE;
-    CAN_Peli_InitStruct->SRR = DISABLE; 
+    CAN_Peli_InitStruct->SRR = DISABLE;
     CAN_Peli_InitStruct->EWLR = 0x96;
 }
 
@@ -490,7 +490,7 @@ void CAN_Peli_StructInit(CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
 *         parameters in the CAN_Peli_InitStruct.
 * @param  CAN_Basic_InitStruct: pointer to a CAN_Peli_InitTypeDef structure that contains
 *         the configuration information for the CAN peripheral in the peli workmode.
-* @retval None 
+* @retval None
 */
 void CAN_Peli_Init(CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
 {
@@ -500,21 +500,21 @@ void CAN_Peli_Init(CAN_Peli_InitTypeDef* CAN_Peli_InitStruct)
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->SAM));
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->TESG2));
     assert_param(IS_FUNCTIONAL_STATE(CAN_InitStruct->TESG1));
-    
+
     CAN1_PELI->BTR0 = ((uint32_t)CAN_Peli_InitStruct->SJW<<6)|((uint32_t)CAN_Peli_InitStruct->BRP);
     CAN1_PELI->BTR1 = ((uint32_t)CAN_Peli_InitStruct->SAM<<7)|((uint32_t)CAN_Peli_InitStruct->TESG2<<4)|\
         ((uint32_t)CAN_Peli_InitStruct->TESG1);
     if(CAN_Peli_InitStruct->LOM == ENABLE)
         CAN1_PELI->MOD |= (uint32_t)CAN_ListenOnlyMode;
-    else  
+    else
         CAN1_PELI->MOD &= ~(uint32_t)CAN_ListenOnlyMode;
     if(CAN_Peli_InitStruct->STM == ENABLE)
         CAN1_PELI->MOD |= (uint32_t)CAN_SeftTestMode;
-    else  
+    else
         CAN1_PELI->MOD &= ~(uint32_t)CAN_SeftTestMode;
     if(CAN_Peli_InitStruct->SM == ENABLE)
         CAN1_PELI->MOD |= (uint32_t)CAN_SleepMode;
-    else  
+    else
         CAN1_PELI->MOD &= ~(uint32_t)CAN_SleepMode;
     CAN1_PELI->EWLR = (uint32_t)CAN_Peli_InitStruct->EWLR;
 }
@@ -532,14 +532,14 @@ void CAN_Peli_FilterInit(CAN_Peli_FilterInitTypeDef* CAN_Peli_FilterInitStruct)
 {
     if(CAN_Peli_FilterInitStruct->AFM == CAN_FilterMode_Singal)
         CAN1_PELI->MOD |= (uint32_t)CAN_FilterMode_Singal;
-    else 
+    else
         CAN1_PELI->MOD &= (uint32_t)CAN_FilterMode_Double;
-    
+
     CAN1_PELI->FF = CAN_Peli_FilterInitStruct->CAN_FilterId0;
     CAN1_PELI->ID0 = CAN_Peli_FilterInitStruct->CAN_FilterId1;
     CAN1_PELI->ID1 = CAN_Peli_FilterInitStruct->CAN_FilterId2;
     CAN1_PELI->DATA0 = CAN_Peli_FilterInitStruct->CAN_FilterId3;
-    
+
     CAN1_PELI->DATA1 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId0;
     CAN1_PELI->DATA2 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId1;
     CAN1_PELI->DATA3 = CAN_Peli_FilterInitStruct->CAN_FilterMaskId2;
@@ -557,7 +557,7 @@ void CAN_Peli_FilterStructInit(CAN_Peli_FilterInitTypeDef* CAN_Peli_FilterInitSt
     CAN_Peli_FilterInitStruct->CAN_FilterId1 = 0;
     CAN_Peli_FilterInitStruct->CAN_FilterId2 = 0;
     CAN_Peli_FilterInitStruct->CAN_FilterId3 = 0;
-    
+
     CAN_Peli_FilterInitStruct->CAN_FilterMaskId0 = 0;
     CAN_Peli_FilterInitStruct->CAN_FilterMaskId1 = 0;
     CAN_Peli_FilterInitStruct->CAN_FilterMaskId2 = 0;
@@ -575,7 +575,7 @@ void CAN_Peli_Transmit(CanPeliTxMsg* PeliTxMessage)
     /* Check the parameters */
     assert_param(IS_CAN_RTR(PeliTxMessage->RTR));
     assert_param(IS_CAN_DLC(PeliTxMessage->DLC));
-    
+
     CAN1_PELI->FF = (PeliTxMessage->FF<<7)|(PeliTxMessage->RTR<<6)|(PeliTxMessage->DLC);
     if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
     {
@@ -620,7 +620,7 @@ void CAN_Peli_Transmit(CanPeliTxMsg* PeliTxMessage)
     {
         CAN1->CMR = CAN_TR|CAN_AT;
     }
-    
+
 }
 
 
@@ -635,7 +635,7 @@ void CAN_Peli_TransmitRepeat(CanPeliTxMsg* PeliTxMessage)
     /* Check the parameters */
     assert_param(IS_CAN_RTR(PeliTxMessage->RTR));
     assert_param(IS_CAN_DLC(PeliTxMessage->DLC));
-    
+
     CAN1_PELI->FF = (PeliTxMessage->FF<<7)|(PeliTxMessage->RTR<<6)|(PeliTxMessage->DLC);
     if(((FunctionalState)PeliTxMessage->FF) != ENABLE)
     {
@@ -671,7 +671,7 @@ void CAN_Peli_TransmitRepeat(CanPeliTxMsg* PeliTxMessage)
             CAN1_PELI->DATA9 = PeliTxMessage->Data[7];
         }
     }
-    
+
     if(CAN1_PELI->MOD&CAN_MOD_STM)
     {
         CAN1->CMR = CAN_CMR_GTS|CAN_CMR_AT;
@@ -683,15 +683,15 @@ void CAN_Peli_TransmitRepeat(CanPeliTxMsg* PeliTxMessage)
 }
 
 /** @defgroup CAN_Group3 CAN Frames Reception functions
-*  @brief    CAN Frames Reception functions 
+*  @brief    CAN Frames Reception functions
 *
-@verbatim    
+@verbatim
 ===============================================================================
 ##### CAN Frames Reception functions #####
-===============================================================================  
-[..] This section provides functions allowing to 
+===============================================================================
+[..] This section provides functions allowing to
 (+) Receive a correct CAN frame.
-(+) Release a specified receive FIFO 
+(+) Release a specified receive FIFO
 (+) Return the number of the pending received CAN frames.
 
 @endverbatim
@@ -711,11 +711,11 @@ void CAN_Peli_Receive(CanPeliRxMsg* PeliRxMessage)
     PeliRxMessage->FF = (CAN1_PELI->FF)>>7;
     PeliRxMessage->RTR = ((CAN1_PELI->FF)>>6)&0x1;
     PeliRxMessage->DLC = (CAN1_PELI->FF)&0xf;
-    
+
     if(((FunctionalState)PeliRxMessage->FF) != ENABLE)
     {
         tempid = (uint32_t)(CAN1_PELI->ID1>>5);
-        tempid |= (uint32_t)(CAN1_PELI->ID0<<3); 
+        tempid |= (uint32_t)(CAN1_PELI->ID0<<3);
         PeliRxMessage->ID = tempid;
         PeliRxMessage->Data[0] = CAN1_PELI->DATA0;
         PeliRxMessage->Data[1] = CAN1_PELI->DATA1;
@@ -732,7 +732,7 @@ void CAN_Peli_Receive(CanPeliRxMsg* PeliRxMessage)
         tempid |= (uint32_t)(CAN1_PELI->DATA0<<5);
         tempid |= (uint32_t)(CAN1_PELI->ID1<<13);
         tempid |= (uint32_t)(CAN1_PELI->ID0<<21);
-        PeliRxMessage->ID = tempid; 
+        PeliRxMessage->ID = tempid;
         PeliRxMessage->Data[0] = CAN1_PELI->DATA2;
         PeliRxMessage->Data[1] = CAN1_PELI->DATA3;
         PeliRxMessage->Data[2] = CAN1_PELI->DATA4;
@@ -757,12 +757,12 @@ uint32_t CAN_Peli_GetRxFIFOInfo(void)
 
 
 /** @defgroup CAN_Group5 CAN Bus Error management functions
-*  @brief    CAN Bus Error management functions 
+*  @brief    CAN Bus Error management functions
 *
-@verbatim    
+@verbatim
 ===============================================================================
 ##### CAN Bus Error management functions #####
-===============================================================================  
+===============================================================================
 
 @endverbatim
 * @{
@@ -770,46 +770,46 @@ uint32_t CAN_Peli_GetRxFIFOInfo(void)
 
 /**
 * @brief  Returns the CAN's last error code (LEC).
-* @retval Error code: 
-*          - CAN_ERRORCODE_NoErr: No Error  
+* @retval Error code:
+*          - CAN_ERRORCODE_NoErr: No Error
 *          - CAN_ERRORCODE_StuffErr: Stuff Error
 *          - CAN_ERRORCODE_FormErr: Form Error
 *          - CAN_ERRORCODE_ACKErr : Acknowledgment Error
 *          - CAN_ERRORCODE_BitRecessiveErr: Bit Recessive Error
 *          - CAN_ERRORCODE_BitDominantErr: Bit Dominant Error
 *          - CAN_ERRORCODE_CRCErr: CRC Error
-*          - CAN_ERRORCODE_SoftwareSetErr: Software Set Error  
+*          - CAN_ERRORCODE_SoftwareSetErr: Software Set Error
 */
 uint8_t CAN_Peli_GetLastErrorCode(void)
 {
     uint8_t errorcode=0;
-    
+
     /* Get the error code*/
     errorcode = ((uint8_t)CAN1_PELI->ECC);
-    
+
     /* Return the error code*/
     return errorcode;
 }
 /**
 * @brief  Returns the CAN Receive Error Counter (REC).
-* @note   In case of an error during reception, this counter is incremented 
-*         by 1 or by 8 depending on the error condition as defined by the CAN 
-*         standard. After every successful reception, the counter is 
-*         decremented by 1 or reset to 120 if its value was higher than 128. 
-*         When the counter value exceeds 127, the CAN controller enters the 
-*         error passive state.  
-* @retval CAN Receive Error Counter. 
+* @note   In case of an error during reception, this counter is incremented
+*         by 1 or by 8 depending on the error condition as defined by the CAN
+*         standard. After every successful reception, the counter is
+*         decremented by 1 or reset to 120 if its value was higher than 128.
+*         When the counter value exceeds 127, the CAN controller enters the
+*         error passive state.
+* @retval CAN Receive Error Counter.
 */
 uint8_t CAN_Peli_GetReceiveErrorCounter(void)
 {
     uint8_t counter=0;
-    
+
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-    
+
     /* Get the Receive Error Counter*/
     counter = (uint8_t)(CAN1_PELI->RXERR);
-    
+
     /* Return the Receive Error Counter*/
     return counter;
 }
@@ -817,29 +817,29 @@ uint8_t CAN_Peli_GetReceiveErrorCounter(void)
 
 /**
 * @brief  Returns the LSB of the 9-bit CANx Transmit Error Counter(TEC).
-* @retval LSB of the 8-bit CAN Transmit Error Counter. 
+* @retval LSB of the 8-bit CAN Transmit Error Counter.
 */
 uint8_t CAN_Peli_GetLSBTransmitErrorCounter(void)
 {
     uint8_t counter=0;
-    
+
     /* Check the parameters */
     assert_param(IS_CAN_ALL_PERIPH(CANx));
-    
+
     /* Get the LSB of the 8-bit CAN Transmit Error Counter(TEC) */
     counter = (uint8_t)(CAN1_PELI->TXERR);
-    
+
     /* Return the LSB of the 8-bit CAN Transmit Error Counter(TEC) */
     return counter;
 }
 /** @defgroup CAN_Group6 Interrupts and flags management functions
 *  @brief   Interrupts and flags management functions
 *
-@verbatim   
+@verbatim
 ===============================================================================
 ##### Interrupts and flags management functions #####
-===============================================================================  
-[..] This section provides functions allowing to configure the CAN Interrupts 
+===============================================================================
+[..] This section provides functions allowing to configure the CAN Interrupts
 and to get the status and clear flags and Interrupts pending bits.
 [..] The CAN provides 14 Interrupts sources and 15 Flags:
 
@@ -849,12 +849,12 @@ and to get the status and clear flags and Interrupts pending bits.
 /**
 * @brief  Enables or disables the specified CAN interrupts in peli workmode.
 * @param  CAN_IT: specifies the CAN interrupt sources to be enabled or disabled.
-*          This parameter can be: 
-*            @arg CAN_IT_RI: Receive FIFO not empty Interrupt 
-*            @arg CAN_IT_TI: Transmit Interrupt 
+*          This parameter can be:
+*            @arg CAN_IT_RI: Receive FIFO not empty Interrupt
+*            @arg CAN_IT_TI: Transmit Interrupt
 *            @arg CAN_IT_EI: ERROR Interrupt
 *            @arg CAN_IT_DOI: Data voerflow Interrupt
-*            @arg CAN_IT_WUI: Wakeup Interrupt 
+*            @arg CAN_IT_WUI: Wakeup Interrupt
 *            @arg CAN_IT_EPI(only Peli): passive error Interrupt
 *            @arg CAN_IT_ALI(only Peli): arbiter lose Interrupt
 *            @arg CAN_IT_BEI(only Peli): bus error Interrupt
@@ -868,7 +868,7 @@ void CAN_Peli_ITConfig(uint32_t CAN_IT, FunctionalState NewState)
     /* Check the parameters */
     assert_param(IS_CAN_IT(CAN_IT));
     assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
     if (NewState != DISABLE)
     {
         /* Enable the selected CAN interrupt */
@@ -886,11 +886,11 @@ void CAN_Peli_ITConfig(uint32_t CAN_IT, FunctionalState NewState)
 * @brief  Checks whether the specified CAN interrupt has occurred or not.
 * @param  CAN_IT: specifies the CAN interrupt source to check.
 *          This parameter can be one of the following values:
-*            @arg CAN_IT_RI: Receive FIFO not empty Interrupt 
-*            @arg CAN_IT_TI: Transmit Interrupt 
+*            @arg CAN_IT_RI: Receive FIFO not empty Interrupt
+*            @arg CAN_IT_TI: Transmit Interrupt
 *            @arg CAN_IT_EI: ERROR Interrupt
 *            @arg CAN_IT_DOI: Data voerflow Interrupt
-*            @arg CAN_IT_WUI: Wakeup Interrupt 
+*            @arg CAN_IT_WUI: Wakeup Interrupt
 *            @arg CAN_IT_EPI(only Peli): passive error Interrupt
 *            @arg CAN_IT_ALI(only Peli): arbiter lose Interrupt
 *            @arg CAN_IT_BEI(only Peli): bus error Interrupt
@@ -902,17 +902,17 @@ ITStatus CAN_Peli_GetITStatus(uint32_t CAN_IT)
     ITStatus itstatus = RESET;
     /* Check the parameters */
     assert_param(IS_CAN_IT(CAN_IT));
-    
+
     /* check the interrupt enable bit */
     if((CAN1_PELI->IR & CAN_IT) != CAN_IT)
     {
         itstatus = RESET;
     }
-    else 
+    else
     {
         itstatus = SET;
     }
-    
+
     return itstatus;
 }
 
@@ -933,7 +933,7 @@ void CAN_AutoCfg_BaudParam(CAN_Peli_InitTypeDef  *CAN_Peli_InitStruct,unsigned i
     for( i = 25;i > 3;i -- )
     {
         remain = sumPrescaler - ((sumPrescaler / i)*i);
-        if( remain == 0 )		//Õû³ý
+        if( remain == 0 )        //Õû³ý
         {
             record = i;
             break;

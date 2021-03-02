@@ -32,10 +32,10 @@ int rt_application_init()
 
     tid = rt_thread_create("init",
         rt_init_thread_entry,
-		RT_NULL,
+        RT_NULL,
         2048,
-		RT_THREAD_PRIORITY_MAX/3,
-		20);
+        RT_THREAD_PRIORITY_MAX/3,
+        20);
 
     if (tid != RT_NULL)
         rt_thread_startup(tid);

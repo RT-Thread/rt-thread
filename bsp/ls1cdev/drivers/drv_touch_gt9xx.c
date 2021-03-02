@@ -33,15 +33,15 @@
 
 #define GT9xx_TS_ADDR               (0x5D)
 
-#define gt9xx_READ_XY_REG           (0x814E)    /* åæ ‡å¯„å­˜å™¨       */
-#define gt9xx_CLEARBUF_REG          (0x814E)    /* æ¸…é™¤åæ ‡å¯„å­˜å™¨   */
-#define gt9xx_CONFIG_REG            (0x8047)    /* é…ç½®å‚æ•°å¯„å­˜å™¨   */
-#define gt9xx_COMMAND_REG           (0x8040)    /* å®æ—¶å‘½ä»¤         */
-#define gt9xx_PRODUCT_ID_REG        (0x8140)    /* äº§å“ID           */
-#define gt9xx_VENDOR_ID_REG         (0x814A)    /* å½“å‰æ¨¡ç»„é€‰é¡¹ä¿¡æ¯ */
-#define gt9xx_CONFIG_VERSION_REG    (0x8047)    /* é…ç½®æ–‡ä»¶ç‰ˆæœ¬å·   */
-#define gt9xx_CONFIG_CHECKSUM_REG   (0x80FF)    /* é…ç½®æ–‡ä»¶æ ¡éªŒç    */
-#define gt9xx_FIRMWARE_VERSION_REG  (0x8144)    /* å›ºä»¶ç‰ˆæœ¬å·       */
+#define gt9xx_READ_XY_REG           (0x814E)    /* ×ø±ê¼Ä´æÆ÷       */
+#define gt9xx_CLEARBUF_REG          (0x814E)    /* Çå³ı×ø±ê¼Ä´æÆ÷   */
+#define gt9xx_CONFIG_REG            (0x8047)    /* ÅäÖÃ²ÎÊı¼Ä´æÆ÷   */
+#define gt9xx_COMMAND_REG           (0x8040)    /* ÊµÊ±ÃüÁî         */
+#define gt9xx_PRODUCT_ID_REG        (0x8140)    /* ²úÆ·ID           */
+#define gt9xx_VENDOR_ID_REG         (0x814A)    /* µ±Ç°Ä£×éÑ¡ÏîĞÅÏ¢ */
+#define gt9xx_CONFIG_VERSION_REG    (0x8047)    /* ÅäÖÃÎÄ¼ş°æ±¾ºÅ   */
+#define gt9xx_CONFIG_CHECKSUM_REG   (0x80FF)    /* ÅäÖÃÎÄ¼şĞ£ÑéÂë   */
+#define gt9xx_FIRMWARE_VERSION_REG  (0x8144)    /* ¹Ì¼ş°æ±¾ºÅ       */
 
 #if 0
 #define TPDEBUG     rt_kprintf

@@ -57,7 +57,7 @@
 #define SYSTEM_GPIO_XREF_TABLE                            \
     { GADI_GPIO_0 , GADI_GPIO_TYPE_OUTPUT_SF_CS0                 }, \
     { GADI_GPIO_1 , GADI_GPIO_TYPE_OUTPUT_SF_CS1                 }, \
-	{ GADI_GPIO_3 , GADI_GPIO_TYPE_INPUT_1                       }, \
+    { GADI_GPIO_3 , GADI_GPIO_TYPE_INPUT_1                       }, \
     { GADI_GPIO_4 , GADI_GPIO_TYPE_INPUT_0                       }, \
     { GADI_GPIO_6 , GADI_GPIO_TYPE_OUTPUT_1                      }, \
     { GADI_GPIO_7 , GADI_GPIO_TYPE_INPUT_0                       }, \
@@ -90,16 +90,16 @@
     { GADI_GPIO_38, GADI_GPIO_TYPE_INOUT_SD_DATA_2               }, \
     { GADI_GPIO_39, GADI_GPIO_TYPE_OUTPUT_SDIO_CLK               }, \
     { GADI_GPIO_40, GADI_GPIO_TYPE_INOUT_SD_DATA_3               }, \
-	{ GADI_GPIO_41, GADI_GPIO_TYPE_INPUT_SD_WP_N                 }, \
+    { GADI_GPIO_41, GADI_GPIO_TYPE_INPUT_SD_WP_N                 }, \
     { GADI_GPIO_42, GADI_GPIO_TYPE_INOUT_SD_DATA_0               }, \
     { GADI_GPIO_45, GADI_GPIO_TYPE_INOUT_SD_DATA_1               }, \
-	{ GADI_GPIO_5,  GADI_GPIO_TYPE_INPUT_SD_CD_N                 }, \
+    { GADI_GPIO_5,  GADI_GPIO_TYPE_INPUT_SD_CD_N                 }, \
     { GADI_GPIO_53, GADI_GPIO_TYPE_INPUT_0        /* ALARM_OUT */}, \
     { GADI_GPIO_54, GADI_GPIO_TYPE_INPUT_0         /* ALARM_IN */}, \
     { GADI_GPIO_55, GADI_GPIO_TYPE_INPUT_0                       }, \
-	{ GADI_GPIO_20, GADI_GPIO_TYPE_INPUT_0                       }, \
-	{ GADI_GPIO_23, GADI_GPIO_TYPE_INPUT_0                       }, \
-	SYSTEM_GPIO_INTPHY_TABLE
+    { GADI_GPIO_20, GADI_GPIO_TYPE_INPUT_0                       }, \
+    { GADI_GPIO_23, GADI_GPIO_TYPE_INPUT_0                       }, \
+    SYSTEM_GPIO_INTPHY_TABLE
 
 #define SYSTEM_GPIO_IR_LED_CTRL     GADI_GPIO_12
 #define SYSTEM_GPIO_IR_CUT1         GADI_GPIO_49

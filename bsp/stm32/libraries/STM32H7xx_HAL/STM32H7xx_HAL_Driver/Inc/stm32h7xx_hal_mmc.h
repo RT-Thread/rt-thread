@@ -15,7 +15,7 @@
   *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32H7xx_HAL_MMC_H

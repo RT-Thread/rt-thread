@@ -71,7 +71,7 @@ static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t valu
         {
             GPIO_REG_GPCLR1(GPIO_BASE) = 1 << (pin % 32);
         }
-        
+
     }
 }
 

@@ -181,7 +181,7 @@ float WRAPPER_FUNC(roundf)(float x) {
     }
     if(e==-1) {              // 0.5<=|x|<1
         ix&=0x80000000;
-        ix|=0x3f800000;        // Â±1
+        ix|=0x3f800000;        // ¡À1
         return *(float*)&ix;
     }
     e=23-e;                  // bit position in mantissa with significance 1, <=23
@@ -209,7 +209,7 @@ float WRAPPER_FUNC(floorf)(float x) {
     e=23-e;                  // bit position in mantissa with significance 1
     if(e<=0) return x;       // |x| large, so must be an integer
     m=(1<<e)-1;              // mask for bit of significance <1
-    if(fisneg(x)) ix+=m;     // add 1-Îµ to magnitude if negative
+    if(fisneg(x)) ix+=m;     // add 1-¦Å to magnitude if negative
     ix&=~m;                  // truncate
     return *(float*)&ix;
 }
@@ -230,7 +230,7 @@ float WRAPPER_FUNC(ceilf)(float x) {
     e=23-e;                  // bit position in mantissa with significance 1
     if(e<=0) return x;       // |x| large, so must be an integer
     m=(1<<e)-1;              // mask for bit of significance <1
-    if(!fisneg(x)) ix+=m;    // add 1-Îµ to magnitude if positive
+    if(!fisneg(x)) ix+=m;    // add 1-¦Å to magnitude if positive
     ix&=~m;                  // truncate
     return *(float*)&ix;
 }
@@ -513,7 +513,7 @@ float WRAPPER_FUNC(fmodf)(float x,float y) {
         if(!fisneg(x)) return PZERO;
         return MZERO;
     }
-    if(ex<ey) return x;  // |x|<|y|, including case x=Â±0
+    if(ex<ey) return x;  // |x|<|y|, including case x=¡À0
     mx=frem_0(mx,my,ex-ey,0);
     if(sx) mx=-mx;
     return fix2float(mx,0x7f-ey+23);

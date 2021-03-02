@@ -1974,7 +1974,7 @@ typedef union _hw_usdhc_sys_ctrl
  *
  * Values:
  * - 0000 - Divide-by-1
- * - ....... - 
+ * - ....... -
  * - 0001 - Divide-by-2
  * - 1110 - Divide-by-15
  * - 1111 - Divide-by-16
@@ -4258,7 +4258,7 @@ typedef union _hw_usdhc_host_ctrl_cap
         unsigned SDR50_SUPPORT : 1; //!< [0] SDR50 support:
         unsigned SDR104_SUPPORT : 1; //!< [1] SDR104 support:
         unsigned DDR50_SUPPORT : 1; //!< [2] DDR50 support:
-        unsigned RESERVED0 : 5; //!< [7:3] 
+        unsigned RESERVED0 : 5; //!< [7:3]
         unsigned TIME_COUNT_RETUNING : 4; //!< [11:8] Time counter for retuning:
         unsigned RESERVED1 : 1; //!< [12] Reserved
         unsigned USE_TUNING_SDR50 : 1; //!< [13] Use Tuning for SDR50:

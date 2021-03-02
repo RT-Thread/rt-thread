@@ -270,10 +270,10 @@ void rt_system_scheduler_start(void)
 #ifdef RT_USING_SMP
 /**
  * This function will handle IPI interrupt and do a scheduling in system;
- * 
+ *
  * @param vector, the number of IPI interrupt for system scheduling
  * @param param, use RT_NULL
- * 
+ *
  * NOTE: this function should be invoke or register as ISR in BSP.
  */
 void rt_scheduler_ipi_handler(int vector, void *param)
@@ -283,7 +283,7 @@ void rt_scheduler_ipi_handler(int vector, void *param)
 
 /**
  * This function will perform one scheduling. It will select one thread
- * with the highest priority level in global ready queue or local ready queue, 
+ * with the highest priority level in global ready queue or local ready queue,
  * then switch to it.
  */
 void rt_schedule(void)

@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	time.h
- * @brief	Time primitives for libmetal.
+ * @file    time.h
+ * @brief    Time primitives for libmetal.
  */
 
 #ifndef __METAL_TIME__H__

@@ -53,7 +53,7 @@ void flexcan1_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio4 signal: GPIO4_IO11
     //     ALT6 (6) - Select instance: hdmi signal: HDMI_TX_CEC_LINE
     HW_IOMUXC_SW_MUX_CTL_PAD_KEY_ROW2_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_KEY_ROW2_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_KEY_ROW2_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_KEY_ROW2_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2(0x020E05DC)
@@ -94,13 +94,13 @@ void flexcan1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_KEY_ROW2_SRE_V(SLOW));
     // Pad KEY_ROW2 is involved in Daisy Chain.
     // Input Select Register:
@@ -133,7 +133,7 @@ void flexcan1_iomux_config(void)
     //     ALT6 (6) - Select instance: spdif signal: SPDIF_LOCK
     //     ALT7 (7) - Select instance: usb signal: USB_OTG_HOST_MODE
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO07_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO07_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO07_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO07_MUX_MODE_V(ALT3));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO07(0x020E0610)
@@ -174,12 +174,12 @@ void flexcan1_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO07_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_SRE_V(SLOW));
 }

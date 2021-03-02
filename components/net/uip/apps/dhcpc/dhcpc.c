@@ -186,12 +186,12 @@ send_request(void)
   struct dhcp_msg *m = (struct dhcp_msg *)uip_appdata;
 
   create_msg(m);
-  
+
   end = add_msg_type(&m->options[4], DHCPREQUEST);
   end = add_server_id(end);
   end = add_req_ipaddr(end);
   end = add_end(end);
-  
+
   uip_send(uip_appdata, end - (u8_t *)uip_appdata);
 }
 /*---------------------------------------------------------------------------*/
@@ -234,7 +234,7 @@ static u8_t
 parse_msg(void)
 {
   struct dhcp_msg *m = (struct dhcp_msg *)uip_appdata;
-  
+
   if(m->op == DHCP_REPLY &&
      memcmp(m->xid, xid, sizeof(xid)) == 0 &&
      memcmp(m->chaddr, s.mac_addr, s.mac_len) == 0) {
@@ -248,7 +248,7 @@ static
 PT_THREAD(handle_dhcp(void))
 {
   PT_BEGIN(&s.pt);
-  
+
   /* try_again:*/
   s.state = STATE_SENDING;
   s.ticks = CLOCK_SECOND;
@@ -267,7 +267,7 @@ PT_THREAD(handle_dhcp(void))
       s.ticks *= 2;
     }
   } while(s.state != STATE_OFFER_RECEIVED);
-  
+
   s.ticks = CLOCK_SECOND;
 
   do {
@@ -286,26 +286,26 @@ PT_THREAD(handle_dhcp(void))
       PT_RESTART(&s.pt);
     }
   } while(s.state != STATE_CONFIG_RECEIVED);
-  
+
 #if 0
   printf("Got IP address %d.%d.%d.%d\n",
-	 uip_ipaddr1(s.ipaddr), uip_ipaddr2(s.ipaddr),
-	 uip_ipaddr3(s.ipaddr), uip_ipaddr4(s.ipaddr));
+     uip_ipaddr1(s.ipaddr), uip_ipaddr2(s.ipaddr),
+     uip_ipaddr3(s.ipaddr), uip_ipaddr4(s.ipaddr));
   printf("Got netmask %d.%d.%d.%d\n",
-	 uip_ipaddr1(s.netmask), uip_ipaddr2(s.netmask),
-	 uip_ipaddr3(s.netmask), uip_ipaddr4(s.netmask));
+     uip_ipaddr1(s.netmask), uip_ipaddr2(s.netmask),
+     uip_ipaddr3(s.netmask), uip_ipaddr4(s.netmask));
   printf("Got DNS server %d.%d.%d.%d\n",
-	 uip_ipaddr1(s.dnsaddr), uip_ipaddr2(s.dnsaddr),
-	 uip_ipaddr3(s.dnsaddr), uip_ipaddr4(s.dnsaddr));
+     uip_ipaddr1(s.dnsaddr), uip_ipaddr2(s.dnsaddr),
+     uip_ipaddr3(s.dnsaddr), uip_ipaddr4(s.dnsaddr));
   printf("Got default router %d.%d.%d.%d\n",
-	 uip_ipaddr1(s.default_router), uip_ipaddr2(s.default_router),
-	 uip_ipaddr3(s.default_router), uip_ipaddr4(s.default_router));
+     uip_ipaddr1(s.default_router), uip_ipaddr2(s.default_router),
+     uip_ipaddr3(s.default_router), uip_ipaddr4(s.default_router));
   printf("Lease expires in %ld seconds\n",
-	 ntohs(s.lease_time[0])*65536ul + ntohs(s.lease_time[1]));
+     ntohs(s.lease_time[0])*65536ul + ntohs(s.lease_time[1]));
 #endif
 
   dhcpc_configured(&s);
-  
+
   /*  timer_stop(&s.timer);*/
 
   /*
@@ -323,7 +323,7 @@ void
 dhcpc_init(const void *mac_addr, int mac_len)
 {
   uip_ipaddr_t addr;
-  
+
   s.mac_addr = mac_addr;
   s.mac_len  = mac_len;
 
@@ -346,7 +346,7 @@ void
 dhcpc_request(void)
 {
   u16_t ipaddr[2];
-  
+
   if(s.state == STATE_INITIAL) {
     uip_ipaddr(ipaddr, 0,0,0,0);
     uip_sethostaddr(ipaddr);

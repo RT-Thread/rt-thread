@@ -270,10 +270,10 @@ void md_adc_get_data(uint8_t SSx,double offset,double coefficient, uint16_t *cal
      data = md_adc_get_ss0_data(ADC);
     else if(SSx == 1)
      data = md_adc_get_ss1_data(ADC);
-    else if(SSx == 2) 
+    else if(SSx == 2)
      data = md_adc_get_ss2_data(ADC);
     else
-     data = md_adc_get_ss3_data(ADC);     
+     data = md_adc_get_ss3_data(ADC);
     if(data >= 4095)
       data = 4095;
     printf("data = %4d\r\n",data);

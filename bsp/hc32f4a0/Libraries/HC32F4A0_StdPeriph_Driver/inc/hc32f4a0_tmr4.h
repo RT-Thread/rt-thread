@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
  * @file  hc32f4a0_tmr4.h
- * @brief This file contains all the functions prototypes of the TMR4(Timer4) 
+ * @brief This file contains all the functions prototypes of the TMR4(Timer4)
  *        driver library.
  @verbatim
    Change Logs:

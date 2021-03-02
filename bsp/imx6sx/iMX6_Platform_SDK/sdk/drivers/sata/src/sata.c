@@ -40,8 +40,8 @@
 // Definitions
 /////////////////////////////////////////////////////////////////////////////
 #define PRINT(opt,fmt,args...) \
-	if(opt) \
-		printf(fmt, ## args)
+    if(opt) \
+        printf(fmt, ## args)
 
 sata_command_header_t *cmdhdr = NULL;
 sata_command_table_t *cmdtbl = NULL;
@@ -69,16 +69,16 @@ static sata_return_t sata_hdd_init(u32 port);
 static sata_return_t ahci_find_empty_slot(u32 port);
 static sata_return_t sata_wait_command_done(u32 port);
 
-static sata_return_t sata_reg_fis_h2d(u32 port, 
+static sata_return_t sata_reg_fis_h2d(u32 port,
                                       u32 sect_addr,
                                       u32 sect_cnt,
-                                      u32 rw, 
-                                      u32 command, 
-                                      char features, 
-                                      u32 size, 
-                                      u32 data_addr,  
-                                      sata_command_header_t * cmdh, 
-                                      sata_command_table_t * cmdt); 
+                                      u32 rw,
+                                      u32 command,
+                                      char features,
+                                      u32 size,
+                                      u32 data_addr,
+                                      sata_command_header_t * cmdh,
+                                      sata_command_table_t * cmdt);
 static sata_return_t sata_non_queued_error_recovery(u32 port);
 static sata_return_t sata_phy_cr_ack_polling(u32 max_iterations, u32 expected_val, u32 port);
 static sata_return_t sata_phy_cr_write(u32 addr, u32 val, u32 port);
@@ -521,7 +521,7 @@ static sata_return_t sata_ahci_set_port_idle(u32 port)
     }
 
     if ((HW_SATA_PORT(port).CMD).B.FRE) {
-    	(HW_SATA_PORT(port).CMD).B.FRE = SATA_DISABLED;
+        (HW_SATA_PORT(port).CMD).B.FRE = SATA_DISABLED;
         hal_delay_us(PORT_N_INIT_TIMEOUT);  //delay 500ms
 
         if ((HW_SATA_PORT(port).CMD).B.FR) {
@@ -616,10 +616,10 @@ static void sata_ahci_host_info_print(void)
           cap & (1 << BP_SATA_CAP_PMD) ? "|PMD" : "",
           cap & (1 << BP_SATA_CAP_SSC) ? "|SSC" : "",
           cap & (1 << BP_SATA_CAP_PSC) ? "|PSC" : "",
-          cap & (1 << BP_SATA_CAP_CCCS) ? "|CCCS" : "", 
-          cap & (1 << BP_SATA_CAP_EMS) ? "|EMS" : "", 
+          cap & (1 << BP_SATA_CAP_CCCS) ? "|CCCS" : "",
+          cap & (1 << BP_SATA_CAP_EMS) ? "|EMS" : "",
           cap & (1 << BP_SATA_CAP_SXS) ? "|SXS" : "");
-          
+
 /*          cap & (1 << 31) ? "64bit" : "32bit",
           cap & (1 << 30) ? "|NCQ" : "",
           cap & (1 << 29) ? "|SNTF" : "",
@@ -872,7 +872,7 @@ static sata_return_t ahci_find_empty_slot(u32 port)
 
     PRINT(0, "+SATADBGMSG:command slot %d is empty\n", empty_cmd_slot);
     PRINT(0, "+SATADBGMSG:command slot %d is empty\n", empty_cmd_slot);
-    
+
     return empty_cmd_slot;
 }
 
@@ -897,7 +897,7 @@ static sata_return_t sata_wait_command_done(u32 port)
 
     if (i == 0) {
         PRINT(0, "+SATAERR: wait interrupt timeout\n");
-        stat = (HW_SATA_PORT(port).IS).U; 
+        stat = (HW_SATA_PORT(port).IS).U;
         err = (HW_SATA_PORT(port).SERR).U;
         (HW_SATA_PORT(port).SERR).U = err;
         (HW_SATA_PORT(port).IS).U = stat;  //clear port interrupt status
@@ -944,12 +944,12 @@ static sata_return_t sata_wait_command_done(u32 port)
  * @param cmdt Pointer of command table
  * @return SATA_PASS or SATA_FAIL
  */
-static sata_return_t sata_reg_fis_h2d(u32 port,  
-                                      u32 sect_addr, 
-                                      u32 sect_cnt, 
-                                      u32 rw, 
-                                      u32 command,  
-                                      char features,    
+static sata_return_t sata_reg_fis_h2d(u32 port,
+                                      u32 sect_addr,
+                                      u32 sect_cnt,
+                                      u32 rw,
+                                      u32 command,
+                                      char features,
                                       u32 size,
                                       u32 data_addr,
                                       sata_command_header_t * cmdh,
@@ -1021,7 +1021,7 @@ static sata_return_t sata_non_queued_error_recovery(u32 port)
     u32 errslot;
     u32 cnt;
     /*a - read PxCI to see which commands are still outstanding */
-    v = (HW_SATA_PORT(port).CI).U; 
+    v = (HW_SATA_PORT(port).CI).U;
     PRINT(1, "+SATAINFO: outstanding command slots 0x%08x\n", v);
     //b - read PxCMD.CCS to determine the slot that the HBA was processing when
     //the error occured
@@ -1101,7 +1101,7 @@ static sata_return_t sata_phy_cr_ack_polling(u32 max_iterations, u32 expected_va
 
     while ((wait_counter < max_iterations) && (ack != expected_val)) {
         v = (HW_SATA_PORT(port).PHYSR).U;
-        ack = (HW_SATA_PORT(port).PHYSR).B.CR_ACK; 
+        ack = (HW_SATA_PORT(port).PHYSR).B.CR_ACK;
         wait_counter++;
     }
 
@@ -1356,7 +1356,7 @@ sata_return_t sata_init(void)
 
     for (i = 0; i < ports; i++) {
         PRINT(0, "+SATADBGMSG: Port %d Implemented\n", i);
- 
+
         /*Place the port into IDLE state */
         ret = sata_ahci_set_port_idle(i);
 
@@ -1402,9 +1402,9 @@ sata_return_t sata_init(void)
         //PRINT(0,"+SATADBGMSG: allocated fb addr 0x%08x\n",SATA_FIS_BASE);
         memset((char *)(SATA_COMMAND_LIST_BASE + i * sizeof(sata_command_header_t) * 32), 0,
                sizeof(sata_command_header_t) * 32);
-        (HW_SATA_PORT(i).CLB).U = (SATA_COMMAND_LIST_BASE + i * sizeof(sata_command_header_t) * 32);       
+        (HW_SATA_PORT(i).CLB).U = (SATA_COMMAND_LIST_BASE + i * sizeof(sata_command_header_t) * 32);
         memset((char *)(SATA_RECEIVED_FIS_BASE + i * sizeof(sata_rx_fis_t)), 0,
-               sizeof(sata_rx_fis_t));        
+               sizeof(sata_rx_fis_t));
          (HW_SATA_PORT(i).FB).U = SATA_RECEIVED_FIS_BASE;
 
         /*Set the AHB burst size and transaction size
@@ -1521,7 +1521,7 @@ sata_return_t sata_deinit(void)
     PRINT(0, "sata_deinit\n");
 
     /*Reading PI register to determine which ports are implemented by HBA */
-    ports = HW_SATA_CAP.B.NP; 
+    ports = HW_SATA_CAP.B.NP;
     ports += 1;
 
     for (i = 0; i < ports; i++) {
@@ -1533,10 +1533,10 @@ sata_return_t sata_deinit(void)
 
     for (i = 0; i < ports; i++) {
         PRINT(0, "+SATADBGMSG: Port %d Implemented\n", i);
- 
+
         /*power off the port */
         (HW_SATA_PORT(i).CMD).B.SUD = SATA_DISABLED;
-        (HW_SATA_PORT(i).CMD).B.POD = SATA_DISABLED; 
+        (HW_SATA_PORT(i).CMD).B.POD = SATA_DISABLED;
 
         /*Place the port into IDLE state */
         ret = sata_ahci_port_reset(i);
@@ -1562,7 +1562,7 @@ sata_return_t sata_identify(u32 port)
 
     PRINT(0, "+SATADBGMSG: SATA port %d base@0x%08x.\n", port, port);
     // 1. check if there is HDD attached.
-    hdd_attached = (HW_SATA_PORT(port).SSTS).B.DET; 
+    hdd_attached = (HW_SATA_PORT(port).SSTS).B.DET;
     PRINT(0, "+SATADBGMSG: port->ssts = 0x%08x.\n", (HW_SATA_PORT(port).SSTS).U);
 
     switch (hdd_attached) {
@@ -1596,7 +1596,7 @@ sata_return_t sata_identify(u32 port)
 
     PRINT(0, "+SATAINFO:SATA HDD found on the port %d, ready to get HDD info\n", port);
 
-    hdd_sig = (HW_SATA_PORT(port).SIG).U; 
+    hdd_sig = (HW_SATA_PORT(port).SIG).U;
 
     sata_hdd_init(port);
 

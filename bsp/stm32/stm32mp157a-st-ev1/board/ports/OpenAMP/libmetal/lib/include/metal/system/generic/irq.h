@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	generic/irq.c
- * @brief	Generic libmetal irq definitions.
+ * @file    generic/irq.c
+ * @brief    Generic libmetal irq definitions.
  */
 
 #ifndef __METAL_IRQ__H__

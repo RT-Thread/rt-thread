@@ -74,7 +74,7 @@
                (+++) Configure Data Path State Machine
           (++) On other devices
                (+++) Configure the DMA in the MSP layer of the external device
-               (+++) Active the needed channel Request 
+               (+++) Active the needed channel Request
                (+++) Enable the DMA using __SDMMC_DMA_ENABLE() macro or Disable it using the macro
                      __SDMMC_DMA_DISABLE().
 

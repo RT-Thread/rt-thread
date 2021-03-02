@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -335,7 +335,7 @@ extern "C"
 #define UART_RS485CTRL_SEL_DTR      ((uint32_t)(1<<3))
 /** Enable Auto Direction Control */
 #define UART_RS485CTRL_DCTRL_EN ((uint32_t)(1<<4))
-/** This bit reverses the polarity of the direction control signal on the RTS (or DTR) pin. 
+/** This bit reverses the polarity of the direction control signal on the RTS (or DTR) pin.
 The direction control pin will be driven to logic "1" when the transmitter has data to be sent */
 #define UART_RS485CTRL_OINV_1       ((uint32_t)(1<<5))
 
@@ -469,7 +469,7 @@ typedef enum {
 /**
  * UART IrDA Control type Definition
  */
-typedef enum 
+typedef enum
 {
     /** Pulse width = 2 * Tpclk
     - Configures the pulse when FixPulseEn = 1 */

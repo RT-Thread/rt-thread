@@ -64,13 +64,13 @@ extern "C" {
  * @features: loader supported features. e.g. seek
  */
 struct image_store_ops {
-	int (*open)(void *store, const char *path, const void **img_data);
-	void (*close)(void *store);
-	int (*load)(void *store, size_t offset, size_t size,
-		    const void **data,
-		    metal_phys_addr_t pa,
-		    struct metal_io_region *io, char is_blocking);
-	unsigned int features;
+    int (*open)(void *store, const char *path, const void **img_data);
+    void (*close)(void *store);
+    int (*load)(void *store, size_t offset, size_t size,
+            const void **data,
+            metal_phys_addr_t pa,
+            struct metal_io_region *io, char is_blocking);
+    unsigned int features;
 };
 
 /**
@@ -85,20 +85,20 @@ struct image_store_ops {
  * @get_load_state: get load state from the image information
  */
 struct loader_ops {
-	int (*load_header)(const void *img_data, size_t offset, size_t len,
-			   void **img_info, int last_state,
-			   size_t *noffset, size_t *nlen);
-	int (*load_data)(struct remoteproc *rproc,
-			 const void *img_data, size_t offset, size_t len,
-			 void **img_info, int last_load_state,
-			 metal_phys_addr_t *da,
-			 size_t *noffset, size_t *nlen,
-			 unsigned char *padding, size_t *nmemsize);
-	int (*locate_rsc_table)(void *img_info, metal_phys_addr_t *da,
-				size_t *offset, size_t *size);
-	void (*release)(void *img_info);
-	metal_phys_addr_t (*get_entry)(void *img_info);
-	int (*get_load_state)(void *img_info);
+    int (*load_header)(const void *img_data, size_t offset, size_t len,
+               void **img_info, int last_state,
+               size_t *noffset, size_t *nlen);
+    int (*load_data)(struct remoteproc *rproc,
+             const void *img_data, size_t offset, size_t len,
+             void **img_info, int last_load_state,
+             metal_phys_addr_t *da,
+             size_t *noffset, size_t *nlen,
+             unsigned char *padding, size_t *nmemsize);
+    int (*locate_rsc_table)(void *img_info, metal_phys_addr_t *da,
+                size_t *offset, size_t *size);
+    void (*release)(void *img_info);
+    metal_phys_addr_t (*get_entry)(void *img_info);
+    int (*get_load_state)(void *img_info);
 };
 
 #if defined __cplusplus

@@ -24,7 +24,7 @@ void syscfg_deinit(void)
 }
 
 /*!
-    \brief      configure the boot mode 
+    \brief      configure the boot mode
     \param[in]  syscfg_bootmode: selects the memory remapping
       \arg        SYSCFG_BOOTMODE_FLASH: main flash memory (0x08000000~0x083BFFFF) is mapped at address 0x00000000
       \arg        SYSCFG_BOOTMODE_BOOTLOADER: boot loader (0x1FFF0000 - 0x1FFF77FF) is mapped at address 0x00000000
@@ -124,14 +124,14 @@ void syscfg_exti_line_config(uint8_t exti_port, uint8_t exti_pin)
     \brief      configure the PHY interface for the ethernet MAC
     \param[in]  syscfg_enet_phy_interface: specifies the media interface mode.
       \arg        SYSCFG_ENET_PHY_MII: MII mode is selected
-      \arg        SYSCFG_ENET_PHY_RMII: RMII mode is selected 
+      \arg        SYSCFG_ENET_PHY_RMII: RMII mode is selected
     \param[out] none
     \retval     none
 */
 void syscfg_enet_phy_interface_config(uint32_t syscfg_enet_phy_interface)
-{ 
+{
     uint32_t reg;
-    
+
     reg = SYSCFG_CFG1;
     /* reset the ENET_PHY_SEL bit and set according to syscfg_enet_phy_interface */
     reg &= ~SYSCFG_CFG1_ENET_PHY_SEL;
@@ -146,7 +146,7 @@ void syscfg_enet_phy_interface_config(uint32_t syscfg_enet_phy_interface)
     \param[out] none
     \retval     none
 */
-void syscfg_compensation_config(uint32_t syscfg_compensation) 
+void syscfg_compensation_config(uint32_t syscfg_compensation)
 {
     uint32_t reg;
 

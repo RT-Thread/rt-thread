@@ -2,7 +2,7 @@
  * Copyright (c) 2013 - 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Debug console shall provide input and output functions to scan and print formatted data.

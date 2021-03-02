@@ -34,7 +34,7 @@
 // Definitions
 ////////////////////////////////////////////////////////////////////////////////
 
-/* 
+/*
  * BOARD_SMART_DEVICE for compile error
  */
 #if defined(BOARD_SMART_DEVICE)

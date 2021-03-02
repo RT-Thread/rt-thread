@@ -46,13 +46,13 @@
 // DEFINITIONS
 //////////////////////////////////////////////////////////////////////////////
 
-#define	DEBUG_LEVEL	0
+#define    DEBUG_LEVEL    0
 
 #define err_msg(fmt, arg...) printf("[ERR]\t%s:%d " fmt,  __FILE__, __LINE__, ## arg)
 
-#define info_msg(fmt, arg...) do { if (DEBUG_LEVEL >= 1)		\
-	printf("[INFO]\t%s:%d " fmt,  __FILE__, __LINE__, ## arg); \
-	} while (0)
+#define info_msg(fmt, arg...) do { if (DEBUG_LEVEL >= 1)        \
+    printf("[INFO]\t%s:%d " fmt,  __FILE__, __LINE__, ## arg); \
+    } while (0)
 
 #define warn_msg(fmt, arg...) printf("[WARN]\t%s:%d " fmt,  __FILE__, __LINE__, ## arg)
 

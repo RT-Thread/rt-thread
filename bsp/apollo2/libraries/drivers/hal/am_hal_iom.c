@@ -15,21 +15,21 @@
 //
 // Copyright (c) 2017, Ambiq Micro
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 // this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright
 // notice, this list of conditions and the following disclaimer in the
 // documentation and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its
 // contributors may be used to endorse or promote products derived from this
 // software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 // IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -1012,8 +1012,8 @@ am_hal_iom_config(uint32_t ui32Module, const am_hal_iom_config_t *psConfig)
     // Note: Only I2C clock speeds of AM_HAL_IOM_800KHZ, AM_HAL_IOM_400KHZ,
     // AM_HAL_IOM_200KHZ, and AM_HAL_IOM_100KHZ are allowed.  Other values will
     // result in the default of AM_HAL_IOM_100KHZ.
-    if ((0 != ui32Module) && (4 != ui32Module) && (6 != ui32Module) && 
-			isRevB2() && (AM_HAL_IOM_I2CMODE == psConfig->ui32InterfaceMode))
+    if ((0 != ui32Module) && (4 != ui32Module) && (6 != ui32Module) &&
+            isRevB2() && (AM_HAL_IOM_I2CMODE == psConfig->ui32InterfaceMode))
     {
       // Set SPHA field to 1 on B2 silicon to enable the feature;
       AM_REGn(IOMSTR, ui32Module, CFG) |= AM_REG_IOMSTR_CFG_SPHA_M;

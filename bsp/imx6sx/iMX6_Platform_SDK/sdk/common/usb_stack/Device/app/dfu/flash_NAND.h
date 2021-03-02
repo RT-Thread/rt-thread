@@ -54,21 +54,21 @@
 
 
 /* Flash commands */
-#define FLASHCMD_PROGRAM        	0x20
-#define FLASHCMD_SECTORERASE    	0x80
+#define FLASHCMD_PROGRAM            0x20
+#define FLASHCMD_SECTORERASE        0x80
 #define FLASHCMD_WRITEPROTECTION    0xE0
 
 /* Sector information */
-#define S28WS128_BASE_ADDR		 0x00000000
+#define S28WS128_BASE_ADDR         0x00000000
 
-#define S28WS128_START_ADD_SECTOR0		0x00000000
-#define S28WS128_SIZE_SECTOR0			0x8000
+#define S28WS128_START_ADD_SECTOR0        0x00000000
+#define S28WS128_SIZE_SECTOR0            0x8000
 
-#define S28WS128_START_ADD_SECTOR1		0x00008000
-#define S28WS128_SIZE_SECTOR1			0x8000
+#define S28WS128_START_ADD_SECTOR1        0x00008000
+#define S28WS128_SIZE_SECTOR1            0x8000
 
-#define S28WS128_START_ADD_SECTOR2		0x00010000
-#define S28WS128_SIZE_SECTOR2			0x8000
+#define S28WS128_START_ADD_SECTOR2        0x00010000
+#define S28WS128_SIZE_SECTOR2            0x8000
 
 /*********************************** Constant **********************************/
 

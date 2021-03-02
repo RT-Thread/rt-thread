@@ -160,8 +160,8 @@ static const char *phy_if_strings[] __attribute__ ((section(".nocache_buffer")))
 GERR GD_ETH_PHY_Init(U8 phyType)
 {
     U32 i,j,k,count,phy_id,try_time;
-	U32 a = 0;
-	
+    U32 a = 0;
+
     if (initialized == GTRUE)
     {
         return GD_ERR_ALREADY_INITIALIZED;
@@ -210,14 +210,14 @@ GERR GD_ETH_PHY_Init(U8 phyType)
                     break;
                 }
                 //GD_TIMER_Delay(2);// jenny marked
-                
-			    if(phyType != 0)
-			    {
-					for(a=0;a<100000;a++)
-					{
-						GH_ETH_get_GAR();
-					}
-			    }
+
+                if(phyType != 0)
+                {
+                    for(a=0;a<100000;a++)
+                    {
+                        GH_ETH_get_GAR();
+                    }
+                }
             }
         }
     }

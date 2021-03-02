@@ -3,9 +3,9 @@
   * @file    stm32f2xx_hal_msp_template.c
   * @author  MCD Application Team
   * @brief   HAL MSP module.
-  *          This file template is located in the HAL folder and should be copied 
+  *          This file template is located in the HAL folder and should be copied
   *          to the user folder.
-  *         
+  *
   @verbatim
  ===============================================================================
                      ##### How to use this driver #####
@@ -54,7 +54,7 @@
   * @retval None
   */
 void HAL_MspInit(void)
-{ 
+{
 }
 
 /**

@@ -2,7 +2,7 @@
  * Copyright 2017 NXP
  * All rights reserved.
  *
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
@@ -32,7 +32,7 @@ extern "C" {
  * @param baudRate, device communicate baudrate
  * @param clkSrcFreq, device source clock freq
  *
- * @return              	Indicates whether initialization was successful or not.
+ * @return                  Indicates whether initialization was successful or not.
  * @retval kStatus_Success  Execution successfully
  * @retval kStatus_Fail     Execution failure
  */

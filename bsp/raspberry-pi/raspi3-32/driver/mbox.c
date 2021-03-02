@@ -41,7 +41,7 @@ int mbox_call(unsigned char ch, int mmu_enable)
         do
         {
             asm volatile("nop");
-        } 
+        }
         while (*MBOX_STATUS & MBOX_EMPTY);
         /* is it a response to our message? */
         if (r == *MBOX_READ)

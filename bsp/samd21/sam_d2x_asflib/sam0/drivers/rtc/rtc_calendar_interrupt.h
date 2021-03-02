@@ -63,21 +63,21 @@ extern "C" {
  * @{
  */
 enum status_code rtc_calendar_register_callback(
-		struct rtc_module *const module,
-		rtc_calendar_callback_t callback,
-		enum rtc_calendar_callback callback_type);
+        struct rtc_module *const module,
+        rtc_calendar_callback_t callback,
+        enum rtc_calendar_callback callback_type);
 
 enum status_code rtc_calendar_unregister_callback(
-		struct rtc_module *const module,
-		enum rtc_calendar_callback callback_type);
+        struct rtc_module *const module,
+        enum rtc_calendar_callback callback_type);
 
 void rtc_calendar_enable_callback(
-		struct rtc_module *const module,
-		enum rtc_calendar_callback callback_type);
+        struct rtc_module *const module,
+        enum rtc_calendar_callback callback_type);
 
 void rtc_calendar_disable_callback(
-	struct rtc_module *const module,
-	enum rtc_calendar_callback callback_type);
+    struct rtc_module *const module,
+    enum rtc_calendar_callback callback_type);
 
 /** @} */
 /** @} */

@@ -30,7 +30,7 @@
 
 /*!
  * @file snd_card.h
- * @brief Sound card instances 
+ * @brief Sound card instances
  *
  * @ingroup diag_audio
  */

@@ -117,10 +117,10 @@ extern "C" {
  * Number of bit per byte selection for UART communication.
  */
 enum uart_number_of_bit_selection{
-	/** 8 bit per byte*/
-	UART_8_BITS = UART_CONFIGURATION_NUMBER_OF_BITS_0,
-	/** 7 bit per byte*/
-	UART_7_BITS = UART_CONFIGURATION_NUMBER_OF_BITS_1,
+    /** 8 bit per byte*/
+    UART_8_BITS = UART_CONFIGURATION_NUMBER_OF_BITS_0,
+    /** 7 bit per byte*/
+    UART_7_BITS = UART_CONFIGURATION_NUMBER_OF_BITS_1,
 };
 
 /** \brief UART stop bit selection
@@ -128,10 +128,10 @@ enum uart_number_of_bit_selection{
  * Number of stop bit selection for UART communication.
  */
 enum uart_stop_bit_selection{
-	/** 1 stop bit per byte*/
-	UART_1_STOP_BIT = UART_CONFIGURATION_STOP_BITS_0,
-	/** 2 stop bit per byte*/
-	UART_2_STOP_BITS = UART_CONFIGURATION_STOP_BITS_1,
+    /** 1 stop bit per byte*/
+    UART_1_STOP_BIT = UART_CONFIGURATION_STOP_BITS_0,
+    /** 2 stop bit per byte*/
+    UART_2_STOP_BITS = UART_CONFIGURATION_STOP_BITS_1,
 };
 
 
@@ -140,16 +140,16 @@ enum uart_stop_bit_selection{
  * Parity type selection for UART communication.
  */
 enum uart_parity_selection{
-	/** No parity bit */
-	UART_NO_PARITY = 0,
-	/** Even parity */
-	UART_EVEN_PARITY,
-	/** Odd parity */
-	UART_ODD_PARITY,
-	/** Space parity */
-	UART_SPACE_PARITY,
-	/** Mark parity */
-	UART_MARK_PARITY
+    /** No parity bit */
+    UART_NO_PARITY = 0,
+    /** Even parity */
+    UART_EVEN_PARITY,
+    /** Odd parity */
+    UART_ODD_PARITY,
+    /** Space parity */
+    UART_SPACE_PARITY,
+    /** Mark parity */
+    UART_MARK_PARITY
 };
 
 /**
@@ -172,16 +172,16 @@ typedef void (*uart_callback_t)(struct uart_module *const module);
  * Callbacks for the UART driver.
  */
 enum uart_callback {
-	/** Callback for TX FIFO not full. */
-	UART_TX_COMPLETE,
-	/** Callback for CTS active. */
-	UART_CTS_ACTIVE,
-	/** Callback for RX FIFO overrun. */
-	UART_RX_COMPLETE,
-	/** Callback for RX FIFO overrun. */
-	UART_RX_FIFO_OVERRUN,
-	/** Number of available callbacks. */
-	UART_CALLBACK_N,
+    /** Callback for TX FIFO not full. */
+    UART_TX_COMPLETE,
+    /** Callback for CTS active. */
+    UART_CTS_ACTIVE,
+    /** Callback for RX FIFO overrun. */
+    UART_RX_COMPLETE,
+    /** Callback for RX FIFO overrun. */
+    UART_RX_FIFO_OVERRUN,
+    /** Number of available callbacks. */
+    UART_CALLBACK_N,
 };
 
 
@@ -194,20 +194,20 @@ enum uart_callback {
  * \ref uart_get_config_defaults .
  */
 struct uart_config{
-	/** Baud rate */
-	uint32_t baud_rate;
-	/** Number of data bits */
-	enum uart_number_of_bit_selection data_bits;
-	/** Number of stop bits */
-	enum uart_stop_bit_selection stop_bits;
-	/** Parity type */
-	enum uart_parity_selection parity;
-	/** flow control type */
-	bool flow_control;
-	/** UART PAD pin number */
-	uint32_t pin_number_pad[4];
-	/** UART PAD pinmux selection */
-	uint32_t pinmux_sel_pad[4];
+    /** Baud rate */
+    uint32_t baud_rate;
+    /** Number of data bits */
+    enum uart_number_of_bit_selection data_bits;
+    /** Number of stop bits */
+    enum uart_stop_bit_selection stop_bits;
+    /** Parity type */
+    enum uart_parity_selection parity;
+    /** flow control type */
+    bool flow_control;
+    /** UART PAD pin number */
+    uint32_t pin_number_pad[4];
+    /** UART PAD pinmux selection */
+    uint32_t pinmux_sel_pad[4];
 };
 
 /**
@@ -220,25 +220,25 @@ struct uart_config{
  *       application; they are reserved for module-internal use only.
  */
 struct uart_module {
-	/** Pointer to the hardware instance. */
-	Uart *hw;
-	/** Array to store callback function pointers in. */
-	uart_callback_t callback[UART_CALLBACK_N];
-	/** Buffer pointer to where the next received character will be put */
-	volatile uint8_t *rx_buffer_ptr;
-	/** Buffer pointer to where the next character will be transmitted from
-	**/
-	volatile uint8_t *tx_buffer_ptr;
-	/** Remaining characters to receive */
-	volatile uint16_t remaining_rx_buffer_length;
-	/** Remaining characters to transmit */
-	volatile uint16_t remaining_tx_buffer_length;
-	/** Bit mask for callbacks registered. */
-	uint8_t callback_reg_mask;
-	/** Bit mask for callbacks enabled. */
-	uint8_t callback_enable_mask;
-	/** Holds the status of the ongoing or last operation */
-	volatile enum status_code status;
+    /** Pointer to the hardware instance. */
+    Uart *hw;
+    /** Array to store callback function pointers in. */
+    uart_callback_t callback[UART_CALLBACK_N];
+    /** Buffer pointer to where the next received character will be put */
+    volatile uint8_t *rx_buffer_ptr;
+    /** Buffer pointer to where the next character will be transmitted from
+    **/
+    volatile uint8_t *tx_buffer_ptr;
+    /** Remaining characters to receive */
+    volatile uint16_t remaining_rx_buffer_length;
+    /** Remaining characters to transmit */
+    volatile uint16_t remaining_tx_buffer_length;
+    /** Bit mask for callbacks registered. */
+    uint8_t callback_reg_mask;
+    /** Bit mask for callbacks enabled. */
+    uint8_t callback_enable_mask;
+    /** Holds the status of the ongoing or last operation */
+    volatile enum status_code status;
 };
 
 /** \name UART Configuration and initialization
@@ -246,38 +246,38 @@ struct uart_module {
  */
 void uart_get_config_defaults(struct uart_config *const config);
 enum status_code uart_init(struct uart_module *const module, Uart * const hw,
-		const struct uart_config *const config);
+        const struct uart_config *const config);
 /** @} */
 
 /** \name UART read and write functions
  * @{
  */
 enum status_code uart_write_wait(struct uart_module *const module,
-		const uint8_t tx_data);
+        const uint8_t tx_data);
 enum status_code uart_read_wait(struct uart_module *const module,
-		uint8_t *const rx_data);
+        uint8_t *const rx_data);
 enum status_code uart_write_buffer_wait(struct uart_module *const module,
-		const uint8_t *tx_data, uint32_t length);
+        const uint8_t *tx_data, uint32_t length);
 enum status_code uart_read_buffer_wait(struct uart_module *const module,
-		uint8_t *rx_data, uint16_t length);
+        uint8_t *rx_data, uint16_t length);
 enum status_code uart_write_buffer_job(struct uart_module *const module,
-		uint8_t *tx_data, uint32_t length);
+        uint8_t *tx_data, uint32_t length);
 enum status_code uart_read_buffer_job(struct uart_module *const module,
-		uint8_t *rx_data, uint16_t length);
+        uint8_t *rx_data, uint16_t length);
 /** @} */
 
 /** \name UART callback config
  * @{
  */
 void uart_register_callback(struct uart_module *const module,
-		uart_callback_t callback_func,
-		enum uart_callback callback_type);
+        uart_callback_t callback_func,
+        enum uart_callback callback_type);
 void uart_unregister_callback(struct uart_module *module,
-		enum uart_callback callback_type);
+        enum uart_callback callback_type);
 void uart_enable_callback(struct uart_module *const module,
-		enum uart_callback callback_type);
+        enum uart_callback callback_type);
 void uart_disable_callback(struct uart_module *const module,
-		enum uart_callback callback_type);
+        enum uart_callback callback_type);
 /** @}*/
 
 /** \name UART DAM enable/disable functions
@@ -304,14 +304,14 @@ void uart_disable_receive_dma(struct uart_module *const module);
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>UART</td>
- *		<td>Universal Asynchronous Receiver/Transmitter</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+ *    <tr>
+ *        <td>UART</td>
+ *        <td>Universal Asynchronous Receiver/Transmitter</td>
+ *    </tr>
  * </table>
  *
  *
@@ -330,12 +330,12 @@ void uart_disable_receive_dma(struct uart_module *const module);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -354,16 +354,16 @@ void uart_disable_receive_dma(struct uart_module *const module);
  * \page asfdoc_samb_uart_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>A</td>
- *		<td>09/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>A</td>
+ *        <td>09/2015</td>
+ *        <td>Initial release</td>
+ *    </tr>
  * </table>
  */
 

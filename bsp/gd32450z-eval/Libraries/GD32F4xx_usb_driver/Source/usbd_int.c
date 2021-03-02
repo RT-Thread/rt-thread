@@ -276,7 +276,7 @@ static uint32_t usbd_intf_outep (usb_core_handle_struct *pudev)
 
                 /* data receive is completed */
                 usbd_out_transaction(pudev, endp_num);
-   
+
                 if (1U == pudev->cfg.dma_enable) {
                     if ((0U == endp_num) && (USB_CTRL_STATUS_OUT == pudev->dev.ctl_status)) {
                         /* prepare to receive more setup packets */

@@ -8,9 +8,9 @@
  *
  * @file usb_descriptor.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date May-08-2009
  *
@@ -45,14 +45,14 @@
 #define MSC_DESC_ENDPOINT_COUNT         (2)
 
 #define BULK_IN_ENDPOINT             (1)
-#define BULK_IN_ENDP_PACKET_SIZE     (32)/* max supported is 64 for FS and 512 for HS*/ 
+#define BULK_IN_ENDP_PACKET_SIZE     (32)/* max supported is 64 for FS and 512 for HS*/
 #define BULK_OUT_ENDPOINT            (2)
-#define BULK_OUT_ENDP_PACKET_SIZE    (32)/* max supported is 64 and 512 for HS*/ 
+#define BULK_OUT_ENDP_PACKET_SIZE    (32)/* max supported is 64 and 512 for HS*/
 
 #if (BULK_OUT_ENDP_PACKET_SIZE < 32)
     #error "BULK_OUT_ENDP_PACKET_SIZE cannot be less than 32"
 #endif
-/* Various descriptor sizes */ 
+/* Various descriptor sizes */
 #define DEVICE_DESCRIPTOR_SIZE            (18)
 #define CONFIG_ONLY_DESC_SIZE             (9)
 #define IFACE_ONLY_DESC_SIZE              (9)
@@ -69,7 +69,7 @@
 
 
 /* Max descriptors provided by the Application */
-#define USB_MAX_STD_DESCRIPTORS           (7) 
+#define USB_MAX_STD_DESCRIPTORS           (7)
 
 /* Max configuration supported by the Application */
 #define USB_MAX_CONFIG_SUPPORTED          (1)
@@ -79,7 +79,7 @@
 
 /* Max language codes supported by the USB */
 #define USB_MAX_LANGUAGES_SUPPORTED       (1)
- 
+
 /* string descriptors sizes */
 #define USB_STR_DESC_SIZE (2)
 #define USB_STR_0_SIZE    (2)
@@ -121,7 +121,7 @@
 #define PERIPHERAL_QUALIFIER_SHIFT   (5)
 #define PERIPHERAL_QUALIFIER         (0)
 #define SPC_VERSION                  (4)/*SPC3 is 5; SPC2 is 4*/
-#define REMOVABLE_MEDIUM_BIT         (1) 
+#define REMOVABLE_MEDIUM_BIT         (1)
 #define REMOVABLE_MEDIUM_BIT_SHIFT   (7)
 #define ADDITIONAL_LENGTH            (0x20)
                          /*set to 0x20H if returning 36 bytes of inquiry data*/
@@ -131,22 +131,22 @@
 
 /******************************************************************************
  * Types
- *****************************************************************************/ 
+ *****************************************************************************/
 #pragma pack(1)
 
-typedef const struct _USB_LANGUAGE 
+typedef const struct _USB_LANGUAGE
 {
     uint_16 const language_id;
     uint_8 const ** lang_desc;
-    uint_8 const * lang_desc_size;    
+    uint_8 const * lang_desc_size;
 } USB_LANGUAGE;
- 
-typedef struct _USB_ALL_LANGUAGES 
+
+typedef struct _USB_ALL_LANGUAGES
 {
     uint_8 const *languages_supported_string;
     uint_8 const languages_supported_size;
     USB_LANGUAGE usb_language[USB_MAX_SUPPORTED_INTERFACES];
-       
+
 }USB_ALL_LANGUAGES;
 
 typedef const struct _USB_ENDPOINTS
@@ -160,33 +160,33 @@ typedef const struct _USB_ENDPOINTS
 #elif defined(__IAR_SYSTEMS_ICC__)
 #pragma pack()
 #endif
-      
+
 /******************************************************************************
  * Global Functions
  *****************************************************************************/
-extern uint_8 USB_Desc_Get_Descriptor( 
-     uint_8 controller_ID,  
+extern uint_8 USB_Desc_Get_Descriptor(
+     uint_8 controller_ID,
      uint_8 type,
-     uint_8 str_num, 
+     uint_8 str_num,
      uint_16 index,
      uint_8_ptr *descriptor,
      uint_32 *size);
-      
+
 extern uint_8 USB_Desc_Get_Interface(
-                              uint_8 controller_ID, 
-                              uint_8 interface, 
+                              uint_8 controller_ID,
+                              uint_8 interface,
                               uint_8_ptr alt_interface);
 
 
 extern uint_8 USB_Desc_Set_Interface(
-                              uint_8 controller_ID, 
-                              uint_8 interface, 
+                              uint_8 controller_ID,
+                              uint_8 interface,
                               uint_8 alt_interface);
 
-extern boolean USB_Desc_Valid_Configation(uint_8 controller_ID, 
-                                          uint_16 config_val); 
+extern boolean USB_Desc_Valid_Configation(uint_8 controller_ID,
+                                          uint_16 config_val);
 
-extern boolean USB_Desc_Remote_Wakeup(uint_8 controller_ID); 
+extern boolean USB_Desc_Remote_Wakeup(uint_8 controller_ID);
 
 extern USB_ENDPOINTS *USB_Desc_Get_Endpoints(uint_8 controller_ID);
 

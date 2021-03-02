@@ -55,7 +55,7 @@ int mpu_init(void)
     /* Enable CACHE */
     SCB_EnableICache();
     SCB_EnableDCache();
-    
+
     return 0;
 
 }

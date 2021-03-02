@@ -38,7 +38,7 @@ extern void usdhc_gpio_config(uint32_t instance);
 
 /*---------------------------------------------- Static Fcuntion ------------------------------------------------*/
 /*!
- * @brief Set data transfer width. 
+ * @brief Set data transfer width.
  * Possible data transfer width is 1-bit, 4-bits or 8-bits
  *
  * @param instance     Instance number of the uSDHC module.
@@ -50,7 +50,7 @@ static void usdhc_set_data_transfer_width(uint32_t instance, int data_width)
 }
 
 /*!
- * @brief Set Endian Mode. 
+ * @brief Set Endian Mode.
  * The uSDHC supports all four modes in data transfer.
  * 00 --- Big Endian Mode
  * 01 --- Half Word Big Endian Mode
@@ -66,26 +66,26 @@ static void usdhc_set_endianness(uint32_t instance, int endian_mode)
 }
 
 /*!
- * @brief Wait for command inhibit(CMD) and command inhibit(DAT) idle for 
- * issuing next SD/MMC command. 
+ * @brief Wait for command inhibit(CMD) and command inhibit(DAT) idle for
+ * issuing next SD/MMC command.
  *
  * @param instance     Instance number of the uSDHC module.
  * @param data_present check command inhibit(DAT)
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
  static int usdhc_wait_cmd_data_lines(uint32_t instance, int data_present)
  {
- 	int count = ZERO;
- 	/* Wait for release of CMD line */
- 	while (HW_USDHC_PRES_STATE(instance).B.CIHB) {
- 		if (count == ESDHC_CIHB_CHK_COUNT) {
+     int count = ZERO;
+     /* Wait for release of CMD line */
+     while (HW_USDHC_PRES_STATE(instance).B.CIHB) {
+         if (count == ESDHC_CIHB_CHK_COUNT) {
             return FAIL;
- 		}
- 		count++;
- 		hal_delay_us(ESDHC_STATUS_CHK_TIMEOUT);
- 	}
- 	
+         }
+         count++;
+         hal_delay_us(ESDHC_STATUS_CHK_TIMEOUT);
+     }
+
     /* If data present with command, wait for release of DATA lines */
     if (data_present == DATA_PRESENT) {
         count = ZERO;
@@ -98,9 +98,9 @@ static void usdhc_set_endianness(uint32_t instance, int endian_mode)
             count++;
             hal_delay_us(ESDHC_STATUS_CHK_TIMEOUT);
         }
-    } 		
- 	
- 	return SUCCESS;
+    }
+
+     return SUCCESS;
  }
 
 /*!
@@ -108,7 +108,7 @@ static void usdhc_set_endianness(uint32_t instance, int endian_mode)
  *
  * @param instance     Instance number of the uSDHC module.
  * @param cmd          The command to be configured
- * 
+ *
  */
 static void usdhc_cmd_cfg(uint32_t instance, command_t * cmd)
 {
@@ -122,7 +122,7 @@ static void usdhc_cmd_cfg(uint32_t instance, command_t * cmd)
 
     /* If ADMA mode enabled and command with DMA, enable ADMA2 */
     if ((cmd->dma_enable == TRUE) && (read_usdhc_adma_mode() == TRUE)) {
-    	BW_USDHC_PROT_CTRL_DMASEL(instance, ESDHC_PRTCTL_ADMA2_VAL);
+        BW_USDHC_PROT_CTRL_DMASEL(instance, ESDHC_PRTCTL_ADMA2_VAL);
     }
 
     /* Keep bit fields other than command setting intact */
@@ -131,7 +131,7 @@ static void usdhc_cmd_cfg(uint32_t instance, command_t * cmd)
     HW_USDHC_MIX_CTRL(instance).U = (consist_status |
                                  ((cmd->dma_enable) << BP_USDHC_MIX_CTRL_DMAEN) |
                                  ((cmd->block_count_enable_check) << BP_USDHC_MIX_CTRL_BCEN) |
-                                 ((cmd->acmd12_enable) << BP_USDHC_MIX_CTRL_AC12EN) | 
+                                 ((cmd->acmd12_enable) << BP_USDHC_MIX_CTRL_AC12EN) |
                                  ((cmd->ddren) << BP_USDHC_MIX_CTRL_DDR_EN) |
                                  ((cmd->data_transfer) << BP_USDHC_MIX_CTRL_DTDSEL) |
                                  ((cmd->multi_single_block) << BP_USDHC_MIX_CTRL_MSBSEL));
@@ -147,7 +147,7 @@ static void usdhc_cmd_cfg(uint32_t instance, command_t * cmd)
  * @brief Wait for transfer complete and without error
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  */
 static void usdhc_wait_end_cmd_resp_dma_intr(uint32_t instance)
 {
@@ -162,13 +162,13 @@ static void usdhc_wait_end_cmd_resp_dma_intr(uint32_t instance)
         count++;
         hal_delay_us(ESDHC_STATUS_CHK_TIMEOUT);
     }
-} 
+}
 
 /*!
  * @brief Wait for command complete and without error
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  */
 static void usdhc_wait_end_cmd_resp_intr(uint32_t instance)
 {
@@ -183,19 +183,19 @@ static void usdhc_wait_end_cmd_resp_intr(uint32_t instance)
         count++;
         hal_delay_us(ESDHC_STATUS_CHK_TIMEOUT);
     }
-} 
+}
 
 /*!
  * @brief uSDHC Controller Checks response
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int usdhc_check_response(uint32_t instance)
 {
     int status = FAIL;
- 
+
     if (((HW_USDHC_INT_STATUS(instance).B.CC) ||
          (HW_USDHC_MMC_BOOT(instance).B.BOOT_EN)) &&
         !(HW_USDHC_INT_STATUS(instance).B.CTOE) &&
@@ -214,13 +214,13 @@ static int usdhc_check_response(uint32_t instance)
     }
 
     return status;
-} 
+}
 
 /*!
  * @brief uSDHC Controller Checks transfer
  *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int usdhc_check_transfer(uint32_t instance)
@@ -242,10 +242,10 @@ static int usdhc_check_transfer(uint32_t instance)
  * @brief  uSDHC handles interrupt
  *
  * @param idx     Index of uSDHC device.
- * 
+ *
  */
 static void usdhc_handle_isr(int idx)
-{   
+{
     uint32_t instance = REGS_USDHC_INSTANCE(usdhc_device[idx].reg_base);
 
     /* Set interrupt flag */
@@ -310,7 +310,7 @@ void usdhc4_isr(void)
 }
 
 /*!
- * @brief uSDHC Controller initialization - enble clock and iomux configuration 
+ * @brief uSDHC Controller initialization - enble clock and iomux configuration
  *
  * @param instance     Instance number of the uSDHC module.
  */
@@ -344,7 +344,7 @@ void host_init_active(uint32_t instance)
  *
  * @param instance     Instance number of the uSDHC module.
  * @param cmd          the command to be sent
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int host_send_cmd(uint32_t instance, command_t * cmd)
@@ -381,7 +381,7 @@ int host_send_cmd(uint32_t instance, command_t * cmd)
     /* If DMA Enabled */
     if (cmd->dma_enable == TRUE) {
         /* Return in interrupt mode */
-        if (read_usdhc_intr_mode() == TRUE) {     
+        if (read_usdhc_intr_mode() == TRUE) {
             return SUCCESS;
         }
 
@@ -405,13 +405,13 @@ int host_send_cmd(uint32_t instance, command_t * cmd)
  *
  * @param instance     Instance number of the uSDHC module.
  * @param frequency    The frequency to be set
- * 
+ *
  */
 void host_cfg_clock(uint32_t instance, int frequency)
 {
-	    /* Clear SDCLKEN bit, this bit is reserved in Rev D*/
+        /* Clear SDCLKEN bit, this bit is reserved in Rev D*/
     //esdhc_base->system_control &= ~ESDHC_SYSCTL_SDCLKEN_MASK;
-    
+
     /* Wait until clock stable */
     while (!(HW_USDHC_PRES_STATE(instance).B.SDSTB)) {
         ;
@@ -448,10 +448,10 @@ void host_cfg_clock(uint32_t instance, int frequency)
 
 /*!
  * @brief uSDHC Controller sets bus width
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    Bus_width
- * 
+ *
  */
 void host_set_bus_width(uint32_t instance, int bus_width)
 {
@@ -462,11 +462,11 @@ void host_set_bus_width(uint32_t instance, int bus_width)
 
 /*!
  * @brief Reset uSDHC Controller
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    Bus_width
  * @param endian_mode  Endain mode
- * 
+ *
  */
 void host_reset(uint32_t instance, int bus_width, int endian_mode)
 {
@@ -487,7 +487,7 @@ void host_reset(uint32_t instance, int bus_width, int endian_mode)
 
 /*!
  * @brief uSDHC Controller reads responses
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param response     Responses from card
  */
@@ -502,11 +502,11 @@ void host_read_response(uint32_t instance, command_response_t * response)
 
 /*!
  * @brief uSDHC Controller configures block
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param blk_len      Block Length
  * @param nob          Block count for current transfer
- * @param wml          Read and write Watermark level 
+ * @param wml          Read and write Watermark level
  */
 void host_cfg_block(uint32_t instance, int blk_len, int nob, int wml)
 {
@@ -520,7 +520,7 @@ void host_cfg_block(uint32_t instance, int blk_len, int nob, int wml)
 
 /*!
  * @brief uSDHC Controller Clears FIFO
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  */
 void host_clear_fifo(uint32_t instance)
@@ -544,7 +544,7 @@ void host_clear_fifo(uint32_t instance)
 
 /*!
  * @brief uSDHC Controller Sets up for ADMA transfer
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param ptr          Pointer for destination
  * @param length       ADMA transfer length
@@ -587,12 +587,12 @@ void host_setup_adma(uint32_t instance, int *ptr, int length)
 
 /*!
  * @brief uSDHC Controller reads data
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param dst_ptr      Pointer for data destination
  * @param length       Data length to be reading
  * @param wml          Watermark for data reading
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int host_data_read(uint32_t instance, int *dst_ptr, int length, int wml)
@@ -646,12 +646,12 @@ int host_data_read(uint32_t instance, int *dst_ptr, int length, int wml)
 
 /*!
  * @brief uSDHC Controller writes data
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param src_ptr      Pointer of data source
  * @param length       Data length to be writen
  * @param wml          Watermark for data writing
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int host_data_write(uint32_t instance, int *src_ptr, int length, int wml)

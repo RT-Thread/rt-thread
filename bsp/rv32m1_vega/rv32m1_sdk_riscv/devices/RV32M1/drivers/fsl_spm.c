@@ -3,7 +3,7 @@
  * Copyright (c) 2016, NXP
  * All rights reserved.
  *
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -79,7 +79,7 @@ void SPM_SetLowVoltWarningConfig(SPM_Type *base, const spm_low_volt_warning_conf
 void SPM_SetHighVoltDetectConfig(SPM_Type *base, const spm_high_volt_detect_config_t *config)
 {
     uint32_t tmp32;
-    
+
     tmp32 = base->HVDSC1 & ~(SPM_HVDSC1_VDD_HVDIE_MASK | SPM_HVDSC1_VDD_HVDRE_MASK |\
                              SPM_HVDSC1_VDD_HVDV_MASK);
     tmp32 |= SPM_HVDSC1_VDD_HVDV(config->vddHighVoltDetectSelect);
@@ -92,7 +92,7 @@ void SPM_SetHighVoltDetectConfig(SPM_Type *base, const spm_high_volt_detect_conf
         tmp32 |= SPM_HVDSC1_VDD_HVDRE_MASK;
     }
     tmp32 |= SPM_HVDSC1_VDD_HVDACK_MASK; /* Clear previous error flag. */
-    
+
     base->HVDSC1 = tmp32;
 }
 
@@ -173,8 +173,8 @@ void SPM_SetDcdcIntegratorConfig(SPM_Type *base, const spm_dcdc_integrator_confi
         base->DCDCC4 = SPM_DCDCC4_PULSE_RUN_SPEEDUP_MASK | SPM_DCDCC4_INTEGRATOR_VALUE_SELECT_MASK |
                        SPM_DCDCC4_INTEGRATOR_VALUE(tmp32u);
     }
-} 
- 
+}
+
 
 
 void SPM_SetLowPowerReqOutPinConfig(SPM_Type *base, const spm_low_power_req_out_pin_config_t *config)

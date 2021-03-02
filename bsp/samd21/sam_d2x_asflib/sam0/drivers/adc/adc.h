@@ -173,27 +173,27 @@
  *
  * \anchor asfdoc_sam0_adc_module_conversion_rate
  * <table>
- *	<caption>Effective ADC Conversion Speed Using Oversampling</caption>
- *	<tr>
- *		<th>Resolution</th>
- *		<th>Effective conversion rate</th>
- *	</tr>
- *	<tr>
- *		<td>13-bit</td>
- *		<td>Conversion rate divided by 4</td>
- *	</tr>
- *	<tr>
- *		<td>14-bit</td>
- *		<td>Conversion rate divided by 16</td>
- *	</tr>
- *	<tr>
- *		<td>15-bit</td>
- *		<td>Conversion rate divided by 64</td>
- *	</tr>
- *	<tr>
- *		<td>16-bit</td>
- *		<td>Conversion rate divided by 256</td>
- *	</tr>
+ *    <caption>Effective ADC Conversion Speed Using Oversampling</caption>
+ *    <tr>
+ *        <th>Resolution</th>
+ *        <th>Effective conversion rate</th>
+ *    </tr>
+ *    <tr>
+ *        <td>13-bit</td>
+ *        <td>Conversion rate divided by 4</td>
+ *    </tr>
+ *    <tr>
+ *        <td>14-bit</td>
+ *        <td>Conversion rate divided by 16</td>
+ *    </tr>
+ *    <tr>
+ *        <td>15-bit</td>
+ *        <td>Conversion rate divided by 64</td>
+ *    </tr>
+ *    <tr>
+ *        <td>16-bit</td>
+ *        <td>Conversion rate divided by 256</td>
+ *    </tr>
  * </table>
  *
  * \subsection asfdoc_sam0_adc_module_overview_conversion Conversion Modes
@@ -442,7 +442,7 @@ extern "C" {
 #if ADC_CALLBACK_MODE == true
 #   if (ADC_INST_NUM > 1)
 #       define _ADC_INTERRUPT_VECT_NUM(n, unused) \
-			SYSTEM_INTERRUPT_MODULE_ADC##n,
+            SYSTEM_INTERRUPT_MODULE_ADC##n,
 /**
  * \internal Get the interrupt vector for the given device instance
  *
@@ -451,20 +451,20 @@ extern "C" {
  * \return Interrupt vector for of the given ADC module instance.
  */
 static enum system_interrupt_vector _adc_interrupt_get_interrupt_vector(
-		uint32_t inst_num)
+        uint32_t inst_num)
 {
-	static uint8_t adc_interrupt_vectors[ADC_INST_NUM] = {
-		MREPEAT(ADC_INST_NUM, _ADC_INTERRUPT_VECT_NUM, 0)
-	};
+    static uint8_t adc_interrupt_vectors[ADC_INST_NUM] = {
+        MREPEAT(ADC_INST_NUM, _ADC_INTERRUPT_VECT_NUM, 0)
+    };
 
-	return (enum system_interrupt_vector)adc_interrupt_vectors[inst_num];
+    return (enum system_interrupt_vector)adc_interrupt_vectors[inst_num];
 }
 #   endif
 #endif
 
 #if !defined(__DOXYGEN__)
 uint8_t _adc_get_inst_index(
-		Adc *const hw);
+        Adc *const hw);
 #endif
 
 /**
@@ -472,16 +472,16 @@ uint8_t _adc_get_inst_index(
  * @{
  */
 enum status_code adc_init(
-		struct adc_module *const module_inst,
-		Adc *hw,
-		struct adc_config *config);
+        struct adc_module *const module_inst,
+        Adc *hw,
+        struct adc_config *config);
 
 void adc_get_config_defaults(
-		struct adc_config *const config);
+        struct adc_config *const config);
 
 #if (SAMD) || (SAMHA1) || (SAMR21)
 void adc_regular_ain_channel(
-		uint32_t *pin_array, uint8_t size);
+        uint32_t *pin_array, uint8_t size);
 #endif
 
 /** @} */
@@ -506,34 +506,34 @@ void adc_regular_ain_channel(
  * \retval ADC_STATUS_OVERRUN       ADC result has overrun
  */
 static inline uint32_t adc_get_status(
-		struct adc_module *const module_inst)
+        struct adc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	uint32_t int_flags = adc_module->INTFLAG.reg;
+    uint32_t int_flags = adc_module->INTFLAG.reg;
 
-	uint32_t status_flags = 0;
+    uint32_t status_flags = 0;
 
-	/* Check for ADC Result Ready */
-	if (int_flags & ADC_INTFLAG_RESRDY) {
-		status_flags |= ADC_STATUS_RESULT_READY;
-	}
+    /* Check for ADC Result Ready */
+    if (int_flags & ADC_INTFLAG_RESRDY) {
+        status_flags |= ADC_STATUS_RESULT_READY;
+    }
 
-	/* Check for ADC Window Match */
-	if (int_flags & ADC_INTFLAG_WINMON) {
-		status_flags |= ADC_STATUS_WINDOW;
-	}
+    /* Check for ADC Window Match */
+    if (int_flags & ADC_INTFLAG_WINMON) {
+        status_flags |= ADC_STATUS_WINDOW;
+    }
 
-	/* Check for ADC Overrun */
-	if (int_flags & ADC_INTFLAG_OVERRUN) {
-		status_flags |= ADC_STATUS_OVERRUN;
-	}
+    /* Check for ADC Overrun */
+    if (int_flags & ADC_INTFLAG_OVERRUN) {
+        status_flags |= ADC_STATUS_OVERRUN;
+    }
 
-	return status_flags;
+    return status_flags;
 }
 
 /**
@@ -545,34 +545,34 @@ static inline uint32_t adc_get_status(
  * \param[in] status_flags  Bitmask of \c ADC_STATUS_* flags to clear
  */
 static inline void adc_clear_status(
-		struct adc_module *const module_inst,
-		const uint32_t status_flags)
+        struct adc_module *const module_inst,
+        const uint32_t status_flags)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	uint32_t int_flags = 0;
+    uint32_t int_flags = 0;
 
-	/* Check for ADC Result Ready */
-	if (status_flags & ADC_STATUS_RESULT_READY) {
-		int_flags |= ADC_INTFLAG_RESRDY;
-	}
+    /* Check for ADC Result Ready */
+    if (status_flags & ADC_STATUS_RESULT_READY) {
+        int_flags |= ADC_INTFLAG_RESRDY;
+    }
 
-	/* Check for ADC Window Match */
-	if (status_flags & ADC_STATUS_WINDOW) {
-		int_flags |= ADC_INTFLAG_WINMON;
-	}
+    /* Check for ADC Window Match */
+    if (status_flags & ADC_STATUS_WINDOW) {
+        int_flags |= ADC_INTFLAG_WINMON;
+    }
 
-	/* Check for ADC Overrun */
-	if (status_flags & ADC_STATUS_OVERRUN) {
-		int_flags |= ADC_INTFLAG_OVERRUN;
-	}
+    /* Check for ADC Overrun */
+    if (status_flags & ADC_STATUS_OVERRUN) {
+        int_flags |= ADC_INTFLAG_OVERRUN;
+    }
 
-	/* Clear interrupt flag */
-	adc_module->INTFLAG.reg = int_flags;
+    /* Clear interrupt flag */
+    adc_module->INTFLAG.reg = int_flags;
 }
 /** @} */
 
@@ -590,39 +590,39 @@ static inline void adc_clear_status(
  * \param[in] module_inst  Pointer to the ADC software instance struct
  */
 static inline enum status_code adc_enable(
-		struct adc_module *const module_inst)
+        struct adc_module *const module_inst)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 
 #if ADC_CALLBACK_MODE == true
 #   if (ADC_INST_NUM > 1)
-	system_interrupt_enable(_adc_interrupt_get_interrupt_vector(
-			_adc_get_inst_index(adc_module)));
+    system_interrupt_enable(_adc_interrupt_get_interrupt_vector(
+            _adc_get_inst_index(adc_module)));
 #   elif (SAMC20)
-		system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_ADC0);
-#	else
-		system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_ADC);
+        system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_ADC0);
+#    else
+        system_interrupt_enable(SYSTEM_INTERRUPT_MODULE_ADC);
 #   endif
 #endif
 
-	/* Disbale interrupt */
-	adc_module->INTENCLR.reg = ADC_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	adc_module->INTFLAG.reg = ADC_INTFLAG_MASK;
+    /* Disbale interrupt */
+    adc_module->INTENCLR.reg = ADC_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    adc_module->INTFLAG.reg = ADC_INTFLAG_MASK;
 
-	adc_module->CTRLA.reg |= ADC_CTRLA_ENABLE;
+    adc_module->CTRLA.reg |= ADC_CTRLA_ENABLE;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
-	return STATUS_OK;
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
+    return STATUS_OK;
 }
 
 /**
@@ -633,39 +633,39 @@ static inline enum status_code adc_enable(
  * \param[in] module_inst Pointer to the ADC software instance struct
  */
 static inline enum status_code adc_disable(
-		struct adc_module *const module_inst)
+        struct adc_module *const module_inst)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
 #if ADC_CALLBACK_MODE == true
 #   if (ADC_INST_NUM > 1)
-	system_interrupt_disable(_adc_interrupt_get_interrupt_vector(
-			_adc_get_inst_index(adc_module)));
+    system_interrupt_disable(_adc_interrupt_get_interrupt_vector(
+            _adc_get_inst_index(adc_module)));
 #   elif (SAMC20)
-		system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_ADC0);
-#	else
-		system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_ADC);
+        system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_ADC0);
+#    else
+        system_interrupt_disable(SYSTEM_INTERRUPT_MODULE_ADC);
 #   endif
 #endif
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 
-	/* Disbale interrupt */
-	adc_module->INTENCLR.reg = ADC_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	adc_module->INTFLAG.reg = ADC_INTFLAG_MASK;
+    /* Disbale interrupt */
+    adc_module->INTENCLR.reg = ADC_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    adc_module->INTFLAG.reg = ADC_INTFLAG_MASK;
 
-	adc_module->CTRLA.reg &= ~ADC_CTRLA_ENABLE;
+    adc_module->CTRLA.reg &= ~ADC_CTRLA_ENABLE;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
-	return STATUS_OK;
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
+    return STATUS_OK;
 }
 
 /**
@@ -677,24 +677,24 @@ static inline enum status_code adc_disable(
  * \param[in] module_inst  Pointer to the ADC software instance struct
  */
 static inline enum status_code adc_reset(
-		struct adc_module *const module_inst)
+        struct adc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	/* Disable to make sure the pipeline is flushed before reset */
-	adc_disable(module_inst);
+    /* Disable to make sure the pipeline is flushed before reset */
+    adc_disable(module_inst);
 
-	/* Software reset the module */
-	adc_module->CTRLA.reg |= ADC_CTRLA_SWRST;
+    /* Software reset the module */
+    adc_module->CTRLA.reg |= ADC_CTRLA_SWRST;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
-	return STATUS_OK;
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
+    return STATUS_OK;
 }
 
 
@@ -710,29 +710,29 @@ static inline enum status_code adc_reset(
  *  \param[in] events       Struct containing flags of events to enable
  */
 static inline void adc_enable_events(
-		struct adc_module *const module_inst,
-		struct adc_events *const events)
+        struct adc_module *const module_inst,
+        struct adc_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(events);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Configure Window Monitor event */
-	if (events->generate_event_on_window_monitor) {
-		event_mask |= ADC_EVCTRL_WINMONEO;
-	}
+    /* Configure Window Monitor event */
+    if (events->generate_event_on_window_monitor) {
+        event_mask |= ADC_EVCTRL_WINMONEO;
+    }
 
-	/* Configure Result Ready event */
-	if (events->generate_event_on_conversion_done) {
-		event_mask |= ADC_EVCTRL_RESRDYEO;
-	}
+    /* Configure Result Ready event */
+    if (events->generate_event_on_conversion_done) {
+        event_mask |= ADC_EVCTRL_RESRDYEO;
+    }
 
-	adc_module->EVCTRL.reg |= event_mask;
+    adc_module->EVCTRL.reg |= event_mask;
 }
 
 /**
@@ -747,29 +747,29 @@ static inline void adc_enable_events(
  *  \param[in] events       Struct containing flags of events to disable
  */
 static inline void adc_disable_events(
-		struct adc_module *const module_inst,
-		struct adc_events *const events)
+        struct adc_module *const module_inst,
+        struct adc_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(events);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Configure Window Monitor event */
-	if (events->generate_event_on_window_monitor) {
-		event_mask |= ADC_EVCTRL_WINMONEO;
-	}
+    /* Configure Window Monitor event */
+    if (events->generate_event_on_window_monitor) {
+        event_mask |= ADC_EVCTRL_WINMONEO;
+    }
 
-	/* Configure Result Ready event */
-	if (events->generate_event_on_conversion_done) {
-		event_mask |= ADC_EVCTRL_RESRDYEO;
-	}
+    /* Configure Result Ready event */
+    if (events->generate_event_on_conversion_done) {
+        event_mask |= ADC_EVCTRL_RESRDYEO;
+    }
 
-	adc_module->EVCTRL.reg &= ~event_mask;
+    adc_module->EVCTRL.reg &= ~event_mask;
 }
 
 /**
@@ -780,22 +780,22 @@ static inline void adc_disable_events(
  * \param[in] module_inst  Pointer to the ADC software instance struct
  */
 static inline void adc_start_conversion(
-		struct adc_module *const module_inst)
+        struct adc_module *const module_inst)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 
-	adc_module->SWTRIG.reg |= ADC_SWTRIG_START;
+    adc_module->SWTRIG.reg |= ADC_SWTRIG_START;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -813,38 +813,38 @@ static inline void adc_start_conversion(
  *                             ADC module before the result was read by the software
  */
 static inline enum status_code adc_read(
-		struct adc_module *const module_inst,
-		uint16_t *result)
+        struct adc_module *const module_inst,
+        uint16_t *result)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(result);
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(result);
 
-	if (!(adc_get_status(module_inst) & ADC_STATUS_RESULT_READY)) {
-		/* Result not ready */
-		return STATUS_BUSY;
-	}
+    if (!(adc_get_status(module_inst) & ADC_STATUS_RESULT_READY)) {
+        /* Result not ready */
+        return STATUS_BUSY;
+    }
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
 #if (SAMD) || (SAMHA1) || (SAMR21)
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 #endif
 
-	/* Get ADC result */
-	*result = adc_module->RESULT.reg;
+    /* Get ADC result */
+    *result = adc_module->RESULT.reg;
 
-	/* Reset ready flag */
-	adc_clear_status(module_inst, ADC_STATUS_RESULT_READY);
+    /* Reset ready flag */
+    adc_clear_status(module_inst, ADC_STATUS_RESULT_READY);
 
-	if (adc_get_status(module_inst) & ADC_STATUS_OVERRUN) {
-		adc_clear_status(module_inst, ADC_STATUS_OVERRUN);
-		return STATUS_ERR_OVERFLOW;
-	}
+    if (adc_get_status(module_inst) & ADC_STATUS_OVERRUN) {
+        adc_clear_status(module_inst, ADC_STATUS_OVERRUN);
+        return STATUS_ERR_OVERFLOW;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /** @} */
@@ -864,28 +864,28 @@ static inline enum status_code adc_read(
  * \param[in] module_inst  Pointer to the ADC software instance struct
  */
 static inline void adc_flush(
-		struct adc_module *const module_inst)
+        struct adc_module *const module_inst)
 {
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 
-	adc_module->SWTRIG.reg |= ADC_SWTRIG_FLUSH;
+    adc_module->SWTRIG.reg |= ADC_SWTRIG_FLUSH;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 }
 void adc_set_window_mode(
-		struct adc_module *const module_inst,
-		const enum adc_window_mode window_mode,
-		const int16_t window_lower_value,
-		const int16_t window_upper_value);
+        struct adc_module *const module_inst,
+        const enum adc_window_mode window_mode,
+        const int16_t window_lower_value,
+        const int16_t window_upper_value);
 
 /**
  * \brief Sets positive ADC input pin.
@@ -896,27 +896,27 @@ void adc_set_window_mode(
  * \param[in] positive_input  Positive input pin
  */
 static inline void adc_set_positive_input(
-		struct adc_module *const module_inst,
-		const enum adc_positive_input positive_input)
+        struct adc_module *const module_inst,
+        const enum adc_positive_input positive_input)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 
-	/* Set positive input pin */
-	adc_module->INPUTCTRL.reg =
-			(adc_module->INPUTCTRL.reg & ~ADC_INPUTCTRL_MUXPOS_Msk) |
-			(positive_input);
+    /* Set positive input pin */
+    adc_module->INPUTCTRL.reg =
+            (adc_module->INPUTCTRL.reg & ~ADC_INPUTCTRL_MUXPOS_Msk) |
+            (positive_input);
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 }
 
 
@@ -930,27 +930,27 @@ static inline void adc_set_positive_input(
  * \param[in] negative_input  Negative input pin
  */
 static inline void adc_set_negative_input(
-		struct adc_module *const module_inst,
-		const enum adc_negative_input negative_input)
+        struct adc_module *const module_inst,
+        const enum adc_negative_input negative_input)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
+    Adc *const adc_module = module_inst->hw;
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 
-	/* Set negative input pin */
-	adc_module->INPUTCTRL.reg =
-			(adc_module->INPUTCTRL.reg & ~ADC_INPUTCTRL_MUXNEG_Msk) |
-			(negative_input);
+    /* Set negative input pin */
+    adc_module->INPUTCTRL.reg =
+            (adc_module->INPUTCTRL.reg & ~ADC_INPUTCTRL_MUXNEG_Msk) |
+            (negative_input);
 
-	while (adc_is_syncing(module_inst)) {
-		/* Wait for synchronization */
-	}
+    while (adc_is_syncing(module_inst)) {
+        /* Wait for synchronization */
+    }
 }
 
 /** @} */
@@ -970,15 +970,15 @@ static inline void adc_set_negative_input(
  * \param[in] interrupt Interrupt to enable
  */
 static inline void adc_enable_interrupt(struct adc_module *const module_inst,
-		enum adc_interrupt_flag interrupt)
+        enum adc_interrupt_flag interrupt)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
-	/* Enable interrupt */
-	adc_module->INTENSET.reg = interrupt;
+    Adc *const adc_module = module_inst->hw;
+    /* Enable interrupt */
+    adc_module->INTENSET.reg = interrupt;
 }
 
 /**
@@ -990,15 +990,15 @@ static inline void adc_enable_interrupt(struct adc_module *const module_inst,
  * \param[in] interrupt Interrupt to disable
  */
 static inline void adc_disable_interrupt(struct adc_module *const module_inst,
-		enum adc_interrupt_flag interrupt)
+        enum adc_interrupt_flag interrupt)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	Adc *const adc_module = module_inst->hw;
-	/* Enable interrupt */
-	adc_module->INTENCLR.reg = interrupt;
+    Adc *const adc_module = module_inst->hw;
+    /* Enable interrupt */
+    adc_module->INTENCLR.reg = interrupt;
 }
 
 /** @} */
@@ -1019,30 +1019,30 @@ static inline void adc_disable_interrupt(struct adc_module *const module_inst,
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
  *  <tr>
- *		<td>ADC</td>
- *		<td>Analog-to-Digital Converter</td>
- *	</tr>
+ *        <td>ADC</td>
+ *        <td>Analog-to-Digital Converter</td>
+ *    </tr>
  *  <tr>
- *		<td>DAC</td>
- *		<td>Digital-to-Analog Converter</td>
- *	</tr>
- *	<tr>
- *		<td>LSB</td>
- *		<td>Least Significant Bit</td>
- *	</tr>
- *	<tr>
- *		<td>MSB</td>
- *		<td>Most Significant Bit</td>
- *	</tr>
- *	<tr>
- *		<td>DMA</td>
- *		<td>Direct Memory Access</td>
- *	</tr>
+ *        <td>DAC</td>
+ *        <td>Digital-to-Analog Converter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>LSB</td>
+ *        <td>Least Significant Bit</td>
+ *    </tr>
+ *    <tr>
+ *        <td>MSB</td>
+ *        <td>Most Significant Bit</td>
+ *    </tr>
+ *    <tr>
+ *        <td>DMA</td>
+ *        <td>Direct Memory Access</td>
+ *    </tr>
  * </table>
  *
  *
@@ -1063,27 +1063,27 @@ static inline void adc_disable_interrupt(struct adc_module *const module_inst,
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
  * \if DEVICE_SAML21_SUPPORT
  *  <tr>
- *		<td>Initial Release</td>
+ *        <td>Initial Release</td>
  * </tr>
  * \else
- *	<tr>
- *		<td>Added support for SAM R21</td>
- *	</tr>
- *	<tr>
- *		<td>Added support for SAM D21 and new DMA quick start guide</td>
- *	</tr>
- *	<tr>
- *		<td>Added ADC calibration constant loading from the device signature
+ *    <tr>
+ *        <td>Added support for SAM R21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Added support for SAM D21 and new DMA quick start guide</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Added ADC calibration constant loading from the device signature
  *          row when the module is initialized</td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * \endif
  * </table>
  */
@@ -1106,49 +1106,49 @@ static inline void adc_disable_interrupt(struct adc_module *const module_inst,
  * \page asfdoc_sam0_adc_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</th>
+ *        <th>Date</th>
+ *        <th>Comments</th>
+ *    </tr>
  * \if DEVICE_SAML21_SUPPORT
- *	<tr>
- *		<td>42451B</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L22</td>
- *	</tr>
+ *    <tr>
+ *        <td>42451B</td>
+ *        <td>12/2015</td>
+ *        <td>Added support for SAM L22</td>
+ *    </tr>
  *  <tr>
  *      <td>42451A</td>
  *      <td>07/2015</td>
  *      <td>Initial document release</td>
  * </tr>
  * \else
- *	<tr>
- *		<td>42109E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM DA1 and SAM D09</td>
- *	</tr>
- *	<tr>
- *		<td>42109D</td>
- *		<td>12/2014</td>
- *		<td>Added support for SAM R21 and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42109C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42109B</td>
- *		<td>06/2013</td>
- *		<td>Added additional documentation on the event system. Corrected
+ *    <tr>
+ *        <td>42109E</td>
+ *        <td>12/2015</td>
+ *        <td>Added support for SAM DA1 and SAM D09</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42109D</td>
+ *        <td>12/2014</td>
+ *        <td>Added support for SAM R21 and SAM D10/D11</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42109C</td>
+ *        <td>01/2014</td>
+ *        <td>Added support for SAM D21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42109B</td>
+ *        <td>06/2013</td>
+ *        <td>Added additional documentation on the event system. Corrected
  *          documentation typos.</td>
- *	</tr>
- *	<tr>
- *		<td>42109A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *    </tr>
+ *    <tr>
+ *        <td>42109A</td>
+ *        <td>06/2013</td>
+ *        <td>Initial release</td>
+ *    </tr>
  * \endif
  * </table>
  */

@@ -68,7 +68,7 @@ static void common_cpu_entry(void)
 {
     uint32_t myCoreNumber = cpu_get_current();
     core_startup_info_t * info = &s_core_info[myCoreNumber];
-    
+
     // Call the requested entry point for this CPU number.
     if (info->entry)
     {
@@ -79,18 +79,18 @@ static void common_cpu_entry(void)
 void cpu_start_secondary(uint8_t coreNumber, cpu_entry_point_t entryPoint, void * arg)
 {
     int actualCores = cpu_get_cores();
-    
+
     // Exit if the requested core is not available.
     if (coreNumber == 0 || coreNumber >= actualCores)
     {
         return;
     }
-    
+
     // Save entry point and arg.
     assert(coreNumber < MAX_CORE_COUNT);
     s_core_info[coreNumber].entry = entryPoint;
     s_core_info[coreNumber].arg = arg;
-    
+
     // Prepare pointers for ROM code. The entry point is always _start, which does some
     // basic preparatory work and then calls the common_cpu_entry function, which itself
     // calls the entry point saved in s_core_info.
@@ -111,7 +111,7 @@ void cpu_start_secondary(uint8_t coreNumber, cpu_entry_point_t entryPoint, void 
 
             HW_SRC_SCR.B.CORE2_ENABLE = 1;
             break;
-    
+
         case 3:
             HW_SRC_GPR7_WR((uint32_t) & _start);
             HW_SRC_GPR8_WR((uint32_t) common_cpu_entry);
@@ -126,13 +126,13 @@ void cpu_start_secondary(uint8_t coreNumber, cpu_entry_point_t entryPoint, void 
 void cpu_disable(uint8_t coreNumber)
 {
     int actualCores = cpu_get_cores();
-    
+
     // Exit if the requested core is not available.
     if (coreNumber == 0 || coreNumber >= actualCores)
     {
         return;
     }
-    
+
     switch (coreNumber)
     {
 #if defined(CHIP_MX6DQ) || defined(CHIP_MX6SDL)
@@ -144,7 +144,7 @@ void cpu_disable(uint8_t coreNumber)
         case 2:
             HW_SRC_SCR.B.CORE2_ENABLE = 0;
             break;
-    
+
         case 3:
             HW_SRC_SCR.B.CORE3_ENABLE = 0;
             break;

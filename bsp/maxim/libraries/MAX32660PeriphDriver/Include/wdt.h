@@ -61,7 +61,7 @@ extern "C" {
 
 /* **** Definitions **** */
 
-/** @brief Watchdog period enumeration. 
+/** @brief Watchdog period enumeration.
     Used to configure the period of the watchdog interrupt */
 typedef enum {
     WDT_PERIOD_2_31 = MXC_S_WDT_CTRL_INT_PERIOD_WDT2POW31, /**< Period 2^31 */

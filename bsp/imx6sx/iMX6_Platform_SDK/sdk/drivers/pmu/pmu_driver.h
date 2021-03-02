@@ -91,31 +91,31 @@ typedef enum _pmu_regulator_properties {
     //!
     //! The valid voltage ranges differ for each regulator. In addition to the range supported
     //! by the regulator hardware, the PMU driver normally disallows setting the output voltages
-    //! to values that could prevent proper functioning or damage the hardware. See the 
+    //! to values that could prevent proper functioning or damage the hardware. See the
     //! #kPMUProperty_SafetyOverrideIsEnabled property for more details.
     kPMUProperty_OutputMillivolts,
-    
+
     //! @brief Minimum allowed output voltage in millivolts. [uint32_t, read-only]
     kPMUProperty_MinOutputMillivolts,
-    
+
     //! @brief Maximum allowed output voltage in millivolts. [uint32_t, read-only]
     kPMUProperty_MaxOutputMillivolts,
-    
+
     //! @brief Brownout voltage in millivolts. [uint32_t]
     //!
     //! The brownout voltage must be between 75mV and 175mV below the output voltage. Any value
     //! outside this range will result in a #kPMUError_ValueOutOfRange error.
     kPMUProperty_BrownoutMillivolts,
-    
+
     //! @brief Minimum allowed brownout voltage in millivolts. [uint32_t, read-only]
     kPMUProperty_MinBrownoutMillivolts,
-    
+
     //! @brief Maximum allowed brownout voltage in millivolts. [uint32_t, read-only]
     kPMUProperty_MaxBrownoutMillivolts,
-    
+
     //! @brief Enable flag for the regulator. [bool]
     kPMUProperty_IsEnabled,
-    
+
     //! @brief Enable property for the bypass mode of the core regulators. [bool]
     //!
     //! The digital or core regulators have an option to turn the pass FET completely on,
@@ -125,26 +125,26 @@ typedef enum _pmu_regulator_properties {
     //! Only applies to core regulators. Attempting to get or set this property for the analog
     //! regulators will result in a #kPMUError_UnsupportedProperty error.
     kPMUProperty_IsBypassed,
-    
+
     //! @brief Enable for the brownout detector. [bool]
     kPMUProperty_BrownoutDetectIsEnabled,
-    
+
     //! @brief Whether the current limiter is enabled. [bool]
     //!
     //! The core regulators do not have a current limiter.
     kPMUProperty_CurrentLimitIsEnabled,
-    
+
     //! @brief Whether the regulator is functioning properly. [bool, read-only]
     kPMUProperty_IsOK,
-    
+
     //! @brief Whether the regulator is currently browning out. [bool, read-only]
     kPMUProperty_IsInBrownout,
-    
+
     //! @brief Enable for the regulator pulldown. [bool]
     //!
     //! The core regulators and 3p0 do not have a pulldown.
     kPMUProperty_PulldownIsEnabled,
-    
+
     //! @brief Ramp rate. [uint32_t]
     //!
     //! One of the ramp rate constants:
@@ -153,10 +153,10 @@ typedef enum _pmu_regulator_properties {
     //! - #kPMURate_Medium
     //! - #kPMURate_Fast
     kPMUProperty_RampRate,
-    
+
     //! @brief Function to be called when a regulator browns out. [pmu_bo_handler_t]
     kPMUProperty_BrownoutHandler,
-    
+
     //! @brief Boolean that controls whether unsafe voltages are allowed. [bool]
     //!
     //! Normally, the PMU driver disallows setting regulator voltages to unsafe values. These
@@ -171,7 +171,7 @@ typedef enum _pmu_regulator_properties {
 enum _pmu_status
 {
     kPMUSuccess = 0,
-    
+
     kPMUError_ValueOutOfRange = -1,
     kPMUError_ReadOnlyProperty = -2,
     kPMUError_UnsupportedProperty = -3,
@@ -193,7 +193,7 @@ extern "C" {
 
 //! @brief Initialize the PMU driver.
 //!
-//! Self-bias of the analog bandgap is turned off, to enable better precision. Brownout detect 
+//! Self-bias of the analog bandgap is turned off, to enable better precision. Brownout detect
 //! is turned off for all regulators.
 void pmu_init(void);
 

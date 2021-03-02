@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* @brief provide commond UART utilities. 
+* @brief provide commond UART utilities.
 *
 *******************************************************************************/
 #ifndef _UART_H_
@@ -33,12 +33,12 @@ extern "C" {
 *
 *//*! @addtogroup uart_setting_type
 * @{
-*******************************************************************************/  
+*******************************************************************************/
 
 /*!
 * @brief UART setting type.
 *
-*/ 
+*/
 
 typedef struct
 {
@@ -56,8 +56,8 @@ typedef struct
  /*!
  * @brief UART Configuration structure.
  *
- */   
-typedef struct 
+ */
+typedef struct
 {
     UART_SettingType    sSettings;              /*!< UART settings */
     uint32_t    u32SysClkHz;        /*!< system clock */
@@ -74,7 +74,7 @@ typedef struct
  /*!
  * @brief UART baudrate type structure.
  *
- */   
+ */
 typedef struct
 {
     uint32_t    u32SysClkHz;        /*!< system clock */
@@ -140,7 +140,7 @@ typedef enum
 
     UART_FlagRAF,           /*!< Receiver active flag */
     UART_FlagLBKDE,         /*!< LIN break detection enable */
-    UART_FlagBRK13,         /*!< Break character generation length */ 
+    UART_FlagBRK13,         /*!< Break character generation length */
     UART_FlagRWUID,         /*!< Receive wake up idle detect */
     UART_FlagRXINV,         /*!< Receive data inversion */
     UART_FlagRev1,          /*!< Reserved */
@@ -170,7 +170,7 @@ typedef void (*UART_CallbackType)(UART_Type *pUART);
 /*****************************************************************************//*!
 *
 * @brief read receive buffer
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return unsign char received char
@@ -184,7 +184,7 @@ __STATIC_INLINE uint8_t UART_ReadDataReg(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief write transmit buffer
-*        
+*
 * @param[in] pUART       base of UART port
 * @param[in] u8Char      char to send
 *
@@ -208,13 +208,13 @@ __STATIC_INLINE void UART_WriteDataReg(UART_Type *pUART, uint8_t u8Char)
 * @ Pass/ Fail criteria:
 *****************************************************************************/
 __STATIC_INLINE uint8_t UART_CharPresent(UART_Type *pUART)
-{  
+{
     return (pUART->S1 & UART_S1_RDRF_MASK);
 }
 /*****************************************************************************//*!
 *
 * @brief enable transmit
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -222,52 +222,52 @@ __STATIC_INLINE uint8_t UART_CharPresent(UART_Type *pUART)
 *****************************************************************************/
 __STATIC_INLINE void UART_EnableTx(UART_Type *pUART)
 {
-    
+
     pUART->C2 |= UART_C2_TE_MASK;
 }
 /*****************************************************************************//*!
 *
 * @brief disable transmit
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
 *
 *****************************************************************************/
 __STATIC_INLINE void UART_DisableTx(UART_Type *pUART)
-{    
+{
     pUART->C2 &= (~UART_C2_TE_MASK);
 }
 /*****************************************************************************//*!
 *
 * @brief enable receive
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
 *
 *****************************************************************************/
 __STATIC_INLINE void UART_EnableRx(UART_Type *pUART)
-{    
+{
     pUART->C2 |= UART_C2_RE_MASK;
 }
 /*****************************************************************************//*!
 *
 * @brief disable receive
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
 *
 *****************************************************************************/
 __STATIC_INLINE void UART_DisableRx(UART_Type *pUART)
-{    
+{
     pUART->C2 &= (~UART_C2_RE_MASK);
 }
 /*****************************************************************************//*!
 *
 * @brief Enable loopback mode
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -281,7 +281,7 @@ __STATIC_INLINE void UART_EnableLoopback(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief enable single wire mode
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -295,7 +295,7 @@ __STATIC_INLINE void UART_EnableSingleWire(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief set 8-bit mode
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -308,7 +308,7 @@ __STATIC_INLINE void UART_Set8BitMode(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief set 9-bit mode
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -321,7 +321,7 @@ __STATIC_INLINE void UART_Set9BitMode(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief enable transmit buffer empty interrupt
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -335,7 +335,7 @@ __STATIC_INLINE void UART_EnableTxBuffEmptyInt(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief enable transmit complete interrupt
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -349,7 +349,7 @@ __STATIC_INLINE void UART_EnableTxCompleteInt(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief enable receive buffer full interrupt
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -363,7 +363,7 @@ __STATIC_INLINE void UART_EnableRxBuffFullInt(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief disable transmit buffer empty interrupt
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -372,12 +372,12 @@ __STATIC_INLINE void UART_EnableRxBuffFullInt(UART_Type *pUART)
 *****************************************************************************/
 __STATIC_INLINE void UART_DisableTxBuffEmptyInt(UART_Type *pUART)
 {
-        pUART->C2 &= (~UART_C2_TIE_MASK);    
+        pUART->C2 &= (~UART_C2_TIE_MASK);
 }
 /*****************************************************************************//*!
 *
 * @brief disable transmit complete interrupt
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -386,12 +386,12 @@ __STATIC_INLINE void UART_DisableTxBuffEmptyInt(UART_Type *pUART)
 *****************************************************************************/
 __STATIC_INLINE void UART_DisableTxCompleteInt(UART_Type *pUART)
 {
-    pUART->C2 &= (~UART_C2_TCIE_MASK);   
+    pUART->C2 &= (~UART_C2_TCIE_MASK);
 }
 /*****************************************************************************//*!
 *
 * @brief disable receive buffer full interrupt
-*        
+*
 * @param[in] pUART       base of UART port
 *
 * @return none
@@ -400,12 +400,12 @@ __STATIC_INLINE void UART_DisableTxCompleteInt(UART_Type *pUART)
 *****************************************************************************/
 __STATIC_INLINE void UART_DisableRxBuffFullInt(UART_Type *pUART)
 {
-    pUART->C2 &= (~UART_C2_RIE_MASK);  
+    pUART->C2 &= (~UART_C2_RIE_MASK);
 }
 /*****************************************************************************//*!
 *
 * @brief print out break character
-*        
+*
 * @param[in] pUART  base of UART port
 *
 * @return       none
@@ -415,17 +415,17 @@ __STATIC_INLINE void UART_DisableRxBuffFullInt(UART_Type *pUART)
 __STATIC_INLINE void UART_PutBreak(UART_Type *pUART)
 {
     /* Write 1 then write 0 to UART_C2[SBK] bit, will put break character */
-    pUART->C2 |= UART_C2_SBK_MASK; 
+    pUART->C2 |= UART_C2_SBK_MASK;
     pUART->C2 &= (~UART_C2_SBK_MASK);
 }
 
 /*****************************************************************************//*!
 *
 * @brief check whether tx is complete,i.e. data has been sent out.
-*        
+*
 * @param[in] pUART  base of UART port
 *
-* @return       
+* @return
 *               1, Tx complete flag is set
 *               0, Tx complete flag is clear
 *
@@ -438,10 +438,10 @@ __STATIC_INLINE uint8_t UART_IsTxComplete(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief check whether Tx buffer is empty
-*        
+*
 * @param[in] pUART  base of UART port
 *
-* @return       
+* @return
 *               1, Tx buffer is empty
 *               0, Tx buffer is not empty
 *
@@ -454,10 +454,10 @@ __STATIC_INLINE uint8_t UART_IsTxBuffEmpty(UART_Type *pUART)
 /*****************************************************************************//*!
 *
 * @brief check whether Rx buffer is full, i.e. receive a character
-*        
+*
 * @param[in] pUART  base of UART port
 *
-* @return       
+* @return
 *               1, Rx buffer is full
 *               0, Rx buffer is not full
 *

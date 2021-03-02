@@ -43,7 +43,7 @@ static struct imx_i2c_request at24cxx_i2c_req;
 static int32_t at24cx_read(uint32_t addr, uint8_t *buf)
 {
     at24cxx_i2c_req.buffer = buf;
-    at24cxx_i2c_req.reg_addr = addr;    
+    at24cxx_i2c_req.reg_addr = addr;
     return i2c_read(&at24cxx_i2c_req);
 }
 

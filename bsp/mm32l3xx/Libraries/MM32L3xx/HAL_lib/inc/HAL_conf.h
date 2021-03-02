@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 #ifndef __HAL_CONF_H__
 #define __HAL_CONF_H__
 

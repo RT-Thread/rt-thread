@@ -48,27 +48,27 @@
 #define D(fmt,args...)
 #endif
 
-#define UNUSED_VARIABLE(x)	(x) = (x)
+#define UNUSED_VARIABLE(x)    (x) = (x)
 
 /* Register value definitions */
-#define SCR_TXFIFO_ESEL_0_SAMPLE	(0x0 << 15)
-#define SCR_TXFIFO_ESEL_4_SAMPLE	(0x1 << 15)
-#define SCR_TXFIFO_ESEL_8_SAMPLE	(0x2 << 15)
-#define SCR_TXFIFO_ESEL_12_SAMPLE	(0x3 << 15)
-#define SCR_TXFIFO_ZERO		(0 << 10)
-#define SCR_TXFIFO_NORMAL	(1 << 10)
-#define SCR_VAL_CLEAR		(1 << 5)
-#define SCR_TXSEL_OFF		(0 << 2)
-#define SCR_TXSEL_RX		(1 << 2)
-#define SCR_TXSEL_NORMAL	(0x5 << 2)
-#define SCR_USRC_SEL_NONE	(0x0)
-#define SCR_USRC_SEL_RECV	(0x1)
-#define SCR_USRC_SEL_CHIP	(0x3)
+#define SCR_TXFIFO_ESEL_0_SAMPLE    (0x0 << 15)
+#define SCR_TXFIFO_ESEL_4_SAMPLE    (0x1 << 15)
+#define SCR_TXFIFO_ESEL_8_SAMPLE    (0x2 << 15)
+#define SCR_TXFIFO_ESEL_12_SAMPLE    (0x3 << 15)
+#define SCR_TXFIFO_ZERO        (0 << 10)
+#define SCR_TXFIFO_NORMAL    (1 << 10)
+#define SCR_VAL_CLEAR        (1 << 5)
+#define SCR_TXSEL_OFF        (0 << 2)
+#define SCR_TXSEL_RX        (1 << 2)
+#define SCR_TXSEL_NORMAL    (0x5 << 2)
+#define SCR_USRC_SEL_NONE    (0x0)
+#define SCR_USRC_SEL_RECV    (0x1)
+#define SCR_USRC_SEL_CHIP    (0x3)
 
 extern void spdif_clk_cfg(void);
 extern unsigned int spdif_get_tx_clk_freq(void);
 
-/*! 
+/*!
  * Dump spdif readable registers.
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the ssi module
  *
@@ -84,17 +84,17 @@ static int32_t spdif_dump(audio_ctrl_p ctrl)
 
     printf("=================%s dump==================\n", ctrl->name);
 
-    printf("SCR: 0x%x\n", 	HW_SPDIF_SCR_RD());
-    printf("SRCD: 0x%x\n", 	HW_SPDIF_SRCD_RD());
-    printf("SRPC: 0x%x\n", 	HW_SPDIF_SRPC_RD());
-    printf("SIE: 0x%x\n", 	HW_SPDIF_SIE_RD());
-    printf("SIS: 0x%x\n", 	HW_SPDIF_SIS_RD());
-    printf("SRCSH: 0x%x\n", 	HW_SPDIF_SRCSH_RD());
-    printf("SRCSL: 0x%x\n", 	HW_SPDIF_SRCSL_RD());
-    printf("STCSCH: 0x%x\n", 	HW_SPDIF_STCSCH_RD());
-    printf("STCSCL: 0x%x\n", 	HW_SPDIF_STCSCL_RD());
-    printf("SRFM: 0x%x\n", 	HW_SPDIF_SRFM_RD());
-    printf("STC: 0x%x\n", 	HW_SPDIF_STC_RD());
+    printf("SCR: 0x%x\n",     HW_SPDIF_SCR_RD());
+    printf("SRCD: 0x%x\n",     HW_SPDIF_SRCD_RD());
+    printf("SRPC: 0x%x\n",     HW_SPDIF_SRPC_RD());
+    printf("SIE: 0x%x\n",     HW_SPDIF_SIE_RD());
+    printf("SIS: 0x%x\n",     HW_SPDIF_SIS_RD());
+    printf("SRCSH: 0x%x\n",     HW_SPDIF_SRCSH_RD());
+    printf("SRCSL: 0x%x\n",     HW_SPDIF_SRCSL_RD());
+    printf("STCSCH: 0x%x\n",     HW_SPDIF_STCSCH_RD());
+    printf("STCSCL: 0x%x\n",     HW_SPDIF_STCSCL_RD());
+    printf("SRFM: 0x%x\n",     HW_SPDIF_SRFM_RD());
+    printf("STC: 0x%x\n",     HW_SPDIF_STC_RD());
 
     return 0;
 }
@@ -105,7 +105,7 @@ static int32_t spdif_dump(audio_ctrl_p ctrl)
 }
 #endif
 
-/*! 
+/*!
  * Put the spdif to soft-reset mode, and then can be configured.
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the ssi module
  *
@@ -191,11 +191,11 @@ static uint32_t spdif_cal_txclk_div(audio_ctrl_p ctrl, uint32_t sample_rate)
 //////////////////////////////////////// APIs //////////////////////////////////////////////////////////////
 
 /*!
- * Initialize the spdif module and set the ssi to default status. 
- * This function will be called by the snd_card driver. 
+ * Initialize the spdif module and set the ssi to default status.
+ * This function will be called by the snd_card driver.
  *
- * @param       priv    a pointer passed by audio card driver, spdif driver should change it 
- *			            to a audio_ctrl_p pointer which presents the spdif controller.
+ * @param       priv    a pointer passed by audio card driver, spdif driver should change it
+ *                        to a audio_ctrl_p pointer which presents the spdif controller.
  *
  * @return      0 if succeeded
  *              -1 if failed
@@ -245,10 +245,10 @@ int32_t spdif_config(void *priv, audio_dev_para_p para)
         cchannel.l.ctrl.sample_freq = IEC958_CON_SAMPLE_FREQ_44100;
     else if (para->sample_rate == SAMPLERATE_32KHz)
         cchannel.l.ctrl.sample_freq = IEC958_CON_SAMPLE_FREQ_32000;
-    else if (para->sample_rate == SAMPLERATE_16KHz)	
-	// There's no 16KHz sample rate defined in IEC958, it is supposed that the receiver
-	// will measure the sample rate automatically.
-	cchannel.l.ctrl.sample_freq = IEC958_CON_SAMPLE_FREQ_NOT_INDICATED;
+    else if (para->sample_rate == SAMPLERATE_16KHz)
+    // There's no 16KHz sample rate defined in IEC958, it is supposed that the receiver
+    // will measure the sample rate automatically.
+    cchannel.l.ctrl.sample_freq = IEC958_CON_SAMPLE_FREQ_NOT_INDICATED;
     else                        //48K
         cchannel.l.ctrl.sample_freq = IEC958_CON_SAMPLE_FREQ_48000;
 
@@ -289,9 +289,9 @@ int32_t spdif_config(void *priv, audio_dev_para_p para)
  * Write datas to the spdif fifo in polling mode.
  * @param       priv    a pointer passed by audio card driver, spdif driver should change it
  *                      to a audio_ctrl_p pointer which presents the spdif controller.
- * @param       buf	points to the buffer which hold the data to be written to the spdif tx fifo
+ * @param       buf    points to the buffer which hold the data to be written to the spdif tx fifo
  * @param       size    the size of the buffer pointed by buf.
- * @param       bytes_written	bytes be written to the spdif tx fifo
+ * @param       bytes_written    bytes be written to the spdif tx fifo
  *
  * @return      0 if succeeded
  *              -1 if failed
@@ -308,13 +308,13 @@ int32_t spdif_write_fifo(void *priv, uint8_t * buf, uint32_t size, uint32_t * by
     while (i < size) {
         if (HW_SPDIF_SIS_RD() & BM_SPDIF_SIS_TXEM) {
             val_right = (uint32_t)(*((uint16_t *) (buf + i)));
-	    val_left = (uint32_t)(*((uint16_t *) (buf + i + 2)));
+        val_left = (uint32_t)(*((uint16_t *) (buf + i + 2)));
             /* TODO: the msb bit of the audio data should be always at 23bit of stl or str  */
             val_right = (val_right << 8) & 0x00ffffff;
             val_left = (val_left << 8) & 0x00ffffff;
 
-	    HW_SPDIF_STR_WR(val_right);
-	    HW_SPDIF_STL_WR(val_left);
+        HW_SPDIF_STR_WR(val_right);
+        HW_SPDIF_STL_WR(val_left);
 
             i += 4;
         }

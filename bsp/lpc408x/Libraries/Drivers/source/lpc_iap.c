@@ -6,7 +6,7 @@
 * @version  1.0
 * @date     21. November. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -46,7 +46,7 @@ IAP iap_entry = (IAP) IAP_LOCATION;
  * @ingroup IAP
  * @{
  */
- 
+
 
 /*********************************************************************//**
  * @brief     Get Sector Number
@@ -63,7 +63,7 @@ IAP iap_entry = (IAP) IAP_LOCATION;
     n = adr >> 12;                               //  4kB Sector
     if (n >= 0x10) {
       n = 0x0E + (n >> 3);                       // 32kB Sector
-    } 
+    }
 
     return (n);                                  // Sector Number
 }
@@ -112,7 +112,7 @@ IAP_STATUS_CODE CopyRAM2Flash(uint8_t * dest, uint8_t* source, IAP_WRITE_SIZE si
     status = PrepareSector(sec, sec);
     if(status != CMD_SUCCESS)
         return status;
-   
+
     // write
     command.cmd    = IAP_COPY_RAM2FLASH;             // Copy RAM to Flash
     command.param[0] = (uint32_t)dest;                 // Destination Flash Address
@@ -120,8 +120,8 @@ IAP_STATUS_CODE CopyRAM2Flash(uint8_t * dest, uint8_t* source, IAP_WRITE_SIZE si
     command.param[2] =  size;                          // Number of bytes
     command.param[3] =  CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU) / 1000;         // CCLK in kHz
     IAP_Call (&command.cmd, &command.status);              // Call IAP Command
-      
-    return (IAP_STATUS_CODE)command.status;             // Finished without Errors    
+
+    return (IAP_STATUS_CODE)command.status;             // Finished without Errors
 }
 
 /*********************************************************************//**
@@ -152,7 +152,7 @@ IAP_STATUS_CODE EraseSector(uint32_t start_sec, uint32_t end_sec)
     command.param[1] = end_sec;                    // End Sector
     command.param[2] =  CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU) / 1000;         // CCLK in kHz
     IAP_Call (&command.cmd, &command.status);      // Call IAP Command
-    return (IAP_STATUS_CODE)command.status;  
+    return (IAP_STATUS_CODE)command.status;
 }
 
 /*********************************************************************//**
@@ -170,11 +170,11 @@ IAP_STATUS_CODE EraseSector(uint32_t start_sec, uint32_t end_sec)
  *
  **********************************************************************/
 IAP_STATUS_CODE BlankCheckSector(uint32_t start_sec, uint32_t end_sec,
-                                 uint32_t *first_nblank_loc, 
+                                 uint32_t *first_nblank_loc,
                                  uint32_t *first_nblank_val)
 {
     IAP_COMMAND_Type command;
-    
+
     command.cmd    = IAP_BLANK_CHECK;                // Prepare Sector for Write
     command.param[0] = start_sec;                    // Start Sector
     command.param[1] = end_sec;                      // End Sector
@@ -312,6 +312,6 @@ void InvokeISP(void)
 /**
  * @}
  */
- 
+
 
 #endif /*_IAP*/

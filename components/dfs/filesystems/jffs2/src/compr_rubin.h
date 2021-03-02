@@ -11,11 +11,11 @@
 
 
 struct rubin_state {
-	unsigned long p;		
-	unsigned long q;	
-	unsigned long rec_q;
-	long bit_number;
-	struct pushpull pp;
-	int bit_divider;
-	int bits[8];
+    unsigned long p;
+    unsigned long q;
+    unsigned long rec_q;
+    long bit_number;
+    struct pushpull pp;
+    int bit_divider;
+    int bits[8];
 };

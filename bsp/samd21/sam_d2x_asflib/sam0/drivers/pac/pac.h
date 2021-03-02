@@ -117,36 +117,36 @@
  *
  * \anchor asfdoc_sam0_pac_rec_imp_diagram
  * \dot
- *	digraph correct {
- *		subgraph cluster_a {
- *			style="filled, dotted";
- *			coler=lightgray;
- *			init [label="Initialize Peripheral", shape=box];
- *			lock [label="Lock peripheral", shape=box];
- *			label="Initialization and code";
- *			init -> lock;
- *		}
- *		subgraph cluster_b {
- *			cli [label="Disable global interrupts", shape=box,
- *				style=dotted];
- *			unlock [label="Unlock peripheral", shape=box];
- *			sanity [label="Sanity Check", shape=box, style=dotted];
- *			modify [label="Modify peripheral", shape=box];
- *			lock2 [label="Lock peripheral", shape=box];
- *			sei [label="Enable global interrupts", shape=box
- *				style=dotted];
+ *    digraph correct {
+ *        subgraph cluster_a {
+ *            style="filled, dotted";
+ *            coler=lightgray;
+ *            init [label="Initialize Peripheral", shape=box];
+ *            lock [label="Lock peripheral", shape=box];
+ *            label="Initialization and code";
+ *            init -> lock;
+ *        }
+ *        subgraph cluster_b {
+ *            cli [label="Disable global interrupts", shape=box,
+ *                style=dotted];
+ *            unlock [label="Unlock peripheral", shape=box];
+ *            sanity [label="Sanity Check", shape=box, style=dotted];
+ *            modify [label="Modify peripheral", shape=box];
+ *            lock2 [label="Lock peripheral", shape=box];
+ *            sei [label="Enable global interrupts", shape=box
+ *                style=dotted];
 *
- *			label="Peripheral Modification";
- *			cli -> unlock;
- *			unlock -> sanity
- *			sanity -> modify;
- *			modify -> lock2;
- *			lock2 -> sei;
- *		}
- *		lock -> cli [label=
- *			"Other initialization\n and enable interrupts if applicable"
- *				, style=dotted];
- *	}
+ *            label="Peripheral Modification";
+ *            cli -> unlock;
+ *            unlock -> sanity
+ *            sanity -> modify;
+ *            modify -> lock2;
+ *            lock2 -> sei;
+ *        }
+ *        lock -> cli [label=
+ *            "Other initialization\n and enable interrupts if applicable"
+ *                , style=dotted];
+ *    }
  * \enddot
  *
  * \subsection asfdoc_sam0_pac_enabled_interrupt Why Disable Interrupts
@@ -165,33 +165,33 @@
  *
  * \anchor asfdoc_sam0_pac_int_hazard_diagram
  * \dot
- *	digraph enabled_interrupt {
- *		subgraph cluster_0{
- *			label="Main routine";
- *			{node [style="filled", color=black, fillcolor=white]
- *			init [label="Initialize and lock peripherals", shape=box];
- *			main_unlock [label="Unlock peripheral",	shape=box,
- *				fillcolor=green];
- *			main_modify [label="Modify peripheral", shape=box];}
- *			main_lock [label="Lock peripheral", shape=box];
- *			init -> main_unlock [label="User code"];
- *			main_unlock -> main_modify;
- *			main_modify -> main_lock [style=dotted];
- *		}
- *		subgraph cluster_1 {
- *			label="Interrupt handler";
- *			int_unlock [label="Unlock peripheral", shape=box,
- *				style=filled, fillcolor=red];
- *			int_modify [label="Modify peripheral", shape=box];
- *			int_lock [label="Lock peripheral", shape=box];
- *			int_unlock -> int_modify [style=dotted];
- *			int_modify -> int_lock [style=dotted];
- *		}
- *		exception [label="Exception", shape=box, style=filled, fillcolor=red];
- *		main_modify -> int_unlock [label=" Interrupt"];
- *		int_unlock -> exception;
- *		exception -> exception;
- *	}
+ *    digraph enabled_interrupt {
+ *        subgraph cluster_0{
+ *            label="Main routine";
+ *            {node [style="filled", color=black, fillcolor=white]
+ *            init [label="Initialize and lock peripherals", shape=box];
+ *            main_unlock [label="Unlock peripheral",    shape=box,
+ *                fillcolor=green];
+ *            main_modify [label="Modify peripheral", shape=box];}
+ *            main_lock [label="Lock peripheral", shape=box];
+ *            init -> main_unlock [label="User code"];
+ *            main_unlock -> main_modify;
+ *            main_modify -> main_lock [style=dotted];
+ *        }
+ *        subgraph cluster_1 {
+ *            label="Interrupt handler";
+ *            int_unlock [label="Unlock peripheral", shape=box,
+ *                style=filled, fillcolor=red];
+ *            int_modify [label="Modify peripheral", shape=box];
+ *            int_lock [label="Lock peripheral", shape=box];
+ *            int_unlock -> int_modify [style=dotted];
+ *            int_modify -> int_lock [style=dotted];
+ *        }
+ *        exception [label="Exception", shape=box, style=filled, fillcolor=red];
+ *        main_modify -> int_unlock [label=" Interrupt"];
+ *        int_unlock -> exception;
+ *        exception -> exception;
+ *    }
  * \enddot
  *
  * \subsection asfdoc_sam0_pac_code_run_away Run-away Code
@@ -207,254 +207,254 @@
  *
  * \anchor asfdoc_sam0_pac_code_runaway_diagram
  * \dot
- *	digraph run_away {
- *	   subgraph cluster_away1{
- *		rankdir=TB;
- *		color=white;
- *		runaway1 [label="Run-away code", shape=box];
- *		node [shape=plaintext];
- *		program1 [label=<
- *			<table>
- *				<tr>
- *					<td>PC#</td>
- *					<td>Code</td>
- *				</tr>
- *				<tr>
- *					<td>0x0020</td>
- *					<td>initialize peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0025</td>
- *					<td>lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>...</td>
- *					<td>...</td>
- *				</tr>
- *				<tr>
- *					<td>0x0080</td>
- *					<td>set sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td port="f0" BGCOLOR="green">...</td>
- *					<td BGCOLOR="green">...</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0115</td>
- *					<td BGCOLOR="green">disable interrupts</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0120</td>
- *					<td BGCOLOR="green">unlock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="red">0x0125</td>
- *					<td BGCOLOR="red">check sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td>0x0130</td>
- *					<td>modify peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0140</td>
- *					<td>lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0145</td>
- *					<td>disable interrupts</td>
- *				</tr>
- *			</table>
- *			>]
- *			runaway1 -> program1:f0;
- *			label="1. Run-away code is caught in sanity check.\nA CPU exception is executed."
- *		}
- *	   subgraph cluster_away2{
- *		rankdir=TB;
- *		runaway2 [label="Run-away code", shape=box];
- *		color=white;
- *		node [shape=plaintext];
- *		program2 [label=<
- *			<table>
- *				<tr>
- *					<td>PC#</td>
- *					<td>Code</td>
- *				</tr>
- *				<tr>
- *					<td>0x0020</td>
- *					<td>initialize peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0025</td>
- *					<td>lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>...</td>
- *					<td>...</td>
- *				</tr>
- *				<tr>
- *					<td>0x0080</td>
- *					<td>set sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td >...</td>
- *					<td >...</td>
- *				</tr>
- *				<tr>
- *					<td >0x0115</td>
- *					<td >disable interrupts</td>
- *				</tr>
- *				<tr>
- *					<td >0x0120</td>
- *					<td >unlock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td >0x0125</td>
- *					<td >check sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td port="f0" BGCOLOR="red">0x0130</td>
- *					<td BGCOLOR="red">modify peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0140</td>
- *					<td>lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0145</td>
- *					<td>disable interrupts</td>
- *				</tr>
- *			</table>
- *			>]
- *			runaway2 -> program2:f0;
- *			label="2. Run-away code is caught when modifying\nlocked peripheral. A CPU exception is executed."
- *		}
- *	}
+ *    digraph run_away {
+ *       subgraph cluster_away1{
+ *        rankdir=TB;
+ *        color=white;
+ *        runaway1 [label="Run-away code", shape=box];
+ *        node [shape=plaintext];
+ *        program1 [label=<
+ *            <table>
+ *                <tr>
+ *                    <td>PC#</td>
+ *                    <td>Code</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0020</td>
+ *                    <td>initialize peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0025</td>
+ *                    <td>lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>...</td>
+ *                    <td>...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0080</td>
+ *                    <td>set sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td port="f0" BGCOLOR="green">...</td>
+ *                    <td BGCOLOR="green">...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0115</td>
+ *                    <td BGCOLOR="green">disable interrupts</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0120</td>
+ *                    <td BGCOLOR="green">unlock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="red">0x0125</td>
+ *                    <td BGCOLOR="red">check sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0130</td>
+ *                    <td>modify peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0140</td>
+ *                    <td>lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0145</td>
+ *                    <td>disable interrupts</td>
+ *                </tr>
+ *            </table>
+ *            >]
+ *            runaway1 -> program1:f0;
+ *            label="1. Run-away code is caught in sanity check.\nA CPU exception is executed."
+ *        }
+ *       subgraph cluster_away2{
+ *        rankdir=TB;
+ *        runaway2 [label="Run-away code", shape=box];
+ *        color=white;
+ *        node [shape=plaintext];
+ *        program2 [label=<
+ *            <table>
+ *                <tr>
+ *                    <td>PC#</td>
+ *                    <td>Code</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0020</td>
+ *                    <td>initialize peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0025</td>
+ *                    <td>lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>...</td>
+ *                    <td>...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0080</td>
+ *                    <td>set sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >...</td>
+ *                    <td >...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >0x0115</td>
+ *                    <td >disable interrupts</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >0x0120</td>
+ *                    <td >unlock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >0x0125</td>
+ *                    <td >check sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td port="f0" BGCOLOR="red">0x0130</td>
+ *                    <td BGCOLOR="red">modify peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0140</td>
+ *                    <td>lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0145</td>
+ *                    <td>disable interrupts</td>
+ *                </tr>
+ *            </table>
+ *            >]
+ *            runaway2 -> program2:f0;
+ *            label="2. Run-away code is caught when modifying\nlocked peripheral. A CPU exception is executed."
+ *        }
+ *    }
  * \enddot
  *
  * \anchor asfdoc_sam0_pac_code_runaway_diagram2
  * \dot
- *	digraph run_away2 {
- *	   subgraph cluster_away3{
- *		rankdir=TB;
- *		runaway3 [label="Run-away code", shape=box];
- *		color=white;
- *		node [shape=plaintext];
- *		program3 [label=<
- *			<table>
- *				<tr>
- *					<td>PC#</td>
- *					<td>Code</td>
- *				</tr>
- *				<tr>
- *					<td>0x0020</td>
- *					<td>initialize peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0025</td>
- *					<td>lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>...</td>
- *					<td>...</td>
- *				</tr>
- *				<tr>
- *					<td>0x0080</td>
- *					<td>set sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td >...</td>
- *					<td >...</td>
- *				</tr>
- *				<tr>
- *					<td >0x0115</td>
- *					<td >disable interrupts</td>
- *				</tr>
- *				<tr>
- *					<td >0x0120</td>
- *					<td >unlock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td >0x0125</td>
- *					<td >check sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td >0x0130</td>
- *					<td >modify peripheral</td>
- *				</tr>
- *				<tr>
- *					<td port="f0" BGCOLOR="red">0x0140</td>
- *					<td BGCOLOR="red">lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0145</td>
- *					<td>disable interrupts</td>
- *				</tr>
- *			</table>
- *			>]
- *			runaway3 -> program3:f0;
- *			label="3. Run-away code is caught when locking\nlocked peripheral. A CPU exception is executed."
- *		}
- *	subgraph cluster_away4 {
- *		rankdir=TB;
- *		runaway4 [label="Run-away code", shape=box];
- *		color=white;
- *		node [shape=plaintext];
- *		program4 [label=<
- *			<table>
- *				<tr>
- *					<td>PC#</td>
- *					<td>Code</td>
- *				</tr>
- *				<tr>
- *					<td>0x0020</td>
- *					<td>initialize peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0025</td>
- *					<td>lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td port="f0" BGCOLOR="green">...</td>
- *					<td BGCOLOR="green">...</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0080</td>
- *					<td BGCOLOR="green">set sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">...</td>
- *					<td BGCOLOR="green">...</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0115</td>
- *					<td BGCOLOR="green">disable interrupts</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0120</td>
- *					<td BGCOLOR="green">unlock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0125</td>
- *					<td BGCOLOR="green">check sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0130</td>
- *					<td BGCOLOR="green">modify peripheral</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0140</td>
- *					<td BGCOLOR="green">lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0145</td>
- *					<td BGCOLOR="green">disable interrupts</td>
- *				</tr>
- *			</table>
- *			>]
- *			runaway4 -> program4:f0;
- *			label="4. Run-away code is not caught.\n "
- *		}
- *	}
+ *    digraph run_away2 {
+ *       subgraph cluster_away3{
+ *        rankdir=TB;
+ *        runaway3 [label="Run-away code", shape=box];
+ *        color=white;
+ *        node [shape=plaintext];
+ *        program3 [label=<
+ *            <table>
+ *                <tr>
+ *                    <td>PC#</td>
+ *                    <td>Code</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0020</td>
+ *                    <td>initialize peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0025</td>
+ *                    <td>lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>...</td>
+ *                    <td>...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0080</td>
+ *                    <td>set sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >...</td>
+ *                    <td >...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >0x0115</td>
+ *                    <td >disable interrupts</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >0x0120</td>
+ *                    <td >unlock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >0x0125</td>
+ *                    <td >check sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td >0x0130</td>
+ *                    <td >modify peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td port="f0" BGCOLOR="red">0x0140</td>
+ *                    <td BGCOLOR="red">lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0145</td>
+ *                    <td>disable interrupts</td>
+ *                </tr>
+ *            </table>
+ *            >]
+ *            runaway3 -> program3:f0;
+ *            label="3. Run-away code is caught when locking\nlocked peripheral. A CPU exception is executed."
+ *        }
+ *    subgraph cluster_away4 {
+ *        rankdir=TB;
+ *        runaway4 [label="Run-away code", shape=box];
+ *        color=white;
+ *        node [shape=plaintext];
+ *        program4 [label=<
+ *            <table>
+ *                <tr>
+ *                    <td>PC#</td>
+ *                    <td>Code</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0020</td>
+ *                    <td>initialize peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0025</td>
+ *                    <td>lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td port="f0" BGCOLOR="green">...</td>
+ *                    <td BGCOLOR="green">...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0080</td>
+ *                    <td BGCOLOR="green">set sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">...</td>
+ *                    <td BGCOLOR="green">...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0115</td>
+ *                    <td BGCOLOR="green">disable interrupts</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0120</td>
+ *                    <td BGCOLOR="green">unlock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0125</td>
+ *                    <td BGCOLOR="green">check sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0130</td>
+ *                    <td BGCOLOR="green">modify peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0140</td>
+ *                    <td BGCOLOR="green">lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0145</td>
+ *                    <td BGCOLOR="green">disable interrupts</td>
+ *                </tr>
+ *            </table>
+ *            >]
+ *            runaway4 -> program4:f0;
+ *            label="4. Run-away code is not caught.\n "
+ *        }
+ *    }
  * \enddot
  *
  * In the example, green indicates that the command is allowed, red indicates
@@ -472,8 +472,8 @@
  * the bitwise inverse of the module flag, i.e.
  *
  * \code
-	system_peripheral_<lock_state>(SYSTEM_PERIPHERAL_<module>,
-			~SYSTEM_PERIPHERAL_<module>);
+    system_peripheral_<lock_state>(SYSTEM_PERIPHERAL_<module>,
+            ~SYSTEM_PERIPHERAL_<module>);
 \endcode
  *
  * Where the lock state can be either lock or unlock, and module refer to the
@@ -498,25 +498,25 @@
  * \anchor asfdoc_sam0_pac_int_connections
  * \dot
  * digraph overview {
- *	nodesep = .05;
- *	rankdir=LR;
+ *    nodesep = .05;
+ *    rankdir=LR;
  *
- *	ahb [label="Peripheral bus", shape=ellipse, style=filled, fillcolor=lightgray];
- *	pac [label="<f0>PAC|<f1>Lock|<f2>Open|<f3>Open",
- *		 height=2.5, shape=record, width=.1];
- *	per1 [label="Peripheral1", shape=ellipse, style=filled, fillcolor=lightgray];
- *	per2 [label="Peripheral2", shape=ellipse, style=filled, fillcolor=lightgray];
- *	per3 [label="Peripheral3", shape=ellipse, style=filled, fillcolor=lightgray];
- *	edge [dir="both"];
- *	ahb -> pac:f1 [label="Read/Write"];
- *	ahb -> pac:f2 [label="Read/Write"];
- *	ahb -> pac:f3 [label="Read/Write"];
- *	edge [dir="back"];
- *	pac:f1 -> per1 [label="Read"];
- *	edge [dir="both"];
- *	pac:f2 -> per2 [label="Read/Write"];
- *	pac:f3 -> per3 [label="Read/Write"];
- *	{rank=same; per1 per2 per3 }
+ *    ahb [label="Peripheral bus", shape=ellipse, style=filled, fillcolor=lightgray];
+ *    pac [label="<f0>PAC|<f1>Lock|<f2>Open|<f3>Open",
+ *         height=2.5, shape=record, width=.1];
+ *    per1 [label="Peripheral1", shape=ellipse, style=filled, fillcolor=lightgray];
+ *    per2 [label="Peripheral2", shape=ellipse, style=filled, fillcolor=lightgray];
+ *    per3 [label="Peripheral3", shape=ellipse, style=filled, fillcolor=lightgray];
+ *    edge [dir="both"];
+ *    ahb -> pac:f1 [label="Read/Write"];
+ *    ahb -> pac:f2 [label="Read/Write"];
+ *    ahb -> pac:f3 [label="Read/Write"];
+ *    edge [dir="back"];
+ *    pac:f1 -> per1 [label="Read"];
+ *    edge [dir="both"];
+ *    pac:f2 -> per2 [label="Read/Write"];
+ *    pac:f3 -> per3 [label="Read/Write"];
+ *    {rank=same; per1 per2 per3 }
  * }
  * \enddot
  *
@@ -538,101 +538,101 @@
  *
  * \anchor asfdoc_sam0_pac_lock_errors_diagram
  * \dot
- *	digraph read_lock {
- *	   subgraph cluster_read1{
- *		rankdir=TB;
- *		color=white;
- *		runaway1 [label="Run-away code\nwith peripheral unlocked", shape=box];
- *		node [shape=plaintext];
- *		program1 [label=<
- *			<table>
- *				<tr>
- *					<td>PC#</td>
- *					<td>Code</td>
- *				</tr>
- *				<tr>
- *					<td port="f0" BGCOLOR="green">...</td>
- *					<td BGCOLOR="green">...</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0100</td>
- *					<td BGCOLOR="green">check if locked</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0102</td>
- *					<td BGCOLOR="green">disable interrupts</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0105</td>
- *					<td BGCOLOR="green">unlock if locked</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0110</td>
- *					<td BGCOLOR="green">check sanity</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0115</td>
- *					<td BGCOLOR="green">modify peripheral</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0120</td>
- *					<td BGCOLOR="green">lock if previously locked</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0125</td>
- *					<td BGCOLOR="green">enable interrupts</td>
- *				</tr>
- *			</table>
- *			>]
- *			runaway1 -> program1:f0;
- *			label="1. Wrong implementation.\n "
- *		}
- *	   subgraph cluster_read2{
- *		rankdir=TB;
- *		color=white;
- *		runaway2 [label="Run-away code\nwith peripheral unlocked", shape=box];
- *		node [shape=plaintext];
- *		program2 [label=<
- *			<table>
- *				<tr>
- *					<td>PC#</td>
- *					<td>Code</td>
- *				</tr>
- *				<tr>
- *					<td port="f0" BGCOLOR="green">...</td>
- *					<td BGCOLOR="green">...</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="green">0x0100</td>
- *					<td BGCOLOR="green">disable interrupts</td>
- *				</tr>
- *				<tr>
- *					<td BGCOLOR="red">0x0120</td>
- *					<td BGCOLOR="red">unlock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0125</td>
- *					<td>check sanity argument</td>
- *				</tr>
- *				<tr>
- *					<td>0x0130</td>
- *					<td>modify peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0140</td>
- *					<td>lock peripheral</td>
- *				</tr>
- *				<tr>
- *					<td>0x0145</td>
- *					<td>disable interrupts</td>
- *				</tr>
- *			</table>
- *			>]
- *			runaway2 -> program2:f0;
+ *    digraph read_lock {
+ *       subgraph cluster_read1{
+ *        rankdir=TB;
+ *        color=white;
+ *        runaway1 [label="Run-away code\nwith peripheral unlocked", shape=box];
+ *        node [shape=plaintext];
+ *        program1 [label=<
+ *            <table>
+ *                <tr>
+ *                    <td>PC#</td>
+ *                    <td>Code</td>
+ *                </tr>
+ *                <tr>
+ *                    <td port="f0" BGCOLOR="green">...</td>
+ *                    <td BGCOLOR="green">...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0100</td>
+ *                    <td BGCOLOR="green">check if locked</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0102</td>
+ *                    <td BGCOLOR="green">disable interrupts</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0105</td>
+ *                    <td BGCOLOR="green">unlock if locked</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0110</td>
+ *                    <td BGCOLOR="green">check sanity</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0115</td>
+ *                    <td BGCOLOR="green">modify peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0120</td>
+ *                    <td BGCOLOR="green">lock if previously locked</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0125</td>
+ *                    <td BGCOLOR="green">enable interrupts</td>
+ *                </tr>
+ *            </table>
+ *            >]
+ *            runaway1 -> program1:f0;
+ *            label="1. Wrong implementation.\n "
+ *        }
+ *       subgraph cluster_read2{
+ *        rankdir=TB;
+ *        color=white;
+ *        runaway2 [label="Run-away code\nwith peripheral unlocked", shape=box];
+ *        node [shape=plaintext];
+ *        program2 [label=<
+ *            <table>
+ *                <tr>
+ *                    <td>PC#</td>
+ *                    <td>Code</td>
+ *                </tr>
+ *                <tr>
+ *                    <td port="f0" BGCOLOR="green">...</td>
+ *                    <td BGCOLOR="green">...</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="green">0x0100</td>
+ *                    <td BGCOLOR="green">disable interrupts</td>
+ *                </tr>
+ *                <tr>
+ *                    <td BGCOLOR="red">0x0120</td>
+ *                    <td BGCOLOR="red">unlock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0125</td>
+ *                    <td>check sanity argument</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0130</td>
+ *                    <td>modify peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0140</td>
+ *                    <td>lock peripheral</td>
+ *                </tr>
+ *                <tr>
+ *                    <td>0x0145</td>
+ *                    <td>disable interrupts</td>
+ *                </tr>
+ *            </table>
+ *            >]
+ *            runaway2 -> program2:f0;
  *
- *			label="2. Correct implementation.\n "
- *		}
- *	}
+ *            label="2. Correct implementation.\n "
+ *        }
+ *    }
  * \enddot
  *
  * In the left figure above, one can see the runaway code continues as all
@@ -679,12 +679,12 @@ extern "C" {
  * @{
  */
 __no_inline enum status_code system_peripheral_lock(
-		const uint32_t peripheral_id,
-		const uint32_t key);
+        const uint32_t peripheral_id,
+        const uint32_t key);
 
 __no_inline enum status_code system_peripheral_unlock(
-		const uint32_t peripheral_id,
-		const uint32_t key);
+        const uint32_t peripheral_id,
+        const uint32_t key);
 /** @}  */
 
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30) || defined(__DOXYGEN__)
@@ -692,8 +692,8 @@ __no_inline enum status_code system_peripheral_unlock(
  * @{
  */
 __no_inline enum status_code system_peripheral_lock_always(
-		const uint32_t peripheral_id,
-		const uint32_t key);
+        const uint32_t peripheral_id,
+        const uint32_t key);
 
 /**
  * \brief Enable PAC interrupt.
@@ -704,7 +704,7 @@ __no_inline enum status_code system_peripheral_lock_always(
  */
 static inline void system_pac_enable_interrupt(void)
 {
-	PAC->INTENSET.reg = PAC_INTENSET_ERR;
+    PAC->INTENSET.reg = PAC_INTENSET_ERR;
 }
 
 /**
@@ -715,7 +715,7 @@ static inline void system_pac_enable_interrupt(void)
  */
 static inline void system_pac_disable_interrupt(void)
 {
-	PAC->INTENCLR.reg = PAC_INTENCLR_ERR;
+    PAC->INTENCLR.reg = PAC_INTENCLR_ERR;
 }
 
 /**
@@ -726,7 +726,7 @@ static inline void system_pac_disable_interrupt(void)
  */
 static inline void system_pac_enable_event(void)
 {
-	PAC->EVCTRL.reg = PAC_EVCTRL_ERREO;
+    PAC->EVCTRL.reg = PAC_EVCTRL_ERREO;
 }
 
 /**
@@ -737,7 +737,7 @@ static inline void system_pac_enable_event(void)
  */
 static inline void system_pac_disable_event(void)
 {
-	PAC->EVCTRL.reg &= (~PAC_EVCTRL_ERREO);
+    PAC->EVCTRL.reg &= (~PAC_EVCTRL_ERREO);
 }
 
 /** @}  */
@@ -757,58 +757,58 @@ static inline void system_pac_disable_event(void)
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</td>
- *		<th>Description</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</td>
+ *        <th>Description</td>
+ *    </tr>
  *  <tr>
- *		<td>AC</td>
- *		<td>Analog Comparator</td>
- *	</tr>
- *	<tr>
- *		<td>ADC</td>
- *		<td>Analog-to-Digital Converter</td>
- *	</tr>
- *	<tr>
- *		<td>EVSYS</td>
- *		<td>Event System</td>
- *	</tr>
- *	<tr>
- *		<td>NMI</td>
- *		<td>Non-Maskable Interrupt</td>
- *	</tr>
- *	<tr>
- *		<td>NVMCTRL</td>
- *		<td>Non-Volatile Memory Controller</td>
- *	</tr>
- *	<tr>
- *		<td>PAC</td>
- *		<td>Peripheral Access Controller</td>
- *	</tr>
-  *	<tr>
- *		<td>PM</td>
- *		<td>Power Manager</td>
- *	</tr>
- *	<tr>
- *		<td>RTC</td>
- *		<td>Real-Time Counter</td>
- *	</tr>
- *	<tr>
- *		<td>SERCOM</td>
- *		<td>Serial Communication Interface</td>
- *	</tr>
- *	<tr>
- *		<td>SYSCTRL</td>
- *		<td>System Controller</td>
- *	</tr>
- *	<tr>
- *		<td>TC</td>
- *		<td>Timer/Counter</td>
- *	</tr>
- *	<tr>
- *		<td>WDT</td>
- *		<td>Watch Dog Timer</td>
- *	</tr>
+ *        <td>AC</td>
+ *        <td>Analog Comparator</td>
+ *    </tr>
+ *    <tr>
+ *        <td>ADC</td>
+ *        <td>Analog-to-Digital Converter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>EVSYS</td>
+ *        <td>Event System</td>
+ *    </tr>
+ *    <tr>
+ *        <td>NMI</td>
+ *        <td>Non-Maskable Interrupt</td>
+ *    </tr>
+ *    <tr>
+ *        <td>NVMCTRL</td>
+ *        <td>Non-Volatile Memory Controller</td>
+ *    </tr>
+ *    <tr>
+ *        <td>PAC</td>
+ *        <td>Peripheral Access Controller</td>
+ *    </tr>
+  *    <tr>
+ *        <td>PM</td>
+ *        <td>Power Manager</td>
+ *    </tr>
+ *    <tr>
+ *        <td>RTC</td>
+ *        <td>Real-Time Counter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>SERCOM</td>
+ *        <td>Serial Communication Interface</td>
+ *    </tr>
+ *    <tr>
+ *        <td>SYSCTRL</td>
+ *        <td>System Controller</td>
+ *    </tr>
+ *    <tr>
+ *        <td>TC</td>
+ *        <td>Timer/Counter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>WDT</td>
+ *        <td>Watch Dog Timer</td>
+ *    </tr>
  * </table>
  *
  *
@@ -829,12 +829,12 @@ static inline void system_pac_disable_event(void)
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -856,160 +856,160 @@ static inline void system_pac_disable_event(void)
  * Look in device datasheet peripheral's subsection "Register Access
  * Protection" to see which is actually available for your device.
  * <table>
- *	<tr>
- *		<th>Module</th>
- *		<th>Non-write protected register</th>
- *	</tr>
- *	<tr>
- *		<td>AC</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUSA</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUSB</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUSC</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>ADC</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUS</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>RESULT</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>EVSYS</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>CHSTATUS</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>NVMCTRL</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUS</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>PM</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>PORT</td>
- *		<td>N/A</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>RTC</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>READREQ</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUS</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>SYSCTRL</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>SERCOM</td>
- *		<td>INTFALG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUS</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>DATA</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>TC</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUS</td>
- *	</tr>
- *	<tr><td colspan="2"/></tr>
- *	<tr>
- *		<td>WDT</td>
- *		<td>INTFLAG</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>STATUS</td>
- *	</tr>
- *	<tr>
- *		<td></td>
- *		<td>(CLEAR)</td>
- *	</tr>
+ *    <tr>
+ *        <th>Module</th>
+ *        <th>Non-write protected register</th>
+ *    </tr>
+ *    <tr>
+ *        <td>AC</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUSA</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUSB</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUSC</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>ADC</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUS</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>RESULT</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>EVSYS</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>CHSTATUS</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>NVMCTRL</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUS</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>PM</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>PORT</td>
+ *        <td>N/A</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>RTC</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>READREQ</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUS</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>SYSCTRL</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>SERCOM</td>
+ *        <td>INTFALG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUS</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>DATA</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>TC</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUS</td>
+ *    </tr>
+ *    <tr><td colspan="2"/></tr>
+ *    <tr>
+ *        <td>WDT</td>
+ *        <td>INTFLAG</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>STATUS</td>
+ *    </tr>
+ *    <tr>
+ *        <td></td>
+ *        <td>(CLEAR)</td>
+ *    </tr>
  * </table>
  *
  * \page asfdoc_sam0_pac_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42107F</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM C20/C21, SAM D09, and SAM DA1</td>
- *	</tr>
- *	<tr>
- *		<td>42107E</td>
- *		<td>12/2014</td>
- *		<td>Added support for SAM R21 and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42107D</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42107C</td>
- *		<td>10/2013</td>
- *		<td>Extended acronyms list</td>
- *	</tr>
- *	<tr>
- *		<td>42107B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos</td>
- *	</tr>
- *	<tr>
- *		<td>42107A</td>
- *		<td>06/2013</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42107F</td>
+ *        <td>12/2015</td>
+ *        <td>Added support for SAM L21/L22, SAM C20/C21, SAM D09, and SAM DA1</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42107E</td>
+ *        <td>12/2014</td>
+ *        <td>Added support for SAM R21 and SAM D10/D11</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42107D</td>
+ *        <td>01/2014</td>
+ *        <td>Added support for SAM D21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42107C</td>
+ *        <td>10/2013</td>
+ *        <td>Extended acronyms list</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42107B</td>
+ *        <td>06/2013</td>
+ *        <td>Corrected documentation typos</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42107A</td>
+ *        <td>06/2013</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

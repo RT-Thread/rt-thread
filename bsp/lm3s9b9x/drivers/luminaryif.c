@@ -22,11 +22,11 @@
 
 struct net_device
 {
-	/* inherit from ethernet device */
-	struct eth_device parent;
+    /* inherit from ethernet device */
+    struct eth_device parent;
 
-	/* interface address info. */
-	rt_uint8_t  dev_addr[MAX_ADDR_LEN];			/* hw address	*/
+    /* interface address info. */
+    rt_uint8_t  dev_addr[MAX_ADDR_LEN];            /* hw address    */
 };
 
 static struct net_device  luminaryif_dev_entry;
@@ -125,7 +125,7 @@ void luminaryif_isr(void)
         /* a frame has been received */
         result = eth_device_ready((struct eth_device*)&(luminaryif_dev->parent));
 
-		if(result != RT_EOK) rt_set_errno(-RT_ERROR);
+        if(result != RT_EOK) rt_set_errno(-RT_ERROR);
 
         //
         // Disable Ethernet RX Interrupt.
@@ -143,45 +143,45 @@ void luminaryif_isr(void)
 /* control the interface */
 rt_err_t luminaryif_control(rt_device_t dev, int cmd, void *args)
 {
-	switch(cmd)
-	{
-	case NIOCTL_GADDR:
-		/* get mac address */
-		if(args) rt_memcpy(args, luminaryif_dev_entry.dev_addr, 6);
-		else return -RT_ERROR;
-		break;
+    switch(cmd)
+    {
+    case NIOCTL_GADDR:
+        /* get mac address */
+        if(args) rt_memcpy(args, luminaryif_dev_entry.dev_addr, 6);
+        else return -RT_ERROR;
+        break;
 
-	default :
-		break;
-	}
+    default :
+        break;
+    }
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /* Open the ethernet interface */
 rt_err_t luminaryif_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /* Close the interface */
 rt_err_t luminaryif_close(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /* Read */
 rt_size_t luminaryif_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 /* Write */
 rt_size_t luminaryif_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 //****************************************************************************
@@ -423,10 +423,10 @@ struct pbuf * luminaryif_rx(rt_device_t dev)
         lwip_stats.link.memerr++;
         lwip_stats.link.drop++;
 #endif
-        // 
-        // Enable Ethernet RX Interrupt. 
-        // 
-        EthernetIntEnable(ETH_BASE, ETH_INT_RX); 
+        //
+        // Enable Ethernet RX Interrupt.
+        //
+        EthernetIntEnable(ETH_BASE, ETH_INT_RX);
     }
 
     return(p);
@@ -434,61 +434,61 @@ struct pbuf * luminaryif_rx(rt_device_t dev)
 
 int rt_hw_luminaryif_init(void)
 {
-	rt_err_t result;
-	unsigned long ulUser0, ulUser1;
+    rt_err_t result;
+    unsigned long ulUser0, ulUser1;
 
-	/* Enable and Reset the Ethernet Controller. */
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
-	SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
+    /* Enable and Reset the Ethernet Controller. */
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_ETH);
+    SysCtlPeripheralReset(SYSCTL_PERIPH_ETH);
 
-	/*
-	Enable Port F for Ethernet LEDs.
-	LED0        Bit 3   Output
-	LED1        Bit 2   Output
-	*/
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    /*
+    Enable Port F for Ethernet LEDs.
+    LED0        Bit 3   Output
+    LED1        Bit 2   Output
+    */
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     /* GPIODirModeSet and GPIOPadConfigSet */
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_2 | GPIO_PIN_3);
     GPIOPinConfigure(GPIO_PF2_LED1);
     GPIOPinConfigure(GPIO_PF3_LED0);
 
-	FlashUserSet(0x00371200, 0x00563412); /* OUI:00-12-37 (hex) Texas Instruments, only for test */
-	/* Configure the hardware MAC address */
-	FlashUserGet(&ulUser0, &ulUser1);
-	if((ulUser0 == 0xffffffff) || (ulUser1 == 0xffffffff))
-	{
-		rt_kprintf("Fatal error in geting MAC address\n");
-	}
+    FlashUserSet(0x00371200, 0x00563412); /* OUI:00-12-37 (hex) Texas Instruments, only for test */
+    /* Configure the hardware MAC address */
+    FlashUserGet(&ulUser0, &ulUser1);
+    if((ulUser0 == 0xffffffff) || (ulUser1 == 0xffffffff))
+    {
+        rt_kprintf("Fatal error in geting MAC address\n");
+    }
 
-	/* init rt-thread device interface */
-	luminaryif_dev_entry.parent.parent.init		= luminaryif_init;
-	luminaryif_dev_entry.parent.parent.open	= luminaryif_open;
-	luminaryif_dev_entry.parent.parent.close	= luminaryif_close;
-	luminaryif_dev_entry.parent.parent.read	= luminaryif_read;
-	luminaryif_dev_entry.parent.parent.write	= luminaryif_write;
-	luminaryif_dev_entry.parent.parent.control	= luminaryif_control;
-	luminaryif_dev_entry.parent.eth_rx		= luminaryif_rx;
-	luminaryif_dev_entry.parent.eth_tx			= luminaryif_tx;
+    /* init rt-thread device interface */
+    luminaryif_dev_entry.parent.parent.init        = luminaryif_init;
+    luminaryif_dev_entry.parent.parent.open    = luminaryif_open;
+    luminaryif_dev_entry.parent.parent.close    = luminaryif_close;
+    luminaryif_dev_entry.parent.parent.read    = luminaryif_read;
+    luminaryif_dev_entry.parent.parent.write    = luminaryif_write;
+    luminaryif_dev_entry.parent.parent.control    = luminaryif_control;
+    luminaryif_dev_entry.parent.eth_rx        = luminaryif_rx;
+    luminaryif_dev_entry.parent.eth_tx            = luminaryif_tx;
 
-	/*
-	Convert the 24/24 split MAC address from NV ram into a 32/16 split MAC
-	address needed to program the hardware registers, then program the MAC
-	address into the Ethernet Controller registers.
-	*/
-	luminaryif_dev_entry.dev_addr[0] = ((ulUser0 >>  0) & 0xff);
-	luminaryif_dev_entry.dev_addr[1] = ((ulUser0 >>  8) & 0xff);
-	luminaryif_dev_entry.dev_addr[2] = ((ulUser0 >> 16) & 0xff);
-	luminaryif_dev_entry.dev_addr[3] = ((ulUser1 >>  0) & 0xff);
-	luminaryif_dev_entry.dev_addr[4] = ((ulUser1 >>  8) & 0xff);
-	luminaryif_dev_entry.dev_addr[5] = ((ulUser1 >> 16) & 0xff);
+    /*
+    Convert the 24/24 split MAC address from NV ram into a 32/16 split MAC
+    address needed to program the hardware registers, then program the MAC
+    address into the Ethernet Controller registers.
+    */
+    luminaryif_dev_entry.dev_addr[0] = ((ulUser0 >>  0) & 0xff);
+    luminaryif_dev_entry.dev_addr[1] = ((ulUser0 >>  8) & 0xff);
+    luminaryif_dev_entry.dev_addr[2] = ((ulUser0 >> 16) & 0xff);
+    luminaryif_dev_entry.dev_addr[3] = ((ulUser1 >>  0) & 0xff);
+    luminaryif_dev_entry.dev_addr[4] = ((ulUser1 >>  8) & 0xff);
+    luminaryif_dev_entry.dev_addr[5] = ((ulUser1 >> 16) & 0xff);
 
-	/* Program the hardware with it's MAC address (for filtering). */
-	EthernetMACAddrSet(ETH_BASE, luminaryif_dev_entry.dev_addr);
+    /* Program the hardware with it's MAC address (for filtering). */
+    EthernetMACAddrSet(ETH_BASE, luminaryif_dev_entry.dev_addr);
 
-	rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&tx_sem, "emac", 1, RT_IPC_FLAG_FIFO);
 
-	result = eth_device_init(&(luminaryif_dev->parent), "E0");
+    result = eth_device_init(&(luminaryif_dev->parent), "E0");
 
-	return result;
+    return result;
 }
 

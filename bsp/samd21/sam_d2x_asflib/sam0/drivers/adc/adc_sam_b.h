@@ -156,38 +156,38 @@ extern "C" {
  *
  */
 enum adc_internal_buf {
-	/** Internal buffer voltage level: 0.5V */
-	ADC_INTERNAL_BUF_0_5 = 0,
-	/** Internal buffer voltage level: 0.6V */
-	ADC_INTERNAL_BUF_0_6,
-	/** Internal buffer voltage level: 0.7V */
-	ADC_INTERNAL_BUF_0_7,
-	/** Internal buffer voltage level: 0.8V */
-	ADC_INTERNAL_BUF_0_8,
-	/** Internal buffer voltage level: 0.9V */
-	ADC_INTERNAL_BUF_0_9,
-	/** Internal buffer voltage level: 1.0V */
-	ADC_INTERNAL_BUF_1_0,
-	/** Internal buffer voltage level: 1.1V */
-	ADC_INTERNAL_BUF_1_1,
-	/** Internal buffer voltage level: 1.2V */
-	ADC_INTERNAL_BUF_1_2,
-	/** Internal buffer voltage level: 1.3V */
-	ADC_INTERNAL_BUF_1_3,
-	/** Internal buffer voltage level: 1.4V */
-	ADC_INTERNAL_BUF_1_4,
-	/** Internal buffer voltage level: 1.5V */
-	ADC_INTERNAL_BUF_1_5,
-	/** Internal buffer voltage level: 1.6V */
-	ADC_INTERNAL_BUF_1_6,
-	/** Internal buffer voltage level: 1.7V */
-	ADC_INTERNAL_BUF_1_7,
-	/** Internal buffer voltage level: 1.8V */
-	ADC_INTERNAL_BUF_1_8,
-	/** Internal buffer voltage level: 1.9V */
-	ADC_INTERNAL_BUF_1_9,
-	/** Internal buffer voltage level: 2.0V */
-	ADC_INTERNAL_BUF_2_0,
+    /** Internal buffer voltage level: 0.5V */
+    ADC_INTERNAL_BUF_0_5 = 0,
+    /** Internal buffer voltage level: 0.6V */
+    ADC_INTERNAL_BUF_0_6,
+    /** Internal buffer voltage level: 0.7V */
+    ADC_INTERNAL_BUF_0_7,
+    /** Internal buffer voltage level: 0.8V */
+    ADC_INTERNAL_BUF_0_8,
+    /** Internal buffer voltage level: 0.9V */
+    ADC_INTERNAL_BUF_0_9,
+    /** Internal buffer voltage level: 1.0V */
+    ADC_INTERNAL_BUF_1_0,
+    /** Internal buffer voltage level: 1.1V */
+    ADC_INTERNAL_BUF_1_1,
+    /** Internal buffer voltage level: 1.2V */
+    ADC_INTERNAL_BUF_1_2,
+    /** Internal buffer voltage level: 1.3V */
+    ADC_INTERNAL_BUF_1_3,
+    /** Internal buffer voltage level: 1.4V */
+    ADC_INTERNAL_BUF_1_4,
+    /** Internal buffer voltage level: 1.5V */
+    ADC_INTERNAL_BUF_1_5,
+    /** Internal buffer voltage level: 1.6V */
+    ADC_INTERNAL_BUF_1_6,
+    /** Internal buffer voltage level: 1.7V */
+    ADC_INTERNAL_BUF_1_7,
+    /** Internal buffer voltage level: 1.8V */
+    ADC_INTERNAL_BUF_1_8,
+    /** Internal buffer voltage level: 1.9V */
+    ADC_INTERNAL_BUF_1_9,
+    /** Internal buffer voltage level: 2.0V */
+    ADC_INTERNAL_BUF_2_0,
 };
 
 /**
@@ -197,22 +197,22 @@ enum adc_internal_buf {
  *
  */
 enum adc_reference {
-	/** Internal form buffer reference */
-	ADC_REFERENCE_INTERNAL_BUF = 0,
-	/** Internal from IxR reference */
-	ADC_REFERENCE_INTERNAL_IR,
-	/**  VBATT/2 reference */
-	ADC_REFERENCE_VBATT_2,
-	/** GPIO_MS1 reference */
-	ADC_REFERENCE_GPIO_MS1,
-	/** GPIO_MS2 reference */
-	ADC_REFERENCE_GPIO_MS2,
-	/** GPIO_MS3 reference */
-	ADC_REFERENCE_GPIO_MS3,
-	/** GPIO_MS4 reference */
-	ADC_REFERENCE_GPIO_MS4,
-	/** VBATTERY reference */
-	ADC_REFERENCE_VBATT,
+    /** Internal form buffer reference */
+    ADC_REFERENCE_INTERNAL_BUF = 0,
+    /** Internal from IxR reference */
+    ADC_REFERENCE_INTERNAL_IR,
+    /**  VBATT/2 reference */
+    ADC_REFERENCE_VBATT_2,
+    /** GPIO_MS1 reference */
+    ADC_REFERENCE_GPIO_MS1,
+    /** GPIO_MS2 reference */
+    ADC_REFERENCE_GPIO_MS2,
+    /** GPIO_MS3 reference */
+    ADC_REFERENCE_GPIO_MS3,
+    /** GPIO_MS4 reference */
+    ADC_REFERENCE_GPIO_MS4,
+    /** VBATTERY reference */
+    ADC_REFERENCE_VBATT,
 };
 
 /**
@@ -222,22 +222,22 @@ enum adc_reference {
  *
  */
 enum adc_input_channel {
-	/** GPIO_MS1 input */
-	ADC_INPUT_CH_GPIO_MS1 = 0,
-	/** GPIO_MS2 input */
-	ADC_INPUT_CH_GPIO_MS2,
-	/** GPIO_MS3 input */
-	ADC_INPUT_CH_GPIO_MS3,
-	/** GPIO_MS4 input */
-	ADC_INPUT_CH_GPIO_MS4,
-	/** On chip temperature measurement input */
-	ADC_INPUT_CH_TEMPERATURE,
-	/** VBATT divided by 4 voltage level */
-	ADC_INPUT_CH_VBATT_4,
-	/** LP_LDO_OUT_1P2 low power domain voltage */
-	ADC_INPUT_CH_LPD0_LDO,
-	/**  ADC reference voltage level */
-	ADC_INPUT_CH_VREF,
+    /** GPIO_MS1 input */
+    ADC_INPUT_CH_GPIO_MS1 = 0,
+    /** GPIO_MS2 input */
+    ADC_INPUT_CH_GPIO_MS2,
+    /** GPIO_MS3 input */
+    ADC_INPUT_CH_GPIO_MS3,
+    /** GPIO_MS4 input */
+    ADC_INPUT_CH_GPIO_MS4,
+    /** On chip temperature measurement input */
+    ADC_INPUT_CH_TEMPERATURE,
+    /** VBATT divided by 4 voltage level */
+    ADC_INPUT_CH_VBATT_4,
+    /** LP_LDO_OUT_1P2 low power domain voltage */
+    ADC_INPUT_CH_LPD0_LDO,
+    /**  ADC reference voltage level */
+    ADC_INPUT_CH_VREF,
 };
 
 /**
@@ -247,18 +247,18 @@ enum adc_input_channel {
  *
  */
 enum adc_channel_mode {
-	/**
-	 * Input channels time multiplexing is between channel 0 to channel 3.
-	 * In this mode, ADC input channel selection is invalid.
-	 */
-	ADC_CH_MODE_CH0_TO_CH3,
-	/**
-	 * Input channels time multiplexing is between channel 4 to channel 7.
-	 * In this mode, ADC input channel selection is invalid.
-	 */
-	ADC_CH_MODE_CH4_TO_CH7,
-	/** Assign a specific input channel using \ref adc_input_channel */
-	ADC_CH_MODE_ASSIGN,
+    /**
+     * Input channels time multiplexing is between channel 0 to channel 3.
+     * In this mode, ADC input channel selection is invalid.
+     */
+    ADC_CH_MODE_CH0_TO_CH3,
+    /**
+     * Input channels time multiplexing is between channel 4 to channel 7.
+     * In this mode, ADC input channel selection is invalid.
+     */
+    ADC_CH_MODE_CH4_TO_CH7,
+    /** Assign a specific input channel using \ref adc_input_channel */
+    ADC_CH_MODE_ASSIGN,
 };
 
 /**
@@ -268,14 +268,14 @@ enum adc_channel_mode {
  *
  */
 enum adc_input_dynamic_range{
-	/** Input dynamic range from 0V to VBATT voltage level */
-	ADC_INPUT_DYNAMIC_RANGE_0 = 0,
-	/** Input dynamic range from 0.08*VBATT to 0.92*VBATT voltage level */
-	ADC_INPUT_DYNAMIC_RANGE_1,
-	/** Input dynamic range from 0.17*VBATT to 0.83*VBATT voltage level */
-	ADC_INPUT_DYNAMIC_RANGE_2,
-	/** Input dynamic range from 0.25*VBATT to 0.75*VBATT voltage level */
-	ADC_INPUT_DYNAMIC_RANGE_3,
+    /** Input dynamic range from 0V to VBATT voltage level */
+    ADC_INPUT_DYNAMIC_RANGE_0 = 0,
+    /** Input dynamic range from 0.08*VBATT to 0.92*VBATT voltage level */
+    ADC_INPUT_DYNAMIC_RANGE_1,
+    /** Input dynamic range from 0.17*VBATT to 0.83*VBATT voltage level */
+    ADC_INPUT_DYNAMIC_RANGE_2,
+    /** Input dynamic range from 0.25*VBATT to 0.75*VBATT voltage level */
+    ADC_INPUT_DYNAMIC_RANGE_3,
 };
 
 /**
@@ -286,14 +286,14 @@ enum adc_input_dynamic_range{
  *
  */
 enum adc_bias_current {
-	/** Comparator bias current is 4uA for throughput 100KS/s */
-	ADC_BIAS_CURRENT_0 = 0,
-	/** Comparator bias current is 8uA */
-	ADC_BIAS_CURRENT_1,
-	/** Comparator bias current is 20uA */
-	ADC_BIAS_CURRENT_2,
-	/** Comparator bias current is 24uA for throughput 1MS/s */
-	ADC_BIAS_CURRENT_3,
+    /** Comparator bias current is 4uA for throughput 100KS/s */
+    ADC_BIAS_CURRENT_0 = 0,
+    /** Comparator bias current is 8uA */
+    ADC_BIAS_CURRENT_1,
+    /** Comparator bias current is 20uA */
+    ADC_BIAS_CURRENT_2,
+    /** Comparator bias current is 24uA for throughput 1MS/s */
+    ADC_BIAS_CURRENT_3,
 };
 
 /**
@@ -304,24 +304,24 @@ enum adc_bias_current {
  * function before being modified by the user application.
  */
 struct adc_config {
-	/** Voltage reference */
-	enum adc_reference reference;
-	/** Internal reference voltage level */
-	enum adc_internal_buf internal_vref;
-	/** Input channel */
-	enum adc_input_channel input_channel;
-	/** Input channel selection */
-	enum adc_channel_mode channel_mode;
-	/** Input channel time multiplexing selection mode */
-	enum adc_input_dynamic_range input_dynamic_range;
-	/** Comparator biasing current selection */
-	enum adc_bias_current bias_current;
-	/** Invert ADC Clock */
-	bool invert_clock;
-	/** Fractional part for the clock divider */
-	uint8_t frac_part;
-	/** Integer part for the clock divider */
-	uint16_t int_part;
+    /** Voltage reference */
+    enum adc_reference reference;
+    /** Internal reference voltage level */
+    enum adc_internal_buf internal_vref;
+    /** Input channel */
+    enum adc_input_channel input_channel;
+    /** Input channel selection */
+    enum adc_channel_mode channel_mode;
+    /** Input channel time multiplexing selection mode */
+    enum adc_input_dynamic_range input_dynamic_range;
+    /** Comparator biasing current selection */
+    enum adc_bias_current bias_current;
+    /** Invert ADC Clock */
+    bool invert_clock;
+    /** Fractional part for the clock divider */
+    uint8_t frac_part;
+    /** Integer part for the clock divider */
+    uint16_t int_part;
 };
 
 /** \name Configuration, initialization and get status
@@ -361,14 +361,14 @@ enum status_code adc_read(enum adc_input_channel input_channel, uint16_t *result
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
  *  <tr>
- *		<td>ADC</td>
- *		<td>Analog-to-Digital Converter</td>
- *	</tr>
+ *        <td>ADC</td>
+ *        <td>Analog-to-Digital Converter</td>
+ *    </tr>
  * </table>
  *
  *
@@ -387,12 +387,12 @@ enum status_code adc_read(enum adc_input_channel input_channel, uint16_t *result
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -410,11 +410,11 @@ enum status_code adc_read(enum adc_input_channel input_channel, uint16_t *result
  * \page asfdoc_samb_adc_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
  *  <tr>
  *      <td>A</td>
  *      <td>09/2015</td>

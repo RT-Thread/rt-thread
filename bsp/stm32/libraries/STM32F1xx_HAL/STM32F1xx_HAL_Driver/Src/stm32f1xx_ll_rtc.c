@@ -123,10 +123,10 @@ ErrorStatus LL_RTC_DeInit(RTC_TypeDef *RTCx)
     {
       /* Wait till the RTC RSF flag is set */
       status = LL_RTC_WaitForSynchro(RTCx);
-  
+
       /* Clear RSF Flag */
       LL_RTC_ClearFlag_RS(RTCx);
-      
+
       /* Enable the write protection for RTC registers */
       LL_RTC_EnableWriteProtection(RTCx);
     }

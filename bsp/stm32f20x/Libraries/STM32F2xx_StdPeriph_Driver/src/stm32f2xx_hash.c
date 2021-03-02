@@ -4,107 +4,107 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file provides firmware functions to manage the following 
-  *          functionalities of the HASH / HMAC Processor (HASH) peripheral:           
+  * @brief   This file provides firmware functions to manage the following
+  *          functionalities of the HASH / HMAC Processor (HASH) peripheral:
   *           - Initialization and Configuration functions
   *           - Message Digest generation functions
-  *           - context swapping functions   
-  *           - DMA interface function       
-  *           - Interrupts and flags management       
-  *         
+  *           - context swapping functions
+  *           - DMA interface function
+  *           - Interrupts and flags management
+  *
   *  @verbatim
-  *                               
-  *          ===================================================================      
+  *
+  *          ===================================================================
   *                                   How to use this driver
   *          ===================================================================
-  *          HASH operation : 
-  *          ----------------                   
-  *         1. Enable the HASH controller clock using 
+  *          HASH operation :
+  *          ----------------
+  *         1. Enable the HASH controller clock using
   *            RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_HASH, ENABLE) function.
-  *           
-  *         2. Initialise the HASH using HASH_Init() function. 
-  *               
-  *         3 . Reset the HASH processor core, so that the HASH will be ready 
-  *             to compute he message digest of a new message by using 
+  *
+  *         2. Initialise the HASH using HASH_Init() function.
+  *
+  *         3 . Reset the HASH processor core, so that the HASH will be ready
+  *             to compute he message digest of a new message by using
   *             HASH_Reset() function.
   *
-  *         4. Enable the HASH controller using the HASH_Cmd() function. 
-  *                
-  *         5. if using DMA for Data input transfer, Activate the DMA Request 
-  *            using HASH_DMACmd() function 
-  *                    
-  *         6. if DMA is not used for data transfer, use HASH_DataIn() function 
+  *         4. Enable the HASH controller using the HASH_Cmd() function.
+  *
+  *         5. if using DMA for Data input transfer, Activate the DMA Request
+  *            using HASH_DMACmd() function
+  *
+  *         6. if DMA is not used for data transfer, use HASH_DataIn() function
   *            to enter data to IN FIFO.
-  *             
-  *          
-  *         7. Configure the Number of valid bits in last word of the message 
+  *
+  *
+  *         7. Configure the Number of valid bits in last word of the message
   *            using HASH_SetLastWordValidBitsNbr() function.
-  *             
-  *         8. if the message length is not an exact multiple of 512 bits, 
-  *            then the function HASH_StartDigest() must be called to 
-  *            launch the computation of the final digest.     
-  *             
-  *         9. Once computed, the digest can be read using HASH_GetDigest() 
-  *            function.         
-  *                   
-  *        10. To control HASH events you can use one of the following 
+  *
+  *         8. if the message length is not an exact multiple of 512 bits,
+  *            then the function HASH_StartDigest() must be called to
+  *            launch the computation of the final digest.
+  *
+  *         9. Once computed, the digest can be read using HASH_GetDigest()
+  *            function.
+  *
+  *        10. To control HASH events you can use one of the following
   *              two methods:
-  *               a- Check on HASH flags using the HASH_GetFlagStatus() function.  
-  *               b- Use HASH interrupts through the function HASH_ITConfig() at 
-  *                  initialization phase and HASH_GetITStatus() function into 
+  *               a- Check on HASH flags using the HASH_GetFlagStatus() function.
+  *               b- Use HASH interrupts through the function HASH_ITConfig() at
+  *                  initialization phase and HASH_GetITStatus() function into
   *                  interrupt routines in hashing phase.
   *          After checking on a flag you should clear it using HASH_ClearFlag()
-  *          function. And after checking on an interrupt event you should 
-  *          clear it using HASH_ClearITPendingBit() function.     
-  *                     
-  *        11. Save and restore hash processor context using 
-  *            HASH_SaveContext() and HASH_RestoreContext() functions.     
-  *              
+  *          function. And after checking on an interrupt event you should
+  *          clear it using HASH_ClearITPendingBit() function.
   *
-  *            
-  *          HMAC operation : 
-  *          ----------------  
-  *          The HMAC algorithm is used for message authentication, by 
-  *          irreversibly binding the message being processed to a key chosen 
-  *          by the user. 
-  *          For HMAC specifications, refer to "HMAC: keyed-hashing for message 
+  *        11. Save and restore hash processor context using
+  *            HASH_SaveContext() and HASH_RestoreContext() functions.
+  *
+  *
+  *
+  *          HMAC operation :
+  *          ----------------
+  *          The HMAC algorithm is used for message authentication, by
+  *          irreversibly binding the message being processed to a key chosen
+  *          by the user.
+  *          For HMAC specifications, refer to "HMAC: keyed-hashing for message
   *          authentication, H. Krawczyk, M. Bellare, R. Canetti, February 1997"
-  *          
+  *
   *          Basically, the HMAC algorithm consists of two nested hash operations:
   *          HMAC(message) = Hash[((key | pad) XOR 0x5C) | Hash(((key | pad) XOR 0x36) | message)]
   *          where:
-  *          - "pad" is a sequence of zeroes needed to extend the key to the 
-  *                  length of the underlying hash function data block (that is 
+  *          - "pad" is a sequence of zeroes needed to extend the key to the
+  *                  length of the underlying hash function data block (that is
   *                  512 bits for both the SHA-1 and MD5 hash algorithms)
-  *          - "|"   represents the concatenation operator 
-  *          
-  *         
+  *          - "|"   represents the concatenation operator
+  *
+  *
   *         To compute the HMAC, four different phases are required:
-  *                    
-  *         1.  Initialise the HASH using HASH_Init() function to do HMAC 
-  *             operation. 
-  *                
-  *         2.  The key (to be used for the inner hash function) is then given 
-  *             to the core. This operation follows the same mechanism as the 
-  *             one used to send the message in the hash operation (that is, 
-  *             by HASH_DataIn() function and, finally, 
+  *
+  *         1.  Initialise the HASH using HASH_Init() function to do HMAC
+  *             operation.
+  *
+  *         2.  The key (to be used for the inner hash function) is then given
+  *             to the core. This operation follows the same mechanism as the
+  *             one used to send the message in the hash operation (that is,
+  *             by HASH_DataIn() function and, finally,
   *             HASH_StartDigest() function.
-  *          
-  *         3.  Once the last word has been entered and computation has started, 
-  *             the hash processor elaborates the key. It is then ready to 
-  *             accept the message text using the same mechanism as the one 
+  *
+  *         3.  Once the last word has been entered and computation has started,
+  *             the hash processor elaborates the key. It is then ready to
+  *             accept the message text using the same mechanism as the one
   *             used to send the message in the hash operation.
-  *       
-  *         4.  After the first hash round, the hash processor returns "ready" 
-  *             to indicate that it is ready to receive the key to be used for 
-  *             the outer hash function (normally, this key is the same as the 
-  *             one used for the inner hash function). When the last word of 
-  *             the key is entered and computation starts, the HMAC result is 
+  *
+  *         4.  After the first hash round, the hash processor returns "ready"
+  *             to indicate that it is ready to receive the key to be used for
+  *             the outer hash function (normally, this key is the same as the
+  *             one used for the inner hash function). When the last word of
+  *             the key is entered and computation starts, the HMAC result is
   *             made available using HASH_GetDigest() function.
-  *               
-  *              
+  *
+  *
   *  @endverbatim
-  *         
+  *
   ******************************************************************************
   * @attention
   *
@@ -116,7 +116,7 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -127,42 +127,42 @@
   * @{
   */
 
-/** @defgroup HASH 
+/** @defgroup HASH
   * @brief HASH driver modules
   * @{
-  */ 
+  */
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/ 
+/* Private functions ---------------------------------------------------------*/
 
 /** @defgroup HASH_Private_Functions
   * @{
-  */ 
+  */
 
 /** @defgroup HASH_Group1 Initialization and Configuration functions
- *  @brief    Initialization and Configuration functions 
+ *  @brief    Initialization and Configuration functions
  *
-@verbatim    
+@verbatim
  ===============================================================================
                       Initialization and Configuration functions
- ===============================================================================  
-  This section provides functions allowing to 
+ ===============================================================================
+  This section provides functions allowing to
    - Initialize the HASH peripheral
-   - Configure the HASH Processor 
-      - MD5/SHA1, 
-      - HASH/HMAC, 
-      - datatype 
+   - Configure the HASH Processor
+      - MD5/SHA1,
+      - HASH/HMAC,
+      - datatype
       - HMAC Key (if mode = HMAC)
-   - Reset the HASH Processor 
-   
+   - Reset the HASH Processor
+
 @endverbatim
   * @{
   */
-  
+
 /**
   * @brief  Deinitializes the HASH peripheral registers to their default reset values
   * @param  None
@@ -181,11 +181,11 @@ void HASH_DeInit(void)
   *         in the HASH_InitStruct structure.
   * @note   the hash processor is reset when calling this function so that the
   *         HASH will be ready to compute the message digest of a new message.
-  *         There is no need to call HASH_Reset() function.           
+  *         There is no need to call HASH_Reset() function.
   * @param  HASH_InitStruct: pointer to a HASH_InitTypeDef structure that contains
   *         the configuration information for the HASH peripheral.
-  * @note   The field HASH_HMACKeyType in HASH_InitTypeDef must be filled only 
-  *          if the algorithm mode is HMAC.       
+  * @note   The field HASH_HMACKeyType in HASH_InitTypeDef must be filled only
+  *          if the algorithm mode is HMAC.
   * @retval None
   */
 void HASH_Init(HASH_InitTypeDef* HASH_InitStruct)
@@ -194,32 +194,32 @@ void HASH_Init(HASH_InitTypeDef* HASH_InitStruct)
   assert_param(IS_HASH_ALGOSELECTION(HASH_InitStruct->HASH_AlgoSelection));
   assert_param(IS_HASH_DATATYPE(HASH_InitStruct->HASH_DataType));
   assert_param(IS_HASH_ALGOMODE(HASH_InitStruct->HASH_AlgoMode));
-  
+
   /* Configure the Algorithm used, algorithm mode and the datatype */
   HASH->CR &= ~ (HASH_CR_ALGO | HASH_CR_DATATYPE | HASH_CR_MODE);
   HASH->CR |= (HASH_InitStruct->HASH_AlgoSelection | \
                HASH_InitStruct->HASH_DataType | \
                HASH_InitStruct->HASH_AlgoMode);
-  
-  /* if algorithm mode is HMAC, set the Key */  
-  if(HASH_InitStruct->HASH_AlgoMode == HASH_AlgoMode_HMAC) 
+
+  /* if algorithm mode is HMAC, set the Key */
+  if(HASH_InitStruct->HASH_AlgoMode == HASH_AlgoMode_HMAC)
   {
     assert_param(IS_HASH_HMAC_KEYTYPE(HASH_InitStruct->HASH_HMACKeyType));
     HASH->CR &= ~HASH_CR_LKEY;
     HASH->CR |= HASH_InitStruct->HASH_HMACKeyType;
   }
 
-  /* Reset the HASH processor core, so that the HASH will be ready to compute 
+  /* Reset the HASH processor core, so that the HASH will be ready to compute
      the message digest of a new message */
-  HASH->CR |= HASH_CR_INIT;  
+  HASH->CR |= HASH_CR_INIT;
 }
 
 /**
   * @brief  Fills each HASH_InitStruct member with its default value.
   * @param  HASH_InitStruct : pointer to a HASH_InitTypeDef structure which will
-  *          be initialized.  
+  *          be initialized.
   *  @note  The default values set are : Processor mode is HASH, Algorithm selected is SHA1,
-  *          Data type selected is 32b and HMAC Key Type is short key.  
+  *          Data type selected is 32b and HMAC Key Type is short key.
   * @retval None
   */
 void HASH_StructInit(HASH_InitTypeDef* HASH_InitStruct)
@@ -240,9 +240,9 @@ void HASH_StructInit(HASH_InitTypeDef* HASH_InitStruct)
 /**
   * @brief  Resets the HASH processor core, so that the HASH will be ready
   *         to compute the message digest of a new message.
-  * @note   Calling this function will clear the HASH_SR_DCIS (Digest calculation 
-  *         completion interrupt status) bit corresponding to HASH_IT_DCI 
-  *         interrupt and HASH_FLAG_DCIS flag. 
+  * @note   Calling this function will clear the HASH_SR_DCIS (Digest calculation
+  *         completion interrupt status) bit corresponding to HASH_IT_DCI
+  *         interrupt and HASH_FLAG_DCIS flag.
   * @param  None
   * @retval None
   */
@@ -254,21 +254,21 @@ void HASH_Reset(void)
 /**
   * @}
   */
- 
+
 /** @defgroup HASH_Group2 Message Digest generation functions
  *  @brief    Message Digest generation functions
  *
-@verbatim    
+@verbatim
  ===============================================================================
                       Message Digest generation functions
- ===============================================================================  
-  This section provides functions allowing the generation of message digest: 
+ ===============================================================================
+  This section provides functions allowing the generation of message digest:
   - Push data in the IN FIFO : using HASH_DataIn()
-  - Get the number of words set in IN FIFO, use HASH_GetInFIFOWordsNbr()  
-  - set the last word valid bits number using HASH_SetLastWordValidBitsNbr() 
+  - Get the number of words set in IN FIFO, use HASH_GetInFIFOWordsNbr()
+  - set the last word valid bits number using HASH_SetLastWordValidBitsNbr()
   - start digest calculation : using HASH_StartDigest()
   - Get the Digest message : using HASH_GetDigest()
- 
+
 @endverbatim
   * @{
   */
@@ -283,16 +283,16 @@ void HASH_Reset(void)
   *             - 0x02: Only bits[1:0] of the last data written are valid
   *             - 0x03: Only bits[2:0] of the last data written are valid
   *             - ...
-  *             - 0x1F: Only bits[30:0] of the last data written are valid    
-  * @note   The Number of valid bits must be set before to start the message 
-  *         digest competition (in Hash and HMAC) and key treatment(in HMAC).    
+  *             - 0x1F: Only bits[30:0] of the last data written are valid
+  * @note   The Number of valid bits must be set before to start the message
+  *         digest competition (in Hash and HMAC) and key treatment(in HMAC).
   * @retval None
   */
 void HASH_SetLastWordValidBitsNbr(uint16_t ValidNumber)
 {
   /* Check the parameters */
   assert_param(IS_HASH_VALIDBITSNUMBER(ValidNumber));
-  
+
   /* Configure the Number of valid bits in last word of the message */
   HASH->STR &= ~(HASH_STR_NBW);
   HASH->STR |= ValidNumber;
@@ -323,9 +323,9 @@ uint8_t HASH_GetInFIFOWordsNbr(void)
 /**
   * @brief  Provides the message digest result.
   * @note   In MD5 mode, Data[4] filed of HASH_MsgDigest structure is not used
-  *         and is read as zero.  
-  * @param  HASH_MessageDigest: pointer to a HASH_MsgDigest structure which will 
-  *         hold the message digest result 
+  *         and is read as zero.
+  * @param  HASH_MessageDigest: pointer to a HASH_MsgDigest structure which will
+  *         hold the message digest result
   * @retval None
   */
 void HASH_GetDigest(HASH_MsgDigest* HASH_MessageDigest)
@@ -339,7 +339,7 @@ void HASH_GetDigest(HASH_MsgDigest* HASH_MessageDigest)
 }
 
 /**
-  * @brief  Starts the message padding and calculation of the final message     
+  * @brief  Starts the message padding and calculation of the final message
   * @param  None
   * @retval None
   */
@@ -355,33 +355,33 @@ void HASH_StartDigest(void)
 /** @defgroup HASH_Group3 Context swapping functions
  *  @brief   Context swapping functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                              Context swapping functions
- ===============================================================================  
+ ===============================================================================
 
   This section provides functions allowing to save and store HASH Context
-  
-  It is possible to interrupt a HASH/HMAC process to perform another processing 
-  with a higher priority, and to complete the interrupted process later on, when 
-  the higher priority task is complete. To do so, the context of the interrupted 
-  task must be saved from the HASH registers to memory, and then be restored 
+
+  It is possible to interrupt a HASH/HMAC process to perform another processing
+  with a higher priority, and to complete the interrupted process later on, when
+  the higher priority task is complete. To do so, the context of the interrupted
+  task must be saved from the HASH registers to memory, and then be restored
   from memory to the HASH registers.
-  
+
   1. To save the current context, use HASH_SaveContext() function
-  2. To restore the saved context, use HASH_RestoreContext() function 
-  
+  2. To restore the saved context, use HASH_RestoreContext() function
+
 
 @endverbatim
   * @{
   */
-  
+
 /**
-  * @brief  Save the Hash peripheral Context. 
-  * @note   The context can be saved only when no block is currently being 
-  *         processed. So user must wait for DINIS = 1 (the last block has been 
-  *         processed and the input FIFO is empty) or NBW != 0 (the FIFO is not 
-  *         full and no processing is ongoing).   
+  * @brief  Save the Hash peripheral Context.
+  * @note   The context can be saved only when no block is currently being
+  *         processed. So user must wait for DINIS = 1 (the last block has been
+  *         processed and the input FIFO is empty) or NBW != 0 (the FIFO is not
+  *         full and no processing is ongoing).
   * @param  HASH_ContextSave: pointer to a HASH_Context structure that contains
   *         the repository for current context.
   * @retval None
@@ -389,59 +389,59 @@ void HASH_StartDigest(void)
 void HASH_SaveContext(HASH_Context* HASH_ContextSave)
 {
   uint8_t i = 0;
-  
+
   /* save context registers */
-  HASH_ContextSave->HASH_IMR = HASH->IMR;  
-  HASH_ContextSave->HASH_STR = HASH->STR;      
-  HASH_ContextSave->HASH_CR  = HASH->CR;     
+  HASH_ContextSave->HASH_IMR = HASH->IMR;
+  HASH_ContextSave->HASH_STR = HASH->STR;
+  HASH_ContextSave->HASH_CR  = HASH->CR;
   for(i=0; i<=50;i++)
   {
      HASH_ContextSave->HASH_CSR[i] = HASH->CSR[i];
-  }   
+  }
 }
 
 /**
-  * @brief  Restore the Hash peripheral Context.  
+  * @brief  Restore the Hash peripheral Context.
   * @note   After calling this function, user can restart the processing from the
-  *         point where it has been interrupted.  
+  *         point where it has been interrupted.
   * @param  HASH_ContextRestore: pointer to a HASH_Context structure that contains
   *         the repository for saved context.
   * @retval None
   */
-void HASH_RestoreContext(HASH_Context* HASH_ContextRestore)  
+void HASH_RestoreContext(HASH_Context* HASH_ContextRestore)
 {
   uint8_t i = 0;
-  
+
   /* restore context registers */
-  HASH->IMR = HASH_ContextRestore->HASH_IMR;   
-  HASH->STR = HASH_ContextRestore->HASH_STR;     
+  HASH->IMR = HASH_ContextRestore->HASH_IMR;
+  HASH->STR = HASH_ContextRestore->HASH_STR;
   HASH->CR = HASH_ContextRestore->HASH_CR;
-  
+
   /* Initialize the hash processor */
-  HASH->CR |= HASH_CR_INIT; 
-  
-   /* continue restoring context registers */     
+  HASH->CR |= HASH_CR_INIT;
+
+   /* continue restoring context registers */
   for(i=0; i<=50;i++)
   {
      HASH->CSR[i] = HASH_ContextRestore->HASH_CSR[i];
-  }   
+  }
 }
 /**
   * @}
   */
 
 /** @defgroup HASH_Group4 HASH's DMA interface Configuration function
- *  @brief   HASH's DMA interface Configuration function 
+ *  @brief   HASH's DMA interface Configuration function
  *
-@verbatim   
+@verbatim
  ===============================================================================
                    HASH's DMA interface Configuration function
- ===============================================================================  
+ ===============================================================================
 
-  This section provides functions allowing to configure the DMA interface for 
+  This section provides functions allowing to configure the DMA interface for
   HASH/ HMAC data input transfer.
-   
-  When the DMA mode is enabled (using the HASH_DMACmd() function), data can be 
+
+  When the DMA mode is enabled (using the HASH_DMACmd() function), data can be
   sent to the IN FIFO using the DMA peripheral.
 
 
@@ -449,7 +449,7 @@ void HASH_RestoreContext(HASH_Context* HASH_ContextRestore)
 @endverbatim
   * @{
   */
-  
+
 /**
   * @brief  Enables or disables the HASH DMA interface.
   * @note   The DMA is disabled by hardware after the end of transfer.
@@ -480,68 +480,68 @@ void HASH_DMACmd(FunctionalState NewState)
 /** @defgroup HASH_Group5 Interrupts and flags management functions
  *  @brief   Interrupts and flags management functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                    Interrupts and flags management functions
- ===============================================================================  
+ ===============================================================================
 
-  This section provides functions allowing to configure the HASH Interrupts and 
+  This section provides functions allowing to configure the HASH Interrupts and
   to get the status and clear flags and Interrupts pending bits.
-  
+
   The HASH provides 2 Interrupts sources and 5 Flags:
-  
+
   Flags :
-  ---------- 
-     1. HASH_FLAG_DINIS : set when 16 locations are free in the Data IN FIFO 
-                          which means that a  new block (512 bit) can be entered 
+  ----------
+     1. HASH_FLAG_DINIS : set when 16 locations are free in the Data IN FIFO
+                          which means that a  new block (512 bit) can be entered
                           into the input buffer.
-                          
+
      2. HASH_FLAG_DCIS :  set when Digest calculation is complete
-      
-     3. HASH_FLAG_DMAS :  set when HASH's DMA interface is enabled (DMAE=1) or 
+
+     3. HASH_FLAG_DMAS :  set when HASH's DMA interface is enabled (DMAE=1) or
                           a transfer is ongoing.
                           This Flag is cleared only by hardware.
-                           
+
      4. HASH_FLAG_BUSY :  set when The hash core is processing a block of data
-                          This Flag is cleared only by hardware. 
-                           
-     5. HASH_FLAG_DINNE : set when Data IN FIFO is not empty which means that 
+                          This Flag is cleared only by hardware.
+
+     5. HASH_FLAG_DINNE : set when Data IN FIFO is not empty which means that
                           the Data IN FIFO contains at least one word of data.
                           This Flag is cleared only by hardware.
-     
+
   Interrupts :
   ------------
-    
-   1. HASH_IT_DINI  : if enabled, this interrupt source is pending when 16 
-                      locations are free in the Data IN FIFO  which means that 
+
+   1. HASH_IT_DINI  : if enabled, this interrupt source is pending when 16
+                      locations are free in the Data IN FIFO  which means that
                       a new block (512 bit) can be entered into the input buffer.
-                      This interrupt source is cleared using 
+                      This interrupt source is cleared using
                       HASH_ClearITPendingBit(HASH_IT_DINI) function.
-   
-   2. HASH_IT_DCI   : if enabled, this interrupt source is pending when Digest 
+
+   2. HASH_IT_DCI   : if enabled, this interrupt source is pending when Digest
                       calculation is complete.
-                      This interrupt source is cleared using 
+                      This interrupt source is cleared using
                       HASH_ClearITPendingBit(HASH_IT_DCI) function.
 
   Managing the HASH controller events :
-  ------------------------------------ 
-  The user should identify which mode will be used in his application to manage 
+  ------------------------------------
+  The user should identify which mode will be used in his application to manage
   the HASH controller events: Polling mode or Interrupt mode.
-  
+
   1.  In the Polling Mode it is advised to use the following functions:
-      - HASH_GetFlagStatus() : to check if flags events occur. 
+      - HASH_GetFlagStatus() : to check if flags events occur.
       - HASH_ClearFlag()     : to clear the flags events.
-    
+
   2.  In the Interrupt Mode it is advised to use the following functions:
       - HASH_ITConfig()       : to enable or disable the interrupt source.
       - HASH_GetITStatus()    : to check if Interrupt occurs.
-      - HASH_ClearITPendingBit() : to clear the Interrupt pending Bit 
-                                (corresponding Flag). 
+      - HASH_ClearITPendingBit() : to clear the Interrupt pending Bit
+                                (corresponding Flag).
 
 @endverbatim
   * @{
-  */ 
-  
+  */
+
 /**
   * @brief  Enables or disables the specified HASH interrupts.
   * @param  HASH_IT: specifies the HASH interrupt source to be enabled or disabled.
@@ -590,7 +590,7 @@ FlagStatus HASH_GetFlagStatus(uint16_t HASH_FLAG)
   assert_param(IS_HASH_GET_FLAG(HASH_FLAG));
 
   /* check if the FLAG is in CR register */
-  if ((HASH_FLAG & HASH_FLAG_DINNE) != (uint16_t)RESET ) 
+  if ((HASH_FLAG & HASH_FLAG_DINNE) != (uint16_t)RESET )
   {
     tempreg = HASH->CR;
   }
@@ -616,17 +616,17 @@ FlagStatus HASH_GetFlagStatus(uint16_t HASH_FLAG)
 }
 /**
   * @brief  Clears the HASH flags.
-  * @param  HASH_FLAG: specifies the flag to clear. 
+  * @param  HASH_FLAG: specifies the flag to clear.
   *          This parameter can be any combination of the following values:
   *            @arg HASH_FLAG_DINIS: Data Input Flag
-  *            @arg HASH_FLAG_DCIS: Digest Calculation Completion Flag                       
+  *            @arg HASH_FLAG_DCIS: Digest Calculation Completion Flag
   * @retval None
   */
 void HASH_ClearFlag(uint16_t HASH_FLAG)
 {
   /* Check the parameters */
   assert_param(IS_HASH_CLEAR_FLAG(HASH_FLAG));
-  
+
   /* Clear the selected HASH flags */
   HASH->SR = ~(uint32_t)HASH_FLAG;
 }
@@ -644,7 +644,7 @@ ITStatus HASH_GetITStatus(uint8_t HASH_IT)
   uint32_t tmpreg = 0;
 
   /* Check the parameters */
-  assert_param(IS_HASH_GET_IT(HASH_IT));  
+  assert_param(IS_HASH_GET_IT(HASH_IT));
 
 
   /* Check the status of the specified HASH interrupt */
@@ -683,18 +683,18 @@ void HASH_ClearITPendingBit(uint8_t HASH_IT)
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

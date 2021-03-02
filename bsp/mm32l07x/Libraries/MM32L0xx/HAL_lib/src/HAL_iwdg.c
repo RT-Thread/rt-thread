@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_iwdg.h"
@@ -25,10 +25,10 @@
 * @{
 */
 
-/** @defgroup IWDG 
+/** @defgroup IWDG
 * @brief IWDG driver modules
 * @{
-*/ 
+*/
 
 /** @defgroup IWDG_Private_TypesDefinitions
 * @{
@@ -40,7 +40,7 @@
 
 /** @defgroup IWDG_Private_Defines
 * @{
-*/ 
+*/
 
 /* ---------------------- IWDG registers bit mask ----------------------------*/
 
@@ -50,7 +50,7 @@
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup IWDG_Private_Macros
 * @{
@@ -86,7 +86,7 @@
 * @param IWDG_WriteAccess: new state of write access to IWDG_PR and
 *   IWDG_RLR registers.
 *   This parameter can be one of the following values:
-* @arg IWDG_WriteAccess_Enable: Enable write access to 
+* @arg IWDG_WriteAccess_Enable: Enable write access to
 *   IWDG_PR and IWDG_RLR registers
 * @arg IWDG_WriteAccess_Disable: Disable write access to
 *   IWDG_PR and IWDG_RLR registers

@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -1306,7 +1306,7 @@ __STATIC_INLINE void LL_DMA_SetPeriphRequest(DMA_TypeDef *DMAx, uint32_t Channel
   */
 __STATIC_INLINE uint32_t LL_DMA_GetPeriphRequest(DMA_TypeDef *DMAx, uint32_t Channel)
 {
-  (void)(DMAx);  
+  (void)(DMAx);
   return (READ_BIT(((DMAMUX_Channel_TypeDef *)(((uint32_t)DMAMUX1_Channel0 + (DMAMUX_CCR_SIZE * (Channel - 1UL)))))->CCR, DMAMUX_CxCR_DMAREQ_ID));
 }
 
@@ -1957,7 +1957,7 @@ __STATIC_INLINE void LL_DMA_ClearFlag_TE7(DMA_TypeDef *DMAx)
   */
 __STATIC_INLINE void LL_DMA_EnableIT_TC(DMA_TypeDef *DMAx, uint32_t Channel)
 {
-  uint32_t dma_base_addr = (uint32_t)DMAx;    
+  uint32_t dma_base_addr = (uint32_t)DMAx;
   SET_BIT(((DMA_Channel_TypeDef *)(dma_base_addr + CHANNEL_OFFSET_TAB[Channel - 1U]))->CCR, DMA_CCR_TCIE);
 }
 

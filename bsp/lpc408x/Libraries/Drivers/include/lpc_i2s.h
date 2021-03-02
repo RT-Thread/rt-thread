@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -107,9 +107,9 @@ extern "C"
 /** I2S wordwide - the number of bytes in data output - 8 bits*/
 #define I2S_DAO_WORDWIDTH_8     ((uint32_t)(0))
 /** I2S wordwide - the number of bytes in data output - 16 bits*/
-#define I2S_DAO_WORDWIDTH_16    ((uint32_t)(1)) 
+#define I2S_DAO_WORDWIDTH_16    ((uint32_t)(1))
 /** I2S wordwide - the number of bytes in data output - 32 bits*/
-#define I2S_DAO_WORDWIDTH_32    ((uint32_t)(3)) 
+#define I2S_DAO_WORDWIDTH_32    ((uint32_t)(3))
 /** I2S control mono or stereo format */
 #define I2S_DAO_MONO            ((uint32_t)(1<<2))
 /** I2S control stop mode */

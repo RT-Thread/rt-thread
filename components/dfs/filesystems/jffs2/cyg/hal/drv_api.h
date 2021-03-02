@@ -8,37 +8,37 @@
 //      Native API for Kernel
 //
 //==========================================================================
-// ####ECOSGPLCOPYRIGHTBEGIN####                                            
-// -------------------------------------------                              
-// This file is part of eCos, the Embedded Configurable Operating System.   
+// ####ECOSGPLCOPYRIGHTBEGIN####
+// -------------------------------------------
+// This file is part of eCos, the Embedded Configurable Operating System.
 // Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
 //
-// eCos is free software; you can redistribute it and/or modify it under    
-// the terms of the GNU General Public License as published by the Free     
-// Software Foundation; either version 2 or (at your option) any later      
-// version.                                                                 
+// eCos is free software; you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 or (at your option) any later
+// version.
 //
-// eCos is distributed in the hope that it will be useful, but WITHOUT      
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
-// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
-// for more details.                                                        
+// eCos is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
 //
-// You should have received a copy of the GNU General Public License        
-// along with eCos; if not, write to the Free Software Foundation, Inc.,    
-// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+// You should have received a copy of the GNU General Public License
+// along with eCos; if not, write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
-// As a special exception, if other files instantiate templates or use      
-// macros or inline functions from this file, or you compile this file      
-// and link it with other works to produce a work based on this file,       
-// this file does not by itself cause the resulting work to be covered by   
-// the GNU General Public License. However the source code for this file    
-// must still be made available in accordance with section (3) of the GNU   
-// General Public License v2.                                               
+// As a special exception, if other files instantiate templates or use
+// macros or inline functions from this file, or you compile this file
+// and link it with other works to produce a work based on this file,
+// this file does not by itself cause the resulting work to be covered by
+// the GNU General Public License. However the source code for this file
+// must still be made available in accordance with section (3) of the GNU
+// General Public License v2.
 //
-// This exception does not invalidate any other reasons why a work based    
-// on this file might be covered by the GNU General Public License.         
-// -------------------------------------------                              
-// ####ECOSGPLCOPYRIGHTEND####                                              
+// This exception does not invalidate any other reasons why a work based
+// on this file might be covered by the GNU General Public License.
+// -------------------------------------------
+// ####ECOSGPLCOPYRIGHTEND####
 //==========================================================================
 //#####DESCRIPTIONBEGIN####
 //
@@ -49,7 +49,7 @@
 //              system services. When the kernel is present it maps directly
 //              to the Kernel C API. When the kernel is absent, it is provided
 //              by a set of HAL functions.
-//              
+//
 // Usage:       #include <cyg/kernel/kapi.h>
 //
 //####DESCRIPTIONEND####
@@ -74,10 +74,10 @@
 
 #define cyg_drv_isr_lock                    cyg_interrupt_disable
 #define cyg_drv_isr_unlock                  cyg_interrupt_enable
-                                     
+
 #define cyg_drv_dsr_lock                    cyg_scheduler_lock
 #define cyg_drv_dsr_unlock                  cyg_scheduler_unlock
-                                     
+
 #define cyg_drv_mutex_t                     cyg_mutex_t
 #define cyg_drv_mutex_init                  cyg_mutex_init
 #define cyg_drv_mutex_destroy               cyg_mutex_destroy
@@ -85,14 +85,14 @@
 #define cyg_drv_mutex_trylock               cyg_mutex_trylock
 #define cyg_drv_mutex_unlock                cyg_mutex_unlock
 #define cyg_drv_mutex_release               cyg_mutex_release
-                                     
+
 #define cyg_drv_cond_t                      cyg_cond_t
 #define cyg_drv_cond_init                   cyg_cond_init
 #define cyg_drv_cond_destroy                cyg_cond_destroy
 #define cyg_drv_cond_wait                   cyg_cond_wait
 #define cyg_drv_cond_signal                 cyg_cond_signal
 #define cyg_drv_cond_broadcast              cyg_cond_broadcast
-                                     
+
 #define cyg_drv_interrupt_create            cyg_interrupt_create
 #define cyg_drv_interrupt_delete            cyg_interrupt_delete
 #define cyg_drv_interrupt_attach            cyg_interrupt_attach
@@ -106,7 +106,7 @@
 #define cyg_drv_interrupt_level             cyg_interrupt_level
 #define cyg_drv_interrupt_set_cpu           cyg_interrupt_set_cpu
 #define cyg_drv_interrupt_get_cpu           cyg_interrupt_get_cpu
-                                          
+
 #define cyg_drv_spinlock_t                  cyg_spinlock_t
 #define cyg_drv_spinlock_init               cyg_spinlock_init
 #define cyg_drv_spinlock_spin               cyg_spinlock_spin
@@ -120,13 +120,13 @@
 
 /*------------------------------------------------------------------------*/
 /* Non-kernel version of API                                              */
-                                          
+
 typedef CYG_ADDRWORD cyg_addrword_t;        /* May hold pointer or word   */
 typedef cyg_addrword_t cyg_handle_t;        /* Object handle              */
 typedef cyg_uint32   cyg_priority_t;        /* type for priorities        */
 typedef cyg_uint32   cyg_vector_t;          /* Interrupt vector id        */
 typedef cyg_uint32   cyg_cpu_t;             /* CPU id                     */
-typedef int          cyg_bool_t;            
+typedef int          cyg_bool_t;
 typedef cyg_int32    cyg_code_t;            /* type for various codes     */
 
 typedef cyg_uint32 cyg_ISR_t( cyg_vector_t vector, cyg_addrword_t data);
@@ -175,7 +175,7 @@ typedef struct cyg_interrupt
 
     struct cyg_interrupt* volatile next_dsr;
     volatile cyg_int32             dsr_count;
-    
+
 #ifdef CYGIMP_HAL_COMMON_INTERRUPTS_CHAIN
     struct cyg_interrupt *next;
 #endif

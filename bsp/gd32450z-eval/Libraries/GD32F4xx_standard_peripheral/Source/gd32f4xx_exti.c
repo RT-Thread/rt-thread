@@ -53,7 +53,7 @@ void exti_init(exti_line_enum linex, \
     EXTI_EVEN &= ~(uint32_t)linex;
     EXTI_RTEN &= ~(uint32_t)linex;
     EXTI_FTEN &= ~(uint32_t)linex;
-    
+
     /* set the EXTI mode and enable the interrupts or events from EXTI line x */
     switch(mode){
     case EXTI_INTERRUPT:
@@ -65,7 +65,7 @@ void exti_init(exti_line_enum linex, \
     default:
         break;
     }
-    
+
     /* set the EXTI trigger type */
     switch(trig_type){
     case EXTI_TRIG_RISING:
@@ -151,7 +151,7 @@ FlagStatus exti_flag_get(exti_line_enum linex)
         return SET;
     }else{
         return RESET;
-    } 
+    }
 }
 
 /*!
@@ -178,10 +178,10 @@ void exti_flag_clear(exti_line_enum linex)
 FlagStatus exti_interrupt_flag_get(exti_line_enum linex)
 {
     uint32_t flag_left, flag_right;
-    
+
     flag_left = EXTI_PD & (uint32_t)linex;
     flag_right = EXTI_INTEN & (uint32_t)linex;
-    
+
     if((RESET != flag_left) && (RESET != flag_right)){
         return SET;
     }else{

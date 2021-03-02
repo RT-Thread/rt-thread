@@ -6,7 +6,7 @@
 ******************************************************************************/
 #include "common.h"
 
-#define EERPOM_SIZE	1024		// in bytes
+#define EERPOM_SIZE    1024        // in bytes
 #define EEPROM_START_ADR 0x00401000
 #define EEPROM_ERR_SUCCESS 0x01
 #define EEPROM_ADR_OverFlow 0x02

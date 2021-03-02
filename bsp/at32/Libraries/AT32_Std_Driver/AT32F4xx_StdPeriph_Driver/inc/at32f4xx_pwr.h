@@ -59,7 +59,7 @@ extern "C" {
   * @}
   */
 
-/** @defgroup PWR_SLEEP_mode_entry 
+/** @defgroup PWR_SLEEP_mode_entry
   * @{
   */
 

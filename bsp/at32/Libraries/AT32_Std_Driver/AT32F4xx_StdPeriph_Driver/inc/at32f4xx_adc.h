@@ -132,7 +132,7 @@ typedef struct
 #define ADC_ExternalTrig_Ext_INT11_TMR8_TRGO_ADC12  ((uint32_t)0x000C0000) /*!< For ADC1 and ADC2 */
 #define ADC_ExternalTrig_TMR8_CC1_ADC12             ((uint32_t)0x020C0000) /*!< For ADC1 and ADC2 */
 #define ADC_ExternalTrig_TMR8_CC2_ADC12             ((uint32_t)0x020E0000) /*!< For ADC1 and ADC2 */
-                                                    
+
 #define ADC_ExternalTrig_TMR1_CC3                   ((uint32_t)0x00040000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrig_None                       ((uint32_t)0x000E0000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrig_TMR15_CC1                  ((uint32_t)0x02000000) /*!< For ADC1, ADC2 and ADC3 */
@@ -141,7 +141,7 @@ typedef struct
 #define ADC_ExternalTrig_TMR15_CC4                  ((uint32_t)0x02060000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrig_TMR15_TRGO                 ((uint32_t)0x02080000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrig_TMR1_TRGO                  ((uint32_t)0x020A0000) /*!< For ADC1, ADC2 and ADC3 */
-                                                    
+
 #define ADC_ExternalTrig_TMR3_CC1_ADC3              ((uint32_t)0x00000000) /*!< For ADC3 only */
 #define ADC_ExternalTrig_TMR2_CC3_ADC3              ((uint32_t)0x00020000) /*!< For ADC3 only */
 #define ADC_ExternalTrig_TMR8_CC1_ADC3              ((uint32_t)0x00060000) /*!< For ADC3 only */
@@ -213,10 +213,10 @@ typedef struct
 #define ADC_Channel_15                              ((uint8_t)0x0F)
 #define ADC_Channel_16                              ((uint8_t)0x10)
 #define ADC_Channel_17                              ((uint8_t)0x11)
-                                                    
+
 #define ADC_Channel_TempSensor                      ((uint8_t)ADC_Channel_16)
 #define ADC_Channel_Vrefint                         ((uint8_t)ADC_Channel_17)
-                                                    
+
 #define IS_ADC_CHANNEL(CHANNEL)                     (((CHANNEL) == ADC_Channel_0)  || ((CHANNEL) == ADC_Channel_1) || \
                                                      ((CHANNEL) == ADC_Channel_2)  || ((CHANNEL) == ADC_Channel_3) || \
                                                      ((CHANNEL) == ADC_Channel_4)  || ((CHANNEL) == ADC_Channel_5) || \
@@ -264,7 +264,7 @@ typedef struct
 #define ADC_ExternalTrigInjec_TMR4_TRGO_ADC12             ((uint32_t)0x00005000) /*!< For ADC1 and ADC2 */
 #define ADC_ExternalTrigInjec_Ext_INT15_TMR8_CC4_ADC12    ((uint32_t)0x00006000) /*!< For ADC1 and ADC2 */
 #define ADC_ExternalTrigInjec_TMR8_CC1_ADC12              ((uint32_t)0x01006000) /*!< For ADC1 and ADC2 */
-                                                    
+
 #define ADC_ExternalTrigInjec_TMR1_TRGO                   ((uint32_t)0x00000000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrigInjec_TMR1_CC4                    ((uint32_t)0x00001000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrigInjec_None                        ((uint32_t)0x00007000) /*!< For ADC1, ADC2 and ADC3 */
@@ -275,7 +275,7 @@ typedef struct
 #define ADC_ExternalTrigInjec_TMR15_TRGO                  ((uint32_t)0x01004000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrigInjec_TMR1_CC1                    ((uint32_t)0x01005000) /*!< For ADC1, ADC2 and ADC3 */
 #define ADC_ExternalTrigInjec_TMR8_TRGO                   ((uint32_t)0x01007000) /*!< For ADC1, ADC2 and ADC3 */
-                                                    
+
 #define ADC_ExternalTrigInjec_TMR4_CC3_ADC3               ((uint32_t)0x00002000) /*!< For ADC3 only */
 #define ADC_ExternalTrigInjec_TMR8_CC2_ADC3               ((uint32_t)0x00003000) /*!< For ADC3 only */
 #define ADC_ExternalTrigInjec_TMR8_CC4_ADC3               ((uint32_t)0x00004000) /*!< For ADC3 only */
@@ -305,7 +305,7 @@ typedef struct
                                                      ((INJTRIG) == ADC_ExternalTrigInjec_TMR5_TRGO_ADC3) || \
                                                      ((INJTRIG) == ADC_ExternalTrigInjec_TMR5_CC4_ADC3) || \
                                                      ((INJTRIG) == ADC_ExternalTrigInjec_TMR1_CC2_ADC3))
-                                        
+
 /**
   * @}
   */
@@ -345,7 +345,7 @@ typedef struct
                                                      ((WDG) == ADC_AnalogWDG_AllInjecEnable) || \
                                                      ((WDG) == ADC_AnalogWDG_AllRegAllInjecEnable) || \
                                                      ((WDG) == ADC_AnalogWDG_None))
-/**                                                 
+/**
   * @}
   */
 

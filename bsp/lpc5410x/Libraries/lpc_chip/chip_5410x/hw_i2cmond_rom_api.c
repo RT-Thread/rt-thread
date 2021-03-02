@@ -34,10 +34,10 @@
 // This creates a table with the addresses of all the I2C functions
 // This table of function pointers is the API interface.
 const ROM_I2CMOND_API_T i2cmon_api = {
-	&i2cmon_get_mem_size,
-	&i2cmon_init,
-	&i2cmom_register_callback,
-	&i2cmom_start_log,
-	&i2cmon_transfer_handler,
-	&i2cmon_get_driver_version,
-};		// end of table ************************************
+    &i2cmon_get_mem_size,
+    &i2cmon_init,
+    &i2cmom_register_callback,
+    &i2cmom_start_log,
+    &i2cmon_transfer_handler,
+    &i2cmon_get_driver_version,
+};        // end of table ************************************

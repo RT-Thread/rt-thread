@@ -3,13 +3,13 @@
   * @file    stm32f7xx_hal_mdios.c
   * @author  MCD Application Team
   * @brief   MDIOS HAL module driver.
-  *          This file provides firmware functions to manage the following 
+  *          This file provides firmware functions to manage the following
   *          functionalities of the MDIOS Peripheral.
   *           + Initialization and de-initialization functions
   *           + IO operation functions
   *           + Peripheral Control functions
-  *           
-  @verbatim       
+  *
+  @verbatim
  ===============================================================================
                         ##### How to use this driver #####
  ===============================================================================
@@ -44,18 +44,18 @@
         (##) Clear write flags of a set of registers: HAL_MDIOS_ClearWriteRegAddress()
 
     (#) Enable interrupts on events using HAL_MDIOS_EnableEvents(), when called
-        the MDIOS will generate an interrupt in the following cases: 
+        the MDIOS will generate an interrupt in the following cases:
         (##) a DINn register written by the Master
         (##) a DOUTn register read by the Master
         (##) an error occur
 
-       -@@- A callback is executed for each genereted interrupt, so the driver provides the following 
+       -@@- A callback is executed for each genereted interrupt, so the driver provides the following
             HAL_MDIOS_WriteCpltCallback(), HAL_MDIOS_ReadCpltCallback() and HAL_MDIOS_ErrorCallback()
        -@@- HAL_MDIOS_IRQHandler() must be called from the MDIOS IRQ Handler, to handle the interrupt
             and execute the previous callbacks
-   
+
     (#) Reset the MDIOS peripheral and all related ressources by calling the HAL_MDIOS_DeInit() API.
-        (##) HAL_MDIOS_MspDeInit() must be implemented to reset low level ressources 
+        (##) HAL_MDIOS_MspDeInit() must be implemented to reset low level ressources
             (GPIO, Clocks, NVIC configuration ...)
 
   *** Callback registration ***
@@ -137,19 +137,19 @@
   * @{
   */
 #ifdef HAL_MDIOS_MODULE_ENABLED
-    
+
 #if defined (MDIOS)
-    
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define MDIOS_PORT_ADDRESS_SHIFT        ((uint32_t)8)
-#define	MDIOS_ALL_REG_FLAG	        ((uint32_t)0xFFFFFFFFU)
-#define	MDIOS_ALL_ERRORS_FLAG           ((uint32_t)(MDIOS_SR_PERF | MDIOS_SR_SERF | MDIOS_SR_TERF))
+#define    MDIOS_ALL_REG_FLAG            ((uint32_t)0xFFFFFFFFU)
+#define    MDIOS_ALL_ERRORS_FLAG           ((uint32_t)(MDIOS_SR_PERF | MDIOS_SR_SERF | MDIOS_SR_TERF))
 
 #define MDIOS_DIN_BASE_ADDR             (MDIOS_BASE + 0x100)
 #define MDIOS_DOUT_BASE_ADDR            (MDIOS_BASE + 0x180)
 
-/* Private macro -------------------------------------------------------------*/ 
+/* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 #if (USE_HAL_MDIOS_REGISTER_CALLBACKS == 1)
@@ -161,16 +161,16 @@ static void MDIOS_InitCallbacksToDefault(MDIOS_HandleTypeDef *hmdios);
   * @{
   */
 
-/** @defgroup MDIOS_Exported_Functions_Group1 Initialization/de-initialization functions 
-  *  @brief    Initialization and Configuration functions 
+/** @defgroup MDIOS_Exported_Functions_Group1 Initialization/de-initialization functions
+  *  @brief    Initialization and Configuration functions
   *
-@verbatim                                               
+@verbatim
 ===============================================================================
             ##### Initialization and Configuration functions #####
- ===============================================================================  
+ ===============================================================================
     [..]
     This subsection provides a set of functions allowing to initialize the MDIOS
-      (+) The following parameters can be configured: 
+      (+) The following parameters can be configured:
         (++) Port Address
         (++) Preamble Check
 
@@ -179,7 +179,7 @@ static void MDIOS_InitCallbacksToDefault(MDIOS_HandleTypeDef *hmdios);
   */
 
 /**
-  * @brief  Initializes the MDIOS according to the specified parameters in 
+  * @brief  Initializes the MDIOS according to the specified parameters in
   *         the MDIOS_InitTypeDef and creates the associated handle .
   * @param  hmdios pointer to a MDIOS_HandleTypeDef structure that contains
   *         the configuration information for MDIOS module
@@ -194,15 +194,15 @@ HAL_StatusTypeDef HAL_MDIOS_Init(MDIOS_HandleTypeDef *hmdios)
   {
     return HAL_ERROR;
   }
-  
+
   /* Check the parameters */
   assert_param(IS_MDIOS_ALL_INSTANCE(hmdios->Instance));
   assert_param(IS_MDIOS_PORTADDRESS(hmdios->Init.PortAddress));
   assert_param(IS_MDIOS_PREAMBLECHECK(hmdios->Init.PreambleCheck));
-  
+
   /* Process Locked */
   __HAL_LOCK(hmdios);
-  
+
   if(hmdios->State == HAL_MDIOS_STATE_RESET)
   {
 #if (USE_HAL_MDIOS_REGISTER_CALLBACKS == 1)
@@ -223,30 +223,30 @@ HAL_StatusTypeDef HAL_MDIOS_Init(MDIOS_HandleTypeDef *hmdios)
 
 #endif /* USE_HAL_MDIOS_REGISTER_CALLBACKS */
   }
-  
+
   /* Change the MDIOS state */
   hmdios->State = HAL_MDIOS_STATE_BUSY;
-  
+
   /* Get the MDIOS CR value */
   tmpcr = hmdios->Instance->CR;
-  
+
   /* Clear PORT_ADDRESS, DPC and EN bits */
   tmpcr &= ((uint32_t)~(MDIOS_CR_EN | MDIOS_CR_DPC | MDIOS_CR_PORT_ADDRESS));
-  
+
   /* Set MDIOS control parametrs and enable the peripheral */
   tmpcr |=  (uint32_t)(((hmdios->Init.PortAddress) << MDIOS_PORT_ADDRESS_SHIFT)    |\
                         (hmdios->Init.PreambleCheck) | \
                         (MDIOS_CR_EN));
-  
+
   /* Write the MDIOS CR */
   hmdios->Instance->CR = tmpcr;
-  
+
   /* Change the MDIOS state */
   hmdios->State = HAL_MDIOS_STATE_READY;
-  
+
   /* Release Lock */
   __HAL_UNLOCK(hmdios);
-  
+
   /* Return function status */
   return HAL_OK;
 
@@ -264,16 +264,16 @@ HAL_StatusTypeDef HAL_MDIOS_DeInit(MDIOS_HandleTypeDef *hmdios)
   {
     return HAL_ERROR;
   }
-  
+
   /* Check the parameters */
   assert_param(IS_MDIOS_ALL_INSTANCE(hmdios->Instance));
-  
+
   /* Change the MDIOS state */
   hmdios->State = HAL_MDIOS_STATE_BUSY;
-  
+
   /* Disable the Peripheral */
   __HAL_MDIOS_DISABLE(hmdios);
-  
+
 #if (USE_HAL_MDIOS_REGISTER_CALLBACKS == 1)
 
   if(hmdios->MspDeInitCallback == NULL)
@@ -287,15 +287,15 @@ HAL_StatusTypeDef HAL_MDIOS_DeInit(MDIOS_HandleTypeDef *hmdios)
 
   /* DeInit the low level hardware */
   HAL_MDIOS_MspDeInit(hmdios);
-  
+
 #endif /* USE_HAL_MDIOS_REGISTER_CALLBACKS */
 
   /* Change the MDIOS state */
   hmdios->State = HAL_MDIOS_STATE_RESET;
-  
+
   /* Release Lock */
   __HAL_UNLOCK(hmdios);
-  
+
   /* Return function status */
   return HAL_OK;
 }
@@ -312,7 +312,7 @@ HAL_StatusTypeDef HAL_MDIOS_DeInit(MDIOS_HandleTypeDef *hmdios)
 
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_MDIOS_MspInit can be implemented in the user file
-   */ 
+   */
 }
 
 /**
@@ -327,7 +327,7 @@ HAL_StatusTypeDef HAL_MDIOS_DeInit(MDIOS_HandleTypeDef *hmdios)
 
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_MDIOS_MspDeInit can be implemented in the user file
-   */ 
+   */
 }
 
 #if (USE_HAL_MDIOS_REGISTER_CALLBACKS == 1)
@@ -521,22 +521,22 @@ static void MDIOS_InitCallbacksToDefault(MDIOS_HandleTypeDef *hmdios)
   * @}
   */
 
-/** @defgroup MDIOS_Exported_Functions_Group2 IO operation functions 
-  *  @brief MDIOS Read/Write functions 
+/** @defgroup MDIOS_Exported_Functions_Group2 IO operation functions
+  *  @brief MDIOS Read/Write functions
   *
-@verbatim   
+@verbatim
  ===============================================================================
                       ##### IO operation functions #####
  ===============================================================================
-    This subsection provides a set of functions allowing to manage the MDIOS 
+    This subsection provides a set of functions allowing to manage the MDIOS
     read and write operations.
 
-    (#) APIs that allow to the MDIOS to read/write from/to the 
+    (#) APIs that allow to the MDIOS to read/write from/to the
         values of one of the DINn/DOUTn registers:
         (+) Read the value of a DINn register: HAL_MDIOS_ReadReg()
         (+) Write a value to a DOUTn register: HAL_MDIOS_WriteReg()
 
-    (#) APIs that provide if there are some Slave registres have been 
+    (#) APIs that provide if there are some Slave registres have been
         read or written by the Master:
         (+) DOUTn registers read by Master: HAL_MDIOS_GetReadRegAddress()
         (+) DINn registers written by Master : HAL_MDIOS_GetWrittenRegAddress()
@@ -548,7 +548,7 @@ static void MDIOS_InitCallbacksToDefault(MDIOS_HandleTypeDef *hmdios)
     (#) A set of Callbacks are provided:
         (+) HAL_MDIOS_WriteCpltCallback()
         (+) HAL_MDIOS_ReadCpltCallback()
-        (+) HAL_MDIOS_ErrorCallback() 
+        (+) HAL_MDIOS_ErrorCallback()
 
 @endverbatim
   * @{
@@ -557,32 +557,32 @@ static void MDIOS_InitCallbacksToDefault(MDIOS_HandleTypeDef *hmdios)
 /**
   * @brief  Writes to an MDIOS output register
   * @param  hmdios mdios handle
-  * @param  RegNum MDIOS input register number    
+  * @param  RegNum MDIOS input register number
   * @param  Data Data to write
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MDIOS_WriteReg(MDIOS_HandleTypeDef *hmdios, uint32_t RegNum, uint16_t Data)
 {
   uint32_t tmpreg;
-  
+
   /* Check the parameters */
   assert_param(IS_MDIOS_REGISTER(RegNum));
-      
+
   /* Process Locked */
   __HAL_LOCK(hmdios);
-  
+
   /* Get the addr of output register to be written by the MDIOS */
   tmpreg = MDIOS_DOUT_BASE_ADDR + (4 * RegNum);
-    
+
   /* Write to DOUTn register */
-  *((uint32_t *)tmpreg) = Data;  
-        
+  *((uint32_t *)tmpreg) = Data;
+
     /* Process Unlocked */
   __HAL_UNLOCK(hmdios);
-        
-  return HAL_OK;   
+
+  return HAL_OK;
 }
-      
+
 /**
   * @brief  Reads an MDIOS input register
   * @param  hmdios mdios handle
@@ -593,13 +593,13 @@ HAL_StatusTypeDef HAL_MDIOS_WriteReg(MDIOS_HandleTypeDef *hmdios, uint32_t RegNu
 HAL_StatusTypeDef HAL_MDIOS_ReadReg(MDIOS_HandleTypeDef *hmdios, uint32_t RegNum, uint16_t *pData)
 {
   uint32_t tmpreg;
-  
+
   /* Check the parameters */
   assert_param(IS_MDIOS_REGISTER(RegNum));
 
   /* Process Locked */
   __HAL_LOCK(hmdios);
-  
+
   /* Get the addr of input register to be read by the MDIOS */
   tmpreg = MDIOS_DIN_BASE_ADDR + (4 * RegNum);
 
@@ -618,8 +618,8 @@ HAL_StatusTypeDef HAL_MDIOS_ReadReg(MDIOS_HandleTypeDef *hmdios, uint32_t RegNum
   * @retval bit map of written registers addresses
   */
 uint32_t HAL_MDIOS_GetWrittenRegAddress(MDIOS_HandleTypeDef *hmdios)
-{        
-  return hmdios->Instance->WRFR;   
+{
+  return hmdios->Instance->WRFR;
 }
 
 /**
@@ -628,31 +628,31 @@ uint32_t HAL_MDIOS_GetWrittenRegAddress(MDIOS_HandleTypeDef *hmdios)
   * @retval bit map of read registers addresses
   */
 uint32_t HAL_MDIOS_GetReadRegAddress(MDIOS_HandleTypeDef *hmdios)
-{        
-  return hmdios->Instance->RDFR;   
+{
+  return hmdios->Instance->RDFR;
 }
 
 /**
   * @brief  Clears Write registers flag
   * @param  hmdios mdios handle
   * @param  RegNum registers addresses to be cleared
-  * @retval HAL status 
+  * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MDIOS_ClearWriteRegAddress(MDIOS_HandleTypeDef *hmdios, uint32_t RegNum)
 {
   /* Check the parameters */
   assert_param(IS_MDIOS_REGISTER(RegNum));
-  
+
   /* Process Locked */
   __HAL_LOCK(hmdios);
-         
+
   /* Clear write registers flags */
   hmdios->Instance->CWRFR |= (RegNum);
- 
+
   /* Release Lock */
   __HAL_UNLOCK(hmdios);
-  
-  return HAL_OK;  
+
+  return HAL_OK;
 }
 
 /**
@@ -665,36 +665,36 @@ HAL_StatusTypeDef HAL_MDIOS_ClearReadRegAddress(MDIOS_HandleTypeDef *hmdios, uin
 {
   /* Check the parameters */
   assert_param(IS_MDIOS_REGISTER(RegNum));
-  
+
   /* Process Locked */
   __HAL_LOCK(hmdios);
-          
+
   /* Clear read registers flags */
-  hmdios->Instance->CRDFR |= (RegNum); 
-  
+  hmdios->Instance->CRDFR |= (RegNum);
+
   /* Release Lock */
   __HAL_UNLOCK(hmdios);
-  
-  return HAL_OK;    
+
+  return HAL_OK;
 }
 
 /**
-  * @brief  Enables Events for MDIOS peripheral 
+  * @brief  Enables Events for MDIOS peripheral
   * @param  hmdios mdios handle
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MDIOS_EnableEvents(MDIOS_HandleTypeDef *hmdios)
-{        
+{
   /* Process Locked */
   __HAL_LOCK(hmdios);
-  
+
   /* Enable MDIOS interrupts: Register Write, Register Read and Error ITs */
   __HAL_MDIOS_ENABLE_IT(hmdios, (MDIOS_IT_WRITE | MDIOS_IT_READ | MDIOS_IT_ERROR));
-  
+
   /* Process Unlocked */
   __HAL_UNLOCK(hmdios);
-    
-  return HAL_OK;   
+
+  return HAL_OK;
 }
 
 /**
@@ -717,12 +717,12 @@ void HAL_MDIOS_IRQHandler(MDIOS_HandleTypeDef *hmdios)
       /* Write callback function */
       HAL_MDIOS_WriteCpltCallback(hmdios);
 #endif /* USE_HAL_MDIOS_REGISTER_CALLBACKS */
-      
+
       /* Clear write register flag */
       HAL_MDIOS_ClearWriteRegAddress(hmdios, MDIOS_ALL_REG_FLAG);
     }
   }
-  
+
   /* Read Register Interrupt enabled ? */
   if(__HAL_MDIOS_GET_IT_SOURCE(hmdios, MDIOS_IT_READ) != RESET)
   {
@@ -736,12 +736,12 @@ void HAL_MDIOS_IRQHandler(MDIOS_HandleTypeDef *hmdios)
       /* Read callback function  */
       HAL_MDIOS_ReadCpltCallback(hmdios);
 #endif /* USE_HAL_MDIOS_REGISTER_CALLBACKS */
-      
+
       /* Clear read register flag */
       HAL_MDIOS_ClearReadRegAddress(hmdios, MDIOS_ALL_REG_FLAG);
     }
   }
-  
+
   /* Error Interrupt enabled ? */
   if(__HAL_MDIOS_GET_IT_SOURCE(hmdios, MDIOS_IT_ERROR) != RESET)
   {
@@ -755,12 +755,12 @@ void HAL_MDIOS_IRQHandler(MDIOS_HandleTypeDef *hmdios)
       /* Error Callback */
       HAL_MDIOS_ErrorCallback(hmdios);
 #endif /* USE_HAL_MDIOS_REGISTER_CALLBACKS */
-      
+
       /* Clear errors flag */
       __HAL_MDIOS_CLEAR_ERROR_FLAG(hmdios, MDIOS_ALL_ERRORS_FLAG);
     }
   }
-   
+
   /* check MDIOS WAKEUP exti flag */
   if(__HAL_MDIOS_WAKEUP_EXTI_GET_FLAG() != RESET)
   {
@@ -789,7 +789,7 @@ void HAL_MDIOS_IRQHandler(MDIOS_HandleTypeDef *hmdios)
 
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_MDIOS_WriteCpltCallback can be implemented in the user file
-   */ 
+   */
 }
 
 /**
@@ -804,7 +804,7 @@ void HAL_MDIOS_IRQHandler(MDIOS_HandleTypeDef *hmdios)
 
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_MDIOS_ReadCpltCallback can be implemented in the user file
-   */ 
+   */
 }
 
 /**
@@ -819,7 +819,7 @@ void HAL_MDIOS_IRQHandler(MDIOS_HandleTypeDef *hmdios)
 
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_MDIOS_ErrorCallback can be implemented in the user file
-   */ 
+   */
 }
 
 /**
@@ -831,36 +831,36 @@ __weak void HAL_MDIOS_WakeUpCallback(MDIOS_HandleTypeDef *hmdios)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hmdios);
-  
+
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_MDIOS_WakeUpCallback could be implemented in the user file
-   */ 
+   */
 }
 
 /**
   * @}
   */
 
-/** @defgroup MDIOS_Exported_Functions_Group3 Peripheral Control functions 
-  *  @brief   MDIOS control functions 
+/** @defgroup MDIOS_Exported_Functions_Group3 Peripheral Control functions
+  *  @brief   MDIOS control functions
   *
-@verbatim   
+@verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
- ===============================================================================  
+ ===============================================================================
     [..]
     This subsection provides a set of functions allowing to control the MDIOS.
-     (+) HAL_MDIOS_GetState() API, helpful to check in run-time the state. 
-     (+) HAL_MDIOS_GetError() API, returns the errors occurred during data transfer. 
-        
+     (+) HAL_MDIOS_GetState() API, helpful to check in run-time the state.
+     (+) HAL_MDIOS_GetError() API, returns the errors occurred during data transfer.
+
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  Gets MDIOS error flags 
+  * @brief  Gets MDIOS error flags
   * @param  hmdios mdios handle
-  * @retval bit map of occurred errors 
+  * @retval bit map of occurred errors
   */
 uint32_t HAL_MDIOS_GetError(MDIOS_HandleTypeDef *hmdios)
 {
@@ -881,11 +881,11 @@ HAL_MDIOS_StateTypeDef HAL_MDIOS_GetState(MDIOS_HandleTypeDef *hmdios)
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 #endif /* MDIOS */
 #endif /* HAL_MDIOS_MODULE_ENABLED */
 /**

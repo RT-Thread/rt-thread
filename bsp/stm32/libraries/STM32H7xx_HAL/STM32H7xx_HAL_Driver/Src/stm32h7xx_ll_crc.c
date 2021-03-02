@@ -71,7 +71,7 @@ ErrorStatus LL_CRC_DeInit(CRC_TypeDef *CRCx)
   {
     /* Force CRC reset */
     LL_AHB4_GRP1_ForceReset (LL_AHB4_GRP1_PERIPH_CRC);
-    
+
     /* Release CRC reset */
     LL_AHB4_GRP1_ReleaseReset (LL_AHB4_GRP1_PERIPH_CRC);
   }

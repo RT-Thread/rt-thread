@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -49,7 +49,7 @@ extern "C" {
 #if defined(PWR_CR5_SMPSEN)
 /** @defgroup PWR_SMPS_Calibration PWR SMPS calibration
   * @{
-  */ 
+  */
 #define SMPS_VOLTAGE_CAL_ADDR              ((uint32_t*) (0x1FFF7558UL))         /* SMPS output voltage calibration level corresponding to voltage "SMPS_VOLTAGE_CAL_VOLTAGE_MV" */
 #define SMPS_VOLTAGE_CAL_POS               (8UL)                                /* SMPS output voltage calibration level bitfield position */
 #define SMPS_VOLTAGE_CAL                   (0xFUL << SMPS_VOLTAGE_CAL_POS)      /* SMPS output voltage calibration level bitfield mask */
@@ -214,7 +214,7 @@ extern "C" {
 /**
   * @}
   */
-  
+
 /** @defgroup PWR_LL_EC_PVDLEVEL PVDLEVEL
   * @{
   */
@@ -457,7 +457,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledLowPowerRunMode(void)
 #if defined(PWR_CR1_VOS)
 /**
   * @brief  Set the main internal regulator output voltage
-  * @note   A delay is required for the internal regulator to be ready 
+  * @note   A delay is required for the internal regulator to be ready
   *         after the voltage scaling has been changed.
   *         Check whether regulator reached the selected voltage level
   *         can be done using function @ref LL_PWR_IsActiveFlag_VOS().
@@ -558,7 +558,7 @@ __STATIC_INLINE void LL_PWR_SetFlashPowerModeLPRun(uint32_t FlashLowPowerMode)
 {
   /* Unlock bit FPDR */
   WRITE_REG(PWR->CR1, 0x0000C1B0U);
-  
+
   /* Update bit FPDR */
   MODIFY_REG(PWR->CR1, PWR_CR1_FPDR, FlashLowPowerMode);
 }
@@ -1306,7 +1306,7 @@ __STATIC_INLINE uint32_t LL_PWR_GetBORConfig(void)
   * @note   When SMPS step down converter SMPS mode is enabled,
   *         it is good practice to enable the BORH to monitor the supply:
   *         in this case, when the supply drops below the SMPS step down
-  *         converter SMPS mode operating supply level, 
+  *         converter SMPS mode operating supply level,
   *         switching on the fly is performed automaticcaly
   *         and interruption is generated.
   *         Refer to function @ref LL_PWR_SetBORConfig().
@@ -1354,9 +1354,9 @@ __STATIC_INLINE uint32_t LL_PWR_SMPS_GetMode(void)
   /*       "LL_PWR_SMPS_SetMode()", "LL_PWR_SMPS_GetMode()"                   */
   /*       and "LL_PWR_SMPS_GetEffectiveMode()".                              */
   uint32_t OperatingMode = (READ_BIT(PWR->CR5, PWR_CR5_SMPSEN) >> (PWR_CR5_SMPSEN_Pos - PWR_SR2_SMPSF_Pos));
-  
+
   OperatingMode = (OperatingMode | ((~OperatingMode >> 1U) & PWR_SR2_SMPSBF));
-  
+
   return OperatingMode;
 }
 
@@ -1493,7 +1493,7 @@ __STATIC_INLINE void LL_PWR_SMPS_SetOutputVoltageLevel(uint32_t OutputVoltageLev
   if(OutputVoltageLevel_calibration == 0UL)
   {
     /* Device with SMPS output voltage not calibrated in production: Apply output voltage value directly */
-    
+
     /* Update register */
     MODIFY_REG(PWR->CR5, PWR_CR5_SMPSVOS, OutputVoltageLevel);
   }
@@ -1554,7 +1554,7 @@ __STATIC_INLINE uint32_t LL_PWR_SMPS_GetOutputVoltageLevel(void)
   if(OutputVoltageLevel_calibration == 0UL)
   {
     /* Device with SMPS output voltage not calibrated in production: Return output voltage value directly */
-    
+
     return (uint32_t)(READ_BIT(PWR->CR5, PWR_CR5_SMPSVOS));
   }
   else
@@ -1674,7 +1674,7 @@ __STATIC_INLINE void LL_C2_PWR_SetFlashPowerModeLPRun(uint32_t FlashLowPowerMode
 {
   /* Unlock bit FPDR */
   WRITE_REG(PWR->C2CR1, 0x0000C1B0U);
-  
+
   /* Update bit FPDR */
   MODIFY_REG(PWR->C2CR1, PWR_C2CR1_FPDR, FlashLowPowerMode);
 }

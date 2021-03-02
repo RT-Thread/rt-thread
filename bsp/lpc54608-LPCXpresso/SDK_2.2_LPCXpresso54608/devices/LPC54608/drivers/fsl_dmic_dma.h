@@ -109,7 +109,7 @@ status_t DMIC_TransferCreateHandleDMA(DMIC_Type *base,
  * @param base USART peripheral base address.
  * @param handle Pointer to usart_dma_handle_t structure.
  * @param xfer DMIC DMA transfer structure. See #dmic_transfer_t.
- * @param dmic_channel DMIC channel 
+ * @param dmic_channel DMIC channel
  * @retval kStatus_Success
  */
 status_t DMIC_TransferReceiveDMA(DMIC_Type *base,

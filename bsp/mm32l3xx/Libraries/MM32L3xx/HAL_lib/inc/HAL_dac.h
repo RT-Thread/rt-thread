@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version V1.0.0
 * @date    28/7/2017
-* @brief   This file contains all the functions prototypes for the DAC firmware 
+* @brief   This file contains all the functions prototypes for the DAC firmware
 *          library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_DAC_H
@@ -38,7 +38,7 @@
 * @{
 */
 
-/** 
+/**
 * @brief  DAC Init structure definition
 */
 
@@ -47,7 +47,7 @@ typedef struct
   uint32_t DAC_Trigger;
   uint32_t DAC_WaveGeneration;
   uint32_t DAC_LFSRUnmask_TriangleAmplitude;
-  uint32_t DAC_OutputBuffer; 
+  uint32_t DAC_OutputBuffer;
 }DAC_InitTypeDef;
 
 /**
@@ -58,7 +58,7 @@ typedef struct
 * @{
 */
 
-/** @defgroup DAC_trigger_selection 
+/** @defgroup DAC_trigger_selection
 * @{
 */
 
@@ -82,7 +82,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DAC_wave_generation 
+/** @defgroup DAC_wave_generation
 * @{
 */
 
@@ -96,7 +96,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DAC_noise_wave_generation_mask_triangle_wave_generation_max_amplitude 
+/** @defgroup DAC_noise_wave_generation_mask_triangle_wave_generation_max_amplitude
 * @{
 */
 
@@ -153,7 +153,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DAC_output_buffer 
+/** @defgroup DAC_output_buffer
 * @{
 */
 
@@ -165,7 +165,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DAC_Channel_selection 
+/** @defgroup DAC_Channel_selection
 * @{
 */
 
@@ -177,7 +177,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DAC_data_alignement 
+/** @defgroup DAC_data_alignement
 * @{
 */
 
@@ -191,7 +191,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup DAC_wave_generation 
+/** @defgroup DAC_wave_generation
 * @{
 */
 
@@ -203,11 +203,11 @@ typedef struct
 * @}
 */
 
-/** @defgroup DAC_data 
+/** @defgroup DAC_data
 * @{
 */
 
-#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0) 
+#define IS_DAC_DATA(DATA) ((DATA) <= 0xFFF0)
 /**
 * @}
 */

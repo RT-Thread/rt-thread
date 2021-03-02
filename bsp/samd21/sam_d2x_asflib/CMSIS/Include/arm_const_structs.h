@@ -2,12 +2,12 @@
 * Copyright (C) 2010-2014 ARM Limited. All rights reserved.
 *
 * $Date:        31. July 2014
-* $Revision: 	V1.4.4
+* $Revision:     V1.4.4
 *
-* Project: 	    CMSIS DSP Library
-* Title:	    arm_const_structs.h
+* Project:         CMSIS DSP Library
+* Title:        arm_const_structs.h
 *
-* Description:	This file has constant structs that are initialized for
+* Description:    This file has constant structs that are initialized for
 *              user convenience.  For example, some can be given as
 *              arguments to the arm_cfft_f32() function.
 *

@@ -27,7 +27,7 @@
 #define     HS_MSC_TEST
 //#define     FS_MSC_TEST
 
-//Switch of DMA FIFO CLR BUG Test 
+//Switch of DMA FIFO CLR BUG Test
 //#define DMA_FIFO_CLR_TEST
 
 //USB data transfer mode choose

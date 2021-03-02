@@ -43,7 +43,7 @@
 /*!
  * LVDS display test case. note that the memory for the flow is not released
  *
- * @param	panel:		ipu panel configuration data structure
+ * @param    panel:        ipu panel configuration data structure
  */
 int32_t ips_display_test(ips_dev_panel_t * panel)
 {
@@ -115,7 +115,7 @@ int32_t ips_hdmi_stream(void)
 /*!
  * HDMI 700P60 display stream
  *
- * @param	ipu_index:	ipu index
+ * @param    ipu_index:    ipu index
  */
 int32_t ips_hdmi_720P60_stream(int32_t ipu_index)
 {
@@ -155,7 +155,7 @@ int32_t ips_hdmi_720P60_stream(int32_t ipu_index)
 /*!
  * HDMI 1080P60 display stream
  *
- * @param	ipu_index:	ipu index
+ * @param    ipu_index:    ipu index
  */
 int32_t ips_hdmi_1080P60_stream(int32_t ipu_index)
 {
@@ -191,7 +191,7 @@ int32_t ips_hdmi_1080P60_stream(int32_t ipu_index)
 
 /*!
  * SII9022 1080P60 display stream
- * @param	ipu_index:	ipu index
+ * @param    ipu_index:    ipu index
  */
 int32_t ips_ext_hdmi_transmitter_1080P60_stream(int32_t ipu_index)
 {
@@ -225,7 +225,7 @@ int32_t ips_ext_hdmi_transmitter_1080P60_stream(int32_t ipu_index)
 /*!
  * LVDS display stream
  *
- * @param	ipu_index:	ipu index
+ * @param    ipu_index:    ipu index
  */
 int32_t ips_hannstar_xga_yuv_stream(int32_t ipu_index)
 {
@@ -263,7 +263,7 @@ int32_t ips_hannstar_xga_yuv_stream(int32_t ipu_index)
 /*!
  * MIPI display stream
  *
- * @param	ipu_index:	ipu index
+ * @param    ipu_index:    ipu index
  */
 int32_t ips_mipi_wvga_rgb_stream(int32_t ipu_index)
 {

@@ -73,20 +73,20 @@ void pcie_card_pwr_setup(uint32_t enable)
 
 #if defined(BOARD_SMART_DEVICE)
    gpio_set_gpio(GPIO_PORT3, 19);
-   gpio_set_direction(GPIO_PORT3, 19, GPIO_GDIR_OUTPUT); 
+   gpio_set_direction(GPIO_PORT3, 19, GPIO_GDIR_OUTPUT);
 
    if(enable){
-	gpio_set_level(GPIO_PORT3, 19, GPIO_HIGH_LEVEL);
+    gpio_set_level(GPIO_PORT3, 19, GPIO_HIGH_LEVEL);
    }else{
-	gpio_set_level(GPIO_PORT3, 19, GPIO_LOW_LEVEL);
-   } 
+    gpio_set_level(GPIO_PORT3, 19, GPIO_LOW_LEVEL);
+   }
 #endif
 }
 
 void pcie_enable_extrn_125mhz_clk(uint32_t enable)
 {
     if (enable) {
-	//Enable 125MHz output of Enet_PLL
+    //Enable 125MHz output of Enet_PLL
         HW_CCM_ANALOG_PLL_ENET_SET(BM_CCM_ANALOG_PLL_ENET_ENABLE_125M);
 
         // Select PCIe clock source and switch to output buffer, ie, CLK1_N/CLK1_P
@@ -100,11 +100,11 @@ void pcie_enable_extrn_125mhz_clk(uint32_t enable)
 void pcie_enable_extrn_100mhz_clk(uint32_t enable)
 {
 #if defined(CHIP_MX6SDL)
-#define BV_PMU_MISC1_LVDS1_CLK_SEL__SATA_REF	11
+#define BV_PMU_MISC1_LVDS1_CLK_SEL__SATA_REF    11
 #endif
 
     if (enable) {
-	//Enable 100MHz output of Enet_PLL
+    //Enable 100MHz output of Enet_PLL
         HW_CCM_ANALOG_PLL_ENET_SET(BM_CCM_ANALOG_PLL_ENET_ENABLE_100M);
 
         HW_PMU_MISC1_CLR(BM_PMU_MISC1_LVDSCLK1_IBEN);
@@ -128,7 +128,7 @@ void pcie_card_rst(void)
 
 #if defined(BOARD_SMART_DEVICE)
     gpio_set_gpio(GPIO_PORT4, 5);
-    gpio_set_direction(GPIO_PORT4, 5, GPIO_GDIR_OUTPUT); 
+    gpio_set_direction(GPIO_PORT4, 5, GPIO_GDIR_OUTPUT);
 
     gpio_set_level(GPIO_PORT4, 5, GPIO_LOW_LEVEL);
     hal_delay_us(200 * 1000);

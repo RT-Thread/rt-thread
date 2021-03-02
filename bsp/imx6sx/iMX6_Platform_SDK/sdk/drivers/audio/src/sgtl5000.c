@@ -55,38 +55,38 @@ struct imx_i2c_request sgtl5000_i2c_req;
 #define CHIP_PLL_CTRL_REG_VALUE2     ((16 << 11) | (786))   // for CodecInit2
 
 ////////////////////////////// Macros  ///////////////////////////////////////////
-#define DEBUG_ENABLE	1
+#define DEBUG_ENABLE    1
 #if DEBUG_ENABLE
-#define TRACE(fmt, args...)	printf(fmt,##args)
+#define TRACE(fmt, args...)    printf(fmt,##args)
 #else
 #define TRACE(fmt, args...)
 #endif
 
-#define SGTL5000_REG_WRITE(codec, reg_addr, reg_val)	\
- 	do{     \
-		if(0 != sgtl5000_write_reg(codec, reg_addr, reg_val)){   \
+#define SGTL5000_REG_WRITE(codec, reg_addr, reg_val)    \
+     do{     \
+        if(0 != sgtl5000_write_reg(codec, reg_addr, reg_val)){   \
                     printf("Write %s  failed.\n", #reg_addr);   \
-                    return -1;	\
+                    return -1;    \
                } \
-	}while(0)
+    }while(0)
 
-#define SGTL5000_REG_READ(codec, reg_addr, reg_val)	\
- 	do{     \
-		if(0 != sgtl5000_read_reg(codec, reg_addr, &reg_val)){   \
+#define SGTL5000_REG_READ(codec, reg_addr, reg_val)    \
+     do{     \
+        if(0 != sgtl5000_read_reg(codec, reg_addr, &reg_val)){   \
                     printf("Read %s  failed.\n", #reg_addr);   \
-			return -1;	\
+            return -1;    \
                 }   \
-	}while(0)
+    }while(0)
 
-#define SGTL5000_REG_DUMP(codec, reg_addr)	\
-	do{	\
-		uint16_t reg_val;	\
-		if(0 != sgtl5000_read_reg(codec, reg_addr, &reg_val)){   \
+#define SGTL5000_REG_DUMP(codec, reg_addr)    \
+    do{    \
+        uint16_t reg_val;    \
+        if(0 != sgtl5000_read_reg(codec, reg_addr, &reg_val)){   \
                     printf("Read %s  failed.\n", #reg_addr);   \
-                    return -1;	\
+                    return -1;    \
                 }    \
-		printf(" %s: 0x%04x\n",  #reg_addr, reg_val); \
-	}while(0)
+        printf(" %s: 0x%04x\n",  #reg_addr, reg_val); \
+    }while(0)
 
 ////////////////////////////Local variables and functions /////////////////////////////////////////
 static int32_t sgtl5000_init_status = 0;

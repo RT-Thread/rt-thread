@@ -653,7 +653,7 @@ HAL_StatusTypeDef HAL_RTCEx_SetWakeUpTimer_IT(RTC_HandleTypeDef *hrtc, uint32_t 
   __HAL_RTC_WAKEUPTIMER_EXTI_ENABLE_IT();
   __HAL_RTC_WAKEUPTIMER_EXTI_RISING_IT();
 
-  /* Configure the Interrupt in the RTC_CR register and Enable the Wakeup Timer */ 
+  /* Configure the Interrupt in the RTC_CR register and Enable the Wakeup Timer */
   SET_BIT(RTC->CR, (RTC_CR_WUTIE | RTC_CR_WUTE));
 
   /* Enable the write protection for RTC registers */

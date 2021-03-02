@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-02-08     Zhangyihong  the first version
  */
- 
+
 #ifndef __DRV_TOUCH_H__
 #define __DRV_TOUCH_H__
 

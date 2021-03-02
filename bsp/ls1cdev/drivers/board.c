@@ -31,10 +31,10 @@ void rt_hw_board_init(void)
 {
     /* init hardware interrupt */
     rt_hw_exception_init();
-    
+
     /* init hardware interrupt */
     rt_hw_interrupt_init();
-    
+
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void*)&__bss_end, (void*)RT_HW_HEAP_END);
 #endif

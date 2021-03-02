@@ -38,7 +38,7 @@
 
 #include "sdma/sdma.h"
 
-#define SDMA_SCRIPT_MAX_NUM	64
+#define SDMA_SCRIPT_MAX_NUM    64
 
 typedef struct {
     script_name_e script_index;

@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* @brief header file for PMC. 
+* @brief header file for PMC.
 *
 *******************************************************************************
 *
@@ -62,11 +62,11 @@ extern "C" {
  *
  */
 
-typedef union 
+typedef union
 {
-   uint8_t byte;						  /*!< byte field of union type */
-   struct 
-   {     
+   uint8_t byte;                          /*!< byte field of union type */
+   struct
+   {
        uint8_t bBandgapEn        :1;      /*!< bandgap enable */
        uint8_t bBandgapDrv       :1;      /*!< bandgap drive select */
        uint8_t bLvdEn            :1;      /*!< LVD enable */
@@ -75,8 +75,8 @@ typedef union
        uint8_t bLvwIrqEn         :1;      /*!< LVW int enable */
        uint8_t bLvwAck           :1;      /*!< LVW acknowledge */
        uint8_t bLvwFlag          :1;      /*!< LVW flag */
-   }bits; 								  /*!< bitfield of union type */
-}PMC_Ctrl1Type, *PMC_Ctrl1Ptr;		  /*!< PMC control1 reg structure */
+   }bits;                                   /*!< bitfield of union type */
+}PMC_Ctrl1Type, *PMC_Ctrl1Ptr;          /*!< PMC control1 reg structure */
 /*! @} End of pmc_ctrlstruct                                                  */
 
 /******************************************************************************
@@ -89,17 +89,17 @@ typedef union
  * @brief PMC control-- voltage select type.
  *
  */
-typedef union 
+typedef union
 {
-   uint8_t byte;						   /*!< byte field of union type */
-   struct 
-   {     
-       uint8_t           :4;               /*!< none */  
-       uint8_t bLVWV     :2;               /*!< LVW voltage select */  
-       uint8_t bLVDV     :1;               /*!< LVD voltage select */  
-       uint8_t           :1;               /*!< none */                 
-   }bits;  								   /*!< bitfield of union type */
-}PMC_Ctrl2Type, *PMC_Ctrl2Ptr;		   /*!< PMC control2 reg structure */
+   uint8_t byte;                           /*!< byte field of union type */
+   struct
+   {
+       uint8_t           :4;               /*!< none */
+       uint8_t bLVWV     :2;               /*!< LVW voltage select */
+       uint8_t bLVDV     :1;               /*!< LVD voltage select */
+       uint8_t           :1;               /*!< none */
+   }bits;                                     /*!< bitfield of union type */
+}PMC_Ctrl2Type, *PMC_Ctrl2Ptr;           /*!< PMC control2 reg structure */
 /*! @} End of pmc_voltselectstruct                                            */
 
 /******************************************************************************
@@ -113,12 +113,12 @@ typedef union
  *
  */
 
-typedef struct 
+typedef struct
 {
-    PMC_Ctrl1Type    sCtrlstatus;          /*!< PMC control and status */  
-    PMC_Ctrl2Type    sDetectVoltSelect;    /*!< LVW and LVW voltage select */  
-}PMC_ConfigType, *PMC_ConfigPtr;		   /*!< PMC configuration structure */
-/*! @} End of pmc_configstruct                                            */  
+    PMC_Ctrl1Type    sCtrlstatus;          /*!< PMC control and status */
+    PMC_Ctrl2Type    sDetectVoltSelect;    /*!< LVW and LVW voltage select */
+}PMC_ConfigType, *PMC_ConfigPtr;           /*!< PMC configuration structure */
+/*! @} End of pmc_configstruct                                            */
 
 
 
@@ -138,7 +138,7 @@ typedef struct
 /*****************************************************************************//*!
 *
 * @brief  enable LVD events during stop mode.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -156,7 +156,7 @@ __STATIC_INLINE void PMC_EnableLVDInStopMode(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  disable LVD events during stop mode.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -174,7 +174,7 @@ __STATIC_INLINE void PMC_DisableLVDInStopMode(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  enable LVD events to generate a hardware reset,  note: write once.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -192,7 +192,7 @@ __STATIC_INLINE void PMC_EnableLVDRst(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  disable LVD events to generate a hardware reset,  note: write once.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -210,7 +210,7 @@ __STATIC_INLINE void PMC_DisableLVDRst(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  enable low-voltage detect logic,  note: write once.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -228,7 +228,7 @@ __STATIC_INLINE void PMC_EnableLVD(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  disable low-voltage detect logic,  note: write once
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -246,7 +246,7 @@ __STATIC_INLINE void PMC_DisableLVD(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  set the low-voltage detect trip point voltage, note: write once.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 * @param[in]  Trippoint         LVD trip point voltage,0~1.
 *
@@ -268,7 +268,7 @@ __STATIC_INLINE void PMC_SetLVDTripVolt(PMC_Type *pPMC, uint8_t Trippoint)
 /*****************************************************************************//*!
 *
 * @brief  set the low-voltage warning (LVW) trip point voltage.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 * @param[in]  Trippoint         LVW trip point voltage,0~3.
 *
@@ -288,7 +288,7 @@ __STATIC_INLINE void PMC_SetLVWTripVolt(PMC_Type *pPMC, uint8_t Trippoint)
 /*****************************************************************************//*!
 *
 * @brief  Enable hardware interrupt requests for LVWF.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -306,7 +306,7 @@ __STATIC_INLINE void PMC_EnableLVWInterrupt(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  Disable hardware interrupt requests for LVWF.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.
@@ -324,7 +324,7 @@ __STATIC_INLINE void PMC_DisableLVWInterrupt(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  get the lvw warning flag.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return uint8_t lvw warning flag.
@@ -342,7 +342,7 @@ __STATIC_INLINE uint8_t PMC_GetLVWFlag(PMC_Type *pPMC)
 /*****************************************************************************//*!
 *
 * @brief  clear the lvw warning flag.
-* 
+*
 * @param[in]  pPMC              pointer to the PMC module.
 *
 * @return none.

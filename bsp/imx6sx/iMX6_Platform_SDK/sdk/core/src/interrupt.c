@@ -61,24 +61,24 @@ volatile uint32_t g_vectNum[4];
 __attribute__ ((interrupt("IRQ")))
 void IRQ_HDLR(void)
 {
-    // vectNum = RESERVED[31:13] | CPUID[12:10] | INTERRUPT_ID[9:0] 
-    // send ack and get ID source 
+    // vectNum = RESERVED[31:13] | CPUID[12:10] | INTERRUPT_ID[9:0]
+    // send ack and get ID source
     uint32_t vectNum = gic_read_irq_ack();
-    
-    // Check that INT_ID isn't 1023 or 1022 (spurious interrupt) 
+
+    // Check that INT_ID isn't 1023 or 1022 (spurious interrupt)
     if (vectNum & 0x0200)
     {
-        gic_write_end_of_irq(vectNum);  // send end of irq 
+        gic_write_end_of_irq(vectNum);  // send end of irq
     }
     else
     {
         // copy the local value to the global image of CPUID
         unsigned cpu = (vectNum >> 10) & 0x7;
         unsigned irq = vectNum & 0x1FF;
-        
+
         // Store the current interrupt number.
         g_vectNum[cpu] = irq;
-        
+
         // Call the service routine stored in the handlers array. If there isn't
         // one for this IRQ, then call the default handler.
         irq_hdlr_t isr = g_interrupt_handlers[irq];
@@ -90,10 +90,10 @@ void IRQ_HDLR(void)
         {
             default_interrupt_routine();
         }
-        
+
         // Clear current interrupt number.
         g_vectNum[cpu] = 0;
-        
+
         // Signal the end of the irq.
         gic_write_end_of_irq(vectNum);
     }

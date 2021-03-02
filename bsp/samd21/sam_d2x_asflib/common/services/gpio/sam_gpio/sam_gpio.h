@@ -51,33 +51,33 @@
 #include "pio.h"
 
 #define gpio_pin_is_low(io_id) \
-	(pio_get_pin_value(io_id) ? 0 : 1)
+    (pio_get_pin_value(io_id) ? 0 : 1)
 
 #define gpio_pin_is_high(io_id) \
-	(pio_get_pin_value(io_id) ? 1 : 0)
+    (pio_get_pin_value(io_id) ? 1 : 0)
 
 #define gpio_set_pin_high(io_id) \
-	pio_set_pin_high(io_id)
+    pio_set_pin_high(io_id)
 
 #define gpio_set_pin_low(io_id) \
-	pio_set_pin_low(io_id)
+    pio_set_pin_low(io_id)
 
 #define gpio_toggle_pin(io_id) \
-	pio_toggle_pin(io_id)
+    pio_toggle_pin(io_id)
 
 #define gpio_configure_pin(io_id,io_flags) \
-	pio_configure_pin(io_id,io_flags)
+    pio_configure_pin(io_id,io_flags)
 
 #define gpio_configure_group(port_id,port_mask,io_flags) \
-	pio_configure_pin_group(port_id,port_mask,io_flags)
+    pio_configure_pin_group(port_id,port_mask,io_flags)
 
 #define gpio_set_pin_group_high(port_id,mask) \
-	pio_set_pin_group_high(port_id,mask)
+    pio_set_pin_group_high(port_id,mask)
 
 #define gpio_set_pin_group_low(port_id,mask) \
-	pio_set_pin_group_low(port_id,mask)
+    pio_set_pin_group_low(port_id,mask)
 
 #define gpio_toggle_pin_group(port_id,mask) \
-	pio_toggle_pin_group(port_id,mask)
+    pio_toggle_pin_group(port_id,mask)
 
 #endif /* SAM_GPIO_H_INCLUDED */

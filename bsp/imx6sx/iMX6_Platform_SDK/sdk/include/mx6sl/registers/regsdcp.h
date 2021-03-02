@@ -140,10 +140,10 @@ typedef union _hw_dcp_ctrl
  * combined (along with the CRC interrupt) into the dcp_irq signal.
  *
  * Values:
- * - CH0 = 0x01 - 
- * - CH1 = 0x02 - 
- * - CH2 = 0x04 - 
- * - CH3 = 0x08 - 
+ * - CH0 = 0x01 -
+ * - CH1 = 0x02 -
+ * - CH2 = 0x04 -
+ * - CH3 = 0x08 -
  */
 //@{
 #define BP_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE      (0)      //!< Bit position for DCP_CTRL_CHANNEL_INTERRUPT_ENABLE.
@@ -163,10 +163,10 @@ typedef union _hw_dcp_ctrl
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE_V(v) BF_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE(BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__##v)
 
-#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH0 (0x1) //!< 
-#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH1 (0x2) //!< 
-#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH2 (0x4) //!< 
-#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH3 (0x8) //!< 
+#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH0 (0x1) //!<
+#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH1 (0x2) //!<
+#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH2 (0x4) //!<
+#define BV_DCP_CTRL_CHANNEL_INTERRUPT_ENABLE__CH3 (0x8) //!<
 //@}
 
 /*! @name Register DCP_CTRL, field ENABLE_CONTEXT_SWITCHING[21] (RW)
@@ -242,8 +242,8 @@ typedef union _hw_dcp_ctrl
  * Indicates whether the SHA1/SHA2 functions are present.
  *
  * Values:
- * - ABSENT = 0x0 - 
- * - PRESENT = 0x1 - 
+ * - ABSENT = 0x0 -
+ * - PRESENT = 0x1 -
  */
 //@{
 #define BP_DCP_CTRL_PRESENT_SHA      (28)      //!< Bit position for DCP_CTRL_PRESENT_SHA.
@@ -255,8 +255,8 @@ typedef union _hw_dcp_ctrl
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_CTRL_PRESENT_SHA_V(v) BF_DCP_CTRL_PRESENT_SHA(BV_DCP_CTRL_PRESENT_SHA__##v)
 
-#define BV_DCP_CTRL_PRESENT_SHA__ABSENT (0x0) //!< 
-#define BV_DCP_CTRL_PRESENT_SHA__PRESENT (0x1) //!< 
+#define BV_DCP_CTRL_PRESENT_SHA__ABSENT (0x0) //!<
+#define BV_DCP_CTRL_PRESENT_SHA__PRESENT (0x1) //!<
 //@}
 
 /*! @name Register DCP_CTRL, field PRESENT_CRYPTO[29] (RO)
@@ -264,8 +264,8 @@ typedef union _hw_dcp_ctrl
  * Indicates whether the crypto (Cipher/Hash) functions are present.
  *
  * Values:
- * - ABSENT = 0x0 - 
- * - PRESENT = 0x1 - 
+ * - ABSENT = 0x0 -
+ * - PRESENT = 0x1 -
  */
 //@{
 #define BP_DCP_CTRL_PRESENT_CRYPTO      (29)      //!< Bit position for DCP_CTRL_PRESENT_CRYPTO.
@@ -277,8 +277,8 @@ typedef union _hw_dcp_ctrl
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_CTRL_PRESENT_CRYPTO_V(v) BF_DCP_CTRL_PRESENT_CRYPTO(BV_DCP_CTRL_PRESENT_CRYPTO__##v)
 
-#define BV_DCP_CTRL_PRESENT_CRYPTO__ABSENT (0x0) //!< 
-#define BV_DCP_CTRL_PRESENT_CRYPTO__PRESENT (0x1) //!< 
+#define BV_DCP_CTRL_PRESENT_CRYPTO__ABSENT (0x0) //!<
+#define BV_DCP_CTRL_PRESENT_CRYPTO__PRESENT (0x1) //!<
 //@}
 
 /*! @name Register DCP_CTRL, field CLKGATE[30] (RW)
@@ -400,10 +400,10 @@ typedef union _hw_dcp_stat
  * Each bit is a one-hot indicating the request status for the associated channel.
  *
  * Values:
- * - CH0 = 0x01 - 
- * - CH1 = 0x02 - 
- * - CH2 = 0x04 - 
- * - CH3 = 0x08 - 
+ * - CH0 = 0x01 -
+ * - CH1 = 0x02 -
+ * - CH2 = 0x04 -
+ * - CH3 = 0x08 -
  */
 //@{
 #define BP_DCP_STAT_READY_CHANNELS      (16)      //!< Bit position for DCP_STAT_READY_CHANNELS.
@@ -415,10 +415,10 @@ typedef union _hw_dcp_stat
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_STAT_READY_CHANNELS_V(v) BF_DCP_STAT_READY_CHANNELS(BV_DCP_STAT_READY_CHANNELS__##v)
 
-#define BV_DCP_STAT_READY_CHANNELS__CH0 (0x1) //!< 
-#define BV_DCP_STAT_READY_CHANNELS__CH1 (0x2) //!< 
-#define BV_DCP_STAT_READY_CHANNELS__CH2 (0x4) //!< 
-#define BV_DCP_STAT_READY_CHANNELS__CH3 (0x8) //!< 
+#define BV_DCP_STAT_READY_CHANNELS__CH0 (0x1) //!<
+#define BV_DCP_STAT_READY_CHANNELS__CH1 (0x2) //!<
+#define BV_DCP_STAT_READY_CHANNELS__CH2 (0x4) //!<
+#define BV_DCP_STAT_READY_CHANNELS__CH3 (0x8) //!<
 //@}
 
 /*! @name Register DCP_STAT, field CUR_CHANNEL[27:24] (RO)
@@ -426,11 +426,11 @@ typedef union _hw_dcp_stat
  * Current (active) channel (encoded).
  *
  * Values:
- * - NONE = 0x0 - 
- * - CH0 = 0x1 - 
- * - CH1 = 0x2 - 
- * - CH2 = 0x3 - 
- * - CH3 = 0x4 - 
+ * - NONE = 0x0 -
+ * - CH0 = 0x1 -
+ * - CH1 = 0x2 -
+ * - CH2 = 0x3 -
+ * - CH3 = 0x4 -
  */
 //@{
 #define BP_DCP_STAT_CUR_CHANNEL      (24)      //!< Bit position for DCP_STAT_CUR_CHANNEL.
@@ -442,11 +442,11 @@ typedef union _hw_dcp_stat
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_STAT_CUR_CHANNEL_V(v) BF_DCP_STAT_CUR_CHANNEL(BV_DCP_STAT_CUR_CHANNEL__##v)
 
-#define BV_DCP_STAT_CUR_CHANNEL__NONE (0x0) //!< 
-#define BV_DCP_STAT_CUR_CHANNEL__CH0 (0x1) //!< 
-#define BV_DCP_STAT_CUR_CHANNEL__CH1 (0x2) //!< 
-#define BV_DCP_STAT_CUR_CHANNEL__CH2 (0x3) //!< 
-#define BV_DCP_STAT_CUR_CHANNEL__CH3 (0x4) //!< 
+#define BV_DCP_STAT_CUR_CHANNEL__NONE (0x0) //!<
+#define BV_DCP_STAT_CUR_CHANNEL__CH0 (0x1) //!<
+#define BV_DCP_STAT_CUR_CHANNEL__CH1 (0x2) //!<
+#define BV_DCP_STAT_CUR_CHANNEL__CH2 (0x3) //!<
+#define BV_DCP_STAT_CUR_CHANNEL__CH3 (0x4) //!<
 //@}
 
 /*! @name Register DCP_STAT, field OTP_KEY_READY[28] (RO)
@@ -517,10 +517,10 @@ typedef union _hw_dcp_channelctrl
  * central DMA resources.
  *
  * Values:
- * - CH0 = 0x01 - 
- * - CH1 = 0x02 - 
- * - CH2 = 0x04 - 
- * - CH3 = 0x08 - 
+ * - CH0 = 0x01 -
+ * - CH1 = 0x02 -
+ * - CH2 = 0x04 -
+ * - CH3 = 0x08 -
  */
 //@{
 #define BP_DCP_CHANNELCTRL_ENABLE_CHANNEL      (0)      //!< Bit position for DCP_CHANNELCTRL_ENABLE_CHANNEL.
@@ -540,10 +540,10 @@ typedef union _hw_dcp_channelctrl
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_CHANNELCTRL_ENABLE_CHANNEL_V(v) BF_DCP_CHANNELCTRL_ENABLE_CHANNEL(BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__##v)
 
-#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH0 (0x1) //!< 
-#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH1 (0x2) //!< 
-#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH2 (0x4) //!< 
-#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH3 (0x8) //!< 
+#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH0 (0x1) //!<
+#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH1 (0x2) //!<
+#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH2 (0x4) //!<
+#define BV_DCP_CHANNELCTRL_ENABLE_CHANNEL__CH3 (0x8) //!<
 //@}
 
 /*! @name Register DCP_CHANNELCTRL, field HIGH_PRIORITY_CHANNEL[15:8] (RW)
@@ -553,10 +553,10 @@ typedef union _hw_dcp_channelctrl
  * channels that are not marked as high priority.
  *
  * Values:
- * - CH0 = 0x01 - 
- * - CH1 = 0x02 - 
- * - CH2 = 0x04 - 
- * - CH3 = 0x08 - 
+ * - CH0 = 0x01 -
+ * - CH1 = 0x02 -
+ * - CH2 = 0x04 -
+ * - CH3 = 0x08 -
  */
 //@{
 #define BP_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL      (8)      //!< Bit position for DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL.
@@ -576,10 +576,10 @@ typedef union _hw_dcp_channelctrl
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL_V(v) BF_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL(BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__##v)
 
-#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH0 (0x1) //!< 
-#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH1 (0x2) //!< 
-#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH2 (0x4) //!< 
-#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH3 (0x8) //!< 
+#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH0 (0x1) //!<
+#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH1 (0x2) //!<
+#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH2 (0x4) //!<
+#define BV_DCP_CHANNELCTRL_HIGH_PRIORITY_CHANNEL__CH3 (0x8) //!<
 //@}
 
 /*! @name Register DCP_CHANNELCTRL, field CH0_IRQ_MERGED[16] (RW)
@@ -766,7 +766,7 @@ typedef union _hw_dcp_capability1
  * One-hot field indicating which cipher algorithms are available.
  *
  * Values:
- * - AES128 = 0x0001 - 
+ * - AES128 = 0x0001 -
  */
 //@{
 #define BP_DCP_CAPABILITY1_CIPHER_ALGORITHMS      (0)      //!< Bit position for DCP_CAPABILITY1_CIPHER_ALGORITHMS.
@@ -778,7 +778,7 @@ typedef union _hw_dcp_capability1
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_CAPABILITY1_CIPHER_ALGORITHMS_V(v) BF_DCP_CAPABILITY1_CIPHER_ALGORITHMS(BV_DCP_CAPABILITY1_CIPHER_ALGORITHMS__##v)
 
-#define BV_DCP_CAPABILITY1_CIPHER_ALGORITHMS__AES128 (0x1) //!< 
+#define BV_DCP_CAPABILITY1_CIPHER_ALGORITHMS__AES128 (0x1) //!<
 //@}
 
 /*! @name Register DCP_CAPABILITY1, field HASH_ALGORITHMS[31:16] (RO)
@@ -786,9 +786,9 @@ typedef union _hw_dcp_capability1
  * One-hot field indicating which hashing features are implemented in HW.
  *
  * Values:
- * - SHA1 = 0x0001 - 
- * - CRC32 = 0x0002 - 
- * - SHA256 = 0x0004 - 
+ * - SHA1 = 0x0001 -
+ * - CRC32 = 0x0002 -
+ * - SHA256 = 0x0004 -
  */
 //@{
 #define BP_DCP_CAPABILITY1_HASH_ALGORITHMS      (16)      //!< Bit position for DCP_CAPABILITY1_HASH_ALGORITHMS.
@@ -800,9 +800,9 @@ typedef union _hw_dcp_capability1
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_CAPABILITY1_HASH_ALGORITHMS_V(v) BF_DCP_CAPABILITY1_HASH_ALGORITHMS(BV_DCP_CAPABILITY1_HASH_ALGORITHMS__##v)
 
-#define BV_DCP_CAPABILITY1_HASH_ALGORITHMS__SHA1 (0x1) //!< 
-#define BV_DCP_CAPABILITY1_HASH_ALGORITHMS__CRC32 (0x2) //!< 
-#define BV_DCP_CAPABILITY1_HASH_ALGORITHMS__SHA256 (0x4) //!< 
+#define BV_DCP_CAPABILITY1_HASH_ALGORITHMS__SHA1 (0x1) //!<
+#define BV_DCP_CAPABILITY1_HASH_ALGORITHMS__CRC32 (0x2) //!<
+#define BV_DCP_CAPABILITY1_HASH_ALGORITHMS__SHA256 (0x4) //!<
 //@}
 
 //-------------------------------------------------------------------------------------------
@@ -1258,8 +1258,8 @@ typedef union _hw_dcp_packet1
  * decryption.
  *
  * Values:
- * - DECRYPT = 0 - 
- * - ENCRYPT = 1 - 
+ * - DECRYPT = 0 -
+ * - ENCRYPT = 1 -
  */
 //@{
 #define BP_DCP_PACKET1_CIPHER_ENCRYPT      (8)      //!< Bit position for DCP_PACKET1_CIPHER_ENCRYPT.
@@ -1271,8 +1271,8 @@ typedef union _hw_dcp_packet1
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_PACKET1_CIPHER_ENCRYPT_V(v) BF_DCP_PACKET1_CIPHER_ENCRYPT(BV_DCP_PACKET1_CIPHER_ENCRYPT__##v)
 
-#define BV_DCP_PACKET1_CIPHER_ENCRYPT__DECRYPT (0x0) //!< 
-#define BV_DCP_PACKET1_CIPHER_ENCRYPT__ENCRYPT (0x1) //!< 
+#define BV_DCP_PACKET1_CIPHER_ENCRYPT__DECRYPT (0x0) //!<
+#define BV_DCP_PACKET1_CIPHER_ENCRYPT__ENCRYPT (0x1) //!<
 //@}
 
 /*! @name Register DCP_PACKET1, field CIPHER_INIT[9] (RO)
@@ -1359,8 +1359,8 @@ typedef union _hw_dcp_packet1
  * When hashing is enabled, this bit controls whether the input or output data is hashed.
  *
  * Values:
- * - INPUT = 0 - 
- * - OUTPUT = 1 - 
+ * - INPUT = 0 -
+ * - OUTPUT = 1 -
  */
 //@{
 #define BP_DCP_PACKET1_HASH_OUTPUT      (15)      //!< Bit position for DCP_PACKET1_HASH_OUTPUT.
@@ -1372,8 +1372,8 @@ typedef union _hw_dcp_packet1
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_PACKET1_HASH_OUTPUT_V(v) BF_DCP_PACKET1_HASH_OUTPUT(BV_DCP_PACKET1_HASH_OUTPUT__##v)
 
-#define BV_DCP_PACKET1_HASH_OUTPUT__INPUT (0x0) //!< 
-#define BV_DCP_PACKET1_HASH_OUTPUT__OUTPUT (0x1) //!< 
+#define BV_DCP_PACKET1_HASH_OUTPUT__INPUT (0x0) //!<
+#define BV_DCP_PACKET1_HASH_OUTPUT__OUTPUT (0x1) //!<
 //@}
 
 /*! @name Register DCP_PACKET1, field CONSTANT_FILL[16] (RO)
@@ -1534,7 +1534,7 @@ typedef union _hw_dcp_packet2
  * Cipher Selection Field
  *
  * Values:
- * - AES128 = 0x00 - 
+ * - AES128 = 0x00 -
  */
 //@{
 #define BP_DCP_PACKET2_CIPHER_SELECT      (0)      //!< Bit position for DCP_PACKET2_CIPHER_SELECT.
@@ -1546,7 +1546,7 @@ typedef union _hw_dcp_packet2
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_PACKET2_CIPHER_SELECT_V(v) BF_DCP_PACKET2_CIPHER_SELECT(BV_DCP_PACKET2_CIPHER_SELECT__##v)
 
-#define BV_DCP_PACKET2_CIPHER_SELECT__AES128 (0x0) //!< 
+#define BV_DCP_PACKET2_CIPHER_SELECT__AES128 (0x0) //!<
 //@}
 
 /*! @name Register DCP_PACKET2, field CIPHER_MODE[7:4] (RO)
@@ -1554,8 +1554,8 @@ typedef union _hw_dcp_packet2
  * Cipher Mode Selection Field. Reflects the mode of operation for cipher operations.
  *
  * Values:
- * - ECB = 0x00 - 
- * - CBC = 0x01 - 
+ * - ECB = 0x00 -
+ * - CBC = 0x01 -
  */
 //@{
 #define BP_DCP_PACKET2_CIPHER_MODE      (4)      //!< Bit position for DCP_PACKET2_CIPHER_MODE.
@@ -1567,8 +1567,8 @@ typedef union _hw_dcp_packet2
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_PACKET2_CIPHER_MODE_V(v) BF_DCP_PACKET2_CIPHER_MODE(BV_DCP_PACKET2_CIPHER_MODE__##v)
 
-#define BV_DCP_PACKET2_CIPHER_MODE__ECB (0x0) //!< 
-#define BV_DCP_PACKET2_CIPHER_MODE__CBC (0x1) //!< 
+#define BV_DCP_PACKET2_CIPHER_MODE__ECB (0x0) //!<
+#define BV_DCP_PACKET2_CIPHER_MODE__CBC (0x1) //!<
 //@}
 
 /*! @name Register DCP_PACKET2, field KEY_SELECT[15:8] (RO)
@@ -1578,12 +1578,12 @@ typedef union _hw_dcp_packet2
  * specific key may also be selected with a value of 0xFF (OTP key) or 0xFE (unique key).
  *
  * Values:
- * - KEY0 = 0x00 - 
- * - KEY1 = 0x01 - 
- * - KEY2 = 0x02 - 
- * - KEY3 = 0x03 - 
- * - UNIQUE_KEY = 0xFE - 
- * - OTP_KEY = 0xFF - 
+ * - KEY0 = 0x00 -
+ * - KEY1 = 0x01 -
+ * - KEY2 = 0x02 -
+ * - KEY3 = 0x03 -
+ * - UNIQUE_KEY = 0xFE -
+ * - OTP_KEY = 0xFF -
  */
 //@{
 #define BP_DCP_PACKET2_KEY_SELECT      (8)      //!< Bit position for DCP_PACKET2_KEY_SELECT.
@@ -1595,12 +1595,12 @@ typedef union _hw_dcp_packet2
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_PACKET2_KEY_SELECT_V(v) BF_DCP_PACKET2_KEY_SELECT(BV_DCP_PACKET2_KEY_SELECT__##v)
 
-#define BV_DCP_PACKET2_KEY_SELECT__KEY0 (0x0) //!< 
-#define BV_DCP_PACKET2_KEY_SELECT__KEY1 (0x1) //!< 
-#define BV_DCP_PACKET2_KEY_SELECT__KEY2 (0x2) //!< 
-#define BV_DCP_PACKET2_KEY_SELECT__KEY3 (0x3) //!< 
-#define BV_DCP_PACKET2_KEY_SELECT__UNIQUE_KEY (0xfe) //!< 
-#define BV_DCP_PACKET2_KEY_SELECT__OTP_KEY (0xff) //!< 
+#define BV_DCP_PACKET2_KEY_SELECT__KEY0 (0x0) //!<
+#define BV_DCP_PACKET2_KEY_SELECT__KEY1 (0x1) //!<
+#define BV_DCP_PACKET2_KEY_SELECT__KEY2 (0x2) //!<
+#define BV_DCP_PACKET2_KEY_SELECT__KEY3 (0x3) //!<
+#define BV_DCP_PACKET2_KEY_SELECT__UNIQUE_KEY (0xfe) //!<
+#define BV_DCP_PACKET2_KEY_SELECT__OTP_KEY (0xff) //!<
 //@}
 
 /*! @name Register DCP_PACKET2, field HASH_SELECT[19:16] (RO)
@@ -1608,9 +1608,9 @@ typedef union _hw_dcp_packet2
  * Hash Selection Field
  *
  * Values:
- * - SHA1 = 0x00 - 
- * - CRC32 = 0x01 - 
- * - SHA256 = 0x02 - 
+ * - SHA1 = 0x00 -
+ * - CRC32 = 0x01 -
+ * - SHA256 = 0x02 -
  */
 //@{
 #define BP_DCP_PACKET2_HASH_SELECT      (16)      //!< Bit position for DCP_PACKET2_HASH_SELECT.
@@ -1622,9 +1622,9 @@ typedef union _hw_dcp_packet2
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_PACKET2_HASH_SELECT_V(v) BF_DCP_PACKET2_HASH_SELECT(BV_DCP_PACKET2_HASH_SELECT__##v)
 
-#define BV_DCP_PACKET2_HASH_SELECT__SHA1 (0x0) //!< 
-#define BV_DCP_PACKET2_HASH_SELECT__CRC32 (0x1) //!< 
-#define BV_DCP_PACKET2_HASH_SELECT__SHA256 (0x2) //!< 
+#define BV_DCP_PACKET2_HASH_SELECT__SHA1 (0x0) //!<
+#define BV_DCP_PACKET2_HASH_SELECT__CRC32 (0x1) //!<
+#define BV_DCP_PACKET2_HASH_SELECT__SHA256 (0x2) //!<
 //@}
 
 /*! @name Register DCP_PACKET2, field CIPHER_CFG[31:24] (RO)
@@ -3807,11 +3807,11 @@ typedef union _hw_dcp_dbgselect
  * Selects a value to read via the debug data register.
  *
  * Values:
- * - CONTROL = 0x01 - 
- * - OTPKEY0 = 0x10 - 
- * - OTPKEY1 = 0x11 - 
- * - OTPKEY2 = 0x12 - 
- * - OTPKEY3 = 0x13 - 
+ * - CONTROL = 0x01 -
+ * - OTPKEY0 = 0x10 -
+ * - OTPKEY1 = 0x11 -
+ * - OTPKEY2 = 0x12 -
+ * - OTPKEY3 = 0x13 -
  */
 //@{
 #define BP_DCP_DBGSELECT_INDEX      (0)      //!< Bit position for DCP_DBGSELECT_INDEX.
@@ -3831,11 +3831,11 @@ typedef union _hw_dcp_dbgselect
 //! @brief Macro to simplify usage of value macros.
 #define BF_DCP_DBGSELECT_INDEX_V(v) BF_DCP_DBGSELECT_INDEX(BV_DCP_DBGSELECT_INDEX__##v)
 
-#define BV_DCP_DBGSELECT_INDEX__CONTROL (0x1) //!< 
-#define BV_DCP_DBGSELECT_INDEX__OTPKEY0 (0x10) //!< 
-#define BV_DCP_DBGSELECT_INDEX__OTPKEY1 (0x11) //!< 
-#define BV_DCP_DBGSELECT_INDEX__OTPKEY2 (0x12) //!< 
-#define BV_DCP_DBGSELECT_INDEX__OTPKEY3 (0x13) //!< 
+#define BV_DCP_DBGSELECT_INDEX__CONTROL (0x1) //!<
+#define BV_DCP_DBGSELECT_INDEX__OTPKEY0 (0x10) //!<
+#define BV_DCP_DBGSELECT_INDEX__OTPKEY1 (0x11) //!<
+#define BV_DCP_DBGSELECT_INDEX__OTPKEY2 (0x12) //!<
+#define BV_DCP_DBGSELECT_INDEX__OTPKEY3 (0x13) //!<
 //@}
 
 //-------------------------------------------------------------------------------------------

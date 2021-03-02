@@ -1,8 +1,8 @@
 /*******************************************************************************
  * (c) Copyright 2011-2013 Microsemi SoC Products Group.  All rights reserved.
- * 
+ *
  * Register bit offsets and masks defintions for SmartFusion2 MSS MMUART.
- * 
+ *
  * SVN $Revision: 5610 $
  * SVN $Date: 2013-04-05 18:49:30 +0530 (Fri, 05 Apr 2013) $
  */
@@ -56,7 +56,7 @@ extern "C" {
 #define EIRD                2u      /* Enable IrDA modem */
 #define EIRX                3u      /* Input polarity for IrDA modem */
 #define EITX                4u      /* Output polarity for IrDA modem */
-#define EITP                5u      /* Output pulse width for IrDA modem */      
+#define EITP                5u      /* Output pulse width for IrDA modem */
 
 /* Multimode register 2 bit definitions */
 #define EERR                0u      /* Enable ERR / NACK during stop time */
@@ -73,7 +73,7 @@ extern "C" {
 #define ELINSI              4u      /* Enable LIN sync detection interrupt */
 
 
-#ifdef __cplusplus                       
+#ifdef __cplusplus
 }
 #endif
 

@@ -800,13 +800,13 @@ void ADC_InjectedDiscModeCtrl(ADC_Type* ADCx, FunctionalState NewState)
   *     @arg ADC_ExternalTrigInjec_TMR1_CC1: Timer1 capture compare1 selected (for ADC1, ADC2 and ADC3)
   *     @arg ADC_ExternalTrigInjec_TMR8_TRGO: Timer8 TRGO event selected (for ADC1, ADC2 and ADC3)
   *     @arg ADC_ExternalTrigInjec_None: Injected conversion started by software and not by external trigger (for ADC1, ADC2 and ADC3)
-  
+
   *     @arg ADC_ExternalTrigInjec_TMR4_CC3_ADC3: Timer4 capture compare3 selected (for ADC3 only)
   *     @arg ADC_ExternalTrigInjec_TMR8_CC2_ADC3: Timer8 capture compare2 selected (for ADC3 only)
   *     @arg ADC_ExternalTrigInjec_TMR8_CC4_ADC3: Timer8 capture compare4 selected (for ADC3 only)
   *     @arg ADC_ExternalTrigInjec_TMR5_TRGO_ADC3: Timer5 TRGO event selected (for ADC3 only)
   *     @arg ADC_ExternalTrigInjec_TMR5_CC4_ADC3: Timer5 capture compare4 selected (for ADC3 only)
-  *     @arg ADC_ExternalTrigInjec_TMR1_CC2_ADC3: Timer1 capture compare2 selected (for ADC3 only)  
+  *     @arg ADC_ExternalTrigInjec_TMR1_CC2_ADC3: Timer1 capture compare2 selected (for ADC3 only)
   * @retval None
   */
 void ADC_ExternalTrigInjectedConvConfig(ADC_Type* ADCx, uint32_t ADC_ExternalTrigInjecConv)

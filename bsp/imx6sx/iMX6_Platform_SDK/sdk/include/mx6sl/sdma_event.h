@@ -52,7 +52,7 @@
 #define SDMA_EVENT_EPIT2                    9
 #define SDMA_EVENT_ECSPI4_TX                 10
 #define SDMA_EVENT_I2C1_B                   10
-#define SDMA_EVENT_GPT	                   13
+#define SDMA_EVENT_GPT                       13
 #define SDMA_EVENT_SPDIF_RX                 14
 #define SDMA_EVENT_EXT_DMA_EVENT_1          14
 #define SDMA_EVENT_SPDIF_TX                 15

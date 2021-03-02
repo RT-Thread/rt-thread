@@ -82,13 +82,13 @@ enum _gicd_sgir_fields
 {
     kBP_GICD_SGIR_TargetListFilter = 24,
     kBM_GICD_SGIR_TargetListFilter = (0x3 << kBP_GICD_SGIR_TargetListFilter),
-    
+
     kBP_GICD_SGIR_CPUTargetList = 16,
     kBM_GICD_SGIR_CPUTargetList = (0xff << kBP_GICD_SGIR_CPUTargetList),
-    
+
     kBP_GICD_SGIR_NSATT = 15,
     kBM_GICD_SGIR_NSATT = (1 << kBP_GICD_SGIR_NSATT),
-    
+
     kBP_GICD_SGIR_SGIINTID = 0,
     kBM_GICD_SGIR_SGIINTID = 0xf
 };
@@ -115,16 +115,16 @@ enum _gicc_ctlr_fields
 {
     kBP_GICC_CTLR_EnableS = 0,
     kBM_GICC_CTLR_EnableS = (1 << 0),
-    
+
     kBP_GICC_CTLR_EnableNS = 1,
     kBM_GICC_CTLR_EnableNS = (1 << 1),
-    
+
     kBP_GICC_CTLR_AckCtl = 2,
     kBM_GICC_CTLR_AckCtl = (1 << 2),
-    
+
     kBP_GICC_CTLR_FIQEn = 3,
     kBM_GICC_CTLR_FIQEn = (1 << 3),
-    
+
     kBP_GICC_CTLR_SBPR = 4,
     kBM_GICC_CTLR_SBPR = (1 << 4)
 };

@@ -405,7 +405,7 @@ HAL_StatusTypeDef HAL_SD_InitCard(SD_HandleTypeDef *hsd)
   uint32_t errorstate;
   HAL_StatusTypeDef status;
   SD_InitTypeDef Init;
-  
+
   /* Default SDIO peripheral configuration for SD card initialization */
   Init.ClockEdge           = SDIO_CLOCK_EDGE_RISING;
   Init.ClockBypass         = SDIO_CLOCK_BYPASS_DISABLE;
@@ -672,7 +672,7 @@ HAL_StatusTypeDef HAL_SD_ReadBlocks(SD_HandleTypeDef *hsd, uint8_t *pData, uint3
         return HAL_TIMEOUT;
       }
     }
-    
+
     /* Send stop transmission command in case of multiblock read */
     if(__HAL_SD_GET_FLAG(hsd, SDIO_FLAG_DATAEND) && (NumberOfBlocks > 1U))
     {
@@ -1557,7 +1557,7 @@ void HAL_SD_IRQHandler(SD_HandleTypeDef *hsd)
                              SDIO_IT_RXFIFOHF | SDIO_IT_STBITERR);
 
     hsd->Instance->DCTRL &= ~(SDIO_DCTRL_DTEN);
-    
+
     if((context & SD_CONTEXT_IT) != 0U)
     {
       if(((context & SD_CONTEXT_READ_MULTIPLE_BLOCK) != 0U) || ((context & SD_CONTEXT_WRITE_MULTIPLE_BLOCK) != 0U))
@@ -2005,7 +2005,7 @@ HAL_StatusTypeDef HAL_SD_UnRegisterCallback(SD_HandleTypeDef *hsd, HAL_SD_Callba
   * @brief  Returns information the information of the card which are stored on
   *         the CID register.
   * @param  hsd: Pointer to SD handle
-  * @param  pCID: Pointer to a HAL_SD_CardCIDTypeDef structure that  
+  * @param  pCID: Pointer to a HAL_SD_CardCIDTypeDef structure that
   *         contains all CID register parameters
   * @retval HAL status
   */
@@ -2038,7 +2038,7 @@ HAL_StatusTypeDef HAL_SD_GetCardCID(SD_HandleTypeDef *hsd, HAL_SD_CardCIDTypeDef
   * @brief  Returns information the information of the card which are stored on
   *         the CSD register.
   * @param  hsd: Pointer to SD handle
-  * @param  pCSD: Pointer to a HAL_SD_CardCSDTypeDef structure that  
+  * @param  pCSD: Pointer to a HAL_SD_CardCSDTypeDef structure that
   *         contains all CSD register parameters
   * @retval HAL status
   */
@@ -2152,7 +2152,7 @@ HAL_StatusTypeDef HAL_SD_GetCardCSD(SD_HandleTypeDef *hsd, HAL_SD_CardCSDTypeDef
 /**
   * @brief  Gets the SD status info.
   * @param  hsd: Pointer to SD handle
-  * @param  pStatus: Pointer to the HAL_SD_CardStatusTypeDef structure that 
+  * @param  pStatus: Pointer to the HAL_SD_CardStatusTypeDef structure that
   *         will contain the SD card status information
   * @retval HAL status
   */
@@ -2536,7 +2536,7 @@ static void SD_DMAError(DMA_HandleTypeDef *hdma)
   uint32_t RxErrorCode, TxErrorCode;
 
     RxErrorCode = hsd->hdmarx->ErrorCode;
-    TxErrorCode = hsd->hdmatx->ErrorCode;  
+    TxErrorCode = hsd->hdmatx->ErrorCode;
     if((RxErrorCode == HAL_DMA_ERROR_TE) || (TxErrorCode == HAL_DMA_ERROR_TE))
     {
       /* Clear All flags */

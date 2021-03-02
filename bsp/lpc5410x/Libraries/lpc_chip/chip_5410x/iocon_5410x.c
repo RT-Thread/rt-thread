@@ -50,9 +50,9 @@
 /* Set all I/O Control pin muxing */
 void Chip_IOCON_SetPinMuxing(LPC_IOCON_T *pIOCON, const PINMUX_GRP_T *pinArray, uint32_t arrayLength)
 {
-	uint32_t ix;
+    uint32_t ix;
 
-	for (ix = 0; ix < arrayLength; ix++ ) {
-		Chip_IOCON_PinMuxSet(pIOCON, pinArray[ix].port, pinArray[ix].pin, pinArray[ix].modefunc);
-	}
+    for (ix = 0; ix < arrayLength; ix++ ) {
+        Chip_IOCON_PinMuxSet(pIOCON, pinArray[ix].port, pinArray[ix].pin, pinArray[ix].modefunc);
+    }
 }

@@ -26,7 +26,7 @@
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal_def.h"  
+#include "stm32f1xx_hal_def.h"
 
 /** @addtogroup STM32F1xx_HAL_Driver
   * @{
@@ -34,14 +34,14 @@
 
 /** @addtogroup ADCEx
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup ADCEx_Exported_Types ADCEx Exported Types
   * @{
   */
 
-/** 
+/**
   * @brief  ADC Configuration injected Channel structure definition
   * @note   Parameters of this structure are shared within 2 scopes:
   *          - Scope channel: InjectedChannel, InjectedRank, InjectedSamplingTime, InjectedOffset
@@ -52,7 +52,7 @@
   *          - For all parameters: ADC disabled (this is the only possible ADC state to modify parameter 'ExternalTrigInjecConv')
   *          - For all except parameters 'ExternalTrigInjecConv': ADC enabled without conversion on going on injected group.
   */
-typedef struct 
+typedef struct
 {
   uint32_t InjectedChannel;                       /*!< Selection of ADC channel to configure
                                                        This parameter can be a value of @ref ADC_channels
@@ -108,14 +108,14 @@ typedef struct
 }ADC_InjectionConfTypeDef;
 
 #if defined (STM32F103x6) || defined (STM32F103xB) || defined (STM32F105xC) || defined (STM32F107xC) || defined (STM32F103xE) || defined (STM32F103xG)
-/** 
+/**
   * @brief  Structure definition of ADC multimode
   * @note   The setting of these parameters with function HAL_ADCEx_MultiModeConfigChannel() is conditioned to ADCs state (both ADCs of the common group).
   *         State of ADCs of the common group must be: disabled.
   */
 typedef struct
 {
-  uint32_t Mode;              /*!< Configures the ADC to operate in independent or multi mode. 
+  uint32_t Mode;              /*!< Configures the ADC to operate in independent or multi mode.
                                    This parameter can be a value of @ref ADCEx_Common_mode
                                    Note: In dual mode, a change of channel configuration generates a restart that can produce a loss of synchronization. It is recommended to disable dual mode before any configuration change.
                                    Note: In case of simultaneous mode used: Exactly the same sampling time should be configured for the 2 channels that will be sampled simultaneously by ACD1 and ADC2.
@@ -125,8 +125,8 @@ typedef struct
                                            - Parameter 'DMAAccessMode': On STM32F1, this parameter is fixed to 1 DMA channel (one DMA channel for both ADC, DMA of ADC master). On other STM32 devices with several ADC, this is equivalent to parameter 'ADC_DMAACCESSMODE_12_10_BITS'.
                                            - Parameter 'TwoSamplingDelay': On STM32F1, this parameter is fixed to 7 or 14 ADC clock cycles depending on fast or slow interleaved mode selected. On other STM32 devices with several ADC, this is equivalent to parameter 'ADC_TWOSAMPLINGDELAY_7CYCLES' (for fast interleaved mode). */
 
-  
-}ADC_MultiModeTypeDef;                                                          
+
+}ADC_MultiModeTypeDef;
 #endif /* defined STM32F103x6 || defined STM32F103xB || defined STM32F105xC || defined STM32F107xC || defined STM32F103xE || defined STM32F103xG */
 
 /**
@@ -135,7 +135,7 @@ typedef struct
 
 
 /* Exported constants --------------------------------------------------------*/
-   
+
 /** @defgroup ADCEx_Exported_Constants ADCEx Exported Constants
   * @{
   */
@@ -159,7 +159,7 @@ typedef struct
 /**
   * @}
   */
-    
+
 /** @defgroup ADC_External_trigger_source_Regular ADC External trigger selection for regular group
   * @{
   */
@@ -215,7 +215,7 @@ typedef struct
 #define ADC_EXTERNALTRIGINJECCONV_T2_TRGO        ADC1_2_EXTERNALTRIGINJEC_T2_TRGO
 #define ADC_EXTERNALTRIGINJECCONV_T2_CC1         ADC1_2_EXTERNALTRIGINJEC_T2_CC1
 #define ADC_EXTERNALTRIGINJECCONV_T3_CC4         ADC1_2_EXTERNALTRIGINJEC_T3_CC4
-#define ADC_EXTERNALTRIGINJECCONV_T4_TRGO        ADC1_2_EXTERNALTRIGINJEC_T4_TRGO 
+#define ADC_EXTERNALTRIGINJECCONV_T4_TRGO        ADC1_2_EXTERNALTRIGINJEC_T4_TRGO
 #define ADC_EXTERNALTRIGINJECCONV_EXT_IT15       ADC1_2_EXTERNALTRIGINJEC_EXT_IT15
 
 #if defined (STM32F103xE) || defined (STM32F103xG)
@@ -367,10 +367,10 @@ typedef struct
 /* Macro reserved for internal HAL driver usage, not intended to be used in   */
 /* code of final user.                                                        */
 
-    
+
 /**
-  * @brief For devices with 3 ADCs: Defines the external trigger source 
-  *        for regular group according to ADC into common group ADC1&ADC2 or 
+  * @brief For devices with 3 ADCs: Defines the external trigger source
+  *        for regular group according to ADC into common group ADC1&ADC2 or
   *        ADC3 (some triggers with same source have different value to
   *        be programmed into ADC EXTSEL bits of CR2 register).
   *        For devices with 2 ADCs or less: this macro makes no change.
@@ -397,8 +397,8 @@ typedef struct
 #endif /* STM32F103xE || STM32F103xG */
 
 /**
-  * @brief For devices with 3 ADCs: Defines the external trigger source 
-  *        for injected group according to ADC into common group ADC1&ADC2 or 
+  * @brief For devices with 3 ADCs: Defines the external trigger source
+  *        for injected group according to ADC into common group ADC1&ADC2 or
   *        ADC3 (some triggers with same source have different value to
   *        be programmed into ADC JEXTSEL bits of CR2 register).
   *        For devices with 2 ADCs or less: this macro makes no change.
@@ -499,7 +499,7 @@ typedef struct
   */
 #define ADC_MULTI_SLAVE(__HANDLE_MASTER__, __HANDLE_SLAVE__)                   \
   ((__HANDLE_SLAVE__)->Instance = ADC2)
-       
+
 #endif /* defined STM32F103x6 || defined STM32F103xB || defined STM32F105xC || defined STM32F107xC || defined STM32F103xE || defined STM32F103xG */
 
 #define IS_ADC_INJECTED_RANK(CHANNEL) (((CHANNEL) == ADC_INJECTED_RANK_1) || \
@@ -626,13 +626,13 @@ typedef struct
 
 /**
   * @}
-  */      
-   
-    
+  */
 
-    
-    
-   
+
+
+
+
+
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup ADCEx_Exported_Functions
   * @{
@@ -658,7 +658,7 @@ HAL_StatusTypeDef       HAL_ADCEx_InjectedStop_IT(ADC_HandleTypeDef* hadc);
 #if defined (STM32F103x6) || defined (STM32F103xB) || defined (STM32F105xC) || defined (STM32F107xC) || defined (STM32F103xE) || defined (STM32F103xG)
 /* ADC multimode */
 HAL_StatusTypeDef       HAL_ADCEx_MultiModeStart_DMA(ADC_HandleTypeDef *hadc, uint32_t *pData, uint32_t Length);
-HAL_StatusTypeDef       HAL_ADCEx_MultiModeStop_DMA(ADC_HandleTypeDef *hadc); 
+HAL_StatusTypeDef       HAL_ADCEx_MultiModeStop_DMA(ADC_HandleTypeDef *hadc);
 #endif /* defined STM32F103x6 || defined STM32F103xB || defined STM32F105xC || defined STM32F107xC || defined STM32F103xE || defined STM32F103xG */
 
 /* ADC retrieve conversion value intended to be used with polling or interruption */
@@ -694,12 +694,12 @@ HAL_StatusTypeDef       HAL_ADCEx_MultiModeConfigChannel(ADC_HandleTypeDef *hadc
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif

@@ -48,9 +48,9 @@ const unsigned int sd_if_cmd_arg[SD_IF_CMD_ARG_COUNT] = {
 /********************************************* Static Function ******************************************/
 /*!
  * @brief Read RCA (relative card address) of SD card
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int sd_get_rca(uint32_t instance)
@@ -92,10 +92,10 @@ static int sd_get_rca(uint32_t instance)
 
 /*!
  * @brief Set SD card bus width
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param data_width   Data transfer width
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 static int sd_set_bus_width(uint32_t instance, int bus_width)
@@ -151,10 +151,10 @@ static int sd_set_bus_width(uint32_t instance, int bus_width)
 /********************************************* Global Function ******************************************/
 /*!
  * @brief Initialize SD - Get Card ID, Set RCA, Frequency and bus width.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
  * @param bus_width    bus width to be configured.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int sd_init(uint32_t instance, int bus_width)
@@ -203,9 +203,9 @@ int sd_init(uint32_t instance, int bus_width)
 
 /*!
  * @brief Valid the voltage.
- * 
+ *
  * @param instance     Instance number of the uSDHC module.
- * 
+ *
  * @return             0 if successful; 1 otherwise
  */
 int sd_voltage_validation(uint32_t instance)

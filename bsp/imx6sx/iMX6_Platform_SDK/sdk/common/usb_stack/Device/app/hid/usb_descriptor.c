@@ -28,9 +28,9 @@
 
 #if (defined __MCF52xxx_H__) || (defined __MK_xxx_H__)
 /* Put CFV2 descriptors in RAM */
-#define USB_DESC_CONST  
+#define USB_DESC_CONST
 #else
-#define USB_DESC_CONST	const
+#define USB_DESC_CONST    const
 #endif
 /*****************************************************************************
  * Constant and Macro's
@@ -192,19 +192,19 @@ uint_8 USB_DESC_CONST USB_STR_2[USB_STR_2_SIZE+USB_STR_DESC_SIZE]
                                USB_STRING_DESCRIPTOR,
                                ' ',0,
                                ' ',0,
-							#ifdef __MK_xxx_H__
+                            #ifdef __MK_xxx_H__
                                'M',0,
-                               'K',0,                               
-							#elif (defined __MCF52xxx_H__)
-							   'C',0,
-							   'F',0, 
+                               'K',0,
+                            #elif (defined __MCF52xxx_H__)
+                               'C',0,
+                               'F',0,
                             #elif (defined MCU_mcf51jf128)
                                'J',0,
-                               'F',0,                               
-							#else     
+                               'F',0,
+                            #else
                                'J',0,
                                'M',0,
-							#endif                               
+                            #endif
                                ' ',0,
                                'H',0,
                                'I',0,
@@ -272,12 +272,12 @@ uint_8 const g_string_desc_size[USB_MAX_STRING_DESCRIPTORS+1] =
                                     };
 
 uint_8_ptr const g_string_descriptors[USB_MAX_STRING_DESCRIPTORS+1] =
-										  {
-											  (uint_8_ptr) USB_STR_0,
-											  (uint_8_ptr) USB_STR_1,
-											  (uint_8_ptr) USB_STR_2,
-											  (uint_8_ptr) USB_STR_n
-										  };
+                                          {
+                                              (uint_8_ptr) USB_STR_0,
+                                              (uint_8_ptr) USB_STR_1,
+                                              (uint_8_ptr) USB_STR_2,
+                                              (uint_8_ptr) USB_STR_n
+                                          };
 
 USB_ALL_LANGUAGES g_languages = { USB_STR_0, sizeof(USB_STR_0),
                                   { (uint_16)0x0409,
@@ -401,16 +401,16 @@ uint_8 USB_Desc_Get_Descriptor(
 
             // device descriptor
             if(type == 1){
-            	device_desc_req_count++;
+                device_desc_req_count++;
             }
             // andrei: second request
             if(device_desc_req_count>=2){
 #ifdef SERIAL_DEBUG
-            	printf("");
+                printf("");
 #endif
-            	device_desc_req_count = 0;
+                device_desc_req_count = 0;
             }
-            
+
             /* if there is no descriptor then return error */
             if(*descriptor == NULL)
             {
@@ -515,7 +515,7 @@ boolean USB_Desc_Valid_Configation(
 {
     uint_8 loop_index=0;
     UNUSED (controller_ID)
-    
+
     /* check with only supported val right now */
     while(loop_index < (USB_MAX_CONFIG_SUPPORTED+1))
     {
@@ -549,7 +549,7 @@ boolean USB_Desc_Valid_Interface(
 {
     uint_8 loop_index=0;
     UNUSED (controller_ID)
-    
+
     /* check with only supported val right now */
     while(loop_index < USB_MAX_SUPPORTED_INTERFACES)
     {

@@ -19,7 +19,7 @@
 
 #if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4)
 #error "Please define at least one BSP_USING_I2Cx"
-/* this driver can be disabled at menuconfig â†’ RT-Thread Components â†’ Device Drivers */
+/* this driver can be disabled at menuconfig ¡ú RT-Thread Components ¡ú Device Drivers */
 #endif
 
 static const struct ab32_soft_i2c_config soft_i2c_config[] =
@@ -235,8 +235,8 @@ int rt_hw_i2c_init(void)
         ab32_i2c_bus_unlock(&soft_i2c_config[i]);
 
         LOG_D("software simulation %s init done, pin scl: %d, pin sda %d",
-        soft_i2c_config[i].bus_name, 
-        soft_i2c_config[i].scl, 
+        soft_i2c_config[i].bus_name,
+        soft_i2c_config[i].scl,
         soft_i2c_config[i].sda);
     }
 

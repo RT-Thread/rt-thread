@@ -39,7 +39,7 @@ extern int32_t lcdif_display_test(void);
 
 typedef struct {
     const char *name;
-	int32_t(*test) (void);
+    int32_t(*test) (void);
 } lcdif_test_t;
 
 static lcdif_test_t lcdif_tests[] = {

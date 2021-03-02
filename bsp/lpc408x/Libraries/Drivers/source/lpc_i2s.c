@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -289,10 +289,10 @@ Status I2S_FreqConfig(LPC_I2S_TypeDef *I2Sx, uint32_t Freq, uint8_t TRMode) {
     uint16_t dif;
     uint16_t x_divide, y_divide;
     uint16_t err, ErrorOptimal = 0xFFFF;
-    
+
     uint32_t N;
 
-    //get cclk 
+    //get cclk
     cclk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_CPU);
 
     if(TRMode == I2S_TX_MODE)
@@ -351,7 +351,7 @@ Status I2S_FreqConfig(LPC_I2S_TypeDef *I2Sx, uint32_t Freq, uint8_t TRMode) {
     x_divide = ((uint64_t)y_divide * Freq *(channel*wordwidth)* N * 2)/cclk;
     if(x_divide >= 256) x_divide = 0xFF;
     if(x_divide == 0) x_divide = 1;
-    
+
     if (TRMode == I2S_TX_MODE)// Transmitter
     {
         I2Sx->TXBITRATE = N-1;

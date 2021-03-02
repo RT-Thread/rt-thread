@@ -38,7 +38,7 @@
 
 const char g_max7310_i2c_device_id_test_name[] = "IO Expander MAX7310 I2C Device ID Test";
 
-/*! 
+/*!
  * @note In hardware.h an array of I2C requests is created as multiple I/O expanders
  *       could be used on a board.
  *       Thanks to board_init() in hardware.c, the requests are populated with addresses.
@@ -55,7 +55,7 @@ extern uint8_t max7310_reg_read(uint8_t reg_addr);
  * The test tries to read the created device ID for all MAX7310 used on board.
  * That IC has no ID register, so one of the register is initialized with
  * a known value during init. That test should actually always pass.
- * 
+ *
  * @return TEST_PASSED or TEST_FAILED
  */
 test_return_t max7310_i2c_device_id_check(void)

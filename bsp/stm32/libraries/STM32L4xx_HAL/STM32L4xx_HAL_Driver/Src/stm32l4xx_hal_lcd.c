@@ -68,11 +68,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -376,7 +376,7 @@ HAL_StatusTypeDef HAL_LCD_Write(LCD_HandleTypeDef *hlcd, uint32_t RAMRegisterInd
 {
   uint32_t tickstart;
   HAL_LCD_StateTypeDef state = hlcd->State;
-  
+
   if ((state == HAL_LCD_STATE_READY) || (state == HAL_LCD_STATE_BUSY))
   {
     /* Check the parameters */
@@ -428,7 +428,7 @@ HAL_StatusTypeDef HAL_LCD_Clear(LCD_HandleTypeDef *hlcd)
   uint32_t counter;
   HAL_StatusTypeDef status = HAL_ERROR;
   HAL_LCD_StateTypeDef state = hlcd->State;
-  
+
   if ((state == HAL_LCD_STATE_READY) || (state == HAL_LCD_STATE_BUSY))
   {
     /* Process Locked */

@@ -91,7 +91,7 @@ static int pkt_compare(unsigned char *packet1, unsigned char *packet2, int lengt
 /*!
  * This test performs a loopback transfer on the RGMII interface through
  * an external AR8031 giga ethernet PHY.
- * 
+ *
  * @return TEST_PASSED or TEST_FAILED
  */
 int enet_test(void)
@@ -117,7 +117,7 @@ int enet_test(void)
     imx_enet_mii_type(dev0, RGMII);
     //init phy0.
     imx_enet_phy_init(dev0);
-    
+
     imx_enet_phy_enable_external_loopback(dev0);
 
     printf("ENET %0d: [ %s ] [ %s ] [ %s ]:\n", dev0->phy_addr,

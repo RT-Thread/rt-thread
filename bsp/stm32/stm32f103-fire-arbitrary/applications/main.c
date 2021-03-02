@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-11-5      SummerGift   first version
  */
- 
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>

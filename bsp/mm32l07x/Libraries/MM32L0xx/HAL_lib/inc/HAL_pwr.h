@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the PWR firmware 
+* @brief  This file contains all the functions prototypes for the PWR firmware
 *         library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_PWR_H
@@ -32,23 +32,23 @@
 
 /** @addtogroup PWR
 * @{
-*/ 
+*/
 
 /** @defgroup PWR_Exported_Types
 * @{
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup PWR_Exported_Constants
 * @{
-*/ 
+*/
 
-/** @defgroup PVD_detection_level 
+/** @defgroup PVD_detection_level
 * @{
-*/ 
+*/
 
 #define PWR_PVDLevel_1V8          ((uint32_t)0x00000000)
 #define PWR_PVDLevel_2V1          ((uint32_t)0x00000200)
@@ -71,7 +71,7 @@
 * @}
 */
 
-/** @defgroup Regulator_state_is_STOP_mode 
+/** @defgroup Regulator_state_is_STOP_mode
 * @{
 */
 
@@ -83,7 +83,7 @@
 * @}
 */
 
-/** @defgroup STOP_mode_entry 
+/** @defgroup STOP_mode_entry
 * @{
 */
 
@@ -95,7 +95,7 @@
 * @}
 */
 
-/** @defgroup PWR_Flag 
+/** @defgroup PWR_Flag
 * @{
 */
 

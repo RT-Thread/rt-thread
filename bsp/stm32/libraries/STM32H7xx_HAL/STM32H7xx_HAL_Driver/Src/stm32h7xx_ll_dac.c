@@ -16,7 +16,7 @@
   *
   ******************************************************************************
   */
-  
+
 #if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
@@ -51,7 +51,7 @@
   (                                                                            \
       ((__DAC_CHANNEL__) == LL_DAC_CHANNEL_1)                                  \
    || ((__DAC_CHANNEL__) == LL_DAC_CHANNEL_2)                                  \
-  )  
+  )
 
 #define IS_LL_DAC_TRIGGER_SOURCE(__TRIGGER_SOURCE__)                           \
   (   ((__TRIGGER_SOURCE__) == LL_DAC_TRIGGER_SOFTWARE )                       \
@@ -68,7 +68,7 @@
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_LPTIM1_OUT)                     \
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_LPTIM2_OUT)                     \
    || ((__TRIGGER_SOURCE__) == LL_DAC_TRIG_EXT_EXTI_LINE9)                     \
-  )  
+  )
 
 #define IS_LL_DAC_WAVE_AUTO_GENER_MODE(__WAVE_AUTO_GENERATION_MODE__)           \
   (   ((__WAVE_AUTO_GENERATION_MODE__) == LL_DAC_WAVE_AUTO_GENERATION_NONE)     \
@@ -150,13 +150,13 @@ ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)
 {
   /* Check the parameters */
   assert_param(IS_DAC_ALL_INSTANCE(DACx));
-  
+
   /* Force reset of DAC clock */
   LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_DAC12);
-  
+
   /* Release reset of DAC clock */
-  LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_DAC12);  
-  
+  LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_DAC12);
+
   return SUCCESS;
 }
 
@@ -179,7 +179,7 @@ ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)
   * @param  DACx DAC instance
   * @param  DAC_Channel This parameter can be one of the following values:
   *         @arg @ref LL_DAC_CHANNEL_1
-  *         @arg @ref LL_DAC_CHANNEL_2 
+  *         @arg @ref LL_DAC_CHANNEL_2
   * @param  DAC_InitStruct Pointer to a @ref LL_DAC_InitTypeDef structure
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: DAC registers are initialized
@@ -188,7 +188,7 @@ ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)
 ErrorStatus LL_DAC_Init(DAC_TypeDef *DACx, uint32_t DAC_Channel, LL_DAC_InitTypeDef *DAC_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_DAC_ALL_INSTANCE(DACx));
   assert_param(IS_LL_DAC_CHANNEL(DAC_Channel));
@@ -201,7 +201,7 @@ ErrorStatus LL_DAC_Init(DAC_TypeDef *DACx, uint32_t DAC_Channel, LL_DAC_InitType
   {
     assert_param(IS_LL_DAC_WAVE_AUTO_GENER_CONFIG((DAC_InitStruct->WaveAutoGeneration), (DAC_InitStruct->WaveAutoGenerationConfig)));
   }
-  
+
   /* Note: Hardware constraint (refer to description of this function)        */
   /*       DAC instance must be disabled.                                     */
   if(LL_DAC_IsEnabled(DACx, DAC_Channel) == 0U)
@@ -238,7 +238,7 @@ ErrorStatus LL_DAC_Init(DAC_TypeDef *DACx, uint32_t DAC_Channel, LL_DAC_InitType
                  ) << (DAC_Channel & DAC_CR_CHX_BITOFFSET_MASK)
                 );
     }
-    
+
     MODIFY_REG(DACx->MCR,
                (  DAC_MCR_MODE1_1
                 | DAC_MCR_MODE1_0

@@ -60,8 +60,8 @@ extern "C" {
 
 /* **** Definitions **** */
 
-/** 
- * Enumeration type for setting the number data lines to use for communication. 
+/**
+ * Enumeration type for setting the number data lines to use for communication.
  */
 typedef enum {
     SPI17Y_WIDTH_1 = 0,  /**< 1 Data Line.                        */
@@ -69,15 +69,15 @@ typedef enum {
     SPI17Y_WIDTH_4 = 2   /**< 4 Data Lines (x4).                  */
 } spi17y_width_t;
 
-/** 
- * Enumeration type for setting the polarity of ss lines. 
+/**
+ * Enumeration type for setting the polarity of ss lines.
  */
 typedef enum {
     SPI17Y_POL_LOW  = 0, /**< Polarity Low.                        */
     SPI17Y_POL_HIGH = 1  /**< Polarity High.                  */
 } spi17y_sspol_t;
 
-/** 
+/**
  * Structure type representing a SPI17Y Master Transaction request.
  */
 typedef struct spi17y_req spi17y_req_t;
@@ -86,7 +86,7 @@ typedef struct spi17y_req spi17y_req_t;
 /**
  * @brief Callback function type used in asynchronous SPI Master communication requests.
  * @details The function declaration for the SPI Master callback is:
- * @code 
+ * @code
  * void callback(spi17y_req_t * req, int error_code);
  * @endcode
  * |        |                                            |
@@ -136,15 +136,15 @@ int SPI17Y_Init(mxc_spi17y_regs_t *spi, unsigned int mode, unsigned int freq, co
 /**
  * @brief      Shutdown SPI module.
  * @param      spi  Pointer to SPI regs.
- * 
+ *
  * @return     #E_NO_ERROR if successful, @ref
  *             MXC_Error_Codes "error" if unsuccessful.
  */
 int SPI17Y_Shutdown(mxc_spi17y_regs_t *spi);
 
 /**
- * @brief     Processing function for asynchronous SPI operations.  
- *            This function must be called either from the SPI interrupt 
+ * @brief     Processing function for asynchronous SPI operations.
+ *            This function must be called either from the SPI interrupt
  *            handler or periodically.
  *
  * @param     spi   Pointer to spi module.
@@ -156,7 +156,7 @@ void SPI17Y_Handler(mxc_spi17y_regs_t *spi);
  *            This function will block until the transaction is complete.
  * @param     spi   Pointer to spi module.
  * @param     req   Pointer to spi request
- * 
+ *
  * @return     #E_NO_ERROR if successful, @ref
  *             MXC_Error_Codes "error" if unsuccessful.
  */
@@ -167,7 +167,7 @@ int SPI17Y_MasterTrans(mxc_spi17y_regs_t *spi, spi17y_req_t *req);
  *            This function will block until the transaction is complete.
  * @param     spi   Pointer to spi module.
  * @param     req   Pointer to spi request
- * 
+ *
  * @return     #E_NO_ERROR if successful, @ref
  *             MXC_Error_Codes "error" if unsuccessful.
  */

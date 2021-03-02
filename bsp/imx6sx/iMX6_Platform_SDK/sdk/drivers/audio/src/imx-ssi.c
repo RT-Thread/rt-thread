@@ -56,32 +56,32 @@
 #define SSI_SFCSR_RX_WATERMARK      4   // Default 4
 
 //! Default values for SSI registers
-#define SSI_SCR_RESET_VAL	0x00000000
+#define SSI_SCR_RESET_VAL    0x00000000
 #define SSI_SISR_RESET_VAL      0x00003003
 #define SSI_SIER_RESET_VAL      0x00003003
 #define SSI_STCR_RESET_VAL      0x00000200
 #define SSI_SRCR_RESET_VAL      0x00000200
-#define SSI_STCCR_RESET_VAL	0x00040000
-#define SSI_SRCCR_RESET_VAL	0x00040000
-#define SSI_SFCSR_RESET_VAL	0x00810081
-#define SSI_SACNT_RESET_VAL	0x00000000
-#define SSI_SACADD_RESET_VAL	0x00000000
-#define SSI_SACDAT_RESET_VAL	0x00000000
-#define SSI_SATAG_RESET_VAL	0x00000000
-#define SSI_STMSK_RESET_VAL	0x00000000
-#define SSI_SRMSK_RESET_VAL	0x00000000
-#define SSI_SACCST_RESET_VAL	0x00000000
-#define SSI_SACCEN_RESET_VAL	0x00000000
-#define SSI_SACCDIS_RESET_VAL	0x00000000
+#define SSI_STCCR_RESET_VAL    0x00040000
+#define SSI_SRCCR_RESET_VAL    0x00040000
+#define SSI_SFCSR_RESET_VAL    0x00810081
+#define SSI_SACNT_RESET_VAL    0x00000000
+#define SSI_SACADD_RESET_VAL    0x00000000
+#define SSI_SACDAT_RESET_VAL    0x00000000
+#define SSI_SATAG_RESET_VAL    0x00000000
+#define SSI_STMSK_RESET_VAL    0x00000000
+#define SSI_SRMSK_RESET_VAL    0x00000000
+#define SSI_SACCST_RESET_VAL    0x00000000
+#define SSI_SACCEN_RESET_VAL    0x00000000
+#define SSI_SACCDIS_RESET_VAL    0x00000000
 
-////////////////////////////////////Local variables and functions/////////////////////////// 
+////////////////////////////////////Local variables and functions///////////////////////////
 
 /*!
- * Dump the ssi registers which can be readable. 
- * @param  	ctrl	a pointer of audio controller(audio_ctrl_t) which presents the ssi module itself
- *			
- * @return	0 if succeeded
- *		-1 if failed   
+ * Dump the ssi registers which can be readable.
+ * @param      ctrl    a pointer of audio controller(audio_ctrl_t) which presents the ssi module itself
+ *
+ * @return    0 if succeeded
+ *        -1 if failed
  */
 static int32_t ssi_dump(audio_ctrl_p ctrl)
 {
@@ -107,7 +107,7 @@ static int32_t ssi_dump(audio_ctrl_p ctrl)
     return 0;
 }
 
-/*! 
+/*!
  * Put the ssi to soft-reset mode, and then can be configured.
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the ssi module
  *
@@ -121,7 +121,7 @@ static int32_t ssi_soft_reset(audio_ctrl_p ctrl)
 
     val = HW_SSI_SCR_RD(instance);
     val &= ~BM_SSI_SCR_SSIEN;
-    HW_SSI_SCR_WR(instance, val);	
+    HW_SSI_SCR_WR(instance, val);
 
     return 0;
 }
@@ -136,8 +136,8 @@ static int32_t ssi_soft_reset(audio_ctrl_p ctrl)
 static int32_t ssi_registers_reset(audio_ctrl_p ctrl)
 {
     uint32_t instance = ctrl->instance;
-    
-    //Reset control regs. All the status regs will be reset by a soft reset. 
+
+    //Reset control regs. All the status regs will be reset by a soft reset.
     HW_SSI_SCR_WR(instance, SSI_SCR_RESET_VAL);
     HW_SSI_SIER_WR(instance, SSI_SIER_RESET_VAL);
     HW_SSI_STCR_WR(instance, SSI_STCR_RESET_VAL);
@@ -171,29 +171,29 @@ static uint32_t ssi_get_hw_setting(audio_ctrl_p ctrl, uint32_t type)
 
     switch (type) {
     case SSI_SETTING_TX_FIFO1_DATAS_CNT:
-	val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_TFCNT0) >> BP_SSI_SFCSR_TFCNT0;
+    val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_TFCNT0) >> BP_SSI_SFCSR_TFCNT0;
         break;
     case SSI_SETTING_TX_FIFO2_DATAS_CNT:
-	val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_TFCNT1) >> BP_SSI_SFCSR_TFCNT1;
+    val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_TFCNT1) >> BP_SSI_SFCSR_TFCNT1;
         break;
     case SSI_SETTING_RX_FIFO1_DATAS_CNT:
-	val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_RFCNT0) >> BP_SSI_SFCSR_RFCNT0;
+    val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_RFCNT0) >> BP_SSI_SFCSR_RFCNT0;
         break;
     case SSI_SETTING_RX_FIFO2_DATAS_CNT:
-	val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_RFCNT1) >> BP_SSI_SFCSR_RFCNT1;
+    val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_RFCNT1) >> BP_SSI_SFCSR_RFCNT1;
         break;
     case SSI_SETTING_TX_WATERMARK:
-	val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_TFWM0) >> BP_SSI_SFCSR_TFWM0;
+    val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_TFWM0) >> BP_SSI_SFCSR_TFWM0;
         break;
     case SSI_SETTING_RX_WATERMARK:
-	val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_RFWM0) >> BP_SSI_SFCSR_RFWM0;
+    val = (HW_SSI_SFCSR_RD(instance) & BM_SSI_SFCSR_RFWM0) >> BP_SSI_SFCSR_RFWM0;
         break;
     case SSI_SETTING_TX_WORD_LEN:
-	val = (HW_SSI_STCCR_RD(instance) & BM_SSI_STCCR_WL3_WL0) >> BP_SSI_STCCR_WL3_WL0;
+    val = (HW_SSI_STCCR_RD(instance) & BM_SSI_STCCR_WL3_WL0) >> BP_SSI_STCCR_WL3_WL0;
         val = (val + 1) * 2;
         break;
     case SSI_SETTING_RX_WORD_LEN:
-	val = (HW_SSI_SRCCR_RD(instance) & BM_SSI_SRCCR_WL3_WL0) >> BP_SSI_SRCCR_WL3_WL0;
+    val = (HW_SSI_SRCCR_RD(instance) & BM_SSI_SRCCR_WL3_WL0) >> BP_SSI_SRCCR_WL3_WL0;
         val = (val + 1) *2;
         break;
     default:
@@ -207,7 +207,7 @@ static uint32_t ssi_get_hw_setting(audio_ctrl_p ctrl, uint32_t type)
  * Set the ssi's settings.
  * @param       ctrl    a pointer of audio controller(audio_ctrl_t) which presents the ssi module
  * @param       type    SSI FIFO settings
- * @param       val     FIFO watermark level value 
+ * @param       val     FIFO watermark level value
  *
  * @return      0 if succeeded
  *              -1 if failed
@@ -219,62 +219,62 @@ static uint32_t ssi_set_hw_setting(audio_ctrl_p ctrl, uint32_t type, uint32_t va
 
     switch (type) {
     case SSI_SETTING_TX_WATERMARK:
-	v = HW_SSI_SFCSR_RD(instance);
-	v &= ~(BM_SSI_SFCSR_TFWM0 | BM_SSI_SFCSR_TFWM1);
+    v = HW_SSI_SFCSR_RD(instance);
+    v &= ~(BM_SSI_SFCSR_TFWM0 | BM_SSI_SFCSR_TFWM1);
         v |= BF_SSI_SFCSR_TFWM0(val) | BF_SSI_SFCSR_TFWM1(val);
-	HW_SSI_SFCSR_WR(instance, v);
+    HW_SSI_SFCSR_WR(instance, v);
         break;
     case SSI_SETTING_RX_WATERMARK:
-	v = HW_SSI_SFCSR_RD(instance);
-	v &= ~(BM_SSI_SFCSR_RFWM0 | BM_SSI_SFCSR_RFWM1);
+    v = HW_SSI_SFCSR_RD(instance);
+    v &= ~(BM_SSI_SFCSR_RFWM0 | BM_SSI_SFCSR_RFWM1);
         v |= BF_SSI_SFCSR_RFWM0(val) | BF_SSI_SFCSR_RFWM1(val);
-	HW_SSI_SFCSR_WR(instance, v);
+    HW_SSI_SFCSR_WR(instance, v);
         break;
     case SSI_SETTING_TX_WORD_LEN:
-	v = HW_SSI_STCCR_RD(instance);
-	v &= ~BM_SSI_STCCR_WL3_WL0;
-        v |= BF_SSI_STCCR_WL3_WL0((val >> 1)-1);	
-	HW_SSI_STCCR_WR(instance, v);
+    v = HW_SSI_STCCR_RD(instance);
+    v &= ~BM_SSI_STCCR_WL3_WL0;
+        v |= BF_SSI_STCCR_WL3_WL0((val >> 1)-1);
+    HW_SSI_STCCR_WR(instance, v);
         break;
     case SSI_SETTING_RX_WORD_LEN:
-	v = HW_SSI_SRCCR_RD(instance);
-	v &= ~BM_SSI_SRCCR_WL3_WL0;
-        v |= BF_SSI_SRCCR_WL3_WL0((val - 2) >> 1);	
-	HW_SSI_SRCCR_WR(instance, v);
+    v = HW_SSI_SRCCR_RD(instance);
+    v &= ~BM_SSI_SRCCR_WL3_WL0;
+        v |= BF_SSI_SRCCR_WL3_WL0((val - 2) >> 1);
+    HW_SSI_SRCCR_WR(instance, v);
         break;
     case SSI_SETTING_TX_BIT_CLOCK:
-	v = HW_SSI_STCCR_RD(instance);
-	v &= ~(BM_SSI_STCCR_PSR | BM_SSI_STCCR_PM7_PM0);
-	v |= val;
-	HW_SSI_STCCR_WR(instance, v);
+    v = HW_SSI_STCCR_RD(instance);
+    v &= ~(BM_SSI_STCCR_PSR | BM_SSI_STCCR_PM7_PM0);
+    v |= val;
+    HW_SSI_STCCR_WR(instance, v);
         break;
     case SSI_SETTING_RX_BIT_CLOCK:
-	v = HW_SSI_SRCCR_RD(instance);
-	v &= ~(BM_SSI_SRCCR_DIV2 | BM_SSI_SRCCR_PSR | BM_SSI_SRCCR_PM7_PM0);
-	v |= val;
-	HW_SSI_SRCCR_WR(instance, v);
+    v = HW_SSI_SRCCR_RD(instance);
+    v &= ~(BM_SSI_SRCCR_DIV2 | BM_SSI_SRCCR_PSR | BM_SSI_SRCCR_PM7_PM0);
+    v |= val;
+    HW_SSI_SRCCR_WR(instance, v);
         break;
     case SSI_SETTING_TX_FRAME_LENGTH:
-	v = HW_SSI_STCCR_RD(instance);
-	v &= ~BM_SSI_STCCR_DC4_DC0;
-  	v |= BF_SSI_STCCR_DC4_DC0(val);
-	HW_SSI_STCCR_WR(instance, v);	
+    v = HW_SSI_STCCR_RD(instance);
+    v &= ~BM_SSI_STCCR_DC4_DC0;
+      v |= BF_SSI_STCCR_DC4_DC0(val);
+    HW_SSI_STCCR_WR(instance, v);
         break;
     case SSI_SETTING_RX_FRAME_LENGTH:
-	v = HW_SSI_SRCCR_RD(instance);
-	v &= ~BM_SSI_SRCCR_DC4_DC0;
-	v |= BF_SSI_SRCCR_DC4_DC0(val);
-	HW_SSI_SRCCR_WR(instance, v);
+    v = HW_SSI_SRCCR_RD(instance);
+    v &= ~BM_SSI_SRCCR_DC4_DC0;
+    v |= BF_SSI_SRCCR_DC4_DC0(val);
+    HW_SSI_SRCCR_WR(instance, v);
         break;
     case SSI_SETTING_CLK_FS_DIR:
         if (SSI_CLK_FS_DIR_OUTPUT == val) {
-	    v = HW_SSI_STCR_RD(instance);
-	    v |= BM_SSI_STCR_TXDIR | BM_SSI_STCR_TFDIR;
-	    HW_SSI_STCR_WR(instance, v);
+        v = HW_SSI_STCR_RD(instance);
+        v |= BM_SSI_STCR_TXDIR | BM_SSI_STCR_TFDIR;
+        HW_SSI_STCR_WR(instance, v);
         } else if (SSI_CLK_FS_DIR_INPUT == val) {
-	    v = HW_SSI_STCR_RD(instance);
-	    v &= ~(BM_SSI_STCR_TXDIR | BM_SSI_STCR_TFDIR);
-	    HW_SSI_STCR_WR(instance, v);
+        v = HW_SSI_STCR_RD(instance);
+        v &= ~(BM_SSI_STCR_TXDIR | BM_SSI_STCR_TFDIR);
+        HW_SSI_STCR_WR(instance, v);
         }
         break;
     default:
@@ -291,63 +291,63 @@ static uint32_t ssi_hw_enable(audio_ctrl_p ctrl, uint32_t type, bool enable)
 
     switch (type) {
     case SSI_HW_ENABLE_SSI:
-	val = HW_SSI_SCR_RD(instance);
+    val = HW_SSI_SCR_RD(instance);
         if (enable){
-	    val |= BM_SSI_SCR_SSIEN;
+        val |= BM_SSI_SCR_SSIEN;
         }else{
             val &= ~BM_SSI_SCR_SSIEN;
-	}
-	HW_SSI_SCR_WR(instance, val);
+    }
+    HW_SSI_SCR_WR(instance, val);
         break;
     case SSI_HW_ENABLE_TX:
-	val = HW_SSI_SCR_RD(instance);
+    val = HW_SSI_SCR_RD(instance);
         if (enable){
-	    val |= BM_SSI_SCR_TE;
+        val |= BM_SSI_SCR_TE;
         }else{
-	    val &= ~BM_SSI_SCR_TE;
-	}
-	HW_SSI_SCR_WR(instance, val);
+        val &= ~BM_SSI_SCR_TE;
+    }
+    HW_SSI_SCR_WR(instance, val);
         break;
     case SSI_HW_ENABLE_RX:
-	val = HW_SSI_SCR_RD(instance);
+    val = HW_SSI_SCR_RD(instance);
         if (enable){
-	    val |= BM_SSI_SCR_RE;
+        val |= BM_SSI_SCR_RE;
         }else{
-	    val &= ~BM_SSI_SCR_RE;
-	}
-	HW_SSI_SCR_WR(instance, val);
+        val &= ~BM_SSI_SCR_RE;
+    }
+    HW_SSI_SCR_WR(instance, val);
         break;
     case SSI_HW_ENABLE_TXFIFO1:
-	val = HW_SSI_STCR_RD(instance);
+    val = HW_SSI_STCR_RD(instance);
         if (enable)
-	    val |= BM_SSI_STCR_TFEN0;
+        val |= BM_SSI_STCR_TFEN0;
         else
-	    val &= ~BM_SSI_STCR_TFEN0;
-	HW_SSI_STCR_WR(instance, val);
+        val &= ~BM_SSI_STCR_TFEN0;
+    HW_SSI_STCR_WR(instance, val);
         break;
     case SSI_HW_ENABLE_TXFIFO2:
-	val = HW_SSI_STCR_RD(instance);
+    val = HW_SSI_STCR_RD(instance);
         if (enable)
-	    val |= BM_SSI_STCR_TFEN1;
+        val |= BM_SSI_STCR_TFEN1;
         else
-	    val &= ~BM_SSI_STCR_TFEN1;
-	HW_SSI_STCR_WR(instance, val);
+        val &= ~BM_SSI_STCR_TFEN1;
+    HW_SSI_STCR_WR(instance, val);
         break;
     case SSI_HW_ENABLE_RXFIFO1:
-	val = HW_SSI_SRCR_RD(instance);
+    val = HW_SSI_SRCR_RD(instance);
         if (enable)
-	    val |= BM_SSI_SRCR_RFEN0;
+        val |= BM_SSI_SRCR_RFEN0;
         else
-	    val &= ~BM_SSI_SRCR_RFEN0;
-	HW_SSI_SRCR_WR(instance, val);
+        val &= ~BM_SSI_SRCR_RFEN0;
+    HW_SSI_SRCR_WR(instance, val);
         break;
     case SSI_HW_ENABLE_RXFIFO2:
-	val = HW_SSI_SRCR_RD(instance);
+    val = HW_SSI_SRCR_RD(instance);
         if (enable)
-	    val |= BM_SSI_SRCR_RFEN1;
+        val |= BM_SSI_SRCR_RFEN1;
         else
-	    val &= ~BM_SSI_SRCR_RFEN1;
-	HW_SSI_SRCR_WR(instance, val);
+        val &= ~BM_SSI_SRCR_RFEN1;
+    HW_SSI_SRCR_WR(instance, val);
         break;
     default:
         break;
@@ -377,37 +377,37 @@ int32_t ssi_config(void *priv, audio_dev_para_p para)
 
     if (AUDIO_BUS_PROTOCOL_I2S == para->bus_protocol) {
         if (AUDIO_BUS_MODE_SLAVE == para->bus_mode) {
-	    val = HW_SSI_SCR_RD(instance);
-	    val |= BF_SSI_SCR_I2S_MODE(I2S_MODE_SLAVE);
-	    HW_SSI_SCR_WR(instance, val);
+        val = HW_SSI_SCR_RD(instance);
+        val |= BF_SSI_SCR_I2S_MODE(I2S_MODE_SLAVE);
+        HW_SSI_SCR_WR(instance, val);
             ssi_set_hw_setting(ctrl, SSI_SETTING_CLK_FS_DIR, SSI_CLK_FS_DIR_INPUT);
         } else {
-	    val = HW_SSI_SCR_RD(instance);
-	    val |= BF_SSI_SCR_I2S_MODE(I2S_MODE_MASTER);
-	    HW_SSI_SCR_WR(instance, val);
+        val = HW_SSI_SCR_RD(instance);
+        val |= BF_SSI_SCR_I2S_MODE(I2S_MODE_MASTER);
+        HW_SSI_SCR_WR(instance, val);
             ssi_set_hw_setting(ctrl, SSI_SETTING_CLK_FS_DIR, SSI_CLK_FS_DIR_OUTPUT);
         }
 
-	val = HW_SSI_SCR_RD(instance);
-	val |= BM_SSI_SCR_CLK_IST | BM_SSI_SCR_SYN;
-	HW_SSI_SCR_WR(instance, val);
+    val = HW_SSI_SCR_RD(instance);
+    val |= BM_SSI_SCR_CLK_IST | BM_SSI_SCR_SYN;
+    HW_SSI_SCR_WR(instance, val);
 
-	val = HW_SSI_STCR_RD(instance);
-	val |= BM_SSI_STCR_TSCKP | BM_SSI_STCR_TEFS;
-	HW_SSI_STCR_WR(instance, val);
+    val = HW_SSI_STCR_RD(instance);
+    val |= BM_SSI_STCR_TSCKP | BM_SSI_STCR_TEFS;
+    HW_SSI_STCR_WR(instance, val);
 
-	val = HW_SSI_STCCR_RD(instance);
+    val = HW_SSI_STCCR_RD(instance);
         val &= ~BM_SSI_STCCR_DIV2;
-	val |= BF_SSI_STCCR_DC4_DC0(1);
-	val &= ~BM_SSI_STCCR_PM7_PM0;
-	if(SAMPLERATE_44_1KHz == para->sample_rate){
-	    val |= BF_SSI_STCCR_PM7_PM0(0xA);
-	}else if(SAMPLERATE_16KHz == para->sample_rate){
-	   val |= BF_SSI_STCCR_PM7_PM0(0x1E);
-	}else{
-		//TODO
-	}
-	HW_SSI_STCCR_WR(instance, val);
+    val |= BF_SSI_STCCR_DC4_DC0(1);
+    val &= ~BM_SSI_STCCR_PM7_PM0;
+    if(SAMPLERATE_44_1KHz == para->sample_rate){
+        val |= BF_SSI_STCCR_PM7_PM0(0xA);
+    }else if(SAMPLERATE_16KHz == para->sample_rate){
+       val |= BF_SSI_STCCR_PM7_PM0(0x1E);
+    }else{
+        //TODO
+    }
+    HW_SSI_STCCR_WR(instance, val);
     } else {
         //TODO
     }
@@ -464,7 +464,7 @@ int32_t ssi_read_fifo(void *priv, uint8_t *buf, uint32_t byte2read, uint32_t * b
     uint32_t instance = ctrl->instance;
     uint32_t wl = ssi_get_hw_setting(ctrl, SSI_SETTING_RX_WORD_LEN);
     int32_t time_out_tmp;
-    
+
     size = byte2read/(wl);
     for ( i = 0; i < size; i++, buf_ptr++) {
         time_out_tmp = SSI_READ_TIMEOUT;
@@ -480,7 +480,7 @@ int32_t ssi_read_fifo(void *priv, uint8_t *buf, uint32_t byte2read, uint32_t * b
     }
     *byteread = byte2read;
 
-    return 0; 
+    return 0;
 }
 
 int32_t ssi_deinit(void *priv)

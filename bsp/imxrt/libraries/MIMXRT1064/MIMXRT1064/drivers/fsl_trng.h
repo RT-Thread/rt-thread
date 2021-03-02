@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2018 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 #ifndef _FSL_TRNG_DRIVER_H_
@@ -24,7 +24,7 @@
 
 /*! @name Driver version */
 /*@{*/
-/*! @brief TRNG driver version 2.0.2. 
+/*! @brief TRNG driver version 2.0.2.
  *
  * Current version: 2.0.2
  *

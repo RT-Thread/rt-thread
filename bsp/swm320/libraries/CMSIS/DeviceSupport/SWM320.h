@@ -105,11 +105,11 @@ typedef enum IRQn
 #endif
 
 #include <stdio.h>
-#include "core_cm4.h" /* Cortex-M0 processor and core peripherals		     */
+#include "core_cm4.h" /* Cortex-M0 processor and core peripherals             */
 #include "system_SWM320.h"
 
 /******************************************************************************/
-/*				Device Specific Peripheral registers structures			 */
+/*                Device Specific Peripheral registers structures             */
 /******************************************************************************/
 typedef struct
 {
@@ -123,9 +123,9 @@ typedef struct
 
     uint32_t RESERVED0[6];
 
-    __IO uint32_t RTCBKP_ISO; //[0] 1 RTCå¤‡ä»½ç”µæºåŸŸå¤„äºéš”ç¦»çŠ¶æ€    0 RTCå¤‡ä»½ç”µæºåŸŸå¯è®¿é—®
+    __IO uint32_t RTCBKP_ISO; //[0] 1 RTC±¸·İµçÔ´Óò´¦ÓÚ¸ôÀë×´Ì¬    0 RTC±¸·İµçÔ´Óò¿É·ÃÎÊ
 
-    __IO uint32_t RTCWKEN; //[0] 1 ä½¿èƒ½RTCå”¤é†’åŠŸèƒ½
+    __IO uint32_t RTCWKEN; //[0] 1 Ê¹ÄÜRTC»½ĞÑ¹¦ÄÜ
 
     uint32_t RESERVED[52 + 64];
 
@@ -135,7 +135,7 @@ typedef struct
 
     uint32_t RESERVED2[1 + 4];
 
-    __IO uint32_t PAWKSR; //Port A Wakeup Status Registerï¼Œå†™1æ¸…é›¶
+    __IO uint32_t PAWKSR; //Port A Wakeup Status Register£¬Ğ´1ÇåÁã
     __IO uint32_t PBWKSR;
     __IO uint32_t PCWKSR;
 
@@ -146,12 +146,12 @@ typedef struct
 
     uint32_t RESERVED4[61 + 64];
 
-    __IO uint32_t BKP[3]; //æ•°æ®å¤‡ä»½å¯„å­˜å™¨
+    __IO uint32_t BKP[3]; //Êı¾İ±¸·İ¼Ä´æÆ÷
 
     //RTC Power Domain: 0x4001E000
     uint32_t RESERVED5[(0x4001E000 - 0x40000508) / 4 - 1];
 
-    __IO uint32_t RTCBKP[8]; //RTCç”µæºåŸŸæ•°æ®å¤‡ä»½å¯„å­˜å™¨
+    __IO uint32_t RTCBKP[8]; //RTCµçÔ´ÓòÊı¾İ±¸·İ¼Ä´æÆ÷
 
     __IO uint32_t LRCCR;    //Low speed RC Control Register
     __IO uint32_t LRCTRIM0; //Low speed RC Trim
@@ -173,7 +173,7 @@ typedef struct
     __IO uint32_t PLLCR;
     __IO uint32_t PLLDIV;
     __IO uint32_t PLLSET;
-    __IO uint32_t PLLLOCK; //[0] 1 PLLå·²é”å®š
+    __IO uint32_t PLLLOCK; //[0] 1 PLLÒÑËø¶¨
 
     __IO uint32_t BODIE;
     __IO uint32_t BODIF;
@@ -181,20 +181,20 @@ typedef struct
     __IO uint32_t ADC1IN7;
 } SYS_TypeDef;
 
-#define SYS_CLKSEL_LFCK_Pos 0 //Low Frequency Clock Source	0 LRC	1 PLL
+#define SYS_CLKSEL_LFCK_Pos 0 //Low Frequency Clock Source    0 LRC    1 PLL
 #define SYS_CLKSEL_LFCK_Msk (0x01 << SYS_CLKSEL_LFCK_Pos)
-#define SYS_CLKSEL_HFCK_Pos 1 //High Frequency Clock Source	0 HRC	1 XTAL
+#define SYS_CLKSEL_HFCK_Pos 1 //High Frequency Clock Source    0 HRC    1 XTAL
 #define SYS_CLKSEL_HFCK_Msk (0x01 << SYS_CLKSEL_HFCK_Pos)
-#define SYS_CLKSEL_SYS_Pos 2 //ç³»ç»Ÿæ—¶é’Ÿé€‰æ‹©	0 LFCK	1 HFCK
+#define SYS_CLKSEL_SYS_Pos 2 //ÏµÍ³Ê±ÖÓÑ¡Ôñ    0 LFCK    1 HFCK
 #define SYS_CLKSEL_SYS_Msk (0x01 << SYS_CLKSEL_SYS_Pos)
 
-#define SYS_CLKDIV_SYS_Pos 0 //ç³»ç»Ÿæ—¶é’Ÿåˆ†é¢‘  0 1åˆ†é¢‘    1 2åˆ†é¢‘
+#define SYS_CLKDIV_SYS_Pos 0 //ÏµÍ³Ê±ÖÓ·ÖÆµ  0 1·ÖÆµ    1 2·ÖÆµ
 #define SYS_CLKDIV_SYS_Msk (0x01 << SYS_CLKDIV_SYS_Pos)
-#define SYS_CLKDIV_PWM_Pos 1 //PWM æ—¶é’Ÿåˆ†é¢‘  0 1åˆ†é¢‘    1 8åˆ†é¢‘
+#define SYS_CLKDIV_PWM_Pos 1 //PWM Ê±ÖÓ·ÖÆµ  0 1·ÖÆµ    1 8·ÖÆµ
 #define SYS_CLKDIV_PWM_Msk (0x01 << SYS_CLKDIV_PWM_Pos)
-#define SYS_CLKDIV_SDRAM_Pos 2 //SDRAMæ—¶é’Ÿåˆ†é¢‘ 0 1åˆ†é¢‘    1 2åˆ†é¢‘    2 4åˆ†é¢‘
+#define SYS_CLKDIV_SDRAM_Pos 2 //SDRAMÊ±ÖÓ·ÖÆµ 0 1·ÖÆµ    1 2·ÖÆµ    2 4·ÖÆµ
 #define SYS_CLKDIV_SDRAM_Msk (0x03 << SYS_CLKDIV_SDRAM_Pos)
-#define SYS_CLKDIV_SDIO_Pos 4 //SDIOæ—¶é’Ÿåˆ†é¢‘  0 1åˆ†é¢‘    1 2åˆ†é¢‘    2 4åˆ†é¢‘     3 8åˆ†é¢‘
+#define SYS_CLKDIV_SDIO_Pos 4 //SDIOÊ±ÖÓ·ÖÆµ  0 1·ÖÆµ    1 2·ÖÆµ    2 4·ÖÆµ     3 8·ÖÆµ
 #define SYS_CLKDIV_SDIO_Msk (0x03 << SYS_CLKDIV_SDIO_Pos)
 
 #define SYS_CLKEN_GPIOA_Pos 0
@@ -239,7 +239,7 @@ typedef struct
 #define SYS_CLKEN_LCD_Msk (0x01 << SYS_CLKEN_LCD_Pos)
 #define SYS_CLKEN_GPIOP_Pos 21
 #define SYS_CLKEN_GPIOP_Msk (0x01 << SYS_CLKEN_GPIOP_Pos)
-#define SYS_CLKEN_ANAC_Pos 22 //æ¨¡æ‹Ÿæ§åˆ¶å•å…ƒæ—¶é’Ÿä½¿èƒ½
+#define SYS_CLKEN_ANAC_Pos 22 //Ä£Äâ¿ØÖÆµ¥ÔªÊ±ÖÓÊ¹ÄÜ
 #define SYS_CLKEN_ANAC_Msk (0x01 << SYS_CLKEN_ANAC_Pos)
 #define SYS_CLKEN_CRC_Pos 23
 #define SYS_CLKEN_CRC_Msk (0x01 << SYS_CLKEN_CRC_Pos)
@@ -257,62 +257,62 @@ typedef struct
 #define SYS_CLKEN_SDIO_Msk (0x01 << SYS_CLKEN_SDIO_Pos)
 #define SYS_CLKEN_ADC1_Pos 30
 #define SYS_CLKEN_ADC1_Msk (0x01 << SYS_CLKEN_ADC1_Pos)
-#define SYS_CLKEN_ALIVE_Pos 31 //CHIPALIVEç”µæºåŸŸç³»ç»Ÿæ—¶é’Ÿä½¿èƒ½
+#define SYS_CLKEN_ALIVE_Pos 31 //CHIPALIVEµçÔ´ÓòÏµÍ³Ê±ÖÓÊ¹ÄÜ
 #define SYS_CLKEN_ALIVE_Msk (0x01 << SYS_CLKEN_ALIVE_Pos)
 
-#define SYS_SLEEP_SLEEP_Pos 0 //å°†è¯¥ä½ç½®1åï¼Œç³»ç»Ÿå°†è¿›å…¥SLEEPæ¨¡å¼
+#define SYS_SLEEP_SLEEP_Pos 0 //½«¸ÃÎ»ÖÃ1ºó£¬ÏµÍ³½«½øÈëSLEEPÄ£Ê½
 #define SYS_SLEEP_SLEEP_Msk (0x01 << SYS_SLEEP_SLEEP_Pos)
-#define SYS_SLEEP_DEEP_Pos 1 //å°†è¯¥ä½ç½®1åï¼Œç³»ç»Ÿå°†è¿›å…¥STOP SLEEPæ¨¡å¼
+#define SYS_SLEEP_DEEP_Pos 1 //½«¸ÃÎ»ÖÃ1ºó£¬ÏµÍ³½«½øÈëSTOP SLEEPÄ£Ê½
 #define SYS_SLEEP_DEEP_Msk (0x01 << SYS_SLEEP_DEEP_Pos)
 
-#define SYS_RSTCR_SYS_Pos 0 //å†™1è¿›è¡Œç³»ç»Ÿå¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_SYS_Pos 0 //Ğ´1½øĞĞÏµÍ³¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_SYS_Msk (0x01 << SYS_RSTCR_SYS_Pos)
-#define SYS_RSTCR_FLASH_Pos 1 //å†™1å¯¹FLASHæ§åˆ¶å™¨è¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_FLASH_Pos 1 //Ğ´1¶ÔFLASH¿ØÖÆÆ÷½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_FLASH_Msk (0x01 << SYS_RSTCR_FLASH_Pos)
-#define SYS_RSTCR_PWM_Pos 2 //å†™1å¯¹PWMè¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_PWM_Pos 2 //Ğ´1¶ÔPWM½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_PWM_Msk (0x01 << SYS_RSTCR_PWM_Pos)
-#define SYS_RSTCR_CPU_Pos 3 //å†™1å¯¹CPUè¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_CPU_Pos 3 //Ğ´1¶ÔCPU½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_CPU_Msk (0x01 << SYS_RSTCR_CPU_Pos)
-#define SYS_RSTCR_DMA_Pos 4 //å†™1å¯¹DMAè¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_DMA_Pos 4 //Ğ´1¶ÔDMA½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_DMA_Msk (0x01 << SYS_RSTCR_DMA_Pos)
-#define SYS_RSTCR_NORFLASH_Pos 5 //å†™1å¯¹NOR Flashæ§åˆ¶å™¨è¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_NORFLASH_Pos 5 //Ğ´1¶ÔNOR Flash¿ØÖÆÆ÷½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_NORFLASH_Msk (0x01 << SYS_RSTCR_NORFLASH_Pos)
-#define SYS_RSTCR_SRAM_Pos 6 //å†™1å¯¹SRAMæ§åˆ¶å™¨è¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_SRAM_Pos 6 //Ğ´1¶ÔSRAM¿ØÖÆÆ÷½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_SRAM_Msk (0x01 << SYS_RSTCR_SRAM_Pos)
-#define SYS_RSTCR_SDRAM_Pos 7 //å†™1å¯¹SDRAMæ§åˆ¶å™¨è¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_SDRAM_Pos 7 //Ğ´1¶ÔSDRAM¿ØÖÆÆ÷½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_SDRAM_Msk (0x01 << SYS_RSTCR_SDRAM_Pos)
-#define SYS_RSTCR_SDIO_Pos 8 //å†™1å¯¹SDIOè¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_SDIO_Pos 8 //Ğ´1¶ÔSDIO½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_SDIO_Msk (0x01 << SYS_RSTCR_SDIO_Pos)
-#define SYS_RSTCR_LCD_Pos 9 //å†™1å¯¹LCDè¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_LCD_Pos 9 //Ğ´1¶ÔLCD½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_LCD_Msk (0x01 << SYS_RSTCR_LCD_Pos)
-#define SYS_RSTCR_CAN_Pos 10 //å†™1å¯¹CANè¿›è¡Œä¸€æ¬¡å¤ä½ï¼Œç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶
+#define SYS_RSTCR_CAN_Pos 10 //Ğ´1¶ÔCAN½øĞĞÒ»´Î¸´Î»£¬Ó²¼ş×Ô¶¯ÇåÁã
 #define SYS_RSTCR_CAN_Msk (0x01 << SYS_RSTCR_CAN_Pos)
 
-#define SYS_RSTSR_POR_Pos 0 //1 å‡ºç°è¿‡PORå¤ä½ï¼Œå†™1æ¸…é›¶
+#define SYS_RSTSR_POR_Pos 0 //1 ³öÏÖ¹ıPOR¸´Î»£¬Ğ´1ÇåÁã
 #define SYS_RSTSR_POR_Msk (0x01 << SYS_RSTSR_POR_Pos)
-#define SYS_RSTSR_BOD_Pos 1 //1 å‡ºç°è¿‡BODå¤ä½ï¼Œå†™1æ¸…é›¶
+#define SYS_RSTSR_BOD_Pos 1 //1 ³öÏÖ¹ıBOD¸´Î»£¬Ğ´1ÇåÁã
 #define SYS_RSTSR_BOD_Msk (0x01 << SYS_RSTSR_BOD_Pos)
-#define SYS_RSTSR_PIN_Pos 2 //1 å‡ºç°è¿‡å¤–éƒ¨å¼•è„šå¤ä½ï¼Œå†™1æ¸…é›¶
+#define SYS_RSTSR_PIN_Pos 2 //1 ³öÏÖ¹ıÍâ²¿Òı½Å¸´Î»£¬Ğ´1ÇåÁã
 #define SYS_RSTSR_PIN_Msk (0x01 << SYS_RSTSR_PIN_Pos)
-#define SYS_RSTSR_WDT_Pos 3 //1 å‡ºç°è¿‡WDTå¤ä½ï¼Œå†™1æ¸…é›¶
+#define SYS_RSTSR_WDT_Pos 3 //1 ³öÏÖ¹ıWDT¸´Î»£¬Ğ´1ÇåÁã
 #define SYS_RSTSR_WDT_Msk (0x01 << SYS_RSTSR_WDT_Pos)
-#define SYS_RSTSR_SWRST_Pos 4 //Software Reset, 1 å‡ºç°è¿‡è½¯ä»¶å¤ä½ï¼Œå†™1æ¸…é›¶
+#define SYS_RSTSR_SWRST_Pos 4 //Software Reset, 1 ³öÏÖ¹ıÈí¼ş¸´Î»£¬Ğ´1ÇåÁã
 #define SYS_RSTSR_SWRST_Msk (0x01 << SYS_RSTSR_SWRST_Pos)
 
 #define SYS_LRCCR_OFF_Pos 0 //Low Speed RC Off
 #define SYS_LRCCR_OFF_Msk (0x01 << SYS_LRCCR_OFF_Pos)
 
-#define SYS_LRCTRIM0_R_Pos 0 //LRCç²—è°ƒæ§åˆ¶ä½
+#define SYS_LRCTRIM0_R_Pos 0 //LRC´Öµ÷¿ØÖÆÎ»
 #define SYS_LRCTRIM0_R_Msk (0x7FFF << SYS_LRCTRIM0_R_Pos)
-#define SYS_LRCTRIM0_M_Pos 15 //LRCä¸­è°ƒæ§åˆ¶ä½
+#define SYS_LRCTRIM0_M_Pos 15 //LRCÖĞµ÷¿ØÖÆÎ»
 #define SYS_LRCTRIM0_M_Msk (0x3F << SYS_LRCTRIM2_M_Pos)
-#define SYS_LRCTRIM0_F_Pos 21 //LRCç»†è°ƒæ§åˆ¶ä½
+#define SYS_LRCTRIM0_F_Pos 21 //LRCÏ¸µ÷¿ØÖÆÎ»
 #define SYS_LRCTRIM0_F_Msk (0x7FF << SYS_LRCTRIM0_F_Pos)
 
-#define SYS_LRCTRIM1_U_Pos 0 //LRC Uè°ƒæ§åˆ¶ä½
+#define SYS_LRCTRIM1_U_Pos 0 //LRC Uµ÷¿ØÖÆÎ»
 #define SYS_LRCTRIM1_U_Msk (0x7FFF << SYS_LRCTRIM1_U_Pos)
 
-#define SYS_HRCCR_DBL_Pos 0 //Double Frequency	0 20MHz	1 40MHz
+#define SYS_HRCCR_DBL_Pos 0 //Double Frequency    0 20MHz    1 40MHz
 #define SYS_HRCCR_DBL_Msk (0x01 << SYS_HRCCR_DBL_Pos)
 #define SYS_HRCCR_OFF_Pos 1 //High speed RC Off
 #define SYS_HRCCR_OFF_Msk (0x01 << SYS_HRCCR_OFF_Pos)
@@ -320,24 +320,24 @@ typedef struct
 #define SYS_XTALCR_EN_Pos 0
 #define SYS_XTALCR_EN_Msk (0x01 << SYS_XTALCR_EN_Pos)
 
-#define SYS_PLLCR_OUTEN_Pos 0 //åªèƒ½LOCKåè®¾ç½®
+#define SYS_PLLCR_OUTEN_Pos 0 //Ö»ÄÜLOCKºóÉèÖÃ
 #define SYS_PLLCR_OUTEN_Msk (0x01 << SYS_PLLCR_OUTEN_Pos)
 #define SYS_PLLCR_INSEL_Pos 1 //0 XTAL    1 HRC
 #define SYS_PLLCR_INSEL_Msk (0x01 << SYS_PLLCR_INSEL_Pos)
 #define SYS_PLLCR_OFF_Pos 2
 #define SYS_PLLCR_OFF_Msk (0x01 << SYS_PLLCR_OFF_Pos)
 
-#define SYS_PLLDIV_FBDIV_Pos 0 //PLL FeedBackåˆ†é¢‘å¯„å­˜å™¨                           \
-                               //VCOè¾“å‡ºé¢‘ç‡ = PLLè¾“å…¥æ—¶é’Ÿ / INDIV * 4 * FBDIV \
-                               //PLLè¾“å‡ºé¢‘ç‡ = PLLè¾“å…¥æ—¶é’Ÿ / INDIV * 4 * FBDIV / OUTDIV = VCOè¾“å‡ºé¢‘ç‡ / OUTDIV
+#define SYS_PLLDIV_FBDIV_Pos 0 //PLL FeedBack·ÖÆµ¼Ä´æÆ÷                           \
+                               //VCOÊä³öÆµÂÊ = PLLÊäÈëÊ±ÖÓ / INDIV * 4 * FBDIV \
+                               //PLLÊä³öÆµÂÊ = PLLÊäÈëÊ±ÖÓ / INDIV * 4 * FBDIV / OUTDIV = VCOÊä³öÆµÂÊ / OUTDIV
 #define SYS_PLLDIV_FBDIV_Msk (0x1FF << SYS_PLLDIV_FBDIV_Pos)
-#define SYS_PLLDIV_ADDIV_Pos 9 //ADCæ—¶é’ŸåŸºï¼ˆå³VCOè¾“å‡ºåˆ†é¢‘åçš„æ—¶é’Ÿï¼‰ç»ADDIVåˆ†é¢‘åä½œä¸ºADCçš„è½¬æ¢æ—¶é’Ÿ
+#define SYS_PLLDIV_ADDIV_Pos 9 //ADCÊ±ÖÓ»ù£¨¼´VCOÊä³ö·ÖÆµºóµÄÊ±ÖÓ£©¾­ADDIV·ÖÆµºó×÷ÎªADCµÄ×ª»»Ê±ÖÓ
 #define SYS_PLLDIV_ADDIV_Msk (0x1F << SYS_PLLDIV_ADDIV_Pos)
-#define SYS_PLLDIV_ADVCO_Pos 14 //0 VCOè¾“å‡º16åˆ†é¢‘ä½œä¸ºADCæ—¶é’ŸåŸº    1 VCOè¾“å‡ºç»è¿‡32åˆ†é¢‘ä½œä¸ºADCæ—¶é’ŸåŸº    2 VCOè¾“å‡ºç»è¿‡64åˆ†é¢‘ä½œä¸ºADCæ—¶é’ŸåŸº
+#define SYS_PLLDIV_ADVCO_Pos 14 //0 VCOÊä³ö16·ÖÆµ×÷ÎªADCÊ±ÖÓ»ù    1 VCOÊä³ö¾­¹ı32·ÖÆµ×÷ÎªADCÊ±ÖÓ»ù    2 VCOÊä³ö¾­¹ı64·ÖÆµ×÷ÎªADCÊ±ÖÓ»ù
 #define SYS_PLLDIV_ADVCO_Msk (0x03 << SYS_PLLDIV_ADVCO_Pos)
-#define SYS_PLLDIV_INDIV_Pos 16 //PLL è¾“å…¥æºæ—¶é’Ÿåˆ†é¢‘
+#define SYS_PLLDIV_INDIV_Pos 16 //PLL ÊäÈëÔ´Ê±ÖÓ·ÖÆµ
 #define SYS_PLLDIV_INDIV_Msk (0x1F << SYS_PLLDIV_INDIV_Pos)
-#define SYS_PLLDIV_OUTDIV_Pos 24 //PLL è¾“å‡ºåˆ†é¢‘ï¼Œ0 8åˆ†é¢‘    1 4åˆ†é¢‘    0 2åˆ†é¢‘
+#define SYS_PLLDIV_OUTDIV_Pos 24 //PLL Êä³ö·ÖÆµ£¬0 8·ÖÆµ    1 4·ÖÆµ    0 2·ÖÆµ
 #define SYS_PLLDIV_OUTDIV_Msk (0x03 << SYS_PLLDIV_OUTDIV_Pos)
 
 #define SYS_PLLSET_LPFBW_Pos 0 //PLL Low Pass Filter Bandwidth
@@ -351,21 +351,21 @@ typedef struct
 #define SYS_PLLSET_CHPADJM_Pos 11 //PLL charge pump MSB current Adjustment
 #define SYS_PLLSET_CHPADJM_Msk (0x03 << SYS_PLLSET_CHPADJM_Pos)
 
-#define SYS_BODIE_2V2_Pos 1 //BOD 2.2Vç­‰çº§è§¦å‘ä¸­æ–­ä½¿èƒ½
+#define SYS_BODIE_2V2_Pos 1 //BOD 2.2VµÈ¼¶´¥·¢ÖĞ¶ÏÊ¹ÄÜ
 #define SYS_BODIE_2V2_Msk (0x01 << SYS_BODIE_2V2_Pos)
 
-#define SYS_BODIF_2V2_Pos 1 //BOD 2.2Vç­‰çº§è§¦å‘ä¸­æ–­çŠ¶æ€ï¼Œå†™1æ¸…é›¶
+#define SYS_BODIF_2V2_Pos 1 //BOD 2.2VµÈ¼¶´¥·¢ÖĞ¶Ï×´Ì¬£¬Ğ´1ÇåÁã
 #define SYS_BODIF_2V2_Msk (0x01 << SYS_BODIF_2V2_Pos)
 
-#define SYS_ADC1IN7_SEL_Pos 0 //ADC1æ¨¡å—æ¨¡æ‹Ÿé€šé“7ï¼Œ1 æ¸©åº¦ä¼ æ„Ÿå™¨    2 ç”µæ± ç”µå‹    3 RTCç”µæºåŸŸBG    4 ä¸»ç”µæºåŸŸBG   5 PDM33
+#define SYS_ADC1IN7_SEL_Pos 0 //ADC1Ä£¿éÄ£ÄâÍ¨µÀ7£¬1 ÎÂ¶È´«¸ĞÆ÷    2 µç³ØµçÑ¹    3 RTCµçÔ´ÓòBG    4 Ö÷µçÔ´ÓòBG   5 PDM33
 #define SYS_ADC1IN7_SEL_Msk (0x0F << SYS_ADC1IN7_SEL_Pos)
-#define SYS_ADC1IN7_IOON_Pos 4 //ADC1æ¨¡å—æ¨¡æ‹Ÿé€šé“7æ‰€ç”¨IOå¼€å…³
+#define SYS_ADC1IN7_IOON_Pos 4 //ADC1Ä£¿éÄ£ÄâÍ¨µÀ7ËùÓÃIO¿ª¹Ø
 #define SYS_ADC1IN7_IOON_Msk (0x01 << SYS_ADC1IN7_IOON_Pos)
 
 typedef struct
 {
-    __IO uint32_t PORTA_SEL; //ç»™PORTA_SEL[2n+2:2n]èµ‹ç›¸åº”çš„å€¼ï¼Œå°†PORTA.PINnå¼•è„šé…ç½®æˆGPIOã€æ¨¡æ‹Ÿã€æ•°å­—ç­‰åŠŸèƒ½
-                             //å½“èµ‹å€¼ä¸ºPORTA_PINn_FUNMUXæ—¶ï¼ŒPORTA.PINnå¼•è„šå¯é€šè¿‡PORTA_MUXå¯„å­˜å™¨è¿æ¥åˆ°å„ç§æ•°å­—å¤–è®¾
+    __IO uint32_t PORTA_SEL; //¸øPORTA_SEL[2n+2:2n]¸³ÏàÓ¦µÄÖµ£¬½«PORTA.PINnÒı½ÅÅäÖÃ³ÉGPIO¡¢Ä£Äâ¡¢Êı×ÖµÈ¹¦ÄÜ
+                             //µ±¸³ÖµÎªPORTA_PINn_FUNMUXÊ±£¬PORTA.PINnÒı½Å¿ÉÍ¨¹ıPORTA_MUX¼Ä´æÆ÷Á¬½Óµ½¸÷ÖÖÊı×ÖÍâÉè
     __IO uint32_t PORTB_SEL;
 
     __IO uint32_t PORTC_SEL;
@@ -434,7 +434,7 @@ typedef struct
 
     uint32_t RESERVED9[28];
 
-    __IO uint32_t PORTA_PULLU; //ä¸Šæ‹‰ä½¿èƒ½
+    __IO uint32_t PORTA_PULLU; //ÉÏÀ­Ê¹ÄÜ
 
     uint32_t RESERVED10[3];
 
@@ -450,7 +450,7 @@ typedef struct
 
     uint32_t RESERVED13[51];
 
-    __IO uint32_t PORTB_PULLD; //ä¸‹æ‹‰ä½¿èƒ½
+    __IO uint32_t PORTB_PULLD; //ÏÂÀ­Ê¹ÄÜ
 
     uint32_t RESERVED14[3];
 
@@ -462,7 +462,7 @@ typedef struct
 
     uint32_t RESERVED16[135];
 
-    __IO uint32_t PORTM_DRIVS; //é©±åŠ¨å¼ºåº¦
+    __IO uint32_t PORTM_DRIVS; //Çı¶¯Ç¿¶È
 
     uint32_t RESERVED17[3];
 
@@ -474,7 +474,7 @@ typedef struct
 
     uint32_t RESERVED19[39];
 
-    __IO uint32_t PORTA_INEN; //è¾“å…¥ä½¿èƒ½
+    __IO uint32_t PORTA_INEN; //ÊäÈëÊ¹ÄÜ
 
     uint32_t RESERVED20[3];
 
@@ -1165,21 +1165,21 @@ typedef struct
 #define PIN23 23
 #define PIN24 24
 
-    __IO uint32_t DIR; //0 è¾“å…¥	1 è¾“å‡º
+    __IO uint32_t DIR; //0 ÊäÈë    1 Êä³ö
 
-    __IO uint32_t INTLVLTRG; //Interrupt Level Trigger  1 ç”µå¹³è§¦å‘ä¸­æ–­	0 è¾¹æ²¿è§¦å‘ä¸­æ–­
+    __IO uint32_t INTLVLTRG; //Interrupt Level Trigger  1 µçÆ½´¥·¢ÖĞ¶Ï    0 ±ßÑØ´¥·¢ÖĞ¶Ï
 
-    __IO uint32_t INTBE; //Both Edgeï¼Œå½“INTLVLTRGè®¾ä¸ºè¾¹æ²¿è§¦å‘ä¸­æ–­æ—¶ï¼Œæ­¤ä½ç½®1è¡¨ç¤ºä¸Šå‡æ²¿å’Œä¸‹é™æ²¿éƒ½è§¦å‘ä¸­æ–­ï¼Œç½®0æ—¶è§¦å‘è¾¹æ²¿ç”±INTRISEENé€‰æ‹©
+    __IO uint32_t INTBE; //Both Edge£¬µ±INTLVLTRGÉèÎª±ßÑØ´¥·¢ÖĞ¶ÏÊ±£¬´ËÎ»ÖÃ1±íÊ¾ÉÏÉıÑØºÍÏÂ½µÑØ¶¼´¥·¢ÖĞ¶Ï£¬ÖÃ0Ê±´¥·¢±ßÑØÓÉINTRISEENÑ¡Ôñ
 
-    __IO uint32_t INTRISEEN; //Interrupt Rise Edge Enable   1 ä¸Šå‡æ²¿/é«˜ç”µå¹³è§¦å‘ä¸­æ–­	0 ä¸‹é™æ²¿/ä½ç”µå¹³è§¦å‘ä¸­æ–­
+    __IO uint32_t INTRISEEN; //Interrupt Rise Edge Enable   1 ÉÏÉıÑØ/¸ßµçÆ½´¥·¢ÖĞ¶Ï    0 ÏÂ½µÑØ/µÍµçÆ½´¥·¢ÖĞ¶Ï
 
-    __IO uint32_t INTEN; //1 ä¸­æ–­ä½¿èƒ½	0 ä¸­æ–­ç¦æ­¢
+    __IO uint32_t INTEN; //1 ÖĞ¶ÏÊ¹ÄÜ    0 ÖĞ¶Ï½ûÖ¹
 
-    __IO uint32_t INTRAWSTAT; //ä¸­æ–­æ£€æµ‹å•å…ƒæ˜¯å¦æ£€æµ‹åˆ°äº†è§¦å‘ä¸­æ–­çš„æ¡ä»¶ 1 æ£€æµ‹åˆ°äº†ä¸­æ–­è§¦å‘æ¡ä»¶	0 æ²¡æœ‰æ£€æµ‹åˆ°ä¸­æ–­è§¦å‘æ¡ä»¶
+    __IO uint32_t INTRAWSTAT; //ÖĞ¶Ï¼ì²âµ¥ÔªÊÇ·ñ¼ì²âµ½ÁË´¥·¢ÖĞ¶ÏµÄÌõ¼ş 1 ¼ì²âµ½ÁËÖĞ¶Ï´¥·¢Ìõ¼ş    0 Ã»ÓĞ¼ì²âµ½ÖĞ¶Ï´¥·¢Ìõ¼ş
 
     __IO uint32_t INTSTAT; //INTSTAT.PIN0 = INTRAWSTAT.PIN0 & INTEN.PIN0
 
-    __IO uint32_t INTCLR; //å†™1æ¸…é™¤ä¸­æ–­æ ‡å¿—ï¼Œåªå¯¹è¾¹æ²¿è§¦å‘ä¸­æ–­æœ‰ç”¨
+    __IO uint32_t INTCLR; //Ğ´1Çå³ıÖĞ¶Ï±êÖ¾£¬Ö»¶Ô±ßÑØ´¥·¢ÖĞ¶ÏÓĞÓÃ
 } GPIO_TypeDef;
 
 #define GPIO_DATA_PIN0_Pos 0
@@ -1625,25 +1625,25 @@ typedef struct
 
 typedef struct
 {
-    __IO uint32_t LDVAL; //å®šæ—¶å™¨åŠ è½½å€¼ï¼Œä½¿èƒ½åå®šæ—¶å™¨ä»æ­¤æ•°å€¼å¼€å§‹å‘ä¸‹é€’å‡è®¡æ•°
+    __IO uint32_t LDVAL; //¶¨Ê±Æ÷¼ÓÔØÖµ£¬Ê¹ÄÜºó¶¨Ê±Æ÷´Ó´ËÊıÖµ¿ªÊ¼ÏòÏÂµİ¼õ¼ÆÊı
 
-    __I uint32_t CVAL; //å®šæ—¶å™¨å½“å‰å€¼ï¼ŒLDVAL-CVAL å¯è®¡ç®—å‡ºè®¡æ—¶æ—¶é•¿
+    __I uint32_t CVAL; //¶¨Ê±Æ÷µ±Ç°Öµ£¬LDVAL-CVAL ¿É¼ÆËã³ö¼ÆÊ±Ê±³¤
 
     __IO uint32_t CTRL;
 } TIMR_TypeDef;
 
-#define TIMR_CTRL_EN_Pos 0 //æ­¤ä½èµ‹1å¯¼è‡´TIMRä»LDVALå¼€å§‹å‘ä¸‹é€’å‡è®¡æ•°
+#define TIMR_CTRL_EN_Pos 0 //´ËÎ»¸³1µ¼ÖÂTIMR´ÓLDVAL¿ªÊ¼ÏòÏÂµİ¼õ¼ÆÊı
 #define TIMR_CTRL_EN_Msk (0x01 << TIMR_CTRL_EN_Pos)
-#define TIMR_CTRL_CLKSRC_Pos 1 //æ—¶é’Ÿæºï¼š0 å†…éƒ¨ç³»ç»Ÿæ—¶é’Ÿ	1 å¤–éƒ¨å¼•è„šè„‰å†²è®¡æ•°
+#define TIMR_CTRL_CLKSRC_Pos 1 //Ê±ÖÓÔ´£º0 ÄÚ²¿ÏµÍ³Ê±ÖÓ    1 Íâ²¿Òı½ÅÂö³å¼ÆÊı
 #define TIMR_CTRL_CLKSRC_Msk (0x01 << TIMR_CTRL_CLKSRC_Pos)
-#define TIMR_CTRL_CASCADE_Pos 2 //1 TIMRxçš„è®¡æ•°æ—¶é’Ÿä¸ºTIMRx-1çš„æº¢å‡ºä¿¡å·
+#define TIMR_CTRL_CASCADE_Pos 2 //1 TIMRxµÄ¼ÆÊıÊ±ÖÓÎªTIMRx-1µÄÒç³öĞÅºÅ
 #define TIMR_CTRL_CASCADE_Msk (0x01 << TIMR_CTRL_CASCADE_Pos)
 
 typedef struct
 {
-    __IO uint32_t PCTRL; //Pulse Controlï¼Œè„‰å®½æµ‹é‡æ¨¡å—æ§åˆ¶å¯„å­˜å™¨
+    __IO uint32_t PCTRL; //Pulse Control£¬Âö¿í²âÁ¿Ä£¿é¿ØÖÆ¼Ä´æÆ÷
 
-    __I uint32_t PCVAL; //è„‰å®½æµ‹é‡å®šæ—¶å™¨å½“å‰å€¼
+    __I uint32_t PCVAL; //Âö¿í²âÁ¿¶¨Ê±Æ÷µ±Ç°Öµ
 
     uint32_t RESERVED[2];
 
@@ -1654,11 +1654,11 @@ typedef struct
     __IO uint32_t HALT;
 } TIMRG_TypeDef;
 
-#define TIMRG_PCTRL_EN_Pos 0 //å¼€å§‹æµ‹é‡è„‰å®½ï¼Œè„‰å®½å†…32ä½è®¡æ•°å™¨ä»0å¼€å§‹å‘ä¸Šè®¡æ•°
+#define TIMRG_PCTRL_EN_Pos 0 //¿ªÊ¼²âÁ¿Âö¿í£¬Âö¿íÄÚ32Î»¼ÆÊıÆ÷´Ó0¿ªÊ¼ÏòÉÏ¼ÆÊı
 #define TIMRG_PCTRL_EN_Msk (0x01 << TIMRG_PCTRL_EN_Pos)
-#define TIMRG_PCTRL_HIGH_Pos 1 //0 æµ‹é‡ä½ç”µå¹³é•¿åº¦	1 æµ‹é‡é«˜ç”µå¹³é•¿åº¦
+#define TIMRG_PCTRL_HIGH_Pos 1 //0 ²âÁ¿µÍµçÆ½³¤¶È    1 ²âÁ¿¸ßµçÆ½³¤¶È
 #define TIMRG_PCTRL_HIGH_Msk (0x01 << TIMRG_PCTRL_HIGH_Pos)
-#define TIMRG_PCTRL_CLKSRC_Pos 2 //æ—¶é’Ÿæºï¼š0 å†…éƒ¨ç³»ç»Ÿæ—¶é’Ÿ	1 è„‰å®½æµ‹é‡æ¨¡å—å˜æˆä¸€ä¸ªè®¡æ•°å™¨ï¼Œä¸å†å…·æœ‰è„‰å®½æµ‹é‡åŠŸèƒ½
+#define TIMRG_PCTRL_CLKSRC_Pos 2 //Ê±ÖÓÔ´£º0 ÄÚ²¿ÏµÍ³Ê±ÖÓ    1 Âö¿í²âÁ¿Ä£¿é±ä³ÉÒ»¸ö¼ÆÊıÆ÷£¬²»ÔÙ¾ßÓĞÂö¿í²âÁ¿¹¦ÄÜ
 #define TIMRG_PCTRL_CLKSRC_Msk (0x01 << TIMRG_PCTRL_CLKSRC_Pos)
 
 #define TIMRG_IE_TIMR0_Pos 0
@@ -1676,7 +1676,7 @@ typedef struct
 #define TIMRG_IE_PULSE_Pos 16
 #define TIMRG_IE_PULSE_Msk (0x01 << TIMRG_IE_PULSE_Pos)
 
-#define TIMRG_IF_TIMR0_Pos 0 //å†™1æ¸…é›¶
+#define TIMRG_IF_TIMR0_Pos 0 //Ğ´1ÇåÁã
 #define TIMRG_IF_TIMR0_Msk (0x01 << TIMRG_IF_TIMR0_Pos)
 #define TIMRG_IF_TIMR1_Pos 1
 #define TIMRG_IF_TIMR1_Msk (0x01 << TIMRG_IF_TIMR1_Pos)
@@ -1691,7 +1691,7 @@ typedef struct
 #define TIMRG_IF_PULSE_Pos 16
 #define TIMRG_IF_PULSE_Msk (0x01 << TIMRG_IF_PULSE_Pos)
 
-#define TIMRG_HALT_TIMR0_Pos 0 //1 æš‚åœè®¡æ•°
+#define TIMRG_HALT_TIMR0_Pos 0 //1 ÔİÍ£¼ÆÊı
 #define TIMRG_HALT_TIMR0_Msk (0x01 << TIMRG_HALT_TIMR0_Pos)
 #define TIMRG_HALT_TIMR1_Pos 1
 #define TIMRG_HALT_TIMR1_Msk (0x01 << TIMRG_HALT_TIMR1_Pos)
@@ -1725,114 +1725,114 @@ typedef struct
 
 #define UART_DATA_DATA_Pos 0
 #define UART_DATA_DATA_Msk (0x1FF << UART_DATA_DATA_Pos)
-#define UART_DATA_VALID_Pos 9 //å½“DATAå­—æ®µæœ‰æœ‰æ•ˆçš„æ¥æ”¶æ•°æ®æ—¶ï¼Œè¯¥ä½ç¡¬ä»¶ç½®1ï¼Œè¯»å–æ•°æ®åè‡ªåŠ¨æ¸…é›¶
+#define UART_DATA_VALID_Pos 9 //µ±DATA×Ö¶ÎÓĞÓĞĞ§µÄ½ÓÊÕÊı¾İÊ±£¬¸ÃÎ»Ó²¼şÖÃ1£¬¶ÁÈ¡Êı¾İºó×Ô¶¯ÇåÁã
 #define UART_DATA_VALID_Msk (0x01 << UART_DATA_VALID_Pos)
 #define UART_DATA_PAERR_Pos 10 //Parity Error
 #define UART_DATA_PAERR_Msk (0x01 << UART_DATA_PAERR_Pos)
 
-#define UART_CTRL_TXIDLE_Pos 0 //TX IDLE: 0 æ­£åœ¨å‘é€æ•°æ®	1 ç©ºé—²çŠ¶æ€ï¼Œæ²¡æœ‰æ•°æ®å‘é€
+#define UART_CTRL_TXIDLE_Pos 0 //TX IDLE: 0 ÕıÔÚ·¢ËÍÊı¾İ    1 ¿ÕÏĞ×´Ì¬£¬Ã»ÓĞÊı¾İ·¢ËÍ
 #define UART_CTRL_TXIDLE_Msk (0x01 << UART_CTRL_TXIDLE_Pos)
 #define UART_CTRL_TXFF_Pos 1 //TX FIFO Full
 #define UART_CTRL_TXFF_Msk (0x01 << UART_CTRL_TXFF_Pos)
-#define UART_CTRL_TXIE_Pos 2 //TX ä¸­æ–­ä½¿èƒ½: 1 TX FF ä¸­æ•°æ®å°‘äºè®¾å®šä¸ªæ•°æ—¶äº§ç”Ÿä¸­æ–­
+#define UART_CTRL_TXIE_Pos 2 //TX ÖĞ¶ÏÊ¹ÄÜ: 1 TX FF ÖĞÊı¾İÉÙÓÚÉè¶¨¸öÊıÊ±²úÉúÖĞ¶Ï
 #define UART_CTRL_TXIE_Msk (0x01 << UART_CTRL_TXIE_Pos)
 #define UART_CTRL_RXNE_Pos 3 //RX FIFO Not Empty
 #define UART_CTRL_RXNE_Msk (0x01 << UART_CTRL_RXNE_Pos)
-#define UART_CTRL_RXIE_Pos 4 //RX ä¸­æ–­ä½¿èƒ½: 1 RX FF ä¸­æ•°æ®è¾¾åˆ°è®¾å®šä¸ªæ•°æ—¶äº§ç”Ÿä¸­æ–­
+#define UART_CTRL_RXIE_Pos 4 //RX ÖĞ¶ÏÊ¹ÄÜ: 1 RX FF ÖĞÊı¾İ´ïµ½Éè¶¨¸öÊıÊ±²úÉúÖĞ¶Ï
 #define UART_CTRL_RXIE_Msk (0x01 << UART_CTRL_RXIE_Pos)
-#define UART_CTRL_RXOV_Pos 5 //RX FIFO Overflowï¼Œå†™1æ¸…é›¶
+#define UART_CTRL_RXOV_Pos 5 //RX FIFO Overflow£¬Ğ´1ÇåÁã
 #define UART_CTRL_RXOV_Msk (0x01 << UART_CTRL_RXOV_Pos)
-#define UART_CTRL_TXDOIE_Pos 6 //TX Done ä¸­æ–­ä½¿èƒ½ï¼Œå‘é€FIFOç©ºä¸”å‘é€å‘é€ç§»ä½å¯„å­˜å™¨å·²å°†æœ€åä¸€ä½å‘é€å‡ºå»
+#define UART_CTRL_TXDOIE_Pos 6 //TX Done ÖĞ¶ÏÊ¹ÄÜ£¬·¢ËÍFIFO¿ÕÇÒ·¢ËÍ·¢ËÍÒÆÎ»¼Ä´æÆ÷ÒÑ½«×îºóÒ»Î»·¢ËÍ³öÈ¥
 #define UART_CTRL_TXDOIE_Msk (0x01 << UART_CTRL_TXDOIE_Pos)
 #define UART_CTRL_EN_Pos 9
 #define UART_CTRL_EN_Msk (0x01 << UART_CTRL_EN_Pos)
 #define UART_CTRL_LOOP_Pos 10
 #define UART_CTRL_LOOP_Msk (0x01 << UART_CTRL_LOOP_Pos)
-#define UART_CTRL_BAUDEN_Pos 13 //å¿…é¡»å†™1
+#define UART_CTRL_BAUDEN_Pos 13 //±ØĞëĞ´1
 #define UART_CTRL_BAUDEN_Msk (0x01 << UART_CTRL_BAUDEN_Pos)
-#define UART_CTRL_TOIE_Pos 14 //TimeOut ä¸­æ–­ä½¿èƒ½ï¼Œæ¥æ”¶åˆ°ä¸Šä¸ªå­—ç¬¦åï¼Œè¶…è¿‡ TOTIME/BAUDRAUD ç§’æ²¡æœ‰æ¥æ”¶åˆ°æ–°çš„æ•°æ®
+#define UART_CTRL_TOIE_Pos 14 //TimeOut ÖĞ¶ÏÊ¹ÄÜ£¬½ÓÊÕµ½ÉÏ¸ö×Ö·ûºó£¬³¬¹ı TOTIME/BAUDRAUD ÃëÃ»ÓĞ½ÓÊÕµ½ĞÂµÄÊı¾İ
 #define UART_CTRL_TOIE_Msk (0x01 << UART_CTRL_TOIE_Pos)
-#define UART_CTRL_BRKDET_Pos 15 //LIN Break Detectï¼Œæ£€æµ‹åˆ°LIN Breakï¼Œå³RXçº¿ä¸Šæ£€æµ‹åˆ°è¿ç»­11ä½ä½ç”µå¹³
+#define UART_CTRL_BRKDET_Pos 15 //LIN Break Detect£¬¼ì²âµ½LIN Break£¬¼´RXÏßÉÏ¼ì²âµ½Á¬Ğø11Î»µÍµçÆ½
 #define UART_CTRL_BRKDET_Msk (0x01 << UART_CTRL_BRKDET_Pos)
-#define UART_CTRL_BRKIE_Pos 16 //LIN Break Detect ä¸­æ–­ä½¿èƒ½
+#define UART_CTRL_BRKIE_Pos 16 //LIN Break Detect ÖĞ¶ÏÊ¹ÄÜ
 #define UART_CTRL_BRKIE_Msk (0x01 << UART_CTRL_BRKIE_Pos)
-#define UART_CTRL_GENBRK_Pos 17 //Generate LIN Breakï¼Œå‘é€LIN Break
+#define UART_CTRL_GENBRK_Pos 17 //Generate LIN Break£¬·¢ËÍLIN Break
 #define UART_CTRL_GENBRK_Msk (0x01 << UART_CTRL_GENBRK_Pos)
-#define UART_CTRL_DATA9b_Pos 18 //1 9ä½æ•°æ®ä½    0 8ä½æ•°æ®ä½
+#define UART_CTRL_DATA9b_Pos 18 //1 9Î»Êı¾İÎ»    0 8Î»Êı¾İÎ»
 #define UART_CTRL_DATA9b_Msk (0x01 << UART_CTRL_DATA9b_Pos)
-#define UART_CTRL_PARITY_Pos 19 //000 æ— æ ¡éªŒ    001 å¥‡æ ¡éªŒ   011 å¶æ ¡éªŒ   101 å›ºå®šä¸º1    111 å›ºå®šä¸º0
+#define UART_CTRL_PARITY_Pos 19 //000 ÎŞĞ£Ñé    001 ÆæĞ£Ñé   011 Å¼Ğ£Ñé   101 ¹Ì¶¨Îª1    111 ¹Ì¶¨Îª0
 #define UART_CTRL_PARITY_Msk (0x07 << UART_CTRL_PARITY_Pos)
-#define UART_CTRL_STOP2b_Pos 22 //1 2ä½åœæ­¢ä½    0 1ä½åœæ­¢ä½
+#define UART_CTRL_STOP2b_Pos 22 //1 2Î»Í£Ö¹Î»    0 1Î»Í£Ö¹Î»
 #define UART_CTRL_STOP2b_Msk (0x03 << UART_CTRL_STOP2b_Pos)
-#define UART_CTRL_TOTIME_Pos 24 //TimeOut æ—¶é•¿ = TOTIME/(BAUDRAUD/10) ç§’
+#define UART_CTRL_TOTIME_Pos 24 //TimeOut Ê±³¤ = TOTIME/(BAUDRAUD/10) Ãë
 #define UART_CTRL_TOTIME_Msk (0xFFu << UART_CTRL_TOTIME_Pos)
 
-#define UART_BAUD_BAUD_Pos 0 //ä¸²å£æ³¢ç‰¹ç‡ = SYS_Freq/16/BAUD - 1
+#define UART_BAUD_BAUD_Pos 0 //´®¿Ú²¨ÌØÂÊ = SYS_Freq/16/BAUD - 1
 #define UART_BAUD_BAUD_Msk (0x3FFF << UART_BAUD_BAUD_Pos)
-#define UART_BAUD_TXD_Pos 14 //é€šè¿‡æ­¤ä½å¯ç›´æ¥è¯»å–ä¸²å£TXDå¼•è„šä¸Šçš„ç”µå¹³
+#define UART_BAUD_TXD_Pos 14 //Í¨¹ı´ËÎ»¿ÉÖ±½Ó¶ÁÈ¡´®¿ÚTXDÒı½ÅÉÏµÄµçÆ½
 #define UART_BAUD_TXD_Msk (0x01 << UART_BAUD_TXD_Pos)
-#define UART_BAUD_RXD_Pos 15 //é€šè¿‡æ­¤ä½å¯ç›´æ¥è¯»å–ä¸²å£RXDå¼•è„šä¸Šçš„ç”µå¹³
+#define UART_BAUD_RXD_Pos 15 //Í¨¹ı´ËÎ»¿ÉÖ±½Ó¶ÁÈ¡´®¿ÚRXDÒı½ÅÉÏµÄµçÆ½
 #define UART_BAUD_RXD_Msk (0x01 << UART_BAUD_RXD_Pos)
-#define UART_BAUD_RXTOIF_Pos 16 //æ¥æ”¶&è¶…æ—¶çš„ä¸­æ–­æ ‡å¿— = RXIF | TOIF
+#define UART_BAUD_RXTOIF_Pos 16 //½ÓÊÕ&³¬Ê±µÄÖĞ¶Ï±êÖ¾ = RXIF | TOIF
 #define UART_BAUD_RXTOIF_Msk (0x01 << UART_BAUD_RXTOIF_Pos)
-#define UART_BAUD_TXIF_Pos 17 //å‘é€ä¸­æ–­æ ‡å¿— = TXTHRF & TXIE
+#define UART_BAUD_TXIF_Pos 17 //·¢ËÍÖĞ¶Ï±êÖ¾ = TXTHRF & TXIE
 #define UART_BAUD_TXIF_Msk (0x01 << UART_BAUD_TXIF_Pos)
-#define UART_BAUD_BRKIF_Pos 18 //LIN Break Detect ä¸­æ–­æ ‡å¿—ï¼Œæ£€æµ‹åˆ°LIN Breakæ—¶è‹¥BRKIE=1ï¼Œæ­¤ä½ç”±ç¡¬ä»¶ç½®ä½
+#define UART_BAUD_BRKIF_Pos 18 //LIN Break Detect ÖĞ¶Ï±êÖ¾£¬¼ì²âµ½LIN BreakÊ±ÈôBRKIE=1£¬´ËÎ»ÓÉÓ²¼şÖÃÎ»
 #define UART_BAUD_BRKIF_Msk (0x01 << UART_BAUD_BRKIF_Pos)
-#define UART_BAUD_RXTHRF_Pos 19 //RX FIFO Threshold Flagï¼ŒRX FIFOä¸­æ•°æ®è¾¾åˆ°è®¾å®šä¸ªæ•°ï¼ˆRXLVL >= RXTHRï¼‰æ—¶ç¡¬ä»¶ç½®1
+#define UART_BAUD_RXTHRF_Pos 19 //RX FIFO Threshold Flag£¬RX FIFOÖĞÊı¾İ´ïµ½Éè¶¨¸öÊı£¨RXLVL >= RXTHR£©Ê±Ó²¼şÖÃ1
 #define UART_BAUD_RXTHRF_Msk (0x01 << UART_BAUD_RXTHRF_Pos)
-#define UART_BAUD_TXTHRF_Pos 20 //TX FIFO Threshold Flagï¼ŒTX FIFOä¸­æ•°æ®å°‘äºè®¾å®šä¸ªæ•°ï¼ˆTXLVL <= TXTHRï¼‰æ—¶ç¡¬ä»¶ç½®1
+#define UART_BAUD_TXTHRF_Pos 20 //TX FIFO Threshold Flag£¬TX FIFOÖĞÊı¾İÉÙÓÚÉè¶¨¸öÊı£¨TXLVL <= TXTHR£©Ê±Ó²¼şÖÃ1
 #define UART_BAUD_TXTHRF_Msk (0x01 << UART_BAUD_TXTHRF_Pos)
-#define UART_BAUD_TOIF_Pos 21 //TimeOut ä¸­æ–­æ ‡å¿—ï¼Œè¶…è¿‡ TOTIME/BAUDRAUD ç§’æ²¡æœ‰æ¥æ”¶åˆ°æ–°çš„æ•°æ®æ—¶è‹¥TOIE=1ï¼Œæ­¤ä½ç”±ç¡¬ä»¶ç½®ä½
+#define UART_BAUD_TOIF_Pos 21 //TimeOut ÖĞ¶Ï±êÖ¾£¬³¬¹ı TOTIME/BAUDRAUD ÃëÃ»ÓĞ½ÓÊÕµ½ĞÂµÄÊı¾İÊ±ÈôTOIE=1£¬´ËÎ»ÓÉÓ²¼şÖÃÎ»
 #define UART_BAUD_TOIF_Msk (0x01 << UART_BAUD_TOIF_Pos)
-#define UART_BAUD_RXIF_Pos 22 //æ¥æ”¶ä¸­æ–­æ ‡å¿— = RXTHRF & RXIE
+#define UART_BAUD_RXIF_Pos 22 //½ÓÊÕÖĞ¶Ï±êÖ¾ = RXTHRF & RXIE
 #define UART_BAUD_RXIF_Msk (0x01 << UART_BAUD_RXIF_Pos)
-#define UART_BAUD_ABREN_Pos 23 //Auto Baudrate Enableï¼Œå†™1å¯åŠ¨è‡ªåŠ¨æ³¢ç‰¹ç‡æ ¡å‡†ï¼Œå®Œæˆåè‡ªåŠ¨æ¸…é›¶
+#define UART_BAUD_ABREN_Pos 23 //Auto Baudrate Enable£¬Ğ´1Æô¶¯×Ô¶¯²¨ÌØÂÊĞ£×¼£¬Íê³Éºó×Ô¶¯ÇåÁã
 #define UART_BAUD_ABREN_Msk (0x01 << UART_BAUD_ABREN_Pos)
-#define UART_BAUD_ABRBIT_Pos 24 //Auto Baudrate Bitï¼Œç”¨äºè®¡ç®—æ³¢ç‰¹ç‡çš„æ£€æµ‹ä½é•¿ï¼Œ0 1ä½ï¼Œé€šè¿‡æµ‹èµ·å§‹ä½           è„‰å®½è®¡ç®—æ³¢ç‰¹ç‡ï¼Œè¦æ±‚å‘é€ç«¯å‘é€0xFF \
-                                //                                             1 2ä½ï¼Œé€šè¿‡æµ‹èµ·å§‹ä½åŠ 1ä½æ•°æ®ä½è„‰å®½è®¡ç®—æ³¢ç‰¹ç‡ï¼Œè¦æ±‚å‘é€ç«¯å‘é€0xFE          \
-                                //                                             1 4ä½ï¼Œé€šè¿‡æµ‹èµ·å§‹ä½åŠ 3ä½æ•°æ®ä½è„‰å®½è®¡ç®—æ³¢ç‰¹ç‡ï¼Œè¦æ±‚å‘é€ç«¯å‘é€0xF8          \
-                                //                                             1 8ä½ï¼Œé€šè¿‡æµ‹èµ·å§‹ä½åŠ 7ä½æ•°æ®ä½è„‰å®½è®¡ç®—æ³¢ç‰¹ç‡ï¼Œè¦æ±‚å‘é€ç«¯å‘é€0x80
+#define UART_BAUD_ABRBIT_Pos 24 //Auto Baudrate Bit£¬ÓÃÓÚ¼ÆËã²¨ÌØÂÊµÄ¼ì²âÎ»³¤£¬0 1Î»£¬Í¨¹ı²âÆğÊ¼Î»           Âö¿í¼ÆËã²¨ÌØÂÊ£¬ÒªÇó·¢ËÍ¶Ë·¢ËÍ0xFF \
+                                //                                             1 2Î»£¬Í¨¹ı²âÆğÊ¼Î»¼Ó1Î»Êı¾İÎ»Âö¿í¼ÆËã²¨ÌØÂÊ£¬ÒªÇó·¢ËÍ¶Ë·¢ËÍ0xFE          \
+                                //                                             1 4Î»£¬Í¨¹ı²âÆğÊ¼Î»¼Ó3Î»Êı¾İÎ»Âö¿í¼ÆËã²¨ÌØÂÊ£¬ÒªÇó·¢ËÍ¶Ë·¢ËÍ0xF8          \
+                                //                                             1 8Î»£¬Í¨¹ı²âÆğÊ¼Î»¼Ó7Î»Êı¾İÎ»Âö¿í¼ÆËã²¨ÌØÂÊ£¬ÒªÇó·¢ËÍ¶Ë·¢ËÍ0x80
 #define UART_BAUD_ABRBIT_Msk (0x03 << UART_BAUD_ABRBIT_Pos)
-#define UART_BAUD_ABRERR_Pos 26 //Auto Baudrate Errorï¼Œ0 è‡ªåŠ¨æ³¢ç‰¹ç‡æ ¡å‡†æˆåŠŸ     1 è‡ªåŠ¨æ³¢ç‰¹ç‡æ ¡å‡†å¤±è´¥
+#define UART_BAUD_ABRERR_Pos 26 //Auto Baudrate Error£¬0 ×Ô¶¯²¨ÌØÂÊĞ£×¼³É¹¦     1 ×Ô¶¯²¨ÌØÂÊĞ£×¼Ê§°Ü
 #define UART_BAUD_ABRERR_Msk (0x01 << UART_BAUD_ABRERR_Pos)
-#define UART_BAUD_TXDOIF_Pos 27 //TX Done ä¸­æ–­æ ‡å¿—ï¼Œå‘é€FIFOç©ºä¸”å‘é€å‘é€ç§»ä½å¯„å­˜å™¨å·²å°†æœ€åä¸€ä½å‘é€å‡ºå»
+#define UART_BAUD_TXDOIF_Pos 27 //TX Done ÖĞ¶Ï±êÖ¾£¬·¢ËÍFIFO¿ÕÇÒ·¢ËÍ·¢ËÍÒÆÎ»¼Ä´æÆ÷ÒÑ½«×îºóÒ»Î»·¢ËÍ³öÈ¥
 #define UART_BAUD_TXDOIF_Msk (0x01 << UART_BAUD_TXDOIF_Pos)
 
-#define UART_FIFO_RXLVL_Pos 0 //RX FIFO Levelï¼ŒRX FIFO ä¸­å­—ç¬¦ä¸ªæ•°
+#define UART_FIFO_RXLVL_Pos 0 //RX FIFO Level£¬RX FIFO ÖĞ×Ö·û¸öÊı
 #define UART_FIFO_RXLVL_Msk (0xFF << UART_FIFO_RXLVL_Pos)
-#define UART_FIFO_TXLVL_Pos 8 //TX FIFO Levelï¼ŒTX FIFO ä¸­å­—ç¬¦ä¸ªæ•°
+#define UART_FIFO_TXLVL_Pos 8 //TX FIFO Level£¬TX FIFO ÖĞ×Ö·û¸öÊı
 #define UART_FIFO_TXLVL_Msk (0xFF << UART_FIFO_TXLVL_Pos)
-#define UART_FIFO_RXTHR_Pos 16 //RX FIFO Thresholdï¼ŒRXä¸­æ–­è§¦å‘é—¨é™ï¼Œä¸­æ–­ä½¿èƒ½æ—¶ RXLVL >= RXTHR è§¦å‘RXä¸­æ–­
+#define UART_FIFO_RXTHR_Pos 16 //RX FIFO Threshold£¬RXÖĞ¶Ï´¥·¢ÃÅÏŞ£¬ÖĞ¶ÏÊ¹ÄÜÊ± RXLVL >= RXTHR ´¥·¢RXÖĞ¶Ï
 #define UART_FIFO_RXTHR_Msk (0xFF << UART_FIFO_RXTHR_Pos)
-#define UART_FIFO_TXTHR_Pos 24 //TX FIFO Thresholdï¼ŒTXä¸­æ–­è§¦å‘é—¨é™ï¼Œä¸­æ–­ä½¿èƒ½æ—¶ TXLVL <= TXTHR è§¦å‘TXä¸­æ–­
+#define UART_FIFO_TXTHR_Pos 24 //TX FIFO Threshold£¬TXÖĞ¶Ï´¥·¢ÃÅÏŞ£¬ÖĞ¶ÏÊ¹ÄÜÊ± TXLVL <= TXTHR ´¥·¢TXÖĞ¶Ï
 #define UART_FIFO_TXTHR_Msk (0xFFu << UART_FIFO_TXTHR_Pos)
 
-#define UART_LINCR_BRKDETIE_Pos 0 //æ£€æµ‹åˆ°LIN Breakä¸­æ–­ä½¿èƒ½
+#define UART_LINCR_BRKDETIE_Pos 0 //¼ì²âµ½LIN BreakÖĞ¶ÏÊ¹ÄÜ
 #define UART_LINCR_BRKDETIE_Msk (0x01 << UART_LINCR_BRKDETIE_Pos)
-#define UART_LINCR_BRKDETIF_Pos 1 //æ£€æµ‹åˆ°LIN Breakä¸­æ–­çŠ¶æ€
+#define UART_LINCR_BRKDETIF_Pos 1 //¼ì²âµ½LIN BreakÖĞ¶Ï×´Ì¬
 #define UART_LINCR_BRKDETIF_Msk (0x01 << UART_LINCR_BRKDETIF_Pos)
-#define UART_LINCR_GENBRKIE_Pos 2 //å‘é€LIN Breakå®Œæˆä¸­æ–­ä½¿èƒ½
+#define UART_LINCR_GENBRKIE_Pos 2 //·¢ËÍLIN BreakÍê³ÉÖĞ¶ÏÊ¹ÄÜ
 #define UART_LINCR_GENBRKIE_Msk (0x01 << UART_LINCR_GENBRKIE_Pos)
-#define UART_LINCR_GENBRKIF_Pos 3 //å‘é€LIN Breakå®Œæˆä¸­æ–­çŠ¶æ€
+#define UART_LINCR_GENBRKIF_Pos 3 //·¢ËÍLIN BreakÍê³ÉÖĞ¶Ï×´Ì¬
 #define UART_LINCR_GENBRKIF_Msk (0x01 << UART_LINCR_GENBRKIF_Pos)
-#define UART_LINCR_GENBRK_Pos 4 //å‘é€LIN Breakï¼Œå‘é€å®Œæˆè‡ªåŠ¨æ¸…é›¶
+#define UART_LINCR_GENBRK_Pos 4 //·¢ËÍLIN Break£¬·¢ËÍÍê³É×Ô¶¯ÇåÁã
 #define UART_LINCR_GENBRK_Msk (0x01 << UART_LINCR_GENBRK_Pos)
 
-#define UART_CTSCR_EN_Pos 0 //CTSæµæ§ä½¿èƒ½
+#define UART_CTSCR_EN_Pos 0 //CTSÁ÷¿ØÊ¹ÄÜ
 #define UART_CTSCR_EN_Msk (0x01 << UART_CTSCR_EN_Pos)
-#define UART_CTSCR_POL_Pos 2 //CTSä¿¡å·ææ€§ï¼Œ0 ä½æœ‰æ•ˆï¼ŒCTSè¾“å…¥ä¸ºä½è¡¨ç¤ºå¯ä»¥å‘é€æ•°æ®
+#define UART_CTSCR_POL_Pos 2 //CTSĞÅºÅ¼«ĞÔ£¬0 µÍÓĞĞ§£¬CTSÊäÈëÎªµÍ±íÊ¾¿ÉÒÔ·¢ËÍÊı¾İ
 #define UART_CTSCR_POL_Msk (0x01 << UART_CTSCR_POL_Pos)
-#define UART_CTSCR_STAT_Pos 7 //CTSä¿¡å·çš„å½“å‰çŠ¶æ€
+#define UART_CTSCR_STAT_Pos 7 //CTSĞÅºÅµÄµ±Ç°×´Ì¬
 #define UART_CTSCR_STAT_Msk (0x01 << UART_CTSCR_STAT_Pos)
 
-#define UART_RTSCR_EN_Pos 1 //RTSæµæ§ä½¿èƒ½
+#define UART_RTSCR_EN_Pos 1 //RTSÁ÷¿ØÊ¹ÄÜ
 #define UART_RTSCR_EN_Msk (0x01 << UART_RTSCR_EN_Pos)
-#define UART_RTSCR_POL_Pos 3 //RTSä¿¡å·ææ€§    0 ä½æœ‰æ•ˆï¼ŒRTSè¾“å…¥ä¸ºä½è¡¨ç¤ºå¯ä»¥æ¥æ”¶æ•°æ®
+#define UART_RTSCR_POL_Pos 3 //RTSĞÅºÅ¼«ĞÔ    0 µÍÓĞĞ§£¬RTSÊäÈëÎªµÍ±íÊ¾¿ÉÒÔ½ÓÊÕÊı¾İ
 #define UART_RTSCR_POL_Msk (0x01 << UART_RTSCR_POL_Pos)
-#define UART_RTSCR_THR_Pos 4 //RTSæµæ§çš„è§¦å‘é˜ˆå€¼    0 1å­—èŠ‚    1 2å­—èŠ‚    2 4å­—èŠ‚    3 6å­—èŠ‚
+#define UART_RTSCR_THR_Pos 4 //RTSÁ÷¿ØµÄ´¥·¢ãĞÖµ    0 1×Ö½Ú    1 2×Ö½Ú    2 4×Ö½Ú    3 6×Ö½Ú
 #define UART_RTSCR_THR_Msk (0x07 << UART_RTSCR_THR_Pos)
-#define UART_RTSCR_STAT_Pos 8 //RTSä¿¡å·çš„å½“å‰çŠ¶æ€
+#define UART_RTSCR_STAT_Pos 8 //RTSĞÅºÅµÄµ±Ç°×´Ì¬
 #define UART_RTSCR_STAT_Msk (0x01 << UART_RTSCR_STAT_Pos)
 
 typedef struct
@@ -1848,46 +1848,46 @@ typedef struct
     __IO uint32_t IF;
 } SPI_TypeDef;
 
-#define SPI_CTRL_CLKDIV_Pos 0 //Clock Divider, SPIå·¥ä½œæ—¶é’Ÿ = SYS_Freq/pow(2, CLKDIV+2)
+#define SPI_CTRL_CLKDIV_Pos 0 //Clock Divider, SPI¹¤×÷Ê±ÖÓ = SYS_Freq/pow(2, CLKDIV+2)
 #define SPI_CTRL_CLKDIV_Msk (0x07 << SPI_CTRL_CLKDIV_Pos)
 #define SPI_CTRL_EN_Pos 3
 #define SPI_CTRL_EN_Msk (0x01 << SPI_CTRL_EN_Pos)
-#define SPI_CTRL_SIZE_Pos 4 //Data Size Select, å–å€¼3--15ï¼Œè¡¨ç¤º4--16ä½
+#define SPI_CTRL_SIZE_Pos 4 //Data Size Select, È¡Öµ3--15£¬±íÊ¾4--16Î»
 #define SPI_CTRL_SIZE_Msk (0x0F << SPI_CTRL_SIZE_Pos)
-#define SPI_CTRL_CPHA_Pos 8 //0 åœ¨SCLKçš„ç¬¬ä¸€ä¸ªè·³å˜æ²¿é‡‡æ ·æ•°æ®	1 åœ¨SCLKçš„ç¬¬äºŒä¸ªè·³å˜æ²¿é‡‡æ ·æ•°æ®
+#define SPI_CTRL_CPHA_Pos 8 //0 ÔÚSCLKµÄµÚÒ»¸öÌø±äÑØ²ÉÑùÊı¾İ    1 ÔÚSCLKµÄµÚ¶ş¸öÌø±äÑØ²ÉÑùÊı¾İ
 #define SPI_CTRL_CPHA_Msk (0x01 << SPI_CTRL_CPHA_Pos)
-#define SPI_CTRL_CPOL_Pos 9 //0 ç©ºé—²çŠ¶æ€ä¸‹SCLKä¸ºä½ç”µå¹³		  1 ç©ºé—²çŠ¶æ€ä¸‹SCLKä¸ºé«˜ç”µå¹³
+#define SPI_CTRL_CPOL_Pos 9 //0 ¿ÕÏĞ×´Ì¬ÏÂSCLKÎªµÍµçÆ½          1 ¿ÕÏĞ×´Ì¬ÏÂSCLKÎª¸ßµçÆ½
 #define SPI_CTRL_CPOL_Msk (0x01 << SPI_CTRL_CPOL_Pos)
-#define SPI_CTRL_FFS_Pos 10 //Frame Format Select, 0 SPI	1 TI SSI	2 SPI	3 SPI
+#define SPI_CTRL_FFS_Pos 10 //Frame Format Select, 0 SPI    1 TI SSI    2 SPI    3 SPI
 #define SPI_CTRL_FFS_Msk (0x03 << SPI_CTRL_FFS_Pos)
-#define SPI_CTRL_MSTR_Pos 12 //Master, 1 ä¸»æ¨¡å¼	0 ä»æ¨¡å¼
+#define SPI_CTRL_MSTR_Pos 12 //Master, 1 Ö÷Ä£Ê½    0 ´ÓÄ£Ê½
 #define SPI_CTRL_MSTR_Msk (0x01 << SPI_CTRL_MSTR_Pos)
-#define SPI_CTRL_FAST_Pos 13 //1 SPIå·¥ä½œæ—¶é’Ÿ = SYS_Freq/2    0 SPIå·¥ä½œæ—¶é’Ÿç”±SPI->CTRL.CLKDIVè®¾ç½®
+#define SPI_CTRL_FAST_Pos 13 //1 SPI¹¤×÷Ê±ÖÓ = SYS_Freq/2    0 SPI¹¤×÷Ê±ÖÓÓÉSPI->CTRL.CLKDIVÉèÖÃ
 #define SPI_CTRL_FAST_Msk (0x01 << SPI_CTRL_FAST_Pos)
-#define SPI_CTRL_FILTE_Pos 16 //1 å¯¹SPIè¾“å…¥ä¿¡å·è¿›è¡Œå»æŠ–æ“ä½œ    0 å¯¹SPIè¾“å…¥ä¿¡å·ä¸è¿›è¡Œå»æŠ–æ“ä½œ
+#define SPI_CTRL_FILTE_Pos 16 //1 ¶ÔSPIÊäÈëĞÅºÅ½øĞĞÈ¥¶¶²Ù×÷    0 ¶ÔSPIÊäÈëĞÅºÅ²»½øĞĞÈ¥¶¶²Ù×÷
 #define SPI_CTRL_FILTE_Msk (0x01 << SPI_CTRL_FILTE_Pos)
-#define SPI_CTRL_SSN_H_Pos 17 //0 ä¼ è¾“è¿‡ç¨‹ä¸­SSNå§‹ç»ˆä¸º0    	 1 ä¼ è¾“è¿‡ç¨‹ä¸­æ¯å­—ç¬¦ä¹‹é—´ä¼šå°†SSNæ‹‰é«˜åŠä¸ªSCLKå‘¨æœŸ
+#define SPI_CTRL_SSN_H_Pos 17 //0 ´«Êä¹ı³ÌÖĞSSNÊ¼ÖÕÎª0         1 ´«Êä¹ı³ÌÖĞÃ¿×Ö·ûÖ®¼ä»á½«SSNÀ­¸ß°ë¸öSCLKÖÜÆÚ
 #define SPI_CTRL_SSN_H_Msk (0x01 << SPI_CTRL_SSN_H_Pos)
 #define SPI_CTRL_TFCLR_Pos 24 //TX FIFO Clear
 #define SPI_CTRL_TFCLR_Msk (0x01 << SPI_CTRL_TFCLR_Pos)
 #define SPI_CTRL_RFCLR_Pos 25 //RX FIFO Clear
 #define SPI_CTRL_RFCLR_Msk (0x01 << SPI_CTRL_RFCLR_Pos)
 
-#define SPI_STAT_WTC_Pos 0 //Word Transmit Completeï¼Œæ¯ä¼ è¾“å®Œæˆä¸€ä¸ªæ•°æ®å­—ç”±ç¡¬ä»¶ç½®1ï¼Œè½¯ä»¶å†™1æ¸…é›¶
+#define SPI_STAT_WTC_Pos 0 //Word Transmit Complete£¬Ã¿´«ÊäÍê³ÉÒ»¸öÊı¾İ×ÖÓÉÓ²¼şÖÃ1£¬Èí¼şĞ´1ÇåÁã
 #define SPI_STAT_WTC_Msk (0x01 << SPI_STAT_WTC_Pos)
-#define SPI_STAT_TFE_Pos 1 //å‘é€FIFO Empty
+#define SPI_STAT_TFE_Pos 1 //·¢ËÍFIFO Empty
 #define SPI_STAT_TFE_Msk (0x01 << SPI_STAT_TFE_Pos)
-#define SPI_STAT_TFNF_Pos 2 //å‘é€FIFO Not Full
+#define SPI_STAT_TFNF_Pos 2 //·¢ËÍFIFO Not Full
 #define SPI_STAT_TFNF_Msk (0x01 << SPI_STAT_TFNF_Pos)
-#define SPI_STAT_RFNE_Pos 3 //æ¥æ”¶FIFO Not Empty
+#define SPI_STAT_RFNE_Pos 3 //½ÓÊÕFIFO Not Empty
 #define SPI_STAT_RFNE_Msk (0x01 << SPI_STAT_RFNE_Pos)
-#define SPI_STAT_RFF_Pos 4 //æ¥æ”¶FIFO Full
+#define SPI_STAT_RFF_Pos 4 //½ÓÊÕFIFO Full
 #define SPI_STAT_RFF_Msk (0x01 << SPI_STAT_RFF_Pos)
-#define SPI_STAT_RFOVF_Pos 5 //æ¥æ”¶FIFO Overflow
+#define SPI_STAT_RFOVF_Pos 5 //½ÓÊÕFIFO Overflow
 #define SPI_STAT_RFOVF_Msk (0x01 << SPI_STAT_RFOVF_Pos)
-#define SPI_STAT_TFLVL_Pos 6 //å‘é€FIFOä¸­æ•°æ®ä¸ªæ•°ï¼Œ 0 TFNF=0æ—¶è¡¨ç¤ºFIFOå†…æœ‰8ä¸ªæ•°æ®ï¼ŒTFNF=1æ—¶è¡¨ç¤ºFIFOå†…æœ‰0ä¸ªæ•°æ®	1--7 FIFOå†…æœ‰1--7ä¸ªæ•°æ®
+#define SPI_STAT_TFLVL_Pos 6 //·¢ËÍFIFOÖĞÊı¾İ¸öÊı£¬ 0 TFNF=0Ê±±íÊ¾FIFOÄÚÓĞ8¸öÊı¾İ£¬TFNF=1Ê±±íÊ¾FIFOÄÚÓĞ0¸öÊı¾İ    1--7 FIFOÄÚÓĞ1--7¸öÊı¾İ
 #define SPI_STAT_TFLVL_Msk (0x07 << SPI_STAT_TFLVL_Pos)
-#define SPI_STAT_RFLVL_Pos 9 //æ¥æ”¶FIFOä¸­æ•°æ®ä¸ªæ•°ï¼Œ 0 RFF=1æ—¶è¡¨ç¤ºFIFOå†…æœ‰8ä¸ªæ•°æ®ï¼Œ RFF=0æ—¶è¡¨ç¤ºFIFOå†…æœ‰0ä¸ªæ•°æ®	1--7 FIFOå†…æœ‰1--7ä¸ªæ•°æ®
+#define SPI_STAT_RFLVL_Pos 9 //½ÓÊÕFIFOÖĞÊı¾İ¸öÊı£¬ 0 RFF=1Ê±±íÊ¾FIFOÄÚÓĞ8¸öÊı¾İ£¬ RFF=0Ê±±íÊ¾FIFOÄÚÓĞ0¸öÊı¾İ    1--7 FIFOÄÚÓĞ1--7¸öÊı¾İ
 #define SPI_STAT_RFLVL_Msk (0x07 << SPI_STAT_RFLVL_Pos)
 #define SPI_STAT_BUSY_Pos 15
 #define SPI_STAT_BUSY_Msk (0x01 << SPI_STAT_BUSY_Pos)
@@ -1907,7 +1907,7 @@ typedef struct
 #define SPI_IE_FTC_Pos 9 //Frame Transmit Complete
 #define SPI_IE_FTC_Msk (0x01 << SPI_IE_FTC_Pos)
 
-#define SPI_IF_RFOVF_Pos 0 //å†™1æ¸…é›¶
+#define SPI_IF_RFOVF_Pos 0 //Ğ´1ÇåÁã
 #define SPI_IF_RFOVF_Msk (0x01 << SPI_IF_RFOVF_Pos)
 #define SPI_IF_RFF_Pos 1
 #define SPI_IF_RFF_Msk (0x01 << SPI_IF_RFF_Pos)
@@ -1917,14 +1917,14 @@ typedef struct
 #define SPI_IF_TFE_Msk (0x01 << SPI_IF_TFE_Pos)
 #define SPI_IF_TFHF_Pos 4
 #define SPI_IF_TFHF_Msk (0x01 << SPI_IF_TFHF_Pos)
-#define SPI_IF_WTC_Pos 8 //Word Transmit Completeï¼Œæ¯ä¼ è¾“å®Œæˆä¸€ä¸ªæ•°æ®å­—ç”±ç¡¬ä»¶ç½®1
+#define SPI_IF_WTC_Pos 8 //Word Transmit Complete£¬Ã¿´«ÊäÍê³ÉÒ»¸öÊı¾İ×ÖÓÉÓ²¼şÖÃ1
 #define SPI_IF_WTC_Msk (0x01 << SPI_IF_WTC_Pos)
-#define SPI_IF_FTC_Pos 9 //Frame Transmit Completeï¼ŒWTCç½®ä½æ—¶è‹¥TX FIFOæ˜¯ç©ºçš„ï¼Œåˆ™FTCç½®ä½
+#define SPI_IF_FTC_Pos 9 //Frame Transmit Complete£¬WTCÖÃÎ»Ê±ÈôTX FIFOÊÇ¿ÕµÄ£¬ÔòFTCÖÃÎ»
 #define SPI_IF_FTC_Msk (0x01 << SPI_IF_FTC_Pos)
 
 typedef struct
 {
-    __IO uint32_t CLKDIV; //[15:0] é¡»å°†å†…éƒ¨å·¥ä½œé¢‘ç‡åˆ†åˆ°SCLé¢‘ç‡çš„5å€ï¼Œå³CLKDIV = SYS_Freq/5/SCL_Freq - 1
+    __IO uint32_t CLKDIV; //[15:0] Ğë½«ÄÚ²¿¹¤×÷ÆµÂÊ·Öµ½SCLÆµÂÊµÄ5±¶£¬¼´CLKDIV = SYS_Freq/5/SCL_Freq - 1
 
     __IO uint32_t CTRL;
 
@@ -1946,61 +1946,61 @@ typedef struct
 #define I2C_CTRL_EN_Pos 7
 #define I2C_CTRL_EN_Msk (0x01 << I2C_CTRL_EN_Pos)
 
-#define I2C_MSTCMD_IF_Pos 0 //1 æœ‰ç­‰å¾…å¤„ç†çš„ä¸­æ–­ï¼Œå†™1æ¸…é›¶	æœ‰ä¸¤ç§æƒ…å†µä¸‹æ­¤ä½ç¡¬ä»¶ç½®ä½ï¼š1ã€ä¸€ä¸ªå­—èŠ‚ä¼ è¾“å®Œæˆ  2ã€æ€»çº¿è®¿é—®æƒä¸¢å¤±
+#define I2C_MSTCMD_IF_Pos 0 //1 ÓĞµÈ´ı´¦ÀíµÄÖĞ¶Ï£¬Ğ´1ÇåÁã    ÓĞÁ½ÖÖÇé¿öÏÂ´ËÎ»Ó²¼şÖÃÎ»£º1¡¢Ò»¸ö×Ö½Ú´«ÊäÍê³É  2¡¢×ÜÏß·ÃÎÊÈ¨¶ªÊ§
 #define I2C_MSTCMD_IF_Msk (0x01 << I2C_MSTCMD_IF_Pos)
 #define I2C_MSTCMD_TIP_Pos 1 //Transmission In Process
 #define I2C_MSTCMD_TIP_Msk (0x01 << I2C_MSTCMD_TIP_Pos)
-#define I2C_MSTCMD_ACK_Pos 3 //æ¥æ”¶æ¨¡å¼ä¸‹ï¼Œ0 å‘å‘é€ç«¯åé¦ˆACK	1 å‘å‘é€ç«¯åé¦ˆNACK
+#define I2C_MSTCMD_ACK_Pos 3 //½ÓÊÕÄ£Ê½ÏÂ£¬0 Ïò·¢ËÍ¶Ë·´À¡ACK    1 Ïò·¢ËÍ¶Ë·´À¡NACK
 #define I2C_MSTCMD_ACK_Msk (0x01 << I2C_MSTCMD_ACK_Pos)
-#define I2C_MSTCMD_WR_Pos 4 //	  å‘Slaveå†™æ•°æ®æ—¶ï¼ŒæŠŠè¿™ä¸€ä½å†™1ï¼Œè‡ªåŠ¨æ¸…é›¶
+#define I2C_MSTCMD_WR_Pos 4 //      ÏòSlaveĞ´Êı¾İÊ±£¬°ÑÕâÒ»Î»Ğ´1£¬×Ô¶¯ÇåÁã
 #define I2C_MSTCMD_WR_Msk (0x01 << I2C_MSTCMD_WR_Pos)
-#define I2C_MSTCMD_RD_Pos 5 //å†™ï¼šä»Slaveè¯»æ•°æ®æ—¶ï¼ŒæŠŠè¿™ä¸€ä½å†™1ï¼Œè‡ªåŠ¨æ¸…é›¶	è¯»ï¼šå½“I2Cæ¨¡å—å¤±å»æ€»çº¿çš„è®¿é—®æƒæ—¶ç¡¬ä»¶ç½®1
+#define I2C_MSTCMD_RD_Pos 5 //Ğ´£º´ÓSlave¶ÁÊı¾İÊ±£¬°ÑÕâÒ»Î»Ğ´1£¬×Ô¶¯ÇåÁã    ¶Á£ºµ±I2CÄ£¿éÊ§È¥×ÜÏßµÄ·ÃÎÊÈ¨Ê±Ó²¼şÖÃ1
 #define I2C_MSTCMD_RD_Msk (0x01 << I2C_MSTCMD_RD_Pos)
-#define I2C_MSTCMD_BUSY_Pos 6 //è¯»ï¼šå½“æ£€æµ‹åˆ°STARTä¹‹åï¼Œè¿™ä¸€ä½å˜1ï¼›å½“æ£€æµ‹åˆ°STOPä¹‹åï¼Œè¿™ä¸€ä½å˜0
+#define I2C_MSTCMD_BUSY_Pos 6 //¶Á£ºµ±¼ì²âµ½STARTÖ®ºó£¬ÕâÒ»Î»±ä1£»µ±¼ì²âµ½STOPÖ®ºó£¬ÕâÒ»Î»±ä0
 #define I2C_MSTCMD_BUSY_Msk (0x01 << I2C_MSTCMD_BUSY_Pos)
-#define I2C_MSTCMD_STO_Pos 6 //å†™ï¼šäº§ç”ŸSTOPï¼Œè‡ªåŠ¨æ¸…é›¶
+#define I2C_MSTCMD_STO_Pos 6 //Ğ´£º²úÉúSTOP£¬×Ô¶¯ÇåÁã
 #define I2C_MSTCMD_STO_Msk (0x01 << I2C_MSTCMD_STO_Pos)
-#define I2C_MSTCMD_RXACK_Pos 7 //è¯»ï¼šæ¥æ”¶åˆ°çš„Slaveçš„ACKä½ï¼Œ0 æ”¶åˆ°ACK	1 æ”¶åˆ°NACK
+#define I2C_MSTCMD_RXACK_Pos 7 //¶Á£º½ÓÊÕµ½µÄSlaveµÄACKÎ»£¬0 ÊÕµ½ACK    1 ÊÕµ½NACK
 #define I2C_MSTCMD_RXACK_Msk (0x01 << I2C_MSTCMD_RXACK_Pos)
-#define I2C_MSTCMD_STA_Pos 7 //å†™ï¼šäº§ç”ŸSTARTï¼Œè‡ªåŠ¨æ¸…é›¶
+#define I2C_MSTCMD_STA_Pos 7 //Ğ´£º²úÉúSTART£¬×Ô¶¯ÇåÁã
 #define I2C_MSTCMD_STA_Msk (0x01 << I2C_MSTCMD_STA_Pos)
 
-#define I2C_SLVCR_IM_RXEND_Pos 0 //æ¥æ”¶å®Œæˆä¸­æ–­ç¦æ­¢
+#define I2C_SLVCR_IM_RXEND_Pos 0 //½ÓÊÕÍê³ÉÖĞ¶Ï½ûÖ¹
 #define I2C_SLVCR_IM_RXEND_Msk (0x01 << I2C_SLVCR_IM_RXEND_Pos)
-#define I2C_SLVCR_IM_TXEND_Pos 1 //å‘é€å®Œæˆä¸­æ–­ç¦æ­¢
+#define I2C_SLVCR_IM_TXEND_Pos 1 //·¢ËÍÍê³ÉÖĞ¶Ï½ûÖ¹
 #define I2C_SLVCR_IM_TXEND_Msk (0x01 << I2C_SLVCR_IM_TXEND_Pos)
-#define I2C_SLVCR_IM_STADET_Pos 2 //æ£€æµ‹åˆ°èµ·å§‹ä¸­æ–­ç¦æ­¢
+#define I2C_SLVCR_IM_STADET_Pos 2 //¼ì²âµ½ÆğÊ¼ÖĞ¶Ï½ûÖ¹
 #define I2C_SLVCR_IM_STADET_Msk (0x01 << I2C_SLVCR_IM_STADET_Pos)
-#define I2C_SLVCR_IM_STODET_Pos 3 //æ£€æµ‹åˆ°åœæ­¢ä¸­æ–­ç¦æ­¢
+#define I2C_SLVCR_IM_STODET_Pos 3 //¼ì²âµ½Í£Ö¹ÖĞ¶Ï½ûÖ¹
 #define I2C_SLVCR_IM_STODET_Msk (0x01 << I2C_SLVCR_IM_STODET_Pos)
-#define I2C_SLVCR_IM_RDREQ_Pos 4 //æ¥æ”¶åˆ°è¯»è¯·æ±‚ä¸­æ–­ç¦æ­¢
+#define I2C_SLVCR_IM_RDREQ_Pos 4 //½ÓÊÕµ½¶ÁÇëÇóÖĞ¶Ï½ûÖ¹
 #define I2C_SLVCR_IM_RDREQ_Msk (0x01 << I2C_SLVCR_IM_RDREQ_Pos)
-#define I2C_SLVCR_IM_WRREQ_Pos 5 //æ¥æ”¶åˆ°å†™è¯·æ±‚ä¸­æ–­ç¦æ­¢
+#define I2C_SLVCR_IM_WRREQ_Pos 5 //½ÓÊÕµ½Ğ´ÇëÇóÖĞ¶Ï½ûÖ¹
 #define I2C_SLVCR_IM_WRREQ_Msk (0x01 << I2C_SLVCR_IM_WRREQ_Pos)
-#define I2C_SLVCR_ADDR7b_Pos 16 //1 7ä½åœ°å€æ¨¡å¼    0 10ä½åœ°å€æ¨¡å¼
+#define I2C_SLVCR_ADDR7b_Pos 16 //1 7Î»µØÖ·Ä£Ê½    0 10Î»µØÖ·Ä£Ê½
 #define I2C_SLVCR_ADDR7b_Msk (0x01 << I2C_SLVCR_ADDR7b_Pos)
-#define I2C_SLVCR_ACK_Pos 17 //1 åº”ç­”ACK    0 åº”ç­”NACK
+#define I2C_SLVCR_ACK_Pos 17 //1 Ó¦´ğACK    0 Ó¦´ğNACK
 #define I2C_SLVCR_ACK_Msk (0x01 << I2C_SLVCR_ACK_Pos)
-#define I2C_SLVCR_SLAVE_Pos 18 //1 ä»æœºæ¨¡å¼   0 ä¸»æœºæ¨¡å¼
+#define I2C_SLVCR_SLAVE_Pos 18 //1 ´Ó»úÄ£Ê½   0 Ö÷»úÄ£Ê½
 #define I2C_SLVCR_SLAVE_Msk (0x01 << I2C_SLVCR_SLAVE_Pos)
-#define I2C_SLVCR_DEBOUNCE_Pos 19 //å»æŠ–åŠ¨ä½¿èƒ½
+#define I2C_SLVCR_DEBOUNCE_Pos 19 //È¥¶¶¶¯Ê¹ÄÜ
 #define I2C_SLVCR_DEBOUNCE_Msk (0x01 << I2C_SLVCR_DEBOUNCE_Pos)
-#define I2C_SLVCR_ADDR_Pos 20 //ä»æœºåœ°å€
+#define I2C_SLVCR_ADDR_Pos 20 //´Ó»úµØÖ·
 #define I2C_SLVCR_ADDR_Msk (0x3FF << I2C_SLVCR_ADDR_Pos)
 
-#define I2C_SLVIF_RXEND_Pos 0 //æ¥æ”¶å®Œæˆä¸­æ–­æ ‡å¿—ï¼Œå†™1æ¸…é›¶
+#define I2C_SLVIF_RXEND_Pos 0 //½ÓÊÕÍê³ÉÖĞ¶Ï±êÖ¾£¬Ğ´1ÇåÁã
 #define I2C_SLVIF_RXEND_Msk (0x01 << I2C_SLVIF_RXEND_Pos)
-#define I2C_SLVIF_TXEND_Pos 1 //å‘é€å®Œæˆä¸­æ–­æ ‡å¿—ï¼Œå†™1æ¸…é›¶
+#define I2C_SLVIF_TXEND_Pos 1 //·¢ËÍÍê³ÉÖĞ¶Ï±êÖ¾£¬Ğ´1ÇåÁã
 #define I2C_SLVIF_TXEND_Msk (0x01 << I2C_SLVIF_TXEND_Pos)
-#define I2C_SLVIF_STADET_Pos 2 //æ£€æµ‹åˆ°èµ·å§‹ä¸­æ–­æ ‡å¿—ï¼Œå†™1æ¸…é›¶
+#define I2C_SLVIF_STADET_Pos 2 //¼ì²âµ½ÆğÊ¼ÖĞ¶Ï±êÖ¾£¬Ğ´1ÇåÁã
 #define I2C_SLVIF_STADET_Msk (0x01 << I2C_SLVIF_STADET_Pos)
-#define I2C_SLVIF_STODET_Pos 3 //æ£€æµ‹åˆ°åœæ­¢ä¸­æ–­æ ‡å¿—ï¼Œå†™1æ¸…é›¶
+#define I2C_SLVIF_STODET_Pos 3 //¼ì²âµ½Í£Ö¹ÖĞ¶Ï±êÖ¾£¬Ğ´1ÇåÁã
 #define I2C_SLVIF_STODET_Msk (0x01 << I2C_SLVIF_STODET_Pos)
-#define I2C_SLVIF_RDREQ_Pos 4 //æ¥æ”¶åˆ°è¯»è¯·æ±‚ä¸­æ–­æ ‡å¿—
+#define I2C_SLVIF_RDREQ_Pos 4 //½ÓÊÕµ½¶ÁÇëÇóÖĞ¶Ï±êÖ¾
 #define I2C_SLVIF_RDREQ_Msk (0x01 << I2C_SLVIF_RDREQ_Pos)
-#define I2C_SLVIF_WRREQ_Pos 5 //æ¥æ”¶åˆ°å†™è¯·æ±‚ä¸­æ–­æ ‡å¿—
+#define I2C_SLVIF_WRREQ_Pos 5 //½ÓÊÕµ½Ğ´ÇëÇóÖĞ¶Ï±êÖ¾
 #define I2C_SLVIF_WRREQ_Msk (0x01 << I2C_SLVIF_WRREQ_Pos)
-#define I2C_SLVIF_ACTIVE_Pos 6 //slave æœ‰æ•ˆ
+#define I2C_SLVIF_ACTIVE_Pos 6 //slave ÓĞĞ§
 #define I2C_SLVIF_ACTIVE_Msk (0x01 << I2C_SLVIF_ACTIVE_Pos)
 
 typedef struct
@@ -2033,7 +2033,7 @@ typedef struct
     __IO uint32_t CALIBEN;
 } ADC_TypeDef;
 
-#define ADC_CTRL_CH0_Pos 0 //é€šé“é€‰ä¸­
+#define ADC_CTRL_CH0_Pos 0 //Í¨µÀÑ¡ÖĞ
 #define ADC_CTRL_CH0_Msk (0x01 << ADC_CTRL_CH0_Pos)
 #define ADC_CTRL_CH1_Pos 1
 #define ADC_CTRL_CH1_Msk (0x01 << ADC_CTRL_CH1_Pos)
@@ -2049,20 +2049,20 @@ typedef struct
 #define ADC_CTRL_CH6_Msk (0x01 << ADC_CTRL_CH6_Pos)
 #define ADC_CTRL_CH7_Pos 7
 #define ADC_CTRL_CH7_Msk (0x01 << ADC_CTRL_CH7_Pos)
-#define ADC_CTRL_AVG_Pos 8 //0 1æ¬¡é‡‡æ ·	  1 2æ¬¡é‡‡æ ·å–å¹³å‡å€¼	  3 4æ¬¡é‡‡æ ·å–å¹³å‡å€¼	  7 8æ¬¡é‡‡æ ·å–å¹³å‡å€¼	  15 16æ¬¡é‡‡æ ·å–å¹³å‡å€¼
+#define ADC_CTRL_AVG_Pos 8 //0 1´Î²ÉÑù      1 2´Î²ÉÑùÈ¡Æ½¾ùÖµ      3 4´Î²ÉÑùÈ¡Æ½¾ùÖµ      7 8´Î²ÉÑùÈ¡Æ½¾ùÖµ      15 16´Î²ÉÑùÈ¡Æ½¾ùÖµ
 #define ADC_CTRL_AVG_Msk (0x0F << ADC_CTRL_AVG_Pos)
 #define ADC_CTRL_EN_Pos 12
 #define ADC_CTRL_EN_Msk (0x01 << ADC_CTRL_EN_Pos)
-#define ADC_CTRL_CONT_Pos 13                          //Continuous conversionï¼Œåªåœ¨è½¯ä»¶å¯åŠ¨æ¨¡å¼ä¸‹æœ‰æ•ˆï¼Œ0 å•æ¬¡è½¬æ¢ï¼Œè½¬æ¢å®ŒæˆåSTARTä½è‡ªåŠ¨æ¸…é™¤åœæ­¢è½¬æ¢
-#define ADC_CTRL_CONT_Msk (0x01 << ADC_CTRL_CONT_Pos) //   1 è¿ç»­è½¬æ¢ï¼Œå¯åŠ¨åä¸€ç›´é‡‡æ ·ã€è½¬æ¢ï¼Œç›´åˆ°è½¯ä»¶æ¸…é™¤STARTä½
-#define ADC_CTRL_TRIG_Pos 14                          //è½¬æ¢è§¦å‘æ–¹å¼ï¼š0 è½¯ä»¶å¯åŠ¨è½¬æ¢	  1 PWMè§¦å‘
+#define ADC_CTRL_CONT_Pos 13                          //Continuous conversion£¬Ö»ÔÚÈí¼şÆô¶¯Ä£Ê½ÏÂÓĞĞ§£¬0 µ¥´Î×ª»»£¬×ª»»Íê³ÉºóSTARTÎ»×Ô¶¯Çå³ıÍ£Ö¹×ª»»
+#define ADC_CTRL_CONT_Msk (0x01 << ADC_CTRL_CONT_Pos) //   1 Á¬Ğø×ª»»£¬Æô¶¯ºóÒ»Ö±²ÉÑù¡¢×ª»»£¬Ö±µ½Èí¼şÇå³ıSTARTÎ»
+#define ADC_CTRL_TRIG_Pos 14                          //×ª»»´¥·¢·½Ê½£º0 Èí¼şÆô¶¯×ª»»      1 PWM´¥·¢
 #define ADC_CTRL_TRIG_Msk (0x01 << ADC_CTRL_TRIG_Pos)
 #define ADC_CTRL_CLKSRC_Pos 15 //0 VCO    1 HRC
 #define ADC_CTRL_CLKSRC_Msk (0x01 << ADC_CTRL_CLKSRC_Pos)
 #define ADC_CTRL_FIFOCLR_Pos 24 //[24] CH0_FIFO_CLR   [25] CH1_FIFO_CLR    ...    [31] CH7_FIFO_CLR
 #define ADC_CTRL_FIFOCLR_Msk (0xFFu << ADC_CTRL_FIFOCLR_Pos)
 
-#define ADC_START_GO_Pos 0 //è½¯ä»¶è§¦å‘æ¨¡å¼ä¸‹ï¼Œå†™1å¯åŠ¨ADCé‡‡æ ·å’Œè½¬æ¢ï¼Œåœ¨å•æ¬¡æ¨¡å¼ä¸‹è½¬æ¢å®Œæˆåç¡¬ä»¶è‡ªåŠ¨æ¸…é›¶ï¼Œåœ¨æ‰«ææ¨¡å¼ä¸‹å¿…é¡»è½¯ä»¶å†™0åœæ­¢ADCè½¬æ¢
+#define ADC_START_GO_Pos 0 //Èí¼ş´¥·¢Ä£Ê½ÏÂ£¬Ğ´1Æô¶¯ADC²ÉÑùºÍ×ª»»£¬ÔÚµ¥´ÎÄ£Ê½ÏÂ×ª»»Íê³ÉºóÓ²¼ş×Ô¶¯ÇåÁã£¬ÔÚÉ¨ÃèÄ£Ê½ÏÂ±ØĞëÈí¼şĞ´0Í£Ö¹ADC×ª»»
 #define ADC_START_GO_Msk (0x01 << ADC_START_GO_Pos)
 #define ADC_START_BUSY_Pos 4
 #define ADC_START_BUSY_Msk (0x01 << ADC_START_BUSY_Pos)
@@ -2132,13 +2132,13 @@ typedef struct
 #define ADC_IE_CH7FULL_Pos 31
 #define ADC_IE_CH7FULL_Msk (0x01u << ADC_IE_CH7FULL_Pos)
 
-#define ADC_IF_CH0EOC_Pos 0 //å†™1æ¸…é›¶
+#define ADC_IF_CH0EOC_Pos 0 //Ğ´1ÇåÁã
 #define ADC_IF_CH0EOC_Msk (0x01 << ADC_IF_CH0EOC_Pos)
-#define ADC_IF_CH0OVF_Pos 1 //å†™1æ¸…é›¶
+#define ADC_IF_CH0OVF_Pos 1 //Ğ´1ÇåÁã
 #define ADC_IF_CH0OVF_Msk (0x01 << ADC_IF_CH0OVF_Pos)
-#define ADC_IF_CH0HFULL_Pos 2 //å†™1æ¸…é›¶
+#define ADC_IF_CH0HFULL_Pos 2 //Ğ´1ÇåÁã
 #define ADC_IF_CH0HFULL_Msk (0x01 << ADC_IF_CH0HFULL_Pos)
-#define ADC_IF_CH0FULL_Pos 3 //å†™1æ¸…é›¶
+#define ADC_IF_CH0FULL_Pos 3 //Ğ´1ÇåÁã
 #define ADC_IF_CH0FULL_Msk (0x01 << ADC_IF_CH0FULL_Pos)
 #define ADC_IF_CH1EOC_Pos 4
 #define ADC_IF_CH1EOC_Msk (0x01 << ADC_IF_CH1EOC_Pos)
@@ -2197,9 +2197,9 @@ typedef struct
 #define ADC_IF_CH7FULL_Pos 31
 #define ADC_IF_CH7FULL_Msk (0x01 << ADC_IF_CH7FULL_Pos)
 
-#define ADC_STAT_EOC_Pos 0 //å†™1æ¸…é›¶
+#define ADC_STAT_EOC_Pos 0 //Ğ´1ÇåÁã
 #define ADC_STAT_EOC_Msk (0x01 << ADC_STAT_EOC_Pos)
-#define ADC_STAT_OVF_Pos 1 //è¯»æ•°æ®å¯„å­˜å™¨æ¸…é™¤
+#define ADC_STAT_OVF_Pos 1 //¶ÁÊı¾İ¼Ä´æÆ÷Çå³ı
 #define ADC_STAT_OVF_Msk (0x01 << ADC_STAT_OVF_Pos)
 #define ADC_STAT_HFULL_Pos 2
 #define ADC_STAT_HFULL_Msk (0x01 << ADC_STAT_HFULL_Pos)
@@ -2208,20 +2208,20 @@ typedef struct
 #define ADC_STAT_EMPTY_Pos 4
 #define ADC_STAT_EMPTY_Msk (0x01 << ADC_STAT_EMPTY_Pos)
 
-#define ADC_CTRL1_RIN_Pos 4 //è¾“å…¥é˜»æŠ—ï¼š0 æ— ç©·å¤§   1 105K   2 90K   3 75K   4 60K   5 45K   6 30K   7 15K
+#define ADC_CTRL1_RIN_Pos 4 //ÊäÈë×è¿¹£º0 ÎŞÇî´ó   1 105K   2 90K   3 75K   4 60K   5 45K   6 30K   7 15K
 #define ADC_CTRL1_RIN_Msk (0x07 << ADC_CTRL1_RIN_Pos)
 
-#define ADC_CTRL2_RESET_Pos 0 //æ•°å­—ç”µè·¯å¤ä½
+#define ADC_CTRL2_RESET_Pos 0 //Êı×ÖµçÂ·¸´Î»
 #define ADC_CTRL2_RESET_Msk (0x01 << ADC_CTRL2_RESET_Pos)
-#define ADC_CTRL2_ADCEVCM_Pos 1 //ADC External VCMï¼ŒADCä¸PGAè¾“å‡ºå…±æ¨¡ç”µå¹³é€‰æ‹©
+#define ADC_CTRL2_ADCEVCM_Pos 1 //ADC External VCM£¬ADCÓëPGAÊä³ö¹²Ä£µçÆ½Ñ¡Ôñ
 #define ADC_CTRL2_ADCEVCM_Msk (0x01 << ADC_CTRL2_ADCEVCM_Pos)
-#define ADC_CTRL2_PGAIVCM_Pos 2 //PGA Internal VCMï¼ŒPGAè¾“å…¥å…±æ¨¡ç”µå¹³é€‰æ‹©
+#define ADC_CTRL2_PGAIVCM_Pos 2 //PGA Internal VCM£¬PGAÊäÈë¹²Ä£µçÆ½Ñ¡Ôñ
 #define ADC_CTRL2_PGAIVCM_Msk (0x01 << ADC_CTRL2_PGAIVCM_Pos)
 #define ADC_CTRL2_PGAGAIN_Pos 3 //0 25.1dB    1 21.6dB    2 11.1dB    3 3.5dB    4 0dB(1.8V)    5 -2.9dB    6 -5.3dB
 #define ADC_CTRL2_PGAGAIN_Msk (0x07 << ADC_CTRL2_PGAGAIN_Pos)
-#define ADC_CTRL2_REFPOUT_Pos 23 //1 ADC å†…éƒ¨ 1.2V REFPç”µå‹è¾“å‡ºåˆ°å¤–éƒ¨REFPå¼•è„šï¼Œç”¨äºæµ‹é‡ï¼Œæˆ–åœ¨éœ€è¦1.2Vå¤–éƒ¨REFPæ—¶èŠ‚çœæˆæœ¬
-#define ADC_CTRL2_REFPOUT_Msk		(0x01 << ADC_CTRL2_REFPOUT_Pos
-#define ADC_CTRL2_CLKDIV_Pos 24 //æ—¶é’Ÿåˆ†é¢‘ï¼Œåªåœ¨æ—¶é’Ÿæºä¸ºHRCæ—¶æœ‰æ•ˆ
+#define ADC_CTRL2_REFPOUT_Pos 23 //1 ADC ÄÚ²¿ 1.2V REFPµçÑ¹Êä³öµ½Íâ²¿REFPÒı½Å£¬ÓÃÓÚ²âÁ¿£¬»òÔÚĞèÒª1.2VÍâ²¿REFPÊ±½ÚÊ¡³É±¾
+#define ADC_CTRL2_REFPOUT_Msk        (0x01 << ADC_CTRL2_REFPOUT_Pos
+#define ADC_CTRL2_CLKDIV_Pos 24 //Ê±ÖÓ·ÖÆµ£¬Ö»ÔÚÊ±ÖÓÔ´ÎªHRCÊ±ÓĞĞ§
 #define ADC_CTRL2_CLKDIV_Msk (0x1F << ADC_CTRL2_CLKDIV_Pos)
 #define ADC_CTRL2_PGAVCM_Pos 29
 #define ADC_CTRL2_PGAVCM_Msk (0x07u << ADC_CTRL2_PGAVCM_Pos)
@@ -2238,17 +2238,17 @@ typedef struct
 
 typedef struct
 {
-    __IO uint32_t MODE; //0 æ™®é€šæ¨¡å¼ï¼ŒAã€Bä¸¤è·¯è¾“å‡ºäº’ç›¸ç‹¬ç«‹
-                        //1 äº’è¡¥æ¨¡å¼ï¼ŒAã€Bä¸¤è·¯è¾“å‡ºéƒ½ç”±PERAã€HIGHAæ§åˆ¶ï¼ŒBè·¯è¾“å‡ºä¸Aè·¯è¾“å‡ºææ€§ç›¸åï¼Œä¸”DZAã€DZBæ§åˆ¶Aã€Bè·¯è¾“å‡ºä¸Šå‡æ²¿æ¨è¿Ÿæ—¶é—´
-                        //2 å•æ¬¡æ¨¡å¼ï¼ŒåŒæ™®é€šæ¨¡å¼ï¼Œä½†ä¸€ä¸ªå‘¨æœŸåè‡ªåŠ¨åœæ­¢
-                        //3 å¯¹ç§°æ¨¡å¼ï¼ŒAã€Bä¸¤è·¯è¾“å‡ºäº’ç›¸ç‹¬ç«‹ï¼Œä»¥ä¸¤ä¸ªè®¡æ•°å‘¨æœŸäº§ç”Ÿä¸€ä¸ªæ³¢å½¢è¾“å‡ºå‘¨æœŸï¼Œåˆ†è¾¨ç‡æå‡ä¸€å€ã€é¢‘ç‡é™ä½ä¸€å€
-                        //4 å¯¹ç§°äº’è¡¥æ¨¡å¼ï¼Œå¯¹ç§°æ¨¡å¼å’Œäº’è¡¥æ¨¡å¼çš„ç»¼åˆ
+    __IO uint32_t MODE; //0 ÆÕÍ¨Ä£Ê½£¬A¡¢BÁ½Â·Êä³ö»¥Ïà¶ÀÁ¢
+                        //1 »¥²¹Ä£Ê½£¬A¡¢BÁ½Â·Êä³ö¶¼ÓÉPERA¡¢HIGHA¿ØÖÆ£¬BÂ·Êä³öÓëAÂ·Êä³ö¼«ĞÔÏà·´£¬ÇÒDZA¡¢DZB¿ØÖÆA¡¢BÂ·Êä³öÉÏÉıÑØÍÆ³ÙÊ±¼ä
+                        //2 µ¥´ÎÄ£Ê½£¬Í¬ÆÕÍ¨Ä£Ê½£¬µ«Ò»¸öÖÜÆÚºó×Ô¶¯Í£Ö¹
+                        //3 ¶Ô³ÆÄ£Ê½£¬A¡¢BÁ½Â·Êä³ö»¥Ïà¶ÀÁ¢£¬ÒÔÁ½¸ö¼ÆÊıÖÜÆÚ²úÉúÒ»¸ö²¨ĞÎÊä³öÖÜÆÚ£¬·Ö±æÂÊÌáÉıÒ»±¶¡¢ÆµÂÊ½µµÍÒ»±¶
+                        //4 ¶Ô³Æ»¥²¹Ä£Ê½£¬¶Ô³ÆÄ£Ê½ºÍ»¥²¹Ä£Ê½µÄ×ÛºÏ
 
-    __IO uint32_t PERA; //[15:0] å‘¨æœŸ
+    __IO uint32_t PERA; //[15:0] ÖÜÆÚ
 
-    __IO uint32_t HIGHA; //[15:0] é«˜ç”µå¹³æŒç»­æ—¶é•¿
+    __IO uint32_t HIGHA; //[15:0] ¸ßµçÆ½³ÖĞøÊ±³¤
 
-    __IO uint32_t DZA; //[9:0] æ­»åŒºï¼Œå³ä¸Šå‡æ²¿æ¨è¿Ÿæ—¶é•¿ï¼Œå¿…é¡»å°äºHIGHA
+    __IO uint32_t DZA; //[9:0] ËÀÇø£¬¼´ÉÏÉıÑØÍÆ³ÙÊ±³¤£¬±ØĞëĞ¡ÓÚHIGHA
 
     __IO uint32_t PERB;
 
@@ -2256,7 +2256,7 @@ typedef struct
 
     __IO uint32_t DZB;
 
-    __IO uint32_t INIOUT; //Init Output levelï¼Œåˆå§‹è¾“å‡ºç”µå¹³
+    __IO uint32_t INIOUT; //Init Output level£¬³õÊ¼Êä³öµçÆ½
 } PWM_TypeDef;
 
 #define PWM_INIOUT_PWMA_Pos 0
@@ -2288,7 +2288,7 @@ typedef struct
 
     uint32_t RESERVED[3];
 
-    __IO uint32_t HALT; //åˆ¹è½¦æ§åˆ¶
+    __IO uint32_t HALT; //É²³µ¿ØÖÆ
 
     __IO uint32_t CHEN;
 
@@ -2316,7 +2316,7 @@ typedef struct
 
 #define PWMG_ADTRG_VALUE_Pos 0
 #define PWMG_ADTRG_VALUE_Msk (0xFFFF << PWMG_ADTRG0A_VALUE_Pos)
-#define PWMG_ADTRG_EVEN_Pos 16 //1 å¶æ•°å‘¨æœŸç”Ÿæ•ˆ    0 å¥‡æ•°å‘¨æœŸç”Ÿæ•ˆ
+#define PWMG_ADTRG_EVEN_Pos 16 //1 Å¼ÊıÖÜÆÚÉúĞ§    0 ÆæÊıÖÜÆÚÉúĞ§
 #define PWMG_ADTRG_EVEN_Msk (0x01 << PWMG_ADTRG0A_EVEN_Pos)
 #define PWMG_ADTRG_EN_Pos 17
 #define PWMG_ADTRG_EN_Msk (0x01 << PWMG_ADTRG0A_EN_Pos)
@@ -2335,13 +2335,13 @@ typedef struct
 #define PWMG_HALT_PWM4_Msk (0x01 << PWMG_HALT_PWM4_Pos)
 #define PWMG_HALT_PWM5_Pos 6
 #define PWMG_HALT_PWM5_Msk (0x01 << PWMG_HALT_PWM5_Pos)
-#define PWMG_HALT_STOPCNT_Pos 7 //1 åˆ¹è½¦æ—¶å°†PWMè®¡æ•°å™¨æ¸…é›¶ï¼Œåœæ­¢è®¡æ•°    0 åˆ¹è½¦æ—¶ï¼ŒPWMè®¡æ•°å™¨ç»§ç»­è®¡æ•°
+#define PWMG_HALT_STOPCNT_Pos 7 //1 É²³µÊ±½«PWM¼ÆÊıÆ÷ÇåÁã£¬Í£Ö¹¼ÆÊı    0 É²³µÊ±£¬PWM¼ÆÊıÆ÷¼ÌĞø¼ÆÊı
 #define PWMG_HALT_STOPCNT_Msk (0x01 << PWMG_HALT_STOPCNT_Pos)
-#define PWMG_HALT_INLVL_Pos 8 //1 åˆ¹è½¦è¾“å…¥é«˜ç”µå¹³æœ‰æ•ˆ
+#define PWMG_HALT_INLVL_Pos 8 //1 É²³µÊäÈë¸ßµçÆ½ÓĞĞ§
 #define PWMG_HALT_INLVL_Msk (0x01 << PWMG_HALT_INLVL_Pos)
-#define PWMG_HALT_OUTLVL_Pos 9 //1 åˆ¹è½¦è¿‡ç¨‹ä¸­è¾“å‡ºé«˜ç”µå¹³
+#define PWMG_HALT_OUTLVL_Pos 9 //1 É²³µ¹ı³ÌÖĞÊä³ö¸ßµçÆ½
 #define PWMG_HALT_OUTLVL_Msk (0x01 << PWMG_HALT_OUTLVL_Pos)
-#define PWMG_HALT_STAT_Pos 10 //1 æ­£åœ¨åˆ¹è½¦
+#define PWMG_HALT_STAT_Pos 10 //1 ÕıÔÚÉ²³µ
 #define PWMG_HALT_STAT_Msk (0x01 << PWMG_HALT_STAT_Pos)
 
 #define PWMG_CHEN_PWM0A_Pos 0
@@ -2577,11 +2577,11 @@ typedef struct
 {
     __IO uint32_t EN; //[0] ENABLE
 
-    __IO uint32_t IE; //åªæœ‰ä¸º1æ—¶ï¼ŒIF[CHx]åœ¨DMAä¼ è¾“ç»“æŸæ—¶æ‰èƒ½å˜ä¸º1ï¼Œå¦åˆ™å°†ä¸€ç›´ä¿æŒåœ¨0
+    __IO uint32_t IE; //Ö»ÓĞÎª1Ê±£¬IF[CHx]ÔÚDMA´«Êä½áÊøÊ±²ÅÄÜ±äÎª1£¬·ñÔò½«Ò»Ö±±£³ÖÔÚ0
 
-    __IO uint32_t IM; //å½“ä¸º1æ—¶ï¼Œå³ä½¿IF[CHx]ä¸º1ï¼Œdma_intä¹Ÿä¸ä¼šå› æ­¤å˜1
+    __IO uint32_t IM; //µ±Îª1Ê±£¬¼´Ê¹IF[CHx]Îª1£¬dma_intÒ²²»»áÒò´Ë±ä1
 
-    __IO uint32_t IF; //å†™1æ¸…é›¶
+    __IO uint32_t IF; //Ğ´1ÇåÁã
 
     uint32_t RESERVED[12];
 
@@ -2593,23 +2593,23 @@ typedef struct
 
         __IO uint32_t SRC;
 
-        __IO uint32_t SRCSGADDR1; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t SRCSGADDR1; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
-        __IO uint32_t SRCSGADDR2; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t SRCSGADDR2; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
-        __IO uint32_t SRCSGADDR3; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t SRCSGADDR3; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
-        __IO uint32_t SRCSGLEN; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t SRCSGLEN; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
         __IO uint32_t DST;
 
-        __IO uint32_t DSTSGADDR1; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t DSTSGADDR1; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
-        __IO uint32_t DSTSGADDR2; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t DSTSGADDR2; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
-        __IO uint32_t DSTSGADDR3; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t DSTSGADDR3; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
-        __IO uint32_t DSTSGLEN; //åªåœ¨Scatter Gatheræ¨¡å¼ä¸‹ä½¿ç”¨
+        __IO uint32_t DSTSGLEN; //Ö»ÔÚScatter GatherÄ£Ê½ÏÂÊ¹ÓÃ
 
         uint32_t RESERVED[4];
     } CH[3];
@@ -2666,16 +2666,16 @@ typedef struct
 #define DMA_IF_CH7_Pos 7
 #define DMA_IF_CH7_Msk (0x01 << DMA_IF_CH7_Pos)
 
-#define DMA_CR_LEN_Pos 0 //æ­¤é€šé“ä¼ è¾“æ€»é•¿åº¦ï¼Œ0å¯¹åº”1å­—èŠ‚ï¼Œæœ€å¤§4096å­—èŠ‚
+#define DMA_CR_LEN_Pos 0 //´ËÍ¨µÀ´«Êä×Ü³¤¶È£¬0¶ÔÓ¦1×Ö½Ú£¬×î´ó4096×Ö½Ú
 #define DMA_CR_LEN_Msk (0xFFF << DMA_CR_LEN_Pos)
 #define DMA_CR_RXEN_Pos 16
 #define DMA_CR_RXEN_Msk (0x01 << DMA_CR_RXEN_Pos)
 #define DMA_CR_TXEN_Pos 17
 #define DMA_CR_TXEN_Msk (0x01 << DMA_CR_TXEN_Pos)
-#define DMA_CR_AUTORE_Pos 18 //Auto Restart, é€šé“åœ¨ä¼ è¾“å®Œæˆåï¼Œæ˜¯å¦è‡ªåŠ¨é‡æ–°å¯åŠ¨
+#define DMA_CR_AUTORE_Pos 18 //Auto Restart, Í¨µÀÔÚ´«ÊäÍê³Éºó£¬ÊÇ·ñ×Ô¶¯ÖØĞÂÆô¶¯
 #define DMA_CR_AUTORE_Msk (0x01 << DMA_CR_AUTORE_Pos)
 
-#define DMA_AM_SRCAM_Pos 0 //Address Mode	0 åœ°å€å›ºå®š    1 åœ°å€é€’å¢    2 scatter gatheræ¨¡å¼
+#define DMA_AM_SRCAM_Pos 0 //Address Mode    0 µØÖ·¹Ì¶¨    1 µØÖ·µİÔö    2 scatter gatherÄ£Ê½
 #define DMA_AM_SRCAM_Msk (0x03 << DMA_AM_SRCAM_Pos)
 #define DMA_AM_DSTAM_Pos 8
 #define DMA_AM_DSTAM_Msk (0x03 << DMA_AM_DSTAM_Pos)
@@ -2702,27 +2702,27 @@ typedef struct
 
     uint32_t RESERVED2[3];
 
-    __I uint32_t ALC; //Arbitration Lost Capture, ä»²è£ä¸¢å¤±æ•æ‰
+    __I uint32_t ALC; //Arbitration Lost Capture, ÖÙ²Ã¶ªÊ§²¶×½
 
-    __I uint32_t ECC; //Error code capture, é”™è¯¯ä»£ç æ•æ‰
+    __I uint32_t ECC; //Error code capture, ´íÎó´úÂë²¶×½
 
-    __IO uint32_t EWLIM; //Error Warning Limit, é”™è¯¯æŠ¥è­¦é™åˆ¶
+    __IO uint32_t EWLIM; //Error Warning Limit, ´íÎó±¨¾¯ÏŞÖÆ
 
-    __IO uint32_t RXERR; //RXé”™è¯¯è®¡æ•°
+    __IO uint32_t RXERR; //RX´íÎó¼ÆÊı
 
-    __IO uint32_t TXERR; //TXé”™è¯¯è®¡æ•°
+    __IO uint32_t TXERR; //TX´íÎó¼ÆÊı
 
     union {
         struct
-        {                         //åœ¨å¤ä½æ—¶å¯è¯»å†™ï¼Œæ­£å¸¸å·¥ä½œæ¨¡å¼ä¸‹ä¸å¯è®¿é—®
-            __IO uint32_t ACR[4]; //Acceptance Check Register, éªŒæ”¶å¯„å­˜å™¨
+        {                         //ÔÚ¸´Î»Ê±¿É¶ÁĞ´£¬Õı³£¹¤×÷Ä£Ê½ÏÂ²»¿É·ÃÎÊ
+            __IO uint32_t ACR[4]; //Acceptance Check Register, ÑéÊÕ¼Ä´æÆ÷
 
-            __IO uint32_t AMR[4]; //Acceptance Mask Register, éªŒæ”¶å±è”½å¯„å­˜å™¨ï¼›å¯¹åº”ä½å†™0ï¼ŒIDå¿…é¡»å’ŒéªŒæ”¶å¯„å­˜å™¨åŒ¹é…
+            __IO uint32_t AMR[4]; //Acceptance Mask Register, ÑéÊÕÆÁ±Î¼Ä´æÆ÷£»¶ÔÓ¦Î»Ğ´0£¬ID±ØĞëºÍÑéÊÕ¼Ä´æÆ÷Æ¥Åä
 
             uint32_t RESERVED[5];
         } FILTER;
 
-        union { //åœ¨æ­£å¸¸å·¥ä½œæ¨¡å¼ä¸‹å¯è¯»å†™ï¼Œå¤ä½æ—¶ä¸å¯è®¿é—®
+        union { //ÔÚÕı³£¹¤×÷Ä£Ê½ÏÂ¿É¶ÁĞ´£¬¸´Î»Ê±²»¿É·ÃÎÊ
             struct
             {
                 __O uint32_t INFO;
@@ -2744,7 +2744,7 @@ typedef struct
     uint32_t RESERVED3[66];
 
     struct
-    { //TXFRAMEçš„è¯»æ¥å£
+    { //TXFRAMEµÄ¶Á½Ó¿Ú
         __I uint32_t INFO;
 
         __I uint32_t DATA[12];
@@ -2755,11 +2755,11 @@ typedef struct
 #define CAN_CR_RST_Msk (0x01 << CAN_CR_RST_Pos)
 #define CAN_CR_LOM_Pos 1 //Listen Only Mode
 #define CAN_CR_LOM_Msk (0x01 << CAN_CR_LOM_Pos)
-#define CAN_CR_STM_Pos 2 //Self Test Mode, æ­¤æ¨¡å¼ä¸‹å³ä½¿æ²¡æœ‰åº”ç­”ï¼ŒCANæ§åˆ¶å™¨ä¹Ÿå¯ä»¥æˆåŠŸå‘é€
+#define CAN_CR_STM_Pos 2 //Self Test Mode, ´ËÄ£Ê½ÏÂ¼´Ê¹Ã»ÓĞÓ¦´ğ£¬CAN¿ØÖÆÆ÷Ò²¿ÉÒÔ³É¹¦·¢ËÍ
 #define CAN_CR_STM_Msk (0x01 << CAN_CR_STM_Pos)
-#define CAN_CR_AFM_Pos 3 //Acceptance Filter Mode, 1 å•ä¸ªéªŒæ”¶æ»¤æ³¢å™¨ï¼ˆ32ä½ï¼‰   0 ä¸¤ä¸ªéªŒæ”¶æ»¤æ³¢å™¨ï¼ˆ16ä½ï¼‰
+#define CAN_CR_AFM_Pos 3 //Acceptance Filter Mode, 1 µ¥¸öÑéÊÕÂË²¨Æ÷£¨32Î»£©   0 Á½¸öÑéÊÕÂË²¨Æ÷£¨16Î»£©
 #define CAN_CR_AFM_Msk (0x01 << CAN_CR_AFM_Pos)
-#define CAN_CR_SLEEP_Pos 4 //å†™1è¿›å…¥ç¡çœ æ¨¡å¼ï¼Œæœ‰æ€»çº¿æ´»åŠ¨æˆ–ä¸­æ–­æ—¶å”¤é†’å¹¶è‡ªåŠ¨æ¸…é›¶æ­¤ä½
+#define CAN_CR_SLEEP_Pos 4 //Ğ´1½øÈëË¯ÃßÄ£Ê½£¬ÓĞ×ÜÏß»î¶¯»òÖĞ¶ÏÊ±»½ĞÑ²¢×Ô¶¯ÇåÁã´ËÎ»
 #define CAN_CR_SLEEP_Msk (0x01 << CAN_CR_SLEEP_Pos)
 
 #define CAN_CMD_TXREQ_Pos 0 //Transmission Request
@@ -2773,38 +2773,38 @@ typedef struct
 #define CAN_CMD_SRR_Pos 4 //Self Reception Request
 #define CAN_CMD_SRR_Msk (0x01 << CAN_CMD_SRR_Pos)
 
-#define CAN_SR_RXDA_Pos 0 //Receive Data Availableï¼Œæ¥æ”¶FIFOä¸­æœ‰å®Œæ•´æ¶ˆæ¯å¯ä»¥è¯»å–
+#define CAN_SR_RXDA_Pos 0 //Receive Data Available£¬½ÓÊÕFIFOÖĞÓĞÍêÕûÏûÏ¢¿ÉÒÔ¶ÁÈ¡
 #define CAN_SR_RXDA_Msk (0x01 << CAN_SR_RXDA_Pos)
-#define CAN_SR_RXOV_Pos 1 //Receive FIFO Overrunï¼Œæ–°æ¥æ”¶çš„ä¿¡æ¯ç”±äºæ¥æ”¶FIFOå·²æ»¡è€Œä¸¢æ‰
+#define CAN_SR_RXOV_Pos 1 //Receive FIFO Overrun£¬ĞÂ½ÓÊÕµÄĞÅÏ¢ÓÉÓÚ½ÓÊÕFIFOÒÑÂú¶ø¶ªµô
 #define CAN_SR_RXOV_Msk (0x01 << CAN_SR_RXOV_Pos)
-#define CAN_SR_TXBR_Pos 2 //Transmit Buffer Releaseï¼Œ0 æ­£åœ¨å¤„ç†å‰é¢çš„å‘é€ï¼Œç°åœ¨ä¸èƒ½å†™æ–°çš„æ¶ˆæ¯    1 å¯ä»¥å†™å…¥æ–°çš„æ¶ˆæ¯å‘é€
+#define CAN_SR_TXBR_Pos 2 //Transmit Buffer Release£¬0 ÕıÔÚ´¦ÀíÇ°ÃæµÄ·¢ËÍ£¬ÏÖÔÚ²»ÄÜĞ´ĞÂµÄÏûÏ¢    1 ¿ÉÒÔĞ´ÈëĞÂµÄÏûÏ¢·¢ËÍ
 #define CAN_SR_TXBR_Msk (0x01 << CAN_SR_TXBR_Pos)
-#define CAN_SR_TXOK_Pos 3 //Transmit OKï¼Œsuccessfully completed
+#define CAN_SR_TXOK_Pos 3 //Transmit OK£¬successfully completed
 #define CAN_SR_TXOK_Msk (0x01 << CAN_SR_TXOK_Pos)
-#define CAN_SR_RXBUSY_Pos 4 //Receive Busyï¼Œæ­£åœ¨æ¥æ”¶
+#define CAN_SR_RXBUSY_Pos 4 //Receive Busy£¬ÕıÔÚ½ÓÊÕ
 #define CAN_SR_RXBUSY_Msk (0x01 << CAN_SR_RXBUSY_Pos)
-#define CAN_SR_TXBUSY_Pos 5 //Transmit Busyï¼Œæ­£åœ¨å‘é€
+#define CAN_SR_TXBUSY_Pos 5 //Transmit Busy£¬ÕıÔÚ·¢ËÍ
 #define CAN_SR_TXBUSY_Msk (0x01 << CAN_SR_TXBUSY_Pos)
-#define CAN_SR_ERRWARN_Pos 6 //1 è‡³å°‘ä¸€ä¸ªé”™è¯¯è®¡æ•°å™¨è¾¾åˆ° Warning Limit
+#define CAN_SR_ERRWARN_Pos 6 //1 ÖÁÉÙÒ»¸ö´íÎó¼ÆÊıÆ÷´ïµ½ Warning Limit
 #define CAN_SR_ERRWARN_Msk (0x01 << CAN_SR_ERRWARN_Pos)
-#define CAN_SR_BUSOFF_Pos 7 //1 CAN æ§åˆ¶å™¨å¤„äºæ€»çº¿å…³é—­çŠ¶æ€ï¼Œæ²¡æœ‰å‚ä¸åˆ°æ€»çº¿æ´»åŠ¨
+#define CAN_SR_BUSOFF_Pos 7 //1 CAN ¿ØÖÆÆ÷´¦ÓÚ×ÜÏß¹Ø±Õ×´Ì¬£¬Ã»ÓĞ²ÎÓëµ½×ÜÏß»î¶¯
 #define CAN_SR_BUSOFF_Msk (0x01 << CAN_SR_BUSOFF_Pos)
 
 #define CAN_IF_RXDA_Pos 0 //IF.RXDA = SR.RXDA & IE.RXDA
 #define CAN_IF_RXDA_Msk (0x01 << CAN_IF_RXDA_Pos)
-#define CAN_IF_TXBR_Pos 1 //å½“IE.TXBR=1æ—¶ï¼ŒSR.TXBRç”±0å˜æˆ1å°†ç½®ä½æ­¤ä½
+#define CAN_IF_TXBR_Pos 1 //µ±IE.TXBR=1Ê±£¬SR.TXBRÓÉ0±ä³É1½«ÖÃÎ»´ËÎ»
 #define CAN_IF_TXBR_Msk (0x01 << CAN_IF_TXBR_Pos)
-#define CAN_IF_ERRWARN_Pos 2 //å½“IE.ERRWARN=1æ—¶ï¼ŒSR.ERRWARNæˆ–SR.BUSOFF 0-to-1 æˆ– 1-to-0å°†ç½®ä½æ­¤ä½
+#define CAN_IF_ERRWARN_Pos 2 //µ±IE.ERRWARN=1Ê±£¬SR.ERRWARN»òSR.BUSOFF 0-to-1 »ò 1-to-0½«ÖÃÎ»´ËÎ»
 #define CAN_IF_ERRWARN_Msk (0x01 << CAN_IF_ERRWARN_Pos)
 #define CAN_IF_RXOV_Pos 3 //IF.RXOV = SR.RXOV & IE.RXOV
 #define CAN_IF_RXOV_Msk (0x01 << CAN_IF_RXOV_Pos)
-#define CAN_IF_WKUP_Pos 4 //å½“IE.WKUP=1æ—¶ï¼Œåœ¨ç¡çœ æ¨¡å¼ä¸‹çš„CANæ§åˆ¶å™¨æ£€æµ‹åˆ°æ€»çº¿æ´»åŠ¨æ—¶ç¡¬ä»¶ç½®ä½
+#define CAN_IF_WKUP_Pos 4 //µ±IE.WKUP=1Ê±£¬ÔÚË¯ÃßÄ£Ê½ÏÂµÄCAN¿ØÖÆÆ÷¼ì²âµ½×ÜÏß»î¶¯Ê±Ó²¼şÖÃÎ»
 #define CAN_IF_WKUP_Msk (0x01 << CAN_IF_WKUP_Pos)
 #define CAN_IF_ERRPASS_Pos 5 //
 #define CAN_IF_ERRPASS_Msk (0x01 << CAN_IF_ERRPASS_Pos)
-#define CAN_IF_ARBLOST_Pos 6 //Arbitration Lostï¼Œå½“IE.ARBLOST=1æ—¶ï¼ŒCANæ§åˆ¶å™¨ä¸¢å¤±ä»²è£å˜æˆæ¥æ”¶æ–¹æ—¶ç¡¬ä»¶ç½®ä½
+#define CAN_IF_ARBLOST_Pos 6 //Arbitration Lost£¬µ±IE.ARBLOST=1Ê±£¬CAN¿ØÖÆÆ÷¶ªÊ§ÖÙ²Ã±ä³É½ÓÊÕ·½Ê±Ó²¼şÖÃÎ»
 #define CAN_IF_ARBLOST_Msk (0x01 << CAN_IF_ARBLOST_Pos)
-#define CAN_IF_BUSERR_Pos 7 //å½“IE.BUSERR=1æ—¶ï¼ŒCANæ§åˆ¶å™¨æ£€æµ‹åˆ°æ€»çº¿é”™è¯¯æ—¶ç¡¬ä»¶ç½®ä½
+#define CAN_IF_BUSERR_Pos 7 //µ±IE.BUSERR=1Ê±£¬CAN¿ØÖÆÆ÷¼ì²âµ½×ÜÏß´íÎóÊ±Ó²¼şÖÃÎ»
 #define CAN_IF_BUSERR_Msk (0x01 << CAN_IF_BUSERR_Pos)
 
 #define CAN_IE_RXDA_Pos 0
@@ -2824,67 +2824,67 @@ typedef struct
 #define CAN_IE_BUSERR_Pos 7
 #define CAN_IE_BUSERR_Msk (0x01 << CAN_IE_BUSERR_Pos)
 
-#define CAN_BT0_BRP_Pos 0 //Baud Rate Prescalerï¼ŒCANæ—¶é—´å•ä½=2*Tsysclk*(BRP+1)
+#define CAN_BT0_BRP_Pos 0 //Baud Rate Prescaler£¬CANÊ±¼äµ¥Î»=2*Tsysclk*(BRP+1)
 #define CAN_BT0_BRP_Msk (0x3F << CAN_BT0_BRP_Pos)
 #define CAN_BT0_SJW_Pos 6 //Synchronization Jump Width
 #define CAN_BT0_SJW_Msk (0x03 << CAN_BT0_SJW_Pos)
 
-#define CAN_BT1_TSEG1_Pos 0 //t_tseg1 = CANæ—¶é—´å•ä½ * (TSEG1+1)
+#define CAN_BT1_TSEG1_Pos 0 //t_tseg1 = CANÊ±¼äµ¥Î» * (TSEG1+1)
 #define CAN_BT1_TSEG1_Msk (0x0F << CAN_BT1_TSEG1_Pos)
-#define CAN_BT1_TSEG2_Pos 4 //t_tseg2 = CANæ—¶é—´å•ä½ * (TSEG2+1)
+#define CAN_BT1_TSEG2_Pos 4 //t_tseg2 = CANÊ±¼äµ¥Î» * (TSEG2+1)
 #define CAN_BT1_TSEG2_Msk (0x07 << CAN_BT1_TSEG2_Pos)
-#define CAN_BT1_SAM_Pos 7 //é‡‡æ ·æ¬¡æ•°  0: sampled once  1: sampled three times
+#define CAN_BT1_SAM_Pos 7 //²ÉÑù´ÎÊı  0: sampled once  1: sampled three times
 #define CAN_BT1_SAM_Msk (0x01 << CAN_BT1_SAM_Pos)
 
 #define CAN_ECC_SEGCODE_Pos 0 //Segment Code
 #define CAN_ECC_SEGCODE_Msk (0x1F << CAN_ECC_SEGCODE_Pos)
 #define CAN_ECC_DIR_Pos 5 //0 error occurred during transmission   1 during reception
 #define CAN_ECC_DIR_Msk (0x01 << CAN_ECC_DIR_Pos)
-#define CAN_ECC_ERRCODE_Pos 6 //Error Codeï¼š0 Bit error   1 Form error   2 Stuff error   3 other error
+#define CAN_ECC_ERRCODE_Pos 6 //Error Code£º0 Bit error   1 Form error   2 Stuff error   3 other error
 #define CAN_ECC_ERRCODE_Msk (0x03 << CAN_ECC_ERRCODE_Pos)
 
 #define CAN_INFO_DLC_Pos 0 //Data Length Control
 #define CAN_INFO_DLC_Msk (0x0F << CAN_INFO_DLC_Pos)
-#define CAN_INFO_RTR_Pos 6 //Remote Frameï¼Œ1 è¿œç¨‹å¸§    0 æ•°æ®å¸§
+#define CAN_INFO_RTR_Pos 6 //Remote Frame£¬1 Ô¶³ÌÖ¡    0 Êı¾İÖ¡
 #define CAN_INFO_RTR_Msk (0x01 << CAN_INFO_RTR_Pos)
-#define CAN_INFO_FF_Pos 7 //Frame Formatï¼Œ0 æ ‡å‡†å¸§æ ¼å¼    1 æ‰©å±•å¸§æ ¼å¼
+#define CAN_INFO_FF_Pos 7 //Frame Format£¬0 ±ê×¼Ö¡¸ñÊ½    1 À©Õ¹Ö¡¸ñÊ½
 #define CAN_INFO_FF_Msk (0x01 << CAN_INFO_FF_Pos)
 
 typedef struct
 {
-    __IO uint32_t IE; //[0] ä¸º0çš„æ—¶å€™ï¼ŒIF[0]ç»´æŒä¸º0
+    __IO uint32_t IE; //[0] Îª0µÄÊ±ºò£¬IF[0]Î¬³ÖÎª0
 
-    __IO uint32_t IF; //[0] å½“å®ŒæˆæŒ‡å®šé•¿åº¦çš„æ•°æ®ä¼ è¾“æ—¶ç½®1ï¼Œå†™1æ¸…é›¶
+    __IO uint32_t IF; //[0] µ±Íê³ÉÖ¸¶¨³¤¶ÈµÄÊı¾İ´«ÊäÊ±ÖÃ1£¬Ğ´1ÇåÁã
 
-    __IO uint32_t IM; //[0] å½“è¯¥å¯„å­˜å™¨ä¸º1æ—¶ï¼ŒLCDCçš„ä¸­æ–­ä¸ä¼šè¾“å‡ºç»™ç³»ç»Ÿçš„ä¸­æ–­æ§åˆ¶å¯„å­˜å™¨
+    __IO uint32_t IM; //[0] µ±¸Ã¼Ä´æÆ÷Îª1Ê±£¬LCDCµÄÖĞ¶Ï²»»áÊä³ö¸øÏµÍ³µÄÖĞ¶Ï¿ØÖÆ¼Ä´æÆ÷
 
     __IO uint32_t START;
 
-    __IO uint32_t SRCADDR; //æ•°æ®æºåœ°å€å¯„å­˜å™¨ï¼Œå¿…é¡»å­—å¯¹é½ï¼ˆå³åœ°å€çš„ä½2ä½å¿…é¡»æ˜¯0ï¼‰
+    __IO uint32_t SRCADDR; //Êı¾İÔ´µØÖ·¼Ä´æÆ÷£¬±ØĞë×Ö¶ÔÆë£¨¼´µØÖ·µÄµÍ2Î»±ØĞëÊÇ0£©
 
     __IO uint32_t CR0;
 
     __IO uint32_t CR1;
 
-    __IO uint32_t PRECMDV; //åœ¨MPUæ¥å£ä¸­ï¼Œå‘é€æ•°æ®å‰ï¼ŒRSæ‹‰ä½çš„é‚£ä¸€æ‹ï¼Œæ•°æ®æ€»çº¿ä¸Šçš„å€¼
+    __IO uint32_t PRECMDV; //ÔÚMPU½Ó¿ÚÖĞ£¬·¢ËÍÊı¾İÇ°£¬RSÀ­µÍµÄÄÇÒ»ÅÄ£¬Êı¾İ×ÜÏßÉÏµÄÖµ
 } LCD_TypeDef;
 
-#define LCD_START_MPUEN_Pos 0 //0 RGBæ¥å£    1 MPUæ¥å£
+#define LCD_START_MPUEN_Pos 0 //0 RGB½Ó¿Ú    1 MPU½Ó¿Ú
 #define LCD_START_MPUEN_Msk (0x01 << LCD_START_MPUEN_Pos)
-#define LCD_START_GO_Pos 1 //å†™1å¼€å§‹ä¼ è¾“æ•°æ®ï¼Œæ•°æ®ä¼ è¾“ç»“æŸåè‡ªåŠ¨æ¸…é›¶
+#define LCD_START_GO_Pos 1 //Ğ´1¿ªÊ¼´«ÊäÊı¾İ£¬Êı¾İ´«Êä½áÊøºó×Ô¶¯ÇåÁã
 #define LCD_START_GO_Msk (0x01 << LCD_START_GO_Pos)
 #define LCD_START_BURST_Pos 2
 #define LCD_START_BURST_Msk (0x01 << LCD_START_BURST_Pos)
 
-#define LCD_CR0_VPIX_Pos 0 //å½“portraitä¸º0æ—¶ï¼Œè¡¨ç¤ºå‚ç›´æ–¹å‘çš„åƒç´ ä¸ªæ•°ï¼Œ0è¡¨ç¤º1ä¸ªï¼Œæœ€å¤§ä¸º767 \
-                           //å½“portraitä¸º1æ—¶ï¼Œè¡¨ç¤ºæ°´å¹³æ–¹å‘çš„åƒç´ ä¸ªæ•°ï¼Œ0è¡¨ç¤º1ä¸ªï¼Œæœ€å¤§ä¸º767
+#define LCD_CR0_VPIX_Pos 0 //µ±portraitÎª0Ê±£¬±íÊ¾´¹Ö±·½ÏòµÄÏñËØ¸öÊı£¬0±íÊ¾1¸ö£¬×î´óÎª767 \
+                           //µ±portraitÎª1Ê±£¬±íÊ¾Ë®Æ½·½ÏòµÄÏñËØ¸öÊı£¬0±íÊ¾1¸ö£¬×î´óÎª767
 #define LCD_CR0_VPIX_Msk (0x3FF << LCD_CR0_VPIX_Pos)
-#define LCD_CR0_HPIX_Pos 10 //å½“portraitä¸º0æ—¶ï¼Œè¡¨ç¤ºæ°´å¹³æ–¹å‘çš„åƒç´ ä¸ªæ•°ï¼Œ0è¡¨ç¤º1ä¸ªï¼Œæœ€å¤§ä¸º1023 \
-                            //å½“portraitä¸º1æ—¶ï¼Œè¡¨ç¤ºå‚ç›´æ–¹å‘çš„åƒç´ ä¸ªæ•°ï¼Œ0è¡¨ç¤º1ä¸ªï¼Œæœ€å¤§ä¸º1023
+#define LCD_CR0_HPIX_Pos 10 //µ±portraitÎª0Ê±£¬±íÊ¾Ë®Æ½·½ÏòµÄÏñËØ¸öÊı£¬0±íÊ¾1¸ö£¬×î´óÎª1023 \
+                            //µ±portraitÎª1Ê±£¬±íÊ¾´¹Ö±·½ÏòµÄÏñËØ¸öÊı£¬0±íÊ¾1¸ö£¬×î´óÎª1023
 #define LCD_CR0_HPIX_Msk (0x3FF << LCD_CR0_HPIX_Pos)
-#define LCD_CR0_DCLK_Pos 20 //0 DOTCLKä¸€ç›´ç¿»è½¬    1 DOTCLKåœ¨ç©ºé—²æ—¶åœåœ¨1
+#define LCD_CR0_DCLK_Pos 20 //0 DOTCLKÒ»Ö±·­×ª    1 DOTCLKÔÚ¿ÕÏĞÊ±Í£ÔÚ1
 #define LCD_CR0_DCLK_Msk (0x01 << LCD_CR0_DCLK_Pos)
-#define LCD_CR0_HLOW_Pos 21 //è¾“å‡ºHSYNCä½ç”µå¹³æŒç»­å¤šå°‘ä¸ªDOTCLKå‘¨æœŸï¼Œ0è¡¨ç¤º1ä¸ªå‘¨æœŸ
+#define LCD_CR0_HLOW_Pos 21 //Êä³öHSYNCµÍµçÆ½³ÖĞø¶àÉÙ¸öDOTCLKÖÜÆÚ£¬0±íÊ¾1¸öÖÜÆÚ
 #define LCD_CR0_HLOW_Msk (0x03 << LCD_CR0_HLOW_Pos)
 
 #define LCD_CR1_VFP_Pos 1
@@ -2895,9 +2895,9 @@ typedef struct
 #define LCD_CR1_HFP_Msk (0x1F << LCD_CR1_HFP_Pos)
 #define LCD_CR1_HBP_Pos 14
 #define LCD_CR1_HBP_Msk (0x7F << LCD_CR1_HBP_Pos)
-#define LCD_CR1_DCLKDIV_Pos 21 //DOTCLKç›¸å¯¹äºæ¨¡å—æ—¶é’Ÿçš„åˆ†é¢‘æ¯”ï¼Œ0è¡¨ç¤º2åˆ†é¢‘ï¼Œ1è¡¨ç¤º4åˆ†é¢‘ ...
+#define LCD_CR1_DCLKDIV_Pos 21 //DOTCLKÏà¶ÔÓÚÄ£¿éÊ±ÖÓµÄ·ÖÆµ±È£¬0±íÊ¾2·ÖÆµ£¬1±íÊ¾4·ÖÆµ ...
 #define LCD_CR1_DCLKDIV_Msk (0x1F << LCD_CR1_DCLKDIV_Pos)
-#define LCD_CR1_DCLKINV_Pos 26 //1 è¾“å‡ºDOTCLKåå‘ï¼Œåº”ç”¨äºç”¨DOTCLKä¸‹é™æ²¿é‡‡æ ·æ•°æ®çš„å±
+#define LCD_CR1_DCLKINV_Pos 26 //1 Êä³öDOTCLK·´Ïò£¬Ó¦ÓÃÓÚÓÃDOTCLKÏÂ½µÑØ²ÉÑùÊı¾İµÄÆÁ
 #define LCD_CR1_DCLKINV_Msk (0x01 << LCD_CR1_DCLKINV_Pos)
 
 typedef struct
@@ -2933,9 +2933,9 @@ typedef struct
     __IO uint32_t MAXCURR;
 } SDIO_TypeDef;
 
-#define SDIO_BLK_SIZE_Pos 0 //0x200 512å­—èŠ‚   0x400 1024å­—èŠ‚   0x800 2048å­—èŠ‚
+#define SDIO_BLK_SIZE_Pos 0 //0x200 512×Ö½Ú   0x400 1024×Ö½Ú   0x800 2048×Ö½Ú
 #define SDIO_BLK_SIZE_Msk (0xFFF << SDIO_BLK_SIZE_Pos)
-#define SDIO_BLK_COUNT_Pos 16 //0 Stop Transfer    1 1å—    2 2å—    ... ...
+#define SDIO_BLK_COUNT_Pos 16 //0 Stop Transfer    1 1¿é    2 2¿é    ... ...
 #define SDIO_BLK_COUNT_Msk (0xFFF << SDIO_BLK_COUNT_Pos)
 
 #define SDIO_CMD_DMAEN_Pos 0
@@ -2948,7 +2948,7 @@ typedef struct
 #define SDIO_CMD_DIRREAD_Msk (0x01 << SDIO_CMD_DIRREAD_Pos)
 #define SDIO_CMD_MULTBLK_Pos 5 //0 Single Block    1  Multiple Block
 #define SDIO_CMD_MULTBLK_Msk (0x01 << SDIO_CMD_MULTBLK_Pos)
-#define SDIO_CMD_RESPTYPE_Pos 16 //å“åº”ç±»å‹ï¼Œ0 æ— å“åº”    1 136ä½å“åº”    2 48ä½å“åº”    3 48ä½å“åº”ï¼ŒBusy after response
+#define SDIO_CMD_RESPTYPE_Pos 16 //ÏìÓ¦ÀàĞÍ£¬0 ÎŞÏìÓ¦    1 136Î»ÏìÓ¦    2 48Î»ÏìÓ¦    3 48Î»ÏìÓ¦£¬Busy after response
 #define SDIO_CMD_RESPTYPE_Msk (0x03 << SDIO_CMD_RESPTYPE_Pos)
 #define SDIO_CMD_CRCCHECK_Pos 19 //Command CRC Check Enable
 #define SDIO_CMD_CRCCHECK_Msk (0x01 << SDIO_CMD_CRCCHECK_Pos)
@@ -2958,7 +2958,7 @@ typedef struct
 #define SDIO_CMD_HAVEDATA_Msk (0x01 << SDIO_CMD_HAVEDATA_Pos)
 #define SDIO_CMD_CMDTYPE_Pos 22 //0 NORMAL   1 SUSPEND    2 RESUME    3 ABORT
 #define SDIO_CMD_CMDTYPE_Msk (0x03 << SDIO_CMD_CMDTYPE_Pos)
-#define SDIO_CMD_CMDINDX_Pos 24 //Command Indexï¼ŒCMD0-63ã€ACMD0-63
+#define SDIO_CMD_CMDINDX_Pos 24 //Command Index£¬CMD0-63¡¢ACMD0-63
 #define SDIO_CMD_CMDINDX_Msk (0x3F << SDIO_CMD_CMDINDX_Pos)
 
 #define SDIO_CR1_4BIT_Pos 1 //1 4 bit mode    0 1 bit mode
@@ -2967,7 +2967,7 @@ typedef struct
 #define SDIO_CR1_8BIT_Msk (0x01 << SDIO_CR1_8BIT_Pos)
 #define SDIO_CR1_CDBIT_Pos 6 //0 No Card    1 Card Inserted
 #define SDIO_CR1_CDBIT_Msk (0x01 << SDIO_CR1_CDBIT_Pos)
-#define SDIO_CR1_CDSRC_Pos 7 //Card Detect Source, 1 CR1.CDBITä½    0 SD_Detectå¼•è„š
+#define SDIO_CR1_CDSRC_Pos 7 //Card Detect Source, 1 CR1.CDBITÎ»    0 SD_DetectÒı½Å
 #define SDIO_CR1_CDSRC_Msk (0x01 << SDIO_CR1_CDSRC_Pos)
 #define SDIO_CR1_PWRON_Pos 8 //1 Power on    0 Power off
 #define SDIO_CR1_PWRON_Msk (0x01 << SDIO_CR1_PWRON_Pos)
@@ -2980,7 +2980,7 @@ typedef struct
 #define SDIO_CR2_CLKRDY_Msk (0x01 << SDIO_CR2_CLKRDY_Pos)
 #define SDIO_CR2_SDCLKEN_Pos 2 //SDCLK Enable
 #define SDIO_CR2_SDCLKEN_Msk (0x01 << SDIO_CR2_SDCLKEN_Pos)
-#define SDIO_CR2_SDCLKDIV_Pos 8 //SDCLK Frequency Div, 0x00 ä¸åˆ†é¢‘    0x01 2åˆ†é¢‘    0x02 4åˆ†é¢‘    0x04 8åˆ†é¢‘    0x08    16åˆ†é¢‘    ...    0x80 256åˆ†é¢‘
+#define SDIO_CR2_SDCLKDIV_Pos 8 //SDCLK Frequency Div, 0x00 ²»·ÖÆµ    0x01 2·ÖÆµ    0x02 4·ÖÆµ    0x04 8·ÖÆµ    0x08    16·ÖÆµ    ...    0x80 256·ÖÆµ
 #define SDIO_CR2_SDCLKDIV_Msk (0xFF << SDIO_CR2_SDCLKDIV_Pos)
 #define SDIO_CR2_TIMEOUT_Pos 16 //0 TMCLK*2^13   1 TMCLK*2^14   ...   14 TMCLK*2^27
 #define SDIO_CR2_TIMEOUT_Msk (0x0F << SDIO_CR2_TIMEOUT_Pos)
@@ -3120,7 +3120,7 @@ typedef struct
 {
     __IO uint32_t DATA;
     __IO uint32_t ADDR;
-    __IO uint32_t _ERASE; //å’Œmmcsd_cmd.h(59)åå­—å†²çªï¼Œè¿™é‡Œä¿®æ”¹ä¸º_ERASE
+    __IO uint32_t _ERASE; //ºÍmmcsd_cmd.h(59)Ãû×Ö³åÍ»£¬ÕâÀïĞŞ¸ÄÎª_ERASE
     __IO uint32_t CACHE;
     __IO uint32_t CFG0;
     __IO uint32_t CFG1;
@@ -3151,11 +3151,11 @@ typedef struct
     __IO uint32_t CR;
 } SRAMC_TypeDef;
 
-#define SRAMC_CR_RWTIME_Pos 0 //è¯»å†™æ“ä½œæŒç»­å¤šå°‘ä¸ªæ—¶é’Ÿå‘¨æœŸã€‚0è¡¨ç¤º1ä¸ªæ—¶é’Ÿå‘¨æœŸã€‚æœ€å°è®¾ç½®ä¸º4
+#define SRAMC_CR_RWTIME_Pos 0 //¶ÁĞ´²Ù×÷³ÖĞø¶àÉÙ¸öÊ±ÖÓÖÜÆÚ¡£0±íÊ¾1¸öÊ±ÖÓÖÜÆÚ¡£×îĞ¡ÉèÖÃÎª4
 #define SRAMC_CR_RWTIME_Msk (0x0F << SRAMC_CR_RWTIME_Pos)
-#define SRAMC_CR_BYTEIF_Pos 4 //å¤–éƒ¨SRAMæ•°æ®å®½åº¦ï¼Œ0 16ä½    1 8ä½
+#define SRAMC_CR_BYTEIF_Pos 4 //Íâ²¿SRAMÊı¾İ¿í¶È£¬0 16Î»    1 8Î»
 #define SRAMC_CR_BYTEIF_Msk (0x01 << SRAMC_CR_BYTEIF_Pos)
-#define SRAMC_CR_HBLBDIS_Pos 5 //1 ADDR[23:22]ä¸ºåœ°å€çº¿   0 ADDR[23]ä¸ºé«˜å­—èŠ‚ä½¿èƒ½ï¼ŒADDR[22]ä¸ºä½å­—èŠ‚ä½¿èƒ½
+#define SRAMC_CR_HBLBDIS_Pos 5 //1 ADDR[23:22]ÎªµØÖ·Ïß   0 ADDR[23]Îª¸ß×Ö½ÚÊ¹ÄÜ£¬ADDR[22]ÎªµÍ×Ö½ÚÊ¹ÄÜ
 #define SRAMC_CR_HBLBDIS_Msk (0x01 << SRAMC_CR_HBLBDIS_Pos)
 
 typedef struct
@@ -3166,16 +3166,16 @@ typedef struct
 
     __IO uint32_t REFRESH;
 
-    __IO uint32_t NOPNUM; //[15:0] åˆå§‹åŒ–å®Œæˆåï¼Œåœ¨æ­£å¸¸æ“ä½œä¹‹å‰ï¼Œå‘é€å¤šå°‘ä¸ªNOPå‘½ä»¤
+    __IO uint32_t NOPNUM; //[15:0] ³õÊ¼»¯Íê³Éºó£¬ÔÚÕı³£²Ù×÷Ö®Ç°£¬·¢ËÍ¶àÉÙ¸öNOPÃüÁî
 
     __IO uint32_t LATCH;
 
-    __IO uint32_t REFDONE; //[0] Frefresh Doneï¼Œä¸Šç”µåˆå§‹åŒ–å®Œæˆ
+    __IO uint32_t REFDONE; //[0] Frefresh Done£¬ÉÏµç³õÊ¼»¯Íê³É
 } SDRAMC_TypeDef;
 
-#define SDRAMC_CR0_BURSTLEN_Pos 0 //å¿…é¡»å–2ï¼Œè¡¨ç¤ºBurst Lengthä¸º4
+#define SDRAMC_CR0_BURSTLEN_Pos 0 //±ØĞëÈ¡2£¬±íÊ¾Burst LengthÎª4
 #define SDRAMC_CR0_BURSTLEN_Msk (0x07 << SDRAMC_CR0_BURSTLEN_Pos)
-#define SDRAMC_CR0_CASDELAY_Pos 4 //CAS Latencyï¼Œ 2 2    3 3
+#define SDRAMC_CR0_CASDELAY_Pos 4 //CAS Latency£¬ 2 2    3 3
 #define SDRAMC_CR0_CASDELAY_Msk (0x07 << SDRAMC_CR0_CASDELAY_Pos)
 
 #define SDRAMC_CR1_TRP_Pos 0
@@ -3190,15 +3190,15 @@ typedef struct
 #define SDRAMC_CR1_TRRD_Msk (0x03 << SDRAMC_CR1_TRRD_Pos)
 #define SDRAMC_CR1_TMRD_Pos 15
 #define SDRAMC_CR1_TMRD_Msk (0x07 << SDRAMC_CR1_TMRD_Pos)
-#define SDRAMC_CR1_32BIT_Pos 18 //SDRAMCçš„æ¥å£æ•°æ®ä½å®½ï¼Œ1 32bit    0 16bit
+#define SDRAMC_CR1_32BIT_Pos 18 //SDRAMCµÄ½Ó¿ÚÊı¾İÎ»¿í£¬1 32bit    0 16bit
 #define SDRAMC_CR1_32BIT_Msk (0x01 << SDRAMC_CR1_32BIT_Pos)
-#define SDRAMC_CR1_BANK_Pos 19 //SDRAMæ¯ä¸ªé¢—ç²’æœ‰å‡ ä¸ªbankï¼Œ0 2 banks    1 4 banks
+#define SDRAMC_CR1_BANK_Pos 19 //SDRAMÃ¿¸ö¿ÅÁ£ÓĞ¼¸¸öbank£¬0 2 banks    1 4 banks
 #define SDRAMC_CR1_BANK_Msk (0x01 << SDRAMC_CR1_BANK_Pos)
-#define SDRAMC_CR1_CELL32BIT_Pos 20 //SDRAMé¢—ç²’çš„ä½å®½ï¼Œ1 32bit    0 16bit
+#define SDRAMC_CR1_CELL32BIT_Pos 20 //SDRAM¿ÅÁ£µÄÎ»¿í£¬1 32bit    0 16bit
 #define SDRAMC_CR1_CELL32BIT_Msk (0x01 << SDRAMC_CR1_CELL32BIT_Pos)
-#define SDRAMC_CR1_CELLSIZE_Pos 21 //SDRAMé¢—ç²’çš„å®¹é‡ï¼Œ0 64Mb    1 128Mb    2 256Mb    3 16Mb
+#define SDRAMC_CR1_CELLSIZE_Pos 21 //SDRAM¿ÅÁ£µÄÈİÁ¿£¬0 64Mb    1 128Mb    2 256Mb    3 16Mb
 #define SDRAMC_CR1_CELLSIZE_Msk (0x03 << SDRAMC_CR1_CELLSIZE_Pos)
-#define SDRAMC_CR1_HIGHSPEED_Pos 23 //å½“hclkå¤§äº100MHzæ—¶ï¼Œè¿™ä¸€ä½å¿…é¡»é…ç½®ä¸º1ï¼Œå¦åˆ™ä¸º0
+#define SDRAMC_CR1_HIGHSPEED_Pos 23 //µ±hclk´óÓÚ100MHzÊ±£¬ÕâÒ»Î»±ØĞëÅäÖÃÎª1£¬·ñÔòÎª0
 #define SDRAMC_CR1_HIGHSPEED_Msk (0x01 << SDRAMC_CR1_HIGHSPEED_Pos)
 
 #define SDRAMC_REFRESH_RATE_Pos 0
@@ -3206,9 +3206,9 @@ typedef struct
 #define SDRAMC_REFRESH_EN_Pos 12
 #define SDRAMC_REFRESH_EN_Msk (0x01 << SDRAMC_REFRESH_EN_Pos)
 
-#define SDRAMC_LATCH_INEDGE_Pos 0 //å“ªä¸ªæ²¿æ¥é”å­˜ä»SDRAMä¸­è¯»å›çš„æ•°æ®ï¼Œ0 ä¸Šå‡æ²¿    1 ä¸‹é™æ²¿
+#define SDRAMC_LATCH_INEDGE_Pos 0 //ÄÄ¸öÑØÀ´Ëø´æ´ÓSDRAMÖĞ¶Á»ØµÄÊı¾İ£¬0 ÉÏÉıÑØ    1 ÏÂ½µÑØ
 #define SDRAMC_LATCH_INEDGE_Msk (0x01 << SDRAMC_LATCH_INEDGE_Pos)
-#define SDRAMC_LATCH_OUTEDGE_Pos 1 //å“ªä¸ªæ²¿å»é”å­˜é€ç»™SDRAMçš„æ•°æ®ï¼Œ1 ä¸Šå‡æ²¿    0 ä¸‹é™æ²¿
+#define SDRAMC_LATCH_OUTEDGE_Pos 1 //ÄÄ¸öÑØÈ¥Ëø´æËÍ¸øSDRAMµÄÊı¾İ£¬1 ÉÏÉıÑØ    0 ÏÂ½µÑØ
 #define SDRAMC_LATCH_OUTEDGE_Msk (0x01 << SDRAMC_LATCH_OUTEDGE_Pos)
 #define SDRAMC_LATCH_WAITST_Pos 2
 #define SDRAMC_LATCH_WAITST_Msk (0x01 << SDRAMC_LATCH_WAITST_Pos)
@@ -3217,7 +3217,7 @@ typedef struct
 {
     __IO uint32_t IE;
 
-    __IO uint32_t IF; //å†™1æ¸…é›¶
+    __IO uint32_t IF; //Ğ´1ÇåÁã
 
     __IO uint32_t IM;
 
@@ -3243,16 +3243,16 @@ typedef struct
 #define NORFLC_IM_TIMEOUT_Pos 1
 #define NORFLC_IM_TIMEOUT_Msk (0x01 << NORFLC_IM_TIMEOUT_Pos)
 
-#define NORFLC_CR_RDTIME_Pos 0 //Oenä¸‹é™æ²¿åå¤šå°‘ä¸ªæ—¶é’Ÿå‘¨æœŸåé‡‡æ ·è¯»å›çš„æ•°æ®ã€‚0è¡¨ç¤º1ä¸ªæ—¶é’Ÿå‘¨æœŸ
+#define NORFLC_CR_RDTIME_Pos 0 //OenÏÂ½µÑØºó¶àÉÙ¸öÊ±ÖÓÖÜÆÚºó²ÉÑù¶Á»ØµÄÊı¾İ¡£0±íÊ¾1¸öÊ±ÖÓÖÜÆÚ
 #define NORFLC_CR_RDTIME_Msk (0x1F << NORFLC_CR_RDTIME_Pos)
-#define NORFLC_CR_WRTIME_Pos 5 //è¾“å‡ºWençš„ä½ç”µå¹³å®½åº¦ã€‚0è¡¨ç¤º1ä¸ªæ—¶é’Ÿå‘¨æœŸ
+#define NORFLC_CR_WRTIME_Pos 5 //Êä³öWenµÄµÍµçÆ½¿í¶È¡£0±íÊ¾1¸öÊ±ÖÓÖÜÆÚ
 #define NORFLC_CR_WRTIME_Msk (0x07 << NORFLC_CR_WRTIME_Pos)
-#define NORFLC_CR_BYTEIF_Pos 8 //å¤–éƒ¨NOR FLASHæ•°æ®å®½åº¦ï¼Œ1 8ä½    0 16ä½
+#define NORFLC_CR_BYTEIF_Pos 8 //Íâ²¿NOR FLASHÊı¾İ¿í¶È£¬1 8Î»    0 16Î»
 #define NORFLC_CR_BYTEIF_Msk (0x01 << NORFLC_CR_BYTEIF_Pos)
 
-#define NORFLC_CMD_DATA_Pos 0 //åœ¨PROGRAMå‘½ä»¤ä¸­ï¼ŒDATAæ˜¯è¦å†™å…¥NOR FLASHçš„æ•°æ®ï¼›åœ¨READå‘½ä»¤ä¸­ï¼ŒDATAæ˜¯ä»NOR FLASHè¯»å›çš„æ•°æ®
+#define NORFLC_CMD_DATA_Pos 0 //ÔÚPROGRAMÃüÁîÖĞ£¬DATAÊÇÒªĞ´ÈëNOR FLASHµÄÊı¾İ£»ÔÚREADÃüÁîÖĞ£¬DATAÊÇ´ÓNOR FLASH¶Á»ØµÄÊı¾İ
 #define NORFLC_CMD_DATA_Msk (0xFFFF << NORFLC_CMD_DATA_Pos)
-#define NORFLC_CMD_CMD_Pos 16 //éœ€è¦æ‰§è¡Œçš„å‘½ä»¤ï¼Œ0 READ   1 RESET   2 AUTOMATIC SELECT   3 PROGRAM   4 CHIP ERASE   5 SECTOR ERASE
+#define NORFLC_CMD_CMD_Pos 16 //ĞèÒªÖ´ĞĞµÄÃüÁî£¬0 READ   1 RESET   2 AUTOMATIC SELECT   3 PROGRAM   4 CHIP ERASE   5 SECTOR ERASE
 #define NORFLC_CMD_CMD_Msk (0x07 << NORFLC_CMD_CMD_Pos)
 
 typedef struct
@@ -3268,42 +3268,42 @@ typedef struct
 
 #define CRC_CR_EN_Pos 0
 #define CRC_CR_EN_Msk (0x01 << CRC_CR_EN_Pos)
-#define CRC_CR_OREV_Pos 1 //è¾“å‡ºç»“æœæ˜¯å¦ç¿»è½¬
+#define CRC_CR_OREV_Pos 1 //Êä³ö½á¹ûÊÇ·ñ·­×ª
 #define CRC_CR_OREV_Msk (0x01 << CRC_CR_OREV_Pos)
-#define CRC_CR_ONOT_Pos 2 //è¾“å‡ºç»“æœæ˜¯å¦å–å
+#define CRC_CR_ONOT_Pos 2 //Êä³ö½á¹ûÊÇ·ñÈ¡·´
 #define CRC_CR_ONOT_Msk (0x01 << CRC_CR_ONOT_Pos)
 #define CRC_CR_CRC16_Pos 3 //1 CRC16    0 CRC32
 #define CRC_CR_CRC16_Msk (0x01 << CRC_CR_CRC16_Pos)
-#define CRC_CR_IBITS_Pos 4 //è¾“å…¥æ•°æ®æœ‰æ•ˆä½æ•° 0 32ä½    1 16ä½    2 8ä½
+#define CRC_CR_IBITS_Pos 4 //ÊäÈëÊı¾İÓĞĞ§Î»Êı 0 32Î»    1 16Î»    2 8Î»
 #define CRC_CR_IBITS_Msk (0x03 << CRC_CR_IBITS_Pos)
 
 typedef struct
 {
-    __IO uint32_t MINSEC; //åˆ†ç§’è®¡æ•°
+    __IO uint32_t MINSEC; //·ÖÃë¼ÆÊı
 
-    __IO uint32_t DATHUR; //æ—¥æ—¶è®¡æ•°
+    __IO uint32_t DATHUR; //ÈÕÊ±¼ÆÊı
 
-    __IO uint32_t MONDAY; //æœˆå‘¨è®¡æ•°
+    __IO uint32_t MONDAY; //ÔÂÖÜ¼ÆÊı
 
-    __IO uint32_t YEAR; //[11:0] å¹´è®¡æ•°ï¼Œæ”¯æŒ1901-2199
+    __IO uint32_t YEAR; //[11:0] Äê¼ÆÊı£¬Ö§³Ö1901-2199
 
-    __IO uint32_t MINSECAL; //åˆ†ç§’é—¹é“ƒè®¾ç½®
+    __IO uint32_t MINSECAL; //·ÖÃëÄÖÁåÉèÖÃ
 
-    __IO uint32_t DAYHURAL; //å‘¨æ—¶é—¹é“ƒè®¾ç½®
+    __IO uint32_t DAYHURAL; //ÖÜÊ±ÄÖÁåÉèÖÃ
 
-    __IO uint32_t LOAD; //å°†è®¾ç½®å¯„å­˜å™¨ä¸­çš„å€¼åŒæ­¥åˆ°RTCä¸­ï¼ŒåŒæ­¥å®Œæˆè‡ªåŠ¨æ¸…é›¶
+    __IO uint32_t LOAD; //½«ÉèÖÃ¼Ä´æÆ÷ÖĞµÄÖµÍ¬²½µ½RTCÖĞ£¬Í¬²½Íê³É×Ô¶¯ÇåÁã
 
     __IO uint32_t IE;
 
-    __IO uint32_t IF; //å†™1æ¸…é›¶
+    __IO uint32_t IF; //Ğ´1ÇåÁã
 
-    __IO uint32_t EN; //[0] 1 RTCä½¿èƒ½
+    __IO uint32_t EN; //[0] 1 RTCÊ¹ÄÜ
 
-    __IO uint32_t CFGABLE; //[0] 1 RTCå¯é…ç½®
+    __IO uint32_t CFGABLE; //[0] 1 RTC¿ÉÅäÖÃ
 
-    __IO uint32_t TRIM; //æ—¶é’Ÿè°ƒæ•´
+    __IO uint32_t TRIM; //Ê±ÖÓµ÷Õû
 
-    __IO uint32_t TRIMM; //æ—¶é’Ÿå¾®è°ƒæ•´
+    __IO uint32_t TRIMM; //Ê±ÖÓÎ¢µ÷Õû
 } RTC_TypeDef;
 
 #define RTC_LOAD_TIME_Pos 0
@@ -3311,44 +3311,44 @@ typedef struct
 #define RTC_LOAD_ALARM_Pos 1
 #define RTC_LOAD_ALARM_Msk (0x01 << RTC_LOAD_ALARM_Pos)
 
-#define RTC_MINSEC_SEC_Pos 0 //ç§’è®¡æ•°ï¼Œå–å€¼0--59
+#define RTC_MINSEC_SEC_Pos 0 //Ãë¼ÆÊı£¬È¡Öµ0--59
 #define RTC_MINSEC_SEC_Msk (0x3F << RTC_MINSEC_SEC_Pos)
-#define RTC_MINSEC_MIN_Pos 6 //åˆ†é’Ÿè®¡æ•°ï¼Œå–å€¼0--59
+#define RTC_MINSEC_MIN_Pos 6 //·ÖÖÓ¼ÆÊı£¬È¡Öµ0--59
 #define RTC_MINSEC_MIN_Msk (0x3F << RTC_MINSEC_MIN_Pos)
 
-#define RTC_DATHUR_HOUR_Pos 0 //å°æ—¶è®¡æ•°ï¼Œå–å€¼0--23
+#define RTC_DATHUR_HOUR_Pos 0 //Ğ¡Ê±¼ÆÊı£¬È¡Öµ0--23
 #define RTC_DATHUR_HOUR_Msk (0x1F << RTC_DATHUR_HOUR_Pos)
-#define RTC_DATHUR_DATE_Pos 5 //date of monthï¼Œå–å€¼1--31
+#define RTC_DATHUR_DATE_Pos 5 //date of month£¬È¡Öµ1--31
 #define RTC_DATHUR_DATE_Msk (0x1F << RTC_DATHUR_DATE_Pos)
 
-#define RTC_MONDAY_DAY_Pos 0 //day of weekï¼Œå–å€¼0--6
+#define RTC_MONDAY_DAY_Pos 0 //day of week£¬È¡Öµ0--6
 #define RTC_MONDAY_DAY_Msk (0x07 << RTC_MONDAY_DAY_Pos)
-#define RTC_MONDAY_MON_Pos 3 //æœˆä»½è®¡æ•°ï¼Œå–å€¼1--12
+#define RTC_MONDAY_MON_Pos 3 //ÔÂ·İ¼ÆÊı£¬È¡Öµ1--12
 #define RTC_MONDAY_MON_Msk (0x0F << RTC_MONDAY_MON_Pos)
 
-#define RTC_MINSECAL_SEC_Pos 0 //é—¹é’Ÿç§’è®¾ç½®
+#define RTC_MINSECAL_SEC_Pos 0 //ÄÖÖÓÃëÉèÖÃ
 #define RTC_MINSECAL_SEC_Msk (0x3F << RTC_MINSECAL_SEC_Pos)
-#define RTC_MINSECAL_MIN_Pos 6 //é—¹é’Ÿåˆ†é’Ÿè®¾ç½®
+#define RTC_MINSECAL_MIN_Pos 6 //ÄÖÖÓ·ÖÖÓÉèÖÃ
 #define RTC_MINSECAL_MIN_Msk (0x3F << RTC_MINSECAL_MIN_Pos)
 
-#define RTC_DAYHURAL_HOUR_Pos 0 //é—¹é’Ÿå°æ—¶è®¾ç½®
+#define RTC_DAYHURAL_HOUR_Pos 0 //ÄÖÖÓĞ¡Ê±ÉèÖÃ
 #define RTC_DAYHURAL_HOUR_Msk (0x1F << RTC_DAYHURAL_HOUR_Pos)
-#define RTC_DAYHURAL_SUN_Pos 5 //å‘¨æ—¥é—¹é’Ÿæœ‰æ•ˆ
+#define RTC_DAYHURAL_SUN_Pos 5 //ÖÜÈÕÄÖÖÓÓĞĞ§
 #define RTC_DAYHURAL_SUN_Msk (0x01 << RTC_DAYHURAL_SUN_Pos)
-#define RTC_DAYHURAL_MON_Pos 6 //å‘¨ä¸€é—¹é’Ÿæœ‰æ•ˆ
+#define RTC_DAYHURAL_MON_Pos 6 //ÖÜÒ»ÄÖÖÓÓĞĞ§
 #define RTC_DAYHURAL_MON_Msk (0x01 << RTC_DAYHURAL_MON_Pos)
-#define RTC_DAYHURAL_TUE_Pos 7 //å‘¨äºŒé—¹é’Ÿæœ‰æ•ˆ
+#define RTC_DAYHURAL_TUE_Pos 7 //ÖÜ¶şÄÖÖÓÓĞĞ§
 #define RTC_DAYHURAL_TUE_Msk (0x01 << RTC_DAYHURAL_TUE_Pos)
-#define RTC_DAYHURAL_WED_Pos 8 //å‘¨ä¸‰é—¹é’Ÿæœ‰æ•ˆ
+#define RTC_DAYHURAL_WED_Pos 8 //ÖÜÈıÄÖÖÓÓĞĞ§
 #define RTC_DAYHURAL_WED_Msk (0x01 << RTC_DAYHURAL_WED_Pos)
-#define RTC_DAYHURAL_THU_Pos 9 //å‘¨å››é—¹é’Ÿæœ‰æ•ˆ
+#define RTC_DAYHURAL_THU_Pos 9 //ÖÜËÄÄÖÖÓÓĞĞ§
 #define RTC_DAYHURAL_THU_Msk (0x01 << RTC_DAYHURAL_THU_Pos)
-#define RTC_DAYHURAL_FRI_Pos 10 //å‘¨äº”é—¹é’Ÿæœ‰æ•ˆ
+#define RTC_DAYHURAL_FRI_Pos 10 //ÖÜÎåÄÖÖÓÓĞĞ§
 #define RTC_DAYHURAL_FRI_Msk (0x01 << RTC_DAYHURAL_FRI_Pos)
-#define RTC_DAYHURAL_SAT_Pos 11 //å‘¨å…­é—¹é’Ÿæœ‰æ•ˆ
+#define RTC_DAYHURAL_SAT_Pos 11 //ÖÜÁùÄÖÖÓÓĞĞ§
 #define RTC_DAYHURAL_SAT_Msk (0x01 << RTC_DAYHURAL_SAT_Pos)
 
-#define RTC_IE_SEC_Pos 0 //ç§’ä¸­æ–­ä½¿èƒ½
+#define RTC_IE_SEC_Pos 0 //ÃëÖĞ¶ÏÊ¹ÄÜ
 #define RTC_IE_SEC_Msk (0x01 << RTC_IE_SEC_Pos)
 #define RTC_IE_MIN_Pos 1
 #define RTC_IE_MIN_Msk (0x01 << RTC_IE_MIN_Pos)
@@ -3359,7 +3359,7 @@ typedef struct
 #define RTC_IE_ALARM_Pos 4
 #define RTC_IE_ALARM_Msk (0x01 << RTC_IE_ALARM_Pos)
 
-#define RTC_IF_SEC_Pos 0 //å†™1æ¸…é›¶
+#define RTC_IF_SEC_Pos 0 //Ğ´1ÇåÁã
 #define RTC_IF_SEC_Msk (0x01 << RTC_IF_SEC_Pos)
 #define RTC_IF_MIN_Pos 1
 #define RTC_IF_MIN_Msk (0x01 << RTC_IF_MIN_Pos)
@@ -3370,28 +3370,28 @@ typedef struct
 #define RTC_IF_ALARM_Pos 4
 #define RTC_IF_ALARM_Msk (0x01 << RTC_IF_ALARM_Pos)
 
-#define RTC_TRIM_ADJ_Pos 0 //ç”¨äºè°ƒæ•´BASECNTçš„è®¡æ•°å‘¨æœŸï¼Œé»˜è®¤ä¸º32768ï¼Œå¦‚æœDECä¸º1ï¼Œåˆ™è®¡æ•°å‘¨æœŸè°ƒæ•´ä¸º32768-ADJï¼Œå¦åˆ™è°ƒæ•´ä¸º32768+ADJ
+#define RTC_TRIM_ADJ_Pos 0 //ÓÃÓÚµ÷ÕûBASECNTµÄ¼ÆÊıÖÜÆÚ£¬Ä¬ÈÏÎª32768£¬Èç¹ûDECÎª1£¬Ôò¼ÆÊıÖÜÆÚµ÷ÕûÎª32768-ADJ£¬·ñÔòµ÷ÕûÎª32768+ADJ
 #define RTC_TRIM_ADJ_Msk (0xFF << RTC_TRIM_ADJ_Pos)
 #define RTC_TRIM_DEC_Pos 8
 #define RTC_TRIM_DEC_Msk (0x01 << RTC_TRIM_DEC_Pos)
 
-#define RTC_TRIMM_CYCLE_Pos 0 //ç”¨äºè®¡æ•°å‘¨æœŸå¾®è°ƒï¼Œå¦‚æœINCä¸º1ï¼Œåˆ™ç¬¬nä¸ªè®¡æ•°å‘¨æœŸè°ƒæ•´ä¸º(32768Â±ADJ)+1,å¦åˆ™è°ƒæ•´ä¸º(32768Â±ADJ)-1 \
-                              //cycles=0æ—¶ï¼Œä¸è¿›è¡Œå¾®è°ƒæ•´ï¼›cycles=1ï¼Œåˆ™nä¸º2ï¼›cycles=7ï¼Œåˆ™nä¸º8ï¼›ä»¥æ­¤ç±»æ¨
+#define RTC_TRIMM_CYCLE_Pos 0 //ÓÃÓÚ¼ÆÊıÖÜÆÚÎ¢µ÷£¬Èç¹ûINCÎª1£¬ÔòµÚn¸ö¼ÆÊıÖÜÆÚµ÷ÕûÎª(32768¡ÀADJ)+1,·ñÔòµ÷ÕûÎª(32768¡ÀADJ)-1 \
+                              //cycles=0Ê±£¬²»½øĞĞÎ¢µ÷Õû£»cycles=1£¬ÔònÎª2£»cycles=7£¬ÔònÎª8£»ÒÔ´ËÀàÍÆ
 #define RTC_TRIMM_CYCLE_Msk (0x07 << RTC_TRIMM_CYCLE_Pos)
 #define RTC_TRIMM_INC_Pos 3
 #define RTC_TRIMM_INC_Msk (0x01 << RTC_TRIMM_INC_Pos)
 
 typedef struct
 {
-    __IO uint32_t LOAD; //å–‚ç‹—ä½¿è®¡æ•°å™¨è£…è½½LOADå€¼
+    __IO uint32_t LOAD; //Î¹¹·Ê¹¼ÆÊıÆ÷×°ÔØLOADÖµ
 
     __I uint32_t VALUE;
 
     __IO uint32_t CR;
 
-    __IO uint32_t IF; //è®¡æ•°åˆ°0æ—¶ç¡¬ä»¶ç½®ä½ï¼Œè½¯ä»¶å†™1æ¸…é™¤æ ‡å¿—
+    __IO uint32_t IF; //¼ÆÊıµ½0Ê±Ó²¼şÖÃÎ»£¬Èí¼şĞ´1Çå³ı±êÖ¾
 
-    __IO uint32_t FEED; //å†™0x55å–‚ç‹—
+    __IO uint32_t FEED; //Ğ´0x55Î¹¹·
 } WDT_TypeDef;
 
 #define WDT_CR_EN_Pos 0
@@ -3400,7 +3400,7 @@ typedef struct
 #define WDT_CR_RSTEN_Msk (0x01 << WDT_CR_RSTEN_Pos)
 
 /******************************************************************************/
-/*						 Peripheral memory map							  */
+/*                         Peripheral memory map                              */
 /******************************************************************************/
 #define RAM_BASE 0x20000000
 #define AHB_BASE 0x40000000
@@ -3476,7 +3476,7 @@ typedef struct
 #define CAN_BASE (APB_BASE + 0x20000)
 
 /******************************************************************************/
-/*						 Peripheral declaration							 */
+/*                         Peripheral declaration                             */
 /******************************************************************************/
 #define SYS ((SYS_TypeDef *)SYS_BASE)
 

@@ -21,9 +21,9 @@
 extern "C" {
 #endif
 
-/* Includes -------------------------------------------------------------------*/ 
+/* Includes -------------------------------------------------------------------*/
 #include "es32f0271.h"
-  
+
 /** @addtogroup Micro_Driver
   * @{
   */
@@ -49,11 +49,11 @@ typedef struct
   uint32_t refout;
   uint32_t refin;
   uint32_t byte;
-  uint32_t mode;  
+  uint32_t mode;
   uint32_t req;
   uint32_t ds;
-  uint32_t rst;  
-} md_crc_init_typedef; 
+  uint32_t rst;
+} md_crc_init_typedef;
 /**
   * @} MD_CRC_INIT
   */
@@ -86,7 +86,7 @@ typedef struct
 /**
   * @} MD_CRC_CON_registers
   */
-  
+
 /** @defgroup MD_CRC_STAT_registers CRC Status Registers
   * @brief
   * @{
@@ -98,7 +98,7 @@ typedef struct
 /**
   * @} MD_CRC_STAT_registers
   */
-  
+
 /**
   * @} MD_CRC_Public_Constants
   */
@@ -110,7 +110,7 @@ typedef struct
   */
 
 /**
-  * @brief  This register is used to write the CRC initial data. 
+  * @brief  This register is used to write the CRC initial data.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
   *         @arg Minimum 0x00000000
@@ -228,21 +228,21 @@ __STATIC_INLINE uint32_t md_crc_get_rema(CRC_TypeDef *crc)
   * @brief  This register is used to set a parameter.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
-  *         @arg @ref MD_CRC_CON_DMA_ON            1  
-  *         @arg @ref MD_CRC_CON_DMA_OFF           0 
-  *         @arg @ref MD_CRC_CON_MSB_ON            1 
-  *         @arg @ref MD_CRC_CON_MSB_OFF           0  
-  *         @arg @ref MD_CRC_CON_REOUT             0            
-  *         @arg @ref MD_CRC_CON_REOUT_REV         1        
-  *         @arg @ref MD_CRC_CON_REIN              0             
-  *         @arg @ref MD_CRC_CON_REIN_REV          1         
-  *         @arg @ref MD_CRC_CON_SIZE_POLY32       0      
-  *         @arg @ref MD_CRC_CON_SIZE_POLY16       1      
-  *         @arg @ref MD_CRC_CON_SIZE_POLY8        2       
-  *         @arg @ref MD_CRC_CON_MODE_COMP_DISABLE 0 
-  *         @arg @ref MD_CRC_CON_MODE_COMP_ZERO    1    
-  *         @arg @ref MD_CRC_CON_MODE_COMP_ENABLE  2  
-  *         @arg @ref MD_CRC_CON_RESET             1            
+  *         @arg @ref MD_CRC_CON_DMA_ON            1
+  *         @arg @ref MD_CRC_CON_DMA_OFF           0
+  *         @arg @ref MD_CRC_CON_MSB_ON            1
+  *         @arg @ref MD_CRC_CON_MSB_OFF           0
+  *         @arg @ref MD_CRC_CON_REOUT             0
+  *         @arg @ref MD_CRC_CON_REOUT_REV         1
+  *         @arg @ref MD_CRC_CON_REIN              0
+  *         @arg @ref MD_CRC_CON_REIN_REV          1
+  *         @arg @ref MD_CRC_CON_SIZE_POLY32       0
+  *         @arg @ref MD_CRC_CON_SIZE_POLY16       1
+  *         @arg @ref MD_CRC_CON_SIZE_POLY8        2
+  *         @arg @ref MD_CRC_CON_MODE_COMP_DISABLE 0
+  *         @arg @ref MD_CRC_CON_MODE_COMP_ZERO    1
+  *         @arg @ref MD_CRC_CON_MODE_COMP_ENABLE  2
+  *         @arg @ref MD_CRC_CON_RESET             1
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con(CRC_TypeDef *crc, uint32_t value)
@@ -264,8 +264,8 @@ __STATIC_INLINE uint32_t md_crc_get_con(CRC_TypeDef *crc)
   * @brief  This function allow user to enable DMA function.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
-  *         @arg @ref MD_CRC_CON_DMA_ON            1  
-  *         @arg @ref MD_CRC_CON_DMA_OFF           0 
+  *         @arg @ref MD_CRC_CON_DMA_ON            1
+  *         @arg @ref MD_CRC_CON_DMA_OFF           0
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con_dma(CRC_TypeDef *crc, uint32_t value)
@@ -274,7 +274,7 @@ __STATIC_INLINE void md_crc_set_con_dma(CRC_TypeDef *crc, uint32_t value)
 }
 
 /**
-  * @brief  This function allow user to enable DMA function. 
+  * @brief  This function allow user to enable DMA function.
   * @param  CRC Instance
   * @retval value 0: disable, 1: enable.
   */
@@ -287,8 +287,8 @@ __STATIC_INLINE uint32_t md_crc_get_con_dma(CRC_TypeDef *crc)
   * @brief  User can set this bit to change the 'byte' order of input data.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
-  *         @arg @ref MD_CRC_CON_MSB_ON            1 
-  *         @arg @ref MD_CRC_CON_MSB_OFF           0 
+  *         @arg @ref MD_CRC_CON_MSB_ON            1
+  *         @arg @ref MD_CRC_CON_MSB_OFF           0
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con_msb(CRC_TypeDef *crc, uint32_t value)
@@ -297,7 +297,7 @@ __STATIC_INLINE void md_crc_set_con_msb(CRC_TypeDef *crc, uint32_t value)
 }
 
 /**
-  * @brief  User can set this bit to change the 'byte' order of input data. 
+  * @brief  User can set this bit to change the 'byte' order of input data.
   * @param  CRC Instance
   * @retval value 0: disable, 1: enable.
   */
@@ -310,8 +310,8 @@ __STATIC_INLINE uint32_t md_crc_get_con_msb(CRC_TypeDef *crc)
   * @brief  This function allow user to reverse the order of CRC output data.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
-  *         @arg @reg MD_CRC_CON_REOUT        0         
-  *         @arg @reg MD_CRC_CON_REOUT_REV    1         
+  *         @arg @reg MD_CRC_CON_REOUT        0
+  *         @arg @reg MD_CRC_CON_REOUT_REV    1
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con_reout(CRC_TypeDef *crc, uint32_t value)
@@ -333,8 +333,8 @@ __STATIC_INLINE uint32_t md_crc_get_con_reout(CRC_TypeDef *crc)
   * @brief  This function allow user to reverse the order of CRC input data.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
-  *         @arg @reg MD_CRC_CON_REIN        0         
-  *         @arg @reg MD_CRC_CON_REIN_REV    1         
+  *         @arg @reg MD_CRC_CON_REIN        0
+  *         @arg @reg MD_CRC_CON_REIN_REV    1
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con_rein(CRC_TypeDef *crc, uint32_t value)
@@ -343,7 +343,7 @@ __STATIC_INLINE void md_crc_set_con_rein(CRC_TypeDef *crc, uint32_t value)
 }
 
 /**
-  * @brief  User can set this bit to change the 'byte' order of input data. 
+  * @brief  User can set this bit to change the 'byte' order of input data.
   * @param  CRC Instance
   * @retval value 0: Disable reverse operation, 1: Bit reversal done by byte.
   */
@@ -356,9 +356,9 @@ __STATIC_INLINE uint32_t md_crc_get_con_rein(CRC_TypeDef *crc)
   * @brief  User can set this bit to change the 'byte' order of input data.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
-  *         @arg @ref MD_CRC_CON_SIZE_POLY32       0      
-  *         @arg @ref MD_CRC_CON_SIZE_POLY16       1      
-  *         @arg @ref MD_CRC_CON_SIZE_POLY8        2         
+  *         @arg @ref MD_CRC_CON_SIZE_POLY32       0
+  *         @arg @ref MD_CRC_CON_SIZE_POLY16       1
+  *         @arg @ref MD_CRC_CON_SIZE_POLY8        2
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con_size(CRC_TypeDef *crc, uint32_t value)
@@ -367,7 +367,7 @@ __STATIC_INLINE void md_crc_set_con_size(CRC_TypeDef *crc, uint32_t value)
 }
 
 /**
-  * @brief  User can set this bit to change the 'byte' order of input data. 
+  * @brief  User can set this bit to change the 'byte' order of input data.
   * @param  CRC Instance
   * @retval value 00: 32 bit polynomial, 01: 16 bit polynomial, 10: 8 bit polynomial.
   */
@@ -377,12 +377,12 @@ __STATIC_INLINE uint32_t md_crc_get_con_size(CRC_TypeDef *crc)
 }
 
 /**
-  * @brief  This function allow user to check CRC result. If CRC result is not correct, the status ‚ÄúFAIL‚Äù in CRC_STA will be set to 1.
+  * @brief  This function allow user to check CRC result. If CRC result is not correct, the status °∞FAIL°± in CRC_STA will be set to 1.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
   *         @arg @ref MD_CRC_CON_MODE_COMP_DISABLE   0
   *         @arg @ref MD_CRC_CON_MODE_COMP_ZERO      1
-  *         @arg @ref MD_CRC_CON_MODE_COMP_ENABLE    2     
+  *         @arg @ref MD_CRC_CON_MODE_COMP_ENABLE    2
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con_mode(CRC_TypeDef *crc, uint32_t value)
@@ -391,9 +391,9 @@ __STATIC_INLINE void md_crc_set_con_mode(CRC_TypeDef *crc, uint32_t value)
 }
 
 /**
-  * @brief  This function allow user to check CRC result. If CRC result is not correct, the status ‚ÄúFAIL‚Äù in CRC_STA will be set to 1. 
+  * @brief  This function allow user to check CRC result. If CRC result is not correct, the status °∞FAIL°± in CRC_STA will be set to 1.
   * @param  CRC Instance
-  * @retval value 00: Disable compare function, 01: Compare CRC result with 32‚Äôh0000_0000, 10: Compare CRC result with CRC_COMP.
+  * @retval value 00: Disable compare function, 01: Compare CRC result with 32°Øh0000_0000, 10: Compare CRC result with CRC_COMP.
   */
 __STATIC_INLINE uint32_t md_crc_get_con_mode(CRC_TypeDef *crc)
 {
@@ -404,7 +404,7 @@ __STATIC_INLINE uint32_t md_crc_get_con_mode(CRC_TypeDef *crc)
   * @brief  User can set this bit to reset CRC function. This bit will be cleared by itself.
   * @param  CRC Instance
   * @param  value This parameter can be one of the following values:
-  *         @arg @ref MD_CRC_CON_RESET  1   
+  *         @arg @ref MD_CRC_CON_RESET  1
   * @retval None.
   */
 __STATIC_INLINE void md_crc_set_con_reset(CRC_TypeDef *crc, uint32_t value)

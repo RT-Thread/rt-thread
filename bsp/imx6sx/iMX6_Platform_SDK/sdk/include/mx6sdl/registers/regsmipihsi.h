@@ -384,27 +384,27 @@ typedef union _hw_mipi_hsi_tx_conf
     reg32_t U;
     struct _hw_mipi_hsi_tx_conf_bitfields
     {
-        unsigned TRANS_MODE : 1; //!< [0] 
+        unsigned TRANS_MODE : 1; //!< [0]
         unsigned WAKEUP : 1; //!< [1] When this bit gets set to one, HSI transmitter sends HSI_TX_WAKE signal to Rx of other device.
         unsigned RESERVED0 : 6; //!< [7:2] Reserved.
-        unsigned TIMEOUT_CNT : 4; //!< [11:8] 
+        unsigned TIMEOUT_CNT : 4; //!< [11:8]
         unsigned RESERVED1 : 4; //!< [15:12] Reserved.
-        unsigned CH0_EN : 1; //!< [16] 
-        unsigned CH1_EN : 1; //!< [17] 
-        unsigned CH2_EN : 1; //!< [18] 
-        unsigned CH3_EN : 1; //!< [19] 
-        unsigned CH4_EN : 1; //!< [20] 
-        unsigned CH5_EN : 1; //!< [21] 
-        unsigned CH6_EN : 1; //!< [22] 
-        unsigned CH7_EN : 1; //!< [23] 
-        unsigned CH8_EN : 1; //!< [24] 
-        unsigned CH9_EN : 1; //!< [25] 
-        unsigned CH10_EN : 1; //!< [26] 
-        unsigned CH11_EN : 1; //!< [27] 
-        unsigned CH12_EN : 1; //!< [28] 
-        unsigned CH13_EN : 1; //!< [29] 
-        unsigned CH14_EN : 1; //!< [30] 
-        unsigned CH15_EN : 1; //!< [31] 
+        unsigned CH0_EN : 1; //!< [16]
+        unsigned CH1_EN : 1; //!< [17]
+        unsigned CH2_EN : 1; //!< [18]
+        unsigned CH3_EN : 1; //!< [19]
+        unsigned CH4_EN : 1; //!< [20]
+        unsigned CH5_EN : 1; //!< [21]
+        unsigned CH6_EN : 1; //!< [22]
+        unsigned CH7_EN : 1; //!< [23]
+        unsigned CH8_EN : 1; //!< [24]
+        unsigned CH9_EN : 1; //!< [25]
+        unsigned CH10_EN : 1; //!< [26]
+        unsigned CH11_EN : 1; //!< [27]
+        unsigned CH12_EN : 1; //!< [28]
+        unsigned CH13_EN : 1; //!< [29]
+        unsigned CH14_EN : 1; //!< [30]
+        unsigned CH15_EN : 1; //!< [31]
     } B;
 } hw_mipi_hsi_tx_conf_t;
 #endif
@@ -872,29 +872,29 @@ typedef union _hw_mipi_hsi_rx_conf
     reg32_t U;
     struct _hw_mipi_hsi_rx_conf_bitfields
     {
-        unsigned DATA_FLOW : 2; //!< [1:0] 
-        unsigned WAKE : 1; //!< [2] 
-        unsigned REC_MODE : 1; //!< [3] 
-        unsigned TAIL_BIT_CNT_EN : 1; //!< [4] 
+        unsigned DATA_FLOW : 2; //!< [1:0]
+        unsigned WAKE : 1; //!< [2]
+        unsigned REC_MODE : 1; //!< [3]
+        unsigned TAIL_BIT_CNT_EN : 1; //!< [4]
         unsigned RESERVED0 : 3; //!< [7:5] Reserved.
         unsigned TIMEOUT_CNT : 7; //!< [14:8] Receive Frame Timeout Counter:
         unsigned RESERVED1 : 1; //!< [15] Reserved.
-        unsigned CH0_EN : 1; //!< [16] 
-        unsigned CH1_EN : 1; //!< [17] 
-        unsigned CH2_EN : 1; //!< [18] 
-        unsigned CH3_EN : 1; //!< [19] 
-        unsigned CH4_EN : 1; //!< [20] 
-        unsigned CH5_EN : 1; //!< [21] 
-        unsigned CH6_EN : 1; //!< [22] 
-        unsigned CH7_EN : 1; //!< [23] 
-        unsigned CH8_EN : 1; //!< [24] 
-        unsigned CH9_EN : 1; //!< [25] 
-        unsigned CH10_EN : 1; //!< [26] 
-        unsigned CH11_EN : 1; //!< [27] 
-        unsigned CH12_EN : 1; //!< [28] 
-        unsigned CH13_EN : 1; //!< [29] 
-        unsigned CH14_EN : 1; //!< [30] 
-        unsigned CH15_EN : 1; //!< [31] 
+        unsigned CH0_EN : 1; //!< [16]
+        unsigned CH1_EN : 1; //!< [17]
+        unsigned CH2_EN : 1; //!< [18]
+        unsigned CH3_EN : 1; //!< [19]
+        unsigned CH4_EN : 1; //!< [20]
+        unsigned CH5_EN : 1; //!< [21]
+        unsigned CH6_EN : 1; //!< [22]
+        unsigned CH7_EN : 1; //!< [23]
+        unsigned CH8_EN : 1; //!< [24]
+        unsigned CH9_EN : 1; //!< [25]
+        unsigned CH10_EN : 1; //!< [26]
+        unsigned CH11_EN : 1; //!< [27]
+        unsigned CH12_EN : 1; //!< [28]
+        unsigned CH13_EN : 1; //!< [29]
+        unsigned CH14_EN : 1; //!< [30]
+        unsigned CH15_EN : 1; //!< [31]
     } B;
 } hw_mipi_hsi_rx_conf_t;
 #endif
@@ -1404,13 +1404,13 @@ typedef union _hw_mipi_hsi_cap
     reg32_t U;
     struct _hw_mipi_hsi_cap_bitfields
     {
-        unsigned TX_CH_NU_SUPPORTE : 4; //!< [3:0] 
-        unsigned RX_CH_NU_SUPPORTE : 4; //!< [7:4] 
-        unsigned DMA_CH_NU_SUPPORT : 5; //!< [12:8] 
+        unsigned TX_CH_NU_SUPPORTE : 4; //!< [3:0]
+        unsigned RX_CH_NU_SUPPORTE : 4; //!< [7:4]
+        unsigned DMA_CH_NU_SUPPORT : 5; //!< [12:8]
         unsigned RESERVED0 : 3; //!< [15:13] Reserved.
-        unsigned TX_DMA_SUPPORT : 1; //!< [16] 
-        unsigned RX_DMA_SUPPORT : 1; //!< [17] 
-        unsigned WAKEUP_EVENT : 1; //!< [18] 
+        unsigned TX_DMA_SUPPORT : 1; //!< [16]
+        unsigned RX_DMA_SUPPORT : 1; //!< [17]
+        unsigned WAKEUP_EVENT : 1; //!< [18]
         unsigned RESERVED1 : 13; //!< [31:19] Reserved.
     } B;
 } hw_mipi_hsi_cap_t;
@@ -2874,38 +2874,38 @@ typedef union _hw_mipi_hsi_fifo_thr_conf
     reg32_t U;
     struct _hw_mipi_hsi_fifo_thr_conf_bitfields
     {
-        unsigned RX_CH0 : 1; //!< [0] 
-        unsigned RX_CH1 : 1; //!< [1] 
-        unsigned RX_CH2 : 1; //!< [2] 
-        unsigned RX_CH3 : 1; //!< [3] 
-        unsigned RX_CH4 : 1; //!< [4] 
-        unsigned RX_CH5 : 1; //!< [5] 
-        unsigned RX_CH6 : 1; //!< [6] 
-        unsigned RX_CH7 : 1; //!< [7] 
-        unsigned RX_CH8 : 1; //!< [8] 
-        unsigned RX_CH9 : 1; //!< [9] 
-        unsigned RX_CH10 : 1; //!< [10] 
-        unsigned RX_CH11 : 1; //!< [11] 
-        unsigned RX_CH12 : 1; //!< [12] 
-        unsigned RX_CH13 : 1; //!< [13] 
-        unsigned RX_CH14 : 1; //!< [14] 
-        unsigned RX_CH15 : 1; //!< [15] 
-        unsigned TX_CH0 : 1; //!< [16] 
-        unsigned TX_CH1 : 1; //!< [17] 
-        unsigned TX_CH2 : 1; //!< [18] 
-        unsigned TX_CH3 : 1; //!< [19] 
-        unsigned TX_CH4 : 1; //!< [20] 
-        unsigned TX_CH5 : 1; //!< [21] 
-        unsigned TX_CH6 : 1; //!< [22] 
-        unsigned TX_CH7 : 1; //!< [23] 
-        unsigned TX_CH8 : 1; //!< [24] 
-        unsigned TX_CH9 : 1; //!< [25] 
-        unsigned TX_CH10 : 1; //!< [26] 
-        unsigned TX_CH11 : 1; //!< [27] 
-        unsigned TX_CH12 : 1; //!< [28] 
-        unsigned TX_CH13 : 1; //!< [29] 
-        unsigned TX_CH14 : 1; //!< [30] 
-        unsigned TX_CH15 : 1; //!< [31] 
+        unsigned RX_CH0 : 1; //!< [0]
+        unsigned RX_CH1 : 1; //!< [1]
+        unsigned RX_CH2 : 1; //!< [2]
+        unsigned RX_CH3 : 1; //!< [3]
+        unsigned RX_CH4 : 1; //!< [4]
+        unsigned RX_CH5 : 1; //!< [5]
+        unsigned RX_CH6 : 1; //!< [6]
+        unsigned RX_CH7 : 1; //!< [7]
+        unsigned RX_CH8 : 1; //!< [8]
+        unsigned RX_CH9 : 1; //!< [9]
+        unsigned RX_CH10 : 1; //!< [10]
+        unsigned RX_CH11 : 1; //!< [11]
+        unsigned RX_CH12 : 1; //!< [12]
+        unsigned RX_CH13 : 1; //!< [13]
+        unsigned RX_CH14 : 1; //!< [14]
+        unsigned RX_CH15 : 1; //!< [15]
+        unsigned TX_CH0 : 1; //!< [16]
+        unsigned TX_CH1 : 1; //!< [17]
+        unsigned TX_CH2 : 1; //!< [18]
+        unsigned TX_CH3 : 1; //!< [19]
+        unsigned TX_CH4 : 1; //!< [20]
+        unsigned TX_CH5 : 1; //!< [21]
+        unsigned TX_CH6 : 1; //!< [22]
+        unsigned TX_CH7 : 1; //!< [23]
+        unsigned TX_CH8 : 1; //!< [24]
+        unsigned TX_CH9 : 1; //!< [25]
+        unsigned TX_CH10 : 1; //!< [26]
+        unsigned TX_CH11 : 1; //!< [27]
+        unsigned TX_CH12 : 1; //!< [28]
+        unsigned TX_CH13 : 1; //!< [29]
+        unsigned TX_CH14 : 1; //!< [30]
+        unsigned TX_CH15 : 1; //!< [31]
     } B;
 } hw_mipi_hsi_fifo_thr_conf_t;
 #endif
@@ -4233,15 +4233,15 @@ typedef union _hw_mipi_hsi_irqstat
     reg32_t U;
     struct _hw_mipi_hsi_irqstat_bitfields
     {
-        unsigned FIFO_THRESHOLD_INT : 1; //!< [0] 
-        unsigned RX_WAKEUP_INT : 1; //!< [1] 
+        unsigned FIFO_THRESHOLD_INT : 1; //!< [0]
+        unsigned RX_WAKEUP_INT : 1; //!< [1]
         unsigned RX_TIMEOUT_INT : 1; //!< [2] If any bit in the HSI Error Interrupt Status Register is set, then this bit is set.
         unsigned DMA_INT : 1; //!< [3] This bit is set when a Transmit or Receive Operation is completed for DMA.
         unsigned DMA_ERR_INT : 1; //!< [4] If any bit in the DMA Error Interrupt Status Register is set, then this bit is set.
-        unsigned TX_TIMEOUT_ERR_INT : 1; //!< [5] 
-        unsigned RX_ERROR_INT : 1; //!< [6] 
-        unsigned RX_BREAK_INT : 1; //!< [7] 
-        unsigned TX_EMPTY_INT : 1; //!< [8] 
+        unsigned TX_TIMEOUT_ERR_INT : 1; //!< [5]
+        unsigned RX_ERROR_INT : 1; //!< [6]
+        unsigned RX_BREAK_INT : 1; //!< [7]
+        unsigned TX_EMPTY_INT : 1; //!< [8]
         unsigned RESERVED0 : 23; //!< [31:9] Reserved, always set to zero.
     } B;
 } hw_mipi_hsi_irqstat_t;
@@ -4426,15 +4426,15 @@ typedef union _hw_mipi_hsi_irqstat_en
     reg32_t U;
     struct _hw_mipi_hsi_irqstat_en_bitfields
     {
-        unsigned FIFO_THRESHOLD_INT : 1; //!< [0] 
-        unsigned RX_WAKEUP_INT : 1; //!< [1] 
-        unsigned RX_TIMEOUT_INT : 1; //!< [2] 
-        unsigned DMA_INT : 1; //!< [3] 
-        unsigned DMA_ERR_INT : 1; //!< [4] 
-        unsigned TX_TIMEOUT_ERR_INT : 1; //!< [5] 
-        unsigned RX_ERROR_INT : 1; //!< [6] 
-        unsigned RX_BREAK_INT : 1; //!< [7] 
-        unsigned TX_EMPTY_INT : 1; //!< [8] 
+        unsigned FIFO_THRESHOLD_INT : 1; //!< [0]
+        unsigned RX_WAKEUP_INT : 1; //!< [1]
+        unsigned RX_TIMEOUT_INT : 1; //!< [2]
+        unsigned DMA_INT : 1; //!< [3]
+        unsigned DMA_ERR_INT : 1; //!< [4]
+        unsigned TX_TIMEOUT_ERR_INT : 1; //!< [5]
+        unsigned RX_ERROR_INT : 1; //!< [6]
+        unsigned RX_BREAK_INT : 1; //!< [7]
+        unsigned TX_EMPTY_INT : 1; //!< [8]
         unsigned RESERVED0 : 23; //!< [31:9] Reserved, always set to zero.
     } B;
 } hw_mipi_hsi_irqstat_en_t;
@@ -4942,38 +4942,38 @@ typedef union _hw_mipi_hsi_fifo_thr_irqstat
     reg32_t U;
     struct _hw_mipi_hsi_fifo_thr_irqstat_bitfields
     {
-        unsigned RX_CH0_INT : 1; //!< [0] 
-        unsigned RX_CH1_INT : 1; //!< [1] 
-        unsigned RX_CH2_INT : 1; //!< [2] 
-        unsigned RX_CH3_INT : 1; //!< [3] 
-        unsigned RX_CH4_INT : 1; //!< [4] 
-        unsigned RX_CH5_INT : 1; //!< [5] 
-        unsigned RX_CH6_INT : 1; //!< [6] 
-        unsigned RX_CH7_INT : 1; //!< [7] 
-        unsigned RX_CH8_INT : 1; //!< [8] 
-        unsigned RX_CH9_INT : 1; //!< [9] 
-        unsigned RX_CH10_INT : 1; //!< [10] 
-        unsigned RX_CH11_INT : 1; //!< [11] 
-        unsigned RX_CH12_INT : 1; //!< [12] 
-        unsigned RX_CH13_INT : 1; //!< [13] 
-        unsigned RX_CH14_INT : 1; //!< [14] 
-        unsigned RX_CH15_INT : 1; //!< [15] 
-        unsigned TX_CH0_INT : 1; //!< [16] 
-        unsigned TX_CH1_INT : 1; //!< [17] 
-        unsigned TX_CH2_INT : 1; //!< [18] 
-        unsigned TX_CH3_INT : 1; //!< [19] 
-        unsigned TX_CH4_INT : 1; //!< [20] 
-        unsigned TX_CH5_INT : 1; //!< [21] 
-        unsigned TX_CH6_INT : 1; //!< [22] 
-        unsigned TX_CH7_INT : 1; //!< [23] 
-        unsigned TX_CH8_INT : 1; //!< [24] 
-        unsigned TX_CH9_INT : 1; //!< [25] 
-        unsigned TX_CH10_INT : 1; //!< [26] 
-        unsigned TX_CH11_INT : 1; //!< [27] 
-        unsigned TX_CH12_INT : 1; //!< [28] 
-        unsigned TX_CH13_INT : 1; //!< [29] 
-        unsigned TX_CH14_INT : 1; //!< [30] 
-        unsigned TX_CH15_INT : 1; //!< [31] 
+        unsigned RX_CH0_INT : 1; //!< [0]
+        unsigned RX_CH1_INT : 1; //!< [1]
+        unsigned RX_CH2_INT : 1; //!< [2]
+        unsigned RX_CH3_INT : 1; //!< [3]
+        unsigned RX_CH4_INT : 1; //!< [4]
+        unsigned RX_CH5_INT : 1; //!< [5]
+        unsigned RX_CH6_INT : 1; //!< [6]
+        unsigned RX_CH7_INT : 1; //!< [7]
+        unsigned RX_CH8_INT : 1; //!< [8]
+        unsigned RX_CH9_INT : 1; //!< [9]
+        unsigned RX_CH10_INT : 1; //!< [10]
+        unsigned RX_CH11_INT : 1; //!< [11]
+        unsigned RX_CH12_INT : 1; //!< [12]
+        unsigned RX_CH13_INT : 1; //!< [13]
+        unsigned RX_CH14_INT : 1; //!< [14]
+        unsigned RX_CH15_INT : 1; //!< [15]
+        unsigned TX_CH0_INT : 1; //!< [16]
+        unsigned TX_CH1_INT : 1; //!< [17]
+        unsigned TX_CH2_INT : 1; //!< [18]
+        unsigned TX_CH3_INT : 1; //!< [19]
+        unsigned TX_CH4_INT : 1; //!< [20]
+        unsigned TX_CH5_INT : 1; //!< [21]
+        unsigned TX_CH6_INT : 1; //!< [22]
+        unsigned TX_CH7_INT : 1; //!< [23]
+        unsigned TX_CH8_INT : 1; //!< [24]
+        unsigned TX_CH9_INT : 1; //!< [25]
+        unsigned TX_CH10_INT : 1; //!< [26]
+        unsigned TX_CH11_INT : 1; //!< [27]
+        unsigned TX_CH12_INT : 1; //!< [28]
+        unsigned TX_CH13_INT : 1; //!< [29]
+        unsigned TX_CH14_INT : 1; //!< [30]
+        unsigned TX_CH15_INT : 1; //!< [31]
     } B;
 } hw_mipi_hsi_fifo_thr_irqstat_t;
 #endif
@@ -7566,22 +7566,22 @@ typedef union _hw_mipi_hsi_err_irqstat_en
     struct _hw_mipi_hsi_err_irqstat_en_bitfields
     {
         unsigned RESERVED0 : 16; //!< [15:0] Reserved, always set to zero.
-        unsigned RX_CH0_TIMEOUT_INT_EN : 1; //!< [16] 
-        unsigned RX_CH1_TIMEOUT_INT_EN : 1; //!< [17] 
-        unsigned RX_CH2_TIMEOUT_INT_EN : 1; //!< [18] 
-        unsigned RX_CH3_TIMEOUT_INT_EN : 1; //!< [19] 
-        unsigned RX_CH4_TIMEOUT_INT_EN : 1; //!< [20] 
-        unsigned RX_CH5_TIMEOUT_INT_EN : 1; //!< [21] 
-        unsigned RX_CH6_TIMEOUT_INT_EN : 1; //!< [22] 
-        unsigned RX_CH7_TIMEOUT_INT_EN : 1; //!< [23] 
-        unsigned RX_CH8_TIMEOUT_INT_EN : 1; //!< [24] 
-        unsigned RX_CH9_TIMEOUT_INT_EN : 1; //!< [25] 
-        unsigned RX_CH10_TIMEOUT_INT_EN : 1; //!< [26] 
-        unsigned RX_CH11_TIMEOUT_INT_EN : 1; //!< [27] 
-        unsigned RX_CH12_TIMEOUT_INT_EN : 1; //!< [28] 
-        unsigned RX_CH13_TIMEOUT_INT_EN : 1; //!< [29] 
-        unsigned RX_CH14_TIMEOUT_INT_EN : 1; //!< [30] 
-        unsigned RX_CH15_TIMEOUT_INT_EN : 1; //!< [31] 
+        unsigned RX_CH0_TIMEOUT_INT_EN : 1; //!< [16]
+        unsigned RX_CH1_TIMEOUT_INT_EN : 1; //!< [17]
+        unsigned RX_CH2_TIMEOUT_INT_EN : 1; //!< [18]
+        unsigned RX_CH3_TIMEOUT_INT_EN : 1; //!< [19]
+        unsigned RX_CH4_TIMEOUT_INT_EN : 1; //!< [20]
+        unsigned RX_CH5_TIMEOUT_INT_EN : 1; //!< [21]
+        unsigned RX_CH6_TIMEOUT_INT_EN : 1; //!< [22]
+        unsigned RX_CH7_TIMEOUT_INT_EN : 1; //!< [23]
+        unsigned RX_CH8_TIMEOUT_INT_EN : 1; //!< [24]
+        unsigned RX_CH9_TIMEOUT_INT_EN : 1; //!< [25]
+        unsigned RX_CH10_TIMEOUT_INT_EN : 1; //!< [26]
+        unsigned RX_CH11_TIMEOUT_INT_EN : 1; //!< [27]
+        unsigned RX_CH12_TIMEOUT_INT_EN : 1; //!< [28]
+        unsigned RX_CH13_TIMEOUT_INT_EN : 1; //!< [29]
+        unsigned RX_CH14_TIMEOUT_INT_EN : 1; //!< [30]
+        unsigned RX_CH15_TIMEOUT_INT_EN : 1; //!< [31]
     } B;
 } hw_mipi_hsi_err_irqstat_en_t;
 #endif
@@ -14337,22 +14337,22 @@ typedef union _hw_mipi_hsi_tx_fifo_stat
     reg32_t U;
     struct _hw_mipi_hsi_tx_fifo_stat_bitfields
     {
-        unsigned CH0 : 2; //!< [1:0] 
-        unsigned CH1 : 2; //!< [3:2] 
-        unsigned CH2 : 2; //!< [5:4] 
-        unsigned CH3 : 2; //!< [7:6] 
-        unsigned CH4 : 2; //!< [9:8] 
-        unsigned CH5 : 2; //!< [11:10] 
-        unsigned CH6 : 2; //!< [13:12] 
-        unsigned CH7 : 2; //!< [15:14] 
-        unsigned CH8 : 2; //!< [17:16] 
-        unsigned CH9 : 2; //!< [19:18] 
-        unsigned CH10 : 2; //!< [21:20] 
-        unsigned CH11 : 2; //!< [23:22] 
-        unsigned CH12 : 2; //!< [25:24] 
-        unsigned CH13 : 2; //!< [27:26] 
-        unsigned CH14 : 2; //!< [29:28] 
-        unsigned CH15 : 2; //!< [31:30] 
+        unsigned CH0 : 2; //!< [1:0]
+        unsigned CH1 : 2; //!< [3:2]
+        unsigned CH2 : 2; //!< [5:4]
+        unsigned CH3 : 2; //!< [7:6]
+        unsigned CH4 : 2; //!< [9:8]
+        unsigned CH5 : 2; //!< [11:10]
+        unsigned CH6 : 2; //!< [13:12]
+        unsigned CH7 : 2; //!< [15:14]
+        unsigned CH8 : 2; //!< [17:16]
+        unsigned CH9 : 2; //!< [19:18]
+        unsigned CH10 : 2; //!< [21:20]
+        unsigned CH11 : 2; //!< [23:22]
+        unsigned CH12 : 2; //!< [25:24]
+        unsigned CH13 : 2; //!< [27:26]
+        unsigned CH14 : 2; //!< [29:28]
+        unsigned CH15 : 2; //!< [31:30]
     } B;
 } hw_mipi_hsi_tx_fifo_stat_t;
 #endif
@@ -14646,22 +14646,22 @@ typedef union _hw_mipi_hsi_rx_fifo_stat
     reg32_t U;
     struct _hw_mipi_hsi_rx_fifo_stat_bitfields
     {
-        unsigned CH0 : 2; //!< [1:0] 
-        unsigned CH1 : 2; //!< [3:2] 
-        unsigned CH2 : 2; //!< [5:4] 
-        unsigned CH3 : 2; //!< [7:6] 
-        unsigned CH4 : 2; //!< [9:8] 
-        unsigned CH5 : 2; //!< [11:10] 
-        unsigned CH6 : 2; //!< [13:12] 
-        unsigned CH7 : 2; //!< [15:14] 
-        unsigned CH8 : 2; //!< [17:16] 
-        unsigned CH9 : 2; //!< [19:18] 
-        unsigned CH10 : 2; //!< [21:20] 
-        unsigned CH11 : 2; //!< [23:22] 
-        unsigned CH12 : 2; //!< [25:24] 
-        unsigned CH13 : 2; //!< [27:26] 
-        unsigned CH14 : 2; //!< [29:28] 
-        unsigned CH15 : 2; //!< [31:30] 
+        unsigned CH0 : 2; //!< [1:0]
+        unsigned CH1 : 2; //!< [3:2]
+        unsigned CH2 : 2; //!< [5:4]
+        unsigned CH3 : 2; //!< [7:6]
+        unsigned CH4 : 2; //!< [9:8]
+        unsigned CH5 : 2; //!< [11:10]
+        unsigned CH6 : 2; //!< [13:12]
+        unsigned CH7 : 2; //!< [15:14]
+        unsigned CH8 : 2; //!< [17:16]
+        unsigned CH9 : 2; //!< [19:18]
+        unsigned CH10 : 2; //!< [21:20]
+        unsigned CH11 : 2; //!< [23:22]
+        unsigned CH12 : 2; //!< [25:24]
+        unsigned CH13 : 2; //!< [27:26]
+        unsigned CH14 : 2; //!< [29:28]
+        unsigned CH15 : 2; //!< [31:30]
     } B;
 } hw_mipi_hsi_rx_fifo_stat_t;
 #endif
@@ -14956,7 +14956,7 @@ typedef union _hw_mipi_hsi_ahb_master_conf
     struct _hw_mipi_hsi_ahb_master_conf_bitfields
     {
         unsigned DMA_INSERT_IDLE_NUM : 4; //!< [3:0] These bits used to set the number of "IDLE" cycles when DMA_MODE == 2'b0x.
-        unsigned DMA_MODE : 2; //!< [5:4] 
+        unsigned DMA_MODE : 2; //!< [5:4]
         unsigned DP_HOLD_CYCLE : 4; //!< [9:6] These bits used to set the number of cycles for DP access fifo.
         unsigned RESERVED0 : 22; //!< [31:10] Reserved, always set to zero.
     } B;

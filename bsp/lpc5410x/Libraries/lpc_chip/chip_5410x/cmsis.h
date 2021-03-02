@@ -40,11 +40,11 @@ extern "C" {
 #if defined(CORE_M4)
 #include "cmsis_5410x.h"
 typedef LPC5410X_IRQn_Type IRQn_Type;
-#include "core_cm4.h"					/*!< Cortex-M4 processor and core peripherals      */
+#include "core_cm4.h"                    /*!< Cortex-M4 processor and core peripherals      */
 #elif defined(CORE_M0PLUS)
 #include "cmsis_5410x_m0.h"
 typedef LPC5410X_M0_IRQn_Type IRQn_Type;
-#include "core_cm0plus.h"				/*!< Cortex-M0 Plus processor and core peripherals  */
+#include "core_cm0plus.h"                /*!< Cortex-M0 Plus processor and core peripherals  */
 #else
 #error "No CORE_* definition is defined"
 #endif

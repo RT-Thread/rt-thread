@@ -161,15 +161,15 @@ static rt_err_t watchdog_ctrl(rt_watchdog_t *wdt, int cmd, void *arg)
     return RT_EOK;
 }
 
-struct rt_watchdog_ops watchdog_ops = 
+struct rt_watchdog_ops watchdog_ops =
 {
-    .init = &watchdog_init, 
+    .init = &watchdog_init,
     .control = &watchdog_ctrl,
 };
 
-int wdt_exit(void *priv_data) 
-{ 
-    return 0;     
+int wdt_exit(void *priv_data)
+{
+    return 0;
 }
 
 int rt_hw_wdt_init(void)

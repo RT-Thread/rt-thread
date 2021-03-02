@@ -19,7 +19,7 @@ int fputc(int ch, FILE *f);
 static char *itoa(int value, char *string, int radix);
 ErrorStatus UART_printf(uint8_t *Data,...);
 
-#ifdef __clang__ 
+#ifdef __clang__
 ErrorStatus UART_printf(uint8_t *Data, ...);
 
 #elif defined __CC_ARM

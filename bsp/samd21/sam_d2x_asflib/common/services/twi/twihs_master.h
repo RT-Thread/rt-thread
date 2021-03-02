@@ -121,15 +121,15 @@
  * \subsection twihs_basic_use_case_setup_code Example code
  * Add to your application C-file, for example in SAM series chip:
  * \code
-	  void twihs_init(void)
-	  {
-	    twihs_master_options_t opt = {
-	        .speed = 400000,
-	        .chip  = 0x50
-	    };
+      void twihs_init(void)
+      {
+        twihs_master_options_t opt = {
+            .speed = 400000,
+            .chip  = 0x50
+        };
 
-	    twihs_master_setup(&TWIM0, &opt);
-	  }
+        twihs_master_setup(&TWIM0, &opt);
+      }
 \endcode
  *
  * \subsection twihs_basic_use_case_setup_flow Workflow
@@ -140,10 +140,10 @@
  * -# Define and initialize config structs for TWIHS module in your TWIHS initialization
  * function, for example in SAM series chip:
  *   - \code
-	twihs_master_options_t opt = {
-	  .speed = 400000,
-	  .chip  = 0x50
-	}; \endcode
+    twihs_master_options_t opt = {
+      .speed = 400000,
+      .chip  = 0x50
+    }; \endcode
  *   - field \ref speed sets the baudrate of the TWIHS bus
  *   - field \ref chip sets the address of the slave device you want to communicate with
  * -# Call twihs_master_setup and optionally check its return code
@@ -154,17 +154,17 @@
  * \subsection twihs_basic_use_case_usage_code_writing Example code : Writing to a slave device
  * Use in application C-file, for example in SAM series chip:
  * \code
-	  const uint8_t test_pattern[] = {0x55,0xA5,0x5A,0x77,0x99};
+      const uint8_t test_pattern[] = {0x55,0xA5,0x5A,0x77,0x99};
 
-	  twihs_package_t packet_write = {
-	    .addr         = EEPROM_MEM_ADDR,      // TWIHS slave memory address data
-	    .addr_length  = sizeof (uint16_t),    // TWIHS slave memory address data size
-	    .chip         = EEPROM_BUS_ADDR,      // TWIHS slave bus address
-	    .buffer       = (void *)test_pattern, // transfer data source buffer
-	    .length       = sizeof(test_pattern)  // transfer data size (bytes)
-	  };
+      twihs_package_t packet_write = {
+        .addr         = EEPROM_MEM_ADDR,      // TWIHS slave memory address data
+        .addr_length  = sizeof (uint16_t),    // TWIHS slave memory address data size
+        .chip         = EEPROM_BUS_ADDR,      // TWIHS slave bus address
+        .buffer       = (void *)test_pattern, // transfer data source buffer
+        .length       = sizeof(test_pattern)  // transfer data size (bytes)
+      };
 
-	  while (twihs_master_write(&TWIM0, &packet_write) != TWI_SUCCESS);
+      while (twihs_master_write(&TWIM0, &packet_write) != TWI_SUCCESS);
 \endcode
  *
  * \subsection twihs_basic_use_case_usage_flow Workflow
@@ -184,21 +184,21 @@
  * \subsection twihs_basic_use_case_usage_code_reading Example code : Reading from a slave device
  * Use in application C-file, for example in SAM series chip:
  * \code
-	   uint8_t data_received[10];
+       uint8_t data_received[10];
 
-	   twihs_package_t packet_read = {
-	     .addr         = EEPROM_MEM_ADDR,      // TWIHS slave memory address data
-	     .addr_length  = sizeof (uint16_t),    // TWIHS slave memory address data size
-	     .chip         = EEPROM_BUS_ADDR,      // TWIHS slave bus address
-	     .buffer       = data_received,        // transfer data destination buffer
-	     .length       = 10                    // transfer data size (bytes)
-	   };
-	   // Perform a multi-byte read access then check the result.
-	   if(twihs_master_read(&TWIM0, &packet_read) == TWI_SUCCESS){
-	     //Check read content
-	     if(data_received[0]==0x55)
-	       do_something();
-	   }
+       twihs_package_t packet_read = {
+         .addr         = EEPROM_MEM_ADDR,      // TWIHS slave memory address data
+         .addr_length  = sizeof (uint16_t),    // TWIHS slave memory address data size
+         .chip         = EEPROM_BUS_ADDR,      // TWIHS slave bus address
+         .buffer       = data_received,        // transfer data destination buffer
+         .length       = 10                    // transfer data size (bytes)
+       };
+       // Perform a multi-byte read access then check the result.
+       if(twihs_master_read(&TWIM0, &packet_read) == TWI_SUCCESS){
+         //Check read content
+         if(data_received[0]==0x55)
+           do_something();
+       }
 \endcode
  *
  * \subsection twihs_basic_use_case_usage_flow Workflow

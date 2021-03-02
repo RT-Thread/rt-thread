@@ -541,7 +541,7 @@ HAL_StatusTypeDef HAL_RNG_UnRegisterReadyDataCallback(RNG_HandleTypeDef *hrng)
 
 HAL_StatusTypeDef HAL_RNG_GenerateRandomNumber(RNG_HandleTypeDef *hrng, uint32_t *random32bit)
 {
-  uint32_t tickstart;    
+  uint32_t tickstart;
   HAL_StatusTypeDef status = HAL_OK;
 
   /* Process Locked */
@@ -630,7 +630,7 @@ uint32_t HAL_RNG_GetRandomNumber(RNG_HandleTypeDef *hrng)
 {
   if(HAL_RNG_GenerateRandomNumber(hrng, &(hrng->RandomNumber)) == HAL_OK)
   {
-    return hrng->RandomNumber; 
+    return hrng->RandomNumber;
   }
   else
   {
@@ -648,20 +648,20 @@ uint32_t HAL_RNG_GetRandomNumber(RNG_HandleTypeDef *hrng)
 uint32_t HAL_RNG_GetRandomNumber_IT(RNG_HandleTypeDef *hrng)
 {
   uint32_t random32bit = 0U;
-  
+
   /* Process locked */
   __HAL_LOCK(hrng);
-  
-  /* Change RNG peripheral state */  
-  hrng->State = HAL_RNG_STATE_BUSY;  
-  
-  /* Get a 32bit Random number */ 
+
+  /* Change RNG peripheral state */
+  hrng->State = HAL_RNG_STATE_BUSY;
+
+  /* Get a 32bit Random number */
   random32bit = hrng->Instance->DR;
-  
-  /* Enable the RNG Interrupts: Data Ready, Clock error, Seed error */ 
-  __HAL_RNG_ENABLE_IT(hrng); 
-  
-  /* Return the 32 bit random number */   
+
+  /* Enable the RNG Interrupts: Data Ready, Clock error, Seed error */
+  __HAL_RNG_ENABLE_IT(hrng);
+
+  /* Return the 32 bit random number */
   return random32bit;
 }
 
@@ -689,7 +689,7 @@ uint32_t HAL_RNG_GetRandomNumber_IT(RNG_HandleTypeDef *hrng)
 void HAL_RNG_IRQHandler(RNG_HandleTypeDef *hrng)
 {
   uint32_t rngclockerror = 0U;
-  
+
   /* RNG clock error interrupt occurred */
   if (__HAL_RNG_GET_IT(hrng, RNG_IT_CEI) != RESET)
   {
@@ -703,9 +703,9 @@ void HAL_RNG_IRQHandler(RNG_HandleTypeDef *hrng)
   {
     /* Nothing to do */
   }
-  
-  if (rngclockerror == 1U)    
-  { 
+
+  if (rngclockerror == 1U)
+  {
     /* Change RNG peripheral state */
     hrng->State = HAL_RNG_STATE_ERROR;
 
@@ -736,7 +736,7 @@ void HAL_RNG_IRQHandler(RNG_HandleTypeDef *hrng)
       hrng->State = HAL_RNG_STATE_READY;
       /* Process Unlocked */
       __HAL_UNLOCK(hrng);
-      
+
 #if (USE_HAL_RNG_REGISTER_CALLBACKS == 1)
       /* Call registered Data Ready callback */
       hrng->ReadyDataCallback(hrng, hrng->RandomNumber);
@@ -749,7 +749,7 @@ void HAL_RNG_IRQHandler(RNG_HandleTypeDef *hrng)
 }
 
 /**
-  * @brief  Read latest generated random number. 
+  * @brief  Read latest generated random number.
   * @param  hrng pointer to a RNG_HandleTypeDef structure that contains
   *                the configuration information for RNG.
   * @retval random value

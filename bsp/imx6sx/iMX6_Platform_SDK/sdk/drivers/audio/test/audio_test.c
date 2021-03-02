@@ -32,7 +32,7 @@
 #include "sdk.h"
 #include "audio/audio.h"
 
-#define WAVE_CHUNK_DATA_OFFSET	44
+#define WAVE_CHUNK_DATA_OFFSET    44
 
 extern int32_t ssi_playback(audio_pcm_p);
 extern int32_t esai_playback(audio_pcm_p);
@@ -69,7 +69,7 @@ static audio_test_t audio_tests[] = {
 #endif
 
 #if defined(BOARD_EVK)
-	{"I2S AUDIO", ssi_playback},
+    {"I2S AUDIO", ssi_playback},
 #endif
 };
 
@@ -81,7 +81,7 @@ int32_t audio_test(void)
     pcm_music.name = "nice musci";
     /*
      * Audio driver supports 2 channels only. Converte the mono wav to two channels.
-     * While esai driver support 44.1/48KHz only since CS42888's issue, the esai dirver 
+     * While esai driver support 44.1/48KHz only since CS42888's issue, the esai dirver
      * will convert it to 48Khz.
      */
     uint32_t chunk_data_len = (uint32_t)wavefile_end - (uint32_t)wavefile_start - WAVE_CHUNK_DATA_OFFSET;
@@ -89,27 +89,27 @@ int32_t audio_test(void)
     uint16_t *buf = NULL;
 
     if(pcm_music.para->channel_number == 1){
-	buf = (uint16_t *)malloc(2*chunk_data_len);
-	uint16_t *dst_ptr = buf;
+    buf = (uint16_t *)malloc(2*chunk_data_len);
+    uint16_t *dst_ptr = buf;
 
-	for(idx =0; idx < chunk_data_len/2; idx++, src_ptr++, dst_ptr+=2){
-		*dst_ptr = *src_ptr;
-		*(dst_ptr + 1) = *src_ptr;
-	}
-	
-	pcm_music.buf = (uint8_t *) buf;
-	pcm_music.size = chunk_data_len * 2;
-	pcm_music.para->channel_number = 2;
+    for(idx =0; idx < chunk_data_len/2; idx++, src_ptr++, dst_ptr+=2){
+        *dst_ptr = *src_ptr;
+        *(dst_ptr + 1) = *src_ptr;
+    }
+
+    pcm_music.buf = (uint8_t *) buf;
+    pcm_music.size = chunk_data_len * 2;
+    pcm_music.para->channel_number = 2;
     }else{
-    	pcm_music.buf = (uint8_t *)src_ptr;
-    	pcm_music.size = chunk_data_len;
+        pcm_music.buf = (uint8_t *)src_ptr;
+        pcm_music.size = chunk_data_len;
     }
 
     num = sizeof(audio_tests)/sizeof(audio_test_t);
 
     if(0 == num){
         printf("Audio test not supported on this board.\n");
-	return 0;
+    return 0;
     }
 
     printf("\n--- Running audio test, type 'x' to exit.\n");
@@ -143,7 +143,7 @@ int32_t audio_test(void)
     } while (1);
 
     if(buf != NULL){
-	free(buf);
+    free(buf);
     }
 
     return retv;

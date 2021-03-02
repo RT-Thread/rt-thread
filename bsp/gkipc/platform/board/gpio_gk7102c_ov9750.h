@@ -38,43 +38,43 @@
     { GADI_GPIO_3 , GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_4 , GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_5 , GADI_GPIO_TYPE_UNDEFINED                      }, \
-    { GADI_GPIO_6,  GADI_GPIO_TYPE_UNDEFINED     			      }, \
+    { GADI_GPIO_6,  GADI_GPIO_TYPE_UNDEFINED                       }, \
     { GADI_GPIO_7,  GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_8,  GADI_GPIO_TYPE_UNDEFINED                      }, \
-    { GADI_GPIO_9 , GADI_GPIO_TYPE_UNDEFINED          			  }, \
-    { GADI_GPIO_10, GADI_GPIO_TYPE_UNDEFINED            		  }, \
+    { GADI_GPIO_9 , GADI_GPIO_TYPE_UNDEFINED                        }, \
+    { GADI_GPIO_10, GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_11, GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_12, GADI_GPIO_TYPE_UNDEFINED                      }, \
-    { GADI_GPIO_13, GADI_GPIO_TYPE_UNDEFINED         		      }, \
-    { GADI_GPIO_14, GADI_GPIO_TYPE_INOUT_I2C_DATA      		      }, \
-    { GADI_GPIO_15, GADI_GPIO_TYPE_UNDEFINED             		  }, \
-    { GADI_GPIO_16, GADI_GPIO_TYPE_UNDEFINED                	  }, \
-    { GADI_GPIO_17, GADI_GPIO_TYPE_INOUT_I2C_CLK    			  }, \
+    { GADI_GPIO_13, GADI_GPIO_TYPE_UNDEFINED                       }, \
+    { GADI_GPIO_14, GADI_GPIO_TYPE_INOUT_I2C_DATA                    }, \
+    { GADI_GPIO_15, GADI_GPIO_TYPE_UNDEFINED                       }, \
+    { GADI_GPIO_16, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_17, GADI_GPIO_TYPE_INOUT_I2C_CLK                  }, \
     SYSTEM_GPIO_INTPHY_TABLE\
-    { GADI_GPIO_19, GADI_GPIO_TYPE_UNDEFINED     		          }, \
-    { GADI_GPIO_20, GADI_GPIO_TYPE_UNDEFINED    			      }, \
-    { GADI_GPIO_21, GADI_GPIO_TYPE_UNDEFINED  			          }, \
-    { GADI_GPIO_22, GADI_GPIO_TYPE_UNDEFINED   				      }, \
-    { GADI_GPIO_23, GADI_GPIO_TYPE_UNDEFINED   			          }, \
-    { GADI_GPIO_24, GADI_GPIO_TYPE_UNDEFINED    			      }, \
-    { GADI_GPIO_25, GADI_GPIO_TYPE_INPUT_UART0_RX  				  }, \
-    { GADI_GPIO_26, GADI_GPIO_TYPE_OUTPUT_UART0_TX  			  }, \
-    { GADI_GPIO_27, GADI_GPIO_TYPE_UNDEFINED 				      }, \
+    { GADI_GPIO_19, GADI_GPIO_TYPE_UNDEFINED                       }, \
+    { GADI_GPIO_20, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_21, GADI_GPIO_TYPE_UNDEFINED                        }, \
+    { GADI_GPIO_22, GADI_GPIO_TYPE_UNDEFINED                         }, \
+    { GADI_GPIO_23, GADI_GPIO_TYPE_UNDEFINED                         }, \
+    { GADI_GPIO_24, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_25, GADI_GPIO_TYPE_INPUT_UART0_RX                    }, \
+    { GADI_GPIO_26, GADI_GPIO_TYPE_OUTPUT_UART0_TX                }, \
+    { GADI_GPIO_27, GADI_GPIO_TYPE_UNDEFINED                       }, \
     { GADI_GPIO_28, GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_29, GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_30, GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_31, GADI_GPIO_TYPE_UNDEFINED                      }, \
     { GADI_GPIO_32, GADI_GPIO_TYPE_UNDEFINED                      }, \
-    { GADI_GPIO_33, GADI_GPIO_TYPE_UNDEFINED        			  }, \
-    { GADI_GPIO_34, GADI_GPIO_TYPE_UNDEFINED         			  }, \
-    { GADI_GPIO_35, GADI_GPIO_TYPE_UNDEFINED         			  }, \
-    { GADI_GPIO_36, GADI_GPIO_TYPE_UNDEFINED        			  }, \
-    { GADI_GPIO_37, GADI_GPIO_TYPE_UNDEFINED        			  }, \
-    { GADI_GPIO_38, GADI_GPIO_TYPE_UNDEFINED        			  }, \
-    { GADI_GPIO_39, GADI_GPIO_TYPE_UNDEFINED        			  }, \
-    { GADI_GPIO_40, GADI_GPIO_TYPE_UNDEFINED         		      }, \
-    { GADI_GPIO_41, GADI_GPIO_TYPE_UNDEFINED         		      }, \
-    { GADI_GPIO_42, GADI_GPIO_TYPE_UNDEFINED          			  }
+    { GADI_GPIO_33, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_34, GADI_GPIO_TYPE_UNDEFINED                       }, \
+    { GADI_GPIO_35, GADI_GPIO_TYPE_UNDEFINED                       }, \
+    { GADI_GPIO_36, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_37, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_38, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_39, GADI_GPIO_TYPE_UNDEFINED                      }, \
+    { GADI_GPIO_40, GADI_GPIO_TYPE_UNDEFINED                       }, \
+    { GADI_GPIO_41, GADI_GPIO_TYPE_UNDEFINED                       }, \
+    { GADI_GPIO_42, GADI_GPIO_TYPE_UNDEFINED                        }
 
 #define SYSTEM_GPIO_IR_LED_CTRL     GADI_GPIO_NUM
 #define SYSTEM_GPIO_IR_CUT1         GADI_GPIO_15

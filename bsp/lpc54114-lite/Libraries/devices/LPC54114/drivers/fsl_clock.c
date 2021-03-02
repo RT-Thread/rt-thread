@@ -492,7 +492,7 @@ uint32_t CLOCK_GetUsbClkFreq(void)
     {}
 
     return freq / ((SYSCON->USBCLKDIV & 0xffU) + 1U);
-} 
+}
 
 uint32_t CLOCK_GetFreq(clock_name_t clockName)
 {
@@ -1124,7 +1124,7 @@ static pll_error_t CLOCK_GetPllConfig(
     for (i = 0U; i < CLOCK_USR_CFG_PLL_CONFIG_CACHE_COUNT; i++)
     {
         if (   (finHz == s_FinHzCache[i])
-            && (foutHz == s_FoutHzCache[i]) 
+            && (foutHz == s_FoutHzCache[i])
             && (useFeedbackDiv2 == s_UseFeedbackDiv2Cache[i])
             && (useSS == s_UseSSCache[i]) )
         {

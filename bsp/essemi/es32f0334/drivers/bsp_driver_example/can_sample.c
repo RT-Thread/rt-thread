@@ -8,25 +8,25 @@
  * 2019-06-25     misonyo      first implementation.
  */
 /*
- * ç¨‹åºæ¸…å•ï¼šè¿™æ˜¯ä¸€ä¸ª CAN è®¾å¤‡ä½¿ç”¨ä¾‹ç¨‹
- * ä¾‹ç¨‹å¯¼å‡ºäº† can_sample å‘½ä»¤åˆ°æ§åˆ¶ç»ˆç«¯
- * å‘½ä»¤è°ƒç”¨æ ¼å¼ï¼šcan_sample can2
- * å‘½ä»¤è§£é‡Šï¼šå‘½ä»¤ç¬¬äºŒä¸ªå‚æ•°æ˜¯è¦ä½¿ç”¨çš„ CAN è®¾å¤‡åç§°ï¼Œä¸ºç©ºåˆ™ä½¿ç”¨é»˜è®¤çš„ CAN è®¾å¤‡
- * ç¨‹åºåŠŸèƒ½ï¼šé€šè¿‡ CAN è®¾å¤‡å‘é€ä¸€å¸§ï¼Œå¹¶åˆ›å»ºä¸€ä¸ªçº¿ç¨‹æ¥æ”¶æ•°æ®ç„¶åæ‰“å°è¾“å‡ºã€‚
+ * ³ÌĞòÇåµ¥£ºÕâÊÇÒ»¸ö CAN Éè±¸Ê¹ÓÃÀı³Ì
+ * Àı³Ìµ¼³öÁË can_sample ÃüÁîµ½¿ØÖÆÖÕ¶Ë
+ * ÃüÁîµ÷ÓÃ¸ñÊ½£ºcan_sample can2
+ * ÃüÁî½âÊÍ£ºÃüÁîµÚ¶ş¸ö²ÎÊıÊÇÒªÊ¹ÓÃµÄ CAN Éè±¸Ãû³Æ£¬Îª¿ÕÔòÊ¹ÓÃÄ¬ÈÏµÄ CAN Éè±¸
+ * ³ÌĞò¹¦ÄÜ£ºÍ¨¹ı CAN Éè±¸·¢ËÍÒ»Ö¡£¬²¢´´½¨Ò»¸öÏß³Ì½ÓÊÕÊı¾İÈ»ºó´òÓ¡Êä³ö¡£
 */
 
 #include <rtthread.h>
 #include "rtdevice.h"
 
-#define CAN_DEV_NAME       "can2"      /* CAN è®¾å¤‡åç§° */
+#define CAN_DEV_NAME       "can2"      /* CAN Éè±¸Ãû³Æ */
 
-static struct rt_semaphore rx_sem;     /* ç”¨äºæ¥æ”¶æ¶ˆæ¯çš„ä¿¡å·é‡ */
-static rt_device_t can_dev;            /* CAN è®¾å¤‡å¥æŸ„ */
+static struct rt_semaphore rx_sem;     /* ÓÃÓÚ½ÓÊÕÏûÏ¢µÄĞÅºÅÁ¿ */
+static rt_device_t can_dev;            /* CAN Éè±¸¾ä±ú */
 
-/* æ¥æ”¶æ•°æ®å›è°ƒå‡½æ•° */
+/* ½ÓÊÕÊı¾İ»Øµ÷º¯Êı */
 static rt_err_t can_rx_call(rt_device_t dev, rt_size_t size)
 {
-    /* CAN æ¥æ”¶åˆ°æ•°æ®åäº§ç”Ÿä¸­æ–­ï¼Œè°ƒç”¨æ­¤å›è°ƒå‡½æ•°ï¼Œç„¶åå‘é€æ¥æ”¶ä¿¡å·é‡ */
+    /* CAN ½ÓÊÕµ½Êı¾İºó²úÉúÖĞ¶Ï£¬µ÷ÓÃ´Ë»Øµ÷º¯Êı£¬È»ºó·¢ËÍ½ÓÊÕĞÅºÅÁ¿ */
     rt_sem_release(&rx_sem);
 
     return RT_EOK;
@@ -37,36 +37,36 @@ static void can_rx_thread(void *parameter)
     int i;
     struct rt_can_msg rxmsg = {0};
 
-    /* è®¾ç½®æ¥æ”¶å›è°ƒå‡½æ•° */
+    /* ÉèÖÃ½ÓÊÕ»Øµ÷º¯Êı */
     rt_device_set_rx_indicate(can_dev, can_rx_call);
 
 #ifdef RT_CAN_USING_HDR
-    
+
     rt_err_t res;
-    
+
     struct rt_can_filter_item items[5] =
     {
-        RT_CAN_FILTER_ITEM_INIT(0x100, 0, 0, 0, 0x700, RT_NULL, RT_NULL), /* std,match ID:0x100~0x1ffï¼Œhdrä¸º-1ï¼Œè®¾ç½®é»˜è®¤è¿‡æ»¤è¡¨ */
-        RT_CAN_FILTER_ITEM_INIT(0x300, 0, 0, 0, 0x700, RT_NULL, RT_NULL), /* std,match ID:0x300~0x3ffï¼Œhdrä¸º-1 */
-        RT_CAN_FILTER_ITEM_INIT(0x211, 0, 0, 0, 0x7ff, RT_NULL, RT_NULL), /* std,match ID:0x211ï¼Œhdrä¸º-1 */
-        RT_CAN_FILTER_STD_INIT(0x486, RT_NULL, RT_NULL),                  /* std,match ID:0x486ï¼Œhdrä¸º-1 */
-        {0x555, 0, 0, 0, 0x7ff, 7,}                                       /* std,match ID:0x555ï¼Œhdrä¸º7ï¼ŒæŒ‡å®šè®¾ç½®7å·è¿‡æ»¤è¡¨ */
+        RT_CAN_FILTER_ITEM_INIT(0x100, 0, 0, 0, 0x700, RT_NULL, RT_NULL), /* std,match ID:0x100~0x1ff£¬hdrÎª-1£¬ÉèÖÃÄ¬ÈÏ¹ıÂË±í */
+        RT_CAN_FILTER_ITEM_INIT(0x300, 0, 0, 0, 0x700, RT_NULL, RT_NULL), /* std,match ID:0x300~0x3ff£¬hdrÎª-1 */
+        RT_CAN_FILTER_ITEM_INIT(0x211, 0, 0, 0, 0x7ff, RT_NULL, RT_NULL), /* std,match ID:0x211£¬hdrÎª-1 */
+        RT_CAN_FILTER_STD_INIT(0x486, RT_NULL, RT_NULL),                  /* std,match ID:0x486£¬hdrÎª-1 */
+        {0x555, 0, 0, 0, 0x7ff, 7,}                                       /* std,match ID:0x555£¬hdrÎª7£¬Ö¸¶¨ÉèÖÃ7ºÅ¹ıÂË±í */
     };
-    struct rt_can_filter_config cfg = {5, 1, items}; /* ä¸€å…±æœ‰5ä¸ªè¿‡æ»¤è¡¨ */
-    /* è®¾ç½®ç¡¬ä»¶è¿‡æ»¤è¡¨ */
+    struct rt_can_filter_config cfg = {5, 1, items}; /* Ò»¹²ÓĞ5¸ö¹ıÂË±í */
+    /* ÉèÖÃÓ²¼ş¹ıÂË±í */
     res = rt_device_control(can_dev, RT_CAN_CMD_SET_FILTER, &cfg);
     RT_ASSERT(res == RT_EOK);
 #endif
 
     while (1)
     {
-        /* hdrå€¼ä¸º-1ï¼Œè¡¨ç¤ºç›´æ¥ä»uselisté“¾è¡¨è¯»å–æ•°æ® */
+        /* hdrÖµÎª-1£¬±íÊ¾Ö±½Ó´ÓuselistÁ´±í¶ÁÈ¡Êı¾İ */
         rxmsg.hdr = -1;
-        /* é˜»å¡ç­‰å¾…æ¥æ”¶ä¿¡å·é‡ */
+        /* ×èÈûµÈ´ı½ÓÊÕĞÅºÅÁ¿ */
         rt_sem_take(&rx_sem, RT_WAITING_FOREVER);
-        /* ä»CANè¯»å–ä¸€å¸§æ•°æ® */
+        /* ´ÓCAN¶ÁÈ¡Ò»Ö¡Êı¾İ */
         rt_device_read(can_dev, 0, &rxmsg, sizeof(rxmsg));
-        /* æ‰“å°æ•°æ®IDåŠå†…å®¹ */
+        /* ´òÓ¡Êı¾İID¼°ÄÚÈİ */
         rt_kprintf("ID:%x  ", rxmsg.id);
         for (i = 0; i < 8; i++)
         {
@@ -84,7 +84,7 @@ int can_sample(int argc, char *argv[])
     rt_size_t  size;
     rt_thread_t thread;
     char can_name[RT_NAME_MAX];
-    
+
     if (argc == 2)
     {
         rt_strncpy(can_name, argv[1], RT_NAME_MAX);
@@ -101,10 +101,10 @@ int can_sample(int argc, char *argv[])
         return RT_ERROR;
     }
 
-    /* åˆå§‹åŒ–CANæ¥æ”¶ä¿¡å·é‡ */
+    /* ³õÊ¼»¯CAN½ÓÊÕĞÅºÅÁ¿ */
     rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
 
-    /* ä»¥ä¸­æ–­æ¥æ”¶åŠå‘é€æ–¹å¼æ‰“å¼€CANè®¾å¤‡ */
+    /* ÒÔÖĞ¶Ï½ÓÊÕ¼°·¢ËÍ·½Ê½´ò¿ªCANÉè±¸ */
     res = rt_device_open(can_dev, RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX);
     RT_ASSERT(res == RT_EOK);
 
@@ -118,11 +118,11 @@ int can_sample(int argc, char *argv[])
         rt_kprintf("create can_rx thread failed!\n");
     }
 
-    msg.id = 0x78;              /* IDä¸º0x78 */
-    msg.ide = RT_CAN_STDID;     /* æ ‡å‡†æ ¼å¼ */
-    msg.rtr = RT_CAN_DTR;       /* æ•°æ®å¸§ */
-    msg.len = 8;                /* æ•°æ®é•¿åº¦ä¸º8 */
-    /* å¾…å‘é€çš„8å­—èŠ‚æ•°æ® */
+    msg.id = 0x78;              /* IDÎª0x78 */
+    msg.ide = RT_CAN_STDID;     /* ±ê×¼¸ñÊ½ */
+    msg.rtr = RT_CAN_DTR;       /* Êı¾İÖ¡ */
+    msg.len = 8;                /* Êı¾İ³¤¶ÈÎª8 */
+    /* ´ı·¢ËÍµÄ8×Ö½ÚÊı¾İ */
     msg.data[0] = 0x00;
     msg.data[1] = 0x11;
     msg.data[2] = 0x22;
@@ -131,14 +131,14 @@ int can_sample(int argc, char *argv[])
     msg.data[5] = 0x55;
     msg.data[6] = 0x66;
     msg.data[7] = 0x77;
-    /* å‘é€ä¸€å¸§CANæ•°æ® */
+    /* ·¢ËÍÒ»Ö¡CANÊı¾İ */
     size = rt_device_write(can_dev, 0, &msg, sizeof(msg));
     if (size == 0)
     {
         rt_kprintf("can dev write data failed!\n");
     }
-    
+
     return res;
 }
-/* å¯¼å‡ºåˆ° msh å‘½ä»¤åˆ—è¡¨ä¸­ */
+/* µ¼³öµ½ msh ÃüÁîÁĞ±íÖĞ */
 MSH_CMD_EXPORT(can_sample, can device sample);

@@ -69,7 +69,7 @@ typedef struct
   uint32_t Mode;      /*!< The Exit Mode to be configured for a core.
                            This parameter can be a combination of @ref EXTI_Mode */
   uint32_t Trigger;   /*!< The Exti Trigger to be configured. This parameter
-                           can be a value of @ref EXTI_Trigger */  
+                           can be a value of @ref EXTI_Trigger */
 } EXTI_ConfigTypeDef;
 
 /**
@@ -102,10 +102,10 @@ typedef struct
 #define EXTI_LINE_15                       EXTI_IMR_IM15    /*!< External interrupt line 15 */
 #define EXTI_LINE_16                       EXTI_IMR_IM16    /*!< External interrupt line 16 Connected to the PVD Output */
 #define EXTI_LINE_17                       EXTI_IMR_IM17    /*!< External interrupt line 17 Connected to the RTC Alarm event */
-#define EXTI_LINE_18                       EXTI_IMR_IM18    /*!< External interrupt line 18 Connected to the USB OTG FS Wakeup from suspend event */                                    
+#define EXTI_LINE_18                       EXTI_IMR_IM18    /*!< External interrupt line 18 Connected to the USB OTG FS Wakeup from suspend event */
 #define EXTI_LINE_19                       EXTI_IMR_IM19    /*!< External interrupt line 19 Connected to the Ethernet Wakeup event */
 #define EXTI_LINE_20                       EXTI_IMR_IM20    /*!< External interrupt line 20 Connected to the USB OTG HS (configured in FS) Wakeup event  */
-#define EXTI_LINE_21                       EXTI_IMR_IM21    /*!< External interrupt line 21 Connected to the RTC Tamper and Time Stamp events */                                               
+#define EXTI_LINE_21                       EXTI_IMR_IM21    /*!< External interrupt line 21 Connected to the RTC Tamper and Time Stamp events */
 #define EXTI_LINE_22                       EXTI_IMR_IM22    /*!< External interrupt line 22 Connected to the RTC Wakeup event */
 
 /**
@@ -131,7 +131,7 @@ typedef struct
 /**
   * @}
   */
-    
+
 /**
   * @}
   */

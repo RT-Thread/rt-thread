@@ -27,7 +27,7 @@
 * @{
 */
 
-/** @defgroup MISC 
+/** @defgroup MISC
 * @brief MISC driver modules
 * @{
 */
@@ -38,7 +38,7 @@
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup MISC_Private_Defines
 * @{
@@ -60,20 +60,20 @@
 void NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct)
 {
   uint32_t tmppriority = 0x00;
-  
+
   /* Check the parameters */
   assert_param(IS_FUNCTIONAL_STATE(NVIC_InitStruct->NVIC_IRQChannelCmd));
-  assert_param(IS_NVIC_PRIORITY(NVIC_InitStruct->NVIC_IRQChannelPriority));  
-    
+  assert_param(IS_NVIC_PRIORITY(NVIC_InitStruct->NVIC_IRQChannelPriority));
+
   if (NVIC_InitStruct->NVIC_IRQChannelCmd != DISABLE)
   {
-    /* Compute the Corresponding IRQ Priority --------------------------------*/    
+    /* Compute the Corresponding IRQ Priority --------------------------------*/
     tmppriority = NVIC->IP[NVIC_InitStruct->NVIC_IRQChannel >> 0x02];
     tmppriority &= (uint32_t)(~(((uint32_t)0xFF) << ((NVIC_InitStruct->NVIC_IRQChannel & 0x03) * 8)));
-    tmppriority |= (uint32_t)((((uint32_t)NVIC_InitStruct->NVIC_IRQChannelPriority << 6) & 0xFF) << ((NVIC_InitStruct->NVIC_IRQChannel & 0x03) * 8));    
-    
+    tmppriority |= (uint32_t)((((uint32_t)NVIC_InitStruct->NVIC_IRQChannelPriority << 6) & 0xFF) << ((NVIC_InitStruct->NVIC_IRQChannel & 0x03) * 8));
+
     NVIC->IP[NVIC_InitStruct->NVIC_IRQChannel >> 0x02] = tmppriority;
-    
+
     /* Enable the Selected IRQ Channels --------------------------------------*/
     NVIC->ISER[0] = (uint32_t)0x01 << (NVIC_InitStruct->NVIC_IRQChannel & (uint8_t)0x1F);
   }
@@ -90,12 +90,12 @@ void NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct)
 *   This parameter can be one of the following values:
 *     @arg NVIC_VectTab_RAM
 *     @arg NVIC_VectTab_FLASH
-* @param  Offset: Vector Table base offset field. This value must be a multiple 
+* @param  Offset: Vector Table base offset field. This value must be a multiple
 *         of 0x200.
 * @retval None
 */
 void NVIC_SetVectorTable(uint32_t NVIC_VectTab, uint32_t Offset)
-{ 
+{
 //    SCB->VTOR = NVIC_VectTab | (Offset & (uint32_t)0x1FFFFF80);
 }
 
@@ -113,8 +113,8 @@ void NVIC_SystemLPConfig(uint8_t LowPowerMode, FunctionalState NewState)
 {
   /* Check the parameters */
   assert_param(IS_NVIC_LP(LowPowerMode));
-  
-  assert_param(IS_FUNCTIONAL_STATE(NewState));  
+
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
     if (NewState != DISABLE)
     {
         SCB->SCR |= LowPowerMode;
@@ -137,7 +137,7 @@ void SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)
 {
     /* Check the parameters */
 assert_param(IS_SYSTICK_CLK_SOURCE(SysTick_CLKSource));
-    
+
     if (SysTick_CLKSource == SysTick_CLKSource_HCLK)
     {
         SysTick->CTRL |= SysTick_CLKSource_HCLK;

@@ -75,10 +75,10 @@ void ccm_init(void)
 #if !defined (CHIP_MX6SL)
     HW_CCM_ANALOG_PLL_ENET.B.DIV_SELECT = 0x3;
 #else
-	HW_CCM_ANALOG_PLL_ENET.B.DIV_SELECT = 0x1;
+    HW_CCM_ANALOG_PLL_ENET.B.DIV_SELECT = 0x1;
 #endif
 
-    // Ungate clocks that are not enabled in a driver - need to be updated 
+    // Ungate clocks that are not enabled in a driver - need to be updated
     HW_CCM_CCGR0_WR(0xffffffff);
     HW_CCM_CCGR1_WR(0xFFCF0FFF);    // EPIT, ESAI, GPT enabled by driver
     HW_CCM_CCGR2_WR(0xFFFFF03F);    // I2C enabled by driver
@@ -105,10 +105,10 @@ void ccm_init(void)
      * 80MHz uart_clk_podf (div-by-1) = 80MHz (UART module clock input)
      */
 //    writel(readl(CCM_CSCDR1) & 0x0000003F, CCM_CSCDR1);
-//     HW_CCM_CSCDR1.U = 
+//     HW_CCM_CSCDR1.U =
 
     /* Mask all interrupt sources that could wake up the processor when in
-       a low power mode. A source is individually masked/unmasked when the 
+       a low power mode. A source is individually masked/unmasked when the
        interrupt is enabled/disabled by the GIC/interrupt driver. */
     HW_GPC_IMR1_WR(0xFFFFFFFF);
     HW_GPC_IMR2_WR(0xFFFFFFFF);
@@ -172,20 +172,20 @@ uint32_t get_peri_clock(peri_clocks_t clock)
             // UART source clock is a fixed PLL3 / 6
             ret_val = PLL3_OUTPUT[0] / 6 / (HW_CCM_CSCDR1.B.UART_CLK_PODF + 1);
             break;
-        
+
         // eCSPI clock:
         //     PLL3(480) -> /8 -> CSCDR2[ECSPI_CLK_PODF]
         case SPI_CLK:
             ret_val = PLL3_OUTPUT[0] / 8 / (HW_CCM_CSCDR2.B.ECSPI_CLK_PODF + 1);
             break;
-        
+
 #if !defined (CHIP_MX6SL)
         case RAWNAND_CLK:
             ret_val =
                 PLL3_OUTPUT[0] / (HW_CCM_CS2CDR.B.ENFC_CLK_PRED + 1) / (HW_CCM_CS2CDR.B.ENFC_CLK_PODF +
                                                                         1);
             break;
-            
+
         case CAN_CLK:
             // For i.mx6dq/sdl CAN source clock is a fixed PLL3 / 8
         ret_val = PLL3_OUTPUT[0] / 8 / (HW_CCM_CSCMR2.B.CAN_CLK_PODF + 1);
@@ -289,24 +289,24 @@ void clock_gating_config(uint32_t base_address, uint32_t gating_mode)
         case REGS_ECSPI1_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(0);
-            break;        
+            break;
         case REGS_ECSPI2_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(1);
-            break;        
+            break;
         case REGS_ECSPI3_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(2);
-            break;        
+            break;
         case REGS_ECSPI4_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(3);
-            break;        
+            break;
 #if CHIP_MX6DQ
         case REGS_ECSPI5_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(4);
-            break;        
+            break;
 #endif // CHIP_MX6DQ
 #if !defined (CHIP_MX6SL)
         case REGS_GPMI_BASE:
@@ -326,7 +326,7 @@ void clock_gating_config(uint32_t base_address, uint32_t gating_mode)
             break;
     }
 
-    // apply changes only if a valid address was found 
+    // apply changes only if a valid address was found
     if (ccm_ccgrx != 0)
     {
         ccm_ccgr_config(ccm_ccgrx, cgx_offset, gating_mode);
@@ -351,14 +351,14 @@ void ccm_set_lpm_wakeup_source(uint32_t irq_id, bool doEnable)
     gpc_imr = readl(HW_GPC_IMR1_ADDR + (reg_offset - 1) * 4);
 
     if (doEnable) {
-        // clear the corresponding bit to unmask the interrupt source 
+        // clear the corresponding bit to unmask the interrupt source
         gpc_imr &= ~(1 << bit_offset);
-        // write the new mask 
+        // write the new mask
         writel(gpc_imr, HW_GPC_IMR1_ADDR + (reg_offset - 1) * 4);
     } else {
-        // set the corresponding bit to mask the interrupt source 
+        // set the corresponding bit to mask the interrupt source
         gpc_imr |= (1 << bit_offset);
-        // write the new mask 
+        // write the new mask
         writel(gpc_imr, HW_GPC_IMR1_ADDR + (reg_offset - 1) * 4);
     }
 }
@@ -367,27 +367,27 @@ void ccm_enter_low_power(lp_modes_t lp_mode)
 {
     uint32_t ccm_clpcr = 0;
 
-    // if MMDC channel 1 is not used, the handshake must be masked 
+    // if MMDC channel 1 is not used, the handshake must be masked
     // set disable core clock in wait - set disable oscillator in stop
-    ccm_clpcr = 
+    ccm_clpcr =
 #if !defined (CHIP_MX6SL)
         BM_CCM_CLPCR_BYPASS_MMDC_CH1_LPM_HS |
 #endif
         BM_CCM_CLPCR_SBYOS | BM_CCM_CLPCR_ARM_CLK_DIS_ON_LPM | lp_mode;
 
     if (lp_mode == STOP_MODE) {
-        // enable peripherals well-biased 
+        // enable peripherals well-biased
         ccm_clpcr |= BM_CCM_CLPCR_WB_PER_AT_LPM;
     }
 
     HW_CCM_CLPCR_WR(ccm_clpcr);
 
     __asm(
-             // data synchronization barrier (caches, TLB maintenance, ...) 
+             // data synchronization barrier (caches, TLB maintenance, ...)
              "dsb;"
-             // wait for interrupt instruction 
+             // wait for interrupt instruction
              "wfi;"
-             // instruction synchronization barrier (flush the pipe-line) 
+             // instruction synchronization barrier (flush the pipe-line)
              "isb;");
 
     return;

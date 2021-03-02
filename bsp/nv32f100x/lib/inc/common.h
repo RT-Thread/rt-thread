@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* @brief provide header files to be included by all project files. 
+* @brief provide header files to be included by all project files.
 *
 *******************************************************************************/
 
@@ -21,13 +21,13 @@ typedef unsigned short  word;
 #define DEBUG
 #define DEBUG_PRINT
 
-/* 
- * Include the generic CPU header file 
+/*
+ * Include the generic CPU header file
  */
 #include "arm_cm0.h"
 
-/* 
- * Include the platform specific header file 
+/*
+ * Include the platform specific header file
  */
 #if (defined(NV32))
  #include  "NV32_config.h"
@@ -39,8 +39,8 @@ typedef unsigned short  word;
   #error "No valid board defined"
 #endif
 
-/* 
- * Include the cpu specific header file 
+/*
+ * Include the cpu specific header file
 */
 #if (defined(CPU_NV32))
  #include "NV32.h"
@@ -53,8 +53,8 @@ typedef unsigned short  word;
 #endif
 
 
-/* 
- * Include any toolchain specfic header files 
+/*
+ * Include any toolchain specfic header files
  */
 #if (defined(__MWERKS__))
   #include "mwerks.h"
@@ -69,12 +69,12 @@ typedef unsigned short  word;
 #elif (defined(IAR))
   #include "iar.h"
 #elif (defined(KEIL))
-  
+
 #else
 #warning "No toolchain specific header included"
 #endif
 
-/* 
+/*
  * Include common utilities
  */
 

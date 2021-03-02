@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32MP1xx_HAL_SDEX_H
@@ -35,7 +35,7 @@
 /** @defgroup SDEx SDEx
   * @brief SD HAL extended module driver
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 /** @defgroup SDEx_Exported_Types SDEx Exported Types
@@ -44,7 +44,7 @@
 
 /** @defgroup SDEx_Exported_Types_Group1 SD Card Internal DMA Buffer structure
   * @{
-  */ 
+  */
 typedef enum
 {
   SD_DMA_BUFFER0      = 0x00U,    /*!< selects SD internal DMA Buffer 0     */
@@ -53,20 +53,20 @@ typedef enum
 }HAL_SDEx_DMABuffer_MemoryTypeDef;
 
 
-/** 
+/**
   * @}
   */
-  
-/** 
+
+/**
   * @}
-  */  
+  */
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup SDEx_Exported_Functions SDEx Exported Functions
   * @{
   */
-  
+
 /** @defgroup SDEx_Exported_Functions_Group1 MultiBuffer functions
   * @{
   */
@@ -83,11 +83,11 @@ void HAL_SDEx_Write_DMADoubleBuffer1CpltCallback(SD_HandleTypeDef *hsd);
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
-  
+
 /* Private types -------------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -95,7 +95,7 @@ void HAL_SDEx_Write_DMADoubleBuffer1CpltCallback(SD_HandleTypeDef *hsd);
 /* Private macros ------------------------------------------------------------*/
 /* Private functions prototypes ----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-  
+
 /**
   * @}
   */
@@ -108,6 +108,6 @@ void HAL_SDEx_Write_DMADoubleBuffer1CpltCallback(SD_HandleTypeDef *hsd);
 #endif
 
 
-#endif /* stm32mp1xx_HAL_SDEX_H */ 
+#endif /* stm32mp1xx_HAL_SDEX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

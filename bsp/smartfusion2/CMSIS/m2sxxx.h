@@ -86,7 +86,7 @@ typedef enum IRQn
   FabricIrq12_IRQn                = 46,       /*!< FPGA fabric interrupt 12                             */
   FabricIrq13_IRQn                = 47,       /*!< FPGA fabric interrupt 13                             */
   FabricIrq14_IRQn                = 48,       /*!< FPGA fabric interrupt 14                             */
-  FabricIrq15_IRQn                = 49,       /*!< FPGA fabric interrupt 15                             */  
+  FabricIrq15_IRQn                = 49,       /*!< FPGA fabric interrupt 15                             */
   GPIO0_IRQn                      = 50,       /*!< GPIO 0 interrupt                                     */
   GPIO1_IRQn                      = 51,       /*!< GPIO 1 interrupt                                     */
   GPIO2_IRQn                      = 52,       /*!< GPIO 2 interrupt                                     */
@@ -112,7 +112,7 @@ typedef enum IRQn
   GPIO22_IRQn                     = 72,       /*!< GPIO 22 interrupt                                    */
   GPIO23_IRQn                     = 73,       /*!< GPIO 23 interrupt                                    */
   GPIO24_IRQn                     = 74,       /*!< GPIO 24 interrupt                                    */
-  GPIO25_IRQn                     = 75,       /*!< GPIO 25 interrupt                                    */ 
+  GPIO25_IRQn                     = 75,       /*!< GPIO 25 interrupt                                    */
   GPIO26_IRQn                     = 76,       /*!< GPIO 26 interrupt                                    */
   GPIO27_IRQn                     = 77,       /*!< GPIO 27 interrupt                                    */
   GPIO28_IRQn                     = 78,       /*!< GPIO 28 interrupt                                    */
@@ -606,7 +606,7 @@ typedef struct
 /*----------------------------------------------------------------------------*/
 typedef struct
 {
-	/* 
+    /*
      * MAC registers (MCXMAC)
      */
     __IO uint32_t CFG1;
@@ -626,7 +626,7 @@ typedef struct
     __I  uint32_t INTERFACE_STATUS;
     __IO uint32_t STATION_ADDRESS1;
     __IO uint32_t STATION_ADDRESS2;
-    /* 
+    /*
      * FIFO Configuration / Access registers (MCXFIF)
      */
     __IO uint32_t FIFO_CFG0;
@@ -714,16 +714,16 @@ typedef struct
 typedef struct
 {
     __IO uint16_t   TX_MAX_P;
-    __IO uint16_t   TX_CSR;  
+    __IO uint16_t   TX_CSR;
     __IO uint16_t   RX_MAX_P;
-    __IO uint16_t   RX_CSR;  
+    __IO uint16_t   RX_CSR;
     __IO uint16_t   RX_COUNT;
-    __IO uint8_t    TX_TYPE; 
+    __IO uint8_t    TX_TYPE;
     __IO uint8_t    TX_INTERVAL;
-    __IO uint8_t    RX_TYPE;    
+    __IO uint8_t    RX_TYPE;
     __IO uint8_t    RX_INTERVAL;
     __IO uint8_t    RESERVED;
-    __IO uint8_t    FIFO_SIZE;  
+    __IO uint8_t    FIFO_SIZE;
 } USB_endpoint_regs_t;
 
 typedef struct
@@ -762,22 +762,22 @@ typedef union
 
 typedef union
 {
-    struct                          
+    struct
     {
-        __IO uint16_t   TX_MAX_P;   
-        __IO uint16_t   CSR0;       
-        __IO uint16_t   RX_MAX_P;   
-        __IO uint16_t   RX_CSR;     
-        __IO uint16_t   COUNT0;     
+        __IO uint16_t   TX_MAX_P;
+        __IO uint16_t   CSR0;
+        __IO uint16_t   RX_MAX_P;
+        __IO uint16_t   RX_CSR;
+        __IO uint16_t   COUNT0;
         __IO uint8_t    RESERVED0;
         __IO uint8_t    RESERVED1;
         __IO uint8_t    RESERVED2;
         __IO uint8_t    RESERVED3;
         __IO uint8_t    RESERVED4;
-        __IO uint8_t    CONFIG_DATA;  
+        __IO uint8_t    CONFIG_DATA;
     } DEVICE_EP0;
 
-    struct                            
+    struct
     {
         __IO uint16_t   TX_MAX_P;
         __IO uint16_t   TX_CSR;
@@ -792,7 +792,7 @@ typedef union
         __IO uint8_t    FIFO_SIZE;
     } DEVICE_EPN;
 
-    struct                          
+    struct
     {
         __IO uint16_t   TX_MAX_P;
         __IO uint16_t   CSR0;
@@ -807,7 +807,7 @@ typedef union
         __IO uint8_t    CONFIG_DATA;
     } HOST_EP0;
 
-    struct                          
+    struct
     {
         __IO uint16_t   TX_MAX_P;
         __IO uint16_t   TX_CSR;
@@ -825,7 +825,7 @@ typedef union
 } USB_indexed_csr_t;
 
 typedef struct {
-    __IO uint32_t   IRQ;    
+    __IO uint32_t   IRQ;
     __IO uint32_t   CNTL;
     __IO uint32_t   ADDR;
     __IO uint32_t   COUNT;
@@ -833,20 +833,20 @@ typedef struct {
 
 typedef struct
 {
-    /* 
-    * Common USB Registers 
+    /*
+    * Common USB Registers
     */
-    __IO uint8_t    FADDR;            
-    __IO uint8_t    POWER;            
-    __IO uint16_t   TX_IRQ;           
-    __IO uint16_t   RX_IRQ;           
-    __IO uint16_t   TX_IRQ_ENABLE;    
-    __IO uint16_t   RX_IRQ_ENABLE;    
-    __IO uint8_t    USB_IRQ;          
-    __IO uint8_t    USB_ENABLE;       
-    __IO uint16_t   FRAME;            
-    __IO uint8_t    INDEX;            
-    __IO uint8_t    TEST_MODE;        
+    __IO uint8_t    FADDR;
+    __IO uint8_t    POWER;
+    __IO uint16_t   TX_IRQ;
+    __IO uint16_t   RX_IRQ;
+    __IO uint16_t   TX_IRQ_ENABLE;
+    __IO uint16_t   RX_IRQ_ENABLE;
+    __IO uint8_t    USB_IRQ;
+    __IO uint8_t    USB_ENABLE;
+    __IO uint16_t   FRAME;
+    __IO uint8_t    INDEX;
+    __IO uint8_t    TEST_MODE;
 
     /*
     * Indexed CSR
@@ -854,60 +854,60 @@ typedef struct
     USB_indexed_csr_t   INDEXED_CSR;
 
     /*
-    * Endpoint FIFOs 
+    * Endpoint FIFOs
     */
-    USB_fifo_t      FIFO[16];         
+    USB_fifo_t      FIFO[16];
 
     /*
-    * OTG, dynamic FIFO and version 
+    * OTG, dynamic FIFO and version
     */
-    __IO uint8_t    DEV_CTRL;         
-    __IO uint8_t    MISC;             
-    __IO uint8_t    TX_FIFO_SIZE;     
-    __IO uint8_t    RX_FIFO_SIZE;     
-    __IO uint16_t   TX_FIFO_ADDR;     
-    __IO uint16_t   RX_FIFO_ADDR;     
-    __IO uint32_t   VBUS_CSR;         
-    __IO uint16_t   HW_VERSION;       
-    __IO uint16_t   RESERVED;         
+    __IO uint8_t    DEV_CTRL;
+    __IO uint8_t    MISC;
+    __IO uint8_t    TX_FIFO_SIZE;
+    __IO uint8_t    RX_FIFO_SIZE;
+    __IO uint16_t   TX_FIFO_ADDR;
+    __IO uint16_t   RX_FIFO_ADDR;
+    __IO uint32_t   VBUS_CSR;
+    __IO uint16_t   HW_VERSION;
+    __IO uint16_t   RESERVED;
 
-    /* 
-    * ULPI and configuration registers 
+    /*
+    * ULPI and configuration registers
     */
-    __IO uint8_t    ULPI_VBUS_CTRL;   
-    __IO uint8_t    ULPI_CARKIT_CTRL; 
-    __IO uint8_t    ULPI_IRQ_MASK;    
-    __IO uint8_t    ULPI_IRQ_SRC;     
-    __IO uint8_t    ULPI_DATA_REG;    
-    __IO uint8_t    ULPI_ADDR_REG;    
-    __IO uint8_t    ULPI_CTRL_REG;    
-    __IO uint8_t    ULPI_RAW_DATA;    
-    __IO uint8_t    EP_INFO;          
-    __IO uint8_t    RAM_INFO;         
-    __IO uint8_t    LINK_INFO;        
-    __IO uint8_t    VP_LEN;           
-    __IO uint8_t    HS_EOF1;          
-    __IO uint8_t    FS_EOF1;          
-    __IO uint8_t    LS_EOF1;          
-    __IO uint8_t    SOFT_RST;         
+    __IO uint8_t    ULPI_VBUS_CTRL;
+    __IO uint8_t    ULPI_CARKIT_CTRL;
+    __IO uint8_t    ULPI_IRQ_MASK;
+    __IO uint8_t    ULPI_IRQ_SRC;
+    __IO uint8_t    ULPI_DATA_REG;
+    __IO uint8_t    ULPI_ADDR_REG;
+    __IO uint8_t    ULPI_CTRL_REG;
+    __IO uint8_t    ULPI_RAW_DATA;
+    __IO uint8_t    EP_INFO;
+    __IO uint8_t    RAM_INFO;
+    __IO uint8_t    LINK_INFO;
+    __IO uint8_t    VP_LEN;
+    __IO uint8_t    HS_EOF1;
+    __IO uint8_t    FS_EOF1;
+    __IO uint8_t    LS_EOF1;
+    __IO uint8_t    SOFT_RST;
 
-    /* 
-    * Target Address registers 
+    /*
+    * Target Address registers
     */
-    USB_tar_t       TAR[16];          
+    USB_tar_t       TAR[16];
 
-    /* 
-    * Endpoints CSR 
+    /*
+    * Endpoints CSR
     */
-    USB_endpoint_regs_t ENDPOINT[16]; 
+    USB_endpoint_regs_t ENDPOINT[16];
 
-    /* 
-    * DMA 
+    /*
+    * DMA
     */
     USB_DMA_channel DMA_CHANNEL[8];
-	
+
     __IO uint32_t   RESERVED_EXT[32];
-    __IO uint32_t   RQ_PKT_CNT[16];   
+    __IO uint32_t   RQ_PKT_CNT[16];
     __IO uint16_t   RX_DPBUF_DIS;
     __IO uint16_t   TX_DPBUF_DIS;
     __IO uint16_t   C_T_UCH;
@@ -1051,7 +1051,7 @@ typedef struct
     __IO uint32_t COMBLK_INTR_ENBL;
     __IO uint32_t USB_DMA_INT_ENBL;
     __IO uint32_t RESERVED0;
-    
+
     /*
      * INTERRUPT_ENABLE1 register bitband definitions.
      */
@@ -1062,7 +1062,7 @@ typedef struct
     __IO uint32_t FAB_PLL_LOCKLOST_INT_ENBL;
     __IO uint32_t FIC64_INT_ENBL;
     __IO uint32_t RESERVED3[24];
-    
+
     /*
      * INTERRUPT_REASON0 register bitband definitions.
      */
@@ -1098,7 +1098,7 @@ typedef struct
     __IO uint32_t COMBLK_INTR_STATUS;
     __IO uint32_t USB_DMA_INT_STATUS;
     __IO uint32_t RESERVED4;
-    
+
     /*
      * INTERRUPT_REASON1 register bitband definitions.
      */
@@ -1109,13 +1109,13 @@ typedef struct
     __IO uint32_t FAB_PLL_LOCKLOST_INT_STATUS;
     __IO uint32_t FIC64_INT_STATUS;
     __IO uint32_t RESERVED7[24];
-    
+
     /*
      * INTERRUPT_MODE register bitband definitions.
      */
     __IO uint32_t SELECT_MODE;
     __IO uint32_t RESERVED8[31];
-    
+
 } INTERRUPT_CTRL_BitBand_TypeDef;
 
 /*----------------------------------------------------------------------------*/
@@ -1184,21 +1184,21 @@ typedef struct
         __I  uint32_t SINGLE_ERR_CNT_SR;
         __I  uint32_t DOUBLE_ERR_CNT_SR;
         __I  uint32_t LUE_SYNDROME_SR[5];       /* LUE : Last Uncorrected Error */
-        __I  uint32_t LUE_ADDRESS_SR[2];        
+        __I  uint32_t LUE_ADDRESS_SR[2];
         __I  uint32_t LCE_SYNDROME_SR[5];       /* LCE : Last Corrected Error */
         __I  uint32_t LCE_ADDRESS_SR[2];
         __I  uint32_t LCB_NUMBER_SR;            /* LCB : Last Corrected Bit */
-        __I  uint32_t LCB_MASK_SR[4];          
+        __I  uint32_t LCB_MASK_SR[4];
         __I  uint32_t ECC_INT_SR;
         __O  uint32_t ECC_INT_CLR_REG;
         __I  uint32_t ECC_OUTPUT_DATA_SR;
         __IO uint32_t RESERVED1[46];
     } ddrc;
-    
+
     /*--------------------------------------------------------------------------
      * DDR PHY configuration registers
      */
-    struct 
+    struct
     {
         __IO uint32_t DYN_BIST_TEST_CR;
         __IO uint32_t DYN_BIST_TEST_ERRCLR_CR[3];
@@ -1243,7 +1243,7 @@ typedef struct
 
         /*----------------------------------------------------------------------
          * DDR PHY status registers
-         */    
+         */
         __I  uint32_t LEVELLING_FAILURE_SR;
         __I  uint32_t BIST_ERROR_SR[3];
         __I  uint32_t WRLVL_DQS_RATIO_SR[4];
@@ -1261,15 +1261,15 @@ typedef struct
         __I  uint32_t WR_DATA_SLAVE_DLL_VAL_SR[3];
         __I  uint32_t FIFO_WE_SLAVE_DLL_VAL_SR[3];
         __I  uint32_t WR_DQS_SLAVE_DLL_VAL_SR[3];
-        __I  uint32_t CTRL_SLAVE_DLL_VAL_SR; 
+        __I  uint32_t CTRL_SLAVE_DLL_VAL_SR;
         __IO uint32_t RESERVED2[13];
     } phy;
-    
+
     /*--------------------------------------------------------------------------
      * FIC-64 registers
      * These registers are 16-bit wide and 32-bit aligned.
      */
-    struct 
+    struct
     {
         __IO uint32_t NB_ADDR_CR;
         __IO uint32_t NBRWB_SIZE_CR;
@@ -1305,18 +1305,18 @@ typedef struct
      * MDDR->core.ddrc.<regname> = <value>;
      */
     DDRCore_TypeDef core;
-    
+
 } MDDR_TypeDef;
 
 
 /*----------------------------------------------------------------------------*/
 /*--------------------- FDDR APB Configuration Registers ---------------------*/
 /*----------------------------------------------------------------------------*/
-typedef struct 
+typedef struct
 {
     /*--------------------------------------------------------------------------
-     * FDDR core configuration registers. These are same as corresponding 
-     * MDDR registers. 
+     * FDDR core configuration registers. These are same as corresponding
+     * MDDR registers.
      * These registers are to be accessed as:
      * FDDR->core.fic.<regname> = <value>;
      * FDDR->core.phy.<regname> = <value>;
@@ -1324,13 +1324,13 @@ typedef struct
      */
     DDRCore_TypeDef core;
     __IO uint32_t RESERVED[39];
-    
+
     /*--------------------------------------------------------------------------
      * FDDR system registers
      * These registers are to be accessed as:
      * FDDR->sysreg.PLL_CONFIG_LOW_2 = 0x04u;
      */
-    struct 
+    struct
     {
         __IO uint32_t PLL_CONFIG_LOW_1;
         __IO uint32_t PLL_CONFIG_LOW_2;
@@ -1339,7 +1339,7 @@ typedef struct
         __IO uint32_t FACC_MUX_CONFIG;
         __IO uint32_t FACC_DIVISOR_RATIO;
         __IO uint32_t PLL_DELAY_LINE_SEL;
-        __IO uint32_t SOFT_RESET; 
+        __IO uint32_t SOFT_RESET;
         __IO uint32_t IO_CALIB;
         __IO uint32_t INTERRUPT_ENABLE;
         __IO uint32_t AXI_AHB_MODE_SEL;
@@ -1371,7 +1371,7 @@ typedef struct
 
 /*------------------------------------------------------------------------------
   PCI Express Bridge Core registers.
-  
+
   This data structure is used to access to the registers of the PCI Express
   Bridge Core.
  */
@@ -1391,143 +1391,143 @@ typedef struct
      */
     /* 0x004 */
     __IO    uint32_t    CFG_PRMSCR;
-    
+
     /**
       Information register: class_code
      */
     /* 0x008 */
     __IO    uint32_t    CLASS_CODE;
-    
+
     __IO    uint32_t    RESERVED0;
-    
+
     /**
       Bridge Configuration Register: bar0
      */
     /* 0x010 */
     __IO    uint32_t    BAR0;
-    
+
     /**
       Bridge Configuration Register: bar1
      */
     /* 0x014 */
     __IO    uint32_t    BAR1;
-    
+
     /**
       Bridge Configuration Register: bar2
      */
     /* 0x018 */
     __IO    uint32_t    BAR2;
-    
+
     /**
       Bridge Configuration Register: bar3
      */
     /* 0x01C */
     __IO    uint32_t    BAR3;
-    
+
     /**
       Bridge Configuration Register: bar4
      */
     /* 0x020 */
     __IO    uint32_t    BAR4;
-    
+
     /**
       Bridge Configuration Register: bar5
      */
     /* 0x024 */
     __IO    uint32_t    BAR5;
-    
+
     __IO    uint32_t    RESERVED1;
-    
+
     /**
       Information register: subsystem_id
      */
     /* 0x02C */
     __IO    uint32_t    SUBSYSTEM_ID;
-    
+
     /**
       PCI Express Control & Status Register: pcie_devscr
      */
     /* 0x030 */
     __IO    uint32_t    PCIE_DEVSCR;
-    
+
     /**
       PCI Express Control & Status Register: pcie_linkscr
      */
     /* 0x034 */
     __IO    uint32_t    PCIE_LINKSCR;
-    
+
     /**
       Bridge Configuration Register: tc_vc_mapping
      */
     /* 0x038 */
     __IO    uint32_t    TC_VC_MAPPING;
-    
+
     /**
       Information register: captured_bus_device_nb
      */
     /* 0x03C */
     __IO    uint32_t    CAPTURED_BUS_DEVICE_NB;
-    
+
     /**
       Endpoint Interrupt register: msi_ctrl_status
      */
     /* 0x040 */
     __IO    uint32_t    MSI_CTRL_STATUS;
-    
+
     /**
       Power Management register: ltssm
      */
     /* 0x044 */
     __IO    uint32_t    LTSSM;
-    
+
     /**
       Power Management register: power_mgt_capability
      */
     /* 0x048 */
     __IO    uint32_t    POWER_MGT_CAPABILITY;
-    
+
     /**
       PCI Express Control & Status Register: cfg_pmscr
      */
     /* 0x04C */
     __IO    uint32_t    CFG_PMSCR;
-    
+
     /**
       Bridge Configuration Register: aer_ecrc_capability
      */
     /* 0x050 */
     __IO    uint32_t    AER_ECRC_CAPABILITY;
-    
+
     /**
       Bridge Configuration Register: vc1_capability
      */
     /* 0x054 */
     __IO    uint32_t    VC1_CAPABILITY;
-    
+
     /**
       Bridge Configuration Register: max_payload_size
      */
     /* 0x058 */
     __IO    uint32_t    MAX_PAYLOAD_SIZE;
-    
+
     /**
       Bridge Configuration Register: clkreq
      */
     /* 0x05C */
     __IO    uint32_t    CLKREQ;
-    
+
     /**
       Power Management register: aspm_l0s_capability
      */
     /* 0x060 */
     __IO    uint32_t    ASPM_L0S_CAPABILITY;
-    
+
     /**
       Power Management register: aspm_l1_capability
      */
     /* 0x064 */
     __IO    uint32_t    ASPM_L1_CAPABILITY;
-    
+
     /**
       Power Management register: timeout_completion
      */
@@ -1535,193 +1535,193 @@ typedef struct
     __IO    uint32_t    TIMEOUT_COMPLETION;
 
     __IO    uint32_t    RESERVED2;
-    
+
     /**
       Power Management register: pm_data_scale
      */
     /* 0x070 */
     __IO    uint32_t    PM_DATA_SCALE[4];
-    
+
     /**
       Endpoint Interrupt register: msi
      */
     /* 0x080 */
     __IO    uint32_t    MSI[8];
-    
+
     /**
       Bridge Configuration Register: error_counter
      */
     /* 0x0A0 */
     __IO    uint32_t    ERROR_COUNTER[4];
-    
+
     /**
       Bridge Configuration Register: credit_allocation
      */
     /* 0x0B0 */
     __IO    uint32_t    CREDIT_ALLOCATION[4];
-    
+
     /**
       Address Mapping register: axi_slave_window
      */
     /* 0x0C0 */
     axi_window_TypeDef      AXI_SLAVE_WINDOW[4];
-    
+
     /**
       Address Mapping register: axi_master_window
      */
     /* 0x100 */
     axi_window_TypeDef      AXI_MASTER_WINDOW[4];
-    
+
     /**
       Rootport Interrupt register: imask
      */
     /* 0x140 */
     __IO    uint32_t    IMASK;
-    
+
     /**
       Rootport Interrupt register: istatus
      */
     /* 0x144 */
     __IO    uint32_t    ISTATUS;
-    
+
     /**
       Rootport Interrupt register: icmd
      */
     /* 0x148 */
     __IO    uint32_t    ICMD;
-    
+
     /**
       Rootport Interrupt register: irstatus
      */
     /* 0x14C */
     __IO    uint32_t    IRSTATUS;
-    
+
     /**
       Rootport Interrupt register: imsiaddr
      */
     /* 0x150 */
     __IO    uint32_t    IMSIADDR;
-    
+
     /**
       PCI Express Control & Status Register: slotcap
      */
     /* 0x154 */
     __IO    uint32_t    SLOTCAP;
-    
+
     /**
       PCI Express Control & Status Register: slotcsr
      */
     /* 0x158 */
     __IO    uint32_t    SLOTCSR;
-    
+
     /**
       PCI Express Control & Status Register: rootcsr
      */
     /* 0x15C */
     __IO    uint32_t    ROOTCSR;
-    
+
     /**
       Configuration Register: cfg_control
      */
     /* 0x160 */
     __IO    uint32_t    CFG_CONTROL;
-    
+
     /**
       Configuration Register: cfg_write_data
      */
     /* 0x164 */
     __IO    uint32_t    CFG_WRITE_DATA;
-    
+
     /**
       Configuration Register: cfg_read_data
      */
     /* 0x168 */
     __IO    uint32_t    CFG_READ_DATA;
-    
+
     /**
       Information register: info
      */
     /* 0x16C */
     __IO    uint32_t    INFO;
-    
+
     /**
       Input/Output Control Register: io_control
      */
     /* 0x170 */
     __IO    uint32_t    IO_CONTROL;
-    
+
     /**
       Input/Output Control Register: io_addr
      */
     /* 0x174 */
     __IO    uint32_t    IO_ADDR;
-    
+
     /**
       Input/Output Control Register: io_write_data
      */
     /* 0x178 */
     __IO    uint32_t    IO_WRITE_DATA;
-    
+
     /**
       Input/Output Control Register: io_read_data
      */
     /* 0x17C */
     __IO    uint32_t    IO_READ_DATA;
-    
+
     /**
       Configuration Register: cfg_fbe
      */
     /* 0x180 */
     __IO    uint32_t    CFG_FBE;
-    
+
     /**
       Address Mapping register: prefetch_io_window
      */
     /* 0x184 */
     __IO    uint32_t    PREFETCH_IO_WINDOW;
-    
+
     __IO    uint32_t    RESERVED4[31];
-    
+
     /**
       Bridge Configuration Register: pcie_config
      */
     /* 0x204 */
     __IO    uint32_t    PCIE_CONFIG;
-    
+
     __IO    uint32_t    RESERVED5[10];
-    
+
     /**
       PCI Express Control & Status Register: pcie_dev2scr
      */
     /* 0x230 */
     __IO    uint32_t    PCIE_DEV2SCR;
-    
+
     /**
       PCI Express Control & Status Register: pcie_link2scr
      */
     /* 0x234 */
     __IO    uint32_t    PCIE_LINK2SCR;
-    
+
     __IO    uint32_t    RESERVED6[10];
-    
+
     /**
       Power Management register: aspm_l0s_gen2 capability
      */
     /* 0x260 */
     __IO    uint32_t    ASPM_L0S_GEN2;
-    
+
     __IO    uint32_t    RESERVED7[39];
-    
+
     /**
       Bridge Configuration Register: k_cnt_config
      */
     /* 0x300 */
     __IO    uint32_t    K_CNT_CONFIG[6];
-    
+
     __IO    uint32_t    RESERVED8[826];
-    
+
 } PCIE_TypeDef;
- 
+
 /*------------------------------------------------------------------------------
   SERDESIF System Registers.
  */
@@ -1853,709 +1853,709 @@ typedef struct
       Control register 0
      */
     __IO    uint32_t    CR0;
-    
+
     /**
       Clock count for error counter decrement
      */
     __IO    uint32_t    ERRCNT_DEC;
-    
+
     /**
       Error counter threshold - Rx idle detect max latency
      */
     __IO    uint32_t    RXIDLE_MAX_ERRCNT_THR;
-    
+
     /**
       Tx Impedance ratio
      */
     __IO    uint32_t    IMPED_RATIO;
-    
+
     /**
       PLL F settings and PCLK ratio
      */
     __IO    uint32_t    PLL_F_PCLK_RATIO;
-    
+
     /**
       PLL M & N settings
      */
     __IO    uint32_t    PLL_M_N;
-    
+
     /**
       250ns timer base count
      */
     __IO    uint32_t    CNT250NS_MAX;
-    
+
     /**
       Rx Equalization amplitude ratio
      */
     __IO    uint32_t    RE_AMP_RATIO;
-    
+
     /**
       Rx Equalization Cut frequency
      */
     __IO    uint32_t    RE_CUT_RATIO;
-    
+
     /**
       Tx Amplitude ratio
      */
     __IO    uint32_t    TX_AMP_RATIO;
-    
+
     /**
       Tx Post-Cursor ratio
      */
     __IO    uint32_t    TX_PST_RATIO;
-    
+
     /**
       Tx Pre-Cursor ratio
      */
     __IO    uint32_t    TX_PRE_RATIO;
-    
+
     /**
       End of calibration counter
      */
     __IO    uint32_t    ENDCALIB_MAX;
-    
+
     /**
       Calibration stability counter
      */
     __IO    uint32_t    CALIB_STABILITY_COUNT;
-    
+
     /**
       Power down feature
      */
     __IO    uint32_t    POWER_DOWN;
-    
+
     /**
       Rx offset counter
      */
     __IO    uint32_t    RX_OFFSET_COUNT;
-    
+
     /**
       PLL F settings and PCLK ratio (in PCIe 5 Gbps speed)
      */
     __IO    uint32_t    PLL_F_PCLK_RATIO_5GBPS;
-    
+
     /**
       PLL M & N sttings (in PCIe 5 Gbps spped)
      */
     __IO    uint32_t    PLL_M_N_5GBPS;
-    
+
     /**
       250ns timer base count (in PCIe 5 Gbps speed)
      */
     __IO    uint32_t    CNT250NS_MAX_5GBPS;
-    
+
     /**
       reserved
      */
     __IO    uint32_t    RESERVED;
-    
+
     /**
       Tx Post-Cursor ratio with TxDeemp=0, Full swing
      */
     __IO    uint32_t    TX_PST_RATIO_DEEMP0_FULL;
-    
+
     /**
       Tx Pre-Cursor ratio TxDeemp=0, full swing
      */
     __IO    uint32_t    TX_PRE_RATIO_DEEMP0_FULL;
-    
+
     /**
       Tx Post-Cursor ratio with TxDeemp=1, Full swing
      */
     __IO    uint32_t    TX_PST_RATIO_DEEMP1_FULL;
-    
+
     /**
       Tx Pre-Cursor ratio TxDeemp=1, full swing
      */
     __IO    uint32_t    TX_PRE_RATIO_DEEMP1_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=0, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN0_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=1, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN1_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=2, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN2_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=3, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN3_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=4, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN4_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=5, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN5_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=6, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN6_FULL;
-    
+
     /**
       Tx Amplitude ratio TxMargin=7, full swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN7_FULL;
-    
+
     /**
       Rx Equalization amplitude ratio TxDeemp=0
      */
     __IO    uint32_t    RE_AMP_RATIO_DEEMP0;
-    
+
     /**
       Rx Equalization Cut frequency TxDeemp=0
      */
     __IO    uint32_t    RE_CUT_RATIO_DEEMP0;
-    
+
     /**
       Rx Equalization amplitude ratio TxDeemp=1
      */
     __IO    uint32_t    RE_AMP_RATIO_DEEMP1;
-    
+
     /**
       Rx Equalization Cut frequency TxDeemp=1
      */
     __IO    uint32_t    RE_CUT_RATIO_DEEMP1;
-    
+
     /**
       Tx Post-Cursor ratio with TxDeemp=0, Half swing
      */
     __IO    uint32_t    TX_PST_RATIO_DEEMP0_HALF;
-    
+
     /**
       Tx Pre-Cursor ratio TxDeemp=0, Half swing
      */
     __IO    uint32_t    TX_PRE_RATIO_DEEMP0_HALF;
-    
+
     /**
       Tx Post-Cursor ratio with TxDeemp=1, Half swing
      */
     __IO    uint32_t    TX_PST_RATIO_DEEMP1_HALF;
-    
+
     /**
       Tx Pre-Cursor ratio TxDeemp=1, Half swing
      */
     __IO    uint32_t    TX_PRE_RATIO_DEEMP1_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=0, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN0_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=1, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN1_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=2, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN2_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=3, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN3_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=4, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN4_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=5, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN5_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=6, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN6_HALF;
-    
+
     /**
       Tx Amplitude ratio TxMargin=7, Half swing
      */
     __IO    uint32_t    TX_AMP_RATIO_MARGIN7_HALF;
-    
+
     /**
       PMA status
      */
     __IO    uint32_t    PMA_STATUS;
-    
+
     /**
       Tx sweep center (RO)
      */
     __IO    uint32_t    TX_SWEEP_CENTER;
-    
+
     /**
       Rx seep center (RO)
      */
     __IO    uint32_t    RX_SWEEP_CENTER;
-    
+
     /**
       Rx Equalization sweep center (RO)
      */
     __IO    uint32_t    RE_SWEEP_CENTER;
-    
+
     /**
       Receiver Shift Loader parameter 0 (RO)
      */
     __IO    uint32_t    ATXDRR_7_0;
-    
+
     /**
       Receiver Shift Loader parameter 1 (RO)
      */
     __IO    uint32_t    ATXDRR_14_8;
-    
+
     /**
       Transmitter P Shift Loader parameter0-0
      */
     __IO    uint32_t    ATXDRP_DYN_7_0;
-    
+
     /**
       Transmitter P Shift Loader parameter0-1
      */
     __IO    uint32_t    ATXDRP_DYN_15_8;
-    
+
     /**
       Transmitter P Shift Loader parameter0-2
      */
     __IO    uint32_t    ATXDRP_DYN_20_16;
-    
+
     /**
       Transmitter A Shift Loader parameter0-0
      */
     __IO    uint32_t    ATXDRA_DYN_7_0;
-    
+
     /**
       Transmitter A Shift Loader parameter0-1
      */
     __IO    uint32_t    ATXDRA_DYN_15_8;
-    
+
     /**
       Transmitter A Shift Loader parameter0-2
      */
     __IO    uint32_t    ATXDRA_DYN_20_16;
-    
+
     /**
       Transmitter T Shift Loader parameter0-0
      */
     __IO    uint32_t    ATXDRT_DYN_7_0;
-    
+
     /**
       Transmitter T Shift Loader parameter0-1
      */
     __IO    uint32_t    ATXDRT_DYN_15_8;
-    
+
     /**
       Transmitter T Shift Loader parameter0-2
      */
     __IO    uint32_t    ATXDRT_DYN_20_16;
-    
+
     /**
       Transmitter P Shift Loader parameter 1-0 (RO)
      */
     __IO    uint32_t    ATXDRP_EI1_7_0;
-    
+
     /**
       Transmitter P Shift Loader parameter 1-1 (RO)
      */
     __IO    uint32_t    ATXDRP_EI1_15_8;
-    
+
     /**
       Transmitter P Shift Loader parameter 1-2 (RO)
      */
     __IO    uint32_t    ATXDRP_EI1_20_16;
-    
+
     /**
       Transmitter A Shift Loader parameter 1-0 (RO)
      */
     __IO    uint32_t    ATXDRA_EI1_7_0;
-    
+
     /**
       Transmitter A Shift Loader parameter 1-1 (RO)
      */
     __IO    uint32_t    ATXDRA_EI1_15_8;
-    
+
     /**
       Transmitter A Shift Loader parameter 1-2 (RO)
      */
     __IO    uint32_t    ATXDRA_EI1_20_16;
-    
+
     /**
       Transmitter T Shift Loader parameter 1-0 (RO)
      */
     __IO    uint32_t    ATXDRT_EI1_7_0;
-    
+
     /**
       Transmitter T Shift Loader parameter 1-1 (RO)
      */
     __IO    uint32_t    ATXDRT_EI1_15_8;
-    
+
     /**
       Transmitter T Shift Loader parameter 1-2 (RO)
      */
     __IO    uint32_t    ATXDRT_EI1_20_16;
-    
+
     /**
       Transmitter P shift Loader parameter 2-0 (RO)
      */
     __IO    uint32_t    ATXDRP_EI2_7_0;
-    
+
     /**
       Transmitter P shift Loader parameter 2-1 (RO)
      */
     __IO    uint32_t    ATXDRP_EI2_15_8;
-    
+
     /**
       Transmitter P shift Loader parameter 2-2 (RO)
      */
     __IO    uint32_t    ATXDRP_EI2_20_16;
-    
+
     /**
       Transmitter A Shift parametr 2-0 (RO)
      */
     __IO    uint32_t    ATXDRA_EI2_7_0;
-    
+
     /**
       Transmitter A Shift parametr 2-1 (RO)
      */
     __IO    uint32_t    ATXDRA_EI2_15_8;
-    
+
     /**
       Transmitter A Shift parametr 2-2 (RO)
      */
     __IO    uint32_t    ATXDRA_EI2_20_16;
-    
+
     /**
       Transmitter T Shift parametr 2-0 (RO)
      */
     __IO    uint32_t    ATXDRT_EI2_7_0;
-    
+
     /**
       Transmitter T Shift parametr 2-1 (RO)
      */
     __IO    uint32_t    ATXDRT_EI2_15_8;
-    
+
     /**
       Transmitter T Shift parametr 2-2 (RO)
      */
     __IO    uint32_t    ATXDRT_EI2_20_16;
-    
+
     /**
       Override calibration register (RW)
      */
     __IO    uint32_t    OVERRIDE_CALIB;
-    
+
     /**
       Force Receiver Shift Loader parameter 0 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRR_7_0;
-    
+
     /**
       Force Receiver Shift Loader parameter 1 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRR_15_8;
-    
+
     /**
       Force Receiver Shift Loader parameter 2 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRR_20_16;
-    
+
     /**
       Force Transmitter P Shift Loader parameter 0 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRP_7_0;
-    
+
     /**
       Force Transmitter P Shift Loader parameter 1 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRP_15_8;
-    
+
     /**
       Force Transmitter P Shift Loader parameter 2 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRP_20_16;
-    
+
     /**
       Force Transmitter A Shift Loader parameter 0 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRA_7_0;
-    
+
     /**
       Force Transmitter A Shift Loader parameter 1 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRA_15_8;
-    
+
     /**
       Force Transmitter A Shift Loader parameter 2 (RW)
      */
     __IO    uint32_t    FORCE_ATXDRA_20_16;
-    
+
     /**
       Force Transmitter T Shift parameter 0-0 (RO)
      */
     __IO    uint32_t    FORCE_ATXDRT_7_0;
-    
+
     /**
       Force Transmitter T Shift parameter 0-1 (RO)
      */
     __IO    uint32_t    FORCE_ATXDRT_15_8;
-    
+
     /**
       Force Transmitter T Shift parameter 0-2 (RO)
      */
     __IO    uint32_t    FORCE_ATXDRT_20_16;
-    
+
     /**
       RxD offset calibration result (RO)
      */
     __IO    uint32_t    RXD_OFFSET_CALIB_RESULT;
-    
+
     /**
       RxT offset calibration result (RO)
      */
     __IO    uint32_t    RXT_OFFSET_CALIB_RESULT;
-    
+
     /**
       Schmitt trigger calibration result (RO)
      */
     __IO    uint32_t    SCHMITT_TRIG_CALIB_RESULT;
-    
+
     /**
       Force RxD offset calibration settings (RW)
      */
     __IO    uint32_t    FORCE_RXD_OFFSET_CALIB;
-    
+
     /**
       Force RxT offset calibration settings (RW)
      */
     __IO    uint32_t    FORCE_RXT_OFFSET_CALIB;
-    
+
     /**
       Force Schmitt trigger calibration settings (RW)
      */
     __IO    uint32_t    FORCE_SCHMITT_TRIG_CALIB;
-    
+
     /**
       PRBS control register (RW)
      */
     __IO    uint32_t    PRBS_CTRL;
-    
+
     /**
       PRBS error counter register (RO)
      */
     __IO    uint32_t    PRBS_ERRCNT;
-    
+
     /**
       PHY reset override register (RW)
      */
     __IO    uint32_t    PHY_RESET_OVERRIDE;
-    
+
     /**
       PHY power override register (RW)
      */
     __IO    uint32_t    PHY_POWER_OVERRIDE;
-    
+
     /**
       Custom Pattern Byte 0 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_7_0;
-    
+
     /**
       Custom Pattern Byte 1 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_15_8;
-    
+
     /**
       Custom Pattern Byte 2 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_23_16;
-    
+
     /**
       Custom Pattern Byte 3 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_31_24;
-    
+
     /**
       Custom Pattern Byte 4 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_39_32;
-    
+
     /**
       Custom Pattern Byte 5 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_47_40;
-    
+
     /**
       Custom Pattern Byte 6 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN55_48;
-    
+
     /**
       Custom Pattern Byte 7 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_63_56;
-    
+
     /**
       Custom Pattern Byte 8 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_71_64;
-    
+
     /**
       Custom Pattern Byte 9 (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_79_72;
-    
+
     /**
       Custom Pattern Control (RW)
      */
     __IO    uint32_t    CUSTOM_PATTERN_CTRL;
-    
+
     /**
       Custom Pattern Status register (RO)
      */
     __IO    uint32_t    CUSTOM_PATTERN_STATUS;
-    
+
     /**
       PCS Loopback Control (RW)
      */
     __IO    uint32_t    PCS_LOOPBBACK_CTRL;
-    
+
     /**
       Gen1 Transmit PLL Current Charge Pump (RW)
      */
     __IO    uint32_t    GEN1_TX_PLL_CCP;
-    
+
     /**
       Gen1 Receive PLL Current Charge Pump (RW)
      */
     __IO    uint32_t    GEN1_RX_PLL_CCP;
-    
+
     /**
       Gen2 Transmit PLL Current Charge Pump (RW)
      */
     __IO    uint32_t    GEN2_TX_PLL_CCP;
-    
+
     /**
       Gen2 Receive PLL Current Charge Pump (RW)
      */
     __IO    uint32_t    GEN2_RX_PLL_CCP;
-    
+
     /**
       CDR PLL manual control
      */
     __IO    uint32_t    CDR_PLL_MANUAL_CR;
-    
+
     /**
       Reserved0
      */
     __IO    uint32_t    RESERVED0[6];
-    
+
     /**
       Update settings command register
      */
     __IO    uint32_t    UPDATE_SETTINGS;
-    
+
     /**
       Reserved1
      */
     __IO    uint32_t    RESERVED1[31];
-    
+
     /**
       PRBS first error cycle counter bits [7:0]
      */
     __IO    uint32_t    PRBS_ERR_CYC_FIRST_7_0;
-    
+
     /**
       PRBS first error cycle counter bits [15:8]
      */
     __IO    uint32_t    PRBS_ERR_CYC_FIRST_15_8;
-    
+
     /**
       PRBS first error cycle counter bits [23:16]
      */
     __IO    uint32_t    PRBS_ERR_CYC_FIRST_23_16;
-    
+
     /**
       PRBS first error cycle counter bits [31:24]
      */
     __IO    uint32_t    PRBS_ERR_CYC_FIRST_31_24;
-    
+
     /**
       PRBS first error cycle counter bits [39:32]
      */
     __IO    uint32_t    PRBS_ERR_CYC_FIRST_39_32;
-    
+
     /**
       PRBS first error cycle counter bits [47:40]
      */
     __IO    uint32_t    PRBS_ERR_CYC_FIRST_47_40;
-    
+
     /**
       PRBS first error cycle counter bits [49:48]
      */
     __IO    uint32_t    PRBS_ERR_CYC_FIRST_49_48;
-    
+
     /**
       Reserved2
      */
     __IO    uint32_t    RESERVED2;
-    
+
     /**
       PRBS last error cycle counter bits [7:0]
      */
     __IO    uint32_t    PRBS_ERR_CYC_LAST_7_0;
-    
+
     /**
       PRBS last error cycle counter bits [15:8]
      */
     __IO    uint32_t    PRBS_ERR_CYC_LAST_15_8;
-    
+
     /**
       PRBS last error cycle counter bits [23:16]
      */
     __IO    uint32_t    PRBS_ERR_CYC_LAST_23_16;
-    
+
     /**
       PRBS last error cycle counter bits [31:24]
      */
     __IO    uint32_t    PRBS_ERR_CYC_LAST_31_24;
-    
+
     /**
       PRBS last error cycle counter bits [39:32]
      */
     __IO    uint32_t    PRBS_ERR_CYC_LAST_39_32;
-    
+
     /**
       PRBS last error cycle counter bits [47:40]
      */
     __IO    uint32_t    PRBS_ERR_CYC_LAST_47_40;
-    
+
     /**
       PRBS last error cycle counter bits [49:48]
      */
     __IO    uint32_t    PRBS_ERR_CYC_LAST_49_48;
-    
+
     /**
       Reserved3
      */
     __IO    uint32_t    RESERVED3[81];
-    
+
 } SERDES_TypeDef;
- 
+
 /*-------------------------------------------------------------------------*//**
   The serdesif_regs_t data structure provides access to the complete set of the
   SERDES Interface hardware block configuration registers. These registers are
@@ -2567,17 +2567,17 @@ typedef struct
       PCIe core registers.
      */
     PCIE_TypeDef                core;
-    
+
     /**
       SERDES macro registers.
      */
     SERDES_TypeDef              lane[4];
-    
+
     /**
       SERDESIF system registers.
      */
     SERDES_INTF_SYSREG_TypeDef     sys_regs;
-    
+
 } SERDESIF_TypeDef;
 
 
@@ -2810,7 +2810,7 @@ typedef struct {
 #define ENVM_2                  ((NVM_TypeDef *) ENVM2_BASE)
 #define SYSREG                  ((SYSREG_TypeDef *) SYSREG_BASE)
 #define MDDR                    ((MDDR_TypeDef *) DDR0_CFG_BASE)
-#define FDDR                    ((FDDR_TypeDef *) DDR1_CFG_BASE) 
+#define FDDR                    ((FDDR_TypeDef *) DDR1_CFG_BASE)
 #define USB                     ((MSS_USB_TypeDef *) USB_BASE)
 #define SERDES0                 ((SERDESIF_TypeDef *) SERDES0_CFG_BASE)
 #define SERDES1                 ((SERDESIF_TypeDef *) SERDES1_CFG_BASE)

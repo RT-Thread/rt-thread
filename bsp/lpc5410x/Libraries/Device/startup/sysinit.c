@@ -57,22 +57,22 @@ const uint32_t ExtClockIn = 0;
 void SystemInit(void)
 {
 #if defined(__CODE_RED)
-	extern void(*const g_pfnVectors[]) (void);
-	SCB->VTOR = (uint32_t) &g_pfnVectors;
+    extern void(*const g_pfnVectors[]) (void);
+    SCB->VTOR = (uint32_t) &g_pfnVectors;
 #else
-	//extern void *__Vectors;
-	//SCB->VTOR = (uint32_t) &isr_vector;
-	SCB->VTOR  = 0x00000000 & 0x3FFFFF80;
+    //extern void *__Vectors;
+    //SCB->VTOR = (uint32_t) &isr_vector;
+    SCB->VTOR  = 0x00000000 & 0x3FFFFF80;
 #endif
 
 #if defined(CORE_M4)
 #if defined(__FPU_PRESENT) && __FPU_PRESENT == 1
-	fpuInit();
+    fpuInit();
 #endif
 #endif
 
 #if !defined(__MULTICORE_M0SLAVE) && !defined(__MULTICORE_M4SLAVE)
-	/* Chip specific SystemInit */
-	Chip_SystemInit();
+    /* Chip specific SystemInit */
+    Chip_SystemInit();
 #endif
 }

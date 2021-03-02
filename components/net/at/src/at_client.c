@@ -579,7 +579,7 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc *urc_table, rt_
         client->urc_table[client->urc_table_size].urc = urc_table;
         client->urc_table[client->urc_table_size].urc_size = table_sz;
         client->urc_table_size++;
-        
+
         rt_free(old_urc_table);
     }
 

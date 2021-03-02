@@ -68,9 +68,9 @@ static void mipi_sensor_i2c_init(uint32_t base, uint32_t baud)
 /*!
  * @brief Perform I2C write operation for mipi camera sensor
  *
- * @param   i2c_base	sensor i2c master address
- * @param   reg	 		sensor i2c register address
- * @param	pval 		value write to i2c register
+ * @param   i2c_base    sensor i2c master address
+ * @param   reg             sensor i2c register address
+ * @param    pval         value write to i2c register
  *
  * @return  0 if successful; non-zero otherwise
  */
@@ -96,9 +96,9 @@ static int32_t mipi_sensor_write_reg(uint32_t i2c_base, uint16_t reg, uint8_t pv
 /*!
  * @brief Perform I2C read operation for mipi camera sensor
  *
- * @param   i2c_base	sensor i2c master address
- * @param   reg	 		sensor i2c register address
- * @param	pval 		value read from i2c register
+ * @param   i2c_base    sensor i2c master address
+ * @param   reg             sensor i2c register address
+ * @param    pval         value read from i2c register
  *
  * @return  0 if successful; non-zero otherwise
  */
@@ -120,12 +120,12 @@ static int32_t mipi_sensor_read_reg(uint32_t i2c_base, uint16_t reg, uint8_t * p
     return ret;
 }
 
-/* @brief Check I2C write and read function. This funtions is used for debug purpose. 
+/* @brief Check I2C write and read function. This funtions is used for debug purpose.
  *
- * @param   i2c_base	sensor i2c master address
- * @param   slave_addr	sensor i2c slave device address
- * @param   reg	 		sensor i2c register address
- * @param	pval 		value read from i2c register
+ * @param   i2c_base    sensor i2c master address
+ * @param   slave_addr    sensor i2c slave device address
+ * @param   reg             sensor i2c register address
+ * @param    pval         value read from i2c register
  *
  * @return  0 if successful; non-zero otherwise
  */
@@ -152,11 +152,11 @@ static int dev_check_reg(uint32_t i2c_base, uint32_t slave_addr, uint8_t reg,
     return ret;
 }
 
-/* @brief Dump a range of sensor registers. This funtions is used for debug purpose. 
+/* @brief Dump a range of sensor registers. This funtions is used for debug purpose.
  *
- * @param   i2c_base	sensor i2c master address
- * @param   start		start of sensor i2c regigter address
- * @param   end			end of sensor i2c regigter address
+ * @param   i2c_base    sensor i2c master address
+ * @param   start        start of sensor i2c regigter address
+ * @param   end            end of sensor i2c regigter address
  */
 static void mipi_sensor_regs_dump(uint32_t i2c_base, uint16_t start, uint16_t end)
 {
@@ -174,7 +174,7 @@ static void mipi_sensor_regs_dump(uint32_t i2c_base, uint16_t start, uint16_t en
  *
  * Only mipi ov5640 is support currently. So the expect mipi id is 5640.
  *
- * @param   i2c_base	sensor i2c master address
+ * @param   i2c_base    sensor i2c master address
  */
 static void mipi_sensor_id_check(uint32_t i2c_base)
 {
@@ -200,8 +200,8 @@ static void mipi_sensor_id_check(uint32_t i2c_base)
 
 /* @brief Download firmware mipi setting array into mipi sensor.
  *
- * @param   i2c_base	sensor i2c master address
- * @param	mipi_cam_fm	sensor mode register settings  
+ * @param   i2c_base    sensor i2c master address
+ * @param    mipi_cam_fm    sensor mode register settings
  */
 static void mipi_sensor_load_firmware(uint32_t i2c_base, mipi_cam_mode_t * mipi_cam_fm)
 {
@@ -228,7 +228,7 @@ static void mipi_sensor_load_firmware(uint32_t i2c_base, mipi_cam_mode_t * mipi_
 /*!
  * @brief Configure and initialize mipi camera sensor
  *
- * @param   i2c_base	sensor i2c master address
+ * @param   i2c_base    sensor i2c master address
  */
 static void mipi_sensor_config(uint32_t i2c_base)
 {
@@ -247,28 +247,28 @@ static void mipi_sensor_config(uint32_t i2c_base)
 /*!
  * @brief Turn mipi sensor into sleep mode through I2C
  *
- * @param   i2c_base	sensor i2c master address
+ * @param   i2c_base    sensor i2c master address
  */
 static void i2c2_sensor_off(uint32_t i2c_base)
 {
-    mipi_sensor_write_reg(i2c_base, 0x3008, 0x42);  //sleep;   
+    mipi_sensor_write_reg(i2c_base, 0x3008, 0x42);  //sleep;
     mipi_sensor_write_reg(i2c_base, 0x3503, 0x7);
     mipi_sensor_write_reg(i2c_base, 0x483b, 0xff);  //sleep;
-    mipi_sensor_write_reg(i2c_base, 0x3007, 0xf7);  //sleep;   
+    mipi_sensor_write_reg(i2c_base, 0x3007, 0xf7);  //sleep;
 
 }
 
 /*!
  * @brief Wake up mipi sensor through I2C
  *
- * @param   i2c_base	sensor i2c master address
+ * @param   i2c_base    sensor i2c master address
  */
 static void i2c2_sensor_on(uint32_t i2c_base)
 {
-    mipi_sensor_write_reg(i2c_base, 0x3008, 0x42);  //sleep;   
+    mipi_sensor_write_reg(i2c_base, 0x3008, 0x42);  //sleep;
     mipi_sensor_write_reg(i2c_base, 0x3503, 0x7);
     mipi_sensor_write_reg(i2c_base, 0x483b, 0xff);  //sleep;
-    mipi_sensor_write_reg(i2c_base, 0x3007, 0xf7);  //sleep;   
+    mipi_sensor_write_reg(i2c_base, 0x3007, 0xf7);  //sleep;
     mipi_sensor_write_reg(i2c_base, 0x3008, 0x02);
     mipi_sensor_write_reg(i2c_base, 0x3503, 0x0);
     mipi_sensor_write_reg(i2c_base, 0x483b, 0x33);  //mipi  reset;
@@ -279,13 +279,13 @@ static void i2c2_sensor_on(uint32_t i2c_base)
 /*!
  * @brief Set number of active data lanes for MIPI-CSI2 controller
  *
- * @param   lanes	number of active data lanes
+ * @param   lanes    number of active data lanes
  */
 static int32_t mipi_csi2_set_lanes(uint32_t lanes)
 {
     if (lanes > 4 || lanes < 1)
         return FALSE;
-	BW_MIPI_CSI_N_LANES_N_LANES(lanes - 1);
+    BW_MIPI_CSI_N_LANES_N_LANES(lanes - 1);
     return TRUE;
 }
 
@@ -302,46 +302,46 @@ static void mipi_csi2_controller_program(void)
     mipi_csi2_set_lanes(2);
 
     /*PHY loopback test */
-	//{phy_testclk,phy_testclr} = {0,1}
-	BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(0);
-	BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLR(1);
+    //{phy_testclk,phy_testclr} = {0,1}
+    BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(0);
+    BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLR(1);
 
-	//{phy_testen,phy_testdout,phy_testdin}
-	HW_MIPI_CSI_PHY_TST_CTRL1_CLR(
-			BM_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTEN |
-			BM_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDOUT |
-			BM_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDIN);
+    //{phy_testen,phy_testdout,phy_testdin}
+    HW_MIPI_CSI_PHY_TST_CTRL1_CLR(
+            BM_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTEN |
+            BM_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDOUT |
+            BM_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDIN);
 
-	//{phy_testclk,phy_testclr} = {0,1} --> {0,0}
-	BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLR(0);
-	//{phy_testclk,phy_testclr} = {0,0} --> {1,0}
-	BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(1);
+    //{phy_testclk,phy_testclr} = {0,1} --> {0,0}
+    BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLR(0);
+    //{phy_testclk,phy_testclr} = {0,0} --> {1,0}
+    BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(1);
 
-	//{phy_testen,phy_testdout,phy_testdin}
-	BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDIN(0x44);
-	BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTEN(1);
+    //{phy_testen,phy_testdout,phy_testdin}
+    BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDIN(0x44);
+    BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTEN(1);
 
-	//{phy_testclk,phy_testclr} = {1,0} --> {0,0}
-	BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(0);
+    //{phy_testclk,phy_testclr} = {1,0} --> {0,0}
+    BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(0);
 
-	//{phy_testen,phy_testdout,phy_testdin}
-	BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTEN(0);
-	BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDIN(0x14);
+    //{phy_testen,phy_testdout,phy_testdin}
+    BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTEN(0);
+    BW_MIPI_CSI_PHY_TST_CTRL1_PHY_TESTDIN(0x14);
 
-	//{phy_testclk,phy_testclr} = {0,0} --> {1,0}
-	BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(1);
+    //{phy_testclk,phy_testclr} = {0,0} --> {1,0}
+    BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(1);
 
-	//{phy_testclk,phy_testclr} = {1,0} --> {0,0}
-	BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(0);
+    //{phy_testclk,phy_testclr} = {1,0} --> {0,0}
+    BW_MIPI_CSI_PHY_TST_CRTL0_PHY_TESTCLK(0);
 
     // raise phy shutdown
-	BW_MIPI_CSI_PHY_SHUTDOWNZ_PHY_SHUTDOWNZ(1);
+    BW_MIPI_CSI_PHY_SHUTDOWNZ_PHY_SHUTDOWNZ(1);
 
     //raise phy reset
-	BW_MIPI_CSI_DPHY_RSTZ_DPHY_RSTZ(1);
+    BW_MIPI_CSI_DPHY_RSTZ_DPHY_RSTZ(1);
 
     //raise csi2 reset
-	BW_MIPI_CSI_CSI2_RESETN_CSI2_RESETN(1);
+    BW_MIPI_CSI_CSI2_RESETN_CSI2_RESETN(1);
 }
 
 void mipi_csi2_config(void)
@@ -357,9 +357,9 @@ void mipi_csi2_config(void)
 
     /*check if D-PHY is ready to receive: clock lane and data lane in stop state */
     timeout = 0x100000;
-	while(HW_MIPI_CSI_PHY_STATE.B.PHY_RXULPSCLKNOT &&
-		  HW_MIPI_CSI_PHY_STATE.B.PHY_STOPSTATEDATA_1 &&
-		  HW_MIPI_CSI_PHY_STATE.B.PHY_STOPSTATEDATA_0) {
+    while(HW_MIPI_CSI_PHY_STATE.B.PHY_RXULPSCLKNOT &&
+          HW_MIPI_CSI_PHY_STATE.B.PHY_STOPSTATEDATA_1 &&
+          HW_MIPI_CSI_PHY_STATE.B.PHY_STOPSTATEDATA_0) {
         if (timeout-- < 0) {
             printf("Waiting for PHY ready timeout!!\n");
             return;
@@ -371,10 +371,10 @@ void mipi_csi2_config(void)
 
     /*check if ddr clock is received */
     timeout = 0x100000;
-	while(!HW_MIPI_CSI_PHY_STATE.B.PHY_RXCLKACTIVEHS) {
-		if (timeout-- < 0) {
-			printf("Waiting for DDR clock ready timeout!!\n");
-			return;
-		}
-	}
+    while(!HW_MIPI_CSI_PHY_STATE.B.PHY_RXCLKACTIVEHS) {
+        if (timeout-- < 0) {
+            printf("Waiting for DDR clock ready timeout!!\n");
+            return;
+        }
+    }
 }

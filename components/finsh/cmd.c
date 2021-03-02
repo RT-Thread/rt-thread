@@ -27,9 +27,9 @@
  * 2012-10-22     Bernard      add MS VC++ patch.
  * 2016-06-02     armink       beautify the list_thread command
  * 2018-11-22     Jesven       list_thread add smp support
- * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread 
+ * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread
  *                             Provide protection for the "first layer of objects" when list_*
- * 2020-04-07     chenhui      add clear 
+ * 2020-04-07     chenhui      add clear
  */
 
 #include <rthw.h>
@@ -156,7 +156,7 @@ static rt_list_t *list_get_next(rt_list_t *current, list_get_next_t *arg)
             break;
         }
     }
-    
+
     rt_hw_interrupt_enable(level);
     arg->nr_out = nr;
     return node;

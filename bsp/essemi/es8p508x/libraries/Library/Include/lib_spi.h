@@ -34,7 +34,7 @@ typedef enum
 /* ADC初始化配置结构体定义 */
 typedef struct
 {
-    uint32_t  SPI_Freq;          //SPI频率 
+    uint32_t  SPI_Freq;          //SPI频率
 
     SPI_TYPE_DFS  SPI_Df;        //通讯数据格式
 

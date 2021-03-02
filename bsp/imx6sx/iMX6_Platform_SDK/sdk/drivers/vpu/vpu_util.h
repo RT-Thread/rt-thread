@@ -57,7 +57,7 @@
 // DEFINITIONS
 //////////////////////////////////////////////////////////////////////////////
 
-#define MAX_FW_BINARY_LEN		200 * 1024
+#define MAX_FW_BINARY_LEN        200 * 1024
 typedef enum {
     INT_BIT_PIC_RUN = 3,
     INT_BIT_BIT_BUF_EMPTY = 14,
@@ -65,11 +65,11 @@ typedef enum {
 } InterruptBit;
 
 #if defined(CHIP_MX6DQ) || defined(CHIP_MX6SDL)
-#define BIT_WORK_SIZE			(128*1024)
+#define BIT_WORK_SIZE            (128*1024)
 #else
-#define BIT_WORK_SIZE			(128*1024)
+#define BIT_WORK_SIZE            (128*1024)
 #endif
-#define SIZE_CONTEXT_BUF		BIT_WORK_SIZE
+#define SIZE_CONTEXT_BUF        BIT_WORK_SIZE
 
 #define SIZE_PIC_PARA_BASE_BUF          0x100
 #define SIZE_MV_DATA                    0x20000
@@ -77,7 +77,7 @@ typedef enum {
 #define SIZE_FRAME_BUF_STAT             0x100
 #define SIZE_SLICE_INFO                 0x4000
 #define USER_DATA_INFO_OFFSET           8*17
-#define JPU_GBU_SIZE			512
+#define JPU_GBU_SIZE            512
 
 #define ADDR_PIC_PARA_BASE_OFFSET       0
 #define ADDR_MV_BASE_OFFSET             ADDR_PIC_PARA_BASE_OFFSET + SIZE_PIC_PARA_BASE_BUF
@@ -87,14 +87,14 @@ typedef enum {
 #define ENC_ADDR_END_OF_RPT_BUF         ADDR_FRAME_BUF_STAT_BASE_OFFSET + SIZE_SLICE_INFO
 #define DEC_ADDR_END_OF_RPT_BUF         ADDR_FRAME_BUF_STAT_BASE_OFFSET + SIZE_FRAME_BUF_STAT
 
-#define DC_TABLE_INDEX0		    0
-#define AC_TABLE_INDEX0		    1
-#define DC_TABLE_INDEX1		    2
-#define AC_TABLE_INDEX1		    3
-#define Q_COMPONENT0		    0
-#define Q_COMPONENT1		    0x40
-#define Q_COMPONENT2		    0x80
-#define HUFF_VAL_SIZE		    162
+#define DC_TABLE_INDEX0            0
+#define AC_TABLE_INDEX0            1
+#define DC_TABLE_INDEX1            2
+#define AC_TABLE_INDEX1            3
+#define Q_COMPONENT0            0
+#define Q_COMPONENT1            0x40
+#define Q_COMPONENT2            0x80
+#define HUFF_VAL_SIZE            162
 
 #define VPU_SW_RESET_BPU_CORE   0x008
 #define VPU_SW_RESET_BPU_BUS    0x010
@@ -441,11 +441,11 @@ typedef struct {
 } vpu_resource_t;
 
 #define swab32(x) \
-	((uint32_t)( \
-		(((uint32_t)(x) & (uint32_t)0x000000ffUL) << 24) | \
-		(((uint32_t)(x) & (uint32_t)0x0000ff00UL) <<  8) | \
-		(((uint32_t)(x) & (uint32_t)0x00ff0000UL) >>  8) | \
-		(((uint32_t)(x) & (uint32_t)0xff000000UL) >> 24) ))
+    ((uint32_t)( \
+        (((uint32_t)(x) & (uint32_t)0x000000ffUL) << 24) | \
+        (((uint32_t)(x) & (uint32_t)0x0000ff00UL) <<  8) | \
+        (((uint32_t)(x) & (uint32_t)0x00ff0000UL) >>  8) | \
+        (((uint32_t)(x) & (uint32_t)0xff000000UL) >> 24) ))
 
 extern int g_vpu_system_mem_size;
 

@@ -14,7 +14,7 @@
  *
  * @date June-16-2009
 
- * @brief This file contains macros and constants required by the various 
+ * @brief This file contains macros and constants required by the various
  *        device specializations
  *****************************************************************************/
 
@@ -26,8 +26,8 @@
 #include "ieee11073_phd_types_kinetis.h"    /* IEEE11073 Data Structures */
 #else
 #include "ieee11073_phd_types.h"    /* IEEE11073 Data Structures */
-#endif  
-#include "ieee11073_nom_codes.h"    
+#endif
+#include "ieee11073_nom_codes.h"
 
 /******************************************************************************
  * Constants - None
@@ -85,8 +85,8 @@ typedef struct _phd_measurement
 #endif
 
 /*****************************************************************************
- * Global variables 
- *****************************************************************************/  
+ * Global variables
+ *****************************************************************************/
 extern uint_16 scanReportNo;
 /*****************************************************************************
  * Global Functions - None

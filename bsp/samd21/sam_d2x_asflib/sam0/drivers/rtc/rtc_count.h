@@ -404,20 +404,20 @@ extern "C" {
  * RTC clock source.
  */
 enum rtc_clock_sel {
-	/** 1.024KHz from 32KHz internal ULP oscillator */
-	RTC_CLOCK_SELECTION_ULP1K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP1K_Val,
-	/** 32.768KHz from 32KHz internal ULP oscillator */
-	RTC_CLOCK_SELECTION_ULP32K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP32K_Val,
+    /** 1.024KHz from 32KHz internal ULP oscillator */
+    RTC_CLOCK_SELECTION_ULP1K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP1K_Val,
+    /** 32.768KHz from 32KHz internal ULP oscillator */
+    RTC_CLOCK_SELECTION_ULP32K = OSC32KCTRL_RTCCTRL_RTCSEL_ULP32K_Val,
 #if !(SAML22)
-	/** 1.024KHz from 32KHz internal oscillator */
-	RTC_CLOCK_SELECTION_OSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC1K_Val,
-	/** 32.768KHz from 32KHz internal oscillator */
-	RTC_CLOCK_SELECTION_OSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC32K_Val,
+    /** 1.024KHz from 32KHz internal oscillator */
+    RTC_CLOCK_SELECTION_OSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC1K_Val,
+    /** 32.768KHz from 32KHz internal oscillator */
+    RTC_CLOCK_SELECTION_OSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_OSC32K_Val,
 #endif
-	/** 1.024KHz from 32KHz external oscillator */
-	RTC_CLOCK_SELECTION_XOSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC1K_Val,
-	/** 32.768KHz from 32.768KHz external crystal oscillator */
-	RTC_CLOCK_SELECTION_XOSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC32K_Val,
+    /** 1.024KHz from 32KHz external oscillator */
+    RTC_CLOCK_SELECTION_XOSC1K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC1K_Val,
+    /** 32.768KHz from 32.768KHz external crystal oscillator */
+    RTC_CLOCK_SELECTION_XOSC32K = OSC32KCTRL_RTCCTRL_RTCSEL_XOSC32K_Val,
 };
 #endif
 
@@ -428,10 +428,10 @@ enum rtc_clock_sel {
  * operation.
  */
 enum rtc_count_mode {
-	/** RTC Count module operates in 16-bit mode */
-	RTC_COUNT_MODE_16BIT = 0,
-	/** RTC Count module operates in 32-bit mode */
-	RTC_COUNT_MODE_32BIT = 1,
+    /** RTC Count module operates in 16-bit mode */
+    RTC_COUNT_MODE_16BIT = 0,
+    /** RTC Count module operates in 32-bit mode */
+    RTC_COUNT_MODE_32BIT = 1,
 };
 
 #if !defined (RTC_NUM_OF_COMP16) && defined(RTC_COMP16_NUM)
@@ -444,27 +444,27 @@ enum rtc_count_mode {
  * \note Not all compare channels are available in all devices and modes.
  */
 enum rtc_count_compare {
-	/** Compare channel 0 */
-	RTC_COUNT_COMPARE_0 = 0,
+    /** Compare channel 0 */
+    RTC_COUNT_COMPARE_0 = 0,
 #if (RTC_NUM_OF_COMP16 > 1) || defined(__DOXYGEN__)
-	/** Compare channel 1 */
-	RTC_COUNT_COMPARE_1 = 1,
+    /** Compare channel 1 */
+    RTC_COUNT_COMPARE_1 = 1,
 #endif
 #if (RTC_NUM_OF_COMP16 > 2) || defined(__DOXYGEN__)
-	/** Compare channel 2 */
-	RTC_COUNT_COMPARE_2 = 2,
+    /** Compare channel 2 */
+    RTC_COUNT_COMPARE_2 = 2,
 #endif
-#if (RTC_NUM_OF_COMP16 > 3)	|| defined(__DOXYGEN__)
-	/** Compare channel 3 */
-	RTC_COUNT_COMPARE_3 = 3,
+#if (RTC_NUM_OF_COMP16 > 3)    || defined(__DOXYGEN__)
+    /** Compare channel 3 */
+    RTC_COUNT_COMPARE_3 = 3,
 #endif
 #if (RTC_NUM_OF_COMP16 > 4) || defined(__DOXYGEN__)
-	/** Compare channel 4 */
-	RTC_COUNT_COMPARE_4 = 4,
+    /** Compare channel 4 */
+    RTC_COUNT_COMPARE_4 = 4,
 #endif
 #if (RTC_NUM_OF_COMP16 > 5) || defined(__DOXYGEN__)
-	/** Compare channel 5 */
-	RTC_COUNT_COMPARE_5 = 5,
+    /** Compare channel 5 */
+    RTC_COUNT_COMPARE_5 = 5,
 #endif
 };
 
@@ -473,22 +473,22 @@ enum rtc_count_compare {
  * \brief Available periodic interval source.
  */
 enum rtc_count_periodic_interval{
-	/** Periodic interval 0 */
-	RTC_COUNT_PERIODIC_INTERVAL_0 = 0,
-	/** Periodic interval 1 */
-	RTC_COUNT_PERIODIC_INTERVAL_1 = 1,
-	/** Periodic interval 2 */
-	RTC_COUNT_PERIODIC_INTERVAL_2 = 2,
-	/** Periodic interval 3 */
-	RTC_COUNT_PERIODIC_INTERVAL_3 = 3,
-	/** Periodic interval 4 */
-	RTC_COUNT_PERIODIC_INTERVAL_4 = 4,
-	/** Periodic interval 5 */
-	RTC_COUNT_PERIODIC_INTERVAL_5 = 5,
-	/** Periodic interval 6 */
-	RTC_COUNT_PERIODIC_INTERVAL_6 = 6,
-	/** Periodic interval 7 */
-	RTC_COUNT_PERIODIC_INTERVAL_7 = 7,
+    /** Periodic interval 0 */
+    RTC_COUNT_PERIODIC_INTERVAL_0 = 0,
+    /** Periodic interval 1 */
+    RTC_COUNT_PERIODIC_INTERVAL_1 = 1,
+    /** Periodic interval 2 */
+    RTC_COUNT_PERIODIC_INTERVAL_2 = 2,
+    /** Periodic interval 3 */
+    RTC_COUNT_PERIODIC_INTERVAL_3 = 3,
+    /** Periodic interval 4 */
+    RTC_COUNT_PERIODIC_INTERVAL_4 = 4,
+    /** Periodic interval 5 */
+    RTC_COUNT_PERIODIC_INTERVAL_5 = 5,
+    /** Periodic interval 6 */
+    RTC_COUNT_PERIODIC_INTERVAL_6 = 6,
+    /** Periodic interval 7 */
+    RTC_COUNT_PERIODIC_INTERVAL_7 = 7,
 };
 #endif
 
@@ -500,55 +500,55 @@ enum rtc_count_periodic_interval{
  * The available callback types for the RTC count module.
  */
 enum rtc_count_callback {
-	/** Callback for Periodic Interval 0 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_0 = 0,
-	/** Callback for Periodic Interval 1 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_1,
-	/** Callback for Periodic Interval 2 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_2,
-	/** Callback for Periodic Interval 3 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_3,
-	/** Callback for Periodic Interval 4 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_4,
-	/** Callback for Periodic Interval 5 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_5,
-	/** Callback for Periodic Interval 6 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_6,
-	/** Callback for Periodic Interval 7 Interrupt */
-	RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_7,
-	/** Callback for compare channel 0 */
-	RTC_COUNT_CALLBACK_COMPARE_0,
+    /** Callback for Periodic Interval 0 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_0 = 0,
+    /** Callback for Periodic Interval 1 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_1,
+    /** Callback for Periodic Interval 2 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_2,
+    /** Callback for Periodic Interval 3 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_3,
+    /** Callback for Periodic Interval 4 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_4,
+    /** Callback for Periodic Interval 5 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_5,
+    /** Callback for Periodic Interval 6 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_6,
+    /** Callback for Periodic Interval 7 Interrupt */
+    RTC_COUNT_CALLBACK_PERIODIC_INTERVAL_7,
+    /** Callback for compare channel 0 */
+    RTC_COUNT_CALLBACK_COMPARE_0,
 #  if (RTC_NUM_OF_COMP16 > 1) || defined(__DOXYGEN__)
-	/** Callback for compare channel 1 */
-	RTC_COUNT_CALLBACK_COMPARE_1,
+    /** Callback for compare channel 1 */
+    RTC_COUNT_CALLBACK_COMPARE_1,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 2) || defined(__DOXYGEN__)
-	/** Callback for compare channel 2 */
-	RTC_COUNT_CALLBACK_COMPARE_2,
+    /** Callback for compare channel 2 */
+    RTC_COUNT_CALLBACK_COMPARE_2,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 3) || defined(__DOXYGEN__)
-	/** Callback for compare channel 3 */
-	RTC_COUNT_CALLBACK_COMPARE_3,
+    /** Callback for compare channel 3 */
+    RTC_COUNT_CALLBACK_COMPARE_3,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 4) || defined(__DOXYGEN__)
-	/** Callback for compare channel 4 */
-	RTC_COUNT_CALLBACK_COMPARE_4,
+    /** Callback for compare channel 4 */
+    RTC_COUNT_CALLBACK_COMPARE_4,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 5) || defined(__DOXYGEN__)
-	/** Callback for compare channel 5 */
-	RTC_COUNT_CALLBACK_COMPARE_5,
+    /** Callback for compare channel 5 */
+    RTC_COUNT_CALLBACK_COMPARE_5,
 #  endif
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/** Callback for tamper */
-	RTC_COUNT_CALLBACK_TAMPER,
+    /** Callback for tamper */
+    RTC_COUNT_CALLBACK_TAMPER,
 #endif
 
-	/** Callback for overflow */
-	RTC_COUNT_CALLBACK_OVERFLOW,
+    /** Callback for overflow */
+    RTC_COUNT_CALLBACK_OVERFLOW,
 #  if !defined(__DOXYGEN__)
-	/** Total number of callbacks */
-	_RTC_COUNT_CALLBACK_N
+    /** Total number of callbacks */
+    _RTC_COUNT_CALLBACK_N
 #  endif
 };
 #else
@@ -558,39 +558,39 @@ enum rtc_count_callback {
  * The available callback types for the RTC count module.
  */
 enum rtc_count_callback {
-	/** Callback for compare channel 0 */
-	RTC_COUNT_CALLBACK_COMPARE_0 = 0,
+    /** Callback for compare channel 0 */
+    RTC_COUNT_CALLBACK_COMPARE_0 = 0,
 #  if (RTC_NUM_OF_COMP16 > 1) || defined(__DOXYGEN__)
-	/** Callback for compare channel 1 */
-	RTC_COUNT_CALLBACK_COMPARE_1,
+    /** Callback for compare channel 1 */
+    RTC_COUNT_CALLBACK_COMPARE_1,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 2) || defined(__DOXYGEN__)
-	/** Callback for compare channel 2 */
-	RTC_COUNT_CALLBACK_COMPARE_2,
+    /** Callback for compare channel 2 */
+    RTC_COUNT_CALLBACK_COMPARE_2,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 3) || defined(__DOXYGEN__)
-	/** Callback for compare channel 3 */
-	RTC_COUNT_CALLBACK_COMPARE_3,
+    /** Callback for compare channel 3 */
+    RTC_COUNT_CALLBACK_COMPARE_3,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 4) || defined(__DOXYGEN__)
-	/** Callback for compare channel 4 */
-	RTC_COUNT_CALLBACK_COMPARE_4,
+    /** Callback for compare channel 4 */
+    RTC_COUNT_CALLBACK_COMPARE_4,
 #  endif
 #  if (RTC_NUM_OF_COMP16 > 5) || defined(__DOXYGEN__)
-	/** Callback for compare channel 5 */
-	RTC_COUNT_CALLBACK_COMPARE_5,
+    /** Callback for compare channel 5 */
+    RTC_COUNT_CALLBACK_COMPARE_5,
 #  endif
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/** Callback for tamper */
-	RTC_COUNT_CALLBACK_TAMPER,
+    /** Callback for tamper */
+    RTC_COUNT_CALLBACK_TAMPER,
 #endif
 
-	/** Callback for overflow */
-	RTC_COUNT_CALLBACK_OVERFLOW,
+    /** Callback for overflow */
+    RTC_COUNT_CALLBACK_OVERFLOW,
 #  if !defined(__DOXYGEN__)
-	/** Total number of callbacks */
-	_RTC_COUNT_CALLBACK_N
+    /** Total number of callbacks */
+    _RTC_COUNT_CALLBACK_N
 #  endif
 };
 #endif
@@ -607,31 +607,31 @@ typedef void (*rtc_count_callback_t)(void);
  * The available input clock prescaler values for the RTC count module.
  */
 enum rtc_count_prescaler {
-	/** RTC prescaler is off, and the input clock frequency is
-	prescaled by a factor of 1 */
-	RTC_COUNT_PRESCALER_OFF      = RTC_MODE0_CTRLA_PRESCALER_OFF,
-	/** RTC input clock frequency is prescaled by a factor of 1 */
-	RTC_COUNT_PRESCALER_DIV_1    = RTC_MODE0_CTRLA_PRESCALER_DIV1,
-	/** RTC input clock frequency is prescaled by a factor of 2 */
-	RTC_COUNT_PRESCALER_DIV_2    = RTC_MODE0_CTRLA_PRESCALER_DIV2,
-	/** RTC input clock frequency is prescaled by a factor of 4 */
-	RTC_COUNT_PRESCALER_DIV_4    = RTC_MODE0_CTRLA_PRESCALER_DIV4,
-	/** RTC input clock frequency is prescaled by a factor of 8 */
-	RTC_COUNT_PRESCALER_DIV_8    = RTC_MODE0_CTRLA_PRESCALER_DIV8,
-	/** RTC input clock frequency is prescaled by a factor of 16 */
-	RTC_COUNT_PRESCALER_DIV_16   = RTC_MODE0_CTRLA_PRESCALER_DIV16,
-	/** RTC input clock frequency is prescaled by a factor of 32 */
-	RTC_COUNT_PRESCALER_DIV_32   = RTC_MODE0_CTRLA_PRESCALER_DIV32,
-	/** RTC input clock frequency is prescaled by a factor of 64 */
-	RTC_COUNT_PRESCALER_DIV_64   = RTC_MODE0_CTRLA_PRESCALER_DIV64,
-	/** RTC input clock frequency is prescaled by a factor of 128 */
-	RTC_COUNT_PRESCALER_DIV_128  = RTC_MODE0_CTRLA_PRESCALER_DIV128,
-	/** RTC input clock frequency is prescaled by a factor of 256 */
-	RTC_COUNT_PRESCALER_DIV_256  = RTC_MODE0_CTRLA_PRESCALER_DIV256,
-	/** RTC input clock frequency is prescaled by a factor of 512 */
-	RTC_COUNT_PRESCALER_DIV_512  = RTC_MODE0_CTRLA_PRESCALER_DIV512,
-	/** RTC input clock frequency is prescaled by a factor of 1024 */
-	RTC_COUNT_PRESCALER_DIV_1024 = RTC_MODE0_CTRLA_PRESCALER_DIV1024,
+    /** RTC prescaler is off, and the input clock frequency is
+    prescaled by a factor of 1 */
+    RTC_COUNT_PRESCALER_OFF      = RTC_MODE0_CTRLA_PRESCALER_OFF,
+    /** RTC input clock frequency is prescaled by a factor of 1 */
+    RTC_COUNT_PRESCALER_DIV_1    = RTC_MODE0_CTRLA_PRESCALER_DIV1,
+    /** RTC input clock frequency is prescaled by a factor of 2 */
+    RTC_COUNT_PRESCALER_DIV_2    = RTC_MODE0_CTRLA_PRESCALER_DIV2,
+    /** RTC input clock frequency is prescaled by a factor of 4 */
+    RTC_COUNT_PRESCALER_DIV_4    = RTC_MODE0_CTRLA_PRESCALER_DIV4,
+    /** RTC input clock frequency is prescaled by a factor of 8 */
+    RTC_COUNT_PRESCALER_DIV_8    = RTC_MODE0_CTRLA_PRESCALER_DIV8,
+    /** RTC input clock frequency is prescaled by a factor of 16 */
+    RTC_COUNT_PRESCALER_DIV_16   = RTC_MODE0_CTRLA_PRESCALER_DIV16,
+    /** RTC input clock frequency is prescaled by a factor of 32 */
+    RTC_COUNT_PRESCALER_DIV_32   = RTC_MODE0_CTRLA_PRESCALER_DIV32,
+    /** RTC input clock frequency is prescaled by a factor of 64 */
+    RTC_COUNT_PRESCALER_DIV_64   = RTC_MODE0_CTRLA_PRESCALER_DIV64,
+    /** RTC input clock frequency is prescaled by a factor of 128 */
+    RTC_COUNT_PRESCALER_DIV_128  = RTC_MODE0_CTRLA_PRESCALER_DIV128,
+    /** RTC input clock frequency is prescaled by a factor of 256 */
+    RTC_COUNT_PRESCALER_DIV_256  = RTC_MODE0_CTRLA_PRESCALER_DIV256,
+    /** RTC input clock frequency is prescaled by a factor of 512 */
+    RTC_COUNT_PRESCALER_DIV_512  = RTC_MODE0_CTRLA_PRESCALER_DIV512,
+    /** RTC input clock frequency is prescaled by a factor of 1024 */
+    RTC_COUNT_PRESCALER_DIV_1024 = RTC_MODE0_CTRLA_PRESCALER_DIV1024,
 };
 #else
 /**
@@ -640,28 +640,28 @@ enum rtc_count_prescaler {
  * The available input clock prescaler values for the RTC count module.
  */
 enum rtc_count_prescaler {
-	/** RTC input clock frequency is prescaled by a factor of 1 */
-	RTC_COUNT_PRESCALER_DIV_1    = RTC_MODE0_CTRL_PRESCALER_DIV1,
-	/** RTC input clock frequency is prescaled by a factor of 2 */
-	RTC_COUNT_PRESCALER_DIV_2    = RTC_MODE0_CTRL_PRESCALER_DIV2,
-	/** RTC input clock frequency is prescaled by a factor of 4 */
-	RTC_COUNT_PRESCALER_DIV_4    = RTC_MODE0_CTRL_PRESCALER_DIV4,
-	/** RTC input clock frequency is prescaled by a factor of 8 */
-	RTC_COUNT_PRESCALER_DIV_8    = RTC_MODE0_CTRL_PRESCALER_DIV8,
-	/** RTC input clock frequency is prescaled by a factor of 16 */
-	RTC_COUNT_PRESCALER_DIV_16   = RTC_MODE0_CTRL_PRESCALER_DIV16,
-	/** RTC input clock frequency is prescaled by a factor of 32 */
-	RTC_COUNT_PRESCALER_DIV_32   = RTC_MODE0_CTRL_PRESCALER_DIV32,
-	/** RTC input clock frequency is prescaled by a factor of 64 */
-	RTC_COUNT_PRESCALER_DIV_64   = RTC_MODE0_CTRL_PRESCALER_DIV64,
-	/** RTC input clock frequency is prescaled by a factor of 128 */
-	RTC_COUNT_PRESCALER_DIV_128  = RTC_MODE0_CTRL_PRESCALER_DIV128,
-	/** RTC input clock frequency is prescaled by a factor of 256 */
-	RTC_COUNT_PRESCALER_DIV_256  = RTC_MODE0_CTRL_PRESCALER_DIV256,
-	/** RTC input clock frequency is prescaled by a factor of 512 */
-	RTC_COUNT_PRESCALER_DIV_512  = RTC_MODE0_CTRL_PRESCALER_DIV512,
-	/** RTC input clock frequency is prescaled by a factor of 1024 */
-	RTC_COUNT_PRESCALER_DIV_1024 = RTC_MODE0_CTRL_PRESCALER_DIV1024,
+    /** RTC input clock frequency is prescaled by a factor of 1 */
+    RTC_COUNT_PRESCALER_DIV_1    = RTC_MODE0_CTRL_PRESCALER_DIV1,
+    /** RTC input clock frequency is prescaled by a factor of 2 */
+    RTC_COUNT_PRESCALER_DIV_2    = RTC_MODE0_CTRL_PRESCALER_DIV2,
+    /** RTC input clock frequency is prescaled by a factor of 4 */
+    RTC_COUNT_PRESCALER_DIV_4    = RTC_MODE0_CTRL_PRESCALER_DIV4,
+    /** RTC input clock frequency is prescaled by a factor of 8 */
+    RTC_COUNT_PRESCALER_DIV_8    = RTC_MODE0_CTRL_PRESCALER_DIV8,
+    /** RTC input clock frequency is prescaled by a factor of 16 */
+    RTC_COUNT_PRESCALER_DIV_16   = RTC_MODE0_CTRL_PRESCALER_DIV16,
+    /** RTC input clock frequency is prescaled by a factor of 32 */
+    RTC_COUNT_PRESCALER_DIV_32   = RTC_MODE0_CTRL_PRESCALER_DIV32,
+    /** RTC input clock frequency is prescaled by a factor of 64 */
+    RTC_COUNT_PRESCALER_DIV_64   = RTC_MODE0_CTRL_PRESCALER_DIV64,
+    /** RTC input clock frequency is prescaled by a factor of 128 */
+    RTC_COUNT_PRESCALER_DIV_128  = RTC_MODE0_CTRL_PRESCALER_DIV128,
+    /** RTC input clock frequency is prescaled by a factor of 256 */
+    RTC_COUNT_PRESCALER_DIV_256  = RTC_MODE0_CTRL_PRESCALER_DIV256,
+    /** RTC input clock frequency is prescaled by a factor of 512 */
+    RTC_COUNT_PRESCALER_DIV_512  = RTC_MODE0_CTRL_PRESCALER_DIV512,
+    /** RTC input clock frequency is prescaled by a factor of 1024 */
+    RTC_COUNT_PRESCALER_DIV_1024 = RTC_MODE0_CTRL_PRESCALER_DIV1024,
 };
 #endif
 
@@ -672,19 +672,19 @@ enum rtc_count_prescaler {
  * \ref rtc_count_disable_events().
  */
 struct rtc_count_events {
-	/** Generate an output event on each overflow of the RTC count */
-	bool generate_event_on_overflow;
-	/** Generate an output event on a compare channel match against the RTC
-	 *  count */
-	bool generate_event_on_compare[RTC_NUM_OF_COMP16];
-	/** Generate an output event periodically at a binary division of the RTC
-	 *  counter frequency */
-	bool generate_event_on_periodic[8];
+    /** Generate an output event on each overflow of the RTC count */
+    bool generate_event_on_overflow;
+    /** Generate an output event on a compare channel match against the RTC
+     *  count */
+    bool generate_event_on_compare[RTC_NUM_OF_COMP16];
+    /** Generate an output event periodically at a binary division of the RTC
+     *  counter frequency */
+    bool generate_event_on_periodic[8];
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/** Generate an output event on every tamper input */
-	bool generate_event_on_tamper;
-	/** Tamper input event and capture the COUNT value */
-	bool on_event_to_tamper;
+    /** Generate an output event on every tamper input */
+    bool generate_event_on_tamper;
+    /** Tamper input event and capture the COUNT value */
+    bool on_event_to_tamper;
 #endif
 };
 
@@ -693,21 +693,21 @@ struct rtc_count_events {
  * \brief Device structure.
  */
 struct rtc_module {
-	/** RTC hardware module */
-	Rtc *hw;
-	/** Operation mode of count */
-	enum rtc_count_mode mode;
+    /** RTC hardware module */
+    Rtc *hw;
+    /** Operation mode of count */
+    enum rtc_count_mode mode;
 #ifdef FEATURE_RTC_CONTINUOUSLY_UPDATED
-	/** Set if counter value should be continuously updated */
-	bool continuously_update;
+    /** Set if counter value should be continuously updated */
+    bool continuously_update;
 #endif
 #  if RTC_COUNT_ASYNC == true
-	/** Pointers to callback functions */
-	volatile rtc_count_callback_t callbacks[_RTC_COUNT_CALLBACK_N];
-	/** Mask for registered callbacks */
-	volatile uint16_t registered_callback;
-	/** Mask for enabled callbacks */
-	volatile uint16_t enabled_callback;
+    /** Pointers to callback functions */
+    volatile rtc_count_callback_t callbacks[_RTC_COUNT_CALLBACK_N];
+    /** Mask for registered callbacks */
+    volatile uint16_t registered_callback;
+    /** Mask for enabled callbacks */
+    volatile uint16_t enabled_callback;
 #  endif
 };
 #endif
@@ -720,28 +720,28 @@ struct rtc_module {
  * user configurations are set.
  */
 struct rtc_count_config {
-	/** Input clock prescaler for the RTC module */
-	enum rtc_count_prescaler prescaler;
-	/** Select the operation mode of the RTC */
-	enum rtc_count_mode mode;
-	/** If true, clears the counter value on compare match. Only available
-	 *  whilst running in 32-bit mode */
-	bool clear_on_match;
+    /** Input clock prescaler for the RTC module */
+    enum rtc_count_prescaler prescaler;
+    /** Select the operation mode of the RTC */
+    enum rtc_count_mode mode;
+    /** If true, clears the counter value on compare match. Only available
+     *  whilst running in 32-bit mode */
+    bool clear_on_match;
 #ifdef FEATURE_RTC_CONTINUOUSLY_UPDATED
-	/** Continuously update the counter value so no synchronization is
-	 *  needed for reading */
-	bool continuously_update;
+    /** Continuously update the counter value so no synchronization is
+     *  needed for reading */
+    bool continuously_update;
 #endif
 #if (SAML21XXXB) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	/** Enable count read synchronization. The COUNT value requires
-	 * synchronization when reading. Disabling the synchronization
-	 * will prevent the COUNT value from displaying the current value. */
-	bool enable_read_sync;
+    /** Enable count read synchronization. The COUNT value requires
+     * synchronization when reading. Disabling the synchronization
+     * will prevent the COUNT value from displaying the current value. */
+    bool enable_read_sync;
 #endif
 
-	/** Array of Compare values. Not all Compare values are available in 32-bit
-	 *  mode */
-	uint32_t compare_values[RTC_NUM_OF_COMP16];
+    /** Array of Compare values. Not all Compare values are available in 32-bit
+     *  mode */
+    uint32_t compare_values[RTC_NUM_OF_COMP16];
 };
 
 
@@ -769,26 +769,26 @@ struct rtc_count_config {
  *                      values
  */
 static inline void rtc_count_get_config_defaults(
-		struct rtc_count_config *const config)
+        struct rtc_count_config *const config)
 {
-	/* Sanity check argument */
-	Assert(config);
+    /* Sanity check argument */
+    Assert(config);
 
-	/* Set default into configuration structure */
-	config->prescaler           = RTC_COUNT_PRESCALER_DIV_1024;
-	config->mode                = RTC_COUNT_MODE_32BIT;
-	config->clear_on_match      = false;
+    /* Set default into configuration structure */
+    config->prescaler           = RTC_COUNT_PRESCALER_DIV_1024;
+    config->mode                = RTC_COUNT_MODE_32BIT;
+    config->clear_on_match      = false;
 
 #ifdef FEATURE_RTC_CONTINUOUSLY_UPDATED
-	config->continuously_update = false;
+    config->continuously_update = false;
 #endif
 #if (SAML21XXXB) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	config->enable_read_sync    = true;
+    config->enable_read_sync    = true;
 #endif
 
-	for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
-		config->compare_values[i] = 0;
-	}
+    for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
+        config->compare_values[i] = 0;
+    }
 }
 
 void rtc_count_reset(struct rtc_module *const module);
@@ -804,32 +804,32 @@ void rtc_count_disable(struct rtc_module *const module);
  * \return Index of the given AC module instance.
  */
 uint8_t _rtc_get_inst_index(
-		Rtc *const hw)
+        Rtc *const hw)
 {
-	/* List of available RTC modules */
-	static Rtc *const rtc_modules[RTC_INST_NUM] = RTC_INSTS;
+    /* List of available RTC modules */
+    static Rtc *const rtc_modules[RTC_INST_NUM] = RTC_INSTS;
 
-	/* Find index for RTC instance */
-	for (uint32_t i = 0; i < RTC_INST_NUM; i++) {
-		if (hw == rtc_modules[i]) {
-			return i;
-		}
-	}
+    /* Find index for RTC instance */
+    for (uint32_t i = 0; i < RTC_INST_NUM; i++) {
+        if (hw == rtc_modules[i]) {
+            return i;
+        }
+    }
 
-	/* Invalid data given */
-	Assert(false);
-	return 0;
+    /* Invalid data given */
+    Assert(false);
+    return 0;
 }
 #endif /* (RTC_INST_NUM > 1) && !defined(__DOXYGEN__) */
 
 enum status_code rtc_count_init(
-		struct rtc_module *const module,
-		Rtc *const hw,
-		const struct rtc_count_config *const config);
+        struct rtc_module *const module,
+        Rtc *const hw,
+        const struct rtc_count_config *const config);
 
 enum status_code rtc_count_frequency_correction(
-		struct rtc_module *const module,
-		const int8_t value);
+        struct rtc_module *const module,
+        const int8_t value);
 
 /** @} */
 
@@ -837,28 +837,28 @@ enum status_code rtc_count_frequency_correction(
  * @{
  */
 enum status_code rtc_count_set_count(
-		struct rtc_module *const module,
-		const uint32_t count_value);
+        struct rtc_module *const module,
+        const uint32_t count_value);
 
 uint32_t rtc_count_get_count(struct rtc_module *const module);
 
 enum status_code rtc_count_set_compare(
-		struct rtc_module *const module,
-		const uint32_t comp_value,
-		const enum rtc_count_compare comp_index);
+        struct rtc_module *const module,
+        const uint32_t comp_value,
+        const enum rtc_count_compare comp_index);
 
 enum status_code rtc_count_get_compare(
-		struct rtc_module *const module,
-		uint32_t *const comp_value,
-		const enum rtc_count_compare comp_index);
+        struct rtc_module *const module,
+        uint32_t *const comp_value,
+        const enum rtc_count_compare comp_index);
 
 enum status_code rtc_count_set_period(
-		struct rtc_module *const module,
-		uint16_t period_value);
+        struct rtc_module *const module,
+        uint16_t period_value);
 
 enum status_code rtc_count_get_period(
-		struct rtc_module *const module,
-		uint16_t *const period_value);
+        struct rtc_module *const module,
+        uint16_t *const period_value);
 
 /** @} */
 
@@ -883,14 +883,14 @@ enum status_code rtc_count_get_period(
 
 static inline bool rtc_count_is_overflow(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Return status of flag */
-	return (rtc_module->MODE0.INTFLAG.reg & RTC_MODE0_INTFLAG_OVF);
+    /* Return status of flag */
+    return (rtc_module->MODE0.INTFLAG.reg & RTC_MODE0_INTFLAG_OVF);
 }
 
 /**
@@ -903,14 +903,14 @@ static inline bool rtc_count_is_overflow(struct rtc_module *const module)
  */
 static inline void rtc_count_clear_overflow(struct rtc_module *const module)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Clear OVF flag */
-	rtc_module->MODE0.INTFLAG.reg = RTC_MODE0_INTFLAG_OVF;
+    /* Clear OVF flag */
+    rtc_module->MODE0.INTFLAG.reg = RTC_MODE0_INTFLAG_OVF;
 }
 
 #ifdef FEATURE_RTC_PERIODIC_INT
@@ -928,16 +928,16 @@ static inline void rtc_count_clear_overflow(struct rtc_module *const module)
  * \retval false  RTC periodic interval interrupt doesn't occur
  */
 static inline bool rtc_count_is_periodic_interval(struct rtc_module *const module,
-										enum rtc_count_periodic_interval n)
+                                        enum rtc_count_periodic_interval n)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Return status of flag */
-	return (rtc_module->MODE0.INTFLAG.reg & RTC_MODE0_INTFLAG_PER(1 << n));
+    /* Return status of flag */
+    return (rtc_module->MODE0.INTFLAG.reg & RTC_MODE0_INTFLAG_PER(1 << n));
 }
 
 /**
@@ -950,25 +950,25 @@ static inline bool rtc_count_is_periodic_interval(struct rtc_module *const modul
  * \param[in]  n  RTC periodic interval interrupt
  */
 static inline void rtc_count_clear_periodic_interval(struct rtc_module *const module,
-												enum rtc_count_periodic_interval n)
+                                                enum rtc_count_periodic_interval n)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	/* Clear periodic interval flag */
-	rtc_module->MODE0.INTFLAG.reg = RTC_MODE0_INTFLAG_PER(1 << n);
+    /* Clear periodic interval flag */
+    rtc_module->MODE0.INTFLAG.reg = RTC_MODE0_INTFLAG_PER(1 << n);
 }
 #endif
 bool rtc_count_is_compare_match(
-		struct rtc_module *const module,
-		const enum rtc_count_compare comp_index);
+        struct rtc_module *const module,
+        const enum rtc_count_compare comp_index);
 
 enum status_code rtc_count_clear_compare_match(
-		struct rtc_module *const module,
-		const enum rtc_count_compare comp_index);
+        struct rtc_module *const module,
+        const enum rtc_count_compare comp_index);
 
 /** @} */
 
@@ -990,50 +990,50 @@ enum status_code rtc_count_clear_compare_match(
  *  \param[in] events    Struct containing flags of events to enable
  */
 static inline void rtc_count_enable_events(
-		struct rtc_module *const module,
-		struct rtc_count_events *const events)
+        struct rtc_module *const module,
+        struct rtc_count_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Check if the user has requested an overflow event */
-	if (events->generate_event_on_overflow) {
-		event_mask |= RTC_MODE0_EVCTRL_OVFEO;
-	}
+    /* Check if the user has requested an overflow event */
+    if (events->generate_event_on_overflow) {
+        event_mask |= RTC_MODE0_EVCTRL_OVFEO;
+    }
 
-	/* Check if the user has requested any compare events */
-	for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
-		if (events->generate_event_on_compare[i]) {
-			event_mask |= RTC_MODE0_EVCTRL_CMPEO(1 << i);
-		}
-	}
+    /* Check if the user has requested any compare events */
+    for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
+        if (events->generate_event_on_compare[i]) {
+            event_mask |= RTC_MODE0_EVCTRL_CMPEO(1 << i);
+        }
+    }
 
-	/* Check if the user has requested any periodic events */
-	for (uint8_t i = 0; i < 8; i++) {
-		if (events->generate_event_on_periodic[i]) {
-			event_mask |= RTC_MODE0_EVCTRL_PEREO(1 << i);
-		}
-	}
+    /* Check if the user has requested any periodic events */
+    for (uint8_t i = 0; i < 8; i++) {
+        if (events->generate_event_on_periodic[i]) {
+            event_mask |= RTC_MODE0_EVCTRL_PEREO(1 << i);
+        }
+    }
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/* Check if the user has requested a tamper event output. */
-	if (events->generate_event_on_tamper) {
-		event_mask |= RTC_MODE0_EVCTRL_TAMPEREO;
-	}
+    /* Check if the user has requested a tamper event output. */
+    if (events->generate_event_on_tamper) {
+        event_mask |= RTC_MODE0_EVCTRL_TAMPEREO;
+    }
 
-	/* Check if the user has requested a tamper event input. */
-	if (events->on_event_to_tamper) {
-		event_mask |= RTC_MODE0_EVCTRL_TAMPEVEI;
-	}
+    /* Check if the user has requested a tamper event input. */
+    if (events->on_event_to_tamper) {
+        event_mask |= RTC_MODE0_EVCTRL_TAMPEVEI;
+    }
 #endif
 
-	/* Enable given event(s). */
-	rtc_module->MODE0.EVCTRL.reg |= event_mask;
+    /* Enable given event(s). */
+    rtc_module->MODE0.EVCTRL.reg |= event_mask;
 }
 
 /**
@@ -1048,50 +1048,50 @@ static inline void rtc_count_enable_events(
  *  \param[in] events    Struct containing flags of events to disable
  */
 static inline void rtc_count_disable_events(
-		struct rtc_module *const module,
-		struct rtc_count_events *const events)
+        struct rtc_module *const module,
+        struct rtc_count_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Check if the user has requested an overflow event */
-	if (events->generate_event_on_overflow) {
-		event_mask |= RTC_MODE0_EVCTRL_OVFEO;
-	}
+    /* Check if the user has requested an overflow event */
+    if (events->generate_event_on_overflow) {
+        event_mask |= RTC_MODE0_EVCTRL_OVFEO;
+    }
 
-	/* Check if the user has requested any compare events */
-	for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
-		if (events->generate_event_on_compare[i]) {
-			event_mask |= RTC_MODE0_EVCTRL_CMPEO(1 << i);
-		}
-	}
+    /* Check if the user has requested any compare events */
+    for (uint8_t i = 0; i < RTC_NUM_OF_COMP16; i++) {
+        if (events->generate_event_on_compare[i]) {
+            event_mask |= RTC_MODE0_EVCTRL_CMPEO(1 << i);
+        }
+    }
 
-	/* Check if the user has requested any periodic events */
-	for (uint8_t i = 0; i < 8; i++) {
-		if (events->generate_event_on_periodic[i]) {
-			event_mask |= RTC_MODE0_EVCTRL_PEREO(1 << i);
-		}
-	}
+    /* Check if the user has requested any periodic events */
+    for (uint8_t i = 0; i < 8; i++) {
+        if (events->generate_event_on_periodic[i]) {
+            event_mask |= RTC_MODE0_EVCTRL_PEREO(1 << i);
+        }
+    }
 
 #ifdef FEATURE_RTC_TAMPER_DETECTION
-	/* Check if the user has requested a tamper event output. */
-	if (events->generate_event_on_tamper) {
-		event_mask |= RTC_MODE0_EVCTRL_TAMPEREO;
-	}
+    /* Check if the user has requested a tamper event output. */
+    if (events->generate_event_on_tamper) {
+        event_mask |= RTC_MODE0_EVCTRL_TAMPEREO;
+    }
 
-	/* Check if the user has requested a tamper event input. */
-	if (events->on_event_to_tamper) {
-		event_mask |= RTC_MODE0_EVCTRL_TAMPEVEI;
-	}
+    /* Check if the user has requested a tamper event input. */
+    if (events->on_event_to_tamper) {
+        event_mask |= RTC_MODE0_EVCTRL_TAMPEVEI;
+    }
 #endif
 
-	/* Disable given event(s). */
-	rtc_module->MODE0.EVCTRL.reg &= ~event_mask;
+    /* Disable given event(s). */
+    rtc_module->MODE0.EVCTRL.reg &= ~event_mask;
 }
 
 /** @} */
@@ -1111,18 +1111,18 @@ static inline void rtc_count_disable_events(
  *
  */
 static inline void rtc_write_general_purpose_reg(
-	struct rtc_module *const module,
-	const  uint8_t index,
-	uint32_t value)
+    struct rtc_module *const module,
+    const  uint8_t index,
+    uint32_t value)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(index <= 3);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(index <= 3);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	rtc_module->MODE0.GP[index].reg = value;
+    rtc_module->MODE0.GP[index].reg = value;
 }
 
 /**
@@ -1134,17 +1134,17 @@ static inline void rtc_write_general_purpose_reg(
  * \return Value of general purpose register.
  */
 static inline uint32_t rtc_read_general_purpose_reg(
-	struct rtc_module *const module,
-	const  uint8_t index)
+    struct rtc_module *const module,
+    const  uint8_t index)
 {
-	/* Sanity check arguments */
-	Assert(module);
-	Assert(module->hw);
-	Assert(index <= 3);
+    /* Sanity check arguments */
+    Assert(module);
+    Assert(module->hw);
+    Assert(index <= 3);
 
-	Rtc *const rtc_module = module->hw;
+    Rtc *const rtc_module = module->hw;
 
-	return rtc_module->MODE0.GP[index].reg;
+    return rtc_module->MODE0.GP[index].reg;
 }
 
 /** @} */
@@ -1177,22 +1177,22 @@ uint32_t rtc_tamper_get_stamp (struct rtc_module *const module);
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</td>
- *		<th>Description</td>
- *	</tr>
- *	<tr>
- *		<td>RTC</td>
- *		<td>Real Time Counter</td>
- *	</tr>
- *	<tr>
- *		<td>PPM</td>
- *		<td>Part Per Million</td>
- *	</tr>
- *	<tr>
- *		<td>RC</td>
- *		<td>Resistor/Capacitor</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</td>
+ *        <th>Description</td>
+ *    </tr>
+ *    <tr>
+ *        <td>RTC</td>
+ *        <td>Real Time Counter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>PPM</td>
+ *        <td>Part Per Million</td>
+ *    </tr>
+ *    <tr>
+ *        <td>RC</td>
+ *        <td>Resistor/Capacitor</td>
+ *    </tr>
  * </table>
  *
  *
@@ -1213,36 +1213,36 @@ uint32_t rtc_tamper_get_stamp (struct rtc_module *const module);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Added support for SAM C21</td>
- *	</tr>
- *	<tr>
- *		<td>Added support for SAM L21/L22</td>
- *	</tr>
- *	<tr>
- *		<td>Added support for SAM R30</td>
- *	</tr>
- *	<tr>
- *		<td>Added support for RTC tamper feature</td>
- *	</tr>
- *	<tr>
- *		<td>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Added support for SAM C21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Added support for SAM L21/L22</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Added support for SAM R30</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Added support for RTC tamper feature</td>
+ *    </tr>
+ *    <tr>
+ *        <td>
  *          Added driver instance parameter to all API function calls, except
  *          get_config_defaults
  *      </td>
- *	</tr>
- *	<tr>
- *		<td>
- *			Updated initialization function to also enable the digital interface
+ *    </tr>
+ *    <tr>
+ *        <td>
+ *            Updated initialization function to also enable the digital interface
  *          clock to the module if it is disabled
- *		</td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *        </td>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -1264,37 +1264,37 @@ uint32_t rtc_tamper_get_stamp (struct rtc_module *const module);
  * \page asfdoc_sam0_rtc_count_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42111E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM C21, SAM D09, SAMR30 and SAM DA1</td>
- *	</tr>
- *	<tr>
- *		<td>42111D</td>
- *		<td>12/2014</td>
- *		<td>Added support for SAM R21 and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42111C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42111B</td>
- *		<td>06/2013</td>
- *		<td>Added additional documentation on the event system. Corrected
+ *    <tr>
+ *        <th>Doc. Rev.</th>
+ *        <th>Date</th>
+ *        <th>Comments</th>
+ *    </tr>
+ *    <tr>
+ *        <td>42111E</td>
+ *        <td>12/2015</td>
+ *        <td>Added support for SAM L21/L22, SAM C21, SAM D09, SAMR30 and SAM DA1</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42111D</td>
+ *        <td>12/2014</td>
+ *        <td>Added support for SAM R21 and SAM D10/D11</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42111C</td>
+ *        <td>01/2014</td>
+ *        <td>Added support for SAM D21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42111B</td>
+ *        <td>06/2013</td>
+ *        <td>Added additional documentation on the event system. Corrected
  *          documentation typos.</td>
- *	</tr>
- *	<tr>
- *		<td>42111A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *    </tr>
+ *    <tr>
+ *        <td>42111A</td>
+ *        <td>06/2013</td>
+ *        <td>Initial release</td>
+ *    </tr>
  * </table>
  */
 

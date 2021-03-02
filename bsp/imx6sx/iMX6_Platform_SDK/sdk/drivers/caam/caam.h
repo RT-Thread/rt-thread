@@ -29,7 +29,7 @@
  */
 
 #ifndef __CAAM_H__
-#define	__CAAM_H__
+#define    __CAAM_H__
 
 //! @name Error codes
 //@{
@@ -69,7 +69,7 @@ uint32_t caam_enc_data(uint32_t plain_text_addr, uint32_t cipher_text_addr,
 //! @param[in] blob_addr  Location address of the blob.
 //!
 //! @return SUCCESS
-//! @return ERROR_XXX 
+//! @return ERROR_XXX
 ////////////////////////////////////////////////////////////////////////////////
 uint32_t caam_gen_blob(uint32_t plain_data_addr, uint32_t blob_addr);
 

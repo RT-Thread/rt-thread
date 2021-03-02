@@ -1,7 +1,7 @@
 /*********************************************************
  *Copyright (C), 2017, Shanghai Eastsoft Microelectronics Co., Ltd.
  *文件名:  type.h
- *作  者:  Liut 
+ *作  者:  Liut
  *版  本:  V1.01
  *日  期:  2017/11/01
  *描  述:  type define

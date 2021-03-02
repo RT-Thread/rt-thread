@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     14. October. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -86,7 +86,7 @@ typedef enum __LCD_PANEL
 /**
  * @brief A struct for Bitmap on LCD screen
  */
-typedef struct _Bmp_t 
+typedef struct _Bmp_t
 {
   uint32_t  H_Size;
   uint32_t  V_Size;
@@ -100,8 +100,8 @@ typedef struct _Bmp_t
 /**
  * @brief A struct for Font Type on LCD screen
  */
- 
-typedef struct _FontType_t 
+
+typedef struct _FontType_t
 {
   uint32_t H_Size;
   uint32_t V_Size;
@@ -152,7 +152,7 @@ typedef struct __LCD_VConfig_Type
 
 typedef struct __LCD_POLARITY_Type
 {
-    uint16_t cpl; // Number of pixel clocks per line 
+    uint16_t cpl; // Number of pixel clocks per line
     uint8_t  active_high; // Signal polarity, active HIGH or LOW
     uint8_t acb;  // AC bias pin frequency
     uint8_t  invert_panel_clock;   // Invert Panel clock;
@@ -215,7 +215,7 @@ void LCD_Cursor_Enable(int enable, int cursor);
 void LCD_Move_Cursor(int x, int y);
 void LCD_Cursor_SetImage (const uint32_t *pCursor, int cursor, int size);
 void LCD_SetImage(LCD_PANEL panel,const uint8_t *pPain);
-void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx, 
+void LCD_FillRect (LCD_PANEL panel, uint32_t startx,uint32_t endx,
                                         uint32_t starty, uint32_t endy,
                                         LcdPixel_t color);
 void LCD_PutPixel (LCD_PANEL panel, uint32_t X_Left, uint32_t Y_Up, LcdPixel_t color);

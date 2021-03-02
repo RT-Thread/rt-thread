@@ -191,7 +191,7 @@ void PWR_EnterSleepMode(uint8_t PWR_SLEEPEntry)
 
   /* Clear SLEEPDEEP bit of Cortex System Control Register */
   SCB->SCR &= (uint32_t)~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
-  
+
   /* Select SLEEP mode entry -------------------------------------------------*/
   if(PWR_SLEEPEntry == PWR_SLEEPEntry_WFI)
   {
@@ -202,8 +202,8 @@ void PWR_EnterSleepMode(uint8_t PWR_SLEEPEntry)
   {
     /* Request Wait For Event */
     __SEV();
-	__WFE();
-	__WFE();
+    __WFE();
+    __WFE();
   }
 }
 
@@ -241,8 +241,8 @@ void PWR_EnterSTOPMode(uint8_t PWR_STOPEntry)
   {
     /* Request Wait For Event */
     __SEV();
-	__WFE();
-	__WFE();
+    __WFE();
+    __WFE();
   }
 
   /* Reset SLEEPDEEP bit of Cortex System Control Register */
@@ -288,8 +288,8 @@ void PWR_EnterSTOPMode(uint32_t PWR_Regulator, uint8_t PWR_STOPEntry)
   {
     /* Request Wait For Event */
     __SEV();
-	__WFE();
-	__WFE();
+    __WFE();
+    __WFE();
   }
 
   /* Reset SLEEPDEEP bit of Cortex System Control Register */

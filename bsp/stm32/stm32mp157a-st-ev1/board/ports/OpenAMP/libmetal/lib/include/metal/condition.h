@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	condition.h
- * @brief	Condition variable for libmetal.
+ * @file    condition.h
+ * @brief    Condition variable for libmetal.
  */
 
 #ifndef __METAL_CONDITION__H__
@@ -27,7 +27,7 @@ struct metal_condition;
 
 /**
  * @brief        Initialize a libmetal condition variable.
- * @param[in]	 cv	condition variable to initialize.
+ * @param[in]     cv    condition variable to initialize.
  */
 static inline void metal_condition_init(struct metal_condition *cv);
 
@@ -57,7 +57,7 @@ static inline int metal_condition_broadcast(struct metal_condition *cv);
  *               have acquired the mutex.
  * @param[in]    cv    condition variable
  * @param[in]    m     mutex
- * @return	 0 on success, non-zero on failure.
+ * @return     0 on success, non-zero on failure.
  * @see metal_condition_signal
  */
 int metal_condition_wait(struct metal_condition *cv, metal_mutex_t *m);

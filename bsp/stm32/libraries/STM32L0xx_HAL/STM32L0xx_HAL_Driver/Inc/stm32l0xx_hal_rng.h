@@ -336,7 +336,7 @@ uint32_t             HAL_RNG_GetError(RNG_HandleTypeDef *hrng);
 /**
   * @}
   */
-  
+
 #endif /* RNG */
 
 /**

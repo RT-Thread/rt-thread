@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -109,7 +109,7 @@ uint_8 USB_Class_CDC_Pstn_Init (
 {
     uint_8 error = USB_OK;
     UNUSED (controller_ID)
-    
+
     /* save input parameters */
     g_pstn_callback = callback;
     return error;
@@ -142,7 +142,7 @@ uint_8 USB_Class_CDC_PSTN_Get_Line_Coding (
     uint_8 status;
     UNUSED (size)
     g_current_interface = (uint_8)setup_packet->index ;
-    status = USB_Desc_Get_Line_Coding(controller_ID, g_current_interface, 
+    status = USB_Desc_Get_Line_Coding(controller_ID, g_current_interface,
         data);
 
     return status;
@@ -175,7 +175,7 @@ uint_8 USB_Class_CDC_PSTN_Set_Line_Coding (
 {
     uint_8 status;
     UNUSED(data)
-    
+
     *size = 0;
 
     g_current_interface = (uint_8)setup_packet->index ;
@@ -232,7 +232,7 @@ uint_8 USB_Class_CDC_PSTN_Set_Ctrl_Line_State (
     {
         if(g_dte_status & CARRIER_ACTIVATION_CHECK)
         {
-            g_pstn_callback(controller_ID, USB_APP_CDC_CARRIER_ACTIVATED, 
+            g_pstn_callback(controller_ID, USB_APP_CDC_CARRIER_ACTIVATED,
                 NULL);
         }
         else
@@ -308,7 +308,7 @@ uint_8 USB_Class_CDC_PSTN_Get_Comm_Feature (
     g_current_interface = (uint_8)setup_packet->index ;
     if(setup_packet->value == ABSTRACT_STATE_FEATURE)
     {
-        status = USB_Desc_Get_Abstract_State(controller_ID, 
+        status = USB_Desc_Get_Abstract_State(controller_ID,
             g_current_interface, data);
     }
     else if(setup_packet->value == COUNTRY_SETTING_FEATURE)

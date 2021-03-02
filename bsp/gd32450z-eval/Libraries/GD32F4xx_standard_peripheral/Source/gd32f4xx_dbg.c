@@ -64,7 +64,7 @@ void dbg_periph_enable(dbg_periph_enum dbg_periph)
         DBG_CTL1 |= (uint32_t)dbg_periph;
     }else{
         DBG_CTL2 |= ((uint32_t)dbg_periph & (~BIT(30)));
-    }        
+    }
 
 }
 
@@ -80,7 +80,7 @@ void dbg_periph_disable(dbg_periph_enum dbg_periph)
         DBG_CTL1 &= ~(uint32_t)dbg_periph;
     }else{
         DBG_CTL2 &= ~((uint32_t)dbg_periph & (~BIT(30)));
-    }  
+    }
 }
 
 /*!
@@ -106,9 +106,9 @@ void dbg_trace_pin_disable(void)
 }
 
 /*!
-    \brief      trace pin mode selection 
+    \brief      trace pin mode selection
     \param[in]  trace_mode:
-      \arg        TRACE_MODE_ASYNC: trace pin used for async mode 
+      \arg        TRACE_MODE_ASYNC: trace pin used for async mode
       \arg        TRACE_MODE_SYNC_DATASIZE_1: trace pin used for sync mode and data size is 1
       \arg        TRACE_MODE_SYNC_DATASIZE_2: trace pin used for sync mode and data size is 2
       \arg        TRACE_MODE_SYNC_DATASIZE_4: trace pin used for sync mode and data size is 4

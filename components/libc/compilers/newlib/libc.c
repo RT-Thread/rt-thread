@@ -19,7 +19,7 @@
 #include <pthread.h>
 #endif
 
-int	_EXFUN(putenv,(char *__string));
+int    _EXFUN(putenv,(char *__string));
 
 int libc_system_init(void)
 {

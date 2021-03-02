@@ -48,7 +48,7 @@
 #define TC_H_INCLUDED
 
 /**
- * \defgroup asfdoc_sam0_tc_group SAM Timer/Counter (TC) Driver 
+ * \defgroup asfdoc_sam0_tc_group SAM Timer/Counter (TC) Driver
  *
  * This driver for Atmel&reg; | SMART ARM&reg;-based microcontrollers provides an interface for the configuration
  * and management of the timer modules within the device, for waveform
@@ -536,17 +536,17 @@ extern "C" {
 #if TC_ASYNC == true
 /** Enum for the possible callback types for the TC module. */
 enum tc_callback {
-	/** Callback for TC overflow */
-	TC_CALLBACK_OVERFLOW,
-	/** Callback for capture overflow error */
-	TC_CALLBACK_ERROR,
-	/** Callback for capture compare channel 0 */
-	TC_CALLBACK_CC_CHANNEL0,
-	/** Callback for capture compare channel 1 */
-	TC_CALLBACK_CC_CHANNEL1,
+    /** Callback for TC overflow */
+    TC_CALLBACK_OVERFLOW,
+    /** Callback for capture overflow error */
+    TC_CALLBACK_ERROR,
+    /** Callback for capture compare channel 0 */
+    TC_CALLBACK_CC_CHANNEL0,
+    /** Callback for capture compare channel 1 */
+    TC_CALLBACK_CC_CHANNEL1,
 #  if !defined(__DOXYGEN__)
-	/** Number of available callbacks */
-	TC_CALLBACK_N,
+    /** Number of available callbacks */
+    TC_CALLBACK_N,
 #  endif
 };
 #endif
@@ -603,10 +603,10 @@ enum tc_callback {
  * operations on.
  */
 enum tc_compare_capture_channel {
-	/** Index of compare capture channel 0 */
-	TC_COMPARE_CAPTURE_CHANNEL_0,
-	/** Index of compare capture channel 1 */
-	TC_COMPARE_CAPTURE_CHANNEL_1,
+    /** Index of compare capture channel 0 */
+    TC_COMPARE_CAPTURE_CHANNEL_0,
+    /** Index of compare capture channel 1 */
+    TC_COMPARE_CAPTURE_CHANNEL_1,
 };
 
 /**
@@ -643,25 +643,25 @@ enum tc_compare_capture_channel {
  *
  */
 enum tc_wave_generation {
-	/** Top is maximum, except in 8-bit counter size where it is the PER
-	 * register
-	 */
-	TC_WAVE_GENERATION_NORMAL_FREQ      = TC_WAVE_GENERATION_NORMAL_FREQ_MODE,
+    /** Top is maximum, except in 8-bit counter size where it is the PER
+     * register
+     */
+    TC_WAVE_GENERATION_NORMAL_FREQ      = TC_WAVE_GENERATION_NORMAL_FREQ_MODE,
 
-	/** Top is CC0, except in 8-bit counter size where it is the PER
-	 * register
-	 */
-	TC_WAVE_GENERATION_MATCH_FREQ       = TC_WAVE_GENERATION_MATCH_FREQ_MODE,
+    /** Top is CC0, except in 8-bit counter size where it is the PER
+     * register
+     */
+    TC_WAVE_GENERATION_MATCH_FREQ       = TC_WAVE_GENERATION_MATCH_FREQ_MODE,
 
-	/** Top is maximum, except in 8-bit counter size where it is the PER
-	 * register
-	 */
-	TC_WAVE_GENERATION_NORMAL_PWM       = TC_WAVE_GENERATION_NORMAL_PWM_MODE,
+    /** Top is maximum, except in 8-bit counter size where it is the PER
+     * register
+     */
+    TC_WAVE_GENERATION_NORMAL_PWM       = TC_WAVE_GENERATION_NORMAL_PWM_MODE,
 
-	/** Top is CC0, except in 8-bit counter size where it is the PER
-	 * register
-	 */
-	TC_WAVE_GENERATION_MATCH_PWM        = TC_WAVE_GENERATION_MATCH_PWM_MODE,
+    /** Top is CC0, except in 8-bit counter size where it is the PER
+     * register
+     */
+    TC_WAVE_GENERATION_MATCH_PWM        = TC_WAVE_GENERATION_MATCH_PWM_MODE,
 };
 
 /**
@@ -670,24 +670,24 @@ enum tc_wave_generation {
  * This enum specifies the maximum value it is possible to count to.
  */
 enum tc_counter_size {
-	/** The counter's maximum value is 0xFF, the period register is
-	 * available to be used as top value
-	 */
-	TC_COUNTER_SIZE_8BIT                = TC_CTRLA_MODE_COUNT8,
+    /** The counter's maximum value is 0xFF, the period register is
+     * available to be used as top value
+     */
+    TC_COUNTER_SIZE_8BIT                = TC_CTRLA_MODE_COUNT8,
 
-	/** The counter's maximum value is 0xFFFF. There is no separate
-	 * period register, to modify top one of the capture compare
-	 * registers has to be used. This limits the amount of
-	 * available channels.
-	 */
-	TC_COUNTER_SIZE_16BIT               = TC_CTRLA_MODE_COUNT16,
+    /** The counter's maximum value is 0xFFFF. There is no separate
+     * period register, to modify top one of the capture compare
+     * registers has to be used. This limits the amount of
+     * available channels.
+     */
+    TC_COUNTER_SIZE_16BIT               = TC_CTRLA_MODE_COUNT16,
 
-	/** The counter's maximum value is 0xFFFFFFFF. There is no separate
-	 * period register, to modify top one of the capture compare
-	 * registers has to be used. This limits the amount of
-	 * available channels.
-	 */
-	TC_COUNTER_SIZE_32BIT               = TC_CTRLA_MODE_COUNT32,
+    /** The counter's maximum value is 0xFFFFFFFF. There is no separate
+     * period register, to modify top one of the capture compare
+     * registers has to be used. This limits the amount of
+     * available channels.
+     */
+    TC_COUNTER_SIZE_32BIT               = TC_CTRLA_MODE_COUNT32,
 };
 
 /**
@@ -696,19 +696,19 @@ enum tc_counter_size {
  * This enum specify how the counter and prescaler should reload.
  */
 enum tc_reload_action {
-	/** The counter is reloaded/reset on the next GCLK and starts
-	 * counting on the prescaler clock
-	 */
-	TC_RELOAD_ACTION_GCLK               = TC_CTRLA_PRESCSYNC_GCLK,
+    /** The counter is reloaded/reset on the next GCLK and starts
+     * counting on the prescaler clock
+     */
+    TC_RELOAD_ACTION_GCLK               = TC_CTRLA_PRESCSYNC_GCLK,
 
-	/** The counter is reloaded/reset on the next prescaler clock
-	 */
-	TC_RELOAD_ACTION_PRESC              = TC_CTRLA_PRESCSYNC_PRESC,
+    /** The counter is reloaded/reset on the next prescaler clock
+     */
+    TC_RELOAD_ACTION_PRESC              = TC_CTRLA_PRESCSYNC_PRESC,
 
-	/** The counter is reloaded/reset on the next GCLK, and the
-	 * prescaler is restarted as well
-	 */
-	TC_RELOAD_ACTION_RESYNC             = TC_CTRLA_PRESCSYNC_RESYNC,
+    /** The counter is reloaded/reset on the next GCLK, and the
+     * prescaler is restarted as well
+     */
+    TC_RELOAD_ACTION_RESYNC             = TC_CTRLA_PRESCSYNC_RESYNC,
 };
 
 /**
@@ -719,22 +719,22 @@ enum tc_reload_action {
  * module to make the counter count slower.
  */
 enum tc_clock_prescaler {
-	/** Divide clock by 1 */
-	TC_CLOCK_PRESCALER_DIV1             = TC_CTRLA_PRESCALER(0),
-	/** Divide clock by 2 */
-	TC_CLOCK_PRESCALER_DIV2             = TC_CTRLA_PRESCALER(1),
-	/** Divide clock by 4 */
-	TC_CLOCK_PRESCALER_DIV4             = TC_CTRLA_PRESCALER(2),
-	/** Divide clock by 8 */
-	TC_CLOCK_PRESCALER_DIV8             = TC_CTRLA_PRESCALER(3),
-	/** Divide clock by 16 */
-	TC_CLOCK_PRESCALER_DIV16            = TC_CTRLA_PRESCALER(4),
-	/** Divide clock by 64 */
-	TC_CLOCK_PRESCALER_DIV64            = TC_CTRLA_PRESCALER(5),
-	/** Divide clock by 256 */
-	TC_CLOCK_PRESCALER_DIV256           = TC_CTRLA_PRESCALER(6),
-	/** Divide clock by 1024 */
-	TC_CLOCK_PRESCALER_DIV1024          = TC_CTRLA_PRESCALER(7),
+    /** Divide clock by 1 */
+    TC_CLOCK_PRESCALER_DIV1             = TC_CTRLA_PRESCALER(0),
+    /** Divide clock by 2 */
+    TC_CLOCK_PRESCALER_DIV2             = TC_CTRLA_PRESCALER(1),
+    /** Divide clock by 4 */
+    TC_CLOCK_PRESCALER_DIV4             = TC_CTRLA_PRESCALER(2),
+    /** Divide clock by 8 */
+    TC_CLOCK_PRESCALER_DIV8             = TC_CTRLA_PRESCALER(3),
+    /** Divide clock by 16 */
+    TC_CLOCK_PRESCALER_DIV16            = TC_CTRLA_PRESCALER(4),
+    /** Divide clock by 64 */
+    TC_CLOCK_PRESCALER_DIV64            = TC_CTRLA_PRESCALER(5),
+    /** Divide clock by 256 */
+    TC_CLOCK_PRESCALER_DIV256           = TC_CTRLA_PRESCALER(6),
+    /** Divide clock by 1024 */
+    TC_CLOCK_PRESCALER_DIV1024          = TC_CTRLA_PRESCALER(7),
 };
 
 /**
@@ -743,11 +743,11 @@ enum tc_clock_prescaler {
  * Timer/Counter count direction.
  */
 enum tc_count_direction {
-	/** Timer should count upward from zero to MAX */
-	TC_COUNT_DIRECTION_UP,
+    /** Timer should count upward from zero to MAX */
+    TC_COUNT_DIRECTION_UP,
 
-	/** Timer should count downward to zero from MAX */
-	TC_COUNT_DIRECTION_DOWN,
+    /** Timer should count downward to zero from MAX */
+    TC_COUNT_DIRECTION_DOWN,
 };
 
 /**
@@ -773,12 +773,12 @@ enum tc_count_direction {
  * Output waveform inversion mode.
  */
 enum tc_waveform_invert_output {
-	/** No inversion of the waveform output */
-	TC_WAVEFORM_INVERT_OUTPUT_NONE      = 0,
-	/** Invert output from compare channel 0 */
-	TC_WAVEFORM_INVERT_OUTPUT_CHANNEL_0 = TC_WAVEFORM_INVERT_CC0_MODE,
-	/** Invert output from compare channel 1 */
-	TC_WAVEFORM_INVERT_OUTPUT_CHANNEL_1 = TC_WAVEFORM_INVERT_CC1_MODE,
+    /** No inversion of the waveform output */
+    TC_WAVEFORM_INVERT_OUTPUT_NONE      = 0,
+    /** Invert output from compare channel 0 */
+    TC_WAVEFORM_INVERT_OUTPUT_CHANNEL_0 = TC_WAVEFORM_INVERT_CC0_MODE,
+    /** Invert output from compare channel 1 */
+    TC_WAVEFORM_INVERT_OUTPUT_CHANNEL_1 = TC_WAVEFORM_INVERT_CC1_MODE,
 };
 
 /**
@@ -787,29 +787,29 @@ enum tc_waveform_invert_output {
  * Event action to perform when the module is triggered by an event.
  */
 enum tc_event_action {
-	/** No event action */
-	TC_EVENT_ACTION_OFF                 = TC_EVCTRL_EVACT_OFF,
-	/** Re-trigger on event */
-	TC_EVENT_ACTION_RETRIGGER           = TC_EVCTRL_EVACT_RETRIGGER,
-	/** Increment counter on event */
-	TC_EVENT_ACTION_INCREMENT_COUNTER   = TC_EVCTRL_EVACT_COUNT,
-	/** Start counter on event */
-	TC_EVENT_ACTION_START               = TC_EVCTRL_EVACT_START,
+    /** No event action */
+    TC_EVENT_ACTION_OFF                 = TC_EVCTRL_EVACT_OFF,
+    /** Re-trigger on event */
+    TC_EVENT_ACTION_RETRIGGER           = TC_EVCTRL_EVACT_RETRIGGER,
+    /** Increment counter on event */
+    TC_EVENT_ACTION_INCREMENT_COUNTER   = TC_EVCTRL_EVACT_COUNT,
+    /** Start counter on event */
+    TC_EVENT_ACTION_START               = TC_EVCTRL_EVACT_START,
 
-	/** Store period in capture register 0, pulse width in capture
-	 *  register 1
-	 */
-	TC_EVENT_ACTION_PPW                 = TC_EVCTRL_EVACT_PPW,
+    /** Store period in capture register 0, pulse width in capture
+     *  register 1
+     */
+    TC_EVENT_ACTION_PPW                 = TC_EVCTRL_EVACT_PPW,
 
-	/** Store pulse width in capture register 0, period in capture
-	 *  register 1
-	 */
-	TC_EVENT_ACTION_PWP                 = TC_EVCTRL_EVACT_PWP,
+    /** Store pulse width in capture register 0, period in capture
+     *  register 1
+     */
+    TC_EVENT_ACTION_PWP                 = TC_EVCTRL_EVACT_PWP,
 #ifdef FEATURE_TC_STAMP_PW_CAPTURE
-	/** Time stamp capture */
-	TC_EVENT_ACTION_STAMP               = TC_EVCTRL_EVACT_STAMP,
-	/** Pulse width capture */
-	TC_EVENT_ACTION_PW                  = TC_EVCTRL_EVACT_PW,
+    /** Time stamp capture */
+    TC_EVENT_ACTION_STAMP               = TC_EVCTRL_EVACT_STAMP,
+    /** Pulse width capture */
+    TC_EVENT_ACTION_PW                  = TC_EVCTRL_EVACT_PW,
 #endif
 };
 
@@ -819,63 +819,63 @@ enum tc_event_action {
  * Event flags for the \ref tc_enable_events() and \ref tc_disable_events().
  */
 struct tc_events {
-	/** Generate an output event on a compare channel match */
-	bool generate_event_on_compare_channel
-			[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
-	/** Generate an output event on counter overflow */
-	bool generate_event_on_overflow;
-	/** Perform the configured event action when an incoming event is signalled */
-	bool on_event_perform_action;
-	/** Specifies if the input event source is inverted, when used in PWP or
-	 *  PPW event action modes
-	 */
-	bool invert_event_input;
-	/** Specifies which event to trigger if an event is triggered */
-	enum tc_event_action event_action;
+    /** Generate an output event on a compare channel match */
+    bool generate_event_on_compare_channel
+            [NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
+    /** Generate an output event on counter overflow */
+    bool generate_event_on_overflow;
+    /** Perform the configured event action when an incoming event is signalled */
+    bool on_event_perform_action;
+    /** Specifies if the input event source is inverted, when used in PWP or
+     *  PPW event action modes
+     */
+    bool invert_event_input;
+    /** Specifies which event to trigger if an event is triggered */
+    enum tc_event_action event_action;
 };
 
 /**
  * \brief Configuration struct for TC module in 8-bit size counter mode.
  */
 struct tc_8bit_config {
-	/** Initial timer count value */
-	uint8_t value;
-	/** Where to count to or from depending on the direction on the counter */
-	uint8_t period;
-	/** Value to be used for compare match on each channel */
-	uint8_t compare_capture_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
+    /** Initial timer count value */
+    uint8_t value;
+    /** Where to count to or from depending on the direction on the counter */
+    uint8_t period;
+    /** Value to be used for compare match on each channel */
+    uint8_t compare_capture_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
 };
 
 /**
  * \brief Configuration struct for TC module in 16-bit size counter mode.
  */
 struct tc_16bit_config {
-	/** Initial timer count value */
-	uint16_t value;
-	/** Value to be used for compare match on each channel */
-	uint16_t compare_capture_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
+    /** Initial timer count value */
+    uint16_t value;
+    /** Value to be used for compare match on each channel */
+    uint16_t compare_capture_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
 };
 
 /**
  * \brief Configuration struct for TC module in 32-bit size counter mode.
  */
 struct tc_32bit_config {
-	/** Initial timer count value */
-	uint32_t value;
-	/** Value to be used for compare match on each channel */
-	uint32_t compare_capture_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
+    /** Initial timer count value */
+    uint32_t value;
+    /** Value to be used for compare match on each channel */
+    uint32_t compare_capture_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
 };
 
 /**
  * \brief Configuration struct for TC module in 32-bit size counter mode.
  */
 struct tc_pwm_channel {
-	/** When \c true, PWM output for the given channel is enabled */
-	bool enabled;
-	/** Specifies pin output for each channel */
-	uint32_t pin_out;
-	/** Specifies Multiplexer (MUX) setting for each output channel pin */
-	uint32_t pin_mux;
+    /** When \c true, PWM output for the given channel is enabled */
+    bool enabled;
+    /** Specifies pin output for each channel */
+    uint32_t pin_out;
+    /** Specifies Multiplexer (MUX) setting for each output channel pin */
+    uint32_t pin_mux;
 };
 
 /**
@@ -886,71 +886,71 @@ struct tc_pwm_channel {
  * modified by the user application.
  */
 struct tc_config {
-	/** GCLK generator used to clock the peripheral */
-	enum gclk_generator clock_source;
+    /** GCLK generator used to clock the peripheral */
+    enum gclk_generator clock_source;
 
-	/** When \c true the module is enabled during standby */
-	bool run_in_standby;
+    /** When \c true the module is enabled during standby */
+    bool run_in_standby;
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	/** Run on demand */
-	bool on_demand;
+    /** Run on demand */
+    bool on_demand;
 #endif
-	/** Specifies either 8-, 16-, or 32-bit counter size */
-	enum tc_counter_size counter_size;
-	/** Specifies the prescaler value for GCLK_TC */
-	enum tc_clock_prescaler clock_prescaler;
-	/** Specifies which waveform generation mode to use */
-	enum tc_wave_generation wave_generation;
+    /** Specifies either 8-, 16-, or 32-bit counter size */
+    enum tc_counter_size counter_size;
+    /** Specifies the prescaler value for GCLK_TC */
+    enum tc_clock_prescaler clock_prescaler;
+    /** Specifies which waveform generation mode to use */
+    enum tc_wave_generation wave_generation;
 
-	/** Specifies the reload or reset time of the counter and prescaler
-	 *  resynchronization on a re-trigger event for the TC
-	 */
-	enum tc_reload_action reload_action;
+    /** Specifies the reload or reset time of the counter and prescaler
+     *  resynchronization on a re-trigger event for the TC
+     */
+    enum tc_reload_action reload_action;
 
-	/** Specifies which channel(s) to invert the waveform on.
-		For SAM L21/L22/C20/C21, it's also used to invert I/O input pin. */
-	uint8_t waveform_invert_output;
+    /** Specifies which channel(s) to invert the waveform on.
+        For SAM L21/L22/C20/C21, it's also used to invert I/O input pin. */
+    uint8_t waveform_invert_output;
 
-	/** Specifies which channel(s) to enable channel capture
-	 *  operation on
-	 */
-	bool enable_capture_on_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
-#ifdef 	FEATURE_TC_IO_CAPTURE
-	/** Specifies which channel(s) to enable I/O capture
-	 *  operation on
-	 */
-	bool enable_capture_on_IO[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
+    /** Specifies which channel(s) to enable channel capture
+     *  operation on
+     */
+    bool enable_capture_on_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
+#ifdef     FEATURE_TC_IO_CAPTURE
+    /** Specifies which channel(s) to enable I/O capture
+     *  operation on
+     */
+    bool enable_capture_on_IO[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
 #endif
 
-	/** When \c true, one-shot will stop the TC on next hardware or software
-	 *  re-trigger event or overflow/underflow
-	 */
-	bool oneshot;
+    /** When \c true, one-shot will stop the TC on next hardware or software
+     *  re-trigger event or overflow/underflow
+     */
+    bool oneshot;
 
-	/** Specifies the direction for the TC to count */
-	enum tc_count_direction count_direction;
+    /** Specifies the direction for the TC to count */
+    enum tc_count_direction count_direction;
 
-	/** Specifies the PWM channel for TC */
-	struct tc_pwm_channel pwm_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
+    /** Specifies the PWM channel for TC */
+    struct tc_pwm_channel pwm_channel[NUMBER_OF_COMPARE_CAPTURE_CHANNELS];
 
-	/** Access the different counter size settings through this configuration member. */
-	union {
-		/** Struct for 8-bit specific timer configuration */
-		struct tc_8bit_config counter_8_bit;
-		/** Struct for 16-bit specific timer configuration */
-		struct tc_16bit_config counter_16_bit;
-		/** Struct for 32-bit specific timer configuration */
-		struct tc_32bit_config counter_32_bit;
-	};
+    /** Access the different counter size settings through this configuration member. */
+    union {
+        /** Struct for 8-bit specific timer configuration */
+        struct tc_8bit_config counter_8_bit;
+        /** Struct for 16-bit specific timer configuration */
+        struct tc_16bit_config counter_16_bit;
+        /** Struct for 32-bit specific timer configuration */
+        struct tc_32bit_config counter_32_bit;
+    };
 
 #ifdef FEATURE_TC_DOUBLE_BUFFERED
-	/** Set to \c true to enable double buffering write. When enabled any write
-	 *  through \ref tc_set_top_value(), \ref tc_set_compare_value() and
-	 *  will direct to the buffer register as buffered
-	 *  value, and the buffered value will be committed to effective register
-	 *  on UPDATE condition, if update is not locked.
-	 */
-	bool double_buffering_enabled;
+    /** Set to \c true to enable double buffering write. When enabled any write
+     *  through \ref tc_set_top_value(), \ref tc_set_compare_value() and
+     *  will direct to the buffer register as buffered
+     *  value, and the buffered value will be committed to effective register
+     *  on UPDATE condition, if update is not locked.
+     */
+    bool double_buffering_enabled;
 #endif
 };
 
@@ -973,29 +973,29 @@ typedef void (*tc_callback_t)(struct tc_module *const module);
  */
 struct tc_module {
 #if !defined(__DOXYGEN__)
-	/** Hardware module pointer of the associated Timer/Counter peripheral */
-	Tc *hw;
+    /** Hardware module pointer of the associated Timer/Counter peripheral */
+    Tc *hw;
 
-	/** Size of the initialized Timer/Counter module configuration */
-	enum tc_counter_size counter_size;
+    /** Size of the initialized Timer/Counter module configuration */
+    enum tc_counter_size counter_size;
 #  if TC_ASYNC == true
-	/** Array of callbacks */
-	tc_callback_t callback[TC_CALLBACK_N];
-	/** Bit mask for callbacks registered */
-	uint8_t register_callback_mask;
-	/** Bit mask for callbacks enabled */
-	uint8_t enable_callback_mask;
+    /** Array of callbacks */
+    tc_callback_t callback[TC_CALLBACK_N];
+    /** Bit mask for callbacks registered */
+    uint8_t register_callback_mask;
+    /** Bit mask for callbacks enabled */
+    uint8_t enable_callback_mask;
 #  endif
 #ifdef FEATURE_TC_DOUBLE_BUFFERED
-	/** Set to \c true to enable double buffering write */
-	bool double_buffering_enabled;
+    /** Set to \c true to enable double buffering write */
+    bool double_buffering_enabled;
 #endif
 #endif
 };
 
 #if !defined(__DOXYGEN__)
 uint8_t _tc_get_inst_index(
-		Tc *const hw);
+        Tc *const hw);
 #endif
 
 /**
@@ -1021,19 +1021,19 @@ uint8_t _tc_get_inst_index(
  * \retval true  If the module synchronization is ongoing
  */
 static inline bool tc_is_syncing(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	return (tc_module->SYNCBUSY.reg);
+    return (tc_module->SYNCBUSY.reg);
 #else
-	return (tc_module->STATUS.reg & TC_STATUS_SYNCBUSY);
+    return (tc_module->STATUS.reg & TC_STATUS_SYNCBUSY);
 #endif
 }
 
@@ -1072,55 +1072,55 @@ static inline bool tc_is_syncing(
  * \param[out]  config  Pointer to a TC module configuration structure to set
  */
 static inline void tc_get_config_defaults(
-		struct tc_config *const config)
+        struct tc_config *const config)
 {
-	/* Sanity check arguments */
-	Assert(config);
+    /* Sanity check arguments */
+    Assert(config);
 
-	/* Write default config to config struct */
-	config->clock_source               = GCLK_GENERATOR_0;
-	config->counter_size               = TC_COUNTER_SIZE_16BIT;
-	config->clock_prescaler            = TC_CLOCK_PRESCALER_DIV1;
-	config->wave_generation            = TC_WAVE_GENERATION_NORMAL_FREQ;
-	config->reload_action              = TC_RELOAD_ACTION_GCLK;
-	config->run_in_standby             = false;
+    /* Write default config to config struct */
+    config->clock_source               = GCLK_GENERATOR_0;
+    config->counter_size               = TC_COUNTER_SIZE_16BIT;
+    config->clock_prescaler            = TC_CLOCK_PRESCALER_DIV1;
+    config->wave_generation            = TC_WAVE_GENERATION_NORMAL_FREQ;
+    config->reload_action              = TC_RELOAD_ACTION_GCLK;
+    config->run_in_standby             = false;
 #if (SAML21) || (SAML22) || (SAMC20) || (SAMC21) || (SAMR30)
-	config->on_demand                  = false;
+    config->on_demand                  = false;
 #endif
-	config->waveform_invert_output     = TC_WAVEFORM_INVERT_OUTPUT_NONE;
-	config->enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = false;
-	config->enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_1] = false;
-#ifdef 	FEATURE_TC_IO_CAPTURE
-	config->enable_capture_on_IO[TC_COMPARE_CAPTURE_CHANNEL_0] = false;
-	config->enable_capture_on_IO[TC_COMPARE_CAPTURE_CHANNEL_1] = false;
+    config->waveform_invert_output     = TC_WAVEFORM_INVERT_OUTPUT_NONE;
+    config->enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_0] = false;
+    config->enable_capture_on_channel[TC_COMPARE_CAPTURE_CHANNEL_1] = false;
+#ifdef     FEATURE_TC_IO_CAPTURE
+    config->enable_capture_on_IO[TC_COMPARE_CAPTURE_CHANNEL_0] = false;
+    config->enable_capture_on_IO[TC_COMPARE_CAPTURE_CHANNEL_1] = false;
 #endif
 
-	config->count_direction            = TC_COUNT_DIRECTION_UP;
-	config->oneshot                    = false;
+    config->count_direction            = TC_COUNT_DIRECTION_UP;
+    config->oneshot                    = false;
 
-	config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_0].enabled = false;
-	config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_0].pin_out = 0;
-	config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_0].pin_mux = 0;
+    config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_0].enabled = false;
+    config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_0].pin_out = 0;
+    config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_0].pin_mux = 0;
 
-	config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_1].enabled = false;
-	config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_1].pin_out = 0;
-	config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_1].pin_mux = 0;
+    config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_1].enabled = false;
+    config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_1].pin_out = 0;
+    config->pwm_channel[TC_COMPARE_CAPTURE_CHANNEL_1].pin_mux = 0;
 
-	config->counter_16_bit.value                   = 0x0000;
-	config->counter_16_bit.compare_capture_channel\
-		[TC_COMPARE_CAPTURE_CHANNEL_0]                        = 0x0000;
-	config->counter_16_bit.compare_capture_channel\
-		[TC_COMPARE_CAPTURE_CHANNEL_1]                        = 0x0000;
+    config->counter_16_bit.value                   = 0x0000;
+    config->counter_16_bit.compare_capture_channel\
+        [TC_COMPARE_CAPTURE_CHANNEL_0]                        = 0x0000;
+    config->counter_16_bit.compare_capture_channel\
+        [TC_COMPARE_CAPTURE_CHANNEL_1]                        = 0x0000;
 #ifdef FEATURE_TC_DOUBLE_BUFFERED
-	config->double_buffering_enabled = false;
+    config->double_buffering_enabled = false;
 #endif
 
 }
 
 enum status_code tc_init(
-		struct tc_module *const module_inst,
-		Tc *const hw,
-		const struct tc_config *const config);
+        struct tc_module *const module_inst,
+        Tc *const hw,
+        const struct tc_config *const config);
 
 /** @} */
 
@@ -1141,37 +1141,37 @@ enum status_code tc_init(
  * \param[in]  events       Struct containing flags of events to enable
  */
 static inline void tc_enable_events(
-		struct tc_module *const module_inst,
-		struct tc_events *const events)
+        struct tc_module *const module_inst,
+        struct tc_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(events);
 
-	Tc *const tc_module = module_inst->hw;
+    Tc *const tc_module = module_inst->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	if (events->invert_event_input == true) {
-		event_mask |= TC_EVCTRL_TCINV;
-	}
+    if (events->invert_event_input == true) {
+        event_mask |= TC_EVCTRL_TCINV;
+    }
 
-	if (events->on_event_perform_action == true) {
-		event_mask |= TC_EVCTRL_TCEI;
-	}
+    if (events->on_event_perform_action == true) {
+        event_mask |= TC_EVCTRL_TCEI;
+    }
 
-	if (events->generate_event_on_overflow == true) {
-		event_mask |= TC_EVCTRL_OVFEO;
-	}
+    if (events->generate_event_on_overflow == true) {
+        event_mask |= TC_EVCTRL_OVFEO;
+    }
 
-	for (uint8_t i = 0; i < NUMBER_OF_COMPARE_CAPTURE_CHANNELS; i++) {
-		if (events->generate_event_on_compare_channel[i] == true) {
-			event_mask |= (TC_EVCTRL_MCEO(1) << i);
-		}
-	}
+    for (uint8_t i = 0; i < NUMBER_OF_COMPARE_CAPTURE_CHANNELS; i++) {
+        if (events->generate_event_on_compare_channel[i] == true) {
+            event_mask |= (TC_EVCTRL_MCEO(1) << i);
+        }
+    }
 
-	tc_module->COUNT8.EVCTRL.reg |= event_mask | events->event_action;
+    tc_module->COUNT8.EVCTRL.reg |= event_mask | events->event_action;
 }
 
 /**
@@ -1186,37 +1186,37 @@ static inline void tc_enable_events(
  * \param[in]  events       Struct containing flags of events to disable
  */
 static inline void tc_disable_events(
-		struct tc_module *const module_inst,
-		struct tc_events *const events)
+        struct tc_module *const module_inst,
+        struct tc_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
+    Assert(events);
 
-	Tc *const tc_module = module_inst->hw;
+    Tc *const tc_module = module_inst->hw;
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	if (events->invert_event_input == true) {
-		event_mask |= TC_EVCTRL_TCINV;
-	}
+    if (events->invert_event_input == true) {
+        event_mask |= TC_EVCTRL_TCINV;
+    }
 
-	if (events->on_event_perform_action == true) {
-		event_mask |= TC_EVCTRL_TCEI;
-	}
+    if (events->on_event_perform_action == true) {
+        event_mask |= TC_EVCTRL_TCEI;
+    }
 
-	if (events->generate_event_on_overflow == true) {
-		event_mask |= TC_EVCTRL_OVFEO;
-	}
+    if (events->generate_event_on_overflow == true) {
+        event_mask |= TC_EVCTRL_OVFEO;
+    }
 
-	for (uint8_t i = 0; i < NUMBER_OF_COMPARE_CAPTURE_CHANNELS; i++) {
-		if (events->generate_event_on_compare_channel[i] == true) {
-			event_mask |= (TC_EVCTRL_MCEO(1) << i);
-		}
-	}
+    for (uint8_t i = 0; i < NUMBER_OF_COMPARE_CAPTURE_CHANNELS; i++) {
+        if (events->generate_event_on_compare_channel[i] == true) {
+            event_mask |= (TC_EVCTRL_MCEO(1) << i);
+        }
+    }
 
-	tc_module->COUNT8.EVCTRL.reg &= ~event_mask;
+    tc_module->COUNT8.EVCTRL.reg &= ~event_mask;
 }
 
 /** @} */
@@ -1227,7 +1227,7 @@ static inline void tc_disable_events(
  */
 
 enum status_code tc_reset(
-		const struct tc_module *const module_inst);
+        const struct tc_module *const module_inst);
 
 /**
  * \brief Enable the TC module.
@@ -1241,21 +1241,21 @@ enum status_code tc_reset(
  * \param[in]  module_inst   Pointer to the software module instance struct
  */
 static inline void tc_enable(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Enable TC module */
-	tc_module->CTRLA.reg |= TC_CTRLA_ENABLE;
+    /* Enable TC module */
+    tc_module->CTRLA.reg |= TC_CTRLA_ENABLE;
 }
 
 /**
@@ -1266,26 +1266,26 @@ static inline void tc_enable(
  * \param[in]  module_inst   Pointer to the software module instance struct
  */
 static inline void tc_disable(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Disbale interrupt */
-	tc_module->INTENCLR.reg = TC_INTENCLR_MASK;
-	/* Clear interrupt flag */
-	tc_module->INTFLAG.reg = TC_INTFLAG_MASK;
+    /* Disbale interrupt */
+    tc_module->INTENCLR.reg = TC_INTENCLR_MASK;
+    /* Clear interrupt flag */
+    tc_module->INTFLAG.reg = TC_INTFLAG_MASK;
 
-	/* Disable TC module */
-	tc_module->CTRLA.reg  &= ~TC_CTRLA_ENABLE;
+    /* Disable TC module */
+    tc_module->CTRLA.reg  &= ~TC_CTRLA_ENABLE;
 }
 
 /** @} */
@@ -1296,11 +1296,11 @@ static inline void tc_disable(
  */
 
 uint32_t tc_get_count_value(
-		const struct tc_module *const module_inst);
+        const struct tc_module *const module_inst);
 
 enum status_code tc_set_count_value(
-		const struct tc_module *const module_inst,
-		const uint32_t count);
+        const struct tc_module *const module_inst,
+        const uint32_t count);
 
 /** @} */
 
@@ -1320,21 +1320,21 @@ enum status_code tc_set_count_value(
  * \param[in]  module_inst   Pointer to the software module instance struct
  */
 static inline void tc_stop_counter(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Write command to execute */
-	tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_STOP_Val);
+    /* Write command to execute */
+    tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_STOP_Val);
 }
 
 /**
@@ -1345,28 +1345,28 @@ static inline void tc_stop_counter(
  * \param[in]  module_inst   Pointer to the software module instance struct
  */
 static inline void tc_start_counter(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Make certain that there are no conflicting commands in the register */
-	tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
+    /* Make certain that there are no conflicting commands in the register */
+    tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Write command to execute */
-	tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_RETRIGGER_Val);
+    /* Write command to execute */
+    tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_RETRIGGER_Val);
 }
 
 /** @} */
@@ -1385,28 +1385,28 @@ static inline void tc_start_counter(
  * \param[in]  module_inst   Pointer to the software module instance struct
  */
 static inline void tc_update_double_buffer(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Make certain that there are no conflicting commands in the register */
-	tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
+    /* Make certain that there are no conflicting commands in the register */
+    tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Write command to execute */
-	tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_UPDATE_Val);
+    /* Write command to execute */
+    tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_UPDATE_Val);
 }
 /** @} */
 #endif
@@ -1425,28 +1425,28 @@ static inline void tc_update_double_buffer(
  * \param[in]  module_inst   Pointer to the software module instance struct
  */
 static inline void tc_sync_read_count(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Make certain that there are no conflicting commands in the register */
-	tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
+    /* Make certain that there are no conflicting commands in the register */
+    tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Write command to execute */
-	tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_READSYNC_Val);
+    /* Write command to execute */
+    tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_READSYNC_Val);
 }
 /** @} */
 #endif
@@ -1465,29 +1465,29 @@ static inline void tc_sync_read_count(
  * \param[in]  module_inst   Pointer to the software module instance struct
  */
 static inline void tc_dma_trigger_command(
-		const struct tc_module *const module_inst)
+        const struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
-	/* Make certain that there are no conflicting commands in the register */
-	tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
+    /* Make certain that there are no conflicting commands in the register */
+    tc_module->CTRLBCLR.reg = TC_CTRLBCLR_CMD_NONE;
 
-	while (tc_is_syncing(module_inst)) {
-		/* Wait for sync */
-	}
+    while (tc_is_syncing(module_inst)) {
+        /* Wait for sync */
+    }
 
 #if (SAMC20) || (SAMC21) || (SAML22) || (SAML21XXXB) || (SAMR30)
-	/* Write command to execute */
-	tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_DMAOS_Val);
+    /* Write command to execute */
+    tc_module->CTRLBSET.reg = TC_CTRLBSET_CMD(TC_CTRLBSET_CMD_DMAOS_Val);
 #endif
 }
 /** @} */
@@ -1499,13 +1499,13 @@ static inline void tc_dma_trigger_command(
  */
 
 uint32_t tc_get_capture_value(
-		const struct tc_module *const module_inst,
-		const enum tc_compare_capture_channel channel_index);
+        const struct tc_module *const module_inst,
+        const enum tc_compare_capture_channel channel_index);
 
 enum status_code tc_set_compare_value(
-		const struct tc_module *const module_inst,
-		const enum tc_compare_capture_channel channel_index,
-		const uint32_t compare_value);
+        const struct tc_module *const module_inst,
+        const enum tc_compare_capture_channel channel_index,
+        const uint32_t compare_value);
 
 /** @} */
 
@@ -1515,8 +1515,8 @@ enum status_code tc_set_compare_value(
  */
 
 enum status_code tc_set_top_value(
-		const struct tc_module *const module_inst,
-		const uint32_t top_value);
+        const struct tc_module *const module_inst,
+        const uint32_t top_value);
 
 /** @} */
 
@@ -1544,63 +1544,63 @@ enum status_code tc_set_top_value(
  * \retval TC_STATUS_PERIOD_BUFFER_VALID Timer count period buffer valid
  */
 static inline uint32_t tc_get_status(
-		struct tc_module *const module_inst)
+        struct tc_module *const module_inst)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	uint32_t int_flags = tc_module->INTFLAG.reg;
+    uint32_t int_flags = tc_module->INTFLAG.reg;
 
-	uint32_t status_flags = 0;
+    uint32_t status_flags = 0;
 
-	/* Check for TC channel 0 match */
-	if (int_flags & TC_INTFLAG_MC(1)) {
-		status_flags |= TC_STATUS_CHANNEL_0_MATCH;
-	}
+    /* Check for TC channel 0 match */
+    if (int_flags & TC_INTFLAG_MC(1)) {
+        status_flags |= TC_STATUS_CHANNEL_0_MATCH;
+    }
 
-	/* Check for TC channel 1 match */
-	if (int_flags & TC_INTFLAG_MC(2)) {
-		status_flags |= TC_STATUS_CHANNEL_1_MATCH;
-	}
+    /* Check for TC channel 1 match */
+    if (int_flags & TC_INTFLAG_MC(2)) {
+        status_flags |= TC_STATUS_CHANNEL_1_MATCH;
+    }
 
 #if !defined(FEATURE_TC_SYNCBUSY_SCHEME_VERSION_2)
-	/* Check for TC read synchronization ready */
-	if (int_flags & TC_INTFLAG_SYNCRDY) {
-		status_flags |= TC_STATUS_SYNC_READY;
-	}
+    /* Check for TC read synchronization ready */
+    if (int_flags & TC_INTFLAG_SYNCRDY) {
+        status_flags |= TC_STATUS_SYNC_READY;
+    }
 #endif
 
-	/* Check for TC capture overflow */
-	if (int_flags & TC_INTFLAG_ERR) {
-		status_flags |= TC_STATUS_CAPTURE_OVERFLOW;
-	}
+    /* Check for TC capture overflow */
+    if (int_flags & TC_INTFLAG_ERR) {
+        status_flags |= TC_STATUS_CAPTURE_OVERFLOW;
+    }
 
-	/* Check for TC count overflow */
-	if (int_flags & TC_INTFLAG_OVF) {
-		status_flags |= TC_STATUS_COUNT_OVERFLOW;
-	}
+    /* Check for TC count overflow */
+    if (int_flags & TC_INTFLAG_OVF) {
+        status_flags |= TC_STATUS_COUNT_OVERFLOW;
+    }
 #ifdef FEATURE_TC_DOUBLE_BUFFERED
-	uint8_t double_buffer_valid_status = tc_module->STATUS.reg;
+    uint8_t double_buffer_valid_status = tc_module->STATUS.reg;
 
-	/* Check channel 0 compare or capture buffer valid */
-	if (double_buffer_valid_status & TC_STATUS_CCBUFV0) {
-		status_flags |= TC_STATUS_CHN0_BUFFER_VALID;
-	}
-	/* Check channel 0 compare or capture buffer valid */
-	if (double_buffer_valid_status & TC_STATUS_CCBUFV1) {
-		status_flags |= TC_STATUS_CHN1_BUFFER_VALID;
-	}
-	/* Check period buffer valid */
-	if (double_buffer_valid_status & TC_STATUS_PERBUFV) {
-		status_flags |= TC_STATUS_PERIOD_BUFFER_VALID;
-	}
+    /* Check channel 0 compare or capture buffer valid */
+    if (double_buffer_valid_status & TC_STATUS_CCBUFV0) {
+        status_flags |= TC_STATUS_CHN0_BUFFER_VALID;
+    }
+    /* Check channel 0 compare or capture buffer valid */
+    if (double_buffer_valid_status & TC_STATUS_CCBUFV1) {
+        status_flags |= TC_STATUS_CHN1_BUFFER_VALID;
+    }
+    /* Check period buffer valid */
+    if (double_buffer_valid_status & TC_STATUS_PERBUFV) {
+        status_flags |= TC_STATUS_PERIOD_BUFFER_VALID;
+    }
 #endif
 
-	return status_flags;
+    return status_flags;
 }
 
 /**
@@ -1612,47 +1612,47 @@ static inline uint32_t tc_get_status(
  * \param[in] status_flags  Bitmask of \c TC_STATUS_* flags to clear
  */
 static inline void tc_clear_status(
-		struct tc_module *const module_inst,
-		const uint32_t status_flags)
+        struct tc_module *const module_inst,
+        const uint32_t status_flags)
 {
-	/* Sanity check arguments */
-	Assert(module_inst);
-	Assert(module_inst->hw);
+    /* Sanity check arguments */
+    Assert(module_inst);
+    Assert(module_inst->hw);
 
-	/* Get a pointer to the module's hardware instance */
-	TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
+    /* Get a pointer to the module's hardware instance */
+    TcCount8 *const tc_module = &(module_inst->hw->COUNT8);
 
-	uint32_t int_flags = 0;
+    uint32_t int_flags = 0;
 
-	/* Check for TC channel 0 match */
-	if (status_flags & TC_STATUS_CHANNEL_0_MATCH) {
-		int_flags |= TC_INTFLAG_MC(1);
-	}
+    /* Check for TC channel 0 match */
+    if (status_flags & TC_STATUS_CHANNEL_0_MATCH) {
+        int_flags |= TC_INTFLAG_MC(1);
+    }
 
-	/* Check for TC channel 1 match */
-	if (status_flags & TC_STATUS_CHANNEL_1_MATCH) {
-		int_flags |= TC_INTFLAG_MC(2);
-	}
+    /* Check for TC channel 1 match */
+    if (status_flags & TC_STATUS_CHANNEL_1_MATCH) {
+        int_flags |= TC_INTFLAG_MC(2);
+    }
 
 #if !defined(FEATURE_TC_SYNCBUSY_SCHEME_VERSION_2)
-	/* Check for TC read synchronization ready */
-	if (status_flags & TC_STATUS_SYNC_READY) {
-		int_flags |= TC_INTFLAG_SYNCRDY;
-	}
+    /* Check for TC read synchronization ready */
+    if (status_flags & TC_STATUS_SYNC_READY) {
+        int_flags |= TC_INTFLAG_SYNCRDY;
+    }
 #endif
 
-	/* Check for TC capture overflow */
-	if (status_flags & TC_STATUS_CAPTURE_OVERFLOW) {
-		int_flags |= TC_INTFLAG_ERR;
-	}
+    /* Check for TC capture overflow */
+    if (status_flags & TC_STATUS_CAPTURE_OVERFLOW) {
+        int_flags |= TC_INTFLAG_ERR;
+    }
 
-	/* Check for TC count overflow */
-	if (status_flags & TC_STATUS_COUNT_OVERFLOW) {
-		int_flags |= TC_INTFLAG_OVF;
-	}
+    /* Check for TC count overflow */
+    if (status_flags & TC_STATUS_COUNT_OVERFLOW) {
+        int_flags |= TC_INTFLAG_OVF;
+    }
 
-	/* Clear interrupt flag */
-	tc_module->INTFLAG.reg = int_flags;
+    /* Clear interrupt flag */
+    tc_module->INTFLAG.reg = int_flags;
 }
 
 /** @} */
@@ -1670,30 +1670,30 @@ static inline void tc_clear_status(
  * The table below presents the acronyms used in this module:
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
-  *	<tr>
- *		<td>DMA</td>
- *		<td>Direct Memory Access</td>
- *	</tr>
- *	<tr>
- *		<td>TC</td>
- *		<td>Timer Counter</td>
- *	</tr>
- *	<tr>
- *		<td>PWM</td>
- *		<td>Pulse Width Modulation</td>
- *	</tr>
- *	<tr>
- *		<td>PWP</td>
- *		<td>Pulse Width Period</td>
- *	</tr>
- *	<tr>
- *		<td>PPW</td>
- *		<td>Period Pulse Width</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+  *    <tr>
+ *        <td>DMA</td>
+ *        <td>Direct Memory Access</td>
+ *    </tr>
+ *    <tr>
+ *        <td>TC</td>
+ *        <td>Timer Counter</td>
+ *    </tr>
+ *    <tr>
+ *        <td>PWM</td>
+ *        <td>Pulse Width Modulation</td>
+ *    </tr>
+ *    <tr>
+ *        <td>PWP</td>
+ *        <td>Pulse Width Period</td>
+ *    </tr>
+ *    <tr>
+ *        <td>PPW</td>
+ *        <td>Period Pulse Width</td>
+ *    </tr>
  * </table>
  *
  *
@@ -1714,23 +1714,23 @@ static inline void tc_clear_status(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
  *    <td>Added support for SAM D21 and do some modifications as below:
  *          \li Clean up in the configuration structure, the counter size
  *              setting specific registers is accessed through the counter_8_bit,
  *              counter_16_bit, and counter_32_bit structures
  *          \li All event related settings moved into the tc_event structure </td>
- *	</tr>
- *	<tr>
- *		<td>Added automatic digital clock interface enable for the slave TC
+ *    </tr>
+ *    <tr>
+ *        <td>Added automatic digital clock interface enable for the slave TC
  *          module when a timer is initialized in 32-bit mode</td>
- *	</tr>
- *	<tr>
- *		<td>Initial release</td>
- *	</tr>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial release</td>
+ *    </tr>
  * </table>
  */
 
@@ -1754,37 +1754,37 @@ static inline void tc_clear_status(
  * \page asfdoc_sam0_tc_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>42123E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C21</td>
- *	</tr>
- *	<tr>
- *		<td>42123D</td>
- *		<td>12/2014</td>
- *		<td>Added timer use case.
- *		    Added support for SAM R21 and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42123C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42123B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos</td>
- *	</tr>
- *	<tr>
- *		<td>42123A</td>
- *		<td>06/2013</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42123E</td>
+ *        <td>12/2015</td>
+ *        <td>Added support for SAM L21/L22, SAM DA1, SAM D09, and SAM C21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42123D</td>
+ *        <td>12/2014</td>
+ *        <td>Added timer use case.
+ *            Added support for SAM R21 and SAM D10/D11</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42123C</td>
+ *        <td>01/2014</td>
+ *        <td>Added support for SAM D21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42123B</td>
+ *        <td>06/2013</td>
+ *        <td>Corrected documentation typos</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42123A</td>
+ *        <td>06/2013</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

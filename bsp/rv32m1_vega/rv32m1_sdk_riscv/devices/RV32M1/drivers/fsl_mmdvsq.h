@@ -2,7 +2,7 @@
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -121,7 +121,7 @@ static inline mmdvsq_execution_status_t MMDVSQ_GetExecutionStatus(MMDVSQ_Type *b
  *
  * This function sets the MMDVSQ division fast start. The MMDVSQ supports two
  * mechanisms for initiating a division operation. The default mechanism is
- * a ‚Äúfast start‚Äù where a write to the DSOR register begins the division.
+ * a °∞fast start°± where a write to the DSOR register begins the division.
  * Alternatively, the start mechanism can begin after a write to the CSR
  * register with CSR[SRT] set.
  *

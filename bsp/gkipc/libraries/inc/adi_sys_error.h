@@ -84,7 +84,7 @@
 
     //! File is read failed.
     #define GADI_ERR_READ_FAILED                         -19
-    
+
     //! Device/handle is not MAP.
     #define GADI_ERR_MAP                                 -20
 
@@ -103,61 +103,61 @@
 */
     //! SYS module base
     #define GADI_SYS_MODULE_BASE                     -1000
-        
+
     //! audio input module base
     #define GADI_AUDIO_MODULE_BASE                   -2000
-        
+
     //! i2s module base
     #define GADI_I2S_MODULE_BASE                     -3000
-    
+
     //! capture module base
     #define GADI_CAP_MODULE_BASE                     -4000
-        
+
     //! face detection module base
     #define GADI_FD_MODULE_BASE                      -5000
-        
+
     //! gpio module base
     #define GADI_GPIO_MODULE_BASE                    -6000
-        
+
     //! i2c module base
     #define GADI_I2C_MODULE_BASE                     -7000
-        
+
     //! isp module base
     #define GADI_ISP_MODULE_BASE                     -8000
-        
+
     //! motion detection module base
     #define GADI_MD_MODULE_BASE                      -9000
-        
+
     //! OSD module base
     #define GADI_OSD_MODULE_BASE                     -10000
-        
+
     //! privacy mask module base
     #define GADI_PM_MODULE_BASE                      -11000
-        
+
     //! PTZ module base
     #define GADI_PTZ_MODULE_BASE                     -12000
-        
+
     //! PWM module base
     #define GADI_PWM_MODULE_BASE                     -13000
-        
+
     //! SPI module base
     #define GADI_SPI_MODULE_BASE                     -14000
-        
+
     //! video decode module base
     #define GADI_VDEC_MODULE_BASE                    -15000
-        
+
     //! video encode module base
     #define GADI_VENC_MODULE_BASE                    -16000
-        
+
     //! video input module base
     #define GADI_VI_MODULE_BASE                      -17000
-        
+
     //! video output module base
     #define GADI_VO_MODULE_BASE                      -18000
-        
+
     //! dsp output module base
     #define GADI_DSP_MODULE_BASE                     -19000
-        
+
     //! ir output module base
     #define GADI_IR_MODULE_BASE                      -20000
 

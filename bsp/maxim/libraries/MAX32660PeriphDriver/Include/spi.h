@@ -38,8 +38,8 @@
  * $Revision: 39010 $
  *
  *************************************************************************** */
-  
-/* Define to prevent redundant inclusion */ 
+
+/* Define to prevent redundant inclusion */
 #ifndef _SPI_H_
 #define _SPI_H_
 
@@ -217,7 +217,7 @@ int SPI_AbortAsync(spi_type spi_name, spi_req_t *req);
  * @brief      Execute SPI transaction based on interrupt handler
  * @param      spi_name  SPI instance being used
  *
- * @return     #E_NO_ERROR if successful, 
+ * @return     #E_NO_ERROR if successful,
  * @return     #E_BAD_PARAM otherwise
  */
 int SPI_Handler(spi_type spi_name);

@@ -18,13 +18,13 @@ void save_register(void *p_head,uint32_t size,void *p_save)
 {
      memcpy(p_save,p_head,size);
 }
- 
+
 void load_register(void *p_head,uint32_t size,void *p_load)
 {
     uint32_t tmp;
      memcpy(p_head,p_load,size);
-    
-    if((p_head == UART0) || (p_head == UART1) || (p_head == UART2) || 
+
+    if((p_head == UART0) || (p_head == UART1) || (p_head == UART2) ||
          (p_head == UART3) || (p_head == UART4) || (p_head == UART5) )
     {
         tmp = ((UART_TypeDef*)p_load)->IVS;
@@ -49,8 +49,8 @@ static void delay(void)
     do{
         i++;
     }
-    while (i < 4000000); 
-    
+    while (i < 4000000);
+
     rt_hw_interrupt_enable(level);
 }
 
@@ -62,16 +62,16 @@ static void delay(void)
 
 struct pm_callback_t
 {
-     volatile int in_fun_times;   /*è¿›å…¥å‡½æ•°çš„æ¬¡æ•°*/
-     volatile char flag;          /*æ ‡å¿—*/
-     volatile int mode;           /*éœ€è¦æ‰“å°çš„æ¨¡å¼*/
+     volatile int in_fun_times;   /*½øÈëº¯ÊýµÄ´ÎÊý*/
+     volatile char flag;          /*±êÖ¾*/
+     volatile int mode;           /*ÐèÒª´òÓ¡µÄÄ£Ê½*/
 };
 
 extern volatile struct pm_callback_t g_pm_data;
 
 static void sleep(struct rt_pm *pm, uint8_t mode)
 {
-   
+
     switch (mode)
     {
     case PM_SLEEP_MODE_NONE:
@@ -84,10 +84,10 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         /* Enter SLEEP Mode, Main regulator is ON */
         ald_pmu_stop1_enter();
         delay();
-      
+
         break;
 
-    case PM_SLEEP_MODE_DEEP:           
+    case PM_SLEEP_MODE_DEEP:
         /* Enter STOP 2 mode  */
         ald_pmu_stop2_enter();
         delay();
@@ -109,7 +109,7 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         RT_ASSERT(0);
         break;
     }
-    
+
 }
 
 static uint8_t run_speed[PM_RUN_MODE_MAX][2] =
@@ -150,7 +150,7 @@ static void run(struct rt_pm *pm, uint8_t mode)
         break;
     }
 
-    /* 4. æ›´æ–°å¤–è®¾æ—¶é’Ÿ */
+    /* 4. ¸üÐÂÍâÉèÊ±ÖÓ */
     uart_console_reconfig();
     /* Re-Configure the Systick time */
     SysTick_Config(ald_cmu_get_sys_clock() / RT_TICK_PER_SECOND);

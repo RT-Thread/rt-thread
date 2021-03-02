@@ -16,7 +16,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_bkp.h"
@@ -26,7 +26,7 @@
 * @{
 */
 
-/** @defgroup BKP 
+/** @defgroup BKP
 * @brief BKP driver modules
 * @{
 */
@@ -84,7 +84,7 @@
 
 /**
 * @}
-*/ 
+*/
 
 
 /** @defgroup BKP_Private_Macros
@@ -175,10 +175,10 @@ void BKP_ITConfig(FunctionalState NewState)
 * @arg BKP_RTCOutputSource_None: no RTC output on the Tamper pin.
 * @arg BKP_RTCOutputSource_CalibClock: output the RTC clock
 *   with frequency divided by 64 on the Tamper pin.
-* @arg BKP_RTCOutputSource_Alarm: output the RTC Alarm pulse 
+* @arg BKP_RTCOutputSource_Alarm: output the RTC Alarm pulse
 *   signal on the Tamper pin.
-* @arg BKP_RTCOutputSource_Second: output the RTC Second pulse 
-*   signal on the Tamper pin.  
+* @arg BKP_RTCOutputSource_Second: output the RTC Second pulse
+*   signal on the Tamper pin.
 * @retval : None
 */
 void BKP_RTCOutputConfig(uint16_t BKP_RTCOutputSource)
@@ -189,7 +189,7 @@ void BKP_RTCOutputConfig(uint16_t BKP_RTCOutputSource)
     tmpreg = BKP->RTCCR;
     /* Clear CCO, ASOE and ASOS bits */
     tmpreg &= RTCCR_Mask;
-    
+
     /* Set CCO, ASOE and ASOS bits according to BKP_RTCOutputSource value */
     tmpreg |= BKP_RTCOutputSource;
     /* Store the new value */

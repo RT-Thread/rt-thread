@@ -12,7 +12,7 @@
 #include "gd32f4xx_can.h"
 
 /*!
-    \brief      deinitialize CAN 
+    \brief      deinitialize CAN
     \param[in]  can_periph
       \arg        CANx(x=0,1)
     \param[out] none
@@ -52,7 +52,7 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
 {
     uint32_t timeout = CAN_TIMEOUT;
     ErrStatus flag = ERROR;
-    
+
     /* disable sleep mode */
     CAN_CTL(can_periph) &= ~CAN_CTL_SLPWMOD;
     /* enable initialize mode */
@@ -95,18 +95,18 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
         }else{
             CAN_CTL(can_periph) &= ~CAN_CTL_ARD;
         }
-        /* receive fifo overwrite mode */        
+        /* receive fifo overwrite mode */
         if(ENABLE == can_parameter_init->rec_fifo_overwrite){
             CAN_CTL(can_periph) |= CAN_CTL_RFOD;
         }else{
             CAN_CTL(can_periph) &= ~CAN_CTL_RFOD;
-        } 
+        }
         /* transmit fifo order */
         if(ENABLE == can_parameter_init->trans_fifo_order){
             CAN_CTL(can_periph) |= CAN_CTL_TFO;
         }else{
             CAN_CTL(can_periph) &= ~CAN_CTL_TFO;
-        }  
+        }
         /* disable initialize mode */
         CAN_CTL(can_periph) &= ~CAN_CTL_IWMOD;
         timeout = CAN_TIMEOUT;
@@ -118,21 +118,21 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
         if(CAN_STAT_IWS == (CAN_STAT(can_periph) & CAN_STAT_IWS)){
             flag = SUCCESS;
         }
-    }  
+    }
     return flag;
 }
 
 /*!
-    \brief      initialize CAN filter 
+    \brief      initialize CAN filter
     \param[in]  can_filter_parameter_struct: struct for CAN filter initialization
                   can_filter_list_high: 0x0000 - 0xFFFF
                   can_filter_list_low: 0x0000 - 0xFFFF
                   can_filter_mask_high: 0x0000 - 0xFFFF
                   can_filter_mask_low: 0x0000 - 0xFFFF
-                  can_filter_fifo_number: CAN_FIFO0, CAN_FIFO1 
+                  can_filter_fifo_number: CAN_FIFO0, CAN_FIFO1
                   can_filter_number: 0 - 27
                   can_filter_mode: CAN_FILTERMODE_MASK, CAN_FILTERMODE_LIST
-                  can_filter_bits: CAN_FILTERBITS_32BIT, CAN_FILTERBITS_16BIT 
+                  can_filter_bits: CAN_FILTERBITS_32BIT, CAN_FILTERBITS_16BIT
                   can_filter_enable: ENABLE or DISABLE
     \param[out] none
     \retval     none
@@ -140,13 +140,13 @@ ErrStatus can_init(uint32_t can_periph, can_parameter_struct* can_parameter_init
 void can_filter_init(can_filter_parameter_struct* can_filter_parameter_init)
 {
     uint32_t val = 0U;
-    
+
     val = ((uint32_t)1) << (can_filter_parameter_init->filter_number);
     /* filter lock disable */
     CAN_FCTL(CAN0) |= CAN_FCTL_FLD;
     /* disable filter */
     CAN_FW(CAN0) &= ~(uint32_t)val;
-    
+
     /* filter 16 bits */
     if(CAN_FILTERBITS_16BIT == can_filter_parameter_init->filter_bits){
         /* set filter 16 bits */
@@ -173,7 +173,7 @@ void can_filter_init(can_filter_parameter_struct* can_filter_parameter_init)
                                 FDATA_MASK_HIGH((can_filter_parameter_init->filter_mask_high) & CAN_FILTER_MASK_16BITS) |
                                 FDATA_MASK_LOW((can_filter_parameter_init->filter_mask_low) & CAN_FILTER_MASK_16BITS);
     }
-    
+
     /* filter mode */
     if(CAN_FILTERMODE_MASK == can_filter_parameter_init->filter_mode){
         /* mask mode */
@@ -182,24 +182,24 @@ void can_filter_init(can_filter_parameter_struct* can_filter_parameter_init)
         /* list mode */
         CAN_FMCFG(CAN0) |= (uint32_t)val;
     }
-    
+
     /* filter FIFO */
     if(CAN_FIFO0 == (can_filter_parameter_init->filter_fifo_number)){
         /* FIFO0 */
         CAN_FAFIFO(CAN0) &= ~(uint32_t)val;
     }
-    
+
     if(CAN_FIFO1 == can_filter_parameter_init->filter_fifo_number){
         /* FIFO1 */
         CAN_FAFIFO(CAN0) |= (uint32_t)val;
     }
-    
+
     /* filter working */
     if(ENABLE == can_filter_parameter_init->filter_enable){
-        
+
         CAN_FW(CAN0) |= (uint32_t)val;
     }
-    
+
     /* filter lock enable */
     CAN_FCTL(CAN0) &= ~CAN_FCTL_FLD;
 }
@@ -266,7 +266,7 @@ void can_debug_freeze_disable(uint32_t can_periph)
 void can_time_trigger_mode_enable(uint32_t can_periph)
 {
     uint8_t mailbox_number;
-    
+
     /* enable the tcc mode */
     CAN_CTL(can_periph) |= CAN_CTL_TTC;
     /* enable time stamp */
@@ -284,8 +284,8 @@ void can_time_trigger_mode_enable(uint32_t can_periph)
 */
 void can_time_trigger_mode_disable(uint32_t can_periph)
 {
-    uint8_t mailbox_number; 
-    
+    uint8_t mailbox_number;
+
     /* disable the TCC mode */
     CAN_CTL(can_periph) &= ~CAN_CTL_TTC;
     /* reset TSEN bits */
@@ -325,7 +325,7 @@ uint8_t can_message_transmit(uint32_t can_periph, can_trasnmit_message_struct* t
     if(CAN_NOMAILBOX == mailbox_number){
         return CAN_NOMAILBOX;
     }
-    
+
     CAN_TMI(can_periph, mailbox_number) &= CAN_TMI_TEN;
     if(CAN_FF_STANDARD == transmit_message->tx_ff){
         /* set transmit mailbox standard identifier */
@@ -357,7 +357,7 @@ uint8_t can_message_transmit(uint32_t can_periph, can_trasnmit_message_struct* t
 }
 
 /*!
-    \brief      CAN transmit state 
+    \brief      CAN transmit state
     \param[in]  can_periph
       \arg        CANx(x=0,1)
     \param[in]  mailbox_number
@@ -369,7 +369,7 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
 {
     can_transmit_state_enum state = CAN_TRANSMIT_FAILED;
     uint32_t val = 0U;
-     
+
     switch(mailbox_number){
     case CAN_MAILBOX0:
         val = CAN_TSTAT(can_periph) & (CAN_TSTAT_MTF0 | CAN_TSTAT_MTFNERR0 | CAN_TSTAT_TME0);
@@ -386,17 +386,17 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
     }
     switch(val){
         /* transmit pending  */
-    case (CAN_STATE_PENDING): 
+    case (CAN_STATE_PENDING):
         state = CAN_TRANSMIT_PENDING;
         break;
         /* transmit failed  */
-    case (CAN_TSTAT_MTF0 | CAN_TSTAT_TME0): 
+    case (CAN_TSTAT_MTF0 | CAN_TSTAT_TME0):
         state = CAN_TRANSMIT_FAILED;
         break;
-    case (CAN_TSTAT_MTF1 | CAN_TSTAT_TME1): 
+    case (CAN_TSTAT_MTF1 | CAN_TSTAT_TME1):
         state = CAN_TRANSMIT_FAILED;
         break;
-    case (CAN_TSTAT_MTF2 | CAN_TSTAT_TME2): 
+    case (CAN_TSTAT_MTF2 | CAN_TSTAT_TME2):
         state = CAN_TRANSMIT_FAILED;
         break;
         /* transmit succeeded  */
@@ -409,7 +409,7 @@ can_transmit_state_enum can_transmit_states(uint32_t can_periph, uint8_t mailbox
     case (CAN_TSTAT_MTF2 | CAN_TSTAT_MTFNERR2 | CAN_TSTAT_TME2):
         state = CAN_TRANSMIT_OK;
         break;
-    default: 
+    default:
         state = CAN_TRANSMIT_FAILED;
         break;
     }
@@ -465,14 +465,14 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
         /* get extended identifier */
         receive_message -> rx_efid = (uint32_t)(RFIFOMI_EFID(CAN_RFIFOMI(can_periph, fifo_number)));
     }
-    
+
     /* get frame type */
     receive_message -> rx_ft = (uint8_t)(CAN_RFIFOMI_FT & CAN_RFIFOMI(can_periph, fifo_number));
     /* get recevie data length */
-    receive_message -> rx_dlen = (uint8_t)(RFIFOMP_DLENC(CAN_RFIFOMP(can_periph, fifo_number)));        
+    receive_message -> rx_dlen = (uint8_t)(RFIFOMP_DLENC(CAN_RFIFOMP(can_periph, fifo_number)));
     /* filtering index */
-    receive_message -> rx_fi = (uint8_t)(RFIFOMP_FI(CAN_RFIFOMP(can_periph, fifo_number)));     
-    
+    receive_message -> rx_fi = (uint8_t)(RFIFOMP_FI(CAN_RFIFOMP(can_periph, fifo_number)));
+
     /* receive data */
     receive_message -> rx_data[0] = (uint8_t)(RFIFOMDATA0_DB0(CAN_RFIFOMDATA0(can_periph, fifo_number)));
     receive_message -> rx_data[1] = (uint8_t)(RFIFOMDATA0_DB1(CAN_RFIFOMDATA0(can_periph, fifo_number)));
@@ -482,7 +482,7 @@ void can_message_receive(uint32_t can_periph, uint8_t fifo_number, can_receive_m
     receive_message -> rx_data[5] = (uint8_t)(RFIFOMDATA1_DB5(CAN_RFIFOMDATA1(can_periph, fifo_number)));
     receive_message -> rx_data[6] = (uint8_t)(RFIFOMDATA1_DB6(CAN_RFIFOMDATA1(can_periph, fifo_number)));
     receive_message -> rx_data[7] = (uint8_t)(RFIFOMDATA1_DB7(CAN_RFIFOMDATA1(can_periph, fifo_number)));
-    
+
     /* release FIFO */
     if(CAN_FIFO0 == fifo_number){
         CAN_RFIFO0(can_periph) |= CAN_RFIFO0_RFD0;
@@ -514,14 +514,14 @@ void can_fifo_release(uint32_t can_periph, uint8_t fifo_number)
     \brief      CAN receive message length
     \param[in]  can_periph
       \arg        CANx(x=0,1)
-      \arg        CAN_FIFO0x(x=0,1) 
+      \arg        CAN_FIFO0x(x=0,1)
     \param[out] none
     \retval     message length
 */
 uint8_t can_receive_message_length(uint32_t can_periph, uint8_t fifo_number)
 {
     uint8_t val = 0U;
-    
+
     if(CAN_FIFO0 == fifo_number){
         val = (uint8_t)(CAN_RFIFO0(can_periph) & CAN_RFIFO_RFL0_MASK);
     }else if(CAN_FIFO0 == fifo_number){
@@ -547,8 +547,8 @@ ErrStatus can_working_mode_set(uint32_t can_periph, uint8_t working_mode)
 {
     ErrStatus flag = ERROR;
     /* timeout for IWS or also for SLPWS bits*/
-    uint32_t timeout = CAN_TIMEOUT; 
-    
+    uint32_t timeout = CAN_TIMEOUT;
+
     if(CAN_MODE_INITIALIZE == working_mode){
         /* disable sleep mode */
         CAN_CTL(can_periph) &= (~(uint32_t)CAN_CTL_SLPWMOD);
@@ -606,10 +606,10 @@ ErrStatus can_wakeup(uint32_t can_periph)
 {
     ErrStatus flag = ERROR;
     uint32_t timeout = CAN_TIMEOUT;
-    
+
     /* wakeup */
     CAN_CTL(can_periph) &= ~CAN_CTL_SLPWMOD;
-    
+
     while((0U != (CAN_STAT(can_periph) & CAN_STAT_SLPWS)) && (timeout != 0x00U)){
         timeout--;
     }
@@ -632,7 +632,7 @@ can_error_enum can_error_get(uint32_t can_periph)
 {
     can_error_enum error;
     error = CAN_ERROR_NONE;
-    
+
     /* get error type */
     error = (can_error_enum)((CAN_ERR(can_periph) & CAN_ERR_ERRN) >> 4U);
     return error;
@@ -648,7 +648,7 @@ can_error_enum can_error_get(uint32_t can_periph)
 uint8_t can_receive_error_number(uint32_t can_periph)
 {
     uint8_t val;
-    
+
     val = (uint8_t)((CAN_ERR(can_periph) & CAN_ERR_RECNT) >> 24U);
     return val;
 }
@@ -663,16 +663,16 @@ uint8_t can_receive_error_number(uint32_t can_periph)
 uint8_t can_transmit_error_number(uint32_t can_periph)
 {
     uint8_t val;
-    
+
     val = (uint8_t)((CAN_ERR(can_periph) & CAN_ERR_TECNT) >> 16U);
     return val;
 }
 
 /*!
-    \brief      enable CAN interrupt 
+    \brief      enable CAN interrupt
     \param[in]  can_periph
       \arg        CANx(x=0,1)
-    \param[in]  interrupt 
+    \param[in]  interrupt
       \arg        CAN_INTEN_TMEIE
       \arg        CAN_INTEN_RFNEIE0
       \arg        CAN_INTEN_RFFIE0
@@ -696,7 +696,7 @@ void can_interrupt_enable(uint32_t can_periph, uint32_t interrupt)
 }
 
 /*!
-    \brief      disable CAN interrupt 
+    \brief      disable CAN interrupt
     \param[in]  can_periph
       \arg        CANx(x=0,1)
     \param[in]  interrupt
@@ -745,7 +745,7 @@ void can_interrupt_disable(uint32_t can_periph, uint32_t interrupt)
     \retval     FlagStatus: SET or RESET
 */
 FlagStatus can_flag_get(uint32_t can_periph, can_flag_enum flag)
-{  
+{
     if(RESET != (CAN_REG_VAL(can_periph, flag) & BIT(CAN_BIT_POS(flag)))){
         return SET;
     }else{
@@ -790,12 +790,12 @@ void can_flag_clear(uint32_t can_periph, can_flag_enum flag)
     \retval     FlagStatus: SET or RESET
 */
 FlagStatus can_interrupt_flag_get(uint32_t can_periph, can_interrupt_flag_enum flag)
-{  
+{
     FlagStatus inten = RESET;
     FlagStatus temp = RESET;
     FlagStatus status1 = RESET;
     FlagStatus status2 = RESET;
-    
+
     switch(flag){
     /* get the status of sleep working interrupt enable bit */
     case CAN_INT_SLPIF:

@@ -54,21 +54,21 @@ extern "C" {
 #define TM_DAYOFWEEK    (1)
 
 /**
- * @brief	Converts a RTC tick time to Universal time
- * @param	rtcTick	: Current RTC time value
- * @param	pTime	: Pointer to time structure to fill
- * @return	Nothing
- * @note	When setting time, the 'tm_wday', 'tm_yday', and 'tm_isdst'
+ * @brief    Converts a RTC tick time to Universal time
+ * @param    rtcTick    : Current RTC time value
+ * @param    pTime    : Pointer to time structure to fill
+ * @return    Nothing
+ * @note    When setting time, the 'tm_wday', 'tm_yday', and 'tm_isdst'
  * fields are not used.
  */
 void ConvertRtcTime(uint32_t rtcTick, struct tm *pTime);
 
 /**
- * @brief	Converts a Universal time to RTC tick time
- * @param	pTime	: Pointer to time structure to use
- * @param	rtcTick	: Pointer to RTC time value to fill
- * @return	Nothing
- * @note	When converting time, the 'tm_isdst' field is not
+ * @brief    Converts a Universal time to RTC tick time
+ * @param    pTime    : Pointer to time structure to use
+ * @param    rtcTick    : Pointer to RTC time value to fill
+ * @return    Nothing
+ * @note    When converting time, the 'tm_isdst' field is not
  * populated by the conversion function.
  */
 void ConvertTimeRtc(struct tm *pTime, uint32_t *rtcTick);

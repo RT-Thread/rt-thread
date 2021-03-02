@@ -86,7 +86,7 @@ void SAIB_config_set(struct rt_audio_configure config)
     SAIB_samplerate_set(config.samplerate);
     SAIB_samplebits_set(config.samplebits);
 }
-		
+
 static void SAIB_config_init()
 {
     _sai_b.hsai.Instance = SAI1_Block_B;

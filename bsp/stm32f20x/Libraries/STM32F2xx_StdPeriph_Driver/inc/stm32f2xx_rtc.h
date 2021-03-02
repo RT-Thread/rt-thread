@@ -17,7 +17,7 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
-  ****************************************************************************** 
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -37,27 +37,27 @@
 
 /** @addtogroup RTC
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/
 
-/** 
-  * @brief  RTC Init structures definition  
-  */ 
+/**
+  * @brief  RTC Init structures definition
+  */
 typedef struct
 {
   uint32_t RTC_HourFormat;   /*!< Specifies the RTC Hour Format.
                              This parameter can be a value of @ref RTC_Hour_Formats */
-  
+
   uint32_t RTC_AsynchPrediv; /*!< Specifies the RTC Asynchronous Predivider value.
                              This parameter must be set to a value lower than 0x7F */
-  
+
   uint32_t RTC_SynchPrediv;  /*!< Specifies the RTC Synchronous Predivider value.
                              This parameter must be set to a value lower than 0x1FFF */
 }RTC_InitTypeDef;
 
-/** 
-  * @brief  RTC Time structure definition  
+/**
+  * @brief  RTC Time structure definition
   */
 typedef struct
 {
@@ -68,34 +68,34 @@ typedef struct
 
   uint8_t RTC_Minutes;  /*!< Specifies the RTC Time Minutes.
                         This parameter must be set to a value in the 0-59 range. */
-  
+
   uint8_t RTC_Seconds;  /*!< Specifies the RTC Time Seconds.
                         This parameter must be set to a value in the 0-59 range. */
 
   uint8_t RTC_H12;      /*!< Specifies the RTC AM/PM Time.
                         This parameter can be a value of @ref RTC_AM_PM_Definitions */
-}RTC_TimeTypeDef; 
+}RTC_TimeTypeDef;
 
-/** 
-  * @brief  RTC Date structure definition  
+/**
+  * @brief  RTC Date structure definition
   */
 typedef struct
 {
   uint8_t RTC_WeekDay; /*!< Specifies the RTC Date WeekDay.
                         This parameter can be a value of @ref RTC_WeekDay_Definitions */
-  
+
   uint8_t RTC_Month;   /*!< Specifies the RTC Date Month (in BCD format).
                         This parameter can be a value of @ref RTC_Month_Date_Definitions */
 
   uint8_t RTC_Date;     /*!< Specifies the RTC Date.
                         This parameter must be set to a value in the 1-31 range. */
-  
+
   uint8_t RTC_Year;     /*!< Specifies the RTC Date Year.
                         This parameter must be set to a value in the 0-99 range. */
 }RTC_DateTypeDef;
 
-/** 
-  * @brief  RTC Alarm structure definition  
+/**
+  * @brief  RTC Alarm structure definition
   */
 typedef struct
 {
@@ -106,11 +106,11 @@ typedef struct
 
   uint32_t RTC_AlarmDateWeekDaySel;  /*!< Specifies the RTC Alarm is on Date or WeekDay.
                                      This parameter can be a value of @ref RTC_AlarmDateWeekDay_Definitions */
-  
+
   uint8_t RTC_AlarmDateWeekDay;      /*!< Specifies the RTC Alarm Date/WeekDay.
                                      If the Alarm Date is selected, this parameter
                                      must be set to a value in the 1-31 range.
-                                     If the Alarm WeekDay is selected, this 
+                                     If the Alarm WeekDay is selected, this
                                      parameter can be a value of @ref RTC_WeekDay_Definitions */
 }RTC_AlarmTypeDef;
 
@@ -118,42 +118,42 @@ typedef struct
 
 /** @defgroup RTC_Exported_Constants
   * @{
-  */ 
+  */
 
 
-/** @defgroup RTC_Hour_Formats 
+/** @defgroup RTC_Hour_Formats
   * @{
-  */ 
+  */
 #define RTC_HourFormat_24              ((uint32_t)0x00000000)
 #define RTC_HourFormat_12              ((uint32_t)0x00000040)
 #define IS_RTC_HOUR_FORMAT(FORMAT)     (((FORMAT) == RTC_HourFormat_12) || \
                                         ((FORMAT) == RTC_HourFormat_24))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Asynchronous_Predivider 
+/** @defgroup RTC_Asynchronous_Predivider
   * @{
-  */ 
+  */
 #define IS_RTC_ASYNCH_PREDIV(PREDIV)   ((PREDIV) <= 0x7F)
- 
+
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup RTC_Synchronous_Predivider 
+/** @defgroup RTC_Synchronous_Predivider
   * @{
-  */ 
+  */
 #define IS_RTC_SYNCH_PREDIV(PREDIV)    ((PREDIV) <= 0x1FFF)
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Time_Definitions 
+/** @defgroup RTC_Time_Definitions
   * @{
-  */ 
+  */
 #define IS_RTC_HOUR12(HOUR)            (((HOUR) > 0) && ((HOUR) <= 12))
 #define IS_RTC_HOUR24(HOUR)            ((HOUR) <= 23)
 #define IS_RTC_MINUTES(MINUTES)        ((MINUTES) <= 59)
@@ -161,31 +161,31 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_AM_PM_Definitions 
+/** @defgroup RTC_AM_PM_Definitions
   * @{
-  */ 
+  */
 #define RTC_H12_AM                     ((uint8_t)0x00)
 #define RTC_H12_PM                     ((uint8_t)0x40)
 #define IS_RTC_H12(PM) (((PM) == RTC_H12_AM) || ((PM) == RTC_H12_PM))
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Year_Date_Definitions 
+/** @defgroup RTC_Year_Date_Definitions
   * @{
-  */ 
+  */
 #define IS_RTC_YEAR(YEAR)              ((YEAR) <= 99)
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Month_Date_Definitions 
+/** @defgroup RTC_Month_Date_Definitions
   * @{
-  */ 
+  */
 
 /* Coded in BCD format */
 #define RTC_Month_January              ((uint8_t)0x01)
@@ -205,19 +205,19 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_WeekDay_Definitions 
+/** @defgroup RTC_WeekDay_Definitions
   * @{
-  */ 
-  
-#define	RTC_Weekday_Monday             ((uint8_t)0x01)
-#define	RTC_Weekday_Tuesday            ((uint8_t)0x02)
-#define	RTC_Weekday_Wednesday          ((uint8_t)0x03)
-#define	RTC_Weekday_Thursday           ((uint8_t)0x04)
-#define	RTC_Weekday_Friday             ((uint8_t)0x05)
-#define	RTC_Weekday_Saturday           ((uint8_t)0x06)
-#define	RTC_Weekday_Sunday             ((uint8_t)0x07)
+  */
+
+#define    RTC_Weekday_Monday             ((uint8_t)0x01)
+#define    RTC_Weekday_Tuesday            ((uint8_t)0x02)
+#define    RTC_Weekday_Wednesday          ((uint8_t)0x03)
+#define    RTC_Weekday_Thursday           ((uint8_t)0x04)
+#define    RTC_Weekday_Friday             ((uint8_t)0x05)
+#define    RTC_Weekday_Saturday           ((uint8_t)0x06)
+#define    RTC_Weekday_Sunday             ((uint8_t)0x07)
 #define IS_RTC_WEEKDAY(WEEKDAY) (((WEEKDAY) == RTC_Weekday_Monday) || \
                                  ((WEEKDAY) == RTC_Weekday_Tuesday) || \
                                  ((WEEKDAY) == RTC_Weekday_Wednesday) || \
@@ -227,12 +227,12 @@ typedef struct
                                  ((WEEKDAY) == RTC_Weekday_Sunday))
 /**
   * @}
-  */ 
+  */
 
 
 /** @defgroup RTC_Alarm_Definitions
   * @{
-  */ 
+  */
 #define IS_RTC_ALARM_DATE_WEEKDAY_DATE(DATE) (((DATE) > 0) && ((DATE) <= 31))
 #define IS_RTC_ALARM_DATE_WEEKDAY_WEEKDAY(WEEKDAY) (((WEEKDAY) == RTC_Weekday_Monday) || \
                                                     ((WEEKDAY) == RTC_Weekday_Tuesday) || \
@@ -244,12 +244,12 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup RTC_AlarmDateWeekDay_Definitions 
+/** @defgroup RTC_AlarmDateWeekDay_Definitions
   * @{
-  */ 
+  */
 #define RTC_AlarmDateWeekDaySel_Date      ((uint32_t)0x00000000)
 #define RTC_AlarmDateWeekDaySel_WeekDay   ((uint32_t)0x40000000)
 
@@ -258,12 +258,12 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup RTC_AlarmMask_Definitions 
+/** @defgroup RTC_AlarmMask_Definitions
   * @{
-  */ 
+  */
 #define RTC_AlarmMask_None                ((uint32_t)0x00000000)
 #define RTC_AlarmMask_DateWeekDay         ((uint32_t)0x80000000)
 #define RTC_AlarmMask_Hours               ((uint32_t)0x00800000)
@@ -274,11 +274,11 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Alarms_Definitions 
+/** @defgroup RTC_Alarms_Definitions
   * @{
-  */ 
+  */
 #define RTC_Alarm_A                       ((uint32_t)0x00000100)
 #define RTC_Alarm_B                       ((uint32_t)0x00000200)
 #define IS_RTC_ALARM(ALARM)     (((ALARM) == RTC_Alarm_A) || ((ALARM) == RTC_Alarm_B))
@@ -286,11 +286,11 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Wakeup_Timer_Definitions 
+/** @defgroup RTC_Wakeup_Timer_Definitions
   * @{
-  */ 
+  */
 #define RTC_WakeUpClock_RTCCLK_Div16        ((uint32_t)0x00000000)
 #define RTC_WakeUpClock_RTCCLK_Div8         ((uint32_t)0x00000001)
 #define RTC_WakeUpClock_RTCCLK_Div4         ((uint32_t)0x00000002)
@@ -306,27 +306,27 @@ typedef struct
 #define IS_RTC_WAKEUP_COUNTER(COUNTER)  ((COUNTER) <= 0xFFFF)
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Time_Stamp_Edges_definitions 
+/** @defgroup RTC_Time_Stamp_Edges_definitions
   * @{
-  */ 
+  */
 #define RTC_TimeStampEdge_Rising          ((uint32_t)0x00000000)
 #define RTC_TimeStampEdge_Falling         ((uint32_t)0x00000008)
 #define IS_RTC_TIMESTAMP_EDGE(EDGE) (((EDGE) == RTC_TimeStampEdge_Rising) || \
                                      ((EDGE) == RTC_TimeStampEdge_Falling))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Output_selection_Definitions 
+/** @defgroup RTC_Output_selection_Definitions
   * @{
-  */ 
+  */
 #define RTC_Output_Disable             ((uint32_t)0x00000000)
 #define RTC_Output_AlarmA              ((uint32_t)0x00200000)
 #define RTC_Output_AlarmB              ((uint32_t)0x00400000)
 #define RTC_Output_WakeUp              ((uint32_t)0x00600000)
- 
+
 #define IS_RTC_OUTPUT(OUTPUT) (((OUTPUT) == RTC_Output_Disable) || \
                                ((OUTPUT) == RTC_Output_AlarmA) || \
                                ((OUTPUT) == RTC_Output_AlarmB) || \
@@ -334,24 +334,24 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Output_Polarity_Definitions 
+/** @defgroup RTC_Output_Polarity_Definitions
   * @{
-  */ 
+  */
 #define RTC_OutputPolarity_High           ((uint32_t)0x00000000)
 #define RTC_OutputPolarity_Low            ((uint32_t)0x00100000)
 #define IS_RTC_OUTPUT_POL(POL) (((POL) == RTC_OutputPolarity_High) || \
                                 ((POL) == RTC_OutputPolarity_Low))
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup RTC_Digital_Calibration_Definitions 
+/** @defgroup RTC_Digital_Calibration_Definitions
   * @{
-  */ 
-#define RTC_CalibSign_Positive            ((uint32_t)0x00000000) 
+  */
+#define RTC_CalibSign_Positive            ((uint32_t)0x00000000)
 #define RTC_CalibSign_Negative            ((uint32_t)0x00000080)
 #define IS_RTC_CALIB_SIGN(SIGN) (((SIGN) == RTC_CalibSign_Positive) || \
                                  ((SIGN) == RTC_CalibSign_Negative))
@@ -359,12 +359,12 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
 
-/** @defgroup RTC_DayLightSaving_Definitions 
+/** @defgroup RTC_DayLightSaving_Definitions
   * @{
-  */ 
+  */
 #define RTC_DayLightSaving_SUB1H   ((uint32_t)0x00020000)
 #define RTC_DayLightSaving_ADD1H   ((uint32_t)0x00010000)
 #define IS_RTC_DAYLIGHT_SAVING(SAVE) (((SAVE) == RTC_DayLightSaving_SUB1H) || \
@@ -376,11 +376,11 @@ typedef struct
                                            ((OPERATION) == RTC_StoreOperation_Set))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Tamper_Trigger_Definitions 
+/** @defgroup RTC_Tamper_Trigger_Definitions
   * @{
-  */ 
+  */
 #define RTC_TamperTrigger_RisingEdge            ((uint32_t)0x00000000)
 #define RTC_TamperTrigger_FallingEdge           ((uint32_t)0x00000001)
 #define IS_RTC_TAMPER_TRIGGER(TRIGGER) (((TRIGGER) == RTC_TamperTrigger_RisingEdge) || \
@@ -388,11 +388,11 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Tamper_Pins_Definitions 
+/** @defgroup RTC_Tamper_Pins_Definitions
   * @{
-  */ 
+  */
 #define RTC_Tamper_1                    RTC_TAFCR_TAMP1E
 #define IS_RTC_TAMPER(TAMPER) (((TAMPER) == RTC_Tamper_1))
 
@@ -400,31 +400,31 @@ typedef struct
   * @}
   */
 
-/** @defgroup RTC_Tamper_Pin_Selection 
+/** @defgroup RTC_Tamper_Pin_Selection
   * @{
-  */ 
+  */
 #define RTC_TamperPin_PC13                 ((uint32_t)0x00000000)
 #define RTC_TamperPin_PI8                  ((uint32_t)0x00010000)
 #define IS_RTC_TAMPER_PIN(PIN) (((PIN) == RTC_TamperPin_PC13) || \
                                 ((PIN) == RTC_TamperPin_PI8))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_TimeStamp_Pin_Selection 
+/** @defgroup RTC_TimeStamp_Pin_Selection
   * @{
-  */ 
+  */
 #define RTC_TimeStampPin_PC13              ((uint32_t)0x00000000)
 #define RTC_TimeStampPin_PI8               ((uint32_t)0x00020000)
 #define IS_RTC_TIMESTAMP_PIN(PIN) (((PIN) == RTC_TimeStampPin_PC13) || \
                                    ((PIN) == RTC_TimeStampPin_PI8))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Output_Type_ALARM_OUT 
+/** @defgroup RTC_Output_Type_ALARM_OUT
   * @{
-  */ 
+  */
 #define RTC_OutputType_OpenDrain           ((uint32_t)0x00000000)
 #define RTC_OutputType_PushPull            ((uint32_t)0x00040000)
 #define IS_RTC_OUTPUT_TYPE(TYPE) (((TYPE) == RTC_OutputType_OpenDrain) || \
@@ -432,9 +432,9 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Backup_Registers_Definitions 
+/** @defgroup RTC_Backup_Registers_Definitions
   * @{
   */
 
@@ -480,22 +480,22 @@ typedef struct
                                            ((BKP) == RTC_BKP_DR19))
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Input_parameter_format_definitions 
+/** @defgroup RTC_Input_parameter_format_definitions
   * @{
-  */ 
+  */
 #define RTC_Format_BIN                    ((uint32_t)0x000000000)
 #define RTC_Format_BCD                    ((uint32_t)0x000000001)
 #define IS_RTC_FORMAT(FORMAT) (((FORMAT) == RTC_Format_BIN) || ((FORMAT) == RTC_Format_BCD))
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Flags_Definitions 
+/** @defgroup RTC_Flags_Definitions
   * @{
-  */ 
+  */
 #define RTC_FLAG_TAMP1F                   ((uint32_t)0x00002000)
 #define RTC_FLAG_TSOVF                    ((uint32_t)0x00001000)
 #define RTC_FLAG_TSF                      ((uint32_t)0x00000800)
@@ -518,11 +518,11 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Interrupts_Definitions 
+/** @defgroup RTC_Interrupts_Definitions
   * @{
-  */ 
+  */
 #define RTC_IT_TS                         ((uint32_t)0x00008000)
 #define RTC_IT_WUT                        ((uint32_t)0x00004000)
 #define RTC_IT_ALRB                       ((uint32_t)0x00002000)
@@ -538,24 +538,24 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup RTC_Legacy 
+/** @defgroup RTC_Legacy
   * @{
-  */ 
+  */
 #define RTC_DigitalCalibConfig  RTC_CoarseCalibConfig
 #define RTC_DigitalCalibCmd     RTC_CoarseCalibCmd
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /* Exported macro ------------------------------------------------------------*/
-/* Exported functions --------------------------------------------------------*/ 
+/* Exported functions --------------------------------------------------------*/
 
 /*  Function used to set the RTC configuration to the default reset state *****/
 ErrorStatus RTC_DeInit(void);
@@ -604,7 +604,7 @@ void RTC_CalibOutputCmd(FunctionalState NewState);
 /* TimeStamp configuration functions ******************************************/
 void RTC_TimeStampCmd(uint32_t RTC_TimeStampEdge, FunctionalState NewState);
 void RTC_GetTimeStamp(uint32_t RTC_Format, RTC_TimeTypeDef* RTC_StampTimeStruct,
-                                      RTC_DateTypeDef* RTC_StampDateStruct);                                  
+                                      RTC_DateTypeDef* RTC_StampDateStruct);
 
 /* Tampers configuration functions ********************************************/
 void RTC_TamperTriggerConfig(uint32_t RTC_Tamper, uint32_t RTC_TamperTrigger);
@@ -635,10 +635,10 @@ void RTC_ClearITPendingBit(uint32_t RTC_IT);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

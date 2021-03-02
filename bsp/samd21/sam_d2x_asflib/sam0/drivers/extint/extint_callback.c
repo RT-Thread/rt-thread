@@ -81,26 +81,26 @@ uint8_t _current_channel;
  *                                  registered, need unregister first
  */
 enum status_code extint_register_callback(
-	const extint_callback_t callback,
-	const uint8_t channel,
-	const enum extint_callback_type type)
+    const extint_callback_t callback,
+    const uint8_t channel,
+    const enum extint_callback_type type)
 {
-	/* Sanity check arguments */
-	Assert(callback);
+    /* Sanity check arguments */
+    Assert(callback);
 
-	if (type != EXTINT_CALLBACK_TYPE_DETECT) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type != EXTINT_CALLBACK_TYPE_DETECT) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	if (_extint_dev.callbacks[channel] == NULL) {
-		_extint_dev.callbacks[channel] = callback;
-		return STATUS_OK;
-	} else if (_extint_dev.callbacks[channel] == callback) {
-		return STATUS_OK;
-	}
+    if (_extint_dev.callbacks[channel] == NULL) {
+        _extint_dev.callbacks[channel] = callback;
+        return STATUS_OK;
+    } else if (_extint_dev.callbacks[channel] == callback) {
+        return STATUS_OK;
+    }
 
-	return STATUS_ERR_ALREADY_INITIALIZED;
+    return STATUS_ERR_ALREADY_INITIALIZED;
 }
 
 /**
@@ -120,24 +120,24 @@ enum status_code extint_register_callback(
  *                                 registration table
  */
 enum status_code extint_unregister_callback(
-	const extint_callback_t callback,
-	const uint8_t channel,
-	const enum extint_callback_type type)
+    const extint_callback_t callback,
+    const uint8_t channel,
+    const enum extint_callback_type type)
 {
-	/* Sanity check arguments */
-	Assert(callback);
+    /* Sanity check arguments */
+    Assert(callback);
 
-	if (type != EXTINT_CALLBACK_TYPE_DETECT) {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+    if (type != EXTINT_CALLBACK_TYPE_DETECT) {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	if (_extint_dev.callbacks[channel] == callback) {
-		_extint_dev.callbacks[channel] = NULL;
-		return STATUS_OK;
-	}
+    if (_extint_dev.callbacks[channel] == callback) {
+        _extint_dev.callbacks[channel] = NULL;
+        return STATUS_OK;
+    }
 
-	return STATUS_ERR_BAD_ADDRESS;
+    return STATUS_ERR_BAD_ADDRESS;
 }
 
 /**
@@ -155,20 +155,20 @@ enum status_code extint_unregister_callback(
  * \retval STATUS_ERR_INVALID_ARG  If an invalid callback type was supplied
  */
 enum status_code extint_chan_enable_callback(
-	const uint8_t channel,
-	const enum extint_callback_type type)
+    const uint8_t channel,
+    const enum extint_callback_type type)
 {
-	if (type == EXTINT_CALLBACK_TYPE_DETECT) {
-		Eic *const eic = _extint_get_eic_from_channel(channel);
+    if (type == EXTINT_CALLBACK_TYPE_DETECT) {
+        Eic *const eic = _extint_get_eic_from_channel(channel);
 
-		eic->INTENSET.reg = (1UL << channel);
-	}
-	else {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+        eic->INTENSET.reg = (1UL << channel);
+    }
+    else {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -185,20 +185,20 @@ enum status_code extint_chan_enable_callback(
  * \retval STATUS_ERR_INVALID_ARG  If an invalid callback type was supplied
  */
 enum status_code extint_chan_disable_callback(
-	const uint8_t channel,
-	const enum extint_callback_type type)
+    const uint8_t channel,
+    const enum extint_callback_type type)
 {
-	if (type == EXTINT_CALLBACK_TYPE_DETECT) {
-		Eic *const eic = _extint_get_eic_from_channel(channel);
+    if (type == EXTINT_CALLBACK_TYPE_DETECT) {
+        Eic *const eic = _extint_get_eic_from_channel(channel);
 
-		eic->INTENCLR.reg = (1UL << channel);
-	}
-	else {
-		Assert(false);
-		return STATUS_ERR_INVALID_ARG;
-	}
+        eic->INTENCLR.reg = (1UL << channel);
+    }
+    else {
+        Assert(false);
+        return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -211,22 +211,22 @@ enum status_code extint_chan_disable_callback(
  */
 uint8_t extint_get_current_channel(void)
 {
-	return _current_channel;
+    return _current_channel;
 }
 
 /** Handler for the EXTINT hardware module interrupt. */
 void EIC_Handler(void)
 {
-	/* Find any triggered channels, run associated callback handlers */
-	for (_current_channel = 0; _current_channel < EIC_NUMBER_OF_INTERRUPTS ; _current_channel++) {
-		if (extint_chan_is_detected(_current_channel)) {
-			/* Clear flag */
-			extint_chan_clear_detected(_current_channel);
-			/* Find any associated callback entries in the callback table */
-			if (_extint_dev.callbacks[_current_channel] != NULL) {
-				/* Run the registered callback */
-				_extint_dev.callbacks[_current_channel]();
-			}
-		}
-	}
+    /* Find any triggered channels, run associated callback handlers */
+    for (_current_channel = 0; _current_channel < EIC_NUMBER_OF_INTERRUPTS ; _current_channel++) {
+        if (extint_chan_is_detected(_current_channel)) {
+            /* Clear flag */
+            extint_chan_clear_detected(_current_channel);
+            /* Find any associated callback entries in the callback table */
+            if (_extint_dev.callbacks[_current_channel] != NULL) {
+                /* Run the registered callback */
+                _extint_dev.callbacks[_current_channel]();
+            }
+        }
+    }
 }

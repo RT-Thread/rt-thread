@@ -29,15 +29,15 @@
  */
 /*----------------------------------------------------------------------------
  SigmaTel Inc
- $Archive: /Fatfs/FileSystem/Fat32/higherapi/DeleteTree.c $              
- $Revision: 16 $                                       
- $Date: 10/08/03 2:53p $      
+ $Archive: /Fatfs/FileSystem/Fat32/higherapi/DeleteTree.c $
+ $Revision: 16 $
+ $Date: 10/08/03 2:53p $
  Description: DeleteTree.c
  Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -47,12 +47,12 @@
 #include "diroffset.h"
 
 /*----------------------------------------------------------------------------
-		Extern Declarations
+        Extern Declarations
 ----------------------------------------------------------------------------*/
 extern RtStatus_t FindNext(int32_t HandleNumber, FindData_t * _finddata);
 extern RtStatus_t FindFirst(FindData_t * _finddata, uint8_t * FileName);
 /*----------------------------------------------------------------------------
-		Global Declarations
+        Global Declarations
 ----------------------------------------------------------------------------*/
 RtStatus_t DeleteAllRecords(int32_t StartingCluster, FindData_t * _finddata);
 RtStatus_t FileRemove(int32_t RecordNumber, int32_t HandleNumber);
@@ -68,7 +68,7 @@ void ClearData(FindData_t * _finddata);
    Inputs:        1) Pointer to the directory path
 
    Outputs:       Returns 0 on success else an error code
-                   
+
    Description:   Deletes all the files and directories of the specified path
 <
 ----------------------------------------------------------------------------*/
@@ -124,10 +124,10 @@ RtStatus_t DeleteTree(uint8_t * filePath)
    FunctionType:  Reentrant
 
    Inputs:        1) StartingCluster
-                  2) FindData_t structure  
+                  2) FindData_t structure
 
-   Outputs:       Returns an Error if function fails 
-                   
+   Outputs:       Returns an Error if function fails
+
    Description:   Deletes all the files and directories of the specified path
 <
 ----------------------------------------------------------------------------*/
@@ -146,7 +146,7 @@ RtStatus_t DeleteAllRecords(int32_t StartingCluster, FindData_t * _finddata)
     while (1) {
         TemphandleNumber = HandleNumber;
         if ((HandleNumber = FindFirst(_finddata, (uint8_t *) Buf)) < 0) {
-            /* FindFirst function returns handle number with setting mode = READ + DIRECTORY 
+            /* FindFirst function returns handle number with setting mode = READ + DIRECTORY
                so we have to set write mode for this handle */
             HandleNumber = TemphandleNumber;
             Handle[HandleNumber].HandleActive = 1;
@@ -215,7 +215,7 @@ RtStatus_t DeleteAllRecords(int32_t StartingCluster, FindData_t * _finddata)
    FunctionType:  Reentrant
 
    Inputs:        1) FindData_t Structure
-                  
+
    Outputs:       Cleares FindData_t Structure
 <
 ----------------------------------------------------------------------------*/
@@ -236,12 +236,12 @@ void ClearData(FindData_t * _finddata)
    FunctionType:  Reentrant
 
    Inputs:        1) Handle Number
-                  2) FindData_t Structure  
+                  2) FindData_t Structure
                   3) Starting Cluster
 
    Outputs:       Returns SUCCESS on success else an Error Code
-                   
-   Description:   Changes to low level directory if available within the given directory 
+
+   Description:   Changes to low level directory if available within the given directory
                   and updates the Handle
 <
 ----------------------------------------------------------------------------*/
@@ -264,7 +264,7 @@ RtStatus_t ChangeToLowLevelDir(int32_t HandleNumber, FindData_t * _finddata,
         if ((ReadDirectoryRecord(HandleNumber, 0, Buffer)) <= 0)
             return ERROR_OS_FILESYSTEM_NO_MATCHING_RECORD;
 
-        // sdk2.6 changed this from right shift to a left shift.   
+        // sdk2.6 changed this from right shift to a left shift.
         ClusterNumber =
             ((FSGetWord(Buffer, DIR_FSTCLUSLOOFFSET)) |
              (FSGetWord(Buffer, DIR_FSTCLUSHIOFFSET) << 16));
@@ -314,10 +314,10 @@ RtStatus_t ChangeToLowLevelDir(int32_t HandleNumber, FindData_t * _finddata,
    FunctionType:  Reentrant
 
    Inputs:        1) Handle Number
-                  2) Starting Cluster  
+                  2) Starting Cluster
 
-   Outputs:       Updated Record number else an Error 
-                   
+   Outputs:       Updated Record number else an Error
+
    Description:   Updates Record Number as per deleted directory record
 <
 ----------------------------------------------------------------------------*/
@@ -366,13 +366,13 @@ RtStatus_t DelGetRecordNumber(int32_t HandleNumber, int32_t StartingCluster)
    FunctionType:  Reentrant
 
    Inputs:        1) Record Number
-                  2) Handle Number  
+                  2) Handle Number
 
-   Outputs:       Returns SUCCESS on success else an Error Code 
-                   
+   Outputs:       Returns SUCCESS on success else an Error Code
+
    Description:   Updates the handle to associate with the file to be deleted and
-                  deletes the contents of the file i.e. marks all the clusters occupied by 
-	              the file as zero in FAT Table.
+                  deletes the contents of the file i.e. marks all the clusters occupied by
+                  the file as zero in FAT Table.
 
 <
 ----------------------------------------------------------------------------*/
@@ -408,7 +408,7 @@ RtStatus_t FileRemove(int32_t RecordNumber, int32_t HandleNumber)
 
     FileSize = FSGetDWord(Buffer, DIR_FILESIZEOFFSET);
 
-    // sdk2.6 changed this to left shift instead of right shift. 
+    // sdk2.6 changed this to left shift instead of right shift.
     ClusterNumber =
         ((FSGetWord(Buffer, DIR_FSTCLUSLOOFFSET)) | (FSGetWord(Buffer, DIR_FSTCLUSHIOFFSET) << 16));
 
@@ -419,7 +419,7 @@ RtStatus_t FileRemove(int32_t RecordNumber, int32_t HandleNumber)
         /* update the handle to associate with the file to be deleted */
         UpdateHandle(HandleNumber, ClusterNumber);
 
-        /* Delete the contents of the file (i.e. Mark all the clusters occupied by 
+        /* Delete the contents of the file (i.e. Mark all the clusters occupied by
            the file as zero in FAT Table) */
         if ((RetValue = DeleteContent(HandleNumber, 0)) < 0)
             return RetValue;

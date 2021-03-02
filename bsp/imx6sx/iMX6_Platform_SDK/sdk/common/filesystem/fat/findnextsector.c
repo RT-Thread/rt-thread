@@ -30,14 +30,14 @@
 /*----------------------------------------------------------------------------
  SigmaTel Inc
  $Archive: /Fatfs/FileSystem/Fat32/Utility/FindNextSector.c $
- $Revision: 11 $                                       
+ $Revision: 11 $
  $Date: 9/18/03 3:45p $
  Description: FindNextSector.c
- Notes:	
+ Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -96,7 +96,7 @@ RtStatus_t UpdateHandleOffsets(int32_t HandleNumber)
 
    Outputs:       Returns 0 else an error code
 
-   Description:   Finds the next cluster and sector 
+   Description:   Finds the next cluster and sector
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t FindNextSector(int32_t Device, int32_t HandleNumber)

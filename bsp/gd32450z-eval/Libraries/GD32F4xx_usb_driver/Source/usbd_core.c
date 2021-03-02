@@ -59,7 +59,7 @@ void usbd_init (usb_core_handle_struct *pudev, usb_core_id_enum core_id)
 /*!
     \brief      endpoint initialization
     \param[in]  pudev: pointer to usb device instance
-    \param[in]  pep_desc: pointer to usb endpoint descriptor 
+    \param[in]  pep_desc: pointer to usb endpoint descriptor
     \param[out] none
     \retval     none
 */
@@ -68,7 +68,7 @@ void usbd_ep_init (usb_core_handle_struct *pudev, const usb_descriptor_endpoint_
     usb_ep_struct *ep;
 
     uint32_t dev_all_ep_int_en = 0U;
-    uint32_t dev_ep_ctlr = 0U; 
+    uint32_t dev_ep_ctlr = 0U;
 
     uint8_t ep_id = pep_desc->bEndpointAddress & 0x7FU;
     uint8_t ep_type = pep_desc->bmAttributes & USB_EPTYPE_MASK;
@@ -303,8 +303,8 @@ void  usbd_ep_tx (usb_core_handle_struct *pudev, uint8_t ep_addr, uint8_t *pbuf,
             dev_ep_xlen |= ((ep->xfer_len - 1U + ep->endp_mps) / ep->endp_mps) << 19U;
         }
 
-        /* configure the transfer size and packet count as follows: 
-         * xfersize = N * maxpacket + short_packet 
+        /* configure the transfer size and packet count as follows:
+         * xfersize = N * maxpacket + short_packet
          * pktcnt = N + (short_packet exist ? 1 : 0)
          */
         dev_ep_xlen |= ep->xfer_len;

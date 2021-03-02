@@ -39,7 +39,7 @@
              User must resort to HAL_HASHEx_xxx_Start() to enter the last one and retrieve as
              well the computed digest.
 
-        (##) In interrupt mode, API HAL_HASHEx_xxx_Accumulate_IT() must be called for each input buffer, 
+        (##) In interrupt mode, API HAL_HASHEx_xxx_Accumulate_IT() must be called for each input buffer,
              except for the last one.
              User must resort to HAL_HASHEx_xxx_Start_IT() to enter the last one and retrieve as
              well the computed digest.

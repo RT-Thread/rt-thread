@@ -33,7 +33,7 @@ extern void standby_idr(void);
 #if (1 == GCC_COMPILE)
 void wm_pm_standby(void)
 {
-    __asm volatile (            
+    __asm volatile (
         " cpsid            i    \n"  /* disable irq*/
         " dsb                   \n"
         " ldr r0, =0X499        \n"
@@ -76,7 +76,7 @@ void sys_start_standby(int ms)
     {
         return;
     }
-    tls_irq_enable(PMU_GPIO_WAKEUP_INT);    //Open interrupt by default to clear the interrupt flag for IO wake-up      
+    tls_irq_enable(PMU_GPIO_WAKEUP_INT);    //Open interrupt by default to clear the interrupt flag for IO wake-up
     val = tls_reg_read32(HR_PMU_PS_CR);
     val |= 0x01;
     tls_reg_write32(HR_PMU_PS_CR, val);

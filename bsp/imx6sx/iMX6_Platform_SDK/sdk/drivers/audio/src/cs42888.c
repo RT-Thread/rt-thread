@@ -45,26 +45,26 @@ struct imx_i2c_request cs42888_i2c_req;
 
 ////////////////////////////// Macros  ///////////////////////////////////////////
 
-#define DEBUG_ENABLE	1
+#define DEBUG_ENABLE    1
 #if DEBUG_ENABLE
-#define TRACE(fmt, args...)	printf(fmt,##args)
+#define TRACE(fmt, args...)    printf(fmt,##args)
 #else
 #define TRACE(fmt, args...)
 #endif
 
-#define CS42888_REG_WRITE(codec, addr,val)	\
-	do{\
-		if(0!=cs42888_reg_write(codec, addr, val)){\
-			return -1;\
-		}\
-	}while(0)
+#define CS42888_REG_WRITE(codec, addr,val)    \
+    do{\
+        if(0!=cs42888_reg_write(codec, addr, val)){\
+            return -1;\
+        }\
+    }while(0)
 
-#define CS42888_REG_read(codec, addr, val)	\
-	do{\
-		if(0!=cs42888_reg_read(codec, addr, &val)){\
-			return -1;\
-		}\
-	}while(0)
+#define CS42888_REG_read(codec, addr, val)    \
+    do{\
+        if(0!=cs42888_reg_read(codec, addr, &val)){\
+            return -1;\
+        }\
+    }while(0)
 
 ////////////////////////////Local variables and functions /////////////////////////////////////////
 static void cs42888_i2c_init(audio_codec_p codec)
@@ -111,13 +111,13 @@ int32_t cs42888_init(void *priv)
 
 int32_t cs42888_dev_info(void *priv, uint8_t *reg_data)
 {
-	audio_codec_p codec = (audio_codec_p) priv;
+    audio_codec_p codec = (audio_codec_p) priv;
 
-	if (cs42888_reg_read(codec, CS42888_REG_CHIP_ID_REV, reg_data) != 0) {
-		return -1;
-	}
+    if (cs42888_reg_read(codec, CS42888_REG_CHIP_ID_REV, reg_data) != 0) {
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int32_t cs42888_config(void *priv, audio_dev_para_p para)
@@ -127,20 +127,20 @@ int32_t cs42888_config(void *priv, audio_dev_para_p para)
     CS42888_REG_WRITE(codec, CS42888_REG_PWR_CTRL, CS42888_REG_PWR_CTRL_BIT_PDN_EN);    // Power up dac, and enter low power mode
 
     if (AUDIO_BUS_MODE_MASTER == para->bus_mode) {
-        CS42888_REG_WRITE(codec, CS42888_REG_FUNC_MODE, CS42888_REG_FUNC_MODE_BITS_DAC_FM_MASTER_4_50K | 
-				CS42888_REG_FUNC_MODE_BITS_ADC_FM_MASTER_4_50K | 
-				CS42888_REG_FUNC_MODE_BITS_ADC_MCLK_512FS);   // SSM mode, X512 (32*2*4), master
+        CS42888_REG_WRITE(codec, CS42888_REG_FUNC_MODE, CS42888_REG_FUNC_MODE_BITS_DAC_FM_MASTER_4_50K |
+                CS42888_REG_FUNC_MODE_BITS_ADC_FM_MASTER_4_50K |
+                CS42888_REG_FUNC_MODE_BITS_ADC_MCLK_512FS);   // SSM mode, X512 (32*2*4), master
     } else {
-	printf("CS42888 configured as slave.\n");
-	if((SAMPLERATE_44_1KHz == para->sample_rate) || (SAMPLERATE_48KHz == para->sample_rate)){
-        	CS42888_REG_WRITE(codec, CS42888_REG_FUNC_MODE, CS42888_REG_FUNC_MODE_BITS_DAC_FM_SLAVE_AUTO | 
-				CS42888_REG_FUNC_MODE_BITS_ADC_FM_SLAVE_AUTO | 
-				CS42888_REG_FUNC_MODE_BITS_ADC_MCLK_256FS);   //  X256 (32*2*4), slave
-	}else if((SAMPLERATE_32KHz == para->sample_rate) || (SAMPLERATE_16KHz == para->sample_rate)){
-        	CS42888_REG_WRITE(codec, CS42888_REG_FUNC_MODE, CS42888_REG_FUNC_MODE_BITS_DAC_FM_SLAVE_AUTO | 
-				CS42888_REG_FUNC_MODE_BITS_ADC_FM_SLAVE_AUTO | 
-				CS42888_REG_FUNC_MODE_BITS_ADC_MCLK_384FS);  
-	}
+    printf("CS42888 configured as slave.\n");
+    if((SAMPLERATE_44_1KHz == para->sample_rate) || (SAMPLERATE_48KHz == para->sample_rate)){
+            CS42888_REG_WRITE(codec, CS42888_REG_FUNC_MODE, CS42888_REG_FUNC_MODE_BITS_DAC_FM_SLAVE_AUTO |
+                CS42888_REG_FUNC_MODE_BITS_ADC_FM_SLAVE_AUTO |
+                CS42888_REG_FUNC_MODE_BITS_ADC_MCLK_256FS);   //  X256 (32*2*4), slave
+    }else if((SAMPLERATE_32KHz == para->sample_rate) || (SAMPLERATE_16KHz == para->sample_rate)){
+            CS42888_REG_WRITE(codec, CS42888_REG_FUNC_MODE, CS42888_REG_FUNC_MODE_BITS_DAC_FM_SLAVE_AUTO |
+                CS42888_REG_FUNC_MODE_BITS_ADC_FM_SLAVE_AUTO |
+                CS42888_REG_FUNC_MODE_BITS_ADC_MCLK_384FS);
+    }
     }
     //Interface Format Setting
     CS42888_REG_WRITE(codec, CS42888_REG_INF_FMT, CS42888_REG_INF_FMT_BIT_AUX_DIF_I2S |

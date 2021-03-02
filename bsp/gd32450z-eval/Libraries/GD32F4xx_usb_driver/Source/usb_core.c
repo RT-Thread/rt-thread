@@ -108,7 +108,7 @@ void *usb_fifo_read (uint8_t *dest, uint16_t len)
 
     for (i = 0U; i < count32b; i++) {
         *(__packed uint32_t *)dest = *fifo;
-        
+
         dest += 4U;
     }
 
@@ -169,7 +169,7 @@ usb_status_enum usb_core_select (usb_core_handle_struct *pudev, usb_core_id_enum
 #ifdef USB_ULPI_PHY_ENABLED
         pudev->cfg.phy_interface = USB_CORE_ULPI_PHY;
 #elif defined(USB_EMBEDDED_PHY_ENABLED)
-        pudev->cfg.phy_interface = USB_CORE_EMBEDDED_PHY; 
+        pudev->cfg.phy_interface = USB_CORE_EMBEDDED_PHY;
 #endif /* USB_ULPI_PHY_ENABLED */
 
 #ifdef USBHS_INTERNAL_DMA_ENABLED
@@ -191,7 +191,7 @@ usb_status_enum usb_core_select (usb_core_handle_struct *pudev, usb_core_id_enum
 }
 
 /*!
-    \brief      initializes the USB controller registers and 
+    \brief      initializes the USB controller registers and
                 prepares the core device mode or host mode operation
     \param[in]  pudev: pointer to usb device
     \param[out] none
@@ -371,7 +371,7 @@ usb_status_enum usb_hostcore_init (usb_core_handle_struct *pudev)
 
     /* initialize host configuration register */
     if (USB_CORE_ULPI_PHY == pudev->cfg.phy_interface) {
-        USB_FSLSCLOCK_INIT(HCTLR_30_60_MHZ); 
+        USB_FSLSCLOCK_INIT(HCTLR_30_60_MHZ);
     } else {
         USB_FSLSCLOCK_INIT(HCTLR_48_MHZ);
     }
@@ -820,7 +820,7 @@ void usb_host_stop(usb_core_handle_struct *pudev)
 #ifdef USBFS_CORE
 
 /* USB endpoint Tx FIFO size */
-static uint16_t USBFS_TX_FIFO_SIZE[USBFS_MAX_DEV_EPCOUNT] = 
+static uint16_t USBFS_TX_FIFO_SIZE[USBFS_MAX_DEV_EPCOUNT] =
 {
     (uint16_t)TX0_FIFO_FS_SIZE,
     (uint16_t)TX1_FIFO_FS_SIZE,
@@ -830,7 +830,7 @@ static uint16_t USBFS_TX_FIFO_SIZE[USBFS_MAX_DEV_EPCOUNT] =
 
 #elif defined(USBHS_CORE)
 
-uint16_t USBHS_TX_FIFO_SIZE[USBHS_MAX_DEV_EPCOUNT] = 
+uint16_t USBHS_TX_FIFO_SIZE[USBHS_MAX_DEV_EPCOUNT] =
 {
     (uint16_t)TX0_FIFO_HS_SIZE,
     (uint16_t)TX1_FIFO_HS_SIZE,

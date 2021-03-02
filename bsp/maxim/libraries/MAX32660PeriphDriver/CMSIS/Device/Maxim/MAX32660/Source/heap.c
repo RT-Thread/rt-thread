@@ -2,7 +2,7 @@
  * @file    heap.c
  * @brief   System level setup help
  */
- 
+
 /*******************************************************************************
  * Copyright (C) 2016 Maxim Integrated Products, Inc., All Rights Reserved.
  *
@@ -38,8 +38,8 @@
  * $Revision: 40072 $
  *
  ******************************************************************************/
- 
-/* **** Includes **** */ 
+
+/* **** Includes **** */
 #include <stdint.h>
 #include <errno.h>
 #include <unistd.h>
@@ -49,7 +49,7 @@
  * @detail Increase program data space
  * @detail Malloc and related functions depend on this
  */
- 
+
 /* **** declarations **** */
 static char *heap_end = 0;
 extern unsigned int __HeapBase;

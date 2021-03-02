@@ -151,17 +151,17 @@ HAL_StatusTypeDef HAL_FIREWALL_Config(FIREWALL_InitTypeDef * fw_init)
 
   /* Protected code segment start address configuration */
   WRITE_REG(FIREWALL->CSSA, (FW_CSSA_ADD & fw_init->CodeSegmentStartAddress));
-	/* Protected code segment length configuration */
+    /* Protected code segment length configuration */
   WRITE_REG(FIREWALL->CSL, (FW_CSL_LENG & fw_init->CodeSegmentLength));
 
   /* Protected non volatile data segment start address configuration */
   WRITE_REG(FIREWALL->NVDSSA, (FW_NVDSSA_ADD & fw_init->NonVDataSegmentStartAddress));
-	/* Protected non volatile data segment length configuration */
+    /* Protected non volatile data segment length configuration */
   WRITE_REG(FIREWALL->NVDSL, (FW_NVDSL_LENG & fw_init->NonVDataSegmentLength));
 
   /* Protected volatile data segment start address configuration */
   WRITE_REG(FIREWALL->VDSSA, (FW_VDSSA_ADD & fw_init->VDataSegmentStartAddress));
-	/* Protected volatile data segment length configuration */
+    /* Protected volatile data segment length configuration */
   WRITE_REG(FIREWALL->VDSL, (FW_VDSL_LENG & fw_init->VDataSegmentLength));
 
   /* Set Firewall Configuration Register VDE and VDS bits

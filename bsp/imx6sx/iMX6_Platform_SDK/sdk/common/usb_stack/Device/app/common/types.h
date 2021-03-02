@@ -6,27 +6,27 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
  *
  * @file types.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
- * @date 
+ * @date
  *
  * @brief The file contains definitions of datatypes.
  *
@@ -59,31 +59,31 @@
 #define _CODE_PTR_ *
 
 #ifndef TRUE
-#define FALSE 0 
+#define FALSE 0
 #define TRUE 1
 #endif
 
-#define BYTESWAP16(x)	(uint_16)((((x) & 0xFF00) >> 0x8) | (((x) & 0xFF) << 0x8))
-#define BYTESWAP32(val)	(uint_32)((BYTESWAP16((uint_32)(val) & (uint_32)0xFFFF) << 0x10) |  \
-					(BYTESWAP16((uint_32)((val) >> 0x10))))
+#define BYTESWAP16(x)    (uint_16)((((x) & 0xFF00) >> 0x8) | (((x) & 0xFF) << 0x8))
+#define BYTESWAP32(val)    (uint_32)((BYTESWAP16((uint_32)(val) & (uint_32)0xFFFF) << 0x10) |  \
+                    (BYTESWAP16((uint_32)((val) >> 0x10))))
 
 #ifndef LITTLE_ENDIAN
-#define ieee_htons(x)		(uint_16)(x)
-#define ieee_htonl(x)		(uint_32)(x)
-#define ieee_ntohs(x)		(uint_16)(x)
-#define ieee_ntohl(x)		(uint_32)(x)
+#define ieee_htons(x)        (uint_16)(x)
+#define ieee_htonl(x)        (uint_32)(x)
+#define ieee_ntohs(x)        (uint_16)(x)
+#define ieee_ntohl(x)        (uint_32)(x)
 #else
-#define ieee_htons(x)		BYTESWAP16(x)
-#define ieee_htonl(x)		BYTESWAP32(x)
-#define ieee_ntohs(x)		BYTESWAP16(x)
-#define ieee_ntohl(x)		BYTESWAP32(x)
+#define ieee_htons(x)        BYTESWAP16(x)
+#define ieee_htonl(x)        BYTESWAP32(x)
+#define ieee_ntohs(x)        BYTESWAP16(x)
+#define ieee_ntohl(x)        BYTESWAP32(x)
 #endif
 
 #define UNUSED(x)   (void)x;
 /******************************************************************************
  * Types
  *****************************************************************************/
-typedef void _PTR_		pointer;          /* Machine representation of a pointer */
+typedef void _PTR_        pointer;          /* Machine representation of a pointer */
 typedef unsigned char   uint_8;           /* 8-bit*/
 typedef   signed char    int_8;           /* 8-bit*/
 
@@ -168,4 +168,4 @@ typedef union _DWORD
  * Global Functions - None
  *****************************************************************************/
 
-#endif            
+#endif

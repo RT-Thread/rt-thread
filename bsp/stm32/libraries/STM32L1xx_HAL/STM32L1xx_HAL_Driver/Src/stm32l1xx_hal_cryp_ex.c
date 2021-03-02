@@ -3,11 +3,11 @@
   * @file    stm32l1xx_hal_cryp_ex.c
   * @author  MCD Application Team
   * @brief   CRYPEx HAL module driver.
-  *    
-  *          This file provides firmware functions to manage the following 
+  *
+  *          This file provides firmware functions to manage the following
   *          functionalities of the Cryptography (CRYP) extension peripheral:
   *           + Computation completed callback.
-  *         
+  *
   ******************************************************************************
   * @attention
   *
@@ -19,8 +19,8 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************  
-  */ 
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l1xx_hal.h"
@@ -50,13 +50,13 @@
   */
 
 
-/** @defgroup CRYPEx_Exported_Functions_Group1 Extended features functions 
- *  @brief    Extended features functions. 
+/** @defgroup CRYPEx_Exported_Functions_Group1 Extended features functions
+ *  @brief    Extended features functions.
  *
-@verbatim   
+@verbatim
  ===============================================================================
                  ##### Extended features functions #####
- =============================================================================== 
+ ===============================================================================
     [..]  This section provides callback functions:
       (+) Computation completed.
 
@@ -77,7 +77,7 @@ __weak void HAL_CRYPEx_ComputationCpltCallback(CRYP_HandleTypeDef *hcryp)
 
   /* NOTE : This function Should not be modified, when the callback is needed,
             the HAL_CRYPEx_ComputationCpltCallback could be implemented in the user file
-   */ 
+   */
 }
 
 /**

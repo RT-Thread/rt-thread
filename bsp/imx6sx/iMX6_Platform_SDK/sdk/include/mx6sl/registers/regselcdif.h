@@ -1517,12 +1517,12 @@ typedef union _hw_lcdif_ctrl2
  * 2,4,6,..). This bitfield must be 0 in DVI mode.
  *
  * Values:
- * - RGB = 0x0 - 
- * - RBG = 0x1 - 
- * - GBR = 0x2 - 
- * - GRB = 0x3 - 
- * - BRG = 0x4 - 
- * - BGR = 0x5 - 
+ * - RGB = 0x0 -
+ * - RBG = 0x1 -
+ * - GBR = 0x2 -
+ * - GRB = 0x3 -
+ * - BRG = 0x4 -
+ * - BGR = 0x5 -
  */
 //@{
 #define BP_LCDIF_CTRL2_EVEN_LINE_PATTERN      (12)      //!< Bit position for LCDIF_CTRL2_EVEN_LINE_PATTERN.
@@ -1542,12 +1542,12 @@ typedef union _hw_lcdif_ctrl2
 //! @brief Macro to simplify usage of value macros.
 #define BF_LCDIF_CTRL2_EVEN_LINE_PATTERN_V(v) BF_LCDIF_CTRL2_EVEN_LINE_PATTERN(BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__##v)
 
-#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__RGB (0x0) //!< 
-#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__RBG (0x1) //!< 
-#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__GBR (0x2) //!< 
-#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__GRB (0x3) //!< 
-#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__BRG (0x4) //!< 
-#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__BGR (0x5) //!< 
+#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__RGB (0x0) //!<
+#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__RBG (0x1) //!<
+#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__GBR (0x2) //!<
+#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__GRB (0x3) //!<
+#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__BRG (0x4) //!<
+#define BV_LCDIF_CTRL2_EVEN_LINE_PATTERN__BGR (0x5) //!<
 //@}
 
 /*! @name Register LCDIF_CTRL2, field ODD_LINE_PATTERN[18:16] (RW)
@@ -1556,12 +1556,12 @@ typedef union _hw_lcdif_ctrl2
  * 1,3,5,..). This bitfield must be 0 in DVI mode.
  *
  * Values:
- * - RGB = 0x0 - 
- * - RBG = 0x1 - 
- * - GBR = 0x2 - 
- * - GRB = 0x3 - 
- * - BRG = 0x4 - 
- * - BGR = 0x5 - 
+ * - RGB = 0x0 -
+ * - RBG = 0x1 -
+ * - GBR = 0x2 -
+ * - GRB = 0x3 -
+ * - BRG = 0x4 -
+ * - BGR = 0x5 -
  */
 //@{
 #define BP_LCDIF_CTRL2_ODD_LINE_PATTERN      (16)      //!< Bit position for LCDIF_CTRL2_ODD_LINE_PATTERN.
@@ -1581,12 +1581,12 @@ typedef union _hw_lcdif_ctrl2
 //! @brief Macro to simplify usage of value macros.
 #define BF_LCDIF_CTRL2_ODD_LINE_PATTERN_V(v) BF_LCDIF_CTRL2_ODD_LINE_PATTERN(BV_LCDIF_CTRL2_ODD_LINE_PATTERN__##v)
 
-#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__RGB (0x0) //!< 
-#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__RBG (0x1) //!< 
-#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__GBR (0x2) //!< 
-#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__GRB (0x3) //!< 
-#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__BRG (0x4) //!< 
-#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__BGR (0x5) //!< 
+#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__RGB (0x0) //!<
+#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__RBG (0x1) //!<
+#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__GBR (0x2) //!<
+#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__GRB (0x3) //!<
+#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__BRG (0x4) //!<
+#define BV_LCDIF_CTRL2_ODD_LINE_PATTERN__BGR (0x5) //!<
 //@}
 
 /*! @name Register LCDIF_CTRL2, field BURST_LEN_8[20] (RW)
@@ -1618,11 +1618,11 @@ typedef union _hw_lcdif_ctrl2
  * when it is acting as a bus master. Default is 2 outstanding transactions.
  *
  * Values:
- * - REQ_1 = 0x0 - 
- * - REQ_2 = 0x1 - 
- * - REQ_4 = 0x2 - 
- * - REQ_8 = 0x3 - 
- * - REQ_16 = 0x4 - 
+ * - REQ_1 = 0x0 -
+ * - REQ_2 = 0x1 -
+ * - REQ_4 = 0x2 -
+ * - REQ_8 = 0x3 -
+ * - REQ_16 = 0x4 -
  */
 //@{
 #define BP_LCDIF_CTRL2_OUTSTANDING_REQS      (21)      //!< Bit position for LCDIF_CTRL2_OUTSTANDING_REQS.
@@ -1642,11 +1642,11 @@ typedef union _hw_lcdif_ctrl2
 //! @brief Macro to simplify usage of value macros.
 #define BF_LCDIF_CTRL2_OUTSTANDING_REQS_V(v) BF_LCDIF_CTRL2_OUTSTANDING_REQS(BV_LCDIF_CTRL2_OUTSTANDING_REQS__##v)
 
-#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_1 (0x0) //!< 
-#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_2 (0x1) //!< 
-#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_4 (0x2) //!< 
-#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_8 (0x3) //!< 
-#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_16 (0x4) //!< 
+#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_1 (0x0) //!<
+#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_2 (0x1) //!<
+#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_4 (0x2) //!<
+#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_8 (0x3) //!<
+#define BV_LCDIF_CTRL2_OUTSTANDING_REQS__REQ_16 (0x4) //!<
 //@}
 
 //-------------------------------------------------------------------------------------------

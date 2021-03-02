@@ -21,6 +21,6 @@ int esp_02_device_init()
     rt_pin_write(ESP8266_CH_PD_Pin,PIN_HIGH) ;
     rt_pin_write(ESP8266_RST,PIN_HIGH) ;
 
-    return RT_EOK ;	
+    return RT_EOK ;
 }
 INIT_DEVICE_EXPORT(esp_02_device_init);

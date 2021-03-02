@@ -31,7 +31,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
 
     hspi->init.ss_en    = DISABLE;
     hspi->init.crc_calc = DISABLE;
-    
+
     /* config spi mode */
     if (cfg->mode & RT_SPI_SLAVE)
     {
@@ -74,7 +74,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     {
         hspi->init.first_bit = SPI_FIRSTBIT_LSB;
     }
-    
+
     if (cfg->mode & RT_SPI_CPOL)
     {
         hspi->init.polarity = SPI_CPOL_HIGH;
@@ -145,7 +145,7 @@ rt_err_t spi_configure(struct rt_spi_device *device,
     {
         hspi->init.baud = SPI_BAUD_256;
     }
-    
+
     ald_spi_init(hspi);
     return RT_EOK;
 }
@@ -159,7 +159,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
-    
+
     hspi = (spi_handle_t *)device->bus->parent.user_data;
     cs = device->parent.user_data;
 
@@ -222,7 +222,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             rt_pin_write(cs->pin, 0);
         }
-        
+
         if (message->cs_release)
         {
             rt_pin_write(cs->pin, 1);
@@ -302,17 +302,17 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     rt_device_register(spi_bus_dev0, "spi00", RT_DEVICE_FLAG_RDWR);
-    
+
     /* SPI0_NSS = PA15 = PIN 50 */
     result = es32f3_spi_device_attach(50, "spi0", "spi00");
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
 
 #ifdef BSP_USING_SPI1
@@ -343,17 +343,17 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     rt_device_register(spi_bus_dev0, "spi10", RT_DEVICE_FLAG_RDWR);
-    
+
     /* SPI1_NSS = PC00 = PIN 8 */
     result = es32f3_spi_device_attach(8, "spi1", "spi10");
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
 
 #ifdef BSP_USING_SPI2
@@ -384,17 +384,17 @@ int rt_hw_spi_init(void)
     {
         return result;
     }
-    
+
     rt_device_register(spi_bus_dev0, "spi20", RT_DEVICE_FLAG_RDWR);
-    
+
     /* SPI2_NSS = PC04 = PIN 24 */
     result = es32f3_spi_device_attach(39, "spi2", "spi20");
-    
+
     if (result != RT_EOK)
     {
         return result;
     }
-    
+
 #endif
     return result;
 }

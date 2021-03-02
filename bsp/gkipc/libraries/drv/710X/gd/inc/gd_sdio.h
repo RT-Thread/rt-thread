@@ -1,6 +1,6 @@
 #ifndef _GD_SDIO_H_
 #define _GD_SDIO_H_
- 
+
 #include <gtypes.h>
 #include <gmodids.h>
 
@@ -14,7 +14,7 @@
 ******************************************************************************/
 typedef struct
 {
-    U32    isConnected;   
+    U32    isConnected;
     U32    sectorSize;
     U32    sectorCount;
     U32    mediaType;
@@ -55,8 +55,8 @@ typedef enum {
     GAPI_SDIO_TRANSFER_TYPE_SECURE,         //!< Spezial secure transfer mode for SD-Cards
     GAPI_SDIO_TRANSFER_TYPE_WIFI
 } GD_SDIO_TransferTypeEnumT;
- 
- enum card_type 
+
+ enum card_type
  {
      CARDTYPE_NONE = 0,
      CARDTYPE_MMC,
@@ -64,7 +64,7 @@ typedef enum {
      CARDTYPE_SD20,
      CARDTYPE_SDHC
  };
- 
+
 
 /*!
 ****************************************************************************
@@ -101,15 +101,15 @@ typedef struct {
        \ref GAPI_SDIO_VersionEnumT "GAPI_SDIO_VERSION".
     */
     GD_SDIO_VersionEnumT version;
-	GD_SDIO_TransferTypeEnumT type;
+    GD_SDIO_TransferTypeEnumT type;
     /*!
     ** The handle specific notification function.
     */
     GD_SDIO_NotifyFuncT  notifyFunc;
 
-	GD_SDIO_IRQFuncT	irqFunc;
+    GD_SDIO_IRQFuncT    irqFunc;
 
-	GD_SDIO_RESETFuncT resetFunc;
+    GD_SDIO_RESETFuncT resetFunc;
     /*!
     ** Optional data pointer for the notification function.
     */
@@ -117,7 +117,7 @@ typedef struct {
     /*!
        Flag to request DMA for read/write transfer operation.
     */
-    U32       			isUseDmaWay;
+    U32                   isUseDmaWay;
 } GD_SDIO_OpenParamsT;
 
 /*cid info */

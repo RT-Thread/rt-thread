@@ -24,9 +24,9 @@ void SPI_Init(SPI_InitStruType* SPI_InitStruct)
     Temp = SystemCoreClock / (SPI_InitStruct->SPI_Freq * 2);
     if(Temp > 254)
         Temp = 255;
-    
+
     SPI0->CKS.CKS = Temp;
-    
+
     SPI0->CON.DFS = SPI_InitStruct->SPI_Df;
     SPI0->CON.MS = SPI_InitStruct->SPI_Mode;
     SPI0->CON.DW = SPI_InitStruct->SPI_DW;
@@ -214,7 +214,7 @@ ITStatus SPI_GetITStatus(SPI_TYPE_IT Flag)
     else
         bitstatus = RESET;
 
-    return  bitstatus;    
+    return  bitstatus;
 }
 
 /***************************************************************

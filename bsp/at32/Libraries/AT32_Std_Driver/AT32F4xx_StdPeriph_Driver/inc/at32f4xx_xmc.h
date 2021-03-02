@@ -697,7 +697,7 @@ typedef struct
 /** @defgroup XMC_Exported_Functions
   * @{
   */
-  
+
 void XMC_ExtTimingConfig(uint32_t XMC_SubBank, uint8_t W2W_Timing, uint8_t R2R_Timing);
 void XMC_NORSRAMReset(uint32_t XMC_Bank);
 void XMC_NANDReset(uint32_t XMC_Bank);

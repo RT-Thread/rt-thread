@@ -1,5 +1,5 @@
 /****************************************************************************************************//**
-* $Id$		LPC407x_8x_177x_8x.h			2012-04-25
+* $Id$        LPC407x_8x_177x_8x.h            2012-04-25
 *//**
  * @file     LPC407x_8x_177x_8x.h
  *
@@ -7,8 +7,8 @@
  *           NXP LPC407x_8x_177x_8x.
  * @version  V0.7
  * @date     20. June 2012
- * @author	NXP MCU SW Application Team
-* 
+ * @author    NXP MCU SW Application Team
+*
 * Copyright(C) 2012, NXP Semiconductor
 * All rights reserved.
 *
@@ -189,8 +189,8 @@ typedef struct
   __IO uint32_t CCLKSEL;                    /*!< Offset: 0x104 (R/W)  CPU Clock Selection Register */
   __IO uint32_t USBCLKSEL;                  /*!< Offset: 0x108 (R/W)  USB Clock Selection Register */
   __IO uint32_t CLKSRCSEL;                  /*!< Offset: 0x10C (R/W)  Clock Source Select Register */
-  __IO uint32_t	CANSLEEPCLR;                /*!< Offset: 0x110 (R/W)  CAN Sleep Clear Register */
-  __IO uint32_t	CANWAKEFLAGS;               /*!< Offset: 0x114 (R/W)  CAN Wake-up Flags Register */
+  __IO uint32_t    CANSLEEPCLR;                /*!< Offset: 0x110 (R/W)  CAN Sleep Clear Register */
+  __IO uint32_t    CANWAKEFLAGS;               /*!< Offset: 0x114 (R/W)  CAN Wake-up Flags Register */
        uint32_t RESERVED4[10];
   __IO uint32_t EXTINT;                     /*!< Offset: 0x140 (R/W)  External Interrupt Flag Register */
        uint32_t RESERVED5[1];
@@ -202,9 +202,9 @@ typedef struct
   __IO uint32_t SCS;                        /*!< Offset: 0x1A0 (R/W)  System Controls and Status Register */
   __IO uint32_t IRCTRIM;                    /*!< Offset: 0x1A4 (R/W) Clock Dividers                     */
   __IO uint32_t PCLKSEL;                    /*!< Offset: 0x1A8 (R/W)  Peripheral Clock Selection Register */
-       uint32_t RESERVED8;					
-  __IO uint32_t PBOOST;						/*!< Offset: 0x1B0 (R/W)  Power Boost control register */	   
-  __IO uint32_t SPIFICLKSEL;					
+       uint32_t RESERVED8;
+  __IO uint32_t PBOOST;                        /*!< Offset: 0x1B0 (R/W)  Power Boost control register */
+  __IO uint32_t SPIFICLKSEL;
   __IO uint32_t LCD_CFG;                    /*!< Offset: 0x1B8 (R/W)  LCD Configuration and clocking control Register */
        uint32_t RESERVED10[1];
   __IO uint32_t USBIntSt;                   /*!< Offset: 0x1C0 (R/W)  USB Interrupt Status Register */
@@ -422,16 +422,16 @@ typedef struct
   struct {
   __O  uint32_t DATA;
   } WR_DATA_DWORD;
-  
+
   struct {
   __O  uint16_t DATA;
        uint16_t RESERVED;
   }WR_DATA_WORD;
-  
+
   struct {
   __O  uint8_t  DATA;
        uint8_t  RESERVED[3];
-  	}WR_DATA_BYTE;
+      }WR_DATA_BYTE;
   };
 } LPC_CRC_TypeDef;
 /*------------- General Purpose Input/Output (GPIO) --------------------------*/
@@ -560,7 +560,7 @@ typedef struct
   __IO uint32_t MR3;                    /*!< Offset: 0x024 Match Register 3 (R/W) */
   __IO uint32_t CCR;                    /*!< Offset: 0x028 Capture Control Register (R/W) */
   __I  uint32_t CR0;                    /*!< Offset: 0x02C Capture Register 0 (R/ ) */
-  __I  uint32_t CR1;					/*!< Offset: 0x030 Capture Register 1 (R/ ) */
+  __I  uint32_t CR1;                    /*!< Offset: 0x030 Capture Register 1 (R/ ) */
        uint32_t RESERVED0[2];
   __IO uint32_t EMR;                    /*!< Offset: 0x03C External Match Register (R/W) */
        uint32_t RESERVED1[12];
@@ -583,17 +583,17 @@ typedef struct
   __IO uint32_t MR3;                    /*!< Offset: 0x024 Match Register 3 (R/W) */
   __IO uint32_t CCR;                    /*!< Offset: 0x028 Capture Control Register (R/W) */
   __I  uint32_t CR0;                    /*!< Offset: 0x02C Capture Register 0 (R/ ) */
-  __I  uint32_t CR1;					/*!< Offset: 0x030 Capture Register 1 (R/ ) */
-  __I  uint32_t CR2;					/*!< Offset: 0x034 Capture Register 2 (R/ ) */
-  __I  uint32_t CR3;					/*!< Offset: 0x038 Capture Register 3 (R/ ) */
+  __I  uint32_t CR1;                    /*!< Offset: 0x030 Capture Register 1 (R/ ) */
+  __I  uint32_t CR2;                    /*!< Offset: 0x034 Capture Register 2 (R/ ) */
+  __I  uint32_t CR3;                    /*!< Offset: 0x038 Capture Register 3 (R/ ) */
        uint32_t RESERVED0;
-  __IO uint32_t MR4;					/*!< Offset: 0x040 Match Register 4 (R/W) */
-  __IO uint32_t MR5;					/*!< Offset: 0x044 Match Register 5 (R/W) */
-  __IO uint32_t MR6;					/*!< Offset: 0x048 Match Register 6 (R/W) */
-  __IO uint32_t PCR;					/*!< Offset: 0x04C PWM Control Register (R/W) */
-  __IO uint32_t LER;					/*!< Offset: 0x050 Load Enable Register (R/W) */
+  __IO uint32_t MR4;                    /*!< Offset: 0x040 Match Register 4 (R/W) */
+  __IO uint32_t MR5;                    /*!< Offset: 0x044 Match Register 5 (R/W) */
+  __IO uint32_t MR6;                    /*!< Offset: 0x048 Match Register 6 (R/W) */
+  __IO uint32_t PCR;                    /*!< Offset: 0x04C PWM Control Register (R/W) */
+  __IO uint32_t LER;                    /*!< Offset: 0x050 Load Enable Register (R/W) */
        uint32_t RESERVED1[7];
-  __IO uint32_t CTCR;					/*!< Offset: 0x070 Counter Control Register (R/W) */
+  __IO uint32_t CTCR;                    /*!< Offset: 0x070 Counter Control Register (R/W) */
 } LPC_PWM_TypeDef;
 
 /*------------- Universal Asynchronous Receiver Transmitter (UARTx) -----------*/
@@ -638,43 +638,43 @@ typedef struct
 #else
 typedef struct
 {
-	union
-	{
-		__I  uint8_t  RBR;
-		__O  uint8_t  THR;
-		__IO uint8_t  DLL;
-		uint32_t RESERVED0;
-	};
-	union
-	{
-		__IO uint8_t  DLM;
-		__IO uint32_t IER;
-	};
-	union
-	{
-		__I  uint32_t IIR;
-		__O  uint8_t  FCR;
-	};
-	__IO uint8_t  LCR;
-	uint8_t  RESERVED1[7];//Reserved
-	__I  uint8_t  LSR;
-	uint8_t  RESERVED2[7];//Reserved
-	__IO uint8_t  SCR;
-	uint8_t  RESERVED3[3];//Reserved
-	__IO uint32_t ACR;
-	__IO uint8_t  ICR;
-	uint8_t  RESERVED4[3];//Reserved
-	__IO uint8_t  FDR;
-	uint8_t  RESERVED5[7];//Reserved
-	__IO uint8_t  TER;
-	uint8_t  RESERVED8[27];//Reserved
-	__IO uint8_t  RS485CTRL;
-	uint8_t  RESERVED9[3];//Reserved
-	__IO uint8_t  ADRMATCH;
-	uint8_t  RESERVED10[3];//Reserved
-	__IO uint8_t  RS485DLY;
-	uint8_t  RESERVED11[3];//Reserved
-	__I  uint8_t  FIFOLVL;
+    union
+    {
+        __I  uint8_t  RBR;
+        __O  uint8_t  THR;
+        __IO uint8_t  DLL;
+        uint32_t RESERVED0;
+    };
+    union
+    {
+        __IO uint8_t  DLM;
+        __IO uint32_t IER;
+    };
+    union
+    {
+        __I  uint32_t IIR;
+        __O  uint8_t  FCR;
+    };
+    __IO uint8_t  LCR;
+    uint8_t  RESERVED1[7];//Reserved
+    __I  uint8_t  LSR;
+    uint8_t  RESERVED2[7];//Reserved
+    __IO uint8_t  SCR;
+    uint8_t  RESERVED3[3];//Reserved
+    __IO uint32_t ACR;
+    __IO uint8_t  ICR;
+    uint8_t  RESERVED4[3];//Reserved
+    __IO uint8_t  FDR;
+    uint8_t  RESERVED5[7];//Reserved
+    __IO uint8_t  TER;
+    uint8_t  RESERVED8[27];//Reserved
+    __IO uint8_t  RS485CTRL;
+    uint8_t  RESERVED9[3];//Reserved
+    __IO uint8_t  ADRMATCH;
+    uint8_t  RESERVED10[3];//Reserved
+    __IO uint8_t  RS485DLY;
+    uint8_t  RESERVED11[3];//Reserved
+    __I  uint8_t  FIFOLVL;
 }LPC_UART_TypeDef;
 #endif
 
@@ -749,7 +749,7 @@ typedef struct
        uint32_t  RESERVED0[2];
   __IO uint32_t  HDEN;                  /*!< Offset: 0x040 Half duplex Enable Register (R/W) */
        uint32_t  RESERVED1;
-  __IO uint32_t  SCI_CTRL;				/*!< Offset: 0x048 Smart card Interface Control Register (R/W) */
+  __IO uint32_t  SCI_CTRL;                /*!< Offset: 0x048 Smart card Interface Control Register (R/W) */
   __IO uint32_t  RS485CTRL;             /*!< Offset: 0x04C RS-485/EIA-485 Control Register (R/W) */
   __IO uint32_t  ADRMATCH;              /*!< Offset: 0x050 RS-485/EIA-485 address match Register (R/W) */
   __IO uint32_t  RS485DLY;              /*!< Offset: 0x054 RS-485/EIA-485 direction control delay Register (R/W) */
@@ -861,7 +861,7 @@ typedef struct
 /*------------- Pin Connect Block (PINCON) -----------------------------------*/
 typedef struct
 {
-  __IO uint32_t P0_0;				/* 0x000 */
+  __IO uint32_t P0_0;                /* 0x000 */
   __IO uint32_t P0_1;
   __IO uint32_t P0_2;
   __IO uint32_t P0_3;
@@ -870,7 +870,7 @@ typedef struct
   __IO uint32_t P0_6;
   __IO uint32_t P0_7;
 
-  __IO uint32_t P0_8;				/* 0x020 */
+  __IO uint32_t P0_8;                /* 0x020 */
   __IO uint32_t P0_9;
   __IO uint32_t P0_10;
   __IO uint32_t P0_11;
@@ -879,7 +879,7 @@ typedef struct
   __IO uint32_t P0_14;
   __IO uint32_t P0_15;
 
-  __IO uint32_t P0_16;				/* 0x040 */
+  __IO uint32_t P0_16;                /* 0x040 */
   __IO uint32_t P0_17;
   __IO uint32_t P0_18;
   __IO uint32_t P0_19;
@@ -888,7 +888,7 @@ typedef struct
   __IO uint32_t P0_22;
   __IO uint32_t P0_23;
 
-  __IO uint32_t P0_24;				/* 0x060 */
+  __IO uint32_t P0_24;                /* 0x060 */
   __IO uint32_t P0_25;
   __IO uint32_t P0_26;
   __IO uint32_t P0_27;
@@ -897,7 +897,7 @@ typedef struct
   __IO uint32_t P0_30;
   __IO uint32_t P0_31;
 
-  __IO uint32_t P1_0;				/* 0x080 */
+  __IO uint32_t P1_0;                /* 0x080 */
   __IO uint32_t P1_1;
   __IO uint32_t P1_2;
   __IO uint32_t P1_3;
@@ -906,7 +906,7 @@ typedef struct
   __IO uint32_t P1_6;
   __IO uint32_t P1_7;
 
-  __IO uint32_t P1_8;				/* 0x0A0 */
+  __IO uint32_t P1_8;                /* 0x0A0 */
   __IO uint32_t P1_9;
   __IO uint32_t P1_10;
   __IO uint32_t P1_11;
@@ -915,7 +915,7 @@ typedef struct
   __IO uint32_t P1_14;
   __IO uint32_t P1_15;
 
-  __IO uint32_t P1_16;				/* 0x0C0 */
+  __IO uint32_t P1_16;                /* 0x0C0 */
   __IO uint32_t P1_17;
   __IO uint32_t P1_18;
   __IO uint32_t P1_19;
@@ -924,7 +924,7 @@ typedef struct
   __IO uint32_t P1_22;
   __IO uint32_t P1_23;
 
-  __IO uint32_t P1_24;				/* 0x0E0 */
+  __IO uint32_t P1_24;                /* 0x0E0 */
   __IO uint32_t P1_25;
   __IO uint32_t P1_26;
   __IO uint32_t P1_27;
@@ -933,7 +933,7 @@ typedef struct
   __IO uint32_t P1_30;
   __IO uint32_t P1_31;
 
-  __IO uint32_t P2_0;				/* 0x100 */
+  __IO uint32_t P2_0;                /* 0x100 */
   __IO uint32_t P2_1;
   __IO uint32_t P2_2;
   __IO uint32_t P2_3;
@@ -942,7 +942,7 @@ typedef struct
   __IO uint32_t P2_6;
   __IO uint32_t P2_7;
 
-  __IO uint32_t P2_8;				/* 0x120 */
+  __IO uint32_t P2_8;                /* 0x120 */
   __IO uint32_t P2_9;
   __IO uint32_t P2_10;
   __IO uint32_t P2_11;
@@ -951,7 +951,7 @@ typedef struct
   __IO uint32_t P2_14;
   __IO uint32_t P2_15;
 
-  __IO uint32_t P2_16;				/* 0x140 */
+  __IO uint32_t P2_16;                /* 0x140 */
   __IO uint32_t P2_17;
   __IO uint32_t P2_18;
   __IO uint32_t P2_19;
@@ -960,7 +960,7 @@ typedef struct
   __IO uint32_t P2_22;
   __IO uint32_t P2_23;
 
-  __IO uint32_t P2_24;				/* 0x160 */
+  __IO uint32_t P2_24;                /* 0x160 */
   __IO uint32_t P2_25;
   __IO uint32_t P2_26;
   __IO uint32_t P2_27;
@@ -969,7 +969,7 @@ typedef struct
   __IO uint32_t P2_30;
   __IO uint32_t P2_31;
 
-  __IO uint32_t P3_0;				/* 0x180 */
+  __IO uint32_t P3_0;                /* 0x180 */
   __IO uint32_t P3_1;
   __IO uint32_t P3_2;
   __IO uint32_t P3_3;
@@ -978,7 +978,7 @@ typedef struct
   __IO uint32_t P3_6;
   __IO uint32_t P3_7;
 
-  __IO uint32_t P3_8;				/* 0x1A0 */
+  __IO uint32_t P3_8;                /* 0x1A0 */
   __IO uint32_t P3_9;
   __IO uint32_t P3_10;
   __IO uint32_t P3_11;
@@ -987,7 +987,7 @@ typedef struct
   __IO uint32_t P3_14;
   __IO uint32_t P3_15;
 
-  __IO uint32_t P3_16;				/* 0x1C0 */
+  __IO uint32_t P3_16;                /* 0x1C0 */
   __IO uint32_t P3_17;
   __IO uint32_t P3_18;
   __IO uint32_t P3_19;
@@ -996,7 +996,7 @@ typedef struct
   __IO uint32_t P3_22;
   __IO uint32_t P3_23;
 
-  __IO uint32_t P3_24;				/* 0x1E0 */
+  __IO uint32_t P3_24;                /* 0x1E0 */
   __IO uint32_t P3_25;
   __IO uint32_t P3_26;
   __IO uint32_t P3_27;
@@ -1005,7 +1005,7 @@ typedef struct
   __IO uint32_t P3_30;
   __IO uint32_t P3_31;
 
-  __IO uint32_t P4_0;				/* 0x200 */
+  __IO uint32_t P4_0;                /* 0x200 */
   __IO uint32_t P4_1;
   __IO uint32_t P4_2;
   __IO uint32_t P4_3;
@@ -1014,7 +1014,7 @@ typedef struct
   __IO uint32_t P4_6;
   __IO uint32_t P4_7;
 
-  __IO uint32_t P4_8;				/* 0x220 */
+  __IO uint32_t P4_8;                /* 0x220 */
   __IO uint32_t P4_9;
   __IO uint32_t P4_10;
   __IO uint32_t P4_11;
@@ -1023,7 +1023,7 @@ typedef struct
   __IO uint32_t P4_14;
   __IO uint32_t P4_15;
 
-  __IO uint32_t P4_16;				/* 0x240 */
+  __IO uint32_t P4_16;                /* 0x240 */
   __IO uint32_t P4_17;
   __IO uint32_t P4_18;
   __IO uint32_t P4_19;
@@ -1032,7 +1032,7 @@ typedef struct
   __IO uint32_t P4_22;
   __IO uint32_t P4_23;
 
-  __IO uint32_t P4_24;				/* 0x260 */
+  __IO uint32_t P4_24;                /* 0x260 */
   __IO uint32_t P4_25;
   __IO uint32_t P4_26;
   __IO uint32_t P4_27;
@@ -1041,11 +1041,11 @@ typedef struct
   __IO uint32_t P4_30;
   __IO uint32_t P4_31;
 
-  __IO uint32_t P5_0;				/* 0x280 */
+  __IO uint32_t P5_0;                /* 0x280 */
   __IO uint32_t P5_1;
   __IO uint32_t P5_2;
   __IO uint32_t P5_3;
-  __IO uint32_t P5_4;				/* 0x290 */
+  __IO uint32_t P5_4;                /* 0x290 */
 } LPC_IOCON_TypeDef;
 
 
@@ -1088,38 +1088,38 @@ typedef struct
 
 typedef struct                          /* Acceptance Filter Registers        */
 {
-	///Offset: 0x00000000 - Acceptance Filter Register
-	__IO uint32_t AFMR;
+    ///Offset: 0x00000000 - Acceptance Filter Register
+    __IO uint32_t AFMR;
 
-	///Offset: 0x00000004 - Standard Frame Individual Start Address Register
-	__IO uint32_t SFF_sa;
+    ///Offset: 0x00000004 - Standard Frame Individual Start Address Register
+    __IO uint32_t SFF_sa;
 
-	///Offset: 0x00000008 - Standard Frame Group Start Address Register
-	__IO uint32_t SFF_GRP_sa;
+    ///Offset: 0x00000008 - Standard Frame Group Start Address Register
+    __IO uint32_t SFF_GRP_sa;
 
-	///Offset: 0x0000000C - Extended Frame Start Address Register
-	__IO uint32_t EFF_sa;
+    ///Offset: 0x0000000C - Extended Frame Start Address Register
+    __IO uint32_t EFF_sa;
 
-	///Offset: 0x00000010 - Extended Frame Group Start Address Register
-	__IO uint32_t EFF_GRP_sa;
+    ///Offset: 0x00000010 - Extended Frame Group Start Address Register
+    __IO uint32_t EFF_GRP_sa;
 
-	///Offset: 0x00000014 - End of AF Tables register
-	__IO uint32_t ENDofTable;
+    ///Offset: 0x00000014 - End of AF Tables register
+    __IO uint32_t ENDofTable;
 
-	///Offset: 0x00000018 - LUT Error Address register
-	__I  uint32_t LUTerrAd;
+    ///Offset: 0x00000018 - LUT Error Address register
+    __I  uint32_t LUTerrAd;
 
-	///Offset: 0x0000001C - LUT Error Register
-	__I  uint32_t LUTerr;
+    ///Offset: 0x0000001C - LUT Error Register
+    __I  uint32_t LUTerr;
 
-	///Offset: 0x00000020 - CAN Central Transmit Status Register
-	__IO uint32_t FCANIE;
+    ///Offset: 0x00000020 - CAN Central Transmit Status Register
+    __IO uint32_t FCANIE;
 
-	///Offset: 0x00000024 - FullCAN Interrupt and Capture registers 0
-	__IO uint32_t FCANIC0;
+    ///Offset: 0x00000024 - FullCAN Interrupt and Capture registers 0
+    __IO uint32_t FCANIC0;
 
-	///Offset: 0x00000028 - FullCAN Interrupt and Capture registers 1
-	__IO uint32_t FCANIC1;
+    ///Offset: 0x00000028 - FullCAN Interrupt and Capture registers 1
+    __IO uint32_t FCANIC1;
 } LPC_CANAF_TypeDef;
 
 typedef struct                          /* Central Registers                  */
@@ -1131,77 +1131,77 @@ typedef struct                          /* Central Registers                  */
 
 typedef struct                          /* Controller Registers               */
 {
-	///Offset: 0x00000000 - Controls the operating mode of the CAN Controller
-	__IO uint32_t MOD;
+    ///Offset: 0x00000000 - Controls the operating mode of the CAN Controller
+    __IO uint32_t MOD;
 
-	///Offset: 0x00000004 - Command bits that affect the state
-	__O  uint32_t CMR;
+    ///Offset: 0x00000004 - Command bits that affect the state
+    __O  uint32_t CMR;
 
-	///Offset: 0x00000008 - Global Controller Status and Error Counters
-	__IO uint32_t GSR;
+    ///Offset: 0x00000008 - Global Controller Status and Error Counters
+    __IO uint32_t GSR;
 
-	///Offset: 0x0000000C - Interrupt status, Arbitration Lost Capture, Error Code Capture
-	__I  uint32_t ICR;
+    ///Offset: 0x0000000C - Interrupt status, Arbitration Lost Capture, Error Code Capture
+    __I  uint32_t ICR;
 
-	///Offset: 0x00000010 - Interrupt Enable Register
-	__IO uint32_t IER;
+    ///Offset: 0x00000010 - Interrupt Enable Register
+    __IO uint32_t IER;
 
-	///Offset: 0x00000014 - Bus Timing Register
-	__IO uint32_t BTR;
+    ///Offset: 0x00000014 - Bus Timing Register
+    __IO uint32_t BTR;
 
-	///Offset: 0x00000018 - Error Warning Limit
-	__IO uint32_t EWL;
+    ///Offset: 0x00000018 - Error Warning Limit
+    __IO uint32_t EWL;
 
-	///Offset: 0x0000001C - Status Register
-	__I  uint32_t SR;
+    ///Offset: 0x0000001C - Status Register
+    __I  uint32_t SR;
 
-	///Offset: 0x00000020 - Receive frame status
-	__IO uint32_t RFS;
+    ///Offset: 0x00000020 - Receive frame status
+    __IO uint32_t RFS;
 
-	///Offset: 0x00000024 - Received Identifier
-	__IO uint32_t RID;
+    ///Offset: 0x00000024 - Received Identifier
+    __IO uint32_t RID;
 
-	///Offset: 0x00000028 - Received data bytes 1-4
-	__IO uint32_t RDA;
+    ///Offset: 0x00000028 - Received data bytes 1-4
+    __IO uint32_t RDA;
 
-	///Offset: 0x0000002C - Received data bytes 5-8
-	__IO uint32_t RDB;
+    ///Offset: 0x0000002C - Received data bytes 5-8
+    __IO uint32_t RDB;
 
-	///Offset: 0x00000030 - Transmit frame info (Tx Buffer 1)
-	__IO uint32_t TFI1;
+    ///Offset: 0x00000030 - Transmit frame info (Tx Buffer 1)
+    __IO uint32_t TFI1;
 
-	///Offset: 0x00000034 - Transmit Identifier (Tx Buffer 1)
-	__IO uint32_t TID1;
+    ///Offset: 0x00000034 - Transmit Identifier (Tx Buffer 1)
+    __IO uint32_t TID1;
 
-	///Offset: 0x00000038 - Transmit data bytes 1-4 (Tx Buffer 1)
-	__IO uint32_t TDA1;
+    ///Offset: 0x00000038 - Transmit data bytes 1-4 (Tx Buffer 1)
+    __IO uint32_t TDA1;
 
-	///Offset: 0x0000003C - Transmit data bytes 5-8 (Tx Buffer 1)
-	__IO uint32_t TDB1;
+    ///Offset: 0x0000003C - Transmit data bytes 5-8 (Tx Buffer 1)
+    __IO uint32_t TDB1;
 
-	///Offset: 0x00000040 - Transmit frame info (Tx Buffer 2)
-	__IO uint32_t TFI2;
+    ///Offset: 0x00000040 - Transmit frame info (Tx Buffer 2)
+    __IO uint32_t TFI2;
 
-	///Offset: 0x00000044 - Transmit Identifier (Tx Buffer 2)
-	__IO uint32_t TID2;
+    ///Offset: 0x00000044 - Transmit Identifier (Tx Buffer 2)
+    __IO uint32_t TID2;
 
-	///Offset: 0x00000048 - Transmit data bytes 1-4 (Tx Buffer 2)
-	__IO uint32_t TDA2;
+    ///Offset: 0x00000048 - Transmit data bytes 1-4 (Tx Buffer 2)
+    __IO uint32_t TDA2;
 
-	///Offset: 0x0000004C - Transmit data bytes 5-8 (Tx Buffer 2)
-	__IO uint32_t TDB2;
+    ///Offset: 0x0000004C - Transmit data bytes 5-8 (Tx Buffer 2)
+    __IO uint32_t TDB2;
 
-	///Offset: 0x00000050 - Transmit frame info (Tx Buffer 3)
-	__IO uint32_t TFI3;
+    ///Offset: 0x00000050 - Transmit frame info (Tx Buffer 3)
+    __IO uint32_t TFI3;
 
-	///Offset: 0x00000054 - Transmit Identifier (Tx Buffer 3)
-	__IO uint32_t TID3;
+    ///Offset: 0x00000054 - Transmit Identifier (Tx Buffer 3)
+    __IO uint32_t TID3;
 
-	///Offset: 0x00000058 - Transmit data bytes 1-4 (Tx Buffer 3)
-	__IO uint32_t TDA3;
+    ///Offset: 0x00000058 - Transmit data bytes 1-4 (Tx Buffer 3)
+    __IO uint32_t TDA3;
 
-	///Offset: 0x0000005C - Transmit data bytes 5-8 (Tx Buffer 3)
-	__IO uint32_t TDB3;
+    ///Offset: 0x0000005C - Transmit data bytes 5-8 (Tx Buffer 3)
+    __IO uint32_t TDB3;
 } LPC_CAN_TypeDef;
 
 /*------------- Digital-to-Analog Converter (DAC) ----------------------------*/
@@ -1342,17 +1342,17 @@ typedef struct
 /*------------- EEPROM Controller (EEPROM) -----------------------------------*/
 typedef struct
 {
-  __IO uint32_t CMD;			/* 0x0080 */
+  __IO uint32_t CMD;            /* 0x0080 */
   __IO uint32_t ADDR;
   __IO uint32_t WDATA;
   __IO uint32_t RDATA;
-  __IO uint32_t WSTATE;			/* 0x0090 */
+  __IO uint32_t WSTATE;            /* 0x0090 */
   __IO uint32_t CLKDIV;
-  __IO uint32_t PWRDWN;			/* 0x0098 */
+  __IO uint32_t PWRDWN;            /* 0x0098 */
        uint32_t RESERVED0[975];
-  __IO uint32_t INT_CLR_ENABLE;	/* 0x0FD8 */
+  __IO uint32_t INT_CLR_ENABLE;    /* 0x0FD8 */
   __IO uint32_t INT_SET_ENABLE;
-  __IO uint32_t INT_STATUS;		/* 0x0FE0 */
+  __IO uint32_t INT_STATUS;        /* 0x0FE0 */
   __IO uint32_t INT_ENABLE;
   __IO uint32_t INT_CLR_STATUS;
   __IO uint32_t INT_SET_STATUS;
@@ -1396,7 +1396,7 @@ typedef struct {                                    /*!< (@ 0x40020000) COMPARAT
 #define LPC_PWM0_BASE         (LPC_APB0_BASE + 0x14000)
 #define LPC_PWM1_BASE         (LPC_APB0_BASE + 0x18000)
 #define LPC_I2C0_BASE         (LPC_APB0_BASE + 0x1C000)
-#define LPC_COMPARATOR_BASE   (LPC_APB0_BASE + 0x20000)					
+#define LPC_COMPARATOR_BASE   (LPC_APB0_BASE + 0x20000)
 #define LPC_RTC_BASE          (LPC_APB0_BASE + 0x24000)
 #define LPC_GPIOINT_BASE      (LPC_APB0_BASE + 0x28080)
 #define LPC_IOCON_BASE        (LPC_APB0_BASE + 0x2C000)
@@ -1470,7 +1470,7 @@ typedef struct {                                    /*!< (@ 0x40020000) COMPARAT
 #define LPC_I2C1              ((LPC_I2C_TypeDef       *) LPC_I2C1_BASE     )
 #define LPC_I2C2              ((LPC_I2C_TypeDef       *) LPC_I2C2_BASE     )
 #define LPC_I2S               ((LPC_I2S_TypeDef       *) LPC_I2S_BASE      )
-#define LPC_COMPARATOR        ((LPC_COMPARATOR_Type	  *) LPC_COMPARATOR_BASE)
+#define LPC_COMPARATOR        ((LPC_COMPARATOR_Type      *) LPC_COMPARATOR_BASE)
 #define LPC_RTC               ((LPC_RTC_TypeDef       *) LPC_RTC_BASE      )
 #define LPC_GPIOINT           ((LPC_GPIOINT_TypeDef   *) LPC_GPIOINT_BASE  )
 #define LPC_IOCON             ((LPC_IOCON_TypeDef     *) LPC_IOCON_BASE    )

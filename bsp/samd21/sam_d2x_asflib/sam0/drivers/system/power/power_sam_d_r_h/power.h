@@ -68,10 +68,10 @@ extern "C" {
  * device.
  */
 enum system_voltage_reference {
-	/** Temperature sensor voltage reference */
-	SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE,
-	/** Bandgap voltage reference */
-	SYSTEM_VOLTAGE_REFERENCE_BANDGAP,
+    /** Temperature sensor voltage reference */
+    SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE,
+    /** Bandgap voltage reference */
+    SYSTEM_VOLTAGE_REFERENCE_BANDGAP,
 };
 
 /**
@@ -81,14 +81,14 @@ enum system_voltage_reference {
  * different sleep modes can be found in \ref asfdoc_sam0_system_module_overview_sleep_mode.
  */
 enum system_sleepmode {
-	/** IDLE 0 sleep mode */
-	SYSTEM_SLEEPMODE_IDLE_0,
-	/** IDLE 1 sleep mode */
-	SYSTEM_SLEEPMODE_IDLE_1,
-	/** IDLE 2 sleep mode */
-	SYSTEM_SLEEPMODE_IDLE_2,
-	/** Standby sleep mode */
-	SYSTEM_SLEEPMODE_STANDBY,
+    /** IDLE 0 sleep mode */
+    SYSTEM_SLEEPMODE_IDLE_0,
+    /** IDLE 1 sleep mode */
+    SYSTEM_SLEEPMODE_IDLE_1,
+    /** IDLE 2 sleep mode */
+    SYSTEM_SLEEPMODE_IDLE_2,
+    /** Standby sleep mode */
+    SYSTEM_SLEEPMODE_STANDBY,
 };
 
 
@@ -107,21 +107,21 @@ enum system_sleepmode {
  * \param[in] vref  Voltage reference to enable
  */
 static inline void system_voltage_reference_enable(
-		const enum system_voltage_reference vref)
+        const enum system_voltage_reference vref)
 {
-	switch (vref) {
-		case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
-			SYSCTRL->VREF.reg |= SYSCTRL_VREF_TSEN;
-			break;
+    switch (vref) {
+        case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
+            SYSCTRL->VREF.reg |= SYSCTRL_VREF_TSEN;
+            break;
 
-		case SYSTEM_VOLTAGE_REFERENCE_BANDGAP:
-			SYSCTRL->VREF.reg |= SYSCTRL_VREF_BGOUTEN;
-			break;
+        case SYSTEM_VOLTAGE_REFERENCE_BANDGAP:
+            SYSCTRL->VREF.reg |= SYSCTRL_VREF_BGOUTEN;
+            break;
 
-		default:
-			Assert(false);
-			return;
-	}
+        default:
+            Assert(false);
+            return;
+    }
 }
 
 /**
@@ -132,21 +132,21 @@ static inline void system_voltage_reference_enable(
  * \param[in] vref  Voltage reference to disable
  */
 static inline void system_voltage_reference_disable(
-		const enum system_voltage_reference vref)
+        const enum system_voltage_reference vref)
 {
-	switch (vref) {
-		case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
-			SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_TSEN;
-			break;
+    switch (vref) {
+        case SYSTEM_VOLTAGE_REFERENCE_TEMPSENSE:
+            SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_TSEN;
+            break;
 
-		case SYSTEM_VOLTAGE_REFERENCE_BANDGAP:
-			SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_BGOUTEN;
-			break;
+        case SYSTEM_VOLTAGE_REFERENCE_BANDGAP:
+            SYSCTRL->VREF.reg &= ~SYSCTRL_VREF_BGOUTEN;
+            break;
 
-		default:
-			Assert(false);
-			return;
-	}
+        default:
+            Assert(false);
+            return;
+    }
 }
 
 /**
@@ -175,52 +175,52 @@ static inline void system_voltage_reference_disable(
  *                                 available
  */
 static inline enum status_code system_set_sleepmode(
-	const enum system_sleepmode sleep_mode)
+    const enum system_sleepmode sleep_mode)
 {
 
 #if (SAMD20 || SAMD21 || SAMR21)
 
-	/* Get MCU revision */
-	uint32_t rev = DSU->DID.reg;
+    /* Get MCU revision */
+    uint32_t rev = DSU->DID.reg;
 
-	rev &= DSU_DID_REVISION_Msk;
-	rev = rev >> DSU_DID_REVISION_Pos;
+    rev &= DSU_DID_REVISION_Msk;
+    rev = rev >> DSU_DID_REVISION_Pos;
 
 #if (SAMD20)
-	if (rev < _SYSTEM_MCU_REVISION_E) {
-		/* Errata 13140: Make sure that the Flash does not power all the way down
-		 * when in sleep mode. */
-		NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
-	}
+    if (rev < _SYSTEM_MCU_REVISION_E) {
+        /* Errata 13140: Make sure that the Flash does not power all the way down
+         * when in sleep mode. */
+        NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
+    }
 #endif
 
 #if (SAMD21 || SAMR21)
-	if (rev < _SYSTEM_MCU_REVISION_D) {
-		/* Errata 13140: Make sure that the Flash does not power all the way down
-		 * when in sleep mode. */
-		NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
-	}
+    if (rev < _SYSTEM_MCU_REVISION_D) {
+        /* Errata 13140: Make sure that the Flash does not power all the way down
+         * when in sleep mode. */
+        NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
+    }
 #endif
 
 #endif
 
-	switch (sleep_mode) {
-		case SYSTEM_SLEEPMODE_IDLE_0:
-		case SYSTEM_SLEEPMODE_IDLE_1:
-		case SYSTEM_SLEEPMODE_IDLE_2:
-			SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
-			PM->SLEEP.reg = sleep_mode;
-			break;
+    switch (sleep_mode) {
+        case SYSTEM_SLEEPMODE_IDLE_0:
+        case SYSTEM_SLEEPMODE_IDLE_1:
+        case SYSTEM_SLEEPMODE_IDLE_2:
+            SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
+            PM->SLEEP.reg = sleep_mode;
+            break;
 
-		case SYSTEM_SLEEPMODE_STANDBY:
-			SCB->SCR |=  SCB_SCR_SLEEPDEEP_Msk;
-			break;
+        case SYSTEM_SLEEPMODE_STANDBY:
+            SCB->SCR |=  SCB_SCR_SLEEPDEEP_Msk;
+            break;
 
-		default:
-			return STATUS_ERR_INVALID_ARG;
-	}
+        default:
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -233,8 +233,8 @@ static inline enum status_code system_set_sleepmode(
  */
 static inline void system_sleep(void)
 {
-	__DSB();
-	__WFI();
+    __DSB();
+    __WFI();
 }
 
 /**

@@ -72,12 +72,12 @@ static rt_err_t asm_usart_configure(struct rt_serial_device *serial,
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
     uart = (asm_uart_t *)serial->parent.user_data;
-    
+
     Hw_UartDisable(uart->port);
 
     Hw_UartReset(uart->port);
-    
-    Hw_UartConfig(uart->port, cfg->baud_rate, cfg->data_bits, 
+
+    Hw_UartConfig(uart->port, cfg->baud_rate, cfg->data_bits,
                   cfg->stop_bits, cfg->parity);
 
     Hw_UartEnable(uart->port);

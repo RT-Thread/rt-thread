@@ -50,42 +50,42 @@
 /* Initialize the ADC peripheral */
 void Chip_ADC_Init(LPC_ADC_T *pADC, uint32_t flags)
 {
-	/* Power up ADC and enable ADC base clock */
-	Chip_SYSCTL_PowerUp(SYSCTL_SLPWAKE_ADC_PD);
-	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_ADC);
+    /* Power up ADC and enable ADC base clock */
+    Chip_SYSCTL_PowerUp(SYSCTL_SLPWAKE_ADC_PD);
+    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_ADC);
 
-	/* Disable ADC interrupts */
-	pADC->INTEN = 0;
+    /* Disable ADC interrupts */
+    pADC->INTEN = 0;
 
-	/* Set ADC control options */
-	pADC->CTRL = flags;
+    /* Set ADC control options */
+    pADC->CTRL = flags;
 }
 
 /* Shutdown ADC */
 void Chip_ADC_DeInit(LPC_ADC_T *pADC)
 {
-	pADC->INTEN = 0;
-	pADC->CTRL = 0;
+    pADC->INTEN = 0;
+    pADC->CTRL = 0;
 
-	/* Stop ADC clock and then power down ADC */
-	Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_ADC);
-	Chip_SYSCTL_PowerDown(SYSCTL_SLPWAKE_ADC_PD);
+    /* Stop ADC clock and then power down ADC */
+    Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_ADC);
+    Chip_SYSCTL_PowerDown(SYSCTL_SLPWAKE_ADC_PD);
 }
 
 /* Start ADC calibration */
 void Chip_ADC_StartCalibration(LPC_ADC_T *pADC)
 {
-	/* Set calibration mode */
-	pADC->CTRL |= ADC_CR_CALMODEBIT;
+    /* Set calibration mode */
+    pADC->CTRL |= ADC_CR_CALMODEBIT;
 
-	/* Clear ASYNC bit */
-	pADC->CTRL &= ~ADC_CR_ASYNMODE;
+    /* Clear ASYNC bit */
+    pADC->CTRL &= ~ADC_CR_ASYNMODE;
 
-	/* Setup ADC for about 500KHz (per UM) */
-	Chip_ADC_SetClockRate(pADC, 500000);
+    /* Setup ADC for about 500KHz (per UM) */
+    Chip_ADC_SetClockRate(pADC, 500000);
 
-	/* Clearn low power bit */
-	pADC->CTRL &= ~ADC_CR_LPWRMODEBIT;
+    /* Clearn low power bit */
+    pADC->CTRL &= ~ADC_CR_LPWRMODEBIT;
 
-	/* Calibration is only complete when ADC_CR_CALMODEBIT bit has cleared */
+    /* Calibration is only complete when ADC_CR_CALMODEBIT bit has cleared */
 }

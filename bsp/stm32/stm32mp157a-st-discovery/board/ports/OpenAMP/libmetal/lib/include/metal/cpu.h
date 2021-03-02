@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	cpu.h
- * @brief	CPU primitives for libmetal.
+ * @file    cpu.h
+ * @brief    CPU primitives for libmetal.
  */
 
 #ifndef __METAL_CPU__H__

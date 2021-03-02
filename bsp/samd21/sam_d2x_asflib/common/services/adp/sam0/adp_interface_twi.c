@@ -62,31 +62,31 @@ struct i2c_master_module i2c_master_instance;
 */
 enum status_code adp_interface_init(void)
 {
-	enum status_code return_value;
+    enum status_code return_value;
 
-	system_init();
+    system_init();
 
-	struct i2c_master_config config_i2c_master;
-	i2c_master_get_config_defaults(&config_i2c_master);
-	config_i2c_master.buffer_timeout = 10000;
-	return_value = i2c_master_init(&i2c_master_instance, EDBG_TWI, &config_i2c_master);
-	i2c_master_enable(&i2c_master_instance);
-	return return_value;
+    struct i2c_master_config config_i2c_master;
+    i2c_master_get_config_defaults(&config_i2c_master);
+    config_i2c_master.buffer_timeout = 10000;
+    return_value = i2c_master_init(&i2c_master_instance, EDBG_TWI, &config_i2c_master);
+    i2c_master_enable(&i2c_master_instance);
+    return return_value;
 }
 
 static enum status_code adp_interface_send(uint8_t* tx_buf, uint16_t length)
 {
-	enum status_code status;
-	
-	struct i2c_master_packet packet = {
-		.address = TWI_EDBG_SLAVE_ADDR,
-		.data_length = length,
-		.data = tx_buf,
-	};
-	/* Send data to PC */
-	status = i2c_master_write_packet_wait(&i2c_master_instance, &packet);
-	
-	return status;
+    enum status_code status;
+
+    struct i2c_master_packet packet = {
+        .address = TWI_EDBG_SLAVE_ADDR,
+        .data_length = length,
+        .data = tx_buf,
+    };
+    /* Send data to PC */
+    status = i2c_master_write_packet_wait(&i2c_master_instance, &packet);
+
+    return status;
 }
 
 /**
@@ -99,24 +99,24 @@ static enum status_code adp_interface_send(uint8_t* tx_buf, uint16_t length)
 */
 enum status_code adp_interface_read_response(uint8_t* rx_buf, uint16_t length)
 {
-	enum status_code status = STATUS_ERR_IO;
-	uint8_t data_len = 0;
+    enum status_code status = STATUS_ERR_IO;
+    uint8_t data_len = 0;
 
-	struct i2c_master_packet packet = {
-		.address = TWI_EDBG_SLAVE_ADDR,
-		.data_length = 1,
-		.data = &data_len,
-	};
-	i2c_master_read_packet_wait(&i2c_master_instance, &packet);
-	
-	if (data_len != 0)
-	{
-		packet.data_length = data_len;
-		packet.data = rx_buf;
-		status = i2c_master_read_packet_wait(&i2c_master_instance, &packet);
-	}
-	
-	return status;
+    struct i2c_master_packet packet = {
+        .address = TWI_EDBG_SLAVE_ADDR,
+        .data_length = 1,
+        .data = &data_len,
+    };
+    i2c_master_read_packet_wait(&i2c_master_instance, &packet);
+
+    if (data_len != 0)
+    {
+        packet.data_length = data_len;
+        packet.data = rx_buf;
+        status = i2c_master_read_packet_wait(&i2c_master_instance, &packet);
+    }
+
+    return status;
 }
 
 /**
@@ -127,7 +127,7 @@ enum status_code adp_interface_read_response(uint8_t* rx_buf, uint16_t length)
 * \param[out] rx_buf  Pointer to store the received I2C character
 */
 void adp_interface_transceive_procotol(uint8_t* tx_buf, uint16_t length, uint8_t* rx_buf)
-{	
-	adp_interface_send(tx_buf, length);
-	adp_interface_read_response(rx_buf, length);
+{
+    adp_interface_send(tx_buf, length);
+    adp_interface_read_response(rx_buf, length);
 }

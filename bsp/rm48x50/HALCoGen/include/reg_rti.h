@@ -2,7 +2,7 @@
 *   @brief RTI Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -57,7 +57,7 @@ typedef volatile struct rtiBase
         uint32 COMPx;      /**< 0x0050,0x0058,0x0060,0x0068: Compare x Register        */
         uint32 UDCPx;      /**< 0x0054,0x005C,0x0064,0x006C: Update Compare x Register */
     } CMP[4U];               /**< Compare x selection:
-                                    - 0: Compare 0 
+                                    - 0: Compare 0
                                     - 1: Compare 1
                                     - 2: Compare 2
                                     - 3: Compare 3                                       */

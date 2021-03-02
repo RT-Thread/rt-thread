@@ -42,8 +42,8 @@
 /*****************************************************************************
  * Private functions
  ****************************************************************************/
-#define	CONFIG_MAIN_FREQ		60000000
-#define	CONFIG_SYS_FREQ			MAX_CLOCK_FREQ
+#define    CONFIG_MAIN_FREQ        60000000
+#define    CONFIG_SYS_FREQ            MAX_CLOCK_FREQ
 
 /*****************************************************************************
  * Public functions
@@ -52,64 +52,64 @@
 /* Setup system clocking */
 void Chip_SetupXtalClocking(void)
 {
-	/* EXT oscillator < 15MHz */
-	Chip_Clock_SetPLLBypass(false, false);
+    /* EXT oscillator < 15MHz */
+    Chip_Clock_SetPLLBypass(false, false);
 
-	/* Turn on the SYSOSC by clearing the power down bit */
-	Chip_SYSCTL_PowerUp(SYSCTL_SLPWAKE_SYSOSC_PD);
+    /* Turn on the SYSOSC by clearing the power down bit */
+    Chip_SYSCTL_PowerUp(SYSCTL_SLPWAKE_SYSOSC_PD);
 
-	/* Select the PLL input to the external oscillator */
-	Chip_Clock_SetSystemPLLSource(SYSCTL_PLLCLKSRC_SYSOSC);
+    /* Select the PLL input to the external oscillator */
+    Chip_Clock_SetSystemPLLSource(SYSCTL_PLLCLKSRC_SYSOSC);
 
-	/* Setup FLASH access to 2 clocks (up to 30MHz) */
-	Chip_FMC_SetFLASHAccess(FLASHTIM_30MHZ_CPU);
+    /* Setup FLASH access to 2 clocks (up to 30MHz) */
+    Chip_FMC_SetFLASHAccess(FLASHTIM_30MHZ_CPU);
 
-	/* Power down PLL to change the PLL divider ratio */
-	Chip_SYSCTL_PowerDown(SYSCTL_SLPWAKE_SYSPLL_PD);
+    /* Power down PLL to change the PLL divider ratio */
+    Chip_SYSCTL_PowerDown(SYSCTL_SLPWAKE_SYSPLL_PD);
 
-	/* Configure the PLL M and P dividers */
-	/* Setup PLL for main oscillator rate ((FCLKIN = 12MHz) * 5)/2 = 30MHz */
-	Chip_Clock_SetupSystemPLL(4, 1);
+    /* Configure the PLL M and P dividers */
+    /* Setup PLL for main oscillator rate ((FCLKIN = 12MHz) * 5)/2 = 30MHz */
+    Chip_Clock_SetupSystemPLL(4, 1);
 
-	/* Turn on the PLL by clearing the power down bit */
-	Chip_SYSCTL_PowerUp(SYSCTL_SLPWAKE_SYSPLL_PD);
+    /* Turn on the PLL by clearing the power down bit */
+    Chip_SYSCTL_PowerUp(SYSCTL_SLPWAKE_SYSPLL_PD);
 
 /* Enable the clock to the Switch Matrix */
-	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_SWM);
+    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_SWM);
 
-	/* Wait for PLL to lock */
-	while (!Chip_Clock_IsSystemPLLLocked()) {}
+    /* Wait for PLL to lock */
+    while (!Chip_Clock_IsSystemPLLLocked()) {}
 
-	Chip_Clock_SetSysClockDiv(2);
+    Chip_Clock_SetSysClockDiv(2);
 
-	/* Set main clock source to the system PLL. This will drive 24MHz
-	   for the main clock and 24MHz for the system clock */
-	Chip_Clock_SetMainClockSource(SYSCTL_MAINCLKSRC_PLLOUT);
+    /* Set main clock source to the system PLL. This will drive 24MHz
+       for the main clock and 24MHz for the system clock */
+    Chip_Clock_SetMainClockSource(SYSCTL_MAINCLKSRC_PLLOUT);
 }
 
 /* Set up and initialize hardware prior to call to main */
 void Chip_SetupIrcClocking(void)
 {
-	Chip_IRC_SetFreq(CONFIG_MAIN_FREQ, CONFIG_SYS_FREQ);
+    Chip_IRC_SetFreq(CONFIG_MAIN_FREQ, CONFIG_SYS_FREQ);
 }
 
 /* Set up and initialize hardware prior to call to main */
 /* 在main()函数之前调用此函数做基本的初始化工作 */
 void SystemInit(void)
 {
-	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_IOCON);
-	#ifdef USE_IRC_AS_ROOT_CLOCK
-		/* Use 12MHz IRC as clock source */
-		Chip_SetupIrcClocking();	
-	#else
-		/* Use Xtal or external clock_in as clock source*/
-	 Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_SWM);
- 	 Chip_SWM_EnableFixedPin(SWM_FIXED_XTALIN);
+    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_IOCON);
+    #ifdef USE_IRC_AS_ROOT_CLOCK
+        /* Use 12MHz IRC as clock source */
+        Chip_SetupIrcClocking();
+    #else
+        /* Use Xtal or external clock_in as clock source*/
+     Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_SWM);
+      Chip_SWM_EnableFixedPin(SWM_FIXED_XTALIN);
    Chip_SWM_EnableFixedPin(SWM_FIXED_XTALOUT);
  //  Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_SWM);
    Chip_IOCON_PinSetMode(LPC_IOCON, IOCON_PIO8, PIN_MODE_INACTIVE);
    Chip_IOCON_PinSetMode(LPC_IOCON, IOCON_PIO9, PIN_MODE_INACTIVE);
-                 
-		Chip_SetupXtalClocking();		
-	#endif
+
+        Chip_SetupXtalClocking();
+    #endif
 }

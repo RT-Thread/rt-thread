@@ -147,18 +147,18 @@ uint8_t input_dcd[] __attribute__ ((section (".dcd_data")))= {
     EXPAND_UINT32(MMDC_P0_BASE_ADDR + 0x01c), EXPAND_UINT32(0x00000000)
 };
 
-//! @brief HAB command write data header, with tag, 
-//!        size of dcd data with hdr, 
+//! @brief HAB command write data header, with tag,
+//!        size of dcd data with hdr,
 //!        parameter field (size of register value and flag)
 uint8_t input_dcd_wrt_cmd[] __attribute__ ((section (".dcd_wrt_cmd")))= {
-    HAB_CMD_WRT_DAT, 
+    HAB_CMD_WRT_DAT,
     EXPAND_UINT16(sizeof(input_dcd) + HDR_BYTES),
     WRT_DAT_PAR(0, HAB_DATA_WIDTH_WORD) //!< flag 0, width 4
 };
 
 //! @brief HAB dcd header with dcd tag, size of entire dcd and version.
 uint8_t input_dcd_hdr[] __attribute__ ((section (".dcd_hdr")))= {
-    HAB_TAG_DCD, 
+    HAB_TAG_DCD,
     EXPAND_UINT16(sizeof(input_dcd) + sizeof(input_dcd_wrt_cmd) + HDR_BYTES),
     HAB_VER(4,0)
 };

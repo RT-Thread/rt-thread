@@ -12,32 +12,32 @@
 
 
 typedef struct {
-	uint16_t Year;
-	uint8_t  Month;			//取值1--12
-	uint8_t  Date;			//取值1--31
-	uint8_t  Hour;			//取值0--23
-	uint8_t  Minute;		//取值0--59
-	uint8_t  Second;		//取值0--59
-	uint8_t  SecondIEn;
-	uint8_t  MinuteIEn;
+    uint16_t Year;
+    uint8_t  Month;            //取值1--12
+    uint8_t  Date;            //取值1--31
+    uint8_t  Hour;            //取值0--23
+    uint8_t  Minute;        //取值0--59
+    uint8_t  Second;        //取值0--59
+    uint8_t  SecondIEn;
+    uint8_t  MinuteIEn;
 } RTC_InitStructure;
 
 typedef struct {
-	uint8_t  Days;			//RTC_SUN、RTC_MON、RTC_TUE、RTC_WED、RTC_THU、RTC_FRI、RTC_SAT及其或运算组合
-	uint8_t  Hour;
-	uint8_t  Minute;
-	uint8_t  Second;
-	uint8_t  AlarmIEn;
+    uint8_t  Days;            //RTC_SUN、RTC_MON、RTC_TUE、RTC_WED、RTC_THU、RTC_FRI、RTC_SAT及其或运算组合
+    uint8_t  Hour;
+    uint8_t  Minute;
+    uint8_t  Second;
+    uint8_t  AlarmIEn;
 } RTC_AlarmStructure;
 
 typedef struct {
-	uint16_t Year;
-	uint8_t  Month;
-	uint8_t  Date;
-	uint8_t  Day;			//RTC_SUN、RTC_MON、RTC_TUE、RTC_WED、RTC_THU、RTC_FRI、RTC_SAT
-	uint8_t  Hour;
-	uint8_t  Minute;
-	uint8_t  Second;
+    uint16_t Year;
+    uint8_t  Month;
+    uint8_t  Date;
+    uint8_t  Day;            //RTC_SUN、RTC_MON、RTC_TUE、RTC_WED、RTC_THU、RTC_FRI、RTC_SAT
+    uint8_t  Hour;
+    uint8_t  Minute;
+    uint8_t  Second;
 } RTC_DateTime;
 
 void RTC_Init(RTC_TypeDef * RTCx, RTC_InitStructure * initStruct);

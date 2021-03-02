@@ -59,12 +59,12 @@
 
 /*SPDC memory map*/
 #if defined(CHIP_MX6SL)
-#define WV_DATA_ADDR			0x93000000
-#define SPDC_NEXT_BUF_ADDR		0x93100000
-#define SPDC_CUR_BUF_ADDR		0x93200000
-#define SPDC_PREV_BUF_ADDR		0x93300000
-#define SPDC_FRM_CNT_BUF_ADDR	0x93400000
-#define SPDC_LUT_BUF_ADDR		0x93500000
+#define WV_DATA_ADDR            0x93000000
+#define SPDC_NEXT_BUF_ADDR        0x93100000
+#define SPDC_CUR_BUF_ADDR        0x93200000
+#define SPDC_PREV_BUF_ADDR        0x93300000
+#define SPDC_FRM_CNT_BUF_ADDR    0x93400000
+#define SPDC_LUT_BUF_ADDR        0x93500000
 #else
 #error SPDC is not supported on the platform
 #endif
@@ -154,17 +154,17 @@ void spdc_operation_start(int opt);
 void spdc_enable_interrupts(unsigned int mask);
 
 /*!
- * @brief Check if LUT download finished 
+ * @brief Check if LUT download finished
  */
 int spdc_check_lut_download_finish(void);
 
 /*!
- * @brief Check if TCON initialization finished 
+ * @brief Check if TCON initialization finished
  */
 int spdc_check_tcon_init_finish(void);
 
 /*!
- * @brief Check if operation finished 
+ * @brief Check if operation finished
  */
 int spdc_check_operation_finish(void);
 

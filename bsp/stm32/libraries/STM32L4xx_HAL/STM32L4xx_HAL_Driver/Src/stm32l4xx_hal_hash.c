@@ -111,7 +111,7 @@
       (#) HAL in interruption mode (interruptions driven)
 
         (##)Due to HASH peripheral hardware design, the peripheral interruption is triggered every 64 bytes.
-        This is why, for driver implementation simplicityâ€™s sake, user is requested to enter a message the
+        This is why, for driver implementation simplicity¡¯s sake, user is requested to enter a message the
         length of which is a multiple of 4 bytes.
 
         (##) When the message length (in bytes) is not a multiple of words, a specific field exists in HASH_STR

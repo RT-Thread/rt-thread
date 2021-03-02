@@ -924,7 +924,7 @@ typedef  void (*pTIM_CallbackTypeDef)(TIM_HandleTypeDef *htim);  /*!< pointer to
   * @{
   */
 #define TIM_AUTOMATICOUTPUT_DISABLE        0x00000000U                          /*!< MOE can be set only by software */
-#define TIM_AUTOMATICOUTPUT_ENABLE         TIM_BDTR_AOE                         /*!< MOE can be set by software or automatically at the next update event 
+#define TIM_AUTOMATICOUTPUT_ENABLE         TIM_BDTR_AOE                         /*!< MOE can be set by software or automatically at the next update event
                                                                                     (if none of the break inputs BRK and BRK2 is active) */
 /**
   * @}
@@ -2062,7 +2062,7 @@ mode.
    ((__CHANNEL__) == TIM_CHANNEL_4) ? (__HANDLE__)->ChannelState[3] :\
    ((__CHANNEL__) == TIM_CHANNEL_5) ? (__HANDLE__)->ChannelState[4] :\
    (__HANDLE__)->ChannelState[5])
-    
+
 #define TIM_CHANNEL_STATE_SET(__HANDLE__, __CHANNEL__, __CHANNEL_STATE__) \
   (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->ChannelState[0] = (__CHANNEL_STATE__)) :\
    ((__CHANNEL__) == TIM_CHANNEL_2) ? ((__HANDLE__)->ChannelState[1] = (__CHANNEL_STATE__)) :\
@@ -2085,7 +2085,7 @@ mode.
    ((__CHANNEL__) == TIM_CHANNEL_2) ? (__HANDLE__)->ChannelNState[1] :\
    ((__CHANNEL__) == TIM_CHANNEL_3) ? (__HANDLE__)->ChannelNState[2] :\
    (__HANDLE__)->ChannelNState[3])
-    
+
 #define TIM_CHANNEL_N_STATE_SET(__HANDLE__, __CHANNEL__, __CHANNEL_STATE__) \
   (((__CHANNEL__) == TIM_CHANNEL_1) ? ((__HANDLE__)->ChannelNState[0] = (__CHANNEL_STATE__)) :\
    ((__CHANNEL__) == TIM_CHANNEL_2) ? ((__HANDLE__)->ChannelNState[1] = (__CHANNEL_STATE__)) :\

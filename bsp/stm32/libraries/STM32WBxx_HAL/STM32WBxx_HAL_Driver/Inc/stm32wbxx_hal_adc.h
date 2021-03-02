@@ -1127,7 +1127,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR
   *         @arg @ref ADC_CHANNEL_VBAT
-  *         
+  *
   *         (7) On STM32WB, fast channel (0.188 us for 12-bit resolution (ADC conversion rate up to 5.33 Ms/s)).
   *             Other channels are slow channels (0.238 us for 12-bit resolution (ADC conversion rate up to 4.21 Ms/s)).
   * @retval Value between Min_Data=0 and Max_Data=18
@@ -1165,7 +1165,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT      (1)
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR   (4)
   *         @arg @ref ADC_CHANNEL_VBAT         (4)
-  *         
+  *
   *         (7) On STM32WB, fast channel (0.188 us for 12-bit resolution (ADC conversion rate up to 5.33 Ms/s)).
   *             Other channels are slow channels (0.238 us for 12-bit resolution (ADC conversion rate up to 4.21 Ms/s)).\n
   *         (4) For ADC channel read back from ADC register,
@@ -1215,7 +1215,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR
   *         @arg @ref ADC_CHANNEL_VBAT
-  *         
+  *
   *         (7) On STM32WB, fast channel (0.188 us for 12-bit resolution (ADC conversion rate up to 5.33 Ms/s)).
   *             Other channels are slow channels (0.238 us for 12-bit resolution (ADC conversion rate up to 4.21 Ms/s)).
   * @retval Value "0" if the channel corresponds to a parameter definition of a ADC external channel (channel connected to a GPIO pin).
@@ -1260,7 +1260,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VREFINT
   *         @arg @ref ADC_CHANNEL_TEMPSENSOR
   *         @arg @ref ADC_CHANNEL_VBAT
-  *         
+  *
   *         (7) On STM32WB, fast channel (0.188 us for 12-bit resolution (ADC conversion rate up to 5.33 Ms/s)).
   *             Other channels are slow channels (0.238 us for 12-bit resolution (ADC conversion rate up to 4.21 Ms/s)).
   * @retval Returned value can be one of the following values:

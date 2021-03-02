@@ -47,8 +47,8 @@ typedef enum
     UART_Clock_1 = 0x1 , //波特率发生器时钟:PCLK
     UART_Clock_2 = 0x2 , //波特率发生器时钟:PCLK/2
     UART_Clock_4 = 0x3 , //波特率发生器时钟:PCLK/4
-	  UART_Clock_8 = 0x4 , //波特率发生器时钟:PCLK/8
-	  
+      UART_Clock_8 = 0x4 , //波特率发生器时钟:PCLK/8
+
 }UART_TYPE_BCS;
 
 /* UART初始化配置结构体定义 */
@@ -79,7 +79,7 @@ typedef enum
 /* 标志位 */
 typedef enum
 {
-	  UART_FLAG_TB = 0x0001 ,
+      UART_FLAG_TB = 0x0001 ,
     UART_FLAG_RB = 0x0002 ,
     UART_FLAG_RO = 0x0004 ,
     UART_FLAG_FE = 0x0008 ,

@@ -146,7 +146,7 @@
 #endif /* (defined(__ASSEMBLY__) || defined(__IAR_SYSTEMS_ASM__)) */
 
 /* ========== Instance parameters for SBMATRIX peripheral ========== */
-#define SBMATRIX_DEFINED                    
+#define SBMATRIX_DEFINED
 /* ========== Instance parameters for SBMATRIX ========== */
 #define SBMATRIX_SLAVE_FLASH        0
 #define SBMATRIX_SLAVE_HPB0         1

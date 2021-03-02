@@ -136,7 +136,7 @@ static inline void interp_config_set_cross_input(interp_config *c, bool cross_in
 /*! \brief Enable cross results
  *  \ingroup interp_config
  *
- *  Allows feeding of the other laneâ€™s result into this laneâ€™s accumulator on a POP operation.
+ *  Allows feeding of the other lane¡¯s result into this lane¡¯s accumulator on a POP operation.
  *
  * \param c Pointer to interpolation config
  * \param cross_result If true, enables the cross result
@@ -327,7 +327,7 @@ static inline uint32_t interp_get_base(interp_hw_t *interp, uint lane) {
  *  \ingroup hardware_interp
  *
  *  The lower 16 bits go to BASE0, upper bits to BASE1 simultaneously.
- *  Each half is sign-extended to 32 bits if that laneâ€™s SIGNED flag is set.
+ *  Each half is sign-extended to 32 bits if that lane¡¯s SIGNED flag is set.
  *
  * \param interp Interpolator instance, interp0 or interp1.
  * \param val The value to apply to the register

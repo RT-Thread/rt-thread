@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018/06/26     Bernard      Fix the wait queue issue when wakeup a soon 
+ * 2018/06/26     Bernard      Fix the wait queue issue when wakeup a soon
  *                             to blocked thread.
  */
 

@@ -116,7 +116,7 @@ typedef union _hw_enet_eir
         unsigned GRA : 1; //!< [28] Graceful Stop Complete
         unsigned BABT : 1; //!< [29] Babbling Transmit Error
         unsigned BABR : 1; //!< [30] Babbling Receive Error
-        unsigned RESERVED1 : 1; //!< [31] 
+        unsigned RESERVED1 : 1; //!< [31]
     } B;
 } hw_enet_eir_t;
 #endif
@@ -499,7 +499,7 @@ typedef union _hw_enet_eimr
     reg32_t U;
     struct _hw_enet_eimr_bitfields
     {
-        unsigned RESERVED0 : 15; //!< [14:0] 
+        unsigned RESERVED0 : 15; //!< [14:0]
         unsigned TS_TIMER : 1; //!< [15] TS_TIMER Interrupt Mask
         unsigned TS_AVAIL : 1; //!< [16] TS_AVAIL Interrupt Mask
         unsigned WAKEUP : 1; //!< [17] WAKEUP Interrupt Mask
@@ -516,7 +516,7 @@ typedef union _hw_enet_eimr
         unsigned GRA : 1; //!< [28] GRA Interrupt Mask
         unsigned BABT : 1; //!< [29] BABT Interrupt Mask
         unsigned BABR : 1; //!< [30] BABR Interrupt Mask
-        unsigned RESERVED1 : 1; //!< [31] 
+        unsigned RESERVED1 : 1; //!< [31]
     } B;
 } hw_enet_eimr_t;
 #endif
@@ -947,9 +947,9 @@ typedef union _hw_enet_rdar
     reg32_t U;
     struct _hw_enet_rdar_bitfields
     {
-        unsigned RESERVED0 : 24; //!< [23:0] 
+        unsigned RESERVED0 : 24; //!< [23:0]
         unsigned RDAR : 1; //!< [24] Receive Descriptor Active
-        unsigned RESERVED1 : 7; //!< [31:25] 
+        unsigned RESERVED1 : 7; //!< [31:25]
     } B;
 } hw_enet_rdar_t;
 #endif
@@ -1016,9 +1016,9 @@ typedef union _hw_enet_tdar
     reg32_t U;
     struct _hw_enet_tdar_bitfields
     {
-        unsigned RESERVED0 : 24; //!< [23:0] 
+        unsigned RESERVED0 : 24; //!< [23:0]
         unsigned TDAR : 1; //!< [24] Transmit Descriptor Active
-        unsigned RESERVED1 : 7; //!< [31:25] 
+        unsigned RESERVED1 : 7; //!< [31:25]
     } B;
 } hw_enet_tdar_t;
 #endif
@@ -1492,11 +1492,11 @@ typedef union _hw_enet_mscr
     reg32_t U;
     struct _hw_enet_mscr_bitfields
     {
-        unsigned RESERVED0 : 1; //!< [0] 
+        unsigned RESERVED0 : 1; //!< [0]
         unsigned MII_SPEED : 6; //!< [6:1] MII Speed
         unsigned DIS_PRE : 1; //!< [7] Disable Preamble
         unsigned HOLDTIME : 3; //!< [10:8] Holdtime On MDIO Output
-        unsigned RESERVED1 : 21; //!< [31:11] 
+        unsigned RESERVED1 : 21; //!< [31:11]
     } B;
 } hw_enet_mscr_t;
 #endif
@@ -1615,7 +1615,7 @@ typedef union _hw_enet_mibc
     reg32_t U;
     struct _hw_enet_mibc_bitfields
     {
-        unsigned RESERVED0 : 29; //!< [28:0] 
+        unsigned RESERVED0 : 29; //!< [28:0]
         unsigned MIB_CLEAR : 1; //!< [29] MIB Clear
         unsigned MIB_IDLE : 1; //!< [30] MIB Idle
         unsigned MIB_DIS : 1; //!< [31] Disable MIB Logic
@@ -1720,7 +1720,7 @@ typedef union _hw_enet_rcr
         unsigned RESERVED0 : 2; //!< [7:6] Reserved.
         unsigned RMII_MODE : 1; //!< [8] RMII Mode Enable
         unsigned RMII_10T : 1; //!< [9] Enables 10-Mbps mode of the RMII .
-        unsigned RESERVED1 : 2; //!< [11:10] 
+        unsigned RESERVED1 : 2; //!< [11:10]
         unsigned PADEN : 1; //!< [12] Enable Frame Padding Remove On Receive
         unsigned PAUFWD : 1; //!< [13] Terminate/Forward Pause Frames
         unsigned CRCFWD : 1; //!< [14] Terminate/Forward Received CRC
@@ -2119,14 +2119,14 @@ typedef union _hw_enet_tcr
     struct _hw_enet_tcr_bitfields
     {
         unsigned GTS : 1; //!< [0] Graceful Transmit Stop
-        unsigned RESERVED0 : 1; //!< [1] 
+        unsigned RESERVED0 : 1; //!< [1]
         unsigned FDEN : 1; //!< [2] Full-Duplex Enable
         unsigned TFC_PAUSE : 1; //!< [3] Transmit Frame Control Pause
         unsigned RFC_PAUSE : 1; //!< [4] Receive Frame Control Pause
         unsigned ADDSEL : 3; //!< [7:5] Source MAC Address Select On Transmit
         unsigned ADDINS : 1; //!< [8] Set MAC Address On Transmit
         unsigned CRCFWD : 1; //!< [9] Forward Frame From Application With CRC
-        unsigned RESERVED1 : 22; //!< [31:10] 
+        unsigned RESERVED1 : 22; //!< [31:10]
     } B;
 } hw_enet_tcr_t;
 #endif
@@ -2245,9 +2245,9 @@ typedef union _hw_enet_tcr
  *
  * Values:
  * - 000 - Node MAC address programmed on PADDR1/2 registers.
- * - 100 - 
- * - 101 - 
- * - 110 - 
+ * - 100 -
+ * - 101 -
+ * - 110 -
  */
 //@{
 #define BP_ENET_TCR_ADDSEL      (5)      //!< Bit position for ENET_TCR_ADDSEL.
@@ -2824,9 +2824,9 @@ typedef union _hw_enet_tfwr
     struct _hw_enet_tfwr_bitfields
     {
         unsigned TFWR : 6; //!< [5:0] Transmit FIFO Write
-        unsigned RESERVED0 : 2; //!< [7:6] 
+        unsigned RESERVED0 : 2; //!< [7:6]
         unsigned STRFWD : 1; //!< [8] Store And Forward Enable
-        unsigned RESERVED1 : 23; //!< [31:9] 
+        unsigned RESERVED1 : 23; //!< [31:9]
     } B;
 } hw_enet_tfwr_t;
 #endif
@@ -2917,7 +2917,7 @@ typedef union _hw_enet_tfwr
  * Reset value: 0x00000000
  *
  * RDSR points to the beginning of the circular receive buffer descriptor queue in external memory.
- * This pointer must be 64-bit aligned (bits 2â€“0 must be zero); however, This register must be
+ * This pointer must be 64-bit aligned (bits 2¨C0 must be zero); however, This register must be
  * initialized prior to operation
  */
 typedef union _hw_enet_rdsr
@@ -2925,7 +2925,7 @@ typedef union _hw_enet_rdsr
     reg32_t U;
     struct _hw_enet_rdsr_bitfields
     {
-        unsigned RESERVED0 : 3; //!< [2:0] 
+        unsigned RESERVED0 : 3; //!< [2:0]
         unsigned R_DES_START : 29; //!< [31:3] Pointer to the beginning of the receive buffer descriptor queue.
     } B;
 } hw_enet_rdsr_t;
@@ -2982,7 +2982,7 @@ typedef union _hw_enet_rdsr
  * Reset value: 0x00000000
  *
  * TDSR provides a pointer to the beginning of the circular transmit buffer descriptor queue in
- * external memory. This pointer must be 64-bit aligned (bits 2â€“0 must be zero); however, This
+ * external memory. This pointer must be 64-bit aligned (bits 2¨C0 must be zero); however, This
  * register must be initialized prior to operation.
  */
 typedef union _hw_enet_tdsr
@@ -2990,7 +2990,7 @@ typedef union _hw_enet_tdsr
     reg32_t U;
     struct _hw_enet_tdsr_bitfields
     {
-        unsigned RESERVED0 : 3; //!< [2:0] 
+        unsigned RESERVED0 : 3; //!< [2:0]
         unsigned X_DES_START : 29; //!< [31:3] Pointer to the beginning of the transmit buffer descriptor queue.
     } B;
 } hw_enet_tdsr_t;
@@ -3058,9 +3058,9 @@ typedef union _hw_enet_mrbr
     reg32_t U;
     struct _hw_enet_mrbr_bitfields
     {
-        unsigned RESERVED0 : 4; //!< [3:0] 
+        unsigned RESERVED0 : 4; //!< [3:0]
         unsigned R_BUF_SIZE : 10; //!< [13:4] Receive buffer size in bytes.
-        unsigned RESERVED1 : 18; //!< [31:14] 
+        unsigned RESERVED1 : 18; //!< [31:14]
     } B;
 } hw_enet_mrbr_t;
 #endif
@@ -3401,7 +3401,7 @@ typedef union _hw_enet_tipg
     struct _hw_enet_tipg_bitfields
     {
         unsigned IPG : 5; //!< [4:0] Transmit Inter-Packet Gap
-        unsigned RESERVED0 : 27; //!< [31:5] 
+        unsigned RESERVED0 : 27; //!< [31:5]
     } B;
 } hw_enet_tipg_t;
 #endif
@@ -3463,7 +3463,7 @@ typedef union _hw_enet_ftrl
     struct _hw_enet_ftrl_bitfields
     {
         unsigned TRUNC_FL : 14; //!< [13:0] Frame Truncation Length
-        unsigned RESERVED0 : 18; //!< [31:14] 
+        unsigned RESERVED0 : 18; //!< [31:14]
     } B;
 } hw_enet_ftrl_t;
 #endif
@@ -3531,10 +3531,10 @@ typedef union _hw_enet_tacc
     struct _hw_enet_tacc_bitfields
     {
         unsigned SHIFT16 : 1; //!< [0] TX FIFO Shift-16
-        unsigned RESERVED0 : 2; //!< [2:1] 
+        unsigned RESERVED0 : 2; //!< [2:1]
         unsigned IPCHK : 1; //!< [3] Enables insertion of IP header checksum.
         unsigned PROCHK : 1; //!< [4] Enables insertion of protocol checksum.
-        unsigned RESERVED1 : 27; //!< [31:5] 
+        unsigned RESERVED1 : 27; //!< [31:5]
     } B;
 } hw_enet_tacc_t;
 #endif
@@ -3652,10 +3652,10 @@ typedef union _hw_enet_racc
         unsigned PADREM : 1; //!< [0] Enable Padding Removal For Short IP Frames
         unsigned IPDIS : 1; //!< [1] Enable Discard Of Frames With Wrong IPv4 Header Checksum
         unsigned PRODIS : 1; //!< [2] Enable Discard Of Frames With Wrong Protocol Checksum
-        unsigned RESERVED0 : 3; //!< [5:3] 
+        unsigned RESERVED0 : 3; //!< [5:3]
         unsigned LINEDIS : 1; //!< [6] Enable Discard Of Frames With MAC Layer Errors
         unsigned SHIFT16 : 1; //!< [7] RX FIFO Shift-16
-        unsigned RESERVED1 : 24; //!< [31:8] 
+        unsigned RESERVED1 : 24; //!< [31:8]
     } B;
 } hw_enet_racc_t;
 #endif
@@ -3820,19 +3820,19 @@ typedef union _hw_enet_atcr
     struct _hw_enet_atcr_bitfields
     {
         unsigned EN : 1; //!< [0] Enable Timer
-        unsigned RESERVED0 : 1; //!< [1] 
+        unsigned RESERVED0 : 1; //!< [1]
         unsigned OFFEN : 1; //!< [2] Enable One-Shot Offset Event
         unsigned OFFRST : 1; //!< [3] Reset Timer On Offset Event
         unsigned PEREN : 1; //!< [4] Enable Periodical Event
-        unsigned RESERVED1 : 2; //!< [6:5] 
+        unsigned RESERVED1 : 2; //!< [6:5]
         unsigned PINPER : 1; //!< [7] Enables event signal output assertion on period event.
-        unsigned RESERVED2 : 1; //!< [8] 
+        unsigned RESERVED2 : 1; //!< [8]
         unsigned RESTART : 1; //!< [9] Reset Timer
-        unsigned RESERVED3 : 1; //!< [10] 
+        unsigned RESERVED3 : 1; //!< [10]
         unsigned CAPTURE : 1; //!< [11] Capture Timer Value
-        unsigned RESERVED4 : 1; //!< [12] 
+        unsigned RESERVED4 : 1; //!< [12]
         unsigned SLAVE : 1; //!< [13] Enable Timer Slave Mode
-        unsigned RESERVED5 : 18; //!< [31:14] 
+        unsigned RESERVED5 : 18; //!< [31:14]
     } B;
 } hw_enet_atcr_t;
 #endif
@@ -4248,7 +4248,7 @@ typedef union _hw_enet_atcor
     struct _hw_enet_atcor_bitfields
     {
         unsigned COR : 31; //!< [30:0] Correction Counter Wrap-Around Value
-        unsigned RESERVED0 : 1; //!< [31] 
+        unsigned RESERVED0 : 1; //!< [31]
     } B;
 } hw_enet_atcor_t;
 #endif
@@ -4312,9 +4312,9 @@ typedef union _hw_enet_atinc
     struct _hw_enet_atinc_bitfields
     {
         unsigned INC : 7; //!< [6:0] Clock Period Of The Timestamping Clock (ts_clk) In Nanoseconds
-        unsigned RESERVED0 : 1; //!< [7] 
+        unsigned RESERVED0 : 1; //!< [7]
         unsigned INC_CORR : 7; //!< [14:8] Correction Increment Value
-        unsigned RESERVED1 : 17; //!< [31:15] 
+        unsigned RESERVED1 : 17; //!< [31:15]
     } B;
 } hw_enet_atinc_t;
 #endif

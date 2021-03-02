@@ -35,8 +35,8 @@
 /*! This routine returns the current speed of the port\n
  * This must be called after the bus reset is completed.
  *
- * @param	port			The usb controller
- * @return	usbPortSpeed	The operating speed full/high
+ * @param    port            The usb controller
+ * @return    usbPortSpeed    The operating speed full/high
  */
 
 #include "usb/usb.h"
@@ -48,7 +48,7 @@ usbPortSpeed_t usb_get_port_speed(usb_module_t * port)
     uint32_t core = (uint32_t)port->controllerID;
 
     /* Determine the speed we are connected at. */
-    switch (BG_USBC_UH1_PORTSC1_PSPD(HW_USBC_PORTSC1_RD(core))) { 
+    switch (BG_USBC_UH1_PORTSC1_PSPD(HW_USBC_PORTSC1_RD(core))) {
     case usbSpeedFull:
         speed = usbSpeedFull;
         printf("Connected at full-speed\n");
@@ -75,7 +75,7 @@ usbPortSpeed_t usb_get_port_speed(usb_module_t * port)
  * This routine performs a byte swap on a 32-bit word
  *
  * @param data
- * @return	Swapped data
+ * @return    Swapped data
  */
 uint32_t swap32(uint32_t data)
 {

@@ -69,7 +69,7 @@
 #define DMA_MODE_CASCADE        0xC0        /* pass thru DREQ->HRQ, DACK<-HLDA only */
 
 /*
- * å¯ç”¨æŒ‡å®šçš„DMAé€šé“
+ * ÆôÓÃÖ¸¶¨µÄDMAÍ¨µÀ
  */
 static __inline__ void EnableDma(unsigned int dmanr)
 {
@@ -80,7 +80,7 @@ static __inline__ void EnableDma(unsigned int dmanr)
 }
 
 /*
- * ç¦ç”¨æŒ‡å®šçš„DMAé€šé“
+ * ½ûÓÃÖ¸¶¨µÄDMAÍ¨µÀ
  */
 static __inline__ void DisableDma(unsigned int dmanr)
 {
@@ -91,7 +91,7 @@ static __inline__ void DisableDma(unsigned int dmanr)
 }
 
 /*
- * æ¸…ç©ºDMA æ™¶ä½“è®¡æ•°å™¨
+ * Çå¿ÕDMA ¾§Ìå¼ÆÊýÆ÷
  */
 static __inline__ void ClearDmaFF(unsigned int dmanr)
 {
@@ -101,8 +101,8 @@ static __inline__ void ClearDmaFF(unsigned int dmanr)
         OUTB(0,  DMA2_CLEAR_FF_REG);
 }
 
-/* 
- * æ¸…ç©ºDMA æ™¶ä½“è®¡æ•°å™¨
+/*
+ * Çå¿ÕDMA ¾§Ìå¼ÆÊýÆ÷
  */
 static __inline__ void SetDmaMode(unsigned int dmanr, char mode)
 {
@@ -113,7 +113,7 @@ static __inline__ void SetDmaMode(unsigned int dmanr, char mode)
 }
 
 /*
- *  è®¾å®šDMA é¡µé¢å¯„å­˜å™¨
+ *  Éè¶¨DMA Ò³Ãæ¼Ä´æÆ÷
  */
 static __inline__ void SetDmaPage(unsigned int dmanr, char pagenr)
 {
@@ -144,7 +144,7 @@ static __inline__ void SetDmaPage(unsigned int dmanr, char pagenr)
 
 
 /*
- * è®¾å®šDMA ä¼ è¾“é«˜é€Ÿç¼“å†²åŒºåœ°å€
+ * Éè¶¨DMA ´«Êä¸ßËÙ»º³åÇøµØÖ·
  */
 static __inline__ void SetDmaAddr(unsigned int dmanr, unsigned int a)
 {
@@ -160,7 +160,7 @@ static __inline__ void SetDmaAddr(unsigned int dmanr, unsigned int a)
 
 
 /*
- * è®¾å®šDMA ä¼ è¾“å—æ•°
+ * Éè¶¨DMA ´«Êä¿éÊý
  */
 static __inline__ void SetDmaCount(unsigned int dmanr, unsigned int count)
 {
@@ -176,7 +176,7 @@ static __inline__ void SetDmaCount(unsigned int dmanr, unsigned int count)
 
 
 /*
- *  èŽ·å¾—DMA ä¼ è¾“å‰©ä½™å—æ•°
+ *  »ñµÃDMA ´«ÊäÊ£Óà¿éÊý
  */
 static __inline__ int GetDmaResidue(unsigned int dmanr)
 {

@@ -487,7 +487,7 @@ typedef struct
   *         @arg @ref LL_DAC_TRIG_EXT_TIM2_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM3_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM4_TRGO
-  *         @arg @ref LL_DAC_TRIG_EXT_TIM5_TRGO  
+  *         @arg @ref LL_DAC_TRIG_EXT_TIM5_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM6_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM7_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM15_TRGO
@@ -518,7 +518,7 @@ __STATIC_INLINE void LL_DAC_SetTriggerSource(DAC_TypeDef *DACx, uint32_t DAC_Cha
   *         @arg @ref LL_DAC_TRIG_EXT_TIM2_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM3_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM4_TRGO
-  *         @arg @ref LL_DAC_TRIG_EXT_TIM5_TRGO  
+  *         @arg @ref LL_DAC_TRIG_EXT_TIM5_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM6_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM7_TRGO
   *         @arg @ref LL_DAC_TRIG_EXT_TIM15_TRGO

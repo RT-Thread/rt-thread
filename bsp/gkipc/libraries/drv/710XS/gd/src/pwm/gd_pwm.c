@@ -58,7 +58,7 @@ GERR GD_PWM_Init()
         GH_PWM_set_Mode_divider(channel, 0);
         GD_PWM_Set_Clock_Divider(channel, 1);
     }
-    
+
     return GD_OK;
 }
 
@@ -91,12 +91,12 @@ GERR GD_PWM_Cycle(U8 channel, U32 highLevelCnt, U32 lowLevelCnt)
     {
 #ifdef DEBUG_PRINT
         GM_Printf("PWM highLevelCnt/lowLevelCnt is invalid!\n");
-#endif   
+#endif
         return GD_ERR_BAD_PARAMETER;
     }
     highLevelReg = (U16)(highLevelCnt - 1);
     lowLevelReg = (U16)(lowLevelCnt - 1);
-    
+
     mode = (U8)GH_PWM_get_Mode_mode(channel);
     if(mode==GD_NORMAL_SPEED)
     {
@@ -185,9 +185,9 @@ GERR GD_PWM_Get_Mode(U8 channel, GD_PWM_MODE_E *mode)
 #endif
         return GD_ERR_BAD_PARAMETER;
     }
-    
+
     *mode = GH_PWM_get_Mode_mode(channel);
-    
+
     return GD_OK;
 }
 
@@ -196,7 +196,7 @@ GERR GD_PWM_Get_Mode(U8 channel, GD_PWM_MODE_E *mode)
 **
 ** \brief  Set PWM speed
 **
-**         This function set pwm divider in sync speed mode. 
+**         This function set pwm divider in sync speed mode.
 **
 **\param channel The PWM channel that specified.
 **\param speed The PWM divider in sync speed mode.
@@ -215,7 +215,7 @@ GERR GD_PWM_Set_Speed(U8 channel, U16 speed)
     }
 
     GH_PWM_set_Mode_divider(channel, speed);
-    
+
     return GD_OK;
 }
 
@@ -224,7 +224,7 @@ GERR GD_PWM_Set_Speed(U8 channel, U16 speed)
 **
 ** \brief  Get PWM speed
 **
-**         This function get pwm divider in sync speed mode. 
+**         This function get pwm divider in sync speed mode.
 **
 **\param channel The PWM channel that specified.
 **\param speed The pointer to get PWM divider in sync speed mode.
@@ -243,7 +243,7 @@ GERR GD_PWM_Get_Speed(U8 channel, U16 *speed)
     }
 
     *speed = GH_PWM_get_Mode_divider(channel);
-    
+
     return GD_OK;
 }
 
@@ -460,12 +460,12 @@ GD_PWM_ERROR_CODE_E GD_PWM_Set_Param(U8 channel, U32 frequency, U32 range, U32 d
         }
         return GD_PWM_ERR_WRONG_DUTY_CONFIGURATION;
     }
-    
+
     pwmDiv = GH_PLL_get_SCALER_PWM();
     apbClk = GD_GET_APB_ClkHz();
     switch (pwmDiv)
     {
-        case 0x1: 
+        case 0x1:
             clkPwm = apbClk;
             break;
         case 0x20:
@@ -525,14 +525,14 @@ GD_PWM_ERROR_CODE_E GD_PWM_Set_Param(U8 channel, U32 frequency, U32 range, U32 d
         highLevelCnt = duty * multiple / AMPLIFICATION;
     }
     lowLevelCnt = total - highLevelCnt;
-    
+
     if (highLevelCnt > 0xFFFF)
     {
         duty = total / 2;
         highLevelCnt = duty;
         lowLevelCnt = total - highLevelCnt;
     }
-    
+
     mode = GH_PWM_get_Mode_mode(channel);
     if(mode == GD_NORMAL_SPEED)
     {
@@ -592,7 +592,7 @@ GERR GD_PWM_Get_Param(U8 channel, U32 *frequency, U32 *duty)
     apbClk = GD_GET_APB_ClkHz();
     switch (pwmDiv)
     {
-        case 0x1: 
+        case 0x1:
             clkPwm = apbClk;
             break;
         case 0x20:
@@ -606,7 +606,7 @@ GERR GD_PWM_Get_Param(U8 channel, U32 *frequency, U32 *duty)
             clkPwm = apbClk / 0x20;
             break;
     }
-    
+
     mode = GH_PWM_get_Mode_mode(channel);
     if(mode == GD_NORMAL_SPEED)
     {
@@ -647,7 +647,7 @@ GERR GD_PWM_Get_Status(U8 channel, U32 *status)
     {
         return GD_ERR_BAD_PARAMETER;
     }
-    
+
     *status = GH_PWM_get_Enable_enb(channel);
     return GD_OK;
 }
@@ -679,7 +679,7 @@ GERR GD_PWM_Set_Clock_Divider(U8 channel, U8 divider)
     {
         GH_PWM_set_Enable_enb(channel, 0);
     }
-    
+
     if (divider == 1)
     {
         GH_PLL_set_SCALER_PWM(0x20);

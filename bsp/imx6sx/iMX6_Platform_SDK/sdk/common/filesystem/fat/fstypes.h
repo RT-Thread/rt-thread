@@ -129,6 +129,6 @@ enum _fs_character_encoding {
 #define UCS2s               0
 #define UCS3s               1
 
-#define     FAT32FSIFREECOUNTSIZE	4
+#define     FAT32FSIFREECOUNTSIZE    4
 
 #endif //FS_TYPES_H

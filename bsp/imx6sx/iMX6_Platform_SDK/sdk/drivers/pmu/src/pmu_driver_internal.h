@@ -91,11 +91,11 @@ enum _pmu_voltage_constants
 //     _2325_mV = 2325,    //!< 2.325V
 //     _2625_mV = 2625,    //!< 2.625V
 //     _2750_mV = 2750,     //!< 2.75V
-    
+
     kLdo1p1MinVoltage = 800,
     kLdo1p1MinSafeVoltage = 900,
     kLdo1p1MaxSafeVoltage = 1300,
-    
+
     kLdo2p5MinVoltage = 2000,
     kLdo2p5MinSafeVoltage = 2350,
     kLdo2p5MaxSafeVoltage = 2750,
@@ -103,9 +103,9 @@ enum _pmu_voltage_constants
     kLdo3p0MinVoltage = 2625,
     kLdo3p0MinSafeVoltage = 2900,
     kLdo3p0MaxSafeVoltage = 3100,
-    
+
     kLdoCoreMinVoltage = 725,
-    
+
     kLdoArmMinSafeVoltage = 900,
     kLdoArmMaxSafeVoltage = 1300,
 
@@ -135,7 +135,7 @@ public:
     //@{
         //! @brief Read a property's current value.
         virtual int getProperty(pmu_property_t selector, void * value);
-        
+
         //! @brief Change the value of a property.
         virtual int setProperty(pmu_property_t selector, const void * value);
     //@}
@@ -144,44 +144,44 @@ public:
     //@{
         //! @brief Change the brownout handler routine.
         void setBrownoutHandler(pmu_bo_handler_t handler) { m_brownoutHandler = handler; }
-        
+
         //! @brief Get the brownout handler.
         pmu_bo_handler_t getBrownoutHandler() { return m_brownoutHandler; }
-        
+
         //! @brief Returns the current brownout voltage.
         virtual uint32_t getBrownoutMillivolts() const=0;
-        
+
         //! @brief Changes the brownout voltage.
         virtual int setBrownoutMillivolts(uint32_t mV)=0;
-    
+
         //! @brief Returns whether the brownout detector is enabled.
         virtual bool isBrownoutDetectEnabled() const=0;
-        
+
         //! @brief Enables or disables the brownout detector.
         virtual int setBrownoutDetectIsEnabled(bool enableIt)=0;
-    
+
         //! @brief Returns whether the regulator is browning out.
         virtual bool isInBrownout() const=0;
     //@}
-    
+
     //! @name Output voltage
     //@{
         //! @brief Gets the current target output voltage for the regulator.
         virtual uint32_t getOutputMillivolts() const=0;
-        
+
         //! @brief Set a new output voltage.
         virtual int setOutputMillivolts(uint32_t mV)=0;
     //@}
-    
+
     //! @name Enabled status
     //@{
         //! @brief Returns whether the regulator is enabled.
         virtual bool isEnabled() const=0;
-        
+
         //! @brief Enable or disable the regulator.
         virtual int setIsEnabled(bool enableIt)=0;
     //@}
-    
+
     //! @name Functioning properly status
     //@{
         //! @brief Returns whether the regulator is functioning properly.
@@ -189,20 +189,20 @@ public:
     //@}
 
 protected:
-    
+
     //! @brief Constants for the output trigger of the regulators.
     enum _trigger_constants
     {
         kMaxOutputTriggerValue = 0x1f,  //!< 5 bits
         kMaxBrownoutOffsetValue = 0x7   //!< 3 bits
     };
-    
+
     pmu_bo_handler_t m_brownoutHandler; //!< The brownout handler routine for this regulator.
     uint32_t m_minMillivolts;  //!< Output voltage with the trigger set to 0.
     uint32_t m_minSafeMillivolts;   //!< Minimum safe voltage.
     uint32_t m_maxSafeMillivolts;   //!< Maximum safe voltage.
     bool m_isSafetyOverrideEnabled; //!< True if safe voltage range checks are disabled.
-    
+
     void setVoltageRange(uint32_t min_mV, uint32_t minSafe_mV, uint32_t maxSafe_mV);
 };
 
@@ -236,40 +236,40 @@ public:
     //@{
         //! @copydoc Regulator::getProperty()
         virtual int getProperty(pmu_property_t selector, void * value);
-        
+
         //! @copydoc Regulator::setProperty()
         virtual int setProperty(pmu_property_t selector, const void * value);
-    //@}    
+    //@}
 
     //! @name Brownout
     //@{
         //! @copydoc Regulator::getBrownoutMillivolts()
         virtual uint32_t getBrownoutMillivolts() const;
-        
+
         //! @copydoc Regulator::setBrownoutMillivolts()
         virtual int setBrownoutMillivolts(uint32_t mV);
-    
+
         //! @copydoc Regulator::isBrownoutDetectEnabled()
         virtual bool isBrownoutDetectEnabled() const;
-        
+
         //! @copydoc Regulator::setBrownoutDetectIsEnabled
         virtual int setBrownoutDetectIsEnabled(bool enableIt);
     //@}
-    
+
     //! @name Output voltage
     //@{
         //! @copydoc Regulator::getOutputMillivolts()
         virtual uint32_t getOutputMillivolts() const;
-        
+
         //! @copydoc Regulator::setOutputMillivolts()
         virtual int setOutputMillivolts(uint32_t mV);
     //@}
-    
+
     //! @name Enabled status
     //@{
         //! @copydoc Regulator::isEnabled()
         virtual bool isEnabled() const;
-        
+
         //! @copydoc Regulator::setIsEnabled()
         virtual int setIsEnabled(bool enableIt);
     //@}
@@ -295,22 +295,22 @@ public:
     //@{
         //! @copydoc Regulator::getProperty();
         virtual int getProperty(pmu_property_t selector, void * value);
-    //@}    
-    
+    //@}
+
     //! @name Status
     //@{
         //! @copydoc Regulator::isInBrownout()
         virtual bool isInBrownout() const { return isBrownoutDetectEnabled() && HW_PMU_REG_1P1.B.BO_VDD1P1 == 1; }
-        
+
         //! @copydoc Regulator::isOK()
         virtual bool isOK() const { return !isBrownoutDetectEnabled() || HW_PMU_REG_1P1.B.OK_VDD1P1 == 1; }
     //@}
-    
+
     //! @name Output voltage
     //@{
         //! @copydoc Regulator::getOutputMillivolts()
         virtual uint32_t getOutputMillivolts() const;
-        
+
         //! @copydoc Regulator::setOutputMillivolts()
         virtual int setOutputMillivolts(uint32_t mV);
     //@}
@@ -334,12 +334,12 @@ class LDO2p5Regulator : public AnalogRegulator
 public:
     //! @brief Constructor.
     LDO2p5Regulator();
-    
+
     //! @name Status
     //@{
         //! @copydoc Regulator::isInBrownout()
         virtual bool isInBrownout() const { return isBrownoutDetectEnabled() && HW_PMU_REG_2P5.B.BO_VDD2P5 == 1; }
-        
+
         //! @copydoc Regulator::isOK()
         virtual bool isOK() const { return !isBrownoutDetectEnabled() || HW_PMU_REG_2P5.B.OK_VDD2P5 == 1; }
     //@}
@@ -363,20 +363,20 @@ public:
     //@{
         //! @copydoc Regulator::getProperty();
         virtual int getProperty(pmu_property_t selector, void * value);
-        
+
         //! @copydoc Regulator::setProperty();
         virtual int setProperty(pmu_property_t selector, const void * value);
-    //@}    
-    
+    //@}
+
     //! @name Status
     //@{
         //! @copydoc Regulator::isInBrownout()
         virtual bool isInBrownout() const { return isBrownoutDetectEnabled() && HW_PMU_REG_3P0.B.BO_VDD3P0 == 1; }
-        
+
         //! @copydoc Regulator::isOK()
         virtual bool isOK() const { return !isBrownoutDetectEnabled() || HW_PMU_REG_3P0.B.OK_VDD3P0 == 1; }
     //@}
-    
+
 
 protected:
 };
@@ -397,7 +397,7 @@ public:
         kMaxDigitalTriggerValue = 0x1e,
         kDigitalTriggerValueRange = kMaxDigitalTriggerValue - kMinDigitalTriggerValue,
         kNoRegulation = 0x1f,  //!< Power FET switched full on. No regulation.
-        
+
         kDefaultOutputMillivolts = 1100
     };
 
@@ -408,47 +408,47 @@ public:
     //@{
         //! @copydoc Regulator::getProperty();
         virtual int getProperty(pmu_property_t selector, void * value);
-        
+
         //! @copydoc Regulator::setProperty();
         virtual int setProperty(pmu_property_t selector, const void * value);
-    //@}    
-    
+    //@}
+
     //! @name Brownout
     //@{
         //! @copydoc Regulator::getBrownoutMillivolts()
         virtual uint32_t getBrownoutMillivolts() const;
-        
+
         //! @copydoc Regulator::setBrownoutMillivolts()
         virtual int setBrownoutMillivolts(uint32_t mV);
     //@}
-    
+
     //! @name Output voltage
     //@{
         //! @copydoc Regulator::getOutputMillivolts()
         virtual uint32_t getOutputMillivolts() const;
-        
+
         //! @copydoc Regulator::setOutputMillivolts()
         virtual int setOutputMillivolts(uint32_t mV);
-        
+
         virtual bool isBypassed() const;
 
         virtual int setIsBypassed(bool bypassIt);
     //@}
-    
+
     //! @name Enabled status
     //@{
         //! @copydoc Regulator::isEnabled()
         virtual bool isEnabled() const;
-        
+
         //! @copydoc Regulator::setIsEnabled()
         virtual int setIsEnabled(bool enableIt);
     //@}
-    
+
     //! @name Ramp rate
     //@{
         //! @brief Get the current ramp rate.
         virtual uint32_t getRampRate() const=0;
-        
+
         //! @brief Change the ramp rate.
         virtual int setRampRate(uint32_t rate)=0;
     //@}
@@ -457,16 +457,16 @@ protected:
 
     //! @brief Returns the unmodified value of the trigger bitfield.
     virtual uint32_t getTrigger() const=0;
-    
+
     //! @brief Change the output trigger value.
     virtual void setTrigger(uint32_t trigger)=0;
-    
+
     //! @brief Returns the unmodified value of the brownout offset bitfield.
     virtual uint32_t getBrownout() const=0;
-    
+
     //! @brief Change the brownout offset value.
     virtual void setBrownout(uint32_t offset)=0;
-    
+
 };
 
 /*!
@@ -477,27 +477,27 @@ class LDOARMRegulator : public DigitalRegulator
 public:
     //! @brief Constructor.
     LDOARMRegulator();
-    
+
     //! @name Status
     //@{
         //! @copydoc Regulator::isBrownoutDetectEnabled()
         virtual bool isBrownoutDetectEnabled() const { return HW_PMU_MISC2.B.REG0_ENABLE_BO; }
-        
+
         //! @copydoc Regulator::setBrownoutDetectIsEnabled
         virtual int setBrownoutDetectIsEnabled(bool enableIt);
 
         //! @copydoc Regulator::isInBrownout()
         virtual bool isInBrownout() const { return isBrownoutDetectEnabled() && HW_PMU_MISC2.B.REG0_BO_STATUS == 1; }
-        
+
         //! @copydoc Regulator::isOK()
         virtual bool isOK() const { return true; /*HW_PMU_MISC2.B.REG0_OK == 1;*/ }
     //@}
-    
+
     //! @name Ramp rate
     //@{
         //! @brief Get the current ramp rate.
         virtual uint32_t getRampRate() const { return HW_PMU_MISC2.B.REG0_STEP_TIME; }
-        
+
         //! @brief Change the ramp rate.
         virtual int setRampRate(uint32_t rate);
     //@}
@@ -505,7 +505,7 @@ public:
 protected:
 
     virtual uint32_t getTrigger() const { return HW_PMU_REG_CORE.B.REG0_TARG; }
-    
+
     virtual void setTrigger(uint32_t trigger) { HW_PMU_REG_CORE.B.REG0_TARG = trigger; }
 
     virtual uint32_t getBrownout() const { return HW_PMU_MISC2.B.REG0_BO_OFFSET; }
@@ -522,27 +522,27 @@ class LDOGraphicsRegulator : public DigitalRegulator
 public:
     //! @brief Constructor.
     LDOGraphicsRegulator();
-    
+
     //! @name Status
     //@{
         //! @copydoc Regulator::isBrownoutDetectEnabled()
         virtual bool isBrownoutDetectEnabled() const { return HW_PMU_MISC2.B.REG1_ENABLE_BO; }
-        
+
         //! @copydoc Regulator::setBrownoutDetectIsEnabled
         virtual int setBrownoutDetectIsEnabled(bool enableIt);
 
         //! @copydoc Regulator::isInBrownout()
         virtual bool isInBrownout() const { return isBrownoutDetectEnabled() && HW_PMU_MISC2.B.REG1_BO_STATUS == 1; }
-        
+
         //! @copydoc Regulator::isOK()
         virtual bool isOK() const { return true; /*HW_PMU_MISC2.B.REG0_OK == 1;*/ }
     //@}
-    
+
     //! @name Ramp rate
     //@{
         //! @brief Get the current ramp rate.
         virtual uint32_t getRampRate() const { return HW_PMU_MISC2.B.REG1_STEP_TIME; }
-        
+
         //! @brief Change the ramp rate.
         virtual int setRampRate(uint32_t rate);
     //@}
@@ -550,7 +550,7 @@ public:
 protected:
 
     virtual uint32_t getTrigger() const { return HW_PMU_REG_CORE.B.REG1_TARG; }
-    
+
     virtual void setTrigger(uint32_t trigger) { HW_PMU_REG_CORE.B.REG1_TARG = trigger; }
 
     virtual uint32_t getBrownout() const { return HW_PMU_MISC2.B.REG1_BO_OFFSET; }
@@ -567,27 +567,27 @@ class LDOSoCRegulator : public DigitalRegulator
 public:
     //! @brief Constructor.
     LDOSoCRegulator();
-    
+
     //! @name Status
     //@{
         //! @copydoc Regulator::isBrownoutDetectEnabled()
         virtual bool isBrownoutDetectEnabled() const { return HW_PMU_MISC2.B.REG2_ENABLE_BO; }
-        
+
         //! @copydoc Regulator::setBrownoutDetectIsEnabled
         virtual int setBrownoutDetectIsEnabled(bool enableIt);
 
         //! @copydoc Regulator::isInBrownout()
         virtual bool isInBrownout() const { return isBrownoutDetectEnabled() && HW_PMU_MISC2.B.REG2_BO_STATUS == 1; }
-        
+
         //! @copydoc Regulator::isOK()
         virtual bool isOK() const { return !isBrownoutDetectEnabled() || HW_PMU_MISC2.B.REG2_OK == 1; }
     //@}
-    
+
     //! @name Ramp rate
     //@{
         //! @brief Get the current ramp rate.
         virtual uint32_t getRampRate() const { return HW_PMU_MISC2.B.REG2_STEP_TIME; }
-        
+
         //! @brief Change the ramp rate.
         virtual int setRampRate(uint32_t rate);
     //@}
@@ -595,13 +595,13 @@ public:
 protected:
 
     virtual uint32_t getTrigger() const { return HW_PMU_REG_CORE.B.REG2_TARG; }
-    
+
     virtual void setTrigger(uint32_t trigger) { HW_PMU_REG_CORE.B.REG2_TARG = trigger; }
 
     virtual uint32_t getBrownout() const { return HW_PMU_MISC2.B.REG2_BO_OFFSET; }
 
     virtual void setBrownout(uint32_t offset) { HW_PMU_MISC2.B.REG2_BO_OFFSET = offset; }
-    
+
 };
 
 /*!

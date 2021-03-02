@@ -15,7 +15,7 @@
   *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32F1xx_LL_SDMMC_H
@@ -36,15 +36,15 @@
 
 /** @addtogroup SDMMC_LL
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup SDMMC_LL_Exported_Types SDMMC_LL Exported Types
   * @{
   */
-  
-/** 
-  * @brief  SDMMC Configuration Structure definition  
+
+/**
+  * @brief  SDMMC Configuration Structure definition
   */
 typedef struct
 {
@@ -66,28 +66,28 @@ typedef struct
                                       This parameter can be a value of @ref SDMMC_LL_Hardware_Flow_Control      */
 
   uint32_t ClockDiv;             /*!< Specifies the clock frequency of the SDMMC controller.
-                                      This parameter can be a value between Min_Data = 0 and Max_Data = 255 */  
-  
-}SDIO_InitTypeDef;
-  
+                                      This parameter can be a value between Min_Data = 0 and Max_Data = 255 */
 
-/** 
-  * @brief  SDMMC Command Control structure 
+}SDIO_InitTypeDef;
+
+
+/**
+  * @brief  SDMMC Command Control structure
   */
-typedef struct                                                                                            
+typedef struct
 {
   uint32_t Argument;            /*!< Specifies the SDMMC command argument which is sent
                                      to a card as part of a command message. If a command
                                      contains an argument, it must be loaded into this register
                                      before writing the command to the command register.              */
 
-  uint32_t CmdIndex;            /*!< Specifies the SDMMC command index. It must be Min_Data = 0 and 
+  uint32_t CmdIndex;            /*!< Specifies the SDMMC command index. It must be Min_Data = 0 and
                                      Max_Data = 64                                                    */
 
   uint32_t Response;            /*!< Specifies the SDMMC response type.
                                      This parameter can be a value of @ref SDMMC_LL_Response_Type         */
 
-  uint32_t WaitForInterrupt;    /*!< Specifies whether SDMMC wait for interrupt request is 
+  uint32_t WaitForInterrupt;    /*!< Specifies whether SDMMC wait for interrupt request is
                                      enabled or disabled.
                                      This parameter can be a value of @ref SDMMC_LL_Wait_Interrupt_State  */
 
@@ -97,25 +97,25 @@ typedef struct
 }SDIO_CmdInitTypeDef;
 
 
-/** 
-  * @brief  SDMMC Data Control structure 
+/**
+  * @brief  SDMMC Data Control structure
   */
 typedef struct
 {
   uint32_t DataTimeOut;         /*!< Specifies the data timeout period in card bus clock periods.  */
 
   uint32_t DataLength;          /*!< Specifies the number of data bytes to be transferred.         */
- 
+
   uint32_t DataBlockSize;       /*!< Specifies the data block size for block transfer.
                                      This parameter can be a value of @ref SDMMC_LL_Data_Block_Size    */
- 
+
   uint32_t TransferDir;         /*!< Specifies the data transfer direction, whether the transfer
                                      is a read or write.
                                      This parameter can be a value of @ref SDMMC_LL_Transfer_Direction */
- 
+
   uint32_t TransferMode;        /*!< Specifies whether data transfer is in stream or block mode.
                                      This parameter can be a value of @ref SDMMC_LL_Transfer_Type      */
- 
+
   uint32_t DPSM;                /*!< Specifies whether SDMMC Data path state machine (DPSM)
                                      is enabled or disabled.
                                      This parameter can be a value of @ref SDMMC_LL_DPSM_State         */
@@ -124,7 +124,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup SDMMC_LL_Exported_Constants SDMMC_LL Exported Constants
   * @{
@@ -166,8 +166,8 @@ typedef struct
 #define SDMMC_ERROR_DMA                      ((uint32_t)0x40000000U)   /*!< Error while DMA transfer                                      */
 #define SDMMC_ERROR_TIMEOUT                  ((uint32_t)0x80000000U)   /*!< Timeout error                                                 */
 
-/** 
-  * @brief SDMMC Commands Index 
+/**
+  * @brief SDMMC Commands Index
   */
 #define SDMMC_CMD_GO_IDLE_STATE                       ((uint8_t)0U)   /*!< Resets the SD memory card.                                                               */
 #define SDMMC_CMD_SEND_OP_COND                        ((uint8_t)1U)   /*!< Sends host capacity support information and activates the card's initialization process. */
@@ -188,7 +188,7 @@ typedef struct
 #define SDMMC_CMD_HS_BUSTEST_READ                     ((uint8_t)14U)  /*!< Reserved                                                                                 */
 #define SDMMC_CMD_GO_INACTIVE_STATE                   ((uint8_t)15U)  /*!< Sends an addressed card into the inactive state.                                         */
 #define SDMMC_CMD_SET_BLOCKLEN                        ((uint8_t)16U)  /*!< Sets the block length (in bytes for SDSC) for all following block commands
-                                                                           (read, write, lock). Default block length is fixed to 512 Bytes. Not effective 
+                                                                           (read, write, lock). Default block length is fixed to 512 Bytes. Not effective
                                                                            for SDHS and SDXC.                                                                       */
 #define SDMMC_CMD_READ_SINGLE_BLOCK                   ((uint8_t)17U)  /*!< Reads single block of size selected by SET_BLOCKLEN in case of SDSC, and a block of
                                                                            fixed 512 bytes in case of SDHC and SDXC.                                                */
@@ -222,9 +222,9 @@ typedef struct
                                                                            for general purpose/application specific commands.                                       */
 #define SDMMC_CMD_NO_CMD                              ((uint8_t)64U)  /*!< No command                                                                               */
 
-/** 
+/**
   * @brief Following commands are SD Card Specific commands.
-  *        SDMMC_APP_CMD should be sent before sending these commands. 
+  *        SDMMC_APP_CMD should be sent before sending these commands.
   */
 #define SDMMC_CMD_APP_SD_SET_BUSWIDTH                 ((uint8_t)6U)   /*!< (ACMD6) Defines the data bus width to be used for data transfer. The allowed data bus
                                                                             widths are given in SCR register.                                                       */
@@ -238,9 +238,9 @@ typedef struct
 #define SDMMC_CMD_SDMMC_RW_DIRECT                     ((uint8_t)52U)  /*!< For SD I/O card only, reserved for security specification.                               */
 #define SDMMC_CMD_SDMMC_RW_EXTENDED                   ((uint8_t)53U)  /*!< For SD I/O card only, reserved for security specification.                               */
 
-/** 
+/**
   * @brief Following commands are SD Card Specific security commands.
-  *        SDMMC_CMD_APP_CMD should be sent before sending these commands. 
+  *        SDMMC_CMD_APP_CMD should be sent before sending these commands.
   */
 #define SDMMC_CMD_SD_APP_GET_MKB                      ((uint8_t)43U)
 #define SDMMC_CMD_SD_APP_GET_MID                      ((uint8_t)44U)
@@ -254,8 +254,8 @@ typedef struct
 #define SDMMC_CMD_SD_APP_CHANGE_SECURE_AREA           ((uint8_t)49U)
 #define SDMMC_CMD_SD_APP_SECURE_WRITE_MKB             ((uint8_t)48U)
 
-/** 
-  * @brief  Masks for errors Card Status R1 (OCR Register) 
+/**
+  * @brief  Masks for errors Card Status R1 (OCR Register)
   */
 #define SDMMC_OCR_ADDR_OUT_OF_RANGE        ((uint32_t)0x80000000U)
 #define SDMMC_OCR_ADDR_MISALIGNED          ((uint32_t)0x40000000U)
@@ -278,8 +278,8 @@ typedef struct
 #define SDMMC_OCR_AKE_SEQ_ERROR            ((uint32_t)0x00000008U)
 #define SDMMC_OCR_ERRORBITS                ((uint32_t)0xFDFFE008U)
 
-/** 
-  * @brief  Masks for R6 Response 
+/**
+  * @brief  Masks for R6 Response
   */
 #define SDMMC_R6_GENERAL_UNKNOWN_ERROR     ((uint32_t)0x00002000U)
 #define SDMMC_R6_ILLEGAL_CMD               ((uint32_t)0x00004000U)
@@ -312,7 +312,7 @@ typedef struct
 #define SDMMC_HALFFIFO                     ((uint32_t)0x00000008U)
 #define SDMMC_HALFFIFOBYTES                ((uint32_t)0x00000020U)
 
-/** 
+/**
   * @brief  Command Class supported
   */
 #define SDIO_CCCC_ERASE                   ((uint32_t)0x00000020U)
@@ -337,13 +337,13 @@ typedef struct
   * @{
   */
 #define SDIO_CLOCK_BYPASS_DISABLE             ((uint32_t)0x00000000U)
-#define SDIO_CLOCK_BYPASS_ENABLE              SDIO_CLKCR_BYPASS   
+#define SDIO_CLOCK_BYPASS_ENABLE              SDIO_CLKCR_BYPASS
 
 #define IS_SDIO_CLOCK_BYPASS(BYPASS) (((BYPASS) == SDIO_CLOCK_BYPASS_DISABLE) || \
                                               ((BYPASS) == SDIO_CLOCK_BYPASS_ENABLE))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup SDIO_LL_Clock_Power_Save Clock Power Saving
   * @{
@@ -382,15 +382,15 @@ typedef struct
 /**
   * @}
   */
-  
+
 /** @defgroup SDIO_LL_Clock_Division Clock Division
   * @{
   */
 #define IS_SDIO_CLKDIV(DIV)   ((DIV) <= 0xFFU)
 /**
   * @}
-  */  
-    
+  */
+
 /** @defgroup SDIO_LL_Command_Index Command Index
   * @{
   */
@@ -417,7 +417,7 @@ typedef struct
   * @{
   */
 #define SDIO_WAIT_NO                        ((uint32_t)0x00000000U)
-#define SDIO_WAIT_IT                        SDIO_CMD_WAITINT 
+#define SDIO_WAIT_IT                        SDIO_CMD_WAITINT
 #define SDIO_WAIT_PEND                      SDIO_CMD_WAITPEND
 
 #define IS_SDIO_WAIT(WAIT) (((WAIT) == SDIO_WAIT_NO) || \
@@ -437,7 +437,7 @@ typedef struct
                                     ((CPSM) == SDIO_CPSM_ENABLE))
 /**
   * @}
-  */  
+  */
 
 /** @defgroup SDIO_LL_Response_Registers Response Register
   * @{
@@ -477,7 +477,7 @@ typedef struct
 #define SDIO_DATABLOCK_SIZE_256B             SDIO_DCTRL_DBLOCKSIZE_3
 #define SDIO_DATABLOCK_SIZE_512B             (SDIO_DCTRL_DBLOCKSIZE_0|SDIO_DCTRL_DBLOCKSIZE_3)
 #define SDIO_DATABLOCK_SIZE_1024B            (SDIO_DCTRL_DBLOCKSIZE_1|SDIO_DCTRL_DBLOCKSIZE_3)
-#define SDIO_DATABLOCK_SIZE_2048B            (SDIO_DCTRL_DBLOCKSIZE_0|SDIO_DCTRL_DBLOCKSIZE_1|SDIO_DCTRL_DBLOCKSIZE_3) 
+#define SDIO_DATABLOCK_SIZE_2048B            (SDIO_DCTRL_DBLOCKSIZE_0|SDIO_DCTRL_DBLOCKSIZE_1|SDIO_DCTRL_DBLOCKSIZE_3)
 #define SDIO_DATABLOCK_SIZE_4096B            (SDIO_DCTRL_DBLOCKSIZE_2|SDIO_DCTRL_DBLOCKSIZE_3)
 #define SDIO_DATABLOCK_SIZE_8192B            (SDIO_DCTRL_DBLOCKSIZE_0|SDIO_DCTRL_DBLOCKSIZE_2|SDIO_DCTRL_DBLOCKSIZE_3)
 #define SDIO_DATABLOCK_SIZE_16384B           (SDIO_DCTRL_DBLOCKSIZE_1|SDIO_DCTRL_DBLOCKSIZE_2|SDIO_DCTRL_DBLOCKSIZE_3)
@@ -496,7 +496,7 @@ typedef struct
                                           ((SIZE) == SDIO_DATABLOCK_SIZE_2048B) || \
                                           ((SIZE) == SDIO_DATABLOCK_SIZE_4096B) || \
                                           ((SIZE) == SDIO_DATABLOCK_SIZE_8192B) || \
-                                          ((SIZE) == SDIO_DATABLOCK_SIZE_16384B)) 
+                                          ((SIZE) == SDIO_DATABLOCK_SIZE_16384B))
 /**
   * @}
   */
@@ -536,7 +536,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /** @defgroup SDIO_LL_Read_Wait_Mode Read Wait Mode
   * @{
   */
@@ -547,7 +547,7 @@ typedef struct
                                              ((MODE) == SDIO_READ_WAIT_MODE_DATA2))
 /**
   * @}
-  */  
+  */
 
 /** @defgroup SDIO_LL_Interrupt_sources Interrupt Sources
   * @{
@@ -578,7 +578,7 @@ typedef struct
 #define SDIO_IT_CEATAEND                    SDIO_MASK_CEATAENDIE
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup SDIO_LL_Flags Flags
   * @{
@@ -610,7 +610,7 @@ typedef struct
 #define SDIO_STATIC_FLAGS                   ((uint32_t)(SDIO_FLAG_CCRCFAIL | SDIO_FLAG_DCRCFAIL | SDIO_FLAG_CTIMEOUT |\
                                                          SDIO_FLAG_DTIMEOUT | SDIO_FLAG_TXUNDERR | SDIO_FLAG_RXOVERR  |\
                                                          SDIO_FLAG_CMDREND  | SDIO_FLAG_CMDSENT  | SDIO_FLAG_DATAEND  |\
-                                                         SDIO_FLAG_DBCKEND | SDIO_FLAG_SDIOIT))  
+                                                         SDIO_FLAG_DBCKEND | SDIO_FLAG_SDIOIT))
 
 #define SDIO_STATIC_CMD_FLAGS               ((uint32_t)(SDIO_FLAG_CCRCFAIL | SDIO_FLAG_CTIMEOUT | SDIO_FLAG_CMDREND |\
                                                          SDIO_FLAG_CMDSENT))
@@ -624,7 +624,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /* Exported macro ------------------------------------------------------------*/
 /** @defgroup SDIO_LL_Exported_macros SDIO_LL Exported Macros
   * @{
@@ -691,7 +691,7 @@ typedef struct
   */
 /* ---------------------- SDIO registers bit mask --------------------------- */
 /* --- CLKCR Register ---*/
-/* CLKCR register clear mask */ 
+/* CLKCR register clear mask */
 #define CLKCR_CLEAR_MASK         ((uint32_t)(SDIO_CLKCR_CLKDIV  | SDIO_CLKCR_PWRSAV |\
                                              SDIO_CLKCR_BYPASS  | SDIO_CLKCR_WIDBUS |\
                                              SDIO_CLKCR_NEGEDGE | SDIO_CLKCR_HWFC_EN))
@@ -720,38 +720,38 @@ typedef struct
  *  @brief macros to handle interrupts and specific clock configurations
  * @{
  */
- 
+
 /**
   * @brief  Enable the SDIO device.
-  * @param  __INSTANCE__: SDIO Instance  
+  * @param  __INSTANCE__: SDIO Instance
   * @retval None
   */
 #define __SDIO_ENABLE(__INSTANCE__)  (*(__IO uint32_t *)CLKCR_CLKEN_BB = ENABLE)
 
 /**
   * @brief  Disable the SDIO device.
-  * @param  __INSTANCE__: SDIO Instance  
+  * @param  __INSTANCE__: SDIO Instance
   * @retval None
   */
 #define __SDIO_DISABLE(__INSTANCE__)  (*(__IO uint32_t *)CLKCR_CLKEN_BB = DISABLE)
 
 /**
   * @brief  Enable the SDIO DMA transfer.
-  * @param  __INSTANCE__: SDIO Instance  
+  * @param  __INSTANCE__: SDIO Instance
   * @retval None
   */
 #define __SDIO_DMA_ENABLE(__INSTANCE__)  (*(__IO uint32_t *)DCTRL_DMAEN_BB = ENABLE)
 
 /**
   * @brief  Disable the SDIO DMA transfer.
-  * @param  __INSTANCE__: SDIO Instance   
+  * @param  __INSTANCE__: SDIO Instance
   * @retval None
   */
 #define __SDIO_DMA_DISABLE(__INSTANCE__)  (*(__IO uint32_t *)DCTRL_DMAEN_BB = DISABLE)
- 
+
 /**
   * @brief  Enable the SDIO device interrupt.
-  * @param  __INSTANCE__ : Pointer to SDIO register base  
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @param  __INTERRUPT__ : specifies the SDIO interrupt sources to be enabled.
   *         This parameter can be one or a combination of the following values:
   *            @arg SDIO_IT_CCRCFAIL: Command response received (CRC check failed) interrupt
@@ -775,14 +775,14 @@ typedef struct
   *            @arg SDIO_IT_RXFIFOE:  Receive FIFO empty interrupt
   *            @arg SDIO_IT_TXDAVL:   Data available in transmit FIFO interrupt
   *            @arg SDIO_IT_RXDAVL:   Data available in receive FIFO interrupt
-  *            @arg SDIO_IT_SDIOIT:   SDIO interrupt received interrupt 
+  *            @arg SDIO_IT_SDIOIT:   SDIO interrupt received interrupt
   * @retval None
   */
 #define __SDIO_ENABLE_IT(__INSTANCE__, __INTERRUPT__)  ((__INSTANCE__)->MASK |= (__INTERRUPT__))
 
 /**
   * @brief  Disable the SDIO device interrupt.
-  * @param  __INSTANCE__ : Pointer to SDIO register base   
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @param  __INTERRUPT__ : specifies the SDIO interrupt sources to be disabled.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDIO_IT_CCRCFAIL: Command response received (CRC check failed) interrupt
@@ -806,15 +806,15 @@ typedef struct
   *            @arg SDIO_IT_RXFIFOE:  Receive FIFO empty interrupt
   *            @arg SDIO_IT_TXDAVL:   Data available in transmit FIFO interrupt
   *            @arg SDIO_IT_RXDAVL:   Data available in receive FIFO interrupt
-  *            @arg SDIO_IT_SDIOIT:   SDIO interrupt received interrupt   
+  *            @arg SDIO_IT_SDIOIT:   SDIO interrupt received interrupt
   * @retval None
   */
 #define __SDIO_DISABLE_IT(__INSTANCE__, __INTERRUPT__)  ((__INSTANCE__)->MASK &= ~(__INTERRUPT__))
 
 /**
-  * @brief  Checks whether the specified SDIO flag is set or not. 
-  * @param  __INSTANCE__ : Pointer to SDIO register base   
-  * @param  __FLAG__: specifies the flag to check. 
+  * @brief  Checks whether the specified SDIO flag is set or not.
+  * @param  __INSTANCE__ : Pointer to SDIO register base
+  * @param  __FLAG__: specifies the flag to check.
   *          This parameter can be one of the following values:
   *            @arg SDIO_FLAG_CCRCFAIL: Command response received (CRC check failed)
   *            @arg SDIO_FLAG_DCRCFAIL: Data block sent/received (CRC check failed)
@@ -845,8 +845,8 @@ typedef struct
 
 /**
   * @brief  Clears the SDIO pending flags.
-  * @param  __INSTANCE__ : Pointer to SDIO register base  
-  * @param  __FLAG__: specifies the flag to clear.  
+  * @param  __INSTANCE__ : Pointer to SDIO register base
+  * @param  __FLAG__: specifies the flag to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDIO_FLAG_CCRCFAIL: Command response received (CRC check failed)
   *            @arg SDIO_FLAG_DCRCFAIL: Data block sent/received (CRC check failed)
@@ -865,8 +865,8 @@ typedef struct
 
 /**
   * @brief  Checks whether the specified SDIO interrupt has occurred or not.
-  * @param  __INSTANCE__ : Pointer to SDIO register base   
-  * @param  __INTERRUPT__: specifies the SDIO interrupt source to check. 
+  * @param  __INSTANCE__ : Pointer to SDIO register base
+  * @param  __INTERRUPT__: specifies the SDIO interrupt source to check.
   *          This parameter can be one of the following values:
   *            @arg SDIO_IT_CCRCFAIL: Command response received (CRC check failed) interrupt
   *            @arg SDIO_IT_DCRCFAIL: Data block sent/received (CRC check failed) interrupt
@@ -896,8 +896,8 @@ typedef struct
 
 /**
   * @brief  Clears the SDIO's interrupt pending bits.
-  * @param  __INSTANCE__ : Pointer to SDIO register base 
-  * @param  __INTERRUPT__: specifies the interrupt pending bit to clear. 
+  * @param  __INSTANCE__ : Pointer to SDIO register base
+  * @param  __INTERRUPT__: specifies the interrupt pending bit to clear.
   *          This parameter can be one or a combination of the following values:
   *            @arg SDIO_IT_CCRCFAIL: Command response received (CRC check failed) interrupt
   *            @arg SDIO_IT_DCRCFAIL: Data block sent/received (CRC check failed) interrupt
@@ -915,56 +915,56 @@ typedef struct
 
 /**
   * @brief  Enable Start the SD I/O Read Wait operation.
-  * @param  __INSTANCE__ : Pointer to SDIO register base  
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_START_READWAIT_ENABLE(__INSTANCE__)  (*(__IO uint32_t *) DCTRL_RWSTART_BB = ENABLE)
 
 /**
   * @brief  Disable Start the SD I/O Read Wait operations.
-  * @param  __INSTANCE__ : Pointer to SDIO register base   
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_START_READWAIT_DISABLE(__INSTANCE__)  (*(__IO uint32_t *) DCTRL_RWSTART_BB = DISABLE)
 
 /**
   * @brief  Enable Start the SD I/O Read Wait operation.
-  * @param  __INSTANCE__ : Pointer to SDIO register base   
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_STOP_READWAIT_ENABLE(__INSTANCE__)  (*(__IO uint32_t *) DCTRL_RWSTOP_BB = ENABLE)
 
 /**
   * @brief  Disable Stop the SD I/O Read Wait operations.
-  * @param  __INSTANCE__ : Pointer to SDIO register base  
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_STOP_READWAIT_DISABLE(__INSTANCE__)  (*(__IO uint32_t *) DCTRL_RWSTOP_BB = DISABLE)
 
 /**
   * @brief  Enable the SD I/O Mode Operation.
-  * @param  __INSTANCE__ : Pointer to SDIO register base   
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_OPERATION_ENABLE(__INSTANCE__)  (*(__IO uint32_t *) DCTRL_SDIOEN_BB = ENABLE)
 
 /**
   * @brief  Disable the SD I/O Mode Operation.
-  * @param  __INSTANCE__ : Pointer to SDIO register base 
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_OPERATION_DISABLE(__INSTANCE__)  (*(__IO uint32_t *) DCTRL_SDIOEN_BB = DISABLE)
 
 /**
   * @brief  Enable the SD I/O Suspend command sending.
-  * @param  __INSTANCE__ : Pointer to SDIO register base  
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_SUSPEND_CMD_ENABLE(__INSTANCE__)  (*(__IO uint32_t *) CMD_SDIOSUSPEND_BB = ENABLE)
 
 /**
   * @brief  Disable the SD I/O Suspend command sending.
-  * @param  __INSTANCE__ : Pointer to SDIO register base  
+  * @param  __INSTANCE__ : Pointer to SDIO register base
   * @retval None
   */
 #define __SDIO_SUSPEND_CMD_DISABLE(__INSTANCE__)  (*(__IO uint32_t *) CMD_SDIOSUSPEND_BB = DISABLE)
@@ -972,52 +972,52 @@ typedef struct
 /**
   * @brief  Enable the command completion signal.
   * @retval None
-  */    
+  */
 #define __SDIO_CEATA_CMD_COMPLETION_ENABLE()   (*(__IO uint32_t *) CMD_ENCMDCOMPL_BB = ENABLE)
 
 /**
   * @brief  Disable the command completion signal.
   * @retval None
-  */  
+  */
 #define __SDIO_CEATA_CMD_COMPLETION_DISABLE()   (*(__IO uint32_t *) CMD_ENCMDCOMPL_BB = DISABLE)
 
 /**
   * @brief  Enable the CE-ATA interrupt.
   * @retval None
-  */    
+  */
 #define __SDIO_CEATA_ENABLE_IT()   (*(__IO uint32_t *) CMD_NIEN_BB = (uint32_t)0U)
 
 /**
   * @brief  Disable the CE-ATA interrupt.
   * @retval None
-  */  
+  */
 #define __SDIO_CEATA_DISABLE_IT()   (*(__IO uint32_t *) CMD_NIEN_BB = (uint32_t)1U)
 
 /**
   * @brief  Enable send CE-ATA command (CMD61).
   * @retval None
-  */  
+  */
 #define __SDIO_CEATA_SENDCMD_ENABLE()   (*(__IO uint32_t *) CMD_ATACMD_BB = ENABLE)
 
 /**
   * @brief  Disable send CE-ATA command (CMD61).
   * @retval None
-  */  
+  */
 #define __SDIO_CEATA_SENDCMD_DISABLE()   (*(__IO uint32_t *) CMD_ATACMD_BB = DISABLE)
-   
+
 /**
   * @}
   */
 
 /**
   * @}
-  */  
+  */
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup SDMMC_LL_Exported_Functions
   * @{
   */
-  
+
 /* Initialization/de-initialization functions  **********************************/
 /** @addtogroup HAL_SDMMC_LL_Group1
   * @{
@@ -1026,7 +1026,7 @@ HAL_StatusTypeDef SDIO_Init(SDIO_TypeDef *SDIOx, SDIO_InitTypeDef Init);
 /**
   * @}
   */
-  
+
 /* I/O operation functions  *****************************************************/
 /** @addtogroup HAL_SDMMC_LL_Group2
   * @{
@@ -1036,7 +1036,7 @@ HAL_StatusTypeDef SDIO_WriteFIFO(SDIO_TypeDef *SDIOx, uint32_t *pWriteData);
 /**
   * @}
   */
-  
+
 /* Peripheral Control functions  ************************************************/
 /** @addtogroup HAL_SDMMC_LL_Group3
   * @{
@@ -1088,14 +1088,14 @@ uint32_t SDMMC_CmdSwitch(SDIO_TypeDef *SDIOx, uint32_t Argument);
 /**
   * @}
   */
-  
+
 /**
   * @}
   */
-  
+
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}

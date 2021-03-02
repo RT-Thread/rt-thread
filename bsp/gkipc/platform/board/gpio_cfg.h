@@ -3,7 +3,7 @@
 
 
 #if defined(GK7101_OV2710_V10) || defined(GK7101_OV2710_V20) || defined(GK7101_OV2710_V21) || defined(GK7101_OV2710_V22) \
-		|| defined(GK7101S_OV2710_V10) || defined(GK7101S_OV2710_V20) || defined(GK7101S_OV2710_V21) || defined(GK7101S_OV2710_V22)
+        || defined(GK7101S_OV2710_V10) || defined(GK7101S_OV2710_V20) || defined(GK7101S_OV2710_V21) || defined(GK7101S_OV2710_V22)
 #include "gpio_gk7101_ov2710.h"
 #endif
 
@@ -31,7 +31,7 @@
 #include "gpio_gk7102s_ov9732_joyhonest.h"
 #endif
 
-#if defined(GK7102C_JH) 
+#if defined(GK7102C_JH)
 #include "gpio_gk7102c_joyhonest.h"
 #endif
 

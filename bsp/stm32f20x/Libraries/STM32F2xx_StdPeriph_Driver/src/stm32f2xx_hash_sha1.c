@@ -10,11 +10,11 @@
   *          peripheral.
   *
   *  @verbatim
-  * 
+  *
   *          ===================================================================
   *                                   How to use this driver
   *          ===================================================================
-  *          1. Enable The HASH controller clock using 
+  *          1. Enable The HASH controller clock using
   *            RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_HASH, ENABLE); function.
   *
   *          2. Calculate the HASH SHA1 Digest using HASH_SHA1() function.
@@ -44,7 +44,7 @@
   * @{
   */
 
-/** @defgroup HASH 
+/** @defgroup HASH
   * @brief HASH driver modules
   * @{
   */
@@ -60,12 +60,12 @@
 
 /** @defgroup HASH_Private_Functions
   * @{
-  */ 
+  */
 
 /** @defgroup HASH_Group6 High Level SHA1 functions
- *  @brief   High Level SHA1 Hash and HMAC functions 
+ *  @brief   High Level SHA1 Hash and HMAC functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                           High Level SHA1 Hash and HMAC functions
  ===============================================================================
@@ -152,7 +152,7 @@ ErrorStatus HASH_SHA1(uint8_t *Input, uint32_t Ilen, uint8_t Output[20])
 /**
   * @brief  Compute the HMAC SHA1 digest.
   * @param  Key: pointer to the Key used for HMAC.
-  * @param  Keylen: length of the Key used for HMAC.  
+  * @param  Keylen: length of the Key used for HMAC.
   * @param  Input: pointer to the Input buffer to be treated.
   * @param  Ilen: length of the Input buffer.
   * @param  Output: the returned digest
@@ -253,7 +253,7 @@ ErrorStatus HMAC_SHA1(uint8_t *Key, uint32_t Keylen, uint8_t *Input,
       status = ERROR;
     }
     else
-    {  
+    {
       /* Configure the number of valid bits in last word of the Key */
       HASH_SetLastWordValidBitsNbr(nbvalidbitskey);
 
@@ -294,24 +294,24 @@ ErrorStatus HMAC_SHA1(uint8_t *Key, uint32_t Keylen, uint8_t *Input,
         outputaddr+=4;
         *(uint32_t*)(outputaddr)  = __REV(SHA1_MessageDigest.Data[4]);
       }
-    }  
+    }
   }
-  return status;  
+  return status;
 }
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

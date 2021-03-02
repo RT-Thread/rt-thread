@@ -1,63 +1,63 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:		arm_sin_q15.c    
-*    
-* Description:	Fast sine calculation for Q15 values.   
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:     V1.1.0
+*
+* Project:         CMSIS DSP Library
+* Title:        arm_sin_q15.c
+*
+* Description:    Fast sine calculation for Q15 values.
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated.    
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.10 2011/7/15
+*    Big Endian support added and Merged M0 and M3/M4 Source code.
+*
+* Version 1.0.3 2010/11/29
+*    Re-organized the CMSIS folders and updated documentation.
+*
+* Version 1.0.2 2010/11/11
+*    Documentation updated.
+*
+* Version 1.0.1 2010/10/05
+*    Production release and review comments incorporated.
+*
+* Version 1.0.0 2010/09/20
+*    Production release and review comments incorporated.
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
 
-/**    
- * @ingroup groupFastMath    
+/**
+ * @ingroup groupFastMath
  */
 
- /**    
- * @addtogroup sin    
- * @{    
+ /**
+ * @addtogroup sin
+ * @{
  */
 
 
-/**    
- * \par    
- * Example code for Generation of Q15 Sin Table:   
- * \par    
- * <pre>tableSize = 256;    
- * for(n = -1; n < (tableSize + 1); n++)    
- * {    
- *	sinTable[n+1]=sin(2*pi*n/tableSize);    
- * } </pre>    
- * where pi value is  3.14159265358979    
- * \par    
- * Convert Floating point to Q15(Fixed point):    
- *	(sinTable[i] * pow(2, 15))    
- * \par    
- * rounding to nearest integer is done    
- * 	sinTable[i] += (sinTable[i] > 0 ? 0.5 :-0.5);    
+/**
+ * \par
+ * Example code for Generation of Q15 Sin Table:
+ * \par
+ * <pre>tableSize = 256;
+ * for(n = -1; n < (tableSize + 1); n++)
+ * {
+ *    sinTable[n+1]=sin(2*pi*n/tableSize);
+ * } </pre>
+ * where pi value is  3.14159265358979
+ * \par
+ * Convert Floating point to Q15(Fixed point):
+ *    (sinTable[i] * pow(2, 15))
+ * \par
+ * rounding to nearest integer is done
+ *     sinTable[i] += (sinTable[i] > 0 ? 0.5 :-0.5);
  */
 
 
@@ -98,12 +98,12 @@ static const q15_t sinTableQ15[259] = {
 };
 
 
-/**   
- * @brief Fast approximation to the trigonometric sine function for Q15 data.   
- * @param[in] x Scaled input value in radians.   
- * @return  sin(x).   
- *   
- * The Q15 input value is in the range [0 +0.9999] and is mapped to a radian value in the range [0 2*pi), Here range excludes 2*pi.   
+/**
+ * @brief Fast approximation to the trigonometric sine function for Q15 data.
+ * @param[in] x Scaled input value in radians.
+ * @return  sin(x).
+ *
+ * The Q15 input value is in the range [0 +0.9999] and is mapped to a radian value in the range [0 2*pi), Here range excludes 2*pi.
  */
 
 q15_t arm_sin_q15(
@@ -203,6 +203,6 @@ q15_t arm_sin_q15(
 
 }
 
-/**    
- * @} end of sin group    
+/**
+ * @} end of sin group
  */

@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -59,7 +59,7 @@ typedef struct
   uint32_t Speed;      /*!< Specifies the speed for the selected pins.
                            This parameter can be a value of @ref GPIO_speed */
 
-  uint32_t Alternate;  /*!< Peripheral to be connected to the selected pins 
+  uint32_t Alternate;  /*!< Peripheral to be connected to the selected pins
                             This parameter can be a value of @ref GPIOEx_Alternate_function_selection */
 }GPIO_InitTypeDef;
 
@@ -162,7 +162,7 @@ typedef enum
 /** @defgroup GPIO_Exported_Macros GPIO Exported Macros
   * @{
   */
-  
+
 /**
   * @brief  Check whether the specified EXTI line flag is set or not.
   * @param __EXTI_LINE__ specifies the EXTI line flag to check.
@@ -244,17 +244,17 @@ typedef enum
 /* Include GPIO HAL Extended module */
 #include "stm32wbxx_hal_gpio_ex.h"
 
-/* Exported functions --------------------------------------------------------*/ 
+/* Exported functions --------------------------------------------------------*/
 /** @defgroup GPIO_Exported_Functions GPIO Exported Functions
  *  @brief    GPIO Exported Functions
   * @{
   */
 
-/** @defgroup GPIO_Exported_Functions_Group1 Initialization/de-initialization functions 
+/** @defgroup GPIO_Exported_Functions_Group1 Initialization/de-initialization functions
  *  @brief    Initialization and Configuration functions
  * @{
  */
-     
+
 /* Initialization and de-initialization functions *****************************/
 void              HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init);
 void              HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin);
@@ -263,11 +263,11 @@ void              HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin);
   * @}
   */
 
-/** @defgroup GPIO_Exported_Functions_Group2 IO operation functions 
+/** @defgroup GPIO_Exported_Functions_Group2 IO operation functions
  *  @brief    IO operation functions
  * @{
  */
-   
+
 /* IO operation functions *****************************************************/
 GPIO_PinState     HAL_GPIO_ReadPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
 void              HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState);
@@ -286,12 +286,12 @@ void              HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */  
-  
+  */
+
 #ifdef __cplusplus
 }
 #endif

@@ -58,24 +58,24 @@ __weak void SystemCoreClockUpdate(void)
 
     // Get the clock source and frequency
     clk_src = (MXC_GCR->clkcn & MXC_F_GCR_CLKCN_CLKSEL);
-    
+
     if (clk_src == MXC_S_GCR_CLKCN_CLKSEL_HFXIN) {
         base_freq = HFX_FREQ;
     } else {
-	if (clk_src == MXC_S_GCR_CLKCN_CLKSEL_NANORING) {
-	    base_freq = NANORING_FREQ;
-	} else {
-	    ovr = (MXC_PWRSEQ->lp_ctrl & MXC_F_PWRSEQ_LP_CTRL_OVR);
-	    if (ovr == MXC_S_PWRSEQ_LP_CTRL_OVR_0_9V) {
-		base_freq = HIRC96_FREQ/4;
-	    } else {
-		if (ovr == MXC_S_PWRSEQ_LP_CTRL_OVR_1_0V) {
-		    base_freq = HIRC96_FREQ/2;
-		} else {
-		    base_freq = HIRC96_FREQ;
-		}
-	    }
-	}
+    if (clk_src == MXC_S_GCR_CLKCN_CLKSEL_NANORING) {
+        base_freq = NANORING_FREQ;
+    } else {
+        ovr = (MXC_PWRSEQ->lp_ctrl & MXC_F_PWRSEQ_LP_CTRL_OVR);
+        if (ovr == MXC_S_PWRSEQ_LP_CTRL_OVR_0_9V) {
+        base_freq = HIRC96_FREQ/4;
+        } else {
+        if (ovr == MXC_S_PWRSEQ_LP_CTRL_OVR_1_0V) {
+            base_freq = HIRC96_FREQ/2;
+        } else {
+            base_freq = HIRC96_FREQ;
+        }
+        }
+    }
     }
 
     // Get the clock divider
@@ -144,7 +144,7 @@ __weak void SystemInit(void)
     SYS_ClockDisable(SYS_PERIPH_CLOCK_T1);
     SYS_ClockDisable(SYS_PERIPH_CLOCK_T2);
     SYS_ClockDisable(SYS_PERIPH_CLOCK_I2C1);
-    
+
     Board_Init();
 }
 

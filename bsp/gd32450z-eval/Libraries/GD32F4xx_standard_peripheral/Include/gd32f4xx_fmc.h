@@ -146,7 +146,7 @@ typedef enum
 #define OB_BB_DISABLE              OBCTL0_BB(0)                   /*!< boot from bank0 */
 #define OB_BB_ENABLE               OBCTL0_BB(1)                   /*!< boot from bank1 or bank0 if bank1 is void */
 
-/* option byte software/hardware free watch dog timer */  
+/* option byte software/hardware free watch dog timer */
 #define OBCTL0_NWDG_HW(regval)     (BIT(5) & ((uint32_t)(regval))<< 5)
 #define OB_FWDGT_SW                OBCTL0_NWDG_HW(1)              /*!< software free watchdog */
 #define OB_FWDGT_HW                OBCTL0_NWDG_HW(0)              /*!< hardware free watchdog */
@@ -220,12 +220,12 @@ typedef enum
 #define OB_DRP_23_30               ((uint32_t)0x00000800U)        /*!< D-bus read protection protection of sector 23~30 */
 #define OB_DRP_ALL                 ((uint32_t)0x00000FFFU)        /*!< D-bus read protection protection of all sectors */
 
-/* double banks or single bank selection when flash size is 1M bytes */  
+/* double banks or single bank selection when flash size is 1M bytes */
 #define OBCTL0_DBS(regval)         (BIT(30) & ((uint32_t)(regval)<<30))
 #define OB_DBS_DISABLE             OBCTL0_DBS(0)                  /*!< single bank when flash size is 1M bytes */
 #define OB_DBS_ENABLE              OBCTL0_DBS(1)                  /*!< double bank when flash size is 1M bytes */
 
-/* option bytes D-bus read protection mode */  
+/* option bytes D-bus read protection mode */
 #define OBCTL0_DRP(regval)         (BIT(31) & ((uint32_t)(regval)<<31))
 #define OB_DRP_DISABLE             OBCTL0_DRP(0)                  /*!< the WPx bits used as erase/program protection of each sector */
 #define OB_DRP_ENABLE              OBCTL0_DRP(1)                  /*!< the WPx bits used as erase/program protection and D-bus read protection of each sector */
@@ -264,7 +264,7 @@ typedef enum
 #define CTL_SECTOR_NUMBER_29       CTL_SN(29)                     /*!< sector 29  */
 #define CTL_SECTOR_NUMBER_30       CTL_SN(30)                     /*!< sector 30  */
 
-/* FMC program size */ 
+/* FMC program size */
 #define CTL_PSZ(regval)            (BITS(8,9) & ((uint32_t)(regval))<< 8)
 #define CTL_PSZ_BYTE               CTL_PSZ(0)                     /*!< FMC program by byte access */
 #define CTL_PSZ_HALF_WORD          CTL_PSZ(1)                     /*!< FMC program by half-word access */
@@ -281,7 +281,7 @@ typedef enum
 #define FMC_FLAG_PGMERR            ((uint32_t)0x00000040U)        /*!< FMC program size not match error flag bit */
 #define FMC_FLAG_PGSERR            ((uint32_t)0x00000080U)        /*!< FMC program sequence error flag bit */
 #define FMC_FLAG_RDDERR            ((uint32_t)0x00000100U)        /*!< FMC read D-bus protection error flag bit */
-#define FMC_FLAG_BUSY              ((uint32_t)0x00010000U)        /*!< FMC busy flag */ 
+#define FMC_FLAG_BUSY              ((uint32_t)0x00010000U)        /*!< FMC busy flag */
 
 /* function declarations */
 /* FMC main memory programming functions */

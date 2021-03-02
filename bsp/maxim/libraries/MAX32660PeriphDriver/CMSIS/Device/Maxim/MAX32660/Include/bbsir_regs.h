@@ -46,11 +46,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- 
+
 #if defined (__ICCARM__)
   #pragma system_include
 #endif
- 
+
 #if defined (__CC_ARM)
   #pragma anon_unions
 #endif
@@ -96,12 +96,12 @@ typedef struct {
 /**
  * @ingroup    bbsir_registers
  * @defgroup   BBSIR_Register_Offsets Register Offsets
- * @brief      BBSIR Peripheral Register Offsets from the BBSIR Base Peripheral Address. 
+ * @brief      BBSIR Peripheral Register Offsets from the BBSIR Base Peripheral Address.
  * @{
  */
- #define MXC_R_BBSIR_RSV0                   ((uint32_t)0x00000000UL) /**< Offset from BBSIR Base Address: <tt> 0x0000</tt> */ 
- #define MXC_R_BBSIR_BB_SIR2                ((uint32_t)0x00000008UL) /**< Offset from BBSIR Base Address: <tt> 0x0008</tt> */ 
- #define MXC_R_BBSIR_BB_SIR3                ((uint32_t)0x0000000CUL) /**< Offset from BBSIR Base Address: <tt> 0x000C</tt> */ 
+ #define MXC_R_BBSIR_RSV0                   ((uint32_t)0x00000000UL) /**< Offset from BBSIR Base Address: <tt> 0x0000</tt> */
+ #define MXC_R_BBSIR_BB_SIR2                ((uint32_t)0x00000008UL) /**< Offset from BBSIR Base Address: <tt> 0x0008</tt> */
+ #define MXC_R_BBSIR_BB_SIR3                ((uint32_t)0x0000000CUL) /**< Offset from BBSIR Base Address: <tt> 0x000C</tt> */
 /**@} end of group bbsir_registers */
 
 #ifdef __cplusplus

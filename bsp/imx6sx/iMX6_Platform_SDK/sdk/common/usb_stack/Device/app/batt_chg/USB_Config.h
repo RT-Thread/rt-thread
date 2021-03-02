@@ -45,7 +45,7 @@
 
 
 /*****************************************************************************/
-/* 								Function's Prototypes						 */
+/*                                 Function's Prototypes                         */
 /*****************************************************************************/
 extern void USB_NULL_CALLBACK (PTR_USB_DEV_EVENT_STRUCT event);
 

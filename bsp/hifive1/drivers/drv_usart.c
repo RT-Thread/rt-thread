@@ -37,7 +37,7 @@ static rt_err_t usart_configure(struct rt_serial_device *serial,
 {
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
- 
+
     GPIO_REG(GPIO_IOF_SEL) &= ~IOF0_UART0_MASK;
     GPIO_REG(GPIO_IOF_EN) |= IOF0_UART0_MASK;
 

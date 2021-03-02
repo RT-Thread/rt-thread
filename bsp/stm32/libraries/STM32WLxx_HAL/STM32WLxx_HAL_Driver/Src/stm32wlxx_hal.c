@@ -649,9 +649,9 @@ void HAL_SYSCFG_VREFBUF_VoltageScalingConfig(uint32_t VoltageScaling)
 
   /* Check the parameters */
   assert_param(IS_SYSCFG_VREFBUF_VOLTAGE_SCALE(VoltageScaling));
-  
+
   LL_VREFBUF_SetVoltageScaling(VoltageScaling);
-  
+
   /* Restrieve Calibration data and store them into trimming field */
   if (VoltageScaling == SYSCFG_VREFBUF_VOLTAGE_SCALE0)
   {
@@ -687,7 +687,7 @@ void HAL_SYSCFG_VREFBUF_HighImpedanceConfig(uint32_t Mode)
   * @brief Tune the Internal Voltage Reference buffer (VREFBUF).
   * @note  Each VrefBuf voltage scale is calibrated in production for each device,
   *        data stored in flash memory.
-  *        Function @ref HAL_SYSCFG_VREFBUF_VoltageScalingConfig retrieves and 
+  *        Function @ref HAL_SYSCFG_VREFBUF_VoltageScalingConfig retrieves and
   *        applies this calibration data as trimming value at each scale change.
   *        Therefore, optionally, function @ref HAL_SYSCFG_VREFBUF_TrimmingConfig
   *        can be used in a second time to fine tune the trimming.

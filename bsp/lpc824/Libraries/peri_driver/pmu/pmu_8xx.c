@@ -53,57 +53,57 @@
 /* Enter MCU Sleep mode */
 void Chip_PMU_SleepState(LPC_PMU_T *pPMU)
 {
-	SCB->SCR = ~(1UL << SCB_SCR_SLEEPDEEP_Pos) & (SCB->SCR & ~SCB_SCR_RESERVED);
-	pPMU->PCON = PMU_PCON_PM_SLEEP;
+    SCB->SCR = ~(1UL << SCB_SCR_SLEEPDEEP_Pos) & (SCB->SCR & ~SCB_SCR_RESERVED);
+    pPMU->PCON = PMU_PCON_PM_SLEEP;
 
-	/* Enter sleep mode */
-	__WFI();
+    /* Enter sleep mode */
+    __WFI();
 }
 
 /* Enter MCU Deep Sleep mode */
 void Chip_PMU_DeepSleepState(LPC_PMU_T *pPMU)
 {
-	SCB->SCR = (1UL << SCB_SCR_SLEEPDEEP_Pos) | (SCB->SCR & ~SCB_SCR_RESERVED);
-	pPMU->PCON = PMU_PCON_PM_DEEPSLEEP;
+    SCB->SCR = (1UL << SCB_SCR_SLEEPDEEP_Pos) | (SCB->SCR & ~SCB_SCR_RESERVED);
+    pPMU->PCON = PMU_PCON_PM_DEEPSLEEP;
 
-	/* Enter sleep mode */
-	__WFI();
+    /* Enter sleep mode */
+    __WFI();
 }
 
 /* Enter MCU Power down mode */
 void Chip_PMU_PowerDownState(LPC_PMU_T *pPMU)
 {
-	SCB->SCR = (1UL << SCB_SCR_SLEEPDEEP_Pos) | (SCB->SCR & ~SCB_SCR_RESERVED);
-	pPMU->PCON = PMU_PCON_PM_POWERDOWN;
+    SCB->SCR = (1UL << SCB_SCR_SLEEPDEEP_Pos) | (SCB->SCR & ~SCB_SCR_RESERVED);
+    pPMU->PCON = PMU_PCON_PM_POWERDOWN;
 
-	/* Enter sleep mode */
-	__WFI();
+    /* Enter sleep mode */
+    __WFI();
 }
 
 /* Enter MCU Deep Power down mode */
 void Chip_PMU_DeepPowerDownState(LPC_PMU_T *pPMU)
 {
-	SCB->SCR = (1UL << SCB_SCR_SLEEPDEEP_Pos) | (SCB->SCR & ~SCB_SCR_RESERVED);
-	pPMU->PCON = PMU_PCON_PM_DEEPPOWERDOWN;
+    SCB->SCR = (1UL << SCB_SCR_SLEEPDEEP_Pos) | (SCB->SCR & ~SCB_SCR_RESERVED);
+    pPMU->PCON = PMU_PCON_PM_DEEPPOWERDOWN;
 
-	/* Enter sleep mode */
-	__WFI();
+    /* Enter sleep mode */
+    __WFI();
 }
 
 /* Put some of the peripheral in sleep mode */
 void Chip_PMU_Sleep(LPC_PMU_T *pPMU, CHIP_PMU_MCUPOWER_T SleepMode)
 {
-	if (SleepMode == PMU_MCU_DEEP_SLEEP) {
-		Chip_PMU_DeepSleepState(pPMU);
-	}
-	else if (SleepMode == PMU_MCU_POWER_DOWN) {
-		Chip_PMU_PowerDownState(pPMU);
-	}
-	else if (SleepMode == PMU_MCU_DEEP_PWRDOWN) {
-		Chip_PMU_DeepPowerDownState(pPMU);
-	}
-	else {
-		/* PMU_MCU_SLEEP */
-		Chip_PMU_SleepState(pPMU);
-	}
+    if (SleepMode == PMU_MCU_DEEP_SLEEP) {
+        Chip_PMU_DeepSleepState(pPMU);
+    }
+    else if (SleepMode == PMU_MCU_POWER_DOWN) {
+        Chip_PMU_PowerDownState(pPMU);
+    }
+    else if (SleepMode == PMU_MCU_DEEP_PWRDOWN) {
+        Chip_PMU_DeepPowerDownState(pPMU);
+    }
+    else {
+        /* PMU_MCU_SLEEP */
+        Chip_PMU_SleepState(pPMU);
+    }
 }

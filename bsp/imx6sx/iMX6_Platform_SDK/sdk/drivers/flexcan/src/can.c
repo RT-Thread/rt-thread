@@ -66,8 +66,8 @@ void can_init(uint32_t instance, uint32_t max_mb)
     can_sw_reset(instance);         //software reset
 
     ctl = HW_FLEXCAN_MCR_RD(instance);
-    ctl &= ~BM_FLEXCAN_MCR_MAXMB;    	//clear MAXMB field
-    ctl |= BF_FLEXCAN_MCR_MAXMB(max_mb);     	// set MAXMB field (0-63)
+    ctl &= ~BM_FLEXCAN_MCR_MAXMB;        //clear MAXMB field
+    ctl |= BF_FLEXCAN_MCR_MAXMB(max_mb);         // set MAXMB field (0-63)
     HW_FLEXCAN_MCR_WR(instance, ctl);
     ctl &= ~BM_FLEXCAN_MCR_MDIS;
     HW_FLEXCAN_MCR_WR(instance, ctl);
@@ -89,12 +89,12 @@ void can_update_bitrate(uint32_t instance, enum can_bitrate bitrate)
 {
     unsigned int can_PE_CLK = get_peri_clock(CAN_CLK);  //can protocol engine clock, input from CCM
     unsigned int temp;
-    uint32_t presdiv;	// Clock pre-divider
+    uint32_t presdiv;    // Clock pre-divider
     struct time_segment ts;
 
     if (can_PE_CLK == 30000000){
         switch (bitrate){
-            case MBPS_1: // 
+            case MBPS_1: //
                 presdiv = 1; // sets sclk ftq to 15MHz = PEclk/2
                 ts = time_segments[7]; // 15 time quanta (15-8=7 for array ID)
                 break;
@@ -105,7 +105,7 @@ void can_update_bitrate(uint32_t instance, enum can_bitrate bitrate)
             case KBPS_500:
                 presdiv = 2; // sets sclk ftq to 10MHz = PEclk/3
                 ts = time_segments[12]; // 20 time quanta (20-8=12 for array ID)
-                break;   
+                break;
             case KBPS_250:
                 presdiv = 4; // sets sclk ftq to 6MHz = PEclk/5
                 ts = time_segments[16]; // 24 time quanta (24-8=16 for array ID)
@@ -114,7 +114,7 @@ void can_update_bitrate(uint32_t instance, enum can_bitrate bitrate)
                 presdiv = 9; // sets sclk ftq to 3MHz = PEclk/10
                 ts = time_segments[16]; // 24 time quanta (24-8=16 for array ID)
                 break;
-            case KBPS_62:  //62.5kps 
+            case KBPS_62:  //62.5kps
                 presdiv = 19; // sets sclk ftq to 1.5MHz = PEclk/20
                 ts = time_segments[16]; // 24 time quanta (24-8=16 for array ID)
                 break;
@@ -128,11 +128,11 @@ void can_update_bitrate(uint32_t instance, enum can_bitrate bitrate)
                 break;
             default:
                 printf("CAN bitrate not supported\n");
-                break;       
+                break;
         }
     }
     else { printf("CAN PE_CLK input to CAN module speed not supported\n");}
-    
+
     // Update the the bit timing segments
     temp = HW_FLEXCAN_CTRL_RD(instance) & CAN_TIMING_MASK;
     temp += (presdiv <<24) + (ts.pseg1 <<19) + (ts.pseg2 <<16) + (ts.propseg);
@@ -177,13 +177,13 @@ void can_enable_mb_interrupt(uint32_t instance, uint32_t mbID)
     uint32_t val;
 
     if (mbID < 32) {
-	val = HW_FLEXCAN_IMASK1_RD(instance);
- 	val |= (1 << mbID);
-	HW_FLEXCAN_IMASK1_WR(instance, val);
+    val = HW_FLEXCAN_IMASK1_RD(instance);
+     val |= (1 << mbID);
+    HW_FLEXCAN_IMASK1_WR(instance, val);
     } else if (mbID < 64) {
-	val = HW_FLEXCAN_IMASK2_RD(instance);
- 	val |= (1 << (mbID - 32));
-	HW_FLEXCAN_IMASK1_WR(instance, val);
+    val = HW_FLEXCAN_IMASK2_RD(instance);
+     val |= (1 << (mbID - 32));
+    HW_FLEXCAN_IMASK1_WR(instance, val);
     }
 }
 
@@ -192,13 +192,13 @@ void can_disable_mb_interrupt(uint32_t instance, uint32_t mbID)
     uint32_t val;
 
     if (mbID < 32) {
-	val = HW_FLEXCAN_IMASK1_RD(instance);
- 	val &= ~(1 << mbID);
-	HW_FLEXCAN_IMASK1_WR(instance, val);
+    val = HW_FLEXCAN_IMASK1_RD(instance);
+     val &= ~(1 << mbID);
+    HW_FLEXCAN_IMASK1_WR(instance, val);
     } else if (mbID < 64) {
-	val = HW_FLEXCAN_IMASK2_RD(instance);
- 	val &= ~(1 << (mbID - 32));
-	HW_FLEXCAN_IMASK1_WR(instance, val);
+    val = HW_FLEXCAN_IMASK2_RD(instance);
+     val &= ~(1 << (mbID - 32));
+    HW_FLEXCAN_IMASK1_WR(instance, val);
     }
 }
 
@@ -226,7 +226,7 @@ uint64_t can_mb_int_flag(uint32_t instance)
 
     val = (uint64_t)HW_FLEXCAN_IFLAG2_RD(instance);
     val <<= 32;
-    val |=(uint64_t)HW_FLEXCAN_IFLAG1_RD(instance);	
+    val |=(uint64_t)HW_FLEXCAN_IFLAG1_RD(instance);
 
     return val;
 }
@@ -236,13 +236,13 @@ void can_mb_int_ack(uint32_t instance, uint32_t mbID)
     uint32_t val;
 
     if(mbID < 32){
-    	val = HW_FLEXCAN_IFLAG1_RD(instance);
-    	val |= (0x01 << mbID);
-	HW_FLEXCAN_IFLAG1_WR(instance, val);
+        val = HW_FLEXCAN_IFLAG1_RD(instance);
+        val |= (0x01 << mbID);
+    HW_FLEXCAN_IFLAG1_WR(instance, val);
     }else{
-    	val = HW_FLEXCAN_IFLAG2_RD(instance);	
-    	val |= (0x01 << (mbID - 32));
-	HW_FLEXCAN_IFLAG2_WR(instance, val);
+        val = HW_FLEXCAN_IFLAG2_RD(instance);
+        val |= (0x01 << (mbID - 32));
+    HW_FLEXCAN_IFLAG2_WR(instance, val);
     }
 }
 
@@ -252,7 +252,7 @@ void can_setup_interrupt(uint32_t instance, void (*irq_subroutine)(void), bool e
 
     if (enableIt)
     {
-	// register the IRQ sub-routine
+    // register the IRQ sub-routine
         register_interrupt_routine(irq_id, irq_subroutine);
 
         // enable the IRQ

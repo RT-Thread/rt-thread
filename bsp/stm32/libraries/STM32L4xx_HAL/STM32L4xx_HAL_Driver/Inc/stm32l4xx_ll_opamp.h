@@ -377,7 +377,7 @@ __STATIC_INLINE void LL_OPAMP_SetCommonPowerRange(OPAMP_Common_TypeDef *OPAMPxy_
 {
   /* Prevent unused parameter warning */
   (void)(*OPAMPxy_COMMON);
-  
+
   MODIFY_REG(OPAMP1->CSR, OPAMP1_CSR_OPARANGE, PowerRange);
 }
 
@@ -396,7 +396,7 @@ __STATIC_INLINE uint32_t LL_OPAMP_GetCommonPowerRange(OPAMP_Common_TypeDef *OPAM
 {
   /* Prevent unused parameter warning */
   (void)(*OPAMPxy_COMMON);
-  
+
   return (uint32_t)(READ_BIT(OPAMP1->CSR, OPAMP1_CSR_OPARANGE));
 }
 

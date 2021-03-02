@@ -255,7 +255,7 @@ HAL_StatusTypeDef HAL_WWDG_RegisterCallback(WWDG_HandleTypeDef *hwwdg, HAL_WWDG_
 
 /**
   * @brief  Unregister a WWDG Callback
-  *         WWDG Callback is redirected to the weak (surcharged) predefined callback 
+  *         WWDG Callback is redirected to the weak (surcharged) predefined callback
   * @param  hwwdg WWDG handle
   * @param  CallbackID ID of the callback to be registered
   *         This parameter can be one of the following values:

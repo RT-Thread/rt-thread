@@ -37,7 +37,7 @@
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <string.h>
 
@@ -100,7 +100,7 @@ RtStatus_t CreateDirRecord
 
         length = DiscardTrailigPeriodsw((uint8_t *) Buffer, (length - index), index);
 
-        // The PutWord was not being qualified by 
+        // The PutWord was not being qualified by
         // if (length<MAX_UNICODE_SIZE) and therefore
         // causing stack corruption.
         if (length < MAX_UNICODE_SIZE) {
@@ -173,7 +173,7 @@ RtStatus_t CreateDirRecord
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to file name or directory
-                 
+
    Outputs:       Chksum computed over the given filename.
 
    Description:   Computes the chksum of the given filename.
@@ -269,16 +269,16 @@ void GetDateTime(int32_t * date, int32_t * time)
   Date Format:
    A FAT directory entry date stamp is a 16-bit field that is basically a date
    relative to the MS-DOS epoch of 01/01/1980.
-     Bits  0â€“4: Day of month, valid value range 1-31 inclusive
-     Bits  5â€“8: Month of year, 1 = January, valid value range 1â€“12 inclusive
-     Bits 9â€“15: Count of years from 1980, valid value range 0â€“127 inclusive (1980â€“2107)
+     Bits  0¨C4: Day of month, valid value range 1-31 inclusive
+     Bits  5¨C8: Month of year, 1 = January, valid value range 1¨C12 inclusive
+     Bits 9¨C15: Count of years from 1980, valid value range 0¨C127 inclusive (1980¨C2107)
 
   Time Format:
    A FAT directory entry time stamp is a 16-bit field that has a granularity
    of 2 seconds.  The valid time range is from Midnight 00:00:00 to 23:59:58.
-     Bits   0â€“4: 2-second count, valid value range 0â€“29 inclusive (0 â€“ 58 seconds)
-     Bits  5â€“10: Minutes, valid value range 0â€“59 inclusive
-     Bits 11â€“15: Hours, valid value range 0â€“23 inclusive
+     Bits   0¨C4: 2-second count, valid value range 0¨C29 inclusive (0 ¨C 58 seconds)
+     Bits  5¨C10: Minutes, valid value range 0¨C59 inclusive
+     Bits 11¨C15: Hours, valid value range 0¨C23 inclusive
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t CreateShortDirRecord(uint8_t * filename, // SFN
@@ -327,8 +327,8 @@ RtStatus_t CreateShortDirRecord(uint8_t * filename, // SFN
    Outputs:        Returns SUCCESS or ERROR_OS_FILESYSTEM_DIR_NOT_EMPTY
 
    Description:    Determines the directory is empty or not by checking all the
-                   records whether they are deleted or not 
-<                   
+                   records whether they are deleted or not
+<
 ----------------------------------------------------------------------------*/
 RtStatus_t Isdirectoryempty(int32_t Handlenumber)
 {
@@ -362,17 +362,17 @@ RtStatus_t Isdirectoryempty(int32_t Handlenumber)
 
    Inputs:         1) Handle Number
                    2) Record Number
-				   3) Pointer to file name
+                   3) Pointer to file name
                    4) Index
                    5) Length
-                   6) String Type 
+                   6) String Type
 
    Outputs:        Returns ERROR_OS_FILESYSTEM_FILE_FOUND if directory or file name matches else ERROR_OS_FILESYSTEM_FILE_NOT_FOUND
-      
-   Description:    This function first decrements the record no. and then reads the directory record 
-                   for this record no. and then it matches the directory or file name with the 
-                   directory record in the buffer word by word. If long name matches then returns 
-                   ERROR_OS_FILESYSTEM_FILE_FOUND else returns ERROR_OS_FILESYSTEM_FILE_NOT_FOUND. 
+
+   Description:    This function first decrements the record no. and then reads the directory record
+                   for this record no. and then it matches the directory or file name with the
+                   directory record in the buffer word by word. If long name matches then returns
+                   ERROR_OS_FILESYSTEM_FILE_FOUND else returns ERROR_OS_FILESYSTEM_FILE_NOT_FOUND.
 >
 ----------------------------------------------------------------------------*/
 RtStatus_t Longdirmatch(int32_t HandleNumber, int32_t RecordNo, uint8_t * file, int32_t index,
@@ -423,17 +423,17 @@ RtStatus_t Longdirmatch(int32_t HandleNumber, int32_t RecordNo, uint8_t * file, 
                     return (ERROR_OS_FILESYSTEM_FILE_NOT_FOUND);
             }
             offset = offset + 2;
-            /* if all words of longdir firstname field are occupied, check for 
+            /* if all words of longdir firstname field are occupied, check for
                longdir secondname field */
             if (offset == LDIRATTRIOFFSET)
                 offset = LDIRNAME2OFFSET;
 
-            /* if all words of longdir secondname field are occupied, check for 
+            /* if all words of longdir secondname field are occupied, check for
                longdir thirdname field */
             if (offset == LDIRFSTCLUSNOOFFSET)
                 offset = LDIRNAME3OFFSET;
 
-            /* if all words of longdir thirdname field are occupied, check for 
+            /* if all words of longdir thirdname field are occupied, check for
                next sub component of longdir entry */
         }                       // while(wordno<length)
 
@@ -463,20 +463,20 @@ RtStatus_t Longdirmatch(int32_t HandleNumber, int32_t RecordNo, uint8_t * file, 
 
    Inputs:         1) Handle number
                    2) Record Number
-				   3) Pointer to file name
-				   4) Pointer to buffer
+                   3) Pointer to file name
+                   4) Pointer to buffer
                    5) Index
                    6) Length
                    7) Shortnamebuf
   Outputs:         Returns ERROR_OS_FILESYSTEM_FILE_FOUND if filename matches otherwise ERROR_OS_FILESYSTEM_FILE_NOT_FOUND.
-      
-  Description:     This function first checks the long directory attribute from the directory record 
-                   and if it is set then it checks the first byte of the record. If it is set to 
-                   first long directory subcomponent then it matches the given file name with long 
-                   directory name.  
-                   IF long directory attribute is not set then function will try to match short directory record from passed 
-                   Shortnamebuf.If file name matches then returns ERROR_OS_FILESYSTEM_FILE_FOUND else returns file not found 
-<    
+
+  Description:     This function first checks the long directory attribute from the directory record
+                   and if it is set then it checks the first byte of the record. If it is set to
+                   first long directory subcomponent then it matches the given file name with long
+                   directory name.
+                   IF long directory attribute is not set then function will try to match short directory record from passed
+                   Shortnamebuf.If file name matches then returns ERROR_OS_FILESYSTEM_FILE_FOUND else returns file not found
+<
 ----------------------------------------------------------------------------*/
 RtStatus_t MatchdirRecordW(int32_t HandleNumber, int32_t RecordNo, uint8_t * file, uint8_t * buf,
                            int32_t index, int32_t length, uint8_t * Shortnamebuf)
@@ -486,7 +486,7 @@ RtStatus_t MatchdirRecordW(int32_t HandleNumber, int32_t RecordNo, uint8_t * fil
     int32_t Firstbyte;
 
     // SGTL_HK change
-    //int32_t shortname[13],ucs2buffer[13];   
+    //int32_t shortname[13],ucs2buffer[13];
     Firstbyte = file[index];
     if ((file[index] == 0x2E) && (file[index + 1] == 0x2E) && ((length - index) == 2)) {
         RecordNo++;
@@ -507,13 +507,13 @@ RtStatus_t MatchdirRecordW(int32_t HandleNumber, int32_t RecordNo, uint8_t * fil
         {
             //  SGTL-HK 1-3-2005
             //  If the Length of the Name > 11, it must Not be a Short Name so No File will be found
-            //modify: change the equation 
+            //modify: change the equation
 //          if (((length/2 - index/2)-1) <= 11)
 //          {
-//        //modify: Replace function with Strcpyw function 
+//        //modify: Replace function with Strcpyw function
 //        //      strcpyUCS3_2((int32_t *)file, ucs2buffer, index,length);
 //              Strcpyw((uint8_t *)file, (uint8_t *)ucs2buffer,length,index);
-//              UnicodeToOEM((uint8_t *)ucs2buffer,(uint8_t *)shortname, length-index, 0); 
+//              UnicodeToOEM((uint8_t *)ucs2buffer,(uint8_t *)shortname, length-index, 0);
 //              Uppercase((uint8_t*)shortname);
             filefound =
                 Shortdirmatch(HandleNumber, RecordNo, (uint8_t *) Shortnamebuf,
@@ -534,9 +534,9 @@ RtStatus_t MatchdirRecordW(int32_t HandleNumber, int32_t RecordNo, uint8_t * fil
 
    Inputs:         1) Handle Number
                    2) Record Number
-				   3) Pointer to file name
-				   4) Pointer to Short name
-				   5) Pointer to buffer
+                   3) Pointer to file name
+                   4) Pointer to Short name
+                   5) Pointer to buffer
                    6) Flag
                    7) Index
                    8) Length
@@ -544,11 +544,11 @@ RtStatus_t MatchdirRecordW(int32_t HandleNumber, int32_t RecordNo, uint8_t * fil
 
    Outputs:        Returns ERROR_OS_FILESYSTEM_FILE_FOUND if directory or file name matches else ERROR_OS_FILESYSTEM_FILE_NOT_FOUND.
 
-   Description:    This function matches the directory or file name with the directory record 
-                   in the buffer byte-by-byte. If the short name matches, then returns ERROR_OS_FILESYSTEM_FILE_FOUND. 
-                   If short name is alias of a long directory name then checks for long directory 
-                   name in the previous directory entry. If short directory name does not match then 
-                   returns ERROR_OS_FILESYSTEM_FILE_NOT_FOUND. 
+   Description:    This function matches the directory or file name with the directory record
+                   in the buffer byte-by-byte. If the short name matches, then returns ERROR_OS_FILESYSTEM_FILE_FOUND.
+                   If short name is alias of a long directory name then checks for long directory
+                   name in the previous directory entry. If short directory name does not match then
+                   returns ERROR_OS_FILESYSTEM_FILE_NOT_FOUND.
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t Shortdirmatch(int32_t HandleNumber, int32_t RecordNo, uint8_t * file,
@@ -648,9 +648,9 @@ void Setfilename(uint8_t * buf, uint8_t * buffer_1)
    FunctionType:   Reentrant
 
    Inputs:         1) Pointer to file name
-			   
+
    Outputs:        Nil
-   
+
    Description:    Converts given file name in Uppercase
 <
 ----------------------------------------------------------------------------*/
@@ -673,12 +673,12 @@ void Uppercase(uint8_t * file)
    FunctionType:   Reentrant
 
    Inputs:         1) Pointer to file name
-                   2) Pointer to file name buffer 
-			       3) Index
+                   2) Pointer to file name buffer
+                   3) Index
                    4) Length
 
    Outputs:        Returns Flag_1
-   
+
    Description:    Converts given file name to Short name.
 <
 ----------------------------------------------------------------------------*/
@@ -766,8 +766,8 @@ int32_t ConverToShortname(uint8_t * file, uint8_t * filenamebuf, int32_t index, 
                    2) Flag
 
    Outputs:        Returns SUCCESS or an Error Code if error occurs
-                      
-   Description:    Determines free space by reading the all the records and 
+
+   Description:    Determines free space by reading the all the records and
                    updates handle according to the free space.
 <
 ----------------------------------------------------------------------------*/
@@ -842,10 +842,10 @@ RtStatus_t FindfreeRecord(int32_t Handlenumber, int32_t Flag)
    Inputs:         1) Device number
                    2) Sector number
 
-   Outputs:        Returns index no. of free record in root directory if there is a space for new 
+   Outputs:        Returns index no. of free record in root directory if there is a space for new
                    directory record else an error NOSPACEINROOTDIRECTORY
 
-   Description:    Determines space in root directory by determining the first character 
+   Description:    Determines space in root directory by determining the first character
                    of directory record for 0x00 or 0xE5
 <
 ----------------------------------------------------------------------------*/
@@ -892,8 +892,8 @@ int32_t Searchfreerecord(int32_t DeviceNum, int32_t sectorNum)
    Outputs:        Returns index no of free record in root directory if there is a space for new dir record
                    else error ERROR_OS_FILESYSTEM_NOSPACE_IN_ROOTDIRECTORY
 
-   Description:    Determines space in root directory by determining the first character 
-                   of directory record for 0x00 or 0xE5 
+   Description:    Determines space in root directory by determining the first character
+                   of directory record for 0x00 or 0xE5
 <
 ----------------------------------------------------------------------------*/
 int32_t CheckspaceinRootdir(int32_t Handlenumber, int32_t Flag)
@@ -954,11 +954,11 @@ int32_t CheckspaceinRootdir(int32_t Handlenumber, int32_t Flag)
 
    Inputs:        1)  HandleNumber
                   2)  RecordNo
-				   
-   Outputs:       SUCCESS or error code if error occurs   
-   
+
+   Outputs:       SUCCESS or error code if error occurs
+
    Description:   Mark the directoy record of the given record no. and all the long
-                  directory records associated with it as deleted.  
+                  directory records associated with it as deleted.
 ----------------------------------------------------------------------------*/
 RtStatus_t DeleteRecord(int32_t HandleNumber, int32_t RecordNo)
 {
@@ -979,7 +979,7 @@ RtStatus_t DeleteRecord(int32_t HandleNumber, int32_t RecordNo)
             return Retval;
     }
 
-    /*Now delete all long file name records that are associated with 
+    /*Now delete all long file name records that are associated with
        the file to be deleted */
 
     while (1) {
@@ -998,7 +998,7 @@ RtStatus_t DeleteRecord(int32_t HandleNumber, int32_t RecordNo)
         }
 
         if ((lTemp = ReadDirectoryRecord(HandleNumber, RecordNo, buf)) < 0) {
-            return ERROR_OS_FILESYSTEM_INVALID_RECORD_NUMBER;   //(RtStatus_t)lTemp;       
+            return ERROR_OS_FILESYSTEM_INVALID_RECORD_NUMBER;   //(RtStatus_t)lTemp;
         }
 
         if (lTemp == 0) {
@@ -1104,11 +1104,11 @@ RtStatus_t ReadRootdirRecord(int32_t HandleNumber, int32_t RecordNumber, uint8_t
 
    Inputs:        1)HandleNumber
                   2)RecordNumber
-                  
 
-   Outputs:       SUCCESS OR error code if error occurs   
 
-   Description:   Sets the given handle according to the given record number  
+   Outputs:       SUCCESS OR error code if error occurs
+
+   Description:   Sets the given handle according to the given record number
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t SetcurrentPos(int32_t HandleNumber, int32_t RecordNumber)

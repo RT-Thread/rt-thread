@@ -170,7 +170,7 @@ HAL_StatusTypeDef RCCEx_PLL2_Config(RCC_PLLInitTypeDef *pll2)
 
 
         /* Configure the Fractional Divider */
-        __HAL_RCC_PLL2FRACV_DISABLE(); //Set FRACLE to â€˜0â€™
+        __HAL_RCC_PLL2FRACV_DISABLE(); //Set FRACLE to ¡®0¡¯
         /* In integer or clock spreading mode the application shall ensure that a 0 is loaded into the SDM */
         if ((pll2->PLLMODE == RCC_PLL_SPREAD_SPECTRUM) || (pll2->PLLMODE == RCC_PLL_INTEGER))
         {
@@ -182,7 +182,7 @@ HAL_StatusTypeDef RCCEx_PLL2_Config(RCC_PLLInitTypeDef *pll2)
           /* Configure PLL  PLL2FRACV  in fractional mode*/
           __HAL_RCC_PLL2FRACV_CONFIG(pll2->PLLFRACV);
         }
-        __HAL_RCC_PLL2FRACV_ENABLE(); //Set FRACLE to â€˜1â€™
+        __HAL_RCC_PLL2FRACV_ENABLE(); //Set FRACLE to ¡®1¡¯
 
 
         /* Configure the Spread Control */
@@ -342,7 +342,7 @@ HAL_StatusTypeDef RCCEx_PLL3_Config(RCC_PLLInitTypeDef *pll3)
           pll3->PLLR);
 
         /* Configure the Fractional Divider */
-        __HAL_RCC_PLL3FRACV_DISABLE(); //Set FRACLE to â€˜0â€™
+        __HAL_RCC_PLL3FRACV_DISABLE(); //Set FRACLE to ¡®0¡¯
         /* In integer or clock spreading mode the application shall ensure that a 0 is loaded into the SDM */
         if ((pll3->PLLMODE == RCC_PLL_SPREAD_SPECTRUM) || (pll3->PLLMODE == RCC_PLL_INTEGER))
         {
@@ -354,7 +354,7 @@ HAL_StatusTypeDef RCCEx_PLL3_Config(RCC_PLLInitTypeDef *pll3)
           /* Configure PLL  PLL3FRACV  in fractional mode*/
           __HAL_RCC_PLL3FRACV_CONFIG(pll3->PLLFRACV);
         }
-        __HAL_RCC_PLL3FRACV_ENABLE(); //Set FRACLE to â€˜1â€™
+        __HAL_RCC_PLL3FRACV_ENABLE(); //Set FRACLE to ¡®1¡¯
 
 
         /* Configure the Spread Control */
@@ -510,7 +510,7 @@ HAL_StatusTypeDef RCCEx_PLL4_Config(RCC_PLLInitTypeDef *pll4)
         pll4->PLLR);
 
       /* Configure the Fractional Divider */
-      __HAL_RCC_PLL4FRACV_DISABLE(); //Set FRACLE to â€˜0â€™
+      __HAL_RCC_PLL4FRACV_DISABLE(); //Set FRACLE to ¡®0¡¯
       /* In integer or clock spreading mode the application shall ensure that a 0 is loaded into the SDM */
       if ((pll4->PLLMODE == RCC_PLL_SPREAD_SPECTRUM) || (pll4->PLLMODE == RCC_PLL_INTEGER))
       {
@@ -522,7 +522,7 @@ HAL_StatusTypeDef RCCEx_PLL4_Config(RCC_PLLInitTypeDef *pll4)
         /* Configure PLL  PLL4FRACV  in fractional mode*/
         __HAL_RCC_PLL4FRACV_CONFIG(pll4->PLLFRACV);
       }
-      __HAL_RCC_PLL4FRACV_ENABLE(); //Set FRACLE to â€˜1â€™
+      __HAL_RCC_PLL4FRACV_ENABLE(); //Set FRACLE to ¡®1¡¯
 
       /* Configure the Spread Control */
       if (pll4->PLLMODE == RCC_PLL_SPREAD_SPECTRUM)

@@ -49,7 +49,7 @@ void uart2_iomux_config(void)
     //     ALT2 (2) - Select instance: uart2 signal: UART2_CTS_B
     //     ALT5 (5) - Select instance: gpio2 signal: GPIO2_IO14
     HW_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA6_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA6_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA6_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA6_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6(0x020E0740)
@@ -90,13 +90,13 @@ void uart2_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA6_SRE_V(SLOW));
     // Pad SD4_DATA6 is involved in Daisy Chain.
     // Input Select Register:
@@ -128,7 +128,7 @@ void uart2_iomux_config(void)
     //     ALT2 (2) - Select instance: uart2 signal: UART2_RTS_B
     //     ALT5 (5) - Select instance: gpio2 signal: GPIO2_IO13
     HW_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA5_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA5_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA5_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_SD4_DATA5_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5(0x020E073C)
@@ -169,13 +169,13 @@ void uart2_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_SD4_DATA5_SRE_V(SLOW));
     // Pad SD4_DATA5 is involved in Daisy Chain.
     // Input Select Register:
@@ -213,7 +213,7 @@ void uart2_iomux_config(void)
     //     ALT7 (7) - Select instance: usb signal: USB_OTG_PWR_CTL_WAKE
     //     ALT8 (8) - Select instance: i2c4 signal: I2C4_SDA
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO08_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO08_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO08_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO08_MUX_MODE_V(ALT4));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO08(0x020E060C)
@@ -254,13 +254,13 @@ void uart2_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO08_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO08_SRE_V(SLOW));
     // Pad GPIO08 is involved in Daisy Chain.
     // Input Select Register:
@@ -299,7 +299,7 @@ void uart2_iomux_config(void)
     //     ALT7 (7) - Select instance: usb signal: USB_OTG_HOST_MODE
     //     ALT8 (8) - Select instance: i2c4 signal: I2C4_SCL
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO07_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO07_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO07_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO07_MUX_MODE_V(ALT4));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO07(0x020E0608)
@@ -340,13 +340,13 @@ void uart2_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO07_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO07_SRE_V(SLOW));
     // Pad GPIO07 is involved in Daisy Chain.
     // Input Select Register:

@@ -86,7 +86,7 @@ extern "C" {
  *
  * The SAM devices contain a number of Brown Out Detector (BOD) modules.
  * Each BOD monitors the supply voltage for any dips that go below the set
- * threshold for the module. In case of a BOD detection the BOD will either 
+ * threshold for the module. In case of a BOD detection the BOD will either
  * reset the system or raise a hardware interrupt so that a safe power-down
  * sequence can be attempted.
  *
@@ -123,8 +123,8 @@ extern "C" {
  * List of possible BOD controllers within the device.
  */
 enum bod {
-	/** BOD33 External I/O voltage */
-	BOD_BOD33,
+    /** BOD33 External I/O voltage */
+    BOD_BOD33,
 };
 
 /**
@@ -134,38 +134,38 @@ enum bod {
  * speed of a BOD to lower the power consumption.
  */
 enum bod_prescale {
-	/** Divide input prescaler clock by 2 */
-	BOD_PRESCALE_DIV_2       = SYSCTRL_BOD33_PSEL(0),
-	/** Divide input prescaler clock by 4 */
-	BOD_PRESCALE_DIV_4       = SYSCTRL_BOD33_PSEL(1),
-	/** Divide input prescaler clock by 8 */
-	BOD_PRESCALE_DIV_8       = SYSCTRL_BOD33_PSEL(2),
-	/** Divide input prescaler clock by 16 */
-	BOD_PRESCALE_DIV_16      = SYSCTRL_BOD33_PSEL(3),
-	/** Divide input prescaler clock by 32*/
-	BOD_PRESCALE_DIV_32      = SYSCTRL_BOD33_PSEL(4),
-	/** Divide input prescaler clock by 64 */
-	BOD_PRESCALE_DIV_64      = SYSCTRL_BOD33_PSEL(5),
-	/** Divide input prescaler clock by 128 */
-	BOD_PRESCALE_DIV_128     = SYSCTRL_BOD33_PSEL(6),
-	/** Divide input prescaler clock by 256 */
-	BOD_PRESCALE_DIV_256     = SYSCTRL_BOD33_PSEL(7),
-	/** Divide input prescaler clock by 512 */
-	BOD_PRESCALE_DIV_512     = SYSCTRL_BOD33_PSEL(8),
-	/** Divide input prescaler clock by 1024 */
-	BOD_PRESCALE_DIV_1024    = SYSCTRL_BOD33_PSEL(9),
-	/** Divide input prescaler clock by 2048 */
-	BOD_PRESCALE_DIV_2048    = SYSCTRL_BOD33_PSEL(10),
-	/** Divide input prescaler clock by 4096 */
-	BOD_PRESCALE_DIV_4096    = SYSCTRL_BOD33_PSEL(11),
-	/** Divide input prescaler clock by 8192 */
-	BOD_PRESCALE_DIV_8192    = SYSCTRL_BOD33_PSEL(12),
-	/** Divide input prescaler clock by 16384 */
-	BOD_PRESCALE_DIV_16384   = SYSCTRL_BOD33_PSEL(13),
-	/** Divide input prescaler clock by 32768 */
-	BOD_PRESCALE_DIV_32768   = SYSCTRL_BOD33_PSEL(14),
-	/** Divide input prescaler clock by 65536 */
-	BOD_PRESCALE_DIV_65536   = SYSCTRL_BOD33_PSEL(15),
+    /** Divide input prescaler clock by 2 */
+    BOD_PRESCALE_DIV_2       = SYSCTRL_BOD33_PSEL(0),
+    /** Divide input prescaler clock by 4 */
+    BOD_PRESCALE_DIV_4       = SYSCTRL_BOD33_PSEL(1),
+    /** Divide input prescaler clock by 8 */
+    BOD_PRESCALE_DIV_8       = SYSCTRL_BOD33_PSEL(2),
+    /** Divide input prescaler clock by 16 */
+    BOD_PRESCALE_DIV_16      = SYSCTRL_BOD33_PSEL(3),
+    /** Divide input prescaler clock by 32*/
+    BOD_PRESCALE_DIV_32      = SYSCTRL_BOD33_PSEL(4),
+    /** Divide input prescaler clock by 64 */
+    BOD_PRESCALE_DIV_64      = SYSCTRL_BOD33_PSEL(5),
+    /** Divide input prescaler clock by 128 */
+    BOD_PRESCALE_DIV_128     = SYSCTRL_BOD33_PSEL(6),
+    /** Divide input prescaler clock by 256 */
+    BOD_PRESCALE_DIV_256     = SYSCTRL_BOD33_PSEL(7),
+    /** Divide input prescaler clock by 512 */
+    BOD_PRESCALE_DIV_512     = SYSCTRL_BOD33_PSEL(8),
+    /** Divide input prescaler clock by 1024 */
+    BOD_PRESCALE_DIV_1024    = SYSCTRL_BOD33_PSEL(9),
+    /** Divide input prescaler clock by 2048 */
+    BOD_PRESCALE_DIV_2048    = SYSCTRL_BOD33_PSEL(10),
+    /** Divide input prescaler clock by 4096 */
+    BOD_PRESCALE_DIV_4096    = SYSCTRL_BOD33_PSEL(11),
+    /** Divide input prescaler clock by 8192 */
+    BOD_PRESCALE_DIV_8192    = SYSCTRL_BOD33_PSEL(12),
+    /** Divide input prescaler clock by 16384 */
+    BOD_PRESCALE_DIV_16384   = SYSCTRL_BOD33_PSEL(13),
+    /** Divide input prescaler clock by 32768 */
+    BOD_PRESCALE_DIV_32768   = SYSCTRL_BOD33_PSEL(14),
+    /** Divide input prescaler clock by 65536 */
+    BOD_PRESCALE_DIV_65536   = SYSCTRL_BOD33_PSEL(15),
 };
 
 /**
@@ -174,12 +174,12 @@ enum bod_prescale {
  * List of possible BOD actions when a BOD module detects a brown out condition.
  */
 enum bod_action {
-	/** A BOD detect will do nothing, and the BOD state can't be polled */
-	BOD_ACTION_NONE      = SYSCTRL_BOD33_ACTION(0),
-	/** A BOD detect will reset the device */
-	BOD_ACTION_RESET     = SYSCTRL_BOD33_ACTION(1),
-	/** A BOD detect will fire an interrupt */
-	BOD_ACTION_INTERRUPT = SYSCTRL_BOD33_ACTION(2),
+    /** A BOD detect will do nothing, and the BOD state can't be polled */
+    BOD_ACTION_NONE      = SYSCTRL_BOD33_ACTION(0),
+    /** A BOD detect will reset the device */
+    BOD_ACTION_RESET     = SYSCTRL_BOD33_ACTION(1),
+    /** A BOD detect will fire an interrupt */
+    BOD_ACTION_INTERRUPT = SYSCTRL_BOD33_ACTION(2),
 };
 
 /**
@@ -188,27 +188,27 @@ enum bod_action {
  * List of possible BOD module voltage sampling modes.
  */
 enum bod_mode {
-	/** BOD will sample the supply line continuously */
-	BOD_MODE_CONTINUOUS  = 0,
-	/** BOD will use the BOD sampling clock (1KHz) to sample the supply line */
-	BOD_MODE_SAMPLED     = SYSCTRL_BOD33_MODE,
+    /** BOD will sample the supply line continuously */
+    BOD_MODE_CONTINUOUS  = 0,
+    /** BOD will use the BOD sampling clock (1KHz) to sample the supply line */
+    BOD_MODE_SAMPLED     = SYSCTRL_BOD33_MODE,
 };
 
 /** Configuration structure for a BOD module. */
 struct bod_config {
-	/** Input sampler clock prescaler factor, to reduce the 1KHz clock from the
-	 *  ULP32K to lower the sampling rate of the BOD */
-	enum bod_prescale prescaler;
-	/** Sampling configuration mode for the BOD */
-	enum bod_mode mode;
-	/** Action to perform when a low power detection is made */
-	enum bod_action action;
-	/** BOD level to trigger at (see electrical section of device datasheet) */
-	uint8_t level;
-	/** If \c true, enables detection hysteresis */
-	bool hysteresis;
-	/** If \c true, the BOD is kept enabled and sampled during device sleep */
-	bool run_in_standby;
+    /** Input sampler clock prescaler factor, to reduce the 1KHz clock from the
+     *  ULP32K to lower the sampling rate of the BOD */
+    enum bod_prescale prescaler;
+    /** Sampling configuration mode for the BOD */
+    enum bod_mode mode;
+    /** Action to perform when a low power detection is made */
+    enum bod_action action;
+    /** BOD level to trigger at (see electrical section of device datasheet) */
+    uint8_t level;
+    /** If \c true, enables detection hysteresis */
+    bool hysteresis;
+    /** If \c true, the BOD is kept enabled and sampled during device sleep */
+    bool run_in_standby;
 };
 
 /**
@@ -230,22 +230,22 @@ struct bod_config {
  * \param[out] conf  BOD configuration struct to set to default settings
  */
 static inline void bod_get_config_defaults(
-		struct bod_config *const conf)
+        struct bod_config *const conf)
 {
-	/* Sanity check arguments */
-	Assert(conf);
+    /* Sanity check arguments */
+    Assert(conf);
 
-	conf->prescaler      = BOD_PRESCALE_DIV_2;
-	conf->mode           = BOD_MODE_CONTINUOUS;
-	conf->action         = BOD_ACTION_RESET;
-	conf->level          = 0x27;
-	conf->hysteresis     = true;
-	conf->run_in_standby = true;
+    conf->prescaler      = BOD_PRESCALE_DIV_2;
+    conf->mode           = BOD_MODE_CONTINUOUS;
+    conf->action         = BOD_ACTION_RESET;
+    conf->level          = 0x27;
+    conf->hysteresis     = true;
+    conf->run_in_standby = true;
 }
 
 enum status_code bod_set_config(
-		const enum bod bod_id,
-		struct bod_config *const conf);
+        const enum bod bod_id,
+        struct bod_config *const conf);
 
 /**
  * \brief Enables a configured BOD module.
@@ -260,18 +260,18 @@ enum status_code bod_set_config(
  * \retval STATUS_ERR_INVALID_ARG  An invalid BOD was supplied
  */
 static inline enum status_code bod_enable(
-		const enum bod bod_id)
+        const enum bod bod_id)
 {
-	switch (bod_id) {
-		case BOD_BOD33:
-			SYSCTRL->BOD33.reg |= SYSCTRL_BOD33_ENABLE;
-			break;
-		default:
-			Assert(false);
-			return STATUS_ERR_INVALID_ARG;
-	}
+    switch (bod_id) {
+        case BOD_BOD33:
+            SYSCTRL->BOD33.reg |= SYSCTRL_BOD33_ENABLE;
+            break;
+        default:
+            Assert(false);
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -287,20 +287,20 @@ static inline enum status_code bod_enable(
  * \retval STATUS_ERR_INVALID_ARG  An invalid BOD was supplied
  */
 static inline enum status_code bod_disable(
-		const enum bod bod_id)
+        const enum bod bod_id)
 {
-	switch (bod_id) {
-		case BOD_BOD33:
-			SYSCTRL->INTENCLR.reg = SYSCTRL_INTENCLR_BOD33RDY | SYSCTRL_INTENCLR_BOD33DET | SYSCTRL_INTENCLR_B33SRDY;
-			SYSCTRL->INTFLAG.reg = SYSCTRL_INTFLAG_BOD33RDY | SYSCTRL_INTFLAG_BOD33DET | SYSCTRL_INTFLAG_B33SRDY;
-			SYSCTRL->BOD33.reg &= ~SYSCTRL_BOD33_ENABLE;
-			break;
-		default:
-			Assert(false);
-			return STATUS_ERR_INVALID_ARG;
-	}
+    switch (bod_id) {
+        case BOD_BOD33:
+            SYSCTRL->INTENCLR.reg = SYSCTRL_INTENCLR_BOD33RDY | SYSCTRL_INTENCLR_BOD33DET | SYSCTRL_INTENCLR_B33SRDY;
+            SYSCTRL->INTFLAG.reg = SYSCTRL_INTFLAG_BOD33RDY | SYSCTRL_INTFLAG_BOD33DET | SYSCTRL_INTFLAG_B33SRDY;
+            SYSCTRL->BOD33.reg &= ~SYSCTRL_BOD33_ENABLE;
+            break;
+        default:
+            Assert(false);
+            return STATUS_ERR_INVALID_ARG;
+    }
 
-	return STATUS_OK;
+    return STATUS_OK;
 }
 
 /**
@@ -317,15 +317,15 @@ static inline enum status_code bod_disable(
  * \retval false  If the BOD has not detected a low voltage condition
  */
 static inline bool bod_is_detected(
-		const enum bod bod_id)
+        const enum bod bod_id)
 {
-	switch (bod_id) {
-		case BOD_BOD33:
-			return SYSCTRL->INTFLAG.bit.BOD33DET;
-		default:
-			Assert(false);
-			return false;
-	}
+    switch (bod_id) {
+        case BOD_BOD33:
+            return SYSCTRL->INTFLAG.bit.BOD33DET;
+        default:
+            Assert(false);
+            return false;
+    }
 }
 
 /**
@@ -337,16 +337,16 @@ static inline bool bod_is_detected(
  * \param[in] bod_id  BOD module to clear
  */
 static inline void bod_clear_detected(
-		const enum bod bod_id)
+        const enum bod bod_id)
 {
-	switch (bod_id) {
-		case BOD_BOD33:
-			SYSCTRL->INTFLAG.reg = SYSCTRL_INTFLAG_BOD33DET;
-			return;
-		default:
-			Assert(false);
-			return;
-	}
+    switch (bod_id) {
+        case BOD_BOD33:
+            SYSCTRL->INTFLAG.reg = SYSCTRL_INTFLAG_BOD33DET;
+            return;
+        default:
+            Assert(false);
+            return;
+    }
 }
 
 /** @} */
@@ -392,15 +392,15 @@ static inline void bod_clear_detected(
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Removed BOD12 reference</td>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Removed BOD12 reference</td>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -430,36 +430,36 @@ static inline void bod_clear_detected(
  * \page asfdoc_sam0_bod_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42149E</td>
- *		<td>12/2015</td>
- *		<td>Added support for SAM DA1</td>
- *	</tr>
- *	<tr>
- *		<td>42149D</td>
- *		<td>12/2014</td>
- *		<td>Added support for SAM R21, and SAM D10/D11</td>
- *	</tr>
- *	<tr>
- *		<td>42149C</td>
- *		<td>01/2014</td>
- *		<td>Added support for SAM D21</td>
- *	</tr>
- *	<tr>
- *		<td>42149B</td>
- *		<td>06/2013</td>
- *		<td>Corrected documentation typos</td>
- *	</tr>
- *	<tr>
- *		<td>42149A</td>
- *		<td>06/2013</td>
- *		<td>Initial release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</th>
+ *        <th>Date</th>
+ *        <th>Comments</th>
+ *    </tr>
+ *    <tr>
+ *        <td>42149E</td>
+ *        <td>12/2015</td>
+ *        <td>Added support for SAM DA1</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42149D</td>
+ *        <td>12/2014</td>
+ *        <td>Added support for SAM R21, and SAM D10/D11</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42149C</td>
+ *        <td>01/2014</td>
+ *        <td>Added support for SAM D21</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42149B</td>
+ *        <td>06/2013</td>
+ *        <td>Corrected documentation typos</td>
+ *    </tr>
+ *    <tr>
+ *        <td>42149A</td>
+ *        <td>06/2013</td>
+ *        <td>Initial release</td>
+ *    </tr>
  * </table>
  */
 

@@ -3,7 +3,7 @@
  * Copyright (c) 2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided
  *  that the following conditions are met:
@@ -114,12 +114,12 @@ void ADC_Init(ADC_Type *base, const adc_config_t *config)
 #if defined(FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE) & FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE
     if(config->enableLowPowerMode)
     {
-         tmp32 |= ADC_CTRL_LPWRMODE_MASK;  
-    } 
+         tmp32 |= ADC_CTRL_LPWRMODE_MASK;
+    }
 #endif/* FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE. */
 
     base->CTRL = tmp32;
-    
+
 #if defined(FSL_FEATURE_ADC_HAS_TRIM_REG) & FSL_FEATURE_ADC_HAS_TRIM_REG
     base->TRM &= ~ADC_TRM_VRANGE_MASK;
     base->TRM |= ADC_TRM_VRANGE(config->voltageRange);
@@ -131,7 +131,7 @@ void ADC_GetDefaultConfig(adc_config_t *config)
 #if defined(FSL_FEATURE_ADC_HAS_CTRL_ASYNMODE) & FSL_FEATURE_ADC_HAS_CTRL_ASYNMODE
     config->clockMode = kADC_ClockSynchronousMode;
 #endif/* FSL_FEATURE_ADC_HAS_CTRL_ASYNMODE. */
-    
+
     config->clockDividerNumber = 0U;
 #if defined(FSL_FEATURE_ADC_HAS_CTRL_RESOL) & FSL_FEATURE_ADC_HAS_CTRL_RESOL
     config->resolution = kADC_Resolution12bit;
@@ -142,10 +142,10 @@ void ADC_GetDefaultConfig(adc_config_t *config)
 #if defined(FSL_FEATURE_ADC_HAS_CTRL_TSAMP) & FSL_FEATURE_ADC_HAS_CTRL_TSAMP
     config->sampleTimeNumber = 0U;
 #endif/* FSL_FEATURE_ADC_HAS_CTRL_TSAMP. */
-#if defined(FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE) & FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE    
+#if defined(FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE) & FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE
     config->enableLowPowerMode = false;
 #endif/* FSL_FEATURE_ADC_HAS_CTRL_LPWRMODE. */
-#if defined(FSL_FEATURE_ADC_HAS_TRIM_REG) & FSL_FEATURE_ADC_HAS_TRIM_REG    
+#if defined(FSL_FEATURE_ADC_HAS_TRIM_REG) & FSL_FEATURE_ADC_HAS_TRIM_REG
     config->voltageRange = kADC_HighVoltageRange;
 #endif/* FSL_FEATURE_ADC_HAS_TRIM_REG. */
 }
@@ -209,35 +209,35 @@ bool ADC_DoSelfCalibration(ADC_Type *base)
 #else
 bool ADC_DoSelfCalibration(ADC_Type *base, uint32_t frequency)
 {
-    uint32_t tmp32; 
+    uint32_t tmp32;
     uint32_t i = 0xF0000;
 
     /* Store the current contents of the ADC CTRL register. */
     tmp32 = base->CTRL;
-    
+
     /* Start ADC self-calibration. */
     base->CTRL |= ADC_CTRL_CALMODE_MASK;
 
     /* Divide the system clock to yield an ADC clock of about 500 kHz. */
     base->CTRL &= ~ADC_CTRL_CLKDIV_MASK;
     base->CTRL |= ADC_CTRL_CLKDIV((frequency / 500000U) - 1U);
-    
+
     /* Clear the LPWR bit. */
     base->CTRL &= ~ADC_CTRL_LPWRMODE_MASK;
-    
+
     /* Wait for the completion of calibration. */
     while ((ADC_CTRL_CALMODE_MASK == (base->CTRL & ADC_CTRL_CALMODE_MASK)) && (--i))
     {
     }
     /* Restore the contents of the ADC CTRL register. */
     base->CTRL = tmp32;
-    
+
     /* Judge whether the calibration is overtime.  */
     if (i == 0U)
     {
         return false; /* Calibration timeout. */
     }
-    
+
     return true;
 }
 #endif/* FSL_FEATURE_ADC_HAS_CALIB_REG */

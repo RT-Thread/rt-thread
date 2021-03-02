@@ -1,31 +1,31 @@
 /******************************************************************************
-*                                                  
+*
 *  (c) copyright Freescale Semiconductor 2008
 *  ALL RIGHTS RESERVED
 *
 *  File Name: FAT16.h
-*                                                                          
-*  Purpose: This file is for a USB Mass-Storage Device bootloader.  This file 
+*
+*  Purpose: This file is for a USB Mass-Storage Device bootloader.  This file
 *           has definitions used for FAT system
-*                                                                          
+*
 *  Assembler:  Codewarrior for Microcontrollers V6.2
-*                                            
+*
 *  Version:  1.1
-*                                                                          
-*                                                                          
-*  Author: Derek Snell                             
-*                                                                                       
-*  Location: Indianapolis, IN. USA                                            
-*                                                                                  
+*
+*
+*  Author: Derek Snell
+*
+*  Location: Indianapolis, IN. USA
+*
 * UPDATED HISTORY:
 *
 * REV   YYYY.MM.DD  AUTHOR        DESCRIPTION OF CHANGE
-* ---   ----------  ------        --------------------- 
+* ---   ----------  ------        ---------------------
 * 1.1   2008.11.24  Derek Snell   Added Volume label "BOOTLOADER" to FAT16 root directory
 * 1.0   2008.06.10  Derek Snell   Initial version
-* 
 *
-******************************************************************************/                                                                        
+*
+******************************************************************************/
 /* Freescale  is  not  obligated  to  provide  any  support, upgrades or new */
 /* releases  of  the Software. Freescale may make changes to the Software at */
 /* any time, without any obligation to notify or provide updated versions of */
@@ -55,7 +55,7 @@
 /* specifically  represent and warrant that you will not use the Software or */
 /* any  derivative  work of the Software for High Risk Activities.           */
 /* Freescale  and the Freescale logos are registered trademarks of Freescale */
-/* Semiconductor Inc.                                                        */ 
+/* Semiconductor Inc.                                                        */
 /*****************************************************************************/
 
 

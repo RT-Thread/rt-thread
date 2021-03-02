@@ -6,7 +6,7 @@
 #include "uip_netif.h"
 
 extern u16_t uip_len, uip_slen;
-void 
+void
 etharp_ip_input(struct netif *netif, struct pbuf *p)
 {
     u8_t *ptr;
@@ -18,9 +18,9 @@ etharp_ip_input(struct netif *netif, struct pbuf *p)
     uip_input();
     return;
 }
-void 
+void
 etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
-{    
+{
     u8_t *ptr,*pdata;
     //struct pbuf *q;
     int i;
@@ -28,18 +28,18 @@ etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
     uip_len = p->len;
     for (i=0;i<p->len;i++) uip_buf[i] = ptr[i];
     uip_arp_arpin();  //update arp table  uip_arp_arpin
-    if (uip_len) 
+    if (uip_len)
     {
        if (( pdata =(u8_t*)rt_malloc(1500*sizeof(u8_t))) ==RT_NULL)
        {
           pbuf_free(p);
           return;
        }
-       for (i=0; i < (UIP_LLH_LEN + 40); ++i) 
+       for (i=0; i < (UIP_LLH_LEN + 40); ++i)
        {
            pdata[i] =  uip_buf[i];
         }
-        for (; i < uip_len; ++i) 
+        for (; i < uip_len; ++i)
         {
             pdata[i] =  uip_appdata[i - UIP_LLH_LEN - 40 ];
         }
@@ -51,7 +51,7 @@ etharp_arp_input(struct netif *netif, struct eth_addr *ethaddr, struct pbuf *p)
         pbuf_free(p);
       //  pbuf_free(q);
         return ;
-        
+
        // return 0;    //ERR_OK
     }
     pbuf_free(p);

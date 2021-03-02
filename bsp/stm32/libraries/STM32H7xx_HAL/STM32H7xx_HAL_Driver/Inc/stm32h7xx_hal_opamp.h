@@ -24,7 +24,7 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
-                  
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_def.h"
 
@@ -34,95 +34,95 @@
 
 /** @addtogroup OPAMP
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 
 /** @defgroup OPAMP_Exported_Types OPAMP Exported Types
   * @{
   */
 
-/** 
-  * @brief  OPAMP Init structure definition  
+/**
+  * @brief  OPAMP Init structure definition
   */
-  
+
 typedef struct
 {
 
   uint32_t PowerMode;                   /*!< Specifies the power mode Normal or High Speed.
                                              This parameter must be a value of @ref OPAMP_PowerMode */
-  
+
   uint32_t Mode;                        /*!< Specifies the OPAMP mode
-                                             This parameter must be a value of @ref OPAMP_Mode 
+                                             This parameter must be a value of @ref OPAMP_Mode
                                              mode is either Standalone, - Follower or PGA */
-                                    
+
   uint32_t InvertingInput;              /*!< Specifies the inverting input in Standalone & PGA modes
                                              - In Standalone mode i.e when mode is OPAMP_STANDALONE_MODE
-                                                 This parameter must be a value of @ref OPAMP_InvertingInput 
+                                                 This parameter must be a value of @ref OPAMP_InvertingInput
                                              - In Follower mode i.e when mode is OPAMP_FOLLOWER_MODE
-                                           & In PGA mode i.e when mode is OPAMP_PGA_MODE 
-                                                 This parameter is Not Applicable */ 
+                                           & In PGA mode i.e when mode is OPAMP_PGA_MODE
+                                                 This parameter is Not Applicable */
 
-  uint32_t NonInvertingInput;           /*!< Specifies the non inverting input of the opamp: 
-                                             This parameter must be a value of @ref OPAMP_NonInvertingInput */                                   
-  
-  uint32_t PgaGain;                     /*!< Specifies the gain in PGA mode 
-                                             i.e. when mode is OPAMP_PGA_MODE. 
+  uint32_t NonInvertingInput;           /*!< Specifies the non inverting input of the opamp:
+                                             This parameter must be a value of @ref OPAMP_NonInvertingInput */
+
+  uint32_t PgaGain;                     /*!< Specifies the gain in PGA mode
+                                             i.e. when mode is OPAMP_PGA_MODE.
                                              This parameter must be a value of @ref OPAMP_PgaGain */
 
-  uint32_t PgaConnect;                  /*!< Specifies the inverting pin in PGA mode 
-                                             i.e. when mode is OPAMP_PGA_MODE 
-                                             This parameter must be a value of @ref OPAMP_PgaConnect 
+  uint32_t PgaConnect;                  /*!< Specifies the inverting pin in PGA mode
+                                             i.e. when mode is OPAMP_PGA_MODE
+                                             This parameter must be a value of @ref OPAMP_PgaConnect
                                              Either: not connected, connected to VINM0, connected to VINM1
                                              (VINM0 or VINM1 are typically used for external filtering) */
- 
-  uint32_t UserTrimming;                /*!< Specifies the trimming mode 
-                                             This parameter must be a value of @ref OPAMP_UserTrimming 
+
+  uint32_t UserTrimming;                /*!< Specifies the trimming mode
+                                             This parameter must be a value of @ref OPAMP_UserTrimming
                                              UserTrimming is either factory or user trimming.*/
-                                                                                                                            
+
   uint32_t TrimmingValueP;              /*!< Specifies the offset trimming value (PMOS) in Normal Mode
-  
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
-                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31. 
+
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31.
                                              16 is typical default value */
-                                        
+
   uint32_t TrimmingValueN;              /*!< Specifies the offset trimming value (NMOS) in Normal Mode
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
-                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31. 
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31.
                                              16 is typical default value */
-  
+
   uint32_t TrimmingValuePHighSpeed;      /*!< Specifies the offset trimming value (PMOS) in High Speed Mode
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
-                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31.  
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31.
                                              16 is typical default value */
 
   uint32_t TrimmingValueNHighSpeed;      /*!< Specifies the offset trimming value (NMOS) in High Speed Mode
-                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER. 
-                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31.  
+                                             i.e. when UserTrimming is OPAMP_TRIMMING_USER.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 31.
                                              16 is typical default value */
 
 }OPAMP_InitTypeDef;
 
-/** 
-  * @brief  HAL State structures definition  
-  */ 
+/**
+  * @brief  HAL State structures definition
+  */
 
 typedef enum
 {
   HAL_OPAMP_STATE_RESET               = 0x00000000U, /*!< OPAMP is not yet Initialized          */
-  
+
   HAL_OPAMP_STATE_READY               = 0x00000001U, /*!< OPAMP is initialized and ready for use */
   HAL_OPAMP_STATE_CALIBBUSY           = 0x00000002U, /*!< OPAMP is enabled in auto calibration mode */
- 
-  HAL_OPAMP_STATE_BUSY                = 0x00000004U, /*!< OPAMP is enabled and running in normal mode */                                                                           
+
+  HAL_OPAMP_STATE_BUSY                = 0x00000004U, /*!< OPAMP is enabled and running in normal mode */
   HAL_OPAMP_STATE_BUSYLOCKED          = 0x00000005U  /*!< OPAMP is locked
                                                          only system reset allows reconfiguring the opamp. */
-    
+
 }HAL_OPAMP_StateTypeDef;
 
-/** 
+/**
   * @brief OPAMP Handle Structure definition
-  */ 
+  */
 #if (USE_HAL_OPAMP_REGISTER_CALLBACKS == 1)
 typedef struct __OPAMP_HandleTypeDef
 #else
@@ -134,16 +134,16 @@ typedef struct
   HAL_StatusTypeDef              Status;                       /*!< OPAMP peripheral status   */
   HAL_LockTypeDef                Lock;                         /*!< Locking object          */
   __IO HAL_OPAMP_StateTypeDef    State;                        /*!< OPAMP communication state */
-  
+
 #if (USE_HAL_OPAMP_REGISTER_CALLBACKS == 1)
 void (* MspInitCallback)                (struct __OPAMP_HandleTypeDef *hopamp);
-void (* MspDeInitCallback)              (struct __OPAMP_HandleTypeDef *hopamp); 
-#endif /* USE_HAL_OPAMP_REGISTER_CALLBACKS */ 
+void (* MspDeInitCallback)              (struct __OPAMP_HandleTypeDef *hopamp);
+#endif /* USE_HAL_OPAMP_REGISTER_CALLBACKS */
 } OPAMP_HandleTypeDef;
 
-/** 
-  * @brief HAl_OPAMP_TrimmingValueTypeDef definition 
-  */ 
+/**
+  * @brief HAl_OPAMP_TrimmingValueTypeDef definition
+  */
 
 typedef  uint32_t HAL_OPAMP_TrimmingValueTypeDef;
 
@@ -160,19 +160,19 @@ typedef enum
   HAL_OPAMP_MSP_INIT_CB_ID                     = 0x01U,  /*!< OPAMP MspInit Callback ID           */
   HAL_OPAMP_MSP_DEINIT_CB_ID                   = 0x02U,  /*!< OPAMP MspDeInit Callback ID         */
   HAL_OPAMP_ALL_CB_ID                          = 0x03U   /*!< OPAMP All ID                        */
-}HAL_OPAMP_CallbackIDTypeDef;                            
+}HAL_OPAMP_CallbackIDTypeDef;
 
 /**
   * @brief  HAL OPAMP Callback pointer definition
   */
 typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 #endif /* USE_HAL_OPAMP_REGISTER_CALLBACKS */
-    
-    
+
+
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup OPAMP_Exported_Constants OPAMP Exported Constants
   * @{
-  */      
+  */
 
 /** @defgroup OPAMP_Mode OPAMP Mode
   * @{
@@ -180,11 +180,11 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 #define OPAMP_STANDALONE_MODE             0x00000000U                                  /*!< standalone mode */
 #define OPAMP_PGA_MODE                    OPAMP_CSR_VMSEL_1                            /*!< PGA mode */
 #define OPAMP_FOLLOWER_MODE               (OPAMP_CSR_VMSEL_1 | OPAMP_CSR_VMSEL_0)      /*!< follower mode */
-    
+
 /**
   * @}
-  */                                        
-                                                                             
+  */
+
 /** @defgroup OPAMP_NonInvertingInput OPAMP Non Inverting Input
   * @{
   */
@@ -256,7 +256,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup OPAMP_UserTrimming OPAMP User Trimming
   * @{
@@ -279,11 +279,11 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
-  */           
+  */
 
  /**
   * @}
-  */ 
+  */
 
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup OPAMP_Private_Constants OPAMP Private Constants
@@ -291,8 +291,8 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
   * @{
   */
 
-/* NONINVERTING bit position in OTR & HSOTR */ 
-#define OPAMP_INPUT_NONINVERTING           (8U)  /*!< Non inverting input */  
+/* NONINVERTING bit position in OTR & HSOTR */
+#define OPAMP_INPUT_NONINVERTING           (8U)  /*!< Non inverting input */
 
 /* Offset trimming time: during calibration, minimum time needed between two  */
 /* steps to have 1 mV accuracy.                                               */
@@ -317,7 +317,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
-  */ 
+  */
 
 /* Private macro -------------------------------------------------------------*/
 
@@ -367,7 +367,7 @@ typedef void (*pOPAMP_CallbackTypeDef)(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
-  */ 
+  */
 
 /* Include OPAMP HAL Extended module */
 #include "stm32h7xx_hal_opamp_ex.h"
@@ -396,7 +396,7 @@ void HAL_OPAMP_MspDeInit(OPAMP_HandleTypeDef *hopamp);
 /* I/O operation functions  *****************************************************/
 HAL_StatusTypeDef HAL_OPAMP_Start(OPAMP_HandleTypeDef *hopamp);
 HAL_StatusTypeDef HAL_OPAMP_Stop(OPAMP_HandleTypeDef *hopamp);
-HAL_StatusTypeDef HAL_OPAMP_SelfCalibrate(OPAMP_HandleTypeDef *hopamp); 
+HAL_StatusTypeDef HAL_OPAMP_SelfCalibrate(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
@@ -412,7 +412,7 @@ HAL_StatusTypeDef HAL_OPAMP_SelfCalibrate(OPAMP_HandleTypeDef *hopamp);
 HAL_StatusTypeDef HAL_OPAMP_RegisterCallback (OPAMP_HandleTypeDef *hopamp, HAL_OPAMP_CallbackIDTypeDef CallbackId, pOPAMP_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_OPAMP_UnRegisterCallback (OPAMP_HandleTypeDef *hopamp, HAL_OPAMP_CallbackIDTypeDef CallbackId);
 #endif /* USE_HAL_OPAMP_REGISTER_CALLBACKS */
-HAL_StatusTypeDef HAL_OPAMP_Lock(OPAMP_HandleTypeDef *hopamp); 
+HAL_StatusTypeDef HAL_OPAMP_Lock(OPAMP_HandleTypeDef *hopamp);
 HAL_OPAMP_TrimmingValueTypeDef HAL_OPAMP_GetTrimOffset (OPAMP_HandleTypeDef *hopamp, uint32_t trimmingoffset);
 
 /**
@@ -436,11 +436,11 @@ HAL_OPAMP_StateTypeDef HAL_OPAMP_GetState(OPAMP_HandleTypeDef *hopamp);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 #ifdef __cplusplus
 }

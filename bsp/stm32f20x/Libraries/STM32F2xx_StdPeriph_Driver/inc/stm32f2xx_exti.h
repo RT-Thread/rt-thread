@@ -41,8 +41,8 @@
 
 /* Exported types ------------------------------------------------------------*/
 
-/** 
-  * @brief  EXTI mode enumeration  
+/**
+  * @brief  EXTI mode enumeration
   */
 
 typedef enum
@@ -53,29 +53,29 @@ typedef enum
 
 #define IS_EXTI_MODE(MODE) (((MODE) == EXTI_Mode_Interrupt) || ((MODE) == EXTI_Mode_Event))
 
-/** 
-  * @brief  EXTI Trigger enumeration  
+/**
+  * @brief  EXTI Trigger enumeration
   */
 
 typedef enum
 {
   EXTI_Trigger_Rising = 0x08,
-  EXTI_Trigger_Falling = 0x0C,  
+  EXTI_Trigger_Falling = 0x0C,
   EXTI_Trigger_Rising_Falling = 0x10
 }EXTITrigger_TypeDef;
 
 #define IS_EXTI_TRIGGER(TRIGGER) (((TRIGGER) == EXTI_Trigger_Rising) || \
                                   ((TRIGGER) == EXTI_Trigger_Falling) || \
                                   ((TRIGGER) == EXTI_Trigger_Rising_Falling))
-/** 
-  * @brief  EXTI Init Structure definition  
+/**
+  * @brief  EXTI Init Structure definition
   */
 
 typedef struct
 {
   uint32_t EXTI_Line;               /*!< Specifies the EXTI lines to be enabled or disabled.
                                          This parameter can be any combination value of @ref EXTI_Lines */
-   
+
   EXTIMode_TypeDef EXTI_Mode;       /*!< Specifies the mode for the EXTI lines.
                                          This parameter can be a value of @ref EXTIMode_TypeDef */
 
@@ -83,7 +83,7 @@ typedef struct
                                          This parameter can be a value of @ref EXTITrigger_TypeDef */
 
   FunctionalState EXTI_LineCmd;     /*!< Specifies the new state of the selected EXTI lines.
-                                         This parameter can be set either to ENABLE or DISABLE */ 
+                                         This parameter can be set either to ENABLE or DISABLE */
 }EXTI_InitTypeDef;
 
 /* Exported constants --------------------------------------------------------*/
@@ -92,7 +92,7 @@ typedef struct
   * @{
   */
 
-/** @defgroup EXTI_Lines 
+/** @defgroup EXTI_Lines
   * @{
   */
 
@@ -114,12 +114,12 @@ typedef struct
 #define EXTI_Line15      ((uint32_t)0x08000)     /*!< External interrupt line 15 */
 #define EXTI_Line16      ((uint32_t)0x10000)     /*!< External interrupt line 16 Connected to the PVD Output */
 #define EXTI_Line17      ((uint32_t)0x20000)     /*!< External interrupt line 17 Connected to the RTC Alarm event */
-#define EXTI_Line18      ((uint32_t)0x40000)     /*!< External interrupt line 18 Connected to the USB OTG FS Wakeup from suspend event */                                    
+#define EXTI_Line18      ((uint32_t)0x40000)     /*!< External interrupt line 18 Connected to the USB OTG FS Wakeup from suspend event */
 #define EXTI_Line19      ((uint32_t)0x80000)     /*!< External interrupt line 19 Connected to the Ethernet Wakeup event */
 #define EXTI_Line20      ((uint32_t)0x00100000)  /*!< External interrupt line 20 Connected to the USB OTG HS (configured in FS) Wakeup event  */
-#define EXTI_Line21      ((uint32_t)0x00200000)  /*!< External interrupt line 21 Connected to the RTC Tamper and Time Stamp events */                                               
-#define EXTI_Line22      ((uint32_t)0x00400000)  /*!< External interrupt line 22 Connected to the RTC Wakeup event */                                               
-                                          
+#define EXTI_Line21      ((uint32_t)0x00200000)  /*!< External interrupt line 21 Connected to the RTC Tamper and Time Stamp events */
+#define EXTI_Line22      ((uint32_t)0x00400000)  /*!< External interrupt line 22 Connected to the RTC Wakeup event */
+
 #define IS_EXTI_LINE(LINE) ((((LINE) & (uint32_t)0xFF800000) == 0x00) && ((LINE) != (uint16_t)0x00))
 
 #define IS_GET_EXTI_LINE(LINE) (((LINE) == EXTI_Line0) || ((LINE) == EXTI_Line1) || \
@@ -134,7 +134,7 @@ typedef struct
                                 ((LINE) == EXTI_Line18) || ((LINE) == EXTI_Line19) || \
                                 ((LINE) == EXTI_Line20) || ((LINE) == EXTI_Line21) ||\
                                 ((LINE) == EXTI_Line22))
-                    
+
 /**
   * @}
   */

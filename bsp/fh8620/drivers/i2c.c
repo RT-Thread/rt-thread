@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *    Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *    All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *    Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #include <rtdevice.h>
 #include <rthw.h>
 #include "i2c.h"
@@ -50,25 +50,25 @@ static void fh_i2c_xfer_init(struct rt_i2c_bus_device *dev, struct rt_i2c_msg ms
 {
     struct i2c_driver *i2c_drv = (struct i2c_driver *)dev->priv;
     struct fh_i2c_obj *i2c_obj = (struct fh_i2c_obj *)i2c_drv->priv;
-	rt_uint32_t ic_con;
+    rt_uint32_t ic_con;
 
-	/* if the slave address is ten bit address, ERROR*/
+    /* if the slave address is ten bit address, ERROR*/
     if (msgs[i2c_drv->msg_write_idx].flags & I2C_M_TEN)
     {
         rt_kprintf("ERROR: %s, ten bit address is NOT supported\n", __func__);
         return;
     }
 
-	/* Disable the adapter */
-	I2C_WaitMasterIdle(i2c_obj);
+    /* Disable the adapter */
+    I2C_WaitMasterIdle(i2c_obj);
 
-	I2C_Enable(i2c_obj, RT_FALSE);
+    I2C_Enable(i2c_obj, RT_FALSE);
 
-	/* set the slave (target) address */
-	I2C_SetSlaveAddress(i2c_obj, msgs[i2c_drv->msg_write_idx].addr);
+    /* set the slave (target) address */
+    I2C_SetSlaveAddress(i2c_obj, msgs[i2c_drv->msg_write_idx].addr);
 
-	/* Enable interrupts */
-	I2C_SetInterruptMask(i2c_obj, DW_IC_INTR_DEFAULT_MASK);
+    /* Enable interrupts */
+    I2C_SetInterruptMask(i2c_obj, DW_IC_INTR_DEFAULT_MASK);
 
     /* Enable the adapter */
     I2C_Enable(i2c_obj, RT_TRUE);
@@ -76,30 +76,30 @@ static void fh_i2c_xfer_init(struct rt_i2c_bus_device *dev, struct rt_i2c_msg ms
 
 
 static rt_size_t fh_i2c_xfer(struct rt_i2c_bus_device *dev,
-		struct rt_i2c_msg msgs[], rt_uint32_t num)
+        struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct i2c_driver *i2c_drv = (struct i2c_driver *)dev->priv;
     struct fh_i2c_obj *i2c_obj = (struct fh_i2c_obj *)i2c_drv->priv;
     int ret;
-	struct rt_i2c_msg *pmsg = RT_NULL;
+    struct rt_i2c_msg *pmsg = RT_NULL;
 
-	PRINT_I2C_DBG(">>>>>>>>>>>>>%s start\n", __func__);
+    PRINT_I2C_DBG(">>>>>>>>>>>>>%s start\n", __func__);
 
     rt_completion_init(&i2c_drv->transfer_completion);
 
     ret = rt_mutex_take(i2c_drv->lock, RT_WAITING_FOREVER);
-	if (ret != RT_EOK) {
-		goto done;
-	}
+    if (ret != RT_EOK) {
+        goto done;
+    }
 
-	i2c_drv->msgs = msgs;
-	i2c_drv->msgs_num = num;
-	i2c_drv->msg_read_idx = 0;
-	i2c_drv->msg_write_idx = 0;
-	i2c_drv->cmd_err = 0;
-	i2c_drv->msg_err = 0;
-	i2c_drv->status = STATUS_IDLE;
-	i2c_obj->abort_source = 0;
+    i2c_drv->msgs = msgs;
+    i2c_drv->msgs_num = num;
+    i2c_drv->msg_read_idx = 0;
+    i2c_drv->msg_write_idx = 0;
+    i2c_drv->cmd_err = 0;
+    i2c_drv->msg_err = 0;
+    i2c_drv->status = STATUS_IDLE;
+    i2c_obj->abort_source = 0;
 
     ret = I2C_WaitDeviceIdle(i2c_obj);
     if (ret < 0)
@@ -108,51 +108,51 @@ static rt_size_t fh_i2c_xfer(struct rt_i2c_bus_device *dev,
         //goto done;
     }
 
-	fh_i2c_xfer_init(dev, msgs, num);
+    fh_i2c_xfer_init(dev, msgs, num);
 
-	ret = rt_completion_wait(&i2c_drv->transfer_completion, RT_TICK_PER_SECOND);
-	PRINT_I2C_DBG("%s transfer finished\n", "rt_completion_wait");
+    ret = rt_completion_wait(&i2c_drv->transfer_completion, RT_TICK_PER_SECOND);
+    PRINT_I2C_DBG("%s transfer finished\n", "rt_completion_wait");
     if(ret)
-	{
+    {
         rt_kprintf("ERROR: %s, transfer timeout\n", __func__);
         I2C_SetDataCmd(i2c_obj, 0x200);
         I2C_Init(i2c_obj);
-		ret = -RT_ETIMEOUT;
-		goto done;
-	}
+        ret = -RT_ETIMEOUT;
+        goto done;
+    }
 
-	if (i2c_drv->msg_err)
-	{
-		rt_kprintf("i2c_priv->msg_err: %d\n", i2c_drv->msg_err);
-		ret = i2c_drv->msg_err;
-		goto done;
-	}
+    if (i2c_drv->msg_err)
+    {
+        rt_kprintf("i2c_priv->msg_err: %d\n", i2c_drv->msg_err);
+        ret = i2c_drv->msg_err;
+        goto done;
+    }
 
-	/* no error */
-	if (!i2c_drv->cmd_err)
-	{
-		/* Disable the adapter */
-	    I2C_WaitMasterIdle(i2c_obj);
-	    I2C_Enable(i2c_obj, RT_FALSE);
-		ret = num;
-		goto done;
-	}
+    /* no error */
+    if (!i2c_drv->cmd_err)
+    {
+        /* Disable the adapter */
+        I2C_WaitMasterIdle(i2c_obj);
+        I2C_Enable(i2c_obj, RT_FALSE);
+        ret = num;
+        goto done;
+    }
 
-	/* We have an error */
-	if (i2c_drv->cmd_err == DW_IC_ERR_TX_ABRT)
-	{
-		rt_kprintf("ERROR: %s, i2c_priv>cmd_err == DW_IC_ERR_TX_ABRT\n", __func__);
-		ret = I2C_HandleTxAbort(i2c_obj);
-		goto done;
-	}
+    /* We have an error */
+    if (i2c_drv->cmd_err == DW_IC_ERR_TX_ABRT)
+    {
+        rt_kprintf("ERROR: %s, i2c_priv>cmd_err == DW_IC_ERR_TX_ABRT\n", __func__);
+        ret = I2C_HandleTxAbort(i2c_obj);
+        goto done;
+    }
 
-	ret = 1;
+    ret = 1;
 
 done:
     I2C_Enable(i2c_obj, RT_FALSE);
     rt_mutex_release(i2c_drv->lock);
     PRINT_I2C_DBG(">>>>>>>>>>>>>%s end\n", __func__);
-	return ret;
+    return ret;
 
 }
 
@@ -167,164 +167,164 @@ static void i2c_fh_xfer_msg(struct rt_i2c_bus_device *dev)
 {
     struct i2c_driver *i2c_drv = (struct i2c_driver *)dev->priv;
     struct fh_i2c_obj *i2c_obj = (struct fh_i2c_obj *)i2c_drv->priv;
-	struct rt_i2c_msg *msgs = i2c_drv->msgs;
-	rt_uint32_t intr_mask, cmd;
-	int tx_limit, rx_limit;
-	rt_uint32_t addr = msgs[i2c_drv->msg_write_idx].addr;
-	rt_uint32_t buf_len = i2c_drv->tx_buf_len;
-	rt_uint8_t *buf = i2c_drv->tx_buf;
+    struct rt_i2c_msg *msgs = i2c_drv->msgs;
+    rt_uint32_t intr_mask, cmd;
+    int tx_limit, rx_limit;
+    rt_uint32_t addr = msgs[i2c_drv->msg_write_idx].addr;
+    rt_uint32_t buf_len = i2c_drv->tx_buf_len;
+    rt_uint8_t *buf = i2c_drv->tx_buf;
 
-	PRINT_I2C_DBG("%s start, msgs_num: %d, write_idx: %d\n", __func__, i2c_drv->msgs_num, i2c_drv->msg_write_idx);
+    PRINT_I2C_DBG("%s start, msgs_num: %d, write_idx: %d\n", __func__, i2c_drv->msgs_num, i2c_drv->msg_write_idx);
 
-	intr_mask = DW_IC_INTR_DEFAULT_MASK;
+    intr_mask = DW_IC_INTR_DEFAULT_MASK;
 
-	for (; i2c_drv->msg_write_idx < i2c_drv->msgs_num; i2c_drv->msg_write_idx++)
-	{
-		/*
-		 * if target address has changed, we need to
-		 * reprogram the target address in the i2c
-		 * adapter when we are done with this transfer
-		 */
-		if (msgs[i2c_drv->msg_write_idx].addr != addr) {
-			rt_kprintf(
-					"ERROR: %s, invalid target address\n", __func__);
-			i2c_drv->msg_err = 1;
-			break;
-		}
+    for (; i2c_drv->msg_write_idx < i2c_drv->msgs_num; i2c_drv->msg_write_idx++)
+    {
+        /*
+         * if target address has changed, we need to
+         * reprogram the target address in the i2c
+         * adapter when we are done with this transfer
+         */
+        if (msgs[i2c_drv->msg_write_idx].addr != addr) {
+            rt_kprintf(
+                    "ERROR: %s, invalid target address\n", __func__);
+            i2c_drv->msg_err = 1;
+            break;
+        }
 
-		if (msgs[i2c_drv->msg_write_idx].len == 0) {
-			rt_kprintf(
-					"ERROR: %s, invalid message length\n", __func__);
-			i2c_drv->msg_err = 1;
-			break;
-		}
+        if (msgs[i2c_drv->msg_write_idx].len == 0) {
+            rt_kprintf(
+                    "ERROR: %s, invalid message length\n", __func__);
+            i2c_drv->msg_err = 1;
+            break;
+        }
 
-		if (!(i2c_drv->status & STATUS_WRITE_IN_PROGRESS))
-		{
-			/* new i2c_msg */
-			buf = msgs[i2c_drv->msg_write_idx].buf;
-			buf_len = msgs[i2c_drv->msg_write_idx].len;
+        if (!(i2c_drv->status & STATUS_WRITE_IN_PROGRESS))
+        {
+            /* new i2c_msg */
+            buf = msgs[i2c_drv->msg_write_idx].buf;
+            buf_len = msgs[i2c_drv->msg_write_idx].len;
 
-			PRINT_I2C_DBG("new msg: len: %d, buf: 0x%x\n", buf_len, buf[0]);
-		}
+            PRINT_I2C_DBG("new msg: len: %d, buf: 0x%x\n", buf_len, buf[0]);
+        }
 
-		tx_limit = i2c_obj->config.tx_fifo_depth - I2C_GetTransmitFifoLevel(i2c_obj);
-		rx_limit = i2c_obj->config.rx_fifo_depth - I2C_GetReceiveFifoLevel(i2c_obj);
+        tx_limit = i2c_obj->config.tx_fifo_depth - I2C_GetTransmitFifoLevel(i2c_obj);
+        rx_limit = i2c_obj->config.rx_fifo_depth - I2C_GetReceiveFifoLevel(i2c_obj);
 
-		while (buf_len > 0 && tx_limit > 0 && rx_limit > 0)
-		{
-			if (msgs[i2c_drv->msg_write_idx].flags & RT_I2C_RD)
-			{
-				cmd = 0x100;
-				rx_limit--;
-			}
-			else
-			{
-				cmd = *buf++;
-			}
+        while (buf_len > 0 && tx_limit > 0 && rx_limit > 0)
+        {
+            if (msgs[i2c_drv->msg_write_idx].flags & RT_I2C_RD)
+            {
+                cmd = 0x100;
+                rx_limit--;
+            }
+            else
+            {
+                cmd = *buf++;
+            }
 
-			tx_limit--; buf_len--;
+            tx_limit--; buf_len--;
 
-			if(!buf_len)
-			{
-			    //2015-11-8 ar0130 bug fixed
-			    while(I2C_GetTransmitFifoLevel(i2c_obj));
-			    cmd |= 0x200;
-			}
+            if(!buf_len)
+            {
+                //2015-11-8 ar0130 bug fixed
+                while(I2C_GetTransmitFifoLevel(i2c_obj));
+                cmd |= 0x200;
+            }
 
-			I2C_SetDataCmd(i2c_obj, cmd);
-		}
+            I2C_SetDataCmd(i2c_obj, cmd);
+        }
 
-		i2c_drv->tx_buf = buf;
-		i2c_drv->tx_buf_len = buf_len;
+        i2c_drv->tx_buf = buf;
+        i2c_drv->tx_buf_len = buf_len;
 
-		if (buf_len > 0)
-		{
-			/* more bytes to be written */
-		    i2c_drv->status |= STATUS_WRITE_IN_PROGRESS;
-			break;
-		}
-		else
-		{
-		    i2c_drv->status &= ~STATUS_WRITE_IN_PROGRESS;
-		}
-	}
+        if (buf_len > 0)
+        {
+            /* more bytes to be written */
+            i2c_drv->status |= STATUS_WRITE_IN_PROGRESS;
+            break;
+        }
+        else
+        {
+            i2c_drv->status &= ~STATUS_WRITE_IN_PROGRESS;
+        }
+    }
 
-	/*
-	 * If i2c_msg index search is completed, we don't need TX_EMPTY
-	 * interrupt any more.
-	 */
+    /*
+     * If i2c_msg index search is completed, we don't need TX_EMPTY
+     * interrupt any more.
+     */
 
-	if (i2c_drv->msg_write_idx == i2c_drv->msgs_num)
-	    intr_mask &= ~DW_IC_INTR_TX_EMPTY;
+    if (i2c_drv->msg_write_idx == i2c_drv->msgs_num)
+        intr_mask &= ~DW_IC_INTR_TX_EMPTY;
 
-	if (i2c_drv->msg_err)
-	{
-	    rt_kprintf("ERROR: %s, msg_err: %d\n", __func__, i2c_drv->msg_err);
-	    intr_mask = 0;
-	}
+    if (i2c_drv->msg_err)
+    {
+        rt_kprintf("ERROR: %s, msg_err: %d\n", __func__, i2c_drv->msg_err);
+        intr_mask = 0;
+    }
 
-	I2C_SetInterruptMask(i2c_obj, intr_mask);
+    I2C_SetInterruptMask(i2c_obj, intr_mask);
 
-	PRINT_I2C_DBG("%s end\n", __func__);
+    PRINT_I2C_DBG("%s end\n", __func__);
 }
 
 static void i2c_fh_read(struct rt_i2c_bus_device *dev)
 {
-	struct i2c_driver *i2c_drv = (struct i2c_driver *)dev->priv;
-	struct fh_i2c_obj *i2c_obj = (struct fh_i2c_obj *)i2c_drv->priv;
-	struct rt_i2c_msg *msgs = i2c_drv->msgs;
-	int rx_valid;
+    struct i2c_driver *i2c_drv = (struct i2c_driver *)dev->priv;
+    struct fh_i2c_obj *i2c_obj = (struct fh_i2c_obj *)i2c_drv->priv;
+    struct rt_i2c_msg *msgs = i2c_drv->msgs;
+    int rx_valid;
 
-	PRINT_I2C_DBG("%s start, msgs_num: %d, read_idx: %d\n", __func__, i2c_drv->msgs_num, i2c_drv->msg_read_idx);
+    PRINT_I2C_DBG("%s start, msgs_num: %d, read_idx: %d\n", __func__, i2c_drv->msgs_num, i2c_drv->msg_read_idx);
 
-	for (; i2c_drv->msg_read_idx < i2c_drv->msgs_num; i2c_drv->msg_read_idx++)
-	{
-		rt_uint32_t len;
-		rt_uint8_t *buf;
+    for (; i2c_drv->msg_read_idx < i2c_drv->msgs_num; i2c_drv->msg_read_idx++)
+    {
+        rt_uint32_t len;
+        rt_uint8_t *buf;
 
-		if (!(msgs[i2c_drv->msg_read_idx].flags & RT_I2C_RD))
-		    continue;
+        if (!(msgs[i2c_drv->msg_read_idx].flags & RT_I2C_RD))
+            continue;
 
-		if (!(i2c_drv->status & STATUS_READ_IN_PROGRESS))
-		{
-			len = msgs[i2c_drv->msg_read_idx].len;
-			buf = msgs[i2c_drv->msg_read_idx].buf;
-		}
-		else
-		{
-		    PRINT_I2C_DBG("STATUS_READ_IN_PROGRESS\n");
-			len = i2c_drv->rx_buf_len;
-			buf = i2c_drv->rx_buf;
-		}
+        if (!(i2c_drv->status & STATUS_READ_IN_PROGRESS))
+        {
+            len = msgs[i2c_drv->msg_read_idx].len;
+            buf = msgs[i2c_drv->msg_read_idx].buf;
+        }
+        else
+        {
+            PRINT_I2C_DBG("STATUS_READ_IN_PROGRESS\n");
+            len = i2c_drv->rx_buf_len;
+            buf = i2c_drv->rx_buf;
+        }
 
-		rx_valid = I2C_GetReceiveFifoLevel(i2c_obj);
+        rx_valid = I2C_GetReceiveFifoLevel(i2c_obj);
 
-		if(rx_valid == 0)
-		{
-			rt_kprintf("ERROR: %s, rx_valid == 0\n", __func__);
-		}
-		PRINT_I2C_DBG("%s, len=%d, rx_valid=%d\n", __func__, len, rx_valid);
-		for (; len > 0 && rx_valid > 0; len--, rx_valid--)
-		{
-			*buf++ = I2C_GetData(i2c_obj);
-		}
+        if(rx_valid == 0)
+        {
+            rt_kprintf("ERROR: %s, rx_valid == 0\n", __func__);
+        }
+        PRINT_I2C_DBG("%s, len=%d, rx_valid=%d\n", __func__, len, rx_valid);
+        for (; len > 0 && rx_valid > 0; len--, rx_valid--)
+        {
+            *buf++ = I2C_GetData(i2c_obj);
+        }
 
-		PRINT_I2C_DBG("i2c_fh_read, len: %d, buf[0]: 0x%x\n", msgs[i2c_drv->msg_read_idx].len, msgs[i2c_drv->msg_read_idx].buf[0]);
+        PRINT_I2C_DBG("i2c_fh_read, len: %d, buf[0]: 0x%x\n", msgs[i2c_drv->msg_read_idx].len, msgs[i2c_drv->msg_read_idx].buf[0]);
 
-		if (len > 0)
-		{
-		    PRINT_I2C_DBG("len > 0\n");
-			i2c_drv->status |= STATUS_READ_IN_PROGRESS;
-			i2c_drv->rx_buf_len = len;
-			i2c_drv->rx_buf = buf;
-			return;
-		}
-		else
-		    i2c_drv->status &= ~STATUS_READ_IN_PROGRESS;
-	}
+        if (len > 0)
+        {
+            PRINT_I2C_DBG("len > 0\n");
+            i2c_drv->status |= STATUS_READ_IN_PROGRESS;
+            i2c_drv->rx_buf_len = len;
+            i2c_drv->rx_buf = buf;
+            return;
+        }
+        else
+            i2c_drv->status &= ~STATUS_READ_IN_PROGRESS;
+    }
 
-	PRINT_I2C_DBG("%s end\n", __func__);
+    PRINT_I2C_DBG("%s end\n", __func__);
 }
 
 /*
@@ -336,44 +336,44 @@ static void fh_i2c_interrupt(int this_irq, void *dev_id)
     struct i2c_driver *i2c_drv = dev_id;
     struct rt_i2c_bus_device *i2c_bus_dev = i2c_drv->i2c_bus_dev;
     struct fh_i2c_obj *i2c_obj = (struct fh_i2c_obj *)i2c_drv->priv;
-	rt_uint32_t stat;
+    rt_uint32_t stat;
 
-	stat = I2C_ClearAndGetInterrupts(i2c_obj);
-	PRINT_I2C_DBG("status: 0x%x, mask: 0x%x\n", stat, I2C_GetInterruptMask(i2c_obj));
+    stat = I2C_ClearAndGetInterrupts(i2c_obj);
+    PRINT_I2C_DBG("status: 0x%x, mask: 0x%x\n", stat, I2C_GetInterruptMask(i2c_obj));
 
-	if (stat & DW_IC_INTR_TX_ABRT)
-	{
-	    PRINT_I2C_DBG("DW_IC_INTR_TX_ABRT\n");
-		i2c_drv->cmd_err |= DW_IC_ERR_TX_ABRT;
-		i2c_drv->status = STATUS_IDLE;
+    if (stat & DW_IC_INTR_TX_ABRT)
+    {
+        PRINT_I2C_DBG("DW_IC_INTR_TX_ABRT\n");
+        i2c_drv->cmd_err |= DW_IC_ERR_TX_ABRT;
+        i2c_drv->status = STATUS_IDLE;
 
-		/*
-		 * Anytime TX_ABRT is set, the contents of the tx/rx
-		 * buffers are flushed.  Make sure to skip them.
-		 */
-		I2C_SetInterruptMask(i2c_obj, 0);
-		goto tx_aborted;
-	}
+        /*
+         * Anytime TX_ABRT is set, the contents of the tx/rx
+         * buffers are flushed.  Make sure to skip them.
+         */
+        I2C_SetInterruptMask(i2c_obj, 0);
+        goto tx_aborted;
+    }
 
-	if (stat & DW_IC_INTR_RX_FULL)
-	{
-		i2c_fh_read(i2c_bus_dev);
-	}
+    if (stat & DW_IC_INTR_RX_FULL)
+    {
+        i2c_fh_read(i2c_bus_dev);
+    }
 
-	if (stat & DW_IC_INTR_TX_EMPTY)
-	{
-		i2c_fh_xfer_msg(i2c_bus_dev);
-	}
+    if (stat & DW_IC_INTR_TX_EMPTY)
+    {
+        i2c_fh_xfer_msg(i2c_bus_dev);
+    }
 
-	/*
-	 * No need to modify or disable the interrupt mask here.
-	 * i2c_fh_xfer_msg() will take care of it according to
-	 * the current transmit status.
-	 */
+    /*
+     * No need to modify or disable the interrupt mask here.
+     * i2c_fh_xfer_msg() will take care of it according to
+     * the current transmit status.
+     */
 
 tx_aborted:
-	if ((stat & (DW_IC_INTR_TX_ABRT | DW_IC_INTR_STOP_DET)) || i2c_drv->msg_err)
-	    rt_completion_done(&i2c_drv->transfer_completion);
+    if ((stat & (DW_IC_INTR_TX_ABRT | DW_IC_INTR_STOP_DET)) || i2c_drv->msg_err)
+        rt_completion_done(&i2c_drv->transfer_completion);
 
 }
 
@@ -464,64 +464,64 @@ void rt_hw_i2c_init(void)
 }
 
 static rt_err_t fh_i2c_read_reg(struct rt_i2c_bus_device *fh81_i2c,
-		rt_uint16_t reg, rt_uint8_t *data) {
-	struct rt_i2c_msg msg[2];
-	rt_uint8_t send_buf[2];
-	rt_uint8_t recv_buf[1] = {0};
+        rt_uint16_t reg, rt_uint8_t *data) {
+    struct rt_i2c_msg msg[2];
+    rt_uint8_t send_buf[2];
+    rt_uint8_t recv_buf[1] = {0};
 
-	PRINT_I2C_DBG("%s start\n", __func__);
+    PRINT_I2C_DBG("%s start\n", __func__);
 
-	//  send_buf[0] = ((reg >> 8) & 0xff);
-	send_buf[0] = (reg & 0xFF);
+    //  send_buf[0] = ((reg >> 8) & 0xff);
+    send_buf[0] = (reg & 0xFF);
 
-	msg[0].addr = 0x51;
-	msg[0].flags = RT_I2C_WR;
-	msg[0].len = 1;
-	msg[0].buf = send_buf;
+    msg[0].addr = 0x51;
+    msg[0].flags = RT_I2C_WR;
+    msg[0].len = 1;
+    msg[0].buf = send_buf;
 
-	msg[1].addr = 0x51;
-	msg[1].flags = RT_I2C_RD;
-	msg[1].len = 1;
-	msg[1].buf = recv_buf;
+    msg[1].addr = 0x51;
+    msg[1].flags = RT_I2C_RD;
+    msg[1].len = 1;
+    msg[1].buf = recv_buf;
 
-	rt_i2c_transfer(fh81_i2c, msg, 2);
-	*data = recv_buf[0];
-	return RT_EOK;
+    rt_i2c_transfer(fh81_i2c, msg, 2);
+    *data = recv_buf[0];
+    return RT_EOK;
 }
 static rt_err_t fh_i2c_write_reg(struct rt_i2c_bus_device *fh81_i2c,
-		rt_uint16_t reg, rt_uint8_t data) {
-	struct rt_i2c_msg msg;
-	rt_uint8_t send_buf[3];
+        rt_uint16_t reg, rt_uint8_t data) {
+    struct rt_i2c_msg msg;
+    rt_uint8_t send_buf[3];
 
-	PRINT_I2C_DBG("%s start\n", __func__);
+    PRINT_I2C_DBG("%s start\n", __func__);
 
-	// send_buf[0] = ((reg >> 8) & 0xff);
-	send_buf[1] = (reg & 0xFF);
-	send_buf[2] = data;
+    // send_buf[0] = ((reg >> 8) & 0xff);
+    send_buf[1] = (reg & 0xFF);
+    send_buf[2] = data;
 
-	msg.addr = 0x51;
-	msg.flags = RT_I2C_WR;
-	msg.len = 2;
-	msg.buf = send_buf;
+    msg.addr = 0x51;
+    msg.flags = RT_I2C_WR;
+    msg.len = 2;
+    msg.buf = send_buf;
 
-	rt_i2c_transfer(fh81_i2c, &msg, 1);
-	PRINT_I2C_DBG("%s end\n", __func__);
-	return RT_EOK;
+    rt_i2c_transfer(fh81_i2c, &msg, 1);
+    PRINT_I2C_DBG("%s end\n", __func__);
+    return RT_EOK;
 }
 
 void i2c_test_sensor() {
-	struct rt_i2c_bus_device *fh81_i2c;
-	struct rt_i2c_msg msg[2];
-	rt_uint8_t data[1] = { 0x00 };
+    struct rt_i2c_bus_device *fh81_i2c;
+    struct rt_i2c_msg msg[2];
+    rt_uint8_t data[1] = { 0x00 };
 
-	fh81_i2c = rt_i2c_bus_device_find("i2c1");
+    fh81_i2c = rt_i2c_bus_device_find("i2c1");
 
-	fh_i2c_write_reg(fh81_i2c, 0x04, 0x02);
+    fh_i2c_write_reg(fh81_i2c, 0x04, 0x02);
 
-	fh_i2c_read_reg(fh81_i2c, 0x02, data);
+    fh_i2c_read_reg(fh81_i2c, 0x02, data);
 
-	rt_kprintf("data read from 0x3038 is 0x%x\r\n", data[0]);
-	PRINT_I2C_DBG("%s end\n", __func__);
+    rt_kprintf("data read from 0x3038 is 0x%x\r\n", data[0]);
+    PRINT_I2C_DBG("%s end\n", __func__);
 }
 #ifdef RT_USING_FINSH
 #include <finsh.h>

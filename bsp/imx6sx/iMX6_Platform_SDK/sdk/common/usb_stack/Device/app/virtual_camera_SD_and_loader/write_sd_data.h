@@ -8,9 +8,9 @@
  *
  * @file virtual_camera.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date Jul-20-2010
  *
@@ -50,8 +50,8 @@ typedef struct _disk_variable_struct
     boolean start_app;
     /* disk space reserved */
     uint_8 storage_disk[10];
-    uint_8 disk_lock; 
-}DISK_GLOBAL_VARIABLE_STRUCT, *PTR_DISK_GLOBAL_VARIABLE_STRUCT; 
+    uint_8 disk_lock;
+}DISK_GLOBAL_VARIABLE_STRUCT, *PTR_DISK_GLOBAL_VARIABLE_STRUCT;
 
 #define  FLASH_IMAGE_SUCCESS    0
 #define  FLASH_IMAGE_ERROR      1
@@ -74,4 +74,4 @@ void Disk_App(void);
 void USB_MSD_App_Callback(uint_8 controller_ID,uint_8 event_type,void* val);
 void MSD_Event_Callback(uint_8 controller_ID,uint_8 event_type,void* val);
 
-#endif 
+#endif

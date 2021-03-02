@@ -142,7 +142,7 @@ static void tempmon_alarm_isr(void)
         float currentTemp = tempmon_get_temp();
         s_tempmon.alarmCallback(currentTemp);
     }
-    
+
     // Clear the alarm IRQ by writing a 1.
     BF_SET(PMU_MISC1, IRQ_TEMPSENSE);
 }
@@ -151,22 +151,22 @@ int tempmon_init(void)
 {
     // Read the calibration point data from OTP.
     uint32_t calibrationData = HW_OCOTP_ANA1_RD();
-    
+
     // If the OTP fields are blank, use a default set of calibration points.
     if (calibrationData == 0)
     {
         calibrationData = DEFAULT_TEMP_CAL_DATA;
     }
-    
+
     // Extract calibration points from the OTP data.
     s_tempmon.roomCount = (calibrationData & BM_ROOM_COUNT) >> BP_ROOM_COUNT;
     s_tempmon.hotCount = (calibrationData & BM_HOT_COUNT) >> BP_HOT_COUNT;
     s_tempmon.hotTemp = (calibrationData & BM_HOT_TEMP) >> BP_HOT_TEMP;
-    
+
     // Fill in other global info fields.
     s_tempmon.alarmCallback = NULL;
     s_tempmon.isAlarmEnabled = false;
-    
+
     return 0;
 }
 
@@ -177,26 +177,26 @@ float tempmon_get_temp(void)
     {
         // Wake up the temp monitor.
         BF_CLR(TEMPMON_TEMPSENSE0, POWER_DOWN);
-    
+
         // Clear the measure frequency so we only get single measurements.
         BF_CLR(TEMPMON_TEMPSENSE1, MEASURE_FREQ);
-    
+
         // Start a measurement cycle.
         BF_SET(TEMPMON_TEMPSENSE0, MEASURE_TEMP);
     }
-    
+
     // Wait until the measurement is ready.
     while (!HW_TEMPMON_TEMPSENSE0.B.FINISHED);
-    
+
     // Read the measured temperature.
     int measuredCount = HW_TEMPMON_TEMPSENSE0.B.TEMP_CNT;
-    
+
     // Power down the temp monitor, unless alarms are enabled.
     if (!s_tempmon.isAlarmEnabled)
     {
         BF_SET(TEMPMON_TEMPSENSE0, POWER_DOWN);
     }
-    
+
     // Return the computed temperature.
     return compute_temp(measuredCount);
 }
@@ -206,10 +206,10 @@ void tempmon_set_alarm(uint32_t period, float alarmTemp, tempmon_alarm_callback_
     // Save alarm info.
     s_tempmon.alarmCallback = alarmCallback;
     s_tempmon.isAlarmEnabled = true;
-    
+
     // Wake up the temp monitor.
     BF_CLR(TEMPMON_TEMPSENSE0, POWER_DOWN);
-    
+
     // Set the measurement frequency.
     int ticks;
     if (period >= kMaxMeasurementPeriod_ms)
@@ -221,20 +221,20 @@ void tempmon_set_alarm(uint32_t period, float alarmTemp, tempmon_alarm_callback_
         // Convert milliseconds to 32.768 kHz clock ticks.
         ticks = period * kMeasurementTicksPerSecond / kMillisecondsPerSecond;
     }
-    
+
     BF_WR(TEMPMON_TEMPSENSE1, MEASURE_FREQ, ticks);
-    
+
     // Calculate and fill in the alarm value.
     int alarmValue = compute_alarm(alarmTemp);
     BF_WR(TEMPMON_TEMPSENSE0, ALARM_VALUE, alarmValue);
-    
+
     // Clear the alarm IRQ by writing a 1.
     BF_SET(PMU_MISC1, IRQ_TEMPSENSE);
-    
+
     // Enable the alarm interrupt.
     register_interrupt_routine(IMX_INT_TEMPERATURE, tempmon_alarm_isr);
     enable_interrupt(IMX_INT_TEMPERATURE, CPU_0, 1);
-    
+
     // Start automatic measurements.
     BF_SET(TEMPMON_TEMPSENSE0, MEASURE_TEMP);
 }
@@ -243,11 +243,11 @@ void tempmon_disable_alarm(void)
 {
     // Turn off the alarm interrupt.
     disable_interrupt(IMX_INT_TEMPERATURE, CPU_0);
-    
+
     // Stop automatic measurements.
     BF_CLR(TEMPMON_TEMPSENSE0, MEASURE_TEMP);
     BF_CLR(TEMPMON_TEMPSENSE1, MEASURE_FREQ);
-    
+
     // Power down the temp monitor.
     BF_SET(TEMPMON_TEMPSENSE0, POWER_DOWN);
 

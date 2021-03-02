@@ -924,8 +924,8 @@ cam_firmware_t ov5640_mipi_480x480_30fps_RGB565_fm[] = {
     , {0x3034, 0x18, 0, 0}
     , {0x3035, 0x11, 0, 0}
     ,
-    //sensor control 
-    ////set VCO multiplier 
+    //sensor control
+    ////set VCO multiplier
     {0x3036, 0x54, 0, 0}
     , {0x3708, 0x66, 0, 0}
     , {0x3709, 0x52, 0, 0}
@@ -983,7 +983,7 @@ cam_firmware_t ov5640_mipi_480x480_30fps_RGB565_fm[] = {
     , {0x3a0d, 0x01, 0, 0}
     ,
     //black level calibration, disabled
-    //format setting RGB565 
+    //format setting RGB565
     {0x4001, 0x02, 0, 0}
     , {0x4004, 0x02, 0, 0}
     , {0x4300, 0x6f, 0, 0}

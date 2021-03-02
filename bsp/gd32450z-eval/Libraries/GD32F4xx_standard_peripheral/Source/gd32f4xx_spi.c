@@ -78,7 +78,7 @@ void spi_i2s_deinit(uint32_t spi_periph)
     \retval     none
 */
 void spi_init(uint32_t spi_periph, spi_parameter_struct* spi_struct)
-{   
+{
     uint32_t reg = 0U;
     reg = SPI_CTL0(spi_periph);
     reg &= SPI_INIT_MASK;
@@ -233,18 +233,18 @@ void i2s_psc_config(uint32_t spi_periph, uint32_t i2s_audiosample, uint32_t i2s_
 /*!
     \brief      I2S parameter configuration
     \param[in]  spi_periph: SPIx(x=0,1,2,3,4)
-    \param[in]  i2s_mode: 
+    \param[in]  i2s_mode:
       \arg        I2S_MODE_SLAVETX : I2S slave transmit mode
       \arg        I2S_MODE_SLAVERX : I2S slave receive mode
       \arg        I2S_MODE_MASTERTX : I2S master transmit mode
       \arg        I2S_MODE_MASTERRX : I2S master receive mode
-    \param[in]  i2s_std: 
+    \param[in]  i2s_std:
       \arg        I2S_STD_PHILLIPS : I2S phillips standard
       \arg        I2S_STD_MSB : I2S MSB standard
       \arg        I2S_STD_LSB : I2S LSB standard
       \arg        I2S_STD_PCMSHORT : I2S PCM short standard
       \arg        I2S_STD_PCMLONG : I2S PCM long standard
-    \param[in]  i2s_ckpl: 
+    \param[in]  i2s_ckpl:
       \arg        I2S_CKPL_LOW : I2S clock polarity low level
       \arg        I2S_CKPL_HIGH : I2S clock polarity high level
     \param[out] none
@@ -257,7 +257,7 @@ void i2s_init(uint32_t spi_periph, uint32_t i2s_mode, uint32_t i2s_standard, uin
     reg &= I2S_INIT_MASK;
 
     /* enable I2S mode */
-    reg |= (uint32_t)SPI_I2SCTL_I2SSEL; 
+    reg |= (uint32_t)SPI_I2SCTL_I2SSEL;
     /* select I2S mode */
     reg |= (uint32_t)i2s_mode;
     /* select I2S standard */
@@ -338,7 +338,7 @@ void spi_nss_internal_low(uint32_t spi_periph)
 /*!
     \brief      SPI dma send or receive enable
     \param[in]  spi_periph: SPIx(x=0,1,2,3,4,5)
-    \param[in]  spi_dma: 
+    \param[in]  spi_dma:
       \arg        SPI_DMA_TRANSMIT: enable DMA transmit
       \arg        SPI_DMA_RECEIVE: enable DMA receive
     \param[out] none
@@ -356,7 +356,7 @@ void spi_dma_enable(uint32_t spi_periph, uint8_t spi_dma)
 /*!
     \brief      SPI dma send or receive diable
     \param[in]  spi_periph: SPIx(x=0,1,2,3,4,5)
-    \param[in]  spi_dma: 
+    \param[in]  spi_dma:
       \arg        SPI_DMA_TRANSMIT: disable DMA transmit
       \arg        SPI_DMA_RECEIVE: disable DMA receive
     \param[out] none
@@ -374,7 +374,7 @@ void spi_dma_disable(uint32_t spi_periph, uint8_t spi_dma)
 /*!
     \brief      configure SPI/I2S data frame format
     \param[in]  spi_periph: SPIx(x=0,1,2,3,4,5)
-    \param[in]  frame_format: 
+    \param[in]  frame_format:
       \arg        SPI_FRAMESIZE_16BIT: SPI frame size is 16 bits
       \arg        SPI_FRAMESIZE_8BIT: SPI frame size is 8 bits
     \param[out] none
@@ -504,7 +504,7 @@ FlagStatus spi_i2s_interrupt_flag_get(uint32_t spi_periph, uint8_t spi_i2s_int)
 {
     uint32_t reg1 = SPI_STAT(spi_periph);
     uint32_t reg2 = SPI_CTL1(spi_periph);
-    
+
     uint32_t temp1 = 0U;
     uint32_t temp2 = 0U;
 
@@ -628,7 +628,7 @@ void spi_crc_polynomial_set(uint32_t spi_periph,uint16_t crc_poly)
 }
 
 /*!
-    \brief      get SPI CRC polynomial 
+    \brief      get SPI CRC polynomial
     \param[in]  spi_periph: SPIx(x=0,1,2,3,4,5)
     \param[out] none
     \retval     16-bit CRC polynomial
@@ -652,7 +652,7 @@ void spi_crc_next(uint32_t spi_periph)
 /*!
     \brief      get SPI CRC send value or receive value
     \param[in]  spi_periph: SPIx(x=0,1,2,3,4,5)
-    \param[in]  spi_crc: 
+    \param[in]  spi_crc:
       \arg        SPI_CRC_TX: get transmit crc value
       \arg        SPI_CRC_RX: get receive crc value
     \param[out] none
@@ -692,18 +692,18 @@ void spi_ti_mode_disable(uint32_t spi_periph)
 /*!
     \brief      configure i2s full duplex mode
     \param[in]  i2s_add_periph: I2Sx_ADD(x=1,2)
-    \param[in]  i2s_mode: 
+    \param[in]  i2s_mode:
       \arg        I2S_MODE_SLAVETX : I2S slave transmit mode
       \arg        I2S_MODE_SLAVERX : I2S slave receive mode
       \arg        I2S_MODE_MASTERTX : I2S master transmit mode
       \arg        I2S_MODE_MASTERRX : I2S master receive mode
-    \param[in]  i2s_standard: 
+    \param[in]  i2s_standard:
       \arg        I2S_STD_PHILLIPS : I2S phillips standard
       \arg        I2S_STD_MSB : I2S MSB standard
       \arg        I2S_STD_LSB : I2S LSB standard
       \arg        I2S_STD_PCMSHORT : I2S PCM short standard
       \arg        I2S_STD_PCMLONG : I2S PCM long standard
-    \param[in]  i2s_ckpl: 
+    \param[in]  i2s_ckpl:
       \arg        I2S_CKPL_LOW : I2S clock polarity low level
       \arg        I2S_CKPL_HIGH : I2S clock polarity high level
     \param[in]  i2s_frameformat:
@@ -720,7 +720,7 @@ void i2s_full_duplex_mode_config(uint32_t i2s_add_periph, uint32_t i2s_mode, uin
     uint32_t reg = 0U, tmp = 0U;
 
     reg = I2S_ADD_I2SCTL(i2s_add_periph);
-    reg &= I2S_FULL_DUPLEX_MASK;  
+    reg &= I2S_FULL_DUPLEX_MASK;
 
     /* get the mode of the extra I2S module I2Sx_ADD */
     if((I2S_MODE_MASTERTX == i2s_mode) || (I2S_MODE_SLAVETX == i2s_mode)){
@@ -730,7 +730,7 @@ void i2s_full_duplex_mode_config(uint32_t i2s_add_periph, uint32_t i2s_mode, uin
     }
 
     /* enable I2S mode */
-    reg |= (uint32_t)SPI_I2SCTL_I2SSEL; 
+    reg |= (uint32_t)SPI_I2SCTL_I2SSEL;
     /* select I2S mode */
     reg |= (uint32_t)tmp;
     /* select I2S standard */
@@ -745,7 +745,7 @@ void i2s_full_duplex_mode_config(uint32_t i2s_add_periph, uint32_t i2s_mode, uin
 }
 
 /*!
-    \brief      quad wire SPI enable 
+    \brief      quad wire SPI enable
     \param[in]  spi_periph: SPIx(only x=5)
     \param[out] none
     \retval     none

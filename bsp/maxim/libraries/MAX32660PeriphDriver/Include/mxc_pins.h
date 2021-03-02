@@ -38,8 +38,8 @@
  * $Revision: 36818 $
  *
  **************************************************************************** */
- 
-/* Define to prevent redundant inclusion */ 
+
+/* Define to prevent redundant inclusion */
 #ifndef _MXC_PINS_H_
 #define _MXC_PINS_H_
 

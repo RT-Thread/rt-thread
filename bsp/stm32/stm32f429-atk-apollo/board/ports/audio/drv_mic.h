@@ -8,10 +8,10 @@
  * 2019-07-28     Ernest         the first version
  */
 
-#ifndef __DRV_MIC_H_ 
-#define __DRV_MIC_H_ 
+#ifndef __DRV_MIC_H_
+#define __DRV_MIC_H_
 
-#include <rtthread.h> 
+#include <rtthread.h>
 #include <rtdevice.h>
 
 #endif

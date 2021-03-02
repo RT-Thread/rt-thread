@@ -4,64 +4,64 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
-  * @brief   This file provides firmware functions to manage the following 
-  *          functionalities of the Window watchdog (WWDG) peripheral:           
+  * @brief   This file provides firmware functions to manage the following
+  *          functionalities of the Window watchdog (WWDG) peripheral:
   *           - Prescaler, Refresh window and Counter configuration
   *           - WWDG activation
   *           - Interrupts and flags management
-  *             
+  *
   *  @verbatim
-  *    
+  *
   *          ===================================================================
   *                                     WWDG features
   *          ===================================================================
-  *                                        
+  *
   *          Once enabled the WWDG generates a system reset on expiry of a programmed
-  *          time period, unless the program refreshes the counter (downcounter) 
+  *          time period, unless the program refreshes the counter (downcounter)
   *          before to reach 0x3F value (i.e. a reset is generated when the counter
-  *          value rolls over from 0x40 to 0x3F). 
+  *          value rolls over from 0x40 to 0x3F).
   *          An MCU reset is also generated if the counter value is refreshed
-  *          before the counter has reached the refresh window value. This 
+  *          before the counter has reached the refresh window value. This
   *          implies that the counter must be refreshed in a limited window.
-  *            
-  *          Once enabled the WWDG cannot be disabled except by a system reset.                          
-  *          
+  *
+  *          Once enabled the WWDG cannot be disabled except by a system reset.
+  *
   *          WWDGRST flag in RCC_CSR register can be used to inform when a WWDG
   *          reset occurs.
-  *            
-  *          The WWDG counter input clock is derived from the APB clock divided 
+  *
+  *          The WWDG counter input clock is derived from the APB clock divided
   *          by a programmable prescaler.
-  *              
+  *
   *          WWDG counter clock = PCLK1 / Prescaler
   *          WWDG timeout = (WWDG counter clock) * (counter value)
-  *                      
+  *
   *          Min-max timeout value @30 MHz(PCLK1): ~136.5 us / ~69.9 ms
-  *                            
+  *
   *          ===================================================================
   *                                 How to use this driver
-  *          =================================================================== 
+  *          ===================================================================
   *          1. Enable WWDG clock using RCC_APB1PeriphClockCmd(RCC_APB1Periph_WWDG, ENABLE) function
-  *            
+  *
   *          2. Configure the WWDG prescaler using WWDG_SetPrescaler() function
-  *                           
+  *
   *          3. Configure the WWDG refresh window using WWDG_SetWindowValue() function
-  *            
+  *
   *          4. Set the WWDG counter value and start it using WWDG_Enable() function.
-  *             When the WWDG is enabled the counter value should be configured to 
-  *             a value greater than 0x40 to prevent generating an immediate reset.     
-  *            
-  *          5. Optionally you can enable the Early wakeup interrupt which is 
+  *             When the WWDG is enabled the counter value should be configured to
+  *             a value greater than 0x40 to prevent generating an immediate reset.
+  *
+  *          5. Optionally you can enable the Early wakeup interrupt which is
   *             generated when the counter reach 0x40.
   *             Once enabled this interrupt cannot be disabled except by a system reset.
-  *                 
+  *
   *          6. Then the application program must refresh the WWDG counter at regular
   *             intervals during normal operation to prevent an MCU reset, using
   *             WWDG_SetCounter() function. This operation must occur only when
-  *             the counter value is lower than the refresh window value, 
-  *             programmed using WWDG_SetWindowValue().         
+  *             the counter value is lower than the refresh window value,
+  *             programmed using WWDG_SetWindowValue().
   *
-  *  @endverbatim  
-  *                             
+  *  @endverbatim
+  *
   ******************************************************************************
   * @attention
   *
@@ -84,7 +84,7 @@
   * @{
   */
 
-/** @defgroup WWDG 
+/** @defgroup WWDG
   * @brief WWDG driver modules
   * @{
   */
@@ -115,12 +115,12 @@
   */
 
 /** @defgroup WWDG_Group1 Prescaler, Refresh window and Counter configuration functions
- *  @brief   Prescaler, Refresh window and Counter configuration functions 
+ *  @brief   Prescaler, Refresh window and Counter configuration functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
           Prescaler, Refresh window and Counter configuration functions
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -198,7 +198,7 @@ void WWDG_EnableIT(void)
   * @brief  Sets the WWDG counter value.
   * @param  Counter: specifies the watchdog counter value.
   *   This parameter must be a number between 0x40 and 0x7F (to prevent generating
-  *   an immediate reset) 
+  *   an immediate reset)
   * @retval None
   */
 void WWDG_SetCounter(uint8_t Counter)
@@ -214,19 +214,19 @@ void WWDG_SetCounter(uint8_t Counter)
   */
 
 /** @defgroup WWDG_Group2 WWDG activation functions
- *  @brief   WWDG activation functions 
+ *  @brief   WWDG activation functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                        WWDG activation function
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
   */
 
 /**
-  * @brief  Enables WWDG and load the counter value.                  
+  * @brief  Enables WWDG and load the counter value.
   * @param  Counter: specifies the watchdog counter value.
   *   This parameter must be a number between 0x40 and 0x7F (to prevent generating
   *   an immediate reset)
@@ -243,12 +243,12 @@ void WWDG_Enable(uint8_t Counter)
   */
 
 /** @defgroup WWDG_Group3 Interrupts and flags management functions
- *  @brief   Interrupts and flags management functions 
+ *  @brief   Interrupts and flags management functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
                  Interrupts and flags management functions
- ===============================================================================  
+ ===============================================================================
 
 @endverbatim
   * @{
@@ -262,7 +262,7 @@ void WWDG_Enable(uint8_t Counter)
 FlagStatus WWDG_GetFlagStatus(void)
 {
   FlagStatus bitstatus = RESET;
-    
+
   if ((WWDG->SR) != (uint32_t)RESET)
   {
     bitstatus = SET;

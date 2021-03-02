@@ -2741,7 +2741,7 @@ static void USART_SetConfig(USART_HandleTypeDef *husart)
   CLEAR_BIT(husart->Instance->CR3, (USART_CR3_RTSE | USART_CR3_CTSE));
 
   /*-------------------------- USART BRR Configuration -----------------------*/
-#if defined(USART6) 
+#if defined(USART6)
   if((husart->Instance == USART1) || (husart->Instance == USART6))
   {
     husart->Instance->BRR = USART_BRR(HAL_RCC_GetPCLK2Freq(), husart->Init.BaudRate);
@@ -2750,8 +2750,8 @@ static void USART_SetConfig(USART_HandleTypeDef *husart)
   if(husart->Instance == USART1)
   {
     husart->Instance->BRR = USART_BRR(HAL_RCC_GetPCLK2Freq(), husart->Init.BaudRate);
-  }	
-#endif /* USART6 */	
+  }
+#endif /* USART6 */
   else
   {
     husart->Instance->BRR = USART_BRR(HAL_RCC_GetPCLK1Freq(), husart->Init.BaudRate);

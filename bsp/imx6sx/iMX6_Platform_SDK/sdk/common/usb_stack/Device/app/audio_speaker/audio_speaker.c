@@ -12,7 +12,7 @@
  *
  * @version
  *
- * @date 
+ * @date
  *
  * @brief  The file emulates a audio speaker.
  *****************************************************************************/
@@ -28,18 +28,18 @@
 #include "sci.h"
 #include "audio_pwm.h"
 #if  (defined MCU_mcf51jf128)
-	#include "audio_ftm_cfv1_plus.h"
+    #include "audio_ftm_cfv1_plus.h"
 #endif
 #if  (defined __MCF52xxx_H__)
-	#include "audio_pit1_cfv2.h"
+    #include "audio_pit1_cfv2.h"
 #endif
 #if  (defined __MK_xxx_H__)
-	#include "audio_pit1_kinetis.h"
+    #include "audio_pit1_kinetis.h"
 #endif
 #if (defined _MC9S08JM60_H) || (defined _MC9S08JM16_H) || (defined _MC9S08JS16_H)
-	#include "audio_rtc.h"
+    #include "audio_rtc.h"
 #else
-	#include "audio_cmt.h"
+    #include "audio_cmt.h"
 #endif
 #include "usb_framework.h"   /* USB device Header File */
 
@@ -63,12 +63,12 @@ void TestApp_Task(void);
 /****************************************************************************
  * Global Variables
  ****************************************************************************/
-	uint_8 audio_sample;
-	uint_8 audio_event;
+    uint_8 audio_sample;
+    uint_8 audio_event;
  uint_8 audio_data_recv[DATA_BUFF_SIZE];
 #ifdef USE_FEEDBACK_ENDPOINT
-	extern uint_32 feedback_data;
-	extern uint_32 gNrSamples;
+    extern uint_32 feedback_data;
+    extern uint_32 gNrSamples;
 #endif
 
 /*****************************************************************************
@@ -85,7 +85,7 @@ static void USB_App_Callback(uint_8 controller_ID,
  * Local Variables
  *****************************************************************************/
 #ifdef _MC9S08JS16_H
-	#pragma DATA_SEG APP_DATA
+    #pragma DATA_SEG APP_DATA
 #endif
 /* Audio speaker Application start Init Flag */
 static volatile boolean start_app = FALSE;
@@ -114,12 +114,12 @@ static uint_8 g_curr_recv_buf[DATA_BUFF_SIZE];
 void TestApp_Init(void)
 {
     uint_8   error;
-    
+
     DisableInterrupts;
 #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
     usb_int_dis();
 #endif
-    
+
 #if !(defined _MC9S08JS16_H)
 #if (defined MCU_mcf51jf128)
     sci1_init();
@@ -129,7 +129,7 @@ void TestApp_Init(void)
     sci_init();
 #endif
 #endif /* _MC9S08JS16_H */
-    
+
 #if  ((defined __MCF52xxx_H__) || (defined __MK_xxx_H__))
     pit1_init();
 #elif (defined _MC9S08JM60_H) || (defined _MC9S08JM16_H) || (defined _MC9S08JS16_H)
@@ -139,13 +139,13 @@ void TestApp_Init(void)
 #else
     cmt_init();
 #endif
-    
+
     pwm_init();
     /* Initialize the USB interface */
     error = USB_Class_Audio_Init(CONTROLLER_ID,USB_App_Callback,
                                  NULL,NULL);
     UNUSED(error);
-    
+
     EnableInterrupts;
 #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
     usb_int_en();
@@ -168,16 +168,16 @@ void TestApp_Init(void)
 void TestApp_Task(void)
 {
 #ifdef USE_FEEDBACK_ENDPOINT
-	if((start_app == TRUE) && (start_send == TRUE))
-	{   
-		
-		start_send = FALSE;
-		feedback_data = 8<<14;	// 10.14 format (8 bytes/frame)
-		(void)USB_Class_Audio_Send_Data(CONTROLLER_ID, 
-										2, 
-										(uint_8_ptr)&feedback_data,
-										3);
-	}
+    if((start_app == TRUE) && (start_send == TRUE))
+    {
+
+        start_send = FALSE;
+        feedback_data = 8<<14;    // 10.14 format (8 bytes/frame)
+        (void)USB_Class_Audio_Send_Data(CONTROLLER_ID,
+                                        2,
+                                        (uint_8_ptr)&feedback_data,
+                                        3);
+    }
 #endif
 }
 
@@ -206,7 +206,7 @@ static void USB_App_Callback (
 )
 {
     static APP_DATA_STRUCT* data_receive;
-      
+
     if(event_type == USB_APP_BUS_RESET)
     {
         start_app=FALSE;
@@ -216,46 +216,46 @@ static void USB_App_Callback (
         start_app=TRUE;
 
         #if (!(defined _MC9S08JS16_H))
-        	(void)printf("Audio Speaker is working ... \r\n");
+            (void)printf("Audio Speaker is working ... \r\n");
         #endif
 
 #ifdef USE_FEEDBACK_ENDPOINT
         // Send initial rate control feedback (48Khz)
         USB_Class_Audio_Send_Data(controller_ID, AUDIO_FEEDBACK_ENDPOINT,
-        		(uint_8_ptr)&feedback_data, AUDIO_FEEDBACK_ENDPOINT_PACKET_SIZE);
+                (uint_8_ptr)&feedback_data, AUDIO_FEEDBACK_ENDPOINT_PACKET_SIZE);
 #endif // USE_FEEDBACK_ENDPOINT
 
 #if HIGH_SPEED_DEVICE
         // Start by receiving data to audio buffer
         USB_Class_Audio_Recv_Data(controller_ID, AUDIO_ENDPOINT,
-        		(uint_8_ptr) g_curr_recv_buf, AUDIO_ENDPOINT_PACKET_SIZE);
+                (uint_8_ptr) g_curr_recv_buf, AUDIO_ENDPOINT_PACKET_SIZE);
 #endif
     }
     else if ((event_type == USB_APP_DATA_RECEIVED) && (TRUE == start_app))
     {
-        (void)USB_Class_Audio_Recv_Data(controller_ID, AUDIO_ENDPOINT, 
-        		(uint_8_ptr)g_curr_recv_buf, AUDIO_ENDPOINT_PACKET_SIZE);
-        		
+        (void)USB_Class_Audio_Recv_Data(controller_ID, AUDIO_ENDPOINT,
+                (uint_8_ptr)g_curr_recv_buf, AUDIO_ENDPOINT_PACKET_SIZE);
+
         audio_event = USB_APP_DATA_RECEIVED;
         data_receive = (APP_DATA_STRUCT*)val;
 
         (void)memcpy(audio_data_recv, data_receive->data_ptr, data_receive->data_size);
         /*for(i=0;i<data_receive->data_size;i++){
-        	audio_data_recv[i] = data_receive->data_ptr[i];
+            audio_data_recv[i] = data_receive->data_ptr[i];
         }*/
     }
 #ifdef USE_FEEDBACK_ENDPOINT
     else if((event_type == USB_APP_SEND_COMPLETE) && (TRUE == start_app))
     {
-    	feedback_data <<= 14;	// 10.14 format
-    	(void)USB_Class_Audio_Send_Data(controller_ID, 
-    			AUDIO_FEEDBACK_ENDPOINT, 
-				(uint_8_ptr)&feedback_data,
-				AUDIO_FEEDBACK_ENDPOINT_PACKET_SIZE);
-										
+        feedback_data <<= 14;    // 10.14 format
+        (void)USB_Class_Audio_Send_Data(controller_ID,
+                AUDIO_FEEDBACK_ENDPOINT,
+                (uint_8_ptr)&feedback_data,
+                AUDIO_FEEDBACK_ENDPOINT_PACKET_SIZE);
+
     }
 #endif
-    
+
     return;
 }
 

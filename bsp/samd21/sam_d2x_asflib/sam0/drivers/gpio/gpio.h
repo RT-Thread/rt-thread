@@ -144,12 +144,12 @@ extern "C" {
  *  structure, to indicate the direction the pin should use.
  */
 enum gpio_pin_dir {
-	/** The pin's input buffer should be enabled, so that the pin state can
-	 *  be read. */
-	GPIO_PIN_DIR_INPUT,
-	/** The pin's output buffer should be enabled, so that the pin state can
-	 *  be set. */
-	GPIO_PIN_DIR_OUTPUT,
+    /** The pin's input buffer should be enabled, so that the pin state can
+     *  be read. */
+    GPIO_PIN_DIR_INPUT,
+    /** The pin's output buffer should be enabled, so that the pin state can
+     *  be set. */
+    GPIO_PIN_DIR_OUTPUT,
 };
 
 /**
@@ -159,12 +159,12 @@ enum gpio_pin_dir {
  *  structure, to indicate the type of logic level pull the pin should use.
  */
 enum gpio_pin_pull {
-	/** No logical pull should be applied to the pin */
-	GPIO_PIN_PULL_NONE,
-	/** Pin should be pulled up when idle */
-	GPIO_PIN_PULL_UP ,
-	/** Pin should be pulled down when idle */
-	GPIO_PIN_PULL_DOWN,
+    /** No logical pull should be applied to the pin */
+    GPIO_PIN_PULL_NONE,
+    /** Pin should be pulled up when idle */
+    GPIO_PIN_PULL_UP ,
+    /** Pin should be pulled down when idle */
+    GPIO_PIN_PULL_DOWN,
 };
 
 /**
@@ -173,22 +173,22 @@ enum gpio_pin_pull {
  *  Enum for the pinmux settings of the GPIO pin configuration.
  */
 enum gpio_pinmux_sel {
-	/** PINMUX selection 0 */
-	GPIO_PINMUX_SEL_0 = 0,
-	/** PINMUX selection 1 */
-	GPIO_PINMUX_SEL_1,
-	/** PINMUX selection 2 */
-	GPIO_PINMUX_SEL_2,
-	/** PINMUX selection 3 */
-	GPIO_PINMUX_SEL_3,
-	/** PINMUX selection 4 */
-	GPIO_PINMUX_SEL_4,
-	/** PINMUX selection 5 */
-	GPIO_PINMUX_SEL_5,
-	/** PINMUX selection 6 */
-	GPIO_PINMUX_SEL_6,
-	/** PINMUX selection 7 */
-	GPIO_PINMUX_SEL_7,
+    /** PINMUX selection 0 */
+    GPIO_PINMUX_SEL_0 = 0,
+    /** PINMUX selection 1 */
+    GPIO_PINMUX_SEL_1,
+    /** PINMUX selection 2 */
+    GPIO_PINMUX_SEL_2,
+    /** PINMUX selection 3 */
+    GPIO_PINMUX_SEL_3,
+    /** PINMUX selection 4 */
+    GPIO_PINMUX_SEL_4,
+    /** PINMUX selection 5 */
+    GPIO_PINMUX_SEL_5,
+    /** PINMUX selection 6 */
+    GPIO_PINMUX_SEL_6,
+    /** PINMUX selection 7 */
+    GPIO_PINMUX_SEL_7,
 };
 
 /**
@@ -211,16 +211,16 @@ typedef void (*gpio_callback_t)(void);
  * Callbacks for the GPIO driver.
  */
 enum gpio_callback {
-	/** Callback for low level */
-	GPIO_CALLBACK_LOW,
-	/** Callback for high level */
-	GPIO_CALLBACK_HIGH,
-	/** Callback for rising edge */
-	GPIO_CALLBACK_RISING,
-	/** Callback for falling edge */
-	GPIO_CALLBACK_FALLING,
-	/** Number of available callbacks */
-	GPIO_CALLBACK_N,
+    /** Callback for low level */
+    GPIO_CALLBACK_LOW,
+    /** Callback for high level */
+    GPIO_CALLBACK_HIGH,
+    /** Callback for rising edge */
+    GPIO_CALLBACK_RISING,
+    /** Callback for falling edge */
+    GPIO_CALLBACK_FALLING,
+    /** Number of available callbacks */
+    GPIO_CALLBACK_N,
 };
 
 /**
@@ -231,22 +231,22 @@ enum gpio_callback {
  *  modified by the user application.
  */
 struct gpio_config {
-	/** GPIO buffer input/output direction */
-	enum gpio_pin_dir  direction;
+    /** GPIO buffer input/output direction */
+    enum gpio_pin_dir  direction;
 
-	/** GPIO pull-up/pull-down for input pins */
-	enum gpio_pin_pull input_pull;
+    /** GPIO pull-up/pull-down for input pins */
+    enum gpio_pin_pull input_pull;
 
-	/** Enable lowest possible powerstate on the pin
-	 *
-	 *  \note All other configurations will be ignored, the pin will be disabled
-	 */
-	bool powersave;
-	/** Enable AON_GPIOs to wakeup MCU from ULP mode 
-	 *
-	 *  \note Only AON_GPIO_0, AON_GPIO_1, and AON_GPIO_2 could enable this feature
-	 */
-	bool aon_wakeup;
+    /** Enable lowest possible powerstate on the pin
+     *
+     *  \note All other configurations will be ignored, the pin will be disabled
+     */
+    bool powersave;
+    /** Enable AON_GPIOs to wakeup MCU from ULP mode
+     *
+     *  \note Only AON_GPIO_0, AON_GPIO_1, and AON_GPIO_2 could enable this feature
+     */
+    bool aon_wakeup;
 };
 
 /**
@@ -260,14 +260,14 @@ struct gpio_config {
  */
 struct gpio_module {
 #if !defined(__DOXYGEN__)
-	/** Pointer to the hardware instance */
-	Gpio *hw;
-	/** Array to store callback function pointers in */
-	gpio_callback_t callback[16];
-	/** Bit mask for callbacks registered */
-	uint16_t callback_reg_mask;
-	/** Bit mask for callbacks enabled */
-	uint16_t callback_enable_mask;
+    /** Pointer to the hardware instance */
+    Gpio *hw;
+    /** Array to store callback function pointers in */
+    gpio_callback_t callback[16];
+    /** Bit mask for callbacks registered */
+    uint16_t callback_reg_mask;
+    /** Bit mask for callbacks enabled */
+    uint16_t callback_enable_mask;
 #endif
 };
 
@@ -277,7 +277,7 @@ struct gpio_module {
 
 void gpio_get_config_defaults(struct gpio_config *const config);
 enum status_code gpio_pin_set_config(const uint8_t gpio_pin,
-		const struct gpio_config *config);
+        const struct gpio_config *config);
 
 /** @} */
 
@@ -301,9 +301,9 @@ void gpio_pinmux_cofiguration(const uint8_t gpio_pin, uint16_t pinmux_sel);
  * @{
  */
 void gpio_register_callback(uint8_t gpio_pin, gpio_callback_t callback_func,
-				enum gpio_callback callback_type);
+                enum gpio_callback callback_type);
 void gpio_unregister_callback(uint8_t gpio_pin,
-				enum gpio_callback callback_type);
+                enum gpio_callback callback_type);
 void gpio_enable_callback(uint8_t gpio_pin);
 void gpio_disable_callback(uint8_t gpio_pin);
 void gpio_init(void);
@@ -324,14 +324,14 @@ void gpio_init(void);
  * intended meanings.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
- *	<tr>
- *		<td>GPIO</td>
- *		<td>General Purpose Input/Output</td>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
+ *    <tr>
+ *        <td>GPIO</td>
+ *        <td>General Purpose Input/Output</td>
+ *    </tr>
  * </table>
  *
  *
@@ -350,12 +350,12 @@ void gpio_init(void);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
- *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+ *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -373,16 +373,16 @@ void gpio_init(void);
  * \page asfdoc_samb_gpio_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</td>
- *		<th>Date</td>
- *		<th>Comments</td>
- *	</tr>
- *	<tr>
- *		<td>A</td>
- *		<td>09/2015</td>
- *		<td>Initial release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</td>
+ *        <th>Date</td>
+ *        <th>Comments</td>
+ *    </tr>
+ *    <tr>
+ *        <td>A</td>
+ *        <td>09/2015</td>
+ *        <td>Initial release</td>
+ *    </tr>
  * </table>
  */
 

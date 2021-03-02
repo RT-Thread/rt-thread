@@ -86,9 +86,9 @@
  * contents of the OFFSET register.
  *
  * Accurately measures a temperature:
- *  - 짹1째C over 0째C ~ 60째C
- *  - 짹3째C over -40째C ~ 85째C
- *  - 짹5째C over -40째C ~ 105째C
+ *  - ÷1▲C over 0▲C ~ 60▲C
+ *  - ÷3▲C over -40▲C ~ 85▲C
+ *  - ÷5▲C over -40▲C ~ 105▲C
  *
  * The number of periods of GCLK_TSENS used for the measurement is defined by
  * the GAIN register. The width of the resulting pulse is measured using a
@@ -103,22 +103,22 @@
  * and resolution as below:
  * <table>
  *  <tr>
- *	  <th>Resolution (#/째C)</th>
- *	  <th>GAIN@48MHz</th>
- *	  <th>GAIN@40MHz</th>
- *	</tr>
- *	<tr>
- *	  <td>&times;1 (1째C)</td>
+ *      <th>Resolution (#/▲C)</th>
+ *      <th>GAIN@48MHz</th>
+ *      <th>GAIN@40MHz</th>
+ *    </tr>
+ *    <tr>
+ *      <td>&times;1 (1▲C)</td>
  *    <td>960</td>
  *    <td>800</td>
  *  </tr>
- *	<tr>
- *	  <td>&times;10 (0.1째C)</td>
+ *    <tr>
+ *      <td>&times;10 (0.1▲C)</td>
  *    <td>9600</td>
  *    <td>8000</td>
  *  </tr>
- *	<tr>
- *	  <td>&times;100 (0.01째C)</td>
+ *    <tr>
+ *      <td>&times;100 (0.01▲C)</td>
  *    <td>96000</td>
  *    <td>80000</td>
  *  </tr>
@@ -209,20 +209,20 @@ extern "C" {
  *
  */
 enum tsens_window_mode {
-	/** No window mode */
-	TSENS_WINDOW_MODE_DISABLE          = TSENS_CTRLC_WINMODE_DISABLE,
-	/** RESULT > WINLT */
-	TSENS_WINDOW_MODE_ABOVE            = TSENS_CTRLC_WINMODE_ABOVE,
-	/** RESULT < WINUT */
-	TSENS_WINDOW_MODE_BELOW            = TSENS_CTRLC_WINMODE_BELOW,
-	/** WINLT < RESULT < WINUT */
-	TSENS_WINDOW_MODE_INSIDE           = TSENS_CTRLC_WINMODE_INSIDE,
-	/** !(WINLT < RESULT < WINUT) */
-	TSENS_WINDOW_MODE_OUTSIDE          = TSENS_CTRLC_WINMODE_OUTSIDE,
-	/** VALUE > WINUT with hysteresis to WINLT */
-	TSENS_WINDOW_MODE_HYST_ABOVE       = TSENS_CTRLC_WINMODE_HYST_ABOVE,
-	/** VALUE < WINLT with hysteresis to WINUT */
-	TSENS_WINDOW_MODE_HYST_BELOW       = TSENS_CTRLC_WINMODE_HYST_BELOW,
+    /** No window mode */
+    TSENS_WINDOW_MODE_DISABLE          = TSENS_CTRLC_WINMODE_DISABLE,
+    /** RESULT > WINLT */
+    TSENS_WINDOW_MODE_ABOVE            = TSENS_CTRLC_WINMODE_ABOVE,
+    /** RESULT < WINUT */
+    TSENS_WINDOW_MODE_BELOW            = TSENS_CTRLC_WINMODE_BELOW,
+    /** WINLT < RESULT < WINUT */
+    TSENS_WINDOW_MODE_INSIDE           = TSENS_CTRLC_WINMODE_INSIDE,
+    /** !(WINLT < RESULT < WINUT) */
+    TSENS_WINDOW_MODE_OUTSIDE          = TSENS_CTRLC_WINMODE_OUTSIDE,
+    /** VALUE > WINUT with hysteresis to WINLT */
+    TSENS_WINDOW_MODE_HYST_ABOVE       = TSENS_CTRLC_WINMODE_HYST_ABOVE,
+    /** VALUE < WINLT with hysteresis to WINUT */
+    TSENS_WINDOW_MODE_HYST_BELOW       = TSENS_CTRLC_WINMODE_HYST_BELOW,
 };
 
 /**
@@ -232,10 +232,10 @@ enum tsens_window_mode {
  *
  */
 enum tsens_event_action {
-	/** Event action disabled */
-	TSENS_EVENT_ACTION_DISABLED         = 0,
-	/** Start conversion */
-	TSENS_EVENT_ACTION_START_CONV       = TSENS_EVCTRL_STARTEI,
+    /** Event action disabled */
+    TSENS_EVENT_ACTION_DISABLED         = 0,
+    /** Start conversion */
+    TSENS_EVENT_ACTION_START_CONV       = TSENS_EVCTRL_STARTEI,
 };
 
 /**
@@ -244,12 +244,12 @@ enum tsens_event_action {
  * Window monitor configuration structure.
  */
 struct tsens_window_config {
-	/** Selected window mode */
-	enum tsens_window_mode window_mode;
-	/** Lower window value */
-	int32_t window_lower_value;
-	/** Upper window value */
-	int32_t window_upper_value;
+    /** Selected window mode */
+    enum tsens_window_mode window_mode;
+    /** Lower window value */
+    int32_t window_lower_value;
+    /** Upper window value */
+    int32_t window_upper_value;
 };
 
 /**
@@ -259,8 +259,8 @@ struct tsens_window_config {
  * disable events via \ref tsens_enable_events() and \ref tsens_disable_events().
  */
 struct tsens_events {
-	/** Enable event generation on window monitor */
-	bool generate_event_on_window_monitor;
+    /** Enable event generation on window monitor */
+    bool generate_event_on_window_monitor;
 };
 
 /**
@@ -269,10 +269,10 @@ struct tsens_events {
  * Calibration configuration structure.
  */
 struct tsens_calibration {
-	/** Time amplifier gain */
-	uint32_t gain;
-	/** Offset correction */
-	int32_t offset;
+    /** Time amplifier gain */
+    uint32_t gain;
+    /** Offset correction */
+    int32_t offset;
 };
 
 /**
@@ -283,18 +283,18 @@ struct tsens_calibration {
  * modified by the user application.
  */
 struct tsens_config {
-	/** GCLK generator used to clock the peripheral */
-	enum gclk_generator clock_source;
-	/** Enables free running mode if true */
-	bool free_running;
-	/** Enables TSENS in standby sleep mode if true */
-	bool run_in_standby;
-	/** Window monitor configuration structure */
-	struct tsens_window_config window;
-	/** Event action to take on incoming event */
-	enum tsens_event_action event_action;
-	/** Calibration value */
-	struct tsens_calibration calibration;
+    /** GCLK generator used to clock the peripheral */
+    enum gclk_generator clock_source;
+    /** Enables free running mode if true */
+    bool free_running;
+    /** Enables TSENS in standby sleep mode if true */
+    bool run_in_standby;
+    /** Window monitor configuration structure */
+    struct tsens_window_config window;
+    /** Event action to take on incoming event */
+    enum tsens_event_action event_action;
+    /** Calibration value */
+    struct tsens_calibration calibration;
 };
 
 
@@ -327,31 +327,31 @@ void tsens_get_config_defaults(struct tsens_config *const config);
  */
 static inline uint32_t tsens_get_status(void)
 {
-	uint32_t int_flags = TSENS->INTFLAG.reg;
+    uint32_t int_flags = TSENS->INTFLAG.reg;
 
-	uint32_t status_flags = 0;
+    uint32_t status_flags = 0;
 
-	/* Check for TSENS Result Ready */
-	if (int_flags & TSENS_INTFLAG_RESRDY) {
-		status_flags |= TSENS_STATUS_RESULT_READY;
-	}
+    /* Check for TSENS Result Ready */
+    if (int_flags & TSENS_INTFLAG_RESRDY) {
+        status_flags |= TSENS_STATUS_RESULT_READY;
+    }
 
-	/* Check for TSENS Overrun */
-	if (int_flags & TSENS_INTFLAG_OVERRUN) {
-		status_flags |= TSENS_STATUS_OVERRUN;
-	}
+    /* Check for TSENS Overrun */
+    if (int_flags & TSENS_INTFLAG_OVERRUN) {
+        status_flags |= TSENS_STATUS_OVERRUN;
+    }
 
-	/* Check for TSENS Window Match */
-	if (int_flags & TSENS_INTFLAG_WINMON) {
-		status_flags |= TSENS_STATUS_WINDOW;
-	}
+    /* Check for TSENS Window Match */
+    if (int_flags & TSENS_INTFLAG_WINMON) {
+        status_flags |= TSENS_STATUS_WINDOW;
+    }
 
-	/* Check for TSENS overflow */
-	if (int_flags & TSENS_INTFLAG_OVF) {
-		status_flags |= TSENS_STATUS_OVERFLOW;
-	}
+    /* Check for TSENS overflow */
+    if (int_flags & TSENS_INTFLAG_OVF) {
+        status_flags |= TSENS_STATUS_OVERFLOW;
+    }
 
-	return status_flags;
+    return status_flags;
 }
 
 /**
@@ -364,30 +364,30 @@ static inline uint32_t tsens_get_status(void)
  */
 static inline void tsens_clear_status(const uint32_t status_flags)
 {
-	uint32_t int_flags = 0;
+    uint32_t int_flags = 0;
 
-	/* Check for TSENS Result Ready */
-	if (status_flags & TSENS_INTFLAG_RESRDY) {
-		 int_flags |= TSENS_STATUS_RESULT_READY;
-	}
+    /* Check for TSENS Result Ready */
+    if (status_flags & TSENS_INTFLAG_RESRDY) {
+         int_flags |= TSENS_STATUS_RESULT_READY;
+    }
 
-	/* Check for TSENS Overrun */
-	if (status_flags & TSENS_INTFLAG_OVERRUN) {
-		int_flags |= TSENS_STATUS_OVERRUN;
-	}
+    /* Check for TSENS Overrun */
+    if (status_flags & TSENS_INTFLAG_OVERRUN) {
+        int_flags |= TSENS_STATUS_OVERRUN;
+    }
 
-	/* Check for TSENS Window Match */
-	if (status_flags & TSENS_INTFLAG_WINMON) {
-		int_flags |= TSENS_STATUS_WINDOW;
-	}
+    /* Check for TSENS Window Match */
+    if (status_flags & TSENS_INTFLAG_WINMON) {
+        int_flags |= TSENS_STATUS_WINDOW;
+    }
 
-	/* Check for TSENS overflow */
-	if (status_flags & TSENS_INTFLAG_OVF) {
-		int_flags |= TSENS_STATUS_OVERFLOW;
-	}
+    /* Check for TSENS overflow */
+    if (status_flags & TSENS_INTFLAG_OVF) {
+        int_flags |= TSENS_STATUS_OVERFLOW;
+    }
 
-	/* Clear interrupt flag */
-	TSENS->INTFLAG.reg = int_flags;
+    /* Clear interrupt flag */
+    TSENS->INTFLAG.reg = int_flags;
 }
 
 /** @} */
@@ -413,11 +413,11 @@ static inline void tsens_clear_status(const uint32_t status_flags)
  */
 static inline bool tsens_is_syncing(void)
 {
-	if (TSENS->SYNCBUSY.reg) {
-		return true;
-	}
+    if (TSENS->SYNCBUSY.reg) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 /**
@@ -428,11 +428,11 @@ static inline bool tsens_is_syncing(void)
  */
 static inline void tsens_enable(void)
 {
-	TSENS->CTRLA.reg |= TSENS_CTRLA_ENABLE;
+    TSENS->CTRLA.reg |= TSENS_CTRLA_ENABLE;
 
-	while (tsens_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    while (tsens_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -443,13 +443,13 @@ static inline void tsens_enable(void)
  */
 static inline void tsens_disable(void)
 {
-	TSENS->INTENCLR.reg = TSENS_INTENCLR_MASK;
-	TSENS->INTFLAG.reg = TSENS_INTFLAG_MASK;
-	TSENS->CTRLA.reg &= ~TSENS_CTRLA_ENABLE;
+    TSENS->INTENCLR.reg = TSENS_INTENCLR_MASK;
+    TSENS->INTFLAG.reg = TSENS_INTFLAG_MASK;
+    TSENS->CTRLA.reg &= ~TSENS_CTRLA_ENABLE;
 
-	while (tsens_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    while (tsens_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 /**
@@ -461,15 +461,15 @@ static inline void tsens_disable(void)
  */
 static inline void tsens_reset(void)
 {
-	/* Disable to make sure the pipeline is flushed before reset */
-	tsens_disable();
+    /* Disable to make sure the pipeline is flushed before reset */
+    tsens_disable();
 
-	/* Software reset the module */
-	TSENS->CTRLA.reg |= TSENS_CTRLA_SWRST;
+    /* Software reset the module */
+    TSENS->CTRLA.reg |= TSENS_CTRLA_SWRST;
 
-	while (tsens_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    while (tsens_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 
@@ -485,17 +485,17 @@ static inline void tsens_reset(void)
  */
 static inline void tsens_enable_events(struct tsens_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(events);
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Configure Window Monitor event */
-	if (events->generate_event_on_window_monitor) {
-		event_mask |= TSENS_EVCTRL_WINEO;
-	}
+    /* Configure Window Monitor event */
+    if (events->generate_event_on_window_monitor) {
+        event_mask |= TSENS_EVCTRL_WINEO;
+    }
 
-	TSENS->EVCTRL.reg |= event_mask;
+    TSENS->EVCTRL.reg |= event_mask;
 }
 
 /**
@@ -510,17 +510,17 @@ static inline void tsens_enable_events(struct tsens_events *const events)
  */
 static inline void tsens_disable_events(struct tsens_events *const events)
 {
-	/* Sanity check arguments */
-	Assert(events);
+    /* Sanity check arguments */
+    Assert(events);
 
-	uint32_t event_mask = 0;
+    uint32_t event_mask = 0;
 
-	/* Configure Window Monitor event */
-	if (events->generate_event_on_window_monitor) {
-		event_mask |= TSENS_EVCTRL_WINEO;
-	}
+    /* Configure Window Monitor event */
+    if (events->generate_event_on_window_monitor) {
+        event_mask |= TSENS_EVCTRL_WINEO;
+    }
 
-	TSENS->EVCTRL.reg &= ~event_mask;
+    TSENS->EVCTRL.reg &= ~event_mask;
 }
 
 /**
@@ -531,11 +531,11 @@ static inline void tsens_disable_events(struct tsens_events *const events)
  */
 static inline void tsens_start_conversion(void)
 {
-	TSENS->CTRLB.reg |= TSENS_CTRLB_START;
+    TSENS->CTRLB.reg |= TSENS_CTRLB_START;
 
-	while (tsens_is_syncing()) {
-		/* Wait for synchronization */
-	}
+    while (tsens_is_syncing()) {
+        /* Wait for synchronization */
+    }
 }
 
 enum status_code tsens_read(int32_t *result);
@@ -551,14 +551,14 @@ enum status_code tsens_read(int32_t *result);
  * intended meaning.
  *
  * <table>
- *	<tr>
- *		<th>Acronym</th>
- *		<th>Description</th>
- *	</tr>
+ *    <tr>
+ *        <th>Acronym</th>
+ *        <th>Description</th>
+ *    </tr>
  *  <tr>
- *		<td>TSENS</td>
- *		<td>Temperature Sensor</td>
- *	</tr>
+ *        <td>TSENS</td>
+ *        <td>Temperature Sensor</td>
+ *    </tr>
  * </table>
  *
  *
@@ -580,12 +580,12 @@ enum status_code tsens_read(int32_t *result);
  * the table.
  *
  * <table>
- *	<tr>
- *		<th>Changelog</th>
- *	</tr>
-  *	<tr>
- *		<td>Initial Release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Changelog</th>
+ *    </tr>
+  *    <tr>
+ *        <td>Initial Release</td>
+ *    </tr>
  * </table>
  */
 
@@ -604,16 +604,16 @@ enum status_code tsens_read(int32_t *result);
  * \page asfdoc_sam0_tsens_document_revision_history Document Revision History
  *
  * <table>
- *	<tr>
- *		<th>Doc. Rev.</th>
- *		<th>Date</th>
- *		<th>Comments</th>
- *	</tr>
- *	<tr>
- *		<td>42542A</td>
- *		<td>12/2015</td>
- *		<td>Initial document release</td>
- *	</tr>
+ *    <tr>
+ *        <th>Doc. Rev.</th>
+ *        <th>Date</th>
+ *        <th>Comments</th>
+ *    </tr>
+ *    <tr>
+ *        <td>42542A</td>
+ *        <td>12/2015</td>
+ *        <td>Initial document release</td>
+ *    </tr>
  * </table>
  */
 

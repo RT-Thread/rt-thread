@@ -1601,7 +1601,7 @@
 #endif
 
 /**
- * LWIP_NETIF_EXT_STATUS_CALLBACK==1: Support an extended callback function 
+ * LWIP_NETIF_EXT_STATUS_CALLBACK==1: Support an extended callback function
  * for several netif related event that supports multiple subscribers.
  * @see netif_ext_status_callback
  */
@@ -2389,7 +2389,7 @@
  * All addresses that have a scope according to the default policy (link-local
  * unicast addresses, interface-local and link-local multicast addresses) should
  * now have a zone set on them before being passed to the core API, although
- * lwIP will currently attempt to select a zone on the caller's behalf when 
+ * lwIP will currently attempt to select a zone on the caller's behalf when
  * necessary. Applications that directly assign IPv6 addresses to interfaces
  * (which is NOT recommended) must now ensure that link-local addresses carry
  * the netif's zone. See the new ip6_zone.h header file for more information and
@@ -3027,8 +3027,8 @@
  * - src: source eth address
  * - dst: destination eth address
  * - eth_type: ethernet type to packet to be sent\n
- * 
- * 
+ *
+ *
  * Return values:
  * - &lt;0: Packet shall not contain VLAN header.
  * - 0 &lt;= return value &lt;= 0xFFFF: Packet shall contain VLAN header. Return value is prio_vid in host byte order.

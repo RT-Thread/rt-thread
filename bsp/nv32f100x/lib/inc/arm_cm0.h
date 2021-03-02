@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* @brief provide generic high-level routines for ARM Cortex M0/M0+ processors. 
+* @brief provide generic high-level routines for ARM Cortex M0/M0+ processors.
 *
 *******************************************************************************/
 
@@ -35,20 +35,20 @@
 /*
  * Misc. Defines
  */
-#ifdef	FALSE
-#undef	FALSE
+#ifdef    FALSE
+#undef    FALSE
 #endif
-#define FALSE	(0)
+#define FALSE    (0)
 
-#ifdef	TRUE
-#undef	TRUE
+#ifdef    TRUE
+#undef    TRUE
 #endif
-#define	TRUE	(1)
+#define    TRUE    (1)
 
-#ifdef	NULL
-#undef	NULL
+#ifdef    NULL
+#undef    NULL
 #endif
-#define NULL	(0)
+#define NULL    (0)
 
 #ifdef  ON
 #undef  ON
@@ -71,21 +71,21 @@
 /*
  * The basic data types
  */
-typedef unsigned char		uint8;  /*  8 bits */
-typedef unsigned short int	uint16; /* 16 bits */
-typedef unsigned long int	uint32; /* 32 bits */
+typedef unsigned char        uint8;  /*  8 bits */
+typedef unsigned short int    uint16; /* 16 bits */
+typedef unsigned long int    uint32; /* 32 bits */
 
-typedef char			int8;   /*  8 bits */
-typedef short int	        int16;  /* 16 bits */
-typedef int		        int32;  /* 32 bits */
+typedef char            int8;   /*  8 bits */
+typedef short int            int16;  /* 16 bits */
+typedef int                int32;  /* 32 bits */
 
-typedef volatile int8		vint8;  /*  8 bits */
-typedef volatile int16		vint16; /* 16 bits */
-typedef volatile int32		vint32; /* 32 bits */
+typedef volatile int8        vint8;  /*  8 bits */
+typedef volatile int16        vint16; /* 16 bits */
+typedef volatile int32        vint32; /* 32 bits */
 
-typedef volatile uint8		vuint8;  /*  8 bits */
-typedef volatile uint16		vuint16; /* 16 bits */
-typedef volatile uint32		vuint32; /* 32 bits */
+typedef volatile uint8        vuint8;  /*  8 bits */
+typedef volatile uint16        vuint16; /* 16 bits */
+typedef volatile uint32        vuint32; /* 32 bits */
 
 // function prototype for main function
 int main(void);
@@ -96,5 +96,5 @@ void wait (void);
 void write_vtor (int);
 
 /***********************************************************************/
-#endif	/* _CPU_ARM_CM4_H */
+#endif    /* _CPU_ARM_CM4_H */
 

@@ -30,14 +30,14 @@
 /*----------------------------------------------------------------------------
  SigmaTel Inc
  $Archive: /Fatfs/FileSystem/Fat32/base/filegetattrib.c $
- $Revision: 7 $                                       
+ $Revision: 7 $
  $Date: 9/13/03 12:20p $
  Description: filegetattrib.c
- Notes:	This file read provides base api functon to get the attribute of the file.
+ Notes:    This file read provides base api functon to get the attribute of the file.
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -91,7 +91,7 @@ RtStatus_t filegetattrib(uint8_t * FilePath)
 
    FunctionType:  Reentrant
 
-   Inputs:        1)valid file handle 
+   Inputs:        1)valid file handle
 
    Outputs:       Returns directory attributes for a file, or ERROR Code if  Error Occurs
 
@@ -133,8 +133,8 @@ RtStatus_t filegetattribhandle(int32_t HandleNumber)
                   4) pointer to structure DIR_TIME
 
    Outputs:       Returns SUCCESS or error code if error occurs.
-   
-   Description:   This function finds the creation / modification date or time of 
+
+   Description:   This function finds the creation / modification date or time of
                   the file referenced by the given handle number.
 <
 ----------------------------------------------------------------------------*/
@@ -231,8 +231,8 @@ RtStatus_t filesetattrib(int32_t HandleNumber, int32_t dirattribute)
                   4) pointer to structure DIR_TIME
 
    Outputs:       Returns SUCCESS or error code if error occurs.
-   
-   Description:   This function sets the creation / modification date or time of 
+
+   Description:   This function sets the creation / modification date or time of
                   the file referenced by the given handle to the specified date or time.
 
    Notes:
@@ -240,16 +240,16 @@ RtStatus_t filesetattrib(int32_t HandleNumber, int32_t dirattribute)
   Date Format:
    A FAT directory entry date stamp is a 16-bit field that is basically a date
    relative to the MS-DOS epoch of 01/01/1980.
-     Bits  0â€“4: Day of month, valid value range 1-31 inclusive
-     Bits  5â€“8: Month of year, 1 = January, valid value range 1â€“12 inclusive
-     Bits 9â€“15: Count of years from 1980, valid value range 0â€“127 inclusive (1980â€“2107)
+     Bits  0¨C4: Day of month, valid value range 1-31 inclusive
+     Bits  5¨C8: Month of year, 1 = January, valid value range 1¨C12 inclusive
+     Bits 9¨C15: Count of years from 1980, valid value range 0¨C127 inclusive (1980¨C2107)
 
   Time Format:
    A FAT directory entry time stamp is a 16-bit field that has a granularity
    of 2 seconds.  The valid time range is from Midnight 00:00:00 to 23:59:58.
-     Bits   0â€“4: 2-second count, valid value range 0â€“29 inclusive (0 â€“ 58 seconds)
-     Bits  5â€“10: Minutes, valid value range 0â€“59 inclusive
-     Bits 11â€“15: Hours, valid value range 0â€“23 inclusive
+     Bits   0¨C4: 2-second count, valid value range 0¨C29 inclusive (0 ¨C 58 seconds)
+     Bits  5¨C10: Minutes, valid value range 0¨C59 inclusive
+     Bits 11¨C15: Hours, valid value range 0¨C23 inclusive
 <----------------------------------------------------------------------------*/
 RtStatus_t filesetdate(uint8_t * FilePath, int32_t crt_mod_date_time_para, DIR_DATE * dirdate,
                        DIR_TIME * dirtime)

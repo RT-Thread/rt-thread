@@ -61,8 +61,8 @@
 
 //! Number of days in a specified month. Index 1 for leap year, else 0.
 const uint8_t month[2][12] = {
-	{ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
-	{ 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+    { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
+    { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
 };
 
 /**
@@ -78,11 +78,11 @@ const uint8_t month[2][12] = {
  */
 static bool calendar_leapyear(uint16_t year)
 {
-	if(!((year) % 4) && (((year) % 100) || !((year) % 400))) {
-		return true;
-	} else {
-		return false;
-	}
+    if(!((year) % 4) && (((year) % 100) || !((year) % 400))) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 /**
@@ -99,11 +99,11 @@ static bool calendar_leapyear(uint16_t year)
  */
 static uint16_t calendar_yearsize(uint16_t year)
 {
-	if (calendar_leapyear(year)) {
-		return 366;
-	} else {
-		return 365;
-	}
+    if (calendar_leapyear(year)) {
+        return 366;
+    } else {
+        return 365;
+    }
 }
 
 /**
@@ -117,9 +117,9 @@ static uint16_t calendar_yearsize(uint16_t year)
  */
 static void calendar_add_year_to_date(struct calendar_date *date)
 {
-	if (date->year < 2105) {
-		date->year++;
-	}
+    if (date->year < 2105) {
+        date->year++;
+    }
 }
 
 /**
@@ -133,13 +133,13 @@ static void calendar_add_year_to_date(struct calendar_date *date)
  */
 static void calendar_add_month_to_date(struct calendar_date *date)
 {
-	uint8_t months = date->month;
-	months++;
-	if (months == 12){
-		months = 0;
-		calendar_add_year_to_date(date);
-	}
-	date->month = months;
+    uint8_t months = date->month;
+    months++;
+    if (months == 12){
+        months = 0;
+        calendar_add_year_to_date(date);
+    }
+    date->month = months;
 }
 
 /**
@@ -154,20 +154,20 @@ static void calendar_add_month_to_date(struct calendar_date *date)
  */
 static void calendar_add_day_to_date(struct calendar_date *date)
 {
-	uint8_t dates = date->date;
-	uint8_t months = date->month;
-	uint8_t year = date->year;
+    uint8_t dates = date->date;
+    uint8_t months = date->month;
+    uint8_t year = date->year;
 
-	dates++;
-	if (dates == month[calendar_leapyear(year)][months]) {
-		dates = 0;
-		calendar_add_month_to_date(date);
-	}
-	date->dayofweek++;
-	if (date->dayofweek == 7) {
-		date->dayofweek = 0;
-	}
-	date->date = dates;
+    dates++;
+    if (dates == month[calendar_leapyear(year)][months]) {
+        dates = 0;
+        calendar_add_month_to_date(date);
+    }
+    date->dayofweek++;
+    if (date->dayofweek == 7) {
+        date->dayofweek = 0;
+    }
+    date->date = dates;
 }
 
 /**
@@ -181,13 +181,13 @@ static void calendar_add_day_to_date(struct calendar_date *date)
  */
 static void calendar_add_hour_to_date(struct calendar_date *date)
 {
-	int8_t hour = date->hour;
-	hour++;
-	if (hour == 24){
-		hour = 0;
-		calendar_add_day_to_date(date);
-	}
-	date->hour = hour;
+    int8_t hour = date->hour;
+    hour++;
+    if (hour == 24){
+        hour = 0;
+        calendar_add_day_to_date(date);
+    }
+    date->hour = hour;
 }
 
 /**
@@ -201,13 +201,13 @@ static void calendar_add_hour_to_date(struct calendar_date *date)
  */
 static void calendar_add_minute_to_date(struct calendar_date *date)
 {
-	uint8_t minute = date->minute;
-	minute++;
-	if (minute == 60){
-		minute = 0;
-		calendar_add_hour_to_date(date);
-	}
-	date->minute = minute;
+    uint8_t minute = date->minute;
+    minute++;
+    if (minute == 60){
+        minute = 0;
+        calendar_add_hour_to_date(date);
+    }
+    date->minute = minute;
 }
 
 /**
@@ -223,27 +223,27 @@ static void calendar_add_minute_to_date(struct calendar_date *date)
  */
 bool calendar_is_date_valid(struct calendar_date *date)
 {
-	// Make sure time is valid
-	if ((date->second >= 60) || (date->minute >= 60) || (date->hour >= 24)) {
-		return false;
-	}
+    // Make sure time is valid
+    if ((date->second >= 60) || (date->minute >= 60) || (date->hour >= 24)) {
+        return false;
+    }
 
-	// Make sure month and date is valid
-	if ((date->month >= 12) || (date->date >=31)) {
-		return false;
-	}
+    // Make sure month and date is valid
+    if ((date->month >= 12) || (date->date >=31)) {
+        return false;
+    }
 
-	// Make sure days in month are not more than it should be
-	if (date->date >= month[calendar_leapyear(date->year)][date->month]) {
-		return false;
-	}
+    // Make sure days in month are not more than it should be
+    if (date->date >= month[calendar_leapyear(date->year)][date->month]) {
+        return false;
+    }
 
-	// Make sure year is not earlier than 1970 and before 2106
-	if ((date->year < EPOCH_YEAR) || (date->year >= 2106)) {
-		return false;
-	} else {
-		return true;
-	}
+    // Make sure year is not earlier than 1970 and before 2106
+    if ((date->year < EPOCH_YEAR) || (date->year >= 2106)) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 /**
@@ -256,33 +256,33 @@ bool calendar_is_date_valid(struct calendar_date *date)
  *
  */
 void calendar_timestamp_to_date(uint32_t timestamp,
-		struct calendar_date *date_out)
+        struct calendar_date *date_out)
 {
-	uint32_t day_number;
-	uint32_t day_clock;
+    uint32_t day_number;
+    uint32_t day_clock;
 
-	date_out->year = EPOCH_YEAR;
-	date_out->month = 0;
+    date_out->year = EPOCH_YEAR;
+    date_out->month = 0;
 
-	day_clock = timestamp % SECS_PER_DAY;
-	day_number = timestamp / SECS_PER_DAY;
+    day_clock = timestamp % SECS_PER_DAY;
+    day_number = timestamp / SECS_PER_DAY;
 
-	date_out->second = day_clock % SECS_PER_MINUTE;
-	date_out->minute = (day_clock % SECS_PER_HOUR) / SECS_PER_MINUTE;
-	date_out->hour = day_clock / SECS_PER_HOUR;
-	date_out->dayofweek = (day_number + 4) % 7;
+    date_out->second = day_clock % SECS_PER_MINUTE;
+    date_out->minute = (day_clock % SECS_PER_HOUR) / SECS_PER_MINUTE;
+    date_out->hour = day_clock / SECS_PER_HOUR;
+    date_out->dayofweek = (day_number + 4) % 7;
 
-	while (day_number >= calendar_yearsize(date_out->year)) {
-		day_number -= calendar_yearsize(date_out->year);
-		date_out->year++;
-	}
+    while (day_number >= calendar_yearsize(date_out->year)) {
+        day_number -= calendar_yearsize(date_out->year);
+        date_out->year++;
+    }
 
-	while (day_number >=
-			month[calendar_leapyear(date_out->year)][date_out->month]) {
-		day_number -= month[calendar_leapyear(date_out->year)][date_out->month];
-		date_out->month++;
-	}
-	date_out->date = day_number;
+    while (day_number >=
+            month[calendar_leapyear(date_out->year)][date_out->month]) {
+        day_number -= month[calendar_leapyear(date_out->year)][date_out->month];
+        date_out->month++;
+    }
+    date_out->date = day_number;
 }
 
 /**
@@ -298,16 +298,16 @@ void calendar_timestamp_to_date(uint32_t timestamp,
  *
  */
 void calendar_timestamp_to_date_tz(uint32_t timestamp, int8_t hour,
-		uint8_t min, struct calendar_date *date_out)
+        uint8_t min, struct calendar_date *date_out)
 {
-	// Multiply timezone offset by seconds, and add to timestamp
-	if (hour >= 0) {
-		calendar_timestamp_to_date((timestamp + (SECS_PER_HOUR * hour) +
-				(SECS_PER_MINUTE * min)), date_out);
-	} else {
-		calendar_timestamp_to_date((timestamp + (SECS_PER_HOUR * hour) -
-				(SECS_PER_MINUTE * min)), date_out);
-	}
+    // Multiply timezone offset by seconds, and add to timestamp
+    if (hour >= 0) {
+        calendar_timestamp_to_date((timestamp + (SECS_PER_HOUR * hour) +
+                (SECS_PER_MINUTE * min)), date_out);
+    } else {
+        calendar_timestamp_to_date((timestamp + (SECS_PER_HOUR * hour) -
+                (SECS_PER_MINUTE * min)), date_out);
+    }
 }
 
 /**
@@ -324,34 +324,34 @@ void calendar_timestamp_to_date_tz(uint32_t timestamp, int8_t hour,
 uint32_t calendar_date_to_timestamp(struct calendar_date *date)
 {
 
-	// Make sure date is valid
-	if (!calendar_is_date_valid(date))
-		return 0;
+    // Make sure date is valid
+    if (!calendar_is_date_valid(date))
+        return 0;
 
-	uint32_t timestamp = 0;
-	uint8_t date_month;
-	uint16_t date_year;
+    uint32_t timestamp = 0;
+    uint8_t date_month;
+    uint16_t date_year;
 
-	date_month = date->month;
-	date_year = date->year;
+    date_month = date->month;
+    date_year = date->year;
 
-	// Add number of seconds elapsed in current month
-	timestamp += (date->date * SECS_PER_DAY) + (date->hour * SECS_PER_HOUR) +
-			(date->minute * SECS_PER_MINUTE) + date->second;
+    // Add number of seconds elapsed in current month
+    timestamp += (date->date * SECS_PER_DAY) + (date->hour * SECS_PER_HOUR) +
+            (date->minute * SECS_PER_MINUTE) + date->second;
 
-	while (date_month != 0) {
-		date_month--;
-		// Add number of seconds in months of current year
-		timestamp += month[calendar_leapyear(date_year)][date_month]
-				* SECS_PER_DAY;
-	}
-	while (date_year > EPOCH_YEAR) {
-		date_year--;
-		// Add number of seconds in all years since epoch year
-		timestamp += calendar_yearsize(date_year) * SECS_PER_DAY;
-	}
+    while (date_month != 0) {
+        date_month--;
+        // Add number of seconds in months of current year
+        timestamp += month[calendar_leapyear(date_year)][date_month]
+                * SECS_PER_DAY;
+    }
+    while (date_year > EPOCH_YEAR) {
+        date_year--;
+        // Add number of seconds in all years since epoch year
+        timestamp += calendar_yearsize(date_year) * SECS_PER_DAY;
+    }
 
-	return timestamp;
+    return timestamp;
 }
 
 /**
@@ -368,21 +368,21 @@ uint32_t calendar_date_to_timestamp(struct calendar_date *date)
  * \retval 0 if date is not valid
  */
 uint32_t calendar_date_to_timestamp_tz(struct calendar_date *date, int8_t hour,
-		uint8_t min)
+        uint8_t min)
 {
-	uint32_t timestamp = calendar_date_to_timestamp(date);
-	if (timestamp == 0) {
-		return 0;
-	} else {
-		// Subtract the seconds of offset in time zone offset from timestamp
-		if (hour >= 0) {
-			return (timestamp - (SECS_PER_HOUR * hour + SECS_PER_MINUTE *
-					min));
-		} else {
-			return (timestamp - (SECS_PER_HOUR * hour - SECS_PER_MINUTE *
-					min));
-		}
-	}
+    uint32_t timestamp = calendar_date_to_timestamp(date);
+    if (timestamp == 0) {
+        return 0;
+    } else {
+        // Subtract the seconds of offset in time zone offset from timestamp
+        if (hour >= 0) {
+            return (timestamp - (SECS_PER_HOUR * hour + SECS_PER_MINUTE *
+                    min));
+        } else {
+            return (timestamp - (SECS_PER_HOUR * hour - SECS_PER_MINUTE *
+                    min));
+        }
+    }
 }
 
 /**
@@ -398,76 +398,76 @@ uint32_t calendar_date_to_timestamp_tz(struct calendar_date *date, int8_t hour,
  *
  */
 void calendar_time_between_dates(struct calendar_date *date_end,
-		struct calendar_date *date_start, struct calendar_date *date_out)
+        struct calendar_date *date_start, struct calendar_date *date_out)
 {
-	uint32_t timestamp_start;
-	uint32_t timestamp_end;
-	struct calendar_date *temp;
+    uint32_t timestamp_start;
+    uint32_t timestamp_end;
+    struct calendar_date *temp;
 
-	timestamp_start = calendar_date_to_timestamp(date_start);
-	timestamp_end = calendar_date_to_timestamp(date_end);
+    timestamp_start = calendar_date_to_timestamp(date_start);
+    timestamp_end = calendar_date_to_timestamp(date_end);
 
-	// Switch dates if date_end is before date_start
-	if (timestamp_end < timestamp_start) {
-		temp = date_end;
-		date_end = date_start;
-		date_start = temp;
-	}
+    // Switch dates if date_end is before date_start
+    if (timestamp_end < timestamp_start) {
+        temp = date_end;
+        date_end = date_start;
+        date_start = temp;
+    }
 
-	// Calculate number of years
-	date_out->year = date_end->year - date_start->year;
+    // Calculate number of years
+    date_out->year = date_end->year - date_start->year;
 
-	// Check if months wrap around new year
-	if (date_end->month - date_start->month < 0 ) {
-		date_end->month += 12;
-		if (date_out->year != 0) {
-			date_out->year--;
-		}
-	}
-	// Calculate number of months
-	date_out->month = date_end->month - date_start->month;
+    // Check if months wrap around new year
+    if (date_end->month - date_start->month < 0 ) {
+        date_end->month += 12;
+        if (date_out->year != 0) {
+            date_out->year--;
+        }
+    }
+    // Calculate number of months
+    date_out->month = date_end->month - date_start->month;
 
-	// Check if dates wrap around month
-	if(date_end->date - date_start->date < 0) {
-		// Add number of days in last month to get number of days correct
-		date_end->date +=
-			month[calendar_leapyear(date_end->year)][date_end->month-1];
-		if (date_out->month != 0) {
-			date_out->month--;
-		}
-	}
-	// Calculate number of days
-	date_out->date = date_end->date - date_start->date;
+    // Check if dates wrap around month
+    if(date_end->date - date_start->date < 0) {
+        // Add number of days in last month to get number of days correct
+        date_end->date +=
+            month[calendar_leapyear(date_end->year)][date_end->month-1];
+        if (date_out->month != 0) {
+            date_out->month--;
+        }
+    }
+    // Calculate number of days
+    date_out->date = date_end->date - date_start->date;
 
-	// Check if hours wrap around midnight
-	if (date_end->hour - date_start->hour < 0) {
-		date_end->hour += 24;
-		if (date_out->date != 0) {
-			date_out->date--;
-		}
-	}
-	// Calculate number of hours
-	date_out->hour = date_end->hour - date_start->hour;
+    // Check if hours wrap around midnight
+    if (date_end->hour - date_start->hour < 0) {
+        date_end->hour += 24;
+        if (date_out->date != 0) {
+            date_out->date--;
+        }
+    }
+    // Calculate number of hours
+    date_out->hour = date_end->hour - date_start->hour;
 
-	// Check if minutes wrap around hour
-	if (date_end->minute - date_start->minute < 0) {
-		date_end->minute += 60;
-		if (date_out->hour != 0) {
-			date_out->hour--;
-		}
-	}
-	// Calculate number of minutes
-	date_out->minute = date_end->minute - date_start->minute;
+    // Check if minutes wrap around hour
+    if (date_end->minute - date_start->minute < 0) {
+        date_end->minute += 60;
+        if (date_out->hour != 0) {
+            date_out->hour--;
+        }
+    }
+    // Calculate number of minutes
+    date_out->minute = date_end->minute - date_start->minute;
 
-	// Check if seconds wrap around minute
-	if (date_end->second - date_start->second < 0) {
-		date_end->second += 60;
-		if (date_out->minute != 0) {
-			date_out->minute--;
-		}
-	}
-	// Calculate number of seconds
-	date_out->second = date_end->second - date_start->second;
+    // Check if seconds wrap around minute
+    if (date_end->second - date_start->second < 0) {
+        date_end->second += 60;
+        if (date_out->minute != 0) {
+            date_out->minute--;
+        }
+    }
+    // Calculate number of seconds
+    date_out->second = date_end->second - date_start->second;
 
 }
 
@@ -482,11 +482,11 @@ void calendar_time_between_dates(struct calendar_date *date_end,
  */
 void calendar_add_second_to_date(struct calendar_date *date)
 {
-	// Check if input date is valid
-	Assert(calendar_is_date_valid(date));
+    // Check if input date is valid
+    Assert(calendar_is_date_valid(date));
 
-	if (++date->second == 60) {
-		date->second = 0;
-		calendar_add_minute_to_date(date);
-	}
+    if (++date->second == 60) {
+        date->second = 0;
+        calendar_add_minute_to_date(date);
+    }
 }

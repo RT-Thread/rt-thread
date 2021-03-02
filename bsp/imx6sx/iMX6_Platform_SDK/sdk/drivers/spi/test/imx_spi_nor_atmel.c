@@ -50,7 +50,7 @@ int spi_nor_query_atmel(uint8_t * data)
     spi_nor_tx_buf[3] = JEDEC_ID; // byte3 is the 1st to shift out
     //Read ID get 20 bytes repsonse
     if (ecspi_xfer(dev_spi_nor, spi_nor_tx_buf, spi_nor_rx_buf, 20 * 8) == FALSE) {
-    	return FAIL;
+        return FAIL;
     }
 
     /* Big-endian */
@@ -66,7 +66,7 @@ int spi_nor_query_atmel(uint8_t * data)
 static int spi_nor_status_atmel(void)
 {
     spi_nor_tx_buf[1] = STAT_READ;
- 
+
     /* Send command */
     if (ecspi_xfer(dev_spi_nor, spi_nor_tx_buf, spi_nor_rx_buf, 2 * 8) == FALSE) {
         printf("Atmel Error - get status.\n");

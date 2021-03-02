@@ -188,9 +188,9 @@ typedef enum _lpadc_hardware_compare_mode
 typedef enum _lpadc_conversion_resolution_mode
 {
     kLPADC_ConversionResolutionStandard = 0U, /*!< Standard resolution. Single-ended 12-bit conversion, Differential
-                                                   13-bit conversion with 2â€™s complement output. */
+                                                   13-bit conversion with 2¡¯s complement output. */
     kLPADC_ConversionResolutionHigh = 1U,     /*!< High resolution. Single-ended 16-bit conversion; Differential 16-bit
-                                                   conversion with 2â€™s complement output. */
+                                                   conversion with 2¡¯s complement output. */
 } lpadc_conversion_resolution_mode_t;
 
 #if defined(FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS) && FSL_FEATURE_LPADC_HAS_CTRL_CAL_AVGS

@@ -38,7 +38,7 @@
 
 /* SDMA EVENT DEFINITIONS. See mx6's user guider, chapter 3 for detail */
 #define SDMA_EVENT_VPU                      0
-#define SDMA_EVENT_GPC	                   1
+#define SDMA_EVENT_GPC                       1
 #define SDMA_EVENT_IPU1                     2
 #define SDMA_EVENT_EXT_DMA_EVENT_0          2
 #define SDMA_EVENT_ECSPI1_RX                 3
@@ -56,7 +56,7 @@
 #define SDMA_EVENT_I2C1_B                   10
 #define SDMA_EVENT_ECSPI5_RX                 11
 #define SDMA_EVENT_ECSPI5_TX                 12
-#define SDMA_EVENT_GPT	                   13
+#define SDMA_EVENT_GPT                       13
 #define SDMA_EVENT_SPDIF_RX                 14
 #define SDMA_EVENT_EXT_DMA_EVENT_1          14
 #define SDMA_EVENT_SPDIF_TX                 15

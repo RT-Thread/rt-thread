@@ -198,14 +198,14 @@
   */
 /* Helper macros for TX descriptor handling */
 #define INCR_TX_DESC_INDEX(inx, offset) do {\
-	(inx) += (offset);\
+    (inx) += (offset);\
           if ((inx) >= (uint32_t)ETH_TX_DESC_CNT){\
             (inx) = ((inx) - (uint32_t)ETH_TX_DESC_CNT);}\
 } while (0)
 
 /* Helper macros for RX descriptor handling */
 #define INCR_RX_DESC_INDEX(inx, offset) do {\
-	(inx) += (offset);\
+    (inx) += (offset);\
           if ((inx) >= (uint32_t)ETH_RX_DESC_CNT){\
             (inx) = ((inx) - (uint32_t)ETH_RX_DESC_CNT);}\
 } while (0)
@@ -2040,13 +2040,13 @@ void HAL_ETH_SetMDIOClockRange(ETH_HandleTypeDef *heth)
   /* Get the ETHERNET MACMDIOAR value */
   tmpreg = (heth->Instance)->MACMDIOAR;
 
-	/* Clear CSR Clock Range bits */
+    /* Clear CSR Clock Range bits */
   tmpreg &= ~ETH_MACMDIOAR_CR;
 
-	/* Get hclk frequency value */
+    /* Get hclk frequency value */
   hclk = HAL_RCC_GetHCLKFreq();
 
-	/* Set CR bits depending on hclk value */
+    /* Set CR bits depending on hclk value */
   if((hclk >= 20000000U)&&(hclk < 35000000U))
   {
     /* CSR Clock Range between 20-35 MHz */

@@ -49,33 +49,33 @@
 /* Set clock source for WKT */
 void Chip_WKT_SetClockSource(LPC_WKT_T *pWKT, WKT_CLKSRC_T clkSrc)
 {
-	if (clkSrc == WKT_CLKSRC_10KHZ) {
-		pWKT->CTRL |= WKT_CTRL_CLKSEL;	/* using Low Power clock 10kHz */
-	}
-	else {
-		pWKT->CTRL &= ~WKT_CTRL_CLKSEL;	/* using Divided IRC clock 750kHz */
-	}
+    if (clkSrc == WKT_CLKSRC_10KHZ) {
+        pWKT->CTRL |= WKT_CTRL_CLKSEL;    /* using Low Power clock 10kHz */
+    }
+    else {
+        pWKT->CTRL &= ~WKT_CTRL_CLKSEL;    /* using Divided IRC clock 750kHz */
+    }
 }
 
 /* Return approximate rate for the selected clock source */
 uint32_t Chip_WKT_GetClockRate(LPC_WKT_T *pWKT)
 {
-	if (Chip_WKT_GetClockSource(pWKT) == WKT_CLKSRC_DIVIRC) {
-		/* Approximately 750KHz */
-		return (750 * 1000);
-	}
-	else {
-		/* Approximately 10KHz */
-		return (10 * 1000);
-	}
+    if (Chip_WKT_GetClockSource(pWKT) == WKT_CLKSRC_DIVIRC) {
+        /* Approximately 750KHz */
+        return (750 * 1000);
+    }
+    else {
+        /* Approximately 10KHz */
+        return (10 * 1000);
+    }
 }
 
 /* Start wake-up timer interrupt, set clock source, set timer interval */
 void Chip_WKT_Start(LPC_WKT_T *pWKT, WKT_CLKSRC_T clkSrc, uint32_t cntVal)
 {
-	/* Set the WKT clock source */
-	Chip_WKT_SetClockSource(pWKT, (WKT_CLKSRC_T) clkSrc);
+    /* Set the WKT clock source */
+    Chip_WKT_SetClockSource(pWKT, (WKT_CLKSRC_T) clkSrc);
 
-	/* Set the WKT counter & start it */
-	pWKT->COUNT = cntVal;
+    /* Set the WKT counter & start it */
+    pWKT->COUNT = cntVal;
 }

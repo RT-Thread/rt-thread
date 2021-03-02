@@ -29,7 +29,7 @@ void dci_deinit(void)
                 members of the structure and the member values are shown as below:
                 capture_mode    : DCI_CAPTURE_MODE_CONTINUOUS, DCI_CAPTURE_MODE_SNAPSHOT
                 colck_polarity  : DCI_CK_POLARITY_FALLING, DCI_CK_POLARITY_RISING
-                hsync_polarity  : DCI_HSYNC_POLARITY_LOW, DCI_HSYNC_POLARITY_HIGH                                      
+                hsync_polarity  : DCI_HSYNC_POLARITY_LOW, DCI_HSYNC_POLARITY_HIGH
                 vsync_polarity  : DCI_VSYNC_POLARITY_LOW, DCI_VSYNC_POLARITY_HIGH
                 frame_rate      : DCI_FRAME_RATE_ALL, DCI_FRAME_RATE_1_2, DCI_FRAME_RATE_1_4
                 interface_format: DCI_INTERFACE_FORMAT_8BITS, DCI_INTERFACE_FORMAT_10BITS,
@@ -54,18 +54,18 @@ void dci_init(dci_parameter_struct* dci_struct)
 }
 
 /*!
-    \brief      enable DCI function 
+    \brief      enable DCI function
     \param[in]  none
     \param[out] none
     \retval     none
 */
 void dci_enable(void)
 {
-    DCI_CTL |= DCI_CTL_DCIEN;    
+    DCI_CTL |= DCI_CTL_DCIEN;
 }
 
 /*!
-    \brief      disable DCI function 
+    \brief      disable DCI function
     \param[in]  none
     \param[out] none
     \retval     none
@@ -76,7 +76,7 @@ void dci_disable(void)
 }
 
 /*!
-    \brief      enable DCI capture 
+    \brief      enable DCI capture
     \param[in]  none
     \param[out] none
     \retval     none
@@ -87,7 +87,7 @@ void dci_capture_enable(void)
 }
 
 /*!
-    \brief      disable DCI capture 
+    \brief      disable DCI capture
     \param[in]  none
     \param[out] none
     \retval     none
@@ -98,7 +98,7 @@ void dci_capture_disable(void)
 }
 
 /*!
-    \brief      enable DCI jpeg mode 
+    \brief      enable DCI jpeg mode
     \param[in]  none
     \param[out] none
     \retval     none
@@ -109,7 +109,7 @@ void dci_jpeg_enable(void)
 }
 
 /*!
-    \brief      disable DCI jpeg mode 
+    \brief      disable DCI jpeg mode
     \param[in]  none
     \param[out] none
     \retval     none
@@ -142,7 +142,7 @@ void dci_crop_window_disable(void)
 }
 
 /*!
-    \brief      config DCI cropping window 
+    \brief      config DCI cropping window
     \param[in]  start_x: window horizontal start position
     \param[in]  start_y: window vertical start position
     \param[in]  size_height: window horizontal size
@@ -178,7 +178,7 @@ void dci_sync_codes_disable(void)
     DCI_CTL &= ~DCI_CTL_ESM;
 }
 /*!
-    \brief      config sync codes 
+    \brief      config sync codes
     \param[in]  frame_start: frame start code in embedded synchronous mode
     \param[in]  line_start: line start code in embedded synchronous mode
     \param[in]  line_end: line end code in embedded synchronous mode
@@ -202,7 +202,7 @@ void dci_sync_codes_config(uint8_t frame_start, uint8_t line_start, uint8_t line
 */
 void dci_sync_codes_unmask_config(uint8_t frame_start, uint8_t line_start, uint8_t line_end, uint8_t frame_end)
 {
-    DCI_SCUMSK = ((uint32_t)frame_start | ((uint32_t)line_start<<8) | ((uint32_t)line_end<<16) | ((uint32_t)frame_end<<24));	
+    DCI_SCUMSK = ((uint32_t)frame_start | ((uint32_t)line_start<<8) | ((uint32_t)line_end<<16) | ((uint32_t)frame_end<<24));
 }
 
 /*!
@@ -221,7 +221,7 @@ uint32_t dci_data_read(void)
     \param[in]  interrupt:
       \arg         DCI_INT_EF: end of frame interrupt
       \arg         DCI_INT_OVR: FIFO overrun interrupt
-      \arg         DCI_INT_ESE: embedded synchronous error interrupt 
+      \arg         DCI_INT_ESE: embedded synchronous error interrupt
       \arg         DCI_INT_VS: vsync interrupt
       \arg         DCI_INT_EL: end of line interrupt
     \param[out] none
@@ -237,7 +237,7 @@ void dci_interrupt_enable(uint32_t interrupt)
     \param[in]  interrupt:
       \arg         DCI_INT_EF: end of frame interrupt
       \arg         DCI_INT_OVR: FIFO overrun interrupt
-      \arg         DCI_INT_ESE: embedded synchronous error interrupt 
+      \arg         DCI_INT_ESE: embedded synchronous error interrupt
       \arg         DCI_INT_VS: vsync interrupt
       \arg         DCI_INT_EL: end of line interrupt
     \param[out] none
@@ -253,7 +253,7 @@ void dci_interrupt_disable(uint32_t interrupt)
     \param[in]  interrupt:
       \arg         DCI_INT_EF: end of frame interrupt
       \arg         DCI_INT_OVR: FIFO overrun interrupt
-      \arg         DCI_INT_ESE: embedded synchronous error interrupt 
+      \arg         DCI_INT_ESE: embedded synchronous error interrupt
       \arg         DCI_INT_VS: vsync interrupt
       \arg         DCI_INT_EL: end of line interrupt
     \param[out] none
@@ -281,7 +281,7 @@ void dci_interrupt_clear(uint32_t interrupt)
 FlagStatus dci_flag_get(uint32_t flag)
 {
     uint32_t ret = 0U;
-    
+
     switch(flag){
     /* get flag status from DCI_STAT0 register */
     case DCI_FLAG_HS:
@@ -312,7 +312,7 @@ FlagStatus dci_flag_get(uint32_t flag)
     default :
         break;
     }
-    
+
     if(RESET == ret){
         return RESET;
     }else{
@@ -325,7 +325,7 @@ FlagStatus dci_flag_get(uint32_t flag)
     \param[in]  interrupt:
       \arg         DCI_INT_EF: end of frame interrupt
       \arg         DCI_INT_OVR: FIFO overrun interrupt
-      \arg         DCI_INT_ESE: embedded synchronous error interrupt 
+      \arg         DCI_INT_ESE: embedded synchronous error interrupt
       \arg         DCI_INT_VS: vsync interrupt
       \arg         DCI_INT_EL: end of line interrupt
     \param[out] none

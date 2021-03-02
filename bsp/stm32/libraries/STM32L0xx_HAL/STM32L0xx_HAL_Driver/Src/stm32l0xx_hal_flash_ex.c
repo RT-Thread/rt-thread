@@ -3,49 +3,49 @@
   * @file    stm32l0xx_hal_flash_ex.c
   * @author  MCD Application Team
   * @brief   Extended FLASH HAL module driver.
-  *    
-  *          This file provides firmware functions to manage the following 
+  *
+  *          This file provides firmware functions to manage the following
   *          functionalities of the internal FLASH memory:
   *            + FLASH Interface configuration
   *            + FLASH Memory Erasing
   *            + DATA EEPROM Programming/Erasing
   *            + Option Bytes Programming
   *            + Interrupts management
-  *    
+  *
   @verbatim
   ==============================================================================
                ##### Flash peripheral Extended features  #####
   ==============================================================================
-           
+
   [..] Comparing to other products, the FLASH interface for STM32L0xx
-       devices contains the following additional features        
+       devices contains the following additional features
        (+) Erase functions
        (+) DATA_EEPROM memory management
-       (+) BOOT option bit configuration       
+       (+) BOOT option bit configuration
        (+) PCROP protection for all sectors
-   
+
                       ##### How to use this driver #####
   ==============================================================================
-  [..] This driver provides functions to configure and program the FLASH memory 
+  [..] This driver provides functions to configure and program the FLASH memory
        of all STM32L0xx. It includes:
        (+) Full DATA_EEPROM erase and program management
        (+) Boot activation
        (+) PCROP protection configuration and control for all pages
-  
+
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
-  ******************************************************************************  
-  */ 
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal.h"
@@ -70,7 +70,7 @@ extern FLASH_ProcessTypeDef pFlash;
 /**
   * @}
   */
-  
+
 /** @defgroup FLASHEx FLASHEx
   * @brief FLASH HAL Extension module driver
   * @{
@@ -91,7 +91,7 @@ extern FLASH_ProcessTypeDef pFlash;
   */
 /**
   * @}
-  */ 
+  */
 
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -110,13 +110,13 @@ static uint8_t            FLASH_OB_GetUser(void);
 static uint8_t            FLASH_OB_GetBOR(void);
 static uint8_t            FLASH_OB_GetBOOTBit1(void);
 static HAL_StatusTypeDef  FLASH_OB_BOOTBit1Config(uint8_t OB_BootBit1);
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
 static HAL_StatusTypeDef  FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32_t Sector2, uint32_t NewState);
 #else
 static HAL_StatusTypeDef  FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32_t NewState);
 #endif
 static uint32_t           FLASH_OB_GetWRP(void);
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
 static uint32_t           FLASH_OB_GetWRP2(void);
 #endif
 
@@ -132,47 +132,47 @@ static uint32_t           FLASH_OB_GetWRP2(void);
 /** @defgroup FLASHEx_Exported_Functions_Group1 FLASHEx Memory Erasing functions
  *  @brief   FLASH Memory Erasing functions
  *
-@verbatim   
+@verbatim
   ==============================================================================
-                ##### FLASH Erasing Programming functions ##### 
+                ##### FLASH Erasing Programming functions #####
   ==============================================================================
 
     [..] The FLASH Memory Erasing functions, includes the following functions:
     (+) @ref HAL_FLASHEx_Erase: return only when erase has been done
-    (+) @ref HAL_FLASHEx_Erase_IT: end of erase is done when @ref HAL_FLASH_EndOfOperationCallback 
+    (+) @ref HAL_FLASHEx_Erase_IT: end of erase is done when @ref HAL_FLASH_EndOfOperationCallback
         is called with parameter 0xFFFFFFFF
 
     [..] Any operation of erase should follow these steps:
-    (#) Call the @ref HAL_FLASH_Unlock() function to enable the flash control register and 
+    (#) Call the @ref HAL_FLASH_Unlock() function to enable the flash control register and
         program memory access.
     (#) Call the desired function to erase page.
-    (#) Call the @ref HAL_FLASH_Lock() to disable the flash program memory access 
+    (#) Call the @ref HAL_FLASH_Lock() to disable the flash program memory access
        (recommended to protect the FLASH memory against possible unwanted operation).
 
 @endverbatim
   * @{
   */
-  
+
 /**
-  * @brief  Erase the specified FLASH memory Pages 
+  * @brief  Erase the specified FLASH memory Pages
   * @note   To correctly run this function, the @ref HAL_FLASH_Unlock() function
   *         must be called before.
-  *         Call the @ref HAL_FLASH_Lock() to disable the flash memory access 
+  *         Call the @ref HAL_FLASH_Lock() to disable the flash memory access
   *         (recommended to protect the FLASH memory against possible unwanted operation)
   * @param[in]  pEraseInit pointer to an FLASH_EraseInitTypeDef structure that
   *         contains the configuration information for the erasing.
-  * 
+  *
   * @param[out]  PageError pointer to variable  that
   *         contains the configuration information on faulty page in case of error
   *         (0xFFFFFFFF means that all the pages have been correctly erased)
-  * 
+  *
   * @retval HAL_StatusTypeDef HAL Status
   */
 HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t *PageError)
 {
   HAL_StatusTypeDef status = HAL_ERROR;
   uint32_t address = 0U;
-  
+
   /* Process Locked */
   __HAL_LOCK(&pFlash);
 
@@ -191,7 +191,7 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t
     assert_param(IS_FLASH_PROGRAM_ADDRESS((pEraseInit->PageAddress & ~(FLASH_PAGE_SIZE - 1U)) + pEraseInit->NbPages * FLASH_PAGE_SIZE - 1U));
 
     /* Erase page by page to be done*/
-    for(address = pEraseInit->PageAddress; 
+    for(address = pEraseInit->PageAddress;
         address < ((pEraseInit->NbPages * FLASH_PAGE_SIZE) + pEraseInit->PageAddress);
         address += FLASH_PAGE_SIZE)
     {
@@ -204,7 +204,7 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t
       CLEAR_BIT(FLASH->PECR, FLASH_PECR_PROG);
       CLEAR_BIT(FLASH->PECR, FLASH_PECR_ERASE);
 
-      if (status != HAL_OK) 
+      if (status != HAL_OK)
       {
         /* In case of error, stop erase procedure and return the faulty address */
         *PageError = address;
@@ -223,13 +223,13 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t
   * @brief  Perform a page erase of the specified FLASH memory pages  with interrupt enabled
   * @note   To correctly run this function, the @ref HAL_FLASH_Unlock() function
   *         must be called before.
-  *         Call the @ref HAL_FLASH_Lock() to disable the flash memory access 
+  *         Call the @ref HAL_FLASH_Lock() to disable the flash memory access
   *         (recommended to protect the FLASH memory against possible unwanted operation)
   *          End of erase is done when @ref HAL_FLASH_EndOfOperationCallback is called with parameter
   *          0xFFFFFFFF
   * @param  pEraseInit pointer to an FLASH_EraseInitTypeDef structure that
   *         contains the configuration information for the erasing.
-  * 
+  *
   * @retval HAL_StatusTypeDef HAL Status
   */
 HAL_StatusTypeDef HAL_FLASHEx_Erase_IT(FLASH_EraseInitTypeDef *pEraseInit)
@@ -253,12 +253,12 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase_IT(FLASH_EraseInitTypeDef *pEraseInit)
 
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   if (status == HAL_OK)
   {
     /* Enable End of FLASH Operation and Error source interrupts */
     __HAL_FLASH_ENABLE_IT(FLASH_IT_EOP | FLASH_IT_ERR);
-    
+
     pFlash.ProcedureOnGoing = FLASH_PROC_PAGEERASE;
     pFlash.NbPagesToErase = pEraseInit->NbPages;
     pFlash.Page = pEraseInit->PageAddress;
@@ -282,13 +282,13 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase_IT(FLASH_EraseInitTypeDef *pEraseInit)
 /** @defgroup FLASHEx_Exported_Functions_Group2 Option Bytes Programming functions
  *  @brief   Option Bytes Programming functions
  *
-@verbatim   
+@verbatim
   ==============================================================================
-                ##### Option Bytes Programming functions ##### 
-  ==============================================================================  
+                ##### Option Bytes Programming functions #####
+  ==============================================================================
 
     [..] Any operation of erase or program should follow these steps:
-    (#) Call the @ref HAL_FLASH_OB_Unlock() function to enable the Flash option control 
+    (#) Call the @ref HAL_FLASH_OB_Unlock() function to enable the Flash option control
         register access.
     (#) Call following function to program the desired option bytes.
         (++) @ref HAL_FLASHEx_OBProgram:
@@ -304,7 +304,7 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase_IT(FLASH_EraseInitTypeDef *pEraseInit)
     [..] Proprietary code Read Out Protection (PcROP):
     (#) The PcROP sector is selected by using the same option bytes as the Write
         protection (nWRPi bits). As a result, these 2 options are exclusive each other.
-    (#) In order to activate the PcROP (change the function of the nWRPi option bits), 
+    (#) In order to activate the PcROP (change the function of the nWRPi option bits),
         the WPRMOD option bit must be activated.
     (#) The active value of nWRPi bits is inverted when PCROP mode is active, this
         means: if WPRMOD = 1 and nWRPi = 1 (default value), then the user sector "i"
@@ -321,13 +321,13 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase_IT(FLASH_EraseInitTypeDef *pEraseInit)
   * @brief  Program option bytes
   * @param  pOBInit pointer to an FLASH_OBInitStruct structure that
   *         contains the configuration information for the programming.
-  * 
+  *
   * @retval HAL_StatusTypeDef HAL Status
   */
 HAL_StatusTypeDef HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit)
 {
   HAL_StatusTypeDef status = HAL_ERROR;
-  
+
   /* Process Locked */
   __HAL_LOCK(&pFlash);
 
@@ -338,7 +338,7 @@ HAL_StatusTypeDef HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit)
   if((pOBInit->OptionType & OPTIONBYTE_WRP) == OPTIONBYTE_WRP)
   {
     assert_param(IS_WRPSTATE(pOBInit->WRPState));
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
     status = FLASH_OB_ProtectedSectorsConfig(pOBInit->WRPSector, pOBInit->WRPSector2, pOBInit->WRPState);
 #else
     status = FLASH_OB_ProtectedSectorsConfig(pOBInit->WRPSector, pOBInit->WRPState);
@@ -350,7 +350,7 @@ HAL_StatusTypeDef HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit)
       return status;
     }
   }
-  
+
   /* Read protection configuration*/
   if((pOBInit->OptionType & OPTIONBYTE_RDP) == OPTIONBYTE_RDP)
   {
@@ -362,11 +362,11 @@ HAL_StatusTypeDef HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit)
       return status;
     }
   }
-  
+
   /* USER  configuration*/
   if((pOBInit->OptionType & OPTIONBYTE_USER) == OPTIONBYTE_USER)
   {
-    status = FLASH_OB_UserConfig(pOBInit->USERConfig & OB_IWDG_SW, 
+    status = FLASH_OB_UserConfig(pOBInit->USERConfig & OB_IWDG_SW,
                                  pOBInit->USERConfig & OB_STOP_NORST,
                                  pOBInit->USERConfig & OB_STDBY_NORST);
     if (status != HAL_OK)
@@ -404,7 +404,7 @@ HAL_StatusTypeDef HAL_FLASHEx_OBProgram(FLASH_OBProgramInitTypeDef *pOBInit)
   * @brief   Get the Option byte configuration
   * @param  pOBInit pointer to an FLASH_OBInitStruct structure that
   *         contains the configuration information for the programming.
-  * 
+  *
   * @retval None
   */
 void HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit)
@@ -414,7 +414,7 @@ void HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit)
   /* Get WRP sector */
   pOBInit->WRPSector = FLASH_OB_GetWRP();
 
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
   pOBInit->WRPSector2 = FLASH_OB_GetWRP2();
 #endif
 
@@ -432,45 +432,45 @@ void HAL_FLASHEx_OBGetConfig(FLASH_OBProgramInitTypeDef *pOBInit)
 }
 
 #if defined(FLASH_OPTR_WPRMOD) || defined(FLASH_OPTR_BFB2)
-    
+
 /**
   * @brief  Program option bytes
   * @param  pAdvOBInit pointer to an FLASH_AdvOBProgramInitTypeDef structure that
   *         contains the configuration information for the programming.
-  * 
+  *
   * @retval HAL_StatusTypeDef HAL Status
   */
 HAL_StatusTypeDef HAL_FLASHEx_AdvOBProgram (FLASH_AdvOBProgramInitTypeDef *pAdvOBInit)
 {
   HAL_StatusTypeDef status = HAL_ERROR;
-  
+
   /* Check the parameters */
   assert_param(IS_OBEX(pAdvOBInit->OptionType));
 
 #if defined(FLASH_OPTR_WPRMOD)
-    
+
   /* Program PCROP option byte*/
   if ((pAdvOBInit->OptionType & OPTIONBYTE_PCROP) == OPTIONBYTE_PCROP)
   {
     /* Check the parameters */
     assert_param(IS_PCROPSTATE(pAdvOBInit->PCROPState));
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
     status = FLASH_OB_ProtectedSectorsConfig(pAdvOBInit->PCROPSector, pAdvOBInit->PCROPSector2, pAdvOBInit->PCROPState);
 #else
     status = FLASH_OB_ProtectedSectorsConfig(pAdvOBInit->PCROPSector, pAdvOBInit->PCROPState);
 #endif
   }
-  
+
 #endif /* FLASH_OPTR_WPRMOD */
 
 #if defined(FLASH_OPTR_BFB2)
-    
+
   /* Program BOOT config option byte */
   if ((pAdvOBInit->OptionType & OPTIONBYTE_BOOTCONFIG) == OPTIONBYTE_BOOTCONFIG)
   {
     status = FLASH_OB_BootConfig(pAdvOBInit->BootConfig);
   }
-  
+
 #endif /* FLASH_OPTR_BFB2 */
 
   return status;
@@ -480,15 +480,15 @@ HAL_StatusTypeDef HAL_FLASHEx_AdvOBProgram (FLASH_AdvOBProgramInitTypeDef *pAdvO
   * @brief  Get the OBEX byte configuration
   * @param  pAdvOBInit pointer to an FLASH_AdvOBProgramInitTypeDef structure that
   *         contains the configuration information for the programming.
-  * 
+  *
   * @retval None
   */
 void HAL_FLASHEx_AdvOBGetConfig(FLASH_AdvOBProgramInitTypeDef *pAdvOBInit)
 {
   pAdvOBInit->OptionType = 0;
-  
+
 #if defined(FLASH_OPTR_WPRMOD)
-      
+
   pAdvOBInit->OptionType |= OPTIONBYTE_PCROP;
 
 
@@ -497,14 +497,14 @@ void HAL_FLASHEx_AdvOBGetConfig(FLASH_AdvOBProgramInitTypeDef *pAdvOBInit)
   /* Get PCROP protected sector */
   pAdvOBInit->PCROPSector = FLASH->WRPR;
 
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
   /* Get PCROP protected sector */
   pAdvOBInit->PCROPSector2 = FLASH->WRPR2;
 #endif
 #endif /* FLASH_OPTR_WPRMOD */
 
 #if defined(FLASH_OPTR_BFB2)
-      
+
   pAdvOBInit->OptionType |= OPTIONBYTE_BOOTCONFIG;
 
   /* Get Boot config OB */
@@ -519,7 +519,7 @@ void HAL_FLASHEx_AdvOBGetConfig(FLASH_AdvOBProgramInitTypeDef *pAdvOBInit)
 
 /**
   * @brief  Select the Protection Mode (WPRMOD).
-  * @note   Once WPRMOD bit is active, unprotection of a protected sector is not possible 
+  * @note   Once WPRMOD bit is active, unprotection of a protected sector is not possible
   * @note   Read a protected sector will set RDERR Flag and write a protected sector will set WRPERR Flag
   * @retval HAL status
   */
@@ -530,38 +530,38 @@ HAL_StatusTypeDef HAL_FLASHEx_OB_SelectPCROP(void)
   uint32_t tmp2 = 0;
   uint8_t optiontmp = 0;
   uint16_t optiontmp2 = 0;
-  
+
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   /* Mask RDP Byte */
-  optiontmp =  (uint8_t)(*(__IO uint8_t *)(OB_BASE)); 
-  
+  optiontmp =  (uint8_t)(*(__IO uint8_t *)(OB_BASE));
+
   /* Update Option Byte */
-  optiontmp2 = (uint16_t)(OB_PCROP_SELECTED | optiontmp); 
-  
+  optiontmp2 = (uint16_t)(OB_PCROP_SELECTED | optiontmp);
+
   /* calculate the option byte to write */
   tmp1 = (uint16_t)(~(optiontmp2 ));
   tmp2 = (uint32_t)(((uint32_t)((uint32_t)(tmp1) << 16U)) | ((uint32_t)optiontmp2));
-  
+
   if(status == HAL_OK)
-  {         
+  {
     /* Clean the error context */
     pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
 
     /* program PCRop */
     OB->RDP = tmp2;
-    
+
     /* Wait for last operation to be completed */
     status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
   }
-  
+
   /* Return the Read protection operation Status */
-  return status;            
+  return status;
 }
 
 /**
   * @brief  Deselect the Protection Mode (WPRMOD).
-  * @note   Once WPRMOD bit is active, unprotection of a protected sector is not possible 
+  * @note   Once WPRMOD bit is active, unprotection of a protected sector is not possible
   * @note   Read a protected sector will set RDERR Flag and write a protected sector will set WRPERR Flag
   * @retval HAL status
   */
@@ -572,33 +572,33 @@ HAL_StatusTypeDef HAL_FLASHEx_OB_DeSelectPCROP(void)
   uint32_t tmp2 = 0;
   uint8_t optiontmp = 0;
   uint16_t optiontmp2 = 0;
-  
+
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   /* Mask RDP Byte */
-  optiontmp =  (uint8_t)(*(__IO uint8_t *)(OB_BASE)); 
-  
+  optiontmp =  (uint8_t)(*(__IO uint8_t *)(OB_BASE));
+
   /* Update Option Byte */
-  optiontmp2 = (uint16_t)(OB_PCROP_DESELECTED | optiontmp); 
-  
+  optiontmp2 = (uint16_t)(OB_PCROP_DESELECTED | optiontmp);
+
   /* calculate the option byte to write */
   tmp1 = (uint16_t)(~(optiontmp2 ));
   tmp2 = (uint32_t)(((uint32_t)((uint32_t)(tmp1) << 16U)) | ((uint32_t)optiontmp2));
-  
+
   if(status == HAL_OK)
-  {         
+  {
     /* Clean the error context */
     pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
 
     /* program PCRop */
     OB->RDP = tmp2;
-    
+
     /* Wait for last operation to be completed */
     status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
   }
-  
+
   /* Return the Read protection operation Status */
-  return status;            
+  return status;
 }
 
 #endif /* FLASH_OPTR_WPRMOD */
@@ -610,11 +610,11 @@ HAL_StatusTypeDef HAL_FLASHEx_OB_DeSelectPCROP(void)
 /** @defgroup FLASHEx_Exported_Functions_Group3 DATA EEPROM Programming functions
  *  @brief   DATA EEPROM Programming functions
  *
-@verbatim   
+@verbatim
  ===============================================================================
-                     ##### DATA EEPROM Programming functions ##### 
- ===============================================================================  
- 
+                     ##### DATA EEPROM Programming functions #####
+ ===============================================================================
+
     [..] Any operation of erase or program should follow these steps:
     (#) Call the @ref HAL_FLASHEx_DATAEEPROM_Unlock() function to enable the data EEPROM access
         and Flash program erase control register access.
@@ -636,7 +636,7 @@ HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_Unlock(void)
   uint32_t primask_bit;
 
   if((FLASH->PECR & FLASH_PECR_PELOCK) != RESET)
-  {  
+  {
     /* Disable interrupts to avoid any interruption during unlock sequence */
     primask_bit = __get_PRIMASK();
     __disable_irq();
@@ -654,7 +654,7 @@ HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_Unlock(void)
     }
   }
 
-  return HAL_OK;  
+  return HAL_OK;
 }
 
 /**
@@ -665,7 +665,7 @@ HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_Lock(void)
 {
   /* Set the PELOCK Bit to lock the data memory and FLASH_PECR register access */
   SET_BIT(FLASH->PECR, FLASH_PECR_PELOCK);
-  
+
   return HAL_OK;
 }
 
@@ -675,20 +675,20 @@ HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_Lock(void)
   * @note   To correctly run this function, the @ref HAL_FLASHEx_DATAEEPROM_Unlock() function
   *         must be called before.
   *         Call the @ref HAL_FLASHEx_DATAEEPROM_Lock() to the data EEPROM access
-  *         and Flash program erase control register access(recommended to protect 
+  *         and Flash program erase control register access(recommended to protect
   *         the DATA_EEPROM against possible unwanted operation).
   * @retval HAL_StatusTypeDef HAL Status
   */
 HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_Erase(uint32_t Address)
 {
   HAL_StatusTypeDef status = HAL_OK;
-  
+
   /* Check the parameters */
   assert_param(IS_FLASH_DATA_ADDRESS(Address));
-  
+
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   if(status == HAL_OK)
   {
     /* Clean the error context */
@@ -699,32 +699,32 @@ HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_Erase(uint32_t Address)
 
     status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
   }
-   
+
   /* Return the erase status */
   return status;
-}  
+}
 
 /**
   * @brief  Program word at a specified address
   * @note   To correctly run this function, the @ref HAL_FLASHEx_DATAEEPROM_Unlock() function
   *         must be called before.
   *         Call the @ref HAL_FLASHEx_DATAEEPROM_Unlock() to he data EEPROM access
-  *         and Flash program erase control register access(recommended to protect 
+  *         and Flash program erase control register access(recommended to protect
   *         the DATA_EEPROM against possible unwanted operation).
-  * @note   The function @ref HAL_FLASHEx_DATAEEPROM_EnableFixedTimeProgram() can be called before 
+  * @note   The function @ref HAL_FLASHEx_DATAEEPROM_EnableFixedTimeProgram() can be called before
   *         this function to configure the Fixed Time Programming.
   * @param  TypeProgram  Indicate the way to program at a specified address.
   *         This parameter can be a value of @ref FLASHEx_Type_Program_Data
   * @param  Address  specifie the address to be programmed.
   * @param  Data     specifie the data to be programmed
-  * 
+  *
   * @retval HAL_StatusTypeDef HAL Status
   */
 
 HAL_StatusTypeDef   HAL_FLASHEx_DATAEEPROM_Program(uint32_t TypeProgram, uint32_t Address, uint32_t Data)
 {
   HAL_StatusTypeDef status = HAL_ERROR;
-  
+
   /* Process Locked */
   __HAL_LOCK(&pFlash);
 
@@ -734,7 +734,7 @@ HAL_StatusTypeDef   HAL_FLASHEx_DATAEEPROM_Program(uint32_t TypeProgram, uint32_
 
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   if(status == HAL_OK)
   {
     /* Clean the error context */
@@ -812,26 +812,26 @@ void HAL_FLASHEx_DATAEEPROM_DisableFixedTimeProgram(void)
   * @brief  Enables or disables the read out protection.
   * @note   To correctly run this function, the @ref HAL_FLASH_OB_Unlock() function
   *         must be called before.
-  * @param  OB_RDP specifies the read protection level. 
+  * @param  OB_RDP specifies the read protection level.
   *   This parameter can be:
   *     @arg @ref OB_RDP_LEVEL_0 No protection
   *     @arg @ref OB_RDP_LEVEL_1 Read protection of the memory
   *     @arg @ref OB_RDP_LEVEL_2 Chip protection
-  * 
+  *
   *  !!!Warning!!! When enabling OB_RDP_LEVEL_2 it's no more possible to go back to level 1 or 0
-  *   
+  *
   * @retval HAL status
   */
 static HAL_StatusTypeDef FLASH_OB_RDPConfig(uint8_t OB_RDP)
 {
   HAL_StatusTypeDef status = HAL_OK;
   uint32_t tmp1 = 0U, tmp2 = 0U, tmp3 = 0U;
-  
+
   /* Check the parameters */
   assert_param(IS_OB_RDP(OB_RDP));
-  
+
   tmp1 = (uint32_t)(OB->RDP & FLASH_OPTR_RDPROT);
-  
+
 #if defined(FLASH_OPTR_WPRMOD)
     /* Mask WPRMOD bit */
     tmp3 = (uint32_t)(OB->RDP & FLASH_OPTR_WPRMOD);
@@ -864,7 +864,7 @@ static HAL_StatusTypeDef FLASH_OB_RDPConfig(uint8_t OB_RDP)
   * @brief  Programs the FLASH brownout reset threshold level Option Byte.
   * @param  OB_BOR Selects the brownout reset threshold level.
   *   This parameter can be one of the following values:
-  *     @arg @ref OB_BOR_OFF BOR is disabled at power down, the reset is asserted when the VDD 
+  *     @arg @ref OB_BOR_OFF BOR is disabled at power down, the reset is asserted when the VDD
   *                      power supply reaches the PDR(Power Down Reset) threshold (1.5V)
   *     @arg @ref OB_BOR_LEVEL1 BOR Reset threshold levels for 1.7V - 1.8V VDD power supply
   *     @arg @ref OB_BOR_LEVEL2 BOR Reset threshold levels for 1.9V - 2.0V VDD power supply
@@ -887,22 +887,22 @@ static HAL_StatusTypeDef FLASH_OB_BORConfig(uint8_t OB_BOR)
   /* Calculate the option byte to write - [0xFF | nUSER | 0x00 | USER]*/
   tmp = (uint32_t)~((OB_BOR | tmp1)) << 16U;
   tmp |= (OB_BOR | tmp1);
-    
+
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   if(status == HAL_OK)
-  {  
+  {
     /* Clean the error context */
     pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
 
-    /* Write the BOR Option Byte */            
+    /* Write the BOR Option Byte */
     OB->USER = tmp;
 
     /* Wait for last operation to be completed */
     status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
   }
-  
+
   /* Return the Option Byte BOR programming Status */
   return status;
 }
@@ -917,7 +917,7 @@ static HAL_StatusTypeDef FLASH_OB_BORConfig(uint8_t OB_BOR)
   */
 static HAL_StatusTypeDef  FLASH_OB_BOOTBit1Config(uint8_t OB_BootBit1)
 {
-  HAL_StatusTypeDef status = HAL_OK; 
+  HAL_StatusTypeDef status = HAL_OK;
   uint32_t tmp = 0, tmp1 = 0, OB_Bits = ((uint32_t) OB_BootBit1) << 15;
 
   /* Check the parameters */
@@ -926,19 +926,19 @@ static HAL_StatusTypeDef  FLASH_OB_BOOTBit1Config(uint8_t OB_BootBit1)
   /* Get the User Option byte register */
   tmp1 = OB->USER & ((~FLASH_OPTR_BOOT1) >> 16U);
 
-  /* Calculate the user option byte to write */ 
+  /* Calculate the user option byte to write */
   tmp = (~(OB_Bits | tmp1)) << 16U;
   tmp |= OB_Bits | tmp1;
-    
+
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   if(status == HAL_OK)
-  {  
+  {
     /* Clean the error context */
     pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
     /* Program OB */
-    OB->USER = tmp; 
+    OB->USER = tmp;
     /* Wait for last operation to be completed */
     status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
   }
@@ -1009,7 +1009,7 @@ static uint32_t FLASH_OB_GetWRP(void)
   return (uint32_t)(FLASH->WRPR);
 }
 
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
 /**
   * @brief  Returns the FLASH Write Protection Option Bytes value.
   * @retval The FLASH Write Protection Option Bytes value.
@@ -1027,7 +1027,7 @@ static uint32_t FLASH_OB_GetWRP2(void)
   * @param  Sector specifies the sectors to be write protected.
   * @param  Sector2 specifies the sectors to be write protected (only stm32l07xxx and stm32l08xxx devices)
   * @param  NewState new state of the specified FLASH Pages Write protection.
-  *   This parameter can be: 
+  *   This parameter can be:
   *        @arg @ref OB_WRPSTATE_ENABLE
   *        @arg @ref OB_WRPSTATE_DISABLE
   * @retval HAL_StatusTypeDef
@@ -1038,7 +1038,7 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
   * @brief  Write Option Byte of the desired pages of the Flash.
   * @param  Sector specifies the sectors to be write protected.
   * @param  NewState new state of the specified FLASH Pages Write protection.
-  *   This parameter can be: 
+  *   This parameter can be:
   *        @arg @ref OB_WRPSTATE_ENABLE
   *        @arg @ref OB_WRPSTATE_DISABLE
   * @retval HAL_StatusTypeDef
@@ -1049,10 +1049,10 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
   HAL_StatusTypeDef status = HAL_OK;
   uint32_t WRP_Data = 0;
   uint32_t OB_WRP = Sector;
-  
+
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
- 
+
   if(status == HAL_OK)
   {
     /* Clean the error context */
@@ -1067,7 +1067,7 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
         {
           WRP_Data = (uint16_t)(((OB_WRP & WRP_MASK_LOW) | OB->WRP01));
           OB->WRP01 = (uint32_t)(~(WRP_Data) << 16U) | (WRP_Data);
-        }             
+        }
         else
         {
           WRP_Data = (uint16_t)(~OB_WRP & (WRP_MASK_LOW & OB->WRP01));
@@ -1075,7 +1075,7 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
         }
       }
     }
-#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)  
+#if defined(STM32L071xx) || defined(STM32L072xx) || defined(STM32L073xx) || defined(STM32L081xx) || defined(STM32L082xx) || defined(STM32L083xx)
     /* Update WRP only if at least 1 selected sector */
     if (OB_WRP != 0x00000000U)
     {
@@ -1083,14 +1083,14 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
       {
         if (NewState != OB_WRPSTATE_DISABLE)
         {
-          WRP_Data = (uint16_t)((((OB_WRP & WRP_MASK_HIGH) >> 16U | OB->WRP23))); 
+          WRP_Data = (uint16_t)((((OB_WRP & WRP_MASK_HIGH) >> 16U | OB->WRP23)));
           OB->WRP23 = (uint32_t)(~(WRP_Data) << 16U) | (WRP_Data);
-        }             
+        }
         else
         {
-          WRP_Data = (uint16_t)((((~OB_WRP & WRP_MASK_HIGH) >> 16U & OB->WRP23))); 
+          WRP_Data = (uint16_t)((((~OB_WRP & WRP_MASK_HIGH) >> 16U & OB->WRP23)));
           OB->WRP23 = (uint32_t)((~WRP_Data) << 16U) | (WRP_Data);
-        } 
+        }
       }
     }
 
@@ -1104,7 +1104,7 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
         {
           WRP_Data = (uint16_t)(((OB_WRP & WRP_MASK_LOW) | OB->WRP45));
           OB->WRP45 =(uint32_t)(~(WRP_Data) << 16U) | (WRP_Data);
-        }             
+        }
         else
         {
           WRP_Data = (uint16_t)(~OB_WRP & (WRP_MASK_LOW & OB->WRP45));
@@ -1118,7 +1118,7 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
 
   /* Return the write protection operation Status */
-  return status;      
+  return status;
 }
 
 /**
@@ -1139,7 +1139,7 @@ static HAL_StatusTypeDef FLASH_OB_ProtectedSectorsConfig(uint32_t Sector, uint32
   */
 static HAL_StatusTypeDef FLASH_OB_UserConfig(uint8_t OB_IWDG, uint8_t OB_STOP, uint8_t OB_STDBY)
 {
-  HAL_StatusTypeDef status = HAL_OK; 
+  HAL_StatusTypeDef status = HAL_OK;
   uint32_t tmp = 0, tmp1 = 0;
 
   /* Check the parameters */
@@ -1150,21 +1150,21 @@ static HAL_StatusTypeDef FLASH_OB_UserConfig(uint8_t OB_IWDG, uint8_t OB_STOP, u
   /* Get the User Option byte register */
   tmp1 = OB->USER & ((~FLASH_OPTR_USER) >> 16U);
 
-  /* Calculate the user option byte to write */ 
+  /* Calculate the user option byte to write */
   tmp = (uint32_t)(((uint32_t)~((uint32_t)((uint32_t)(OB_IWDG) | (uint32_t)(OB_STOP) | (uint32_t)(OB_STDBY) | tmp1))) << 16U);
   tmp |= ((uint32_t)(OB_IWDG) | ((uint32_t)OB_STOP) | (uint32_t)(OB_STDBY) | tmp1);
-  
+
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
-  
+
   if(status == HAL_OK)
-  {  
+  {
     /* Clean the error context */
     pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
 
     /* Write the User Option Byte */
     OB->USER = tmp;
-    
+
     /* Wait for last operation to be completed */
     status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
   }
@@ -1185,7 +1185,7 @@ static HAL_StatusTypeDef FLASH_OB_UserConfig(uint8_t OB_IWDG, uint8_t OB_STOP, u
   */
 static HAL_StatusTypeDef FLASH_OB_BootConfig(uint8_t OB_BOOT)
 {
-  HAL_StatusTypeDef status = HAL_OK; 
+  HAL_StatusTypeDef status = HAL_OK;
   uint32_t tmp = 0U, tmp1 = 0U;
 
   /* Check the parameters */
@@ -1202,13 +1202,13 @@ static HAL_StatusTypeDef FLASH_OB_BootConfig(uint8_t OB_BOOT)
   status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
 
   if(status == HAL_OK)
-  {  
+  {
     /* Clean the error context */
     pFlash.ErrorCode = HAL_FLASH_ERROR_NONE;
 
     /* Write the BOOT Option Byte */
     OB->USER = tmp;
-    
+
     /* Wait for last operation to be completed */
     status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
   }
@@ -1239,7 +1239,7 @@ static HAL_StatusTypeDef FLASH_OB_BootConfig(uint8_t OB_BOOT)
 /**
   * @brief  Erases a specified page in program memory.
   * @param  PageAddress The page address in program memory to be erased.
-  * @note   A Page is erased in the Program memory only if the address to load 
+  * @note   A Page is erased in the Program memory only if the address to load
   *         is the start address of a page (multiple of @ref FLASH_PAGE_SIZE bytes).
   * @retval None
   */
@@ -1257,7 +1257,7 @@ void FLASH_PageErase(uint32_t PageAddress)
   /* Write 00000000h to the first word of the program page to erase */
   *(__IO uint32_t *)(uint32_t)(PageAddress & ~(FLASH_PAGE_SIZE - 1)) = 0x00000000;
 }
-  
+
 /**
   * @}
   */

@@ -1,7 +1,7 @@
 #ifndef __LINUX_SPINLOCK_H__
 #define __LINUX_SPINLOCK_H__
 
-#if defined (__GNUC__)    
+#if defined (__GNUC__)
 typedef struct { } spinlock_t;
 
 #define SPIN_LOCK_UNLOCKED (spinlock_t) { }
@@ -10,7 +10,7 @@ typedef struct { } spinlock_t;
 typedef struct {int no; } spinlock_t;
 
 #define SPIN_LOCK_UNLOCKED (spinlock_t) ( 0)
-#define DEFINE_SPINLOCK(x) spinlock_t x 
+#define DEFINE_SPINLOCK(x) spinlock_t x
 #else
 #error "please use a right C compiler"
 #endif

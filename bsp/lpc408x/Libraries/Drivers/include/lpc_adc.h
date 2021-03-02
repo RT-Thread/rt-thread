@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -263,7 +263,7 @@ typedef enum
 /** @defgroup ADC_Public_Functions ADC Public Functions
  * @{
  */
- 
+
 /* Init/DeInit ADC peripheral ----------------*/
 void ADC_Init(LPC_ADC_TypeDef *ADCx, uint32_t rate);
 void ADC_DeInit(LPC_ADC_TypeDef *ADCx);

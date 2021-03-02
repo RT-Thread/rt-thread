@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -76,11 +76,11 @@
 #define  PHD_AG_EVT_TRANSPORT_APDU_RECEIVED      0x80
 #define  PHD_AG_EVT_TRANSPORT_SENT_COMPLETED     0x81
 
-#define  AG_MAX_STATES						7
-#define  AG_MAX_EVENTS						0x08
+#define  AG_MAX_STATES                        7
+#define  AG_MAX_EVENTS                        0x08
 #define PHD_ASSOC_RETRY_COUNT               3
 
-#define  AG_PHD_STATE_MASK					0x0f
+#define  AG_PHD_STATE_MASK                    0x0f
 
 
 /* Events sent to application layer */
@@ -99,10 +99,10 @@
 #define INVALID_TIMER_VALUE                 0xFF
 
 /* PHD Timeouts */
-#define PHD_ASSOCIATION_TIMEOUT				10000	/* 10 sec Timeout */
-#define PHD_CONFIGURATION_TIMEOUT			10000	/* 10 sec Timeout */
-#define PHD_ASSOC_RELEASE_TIMEOUT			3000	/* 3 sec Timeout */
-#define PHD_DEFAULT_RESPONSE_TIMEOUT		3000	/* 3 sec Timeout */	
+#define PHD_ASSOCIATION_TIMEOUT                10000    /* 10 sec Timeout */
+#define PHD_CONFIGURATION_TIMEOUT            10000    /* 10 sec Timeout */
+#define PHD_ASSOC_RELEASE_TIMEOUT            3000    /* 3 sec Timeout */
+#define PHD_DEFAULT_RESPONSE_TIMEOUT        3000    /* 3 sec Timeout */
 
 /* Request/Response Sizes */
 #define ASSOC_REQ_SIZE                      54
@@ -137,22 +137,22 @@ typedef void (_CODE_PTR_ USB_PHD_SEND_MEASUREMENTS)(uint_8, void*, void*);
 
 typedef struct _phd_cnf_param
 {
-	uint_8_ptr AssociationReq;
-	uint_8_ptr ConfigEvntRpt;
-	uint_32 ConfigEvntRptSize;
-	uint_8_ptr AssociationRelReq;
-	uint_8_ptr AssociationRelRes;
-	uint_8_ptr DimGetAttrRes;
-	uint_32 DimGetAttrResSize;
-	uint_16 ConfigurationVal;
-	USB_PHD_SEND_MEASUREMENTS usb_phd_send_msr;
+    uint_8_ptr AssociationReq;
+    uint_8_ptr ConfigEvntRpt;
+    uint_32 ConfigEvntRptSize;
+    uint_8_ptr AssociationRelReq;
+    uint_8_ptr AssociationRelRes;
+    uint_8_ptr DimGetAttrRes;
+    uint_32 DimGetAttrResSize;
+    uint_16 ConfigurationVal;
+    USB_PHD_SEND_MEASUREMENTS usb_phd_send_msr;
 }PHD_CNF_PARAM, *PHD_CNF_PARAM_PTR;
 
 #if defined(__CWCC__)
-	#pragma align_array_members off
-	#pragma options align=reset
+    #pragma align_array_members off
+    #pragma options align=reset
 #elif defined(__IAR_SYSTEMS_ICC__)
-	#pragma pack()
+    #pragma pack()
 #endif
 
 /*****************************************************************************
@@ -169,7 +169,7 @@ extern void PHD_Connect_to_Manager(uint_8 controller_ID);
 extern void PHD_Disconnect_from_Manager(uint_8 controller_ID);
 extern void PHD_Send_Measurements_to_Manager(uint_8 controller_ID);
 extern void PHD_Send_Abort_to_Manager (
-    uint_8 controller_ID,   
+    uint_8 controller_ID,
     uint_16 abort_reason);
 
 #endif

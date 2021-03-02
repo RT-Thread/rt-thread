@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-31     ZYH          first version
- * 2018-12-10     Zohar_Lee    ‰øÆÂ§çbug
+ * 2018-12-10     Zohar_Lee    –ﬁ∏¥bug
  */
 
 #include <rtthread.h>

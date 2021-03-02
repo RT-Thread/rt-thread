@@ -2,7 +2,7 @@
 *   @brief CRC Driver Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -26,7 +26,7 @@
 /* CRC General Definitions */
 
 /** @def CRCLEVEL_ACTIVE
-*   @brief Alias name for CRC error operation level active 
+*   @brief Alias name for CRC error operation level active
 */
 #define CRCLEVEL_ACTIVE 0x00U
 
@@ -110,22 +110,22 @@
 #define CRC_CH2_UR 0x00000800U
 
 /** @def CRC_CH2_OR
-*   @brief Alias name for channel3 overrun interrupt flag  
+*   @brief Alias name for channel3 overrun interrupt flag
 */
 #define CRC_CH2_OR 0x00000400U
 
 /** @def CRC_CH2_FAIL
-*   @brief Alias name for channel3 crc fail interrupt flag 
+*   @brief Alias name for channel3 crc fail interrupt flag
 */
 #define CRC_CH2_FAIL 0x00000200U
 
 /** @def CRC_CH2_CC
-*   @brief Alias name for channel3 compression complete interrupt flag  
+*   @brief Alias name for channel3 compression complete interrupt flag
 */
 #define CRC_CH2_CC 0x00000100U
 
 /** @def CRC_CH1_TO
-*   @brief Alias name for channel4 time out interrupt flag 
+*   @brief Alias name for channel4 time out interrupt flag
 */
 #define CRC_CH1_TO 0x00000010U
 
@@ -136,26 +136,26 @@
 
 
 /** @def CRC_CH1_OR
-*   @brief Alias name for channel4 overrun interrupt flag  
+*   @brief Alias name for channel4 overrun interrupt flag
 */
 #define CRC_CH1_OR 0x00000004U
 
 /** @def CRC_CH1_FAIL
-*   @brief Alias name for channel4 crc fail interrupt flag  
+*   @brief Alias name for channel4 crc fail interrupt flag
 */
 #define CRC_CH1_FAIL 0x00000002U
 
 /** @def CRC_CH1_CC
-*   @brief Alias name for channel4 compression complete interrupt flag    
+*   @brief Alias name for channel4 compression complete interrupt flag
 */
 #define CRC_CH1_CC 0x00000001U
 
 
 
 /** @struct crcModConfig
-*   @brief CRC mode specific parameters 
+*   @brief CRC mode specific parameters
 *
-*   This type is used to pass crc mode specific parameters 
+*   This type is used to pass crc mode specific parameters
 */
 /** @typedef crcModConfig_t
 *   @brief CRC Data Type Definition
@@ -190,10 +190,10 @@ typedef struct crcConfig
 /* USER CODE BEGIN (1) */
 /* USER CODE END */
 
-/** 
+/**
  *  @defgroup CRC CRC
  *  @brief Cyclic Redundancy Check Controller Module.
- *  
+ *
  *  The CRC controller is a module that is used to perform CRC (Cyclic Redundancy Check) to verify the
  *  integrity of memory system. A signature representing the contents of the memory is obtained when the
  *  contents of the memory are read into CRC controller. The responsibility of CRC controller is to calculate
@@ -201,14 +201,14 @@ typedef struct crcConfig
  *  good signature value. CRC controller supports two channels to perform CRC calculation on multiple
  *  memories in parallel and can be used on any memory system.
  *
- *	Related Files
+ *    Related Files
  *   - reg_crc.h
  *   - crc.h
  *   - crc.c
  *  @addtogroup CRC
  *  @{
  */
- 
+
 /* CRC Interface Functions */
 void crcInit(void);
 void crcSendPowerDown(crcBASE_t *crc);
@@ -227,7 +227,7 @@ void crcDisableNotification(crcBASE_t *crc, uint32 flags);
 *   @param[in] flags - copy of error interrupt flags
 *
 * This is a callback that is provided by the application and is called upon
-* an interrupt.  The parameter passed to the callback is a copy of the 
+* an interrupt.  The parameter passed to the callback is a copy of the
 * interrupt flag register.
 */
 void crcNotification(crcBASE_t *crc, uint32 flags);

@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version V1.0.0
 * @date    28/7/2017
-* @brief   This file contains all the functions prototypes for the UART 
+* @brief   This file contains all the functions prototypes for the UART
 *          firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_UART_H
@@ -32,15 +32,15 @@
 
 /** @addtogroup UART
 * @{
-*/ 
+*/
 
 /** @defgroup UART_Exported_Types
 * @{
-*/ 
+*/
 
-/** 
-* @brief  UART Init Structure definition  
-*/ 
+/**
+* @brief  UART Init Structure definition
+*/
 
 typedef struct
 {
@@ -49,17 +49,17 @@ typedef struct
   uint16_t UART_StopBits;
   uint16_t UART_Parity;
   uint16_t UART_Mode;
-  uint16_t UART_HardwareFlowControl; 
+  uint16_t UART_HardwareFlowControl;
 } UART_InitTypeDef;
 
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup UART_Exported_Constants
 * @{
-*/ 
+*/
 
 #define IS_UART_ALL_PERIPH(PERIPH) (((*(uint32_t*)&(PERIPH)) == UART1_BASE) || \
 ((*(uint32_t*)&(PERIPH)) == UART2_BASE) || \
@@ -68,9 +68,9 @@ typedef struct
 ((*(uint32_t*)&(PERIPH)) == UART2_BASE) || \
   ((*(uint32_t*)&(PERIPH)) == UART3_BASE))
 
-/** @defgroup UART_Word_Length 
+/** @defgroup UART_Word_Length
 * @{
-*/ 
+*/
 
 #define UART_WordLength_5b                  ((uint16_t)0x0000)
 #define UART_WordLength_6b                  ((uint16_t)0x0010)
@@ -84,39 +84,39 @@ typedef struct
     ((LENGTH) == UART_WordLength_8b))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup UART_Stop_Bits 
+/** @defgroup UART_Stop_Bits
 * @{
-*/ 
+*/
 
 #define UART_StopBits_1                     ((uint16_t)0x0000)
 #define UART_StopBits_2                     ((uint16_t)0x0004)
 
 #define IS_UART_STOPBITS(STOPBITS) (((STOPBITS) == UART_StopBits_1) || \
-((STOPBITS) == UART_StopBits_2)) 
+((STOPBITS) == UART_StopBits_2))
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup UART_Parity 
+/** @defgroup UART_Parity
 * @{
-*/ 
+*/
 
 #define UART_Parity_No                      ((uint16_t)0x0000)
 #define UART_Parity_Even                    ((uint16_t)0x0003)
-#define UART_Parity_Odd                     ((uint16_t)0x0001) 
+#define UART_Parity_Odd                     ((uint16_t)0x0001)
 #define IS_UART_PARITY(PARITY) (((PARITY) == UART_Parity_No) || \
 ((PARITY) == UART_Parity_Even) || \
   ((PARITY) == UART_Parity_Odd))
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup UART_Mode 
+/** @defgroup UART_Mode
 * @{
-*/ 
+*/
 
 #define UART_Mode_Rx                        ((uint16_t)0x0008)
 #define UART_Mode_Tx                        ((uint16_t)0x0010)
@@ -126,11 +126,11 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup UART_Hardware_Flow_Control 
+/** @defgroup UART_Hardware_Flow_Control
 * @{
-*/ 
+*/
 #define UART_HardwareFlowControl_None       ((uint16_t)0x0000)
 
 #define IS_UART_HARDWARE_FLOW_CONTROL(CONTROL)\
@@ -139,7 +139,7 @@ typedef struct
     ((CONTROL) == UART_HardwareFlowControl_CTS) || \
       ((CONTROL) == UART_HardwareFlowControl_RTS_CTS))
 
-/** @defgroup UART_Interrupt_definition 
+/** @defgroup UART_Interrupt_definition
 * @{
 */
 
@@ -165,7 +165,7 @@ typedef struct
 * @}
 */
 
-/** @defgroup UART_DMA_Requests 
+/** @defgroup UART_DMA_Requests
 * @{
 */
 #define UART_DMAReq_EN                      ((uint16_t)0x0002)
@@ -174,10 +174,10 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
 
-/** @defgroup UART_Flags 
+/** @defgroup UART_Flags
 * @{
 */
 
@@ -200,19 +200,19 @@ typedef struct
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup UART_Exported_Macros
 * @{
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /** @defgroup UART_Exported_Functions
 * @{
@@ -234,14 +234,14 @@ void UART_ClearITPendingBit(UART_TypeDef* UARTx, uint16_t UART_IT);
 #endif /* __HAL_UART_H */
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /**
 * @}
-*/ 
+*/
 
 /*-------------------------(C) COPYRIGHT 2017 MindMotion ----------------------*/

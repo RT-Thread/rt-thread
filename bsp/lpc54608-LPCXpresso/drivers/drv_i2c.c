@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-08-08     Yang        the first version
  */
- 
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"

@@ -396,7 +396,7 @@ typedef struct _enet_data_error_stats
  *    Receive buffers should be continuous with the total size equal to "rxBdNumber * rxBuffSizeAlign".
  *    Transmit buffers should be continuous with the total size equal to "txBdNumber * txBuffSizeAlign".
  *    when the data buffers are in cacheable region when cache is enabled, all those size should be
- *    aligned to the maximum value of "ENET_BUFF_ALIGNMENT" and the cache line size. 
+ *    aligned to the maximum value of "ENET_BUFF_ALIGNMENT" and the cache line size.
  */
 typedef struct _enet_buffer_config
 {
@@ -1149,20 +1149,20 @@ static inline void ENET_Ptp1588SetChannelMode(ENET_Type *base,
  *
  * For the input "mode" in ENET_Ptp1588SetChannelMode, the kENET_PtpChannelPulseLowonCompare
  * kENET_PtpChannelPulseHighonCompare only support the pulse width for one 1588 clock.
- * this function is extended for control the pulse width from 1 to 32 1588 clock cycles. 
- * so call this function if you need to set the timer channel mode for 
+ * this function is extended for control the pulse width from 1 to 32 1588 clock cycles.
+ * so call this function if you need to set the timer channel mode for
  * kENET_PtpChannelPulseLowonCompare or kENET_PtpChannelPulseHighonCompare
  * with pulse width more than one 1588 clock,
  *
  * @param base  ENET peripheral base address.
  * @param channel The ENET PTP timer channel number.
- * @param isOutputLow  True --- timer channel is configured for output compare 
+ * @param isOutputLow  True --- timer channel is configured for output compare
  *                              pulse output low.
  *                     false --- timer channel is configured for output compare
  *                              pulse output high.
  * @param pulseWidth  The pulse width control value, range from 0 ~ 31.
  *                     0  --- pulse width is one 1588 clock cycle.
- *                     31 --- pulse width is thirty two 1588 clock cycles.      
+ *                     31 --- pulse width is thirty two 1588 clock cycles.
  * @param intEnable Enables or disables the interrupt.
  */
 static inline void ENET_Ptp1588SetChannelOutputPulseWidth(ENET_Type *base,
@@ -1174,7 +1174,7 @@ static inline void ENET_Ptp1588SetChannelOutputPulseWidth(ENET_Type *base,
     uint32_t tcrReg;
 
     tcrReg = ENET_TCSR_TIE(intEnable) | ENET_TCSR_TPWC(pulseWidth);
-    
+
     if (isOutputLow)
     {
         tcrReg |= ENET_TCSR_TMODE(kENET_PtpChannelPulseLowonCompare);

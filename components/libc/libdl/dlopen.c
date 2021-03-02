@@ -43,12 +43,12 @@ void* dlopen(const char *filename, int flags)
     /* find in module list */
     module = dlmodule_find(fullpath);
 
-    if(module != RT_NULL) 
+    if(module != RT_NULL)
     {
         rt_exit_critical();
         module->nref++;
     }
-    else 
+    else
     {
         rt_exit_critical();
         module = dlmodule_load(fullpath);

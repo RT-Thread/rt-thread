@@ -41,12 +41,12 @@
 #include "ccm_pll.h"
 //#include "hardware.h"
 //#include "soc_memory_map.h"
-#define HW_ANADIG_REG_CORE		(ANATOP_IPS_BASE_ADDR + 0x140)
+#define HW_ANADIG_REG_CORE        (ANATOP_IPS_BASE_ADDR + 0x140)
 #define HW_ANADIG_PLL_SYS_RW  (ANATOP_IPS_BASE_ADDR + 0x000)
-#define HW_ANADIG_REG_CORE_V_CORE_VALUE_mv(x)	((((x)-700)/25) << 0)
-#define HW_ANADIG_REG_CORE_V_SOC_VALUE_mv(x)	((((x)-700)/25) << 18)
-#define HW_ANADIG_REG_CORE_V_CORE_MSK		0x1F
-#define HW_ANADIG_REG_CORE_V_SOC_MSK		(0x1F << 18)
+#define HW_ANADIG_REG_CORE_V_CORE_VALUE_mv(x)    ((((x)-700)/25) << 0)
+#define HW_ANADIG_REG_CORE_V_SOC_VALUE_mv(x)    ((((x)-700)/25) << 18)
+#define HW_ANADIG_REG_CORE_V_CORE_MSK        0x1F
+#define HW_ANADIG_REG_CORE_V_SOC_MSK        (0x1F << 18)
 
 uint32_t g_arm_clk = 528000000;
 
@@ -76,50 +76,50 @@ void set_soc_core_voltage(unsigned int v_core_mv, unsigned int v_soc_mv)
 
 void setup_clk(void)
 {
-		uint32_t div_select;
-		uint32_t temp;	
-		uint32_t arm_clk = g_arm_clk/1000000;
-	  
-		switch(arm_clk)
-		{
-			case 400:
-				div_select = 33;
-				set_soc_core_voltage(1150, 1175);
-				return;
-			case 528:
-				div_select = 44;
-				set_soc_core_voltage(1250, 1250);
-				break;
-			case 756:
-				div_select = 63;
-    		set_soc_core_voltage(1250, 1250);
-    		printf("ARM Clock set to 756MHz\r\n");
-    		break;
-			default:
-				return;
-    }      	    			   	    			
-    	
+        uint32_t div_select;
+        uint32_t temp;
+        uint32_t arm_clk = g_arm_clk/1000000;
+
+        switch(arm_clk)
+        {
+            case 400:
+                div_select = 33;
+                set_soc_core_voltage(1150, 1175);
+                return;
+            case 528:
+                div_select = 44;
+                set_soc_core_voltage(1250, 1250);
+                break;
+            case 756:
+                div_select = 63;
+            set_soc_core_voltage(1250, 1250);
+            printf("ARM Clock set to 756MHz\r\n");
+            break;
+            default:
+                return;
+    }
+
     // first, make sure ARM_PODF is clear
     HW_CCM_CACRR_WR(0);
     // write the div_select value into HW_ANADIG_PLL_SYS_RW
     // this will re-program the PLL to the new freq
 
     temp = readl(HW_ANADIG_PLL_SYS_RW);
-    temp |= 0x10000;// set BYBASS 
+    temp |= 0x10000;// set BYBASS
     writel(temp, HW_ANADIG_PLL_SYS_RW);
 
     temp = readl(HW_ANADIG_PLL_SYS_RW);
     temp &= ~(0x0000007F);
-    temp |= div_select;  // Update div 
+    temp |= div_select;  // Update div
     writel(temp, HW_ANADIG_PLL_SYS_RW);
 
-		/* Wait for PLL to lock */
-		while(!(readl(HW_ANADIG_PLL_SYS_RW) & 0x80000000));
+        /* Wait for PLL to lock */
+        while(!(readl(HW_ANADIG_PLL_SYS_RW) & 0x80000000));
 
-		/*disable BYPASS*/
+        /*disable BYPASS*/
     temp = readl(HW_ANADIG_PLL_SYS_RW);
-		temp &= ~0x10000;
-    writel(temp, HW_ANADIG_PLL_SYS_RW);		
+        temp &= ~0x10000;
+    writel(temp, HW_ANADIG_PLL_SYS_RW);
 }
 
 void ccm_init(void)
@@ -138,11 +138,11 @@ void ccm_init(void)
      * of PLL2 is the main output at 528MHz.
      * => by default, ahb_podf divides by 4 => AHB_CLK@132MHz.
      * => by default, ipg_podf divides by 2 => IPG_CLK@66MHz.
-     */    
+     */
     HW_CCM_CBCDR.U = BF_CCM_CBCDR_AHB_PODF(3)
         | BF_CCM_CBCDR_AXI_PODF(1)
         | BF_CCM_CBCDR_IPG_PODF(1);
-    
+
     setup_clk();
 
     /* Power up 480MHz PLL */
@@ -150,7 +150,7 @@ void ccm_init(void)
 
     /* Enable 480MHz PLL */
     reg32_write_mask(HW_CCM_ANALOG_PLL_USB1_ADDR, 0x00002000, 0x00002000);
-    
+
     reg32_write_mask(HW_CCM_CSCDR1_ADDR, 0x00000000, 0x0000003F);
 }
 
@@ -200,10 +200,10 @@ uint32_t get_peri_clock(peri_clocks_t clock)
         case UART2_MODULE_CLK:
         case UART3_MODULE_CLK:
         case UART4_MODULE_CLK:
-       	case UART5_MODULE_CLK:
-     		case UART6_MODULE_CLK:
-   			case UART7_MODULE_CLK:
-   			case UART8_MODULE_CLK:   				
+           case UART5_MODULE_CLK:
+             case UART6_MODULE_CLK:
+               case UART7_MODULE_CLK:
+               case UART8_MODULE_CLK:
             // UART source clock is a fixed PLL3 / 6
             ret_val = PLL3_OUTPUT[0] / 6 / (HW_CCM_CSCDR1.B.UART_CLK_PODF + 1);
             break;
@@ -217,8 +217,8 @@ uint32_t get_peri_clock(peri_clocks_t clock)
             break;
         case CAN_CLK:
             // For i.mx6dq/sdl CAN source clock is a fixed PLL3 / 8
-        	ret_val = PLL3_OUTPUT[0] / 8 / (HW_CCM_CSCMR2.B.CAN_CLK_PODF + 1);
-        	break;
+            ret_val = PLL3_OUTPUT[0] / 8 / (HW_CCM_CSCMR2.B.CAN_CLK_PODF + 1);
+            break;
         default:
             break;
     }
@@ -248,31 +248,31 @@ void clock_gating_config(uint32_t base_address, uint32_t gating_mode)
         case REGS_UART1_BASE:
             ccm_ccgrx = HW_CCM_CCGR5_ADDR;
             cgx_offset = CG(12);
-            break;         	
+            break;
         case REGS_UART2_BASE:
             ccm_ccgrx = HW_CCM_CCGR0_ADDR;
             cgx_offset = CG(14);
-            break;        	
+            break;
         case REGS_UART3_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(5);
-            break;           	
+            break;
         case REGS_UART4_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(12);
-            break;         	
+            break;
         case REGS_UART5_BASE:
             ccm_ccgrx = HW_CCM_CCGR3_ADDR;
             cgx_offset = CG(1);
-            break;         	
+            break;
         case REGS_UART6_BASE:
             ccm_ccgrx = HW_CCM_CCGR3_ADDR;
             cgx_offset = CG(3);
-            break;          	
+            break;
         case REGS_UART7_BASE:
             ccm_ccgrx = HW_CCM_CCGR5_ADDR;
             cgx_offset = CG(13);
-            break;          	
+            break;
         case REGS_UART8_BASE:
             ccm_ccgrx = HW_CCM_CCGR6_ADDR;
             cgx_offset = CG(7);
@@ -297,7 +297,7 @@ void clock_gating_config(uint32_t base_address, uint32_t gating_mode)
         case REGS_GPT2_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(10)|CG(11);
-            break;            
+            break;
         case REGS_I2C1_BASE:
             ccm_ccgrx = HW_CCM_CCGR2_ADDR;
             cgx_offset = CG(3);
@@ -313,24 +313,24 @@ void clock_gating_config(uint32_t base_address, uint32_t gating_mode)
         case REGS_ECSPI1_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(0);
-            break;        
+            break;
         case REGS_ECSPI2_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(1);
-            break;        
+            break;
         case REGS_ECSPI3_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(2);
-            break;        
+            break;
         case REGS_ECSPI4_BASE:
             ccm_ccgrx = HW_CCM_CCGR1_ADDR;
             cgx_offset = CG(3);
-            break;        
+            break;
         default:
             break;
     }
 
-    // apply changes only if a valid address was found 
+    // apply changes only if a valid address was found
     if (ccm_ccgrx != 0)
     {
         ccm_ccgr_config(ccm_ccgrx, cgx_offset, gating_mode);

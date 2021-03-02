@@ -6,16 +6,16 @@
  *
  ******************************************************************************
  *
- * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR 
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  
- * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+ * THIS SOFTWARE IS PROVIDED BY FREESCALE "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL FREESCALE OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  **************************************************************************//*!
@@ -203,12 +203,12 @@ void USB_Service_Hid (
     {
         uint_8 index_num = 0;
         uint_8 count = 0,ep_count = 0;
-        USB_ENDPOINTS *ep_desc_data;  
-        
+        USB_ENDPOINTS *ep_desc_data;
+
 #ifdef COMPOSITE_DEV
         DEV_ARCHITECTURE_STRUCT_PTR dev_arc_ptr;
-        CLASS_ARC_STRUCT_PTR dev_class_ptr;   
-        dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);    
+        CLASS_ARC_STRUCT_PTR dev_class_ptr;
+        dev_arc_ptr = (DEV_ARCHITECTURE_STRUCT *)USB_Desc_Get_Class_Architecture(controller_ID);
         for(count = 0; count < dev_arc_ptr->cl_count; count++)
         {
             dev_class_ptr = (CLASS_ARC_STRUCT_PTR)dev_arc_ptr->value[count];
@@ -219,21 +219,21 @@ void USB_Service_Hid (
             index_num +=dev_class_ptr->value[0];
         }
         /* get the endpoints from the descriptor module */
-        ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID); 
+        ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID);
 #else
         /* get the endpoints from the descriptor module */
-        ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID); 
-                    		    
-		ep_count = ep_desc_data->count; 
+        ep_desc_data = (USB_ENDPOINTS *)USB_Desc_Get_Endpoints(controller_ID);
+
+        ep_count = ep_desc_data->count;
 #endif
-		/* deinitialize all endpoints in case they were initialized */
-		for(count=index_num;count<ep_count+index_num;count++) 
-		{   
-			USB_EP_STRUCT_PTR ep_struct_ptr= 
-				(USB_EP_STRUCT_PTR) (&ep_desc_data->ep[count]);
-			(void)_usb_device_deinit_endpoint(&controller_ID,
-				ep_struct_ptr->ep_num, ep_struct_ptr->direction);  
-		}
+        /* deinitialize all endpoints in case they were initialized */
+        for(count=index_num;count<ep_count+index_num;count++)
+        {
+            USB_EP_STRUCT_PTR ep_struct_ptr=
+                (USB_EP_STRUCT_PTR) (&ep_desc_data->ep[count]);
+            (void)_usb_device_deinit_endpoint(&controller_ID,
+                ep_struct_ptr->ep_num, ep_struct_ptr->direction);
+        }
 
         /* intialize all non control endpoints */
         for(count=index_num;count<ep_count+index_num;count++)
@@ -242,8 +242,8 @@ void USB_Service_Hid (
                 (USB_EP_STRUCT_PTR)&ep_desc_data->ep[count];
 
             (void)_usb_device_init_endpoint(&controller_ID, ep_struct->ep_num,
-            		ep_struct->size, ep_struct->direction, ep_struct->type,
-            		TRUE);
+                    ep_struct->size, ep_struct->direction, ep_struct->type,
+                    TRUE);
 
             /* register callback service for the endpoint */
             (void)_usb_device_register_service(controller_ID,
@@ -299,9 +299,9 @@ void USB_Service_Hid (
  * application
  *****************************************************************************/
 #ifndef COMPOSITE_DEV
-static uint_8 USB_Other_Requests 
+static uint_8 USB_Other_Requests
 #else
-uint_8 USB_HID_Other_Requests 
+uint_8 USB_HID_Other_Requests
 #endif
 (
     uint_8 controller_ID,               /* [IN] Controller ID */
@@ -375,11 +375,11 @@ uint_8 USB_HID_Other_Requests
 
         if(g_param_callback != NULL)
         {
-            /* 
+            /*
                handle callback if the application has supplied it
-               set the size of the transfer from the setup packet 
+               set the size of the transfer from the setup packet
             */
-            *size = (USB_PACKET_SIZE)setup_packet->length; 
+            *size = (USB_PACKET_SIZE)setup_packet->length;
 
             /* notify the application of the class request.
                give control to the application */
@@ -436,7 +436,7 @@ uint_8 USB_Class_HID_Init (
     uint_8 index,status = USB_OK;
     USB_ENDPOINTS *ep_desc_data = (USB_ENDPOINTS *)
         USB_Desc_Get_Endpoints(controller_ID);
-    
+
 #ifndef COMPOSITE_DEV
     /* Initialize the device layer*/
     status = _usb_device_init(controller_ID, NULL,
@@ -492,32 +492,32 @@ uint_8 USB_Class_HID_Init (
  ******************************************************************************
  *This function de-initializes the HID Class layer
  *****************************************************************************/
-uint_8 USB_Class_HID_DeInit 
+uint_8 USB_Class_HID_DeInit
 (
     uint_8 controller_ID              /* [IN] Controller ID */
-) 
+)
 {
     uint_8 status = USB_OK;
-#ifdef COMPOSITE_DEV 
+#ifdef COMPOSITE_DEV
     UNUSED(controller_ID)
-#endif  
+#endif
     /* free the HID class callback pointer */
     g_hid_class_callback = NULL;
-    
+
     /* free the vendor request callback pointer */
     g_vendor_req_callback = NULL;
-    
+
     /* free the callback to ask application for class specific params*/
     g_param_callback = NULL;
-    
+
 #ifndef COMPOSITE_DEV
     /* Call common class deinit function */
     status = USB_Class_DeInit(controller_ID);
-    
+
     if(status == USB_OK)
     /* Call device deinit function */
-    	status = _usb_device_deinit();
-#endif	
+        status = _usb_device_deinit();
+#endif
     return status;
 }
 

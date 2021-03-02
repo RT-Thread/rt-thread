@@ -101,12 +101,12 @@ static inline bool is_dig_reg(pmu_regulators_t reg)
 void print_rails(void)
 {
     pmu_regulators_t reg;
-    
+
     for (reg = kPMURegulator_1p1; reg <= kPMURegulator_SoC; ++reg)
     {
         uint32_t mV;
         CHECK_GET_( pmu_get_property(reg, kPMUProperty_OutputMillivolts, &mV) );
-        
+
         printf("%s = %lu mV\n", kRegulatorNames[reg], mV);
     }
 }
@@ -115,43 +115,43 @@ void print_reg_info(pmu_regulators_t reg)
 {
     uint32_t mV;
     uint32_t flag;
-    
+
     printf("%s state:\n", kRegulatorNames[reg]);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_OutputMillivolts, &mV) );
     printf("  output = %lu mV\n", mV);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_MinOutputMillivolts, &mV) );
     printf("  min output = %lu mV\n", mV);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_MaxOutputMillivolts, &mV) );
     printf("  max output = %lu mV\n", mV);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_BrownoutMillivolts, &mV) );
     printf("  brownout level = %lu mV\n", mV);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_MinBrownoutMillivolts, &mV) );
     printf("  min brownout level = %lu mV\n", mV);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_MaxBrownoutMillivolts, &mV) );
     printf("  max brownout level = %lu mV\n", mV);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_IsEnabled, &flag) );
     printf("  enabled = %s\n", kYesNoNames[flag]);
-    
+
     if (is_dig_reg(reg))
     {
         CHECK_GET_( pmu_get_property(reg, kPMUProperty_IsBypassed, &flag) );
         printf("  bypassed = %s\n", kYesNoNames[flag]);
-    
+
         uint32_t i;
         CHECK_GET_( pmu_get_property(reg, kPMUProperty_RampRate, &i) );
         printf("  ramp rate = %s\n", kRampRateNames[i]);
     }
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_BrownoutDetectIsEnabled, &flag) );
     printf("  brownout enabled = %s\n", kYesNoNames[flag]);
-    
+
     if (is_ana_reg(reg))
     {
         CHECK_GET_( pmu_get_property(reg, kPMUProperty_CurrentLimitIsEnabled, &flag) );
@@ -163,17 +163,17 @@ void print_reg_info(pmu_regulators_t reg)
             printf("  pulldown enabled = %s\n", kYesNoNames[flag]);
         }
     }
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_IsOK, &flag) );
     printf("  regulator ok = %s\n", kYesNoNames[flag]);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_IsInBrownout, &flag) );
     printf("  in brownout = %s\n", kYesNoNames[flag]);
-    
+
     pmu_bo_handler_t handler;
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_BrownoutHandler, &handler) );
     printf("  brownout handler = 0x%08x\n", handler);
-    
+
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_SafetyOverrideIsEnabled, &flag) );
     printf("  safety override enable = %s\n", kYesNoNames[flag]);
 }
@@ -191,7 +191,7 @@ Choose a regulator:\n\
     x - Return to main menu\n\
 \n\
 > ");
-    
+
     // Wait for the user to type a valid character.
     char c;
     while (true)
@@ -202,15 +202,15 @@ Choose a regulator:\n\
             break;
         }
     }
-    
+
     // Echo the typed char.
     printf("%c\n\n", c);
-    
+
     if (c == 'x')
     {
         return false;
     }
-    
+
     *reg = (pmu_regulators_t)(c - '1');
     return true;
 }
@@ -222,19 +222,19 @@ void set_regulator_voltage(void)
     {
         return;
     }
-    
+
     uint32_t mV;
     CHECK_GET_( pmu_get_property(reg, kPMUProperty_OutputMillivolts, &mV) );
-    
+
     printf("Current output: %ld mV\n\n", mV);
     printf("Enter new voltage in millivolts (0 to abort):\n");
     mV = read_int();
-    
+
     if (mV == 0)
     {
         return;
     }
-    
+
     int err = pmu_set_property(reg, kPMUProperty_OutputMillivolts, &mV);
     if (err != kPMUSuccess)
     {
@@ -245,10 +245,10 @@ void set_regulator_voltage(void)
 void pmu_test(void)
 {
     printf("\n--- PMU test ---\n\n");
-    
+
     // Init the PMU driver.
     pmu_init();
-    
+
     do {
         // Print the prompt.
         printf("\n\
@@ -259,7 +259,7 @@ Choose an option:\n\
     x - Exit test\n\
 \n\
 > ");
-    
+
         // Wait for the user to type a valid character.
         char c;
         while (true)
@@ -270,17 +270,17 @@ Choose an option:\n\
                 break;
             }
         }
-        
+
         // Echo the typed char.
         printf("%c\n\n", c);
-        
+
         pmu_regulators_t reg;
         switch (c)
         {
             case 'x':
                 printf("Test exited.\n");
                 return;
-            
+
             case 'i':
                 if (choose_regulator(&reg))
                 {
@@ -289,7 +289,7 @@ Choose an option:\n\
                     printf("\n");
                 }
                 break;
-            
+
             case 'v':
                 set_regulator_voltage();
                 break;

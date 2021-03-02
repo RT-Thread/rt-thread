@@ -67,14 +67,14 @@ typedef enum
                               (__HANDLE__)->__PPP_DMA_FIELD__ = &(__DMA_HANDLE__); \
                               (__DMA_HANDLE__).Parent = (__HANDLE__);             \
                           } while(0)
-                         
+
 /** @brief Reset the Handle's State field.
   * @param __HANDLE__ specifies the Peripheral Handle.
-  * @note  This macro can be used for the following purpose: 
+  * @note  This macro can be used for the following purpose:
   *          - When the Handle is declared as local variable; before passing it as parameter
-  *            to HAL_PPP_Init() for the first time, it is mandatory to use this macro 
+  *            to HAL_PPP_Init() for the first time, it is mandatory to use this macro
   *            to set to 0 the Handle's "State" field.
-  *            Otherwise, "State" field may have any random value and the first time the function 
+  *            Otherwise, "State" field may have any random value and the first time the function
   *            HAL_PPP_Init() is called, the low level hardware initialization will be missed
   *            (i.e. HAL_PPP_MspInit() will not be executed).
   *          - When there is a need to reconfigure the low level hardware: instead of calling
@@ -185,14 +185,14 @@ typedef enum
 
 #endif
 
-/** 
+/**
   * @brief  __NOINLINE definition
-  */ 
+  */
 #if defined ( __CC_ARM   ) || (defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)) || defined   (  __GNUC__  )
 /* ARM V4/V5 and V6 & GNU Compiler
-   ------------------------------- 
+   -------------------------------
 */
-#define __NOINLINE __attribute__ ( (noinline) )  
+#define __NOINLINE __attribute__ ( (noinline) )
 
 #elif defined ( __ICCARM__ )
 /* ICCARM Compiler

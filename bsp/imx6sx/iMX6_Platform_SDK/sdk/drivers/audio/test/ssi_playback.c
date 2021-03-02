@@ -54,7 +54,7 @@ int32_t ssi_playback(audio_pcm_p pcm_file)
         printf("  skip AUDIO test \n");
         return TEST_BYPASSED;
     }
-    
+
     audio_codec_power_on();
     audio_clock_config();
 

@@ -25,14 +25,14 @@ extern "C" {
 #define EMAC_RMIISPEED_100MBPS                (0x00008000U)
 
 /*
-** Macros which can be used as duplexMode parameter to the API 
+** Macros which can be used as duplexMode parameter to the API
 ** EMACDuplexSet
 */
 #define EMAC_DUPLEX_FULL                      (0x00000001U)
 #define EMAC_DUPLEX_HALF                      (0x00000000U)
 
 /*
-** Macros which can be used as matchFilt  parameters to the API 
+** Macros which can be used as matchFilt  parameters to the API
 ** EMACMACAddrSet
 */
 /* Address not used to match/filter incoming packets */
@@ -59,10 +59,10 @@ extern "C" {
 #define EMAC_INT_CORE2_TX                     (0xAU)
 
 /*****************************************************************************/
-/** 
+/**
  *  @defgroup EMACMDIO EMAC/MDIO
  *  @brief Ethernet Media Access Controller/Management Data Input/Output.
- *  
+ *
  *  The EMAC controls the flow of packet data from the system to the PHY. The MDIO module controls PHY
  *  configuration and status monitoring.
  *
@@ -70,13 +70,13 @@ extern "C" {
  *  allows efficient data transmission and reception. This custom interface is referred to as the EMAC control
  *  module and is considered integral to the EMAC/MDIO peripheral
  *
- *	Related Files
+ *    Related Files
  *   - emac.h
  *   - emac.c
  *   - hw_emac.h
  *   - hw_emac_ctrl.h
  *   - hw_mdio.h
- *   - hw_reg_access.h	
+ *   - hw_reg_access.h
  *   - mdio.h
  *   - mdio.c
  *  @addtogroup EMACMDIO

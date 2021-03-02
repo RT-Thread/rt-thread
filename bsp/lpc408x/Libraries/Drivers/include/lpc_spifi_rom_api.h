@@ -40,8 +40,8 @@ typedef struct {
 /* bits in the flags byte */
 enum {RWPROT=1};
 
-/* overall data structure includes # sectors, length of protection reg, 
-   array of descriptors 
+/* overall data structure includes # sectors, length of protection reg,
+   array of descriptors
 typedef struct {
     uint16_t sectors;
     uint16_t protBytes;
@@ -79,7 +79,7 @@ typedef struct {
 /* instruction classes for wait_busy */
 typedef enum {stat_inst, block_erase, prog_inst, chip_erase} inst_type;
 
-/* bits in options operands (MODE3, RCVCLK, and FULLCLK 
+/* bits in options operands (MODE3, RCVCLK, and FULLCLK
     have the same relationship as in the Control register) */
 #define S_MODE3 1
 #define S_MODE0 0
@@ -118,7 +118,7 @@ typedef enum {stat_inst, block_erase, prog_inst, chip_erase} inst_type;
 #define OPT_SEND_A3        1
 /* used by SST: send 0x38 command to enable quad and allow full command set */
 #define OPT_SEND_38        2
-/* used by Winbond and others: read status reg 2, check it, 
+/* used by Winbond and others: read status reg 2, check it,
     if necessary write it back with Quad Enable set */
 #define OPT_35_OR02_01     4
 /* used by Atmel: read Configuration register, if necessary set Quad Enable */
@@ -130,7 +130,7 @@ typedef enum {stat_inst, block_erase, prog_inst, chip_erase} inst_type;
 #define OPT_81          0x20
 /* set for devices without full device erase command (Numonyx type 0x40) */
 #define OPT_NO_DEV_ERASE 0x40
-/* used by Macronix: status reg 2 includes selection between write-protect 
+/* used by Macronix: status reg 2 includes selection between write-protect
     in status reg and command-based */
 #define OPT_WPSEL       0x80
 /* set when protection data has been read into the SPIFI object */
@@ -157,7 +157,7 @@ typedef enum {stat_inst, block_erase, prog_inst, chip_erase} inst_type;
 #ifndef OMIT_ROM_TABLE
 /* interface to ROM API */
 typedef struct {
-  int32_t (*spifi_init)      (SPIFIobj *obj, uint32_t csHigh, uint32_t options, 
+  int32_t (*spifi_init)      (SPIFIobj *obj, uint32_t csHigh, uint32_t options,
                           uint32_t mhz);
   int32_t (*spifi_program)   (SPIFIobj *obj, char *source, SPIFIopers *opers);
   int32_t (*spifi_erase)     (SPIFIobj *obj, SPIFIopers *opers);
@@ -167,19 +167,19 @@ typedef struct {
 
   /* mid level functions */
   int32_t (*checkAd)         (SPIFIobj *obj, SPIFIopers *opers);
-  int32_t (*setProt)         (SPIFIobj *obj, SPIFIopers *opers, char *change, 
+  int32_t (*setProt)         (SPIFIobj *obj, SPIFIopers *opers, char *change,
                           char *saveProt);
-  int32_t (*check_block)     (SPIFIobj *obj, char *source, SPIFIopers *opers, 
+  int32_t (*check_block)     (SPIFIobj *obj, char *source, SPIFIopers *opers,
                           uint32_t check_program);
   int32_t (*send_erase_cmd)  (SPIFIobj *obj, uint8_t op, uint32_t addr);
   uint32_t (*ck_erase)   (SPIFIobj *obj, uint32_t *addr, uint32_t length);
-  int32_t (*prog_block)      (SPIFIobj *obj, char *source, SPIFIopers *opers, 
+  int32_t (*prog_block)      (SPIFIobj *obj, char *source, SPIFIopers *opers,
                           uint32_t *left_in_page);
   uint32_t (*ck_prog)    (SPIFIobj *obj, char *source, char *dest, uint32_t length);
 
   /* low level functions */
   void(*setSize)         (SPIFIobj *obj, int32_t value);
-  int32_t (*setDev)          (SPIFIobj *obj, uint32_t opts, uint32_t mem_cmd, 
+  int32_t (*setDev)          (SPIFIobj *obj, uint32_t opts, uint32_t mem_cmd,
                           uint32_t prog_cmd);
   uint32_t (*cmd)        (uc op, uc addrLen, uc intLen, uint16_t len);
   uint32_t (*readAd)     (SPIFIobj *obj, uint32_t cmd, uint32_t addr);
@@ -195,7 +195,7 @@ typedef struct {
 #ifdef USE_SPIFI_LIB
 extern SPIFI_RTNS spifi_table;
 #endif  /* USE_SPIFI_LIB */
- 
+
 /* example of using this interface:
 #include "spifi_rom_api.h"
 #define CSHIGH 4

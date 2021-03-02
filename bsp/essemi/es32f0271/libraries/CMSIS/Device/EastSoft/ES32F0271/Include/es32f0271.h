@@ -11,7 +11,7 @@
 /** @addtogroup CMSIS
   * @{
   */
- 
+
 /** @addtogroup ES32F0271_SUB1
   * @{
   */
@@ -23,26 +23,26 @@
 extern "C"{
 #endif
 
-/** 
-  * @brief defines 'read only' „ÄÅ'write only'„ÄÅ 'read / write' permissions.
+/**
+  * @brief defines 'read only' °¢'write only'°¢ 'read / write' permissions.
   */
 #define __I   volatile const  /* defines 'read only' permissions */
 #define __O   volatile        /* defines 'write only' permissions */
 #define __IO  volatile        /* defines 'read / write' permissions */
-  
+
 /** @addtogroup Configuration_section_for_CMSIS
   * @{
   */
-/** 
+/**
   * @brief configuration of the cortex-M3 processor and core peripherals.
-  */  
+  */
 
 #define __MPU_PRESENT           0       /*!< cm0ikmcu does not provide a MPU present or not       */
 #define __NVIC_PRIO_BITS        2       /*!< cm0ikmcu Supports 2 Bits for the Priority Levels     */
 #define __Vendor_SysTickConfig  0       /*!< Set to 1 if different SysTick Config is used         */
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup peripherals_interrupt_number_definition
   * @{
@@ -97,7 +97,7 @@ typedef enum IRQn
 
 /**
   * @}
-  */ 
+  */
 
 /* Includes-------------------------------------------------------------------------------*/
 
@@ -105,7 +105,7 @@ typedef enum IRQn
 #include <stdint.h>
 #include <stdbool.h>
 #include "system_es32f027x.h"
-/** 
+/**
   * @brief these files declare Peripheral register bit_definition.
   */
 #include "reg_rcu.h"
@@ -140,7 +140,7 @@ typedef enum IRQn
 /******************************************************************************/
 /*                            Peripheral memory map                           */
 /******************************************************************************/
- 
+
 /*********************      Base addresses        *************************/
 #define FLASH_BASE        (0x08000000UL)
 #define FLASH_INFO_BASE   (0x1FFFE000UL)  /* EFLASH Info  ( 6K Bytes) - Boot Loader Memory */
@@ -151,7 +151,7 @@ typedef enum IRQn
 #define AHB2_BASE         (0x48000000UL)
 #define CM0IN_BASE        (0xE0000000UL)
 
-/* CortexÁ∞ß-M0 internal Peripherals - CM0IN_BASE: 0xE0000000*/
+/* Cortexª…-M0 internal Peripherals - CM0IN_BASE: 0xE0000000*/
 #define TICK_BASE         (CM0IN_BASE     + 0xE010)
 
 #define SRAM1_BASE        (SRAM_BASE      + 0x0000)   // SRAM1 Memory ( 4K Bytes)
@@ -269,7 +269,7 @@ typedef enum IRQn
 #define SIM_PASS    0xFFFF5555
 /******************************************************************************/
 /*                                          macros                            */
-/******************************************************************************/  
+/******************************************************************************/
 
 /** @addtogroup Public_macros
   * @{
@@ -302,7 +302,7 @@ do                        \
 #define BIT(x)                   ((uint32_t)((uint32_t)0x01U<<(x)))
 
 #define BITS(start, end)         ((0xFFFFFFFFUL << (start)) &\
-                                  (0xFFFFFFFFUL >> (31U - (uint32_t)(end)))) 
+                                  (0xFFFFFFFFUL >> (31U - (uint32_t)(end))))
 
 #define SET_BIT(REG, SETMASK)     ((REG) |= (SETMASK))
 
@@ -320,69 +320,69 @@ do                        \
 
 #define POSITION_VAL(VAL)         (__CLZ(__RBIT(VAL)))
 
-/** 
+/**
   * @}
   */
 
 /******************************************************************************/
 /*                                types                                       */
-/******************************************************************************/  
+/******************************************************************************/
 /** @addtogroup Public_types
   * @{
   */
-typedef enum 
-{  
+typedef enum
+{
   DISABLE = 0,
   ENABLE = !DISABLE
 } TypeFunc,FuncState;
 #define IS_FUNC_STATE(x) (((x) == DISABLE) || ((x) == ENABLE))
 
-typedef enum 
+typedef enum
 {
-  RESET = 0, 
+  RESET = 0,
   SET = !RESET
 } FlagStatus, ITStatus, PinStatus;
 
-typedef enum 
+typedef enum
 {
-  ERROR = 0, 
+  ERROR = 0,
   SUCCESS = !ERROR
 } ErrorStatus;
 
-typedef enum 
+typedef enum
 {
   BIT_RESET = 0x0,
   BIT_SET   = 0x1,
 } BitStatus;
 
-typedef enum 
+typedef enum
 {
   FALSE = 0x0,
   TRUE  = 0x1,
 } TypeBool;
 
-typedef enum 
+typedef enum
 {
   UNLOCK = 0x0,
   LOCK   = 0x1,
 } LockState;
 #define IS_LOCK_STATE(x) (((x) == UNLOCK) || ((x) == LOCK))
 
-/** 
+/**
   * @} Public_types
   */
 
 #ifdef __cplusplus
 }
-#endif  
+#endif
 
 #endif
 
-/** 
+/**
   * @} ES32F0271_SUB
   */
-  
-/** 
+
+/**
   * @} CMSIS
   */
 

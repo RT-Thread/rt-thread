@@ -30,14 +30,14 @@
 /*----------------------------------------------------------------------------
  SigmaTel Inc
  $Archive: /Fatfs/FileSystem/Fat32/Utility/Convert_itoa.c $
- $Revision: 1 $                                       
+ $Revision: 1 $
  $Date: 9/18/03 11:52a $
  Description: Convert_itoa.c
- Notes:	
+ Notes:
 ----------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------
-		File Includes
+        File Includes
 ----------------------------------------------------------------------------*/
 #include <types.h>
 #include "fstypes.h"
@@ -83,10 +83,10 @@ int32_t Convert_itoa(int32_t Number, uint8_t * string)
    FunctionType:   Reentrant
 
    Inputs:         filenameword
-   
+
    Outputs:        filenameword
-      
-   Description:    Changes the case 
+
+   Description:    Changes the case
 ----------------------------------------------------------------------------*/
 int32_t Changecase(int32_t filenameword)
 {
@@ -103,11 +103,11 @@ int32_t Changecase(int32_t filenameword)
    FunctionType:   Reentrant
 
    Inputs:         pointer to filepath
-                   
-   Outputs:        Returns no. of characters in the string.(It considers the 
+
+   Outputs:        Returns no. of characters in the string.(It considers the
                    string as UNICODE.)
-   
-   Description:    Finds the no. of characters in the string i.e. length of the string. 
+
+   Description:    Finds the no. of characters in the string i.e. length of the string.
 <
 ----------------------------------------------------------------------------*/
 int32_t StrlengthW(uint8_t * filepath)
@@ -130,10 +130,10 @@ int32_t StrlengthW(uint8_t * filepath)
    FunctionType:   Reentrant
 
    Inputs:         pointer to filepath
-                   
-   Outputs:        Returns the no. of characters in the string.(It considers the 
+
+   Outputs:        Returns the no. of characters in the string.(It considers the
                    string as DBCS.)
-   
+
    Description:    Finds the no. of characters in the string i.e. length of the string.
 <
 ----------------------------------------------------------------------------*/
@@ -160,9 +160,9 @@ int32_t Strlength(uint8_t * filepath)
                    2) pointer to file_path1
                    3) length
                    4) index
-				   
+
    Outputs:        Returns SUCCESS or an error if function fails.
-      
+
    Description:    This function copies the first string to second string.
 <
 ----------------------------------------------------------------------------*/
@@ -189,11 +189,11 @@ RtStatus_t Strcpy(uint8_t * filepath, uint8_t * file_path1, int32_t length, int3
                    2) pointer to file_path
                    3) length
                    4) index
-				   
+
    Outputs:        Returns SUCCESS or an error if function fails.
 
    Description:    This function copies the first string to second string.
-				   It considers the string as UNICODE.
+                   It considers the string as UNICODE.
 <
 ----------------------------------------------------------------------------*/
 RtStatus_t Strcpyw(uint8_t * filepath, uint8_t * file_path, int32_t length, int32_t index)
@@ -222,11 +222,11 @@ RtStatus_t Strcpyw(uint8_t * filepath, uint8_t * file_path, int32_t length, int3
    FunctionType:   Reentrant
 
    Inputs:         1) pointer to Buffer
-                   2) offset 
-                   
+                   2) offset
+
    Outputs:        Returns char of the given buffer at the given offset.
-   
-   Description:    This	function gets a character from the given string at the 
+
+   Description:    This    function gets a character from the given string at the
                    given offset and updates the offset accordingly.
 <
 ----------------------------------------------------------------------------*/
@@ -244,11 +244,11 @@ int32_t GetChar(uint8_t * Buffer, int32_t * offset)
    FunctionType:   Reentrant
 
    Inputs:         1) pointer to Buffer
-                   2) offset 
-                   
+                   2) offset
+
    Outputs:        Returns char of the given buffer at the given offset.
-   
-   Description:    This	function gets a word from the given Unicode string at the 
+
+   Description:    This    function gets a word from the given Unicode string at the
                    given offset and updates the offset accordingly.
 <
 ----------------------------------------------------------------------------*/
@@ -266,13 +266,13 @@ int32_t GetCharW(uint8_t * Buffer, int32_t * offset)
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to Buffer
-                  2) Offset 
-				  3) Char
-                  
+                  2) Offset
+                  3) Char
+
    Outputs:       Nil
-   
-   Description:   This function puts a character in the given string at given offset 
-                  and updates the offset accordingly. 
+
+   Description:   This function puts a character in the given string at given offset
+                  and updates the offset accordingly.
 ----------------------------------------------------------------------------*/
 void PutChar(uint8_t * Buffer, int32_t * offset, int32_t Char)
 {
@@ -286,13 +286,13 @@ void PutChar(uint8_t * Buffer, int32_t * offset, int32_t Char)
    FunctionType:  Reentrant
 
    Inputs:        1) Pointer to Buffer
-                  2) Offset 
-				  3) Char
-                  
+                  2) Offset
+                  3) Char
+
    Outputs:       Nil
-   
-   Description:   This function puts a word in the given Unicode string at given offset 
-                  and updates the offset accordingly. 
+
+   Description:   This function puts a word in the given Unicode string at given offset
+                  and updates the offset accordingly.
 ----------------------------------------------------------------------------*/
 void PutCharW(uint8_t * Buffer, int32_t * offset, int32_t Char)
 {
@@ -310,10 +310,10 @@ void PutCharW(uint8_t * Buffer, int32_t * offset, int32_t Char)
                    2) current position
 
    Outputs:        Returns current position.
-   
-   Description:    This function copies the string from current position to the 
-                   directory separator or null character in the file path to 
-                   another string called name.Current position is set to next 
+
+   Description:    This function copies the string from current position to the
+                   directory separator or null character in the file path to
+                   another string called name.Current position is set to next
                    directory separator or to end of file path. (It considers the string as UNICODE)
 ----------------------------------------------------------------------------*/
 int32_t GetnameW(uint8_t * filepath, int32_t currentPosition)
@@ -335,13 +335,13 @@ int32_t GetnameW(uint8_t * filepath, int32_t currentPosition)
    FunctionType:   Reentrant
 
    Inputs:         1) pointer to filepath
-				   2) current position
+                   2) current position
 
    Outputs:        Returns current position.
-   
-   Description:    This function copies the string from current position to the 
-                   directory separator or null character in the file path to 
-                   another string called name.Current position is set to next 
+
+   Description:    This function copies the string from current position to the
+                   directory separator or null character in the file path to
+                   another string called name.Current position is set to next
                    directory separator or to end of file path. (It considers the string as DBCS)
 ----------------------------------------------------------------------------*/
 int32_t Getname(uint8_t * filepath, int32_t currentPosition)
@@ -365,10 +365,10 @@ int32_t Getname(uint8_t * filepath, int32_t currentPosition)
                    2) current position
 
    Outputs:        Returns current position.
-   
-   Description:    This function copies the string from current position to the 
-                   directory separator or null character in the file path to 
-                   another string called name.Current position is set to next 
+
+   Description:    This function copies the string from current position to the
+                   directory separator or null character in the file path to
+                   another string called name.Current position is set to next
                    directory separator or to end of file path. (It considers the string as UNICODE)
 ----------------------------------------------------------------------------*/
 int32_t GetDirnameW(uint8_t * filepath, int32_t currentPosition)
@@ -393,8 +393,8 @@ int32_t GetDirnameW(uint8_t * filepath, int32_t currentPosition)
                    3) Index
 
    Outputs:        Returns String length
-   
-   Description:    This function copies the string from last directory separator 
+
+   Description:    This function copies the string from last directory separator
                    to end of file to another string called filename.
 ----------------------------------------------------------------------------*/
 int32_t Extractfilename(uint8_t * filepath, int32_t strlength, int32_t * index)
@@ -418,10 +418,10 @@ int32_t Extractfilename(uint8_t * filepath, int32_t strlength, int32_t * index)
                    2) Pointer to index
 
    Outputs:        Returns string length
-   
-   Description:    This function copies the string from last directory separator 
+
+   Description:    This function copies the string from last directory separator
                    to end of file to another string called filename. It considers
-				   the file name in UNICODE.
+                   the file name in UNICODE.
 <
 ----------------------------------------------------------------------------*/
 int32_t Extractfilenamew(uint8_t * filepath, int32_t * index)
@@ -431,7 +431,7 @@ int32_t Extractfilenamew(uint8_t * filepath, int32_t * index)
 
     strlen = StrlengthW(filepath);
 
-    // StrlenthW returns in terms of number of Wide characters = 2 bytes per character. 
+    // StrlenthW returns in terms of number of Wide characters = 2 bytes per character.
     i = strlen << 1;
 
     while (i > *index) {
@@ -456,8 +456,8 @@ int32_t Extractfilenamew(uint8_t * filepath, int32_t * index)
                    3) Index
 
    Outputs:        Returns String length
-   
-   Description:    This function copies the string from last directory separator 
+
+   Description:    This function copies the string from last directory separator
                    to end of file to another string called filename.
 ----------------------------------------------------------------------------*/
 int32_t Extractdirnamew(uint8_t * filepath, int32_t strlength, int32_t * index)
@@ -479,11 +479,11 @@ int32_t Extractdirnamew(uint8_t * filepath, int32_t strlength, int32_t * index)
 
    Inputs:         1) Pointer to filepath
                    2) Pointer to index
-				   
+
    Outputs:        Returns SUCCESS or an error if function fails.
-      
+
    Description:    This function copies the string from first directory separator(\\)
-                   to the end of string to the same string. It considers the 
+                   to the end of string to the same string. It considers the
                    string as UNICODE.
 <
 ----------------------------------------------------------------------------*/
@@ -513,11 +513,11 @@ int32_t ExtractPathW(uint8_t * filepath, int32_t * index)
 
    Inputs:         1) Pointer to filepath
                    2) Pointer to index
-				   
+
    Outputs:        Returns SUCCESS or an error if function fails.
 
    Description:    This function copies the string from first directory separator(\\)
-                   to the end of string to the same string. It considers the 
+                   to the end of string to the same string. It considers the
                    string as DBCS.
 <
 ----------------------------------------------------------------------------*/
@@ -550,7 +550,7 @@ int32_t ExtractPath(uint8_t * filepath, int32_t * index)
 
    Outputs:       Returns length
 
-   Description:   This function removes all the trailing periods from the given string. 
+   Description:   This function removes all the trailing periods from the given string.
 <
 -----------------------------------------------------------------------------*/
 int32_t DiscardTrailigPeriods(uint8_t * Buffer, int32_t length, int32_t index, int32_t Flag)
@@ -586,7 +586,7 @@ int32_t DiscardTrailigPeriods(uint8_t * Buffer, int32_t length, int32_t index, i
 
    Outputs:       Returns length
 
-   Description:   This function removes all the trailing periods from the given string. 
+   Description:   This function removes all the trailing periods from the given string.
 <                 It considers the string in UNICODE.
 -----------------------------------------------------------------------------*/
 int32_t DiscardTrailigPeriodsw(uint8_t * Buffer, int32_t length, int32_t index)

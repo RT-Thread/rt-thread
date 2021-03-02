@@ -40,12 +40,12 @@
 #include <stdint.h>
 
 /* UART Status Register bits */
-#define UART_RXRDY           (1 << 0)	/* Receive data ready */
-#define UART_RXIDLE          (1 << 1)	/* Receiver Idle */
-#define UART_TXRDY           (1 << 2)	/* Transmitter ready */
-#define UART_TXIDLE          (1 << 3)	/* Transmitter Idle */
-#define UART_RXDERR          (0xF100)	/* overrun err, frame err, parity err, RxNoise err */
-#define UART_TXDERR          (0x0200)	/* underrun err */
+#define UART_RXRDY           (1 << 0)    /* Receive data ready */
+#define UART_RXIDLE          (1 << 1)    /* Receiver Idle */
+#define UART_TXRDY           (1 << 2)    /* Transmitter ready */
+#define UART_TXIDLE          (1 << 3)    /* Transmitter Idle */
+#define UART_RXDERR          (0xF100)    /* overrun err, frame err, parity err, RxNoise err */
+#define UART_TXDERR          (0x0200)    /* underrun err */
 #define UART_START           (0x1000)
 
 /* UART Interrupt register bits */
@@ -88,19 +88,19 @@
  * EXPORTED TYPEDEFS  *
  **********************/
 
-typedef struct {		/* UART registers Structure          */
-	volatile uint32_t CFG;				/*!< Offset: 0x000 Configuration register  */
-	volatile uint32_t CTL;				/*!< Offset: 0x004 Control register */
-	volatile uint32_t STAT;				/*!< Offset: 0x008 Status register */
-	volatile uint32_t INTENSET;			/*!< Offset: 0x00C Interrupt Enable Read and Set register */
-	volatile uint32_t INTENCLR;			/*!< Offset: 0x010 Interrupt Enable Clear register */
-	const volatile uint32_t RXDAT;		/*!< Offset: 0x014 Receiver Data register */
-	const volatile uint32_t RXDATSTAT;	/*!< Offset: 0x018 Rx Data with status */
-	volatile uint32_t TXDAT;			/*!< Offset: 0x01C Transmitter Data Register */
-	volatile uint32_t BRG;				/*!< Offset: 0x020 Baud Rate Generator register */
-	const volatile uint32_t INTSTAT;	/*!< Offset: 0x024 Interrupt Status register */
-	volatile uint32_t OSR;				/*!< Offset: 0x028 Oversampling register */
-	volatile uint32_t ADR;				/*!< Offset: 0x02C Address register (for automatic address matching) */
+typedef struct {        /* UART registers Structure          */
+    volatile uint32_t CFG;                /*!< Offset: 0x000 Configuration register  */
+    volatile uint32_t CTL;                /*!< Offset: 0x004 Control register */
+    volatile uint32_t STAT;                /*!< Offset: 0x008 Status register */
+    volatile uint32_t INTENSET;            /*!< Offset: 0x00C Interrupt Enable Read and Set register */
+    volatile uint32_t INTENCLR;            /*!< Offset: 0x010 Interrupt Enable Clear register */
+    const volatile uint32_t RXDAT;        /*!< Offset: 0x014 Receiver Data register */
+    const volatile uint32_t RXDATSTAT;    /*!< Offset: 0x018 Rx Data with status */
+    volatile uint32_t TXDAT;            /*!< Offset: 0x01C Transmitter Data Register */
+    volatile uint32_t BRG;                /*!< Offset: 0x020 Baud Rate Generator register */
+    const volatile uint32_t INTSTAT;    /*!< Offset: 0x024 Interrupt Status register */
+    volatile uint32_t OSR;                /*!< Offset: 0x028 Oversampling register */
+    volatile uint32_t ADR;                /*!< Offset: 0x02C Address register (for automatic address matching) */
 } UART_REGS_T;
 typedef UART_REGS_T LPC_USART_T;
 

@@ -58,7 +58,7 @@ static uint8_t framebuffer[GFX_MONO_LCD_FRAMEBUFFER_SIZE];
  */
 void gfx_mono_null_init(void)
 {
-	gfx_mono_set_framebuffer(framebuffer);
+    gfx_mono_set_framebuffer(framebuffer);
 }
 
 /** @} */

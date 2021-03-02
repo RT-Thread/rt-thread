@@ -435,7 +435,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /* Private macro -------------------------------------------------------------*/
 /** @defgroup FMC_LL_Private_Macros FMC_LL  Private Macros
   * @{

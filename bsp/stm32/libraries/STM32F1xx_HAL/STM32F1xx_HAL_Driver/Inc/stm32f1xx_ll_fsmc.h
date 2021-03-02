@@ -67,7 +67,7 @@ extern "C" {
 #define IS_FSMC_WAIT_POLARITY(__POLARITY__) (((__POLARITY__) == FSMC_WAIT_SIGNAL_POLARITY_LOW) || \
                                             ((__POLARITY__) == FSMC_WAIT_SIGNAL_POLARITY_HIGH))
 #define IS_FSMC_WRAP_MODE(__MODE__) (((__MODE__) == FSMC_WRAP_MODE_DISABLE) || \
-                                     ((__MODE__) == FSMC_WRAP_MODE_ENABLE))     
+                                     ((__MODE__) == FSMC_WRAP_MODE_ENABLE))
 #define IS_FSMC_WAIT_SIGNAL_ACTIVE(__ACTIVE__) (((__ACTIVE__) == FSMC_WAIT_TIMING_BEFORE_WS) || \
                                                ((__ACTIVE__) == FSMC_WAIT_TIMING_DURING_WS))
 #define IS_FSMC_WRITE_OPERATION(__OPERATION__) (((__OPERATION__) == FSMC_WRITE_OPERATION_DISABLE) || \
@@ -323,9 +323,9 @@ typedef struct
 #endif /* FSMC_BANK3 */
 
 #if defined(FSMC_BANK4)
-/** 
+/**
   * @brief FSMC PCCARD Configuration Structure definition
-  */ 
+  */
 typedef struct
 {
   uint32_t Waitfeature;            /*!< Enables or disables the Wait feature for the PCCARD Memory device.
@@ -422,7 +422,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup FSMC_Wrap_Mode FSMC Wrap Mode 
+/** @defgroup FSMC_Wrap_Mode FSMC Wrap Mode
   * @{
   */
 #define FSMC_WRAP_MODE_DISABLE                   ((uint32_t)0x00000000U)
@@ -625,7 +625,7 @@ typedef struct
 /**
   * @}
   */
-  
+
 /* Private macro -------------------------------------------------------------*/
 /** @defgroup FSMC_LL_Private_Macros FSMC_LL  Private Macros
   * @{
@@ -688,21 +688,21 @@ typedef struct
 
 #if defined(FSMC_BANK4)
 /** @defgroup FSMC_LL_PCCARD_Macros FMC PCCARD Macros
- *  @brief macros to handle PCCARD read/write operations 
+ *  @brief macros to handle PCCARD read/write operations
  *  @{
  */
 /**
   * @brief  Enable the PCCARD device access.
-  * @param  __INSTANCE__ FSMC_PCCARD Instance  
+  * @param  __INSTANCE__ FSMC_PCCARD Instance
   * @retval None
-  */ 
+  */
 #define __FSMC_PCCARD_ENABLE(__INSTANCE__)  ((__INSTANCE__)->PCR4 |= FSMC_PCRx_PBKEN)
 
 /**
   * @brief  Disable the PCCARD device access.
-  * @param  __INSTANCE__ FSMC_PCCARD Instance     
+  * @param  __INSTANCE__ FSMC_PCCARD Instance
   * @retval None
-  */ 
+  */
 #define __FSMC_PCCARD_DISABLE(__INSTANCE__) ((__INSTANCE__)->PCR4 &= ~FSMC_PCRx_PBKEN)
 /**
   * @}
@@ -741,7 +741,7 @@ typedef struct
   * @retval None
   */
 #define __FSMC_NAND_DISABLE_IT(__INSTANCE__, __BANK__, __INTERRUPT__)  (((__BANK__) == FSMC_NAND_BANK2)? ((__INSTANCE__)->SR2 &= ~(__INTERRUPT__)): \
-                                                                                ((__INSTANCE__)->SR3 &= ~(__INTERRUPT__))) 
+                                                                                ((__INSTANCE__)->SR3 &= ~(__INTERRUPT__)))
 
 /**
   * @brief  Get flag status of the NAND device.
@@ -786,50 +786,50 @@ typedef struct
 
 /**
   * @brief  Enable the PCCARD device interrupt.
-  * @param  __INSTANCE__ FSMC_PCCARD instance  
-  * @param  __INTERRUPT__ FSMC_PCCARD interrupt 
+  * @param  __INSTANCE__ FSMC_PCCARD instance
+  * @param  __INTERRUPT__ FSMC_PCCARD interrupt
   *         This parameter can be any combination of the following values:
   *            @arg FSMC_IT_RISING_EDGE: Interrupt rising edge.
   *            @arg FSMC_IT_LEVEL: Interrupt level.
-  *            @arg FSMC_IT_FALLING_EDGE: Interrupt falling edge.       
+  *            @arg FSMC_IT_FALLING_EDGE: Interrupt falling edge.
   * @retval None
-  */ 
+  */
 #define __FSMC_PCCARD_ENABLE_IT(__INSTANCE__, __INTERRUPT__)  ((__INSTANCE__)->SR4 |= (__INTERRUPT__))
 
 /**
   * @brief  Disable the PCCARD device interrupt.
-  * @param  __INSTANCE__ FSMC_PCCARD instance  
-  * @param  __INTERRUPT__ FSMC_PCCARD interrupt 
+  * @param  __INSTANCE__ FSMC_PCCARD instance
+  * @param  __INTERRUPT__ FSMC_PCCARD interrupt
   *         This parameter can be any combination of the following values:
   *            @arg FSMC_IT_RISING_EDGE: Interrupt rising edge.
   *            @arg FSMC_IT_LEVEL: Interrupt level.
-  *            @arg FSMC_IT_FALLING_EDGE: Interrupt falling edge.       
+  *            @arg FSMC_IT_FALLING_EDGE: Interrupt falling edge.
   * @retval None
-  */ 
-#define __FSMC_PCCARD_DISABLE_IT(__INSTANCE__, __INTERRUPT__)  ((__INSTANCE__)->SR4 &= ~(__INTERRUPT__)) 
+  */
+#define __FSMC_PCCARD_DISABLE_IT(__INSTANCE__, __INTERRUPT__)  ((__INSTANCE__)->SR4 &= ~(__INTERRUPT__))
 
 /**
   * @brief  Get flag status of the PCCARD device.
-  * @param  __INSTANCE__ FSMC_PCCARD instance  
+  * @param  __INSTANCE__ FSMC_PCCARD instance
   * @param  __FLAG__ FSMC_PCCARD flag
   *         This parameter can be any combination of the following values:
   *            @arg  FSMC_FLAG_RISING_EDGE: Interrupt rising edge flag.
   *            @arg  FSMC_FLAG_LEVEL: Interrupt level edge flag.
   *            @arg  FSMC_FLAG_FALLING_EDGE: Interrupt falling edge flag.
-  *            @arg  FSMC_FLAG_FEMPT: FIFO empty flag.   
+  *            @arg  FSMC_FLAG_FEMPT: FIFO empty flag.
   * @retval The state of FLAG (SET or RESET).
   */
 #define __FSMC_PCCARD_GET_FLAG(__INSTANCE__, __FLAG__)  (((__INSTANCE__)->SR4 &(__FLAG__)) == (__FLAG__))
 
 /**
   * @brief  Clear flag status of the PCCARD device.
-  * @param  __INSTANCE__ FSMC_PCCARD instance  
+  * @param  __INSTANCE__ FSMC_PCCARD instance
   * @param  __FLAG__ FSMC_PCCARD flag
   *         This parameter can be any combination of the following values:
   *            @arg  FSMC_FLAG_RISING_EDGE: Interrupt rising edge flag.
   *            @arg  FSMC_FLAG_LEVEL: Interrupt level edge flag.
   *            @arg  FSMC_FLAG_FALLING_EDGE: Interrupt falling edge flag.
-  *            @arg  FSMC_FLAG_FEMPT: FIFO empty flag.   
+  *            @arg  FSMC_FLAG_FEMPT: FIFO empty flag.
   * @retval None
   */
 #define __FSMC_PCCARD_CLEAR_FLAG(__INSTANCE__, __FLAG__)  ((__INSTANCE__)->SR4 &= ~(__FLAG__))

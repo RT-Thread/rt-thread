@@ -2,7 +2,7 @@
 *   @brief DMA Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -25,14 +25,14 @@
 #define ADDR_RESERVED       2U
 #define ADDR_OFFSET         3U
 
-#define INTERRUPT_ENABLE	1U
-#define INTERRUPT_DISABLE	0U
+#define INTERRUPT_ENABLE    1U
+#define INTERRUPT_DISABLE    0U
 
 
 /*Bit Masks*/
-#define DMA_GCTRL_BUSBUSY	(1U << 14U)
+#define DMA_GCTRL_BUSBUSY    (1U << 14U)
 /** @enum dmaREQTYPE
-*   @brief DMA TRANSFER Type definitions 
+*   @brief DMA TRANSFER Type definitions
 *
 *   Used to define DMA transfer type
 */
@@ -44,7 +44,7 @@ enum dmaREQTYPE
 
 
 /** @enum dmaCHANNEL
-*   @brief DMA CHANNEL definitions 
+*   @brief DMA CHANNEL definitions
 *
 *   Used to define DMA Channel Number
 */
@@ -86,7 +86,7 @@ enum dmaCHANNEL
 };
 
 /** @enum dmaACCESS
-*   @brief DMA ACESS WIDTH definitions 
+*   @brief DMA ACESS WIDTH definitions
 *
 *   Used to define DMA access width
 */
@@ -106,8 +106,8 @@ typedef enum dmaACCESS
 */
 typedef enum dmaPRIORITY
 {
-	LOWPRIORITY = 0U,
-	HIGHPRIORITY = 1U
+    LOWPRIORITY = 0U,
+    HIGHPRIORITY = 1U
 }dmaPRIORITY_t;
 
 
@@ -118,10 +118,10 @@ typedef enum dmaPRIORITY
 */
 typedef enum dmaREGION
 {
-	DMA_REGION0 = 0U,
-	DMA_REGION1 = 1U,
-	DMA_REGION2 = 2U,
-	DMA_REGION3 = 3U
+    DMA_REGION0 = 0U,
+    DMA_REGION1 = 1U,
+    DMA_REGION2 = 2U,
+    DMA_REGION3 = 3U
 }dmaREGION_t;
 
 
@@ -132,10 +132,10 @@ typedef enum dmaREGION
 */
 typedef enum dmaRegionAccess
 {
-	FULLACCESS = 0U,
-	READONLY   = 1U,
-	WRITEONLY  = 2U,
-	NOACCESS   = 3U
+    FULLACCESS = 0U,
+    READONLY   = 1U,
+    WRITEONLY  = 2U,
+    NOACCESS   = 3U
 }dmaRegionAccess_t;
 
 
@@ -146,10 +146,10 @@ typedef enum dmaRegionAccess
 */
 typedef enum dmaInterrupt
 {
-	FTC = 1U,   /**<  Frame transfer complete Interrupt      */
-	LFS = 2U,   /**<  Last frame transfer started Interrupt  */
-	HBC = 3U,   /**<  First half of block complete Interrupt */
-	BTC = 4U    /**<  Block transfer complete Interrupt      */
+    FTC = 1U,   /**<  Frame transfer complete Interrupt      */
+    LFS = 2U,   /**<  Last frame transfer started Interrupt  */
+    HBC = 3U,   /**<  First half of block complete Interrupt */
+    BTC = 4U    /**<  Block transfer complete Interrupt      */
 }dmaInterrupt_t;
 
 /** @struct g_dmaCTRL
@@ -179,17 +179,17 @@ typedef struct  dmaCTRLPKT
 
 typedef volatile struct
 {
-     
+
      struct                                     /* 0x000-0x400 */
      {
       uint32 ISADDR;
       uint32 IDADDR;
-      uint32 ITCOUNT; 
-      uint32  rsvd1;    
+      uint32 ITCOUNT;
+      uint32  rsvd1;
       uint32 CHCTRL;
       uint32 EIOFF;
       uint32 FIOFF;
-      uint32  rsvd2;  
+      uint32  rsvd2;
      }PCP[32U];
 
      struct                                     /* 0x400-0x800   */
@@ -202,7 +202,7 @@ typedef volatile struct
       uint32 CSADDR;
       uint32 CDADDR;
       uint32 CTCOUNT;
-      uint32  rsvd3; 
+      uint32  rsvd3;
      }WCP[32U];
 
 } dmaRAMBASE_t;
@@ -252,7 +252,7 @@ void dmaDisableParityCheck(void);
 *                        - BTC
 *   @param[in] channel  channel number 0..15
 * This is a callback that is provided by the application and is called apon
-* an interrupt.  The parameter passed to the callback is a copy of the 
+* an interrupt.  The parameter passed to the callback is a copy of the
 * interrupt flag register.
 */
 void dmaGroupANotification(dmaInterrupt_t inttype, sint32 channel);

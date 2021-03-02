@@ -49,31 +49,31 @@
 
 /* Set source for pattern match engine */
 void Chip_PININT_SetPatternMatchSrc(LPC_PIN_INT_T *pPININT,
-									Chip_PININT_SELECT_T channelNum,
-									Chip_PININT_BITSLICE_T sliceNum)
+                                    Chip_PININT_SELECT_T channelNum,
+                                    Chip_PININT_BITSLICE_T sliceNum)
 {
-	uint32_t pmsrc_reg;
+    uint32_t pmsrc_reg;
 
-	/* Source source for pattern matching */
-	pmsrc_reg = pPININT->PMSRC & ~(PININT_SRC_BITSOURCE_MASK << (PININT_SRC_BITSOURCE_START + (sliceNum * 3)));
-	pPININT->PMSRC = pmsrc_reg | (channelNum << (PININT_SRC_BITSOURCE_START + (sliceNum * 3)));
+    /* Source source for pattern matching */
+    pmsrc_reg = pPININT->PMSRC & ~(PININT_SRC_BITSOURCE_MASK << (PININT_SRC_BITSOURCE_START + (sliceNum * 3)));
+    pPININT->PMSRC = pmsrc_reg | (channelNum << (PININT_SRC_BITSOURCE_START + (sliceNum * 3)));
 }
 
 /* Configure Pattern match engine */
 void Chip_PININT_SetPatternMatchConfig(LPC_PIN_INT_T *pPININT, Chip_PININT_BITSLICE_T sliceNum,
-									   Chip_PININT_BITSLICE_CFG_T slice_cfg, bool end_point)
+                                       Chip_PININT_BITSLICE_CFG_T slice_cfg, bool end_point)
 {
-	uint32_t pmcfg_reg;
+    uint32_t pmcfg_reg;
 
-	/* Configure bit slice configuration */
-	pmcfg_reg = pPININT->PMCFG & ~(PININT_SRC_BITCFG_MASK << (PININT_SRC_BITCFG_START + (sliceNum * 3)));
-	pPININT->PMCFG = pmcfg_reg | (slice_cfg << (PININT_SRC_BITCFG_START + (sliceNum * 3)));
+    /* Configure bit slice configuration */
+    pmcfg_reg = pPININT->PMCFG & ~(PININT_SRC_BITCFG_MASK << (PININT_SRC_BITCFG_START + (sliceNum * 3)));
+    pPININT->PMCFG = pmcfg_reg | (slice_cfg << (PININT_SRC_BITCFG_START + (sliceNum * 3)));
 
-	/* If end point is true, enable the bits */
-	if (end_point == true) {
-		/* By default slice 7 is final component */
-		if (sliceNum != PININTBITSLICE7) {
-			pPININT->PMCFG |= (0x1 << sliceNum);
-		}
-	}
+    /* If end point is true, enable the bits */
+    if (end_point == true) {
+        /* By default slice 7 is final component */
+        if (sliceNum != PININTBITSLICE7) {
+            pPININT->PMCFG |= (0x1 << sliceNum);
+        }
+    }
 }

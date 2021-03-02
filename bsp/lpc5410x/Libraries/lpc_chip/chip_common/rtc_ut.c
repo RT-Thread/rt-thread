@@ -49,8 +49,8 @@
 
 /* Days per month, LY is special */
 static uint8_t daysPerMonth[2][MONETHSPERYEAR] = {
-	{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},	/* Normal year */
-	{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},	/* Leap year */
+    {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},    /* Normal year */
+    {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},    /* Leap year */
 };
 
 /*****************************************************************************
@@ -65,61 +65,61 @@ static uint8_t daysPerMonth[2][MONETHSPERYEAR] = {
    data accounting for leap years */
 static void GetDMLY(int dayOff, struct tm *pTime)
 {
-	bool YearFound = false;
-	int daysYear = dayOff;
-	int leapYear, curLeapYear, year = TM_YEAR_BASE, monthYear = 0;
-	bool MonthFound = false;
+    bool YearFound = false;
+    int daysYear = dayOff;
+    int leapYear, curLeapYear, year = TM_YEAR_BASE, monthYear = 0;
+    bool MonthFound = false;
 
-	/* Leap year check for less than 1 year time */
-	if ((year % 4) == 0) {
-		curLeapYear = 1;
-	}
-	else {
-		curLeapYear = 0;
-	}
+    /* Leap year check for less than 1 year time */
+    if ((year % 4) == 0) {
+        curLeapYear = 1;
+    }
+    else {
+        curLeapYear = 0;
+    }
 
-	/* Determine offset of years from days offset */
-	while (YearFound == false) {
-		if ((year % 4) == 0) {
-			/* Leap year, 366 days */
-			daysYear = DAYSPERLEAPYEAR;
-			leapYear = 1;
-		}
-		else {
-			/* Leap year, 365 days */
-			daysYear = DAYSPERYEAR;
-			leapYear = 0;
-		}
+    /* Determine offset of years from days offset */
+    while (YearFound == false) {
+        if ((year % 4) == 0) {
+            /* Leap year, 366 days */
+            daysYear = DAYSPERLEAPYEAR;
+            leapYear = 1;
+        }
+        else {
+            /* Leap year, 365 days */
+            daysYear = DAYSPERYEAR;
+            leapYear = 0;
+        }
 
-		if (dayOff > daysYear) {
-			dayOff -= daysYear;
-			year++;
-		}
-		else {
-			YearFound = true;
-			curLeapYear = leapYear;	/* In a leap year */
-		}
-	}
+        if (dayOff > daysYear) {
+            dayOff -= daysYear;
+            year++;
+        }
+        else {
+            YearFound = true;
+            curLeapYear = leapYear;    /* In a leap year */
+        }
+    }
 
-	/* Save relative year and day into year */
-	pTime->tm_year = year - TM_YEAR_BASE;	/* Base year relative */
-	pTime->tm_yday = dayOff;/* 0 relative */
+    /* Save relative year and day into year */
+    pTime->tm_year = year - TM_YEAR_BASE;    /* Base year relative */
+    pTime->tm_yday = dayOff;/* 0 relative */
 
-	/* Determine offset of months from days offset */
-	while (MonthFound == false) {
-		if ((dayOff + 1) > daysPerMonth[curLeapYear][monthYear]) {
-			/* Next month */
-			dayOff -= daysPerMonth[curLeapYear][monthYear];
-			monthYear++;
-		}
-		else {
-			/* Month found */
-			MonthFound = true;
-		}
-	}
+    /* Determine offset of months from days offset */
+    while (MonthFound == false) {
+        if ((dayOff + 1) > daysPerMonth[curLeapYear][monthYear]) {
+            /* Next month */
+            dayOff -= daysPerMonth[curLeapYear][monthYear];
+            monthYear++;
+        }
+        else {
+            /* Month found */
+            MonthFound = true;
+        }
+    }
 
-	pTime->tm_mday = dayOff + 1;/* 1 relative */
-	pTime->tm_mon = monthYear;	/* 0 relative */
+    pTime->tm_mday = dayOff + 1;/* 1 relative */
+    pTime->tm_mon = monthYear;    /* 0 relative */
 }
 
 /*****************************************************************************
@@ -129,74 +129,74 @@ static void GetDMLY(int dayOff, struct tm *pTime)
 /* Converts an RTC tick time to Universal time */
 void ConvertRtcTime(uint32_t rtcTick, struct tm *pTime)
 {
-	int daySeconds, dayNum;
+    int daySeconds, dayNum;
 
-	/* Get day offset and seconds since start */
-	dayNum = (int) (rtcTick / SECSPERDAY);
-	daySeconds = (int) (rtcTick % SECSPERDAY);
+    /* Get day offset and seconds since start */
+    dayNum = (int) (rtcTick / SECSPERDAY);
+    daySeconds = (int) (rtcTick % SECSPERDAY);
 
-	/* Fill in secs, min, hours */
-	pTime->tm_sec = daySeconds % 60;
-	pTime->tm_hour = daySeconds / SECSPERHOUR;
-	pTime->tm_min = (daySeconds - (pTime->tm_hour * SECSPERHOUR)) / SECSPERMIN;
+    /* Fill in secs, min, hours */
+    pTime->tm_sec = daySeconds % 60;
+    pTime->tm_hour = daySeconds / SECSPERHOUR;
+    pTime->tm_min = (daySeconds - (pTime->tm_hour * SECSPERHOUR)) / SECSPERMIN;
 
-	/* Weekday, 0 = Sunday, 6 = Saturday */
-	pTime->tm_wday = (dayNum + TM_DAYOFWEEK) % DAYSPERWEEK;
+    /* Weekday, 0 = Sunday, 6 = Saturday */
+    pTime->tm_wday = (dayNum + TM_DAYOFWEEK) % DAYSPERWEEK;
 
-	/* Get year, month, day of month, and day of year */
-	GetDMLY(dayNum, pTime);
+    /* Get year, month, day of month, and day of year */
+    GetDMLY(dayNum, pTime);
 
-	/* Not supported in this driver */
-	pTime->tm_isdst = 0;
+    /* Not supported in this driver */
+    pTime->tm_isdst = 0;
 }
 
 /* Converts a Universal time to RTC tick time */
 void ConvertTimeRtc(struct tm *pTime, uint32_t *rtcTick)
 {
-	int leapYear, year = pTime->tm_year + TM_YEAR_BASE;
-	uint32_t dayOff, monthOff, monthCur, rtcTicks = 0;
+    int leapYear, year = pTime->tm_year + TM_YEAR_BASE;
+    uint32_t dayOff, monthOff, monthCur, rtcTicks = 0;
 
-	/* Leap year check for less than 1 year time */
-	if ((year % 4) == 0) {
-		leapYear = 1;
-	}
-	else {
-		leapYear = 0;
-	}
+    /* Leap year check for less than 1 year time */
+    if ((year % 4) == 0) {
+        leapYear = 1;
+    }
+    else {
+        leapYear = 0;
+    }
 
-	/* Add days for each year and leap year */
-	while (year > TM_YEAR_BASE) {
-		if ((year % 4) == 0) {
-			/* Leap year, 366 days */
-			rtcTicks += DAYSPERLEAPYEAR * SECSPERDAY;
-			leapYear = 1;
-		}
-		else {
-			/* Leap year, 365 days */
-			rtcTicks += DAYSPERYEAR * SECSPERDAY;
-			leapYear = 0;
-		}
+    /* Add days for each year and leap year */
+    while (year > TM_YEAR_BASE) {
+        if ((year % 4) == 0) {
+            /* Leap year, 366 days */
+            rtcTicks += DAYSPERLEAPYEAR * SECSPERDAY;
+            leapYear = 1;
+        }
+        else {
+            /* Leap year, 365 days */
+            rtcTicks += DAYSPERYEAR * SECSPERDAY;
+            leapYear = 0;
+        }
 
-		year--;
-	}
+        year--;
+    }
 
-	/* Day and month are 0 relative offsets since day and month
-	   start at 1 */
-	dayOff = (uint32_t) pTime->tm_mday - 1;
-	monthOff = (uint32_t) pTime->tm_mon;
+    /* Day and month are 0 relative offsets since day and month
+       start at 1 */
+    dayOff = (uint32_t) pTime->tm_mday - 1;
+    monthOff = (uint32_t) pTime->tm_mon;
 
-	/* Add in seconds for passed months */
-	for (monthCur = 0; monthCur < monthOff; monthCur++) {
-		rtcTicks += (uint32_t) (daysPerMonth[leapYear][monthCur] * SECSPERDAY);
-	}
+    /* Add in seconds for passed months */
+    for (monthCur = 0; monthCur < monthOff; monthCur++) {
+        rtcTicks += (uint32_t) (daysPerMonth[leapYear][monthCur] * SECSPERDAY);
+    }
 
-	/* Add in seconds for day offset into the current month */
-	rtcTicks += (dayOff * SECSPERDAY);
+    /* Add in seconds for day offset into the current month */
+    rtcTicks += (dayOff * SECSPERDAY);
 
-	/* Add in seconds for hours, minutes, and seconds */
-	rtcTicks += (uint32_t) (pTime->tm_hour * SECSPERHOUR);
-	rtcTicks += (uint32_t) (pTime->tm_min * SECSPERMIN);
-	rtcTicks += (uint32_t) pTime->tm_sec;
+    /* Add in seconds for hours, minutes, and seconds */
+    rtcTicks += (uint32_t) (pTime->tm_hour * SECSPERHOUR);
+    rtcTicks += (uint32_t) (pTime->tm_min * SECSPERMIN);
+    rtcTicks += (uint32_t) pTime->tm_sec;
 
-	*rtcTick = rtcTicks;
+    *rtcTick = rtcTicks;
 }

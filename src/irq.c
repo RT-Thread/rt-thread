@@ -21,7 +21,7 @@ static void (*rt_interrupt_leave_hook)(void);
 
 /**
  * @ingroup Hook
- * This function set a hook function when the system enter a interrupt 
+ * This function set a hook function when the system enter a interrupt
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */
@@ -31,7 +31,7 @@ void rt_interrupt_enter_sethook(void (*hook)(void))
 }
 /**
  * @ingroup Hook
- * This function set a hook function when the system exit a interrupt. 
+ * This function set a hook function when the system exit a interrupt.
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */

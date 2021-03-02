@@ -96,29 +96,29 @@ extern "C" {
  */
 
 /**
- * @brief	Sets up the System PLL given the PLL input frequency and feedback multiplier
- * @param	multiply_by	: PLL multiplier, minimum of 1, maximum of 16
- * @param	input_freq	: Input frequency into the PLL
- * @return	LPC_OK on success, or an error code (see error.h)
+ * @brief    Sets up the System PLL given the PLL input frequency and feedback multiplier
+ * @param    multiply_by    : PLL multiplier, minimum of 1, maximum of 16
+ * @param    input_freq    : Input frequency into the PLL
+ * @return    LPC_OK on success, or an error code (see error.h)
  */
 uint32_t Chip_POWER_SetPLL(uint32_t multiply_by, uint32_t input_freq);
 
 /**
- * @brief	Set optimal system voltage based on passed system frequency
- * @param	mode			: Power mode
- * @param	desired_freq	: System (CPU) frequency
- * @return	LPC_OK on success, or an error code (see error.h)
- * @note	This function will adjust the system voltages to the lowest
+ * @brief    Set optimal system voltage based on passed system frequency
+ * @param    mode            : Power mode
+ * @param    desired_freq    : System (CPU) frequency
+ * @return    LPC_OK on success, or an error code (see error.h)
+ * @note    This function will adjust the system voltages to the lowest
  * levels that will support the passed mode and CPU frequency.
  */
 uint32_t Chip_POWER_SetVoltage(PERF_MODE_T mode, uint32_t desired_freq);
 
 /**
- * @brief	Enters the selected power state
- * @param	mode			: Power mode
- * @param	peripheral_ctrl	: Peripherals that will remain powered up in the power state
- * @return	Nothing
- * @note	The 'peripheral_ctrl' field is a bitmask of bits from the
+ * @brief    Enters the selected power state
+ * @param    mode            : Power mode
+ * @param    peripheral_ctrl    : Peripherals that will remain powered up in the power state
+ * @return    Nothing
+ * @note    The 'peripheral_ctrl' field is a bitmask of bits from the
  * PDRUNCFG register (SYSCON_PDRUNCFG_PD_*) that describe which
  * peripherals can wake up the chip from the power state. These
  * peripherals are not powered down during the power state.<br>
@@ -131,10 +131,10 @@ void Chip_POWER_EnterPowerMode(POWER_MODE_T mode, uint32_t peripheral_ctrl);
 #define LPC5410X_ROMVER_2   (0x1102)
 
 /**
- * @brief	Fast powerdown for IRAM based applications
- * @param	peripheral_ctrl	: Peripherals that will remain powered up in the power down state
- * @return	Nothing
- * @note	The 'peripheral_ctrl' field is a bitmask of bits from the
+ * @brief    Fast powerdown for IRAM based applications
+ * @param    peripheral_ctrl    : Peripherals that will remain powered up in the power down state
+ * @return    Nothing
+ * @note    The 'peripheral_ctrl' field is a bitmask of bits from the
  * PDRUNCFG register (SYSCON_PDRUNCFG_PD_*) that describe which
  * peripherals can wake up the chip from the power state. These
  * peripherals are not powered down during the power state.<br>
@@ -147,9 +147,9 @@ void Chip_POWER_EnterPowerMode(POWER_MODE_T mode, uint32_t peripheral_ctrl);
 void Chip_POWER_EnterPowerModeIramOnly(uint32_t peripheral_ctrl);
 
 /**
- * @brief	Return ROM version
- * @return	ROM version
- * @note	Will return one of the following version numbers:<br>
+ * @brief    Return ROM version
+ * @return    ROM version
+ * @note    Will return one of the following version numbers:<br>
  * (0x1100) for v17.0 ROMs.<br>
  * (0x1101) for v17.1 ROMs.<br>
  * (0x1102) for v17.2 ROMs.<br>

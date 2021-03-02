@@ -8,10 +8,10 @@
  * 2018-11-30     misonyo      first implementation.
  */
 /*
- * ç¨‹åºæ¸…å•ï¼šè¿™æ˜¯ä¸€ä¸ª RTC è®¾å¤‡ä½¿ç”¨ä¾‹ç¨‹
- * ä¾‹ç¨‹å¯¼å‡ºäº† rtc_sample å‘½ä»¤åˆ°æ§åˆ¶ç»ˆç«¯
- * å‘½ä»¤è°ƒç”¨æ ¼å¼ï¼šrtc_sample
- * ç¨‹åºåŠŸèƒ½ï¼šè®¾ç½®RTCè®¾å¤‡çš„æ—¥æœŸå’Œæ—¶é—´ï¼Œå»¶æ—¶ä¸€æ®µæ—¶é—´åè·å–å½“å‰æ—¶é—´å¹¶æ‰“å°æ˜¾ç¤ºã€‚
+ * ³ÌĞòÇåµ¥£ºÕâÊÇÒ»¸ö RTC Éè±¸Ê¹ÓÃÀı³Ì
+ * Àı³Ìµ¼³öÁË rtc_sample ÃüÁîµ½¿ØÖÆÖÕ¶Ë
+ * ÃüÁîµ÷ÓÃ¸ñÊ½£ºrtc_sample
+ * ³ÌĞò¹¦ÄÜ£ºÉèÖÃRTCÉè±¸µÄÈÕÆÚºÍÊ±¼ä£¬ÑÓÊ±Ò»¶ÎÊ±¼äºó»ñÈ¡µ±Ç°Ê±¼ä²¢´òÓ¡ÏÔÊ¾¡£
 */
 
 #include <rtthread.h>
@@ -22,7 +22,7 @@ static int rtc_sample(int argc, char *argv[])
     rt_err_t ret = RT_EOK;
     time_t now;
 
-    /* è®¾ç½®æ—¥æœŸ */
+    /* ÉèÖÃÈÕÆÚ */
     ret = set_date(2018, 12, 3);
     if (ret != RT_EOK)
     {
@@ -30,7 +30,7 @@ static int rtc_sample(int argc, char *argv[])
         return ret;
     }
 
-    /* è®¾ç½®æ—¶é—´ */
+    /* ÉèÖÃÊ±¼ä */
     ret = set_time(11, 15, 50);
     if (ret != RT_EOK)
     {
@@ -38,14 +38,14 @@ static int rtc_sample(int argc, char *argv[])
         return ret;
     }
 
-    /* å»¶æ—¶3ç§’ */
+    /* ÑÓÊ±3Ãë */
     rt_thread_mdelay(3000);
 
-    /* è·å–æ—¶é—´ */
+    /* »ñÈ¡Ê±¼ä */
     now = time(RT_NULL);
     rt_kprintf("%s\n", ctime(&now));
 
     return ret;
 }
-/* å¯¼å‡ºåˆ° msh å‘½ä»¤åˆ—è¡¨ä¸­ */
+/* µ¼³öµ½ msh ÃüÁîÁĞ±íÖĞ */
 MSH_CMD_EXPORT(rtc_sample, rtc sample);

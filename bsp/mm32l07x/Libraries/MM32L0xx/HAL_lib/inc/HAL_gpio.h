@@ -4,7 +4,7 @@
 * @author  AE Team
 * @version  V2.0.0
 * @date  22/08/2017
-* @brief  This file contains all the functions prototypes for the GPIO 
+* @brief  This file contains all the functions prototypes for the GPIO
 *         firmware library.
 ******************************************************************************
 * @copy
@@ -17,7 +17,7 @@
 * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 *
 * <h2><center>&copy; COPYRIGHT 2017 MindMotion</center></h2>
-*/ 
+*/
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __HAL_GPIO_H
@@ -46,21 +46,21 @@
                 ((*(uint32_t*)&(PERIPH)) == GPIOF_BASE) || \
                     ((*(uint32_t*)&(PERIPH)) == GPIOG_BASE))
 
-/** 
-* @brief  Output Maximum frequency selection  
+/**
+* @brief  Output Maximum frequency selection
 */
 
 typedef enum
-{ 
+{
     GPIO_Speed_10MHz = 1,
-    GPIO_Speed_2MHz, 
+    GPIO_Speed_2MHz,
     GPIO_Speed_50MHz
 }GPIOSpeed_TypeDef;
 #define IS_GPIO_SPEED(SPEED) (((SPEED) == GPIO_Speed_10MHz) || ((SPEED) == GPIO_Speed_2MHz) || \
 ((SPEED) == GPIO_Speed_50MHz))
 
-/** 
-* @brief  Configuration Mode enumeration  
+/**
+* @brief  Configuration Mode enumeration
 */
 
 typedef enum
@@ -79,8 +79,8 @@ GPIO_Mode_AF_PP = 0x18  //∏¥”√Õ∆√‚ ‰≥ˆ
     ((MODE) == GPIO_Mode_Out_OD) || ((MODE) == GPIO_Mode_Out_PP) || \
         ((MODE) == GPIO_Mode_AF_OD) || ((MODE) == GPIO_Mode_AF_PP))
 
-/** 
-* @brief  GPIO Init structure definition  
+/**
+* @brief  GPIO Init structure definition
 */
 
 typedef struct
@@ -90,8 +90,8 @@ typedef struct
     GPIOMode_TypeDef GPIO_Mode;
 }GPIO_InitTypeDef;
 
-/** 
-* @brief  Bit_SET and Bit_RESET enumeration  
+/**
+* @brief  Bit_SET and Bit_RESET enumeration
 */
 
 typedef enum
@@ -109,7 +109,7 @@ Bit_SET
 * @{
 */
 
-/** @defgroup GPIO_pins_define 
+/** @defgroup GPIO_pins_define
 * @{
 */
 
@@ -154,7 +154,7 @@ Bit_SET
 * @}
 */
 
-/** @defgroup GPIO_Remap_define 
+/** @defgroup GPIO_Remap_define
 * @{
 */
 
@@ -193,9 +193,9 @@ Bit_SET
 
 /**
 * @}
-*/ 
+*/
 
-/** @defgroup GPIO_Port_Sources 
+/** @defgroup GPIO_Port_Sources
 * @{
 */
 
@@ -224,7 +224,7 @@ Bit_SET
 * @}
 */
 
-/** @defgroup GPIO_Pin_sources 
+/** @defgroup GPIO_Pin_sources
 * @{
 */
 
@@ -269,50 +269,50 @@ Bit_SET
 * @}
 */
 
-/** @defgroup GPIO_Alternate_function_selection_define 
+/** @defgroup GPIO_Alternate_function_selection_define
 * @{
 */
 
-/** 
+/**
 * @brief  AF 0 selection
 */
 #define GPIO_AF_0            ((uint8_t)0x00) /* SPI1, MC0, TIM17_BKIN, SWDIO,SWCLK,
 UART1*/
-/** 
+/**
 * @brief  AF 1 selection
 */
 #define GPIO_AF_1            ((uint8_t)0x01) /* UART1, TIM3_CH1, TIM3_CH2, TIM3_CH3,
 TIM3_CH4, I2C1*/
-/** 
+/**
 * @brief  AF 2 selection
 */
-#define GPIO_AF_2            ((uint8_t)0x02) /* TIM2_CH1_ETR, TIM2_CH2, TIM2_CH3, 
+#define GPIO_AF_2            ((uint8_t)0x02) /* TIM2_CH1_ETR, TIM2_CH2, TIM2_CH3,
 TIM2_CH3, TIM2_CH4, TIM1_BKIN,
 TIM1_CH1N, TIM1_CH1, TIM1_CH2,
 TIM1_CH3, TIM1_CH4, TIM1_ETR,
 TIM1_CH2N, TIM1_CH3N, TIM2_CH2,
 TIM1 6_BKIN, TIM16_CH1N, TIM17_CH1N,
 TIM1 6_CH1, TIM17_CH1 */
-/** 
+/**
 * @brief  AF 3 selection
 */
 #define GPIO_AF_3            ((uint8_t)0x03) /*  */
 
-/** 
+/**
 * @brief  AF 4 selection
 */
 #define GPIO_AF_4            ((uint8_t)0x04) /* TIM14_CH1, I2C1*/
 
-/** 
+/**
 * @brief  AF 5 selection
 */
 #define GPIO_AF_5            ((uint8_t)0x05) /*  */
 
-/** 
+/**
 * @brief  AF 6 selection
 */
 #define GPIO_AF_6            ((uint8_t)0x06) /*  */
-/** 
+/**
 * @brief  AF 7 selection
 */
 #define GPIO_AF_7            ((uint8_t)0x07) /*  */

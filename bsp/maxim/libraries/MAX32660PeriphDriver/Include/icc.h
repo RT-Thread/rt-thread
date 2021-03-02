@@ -55,36 +55,36 @@ extern "C" {
  * @defgroup icc Internal Cache Controller (ICC)
  * @ingroup periphlibs
  * @{
- */ 
+ */
 
 /**
  * @brief Enumeration type for the Cache ID Register
  */
 typedef enum {
-    ICC_CACHE_ID_RELNUM,	// Identifies the RTL release version
-    ICC_CACHE_ID_PARTNUM,	// Specifies the value of C_ID Port Number
-    ICC_CACHE_ID_CCHID		// Specifies the value of Cache ID
+    ICC_CACHE_ID_RELNUM,    // Identifies the RTL release version
+    ICC_CACHE_ID_PARTNUM,    // Specifies the value of C_ID Port Number
+    ICC_CACHE_ID_CCHID        // Specifies the value of Cache ID
 } icc_cache_id_t;
 
 /**
- * @brief	Reads the data from the Cache Id Register.
- * @param	cid	Enumeration type for Cache Id Register.
- * @retval	Returns the contents of Cache Id Register. 
+ * @brief    Reads the data from the Cache Id Register.
+ * @param    cid    Enumeration type for Cache Id Register.
+ * @retval    Returns the contents of Cache Id Register.
  */
 int ICC_ID(icc_cache_id_t cid);
 
 /**
- * @brief	Enable the instruction cache controller.
+ * @brief    Enable the instruction cache controller.
  */
 void ICC_Enable(void);
 
 /**
- * @brief	Disable the instruction cache controller.
+ * @brief    Disable the instruction cache controller.
  */
 void ICC_Disable(void);
 
 /**
- * @brief	Flush the instruction cache controller.
+ * @brief    Flush the instruction cache controller.
  */
 void ICC_Flush(void);
 

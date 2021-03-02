@@ -45,7 +45,7 @@ void  SystemClock_Config(void)
      * Config system clock to 48MHz of which the clock source
      * is PLL0.
      */
-    
+
     //
     // Open PLL0/HRC then wait it ready.
     //

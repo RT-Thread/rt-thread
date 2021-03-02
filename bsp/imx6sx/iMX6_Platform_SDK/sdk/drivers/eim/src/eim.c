@@ -33,7 +33,7 @@
 #include "eim.h"
 
 static eim_cfg_t cfg_table[] = {
-/*	ID						BOOL	SHF	   REGISTER		MASK 		*/
+/*    ID                        BOOL    SHF       REGISTER        MASK         */
     {GCR1_CSEN, TRUE, 0, EIM_GCR1, BM_EIM_CS0GCR1_CSEN},
     {GCR1_SWR, TRUE, 1, EIM_GCR1, BM_EIM_CS0GCR1_SWR},
     {GCR1_SDR, TRUE, 2, EIM_GCR1, BM_EIM_CS0GCR1_SRD},
@@ -110,18 +110,18 @@ static eim_cfg_t cfg_table[] = {
  * @brief Initialize EIM controller.
  *
  * Only setup the data port size and enable the chip select.
- * 
+ *
  * @param cs     Chip select
  * @param dsz    Data port size
  * @param mum    Multiplexed Mode.
  * @param aus    Address unshift
- * 
+ *
  * @return TRUE on success, FALSE on fail
  */
 uint32_t eim_init(uint32_t cs, uint32_t dsz, uint32_t mum, uint32_t aus)
 {
-	//!Init clock
-	
+    //!Init clock
+
     if (cs >= EIM_NUM_CS) {
         printf("Invalid chip select.\n");
         return FALSE;
@@ -278,7 +278,7 @@ uint32_t eim_cfg_set(uint32_t cs, uint32_t cfg, uint32_t value)
 
     return TRUE;
 }
- 
+
 //uint32_t eim_cfg_set(uint32_t cs, uint32_t cfg, uint32_t value)
 //{
 //    uint32_t idx;

@@ -49,69 +49,69 @@
 /* Initialize CRC engine */
 void Chip_CRC_Init(void)
 {
-	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_CRC);
+    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_CRC);
 }
 
 /* De-initialize CRC engine */
 void Chip_CRC_Deinit(void)
 {
-	Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_CRC);
+    Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_CRC);
 }
 
 /* Sets up the CRC engine with defaults based on the polynomial to be used */
 void Chip_CRC_UseDefaultConfig(CRC_POLY_T poly)
 {
-	switch (poly) {
-	case CRC_POLY_CRC16:
-		Chip_CRC_UseCRC16();
-		break;
+    switch (poly) {
+    case CRC_POLY_CRC16:
+        Chip_CRC_UseCRC16();
+        break;
 
-	case CRC_POLY_CRC32:
-		Chip_CRC_UseCRC32();
-		break;
+    case CRC_POLY_CRC32:
+        Chip_CRC_UseCRC32();
+        break;
 
-	case CRC_POLY_CCITT:
-	default:
-		Chip_CRC_UseCCITT();
-		break;
-	}
+    case CRC_POLY_CCITT:
+    default:
+        Chip_CRC_UseCCITT();
+        break;
+    }
 }
 
 /* configure CRC engine and compute CCITT checksum from 8-bit data */
 uint32_t Chip_CRC_CRC8(const uint8_t *data, uint32_t bytes)
 {
-	Chip_CRC_UseCCITT();
-	while (bytes > 0) {
-		Chip_CRC_Write8(*data);
-		data++;
-		bytes--;
-	}
+    Chip_CRC_UseCCITT();
+    while (bytes > 0) {
+        Chip_CRC_Write8(*data);
+        data++;
+        bytes--;
+    }
 
-	return Chip_CRC_Sum();
+    return Chip_CRC_Sum();
 }
 
 /* Convenience function for computing a standard CRC16 checksum from 16-bit data block */
 uint32_t Chip_CRC_CRC16(const uint16_t *data, uint32_t hwords)
 {
-	Chip_CRC_UseCRC16();
-	while (hwords > 0) {
-		Chip_CRC_Write16(*data);
-		data++;
-		hwords--;
-	}
+    Chip_CRC_UseCRC16();
+    while (hwords > 0) {
+        Chip_CRC_Write16(*data);
+        data++;
+        hwords--;
+    }
 
-	return Chip_CRC_Sum();
+    return Chip_CRC_Sum();
 }
 
 /* Convenience function for computing a standard CRC32 checksum from 32-bit data block */
 uint32_t Chip_CRC_CRC32(const uint32_t *data, uint32_t words)
 {
-	Chip_CRC_UseCRC32();
-	while (words > 0) {
-		Chip_CRC_Write32(*data);
-		data++;
-		words--;
-	}
+    Chip_CRC_UseCRC32();
+    while (words > 0) {
+        Chip_CRC_Write32(*data);
+        data++;
+        words--;
+    }
 
-	return Chip_CRC_Sum();
+    return Chip_CRC_Sum();
 }

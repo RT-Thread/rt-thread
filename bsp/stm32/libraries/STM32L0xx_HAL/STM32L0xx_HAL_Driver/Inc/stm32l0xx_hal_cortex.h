@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32L0xx_HAL_CORTEX_H
@@ -34,7 +34,7 @@
 
 /** @defgroup CORTEX CORTEX
   * @{
-  */ 
+  */
 /* Exported types ------------------------------------------------------------*/
 
 /** @defgroup CORTEX_Exported_Types CORTEX Exported Types
@@ -227,14 +227,14 @@ typedef struct
 
 /**
   * @}
-  */  
+  */
 
 /* Exported functions --------------------------------------------------------*/
 /** @defgroup CORTEX_Exported_Functions CORTEX Exported Functions
   * @{
   */
-  
-/** @defgroup CORTEX_Exported_Functions_Group1 Initialization and Configuration functions 
+
+/** @defgroup CORTEX_Exported_Functions_Group1 Initialization and Configuration functions
  *  @brief    Initialization and Configuration functions
  * @{
   */
@@ -246,12 +246,12 @@ uint32_t HAL_SYSTICK_Config(uint32_t TicksNumb);
 /**
   * @}
   */
-  
+
 /** @defgroup CORTEX_Exported_Functions_Group2 Peripheral Control functions
  *  @brief   Cortex control functions
  * @{
  */
- 
+
 uint32_t HAL_NVIC_GetPriority(IRQn_Type IRQn);
 uint32_t HAL_NVIC_GetPendingIRQ(IRQn_Type IRQn);
 void HAL_NVIC_SetPendingIRQ(IRQn_Type IRQn);
@@ -267,7 +267,7 @@ void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init);
 /**
   * @}
   */
-  
+
   /**
   * @}
   */
@@ -348,18 +348,18 @@ void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __STM32L0xx_HAL_CORTEX_H */
- 
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

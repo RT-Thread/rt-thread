@@ -121,7 +121,7 @@ GERR GD_SPI_Init( void )
         SPIstatus[ii].baudrate      = 3000000;  // 3M
         SPIstatus[ii].using         = 0;
         SPIstatus[ii].datwidth      = 8;
-		SPIstatus[ii].used_irq      = GFALSE;
+        SPIstatus[ii].used_irq      = GFALSE;
     }
     SpiInitDone = 1;
     /*open the sdio control interrupt*/
@@ -138,7 +138,7 @@ GERR GD_SPI_Init( void )
     }
     GD_INT_Enable(&(SpiIsr[0].spiIrqHandle), GD_INT_ENABLED);
     SpiIsr[0].rwmode = GD_SPI_UNUSED;
-    
+
     intParams1.type           = (S8)GD_INT_SSI2_IRQ;
     intParams1.sensitivity    = GD_INT_LEVEL_HIGH;
     intParams1.active         = GD_INT_INVERT_IRQ;
@@ -538,7 +538,7 @@ GERR GD_SPI_FinishTransfer(GD_SPI_ISR_PARAMS_S* SpiTHandle)
     U32 rx_xfer;
     U32 dummy;
     U16 data;
-    
+
     while(GH_SPI_get_SR_BUSY(SpiTHandle->spi));
     rx_xfer = GH_SPI_get_RXFLR(SpiTHandle->spi);
 #ifdef DEBUG
@@ -721,7 +721,7 @@ GERR GD_SPI_WriteWords( GD_HANDLE handle, U16* wbuffer, U32 w_words )
             if(i>=0xffffffff)
             {
                 return GD_ERR_SPI_BUSY;
-	 	    }
+             }
             rt_thread_yield();
         }
     }
@@ -897,11 +897,11 @@ GERR GD_SPI_WriteThenReadWords( GD_HANDLE handle, U16* wbuffer, U32 w_words, U16
             if(i>=0xffffffff)
             {
                 return GD_ERR_SPI_BUSY;
-	 	    }
-	 	    rt_thread_yield();
+             }
+             rt_thread_yield();
         }
     }
-    
+
     return( GD_OK );
 }
 
@@ -929,13 +929,13 @@ GERR GD_SPI_WriteBytes( GD_HANDLE handle, U8* wbuffer, U32 w_size )
     U32     wbytes;
     U32     rbytes;
     /* check if handle is valid */
-	
-	ret = spiHandleCheck(handle);
-	if (GD_OK != ret)
-	{
-		return ret;
-	}
-	
+
+    ret = spiHandleCheck(handle);
+    if (GD_OK != ret)
+    {
+        return ret;
+    }
+
     if(device->used_irq == GFALSE)
     {
 
@@ -988,7 +988,7 @@ GERR GD_SPI_WriteBytes( GD_HANDLE handle, U8* wbuffer, U32 w_size )
         {
             return GD_ERR_SPI_BUSY;
         }
-		
+
         SpiIrqHandle->spihandle = handle;
         SpiIrqHandle->spi = device->spi;
         SpiIrqHandle->write_len = w_size;
@@ -1007,8 +1007,8 @@ GERR GD_SPI_WriteBytes( GD_HANDLE handle, U8* wbuffer, U32 w_size )
             if(i>=0xffffffff)
             {
                 return GD_ERR_SPI_BUSY;
-	 	    }
-	 	    rt_thread_yield();
+             }
+             rt_thread_yield();
         }
     }
 
@@ -1026,13 +1026,13 @@ GERR GD_SPI_WriteThenReadBytes( GD_HANDLE handle, U8* wbuffer, U32 w_size, U8* r
     U32     preload = SPI_FIFO_LEVEL;
     U32     postload = SPI_FIFO_LEVEL;
     U32     i,retry,fifo_size;
-    
-	ret = spiHandleCheck(handle);
-	if (GD_OK != ret)
-	{
-		return ret;
-	}
-	
+
+    ret = spiHandleCheck(handle);
+    if (GD_OK != ret)
+    {
+        return ret;
+    }
+
     if(device->used_irq == GFALSE)
     {
         wbytes = 0;
@@ -1185,8 +1185,8 @@ GERR GD_SPI_WriteThenReadBytes( GD_HANDLE handle, U8* wbuffer, U32 w_size, U8* r
             if(i>=0xffffffff)
             {
                 return GD_ERR_SPI_BUSY;
-	 	    }
-	 	    rt_thread_yield();
+             }
+             rt_thread_yield();
         }
     }
     return( GD_OK );
@@ -1197,7 +1197,7 @@ static GISR1 GD_SPI_ISR0( void )
     U32 irqsta;
 
     GD_SPI_ISR_PARAMS_S *SpiIrqHandle = &SpiIsr[0];
-    
+
     irqsta = GH_SPI_get_ISR(SpiIrqHandle->spi);
     if(irqsta)
     {
@@ -1271,14 +1271,14 @@ GERR GD_SPI_SetDatFormat(GD_HANDLE handle, U8 dat_width)
     else
     {
         ssi_enb = GH_SPI_get_SSIENR_ssi_enb(device->spi);
-        
+
         GH_SPI_set_SSIENR_ssi_enb(device->spi, 0);//SPI FIFO will be reset
 
         device->datwidth = dat_width;
         GH_SPI_set_CTRLR0_CFS(device->spi, dat_width-1);
         GH_SPI_set_CTRLR0_DFS(device->spi, dat_width-1);
 
-        GH_SPI_set_SSIENR_ssi_enb(device->spi, ssi_enb);       
+        GH_SPI_set_SSIENR_ssi_enb(device->spi, ssi_enb);
     }
     return ret;
 }

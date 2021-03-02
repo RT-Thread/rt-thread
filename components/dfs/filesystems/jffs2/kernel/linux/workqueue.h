@@ -2,7 +2,7 @@
 #define __LINUX_WORKQUEUE_H__
 
 /* We don't do this yet */
-#if defined (__GNUC__)    
+#if defined (__GNUC__)
 struct work_struct { } ;
 #elif defined (MSVC)
 struct work_struct {int no; } ;

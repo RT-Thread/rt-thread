@@ -133,7 +133,7 @@
 #else
 /* sorry, [u]int_least64_t not implemented for C27X, CLA */
 #endif
-#elif defined(_TMS320C5XX) || defined(__TMS320C55X__) 
+#elif defined(_TMS320C5XX) || defined(__TMS320C55X__)
 /* sorry, [u]int_least64_t not implemented for C54x, C55x */
 #endif
 
@@ -185,7 +185,7 @@
 #else
 /* sorry, [u]int_fast64_t not implemented for C27X, CLA */
 #endif
-#elif defined(_TMS320C5XX) || defined(__TMS320C55X__) 
+#elif defined(_TMS320C5XX) || defined(__TMS320C55X__)
 /* sorry, [u]int_fast64_t not implemented for C54x, C55x */
 #endif
 
@@ -232,7 +232,7 @@
 /*
    According to footnotes in the 1999 C standard, "C++ implementations
    should define these macros only when __STDC_LIMIT_MACROS is defined
-   before <stdint.h> is included." 
+   before <stdint.h> is included."
 */
 #if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
 
@@ -459,7 +459,7 @@
 #ifndef WCHAR_MAX
 #if !defined(__TI_WCHAR_T_BITS__) || __TI_WCHAR_T_BITS__ == 16
 #define WCHAR_MAX 0xffffu
-#else 
+#else
 #define WCHAR_MAX 0xffffffffu
 #endif
 #endif
@@ -480,9 +480,9 @@
 /* 7.18.4.1 Macros for minimum-width integer constants */
 
 /*
-   There is a defect report filed against the C99 standard concerning how 
+   There is a defect report filed against the C99 standard concerning how
    the (U)INTN_C macros should be implemented.  Please refer to --
-   http://wwwold.dkuug.dk/JTC1/SC22/WG14/www/docs/dr_209.htm 
+   http://wwwold.dkuug.dk/JTC1/SC22/WG14/www/docs/dr_209.htm
    for more information.  These macros are implemented according to the
    suggestion given at this web site.
 */

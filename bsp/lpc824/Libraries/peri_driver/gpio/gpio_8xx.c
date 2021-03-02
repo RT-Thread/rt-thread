@@ -50,12 +50,12 @@
 ///* GPIO initilisation function */
 //void Chip_GPIO_Init(LPC_GPIO_T *pGPIO)
 //{
-//	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_GPIO);
+//    Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_GPIO);
 //}
 
 ///* GPIO deinitialisation function */
 //void Chip_GPIO_DeInit(LPC_GPIO_T *pGPIO)
 //{
-//	Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_GPIO);
+//    Chip_Clock_DisablePeriphClock(SYSCTL_CLOCK_GPIO);
 //}
 

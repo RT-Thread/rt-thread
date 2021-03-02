@@ -150,8 +150,8 @@ static inline void multicore_fifo_clear_irq() {
  * ----|------------
  * 3 | Sticky flag indicating the RX FIFO was read when empty. This read was ignored by the FIFO.
  * 2 | Sticky flag indicating the TX FIFO was written when full. This write was ignored by the FIFO.
- * 1 | Value is 1 if this coreâ€™s TX FIFO is not full (i.e. if FIFO_WR is ready for more data)
- * 0 | Value is 1 if this coreâ€™s RX FIFO is not empty (i.e. if FIFO_RD is valid)
+ * 1 | Value is 1 if this core¡¯s TX FIFO is not full (i.e. if FIFO_WR is ready for more data)
+ * 0 | Value is 1 if this core¡¯s RX FIFO is not empty (i.e. if FIFO_RD is valid)
 */
 static inline int32_t multicore_fifo_get_status() {
     return sio_hw->fifo_st;

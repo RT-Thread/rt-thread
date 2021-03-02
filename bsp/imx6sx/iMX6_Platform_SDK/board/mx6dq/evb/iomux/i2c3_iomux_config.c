@@ -52,7 +52,7 @@ void i2c3_iomux_config(void)
     //     ALT6 (6) - Select instance: i2c3 signal: I2C3_SCL
     //     ALT7 (7) - Select instance: arm signal: ARM_EVENTI
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO05_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO05_SION_V(ENABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO05_SION_V(ENABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO05_MUX_MODE_V(ALT6));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO05(0x020E060C)
@@ -93,13 +93,13 @@ void i2c3_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO05_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO05_SRE_V(SLOW));
     // Pad GPIO05 is involved in Daisy Chain.
     // Input Select Register:
@@ -133,7 +133,7 @@ void i2c3_iomux_config(void)
     //     ALT6 (6) - Select instance: i2c3 signal: I2C3_SDA
     //     ALT7 (7) - Select instance: sjc signal: JTAG_DE_B
     HW_IOMUXC_SW_MUX_CTL_PAD_GPIO16_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO16_SION_V(ENABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_GPIO16_SION_V(ENABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_GPIO16_MUX_MODE_V(ALT6));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_GPIO16(0x020E0618)
@@ -174,13 +174,13 @@ void i2c3_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_GPIO16_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_GPIO16_SRE_V(SLOW));
     // Pad GPIO16 is involved in Daisy Chain.
     // Input Select Register:

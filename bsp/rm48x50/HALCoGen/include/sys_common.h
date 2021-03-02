@@ -2,7 +2,7 @@
 *   @brief Common Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - General Definitions
 *   .
@@ -36,9 +36,9 @@ typedef boolean tBoolean;
 *
 *   This type is used to select the module Loopback type Digital or Analog loopback.
 */
-typedef enum loopBackType 
+typedef enum loopBackType
 {
-    Digital = 0U, 
+    Digital = 0U,
     Analog = 1U
 }loopBackType_t;
 
@@ -52,8 +52,8 @@ typedef enum loopBackType
 */
 typedef enum config_value_type
 {
-	InitialValue,
-	CurrentValue
+    InitialValue,
+    CurrentValue
 }config_value_type_t;
 
 /* USER CODE BEGIN (1) */

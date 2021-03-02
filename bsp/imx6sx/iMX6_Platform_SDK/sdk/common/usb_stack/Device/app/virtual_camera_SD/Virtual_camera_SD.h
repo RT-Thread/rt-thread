@@ -8,9 +8,9 @@
  *
  * @file virtual_camera.h
  *
- * @author 
+ * @author
  *
- * @version 
+ * @version
  *
  * @date Jul-20-2010
  *
@@ -32,7 +32,7 @@
 /******************************************************************************
  * Macro's
  *****************************************************************************/
-#define  CONTROLLER_ID      (0)   /* ID to identify USB CONTROLLER */ 
+#define  CONTROLLER_ID      (0)   /* ID to identify USB CONTROLLER */
 
 #define  KBI_STAT_MASK      (0x0F)
 

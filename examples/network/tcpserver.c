@@ -7,7 +7,7 @@
 #include <sys/time.h>
 #include <sys/select.h>
 #endif
-#include <sys/socket.h> /* ä½¿ç”¨BSD socketï¼Œéœ€è¦åŒ…å«socket.hå¤´æ–‡ä»¶ */
+#include <sys/socket.h> /* Ê¹ÓÃBSD socket£¬ĞèÒª°üº¬socket.hÍ·ÎÄ¼ş */
 #include "netdb.h"
 
 #define DEBUG_TCP_SERVER
@@ -25,12 +25,12 @@
 static int started = 0;
 static int is_running = 0;
 static int port = 5000;
-static const char send_data[] = "This is TCP Server from RT-Thread."; /* å‘é€ç”¨åˆ°çš„æ•°æ® */
+static const char send_data[] = "This is TCP Server from RT-Thread."; /* ·¢ËÍÓÃµ½µÄÊı¾İ */
 
 static void tcpserv(void *arg)
 {
     int ret;
-    char *recv_data; /* ç”¨äºæ¥æ”¶çš„æŒ‡é’ˆï¼Œåé¢ä¼šåšä¸€æ¬¡åŠ¨æ€åˆ†é…ä»¥è¯·æ±‚å¯ç”¨å†…å­˜ */
+    char *recv_data; /* ÓÃÓÚ½ÓÊÕµÄÖ¸Õë£¬ºóÃæ»á×öÒ»´Î¶¯Ì¬·ÖÅäÒÔÇëÇó¿ÉÓÃÄÚ´æ */
     int sock, connected, bytes_received;
     struct sockaddr_in server_addr, client_addr;
 
@@ -38,34 +38,34 @@ static void tcpserv(void *arg)
     fd_set readset, readset_c;
     socklen_t sin_size = sizeof(struct sockaddr_in);
 
-    recv_data = rt_malloc(BUFSZ + 1); /* åˆ†é…æ¥æ”¶ç”¨çš„æ•°æ®ç¼“å†² */
+    recv_data = rt_malloc(BUFSZ + 1); /* ·ÖÅä½ÓÊÕÓÃµÄÊı¾İ»º³å */
     if (recv_data == RT_NULL)
     {
         LOG_E("No memory");
         return;
     }
 
-    /* ä¸€ä¸ªsocketåœ¨ä½¿ç”¨å‰ï¼Œéœ€è¦é¢„å…ˆåˆ›å»ºå‡ºæ¥ï¼ŒæŒ‡å®šSOCK_STREAMä¸ºTCPçš„socket */
+    /* Ò»¸ösocketÔÚÊ¹ÓÃÇ°£¬ĞèÒªÔ¤ÏÈ´´½¨³öÀ´£¬Ö¸¶¨SOCK_STREAMÎªTCPµÄsocket */
     if ((sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
     {
         LOG_E("Create socket error");
         goto __exit;
     }
 
-    /* åˆå§‹åŒ–æœåŠ¡ç«¯åœ°å€ */
+    /* ³õÊ¼»¯·şÎñ¶ËµØÖ· */
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port); /* æœåŠ¡ç«¯å·¥ä½œçš„ç«¯å£ */
+    server_addr.sin_port = htons(port); /* ·şÎñ¶Ë¹¤×÷µÄ¶Ë¿Ú */
     server_addr.sin_addr.s_addr = INADDR_ANY;
     rt_memset(&(server_addr.sin_zero), 0x0, sizeof(server_addr.sin_zero));
 
-    /* ç»‘å®šsocketåˆ°æœåŠ¡ç«¯åœ°å€ */
+    /* °ó¶¨socketµ½·şÎñ¶ËµØÖ· */
     if (bind(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
     {
         LOG_E("Unable to bind");
         goto __exit;
     }
 
-    /* åœ¨socketä¸Šè¿›è¡Œç›‘å¬ */
+    /* ÔÚsocketÉÏ½øĞĞ¼àÌı */
     if (listen(sock, 10) == -1)
     {
         LOG_E("Listen error");
@@ -91,20 +91,20 @@ static void tcpserv(void *arg)
         if (select(sock + 1, &readset, RT_NULL, RT_NULL, &timeout) == 0)
             continue;
 
-        /* æ¥å—ä¸€ä¸ªå®¢æˆ·ç«¯è¿æ¥socketçš„è¯·æ±‚ï¼Œè¿™ä¸ªå‡½æ•°è°ƒç”¨æ˜¯é˜»å¡å¼çš„ */
+        /* ½ÓÊÜÒ»¸ö¿Í»§¶ËÁ¬½ÓsocketµÄÇëÇó£¬Õâ¸öº¯Êıµ÷ÓÃÊÇ×èÈûÊ½µÄ */
         connected = accept(sock, (struct sockaddr *)&client_addr, &sin_size);
-        /* è¿”å›çš„æ˜¯è¿æ¥æˆåŠŸçš„socket */
+        /* ·µ»ØµÄÊÇÁ¬½Ó³É¹¦µÄsocket */
         if (connected < 0)
         {
             LOG_E("accept connection failed! errno = %d", errno);
             continue;
         }
 
-        /* æ¥å—è¿”å›çš„client_addræŒ‡å‘äº†å®¢æˆ·ç«¯çš„åœ°å€ä¿¡æ¯ */
+        /* ½ÓÊÜ·µ»ØµÄclient_addrÖ¸ÏòÁË¿Í»§¶ËµÄµØÖ·ĞÅÏ¢ */
         LOG_I("I got a connection from (%s , %d)\n",
                    inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
 
-        /* å®¢æˆ·ç«¯è¿æ¥çš„å¤„ç† */
+        /* ¿Í»§¶ËÁ¬½ÓµÄ´¦Àí */
         while (is_running)
         {
             FD_ZERO(&readset_c);
@@ -114,7 +114,7 @@ static void tcpserv(void *arg)
             if (select(connected + 1, &readset_c, RT_NULL, RT_NULL, &timeout) == 0)
                 continue;
 
-            /* ä»connected socketä¸­æ¥æ”¶æ•°æ®ï¼Œæ¥æ”¶bufferæ˜¯1024å¤§å°ï¼Œä½†å¹¶ä¸ä¸€å®šèƒ½å¤Ÿæ”¶åˆ°1024å¤§å°çš„æ•°æ® */
+            /* ´Óconnected socketÖĞ½ÓÊÕÊı¾İ£¬½ÓÊÕbufferÊÇ1024´óĞ¡£¬µ«²¢²»Ò»¶¨ÄÜ¹»ÊÕµ½1024´óĞ¡µÄÊı¾İ */
             bytes_received = recv(connected, recv_data, BUFSZ, 0);
             if (bytes_received < 0)
             {
@@ -125,17 +125,17 @@ static void tcpserv(void *arg)
             }
             else if (bytes_received == 0)
             {
-                /* æ‰“å°recvå‡½æ•°è¿”å›å€¼ä¸º0çš„è­¦å‘Šä¿¡æ¯ */
+                /* ´òÓ¡recvº¯Êı·µ»ØÖµÎª0µÄ¾¯¸æĞÅÏ¢ */
                 LOG_W("Received warning, recv function return 0.");
                 continue;
             }
             else
             {
-                /* æœ‰æ¥æ”¶åˆ°æ•°æ®ï¼ŒæŠŠæœ«ç«¯æ¸…é›¶ */
+                /* ÓĞ½ÓÊÕµ½Êı¾İ£¬°ÑÄ©¶ËÇåÁã */
                 recv_data[bytes_received] = '\0';
                 if (strcmp(recv_data, "q") == 0 || strcmp(recv_data, "Q") == 0)
                 {
-                    /* å¦‚æœæ˜¯é¦–å­—æ¯æ˜¯qæˆ–Qï¼Œå…³é—­è¿™ä¸ªè¿æ¥ */
+                    /* Èç¹ûÊÇÊ××ÖÄ¸ÊÇq»òQ£¬¹Ø±ÕÕâ¸öÁ¬½Ó */
                     LOG_I("Got a 'q' or 'Q', close the connect.");
                     closesocket(connected);
                     connected = -1;
@@ -143,19 +143,19 @@ static void tcpserv(void *arg)
                 }
                 else if (strcmp(recv_data, "exit") == 0)
                 {
-                    /* å¦‚æœæ¥æ”¶çš„æ˜¯exitï¼Œåˆ™å…³é—­æ•´ä¸ªæœåŠ¡ç«¯ */
+                    /* Èç¹û½ÓÊÕµÄÊÇexit£¬Ôò¹Ø±ÕÕû¸ö·şÎñ¶Ë */
                     closesocket(connected);
                     connected = -1;
                     goto __exit;
                 }
                 else
                 {
-                    /* åœ¨æ§åˆ¶ç»ˆç«¯æ˜¾ç¤ºæ”¶åˆ°çš„æ•°æ® */
+                    /* ÔÚ¿ØÖÆÖÕ¶ËÏÔÊ¾ÊÕµ½µÄÊı¾İ */
                     LOG_D("Received data = %s", recv_data);
                 }
             }
 
-            /* å‘é€æ•°æ®åˆ°connected socket */
+            /* ·¢ËÍÊı¾İµ½connected socket */
             ret = send(connected, send_data, rt_strlen(send_data), 0);
             if (ret < 0)
             {
@@ -166,7 +166,7 @@ static void tcpserv(void *arg)
             }
             else if (ret == 0)
             {
-                /* æ‰“å°sendå‡½æ•°è¿”å›å€¼ä¸º0çš„è­¦å‘Šä¿¡æ¯ */
+                /* ´òÓ¡sendº¯Êı·µ»ØÖµÎª0µÄ¾¯¸æĞÅÏ¢ */
                 LOG_W("Send warning, send function return 0.");
             }
         }

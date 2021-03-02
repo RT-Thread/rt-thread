@@ -1,6 +1,6 @@
 /******************************************************************************
 *
-* @brief provide commond GPIO utilities. 
+* @brief provide commond GPIO utilities.
 *
 *******************************************************************************/
 #ifndef _GPIO_H_
@@ -109,7 +109,7 @@ typedef enum
 typedef enum
 {
     /* in GPIOA register */
-    GPIO_PTA0_MASK = (1<<0),    /*!< GPIO Pin PTA0 bit mask */        
+    GPIO_PTA0_MASK = (1<<0),    /*!< GPIO Pin PTA0 bit mask */
     GPIO_PTA1_MASK = (1<<1),    /*!< GPIO Pin PTA1 bit mask */
     GPIO_PTA2_MASK = (1<<2),    /*!< GPIO Pin PTA2 bit mask */
     GPIO_PTA3_MASK = (1<<3),    /*!< GPIO Pin PTA3 bit mask */
@@ -216,7 +216,7 @@ typedef enum
 
 /*****************************************************************************//*!
 * @brief    Toggle the pins which are specified by u32PinMask in single cycle.
-*        
+*
 * @param[in] pGPIO       Pointer to GPIO module, can be FGPIOA/FGPIOB.
 * @param[in] u32PinMask  Specify GPIO pin need to be toggled
 *
@@ -231,7 +231,7 @@ __STATIC_INLINE void FGPIO_Toggle(FGPIO_Type *pFGPIO, uint32_t u32PinMask)
 
 /*****************************************************************************//*!
 * @brief Read input data from GPIO which is specified by pGPIO in single cycle.
-*        
+*
 * @param[in] pGPIO       Pointer to GPIO module, can be FGPIOA/FGPIOB.
 *
 * @return   GPIO input value unsigned int 32-bit
@@ -241,12 +241,12 @@ __STATIC_INLINE void FGPIO_Toggle(FGPIO_Type *pFGPIO, uint32_t u32PinMask)
  __STATIC_INLINE uint32_t FGPIO_Read(FGPIO_Type *pFGPIO)
 {
     return (pFGPIO->PDIR);      /* Read Port Data Input Register */
-  
+
 }
 
 /*****************************************************************************//*!
 * @brief    Write output data to GPIO which is specified by pGPIO in single cycle.
-*        
+*
 * @param[in] pGPIO       Pointer to GPIO module, can be FGPIOA/FGPIOB.
 * @param[in] u32Value    value to output
 *
@@ -255,7 +255,7 @@ __STATIC_INLINE void FGPIO_Toggle(FGPIO_Type *pFGPIO, uint32_t u32PinMask)
 * @ Pass/ Fail criteria: none
 *****************************************************************************/
 __STATIC_INLINE void FGPIO_Write(FGPIO_Type *pFGPIO, uint32_t u32Value)
-{    
+{
     pFGPIO->PDOR = u32Value;    /* Write Port Ouput Data Register */
 }
 
@@ -269,7 +269,7 @@ void GPIO_PinToggle(GPIO_PinType GPIO_Pin);
 void GPIO_PinSet(GPIO_PinType GPIO_Pin);
 void GPIO_PinClear(GPIO_PinType GPIO_Pin);
 uint8_t GPIO_BitRead(GPIO_PinType GPIO_Pin);
-    
+
 /*! @} End of gpio_api_list */
 
 #ifdef __cplusplus

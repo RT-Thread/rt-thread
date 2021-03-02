@@ -2,7 +2,7 @@
 *   @brief MIBSPI Driver Definition File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 */
 
 /* (c) Texas Instruments 2009-2013, All rights reserved. */
@@ -102,23 +102,23 @@ enum chipSelect
     CS_7    = 0x7FU
 };
 
-/** 
+/**
  *  @defgroup MIBSPI MIBSPI
  *  @brief Multi-Buffered Serial Peripheral Interface Module.
- *  
+ *
  *  The MibSPI/MibSPIP is a high-speed synchronous serial input/output port that allows a serial bit stream of
  *  programmed length (2 to 16 bits) to be shifted in and out of the device at a programmed bit-transfer rate.
  *  The MibSPI has a programmable buffer memory that enables programmed transmission to be completed
  *  without CPU intervention
  *
- *	Related Files
+ *    Related Files
  *   - reg_mibspi.h
  *   - mibspi.h
  *   - mibspi.c
  *  @addtogroup MIBSPI
  *  @{
  */
- 
+
 /* MIBSPI Interface Functions */
 void mibspiInit(void);
 void mibspiSetFunctional(mibspiBASE_t *mibspi, uint32 port);

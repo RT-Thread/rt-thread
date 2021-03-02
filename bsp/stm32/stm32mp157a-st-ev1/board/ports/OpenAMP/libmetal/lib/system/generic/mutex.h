@@ -5,8 +5,8 @@
  */
 
 /*
- * @file	generic/mutex.h
- * @brief	Generic mutex primitives for libmetal.
+ * @file    generic/mutex.h
+ * @brief    Generic mutex primitives for libmetal.
  */
 
 #ifndef __METAL_MUTEX__H__
@@ -23,10 +23,10 @@ extern "C" {
 #endif
 
 typedef struct {
-	union{
-		atomic_int v;
-		atomic_flag w;
-	};
+    union{
+        atomic_int v;
+        atomic_flag w;
+    };
 } metal_mutex_t;
 
 /*
@@ -42,34 +42,34 @@ typedef struct {
 
 static inline void __metal_mutex_init(metal_mutex_t *mutex)
 {
-	atomic_store(&mutex->v, 0);
+    atomic_store(&mutex->v, 0);
 }
 
 static inline void __metal_mutex_deinit(metal_mutex_t *mutex)
 {
-	(void)mutex;
+    (void)mutex;
 }
 
 static inline int __metal_mutex_try_acquire(metal_mutex_t *mutex)
 {
-	return 1 - atomic_flag_test_and_set(&mutex->w);
+    return 1 - atomic_flag_test_and_set(&mutex->w);
 }
 
 static inline void __metal_mutex_acquire(metal_mutex_t *mutex)
 {
-	while (atomic_flag_test_and_set(&mutex->w)) {
-		;
-	}
+    while (atomic_flag_test_and_set(&mutex->w)) {
+        ;
+    }
 }
 
 static inline void __metal_mutex_release(metal_mutex_t *mutex)
 {
-	atomic_flag_clear(&mutex->w);
+    atomic_flag_clear(&mutex->w);
 }
 
 static inline int __metal_mutex_is_acquired(metal_mutex_t *mutex)
 {
-	return atomic_load(&mutex->v);
+    return atomic_load(&mutex->v);
 }
 
 #ifdef __cplusplus

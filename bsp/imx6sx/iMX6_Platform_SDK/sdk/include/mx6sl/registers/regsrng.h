@@ -466,11 +466,11 @@ typedef union _hw_rng_sr
         unsigned STDN : 1; //!< [4] Self test done.
         unsigned SDN : 1; //!< [5] Seed done.
         unsigned NSDN : 1; //!< [6] New seed done.
-        unsigned RESERVED1 : 1; //!< [7] 
+        unsigned RESERVED1 : 1; //!< [7]
         unsigned FIFO_LVL : 4; //!< [11:8] FIFO level.
         unsigned FIFO_SIZE : 4; //!< [15:12] FIFO size.
         unsigned ERR : 1; //!< [16] Error.
-        unsigned RESERVED2 : 4; //!< [20:17] 
+        unsigned RESERVED2 : 4; //!< [20:17]
         unsigned ST_PF : 3; //!< [23:21] Self Test Pass Fail.
         unsigned STATPF : 8; //!< [31:24] Statistics test pass fail.
     } B;

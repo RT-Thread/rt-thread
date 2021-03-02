@@ -31,7 +31,7 @@
 #ifndef __WM8962_H__
 #define __WM8962_H__
 
-#define WM8962_ID	0x6243
+#define WM8962_ID    0x6243
 
 #define WM8962_SYSCLK_MCLK 1
 #define WM8962_SYSCLK_FLL  2
@@ -199,7 +199,7 @@
 #define WM8962_EQ39                             0x175
 #define WM8962_EQ40                             0x176
 #define WM8962_EQ41                             0x177
-#define WM8962_GPIO_BASE						0x200
+#define WM8962_GPIO_BASE                        0x200
 #define WM8962_GPIO_2                           0x201
 #define WM8962_GPIO_3                           0x202
 #define WM8962_GPIO_5                           0x204
@@ -2699,7 +2699,7 @@ typedef enum {
     RSVD,
 } fll_refclk_src_e;
 
-#define WM8962_REG_FLL_CTRL1_REF_SRC(x)		((x) << WM8962_FLL_REFCLK_SRC_SHIFT)
+#define WM8962_REG_FLL_CTRL1_REF_SRC(x)        ((x) << WM8962_FLL_REFCLK_SRC_SHIFT)
 
 /*
  * R156 (0x9C) - FLL Control (2)
@@ -2711,13 +2711,13 @@ typedef enum {
 #define WM8962_FLL_REFCLK_DIV_SHIFT                  0  /* FLL_REFCLK_DIV - [1:0] */
 #define WM8962_FLL_REFCLK_DIV_WIDTH                  2  /* FLL_REFCLK_DIV - [1:0] */
 
-#define WM8962_FLL_CTRL2_OUTDIV(x)				(((x) & WM8962_FLL_OUTDIV_MASK) << WM8962_FLL_OUTDIV_SHIFT)
+#define WM8962_FLL_CTRL2_OUTDIV(x)                (((x) & WM8962_FLL_OUTDIV_MASK) << WM8962_FLL_OUTDIV_SHIFT)
 typedef enum {
     FLL_CTRL2_REFCLK_DIV1 = 0,
     FLL_CTRL2_REFCLK_DIV2 = 1,
     FLL_CTRL2_REFCLK_DIV4 = 2,
 } fll_refclk_div_e;
-#define WM8962_FLL_CTRL2_REFCLK_DIV(x)			((x) & WM8962_FLL_REFCLK_DIV_MASK)
+#define WM8962_FLL_CTRL2_REFCLK_DIV(x)            ((x) & WM8962_FLL_REFCLK_DIV_MASK)
 /*
  * R157 (0x9D) - FLL Control (3)
  */
@@ -2731,7 +2731,7 @@ typedef enum {
     FLL_FRATIO_8 = 3,
     FLL_FRATIO_16 = 4,
 } fll_fratio_e;
-#define WM8962_FLL_CTRL3_FRATIO(x)				((x) & WM8962_FLL_FRATIO_MASK)
+#define WM8962_FLL_CTRL3_FRATIO(x)                ((x) & WM8962_FLL_FRATIO_MASK)
 
 /*
  * R159 (0x9F) - FLL Control (5)
@@ -2751,7 +2751,7 @@ typedef enum {
 #define WM8962_FLL_THETA_SHIFT                       0  /* FLL_THETA - [15:0] */
 #define WM8962_FLL_THETA_WIDTH                      16  /* FLL_THETA - [15:0] */
 
-#define WM8962_FLL_CTRL6_NUM(x)		(x)
+#define WM8962_FLL_CTRL6_NUM(x)        (x)
 
 /*
  * R161 (0xA1) - FLL Control (7)
@@ -2760,7 +2760,7 @@ typedef enum {
 #define WM8962_FLL_LAMBDA_SHIFT                      0  /* FLL_LAMBDA - [15:0] */
 #define WM8962_FLL_LAMBDA_WIDTH                     16  /* FLL_LAMBDA - [15:0] */
 
-#define WM8962_FLL_CTRL7_DEN(x)		(x)
+#define WM8962_FLL_CTRL7_DEN(x)        (x)
 
 /*
  * R162 (0xA2) - FLL Control (8)
@@ -2768,7 +2768,7 @@ typedef enum {
 #define WM8962_FLL_N_MASK                       0x03FF  /* FLL_N - [9:0] */
 #define WM8962_FLL_N_SHIFT                           0  /* FLL_N - [9:0] */
 #define WM8962_FLL_N_WIDTH                          10  /* FLL_N - [9:0] */
-#define WM8962_FLL_CTRL8_N(x)					((x) & WM8962_FLL_N_MASK)
+#define WM8962_FLL_CTRL8_N(x)                    ((x) & WM8962_FLL_N_MASK)
 
 /*
  * R252 (0xFC) - General test 1

@@ -1062,10 +1062,10 @@ HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDat
     /* Exit Initialization mode */
     status = RTC_ExitInitMode(hrtc);
   }
-	
+
   /* Enable the write protection for RTC registers */
   __HAL_RTC_WRITEPROTECTION_ENABLE(hrtc);
- 
+
   if (status == HAL_OK)
   {
 

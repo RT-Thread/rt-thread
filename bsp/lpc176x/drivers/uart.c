@@ -56,8 +56,8 @@ void UART0_IRQHandler(void)
 {
     rt_ubase_t level, iir;
     struct rt_uart_lpc *uart = &uart_device;
-	/* enter interrupt */ 
- 	rt_interrupt_enter();
+    /* enter interrupt */
+     rt_interrupt_enter();
     /* read IIR and clear it */
     iir = LPC_UART->IIR;
 
@@ -91,8 +91,8 @@ void UART0_IRQHandler(void)
     {
         iir = LPC_UART->LSR;    //oe pe fe oe read for clear interrupt
     }
-	/* leave interrupt */ 
- 	rt_interrupt_leave();
+    /* leave interrupt */
+     rt_interrupt_leave();
     return;
 }
 

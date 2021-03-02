@@ -119,7 +119,7 @@ void EEPROM_Init(EEPROM_Type *base, const eeprom_config_t *config, uint32_t sour
                    EEPROM_WSTATE_PHASE2(config->writeWaitPhase2 - 1U) |
                    EEPROM_WSTATE_PHASE3(config->writeWaitPhase3 - 1U);
     base->WSTATE |= EEPROM_WSTATE_LCK_PARWEP(config->lockTimingParam);
- 
+
     /* Clear the remaining write operation  */
     base->CMD = FSL_FEATURE_EEPROM_PROGRAM_CMD;
     while ((EEPROM_GetInterruptStatus(base) & kEEPROM_ProgramFinishInterruptEnable) == 0U)

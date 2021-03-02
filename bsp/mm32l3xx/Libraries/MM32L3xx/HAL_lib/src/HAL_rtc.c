@@ -22,18 +22,18 @@
 /* Includes ------------------------------------------------------------------*/
 #include "HAL_rtc.h"
 
-/** @addtogroup  
+/** @addtogroup
 * @{
 */
 
-/** @defgroup RTC 
+/** @defgroup RTC
 * @brief RTC driver modules
 * @{
 */
 
 /** @defgroup RTC_Private_TypesDefinitions
 * @{
-*/ 
+*/
 /**
 * @}
 */
@@ -90,9 +90,9 @@
 void RTC_ITConfig(uint16_t RTC_IT, FunctionalState NewState)
 {
     /* Check the parameters */
-    assert_param(IS_RTC_IT(RTC_IT));  
+    assert_param(IS_RTC_IT(RTC_IT));
     assert_param(IS_FUNCTIONAL_STATE(NewState));
-    
+
     if (NewState != DISABLE)
     {
         RTC->CRH |= RTC_IT;
@@ -122,7 +122,7 @@ void RTC_EnterConfigMode(void)
 void RTC_ExitConfigMode(void)
 {
     /* Reset the CNF flag to exit from the Configuration Mode */
-    RTC->CRL &= (uint16_t)~((uint16_t)RTC_CRL_CNF); 
+    RTC->CRL &= (uint16_t)~((uint16_t)RTC_CRL_CNF);
 }
 
 /**
@@ -143,7 +143,7 @@ uint32_t RTC_GetCounter(void)
 * @retval None
 */
 void RTC_SetCounter(uint32_t CounterValue)
-{ 
+{
     RTC_EnterConfigMode();
     /* Set RTC COUNTER MSB word */
     RTC->CNTH = CounterValue >> 16;
@@ -161,7 +161,7 @@ void RTC_SetPrescaler(uint32_t PrescalerValue)
 {
     /* Check the parameters */
     assert_param(IS_RTC_PRESCALER(PrescalerValue));
-    
+
     RTC_EnterConfigMode();
     /* Set RTC PRESCALER MSB word */
     RTC->PRLH = (PrescalerValue & PRLH_MSB_MASK) >> 16;
@@ -176,7 +176,7 @@ void RTC_SetPrescaler(uint32_t PrescalerValue)
 * @retval None
 */
 void RTC_SetAlarm(uint32_t AlarmValue)
-{  
+{
     RTC_EnterConfigMode();
     /* Set the ALARM MSB word */
     RTC->ALRH = AlarmValue >> 16;
@@ -244,10 +244,10 @@ void RTC_WaitForSynchro(void)
 FlagStatus RTC_GetFlagStatus(uint16_t RTC_FLAG)
 {
     FlagStatus bitstatus = RESET;
-    
+
     /* Check the parameters */
-    assert_param(IS_RTC_GET_FLAG(RTC_FLAG)); 
-    
+    assert_param(IS_RTC_GET_FLAG(RTC_FLAG));
+
     if ((RTC->CRL & RTC_FLAG) != (uint16_t)RESET)
     {
         bitstatus = SET;
@@ -273,8 +273,8 @@ FlagStatus RTC_GetFlagStatus(uint16_t RTC_FLAG)
 void RTC_ClearFlag(uint16_t RTC_FLAG)
 {
     /* Check the parameters */
-    assert_param(IS_RTC_CLEAR_FLAG(RTC_FLAG)); 
-    
+    assert_param(IS_RTC_CLEAR_FLAG(RTC_FLAG));
+
     /* Clear the corresponding RTC flag */
     RTC->CRL &= (uint16_t)~RTC_FLAG;
 }
@@ -292,8 +292,8 @@ ITStatus RTC_GetITStatus(uint16_t RTC_IT)
 {
     ITStatus bitstatus = RESET;
     /* Check the parameters */
-    assert_param(IS_RTC_GET_IT(RTC_IT)); 
-    
+    assert_param(IS_RTC_GET_IT(RTC_IT));
+
     bitstatus = (ITStatus)(RTC->CRL & RTC_IT);
     if (((RTC->CRH & RTC_IT) != (uint16_t)RESET) && (bitstatus != (uint16_t)RESET))
     {
@@ -318,8 +318,8 @@ ITStatus RTC_GetITStatus(uint16_t RTC_IT)
 void RTC_ClearITPendingBit(uint16_t RTC_IT)
 {
     /* Check the parameters */
-    assert_param(IS_RTC_IT(RTC_IT));  
-    
+    assert_param(IS_RTC_IT(RTC_IT));
+
     /* Clear the corresponding RTC pending bit */
     RTC->CRL &= (uint16_t)~RTC_IT;
 }

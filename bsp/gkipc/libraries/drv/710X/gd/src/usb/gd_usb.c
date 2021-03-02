@@ -31,8 +31,8 @@
 #define USB_AHB_W(addr, value)  *(volatile unsigned long*)(addr) = (value)
 #define USB_AHB_R(addr, value)  value = *(volatile unsigned long*)(addr)
 
-#define CLK_REG_W 	USB_AHB_W
-#define CLK_REG_R 	USB_AHB_R
+#define CLK_REG_W     USB_AHB_W
+#define CLK_REG_R     USB_AHB_R
 //*****************************************************************************
 //*****************************************************************************
 //** Clock Switch Related Functions
@@ -40,51 +40,51 @@
 //*****************************************************************************
 /*
 pheri_cken (w/r) - 0xA0170288
-Bit	Field Name	Default
-Value	Description
-[31:7]	reserved	R	?¨¤?¨º¡§¡é?
-[6]	Ssi2_cken	0x1	Ssi2 ????¡§o?¨¤?¡§?¡§o1?¡§1
-[5]	ssi_cken	0x1	ssi ????¡§o?¨¤?¡§?¡§o1?¡§1
-[4]	Sd2_cken	0x1	Sd2 ????¡§o?¨¤?¡§?¡§o1?¡§1
-[3]	sd_cken	0x1	sd ????¡§o?¨¤?¡§?¡§o1?¡§1
-[2]	reserved	0x1	?¨¤?¨º¡§¡é?
-[1]	eth_cken	0x1	eth ????¡§o?¨¤?¡§?¡§o1?¡§1
-[0]	usb_cken	0x1	usb ????¡§o?¨¤?¡§?¡§o1?¡§1
+Bit    Field Name    Default
+Value    Description
+[31:7]    reserved    R    ?¨¤?¨º¡§¡é?
+[6]    Ssi2_cken    0x1    Ssi2 ????¡§o?¨¤?¡§?¡§o1?¡§1
+[5]    ssi_cken    0x1    ssi ????¡§o?¨¤?¡§?¡§o1?¡§1
+[4]    Sd2_cken    0x1    Sd2 ????¡§o?¨¤?¡§?¡§o1?¡§1
+[3]    sd_cken    0x1    sd ????¡§o?¨¤?¡§?¡§o1?¡§1
+[2]    reserved    0x1    ?¨¤?¨º¡§¡é?
+[1]    eth_cken    0x1    eth ????¡§o?¨¤?¡§?¡§o1?¡§1
+[0]    usb_cken    0x1    usb ????¡§o?¨¤?¡§?¡§o1?¡§1
 */
 #ifdef CODEC_710XS
 #define REG_ADDR_CLK_POWER_SW 0xA0170288
 #else
 #define REG_ADDR_CLK_POWER_SW 0x70170288
-#endif 
+#endif
 
 #define CLK_BIT_USB_EN (1 << 0)
 void gd_clk_disable_usb()
 {
-	U32 val_clk = 0;
-	
-	CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
-	
-	val_clk &= ~CLK_BIT_USB_EN;
-	
-	CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
+    U32 val_clk = 0;
+
+    CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
+
+    val_clk &= ~CLK_BIT_USB_EN;
+
+    CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
 }
 
 void gd_clk_enable_usb()
 {
-	U32 val_clk = 0;
-	
-	CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
-	
-	val_clk |= CLK_BIT_USB_EN;
-	
-	CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
+    U32 val_clk = 0;
+
+    CLK_REG_R(REG_ADDR_CLK_POWER_SW, val_clk);
+
+    val_clk |= CLK_BIT_USB_EN;
+
+    CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
 }
 
 void gd_clk_disable_all()
 {
-	U32 val_clk = 0;
-		
-	CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
+    U32 val_clk = 0;
+
+    CLK_REG_W(REG_ADDR_CLK_POWER_SW, val_clk);
 }
 
 
@@ -98,13 +98,13 @@ GERR GD_USB_PHY_FPGA_Init(void)
     GD_TIMER_Delay(20);
     GH_PLL_set_USB_GRST_en(1);
 #endif
-	printf("[GK]%s()\n", __FUNCTION__);
+    printf("[GK]%s()\n", __FUNCTION__);
 
     *((unsigned volatile int*)(GPIOx_ADDR_USB_PHY_RST(12)))=0x00000001;   // Reset External USB PHY on the FPGA Platform by GPIO[0] in GK7101S or GPIO[42] in GK7102C
     GD_TIMER_Delay(1);
     *((unsigned volatile int*)(GPIOx_ADDR_USB_PHY_RST(12)))=0x00000000;
-	GD_TIMER_Delay(1);
-	return GD_OK;
+    GD_TIMER_Delay(1);
+    return GD_OK;
 }
 
 GERR GD_USB_PHY_Init(U8 GpioNumber)
@@ -573,7 +573,7 @@ void  GD_USB_Control_in(const U8 *p, U32 *length,U32 len0_flag)
             while(GH_USB_get_CSR0L_R_PERI_TxPktRdy());
             *length=0;
 
-			printf("send short packet, tran end!!!\n");
+            printf("send short packet, tran end!!!\n");
             break;
         }
         else
@@ -584,7 +584,7 @@ void  GD_USB_Control_in(const U8 *p, U32 *length,U32 len0_flag)
                 while(GH_USB_get_CSR0L_R_PERI_TxPktRdy());
             }
 
-			printf("send NULL paket, tran end!!!\n");
+            printf("send NULL paket, tran end!!!\n");
             break;
         }
     }
@@ -701,39 +701,39 @@ void GD_USB_In_tranTx(U8 *p, U32 len)
     maxPktSize = 512;               // According to USB spec2.0, maxSize is 512 for BulkT
 #endif
 
-	while(1)
-	{
-		if(len>=maxPktSize) //TxPktRdy will be automatically set when data of maxPktSize (value in TxMaxP) is loaded into the TX FIFO.
-		{
-			for(i=0;i<maxPktSize;i++)
-			{
-				//*REG_USB_EP1FIFO = p[n++];
+    while(1)
+    {
+        if(len>=maxPktSize) //TxPktRdy will be automatically set when data of maxPktSize (value in TxMaxP) is loaded into the TX FIFO.
+        {
+            for(i=0;i<maxPktSize;i++)
+            {
+                //*REG_USB_EP1FIFO = p[n++];
                 GH_USB_set_FIFOs(g_tx_ep, p[n]);
                 //GH_USB_set_FIFOs(1, p[n]);
                 n++;
-			}
+            }
 
-			while(GH_USB_get_TXCSRL_R_PERI() & 0x1);  // TxPktRdy
-			len-=maxPktSize;
-			if(len==0)
-				break;
-		}
+            while(GH_USB_get_TXCSRL_R_PERI() & 0x1);  // TxPktRdy
+            len-=maxPktSize;
+            if(len==0)
+                break;
+        }
 
-		if(len<maxPktSize)
-		{
-			for(i=0;i<len;i++)
-			{
-				//*REG_USB_EP1FIFO = p[n++];
+        if(len<maxPktSize)
+        {
+            for(i=0;i<len;i++)
+            {
+                //*REG_USB_EP1FIFO = p[n++];
                 GH_USB_set_FIFOs(g_tx_ep, p[n]);
                 //GH_USB_set_FIFOs(1, p[n]);
                 n++;
-			}
+            }
 
-			GH_USB_set_TXCSRL_W_PERI(0x01);
-			while(GH_USB_get_TXCSRL_R_PERI() & 0x1);
-			break;
-		}
-	}
+            GH_USB_set_TXCSRL_W_PERI(0x01);
+            while(GH_USB_get_TXCSRL_R_PERI() & 0x1);
+            break;
+        }
+    }
 }
 #ifdef GK710X
 GERR GD_USB_DMA_In_TranRx(U32 host_write_addr, U32 host_write_len)
@@ -966,15 +966,15 @@ GERR GD_USB_DMA_Out_TranTx_Fix_BugDMA(U32 read_addr, U32 read_len)
 
 #endif
 
-	data = 0;
+    data = 0;
     data = GH_DMA_get_Status(MUSB_TX_DMA_CHAN);
- 	while(data == 0)
- 	{
+     while(data == 0)
+     {
          data = GH_DMA_get_Status(MUSB_TX_DMA_CHAN);
-	}
+    }
 
-	// stop USB
-	GH_USB_set_TXCSRH_W_PERI(0xa4);   // AutoSet & endpoint 1 dir: Tx & disable the DMA request for the TX endpoint and DMA mode 1
+    // stop USB
+    GH_USB_set_TXCSRH_W_PERI(0xa4);   // AutoSet & endpoint 1 dir: Tx & disable the DMA request for the TX endpoint and DMA mode 1
     printf("1....DMA CH0, CTL=%#x, STA=%#x, INT=%#x, STA0=%#x\n", GH_DMA_get_Control(MUSB_TX_DMA_CHAN), GH_DMA_get_Status(MUSB_TX_DMA_CHAN), GH_DMA_get_IR(), data);
     GH_USB_set_TXCSRL_W_PERI(0x08);   // set FlushFIFO
     GH_USB_set_TXCSRL_W_PERI(0x01);   // TxPktRdy

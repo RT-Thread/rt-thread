@@ -54,7 +54,7 @@ void uart3_iomux_config(void)
     //     ALT6 (6) - Select instance: usb signal: USB_H1_OC
     //     ALT8 (8) - Select instance: epdc signal: EPDC_SDOEZ
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_DATA30_MUX_MODE_V(ALT4));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30(0x020E054C)
@@ -95,13 +95,13 @@ void uart3_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_DATA30_SRE_V(SLOW));
     // Pad EIM_DATA30 is involved in Daisy Chain.
     // Input Select Register:
@@ -140,7 +140,7 @@ void uart3_iomux_config(void)
     //     ALT8 (8) - Select instance: epdc signal: EPDC_SDCE0
     //     ALT9 (9) - Select instance: eim signal: EIM_ACLK_FREERUN
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_EB3_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_EB3_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_EB3_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_EB3_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_EB3(0x020E05A0)
@@ -181,13 +181,13 @@ void uart3_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_EB3_SRE_V(SLOW));
     // Pad EIM_EB3 is involved in Daisy Chain.
     // Input Select Register:
@@ -220,7 +220,7 @@ void uart3_iomux_config(void)
     //     ALT2 (2) - Select instance: uart3 signal: UART3_RX_DATA
     //     ALT5 (5) - Select instance: gpio7 signal: GPIO7_IO10
     HW_IOMUXC_SW_MUX_CTL_PAD_SD4_CLK_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_CLK_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_CLK_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_SD4_CLK_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_SD4_CLK(0x020E0720)
@@ -261,13 +261,13 @@ void uart3_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CLK_SRE_V(SLOW));
     // Pad SD4_CLK is involved in Daisy Chain.
     // Input Select Register:
@@ -298,7 +298,7 @@ void uart3_iomux_config(void)
     //     ALT2 (2) - Select instance: uart3 signal: UART3_TX_DATA
     //     ALT5 (5) - Select instance: gpio7 signal: GPIO7_IO09
     HW_IOMUXC_SW_MUX_CTL_PAD_SD4_CMD_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_CMD_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_SD4_CMD_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_SD4_CMD_MUX_MODE_V(ALT2));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_SD4_CMD(0x020E0724)
@@ -339,13 +339,13 @@ void uart3_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_HYS_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_HYS_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_SD4_CMD_SRE_V(SLOW));
     // Pad SD4_CMD is involved in Daisy Chain.
     // Input Select Register:

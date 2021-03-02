@@ -46,7 +46,7 @@
   * @{
   */
 
-/** 
+/**
   * @brief HAL State structures definition
   */
 typedef enum
@@ -57,8 +57,8 @@ typedef enum
   HAL_DAC_STATE_TIMEOUT           = 0x03U,  /*!< DAC timeout state                    */
   HAL_DAC_STATE_ERROR             = 0x04U   /*!< DAC error state                      */
 }HAL_DAC_StateTypeDef;
- 
-/** 
+
+/**
   * @brief DAC handle Structure definition
   */
 #if (USE_HAL_DAC_REGISTER_CALLBACKS == 1)
@@ -95,7 +95,7 @@ typedef struct
 
 }DAC_HandleTypeDef;
 
-/** 
+/**
   * @brief DAC Configuration regular Channel structure definition
   */
 typedef struct
@@ -158,14 +158,14 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
   * @{
   */
 
-#define DAC_TRIGGER_NONE                   0x00000000U /*!< Conversion is automatic once the DAC1_DHRxxxx register 
+#define DAC_TRIGGER_NONE                   0x00000000U /*!< Conversion is automatic once the DAC1_DHRxxxx register
                                                             has been loaded, and not by external trigger */
 #define DAC_TRIGGER_T2_TRGO                ((uint32_t)(DAC_CR_TSEL1_2 | DAC_CR_TEN1)) /*!< TIM2 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T4_TRGO                ((uint32_t)(DAC_CR_TSEL1_2 | DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< TIM4 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T5_TRGO                ((uint32_t)(DAC_CR_TSEL1_1 | DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< TIM5 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T6_TRGO                ((uint32_t)DAC_CR_TEN1) /*!< TIM6 TRGO selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_T7_TRGO                ((uint32_t)(DAC_CR_TSEL1_1 | DAC_CR_TEN1)) /*!< TIM7 TRGO selected as external conversion trigger for DAC channel */
-#define DAC_TRIGGER_T8_TRGO                ((uint32_t)(DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel */                                                                       
+#define DAC_TRIGGER_T8_TRGO                ((uint32_t)(DAC_CR_TSEL1_0 | DAC_CR_TEN1)) /*!< TIM8 TRGO selected as external conversion trigger for DAC channel */
 
 #define DAC_TRIGGER_EXT_IT9                ((uint32_t)(DAC_CR_TSEL1_2 | DAC_CR_TSEL1_1 | DAC_CR_TEN1)) /*!< EXTI Line9 event selected as external conversion trigger for DAC channel */
 #define DAC_TRIGGER_SOFTWARE               ((uint32_t)(DAC_CR_TSEL1 | DAC_CR_TEN1)) /*!< Conversion started by software trigger for DAC channel */
@@ -203,7 +203,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 
 /** @defgroup DAC_flags_definition DAC Flags Definition
   * @{
-  */ 
+  */
 #define DAC_FLAG_DMAUDR1                   ((uint32_t)DAC_SR_DMAUDR1)
 #define DAC_FLAG_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)
 /**
@@ -212,7 +212,7 @@ typedef void (*pDAC_CallbackTypeDef)(DAC_HandleTypeDef *hdac);
 
 /** @defgroup DAC_IT_definition DAC IT Definition
   * @{
-  */ 
+  */
 #define DAC_IT_DMAUDR1                   ((uint32_t)DAC_SR_DMAUDR1)
 #define DAC_IT_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)
 /**
@@ -437,7 +437,7 @@ HAL_StatusTypeDef     HAL_DAC_UnRegisterCallback (DAC_HandleTypeDef *hdac, HAL_D
 #endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx ||\
           STM32F427xx || STM32F437xx || STM32F429xx || STM32F439xx ||\
           STM32F410xx || STM32F446xx || STM32F469xx || STM32F479xx ||\
-		  STM32F413xx || STM32F423xx */
+          STM32F413xx || STM32F423xx */
 
 /**
   * @}
@@ -446,7 +446,7 @@ HAL_StatusTypeDef     HAL_DAC_UnRegisterCallback (DAC_HandleTypeDef *hdac, HAL_D
 /**
   * @}
   */
-  
+
 #ifdef __cplusplus
 }
 #endif

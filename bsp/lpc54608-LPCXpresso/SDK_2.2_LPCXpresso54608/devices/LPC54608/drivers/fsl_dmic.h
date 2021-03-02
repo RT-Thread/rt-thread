@@ -180,42 +180,42 @@ extern "C" {
 uint32_t DMIC_GetInstance(DMIC_Type *base);
 
 /*!
- * @brief	Turns DMIC Clock on
- * @param	base	: DMIC base
- * @return	Nothing
+ * @brief    Turns DMIC Clock on
+ * @param    base    : DMIC base
+ * @return    Nothing
  */
 void DMIC_Init(DMIC_Type *base);
 
 /*!
- * @brief	Turns DMIC Clock off
- * @param	base	: DMIC base
- * @return	Nothing
+ * @brief    Turns DMIC Clock off
+ * @param    base    : DMIC base
+ * @return    Nothing
  */
 void DMIC_DeInit(DMIC_Type *base);
 
 /*!
- * @brief	Configure DMIC io
- * @param	base	: The base address of DMIC interface
- * @param	config		: DMIC io configuration
- * @return	Nothing
+ * @brief    Configure DMIC io
+ * @param    base    : The base address of DMIC interface
+ * @param    config        : DMIC io configuration
+ * @return    Nothing
  */
 void DMIC_ConfigIO(DMIC_Type *base, dmic_io_t config);
 
 /*!
- * @brief	Set DMIC operating mode
- * @param	base	: The base address of DMIC interface
- * @param	mode	: DMIC mode
- * @return	Nothing
+ * @brief    Set DMIC operating mode
+ * @param    base    : The base address of DMIC interface
+ * @param    mode    : DMIC mode
+ * @return    Nothing
  */
 void DMIC_SetOperationMode(DMIC_Type *base, operation_mode_t mode);
 
 /*!
- * @brief	Configure DMIC channel
- * @param	base		: The base address of DMIC interface
- * @param	channel		: DMIC channel
+ * @brief    Configure DMIC channel
+ * @param    base        : The base address of DMIC interface
+ * @param    channel        : DMIC channel
  * @param side     : stereo_side_t, choice of left or right
- * @param	channel_config	: Channel configuration
- * @return	Nothing
+ * @param    channel_config    : Channel configuration
+ * @return    Nothing
  */
 void DMIC_ConfigChannel(DMIC_Type *base,
                         dmic_channel_t channel,
@@ -223,37 +223,37 @@ void DMIC_ConfigChannel(DMIC_Type *base,
                         dmic_channel_config_t *channel_config);
 
 /*!
- * @brief	Configure Clock scaling
- * @param	base		: The base address of DMIC interface
- * @param	use2fs		: clock scaling
- * @return	Nothing
+ * @brief    Configure Clock scaling
+ * @param    base        : The base address of DMIC interface
+ * @param    use2fs        : clock scaling
+ * @return    Nothing
  */
 void DMIC_Use2fs(DMIC_Type *base, bool use2fs);
 
 /*!
- * @brief	Enable a particualr channel
- * @param	base		: The base address of DMIC interface
- * @param	channelmask	: Channel selection
- * @return	Nothing
+ * @brief    Enable a particualr channel
+ * @param    base        : The base address of DMIC interface
+ * @param    channelmask    : Channel selection
+ * @return    Nothing
  */
 void DMIC_EnableChannnel(DMIC_Type *base, uint32_t channelmask);
 
 /*!
- * @brief	Configure fifo settings for DMIC channel
- * @param	base		: The base address of DMIC interface
- * @param	channel		: DMIC channel
- * @param	trig_level	: FIFO trigger level
- * @param	enable		: FIFO level
- * @param	resetn		: FIFO reset
- * @return	Nothing
+ * @brief    Configure fifo settings for DMIC channel
+ * @param    base        : The base address of DMIC interface
+ * @param    channel        : DMIC channel
+ * @param    trig_level    : FIFO trigger level
+ * @param    enable        : FIFO level
+ * @param    resetn        : FIFO reset
+ * @return    Nothing
  */
 void DMIC_FifoChannel(DMIC_Type *base, uint32_t channel, uint32_t trig_level, uint32_t enable, uint32_t resetn);
 
 /*!
- * @brief	Get FIFO status
- * @param	base		: The base address of DMIC interface
- * @param	channel		: DMIC channel
- * @return	FIFO status
+ * @brief    Get FIFO status
+ * @param    base        : The base address of DMIC interface
+ * @param    channel        : DMIC channel
+ * @return    FIFO status
  */
 static inline uint32_t DMIC_FifoGetStatus(DMIC_Type *base, uint32_t channel)
 {
@@ -261,11 +261,11 @@ static inline uint32_t DMIC_FifoGetStatus(DMIC_Type *base, uint32_t channel)
 }
 
 /*!
- * @brief	Clear FIFO status
- * @param	base		: The base address of DMIC interface
- * @param	channel		: DMIC channel
- * @param	mask		: Bits to be cleared
- * @return	FIFO status
+ * @brief    Clear FIFO status
+ * @param    base        : The base address of DMIC interface
+ * @param    channel        : DMIC channel
+ * @param    mask        : Bits to be cleared
+ * @return    FIFO status
  */
 static inline void DMIC_FifoClearStatus(DMIC_Type *base, uint32_t channel, uint32_t mask)
 {
@@ -273,10 +273,10 @@ static inline void DMIC_FifoClearStatus(DMIC_Type *base, uint32_t channel, uint3
 }
 
 /*!
- * @brief	Get FIFO data
- * @param	base		: The base address of DMIC interface
- * @param	channel		: DMIC channel
- * @return	FIFO data
+ * @brief    Get FIFO data
+ * @param    base        : The base address of DMIC interface
+ * @param    channel        : DMIC channel
+ * @return    FIFO data
  */
 static inline uint32_t DMIC_FifoGetData(DMIC_Type *base, uint32_t channel)
 {
@@ -284,7 +284,7 @@ static inline uint32_t DMIC_FifoGetData(DMIC_Type *base, uint32_t channel)
 }
 
 /*!
- * @brief	Enable callback.
+ * @brief    Enable callback.
 
  * This function enables the interrupt for the selected DMIC peripheral.
  * The callback function is not enabled until this function is called.
@@ -296,7 +296,7 @@ static inline uint32_t DMIC_FifoGetData(DMIC_Type *base, uint32_t channel)
 void DMIC_EnableIntCallback(DMIC_Type *base, dmic_callback_t cb);
 
 /*!
- * @brief	Disable callback.
+ * @brief    Disable callback.
 
  * This function disables the interrupt for the selected DMIC peripheral.
  *
@@ -406,7 +406,7 @@ static inline uint16_t DMIC_GetNoiseEnvlpEst(DMIC_Type *base)
 }
 
 /*!
- * @brief	Enable hwvad callback.
+ * @brief    Enable hwvad callback.
 
  * This function enables the hwvad interrupt for the selected DMIC  peripheral.
  * The callback function is not enabled until this function is called.
@@ -418,7 +418,7 @@ static inline uint16_t DMIC_GetNoiseEnvlpEst(DMIC_Type *base)
 void DMIC_HwvadEnableIntCallback(DMIC_Type *base, dmic_hwvad_callback_t vadcb);
 
 /*!
- * @brief	Disable callback.
+ * @brief    Disable callback.
 
  * This function disables the hwvad interrupt for the selected DMIC peripheral.
  *

@@ -53,7 +53,7 @@ void hdmi_iomux_config(void)
     //     ALT5 (5) - Select instance: gpio5 signal: GPIO5_IO02
     //     ALT6 (6) - Select instance: hdmi signal: HDMI_TX_CEC_LINE
     HW_IOMUXC_SW_MUX_CTL_PAD_EIM_ADDR25_WR(
-            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_ADDR25_SION_V(DISABLED) | 
+            BF_IOMUXC_SW_MUX_CTL_PAD_EIM_ADDR25_SION_V(DISABLED) |
             BF_IOMUXC_SW_MUX_CTL_PAD_EIM_ADDR25_MUX_MODE_V(ALT6));
     // Pad Control Register:
     // IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25(0x020E039C)
@@ -94,13 +94,13 @@ void hdmi_iomux_config(void)
     //     SLOW (0) - Slow Slew Rate
     //     FAST (1) - Fast Slew Rate
     HW_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_WR(
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_HYS_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_PUS_V(100K_OHM_PU) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_PUE_V(PULL) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_PKE_V(ENABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_ODE_V(DISABLED) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_SPEED_V(100MHZ) | 
-            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_DSE_V(40_OHM) | 
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_HYS_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_PUS_V(100K_OHM_PU) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_PUE_V(PULL) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_PKE_V(ENABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_ODE_V(DISABLED) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_SPEED_V(100MHZ) |
+            BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_DSE_V(40_OHM) |
             BF_IOMUXC_SW_PAD_CTL_PAD_EIM_ADDR25_SRE_V(FAST));
     // Pad EIM_ADDR25 is involved in Daisy Chain.
     // Input Select Register:

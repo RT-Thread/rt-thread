@@ -61,28 +61,28 @@ extern "C" {
  * @{
  */
 enum sleepmgr_mode {
-	//! Active mode.
-	SLEEPMGR_ACTIVE = 0,
-	/*! WFE sleep mode.
-	 *  Potential Wake Up sources:
-	 *  fast startup events (USB, RTC, RTT, WKUPs),
-	 *  interrupt, and events. */
-	SLEEPMGR_SLEEP_WFE,
-	/*! WFI sleep mode.
-	 * Potential Wake Up sources: fast startup events and interrupt. */
-	SLEEPMGR_SLEEP_WFI,
-	/*! Wait mode, wakeup fast (in 3ms).
-	 *  XTAL is not disabled when sleep.
-	 *  Potential Wake Up sources: fast startup events */
-	SLEEPMGR_WAIT_FAST,
-	/*! Wait mode.
-	 *  Potential Wake Up sources: fast startup events */
-	SLEEPMGR_WAIT,
+    //! Active mode.
+    SLEEPMGR_ACTIVE = 0,
+    /*! WFE sleep mode.
+     *  Potential Wake Up sources:
+     *  fast startup events (USB, RTC, RTT, WKUPs),
+     *  interrupt, and events. */
+    SLEEPMGR_SLEEP_WFE,
+    /*! WFI sleep mode.
+     * Potential Wake Up sources: fast startup events and interrupt. */
+    SLEEPMGR_SLEEP_WFI,
+    /*! Wait mode, wakeup fast (in 3ms).
+     *  XTAL is not disabled when sleep.
+     *  Potential Wake Up sources: fast startup events */
+    SLEEPMGR_WAIT_FAST,
+    /*! Wait mode.
+     *  Potential Wake Up sources: fast startup events */
+    SLEEPMGR_WAIT,
 #if (!(SAMG51 || SAMG53 || SAMG54))
-	//! Backup mode. Potential Wake Up sources: WKUPs, SM, RTT, RTC.
-	SLEEPMGR_BACKUP,
+    //! Backup mode. Potential Wake Up sources: WKUPs, SM, RTT, RTC.
+    SLEEPMGR_BACKUP,
 #endif
-	SLEEPMGR_NR_OF_MODES,
+    SLEEPMGR_NR_OF_MODES,
 };
 
 /**
@@ -99,15 +99,15 @@ extern uint8_t sleepmgr_locks[];
 
 static inline void sleepmgr_sleep(const enum sleepmgr_mode sleep_mode)
 {
-	Assert(sleep_mode != SLEEPMGR_ACTIVE);
+    Assert(sleep_mode != SLEEPMGR_ACTIVE);
 #ifdef CONFIG_SLEEPMGR_ENABLE
-	cpu_irq_disable();
+    cpu_irq_disable();
 
-	// Atomically enable the global interrupts and enter the sleep mode.
-	pmc_sleep(sleep_mode);
+    // Atomically enable the global interrupts and enter the sleep mode.
+    pmc_sleep(sleep_mode);
 #else
-	UNUSED(sleep_mode);
-	cpu_irq_enable();
+    UNUSED(sleep_mode);
+    cpu_irq_enable();
 #endif /* CONFIG_SLEEPMGR_ENABLE */
 
 }

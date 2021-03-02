@@ -1,24 +1,24 @@
 /*
- * ç¨‹åºæ¸…å•ï¼šäº‹ä»¶ä¾‹ç¨‹
+ * ³ÌĞòÇåµ¥£ºÊÂ¼şÀı³Ì
  *
- * è¿™ä¸ªç¨‹åºä¼šåˆ›å»º3ä¸ªåŠ¨æ€çº¿ç¨‹åŠåˆå§‹åŒ–ä¸€ä¸ªé™æ€äº‹ä»¶å¯¹è±¡
- * ä¸€ä¸ªçº¿ç¨‹ç­‰äºäº‹ä»¶å¯¹è±¡ä¸Šä»¥æ¥æ”¶äº‹ä»¶ï¼›
- * ä¸€ä¸ªçº¿ç¨‹å®šæ—¶å‘é€äº‹ä»¶ (äº‹ä»¶3)
- * ä¸€ä¸ªçº¿ç¨‹å®šæ—¶å‘é€äº‹ä»¶ (äº‹ä»¶5)
+ * Õâ¸ö³ÌĞò»á´´½¨3¸ö¶¯Ì¬Ïß³Ì¼°³õÊ¼»¯Ò»¸ö¾²Ì¬ÊÂ¼ş¶ÔÏó
+ * Ò»¸öÏß³ÌµÈÓÚÊÂ¼ş¶ÔÏóÉÏÒÔ½ÓÊÕÊÂ¼ş£»
+ * Ò»¸öÏß³Ì¶¨Ê±·¢ËÍÊÂ¼ş (ÊÂ¼ş3)
+ * Ò»¸öÏß³Ì¶¨Ê±·¢ËÍÊÂ¼ş (ÊÂ¼ş5)
  */
 #include <rtthread.h>
 #include <time.h>
 #include "tc_comm.h"
 
-/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
+/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
 static rt_thread_t tid3 = RT_NULL;
 
-/* äº‹ä»¶æ§åˆ¶å— */
+/* ÊÂ¼ş¿ØÖÆ¿é */
 static struct rt_event event;
 
-/* çº¿ç¨‹1å…¥å£å‡½æ•° */
+/* Ïß³Ì1Èë¿Úº¯Êı */
 static void thread1_entry(void *param)
 {
     rt_uint32_t e;
@@ -48,7 +48,7 @@ static void thread1_entry(void *param)
     }
 }
 
-/* çº¿ç¨‹2å…¥å£å‡½æ•° */
+/* Ïß³Ì2Èë¿Úº¯Êı */
 static void thread2_entry(void *param)
 {
     while (1)
@@ -60,7 +60,7 @@ static void thread2_entry(void *param)
     }
 }
 
-/* çº¿ç¨‹3å…¥å£å‡½æ•° */
+/* Ïß³Ì3Èë¿Úº¯Êı */
 static void thread3_entry(void *param)
 {
     while (1)
@@ -74,30 +74,30 @@ static void thread3_entry(void *param)
 
 int event_simple_init()
 {
-    /* åˆå§‹åŒ–äº‹ä»¶å¯¹è±¡ */
+    /* ³õÊ¼»¯ÊÂ¼ş¶ÔÏó */
     rt_event_init(&event, "event", RT_IPC_FLAG_FIFO);
 
-    /* åˆ›å»ºçº¿ç¨‹1 */
+    /* ´´½¨Ïß³Ì1 */
     tid1 = rt_thread_create("t1",
-                            thread1_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread1_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread1_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread1_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid1 != RT_NULL)
         rt_thread_startup(tid1);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹2 */
+    /* ´´½¨Ïß³Ì2 */
     tid2 = rt_thread_create("t2",
-                            thread2_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread2_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread2_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread2_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid2 != RT_NULL)
         rt_thread_startup(tid2);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* åˆ›å»ºçº¿ç¨‹3 */
+    /* ´´½¨Ïß³Ì3 */
     tid3 = rt_thread_create("t3",
-                            thread3_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread3_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
+                            thread3_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread3_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
                             THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid3 != RT_NULL)
         rt_thread_startup(tid3);
@@ -110,10 +110,10 @@ int event_simple_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
+    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
     rt_enter_critical();
 
-    /* åˆ é™¤çº¿ç¨‹ */
+    /* É¾³ıÏß³Ì */
     if (tid1 != RT_NULL && tid1->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid1);
     if (tid2 != RT_NULL && tid2->stat != RT_THREAD_CLOSE)
@@ -121,29 +121,29 @@ static void _tc_cleanup()
     if (tid3 != RT_NULL && tid3->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid3);
 
-    /* æ‰§è¡Œäº‹ä»¶å¯¹è±¡è„±ç¦» */
+    /* Ö´ĞĞÊÂ¼ş¶ÔÏóÍÑÀë */
     rt_event_detach(&event);
 
-    /* è°ƒåº¦å™¨è§£é” */
+    /* µ÷¶ÈÆ÷½âËø */
     rt_exit_critical();
 
-    /* è®¾ç½®TestCaseçŠ¶æ€ */
+    /* ÉèÖÃTestCase×´Ì¬ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_event_simple()
 {
-    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
+    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
     tc_cleanup(_tc_cleanup);
     event_simple_init();
 
-    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
+    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
     return 100;
 }
-/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
+/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
 FINSH_FUNCTION_EXPORT(_tc_event_simple, a simple event example);
 #else
-/* ç”¨æˆ·åº”ç”¨å…¥å£ */
+/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
 int rt_application_init()
 {
     event_simple_init();

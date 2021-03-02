@@ -845,7 +845,7 @@ typedef struct
  */
 
 /**
- * @defgroup EFM_Wait_Cycle EFM Wait Cycle 
+ * @defgroup EFM_Wait_Cycle EFM Wait Cycle
  * @{
  */
 #define EFM_WAIT_CYCLE_0                   (0U)      /*!< Don't insert read wait cycle */
@@ -1052,7 +1052,7 @@ typedef struct
  */
 
 /**
- * @defgroup EFM_ProtectReg_definition EFM Write protect for register definition 
+ * @defgroup EFM_ProtectReg_definition EFM Write protect for register definition
  * @{
  */
 #define EFM_PROTECT_FWMC            (0U)

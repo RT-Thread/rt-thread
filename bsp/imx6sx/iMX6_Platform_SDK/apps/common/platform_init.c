@@ -54,23 +54,23 @@ void platform_init(void)
     // Enable interrupts. Until this point, the startup code has left interrupts disabled.
     gic_init();
     arm_set_interrupt_state(true);
-    
-    // Initialize clock sources, dividers, ... 
+
+    // Initialize clock sources, dividers, ...
     ccm_init();
-    
-    // Configure the EPIT timer used for system delay function. 
+
+    // Configure the EPIT timer used for system delay function.
     system_time_init();
-    
-    // Initialize the debug/console UART 
+
+    // Initialize the debug/console UART
     uart_init(g_debug_uart_port, 115200, PARITY_NONE, STOPBITS_ONE, EIGHTBITS, FLOWCTRL_OFF);
 
-    // flush UART RX FIFO 
+    // flush UART RX FIFO
     uint8_t c;
     do {
         c = uart_getchar(g_debug_uart_port);
     } while (c != NONE_CHAR);
 
-    // Some init for the board 
+    // Some init for the board
     board_ioexpander_init();
 }
 

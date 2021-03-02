@@ -1,73 +1,73 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:	    arm_common_tables.c    
-*    
-* Description:	This file has common tables like fft twiddle factors, Bitreverse, reciprocal etc which are used across different functions    
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:     V1.1.0
+*
+* Project:         CMSIS DSP Library
+* Title:        arm_common_tables.c
+*
+* Description:    This file has common tables like fft twiddle factors, Bitreverse, reciprocal etc which are used across different functions
+*
 * Target Processor: Cortex-M4/Cortex-M3/Cortex-M0
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*   
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated.    
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.10 2011/7/15
+*    Big Endian support added and Merged M0 and M3/M4 Source code.
+*
+* Version 1.0.3 2010/11/29
+*    Re-organized the CMSIS folders and updated documentation.
+*
+* Version 1.0.2 2010/11/11
+*    Documentation updated.
+*
+* Version 1.0.1 2010/10/05
+*    Production release and review comments incorporated.
+*
+* Version 1.0.0 2010/09/20
+*    Production release and review comments incorporated.
 * -------------------------------------------------------------------- */
 
 
 #include "arm_math.h"
 #include "arm_common_tables.h"
 
-/**    
- * @ingroup groupTransforms    
+/**
+ * @ingroup groupTransforms
  */
 
-/**    
- * @addtogroup CFFT_CIFFT Complex FFT Tables  
- * @{    
+/**
+ * @addtogroup CFFT_CIFFT Complex FFT Tables
+ * @{
  */
 
-/**    
-* \par    
-* Pseudo code for Generation of Bit reversal Table is    
-* \par    
-* <pre>for(l=1;l <= N/4;l++)    
-* {    
-*   for(i=0;i<logN2;i++)    
-*   {     
-*     a[i]=l&(1<<i);    
-*   }    
-*   for(j=0; j<logN2; j++)    
-*   {    
-*     if (a[j]!=0)    
-*     y[l]+=(1<<((logN2-1)-j));    
-*   }    
-*   y[l] = y[l] >> 1;    
-*  } </pre>    
-* \par    
-* where N = 4096	logN2 = 12   
-* \par    
-* N is the maximum FFT Size supported    
+/**
+* \par
+* Pseudo code for Generation of Bit reversal Table is
+* \par
+* <pre>for(l=1;l <= N/4;l++)
+* {
+*   for(i=0;i<logN2;i++)
+*   {
+*     a[i]=l&(1<<i);
+*   }
+*   for(j=0; j<logN2; j++)
+*   {
+*     if (a[j]!=0)
+*     y[l]+=(1<<((logN2-1)-j));
+*   }
+*   y[l] = y[l] >> 1;
+*  } </pre>
+* \par
+* where N = 4096    logN2 = 12
+* \par
+* N is the maximum FFT Size supported
 */
 
-/*    
-* @brief  Table for bit reversal process    
+/*
+* @brief  Table for bit reversal process
 */
 const uint16_t armBitRevTable[1024] = {
   0x400, 0x200, 0x600, 0x100, 0x500, 0x300, 0x700,
@@ -220,25 +220,25 @@ const uint16_t armBitRevTable[1024] = {
 };
 
 
-/*    
-* @brief  Floating-point Twiddle factors Table Generation    
+/*
+* @brief  Floating-point Twiddle factors Table Generation
 */
 
 
-/**    
-* \par    
-* Example code for Floating-point Twiddle factors Generation:    
-* \par    
-* <pre>for(i = 0; i< 3N/4; i++)    
-* {    
-*	twiddleCoef[2*i]= cos(i * 2*PI/(float)N);    
-*	twiddleCoef[2*i+1]= sin(i * 2*PI/(float)N);    
-* } </pre>    
-* \par    
-* where N = 4096	and PI = 3.14159265358979    
-* \par    
-* Cos and Sin values are in interleaved fashion    
-*     
+/**
+* \par
+* Example code for Floating-point Twiddle factors Generation:
+* \par
+* <pre>for(i = 0; i< 3N/4; i++)
+* {
+*    twiddleCoef[2*i]= cos(i * 2*PI/(float)N);
+*    twiddleCoef[2*i+1]= sin(i * 2*PI/(float)N);
+* } </pre>
+* \par
+* where N = 4096    and PI = 3.14159265358979
+* \par
+* Cos and Sin values are in interleaved fashion
+*
 */
 const float32_t twiddleCoef[6144] = {
   1.000000000000000000f, 0.000000000000000000f, 0.999998823451701880f,
@@ -2291,27 +2291,27 @@ const float32_t twiddleCoef[6144] = {
     -0.999995293809576190f, -0.001533980186285111f, -0.999998823451701880f,
 };
 
-/*    
-* @brief  Q31 Twiddle factors Table    
+/*
+* @brief  Q31 Twiddle factors Table
 */
 
-/**    
-* \par   
-* Example code for Q31 Twiddle factors Generation::    
-* \par    
-* <pre>for(i = 0; i< 3N/4; i++)    
-* {    
-*    twiddleCoefQ31[2*i]= cos(i * 2*PI/(float)N);    
-*    twiddleCoefQ31[2*i+1]= sin(i * 2*PI/(float)N);    
-* } </pre>    
-* \par    
-* where N = 4096	and PI = 3.14159265358979    
-* \par    
-* Cos and Sin values are interleaved fashion    
-* \par    
-* Convert Floating point to Q31(Fixed point 1.31):    
-*	round(twiddleCoefQ31(i) * pow(2, 31))    
-*    
+/**
+* \par
+* Example code for Q31 Twiddle factors Generation::
+* \par
+* <pre>for(i = 0; i< 3N/4; i++)
+* {
+*    twiddleCoefQ31[2*i]= cos(i * 2*PI/(float)N);
+*    twiddleCoefQ31[2*i+1]= sin(i * 2*PI/(float)N);
+* } </pre>
+* \par
+* where N = 4096    and PI = 3.14159265358979
+* \par
+* Cos and Sin values are interleaved fashion
+* \par
+* Convert Floating point to Q31(Fixed point 1.31):
+*    round(twiddleCoefQ31(i) * pow(2, 31))
+*
 */
 
 const q31_t twiddleCoefQ31[6144] = {
@@ -3855,27 +3855,27 @@ const q31_t twiddleCoefQ31[6144] = {
 };
 
 
-/*    
-* @brief  Q15 Twiddle factors Table    
+/*
+* @brief  Q15 Twiddle factors Table
 */
 
-/**   
-* \par    
-* Example code for Q15 Twiddle factors Generation::    
-* \par    
-* <pre>for(i = 0; i< 3N/4; i++)    
-* {    
-*	twiddleCoefQ15[2*i]= cos(i * 2*PI/(float)N);    
-*	twiddleCoefQ15[2*i+1]= sin(i * 2*PI/(float)N);    
-* } </pre>    
-* \par    
-* where N = 4096	and PI = 3.14159265358979    
-* \par    
-* Cos and Sin values are interleaved fashion    
-* \par    
-* Convert Floating point to Q15(Fixed point 1.15):    
-*	round(twiddleCoefQ15(i) * pow(2, 15))    
-*    
+/**
+* \par
+* Example code for Q15 Twiddle factors Generation::
+* \par
+* <pre>for(i = 0; i< 3N/4; i++)
+* {
+*    twiddleCoefQ15[2*i]= cos(i * 2*PI/(float)N);
+*    twiddleCoefQ15[2*i+1]= sin(i * 2*PI/(float)N);
+* } </pre>
+* \par
+* where N = 4096    and PI = 3.14159265358979
+* \par
+* Cos and Sin values are interleaved fashion
+* \par
+* Convert Floating point to Q15(Fixed point 1.15):
+*    round(twiddleCoefQ15(i) * pow(2, 15))
+*
 */
 
 const q15_t ALIGN4 twiddleCoefQ15[6144] = {
@@ -4650,12 +4650,12 @@ const q15_t ALIGN4 twiddleCoefQ15[6144] = {
   0xff37, 0x8001, 0xff69, 0x8000, 0xff9b, 0x8000, 0xffce, 0x8000,
 };
 
-/**    
- * @} end of CFFT_CIFFT group    
+/**
+ * @} end of CFFT_CIFFT group
  */
 
-/*    
-* @brief  Q15 table for reciprocal    
+/*
+* @brief  Q15 table for reciprocal
 */
 const q15_t ALIGN4 armRecipTableQ15[64] = {
   0x7F03, 0x7D13, 0x7B31, 0x795E, 0x7798, 0x75E0,
@@ -4671,8 +4671,8 @@ const q15_t ALIGN4 armRecipTableQ15[64] = {
   0x41CC, 0x4146, 0x40C2, 0x4040
 };
 
-/*    
-* @brief  Q31 table for reciprocal    
+/*
+* @brief  Q31 table for reciprocal
 */
 const q31_t armRecipTableQ31[64] = {
   0x7F03F03F, 0x7D137420, 0x7B31E739, 0x795E9F94, 0x7798FD29, 0x75E06928,

@@ -136,7 +136,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
   if((PeriphClkInit->PeriphClockSelection & RCC_PERIPHCLK_RTC) == RCC_PERIPHCLK_RTC)
   {
     FlagStatus       pwrclkchanged = RESET;
-    
+
     /* Check for RTC Parameters used to output RTCCLK */
     assert_param(IS_RCC_RTCCLKSOURCE(PeriphClkInit->RTCClockSelection));
 
@@ -146,7 +146,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
       __HAL_RCC_PWR_CLK_ENABLE();
       pwrclkchanged = SET;
     }
-      
+
     /* Enable write access to Backup domain */
     SET_BIT(PWR->CR1, PWR_CR1_DBP);
 
@@ -163,10 +163,10 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
     }
 
     if(ret == HAL_OK)
-    { 
+    {
       /* Reset the Backup domain only if the RTC Clock source selection is modified from default */
       tmpregister = READ_BIT(RCC->BDCR, RCC_BDCR_RTCSEL);
-      
+
       if((tmpregister != RCC_RTCCLKSOURCE_NONE) && (tmpregister != PeriphClkInit->RTCClockSelection))
       {
         /* Store the content of BDCR register before the reset of Backup Domain */
@@ -194,7 +194,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
           }
         }
       }
-      
+
       if(ret == HAL_OK)
       {
         /* Apply new RTC clock source selection */
@@ -315,7 +315,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
     __HAL_RCC_I2C3_CONFIG(PeriphClkInit->I2c3ClockSelection);
   }
 
-#if defined(I2C4)  
+#if defined(I2C4)
 
   /*-------------------------- I2C4 clock source configuration ---------------------*/
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_I2C4) == RCC_PERIPHCLK_I2C4)
@@ -347,7 +347,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
     /* Configure the SAI1 interface clock source */
     __HAL_RCC_SAI1_CONFIG(PeriphClkInit->Sai1ClockSelection);
-    
+
     if(PeriphClkInit->Sai1ClockSelection == RCC_SAI1CLKSOURCE_PLL)
     {
       /* Enable PLL48M1CLK output */
@@ -363,7 +363,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
     /* Configure the I2S interface clock source */
     __HAL_RCC_I2S_CONFIG(PeriphClkInit->I2sClockSelection);
-    
+
     if(PeriphClkInit->I2sClockSelection == RCC_I2SCLKSOURCE_PLL)
     {
       /* Enable PLL48M1CLK output */
@@ -380,7 +380,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
     /* Configure the FDCAN interface clock source */
     __HAL_RCC_FDCAN_CONFIG(PeriphClkInit->FdcanClockSelection);
-    
+
     if(PeriphClkInit->FdcanClockSelection == RCC_FDCANCLKSOURCE_PLL)
     {
       /* Enable PLL48M1CLK output */
@@ -427,14 +427,14 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
     /* Configure the ADC12 interface clock source */
     __HAL_RCC_ADC12_CONFIG(PeriphClkInit->Adc12ClockSelection);
-    
+
     if(PeriphClkInit->Adc12ClockSelection == RCC_ADC12CLKSOURCE_PLL)
     {
       /* Enable PLLADCCLK output */
       __HAL_RCC_PLLCLKOUT_ENABLE(RCC_PLL_ADCCLK);
     }
   }
-  
+
 #if defined(ADC345_COMMON)
   /*-------------------------- ADC345 clock source configuration ----------------------*/
   if(((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_ADC345) == RCC_PERIPHCLK_ADC345)
@@ -444,7 +444,7 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
 
     /* Configure the ADC345 interface clock source */
     __HAL_RCC_ADC345_CONFIG(PeriphClkInit->Adc345ClockSelection);
-    
+
     if(PeriphClkInit->Adc345ClockSelection == RCC_ADC345CLKSOURCE_PLL)
     {
       /* Enable PLLADCCLK output */
@@ -553,7 +553,7 @@ void HAL_RCCEx_GetPeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClkInit)
   /* Get the UART5 clock source ----------------------------------------------*/
   PeriphClkInit->Uart5ClockSelection   = __HAL_RCC_GET_UART5_SOURCE();
 #endif /* UART5 */
-  
+
   /* Get the LPUART1 clock source --------------------------------------------*/
   PeriphClkInit->Lpuart1ClockSelection = __HAL_RCC_GET_LPUART1_SOURCE();
 
@@ -1054,7 +1054,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       {
         /* External clock used.*/
         frequency = EXTERNAL_CLOCK_VALUE;
-      }      
+      }
       else if((HAL_IS_BIT_SET(RCC->CR, RCC_CR_HSIRDY)) && (srcclk == RCC_I2SCLKSOURCE_HSI))
       {
         frequency = HSI_VALUE;
@@ -1095,13 +1095,13 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       }
       break;
 #endif /* FDCAN1 */
-    
+
 #if defined(USB)
-    
+
     case RCC_PERIPHCLK_USB:
       /* Get the current USB source */
       srcclk = __HAL_RCC_GET_USB_SOURCE();
-      
+
       if(srcclk == RCC_USBCLKSOURCE_PLL)  /* PLL ? */
       {
         /* f(PLLQ) = f(VCO input) * PLLN / PLLQ */
@@ -1117,7 +1117,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* nothing to do: frequency already initialized to 0 */
       }
       break;
-      
+
 #endif /* USB */
 
     case RCC_PERIPHCLK_RNG:
@@ -1143,7 +1143,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case RCC_PERIPHCLK_ADC12:
       /* Get the current ADC12 source */
       srcclk = __HAL_RCC_GET_ADC12_SOURCE();
-      
+
       if(srcclk == RCC_ADC12CLKSOURCE_PLL)
       {
         if(__HAL_RCC_GET_PLLCLKOUT_CONFIG(RCC_PLL_ADCCLK) != 0U)
@@ -1180,7 +1180,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case RCC_PERIPHCLK_ADC345:
       /* Get the current ADC345 source */
       srcclk = __HAL_RCC_GET_ADC345_SOURCE();
-      
+
       if(srcclk == RCC_ADC345CLKSOURCE_PLL)
       {
         if(__HAL_RCC_GET_PLLCLKOUT_CONFIG(RCC_PLL_ADCCLK) != 0U)
@@ -1219,7 +1219,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     case RCC_PERIPHCLK_QSPI:
       /* Get the current QSPI source */
       srcclk = __HAL_RCC_GET_QSPI_SOURCE();
-      
+
       if(srcclk == RCC_QSPICLKSOURCE_PLL)  /* PLL ? */
       {
         /* f(PLLQ) = f(VCO input) * PLLN / PLLQ */
@@ -1229,7 +1229,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
       else if(srcclk == RCC_QSPICLKSOURCE_HSI)
       {
         frequency = HSI_VALUE;
-      }      
+      }
       else if(srcclk == RCC_QSPICLKSOURCE_SYSCLK)
       {
         frequency = HAL_RCC_GetSysClockFreq();

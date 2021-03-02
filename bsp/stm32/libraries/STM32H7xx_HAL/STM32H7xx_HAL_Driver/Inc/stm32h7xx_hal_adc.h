@@ -1217,7 +1217,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (2)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (2)
-  *         
+  *
   *         (1) On STM32H7, parameter available only on ADC instance: ADC3.\n
   *         (2) On STM32H7, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32H7, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
@@ -1259,7 +1259,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (2)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (2)
-  *         
+  *
   *         (1) On STM32H7, parameter available only on ADC instance: ADC3.\n
   *         (2) On STM32H7, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32H7, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
@@ -1313,7 +1313,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (2)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (2)
-  *         
+  *
   *         (1) On STM32H7, parameter available only on ADC instance: ADC3.\n
   *         (2) On STM32H7, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32H7, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
@@ -1362,7 +1362,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (2)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (2)
-  *         
+  *
   *         (1) On STM32H7, parameter available only on ADC instance: ADC3.\n
   *         (2) On STM32H7, parameter available only on ADC instance: ADC2.\n
   *         (3) On STM32H7, fast channel (0.125 us for 14-bit resolution (ADC conversion rate up to 8 Ms/s)).
@@ -1411,7 +1411,7 @@ typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to 
   *         @arg @ref ADC_CHANNEL_VBAT         (1)
   *         @arg @ref ADC_CHANNEL_DAC1CH1_ADC2 (2)
   *         @arg @ref ADC_CHANNEL_DAC1CH2_ADC2 (2)
-  *         
+  *
   *         (1) On STM32H7, parameter available only on ADC instance: ADC3.\n
   *         (2) On STM32H7, parameter available only on ADC instance: ADC2.
   * @retval Value "0" if the internal channel selected is not available on the ADC instance selected.

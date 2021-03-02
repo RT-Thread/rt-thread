@@ -101,7 +101,7 @@ typedef struct
     TYPE_FUNCEN  T16Nx_MOE0;   //输出端口0使能
     TYPE_FUNCEN  T16Nx_MOE1;   //输出端口1使能
     T16Nx_PWMOUT_POLAR_Type  T16Nx_POL0;    //T16NxOUT0输出极性选择位
-    T16Nx_PWMOUT_POLAR_Type  T16Nx_POL1;    //T16NxOUT1输出极性选择位 
+    T16Nx_PWMOUT_POLAR_Type  T16Nx_POL1;    //T16NxOUT1输出极性选择位
 }T16Nx_PWMInitStruType;
 
 /* 捕捉功能初始化结构体定义 */
@@ -125,7 +125,7 @@ typedef enum
 typedef enum
 {
     PWMBKP_High = 0,
-    PWMBKP_Low = 1,     
+    PWMBKP_Low = 1,
 }T16Nx_PWMBKP_LEVEl;
 
 /*PWM刹车信号源选择*/

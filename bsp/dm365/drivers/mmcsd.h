@@ -18,8 +18,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
- * Date           Author		Notes
- * 2011-01-13     weety		first version
+ * Date           Author        Notes
+ * 2011-01-13     weety        first version
  */
 
 #ifndef __DAVINCI_MMC_H__
@@ -44,18 +44,18 @@
 #define MMCCLK_CLKRT_MASK     (0xFF << 0)
 
 /* IRQ bit definitions, for DAVINCI_MMCST0 and DAVINCI_MMCIM */
-#define MMCST0_DATDNE         (1 << 0)	/* data done */
-#define MMCST0_BSYDNE         (1 << 1)	/* busy done */
-#define MMCST0_RSPDNE         (1 << 2)	/* command done */
-#define MMCST0_TOUTRD         (1 << 3)	/* data read timeout */
-#define MMCST0_TOUTRS         (1 << 4)	/* command response timeout */
-#define MMCST0_CRCWR          (1 << 5)	/* data write CRC error */
-#define MMCST0_CRCRD          (1 << 6)	/* data read CRC error */
-#define MMCST0_CRCRS          (1 << 7)	/* command response CRC error */
-#define MMCST0_DXRDY          (1 << 9)	/* data transmit ready (fifo empty) */
-#define MMCST0_DRRDY          (1 << 10)	/* data receive ready (data in fifo)*/
-#define MMCST0_DATED          (1 << 11)	/* DAT3 edge detect */
-#define MMCST0_TRNDNE         (1 << 12)	/* transfer done */
+#define MMCST0_DATDNE         (1 << 0)    /* data done */
+#define MMCST0_BSYDNE         (1 << 1)    /* busy done */
+#define MMCST0_RSPDNE         (1 << 2)    /* command done */
+#define MMCST0_TOUTRD         (1 << 3)    /* data read timeout */
+#define MMCST0_TOUTRS         (1 << 4)    /* command response timeout */
+#define MMCST0_CRCWR          (1 << 5)    /* data write CRC error */
+#define MMCST0_CRCRD          (1 << 6)    /* data read CRC error */
+#define MMCST0_CRCRS          (1 << 7)    /* command response CRC error */
+#define MMCST0_DXRDY          (1 << 9)    /* data transmit ready (fifo empty) */
+#define MMCST0_DRRDY          (1 << 10)    /* data receive ready (data in fifo)*/
+#define MMCST0_DATED          (1 << 11)    /* DAT3 edge detect */
+#define MMCST0_TRNDNE         (1 << 12)    /* transfer done */
 
 /* DAVINCI_MMCST1 definitions */
 #define MMCST1_BUSY           (1 << 0)
@@ -100,44 +100,44 @@
 #define SDIOIST_RWS           (1 << 1)
 
 /* MMCSD Init clock in Hz in opendrain mode */
-#define MMCSD_INIT_CLOCK		200000
+#define MMCSD_INIT_CLOCK        200000
 
-#define MAX_CCNT	((1 << 16) - 1)
+#define MAX_CCNT    ((1 << 16) - 1)
 
-#define MAX_NR_SG	16
+#define MAX_NR_SG    16
 
-#define MMC_DATA_WRITE	(1 << 8)
-#define MMC_DATA_READ	(1 << 9)
-#define MMC_DATA_STREAM	(1 << 10)
+#define MMC_DATA_WRITE    (1 << 8)
+#define MMC_DATA_READ    (1 << 9)
+#define MMC_DATA_STREAM    (1 << 10)
 
 typedef struct {
-	volatile rt_uint32_t MMCCTL;
-	volatile rt_uint32_t MMCCLK;
-	volatile rt_uint32_t MMCST0;
-	volatile rt_uint32_t MMCST1;
-	volatile rt_uint32_t MMCIM;
-	volatile rt_uint32_t MMCTOR;
-	volatile rt_uint32_t MMCTOD;
-	volatile rt_uint32_t MMCBLEN;
-	volatile rt_uint32_t MMCNBLK;
-	volatile rt_uint32_t MMCNBLC;
-	volatile rt_uint32_t MMCDRR;
-	volatile rt_uint32_t MMCDXR;
-	volatile rt_uint32_t MMCCMD;
-	volatile rt_uint32_t MMCARGHL;
-	volatile rt_uint32_t MMCRSP01;
-	volatile rt_uint32_t MMCRSP23;
-	volatile rt_uint32_t MMCRSP45;
-	volatile rt_uint32_t MMCRSP67;
-	volatile rt_uint32_t MMCDRSP;
-	volatile rt_uint32_t reserved0;
-	volatile rt_uint32_t MMCCIDX;
-	volatile rt_uint32_t reserved1[4];
-	volatile rt_uint32_t SDIOCTL;
-	volatile rt_uint32_t SDIOST0;
-	volatile rt_uint32_t SDIOIEN;
-	volatile rt_uint32_t SDIOIST;
-	volatile rt_uint32_t MMCFIFOCTL;
+    volatile rt_uint32_t MMCCTL;
+    volatile rt_uint32_t MMCCLK;
+    volatile rt_uint32_t MMCST0;
+    volatile rt_uint32_t MMCST1;
+    volatile rt_uint32_t MMCIM;
+    volatile rt_uint32_t MMCTOR;
+    volatile rt_uint32_t MMCTOD;
+    volatile rt_uint32_t MMCBLEN;
+    volatile rt_uint32_t MMCNBLK;
+    volatile rt_uint32_t MMCNBLC;
+    volatile rt_uint32_t MMCDRR;
+    volatile rt_uint32_t MMCDXR;
+    volatile rt_uint32_t MMCCMD;
+    volatile rt_uint32_t MMCARGHL;
+    volatile rt_uint32_t MMCRSP01;
+    volatile rt_uint32_t MMCRSP23;
+    volatile rt_uint32_t MMCRSP45;
+    volatile rt_uint32_t MMCRSP67;
+    volatile rt_uint32_t MMCDRSP;
+    volatile rt_uint32_t reserved0;
+    volatile rt_uint32_t MMCCIDX;
+    volatile rt_uint32_t reserved1[4];
+    volatile rt_uint32_t SDIOCTL;
+    volatile rt_uint32_t SDIOST0;
+    volatile rt_uint32_t SDIOIEN;
+    volatile rt_uint32_t SDIOIST;
+    volatile rt_uint32_t MMCFIFOCTL;
 }mmcsd_regs_t;
 
 extern int rt_hw_mmcsd_init(void);

@@ -31,7 +31,7 @@
 //! @addtogroup diag_audio
 //! @{
 
-/*! 
+/*!
  * @file imx-audmux.h
  * @brief imx-audmux public inferface.
  */
@@ -64,11 +64,11 @@ extern "C" {
 /*!
  * @breif Set ptcr and pdcr of the audmux port
  *
- * @param   port	the port to be set
- * @param   ptcr	ptcr value to be set
- * @param   pdcr	pdcr value to be set
+ * @param   port    the port to be set
+ * @param   ptcr    ptcr value to be set
+ * @param   pdcr    pdcr value to be set
  * @return  0 if succeeded
- *	    -1 if failed. 
+ *        -1 if failed.
  */
     uint32_t audmux_port_set(uint32_t port, uint32_t ptcr, uint32_t pdcr);
 
@@ -76,12 +76,12 @@ extern "C" {
  * @brief Set audmux port according the ssi mode(master/slave).
  *
  * We set the audumx ports in sync mode which is the default status for most codec.
- * 
- * @param   intPort	the internal port to be set
- * @param   extPort	the external port to be set
- * @param   is_master	ssi mode(master/slave)
+ *
+ * @param   intPort    the internal port to be set
+ * @param   extPort    the external port to be set
+ * @param   is_master    ssi mode(master/slave)
  * @return  0 if succeeded
- *	    -1 if failed. 
+ *        -1 if failed.
  */
     uint32_t audmux_route(uint32_t intPort, uint32_t extPort, uint32_t is_master);
 

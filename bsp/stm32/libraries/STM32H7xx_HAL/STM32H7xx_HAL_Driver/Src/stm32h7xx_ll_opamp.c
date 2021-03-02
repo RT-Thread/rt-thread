@@ -31,7 +31,7 @@
   * @{
   */
 
-#if defined (OPAMP1) || defined (OPAMP2) 
+#if defined (OPAMP1) || defined (OPAMP2)
 /** @addtogroup OPAMP_LL OPAMP
   * @{
   */
@@ -66,14 +66,14 @@
   (   ((__INPUT_NONINVERTING__) == LL_OPAMP_INPUT_NONINVERT_IO0)               \
    || ((__INPUT_NONINVERTING__) == LL_OPAMP_INPUT_NONINVERT_DAC)               \
   )
-  
+
 
 #define IS_LL_OPAMP_INPUT_INVERTING(__INPUT_INVERTING__)                       \
   (   ((__INPUT_INVERTING__) == LL_OPAMP_INPUT_INVERT_IO0)                     \
    || ((__INPUT_INVERTING__) == LL_OPAMP_INPUT_INVERT_IO1)                     \
    || ((__INPUT_INVERTING__) == LL_OPAMP_INPUT_INVERT_CONNECT_NO)              \
   )
-  
+
 /**
   * @}
   */
@@ -104,12 +104,12 @@
 ErrorStatus LL_OPAMP_DeInit(OPAMP_TypeDef* OPAMPx)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_OPAMP_ALL_INSTANCE(OPAMPx));
-  
+
   LL_OPAMP_WriteReg(OPAMPx, CSR, 0x00000000U);
- 
+
   return status;
 }
 
@@ -128,13 +128,13 @@ ErrorStatus LL_OPAMP_DeInit(OPAMP_TypeDef* OPAMPx)
 ErrorStatus LL_OPAMP_Init(OPAMP_TypeDef *OPAMPx, LL_OPAMP_InitTypeDef *OPAMP_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_OPAMP_ALL_INSTANCE(OPAMPx));
   assert_param(IS_LL_OPAMP_POWER_MODE(OPAMP_InitStruct->PowerMode));
   assert_param(IS_LL_OPAMP_FUNCTIONAL_MODE(OPAMP_InitStruct->FunctionalMode));
   assert_param(IS_LL_OPAMP_INPUT_NONINVERTING(OPAMP_InitStruct->InputNonInverting));
-  
+
   /* Note: OPAMP inverting input can be used with OPAMP in mode standalone    */
   /*       or PGA with external capacitors for filtering circuit.             */
   /*       Otherwise (OPAMP in mode follower), OPAMP inverting input is       */
@@ -143,7 +143,7 @@ ErrorStatus LL_OPAMP_Init(OPAMP_TypeDef *OPAMPx, LL_OPAMP_InitTypeDef *OPAMP_Ini
   {
     assert_param(IS_LL_OPAMP_INPUT_INVERTING(OPAMP_InitStruct->InputInverting));
   }
-  
+
   /* Configuration of OPAMP instance :                                      */
   /*  - PowerMode                                                           */
   /*  - Functional mode                                                     */

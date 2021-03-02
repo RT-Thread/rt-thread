@@ -2,7 +2,7 @@
 *   @brief TCRAM Register Layer Header File
 *   @date 29.May.2013
 *   @version 03.05.02
-*   
+*
 *   This file contains:
 *   - Definitions
 *   - Types
@@ -31,18 +31,18 @@
 
 typedef volatile struct tcramBase
 {
-    uint32 RAMCTRL;		    /* 0x0000 */
+    uint32 RAMCTRL;            /* 0x0000 */
     uint32 RAMTHRESHOLD;      /* 0x0004 */
-    uint32 RAMOCCUR;			/* 0x0008 */
-    uint32 RAMINTCTRL;		/* 0x000C */
-    uint32 RAMERRSTATUS;		/* 0x0010 */
-    uint32 RAMSERRADDR;		/* 0x0014 */
-    uint32   rsvd1;			/* 0x0018 */
-    uint32 RAMUERRADDR;		/* 0x001C */
-    uint32   rsvd2[4U];		/* 0x0020 */
-    uint32 RAMTEST;			/* 0x0030 */
-    uint32   rsvd3;			/* 0x0034 */
-    uint32 RAMADDRDECVECT;	/* 0x0038 */
+    uint32 RAMOCCUR;            /* 0x0008 */
+    uint32 RAMINTCTRL;        /* 0x000C */
+    uint32 RAMERRSTATUS;        /* 0x0010 */
+    uint32 RAMSERRADDR;        /* 0x0014 */
+    uint32   rsvd1;            /* 0x0018 */
+    uint32 RAMUERRADDR;        /* 0x001C */
+    uint32   rsvd2[4U];        /* 0x0020 */
+    uint32 RAMTEST;            /* 0x0030 */
+    uint32   rsvd3;            /* 0x0034 */
+    uint32 RAMADDRDECVECT;    /* 0x0038 */
     uint32 RAMPERADDR;        /* 0x003C */
 } tcramBASE_t;
 

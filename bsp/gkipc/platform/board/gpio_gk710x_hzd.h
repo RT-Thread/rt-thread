@@ -67,8 +67,8 @@
 #define SYSTEM_GPIO_XREF_TABLE                            \
     { GADI_GPIO_0 , GADI_GPIO_TYPE_OUTPUT_SF_CS0                 }, \
     { GADI_GPIO_1 , GADI_GPIO_TYPE_OUTPUT_SF_CS1                 }, \
-    { GADI_GPIO_2 , GADI_GPIO_TYPE_INPUT_0 },					\
-    { GADI_GPIO_3 , GADI_GPIO_TYPE_INPUT_0 }, 				\
+    { GADI_GPIO_2 , GADI_GPIO_TYPE_INPUT_0 },                    \
+    { GADI_GPIO_3 , GADI_GPIO_TYPE_INPUT_0 },                 \
     { GADI_GPIO_8 , GADI_GPIO_TYPE_INPUT_0       /* SPI0_HOLD */}, \
     { GADI_GPIO_9 , GADI_GPIO_TYPE_INPUT_0               }, \
     { GADI_GPIO_10, GADI_GPIO_TYPE_INPUT_0               }, \
@@ -100,10 +100,10 @@
     { GADI_GPIO_37, GADI_GPIO_TYPE_OUTPUT_0            /* PTZ  */}, \
     { GADI_GPIO_38, GADI_GPIO_TYPE_INOUT_I2C_DATA2               }, \
     { GADI_GPIO_39, GADI_GPIO_TYPE_INOUT_I2C_CLK2                }, \
-    SYSTEM_GADI_GPIO_SD_TABLE	\
+    SYSTEM_GADI_GPIO_SD_TABLE    \
     { GADI_GPIO_51, GADI_GPIO_TYPE_OUTPUT_AOBCLK                 }, \
     { GADI_GPIO_52, GADI_GPIO_TYPE_OUTPUT_AOLRCLK                }, \
-	SYSTEM_GPIO_INTPHY_TABLE                          \
+    SYSTEM_GPIO_INTPHY_TABLE                          \
 
 
 
@@ -111,6 +111,6 @@
 #define SYSTEM_GPIO_IR_CUT2                       GADI_GPIO_11
 
 #define SYSTEM_ETH_PHY_RESET_GPIO                 GADI_GPIO_41
-#define SYSTEM_GPIO_SENSOR_RESET    			  GADI_GPIO_27
+#define SYSTEM_GPIO_SENSOR_RESET                  GADI_GPIO_27
 
 #endif

@@ -69,11 +69,11 @@ extern "C" {
 
 /**
  * @brief      Initializes the flash controller for erase/write operations
- * @param      sys_cfg      Reserved for future use.  Use NULL as this parameter's value.  
+ * @param      sys_cfg      Reserved for future use.  Use NULL as this parameter's value.
  * @return     #E_NO_ERROR if successful, @ref MXC_Error_Codes "error" if unsuccessful.
  */
 int FLC_Init(const sys_cfg_flc_t *sys_cfg);
-  
+
 /**
  * @brief      Checks if Flash controller is busy.
  * @details    Reading or executing from flash is not possible if flash is busy
@@ -81,7 +81,7 @@ int FLC_Init(const sys_cfg_flc_t *sys_cfg);
  * @return     If non-zero, flash operation is in progress
  */
 int FLC_Busy(void);
-  
+
 /**
  * @brief      Erases the entire flash array.
  * @return     #E_NO_ERROR if successful, @ref MXC_Error_Codes "error" if unsuccessful.
@@ -110,11 +110,11 @@ int FLC_Erase(uint32_t start, uint32_t end);
  * @param      end      Ending address to erase, exclusive.
  * @param      buffer   Data buffer to restore data in beginning and ending pages.
  * @param      length   Length of given buffer.
- * 
- * @note       Buffer should be appropriate size to store all of the data remaining in the 
- * first and last pages. length should be greater than or equal to 
+ *
+ * @note       Buffer should be appropriate size to store all of the data remaining in the
+ * first and last pages. length should be greater than or equal to
  * (start % MXC_FLASH_PAGE_SIZE) and ((MXC_FLASH_PAGE_SIZE - (end % MXC_FLASH_PAGE_SIZE)) % MXC_FLASH_PAGE_SIZE).
- * 
+ *
  * @return     #E_NO_ERROR if successful, @ref MXC_Error_Codes "error" if unsuccessful.
  */
 int FLC_BufferErase(uint32_t start, uint32_t end, uint8_t *buffer, unsigned length);

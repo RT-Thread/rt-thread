@@ -35,9 +35,9 @@
 uint32_t ROM_SPIM_GetMemSize(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIM_API->GetMemSize();
+    return ROMAPI_SPIM_API->GetMemSize();
 #else
-	return spim_api.GetMemSize();
+    return spim_api.GetMemSize();
 #endif
 }
 
@@ -45,54 +45,54 @@ uint32_t ROM_SPIM_GetMemSize(void)
 ROM_SPIM_HANDLE_T ROM_SPIM_Init(void *mem, ROM_SPIM_INIT_T *pInit)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIM_API->Init(mem, pInit);
+    return ROMAPI_SPIM_API->Init(mem, pInit);
 #else
-	return spim_api.Init(mem, pInit);
+    return spim_api.Init(mem, pInit);
 #endif
 }
 
 void ROM_SPIM_RegisterCallback(ROM_SPIM_HANDLE_T pHandle, ROM_SPIM_CALLBACK_T cbIndex, void *pCB)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_SPIM_API->RegisterCallback(pHandle, cbIndex, pCB);
+    ROMAPI_SPIM_API->RegisterCallback(pHandle, cbIndex, pCB);
 #else
-	spim_api.RegisterCallback(pHandle, cbIndex, pCB);
+    spim_api.RegisterCallback(pHandle, cbIndex, pCB);
 #endif
 }
 
 ErrorCode_t ROM_SPIM_SetupTransfer(ROM_SPIM_HANDLE_T pHandle, ROM_SPIM_XFER_CONFIG_T *pCfg)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIM_API->SetupTransfer(pHandle, pCfg);
+    return ROMAPI_SPIM_API->SetupTransfer(pHandle, pCfg);
 #else
-	return spim_api.SetupTransfer(pHandle, pCfg);
+    return spim_api.SetupTransfer(pHandle, pCfg);
 #endif
 }
 
 ErrorCode_t ROM_SPIM_Transfer(ROM_SPIM_HANDLE_T pHandle, ROM_SPIM_XFER_T *pXfer)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIM_API->Transfer(pHandle, pXfer);
+    return ROMAPI_SPIM_API->Transfer(pHandle, pXfer);
 #else
-	return spim_api.Transfer(pHandle, pXfer);
+    return spim_api.Transfer(pHandle, pXfer);
 #endif
 }
 
 void ROM_SPIM_TransferHandler(ROM_SPIM_HANDLE_T pHandle)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_SPIM_API->TransferHandler(pHandle);
+    ROMAPI_SPIM_API->TransferHandler(pHandle);
 #else
-	spim_api.TransferHandler(pHandle);
+    spim_api.TransferHandler(pHandle);
 #endif
 }
 
 void ROM_SPIM_ClosePendingTransfer(ROM_SPIM_HANDLE_T pHandle)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	ROMAPI_SPIM_API->ClosePendingTransfer(pHandle);
+    ROMAPI_SPIM_API->ClosePendingTransfer(pHandle);
 #else
-	spim_api.ClosePendingTransfer(pHandle);
+    spim_api.ClosePendingTransfer(pHandle);
 #endif
 }
 
@@ -100,8 +100,8 @@ void ROM_SPIM_ClosePendingTransfer(ROM_SPIM_HANDLE_T pHandle)
 uint16_t ROM_SPIM_GetDriverVersion(void)
 {
 #if defined(ROMDRIVERSV2_PRESENT)
-	return ROMAPI_SPIM_API->GetDriverVersion();
+    return ROMAPI_SPIM_API->GetDriverVersion();
 #else
-	return spim_api.GetDriverVersion();
+    return spim_api.GetDriverVersion();
 #endif
 }

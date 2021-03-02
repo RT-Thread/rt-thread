@@ -26,11 +26,11 @@ void trap_c(uint32_t *regs)
     printf("CPU Exception: NO.%d", vec);
     printf("\n");
 
-    for (i = 0; i < 31; i++) 
+    for (i = 0; i < 31; i++)
     {
         printf("x%d: %08x\t", i + 1, regs[i]);
 
-        if ((i % 4) == 3) 
+        if ((i % 4) == 3)
         {
             printf("\n");
         }
@@ -40,7 +40,7 @@ void trap_c(uint32_t *regs)
     printf("mepc   : %08x\n", regs[31]);
     printf("mstatus: %08x\n", regs[32]);
 
-    if (trap_c_callback) 
+    if (trap_c_callback)
     {
         trap_c_callback();
     }

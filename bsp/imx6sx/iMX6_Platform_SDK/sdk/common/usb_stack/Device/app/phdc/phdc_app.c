@@ -34,7 +34,7 @@
    #include <stdio.h>
 #endif
 #include <stdlib.h>
-#include <string.h>			
+#include <string.h>
 
 #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
 #include "exceptions.h"
@@ -219,7 +219,7 @@ uint_8 USB_CONST PHD_WSL_DIM_GET_RSP[DIM_GET_RSP_SIZE] = {
 0x61, 0x6C, 0x65, 0x20,
 0x00, 0x0C, 0x4D, 0x65,          /* string length = 12 | TheScaleABC\0    */
 0x64, 0x69, 0x63, 0x61,
-0x6C, 0x20, 
+0x6C, 0x20,
 #ifdef _MCF51JM128_H
 0x43, 0x46, 0x56, 0x31,
 #endif
@@ -425,7 +425,7 @@ static void USB_App_Callback(
         case APP_PHD_ASSOCIATION_TIMEDOUT:
             event = APP_PHD_INITIALISED;
             break;
-        
+
     }
     return;
 }
@@ -448,53 +448,53 @@ static void USB_App_Callback(
     {
         switch(kbi_stat & KBI_STAT_MASK)
         {
-            case SEND_MEASUREMENT_BULK: 
-                /* 
+            case SEND_MEASUREMENT_BULK:
+                /*
                     PTG1 is pressed, used to send
-                    measurements 
+                    measurements
                 */
                 if(event == APP_PHD_CONNECTED_TO_HOST)
                 {
-    		        /* 
-    		            Send measurements only when the device is in the 
-    		            operating state 
-    		        */
-    		        event = APP_PHD_MEASUREMENT_SENDING;
+                    /*
+                        Send measurements only when the device is in the
+                        operating state
+                    */
+                    event = APP_PHD_MEASUREMENT_SENDING;
                     PHD_Send_Measurements_to_Manager(CONTROLLER_ID , PHDC_BULK_IN_QOS);
                 }
                 break;
             case SEND_MEASUREMENT_INT:
              #ifndef BUTTON_PRESS_SIMULATION
-              #ifndef _MC9S08JS16_H 
-                /* 
+              #ifndef _MC9S08JS16_H
+                /*
                     PTG1 is pressed, used to send
-                    measurements 
+                    measurements
                 */
                 if(event == APP_PHD_CONNECTED_TO_HOST)
                 {
-    		        /* 
-    		            Send measurements only when the device is in the 
-    		            operating state 
-    		        */
-    		        event = APP_PHD_MEASUREMENT_SENDING;
+                    /*
+                        Send measurements only when the device is in the
+                        operating state
+                    */
+                    event = APP_PHD_MEASUREMENT_SENDING;
                     PHD_Send_Measurements_to_Manager(CONTROLLER_ID , PHDC_INT_IN_QOS);
                 }
-                break;                
+                break;
               #endif /* _MC9S08JS16_H */
-             #endif /* BUTTON_PRESS_SIMULATION */ 
+             #endif /* BUTTON_PRESS_SIMULATION */
             case DISCONNECT:
-              #ifndef BUTTON_PRESS_SIMULATION  
-                /* 
+              #ifndef BUTTON_PRESS_SIMULATION
+                /*
                     PTG2 is pressed, to disconnect(dis-associate)
-                    from the host 
-                */                
+                    from the host
+                */
                 if(event == APP_PHD_CONNECTED_TO_HOST)
                 {
                     event = APP_PHD_DISCONNECTING;
                     PHD_Disconnect_from_Manager(CONTROLLER_ID);
                 }
                 break;
-              #endif /* BUTTON_PRESS_SIMULATION */ 
+              #endif /* BUTTON_PRESS_SIMULATION */
             default:
                 break; /* otherwise */
         }
@@ -534,16 +534,16 @@ void TestApp_Init(void)
     msr.weight[1]= 54;
 
     DisableInterrupts;
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
-		usb_int_dis();
-	#endif	
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+        usb_int_dis();
+    #endif
     /* Initialize the USB interface */
     error = PHD_Transport_Init(CONTROLLER_ID, USB_App_Callback);
 
     EnableInterrupts;
-	#if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
-		usb_int_en();
-	#endif		
+    #if (defined _MCF51MM256_H) || (defined _MCF51JE256_H)
+        usb_int_en();
+    #endif
 
 }
 
@@ -561,53 +561,53 @@ void TestApp_Init(void)
  * Application task function. It is called from the main loop
  *****************************************************************************/
 void TestApp_Task(void)
-{       
+{
         /* Check for any button pressed */
         Button_Pressed();
         switch (event)
         {
             case APP_PHD_INITIALISED:
                 {
-                    /* 
-                        Start a timer so that the user has enough time to 
-                        select the device specialization 
+                    /*
+                        Start a timer so that the user has enough time to
+                        select the device specialization
                     */
                     TIMER_OBJECT TimerObject;
                     TimerObject.msCount = SELECT_TIMEOUT;
                     TimerObject.pfnTimerCallback = SelectTimerCallback;
-                 
+
                     event = APP_PHD_SELECT_TIMER_STARTED;
                     g_app_timer = AddTimerQ(&TimerObject);
                 }
                 break;
             case APP_PHD_DISCONNECTED_FROM_HOST:
-                /* 
-                    transition to initialised state so the association 
-                    procedure can start again 
+                /*
+                    transition to initialised state so the association
+                    procedure can start again
                 */
                 event = APP_PHD_INITIALISED;
                 break;
 
             case APP_PHD_MEASUREMENT_SENT:
-                /* 
+                /*
                     enters here each time we receive a response to the
-                    measurements sent 
+                    measurements sent
                 */
                 event = APP_PHD_CONNECTED_TO_HOST;
                 break;
             case APP_PHD_SELECT_TIMER_OFF:
-                /* 
-                    Start the association procedure once the select timer 
-                    fires 
+                /*
+                    Start the association procedure once the select timer
+                    fires
                 */
                 event = APP_PHD_INITIATED;
                 /* connect to the manager */
-                PHD_Connect_to_Manager(CONTROLLER_ID);                  
+                PHD_Connect_to_Manager(CONTROLLER_ID);
                 break;
-                  
+
           default:
               break;
-    
+
         }
 }
 
@@ -623,7 +623,7 @@ void TestApp_Task(void)
  *   @return      None
  *
  *****************************************************************************
- * This function when called initiates the association procedure for the 
+ * This function when called initiates the association procedure for the
  * selected device specialization
  *****************************************************************************/
 #ifdef TIMER_CALLBACK_ARG
@@ -652,24 +652,24 @@ static void SelectTimerCallback(void)
  * Called by the application to send the measurement data via event report
  *****************************************************************************/
 void PHD_Send_WSL_Measurements_to_Manager (
-    uint_8 controller_ID,       /* [IN] Controller ID */    
+    uint_8 controller_ID,       /* [IN] Controller ID */
     void* buffer_ptr,           /* [IN] Measurement buffer */
     void* size                /* [IN] Buffer size */
 )
 {
         uint_8 i=0;
         uint_8_ptr send_buff = (uint_8_ptr)buffer_ptr;
-        
+
         DATA_apdu *dataApdu = (DATA_apdu *)&(((PRST_apdu *)&((APDU *)send_buff)->u.prst)->value[0]);
         ScanReportInfoFixed *scan_rep = (ScanReportInfoFixed *)&(dataApdu->choice.u.roiv_cmipConfirmedEventReport.event_info.value[0]);
-        
+
         UNUSED(controller_ID)
         *(USB_PACKET_SIZE *)size = DIM_DATA_TX_SIZE;
         /* copy the measurements to send in the phd_buffer */
-        (void)memcpy(send_buff, PHD_WSL_DIM_DATA_TX, DIM_DATA_TX_SIZE);        
+        (void)memcpy(send_buff, PHD_WSL_DIM_DATA_TX, DIM_DATA_TX_SIZE);
         /* update the scan report no */
         scan_rep->scan_report_no = scanReportNo++;
-        
+
          /* set measurement  */
          for(i = 0; i < 4; i++)
          {
@@ -683,14 +683,14 @@ void PHD_Send_WSL_Measurements_to_Manager (
              uint_8 j = (uint_8)(i >> 1);
              if((i & 0x01) == 0)
              {
-                msr.weight[j]++;                
+                msr.weight[j]++;
                 msr.weight[j] %= 1000;
                 send_buff[36+i*16] = (uint_8)((msr.weight[j] >> 8) & 0x00FF);
                 send_buff[37+i*16] = (uint_8)((msr.weight[j]) & 0x00FF);
              }
              else /* bmi */
              {
-                msr.bmi[j]++;                
+                msr.bmi[j]++;
                 msr.bmi[j] %= 500;
                 send_buff[36+i*16] = (uint_8)((msr.bmi[j] >> 8) & 0x00FF);
                 send_buff[37+i*16] = (uint_8)((msr.bmi[j]) & 0x00FF);

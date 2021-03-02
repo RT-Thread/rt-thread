@@ -28,7 +28,7 @@ extern "C" {
  * RP2040 has 36 multi-functional General Purpose Input / Output (GPIO) pins, divided into two banks. In a typical use case,
  * the pins in the QSPI bank (QSPI_SS, QSPI_SCLK and QSPI_SD0 to QSPI_SD3) are used to execute code from an external
  * flash device, leaving the User bank (GPIO0 to GPIO29) for the programmer to use. All GPIOs support digital input and
- * output, but GPIO26 to GPIO29 can also be used as inputs to the chipâ€™s Analogue to Digital Converter (ADC). Each GPIO
+ * output, but GPIO26 to GPIO29 can also be used as inputs to the chip¡¯s Analogue to Digital Converter (ADC). Each GPIO
  * can be controlled directly by software running on the processors, or by a number of other functional blocks.
  *
  * The function allocated to each GPIO is selected by calling the \ref gpio_set_function function. \note Not all functions

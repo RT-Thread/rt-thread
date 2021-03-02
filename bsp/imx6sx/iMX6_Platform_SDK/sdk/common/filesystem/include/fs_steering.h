@@ -36,11 +36,11 @@
 //! \brief Filesystem steering support
 //! \version 1.0
 //! \date June-2005
-//! 
+//!
 //! Prototypes, enumerations and defines for filesystem steering support.
-//!                     
+//!
 //! \see Implementations in fs_steering.c
-//                     
+//
 
 #ifndef _FS_STEERING_H
 #define _FS_STEERING_H

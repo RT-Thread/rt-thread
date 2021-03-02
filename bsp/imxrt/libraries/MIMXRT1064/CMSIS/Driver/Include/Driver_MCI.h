@@ -112,8 +112,8 @@ extern "C"
 #define ARM_MCI_BUS_SPEED_MODE          (0x02)      ///< Set Bus Speed Mode as specified with arg
 #define ARM_MCI_BUS_CMD_MODE            (0x03)      ///< Set CMD Line Mode as specified with arg
 #define ARM_MCI_BUS_DATA_WIDTH          (0x04)      ///< Set Bus Data Width as specified with arg
-#define ARM_MCI_DRIVER_STRENGTH         (0x05)      ///< Set SD UHS-I Driver Strength as specified with arg 
-#define ARM_MCI_CONTROL_RESET           (0x06)      ///< Control optional RST_n Pin (eMMC); arg: 0=inactive, 1=active 
+#define ARM_MCI_DRIVER_STRENGTH         (0x05)      ///< Set SD UHS-I Driver Strength as specified with arg
+#define ARM_MCI_CONTROL_RESET           (0x06)      ///< Control optional RST_n Pin (eMMC); arg: 0=inactive, 1=active
 #define ARM_MCI_CONTROL_CLOCK_IDLE      (0x07)      ///< Control Clock generation on CLK Pin when idle; arg: 0=disabled, 1=enabled
 #define ARM_MCI_UHS_TUNING_OPERATION    (0x08)      ///< Sampling clock Tuning operation (SD UHS-I); arg: 0=reset, 1=execute
 #define ARM_MCI_UHS_TUNING_RESULT       (0x09)      ///< Sampling clock Tuning result (SD UHS-I); returns: 0=done, 1=in progress, -1=error
@@ -308,19 +308,19 @@ typedef struct _ARM_MCI_CAPABILITIES {
   uint32_t data_width_4_ddr  : 1;       ///< Supports 4-bit data, DDR (Dual Data Rate) - MMC only
   uint32_t data_width_8_ddr  : 1;       ///< Supports 8-bit data, DDR (Dual Data Rate) - MMC only
   uint32_t high_speed        : 1;       ///< Supports SD/MMC High Speed Mode
-  uint32_t uhs_signaling     : 1;       ///< Supports SD UHS-I (Ultra High Speed) 1.8V signaling 
-  uint32_t uhs_tuning        : 1;       ///< Supports SD UHS-I tuning 
+  uint32_t uhs_signaling     : 1;       ///< Supports SD UHS-I (Ultra High Speed) 1.8V signaling
+  uint32_t uhs_tuning        : 1;       ///< Supports SD UHS-I tuning
   uint32_t uhs_sdr50         : 1;       ///< Supports SD UHS-I SDR50  (Single Data Rate) up to  50MB/s
   uint32_t uhs_sdr104        : 1;       ///< Supports SD UHS-I SDR104 (Single Data Rate) up to 104MB/s
   uint32_t uhs_ddr50         : 1;       ///< Supports SD UHS-I DDR50  (Dual   Data Rate) up to  50MB/s
   uint32_t uhs_driver_type_a : 1;       ///< Supports SD UHS-I Driver Type A
   uint32_t uhs_driver_type_c : 1;       ///< Supports SD UHS-I Driver Type C
-  uint32_t uhs_driver_type_d : 1;       ///< Supports SD UHS-I Driver Type D 
-  uint32_t sdio_interrupt    : 1;       ///< Supports SD I/O Interrupt 
+  uint32_t uhs_driver_type_d : 1;       ///< Supports SD UHS-I Driver Type D
+  uint32_t sdio_interrupt    : 1;       ///< Supports SD I/O Interrupt
   uint32_t read_wait         : 1;       ///< Supports Read Wait (SD I/O)
   uint32_t suspend_resume    : 1;       ///< Supports Suspend/Resume (SD I/O)
-  uint32_t mmc_interrupt     : 1;       ///< Supports MMC Interrupt 
-  uint32_t mmc_boot          : 1;       ///< Supports MMC Boot 
+  uint32_t mmc_interrupt     : 1;       ///< Supports MMC Interrupt
+  uint32_t mmc_boot          : 1;       ///< Supports MMC Boot
   uint32_t rst_n             : 1;       ///< Supports RST_n Pin Control (eMMC)
   uint32_t ccs               : 1;       ///< Supports Command Completion Signal (CCS) for CE-ATA
   uint32_t ccs_timeout       : 1;       ///< Supports Command Completion Signal (CCS) timeout for CE-ATA
@@ -340,8 +340,8 @@ typedef struct _ARM_DRIVER_MCI {
   int32_t              (*CardPower)      (uint32_t voltage);               ///< Pointer to \ref ARM_MCI_CardPower : Set card power supply voltage.
   int32_t              (*ReadCD)         (void);                           ///< Pointer to \ref ARM_MCI_ReadCD : Read Card Detect (CD) state.
   int32_t              (*ReadWP)         (void);                           ///< Pointer to \ref ARM_MCI_ReadWP : Read Write Protect (WP) state.
-  int32_t              (*SendCommand)    (uint32_t cmd, 
-                                          uint32_t arg, 
+  int32_t              (*SendCommand)    (uint32_t cmd,
+                                          uint32_t arg,
                                           uint32_t flags,
                                           uint32_t *response);             ///< Pointer to \ref ARM_MCI_SendCommand : Send Command to card and get the response.
   int32_t              (*SetupTransfer)  (uint8_t *data,

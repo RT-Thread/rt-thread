@@ -378,8 +378,8 @@ extern unsigned int _ebss;
 __attribute__ ((section(".after_vectors.reset")))
 void Reset_Handler(void) {
     /* Data and BSS variables */
-	unsigned int *srcdata, *dstdata, *sbss;
-    
+    unsigned int *srcdata, *dstdata, *sbss;
+
     // Disable interrupts
     __asm volatile ("cpsid i");
 
@@ -387,26 +387,26 @@ void Reset_Handler(void) {
     __asm volatile ("LDR R0, =0x40000220\n\t"
                     "MOV R1, #56\n\t"
                     "STR R1, [R0]");
-                    
+
     // extern void Reset_ASM_Handler();
     // Reset_ASM_Handler();
-    
-	srcdata = &_sidata;
-	dstdata = &_sdata;
-	sbss = &_sbss;
 
-	/* Copy data */
-	while(dstdata != &_edata)
-	{
-		*(dstdata++) = *(srcdata++);
-	}
+    srcdata = &_sidata;
+    dstdata = &_sdata;
+    sbss = &_sbss;
 
-	/* Clear BSS */
-	while(sbss != &_ebss)
-	{
-		*(sbss++) = '\0';
-	}
-    
+    /* Copy data */
+    while(dstdata != &_edata)
+    {
+        *(dstdata++) = *(srcdata++);
+    }
+
+    /* Clear BSS */
+    while(sbss != &_ebss)
+    {
+        *(sbss++) = '\0';
+    }
+
 #if defined (__USE_CMSIS)
 // If __USE_CMSIS defined, then call CMSIS SystemInit code
     SystemInit();

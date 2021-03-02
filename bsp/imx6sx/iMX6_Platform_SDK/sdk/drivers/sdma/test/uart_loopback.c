@@ -37,8 +37,8 @@
 #include "sdk.h"
 #include "registers/regsuart.h"
 
-#define UART_LOOPBACK_TEST_BUF_SZ 	1024
-#define UART_REF_FREQ 			27000000
+#define UART_LOOPBACK_TEST_BUF_SZ     1024
+#define UART_REF_FREQ             27000000
 
 #define TX_FIFO_WATERMARK_LEVEL 4
 #define RX_FIFO_WATERMARK_LEVEL 16

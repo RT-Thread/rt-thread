@@ -7,7 +7,7 @@
 * @version  1.0
 * @date     02. June. 2011
 * @author   NXP MCU SW Application Team
-* 
+*
 * Copyright(C) 2011, NXP Semiconductor
 * All rights reserved.
 *
@@ -164,7 +164,7 @@ typedef enum
 
 
 /** @brief Configuration structure in PWM TIMER mode */
-typedef struct 
+typedef struct
 {
 
     uint8_t PrescaleOption;     /**< Prescale option, should be:
@@ -178,7 +178,7 @@ typedef struct
 } PWM_TIMERCFG_Type;
 
 /** @brief Configuration structure in PWM COUNTER mode */
-typedef struct 
+typedef struct
 {
 
     uint8_t CounterOption;      /**< Counter Option, should be:
@@ -194,7 +194,7 @@ typedef struct
 } PWM_COUNTERCFG_Type;
 
 /** @brief PWM Match channel configuration structure */
-typedef struct 
+typedef struct
 {
     uint8_t MatchChannel;   /**< Match channel, should be in range
                             from 0..6 */
@@ -214,7 +214,7 @@ typedef struct
 
 
 /** @brief PWM Capture Input configuration structure */
-typedef struct 
+typedef struct
 {
     uint8_t CaptureChannel; /**< Capture channel, should be in range
                             from 0..1 */
@@ -235,7 +235,7 @@ typedef struct
 /* Timer/Counter in PWM configuration type definition -----------------------------------*/
 
 /** @brief PMW TC mode select option */
-typedef enum 
+typedef enum
 {
     PWM_MODE_TIMER = 0,     /*!< PWM using Timer mode */
     PWM_MODE_COUNTER,       /*!< PWM using Counter mode */
@@ -255,7 +255,7 @@ typedef enum
 
 
 /** @brief PWM Input Select in counter mode */
-typedef enum 
+typedef enum
 {
     PWM_COUNTER_PCAP1_0 = 0,        /*!< PWM Counter input selected is PCAP1.0 pin */
     PWM_COUNTER_PCAP1_1         /*!< PWM counter input selected is CAP1.1 pin */
@@ -264,7 +264,7 @@ typedef enum
 #define PARAM_PWM_COUNTER_INPUTSEL(n) ((n==PWM_COUNTER_PCAP1_0) || (n==PWM_COUNTER_PCAP1_1))
 
 /** @brief PWM Input Edge Option in counter mode */
-typedef enum 
+typedef enum
 {
     PWM_COUNTER_RISING = 1,     /*!< Rising edge mode */
     PWM_COUNTER_FALLING = 2,    /*!< Falling edge mode */
@@ -277,7 +277,7 @@ typedef enum
 
 /* PWM configuration type definition ----------------------------------------------------- */
 /** @brief PWM operating mode options */
-typedef enum 
+typedef enum
 {
     PWM_CHANNEL_SINGLE_EDGE,    /*!< PWM Channel Single edge mode */
     PWM_CHANNEL_DUAL_EDGE       /*!< PWM Channel Dual edge mode */
@@ -287,7 +287,7 @@ typedef enum
 
 
 /** @brief PWM update type */
-typedef enum 
+typedef enum
 {
     PWM_MATCH_UPDATE_NOW = 0,           /**< PWM Match Channel Update Now */
     PWM_MATCH_UPDATE_NEXT_RST           /**< PWM Match Channel Update on next

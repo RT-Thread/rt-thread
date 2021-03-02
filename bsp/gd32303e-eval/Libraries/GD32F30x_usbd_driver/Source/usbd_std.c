@@ -28,16 +28,16 @@ static void usbd_getinterface      (usbd_core_handle_struct *pudev, usb_device_r
 static void usbd_setinterface      (usbd_core_handle_struct *pudev, usb_device_req_struct *req);
 static void usbd_synchframe        (usbd_core_handle_struct *pudev, usb_device_req_struct *req);
 
-static uint8_t* usbd_device_descriptor_get        (usbd_core_handle_struct *pudev, 
-                                                   uint8_t index, 
+static uint8_t* usbd_device_descriptor_get        (usbd_core_handle_struct *pudev,
+                                                   uint8_t index,
                                                    uint16_t *pLen);
 
-static uint8_t* usbd_configuration_descriptor_get (usbd_core_handle_struct *pudev, 
-                                                   uint8_t index, 
+static uint8_t* usbd_configuration_descriptor_get (usbd_core_handle_struct *pudev,
+                                                   uint8_t index,
                                                    uint16_t *pLen);
 
-static uint8_t* usbd_string_descriptor_get        (usbd_core_handle_struct *pudev, 
-                                                   uint8_t index, 
+static uint8_t* usbd_string_descriptor_get        (usbd_core_handle_struct *pudev,
+                                                   uint8_t index,
                                                    uint16_t *pLen);
 
 #ifdef LPM_ENABLED
@@ -63,7 +63,7 @@ static void (*standard_device_request[])(usbd_core_handle_struct *pudev, usb_dev
 };
 
 /* get standard descriptor handler */
-static uint8_t* (*standard_descriptor_get[])(usbd_core_handle_struct *pudev, uint8_t index, uint16_t *pLen) = 
+static uint8_t* (*standard_descriptor_get[])(usbd_core_handle_struct *pudev, uint8_t index, uint16_t *pLen) =
 {
     usbd_device_descriptor_get,
     usbd_configuration_descriptor_get,
@@ -180,7 +180,7 @@ uint8_t  usbd_in_transaction (usbd_core_handle_struct *pudev, uint8_t ep_num)
                     ep->trs_len = 0U;
 
                     if (USBD_CONFIGURED == pudev->status) {
-                        pudev->class_data_handler(pudev, USBD_TX, EP0); 
+                        pudev->class_data_handler(pudev, USBD_TX, EP0);
                     }
 
                     USBD_CONTRL_STATUS_RX();
@@ -617,7 +617,7 @@ static void  usbd_getdescriptor (usbd_core_handle_struct *pudev, usb_device_req_
         if (desc_index <= 0x03U) {
             /* call corresponding descriptor get function */
             pbuf = standard_descriptor_get[desc_index - 1U](pudev, (uint8_t)(req->wValue) & 0xFFU, &len);
-        } 
+        }
 #ifdef LPM_ENABLED
         else if (USB_DESCTYPE_BOS == desc_index) {
             pbuf = usbd_bos_descriptor_get(pudev, &len);
@@ -638,7 +638,7 @@ static void  usbd_getdescriptor (usbd_core_handle_struct *pudev, usb_device_req_
             pudev->class_req_handler(pudev, req);
         }
     } else {
-        
+
     }
 }
 

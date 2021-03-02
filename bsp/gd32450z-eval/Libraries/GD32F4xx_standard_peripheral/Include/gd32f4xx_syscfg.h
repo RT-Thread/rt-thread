@@ -141,7 +141,7 @@ void syscfg_bootmode_config(uint8_t syscfg_bootmode);
 void syscfg_fmc_swap_config(uint32_t syscfg_fmc_swap);
 
 /* configure the EXMC swap */
-void syscfg_exmc_swap_config(uint32_t syscfg_exmc_swap); 
+void syscfg_exmc_swap_config(uint32_t syscfg_exmc_swap);
 
 /* configure the GPIO pin as EXTI Line */
 void syscfg_exti_line_config(uint8_t exti_port, uint8_t exti_pin);
@@ -150,7 +150,7 @@ void syscfg_exti_line_config(uint8_t exti_port, uint8_t exti_pin);
 void syscfg_enet_phy_interface_config(uint32_t syscfg_enet_phy_interface);
 
 /* configure the I/O compensation cell */
-void syscfg_compensation_config(uint32_t syscfg_compensation); 
+void syscfg_compensation_config(uint32_t syscfg_compensation);
 
 /* check the I/O compensation cell is ready or not */
 FlagStatus syscfg_flag_get(void);

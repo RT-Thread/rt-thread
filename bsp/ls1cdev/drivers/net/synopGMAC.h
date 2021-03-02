@@ -20,4 +20,4 @@
 
 int rt_hw_eth_init(void);
 
-#endif	/*__SYNOPGMAC__H*/
+#endif    /*__SYNOPGMAC__H*/

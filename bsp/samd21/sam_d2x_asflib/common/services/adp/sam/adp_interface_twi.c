@@ -59,14 +59,14 @@
 */
 enum status_code adp_interface_init(void)
 {
-	sysclk_init();
+    sysclk_init();
 
-	/* Configure the TWI interface */
-	twi_master_options_t opt = {
-		.speed = 100000,
-		.chip  = TWI_EDBG_SLAVE_ADDR
-	};
-	return twi_master_setup(EDBG_TWI_MODULE, &opt);
+    /* Configure the TWI interface */
+    twi_master_options_t opt = {
+        .speed = 100000,
+        .chip  = TWI_EDBG_SLAVE_ADDR
+    };
+    return twi_master_setup(EDBG_TWI_MODULE, &opt);
 }
 
 /**
@@ -77,12 +77,12 @@ enum status_code adp_interface_init(void)
 */
 static enum status_code adp_interface_send(uint8_t* tx_buf, uint16_t length)
 {
-	twi_package_t packet_write = {
-		.chip         = TWI_EDBG_SLAVE_ADDR, /* TWI slave bus address */
-		.buffer       = tx_buf,        /* transfer data source buffer */
-		.length       = length               /* transfer data size (bytes) */
-	};
-	return twi_master_write(EDBG_TWI_MODULE, &packet_write);
+    twi_package_t packet_write = {
+        .chip         = TWI_EDBG_SLAVE_ADDR, /* TWI slave bus address */
+        .buffer       = tx_buf,        /* transfer data source buffer */
+        .length       = length               /* transfer data size (bytes) */
+    };
+    return twi_master_write(EDBG_TWI_MODULE, &packet_write);
 }
 
 /**
@@ -91,25 +91,25 @@ static enum status_code adp_interface_send(uint8_t* tx_buf, uint16_t length)
 * \param[out] data   Pointer to place received data
 * \param[in]  length Number of bytes to receive
 */
-enum status_code adp_interface_read_response(uint8_t *data,	uint16_t length)
+enum status_code adp_interface_read_response(uint8_t *data,    uint16_t length)
 {
-	enum status_code status = ERR_IO_ERROR;
-	uint8_t data_len = 0;
-	
-	twi_package_t packet_read = {
-		.chip         = TWI_EDBG_SLAVE_ADDR, // TWI slave bus address
-		.buffer       = &data_len,                // transfer data destination buffer
-		.length       = 1               // transfer data size (bytes)
-	};
-	twi_master_read(EDBG_TWI_MODULE, &packet_read);
-	
-	if(data_len != 0){
-		packet_read.length = data_len;
-		packet_read.buffer = data;
-		status = twi_master_read(EDBG_TWI_MODULE, &packet_read);	
-	}
+    enum status_code status = ERR_IO_ERROR;
+    uint8_t data_len = 0;
 
-	return status;
+    twi_package_t packet_read = {
+        .chip         = TWI_EDBG_SLAVE_ADDR, // TWI slave bus address
+        .buffer       = &data_len,                // transfer data destination buffer
+        .length       = 1               // transfer data size (bytes)
+    };
+    twi_master_read(EDBG_TWI_MODULE, &packet_read);
+
+    if(data_len != 0){
+        packet_read.length = data_len;
+        packet_read.buffer = data;
+        status = twi_master_read(EDBG_TWI_MODULE, &packet_read);
+    }
+
+    return status;
 }
 
 /**
@@ -121,7 +121,7 @@ enum status_code adp_interface_read_response(uint8_t *data,	uint16_t length)
 */
 void adp_interface_transceive_procotol(uint8_t* tx_buf, uint16_t length, uint8_t* rx_buf)
 {
-	adp_interface_send(tx_buf, length);
-	adp_interface_read_response(rx_buf, length);
+    adp_interface_send(tx_buf, length);
+    adp_interface_read_response(rx_buf, length);
 }
 

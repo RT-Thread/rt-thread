@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32G4xx_HAL_CONF_H
@@ -30,10 +30,10 @@
 
 /* ########################## Module Selection ############################## */
 /**
-  * @brief This is the list of modules to be used in the HAL driver 
+  * @brief This is the list of modules to be used in the HAL driver
   */
-  
-#define HAL_MODULE_ENABLED  
+
+#define HAL_MODULE_ENABLED
 
   /*#define HAL_ADC_MODULE_ENABLED   */
 /*#define HAL_COMP_MODULE_ENABLED   */
@@ -111,9 +111,9 @@
 /**
   * @brief Adjust the value of External High Speed oscillator (HSE) used in your application.
   *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSE is used as system clock source, directly or through the PLL).  
+  *        (when HSE is used as system clock source, directly or through the PLL).
   */
-#if !defined  (HSE_VALUE) 
+#if !defined  (HSE_VALUE)
   #define HSE_VALUE    (24000000UL) /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
 
@@ -124,7 +124,7 @@
 /**
   * @brief Internal High Speed oscillator (HSI) value.
   *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSI is used as system clock source, directly or through the PLL). 
+  *        (when HSI is used as system clock source, directly or through the PLL).
   */
 #if !defined  (HSI_VALUE)
   #define HSI_VALUE    (16000000UL) /*!< Value of the Internal oscillator in Hz*/
@@ -145,10 +145,10 @@
 /**
   * @brief Internal Low Speed oscillator (LSI) value.
   */
-#if !defined  (LSI_VALUE) 
+#if !defined  (LSI_VALUE)
 /*!< Value of the Internal Low Speed oscillator in Hz
 The real value may vary depending on the variations in voltage and temperature.*/
-#define LSI_VALUE  (32000UL)     /*!< LSI Typical Value in Hz*/    
+#define LSI_VALUE  (32000UL)     /*!< LSI Typical Value in Hz*/
 #endif /* LSI_VALUE */
 /**
   * @brief External Low Speed oscillator (LSE) value.
@@ -156,7 +156,7 @@ The real value may vary depending on the variations in voltage and temperature.*
   */
 #if !defined  (LSE_VALUE)
 #define LSE_VALUE  (32768UL)    /*!< Value of the External Low Speed oscillator in Hz */
-#endif /* LSE_VALUE */     
+#endif /* LSE_VALUE */
 
 #if !defined  (LSE_STARTUP_TIMEOUT)
 #define LSE_STARTUP_TIMEOUT    (5000UL)   /*!< Time out for LSE start up, in ms */
@@ -177,10 +177,10 @@ The real value may vary depending on the variations in voltage and temperature.*
 /* ########################### System Configuration ######################### */
 /**
   * @brief This is the HAL system configuration section
-  */     
+  */
 
 #define  VDD_VALUE                   (3300UL) /*!< Value of VDD in mv */
-#define  TICK_INT_PRIORITY           (0UL)    /*!< tick interrupt priority (lowest by default)  */            
+#define  TICK_INT_PRIORITY           (0UL)    /*!< tick interrupt priority (lowest by default)  */
 #define  USE_RTOS                     0U
 #define  PREFETCH_ENABLE              0U
 #define  INSTRUCTION_CACHE_ENABLE     1U
@@ -188,7 +188,7 @@ The real value may vary depending on the variations in voltage and temperature.*
 
 /* ########################## Assert Selection ############################## */
 /**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
+  * @brief Uncomment the line below to expanse the "assert_param" macro in the
   *        HAL drivers code
   */
 /* #define USE_FULL_ASSERT    1U */

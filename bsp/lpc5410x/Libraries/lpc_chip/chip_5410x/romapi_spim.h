@@ -44,53 +44,53 @@ extern "C" {
  */
 
 /**
- * @brief	Get memory size in bytes needed for SPI master driver context
- * @return	Size in bytes needed for the ROM driver
+ * @brief    Get memory size in bytes needed for SPI master driver context
+ * @return    Size in bytes needed for the ROM driver
  */
 uint32_t ROM_SPIM_GetMemSize(void);
 
 /**
- * @brief	Initialize SPI master peripheral
- * @param	mem		: Pointer to memory area used to driver context
- * @param	pInit	: Pointer to SPI master init data
- * @return	NULL on error, or a pointer to the device context handle
+ * @brief    Initialize SPI master peripheral
+ * @param    mem        : Pointer to memory area used to driver context
+ * @param    pInit    : Pointer to SPI master init data
+ * @return    NULL on error, or a pointer to the device context handle
  */
 ROM_SPIM_HANDLE_T ROM_SPIM_Init(void *mem, ROM_SPIM_INIT_T *pInit);
 
 /**
- * @brief	Register a SPI master callback
- * @param	pHandle	: Pointer to driver context handle
- * @param	cbIndex	: Callback to register
- * @param	pCB		: Pointer to callback function
- * @return	Nothing
+ * @brief    Register a SPI master callback
+ * @param    pHandle    : Pointer to driver context handle
+ * @param    cbIndex    : Callback to register
+ * @param    pCB        : Pointer to callback function
+ * @return    Nothing
  */
 void ROM_SPIM_RegisterCallback(ROM_SPIM_HANDLE_T pHandle, ROM_SPIM_CALLBACK_T cbIndex, void *pCB);
 
 ErrorCode_t ROM_SPIM_SetupTransfer(ROM_SPIM_HANDLE_T pHandle, ROM_SPIM_XFER_CONFIG_T *pCfg);
 
 /**
- * @brief	Start a SPI master transfer
- * @param	pHandle	: Pointer to driver context handle
- * @param	pXfer	: Pointer to master transfer configuration
- * @return	Error code
- * @note	This function starts the transfer and returns immediately.
+ * @brief    Start a SPI master transfer
+ * @param    pHandle    : Pointer to driver context handle
+ * @param    pXfer    : Pointer to master transfer configuration
+ * @return    Error code
+ * @note    This function starts the transfer and returns immediately.
  */
 ErrorCode_t ROM_SPIM_Transfer(ROM_SPIM_HANDLE_T pHandle, ROM_SPIM_XFER_T *pXfer);
 
 /**
- * @brief	SPI master transfer (interrupt) handler
- * @param	pHandle	: Pointer to driver context handle
- * @return	Nothing
- * @note	This function should be called from the SPI interrupt handler and
+ * @brief    SPI master transfer (interrupt) handler
+ * @param    pHandle    : Pointer to driver context handle
+ * @return    Nothing
+ * @note    This function should be called from the SPI interrupt handler and
  * is used in interrupt and DMA modes.
  */
 void ROM_SPIM_TransferHandler(ROM_SPIM_HANDLE_T pHandle);
 
 /**
- * @brief	Safely stop a SPI master transfer
- * @param	pHandle	: Pointer to driver context handle
- * @return	Nothing
- * @note	This function completes the SPI transfer at the next possible
+ * @brief    Safely stop a SPI master transfer
+ * @param    pHandle    : Pointer to driver context handle
+ * @return    Nothing
+ * @note    This function completes the SPI transfer at the next possible
  * transfer completion state. This should be called when DMA is used and
  * DMA transfer is complete, or whenever the transfer neesd to be aborted.
  * It will safely transmit any data already inside the SPI transmit FIFOs
@@ -99,9 +99,9 @@ void ROM_SPIM_TransferHandler(ROM_SPIM_HANDLE_T pHandle);
 void ROM_SPIM_ClosePendingTransfer(ROM_SPIM_HANDLE_T pHandle);
 
 /**
- * @brief	Return the SPI master ROM driver version
- * @return	Driver version number
- * @note	The returned driver version number consists of a major and minor
+ * @brief    Return the SPI master ROM driver version
+ * @return    Driver version number
+ * @note    The returned driver version number consists of a major and minor
  * number, with the minor number in the lower 8 bits and the major number in
  * the upper 8 bits.
  */

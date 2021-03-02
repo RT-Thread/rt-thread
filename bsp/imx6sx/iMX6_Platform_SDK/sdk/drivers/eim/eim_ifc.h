@@ -33,9 +33,9 @@
 
 /*!
  * @file eim_ifc.h
- * @brief External Interface Module (eim) driver public interface. 
+ * @brief External Interface Module (eim) driver public interface.
  */
- 
+
 #ifndef __EIM_IFC__
 #define __EIM_IFC__
 
@@ -140,12 +140,12 @@ extern "C" {
  * @brief Initialize EIM controller.
  *
  * Only setup the data port size and enable the chip select.
- * 
+ *
  * @param cs     Chip select
  * @param dsz    Data port size
  * @param mum    Multiplexed Mode.
  * @param aus    Address unshift
- * 
+ *
  * @return TRUE on success, FALSE on fail
  */
 extern uint32_t eim_init(uint32_t cs, uint32_t dsz, uint32_t mum, uint32_t aus);
@@ -176,7 +176,7 @@ void eim_iomux_config(void);
 #endif
 
 //! @}
-#endif  /*__EIM_IFC__ */ 
+#endif  /*__EIM_IFC__ */
 /////////////////////////////////////////////////////////////////////////////////
 // EOF
 /////////////////////////////////////////////////////////////////////////////////

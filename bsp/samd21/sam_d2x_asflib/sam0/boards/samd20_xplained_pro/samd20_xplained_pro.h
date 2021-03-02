@@ -113,7 +113,7 @@ void system_board_init(void);
 #define LED_0_PIN                 LED0_PIN
 #define LED_0_ACTIVE              LED0_ACTIVE
 #define LED_0_INACTIVE            LED0_INACTIVE
-#define LED0_GPIO 				  LED0_PIN
+#define LED0_GPIO                   LED0_PIN
 /** @} */
 
 /** Number of on-board LEDs */
@@ -553,27 +553,27 @@ void system_board_init(void);
 
 /** Enables the transceiver main interrupt. */
 #define ENABLE_TRX_IRQ()      \
-		extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
+        extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
 
 /** Disables the transceiver main interrupt. */
 #define DISABLE_TRX_IRQ()     \
-		extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
+        extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
 
 /** Clears the transceiver main interrupt. */
 #define CLEAR_TRX_IRQ()       \
-		extint_chan_clear_detected(AT86RFX_IRQ_CHAN);
+        extint_chan_clear_detected(AT86RFX_IRQ_CHAN);
 
 /*
  * This macro saves the trx interrupt status and disables the trx interrupt.
  */
 #define ENTER_TRX_REGION()   \
-		{ extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
+        { extint_chan_disable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT)
 
 /*
  *  This macro restores the transceiver interrupt status
  */
 #define LEAVE_TRX_REGION()   \
-		extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT); }
+        extint_chan_enable_callback(AT86RFX_IRQ_CHAN, EXTINT_CALLBACK_TYPE_DETECT); }
 
 /**
  * \brief Turns off the specified LEDs.

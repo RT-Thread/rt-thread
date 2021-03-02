@@ -44,14 +44,14 @@ extern "C" {
 /**
  * @brief Windowed Watchdog register block structure
  */
-typedef struct {				/*!< WWDT Structure         */
-	__IO uint32_t  MOD;			/*!< Watchdog mode register. This register contains the basic mode and status of the Watchdog Timer. */
-	__IO uint32_t  TC;			/*!< Watchdog timer constant register. This register determines the time-out value. */
-	__O  uint32_t  FEED;		/*!< Watchdog feed sequence register. Writing 0xAA followed by 0x55 to this register reloads the Watchdog timer with the value contained in WDTC. */
-	__I  uint32_t  TV;			/*!< Watchdog timer value register. This register reads out the current value of the Watchdog timer. */
-	__I  uint32_t  RESERVED0;
-	__IO uint32_t  WARNINT;		/*!< Watchdog warning interrupt register. This register contains the Watchdog warning interrupt compare value. */
-	__IO uint32_t  WINDOW;		/*!< Watchdog timer window register. This register contains the Watchdog window value. */
+typedef struct {                /*!< WWDT Structure         */
+    __IO uint32_t  MOD;            /*!< Watchdog mode register. This register contains the basic mode and status of the Watchdog Timer. */
+    __IO uint32_t  TC;            /*!< Watchdog timer constant register. This register determines the time-out value. */
+    __O  uint32_t  FEED;        /*!< Watchdog feed sequence register. Writing 0xAA followed by 0x55 to this register reloads the Watchdog timer with the value contained in WDTC. */
+    __I  uint32_t  TV;            /*!< Watchdog timer value register. This register reads out the current value of the Watchdog timer. */
+    __I  uint32_t  RESERVED0;
+    __IO uint32_t  WARNINT;        /*!< Watchdog warning interrupt register. This register contains the Watchdog warning interrupt compare value. */
+    __IO uint32_t  WINDOW;        /*!< Watchdog timer window register. This register contains the Watchdog window value. */
 } LPC_WWDT_T;
 
 /**
@@ -73,164 +73,164 @@ typedef struct {				/*!< WWDT Structure         */
 #define WWDT_WDMOD_LOCK             ((uint32_t) (1 << 5))
 
 /**
- * @brief	Initialize the Watchdog timer
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	None
+ * @brief    Initialize the Watchdog timer
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    None
  */
 void Chip_WWDT_Init(LPC_WWDT_T *pWWDT);
 
 /**
- * @brief	Shutdown the Watchdog timer
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	None
+ * @brief    Shutdown the Watchdog timer
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    None
  */
 STATIC INLINE void Chip_WWDT_DeInit(LPC_WWDT_T *pWWDT)
 {
-	Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_WWDT);
+    Chip_Clock_DisablePeriphClock(SYSCON_CLOCK_WWDT);
 }
 
 /**
- * @brief	Set WDT timeout constant value used for feed
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @param	timeout	: WDT timeout in ticks, between WWDT_TICKS_MIN and WWDT_TICKS_MAX
- * @return	none
+ * @brief    Set WDT timeout constant value used for feed
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @param    timeout    : WDT timeout in ticks, between WWDT_TICKS_MIN and WWDT_TICKS_MAX
+ * @return    none
  */
 STATIC INLINE void Chip_WWDT_SetTimeOut(LPC_WWDT_T *pWWDT, uint32_t timeout)
 {
-	pWWDT->TC = timeout;
+    pWWDT->TC = timeout;
 }
 
 /**
- * @brief	Feed watchdog timer
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	None
- * @note	If this function isn't called, a watchdog timer warning will occur.
+ * @brief    Feed watchdog timer
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    None
+ * @note    If this function isn't called, a watchdog timer warning will occur.
  * After the warning, a timeout will occur if a feed has happened.
  * Note that if WWDT registers are modified in an interrupt then it is a good
  * idea to prevent those interrupts when writing the feed sequence.
  */
 STATIC INLINE void Chip_WWDT_Feed(LPC_WWDT_T *pWWDT)
 {
-	pWWDT->FEED = 0xAA;
-	pWWDT->FEED = 0x55;
+    pWWDT->FEED = 0xAA;
+    pWWDT->FEED = 0x55;
 }
 
 /**
- * @brief	Set WWDT warning interrupt
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @param	timeout	: WDT warning in ticks, between 0 and 1023
- * @return	None
- * @note	This is the number of ticks after the watchdog interrupt that the
+ * @brief    Set WWDT warning interrupt
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @param    timeout    : WDT warning in ticks, between 0 and 1023
+ * @return    None
+ * @note    This is the number of ticks after the watchdog interrupt that the
  * warning interrupt will be generated.
  */
 STATIC INLINE void Chip_WWDT_SetWarning(LPC_WWDT_T *pWWDT, uint32_t timeout)
 {
-	pWWDT->WARNINT = timeout;
+    pWWDT->WARNINT = timeout;
 }
 
 /**
- * @brief	Get WWDT warning interrupt
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	WWDT warning interrupt
+ * @brief    Get WWDT warning interrupt
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    WWDT warning interrupt
  */
 STATIC INLINE uint32_t Chip_WWDT_GetWarning(LPC_WWDT_T *pWWDT)
 {
-	return pWWDT->WARNINT;
+    return pWWDT->WARNINT;
 }
 
 /**
- * @brief	Set WWDT window time
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @param	timeout	: WDT timeout in ticks, between WWDT_TICKS_MIN and WWDT_TICKS_MAX
- * @return	None
- * @note	The watchdog timer must be fed between the timeout from the Chip_WWDT_SetTimeOut()
+ * @brief    Set WWDT window time
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @param    timeout    : WDT timeout in ticks, between WWDT_TICKS_MIN and WWDT_TICKS_MAX
+ * @return    None
+ * @note    The watchdog timer must be fed between the timeout from the Chip_WWDT_SetTimeOut()
  * function and this function, with this function defining the last tick before the
  * watchdog window interrupt occurs.
  */
 STATIC INLINE void Chip_WWDT_SetWindow(LPC_WWDT_T *pWWDT, uint32_t timeout)
 {
-	pWWDT->WINDOW = timeout;
+    pWWDT->WINDOW = timeout;
 }
 
 /**
- * @brief	Get WWDT window time
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	WWDT window time
+ * @brief    Get WWDT window time
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    WWDT window time
  */
 STATIC INLINE uint32_t Chip_WWDT_GetWindow(LPC_WWDT_T *pWWDT)
 {
-	return pWWDT->WINDOW;
+    return pWWDT->WINDOW;
 }
 
 /**
- * @brief	Enable watchdog timer options
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @param	options	: An or'ed set of options of values
- *						WWDT_WDMOD_WDEN, WWDT_WDMOD_WDRESET, and WWDT_WDMOD_WDPROTECT
- * @return	None
- * @note	You can enable more than one option at once (ie, WWDT_WDMOD_WDRESET |
+ * @brief    Enable watchdog timer options
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @param    options    : An or'ed set of options of values
+ *                        WWDT_WDMOD_WDEN, WWDT_WDMOD_WDRESET, and WWDT_WDMOD_WDPROTECT
+ * @return    None
+ * @note    You can enable more than one option at once (ie, WWDT_WDMOD_WDRESET |
  * WWDT_WDMOD_WDPROTECT), but use the WWDT_WDMOD_WDEN after all other options
  * are set (or unset) with no other options. If WWDT_WDMOD_LOCK is used, it cannot
  * be unset.
  */
 STATIC INLINE void Chip_WWDT_SetOption(LPC_WWDT_T *pWWDT, uint32_t options)
 {
-	pWWDT->MOD = (pWWDT->MOD & WWDT_WDMOD_BITMASK) | options;
+    pWWDT->MOD = (pWWDT->MOD & WWDT_WDMOD_BITMASK) | options;
 }
 
 /**
- * @brief	Disable/clear watchdog timer options
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @param	options	: An or'ed set of options of values
- *						WWDT_WDMOD_WDEN, WWDT_WDMOD_WDRESET, and WWDT_WDMOD_WDPROTECT
- * @return	None
- * @note	You can disable more than one option at once (ie, WWDT_WDMOD_WDRESET |
+ * @brief    Disable/clear watchdog timer options
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @param    options    : An or'ed set of options of values
+ *                        WWDT_WDMOD_WDEN, WWDT_WDMOD_WDRESET, and WWDT_WDMOD_WDPROTECT
+ * @return    None
+ * @note    You can disable more than one option at once (ie, WWDT_WDMOD_WDRESET |
  * WWDT_WDMOD_WDTOF).
  */
 STATIC INLINE void Chip_WWDT_UnsetOption(LPC_WWDT_T *pWWDT, uint32_t options)
 {
-	pWWDT->MOD &= (~options) & WWDT_WDMOD_BITMASK;
+    pWWDT->MOD &= (~options) & WWDT_WDMOD_BITMASK;
 }
 
 /**
- * @brief	Enable WWDT activity
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	None
+ * @brief    Enable WWDT activity
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    None
  */
 STATIC INLINE void Chip_WWDT_Start(LPC_WWDT_T *pWWDT)
 {
-	Chip_WWDT_SetOption(pWWDT, WWDT_WDMOD_WDEN);
-	Chip_WWDT_Feed(pWWDT);
+    Chip_WWDT_SetOption(pWWDT, WWDT_WDMOD_WDEN);
+    Chip_WWDT_Feed(pWWDT);
 }
 
 /**
- * @brief	Read WWDT status flag
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	Watchdog status, an Or'ed value of WWDT_WDMOD_*
+ * @brief    Read WWDT status flag
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    Watchdog status, an Or'ed value of WWDT_WDMOD_*
  */
 STATIC INLINE uint32_t Chip_WWDT_GetStatus(LPC_WWDT_T *pWWDT)
 {
-	return pWWDT->MOD;
+    return pWWDT->MOD;
 }
 
 /**
- * @brief	Clear WWDT interrupt status flags
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @param	status	: Or'ed value of status flag(s) that you want to clear, should be:
+ * @brief    Clear WWDT interrupt status flags
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @param    status    : Or'ed value of status flag(s) that you want to clear, should be:
  *              - WWDT_WDMOD_WDTOF: Clear watchdog timeout flag
  *              - WWDT_WDMOD_WDINT: Clear watchdog warning flag
- * @return	None
+ * @return    None
  */
 void Chip_WWDT_ClearStatusFlag(LPC_WWDT_T *pWWDT, uint32_t status);
 
 /**
- * @brief	Get the current value of WDT
- * @param	pWWDT	: The base of WatchDog Timer peripheral on the chip
- * @return	current value of WDT
+ * @brief    Get the current value of WDT
+ * @param    pWWDT    : The base of WatchDog Timer peripheral on the chip
+ * @return    current value of WDT
  */
 STATIC INLINE uint32_t Chip_WWDT_GetCurrentCount(LPC_WWDT_T *pWWDT)
 {
-	return pWWDT->TV;
+    return pWWDT->TV;
 }
 
 /**

@@ -74,23 +74,23 @@ typedef union _hw_spdif_scr
     reg32_t U;
     struct _hw_spdif_scr_bitfields
     {
-        unsigned USRC_SEL : 2; //!< [1:0] 
-        unsigned TXSEL : 3; //!< [4:2] 
-        unsigned VALCTRL : 1; //!< [5] 
+        unsigned USRC_SEL : 2; //!< [1:0]
+        unsigned TXSEL : 3; //!< [4:2]
+        unsigned VALCTRL : 1; //!< [5]
         unsigned RESERVED0 : 2; //!< [7:6] Reserved
         unsigned DMA_TX_EN : 1; //!< [8] DMA Transmit Request Enable
         unsigned DMA_RX_EN : 1; //!< [9] DMA Receive Request Enable
-        unsigned TXFIFO_CTRL : 2; //!< [11:10] 
+        unsigned TXFIFO_CTRL : 2; //!< [11:10]
         unsigned SOFT_RESET : 1; //!< [12] When write 1 to this bit, it will cause SPDIF software reset.
         unsigned LOW_POWER : 1; //!< [13] When write 1 to this bit, it will cause SPDIF enter low-power mode.
         unsigned RESERVED1 : 1; //!< [14] Reserved
-        unsigned TXFIFOEMPTY_SEL : 2; //!< [16:15] 
-        unsigned TXAUTOSYNC : 1; //!< [17] 
-        unsigned RXAUTOSYNC : 1; //!< [18] 
-        unsigned RXFIFOFULL_SEL : 2; //!< [20:19] 
-        unsigned RXFIFO_RST : 1; //!< [21] 
-        unsigned RXFIFO_OFF_ON : 1; //!< [22] 
-        unsigned RXFIFO_CTRL : 1; //!< [23] 
+        unsigned TXFIFOEMPTY_SEL : 2; //!< [16:15]
+        unsigned TXAUTOSYNC : 1; //!< [17]
+        unsigned RXAUTOSYNC : 1; //!< [18]
+        unsigned RXFIFOFULL_SEL : 2; //!< [20:19]
+        unsigned RXFIFO_RST : 1; //!< [21]
+        unsigned RXFIFO_OFF_ON : 1; //!< [22]
+        unsigned RXFIFO_CTRL : 1; //!< [23]
         unsigned UNIMPLEMENTED : 8; //!< [31:24] This is a 24-bit register the upper byte is unimplemented.
     } B;
 } hw_spdif_scr_t;
@@ -476,7 +476,7 @@ typedef union _hw_spdif_srcd
     struct _hw_spdif_srcd_bitfields
     {
         unsigned RESERVED0 : 1; //!< [0] Reserved
-        unsigned USYNCMODE : 1; //!< [1] 
+        unsigned USYNCMODE : 1; //!< [1]
         unsigned RESERVED3 : 22; //!< [23:2] Reserved.
         unsigned UNIMPLEMENTED : 8; //!< [31:24] This is a 24-bit register the upper byte is unimplemented.
     } B;
@@ -2391,7 +2391,7 @@ typedef union _hw_spdif_stc
     {
         unsigned TXCLK_DF : 7; //!< [6:0] Divider factor (1-128)
         unsigned TX_ALL_CLK_EN : 1; //!< [7] Spdif transfer clock enable.When data is going to be transfered, this bit should be set to1.
-        unsigned TXCLK_SOURCE : 3; //!< [10:8] 
+        unsigned TXCLK_SOURCE : 3; //!< [10:8]
         unsigned SYSCLK_DF : 9; //!< [19:11] system clock divider factor, 2~512.
         unsigned RESERVED0 : 4; //!< [23:20] Reserved, return zeros when read
         unsigned UNIMPLEMENTED : 8; //!< [31:24] This is a 24-bit register the upper byte is unimplemented.

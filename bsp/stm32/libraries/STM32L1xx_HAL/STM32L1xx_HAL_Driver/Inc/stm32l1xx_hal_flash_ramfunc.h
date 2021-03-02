@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32L1xx_FLASH_RAMFUNC_H
@@ -34,9 +34,9 @@
 
 /** @addtogroup FLASH_RAMFUNC
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 
 
 /* Exported functions --------------------------------------------------------*/
@@ -50,7 +50,7 @@
   *         These functions are defined inside the "stm32l1xx_hal_flash_ramfunc.c"
   *         file.
   */
-  
+
 /** @addtogroup FLASH_RAMFUNC_Exported_Functions_Group1
   * @{
   */
@@ -60,7 +60,7 @@ __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_DisableRunPowerDown(void);
 
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup FLASH_RAMFUNC_Exported_Functions_Group2
   * @{
@@ -77,7 +77,7 @@ __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_HalfPageProgram(uint32_t Address, uint3
 
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup FLASH_RAMFUNC_Exported_Functions_Group3
   * @{
@@ -85,7 +85,7 @@ __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_HalfPageProgram(uint32_t Address, uint3
 __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_GetError(uint32_t *Error);
 /**
   * @}
-  */ 
+  */
 
 /** @addtogroup FLASH_RAMFUNC_Exported_Functions_Group4
   * @{
@@ -100,11 +100,11 @@ __RAM_FUNC HAL_StatusTypeDef HAL_FLASHEx_DATAEEPROM_ProgramDoubleWord(uint32_t A
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
