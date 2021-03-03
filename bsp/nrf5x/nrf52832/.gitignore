@@ -1,0 +1,7 @@
+# vscode common config
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# OS X icon info
+.DS_Store
