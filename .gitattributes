@@ -1,3 +1,8 @@
+*.c linguist-language=C
+*.C linguist-language=C
+*.h linguist-language=C
+*.H linguist-language=C
+
 * text=auto
 
 *.S text
