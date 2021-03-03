@@ -642,6 +642,14 @@ menu "Using USB"
                     string "Udisk mount dir"
                     default "/"
                 endif
+            config RT_USBH_HID
+                bool "Enable HID Drivers"
+                default n
+                if RT_USBH_HID
+                    config RT_USBH_HID_MOUSE
+                    bool "Enable HID mouse protocol"
+                    default n
+                endif
         endif
     config RT_USING_USB_DEVICE
         bool "Using USB device"

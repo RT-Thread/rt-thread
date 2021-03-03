@@ -667,6 +667,9 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
 
     rt_size_t i, j;
     rt_size_t log_len = 0, name_len = rt_strlen(tag);
+#ifdef ULOG_OUTPUT_TIME
+    rt_size_t time_head_len = 0;
+#endif
     char *log_buf = NULL, dump_string[8];
     int fmt_result;
 
@@ -703,6 +706,35 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
         /* package header */
         if (i == 0)
         {
+#ifdef ULOG_OUTPUT_TIME
+            /* add time info */
+#ifdef ULOG_TIME_USING_TIMESTAMP
+            static time_t now;
+            static struct tm *tm, tm_tmp;
+
+            now = time(NULL);
+            tm = gmtime_r(&now, &tm_tmp);
+
+#ifdef RT_USING_SOFT_RTC
+            rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d.%03d ", tm->tm_mon + 1,
+                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, rt_tick_get() % 1000);
+#else
+            rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d ", tm->tm_mon + 1,
+                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+#endif /* RT_USING_SOFT_RTC */
+
+#else
+            static rt_size_t tick_len = 0;
+
+            log_buf[log_len] = '[';
+            tick_len = ulog_ultoa(log_buf + log_len + 1, rt_tick_get());
+            log_buf[log_len + 1 + tick_len] = ']';
+            log_buf[log_len + 2 + tick_len] = ' ';
+            log_buf[log_len + 3 + tick_len] = '\0';
+#endif /* ULOG_TIME_USING_TIMESTAMP */
+            time_head_len = rt_strlen(log_buf + log_len);
+            log_len += time_head_len;
+#endif /* ULOG_OUTPUT_TIME */
             log_len += ulog_strcpy(log_len, log_buf + log_len, "D/HEX ");
             log_len += ulog_strcpy(log_len, log_buf + log_len, tag);
             log_len += ulog_strcpy(log_len, log_buf + log_len, ": ");
@@ -710,6 +742,9 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
         else
         {
             log_len = 6 + name_len + 2;
+#ifdef ULOG_OUTPUT_TIME
+            log_len += time_head_len;
+#endif
             rt_memset(log_buf, ' ', log_len);
         }
         fmt_result = rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE, "%04X-%04X: ", i, i + width - 1);

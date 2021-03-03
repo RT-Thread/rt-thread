@@ -31,11 +31,11 @@ typedef struct uhid uhid_t;
 #define USB_HID_KEYBOARD        1    
 #define USB_HID_MOUSE            2
 
-rt_err_t rt_usbh_hid_set_idle(struct uintf* intf, int duration, int report_id);
-rt_err_t rt_usbh_hid_get_report(struct uintf* intf, rt_uint8_t type, rt_uint8_t id, rt_uint8_t *buffer, rt_size_t size);
-rt_err_t rt_usbh_hid_set_report(struct uintf* intf, rt_uint8_t *buffer, rt_size_t size);
-rt_err_t rt_usbh_hid_set_protocal(struct uintf* intf, int protocol);
-rt_err_t rt_usbh_hid_get_report_descriptor(struct uintf* intf, rt_uint8_t *buffer, rt_size_t size);
+rt_err_t rt_usbh_hid_set_idle(struct uhintf* intf, int duration, int report_id);
+rt_err_t rt_usbh_hid_get_report(struct uhintf* intf, rt_uint8_t type, rt_uint8_t id, rt_uint8_t *buffer, rt_size_t size);
+rt_err_t rt_usbh_hid_set_report(struct uhintf* intf, rt_uint8_t *buffer, rt_size_t size);
+rt_err_t rt_usbh_hid_set_protocal(struct uhintf* intf, int protocol);
+rt_err_t rt_usbh_hid_get_report_descriptor(struct uhintf* intf, rt_uint8_t *buffer, rt_size_t size);
 rt_err_t rt_usbh_hid_protocal_register(uprotocal_t protocal);
 
 #endif
