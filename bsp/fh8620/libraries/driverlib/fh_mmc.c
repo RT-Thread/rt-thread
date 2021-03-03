@@ -194,7 +194,6 @@ int MMC_SetCardWidth(struct fh_mmc_obj *mmc_obj, int width)
     default:
         rt_kprintf("ERROR: %s, card width %d is not supported\n", __func__, width);
         return -RT_ERROR;
-        break;
     }
     return 0;
 }
