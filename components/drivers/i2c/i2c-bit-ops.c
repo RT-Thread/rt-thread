@@ -375,6 +375,8 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
     rt_int32_t i, ret;
     rt_uint16_t ignore_nack;
 
+    if (num == 0) return 0;
+
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
