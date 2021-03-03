@@ -99,7 +99,7 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
             write_size = end_addr - addr + 1;
             for(size_t i = 0; i < write_size; i++)
             {
-                write_buffer[i] = *(buf + i);
+                write_buffer[i] = *((uint8_t *)(write_addr + i));
             }
             write_addr = (uint32_t)((rt_uint32_t *)write_buffer);
         }
@@ -107,14 +107,14 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
         {
             for(rt_uint8_t i = 0; i < write_size; i++)
             {
-                if (*(rt_uint8_t *)(addr + i) != *(rt_uint8_t *)(buf + i))
+                if (*(rt_uint8_t *)(addr + i) != *(rt_uint8_t *)(write_addr + i))
                 {
                     result = -RT_ERROR;
                     goto __exit;
                 }
             }
             addr += write_granularity;
-            buf  += write_granularity;
+            write_addr  += write_granularity;
         }
         else
         {
