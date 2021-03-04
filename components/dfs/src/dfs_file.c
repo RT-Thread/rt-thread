@@ -186,7 +186,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 
         /* initialize the fd item */
         fnode->type  = FT_REGULAR;
-        fnode->flags = flags;
+        fnode->flags = 0;
 
         if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
         {
@@ -224,6 +224,8 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         rt_list_insert_after(hash_head, &fnode->list);
     }
 
+    fd->flags = flags;
+
     if ((result = fnode->fops->open(fd)) < 0)
     {
         fnode->ref_count--;
@@ -247,11 +249,11 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         return result;
     }
 
-    fnode->flags |= DFS_F_OPEN;
+    fd->flags |= DFS_F_OPEN;
     if (flags & O_DIRECTORY)
     {
-        fnode->type = FT_DIRECTORY;
-        fnode->flags |= DFS_F_DIRECTORY;
+        fd->fnode->type = FT_DIRECTORY;
+        fd->flags |= DFS_F_DIRECTORY;
     }
     dfs_fm_unlock();
 
@@ -340,15 +342,15 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         switch (cmd)
         {
         case F_GETFL:
-            return fd->fnode->flags; /* return flags */
+            return fd->flags; /* return flags */
         case F_SETFL:
             {
                 int flags = (int)(rt_base_t)args;
                 int mask  = O_NONBLOCK | O_APPEND;
 
                 flags &= mask;
-                fd->fnode->flags &= ~mask;
-                fd->fnode->flags |= flags;
+                fd->flags &= ~mask;
+                fd->flags |= flags;
             }
             return 0;
         }
@@ -388,7 +390,7 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
 
     if ((result = fd->fnode->fops->read(fd, buf, len)) < 0)
     {
-        fd->fnode->flags |= DFS_F_EOF;
+        fd->flags |= DFS_F_EOF;
     }
 
     return result;

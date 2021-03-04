@@ -747,19 +747,25 @@ int nfs_open(struct dfs_fd *file)
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     RT_ASSERT(nfs != NULL);
 
-    if (file->fnode->flags & O_DIRECTORY)
+    if (file->flags & O_DIRECTORY)
     {
         nfs_dir *dir;
 
-        if (file->fnode->flags & O_CREAT)
+        if (file->flags & O_CREAT)
         {
             if (nfs_mkdir(nfs, file->fnode->path, 0755) < 0)
+            {
                 return -EAGAIN;
+            }
         }
 
         /* open directory */
         dir = nfs_opendir(nfs, file->fnode->path);
-        if (dir == NULL) return -ENOENT;
+        if (dir == NULL)
+        {
+            return -ENOENT;
+        }
+        file->fnode->type = FT_DIRECTORY;
         nfs->data = dir;
     }
     else
@@ -768,10 +774,12 @@ int nfs_open(struct dfs_fd *file)
         nfs_fh3 *handle;
 
         /* create file */
-        if (file->fnode->flags & O_CREAT)
+        if (file->flags & O_CREAT)
         {
             if (nfs_create(nfs, file->fnode->path, 0664) < 0)
+            {
                 return -EAGAIN;
+            }
         }
 
         /* open file (get file handle ) */
@@ -796,7 +804,7 @@ int nfs_open(struct dfs_fd *file)
         xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
         rt_free(handle);
 
-        if (file->fnode->flags & O_APPEND)
+        if (file->flags & O_APPEND)
         {
             fp->offset = fp->size;
         }

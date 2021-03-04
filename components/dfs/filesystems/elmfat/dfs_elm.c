@@ -351,11 +351,11 @@ int dfs_elm_open(struct dfs_fd *file)
     drivers_fn = file->fnode->path;
 #endif
 
-    if (file->fnode->flags & O_DIRECTORY)
+    if (file->flags & O_DIRECTORY)
     {
         DIR *dir;
 
-        if (file->fnode->flags & O_CREAT)
+        if (file->flags & O_CREAT)
         {
             result = f_mkdir(drivers_fn);
             if (result != FR_OK)
@@ -394,26 +394,26 @@ int dfs_elm_open(struct dfs_fd *file)
     {
         mode = FA_READ;
 
-        if (file->fnode->flags & O_WRONLY)
+        if (file->flags & O_WRONLY)
         {
             mode |= FA_WRITE;
         }
-        if ((file->fnode->flags & O_ACCMODE) & O_RDWR)
+        if ((file->flags & O_ACCMODE) & O_RDWR)
         {
             mode |= FA_WRITE;
         }
         /* Opens the file, if it is existing. If not, a new file is created. */
-        if (file->fnode->flags & O_CREAT)
+        if (file->flags & O_CREAT)
         {
             mode |= FA_OPEN_ALWAYS;
         }
         /* Creates a new file. If the file is existing, it is truncated and overwritten. */
-        if (file->fnode->flags & O_TRUNC)
+        if (file->flags & O_TRUNC)
         {
             mode |= FA_CREATE_ALWAYS;
         }
         /* Creates a new file. The function fails if the file is already existing. */
-        if (file->fnode->flags & O_EXCL)
+        if (file->flags & O_EXCL)
         {
             mode |= FA_CREATE_NEW;
         }
@@ -438,7 +438,7 @@ int dfs_elm_open(struct dfs_fd *file)
             file->fnode->size = f_size(fd);
             file->data = fd;
 
-            if (file->fnode->flags & O_APPEND)
+            if (file->flags & O_APPEND)
             {
                 /* seek to the end of file */
                 f_lseek(fd, f_size(fd));

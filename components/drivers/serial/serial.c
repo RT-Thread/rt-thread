@@ -68,7 +68,7 @@ static int serial_fops_open(struct dfs_fd *fd)
     device = (rt_device_t)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
-    switch (fd->fnode->flags & O_ACCMODE)
+    switch (fd->flags & O_ACCMODE)
     {
     case O_RDONLY:
         LOG_D("fops open: O_RDONLY!");
@@ -83,14 +83,19 @@ static int serial_fops_open(struct dfs_fd *fd)
         flags = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_RDWR;
         break;
     default:
-        LOG_E("fops open: unknown mode - %d!", fd->fnode->flags & O_ACCMODE);
+        LOG_E("fops open: unknown mode - %d!", fd->flags & O_ACCMODE);
         break;
     }
 
-    if ((fd->fnode->flags & O_ACCMODE) != O_WRONLY)
+    if ((fd->flags & O_ACCMODE) != O_WRONLY)
+    {
         rt_device_set_rx_indicate(device, serial_fops_rx_ind);
+    }
     ret = rt_device_open(device, flags);
-    if (ret == RT_EOK) return 0;
+    if (ret == RT_EOK)
+    {
+        return 0;
+    }
 
     return ret;
 }
@@ -136,7 +141,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
         size = rt_device_read(device, -1,  buf, count);
         if (size <= 0)
         {
-            if (fd->fnode->flags & O_NONBLOCK)
+            if (fd->flags & O_NONBLOCK)
             {
                 break;
             }
@@ -177,7 +182,7 @@ static int serial_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     serial = (struct rt_serial_device *)device;
 
     /* only support POLLIN */
-    flags = fd->fnode->flags & O_ACCMODE;
+    flags = fd->flags & O_ACCMODE;
     if (flags == O_RDONLY || flags == O_RDWR)
     {
         rt_base_t level;

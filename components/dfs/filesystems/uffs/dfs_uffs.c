@@ -281,7 +281,7 @@ static int dfs_uffs_open(struct dfs_fd *file)
     int oflag, mode;
     char *file_path;
 
-    oflag = file->fnode->flags;
+    oflag = file->flags;
     if (oflag & O_DIRECTORY)   /* operations about dir */
     {
         uffs_DIR *dir;
@@ -356,7 +356,7 @@ static int dfs_uffs_close(struct dfs_fd *file)
     int oflag;
     int fd;
 
-    oflag = file->fnode->flags;
+    oflag = file->flags;
     if (oflag & O_DIRECTORY)
     {
         /* operations about dir */

@@ -30,9 +30,6 @@ struct rt_pipe_device
     struct rt_ringbuffer *fifo;
     rt_uint16_t bufsz;
 
-    rt_uint8_t readers;
-    rt_uint8_t writers;
-
     rt_wqueue_t reader_queue;
     rt_wqueue_t writer_queue;
 

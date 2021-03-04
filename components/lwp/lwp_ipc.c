@@ -926,7 +926,7 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
 
         d->fnode->fops = &channel_fops;
 
-        d->fnode->flags = O_RDWR; /* set flags as read and write */
+        d->flags = O_RDWR; /* set flags as read and write */
         d->fnode->size = 0;
         d->pos = 0;
         d->fnode->ref_count = 1;
