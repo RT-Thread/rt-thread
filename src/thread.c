@@ -598,7 +598,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     level = rt_hw_interrupt_disable();
 
     cur_tick = rt_tick_get();
-    if ((rt_int32_t)(cur_tick - *tick) < (rt_int32_t)inc_tick)
+    if (cur_tick - *tick < inc_tick)
     {
         rt_tick_t left_tick;
 
