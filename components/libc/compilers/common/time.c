@@ -12,7 +12,6 @@
  * 2021-02-08     Meco Man     add settimeofday() stime()
  * 2021-02-10     Meco Man     add ctime_r() and re-implement ctime()
  * 2021-02-11     Meco Man     fix bug #3183 - align days[] and months[] to 4 bytes
- *                             add difftime()
  * 2021-02-12     Meco Man     add errno
  * 2012-12-08     Bernard      <clock_time.c> fix the issue of _timevalue.tv_usec initialization,
  *                             which found by Rob <rdent@iinet.net.au>
@@ -176,12 +175,6 @@ char* ctime(const time_t *tim_p)
     return asctime (localtime (tim_p));
 }
 RTM_EXPORT(ctime);
-
-double difftime (time_t tim1, time_t tim2)
-{
-    return (double)(tim1 - tim2);
-}
-RTM_EXPORT(difftime);
 
 /**
  * Returns the current time.
@@ -371,6 +364,9 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     }
 }
 RTM_EXPORT(settimeofday);
+
+RTM_EXPORT(difftime); /* inherent in libc */
+RTM_EXPORT(strftime); /* inherent in libc*/
 
 #ifdef RT_USING_POSIX
 static struct timeval _timevalue;
