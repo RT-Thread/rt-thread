@@ -39,7 +39,7 @@ import chardet
 #这里并不是简单的将TAB替换成4个空格
 #空格个数到底是多少需要计算，因为TAB制表本身有自动对齐的功能
 def tab2spaces(line):
-    list_str = list(line) #字符串变成列表
+    list_str = list(line) #字符串打散成列表，放边操作
     i = list_str.count('\t')
     
     while i > 0:
@@ -78,13 +78,15 @@ def format_codes(filename):
 
 def get_encode_info(file):
     with open(file, 'rb') as f:
-        code = chardet.detect(f.read())['encoding']               
-        if code == 'EUC-JP': #chardet库容易将含着少量中文的英文字符文档识别为日语编码格式
-            code = 'GB2312' 
+        code = chardet.detect(f.read())['encoding']       
+        #charde库有一定几率对当前文件的编码识别不准确        
+        if code == 'EUC-JP': #容易将含着少量中文的英文字符文档识别为日语编码格式
+            code = 'GB2312'
         elif code == 'ISO-8859-1': #部分文件GB2312码会被识别成ISO-8859-1
             code = 'GB2312'
 
-        if not (code == 'ascii' or code == 'utf-8' or code == 'GB2312' or code == 'Windows-1252'): # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
+        if not (code == 'ascii' or code == 'utf-8' or code == 'GB2312' #编码识别正确
+                or code == 'Windows-1252'): # Windows-1252 是由于意法半导体是法国企业's的'是法语的'导致的
             if code != None:
                 print('未处理，需人工确认：'+code+':'+file) #需要人工确认
                 code = None
