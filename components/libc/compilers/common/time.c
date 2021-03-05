@@ -365,8 +365,9 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 }
 RTM_EXPORT(settimeofday);
 
-RTM_EXPORT(difftime); /* inherent in libc */
-RTM_EXPORT(strftime); /* inherent in libc*/
+/* inherent in the toolchain */
+RTM_EXPORT(difftime); 
+RTM_EXPORT(strftime);
 
 #ifdef RT_USING_POSIX
 static struct timeval _timevalue;
