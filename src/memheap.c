@@ -85,6 +85,10 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
     item->next_free = item;
     item->prev_free = item;
 
+#ifdef RT_USING_MEMTRACE
+    rt_memset(item->owner_thread_name, ' ', sizeof(item->owner_thread_name));
+#endif
+
     item->next = (struct rt_memheap_item *)
                  ((rt_uint8_t *)item + memheap->available_size + RT_MEMHEAP_SIZE);
     item->prev = item->next;
@@ -206,6 +210,10 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
                 /* put the pool pointer into the new block. */
                 new_ptr->pool_ptr = heap;
 
+#ifdef RT_USING_MEMTRACE
+                rt_memset(new_ptr->owner_thread_name, ' ', sizeof(new_ptr->owner_thread_name));
+#endif
+
                 /* break down the block list */
                 new_ptr->prev          = header_ptr;
                 new_ptr->next          = header_ptr->next;
@@ -256,6 +264,13 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 
             /* Mark the allocated block as not available. */
             header_ptr->magic |= RT_MEMHEAP_USED;
+
+#ifdef RT_USING_MEMTRACE
+            if (rt_thread_self())
+                rt_memcpy(header_ptr->owner_thread_name, rt_thread_self()->name, sizeof(header_ptr->owner_thread_name));
+            else
+                rt_memcpy(header_ptr->owner_thread_name, "NONE", sizeof(header_ptr->owner_thread_name));
+#endif
 
             /* release lock */
             rt_sem_release(&(heap->lock));
@@ -381,6 +396,10 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                 /* put the pool pointer into the new block. */
                 next_ptr->pool_ptr = heap;
 
+#ifdef RT_USING_MEMTRACE
+                rt_memset(next_ptr->owner_thread_name, ' ', sizeof(next_ptr->owner_thread_name));
+#endif
+
                 next_ptr->prev          = header_ptr;
                 next_ptr->next          = header_ptr->next;
                 header_ptr->next->prev = next_ptr;
@@ -444,6 +463,10 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     new_ptr->magic = RT_MEMHEAP_MAGIC;
     /* put the pool pointer into the new block. */
     new_ptr->pool_ptr = heap;
+
+#ifdef RT_USING_MEMTRACE
+    rt_memset(new_ptr->owner_thread_name, ' ', sizeof(new_ptr->owner_thread_name));
+#endif
 
     /* break down the block list */
     new_ptr->prev          = header_ptr;
@@ -590,6 +613,10 @@ void rt_memheap_free(void *ptr)
                       header_ptr->next_free, header_ptr->prev_free));
     }
 
+#ifdef RT_USING_MEMTRACE
+    rt_memset(header_ptr->owner_thread_name, ' ', sizeof(header_ptr->owner_thread_name));
+#endif
+
     /* release lock */
     rt_sem_release(&(heap->lock));
 }
@@ -728,4 +755,78 @@ void rt_memory_info(rt_uint32_t *total,
 
 #endif
 
-#endif
+#ifdef RT_USING_MEMTRACE
+
+void dump_used_memheap(struct rt_memheap *mh)
+{
+    struct rt_memheap_item *header_ptr;
+    rt_uint32_t block_size;
+
+
+    rt_kprintf("\nmemory heap address:\n");
+    rt_kprintf("heap_ptr: 0x%08x\n", mh->start_addr);
+    rt_kprintf("free	: 0x%08x\n", mh->available_size);
+    rt_kprintf("max_used: 0x%08x\n", mh->max_used_size);
+    rt_kprintf("size    : 0x%08x\n", mh->pool_size);
+
+    rt_kprintf("\n--memory used information --\n");
+
+    header_ptr = mh->block_list;
+    while (header_ptr->next != mh->block_list)
+    {
+        if ((header_ptr->magic & RT_MEMHEAP_MASK) != RT_MEMHEAP_MAGIC)
+        {
+            rt_kprintf("[0x%08x - incorrect magic: 0x%08x\n", header_ptr, header_ptr->magic);
+            break;
+        }
+
+        /* get current memory block size */
+        block_size = MEMITEM_SIZE(header_ptr);
+        if (block_size < 0)
+            break;
+
+        if (RT_MEMHEAP_IS_USED(header_ptr))
+        {
+            /* dump information */
+            rt_kprintf("[0x%08x - %d - %c%c%c%c] used\n", header_ptr, block_size,
+                header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
+                header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
+        }
+        else
+        {
+            /* dump information */
+            rt_kprintf("[0x%08x - %d - %c%c%c%c] free\n", header_ptr, block_size,
+                header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
+                header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
+        }
+
+        /* move to next used memory block */
+        header_ptr = header_ptr->next;
+    }
+}
+
+void memtrace_heap()
+{
+    struct rt_object_information *info;
+    struct rt_list_node *list;
+    struct rt_memheap *mh;
+    struct rt_list_node *node;
+
+    info = rt_object_get_information(RT_Object_Class_MemHeap);
+    list = &info->object_list;
+
+    for (node = list->next; node != list; node = node->next)
+    {
+        mh = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
+        dump_used_memheap(mh);
+    }
+}
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+MSH_CMD_EXPORT(memtrace_heap, dump memory trace for heap);
+#endif /* end of RT_USING_FINSH */
+
+#endif /* end of RT_USING_MEMTRACE */
+
+#endif /* end of RT_USING_MEMHEAP */
