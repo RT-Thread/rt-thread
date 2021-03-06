@@ -2662,6 +2662,11 @@ int sys_access(const char *filename, int mode)
 
 int sys_pipe(int fd[2])
 {
+    if (!lwp_user_accessable((void *)fd, sizeof(int[2])))
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
     return pipe(fd);
 }
 

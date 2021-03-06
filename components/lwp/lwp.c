@@ -373,6 +373,9 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     size_t rel_dyn_size = 0;
     size_t dynsym_off = 0;
     size_t dynsym_size = 0;
+#ifdef RT_USING_USERSPACE
+    void *pa, *va;
+#endif
 
 #ifdef RT_USING_USERSPACE
     rt_mmu_info *m_info = &lwp->mmu_info;
@@ -424,9 +427,6 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     }
 
     { /* load aux */
-#ifdef RT_USING_USERSPACE
-        void *pa, *va;
-#endif
         uint8_t *process_header;
         size_t process_header_size;
 
@@ -478,6 +478,50 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
 #endif
     }
 
+#ifdef RT_USING_USERSPACE
+    /* map user */
+    off = eheader.e_shoff;
+    for (i = 0; i < eheader.e_shnum; i++, off += sizeof sheader)
+    {
+        int need_map = 0;
+        int text = 0;
+
+        check_off(off, len);
+        lseek(fd, off, SEEK_SET);
+        read_len = load_fread(&sheader, 1, sizeof sheader, fd);
+        check_read(read_len, sizeof sheader);
+
+        if ((sheader.sh_flags & SHF_ALLOC) == 0)
+        {
+            continue;
+        }
+
+        switch (sheader.sh_type)
+        {
+            case SHT_PROGBITS:
+                if ((sheader.sh_flags & SHF_EXECINSTR) != 0)
+                {
+                    text = 1;
+                }
+            case SHT_NOBITS:
+                need_map = 1;
+                break;
+            default:
+                break;
+        }
+        if (need_map)
+        {
+            /* map user */
+            va = lwp_map_user(lwp, (void *)sheader.sh_addr, sheader.sh_size, text);
+            if (!va || (va != (void *)(size_t)sheader.sh_addr))
+            {
+                result = -RT_ERROR;
+                goto _exit;
+            }
+        }
+    }
+#endif
+
     off = eheader.e_phoff;
     for (i = 0; i < eheader.e_phnum; i++, off += sizeof pheader)
     {
@@ -513,12 +557,8 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                         result = -RT_ERROR;
                         goto _exit;
                     }
-                    va = lwp_map_user(lwp, (void *)pheader.p_vaddr, pheader.p_memsz, 1);
                 }
-                else
-                {
-                    va = lwp_map_user(lwp, 0, pheader.p_memsz, 0);
-                }
+                va = (void *)pheader.p_vaddr;
                 if (va)
                 {
                     lwp->text_entry = va;

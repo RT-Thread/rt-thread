@@ -568,7 +568,7 @@ size_t lwp_data_get(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
         {
             break;
         }
-        tmp_src = (void *)((char *)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
+        tmp_src = (void *)((char *)tmp_src - PV_OFFSET);
         rt_memcpy(tmp_dst, tmp_src, len);
         tmp_dst = (void *)((char *)tmp_dst + len);
         addr_start = (void *)((char *)addr_start + len);
@@ -607,7 +607,7 @@ size_t lwp_data_put(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
         {
             break;
         }
-        tmp_dst = (void *)((char *)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
+        tmp_dst = (void *)((char *)tmp_dst - PV_OFFSET);
         rt_memcpy(tmp_dst, tmp_src, len);
         tmp_src = (void *)((char *)tmp_src + len);
         addr_start = (void *)((char *)addr_start + len);
