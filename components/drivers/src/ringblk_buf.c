@@ -6,11 +6,13 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-25     armink       the first version
+ * 2021-02-19     lizhirui     repaired compilation error in riscv64-unknown-elf that is NULL undeclared
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <stddef.h>
 
 /**
  * ring block buffer object initialization

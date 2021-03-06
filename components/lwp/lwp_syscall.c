@@ -1,11 +1,15 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-06-10     Bernard      first version
+ * 2021-02-03     lizhirui     add limit condition for network syscall and add 64-bit arch support
+ * 2021-02-06     lizhirui     fix some bugs
+ * 2021-02-12     lizhirui     add 64-bit support for sys_brk
+ * 2021-02-20     lizhirui     fix some warnings
  */
 
 /* RT-Thread System call */
@@ -314,35 +318,37 @@ static void convert_sockopt(int *level, int *optname)
 
 }
 
-static void sockaddr_tolwip(const struct musl_sockaddr *std, struct sockaddr *lwip)
-{
-    if (std && lwip)
+#ifdef RT_USING_LWIP
+    static void sockaddr_tolwip(const struct musl_sockaddr *std, struct sockaddr *lwip)
     {
-        lwip->sa_len = sizeof(*lwip);
-        lwip->sa_family = (sa_family_t) std->sa_family;
-        memcpy(lwip->sa_data, std->sa_data, sizeof(lwip->sa_data));
+        if (std && lwip)
+        {
+            lwip->sa_len = sizeof(*lwip);
+            lwip->sa_family = (sa_family_t) std->sa_family;
+            memcpy(lwip->sa_data, std->sa_data, sizeof(lwip->sa_data));
+        }
     }
-}
 
-static void sockaddr_tomusl(const struct sockaddr *lwip, struct musl_sockaddr *std)
-{
-    if (std && lwip)
+    static void sockaddr_tomusl(const struct sockaddr *lwip, struct musl_sockaddr *std)
     {
-        std->sa_family = (uint16_t) lwip->sa_family;
-        memcpy(std->sa_data, lwip->sa_data, sizeof(std->sa_data));
+        if (std && lwip)
+        {
+            std->sa_family = (uint16_t) lwip->sa_family;
+            memcpy(std->sa_data, lwip->sa_data, sizeof(std->sa_data));
+        }
     }
-}
+#endif
 
 static void lwp_user_thread(void *parameter)
 {
     rt_thread_t tid;
-    uint32_t user_stack;
+    rt_size_t user_stack;
     struct rt_lwp *lwp;
 
     tid = rt_thread_self();
     lwp = lwp_self();
 
-    user_stack = (uint32_t)tid->user_stack + tid->user_stack_size;
+    user_stack = (rt_size_t)tid->user_stack + tid->user_stack_size;
     user_stack &= ~7; //align 8
     set_user_context((void *)user_stack);
 
@@ -928,7 +934,7 @@ int sys_getpriority(int which, id_t who)
         rt_thread_t tid;
 
         tid = rt_thread_self();
-        if (who == (id_t)tid || who == 0xff)
+        if (who == (id_t)(rt_size_t)tid || who == 0xff)
         {
             return tid->current_priority;
         }
@@ -945,7 +951,7 @@ int sys_setpriority(int which, id_t who, int prio)
         rt_thread_t tid;
 
         tid = rt_thread_self();
-        if ((who == (id_t)tid || who == 0xff) && (prio >= 0 && prio < RT_THREAD_PRIORITY_MAX))
+        if ((who == (id_t)(rt_size_t)tid || who == 0xff) && (prio >= 0 && prio < RT_THREAD_PRIORITY_MAX))
         {
             rt_thread_control(tid, RT_THREAD_CTRL_CHANGE_PRIORITY, &prio);
             return 0;
@@ -997,8 +1003,8 @@ rt_err_t sys_mutex_release(rt_mutex_t mutex)
 
 #ifdef RT_USING_USERSPACE
 /* memory allocation */
-extern int lwp_brk(void *addr);
-int sys_brk(void *addr)
+extern rt_base_t lwp_brk(void *addr);
+rt_base_t sys_brk(void *addr)
 {
     return lwp_brk(addr);
 }
@@ -1164,7 +1170,7 @@ rt_thread_t sys_thread_create(void *arg[])
             (void *)arg[2],
             ALLOC_KERNEL_STACK_SIZE,
             (rt_uint8_t)(size_t)arg[4],
-            (rt_uint32_t)arg[5]);
+            (rt_uint32_t)(rt_size_t)arg[5]);
     if (!thread)
     {
         goto fail;
@@ -1173,8 +1179,8 @@ rt_thread_t sys_thread_create(void *arg[])
     thread->cleanup = lwp_cleanup;
     thread->user_entry = (void (*)(void *))arg[1];
     thread->user_stack = (void *)user_stack;
-    thread->user_stack_size = (uint32_t)arg[3];
-    thread->lwp = (void *)lwp;
+    thread->user_stack_size = (rt_size_t)arg[3];
+    thread->lwp = (void*)lwp;
     thread->tid = tid;
     lwp_tid_set_thread(tid, thread);
 
@@ -1735,6 +1741,7 @@ rt_size_t sys_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt
     return rt_device_write(dev, pos, buffer, size);
 }
 
+#ifdef RT_USING_NET
 /* network interfaces */
 int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 {
@@ -2132,6 +2139,8 @@ int sys_closesocket(int socket)
 {
     return closesocket(socket);
 }
+
+#endif
 
 rt_thread_t sys_thread_find(char *name)
 {
