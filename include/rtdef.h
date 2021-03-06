@@ -802,6 +802,9 @@ struct rt_memheap_item
 
     struct rt_memheap_item *next_free;                  /**< next free memheap item */
     struct rt_memheap_item *prev_free;                  /**< prev free memheap item */
+#ifdef RT_USING_MEMTRACE
+    rt_uint8_t              owner_thread_name[4];       /**< owner thread name */
+#endif
 };
 
 /**
