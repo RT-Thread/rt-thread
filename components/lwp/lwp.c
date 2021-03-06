@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2006-03-12     Bernard      first version
  * 2018-11-02     heyuanjie    fix complie error in iar
+ * 2021-02-03     lizhirui     add 64-bit arch support and riscv64 arch support
  */
 
 #include <rthw.h>
@@ -78,7 +79,11 @@ struct process_aux
 #include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
 
-#define USER_LOAD_VADDR 0x100000
+#ifdef ARCH_RISCV64
+    #define USER_LOAD_VADDR 0x200000000
+#else
+    #define USER_LOAD_VADDR 0x100000
+#endif
 #endif
 
 static const char elf_magic[] = {0x7f, 'E', 'L', 'F'};
@@ -318,20 +323,36 @@ static size_t load_fread(void *ptr, size_t size, size_t nmemb, int fd)
     return read_block;
 }
 
+#ifdef ARCH_CPU_64BIT
+#define Elf_Word Elf64_Word
+#define Elf_Addr Elf64_Addr
+#define Elf_Half Elf64_Half
+#define Elf_Ehdr Elf64_Ehdr
+#define Elf_Phdr Elf64_Phdr
+#define Elf_Shdr Elf64_Shdr
+#else
+#define Elf_Word Elf32_Word
+#define Elf_Addr Elf32_Addr
+#define Elf_Half Elf32_Half
+#define Elf_Ehdr Elf32_Ehdr
+#define Elf_Phdr Elf32_Phdr
+#define Elf_Shdr Elf32_Shdr
+#endif
+
 typedef struct
 {
-    Elf32_Word st_name;
-    Elf32_Addr st_value;
-    Elf32_Word st_size;
+    Elf_Word st_name;
+    Elf_Addr st_value;
+    Elf_Word st_size;
     unsigned char st_info;
     unsigned char st_other;
-    Elf32_Half st_shndx;
-} Elf32_sym;
+    Elf_Half st_shndx;
+} Elf_sym;
 
 #ifdef RT_USING_USERSPACE
-void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym);
+void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym);
 #else
-void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf32_sym *dynsym);
+void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym);
 #endif
 
 static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, struct process_aux *aux)
@@ -339,10 +360,10 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     uint32_t i;
     uint32_t off = 0;
     char *p_section_str = 0;
-    Elf32_sym *dynsym = 0;
-    Elf32_Ehdr eheader;
-    Elf32_Phdr pheader;
-    Elf32_Shdr sheader;
+    Elf_sym *dynsym = 0;
+    Elf_Ehdr eheader;
+    Elf_Phdr pheader;
+    Elf_Shdr sheader;
     int result = RT_EOK;
     uint32_t magic;
     size_t read_len;
@@ -375,10 +396,18 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     read_len = load_fread(&eheader, 1, sizeof eheader, fd);
     check_read(read_len, sizeof eheader);
 
-    if (eheader.e_ident[4] != 1)
-    { /* not 32bit */
-        return -RT_ERROR;
-    }
+    #ifndef ARCH_CPU_64BIT
+        if (eheader.e_ident[4] != 1)
+        { /* not 32bit */
+            return -RT_ERROR;
+        }
+    #else
+        if (eheader.e_ident[4] != 2)
+        { /* not 64bit */
+            return -RT_ERROR;
+        }
+    #endif
+
     if (eheader.e_ident[6] != 1)
     { /* ver not 1 */
         return -RT_ERROR;
@@ -877,7 +906,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
         thread_name = thread_name ? thread_name + 1 : filename;
 
         thread = rt_thread_create(thread_name, lwp_thread_entry, RT_NULL,
-                               1024 * 4, 25, 200);
+                               1024 * 16, 25, 200);
         if (thread != RT_NULL)
         {
             struct rt_lwp *self_lwp;

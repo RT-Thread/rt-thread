@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-28     Jesven       first version
+ * 2021-02-12     lizhirui     add 64-bit support for lwp_brk
  */
 #ifndef  __LWP_USER_MM_H__
 #define  __LWP_USER_MM_H__
@@ -33,7 +34,7 @@ int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va);
 void *lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, int cached, int type);
 int lwp_unmap_user_type(struct rt_lwp *lwp, void *va);
 
-int lwp_brk(void *addr);
+rt_base_t lwp_brk(void *addr);
 void* lwp_mmap2(void *addr, size_t length, int prot, int flags, int fd, off_t pgoffset);
 int lwp_munmap(void *addr);
 

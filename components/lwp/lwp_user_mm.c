@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-28     Jesven       first version
+ * 2021-02-06     lizhirui     fixed fixed vtable size problem
+ * 2021-02-12     lizhirui     add 64-bit support for lwp_brk
+ * 2021-02-19     lizhirui     add riscv64 support for lwp_user_accessable and lwp_get_from_user
  */
 
 #include <rtthread.h>
@@ -133,7 +136,12 @@ void lwp_unmap_user_space(struct rt_lwp *lwp)
         unmap_range(lwp, (void *)ma->addr, ma->size, pa_need_free);
         lwp_map_area_remove(&lwp->map_area, ma->addr);
     }
-    rt_pages_free(m_info->vtable, 2);
+    
+    #ifdef ARCH_RISCV
+        rt_pages_free(m_info->vtable, 0);
+    #else
+        rt_pages_free(m_info->vtable, 2);
+    #endif
 }
 
 static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
@@ -352,10 +360,10 @@ void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t ma
     return lwp_map_user_type(lwp, map_va, map_pa, map_size, cached, MM_AREA_TYPE_PHY);
 }
 
-int lwp_brk(void *addr)
+rt_base_t lwp_brk(void *addr)
 {
     rt_base_t level = 0;
-    int ret = -1;
+    rt_base_t ret = -1;
     struct rt_lwp *lwp = RT_NULL;
 
     level = rt_hw_interrupt_disable();
@@ -363,7 +371,7 @@ int lwp_brk(void *addr)
 
     if ((size_t)addr <= lwp->end_heap)
     {
-        ret = (int)lwp->end_heap;
+        ret = (rt_base_t)lwp->end_heap;
     }
     else
     {
@@ -426,14 +434,21 @@ size_t lwp_get_from_user(void *dst, void *src, size_t size)
     rt_mmu_info *m_info = RT_NULL;
 
     /* check src */
-    if (src >= (void *)KERNEL_VADDR_START)
-    {
-        return 0;
-    }
-    if ((void *)((char *)src + size) > (void *)KERNEL_VADDR_START)
-    {
-        return 0;
-    }
+    #ifdef ARCH_RISCV64
+        if(src < (void *)USER_VADDR_START)
+        {
+            return 0;
+        }
+    #else
+        if (src >= (void*)KERNEL_VADDR_START)
+        {
+            return 0;
+        }
+        if ((void*)((char*)src + size) > (void*)KERNEL_VADDR_START)
+        {
+            return 0;
+        }
+    #endif
 
     lwp = lwp_self();
     if (!lwp)
@@ -485,15 +500,23 @@ int lwp_user_accessable(void *addr, size_t size)
         return 0;
     }
     addr_start = addr;
-    addr_end = (void *)((char *)addr + size);
-    if (addr_start >= (void *)KERNEL_VADDR_START)
-    {
-        return 0;
-    }
-    if (addr_start > (void *)KERNEL_VADDR_START)
-    {
-        return 0;
-    }
+    addr_end = (void*)((char*)addr + size);
+
+    #ifdef ARCH_RISCV64
+        if(addr_start < (void *)USER_VADDR_START)
+        {
+            return 0;
+        }
+    #else
+        if (addr_start >= (void*)KERNEL_VADDR_START)
+        {
+            return 0;
+        }
+        if (addr_start > (void *)KERNEL_VADDR_START)
+        {
+            return 0;
+        }
+    #endif
 
     mmu_info = &lwp->mmu_info;
     next_page = (void *)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));

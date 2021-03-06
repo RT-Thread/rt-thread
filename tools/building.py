@@ -1,7 +1,7 @@
 #
 # File      : building.py
 # This file is part of RT-Thread RTOS
-# COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+# COPYRIGHT (C) 2006 - 2021, RT-Thread Development Team
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 # 2015-01-20     Bernard      Add copyright information
 # 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
 #                             group definition.
+# 2021-02-06     lizhirui     Add dump support
 #
 
 import os
@@ -228,6 +229,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 action = 'store_true',
                 default = False,
                 help = 'print verbose information during build')
+
+    AddOption('--dump',
+                      dest = 'dump',
+                      action = 'store_true',
+                      default = False,
+                      help = 'dump assembler file')
 
     Env = env
     Rtt_Root = os.path.abspath(root_directory)
@@ -892,6 +899,10 @@ def EndBuilding(target, program = None):
         Env['dist_handle'] = rtconfig.dist_handle
 
     Env.AddPostAction(target, rtconfig.POST_ACTION)
+
+    if hasattr(rtconfig, 'DUMP_ACTION') and GetOption('dump'):
+        Env.AddPostAction(target, rtconfig.DUMP_ACTION)
+
     # Add addition clean files
     Clean(target, 'cconfig.h')
     Clean(target, 'rtua.py')

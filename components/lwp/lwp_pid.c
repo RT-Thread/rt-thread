@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-16     zhangjun     first version
+ * 2021-02-20     lizhirui     fix warning
  */
 
 #include <rthw.h>
@@ -276,7 +277,7 @@ void lwp_free(struct rt_lwp* lwp)
             {
                 thread = rt_list_entry(lwp->wait_list.next, struct rt_thread, tlist);
                 thread->error = RT_EOK;
-                thread->msg_ret = (void *)lwp->lwp_ret;
+                thread->msg_ret = (void*)(rt_size_t)lwp->lwp_ret;
                 rt_thread_resume(thread);
             }
         }
@@ -501,9 +502,9 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
     while (*ptr == '#')ptr ++;
 
     rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-            (thread->stack_size + (rt_uint32_t)thread->stack_addr - (rt_uint32_t)thread->sp),
+            (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)thread->sp),
             thread->stack_size,
-            (thread->stack_size + (rt_uint32_t)thread->stack_addr - (rt_uint32_t) ptr) * 100
+            (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)ptr) * 100
             / thread->stack_size,
             thread->remaining_tick,
             thread->error);
