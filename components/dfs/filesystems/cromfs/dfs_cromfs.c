@@ -929,7 +929,7 @@ static int dfs_cromfs_open(struct dfs_fd *file)
     int is_dir = 0;
     rt_err_t result = RT_EOK;
 
-    if (file->fnode->flags & (O_CREAT | O_WRONLY | O_APPEND | O_TRUNC | O_RDWR))
+    if (file->flags & (O_CREAT | O_WRONLY | O_APPEND | O_TRUNC | O_RDWR))
     {
         return -EINVAL;
     }
@@ -954,7 +954,7 @@ static int dfs_cromfs_open(struct dfs_fd *file)
     /* entry is a directory file type */
     if (is_dir)
     {
-        if (!(file->fnode->flags & O_DIRECTORY))
+        if (!(file->flags & O_DIRECTORY))
         {
             ret = -ENOENT;
             goto end;
@@ -963,7 +963,7 @@ static int dfs_cromfs_open(struct dfs_fd *file)
     else
     {
         /* entry is a file, but open it as a directory */
-        if (file->fnode->flags & O_DIRECTORY)
+        if (file->flags & O_DIRECTORY)
         {
             ret = -ENOENT;
             goto end;

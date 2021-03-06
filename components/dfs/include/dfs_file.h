@@ -48,8 +48,8 @@ struct dfs_fnode
 
     struct dfs_filesystem *fs;
     const struct dfs_file_ops *fops;
+    uint32_t flags;              /* self flags, is dir etc.. */
 
-    uint32_t flags;              /* Descriptor flags */
     size_t   size;               /* Size in bytes */
     void *data;                  /* Specific file system data */
 };
@@ -57,6 +57,7 @@ struct dfs_fnode
 struct dfs_fd
 {
     uint16_t magic;              /* file descriptor magic number */
+    uint32_t flags;              /* Descriptor flags */
     int ref_count;               /* Descriptor reference count */
     off_t    pos;                /* Current file position */
     struct dfs_fnode *fnode;     /* file node struct */

@@ -219,7 +219,7 @@ static int console_fops_open(struct dfs_fd *fd)
 
     if (fd->fnode->ref_count == 1)
     {
-        ret = rt_device_open(device, fd->fnode->flags);
+        ret = rt_device_open(device, fd->flags);
     }
     return ret;
 }
@@ -264,7 +264,7 @@ static int console_fops_read(struct dfs_fd *fd, void *buf, size_t count)
         {
             break;
         }
-        if (fd->fnode->flags & O_NONBLOCK)
+        if (fd->flags & O_NONBLOCK)
         {
             break;
         }

@@ -127,7 +127,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
 
     /* open root directory */
     if ((file->fnode->path[0] == '/') && (file->fnode->path[1] == '\0') &&
-        (file->fnode->flags & O_DIRECTORY))
+        (file->flags & O_DIRECTORY))
     {
         struct rt_object *object;
         struct rt_list_node *node;

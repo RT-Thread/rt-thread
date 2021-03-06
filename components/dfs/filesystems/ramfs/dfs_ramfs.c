@@ -182,9 +182,9 @@ int dfs_ramfs_open(struct dfs_fd *file)
     ramfs = (struct dfs_ramfs *)fs->data;
     RT_ASSERT(ramfs != NULL);
 
-    if (file->fnode->flags & O_DIRECTORY)
+    if (file->flags & O_DIRECTORY)
     {
-        if (file->fnode->flags & O_CREAT)
+        if (file->flags & O_CREAT)
         {
             return -ENOSPC;
         }
@@ -195,7 +195,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
             return -ENOENT;
         if (dirent == &(ramfs->root)) /* it's root directory */
         {
-            if (!(file->fnode->flags & O_DIRECTORY))
+            if (!(file->flags & O_DIRECTORY))
             {
                 return -ENOENT;
             }
@@ -211,7 +211,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
 
         if (dirent == NULL)
         {
-            if (file->fnode->flags & O_CREAT || file->fnode->flags & O_WRONLY)
+            if (file->flags & O_CREAT || file->flags & O_WRONLY)
             {
                 char *name_ptr;
 
@@ -227,7 +227,9 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 /* remove '/' separator */
                 name_ptr = file->fnode->path;
                 while (*name_ptr == '/' && *name_ptr)
+                {
                     name_ptr++;
+                }
                 strncpy(dirent->name, name_ptr, RAMFS_NAME_MAX);
 
                 rt_list_init(&(dirent->list));
@@ -245,7 +247,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
         /* Creates a new file.
          * If the file is existing, it is truncated and overwritten.
          */
-        if (file->fnode->flags & O_TRUNC)
+        if (file->flags & O_TRUNC)
         {
             dirent->size = 0;
             if (dirent->data != NULL)
@@ -258,10 +260,14 @@ int dfs_ramfs_open(struct dfs_fd *file)
 
     file->fnode->data = dirent;
     file->fnode->size = dirent->size;
-    if (file->fnode->flags & O_APPEND)
+    if (file->flags & O_APPEND)
+    {
         file->pos = file->fnode->size;
+    }
     else
+    {
         file->pos = 0;
+    }
 
     return 0;
 }

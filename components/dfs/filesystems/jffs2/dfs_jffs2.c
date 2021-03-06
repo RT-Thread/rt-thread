@@ -223,7 +223,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
     struct dfs_filesystem *fs;
     struct cyg_mtab_entry * mte;
 
-    oflag = file->fnode->flags;
+    oflag = file->flags;
     fs = file->fnode->fs;
     RT_ASSERT(fs != RT_NULL);
 
@@ -330,7 +330,7 @@ static int dfs_jffs2_close(struct dfs_fd* file)
     RT_ASSERT(file->fnode->data != NULL);
     jffs2_file = (cyg_file *)(file->fnode->data);
 
-    if (file->fnode->flags & O_DIRECTORY) /* operations about dir */
+    if (file->flags & O_DIRECTORY) /* operations about dir */
     {
         rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
         result = jffs2_dir_colse(jffs2_file);
