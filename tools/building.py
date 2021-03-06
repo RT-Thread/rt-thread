@@ -626,6 +626,8 @@ def DefineGroup(name, src, depend, **parameters):
     group['name'] = name
     group['path'] = group_path
     if type(src) == type([]):
+        # remove duplicate elements from list
+        src = list(set(src))
         group['src'] = File(src)
     else:
         group['src'] = src
