@@ -1741,7 +1741,7 @@ rt_size_t sys_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt
     return rt_device_write(dev, pos, buffer, size);
 }
 
-#ifdef RT_USING_NET
+#ifdef RT_USING_SAL
 /* network interfaces */
 int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 {
