@@ -14,7 +14,7 @@ static rt_uint8_t count;
 static void timeout1(void* parameter)
 {
     rt_tick_t timeout = 50;
-    
+
     rt_kprintf("periodic timer is timeout\n");
 
     count ++;

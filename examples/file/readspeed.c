@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,9 +46,9 @@ void readspeed(const char* filename, int block_size)
     }
     tick = rt_tick_get() - tick;
 
-	/* close file and release memory */
+    /* close file and release memory */
     close(fd);
-	rt_free(buff_ptr);
+    rt_free(buff_ptr);
 
     /* calculate read speed */
     rt_kprintf("File read speed: %d byte/s\n", total_length /tick * RT_TICK_PER_SECOND);
