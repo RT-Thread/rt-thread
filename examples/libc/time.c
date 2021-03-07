@@ -1,8 +1,11 @@
 /*
- * time.c
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  Created on: 2010-11-17
- *      Author: bernard
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2010-11-17     Bernard      first version
  */
 
 #include <stdio.h>

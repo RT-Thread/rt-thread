@@ -1,4 +1,12 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+/*
  * 程序清单：事件例程
  *
  * 这个程序会创建3个动态线程及初始化一个静态事件对象
