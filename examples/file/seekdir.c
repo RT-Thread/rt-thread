@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,35 +12,35 @@
 
 void seekdir_test(void)
 {
-	DIR * dirp;
-	long save3 = 0;
-	int i = 0;
-	struct dirent *dp;
+    DIR * dirp;
+    long save3 = 0;
+    int i = 0;
+    struct dirent *dp;
 
-	dirp = opendir ("/");
-	save3 = telldir(dirp);
-	for (dp = readdir(dirp); dp != RT_NULL; dp = readdir(dirp))
-	{
-		rt_kprintf("direntry: %s\n", dp->d_name);
+    dirp = opendir ("/");
+    save3 = telldir(dirp);
+    for (dp = readdir(dirp); dp != RT_NULL; dp = readdir(dirp))
+    {
+        rt_kprintf("direntry: %s\n", dp->d_name);
 
-		/* save the pointer of the third directory */
-		if (i++ == 3)
-		{
-			save3 = telldir(dirp);
-		}
-	}
+        /* save the pointer of the third directory */
+        if (i++ == 3)
+        {
+            save3 = telldir(dirp);
+        }
+    }
 
-	/* get back to the third directory */
-	seekdir (dirp, save3);
-	rt_kprintf("seek dientry to: %d\n", save3);
-	for (dp = readdir(dirp); dp != RT_NULL; dp = readdir(dirp))
-	{
-		rt_kprintf("direntry: %s\n", dp->d_name);
-	}
+    /* get back to the third directory */
+    seekdir (dirp, save3);
+    rt_kprintf("seek dientry to: %d\n", save3);
+    for (dp = readdir(dirp); dp != RT_NULL; dp = readdir(dirp))
+    {
+        rt_kprintf("direntry: %s\n", dp->d_name);
+    }
 
-	/* close the directory */
-	closedir (dirp);
-} 
+    /* close the directory */
+    closedir (dirp);
+}
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
