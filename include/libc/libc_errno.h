@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -161,7 +161,7 @@ defined in armcc/errno.h
 #define EPROTONOSUPPORT (ERROR_BASE_NO + 93)
 #define ESOCKTNOSUPPORT (ERROR_BASE_NO + 94)
 #define EOPNOTSUPP      (ERROR_BASE_NO + 95)
-#define ENOTSUP         EOPNOTSUPP         
+#define ENOTSUP         EOPNOTSUPP
 #define EPFNOSUPPORT    (ERROR_BASE_NO + 96)
 #define EAFNOSUPPORT    (ERROR_BASE_NO + 97)
 #define EADDRINUSE      (ERROR_BASE_NO + 98)
