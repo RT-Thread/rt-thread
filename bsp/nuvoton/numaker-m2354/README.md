@@ -39,7 +39,9 @@ Support GCC, MDK5, IAR IDE/compilers. More information of these compiler version
 | IAR        | 8.32                                 |
 | GCC        | GCC 6.3.1 20170620 (Need update env) |
 
-Notice: Please install Nu-Link_Keil_Driver or Nu-Link_IAR_Driver for development.
+Notice: 
+(1) Please install Nu-Link_Keil_Driver or Nu-Link_IAR_Driver for development.
+(2) You must remove '--c99' flag in <path/to/rtt>/components/drivers/spi/SConscript before generating MDK5 project file.
 
 ## 3. Program firmware
 ### Step 1:
