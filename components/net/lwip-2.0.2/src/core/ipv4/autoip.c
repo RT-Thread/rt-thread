@@ -22,7 +22,7 @@
  * With DHCP:
  * - define @ref LWIP_DHCP_AUTOIP_COOP 1 in your lwipopts.h.
  * - Configure your DHCP Client.
- *
+ * 
  * @see netifapi_autoip
  */
 
@@ -95,7 +95,7 @@ static err_t autoip_arp_announce(struct netif *netif);
 static void autoip_start_probing(struct netif *netif);
 
 /**
- * @ingroup autoip
+ * @ingroup autoip 
  * Set a statically allocated struct autoip to work with.
  * Using this prevents autoip_start to allocate it using mem_malloc.
  *
@@ -245,7 +245,7 @@ autoip_bind(struct netif *netif)
 }
 
 /**
- * @ingroup autoip
+ * @ingroup autoip 
  * Start AutoIP client
  *
  * @param netif network interface on which start the AutoIP client
@@ -339,7 +339,7 @@ autoip_network_changed(struct netif *netif)
 }
 
 /**
- * @ingroup autoip
+ * @ingroup autoip 
  * Stop AutoIP client
  *
  * @param netif network interface on which stop the AutoIP client

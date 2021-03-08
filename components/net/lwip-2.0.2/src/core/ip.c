@@ -4,19 +4,19 @@
  *
  * @defgroup ip IP
  * @ingroup callbackstyle_api
- *
+ * 
  * @defgroup ip4 IPv4
  * @ingroup ip
  *
  * @defgroup ip6 IPv6
  * @ingroup ip
- *
+ * 
  * @defgroup ipaddr IP address handling
  * @ingroup infrastructure
- *
+ * 
  * @defgroup ip4addr IPv4 only
  * @ingroup ipaddr
- *
+ * 
  * @defgroup ip6addr IPv6 only
  * @ingroup ipaddr
  */

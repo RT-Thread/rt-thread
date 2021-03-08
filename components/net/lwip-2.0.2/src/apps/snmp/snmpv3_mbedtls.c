@@ -73,7 +73,7 @@ snmpv3_auth(struct snmp_pbuf_stream* stream, u16_t length,
   if(mbedtls_md_setup(&ctx, md_info, 1) != 0) {
     return ERR_ARG;
   }
-
+          
   if (mbedtls_md_hmac_starts(&ctx, key, key_len) != 0) {
     goto free_md;
   }
@@ -96,7 +96,7 @@ snmpv3_auth(struct snmp_pbuf_stream* stream, u16_t length,
 
   mbedtls_md_free(&ctx);
   return ERR_OK;
-
+  
 free_md:
   mbedtls_md_free(&ctx);
   return ERR_ARG;
@@ -140,7 +140,7 @@ snmpv3_crypt(struct snmp_pbuf_stream* stream, u16_t length,
       goto error;
     }
 
-    /* Prepare IV */
+    /* Prepare IV */    
     for (i = 0; i < LWIP_ARRAYSIZE(iv_local); i++) {
       iv_local[i] = priv_param[i] ^ key[i + 8];
     }
@@ -152,7 +152,7 @@ snmpv3_crypt(struct snmp_pbuf_stream* stream, u16_t length,
       size_t j;
       u8_t in_bytes[8];
       out_len = LWIP_ARRAYSIZE(out_bytes) ;
-
+      
       for (j = 0; j < LWIP_ARRAYSIZE(in_bytes); j++) {
         snmp_pbuf_stream_read(&read_stream, &in_bytes[j]);
       }
@@ -163,7 +163,7 @@ snmpv3_crypt(struct snmp_pbuf_stream* stream, u16_t length,
 
       snmp_pbuf_stream_writebuf(&write_stream, out_bytes, out_len);
     }
-
+    
     out_len = LWIP_ARRAYSIZE(out_bytes);
     if(mbedtls_cipher_finish(&ctx, out_bytes, &out_len) != 0) {
       goto error;
@@ -201,7 +201,7 @@ snmpv3_crypt(struct snmp_pbuf_stream* stream, u16_t length,
       u8_t in_byte;
       u8_t out_byte;
       size_t out_len = sizeof(out_byte);
-
+      
       snmp_pbuf_stream_read(&read_stream, &in_byte);
       if(mbedtls_cipher_update(&ctx, &in_byte, sizeof(in_byte), &out_byte, &out_len) != 0) {
         goto error;
@@ -223,7 +223,7 @@ error:
 #endif /* LWIP_SNMP_V3_CRYPTO */
 
 /* A.2.1. Password to Key Sample Code for MD5 */
-void
+void 
 snmpv3_password_to_key_md5(
     const u8_t *password,    /* IN */
     u8_t        passwordlen, /* IN */
@@ -276,7 +276,7 @@ snmpv3_password_to_key_md5(
 }
 
 /* A.2.2. Password to Key Sample Code for SHA */
-void
+void 
 snmpv3_password_to_key_sha(
     const u8_t *password,    /* IN */
     u8_t        passwordlen, /* IN */
@@ -323,7 +323,7 @@ snmpv3_password_to_key_sha(
   mbedtls_sha1_starts(&SH);
   mbedtls_sha1_update(&SH, password_buf, 40 + engineLength);
   mbedtls_sha1_finish(&SH, key);
-
+  
   mbedtls_sha1_free(&SH);
   return;
 }

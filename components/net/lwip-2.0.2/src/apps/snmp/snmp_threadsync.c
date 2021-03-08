@@ -40,7 +40,7 @@
 #include "lwip/apps/snmp_core.h"
 #include "lwip/sys.h"
 #include <string.h>
-
+        
 static void
 call_synced_function(struct threadsync_data *call_data, snmp_threadsync_called_fn fn)
 {
@@ -111,7 +111,7 @@ threadsync_set_value(struct snmp_node_instance* instance, u16_t len, void *value
   call_data->arg1.value = value;
   call_data->arg2.len = len;
   call_synced_function(call_data, threadsync_set_value_synced);
-
+  
   return call_data->retval.err;
 }
 
@@ -119,7 +119,7 @@ static void
 threadsync_release_instance_synced(void* ctx)
 {
   struct threadsync_data *call_data = (struct threadsync_data*)ctx;
-
+  
   call_data->proxy_instance.release_instance(&call_data->proxy_instance);
 
   sys_sem_signal(&call_data->threadsync_node->instance->sem);
@@ -129,7 +129,7 @@ static void
 threadsync_release_instance(struct snmp_node_instance *instance)
 {
   struct threadsync_data *call_data = (struct threadsync_data*)instance->reference.ptr;
-
+  
   if (call_data->proxy_instance.release_instance != NULL) {
     call_synced_function(call_data, threadsync_release_instance_synced);
   }

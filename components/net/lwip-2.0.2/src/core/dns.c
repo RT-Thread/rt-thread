@@ -23,14 +23,14 @@
  * Once a hostname has been resolved (or found to be non-existent),
  * the resolver code calls a specified callback function (which
  * must be implemented by the module that uses the resolver).
- *
+ * 
  * Multicast DNS queries are supported for names ending on ".local".
  * However, only "One-Shot Multicast DNS Queries" are supported (RFC 6762
  * chapter 5.1), this is not a fully compliant implementation of continuous
  * mDNS querying!
  *
  * All functions must be called from TCPIP thread.
- *
+ * 
  * @see @ref netconn_common for thread-safe access.
  */
 
@@ -368,7 +368,7 @@ dns_setserver(u8_t numdns, const ip_addr_t *dnsserver)
   if (numdns < DNS_MAX_SERVERS) {
     if (dnsserver != NULL) {
       dns_servers[numdns] = (*dnsserver);
-
+        
 #ifdef RT_USING_NETDEV
       extern struct netif *netif_list;
       extern struct netdev *netdev_get_by_name(const char *name);

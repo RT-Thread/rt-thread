@@ -115,7 +115,7 @@ struct snmp_request
   s32_t non_repeaters;
   /* max-repetitions (getBulkRequest (SNMPv2c)) */
   s32_t max_repetitions;
-
+  
 #if LWIP_SNMP_V3
   s32_t msg_id;
   s32_t msg_max_size;

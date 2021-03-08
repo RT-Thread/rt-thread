@@ -109,7 +109,7 @@
 #define LWIP_RFC7668_IP_UNCOMPRESSED_DEBUG    LWIP_DBG_OFF
 #endif
 
-/** LWIP_RFC7668_LINUX_WORKAROUND_PUBLIC_ADDRESS:
+/** LWIP_RFC7668_LINUX_WORKAROUND_PUBLIC_ADDRESS: 
  * Currently, the linux kernel driver for 6lowpan sets/clears a bit in
  * the address, depending on the BD address (either public or not).
  * Might not be RFC7668 conform, so you may select to do that (=1) or

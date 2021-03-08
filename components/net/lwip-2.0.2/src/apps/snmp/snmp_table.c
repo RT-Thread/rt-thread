@@ -61,7 +61,7 @@ snmp_err_t snmp_table_get_instance(const u32_t *root_oid, u8_t root_oid_len, str
       if (col_def->index == instance->instance_oid.id[1]) {
         break;
       }
-
+      
       col_def++;
       i--;
     }
@@ -212,13 +212,13 @@ snmp_err_t snmp_table_simple_get_instance(const u32_t *root_oid, u8_t root_oid_l
           default:
             LWIP_DEBUGF(SNMP_DEBUG, ("snmp_table_simple_get_instance(): unknown column data_type: %d\n", col_def->data_type));
             return SNMP_ERR_GENERROR;
-        }
+        }        
 
         ret = SNMP_ERR_NOERROR;
       } else {
         ret = SNMP_ERR_NOSUCHINSTANCE;
       }
-    }
+    } 
   }
 
   return ret;

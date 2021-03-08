@@ -8,7 +8,7 @@
  * your own version, link it in and in your cc.h put:
  *
  * \#define LWIP_CHKSUM your_checksum_routine
- *
+ * 
  * Or you can select from the implementations below by defining
  * LWIP_CHKSUM_ALGORITHM to 1, 2 or 3.
  */

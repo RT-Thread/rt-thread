@@ -149,7 +149,7 @@ snmp_set_community_trap(const char * const community)
  * @ingroup snmp_core
  * Callback fired on every successful write access
  */
-void
+void 
 snmp_set_write_callback(snmp_write_callback_fct write_callback, void* callback_arg)
 {
   snmp_write_callback     = write_callback;
@@ -180,7 +180,7 @@ snmp_receive(void *handle, struct pbuf *p, const ip_addr_t *source_ip, u16_t por
 {
   err_t err;
   struct snmp_request request;
-
+   
   memset(&request, 0, sizeof(request));
   request.handle       = handle;
   request.source_ip    = source_ip;
@@ -209,12 +209,12 @@ snmp_receive(void *handle, struct pbuf *p, const ip_addr_t *source_ip, u16_t por
 
       if (err == ERR_OK) {
         err = snmp_complete_outbound_frame(&request);
-
+      
         if (err == ERR_OK) {
           err = snmp_sendto(request.handle, request.outbound_pbuf, request.source_ip, request.source_port);
 
-          if ((request.request_type == SNMP_ASN1_CONTEXT_PDU_SET_REQ)
-            && (request.error_status == SNMP_ERR_NOERROR)
+          if ((request.request_type == SNMP_ASN1_CONTEXT_PDU_SET_REQ) 
+            && (request.error_status == SNMP_ERR_NOERROR) 
             && (snmp_write_callback != NULL)) {
             /* raise write notification for all written objects */
             snmp_execute_write_callbacks(&request);
@@ -222,7 +222,7 @@ snmp_receive(void *handle, struct pbuf *p, const ip_addr_t *source_ip, u16_t por
         }
       }
     }
-
+  
     if (request.outbound_pbuf != NULL) {
       pbuf_free(request.outbound_pbuf);
     }
@@ -244,7 +244,7 @@ snmp_msg_getnext_validate_node_inst(struct snmp_node_instance* node_instance, vo
   return SNMP_ERR_NOERROR;
 }
 
-static void
+static void 
 snmp_process_varbind(struct snmp_request *request, struct snmp_varbind *vb, u8_t get_next)
 {
   err_t err;
@@ -388,7 +388,7 @@ snmp_process_getnext_request(struct snmp_request *request)
       request->error_status = SNMP_ERR_GENERROR;
     }
   }
-
+  
   return ERR_OK;
 }
 
@@ -447,7 +447,7 @@ snmp_process_getbulk_request(struct snmp_request *request)
   while ((request->error_status == SNMP_ERR_NOERROR) && (repetitions > 0) && (request->outbound_pbuf_stream.offset != repetition_offset)) {
 
     u8_t all_endofmibview = 1;
-
+    
     snmp_vb_enumerator_init(&repetition_varbind_enumerator, request->outbound_pbuf, repetition_offset, request->outbound_pbuf_stream.offset - repetition_offset);
     repetition_offset = request->outbound_pbuf_stream.offset; /* for next loop */
 
@@ -478,7 +478,7 @@ snmp_process_getbulk_request(struct snmp_request *request)
       /* stop when all varbinds in a loop return EndOfMibView */
       break;
     }
-
+    
     repetitions--;
   }
 
@@ -510,7 +510,7 @@ snmp_process_set_request(struct snmp_request *request)
     if (err == SNMP_VB_ENUMERATOR_ERR_OK) {
       struct snmp_node_instance node_instance;
       memset(&node_instance, 0, sizeof(node_instance));
-
+      
       request->error_status = snmp_get_node_instance_from_oid(vb.oid.id, vb.oid.len, &node_instance);
       if (request->error_status == SNMP_ERR_NOERROR) {
         if (node_instance.asn1_type != vb.type) {
@@ -617,7 +617,7 @@ snmp_parse_inbound_frame(struct snmp_request *request)
   err_t err;
 
   IF_PARSE_EXEC(snmp_pbuf_stream_init(&pbuf_stream, request->inbound_pbuf, 0, request->inbound_pbuf->tot_len));
-
+  
   /* decode main container consisting of version, community and PDU */
   IF_PARSE_EXEC(snmp_asn1_dec_tlv(&pbuf_stream, &tlv));
   IF_PARSE_ASSERT((tlv.type == SNMP_ASN1_TYPE_SEQUENCE) && (tlv.value_len == pbuf_stream.length));
@@ -628,7 +628,7 @@ snmp_parse_inbound_frame(struct snmp_request *request)
   IF_PARSE_ASSERT(tlv.type == SNMP_ASN1_TYPE_INTEGER);
   parent_tlv_value_len -= SNMP_ASN1_TLV_LENGTH(tlv);
   IF_PARSE_ASSERT(parent_tlv_value_len > 0);
-
+  
   IF_PARSE_EXEC(snmp_asn1_dec_s32t(&pbuf_stream, tlv.value_len, &s32_value));
   if ((s32_value != SNMP_VERSION_1) &&
       (s32_value != SNMP_VERSION_2c)
@@ -921,7 +921,7 @@ snmp_parse_inbound_frame(struct snmp_request *request)
       snmp_authfail_trap();
       return ERR_ARG;
     }
-  } else {
+  } else { 
     if (strncmp(snmp_community, (const char*)request->community, SNMP_MAX_COMMUNITY_STR_LEN) != 0) {
       /* community name does not match */
       snmp_stats.inbadcommunitynames++;
@@ -929,13 +929,13 @@ snmp_parse_inbound_frame(struct snmp_request *request)
       return ERR_ARG;
     }
   }
-
+  
   /* decode request ID */
   IF_PARSE_EXEC(snmp_asn1_dec_tlv(&pbuf_stream, &tlv));
   IF_PARSE_ASSERT(tlv.type == SNMP_ASN1_TYPE_INTEGER);
   parent_tlv_value_len -= SNMP_ASN1_TLV_LENGTH(tlv);
   IF_PARSE_ASSERT(parent_tlv_value_len > 0);
-
+  
   IF_PARSE_EXEC(snmp_asn1_dec_s32t(&pbuf_stream, tlv.value_len, &request->request_id));
 
   /* decode error status / non-repeaters */
@@ -976,7 +976,7 @@ snmp_parse_inbound_frame(struct snmp_request *request)
   /* decode varbind-list type (next container level) */
   IF_PARSE_EXEC(snmp_asn1_dec_tlv(&pbuf_stream, &tlv));
   IF_PARSE_ASSERT((tlv.type == SNMP_ASN1_TYPE_SEQUENCE) && (tlv.value_len <= pbuf_stream.length));
-
+  
   request->inbound_varbind_offset = pbuf_stream.offset;
   request->inbound_varbind_len    = pbuf_stream.length - request->inbound_padding_len;
   snmp_vb_enumerator_init(&(request->inbound_varbind_enumerator), request->inbound_pbuf, request->inbound_varbind_offset, request->inbound_varbind_len);
@@ -1327,8 +1327,8 @@ snmp_complete_outbound_frame(struct snmp_request *request)
     if (request->error_status != SNMP_ERR_NOERROR) {
       /* map v2c error codes to v1 compliant error code (according to RFC 2089) */
       switch (request->error_status) {
-        /* mapping of implementation specific "virtual" error codes
-         * (during processing of frame we already stored them in error_status field,
+        /* mapping of implementation specific "virtual" error codes 
+         * (during processing of frame we already stored them in error_status field, 
          * so no need to check all varbinds here for those exceptions as suggested by RFC) */
         case SNMP_ERR_NOSUCHINSTANCE:
         case SNMP_ERR_NOSUCHOBJECT:
@@ -1549,7 +1549,7 @@ snmp_complete_outbound_frame(struct snmp_request *request)
   return ERR_OK;
 }
 
-static void
+static void 
 snmp_execute_write_callbacks(struct snmp_request *request)
 {
   struct snmp_varbind_enumerator inbound_varbind_enumerator;
@@ -1584,7 +1584,7 @@ snmp_vb_enumerator_get_next(struct snmp_varbind_enumerator* enumerator, struct s
   struct snmp_asn1_tlv tlv;
   u16_t  varbind_len;
   err_t  err;
-
+  
   if (enumerator->pbuf_stream.length == 0)
   {
     return SNMP_VB_ENUMERATOR_ERR_EOVB;
@@ -1599,7 +1599,7 @@ snmp_vb_enumerator_get_next(struct snmp_varbind_enumerator* enumerator, struct s
   /* decode varbind name (object id) */
   VB_PARSE_EXEC(snmp_asn1_dec_tlv(&(enumerator->pbuf_stream), &tlv));
   VB_PARSE_ASSERT((tlv.type == SNMP_ASN1_TYPE_OBJECT_ID) && (SNMP_ASN1_TLV_LENGTH(tlv) < varbind_len) && (tlv.value_len < enumerator->pbuf_stream.length));
-
+   
   VB_PARSE_EXEC(snmp_asn1_dec_oid(&(enumerator->pbuf_stream), tlv.value_len, varbind->oid.id, &(varbind->oid.len), SNMP_MAX_OBJ_ID_LEN));
   varbind_len -= SNMP_ASN1_TLV_LENGTH(tlv);
 

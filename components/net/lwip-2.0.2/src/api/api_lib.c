@@ -1,21 +1,21 @@
 /**
  * @file
  * Sequential API External module
- *
+ * 
  * @defgroup netconn Netconn API
  * @ingroup sequential_api
  * Thread-safe, to be called from non-TCPIP threads only.
  * TX/RX handling based on @ref netbuf (containing @ref pbuf)
  * to avoid copying data around.
- *
+ * 
  * @defgroup netconn_common Common functions
  * @ingroup netconn
  * For use with TCP and UDP
- *
+ * 
  * @defgroup netconn_tcp TCP only
  * @ingroup netconn
  * TCP only functions
- *
+ * 
  * @defgroup netconn_udp UDP only
  * @ingroup netconn
  * UDP only functions
@@ -241,7 +241,7 @@ netconn_getaddr(struct netconn *conn, ip_addr_t *addr, u16_t *port, u8_t local)
  * Binding one netconn twice might not always be checked correctly!
  *
  * @param conn the netconn to bind
- * @param addr the local IP address to bind the netconn to
+ * @param addr the local IP address to bind the netconn to 
  *             (use IP4_ADDR_ANY/IP6_ADDR_ANY to bind to all addresses)
  * @param port the local port to bind the netconn to (not used for RAW)
  * @return ERR_OK if bound, any other err_t on failure
@@ -251,7 +251,7 @@ netconn_bind(struct netconn *conn, const ip_addr_t *addr, u16_t port)
 {
   API_MSG_VAR_DECLARE(msg);
   err_t err;
-
+  
   LWIP_ERROR("netconn_bind: invalid conn", (conn != NULL), return ERR_ARG;);
 
 #if LWIP_IPV4
@@ -260,7 +260,7 @@ netconn_bind(struct netconn *conn, const ip_addr_t *addr, u16_t port)
     addr = IP4_ADDR_ANY;
   }
 #endif /* LWIP_IPV4 */
-
+  
 #if LWIP_IPV4 && LWIP_IPV6
   /* "Socket API like" dual-stack support: If IP to bind to is IP6_ADDR_ANY,
    * and NETCONN_FLAG_IPV6_V6ONLY is 0, use IP_ANY_TYPE to bind

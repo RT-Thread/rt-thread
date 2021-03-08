@@ -48,7 +48,7 @@
  *
  * 0 Agent Capabilities
  * ====================
- *
+ * 
  * Features:
  * ---------
  * - SNMPv2c support.
@@ -66,7 +66,7 @@
  * - Simplified thread sync support for MIBs - useful when MIBs
  *   need to access variables shared with other threads where no locking is
  *   possible. Used in MIB2 to access lwIP stats from lwIP thread.
- *
+ * 
  * MIB compiler (code generator):
  * ------------------------------
  * - Provided in lwIP contrib repository.
@@ -78,92 +78,92 @@
  * - MIB parser, C file generation framework and LWIP code generation are cleanly
  *   separated, which means the code may be useful as a base for code generation
  *   of other SNMP agents.
- *
+ * 
  * Notes:
  * ------
  * - Stack and MIB compiler were used to implement a Profinet device.
  *   Compiled/implemented MIBs: LLDP-MIB, LLDP-EXT-DOT3-MIB, LLDP-EXT-PNO-MIB.
- *
+ * 
  * SNMPv1 per RFC1157 and SNMPv2c per RFC 3416
  * -------------------------------------------
  *   Note the S in SNMP stands for "Simple". Note that "Simple" is
  *   relative. SNMP is simple compared to the complex ISO network
  *   management protocols CMIP (Common Management Information Protocol)
  *   and CMOT (CMip Over Tcp).
- *
+ * 
  * MIB II
  * ------
  *   The standard lwIP stack management information base.
  *   This is a required MIB, so this is always enabled.
  *   The groups EGP, CMOT and transmission are disabled by default.
- *
+ * 
  *   Most mib-2 objects are not writable except:
  *   sysName, sysLocation, sysContact, snmpEnableAuthenTraps.
  *   Writing to or changing the ARP and IP address and route
  *   tables is not possible.
- *
+ * 
  *   Note lwIP has a very limited notion of IP routing. It currently
  *   doen't have a route table and doesn't have a notion of the U,G,H flags.
  *   Instead lwIP uses the interface list with only one default interface
  *   acting as a single gateway interface (G) for the default route.
- *
+ * 
  *   The agent returns a "virtual table" with the default route 0.0.0.0
  *   for the default interface and network routes (no H) for each
  *   network interface in the netif_list.
  *   All routes are considered to be up (U).
- *
+ * 
  * Loading additional MIBs
  * -----------------------
  *   MIBs can only be added in compile-time, not in run-time.
- *
- *
+ *  
+ * 
  * 1 Building the Agent
  * ====================
  * First of all you'll need to add the following define
  * to your local lwipopts.h:
  * \#define LWIP_SNMP               1
- *
+ * 
  * and add the source files your makefile.
- *
+ * 
  * Note you'll might need to adapt you network driver to update
  * the mib2 variables for your interface.
- *
+ * 
  * 2 Running the Agent
  * ===================
  * The following function calls must be made in your program to
  * actually get the SNMP agent running.
- *
+ * 
  * Before starting the agent you should supply pointers
  * for sysContact, sysLocation, and snmpEnableAuthenTraps.
  * You can do this by calling
- *
+ * 
  * - snmp_mib2_set_syscontact()
  * - snmp_mib2_set_syslocation()
  * - snmp_set_auth_traps_enabled()
- *
- * You can register a callback which is called on successful write access:
+ * 
+ * You can register a callback which is called on successful write access: 
  * snmp_set_write_callback().
- *
+ * 
  * Additionally you may want to set
- *
+ * 
  * - snmp_mib2_set_sysdescr()
  * - snmp_set_device_enterprise_oid()
  * - snmp_mib2_set_sysname()
- *
+ * 
  * Also before starting the agent you need to setup
  * one or more trap destinations using these calls:
- *
+ * 
  * - snmp_trap_dst_enable()
  * - snmp_trap_dst_ip_set()
- *
+ * 
  * If you need more than MIB2, set the MIBs you want to use
  * by snmp_set_mibs().
- *
+ * 
  * Finally, enable the agent by calling snmp_init()
  *
  * @defgroup snmp_core Core
  * @ingroup snmp
- *
+ * 
  * @defgroup snmp_traps Traps
  * @ingroup snmp
  */
@@ -232,7 +232,7 @@ snmp_set_mibs(const struct snmp_mib **mibs, u8_t num_mibs)
  * The 'device enterprise oid' shall point to an OID located under 'private-enterprises' branch (1.3.6.1.4.1.XXX). If a vendor
  * wants to provide a custom object there, he has to get its own enterprise oid from IANA (http://www.iana.org). It
  * is not allowed to use LWIP enterprise ID!
- * In order to identify a specific device it is recommended to create a dedicated OID for each device type under its own
+ * In order to identify a specific device it is recommended to create a dedicated OID for each device type under its own 
  * enterprise oid.
  * e.g.
  * device a > 1.3.6.1.4.1.XXX(ent-oid).1(devices).1(device a)
@@ -250,7 +250,7 @@ void snmp_set_device_enterprise_oid(const struct snmp_obj_id* device_enterprise_
 
 /**
  * @ingroup snmp_core
- * Get 'device enterprise oid'
+ * Get 'device enterprise oid' 
  */
 const struct snmp_obj_id* snmp_get_device_enterprise_oid(void)
 {
@@ -521,7 +521,7 @@ snmp_oid_to_ip_port(const u32_t *oid, u8_t oid_len, ip_addr_t *ip, u16_t *port)
 
 /**
  * Assign an OID to struct snmp_obj_id
- * @param target Assignment target
+ * @param target Assignment target 
  * @param oid OID
  * @param oid_len OID length
  */
@@ -906,7 +906,7 @@ snmp_get_next_node_instance_from_oid(const u32_t *oid, u8_t oid_len, snmp_valida
       /*
       we found a suitable next node,
       now we have to check if a inner MIB is located between the searched OID and the resulting OID.
-      this is possible because MIB's may be located anywhere in the global tree, that means also in
+      this is possible because MIB's may be located anywhere in the global tree, that means also in 
       the subtree of another MIB (e.g. if searched OID is .2 and resulting OID is .4, then another
       MIB having .3 as root node may exist)
       */

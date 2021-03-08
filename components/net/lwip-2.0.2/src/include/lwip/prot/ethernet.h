@@ -109,7 +109,7 @@ enum eth_type {
   /** Internet protocol v4 */
   ETHTYPE_IP        = 0x0800U,
   /** Address resolution protocol */
-  ETHTYPE_ARP       = 0x0806U,
+  ETHTYPE_ARP       = 0x0806U, 
   /** Wake on lan */
   ETHTYPE_WOL       = 0x0842U,
   /** RARP */

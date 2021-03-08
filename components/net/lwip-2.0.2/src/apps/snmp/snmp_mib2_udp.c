@@ -135,7 +135,7 @@ udp_endpointTable_get_cell_value(const u32_t* column, const u32_t* row_oid, u8_t
   if (row_oid[idx] != 0) {
     return SNMP_ERR_NOSUCHINSTANCE;
   }
-
+  
   /* find udp_pcb with requested ip and port*/
   pcb = udp_pcbs;
   while (pcb != NULL) {
@@ -153,7 +153,7 @@ udp_endpointTable_get_cell_value(const u32_t* column, const u32_t* row_oid, u8_t
   return SNMP_ERR_NOSUCHINSTANCE;
 }
 
-static snmp_err_t
+static snmp_err_t 
 udp_endpointTable_get_next_cell_instance_and_value(const u32_t* column, struct snmp_obj_id* row_oid, union snmp_variant_value* value, u32_t* value_len)
 {
   struct udp_pcb *pcb;
@@ -181,12 +181,12 @@ udp_endpointTable_get_next_cell_instance_and_value(const u32_t* column, struct s
     /* udpEndpointRemoteAddressType + udpEndpointRemoteAddress + udpEndpointRemotePort */
     idx += snmp_ip_port_to_oid(&pcb->remote_ip, pcb->remote_port, &test_oid[idx]);
 
-    test_oid[idx] = 0; /* udpEndpointInstance */
+    test_oid[idx] = 0; /* udpEndpointInstance */    
     idx++;
-
+    
     /* check generated OID: is it a candidate for the next one? */
     snmp_next_oid_check(&state, test_oid, idx, NULL);
-
+    
     pcb = pcb->next;
   }
 
@@ -214,7 +214,7 @@ static const struct snmp_oid_range udp_Table_oid_ranges[] = {
   { 1, 0xffff }  /* Port        */
 };
 
-static snmp_err_t
+static snmp_err_t 
 udp_Table_get_cell_value_core(struct udp_pcb *pcb, const u32_t* column, union snmp_variant_value* value, u32_t* value_len)
 {
   LWIP_UNUSED_ARG(value_len);
@@ -235,7 +235,7 @@ udp_Table_get_cell_value_core(struct udp_pcb *pcb, const u32_t* column, union sn
   return SNMP_ERR_NOERROR;
 }
 
-static snmp_err_t
+static snmp_err_t 
 udp_Table_get_cell_value(const u32_t* column, const u32_t* row_oid, u8_t row_oid_len, union snmp_variant_value* value, u32_t* value_len)
 {
   ip4_addr_t ip;
@@ -267,7 +267,7 @@ udp_Table_get_cell_value(const u32_t* column, const u32_t* row_oid, u8_t row_oid
   return SNMP_ERR_NOSUCHINSTANCE;
 }
 
-static snmp_err_t
+static snmp_err_t 
 udp_Table_get_next_cell_instance_and_value(const u32_t* column, struct snmp_obj_id* row_oid, union snmp_variant_value* value, u32_t* value_len)
 {
   struct udp_pcb *pcb;
@@ -289,7 +289,7 @@ udp_Table_get_next_cell_instance_and_value(const u32_t* column, struct snmp_obj_
       /* check generated OID: is it a candidate for the next one? */
       snmp_next_oid_check(&state, test_oid, LWIP_ARRAYSIZE(udp_Table_oid_ranges), pcb);
     }
-
+    
     pcb = pcb->next;
   }
 
@@ -322,13 +322,13 @@ static const struct snmp_table_simple_node udp_Table = SNMP_TABLE_CREATE_SIMPLE(
 #endif /* LWIP_IPV4 */
 
 static const struct snmp_table_simple_col_def udp_endpointTable_columns[] = {
-  /* all items except udpEndpointProcess are declared as not-accessible */
+  /* all items except udpEndpointProcess are declared as not-accessible */   
   { 8, SNMP_ASN1_TYPE_UNSIGNED32, SNMP_VARIANT_VALUE_TYPE_U32 }  /* udpEndpointProcess */
 };
 
 static const struct snmp_table_simple_node udp_endpointTable = SNMP_TABLE_CREATE_SIMPLE(7, udp_endpointTable_columns, udp_endpointTable_get_cell_value, udp_endpointTable_get_next_cell_instance_and_value);
 
-/* the following nodes access variables in LWIP stack from SNMP worker thread and must therefore be synced to LWIP (TCPIP) thread */
+/* the following nodes access variables in LWIP stack from SNMP worker thread and must therefore be synced to LWIP (TCPIP) thread */ 
 CREATE_LWIP_SYNC_NODE(1, udp_inDatagrams)
 CREATE_LWIP_SYNC_NODE(2, udp_noPorts)
 CREATE_LWIP_SYNC_NODE(3, udp_inErrors)
