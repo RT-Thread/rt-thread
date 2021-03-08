@@ -880,6 +880,8 @@ struct rt_lwp *lwp_self(void)
     return RT_NULL;
 }
 
+#define LWP_TASK_STACK_SIZE (16 * 1024)
+
 #ifdef RT_USING_GDBSERVER
 pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 #else
@@ -946,7 +948,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
         thread_name = thread_name ? thread_name + 1 : filename;
 
         thread = rt_thread_create(thread_name, lwp_thread_entry, RT_NULL,
-                               1024 * 16, 25, 200);
+                LWP_TASK_STACK_SIZE, 25, 200);
         if (thread != RT_NULL)
         {
             struct rt_lwp *self_lwp;
