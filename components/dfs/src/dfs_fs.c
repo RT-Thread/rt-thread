@@ -272,11 +272,27 @@ int dfs_mount(const char   *device_name,
     if ((strcmp(fullpath, "/") != 0) && (strcmp(fullpath, "/dev") != 0))
     {
         struct dfs_fd fd;
+        struct dirent dirent;
+        int length = 0;
 
-        if (dfs_file_open(&fd, fullpath, O_RDONLY | O_DIRECTORY) < 0)
+        memset(&dirent, 0, sizeof(struct dirent));
+
+        /* Check whether the path is empty or cannot be opened.
+         * If it is not empty or cannot be opened, it will not be mounted. */
+        if (dfs_file_open(&fd, fullpath, O_RDONLY | O_DIRECTORY) < 0 ||
+            (length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent))) > 0)
         {
+            if (length > 0)
+            {
+                rt_set_errno(-ENOTEMPTY);
+                dfs_file_close(&fd);
+            }
+            else
+            {
+                rt_set_errno(-ENOTDIR);
+            }
+
             rt_free(fullpath);
-            rt_set_errno(-ENOTDIR);
 
             return -1;
         }
