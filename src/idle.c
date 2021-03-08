@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -211,7 +211,7 @@ static void rt_thread_idle_entry(void *parameter)
 #endif
 
         rt_thread_idle_excute();
-#ifdef RT_USING_PM        
+#ifdef RT_USING_PM
         rt_system_power_manager();
 #endif
     }
