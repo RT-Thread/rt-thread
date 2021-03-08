@@ -351,7 +351,7 @@ system_set_value(const struct snmp_scalar_array_node_def *node, u16_t len, void 
   /* no need to check size of target buffer, this was already done in set_test method */
   LWIP_ASSERT("", var_wr != NULL);
   MEMCPY(var_wr, value, len);
-
+  
   if (var_wr_len == NULL) {
     /* add terminating 0 */
     var_wr[len] = 0;

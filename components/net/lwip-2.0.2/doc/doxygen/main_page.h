@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @defgroup lwip lwIP
  *
  * @defgroup infrastructure Infrastructure
@@ -6,13 +6,13 @@
  * @defgroup callbackstyle_api Callback-style APIs
  * Non thread-safe APIs, callback style for maximum performance and minimum
  * memory footprint.
- *
+ * 
  * @defgroup sequential_api Sequential-style APIs
  * Sequential-style APIs, blocking functions. More overhead, but can be called
  * from any thread except TCPIP thread.
- *
+ * 
  * @defgroup addons Addons
- *
+ * 
  * @defgroup apps Applications
  */
 
@@ -44,19 +44,19 @@
  *
  * The most common source of lwIP problems is to have multiple execution contexts
  * inside the lwIP code.
- *
- * lwIP can be used in two basic modes: @ref lwip_nosys (no OS/RTOS
+ * 
+ * lwIP can be used in two basic modes: @ref lwip_nosys (no OS/RTOS 
  * running on target system) or @ref lwip_os (there is an OS running
  * on the target system).
  *
  * Mainloop Mode
  * -------------
  * In mainloop mode, only @ref callbackstyle_api can be used.
- * The user has two possibilities to ensure there is only one
+ * The user has two possibilities to ensure there is only one 
  * exection context at a time in lwIP:
  *
  * 1) Deliver RX ethernet packets directly in interrupt context to lwIP
- *    by calling netif->input directly in interrupt. This implies all lwIP
+ *    by calling netif->input directly in interrupt. This implies all lwIP 
  *    callback functions are called in IRQ context, which may cause further
  *    problems in application code: IRQ is blocked for a long time, multiple
  *    execution contexts in application code etc. When the application wants
@@ -82,7 +82,7 @@
  * implemented in tcpip_input().​​
  * Again, ensure lwIP is _NEVER_ called from an interrupt, e.g.
  * some SPI IRQ wants to forward data to udp_send() or tcp_write()!
- *
+ * 
  * 1) tcpip_callback() can be used get called back from TCPIP thread,
  *    it is safe to call any @ref callbackstyle_api from there.
  *
@@ -108,7 +108,7 @@
  * *not* *from* *interrupt* *context*. You can allocate a @ref pbuf in interrupt
  * context and put them into a queue which is processed from mainloop.\n
  * Call sys_check_timeouts() periodically in the mainloop.\n
- * Porting: implement all functions in @ref sys_time, @ref sys_prot and
+ * Porting: implement all functions in @ref sys_time, @ref sys_prot and 
  * @ref compiler_abstraction.\n
  * You can only use @ref callbackstyle_api in this mode.\n
  * Sample code:\n
@@ -130,4 +130,3 @@
  * @page raw_api lwIP API
  * @verbinclude "rawapi.txt"
  */
-/

@@ -46,7 +46,7 @@ static s16_t snmp_scalar_array_get_value(struct snmp_node_instance* instance, vo
 static snmp_err_t  snmp_scalar_array_set_test(struct snmp_node_instance* instance, u16_t value_len, void* value);
 static snmp_err_t  snmp_scalar_array_set_value(struct snmp_node_instance* instance, u16_t value_len, void* value);
 
-snmp_err_t
+snmp_err_t 
 snmp_scalar_get_instance(const u32_t *root_oid, u8_t root_oid_len, struct snmp_node_instance* instance)
 {
   const struct snmp_scalar_node* scalar_node = (const struct snmp_scalar_node*)(const void*)instance->node;
@@ -67,7 +67,7 @@ snmp_scalar_get_instance(const u32_t *root_oid, u8_t root_oid_len, struct snmp_n
   return SNMP_ERR_NOERROR;
 }
 
-snmp_err_t
+snmp_err_t 
 snmp_scalar_get_next_instance(const u32_t *root_oid, u8_t root_oid_len, struct snmp_node_instance* instance)
 {
   /* because our only instance is .0 we can only return a next instance if no instance oid is passed */
@@ -130,7 +130,7 @@ snmp_scalar_array_get_next_instance(const u32_t *root_oid, u8_t root_oid_len, st
   if ((instance->instance_oid.len == 0) && (array_node->array_node_count > 0)) {
     /* return node with lowest OID */
     u16_t i = 0;
-
+    
     result = array_node_def;
     array_node_def++;
 
@@ -142,7 +142,7 @@ snmp_scalar_array_get_next_instance(const u32_t *root_oid, u8_t root_oid_len, st
     }
   } else if (instance->instance_oid.len >= 1) {
     if (instance->instance_oid.len == 1) {
-      /* if we have the requested OID we return its instance, otherwise we search for the next available */
+      /* if we have the requested OID we return its instance, otherwise we search for the next available */    
       u16_t i = 0;
       while (i < array_node->array_node_count) {
         if (array_node_def->oid == instance->instance_oid.id[0]) {
@@ -179,7 +179,7 @@ snmp_scalar_array_get_next_instance(const u32_t *root_oid, u8_t root_oid_len, st
   instance->instance_oid.len   = 2;
   instance->instance_oid.id[0] = result->oid;
   instance->instance_oid.id[1] = 0;
-
+  
   instance->access              = result->access;
   instance->asn1_type           = result->asn1_type;
   instance->get_value           = snmp_scalar_array_get_value;

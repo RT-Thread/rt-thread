@@ -52,17 +52,17 @@ snmpv3_get_user(const char* username, u8_t *auth_algo, u8_t *auth_key, u8_t *pri
 {
   const char* engine_id;
   u8_t engine_id_len;
-
+  
   if(strlen(username) == 0) {
     return ERR_OK;
   }
-
+  
   if(memcmp(username, "lwip", 4) != 0) {
     return ERR_VAL;
   }
-
+  
   snmpv3_get_engine_id(&engine_id, &engine_id_len);
-
+  
   if(auth_key != NULL) {
     snmpv3_password_to_key_sha((const u8_t*)"maplesyrup", 10,
       (const u8_t*)engine_id, engine_id_len,
@@ -105,7 +105,7 @@ snmpv3_set_engine_id(const char *id, u8_t len)
 
 /**
  * Get engine boots from persistence. Must be increased on each boot.
- * @return
+ * @return 
  */
 u32_t
 snmpv3_get_engine_boots(void)
@@ -117,7 +117,7 @@ snmpv3_get_engine_boots(void)
  * Store engine boots in persistence
  * @param boots
  */
-void
+void 
 snmpv3_set_engine_boots(u32_t boots)
 {
   LWIP_UNUSED_ARG(boots);

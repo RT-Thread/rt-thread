@@ -52,7 +52,7 @@ snmp_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t *addr,
   pbuf_free(p);
 }
 
-err_t
+err_t 
 snmp_sendto(void *handle, struct pbuf *p, const ip_addr_t *dst, u16_t port)
 {
   return udp_sendto((struct udp_pcb*)handle, p, dst, port);
@@ -86,7 +86,7 @@ void
 snmp_init(void)
 {
   err_t err;
-
+  
   struct udp_pcb *snmp_pcb = udp_new_ip_type(IPADDR_TYPE_ANY);
   LWIP_ERROR("snmp_raw: no PCB", (snmp_pcb != NULL), return;);
 

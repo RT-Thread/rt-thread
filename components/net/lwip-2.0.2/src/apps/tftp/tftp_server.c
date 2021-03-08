@@ -12,7 +12,7 @@
  *
  ********************************************************************/
 
-/*
+/* 
  * Redistribution and use in source and binary forms, with or without
  * modification,are permitted provided that the following conditions are met:
  *
@@ -106,7 +106,7 @@ close_handle(void)
   }
 
   sys_untimeout(tftp_tmr, NULL);
-
+  
   if (tftp_state.handle) {
     tftp_state.ctx->close(tftp_state.handle);
     tftp_state.handle = NULL;
@@ -120,7 +120,7 @@ send_error(const ip_addr_t *addr, u16_t port, enum tftp_error code, const char *
   int str_length = strlen(str);
   struct pbuf* p;
   u16_t* payload;
-
+  
   p = pbuf_alloc(PBUF_TRANSPORT, (u16_t)(TFTP_HEADER_LENGTH + str_length + 1), PBUF_RAM);
   if(p == NULL) {
     return;
@@ -140,13 +140,13 @@ send_ack(u16_t blknum)
 {
   struct pbuf* p;
   u16_t* payload;
-
+  
   p = pbuf_alloc(PBUF_TRANSPORT, TFTP_HEADER_LENGTH, PBUF_RAM);
   if(p == NULL) {
     return;
   }
   payload = (u16_t*) p->payload;
-
+  
   payload[0] = PP_HTONS(TFTP_ACK);
   payload[1] = lwip_htons(blknum);
   udp_sendto(tftp_state.upcb, p, &tftp_state.addr, tftp_state.port);
@@ -165,7 +165,7 @@ resend_data(void)
     pbuf_free(p);
     return;
   }
-
+    
   udp_sendto(tftp_state.upcb, p, &tftp_state.addr, tftp_state.port);
   pbuf_free(p);
 }
@@ -179,7 +179,7 @@ send_data(void)
   if(tftp_state.last_data != NULL) {
     pbuf_free(tftp_state.last_data);
   }
-
+  
   tftp_state.last_data = pbuf_alloc(PBUF_TRANSPORT, TFTP_HEADER_LENGTH + TFTP_MAX_PAYLOAD_SIZE, PBUF_RAM);
   if(tftp_state.last_data == NULL) {
     return;
@@ -208,7 +208,7 @@ recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16
 
   LWIP_UNUSED_ARG(arg);
   LWIP_UNUSED_ARG(upcb);
-
+  
   if (((tftp_state.port != 0) && (port != tftp_state.port)) ||
       (!ip_addr_isany_val(tftp_state.addr) && !ip_addr_cmp(&tftp_state.addr, addr))) {
     send_error(addr, port, TFTP_ERROR_ACCESS_VIOLATION, "Only one connection at a time is supported");
@@ -235,7 +235,7 @@ recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16
         send_error(addr, port, TFTP_ERROR_ACCESS_VIOLATION, "Only one connection at a time is supported");
         break;
       }
-
+      
       sys_timeout(TFTP_TIMER_MSECS, tftp_tmr, NULL);
 
       /* find \0 in pbuf -> end of filename string */
@@ -253,7 +253,7 @@ recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16
         break;
       }
       pbuf_copy_partial(p, mode, mode_end_offset-filename_end_offset, filename_end_offset+1);
-
+ 
       tftp_state.handle = tftp_state.ctx->open(filename, mode, opcode == PP_HTONS(TFTP_WRQ));
       tftp_state.blknum = 1;
 
@@ -279,12 +279,12 @@ recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16
 
       break;
     }
-
+    
     case PP_HTONS(TFTP_DATA):
     {
       int ret;
       u16_t blknum;
-
+      
       if (tftp_state.handle == NULL) {
         send_error(addr, port, TFTP_ERROR_ACCESS_VIOLATION, "No connection");
         break;
@@ -348,7 +348,7 @@ recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16
 
       break;
     }
-
+    
     default:
       send_error(addr, port, TFTP_ERROR_ILLEGAL_OPERATION, "Unknown operation");
       break;
@@ -361,7 +361,7 @@ static void
 tftp_tmr(void* arg)
 {
   LWIP_UNUSED_ARG(arg);
-
+  
   tftp_state.timer++;
 
   if (tftp_state.handle == NULL) {
@@ -386,7 +386,7 @@ tftp_tmr(void* arg)
  * Initialize TFTP server.
  * @param ctx TFTP callback struct
  */
-err_t
+err_t 
 tftp_init(const struct tftp_context *ctx)
 {
   err_t ret;

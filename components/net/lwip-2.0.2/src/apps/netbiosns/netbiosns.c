@@ -315,7 +315,7 @@ netbiosns_recv(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t 
 }
 
 /**
- * @ingroup netbiosns
+ * @ingroup netbiosns 
  * Init netbios responder
  */
 void
@@ -336,7 +336,7 @@ netbiosns_init(void)
 
 #ifndef NETBIOS_LWIP_NAME
 /**
- * @ingroup netbiosns
+ * @ingroup netbiosns 
  * Set netbios name. ATTENTION: the hostname must be less than 15 characters!
  */
 void
@@ -352,7 +352,7 @@ netbiosns_set_name(const char* hostname)
 #endif
 
 /**
- * @ingroup netbiosns
+ * @ingroup netbiosns 
  * Stop netbios responder
  */
 void

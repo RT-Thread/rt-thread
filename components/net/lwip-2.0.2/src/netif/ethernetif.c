@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2018, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -173,7 +173,7 @@ static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
     }
     else
     {
-        dhcp_stop((struct netif *)netif->user_data);
+        dhcp_stop((struct netif *)netif->user_data);    
     }
     return ERR_OK;
 }
@@ -868,27 +868,27 @@ void list_if(void)
         rt_kprintf("gw address: %s\n", ipaddr_ntoa(&(netif->gw)));
         rt_kprintf("net mask  : %s\n", ipaddr_ntoa(&(netif->netmask)));
 #if LWIP_IPV6
-        {
-            ip6_addr_t *addr;
-            int addr_state;
-            int i;
+		{
+			ip6_addr_t *addr;
+			int addr_state;
+			int i;
 
-            addr = (ip6_addr_t *)&netif->ip6_addr[0];
-            addr_state = netif->ip6_addr_state[0];
+			addr = (ip6_addr_t *)&netif->ip6_addr[0];
+			addr_state = netif->ip6_addr_state[0];
 
-            rt_kprintf("\nipv6 link-local: %s state:%02X %s\n", ip6addr_ntoa(addr),
-            addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
+			rt_kprintf("\nipv6 link-local: %s state:%02X %s\n", ip6addr_ntoa(addr),
+			addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
 
-            for(i=1; i<LWIP_IPV6_NUM_ADDRESSES; i++)
-            {
-                addr = (ip6_addr_t *)&netif->ip6_addr[i];
-                addr_state = netif->ip6_addr_state[i];
+			for(i=1; i<LWIP_IPV6_NUM_ADDRESSES; i++)
+			{
+				addr = (ip6_addr_t *)&netif->ip6_addr[i];
+				addr_state = netif->ip6_addr_state[i];
 
-                rt_kprintf("ipv6[%d] address: %s state:%02X %s\n", i, ip6addr_ntoa(addr),
-                addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
-            }
+				rt_kprintf("ipv6[%d] address: %s state:%02X %s\n", i, ip6addr_ntoa(addr),
+				addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
+			}
 
-        }
+		}
         rt_kprintf("\r\n");
 #endif /* LWIP_IPV6 */
         netif = netif->next;

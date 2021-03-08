@@ -378,7 +378,7 @@ lwip_init(void)
 #if PPP_SUPPORT
   ppp_init();
 #endif
-
+ 
 #if LWIP_TIMERS
   sys_timeouts_init();
 #endif /* LWIP_TIMERS */

@@ -36,7 +36,7 @@
 /* This header file is included in all PPP modules needing hashes and/or ciphers */
 
 #ifndef PPPCRYPT_H
-#define PPPCRYPT_H
+#define	PPPCRYPT_H
 
 /*
  * If included PolarSSL copy is not used, user is expected to include

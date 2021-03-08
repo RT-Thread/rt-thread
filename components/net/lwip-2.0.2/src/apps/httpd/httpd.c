@@ -548,7 +548,7 @@ http_write(struct tcp_pcb *pcb, const void* ptr, u16_t *length, u8_t apiflags)
       } else {
         len /= 2;
       }
-      LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE,
+      LWIP_DEBUGF(HTTPD_DEBUG | LWIP_DBG_TRACE, 
         ("Send failed, trying less (%d bytes)\n", len));
     }
   } while ((err == ERR_MEM) && (len > 1));
@@ -871,7 +871,7 @@ get_http_headers(struct http_state *hs, const char *uri)
     hs->hdrs[HDR_STRINGS_IDX_HTTP_STATUS] = g_psHTTPHeaderStrings[HTTP_HDR_OK];
   }
 
-  /* Determine if the URI has any variables and, if so, temporarily remove
+  /* Determine if the URI has any variables and, if so, temporarily remove 
       them. */
   vars = strchr(uri, '?');
   if(vars) {

@@ -101,7 +101,7 @@ extern "C" {
 /** error codes predefined by SNMP prot. */
 typedef enum {
   SNMP_ERR_NOERROR             = 0,
-/*
+/* 
 outdated v1 error codes. do not use anmore!
 #define SNMP_ERR_NOSUCHNAME 2  use SNMP_ERR_NOSUCHINSTANCE instead
 #define SNMP_ERR_BADVALUE   3  use SNMP_ERR_WRONGTYPE,SNMP_ERR_WRONGLENGTH,SNMP_ERR_WRONGENCODING or SNMP_ERR_WRONGVALUE instead

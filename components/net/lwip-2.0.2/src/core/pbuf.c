@@ -62,7 +62,7 @@ void eth_rx_irq()
   my_pbuf->dma_descriptor         = dma_desc;
 
   invalidate_cpu_cache(dma_desc->rx_data, dma_desc->rx_length);
-
+  
   struct pbuf* p = pbuf_alloced_custom(PBUF_RAW,
      dma_desc->rx_length,
      PBUF_REF,
@@ -352,12 +352,12 @@ pbuf_alloc(pbuf_layer layer, u16_t length, pbuf_type type)
   case PBUF_RAM:
     {
       mem_size_t alloc_len = LWIP_MEM_ALIGN_SIZE(SIZEOF_STRUCT_PBUF + offset) + LWIP_MEM_ALIGN_SIZE(length);
-
+      
       /* bug #50040: Check for integer overflow when calculating alloc_len */
       if (alloc_len < LWIP_MEM_ALIGN_SIZE(length)) {
         return NULL;
       }
-
+    
       /* If pbuf is to be allocated in RAM, allocate memory for it. */
       p = (struct pbuf*)mem_malloc(alloc_len);
     }
@@ -1364,18 +1364,18 @@ pbuf_memcmp(const struct pbuf* p, u16_t offset, const void* s2, u16_t n)
   u16_t start = offset;
   const struct pbuf* q = p;
   u16_t i;
-
+ 
   /* pbuf long enough to perform check? */
   if(p->tot_len < (offset + n)) {
     return 0xffff;
   }
-
+ 
   /* get the correct pbuf from chain. We know it succeeds because of p->tot_len check above. */
   while ((q != NULL) && (q->len <= start)) {
     start -= q->len;
     q = q->next;
   }
-
+ 
   /* return requested data if pbuf is OK */
   for (i = 0; i < n; i++) {
     /* We know pbuf_get_at() succeeds because of p->tot_len check above. */

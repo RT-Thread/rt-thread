@@ -228,7 +228,7 @@ snmp_send_trap(const struct snmp_obj_id* eoid, s32_t generic_trap, s32_t specifi
  * @ingroup snmp_traps
  * Send generic SNMP trap
  */
-err_t
+err_t 
 snmp_send_trap_generic(s32_t generic_trap)
 {
   static const struct snmp_obj_id oid = { 7, { 1, 3, 6, 1, 2, 1, 11 } };
@@ -257,7 +257,7 @@ snmp_coldstart_trap(void)
 
 /**
  * @ingroup snmp_traps
- * Send authentication failure trap (used internally by agent)
+ * Send authentication failure trap (used internally by agent) 
  */
 void
 snmp_authfail_trap(void)

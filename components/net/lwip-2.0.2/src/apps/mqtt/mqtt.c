@@ -142,7 +142,7 @@ static const char * const mqtt_message_type_str[15] =
 /**
  * Message type value to string
  * @param msg_type see enum mqtt_message_type
- *
+ * 
  * @return Control message type text string
  */
 static const char *

@@ -159,7 +159,7 @@ nd6_input(struct pbuf *p, struct netif *inp)
     /* Unsolicited NA?*/
     if (ip6_addr_ismulticast(ip6_current_dest_addr())) {
       ip6_addr_t target_address;
-
+      
       /* This is an unsolicited NA.
        * link-layer changed?
        * part of DAD mechanism? */
@@ -335,7 +335,7 @@ nd6_input(struct pbuf *p, struct netif *inp)
       }
     } else {
       ip6_addr_t target_address;
-
+      
       /* Sender is trying to resolve our address. */
       /* Verify that they included their own link-layer address. */
       if (lladdr_opt == NULL) {
@@ -1517,9 +1517,9 @@ nd6_new_router(const ip6_addr_t *router_addr, struct netif *netif)
   for (router_index = LWIP_ND6_NUM_ROUTERS - 1; router_index >= 0; router_index--) {
     /* check if router already exists (this is a special case for 2 netifs on the same subnet
        - e.g. wifi and cable) */
-    if(default_router_list[router_index].neighbor_entry == &(neighbor_cache[neighbor_index])){
-      return router_index;
-    }
+    if(default_router_list[router_index].neighbor_entry == &(neighbor_cache[neighbor_index])){ 
+      return router_index; 
+    } 
     if (default_router_list[router_index].neighbor_entry == NULL) {
       /* remember lowest free index to create a new entry */
       free_router_index = router_index;
