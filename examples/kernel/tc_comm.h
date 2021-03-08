@@ -1,3 +1,12 @@
+
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
 #ifndef __TC_COMM_H__
 #define __TC_COMM_H__
 

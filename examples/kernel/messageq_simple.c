@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：消息队列例程
  *
  * 这个程序会创建3个动态线程，一个线程会从消息队列中收取消息；一个线程会定时给消
