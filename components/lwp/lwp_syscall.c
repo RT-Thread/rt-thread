@@ -1302,7 +1302,7 @@ long sys_clone(void *arg[])
     thread = rt_thread_create((const char *)"pthread",
             RT_NULL,
             RT_NULL,
-            ALLOC_KERNEL_STACK_SIZE,
+            self->stack_size,
             self->init_priority,
             self->init_tick);
     if (!thread)
@@ -1493,7 +1493,7 @@ int sys_fork(void)
     thread = rt_thread_create((const char *)thread_name,
             RT_NULL,
             RT_NULL,
-            ALLOC_KERNEL_STACK_SIZE,
+            self_thread->stack_size,
             self_thread->init_priority,
             self_thread->init_tick);
     if (!thread)
@@ -1523,15 +1523,15 @@ int sys_fork(void)
     rt_hw_interrupt_enable(level);
 
     /* copy origin stack */
-    rt_memcpy(thread->stack_addr, self_thread->stack_addr, ALLOC_KERNEL_STACK_SIZE);
+    rt_memcpy(thread->stack_addr, self_thread->stack_addr, self_thread->stack_size);
     lwp_tid_set_thread(tid, thread);
 
     level = rt_hw_interrupt_disable();
     user_stack = lwp_get_user_sp();
     rt_hw_interrupt_enable(level);
 
-    tid = lwp_set_thread_context((void *)((char *)thread->stack_addr + ALLOC_KERNEL_STACK_SIZE),
-            (void *)((char *)self_thread->stack_addr + ALLOC_KERNEL_STACK_SIZE), user_stack, &thread->sp, tid);
+    tid = lwp_set_thread_context((void *)((char *)thread->stack_addr + thread->stack_size),
+            (void *)((char *)self_thread->stack_addr + self_thread->stack_size), user_stack, &thread->sp, tid);
     if (tid)
     {
         level = rt_hw_interrupt_disable();

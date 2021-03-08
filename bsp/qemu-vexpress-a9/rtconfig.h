@@ -230,6 +230,7 @@
 
 #define RT_USING_LWP
 #define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
 #define RT_CH_MSG_MAX_NR 1024
 #define RT_LWP_SHM_MAX_NR 64
 #define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
@@ -279,6 +280,12 @@
 
 
 /* games: games run on RT-Thread console */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0

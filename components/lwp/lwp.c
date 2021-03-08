@@ -946,7 +946,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
         thread_name = thread_name ? thread_name + 1 : filename;
 
         thread = rt_thread_create(thread_name, lwp_thread_entry, RT_NULL,
-                               1024 * 16, 25, 200);
+                LWP_TASK_STACK_SIZE, 25, 200);
         if (thread != RT_NULL)
         {
             struct rt_lwp *self_lwp;
