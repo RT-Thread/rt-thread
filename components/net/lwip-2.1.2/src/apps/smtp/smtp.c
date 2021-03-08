@@ -1,12 +1,12 @@
 /**
  * @file
  * SMTP client module
- * 
+ *
  * Author: Simon Goldschmidt
  *
  * @defgroup smtp SMTP client
  * @ingroup apps
- * 
+ *
  * This is simple SMTP client for raw API.
  * It is a minimal implementation of SMTP as specified in RFC 5321.
  *
@@ -29,7 +29,7 @@
 
  * When using from any other thread than the tcpip_thread (for NO_SYS==0), use
  * smtp_send_mail_int()!
- * 
+ *
  * SMTP_BODYDH usage:
 @code{.c}
  int my_smtp_bodydh_fn(void *arg, struct smtp_bodydh *bdh)
@@ -42,11 +42,11 @@
     ++bdh->state;
     return BDH_WORKING;
  }
- 
- smtp_send_mail_bodycback("sender", "recipient", "subject", 
+
+ smtp_send_mail_bodycback("sender", "recipient", "subject",
                 my_smtp_bodydh_fn, my_smtp_result_fn, some_argument);
 @endcode
- * 
+ *
  * @todo:
  * - attachments (the main difficulty here is streaming base64-encoding to
  *   prevent having to allocate a buffer for the whole encoded file at once)

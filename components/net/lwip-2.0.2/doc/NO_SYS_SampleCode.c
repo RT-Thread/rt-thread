@@ -72,7 +72,7 @@ void main(void)
   netif_set_status_callback(&netif, netif_status_callback);
   netif_set_default(&netif);
   netif_set_up(&netif);
-  
+
   /* Start DHCP and HTTPD */
   dhcp_init();
   httpd_init();
@@ -94,7 +94,7 @@ void main(void)
 
     if(p != NULL) {
       LINK_STATS_INC(link.recv);
- 
+
       /* Update SNMP stats (only if you use SNMP) */
       MIB2_STATS_NETIF_ADD(netif, ifinoctets, p->tot_len);
       int unicast = ((p->payload[0] & 0x01) == 0);
@@ -108,10 +108,10 @@ void main(void)
         pbuf_free(p);
       }
     }
-     
+
     /* Cyclic lwIP timers check */
     sys_check_timeouts();
-     
+
     /* your application goes here */
   }
 }

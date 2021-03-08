@@ -134,7 +134,7 @@ enum {
   MQTT_DATA_FLAG_LAST = 1
 };
 
-/** 
+/**
  * @ingroup mqtt
  * Function prototype for MQTT incoming publish data callback function. Called when data
  * arrives to a subscribed topic @see mqtt_subscribe
@@ -149,7 +149,7 @@ enum {
 typedef void (*mqtt_incoming_data_cb_t)(void *arg, const u8_t *data, u16_t len, u8_t flags);
 
 
-/** 
+/**
  * @ingroup mqtt
  * Function prototype for MQTT incoming publish function. Called when an incoming publish
  * arrives to a subscribed topic @see mqtt_subscribe

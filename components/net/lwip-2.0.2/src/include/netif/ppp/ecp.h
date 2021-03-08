@@ -35,8 +35,8 @@
 #if PPP_SUPPORT && ECP_SUPPORT  /* don't build if not configured for use in lwipopts.h */
 
 typedef struct ecp_options {
-    bool required;		/* Is ECP required? */
-    unsigned enctype;		/* Encryption type */
+    bool required;      /* Is ECP required? */
+    unsigned enctype;       /* Encryption type */
 } ecp_options;
 
 extern fsm ecp_fsm[];

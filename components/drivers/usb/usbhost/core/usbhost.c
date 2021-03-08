@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,13 +19,13 @@
 /**
  * This function will initialize the usb host stack, all the usb class driver and
  * host controller driver are also be initialized here.
- * 
+ *
  * @return none.
  */
 rt_err_t rt_usb_host_init(void)
 {
     ucd_t drv;
-    rt_device_t uhc;    
+    rt_device_t uhc;
 
     uhc = rt_device_find(USB_HOST_CONTROLLER_NAME);
     if(uhc == RT_NULL)

@@ -69,7 +69,7 @@ typedef struct bridgeif_dfdb_s {
  * remembers known src mac addresses to know which port to send frames destined for that
  * mac address.
  *
- * ATTENTION: This is meant as an example only, in real-world use, you should 
+ * ATTENTION: This is meant as an example only, in real-world use, you should
  * provide a better implementation :-)
  */
 void
@@ -120,9 +120,9 @@ bridgeif_fdb_update_src(void *fdb_ptr, struct eth_addr *src_addr, u8_t port_idx)
   /* not found, no free entry -> flood */
 }
 
-/** 
+/**
  * @ingroup bridgeif_fdb
- * Walk our list of auto-learnt fdb entries and return a port to forward or BR_FLOOD if unknown 
+ * Walk our list of auto-learnt fdb entries and return a port to forward or BR_FLOOD if unknown
  */
 bridgeif_portmask_t
 bridgeif_fdb_get_dst_ports(void *fdb_ptr, struct eth_addr *dst_addr)

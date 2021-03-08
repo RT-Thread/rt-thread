@@ -430,7 +430,7 @@ lowpan6_decompress_hdr(u8_t *lowpan6_buffer, size_t lowpan6_bufsize,
 
   /* offset for inline IP headers (RFC 6282 ch3)*/
   lowpan6_offset = 2;
-  /* if CID is set (context identifier), the context byte 
+  /* if CID is set (context identifier), the context byte
    * follows immediately after the header, so other IPHC fields are @+3 */
   if (lowpan6_buffer[1] & 0x80) {
     lowpan6_offset++;

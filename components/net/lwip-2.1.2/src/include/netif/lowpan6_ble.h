@@ -6,7 +6,7 @@
 /*
  * Copyright (c) 2017 Benjamin Aigner
  * Copyright (c) 2015 Inico Technologies Ltd. , Author: Ivan Delamer <delamer@inicotech.com>
- * 
+ *
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -32,10 +32,10 @@
  * OF SUCH DAMAGE.
  *
  * Author: Benjamin Aigner <aignerb@technikum-wien.at>
- * 
+ *
  * Based on the original 6lowpan implementation of lwIP ( @see 6lowpan.c)
  */
- 
+
 #ifndef LWIP_HDR_LOWPAN6_BLE_H
 #define LWIP_HDR_LOWPAN6_BLE_H
 

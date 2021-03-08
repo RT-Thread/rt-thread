@@ -120,7 +120,7 @@
 #define HTTPD_DEBUG         LWIP_DBG_OFF
 #endif
 
-/** Set this to 1 to use a memp pool for allocating 
+/** Set this to 1 to use a memp pool for allocating
  * struct http_state instead of the heap.
  */
 #if !defined HTTPD_USE_MEM_POOL || defined __DOXYGEN__
