@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -130,7 +130,7 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
     RT_ASSERT(heap);
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
     RT_ASSERT(rt_object_is_systemobject(&heap->parent));
-    
+
     rt_sem_detach(&heap->lock);
     rt_object_detach(&(heap->parent));
 
@@ -765,7 +765,7 @@ void dump_used_memheap(struct rt_memheap *mh)
 
     rt_kprintf("\nmemory heap address:\n");
     rt_kprintf("heap_ptr: 0x%08x\n", mh->start_addr);
-    rt_kprintf("free	: 0x%08x\n", mh->available_size);
+    rt_kprintf("free    : 0x%08x\n", mh->available_size);
     rt_kprintf("max_used: 0x%08x\n", mh->max_used_size);
     rt_kprintf("size    : 0x%08x\n", mh->pool_size);
 
