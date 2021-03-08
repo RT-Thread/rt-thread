@@ -14,6 +14,11 @@ if RT_USING_LWP
         default 30
 endif
 
+config LWP_TASK_STACK_SIZE
+    int "The lwp thread kernel stack size"
+    default 16384
+    depends on RT_USING_LWP
+
 config RT_USING_GDBSERVER
     bool "Using gdbserver"
     default y

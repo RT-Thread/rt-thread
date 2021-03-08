@@ -880,8 +880,6 @@ struct rt_lwp *lwp_self(void)
     return RT_NULL;
 }
 
-#define LWP_TASK_STACK_SIZE (16 * 1024)
-
 #ifdef RT_USING_GDBSERVER
 pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 #else
