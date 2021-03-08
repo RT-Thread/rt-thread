@@ -241,7 +241,7 @@ lwip_cyclic_timer(void *arg)
   cyclic->handler();
 
   now = sys_now();
-  next_timeout_time = (u32_t)(current_timeout_due_time + cyclic->interval_ms);  /* overflow handled by TIME_LESS_THAN macro */ 
+  next_timeout_time = (u32_t)(current_timeout_due_time + cyclic->interval_ms);  /* overflow handled by TIME_LESS_THAN macro */
   if (TIME_LESS_THAN(next_timeout_time, now)) {
     /* timer would immediately expire again -> "overload" -> restart without any correction */
 #if LWIP_DEBUG_TIMERNAMES
@@ -296,7 +296,7 @@ sys_timeout(u32_t msecs, sys_timeout_handler handler, void *arg)
 
   LWIP_ASSERT("Timeout time too long, max is LWIP_UINT32_MAX/4 msecs", msecs <= (LWIP_UINT32_MAX / 4));
 
-  next_timeout_time = (u32_t)(sys_now() + msecs); /* overflow handled by TIME_LESS_THAN macro */ 
+  next_timeout_time = (u32_t)(sys_now() + msecs); /* overflow handled by TIME_LESS_THAN macro */
 
 #if LWIP_DEBUG_TIMERNAMES
   sys_timeout_abs(next_timeout_time, handler, arg, handler_name);

@@ -355,7 +355,7 @@ tcp_write_checks(struct tcp_pcb *pcb, u16_t len)
  * it can send them more efficiently by combining them together).
  * To prompt the system to send data now, call tcp_output() after
  * calling tcp_write().
- * 
+ *
  * This function enqueues the data pointed to by the argument dataptr. The length of
  * the data is passed as the len parameter. The apiflags can be one or more of:
  * - TCP_WRITE_FLAG_COPY: indicates whether the new memory should be allocated

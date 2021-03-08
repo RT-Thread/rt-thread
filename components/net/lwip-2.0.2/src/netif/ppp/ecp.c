@@ -92,8 +92,8 @@ static void ecp_protrej (int unit);
 */
 #if PRINTPKT_SUPPORT
 static int  ecp_printpkt (const u_char *pkt, int len,
-			      void (*printer) (void *, char *, ...),
-			      void *arg);
+                  void (*printer) (void *, char *, ...),
+                  void *arg);
 #endif /* PRINTPKT_SUPPORT */
 /*
 static void ecp_datainput (int unit, u_char *pkt, int len);
@@ -129,10 +129,10 @@ const struct protent ecp_protent = {
 };
 
 fsm ecp_fsm[NUM_PPP];
-ecp_options ecp_wantoptions[NUM_PPP];	/* what to request the peer to use */
-ecp_options ecp_gotoptions[NUM_PPP];	/* what the peer agreed to do */
-ecp_options ecp_allowoptions[NUM_PPP];	/* what we'll agree to do */
-ecp_options ecp_hisoptions[NUM_PPP];	/* what we agreed to do */
+ecp_options ecp_wantoptions[NUM_PPP];   /* what to request the peer to use */
+ecp_options ecp_gotoptions[NUM_PPP];    /* what the peer agreed to do */
+ecp_options ecp_allowoptions[NUM_PPP];  /* what we'll agree to do */
+ecp_options ecp_hisoptions[NUM_PPP];    /* what we agreed to do */
 
 static const fsm_callbacks ecp_callbacks = {
     NULL, /* ecp_resetci, */

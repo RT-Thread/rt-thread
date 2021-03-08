@@ -1743,7 +1743,7 @@ decode_next:
     /* make sure the string is really NULL-terminated */
     dhcp->boot_file_name[DHCP_FILE_LEN-1] = 0;
   }
-#endif /* LWIP_DHCP_BOOTP_FILE */ 
+#endif /* LWIP_DHCP_BOOTP_FILE */
   return ERR_OK;
 }
 

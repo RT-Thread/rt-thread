@@ -73,7 +73,7 @@
     between BULL S.A. and INRIA).
 
     This software is available with usual "research" terms
-    with the aim of retain credits of the software. 
+    with the aim of retain credits of the software.
     Permission to use, copy, modify and distribute this software for any
     purpose and without fee is hereby granted, provided that the above
     copyright notice and this permission notice appear in all copies,
@@ -142,7 +142,7 @@
 #if PPP_SUPPORT && PPP_IPV6_SUPPORT  /* don't build if not configured for use in lwipopts.h */
 
 #ifndef IPV6CP_H
-#define	IPV6CP_H
+#define IPV6CP_H
 
 #include "eui64.h"
 
@@ -153,13 +153,13 @@ extern "C" {
 /*
  * Options.
  */
-#define CI_IFACEID	1	/* Interface Identifier */
+#define CI_IFACEID  1   /* Interface Identifier */
 #ifdef IPV6CP_COMP
-#define CI_COMPRESSTYPE	2	/* Compression Type     */
+#define CI_COMPRESSTYPE 2   /* Compression Type     */
 #endif /* IPV6CP_COMP */
 
 /* No compression types yet defined.
- *#define IPV6CP_COMP	0x004f
+ *#define IPV6CP_COMP   0x004f
  */
 typedef struct ipv6cp_options {
     unsigned int neg_ifaceid    :1;  /* Negotiate interface identifier? */

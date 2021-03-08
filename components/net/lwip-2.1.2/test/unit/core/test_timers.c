@@ -61,7 +61,7 @@ do_test_cyclic_timers(u32_t offset)
   fail_unless(cyclic_fired == 1);
 
   fail_unless((*list_head)->time == (u32_t)(lwip_sys_now + test_cyclic.interval_ms - HANDLER_EXECUTION_TIME));
-  
+
   sys_untimeout(lwip_cyclic_timer, &test_cyclic);
 
 
@@ -128,7 +128,7 @@ static void
 do_test_timers(u32_t offset)
 {
   struct sys_timeo** list_head = sys_timeouts_get_next_timeout();
-  
+
   lwip_sys_now = offset + 0;
 
   sys_timeout(10, dummy_handler, LWIP_PTR_NUMERIC_CAST(void*, 0));
@@ -142,7 +142,7 @@ do_test_timers(u32_t offset)
   fail_unless((*list_head)->time             == (u32_t)(lwip_sys_now + 5));
   fail_unless((*list_head)->next->time       == (u32_t)(lwip_sys_now + 10));
   fail_unless((*list_head)->next->next->time == (u32_t)(lwip_sys_now + 20));
-  
+
   /* check timers expire in correct order */
   memset(&fired, 0, sizeof(fired));
 

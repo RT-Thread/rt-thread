@@ -233,7 +233,7 @@ struct http_ssi_state {
 
 struct http_ssi_tag_description {
   const char *lead_in;
-  const char *lead_out; 
+  const char *lead_out;
 };
 
 #endif /* LWIP_HTTPD_SSI */
