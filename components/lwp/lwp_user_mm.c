@@ -502,21 +502,21 @@ int lwp_user_accessable(void *addr, size_t size)
     addr_start = addr;
     addr_end = (void*)((char*)addr + size);
 
-    #ifdef ARCH_RISCV64
-        if(addr_start < (void *)USER_VADDR_START)
-        {
-            return 0;
-        }
-    #else
-        if (addr_start >= (void*)KERNEL_VADDR_START)
-        {
-            return 0;
-        }
-        if (addr_start > (void *)KERNEL_VADDR_START)
-        {
-            return 0;
-        }
-    #endif
+#ifdef ARCH_RISCV64
+    if(addr_start < (void *)USER_VADDR_START)
+    {
+        return 0;
+    }
+#else
+    if (addr_start >= (void*)KERNEL_VADDR_START)
+    {
+        return 0;
+    }
+    if (addr_end > (void *)KERNEL_VADDR_START)
+    {
+        return 0;
+    }
+#endif
 
     mmu_info = &lwp->mmu_info;
     next_page = (void *)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
