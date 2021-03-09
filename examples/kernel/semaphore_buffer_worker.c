@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：信号量实现生产者消费者间的互斥
  *
  * 在这个程序中，会创建两个线程，一个是生成者线程worker一个是消费者线程thread
