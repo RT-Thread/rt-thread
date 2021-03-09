@@ -100,4 +100,10 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
+
+    config BSP_USING_RTC
+        bool "using internal rtc"
+        default n
+        select RT_USING_RTC
+
 endmenu
