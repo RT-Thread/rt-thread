@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <finsh.h>
@@ -35,8 +44,8 @@ int hwtimer(void)
         return -1;
     }
 
-    /* Ê±¼ä²âÁ¿ */
-    /* ¼ÆÊıÊ±ÖÓÉèÖÃ(Ä¬ÈÏ1Mhz»òÖ§³ÖµÄ×îĞ¡¼ÆÊıÆµÂÊ) */
+    /* æ—¶é—´æµ‹é‡ */
+    /* è®¡æ•°æ—¶é’Ÿè®¾ç½®(é»˜è®¤1Mhzæˆ–æ”¯æŒçš„æœ€å°è®¡æ•°é¢‘ç‡) */
     err = rt_device_control(dev, HWTIMER_CTRL_FREQ_SET, &freq);
     if (err != RT_EOK)
     {
@@ -44,13 +53,13 @@ int hwtimer(void)
         goto EXIT;
     }
 
-    /* ÖÜÆÚÄ£Ê½ */
+    /* å‘¨æœŸæ¨¡å¼ */
     mode = HWTIMER_MODE_PERIOD;
     err = rt_device_control(dev, HWTIMER_CTRL_MODE_SET, &mode);
 
     tick = rt_tick_get();
     rt_kprintf("Start Timer> Tick: %d\n", tick);
-    /* ÉèÖÃ¶¨Ê±Æ÷³¬Ê±Öµ²¢Æô¶¯¶¨Ê±Æ÷ */
+    /* è®¾ç½®å®šæ—¶å™¨è¶…æ—¶å€¼å¹¶å¯åŠ¨å®šæ—¶å™¨ */
     val.sec = t;
     val.usec = 0;
     rt_kprintf("SetTime: Sec %d, Usec %d\n", val.sec, val.usec);
@@ -62,22 +71,22 @@ int hwtimer(void)
     rt_kprintf("Sleep %d sec\n", t);
     rt_thread_delay(t*RT_TICK_PER_SECOND);
 
-    /* Í£Ö¹¶¨Ê±Æ÷ */
+    /* åœæ­¢å®šæ—¶å™¨ */
     err = rt_device_control(dev, HWTIMER_CTRL_STOP, RT_NULL);
     rt_kprintf("Timer Stoped\n");
-    /* ¶ÁÈ¡¼ÆÊı */
+    /* è¯»å–è®¡æ•° */
     rt_device_read(dev, 0, &val, sizeof(val));
     rt_kprintf("Read: Sec = %d, Usec = %d\n", val.sec, val.usec);
 
-    /* ¶¨Ê±Ö´ĞĞ»Øµ÷º¯Êı -- µ¥´ÎÄ£Ê½ */
-    /* ÉèÖÃ³¬Ê±»Øµ÷º¯Êı */
+    /* å®šæ—¶æ‰§è¡Œå›è°ƒå‡½æ•° -- å•æ¬¡æ¨¡å¼ */
+    /* è®¾ç½®è¶…æ—¶å›è°ƒå‡½æ•° */
     rt_device_set_rx_indicate(dev, timer_timeout_cb);
 
-    /* µ¥´ÎÄ£Ê½ */
+    /* å•æ¬¡æ¨¡å¼ */
     mode = HWTIMER_MODE_PERIOD;
     err = rt_device_control(dev, HWTIMER_CTRL_MODE_SET, &mode);
 
-    /* ÉèÖÃ¶¨Ê±Æ÷³¬Ê±Öµ²¢Æô¶¯¶¨Ê±Æ÷ */
+    /* è®¾ç½®å®šæ—¶å™¨è¶…æ—¶å€¼å¹¶å¯åŠ¨å®šæ—¶å™¨ */
     val.sec = t;
     val.usec = 0;
     rt_kprintf("SetTime: Sec %d, Usec %d\n", val.sec, val.usec);
@@ -87,7 +96,7 @@ int hwtimer(void)
         goto EXIT;
     }
 
-    /* µÈ´ı»Øµ÷º¯ÊıÖ´ĞĞ */
+    /* ç­‰å¾…å›è°ƒå‡½æ•°æ‰§è¡Œ */
     rt_thread_delay((t + 1)*RT_TICK_PER_SECOND);
 
 EXIT:
