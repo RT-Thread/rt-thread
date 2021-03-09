@@ -570,9 +570,24 @@ void LCDLIB_Printf(uint32_t u32Zone, char *InputStr)
             ch = 0x20;
         }
 
-        /* The Main Digit Table is an ASCII table beginning with "SPACE" (hex is 0x20) */
-        ch       = ch - 0x20;
-        DispData = *(g_LCDDispTable[u32Zone] + ch);
+        /* For Main Zone */
+        if (u32Zone == ZONE_MAIN_DIGIT)
+        {
+            /* The Main Digit Table is an ASCII table beginning with "SPACE" (hex is 0x20) */
+            ch = ch - 0x20;
+            DispData = *(g_LCDDispTable[u32Zone] + ch);
+        }
+        /* For Other Zones (Support '0' ~ '9' only) */
+        else if ((ch >= '0') && (ch <= '9'))
+        {
+            ch = ch - '0';
+            DispData = *(g_LCDDispTable[u32Zone] + ch);
+        }
+        /* Out of definition. Will show "SPACE" */
+        else
+        {
+            DispData = 0;
+        }
 
         for (i = 0; i < g_LCDZoneInfo[u32Zone].u32MaxSegNum; i++)
         {
@@ -660,15 +675,30 @@ void LCDLIB_PrintNumber(uint32_t u32Zone, uint32_t InputNum)
  */
 void LCDLIB_PutChar(uint32_t u32Zone, uint32_t u32Index, uint8_t u8Ch)
 {
-    uint32_t    i, ch;
+    uint32_t    i;
     uint16_t    DispData;
     uint32_t    com, seg;
 
     if (u32Index <= g_LCDZoneInfo[u32Zone].u32DigitCnt)
     {
-        /* Defined letters currently starts at "SPACE" - 0x20; */
-        ch       = u8Ch - 0x20;
-        DispData = *(g_LCDDispTable[u32Zone] + ch);
+        /* For Main Zone */
+        if (u32Zone == ZONE_MAIN_DIGIT)
+        {
+            /* The Main Digit Table is an ASCII table beginning with "SPACE" (hex is 0x20) */
+            u8Ch = u8Ch - 0x20;
+            DispData = *(g_LCDDispTable[u32Zone] + u8Ch);
+        }
+        /* For Other Zones (Support '0' ~ '9' only) */
+        else if ((u8Ch >= '0') && (u8Ch <= '9'))
+        {
+            u8Ch = u8Ch - '0';
+            DispData = *(g_LCDDispTable[u32Zone] + u8Ch);
+        }
+        /* Out of definition. Will show "SPACE" */
+        else
+        {
+            DispData = 0;
+        }
 
         for (i = 0; i < g_LCDZoneInfo[u32Zone].u32MaxSegNum; i++)
         {
