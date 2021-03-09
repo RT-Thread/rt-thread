@@ -3,9 +3,9 @@
  *
  *                   "DHRYSTONE" Benchmark Program
  *                   -----------------------------
- *                                                                            
+ *
  *  Version:    C, Version 2.1
- *                                                                            
+ *
  *  File:       dhry_2.c (part 3 of 3)
  *
  *  Date:       May 25, 1988
@@ -41,10 +41,10 @@ Enumeration *Enum_Ref_Par;
     *Enum_Ref_Par = Ident_4;
   switch (Enum_Val_Par)
   {
-    case Ident_1: 
+    case Ident_1:
       *Enum_Ref_Par = Ident_1;
       break;
-    case Ident_2: 
+    case Ident_2:
       if (Int_Glob > 100)
         /* then */
       *Enum_Ref_Par = Ident_1;
@@ -54,7 +54,7 @@ Enumeration *Enum_Ref_Par;
       *Enum_Ref_Par = Ident_2;
       break;
     case Ident_4: break;
-    case Ident_5: 
+    case Ident_5:
       *Enum_Ref_Par = Ident_3;
       break;
   } /* switch */
@@ -63,7 +63,7 @@ Enumeration *Enum_Ref_Par;
 
 Proc_7 (Int_1_Par_Val, Int_2_Par_Val, Int_Par_Ref)
 /**********************************************/
-    /* executed three times                                      */ 
+    /* executed three times                                      */
     /* first call:      Int_1_Par_Val == 2, Int_2_Par_Val == 3,  */
     /*                  Int_Par_Ref becomes 7                    */
     /* second call:     Int_1_Par_Val == 10, Int_2_Par_Val == 5, */
