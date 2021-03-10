@@ -30,7 +30,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
     print('build M0 code first')
     if sys.platform.startswith('linux'):
         import glob
-        ocwd = os.getcwdu()
+        ocwd = os.getcwd()
         os.chdir('../M0')
         res = os.system('scons')
         if res:
@@ -41,7 +41,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
         os.chdir(ocwd)
     else:
         # Assume Windows.
-        ocwd = os.getcwdu()
+        ocwd = os.getcwd()
         os.chdir('..\M0')
         os.system('scons.bat')
         os.chdir(ocwd)
