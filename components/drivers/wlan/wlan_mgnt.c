@@ -1080,6 +1080,7 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password)
     /* get info from cache */
     INVALID_INFO(&info);
     MGNT_LOCK();
+#if 0
     while (scan_retry-- && rt_wlan_find_best_by_cache(ssid, &info) != RT_TRUE)
     {
         rt_wlan_scan_sync();
@@ -1088,14 +1089,17 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password)
 
     if (info.ssid.len <= 0)
     {
-        RT_WLAN_LOG_W("not find ap! ssid:%s", ssid);
+        RT_WLAN_LOG_W("not find ap! ssid:%s,info.ssid.len=%d", ssid,info.ssid.len);
         MGNT_UNLOCK();
         return -RT_ERROR;
     }
 
     RT_WLAN_LOG_D("find best info ssid:%s mac: %02x %02x %02x %02x %02x %02x",
                   info.ssid.val, info.bssid[0], info.bssid[1], info.bssid[2], info.bssid[3], info.bssid[4], info.bssid[5]);
-
+#else
+    memcpy(&info.ssid.val[0],ssid,strlen(ssid));
+    info.ssid.len = strlen(ssid);
+#endif
     /* create event wait complete */
     complete = rt_wlan_complete_create("join");
     if (complete == RT_NULL)

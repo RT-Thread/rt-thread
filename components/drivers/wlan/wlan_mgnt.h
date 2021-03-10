@@ -12,6 +12,7 @@
 #define __WLAN_MGNT_H__
 
 #include <wlan_dev.h>
+#include <rtconfig.h>
 
 #ifdef __cplusplus
 extern "C" {
