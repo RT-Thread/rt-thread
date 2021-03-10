@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -43,7 +43,7 @@
 static rt_uint32_t GetSector(rt_uint32_t Address)
 {
     uint32_t sector = 0;
-  
+
 #if defined (FLASH_OPTCR_nDBANK)
     FLASH_OBProgramInitTypeDef OBInit;
     uint32_t nbank = 0;
@@ -53,7 +53,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     nbank = ((OBInit.USERConfig & 0x20000000U) >> 29);
     //1:single bank mode
     if (1 == nbank)
-    {  
+    {
         if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
         {
             sector = FLASH_SECTOR_0;
@@ -98,7 +98,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
         {
             sector = FLASH_SECTOR_10;
         }
-        else 
+        else
         {
             sector = FLASH_SECTOR_11;
         }
@@ -153,7 +153,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_10;
     }
-    else 
+    else
     {
         sector = FLASH_SECTOR_11;
     }
