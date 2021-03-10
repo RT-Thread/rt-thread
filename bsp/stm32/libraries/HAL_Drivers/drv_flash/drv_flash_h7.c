@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,7 +60,7 @@ static void GetSector(rt_uint32_t Address,uint32_t* bank,uint32_t* sector)
     nbank = ((OBInit.USERConfig & 0x20000000U) >> 29);
     /* 1:single bank mode */
     if (1 == nbank)
-    {  
+    {
         if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
         {
             sector = FLASH_SECTOR_0;
@@ -105,7 +105,7 @@ static void GetSector(rt_uint32_t Address,uint32_t* bank,uint32_t* sector)
         {
             sector = FLASH_SECTOR_10;
         }
-        else 
+        else
         {
             sector = FLASH_SECTOR_11;
         }
@@ -115,7 +115,7 @@ static void GetSector(rt_uint32_t Address,uint32_t* bank,uint32_t* sector)
         LOG_E("rtthread doesn't support duel bank mode yet!");
         RT_ASSERT(0);
     }
-#else /* no dual bank ability */	
+#else /* no dual bank ability */
     *sector = (Address&0xffffff)/FLASH_SIZE_GRANULARITY_128K;
     if(*sector>7)
     {

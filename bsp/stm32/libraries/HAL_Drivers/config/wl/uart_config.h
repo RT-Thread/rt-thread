@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -50,7 +50,7 @@ extern "C" {
 #endif /* UART1_DMA_TX_CONFIG */
 #endif /* BSP_UART1_TX_USING_DMA */
 #endif /* BSP_USING_UART1 */
-    
+
 #if defined(BSP_USING_UART1)
 #ifndef UART1_CONFIG
 #define UART1_CONFIG                                                \
@@ -72,8 +72,8 @@ extern "C" {
         .dma_irq  = UART1_RX_DMA_IRQ,                               \
     }
 #endif /* UART1_DMA_RX_CONFIG */
-#endif /* BSP_UART1_RX_USING_DMA */  
-   
+#endif /* BSP_UART1_RX_USING_DMA */
+
 #if defined(BSP_USING_UART2)
 #ifndef UART2_CONFIG
 #define UART2_CONFIG                                                \
@@ -120,9 +120,9 @@ extern "C" {
 #endif /* UART3_DMA_RX_CONFIG */
 #endif /* BSP_UART3_RX_USING_DMA */
 
-    
+
 #ifdef __cplusplus
 }
-#endif 
+#endif
 
 #endif
