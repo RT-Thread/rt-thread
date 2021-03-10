@@ -136,12 +136,12 @@ void lwp_unmap_user_space(struct rt_lwp *lwp)
         unmap_range(lwp, (void *)ma->addr, ma->size, pa_need_free);
         lwp_map_area_remove(&lwp->map_area, ma->addr);
     }
-    
-    #ifdef ARCH_RISCV
-        rt_pages_free(m_info->vtable, 0);
-    #else
-        rt_pages_free(m_info->vtable, 2);
-    #endif
+
+#ifdef ARCH_RISCV
+    rt_pages_free(m_info->vtable, 0);
+#else
+    rt_pages_free(m_info->vtable, 2);
+#endif
 }
 
 static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
@@ -434,21 +434,21 @@ size_t lwp_get_from_user(void *dst, void *src, size_t size)
     rt_mmu_info *m_info = RT_NULL;
 
     /* check src */
-    #ifdef ARCH_RISCV64
-        if(src < (void *)USER_VADDR_START)
-        {
-            return 0;
-        }
-    #else
-        if (src >= (void*)KERNEL_VADDR_START)
-        {
-            return 0;
-        }
-        if ((void*)((char*)src + size) > (void*)KERNEL_VADDR_START)
-        {
-            return 0;
-        }
-    #endif
+#ifdef ARCH_RISCV64
+    if(src < (void *)USER_VADDR_START)
+    {
+        return 0;
+    }
+#else
+    if (src >= (void *)KERNEL_VADDR_START)
+    {
+        return 0;
+    }
+    if ((void *)((char *)src + size) > (void *)KERNEL_VADDR_START)
+    {
+        return 0;
+    }
+#endif
 
     lwp = lwp_self();
     if (!lwp)
@@ -500,7 +500,7 @@ int lwp_user_accessable(void *addr, size_t size)
         return 0;
     }
     addr_start = addr;
-    addr_end = (void*)((char*)addr + size);
+    addr_end = (void *)((char *)addr + size);
 
 #ifdef ARCH_RISCV64
     if(addr_start < (void *)USER_VADDR_START)
@@ -508,7 +508,7 @@ int lwp_user_accessable(void *addr, size_t size)
         return 0;
     }
 #else
-    if (addr_start >= (void*)KERNEL_VADDR_START)
+    if (addr_start >= (void *)KERNEL_VADDR_START)
     {
         return 0;
     }

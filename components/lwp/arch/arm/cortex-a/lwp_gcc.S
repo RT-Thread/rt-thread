@@ -99,6 +99,18 @@ lwp_get_user_sp:
     mov pc, lr
 
 /*
+void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
+*/
+.global lwp_exec_user
+lwp_exec_user:
+    mov sp, r1
+    mov lr, r2
+    mov r2, #Mode_USR
+    msr spsr_cxsf, r2
+    ldr r3, =0x80000000
+    b ret_to_user
+
+/*
  * void SVC_Handler(void);
  */
 .global vector_swi
@@ -107,10 +119,7 @@ vector_swi:
     push {lr}
     mrs lr, spsr
     push {r4, r5, lr}
-    tst lr, #(1 << 7)   /* mask irq ? */
-    bne 1f
     cpsie i
-1:
     push {r0 - r3, r12}
     and r0, r7, #0xff
     cmp r0, #0xfe
@@ -127,11 +136,8 @@ vector_swi:
     blx lr
 
 svc_exit:
-    mrs r4, cpsr
     cpsid i
-    tst r4, #(1 << 7)   /* mask irq ? */
     pop {r4, r5, lr}
-    orrne lr, #(1 << 7)
     msr spsr_cxsf, lr
     pop {lr}
 

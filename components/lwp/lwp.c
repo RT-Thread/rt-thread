@@ -27,49 +27,6 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
-#define AUX_ARRAY_ITEMS_NR 6
-
-/* aux key */
-#define AT_NULL 0
-#define AT_IGNORE 1
-#define AT_EXECFD 2
-#define AT_PHDR 3
-#define AT_PHENT 4
-#define AT_PHNUM 5
-#define AT_PAGESZ 6
-#define AT_BASE 7
-#define AT_FLAGS 8
-#define AT_ENTRY 9
-#define AT_NOTELF 10
-#define AT_UID 11
-#define AT_EUID 12
-#define AT_GID 13
-#define AT_EGID 14
-#define AT_CLKTCK 17
-#define AT_PLATFORM 15
-#define AT_HWCAP 16
-#define AT_FPUCW 18
-#define AT_DCACHEBSIZE 19
-#define AT_ICACHEBSIZE 20
-#define AT_UCACHEBSIZE 21
-#define AT_IGNOREPPC 22
-#define AT_SECURE 23
-#define AT_BASE_PLATFORM 24
-#define AT_RANDOM 25
-#define AT_HWCAP2 26
-#define AT_EXECFN 31
-
-struct process_aux_item
-{
-    uint32_t key;
-    uint32_t value;
-};
-
-struct process_aux
-{
-    struct process_aux_item item[AUX_ARRAY_ITEMS_NR];
-};
-
 #ifdef RT_USING_USERSPACE
 #ifdef RT_USING_GDBSERVER
 #include <hw_breakpoint.h>
@@ -109,7 +66,7 @@ uint32_t *lwp_get_kernel_sp(void)
 }
 
 #ifdef RT_USING_USERSPACE
-static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char **envp)
+struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char **envp)
 {
     int size = sizeof(int) * 5; /* store argc, argv, envp, aux, NULL */
     int *args;
@@ -142,12 +99,16 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
     size += sizeof(struct process_aux);
 
     if (size > ARCH_PAGE_SIZE)
+    {
         return RT_NULL;
+    }
 
     /* args = (int *)lwp_map_user(lwp, 0, size); */
     args = (int *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE), size, 0);
     if (args == RT_NULL)
+    {
         return RT_NULL;
+    }
 
     args_k = (int *)rt_hw_mmu_v2p(&lwp->mmu_info, args);
     args_k = (int *)((size_t)args_k - PV_OFFSET);
@@ -234,7 +195,9 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
 
     args = (int *)rt_malloc(size);
     if (args == RT_NULL)
+    {
         return RT_NULL;
+    }
 
     /* argc, argv[], 0, envp[], 0 */
     str = (char *)((size_t)args + (argc + 2 + i + 1 + AUX_ARRAY_ITEMS_NR * 2 + 1) * sizeof(int));
@@ -355,6 +318,36 @@ void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, s
 void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym);
 #endif
 
+struct map_range
+{
+    void *start;
+    size_t size;
+};
+
+static void expand_map_range(struct map_range *m, void *start, size_t size)
+{
+    if (!m->start)
+    {
+        m->start = start;
+        m->size = size;
+    }
+    else
+    {
+        void *end = (void *)((char*)start + size);
+        void *mend = (void *)((char*)m->start + m->size);
+
+        if (m->start > start)
+        {
+            m->start = start;
+        }
+        if (mend < end)
+        {
+            mend = end;
+        }
+        m->size = (char *)mend - (char *)m->start;
+    }
+}
+
 static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, struct process_aux *aux)
 {
     uint32_t i;
@@ -373,6 +366,8 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     size_t rel_dyn_size = 0;
     size_t dynsym_off = 0;
     size_t dynsym_size = 0;
+    struct map_range text_area = {NULL, 0};
+    struct map_range data_area = {NULL, 0};
 #ifdef RT_USING_USERSPACE
     void *pa, *va;
 #endif
@@ -399,17 +394,17 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     read_len = load_fread(&eheader, 1, sizeof eheader, fd);
     check_read(read_len, sizeof eheader);
 
-    #ifndef ARCH_CPU_64BIT
-        if (eheader.e_ident[4] != 1)
-        { /* not 32bit */
-            return -RT_ERROR;
-        }
-    #else
-        if (eheader.e_ident[4] != 2)
-        { /* not 64bit */
-            return -RT_ERROR;
-        }
-    #endif
+#ifndef ARCH_CPU_64BIT
+    if (eheader.e_ident[4] != 1)
+    { /* not 32bit */
+        return -RT_ERROR;
+    }
+#else
+    if (eheader.e_ident[4] != 2)
+    { /* not 64bit */
+        return -RT_ERROR;
+    }
+#endif
 
     if (eheader.e_ident[6] != 1)
     { /* ver not 1 */
@@ -483,9 +478,6 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     off = eheader.e_shoff;
     for (i = 0; i < eheader.e_shnum; i++, off += sizeof sheader)
     {
-        int need_map = 0;
-        int text = 0;
-
         check_off(off, len);
         lseek(fd, off, SEEK_SET);
         read_len = load_fread(&sheader, 1, sizeof sheader, fd);
@@ -499,25 +491,38 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         switch (sheader.sh_type)
         {
             case SHT_PROGBITS:
-                if ((sheader.sh_flags & SHF_EXECINSTR) != 0)
+                if ((sheader.sh_flags & SHF_WRITE) == 0)
                 {
-                    text = 1;
+                    expand_map_range(&text_area, (void *)sheader.sh_addr, sheader.sh_size);
                 }
+                else
+                {
+                    expand_map_range(&data_area, (void *)sheader.sh_addr, sheader.sh_size);
+                }
+                break;
             case SHT_NOBITS:
-                need_map = 1;
+                expand_map_range(&data_area, (void *)sheader.sh_addr, sheader.sh_size);
                 break;
             default:
                 break;
         }
-        if (need_map)
+    }
+    if (text_area.start)
+    {
+        va = lwp_map_user(lwp, text_area.start, text_area.size, 1);
+        if (!va || (va != text_area.start))
         {
-            /* map user */
-            va = lwp_map_user(lwp, (void *)sheader.sh_addr, sheader.sh_size, text);
-            if (!va || (va != (void *)(size_t)sheader.sh_addr))
-            {
-                result = -RT_ERROR;
-                goto _exit;
-            }
+            result = -RT_ERROR;
+            goto _exit;
+        }
+    }
+    if (data_area.start)
+    {
+        va = lwp_map_user(lwp, data_area.start, data_area.size, 0);
+        if (!va || (va != data_area.start))
+        {
+            result = -RT_ERROR;
+            goto _exit;
         }
     }
 #endif
@@ -733,7 +738,6 @@ _exit:
     if (result != RT_EOK)
     {
         LOG_E("lwp dynamic load faild, %d", result);
-        lwp_ref_dec(lwp);
     }
     return result;
 }
@@ -896,7 +900,9 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
     int tid = 0;
 
     if (filename == RT_NULL)
+    {
         return -RT_ERROR;
+    }
 
     lwp = lwp_new();
 

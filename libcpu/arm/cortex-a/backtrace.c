@@ -17,6 +17,12 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_USING_USERSPACE
+#include <lwp.h>
+#include <lwp_user_mm.h>
+#include <lwp_arch.h>
+#endif
+
 rt_inline void arm_get_current_stackframe(struct pt_regs *regs, struct stackframe *frame)
 {
     frame->fp = frame_pointer(regs);
@@ -516,6 +522,12 @@ void rt_unwind(struct rt_hw_exp_stack *regs, unsigned int pc_adj)
     e_regs.ARM_sp = regs->sp;
     e_regs.ARM_lr = regs->lr;
     e_regs.ARM_pc = regs->pc - pc_adj;
+#ifdef RT_USING_USERSPACE
+    if (!lwp_user_accessable((void *)e_regs.ARM_pc, sizeof (void *)))
+    {
+        e_regs.ARM_pc = regs->lr - sizeof(void *);
+    }
+#endif
     rt_kprintf("backtrace:\n");
     unwind_backtrace(&e_regs, __exidx_start, __exidx_end);
 }
