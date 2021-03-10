@@ -9,6 +9,7 @@
  * 2019-3-2       jinsheng     add Macro judgment
  * 2020-1-6       duminmin     support single bank mode
  * 2020-5-17      yufanyufan77 support support H7
+ * 2021-3-3       zhuyf233     fix some bugs
  */
 
 #include "board.h"
