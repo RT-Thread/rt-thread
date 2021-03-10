@@ -193,7 +193,6 @@ menuconfig BSP_USING_SPI
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
-        select RT_USING_LIBC
         default n
         if BSP_USING_ONCHIP_RTC
             choice
