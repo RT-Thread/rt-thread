@@ -13,7 +13,12 @@
 
 #include <rtthread.h>
 #include <ab32vgx.h>
+#ifdef RT_USING_PIN
 #include <drv_gpio.h>
+#endif
+#ifdef RT_USING_WDT
 #include <drv_wdt.h>
+#endif
+
 
 #endif
