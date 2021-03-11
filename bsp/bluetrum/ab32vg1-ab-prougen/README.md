@@ -94,12 +94,11 @@ msh >
 此 BSP 默认只开启了 GPIO 和 串口0 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
-
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
 3. 输入`pkgs --update`命令更新软件包。
-
 4. 输入`scons` 命令重新编译工程。
+
+更多细节请参见使用指南：https://ab32vg1-example.readthedocs.io/zh/latest/introduction.html
 
 ## 注意事项
 
