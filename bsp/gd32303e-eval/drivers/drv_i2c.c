@@ -168,7 +168,7 @@ static int gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint16_t slave_address, rt_u
             *p_buffer = i2c_data_receive(i2c_periph);
 
             /* point to the next location where the byte read will be saved */
-            p_buffer++; 
+            p_buffer++;
 
             /* decrement the read bytes counter */
             data_byte--;
@@ -277,7 +277,7 @@ static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
             }
         }
     }
-    
+
     ret = i;
 
 out:
@@ -287,7 +287,7 @@ out:
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
-{ 
+{
     gd32_i2c_xfer,
     RT_NULL,
     RT_NULL
@@ -324,7 +324,7 @@ int rt_hw_i2c_init(void)
 
         i2c_device.priv = (void *)&_i2c_bit_ops;
         rt_i2c_bit_add_bus(&i2c_device, I2C_BUS_NAME);
-    } 
+    }
 
 #else   /* register hardware I2C */
 

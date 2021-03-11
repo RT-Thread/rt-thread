@@ -108,8 +108,8 @@ void lcd_spi_config(void)
     gpio_mode_set(GPIOG, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO_PIN_13|GPIO_PIN_14);
     gpio_output_options_set(GPIOG, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13|GPIO_PIN_14);
     spi_i2s_deinit(SPI5);
-    
-    if(0 == (SPI_CTL0(LCD_SPI) & SPI_CTL0_SPIEN)){    
+
+    if(0 == (SPI_CTL0(LCD_SPI) & SPI_CTL0_SPIEN)){
         spi_init_struct.trans_mode           = SPI_TRANSMODE_FULLDUPLEX;
         spi_init_struct.device_mode          = SPI_MASTER;
         spi_init_struct.frame_size           = SPI_FRAMESIZE_8BIT;
@@ -155,7 +155,7 @@ void lcd_data_write(uint8_t value)
     /* set LCD_RS to send data */
     lcd_ctrl_line_set(LCD_RS_GPIO_PORT, LCD_RS_PIN);
 
-    /* reset LCD control line and send data */  
+    /* reset LCD control line and send data */
     lcd_disable();
     while(RESET == spi_i2s_flag_get(LCD_SPI, SPI_FLAG_TBE)) ;
 
@@ -228,80 +228,80 @@ void lcd_power_on(void)
 }
 /**
   * @brief  New Version 3.5" TFT RGB Hardware needs add this initilize funtion  ---By xufei 2016.10.21
-						Modified by GAO HAIYANG, test pass, 17, Nov, 2016
+                        Modified by GAO HAIYANG, test pass, 17, Nov, 2016
   * @param  None
   * @retval None
   */
 void lcd_power_on3(void)
 {
-		lcd_command_write(0xC0);//power control1 command/w/
-		lcd_data_write(0x0A); // P-Gamma level//4.1875v
-		lcd_data_write(0x0A); // N-Gamma level
-		lcd_command_write(0xC1); // BT & VC Setting//power contrl2 command/w/
-		lcd_data_write(0x41);
-		lcd_data_write(0x07); // VCI1 = 2.5V
-		lcd_command_write(0xC2); // DC1.DC0 Setting//power control3 for normal mode
-		lcd_data_write(0x33);
-		lcd_command_write(0xC5);//VCOM control
-		lcd_data_write(0x00);  //NV memory is not programmed
-		lcd_data_write(0x42); // VCM Setting
-		lcd_data_write(0x80); // VCM Register Enable
-		lcd_command_write(0xB0);      //interface mode control //Polarity Setting
-		lcd_data_write(0x02);
-		lcd_command_write(0xB1);//frame rate control for normal mode
-		lcd_data_write(0xB0); // Frame Rate Setting//70 frame per second//no division for internal clocks
-		lcd_data_write(0x11);//17 clocks per line period for idle mode at cpu interface
-		lcd_command_write(0xB4);//dispaly inversion control
-		lcd_data_write(0x00); // disable Z-inversion , column inversion
-		lcd_command_write(0xB6); //display function control// RM.DM Setting
-		lcd_data_write(0x70);////0xF0
-		lcd_data_write(0x02);//direction of gate scan: G1->G480 one by one, source scan: S1->S960, scan cycle if interval scan in non-display area
-		lcd_data_write(0x3B); // number of lines to drive LCD: 8*(0x3C) = 480
-		lcd_command_write(0xB7); // Entry Mode
-		lcd_data_write(0x07); // disable low voltage detection, normal display, 
-		lcd_command_write(0xF0); // Enter ENG , must be set before gamma setting
-		lcd_data_write(0x36);
-		lcd_data_write(0xA5);
-		lcd_data_write(0xD3);
-		lcd_command_write(0xE5); // Open gamma function , must be set before gamma setting
-		lcd_data_write(0x80);
-		lcd_command_write(0xE5); // Page 1
-		lcd_data_write(0x01);
-		lcd_command_write(0XB3); // WEMODE=0(Page 1) , pixels over window setting will be ignored.//frame rate control in partial mode/full colors
-		lcd_data_write(0x00);
-		lcd_command_write(0xE5); // Page 0
-		lcd_data_write(0x00);
-		lcd_command_write(0xF0); // Exit ENG , must be set before gamma setting
-		lcd_data_write(0x36);
-		lcd_data_write(0xA5);
-		lcd_data_write(0x53);
-		lcd_command_write(0xE0); // Gamma setting
-		//y fine adjustment register for positive polarity
-		lcd_data_write(0x00);
-		lcd_data_write(0x35);
-		lcd_data_write(0x33);
-		//y gradient adjustment register for positive polarity
-		lcd_data_write(0x00);
-		//y amplitude adjustment register for positive polarity
-		lcd_data_write(0x00);
-		lcd_data_write(0x00);
-		//y fine adjustment register for negative polarity
-		lcd_data_write(0x00);
-		lcd_data_write(0x35);
-		lcd_data_write(0x33);
-		//y gradient adjustment register for negative polarity
-		lcd_data_write(0x00);
-		//y amplitude adjustment register for negative polarity
-		lcd_data_write(0x00);
-		lcd_data_write(0x00);
-		lcd_command_write(0x36); // memory data access control //
-		lcd_data_write(0x48);//
-		lcd_command_write(0x3A); // interface pixel format setting
-		lcd_data_write(0x55);//16-bits
-		lcd_command_write(0x11); // Exit sleep mode
-		lcd_command_write(0x29); // Display on 
+        lcd_command_write(0xC0);//power control1 command/w/
+        lcd_data_write(0x0A); // P-Gamma level//4.1875v
+        lcd_data_write(0x0A); // N-Gamma level
+        lcd_command_write(0xC1); // BT & VC Setting//power contrl2 command/w/
+        lcd_data_write(0x41);
+        lcd_data_write(0x07); // VCI1 = 2.5V
+        lcd_command_write(0xC2); // DC1.DC0 Setting//power control3 for normal mode
+        lcd_data_write(0x33);
+        lcd_command_write(0xC5);//VCOM control
+        lcd_data_write(0x00);  //NV memory is not programmed
+        lcd_data_write(0x42); // VCM Setting
+        lcd_data_write(0x80); // VCM Register Enable
+        lcd_command_write(0xB0);      //interface mode control //Polarity Setting
+        lcd_data_write(0x02);
+        lcd_command_write(0xB1);//frame rate control for normal mode
+        lcd_data_write(0xB0); // Frame Rate Setting//70 frame per second//no division for internal clocks
+        lcd_data_write(0x11);//17 clocks per line period for idle mode at cpu interface
+        lcd_command_write(0xB4);//dispaly inversion control
+        lcd_data_write(0x00); // disable Z-inversion , column inversion
+        lcd_command_write(0xB6); //display function control// RM.DM Setting
+        lcd_data_write(0x70);////0xF0
+        lcd_data_write(0x02);//direction of gate scan: G1->G480 one by one, source scan: S1->S960, scan cycle if interval scan in non-display area
+        lcd_data_write(0x3B); // number of lines to drive LCD: 8*(0x3C) = 480
+        lcd_command_write(0xB7); // Entry Mode
+        lcd_data_write(0x07); // disable low voltage detection, normal display,
+        lcd_command_write(0xF0); // Enter ENG , must be set before gamma setting
+        lcd_data_write(0x36);
+        lcd_data_write(0xA5);
+        lcd_data_write(0xD3);
+        lcd_command_write(0xE5); // Open gamma function , must be set before gamma setting
+        lcd_data_write(0x80);
+        lcd_command_write(0xE5); // Page 1
+        lcd_data_write(0x01);
+        lcd_command_write(0XB3); // WEMODE=0(Page 1) , pixels over window setting will be ignored.//frame rate control in partial mode/full colors
+        lcd_data_write(0x00);
+        lcd_command_write(0xE5); // Page 0
+        lcd_data_write(0x00);
+        lcd_command_write(0xF0); // Exit ENG , must be set before gamma setting
+        lcd_data_write(0x36);
+        lcd_data_write(0xA5);
+        lcd_data_write(0x53);
+        lcd_command_write(0xE0); // Gamma setting
+        //y fine adjustment register for positive polarity
+        lcd_data_write(0x00);
+        lcd_data_write(0x35);
+        lcd_data_write(0x33);
+        //y gradient adjustment register for positive polarity
+        lcd_data_write(0x00);
+        //y amplitude adjustment register for positive polarity
+        lcd_data_write(0x00);
+        lcd_data_write(0x00);
+        //y fine adjustment register for negative polarity
+        lcd_data_write(0x00);
+        lcd_data_write(0x35);
+        lcd_data_write(0x33);
+        //y gradient adjustment register for negative polarity
+        lcd_data_write(0x00);
+        //y amplitude adjustment register for negative polarity
+        lcd_data_write(0x00);
+        lcd_data_write(0x00);
+        lcd_command_write(0x36); // memory data access control //
+        lcd_data_write(0x48);//
+        lcd_command_write(0x3A); // interface pixel format setting
+        lcd_data_write(0x55);//16-bits
+        lcd_command_write(0x11); // Exit sleep mode
+        lcd_command_write(0x29); // Display on
 
-		delay(10);
+        delay(10);
 }
 /*!
     \brief      insert a delay time
