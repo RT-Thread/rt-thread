@@ -1239,9 +1239,12 @@ fail:
  *          start_args
  *          */
 #define SYS_CLONE_ARGS_NR 7
-int lwp_set_thread_context(void *new_thread_stack, void *origin_thread_stack,
-        void *user_stack, void **thread_sp, int tid);
-long sys_clone(void *arg[])
+int lwp_set_thread_context(void (*exit)(void), void *new_thread_stack,
+        void *user_stack, void **thread_sp);
+
+long sys_clone(void *arg[]);
+void sys_clone_exit(void);
+long _sys_clone(void *arg[])
 {
     rt_base_t level = 0;
     struct rt_lwp *lwp = 0;
@@ -1336,16 +1339,14 @@ long sys_clone(void *arg[])
     rt_hw_interrupt_enable(level);
 
     /* copy origin stack */
-    rt_memcpy(thread->stack_addr, self->stack_addr, ALLOC_KERNEL_STACK_SIZE);
+    rt_memcpy(thread->stack_addr, self->stack_addr, thread->stack_size);
     lwp_tid_set_thread(tid, thread);
-    tid = lwp_set_thread_context((void *)((char *)thread->stack_addr + ALLOC_KERNEL_STACK_SIZE),
-            (void *)((char *)self->stack_addr + ALLOC_KERNEL_STACK_SIZE), user_stack, &thread->sp, tid);
-    if (tid)
-    {
-        rt_thread_startup(thread);
-    }
+    lwp_set_thread_context(sys_clone_exit,
+            (void *)((char *)thread->stack_addr + thread->stack_size),
+            user_stack, &thread->sp);
+    /* new thread never reach there */
+    rt_thread_startup(thread);
     return (long)tid;
-
 fail:
     lwp_tid_put(tid);
     if (lwp)
@@ -1434,7 +1435,9 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
     return -1;
 }
 
-int sys_fork(void)
+int sys_fork(void);
+void sys_fork_exit(void);
+int _sys_fork(void)
 {
     rt_base_t level;
     int tid = 0;
@@ -1531,23 +1534,18 @@ int sys_fork(void)
     user_stack = lwp_get_user_sp();
     rt_hw_interrupt_enable(level);
 
-    tid = lwp_set_thread_context((void *)((char *)thread->stack_addr + thread->stack_size),
-            (void *)((char *)self_thread->stack_addr + self_thread->stack_size), user_stack, &thread->sp, tid);
-    if (tid)
+    lwp_set_thread_context(sys_fork_exit,
+            (void *)((char *)thread->stack_addr + thread->stack_size),
+            user_stack, &thread->sp);
+    /* new thread never reach there */
+    level = rt_hw_interrupt_disable();
+    if (rt_console_get_foreground() == self_lwp)
     {
-        level = rt_hw_interrupt_disable();
-        if (rt_console_get_foreground() == self_lwp)
-        {
-            rt_console_set_foreground(lwp);
-        }
-        rt_hw_interrupt_enable(level);
-        rt_thread_startup(thread);
-        return lwp_to_pid(lwp);
+        rt_console_set_foreground(lwp);
     }
-    else
-    {
-        return 0;
-    }
+    rt_hw_interrupt_enable(level);
+    rt_thread_startup(thread);
+    return lwp_to_pid(lwp);
 fail:
     if (tid != 0)
     {

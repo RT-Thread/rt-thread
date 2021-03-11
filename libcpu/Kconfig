@@ -104,7 +104,7 @@ config ARCH_ARM_CORTEX_A9
     select ARCH_ARM_CORTEX_A
 
 config RT_BACKTRACE_FUNCTION_NAME
-    bool "To show function name when backtrace. Warning: Don't selet it when use fork/clone!"
+    bool "To show function name when backtrace."
     default n
     depends on ARCH_ARM_CORTEX_A
 

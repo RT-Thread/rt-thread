@@ -59,6 +59,7 @@
 #define PV_OFFSET 0xa0000000
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARM_CORTEX_A9
+#define RT_BACKTRACE_FUNCTION_NAME
 
 /* RT-Thread Components */
 
