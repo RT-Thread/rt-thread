@@ -12,7 +12,8 @@
 #define BOARD_H__
 
 #include <rtthread.h>
-#include "ab32vgx.h"
-#include "drv_gpio.h"
+#include <ab32vgx.h>
+#include <drv_gpio.h>
+#include <drv_wdt.h>
 
 #endif
