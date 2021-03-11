@@ -36,12 +36,55 @@
 
 PID_CT_ASSERT(pid_max_nr, RT_LWP_MAX_NR > 1);
 
-struct rt_pid_struct
+static struct rt_lwp *lwp_pid_ary[RT_LWP_MAX_NR];
+static struct rt_lwp **lwp_pid_free_head = RT_NULL;
+static pid_t lwp_pid_ary_alloced = 1; /* 0 is reserved */
+
+pid_t lwp_pid_get(void)
 {
-    struct rt_lwp* pidmap[RT_LWP_MAX_NR];
-    pid_t last_pid;
-};
-static struct rt_pid_struct pid_struct = {{0}, 1};
+    pid_t ret = 0;
+    rt_base_t level = rt_hw_interrupt_disable();
+    struct rt_lwp **p = lwp_pid_free_head;
+
+    if (p)
+    {
+        lwp_pid_free_head = (struct rt_lwp **)*p;
+    }
+    else if (lwp_pid_ary_alloced < RT_LWP_MAX_NR)
+    {
+        p = lwp_pid_ary + lwp_pid_ary_alloced;
+        lwp_pid_ary_alloced++;
+    }
+    if (p)
+    {
+        *p = RT_NULL;
+        ret = p - lwp_pid_ary;
+    }
+    rt_hw_interrupt_enable(level);
+    return ret;
+}
+
+void lwp_pid_put(pid_t pid)
+{
+    struct rt_lwp **p = RT_NULL;
+    rt_base_t level = rt_hw_interrupt_disable();
+
+    if (pid > 0 && pid < RT_LWP_MAX_NR)
+    {
+        p = lwp_pid_ary + pid;
+        *p = (struct rt_lwp *)lwp_pid_free_head;
+        lwp_pid_free_head = p;
+    }
+    rt_hw_interrupt_enable(level);
+}
+
+void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp)
+{
+    if (pid > 0 && pid < RT_LWP_MAX_NR)
+    {
+        lwp_pid_ary[pid] = lwp;
+    }
+}
 
 int libc_stdio_get_console(void);
 
@@ -65,46 +108,17 @@ static void __exit_files(struct rt_lwp *lwp)
 
 struct rt_lwp* lwp_new(void)
 {
-    uint32_t i;
+    pid_t pid;
     rt_base_t level;
     struct rt_lwp* lwp = RT_NULL;
 
     level = rt_hw_interrupt_disable();
 
-    /* first scan */
-    for (i = pid_struct.last_pid; i < RT_LWP_MAX_NR; i++)
+    pid = lwp_pid_get();
+    if (pid == 0)
     {
-        if (!pid_struct.pidmap[i])
-        {
-            break;
-        }
-    }
-
-    /* if first scan failed, scan the pidmap start with 0 */
-    if (i >= RT_LWP_MAX_NR)
-    {
-        /* 0 is reserved */
-        for (i = 1; i < pid_struct.last_pid; i++)
-        {
-            if (!pid_struct.pidmap[i])
-            {
-                break;
-            }
-        }
-    }
-
-    if (i >= RT_LWP_MAX_NR)
-    {
-        /* if second scan also failed */
-        LOG_W("pidmap fulled\n");
-        pid_struct.last_pid = 0;
+        LOG_E("pid slot fulled!\n");
         goto out;
-    }
-    pid_struct.last_pid = (i + 1) % RT_LWP_MAX_NR;
-    if (pid_struct.last_pid == 0)
-    {
-        /* 0 is reserved */
-        pid_struct.last_pid++;
     }
     lwp = (struct rt_lwp *)rt_malloc(sizeof(struct rt_lwp));
     if (lwp == RT_NULL)
@@ -114,8 +128,8 @@ struct rt_lwp* lwp_new(void)
     }
     rt_memset(lwp, 0, sizeof(*lwp));
     rt_list_init(&lwp->wait_list);
-    lwp->pid = i;
-    pid_struct.pidmap[i] = lwp;
+    lwp->pid = pid;
+    lwp_pid_set_lwp(pid, lwp);
     rt_list_init(&lwp->t_grp);
     rt_list_init(&lwp->object_list);
     lwp->address_search_head = RT_NULL;
@@ -127,7 +141,7 @@ out:
     return lwp;
 }
 
-static void lwp_user_obj_free(struct rt_lwp *lwp)
+void lwp_user_obj_free(struct rt_lwp *lwp)
 {
     rt_base_t level = 0;
     struct rt_list_node *list = RT_NULL, *node = RT_NULL;
@@ -250,7 +264,7 @@ void lwp_free(struct rt_lwp* lwp)
         lwp->first_child = child->sibling;
         if (child->finish)
         {
-            pid_struct.pidmap[lwp_to_pid(child)] = RT_NULL;
+            lwp_pid_put(lwp_to_pid(child));
             rt_free(child);
         }
         else
@@ -283,7 +297,7 @@ void lwp_free(struct rt_lwp* lwp)
         }
         else
         {
-            pid_struct.pidmap[lwp_to_pid(lwp)] = RT_NULL;
+            lwp_pid_put(lwp_to_pid(lwp));
             rt_free(lwp);
         }
     }
@@ -333,21 +347,21 @@ struct rt_lwp* lwp_from_pid(pid_t pid)
     {
         return NULL;
     }
-    return pid_struct.pidmap[pid];
+    return lwp_pid_ary[pid];
 }
 
 pid_t lwp_to_pid(struct rt_lwp* lwp)
 {
     if (!lwp)
     {
-        return -1;
+        return 0;
     }
     return lwp->pid;
 }
 
 char* lwp_pid2name(int32_t pid)
 {
-    struct rt_lwp* lwp;
+    struct rt_lwp *lwp;
     char* process_name = RT_NULL;
 
     lwp = lwp_from_pid(pid);
@@ -359,19 +373,19 @@ char* lwp_pid2name(int32_t pid)
     return process_name;
 }
 
-int32_t lwp_name2pid(const char* name)
+int32_t lwp_name2pid(const char *name)
 {
-    uint32_t pid;
+    pid_t pid;
     rt_thread_t main_thread;
     char* process_name = RT_NULL;
-    struct rt_lwp* lwp = RT_NULL;
 
     for (pid = 1; pid < RT_LWP_MAX_NR; pid++)
     {
         /* 0 is reserved */
-        if (pid_struct.pidmap[pid])
+        struct rt_lwp *lwp = lwp_pid_ary[pid];
+
+        if (lwp && (lwp < (struct rt_lwp *)&lwp_pid_ary[0] || lwp >= (struct rt_lwp *)&lwp_pid_ary[RT_LWP_MAX_NR]))
         {
-            lwp = pid_struct.pidmap[pid];
             process_name = strrchr(lwp->cmd, '/');
             process_name = process_name? process_name + 1: lwp->cmd;
             if (!rt_strncmp(name, process_name, RT_NAME_MAX))
@@ -450,7 +464,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
         }
         (*lwp_node) = lwp->sibling;
 
-        pid_struct.pidmap[pid] = RT_NULL;
+        lwp_pid_put(pid);
         rt_free(lwp);
     }
 
@@ -516,7 +530,6 @@ long list_process(void)
     int index;
     int maxlen;
     rt_ubase_t level;
-    struct rt_lwp* lwp = RT_NULL;
     struct rt_thread *thread;
     struct rt_list_node *node, *list;
     const char *item_title = "thread";
@@ -575,9 +588,10 @@ long list_process(void)
 
     for (index = 0; index < RT_LWP_MAX_NR; index++)
     {
-        if (pid_struct.pidmap[index])
+        struct rt_lwp *lwp = lwp_pid_ary[index];
+
+        if (lwp && (lwp < (struct rt_lwp *)&lwp_pid_ary[0] || lwp >= (struct rt_lwp *)&lwp_pid_ary[RT_LWP_MAX_NR]))
         {
-            lwp = pid_struct.pidmap[index];
             list = &lwp->t_grp;
             for (node = list->next; node != list; node = node->next)
             {

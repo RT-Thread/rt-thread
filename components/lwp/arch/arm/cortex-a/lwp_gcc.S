@@ -29,7 +29,7 @@
 .text
 
 /*
- * void lwp_user_entry(args, text, data);
+ * void lwp_user_entry(args, text, data, kstack);
  */
 .global lwp_user_entry
 .type lwp_user_entry, % function
@@ -39,6 +39,7 @@ lwp_user_entry:
     orr     r9, #Mode_USR
     cpsid i
     msr     spsr, r9
+    mov     sp, r3
 
     ldr     r3, =0x80000000 ;/* user stack top */
     /* set data address. */
@@ -63,32 +64,26 @@ set_user_context:
     mov pc, lr
 
 /*
-int lwp_set_thread_context(void *new_thread_stack, void *origin_thread_stack, void *user_stack, void **thread_sp, int tid);
+void lwp_set_thread_context(void *exit_addr, void *new_thread_stack, void *user_stack, void **thread_sp);
 */
 .global lwp_set_thread_context
 lwp_set_thread_context:
-    sub r12, r1, sp /* origin, r12 = origin sp offset */
-    sub r0, r0, r12 /* new sp */
-    stmfd r0!, {lr}
-    stmfd r0!, {lr}
-    stmfd r0!, {r12}
-    sub r12, sp, fp  /* new, r1 = origin fp offset */
-    sub r1, r0, r12
-    add r1, #12  /* new fp */
-    stmfd r0!, {r1} /* fp */
-    stmfd r0!, {r1 - r10}
+    sub r1, #(10 * 4 + 4 * 4) /* {r4 - r12, lr} , {r4, r5, spsr, u_pc} */
+    stmfd r1!, {r0}
     mov r12, #0
-    stmfd r0!, {r12} /* new thread return value */
-    mrs r1, cpsr
-    stmfd r0!, {r1} /* spsr */
-    mov r1, #0
-    stmfd r0!, {r1} /* now user lr is 0 */
-    stmfd r0!, {r2} /* user sp */
+    stmfd r1!, {r12}
+    stmfd r1!, {r1 - r12}
+    stmfd r1!, {r12} /* new thread return value */
+    mrs r12, cpsr
+    orr r12, #(1 << 7) /* disable irq */
+    stmfd r1!, {r12} /* spsr */
+    mov r12, #0
+    stmfd r1!, {r12} /* now user lr is 0 */
+    stmfd r1!, {r2} /* user sp */
 #ifdef RT_USING_FPU
-    stmfd r0!, {r1} /* not use fpu */
+    stmfd r1!, {r12} /* not use fpu */
 #endif
-    str r0, [r3]
-    ldr r0, [sp]
+    str r1, [r3]
     mov pc, lr
 
 .global lwp_get_user_sp
@@ -97,6 +92,36 @@ lwp_get_user_sp:
     mov r0, sp
     cps #Mode_SVC
     mov pc, lr
+
+.global sys_fork
+.global sys_fork_exit
+sys_fork:
+    push {r4 - r12, lr}
+    bl _sys_fork
+sys_fork_exit:
+    pop {r4 - r12, lr}
+    b svc_exit
+
+.global sys_clone
+.global sys_clone_exit
+sys_clone:
+    push {r4 - r12, lr}
+    bl _sys_clone
+sys_clone_exit:
+    pop {r4 - r12, lr}
+    b svc_exit
+/*
+void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
+*/
+.global lwp_exec_user
+lwp_exec_user:
+    cpsid i
+    mov sp, r1
+    mov lr, r2
+    mov r2, #Mode_USR
+    msr spsr_cxsf, r2
+    ldr r3, =0x80000000
+    b ret_to_user
 
 /*
  * void SVC_Handler(void);
@@ -107,10 +132,7 @@ vector_swi:
     push {lr}
     mrs lr, spsr
     push {r4, r5, lr}
-    tst lr, #(1 << 7)   /* mask irq ? */
-    bne 1f
     cpsie i
-1:
     push {r0 - r3, r12}
     and r0, r7, #0xff
     cmp r0, #0xfe
@@ -127,11 +149,8 @@ vector_swi:
     blx lr
 
 svc_exit:
-    mrs r4, cpsr
     cpsid i
-    tst r4, #(1 << 7)   /* mask irq ? */
     pop {r4, r5, lr}
-    orrne lr, #(1 << 7)
     msr spsr_cxsf, lr
     pop {lr}
 

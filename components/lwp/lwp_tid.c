@@ -27,6 +27,11 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#define TID_CT_ASSERT(name, x) \
+    struct assert_##name {char ary[2 * (x) - 1];}
+
+TID_CT_ASSERT(tid_max_nr, LWP_TID_MAX_NR > 1);
+
 static rt_thread_t lwp_tid_ary[LWP_TID_MAX_NR];
 static rt_thread_t *lwp_tid_free_head = RT_NULL;
 static int lwp_tid_ary_alloced = 1; /* 0 is reserved */
@@ -39,7 +44,7 @@ int lwp_tid_get(void)
 
     if (p)
     {
-        lwp_tid_free_head = (rt_thread_t*)*p;
+        lwp_tid_free_head = (rt_thread_t *)*p;
     }
     else if (lwp_tid_ary_alloced < LWP_TID_MAX_NR)
     {

@@ -71,7 +71,7 @@ struct rt_lwp
     void *text_entry;
     uint32_t text_size;
     void *data_entry;
-    uint32_t *data_size;
+    uint32_t data_size;
 
     int ref;
     void *args;
@@ -115,6 +115,10 @@ void lwp_wait_subthread_exit(void);
 void lwp_set_thread_area(void *p);
 void* rt_cpu_get_thread_idr(void);
 void rt_cpu_set_thread_idr(void *p);
+
+pid_t lwp_pid_get(void);
+void lwp_pid_put(pid_t pid);
+void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp);
 
 int lwp_tid_get(void);
 void lwp_tid_put(int tid);
@@ -182,5 +186,48 @@ struct __pthread {
 #ifdef __cplusplus
 }
 #endif
+
+#define AUX_ARRAY_ITEMS_NR 6
+
+/* aux key */
+#define AT_NULL 0
+#define AT_IGNORE 1
+#define AT_EXECFD 2
+#define AT_PHDR 3
+#define AT_PHENT 4
+#define AT_PHNUM 5
+#define AT_PAGESZ 6
+#define AT_BASE 7
+#define AT_FLAGS 8
+#define AT_ENTRY 9
+#define AT_NOTELF 10
+#define AT_UID 11
+#define AT_EUID 12
+#define AT_GID 13
+#define AT_EGID 14
+#define AT_CLKTCK 17
+#define AT_PLATFORM 15
+#define AT_HWCAP 16
+#define AT_FPUCW 18
+#define AT_DCACHEBSIZE 19
+#define AT_ICACHEBSIZE 20
+#define AT_UCACHEBSIZE 21
+#define AT_IGNOREPPC 22
+#define AT_SECURE 23
+#define AT_BASE_PLATFORM 24
+#define AT_RANDOM 25
+#define AT_HWCAP2 26
+#define AT_EXECFN 31
+
+struct process_aux_item
+{
+    uint32_t key;
+    uint32_t value;
+};
+
+struct process_aux
+{
+    struct process_aux_item item[AUX_ARRAY_ITEMS_NR];
+};
 
 #endif
