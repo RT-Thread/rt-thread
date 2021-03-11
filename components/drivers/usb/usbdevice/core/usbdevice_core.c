@@ -123,12 +123,18 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
     }
     else
     {
-        len = rt_strlen(device->str[index]);
+        if(index < 5)
+            len = rt_strlen(device->str[index]);
+        else
+            len = rt_strlen(device->str_intf[index]);
         str_desc.bLength = len*2 + 2;
 
         for(i=0; i<len; i++)
         {
-            str_desc.String[i*2] = device->str[index][i];
+            if(index < 5)
+                str_desc.String[i*2] = device->str[index][i];
+            else
+                str_desc.String[i*2] = device->str_intf[index][i];
             str_desc.String[i*2 + 1] = 0;
         }
     }
@@ -1040,6 +1046,28 @@ rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring)
 
     /* set string descriptor array to the device object */
     device->str = ustring;
+
+    return RT_EOK;
+}
+
+/**
+ * This function will set usb device interface string description.
+ *
+ * @param device the usb device object.
+ * @param index of interface string
+ * @param string pointer to interface string description.
+ *
+ * @return RT_EOK.
+ */
+rt_err_t rt_usbd_device_set_interface_string(udevice_t device, int index, const char* string)
+{
+    /* parameter check */
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(string != RT_NULL);
+    RT_ASSERT(index < MAX_INTF_STR);
+
+    /* set string descriptor array to the device object */
+    device->str_intf[index] = string;
 
     return RT_EOK;
 }
