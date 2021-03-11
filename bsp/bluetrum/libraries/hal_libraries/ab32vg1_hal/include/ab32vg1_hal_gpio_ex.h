@@ -28,7 +28,7 @@
  * G5: tx:PA1 rx:PA0
  * G6: tx:PE0 rx:PE1
  * G7: tx:PF2 rx:map to tx
- * 
+ *
  * UART1:
  * G1: tx:PA7 rx:PA6
  * G2: tx:PA4 rx:PA3
@@ -52,17 +52,17 @@
  * G1: PE7
  * G2: PF2
  * G3: PA3
- * 
+ *
  * LPWM2:
  * G1: PE6
  * G2: PE0
  * G3: PA2
- * 
+ *
  * LPWM1:
  * G1: PE5
  * G2: PB4
  * G3: PA1
- * 
+ *
  * LPWM0:
  * G1: PE4
  * G2: PB3
@@ -76,10 +76,10 @@
 /**
  * TMR5:
  * G1: PE1 PE2 PE3
- * 
+ *
  * TMR4:
  * G1: PA5 PA6 PA7
- * 
+ *
  * TMR3:
  * G1: PB0 PB1 PB2
  */

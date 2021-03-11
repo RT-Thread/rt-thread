@@ -39,7 +39,7 @@ struct uart_init
 
 /**
  * @brief UART handle struction definition
- * 
+ *
  */
 struct uart_handle
 {
@@ -76,8 +76,8 @@ struct uart_handle
 /** @defgroup UART_Mode UART Transfer Mode
   * @{
   */
-#define UART_MODE_TX                        (0x00u)         /*!< TX mode                    */ 
-#define UART_MODE_TX_RX                     (0x01u)         /*!< RX and TX mode             */ 
+#define UART_MODE_TX                        (0x00u)         /*!< TX mode                    */
+#define UART_MODE_TX_RX                     (0x01u)         /*!< RX and TX mode             */
 
 /**
   * @}
