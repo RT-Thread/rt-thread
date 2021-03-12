@@ -1636,6 +1636,12 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         goto quit;
     }
 
+    len = lwp_user_strlen(path, &access_err);
+    if (access_err)
+    {
+        rt_set_errno(EFAULT);
+        goto quit;
+    }
     if (argv)
     {
         while (1)
@@ -1758,8 +1764,28 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     ret = lwp_load(path, new_lwp, RT_NULL, 0, aux);
     if (ret == RT_EOK)
     {
-        /* load ok, now swap the data of lwp and new_lwp */
+        int off = 0;
+        int last_backslash = 0;
+
+        /* find last \ or / */
+        while (1)
+        {
+            char c = path[off++];
+
+            if (c == '\0')
+            {
+                break;
+            }
+            if (c == '\\' || c == '/')
+            {
+                last_backslash = off;
+            }
+        }
+
+        /* load ok, now set thread name and swap the data of lwp and new_lwp */
         rt_hw_interrupt_disable();
+
+        rt_strncpy(thread->name, path + last_backslash, RT_NAME_MAX);
 
 #ifdef RT_USING_USERSPACE
         _swap_lwp_data(lwp, new_lwp, rt_mmu_info, mmu_info);
