@@ -31,7 +31,7 @@ typedef rt_int32_t s32;
 
 static u8 floppy_buffer[512];                       /* 软盘高速缓冲区地址指针 */
 
-#define MAX_REPLIES 7                                                             
+#define MAX_REPLIES 7
 static u8 floppy_reply_buffer[MAX_REPLIES];         /* 软驱回应缓冲区 */
 #define ST0 (floppy_reply_buffer[0])                /* 软驱回应0号字节 */
 #define ST1 (floppy_reply_buffer[1])                /* 软驱回应1号字节 */
@@ -114,7 +114,7 @@ u32 floppy_get_info(void)
     u8 CmType, FdType;
 
     floppy_sendbyte(0x10);
-    i = floppy_getbyte(); 
+    i = floppy_getbyte();
 
     switch (i)
     {
@@ -180,7 +180,7 @@ void floppy_motorOff( void )
 
 
 void floppy_setmode(void)
-{   
+{
     floppy_sendbyte (FD_SPECIFY);
     floppy_sendbyte (0xcf);
     floppy_sendbyte (0x06);
@@ -197,7 +197,7 @@ void block_to_hts(u32 block, u32 *head, u32 *track, u32 *sector )
 
 
 void floppy_setupDMA(void)
-{  
+{
     u32 eflags;
     _local_irq_save(eflags);
     DisableDma(2);
@@ -235,7 +235,7 @@ void floppy_read_cmd(u32 blk)
     floppy_sendbyte (18);
     //floppy_sendbyte (sector+secs-1);          /*  Last sector in track:here are  sectors count */
     floppy_sendbyte (0x1B);
-    floppy_sendbyte (0xff);                      
+    floppy_sendbyte (0xff);
     return;
 }
 
@@ -282,12 +282,12 @@ static rt_size_t rt_floppy_read(rt_device_t device, rt_off_t position, void *buf
         {
             panic("ST0 %d ST1 %d ST2 %d\n",ST0,ST1,ST2);
         }
-    
+
         rt_memcpy(buffer, floppy_buffer, 512);
 
         floppy_motorOff();
         io_delay();
-        
+
         position += 1;
         size     -= 1;
     }
