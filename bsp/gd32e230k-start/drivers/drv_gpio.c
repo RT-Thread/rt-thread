@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,8 +29,8 @@ struct pin_index
     rcu_periph_enum clk;
     rt_uint32_t gpio_periph;
     rt_uint32_t pin;
-	  rt_uint32_t port_src;
-	  rt_uint32_t pin_src;
+      rt_uint32_t port_src;
+      rt_uint32_t pin_src;
 };
 
 static const struct pin_index pins[] =
@@ -38,8 +38,8 @@ static const struct pin_index pins[] =
     __GD32_PIN_DEFAULT,
     __GD32_PIN(2, F, 0),
     __GD32_PIN(3, F, 1),
-	  __GD32_PIN_DEFAULT,
-		__GD32_PIN_DEFAULT,
+      __GD32_PIN_DEFAULT,
+        __GD32_PIN_DEFAULT,
     __GD32_PIN(6, A, 0),
     __GD32_PIN(7, A, 1),
     __GD32_PIN(8, A, 2),
@@ -51,7 +51,7 @@ static const struct pin_index pins[] =
     __GD32_PIN(14, B, 0),
     __GD32_PIN(15, B, 1),
     __GD32_PIN(16, B, 2),
-		__GD32_PIN_DEFAULT,
+        __GD32_PIN_DEFAULT,
     __GD32_PIN(18, A, 8),
     __GD32_PIN(19, A, 9),
     __GD32_PIN(20, A, 10),
@@ -136,8 +136,8 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
     const struct pin_index *index;
     rt_uint32_t pin_mode;
-	  rt_uint32_t otype;
-	  rt_uint32_t pull_up_down;
+      rt_uint32_t otype;
+      rt_uint32_t pull_up_down;
     index = get_pin(pin);
     if (index == RT_NULL)
     {
@@ -147,9 +147,9 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     /* GPIO Periph clock enable */
     rcu_periph_clock_enable(index->clk);
     pin_mode = GPIO_MODE_OUTPUT;
-		otype = GPIO_OTYPE_PP;
-		pull_up_down = GPIO_PUPD_NONE;
-    
+        otype = GPIO_OTYPE_PP;
+        pull_up_down = GPIO_PUPD_NONE;
+
    switch(mode)
    {
    case PIN_MODE_OUTPUT:
@@ -157,7 +157,7 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
         break;
    case PIN_MODE_OUTPUT_OD:
         /* output setting: od. */
-		    otype = GPIO_OTYPE_OD;
+            otype = GPIO_OTYPE_OD;
         break;
    case PIN_MODE_INPUT:
         /* input setting: not pull. */
@@ -166,20 +166,20 @@ void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
    case PIN_MODE_INPUT_PULLUP:
         /* input setting: pull up. */
         pin_mode = GPIO_MODE_INPUT;
-	      pull_up_down = GPIO_PUPD_PULLUP;
+          pull_up_down = GPIO_PUPD_PULLUP;
         break;
    case PIN_MODE_INPUT_PULLDOWN:
         /* input setting: pull down. */
-	      pin_mode = GPIO_MODE_INPUT;
-	      pull_up_down = GPIO_PUPD_PULLDOWN;
+          pin_mode = GPIO_MODE_INPUT;
+          pull_up_down = GPIO_PUPD_PULLDOWN;
         break;
    default:
         break;
    }
 
-	  gpio_mode_set(index->gpio_periph, pin_mode, pull_up_down, index->pin);
+      gpio_mode_set(index->gpio_periph, pin_mode, pull_up_down, index->pin);
     gpio_output_options_set(index->gpio_periph, otype, GPIO_OSPEED_50MHZ, index->pin);
-	 
+
 }
 
 void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
@@ -333,7 +333,7 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
             return RT_EINVAL;
         }
         irqmap = &pin_irq_map[hdr_index];
-   
+
         switch (pin_irq_hdr_tab[hdr_index].mode)
         {
             case PIN_IRQ_MODE_RISING:
@@ -354,14 +354,14 @@ rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_
 
         /* enable and set interrupt priority */
         nvic_irq_enable(irqmap->irqno, 5U);
-        
+
         /* connect EXTI line to  GPIO pin */
-				syscfg_exti_line_config(index->port_src, index->pin_src);
+                syscfg_exti_line_config(index->port_src, index->pin_src);
 
         /* configure EXTI line */
         exti_init((exti_line_enum)(index->pin), EXTI_INTERRUPT, trigger_mode);
         exti_interrupt_flag_clear((exti_line_enum)(index->pin));
-        
+
         rt_hw_interrupt_enable(level);
     }
     else if (enabled == PIN_IRQ_DISABLE)
@@ -396,7 +396,7 @@ int rt_hw_pin_init(void)
     int result;
 
     result = rt_device_pin_register("pin", &_gd32_pin_ops, RT_NULL);
-    
+
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
@@ -415,7 +415,7 @@ void GD32_GPIO_EXTI_IRQHandler(rt_int8_t exti_line)
     {
         pin_irq_hdr(exti_line);
         exti_interrupt_flag_clear((exti_line_enum)(1 << exti_line));
-    } 
+    }
 }
 void EXTI0_IRQHandler(void)
 {
