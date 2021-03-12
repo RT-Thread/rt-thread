@@ -1783,7 +1783,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         }
 
         /* load ok, now set thread name and swap the data of lwp and new_lwp */
-        rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         rt_strncpy(thread->name, path + last_backslash, RT_NAME_MAX);
 
@@ -1807,11 +1807,14 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         /* to do: clsoe files with flag CLOEXEC */
 
         lwp_mmu_switch(thread);
+
+        rt_hw_interrupt_enable(level);
+
         lwp_ref_dec(new_lwp);
         lwp_exec_user(lwp->args,
                 thread->stack_addr + thread->stack_size,
                 lwp->text_entry);
-        /* never reach here, so rt_hw_interrupt_enable is not needed */
+        /* never reach here */
     }
     rt_set_errno(EINVAL);
 quit:
