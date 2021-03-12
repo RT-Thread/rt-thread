@@ -348,6 +348,31 @@ static void expand_map_range(struct map_range *m, void *start, size_t size)
     }
 }
 
+static int map_range_ckeck(struct map_range *m1, struct map_range *m2)
+{
+    int ret = 0;
+    void *m1_start = (void *)((size_t)m1->start & ~ARCH_PAGE_MASK);
+    void *m1_end = (void *)((((size_t)m1->start + m1->size) + ARCH_PAGE_MASK) & ~ARCH_PAGE_MASK);
+    void *m2_start = (void *)((size_t)m2->start & ~ARCH_PAGE_MASK);
+    void *m2_end = (void *)((((size_t)m2->start + m2->size) + ARCH_PAGE_MASK) & ~ARCH_PAGE_MASK);
+
+    if (m1_start < m2_start)
+    {
+        if (m1_end > m2_start)
+        {
+            ret = -1;
+        }
+    }
+    else /* m2_start <= m1_start */
+    {
+        if (m2_end > m1_start)
+        {
+            ret = -1;
+        }
+    }
+    return ret;
+}
+
 static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, struct process_aux *aux)
 {
     uint32_t i;
@@ -506,6 +531,11 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             default:
                 break;
         }
+    }
+    if (map_range_ckeck(&text_area, &data_area) != 0)
+    {
+        result = -RT_ERROR;
+        goto _exit;
     }
     if (text_area.start)
     {
