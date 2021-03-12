@@ -68,6 +68,8 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 
 本 BSP 为开发者提供 GCC 开发环境。下面介绍如何将系统运行起来。
 
+教学视频：https://www.bilibili.com/video/BV1RV411v75P/
+
 #### 硬件连接
 
 使用数据线连接开发板到 PC，打开电源开关。
