@@ -94,8 +94,10 @@ lwp_get_user_sp:
     mov pc, lr
 
 .global sys_fork
+.global sys_vfork
 .global sys_fork_exit
 sys_fork:
+sys_vfork:
     push {r4 - r12, lr}
     bl _sys_fork
 sys_fork_exit:
