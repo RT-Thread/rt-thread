@@ -1436,6 +1436,7 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
 }
 
 int sys_fork(void);
+int sys_vfork(void);
 void sys_fork_exit(void);
 int _sys_fork(void)
 {
@@ -3203,6 +3204,7 @@ const static void* func_table[] =
     (void *)sys_rename,			/* 135 */
     (void *)sys_fork,
     (void *)sys_execve,
+    (void *)sys_vfork,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
