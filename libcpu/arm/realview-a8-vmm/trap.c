@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -131,7 +131,7 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
     rt_hw_cpu_shutdown();
 }
 
-#define GIC_ACK_INTID_MASK					0x000003ff
+#define GIC_ACK_INTID_MASK                  0x000003ff
 
 void rt_hw_trap_irq(void)
 {

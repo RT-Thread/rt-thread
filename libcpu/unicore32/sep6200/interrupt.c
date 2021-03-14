@@ -26,38 +26,38 @@
 #include <rthw.h>
 #include <sep6200.h>
 
-#define MAX_HANDLERS	64
+#define MAX_HANDLERS    64
 
 
 #define SEP6200_IRQ_TYPE 0
 #define SEP6200_FIQ_TYPE 1
 
-#define int_enable_all() 					  \
-	do {							  \
-		*(volatile unsigned long*)SEP6200_VIC_INT_EN_L = ~0x0;\
-		*(volatile unsigned long*)SEP6200_VIC_INT_EN_H = ~0x0;\
-	}while(0)
-#define int_disable_all() 					 \
-	do {							 \
-		*(volatile unsigned long*)SEP6200_VIC_INT_EN_L = 0x0;\
-		*(volatile unsigned long*)SEP6200_VIC_INT_EN_H = 0x0;\
-	}while(0)
-#define mask_all_int(int_type)					 \
-	do {							 \
-		if (int_type == SEP6200_IRQ_TYPE){		 \
-		*(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = 0x1;\
-		} else if (int_type == SEP6200_FIQ_TYPE) {\
-		*(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = 0x2;\
-		}\
-	}while(0)
+#define int_enable_all()                      \
+    do {                              \
+        *(volatile unsigned long*)SEP6200_VIC_INT_EN_L = ~0x0;\
+        *(volatile unsigned long*)SEP6200_VIC_INT_EN_H = ~0x0;\
+    }while(0)
+#define int_disable_all()                    \
+    do {                             \
+        *(volatile unsigned long*)SEP6200_VIC_INT_EN_L = 0x0;\
+        *(volatile unsigned long*)SEP6200_VIC_INT_EN_H = 0x0;\
+    }while(0)
+#define mask_all_int(int_type)                   \
+    do {                             \
+        if (int_type == SEP6200_IRQ_TYPE){       \
+        *(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = 0x1;\
+        } else if (int_type == SEP6200_FIQ_TYPE) {\
+        *(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = 0x2;\
+        }\
+    }while(0)
 #define unmask_all_int(int_type)\
-	do {							 \
-		if (int_type == SEP6200_IRQ_TYPE){		 \
-		*(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = ~0x1;\
-		} else if (int_type == SEP6200_FIQ_TYPE) {\
-		*(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = ~0x2;\
-		}\
-	}while(0)
+    do {                             \
+        if (int_type == SEP6200_IRQ_TYPE){       \
+        *(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = ~0x1;\
+        } else if (int_type == SEP6200_FIQ_TYPE) {\
+        *(volatile unsigned long*)SEP6200_VIC_INT_MSK_ALL = ~0x2;\
+        }\
+    }while(0)
 
 #define SEP6200_INT_SET(intnum)                                     \
 do{                                                                 \
@@ -113,27 +113,27 @@ void rt_hw_interrupt_umask(int irq);
 
 rt_inline void sep6200_irq_enable(rt_uint32_t irq)
 {
-	SEP6200_INT_ENABLE(irq);
+    SEP6200_INT_ENABLE(irq);
 }
 
 rt_inline void sep6200_irq_disable(rt_uint32_t irq)
 {
-	SEP6200_INT_DISABLE(irq);
+    SEP6200_INT_DISABLE(irq);
 }
 
 rt_inline void sep6200_irq_unmask(rt_uint32_t irq)
 {
-	SEP6200_INT_ENABLE(irq);
+    SEP6200_INT_ENABLE(irq);
 }
 
 rt_inline void sep6200_irq_mask(rt_uint32_t irq)
 {
-	SEP6200_INT_DISABLE(irq);
+    SEP6200_INT_DISABLE(irq);
 }
 rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
 {
-	rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
-	return RT_NULL;
+    rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
+    return RT_NULL;
 }
 
 /**
@@ -141,26 +141,26 @@ rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
  */
 void rt_hw_interrupt_init(void)
 {
-	rt_int32_t i;
-	register rt_uint32_t idx;
+    rt_int32_t i;
+    register rt_uint32_t idx;
 
 
-	/* init exceptions table */
-	for(idx=0; idx < MAX_HANDLERS; idx++)
-	{
-		isr_table[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
-	}
-	int_disable_all();
-	mask_all_int(SEP6200_FIQ_TYPE);
+    /* init exceptions table */
+    for(idx=0; idx < MAX_HANDLERS; idx++)
+    {
+        isr_table[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
+    }
+    int_disable_all();
+    mask_all_int(SEP6200_FIQ_TYPE);
 
-	//int_enable_all();
-	unmask_all_int(SEP6200_IRQ_TYPE);
+    //int_enable_all();
+    unmask_all_int(SEP6200_IRQ_TYPE);
 
-	/* init interrupt nest, and context in thread sp */
-	rt_interrupt_nest = 0;
-	rt_interrupt_from_thread = 0;
-	rt_interrupt_to_thread = 0;
-	rt_thread_switch_interrupt_flag = 0;
+    /* init interrupt nest, and context in thread sp */
+    rt_interrupt_nest = 0;
+    rt_interrupt_from_thread = 0;
+    rt_interrupt_to_thread = 0;
+    rt_thread_switch_interrupt_flag = 0;
 }
 
 
@@ -171,11 +171,11 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int irq)
 {
-	if (irq >= MAX_HANDLERS) {
-		rt_kprintf("Wrong irq num to mask\n");
-	} else {
-		sep6200_irq_mask(irq);
-	}
+    if (irq >= MAX_HANDLERS) {
+        rt_kprintf("Wrong irq num to mask\n");
+    } else {
+        sep6200_irq_mask(irq);
+    }
 
 }
 
@@ -185,11 +185,11 @@ void rt_hw_interrupt_mask(int irq)
  */
 void rt_hw_interrupt_umask(int irq)
 {
-	if (irq >= MAX_HANDLERS) {
-		rt_kprintf("Wrong irq num to unmask\n");
-	} else {
-		sep6200_irq_unmask(irq);
-	}
+    if (irq >= MAX_HANDLERS) {
+        rt_kprintf("Wrong irq num to unmask\n");
+    } else {
+        sep6200_irq_unmask(irq);
+    }
 }
 
 /**
@@ -210,7 +210,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         if (handler != RT_NULL)
         {
 #ifdef RT_USING_INTERRUPT_INFO
-		    rt_strncpy(isr_table[vector].name, name, RT_NAME_MAX);
+            rt_strncpy(isr_table[vector].name, name, RT_NAME_MAX);
 #endif /* RT_USING_INTERRUPT_INFO */
             isr_table[vector].handler = handler;
             isr_table[vector].param = param;

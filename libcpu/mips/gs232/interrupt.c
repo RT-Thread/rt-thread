@@ -1,16 +1,16 @@
 /*
  * Interrupt handle for GS232
- * 
- * Copyright (c) 2006-2019, RT-Thread Development Team
- * 
+ *
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2010-10-15     Bernard      first version
- * 2010-10-15     lgnq           modified for LS1B
- * 2013-03-29     aozima       Modify the interrupt interface implementations.
- * 2015-07-06     chinesebear modified for loongson 1c
+ * Date           Author        Notes
+ * 2010-10-15     Bernard       first version
+ * 2010-10-15     lgnq          modified for LS1B
+ * 2013-03-29     aozima        Modify the interrupt interface implementations.
+ * 2015-07-06     chinesebear   modified for loongson 1c
  * 2019-12-04     Jiaxun Yang   Generialize
  */
 
@@ -52,7 +52,7 @@ void rt_hw_interrupt_init(void)
         /* Disable */
         (gs232_hw0_icregs+i)->int_en = 0x0;
         /* Trigger active low */
-        (gs232_hw0_icregs+i)->int_pol = -1;	   /* Must be done here */
+        (gs232_hw0_icregs+i)->int_pol = -1;    /* Must be done here */
         /* Make all interrupts level triggered */
         (gs232_hw0_icregs+i)->int_edge = 0x00000000;
         /* Mask all interrupts */
