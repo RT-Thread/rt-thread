@@ -77,8 +77,8 @@ struct photo_event
 {
     struct rtgui_event_win win;
     rt_uint32_t cmd;
-	rt_uint8_t* path;
-	rt_uint8_t* format;
+    rt_uint8_t* path;
+    rt_uint8_t* format;
 };
 
 /* Private defines -----------------------------------------------------------*/
@@ -95,10 +95,10 @@ volatile rt_uint32_t    rt_system_status = 0;
 #if defined(RT_USING_RTGUI)
 static rt_bool_t pic_view_event_handler(rtgui_object_t *object, rtgui_event_t *event)
 {
-	rt_bool_t result;
+    rt_bool_t result;
     rt_bool_t load = RT_FALSE;
 
-	result = rtgui_container_event_handler(object, event);
+    result = rtgui_container_event_handler(object, event);
 
     switch(event->type)
     {
@@ -108,27 +108,27 @@ static rt_bool_t pic_view_event_handler(rtgui_object_t *object, rtgui_event_t *e
 
     case RTGUI_EVENT_MOUSE_BUTTON:
         {
-			struct rtgui_event_mouse *mouse = (struct rtgui_event_mouse *)event;
+            struct rtgui_event_mouse *mouse = (struct rtgui_event_mouse *)event;
 
-			if (mouse->button == RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP)
-			{
+            if (mouse->button == RTGUI_MOUSE_BUTTON_LEFT | RTGUI_MOUSE_BUTTON_UP)
+            {
                 rt_kprintf("APP: left click (%x)\n", mouse->button);
-			}
+            }
         }
         break;
     }
 
     if (load)
-	{
-		struct rtgui_dc* dc;
-		rtgui_rect_t rect;
+    {
+        struct rtgui_dc* dc;
+        rtgui_rect_t rect;
         rtgui_image_t* image;
 
         image = rtgui_image_create_from_file("jpg", "/test9.jpg", RT_FALSE);
 //        image = rtgui_image_create_from_file("bmp", "/test_565.bmp", RT_FALSE);
 
-		dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(object));
-		if (dc == RT_NULL)
+        dc = rtgui_dc_begin_drawing(RTGUI_WIDGET(object));
+        if (dc == RT_NULL)
         {
             return result;
         }
@@ -138,9 +138,9 @@ static rt_bool_t pic_view_event_handler(rtgui_object_t *object, rtgui_event_t *e
         rect.x1 +=10;
         rect.y1 +=10;
 
-		if (image != RT_NULL)
+        if (image != RT_NULL)
         {
-			rtgui_image_blit(image, dc, &rect);
+            rtgui_image_blit(image, dc, &rect);
             rtgui_image_destroy(image);
         }
         else
@@ -148,10 +148,10 @@ static rt_bool_t pic_view_event_handler(rtgui_object_t *object, rtgui_event_t *e
             rt_kprintf("APP err: no image found!\n");
         }
 
-		rtgui_dc_end_drawing(dc, RT_TRUE);
-	}
+        rtgui_dc_end_drawing(dc, RT_TRUE);
+    }
 
-	return result;
+    return result;
 }
 
 static void app_main(void *parameter)
@@ -169,21 +169,21 @@ static void app_main(void *parameter)
     lcd->control(lcd, RTGRAPHIC_CTRL_GET_INFO, (void *)&lcd_info);
     rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
 
-	/* create application */
-	struct rtgui_app *app;
-	app = rtgui_app_create("gui_app");
-	if (app == RT_NULL)
+    /* create application */
+    struct rtgui_app *app;
+    app = rtgui_app_create("gui_app");
+    if (app == RT_NULL)
     {
         rt_kprintf("Create application \"gui_app\" failed!\n");
         return;
     }
 
-	struct rtgui_rect rect1, rect2, rect3;
+    struct rtgui_rect rect1, rect2, rect3;
     struct rtgui_win *win_info, *win_main, *win_hello;
-	struct rtgui_container *container;
+    struct rtgui_container *container;
     struct rtgui_label* label;
 
-	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect1);
+    rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect1);
     rect2.x1 = rect1.x1;
     rect2.y1 = 25;
     rect2.x2 = rect1.x2;
@@ -191,119 +191,119 @@ static void app_main(void *parameter)
     rect1.y2 = 25;
 
     /* create info window */
-	win_info = rtgui_win_create(RT_NULL, "info",
+    win_info = rtgui_win_create(RT_NULL, "info",
                     &rect1,
                     RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
-	if (win_info == RT_NULL)
-	{
+    if (win_info == RT_NULL)
+    {
         rt_kprintf("Create window \"info\" failed!\n");
-		rtgui_app_destroy(app);
+        rtgui_app_destroy(app);
         return;
-	}
+    }
 
     /* create container in info window */
-	container = rtgui_container_create();
-	if (container == RT_NULL)
-	{
+    container = rtgui_container_create();
+    if (container == RT_NULL)
+    {
         rt_kprintf("Create container failed!\n");
-		return;
-	}
-	rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect1);
+        return;
+    }
+    rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect1);
     rtgui_container_add_child(RTGUI_CONTAINER(win_info), RTGUI_WIDGET(container));
 
     /* create lable in info window */
-	label = rtgui_label_create("RT-Thread & RTGUI");
+    label = rtgui_label_create("RT-Thread & RTGUI");
     if (label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
         return;
     }
 
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = red;
+    RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
+    RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = red;
     RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = white;
 
-	rect3.x1 = rect1.x1 + 5;
-	rect3.y1 = rect1.y1 + 5;
-	rect3.x2 = rect1.x2 - 5;
-	rect3.y2 = rect1.y2 - 5;
-	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect3);
-	rtgui_container_add_child(container, RTGUI_WIDGET(label));
+    rect3.x1 = rect1.x1 + 5;
+    rect3.y1 = rect1.y1 + 5;
+    rect3.x2 = rect1.x2 - 5;
+    rect3.y2 = rect1.y2 - 5;
+    rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect3);
+    rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
 
     /* create main window */
-	win_main = rtgui_win_create(RT_NULL, "main",
+    win_main = rtgui_win_create(RT_NULL, "main",
                     &rect2,
                     RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
-	if (win_main == RT_NULL)
-	{
+    if (win_main == RT_NULL)
+    {
         rt_kprintf("Create window \"main\" failed!\n");
-		rtgui_app_destroy(app);
+        rtgui_app_destroy(app);
         return;
-	}
+    }
 
     /* create container in main window */
-	container = rtgui_container_create();
-	if (container == RT_NULL)
-	{
+    container = rtgui_container_create();
+    if (container == RT_NULL)
+    {
         rt_kprintf("Create container failed!\n");
-		return;
-	}
+        return;
+    }
 
-	rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect2);
+    rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect2);
     rtgui_object_set_event_handler(RTGUI_OBJECT(container), pic_view_event_handler);
     rtgui_container_add_child(RTGUI_CONTAINER(win_main), RTGUI_WIDGET(container));
 
     /* create lable in main window */
-	label = rtgui_label_create("EFM32GG_DK3750 Kit");
+    label = rtgui_label_create("EFM32GG_DK3750 Kit");
     if (label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
         return;
     }
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
+    RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
+    RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
     RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = blue;
 
-	rect3.x1 = rect2.x1 + 5;
-	rect3.y1 = rect2.y1 + 5;
-	rect3.x2 = rect2.x2 - 5;
-	rect3.y2 = rect2.y1 + 20;
-	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect3);
-	rtgui_container_add_child(container, RTGUI_WIDGET(label));
+    rect3.x1 = rect2.x1 + 5;
+    rect3.y1 = rect2.y1 + 5;
+    rect3.x2 = rect2.x2 - 5;
+    rect3.y2 = rect2.y1 + 20;
+    rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect3);
+    rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
 
     /* create hello window */
-	rect3.x1 = 80;
-	rect3.y1 = 50;
-	rect3.x2 = 320 - 80;
-	rect3.y2 = 240 - 50;
-	win_hello = rtgui_win_create(RT_NULL, "hello",
+    rect3.x1 = 80;
+    rect3.y1 = 50;
+    rect3.x2 = 320 - 80;
+    rect3.y2 = 240 - 50;
+    win_hello = rtgui_win_create(RT_NULL, "hello",
                     &rect3,
                     RTGUI_WIN_STYLE_DEFAULT);
-	if (win_hello == RT_NULL)
-	{
+    if (win_hello == RT_NULL)
+    {
         rt_kprintf("Create window \"hello\" failed!\n");
-		rtgui_app_destroy(app);
+        rtgui_app_destroy(app);
         return;
-	}
+    }
 
     /* create a box */
     rtgui_box_t *box = rtgui_box_create(RTGUI_VERTICAL, RT_NULL);
-	if(box == RT_NULL)
+    if(box == RT_NULL)
     {
         rt_kprintf("Create box failed!\n");
         return;
     }
 //    rtgui_win_set_box(win_hello, box);
 
-    label = rtgui_label_create("¹þÂÞ,íïÅÖ!");
-	if(label == RT_NULL)
+    label = rtgui_label_create("å“ˆç½—,ç›¹èƒ–!");
+    if(label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
         return;
     }
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
+    RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
     RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = black;
     RTGUI_WIDGET(label)->align = RTGUI_ALIGN_CENTER_HORIZONTAL | RTGUI_ALIGN_CENTER_VERTICAL;
     rtgui_widget_set_miniwidth(RTGUI_WIDGET(label),130);
@@ -322,18 +322,18 @@ static void app_main(void *parameter)
 
 static rt_bool_t photo_view_event_handler(rtgui_object_t *object, rtgui_event_t *event)
 {
-	rt_bool_t result = RT_FALSE;
+    rt_bool_t result = RT_FALSE;
     struct photo_event *photo_event = (struct photo_event *)event;
 
-	result = rtgui_container_event_handler(object, event);
+    result = rtgui_container_event_handler(object, event);
     rt_kprintf("container event %x\n", event->type);
 
-	struct rtgui_event_win* wevent = (struct rtgui_event_win*)event;
+    struct rtgui_event_win* wevent = (struct rtgui_event_win*)event;
     rt_kprintf("wevent->wid %x\n", wevent->wid);
 
     if ((event->type == RTGUI_EVENT_COMMAND) && \
         (photo_event->cmd == APP_CMD_PHOTO_FRAME))
-	{
+    {
         rtgui_rect_t rect;
         rtgui_image_t* image;
         struct rtgui_dc* dc;
@@ -361,25 +361,25 @@ static rt_bool_t photo_view_event_handler(rtgui_object_t *object, rtgui_event_t 
         return RT_TRUE;
     }
 
-	return result;
+    return result;
 }
 
 static rt_bool_t photo_lable_event_handler(rtgui_object_t *object, rtgui_event_t *event)
 {
-	rt_bool_t result = RT_FALSE;
+    rt_bool_t result = RT_FALSE;
 
-	result = rtgui_label_event_handler(object, event);
+    result = rtgui_label_event_handler(object, event);
     rt_kprintf("lable event %x\n", event->type);
 
     if (event->type == RTGUI_EVENT_COMMAND)
-	{
+    {
         struct photo_event *photo = (struct photo_event *)event;
 
         rtgui_label_set_text((rtgui_label_t *)object, photo->path);
         rt_kprintf("path %s\n", photo->path);
     }
 
-	return result;
+    return result;
 }
 
 static void app_photo(void *parameter)
@@ -399,64 +399,64 @@ static void app_photo(void *parameter)
     lcd->control(lcd, RTGRAPHIC_CTRL_GET_INFO, (void *)&lcd_info);
     rt_kprintf("LCD size: %dX%d\n", lcd_info.width, lcd_info.height);
 
-	/* create application */
-	struct rtgui_app *app;
-	app = rtgui_app_create("pho_app");
-	if (app == RT_NULL)
+    /* create application */
+    struct rtgui_app *app;
+    app = rtgui_app_create("pho_app");
+    if (app == RT_NULL)
     {
         rt_kprintf("Create application \"pho_app\" failed!\n");
         return;
     }
 
-	struct rtgui_rect rect1, rect2;
+    struct rtgui_rect rect1, rect2;
     struct rtgui_win *window;
-	struct rtgui_container *container;
+    struct rtgui_container *container;
     struct rtgui_label* label;
 
-	rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect1);
+    rtgui_graphic_driver_get_rect(rtgui_graphic_driver_get_default(), &rect1);
 
     /* create window */
-	window = rtgui_win_create(RT_NULL, "photo",
+    window = rtgui_win_create(RT_NULL, "photo",
                     &rect1,
                     RTGUI_WIN_STYLE_NO_BORDER | RTGUI_WIN_STYLE_NO_TITLE);
-	if (window == RT_NULL)
-	{
+    if (window == RT_NULL)
+    {
         rt_kprintf("Create window \"photo\" failed!\n");
-		rtgui_app_destroy(app);
+        rtgui_app_destroy(app);
         return;
-	}
+    }
     event->win.wid = window;
 
     /* create container */
-	container = rtgui_container_create();
-	if (container == RT_NULL)
-	{
+    container = rtgui_container_create();
+    if (container == RT_NULL)
+    {
         rt_kprintf("Create container failed!\n");
-		return;
-	}
-	rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect1);
+        return;
+    }
+    rtgui_widget_set_rect(RTGUI_WIDGET(container), &rect1);
     rtgui_object_set_event_handler(RTGUI_OBJECT(container), photo_view_event_handler);
     rtgui_container_add_child(RTGUI_CONTAINER(window), RTGUI_WIDGET(container));
 
     /* create lable in info window */
-	label = rtgui_label_create("Photo Frame Demo");
+    label = rtgui_label_create("Photo Frame Demo");
     if (label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");
         return;
     }
 
-	RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
-	RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
+    RTGUI_WIDGET_TEXTALIGN(RTGUI_WIDGET(label)) = RTGUI_ALIGN_LEFT;
+    RTGUI_WIDGET_BACKGROUND(RTGUI_WIDGET(label)) = white;
     RTGUI_WIDGET_FOREGROUND(RTGUI_WIDGET(label)) = blue;
 
     rect2.x1 = rect1.x1;
     rect2.y1 = rect1.y1;
     rect2.x2 = rect1.x2;
     rect2.y2 = 15;
-	rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect2);
+    rtgui_widget_set_rect(RTGUI_WIDGET(label), &rect2);
     rtgui_object_set_event_handler(RTGUI_OBJECT(label), photo_lable_event_handler);
-	rtgui_container_add_child(container, RTGUI_WIDGET(label));
+    rtgui_container_add_child(container, RTGUI_WIDGET(label));
 
     rtgui_win_show(window, RT_FALSE);
 

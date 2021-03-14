@@ -1,73 +1,73 @@
-/* ----------------------------------------------------------------------    
-* Copyright (C) 2010 ARM Limited. All rights reserved.    
-*    
-* $Date:        15. February 2012  
-* $Revision: 	V1.1.0  
-*    
-* Project: 	    CMSIS DSP Library    
-* Title:		arm_conv_partial_opt_q15.c    
-*    
-* Description:	Partial convolution of Q15 sequences.   
-*    
+/* ----------------------------------------------------------------------
+* Copyright (C) 2010 ARM Limited. All rights reserved.
+*
+* $Date:        15. February 2012
+* $Revision:    V1.1.0
+*
+* Project:      CMSIS DSP Library
+* Title:        arm_conv_partial_opt_q15.c
+*
+* Description:  Partial convolution of Q15 sequences.
+*
 * Target Processor: Cortex-M4/Cortex-M3
-*  
-* Version 1.1.0 2012/02/15 
-*    Updated with more optimizations, bug fixes and minor API changes.  
-*  
-* Version 1.0.11 2011/10/18  
-*    Bug Fix in conv, correlation, partial convolution.  
-* 
-* Version 1.0.10 2011/7/15  
-*    Big Endian support added and Merged M0 and M3/M4 Source code.   
-*    
-* Version 1.0.3 2010/11/29   
-*    Re-organized the CMSIS folders and updated documentation.    
-*     
-* Version 1.0.2 2010/11/11    
-*    Documentation updated.     
-*    
-* Version 1.0.1 2010/10/05     
-*    Production release and review comments incorporated.    
-*    
-* Version 1.0.0 2010/09/20     
-*    Production release and review comments incorporated    
-*    
-* Version 0.0.7  2010/06/10     
-*    Misra-C changes done    
-*    
+*
+* Version 1.1.0 2012/02/15
+*    Updated with more optimizations, bug fixes and minor API changes.
+*
+* Version 1.0.11 2011/10/18
+*    Bug Fix in conv, correlation, partial convolution.
+*
+* Version 1.0.10 2011/7/15
+*    Big Endian support added and Merged M0 and M3/M4 Source code.
+*
+* Version 1.0.3 2010/11/29
+*    Re-organized the CMSIS folders and updated documentation.
+*
+* Version 1.0.2 2010/11/11
+*    Documentation updated.
+*
+* Version 1.0.1 2010/10/05
+*    Production release and review comments incorporated.
+*
+* Version 1.0.0 2010/09/20
+*    Production release and review comments incorporated
+*
+* Version 0.0.7  2010/06/10
+*    Misra-C changes done
+*
 * -------------------------------------------------------------------- */
 
 #include "arm_math.h"
 
-/**    
- * @ingroup groupFilters    
+/**
+ * @ingroup groupFilters
  */
 
-/**    
- * @addtogroup PartialConv    
- * @{    
+/**
+ * @addtogroup PartialConv
+ * @{
  */
 
-/**    
- * @brief Partial convolution of Q15 sequences.    
- * @param[in]       *pSrcA points to the first input sequence.    
- * @param[in]       srcALen length of the first input sequence.    
- * @param[in]       *pSrcB points to the second input sequence.    
- * @param[in]       srcBLen length of the second input sequence.    
- * @param[out]      *pDst points to the location where the output result is written.    
- * @param[in]       firstIndex is the first output sample to start with.    
- * @param[in]       numPoints is the number of output points to be computed.    
- * @param[in]       *pScratch1 points to scratch buffer of size max(srcALen, srcBLen) + 2*min(srcALen, srcBLen) - 2.   
- * @param[in]       *pScratch2 points to scratch buffer of size min(srcALen, srcBLen).   
- * @return  Returns either ARM_MATH_SUCCESS if the function completed correctly or ARM_MATH_ARGUMENT_ERROR if the requested subset is not in the range [0 srcALen+srcBLen-2].    
- *    
- * \par Restrictions    
- *  If the silicon does not support unaligned memory access enable the macro UNALIGNED_SUPPORT_DISABLE    
- *	In this case input, output, state buffers should be aligned by 32-bit    
- *    
- * Refer to <code>arm_conv_partial_fast_q15()</code> for a faster but less precise version of this function for Cortex-M3 and Cortex-M4.   
- *  
- * 
+/**
+ * @brief Partial convolution of Q15 sequences.
+ * @param[in]       *pSrcA points to the first input sequence.
+ * @param[in]       srcALen length of the first input sequence.
+ * @param[in]       *pSrcB points to the second input sequence.
+ * @param[in]       srcBLen length of the second input sequence.
+ * @param[out]      *pDst points to the location where the output result is written.
+ * @param[in]       firstIndex is the first output sample to start with.
+ * @param[in]       numPoints is the number of output points to be computed.
+ * @param[in]       *pScratch1 points to scratch buffer of size max(srcALen, srcBLen) + 2*min(srcALen, srcBLen) - 2.
+ * @param[in]       *pScratch2 points to scratch buffer of size min(srcALen, srcBLen).
+ * @return  Returns either ARM_MATH_SUCCESS if the function completed correctly or ARM_MATH_ARGUMENT_ERROR if the requested subset is not in the range [0 srcALen+srcBLen-2].
+ *
+ * \par Restrictions
+ *  If the silicon does not support unaligned memory access enable the macro UNALIGNED_SUPPORT_DISABLE
+ *  In this case input, output, state buffers should be aligned by 32-bit
+ *
+ * Refer to <code>arm_conv_partial_fast_q15()</code> for a faster but less precise version of this function for Cortex-M3 and Cortex-M4.
+ *
+ *
  */
 
 #ifndef UNALIGNED_SUPPORT_DISABLE
@@ -144,7 +144,7 @@ arm_status arm_conv_partial_opt_q15(
     /* Apply loop unrolling and do 4 Copies simultaneously. */
     k = srcBLen >> 2u;
 
-    /* First part of the processing with loop unrolling copies 4 data points at a time.       
+    /* First part of the processing with loop unrolling copies 4 data points at a time.
      ** a second loop below copies for the remaining 1 to 3 samples. */
     while(k > 0u)
     {
@@ -158,7 +158,7 @@ arm_status arm_conv_partial_opt_q15(
       k--;
     }
 
-    /* If the count is not a multiple of 4, copy remaining samples here.       
+    /* If the count is not a multiple of 4, copy remaining samples here.
      ** No loop unrolling is used. */
     k = srcBLen % 0x4u;
 
@@ -466,7 +466,7 @@ arm_status arm_conv_partial_opt_q15(
     /* Apply loop unrolling and do 4 Copies simultaneously. */
     k = srcBLen >> 2u;
 
-    /* First part of the processing with loop unrolling copies 4 data points at a time.       
+    /* First part of the processing with loop unrolling copies 4 data points at a time.
      ** a second loop below copies for the remaining 1 to 3 samples. */
     while(k > 0u)
     {
@@ -480,7 +480,7 @@ arm_status arm_conv_partial_opt_q15(
       k--;
     }
 
-    /* If the count is not a multiple of 4, copy remaining samples here.       
+    /* If the count is not a multiple of 4, copy remaining samples here.
      ** No loop unrolling is used. */
     k = srcBLen % 0x4u;
 
@@ -508,7 +508,7 @@ arm_status arm_conv_partial_opt_q15(
     /* Apply loop unrolling and do 4 Copies simultaneously. */
     k = srcALen >> 2u;
 
-    /* First part of the processing with loop unrolling copies 4 data points at a time.       
+    /* First part of the processing with loop unrolling copies 4 data points at a time.
      ** a second loop below copies for the remaining 1 to 3 samples. */
     while(k > 0u)
     {
@@ -522,7 +522,7 @@ arm_status arm_conv_partial_opt_q15(
       k--;
     }
 
-    /* If the count is not a multiple of 4, copy remaining samples here.       
+    /* If the count is not a multiple of 4, copy remaining samples here.
      ** No loop unrolling is used. */
     k = srcALen % 0x4u;
 
@@ -539,7 +539,7 @@ arm_status arm_conv_partial_opt_q15(
     /* Apply loop unrolling and do 4 Copies simultaneously. */
     k = (srcBLen - 1u) >> 2u;
 
-    /* First part of the processing with loop unrolling copies 4 data points at a time.       
+    /* First part of the processing with loop unrolling copies 4 data points at a time.
      ** a second loop below copies for the remaining 1 to 3 samples. */
     while(k > 0u)
     {
@@ -553,7 +553,7 @@ arm_status arm_conv_partial_opt_q15(
       k--;
     }
 
-    /* If the count is not a multiple of 4, copy remaining samples here.       
+    /* If the count is not a multiple of 4, copy remaining samples here.
      ** No loop unrolling is used. */
     k = (srcBLen - 1u) % 0x4u;
 
@@ -756,9 +756,9 @@ arm_status arm_conv_partial_opt_q15(
   return (status);
 }
 
-#endif	/*	#ifndef UNALIGNED_SUPPORT_DISABLE	*/
+#endif  /*  #ifndef UNALIGNED_SUPPORT_DISABLE   */
 
 
-/**    
- * @} end of PartialConv group    
+/**
+ * @} end of PartialConv group
  */
