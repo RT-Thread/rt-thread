@@ -2568,7 +2568,7 @@ int sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *os
         return ret;
     }
 #ifdef RT_USING_USERSPACE
-    if ( !lwp_user_accessable((void *)sigset,sizeof(lwp_sigset_t))
+    if (!lwp_user_accessable((void *)sigset,sizeof(lwp_sigset_t))
     || !lwp_user_accessable((void *)oset,sizeof(lwp_sigset_t)))
     {
         rt_set_errno(EFAULT);
@@ -2668,13 +2668,13 @@ int sys_getaddrinfo(const char *nodename,
     lwp_user_strlen(nodename, &a_err);
     lwp_user_strlen(servname, &a_err2);
 
-	if (a_err || a_err2
+    if (a_err || a_err2
     || !lwp_user_accessable((void *)hints ,sizeof(struct musl_addrinfo))
     || !lwp_user_accessable((void *)res, sizeof(struct musl_addrinfo)))
 	{
         rt_set_errno(EFAULT);
         goto exit;
-	}
+    }
 #endif
 
     if (nodename)
@@ -2764,8 +2764,8 @@ int sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
     struct hostent *sal_result = NULL;
     char *sal_buf = NULL;
     char *k_name  = NULL;
+    int a_err = 0;
 
-	int a_err = 0;
     if (!lwp_user_accessable((void *)result, sizeof(struct hostent *))
     || !lwp_user_accessable((void *)ret, sizeof(int))
 	|| !lwp_user_accessable((void *)buf, buflen)
@@ -2778,7 +2778,7 @@ int sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
     }
 
     lwp_user_strlen(name, &a_err);
-	if (a_err)
+    if (a_err)
     {
         *err = EFAULT;
         rt_set_errno(EFAULT);
@@ -2920,7 +2920,7 @@ int sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
     size_t rtt_nbytes = 0;
     struct dirent *rtt_dirp;
 
-    if ( !lwp_user_accessable((void *)dirp, sizeof(struct libc_dirent)))
+    if (!lwp_user_accessable((void *)dirp, sizeof(struct libc_dirent)))
     {
         rt_set_errno(EFAULT);
         return -1;
@@ -2976,7 +2976,7 @@ int sys_set_thread_area(void *p)
 
 int sys_set_tid_address(int *tidptr)
 {
-    if ( !lwp_user_accessable((void *)tidptr, sizeof(int)))
+    if (!lwp_user_accessable((void *)tidptr, sizeof(int)))
     {
         rt_set_errno(EFAULT);
         return -1;
