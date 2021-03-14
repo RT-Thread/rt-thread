@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -104,7 +104,7 @@ no pressed:(0x800,0xfff)
 ------------------------------------
 */
 #define XMIN 0x800
-#define YMAX 0xfff 
+#define YMAX 0xfff
 void read_tp(void *dev, rt_uint16_t *x, rt_uint16_t *y)
 {
     struct rt_spi_device *touch_dev = (struct rt_spi_device *)dev;
