@@ -1113,9 +1113,19 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 struct winsize* p_winsize;
 
                 p_winsize = (struct winsize*)args;
-                rt_enter_critical();
                 rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
-                rt_exit_critical();
+            }
+            break;
+        case TIOCGWINSZ:
+            {
+                struct winsize* p_winsize;
+
+                p_winsize = (struct winsize*)args;
+                /* TODO: get windows size from console */
+                p_winsize->ws_col = 80;
+                p_winsize->ws_row = 24;
+                p_winsize->ws_xpixel = 0;/*unused*/
+                p_winsize->ws_ypixel = 0;/*unused*/
             }
             break;
 #endif /*RT_USING_POSIX_TERMIOS*/

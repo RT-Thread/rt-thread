@@ -24,16 +24,16 @@ void set_cpu_irq_comm(void (*irq_hook)(void))
 
 void cpu_irq_comm_do(void)
 {
-	void (*pfnct)(void);
+    void (*pfnct)(void);
     uint32_t irq_pend = PICPND & irq_mask;
-	for (int i = 0; i < IRQ_TOTAL_NUM; i++) {
+    for (int i = 0; i < IRQ_TOTAL_NUM; i++) {
         if (irq_pend & BIT(i)) {
             pfnct = tbl_irq_vector[i];
             if (pfnct) {
-                pfnct();				/* call ISR */
+                pfnct();                /* call ISR */
             }
         }
-	}
+    }
 }
 
 void rt_hw_irq_enable(int vector)
@@ -56,12 +56,12 @@ void rt_hw_interrupt_init(void)
 
 /**
  * @brief This function will install a interrupt service routine to a interrupt.
- * 
- * @param vector 
- * @param handler 
- * @param param 
- * @param name 
- * @return rt_isr_handler_t 
+ *
+ * @param vector
+ * @param handler
+ * @param param
+ * @param name
+ * @return rt_isr_handler_t
  */
 rt_isr_handler_t rt_hw_interrupt_install(int              vector,
                                          rt_isr_handler_t handler,
