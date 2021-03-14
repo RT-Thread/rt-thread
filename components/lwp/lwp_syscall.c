@@ -69,7 +69,7 @@ extern void lwp_user_entry(void *args, const void *text, void *data, void *user_
 extern void set_user_context(void *stack);
 
 void lwp_cleanup(struct rt_thread *tid);
-
+size_t lwp_user_strlen(const char *s, int *err);
 #ifdef RT_USING_USERSPACE
 static void *kmem_get(size_t size)
 {
@@ -536,8 +536,16 @@ int sys_fstat(int file, struct stat *buf)
     int ret = -1;
     struct stat statbuff;
 
-    ret = fstat(file, &statbuff);
-    lwp_put_to_user(buf, &statbuff, sizeof statbuff);
+    if (!lwp_user_accessable((void *)buf, sizeof(struct stat)))
+    {
+        rt_set_errno(EFAULT);
+        ret = -1;
+    }
+    else
+    {
+        ret = fstat(file, &statbuff);
+        lwp_put_to_user(buf, &statbuff, sizeof statbuff);
+    }
     return ret;
 #else
     return fstat(file, buf);
@@ -782,8 +790,10 @@ int sys_unlink(const char *pathname)
     int ret = -1;
     rt_size_t len = 0;
     char *kname = RT_NULL;
+    int a_err = 0;
 
-    if (!lwp_user_accessable((void *)pathname, 1))
+    lwp_user_strlen(pathname, &a_err);
+    if (a_err)
     {
         rt_set_errno(EFAULT);
         return -1;
@@ -2557,11 +2567,20 @@ int sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *os
         rt_set_errno(EINVAL);
         return ret;
     }
+#ifdef RT_USING_USERSPACE
+    if ( !lwp_user_accessable((void *)sigset,sizeof(lwp_sigset_t))
+    || !lwp_user_accessable((void *)oset,sizeof(lwp_sigset_t)))
+    {
+        rt_set_errno(EFAULT);
+        return ret;
+    }
+#else
     if (!oset && !sigset)
     {
         rt_set_errno(EINVAL);
         return ret;
     }
+#endif
     if (size != sizeof(lwp_sigset_t))
     {
         rt_set_errno(EINVAL);
@@ -2600,7 +2619,21 @@ int sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *os
 
 int32_t sys_waitpid(int32_t pid, int *status, int options)
 {
-    return waitpid(pid, status, options);
+    int ret = -1;
+#ifdef RT_USING_USERSPACE
+    if (!lwp_user_accessable((void *)status, sizeof(int)))
+    {
+        rt_set_errno(EFAULT);
+        ret = -1;
+    }
+    else
+    {
+        ret = waitpid(pid, status, options);
+    }
+#else
+    ret = waitpid(pid, status, options);
+#endif
+    return ret;
 }
 
 #if defined(RT_USING_SAL) && defined(SAL_USING_POSIX)
@@ -2628,6 +2661,21 @@ int sys_getaddrinfo(const char *nodename,
     char *k_nodename = NULL;
     char *k_servname = NULL;
     struct addrinfo *k_hints = NULL;
+
+#ifdef RT_USING_USERSPACE
+    int a_err = 0,a_err2 = 0;
+
+    lwp_user_strlen(nodename, &a_err);
+    lwp_user_strlen(servname, &a_err2);
+
+	if (a_err || a_err2
+    || !lwp_user_accessable((void *)hints ,sizeof(struct musl_addrinfo))
+    || !lwp_user_accessable((void *)res, sizeof(struct musl_addrinfo)))
+	{
+        rt_set_errno(EFAULT);
+        goto exit;
+	}
+#endif
 
     if (nodename)
     {
@@ -2717,18 +2765,23 @@ int sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
     char *sal_buf = NULL;
     char *k_name  = NULL;
 
-    if (result == NULL)
+	int a_err = 0;
+    if (!lwp_user_accessable((void *)result, sizeof(struct hostent *))
+    || !lwp_user_accessable((void *)ret, sizeof(int))
+	|| !lwp_user_accessable((void *)buf, buflen)
+	|| !lwp_user_accessable((void *)err, sizeof(int)))
     {
         /* not all arguments given */
-        *err = EINVAL;
-        rt_set_errno(EINVAL);
+        *err = EFAULT;
+        rt_set_errno(EFAULT);
         goto __exit;
     }
-    if ((name == NULL) || (ret == NULL) || (buf == NULL))
+
+    lwp_user_strlen(name, &a_err);
+	if (a_err)
     {
-        /* not all arguments given */
-        *err = EINVAL;
-        rt_set_errno(EINVAL);
+        *err = EFAULT;
+        rt_set_errno(EFAULT);
         goto __exit;
     }
 
@@ -2804,21 +2857,50 @@ __exit:
 
 char *sys_getcwd(char *buf, size_t size)
 {
+    if (!lwp_user_accessable((void *)buf, size))
+    {
+        rt_set_errno(EFAULT);
+        return RT_NULL;
+    }
     return getcwd(buf, size);
 }
 
 int sys_chdir(const char *path)
 {
+    int err = 0;
+
+    lwp_user_strlen(path, &err);
+    if (err)
+    {
+        rt_set_errno(EFAULT);
+        return -1;
+    }
     return chdir(path);
 }
 
 int sys_mkdir(const char *path, mode_t mode)
 {
+    int err = 0;
+
+    lwp_user_strlen(path, &err);
+    if (err)
+    {
+        rt_set_errno(EFAULT);
+        return -1;
+    }
     return mkdir(path, mode);
 }
 
 int sys_rmdir(const char *path)
 {
+    int err = 0;
+
+    lwp_user_strlen(path, &err);
+    if (err)
+    {
+        rt_set_errno(EFAULT);
+        return -1;
+    }
     return unlink(path);
 }
 
@@ -2837,6 +2919,12 @@ int sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
     size_t cnt = (nbytes / sizeof(struct libc_dirent));
     size_t rtt_nbytes = 0;
     struct dirent *rtt_dirp;
+
+    if ( !lwp_user_accessable((void *)dirp, sizeof(struct libc_dirent)))
+    {
+        rt_set_errno(EFAULT);
+        return -1;
+    }
 
     if (cnt == 0)
     {
@@ -2888,6 +2976,12 @@ int sys_set_thread_area(void *p)
 
 int sys_set_tid_address(int *tidptr)
 {
+    if ( !lwp_user_accessable((void *)tidptr, sizeof(int)))
+    {
+        rt_set_errno(EFAULT);
+        return -1;
+    }
+
     rt_thread_t thread = rt_thread_self();
 
     thread->clear_child_tid = tidptr;
@@ -2896,34 +2990,33 @@ int sys_set_tid_address(int *tidptr)
 
 int sys_access(const char *filename, int mode)
 {
-    int ret = -1;
+    int ret = 0;
 #ifdef RT_USING_USERSPACE
     rt_size_t len = 0;
     char *kname = RT_NULL;
+    int a_err = 0;
 
-    if (!lwp_user_accessable((void *)filename, 1))
+    lwp_user_strlen(filename, &a_err);
+    if (a_err)
     {
         rt_set_errno(EFAULT);
-        return -1;
-    }
-
-    len = rt_strlen(filename);
-    if (!len)
-    {
-        rt_set_errno(EINVAL);
-        return -1;
+        ret = -1;
     }
 
     kname = (char *)kmem_get(len + 1);
-    if (!kname)
+    if (!ret && !kname)
     {
         rt_set_errno(ENOMEM);
-        return -1;
+        ret = -1;
     }
 
-    lwp_get_from_user(kname, (void *)filename, len + 1);
-    ret = access(kname, mode);
-    kmem_put(kname);
+    if (!ret)
+    {
+        lwp_get_from_user(kname, (void *)filename, len + 1);
+        ret = access(kname, mode);
+        kmem_put(kname);
+    }
+
 #else
     ret = access(filename, mode);
 #endif
@@ -3046,7 +3139,26 @@ int sys_dup2(int oldfd, int new);
 
 int sys_rename(const char *oldpath,const char *newpath)
 {
-    return rename(oldpath,newpath);
+    int ret = -1;
+#ifdef RT_USING_USERSPACE
+    int a_err = 0,a_err2 = 0;
+
+    lwp_user_strlen(oldpath, &a_err);
+    lwp_user_strlen(newpath, &a_err2);
+
+    if (a_err || a_err2)
+    {
+        rt_set_errno(EFAULT);
+        ret = -1;
+    }
+    else
+    {
+        ret = rename(oldpath,newpath);
+    }
+#else
+    ret = rename(oldpath,newpath);
+#endif
+    return (ret >= 0)? 0: ret;
 }
 
 const static void* func_table[] =
