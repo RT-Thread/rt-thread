@@ -64,7 +64,7 @@ void OSTick_Handler( void )
 {
     uint32_t diff;
 
-	/* enter interrupt */
+    /* enter interrupt */
     rt_interrupt_enter();
     diff = _tick_distance();
 
@@ -92,7 +92,7 @@ static void _wakeup_tick_adjust(void)
 
     if (rt_thread_self() != RT_NULL)
     {
-    	struct rt_thread *thread;
+        struct rt_thread *thread;
 
         /* check time slice */
         thread = rt_thread_self();
