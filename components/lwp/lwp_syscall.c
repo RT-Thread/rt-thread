@@ -1572,6 +1572,11 @@ fail:
 size_t lwp_user_strlen(const char *s, int *err)
 {
     size_t len = 0;
+    if (!s)
+    {
+        *err = 1
+        return 0;
+    }
 
     while (1)
     {
