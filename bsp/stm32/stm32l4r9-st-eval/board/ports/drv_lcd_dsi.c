@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -706,17 +706,17 @@ void line()
     lcd = (struct drv_lcd_dsi_device *)rt_device_find("lcd_dsi");
     rt_uint8_t *ptr = lcd->lcd_info.framebuffer;
 
-		/* red */
-		for (unsigned long long i = LCD_DSI_BUF_SIZE/4/2; i <LCD_DSI_BUF_SIZE/4/2+390; i++)
-		{
-				ptr[4 * i] = 0x00;
-				ptr[4 * i + 1] = 0x00;
-				ptr[4 * i + 2] = 0xFF;
-				ptr[4 * i + 3] = 0xFF;
-		}
-		rt_device_control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
+        /* red */
+        for (unsigned long long i = LCD_DSI_BUF_SIZE/4/2; i <LCD_DSI_BUF_SIZE/4/2+390; i++)
+        {
+                ptr[4 * i] = 0x00;
+                ptr[4 * i + 1] = 0x00;
+                ptr[4 * i + 2] = 0xFF;
+                ptr[4 * i + 3] = 0xFF;
+        }
+        rt_device_control(&lcd->parent, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
 
-	
+
 }
 MSH_CMD_EXPORT(line, line);
 

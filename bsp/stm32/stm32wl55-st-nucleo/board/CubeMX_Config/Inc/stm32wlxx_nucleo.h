@@ -28,7 +28,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wlxx_nucleo_errno.h"
 #include "stm32wlxx_nucleo_conf.h"
-   
+
 #if (USE_BSP_COM_FEATURE > 0)
   #if (USE_COM_LOG > 0)
     #ifndef __GNUC__
@@ -36,7 +36,7 @@
     #endif
   #endif
 #endif
-   
+
 /** @addtogroup BSP
   * @{
   */
@@ -52,7 +52,7 @@
 /** @defgroup STM32WLXX_NUCLEO_LOW_LEVEL_Exported_Types LOW LEVEL Exported Types
   * @{
   */
-typedef enum 
+typedef enum
 {
   LED1 = 0,
   LED2 = 1,
@@ -63,15 +63,15 @@ typedef enum
   LED_RED    = LED3
 }Led_TypeDef;
 
-typedef enum 
-{  
+typedef enum
+{
   BUTTON_SW1 = 0,
   BUTTON_SW2 = 1,
   BUTTON_SW3 = 2,
 }Button_TypeDef;
 
-typedef enum 
-{  
+typedef enum
+{
   BUTTON_MODE_GPIO = 0,
   BUTTON_MODE_EXTI = 1
 }ButtonMode_TypeDef;
@@ -129,18 +129,18 @@ typedef struct
 #endif /* (USE_HAL_UART_REGISTER_CALLBACKS == 1) */
 #endif /* (USE_BSP_COM_FEATURE > 0) */
 
-typedef enum 
+typedef enum
 {
   ABSENT  = 0,
   PRESENT = 1,
 }Presence_TypeDef;
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup STM32WLXX_NUCLEO_LOW_LEVEL_Exported_Constants LOW LEVEL Exported Constants
   * @{
-  */ 
+  */
 
 /**
   * @brief STM32WLXX NUCLEO BSP Driver version number
@@ -148,15 +148,15 @@ typedef enum
 #define __STM32WLXX_NUCLEO_BSP_VERSION_MAIN   (0x00U) /*!< [31:24] main version */
 #define __STM32WLXX_NUCLEO_BSP_VERSION_SUB1   (0x03U) /*!< [23:16] sub1 version */
 #define __STM32WLXX_NUCLEO_BSP_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
-#define __STM32WLXX_NUCLEO_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */ 
+#define __STM32WLXX_NUCLEO_BSP_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32WLXX_NUCLEO_BSP_VERSION        ((__STM32WLXX_NUCLEO_BSP_VERSION_MAIN << 24)\
                                               |(__STM32WLXX_NUCLEO_BSP_VERSION_SUB1 << 16)\
                                               |(__STM32WLXX_NUCLEO_BSP_VERSION_SUB2 << 8 )\
                                               |(__STM32WLXX_NUCLEO_BSP_VERSION_RC))
 
-/** 
-  * @brief Define for STM32WLXX_NUCLEO board  
-  */ 
+/**
+  * @brief Define for STM32WLXX_NUCLEO board
+  */
 #if !defined (USE_STM32WLXX_NUCLEO)
  #define USE_STM32WLXX_NUCLEO
 #endif
@@ -185,11 +185,11 @@ typedef enum
 #define LEDx_GPIO_CLK_DISABLE(__INDEX__)        __HAL_RCC_GPIOB_CLK_ENABLE() /* All Led on same port */
 /**
   * @}
-  */ 
-  
+  */
+
 /** @defgroup STM32WLXX_NUCLEO_LOW_LEVEL_BUTTON LOW LEVEL BUTTON Constants
   * @{
-  */  
+  */
 #define BUTTONn                                 3
 
 /**
@@ -239,11 +239,11 @@ typedef enum
 /**
   * @}
   */
-  
+
 #if (USE_BSP_COM_FEATURE > 0)
 /** @defgroup STM32WLXX_NUCLEO_LOW_LEVEL_COM LOW LEVEL COM Port Constants
   * @{
-  */  
+  */
 #define COM1_UART                             LPUART1
 #define COM1_CLK_ENABLE()                     __HAL_RCC_LPUART1_CLK_ENABLE()
 #define COM1_CLK_DISABLE()                    __HAL_RCC_LPUART1_CLK_DISABLE()
@@ -315,7 +315,7 @@ void             BSP_PB_IRQHandler(Button_TypeDef Button);
 #if (USE_BSP_COM_FEATURE > 0)
 /** @defgroup STM32WLXX_NUCLEO_LOW_LEVEL_COM_Functions LOW LEVEL COM Port Functions
   * @{
-  */  
+  */
 int32_t  BSP_COM_Init(COM_TypeDef COM, COM_InitTypeDef *COM_Init);
 int32_t  BSP_COM_DeInit(COM_TypeDef COM);
 #if (USE_COM_LOG > 0)
