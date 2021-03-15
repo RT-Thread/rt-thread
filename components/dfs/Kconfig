@@ -115,7 +115,7 @@ if RT_USING_DFS
             int "Maximum sector size to be handled."
             default 512
             help
-                if you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
+                If you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
 
         config RT_DFS_ELM_USE_ERASE
             bool "Enable sector erase feature"
