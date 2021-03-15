@@ -348,6 +348,7 @@
                     <state>$PROJ_DIR$\..\..\Device\Nuvoton\M2354\Include</state>
                     <state>$PROJ_DIR$\..\..\CMSIS\Include</state>
                     <state>$PROJ_DIR$\..\inc</state>
+                    <state>$PROJ_DIR$</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1385,6 +1386,7 @@
                     <state>$PROJ_DIR$\..\..\Device\Nuvoton\M2354\Include</state>
                     <state>$PROJ_DIR$\..\..\CMSIS\Include</state>
                     <state>$PROJ_DIR$\..\inc</state>
+                    <state>$PROJ_DIR$</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>

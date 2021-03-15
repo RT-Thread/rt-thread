@@ -220,7 +220,8 @@ static rt_err_t nu_i2s_dai_setup(nu_i2s_t psNuI2s, struct rt_audio_configure *pc
         }
 
         /* Set MCLK and enable MCLK */
-        I2S_EnableMCLK(psNuI2s->i2s_base, __HXT);
+        /* The target MCLK is related to audio codec setting. */
+        I2S_EnableMCLK(psNuI2s->i2s_base, 12000000);
 
         /* Set unmute */
         if (pNuACodecOps->nu_acodec_mixer_control)

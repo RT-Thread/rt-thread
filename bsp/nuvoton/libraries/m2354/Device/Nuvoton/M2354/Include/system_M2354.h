@@ -49,11 +49,21 @@ extern "C" {
 /*----------------------------------------------------------------------------
   Define SYSCLK
  *----------------------------------------------------------------------------*/
+#ifndef __HXT
 #define __HXT       (12000000UL)    /*!< External Crystal Clock Frequency     */
+#endif
+
 #define __LIRC      (32000UL)       /*!< Internal 32K RC Oscillator Frequency */
 #define __HIRC      (12000000UL)    /*!< Internal 12M RC Oscillator Frequency */
+
+#ifndef __LXT
 #define __LXT       (32768UL)       /*!< External Crystal Clock Frequency 32.768KHz */
+#endif
+
+#ifndef __HSI
 #define __HSI       (48000000UL)    /*!< PLL Output Clock Frequency */
+#endif
+
 #define __HIRC48    (48000000UL)    /*!< Internal 48M RC Oscillator Frequency */
 #define __LIRC32    (32000UL)       /*!< Internal 32K RC Oscillator Frequency */
 #define __MIRC      (4000000UL)     /*!< Internal 4M RC Oscillator Frequency */
@@ -93,7 +103,7 @@ extern uint32_t __PC(void);         /*!< Return the current program counter valu
  */
 #define ASSERT_PARAM(expr)  { if (!(expr)) { AssertError((uint8_t*)__FILE__, __LINE__); } }
 
-void AssertError(uint8_t* file, uint32_t line);
+void AssertError(uint8_t *file, uint32_t line);
 #else
 #define ASSERT_PARAM(expr)
 #endif

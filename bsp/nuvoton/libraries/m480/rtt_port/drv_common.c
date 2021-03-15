@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 #include <rtthread.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include "drv_uart.h"
 #include "board.h"
 #include "nutool_pincfg.h"
@@ -20,9 +20,9 @@
 
 
 /**
- * This function will initial M487 board.
+ * This function will initial.
  */
-void rt_hw_board_init(void)
+RT_WEAK void rt_hw_board_init(void)
 {
     /* Init System/modules clock */
     nutool_modclkcfg_init();
@@ -68,6 +68,41 @@ void rt_hw_board_init(void)
 }
 
 /**
+ * The time delay function.
+ *
+ * @param microseconds.
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+    while (1)
+    {
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/**
  * This is the timer interrupt service routine.
  *
  */
@@ -89,7 +124,7 @@ void rt_hw_cpu_reset(void)
     SYS->IPRST0 |= SYS_IPRST0_CHIPRST_Msk;
 }
 
-int reboot(int argc, char** argv)
+int reboot(int argc, char **argv)
 {
     rt_hw_cpu_reset();
     return 0;

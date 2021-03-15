@@ -24,7 +24,7 @@
 #include <rtdevice.h>
 #include <rtdef.h>
 
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <nu_bitutil.h>
 
 #if defined(BSP_USING_USPI_PDMA)

@@ -14,7 +14,7 @@
 #if defined(BSP_USING_ECAP)
 #if ((BSP_USING_ECAP0_CHMSK+BSP_USING_ECAP1_CHMSK)!=0)
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #define ECAP_CH0_POS    (0)
 #define ECAP_CH1_POS    (1)

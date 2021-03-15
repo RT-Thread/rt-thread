@@ -14,7 +14,7 @@
 #define __DRV_SLCD_H__
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 struct nu_slcd_pixel
 {

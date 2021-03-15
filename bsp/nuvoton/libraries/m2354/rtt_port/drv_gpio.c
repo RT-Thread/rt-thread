@@ -16,7 +16,7 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <nu_bitutil.h>
 #include <drv_gpio.h>
 #include <stdlib.h>
