@@ -16,6 +16,7 @@
  * 2012-12-08     Bernard      <clock_time.c> fix the issue of _timevalue.tv_usec initialization,
  *                             which found by Rob <rdent@iinet.net.au>
  * 2021-02-12     Meco Man     move all of the functions located in <clock_time.c> to this file
+ * 2021-03-15     Meco Man     fixed bug: https://club.rt-thread.org/ask/question/423650.html
  */
 
 #include <sys/time.h>
@@ -152,13 +153,14 @@ char* asctime_r(const struct tm *t, char *buf)
     num2str(buf + 20, (t->tm_year + 1900) / 100);
     num2str(buf + 22, (t->tm_year + 1900) % 100);
     buf[24] = '\n';
+    buf[25] = '\0';
     return buf;
 }
 RTM_EXPORT(asctime_r);
 
 char* asctime(const struct tm *timeptr)
 {
-    static char buf[25];
+    static char buf[26];
     return asctime_r(timeptr, buf);
 }
 RTM_EXPORT(asctime);
