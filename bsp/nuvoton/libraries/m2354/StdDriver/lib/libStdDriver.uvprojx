@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\inc;..\..\CMSIS\Include;..\..\Device\Nuvoton\M2354\Include</IncludePath>
+              <IncludePath>..\inc;..\..\CMSIS\Include;..\..\Device\Nuvoton\M2354\Include;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

@@ -16,7 +16,7 @@
 
 #include <rtdevice.h>
 #include <string.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_pdma.h>
 #include <drv_sys.h>
 

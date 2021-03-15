@@ -9,6 +9,7 @@
 #ifndef __NUMICRO_H__
 #define __NUMICRO_H__
 
+#include "nutool_clkcfg.h"
 #include "M2354.h"
 
 #endif  /* __NUMICRO_H__ */
