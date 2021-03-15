@@ -516,13 +516,6 @@ int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
             fd->fptr = fptr;
             return elm_result_to_dfs(result);
         }
-    case F_GETLK:
-        /* dummy implementation */
-        return 0;
-    case F_SETLK:
-        /* dummy implementation */
-        return 0;
-
     }
     return -ENOSYS;
 }
