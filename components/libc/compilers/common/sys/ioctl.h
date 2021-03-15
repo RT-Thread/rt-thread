@@ -10,6 +10,10 @@
 #ifndef _SYS_IOCTL_H
 #define _SYS_IOCTL_H
 
+#include <rtconfig.h>
 
+#ifdef RT_USING_DFS
+#include <dfs_posix.h> /*for ioctl()*/
+#endif
 
 #endif
