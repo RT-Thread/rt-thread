@@ -14,7 +14,7 @@
 #define __DRV_FMC_H__
 
 #include <rtthread.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 int nu_fmc_read(long offset, uint8_t *buf, size_t size);
 int nu_fmc_write(long offset, const uint8_t *buf, size_t size);

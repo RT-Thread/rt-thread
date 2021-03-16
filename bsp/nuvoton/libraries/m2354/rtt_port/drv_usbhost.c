@@ -15,7 +15,7 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #include "usb.h"
 #include "usbh_lib.h"

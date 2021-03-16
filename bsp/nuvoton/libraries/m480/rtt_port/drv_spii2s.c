@@ -282,7 +282,8 @@ static rt_err_t nu_spii2s_dai_setup(nu_i2s_t psNuSPII2s, struct rt_audio_configu
         LOG_I("Open SPII2S.");
 
         /* Set MCLK and enable MCLK */
-        SPII2S_EnableMCLK(spii2s_base, __HXT);
+        /* The target MCLK is related to audio codec setting. */
+        SPII2S_EnableMCLK(spii2s_base, 12000000);
 
         /* Set un-mute */
         if (pNuACodecOps->nu_acodec_mixer_control)
