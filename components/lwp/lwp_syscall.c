@@ -1598,12 +1598,195 @@ void lwp_user_obj_free(struct rt_lwp *lwp);
         lwp_new->member = tmp;\
     } while (0)
 
+struct lwp_args_info
+{
+    char **argv;
+    char **envp;
+    int argc;
+    int envc;
+    int size;
+};
+
+static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *args)
+{
+    void *page = NULL;
+    int err = 0;
+    char **nargv;
+    char **nenvp;
+    char *p;
+    int i, len;
+    int nsize;
+
+    if (new_argc == 0)
+    {
+        goto quit;
+    }
+    page = rt_pages_alloc(0); /* 1 page */
+    if (!page)
+    {
+        goto quit;
+    }
+
+    nsize = new_argc * sizeof(char *);
+    for (i = 0; i < new_argc; i++)
+    {
+        nsize += rt_strlen(new_argv[i]) + 1;
+    }
+    if (nsize + args->size > ARCH_PAGE_SIZE)
+    {
+        err = 1;
+        goto quit;
+    }
+    nargv = (char **)page;
+    nenvp = nargv + args->argc + new_argc + 1;
+    p = (char *)(nenvp + args->envc + 1);
+    /* insert argv */
+    for (i = 0; i < new_argc; i++)
+    {
+        nargv[i] = p;
+        len = rt_strlen(new_argv[i]) + 1;
+        rt_memcpy(p, new_argv[i], len);
+        p += len;
+    }
+    /* copy argv */
+    nargv += new_argc;
+    for (i = 0; i < args->argc; i++)
+    {
+        nargv[i] = p;
+        len = rt_strlen(args->argv[i]) + 1;
+        rt_memcpy(p, args->argv[i], len);
+        p += len;
+    }
+    nargv[i] = NULL;
+    /* copy envp */
+    for (i = 0; i < args->envc; i++)
+    {
+        nenvp[i] = p;
+        len = rt_strlen(args->envp[i]) + 1;
+        rt_memcpy(p, args->envp[i], len);
+        p += len;
+    }
+    nenvp[i] = NULL;
+
+    /* update args */
+    args->argv = (char **)page;
+    args->argc = args->argc + new_argc;
+    args->envp = args->argv + args->argc + 1;
+    /* args->envc no change */
+    args->size = args->size + nsize;
+
+quit:
+    if (err && page)
+    {
+        rt_pages_free(page, 0);
+        page = NULL;
+    }
+    return page;
+}
+
+#define INTERP_BUF_SIZE 128
+static char *_load_script(const char *filename, struct lwp_args_info *args)
+{
+    void *page = NULL;
+    char *new_page;
+    int fd = -1;
+    int len;
+    char interp[INTERP_BUF_SIZE];
+    char *cp;
+    char *i_name;
+    char *i_arg;
+
+    fd = open(filename, O_BINARY | O_RDONLY, 0);
+    if (fd < 0)
+    {
+        goto quit;
+    }
+    len = read(fd, interp, INTERP_BUF_SIZE);
+    if (len < 2)
+    {
+        goto quit;
+    }
+
+    if ((interp[0] != '#') || (interp[1] != '!'))
+    {
+        goto quit;
+    }
+
+    if (len == INTERP_BUF_SIZE)
+    {
+        len--;
+    }
+    interp[len] = '\0';
+
+    if ((cp = strchr(interp, '\n')) == NULL)
+    {
+        cp = interp + INTERP_BUF_SIZE - 1;
+    }
+    *cp = '\0';
+    while (cp > interp)
+    {
+        cp--;
+        if ((*cp == ' ') || (*cp == '\t'))
+        {
+            *cp = '\0';
+        }
+        else
+        {
+            break;
+        }
+    }
+    for (cp = interp + 2; (*cp == ' ') || (*cp == '\t'); cp++)
+    {
+        /* nothing */
+    }
+    if (*cp == '\0')
+    {
+        goto quit; /* No interpreter name found */
+    }
+    i_name = cp;
+    i_arg = NULL;
+    for (; *cp && (*cp != ' ') && (*cp != '\t'); cp++)
+    {
+        /* nothing */
+    }
+    while ((*cp == ' ') || (*cp == '\t'))
+    {
+        *cp++ = '\0';
+    }
+    if (*cp)
+    {
+        i_arg = cp;
+    }
+
+    if (i_arg)
+    {
+        new_page = _insert_args(1, &i_arg, args);
+        rt_pages_free(page, 0);
+        page = new_page;
+        if (!page)
+        {
+            goto quit;
+        }
+    }
+    new_page = _insert_args(1, &i_name, args);
+    rt_pages_free(page, 0);
+    page = new_page;
+
+quit:
+    if (fd >= 0)
+    {
+        close(fd);
+    }
+    return page;
+}
+
 int sys_execve(const char *path, char *const argv[], char *const envp[])
 {
     int ret = -1;
     int argc = 0;
     int envc = 0;
     void *page = NULL;
+    void *new_page;
     int size = 0;
     size_t len;
     int access_err;
@@ -1617,6 +1800,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     rt_thread_t thread;
     struct process_aux *aux;
     int i;
+    struct lwp_args_info args_info;
 
     lwp = lwp_self();
     thread = rt_thread_self();
@@ -1643,6 +1827,8 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         rt_set_errno(EFAULT);
         goto quit;
     }
+
+    size += sizeof(char *);
     if (argv)
     {
         while (1)
@@ -1652,7 +1838,6 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
                 rt_set_errno(EFAULT);
                 goto quit;
             }
-            size += sizeof(char *);
             if (!argv[argc])
             {
                 break;
@@ -1663,11 +1848,11 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
                 rt_set_errno(EFAULT);
                 goto quit;
             }
-            size += len + 1;
+            size += sizeof(char *) + len + 1;
             argc++;
         }
-        size += sizeof(char *);
     }
+    size += sizeof(char *);
     if (envp)
     {
         while (1)
@@ -1677,7 +1862,6 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
                 rt_set_errno(EFAULT);
                 goto quit;
             }
-            size += sizeof(char *);
             if (!envp[envc])
             {
                 break;
@@ -1688,10 +1872,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
                 rt_set_errno(EFAULT);
                 goto quit;
             }
-            size += len + 1;
+            size += sizeof(char *) + len + 1;
             envc++;
         }
-        size += sizeof(char *);
     }
     if (size > ARCH_PAGE_SIZE)
     {
@@ -1713,13 +1896,10 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     {
         for (i = 0; i < argc; i++)
         {
-            if (argv[i])
-            {
-                kargv[i] = p;
-                len = rt_strlen(argv[i]) + 1;
-                rt_memcpy(p, argv[i], len);
-                p += len;
-            }
+            kargv[i] = p;
+            len = rt_strlen(argv[i]) + 1;
+            rt_memcpy(p, argv[i], len);
+            p += len;
         }
         kargv[i] = NULL;
     }
@@ -1728,13 +1908,10 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     {
         for (i = 0; i < envc; i++)
         {
-            if (envp[i])
-            {
-                kenvp[i] = p;
-                len = rt_strlen(envp[i]) + 1;
-                rt_memcpy(p, envp[i], len);
-                p += len;
-            }
+            kenvp[i] = p;
+            len = rt_strlen(envp[i]) + 1;
+            rt_memcpy(p, envp[i], len);
+            p += len;
         }
         kenvp[i] = NULL;
     }
@@ -1754,24 +1931,39 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         rt_set_errno(ENOMEM);
         goto quit;
     }
-    if ((aux = lwp_argscopy(new_lwp, argc, kargv, kenvp)) == NULL)
+    /* file is a script ? */
+    args_info.argc = argc;
+    args_info.argv = kargv;
+    args_info.envc = envc;
+    args_info.envp = kenvp;
+    args_info.size = size;
+    do
+    {
+        new_page = _load_script(args_info.argv[0], &args_info);
+        if (new_page)
+        {
+            rt_pages_free(page, 0);
+            page = new_page;
+        }
+    } while (new_page);
+
+    /* now load elf */
+    if ((aux = lwp_argscopy(new_lwp, args_info.argc, args_info.argv, args_info.envp)) == NULL)
     {
         rt_set_errno(ENOMEM);
         goto quit;
     }
-    rt_pages_free(page, 0);
-    page = NULL;
-
-    ret = lwp_load(path, new_lwp, RT_NULL, 0, aux);
+    ret = lwp_load(args_info.argv[0], new_lwp, RT_NULL, 0, aux);
     if (ret == RT_EOK)
     {
         int off = 0;
         int last_backslash = 0;
+        char *run_name = args_info.argv[0];
 
         /* find last \ or / */
         while (1)
         {
-            char c = path[off++];
+            char c = run_name[off++];
 
             if (c == '\0')
             {
@@ -1786,7 +1978,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         /* load ok, now set thread name and swap the data of lwp and new_lwp */
         level = rt_hw_interrupt_disable();
 
-        rt_strncpy(thread->name, path + last_backslash, RT_NAME_MAX);
+        rt_strncpy(thread->name, run_name + last_backslash, RT_NAME_MAX);
+
+        rt_pages_free(page, 0);
 
 #ifdef RT_USING_USERSPACE
         _swap_lwp_data(lwp, new_lwp, rt_mmu_info, mmu_info);
