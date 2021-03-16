@@ -230,4 +230,13 @@ struct process_aux
     struct process_aux_item item[AUX_ARRAY_ITEMS_NR];
 };
 
+struct lwp_args_info
+{
+    char **argv;
+    char **envp;
+    int argc;
+    int envc;
+    int size;
+};
+
 #endif

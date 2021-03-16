@@ -1598,15 +1598,6 @@ void lwp_user_obj_free(struct rt_lwp *lwp);
         lwp_new->member = tmp;\
     } while (0)
 
-struct lwp_args_info
-{
-    char **argv;
-    char **envp;
-    int argc;
-    int envc;
-    int size;
-};
-
 static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *args)
 {
     void *page = NULL;
