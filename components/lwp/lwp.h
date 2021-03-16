@@ -125,6 +125,8 @@ void lwp_tid_put(int tid);
 rt_thread_t lwp_tid_get_thread(int tid);
 void lwp_tid_set_thread(int tid, rt_thread_t thread);
 
+size_t lwp_user_strlen(const char *s, int *err);
+
 #ifdef RT_USING_USERSPACE
 void lwp_mmu_switch(struct rt_thread *thread);
 #endif
