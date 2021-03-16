@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  */
-/* @(#)rpc.h	2.3 88/08/10 4.0 RPCSRC; from 1.9 88/02/08 SMI */
+/* @(#)rpc.h    2.3 88/08/10 4.0 RPCSRC; from 1.9 88/02/08 SMI */
 /*
  * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
  * unrestricted use provided that this legend is included on all tape
@@ -46,17 +46,17 @@
 #ifndef _RPC_RPC_H
 #define _RPC_RPC_H 1
 
-#include <rpc/types.h>		/* some typedefs */
+#include <rpc/types.h>      /* some typedefs */
 
 /* external data representation interfaces */
-#include <rpc/xdr.h>		/* generic (de)serializer */
+#include <rpc/xdr.h>        /* generic (de)serializer */
 
 #include <rpc/auth.h>
 
 /* Client side (mostly) remote procedure call */
-#include <rpc/clnt.h>		/* generic rpc stuff */
+#include <rpc/clnt.h>       /* generic rpc stuff */
 
 /* semi-private protocol headers */
-#include <rpc/rpc_msg.h>	/* protocol for rpc messages */
+#include <rpc/rpc_msg.h>    /* protocol for rpc messages */
 
 #endif
