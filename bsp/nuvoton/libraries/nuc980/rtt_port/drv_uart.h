@@ -16,5 +16,6 @@
 #include <rtdevice.h>
 
 rt_err_t rt_hw_uart_init(void);
+void nu_uart_set_rs485aud(struct rt_serial_device *serial, rt_bool_t bRTSActiveLowLevel);
 
 #endif /* __DRV_UART_H__ */

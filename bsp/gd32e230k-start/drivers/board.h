@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 #include <gd32e230.h>
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
-//	<i>Default: 64
+//  <i>Default: 64
 #ifdef __ICCARM__
 // Use *.icf ram symbal, to avoid hardcode.
 extern char __ICFEDIT_region_RAM_end__;

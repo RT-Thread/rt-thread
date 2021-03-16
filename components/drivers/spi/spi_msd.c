@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -435,7 +435,7 @@ static rt_err_t _write_block(struct rt_spi_device *device, const void *buffer, u
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops msd_ops = 
+const static struct rt_device_ops msd_ops =
 {
     rt_msd_init,
     rt_msd_open,
@@ -445,7 +445,7 @@ const static struct rt_device_ops msd_ops =
     rt_msd_control
 };
 
-const static struct rt_device_ops msd_sdhc_ops = 
+const static struct rt_device_ops msd_sdhc_ops =
 {
     rt_msd_init,
     rt_msd_open,

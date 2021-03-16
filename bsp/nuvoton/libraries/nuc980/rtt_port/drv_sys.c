@@ -348,4 +348,22 @@ int nu_clocks(int argc, char **argv)
 MSH_CMD_EXPORT(nu_clocks, Get all system clocks);
 #endif
 
+#ifdef RT_USING_INTERRUPT_INFO
+int list_interrupt(int argc, char **argv)
+{
+    int i;
+
+    for (i = 1; i <= SYS_MAX_INT_SOURCE; i++)
+    {
+        if (irq_desc[i].handler != rt_hw_interrupt_dummy_handler)
+        {
+            rt_kprintf("[%d] %s: %d\n", i, irq_desc[i].name, irq_desc[i].counter);
+        }
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT(list_interrupt, list registered interrupts);
+#endif
+
 #endif

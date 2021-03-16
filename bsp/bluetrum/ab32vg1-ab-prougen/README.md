@@ -68,6 +68,8 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 
 本 BSP 为开发者提供 GCC 开发环境。下面介绍如何将系统运行起来。
 
+教学视频：https://www.bilibili.com/video/BV1RV411v75P/
+
 #### 硬件连接
 
 使用数据线连接开发板到 PC，打开电源开关。
@@ -94,12 +96,11 @@ msh >
 此 BSP 默认只开启了 GPIO 和 串口0 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
-
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
 3. 输入`pkgs --update`命令更新软件包。
-
 4. 输入`scons` 命令重新编译工程。
+
+更多细节请参见使用指南：https://ab32vg1-example.readthedocs.io/zh/latest/introduction.html
 
 ## 注意事项
 

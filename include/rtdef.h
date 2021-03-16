@@ -1044,6 +1044,10 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_GET_INFO         3
 #define RTGRAPHIC_CTRL_SET_MODE         4
 #define RTGRAPHIC_CTRL_GET_EXT          5
+#define RTGRAPHIC_CTRL_SET_BRIGHTNESS   6
+#define RTGRAPHIC_CTRL_GET_BRIGHTNESS   7
+#define RTGRAPHIC_CTRL_GET_MODE         8
+#define RTGRAPHIC_CTRL_GET_STATUS       9
 
 /* graphic deice */
 enum
@@ -1060,9 +1064,7 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
     RTGRAPHIC_PIXEL_FORMAT_ARGB888,
     RTGRAPHIC_PIXEL_FORMAT_ABGR888,
-    RTGRAPHIC_PIXEL_FORMAT_ARGB565,
-    RTGRAPHIC_PIXEL_FORMAT_ALPHA,
-    RTGRAPHIC_PIXEL_FORMAT_COLOR,
+    RTGRAPHIC_PIXEL_FORMAT_RESERVED,
 };
 
 /**
@@ -1077,7 +1079,7 @@ struct rt_device_graphic_info
 {
     rt_uint8_t  pixel_format;                           /**< graphic format */
     rt_uint8_t  bits_per_pixel;                         /**< bits per pixel */
-    rt_uint16_t reserved;                               /**< reserved field */
+    rt_uint16_t pitch;                                  /**< bytes per line */
 
     rt_uint16_t width;                                  /**< width of graphic device */
     rt_uint16_t height;                                 /**< height of graphic device */

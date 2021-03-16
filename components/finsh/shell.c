@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -844,7 +844,7 @@ int finsh_system_init(void)
     finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #elif defined(_MSC_VER)
     unsigned int *ptr_begin, *ptr_end;
-		
+
     if(shell)
     {
         rt_kprintf("finsh shell already init.\n");

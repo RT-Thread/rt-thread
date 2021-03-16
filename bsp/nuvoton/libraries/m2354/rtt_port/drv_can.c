@@ -16,7 +16,7 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private Define ---------------------------------------------------------------*/
 #define RX_MSG_ID_INDEX        16
