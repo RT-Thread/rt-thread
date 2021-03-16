@@ -14,7 +14,7 @@
 #define __DRV_I2S_H__
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_pdma.h>
 
 #if !defined(NU_I2S_DMA_FIFO_SIZE)

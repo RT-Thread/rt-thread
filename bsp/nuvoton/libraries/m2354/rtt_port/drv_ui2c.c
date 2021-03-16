@@ -15,7 +15,7 @@
 #if (defined(BSP_USING_UI2C) && defined(RT_USING_I2C))
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private define ---------------------------------------------------------------*/
 #define LOG_TAG          "drv.ui2c"

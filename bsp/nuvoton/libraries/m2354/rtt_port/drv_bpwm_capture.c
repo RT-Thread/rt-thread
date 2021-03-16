@@ -14,7 +14,7 @@
 #if defined(BSP_USING_BPWM_CAPTURE)
 #if ((BSP_USING_BPWM0_CAPTURE_CHMSK+BSP_USING_BPWM1_CAPTURE_CHMSK)!=0)
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private typedef --------------------------------------------------------------*/
 typedef struct _bpwm_dev
