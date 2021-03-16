@@ -15,7 +15,7 @@
 #if defined( BSP_USING_I2C)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_i2c.h>
 #include <drv_sys.h>
 

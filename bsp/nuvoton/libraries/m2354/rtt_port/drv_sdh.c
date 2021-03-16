@@ -15,7 +15,7 @@
 #if defined(BSP_USING_SDH)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_pdma.h>
 #include <string.h>
 

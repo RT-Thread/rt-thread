@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -427,14 +427,14 @@ struct usb_os_proerty
 };
 typedef struct usb_os_proerty * usb_os_proerty_t;
 
-// Value	Description
-//  1	    A NULL-terminated Unicode String (REG_SZ)
-//  2	    A NULL-terminated Unicode String that includes environment variables (REG_EXPAND_SZ)
-//  3	    Free-form binary (REG_BINARY)
-//  4	    A little-endian 32-bit integer (REG_DWORD_LITTLE_ENDIAN)
-//  5	    A big-endian 32-bit integer (REG_DWORD_BIG_ENDIAN)
-//  6	    A NULL-terminated Unicode string that contains a symbolic link (REG_LINK)
-//  7	    Multiple NULL-terminated Unicode strings (REG_MULTI_SZ)
+// Value    Description
+//  1       A NULL-terminated Unicode String (REG_SZ)
+//  2       A NULL-terminated Unicode String that includes environment variables (REG_EXPAND_SZ)
+//  3       Free-form binary (REG_BINARY)
+//  4       A little-endian 32-bit integer (REG_DWORD_LITTLE_ENDIAN)
+//  5       A big-endian 32-bit integer (REG_DWORD_BIG_ENDIAN)
+//  6       A NULL-terminated Unicode string that contains a symbolic link (REG_LINK)
+//  7       Multiple NULL-terminated Unicode strings (REG_MULTI_SZ)
 #define USB_OS_PROPERTY_TYPE_REG_SZ                      0x01UL
 #define USB_OS_PROPERTY_TYPE_REG_EXPAND_SZ               0x02UL
 #define USB_OS_PROPERTY_TYPE_REG_BINARY                  0x03UL

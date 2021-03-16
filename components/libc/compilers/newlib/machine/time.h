@@ -9,4 +9,4 @@
 int nanosleep (const struct timespec *, struct timespec *);
 #endif
 
-#endif	/* _MACHTIME_H_ */
+#endif  /* _MACHTIME_H_ */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -24,17 +24,17 @@
  */
 void rt_serial_init(void)
 {
-    outb(COM1+3,0x80);	/* set DLAB of line control reg */
-    outb(COM1,0x0c);	/* LS of divisor (48 -> 2400 bps */
-    outb(COM1+1,0x00);	/* MS of divisor */
-    outb(COM1+3,0x03);	/* reset DLAB */
-    outb(COM1+4,0x0b);	/* set DTR,RTS, OUT_2 */
-    outb(COM1+1,0x0d);	/* enable all intrs but writes */
-    inb(COM1);			/* read data port to reset things (?) */
+    outb(COM1+3,0x80);  /* set DLAB of line control reg */
+    outb(COM1,0x0c);    /* LS of divisor (48 -> 2400 bps */
+    outb(COM1+1,0x00);  /* MS of divisor */
+    outb(COM1+3,0x03);  /* reset DLAB */
+    outb(COM1+4,0x0b);  /* set DTR,RTS, OUT_2 */
+    outb(COM1+1,0x0d);  /* enable all intrs but writes */
+    inb(COM1);          /* read data port to reset things (?) */
 }
 
 /**
- * This function read a character from serial without interrupt enable mode 
+ * This function read a character from serial without interrupt enable mode
  *
  * @return the read char
  */
@@ -53,13 +53,13 @@ char rt_serial_getc(void)
 void rt_serial_putc(const char c)
 {
     int val;
-    
+
     while(1)
     {
-           if ((val = inb(COM1+COMSTATUS)) & THRE) 
+           if ((val = inb(COM1+COMSTATUS)) & THRE)
             break;
     }
-    
+
     outb(COM1+COMWRITE, c&0xff);
 }
 

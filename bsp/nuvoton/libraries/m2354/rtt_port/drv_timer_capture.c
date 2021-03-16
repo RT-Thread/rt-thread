@@ -21,7 +21,7 @@
     defined(BSP_USING_TIMER5_CAPTURE)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private typedef --------------------------------------------------------------*/
 typedef struct _timer
