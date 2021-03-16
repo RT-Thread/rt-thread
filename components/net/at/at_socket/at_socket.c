@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -70,8 +70,8 @@ struct at_socket *at_get_socket(int socket)
                 return at_sock;
             }
         }
-    } 
-    
+    }
+
     rt_hw_interrupt_enable(level);
 
     return RT_NULL;
@@ -289,7 +289,7 @@ static int alloc_empty_socket(rt_slist_t *l)
     rt_slist_for_each(node, &_socket_list)
     {
         at_sock = rt_slist_entry(node, struct at_socket, list);
-        if(at_sock->socket != idx)  
+        if(at_sock->socket != idx)
             break;
         idx++;
         pre_node = node;
@@ -337,7 +337,7 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device, enum a
     {
         goto __err;
     }
-    
+
     sock = &(device->sockets[idx]);
     /* the socket descriptor is the number of sockte lists */
     sock->socket = alloc_empty_socket(&(sock->list));
@@ -508,7 +508,7 @@ int at_closesocket(int socket)
 
     /* deal with TCP server actively disconnect */
     rt_thread_delay(rt_tick_from_millisecond(100));
-    
+
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
@@ -529,7 +529,7 @@ int at_closesocket(int socket)
         }
     }
 
-    free_socket(sock); 
+    free_socket(sock);
     return 0;
 }
 
@@ -603,7 +603,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 
     /* input ip address is different from device ip address */
     if (ip_addr_cmp(&input_ipaddr, &local_ipaddr) == 0)
-    {   
+    {
         struct at_socket *new_sock = RT_NULL;
         struct at_device *new_device = RT_NULL;
         enum at_socket_type type = sock->type;
@@ -613,7 +613,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         {
             return -1;
         }
-        
+
         extern struct at_device *at_device_get_by_ipaddr(ip_addr_t *ip_addr);
         new_device = at_device_get_by_ipaddr(&input_ipaddr);
         if (new_device == RT_NULL)
@@ -649,7 +649,7 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
 {
     RT_ASSERT(buff);
     RT_ASSERT(event == AT_SOCKET_EVT_RECV);
-    
+
     /* check the socket object status */
     if (sock->magic != AT_SOCKET_MAGIC)
     {
@@ -675,7 +675,7 @@ static void at_closed_notice_cb(struct at_socket *sock, at_socket_evt_t event, c
     {
         return;
     }
-    
+
     at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
     at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
 
@@ -731,7 +731,7 @@ __exit:
     {
         at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
     }
-    
+
     return result;
 }
 
@@ -780,7 +780,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         goto __exit;
     }
     rt_mutex_release(sock->recv_lock);
-        
+
     /* socket passively closed, receive function return 0 */
     if (sock->state == AT_SOCKET_CLOSED)
     {
@@ -821,7 +821,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             goto __exit;
         }
         else
-        {         
+        {
 
             /* get receive buffer to receiver ring buffer */
             rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
@@ -945,7 +945,7 @@ __exit:
     {
         if (sock != RT_NULL)
         {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);   
+            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
         }
     }
     else
@@ -1138,13 +1138,13 @@ struct hostent *at_gethostbyname(const char *name)
 
 #if NETDEV_IPV4 && NETDEV_IPV6
     addr.u_addr.ip4.addr = ipstr_to_u32(ipstr);
-	addr.type = IPADDR_TYPE_V4;
+    addr.type = IPADDR_TYPE_V4;
 #elif NETDEV_IPV4
     addr.addr = ipstr_to_u32(ipstr);
 #elif NETDEV_IPV6
 #error "not support IPV6."
 #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
- 
+
     /* fill hostent structure */
     s_hostent_addr = addr;
     s_phostent_addr[0] = &s_hostent_addr;
@@ -1243,8 +1243,8 @@ int at_getaddrinfo(const char *nodename, const char *servname,
             {
                 strncpy(ip_str, nodename, strlen(nodename));
             }
-            
-        #if NETDEV_IPV4 && NETDEV_IPV6 
+
+        #if NETDEV_IPV4 && NETDEV_IPV6
             addr.type = IPADDR_TYPE_V4;
             if ((addr.u_addr.ip4.addr = ipstr_to_u32(ip_str)) == 0)
             {
@@ -1254,7 +1254,7 @@ int at_getaddrinfo(const char *nodename, const char *servname,
             addr.addr = ipstr_to_u32(ip_str);
         #elif NETDEV_IPV6
         #error "not support IPV6."
-        #endif /* NETDEV_IPV4 && NETDEV_IPV6 */  
+        #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
         }
     }
     else

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,32 +18,32 @@
  */
 
 /* File types */
-#define FT_REGULAR		0	/* regular file */
-#define FT_SOCKET		1	/* socket file  */
-#define FT_DIRECTORY	2	/* directory    */
-#define FT_USER			3	/* user defined */
+#define FT_REGULAR      0   /* regular file */
+#define FT_SOCKET       1   /* socket file  */
+#define FT_DIRECTORY    2   /* directory    */
+#define FT_USER         3   /* user defined */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifndef HAVE_DIR_STRUCTURE
-typedef struct 
+typedef struct
 {
-	int fd;							/* directory file */
-	char buf[512];
-	int num;
-	int cur;
+    int fd;                         /* directory file */
+    char buf[512];
+    int num;
+    int cur;
 } DIR;
 #endif
 
 #ifndef HAVE_DIRENT_STRUCTURE
 struct dirent
 {
-	rt_uint8_t  d_type;				/* The type of the file */
-	rt_uint8_t  d_namlen;			/* The length of the not including the terminating null file name */
-	rt_uint16_t d_reclen;			/* length of this record */
-	char d_name[256];				/* The null-terminated file name */
+    rt_uint8_t  d_type;             /* The type of the file */
+    rt_uint8_t  d_namlen;           /* The length of the not including the terminating null file name */
+    rt_uint16_t d_reclen;           /* length of this record */
+    char d_name[256];               /* The null-terminated file name */
 };
 #endif
 
