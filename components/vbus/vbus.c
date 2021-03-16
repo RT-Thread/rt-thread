@@ -1,6 +1,6 @@
 /*
- * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -899,8 +899,8 @@ int rt_vbus_request_chn(struct rt_vbus_request *req,
                         int timeout)
 {
     int i, chnr, err;
-	size_t plen = rt_strlen(req->name) + 2;
-	unsigned char *pbuf;
+    size_t plen = rt_strlen(req->name) + 2;
+    unsigned char *pbuf;
     rt_ubase_t lvl;
 
     lvl = rt_hw_interrupt_disable();
@@ -930,8 +930,8 @@ int rt_vbus_request_chn(struct rt_vbus_request *req,
         goto _waitforcmp;
     }
 
-	pbuf = rt_malloc(plen);
-	if (!pbuf)
+    pbuf = rt_malloc(plen);
+    if (!pbuf)
     {
         rt_hw_interrupt_enable(lvl);
         return -RT_ENOMEM;
@@ -944,7 +944,7 @@ int rt_vbus_request_chn(struct rt_vbus_request *req,
     rt_memcpy(pbuf+1, req->name, plen-1);
     vbus_verbose("%s --> remote\n", dump_cmd_pkt(pbuf, plen));
 
-	err = _chn0_post(pbuf, plen, RT_WAITING_FOREVER);
+    err = _chn0_post(pbuf, plen, RT_WAITING_FOREVER);
     rt_free(pbuf);
 
 _waitforcmp:

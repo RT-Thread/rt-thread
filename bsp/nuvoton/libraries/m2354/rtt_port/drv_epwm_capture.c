@@ -14,7 +14,7 @@
 #if defined(BSP_USING_EPWM_CAPTURE)
 #if ((BSP_USING_EPWM0_CAPTURE_CHMSK+BSP_USING_EPWM1_CAPTURE_CHMSK)!=0)
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #define EPWM_CH0CH1_POS    (0)
 #define EPWM_CH2CH3_POS    (2)

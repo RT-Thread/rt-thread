@@ -15,4 +15,6 @@
 #include <rthw.h>
 #include <rtdevice.h>
 
+#define GET_PIN(PORTx,PIN) (uint8_t)__AB32_GET_PIN_##PORTx(PIN)
+
 #endif // DRV_COMMON_H__

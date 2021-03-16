@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -181,7 +181,7 @@ RTM_EXPORT(ctime);
  *
  * @param time_t * t the timestamp pointer, if not used, keep NULL.
  *
- * @return The value ((time_t)-1) is returned if the calendar time is not available. 
+ * @return The value ((time_t)-1) is returned if the calendar time is not available.
  *         If timer is not a NULL pointer, the return value is also stored in timer.
  *
  */
@@ -366,7 +366,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 RTM_EXPORT(settimeofday);
 
 /* inherent in the toolchain */
-RTM_EXPORT(difftime); 
+RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
 #ifdef RT_USING_POSIX

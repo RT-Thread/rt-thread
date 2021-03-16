@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2012-10-01     Yi Qiu       first version
  * 2012-12-12     heyuanjie87  add MASS endpoints collection
  */
- 
+
 #ifndef  __MSTORAGE_H__
 #define  __MSTORAGE_H__
 
@@ -23,7 +23,7 @@ struct umass_descriptor
 #endif
     struct uinterface_descriptor intf_desc;
     struct uendpoint_descriptor ep_out_desc;
-    struct uendpoint_descriptor ep_in_desc;    
+    struct uendpoint_descriptor ep_in_desc;
 };
 typedef struct umass_descriptor* umass_desc_t;
 

@@ -30,21 +30,6 @@ config SOC_SERIES_NUC980
         select RT_USING_PIN
         default y
 
-    menuconfig BSP_USING_CLK
-        bool "Enable Clock Controller(CLK)"
-        select RT_USING_PM
-        select BSP_USING_TMR
-        default y
-        help
-            Choose this option if you need CLK/PM function.
-            Notice: Enable the option will hold timer3 resource
-
-        if BSP_USING_CLK
-            config NU_CLK_INVOKE_WKTMR
-            bool "Enable SPD1 and DPD mode wakeup timer. (About 6.6 Secs)"
-            default y
-        endif
-
     menuconfig BSP_USING_EMAC
         bool "Enable Ethernet MAC Controller(EMAC)"
         select RT_USING_LWIP

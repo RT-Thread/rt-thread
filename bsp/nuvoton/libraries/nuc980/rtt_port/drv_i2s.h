@@ -15,7 +15,7 @@
 
 #include <rtthread.h>
 #include <drv_sys.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 #if !defined(NU_I2S_DMA_FIFO_SIZE)
     #define NU_I2S_DMA_FIFO_SIZE (2048)
