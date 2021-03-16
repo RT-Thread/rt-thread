@@ -18,7 +18,7 @@
 #include <rtdbg.h>
 #include <stdint.h>
 #include <string.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 
 /* Private define ---------------------------------------------------------------*/
