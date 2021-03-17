@@ -85,7 +85,7 @@ class Folder(object):
         # TODO: take care of the unicode names
         for ent in os.listdir(u'.'):
             if os.path.isdir(ent):
-                cwd = os.getcwdu()
+                cwd = os.getcwd()
                 d = Folder(ent)
                 # depth-first
                 os.chdir(os.path.join(cwd, ent))
