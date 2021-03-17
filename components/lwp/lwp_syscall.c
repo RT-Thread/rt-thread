@@ -1259,6 +1259,7 @@ long _sys_clone(void *arg[])
     struct rt_lwp *lwp = 0;
     rt_thread_t thread = RT_NULL;
     rt_thread_t self = RT_NULL;
+    char thread_name[RT_NAME_MAX + 1];
     int tid = 0;
 
     unsigned long flags = 0;
@@ -1312,7 +1313,11 @@ long _sys_clone(void *arg[])
         rt_set_errno(ENOMEM);
         goto fail;
     }
-    thread = rt_thread_create((const char *)"pthread",
+
+    rt_memcpy(thread_name, self->name, RT_NAME_MAX);
+    thread_name[RT_NAME_MAX] = '\0';
+
+    thread = rt_thread_create(thread_name,
             RT_NULL,
             RT_NULL,
             self->stack_size,
