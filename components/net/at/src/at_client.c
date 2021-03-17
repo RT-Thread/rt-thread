@@ -104,17 +104,22 @@ void at_delete_resp(at_response_t resp)
  */
 at_response_t at_resp_set_info(at_response_t resp, rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout)
 {
+    char *p_temp;
     RT_ASSERT(resp);
 
     if (resp->buf_size != buf_size)
     {
         resp->buf_size = buf_size;
 
-        resp->buf = (char *) rt_realloc(resp->buf, buf_size);
-        if (!resp->buf)
+        p_temp = (char *) rt_realloc(resp->buf, buf_size);
+        if (p_temp == RT_NULL)
         {
             LOG_D("No memory for realloc response buffer size(%d).", buf_size);
             return RT_NULL;
+        }
+        else
+        {
+            resp->buf = p_temp;
         }
     }
 
