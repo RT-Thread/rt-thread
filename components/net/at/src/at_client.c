@@ -8,6 +8,7 @@
  * 2018-03-30     chenyong     first version
  * 2018-04-12     chenyong     add client implement
  * 2018-08-17     chenyong     multiple client support
+ * 2021-03-17     Meco Man     fix a buf of leaking memory 
  */
 
 #include <at.h>
@@ -104,17 +105,22 @@ void at_delete_resp(at_response_t resp)
  */
 at_response_t at_resp_set_info(at_response_t resp, rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout)
 {
+    char *p_temp;
     RT_ASSERT(resp);
 
     if (resp->buf_size != buf_size)
     {
         resp->buf_size = buf_size;
 
-        resp->buf = (char *) rt_realloc(resp->buf, buf_size);
-        if (!resp->buf)
+        p_temp = (char *) rt_realloc(resp->buf, buf_size);
+        if (p_temp == RT_NULL)
         {
             LOG_D("No memory for realloc response buffer size(%d).", buf_size);
             return RT_NULL;
+        }
+        else
+        {
+            resp->buf = p_temp;
         }
     }
 
