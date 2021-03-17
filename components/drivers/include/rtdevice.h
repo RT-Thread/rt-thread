@@ -80,9 +80,6 @@ extern "C" {
 #include "drivers/sdio.h"
 #endif /* RT_USING_SDIO */
 
-#ifdef RT_USING_SENSOR
-#include "drivers/sensor.h"
-#endif /* RT_USING_SENSOR */
 
 #ifdef RT_USING_WDT
 #include "drivers/watchdog.h"
@@ -91,6 +88,10 @@ extern "C" {
 #ifdef RT_USING_PIN
 #include "drivers/pin.h"
 #endif /* RT_USING_PIN */
+
+#ifdef RT_USING_SENSOR
+#include "drivers/sensor.h"
+#endif /* RT_USING_SENSOR */
 
 #ifdef RT_USING_CAN
 #include "drivers/can.h"
