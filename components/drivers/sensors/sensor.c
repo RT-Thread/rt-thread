@@ -256,10 +256,13 @@ static rt_err_t rt_sensor_close(rt_device_t dev)
             }
         }
     }
-    /* Sensor disable interrupt */
-    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
+    if (sensor->config.mode != RT_SENSOR_MODE_POLLING)
     {
-        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
+        /* Sensor disable interrupt */
+        if (sensor->config.irq_pin.pin != RT_PIN_NONE)
+        {
+            rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
+        }
     }
 
 __exit:
@@ -476,12 +479,12 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
     result = rt_device_register(device, device_name, flag | RT_DEVICE_FLAG_STANDALONE);
     if (result != RT_EOK)
     {
+        LOG_E("rt_sensor[%s] register err code: %d", device_name, result);
         rt_free(device_name);
-        LOG_E("rt_sensor register err code: %d", result);
         return result;
     }
 
     rt_free(device_name);
-    LOG_I("rt_sensor init success");
+    LOG_I("rt_sensor[%s] init success", device_name);
     return RT_EOK;
 }
