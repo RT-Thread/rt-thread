@@ -257,6 +257,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'makefile':('gcc', 'gcc'),
                 'eclipse':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc'),
+                'cmake':('gcc', 'gcc'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
