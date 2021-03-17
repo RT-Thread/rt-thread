@@ -1312,7 +1312,8 @@ long _sys_clone(void *arg[])
         rt_set_errno(ENOMEM);
         goto fail;
     }
-    thread = rt_thread_create((const char *)"pthread",
+
+    thread = rt_thread_create(self->name,
             RT_NULL,
             RT_NULL,
             self->stack_size,
@@ -1456,7 +1457,6 @@ int _sys_fork(void)
     rt_thread_t thread = RT_NULL;
     rt_thread_t self_thread = RT_NULL;
     void *user_stack = RT_NULL;
-    char thread_name[RT_NAME_MAX + 1];
 
     /* new lwp */
     lwp = lwp_new();
@@ -1502,9 +1502,7 @@ int _sys_fork(void)
     /* create thread */
     self_thread = rt_thread_self();
 
-    rt_memcpy(thread_name, self_thread->name, RT_NAME_MAX);
-    thread_name[RT_NAME_MAX] = '\0';
-    thread = rt_thread_create((const char *)thread_name,
+    thread = rt_thread_create(self_thread->name,
             RT_NULL,
             RT_NULL,
             self_thread->stack_size,
