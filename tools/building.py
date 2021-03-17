@@ -208,7 +208,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
     AddOption('--stackanalysis',
                 dest = 'stackanalysis',
                 action = 'store_true',
@@ -876,6 +876,10 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'codelite':
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)
+
+    if GetOption('target') == 'cmake':
+        from cmake import CMakeProject
+        CMakeProject(Env,Projects)
 
 
 def EndBuilding(target, program = None):
