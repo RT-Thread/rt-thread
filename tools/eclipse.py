@@ -448,8 +448,10 @@ def RelativeProjectPath(env, path):
 def HandleExcludingOption(entry, sourceEntries, excluding):
     old_excluding = []
     if entry != None:
-        old_excluding = entry.get('excluding').split('|')
-        sourceEntries.remove(entry)
+        exclud = entry.get('excluding')
+        if exclud != None:
+            old_excluding = entry.get('excluding').split('|')
+            sourceEntries.remove(entry)
 
     value = ''
     for item in old_excluding:
@@ -484,8 +486,9 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
         HandleToolOption(tools, env, project, reset)
 
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
-        entry = sourceEntries.find('entry')
-        HandleExcludingOption(entry, sourceEntries, excluding)
+        if sourceEntries != None:
+            entry = sourceEntries.find('entry')
+            HandleExcludingOption(entry, sourceEntries, excluding)
     # update refreshScope
     if prj_name:
         prj_name = '/' + prj_name
