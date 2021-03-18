@@ -27,10 +27,51 @@ void hal_uart_setbaud(hal_sfr_t uartx, uint32_t baud)
     uint32_t baud_cfg;
 
     uartx[UARTxCON] |= UART_CLK_SRC1;
-    baud_cfg = (26000000/2)/baud;   //1.5M
+    baud_cfg = (26000000/2)/baud;
     uartx[UARTxBAUD] = (baud_cfg << 16) | baud_cfg;
 }
 
+/**
+ * @brief Set the UART misc paramter.
+ *
+ * @param uartx This parameter can be UARTxN where x can be (0.2).
+ * @param param uart config paramter pointer.
+ */
+void hal_uart_setparam(hal_sfr_t uartx, struct uart_init *param)
+{
+    switch (param->word_len)
+    {
+    case UART_WORDLENGTH_8B:
+        uartx[UARTxCON] &= ~UART_BIT9_ENABLE;
+        break;
+    case UART_WORDLENGTH_9B:
+        uartx[UARTxCON] |= UART_BIT9_ENABLE;
+        break;
+    default:
+        break;
+    }
+
+    switch (param->stop_bits)
+    {
+    case UART_STOPBITS_1:
+        uartx[UARTxCON] &= ~UART_SB2_ENABLE;
+        break;
+    case UART_STOPBITS_2:
+        uartx[UARTxCON] |= UART_SB2_ENABLE;
+        break;
+    default:
+        break;
+    }
+
+    if (param->mode & UART_MODE_1LINE)
+    {
+        uartx[UARTxCON] |= UART_1LINE_ENABLE;
+    }
+    else
+    {
+        uartx[UARTxCON] &= ~UART_1LINE_ENABLE;
+    }
+}
 /**
  * @brief Initialize the UART mode.
  *
@@ -157,11 +198,15 @@ void uart_config_all(struct uart_handle *huart)
         hal_rcu_periph_clk_enable(RCU_UART0);
     } else if (huart->instance == UART1_BASE) {
         hal_rcu_periph_clk_enable(RCU_UART1);
+    } else if (huart->instance == UART2_BASE) {
+        hal_rcu_periph_clk_enable(RCU_UART2);
     } else {
         return; /* Not support! */
     }
 
+    hal_uart_deinit(huart->instance);
     hal_uart_setbaud(huart->instance, huart->init.baud);
+    hal_uart_setparam(huart->instance, &huart->init);
 
     if (huart->init.mode != UART_MODE_TX) {
         hal_uart_control(huart->instance, UART_RX_ENABLE, HAL_ENABLE);
