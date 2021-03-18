@@ -472,12 +472,17 @@ config SOC_SERIES_NUC980
         select BSP_USING_SPI
 
         if BSP_USING_QSPI
-           config BSP_USING_QSPI0
-               bool "Enable QSPI0"
+            config BSP_USING_QSPI_PDMA
+            bool
+            select BSP_USING_SPI_PDMA
+            default n
 
-           config BSP_USING_QSPI0_PDMA
+            config BSP_USING_QSPI0
+                bool "Enable QSPI0"
+
+            config BSP_USING_QSPI0_PDMA
                 bool "Enable PDMA for QSPI0"
-                select BSP_USING_SPI_PDMA
+                select BSP_USING_QSPI_PDMA
                 depends on BSP_USING_QSPI0
         endif
 
