@@ -11,11 +11,14 @@
  */
 #include <rtthread.h>
 
-#ifdef FINSH_USING_MSH
+#ifdef RT_USING_MSH
+
+#ifndef FINSH_ARG_MAX
+#define FINSH_ARG_MAX    8
+#endif
 
 #include "msh.h"
-#include <finsh.h>
-#include <shell.h>
+#include "shell.h"
 
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
@@ -25,45 +28,7 @@
 #include <dlmodule.h>
 #endif
 
-#ifndef FINSH_ARG_MAX
-#define FINSH_ARG_MAX    8
-#endif
-
 typedef int (*cmd_function_t)(int argc, char **argv);
-
-#ifdef FINSH_USING_MSH
-#ifdef FINSH_USING_MSH_ONLY
-rt_bool_t msh_is_used(void)
-{
-    return RT_TRUE;
-}
-#else
-#ifdef FINSH_USING_MSH_DEFAULT
-static rt_bool_t __msh_state = RT_TRUE;
-#else
-static rt_bool_t __msh_state = RT_FALSE;
-#endif
-rt_bool_t msh_is_used(void)
-{
-    return __msh_state;
-}
-
-static int msh_exit(int argc, char **argv)
-{
-    /* return to finsh shell mode */
-    __msh_state = RT_FALSE;
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(msh_exit, __cmd_exit, return to RT-Thread shell mode.);
-
-static int msh_enter(void)
-{
-    /* enter module shell mode */
-    __msh_state = RT_TRUE;
-    return 0;
-}
-FINSH_FUNCTION_EXPORT_ALIAS(msh_enter, msh, use module shell);
-#endif
 
 int msh_help(int argc, char **argv)
 {
@@ -87,7 +52,7 @@ int msh_help(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
+MSH_CMD_EXPORT_ALIAS(msh_help, help, RT-Thread shell help.);
 
 int cmd_ps(int argc, char **argv)
 {
@@ -102,7 +67,7 @@ int cmd_ps(int argc, char **argv)
         list_thread();
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);
 
 #ifdef RT_USING_HEAP
 int cmd_free(int argc, char **argv)
@@ -117,7 +82,7 @@ int cmd_free(int argc, char **argv)
 #endif
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);
 #endif
 
 static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
@@ -398,6 +363,134 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
 }
 #endif
 
+#if defined(RT_USING_DFS)
+static int msh_readline(int fd, char *line_buf, int size)
+{
+    char ch;
+    int index = 0;
+
+    do
+    {
+        if (read(fd, &ch, 1) != 1)
+        {
+            /* nothing in this file */
+            return 0;
+        }
+    }
+    while (ch == '\n' || ch == '\r');
+
+    /* set the first character */
+    line_buf[index ++] = ch;
+
+    while (index < size)
+    {
+        if (read(fd, &ch, 1) == 1)
+        {
+            if (ch == '\n' || ch == '\r')
+            {
+                line_buf[index] = '\0';
+                break;
+            }
+
+            line_buf[index++] = ch;
+        }
+        else
+        {
+            line_buf[index] = '\0';
+            break;
+        }
+    }
+
+    return index;
+}
+
+int msh_exec_script(const char *cmd_line, int size)
+{
+    int ret;
+    int fd = -1;
+    char *pg_name;
+    int length, cmd_length = 0;
+
+    if (size == 0) return -RT_ERROR;
+
+    /* get the length of command0 */
+    while ((cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t') && cmd_length < size)
+        cmd_length ++;
+
+    /* get name length */
+    length = cmd_length + 32;
+
+    /* allocate program name memory */
+    pg_name = (char *) rt_malloc(length);
+    if (pg_name == RT_NULL) return -RT_ENOMEM;
+
+    /* copy command0 */
+    memcpy(pg_name, cmd_line, cmd_length);
+    pg_name[cmd_length] = '\0';
+
+    if (strstr(pg_name, ".sh") != RT_NULL || strstr(pg_name, ".SH") != RT_NULL)
+    {
+        /* try to open program */
+        fd = open(pg_name, O_RDONLY, 0);
+
+        /* search in /bin path */
+        if (fd < 0)
+        {
+            rt_snprintf(pg_name, length - 1, "/bin/%.*s", cmd_length, cmd_line);
+            fd = open(pg_name, O_RDONLY, 0);
+        }
+    }
+
+    rt_free(pg_name);
+    if (fd >= 0)
+    {
+        /* found script */
+        char *line_buf;
+        int length;
+
+        line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
+        if (line_buf == RT_NULL) 
+        {
+            close(fd);
+            return -RT_ENOMEM;
+        }
+
+        /* read line by line and then exec it */
+        do
+        {
+            length = msh_readline(fd, line_buf, RT_CONSOLEBUF_SIZE);
+            if (length > 0)
+            {
+                char ch = '\0';
+                int index;
+
+                for (index = 0; index < length; index ++)
+                {
+                    ch = line_buf[index];
+                    if (ch == ' ' || ch == '\t') continue;
+                    else break;
+                }
+
+                if (ch != '#') /* not a comment */
+                    msh_exec(line_buf, length);
+            }
+        }
+        while (length > 0);
+
+        close(fd);
+        rt_free(line_buf);
+
+        ret = 0;
+    }
+    else
+    {
+        ret = -1;
+    }
+
+    return ret;
+}
+#endif
+
 int msh_exec(char *cmd, rt_size_t length)
 {
     int cmd_ret;
@@ -671,6 +764,5 @@ void msh_auto_complete(char *prefix)
 
     return ;
 }
-#endif
 
-#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_MSH */

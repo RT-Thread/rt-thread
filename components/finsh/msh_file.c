@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,138 +9,10 @@
  */
 
 #include <rtthread.h>
-
-#if defined(FINSH_USING_MSH) && defined(RT_USING_DFS)
-
-#include <finsh.h>
 #include "msh.h"
+
+#if defined(RT_USING_MSH) && defined(RT_USING_DFS)
 #include <dfs_posix.h>
-
-static int msh_readline(int fd, char *line_buf, int size)
-{
-    char ch;
-    int index = 0;
-
-    do
-    {
-        if (read(fd, &ch, 1) != 1)
-        {
-            /* nothing in this file */
-            return 0;
-        }
-    }
-    while (ch == '\n' || ch == '\r');
-
-    /* set the first character */
-    line_buf[index ++] = ch;
-
-    while (index < size)
-    {
-        if (read(fd, &ch, 1) == 1)
-        {
-            if (ch == '\n' || ch == '\r')
-            {
-                line_buf[index] = '\0';
-                break;
-            }
-
-            line_buf[index++] = ch;
-        }
-        else
-        {
-            line_buf[index] = '\0';
-            break;
-        }
-    }
-
-    return index;
-}
-
-int msh_exec_script(const char *cmd_line, int size)
-{
-    int ret;
-    int fd = -1;
-    char *pg_name;
-    int length, cmd_length = 0;
-
-    if (size == 0) return -RT_ERROR;
-
-    /* get the length of command0 */
-    while ((cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t') && cmd_length < size)
-        cmd_length ++;
-
-    /* get name length */
-    length = cmd_length + 32;
-
-    /* allocate program name memory */
-    pg_name = (char *) rt_malloc(length);
-    if (pg_name == RT_NULL) return -RT_ENOMEM;
-
-    /* copy command0 */
-    memcpy(pg_name, cmd_line, cmd_length);
-    pg_name[cmd_length] = '\0';
-
-    if (strstr(pg_name, ".sh") != RT_NULL || strstr(pg_name, ".SH") != RT_NULL)
-    {
-        /* try to open program */
-        fd = open(pg_name, O_RDONLY, 0);
-
-        /* search in /bin path */
-        if (fd < 0)
-        {
-            rt_snprintf(pg_name, length - 1, "/bin/%.*s", cmd_length, cmd_line);
-            fd = open(pg_name, O_RDONLY, 0);
-        }
-    }
-
-    rt_free(pg_name);
-    if (fd >= 0)
-    {
-        /* found script */
-        char *line_buf;
-        int length;
-
-        line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
-        if (line_buf == RT_NULL) 
-        {
-            close(fd);
-            return -RT_ENOMEM;
-        }
-
-        /* read line by line and then exec it */
-        do
-        {
-            length = msh_readline(fd, line_buf, RT_CONSOLEBUF_SIZE);
-            if (length > 0)
-            {
-                char ch = '\0';
-                int index;
-
-                for (index = 0; index < length; index ++)
-                {
-                    ch = line_buf[index];
-                    if (ch == ' ' || ch == '\t') continue;
-                    else break;
-                }
-
-                if (ch != '#') /* not a comment */
-                    msh_exec(line_buf, length);
-            }
-        }
-        while (length > 0);
-
-        close(fd);
-        rt_free(line_buf);
-
-        ret = 0;
-    }
-    else
-    {
-        ret = -1;
-    }
-
-    return ret;
-}
 
 #ifdef DFS_USING_WORKDIR
 extern char working_directory[];
@@ -165,7 +37,7 @@ int cmd_ls(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_ls, __cmd_ls, List information about the FILEs.);
+MSH_CMD_EXPORT_ALIAS(cmd_ls, ls, List information about the FILEs.);
 
 int cmd_cp(int argc, char **argv)
 {
@@ -183,7 +55,7 @@ int cmd_cp(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_cp, __cmd_cp, Copy SOURCE to DEST.);
+MSH_CMD_EXPORT_ALIAS(cmd_cp, cp, Copy SOURCE to DEST.);
 
 int cmd_mv(int argc, char **argv)
 {
@@ -242,7 +114,7 @@ int cmd_mv(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_mv, __cmd_mv, Rename SOURCE to DEST.);
+MSH_CMD_EXPORT_ALIAS(cmd_mv, mv, Rename SOURCE to DEST.);
 
 int cmd_cat(int argc, char **argv)
 {
@@ -263,9 +135,9 @@ int cmd_cat(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_cat, __cmd_cat, Concatenate FILE(s));
+MSH_CMD_EXPORT_ALIAS(cmd_cat, cat, Concatenate FILE(s));
 
-static void directory_delete_for_msh(const char *pathname, char f, char v)
+static void msh_deltree(const char *pathname, char f, char v)
 {
     DIR *dir = NULL;
     struct dirent *dirent = NULL;
@@ -312,7 +184,7 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
             }
             else if (dirent->d_type == DT_DIR)
             {
-                directory_delete_for_msh(full_path, f, v);
+                msh_deltree(full_path, f, v);
             }
         }
     }
@@ -370,7 +242,7 @@ int cmd_rm(int argc, char **argv)
                 if (r == 0)
                     rt_kprintf("cannot remove '%s': Is a directory\n", argv[index]);
                 else
-                    directory_delete_for_msh(argv[index], f, v);
+                    msh_deltree(argv[index], f, v);
             }
             else if (s.st_mode & S_IFREG)
             {
@@ -392,7 +264,7 @@ int cmd_rm(int argc, char **argv)
     }
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, Remove(unlink) the FILE(s).);
+MSH_CMD_EXPORT_ALIAS(cmd_rm, rm, Remove(unlink) the FILE(s).);
 
 #ifdef DFS_USING_WORKDIR
 int cmd_cd(int argc, char **argv)
@@ -411,14 +283,14 @@ int cmd_cd(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_cd, __cmd_cd, Change the shell working directory.);
+MSH_CMD_EXPORT_ALIAS(cmd_cd, cd, Change the shell working directory.);
 
 int cmd_pwd(int argc, char **argv)
 {
     rt_kprintf("%s\n", working_directory);
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_pwd, __cmd_pwd, Print the name of the current working directory.);
+MSH_CMD_EXPORT_ALIAS(cmd_pwd, pwd, Print the name of the current working directory.);
 #endif
 
 int cmd_mkdir(int argc, char **argv)
@@ -435,7 +307,7 @@ int cmd_mkdir(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkdir, __cmd_mkdir, Create the DIRECTORY.);
+MSH_CMD_EXPORT_ALIAS(cmd_mkdir, mkdir, Create the DIRECTORY.);
 
 int cmd_mkfs(int argc, char **argv)
 {
@@ -467,7 +339,7 @@ int cmd_mkfs(int argc, char **argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
+MSH_CMD_EXPORT_ALIAS(cmd_mkfs, mkfs, format disk with file system);
 
 extern int df(const char *path);
 int cmd_df(int argc, char** argv)
@@ -490,7 +362,7 @@ int cmd_df(int argc, char** argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
+MSH_CMD_EXPORT_ALIAS(cmd_df, df, disk free);
 
 int cmd_echo(int argc, char** argv)
 {
@@ -520,7 +392,6 @@ int cmd_echo(int argc, char** argv)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_echo, __cmd_echo, echo string to file);
+MSH_CMD_EXPORT_ALIAS(cmd_echo, echo, echo string to file);
 
-#endif /* defined(FINSH_USING_MSH) && defined(RT_USING_DFS) */
-
+#endif /* defined(RT_USING_MSH) && defined(RT_USING_DFS) */

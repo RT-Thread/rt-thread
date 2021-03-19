@@ -9,6 +9,7 @@
  */
 
 #include <stdint.h>
+#include <string.h>
 #include <rtdevice.h>
 #include "spi_flash.h"
 #include "spi_flash_sfud.h"
