@@ -28,7 +28,9 @@ STM32H750 是RTTHREAD推出的一款基于 ARM Cortex-M7 内核的开发板，�
 
 开发板更多详细信息请参考[H750-ART-PI](https://www.rt-thread.org/product/153.html)。
 
-官方仓库[sdk-bsp-stm32h750-realthread-artpi](https://github.com/supperthomas/sdk-bsp-stm32h750-realthread-artpi)
+官方仓库[sdk-bsp-stm32h750-realthread-artpi](https://github.com/RT-Thread-Studio/sdk-bsp-stm32h750-realthread-artpi)
+
+官方主页 [ART-PI](https://art-pi.gitee.io/website)
 
 ## 外设支持
 
