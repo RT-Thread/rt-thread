@@ -437,8 +437,6 @@ rt_err_t rt_device_unregister(rt_device_t dev);
 rt_device_t rt_device_create(int type, int attach_size);
 void rt_device_destroy(rt_device_t device);
 
-rt_err_t rt_device_init_all(void);
-
 rt_err_t
 rt_device_set_rx_indicate(rt_device_t dev,
                           rt_err_t (*rx_ind)(rt_device_t dev, rt_size_t size));
