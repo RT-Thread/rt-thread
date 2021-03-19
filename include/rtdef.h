@@ -34,6 +34,7 @@
  * 2019-12-20     Bernard      change version number to v4.0.3
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
+ * 2021-03-19     Meco Man     add security devices
  */
 
 #ifndef __RT_DEF_H__
@@ -887,6 +888,7 @@ enum rt_device_class_type
     RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Touch,                              /**< Touch device */
     RT_Device_Class_PHY,                                /**< PHY device */
+    RT_Device_Class_Security,                           /**< Security device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 
