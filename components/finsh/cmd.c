@@ -34,10 +34,10 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <string.h>
 
 #ifdef RT_USING_FINSH
-
-#include "finsh.h"
+#include <finsh.h>
 
 #define LIST_FIND_OBJ_NR 8
 
@@ -47,7 +47,7 @@ long hello(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(hello, say hello world);
+MSH_CMD_EXPORT(hello, say hello world);
 
 static long clear(void)
 {
@@ -55,7 +55,6 @@ static long clear(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(clear, clear the terminal screen);
 MSH_CMD_EXPORT(clear, clear the terminal screen);
 
 extern void rt_show_version(void);
@@ -65,7 +64,6 @@ long version(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
 MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 rt_inline void object_split(int len)
@@ -202,7 +200,7 @@ long list_thread(void)
                     continue;
                 }
                 /* copy info */
-                memcpy(&thread_info, obj, sizeof thread_info);
+                rt_memcpy(&thread_info, obj, sizeof thread_info);
                 rt_hw_interrupt_enable(level);
 
                 thread = (struct rt_thread*)obj;
@@ -256,7 +254,6 @@ long list_thread(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_thread, list thread);
 MSH_CMD_EXPORT(list_thread, list thread);
 
 static void show_wait_queue(struct rt_list_node *list)
@@ -267,7 +264,7 @@ static void show_wait_queue(struct rt_list_node *list)
     for (node = list->next; node != list; node = node->next)
     {
         thread = rt_list_entry(node, struct rt_thread, tlist);
-        rt_kprintf("%s", thread->name);
+        rt_kprintf("%.*s", RT_NAME_MAX, thread->name);
 
         if (node->next != list)
             rt_kprintf("/");
@@ -337,7 +334,6 @@ long list_sem(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_sem, list semaphore in system);
 MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #endif
 
@@ -402,7 +398,6 @@ long list_event(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_event, list event in system);
 MSH_CMD_EXPORT(list_event, list event in system);
 #endif
 
@@ -460,7 +455,6 @@ long list_mutex(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system);
 MSH_CMD_EXPORT(list_mutex, list mutex in system);
 #endif
 
@@ -531,7 +525,6 @@ long list_mailbox(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system);
 MSH_CMD_EXPORT(list_mailbox, list mail box in system);
 #endif
 
@@ -598,7 +591,6 @@ long list_msgqueue(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system);
 MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
 #endif
 
@@ -655,7 +647,6 @@ long list_memheap(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system);
 MSH_CMD_EXPORT(list_memheap, list memory heap in system);
 #endif
 
@@ -735,7 +726,6 @@ long list_mempool(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
 MSH_CMD_EXPORT(list_mempool, list memory pool in system);
 #endif
 
@@ -794,7 +784,6 @@ long list_timer(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
 MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
@@ -877,17 +866,11 @@ long list_device(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list_device, list device in system);
 MSH_CMD_EXPORT(list_device, list device in system);
 #endif
 
 long list(void)
 {
-#ifndef FINSH_USING_MSH_ONLY
-    struct finsh_syscall_item *syscall_item;
-    struct finsh_sysvar_item *sysvar_item;
-#endif
-
     rt_kprintf("--Function List:\n");
     {
         struct finsh_syscall *index;
@@ -906,247 +889,9 @@ long list(void)
         }
     }
 
-#ifndef FINSH_USING_MSH_ONLY
-    /* list syscall list */
-    syscall_item = global_syscall_list;
-    while (syscall_item != NULL)
-    {
-        rt_kprintf("[l] %s\n", syscall_item->syscall.name);
-        syscall_item = syscall_item->next;
-    }
-
-    rt_kprintf("--Variable List:\n");
-    {
-        struct finsh_sysvar *index;
-        for (index = _sysvar_table_begin;
-                index < _sysvar_table_end;
-                FINSH_NEXT_SYSVAR(index))
-        {
-#ifdef FINSH_USING_DESCRIPTION
-            rt_kprintf("%-16s -- %s\n", index->name, index->desc);
-#else
-            rt_kprintf("%s\n", index->name);
-#endif
-        }
-    }
-
-    sysvar_item = global_sysvar_list;
-    while (sysvar_item != NULL)
-    {
-        rt_kprintf("[l] %s\n", sysvar_item->sysvar.name);
-        sysvar_item = sysvar_item->next;
-    }
-#endif
-
     return 0;
 }
-FINSH_FUNCTION_EXPORT(list, list all symbol in system)
-
-#ifndef FINSH_USING_MSH_ONLY
-static int str_is_prefix(const char *prefix, const char *str)
-{
-    while ((*prefix) && (*prefix == *str))
-    {
-        prefix ++;
-        str ++;
-    }
-
-    if (*prefix == 0)
-        return 0;
-
-    return -1;
-}
-
-static int str_common(const char *str1, const char *str2)
-{
-    const char *str = str1;
-
-    while ((*str != 0) && (*str2 != 0) && (*str == *str2))
-    {
-        str ++;
-        str2 ++;
-    }
-
-    return (str - str1);
-}
-
-void list_prefix(char *prefix)
-{
-    struct finsh_syscall_item *syscall_item;
-    struct finsh_sysvar_item *sysvar_item;
-    rt_uint16_t func_cnt, var_cnt;
-    int length, min_length;
-    const char *name_ptr;
-
-    func_cnt = 0;
-    var_cnt  = 0;
-    min_length = 0;
-    name_ptr = RT_NULL;
-
-    /* checks in system function call */
-    {
-        struct finsh_syscall *index;
-        for (index = _syscall_table_begin;
-                index < _syscall_table_end;
-                FINSH_NEXT_SYSCALL(index))
-        {
-            /* skip internal command */
-            if (str_is_prefix("__", index->name) == 0) continue;
-
-            if (str_is_prefix(prefix, index->name) == 0)
-            {
-                if (func_cnt == 0)
-                {
-                    rt_kprintf("--function:\n");
-
-                    if (*prefix != 0)
-                    {
-                        /* set name_ptr */
-                        name_ptr = index->name;
-
-                        /* set initial length */
-                        min_length = strlen(name_ptr);
-                    }
-                }
-
-                func_cnt ++;
-
-                if (*prefix != 0)
-                {
-                    length = str_common(name_ptr, index->name);
-                    if (length < min_length)
-                        min_length = length;
-                }
-
-#ifdef FINSH_USING_DESCRIPTION
-                rt_kprintf("%-16s -- %s\n", index->name, index->desc);
-#else
-                rt_kprintf("%s\n", index->name);
-#endif
-            }
-        }
-    }
-
-    /* checks in dynamic system function call */
-    syscall_item = global_syscall_list;
-    while (syscall_item != NULL)
-    {
-        if (str_is_prefix(prefix, syscall_item->syscall.name) == 0)
-        {
-            if (func_cnt == 0)
-            {
-                rt_kprintf("--function:\n");
-                if (*prefix != 0 && name_ptr == NULL)
-                {
-                    /* set name_ptr */
-                    name_ptr = syscall_item->syscall.name;
-
-                    /* set initial length */
-                    min_length = strlen(name_ptr);
-                }
-            }
-
-            func_cnt ++;
-
-            if (*prefix != 0)
-            {
-                length = str_common(name_ptr, syscall_item->syscall.name);
-                if (length < min_length)
-                    min_length = length;
-            }
-
-            rt_kprintf("[l] %s\n", syscall_item->syscall.name);
-        }
-        syscall_item = syscall_item->next;
-    }
-
-    /* checks in system variable */
-    {
-        struct finsh_sysvar *index;
-        for (index = _sysvar_table_begin;
-                index < _sysvar_table_end;
-                FINSH_NEXT_SYSVAR(index))
-        {
-            if (str_is_prefix(prefix, index->name) == 0)
-            {
-                if (var_cnt == 0)
-                {
-                    rt_kprintf("--variable:\n");
-
-                    if (*prefix != 0 && name_ptr == NULL)
-                    {
-                        /* set name_ptr */
-                        name_ptr = index->name;
-
-                        /* set initial length */
-                        min_length = strlen(name_ptr);
-
-                    }
-                }
-
-                var_cnt ++;
-
-                if (*prefix != 0)
-                {
-                    length = str_common(name_ptr, index->name);
-                    if (length < min_length)
-                        min_length = length;
-                }
-
-#ifdef FINSH_USING_DESCRIPTION
-                rt_kprintf("%-16s -- %s\n", index->name, index->desc);
-#else
-                rt_kprintf("%s\n", index->name);
-#endif
-            }
-        }
-    }
-
-    /* checks in dynamic system variable */
-    sysvar_item = global_sysvar_list;
-    while (sysvar_item != NULL)
-    {
-        if (str_is_prefix(prefix, sysvar_item->sysvar.name) == 0)
-        {
-            if (var_cnt == 0)
-            {
-                rt_kprintf("--variable:\n");
-                if (*prefix != 0 && name_ptr == NULL)
-                {
-                    /* set name_ptr */
-                    name_ptr = sysvar_item->sysvar.name;
-
-                    /* set initial length */
-                    min_length = strlen(name_ptr);
-                }
-            }
-
-            var_cnt ++;
-
-            if (*prefix != 0)
-            {
-                length = str_common(name_ptr, sysvar_item->sysvar.name);
-                if (length < min_length)
-                    min_length = length;
-            }
-
-            rt_kprintf("[v] %s\n", sysvar_item->sysvar.name);
-        }
-        sysvar_item = sysvar_item->next;
-    }
-
-    /* only one matched */
-    if (name_ptr != NULL)
-    {
-        rt_strncpy(prefix, name_ptr, min_length);
-    }
-}
-#endif
-
-#if defined(FINSH_USING_SYMTAB) && !defined(FINSH_USING_MSH_ONLY)
-static int dummy = 0;
-FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
-#endif
+MSH_CMD_EXPORT(list, list all symbol in system)
 
 #ifdef RT_USING_LWP
 #include <lwp.h>
@@ -1330,9 +1075,7 @@ long top(void)
     }
     return 0;
 }
-FINSH_FUNCTION_EXPORT(top, display system info);
 MSH_CMD_EXPORT(top, disaplay system info);
 #endif /* end of RT_USING_LWP */
 
 #endif /* RT_USING_FINSH */
-
