@@ -74,6 +74,7 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define RT_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 10
@@ -82,8 +83,6 @@
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 256
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -122,6 +121,8 @@
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_NULL
+#define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_MTD_NOR
 #define RT_USING_MTD_NAND
@@ -173,13 +174,15 @@
 #define NETDEV_USING_PING
 #define NETDEV_USING_NETSTAT
 #define NETDEV_USING_AUTO_DEFAULT
+#define NETDEV_USING_IPV6
 #define NETDEV_IPV4 1
-#define NETDEV_IPV6 0
+#define NETDEV_IPV6 1
 
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
 #define RT_USING_LWIP202
+#define RT_USING_LWIP_IPV6
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
@@ -273,6 +276,9 @@
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
 
@@ -280,12 +286,6 @@
 
 
 /* games: games run on RT-Thread console */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
