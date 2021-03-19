@@ -11,7 +11,7 @@
 /*
  * COPYRIGHT (C) 2012, Shanghai Real Thread
  */
-
+#include <string.h>
 #include <drivers/mtd_nand.h>
 
 #ifdef RT_USING_MTD_NAND
