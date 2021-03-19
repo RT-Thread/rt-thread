@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2021-01-28     greedyhao         first version
+ * 2021-03-19     iysheng           modify just set time first power up
  */
 
 #include "board.h"
@@ -108,17 +109,17 @@ void hal_rtc_init(void)
     irtc_sfr_write(RTCCON2_CMD, temp | RTC_CON2_32K_SELECT);
 
     temp = irtc_sfr_read(RTCCON0_CMD);
-    if (temp & BIT(7)) {
-        temp &= ~BIT(7);
+    if (temp & RTC_CON0_PWRUP_FIRST) {
+        temp &= ~RTC_CON0_PWRUP_FIRST;
         irtc_sfr_write(RTCCON0_CMD, temp); /* First power on */
+        tm_new.tm_mday = 29;
+        tm_new.tm_mon  = 1 - 1;
+        tm_new.tm_year = 2021 - 1900;
+        sec = timegm(&tm_new);
+
+        irtc_time_write(RTCCNT_CMD, sec);
     }
 
-    tm_new.tm_mday = 29;
-    tm_new.tm_mon  = 1 - 1;
-    tm_new.tm_year = 2021 - 1900;
-    sec = timegm(&tm_new);
-
-    irtc_time_write(RTCCNT_CMD, sec);
 }
 /************** HAL End *******************/
 
