@@ -31,8 +31,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-extern rt_list_t rt_thread_defunct;
-
 #ifdef RT_USING_HOOK
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
 static void (*rt_thread_resume_hook) (rt_thread_t thread);
@@ -104,7 +102,7 @@ void rt_thread_exit(void)
     else
     {
         /* insert to defunct thread list */
-        rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+        rt_thread_defunct_enqueue(thread);
     }
 
     /* switch to next task */
@@ -373,7 +371,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
         /* disable interrupt */
         lock = rt_hw_interrupt_disable();
         /* insert to defunct thread list */
-        rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+        rt_thread_defunct_enqueue(thread);
         /* enable interrupt */
         rt_hw_interrupt_enable(lock);
     }
@@ -469,7 +467,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     thread->stat = RT_THREAD_CLOSE;
 
     /* insert to defunct thread list */
-    rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+    rt_thread_defunct_enqueue(thread);
 
     /* enable interrupt */
     rt_hw_interrupt_enable(lock);
