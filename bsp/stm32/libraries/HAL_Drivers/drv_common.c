@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-7      SummerGift   first version
+ * 2021-03-19     Meco Man     intergrade between HAL assert and RT-Thread assert
  */
 
 #include "drv_common.h"
@@ -105,6 +106,14 @@ void _Error_Handler(char *s, int num)
     }
     /* USER CODE END Error_Handler */
 }
+
+/*assert*/
+#ifdef USE_FULL_ASSERT
+void assert_failed(uint8_t *file, uint32_t line)
+{
+    rt_assert_handler("STM32 HAL Assert!", (const char*)file, line);
+}
+#endif
 
 /**
  * This function will delay for some us.

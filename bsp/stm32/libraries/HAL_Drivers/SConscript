@@ -111,6 +111,8 @@ path += [cwd + '/config']
 if GetDepend('BSP_USING_ON_CHIP_FLASH'):
     path += [cwd + '/drv_flash']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+CPPDEFINES = ['USE_FULL_ASSERT']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
