@@ -20,6 +20,8 @@ struct ab32_uart_config
 {
     const char *name;
     hal_sfr_t instance;
+    uint8_t mode;
+    uint8_t reserve[3];
     // struct dma_config *dma_rx;
     // struct dma_config *dma_tx;
 };

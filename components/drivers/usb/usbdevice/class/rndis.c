@@ -28,7 +28,7 @@
 #define DBG_SECTION_NAME    "RNDIS"
 #include <rtdbg.h>
 
-
+#define RNDIS_INTF_STR_INDEX 12
 /* RT-Thread LWIP ethernet interface */
 #include <netif/ethernetif.h>
 
@@ -123,7 +123,11 @@ const static struct ucdc_comm_descriptor _comm_desc =
         USB_CDC_CLASS_COMM,
         USB_CDC_SUBCLASS_ACM,
         USB_CDC_PROTOCOL_VENDOR,
+#ifdef RT_USB_DEVICE_COMPOSITE
+        RNDIS_INTF_STR_INDEX,
+#else
         0x00,
+#endif
     },
     /* Header Functional Descriptor */
     {
@@ -1318,8 +1322,11 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     RT_ASSERT(device != RT_NULL);
 
     /* set usb device string description */
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_interface_string(device, RNDIS_INTF_STR_INDEX, _ustring[2]);
+#else
     rt_usbd_device_set_string(device, _ustring);
-
+#endif
     /* create a cdc class */
     cdc = rt_usbd_function_new(device, &_dev_desc, &ops);
     rt_usbd_device_set_qualifier(device, &dev_qualifier);
