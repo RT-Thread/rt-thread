@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,7 +40,7 @@ static struct nrfx_drv_spi_config spi_config[] =
 static struct nrfx_drv_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])];
 
 //Configure SPI bus pins using the menuconfig
-static struct nrfx_drv_spi_pin_config bsp_spi_pin[] = 
+static struct nrfx_drv_spi_pin_config bsp_spi_pin[] =
 {
 #ifdef BSP_USING_SPI0
     {
@@ -102,7 +102,7 @@ nrfx_spi_evt_handler_t spi_handler[] = {spi0_handler, spi1_handler, spi2_handler
 
 /**
   * @brief  This function config spi bus
-  * @param  device    
+  * @param  device
   * @param  configuration
   * @retval RT_EOK / RT_ERROR
   */
@@ -118,7 +118,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     RT_ASSERT(index != 0xFF);
 
     nrfx_spi_t spi = spi_bus_obj[index].spi;
-    nrfx_spi_config_t config = NRFX_SPI_DEFAULT_CONFIG(bsp_spi_pin[index].sck_pin, 
+    nrfx_spi_config_t config = NRFX_SPI_DEFAULT_CONFIG(bsp_spi_pin[index].sck_pin,
         bsp_spi_pin[index].mosi_pin, bsp_spi_pin[index].miso_pin, NRFX_SPI_PIN_NOT_USED);
 
     /* spi config ss pin */
@@ -211,7 +211,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         nrf_gpio_pin_clear((uint32_t)device->parent.user_data);
     }
     p_xfer_desc.p_rx_buffer = message->recv_buf;
-    p_xfer_desc.rx_length = message->length;  
+    p_xfer_desc.rx_length = message->length;
     p_xfer_desc.p_tx_buffer = message->send_buf;
     p_xfer_desc.tx_length = message->length ;
     if(message->send_buf == RT_NULL)
@@ -220,7 +220,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     }
     if(message->recv_buf == RT_NULL)
     {
-        p_xfer_desc.rx_length = 0;          
+        p_xfer_desc.rx_length = 0;
     }
 
     nrf_ret = nrfx_spi_xfer(p_instance, &p_xfer_desc, 0);
@@ -228,14 +228,14 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         nrf_gpio_pin_set((uint32_t)device->parent.user_data);
     }
-    
+
     if( NRFX_SUCCESS != nrf_ret)
     {
         return 0;
     }
     else
     {
-        return message->length;        
+        return message->length;
     }
 }
 

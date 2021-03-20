@@ -17,7 +17,7 @@
 #include "hid.h"
 
 #ifdef RT_USB_DEVICE_HID
-
+#define HID_INTF_STR_INDEX 7
 struct hid_s
 {
     struct rt_device parent;
@@ -318,8 +318,12 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
 #else
         USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #endif
-        0,                          /* iInterface: Index of string descriptor */
-    },
+#ifdef RT_USB_DEVICE_COMPOSITE
+        HID_INTF_STR_INDEX,         /* iInterface: Index of string descriptor */
+#else
+        0,
+#endif
+	},
 
     /* HID Descriptor */
     {
@@ -685,8 +689,11 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
     RT_ASSERT(device != RT_NULL);
 
     /* set usb device string description */
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_interface_string(device, HID_INTF_STR_INDEX, _ustring[2]);
+#else
     rt_usbd_device_set_string(device, _ustring);
-
+#endif
     /* create a cdc function */
     func = rt_usbd_function_new(device, &_dev_desc, &ops);
 

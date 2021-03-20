@@ -1,0 +1,58 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32H750XB
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (W25Q64)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default y
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
+        endif
+
+
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
