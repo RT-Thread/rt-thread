@@ -33,7 +33,14 @@
  * G1: tx:PA7 rx:PA6
  * G2: tx:PA4 rx:PA3
  * G3: tx:PF2 rx:map to tx
+ * 
+ * UART2:
+ * G1: tx:PE3 rx:PE2
+ * G2: tx:PB2 rx:PB1
  */
+
+#define UT2RXMAP_AF             (8u)
+#define UT2TXMAP_AF             (4u)
 
 #define UT1RXMAP_AF             (28u)
 #define UT1TXMAP_AF             (24u)
