@@ -1,10 +1,10 @@
 /*-
  * Copyright (c) 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from the Stanford/CMU enet packet filter,
  * (net/enet.c) distributed as part of 4.3BSD, and code contributed
- * to Berkeley by Steven McCanne and Van Jacobson both of Lawrence 
+ * to Berkeley by Steven McCanne and Van Jacobson both of Lawrence
  * Berkeley Laboratory.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,13 +64,13 @@ extern "C" {
 typedef long          bpf_int32;
 typedef unsigned long bpf_u_int32;
 #else
-typedef	int bpf_int32;
-typedef	u_int bpf_u_int32;
+typedef int bpf_int32;
+typedef u_int bpf_u_int32;
 #endif
 
 /*
- * Alignment macros.  BPF_WORDALIGN rounds up to the next 
- * even multiple of BPF_ALIGNMENT. 
+ * Alignment macros.  BPF_WORDALIGN rounds up to the next
+ * even multiple of BPF_ALIGNMENT.
  */
 #ifndef __NetBSD__
 #define BPF_ALIGNMENT sizeof(bpf_int32)
@@ -86,12 +86,12 @@ typedef	u_int bpf_u_int32;
  * Structure for "pcap_compile()", "pcap_setfilter()", etc..
  */
 struct bpf_program {
-	u_int bf_len;
-	struct bpf_insn *bf_insns;
+    u_int bf_len;
+    struct bpf_insn *bf_insns;
 };
- 
+
 /*
- * Struct return by BIOCVERSION.  This represents the version number of 
+ * Struct return by BIOCVERSION.  This represents the version number of
  * the filter language described by the instruction encodings below.
  * bpf understands a program iff kernel_major == filter_major &&
  * kernel_minor >= filter_minor, that is, if the value returned by the
@@ -102,8 +102,8 @@ struct bpf_program {
  * It has nothing to do with the source code version.
  */
 struct bpf_version {
-	u_short bv_major;
-	u_short bv_minor;
+    u_short bv_major;
+    u_short bv_minor;
 };
 /* Current version number of filter architecture. */
 #define BPF_MAJOR_VERSION 1
@@ -125,17 +125,17 @@ struct bpf_version {
  * These are the types that are the same on all platforms, and that
  * have been defined by <net/bpf.h> for ages.
  */
-#define DLT_NULL	0	/* BSD loopback encapsulation */
-#define DLT_EN10MB	1	/* Ethernet (10Mb) */
-#define DLT_EN3MB	2	/* Experimental Ethernet (3Mb) */
-#define DLT_AX25	3	/* Amateur Radio AX.25 */
-#define DLT_PRONET	4	/* Proteon ProNET Token Ring */
-#define DLT_CHAOS	5	/* Chaos */
-#define DLT_IEEE802	6	/* 802.5 Token Ring */
-#define DLT_ARCNET	7	/* ARCNET, with BSD-style header */
-#define DLT_SLIP	8	/* Serial Line IP */
-#define DLT_PPP		9	/* Point-to-point Protocol */
-#define DLT_FDDI	10	/* FDDI */
+#define DLT_NULL    0   /* BSD loopback encapsulation */
+#define DLT_EN10MB  1   /* Ethernet (10Mb) */
+#define DLT_EN3MB   2   /* Experimental Ethernet (3Mb) */
+#define DLT_AX25    3   /* Amateur Radio AX.25 */
+#define DLT_PRONET  4   /* Proteon ProNET Token Ring */
+#define DLT_CHAOS   5   /* Chaos */
+#define DLT_IEEE802 6   /* 802.5 Token Ring */
+#define DLT_ARCNET  7   /* ARCNET, with BSD-style header */
+#define DLT_SLIP    8   /* Serial Line IP */
+#define DLT_PPP     9   /* Point-to-point Protocol */
+#define DLT_FDDI    10  /* FDDI */
 
 /*
  * These are types that are different on some platforms, and that
@@ -146,12 +146,12 @@ struct bpf_version {
  * XXX - DLT_ATM_RFC1483 is 13 in BSD/OS, and DLT_RAW is 14 in BSD/OS,
  * but I don't know what the right #define is for BSD/OS.
  */
-#define DLT_ATM_RFC1483	11	/* LLC-encapsulated ATM */
+#define DLT_ATM_RFC1483 11  /* LLC-encapsulated ATM */
 
 #ifdef __OpenBSD__
-#define DLT_RAW		14	/* raw IP */
+#define DLT_RAW     14  /* raw IP */
 #else
-#define DLT_RAW		12	/* raw IP */
+#define DLT_RAW     12  /* raw IP */
 #endif
 
 /*
@@ -162,12 +162,12 @@ struct bpf_version {
  */
 #if defined(__NetBSD__) || defined(__FreeBSD__)
 #ifndef DLT_SLIP_BSDOS
-#define DLT_SLIP_BSDOS	13	/* BSD/OS Serial Line IP */
-#define DLT_PPP_BSDOS	14	/* BSD/OS Point-to-point Protocol */
+#define DLT_SLIP_BSDOS  13  /* BSD/OS Serial Line IP */
+#define DLT_PPP_BSDOS   14  /* BSD/OS Point-to-point Protocol */
 #endif
 #else
-#define DLT_SLIP_BSDOS	15	/* BSD/OS Serial Line IP */
-#define DLT_PPP_BSDOS	16	/* BSD/OS Point-to-point Protocol */
+#define DLT_SLIP_BSDOS  15  /* BSD/OS Serial Line IP */
+#define DLT_PPP_BSDOS   16  /* BSD/OS Point-to-point Protocol */
 #endif
 
 /*
@@ -176,21 +176,21 @@ struct bpf_version {
  * 18 is used for DLT_PFSYNC in OpenBSD; don't use it for anything else.
  */
 
-#define DLT_ATM_CLIP	19	/* Linux Classical-IP over ATM */
+#define DLT_ATM_CLIP    19  /* Linux Classical-IP over ATM */
 
 /*
  * Apparently Redback uses this for its SmartEdge 400/800.  I hope
  * nobody else decided to use it, too.
  */
-#define DLT_REDBACK_SMARTEDGE	32
+#define DLT_REDBACK_SMARTEDGE   32
 
 /*
  * These values are defined by NetBSD; other platforms should refrain from
  * using them for other purposes, so that NetBSD savefiles with link
  * types of 50 or 51 can be read as this type on all platforms.
  */
-#define DLT_PPP_SERIAL	50	/* PPP over serial with HDLC encapsulation */
-#define DLT_PPP_ETHER	51	/* PPP over Ethernet */
+#define DLT_PPP_SERIAL  50  /* PPP over serial with HDLC encapsulation */
+#define DLT_PPP_ETHER   51  /* PPP over Ethernet */
 
 /*
  * The Axent Raptor firewall - now the Symantec Enterprise Firewall - uses
@@ -199,7 +199,7 @@ struct bpf_version {
  * Ethernet type, and 36 bytes that appear to be 0 in at least one capture
  * I've seen.
  */
-#define DLT_SYMANTEC_FIREWALL	99
+#define DLT_SYMANTEC_FIREWALL   99
 
 /*
  * Values between 100 and 103 are used in capture file headers as
@@ -221,10 +221,10 @@ struct bpf_version {
  * libpcap 0.5 defined it as DLT_CHDLC; we define DLT_CHDLC as well,
  * for source compatibility with programs written for libpcap 0.5.
  */
-#define DLT_C_HDLC	104	/* Cisco HDLC */
-#define DLT_CHDLC	DLT_C_HDLC
+#define DLT_C_HDLC  104 /* Cisco HDLC */
+#define DLT_CHDLC   DLT_C_HDLC
 
-#define DLT_IEEE802_11	105	/* IEEE 802.11 wireless */
+#define DLT_IEEE802_11  105 /* IEEE 802.11 wireless */
 
 /*
  * 106 is reserved for Linux Classical IP over ATM; it's like DLT_RAW,
@@ -239,7 +239,7 @@ struct bpf_version {
  * DLT_FR and DLT_FRELAY packets start with the Q.922 Frame Relay header
  * (DLCI, etc.).
  */
-#define DLT_FRELAY	107
+#define DLT_FRELAY  107
 
 /*
  * OpenBSD DLT_LOOP, for loopback devices; it's like DLT_NULL, except
@@ -249,9 +249,9 @@ struct bpf_version {
  * we don't use 12 for it in OSes other than OpenBSD.
  */
 #ifdef __OpenBSD__
-#define DLT_LOOP	12
+#define DLT_LOOP    12
 #else
-#define DLT_LOOP	108
+#define DLT_LOOP    108
 #endif
 
 /*
@@ -260,9 +260,9 @@ struct bpf_version {
  * than OpenBSD.
  */
 #ifdef __OpenBSD__
-#define DLT_ENC		13
+#define DLT_ENC     13
 #else
-#define DLT_ENC		109
+#define DLT_ENC     109
 #endif
 
 /*
@@ -275,22 +275,22 @@ struct bpf_version {
 /*
  * This is for Linux cooked sockets.
  */
-#define DLT_LINUX_SLL	113
+#define DLT_LINUX_SLL   113
 
 /*
  * Apple LocalTalk hardware.
  */
-#define DLT_LTALK	114
+#define DLT_LTALK   114
 
 /*
  * Acorn Econet.
  */
-#define DLT_ECONET	115
+#define DLT_ECONET  115
 
 /*
  * Reserved for use with OpenBSD ipfilter.
  */
-#define DLT_IPFILTER	116
+#define DLT_IPFILTER    116
 
 /*
  * OpenBSD DLT_PFLOG; DLT_PFLOG is 17 in OpenBSD, but that's DLT_LANE8023
@@ -299,33 +299,33 @@ struct bpf_version {
  * XXX: is there a conflict with DLT_PFSYNC 18 as well?
  */
 #ifdef __OpenBSD__
-#define DLT_OLD_PFLOG	17
-#define DLT_PFSYNC	18
+#define DLT_OLD_PFLOG   17
+#define DLT_PFSYNC  18
 #endif
-#define DLT_PFLOG	117
+#define DLT_PFLOG   117
 
 /*
  * Registered for Cisco-internal use.
  */
-#define DLT_CISCO_IOS	118
+#define DLT_CISCO_IOS   118
 
 /*
  * For 802.11 cards using the Prism II chips, with a link-layer
  * header including Prism monitor mode information plus an 802.11
  * header.
  */
-#define DLT_PRISM_HEADER	119
+#define DLT_PRISM_HEADER    119
 
 /*
  * Reserved for Aironet 802.11 cards, with an Aironet link-layer header
  * (see Doug Ambrisko's FreeBSD patches).
  */
-#define DLT_AIRONET_HEADER	120
+#define DLT_AIRONET_HEADER  120
 
 /*
  * Reserved for Siemens HiPath HDLC.
  */
-#define DLT_HHDLC		121
+#define DLT_HHDLC       121
 
 /*
  * This is for RFC 2625 IP-over-Fibre Channel.
@@ -335,7 +335,7 @@ struct bpf_version {
  * where the link-layer header starts with an RFC 2625 Network_Header
  * field.
  */
-#define DLT_IP_OVER_FC		122
+#define DLT_IP_OVER_FC      122
 
 /*
  * This is for Full Frontal ATM on Solaris with SunATM, with a
@@ -351,9 +351,9 @@ struct bpf_version {
  * and the like don't have to infer the presence or absence of a
  * pseudo-header and the form of the pseudo-header.
  */
-#define DLT_SUNATM		123	/* Solaris+SunATM */
+#define DLT_SUNATM      123 /* Solaris+SunATM */
 
-/* 
+/*
  * Reserved as per request from Kent Dahlgren <kent@praesum.com>
  * for private use.
  */
@@ -366,7 +366,7 @@ struct bpf_version {
  * including radio information, used by some recent BSD drivers as
  * well as the madwifi Atheros driver for Linux.
  */
-#define DLT_IEEE802_11_RADIO	127	/* 802.11 plus radiotap radio header */
+#define DLT_IEEE802_11_RADIO    127 /* 802.11 plus radiotap radio header */
 
 /*
  * Reserved for the TZSP encapsulation, as per request from
@@ -389,7 +389,7 @@ struct bpf_version {
  *
  * We therefore have to have separate DLT_ values for them.
  */
-#define DLT_ARCNET_LINUX	129	/* ARCNET */
+#define DLT_ARCNET_LINUX    129 /* ARCNET */
 
 /*
  * Juniper-private data link types, as per request from
@@ -411,31 +411,31 @@ struct bpf_version {
  * <dieter@apple.com>.  The header that's presented is an Ethernet-like
  * header:
  *
- *	#define FIREWIRE_EUI64_LEN	8
- *	struct firewire_header {
- *		u_char  firewire_dhost[FIREWIRE_EUI64_LEN];
- *		u_char  firewire_shost[FIREWIRE_EUI64_LEN];
- *		u_short firewire_type;
- *	};
+ *  #define FIREWIRE_EUI64_LEN  8
+ *  struct firewire_header {
+ *      u_char  firewire_dhost[FIREWIRE_EUI64_LEN];
+ *      u_char  firewire_shost[FIREWIRE_EUI64_LEN];
+ *      u_short firewire_type;
+ *  };
  *
  * with "firewire_type" being an Ethernet type value, rather than,
  * for example, raw GASP frames being handed up.
  */
-#define DLT_APPLE_IP_OVER_IEEE1394	138
+#define DLT_APPLE_IP_OVER_IEEE1394  138
 
 /*
  * Various SS7 encapsulations, as per a request from Jeff Morriss
  * <jeff.morriss[AT]ulticom.com> and subsequent discussions.
  */
-#define DLT_MTP2_WITH_PHDR	139	/* pseudo-header with various info, followed by MTP2 */
-#define DLT_MTP2		140	/* MTP2, without pseudo-header */
-#define DLT_MTP3		141	/* MTP3, without pseudo-header or MTP2 */
-#define DLT_SCCP		142	/* SCCP, without pseudo-header or MTP2 or MTP3 */
+#define DLT_MTP2_WITH_PHDR  139 /* pseudo-header with various info, followed by MTP2 */
+#define DLT_MTP2        140 /* MTP2, without pseudo-header */
+#define DLT_MTP3        141 /* MTP3, without pseudo-header or MTP2 */
+#define DLT_SCCP        142 /* SCCP, without pseudo-header or MTP2 or MTP3 */
 
 /*
  * DOCSIS MAC frames.
  */
-#define DLT_DOCSIS		143
+#define DLT_DOCSIS      143
 
 /*
  * Linux-IrDA packets. Protocol defined at http://www.irda.org.
@@ -452,13 +452,13 @@ struct bpf_version {
  * issue and define a real DLT_IRDA...
  * Jean II
  */
-#define DLT_LINUX_IRDA		144
+#define DLT_LINUX_IRDA      144
 
 /*
  * Reserved for IBM SP switch and IBM Next Federation switch.
  */
-#define DLT_IBM_SP		145
-#define DLT_IBM_SN		146
+#define DLT_IBM_SP      145
+#define DLT_IBM_SN      146
 
 /*
  * Reserved for private use.  If you have some link-layer header type
@@ -485,34 +485,34 @@ struct bpf_version {
  * Instead, ask "tcpdump-workers@lists.tcpdump.org" for a new DLT_ value,
  * as per the comment above, and use the type you're given.
  */
-#define DLT_USER0		147
-#define DLT_USER1		148
-#define DLT_USER2		149
-#define DLT_USER3		150
-#define DLT_USER4		151
-#define DLT_USER5		152
-#define DLT_USER6		153
-#define DLT_USER7		154
-#define DLT_USER8		155
-#define DLT_USER9		156
-#define DLT_USER10		157
-#define DLT_USER11		158
-#define DLT_USER12		159
-#define DLT_USER13		160
-#define DLT_USER14		161
-#define DLT_USER15		162
+#define DLT_USER0       147
+#define DLT_USER1       148
+#define DLT_USER2       149
+#define DLT_USER3       150
+#define DLT_USER4       151
+#define DLT_USER5       152
+#define DLT_USER6       153
+#define DLT_USER7       154
+#define DLT_USER8       155
+#define DLT_USER9       156
+#define DLT_USER10      157
+#define DLT_USER11      158
+#define DLT_USER12      159
+#define DLT_USER13      160
+#define DLT_USER14      161
+#define DLT_USER15      162
 
 /*
  * For future use with 802.11 captures - defined by AbsoluteValue
  * Systems to store a number of bits of link-layer information
  * including radio information:
  *
- *	http://www.shaftnet.org/~pizza/software/capturefrm.txt
+ *  http://www.shaftnet.org/~pizza/software/capturefrm.txt
  *
  * but it might be used by some non-AVS drivers now or in the
  * future.
  */
-#define DLT_IEEE802_11_RADIO_AVS 163	/* 802.11 plus AVS radio header */
+#define DLT_IEEE802_11_RADIO_AVS 163    /* 802.11 plus AVS radio header */
 
 /*
  * Juniper-private data link type, as per request from
@@ -525,7 +525,7 @@ struct bpf_version {
 /*
  * Reserved for BACnet MS/TP.
  */
-#define DLT_BACNET_MS_TP	165
+#define DLT_BACNET_MS_TP    165
 
 /*
  * Another PPP variant as per request from Karsten Keil <kkeil@suse.de>.
@@ -541,14 +541,14 @@ struct bpf_version {
  * The first byte of the PPP header (0xff03) is modified to accomodate
  * the direction - 0x00 = IN, 0x01 = OUT.
  */
-#define DLT_PPP_PPPD		166
+#define DLT_PPP_PPPD        166
 
 /*
  * Names for backwards compatibility with older versions of some PPP
  * software; new software should use DLT_PPP_PPPD.
  */
-#define DLT_PPP_WITH_DIRECTION	DLT_PPP_PPPD
-#define DLT_LINUX_PPP_WITHDIRECTION	DLT_PPP_PPPD
+#define DLT_PPP_WITH_DIRECTION  DLT_PPP_PPPD
+#define DLT_LINUX_PPP_WITHDIRECTION DLT_PPP_PPPD
 
 /*
  * Juniper-private data link type, as per request from
@@ -559,16 +559,16 @@ struct bpf_version {
 #define DLT_JUNIPER_PPPOE       167
 #define DLT_JUNIPER_PPPOE_ATM   168
 
-#define DLT_GPRS_LLC		169	/* GPRS LLC */
-#define DLT_GPF_T		170	/* GPF-T (ITU-T G.7041/Y.1303) */
-#define DLT_GPF_F		171	/* GPF-F (ITU-T G.7041/Y.1303) */
+#define DLT_GPRS_LLC        169 /* GPRS LLC */
+#define DLT_GPF_T       170 /* GPF-T (ITU-T G.7041/Y.1303) */
+#define DLT_GPF_F       171 /* GPF-F (ITU-T G.7041/Y.1303) */
 
 /*
  * Requested by Oolan Zimmer <oz@gcom.com> for use in Gcom's T1/E1 line
  * monitoring equipment.
  */
-#define DLT_GCOM_T1E1		172
-#define DLT_GCOM_SERIAL		173
+#define DLT_GCOM_T1E1       172
+#define DLT_GCOM_SERIAL     173
 
 /*
  * Juniper-private data link type, as per request from
@@ -583,8 +583,8 @@ struct bpf_version {
  * http://www.endace.com/support/EndaceRecordFormat.pdf) in front of
  * the link-layer header.
  */
-#define DLT_ERF_ETH		175	/* Ethernet */
-#define DLT_ERF_POS		176	/* Packet-over-SONET */
+#define DLT_ERF_ETH     175 /* Ethernet */
+#define DLT_ERF_POS     176 /* Packet-over-SONET */
 
 /*
  * Requested by Daniele Orlandi <daniele@orlandi.com> for raw LAPD
@@ -592,11 +592,11 @@ struct bpf_version {
  * includes additional information before the LAPD header, so it's
  * not necessarily a generic LAPD header.
  */
-#define DLT_LINUX_LAPD		177
+#define DLT_LINUX_LAPD      177
 
 /*
  * Juniper-private data link type, as per request from
- * Hannes Gredler <hannes@juniper.net>. 
+ * Hannes Gredler <hannes@juniper.net>.
  * The DLT_ are used for prepending meta-information
  * like interface index, interface name
  * before standard Ethernet, PPP, Frelay & C-HDLC Frames
@@ -613,7 +613,7 @@ struct bpf_version {
 
 /*
  * Juniper-private data link type, as per request from
- * Hannes Gredler <hannes@juniper.net>. 
+ * Hannes Gredler <hannes@juniper.net>.
  * The DLT_ is used for internal communication with a
  * voice Adapter Card (PIC)
  */
@@ -639,25 +639,25 @@ struct bpf_version {
  * USB packets, beginning with a USB setup header; requested by
  * Paolo Abeni <paolo.abeni@email.it>.
  */
-#define DLT_USB			186
+#define DLT_USB         186
 
 /*
  * Bluetooth HCI UART transport layer (part H:4); requested by
  * Paolo Abeni.
  */
-#define DLT_BLUETOOTH_HCI_H4	187
+#define DLT_BLUETOOTH_HCI_H4    187
 
 /*
  * IEEE 802.16 MAC Common Part Sublayer; requested by Maria Cruz
  * <cruz_petagay@bah.com>.
  */
-#define DLT_IEEE802_16_MAC_CPS	188
+#define DLT_IEEE802_16_MAC_CPS  188
 
 /*
  * USB packets, beginning with a Linux USB header; requested by
  * Paolo Abeni <paolo.abeni@email.it>.
  */
-#define DLT_USB_LINUX		189
+#define DLT_USB_LINUX       189
 
 /*
  * Controller Area Network (CAN) v. 2.0B packets.
@@ -672,23 +672,23 @@ struct bpf_version {
  * IEEE 802.15.4, with address fields padded, as is done by Linux
  * drivers; requested by Juergen Schimmer.
  */
-#define DLT_IEEE802_15_4_LINUX	191
+#define DLT_IEEE802_15_4_LINUX  191
 
 /*
  * Per Packet Information encapsulated packets.
  * DLT_ requested by Gianluca Varenni <gianluca.varenni@cacetech.com>.
  */
-#define DLT_PPI			192
+#define DLT_PPI         192
 
 /*
  * Header for 802.16 MAC Common Part Sublayer plus a radiotap radio header;
  * requested by Charles Clancy.
  */
-#define DLT_IEEE802_16_MAC_CPS_RADIO	193
+#define DLT_IEEE802_16_MAC_CPS_RADIO    193
 
 /*
  * Juniper-private data link type, as per request from
- * Hannes Gredler <hannes@juniper.net>. 
+ * Hannes Gredler <hannes@juniper.net>.
  * The DLT_ is used for internal communication with a
  * integrated service module (ISM).
  */
@@ -698,38 +698,38 @@ struct bpf_version {
  * IEEE 802.15.4, exactly as it appears in the spec (no padding, no
  * nothing); requested by Mikko Saarnivala <mikko.saarnivala@sensinode.com>.
  */
-#define DLT_IEEE802_15_4	195
+#define DLT_IEEE802_15_4    195
 
 /*
  * Various link-layer types, with a pseudo-header, for SITA
  * (http://www.sita.aero/); requested by Fulko Hew (fulko.hew@gmail.com).
  */
-#define DLT_SITA		196
+#define DLT_SITA        196
 
 /*
  * Various link-layer types, with a pseudo-header, for Endace DAG cards;
  * encapsulates Endace ERF records.  Requested by Stephen Donnelly
  * <stephen@endace.com>.
  */
-#define DLT_ERF			197
+#define DLT_ERF         197
 
 /*
  * Special header prepended to Ethernet packets when capturing from a
  * u10 Networks board.  Requested by Phil Mulholland
  * <phil@u10networks.com>.
  */
-#define DLT_RAIF1		198
+#define DLT_RAIF1       198
 
 /*
  * IPMB packet for IPMI, beginning with the I2C slave address, followed
  * by the netFn and LUN, etc..  Requested by Chanthy Toeung
  * <chanthy.toeung@ca.kontron.com>.
  */
-#define DLT_IPMB		199
+#define DLT_IPMB        199
 
 /*
  * Juniper-private data link type, as per request from
- * Hannes Gredler <hannes@juniper.net>. 
+ * Hannes Gredler <hannes@juniper.net>.
  * The DLT_ is used for capturing data on a secure tunnel interface.
  */
 #define DLT_JUNIPER_ST          200
@@ -738,23 +738,23 @@ struct bpf_version {
  * Bluetooth HCI UART transport layer (part H:4), with pseudo-header
  * that includes direction information; requested by Paolo Abeni.
  */
-#define DLT_BLUETOOTH_HCI_H4_WITH_PHDR	201
+#define DLT_BLUETOOTH_HCI_H4_WITH_PHDR  201
 
 /*
  * AX.25 packet with a 1-byte KISS header; see
  *
- *	http://www.ax25.net/kiss.htm
+ *  http://www.ax25.net/kiss.htm
  *
  * as per Richard Stearn <richard@rns-stearn.demon.co.uk>.
  */
-#define DLT_AX25_KISS		202
+#define DLT_AX25_KISS       202
 
 /*
  * LAPD packets from an ISDN channel, starting with the address field,
  * with no pseudo-header.
  * Requested by Varuna De Silva <varunax@gmail.com>.
  */
-#define DLT_LAPD		203
+#define DLT_LAPD        203
 
 /*
  * Variants of various link-layer headers, with a one-byte direction
@@ -762,10 +762,10 @@ struct bpf_version {
  * non-zero (any non-zero value) means "sent by this host" - as per
  * Will Barker <w.barker@zen.co.uk>.
  */
-#define DLT_PPP_WITH_DIR	204	/* PPP - don't confuse with DLT_PPP_WITH_DIRECTION */
-#define DLT_C_HDLC_WITH_DIR	205	/* Cisco HDLC */
-#define DLT_FRELAY_WITH_DIR	206	/* Frame Relay */
-#define DLT_LAPB_WITH_DIR	207	/* LAPB */
+#define DLT_PPP_WITH_DIR    204 /* PPP - don't confuse with DLT_PPP_WITH_DIRECTION */
+#define DLT_C_HDLC_WITH_DIR 205 /* Cisco HDLC */
+#define DLT_FRELAY_WITH_DIR 206 /* Frame Relay */
+#define DLT_LAPB_WITH_DIR   207 /* LAPB */
 
 /*
  * 208 is reserved for an as-yet-unspecified proprietary link-layer
@@ -776,39 +776,39 @@ struct bpf_version {
  * IPMB with a Linux-specific pseudo-header; as requested by Alexey Neyman
  * <avn@pigeonpoint.com>.
  */
-#define DLT_IPMB_LINUX		209
+#define DLT_IPMB_LINUX      209
 
 /*
  * FlexRay automotive bus - http://www.flexray.com/ - as requested
  * by Hannes Kaelber <hannes.kaelber@x2e.de>.
  */
-#define DLT_FLEXRAY		210
+#define DLT_FLEXRAY     210
 
 /*
  * Media Oriented Systems Transport (MOST) bus for multimedia
  * transport - http://www.mostcooperation.com/ - as requested
  * by Hannes Kaelber <hannes.kaelber@x2e.de>.
  */
-#define DLT_MOST		211
+#define DLT_MOST        211
 
 /*
  * Local Interconnect Network (LIN) bus for vehicle networks -
  * http://www.lin-subbus.org/ - as requested by Hannes Kaelber
  * <hannes.kaelber@x2e.de>.
  */
-#define DLT_LIN			212
+#define DLT_LIN         212
 
 /*
  * X2E-private data link type used for serial line capture,
  * as requested by Hannes Kaelber <hannes.kaelber@x2e.de>.
  */
-#define DLT_X2E_SERIAL		213
+#define DLT_X2E_SERIAL      213
 
 /*
  * X2E-private data link type used for the Xoraya data logger
  * family, as requested by Hannes Kaelber <hannes.kaelber@x2e.de>.
  */
-#define DLT_X2E_XORAYA		214
+#define DLT_X2E_XORAYA      214
 
 /*
  * IEEE 802.15.4, exactly as it appears in the spec (no padding, no
@@ -819,7 +819,7 @@ struct bpf_version {
  *
  * Requested by Max Filippov <jcmvbkbc@gmail.com>.
  */
-#define DLT_IEEE802_15_4_NONASK_PHY	215
+#define DLT_IEEE802_15_4_NONASK_PHY 215
 
 
 /*
@@ -827,7 +827,7 @@ struct bpf_version {
  * a member of that class.  A class value of 0 indicates a regular
  * DLT_/LINKTYPE_ value.
  */
-#define DLT_CLASS(x)		((x) & 0x03ff0000)
+#define DLT_CLASS(x)        ((x) & 0x03ff0000)
 
 /*
  * NetBSD-specific generic "raw" link type.  The class value indicates
@@ -836,10 +836,10 @@ struct bpf_version {
  * do not assume that they correspond to AF_ values for your operating
  * system.
  */
-#define	DLT_CLASS_NETBSD_RAWAF	0x02240000
-#define	DLT_NETBSD_RAWAF(af)	(DLT_CLASS_NETBSD_RAWAF | (af))
-#define	DLT_NETBSD_RAWAF_AF(x)	((x) & 0x0000ffff)
-#define	DLT_IS_NETBSD_RAWAF(x)	(DLT_CLASS(x) == DLT_CLASS_NETBSD_RAWAF)
+#define DLT_CLASS_NETBSD_RAWAF  0x02240000
+#define DLT_NETBSD_RAWAF(af)    (DLT_CLASS_NETBSD_RAWAF | (af))
+#define DLT_NETBSD_RAWAF_AF(x)  ((x) & 0x0000ffff)
+#define DLT_IS_NETBSD_RAWAF(x)  (DLT_CLASS(x) == DLT_CLASS_NETBSD_RAWAF)
 
 
 /*
@@ -847,65 +847,65 @@ struct bpf_version {
  */
 /* instruction classes */
 #define BPF_CLASS(code) ((code) & 0x07)
-#define		BPF_LD		0x00
-#define		BPF_LDX		0x01
-#define		BPF_ST		0x02
-#define		BPF_STX		0x03
-#define		BPF_ALU		0x04
-#define		BPF_JMP		0x05
-#define		BPF_RET		0x06
-#define		BPF_MISC	0x07
+#define     BPF_LD      0x00
+#define     BPF_LDX     0x01
+#define     BPF_ST      0x02
+#define     BPF_STX     0x03
+#define     BPF_ALU     0x04
+#define     BPF_JMP     0x05
+#define     BPF_RET     0x06
+#define     BPF_MISC    0x07
 
 /* ld/ldx fields */
-#define BPF_SIZE(code)	((code) & 0x18)
-#define		BPF_W		0x00
-#define		BPF_H		0x08
-#define		BPF_B		0x10
-#define BPF_MODE(code)	((code) & 0xe0)
-#define		BPF_IMM 	0x00
-#define		BPF_ABS		0x20
-#define		BPF_IND		0x40
-#define		BPF_MEM		0x60
-#define		BPF_LEN		0x80
-#define		BPF_MSH		0xa0
+#define BPF_SIZE(code)  ((code) & 0x18)
+#define     BPF_W       0x00
+#define     BPF_H       0x08
+#define     BPF_B       0x10
+#define BPF_MODE(code)  ((code) & 0xe0)
+#define     BPF_IMM     0x00
+#define     BPF_ABS     0x20
+#define     BPF_IND     0x40
+#define     BPF_MEM     0x60
+#define     BPF_LEN     0x80
+#define     BPF_MSH     0xa0
 
 /* alu/jmp fields */
-#define BPF_OP(code)	((code) & 0xf0)
-#define		BPF_ADD		0x00
-#define		BPF_SUB		0x10
-#define		BPF_MUL		0x20
-#define		BPF_DIV		0x30
-#define		BPF_OR		0x40
-#define		BPF_AND		0x50
-#define		BPF_LSH		0x60
-#define		BPF_RSH		0x70
-#define		BPF_NEG		0x80
-#define		BPF_JA		0x00
-#define		BPF_JEQ		0x10
-#define		BPF_JGT		0x20
-#define		BPF_JGE		0x30
-#define		BPF_JSET	0x40
-#define BPF_SRC(code)	((code) & 0x08)
-#define		BPF_K		0x00
-#define		BPF_X		0x08
+#define BPF_OP(code)    ((code) & 0xf0)
+#define     BPF_ADD     0x00
+#define     BPF_SUB     0x10
+#define     BPF_MUL     0x20
+#define     BPF_DIV     0x30
+#define     BPF_OR      0x40
+#define     BPF_AND     0x50
+#define     BPF_LSH     0x60
+#define     BPF_RSH     0x70
+#define     BPF_NEG     0x80
+#define     BPF_JA      0x00
+#define     BPF_JEQ     0x10
+#define     BPF_JGT     0x20
+#define     BPF_JGE     0x30
+#define     BPF_JSET    0x40
+#define BPF_SRC(code)   ((code) & 0x08)
+#define     BPF_K       0x00
+#define     BPF_X       0x08
 
 /* ret - BPF_K and BPF_X also apply */
-#define BPF_RVAL(code)	((code) & 0x18)
-#define		BPF_A		0x10
+#define BPF_RVAL(code)  ((code) & 0x18)
+#define     BPF_A       0x10
 
 /* misc */
 #define BPF_MISCOP(code) ((code) & 0xf8)
-#define		BPF_TAX		0x00
-#define		BPF_TXA		0x80
+#define     BPF_TAX     0x00
+#define     BPF_TXA     0x80
 
 /*
  * The instruction data structure.
  */
 struct bpf_insn {
-	u_short	code;
-	u_char 	jt;
-	u_char 	jf;
-	bpf_u_int32 k;
+    u_short code;
+    u_char  jt;
+    u_char  jf;
+    bpf_u_int32 k;
 };
 
 /*
