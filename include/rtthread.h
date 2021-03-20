@@ -182,7 +182,6 @@ void rt_thread_idle_init(void);
 rt_err_t rt_thread_idle_sethook(void (*hook)(void));
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif
-void rt_thread_idle_excute(void);
 rt_thread_t rt_thread_idle_gethandler(void);
 
 /*
@@ -448,6 +447,10 @@ rt_err_t rt_mq_recv_killable(rt_mq_t    mq,
                     rt_int32_t timeout);
 rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg);
 #endif
+
+/* defunct */
+void rt_thread_defunct_enqueue(rt_thread_t thread);
+rt_thread_t rt_thread_defunct_dequeue(void);
 
 /*
  * spinlock
