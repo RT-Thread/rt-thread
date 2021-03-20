@@ -615,6 +615,7 @@ void cat(const char *filename)
         }
     }
     while (length > 0);
+    rt_kprintf("\n");
 
     dfs_file_close(&fd);
 }
