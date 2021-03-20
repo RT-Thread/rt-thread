@@ -112,7 +112,7 @@ extern "C" {
 #define USB_STRING_CONFIG_INDEX         0x04
 #define USB_STRING_INTERFACE_INDEX      0x05
 #define USB_STRING_OS_INDEX             0x06
-#define USB_STRING_MAX                  USB_STRING_OS_INDEX
+#define USB_STRING_MAX                  0xff
 
 #define USB_STRING_OS                   "MSFT100A"
 
@@ -301,7 +301,7 @@ struct uconfig_descriptor
     rt_uint8_t iConfiguration;
     rt_uint8_t bmAttributes;
     rt_uint8_t MaxPower;
-    rt_uint8_t data[256];
+    rt_uint8_t data[2048];
 };
 typedef struct uconfig_descriptor* ucfg_desc_t;
 
