@@ -34,6 +34,10 @@ extern "C" {
 #define _PRODUCT_ID                 0x0001
 #endif
 
+#ifndef MAX_INTF_STR
+#define MAX_INTF_STR 20
+#endif
+
 #define USB_BCD_DEVICE              0x0200   /* USB Specification Release Number in Binary-Coded Decimal */
 #define USB_BCD_VERSION             0x0200   /* USB 2.0 */
 #define EP0_IN_ADDR                 0x80
@@ -193,7 +197,7 @@ struct udevice
     struct usb_qualifier_descriptor * dev_qualifier;
     usb_os_comp_id_desc_t    os_comp_id_desc;
     const char** str;
-
+    const char *str_intf[MAX_INTF_STR];
     udevice_state_t state;
     rt_list_t cfg_list;
     uconfig_t curr_cfg;
@@ -260,6 +264,7 @@ rt_err_t rt_usbd_event_signal(struct udev_msg* msg);
 rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
 rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring);
+rt_err_t rt_usbd_device_set_interface_string(udevice_t device, int index, const char* string);
 rt_err_t rt_usbd_device_set_qualifier(udevice_t device, struct usb_qualifier_descriptor* qualifier);
 rt_err_t rt_usbd_device_set_os_comp_id_desc(udevice_t device, usb_os_comp_id_desc_t os_comp_id_desc);
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg);
