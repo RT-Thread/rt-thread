@@ -76,7 +76,7 @@ MAX32660-EVSYS开发板常用 **板载资源** 如下：
 | UART         |     支持     | UART0, UART1(console) |
 | PWM          |              |                       |
 | SPI          |     支持     |      SPI0, SPI1       |
-| RTC          |              |                       |
+| RTC          |     支持     |      RTC              |
 | I2S          |              |                       |
 | I2C          |     支持     |      I2C0, I2C1       |
 | TIMER        |              |                       |
