@@ -205,7 +205,6 @@ void rtgui_startup()
 {
     rtgui_rect_t rect;
 
-    /* GUIϵͳ��ʼ�� */
     rtgui_system_server_init();
 
     /* register dock panel */
@@ -216,7 +215,7 @@ void rtgui_startup()
     rtgui_panel_register("info", &rect);
     rtgui_panel_set_default_focused("info");
 
-    /* ����info workbench */
+    /*init info workbench */
     info_init();
 }
 
