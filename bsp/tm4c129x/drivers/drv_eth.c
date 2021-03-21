@@ -1,11 +1,7 @@
 /*
- * File      : drv_eth.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009-2013 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -246,7 +242,7 @@ volatile uint32_t g_ui32AbnormalInts;
                                     ((uint32_t)(ptr) < 0x20070000))
 
 
-typedef struct 
+typedef struct
 {
     /* inherit from ethernet device */
     struct eth_device parent;
@@ -254,7 +250,7 @@ typedef struct
     /* for rx_thread async get pbuf */
     rt_mailbox_t rx_pbuf_mb;
 } net_device;
-typedef net_device* net_device_t; 
+typedef net_device* net_device_t;
 
 static char               rx_pbuf_mb_pool[8*4];
 static struct rt_mailbox  eth_rx_pbuf_mb;
@@ -570,7 +566,7 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
   /* Get our state data from the netif structure we were passed. */
   //pIF = (tStellarisIF *)psNetif->state;
   pIF = dev->dma_if;
-  
+
   /* Make sure that the transmit descriptors are not all in use */
   pDesc = &(pIF->pTxDescList->pDescriptors[pIF->pTxDescList->ui32Write]);
   if(pDesc->pBuf)
@@ -955,7 +951,7 @@ tivaif_process_phy_interrupt(net_device_t dev)
      */
     ui16Val = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_MISR1);
 
-    /* 
+    /*
      * Dummy read PHY REG EPHY_BMSR, it will force update the EPHY_STS register
      */
         EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMSR);
@@ -1170,38 +1166,38 @@ void lwIPEthernetIntHandler(void)
 }
 
 
-// OUI:00-12-37 (hex) Texas Instruments, only for test 
+// OUI:00-12-37 (hex) Texas Instruments, only for test
 static int tiva_eth_mac_addr_init(void)
 {
-    int retVal =0; 
+    int retVal =0;
     uint32_t ulUser[2];
     uint8_t mac_addr[6];
-    
+
     MAP_FlashUserGet(&ulUser[0], &ulUser[1]);
     if((ulUser[0] == 0xffffffff) || (ulUser[1] == 0xffffffff))
     {
         rt_kprintf("Fail to get mac address from eeprom.\n");
         rt_kprintf("Using default mac address\n");
-        // OUI:00-12-37 (hex) Texas Instruments, only for test 
-        // Configure the hardware MAC address 
+        // OUI:00-12-37 (hex) Texas Instruments, only for test
+        // Configure the hardware MAC address
         ulUser[0] = 0x00371200;
         ulUser[1] = 0x00563412;
-        //FlashUserSet(ulUser0, ulUser1); 
+        //FlashUserSet(ulUser0, ulUser1);
         retVal =-1;
     }
-    
-    
+
+
     //Convert the 24/24 split MAC address from NV ram into a 32/16 split MAC
     //address needed to program the hardware registers, then program the MAC
     //address into the Ethernet Controller registers.
-    
+
     mac_addr[0] = ((ulUser[0] >>  0) & 0xff);
     mac_addr[1] = ((ulUser[0] >>  8) & 0xff);
     mac_addr[2] = ((ulUser[0] >> 16) & 0xff);
     mac_addr[3] = ((ulUser[1] >>  0) & 0xff);
     mac_addr[4] = ((ulUser[1] >>  8) & 0xff);
     mac_addr[5] = ((ulUser[1] >> 16) & 0xff);
-    
+
     //
     // Program the hardware with its MAC address (for filtering).
     //
@@ -1219,7 +1215,7 @@ static int tiva_eth_mac_addr_init(void)
     MAP_GPIOPinConfigure(GPIO_PF4_EN0LED1);
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_0);
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_4);
-    
+
     //
     // Enable the ethernet peripheral.
     //
@@ -1288,7 +1284,7 @@ static int tiva_eth_mac_addr_init(void)
                        EMAC_MODE_TX_STORE_FORWARD |
                        EMAC_MODE_TX_THRESHOLD_64_BYTES |
                        EMAC_MODE_RX_THRESHOLD_64_BYTES), 0);
-           
+
     EMACIntRegister(EMAC0_BASE, lwIPEthernetIntHandler);
 
 }
@@ -1297,7 +1293,7 @@ static rt_err_t eth_dev_init(rt_device_t device)
 {
     net_device_t net_dev = (net_device_t)device;
     struct netif *psNetif = (net_dev->parent.netif);
-    
+
     LWIP_ASSERT("psNetif != NULL", (psNetif != NULL));
 
 #if LWIP_NETIF_HOSTNAME
@@ -1311,7 +1307,7 @@ static rt_err_t eth_dev_init(rt_device_t device)
    * of bits per second.
    */
   //NETIF_INIT_SNMP(psNetif, snmp_ifType_ethernet_csmacd, 1000000);
-  
+
   net_dev->dma_if = &g_StellarisIFData;
 
   /* Remember our MAC address. */
@@ -1329,9 +1325,9 @@ static rt_err_t eth_dev_control(rt_device_t dev, int cmd, void *args)
     {
     case NIOCTL_GADDR:
         /* get mac address */
-        if(args) 
+        if(args)
             MAP_EMACAddrGet(EMAC0_BASE, 0, (uint8_t*)args);
-        else 
+        else
             return -RT_ERROR;
         break;
 
@@ -1379,7 +1375,7 @@ static struct pbuf* eth_dev_rx(rt_device_t dev)
     rt_uint32_t temp =0;
     net_device_t net_dev = (net_device_t)dev;
     result = rt_mb_recv(net_dev->rx_pbuf_mb, (rt_ubase_t *)&temp, RT_WAITING_NO);
-    
+
     return (result == RT_EOK)? (struct pbuf*)temp : RT_NULL;
 }
 
@@ -1388,7 +1384,7 @@ int rt_hw_tiva_eth_init(void)
     rt_err_t result;
 
     /* Clock GPIO and etc */
-    tiva_eth_lowlevel_init(); 
+    tiva_eth_lowlevel_init();
     tiva_eth_mac_addr_init();
 
     /* init rt-thread device interface */
@@ -1400,14 +1396,14 @@ int rt_hw_tiva_eth_init(void)
     eth_dev->parent.parent.control  = eth_dev_control;
     eth_dev->parent.eth_rx          = eth_dev_rx;
     eth_dev->parent.eth_tx          = eth_dev_tx;
-    
+
     result = rt_mb_init(&eth_rx_pbuf_mb, "epbuf",
                         &rx_pbuf_mb_pool[0], sizeof(rx_pbuf_mb_pool)/4,
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
     eth_dev->rx_pbuf_mb = &eth_rx_pbuf_mb;
-    
-    
+
+
     result = eth_device_init(&(eth_dev->parent), "e0");
     return result;
 }
@@ -1433,13 +1429,13 @@ void PHY_Write(uint8_t addr , uint16_t data)
 }
 FINSH_FUNCTION_EXPORT(PHY_Write, (add, data));
 
-void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2, 
+void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2,
                 uint8_t addr3, uint8_t addr4, uint8_t addr5)
 {
     uint32_t ulUser[2];
     ulUser[0] = (((addr2<<8)|addr1)<<8)|addr0;
     ulUser[1] = (((addr5<<8)|addr4)<<8)|addr3;
-    
+
     MAP_FlashUserSet(ulUser[0], ulUser[1]);
     MAP_FlashUserSave();
     rt_kprintf("Save to EEPROM. please reboot.");
