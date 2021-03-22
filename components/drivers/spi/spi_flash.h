@@ -26,6 +26,7 @@ struct spi_flash_device
 typedef struct spi_flash_device *rt_spi_flash_device_t;
 
 #ifdef RT_USING_MTD_NOR
+#include <drivers/mtd_nor.h>
 struct spi_flash_mtd
 {
     struct rt_mtd_nor_device            mtd_device;
