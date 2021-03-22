@@ -320,18 +320,6 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                     drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
                 }
                  /**
-                 * struct rt_can_filter_item { 
-                 *      rt_uint32_t id : 29; // 报文 ID  
-                 *      rt_uint32_t ide : 1; // 扩展帧标识位  
-                 *      rt_uint32_t rtr : 1; // 远程帧标识位  
-                 *      rt_uint32_t mode : 1; // 过滤表模式  
-                 *      rt_uint32_t mask; // ID 掩码，0 表示对应的位不关心，1 表示对应的位必须匹配  
-                 *      rt_int32_t hdr; // -1 表示不指定过滤表号，对应的过滤表控制块也不会被初始化，正数为过滤表号，对应的过滤表控制块会被初始化  
-                 *      #ifdef RT_CAN_USING_HDR // 过滤表回调函数  
-                 *      rt_err_t (*ind)(rt_device_t dev, void *args , rt_int32_t hdr, rt_size_t size); // 回调函数参数  
-                 *      void *args; 
-                 *      #endif
-                 * };
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
                  * MASK   | CAN_FxR2[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
                  * STD ID |     STID[10:3]  | STDID[2:0] |<-                21bit                  ->|
