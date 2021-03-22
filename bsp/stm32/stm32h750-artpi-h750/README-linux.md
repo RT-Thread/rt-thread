@@ -14,10 +14,7 @@ Following steps should be done at first:
 
 rt-thread build step:
 1, cd bsp/stm32/stm32h750-artpi-h750
-2, scons --menuconfig                (update rtconfig.h)
-3, source ~/.env/env.sh
-4, pkgs --update                     (download fal package)
-5, scons
+2, scons
 
 fw/u-boot/kernel install step:
 msh >ry                              (download u-boot, ./demo/u-boot)

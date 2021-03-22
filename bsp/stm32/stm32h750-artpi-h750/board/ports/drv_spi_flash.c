@@ -24,7 +24,6 @@ static int rt_flash_init(void)
     /* initialize SPI Flash device */
     rt_sfud_flash_probe("norflash0", "spi10");
 
-    fal_init();
     return 0;
 }
 INIT_ENV_EXPORT(rt_flash_init);
