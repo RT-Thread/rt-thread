@@ -6,7 +6,7 @@
 
 /* RT-Thread Kernel */
 
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 16
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -80,6 +80,13 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_SPI
+#define RT_USING_QSPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_USING_QSPI
+#define RT_SFUD_SPI_MAX_HZ 50000000
 
 /* Using USB */
 
@@ -107,6 +114,8 @@
 
 /* Utilities */
 
+#define RT_USING_RYM
+#define YMODEM_USING_CRC_TABLE
 
 /* RT-Thread online packages */
 
@@ -138,14 +147,29 @@
 
 /* system packages */
 
+#define PKG_USING_FAL
+#define FAL_DEBUG_CONFIG
+#define FAL_DEBUG 1
+#define FAL_PART_HAS_TABLE_CFG
+#define PKG_USING_FAL_V00500
+#define PKG_FAL_VER_NUM 0x00500
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
 
 /* peripheral libraries and drivers */
+
+
+/* AI packages */
 
 
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
+
+
+/* games: games run on RT-Thread console */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32H7
@@ -156,13 +180,18 @@
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_QSPI_FLASH
+#define BSP_USING_SPI_FLASH
+#define FAL_USING_SFUD_PORT_LOCAL
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
-#define BSP_USING_UART3
 #define BSP_USING_UART4
+#define BSP_USING_SPI
+#define BSP_USING_SPI1
+#define BSP_USING_QSPI
 
 /* Board extended module Drivers */
 

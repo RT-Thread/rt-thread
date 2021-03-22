@@ -9,12 +9,23 @@ src += Glob('CubeMX_Config/Core/Src/stm32h7xx_hal_msp.c')
 
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += Glob('ports/drv_qspi_flash.c')
+    src += Glob('ports/w25qxx.c')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/drv_spi_flash.c')
+
+if GetDepend(['FAL_USING_SFUD_PORT_LOCAL']):
+    src += Glob('ports/fal_qspi_flash.c')
+    src += Glob('ports/fal_flash_sfud_port.c')
 
 if GetDepend('BSP_USING_SPI_LCD'):
     src = src + ['ports/drv_lcd.c']
 
+src = src + ['drv_mpu.c']
+
 path = [cwd]
 path += [cwd + '/CubeMX_Config/Core/Inc']
+path += [cwd + '/ports']
 
 if rtconfig.CROSS_TOOL == 'gcc':
     src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h750xx.s']

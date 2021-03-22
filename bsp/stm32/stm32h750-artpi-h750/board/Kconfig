@@ -14,7 +14,21 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
+        select FAL_USING_SFUD_PORT_LOCAL
         default n
+
+    config BSP_USING_SPI_FLASH
+        bool "Enable SPI FLASH (W25Q64 spi1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select RT_USING_SFUD
+        select RT_SFUD_USING_SFDP
+        select FAL_USING_SFUD_PORT_LOCAL
+        default n
+
+    menuconfig FAL_USING_SFUD_PORT_LOCAL
+        bool "Use local fal driver"
+        default y
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -46,6 +60,51 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+        endif
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    config BSP_QSPI_USING_DMA
+        bool "Enable QSPI DMA support"
+        default n
 
     source "../libraries/HAL_Drivers/Kconfig"
 
