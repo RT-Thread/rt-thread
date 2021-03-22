@@ -176,7 +176,7 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     else if (oflag & RT_DEVICE_FLAG_INT_RX && dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
         /* If interrupt mode is supported, configure it to interrupt mode */
-        if (RT_EOK== local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT))
+        if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT) == RT_EOK)
         {
             /* Initialization sensor interrupt */
             rt_sensor_irq_init(sensor);
@@ -186,7 +186,7 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     else if (oflag & RT_DEVICE_FLAG_FIFO_RX && dev->flag & RT_DEVICE_FLAG_FIFO_RX)
     {
         /* If fifo mode is supported, configure it to fifo mode */
-        if (RT_EOK == local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO))
+        if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO) == RT_EOK)
         {
             /* Initialization sensor interrupt */
             rt_sensor_irq_init(sensor);
@@ -200,7 +200,7 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
     }
 
     /* Configure power mode to normal mode */
-    if (RT_EOK  == local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_NORMAL))
+    if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_NORMAL) == RT_EOK)
     {
         sensor->config.power = RT_SENSOR_POWER_NORMAL;
     }
@@ -233,7 +233,7 @@ static rt_err_t rt_sensor_close(rt_device_t dev)
     }
 
     /* Configure power mode to power down mode */
-    if (RT_EOK == local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_DOWN))
+    if (local_ctrl(sensor, RT_SENSOR_CTRL_SET_POWER, (void *)RT_SENSOR_POWER_DOWN) == RT_EOK)
     {
         sensor->config.power = RT_SENSOR_POWER_DOWN;
     }
