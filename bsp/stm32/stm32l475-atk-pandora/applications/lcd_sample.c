@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,30 +18,30 @@
 
 static int lcd_sample(void)
 {
-    /* ÇåÆÁ */
+    /* æ¸…å± */
     lcd_clear(WHITE);
 
-    /* ÏÔÊ¾ RT-Thread logo */
+    /* æ˜¾ç¤º RT-Thread logo */
     lcd_show_image(0, 0, 240, 69, image_rttlogo);
-    
-    /* ÉèÖÃ±³¾°É«ºÍÇ°¾°É« */
+
+    /* è®¾ç½®èƒŒæ™¯è‰²å’Œå‰æ™¯è‰² */
     lcd_set_color(WHITE, BLACK);
 
-    /* ÔÚ LCD ÉÏÏÔÊ¾×Ö·û */
+    /* åœ¨ LCD ä¸Šæ˜¾ç¤ºå­—ç¬¦ */
     lcd_show_string(10, 69, 16, "Hello, RT-Thread!");
     lcd_show_string(10, 69+16, 24, "RT-Thread");
     lcd_show_string(10, 69+16+24, 32, "RT-Thread");
-    
-    /* ÔÚ LCD ÉÏ»­Ïß */
+
+    /* åœ¨ LCD ä¸Šç”»çº¿ */
     lcd_draw_line(0, 69+16+24+32, 240, 69+16+24+32);
-    
-    /* ÔÚ LCD ÉÏ»­Ò»¸öÍ¬ĞÄÔ² */
+
+    /* åœ¨ LCD ä¸Šç”»ä¸€ä¸ªåŒå¿ƒåœ† */
     lcd_draw_point(120, 194);
     for (int i = 0; i < 46; i += 4)
     {
         lcd_draw_circle(120, 194, i);
     }
-    
+
     return RT_EOK;
 }
 INIT_APP_EXPORT(lcd_sample);

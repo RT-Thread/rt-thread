@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,8 +21,8 @@
 
 #define NAND_RB_PIN GET_PIN(D, 6)
 
-static rt_uint32_t ecc_rdbuf[NAND_MAX_PAGE_SIZE/NAND_ECC_SECTOR_SIZE];	
-static rt_uint32_t ecc_hdbuf[NAND_MAX_PAGE_SIZE/NAND_ECC_SECTOR_SIZE];	
+static rt_uint32_t ecc_rdbuf[NAND_MAX_PAGE_SIZE/NAND_ECC_SECTOR_SIZE];
+static rt_uint32_t ecc_hdbuf[NAND_MAX_PAGE_SIZE/NAND_ECC_SECTOR_SIZE];
 struct rthw_fmc
 {
     rt_uint32_t id;
@@ -193,11 +193,11 @@ static rt_uint8_t rt_hw_nand_ecc_check(rt_uint32_t generatedEcc, rt_uint32_t rea
 
     syndrome = (generatedEcc ^ readEcc) & ECC_MASK28;
 
-    if (syndrome == 0)   
+    if (syndrome == 0)
     {
         return (RT_EOK);                     /* No errors in data. */
     }
-     
+
     eccPn = syndrome & ECC_MASK;              /* Get 14 odd parity bits.  */
     eccP  = (syndrome >> 1) & ECC_MASK;       /* Get 14 even parity bits. */
 
@@ -255,13 +255,13 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
     rt_uint32_t index, i, tickstart, eccnum;
     rt_err_t result;
     rt_uint8_t *p = RT_NULL;
-    
+
     page = page + device->block_start * device->pages_per_block;
     if (page / device->pages_per_block > device->block_end)
     {
         return -RT_EIO;
     }
-    
+
     rt_mutex_take(&_device.lock, RT_WAITING_FOREVER);
     if (data && data_len)
     {
@@ -272,9 +272,9 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
         NAND_DATA_AREA = (rt_uint8_t)(page >> 8);
         NAND_DATA_AREA = (rt_uint8_t)(page >> 16);
         NAND_CMD_AREA  = NAND_AREA_TRUE1;
-        
+
         rt_hw_nand_delay(10);
-        
+
         /* not an integer multiple of NAND ECC SECTOR SIZE, no ECC checks*/
         if (data_len % NAND_ECC_SECTOR_SIZE)
         {
@@ -285,16 +285,16 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
         }
         else
         {
-            eccnum = data_len/NAND_ECC_SECTOR_SIZE;			
+            eccnum = data_len/NAND_ECC_SECTOR_SIZE;
             p = data;
             for (index = 0; index < 4; index++)
             {
-                FMC_Bank3_R->PCR |= 1<<6;	/* enable ecc */ 
-            
-                for (i = 0; i < NAND_ECC_SECTOR_SIZE; i++)				
+                FMC_Bank3_R->PCR |= 1<<6;   /* enable ecc */
+
+                for (i = 0; i < NAND_ECC_SECTOR_SIZE; i++)
                 {
                     *data++ = NAND_ADDR_AREA;
-                }		
+                }
                 /* Get tick */
                 tickstart = rt_tick_get();
                 /* Wait until FIFO is empty */
@@ -307,25 +307,25 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
                         goto _exit;
                     }
                 }
-                ecc_hdbuf[index] = FMC_Bank3_R->HECCR;	/* read hardware ecc */
-                FMC_Bank3_R->PCR &= ~(1<<6);		    /* disable ecc */
+                ecc_hdbuf[index] = FMC_Bank3_R->HECCR;  /* read hardware ecc */
+                FMC_Bank3_R->PCR &= ~(1<<6);            /* disable ecc */
             }
             i = device->page_size + 0x10;
-            
+
             rt_hw_nand_delay(10);
-            
+
             NAND_CMD_AREA  = 0x05;
             NAND_DATA_AREA = (rt_uint8_t)i;
             NAND_DATA_AREA = (rt_uint8_t)(i>>8);
             NAND_CMD_AREA  = 0xE0;
-            
+
             rt_hw_nand_delay(10);
-            
-            data =(rt_uint8_t*)&ecc_rdbuf[0]; 
+
+            data =(rt_uint8_t*)&ecc_rdbuf[0];
             for (i = 0; i < 4*eccnum; i++)
             {
                 *data++ = NAND_ADDR_AREA;
-            }		
+            }
             /* check ecc */
             for(i  = 0;  i< eccnum; i++)
             {
@@ -336,10 +336,10 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
                     {
                         goto _exit;
                     }
-                } 
+                }
             }
         }
-    }    
+    }
     if (spare && spare_len)
     {
         NAND_CMD_AREA  = NAND_AREA_A;
@@ -356,7 +356,7 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
             *spare++ = NAND_ADDR_AREA;
         }
     }
-    
+
     if (rt_hw_nand_wait_ready() != RT_EOK)
     {
         result = RT_ETIMEOUT;
@@ -400,11 +400,11 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
         NAND_DATA_AREA = (rt_uint8_t)(page & 0xFF);
         NAND_DATA_AREA = (rt_uint8_t)(page >> 8);
         NAND_DATA_AREA = (rt_uint8_t)(page >> 16);
-        
+
         rt_hw_nand_delay(10);
-        
+
         if (data_len % NAND_ECC_SECTOR_SIZE)
-        { 
+        {
             /* read nand flash */
             for (i = 0; i < data_len; i++)
             {
@@ -413,15 +413,15 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
         }
         else
         {
-            eccnum   = data_len/NAND_ECC_SECTOR_SIZE;	
+            eccnum   = data_len/NAND_ECC_SECTOR_SIZE;
             for (index = 0; index < eccnum; index++)
             {
-                FMC_Bank3_R->PCR |= 1<<6;				/* enable ecc */ 
-                
-                for (i = 0; i < NAND_ECC_SECTOR_SIZE; i++)				
+                FMC_Bank3_R->PCR |= 1<<6;               /* enable ecc */
+
+                for (i = 0; i < NAND_ECC_SECTOR_SIZE; i++)
                 {
                     NAND_ADDR_AREA = *data++;
-                }		
+                }
                 /* Get tick */
                 tickstart = rt_tick_get();
                 /* Wait until FIFO is empty */
@@ -434,26 +434,26 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
                         goto _exit;
                     }
                 }
-                ecc_hdbuf[index] = FMC_Bank3_R->HECCR;	/* read hardware ecc */
-                FMC_Bank3_R->PCR &= ~(1<<6);			/* disable ecc */
+                ecc_hdbuf[index] = FMC_Bank3_R->HECCR;  /* read hardware ecc */
+                FMC_Bank3_R->PCR &= ~(1<<6);            /* disable ecc */
             }
-            
+
             i = device->page_size + 0x10;
             rt_hw_nand_delay(10);
             NAND_CMD_AREA  = 0x85;
             NAND_DATA_AREA = (rt_uint8_t)i;
             NAND_DATA_AREA = (rt_uint8_t)(i>>8);
             rt_hw_nand_delay(10);
-            
+
             data = (uint8_t*)&ecc_hdbuf[0];
 
-            for (index = 0; index < eccnum; index++)		
-            { 
-                for (i = 0; i < 4; i++)				 
+            for (index = 0; index < eccnum; index++)
+            {
+                for (i = 0; i < 4; i++)
                 {
                     NAND_ADDR_AREA = *data++;
                 }
-            }              
+            }
         }
     }
     NAND_CMD_AREA = NAND_WRITE_TURE1;
@@ -462,7 +462,7 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
         result = -RT_EIO;
         goto _exit;
     }
-        
+
     if (spare && spare_len)
     {
         NAND_CMD_AREA = NAND_WRITE0;

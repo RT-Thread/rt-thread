@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -83,9 +83,9 @@ static int uart_dma_sample(int argc, char *argv[])
     }
 
     rt_mq_init(&rx_mq, "rx_mq",
-               msg_pool,                 
-               sizeof(struct rx_msg),    
-               sizeof(msg_pool), 
+               msg_pool,
+               sizeof(struct rx_msg),
+               sizeof(msg_pool),
                RT_IPC_FLAG_FIFO);
 
     ret = rt_device_open(serial, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
@@ -94,14 +94,14 @@ static int uart_dma_sample(int argc, char *argv[])
         rt_kprintf("serial device open fail!.\n");
         return -RT_ERROR;
     }
-    
+
     ret = rt_device_set_rx_indicate(serial, uart_input);
     if (ret != RT_EOK)
     {
         rt_kprintf("set rx indicate fail!.\n");
         return -RT_ERROR;
     }
-    
+
     rt_device_write(serial, 0, str, (sizeof(str) - 1));
 
     rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 1024, 25, 10);

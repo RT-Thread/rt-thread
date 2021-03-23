@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,9 +20,9 @@ extern const struct fal_flash_dev stm32_onchip_flash;
 
 /* ========================= Device Configuration ========================== */
 #ifdef BSP_USING_ON_CHIP_FLASH
-#define ONCHIP_FLASH_DEV     &stm32_onchip_flash,  
+#define ONCHIP_FLASH_DEV     &stm32_onchip_flash,
 #else
-#define ONCHIP_FLASH_DEV    
+#define ONCHIP_FLASH_DEV
 #endif /* BSP_USING_ON_CHIP_FLASH */
 
 /* flash device table */

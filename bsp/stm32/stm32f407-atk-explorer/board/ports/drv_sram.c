@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,11 +26,11 @@ static struct rt_memheap system_heap;
 static SRAM_HandleTypeDef hsram;
 
 static int rt_hw_sram_init(void)
-{ 
+{
     int result = RT_EOK;
 
     FSMC_NORSRAM_TimingTypeDef Timing = {0};
-    
+
     /** Perform the SRAM2 memory initialization sequence
     */
     hsram.Instance = FSMC_NORSRAM_DEVICE;
@@ -57,7 +57,7 @@ static int rt_hw_sram_init(void)
     hsram.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
     hsram.Init.PageSize = FSMC_PAGE_SIZE_NONE;
 
-    
+
     /* Timing */
     Timing.AddressSetupTime = 0;
     Timing.AddressHoldTime = 0;
@@ -81,7 +81,7 @@ static int rt_hw_sram_init(void)
         rt_memheap_init(&system_heap, "sram", (void *)SRAM_BANK_ADDR, SRAM_SIZE);
 #endif
     }
-    
+
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_sram_init);
@@ -153,7 +153,7 @@ static int sram_test(void)
         LOG_D("SRAM test success!");
     }
 
-    return RT_EOK;  
+    return RT_EOK;
 }
 MSH_CMD_EXPORT(sram_test, sram test);
 #endif /* FINSH_USING_MSH */
