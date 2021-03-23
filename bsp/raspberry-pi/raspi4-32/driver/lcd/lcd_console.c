@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -55,7 +55,7 @@ static void newline(fb_t* fb)
 
         if(fb->depth >= 3)
         {
-            uint32_t *addr_32bit = (uint32_t*) (fb->vaddr) + (fb->height - CHAR_H) * fb->width;        
+            uint32_t *addr_32bit = (uint32_t*) (fb->vaddr) + (fb->height - CHAR_H) * fb->width;
 
             for (i = 0; i < (CHAR_H * fb->width); i++)
             {
@@ -64,7 +64,7 @@ static void newline(fb_t* fb)
         }
         else
         {
-            uint16_t *addr_16bit = (uint16_t*) (fb->vaddr) + (fb->height - CHAR_H) * fb->width;        
+            uint16_t *addr_16bit = (uint16_t*) (fb->vaddr) + (fb->height - CHAR_H) * fb->width;
 
             for (i = 0; i < (CHAR_H * fb->width); i++)
             {
@@ -107,7 +107,7 @@ static void fb_draw_char(fb_t *fb, char s)
             {
                 *((unsigned short*) (addr + line)) = ((int) *(glyph + ((i)/8)) * 1) & mask ? fb->fore : fb->back;
             }
-            
+
             mask >>= 1;
             if(mask == 0)
             {
@@ -170,12 +170,12 @@ void fb_print(char *s)
     {
         rt_device_control(console_dev,RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
     }
-#endif 
+#endif
 }
 
 #ifndef LCD_CONSOLE_FLUSH_NOW
 void lcd_console_task_entry(void *param)
-{   
+{
     fb_t *fb = (fb_t *)param;
     while (1)
     {
@@ -186,7 +186,7 @@ void lcd_console_task_entry(void *param)
         }
         rt_thread_mdelay(LCD_CONSOLE_DELAY);
     }
-    
+
 }
 #endif
 
@@ -199,7 +199,7 @@ int lcd_console_init(void)
         rt_kprintf("no console dev!\n");
         return 0;
     }
-    
+
     if(console_dev->ref_count >= 1)
     {
         rt_kprintf("lcd console has open!\n");
@@ -209,7 +209,7 @@ int lcd_console_init(void)
     rt_device_open(console_dev,RT_DEVICE_OFLAG_RDWR);
 
     rt_device_control(console_dev, RTGRAPHIC_CTRL_GET_INFO, &info);
-        
+
     virt_buffer = (rt_uint8_t* )rt_malloc(info.width * info.height * (info.bits_per_pixel/8));
     rt_memset(virt_buffer, 0 , info.width * info.height * (info.bits_per_pixel/8));
     console_fb.width = info.width;
@@ -246,7 +246,7 @@ int lcd_console_init(void)
     * #ifdef USING_LCD_CONSOLE
     *     fb_print((char*)rt_log_buf);
     * #endif
-    * 
+    *
     * remove rt_console_set_device(CONSOLE_NAME);
     */
     rt_console_set_device(CONSOLE_NAME);
