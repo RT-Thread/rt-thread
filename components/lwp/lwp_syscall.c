@@ -973,12 +973,18 @@ int sys_setpriority(int which, id_t who, int prio)
 
 rt_sem_t sys_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 {
-    return rt_sem_create(name, value, flag);
+    rt_sem_t sem = rt_sem_create(name, value, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)sem) != 0)
+    {
+        rt_sem_delete(sem);
+        sem = NULL;
+    }
+    return sem;
 }
 
 rt_err_t sys_sem_delete(rt_sem_t sem)
 {
-    return rt_sem_delete(sem);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)sem);
 }
 
 rt_err_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
@@ -993,12 +999,18 @@ rt_err_t sys_sem_release(rt_sem_t sem)
 
 rt_mutex_t sys_mutex_create(const char *name, rt_uint8_t flag)
 {
-    return rt_mutex_create(name, flag);
+    rt_mutex_t mutex = rt_mutex_create(name, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)mutex) != 0)
+    {
+        rt_mutex_delete(mutex);
+        mutex = NULL;
+    }
+    return mutex;
 }
 
 rt_err_t sys_mutex_delete(rt_mutex_t mutex)
 {
-    return rt_mutex_delete(mutex);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)mutex);
 }
 
 rt_err_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
@@ -1036,12 +1048,18 @@ int sys_munmap(void *addr, size_t length)
 
 rt_event_t sys_event_create(const char *name, rt_uint8_t flag)
 {
-    return rt_event_create(name, flag);
+    rt_event_t event = rt_event_create(name, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)event) != 0)
+    {
+        rt_event_delete(event);
+        event = NULL;
+    }
+    return event;
 }
 
 rt_err_t sys_event_delete(rt_event_t event)
 {
-    return rt_event_delete(event);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)event);
 }
 
 rt_err_t sys_event_send(rt_event_t event, rt_uint32_t set)
@@ -1060,12 +1078,18 @@ rt_err_t sys_event_recv(rt_event_t   event,
 
 rt_mailbox_t sys_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 {
-    return rt_mb_create(name, size, flag);
+    rt_mailbox_t mb = rt_mb_create(name, size, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)mb) != 0)
+    {
+        rt_mb_delete(mb);
+        mb = NULL;
+    }
+    return mb;
 }
 
 rt_err_t sys_mb_delete(rt_mailbox_t mb)
 {
-    return rt_mb_delete(mb);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)mb);
 }
 
 rt_err_t sys_mb_send(rt_mailbox_t mb, rt_uint32_t value)
@@ -1090,12 +1114,18 @@ rt_mq_t sys_mq_create(const char *name,
                      rt_size_t   max_msgs,
                      rt_uint8_t  flag)
 {
-    return rt_mq_create(name, msg_size, max_msgs, flag);
+    rt_mq_t mq = rt_mq_create(name, msg_size, max_msgs, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)mq) != 0)
+    {
+        rt_mq_delete(mq);
+        mq = NULL;
+    }
+    return mq;
 }
 
 rt_err_t sys_mq_delete(rt_mq_t mq)
 {
-    return rt_mq_delete(mq);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)mq);
 }
 
 rt_err_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
@@ -1127,12 +1157,18 @@ rt_timer_t sys_timer_create(const char *name,
         rt_tick_t   time,
         rt_uint8_t  flag)
 {
-    return rt_timer_create(name, timer_timeout_callback, (void *)data, time, flag);
+    rt_timer_t timer = rt_timer_create(name, timer_timeout_callback, (void *)data, time, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)timer) != 0)
+    {
+        rt_timer_delete(timer);
+        timer = NULL;
+    }
+    return timer;
 }
 
 rt_err_t sys_timer_delete(rt_timer_t timer)
 {
-    return rt_timer_delete(timer);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)timer);
 }
 
 rt_err_t sys_timer_start(rt_timer_t timer)
@@ -1538,6 +1574,9 @@ int _sys_fork(void)
     rt_memcpy(thread->stack_addr, self_thread->stack_addr, self_thread->stack_size);
     lwp_tid_set_thread(tid, thread);
 
+    /* duplicate user objects */
+    lwp_user_object_dup(lwp, self_lwp);
+
     level = rt_hw_interrupt_disable();
     user_stack = lwp_get_user_sp();
     rt_hw_interrupt_enable(level);
@@ -1923,6 +1962,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     }
     rt_memset(new_lwp, 0, sizeof(struct rt_lwp));
     new_lwp->ref = 1;
+    lwp_user_object_lock_init(new_lwp);
     ret = arch_user_space_init(new_lwp);
     if (ret != 0)
     {
@@ -1957,6 +1997,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         int off = 0;
         int last_backslash = 0;
         char *run_name = args_info.argv[0];
+
+        /* clear all user objects */
+        lwp_user_object_clear(lwp);
 
         /* find last \ or / */
         while (1)

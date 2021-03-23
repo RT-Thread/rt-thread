@@ -40,7 +40,7 @@ static struct rt_lwp *lwp_pid_ary[RT_LWP_MAX_NR];
 static struct rt_lwp **lwp_pid_free_head = RT_NULL;
 static pid_t lwp_pid_ary_alloced = 1; /* 0 is reserved */
 
-pid_t lwp_pid_get(void)
+static pid_t lwp_pid_get(void)
 {
     pid_t ret = 0;
     rt_base_t level = rt_hw_interrupt_disable();
@@ -64,7 +64,7 @@ pid_t lwp_pid_get(void)
     return ret;
 }
 
-void lwp_pid_put(pid_t pid)
+static void lwp_pid_put(pid_t pid)
 {
     struct rt_lwp **p = RT_NULL;
     rt_base_t level = rt_hw_interrupt_disable();
@@ -78,7 +78,7 @@ void lwp_pid_put(pid_t pid)
     rt_hw_interrupt_enable(level);
 }
 
-void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp)
+static void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp)
 {
     if (pid > 0 && pid < RT_LWP_MAX_NR)
     {
@@ -106,6 +106,165 @@ static void __exit_files(struct rt_lwp *lwp)
     }
 }
 
+void lwp_user_object_lock_init(struct rt_lwp *lwp)
+{
+    rt_mutex_init(&lwp->object_mutex, "lwp_obj", RT_IPC_FLAG_PRIO);
+}
+
+void lwp_user_object_lock_destroy(struct rt_lwp *lwp)
+{
+    rt_mutex_detach(&lwp->object_mutex);
+}
+
+void lwp_user_object_lock(struct rt_lwp *lwp)
+{
+    if (lwp)
+    {
+        rt_mutex_take(&lwp->object_mutex, RT_WAITING_FOREVER);
+    }
+    else
+    {
+        RT_ASSERT(0);
+    }
+}
+
+void lwp_user_object_unlock(struct rt_lwp *lwp)
+{
+    if (lwp)
+    {
+        rt_mutex_release(&lwp->object_mutex);
+    }
+    else
+    {
+        RT_ASSERT(0);
+    }
+}
+
+int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object)
+{
+    int ret = -1;
+
+    if (lwp && object)
+    {
+        lwp_user_object_lock(lwp);
+        if (!lwp_avl_find((avl_key_t)object, lwp->object_root))
+        {
+            struct lwp_avl_struct *node;
+
+            node = (struct lwp_avl_struct *)rt_malloc(sizeof(struct lwp_avl_struct));
+            if (node)
+            {
+                rt_base_t level;
+
+                level = rt_hw_interrupt_disable();
+                object->lwp_ref_count++;
+                rt_hw_interrupt_enable(level);
+                node->avl_key = (avl_key_t)object;
+                lwp_avl_insert(node, &lwp->object_root);
+                ret = 0;
+            }
+        }
+        lwp_user_object_unlock(lwp);
+    }
+    return ret;
+}
+
+static rt_err_t _object_node_delete(struct rt_lwp *lwp, struct lwp_avl_struct *node)
+{
+    rt_err_t ret = -1;
+    rt_object_t object;
+
+    if (!lwp || !node)
+    {
+        return ret;
+    }
+    object = (rt_object_t)node->avl_key;
+    object->lwp_ref_count--;
+    if (object->lwp_ref_count == 0)
+    {
+        /* remove from kernel object list */
+        switch (object->type)
+        {
+        case RT_Object_Class_Semaphore:
+            ret = rt_sem_delete((rt_sem_t)object);
+            break;
+        case RT_Object_Class_Mutex:
+            ret = rt_mutex_delete((rt_mutex_t)object);
+            break;
+        case RT_Object_Class_Event:
+            ret = rt_event_delete((rt_event_t)object);
+            break;
+        case RT_Object_Class_MailBox:
+            ret = rt_mb_delete((rt_mailbox_t)object);
+            break;
+        case RT_Object_Class_MessageQueue:
+            ret = rt_mq_delete((rt_mq_t)object);
+            break;
+        case RT_Object_Class_Timer:
+            ret = rt_timer_delete((rt_timer_t)object);
+            break;
+        case RT_Object_Class_Custom:
+            ret = rt_custom_object_destroy(object);
+            break;
+        default:
+            LOG_E("input object type(%d) error", object->type);
+            break;
+        }
+    }
+    else
+    {
+        ret = 0;
+    }
+    lwp_avl_remove(node, &lwp->object_root);
+    rt_free(node);
+    return ret;
+}
+
+rt_err_t lwp_user_object_delete(struct rt_lwp *lwp, rt_object_t object)
+{
+    rt_err_t ret = -1;
+
+    if (lwp && object)
+    {
+        struct lwp_avl_struct *node;
+
+        lwp_user_object_lock(lwp);
+        node = lwp_avl_find((avl_key_t)object, lwp->object_root);
+        ret = _object_node_delete(lwp, node);
+        lwp_user_object_unlock(lwp);
+    }
+    return ret;
+}
+
+void lwp_user_object_clear(struct rt_lwp *lwp)
+{
+    struct lwp_avl_struct *node;
+
+    lwp_user_object_lock(lwp);
+    while ((node = lwp_map_find_first(lwp->object_root)) != NULL)
+    {
+        _object_node_delete(lwp, node);
+    }
+    lwp_user_object_unlock(lwp);
+}
+
+static int _object_dup(struct lwp_avl_struct *node, void *arg)
+{
+    rt_object_t object;
+    struct rt_lwp *dst_lwp = (struct rt_lwp *)arg;
+
+    object = (rt_object_t)node->avl_key;
+    lwp_user_object_add(dst_lwp, object);
+    return 0;
+}
+
+void lwp_user_object_dup(struct rt_lwp *dst_lwp, struct rt_lwp *src_lwp)
+{
+    lwp_user_object_lock(src_lwp);
+    lwp_avl_traversal(src_lwp->object_root, _object_dup, dst_lwp);
+    lwp_user_object_unlock(src_lwp);
+}
+
 struct rt_lwp* lwp_new(void)
 {
     pid_t pid;
@@ -131,7 +290,7 @@ struct rt_lwp* lwp_new(void)
     lwp->pid = pid;
     lwp_pid_set_lwp(pid, lwp);
     rt_list_init(&lwp->t_grp);
-    rt_list_init(&lwp->object_list);
+    lwp_user_object_lock_init(lwp);
     lwp->address_search_head = RT_NULL;
     rt_wqueue_init(&lwp->wait_queue);
 
@@ -139,64 +298,6 @@ struct rt_lwp* lwp_new(void)
 out:
     rt_hw_interrupt_enable(level);
     return lwp;
-}
-
-void lwp_user_obj_free(struct rt_lwp *lwp)
-{
-    rt_base_t level = 0;
-    struct rt_list_node *list = RT_NULL, *node = RT_NULL;
-    struct rt_object *object = RT_NULL;
-
-    list = &(lwp->object_list);
-
-    level = rt_hw_interrupt_disable();
-    while ((node = list->next) != list)
-    {
-        object = rt_list_entry(node, struct rt_object, lwp_obj_list);
-        /* remove from kernel object list */
-        switch (object->type)
-        {
-        case RT_Object_Class_Thread:
-        {
-            RT_ASSERT(0);
-            break;
-        }
-        case RT_Object_Class_Semaphore:
-            rt_sem_delete((rt_sem_t)object);
-            break;
-        case RT_Object_Class_Mutex:
-            rt_mutex_delete((rt_mutex_t)object);
-            break;
-        case RT_Object_Class_Event:
-            rt_event_delete((rt_event_t)object);
-            break;
-        case RT_Object_Class_MailBox:
-            rt_mb_delete((rt_mailbox_t)object);
-            break;
-        case RT_Object_Class_MessageQueue:
-            rt_mq_delete((rt_mq_t)object);
-            break;
-        case RT_Object_Class_Device:
-            rt_device_close((rt_device_t)object);
-            break;
-        case RT_Object_Class_Timer:
-            rt_timer_delete((rt_timer_t)object);
-            break;
-        case RT_Object_Class_Channel:
-            /* remove from object list */
-            rt_list_remove(&object->list);
-            break;
-        case RT_Object_Class_Custom:
-            rt_custom_object_destroy(object);
-            break;
-        default:
-            LOG_E("input object type(%d) error", object->type);
-            /* remove from object list */
-            rt_list_remove(&object->list);
-            break;
-        }
-    }
-    rt_hw_interrupt_enable(level);
 }
 
 void lwp_free(struct rt_lwp* lwp)
@@ -222,10 +323,12 @@ void lwp_free(struct rt_lwp* lwp)
     {
         /* auto clean fds */
         __exit_files(lwp);
-        lwp_user_obj_free(lwp);
         rt_free(lwp->fdt.fds);
         lwp->fdt.fds = RT_NULL;
     }
+
+    lwp_user_object_clear(lwp);
+    lwp_user_object_lock_destroy(lwp);
 
     /* free data section */
     if (lwp->data_entry != RT_NULL)
@@ -293,13 +396,22 @@ void lwp_free(struct rt_lwp* lwp)
                 thread->error = RT_EOK;
                 thread->msg_ret = (void*)(rt_size_t)lwp->lwp_ret;
                 rt_thread_resume(thread);
+                rt_hw_interrupt_enable(level);
+                return;
+            }
+            else
+            {
+                struct rt_lwp **it = &lwp->parent->first_child;
+
+                while (*it != lwp)
+                {
+                    it = &(*it)->sibling;
+                }
+                *it = lwp->sibling;
             }
         }
-        else
-        {
-            lwp_pid_put(lwp_to_pid(lwp));
-            rt_free(lwp);
-        }
+        lwp_pid_put(lwp_to_pid(lwp));
+        rt_free(lwp);
     }
 
     rt_hw_interrupt_enable(level);

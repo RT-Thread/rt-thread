@@ -34,6 +34,15 @@ int lwp_getpid(void);
 pid_t waitpid(pid_t pid, int *status, int options);
 long list_process(void);
 
+void lwp_user_object_lock_init(struct rt_lwp *lwp);
+void lwp_user_object_lock_destroy(struct rt_lwp *lwp);
+void lwp_user_object_lock(struct rt_lwp *lwp);
+void lwp_user_object_unlock(struct rt_lwp *lwp);
+int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object);
+rt_err_t lwp_user_object_delete(struct rt_lwp *lwp, rt_object_t object);
+void lwp_user_object_clear(struct rt_lwp *lwp);
+void lwp_user_object_dup(struct rt_lwp *dst_lwp, struct rt_lwp *src_lwp);
+
 #ifdef __cplusplus
 }
 #endif

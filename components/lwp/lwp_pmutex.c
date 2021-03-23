@@ -31,8 +31,9 @@ static int pmutex_system_init(void)
 }
 INIT_PREV_EXPORT(pmutex_system_init);
 
-static void pmutex_destory(void *data)
+static rt_err_t pmutex_destory(void *data)
 {
+    rt_err_t ret = -1;
     rt_base_t level = 0;
     struct rt_pmutex *pmutex = (struct rt_pmutex *)data;
 
@@ -47,9 +48,9 @@ static void pmutex_destory(void *data)
 
         /* release object */
         rt_free(pmutex);
+        ret = 0;
     }
-
-    return ;
+    return ret;
 }
 
 static struct rt_pmutex* pmutex_create(void *umutex, struct rt_lwp *lwp)
@@ -79,7 +80,6 @@ static struct rt_pmutex* pmutex_create(void *umutex, struct rt_lwp *lwp)
         rt_free(pmutex);
         return RT_NULL;
     }
-
     pmutex->node.avl_key = (avl_key_t)umutex;
     pmutex->node.data = &lwp->address_search_head;
     pmutex->custom_obj = obj;
@@ -132,6 +132,12 @@ static int _pthread_mutex_init(void *umutex)
         if (pmutex == RT_NULL)
         {
             rt_mutex_release(&_pmutex_lock);
+            rt_set_errno(ENOMEM);
+            return -RT_ENOMEM;
+        }
+        if (lwp_user_object_add(lwp, pmutex->custom_obj) != 0)
+        {
+            rt_custom_object_destroy(pmutex->custom_obj);
             rt_set_errno(ENOMEM);
             return -RT_ENOMEM;
         }
@@ -233,7 +239,6 @@ static int _pthread_mutex_destroy(void *umutex)
     struct rt_lwp *lwp = RT_NULL;
     struct rt_pmutex *pmutex = RT_NULL;
     rt_err_t lock_ret = 0;
-    rt_base_t level = 0;
 
     lock_ret = rt_mutex_take_interruptible(&_pmutex_lock, RT_WAITING_FOREVER);
     if (lock_ret != RT_EOK)
@@ -251,10 +256,7 @@ static int _pthread_mutex_destroy(void *umutex)
         return -RT_EINVAL;
     }
 
-    level = rt_hw_interrupt_disable();
-    rt_custom_object_destroy(pmutex->custom_obj);
-    rt_hw_interrupt_enable(level);
-
+    lwp_user_object_delete(lwp, pmutex->custom_obj);
     rt_mutex_release(&_pmutex_lock);
 
     return RT_EOK;

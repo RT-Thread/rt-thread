@@ -57,8 +57,8 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type);
 
 #ifdef RT_USING_HEAP
 /* custom object */
-rt_object_t rt_custom_object_create(const char *name, void *data, void (*data_destroy)(void *));
-void rt_custom_object_destroy(rt_object_t obj);
+rt_object_t rt_custom_object_create(const char *name, void *data, rt_err_t (*data_destroy)(void *));
+rt_err_t rt_custom_object_destroy(rt_object_t obj);
 #endif
 
 #ifdef RT_USING_HOOK

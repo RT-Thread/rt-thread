@@ -365,7 +365,7 @@ struct rt_object
 #endif
 
 #ifdef RT_USING_LWP
-    rt_list_t  lwp_obj_list;                            /**< list node of kernel object for lwp */
+    int       lwp_ref_count;                            /**< ref count for lwp */
 #endif
 
     rt_list_t  list;                                    /**< list node of kernel object */
@@ -650,7 +650,7 @@ struct rt_thread
 #endif
 
 #ifdef RT_USING_LWP
-    rt_list_t  lwp_obj_list;                            /**< list node of kernel object for lwp */
+    int       lwp_ref_count;                            /**< ref count for lwp */
 #endif
 
     rt_list_t   list;                                   /**< the object list */
