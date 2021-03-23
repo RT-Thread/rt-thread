@@ -2770,15 +2770,15 @@ int sys_sigprocmask(int how, const sigset_t *sigset, sigset_t *oset, size_t size
 
 int sys_tkill(int tid, int sig)
 {
-    rt_thread_t thread = RT_NULL;
+    rt_base_t level;
+    rt_thread_t thread;
+    int ret;
 
-    if (tid <= 0)
-    {
-        rt_set_errno(EINVAL);
-        return -RT_EINVAL;
-    }
+    level = rt_hw_interrupt_disable();
     thread = lwp_tid_get_thread(tid);
-    return lwp_thread_kill(thread, sig);
+    ret =  lwp_thread_kill(thread, sig);
+    rt_hw_interrupt_enable(level);
+    return ret;
 }
 
 int sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *oset, size_t size)
