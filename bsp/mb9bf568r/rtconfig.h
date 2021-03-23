@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX				        8
+#define RT_NAME_MAX                     8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE			        4
+#define RT_ALIGN_SIZE                   4
 
 /* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	        64
+#define RT_THREAD_PRIORITY_MAX          64
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND		        100
+#define RT_TICK_PER_SECOND              100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -60,9 +60,9 @@
 /* #define RT_TINY_SIZE */
 #define RT_USING_CONSOLE
 /* the buffer size of console */
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
-#define RT_CONSOLE_DEVICE_NAME	        "uart0"
+#define RT_CONSOLE_DEVICE_NAME          "uart0"
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
