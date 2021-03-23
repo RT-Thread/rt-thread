@@ -37,14 +37,14 @@
 #define C_GLCD_LINES_PER_FRAME  (C_GLCD_V_SIZE + C_GLCD_V_PULSE + C_GLCD_V_FRONT_PORCH + C_GLCD_V_BACK_PORCH)
 #define C_GLCD_PIX_CLK          (C_GLCD_CLK_PER_LINE * C_GLCD_LINES_PER_FRAME)
 
-//LPC_LCD_TypeDef 	* const g_pLCD = ((LPC_LCD_TypeDef*) LPC_LCD_BASE);
+//LPC_LCD_TypeDef   * const g_pLCD = ((LPC_LCD_TypeDef*) LPC_LCD_BASE);
 //LPC_SC_TypeDef * const g_pSC = ((LPC_SC_TypeDef*) LPC_SC_BASE);
 
-#define SDRAM_BASE			0xA0000000	   /* CS0 */
-#define SDRAM_BASE_ADDR		SDRAM_BASE
+#define SDRAM_BASE          0xA0000000     /* CS0 */
+#define SDRAM_BASE_ADDR     SDRAM_BASE
 
-#define LCD_VRAM_BASE_ADDR 	((unsigned long)SDRAM_BASE_ADDR + 0x00000000)
-#define LCD_CURSOR_BASE_ADDR 	((unsigned long)0x20088800)
+#define LCD_VRAM_BASE_ADDR  ((unsigned long)SDRAM_BASE_ADDR + 0x00000000)
+#define LCD_CURSOR_BASE_ADDR    ((unsigned long)0x20088800)
 
 
 static pFontType_t pCurrFont = NULL;
@@ -155,18 +155,18 @@ void GLCD_Move_Cursor(int x, int y)
  *************************************************************************/
 void GLCD_Copy_Cursor (const unsigned long *pCursor, int cursor, int size)
 {
-   	unsigned long i ;
-   	unsigned long * pDst = (unsigned long *)LCD_CURSOR_BASE_ADDR;
+    unsigned long i ;
+    unsigned long * pDst = (unsigned long *)LCD_CURSOR_BASE_ADDR;
 
-   	pDst += cursor*64;
+    pDst += cursor*64;
 
-   	for(i = 0; i < size ; i++)
-//	   *pDst++ = *pCursor++;
-	{
-		*pDst = *pCursor;
-		pDst++;
-		pCursor++;
-	}
+    for(i = 0; i < size ; i++)
+//     *pDst++ = *pCursor++;
+    {
+        *pDst = *pCursor;
+        pDst++;
+        pCursor++;
+    }
 }
 /*************************************************************************
  * Function Name: GLCD_Init
@@ -179,101 +179,101 @@ void GLCD_Copy_Cursor (const unsigned long *pCursor, int cursor, int size)
  *************************************************************************/
 void GLCD_Init (void* VRAMBase)
 {
-	// unsigned long i;
-	// Assign pins
-	LPC_IOCON->P2_9 	= 0x06;	// VD3, 	R0
-	LPC_IOCON->P2_6 	= 0x07;	// VD4,		R1
-	LPC_IOCON->P2_7 	= 0x07;	// VD5,		R2
-	LPC_IOCON->P4_28	= 0x05;	// VD6,		R3
-	LPC_IOCON->P4_29 = 0x05;	// VD7,		R4
+    // unsigned long i;
+    // Assign pins
+    LPC_IOCON->P2_9     = 0x06; // VD3,     R0
+    LPC_IOCON->P2_6     = 0x07; // VD4,     R1
+    LPC_IOCON->P2_7     = 0x07; // VD5,     R2
+    LPC_IOCON->P4_28    = 0x05; // VD6,     R3
+    LPC_IOCON->P4_29 = 0x05;    // VD7,     R4
 
-	LPC_IOCON->P1_20	= 0x07;	// VD10,	G0
-	LPC_IOCON->P1_21	= 0x07;	// VD11,	G1
-	LPC_IOCON->P1_22	= 0x07;	// VD12,	G2
-	LPC_IOCON->P1_23	= 0x07;	// VD13,	G3
-	LPC_IOCON->P1_24	= 0x07;	// VD14,	G4
-	LPC_IOCON->P1_25	= 0x07;	// VD15,	G5
+    LPC_IOCON->P1_20    = 0x07; // VD10,    G0
+    LPC_IOCON->P1_21    = 0x07; // VD11,    G1
+    LPC_IOCON->P1_22    = 0x07; // VD12,    G2
+    LPC_IOCON->P1_23    = 0x07; // VD13,    G3
+    LPC_IOCON->P1_24    = 0x07; // VD14,    G4
+    LPC_IOCON->P1_25    = 0x07; // VD15,    G5
 
-	LPC_IOCON->P2_13	= 0x07;	// VD19,	B0
-	LPC_IOCON->P1_26 = 0x07;	// VD20,	B1
-	LPC_IOCON->P1_27 = 0x07;	// VD21,	B2
-	LPC_IOCON->P1_28 = 0x07;	// VD22,	B3
-	LPC_IOCON->P1_29 = 0x07;	// VD23,	B4
+    LPC_IOCON->P2_13    = 0x07; // VD19,    B0
+    LPC_IOCON->P1_26 = 0x07;    // VD20,    B1
+    LPC_IOCON->P1_27 = 0x07;    // VD21,    B2
+    LPC_IOCON->P1_28 = 0x07;    // VD22,    B3
+    LPC_IOCON->P1_29 = 0x07;    // VD23,    B4
 
-	LPC_IOCON->P2_2	= 0x07;	// DCLK
-	LPC_IOCON->P2_0	= 0x07;	// DSIP(power)
-	LPC_IOCON->P2_5	= 0x07;	// HSYNC
-	LPC_IOCON->P2_3	= 0x07;	// VSYNC
-	LPC_IOCON->P2_4	= 0x07;	// DataEn
+    LPC_IOCON->P2_2 = 0x07; // DCLK
+    LPC_IOCON->P2_0 = 0x07; // DSIP(power)
+    LPC_IOCON->P2_5 = 0x07; // HSYNC
+    LPC_IOCON->P2_3 = 0x07; // VSYNC
+    LPC_IOCON->P2_4 = 0x07; // DataEn
 
-//	LPC_IOCON->P5_4	= 0x00;	// Backlight
+//  LPC_IOCON->P5_4 = 0x00; // Backlight
 
-	// >>> debug >>>
+    // >>> debug >>>
 
-	// <<< debug <<<
+    // <<< debug <<<
 
-	/*Back light enable*/
-//	LPC_GPIO5->DIR = (1<<4);
-//	LPC_GPIO5->SET= (5<<4);
+    /*Back light enable*/
+//  LPC_GPIO5->DIR = (1<<4);
+//  LPC_GPIO5->SET= (5<<4);
 
-	//Turn on LCD clock
-	CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCLCD, ENABLE);
+    //Turn on LCD clock
+    CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCLCD, ENABLE);
 
-	// Disable cursor
-	LPC_LCD->CRSR_CTRL &=~(1<<0);
+    // Disable cursor
+    LPC_LCD->CRSR_CTRL &=~(1<<0);
 
-	// disable GLCD controller
-	LPC_LCD->CTRL = 0;
-	// RGB888
-	LPC_LCD->CTRL &= ~(0x07 <<1);
-	LPC_LCD->CTRL |= (6<<1);
+    // disable GLCD controller
+    LPC_LCD->CTRL = 0;
+    // RGB888
+    LPC_LCD->CTRL &= ~(0x07 <<1);
+    LPC_LCD->CTRL |= (6<<1);
 
-	// TFT panel
-	LPC_LCD->CTRL |= (1<<5);
-	// single panel
-	LPC_LCD->CTRL &= ~(1<<7);
-	// notmal output
-	LPC_LCD->CTRL &= ~(1<<8);
-	// little endian byte order
-	LPC_LCD->CTRL &= ~(1<<9);
-	// little endian pix order
-	LPC_LCD->CTRL &= ~(1<<10);
-	// disable power
-	LPC_LCD->CTRL &= ~(1<<11);
-	// init pixel clock
-//	g_pSC->LCD_CFG = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER) / ((unsigned long)C_GLCD_PIX_CLK);
-	LPC_SC->LCD_CFG = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER) / ((unsigned long)C_GLCD_PIX_CLK);
-	// bypass inrenal clk divider
-	LPC_LCD->POL |=(1<<26);
-	// clock source for the LCD block is HCLK
-	LPC_LCD->POL &= ~(1<<5);
-	// LCDFP pin is active LOW and inactive HIGH
-	LPC_LCD->POL |= (1<<11);
-	// LCDLP pin is active LOW and inactive HIGH
-	LPC_LCD->POL |= (1<<12);
-	// data is driven out into the LCD on the falling edge
-	LPC_LCD->POL &= ~(1<<13);
-	// active high
-	LPC_LCD->POL &= ~(1<<14);
-	LPC_LCD->POL &= ~(0x3FF <<16);
-	LPC_LCD->POL |= (C_GLCD_H_SIZE-1)<<16;
+    // TFT panel
+    LPC_LCD->CTRL |= (1<<5);
+    // single panel
+    LPC_LCD->CTRL &= ~(1<<7);
+    // notmal output
+    LPC_LCD->CTRL &= ~(1<<8);
+    // little endian byte order
+    LPC_LCD->CTRL &= ~(1<<9);
+    // little endian pix order
+    LPC_LCD->CTRL &= ~(1<<10);
+    // disable power
+    LPC_LCD->CTRL &= ~(1<<11);
+    // init pixel clock
+//  g_pSC->LCD_CFG = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER) / ((unsigned long)C_GLCD_PIX_CLK);
+    LPC_SC->LCD_CFG = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER) / ((unsigned long)C_GLCD_PIX_CLK);
+    // bypass inrenal clk divider
+    LPC_LCD->POL |=(1<<26);
+    // clock source for the LCD block is HCLK
+    LPC_LCD->POL &= ~(1<<5);
+    // LCDFP pin is active LOW and inactive HIGH
+    LPC_LCD->POL |= (1<<11);
+    // LCDLP pin is active LOW and inactive HIGH
+    LPC_LCD->POL |= (1<<12);
+    // data is driven out into the LCD on the falling edge
+    LPC_LCD->POL &= ~(1<<13);
+    // active high
+    LPC_LCD->POL &= ~(1<<14);
+    LPC_LCD->POL &= ~(0x3FF <<16);
+    LPC_LCD->POL |= (C_GLCD_H_SIZE-1)<<16;
 
-	// init Horizontal Timing
-	LPC_LCD->TIMH = 0; //reset TIMH before set value
-	LPC_LCD->TIMH |= (C_GLCD_H_BACK_PORCH - 1)<<24;
-	LPC_LCD->TIMH |= (C_GLCD_H_FRONT_PORCH - 1)<<16;
-	LPC_LCD->TIMH |= (C_GLCD_H_PULSE - 1)<<8;
-	LPC_LCD->TIMH |= ((C_GLCD_H_SIZE/16) - 1)<<2;
+    // init Horizontal Timing
+    LPC_LCD->TIMH = 0; //reset TIMH before set value
+    LPC_LCD->TIMH |= (C_GLCD_H_BACK_PORCH - 1)<<24;
+    LPC_LCD->TIMH |= (C_GLCD_H_FRONT_PORCH - 1)<<16;
+    LPC_LCD->TIMH |= (C_GLCD_H_PULSE - 1)<<8;
+    LPC_LCD->TIMH |= ((C_GLCD_H_SIZE/16) - 1)<<2;
 
-	// init Vertical Timing
-	LPC_LCD->TIMV = 0;  //reset TIMV value before setting
-	LPC_LCD->TIMV |= (C_GLCD_V_BACK_PORCH)<<24;
-	LPC_LCD->TIMV |= (C_GLCD_V_FRONT_PORCH)<<16;
-	LPC_LCD->TIMV |= (C_GLCD_V_PULSE - 1)<<10;
-	LPC_LCD->TIMV |= C_GLCD_V_SIZE - 1;
-	// Frame Base Address doubleword aligned
-	LPC_LCD->UPBASE = (unsigned long)VRAMBase & ~7UL ;
-	LPC_LCD->LPBASE = (unsigned long)VRAMBase & ~7UL ;
+    // init Vertical Timing
+    LPC_LCD->TIMV = 0;  //reset TIMV value before setting
+    LPC_LCD->TIMV |= (C_GLCD_V_BACK_PORCH)<<24;
+    LPC_LCD->TIMV |= (C_GLCD_V_FRONT_PORCH)<<16;
+    LPC_LCD->TIMV |= (C_GLCD_V_PULSE - 1)<<10;
+    LPC_LCD->TIMV |= C_GLCD_V_SIZE - 1;
+    // Frame Base Address doubleword aligned
+    LPC_LCD->UPBASE = (unsigned long)VRAMBase & ~7UL ;
+    LPC_LCD->LPBASE = (unsigned long)VRAMBase & ~7UL ;
 }
 
 /*************************************************************************
@@ -287,13 +287,13 @@ void GLCD_Init (void* VRAMBase)
  *************************************************************************/
 void GLCD_SetPallet (const unsigned long * pPallete)
 {
-	unsigned long i;
-	unsigned long * pDst = (unsigned long *)LPC_LCD->PAL;
-	// //assert(pPallete);
-	for (i = 0; i < 128; i++)
-	{
-	*pDst++ = *pPallete++;
-	}
+    unsigned long i;
+    unsigned long * pDst = (unsigned long *)LPC_LCD->PAL;
+    // //assert(pPallete);
+    for (i = 0; i < 128; i++)
+    {
+    *pDst++ = *pPallete++;
+    }
 }
 
 /*************************************************************************
@@ -307,7 +307,7 @@ void GLCD_SetPallet (const unsigned long * pPallete)
  *************************************************************************/
 void GLCD_Ctrl (Bool bEna)
 {
-	volatile unsigned long i;
+    volatile unsigned long i;
   if (bEna)
   {
 //    LCD_CTRL_bit.LcdEn = 1;
@@ -473,7 +473,7 @@ Bool GLCD_TextCalcWindow (unsigned long * pXL, unsigned long * pXR,
   *pXR   = XL_Win + ((TextX_Pos+1)*pCurrFont->H_Size) - 1;
   if(*pXR > XR_Win)
   {
-  	*pH_Size -= *pXR - XR_Win;
+    *pH_Size -= *pXR - XR_Win;
     *pXR = XR_Win;
   }
 
@@ -514,19 +514,19 @@ unsigned long i, j, k;
     ++TextY_Pos;
     break;
   case '\r':  // go to begin of this line (Carriage Return)
-  	// clear from current position to end of line
-  	while(GLCD_TextCalcWindow(&xl,&xr,&yu,&yd,&H_Size,&V_Size))
-  	{
+    // clear from current position to end of line
+    while(GLCD_TextCalcWindow(&xl,&xr,&yu,&yd,&H_Size,&V_Size))
+    {
       LCD_SET_WINDOW(xl,xr,yu,yd);
-	    for(i = 0; i < V_Size; ++i)
-	    {
-	      for(j = 0; j < H_Size; ++j)
-	      {
-	        LCD_WRITE_PIXEL(TextBackgndColour);
-	      }
-	    }
-  		++TextX_Pos;
-  	}
+        for(i = 0; i < V_Size; ++i)
+        {
+          for(j = 0; j < H_Size; ++j)
+          {
+            LCD_WRITE_PIXEL(TextBackgndColour);
+          }
+        }
+        ++TextX_Pos;
+    }
     TextX_Pos = 0;
     break;
   case '\b': // go back one position (BackSpace)
@@ -534,45 +534,45 @@ unsigned long i, j, k;
     {
       --TextX_Pos;
       // del current position
-	  	if(GLCD_TextCalcWindow(&xl,&xr,&yu,&yd,&H_Size,&V_Size))
-	  	{
+        if(GLCD_TextCalcWindow(&xl,&xr,&yu,&yd,&H_Size,&V_Size))
+        {
         LCD_SET_WINDOW(xl,xr,yu,yd);
-		    for(i = 0; i < V_Size; ++i)
-		    {
-		      for(j = 0; j < H_Size; ++j)
-		      {
-		        LCD_WRITE_PIXEL(TextBackgndColour);
-		      }
-		    }
-	  	}
+            for(i = 0; i < V_Size; ++i)
+            {
+              for(j = 0; j < H_Size; ++j)
+              {
+                LCD_WRITE_PIXEL(TextBackgndColour);
+              }
+            }
+        }
     }
     break;
   case '\t':  // go to next Horizontal Tab stop
-  	WhiteSpaceNumb = TabSize - (TextX_Pos%TabSize);
-  	for(k = 0; k < WhiteSpaceNumb; ++k)
-  	{
+    WhiteSpaceNumb = TabSize - (TextX_Pos%TabSize);
+    for(k = 0; k < WhiteSpaceNumb; ++k)
+    {
       LCD_SET_WINDOW(xl,xr,yu,yd);
-	  	if(GLCD_TextCalcWindow(&xl,&xr,&yu,&yd,&H_Size,&V_Size))
-	  	{
-		    for(i = 0; i < V_Size; ++i)
-		    {
-		      for(j = 0; j < H_Size; ++j)
-		      {
-		        LCD_WRITE_PIXEL(TextBackgndColour);
-		      }
-		    }
-		    ++TextX_Pos;
-	  	}
-	  	else
-	  	{
-	  		break;
-	  	}
-  	}
+        if(GLCD_TextCalcWindow(&xl,&xr,&yu,&yd,&H_Size,&V_Size))
+        {
+            for(i = 0; i < V_Size; ++i)
+            {
+              for(j = 0; j < H_Size; ++j)
+              {
+                LCD_WRITE_PIXEL(TextBackgndColour);
+              }
+            }
+            ++TextX_Pos;
+        }
+        else
+        {
+            break;
+        }
+    }
     break;
   case '\f':  // go to top of page (Form Feed)
-  	// clear entire window
-  	H_Size = XR_Win - XL_Win;
-  	V_Size = YD_Win - YU_Win;
+    // clear entire window
+    H_Size = XR_Win - XL_Win;
+    V_Size = YD_Win - YU_Win;
     // set character window X left, Y right
     LCD_SET_WINDOW(XL_Win,XR_Win,YU_Win,YD_Win);
     // Fill window with background font color
@@ -584,7 +584,7 @@ unsigned long i, j, k;
       }
     }
 
-  	TextX_Pos = TextY_Pos = 0;
+    TextX_Pos = TextY_Pos = 0;
     break;
   case '\a':  // signal an alert (BELl)
     TEXT_BEL1_FUNC();
@@ -593,37 +593,37 @@ unsigned long i, j, k;
     // Calculate the current character base address from stream
     // and the character position
     if((c <  pCurrFont->CharacterOffset) &&
-    	 (c >= pCurrFont->CharactersNuber))
-   	{
-   		c = 0;
+         (c >= pCurrFont->CharactersNuber))
+    {
+        c = 0;
     }
     else
     {
-    	c -= pCurrFont->CharacterOffset;
+        c -= pCurrFont->CharacterOffset;
     }
     pSrc = pCurrFont->pFontStream + (H_Line * pCurrFont->V_Size * c);
     // Calculate character window and fit it in the text window
     if(GLCD_TextCalcWindow(&xl,&xr,&yu,&yd,&H_Size,&V_Size))
     {
-	    // set character window X left, Y right
-	    LCD_SET_WINDOW(xl,xr,yu,yd);
-	    // Send char data
-	    for(i = 0; i < V_Size; ++i)
-	    {
+        // set character window X left, Y right
+        LCD_SET_WINDOW(xl,xr,yu,yd);
+        // Send char data
+        for(i = 0; i < V_Size; ++i)
+        {
         SrcInc = H_Line;
         for(j = 0; j < H_Size; ++j)
-	      {
-	        Temp = (*pSrc & (1UL << (j&0x7)))?TextColour:TextBackgndColour;
-	        LCD_WRITE_PIXEL(Temp);
-	        if((j&0x7) == 7)
-	        {
-	          ++pSrc;
+          {
+            Temp = (*pSrc & (1UL << (j&0x7)))?TextColour:TextBackgndColour;
+            LCD_WRITE_PIXEL(Temp);
+            if((j&0x7) == 7)
+            {
+              ++pSrc;
             --SrcInc;
-	        }
-	      }
+            }
+          }
         // next line of character
-	      pSrc += SrcInc;
-	    }
+          pSrc += SrcInc;
+        }
     }
     ++TextX_Pos;
   }

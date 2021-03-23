@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,7 +40,7 @@ static struct rt_pwm_ops lpc_drv_ops =
 static rt_err_t lpc_drv_pwm_enable(struct rt_device_pwm *device, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
     CTIMER_Type *base;
-    
+
     base = (CTIMER_Type *)device->parent.user_data;
 
     if (!enable)
@@ -63,14 +63,14 @@ static rt_err_t lpc_drv_pwm_get(struct rt_device_pwm *device, struct rt_pwm_conf
     uint32_t get_frequence;
     uint32_t pwmClock = 0;
     CTIMER_Type *base;
-    
+
     base = (CTIMER_Type *)device->parent.user_data;
-    
+
 #ifdef BSP_USING_CTIMER2
     /* get frequence */
     pwmClock = CLOCK_GetFreq(kCLOCK_CTimer2) ;
 #endif
-    
+
     get_frequence = pwmClock / (base->MR[kCTIMER_Match_3] + 1);
 
     if(configuration->channel == 1)
@@ -85,7 +85,7 @@ static rt_err_t lpc_drv_pwm_get(struct rt_device_pwm *device, struct rt_pwm_conf
     configuration->pulse = get_duty * configuration->period / 100;
 
     rt_kprintf("*** PWM period %d, pulse %d\r\n", configuration->period, configuration->pulse);
-    
+
     return RT_EOK;
 }
 
@@ -97,7 +97,7 @@ static rt_err_t lpc_drv_pwm_set(struct rt_device_pwm *device, struct rt_pwm_conf
     ctimer_config_t config;
     CTIMER_Type *base;
     base = (CTIMER_Type *)device->parent.user_data;
-    
+
     uint32_t pwmPeriod, pulsePeriod;
     /* Run as a timer */
     config.mode = kCTIMER_TimerMode;
@@ -105,7 +105,7 @@ static rt_err_t lpc_drv_pwm_set(struct rt_device_pwm *device, struct rt_pwm_conf
     config.input = kCTIMER_Capture_0;
     /* Timer counter is incremented on every APB bus clock */
     config.prescale = 0;
-    
+
     if(configuration->channel == 1)
     {
         /* Get the PWM period match value and pulse width match value of DEFAULT_FREQ PWM signal with DEFAULT_DUTY dutycycle */
@@ -159,17 +159,17 @@ int rt_hw_pwm_init(void)
     static struct rt_device_pwm pwm1_device;
     ctimer_config_t config;
     uint32_t pwmPeriod, pulsePeriod;
-    
+
     /* Use 12 MHz clock for some of the Ctimers */
     CLOCK_AttachClk(kMAIN_CLK_to_CTIMER2);
-    
+
     /* Run as a timer */
     config.mode = kCTIMER_TimerMode;
     /* This field is ignored when mode is timer */
     config.input = kCTIMER_Capture_0;
     /* Timer counter is incremented on every APB bus clock */
     config.prescale = 0;
-    
+
     CTIMER_Init(CTIMER2, &config);
 
 #ifdef BSP_USING_CTIMER2_MAT1
@@ -243,7 +243,7 @@ static int pwm_get(int argc, char **argv)
         result = -RT_EIO;
         goto _exit;
     }
-    
+
     result = rt_pwm_get(device, atoi(argv[2]));
 
 _exit:
