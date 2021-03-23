@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,15 +31,15 @@ static void NVIC_Configuration(void)
 #ifdef BSP_USING_CTIMER1
     EnableIRQ(CTIMER1_IRQn);
 #endif
-    
+
 #ifdef BSP_USING_CTIMER2
     EnableIRQ(CTIMER2_IRQn);
 #endif
-    
+
 #ifdef BSP_USING_CTIMER3
     EnableIRQ(CTIMER3_IRQn);
 #endif
-    
+
 #ifdef BSP_USING_CTIMER4
     EnableIRQ(CTIMER4_IRQn);
 #endif
@@ -64,9 +64,9 @@ static rt_err_t lpc_ctimer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *a
         if(hwtimer_dev == CTIMER2) clk = CLOCK_GetFreq(kCLOCK_CTimer2);
         if(hwtimer_dev == CTIMER3) clk = CLOCK_GetFreq(kCLOCK_CTimer3);
         if(hwtimer_dev == CTIMER4) clk = CLOCK_GetFreq(kCLOCK_CTimer4);
-        
+
         pre = clk / *((uint32_t *)args) - 1;
-        
+
         hwtimer_dev->PR = pre;
     }
     break;
@@ -97,16 +97,16 @@ static void lpc_ctimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
     hwtimer_dev = (CTIMER_Type *)timer->parent.user_data;
 
     RT_ASSERT(timer != RT_NULL);
-    
+
     /* Use Main clock for some of the Ctimers */
     if(hwtimer_dev == CTIMER0) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER0);
     if(hwtimer_dev == CTIMER1) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER1);
     if(hwtimer_dev == CTIMER2) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER2);
     if(hwtimer_dev == CTIMER3) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER3);
     if(hwtimer_dev == CTIMER4) CLOCK_AttachClk(kMAIN_CLK_to_CTIMER4);
-    
+
     CTIMER_Deinit(hwtimer_dev);
-    
+
     if (state == 1)
     {
         NVIC_Configuration();
@@ -121,7 +121,7 @@ static rt_err_t lpc_ctimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtime
     hwtimer_dev = (CTIMER_Type *)timer->parent.user_data;
     /* Match Configuration for Channel 0 */
     ctimer_match_config_t matchCfg;
-    
+
     RT_ASSERT(timer != RT_NULL);
 
     /* Configuration*/
@@ -131,13 +131,13 @@ static rt_err_t lpc_ctimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtime
     matchCfg.outControl         = kCTIMER_Output_NoAction;
     matchCfg.outPinInitState    = false;
     matchCfg.enableInterrupt    = true;
-    
+
     CTIMER_SetupMatch(hwtimer_dev, kCTIMER_Match_1, &matchCfg);
-    
+
     NVIC_Configuration();
 
     CTIMER_StartTimer(hwtimer_dev);
-    
+
     return RT_EOK;
 }
 
@@ -213,7 +213,7 @@ int rt_hw_hwtimer_init(void)
         LOG_E("CTIMER1 register failed\n");
     }
 #endif
-    
+
 #ifdef BSP_USING_CTIMER2
     CTimer2.info = &lpc_hwtimer_info;
     CTimer2.ops  = &lpc_hwtimer_ops;
@@ -224,7 +224,7 @@ int rt_hw_hwtimer_init(void)
         LOG_E("CTIMER2 register failed\n");
     }
 #endif
-    
+
 #ifdef BSP_USING_CTIMER3
     CTimer3.info = &lpc_hwtimer_info;
     CTimer3.ops  = &lpc_hwtimer_ops;
@@ -235,7 +235,7 @@ int rt_hw_hwtimer_init(void)
         LOG_E("CTIMER3 register failed\n");
     }
 #endif
-    
+
 #ifdef BSP_USING_CTIMER4
     CTimer4.info = &lpc_hwtimer_info;
     CTimer4.ops  = &lpc_hwtimer_ops;
@@ -246,7 +246,7 @@ int rt_hw_hwtimer_init(void)
         LOG_E("CTIMER4 register failed\n");
     }
 #endif
-    
+
     return ret;
 }
 
