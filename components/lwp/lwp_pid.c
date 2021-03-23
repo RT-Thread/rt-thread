@@ -31,24 +31,31 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#define PID_MAX 10000
+
 #define PID_CT_ASSERT(name, x) \
     struct assert_##name {char ary[2 * (x) - 1];}
 
-PID_CT_ASSERT(pid_max_nr, RT_LWP_MAX_NR > 1);
+PID_CT_ASSERT(pid_min_nr, RT_LWP_MAX_NR > 1);
+PID_CT_ASSERT(pid_max_nr, RT_LWP_MAX_NR < PID_MAX);
 
-static struct rt_lwp *lwp_pid_ary[RT_LWP_MAX_NR];
-static struct rt_lwp **lwp_pid_free_head = RT_NULL;
-static pid_t lwp_pid_ary_alloced = 1; /* 0 is reserved */
+static struct lwp_avl_struct lwp_pid_ary[RT_LWP_MAX_NR];
+static struct lwp_avl_struct *lwp_pid_free_head = RT_NULL;
+static int lwp_pid_ary_alloced = 0;
+static struct lwp_avl_struct *lwp_pid_root = RT_NULL;
+static pid_t current_pid = 0;
 
 static pid_t lwp_pid_get(void)
 {
-    pid_t ret = 0;
-    rt_base_t level = rt_hw_interrupt_disable();
-    struct rt_lwp **p = lwp_pid_free_head;
+    rt_base_t level;
+    struct lwp_avl_struct *p;
+    pid_t pid = 0;
 
+    level = rt_hw_interrupt_disable();
+    p = lwp_pid_free_head;
     if (p)
     {
-        lwp_pid_free_head = (struct rt_lwp **)*p;
+        lwp_pid_free_head = (struct lwp_avl_struct *)p->avl_right;
     }
     else if (lwp_pid_ary_alloced < RT_LWP_MAX_NR)
     {
@@ -57,22 +64,48 @@ static pid_t lwp_pid_get(void)
     }
     if (p)
     {
-        *p = RT_NULL;
-        ret = p - lwp_pid_ary;
+        int found_noused = 0;
+
+        RT_ASSERT(p->data == RT_NULL);
+        for (pid = current_pid + 1; pid < PID_MAX; pid++)
+        {
+            if (!lwp_avl_find(pid, lwp_pid_root))
+            {
+                found_noused = 1;
+                break;
+            }
+        }
+        if (!found_noused)
+        {
+            for (pid = 1; pid <= current_pid; pid++)
+            {
+                if (!lwp_avl_find(pid, lwp_pid_root))
+                {
+                    found_noused = 1;
+                    break;
+                }
+            }
+        }
+        p->avl_key = pid;
+        lwp_avl_insert(p, &lwp_pid_root);
+        current_pid = pid;
     }
     rt_hw_interrupt_enable(level);
-    return ret;
+    return pid;
 }
 
 static void lwp_pid_put(pid_t pid)
 {
-    struct rt_lwp **p = RT_NULL;
-    rt_base_t level = rt_hw_interrupt_disable();
+    rt_base_t level;
+    struct lwp_avl_struct *p;
 
-    if (pid > 0 && pid < RT_LWP_MAX_NR)
+    level = rt_hw_interrupt_disable();
+    p  = lwp_avl_find(pid, lwp_pid_root);
+    if (p)
     {
-        p = lwp_pid_ary + pid;
-        *p = (struct rt_lwp *)lwp_pid_free_head;
+        p->data = RT_NULL;
+        lwp_avl_remove(p, &lwp_pid_root);
+        p->avl_right = lwp_pid_free_head;
         lwp_pid_free_head = p;
     }
     rt_hw_interrupt_enable(level);
@@ -80,10 +113,16 @@ static void lwp_pid_put(pid_t pid)
 
 static void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp)
 {
-    if (pid > 0 && pid < RT_LWP_MAX_NR)
+    rt_base_t level;
+    struct lwp_avl_struct *p;
+
+    level = rt_hw_interrupt_disable();
+    p  = lwp_avl_find(pid, lwp_pid_root);
+    if (p)
     {
-        lwp_pid_ary[pid] = lwp;
+        p->data = lwp;
     }
+    rt_hw_interrupt_enable(level);
 }
 
 int libc_stdio_get_console(void);
@@ -241,7 +280,7 @@ void lwp_user_object_clear(struct rt_lwp *lwp)
     struct lwp_avl_struct *node;
 
     lwp_user_object_lock(lwp);
-    while ((node = lwp_map_find_first(lwp->object_root)) != NULL)
+    while ((node = lwp_map_find_first(lwp->object_root)) != RT_NULL)
     {
         _object_node_delete(lwp, node);
     }
@@ -304,7 +343,10 @@ void lwp_free(struct rt_lwp* lwp)
 {
     rt_base_t level;
 
-    if (lwp == NULL) return ;
+    if (lwp == RT_NULL)
+    {
+        return;
+    }
 
     LOG_D("lwp free: %p\n", lwp);
 
@@ -455,11 +497,18 @@ void lwp_ref_dec(struct rt_lwp *lwp)
 
 struct rt_lwp* lwp_from_pid(pid_t pid)
 {
-    if ((pid <= 0) || (pid >= RT_LWP_MAX_NR))
+    rt_base_t level;
+    struct lwp_avl_struct *p;
+    struct rt_lwp *lwp = RT_NULL;
+
+    level = rt_hw_interrupt_disable();
+    p  = lwp_avl_find(pid, lwp_pid_root);
+    if (p)
     {
-        return NULL;
+        lwp = (struct rt_lwp *)p->data;
     }
-    return lwp_pid_ary[pid];
+    rt_hw_interrupt_enable(level);
+    return lwp;
 }
 
 pid_t lwp_to_pid(struct rt_lwp* lwp)
@@ -485,18 +534,21 @@ char* lwp_pid2name(int32_t pid)
     return process_name;
 }
 
-int32_t lwp_name2pid(const char *name)
+pid_t lwp_name2pid(const char *name)
 {
-    pid_t pid;
+    int idx;
+    pid_t pid = 0;
     rt_thread_t main_thread;
     char* process_name = RT_NULL;
+    rt_base_t level;
 
-    for (pid = 1; pid < RT_LWP_MAX_NR; pid++)
+    level = rt_hw_interrupt_disable();
+    for (idx = 0; idx < RT_LWP_MAX_NR; idx++)
     {
         /* 0 is reserved */
-        struct rt_lwp *lwp = lwp_pid_ary[pid];
+        struct rt_lwp *lwp = (struct rt_lwp *)lwp_pid_ary[idx].data;
 
-        if (lwp && (lwp < (struct rt_lwp *)&lwp_pid_ary[0] || lwp >= (struct rt_lwp *)&lwp_pid_ary[RT_LWP_MAX_NR]))
+        if (lwp)
         {
             process_name = strrchr(lwp->cmd, '/');
             process_name = process_name? process_name + 1: lwp->cmd;
@@ -505,12 +557,13 @@ int32_t lwp_name2pid(const char *name)
                 main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
                 if (!(main_thread->stat & RT_THREAD_CLOSE))
                 {
-                    return pid;
+                    pid = lwp->pid;
                 }
             }
         }
     }
-    return -1;
+    rt_hw_interrupt_enable(level);
+    return pid;
 }
 
 int lwp_getpid(void)
@@ -589,7 +642,10 @@ quit:
 /* copy from components/finsh/cmd.c */
 static void object_split(int len)
 {
-    while (len--) rt_kprintf("-");
+    while (len--)
+    {
+        rt_kprintf("-");
+    }
 }
 
 static void print_thread_info(struct rt_thread* thread, int maxlen)
@@ -615,7 +671,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
 
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
-    while (*ptr == '#')ptr --;
+    while (*ptr == '#')ptr--;
 
     rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
             ((rt_uint32_t)thread->sp - (rt_uint32_t)thread->stack_addr),
@@ -625,7 +681,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
             thread->error);
 #else
     ptr = (rt_uint8_t *)thread->stack_addr;
-    while (*ptr == '#')ptr ++;
+    while (*ptr == '#')ptr++;
 
     rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
             (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)thread->sp),
@@ -671,7 +727,7 @@ long list_process(void)
 
             if (index > 0)
             {
-                for (index = 0; index <count; index ++)
+                for (index = 0; index <count; index++)
                 {
                     struct rt_thread th;
 
@@ -686,7 +742,6 @@ long list_process(void)
                     rt_memcpy(&th, thread, sizeof(struct rt_thread));
                     rt_hw_interrupt_enable(level);
 
-
                     if (th.lwp == RT_NULL)
                     {
                         rt_kprintf("     %-*.*s ", maxlen, RT_NAME_MAX, "kernel");
@@ -700,9 +755,9 @@ long list_process(void)
 
     for (index = 0; index < RT_LWP_MAX_NR; index++)
     {
-        struct rt_lwp *lwp = lwp_pid_ary[index];
+        struct rt_lwp *lwp = (struct rt_lwp *)lwp_pid_ary[index].data;
 
-        if (lwp && (lwp < (struct rt_lwp *)&lwp_pid_ary[0] || lwp >= (struct rt_lwp *)&lwp_pid_ary[RT_LWP_MAX_NR]))
+        if (lwp)
         {
             list = &lwp->t_grp;
             for (node = list->next; node != list; node = node->next)
@@ -896,7 +951,10 @@ void lwp_wait_subthread_exit(void)
     rt_thread_t main_thread;
 
     lwp = lwp_self();
-    if (!lwp) return;
+    if (!lwp)
+    {
+        return;
+    }
 
     thread = rt_thread_self();
     main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);

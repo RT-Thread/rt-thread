@@ -26,7 +26,7 @@ void lwp_ref_dec(struct rt_lwp *lwp);
 struct rt_lwp* lwp_from_pid(pid_t pid);
 pid_t lwp_to_pid(struct rt_lwp* lwp);
 
-int32_t lwp_name2pid(const char* name);
+pid_t lwp_name2pid(const char* name);
 char* lwp_pid2name(int32_t pid);
 
 int lwp_getpid(void);
