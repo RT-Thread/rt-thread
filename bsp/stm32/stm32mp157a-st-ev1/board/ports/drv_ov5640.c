@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -39,10 +39,10 @@ __no_init static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE];
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 __attribute__((at(0x2FFDC000))) static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE];
 #elif defined(__GNUC__)
-static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE]  __attribute__((section(".Dcmi1Section")));            
+static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE]  __attribute__((section(".Dcmi1Section")));
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFDC000
-__no_init static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE]; 
+__no_init static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE];
 #endif
 
 volatile rt_uint32_t jpeg_data_len = 0;

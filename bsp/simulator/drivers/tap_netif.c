@@ -33,7 +33,7 @@
 #include <netif/ethernetif.h>
 
 #define MAX_ADDR_LEN 6
-#define TAP_IFNAME	"RT-net"
+#define TAP_IFNAME  "RT-net"
 
 //=============
 // TAP IOCTLs
@@ -112,13 +112,13 @@ static tap_win32_overlapped_t tap_overlapped;
 /************************************************************************/
 struct tap_netif
 {
-	/* inherit from ethernet device */
-	struct eth_device parent;
+    /* inherit from ethernet device */
+    struct eth_device parent;
 
-	tap_win32_overlapped_t *handle;
+    tap_win32_overlapped_t *handle;
 
-	/* interface address info. */
-	rt_uint8_t  dev_addr[MAX_ADDR_LEN];		/* hw address	*/
+    /* interface address info. */
+    rt_uint8_t  dev_addr[MAX_ADDR_LEN];     /* hw address   */
 };
 #define NETIF_DEVICE(netif) ((struct tap_netif*)(netif))
 #define NETIF_TAP(netif)   (NETIF_DEVICE(netif)->handle)
@@ -505,12 +505,12 @@ static void tap_win32_thread_entry(void* param)
     unsigned long read_size;
     BOOL result;
     DWORD dwError;
-	tun_buffer_t* buffer;
-	struct eth_device* eth;
+    tun_buffer_t* buffer;
+    struct eth_device* eth;
 
-	eth = (struct eth_device*) &tap_netif_device;
-	overlapped = NETIF_TAP(&tap_netif_device);
-	buffer = get_buffer_from_free_list(overlapped);
+    eth = (struct eth_device*) &tap_netif_device;
+    overlapped = NETIF_TAP(&tap_netif_device);
+    buffer = get_buffer_from_free_list(overlapped);
 
     for (;;) {
         result = ReadFile(overlapped->handle,
@@ -548,15 +548,15 @@ static void tap_win32_thread_entry(void* param)
         }
 
         if(read_size > 0) {
-			// rt_kprintf("rx packet, length=%d\n", read_size);
+            // rt_kprintf("rx packet, length=%d\n", read_size);
 
-			buffer->read_size = read_size;
+            buffer->read_size = read_size;
             put_buffer_on_output_queue(overlapped, buffer);
 
-			/* notify eth rx thread to receive packet */
-			eth_device_ready(eth);
+            /* notify eth rx thread to receive packet */
+            eth_device_ready(eth);
 
-			buffer = get_buffer_from_free_list(overlapped);
+            buffer = get_buffer_from_free_list(overlapped);
         }
     }
 }
@@ -649,143 +649,143 @@ static int tap_win32_open(tap_win32_overlapped_t **phandle,
 
 static rt_err_t tap_netif_init(rt_device_t dev)
 {
-	rt_thread_t tid;
-	tap_win32_overlapped_t *handle;
+    rt_thread_t tid;
+    tap_win32_overlapped_t *handle;
 
-	if (tap_win32_open(&handle, TAP_IFNAME) < 0) {
-		printf("tap: Could not open '%s'\n", TAP_IFNAME);
-		return -RT_ERROR;
-	}
+    if (tap_win32_open(&handle, TAP_IFNAME) < 0) {
+        printf("tap: Could not open '%s'\n", TAP_IFNAME);
+        return -RT_ERROR;
+    }
 
-	tap_netif_device.handle = handle;
+    tap_netif_device.handle = handle;
 
-	/* create recv thread */
-	tid = rt_thread_create("tap", tap_win32_thread_entry, RT_NULL, 
-		2048, RT_THREAD_PRIORITY_MAX - 1, 10);
-	if (tid != RT_NULL)
-	{
-		rt_thread_startup(tid);
-	}
+    /* create recv thread */
+    tid = rt_thread_create("tap", tap_win32_thread_entry, RT_NULL,
+        2048, RT_THREAD_PRIORITY_MAX - 1, 10);
+    if (tid != RT_NULL)
+    {
+        rt_thread_startup(tid);
+    }
 
-	rt_thread_sleep(RT_TICK_PER_SECOND);
+    rt_thread_sleep(RT_TICK_PER_SECOND);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t tap_netif_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t tap_netif_close(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_size_t tap_netif_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 static rt_size_t tap_netif_write (rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 static rt_err_t tap_netif_control(rt_device_t dev, int cmd, void *args)
 {
-	switch (cmd)
-	{
-	case NIOCTL_GADDR:
-		/* get mac address */
-		if (args) rt_memcpy(args, tap_netif_device.dev_addr, 6);
-		else return -RT_ERROR;
-		break;
+    switch (cmd)
+    {
+    case NIOCTL_GADDR:
+        /* get mac address */
+        if (args) rt_memcpy(args, tap_netif_device.dev_addr, 6);
+        else return -RT_ERROR;
+        break;
 
-	default :
-		break;
-	}
+    default :
+        break;
+    }
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 rt_err_t tap_netif_tx( rt_device_t dev, struct pbuf* p)
 {
-	struct pbuf *q;
-	char buffer[2048];
-	int length;
-	tap_win32_overlapped_t *handle;
-	unsigned char* ptr;
+    struct pbuf *q;
+    char buffer[2048];
+    int length;
+    tap_win32_overlapped_t *handle;
+    unsigned char* ptr;
 
-	handle = NETIF_TAP(dev);
+    handle = NETIF_TAP(dev);
 
-	/* lock EMAC device */
-	rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
+    /* lock EMAC device */
+    rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
 
-	/* copy data to tx buffer */
-	q = p;
-	ptr = (rt_uint8_t*)buffer;
-	while (q)
-	{
-		memcpy(ptr, q->payload, q->len);
-		ptr += q->len;
-		q = q->next;
-	}
-	length = p->tot_len;
+    /* copy data to tx buffer */
+    q = p;
+    ptr = (rt_uint8_t*)buffer;
+    while (q)
+    {
+        memcpy(ptr, q->payload, q->len);
+        ptr += q->len;
+        q = q->next;
+    }
+    length = p->tot_len;
 
-	tap_win32_write(handle, buffer, length);
+    tap_win32_write(handle, buffer, length);
 
-	/* unlock EMAC device */
-	rt_sem_release(&sem_lock);
+    /* unlock EMAC device */
+    rt_sem_release(&sem_lock);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 struct pbuf *tap_netif_rx(rt_device_t dev)
 {
-	struct pbuf* p = RT_NULL;
-	tap_win32_overlapped_t *handle;
-	rt_uint8_t *buf;
-	int max_size = 4096;
-	int size;
+    struct pbuf* p = RT_NULL;
+    tap_win32_overlapped_t *handle;
+    rt_uint8_t *buf;
+    int max_size = 4096;
+    int size;
 
-	handle = NETIF_TAP(dev);
+    handle = NETIF_TAP(dev);
 
-	size = tap_win32_read(handle, &buf, max_size);
-	if (size > 0) {
-		p = pbuf_alloc(PBUF_LINK, size, PBUF_RAM);
-		pbuf_take(p, buf, size);
+    size = tap_win32_read(handle, &buf, max_size);
+    if (size > 0) {
+        p = pbuf_alloc(PBUF_LINK, size, PBUF_RAM);
+        pbuf_take(p, buf, size);
 
-		tap_win32_free_buffer(handle, buf);
-	}
+        tap_win32_free_buffer(handle, buf);
+    }
 
-	return p;
+    return p;
 }
 
 void tap_netif_hw_init(void)
 {
-	rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
 
-	tap_netif_device.dev_addr[0] = 0x00;
-	tap_netif_device.dev_addr[1] = 0x60;
-	tap_netif_device.dev_addr[2] = 0x37;
-	/* set mac address: (only for test) */
-	tap_netif_device.dev_addr[3] = 0x12;
-	tap_netif_device.dev_addr[4] = 0x34;
-	tap_netif_device.dev_addr[5] = 0x56;
+    tap_netif_device.dev_addr[0] = 0x00;
+    tap_netif_device.dev_addr[1] = 0x60;
+    tap_netif_device.dev_addr[2] = 0x37;
+    /* set mac address: (only for test) */
+    tap_netif_device.dev_addr[3] = 0x12;
+    tap_netif_device.dev_addr[4] = 0x34;
+    tap_netif_device.dev_addr[5] = 0x56;
 
-	tap_netif_device.parent.parent.init		= tap_netif_init;
-	tap_netif_device.parent.parent.open		= tap_netif_open;
-	tap_netif_device.parent.parent.close	= tap_netif_close;
-	tap_netif_device.parent.parent.read		= tap_netif_read;
-	tap_netif_device.parent.parent.write	= tap_netif_write;
-	tap_netif_device.parent.parent.control	= tap_netif_control;
-	tap_netif_device.parent.parent.user_data= RT_NULL;
+    tap_netif_device.parent.parent.init     = tap_netif_init;
+    tap_netif_device.parent.parent.open     = tap_netif_open;
+    tap_netif_device.parent.parent.close    = tap_netif_close;
+    tap_netif_device.parent.parent.read     = tap_netif_read;
+    tap_netif_device.parent.parent.write    = tap_netif_write;
+    tap_netif_device.parent.parent.control  = tap_netif_control;
+    tap_netif_device.parent.parent.user_data= RT_NULL;
 
-	tap_netif_device.parent.eth_rx			= tap_netif_rx;
-	tap_netif_device.parent.eth_tx			= tap_netif_tx;
+    tap_netif_device.parent.eth_rx          = tap_netif_rx;
+    tap_netif_device.parent.eth_tx          = tap_netif_tx;
 
-	eth_device_init(&(tap_netif_device.parent), "e0");
+    eth_device_init(&(tap_netif_device.parent), "e0");
 }

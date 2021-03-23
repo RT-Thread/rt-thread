@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -156,7 +156,7 @@ static rt_err_t phy_write_reg(uint8_t phy_addr, uint8_t reg_addr, uint16_t reg_v
             return -RT_ETIMEOUT;
         }
     }
-    
+
     return RT_EOK;
 }
 
@@ -165,7 +165,7 @@ static uint16_t phy_read_reg(uint8_t phy_addr, uint8_t reg_addr)
     uint16_t reg_value = 0;
     uint32_t status = 0;
     volatile uint32_t tickstart = 0;
-    
+
     /* Take care not to alter MDC clock configuration */
     status = ETH->MACMDIOAR & ETH_MACMDIOAR_CR;
     /* Set up a read operation */
@@ -238,10 +238,10 @@ static void HAL_ETH_MspInit(void)
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
     RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-    
+
     if(IS_ENGINEERING_BOOT_MODE())
     {
-        /** Initializes the peripherals clock 
+        /** Initializes the peripherals clock
         */
         PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ETH;
         PeriphClkInit.EthClockSelection = RCC_ETHCLKSOURCE_PLL4;
@@ -250,10 +250,10 @@ static void HAL_ETH_MspInit(void)
             Error_Handler();
         }
     }
-  
+
     /* Enable SYSCFG clock */
     __HAL_RCC_SYSCFG_CLK_ENABLE();
-    
+
     /* Enable GPIO clocks */
     __HAL_RCC_GPIOA_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -263,12 +263,12 @@ static void HAL_ETH_MspInit(void)
 
     /* Select RGMII interface mode */
     HAL_SYSCFG_ETHInterfaceSelect(SYSCFG_ETH_RGMII);
-    
+
     /* Enable Ethernet MAC clock */
     __HAL_RCC_ETH1MAC_CLK_ENABLE();
     __HAL_RCC_ETH1TX_CLK_ENABLE();
     __HAL_RCC_ETH1RX_CLK_ENABLE();
-    
+
     /**ETH1 GPIO Configuration
     PA1     ------>  ETH1_RX_CLK
     PA7     ------>  ETH1_RX_CTL
@@ -303,12 +303,12 @@ static void HAL_ETH_MspInit(void)
     HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_13|GPIO_PIN_14;
-    HAL_GPIO_Init(GPIOG, &GPIO_InitStruct); 
+    HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
     /* ETH interrupt Init */
     HAL_NVIC_SetPriority(ETH1_IRQn, 0x01, 0x00);
     HAL_NVIC_EnableIRQ(ETH1_IRQn);
-    
+
     /* Configure PHY_RST (PG0) */
     GPIO_InitStruct.Pin = GPIO_PIN_0;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -326,11 +326,11 @@ static void HAL_ETH_MspInit(void)
 static rt_err_t rt_stm32_eth_init(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
-    
+
     rt_uint32_t status, i;
     volatile rt_uint32_t tickstart = 0;
     rt_uint8_t  *macAddr = &stm32_eth_device.dev_addr[0];
-    
+
     /* Initialize TX descriptor index */
     txIndex = 0;
     /* Initialize RX descriptor index */
@@ -372,30 +372,30 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     ETH->MACA2HR = 0;
     ETH->MACA3LR = 0;
     ETH->MACA3HR = 0;
-    
+
     /* Initialize hash table */
     ETH->MACHT0R = 0;
     ETH->MACHT1R = 0;
-    
+
     /* Configure the receive filter */
     ETH->MACPFR = ETH_MACPFR_HPF | ETH_MACPFR_HMC;
-    
+
     /* Disable flow control */
     ETH->MACQ0TXFCR = 0;
     ETH->MACRXFCR   = 0;
-    
+
     /* Enable the first RX queue */
     ETH->MACRXQC0R = ETH_MACRXQC0R_RXQ0EN_Val(1);
-    
+
     /* Configure DMA operating mode */
     ETH->DMAMR = ETH_DMAMR_INTM_Val(0) | ETH_DMAMR_PR_Val(0);
-    
+
     /* Configure system bus mode */
     ETH->DMASBMR |= ETH_DMASBMR_AAL;
-    
+
     /* The DMA takes the descriptor table as contiguous */
     ETH->DMAC0CR = ETH_DMAC0CR_DSL_Val(0);
-    
+
     /* Configure TX features */
     ETH->DMAC0TXCR = ETH_DMAC0TXCR_TXPBL_Val(1);
 
@@ -427,12 +427,12 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         rxDmaDesc[i].rdes2 = 0;
         rxDmaDesc[i].rdes3 = ETH_RDES3_OWN | ETH_RDES3_IOC | ETH_RDES3_BUF1V;
     }
-    
+
     /* Set Transmit Descriptor List Address Register */
     ETH->DMAC0TXDLAR = (uint32_t) &txDmaDesc[0];
     /* Length of the transmit descriptor ring */
     ETH->DMAC0TXRLR = ETH_TXBUFNB - 1;
-    
+
     /* Set Receive Descriptor List Address Register */
     ETH->DMAC0RXDLAR = (uint32_t) &rxDmaDesc[0];
     /* Length of the receive descriptor ring */
@@ -441,24 +441,24 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
     /* Prevent interrupts from being generated when the transmit statistic
      * counters reach half their maximum value */
     ETH->MMCTXIMR = ETH_MMCTXIMR_TXLPITRCIM | ETH_MMCTXIMR_TXLPIUSCIM | ETH_MMCTXIMR_TXGPKTIM | ETH_MMCTXIMR_TXMCOLGPIM | ETH_MMCTXIMR_TXSCOLGPIM;
-    
+
     /* Prevent interrupts from being generated when the receive statistic
      * counters reach half their maximum value */
     ETH->MMCRXIMR = ETH_MMCRXIMR_RXLPITRCIM | ETH_MMCRXIMR_RXLPIUSCIM | ETH_MMCRXIMR_RXUCGPIM | ETH_MMCRXIMR_RXALGNERPIM | ETH_MMCRXIMR_RXCRCERPIM;
-   
+
     /* Disable MAC interrupts */
     ETH->MACIER = 0;
-    
+
     /* Enable the desired DMA interrupts */
     ETH->DMAC0IER = ETH_DMAC0IER_NIE | ETH_DMAC0IER_RIE | ETH_DMAC0IER_TIE;
-    
+
     /* Enable MAC transmission and reception */
     ETH->MACCR |= ETH_MACCR_TE | ETH_MACCR_RE;
-   
+
     /* Enable DMA transmission and reception */
     ETH->DMAC0TXCR |= ETH_DMAC0TXCR_ST;
     ETH->DMAC0RXCR |= ETH_DMAC0RXCR_SR;
-   
+
     /* Reset PHY transceiver */
     phy_write_reg(RTL8211F_PHY_ADDR, RTL8211F_BMCR, RTL8211F_BMCR_RESET);
     status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_BMCR);
@@ -474,9 +474,9 @@ static rt_err_t rt_stm32_eth_init(rt_device_t dev)
         else
         {
             status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_BMCR);
-        } 
+        }
     }
-    
+
     /* The PHY will generate interrupts when link status changes are detected */
     phy_write_reg(RTL8211F_PHY_ADDR, RTL8211F_INER, RTL8211F_INER_AN_COMPLETE | RTL8211F_INER_LINK_STATUS);
 
@@ -515,11 +515,11 @@ static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
     {
     case NIOCTL_GADDR:
         /* get mac address */
-        if (args) 
+        if (args)
         {
             rt_memcpy(args, stm32_eth_device.dev_addr, 6);
         }
-        else 
+        else
         {
             return -RT_ERROR;
         }
@@ -536,7 +536,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
 {
     uint32_t framelen = 0;
     struct pbuf *q = RT_NULL;
-    
+
     /* Copy user data to the transmit buffer */
     for (q = p; q != NULL; q = q->next)
     {
@@ -546,12 +546,12 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
             LOG_D("buffer not valid");
             return ERR_USE;
         }
-        
+
         level = rt_hw_interrupt_disable();
         rt_memcpy(&txBuffer[txIndex][framelen], q->payload, q->len);
         framelen += q->len;
         rt_hw_interrupt_enable(level);
-        
+
         /* Check the frame length */
         if (framelen > ETH_TX_BUF_SIZE - 1)
         {
@@ -559,7 +559,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
             return ERR_USE;
         }
     }
-    
+
 #ifdef ETH_TX_DUMP
         rt_kprintf("Tx dump, len= %d\r\n", framelen);
         dump_hex(txBuffer[txIndex], framelen);
@@ -579,7 +579,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
     ETH->DMAC0SR = ETH_DMAC0SR_TBU;
     /* Instruct the DMA to poll the transmit descriptor list */
     ETH->DMAC0TXDTPR = 0;
-    
+
     if (++txIndex > ETH_TXBUFNB - 1)
     {
         txIndex = 0;
@@ -595,7 +595,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
     struct pbuf *p = RT_NULL, *q = RT_NULL;
 
     /* The current buffer is available for reading */
-    if (!(rxDmaDesc[rxIndex].rdes3 & ETH_RDES3_OWN)) 
+    if (!(rxDmaDesc[rxIndex].rdes3 & ETH_RDES3_OWN))
     {
         /* FD and LD flags should be set */
         if ((rxDmaDesc[rxIndex].rdes3 & ETH_RDES3_FD) && (rxDmaDesc[rxIndex].rdes3 & ETH_RDES3_LD))
@@ -617,7 +617,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
                             rt_memcpy(q->payload, &rxBuffer[rxIndex][framelen], q->len);
                             framelen += q->len;
                             rt_hw_interrupt_enable(level);
-                            
+
                             if (framelen > framelength)
                             {
                                 LOG_E("frame len is too long!");
@@ -632,7 +632,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
                     LOG_D("the received packet contains an error!");
                     return RT_NULL;
                 }
-                
+
             }
         else
         {
@@ -645,7 +645,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
         rxDmaDesc[rxIndex].rdes0 = (uint32_t)rxBuffer[rxIndex];
         /* Give the ownership of the descriptor back to the DMA */
         rxDmaDesc[rxIndex].rdes3 = ETH_RDES3_OWN | ETH_RDES3_IOC | ETH_RDES3_BUF1V;
-        
+
 #ifdef ETH_RX_DUMP
         rt_kprintf("Rx dump, len= %d\r\n", framelen);
         dump_hex(rxBuffer[rxIndex], framelen);
@@ -660,14 +660,14 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
         /* Instruct the DMA to poll the receive descriptor list */
         ETH->DMAC0RXDTPR = 0;
     }
-    
+
     return p;
 }
 
 void ETH1_IRQHandler(void)
 {
     rt_uint32_t status = 0;
-    
+
     /* enter interrupt */
     rt_interrupt_enter();
     /* Read DMA status register */
@@ -683,7 +683,7 @@ void ETH1_IRQHandler(void)
     {
         /* Disable RIE interrupt */
         ETH->DMAC0IER &= ~ETH_DMAC0IER_RIE;
-        
+
         rt_event_send(&rx_event, status);
     }
     /* ETH DMA Error */
@@ -694,7 +694,7 @@ void ETH1_IRQHandler(void)
     }
     /* Clear the interrupt flags */
     ETH->DMAC0SR = ETH_DMAC0SR_NIS;
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 
@@ -704,19 +704,19 @@ static void phy_linkchange()
 {
     rt_uint32_t status = 0;
 
-	/* Read status register to acknowledge the interrupt */
+    /* Read status register to acknowledge the interrupt */
     status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_INSR);
-	
+
 
     if (status & (RTL8211F_BMSR_LINK_STATUS | RTL8211F_INSR_AN_COMPLETE))
     {
-	    status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_BMSR);
-    	status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_BMSR);
+        status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_BMSR);
+        status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_BMSR);
         if (status & RTL8211F_BMSR_LINK_STATUS)
         {
-            LOG_D("link up");  
+            LOG_D("link up");
 
-			status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_PHYSR);
+            status = phy_read_reg(RTL8211F_PHY_ADDR, RTL8211F_PHYSR);
             switch (status & RTL8211F_PHYSR_SPEED)
             {
             case RTL8211F_PHYSR_SPEED_10MBPS:
@@ -725,25 +725,25 @@ static void phy_linkchange()
                 stm32_eth_device.eth_speed |= PHY_10M;
               }
             break;
-            
+
             case RTL8211F_PHYSR_SPEED_100MBPS:
               {
                 LOG_D("speed: 100M");
                 stm32_eth_device.eth_speed |= PHY_100M;
               }
             break;
-            
+
             case RTL8211F_PHYSR_SPEED_1000MBPS:
               {
                 LOG_D("speed: 1000M");
                 stm32_eth_device.eth_speed |= PHY_1000M;
               }
             break;
-            
+
             /* Unknown speed */
             default:
                 rt_kprintf("Invalid speed.");
-            break;    
+            break;
             }
 
             stm32_eth_device.eth_mode = (status & RTL8211F_PHYSR_DUPLEX)? PHY_FULL_DUPLEX : PHY_HALF_DUPLEX ;
@@ -812,9 +812,9 @@ static void phy_monitor_thread_entry(void *parameter)
                     eth_device_ready(&(stm32_eth_device.parent));
                 }
             }
-            
+
             /* enable DMA interrupts */
-            ETH->DMAC0IER = ETH_DMAC0IER_NIE | ETH_DMAC0IER_RIE | ETH_DMAC0IER_TIE; 
+            ETH->DMAC0IER = ETH_DMAC0IER_NIE | ETH_DMAC0IER_RIE | ETH_DMAC0IER_TIE;
         }
     }
 }
@@ -823,7 +823,7 @@ static void phy_monitor_thread_entry(void *parameter)
 static int rt_hw_stm32_eth_init(void)
 {
     rt_err_t state = RT_EOK;
-    
+
     /* OUI 00-80-E1 STMICROELECTRONICS. */
     stm32_eth_device.dev_addr[0] = 0x00;
     stm32_eth_device.dev_addr[1] = 0x80;
@@ -845,7 +845,7 @@ static int rt_hw_stm32_eth_init(void)
     stm32_eth_device.parent.eth_tx = rt_stm32_eth_tx;
 
     rt_event_init(&rx_event, "eth_rx", RT_IPC_FLAG_FIFO);
-    
+
     /* register eth device */
     state = eth_device_init(&(stm32_eth_device.parent), "e0");
     if (RT_EOK == state)

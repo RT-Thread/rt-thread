@@ -198,7 +198,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used, protect))
     #define PRAGMA(x)                   _Pragma(#x)
-    #define ALIGN(n)                    __attribute__((aligned(n)))
+    #define ALIGN(n)                    __attribute__((__align(n)))
     #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API

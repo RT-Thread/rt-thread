@@ -231,6 +231,7 @@ static void sensor_polling(int argc, char **argv)
     struct rt_sensor_data data;
     rt_size_t res, i;
     rt_int32_t delay;
+    rt_err_t result;
 
     dev = rt_device_find(argv[1]);
     if (dev == RT_NULL)
@@ -244,9 +245,10 @@ static void sensor_polling(int argc, char **argv)
     sensor = (rt_sensor_t)dev;
     delay  = sensor->info.period_min > 100 ? sensor->info.period_min : 100;
 
-    if (rt_device_open(dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+    result = rt_device_open(dev, RT_DEVICE_FLAG_RDONLY);
+    if (result != RT_EOK)
     {
-        LOG_E("open device failed!");
+        LOG_E("open device failed! error code : %d", result);
         return;
     }
     rt_device_control(dev, RT_SENSOR_CTRL_SET_ODR, (void *)100);
@@ -451,7 +453,7 @@ static void sensor(int argc, char **argv)
             dev = rt_device_find(argv[2]);
             if (dev == RT_NULL)
             {
-                LOG_E("Can't find device:%s", argv[1]);
+                LOG_E("Can't find device:%s", argv[2]);
                 return;
             }
             if (rt_device_open(dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)

@@ -1,21 +1,21 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
- 
-#include "drv_i2c.h" 
 
-#include "fsl_common.h" 
+#include "drv_i2c.h"
+
+#include "fsl_common.h"
 #include "fsl_iocon.h"
 #include "fsl_i2c.h"
 
 struct lpc_i2c
 {
-    struct rt_i2c_bus_device bus; 
-    
+    struct rt_i2c_bus_device bus;
+
     I2C_Type *base;
-    
+
     char *device_name;
 };
 
@@ -28,9 +28,9 @@ static uint32_t get_i2c_freq(I2C_Type *base)
     {
         freq = CLOCK_GetFreq(kCLOCK_Flexcomm4);
     }
-#endif 
+#endif
 
-    return freq; 
+    return freq;
 }
 
 static rt_size_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
@@ -43,7 +43,7 @@ static rt_size_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
     i2c_direction_t direction;
     status_t result = kStatus_Success;
 
-    RT_ASSERT(bus != RT_NULL); 
+    RT_ASSERT(bus != RT_NULL);
 
     lpc_i2c = (struct lpc_i2c *)bus;
 
@@ -94,13 +94,13 @@ static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t cmd, 
 
 static const struct rt_i2c_bus_device_ops ops =
 {
-    master_xfer, 
+    master_xfer,
     slave_xfer,
     i2c_bus_control,
-}; 
+};
 
 #if defined(BSP_USING_I2C4)
-static struct lpc_i2c i2c4 = {0}; 
+static struct lpc_i2c i2c4 = {0};
 #endif
 
 int rt_hw_i2c_init(void)
@@ -110,11 +110,11 @@ int rt_hw_i2c_init(void)
 #if defined(BSP_USING_I2C4)
     CLOCK_AttachClk(kFRO12M_to_FLEXCOMM4);
     RESET_PeripheralReset(kFC4_RST_SHIFT_RSTn);
-    
+
     i2c4.base = I2C4;
-    i2c4.device_name = "i2c4"; 
-    i2c4.bus.ops = &ops; 
-    
+    i2c4.device_name = "i2c4";
+    i2c4.bus.ops = &ops;
+
     IOCON_PinMuxSet(IOCON, 1, 1, IOCON_MODE_PULLUP | IOCON_FUNC5 | IOCON_DIGITAL_EN | IOCON_INPFILT_OFF);
     IOCON_PinMuxSet(IOCON, 1, 2, IOCON_MODE_PULLUP | IOCON_FUNC5 | IOCON_DIGITAL_EN | IOCON_INPFILT_OFF);
 
@@ -122,12 +122,12 @@ int rt_hw_i2c_init(void)
 
     I2C_MasterGetDefaultConfig(&masterConfig);
     masterConfig.baudRate_Bps = 100*1000U;
-    
+
     I2C_MasterInit(I2C4, &masterConfig, get_i2c_freq(I2C4));
 
     rt_i2c_bus_device_register(&i2c4.bus, i2c4.device_name);
 #endif
 
-    return RT_EOK; 
+    return RT_EOK;
 }
-INIT_BOARD_EXPORT(rt_hw_i2c_init); 
+INIT_BOARD_EXPORT(rt_hw_i2c_init);
