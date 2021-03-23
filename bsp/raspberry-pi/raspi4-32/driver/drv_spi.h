@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -70,7 +70,7 @@ struct raspi_spi_hw_config
     GPIO_FUNC  ce2_mode;
 #endif
     rt_ubase_t hw_base;
-    
+
 };
 
 struct raspi_spi_device
