@@ -96,18 +96,33 @@ uint8_t irtc_sfr_read(uint32_t cmd)
     IRTC_EXIT_CRITICAL();
 }
 
+static void _init_rtc_clock(void)
+{
+    uint8_t rtccon0;
+    uint8_t rtccon2;
+
+    rtccon0 = irtc_sfr_read(RTCCON0_CMD);
+    rtccon2 = irtc_sfr_read(RTCCON2_CMD);
+#ifdef RTC_USING_INTERNAL_CLK
+    rtccon0 &= ~RTC_CON0_XOSC32K_ENABLE;
+    rtccon0 |= RTC_CON0_INTERNAL_32K;
+    rtccon2 | RTC_CON2_32K_SELECT;
+#else
+    rtccon0 |= RTC_CON0_XOSC32K_ENABLE;
+    rtccon0 &= ~RTC_CON0_INTERNAL_32K;
+    rtccon2 & ~RTC_CON2_32K_SELECT;
+#endif
+    irtc_sfr_write(RTCCON0_CMD, rtccon0);
+    irtc_sfr_write(RTCCON2_CMD, rtccon2);
+}
+
 void hal_rtc_init(void)
 {
     time_t sec = 0;
     struct tm tm_new = {0};
+    uint8_t temp;
 
-    uint8_t temp = irtc_sfr_read(RTCCON0_CMD);
-    temp &= ~RTC_CON0_XOSC32K_ENABLE;
-    temp |= RTC_CON0_EXTERNAL_32K;
-    irtc_sfr_write(RTCCON0_CMD, temp);
-    temp = irtc_sfr_read(RTCCON2_CMD);
-    irtc_sfr_write(RTCCON2_CMD, temp | RTC_CON2_32K_SELECT);
-
+    _init_rtc_clock();
     temp = irtc_sfr_read(RTCCON0_CMD);
     if (temp & RTC_CON0_PWRUP_FIRST) {
         temp &= ~RTC_CON0_PWRUP_FIRST;
@@ -119,7 +134,6 @@ void hal_rtc_init(void)
 
         irtc_time_write(RTCCNT_CMD, sec);
     }
-
 }
 /************** HAL End *******************/
 
