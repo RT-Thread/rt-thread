@@ -16,8 +16,6 @@
 #include "board.h"
 #include "hardware/structs/systick.h"
 
-uint8_t heap[1024 * 80];
-
 void isr_systick(void)
 {
     /* enter interrupt */
@@ -45,7 +43,7 @@ uint32_t systick_config(uint32_t ticks)
 
 void rt_hw_board_init()
 {
-    rt_system_heap_init(heap, (uint8_t *)heap + sizeof(heap));
+    rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 
     alarm_pool_init_default();
 
