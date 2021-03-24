@@ -1,21 +1,7 @@
 /*
- * File      : core_ck802.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -147,24 +133,24 @@ extern "C" {
  */
 
 /**
-  \brief  访问处理器状态寄存器(PSR)的联合体定义.
+  \brief  路脙脦脢麓娄脌铆脝梅脳麓脤卢录脛麓忙脝梅(PSR)碌脛脕陋潞脧脤氓露篓脪氓.
  */
 typedef union
 {
     struct
     {
-        uint32_t C: 1;                       /*!< bit:      0  条件码／进位位 */
-        uint32_t _reserved0: 5;              /*!< bit:  2.. 5  保留 */
-        uint32_t IE: 1;                      /*!< bit:      6  中断有效控制位 */
-        uint32_t IC: 1;                      /*!< bit:      7  中断控制位 */
-        uint32_t EE: 1;                      /*!< bit:      8  异常有效控制位 */
-        uint32_t MM: 1;                      /*!< bit:      9  不对齐异常掩盖位 */
-        uint32_t _reserved1: 6;              /*!< bit: 10..15  保留 */
-        uint32_t VEC: 8;                     /*!< bit: 16..23  异常事件向量值 */
-        uint32_t _reserved2: 7;              /*!< bit: 24..30  保留 */
-        uint32_t S: 1;                       /*!< bit:     31  超级用户模式设置位 */
-    } b;                                   /*!< Structure    用来按位访问 */
-    uint32_t w;                            /*!< Type         整个寄存器访问 */
+        uint32_t C: 1;                       /*!< bit:      0  脤玫录镁脗毛拢炉陆酶脦禄脦禄 */
+        uint32_t _reserved0: 5;              /*!< bit:  2.. 5  卤拢脕么 */
+        uint32_t IE: 1;                      /*!< bit:      6  脰脨露脧脫脨脨搂驴脴脰脝脦禄 */
+        uint32_t IC: 1;                      /*!< bit:      7  脰脨露脧驴脴脰脝脦禄 */
+        uint32_t EE: 1;                      /*!< bit:      8  脪矛鲁拢脫脨脨搂驴脴脰脝脦禄 */
+        uint32_t MM: 1;                      /*!< bit:      9  虏禄露脭脝毛脪矛鲁拢脩脷赂脟脦禄 */
+        uint32_t _reserved1: 6;              /*!< bit: 10..15  卤拢脕么 */
+        uint32_t VEC: 8;                     /*!< bit: 16..23  脪矛鲁拢脢脗录镁脧貌脕驴脰碌 */
+        uint32_t _reserved2: 7;              /*!< bit: 24..30  卤拢脕么 */
+        uint32_t S: 1;                       /*!< bit:     31  鲁卢录露脫脙禄搂脛拢脢陆脡猫脰脙脦禄 */
+    } b;                                   /*!< Structure    脫脙脌麓掳麓脦禄路脙脦脢 */
+    uint32_t w;                            /*!< Type         脮没赂枚录脛麓忙脝梅路脙脦脢 */
 } PSR_Type;
 
 /* PSR Register Definitions */
@@ -190,21 +176,21 @@ typedef union
 #define PSR_C_Msk                          (1UL << PSR_C_Pos)                             /*!< PSR: C Mask */
 
 /**
-  \brief  访问高速缓存配置寄存器(CCR, CR<18, 0>)的联合体定义.
+  \brief  路脙脦脢赂脽脣脵禄潞麓忙脜盲脰脙录脛麓忙脝梅(CCR, CR<18, 0>)碌脛脕陋潞脧脤氓露篓脪氓.
  */
 typedef union
 {
     struct
     {
-        uint32_t MP: 1;                      /*!< bit:      0  内存保护设置位 */
-        uint32_t _reserved0: 6;              /*!< bit:  1.. 6  保留 */
-        uint32_t BE: 1;                      /*!< bit:      7  Endian模式 */
-        uint32_t SCK: 3;                     /*!< bit:  8..10  系统和处理器的时钟比 */
-        uint32_t _reserved1: 2;              /*!< bit: 11..12  保留 */
-        uint32_t BE_V2: 1;                   /*!< bit:     13  V2版本大小端 */
-        uint32_t _reserved2: 18;             /*!< bit: 14..31  保留 */
-    } b;                                   /*!< Structure    用来按位访问 */
-    uint32_t w;                            /*!< Type         整个寄存器访问 */
+        uint32_t MP: 1;                      /*!< bit:      0  脛脷麓忙卤拢禄陇脡猫脰脙脦禄 */
+        uint32_t _reserved0: 6;              /*!< bit:  1.. 6  卤拢脕么 */
+        uint32_t BE: 1;                      /*!< bit:      7  Endian脛拢脢陆 */
+        uint32_t SCK: 3;                     /*!< bit:  8..10  脧碌脥鲁潞脥麓娄脌铆脝梅碌脛脢卤脰脫卤脠 */
+        uint32_t _reserved1: 2;              /*!< bit: 11..12  卤拢脕么 */
+        uint32_t BE_V2: 1;                   /*!< bit:     13  V2掳忙卤戮麓贸脨隆露脣 */
+        uint32_t _reserved2: 18;             /*!< bit: 14..31  卤拢脕么 */
+    } b;                                   /*!< Structure    脫脙脌麓掳麓脦禄路脙脦脢 */
+    uint32_t w;                            /*!< Type         脮没赂枚录脛麓忙脝梅路脙脦脢 */
 } CCR_Type;
 
 /* CCR Register Definitions */
@@ -221,38 +207,38 @@ typedef union
 #define CCR_MP_Msk                        (0x1UL << CCR_MP_Pos)                          /*!< CCR: MP Mask */
 
 /**
-  \brief  访问可高缓和访问权限配置寄存器(CAPR, CR<19,0>)的联合体定义..
+  \brief  路脙脦脢驴脡赂脽禄潞潞脥路脙脦脢脠篓脧脼脜盲脰脙录脛麓忙脝梅(CAPR, CR<19,0>)碌脛脕陋潞脧脤氓露篓脪氓..
  */
 typedef union
 {
     struct
     {
-        uint32_t X0: 1;                      /*!< bit:      0  不可执行属性设置位 */
-        uint32_t X1: 1;                      /*!< bit:      1  不可执行属性设置位 */
-        uint32_t X2: 1;                      /*!< bit:      2  不可执行属性设置位 */
-        uint32_t X3: 1;                      /*!< bit:      3  不可执行属性设置位 */
-        uint32_t X4: 1;                      /*!< bit:      4  不可执行属性设置位 */
-        uint32_t X5: 1;                      /*!< bit:      5  不可执行属性设置位 */
-        uint32_t X6: 1;                      /*!< bit:      6  不可执行属性设置位 */
-        uint32_t X7: 1;                      /*!< bit:      7  不可执行属性设置位 */
-        uint32_t AP0: 2;                     /*!< bit:  8.. 9  访问权限设置位 */
-        uint32_t AP1: 2;                     /*!< bit: 10..11  访问权限设置位 */
-        uint32_t AP2: 2;                     /*!< bit: 12..13  访问权限设置位 */
-        uint32_t AP3: 2;                     /*!< bit: 14..15  访问权限设置位 */
-        uint32_t AP4: 2;                     /*!< bit: 16..17  访问权限设置位 */
-        uint32_t AP5: 2;                     /*!< bit: 18..19  访问权限设置位 */
-        uint32_t AP6: 2;                     /*!< bit: 20..21  访问权限设置位 */
-        uint32_t AP7: 2;                     /*!< bit: 22..23  访问权限设置位 */
-        uint32_t S0: 1;                      /*!< bit:     24  安全属性设置位 */
-        uint32_t S1: 1;                      /*!< bit:     25  安全属性设置位 */
-        uint32_t S2: 1;                      /*!< bit:     26  安全属性设置位 */
-        uint32_t S3: 1;                      /*!< bit:     27  安全属性设置位 */
-        uint32_t S4: 1;                      /*!< bit:     28  安全属性设置位 */
-        uint32_t S5: 1;                      /*!< bit:     29  安全属性设置位 */
-        uint32_t S6: 1;                      /*!< bit:     30  安全属性设置位 */
-        uint32_t S7: 1;                      /*!< bit:     31  安全属性设置位 */
-    } b;                                   /*!< Structure    用来按位访问 */
-    uint32_t w;                            /*!< Type         整个寄存器访问 */
+        uint32_t X0: 1;                      /*!< bit:      0  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t X1: 1;                      /*!< bit:      1  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t X2: 1;                      /*!< bit:      2  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t X3: 1;                      /*!< bit:      3  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t X4: 1;                      /*!< bit:      4  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t X5: 1;                      /*!< bit:      5  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t X6: 1;                      /*!< bit:      6  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t X7: 1;                      /*!< bit:      7  虏禄驴脡脰麓脨脨脢么脨脭脡猫脰脙脦禄 */
+        uint32_t AP0: 2;                     /*!< bit:  8.. 9  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t AP1: 2;                     /*!< bit: 10..11  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t AP2: 2;                     /*!< bit: 12..13  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t AP3: 2;                     /*!< bit: 14..15  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t AP4: 2;                     /*!< bit: 16..17  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t AP5: 2;                     /*!< bit: 18..19  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t AP6: 2;                     /*!< bit: 20..21  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t AP7: 2;                     /*!< bit: 22..23  路脙脦脢脠篓脧脼脡猫脰脙脦禄 */
+        uint32_t S0: 1;                      /*!< bit:     24  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+        uint32_t S1: 1;                      /*!< bit:     25  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+        uint32_t S2: 1;                      /*!< bit:     26  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+        uint32_t S3: 1;                      /*!< bit:     27  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+        uint32_t S4: 1;                      /*!< bit:     28  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+        uint32_t S5: 1;                      /*!< bit:     29  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+        uint32_t S6: 1;                      /*!< bit:     30  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+        uint32_t S7: 1;                      /*!< bit:     31  掳虏脠芦脢么脨脭脡猫脰脙脦禄 */
+    } b;                                   /*!< Structure    脫脙脌麓掳麓脦禄路脙脦脢 */
+    uint32_t w;                            /*!< Type         脮没赂枚录脛麓忙脝梅路脙脦脢 */
 } CAPR_Type;
 
 /* CAPR Register Definitions */
@@ -329,18 +315,18 @@ typedef union
 #define CAPR_X0_Msk                        (0x1UL << CAPR_X0_Pos)                         /*!< CAPR: X0 Mask */
 
 /**
-  \brief  访问保护区控制寄存器(PACR, CR<20,0>)的联合体定义.
+  \brief  路脙脦脢卤拢禄陇脟酶驴脴脰脝录脛麓忙脝梅(PACR, CR<20,0>)碌脛脕陋潞脧脤氓露篓脪氓.
  */
 typedef union
 {
     struct
     {
-        uint32_t E: 1;                       /*!< bit:      0  保护区有效设置 */
-        uint32_t Size: 5;                    /*!< bit:  1.. 5  保护区大小 */
-        uint32_t _reserved0: 4;              /*!< bit:  6.. 9  保留 */
-        uint32_t base_addr: 22;              /*!< bit: 10..31  保护区地址的高位 */
-    } b;                                   /*!< Structure    用来按位访问 */
-    uint32_t w;                            /*!< Type         整个寄存器访问 */
+        uint32_t E: 1;                       /*!< bit:      0  卤拢禄陇脟酶脫脨脨搂脡猫脰脙 */
+        uint32_t Size: 5;                    /*!< bit:  1.. 5  卤拢禄陇脟酶麓贸脨隆 */
+        uint32_t _reserved0: 4;              /*!< bit:  6.. 9  卤拢脕么 */
+        uint32_t base_addr: 22;              /*!< bit: 10..31  卤拢禄陇脟酶碌脴脰路碌脛赂脽脦禄 */
+    } b;                                   /*!< Structure    脫脙脌麓掳麓脦禄路脙脦脢 */
+    uint32_t w;                            /*!< Type         脮没赂枚录脛麓忙脝梅路脙脦脢 */
 } PACR_Type;
 
 /* PACR Register Definitions */
@@ -354,16 +340,16 @@ typedef union
 #define PACK_E_Msk                         (0x1UL << PACR_E_Pos)                          /*!< PACR: E Mask */
 
 /**
-  \brief  访问保护区选择寄存器(PRSR,CR<21,0>)的联合体定义.
+  \brief  路脙脦脢卤拢禄陇脟酶脩隆脭帽录脛麓忙脝梅(PRSR,CR<21,0>)碌脛脕陋潞脧脤氓露篓脪氓.
  */
 typedef union
 {
     struct
     {
-        uint32_t RID: 3;                     /*!< bit:  0.. 2  保护区索引值 */
-        uint32_t _reserved0: 30;             /*!< bit:  3..31  保留 */
-    } b;                                   /*!< Structure    用来按位访问 */
-    uint32_t w;                            /*!< Type         整个寄存器访问 */
+        uint32_t RID: 3;                     /*!< bit:  0.. 2  卤拢禄陇脟酶脣梅脪媒脰碌 */
+        uint32_t _reserved0: 30;             /*!< bit:  3..31  卤拢脕么 */
+    } b;                                   /*!< Structure    脫脙脌麓掳麓脦禄路脙脦脢 */
+    uint32_t w;                            /*!< Type         脮没赂枚录脛麓忙脝梅路脙脦脢 */
 } PRSR_Type;
 
 /* PRSR Register Definitions */
@@ -381,30 +367,30 @@ typedef union
  */
 
 /**
-  \brief 访问矢量中断控制器的结构体.
+  \brief 路脙脦脢脢赂脕驴脰脨露脧驴脴脰脝脝梅碌脛陆谩鹿鹿脤氓.
  */
 typedef struct
 {
-    __IOM uint32_t ISER[1U];               /*!< Offset: 0x000 (R/W)  中断使能设置寄存器 */
+    __IOM uint32_t ISER[1U];               /*!< Offset: 0x000 (R/W)  脰脨露脧脢鹿脛脺脡猫脰脙录脛麓忙脝梅 */
     uint32_t RESERVED0[15U];
-    __IOM uint32_t IWER[1U];               /*!< Offset: 0x040 (R/W)  中断低功耗唤醒设置寄存器 */
+    __IOM uint32_t IWER[1U];               /*!< Offset: 0x040 (R/W)  脰脨露脧碌脥鹿娄潞脛禄陆脨脩脡猫脰脙录脛麓忙脝梅 */
     uint32_t RESERVED1[15U];
-    __IOM uint32_t ICER[1U];               /*!< Offset: 0x080 (R/W)  中断使能清除寄存器 */
+    __IOM uint32_t ICER[1U];               /*!< Offset: 0x080 (R/W)  脰脨露脧脢鹿脛脺脟氓鲁媒录脛麓忙脝梅 */
     uint32_t RESERVED2[15U];
-    __IOM uint32_t IWDR[1U];               /*!< Offset: 0x0c0 (R/W)  中断低功耗唤醒清除寄存器 */
+    __IOM uint32_t IWDR[1U];               /*!< Offset: 0x0c0 (R/W)  脰脨露脧碌脥鹿娄潞脛禄陆脨脩脟氓鲁媒录脛麓忙脝梅 */
     uint32_t RESERVED3[15U];
-    __IOM uint32_t ISPR[1U];               /*!< Offset: 0x100 (R/W)  中断等待设置寄存器 */
+    __IOM uint32_t ISPR[1U];               /*!< Offset: 0x100 (R/W)  脰脨露脧碌脠麓媒脡猫脰脙录脛麓忙脝梅 */
     uint32_t RESERVED4[15U];
-    __IOM uint32_t ISSR[1U];               /*!< Offset: 0x140 (R/W)  安全中断使能设置寄存器 */
+    __IOM uint32_t ISSR[1U];               /*!< Offset: 0x140 (R/W)  掳虏脠芦脰脨露脧脢鹿脛脺脡猫脰脙录脛麓忙脝梅 */
     uint32_t RESERVED5[15U];
-    __IOM uint32_t ICPR[1U];               /*!< Offset: 0x180 (R/W)  中断等待清除寄存器 */
+    __IOM uint32_t ICPR[1U];               /*!< Offset: 0x180 (R/W)  脰脨露脧碌脠麓媒脟氓鲁媒录脛麓忙脝梅 */
     uint32_t RESERVED6[31U];
-    __IOM uint32_t IABR[1U];               /*!< Offset: 0x200 (R/W)  中断响应状态寄存器 */
+    __IOM uint32_t IABR[1U];               /*!< Offset: 0x200 (R/W)  脰脨露脧脧矛脫娄脳麓脤卢录脛麓忙脝梅 */
     uint32_t RESERVED7[63U];
-    __IOM uint32_t IPR[8U];                /*!< Offset: 0x300 (R/W)  中断优先级设置寄存器 */
+    __IOM uint32_t IPR[8U];                /*!< Offset: 0x300 (R/W)  脰脨露脧脫脜脧脠录露脡猫脰脙录脛麓忙脝梅 */
     uint32_t RESERVED8[504U];
-    __IM  uint32_t ISR;                    /*!< Offset: 0xB00 (R/ )  中断状态寄存器 */
-    __IOM uint32_t IPTR;                   /*!< Offset: 0xB04 (R/W)  中断优先级阈值寄存器 */
+    __IM  uint32_t ISR;                    /*!< Offset: 0xB00 (R/ )  脰脨露脧脳麓脤卢录脛麓忙脝梅 */
+    __IOM uint32_t IPTR;                   /*!< Offset: 0xB04 (R/W)  脰脨露脧脫脜脧脠录露茫脨脰碌录脛麓忙脝梅 */
 } NVIC_Type;
 
 /*@} end of group CSI_NVIC */
@@ -417,14 +403,14 @@ typedef struct
  */
 
 /**
-  \brief  访问系统计时器的数据结构.
+  \brief  路脙脦脢脧碌脥鲁录脝脢卤脝梅碌脛脢媒戮脻陆谩鹿鹿.
  */
 typedef struct
 {
-    __IOM uint32_t CTRL;                   /*!< Offset: 0x000 (R/W)  控制状态寄存器 */
-    __IOM uint32_t LOAD;                   /*!< Offset: 0x004 (R/W)  回填值寄存器 */
-    __IOM uint32_t VAL;                    /*!< Offset: 0x008 (R/W)  当前值寄存器 */
-    __IM  uint32_t CALIB;                  /*!< Offset: 0x00C (R/ )  校准寄存器 */
+    __IOM uint32_t CTRL;                   /*!< Offset: 0x000 (R/W)  驴脴脰脝脳麓脤卢录脛麓忙脝梅 */
+    __IOM uint32_t LOAD;                   /*!< Offset: 0x004 (R/W)  禄脴脤卯脰碌录脛麓忙脝梅 */
+    __IOM uint32_t VAL;                    /*!< Offset: 0x008 (R/W)  碌卤脟掳脰碌录脛麓忙脝梅 */
+    __IM  uint32_t CALIB;                  /*!< Offset: 0x00C (R/ )  脨拢脳录录脛麓忙脝梅 */
 } CORET_Type;
 
 /* CORET Control / Status Register Definitions */
@@ -468,7 +454,7 @@ typedef struct
  */
 
 /**
-  \brief  访问DCC的数据结构.
+  \brief  路脙脦脢DCC碌脛脢媒戮脻陆谩鹿鹿.
  */
 typedef struct
 {
@@ -478,8 +464,8 @@ typedef struct
     uint32_t RESERVED1[6U];
     union
     {
-        __IM uint32_t DERJW;                 /*!< Offset: 0x058 (R/ )  数据交换寄存器 CPU读*/
-        __OM uint32_t DERJR;                 /*!< Offset: 0x058 ( /W)  数据交换寄存器 CPU写*/
+        __IM uint32_t DERJW;                 /*!< Offset: 0x058 (R/ )  脢媒戮脻陆禄禄禄录脛麓忙脝梅 CPU露脕*/
+        __OM uint32_t DERJR;                 /*!< Offset: 0x058 ( /W)  脢媒戮脻陆禄禄禄录脛麓忙脝梅 CPU脨麓*/
     };
 
 } DCC_Type;
