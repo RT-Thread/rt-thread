@@ -123,8 +123,6 @@ jobs:
          - {RTT_BSP: "swm320", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "swm320-lq100", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "beaglebone", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "zynq7000", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "zynqmp-r5-axu4ev", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "frdm-k64f", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "fh8620", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "xplorer4330/M4", RTT_TOOL_CHAIN: "sourcery-arm"}
