@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2018-08-14    flybreak           the first version
- * 2018-09-18    balanceTWK         add sleep mode function 
+ * 2018-09-18    balanceTWK         add sleep mode function
  */
 
 #ifndef __DRV_LCD_H__

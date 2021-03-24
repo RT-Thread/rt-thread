@@ -1,11 +1,7 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,35 +29,35 @@
 
 void rt_init_thread_entry(void *parameter)
 {
-	/* LED Initialization */
-	rt_hw_led_init();
+    /* LED Initialization */
+    rt_hw_led_init();
 
 #ifdef RT_USING_COMPONENTS_INIT
-	/* initialization RT-Thread Components */
-	rt_components_init();
+    /* initialization RT-Thread Components */
+    rt_components_init();
 #endif
 
-	/* Filesystem Initialization */
+    /* Filesystem Initialization */
 #ifdef RT_USING_DFS
-	/* mount nand fat partition 1 as root directory */
-	if (dfs_mount("nand", "/", "elm", 0, 0) == 0)
-		rt_kprintf("File System initialized!\n");
-	else
-		rt_kprintf("File System init failed!\n");
+    /* mount nand fat partition 1 as root directory */
+    if (dfs_mount("nand", "/", "elm", 0, 0) == 0)
+        rt_kprintf("File System initialized!\n");
+    else
+        rt_kprintf("File System init failed!\n");
 #endif
 }
 
 int rt_application_init(void)
 {
-	rt_thread_t tid;
+    rt_thread_t tid;
 
-	tid = rt_thread_create("init",
-			rt_init_thread_entry, RT_NULL,
-			2048, RT_THREAD_PRIORITY_MAX/3, 20);
-	if (tid != RT_NULL)
-		rt_thread_startup(tid);
+    tid = rt_thread_create("init",
+            rt_init_thread_entry, RT_NULL,
+            2048, RT_THREAD_PRIORITY_MAX/3, 20);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
 
-	return 0;
+    return 0;
 }
 
 /*@}*/

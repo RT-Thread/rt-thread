@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -62,7 +62,7 @@ void rt_hw_timer_init(void)
     timerStep = rt_hw_get_gtimer_frq();
     __DSB();
     timerStep /= RT_TICK_PER_SECOND;
-    
+
     rt_hw_gtimer_enable();
     rt_hw_set_gtimer_val(timerStep);
     core0_timer_enable_interrupt_controller();
@@ -90,7 +90,7 @@ void idle_wfi(void)
 }
 
 /**
- *  Initialize the Hardware related stuffs. Called from rtthread_startup() 
+ *  Initialize the Hardware related stuffs. Called from rtthread_startup()
  *  after interrupt disabled.
  */
 void rt_hw_board_init(void)
@@ -105,7 +105,7 @@ void rt_hw_board_init(void)
     armv8_map(0x3f804000, 0x3f804000, 0x1000, MEM_ATTR_IO);//i2c0
     armv8_map(0x3f205000, 0x3f205000, 0x1000, MEM_ATTR_IO);//i2c1
     mmu_enable();
-    
+
     /* initialize hardware interrupt */
     rt_hw_interrupt_init(); // in libcpu/interrupt.c. Set some data structures, no operation on device
     rt_hw_vector_init();    // in libcpu/interrupt.c. == rt_cpu_vector_set_base((rt_ubase_t)&system_vectors);

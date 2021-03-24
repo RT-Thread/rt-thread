@@ -2,12 +2,6 @@ menu "Hardware Drivers Config"
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_USB_TO_USART
-        bool "Enable USB TO USART (uart0)"
-        select BSP_USING_UART
-        select BSP_USING_UART0
-        default y
-
     menuconfig BSP_USING_AUDIO
         bool "Enable Audio Device"
         select RT_USING_AUDIO
@@ -34,11 +28,22 @@ menu "Onboard Peripheral Drivers"
 endmenu
 
 menu "On-chip Peripheral Drivers"
-
-    menuconfig BSP_USING_UART0
-        bool "Enable UART0"
-        select RT_USING_SERIAL
-        default y
+    menuconfig BSP_USING_UART
+		bool "Enable UART"
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                select RT_USING_SERIAL
+                default y
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                select RT_USING_SERIAL
+                default n
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                select RT_USING_SERIAL
+                default n
+        endif
 
     config BSP_USING_SDIO
         bool "Enable SDIO"
@@ -162,11 +167,16 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    config BSP_USING_ONCHIP_RTC
+    menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         select RT_USING_LIBC
         default n
+        if BSP_USING_ONCHIP_RTC
+            config RTC_USING_INTERNAL_CLK
+            bool "Using internal clock RTC"
+            default y
+        endif
 
     menuconfig BSP_USING_ADC
         bool "Enable ADC"

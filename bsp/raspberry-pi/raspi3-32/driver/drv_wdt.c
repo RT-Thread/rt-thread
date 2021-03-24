@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -129,9 +129,9 @@ int reboot(void)
     PM_RSTS = PM_PASSWORD | r;   // boot from partition 0
     PM_WDOG = PM_PASSWORD | 10;
     PM_RSTC = PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET;
-    
+
     while (1);
-    
+
     return 0;
 }
 MSH_CMD_EXPORT(reboot,reboot system...);

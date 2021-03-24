@@ -20,6 +20,7 @@
 
 #ifdef RT_USB_DEVICE_CDC
 
+#define VCOM_INTF_STR_INDEX 5
 #ifdef RT_VCOM_TX_TIMEOUT
 #define VCOM_TX_TIMEOUT      RT_VCOM_TX_TIMEOUT
 #else /*!RT_VCOM_TX_TIMEOUT*/
@@ -151,7 +152,11 @@ const static struct ucdc_comm_descriptor _comm_desc =
         USB_CDC_CLASS_COMM,
         USB_CDC_SUBCLASS_ACM,
         USB_CDC_PROTOCOL_V25TER,
-        0x00,
+#ifdef RT_USB_DEVICE_COMPOSITE
+        VCOM_INTF_STR_INDEX,
+#else
+        0,
+#endif
     },
     /* Header Functional Descriptor */
     {
@@ -582,9 +587,12 @@ ufunction_t rt_usbd_function_cdc_create(udevice_t device)
         rt_memset(serno, 0, _SER_NO_LEN + 1);
         rt_memcpy(serno, _SER_NO, rt_strlen(_SER_NO));
     }
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_interface_string(device, VCOM_INTF_STR_INDEX, _ustring[2]);
+#else
     /* set usb device string description */
     rt_usbd_device_set_string(device, _ustring);
-
+#endif
     /* create a cdc function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
 

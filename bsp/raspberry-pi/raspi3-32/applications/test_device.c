@@ -1,6 +1,6 @@
 /*
  * File      : test_driver.h
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -50,7 +50,7 @@ void test_hdmi()
     int i=0;
     for (; i < 20; i++)  colors[i] = COLOR_RED;
     rt_graphix_ops(hdmi) -> blit_line((char *)colors, 20, 20, 20);
-    
+
 #endif
 }
 
@@ -73,8 +73,8 @@ void test_cpusmp(void)
 {
     rt_kprintf("Hello Test SMP!\n");
 #ifdef RT_USING_SMP
-    int i;    
-    char test_name[RT_NAME_MAX]; 
+    int i;
+    char test_name[RT_NAME_MAX];
     for (i = 0; i < _CPUS_NR; i++)
     {
         rt_sprintf(test_name, "smp%d", i);
@@ -162,17 +162,17 @@ void test_i2c(void)
         rt_kprintf("can't find %s device!\n", name);
     else
     {
-    	read_regs(i2c_bus, 7, buf);
-    	buf[0] = buf[0]&0x7F; //sec
-    	buf[1] = buf[1]&0x7F; //min
-    	buf[2] = buf[2]&0x3F; //hour
-    	buf[3] = buf[3]&0x07; //week
-    	buf[4] = buf[4]&0x3F; //day
-    	buf[5] = buf[5]&0x1F; //mouth
-    	//year/month/day
-    	rt_kprintf("20%02x-%02x-%02x ",buf[6],buf[5],buf[4]);
-    	//hour:minute/second
-    	rt_kprintf("%02x:%02x:%02x \n",buf[2],buf[1],buf[0]);
+        read_regs(i2c_bus, 7, buf);
+        buf[0] = buf[0]&0x7F; //sec
+        buf[1] = buf[1]&0x7F; //min
+        buf[2] = buf[2]&0x3F; //hour
+        buf[3] = buf[3]&0x07; //week
+        buf[4] = buf[4]&0x3F; //day
+        buf[5] = buf[5]&0x1F; //mouth
+        //year/month/day
+        rt_kprintf("20%02x-%02x-%02x ",buf[6],buf[5],buf[4]);
+        //hour:minute/second
+        rt_kprintf("%02x:%02x:%02x \n",buf[2],buf[1],buf[0]);
     }
 #endif
 }

@@ -19,7 +19,7 @@ struct winusb_device
     uep_t ep_out;
     uep_t ep_in;
 };
-
+#define WINUSB_INTF_STR_INDEX 13
 typedef struct winusb_device * winusb_device_t;
 
 ALIGN(4)
@@ -82,7 +82,11 @@ struct winusb_descriptor _winusb_desc =
         0xFF,                       //bInterfaceClass;
         0x00,                       //bInterfaceSubClass;
         0x00,                       //bInterfaceProtocol;
+#ifdef RT_USB_DEVICE_COMPOSITE
+        WINUSB_INTF_STR_INDEX,
+#else
         0x00,                       //iInterface;
+#endif
     },
     /*endpoint descriptor*/
     {
@@ -308,7 +312,11 @@ ufunction_t rt_usbd_function_winusb_create(udevice_t device)
     RT_ASSERT(device != RT_NULL);
 
     /* set usb device string description */
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_interface_string(device, WINUSB_INTF_STR_INDEX, _ustring[2]);
+#else
     rt_usbd_device_set_string(device, _ustring);
+#endif
 
     /* create a cdc function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);

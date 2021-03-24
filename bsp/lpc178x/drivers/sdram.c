@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,10 +12,10 @@
 #include "LPC177x_8x.h"
 #include "sdram.h"
 
-//LPC_EMC_TypeDef	* const g_pEMC = ((LPC_EMC_TypeDef*) LPC_EMC_BASE);
-//LPC_IOCON_TypeDef	* const LPC_IOCON = ((LPC_IOCON_TypeDef*) LPC_IOCON_BASE);
-#define SDRAM_BASE               0xA0000000	   /* CS0 */
-#define EMC_NS2CLK(ns, nsPerClk)	((ns + nsPerClk - 1) / nsPerClk)
+//LPC_EMC_TypeDef   * const g_pEMC = ((LPC_EMC_TypeDef*) LPC_EMC_BASE);
+//LPC_IOCON_TypeDef * const LPC_IOCON = ((LPC_IOCON_TypeDef*) LPC_IOCON_BASE);
+#define SDRAM_BASE               0xA0000000    /* CS0 */
+#define EMC_NS2CLK(ns, nsPerClk)    ((ns + nsPerClk - 1) / nsPerClk)
 
 static void delayMs(int a,int b)
 {
@@ -24,65 +24,65 @@ static void delayMs(int a,int b)
 }
 
 /*****************************************************************************
-** Function name:		delayMs
+** Function name:       delayMs
 **
-** Descriptions:		Start the timer delay in milo seconds
-**						until elapsed
+** Descriptions:        Start the timer delay in milo seconds
+**                      until elapsed
 **
-** parameters:			timer number, Delay value in milo second
+** parameters:          timer number, Delay value in milo second
 **
-** Returned value:		None
+** Returned value:      None
 **
 *****************************************************************************/
 //void delayMs(uint8_t timer_num, uint32_t delayInMs)
 //{
 //  if ( timer_num == 0 )
 //  {
-//	LPC_TIM0->TCR = 0x02;		/* reset timer */
-//	LPC_TIM0->PR  = 0x00;		/* set prescaler to zero */
-//	LPC_TIM0->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
-//	LPC_TIM0->IR  = 0xff;		/* reset all interrrupts */
-//	LPC_TIM0->MCR = 0x04;		/* stop timer on match */
-//	LPC_TIM0->TCR = 0x01;		/* start timer */
+//  LPC_TIM0->TCR = 0x02;       /* reset timer */
+//  LPC_TIM0->PR  = 0x00;       /* set prescaler to zero */
+//  LPC_TIM0->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
+//  LPC_TIM0->IR  = 0xff;       /* reset all interrrupts */
+//  LPC_TIM0->MCR = 0x04;       /* stop timer on match */
+//  LPC_TIM0->TCR = 0x01;       /* start timer */
 //
-//	/* wait until delay time has elapsed */
-//	while (LPC_TIM0->TCR & 0x01);
+//  /* wait until delay time has elapsed */
+//  while (LPC_TIM0->TCR & 0x01);
 //  }
 //  else if ( timer_num == 1 )
 //  {
-//	LPC_TIM1->TCR = 0x02;		/* reset timer */
-//	LPC_TIM1->PR  = 0x00;		/* set prescaler to zero */
-//	LPC_TIM1->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
-//	LPC_TIM1->IR  = 0xff;		/* reset all interrrupts */
-//	LPC_TIM1->MCR = 0x04;		/* stop timer on match */
-//	LPC_TIM1->TCR = 0x01;		/* start timer */
+//  LPC_TIM1->TCR = 0x02;       /* reset timer */
+//  LPC_TIM1->PR  = 0x00;       /* set prescaler to zero */
+//  LPC_TIM1->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
+//  LPC_TIM1->IR  = 0xff;       /* reset all interrrupts */
+//  LPC_TIM1->MCR = 0x04;       /* stop timer on match */
+//  LPC_TIM1->TCR = 0x01;       /* start timer */
 //
-//	/* wait until delay time has elapsed */
-//	while (LPC_TIM1->TCR & 0x01);
+//  /* wait until delay time has elapsed */
+//  while (LPC_TIM1->TCR & 0x01);
 //  }
 //  else if ( timer_num == 2 )
 //  {
-//	LPC_TIM2->TCR = 0x02;		/* reset timer */
-//	LPC_TIM2->PR  = 0x00;		/* set prescaler to zero */
-//	LPC_TIM2->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
-//	LPC_TIM2->IR  = 0xff;		/* reset all interrrupts */
-//	LPC_TIM2->MCR = 0x04;		/* stop timer on match */
-//	LPC_TIM2->TCR = 0x01;		/* start timer */
+//  LPC_TIM2->TCR = 0x02;       /* reset timer */
+//  LPC_TIM2->PR  = 0x00;       /* set prescaler to zero */
+//  LPC_TIM2->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
+//  LPC_TIM2->IR  = 0xff;       /* reset all interrrupts */
+//  LPC_TIM2->MCR = 0x04;       /* stop timer on match */
+//  LPC_TIM2->TCR = 0x01;       /* start timer */
 //
-//	/* wait until delay time has elapsed */
-//	while (LPC_TIM2->TCR & 0x01);
+//  /* wait until delay time has elapsed */
+//  while (LPC_TIM2->TCR & 0x01);
 //  }
 //  else if ( timer_num == 3 )
 //  {
-//	LPC_TIM3->TCR = 0x02;		/* reset timer */
-//	LPC_TIM3->PR  = 0x00;		/* set prescaler to zero */
-//	LPC_TIM3->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
-//	LPC_TIM3->IR  = 0xff;		/* reset all interrrupts */
-//	LPC_TIM3->MCR = 0x04;		/* stop timer on match */
-//	LPC_TIM3->TCR = 0x01;		/* start timer */
+//  LPC_TIM3->TCR = 0x02;       /* reset timer */
+//  LPC_TIM3->PR  = 0x00;       /* set prescaler to zero */
+//  LPC_TIM3->MR0 = delayInMs * (PeripheralClock / 1000 - 1);
+//  LPC_TIM3->IR  = 0xff;       /* reset all interrrupts */
+//  LPC_TIM3->MCR = 0x04;       /* stop timer on match */
+//  LPC_TIM3->TCR = 0x01;       /* start timer */
 //
-//	/* wait until delay time has elapsed */
-//	while (LPC_TIM3->TCR & 0x01);
+//  /* wait until delay time has elapsed */
+//  while (LPC_TIM3->TCR & 0x01);
 //  }
 //  return;
 //}
@@ -204,7 +204,7 @@ void SDRAM_Init (void)
 {
     uint32_t i, dwtemp = dwtemp;
     uint16_t wtemp = wtemp;
-	uint32_t mhz, nsPerClk;
+    uint32_t mhz, nsPerClk;
     /* Enable External Memory Controller power/clock */
     LPC_SC->PCONP      |= 0x00000800;
     LPC_SC->EMCDLYCTL   = 0x00001010;
@@ -213,10 +213,10 @@ void SDRAM_Init (void)
 
     EMC_GPIO_Init();
 
-	mhz = SystemCoreClock / 1000000;
-	if (LPC_SC->EMCCLKSEL)
-		mhz >>= 1;
-	nsPerClk = 1000 / mhz;
+    mhz = SystemCoreClock / 1000000;
+    if (LPC_SC->EMCCLKSEL)
+        mhz >>= 1;
+    nsPerClk = 1000 / mhz;
     LPC_EMC->DynamicRP         = EMC_NS2CLK(20, nsPerClk); /* 20ns,  */
     LPC_EMC->DynamicRAS        = /*EMC_NS2CLK(42, nsPerClk);*/ 15; /* 42ns to 100K ns,  */
     LPC_EMC->DynamicSREX       = 1 - 1; /* tSRE, 1clk, */
@@ -225,7 +225,7 @@ void SDRAM_Init (void)
     LPC_EMC->DynamicWR         = 2 - 1; /* 2CLK,  */
     LPC_EMC->DynamicRC         = EMC_NS2CLK(63, nsPerClk); /* H57V2562GTR-75C tRC=63ns(min)*/
     LPC_EMC->DynamicRFC        = EMC_NS2CLK(63, nsPerClk); /* H57V2562GTR-75C tRFC=tRC */
-    LPC_EMC->DynamicXSR        = 0x0000000F; /* exit self-refresh to active, ²»ÖªµÀ£¬ÉèÎª×î¾Ã  */
+    LPC_EMC->DynamicXSR        = 0x0000000F; /* exit self-refresh to active, ä¸çŸ¥é“ï¼Œè®¾ä¸ºæœ€ä¹…  */
     LPC_EMC->DynamicRRD        = EMC_NS2CLK(63, nsPerClk); /* 3clk, tRRD=15ns(min) */
     LPC_EMC->DynamicMRD        = 2 - 1; /* 2clk, tMRD=2clk(min) */
 
@@ -249,22 +249,22 @@ void SDRAM_Init (void)
 #ifdef SDRAM_CONFIG_16BIT
     LPC_EMC->DynamicConfig0    = 0x680; /* 256Mb, 16Mx16, 4 banks, row=13, column=9, RBC */
 #elif defined SDRAM_CONFIG_32BIT
-    LPC_EMC->DynamicConfig0	= 0x4680; /* 256Mb, 16Mx16, 4 banks, row=13, column=9, RBC */
+    LPC_EMC->DynamicConfig0 = 0x4680; /* 256Mb, 16Mx16, 4 banks, row=13, column=9, RBC */
 #endif
     delayMs(0, 100);
 
     LPC_EMC->DynamicControl    = 0x00000183; /* Issue NOP command */
-    delayMs(0, 200);							  /* wait 200ms */
+    delayMs(0, 200);                              /* wait 200ms */
 
     LPC_EMC->DynamicControl    = 0x00000103; /* Issue PALL command */
 
     LPC_EMC->DynamicRefresh    = 0x00000002; /* ( n * 16 ) -> 32 clock cycles */
-    for(i = 0; i < 0x80; i++);	              /* wait 128 AHB clock cycles */
+    for(i = 0; i < 0x80; i++);                /* wait 128 AHB clock cycles */
     /* 64ms/8192=7.8125us, nx16x8.33ns<7.8125us, n<58.6*/
-	wtemp = 64000000 / (1 << 13);
-	wtemp -= 16;
-	wtemp >>= 4;
-	wtemp = wtemp * mhz / 1000;
+    wtemp = 64000000 / (1 << 13);
+    wtemp -= 16;
+    wtemp >>= 4;
+    wtemp = wtemp * mhz / 1000;
     LPC_EMC->DynamicRefresh    = wtemp;
 
     LPC_EMC->DynamicControl    = 0x00000083; /* Issue MODE command */
@@ -273,7 +273,7 @@ void SDRAM_Init (void)
 
     wtemp = *((volatile uint16_t *)(SDRAM_BASE | (0x33<<12))); /* 8 burst, 3 CAS latency */
 #elif defined SDRAM_CONFIG_32BIT
-    dwtemp = *((volatile uint32_t *)(SDRAM_BASE | (0x32<<13)));	/* 4 burst, 3 CAS latency */
+    dwtemp = *((volatile uint32_t *)(SDRAM_BASE | (0x32<<13))); /* 4 burst, 3 CAS latency */
 #endif
 
     LPC_EMC->DynamicControl    = 0x00000000; /* Issue NORMAL command */
