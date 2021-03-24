@@ -165,6 +165,12 @@ int dfs_ramfs_lseek(struct dfs_fd *file, off_t offset)
 
 int dfs_ramfs_close(struct dfs_fd *file)
 {
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        return 0;
+    }
+
     file->fnode->data = NULL;
 
     return RT_EOK;
@@ -176,6 +182,18 @@ int dfs_ramfs_open(struct dfs_fd *file)
     struct dfs_ramfs *ramfs;
     struct ramfs_dirent *dirent;
     struct dfs_filesystem *fs;
+
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        if (file->fnode->type == FT_DIRECTORY
+                && !(file->flags & O_DIRECTORY))
+        {
+            return -ENOENT;
+        }
+        file->pos = 0;
+        return 0;
+    }
 
     fs = file->fnode->fs;
 
@@ -200,6 +218,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 return -ENOENT;
             }
         }
+        file->fnode->type = FT_DIRECTORY;
     }
     else
     {
@@ -236,6 +255,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 dirent->data = NULL;
                 dirent->size = 0;
                 dirent->fs = ramfs;
+                file->fnode->type = FT_DIRECTORY;
 
                 /* add to the root directory */
                 rt_list_insert_after(&(ramfs->root.list), &(dirent->list));
