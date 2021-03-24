@@ -80,6 +80,7 @@ struct rt_lwp
     struct dfs_fdtable fdt;
     char cmd[RT_NAME_MAX];
 
+    int sa_flags;
     lwp_sigset_t signal;
     lwp_sigset_t signal_mask;
     int signal_mask_bak;

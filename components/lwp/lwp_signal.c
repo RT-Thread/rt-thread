@@ -343,13 +343,14 @@ int lwp_sigaction(int sig, const struct lwp_sigaction *act,
     }
     if (oact)
     {
+        oact->sa_flags = lwp->sa_flags;
         oact->sa_mask = lwp->signal_mask;
-        oact->sa_flags = 0;
         oact->sa_restorer = RT_NULL;
         oact->__sa_handler._sa_handler = lwp->signal_handler[sig - 1];
     }
     if (act)
     {
+        lwp->sa_flags = act->sa_flags;
         newset = act->sa_mask;
         lwp_sigdelset(&newset, SIGKILL);
         lwp_sigdelset(&newset, SIGSTOP);

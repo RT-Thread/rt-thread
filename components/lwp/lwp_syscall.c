@@ -1423,6 +1423,7 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     dst->args = src->args;
     rt_memcpy(dst->cmd, src->cmd, RT_NAME_MAX);
 
+    dst->sa_flags = src->sa_flags;
     dst->signal_mask = src->signal_mask;
     rt_memcpy(dst->signal_handler, src->signal_handler, sizeof dst->signal_handler);
 }
@@ -2036,6 +2037,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
 
         _swap_lwp_data(lwp, new_lwp, void *, args);
 
+        rt_memset(&thread->signal_mask, 0, sizeof(thread->signal_mask));
+        rt_memset(&thread->signal_mask_bak, 0, sizeof(thread->signal_mask_bak));
+        lwp->sa_flags = 0;
         rt_memset(&lwp->signal_mask, 0, sizeof(lwp->signal_mask));
         rt_memset(&lwp->signal_mask_bak, 0, sizeof(lwp->signal_mask_bak));
         rt_memset(lwp->signal_handler, 0, sizeof(lwp->signal_handler));
@@ -2663,8 +2667,15 @@ rt_err_t sys_thread_mdelay(rt_int32_t ms)
     return rt_thread_mdelay(ms);
 }
 
-int sys_sigaction(int sig, const struct sigaction *act,
-                     struct sigaction *oact, size_t sigsetsize)
+struct k_sigaction {
+    void (*handler)(int);
+    unsigned long flags;
+    void (*restorer)(void);
+    unsigned mask[2];
+};
+
+int sys_sigaction(int sig, const struct k_sigaction *act,
+                     struct k_sigaction *oact, size_t sigsetsize)
 {
     int ret = -RT_EINVAL;
     struct lwp_sigaction kact, *pkact = RT_NULL;
@@ -2686,7 +2697,7 @@ int sys_sigaction(int sig, const struct sigaction *act,
     }
     if (oact)
     {
-        if (!lwp_user_accessable((void *)oact, sigsetsize))
+        if (!lwp_user_accessable((void *)oact, sizeof(*oact)))
         {
             rt_set_errno(EFAULT);
             goto out;
@@ -2695,23 +2706,25 @@ int sys_sigaction(int sig, const struct sigaction *act,
     }
     if (act)
     {
-        if (!lwp_user_accessable((void *)act, sigsetsize))
+        if (!lwp_user_accessable((void *)act, sizeof(*act)))
         {
             rt_set_errno(EFAULT);
             goto out;
         }
-        kact.__sa_handler._sa_handler = act->sa_handler;
-        memcpy(&kact.sa_mask, &act->sa_mask, sigsetsize);
+        kact.sa_flags = act->flags;
+        kact.__sa_handler._sa_handler = act->handler;
+        memcpy(&kact.sa_mask, &act->mask, sigsetsize);
+        kact.sa_restorer = act->restorer;
         pkact = &kact;
     }
 
     ret = lwp_sigaction(sig, pkact, pkoact, sigsetsize);
-    if (ret == 0)
+    if (ret == 0 && oact)
     {
-        lwp_put_to_user(&oact->sa_handler, &pkoact->__sa_handler._sa_handler, sizeof(void (*)(int)));
-        lwp_put_to_user(&oact->sa_mask, &pkoact->sa_mask, sigsetsize);
-        lwp_put_to_user(&oact->sa_flags, &pkoact->sa_flags, sizeof(int));
-        lwp_put_to_user(&oact->sa_restorer, &pkoact->sa_restorer, sizeof(void (*)(void)));
+        lwp_put_to_user(&oact->handler, &pkoact->__sa_handler._sa_handler, sizeof(void (*)(int)));
+        lwp_put_to_user(&oact->mask, &pkoact->sa_mask, sigsetsize);
+        lwp_put_to_user(&oact->flags, &pkoact->sa_flags, sizeof(int));
+        lwp_put_to_user(&oact->restorer, &pkoact->sa_restorer, sizeof(void (*)(void)));
     }
 out:
     return ret;
