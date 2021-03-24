@@ -1386,4 +1386,10 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
 RTM_EXPORT(rt_assert_handler);
 #endif /* RT_DEBUG */
 
+RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
+{
+    (void) us;
+    rt_kprintf("Please consider implementing rt_hw_us_delay() in another file.");
+}
+
 /**@}*/
