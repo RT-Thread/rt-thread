@@ -21,6 +21,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+#include <rtdbg.h>
 
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
@@ -1389,7 +1390,7 @@ RTM_EXPORT(rt_assert_handler);
 RT_WEAK void rt_hw_us_delay(rt_uint32_t us)
 {
     (void) us;
-    rt_kprintf("Please consider implementing rt_hw_us_delay() in another file.");
+    LOG_W("Please consider implementing rt_hw_us_delay() in another file.");
 }
 
 /**@}*/
