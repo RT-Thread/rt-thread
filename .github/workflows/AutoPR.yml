@@ -15,21 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+            ssh-key: ${{ secrets.LOCAL_PRIVATE_KEY }}
+
       - name: Set up Python
         uses: actions/setup-python@master
         with:
           python-version: 3.8
-        
-      - name: Setup Deploy Private Key
-        env:
-          LOCAL_PRIVATE_KEY: ${{ secrets.LOCAL_PRIVATE_KEY }}
-        run: |
-          git --version
-          mkdir -p ~/.ssh/
-          echo "$LOCAL_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
+          
       - name: Pull request
         shell: bash
         run: |
