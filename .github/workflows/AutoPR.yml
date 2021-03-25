@@ -44,14 +44,11 @@ jobs:
           git remote add rebot_github git@github.com:thread-liu/rt-thread.git
           git push -u rebot_github master:rebot
 
-      - name: Make changes to pull request
-        run: date +%s > report.txt
-
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          push-to-fork: rt-thread/master
+          push-to-fork: thread-liu/master
           commit-message: rtthread-bot
           committer: GitHub <thread-liu@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.thread-liu.github.com>
