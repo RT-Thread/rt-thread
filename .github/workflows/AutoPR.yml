@@ -43,6 +43,7 @@ jobs:
           git merge rtt_gitee/gitee_master
           git remote add rebot_github git@github.com:thread-liu/rt-thread.git
           git push -u rebot_github master:rebot
+          cd ..
 
       - name: Create Pull Request
         id: cpr
