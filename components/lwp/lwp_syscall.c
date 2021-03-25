@@ -3264,6 +3264,11 @@ int sys_set_tid_address(int *tidptr)
     return thread->tid;
 }
 
+int sys_gettid(void)
+{
+    return rt_thread_self()->tid;
+}
+
 int sys_access(const char *filename, int mode)
 {
     int ret = 0;
@@ -3592,6 +3597,7 @@ const static void* func_table[] =
     (void *)sys_fork,
     (void *)sys_execve,
     (void *)sys_vfork,
+    (void *)sys_gettid,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
