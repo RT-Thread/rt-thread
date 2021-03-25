@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2013-07-20     Bernard      first version
  * 2019-07-28     zdzn         add smp support
- * 2019-08-09     zhangjun     fixup the problem of smp startup and scheduling issues, 
+ * 2019-08-09     zhangjun     fixup the problem of smp startup and scheduling issues,
  *                             write addr to mailbox3 to startup smp, and we use mailbox0 for ipi
  */
 
@@ -164,7 +164,7 @@ void rt_hw_trap_irq(void)
         if (mailbox_data & 0x1)
         {
             /* clear mailbox */
-            IPI_MAILBOX_CLEAR(cpu_id) = mailbox_data;    
+            IPI_MAILBOX_CLEAR(cpu_id) = mailbox_data;
             isr_func = isr_table[IRQ_ARM_MAILBOX].handler;
 #ifdef RT_USING_INTERRUPT_INFO
             isr_table[IRQ_ARM_MAILBOX].counter++;
@@ -175,7 +175,7 @@ void rt_hw_trap_irq(void)
                 isr_func(IRQ_ARM_MAILBOX, param);
             }
         }
-        else 
+        else
             CORE_MAILBOX3_CLEAR(cpu_id) = mailbox_data;
     }
 #endif

@@ -1,11 +1,7 @@
 /*
- * File      : serial.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -258,16 +254,16 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name,
 {
     RT_ASSERT(device != RT_NULL);
 
-    device->type 		= RT_Device_Class_Char;
+    device->type        = RT_Device_Class_Char;
     device->rx_indicate = RT_NULL;
     device->tx_complete = RT_NULL;
-    device->init 		= rt_serial_init;
-    device->open		= rt_serial_open;
-    device->close		= rt_serial_close;
-    device->read 		= rt_serial_read;
-    device->write 		= rt_serial_write;
-    device->control 	= rt_serial_control;
-    device->user_data	= serial;
+    device->init        = rt_serial_init;
+    device->open        = rt_serial_open;
+    device->close       = rt_serial_close;
+    device->read        = rt_serial_read;
+    device->write       = rt_serial_write;
+    device->control     = rt_serial_control;
+    device->user_data   = serial;
 
     /* register a character device */
     return rt_device_register(device, name, RT_DEVICE_FLAG_RDWR | flag);
@@ -303,7 +299,7 @@ void rt_hw_serial_isr(rt_device_t device)
 
 #ifdef RT_USING_UART0
 /* UART0 device driver structure */
-#define UART0	FM3_MFS0_UART
+#define UART0   FM3_MFS0_UART
 struct serial_int_rx uart0_int_rx;
 struct serial_device uart0 =
 {
@@ -327,7 +323,7 @@ void MFS0RX_IRQHandler(void)
 
 #ifdef RT_USING_UART2
 /* UART2 device driver structure */
-#define UART2	FM3_MFS2_UART
+#define UART2   FM3_MFS2_UART
 struct serial_int_rx uart2_int_rx;
 struct serial_device uart2 =
 {
@@ -351,7 +347,7 @@ void MFS2RX_IRQHandler(void)
 
 #ifdef RT_USING_UART4
 /* UART4 device driver structure */
-#define UART4	FM3_MFS4_UART
+#define UART4   FM3_MFS4_UART
 struct serial_int_rx uart4_int_rx;
 struct serial_device uart4 =
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,12 +22,12 @@
 extern "C" {
 #endif
 
-#define STM32_FLASH_START_ADRESS     ((uint32_t)0x10000000)  
+#define STM32_FLASH_START_ADRESS     ((uint32_t)0x10000000)
 #define STM32_FLASH_SIZE             (192 * 1024)
 #define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
-  
+
 #define STM32_SRAM_SIZE           (64)
-#define STM32_SRAM_END            (0x10030000 + 64 * 1024)  	
+#define STM32_SRAM_END            (0x10030000 + 64 * 1024)
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
