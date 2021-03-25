@@ -33,17 +33,15 @@ jobs:
       - name: Pull request
         shell: bash
         run: |
-          git clone https://github.com/RT-Thread/rt-thread
-          cd rt-thread
-          git branch -a
           git config --global user.name  'thread-liu'
-          git config --global user.email 'lk9608@outlook.com'
+          git config --global user.email 'lk9608@outlook.com' 
+          git remote add rtt_github https://github.com/RT-Thread/rt-thread
           git remote add rtt_gitee https://gitee.com/rtthread/rt-thread
+          git fetch rtt_github master:rtt_github
           git fetch rtt_gitee gitee_master:rtt_gitee
+          git checkout -b dev rtt_github/master
           git merge rtt_gitee/gitee_master
-          git remote add rebot_github git@github.com:thread-liu/rt-thread.git
-          git push --force rebot_github master:rebot
-          cd ..
+          git push --force origin dev:rebot
 
       - name: Create Pull Request
         id: cpr
@@ -72,7 +70,6 @@ jobs:
           team-reviewers: |
             owners
             maintainers
-          milestone: 1
           draft: false
 
       - name: Check outputs
