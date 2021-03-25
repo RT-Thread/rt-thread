@@ -42,18 +42,20 @@ jobs:
           git fetch rtt_gitee gitee_master:rtt_gitee
           git merge rtt_gitee/gitee_master
           git remote add rebot_github git@github.com:thread-liu/rt-thread.git
-          git push -u rebot_github master:rebot
+          git push --force rebot_github master:rebot
           cd ..
 
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
+        
           commit-message: rtthread-bot
           committer: GitHub <thread-liu@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.thread-liu.github.com>
           signoff: false
-          branch: rebot
+          base: rebot
+          branch: test
           delete-branch: true
           title: '[Example] Update report'
           body: |
