@@ -42,6 +42,7 @@ jobs:
           git checkout -b localdev rtt_github/master
           git merge rtt_gitee/gitee_master
           git push --force origin localdev:rebot
+          git checkout master
 
       - name: Create Pull Request
         id: cpr
