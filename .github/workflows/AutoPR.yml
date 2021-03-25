@@ -51,7 +51,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ GITHUB_TOKEN }}
+          token: GITHUB_TOKEN
           push-to-fork: rt-thread/master
           commit-message: rtthread-bot
           committer: GitHub <thread-liu@github.com>
