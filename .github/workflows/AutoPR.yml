@@ -39,7 +39,7 @@ jobs:
           git remote add rtt_gitee https://gitee.com/rtthread/rt-thread
           git fetch rtt_github master:rtt_github 
           git fetch rtt_gitee gitee_master:rtt_gitee
-          git checkout dev
+          git checkout -b dev origin/master
           git branch -D master
           git checkout -b master rtt_github/master
           git merge rtt_gitee/gitee_master
