@@ -36,13 +36,13 @@ jobs:
           git clone https://github.com/RT-Thread/rt-thread
           cd rt-thread
           git branch -a
-          git checkout rebot
+          git checkout master
           git config --global user.name  'thread-liu'
           git config --global user.email 'lk9608@outlook.com'
           git remote add rtt_gitee https://gitee.com/rtthread/rt-thread
           git fetch rtt_gitee gitee_master:rtt_gitee
           git merge rtt_gitee/gitee_master
-          git push -u origin rebot:rebot
+          git push -u origin master:rebot
 
       - name: Make changes to pull request
         run: date +%s > report.txt
@@ -51,7 +51,6 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: GITHUB_TOKEN
           push-to-fork: rt-thread/master
           commit-message: rtthread-bot
           committer: GitHub <thread-liu@github.com>
