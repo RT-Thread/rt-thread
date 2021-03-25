@@ -41,7 +41,6 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.LOCAL_TOKEN }}
           commit-message: rtthread-bot
           committer: GitHub <thread-liu@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.thread-liu.github.com>
