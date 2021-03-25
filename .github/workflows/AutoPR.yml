@@ -42,7 +42,7 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.LOCAL_TOKEN }}
-          push-to-fork: RT-Thread/rt-thread
+          push-to-fork: thread-liu/rt-thread
           commit-message: rtthread-bot
           committer: GitHub <thread-liu@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.thread-liu.github.com>
