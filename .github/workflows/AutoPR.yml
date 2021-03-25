@@ -39,10 +39,10 @@ jobs:
           git remote add rtt_gitee https://gitee.com/rtthread/rt-thread
           git fetch rtt_github master:rtt_github
           git fetch rtt_gitee gitee_master:rtt_gitee
-          git checkout -b localdev rtt_github/master
+          git merge rtt_github/master
+          git push --force origin master:main
+          git checkout -b main origin/main
           git merge rtt_gitee/gitee_master
-          git push --force origin localdev:rebot
-          git checkout master
 
       - name: Create Pull Request
         id: cpr
@@ -54,7 +54,7 @@ jobs:
           author: ${{ github.actor }} <${{ github.actor }}@users.thread-liu.github.com>
           signoff: false
           branch: rebot
-          delete-branch: true
+          delete-branch: false
           title: '[Example] Update report'
           body: |
             Update report
