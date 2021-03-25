@@ -53,8 +53,7 @@ jobs:
           committer: GitHub <thread-liu@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.thread-liu.github.com>
           signoff: false
-          base: rebot
-          branch: test
+          branch: rebot
           delete-branch: true
           title: '[Example] Update report'
           body: |
