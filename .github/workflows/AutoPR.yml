@@ -48,14 +48,14 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
-        
+          push-to-fork: thread-liu/master-fork
           commit-message: rtthread-bot
           committer: GitHub <thread-liu@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.thread-liu.github.com>
           signoff: false
           branch: rebot
-          delete-branch: false
-          title: '[Example] Update report'
+          delete-branch: true
+          title: '[auto pr] rtthread-bot'
           body: |
             Update report
             - Updated with *today's* date
