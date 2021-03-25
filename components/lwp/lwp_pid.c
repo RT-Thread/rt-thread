@@ -31,24 +31,31 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#define PID_MAX 10000
+
 #define PID_CT_ASSERT(name, x) \
     struct assert_##name {char ary[2 * (x) - 1];}
 
-PID_CT_ASSERT(pid_max_nr, RT_LWP_MAX_NR > 1);
+PID_CT_ASSERT(pid_min_nr, RT_LWP_MAX_NR > 1);
+PID_CT_ASSERT(pid_max_nr, RT_LWP_MAX_NR < PID_MAX);
 
-static struct rt_lwp *lwp_pid_ary[RT_LWP_MAX_NR];
-static struct rt_lwp **lwp_pid_free_head = RT_NULL;
-static pid_t lwp_pid_ary_alloced = 1; /* 0 is reserved */
+static struct lwp_avl_struct lwp_pid_ary[RT_LWP_MAX_NR];
+static struct lwp_avl_struct *lwp_pid_free_head = RT_NULL;
+static int lwp_pid_ary_alloced = 0;
+static struct lwp_avl_struct *lwp_pid_root = RT_NULL;
+static pid_t current_pid = 0;
 
-pid_t lwp_pid_get(void)
+static pid_t lwp_pid_get(void)
 {
-    pid_t ret = 0;
-    rt_base_t level = rt_hw_interrupt_disable();
-    struct rt_lwp **p = lwp_pid_free_head;
+    rt_base_t level;
+    struct lwp_avl_struct *p;
+    pid_t pid = 0;
 
+    level = rt_hw_interrupt_disable();
+    p = lwp_pid_free_head;
     if (p)
     {
-        lwp_pid_free_head = (struct rt_lwp **)*p;
+        lwp_pid_free_head = (struct lwp_avl_struct *)p->avl_right;
     }
     else if (lwp_pid_ary_alloced < RT_LWP_MAX_NR)
     {
@@ -57,33 +64,65 @@ pid_t lwp_pid_get(void)
     }
     if (p)
     {
-        *p = RT_NULL;
-        ret = p - lwp_pid_ary;
+        int found_noused = 0;
+
+        RT_ASSERT(p->data == RT_NULL);
+        for (pid = current_pid + 1; pid < PID_MAX; pid++)
+        {
+            if (!lwp_avl_find(pid, lwp_pid_root))
+            {
+                found_noused = 1;
+                break;
+            }
+        }
+        if (!found_noused)
+        {
+            for (pid = 1; pid <= current_pid; pid++)
+            {
+                if (!lwp_avl_find(pid, lwp_pid_root))
+                {
+                    found_noused = 1;
+                    break;
+                }
+            }
+        }
+        p->avl_key = pid;
+        lwp_avl_insert(p, &lwp_pid_root);
+        current_pid = pid;
     }
     rt_hw_interrupt_enable(level);
-    return ret;
+    return pid;
 }
 
-void lwp_pid_put(pid_t pid)
+static void lwp_pid_put(pid_t pid)
 {
-    struct rt_lwp **p = RT_NULL;
-    rt_base_t level = rt_hw_interrupt_disable();
+    rt_base_t level;
+    struct lwp_avl_struct *p;
 
-    if (pid > 0 && pid < RT_LWP_MAX_NR)
+    level = rt_hw_interrupt_disable();
+    p  = lwp_avl_find(pid, lwp_pid_root);
+    if (p)
     {
-        p = lwp_pid_ary + pid;
-        *p = (struct rt_lwp *)lwp_pid_free_head;
+        p->data = RT_NULL;
+        lwp_avl_remove(p, &lwp_pid_root);
+        p->avl_right = lwp_pid_free_head;
         lwp_pid_free_head = p;
     }
     rt_hw_interrupt_enable(level);
 }
 
-void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp)
+static void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp)
 {
-    if (pid > 0 && pid < RT_LWP_MAX_NR)
+    rt_base_t level;
+    struct lwp_avl_struct *p;
+
+    level = rt_hw_interrupt_disable();
+    p  = lwp_avl_find(pid, lwp_pid_root);
+    if (p)
     {
-        lwp_pid_ary[pid] = lwp;
+        p->data = lwp;
     }
+    rt_hw_interrupt_enable(level);
 }
 
 int libc_stdio_get_console(void);
@@ -104,6 +143,165 @@ static void __exit_files(struct rt_lwp *lwp)
         }
         fd--;
     }
+}
+
+void lwp_user_object_lock_init(struct rt_lwp *lwp)
+{
+    rt_mutex_init(&lwp->object_mutex, "lwp_obj", RT_IPC_FLAG_PRIO);
+}
+
+void lwp_user_object_lock_destroy(struct rt_lwp *lwp)
+{
+    rt_mutex_detach(&lwp->object_mutex);
+}
+
+void lwp_user_object_lock(struct rt_lwp *lwp)
+{
+    if (lwp)
+    {
+        rt_mutex_take(&lwp->object_mutex, RT_WAITING_FOREVER);
+    }
+    else
+    {
+        RT_ASSERT(0);
+    }
+}
+
+void lwp_user_object_unlock(struct rt_lwp *lwp)
+{
+    if (lwp)
+    {
+        rt_mutex_release(&lwp->object_mutex);
+    }
+    else
+    {
+        RT_ASSERT(0);
+    }
+}
+
+int lwp_user_object_add(struct rt_lwp *lwp, rt_object_t object)
+{
+    int ret = -1;
+
+    if (lwp && object)
+    {
+        lwp_user_object_lock(lwp);
+        if (!lwp_avl_find((avl_key_t)object, lwp->object_root))
+        {
+            struct lwp_avl_struct *node;
+
+            node = (struct lwp_avl_struct *)rt_malloc(sizeof(struct lwp_avl_struct));
+            if (node)
+            {
+                rt_base_t level;
+
+                level = rt_hw_interrupt_disable();
+                object->lwp_ref_count++;
+                rt_hw_interrupt_enable(level);
+                node->avl_key = (avl_key_t)object;
+                lwp_avl_insert(node, &lwp->object_root);
+                ret = 0;
+            }
+        }
+        lwp_user_object_unlock(lwp);
+    }
+    return ret;
+}
+
+static rt_err_t _object_node_delete(struct rt_lwp *lwp, struct lwp_avl_struct *node)
+{
+    rt_err_t ret = -1;
+    rt_object_t object;
+
+    if (!lwp || !node)
+    {
+        return ret;
+    }
+    object = (rt_object_t)node->avl_key;
+    object->lwp_ref_count--;
+    if (object->lwp_ref_count == 0)
+    {
+        /* remove from kernel object list */
+        switch (object->type)
+        {
+        case RT_Object_Class_Semaphore:
+            ret = rt_sem_delete((rt_sem_t)object);
+            break;
+        case RT_Object_Class_Mutex:
+            ret = rt_mutex_delete((rt_mutex_t)object);
+            break;
+        case RT_Object_Class_Event:
+            ret = rt_event_delete((rt_event_t)object);
+            break;
+        case RT_Object_Class_MailBox:
+            ret = rt_mb_delete((rt_mailbox_t)object);
+            break;
+        case RT_Object_Class_MessageQueue:
+            ret = rt_mq_delete((rt_mq_t)object);
+            break;
+        case RT_Object_Class_Timer:
+            ret = rt_timer_delete((rt_timer_t)object);
+            break;
+        case RT_Object_Class_Custom:
+            ret = rt_custom_object_destroy(object);
+            break;
+        default:
+            LOG_E("input object type(%d) error", object->type);
+            break;
+        }
+    }
+    else
+    {
+        ret = 0;
+    }
+    lwp_avl_remove(node, &lwp->object_root);
+    rt_free(node);
+    return ret;
+}
+
+rt_err_t lwp_user_object_delete(struct rt_lwp *lwp, rt_object_t object)
+{
+    rt_err_t ret = -1;
+
+    if (lwp && object)
+    {
+        struct lwp_avl_struct *node;
+
+        lwp_user_object_lock(lwp);
+        node = lwp_avl_find((avl_key_t)object, lwp->object_root);
+        ret = _object_node_delete(lwp, node);
+        lwp_user_object_unlock(lwp);
+    }
+    return ret;
+}
+
+void lwp_user_object_clear(struct rt_lwp *lwp)
+{
+    struct lwp_avl_struct *node;
+
+    lwp_user_object_lock(lwp);
+    while ((node = lwp_map_find_first(lwp->object_root)) != RT_NULL)
+    {
+        _object_node_delete(lwp, node);
+    }
+    lwp_user_object_unlock(lwp);
+}
+
+static int _object_dup(struct lwp_avl_struct *node, void *arg)
+{
+    rt_object_t object;
+    struct rt_lwp *dst_lwp = (struct rt_lwp *)arg;
+
+    object = (rt_object_t)node->avl_key;
+    lwp_user_object_add(dst_lwp, object);
+    return 0;
+}
+
+void lwp_user_object_dup(struct rt_lwp *dst_lwp, struct rt_lwp *src_lwp)
+{
+    lwp_user_object_lock(src_lwp);
+    lwp_avl_traversal(src_lwp->object_root, _object_dup, dst_lwp);
+    lwp_user_object_unlock(src_lwp);
 }
 
 struct rt_lwp* lwp_new(void)
@@ -131,7 +329,7 @@ struct rt_lwp* lwp_new(void)
     lwp->pid = pid;
     lwp_pid_set_lwp(pid, lwp);
     rt_list_init(&lwp->t_grp);
-    rt_list_init(&lwp->object_list);
+    lwp_user_object_lock_init(lwp);
     lwp->address_search_head = RT_NULL;
     rt_wqueue_init(&lwp->wait_queue);
 
@@ -141,69 +339,14 @@ out:
     return lwp;
 }
 
-void lwp_user_obj_free(struct rt_lwp *lwp)
-{
-    rt_base_t level = 0;
-    struct rt_list_node *list = RT_NULL, *node = RT_NULL;
-    struct rt_object *object = RT_NULL;
-
-    list = &(lwp->object_list);
-
-    level = rt_hw_interrupt_disable();
-    while ((node = list->next) != list)
-    {
-        object = rt_list_entry(node, struct rt_object, lwp_obj_list);
-        /* remove from kernel object list */
-        switch (object->type)
-        {
-        case RT_Object_Class_Thread:
-        {
-            RT_ASSERT(0);
-            break;
-        }
-        case RT_Object_Class_Semaphore:
-            rt_sem_delete((rt_sem_t)object);
-            break;
-        case RT_Object_Class_Mutex:
-            rt_mutex_delete((rt_mutex_t)object);
-            break;
-        case RT_Object_Class_Event:
-            rt_event_delete((rt_event_t)object);
-            break;
-        case RT_Object_Class_MailBox:
-            rt_mb_delete((rt_mailbox_t)object);
-            break;
-        case RT_Object_Class_MessageQueue:
-            rt_mq_delete((rt_mq_t)object);
-            break;
-        case RT_Object_Class_Device:
-            rt_device_close((rt_device_t)object);
-            break;
-        case RT_Object_Class_Timer:
-            rt_timer_delete((rt_timer_t)object);
-            break;
-        case RT_Object_Class_Channel:
-            /* remove from object list */
-            rt_list_remove(&object->list);
-            break;
-        case RT_Object_Class_Custom:
-            rt_custom_object_destroy(object);
-            break;
-        default:
-            LOG_E("input object type(%d) error", object->type);
-            /* remove from object list */
-            rt_list_remove(&object->list);
-            break;
-        }
-    }
-    rt_hw_interrupt_enable(level);
-}
-
 void lwp_free(struct rt_lwp* lwp)
 {
     rt_base_t level;
 
-    if (lwp == NULL) return ;
+    if (lwp == RT_NULL)
+    {
+        return;
+    }
 
     LOG_D("lwp free: %p\n", lwp);
 
@@ -222,10 +365,12 @@ void lwp_free(struct rt_lwp* lwp)
     {
         /* auto clean fds */
         __exit_files(lwp);
-        lwp_user_obj_free(lwp);
         rt_free(lwp->fdt.fds);
         lwp->fdt.fds = RT_NULL;
     }
+
+    lwp_user_object_clear(lwp);
+    lwp_user_object_lock_destroy(lwp);
 
     /* free data section */
     if (lwp->data_entry != RT_NULL)
@@ -293,13 +438,22 @@ void lwp_free(struct rt_lwp* lwp)
                 thread->error = RT_EOK;
                 thread->msg_ret = (void*)(rt_size_t)lwp->lwp_ret;
                 rt_thread_resume(thread);
+                rt_hw_interrupt_enable(level);
+                return;
+            }
+            else
+            {
+                struct rt_lwp **it = &lwp->parent->first_child;
+
+                while (*it != lwp)
+                {
+                    it = &(*it)->sibling;
+                }
+                *it = lwp->sibling;
             }
         }
-        else
-        {
-            lwp_pid_put(lwp_to_pid(lwp));
-            rt_free(lwp);
-        }
+        lwp_pid_put(lwp_to_pid(lwp));
+        rt_free(lwp);
     }
 
     rt_hw_interrupt_enable(level);
@@ -343,11 +497,18 @@ void lwp_ref_dec(struct rt_lwp *lwp)
 
 struct rt_lwp* lwp_from_pid(pid_t pid)
 {
-    if ((pid <= 0) || (pid >= RT_LWP_MAX_NR))
+    rt_base_t level;
+    struct lwp_avl_struct *p;
+    struct rt_lwp *lwp = RT_NULL;
+
+    level = rt_hw_interrupt_disable();
+    p  = lwp_avl_find(pid, lwp_pid_root);
+    if (p)
     {
-        return NULL;
+        lwp = (struct rt_lwp *)p->data;
     }
-    return lwp_pid_ary[pid];
+    rt_hw_interrupt_enable(level);
+    return lwp;
 }
 
 pid_t lwp_to_pid(struct rt_lwp* lwp)
@@ -373,18 +534,21 @@ char* lwp_pid2name(int32_t pid)
     return process_name;
 }
 
-int32_t lwp_name2pid(const char *name)
+pid_t lwp_name2pid(const char *name)
 {
-    pid_t pid;
+    int idx;
+    pid_t pid = 0;
     rt_thread_t main_thread;
     char* process_name = RT_NULL;
+    rt_base_t level;
 
-    for (pid = 1; pid < RT_LWP_MAX_NR; pid++)
+    level = rt_hw_interrupt_disable();
+    for (idx = 0; idx < RT_LWP_MAX_NR; idx++)
     {
         /* 0 is reserved */
-        struct rt_lwp *lwp = lwp_pid_ary[pid];
+        struct rt_lwp *lwp = (struct rt_lwp *)lwp_pid_ary[idx].data;
 
-        if (lwp && (lwp < (struct rt_lwp *)&lwp_pid_ary[0] || lwp >= (struct rt_lwp *)&lwp_pid_ary[RT_LWP_MAX_NR]))
+        if (lwp)
         {
             process_name = strrchr(lwp->cmd, '/');
             process_name = process_name? process_name + 1: lwp->cmd;
@@ -393,12 +557,13 @@ int32_t lwp_name2pid(const char *name)
                 main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
                 if (!(main_thread->stat & RT_THREAD_CLOSE))
                 {
-                    return pid;
+                    pid = lwp->pid;
                 }
             }
         }
     }
-    return -1;
+    rt_hw_interrupt_enable(level);
+    return pid;
 }
 
 int lwp_getpid(void)
@@ -477,7 +642,10 @@ quit:
 /* copy from components/finsh/cmd.c */
 static void object_split(int len)
 {
-    while (len--) rt_kprintf("-");
+    while (len--)
+    {
+        rt_kprintf("-");
+    }
 }
 
 static void print_thread_info(struct rt_thread* thread, int maxlen)
@@ -503,7 +671,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
 
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
-    while (*ptr == '#')ptr --;
+    while (*ptr == '#')ptr--;
 
     rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
             ((rt_uint32_t)thread->sp - (rt_uint32_t)thread->stack_addr),
@@ -513,7 +681,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
             thread->error);
 #else
     ptr = (rt_uint8_t *)thread->stack_addr;
-    while (*ptr == '#')ptr ++;
+    while (*ptr == '#')ptr++;
 
     rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
             (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)thread->sp),
@@ -559,7 +727,7 @@ long list_process(void)
 
             if (index > 0)
             {
-                for (index = 0; index <count; index ++)
+                for (index = 0; index <count; index++)
                 {
                     struct rt_thread th;
 
@@ -574,7 +742,6 @@ long list_process(void)
                     rt_memcpy(&th, thread, sizeof(struct rt_thread));
                     rt_hw_interrupt_enable(level);
 
-
                     if (th.lwp == RT_NULL)
                     {
                         rt_kprintf("     %-*.*s ", maxlen, RT_NAME_MAX, "kernel");
@@ -588,9 +755,9 @@ long list_process(void)
 
     for (index = 0; index < RT_LWP_MAX_NR; index++)
     {
-        struct rt_lwp *lwp = lwp_pid_ary[index];
+        struct rt_lwp *lwp = (struct rt_lwp *)lwp_pid_ary[index].data;
 
-        if (lwp && (lwp < (struct rt_lwp *)&lwp_pid_ary[0] || lwp >= (struct rt_lwp *)&lwp_pid_ary[RT_LWP_MAX_NR]))
+        if (lwp)
         {
             list = &lwp->t_grp;
             for (node = list->next; node != list; node = node->next)
@@ -784,7 +951,10 @@ void lwp_wait_subthread_exit(void)
     rt_thread_t main_thread;
 
     lwp = lwp_self();
-    if (!lwp) return;
+    if (!lwp)
+    {
+        return;
+    }
 
     thread = rt_thread_self();
     main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);

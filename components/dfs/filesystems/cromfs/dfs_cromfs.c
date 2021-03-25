@@ -937,6 +937,11 @@ static int dfs_cromfs_open(struct dfs_fd *file)
     RT_ASSERT(file->fnode->ref_count > 0);
     if (file->fnode->ref_count > 1)
     {
+        if (file->fnode->type == FT_DIRECTORY
+                && !(file->flags & O_DIRECTORY))
+        {
+            return -ENOENT;
+        }
         file->pos = 0;
         return 0;
     }
@@ -959,6 +964,7 @@ static int dfs_cromfs_open(struct dfs_fd *file)
             ret = -ENOENT;
             goto end;
         }
+        file->fnode->type = FT_DIRECTORY;
     }
     else
     {
@@ -968,6 +974,7 @@ static int dfs_cromfs_open(struct dfs_fd *file)
             ret = -ENOENT;
             goto end;
         }
+        file->fnode->type = FT_REGULAR;
     }
 
     result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);

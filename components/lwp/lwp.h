@@ -80,13 +80,15 @@ struct rt_lwp
     struct dfs_fdtable fdt;
     char cmd[RT_NAME_MAX];
 
+    int sa_flags;
     lwp_sigset_t signal;
     lwp_sigset_t signal_mask;
     int signal_mask_bak;
     rt_uint32_t signal_in_process;
     lwp_sighandler_t signal_handler[_LWP_NSIG];
 
-    rt_list_t object_list;
+    struct lwp_avl_struct *object_root;
+    struct rt_mutex object_mutex;
     struct rt_user_context user_ctx;
 
     struct rt_wqueue wait_queue; /*for console */
@@ -115,10 +117,6 @@ void lwp_wait_subthread_exit(void);
 void lwp_set_thread_area(void *p);
 void* rt_cpu_get_thread_idr(void);
 void rt_cpu_set_thread_idr(void *p);
-
-pid_t lwp_pid_get(void);
-void lwp_pid_put(pid_t pid);
-void lwp_pid_set_lwp(pid_t pid, struct rt_lwp *lwp);
 
 int lwp_tid_get(void);
 void lwp_tid_put(int tid);

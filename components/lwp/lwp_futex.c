@@ -20,6 +20,7 @@ struct rt_futex
     int *uaddr;
     rt_list_t waiting_thread;
     struct lwp_avl_struct node;
+    struct rt_object *custom_obj;
 };
 
 static struct rt_mutex _futex_lock;
@@ -31,9 +32,10 @@ static int futex_system_init(void)
 }
 INIT_PREV_EXPORT(futex_system_init);
 
-void futex_destory(void *data)
+rt_err_t futex_destory(void *data)
 {
-    rt_base_t level = 0;
+    rt_err_t ret = -1;
+    rt_base_t level;
     struct rt_futex *futex = (struct rt_futex *)data;
 
     if (futex)
@@ -45,9 +47,9 @@ void futex_destory(void *data)
 
         /* release object */
         rt_free(futex);
+        ret = 0;
     }
-
-    return ;
+    return ret;
 }
 
 struct rt_futex* futex_create(int *uaddr, struct rt_lwp *lwp)
@@ -74,6 +76,7 @@ struct rt_futex* futex_create(int *uaddr, struct rt_lwp *lwp)
     futex->uaddr = uaddr;
     futex->node.avl_key = (avl_key_t)uaddr;
     futex->node.data = &lwp->address_search_head;
+    futex->custom_obj = obj;
     rt_list_init(&(futex->waiting_thread));
 
     /* insert into futex head */
@@ -209,6 +212,12 @@ int sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
         if (futex == RT_NULL)
         {
             rt_mutex_release(&_futex_lock);
+            rt_set_errno(ENOMEM);
+            return -RT_ENOMEM;
+        }
+        if (lwp_user_object_add(lwp, futex->custom_obj) != 0)
+        {
+            rt_custom_object_destroy(futex->custom_obj);
             rt_set_errno(ENOMEM);
             return -RT_ENOMEM;
         }

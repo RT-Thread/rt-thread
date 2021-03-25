@@ -223,6 +223,18 @@ static int dfs_jffs2_open(struct dfs_fd* file)
     struct dfs_filesystem *fs;
     struct cyg_mtab_entry * mte;
 
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        if (file->fnode->type == FT_DIRECTORY
+                && !(file->flags & O_DIRECTORY))
+        {
+            return -ENOENT;
+        }
+        file->pos = 0;
+        return 0;
+    }
+
     oflag = file->flags;
     fs = file->fnode->fs;
     RT_ASSERT(fs != RT_NULL);
@@ -282,6 +294,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 #endif
         /* save this pointer, it will be used by dfs_jffs2_getdents*/
         file->fnode->data = jffs2_file;
+        file->fnode->type = FT_DIRECTORY;
         return 0;
     }
     /* regular file operations */
@@ -309,6 +322,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
     file->fnode->data = jffs2_file;
     file->pos = jffs2_file->f_offset;
     file->fnode->size = 0;
+    file->fnode->type = FT_REGULAR;
     jffs2_file_lseek(jffs2_file, (off_t *)(&(file->fnode->size)), SEEK_END);
     jffs2_file->f_offset = (off_t)file->pos;
     rt_mutex_release(&jffs2_lock);
@@ -328,6 +342,12 @@ static int dfs_jffs2_close(struct dfs_fd* file)
     cyg_file * jffs2_file;
 
     RT_ASSERT(file->fnode->data != NULL);
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        return 0;
+    }
+
     jffs2_file = (cyg_file *)(file->fnode->data);
 
     if (file->flags & O_DIRECTORY) /* operations about dir */

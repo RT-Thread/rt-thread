@@ -281,6 +281,18 @@ static int dfs_uffs_open(struct dfs_fd *file)
     int oflag, mode;
     char *file_path;
 
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        if (file->fnode->type == FT_DIRECTORY
+                && !(file->flags & O_DIRECTORY))
+        {
+            return -ENOENT;
+        }
+        file->pos = 0;
+        return 0;
+    }
+
     oflag = file->flags;
     if (oflag & O_DIRECTORY)   /* operations about dir */
     {
@@ -313,6 +325,7 @@ static int dfs_uffs_open(struct dfs_fd *file)
         }
         /* save this pointer,will used by  dfs_uffs_getdents*/
         file->fnode->data = dir;
+        file->fnode->type = FT_DIRECTORY;
         rt_free(file_path);
         return RT_EOK;
     }
@@ -355,6 +368,12 @@ static int dfs_uffs_close(struct dfs_fd *file)
 {
     int oflag;
     int fd;
+
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        return 0;
+    }
 
     oflag = file->flags;
     if (oflag & O_DIRECTORY)

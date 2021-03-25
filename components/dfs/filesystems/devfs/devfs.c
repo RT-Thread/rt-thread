@@ -90,6 +90,12 @@ int dfs_device_fs_close(struct dfs_fd *file)
     rt_device_t dev_id;
 
     RT_ASSERT(file != RT_NULL);
+    RT_ASSERT(file->fnode->ref_count > 0);
+
+    if (file->fnode->ref_count > 1)
+    {
+        return 0;
+    }
 
     if (file->fnode->type == FT_DIRECTORY)
     {
@@ -125,6 +131,12 @@ int dfs_device_fs_open(struct dfs_fd *file)
     rt_device_t device;
     rt_base_t level;
 
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        file->pos = 0;
+        return 0;
+    }
     /* open root directory */
     if ((file->fnode->path[0] == '/') && (file->fnode->path[1] == '\0') &&
         (file->flags & O_DIRECTORY))

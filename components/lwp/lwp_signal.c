@@ -343,13 +343,14 @@ int lwp_sigaction(int sig, const struct lwp_sigaction *act,
     }
     if (oact)
     {
+        oact->sa_flags = lwp->sa_flags;
         oact->sa_mask = lwp->signal_mask;
-        oact->sa_flags = 0;
         oact->sa_restorer = RT_NULL;
         oact->__sa_handler._sa_handler = lwp->signal_handler[sig - 1];
     }
     if (act)
     {
+        lwp->sa_flags = act->sa_flags;
         newset = act->sa_mask;
         lwp_sigdelset(&newset, SIGKILL);
         lwp_sigdelset(&newset, SIGSTOP);
@@ -516,27 +517,31 @@ int lwp_kill(pid_t pid, int sig)
 {
     rt_base_t level;
     struct rt_lwp *lwp;
-    int ret = -RT_EINVAL;
+    int ret = -1;
     rt_thread_t thread;
 
-    if (sig == 0 || sig > _LWP_NSIG)
+    if (sig < 0 || sig >= _LWP_NSIG)
+    {
+        rt_set_errno(EINVAL);
         return ret;
+    }
     level = rt_hw_interrupt_disable();
     lwp = lwp_from_pid(pid);
     if (!lwp)
     {
+        rt_set_errno(ESRCH);
         goto out;
     }
-
-    /* check main thread */
-    thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (lwp_sigismember(&lwp->signal_mask, sig)) /* if signal masked */
+    if (sig)
     {
-        goto out;
+        /* check main thread */
+        thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
+        if (!lwp_sigismember(&lwp->signal_mask, sig)) /* if signal masked */
+        {
+            lwp_sigaddset(&lwp->signal, sig);
+            _do_signal_wakeup(thread, sig);
+        }
     }
-
-    lwp_sigaddset(&lwp->signal, sig);
-    _do_signal_wakeup(thread, sig);
     ret = 0;
 out:
     rt_hw_interrupt_enable(level);
@@ -548,22 +553,27 @@ int lwp_thread_kill(rt_thread_t thread, int sig)
     rt_base_t level;
     int ret = -RT_EINVAL;
 
-    if (!thread) return ret;
-
-    if (sig == 0 || sig > _LWP_NSIG)
+    if (!thread)
+    {
+        rt_set_errno(ESRCH);
         return ret;
+    }
+    if (sig < 0 || sig >= _LWP_NSIG)
+    {
+        rt_set_errno(EINVAL);
+        return ret;
+    }
     level = rt_hw_interrupt_disable();
     if (!thread->lwp)
     {
+        rt_set_errno(EPERM);
         goto out;
     }
-    if (lwp_sigismember(&thread->signal_mask, sig)) /* if signal masked */
+    if (!lwp_sigismember(&thread->signal_mask, sig)) /* if signal masked */
     {
-        goto out;
+        lwp_sigaddset(&thread->signal, sig);
+        _do_signal_wakeup(thread, sig);
     }
-
-    lwp_sigaddset(&thread->signal, sig);
-    _do_signal_wakeup(thread, sig);
     ret = 0;
 out:
     rt_hw_interrupt_enable(level);

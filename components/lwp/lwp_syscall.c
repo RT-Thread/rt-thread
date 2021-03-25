@@ -973,12 +973,18 @@ int sys_setpriority(int which, id_t who, int prio)
 
 rt_sem_t sys_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 {
-    return rt_sem_create(name, value, flag);
+    rt_sem_t sem = rt_sem_create(name, value, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)sem) != 0)
+    {
+        rt_sem_delete(sem);
+        sem = NULL;
+    }
+    return sem;
 }
 
 rt_err_t sys_sem_delete(rt_sem_t sem)
 {
-    return rt_sem_delete(sem);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)sem);
 }
 
 rt_err_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
@@ -993,12 +999,18 @@ rt_err_t sys_sem_release(rt_sem_t sem)
 
 rt_mutex_t sys_mutex_create(const char *name, rt_uint8_t flag)
 {
-    return rt_mutex_create(name, flag);
+    rt_mutex_t mutex = rt_mutex_create(name, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)mutex) != 0)
+    {
+        rt_mutex_delete(mutex);
+        mutex = NULL;
+    }
+    return mutex;
 }
 
 rt_err_t sys_mutex_delete(rt_mutex_t mutex)
 {
-    return rt_mutex_delete(mutex);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)mutex);
 }
 
 rt_err_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
@@ -1036,12 +1048,18 @@ int sys_munmap(void *addr, size_t length)
 
 rt_event_t sys_event_create(const char *name, rt_uint8_t flag)
 {
-    return rt_event_create(name, flag);
+    rt_event_t event = rt_event_create(name, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)event) != 0)
+    {
+        rt_event_delete(event);
+        event = NULL;
+    }
+    return event;
 }
 
 rt_err_t sys_event_delete(rt_event_t event)
 {
-    return rt_event_delete(event);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)event);
 }
 
 rt_err_t sys_event_send(rt_event_t event, rt_uint32_t set)
@@ -1060,12 +1078,18 @@ rt_err_t sys_event_recv(rt_event_t   event,
 
 rt_mailbox_t sys_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 {
-    return rt_mb_create(name, size, flag);
+    rt_mailbox_t mb = rt_mb_create(name, size, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)mb) != 0)
+    {
+        rt_mb_delete(mb);
+        mb = NULL;
+    }
+    return mb;
 }
 
 rt_err_t sys_mb_delete(rt_mailbox_t mb)
 {
-    return rt_mb_delete(mb);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)mb);
 }
 
 rt_err_t sys_mb_send(rt_mailbox_t mb, rt_uint32_t value)
@@ -1090,12 +1114,18 @@ rt_mq_t sys_mq_create(const char *name,
                      rt_size_t   max_msgs,
                      rt_uint8_t  flag)
 {
-    return rt_mq_create(name, msg_size, max_msgs, flag);
+    rt_mq_t mq = rt_mq_create(name, msg_size, max_msgs, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)mq) != 0)
+    {
+        rt_mq_delete(mq);
+        mq = NULL;
+    }
+    return mq;
 }
 
 rt_err_t sys_mq_delete(rt_mq_t mq)
 {
-    return rt_mq_delete(mq);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)mq);
 }
 
 rt_err_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
@@ -1127,12 +1157,18 @@ rt_timer_t sys_timer_create(const char *name,
         rt_tick_t   time,
         rt_uint8_t  flag)
 {
-    return rt_timer_create(name, timer_timeout_callback, (void *)data, time, flag);
+    rt_timer_t timer = rt_timer_create(name, timer_timeout_callback, (void *)data, time, flag);
+    if (lwp_user_object_add(lwp_self(), (rt_object_t)timer) != 0)
+    {
+        rt_timer_delete(timer);
+        timer = NULL;
+    }
+    return timer;
 }
 
 rt_err_t sys_timer_delete(rt_timer_t timer)
 {
-    return rt_timer_delete(timer);
+    return lwp_user_object_delete(lwp_self(), (rt_object_t)timer);
 }
 
 rt_err_t sys_timer_start(rt_timer_t timer)
@@ -1387,6 +1423,7 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     dst->args = src->args;
     rt_memcpy(dst->cmd, src->cmd, RT_NAME_MAX);
 
+    dst->sa_flags = src->sa_flags;
     dst->signal_mask = src->signal_mask;
     rt_memcpy(dst->signal_handler, src->signal_handler, sizeof dst->signal_handler);
 }
@@ -1537,6 +1574,9 @@ int _sys_fork(void)
     /* copy origin stack */
     rt_memcpy(thread->stack_addr, self_thread->stack_addr, self_thread->stack_size);
     lwp_tid_set_thread(tid, thread);
+
+    /* duplicate user objects */
+    lwp_user_object_dup(lwp, self_lwp);
 
     level = rt_hw_interrupt_disable();
     user_stack = lwp_get_user_sp();
@@ -1923,6 +1963,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     }
     rt_memset(new_lwp, 0, sizeof(struct rt_lwp));
     new_lwp->ref = 1;
+    lwp_user_object_lock_init(new_lwp);
     ret = arch_user_space_init(new_lwp);
     if (ret != 0)
     {
@@ -1957,6 +1998,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         int off = 0;
         int last_backslash = 0;
         char *run_name = args_info.argv[0];
+
+        /* clear all user objects */
+        lwp_user_object_clear(lwp);
 
         /* find last \ or / */
         while (1)
@@ -1993,6 +2037,9 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
 
         _swap_lwp_data(lwp, new_lwp, void *, args);
 
+        rt_memset(&thread->signal_mask, 0, sizeof(thread->signal_mask));
+        rt_memset(&thread->signal_mask_bak, 0, sizeof(thread->signal_mask_bak));
+        lwp->sa_flags = 0;
         rt_memset(&lwp->signal_mask, 0, sizeof(lwp->signal_mask));
         rt_memset(&lwp->signal_mask_bak, 0, sizeof(lwp->signal_mask_bak));
         rt_memset(lwp->signal_handler, 0, sizeof(lwp->signal_handler));
@@ -2620,8 +2667,15 @@ rt_err_t sys_thread_mdelay(rt_int32_t ms)
     return rt_thread_mdelay(ms);
 }
 
-int sys_sigaction(int sig, const struct sigaction *act,
-                     struct sigaction *oact, size_t sigsetsize)
+struct k_sigaction {
+    void (*handler)(int);
+    unsigned long flags;
+    void (*restorer)(void);
+    unsigned mask[2];
+};
+
+int sys_sigaction(int sig, const struct k_sigaction *act,
+                     struct k_sigaction *oact, size_t sigsetsize)
 {
     int ret = -RT_EINVAL;
     struct lwp_sigaction kact, *pkact = RT_NULL;
@@ -2643,7 +2697,7 @@ int sys_sigaction(int sig, const struct sigaction *act,
     }
     if (oact)
     {
-        if (!lwp_user_accessable((void *)oact, sigsetsize))
+        if (!lwp_user_accessable((void *)oact, sizeof(*oact)))
         {
             rt_set_errno(EFAULT);
             goto out;
@@ -2652,23 +2706,25 @@ int sys_sigaction(int sig, const struct sigaction *act,
     }
     if (act)
     {
-        if (!lwp_user_accessable((void *)act, sigsetsize))
+        if (!lwp_user_accessable((void *)act, sizeof(*act)))
         {
             rt_set_errno(EFAULT);
             goto out;
         }
-        kact.__sa_handler._sa_handler = act->sa_handler;
-        memcpy(&kact.sa_mask, &act->sa_mask, sigsetsize);
+        kact.sa_flags = act->flags;
+        kact.__sa_handler._sa_handler = act->handler;
+        memcpy(&kact.sa_mask, &act->mask, sigsetsize);
+        kact.sa_restorer = act->restorer;
         pkact = &kact;
     }
 
     ret = lwp_sigaction(sig, pkact, pkoact, sigsetsize);
-    if (ret == 0)
+    if (ret == 0 && oact)
     {
-        lwp_put_to_user(&oact->sa_handler, &pkoact->__sa_handler._sa_handler, sizeof(void (*)(int)));
-        lwp_put_to_user(&oact->sa_mask, &pkoact->sa_mask, sigsetsize);
-        lwp_put_to_user(&oact->sa_flags, &pkoact->sa_flags, sizeof(int));
-        lwp_put_to_user(&oact->sa_restorer, &pkoact->sa_restorer, sizeof(void (*)(void)));
+        lwp_put_to_user(&oact->handler, &pkoact->__sa_handler._sa_handler, sizeof(void (*)(int)));
+        lwp_put_to_user(&oact->mask, &pkoact->sa_mask, sigsetsize);
+        lwp_put_to_user(&oact->flags, &pkoact->sa_flags, sizeof(int));
+        lwp_put_to_user(&oact->restorer, &pkoact->sa_restorer, sizeof(void (*)(void)));
     }
 out:
     return ret;
@@ -2727,15 +2783,15 @@ int sys_sigprocmask(int how, const sigset_t *sigset, sigset_t *oset, size_t size
 
 int sys_tkill(int tid, int sig)
 {
-    rt_thread_t thread = RT_NULL;
+    rt_base_t level;
+    rt_thread_t thread;
+    int ret;
 
-    if (tid <= 0)
-    {
-        rt_set_errno(EINVAL);
-        return -RT_EINVAL;
-    }
+    level = rt_hw_interrupt_disable();
     thread = lwp_tid_get_thread(tid);
-    return lwp_thread_kill(thread, sig);
+    ret =  lwp_thread_kill(thread, sig);
+    rt_hw_interrupt_enable(level);
+    return ret;
 }
 
 int sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *oset, size_t size)
@@ -3208,6 +3264,11 @@ int sys_set_tid_address(int *tidptr)
     return thread->tid;
 }
 
+int sys_gettid(void)
+{
+    return rt_thread_self()->tid;
+}
+
 int sys_access(const char *filename, int mode)
 {
     int ret = 0;
@@ -3536,6 +3597,7 @@ const static void* func_table[] =
     (void *)sys_fork,
     (void *)sys_execve,
     (void *)sys_vfork,
+    (void *)sys_gettid,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

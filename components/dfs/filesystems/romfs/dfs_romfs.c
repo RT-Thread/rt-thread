@@ -165,6 +165,7 @@ int dfs_romfs_lseek(struct dfs_fd *file, off_t offset)
 
 int dfs_romfs_close(struct dfs_fd *file)
 {
+    RT_ASSERT(file->fnode->ref_count > 0);
     if (file->fnode->ref_count > 1)
     {
         return RT_EOK;
@@ -180,10 +181,23 @@ int dfs_romfs_open(struct dfs_fd *file)
     struct romfs_dirent *root_dirent;
     struct dfs_filesystem *fs;
 
+    if (file->flags & (O_CREAT | O_WRONLY | O_APPEND | O_TRUNC | O_RDWR))
+    {
+        return -EINVAL;
+    }
+
+    RT_ASSERT(file->fnode->ref_count > 0);
     if (file->fnode->ref_count > 1)
     {
-        return RT_EOK;
+        if (file->fnode->type == FT_DIRECTORY
+                && !(file->flags & O_DIRECTORY))
+        {
+            return -ENOENT;
+        }
+        file->pos = 0;
+        return 0;
     }
+
     fs = file->fnode->fs;
     root_dirent = (struct romfs_dirent *)fs->data;
 
@@ -210,6 +224,7 @@ int dfs_romfs_open(struct dfs_fd *file)
         {
             return -ENOENT;
         }
+        file->fnode->type = FT_DIRECTORY;
     }
     else
     {
@@ -218,6 +233,7 @@ int dfs_romfs_open(struct dfs_fd *file)
         {
             return -ENOENT;
         }
+        file->fnode->type = FT_REGULAR;
     }
 
     file->fnode->data = dirent;

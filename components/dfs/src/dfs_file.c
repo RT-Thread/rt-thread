@@ -159,6 +159,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fd->pos   = 0;
         fd->fnode = fnode;
         dfs_fm_unlock();
+        rt_free(fullpath); /* release path */
     }
     else
     {

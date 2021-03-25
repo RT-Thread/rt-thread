@@ -714,6 +714,13 @@ int nfs_close(struct dfs_fd *file)
     nfs_filesystem *nfs;
     RT_ASSERT(file->fnode->data != NULL);
     struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));
+
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        return 0;
+    }
+
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
 
     if (file->fnode->type == FT_DIRECTORY)
@@ -746,6 +753,18 @@ int nfs_open(struct dfs_fd *file)
     struct dfs_filesystem *dfs_nfs  = file->fnode->fs;
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     RT_ASSERT(nfs != NULL);
+
+    RT_ASSERT(file->fnode->ref_count > 0);
+    if (file->fnode->ref_count > 1)
+    {
+        if (file->fnode->type == FT_DIRECTORY
+                && !(file->flags & O_DIRECTORY))
+        {
+            return -ENOENT;
+        }
+        file->pos = 0;
+        return 0;
+    }
 
     if (file->flags & O_DIRECTORY)
     {
@@ -812,6 +831,7 @@ int nfs_open(struct dfs_fd *file)
         /* set private file */
         nfs->data = fp;
         file->fnode->size = fp->size;
+        file->fnode->type = FT_REGULAR;
     }
 
     return 0;

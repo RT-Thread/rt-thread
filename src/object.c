@@ -29,7 +29,7 @@
 struct rt_custom_object
 {
     struct rt_object parent;
-    void (*destroy)(void *);
+    rt_err_t (*destroy)(void *);
     void *data;
 };
 
@@ -484,21 +484,6 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         rt_list_insert_after(&(information->object_list), &(object->list));
     }
 
-#ifdef RT_USING_LWP
-    {
-        struct rt_lwp *lwp = lwp_self();
-        if (lwp && type != RT_Object_Class_Thread)
-        {
-            /* insert object into lwP object list */
-            rt_list_insert_after(&(lwp->object_list), &(object->lwp_obj_list));
-        }
-        else
-        {
-            rt_list_init(&(object->lwp_obj_list));
-        }
-    }
-#endif
-
     /* unlock interrupt */
     rt_hw_interrupt_enable(temp);
 
@@ -529,11 +514,6 @@ void rt_object_delete(rt_object_t object)
 
     /* remove from old list */
     rt_list_remove(&(object->list));
-
-#ifdef RT_USING_LWP
-    /* remove from the object list of lwP */
-    rt_list_remove(&(object->lwp_obj_list));
-#endif
 
     /* unlock interrupt */
     rt_hw_interrupt_enable(temp);
@@ -643,7 +623,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
  * @note this function shall not be invoked in interrupt status.
  */
 
-rt_object_t rt_custom_object_create(const char *name, void *data, void (*data_destroy)(void *))
+rt_object_t rt_custom_object_create(const char *name, void *data, rt_err_t (*data_destroy)(void *))
 {
     struct rt_custom_object *cobj = RT_NULL;
 
@@ -661,23 +641,25 @@ rt_object_t rt_custom_object_create(const char *name, void *data, void (*data_de
  * This function will destroy a custom object
  * container.
  *
- * @param name the specified name of object.
+ * @param obj the specified name of object.
  *
  * @note this function shall not be invoked in interrupt status.
  */
-void rt_custom_object_destroy(rt_object_t obj)
+rt_err_t rt_custom_object_destroy(rt_object_t obj)
 {
+    rt_err_t ret = -1;
+
     struct rt_custom_object *cobj = (struct rt_custom_object *)obj;
 
-    if (!obj || obj->type != RT_Object_Class_Custom)
+    if (obj && obj->type == RT_Object_Class_Custom)
     {
-        return;
+        if (cobj->destroy)
+        {
+            ret = cobj->destroy(cobj->data);
+        }
+        rt_object_delete(obj);
     }
-    if (cobj->destroy)
-    {
-        cobj->destroy(cobj->data);
-    }
-    rt_object_delete(obj);
+    return ret;
 }
 #endif
 
