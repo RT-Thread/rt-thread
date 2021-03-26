@@ -12,6 +12,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <sys/time.h>
 #include <string.h>
 #include "board.h"
 #include "drv_rtc.h"
@@ -59,14 +60,14 @@ static rt_err_t es32f0_rtc_control(rt_device_t dev, int cmd, void *args)
         time_temp.tm_mday = date.day;
         time_temp.tm_mon = date.month - 1;
         time_temp.tm_year = date.year - 1900 + 2000;
-        *((time_t *)args) = mktime(&time_temp);
+        *((time_t *)args) = timegm(&time_temp);
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
 
         rt_enter_critical();
         /* converts calendar time time into local time. */
-        pNow = localtime((const time_t *)args);
+        pNow = gmtime((const time_t *)args);
         /* copy the statically located variable */
         memcpy(&time_temp, pNow, sizeof(struct tm));
         /* unlock scheduler. */

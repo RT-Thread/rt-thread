@@ -49,9 +49,6 @@ if GetDepend(['BSP_USING_ADC']):
 if GetDepend(['BSP_USING_SDRAM']):
     src += ['MIMXRT1064/drivers/fsl_semc.c']
 
-if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
-    src += ['MIMXRT1064/drivers/fsl_usdhc.c']
-
 if GetDepend(['RT_USING_CAN']):
     src += ['MIMXRT1064/drivers/fsl_flexcan.c']
 
@@ -77,6 +74,9 @@ if GetDepend(['RT_SERIAL_USING_DMA']):
     src += ['MIMXRT1064/drivers/fsl_lpuart_edma.c']
     src += ['MIMXRT1064/drivers/fsl_lpspi_edma.c']
 
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+if rtconfig.CROSS_TOOL == 'gcc':
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
+else:
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
 Return('group')

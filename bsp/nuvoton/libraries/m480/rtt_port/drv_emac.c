@@ -17,7 +17,7 @@
 #if defined(RT_USING_LWIP)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <netif/ethernetif.h>
 #include <netif/etharp.h>
 #include <lwip/icmp.h>
@@ -242,6 +242,8 @@ static void link_monitor(void *param)
 
 static rt_err_t nu_emac_init(rt_device_t dev)
 {
+    rt_err_t result;
+
     nu_emac_t psNuEMAC = (nu_emac_t)dev;
 
     EMAC_Close();
@@ -254,9 +256,12 @@ static rt_err_t nu_emac_init(rt_device_t dev)
     NVIC_SetPriority(EMAC_RX_IRQn, 1);
     NVIC_EnableIRQ(EMAC_RX_IRQn);
 
-    rt_sem_init(&psNuEMAC->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&psNuEMAC->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(result == RT_EOK);
 
-    rt_thread_init(&eth_tid, "eth", link_monitor, (void *)psNuEMAC, eth_stack, sizeof(eth_stack), RT_THREAD_PRIORITY_MAX - 2, 10);
+    result = rt_thread_init(&eth_tid, "eth", link_monitor, (void *)psNuEMAC, eth_stack, sizeof(eth_stack), RT_THREAD_PRIORITY_MAX - 2, 10);
+    RT_ASSERT(result == RT_EOK);
+
     rt_thread_startup(&eth_tid);
 
 #if defined(LWIP_IPV4) && defined(LWIP_IGMP)
@@ -310,6 +315,7 @@ static rt_err_t nu_emac_control(rt_device_t dev, int cmd, void *args)
 
 static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
 {
+    rt_err_t result;
     nu_emac_t psNuEMAC = (nu_emac_t)dev;
     struct pbuf *q;
     rt_uint32_t offset = 0;
@@ -319,14 +325,15 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
     /* Get free TX buffer */
     if (buf == RT_NULL)
     {
-        rt_sem_control(&psNuEMAC->eth_sem, RT_IPC_CMD_RESET, 0);
+        result = rt_sem_control(&psNuEMAC->eth_sem, RT_IPC_CMD_RESET, 0);
+        RT_ASSERT(result == RT_EOK);
 
         EMAC_CLEAR_INT_FLAG(EMAC, EMAC_INTSTS_TXCPIF_Msk);
         EMAC_ENABLE_INT(EMAC, EMAC_INTEN_TXCPIEN_Msk);
 
         do
         {
-            rt_sem_take(&psNuEMAC->eth_sem, 1);
+            while (rt_sem_take(&psNuEMAC->eth_sem, 10) != RT_EOK) ;
             buf = (rt_uint8_t *)EMAC_ClaimFreeTXBuf();
         }
         while (buf == RT_NULL);
@@ -440,8 +447,11 @@ void EMAC_TX_IRQHandler(void)
     /* Wake-up suspended process to send */
     if (EMAC_GET_INT_FLAG(EMAC, EMAC_INTSTS_TXCPIF_Msk))
     {
+        rt_err_t result;
+
         EMAC_DISABLE_INT(EMAC, EMAC_INTEN_TXCPIEN_Msk);
-        rt_sem_release(&nu_emac_dev.eth_sem);
+        result = rt_sem_release(&nu_emac_dev.eth_sem);
+        RT_ASSERT(result == RT_EOK);
     }
 
     if (EMAC_GET_INT_FLAG(EMAC, EMAC_INTSTS_TXBEIF_Msk))

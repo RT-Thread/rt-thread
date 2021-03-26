@@ -1,4 +1,10 @@
-
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ */
 #include <rtthread.h>
 #include <rthw.h>
 
@@ -17,7 +23,6 @@ typedef rt_int32_t s32;
 #include "floppy.h"
 #include "dma.h"
 
-#define NULL RT_NULL
 #define SECTOR_SIZE 512
 #define panic(str,...) do { rt_kprintf("panic::" str,##__VA_ARGS__); while(1); } while(0)
 
@@ -26,7 +31,7 @@ typedef rt_int32_t s32;
 
 static u8 floppy_buffer[512];                       /* 软盘高速缓冲区地址指针 */
 
-#define MAX_REPLIES 7                                                             
+#define MAX_REPLIES 7
 static u8 floppy_reply_buffer[MAX_REPLIES];         /* 软驱回应缓冲区 */
 #define ST0 (floppy_reply_buffer[0])                /* 软驱回应0号字节 */
 #define ST1 (floppy_reply_buffer[1])                /* 软驱回应1号字节 */
@@ -109,7 +114,7 @@ u32 floppy_get_info(void)
     u8 CmType, FdType;
 
     floppy_sendbyte(0x10);
-    i = floppy_getbyte(); 
+    i = floppy_getbyte();
 
     switch (i)
     {
@@ -128,17 +133,17 @@ u32 floppy_get_info(void)
     {
     case 0x02: // 1.2MB
         floppy_type = "1.2MB";
-		floppy_size = 2458*512;
+        floppy_size = 2458*512;
     break;
 
     case 0x04: // 1.44MB       标准软盘
         floppy_type = "1.44MB";
-		floppy_size = 2880*512;
+        floppy_size = 2880*512;
         break;
 
     case 0x05: // 2.88MB
         floppy_type = "2.88MB";
-		floppy_size = 2*2880*512;
+        floppy_size = 2*2880*512;
         break;
     }
     return 1;
@@ -175,7 +180,7 @@ void floppy_motorOff( void )
 
 
 void floppy_setmode(void)
-{   
+{
     floppy_sendbyte (FD_SPECIFY);
     floppy_sendbyte (0xcf);
     floppy_sendbyte (0x06);
@@ -192,7 +197,7 @@ void block_to_hts(u32 block, u32 *head, u32 *track, u32 *sector )
 
 
 void floppy_setupDMA(void)
-{  
+{
     u32 eflags;
     _local_irq_save(eflags);
     DisableDma(2);
@@ -230,7 +235,7 @@ void floppy_read_cmd(u32 blk)
     floppy_sendbyte (18);
     //floppy_sendbyte (sector+secs-1);          /*  Last sector in track:here are  sectors count */
     floppy_sendbyte (0x1B);
-    floppy_sendbyte (0xff);                      
+    floppy_sendbyte (0xff);
     return;
 }
 
@@ -261,32 +266,32 @@ static rt_err_t rt_floppy_close(rt_device_t dev)
  */
 static rt_size_t rt_floppy_read(rt_device_t device, rt_off_t position, void *buffer, rt_size_t size)
 {
-	rt_size_t doSize = size;
+    rt_size_t doSize = size;
 
     rt_mutex_take(&lock, RT_WAITING_FOREVER);
-	while(size>0)
-	{
-		floppy_read_cmd(position);
+    while(size>0)
+    {
+        floppy_read_cmd(position);
 
-		rt_sem_take(&sem, RT_WAITING_FOREVER); /* waiting isr sem forever */
+        rt_sem_take(&sem, RT_WAITING_FOREVER); /* waiting isr sem forever */
 
-		floppy_result();
-		io_delay();
+        floppy_result();
+        io_delay();
 
-		if(ST1 != 0 || ST2 != 0)
-		{
-			panic("ST0 %d ST1 %d ST2 %d\n",ST0,ST1,ST2);
-		}
-    
-		rt_memcpy(buffer, floppy_buffer, 512);
+        if(ST1 != 0 || ST2 != 0)
+        {
+            panic("ST0 %d ST1 %d ST2 %d\n",ST0,ST1,ST2);
+        }
 
-		floppy_motorOff();
-		io_delay();
-		
-		position += 1;
-		size     -= 1;
-	}
-	rt_mutex_release(&lock);
+        rt_memcpy(buffer, floppy_buffer, 512);
+
+        floppy_motorOff();
+        io_delay();
+
+        position += 1;
+        size     -= 1;
+    }
+    rt_mutex_release(&lock);
 
     return doSize;
 }
@@ -298,7 +303,7 @@ static rt_size_t rt_floppy_read(rt_device_t device, rt_off_t position, void *buf
 static rt_size_t rt_floppy_write(rt_device_t device, rt_off_t position, const void *buffer, rt_size_t size)
 {
     rt_mutex_take(&lock, RT_WAITING_FOREVER);
-	panic("FIXME:I don't know how!\n");
+    panic("FIXME:I don't know how!\n");
     rt_mutex_release(&lock);
     return size;
 }
@@ -325,9 +330,9 @@ static rt_err_t rt_floppy_control(rt_device_t dev, int cmd, void *args)
 
 static void rt_floppy_isr(int vector, void* param)
 {
-	(void)vector;
-	(void)param;
-	rt_sem_release(&sem);
+    (void)vector;
+    (void)param;
+    rt_sem_release(&sem);
 }
 
 void rt_floppy_init(void)
@@ -335,9 +340,9 @@ void rt_floppy_init(void)
     struct rt_device *device;
 
     rt_mutex_init(&lock,"fdlock", RT_IPC_FLAG_FIFO);
-	rt_sem_init(&sem, "fdsem", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&sem, "fdsem", 0, RT_IPC_FLAG_FIFO);
 
-	rt_hw_interrupt_install(FLOPPY_IRQ, rt_floppy_isr, RT_NULL, "floppy");
+    rt_hw_interrupt_install(FLOPPY_IRQ, rt_floppy_isr, RT_NULL, "floppy");
     rt_hw_interrupt_umask(FLOPPY_IRQ);
 
     floppy_get_info();

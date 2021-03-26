@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,16 +41,16 @@ static int pipe_fops_open(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-    case O_RDONLY:
-        pipe->readers ++;
-        break;
-    case O_WRONLY:
-        pipe->writers ++;
-        break;
-    case O_RDWR:
-        pipe->readers ++;
-        pipe->writers ++;
-        break;
+        case O_RDONLY:
+            pipe->readers ++;
+            break;
+        case O_WRONLY:
+            pipe->writers ++;
+            break;
+        case O_RDWR:
+            pipe->readers ++;
+            pipe->writers ++;
+            break;
     }
     device->ref_count ++;
 
@@ -73,16 +73,16 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-    case O_RDONLY:
-        pipe->readers --;
-        break;
-    case O_WRONLY:
-        pipe->writers --;
-        break;
-    case O_RDWR:
-        pipe->readers --;
-        pipe->writers --;
-        break;
+        case O_RDONLY:
+            pipe->readers --;
+            break;
+        case O_WRONLY:
+            pipe->writers --;
+            break;
+        case O_RDWR:
+            pipe->readers --;
+            pipe->writers --;
+            break;
     }
 
     if (pipe->writers == 0)
@@ -123,15 +123,15 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 
     switch (cmd)
     {
-    case FIONREAD:
-        *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
-        break;
-    case FIONWRITE:
-        *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
-        break;
-    default:
-        ret = -EINVAL;
-        break;
+        case FIONREAD:
+            *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
+            break;
+        case FIONWRITE:
+            *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
+            break;
+        default:
+            ret = -EINVAL;
+            break;
     }
 
     return ret;
@@ -330,7 +330,7 @@ rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
         ret = -RT_EINVAL;
         goto __exit;
     }
-    
+
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
     if (pipe->fifo == RT_NULL)
@@ -428,7 +428,7 @@ rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops pipe_ops = 
+const static struct rt_device_ops pipe_ops =
 {
     RT_NULL,
     rt_pipe_open,
@@ -507,7 +507,7 @@ int rt_pipe_delete(const char *name)
             rt_device_unregister(device);
 
             /* close fifo ringbuffer */
-            if (pipe->fifo) 
+            if (pipe->fifo)
             {
                 rt_ringbuffer_destroy(pipe->fifo);
                 pipe->fifo = RT_NULL;
@@ -564,7 +564,7 @@ int pipe(int fildes[2])
 int mkfifo(const char *path, mode_t mode)
 {
     rt_pipe_t *pipe;
-    
+
     pipe = rt_pipe_create(path, PIPE_BUFSZ);
     if (pipe == RT_NULL)
     {

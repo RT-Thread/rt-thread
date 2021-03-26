@@ -72,10 +72,6 @@
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
 
-/* SECTION: a mini libc */
-/* Using mini libc library*/
-/* #define RT_USING_MINILIBC */
-
 /* SECTION: C++ support */
 /* Using C++ support*/
 /* #define RT_USING_CPLUSPLUS */

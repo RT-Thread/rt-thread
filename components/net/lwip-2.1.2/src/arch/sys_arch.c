@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2006-2018, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -33,6 +33,7 @@
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 
 #include "lwip/sys.h"
 #include "lwip/opt.h"
@@ -641,7 +642,7 @@ u32_t sys_jiffies(void)
 
 u32_t sys_now(void)
 {
-    return rt_tick_get() * (1000 / RT_TICK_PER_SECOND);
+    return rt_tick_get_millisecond();
 }
 
 #if MEM_OVERFLOW_CHECK || MEMP_OVERFLOW_CHECK

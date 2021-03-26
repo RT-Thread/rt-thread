@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
 #include <string.h>
 #include <board.h>
 
-#include "fsl_common.h" 
+#include "fsl_common.h"
 #include "fsl_iocon.h"
 
 #include "fsl_sdif.h"
@@ -52,8 +52,19 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 {
     rt_uint8_t status = kStatus_Success;
     struct mci_device *mci = (struct mci_device *)dev;
+    int ret;
 
-    rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    ret = rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    if (ret == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return ret;
+    }
+    else if (ret == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return ret;
+    }
 
     {
         /* non-aligned. */
@@ -66,7 +77,7 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 
         for(i=0; i<size; i++)
         {
-            status=SD_ReadBlocks(&mci->card, sdio_buffer, sector_adr, 1);
+            status = SD_ReadBlocks(&mci->card, sdio_buffer, sector_adr, 1);
 
             memcpy(copy_buffer, sdio_buffer, mci->card.blockSize);
             sector_adr ++;
@@ -85,8 +96,19 @@ static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 {
     rt_uint8_t status = kStatus_Success;
     struct mci_device *mci = (struct mci_device *)dev;
+    int ret;
 
-    rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    ret = rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    if (ret == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return ret;
+    }
+    else if (ret == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return ret;
+    }
 
     {
         /* non-aligned. */
@@ -155,14 +177,14 @@ int rt_hw_mci_init(void)
         return -RT_ERROR;
     }
     rt_memset(_mci_device, 0, sizeof(struct mci_device));
-    
+
     /* attach main clock to SDIF */
     CLOCK_AttachClk(kMAIN_CLK_to_SDIO_CLK);
     /* need call this function to clear the halt bit in clock divider register */
     CLOCK_SetClkDiv(kCLOCK_DivSdioClk, (uint32_t)(SystemCoreClock / FSL_FEATURE_SDIF_MAX_SOURCE_CLOCK + 1U), true);
 
     _mci_device->card = g_sd;
-    
+
     /* Save host information. */
     _mci_device->card.host.base = SDIF;
     _mci_device->card.host.sourceClock_Hz = CLOCK_GetFreq(kCLOCK_SDio);
@@ -180,14 +202,14 @@ int rt_hw_mci_init(void)
 
     /* power off card */
     SD_PowerOffCard(_mci_device->card.host.base, _mci_device->card.usrParam.pwr);
-    
+
     /* check SD card insert */
     if(BOARD_SDIF_CD_STATUS() == true)
     {
         rt_kprintf("\r\nCard detect fail.\r\n");
         return kStatus_Fail;
     }
-    
+
     /* wait card insert */
     if (SD_WaitCardDetectStatus(_mci_device->card.host.base, &s_sdCardDetect, true) == kStatus_Success)
     {
@@ -201,7 +223,7 @@ int rt_hw_mci_init(void)
         rt_kprintf("\r\nCard detect fail.\r\n");
         return kStatus_Fail;
     }
-    
+
     /* Init card. */
     if (SD_CardInit(&_mci_device->card))
     {

@@ -53,17 +53,17 @@
 /* some errno not defined in newlib */
 #define ENSRNOTFOUND 163  /* Domain name not found */
 /* WARNING: ESHUTDOWN also not defined in newlib. We chose
-			180 here because the number "108" which is used
-			in arch.h has been assigned to another error code. */
+            180 here because the number "108" which is used
+            in arch.h has been assigned to another error code. */
 #define ESHUTDOWN 180
 #endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
 #endif /* RT_USING_LIBC */
 
-#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+#if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/time.h>
-#define LWIP_TIMEVAL_PRIVATE	   0
+#define LWIP_TIMEVAL_PRIVATE       0
 #else
-#define LWIP_TIMEVAL_PRIVATE	   1
+#define LWIP_TIMEVAL_PRIVATE       1
 #endif
 
 #if defined(__CC_ARM)   /* ARMCC compiler */
@@ -95,14 +95,14 @@
 #endif
 
 void sys_arch_assert(const char* file, int line);
-#define LWIP_PLATFORM_DIAG(x)	do {rt_kprintf x;} while(0)
+#define LWIP_PLATFORM_DIAG(x)   do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) do {rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__);}while(0)
 
 #include "string.h"
 
-#define SYS_ARCH_DECL_PROTECT(level)	
-#define SYS_ARCH_PROTECT(level)		rt_enter_critical()
-#define SYS_ARCH_UNPROTECT(level) 	rt_exit_critical()
+#define SYS_ARCH_DECL_PROTECT(level)
+#define SYS_ARCH_PROTECT(level)     rt_enter_critical()
+#define SYS_ARCH_UNPROTECT(level)   rt_exit_critical()
 
 #endif /* __ARCH_CC_H__ */
 

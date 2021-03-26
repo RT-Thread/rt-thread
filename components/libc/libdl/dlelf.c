@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -172,7 +172,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
             rel ++;
         }
 
-        if (unsolved) 
+        if (unsolved)
             return -RT_ERROR;
     }
 
@@ -335,7 +335,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
             rodata_addr = (rt_uint32_t)ptr;
-            LOG_D("load rodata 0x%x, size %d, rodata 0x%x", ptr, 
+            LOG_D("load rodata 0x%x, size %d, rodata 0x%x", ptr,
                 shdr[index].sh_size, *(rt_uint32_t *)data_addr);
             ptr += shdr[index].sh_size;
         }
@@ -347,7 +347,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
             data_addr = (rt_uint32_t)ptr;
-            LOG_D("load data 0x%x, size %d, data 0x%x", ptr, 
+            LOG_D("load data 0x%x, size %d, data 0x%x", ptr,
                 shdr[index].sh_size, *(rt_uint32_t *)data_addr);
             ptr += shdr[index].sh_size;
         }
@@ -396,7 +396,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             if (sym->st_shndx != STN_UNDEF)
             {
                 Elf32_Addr addr = 0;
-                
+
                 if ((ELF_ST_TYPE(sym->st_info) == STT_SECTION) ||
                     (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
                 {

@@ -1,11 +1,7 @@
 /*
- * File      : rtdef.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -20,7 +16,7 @@
 
 #ifdef RT_USING_MTD_NOR
 #define NOR_SIM "nor.bin"
-/* JEDEC Manufacturer¡¯s ID */
+/* JEDEC Manufacturerâ€™s ID */
 #define MF_ID           (0xBF)
 /* JEDEC Device ID : Memory Type */
 #define MT_ID           (0x25)
@@ -58,7 +54,17 @@ static int sst25vfxx_read(struct rt_mtd_nor_device *device, rt_off_t position, r
     sst25 = SST25_MTD(device);
     RT_ASSERT(sst25 != RT_NULL);
 
-    rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    if (result == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return result;
+    }
+    else if (result == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return result;
+    }
 
     fseek(sst25->file, position, SEEK_SET);
     result = fread(data, size, 1, sst25->file);
@@ -78,7 +84,17 @@ static int sst25vfxx_write(struct rt_mtd_nor_device *device, rt_off_t position,
     sst25 = SST25_MTD(device);
     RT_ASSERT(sst25 != RT_NULL);
 
-    rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    if (result == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return result;
+    }
+    else if (result == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return result;
+    }
 
     fseek(sst25->file, position, SEEK_SET);
     result = fwrite(data, size, 1, sst25->file);
@@ -99,7 +115,17 @@ static rt_err_t sst25vfxx_erase_block(struct rt_mtd_nor_device *device, rt_off_t
 
     RT_ASSERT(sst25 != RT_NULL);
 
-    rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    if (result == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return -RT_ETIMEOUT;
+    }
+    else if (result == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return -RT_ERROR;
+    }
 
     memset(block_buffer, 0xFF, BLOCK_SIZE);
     fseek(sst25->file, offset, SEEK_SET);

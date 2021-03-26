@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,10 +38,6 @@ RTM_EXPORT(sprintf);
 RTM_EXPORT(snprintf);
 
 RTM_EXPORT(fwrite);
-
-#include <time.h>
-RTM_EXPORT(localtime);
-RTM_EXPORT(time);
 
 #include <setjmp.h>
 RTM_EXPORT(longjmp);

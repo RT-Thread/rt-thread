@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -55,7 +55,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
                            const void          **data_ptr,
                            rt_size_t            *size,
                            rt_int32_t            timeout);
-rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
+rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
                             const void          **data_ptr,
                             rt_size_t            *size);
 void rt_data_queue_reset(struct rt_data_queue *queue);

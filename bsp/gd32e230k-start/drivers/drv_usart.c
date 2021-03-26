@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,7 +41,7 @@ struct gd32_uart
     uint16_t tx_pin;
     uint32_t rx_port;
     uint32_t rx_af;
-    uint16_t rx_pin; 
+    uint16_t rx_pin;
 
     struct rt_serial_device * serial;
     char *device_name;
@@ -93,7 +93,7 @@ static const struct gd32_uart uarts[] = {
         "uart0",
     },
     #endif
-    
+
     #ifdef RT_USING_USART1
     {
         USART1,                                 // uart peripheral index
@@ -122,18 +122,18 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     /* enable USART clock */
     rcu_periph_clock_enable(uart->tx_gpio_clk);
     rcu_periph_clock_enable(uart->rx_gpio_clk);
-    rcu_periph_clock_enable(uart->per_clk);    
+    rcu_periph_clock_enable(uart->per_clk);
 
     /* connect port to USARTx_Tx */
     gpio_af_set(uart->tx_port, uart->tx_af, uart->tx_pin);
     gpio_mode_set(uart->tx_port, GPIO_MODE_AF, GPIO_PUPD_NONE, uart->tx_pin);
     gpio_output_options_set(uart->tx_port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, uart->tx_pin);
-	
+
     /* connect port to USARTx_Rx */
     gpio_af_set(uart->rx_port, uart->rx_af, uart->rx_pin);
-    gpio_mode_set(uart->rx_port, GPIO_MODE_INPUT, GPIO_PUPD_NONE, uart->rx_pin);
+    gpio_mode_set(uart->rx_port, GPIO_MODE_AF, GPIO_PUPD_NONE, uart->rx_pin);
     gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, uart->rx_pin);
-	
+
     NVIC_SetPriority(uart->irqn, 0);
     NVIC_EnableIRQ(uart->irqn);
 }
@@ -146,9 +146,9 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial, struct serial_co
     RT_ASSERT(cfg != RT_NULL);
 
     uart = (struct gd32_uart *)serial->parent.user_data;
-    
+
     gd32_uart_gpio_init(uart);
-    
+
     usart_baudrate_set(uart->uart_periph, cfg->baud_rate);
 
     switch (cfg->data_bits)
@@ -228,7 +228,7 @@ static int gd32_putc(struct rt_serial_device *serial, char ch)
 
     usart_data_transmit(uart->uart_periph, ch);
     while((usart_flag_get(uart->uart_periph, USART_FLAG_TC) == RESET));
-    
+
     return 1;
 }
 

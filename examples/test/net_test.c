@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
+/*
  * Net Test Utilities for RT-Thread
  */
 #include <rtthread.h>
@@ -7,7 +16,7 @@
 #include <lwip/sockets.h>
 #include <lwip/init.h>
 
-/* 
+/*
  * UDP echo server
  */
 #define UDP_ECHO_PORT   7
@@ -30,12 +39,12 @@ void udpecho_entry(void *parameter)
     while(1)
     {
         /* received data to buffer */
-#if LWIP_VERSION_MINOR==3U 
+#if LWIP_VERSION_MINOR==3U
         buf = netconn_recv(conn);
 #else
         netconn_recv(conn, &buf);
 #endif
-        if(buf == NULL)	
+        if(buf == NULL)
         {
             break;
         }
@@ -46,25 +55,25 @@ void udpecho_entry(void *parameter)
         netconn_connect(conn, addr, port);
 
         /* reset address, and send to client */
-#if LWIP_VERSION_MINOR==3U 		
+#if LWIP_VERSION_MINOR==3U
         buf->addr = RT_NULL;
 #else
         buf->addr = *IP_ADDR_ANY;
 #endif
-		
+
         netconn_send(conn, buf);
-		
+
         /* release buffer */
         netbuf_delete(buf);
     }
-	
+
     netconn_delete(conn);
 }
 /*
  * UDP socket echo server
  */
-#define UDP_SOCKET_ECHO_PORT	700
-#define UDP_SOCKET_BUFFER_SIZE	4096
+#define UDP_SOCKET_ECHO_PORT    700
+#define UDP_SOCKET_BUFFER_SIZE  4096
 rt_thread_t udpecho_socket_tid = RT_NULL;
 void udpecho_socket_entry(void *parameter)
 {
@@ -110,7 +119,7 @@ void udpecho_socket_entry(void *parameter)
         /* try to receive from UDP socket */
         bytes_read = recvfrom(sock, recv_data, UDP_SOCKET_BUFFER_SIZE, 0,
             (struct sockaddr *)&client_addr, &addr_len);
-	    
+
         /* send back */
         sendto(sock, recv_data, bytes_read, 0,
             (struct sockaddr *)&client_addr, addr_len);
@@ -148,7 +157,7 @@ void tcpecho_entry(void *parameter)
     while(1)
     {
         /* Grab new connection. */
-#if LWIP_VERSION_MINOR==3U 
+#if LWIP_VERSION_MINOR==3U
         newconn = netconn_accept(conn);
         if(newconn != NULL)
 #else
@@ -172,25 +181,25 @@ void tcpecho_entry(void *parameter)
                     err = netconn_write(newconn, data, len, NETCONN_COPY);
                     if(err != ERR_OK)
                     {
-                        break;			    
+                        break;
                     }
                 }while(netbuf_next(buf) >= 0);
-		    
+
                 netbuf_delete(buf);
             }
             /* Close connection and discard connection identifier. */
             netconn_delete(newconn);
         }
     }
-	
+
     netconn_delete(conn);
 }
 
 /*
  * TCP socket echo server
  */
-#define TCP_SOCKET_ECHO_PORT	700
-#define TCP_SOCKET_BUFFER_SIZE	4096
+#define TCP_SOCKET_ECHO_PORT    700
+#define TCP_SOCKET_BUFFER_SIZE  4096
 rt_thread_t tcpecho_socket_tid = RT_NULL;
 void tcpecho_socket_entry(void *parameter)
 {
@@ -217,7 +226,7 @@ void tcpecho_socket_entry(void *parameter)
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(TCP_SOCKET_ECHO_PORT);
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    rt_memset(&(server_addr.sin_zero),8, sizeof(server_addr.sin_zero));
+    rt_memset(&(server_addr.sin_zero),0, sizeof(server_addr.sin_zero));
 
     /* bind to server address */
     if (bind(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
@@ -241,7 +250,7 @@ void tcpecho_socket_entry(void *parameter)
         if (connected > 0)
         {
             int timeout;
-			
+
             /* set timeout option */
             timeout = 5000; /* 5second */
             setsockopt(connected, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
@@ -285,8 +294,8 @@ void net_test(void)
     {
         udpecho_tid = rt_thread_create("uecho",
                                        udpecho_entry,
-                                       RT_NULL, 
-                                       512, 
+                                       RT_NULL,
+                                       512,
                                        RT_THREAD_PRIORITY_MAX/2, 5);
         if (udpecho_tid != RT_NULL)
         {
@@ -299,7 +308,7 @@ void net_test(void)
         udpecho_socket_tid = rt_thread_create("uecho_s",
                                               udpecho_socket_entry,
                                               RT_NULL,
-                                              512, 
+                                              512,
                                               RT_THREAD_PRIORITY_MAX/2 + 1, 5);
         if (udpecho_socket_tid != RT_NULL)
         {
@@ -310,22 +319,22 @@ void net_test(void)
     if (tcpecho_tid == RT_NULL)
     {
         tcpecho_tid = rt_thread_create("techo",
-                                       tcpecho_entry, 
+                                       tcpecho_entry,
                                        RT_NULL,
-                                       512, 
+                                       512,
                                        RT_THREAD_PRIORITY_MAX/2 + 2, 5);
         if (tcpecho_tid != RT_NULL)
         {
             rt_thread_startup(tcpecho_tid);
         }
     }
-	
+
     if (tcpecho_socket_tid == RT_NULL)
     {
         tcpecho_socket_tid = rt_thread_create("techo_s",
-                                              tcpecho_socket_entry, 
+                                              tcpecho_socket_entry,
                                               RT_NULL,
-                                              512, 
+                                              512,
                                               RT_THREAD_PRIORITY_MAX/2 + 3, 5);
     if (tcpecho_socket_tid != RT_NULL)
     {

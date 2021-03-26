@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    at32_msp.h
   * @author  Artery Technology
-  * @version V1.0.0
-  * @date    2020-01-10
+  * @version V1.0.1
+  * @date    2021-02-09
   * @brief   Msp header file
   ******************************************************************************
   * @attention
@@ -29,5 +29,6 @@ void at32_msp_i2c_init(void *Instance);
 void at32_msp_sdio_init(void *Instance);
 void at32_msp_adc_init(void *Instance);
 void at32_msp_hwtmr_init(void *Instance);
+void at32_msp_can_init(void *Instance);
 
 #endif /* __AT32_MSP_H__ */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -79,21 +79,21 @@ void SAIB_Init(void)
     hsai_BlockB2.FrameInit.FSDefinition      = SAI_FS_CHANNEL_IDENTIFICATION;
     hsai_BlockB2.FrameInit.FSPolarity        = SAI_FS_ACTIVE_LOW;
     hsai_BlockB2.FrameInit.FSOffset          = SAI_FS_BEFOREFIRSTBIT;
-    
+
     hsai_BlockB2.SlotInit.FirstBitOffset     = 0;
     hsai_BlockB2.SlotInit.SlotSize           = SAI_SLOTSIZE_32B;
     hsai_BlockB2.SlotInit.SlotNumber         = 2;
     hsai_BlockB2.SlotInit.SlotActive         = SAI_SLOTACTIVE_0|SAI_SLOTACTIVE_1;
-    
+
     /* DeInit SAI PDM input */
     HAL_SAI_DeInit(&hsai_BlockB2);
-    
+
     /* Init SAI PDM input */
     if(HAL_OK != HAL_SAI_Init(&hsai_BlockB2))
     {
         Error_Handler();
     }
-    
+
     /* Enable SAI to generate clock used by audio driver */
     __HAL_SAI_ENABLE(&hsai_BlockB2);
 }
@@ -299,7 +299,7 @@ static rt_err_t mic_init(struct rt_audio_device *audio)
 {
     struct mic_device *mic_dev;
     RT_ASSERT(audio != RT_NULL);
-    
+
     mic_dev = (struct mic_device *)audio->parent.user_data;
     SAIB_Init();
     /* set default params */
@@ -312,7 +312,7 @@ static rt_err_t mic_start(struct rt_audio_device *audio, int stream)
 {
     struct mic_device *mic_dev;
     RT_ASSERT(audio != RT_NULL);
-    
+
     mic_dev = (struct mic_device *)audio->parent.user_data;
     if (stream == AUDIO_STREAM_RECORD)
     {
@@ -324,7 +324,7 @@ static rt_err_t mic_start(struct rt_audio_device *audio, int stream)
         }
         /* supply clk */
         HAL_SAI_Transmit(&hsai_BlockA2, (uint8_t *)&zero_frame[0], 2, 0);
-        
+
         cs42l51_drv.play();
     }
 
@@ -358,7 +358,7 @@ int rt_hw_mic_init(void)
 {
     rt_err_t result = RT_EOK;
     struct rt_device *device;
-    
+
     rt_memset(MIC_RX_FIFO, 0, RX_FIFO_SIZE);
     mic_dev.rx_fifo = MIC_RX_FIFO;
 
@@ -373,15 +373,15 @@ int rt_hw_mic_init(void)
     /* register sound device */
     mic_dev.audio.ops = &mic_ops;
     result = rt_audio_register(&mic_dev.audio, "mic0", RT_DEVICE_FLAG_RDONLY, &mic_dev);
-    
+
     if (result != RT_EOK)
     {
-        device = &(mic_dev.audio.parent); 
+        device = &(mic_dev.audio.parent);
         rt_device_unregister(device);
         LOG_E("mic device init error!");
         return RT_ERROR;
     }
-    
+
     return RT_EOK;
 }
 

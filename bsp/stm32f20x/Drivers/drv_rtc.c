@@ -115,7 +115,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
         /* Change the current time */
         //RTC_SetCounter(*time);
 
-		to = localtime(time);
+		to = gmtime(time);
 		RTC_TimeStructure.RTC_Seconds = to->tm_sec;
 		RTC_TimeStructure.RTC_Minutes = to->tm_min;
 		RTC_TimeStructure.RTC_Hours	= to->tm_hour;

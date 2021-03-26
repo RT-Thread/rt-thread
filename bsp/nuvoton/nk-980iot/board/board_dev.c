@@ -30,8 +30,11 @@
 static rt_uint8_t SpiFlash_ReadStatusReg(struct rt_qspi_device *qspi_device)
 {
     rt_uint8_t u8Val;
+    rt_err_t result = RT_EOK;
     rt_uint8_t w25x_txCMD1 = W25X_REG_READSTATUS;
-    rt_qspi_send_then_recv(qspi_device, &w25x_txCMD1, 1, &u8Val, 1);
+
+    result = rt_qspi_send_then_recv(qspi_device, &w25x_txCMD1, 1, &u8Val, 1);
+    RT_ASSERT(result > 0);
 
     return u8Val;
 }
@@ -39,24 +42,53 @@ static rt_uint8_t SpiFlash_ReadStatusReg(struct rt_qspi_device *qspi_device)
 static rt_uint8_t SpiFlash_ReadStatusReg2(struct rt_qspi_device *qspi_device)
 {
     rt_uint8_t u8Val;
+    rt_err_t result = RT_EOK;
     rt_uint8_t w25x_txCMD1 = W25X_REG_READSTATUS2;
-    rt_qspi_send_then_recv(qspi_device, &w25x_txCMD1, 1, &u8Val, 1);
+
+    result = rt_qspi_send_then_recv(qspi_device, &w25x_txCMD1, 1, &u8Val, 1);
+    RT_ASSERT(result > 0);
 
     return u8Val;
 }
 
-static void SpiFlash_WriteStatusReg(struct rt_qspi_device *qspi_device, uint8_t u8Value1, uint8_t u8Value2)
+static rt_err_t SpiFlash_WriteStatusReg(struct rt_qspi_device *qspi_device, uint8_t u8Value1, uint8_t u8Value2)
 {
     rt_uint8_t w25x_txCMD1;
-    rt_uint8_t u8Val[3];
+    rt_uint8_t au8Val[2];
+    rt_err_t result;
+    struct rt_qspi_message qspi_message = {0};
 
+    /* Enable WE */
     w25x_txCMD1 = W25X_REG_WRITEENABLE;
-    rt_qspi_send(qspi_device, &w25x_txCMD1, 1);
+    result = rt_qspi_send(qspi_device, &w25x_txCMD1, sizeof(w25x_txCMD1));
+    if (result != sizeof(w25x_txCMD1))
+        goto exit_SpiFlash_WriteStatusReg;
 
-    u8Val[0] = W25X_REG_WRITESTATUS;
-    u8Val[1] = u8Value1;
-    u8Val[2] = u8Value2;
-    rt_qspi_send(qspi_device, &u8Val, 3);
+    /* Prepare status-1, 2 data */
+    au8Val[0] = u8Value1;
+    au8Val[1] = u8Value2;
+
+    /* 1-bit mode: Instruction+payload */
+    qspi_message.instruction.content = W25X_REG_WRITESTATUS;
+    qspi_message.instruction.qspi_lines = 1;
+
+    qspi_message.qspi_data_lines   = 1;
+    qspi_message.parent.cs_take    = 1;
+    qspi_message.parent.cs_release = 1;
+    qspi_message.parent.send_buf   = &au8Val[0];
+    qspi_message.parent.length     = sizeof(au8Val);
+    qspi_message.parent.next       = RT_NULL;
+
+    if (rt_qspi_transfer_message(qspi_device, &qspi_message) != sizeof(au8Val))
+    {
+        result = -RT_ERROR;
+    }
+
+    result  = RT_EOK;
+
+exit_SpiFlash_WriteStatusReg:
+
+    return result;
 }
 
 static void SpiFlash_WaitReady(struct rt_qspi_device *qspi_device)
@@ -73,21 +105,30 @@ static void SpiFlash_WaitReady(struct rt_qspi_device *qspi_device)
 
 static void SpiFlash_EnterQspiMode(struct rt_qspi_device *qspi_device)
 {
+    rt_err_t result = RT_EOK;
+
     uint8_t u8Status1 = SpiFlash_ReadStatusReg(qspi_device);
     uint8_t u8Status2 = SpiFlash_ReadStatusReg2(qspi_device);
 
     u8Status2 |= W25X_REG_QUADENABLE;
-    SpiFlash_WriteStatusReg(qspi_device, u8Status1, u8Status2);
+
+    result = SpiFlash_WriteStatusReg(qspi_device, u8Status1, u8Status2);
+    RT_ASSERT(result == RT_EOK);
+
     SpiFlash_WaitReady(qspi_device);
 }
 
 static void SpiFlash_ExitQspiMode(struct rt_qspi_device *qspi_device)
 {
+    rt_err_t result = RT_EOK;
     uint8_t u8Status1 = SpiFlash_ReadStatusReg(qspi_device);
     uint8_t u8Status2 = SpiFlash_ReadStatusReg2(qspi_device);
 
     u8Status2 &= ~W25X_REG_QUADENABLE;
-    SpiFlash_WriteStatusReg(qspi_device, u8Status1, u8Status2);
+
+    result = SpiFlash_WriteStatusReg(qspi_device, u8Status1, u8Status2);
+    RT_ASSERT(result == RT_EOK);
+
     SpiFlash_WaitReady(qspi_device);
 }
 
@@ -105,7 +146,49 @@ static int rt_hw_spiflash_init(void)
     return 0;
 }
 INIT_COMPONENT_EXPORT(rt_hw_spiflash_init);
-#endif /* BOARD_USING_STORAGE_SPIFLASH */
+#endif
+
+#if defined(BOARD_USING_STORAGE_SPINAND) && defined(NU_PKG_USING_SPINAND)
+
+#include "drv_qspi.h"
+#include "spinand.h"
+
+struct rt_mtd_nand_device mtd_partitions[MTD_SPINAND_PARTITION_NUM] =
+{
+    [0] =
+    {
+        .block_start =  0,
+        .block_end   = 23,
+        .block_total = 24,
+    },
+    [1] =
+    {
+        .block_start = 24,
+        .block_end   = 1023,
+        .block_total = 1000,
+    },
+    [2] =
+    {
+        .block_start = 0,
+        .block_end   = 1023,
+        .block_total = 1024,
+    }
+};
+
+static int rt_hw_spinand_init(void)
+{
+    if (nu_qspi_bus_attach_device("qspi0", "qspi01", 4, RT_NULL, RT_NULL) != RT_EOK)
+        return -1;
+
+    if (rt_hw_mtd_spinand_register("qspi01") != RT_EOK)
+        return -1;
+
+    return 0;
+}
+
+INIT_COMPONENT_EXPORT(rt_hw_spinand_init);
+#endif
+
 
 #if defined(BOARD_USING_LCD_ILI9341) && defined(NU_PKG_USING_ILI9341_SPI)
 #include <lcd_ili9341.h>
@@ -161,9 +244,9 @@ static int rt_hw_esp8266_port(void)
                               AT_DEVICE_CLASS_ESP8266,
                               (void *) esp8266);
 }
-//INIT_APP_EXPORT(rt_hw_esp8266_port);
+INIT_APP_EXPORT(rt_hw_esp8266_port);
 
-static void at_wifi_set(int argc, char **argv)
+static int at_wifi_set(int argc, char **argv)
 {
     struct at_device_ssid_pwd sATDConf;
     struct at_device *at_dev = RT_NULL;
@@ -173,7 +256,7 @@ static void at_wifi_set(int argc, char **argv)
     {
         rt_kprintf("\n");
         rt_kprintf("at_wifi_set <ssid> <password>\n");
-        return ;
+        return -1;
     }
 
     sATDConf.ssid     = argv[1]; //ssid
@@ -185,6 +268,8 @@ static void at_wifi_set(int argc, char **argv)
     {
         rt_kprintf("Can't find any initialized AT device.\n");
     }
+
+    return 0;
 }
 #ifdef FINSH_USING_MSH
     MSH_CMD_EXPORT(at_wifi_set, AT device wifi set ssid / password function);

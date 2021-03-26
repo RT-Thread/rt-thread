@@ -1,5 +1,14 @@
-#ifndef __AM33XX_H__
-#define __AM33XX_H__
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020/12/31     Bernard      Add license info
+ */
+#ifndef __REALVIEW_H__
+#define __REALVIEW_H__
 
 #define __REG32(x)  (*((volatile unsigned int *)(x)))
 #define __REG16(x)  (*((volatile unsigned short *)(x)))

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -72,5 +72,12 @@ char *  ttyname     (int desc);
 
 unsigned int sleep(unsigned int seconds);
 int usleep(useconds_t usec);
+
+pid_t getpid(void);
+pid_t getppid(void);
+uid_t getuid(void);
+uid_t geteuid(void);
+gid_t getgid(void);
+gid_t getegid(void);
 
 #endif /* _SYS_UNISTD_H */

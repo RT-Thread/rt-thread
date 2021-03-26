@@ -45,11 +45,11 @@
 #define S32_F "ld"
 #define X32_F "lx"
 
-#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+#if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/time.h>
-#define LWIP_TIMEVAL_PRIVATE	   0
+#define LWIP_TIMEVAL_PRIVATE       0
 #else
-#define LWIP_TIMEVAL_PRIVATE	   1
+#define LWIP_TIMEVAL_PRIVATE       1
 #endif
 
 #if defined(__CC_ARM)   /* ARMCC compiler */
@@ -81,14 +81,14 @@
 #endif
 
 void sys_arch_assert(const char* file, int line);
-#define LWIP_PLATFORM_DIAG(x)	do {rt_kprintf x;} while(0)
+#define LWIP_PLATFORM_DIAG(x)   do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) do {rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__);}while(0)
 
 #include "string.h"
 
-#define SYS_ARCH_DECL_PROTECT(level)	
-#define SYS_ARCH_PROTECT(level)		rt_enter_critical()
-#define SYS_ARCH_UNPROTECT(level) 	rt_exit_critical()
+#define SYS_ARCH_DECL_PROTECT(level)
+#define SYS_ARCH_PROTECT(level)     rt_enter_critical()
+#define SYS_ARCH_UNPROTECT(level)   rt_exit_critical()
 
 #endif /* __ARCH_CC_H__ */
 

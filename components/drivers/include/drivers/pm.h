@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,8 @@
  * 2012-06-02     Bernard      the first version
  * 2018-08-02     Tanek        split run and sleep modes, support custom mode
  * 2019-04-28     Zero-Free    improve PM mode and device ops interface
+ * 2020-11-23     zhangsz      update pm mode select
+ * 2020-11-27     zhangsz      update pm 2.0
  */
 
 #ifndef __PM_H__
@@ -45,7 +47,8 @@ enum
     RT_PM_FREQUENCY_PENDING = 0x01,
 };
 
-#define RT_PM_DEFAULT_SLEEP_MODE PM_SLEEP_MODE_IDLE
+#define RT_PM_DEFAULT_SLEEP_MODE PM_SLEEP_MODE_NONE
+#define RT_PM_DEFAULT_DEEPSLEEP_MODE PM_SLEEP_MODE_DEEP
 #define RT_PM_DEFAULT_RUN_MODE   PM_RUN_MODE_NORMAL_SPEED
 
 /* The name of all modes used in the msh command "pm_dump" */
@@ -66,6 +69,33 @@ enum
     "Medium Speed",             \
     "Low Mode",                 \
 }
+
+/**
+ * Modules used for
+ * pm_module_request(PM_BOARD_ID, PM_SLEEP_MODE_IDLE)
+ * pm_module_release(PM_BOARD_ID, PM_SLEEP_MODE_IDLE)
+ * pm_module_release_all(PM_BOARD_ID, PM_SLEEP_MODE_IDLE)
+ */
+enum pm_module_id {
+    PM_NONE_ID = 0,
+    PM_POWER_ID,
+    PM_BOARD_ID,
+    PM_BSP_ID,
+    PM_MAIN_ID,
+    PM_PMS_ID,
+    PM_PMC_ID,
+    PM_TASK_ID,
+    PM_SPI_ID,
+    PM_I2C_ID,
+    PM_UART_ID,
+    PM_CAN_ID,
+    PM_ETH_ID,
+    PM_SENSOR_ID,
+    PM_LCD_ID,
+    PM_KEY_ID,
+    PM_TP_ID,
+    PM_MODULE_MAX_ID, /* enum must! */
+};
 
 #else /* PM_HAS_CUSTOM_CONFIG */
 
@@ -106,6 +136,14 @@ struct rt_device_pm
     const struct rt_device_pm_ops *ops;
 };
 
+struct rt_pm_module
+{
+    rt_uint8_t req_status;
+    rt_bool_t busy_flag;
+    rt_uint32_t timeout;
+    rt_uint32_t start_time;
+};
+
 /**
  * power management
  */
@@ -117,6 +155,9 @@ struct rt_pm
     rt_uint8_t modes[PM_SLEEP_MODE_MAX];
     rt_uint8_t sleep_mode;    /* current sleep mode */
     rt_uint8_t run_mode;      /* current running mode */
+
+    /* modules request status*/
+    struct rt_pm_module module_status[PM_MODULE_MAX_ID];
 
     /* the list of device, which has PM feature */
     rt_uint8_t device_pm_number;
@@ -143,6 +184,7 @@ struct rt_pm_notify
 
 void rt_pm_request(rt_uint8_t sleep_mode);
 void rt_pm_release(rt_uint8_t sleep_mode);
+void rt_pm_release_all(rt_uint8_t sleep_mode);
 int rt_pm_run_enter(rt_uint8_t run_mode);
 
 void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_ops *ops);
@@ -154,5 +196,11 @@ void rt_pm_default_set(rt_uint8_t sleep_mode);
 void rt_system_pm_init(const struct rt_pm_ops *ops,
                        rt_uint8_t              timer_mask,
                        void                 *user_data);
+void rt_pm_module_request(uint8_t module_id, rt_uint8_t sleep_mode);
+void rt_pm_module_release(uint8_t module_id, rt_uint8_t sleep_mode);
+void rt_pm_module_release_all(uint8_t module_id, rt_uint8_t sleep_mode);
+void rt_pm_module_delay_sleep(rt_uint8_t module_id, rt_tick_t timeout);
+rt_uint32_t rt_pm_module_get_status(void);
+rt_uint8_t rt_pm_get_sleep_mode(void);
 
 #endif /* __PM_H__ */

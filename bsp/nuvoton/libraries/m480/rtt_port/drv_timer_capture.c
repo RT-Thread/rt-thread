@@ -19,7 +19,7 @@
     defined(BSP_USING_TIMER3_CAPTURE)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private typedef --------------------------------------------------------------*/
 typedef struct _timer
@@ -72,7 +72,7 @@ void timer_interrupt_handler(nu_capture_t *nu_timer_capture)
 {
     TIMER_ClearCaptureIntFlag(nu_timer_capture->timer);
 
-    /* Frist event is rising edge */
+    /* First event is rising edge */
     if (nu_timer_capture->first_edge == RT_TRUE)
     {
         nu_timer_capture->first_edge = RT_FALSE;

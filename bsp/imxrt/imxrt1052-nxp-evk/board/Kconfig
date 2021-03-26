@@ -86,6 +86,25 @@ menu "On-chip Peripheral Drivers"
                         default 1
         endif
 
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+            choice
+                prompt "Select I2C1 badurate"
+                default HW_I2C1_BADURATE_100kHZ
+
+                config HW_I2C1_BADURATE_100kHZ
+                    bool "Badurate 100kHZ"
+
+                config HW_I2C1_BADURATE_400kHZ
+                    bool "Badurate 400kHZ"
+            endchoice
+        endif
 endmenu
 
 menu "Onboard Peripheral Drivers"
@@ -132,6 +151,33 @@ menu "Onboard Peripheral Drivers"
 
         endif
 	endif
+	
+    menuconfig BSP_USING_AUDIO
+    bool "Enable AUDIO (WM8960)"
+    select BSP_USING_I2C1
+    select RT_USING_AUDIO
+    default n
+        
+    if BSP_USING_AUDIO
+        config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
+        if BSP_USING_AUDIO_PLAY
+            config BSP_AUDIO_USING_DMA
+                bool "Enable AUDIO DMA"
+                default y
+        endif
+
+        config BSP_USING_AUDIO_RECORD
+            bool "Enable Audio Record"
+            select BSP_USING_AUDIO_PLAY
+            default n
+        if BSP_USING_AUDIO_RECORD
+            config BSP_AUDIO_USING_DMA
+                bool "Enable AUDIO DMA"
+                default n
+        endif			
+    endif 	
 endmenu
 
 menu "Board extended module Drivers"

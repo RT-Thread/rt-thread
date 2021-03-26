@@ -149,8 +149,8 @@ typedef enum {
     } while (0) \
 
 //External Mass Media Controller (SD Card)
-#define MMC0_BASE_ADDR		(PER_BASE+0x300000)   
-#define MMC2_BASE_ADDR		(PER_BASE+0x340000)
+#define MMC0_BASE_ADDR      (PER_BASE+0x300000)
+#define MMC2_BASE_ADDR      (PER_BASE+0x340000)
 
 #define ETH_IRQ                 (160+29)
 
@@ -162,7 +162,7 @@ typedef enum {
 #define BSC5_BASE_OFFSET            (0x205A80)
 #define BSC6_BASE_OFFSET            (0x205C00)
 
-//BSC2 and BSC7 masters are dedicated for use by the 
+//BSC2 and BSC7 masters are dedicated for use by the
 //HDMI interfaces and should not be accessed byuser programs.
 #define BSC0_BASE                   (PER_BASE + BSC0_BASE_OFFSET)
 #define BSC1_BASE                   (PER_BASE + BSC1_BASE_OFFSET)

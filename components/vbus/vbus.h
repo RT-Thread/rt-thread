@@ -1,6 +1,6 @@
 /*
- * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
- * 
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -51,14 +51,14 @@ struct rt_vbus_data {
 };
 
 struct rt_vbus_wm_cfg {
-	unsigned int low, high;
+    unsigned int low, high;
 };
 
 struct rt_vbus_request {
-	unsigned char prio;
-	const char *name;
-	int is_server;
-	struct rt_vbus_wm_cfg recv_wm, post_wm;
+    unsigned char prio;
+    const char *name;
+    int is_server;
+    struct rt_vbus_wm_cfg recv_wm, post_wm;
 };
 
 /** Request a channel.

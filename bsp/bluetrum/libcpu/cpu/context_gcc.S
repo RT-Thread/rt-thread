@@ -13,7 +13,7 @@
 .global  rt_interrupt_from_thread
 .global  rt_interrupt_to_thread
 .global  rt_cur_thread_sp
-.global  rt_switch_flag
+.global  rt_thread_switch_interrupt_flag
 .global  rt_interrupt_nest
 
 /*
@@ -77,12 +77,12 @@ enable_int_ret:
     sw      x30, 108(sp)
     sw      x31, 112(sp)
 
-    lw      a5, EPC(zero)                  //Saves current program counter (EPC) as task program counter
+    lw      a5, EPC(zero)                                       //Saves current program counter (EPC) as task program counter
     sw      a5, 116(sp)
     lw      a5, EPICCON(zero)
     sw      a5, 120(sp)
 
-    sw      sp, rt_cur_thread_sp, a4                       //store sp in preempted tasks tcb
+    sw      sp, rt_cur_thread_sp, a4                            //store sp in preempted tasks tcb
     .endm
 
 
@@ -90,7 +90,7 @@ enable_int_ret:
 .macro restore_context
 
     la      a5, rt_cur_thread_sp
-    lw      sp, 0(a5)                       //get new task stack pointer
+    lw      sp, 0(a5)                                           //get new task stack pointer
 
     /* Load task program counter  EPC*/
     lw      a5, 116(sp)
@@ -140,16 +140,16 @@ enable_int_ret:
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
-    sw      zero, rt_interrupt_from_thread, a4                         /*set from thread to 0*/
-    sw      a0, rt_interrupt_to_thread, a4                           /*set rt_interrupt_to_thread*/
+    sw      zero, rt_interrupt_from_thread, a4                      /*set from thread to 0*/
+    sw      a0, rt_interrupt_to_thread, a4                          /*set rt_interrupt_to_thread*/
 
-    sb      zero, rt_interrupt_nest, a4                                /*rt_interrupt_nest = 0*/
+    sb      zero, rt_interrupt_nest, a4                             /*rt_interrupt_nest = 0*/
 
     li      a5, 1
-    sw      a5, rt_switch_flag, a4                                  // rt_switch_flag = 1;
+    sw      a5, rt_thread_switch_interrupt_flag, a4                 // rt_thread_switch_interrupt_flag = 1;
 
     SWINT                                                           /*kick soft interrupt*/
-    lw      a5, PICCON(zero)                                                 /*enable interrupt*/
+    lw      a5, PICCON(zero)                                        /*enable interrupt*/
     ori     a5, a5, 1
     sw      a5, PICCON(zero)
     ret
@@ -161,10 +161,10 @@ rt_hw_context_switch_to:
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-    sw      a0, rt_interrupt_from_thread, a4                         /*set rt_interrupt_from_thread*/
+    sw      a0, rt_interrupt_from_thread, a4                        /*set rt_interrupt_from_thread*/
     sw      a1, rt_interrupt_to_thread, a4                          /*set rt_interrupt_to_thread*/
     li      a5, 1
-    sw      a5, rt_switch_flag, a4                                  // rt_switch_flag = 1;
+    sw      a5, rt_thread_switch_interrupt_flag, a4                 /*rt_thread_switch_interrupt_flag = 1*/
     SWINT                                                           /*kick soft interrupt*/
     ret
 
@@ -190,37 +190,37 @@ rt_switch_to_thread:
  */
     .global rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-    lw      a5, rt_switch_flag
+    lw      a5, rt_thread_switch_interrupt_flag
     bnez    a5, _reswitch
     li      a5, 0x01
-    sw      a5, rt_switch_flag, a4
-    sw      a0, rt_interrupt_from_thread, a4                       /*set rt_interrupt_from_thread*/
+    sw      a5, rt_thread_switch_interrupt_flag, a4
+    sw      a0, rt_interrupt_from_thread, a4                      	/*set rt_interrupt_from_thread*/
 _reswitch:
-    sw      a1, rt_interrupt_to_thread, a4                        /*set rt_interrupt_to_thread*/
+    sw      a1, rt_interrupt_to_thread, a4                        	/*set rt_interrupt_to_thread*/
     ret
 
     //软中断服务
     .global rt_soft_isr
 rt_soft_isr:
-    li      a5, 0x4                                                 // PICPND = BIT(IRQ_SW_VECTOR); 清软中断Pending
+    li      a5, 0x4                                       			// PICPND = BIT(IRQ_SW_VECTOR); 清软中断Pending
     sw      a5, PICPND(zero)
     ret
 
     .globl low_prio_irq
 low_prio_irq:
     save_context
-    li      a5, 1
-    sb      a5, rt_interrupt_nest, a4                               // rt_interrupt_nest = 1;
+
+    lw      a5, rt_interrupt_nest
+    bnez    a5, _low_prio_irq_exit
 
     lw      a5, cpu_irq_comm_hook
     jalr    a5
 
-    lw      a5, rt_switch_flag
-    beqz    a5, _low_prio_irq_exit                                  // if (rt_switch_flag)
+    lw      a5, rt_thread_switch_interrupt_flag
+    beqz    a5, _low_prio_irq_exit                                  // if (rt_thread_switch_interrupt_flag)
     jal     rt_switch_to_thread
-    sw      zero, rt_switch_flag, a4                                // rt_switch_flag = 0;
+    sw      zero, rt_thread_switch_interrupt_flag, a4               // rt_thread_switch_interrupt_flag = 0;
 
     _low_prio_irq_exit:
-    sb      zero, rt_interrupt_nest, a4                             // rt_interrupt_nest = 0;
     restore_context
 

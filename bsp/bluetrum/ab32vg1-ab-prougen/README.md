@@ -12,7 +12,7 @@
 
 ## 开发板介绍
 
-ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核的开发板，最高主频为 120Mhz，该开发板芯片为 AB5301A。
+ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核的开发板，最高主频为 120Mhz，该开发板芯片为 AB32VG1。
 
 开发板外观如下图所示：
 
@@ -20,7 +20,7 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：AB5301A，主频 120MHz，可超频至 192MHz，4Mbit FLASH ，192KB RAM。
+- MCU：AB32VG1，主频 120MHz，可超频至 192MHz，8Mbit FLASH ，192KB RAM。
 - 常用外设
   - LED: RGB灯
   - 按键: 3 个, USER(s2,s3) and RESET(s1)
@@ -30,25 +30,26 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注**    |
-| :----------- | :----------: | :---------- |
-| USB 转串口   |     支持     |             |
-| SD卡         |   即将支持   |             |
-| IRDA         |   即将支持   |             |
-| 音频接口     |   即将支持   |             |
-| **片上外设** | **支持情况** | **备注**    |
-| GPIO         |     支持     | PA PB PE PF |
-| UART         |     支持     | UART0/1/2   |
-| SDIO         |   即将支持   |             |
-| ADC          |   即将支持   |             |
-| SPI          |   即将支持   |             |
-| I2C          |   即将支持   | 软件 I2C    |
-| RTC          |   即将支持   |             |
-| WDT          |   即将支持   |             |
-| FLASH        |   即将支持   |             |
-| PWM          |   即将支持   |             |
-| USB Device   |   暂不支持   |             |
-| USB Host     |   暂不支持   |             |
+| **板载外设** | **支持情况** | **备注**                                  |
+| :----------- | :----------: | :---------------------------------------- |
+| USB 转串口   |     支持     |                                           |
+| SD卡         |     支持     |                                           |
+| IRDA         |   即将支持   |                                           |
+| 音频接口     |     支持     |                                           |
+| **片上外设** | **支持情况** | **备注**                                  |
+| GPIO         |     支持     | PA PB PE PF                               |
+| UART         |     支持     | UART0/1/2                                 |
+| SDIO         |     支持     |                                           |
+| ADC          |   即将支持   |                                           |
+| SPI          |   即将支持   | 软件 SPI                                  |
+| I2C          |     支持     | 软件 I2C                                  |
+| RTC          |   即将支持   |                                           |
+| WDT          |     支持     |                                           |
+| FLASH        |   即将支持   |                                           |
+| TIMER        |     支持     |                                           |
+| PWM          |     支持     | LPWM 的 G1 G2 G3 之间是互斥的，只能三选一 |
+| USB Device   |   暂不支持   |                                           |
+| USB Host     |   暂不支持   |                                           |
 
 ## 使用说明
 
@@ -67,17 +68,19 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 
 本 BSP 为开发者提供 GCC 开发环境。下面介绍如何将系统运行起来。
 
+教学视频：https://www.bilibili.com/video/BV1RV411v75P/
+
 #### 硬件连接
 
 使用数据线连接开发板到 PC，打开电源开关。
 
 #### 编译下载
 
-运行 `scons` 编译得到 `.dcf` 固件，通过 `downloader` 进行下载
+通过 `RT-Thread Studio` 或者 `scons` 编译得到 `.dcf` 固件，通过 `Downloader` 进行下载
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LED 常亮、绿色 LED 会周期性闪烁。
+下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LED 会周期性闪烁。
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
@@ -93,12 +96,11 @@ msh >
 此 BSP 默认只开启了 GPIO 和 串口0 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
-
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
 3. 输入`pkgs --update`命令更新软件包。
-
 4. 输入`scons` 命令重新编译工程。
+
+更多细节请参见使用指南：https://ab32vg1-example.readthedocs.io/zh/latest/introduction.html
 
 ## 注意事项
 

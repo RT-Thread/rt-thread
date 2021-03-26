@@ -2,7 +2,7 @@
 
 ## 简介
 
-该文件夹主要存放所有主芯片为nRF52840的板级支持包。目前默认支持的开发板是官方[PCA10040](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52-DK)
+该文件夹主要存放所有主芯片为nRF52832的板级支持包。目前默认支持的开发板是官方[PCA10040](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52-DK)
 主要内容如下：
 
 - 开发板资源介绍
@@ -61,6 +61,30 @@ PCA10040-nrf52832开发板常用 **板载资源** 如下：
 4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
 
+### VS Code开发支持
+
+配置步骤：
+
+1. 在命令行设置以下两个环境变量：
+
+    ```bash
+    export RTT_CC=gcc
+    export RTT_EXEC_PATH=<工具链路径/bin>
+    ```
+
+2. 搜索插件`Cortex-debug`并安装。
+3. 安装[nRF Command Line Tools](https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Command-Line-Tools)以支持`nrfjprog`命令。
+4. 在.vscode/settings.json内配置工具链和`JlinkGDBServer`，sample：
+
+    ```json
+    {
+        "cortex-debug.armToolchainPath": "/usr/local/gcc-arm-none-eabi-9-2019-q4-major/bin/",
+        "cortex-debug.armToolchainPrefix": "arm-none-eabi",
+        "cortex-debug.JLinkGDBServerPath": "/Applications/SEGGER/JLink/JLinkGDBServer"
+    }
+    ```
+
+5. 点击`终端`->`运行任务`->`build`编译，点击`终端`->`运行任务`->`flash`烧录，点击左侧`debug`->`run`使用VS Code进行debug。
 
 ## 支持其他开发板
 

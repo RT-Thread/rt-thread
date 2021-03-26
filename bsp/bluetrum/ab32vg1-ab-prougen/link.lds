@@ -34,12 +34,6 @@ SECTIONS
     } > init
 
     .ram1 __ram1_vma : {
-        *components*drivers**.o(.text* .rodata*)
-        *device.o(.text*)
-        . = ALIGN(32);
-    } > ram1 AT > flash
-
-    .rti : {
         . = ALIGN(4);
         /* section information for initial */
         __rt_init_start = .;
@@ -47,33 +41,36 @@ SECTIONS
         __rt_init_end = .;
 
         . = ALIGN(4);
-        __fsymtab_start = .;
-        KEEP(*(FSymTab))
-        __fsymtab_end = .;
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
 
         . = ALIGN(4);
-        __vsymtab_start = .;
-        KEEP(*(VSymTab))
-        __vsymtab_end = .;
-
-        . = ALIGN(32);
+        *components*drivers**.o (.text*)
+        *components.o (.text*)
     } > ram1 AT > flash
 
-    .comm : {
-        KEEP (*(.vector))
-        EXCLUDE_FILE (*hal_drivers**.o *ab32vg1_hal**.o *components*finsh**.o *components*libc**.o *rt-thread*src**.o *kernel*src**.o *romfs.o *lib_a**.o) *(.text*)
-        *idle.o (.text*)
-        *ipc.o (.text*)
-        *irq.o (.text*)
-        *scheduler.o (.text*)
-        *timer.o (.text*)
-        *kservice.o (.text*)
-        EXCLUDE_FILE (*romfs.o *lib_a**.o) *(.rodata*)
-        *(.srodata*)
+    .comm __comm_vma : {
+        . = ALIGN(4);
+        KEEP(*(.vector))
+        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *dfs*filesystems**.o  
+        *romfs.o *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
+        *letf2.o *multf3.o *subtf3.o *fixtfsi.o *floatsitf.o *extenddftf2.o
+        *trunctfdf2.o *_clzsi2.o *cp-demangle.o *unwind*.o
+        *fixdfsi.o *addsf3.o *divsf3.o *eqsf2.o *gesf2.o *float*.o
+        *lesf2.o *mulsf3.o *subsf3.o *fixsfsi.o *fixunssfsi.o) *(.text)
+        *finsh*shell.o (.text*)
+        *(.text.unlikely)
+        *(.text.startup)
+        EXCLUDE_FILE (*components*libc**.o *dfs*filesystems**.o *romfs.o *lib_a**.o 
+        *cp-demangle.o *divdf3.o *muldf3.o *multf3.o *unwind*.o *_clz.o) *(.rodata)
+        *(.rodata.name)
+        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o *cp-demangle.o) *(.rodata.str1.4)
+        EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata)
         *(.rela*)
         *(.data*)
-	    *(.sdata*)
-        . = ALIGN(512);
+        *(.sdata*)
     } > comm AT > flash
 
     .bss (NOLOAD):
@@ -101,8 +98,20 @@ SECTIONS
     } > heap
 
     .flash : {
+        
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+
         *(.text*)
         *(.rodata*)
+        *(.srodata*)
         . = ALIGN(512);
     } > flash
 }
@@ -112,4 +121,4 @@ __bank_size = SIZEOF(.flash);
 __comm_lma = LOADADDR(.comm);
 __comm_size = SIZEOF(.comm);
 __ram1_lma = LOADADDR(.ram1);
-__ram1_size = SIZEOF(.ram1) + SIZEOF(.rti);
+__ram1_size = SIZEOF(.ram1);

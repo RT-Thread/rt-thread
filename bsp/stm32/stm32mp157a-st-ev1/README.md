@@ -1,4 +1,4 @@
-# STM32MP157A-EV1 BSP (Board Support Package) Execution Instruction
+# STM32MP157A-EV1 BSP Introduction
 
 [中文页](README_zh.md) |
 

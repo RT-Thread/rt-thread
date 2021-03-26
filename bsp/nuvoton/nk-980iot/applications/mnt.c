@@ -53,7 +53,10 @@ const void   *data;
 
 const struct dfs_mount_tbl mount_table[] =
 {
-    { RAMDISK_UDC, "/ramdisk_udc", "elm", 0, RT_NULL },
+    { RAMDISK_UDC, "/mnt/ram_usbd", "elm", 0, RT_NULL },
+#if defined(RT_USING_DFS_UFFS)
+    { "nand1", "/mnt/filesystem", "uffs", 0, RT_NULL },
+#endif
     {0},
 };
 #endif
@@ -171,10 +174,11 @@ int filesystem_init(void)
             LOG_I("ramdisk mounted on \"/\".");
 
             /* now you can create dir dynamically. */
-            mkdir_p("/ramdisk_udc", 0x777);
             mkdir_p("/mnt", 0x777);
             mkdir_p("/cache", 0x777);
             mkdir_p("/download", 0x777);
+            mkdir_p("/mnt/ram_usbd", 0x777);
+            mkdir_p("/mnt/filesystem", 0x777);
 #if defined(RT_USBH_MSTORAGE) && defined(UDISK_MOUNTPOINT)
             mkdir_p(UDISK_MOUNTPOINT, 0x777);
 #endif
@@ -217,11 +221,6 @@ int mnt_init_spiflash0(void)
     if (!psNorFlash)
     {
         rt_kprintf("Failed to create block device for %s.\n", PARTITION_NAME_FILESYSTEM);
-        goto exit_mnt_init_spiflash0;
-    }
-    else if (mkdir(MOUNT_POINT_SPIFLASH0, 0x777) < 0)
-    {
-        rt_kprintf("Failed to make folder for %s.\n", MOUNT_POINT_SPIFLASH0);
         goto exit_mnt_init_spiflash0;
     }
     else if (dfs_mount(psNorFlash->parent.name, MOUNT_POINT_SPIFLASH0, "elm", 0, 0) != 0)

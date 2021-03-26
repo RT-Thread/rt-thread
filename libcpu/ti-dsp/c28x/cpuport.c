@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-09-01     xuzhuoyi     the first version.
  * 2019-07-03     zhaoxiaowei  add support for __rt_ffs.
+ * 2019-12-05     xiaolifan    add support for hardware fpu32
  */
 
 #include <rtthread.h>
@@ -21,6 +22,7 @@ static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
 extern rt_uint16_t rt_hw_get_st0(void);
 extern rt_uint16_t rt_hw_get_st1(void);
 extern int rt_hw_calc_csb(int value);
+
 
 struct exception_stack_frame
 {
@@ -49,6 +51,18 @@ struct stack_frame
     rt_uint32_t xt;
     rt_uint32_t rpc;
 
+#ifdef __TMS320C28XX_FPU32__
+    rt_uint32_t rb;
+    rt_uint32_t stf;
+    rt_uint32_t r0h;
+    rt_uint32_t r1h;
+    rt_uint32_t r2h;
+    rt_uint32_t r3h;
+    rt_uint32_t r4h;
+    rt_uint32_t r5h;
+    rt_uint32_t r6h;
+    rt_uint32_t r7h;
+#endif
 
 };
 
@@ -82,6 +96,11 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stack_frame->exception_stack_frame.dbgstat_ier    = 0;                              /* dbgstat_ier */
     stack_frame->exception_stack_frame.return_address = (unsigned long)tentry;          /* return_address */
     stack_frame->rpc = (unsigned long)texit;
+
+#ifdef __TMS320C28XX_FPU32__
+    stack_frame->stf = 0x00000200;
+    stack_frame->rb = 0;
+#endif
 
     /* return task's current stack address */
     return stk + sizeof(struct stack_frame);

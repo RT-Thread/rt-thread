@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,7 +38,7 @@
 #ifdef  _O_BINARY
 #define O_BINARY _O_BINARY
 #else
-#define O_BINARY	     0
+#define O_BINARY         0
 #endif
 #endif
 

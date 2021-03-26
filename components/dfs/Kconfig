@@ -78,6 +78,30 @@ if RT_USING_DFS
             default 2 if RT_DFS_ELM_USE_LFN_2
             default 3 if RT_DFS_ELM_USE_LFN_3
 
+        choice
+            prompt "Support unicode for long file name"
+            default RT_DFS_ELM_LFN_UNICODE_0
+
+            config RT_DFS_ELM_LFN_UNICODE_0
+                bool "0: ANSI/OEM in current CP (TCHAR = char)"
+
+            config RT_DFS_ELM_LFN_UNICODE_1
+                bool "1: Unicode in UTF-16 (TCHAR = WCHAR)"
+
+            config RT_DFS_ELM_LFN_UNICODE_2
+                bool "2: Unicode in UTF-8 (TCHAR = char)"
+
+            config RT_DFS_ELM_LFN_UNICODE_3
+                bool "3: Unicode in UTF-32 (TCHAR = DWORD)"
+        endchoice
+
+        config RT_DFS_ELM_LFN_UNICODE
+            int
+            default 0 if RT_DFS_ELM_LFN_UNICODE_0
+            default 1 if RT_DFS_ELM_LFN_UNICODE_1
+            default 2 if RT_DFS_ELM_LFN_UNICODE_2
+            default 3 if RT_DFS_ELM_LFN_UNICODE_3
+
         config RT_DFS_ELM_MAX_LFN
             int "Maximal size of file name length"
             range 12 255
@@ -91,7 +115,7 @@ if RT_USING_DFS
             int "Maximum sector size to be handled."
             default 512
             help
-                if you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
+                If you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
 
         config RT_DFS_ELM_USE_ERASE
             bool "Enable sector erase feature"
@@ -114,43 +138,6 @@ if RT_USING_DFS
     config RT_USING_DFS_RAMFS
         bool "Enable RAM file system"
         select RT_USING_MEMHEAP
-        default n
-
-    config RT_USING_DFS_UFFS
-        bool "Enable UFFS file system: Ultra-low-cost Flash File System"
-        select RT_USING_MTD_NAND
-        default n
-
-    if RT_USING_DFS_UFFS
-        choice
-            prompt "UFFS ECC mode"
-            default RT_UFFS_ECC_MODE_1
-
-            config RT_UFFS_ECC_MODE_0
-                bool "0: Do not use ECC"
-
-            config RT_UFFS_ECC_MODE_1
-                bool "1: UFFS calculate the ECC"
-
-            config RT_UFFS_ECC_MODE_2
-                bool "2: Flash driver(or by hardware) calculate the ECC"
-
-            config RT_UFFS_ECC_MODE_3
-                bool "3: Hardware calculate the ECC and automatically write to spare."
-        endchoice
-
-        config RT_UFFS_ECC_MODE
-            int
-            default 0 if RT_UFFS_ECC_MODE_0
-            default 1 if RT_UFFS_ECC_MODE_1
-            default 2 if RT_UFFS_ECC_MODE_2
-            default 3 if RT_UFFS_ECC_MODE_3
-
-    endif
-
-    config RT_USING_DFS_JFFS2
-        bool "Enable JFFS2 file system"
-        select RT_USING_MTD_NOR
         default n
 
     config RT_USING_DFS_NFS

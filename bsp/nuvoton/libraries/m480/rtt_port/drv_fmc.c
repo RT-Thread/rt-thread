@@ -54,10 +54,15 @@ const struct fal_flash_dev Onchip_ldrom_flash = { "OnChip_LDROM", FMC_LDROM_BASE
 
 int nu_fmc_read(long addr, uint8_t *buf, size_t size)
 {
+    rt_err_t result;
+
     size_t read_size = 0;
     uint32_t addr_end = addr + size;
     uint32_t isp_rdata = 0;
-    rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
+
+    result = rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
+
     SYS_UnlockReg();
 
     if (NU_GET_LSB2BIT(addr))
@@ -87,7 +92,9 @@ int nu_fmc_read(long addr, uint8_t *buf, size_t size)
     }
 
     SYS_LockReg();
-    rt_mutex_release(g_mutex_fmc);
+
+    result = rt_mutex_release(g_mutex_fmc);
+    RT_ASSERT(result == RT_EOK);
 
     return read_size;
 }
@@ -97,8 +104,11 @@ int nu_fmc_write(long addr, const uint8_t *buf, size_t size)
     size_t write_size = 0;
     uint32_t addr_end = addr + size;
     uint32_t isp_rdata = 0;
+    rt_err_t result;
 
-    rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
+    result = rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
+
     SYS_UnlockReg();
 
     if (addr < FMC_APROM_END)
@@ -144,9 +154,12 @@ int nu_fmc_write(long addr, const uint8_t *buf, size_t size)
 
     FMC_DISABLE_AP_UPDATE();
     FMC_DISABLE_LD_UPDATE();
+
 Exit2:
     SYS_LockReg();
-    rt_mutex_release(g_mutex_fmc);
+
+    result = rt_mutex_release(g_mutex_fmc);
+    RT_ASSERT(result == RT_EOK);
 
     return write_size;
 
@@ -157,11 +170,11 @@ int nu_fmc_erase(long addr, size_t size)
     size_t erased_size = 0;
     uint32_t addrptr;
     uint32_t addr_end = addr + size;
+    rt_err_t result;
 
 #if defined(NU_SUPPORT_NONALIGN)
     uint8_t *page_sdtemp = RT_NULL;
     uint8_t *page_edtemp = RT_NULL;
-
 
     addrptr = addr & (FMC_FLASH_PAGE_SIZE - 1);
     if (addrptr)
@@ -205,7 +218,9 @@ int nu_fmc_erase(long addr, size_t size)
     }
 #endif
 
-    rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
+    result = rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
+
     SYS_UnlockReg();
 
     if (addr <= FMC_APROM_END)
@@ -233,7 +248,9 @@ Exit1:
     FMC_DISABLE_LD_UPDATE();
 Exit2:
     SYS_LockReg();
-    rt_mutex_release(g_mutex_fmc);
+
+    result = rt_mutex_release(g_mutex_fmc);
+    RT_ASSERT(result == RT_EOK);
 
 #if defined(NU_SUPPORT_NONALIGN)
 
@@ -315,6 +332,7 @@ static int nu_fmc_init(void)
     SYS_LockReg();
 
     g_mutex_fmc = rt_mutex_create("nu_fmc_lock", RT_IPC_FLAG_FIFO);
+    RT_ASSERT(g_mutex_fmc != RT_NULL);
 
     /* PKG_USING_FAL */
 #if defined(PKG_USING_FAL)

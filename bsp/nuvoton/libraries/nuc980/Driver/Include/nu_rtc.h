@@ -110,23 +110,23 @@ typedef struct
 
 typedef struct
 {
-    uint32_t INIT;                  /*!< [0x0000] RTC Initiation Register                                          */
-    uint32_t RWEN;                  /*!< [0x0004] RTC Access Enable Register                                       */
-    uint32_t FREQADJ;               /*!< [0x0008] RTC Frequency Compensation Register                              */
-    uint32_t TIME;                  /*!< [0x000c] RTC Time Loading Register                                        */
-    uint32_t CAL;                   /*!< [0x0010] RTC Calendar Loading Register                                    */
-    uint32_t CLKFMT;                /*!< [0x0014] RTC Time Scale Selection Register                                */
-    uint32_t WEEKDAY;               /*!< [0x0018] RTC Day of the Week Register                                     */
-    uint32_t TALM;                  /*!< [0x001c] RTC Time Alarm Register                                          */
-    uint32_t CALM;                  /*!< [0x0020] RTC Calendar Alarm Register                                      */
-    uint32_t LEAPYEAR;              /*!< [0x0024] RTC Leap Year Indicator Register                                 */
-    uint32_t INTEN;                 /*!< [0x0028] RTC Interrupt Enable Register                                    */
-    uint32_t INTSTS;                /*!< [0x002c] RTC Interrupt Status Register                                    */
-    uint32_t TICK;                  /*!< [0x0030] RTC Time Tick Register                                           */
-    uint32_t PWRCTL;                 /*!< [0x0034] RTC Power Control Register                                     */
-    uint32_t PWRCNT;                 /*!< [0x0038] RTC Power Control Counter Register                                 */
-    uint32_t RESERVE0;                /*!< [0x003c] RTC Spare Functional Control Register                            */
-    uint32_t SPR[16];               /*!< [0x0040] ~ [0x007c] RTC Spare Register 0 ~ 15                             */
+    __IO uint32_t INIT;                  /*!< [0x0000] RTC Initiation Register                                          */
+    __IO uint32_t RWEN;                  /*!< [0x0004] RTC Access Enable Register                                       */
+    __IO uint32_t FREQADJ;               /*!< [0x0008] RTC Frequency Compensation Register                              */
+    __IO uint32_t TIME;                  /*!< [0x000c] RTC Time Loading Register                                        */
+    __IO uint32_t CAL;                   /*!< [0x0010] RTC Calendar Loading Register                                    */
+    __IO uint32_t CLKFMT;                /*!< [0x0014] RTC Time Scale Selection Register                                */
+    __IO uint32_t WEEKDAY;               /*!< [0x0018] RTC Day of the Week Register                                     */
+    __IO uint32_t TALM;                  /*!< [0x001c] RTC Time Alarm Register                                          */
+    __IO uint32_t CALM;                  /*!< [0x0020] RTC Calendar Alarm Register                                      */
+    __I uint32_t LEAPYEAR;              /*!< [0x0024] RTC Leap Year Indicator Register                                 */
+    __IO uint32_t INTEN;                 /*!< [0x0028] RTC Interrupt Enable Register                                    */
+    __IO uint32_t INTSTS;                /*!< [0x002c] RTC Interrupt Status Register                                    */
+    __IO uint32_t TICK;                  /*!< [0x0030] RTC Time Tick Register                                           */
+    __IO uint32_t PWRCTL;                 /*!< [0x0034] RTC Power Control Register                                     */
+    __IO uint32_t PWRCNT;                 /*!< [0x0038] RTC Power Control Counter Register                                 */
+    __IO uint32_t RESERVE0;                /*!< [0x003c] RTC Spare Functional Control Register                            */
+    __I uint32_t SPR[16];               /*!< [0x0040] ~ [0x007c] RTC Spare Register 0 ~ 15                             */
 } RTC_T;
 
 #define RTC_INIT_ACTIVE_Pos         (0)                                               /*!< RTC_T::INIT: INIT_ACTIVE Position      */

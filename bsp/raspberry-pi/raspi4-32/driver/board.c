@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +22,7 @@ struct mem_desc platform_mem_desc[] = {
     {0x0, 0x6400000, 0x0, NORMAL_MEM},
     {0x8000000, 0x8800000, 0x8000000, DEVICE_MEM},    //mbox msg
     {0x0E000000, 0x0EE00000, 0x0E000000, DEVICE_MEM}, //framebuffer
-    {0x0F400000, 0x0FA00000, 0x0F400000, DEVICE_MEM}, //dsi_touch 
+    {0x0F400000, 0x0FA00000, 0x0F400000, DEVICE_MEM}, //dsi_touch
     {0xFD500000, 0xFDA00000, 0xFD500000, DEVICE_MEM}, //gmac
     {0xFE000000, 0xFF000000, 0xFE000000, DEVICE_MEM}, //peripheral
     {0xFF800000, 0xFFA00000, 0xFF800000, DEVICE_MEM}  //gic
@@ -65,7 +65,7 @@ void idle_wfi(void)
 }
 
 /**
- *  Initialize the Hardware related stuffs. Called from rtthread_startup() 
+ *  Initialize the Hardware related stuffs. Called from rtthread_startup()
  *  after interrupt disabled.
  */
 void rt_hw_board_init(void)

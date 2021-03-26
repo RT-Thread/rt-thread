@@ -46,45 +46,45 @@
 
 typedef struct
 {
-    uint32_t CREQ;         /*!< [0x0020] IFn Command Request Register                                     */
-    uint32_t CMASK;        /*!< [0x0024] IFn Command Mask Register                                        */
-    uint32_t MASK1;        /*!< [0x0028] IFn Mask 1 Register                                              */
-    uint32_t MASK2;        /*!< [0x002c] IFn Mask 2 Register                                              */
-    uint32_t ARB1;         /*!< [0x0030] IFn Arbitration 1 Register                                       */
-    uint32_t ARB2;         /*!< [0x0034] IFn Arbitration 2 Register                                       */
-    uint32_t MCON;         /*!< [0x0038] IFn Message Control Register                                     */
-    uint32_t DAT_A1;       /*!< [0x003c] IFn Data A1 Register                                             */
-    uint32_t DAT_A2;       /*!< [0x0040] IFn Data A2 Register                                             */
-    uint32_t DAT_B1;       /*!< [0x0044] IFn Data B1 Register                                             */
-    uint32_t DAT_B2;       /*!< [0x0048] IFn Data B2 Register                                             */
-    uint32_t RESERVE0[13];
+    __IO uint32_t CREQ;         /*!< [0x0020] IFn Command Request Register                                     */
+    __IO uint32_t CMASK;        /*!< [0x0024] IFn Command Mask Register                                        */
+    __IO uint32_t MASK1;        /*!< [0x0028] IFn Mask 1 Register                                              */
+    __IO uint32_t MASK2;        /*!< [0x002c] IFn Mask 2 Register                                              */
+    __IO uint32_t ARB1;         /*!< [0x0030] IFn Arbitration 1 Register                                       */
+    __IO uint32_t ARB2;         /*!< [0x0034] IFn Arbitration 2 Register                                       */
+    __IO uint32_t MCON;         /*!< [0x0038] IFn Message Control Register                                     */
+    __IO uint32_t DAT_A1;       /*!< [0x003c] IFn Data A1 Register                                             */
+    __IO uint32_t DAT_A2;       /*!< [0x0040] IFn Data A2 Register                                             */
+    __IO uint32_t DAT_B1;       /*!< [0x0044] IFn Data B1 Register                                             */
+    __IO uint32_t DAT_B2;       /*!< [0x0048] IFn Data B2 Register                                             */
+    __I uint32_t RESERVE0[13];
 } CAN_IF_T;
 
 typedef struct
 {
-    uint32_t CON;                   /*!< [0x0000] Control Register                                                 */
-    uint32_t STATUS;                /*!< [0x0004] Status Register                                                  */
-    uint32_t ERR;                   /*!< [0x0008] Error Counter Register                                           */
-    uint32_t BTIME;                 /*!< [0x000c] Bit Timing Register                                              */
-    uint32_t IIDR;                  /*!< [0x0010] Interrupt Identifier Register                                    */
-    uint32_t TEST;                  /*!< [0x0014] Test Register                                                    */
-    uint32_t BRPE;                  /*!< [0x0018] Baud Rate Prescaler Extension Register                           */
-    uint32_t RESERVE0[1];
-    CAN_IF_T IF[2];
-    uint32_t RESERVE2[8];
-    uint32_t TXREQ1;                /*!< [0x0100] Transmission Request Register 1                                  */
-    uint32_t TXREQ2;                /*!< [0x0104] Transmission Request Register 2                                  */
-    uint32_t RESERVE3[6];
-    uint32_t NDAT1;                 /*!< [0x0120] New Data Register 1                                              */
-    uint32_t NDAT2;                 /*!< [0x0124] New Data Register 2                                              */
-    uint32_t RESERVE4[6];
-    uint32_t IPND1;                 /*!< [0x0140] Interrupt Pending Register 1                                     */
-    uint32_t IPND2;                 /*!< [0x0144] Interrupt Pending Register 2                                     */
-    uint32_t RESERVE5[6];
-    uint32_t MVLD1;                 /*!< [0x0160] Message Valid Register 1                                         */
-    uint32_t MVLD2;                 /*!< [0x0164] Message Valid Register 2                                         */
-    uint32_t WU_EN;                 /*!< [0x0168] Wake-up Enable Control Register                                  */
-    uint32_t WU_STATUS;             /*!< [0x016c] Wake-up Status Register                                          */
+    __IO uint32_t CON;                   /*!< [0x0000] Control Register                                                 */
+    __IO uint32_t STATUS;                /*!< [0x0004] Status Register                                                  */
+    __I  uint32_t ERR;                   /*!< [0x0008] Error Counter Register                                           */
+    __IO uint32_t BTIME;                 /*!< [0x000c] Bit Timing Register                                              */
+    __I  uint32_t IIDR;                  /*!< [0x0010] Interrupt Identifier Register                                    */
+    __IO uint32_t TEST;                  /*!< [0x0014] Test Register                                                    */
+    __IO uint32_t BRPE;                  /*!< [0x0018] Baud Rate Prescaler Extension Register                           */
+    __I  uint32_t RESERVE0[1];
+    __IO CAN_IF_T IF[2];
+    __I  uint32_t RESERVE2[8];
+    __I  uint32_t TXREQ1;                /*!< [0x0100] Transmission Request Register 1                                  */
+    __I  uint32_t TXREQ2;                /*!< [0x0104] Transmission Request Register 2                                  */
+    __I  uint32_t RESERVE3[6];
+    __I  uint32_t NDAT1;                 /*!< [0x0120] New Data Register 1                                              */
+    __I  uint32_t NDAT2;                 /*!< [0x0124] New Data Register 2                                              */
+    __I  uint32_t RESERVE4[6];
+    __I  uint32_t IPND1;                 /*!< [0x0140] Interrupt Pending Register 1                                     */
+    __I  uint32_t IPND2;                 /*!< [0x0144] Interrupt Pending Register 2                                     */
+    __I  uint32_t RESERVE5[6];
+    __I  uint32_t MVLD1;                 /*!< [0x0160] Message Valid Register 1                                         */
+    __I  uint32_t MVLD2;                 /*!< [0x0164] Message Valid Register 2                                         */
+    __IO uint32_t WU_EN;                 /*!< [0x0168] Wake-up Enable Control Register                                  */
+    __IO uint32_t WU_STATUS;             /*!< [0x016c] Wake-up Status Register                                          */
 
 } CAN_T;
 

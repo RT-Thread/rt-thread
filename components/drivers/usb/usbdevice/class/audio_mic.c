@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,6 +35,7 @@
 #define EVENT_RECORD_STOP    (1 << 1)
 #define EVENT_RECORD_DATA    (1 << 2)
 
+#define MIC_INTF_STR_INDEX 8
 /*
  * uac mic descriptor define
  */
@@ -128,7 +129,7 @@ const static char *_ustring[] =
 {
     "Language",
     "RT-Thread Team.",
-    "Microphone",
+    "RT-Thread Audio Microphone",
     "32021919830108",
     "Configuration",
     "Interface",
@@ -160,7 +161,11 @@ static struct uac_ac_descriptor ac_desc =
         USB_CLASS_AUDIO,
         USB_SUBCLASS_AUDIOCONTROL,
         0x00,
+#ifdef RT_USB_DEVICE_COMPOSITE
+        MIC_INTF_STR_INDEX,
+#else
         0x00,
+#endif
     },
     /* Header Descriptor */
     {
@@ -495,9 +500,12 @@ ufunction_t rt_usbd_function_uac_mic_create(udevice_t device)
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
 
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_interface_string(device, MIC_INTF_STR_INDEX, _ustring[2]);
+#else
     /* set usb device string description */
     rt_usbd_device_set_string(device, _ustring);
-
+#endif
     /* create a uac function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
     //not support HS

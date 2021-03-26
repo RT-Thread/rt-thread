@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2018-10-30     SummerGift   first version
  * 2019-01-03     zylx         modify dma support
  */
- 
+
 #ifndef __UART_CONFIG_H__
 #define __UART_CONFIG_H__
 
@@ -27,7 +27,7 @@ extern "C" {
         .irq_type = USART1_IRQn,                                    \
     }
 #endif /* UART1_CONFIG */
-		
+
 #if defined(BSP_UART1_RX_USING_DMA)
 #ifndef UART1_DMA_RX_CONFIG
 #define UART1_DMA_RX_CONFIG                                        \
@@ -74,7 +74,7 @@ extern "C" {
     }
 #endif /* UART2_DMA_RX_CONFIG */
 #endif /* BSP_UART2_RX_USING_DMA */
-		
+
 #if defined(BSP_UART2_TX_USING_DMA)
 #ifndef UART2_DMA_TX_CONFIG
 #define UART2_DMA_TX_CONFIG                                        \
@@ -109,7 +109,7 @@ extern "C" {
     }
 #endif /* UART3_DMA_RX_CONFIG */
 #endif /* BSP_UART3_RX_USING_DMA */
-		
+
 #if defined(BSP_UART3_TX_USING_DMA)
 #ifndef UART3_DMA_TX_CONFIG
 #define UART3_DMA_TX_CONFIG                                        \
@@ -179,7 +179,7 @@ extern "C" {
     }
 #endif /* UART5_DMA_RX_CONFIG */
 #endif /* BSP_UART5_RX_USING_DMA */
-		
+
 #if defined(BSP_UART5_TX_USING_DMA)
 #ifndef UART5_DMA_TX_CONFIG
 #define UART5_DMA_TX_CONFIG                                        \
@@ -214,7 +214,7 @@ extern "C" {
     }
 #endif /* UART6_DMA_RX_CONFIG */
 #endif /* BSP_UART6_RX_USING_DMA */
-		
+
 #if defined(BSP_UART6_TX_USING_DMA)
 #ifndef UART6_DMA_TX_CONFIG
 #define UART6_DMA_TX_CONFIG                                        \
@@ -249,7 +249,7 @@ extern "C" {
     }
 #endif /* UART7_DMA_RX_CONFIG */
 #endif /* BSP_UART7_RX_USING_DMA */
-		
+
 #if defined(BSP_UART7_TX_USING_DMA)
 #ifndef UART7_DMA_TX_CONFIG
 #define UART7_DMA_TX_CONFIG                                        \
@@ -284,7 +284,7 @@ extern "C" {
     }
 #endif /* UART8_DMA_RX_CONFIG */
 #endif /* BSP_UART8_RX_USING_DMA */
-		
+
 #if defined(BSP_UART8_TX_USING_DMA)
 #ifndef UART8_DMA_TX_CONFIG
 #define UART8_DMA_TX_CONFIG                                        \
