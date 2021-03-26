@@ -173,7 +173,7 @@ static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
     }
     else
     {
-        dhcp_stop((struct netif *)netif->user_data);    
+        dhcp_stop((struct netif *)netif->user_data);
     }
     return ERR_OK;
 }
@@ -697,7 +697,7 @@ static void eth_rx_thread_entry(void* parameter)
             }
 
             /* receive all of buffer */
-            while (1)
+            do
             {
                 if(device->eth_rx == RT_NULL) break;
 
@@ -713,7 +713,7 @@ static void eth_rx_thread_entry(void* parameter)
                     }
                 }
                 else break;
-            }
+            }while(rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t *)&device, RT_WAITING_NO) == RT_EOK);
         }
         else
         {
