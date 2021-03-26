@@ -632,6 +632,11 @@ set_secondary_cpu_boot_address:
 #endif
     mov     pc, lr
 
+.global rt_clz
+rt_clz:
+    clz r0, r0
+    bx lr
+
 .global secondary_cpu_start
 secondary_cpu_start:
 #ifdef RT_USING_USERSPACE
