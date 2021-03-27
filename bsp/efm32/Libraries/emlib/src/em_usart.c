@@ -82,7 +82,7 @@
 #endif
 
 #if (UART_COUNT == 1)
-#define UART_REF_VALID(ref)     ((ref)==UART0) 
+#define UART_REF_VALID(ref)     ((ref)==UART0)
 #elif (UART_COUNT == 2)
 #define UART_REF_VALID(ref)     (((ref)==UART0) || ((ref)==UART1))
 #else
@@ -733,8 +733,8 @@ void USART_InitI2s(USART_TypeDef *usart, USART_InitI2s_TypeDef *init)
  * @brief
  *   Initialize automatic transmissions using PRS channel as trigger
  * @note
- *   Initialize USART with USART_Init() before setting up PRS configuration 
- * 
+ *   Initialize USART with USART_Init() before setting up PRS configuration
+ *
  * @param[in] usart Pointer to USART to configure
  * @param[in] init Pointer to initialization structure
  ******************************************************************************/
