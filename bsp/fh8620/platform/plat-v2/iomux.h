@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #ifndef IOMUX_H_
 #define IOMUX_H_
 
@@ -126,179 +126,179 @@
 #define PMU_PAD_MAC_TXER         (92)
 
 
-#define IOMUX_PADTYPE(n)		(Iomux_PadType##n *)
-#define IOMUX_PUPD_NONE			0
-#define IOMUX_PUPD_DOWN			1
-#define IOMUX_PUPD_UP			2
-#define IOMUX_PUPD_KEEPER		3
+#define IOMUX_PADTYPE(n)        (Iomux_PadType##n *)
+#define IOMUX_PUPD_NONE         0
+#define IOMUX_PUPD_DOWN         1
+#define IOMUX_PUPD_UP           2
+#define IOMUX_PUPD_KEEPER       3
 //#define IOMUX_DEBUG
 
 
 typedef union
 {
-	struct
-	{
-		UINT32	sr								:1;
-		UINT32	reserved_3_1					:3;
+    struct
+    {
+        UINT32  sr                              :1;
+        UINT32  reserved_3_1                    :3;
 
-		UINT32	e8_e4							:2;
-		UINT32	reserved_31_6					:24;
+        UINT32  e8_e4                           :2;
+        UINT32  reserved_31_6                   :24;
 
-	}bit;
-	UINT32 dw;
+    }bit;
+    UINT32 dw;
 }Iomux_PadType5;
 
 typedef union
 {
-	struct
-	{
-		UINT32	sr								:1;
-		UINT32	reserved_3_1					:3;
+    struct
+    {
+        UINT32  sr                              :1;
+        UINT32  reserved_3_1                    :3;
 
-		UINT32	e8_e4							:2;
-		UINT32	reserved_7_6					:2;
+        UINT32  e8_e4                           :2;
+        UINT32  reserved_7_6                    :2;
 
-		UINT32	mfs								:1;
-		UINT32	reserved_31_9					:23;
+        UINT32  mfs                             :1;
+        UINT32  reserved_31_9                   :23;
 
-	}bit;
-	UINT32 dw;
+    }bit;
+    UINT32 dw;
 }Iomux_PadType8;
 
 
 typedef union
 {
-	struct
-	{
-		UINT32	smt								:1;
-		UINT32	reserved_3_1					:3;
+    struct
+    {
+        UINT32  smt                             :1;
+        UINT32  reserved_3_1                    :3;
 
-		UINT32	ie								:1;
-		UINT32	reserved_7_5					:3;
+        UINT32  ie                              :1;
+        UINT32  reserved_7_5                    :3;
 
-		UINT32	pu_pd							:2;
-		UINT32	reserved_31_10					:22;
+        UINT32  pu_pd                           :2;
+        UINT32  reserved_31_10                  :22;
 
-	}bit;
-	UINT32 dw;
+    }bit;
+    UINT32 dw;
 }Iomux_PadType9;
 
 
 typedef union
 {
-	struct
-	{
-		UINT32	e4_e2							:2;
-		UINT32	reserved_3_2					:2;
+    struct
+    {
+        UINT32  e4_e2                           :2;
+        UINT32  reserved_3_2                    :2;
 
-		UINT32	smt								:1;
-		UINT32	reserved_7_5					:3;
+        UINT32  smt                             :1;
+        UINT32  reserved_7_5                    :3;
 
-		UINT32	ie								:1;
-		UINT32	reserved_11_9					:3;
+        UINT32  ie                              :1;
+        UINT32  reserved_11_9                   :3;
 
-		UINT32	mfs								:2;
-		UINT32	reserved_31_14					:18;
+        UINT32  mfs                             :2;
+        UINT32  reserved_31_14                  :18;
 
-	}bit;
-	UINT32 dw;
+    }bit;
+    UINT32 dw;
 }Iomux_PadType13;
 
 typedef union
 {
-	struct
-	{
-		UINT32	sr								:1;
-		UINT32	reserved_3_1					:3;
+    struct
+    {
+        UINT32  sr                              :1;
+        UINT32  reserved_3_1                    :3;
 
-		UINT32	e8_e4							:2;
-		UINT32	reserved_7_6					:2;
+        UINT32  e8_e4                           :2;
+        UINT32  reserved_7_6                    :2;
 
-		UINT32	smt								:1;
-		UINT32	reserved_11_9					:3;
+        UINT32  smt                             :1;
+        UINT32  reserved_11_9                   :3;
 
-		UINT32	ie								:1;
-		UINT32	e								:1;	//only for PAD_MAC_REF_CLK_CFG (0x00a4)
-		UINT32	reserved_15_12					:2;
+        UINT32  ie                              :1;
+        UINT32  e                               :1; //only for PAD_MAC_REF_CLK_CFG (0x00a4)
+        UINT32  reserved_15_12                  :2;
 
-		UINT32	pu_pd							:2;
-		UINT32	reserved_31_18					:14;
+        UINT32  pu_pd                           :2;
+        UINT32  reserved_31_18                  :14;
 
-	}bit;
-	UINT32 dw;
+    }bit;
+    UINT32 dw;
 }Iomux_PadType17;
 
 typedef union
 {
-	struct
-	{
-		UINT32	sr								:1;
-		UINT32	reserved_3_1					:3;
+    struct
+    {
+        UINT32  sr                              :1;
+        UINT32  reserved_3_1                    :3;
 
-		UINT32	e4_e2							:2;
-		UINT32	reserved_7_6					:2;
+        UINT32  e4_e2                           :2;
+        UINT32  reserved_7_6                    :2;
 
-		UINT32	smt								:1;
-		UINT32	reserved_11_9					:3;
+        UINT32  smt                             :1;
+        UINT32  reserved_11_9                   :3;
 
-		UINT32	ie								:1;
-		UINT32	reserved_15_13					:3;
+        UINT32  ie                              :1;
+        UINT32  reserved_15_13                  :3;
 
-		UINT32	pu_pd							:2;
-		UINT32	reserved_19_18					:2;
+        UINT32  pu_pd                           :2;
+        UINT32  reserved_19_18                  :2;
 
-		UINT32	mfs								:1;
-		UINT32	reserved_31_21					:11;
+        UINT32  mfs                             :1;
+        UINT32  reserved_31_21                  :11;
 
-	}bit;
-	UINT32 dw;
+    }bit;
+    UINT32 dw;
 }Iomux_PadType20;
 
 
 typedef union
 {
-	struct
-	{
-		UINT32	sr								:1;
-		UINT32	reserved_3_1					:3;
+    struct
+    {
+        UINT32  sr                              :1;
+        UINT32  reserved_3_1                    :3;
 
-		UINT32	e4_e2							:2;
-		UINT32	reserved_7_6					:2;
+        UINT32  e4_e2                           :2;
+        UINT32  reserved_7_6                    :2;
 
-		UINT32	smt								:1;
-		UINT32	reserved_11_9					:3;
+        UINT32  smt                             :1;
+        UINT32  reserved_11_9                   :3;
 
-		UINT32	ie								:1;
-		UINT32	reserved_15_13					:3;
+        UINT32  ie                              :1;
+        UINT32  reserved_15_13                  :3;
 
-		UINT32	pu_pd							:2;
-		UINT32	reserved_19_18					:2;
+        UINT32  pu_pd                           :2;
+        UINT32  reserved_19_18                  :2;
 
-		UINT32	mfs								:2;
-		UINT32	reserved_31_21					:10;
+        UINT32  mfs                             :2;
+        UINT32  reserved_31_21                  :10;
 
-	}bit;
-	UINT32 dw;
+    }bit;
+    UINT32 dw;
 }Iomux_PadType21;
 
 typedef struct
 {
     int id;
-	UINT32* reg;
-	UINT32 reg_offset;
-	char* func_name[4];
-	int reg_type;
-	int func_sel;
-	int drv_cur;
-	int pupd;
-	//UINT32 value;
+    UINT32* reg;
+    UINT32 reg_offset;
+    char* func_name[4];
+    int reg_type;
+    int func_sel;
+    int drv_cur;
+    int pupd;
+    //UINT32 value;
 }Iomux_Pad;
 
 typedef struct
 {
-	void  *vbase;
-	void  *pbase;
-	Iomux_Pad *pads;
+    void  *vbase;
+    void  *pbase;
+    Iomux_Pad *pads;
 }Iomux_Object;
 
 
