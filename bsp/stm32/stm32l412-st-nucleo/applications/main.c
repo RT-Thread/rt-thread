@@ -17,11 +17,10 @@
 
 int main(void)
 {
-    int count = 1;
     /* set LD4 pin mode to output */
     rt_pin_mode(LD4_PIN, PIN_MODE_OUTPUT);
 
-    while (count++)
+    while (1)
     {
         rt_pin_write(LD4_PIN, PIN_HIGH);
         rt_thread_mdelay(500);
