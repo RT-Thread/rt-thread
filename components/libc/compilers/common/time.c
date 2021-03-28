@@ -21,10 +21,14 @@
 
 #include <sys/time.h>
 #include <rtthread.h>
-#include <rtdbg.h>
+
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
 #endif
+
+#define DBG_TAG    "TIME"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 /* seconds per day */
 #define SPD 24*60*60
