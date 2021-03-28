@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,7 +29,7 @@
 
  /****************************************************************************
  * #include section
- *	add #include here if any
+ *  add #include here if any
  ***************************************************************************/
 #include "fh_def.h"
 
@@ -38,7 +38,7 @@
 
  /****************************************************************************
  * #define section
- *	add constant #define here if any
+ *  add constant #define here if any
  ***************************************************************************/
 #define TIMER_CTRL_ENABLE   (1u << 0)
 #define TIMER_CTRL_MODE     (1u << 1)
@@ -49,19 +49,19 @@
 
  /****************************************************************************
  * ADT section
- *	add Abstract Data Type definition here
+ *  add Abstract Data Type definition here
  ***************************************************************************/
 typedef struct {
-	RwReg TIMER_LOAD_COUNT;
-	RwReg TIMER_CURRENT_VALUE;
-	RwReg TIMER_CTRL_REG;
-	RwReg TIMER_EOI;
-	RwReg TIMER_INT_STATUS;
+    RwReg TIMER_LOAD_COUNT;
+    RwReg TIMER_CURRENT_VALUE;
+    RwReg TIMER_CTRL_REG;
+    RwReg TIMER_EOI;
+    RwReg TIMER_INT_STATUS;
 }timer;
 
  enum timer_mode {
- 	TIMER_MODE_PERIODIC = 0,
- 	TIMER_MODE_ONESHOT = 1,
+    TIMER_MODE_PERIODIC = 0,
+    TIMER_MODE_ONESHOT = 1,
  };
 
 
@@ -73,7 +73,7 @@ typedef struct {
 
 /****************************************************************************
 *  section
-*	add function prototype here if any
+*   add function prototype here if any
 ***************************************************************************/
 
 
