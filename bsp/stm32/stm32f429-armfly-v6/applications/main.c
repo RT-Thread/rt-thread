@@ -15,14 +15,12 @@
 
 int main(void)
 {
-    int count = 1;
-
     HC574_SetPin(LED1,0);
     HC574_SetPin(LED2,0);
     HC574_SetPin(LED3,0);
     HC574_SetPin(LED4,0);
 
-    while (count++)
+    while (1)
     {
         HC574_SetPin(LED1,1);
         rt_thread_mdelay(500);
