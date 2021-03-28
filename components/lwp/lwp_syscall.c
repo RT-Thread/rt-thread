@@ -1976,15 +1976,17 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
     args_info.envc = envc;
     args_info.envp = kenvp;
     args_info.size = size;
-    do
+    while (1)
     {
-        new_page = _load_script(args_info.argv[0], &args_info);
-        if (new_page)
+        new_page = _load_script(path, &args_info);
+        if (!new_page)
         {
-            rt_pages_free(page, 0);
-            page = new_page;
+            break;
         }
-    } while (new_page);
+        rt_pages_free(page, 0);
+        page = new_page;
+        path = args_info.argv[0];
+    }
 
     /* now load elf */
     if ((aux = lwp_argscopy(new_lwp, args_info.argc, args_info.argv, args_info.envp)) == NULL)
@@ -1992,7 +1994,7 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         rt_set_errno(ENOMEM);
         goto quit;
     }
-    ret = lwp_load(args_info.argv[0], new_lwp, RT_NULL, 0, aux);
+    ret = lwp_load(path, new_lwp, RT_NULL, 0, aux);
     if (ret == RT_EOK)
     {
         int off = 0;
