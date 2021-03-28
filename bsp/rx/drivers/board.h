@@ -2,10 +2,10 @@
 #define __BOARD_H__
 
 
-#define		XTAL_FREQUENCY (12000000L)
-#define		ICLK_MUL (8)
-#define		PCLK_MUL (4)
-#define		BCLK_MUL (2)
+#define     XTAL_FREQUENCY (12000000L)
+#define     ICLK_MUL (8)
+#define     PCLK_MUL (4)
+#define     BCLK_MUL (2)
 
 #define RX62N_SRAM_END 0x0000ffff
 
