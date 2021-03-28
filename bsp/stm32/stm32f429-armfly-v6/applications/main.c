@@ -27,6 +27,4 @@ int main(void)
         HC574_SetPin(LED1,0);
         rt_thread_mdelay(500);
     }
-
-    return RT_EOK;
 }

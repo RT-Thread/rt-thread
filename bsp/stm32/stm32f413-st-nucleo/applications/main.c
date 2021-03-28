@@ -31,7 +31,6 @@ int main(void)
         rt_pin_write(LED1_PIN, PIN_HIGH);
         rt_thread_mdelay(500);
         rt_pin_write(LED1_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
     }
-
-    return RT_EOK;
 }
