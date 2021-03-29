@@ -13,7 +13,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifdef RT_USING_SOFT_RTC
+#if defined (RT_USING_SOFT_RTC) && !defined (BSP_USING_ONCHIP_RTC)
 
 /* 2018-01-30 14:44:50 = RTC_TIME_INIT(2018, 1, 30, 14, 44, 50)  */
 #define RTC_TIME_INIT(year, month, day, hour, minute, second)        \
