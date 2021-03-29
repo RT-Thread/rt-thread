@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -30,21 +30,21 @@
 #include "fh_def.h"
 
 typedef struct {
-	RwReg IRQ_EN_L;
-	RwReg IRQ_EN_H;
-	RwReg IRQ_MASK_L;
-	RwReg IRQ_MASK_H;
-	RwReg IRQ_FORCE_L;
-	RwReg IRQ_FORCE_H;
-	RwReg IRQ_RAWSTARUS_L;
-	RwReg IRQ_RAWSTARUS_H;
-	RwReg IRQ_STATUS_L;
-	RwReg IRQ_STATUS_H;
-	RwReg IRQ_MASKSTATUS_L;
-	RwReg IRQ_MASKSTATUS_H;
-	RwReg IRQ_FINALSTATUS_L;
-	RwReg IRQ_FINALSTATUS_H;
-	RwReg IRQ_VECTOR;
+    RwReg IRQ_EN_L;
+    RwReg IRQ_EN_H;
+    RwReg IRQ_MASK_L;
+    RwReg IRQ_MASK_H;
+    RwReg IRQ_FORCE_L;
+    RwReg IRQ_FORCE_H;
+    RwReg IRQ_RAWSTARUS_L;
+    RwReg IRQ_RAWSTARUS_H;
+    RwReg IRQ_STATUS_L;
+    RwReg IRQ_STATUS_H;
+    RwReg IRQ_MASKSTATUS_L;
+    RwReg IRQ_MASKSTATUS_H;
+    RwReg IRQ_FINALSTATUS_L;
+    RwReg IRQ_FINALSTATUS_H;
+    RwReg IRQ_VECTOR;
 }fh_intc;
 
 
