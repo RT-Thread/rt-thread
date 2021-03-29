@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -30,12 +30,12 @@
 #include "dma.h"
 #ifdef RT_USING_FH_ACW
 #if 1
-typedef struct 
+typedef struct
 {
-	unsigned int 			base;
-	void 					*vbase;
-	unsigned int 			size;
-	unsigned int 			align;
+    unsigned int            base;
+    void                    *vbase;
+    unsigned int            size;
+    unsigned int            align;
 }MEM_DESC;
 #define ACW_SELFTEST 0
 int buffer_malloc_withname(MEM_DESC *mem, int size, int align,  char* name);
@@ -222,9 +222,9 @@ void fh_acw_stop_playback(struct fh_audio_cfg *audio_config)
     audio_config->playback.state = stopping;
     writel(0, audio_dev.reg_base + ACW_TXFIFO_CTRL);//tx fifo disable
     if(audio_config->plauback_trans->channel_number != ACW_PLY_DMA_CHAN)
-    	goto free_mem;
+        goto free_mem;
     if(!audio_config->plauback_trans->first_lli)
-    	goto free_channel;
+        goto free_channel;
     audio_config->playback_dma->ops->control(audio_config->playback_dma,RT_DEVICE_CTRL_DMA_CYCLIC_STOP,audio_config->plauback_trans);
     audio_config->playback_dma->ops->control(audio_config->playback_dma,RT_DEVICE_CTRL_DMA_CYCLIC_FREE,audio_config->plauback_trans);
 free_channel:
@@ -259,9 +259,9 @@ void fh_acw_stop_capture(struct fh_audio_cfg *audio_config)
 
     writel(0, audio_dev.reg_base + 8);//rx fifo disable
     if(audio_config->capture_trans->channel_number != ACW_CAP_DMA_CHAN)
-    	goto free_mem;
+        goto free_mem;
     if(!audio_config->capture_trans->first_lli)
-    	goto free_channel;
+        goto free_channel;
     audio_config->capture_dma->ops->control(audio_config->capture_dma,RT_DEVICE_CTRL_DMA_CYCLIC_STOP,audio_config->capture_trans);
 
     audio_config->capture_dma->ops->control(audio_config->capture_dma,RT_DEVICE_CTRL_DMA_CYCLIC_FREE,audio_config->capture_trans);
@@ -286,10 +286,10 @@ void switch_io_type(enum audio_type type, enum io_select io_type)
         {
             rt_kprintf("audio input changed to mic_in\n");
             writel( reg & (~(1<<1)),audio_dev.reg_base + ACW_ADC_PATH_CTRL);
-        	reg = readl(audio_dev.reg_base + ACW_ADC_PATH_CTRL);
-       	    reg = reg & (~(1<<3));
-       	    reg |=(0x1<<3);
-       	    writel(reg, audio_dev.reg_base + ACW_ADC_PATH_CTRL);
+            reg = readl(audio_dev.reg_base + ACW_ADC_PATH_CTRL);
+            reg = reg & (~(1<<3));
+            reg |=(0x1<<3);
+            writel(reg, audio_dev.reg_base + ACW_ADC_PATH_CTRL);
         }
         else if (line_in == io_type)
         {
@@ -397,7 +397,7 @@ void switch_input_volume(int volume)
     param = get_param_from_volume(volume);
     if (param < 0)
     {
-    	rt_kprintf("capture volume error\n");
+        rt_kprintf("capture volume error\n");
         return;
     }
 
@@ -511,25 +511,25 @@ int register_tx_dma(struct fh_audio_cfg  *audio_config)
 
     if(playback_trans->channel_number == ACW_PLY_DMA_CHAN){
 
-    	ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_PREPARE,playback_trans);
-    	if(ret){
-    		rt_kprintf("can't playback cyclic prepare \n");
-    		return RT_ERROR;
-    	}
-    	ret = 	rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_START,playback_trans);
-    	if(ret){
-    		rt_kprintf("can't playback cyclic start \n");
-    		return RT_ERROR;
-    	}
+        ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_PREPARE,playback_trans);
+        if(ret){
+            rt_kprintf("can't playback cyclic prepare \n");
+            return RT_ERROR;
+        }
+        ret =   rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_START,playback_trans);
+        if(ret){
+            rt_kprintf("can't playback cyclic start \n");
+            return RT_ERROR;
+        }
     }
     else
-    	return RT_ERROR;
+        return RT_ERROR;
     return 0;
 }
 
 int register_rx_dma( struct fh_audio_cfg  *audio_config)
 {
-	int ret;
+    int ret;
     struct dma_transfer *capture_slave;
     capture_slave = audio_config->capture_trans;
     struct rt_dma_device *rt_dma_dev;
@@ -546,19 +546,19 @@ int register_rx_dma( struct fh_audio_cfg  *audio_config)
         return RT_ERROR;
     }
     if(capture_slave->channel_number==ACW_CAP_DMA_CHAN){
-    	ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_PREPARE,capture_slave);
-    	if(ret){
-    		rt_kprintf("can't capture cyclic prepare \n");
-    		return RT_ERROR;
-    	}
-    	ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_START,capture_slave);
-    	if(ret){
-    		rt_kprintf("can't capture cyclic start \n");
-    		return RT_ERROR;
-    	}
+        ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_PREPARE,capture_slave);
+        if(ret){
+            rt_kprintf("can't capture cyclic prepare \n");
+            return RT_ERROR;
+        }
+        ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_CYCLIC_START,capture_slave);
+        if(ret){
+            rt_kprintf("can't capture cyclic start \n");
+            return RT_ERROR;
+        }
     }
     else
-    	return RT_ERROR;
+        return RT_ERROR;
     writel(0x11,audio_dev.reg_base  + ACW_RXFIFO_CTRL);//clear rx fifo
     writel(0x30029,audio_dev.reg_base + ACW_RXFIFO_CTRL);/*enable rx fifo*/
 
@@ -614,13 +614,13 @@ int fh_acw_start_playback(struct fh_audio_cfg *audio_config)
     audio_config->playback.state = running;
     ret =  audio_request_playback_channel(audio_config);
     if(ret){
-    	rt_kprintf("can't request playback channel\n");
-    	return ret;
+        rt_kprintf("can't request playback channel\n");
+        return ret;
     }
     ret = register_tx_dma(audio_config);
     if (ret < 0)
     {
-    	rt_kprintf("can't register tx dma\n");
+        rt_kprintf("can't register tx dma\n");
         return ret;
     }
     rt_list_init(&(playback_wq.list));
@@ -638,7 +638,7 @@ int fh_acw_start_playback(struct fh_audio_cfg *audio_config)
 
 int fh_acw_start_capture(struct fh_audio_cfg *audio_config)
 {
-	int ret;
+    int ret;
     if(audio_config->capture.state == running)
     {
         return 0;
@@ -654,8 +654,8 @@ int fh_acw_start_capture(struct fh_audio_cfg *audio_config)
     audio_config->capture.state = running;
     ret = audio_request_capture_channel(audio_config);
     if(ret){
-    	rt_kprintf("can't request capture channel \n");
-    	return ret;
+        rt_kprintf("can't request capture channel \n");
+        return ret;
     }
 
     return register_rx_dma(audio_config);
@@ -698,12 +698,12 @@ static void fh_acw_tx_dma_done(void *arg)
         audio_config->playback.hw_ptr = audio_config->playback.hw_ptr - audio_config->playback.size;
     }
 
-	int avail = avail_data_len(playback,audio_config);
-	if (avail > audio_config->playback.cfg.period_bytes)
-	{
+    int avail = avail_data_len(playback,audio_config);
+    if (avail > audio_config->playback.cfg.period_bytes)
+    {
 
-		rt_sem_release(&audio_config->sem_playback);
-	}
+        rt_sem_release(&audio_config->sem_playback);
+    }
 
 #endif
 }
@@ -719,12 +719,12 @@ int arg_config_support(struct fh_audio_cfg_arg * cfg)
 
     ret = get_param_from_volume(cfg->volume);
     if (ret < 0) {
-    	rt_kprintf("invalid volume\n");
+        rt_kprintf("invalid volume\n");
         return -EINVAL;
     }
     ret = get_factor_from_table(cfg->rate);
     if (ret < 0) {
-    	rt_kprintf("invalid rate\n");
+        rt_kprintf("invalid rate\n");
         return -EINVAL;
     }
     return 0;
@@ -1084,7 +1084,7 @@ static void fh_audio_interrupt(int irq, void *param)
 void audio_prealloc_dma_buffer(int aiaotype,struct fh_audio_cfg  *audio_config)
 {
 
-	 if(aiaotype == mic_in || aiaotype == line_in){
+     if(aiaotype == mic_in || aiaotype == line_in){
     audio_config->capture.area  = (void *)fh_dma_mem_malloc(audio_config->capture.cfg.buffer_bytes \
             + audio_config->capture.cfg.period_bytes);
 
@@ -1093,8 +1093,8 @@ void audio_prealloc_dma_buffer(int aiaotype,struct fh_audio_cfg  *audio_config)
         rt_kprintf("no enough mem for capture  buffer alloc\n");
         return ;
     }
-	 }
-	 if(aiaotype == speaker_out || aiaotype == line_out){
+     }
+     if(aiaotype == speaker_out || aiaotype == line_out){
     audio_config->playback.area  = (void *)fh_dma_mem_malloc(audio_config->playback.cfg.buffer_bytes \
             + audio_config->playback.cfg.period_bytes);
 
@@ -1169,9 +1169,9 @@ int audio_request_capture_channel(struct fh_audio_cfg  *audio_config){
     rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_OPEN,dma_rx_transfer);
     ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_REQUEST_CHANNEL,dma_rx_transfer);
     if(ret){
-    	rt_kprintf("can't request capture channel\n");
-    	dma_rx_transfer->channel_number =0xff;
-    	return -ret;
+        rt_kprintf("can't request capture channel\n");
+        dma_rx_transfer->channel_number =0xff;
+        return -ret;
     }
 
 }
@@ -1219,9 +1219,9 @@ int audio_request_playback_channel(struct fh_audio_cfg  *audio_config)
     rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_OPEN,dma_tx_transfer);
     ret = rt_dma_dev->ops->control(rt_dma_dev,RT_DEVICE_CTRL_DMA_REQUEST_CHANNEL,dma_tx_transfer);
     if(ret){
-    	rt_kprintf("can't request playbak channel\n");
-    	dma_tx_transfer->channel_number = 0xff;
-    	return -ret;
+        rt_kprintf("can't request playbak channel\n");
+        dma_tx_transfer->channel_number = 0xff;
+        return -ret;
     }
     return 0;
 
@@ -1320,7 +1320,7 @@ void fh_acw_test(){
     cfg.frame_bit = 16;
 
     cfg.io_type = mic_in;
-    
+
     cfg.period_size = BUFF_SIZE/8;
     cfg.rate = 8000;
     cfg.volume = 80;
@@ -1344,18 +1344,18 @@ void fh_acw_test(){
 
     ret = acw_dev->control(acw_dev,AC_AI_EN,&cfg);
     if(ret)
-    	acw_dev->control(acw_dev,AC_AI_DISABLE,&cfg);
+        acw_dev->control(acw_dev,AC_AI_DISABLE,&cfg);
     cfg.io_type = line_out;
     acw_dev->control(acw_dev,AC_INIT_PLAYBACK_MEM,&cfg);
     ret = acw_dev->control(acw_dev,AC_AO_EN,&cfg);
     if(ret){
-    	acw_dev->control(acw_dev,AC_AO_DISABLE,&cfg);
+        acw_dev->control(acw_dev,AC_AO_DISABLE,&cfg);
    // acw_dev->control(acw_dev,AC_SET_OUTPUT_MODE,&output);
-    	return ;
+        return ;
     }
 
 
-	 for(i=0;i<100;i++)
+     for(i=0;i<100;i++)
  {
 
 rx:
@@ -1374,7 +1374,7 @@ tx:
         acw_dev->write(acw_dev,0,&rx_buff[0],1024*8);
 
     }
- 	acw_dev->close(acw_dev);
+    acw_dev->close(acw_dev);
 
 }
 #ifdef RT_USING_FINSH

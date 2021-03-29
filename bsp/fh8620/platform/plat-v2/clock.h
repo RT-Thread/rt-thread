@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #ifndef TIMER_H_
 #define TIMER_H_
 
@@ -43,12 +43,12 @@ void fh_pmu_open(void);
 void fh_pmu_close(void);
 */
 
-#define DIFF_SDC_REFCLK_0			(0)
-#define DIFF_SDC_REFCLK_90			(1)
-#define DIFF_SDC_REFCLK_180			(2)
-#define DIFF_SDC_REFCLK_270			(3)
-#define SDC_CLK_PARA_ERROR		(0xffff0000)
-#define SDC_CLK_PARA_OK			(0)
+#define DIFF_SDC_REFCLK_0           (0)
+#define DIFF_SDC_REFCLK_90          (1)
+#define DIFF_SDC_REFCLK_180         (2)
+#define DIFF_SDC_REFCLK_270         (3)
+#define SDC_CLK_PARA_ERROR      (0xffff0000)
+#define SDC_CLK_PARA_OK         (0)
 
 
 void clk_gate(struct fh_clk *p_clk);
