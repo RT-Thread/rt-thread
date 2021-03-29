@@ -3443,6 +3443,68 @@ int sys_rename(const char *oldpath, const char *newpath)
     return (ret >= 0) ? 0: ret;
 }
 
+typedef unsigned long long rlim_t;
+
+struct rlimit {
+    rlim_t rlim_cur;
+    rlim_t rlim_max;
+};
+
+#define RLIMIT_CPU     0
+#define RLIMIT_FSIZE   1
+#define RLIMIT_DATA    2
+#define RLIMIT_STACK   3
+#define RLIMIT_CORE    4
+#define RLIMIT_RSS     5
+#define RLIMIT_NPROC   6
+#define RLIMIT_NOFILE  7
+#define RLIMIT_MEMLOCK 8
+#define RLIMIT_AS      9
+
+int sys_prlimit64(pid_t pid,
+        unsigned int resource,
+        const struct rlimit *new_rlim,
+        struct rlimit *old_rlim)
+{
+    rt_set_errno(ENOSYS);
+    return -1;
+}
+
+int sys_getrlimit(unsigned int resource, unsigned long rlim[2])
+{
+    int ret = -1;
+
+    if (!lwp_user_accessable((void *)rlim, sizeof(unsigned long [2])))
+    {
+        rt_set_errno(EFAULT);
+        return -1;
+    }
+    switch (resource)
+    {
+    case RLIMIT_NOFILE:
+        {
+            struct dfs_fdtable *fdt = dfs_fdtable_get();
+
+            dfs_fd_lock();
+            rlim[0] = fdt->maxfd;
+            dfs_fd_unlock();
+            rlim[1] = DFS_FD_MAX;
+            ret = 0;
+        }
+        break;
+    default:
+        rt_set_errno(EINVAL);
+        break;
+    }
+    return ret;
+}
+
+int sys_setrlimit(unsigned int resource, struct rlimit *rlim)
+{
+    rt_set_errno(ENOSYS);
+    return -1;
+}
+
 const static void* func_table[] =
 {
     (void *)sys_exit,            /* 01 */
@@ -3600,6 +3662,9 @@ const static void* func_table[] =
     (void *)sys_execve,
     (void *)sys_vfork,
     (void *)sys_gettid,
+    (void *)sys_prlimit64,      /* 140 */
+    (void *)sys_getrlimit,
+    (void *)sys_setrlimit,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
