@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -105,10 +105,10 @@ void rt_hw_interrupt_init(void)
 {
     rt_int32_t i;
     register rt_uint32_t idx;
-	fh_intc *p = (fh_intc *)INTC_REG_BASE;
+    fh_intc *p = (fh_intc *)INTC_REG_BASE;
 
 
-	ictl_close_all_isr(p);
+    ictl_close_all_isr(p);
     /* init exceptions table */
     for(idx=0; idx < MAX_HANDLERS; idx++)
     {
@@ -137,27 +137,27 @@ void rt_hw_interrupt_init(void)
 void rt_hw_interrupt_mask(int irq)
 {
 
-	fh_intc *p = (fh_intc *)INTC_REG_BASE;
+    fh_intc *p = (fh_intc *)INTC_REG_BASE;
     /* Disable irq on AIC */
-	ictl_mask_isr(p,irq);
+    ictl_mask_isr(p,irq);
 
-//	if (irq < 32)
-//    	p->IRQ_EN_L &= ~(1 << irq);
-//	else
-//		p->IRQ_EN_H &= ~(1 << (irq - 32));
+//  if (irq < 32)
+//      p->IRQ_EN_L &= ~(1 << irq);
+//  else
+//      p->IRQ_EN_H &= ~(1 << (irq - 32));
 }
 
 
 void rt_hw_interrupt_umask(int irq)
 {
 
-	fh_intc *p = (fh_intc *)INTC_REG_BASE;
+    fh_intc *p = (fh_intc *)INTC_REG_BASE;
     /* Enable irq on AIC */
-	ictl_unmask_isr(p,irq);
+    ictl_unmask_isr(p,irq);
 //    if (irq < 32)
-//    	p->IRQ_EN_L |= 1 << irq;
-//	else
-//		p->IRQ_EN_H |= 1 << (irq - 32);
+//      p->IRQ_EN_L |= 1 << irq;
+//  else
+//      p->IRQ_EN_H |= 1 << (irq - 32);
 }
 
 /**
@@ -168,7 +168,7 @@ void rt_hw_interrupt_umask(int irq)
  * @param name the interrupt name
  * @return old handler
  */
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
                                     void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
@@ -182,7 +182,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
             irq_desc[vector].param = param;
 #ifdef RT_USING_INTERRUPT_INFO
             rt_snprintf(irq_desc[vector].name, RT_NAME_MAX - 1, "%s", name);
-			irq_desc[vector].counter = 0;
+            irq_desc[vector].counter = 0;
 #endif
         }
     }
@@ -195,7 +195,7 @@ void list_irq(void)
 {
 
 #ifdef RT_USING_INTERRUPT_INFO
-	int irq;
+    int irq;
     rt_kprintf("number\tcount\tname\n");
     for (irq = 0; irq < MAX_HANDLERS; irq++)
     {

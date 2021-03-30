@@ -107,7 +107,6 @@ pipeline {
                         ['stm32f20x', 'sourcery-arm'],
                         ['swm320-lq100', 'sourcery-arm'],
                         ['beaglebone', 'sourcery-arm'],
-                        ['zynq7000', 'sourcery-arm'],
                         ['frdm-k64f', 'sourcery-arm'],
                         ['fh8620', 'sourcery-arm'],
                         ['xplorer4330/M4', 'sourcery-arm'],

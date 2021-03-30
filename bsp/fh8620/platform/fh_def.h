@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #ifndef FH_DEF_H_
 #define FH_DEF_H_
 
@@ -32,29 +32,29 @@
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
-typedef char				SINT8;
-typedef short				SINT16;
-typedef int					SINT32;
-typedef long long			SINT64;
-typedef unsigned char		UINT8;
-typedef unsigned short		UINT16;
-typedef unsigned int		UINT32;
-typedef unsigned long long	UINT64;
+typedef char                SINT8;
+typedef short               SINT16;
+typedef int                 SINT32;
+typedef long long           SINT64;
+typedef unsigned char       UINT8;
+typedef unsigned short      UINT16;
+typedef unsigned int        UINT32;
+typedef unsigned long long  UINT64;
 
 #ifndef TYPE_DEFINED
-typedef	unsigned char		uchar;
-typedef signed   char		int8;
-typedef unsigned char		uint8;
-typedef signed   short		int16;
-typedef unsigned short		uint16;
-typedef signed   int		int32;
-typedef unsigned int		uint32;
-typedef signed   long  long	int64;
-typedef unsigned long long	uint64;
-typedef float        		ieee_single;
-typedef double       		ieee_double;
+typedef unsigned char       uchar;
+typedef signed   char       int8;
+typedef unsigned char       uint8;
+typedef signed   short      int16;
+typedef unsigned short      uint16;
+typedef signed   int        int32;
+typedef unsigned int        uint32;
+typedef signed   long  long int64;
+typedef unsigned long long  uint64;
+typedef float               ieee_single;
+typedef double              ieee_double;
 
-typedef unsigned long  		boolean;
+typedef unsigned long       boolean;
 
 #define TYPE_DEFINED
 

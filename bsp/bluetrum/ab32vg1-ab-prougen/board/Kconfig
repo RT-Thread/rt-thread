@@ -176,6 +176,10 @@ menu "On-chip Peripheral Drivers"
             config RTC_USING_INTERNAL_CLK
             bool "Using internal clock RTC"
             default y
+            config RTC_USING_1S_INT
+            bool "Using 1 second interrupt"
+            depends on RT_USING_ALARM
+            default n
         endif
 
     menuconfig BSP_USING_ADC

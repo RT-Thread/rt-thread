@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 /*****************************************************************************
  *  Include Section
  *  add all #include here
@@ -79,66 +79,66 @@
  *****************************************************************************/
 int timer_init(timer *tim)
 {
-	tim->TIMER_CTRL_REG = 0;
+    tim->TIMER_CTRL_REG = 0;
 }
 
 int timer_set_mode(timer *tim, enum timer_mode mode)
 {
-	switch (mode)
-	{
-		case TIMER_MODE_PERIODIC:
-			tim->TIMER_CTRL_REG |= TIMER_CTRL_MODE;
-			break;
-		case TIMER_MODE_ONESHOT:
-			tim->TIMER_CTRL_REG |= TIMER_CTRL_MODE;
-			break;
-		default:
-			rt_kprintf("Not support TIMER mode\n");
-			return -1;
-			break;
-	}
+    switch (mode)
+    {
+        case TIMER_MODE_PERIODIC:
+            tim->TIMER_CTRL_REG |= TIMER_CTRL_MODE;
+            break;
+        case TIMER_MODE_ONESHOT:
+            tim->TIMER_CTRL_REG |= TIMER_CTRL_MODE;
+            break;
+        default:
+            rt_kprintf("Not support TIMER mode\n");
+            return -1;
+            break;
+    }
 
-	return 0;
+    return 0;
 }
 
 void timer_set_period(timer *tim, UINT32 period, UINT32 clock)
 {
-	tim->TIMER_LOAD_COUNT = clock/period;
+    tim->TIMER_LOAD_COUNT = clock/period;
 }
 
 
 
 void timer_enable(timer *tim)
 {
-	tim->TIMER_CTRL_REG |= TIMER_CTRL_ENABLE;
+    tim->TIMER_CTRL_REG |= TIMER_CTRL_ENABLE;
 }
 
 void timer_disable(timer *tim)
 {
-	tim->TIMER_CTRL_REG &= ~TIMER_CTRL_ENABLE;
+    tim->TIMER_CTRL_REG &= ~TIMER_CTRL_ENABLE;
 }
 
 void timer_enable_irq(timer *tim)
 {
-	tim->TIMER_CTRL_REG &= ~TIMER_CTRL_INTMASK;
+    tim->TIMER_CTRL_REG &= ~TIMER_CTRL_INTMASK;
 }
 
 void timer_disable_irq(timer *tim)
 {
-	tim->TIMER_CTRL_REG |= TIMER_CTRL_INTMASK;
+    tim->TIMER_CTRL_REG |= TIMER_CTRL_INTMASK;
 }
 
 UINT32 timer_get_status(timer *tim)
 {
-	return tim->TIMER_INT_STATUS;
+    return tim->TIMER_INT_STATUS;
 }
 
 UINT32 timer_get_eoi(timer *tim)
 {
-	return tim->TIMER_EOI;
+    return tim->TIMER_EOI;
 }
 
 UINT32 timer_get_value(timer *tim)
 {
-	return tim->TIMER_LOAD_COUNT - tim->TIMER_CURRENT_VALUE;
+    return tim->TIMER_LOAD_COUNT - tim->TIMER_CURRENT_VALUE;
 }
