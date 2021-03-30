@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 /*****************************************************************************
  *  Include Section
  *  add all #include here
@@ -47,11 +47,11 @@
  *
  *
  **************************/
-#if RT_NAME_MAX	!= 16
+#if RT_NAME_MAX != 16
 #error "define RT_NAME_MAX 16"
 #endif
 
-#if RT_TICK_PER_SECOND	!= 100
+#if RT_TICK_PER_SECOND  != 100
 #warning "RT_TICK_PER_SECOND = 100"
 #endif
 

@@ -1,21 +1,7 @@
 /*
- * File      : drv_sdio.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -133,8 +119,8 @@ REG[31]  : Load cmd
 #define SDXC_UPDATE_CLOCK_CMD    BIT(21)
 #define SDXC_LOAD_CMD            BIT(31)
 
-/* 
-    SD status reg 
+/*
+    SD status reg
 REG[0]   : FIFO_RX_LEVEL
 REG[1]   : FIFO_TX_LEVEL
 REG[2]   : FIFO_EMPTY
@@ -143,7 +129,7 @@ REG[4-7] : FSM_STA
 REG[8]   : CARD_PRESENT
 REG[9]   : CARD_BUSY
 REG[10]  : FSM_BUSY
-REG[11-16]: RESP_IDX 
+REG[11-16]: RESP_IDX
 REG[17-21]: FIFO_LEVEL
 REG[31]   : DMA_REQ
 */

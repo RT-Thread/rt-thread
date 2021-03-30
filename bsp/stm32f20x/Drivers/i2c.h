@@ -5,17 +5,17 @@
 
 /* Exported constants --------------------------------------------------------*/
 
-#define	SR1_AF_Set				((uint16_t)0x0400)
-#define	SR1_ARLO_Set			((uint16_t)0x0200)
-#define	SR1_BERR_Set			((uint16_t)0x0100)
-#define	SR1_ADDR_Set			((uint16_t)0x0002)
-#define	SR1_SB_Set				((uint16_t)0x0001)
+#define SR1_AF_Set              ((uint16_t)0x0400)
+#define SR1_ARLO_Set            ((uint16_t)0x0200)
+#define SR1_BERR_Set            ((uint16_t)0x0100)
+#define SR1_ADDR_Set            ((uint16_t)0x0002)
+#define SR1_SB_Set              ((uint16_t)0x0001)
 
 
-#define SR2_BUSY				((uint16_t)0x0002)
-#define SR2_MSL					((uint16_t)0x0001)
+#define SR2_BUSY                ((uint16_t)0x0002)
+#define SR2_MSL                 ((uint16_t)0x0001)
 
-#define CR1_SWRST_Set			((uint16_t)0x8000)
+#define CR1_SWRST_Set           ((uint16_t)0x8000)
 /* I2C SPE mask */
 #define CR1_PE_Set              ((uint16_t)0x0001)
 #define CR1_PE_Reset            ((uint16_t)0xFFFE)
@@ -97,12 +97,12 @@
 
 #define I2C1_DMA_CHANNEL_TX           DMA1_Stream6
 #define I2C1_DMA_CHANNEL_RX           DMA1_Stream0
-#define I2C1_DMA_TX_IRQn	          DMA1_Stream6_IRQn
+#define I2C1_DMA_TX_IRQn              DMA1_Stream6_IRQn
 #define I2C1_DMA_RX_IRQn              DMA1_Stream0_IRQn
-								  
+
 #define I2C2_DMA_CHANNEL_TX           DMA1_Stream2
 #define I2C2_DMA_CHANNEL_RX           DMA1_Stream7
-#define I2C2_DMA_TX_IRQn	          DMA1_Stream2_IRQn
+#define I2C2_DMA_TX_IRQn              DMA1_Stream2_IRQn
 #define I2C2_DMA_RX_IRQn              DMA1_Stream7_IRQn
 
 #define I2C1_DR_Address              0x40005410
@@ -112,20 +112,20 @@
 #define I2C1_SCL_PIN                  GPIO_Pin_6
 #define I2C1_SDA_SOURCE               GPIO_PinSource7
 #define I2C1_SCL_SOURCE               GPIO_PinSource6
-#define I2C1_GPIO_PORT          	  GPIOB 
-#define I2C1_GPIO_CLK          		  RCC_AHB1Periph_GPIOB
+#define I2C1_GPIO_PORT                GPIOB
+#define I2C1_GPIO_CLK                 RCC_AHB1Periph_GPIOB
 #define I2C1_CLK                      RCC_APB1Periph_I2C1
 
 #define I2C2_SDA_PIN                  GPIO_Pin_11
 #define I2C2_SCL_PIN                  GPIO_Pin_10
 #define I2C2_SDA_SOURCE               GPIO_PinSource11
 #define I2C2_SCL_SOURCE               GPIO_PinSource10
-#define I2C2_GPIO_PORT          	  GPIOB 
-#define I2C2_GPIO_CLK          		  RCC_AHB1Periph_GPIOB
+#define I2C2_GPIO_PORT                GPIOB
+#define I2C2_GPIO_CLK                 RCC_AHB1Periph_GPIOB
 #define I2C2_CLK                      RCC_APB1Periph_I2C1
 
-#define I2C_MEM_1Byte			      1
-#define I2C_MEM_2Bytes				  2
+#define I2C_MEM_1Byte                 1
+#define I2C_MEM_2Bytes                2
 
 typedef enum
 {
