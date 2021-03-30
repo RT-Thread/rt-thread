@@ -23,6 +23,8 @@ jobs:
       shell: bash
       run: |
         git --version
+        git remote add origin https://github.com/RT-Thread/rt-thread
+        git fetch origin
         git branch
         git reset origin/master --soft
         git status
