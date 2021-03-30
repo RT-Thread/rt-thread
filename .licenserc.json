@@ -1,0 +1,20 @@
+{
+    "**/*.{c,h,C,H,s,S}": ["SPDX-License-Identifier: Apache-2.0"],
+    "ignore": [
+        "bsp/",
+        "documentation/",
+        "components/libc/getline/",
+        "components/net/lwip-1.4.1/",
+        "components/net/lwip-2.0.2/",
+        "components/net/lwip-2.1.2/",
+        "components/net/lwip_dhcpd/",
+        "components/net/lwip_nat/",
+        "components/drivers/spi/sfud/",
+        "components/dfs/filesystems/elmfat/",
+        "components/utilities/ymodem/",
+        "components/utilities/zmodem/",
+        "components/vbus/",
+        "components/vmm/",
+        "tools/kconfig-frontends/"
+    ]
+}
