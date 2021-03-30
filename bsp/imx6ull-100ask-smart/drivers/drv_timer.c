@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,22 +25,22 @@ static int g_sys_freq;
 
 /* System Counter */
 struct sctr_regs {
-	rt_uint32_t cntcr;
-	rt_uint32_t cntsr;
-	rt_uint32_t cntcv1;
-	rt_uint32_t cntcv2;
-	rt_uint32_t resv1[4];
-	rt_uint32_t cntfid0;
-	rt_uint32_t cntfid1;
-	rt_uint32_t cntfid2;
-	rt_uint32_t resv2[1001];
-	rt_uint32_t counterid[1];
+    rt_uint32_t cntcr;
+    rt_uint32_t cntsr;
+    rt_uint32_t cntcv1;
+    rt_uint32_t cntcv2;
+    rt_uint32_t resv1[4];
+    rt_uint32_t cntfid0;
+    rt_uint32_t cntfid1;
+    rt_uint32_t cntfid2;
+    rt_uint32_t resv2[1001];
+    rt_uint32_t counterid[1];
 };
 
-#define SC_CNTCR_ENABLE		(1 << 0)
-#define SC_CNTCR_HDBG		(1 << 1)
-#define SC_CNTCR_FREQ0		(1 << 8)
-#define SC_CNTCR_FREQ1		(1 << 9)
+#define SC_CNTCR_ENABLE     (1 << 0)
+#define SC_CNTCR_HDBG       (1 << 1)
+#define SC_CNTCR_FREQ0      (1 << 8)
+#define SC_CNTCR_FREQ1      (1 << 9)
 
 
 #define isb() __asm__ __volatile__ ("" : : : "memory")
@@ -96,79 +96,76 @@ volatile unsigned int *CCM_CLPCR;
 
 static void imx6ull_enable_clk_in_waitmode(void)
 {
-	CCM_CLPCR = rt_hw_kernel_phys_to_virt((void*)0x20C4054, 4); 
-	*CCM_CLPCR &= ~(1<<5 | 0x3);
+    CCM_CLPCR = rt_hw_kernel_phys_to_virt((void*)0x20C4054, 4);
+    *CCM_CLPCR &= ~(1<<5 | 0x3);
 }
 
 static void system_counter_clk_source_init(void)
 {
-	/* to do */
+    /* to do */
 }
 
 static void system_counter_init(void)
 {
-	/* enable system_counter */
-#define SCTR_BASE_ADDR	0x021DC000
+    /* enable system_counter */
+#define SCTR_BASE_ADDR  0x021DC000
 #define CONFIG_SC_TIMER_CLK  8000000
 
-	/* imx6ull, enable system counter */
-	struct sctr_regs *sctr = (struct sctr_regs *)rt_hw_kernel_phys_to_virt((void*)SCTR_BASE_ADDR, sizeof(struct sctr_regs));
-	unsigned long val, freq;
+    /* imx6ull, enable system counter */
+    struct sctr_regs *sctr = (struct sctr_regs *)rt_hw_kernel_phys_to_virt((void*)SCTR_BASE_ADDR, sizeof(struct sctr_regs));
+    unsigned long val, freq;
 
-	freq = CONFIG_SC_TIMER_CLK;
-	asm volatile("mcr p15, 0, %0, c14, c0, 0" : : "r" (freq));
+    freq = CONFIG_SC_TIMER_CLK;
+    asm volatile("mcr p15, 0, %0, c14, c0, 0" : : "r" (freq));
 
-	sctr->cntfid0 = freq;
+    sctr->cntfid0 = freq;
 
-	/* Enable system counter */
-	val = sctr->cntcr;
-	val &= ~(SC_CNTCR_FREQ0 | SC_CNTCR_FREQ1);
-	val |= SC_CNTCR_FREQ0 | SC_CNTCR_ENABLE | SC_CNTCR_HDBG;
-	sctr->cntcr = val;
-	
-	imx6ull_enable_clk_in_waitmode();
+    /* Enable system counter */
+    val = sctr->cntcr;
+    val &= ~(SC_CNTCR_FREQ0 | SC_CNTCR_FREQ1);
+    val |= SC_CNTCR_FREQ0 | SC_CNTCR_ENABLE | SC_CNTCR_HDBG;
+    sctr->cntcr = val;
+
+    imx6ull_enable_clk_in_waitmode();
 }
 
 static void arch_timer_init(void)
 {
-	g_sys_freq = read_cntfrq();
-	
-	/* set timeout val */
-	disable_cntp();
-	write_cntp_tval(TICK_PERIOD);
-	
-	/* start timer */
-	enable_cntp();
-	
-	/* enable irq */
-	
-}
+    g_sys_freq = read_cntfrq();
 
+    /* set timeout val */
+    disable_cntp();
+    write_cntp_tval(TICK_PERIOD);
+
+    /* start timer */
+    enable_cntp();
+
+    /* enable irq */
+}
 
 static void rt_hw_timer_isr(int vector, void *param)
 {
     rt_tick_increase();
 
-	/* setup for next irq */
+    /* setup for next irq */
     /* clear interrupt */
-	disable_cntp();
+    disable_cntp();
     write_cntp_cval(read_cntp_cval() + TICK_PERIOD);
-	enable_cntp();
+    enable_cntp();
 }
 
 int rt_hw_timer_init(void)
 {
     /* Setup Timer for generating irq */
     /* enable timer */
-	system_counter_clk_source_init(); 
-	system_counter_init();
-	arch_timer_init();
+    system_counter_clk_source_init();
+    system_counter_init();
+    arch_timer_init();
 
-	/* insall irq, enable irq */
+    /* insall irq, enable irq */
     rt_hw_interrupt_install(IRQ_SYS_TICK, rt_hw_timer_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(IRQ_SYS_TICK);
 
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_timer_init);
-
