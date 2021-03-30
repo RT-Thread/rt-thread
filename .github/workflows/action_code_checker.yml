@@ -23,10 +23,11 @@ jobs:
       shell: bash
       run: |
         git --version
-        git remote add origin https://github.com/RT-Thread/rt-thread
-        git fetch origin
+        git remote
+        git remote add rtt_origin https://github.com/RT-Thread/rt-thread
+        git fetch rtt_origin
         git branch
-        git reset origin/master --soft
+        git reset rtt_origin/master --soft
         git status
 
     - name: Check License Lines
