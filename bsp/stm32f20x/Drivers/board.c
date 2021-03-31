@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -30,16 +30,16 @@
 void SD_LowLevel_DeInit(void)
 {
   GPIO_InitTypeDef  GPIO_InitStructure;
-  
+
   /*!< Disable SDIO Clock */
   SDIO_ClockCmd(DISABLE);
-  
+
   /*!< Set Power State to OFF */
   SDIO_SetPowerState(SDIO_PowerState_OFF);
 
   /*!< DeInitializes the SDIO peripheral */
   SDIO_DeInit();
-  
+
   /* Disable the SDIO APB2 Clock */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SDIO, DISABLE);
 
@@ -66,7 +66,7 @@ void SD_LowLevel_DeInit(void)
 }
 
 /**
-  * @brief  Initializes the SD Card and put it into StandBy State (Ready for 
+  * @brief  Initializes the SD Card and put it into StandBy State (Ready for
   *         data transfer).
   * @param  None
   * @retval None
@@ -101,7 +101,7 @@ void SD_LowLevel_Init(void)
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
-  
+
   /*!< Configure SD_SPI_DETECT_PIN pin: SD Card detect pin */
   GPIO_InitStructure.GPIO_Pin = SD_DETECT_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -154,7 +154,7 @@ void SD_LowLevel_DMA_TxConfig(uint32_t *BufferSRC, uint32_t BufferSize)
 
   /* DMA2 Stream3  or Stream6 enable */
   DMA_Cmd(SD_SDIO_DMA_STREAM, ENABLE);
-    
+
 }
 
 /**
@@ -219,11 +219,11 @@ uint32_t SD_DMAEndOfTransferStatus(void)
 void NVIC_Configuration(void)
 {
 #ifdef  VECT_TAB_RAM
-	/* Set the Vector Table base location at 0x20000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
+    /* Set the Vector Table base location at 0x20000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
 #else  /* VECT_TAB_FLASH  */
-	/* Set the Vector Table base location at 0x08000000 */
-	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+    /* Set the Vector Table base location at 0x08000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
 }
 
@@ -236,15 +236,15 @@ void NVIC_Configuration(void)
  *******************************************************************************/
 void  SysTick_Configuration(void)
 {
-	RCC_ClocksTypeDef  rcc_clocks;
-	rt_uint32_t         cnts;
+    RCC_ClocksTypeDef  rcc_clocks;
+    rt_uint32_t         cnts;
 
-	RCC_GetClocksFreq(&rcc_clocks);
+    RCC_GetClocksFreq(&rcc_clocks);
 
-	cnts = (rt_uint32_t)rcc_clocks.HCLK_Frequency / RT_TICK_PER_SECOND;
+    cnts = (rt_uint32_t)rcc_clocks.HCLK_Frequency / RT_TICK_PER_SECOND;
 
-	SysTick_Config(cnts);
-	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
+    SysTick_Config(cnts);
+    SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
 }
 
 /**
@@ -253,13 +253,13 @@ void  SysTick_Configuration(void)
  */
 void SysTick_Handler(void)
 {
-	/* enter interrupt */
-	rt_interrupt_enter();
+    /* enter interrupt */
+    rt_interrupt_enter();
 
-	rt_tick_increase();
+    rt_tick_increase();
 
-	/* leave interrupt */
-	rt_interrupt_leave();
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 /**
@@ -267,15 +267,15 @@ void SysTick_Handler(void)
  */
 void rt_hw_board_init()
 {
-	/* NVIC Configuration */
-	NVIC_Configuration();
+    /* NVIC Configuration */
+    NVIC_Configuration();
 
-	/* Configure the SysTick */
-	SysTick_Configuration();
+    /* Configure the SysTick */
+    SysTick_Configuration();
 
-	rt_hw_usart_init();
+    rt_hw_usart_init();
 #ifdef RT_USING_CONSOLE
-	rt_console_set_device(CONSOLE_DEVICE);
+    rt_console_set_device(CONSOLE_DEVICE);
 #endif
 }
 

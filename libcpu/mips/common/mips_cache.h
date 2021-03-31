@@ -102,7 +102,7 @@ enum dma_data_direction
 #define INDEX_STORE_DATA_D      0x1d
 #define INDEX_STORE_DATA_S      0x1f
 
-#define cache_op(op, addr)		    \
+#define cache_op(op, addr)          \
     __asm__ __volatile__(        \
         ".set   push\n"             \
         ".set   noreorder\n"        \
@@ -112,95 +112,95 @@ enum dma_data_direction
         :                           \
         : "i" (op), "R" (*(unsigned char *)(addr)))
 
-#define cache16_unroll32(base, op)					\
-	__asm__ __volatile__(						\
-	"	.set noreorder					\n"	\
-	"	.set mips3					\n"	\
-	"	cache %1, 0x000(%0); cache %1, 0x010(%0)	\n"	\
-	"	cache %1, 0x020(%0); cache %1, 0x030(%0)	\n"	\
-	"	cache %1, 0x040(%0); cache %1, 0x050(%0)	\n"	\
-	"	cache %1, 0x060(%0); cache %1, 0x070(%0)	\n"	\
-	"	cache %1, 0x080(%0); cache %1, 0x090(%0)	\n"	\
-	"	cache %1, 0x0a0(%0); cache %1, 0x0b0(%0)	\n"	\
-	"	cache %1, 0x0c0(%0); cache %1, 0x0d0(%0)	\n"	\
-	"	cache %1, 0x0e0(%0); cache %1, 0x0f0(%0)	\n"	\
-	"	cache %1, 0x100(%0); cache %1, 0x110(%0)	\n"	\
-	"	cache %1, 0x120(%0); cache %1, 0x130(%0)	\n"	\
-	"	cache %1, 0x140(%0); cache %1, 0x150(%0)	\n"	\
-	"	cache %1, 0x160(%0); cache %1, 0x170(%0)	\n"	\
-	"	cache %1, 0x180(%0); cache %1, 0x190(%0)	\n"	\
-	"	cache %1, 0x1a0(%0); cache %1, 0x1b0(%0)	\n"	\
-	"	cache %1, 0x1c0(%0); cache %1, 0x1d0(%0)	\n"	\
-	"	cache %1, 0x1e0(%0); cache %1, 0x1f0(%0)	\n"	\
-	"	.set mips0					\n"	\
-	"	.set reorder					\n"	\
-		:							\
-		: "r" (base),						\
-		  "i" (op));
+#define cache16_unroll32(base, op)                  \
+    __asm__ __volatile__(                       \
+    "   .set noreorder                  \n" \
+    "   .set mips3                  \n" \
+    "   cache %1, 0x000(%0); cache %1, 0x010(%0)    \n" \
+    "   cache %1, 0x020(%0); cache %1, 0x030(%0)    \n" \
+    "   cache %1, 0x040(%0); cache %1, 0x050(%0)    \n" \
+    "   cache %1, 0x060(%0); cache %1, 0x070(%0)    \n" \
+    "   cache %1, 0x080(%0); cache %1, 0x090(%0)    \n" \
+    "   cache %1, 0x0a0(%0); cache %1, 0x0b0(%0)    \n" \
+    "   cache %1, 0x0c0(%0); cache %1, 0x0d0(%0)    \n" \
+    "   cache %1, 0x0e0(%0); cache %1, 0x0f0(%0)    \n" \
+    "   cache %1, 0x100(%0); cache %1, 0x110(%0)    \n" \
+    "   cache %1, 0x120(%0); cache %1, 0x130(%0)    \n" \
+    "   cache %1, 0x140(%0); cache %1, 0x150(%0)    \n" \
+    "   cache %1, 0x160(%0); cache %1, 0x170(%0)    \n" \
+    "   cache %1, 0x180(%0); cache %1, 0x190(%0)    \n" \
+    "   cache %1, 0x1a0(%0); cache %1, 0x1b0(%0)    \n" \
+    "   cache %1, 0x1c0(%0); cache %1, 0x1d0(%0)    \n" \
+    "   cache %1, 0x1e0(%0); cache %1, 0x1f0(%0)    \n" \
+    "   .set mips0                  \n" \
+    "   .set reorder                    \n" \
+        :                           \
+        : "r" (base),                       \
+          "i" (op));
 
 
 static inline void flush_icache_line_indexed(rt_ubase_t addr)
 {
-	cache_op(INDEX_INVALIDATE_I, addr);
+    cache_op(INDEX_INVALIDATE_I, addr);
 }
 
 static inline void flush_dcache_line_indexed(rt_ubase_t addr)
 {
-	cache_op(INDEX_WRITEBACK_INV_D, addr);
+    cache_op(INDEX_WRITEBACK_INV_D, addr);
 }
 
 static inline void flush_icache_line(rt_ubase_t addr)
 {
-	cache_op(HIT_INVALIDATE_I, addr);
+    cache_op(HIT_INVALIDATE_I, addr);
 }
 
 static inline void lock_icache_line(rt_ubase_t addr)
 {
-	cache_op(FETCH_AND_LOCK_I, addr);
+    cache_op(FETCH_AND_LOCK_I, addr);
 }
 
 static inline void lock_dcache_line(rt_ubase_t addr)
 {
-	cache_op(FETCH_AND_LOCK_D, addr);
+    cache_op(FETCH_AND_LOCK_D, addr);
 }
 
 static inline void flush_dcache_line(rt_ubase_t addr)
 {
-	cache_op(HIT_WRITEBACK_INV_D, addr);
+    cache_op(HIT_WRITEBACK_INV_D, addr);
 }
 
 static inline void invalidate_dcache_line(rt_ubase_t addr)
 {
-	cache_op(HIT_INVALIDATE_D, addr);
+    cache_op(HIT_INVALIDATE_D, addr);
 }
 static inline void blast_dcache16(void)
 {
-	rt_ubase_t start = KSEG0BASE;
-	rt_ubase_t end = start + g_mips_core.dcache_size;
-	rt_ubase_t addr;
+    rt_ubase_t start = KSEG0BASE;
+    rt_ubase_t end = start + g_mips_core.dcache_size;
+    rt_ubase_t addr;
 
-	for (addr = start; addr < end; addr += g_mips_core.dcache_line_size)
-		cache16_unroll32(addr, INDEX_WRITEBACK_INV_D);
+    for (addr = start; addr < end; addr += g_mips_core.dcache_line_size)
+        cache16_unroll32(addr, INDEX_WRITEBACK_INV_D);
 }
 
 static inline void inv_dcache16(void)
 {
-	rt_ubase_t start = KSEG0BASE;
-	rt_ubase_t end = start + g_mips_core.dcache_size;
-	rt_ubase_t addr;
+    rt_ubase_t start = KSEG0BASE;
+    rt_ubase_t end = start + g_mips_core.dcache_size;
+    rt_ubase_t addr;
 
-	for (addr = start; addr < end; addr += g_mips_core.dcache_line_size)
-		cache16_unroll32(addr, HIT_INVALIDATE_D);
+    for (addr = start; addr < end; addr += g_mips_core.dcache_line_size)
+        cache16_unroll32(addr, HIT_INVALIDATE_D);
 }
 
 static inline void blast_icache16(void)
 {
-	rt_ubase_t start = KSEG0BASE;
-	rt_ubase_t end = start + g_mips_core.icache_size;
-	rt_ubase_t addr;
+    rt_ubase_t start = KSEG0BASE;
+    rt_ubase_t end = start + g_mips_core.icache_size;
+    rt_ubase_t addr;
 
-	for (addr = start; addr < end; addr += g_mips_core.icache_line_size)
-		cache16_unroll32(addr, INDEX_INVALIDATE_I);
+    for (addr = start; addr < end; addr += g_mips_core.icache_line_size)
+        cache16_unroll32(addr, INDEX_INVALIDATE_I);
 }
 
 void r4k_cache_init(void);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,27 +12,27 @@
 
 void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size)
 {
-	int i = 0, j =0;
+    int i = 0, j =0;
 
-	RT_ASSERT(addr);
+    RT_ASSERT(addr);
 
-	addr = addr & ~0xF;
-	size = 4*((size + 3)/4);
+    addr = addr & ~0xF;
+    size = 4*((size + 3)/4);
 
-	while(i < size)
-	{
-		rt_kprintf("0x%08x: ", addr );
+    while(i < size)
+    {
+        rt_kprintf("0x%08x: ", addr );
 
-		for(j=0; j<4; j++)
-		{
-			rt_kprintf("0x%08x  ", *(rt_uint32_t *)addr);
+        for(j=0; j<4; j++)
+        {
+            rt_kprintf("0x%08x  ", *(rt_uint32_t *)addr);
 
-			addr += 4;
-			i++;
-		}
+            addr += 4;
+            i++;
+        }
 
-		rt_kprintf("\n");
-	}
+        rt_kprintf("\n");
+    }
 
-	return;
+    return;
 }
