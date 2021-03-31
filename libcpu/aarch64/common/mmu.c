@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -52,7 +52,7 @@ void mmu_memset(char *dst, char v,  size_t len)
 }
 
 static unsigned long __page_off = 0;
-static unsigned long get_free_page(void) 
+static unsigned long get_free_page(void)
 {
     __page_off += 512;
     return (unsigned long)(main_tbl + __page_off);
@@ -128,7 +128,7 @@ void mmu_enable(void)
 
 }
 
-static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned long pa, unsigned long attr) 
+static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned long pa, unsigned long attr)
 {
     int level;
     unsigned long* cur_lv_tbl = lv0_tbl;
@@ -136,22 +136,22 @@ static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned
     unsigned long off;
     int level_shift = 39;
 
-    if (va & (0x200000UL - 1)) 
+    if (va & (0x200000UL - 1))
     {
         return MMU_MAP_ERROR_VANOTALIGN;
     }
-    if (pa & (0x200000UL - 1)) 
+    if (pa & (0x200000UL - 1))
     {
         return MMU_MAP_ERROR_PANOTALIGN;
     }
-    for (level = 0; level < 2; level++) 
+    for (level = 0; level < 2; level++)
     {
         off = (va >> level_shift);
         off &= MMU_LEVEL_MASK;
-        if ((cur_lv_tbl[off] & 1) == 0) 
+        if ((cur_lv_tbl[off] & 1) == 0)
         {
             page = get_free_page();
-            if (!page) 
+            if (!page)
             {
                 return MMU_MAP_ERROR_NOPAGE;
             }
@@ -159,7 +159,7 @@ static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned
             cur_lv_tbl[off] = page | 0x3UL;
         }
         page = cur_lv_tbl[off];
-        if (!(page & 0x2)) 
+        if (!(page & 0x2))
         {
             //is block! error!
             return MMU_MAP_ERROR_CONFLICT;
@@ -239,8 +239,8 @@ static int level2shift(int level)
 static uint64_t *get_level_table(uint64_t *pte)
 {
     uint64_t *table = (uint64_t *)(*pte & XLAT_ADDR_MASK);
-    
-    if (pte_type(pte) != PMD_TYPE_TABLE) 
+
+    if (pte_type(pte) != PMD_TYPE_TABLE)
     {
         table = create_table();
         set_table(pte, table);
@@ -259,10 +259,10 @@ static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t att
     int level = 0;
 
     addr = virt;
-    while (size) 
+    while (size)
     {
         table = &main_tbl[0];
-        for (level = 0; level < 4; level++) 
+        for (level = 0; level < 4; level++)
         {
             block_shift = level2shift(level);
             idx = addr >> block_shift;
@@ -270,7 +270,7 @@ static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t att
             block_size = (uint64_t)(1L << block_shift);
             pte = table + idx;
 
-            if (size >= block_size && IS_ALIGNED(addr, block_size)) 
+            if (size >= block_size && IS_ALIGNED(addr, block_size))
             {
                 attr &= 0xfff0000000000ffcUL;
                 if(level != 3)
@@ -298,7 +298,7 @@ void armv8_map(unsigned long va, unsigned long pa, unsigned long size, unsigned 
 
 void rt_hw_dcache_enable(void)
 {
-    if (!(get_sctlr() & CR_M)) 
+    if (!(get_sctlr() & CR_M))
     {
         rt_kprintf("please init mmu!\n");
     }

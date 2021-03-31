@@ -8,8 +8,8 @@
  * http://www.rt-thread.org/license/LICENSE
  *
  * Change Logs:
- * Date			Author		Notes
- * 2012-02-13 	mojingxian 	first version
+ * Date         Author      Notes
+ * 2012-02-13   mojingxian  first version
  */
 
 #include <rtthread.h>
@@ -23,10 +23,10 @@ rt_uint32_t rt_thread_switch_interrupt_flag;
  * initializes stack of thread
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-	rt_uint8_t *stack_addr, void *texit)
+    rt_uint8_t *stack_addr, void *texit)
 {
     unsigned char i;
-	unsigned long *stk;
+    unsigned long *stk;
 
     stk    = (unsigned long *)stack_addr;     /* Load stack pointer                                    */
 
