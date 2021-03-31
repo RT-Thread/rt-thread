@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #ifndef FH_PMU_H_
 #define FH_PMU_H_
 
@@ -36,7 +36,7 @@
 #define     REG_PMU_PLL0_CTRL           (0x010)
 #define     REG_PMU_PLL1_CTRL           (0x014)
 #define     REG_PMU_ARC_CLK_GATE        (0x018)
-#define     REG_PMU_CLK_GATE        	(0x01c)
+#define     REG_PMU_CLK_GATE            (0x01c)
 #define     REG_PMU_CLK_SEL             (0x020)
 #define     REG_PMU_CLK_DIV0            (0x024)
 #define     REG_PMU_CLK_DIV1            (0x028)

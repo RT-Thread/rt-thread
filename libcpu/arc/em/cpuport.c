@@ -22,11 +22,11 @@ rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t exc_nest_count;
 
 struct init_stack_frame {
-	rt_uint32_t pc;
-	rt_uint32_t blink;
-	rt_uint32_t task;
-	rt_uint32_t status32;
-	rt_uint32_t r0;
+    rt_uint32_t pc;
+    rt_uint32_t blink;
+    rt_uint32_t task;
+    rt_uint32_t status32;
+    rt_uint32_t r0;
 };
 
 /**
@@ -55,7 +55,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stack_frame->blink = (rt_uint32_t)texit;
     stack_frame->task = (rt_uint32_t)tentry;
     stack_frame->status32 = ARC_INIT_STATUS;
-	stack_frame->r0 = (rt_uint32_t)parameter;
+    stack_frame->r0 = (rt_uint32_t)parameter;
 
     return stk;
 }
@@ -74,14 +74,14 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context))
 void set_hw_stack_check(rt_uint32_t *from, rt_uint32_t *to)
 {
     struct rt_thread *rt_thread_to;
-	if (to != NULL) {
+    if (to != NULL) {
         rt_thread_to = rt_container_of(to, struct rt_thread, sp);
 #if ARC_FEATURE_SEC_PRESENT
-		arc_aux_write(AUX_S_KSTACK_TOP, (uint32_t)(rt_thread_to->stack_addr));
-		arc_aux_write(AUX_S_KSTACK_BASE, (uint32_t)(rt_thread_to->stack_addr)+rt_thread_to->stack_size);
+        arc_aux_write(AUX_S_KSTACK_TOP, (uint32_t)(rt_thread_to->stack_addr));
+        arc_aux_write(AUX_S_KSTACK_BASE, (uint32_t)(rt_thread_to->stack_addr)+rt_thread_to->stack_size);
 #else
-		arc_aux_write(AUX_KSTACK_TOP, (uint32_t)(rt_thread_to->stack_addr));
-		arc_aux_write(AUX_KSTACK_BASE, (uint32_t)(rt_thread_to->stack_addr)+rt_thread_to->stack_size);
+        arc_aux_write(AUX_KSTACK_TOP, (uint32_t)(rt_thread_to->stack_addr));
+        arc_aux_write(AUX_KSTACK_BASE, (uint32_t)(rt_thread_to->stack_addr)+rt_thread_to->stack_size);
 #endif
-	}
+    }
 }
