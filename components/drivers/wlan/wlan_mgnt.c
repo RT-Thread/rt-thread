@@ -53,6 +53,7 @@
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 #define TIME_STOP()    (rt_timer_stop(&reconnect_time))
 #define TIME_START()   (rt_timer_start(&reconnect_time))
+static rt_uint32_t id = 0;
 #else
 #define TIME_STOP()
 #define TIME_START()
@@ -500,7 +501,6 @@ static rt_err_t rt_wlan_sta_info_del_all(int timeout)
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 static void rt_wlan_auto_connect_run(struct rt_work *work, void *parameter)
 {
-    static rt_uint32_t id = 0;
     struct rt_wlan_cfg_info cfg_info;
     char *password = RT_NULL;
     rt_base_t level;
@@ -584,6 +584,9 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
     case RT_WLAN_DEV_EVT_CONNECT:
     {
         RT_WLAN_LOG_D("event: CONNECT");
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
+        id = 0;
+#endif
         _sta_mgnt.state |= RT_WLAN_STATE_CONNECT;
         _sta_mgnt.state &= ~RT_WLAN_STATE_CONNECTING;
         user_event = RT_WLAN_EVT_STA_CONNECTED;
