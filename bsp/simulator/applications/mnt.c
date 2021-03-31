@@ -15,8 +15,6 @@
 
 int mnt_init(void)
 {
-    dfs_init();
-
 #ifdef RT_USING_DFS_WINSHAREDIR
     extern int dfs_win32_init(void);
     extern rt_err_t rt_win_sharedir_init(const char *name);
@@ -54,5 +52,5 @@ int mnt_init(void)
 
     return 0;
 }
-
+INIT_COMPONENT_EXPORT(mnt_init);
 #endif
