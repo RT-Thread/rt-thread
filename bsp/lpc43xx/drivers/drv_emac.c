@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,7 +20,7 @@
 #define EMAC_PHY_100MBIT    2
 
 #define MAX_ADDR_LEN 6
-static rt_uint32_t ETH_RAM_BASE[4 * 1024] SECTION("ETH_RAM");
+static rt_uint32_t ETH_RAM_BASE[4 * 1024] RT_SECTION("ETH_RAM");
 
 /* EMAC variables located in 16K Ethernet SRAM */
 #define RX_DESC_BASE         (uint32_t)&ETH_RAM_BASE[0]

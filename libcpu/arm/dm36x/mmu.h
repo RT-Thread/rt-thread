@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
 
 #include <rtthread.h>
 
-#define CACHE_LINE_SIZE	32
+#define CACHE_LINE_SIZE 32
 
 /*
  * Hardware page table definitions.
@@ -30,7 +30,7 @@
 /*
  *   - section
  */
-#define PGD_SECT_BUFFERABLE	(1 << 2)
+#define PGD_SECT_BUFFERABLE (1 << 2)
 #define PGD_SECT_CACHEABLE  (1 << 3)
 #define PGD_SECT_XN         (1 << 4)    /* ARMv6 */
 #define PGD_SECT_AP0        (1 << 10)
@@ -133,14 +133,14 @@
 #define PAGE_RO_FAULT   (PAGE_AP_RO|PTE_TYPE_SMALL) /* Read Only without cache and write buffer */
 
 struct mem_desc {
-	rt_uint32_t vaddr_start;
-	rt_uint32_t vaddr_end;
-	rt_uint32_t paddr_start;
-	rt_uint32_t sect_attr;   /* when page mapped */
-	rt_uint32_t page_attr;   /* only sector mapped valid */
-	rt_uint32_t mapped_mode;
-	#define     SECT_MAPPED  0
-	#define     PAGE_MAPPED  1
+    rt_uint32_t vaddr_start;
+    rt_uint32_t vaddr_end;
+    rt_uint32_t paddr_start;
+    rt_uint32_t sect_attr;   /* when page mapped */
+    rt_uint32_t page_attr;   /* only sector mapped valid */
+    rt_uint32_t mapped_mode;
+    #define     SECT_MAPPED  0
+    #define     PAGE_MAPPED  1
 };
 
 

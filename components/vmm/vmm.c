@@ -1,9 +1,9 @@
 /*
  *  VMM startup file.
  *
- * COPYRIGHT (C) 2013-2014, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2021, Real-Thread Information Technology Ltd
  * All rights reserved
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -22,9 +22,9 @@
 extern void rt_hw_interrupt_init(void);
 extern void rt_application_init(void);
 
-void vmm_entry(struct vmm_entry_param* param) SECTION(".vmm_init");
+void vmm_entry(struct vmm_entry_param* param) RT_SECTION(".vmm_init");
 
-struct rt_thread vmm_thread SECTION(".bss.share.vmm");
+struct rt_thread vmm_thread RT_SECTION(".bss.share.vmm");
 extern rt_uint8_t vmm_stack_start;
 extern rt_uint8_t vmm_stack_end;
 
@@ -75,7 +75,7 @@ static void vmm_entry_glue(rt_uint32_t level,
                            unsigned int kernel_domain)
     /* inline would make the section setting meaningless */
     __attribute__((noinline))
-    SECTION(".vmm_glue");
+    RT_SECTION(".vmm_glue");
 static void vmm_entry_glue(rt_uint32_t level,
                            unsigned int vmm_domain,
                            unsigned int kernel_domain)

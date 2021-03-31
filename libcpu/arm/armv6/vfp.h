@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -87,7 +87,7 @@
  })
 
 #define vmsr(vfp, var) \
-    asm("vmsr  "#vfp",  %0"	\
+    asm("vmsr  "#vfp",  %0" \
        : : "r" (var) : "cc")
 
 

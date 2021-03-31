@@ -28,8 +28,8 @@ RT_WEAK void rt_hw_cpu_reset()
  */
 RT_WEAK void rt_hw_cpu_shutdown()
 {
-	rt_kprintf("shutdown...\n");
+    rt_kprintf("shutdown...\n");
 
-	while (1);
+    while (1);
 }
 

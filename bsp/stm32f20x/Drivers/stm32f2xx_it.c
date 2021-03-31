@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    Project/STM32F2xx_StdPeriph_Template/stm32f2xx_it.c 
+  * @file    Project/STM32F2xx_StdPeriph_Template/stm32f2xx_it.c
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    18-April-2011
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
+  *          This file provides template for all exceptions handler and
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
@@ -19,7 +19,7 @@
   *
   * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f2xx.h"
@@ -126,7 +126,7 @@ void DebugMon_Handler(void)
 
 /**
   * @}
-  */ 
+  */
 
 #if defined(RT_USING_DFS) && STM32_USE_SDIO
 /*******************************************************************************
@@ -145,7 +145,7 @@ void SDIO_IRQHandler(void)
 
     /* Process All SDIO Interrupt Sources */
     if( SD_ProcessIRQSrc() == 2)
-		rt_kprintf("SD Error\n");
+        rt_kprintf("SD Error\n");
 
     /* leave interrupt */
     rt_interrupt_leave();

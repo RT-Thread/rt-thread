@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,7 +38,7 @@ static int rt_hw_sram_Init(void)
 
     /* Init XMC pin */
     at32_msp_xmc_init(XMC);
-    
+
     /*-- FSMC Configuration ------------------------------------------------------*/
     p.XMC_AdrOpTime         = 0x04;
     p.XMC_AdrHoldTime       = 0x04;
@@ -53,7 +53,7 @@ static int rt_hw_sram_Init(void)
     XMC_NORSRAMInitStructure.XMC_Dev                    = XMC_Dev_SRAM;
     XMC_NORSRAMInitStructure.XMC_BusType                = XMC_BusType_16b;
     XMC_NORSRAMInitStructure.XMC_EnableBurstMode        = XMC_BurstMode_Disable;
-    XMC_NORSRAMInitStructure.XMC_EnableAsynWait         = XMC_AsynWait_Disable;  
+    XMC_NORSRAMInitStructure.XMC_EnableAsynWait         = XMC_AsynWait_Disable;
     XMC_NORSRAMInitStructure.XMC_WaitSignalLv           = XMC_WaitSignalLv_Low;
     XMC_NORSRAMInitStructure.XMC_EnableBurstModeSplit   = XMC_BurstModeSplit_Disable;
     XMC_NORSRAMInitStructure.XMC_WaitSignalConfig       = XMC_WaitSignalConfig_BeforeWaitState;
@@ -63,9 +63,9 @@ static int rt_hw_sram_Init(void)
     XMC_NORSRAMInitStructure.XMC_WriteBurstSyn          = XMC_WriteBurstSyn_Disable;
     XMC_NORSRAMInitStructure.XMC_RWTimingStruct         = &p;
     XMC_NORSRAMInitStructure.XMC_WTimingStruct          = &p;
-    
-    XMC_NORSRAMInit(&XMC_NORSRAMInitStructure); 
-    
+
+    XMC_NORSRAMInit(&XMC_NORSRAMInitStructure);
+
     /*!< Enable FSMC Bank1_SRAM Bank */
     XMC_NORSRAMCmd(XMC_Bank1_NORSRAM3, ENABLE);
 
@@ -73,7 +73,7 @@ static int rt_hw_sram_Init(void)
         /* If RT_USING_MEMHEAP_AS_HEAP is enabled, SRAM is initialized to the heap */
         rt_memheap_init(&system_heap, "sram", (void *)EXT_SRAM_BEGIN, SRAM_LENGTH);
 #endif
-    
+
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_sram_Init);
@@ -81,11 +81,11 @@ INIT_BOARD_EXPORT(rt_hw_sram_Init);
 #ifdef DRV_DEBUG
 #ifdef FINSH_USING_MSH
 /**
-  * @brief  Writes a Half-word buffer to the FSMC SRAM memory. 
-  * @param  pBuffer : pointer to buffer. 
-  * @param  WriteAddr : SRAM memory internal address from which the data will be 
+  * @brief  Writes a Half-word buffer to the FSMC SRAM memory.
+  * @param  pBuffer : pointer to buffer.
+  * @param  WriteAddr : SRAM memory internal address from which the data will be
   *         written.
-  * @param  NumHalfwordToWrite : number of half-words to write. 
+  * @param  NumHalfwordToWrite : number of half-words to write.
   * @retval None
   */
 static void SRAM_WriteBuffer(uint16_t* pBuffer, uint32_t WriteAddr, uint32_t NumHalfwordToWrite)
@@ -94,15 +94,15 @@ static void SRAM_WriteBuffer(uint16_t* pBuffer, uint32_t WriteAddr, uint32_t Num
   {
     /*!< Transfer data to the memory */
     *(uint16_t *) (EXT_SRAM_BEGIN + WriteAddr) = *pBuffer++;
-    
-    /*!< Increment the address*/  
+
+    /*!< Increment the address*/
     WriteAddr += 2;
-  }   
+  }
 }
 
 /**
   * @brief  Reads a block of data from the FSMC SRAM memory.
-  * @param  pBuffer : pointer to the buffer that receives the data read from the 
+  * @param  pBuffer : pointer to the buffer that receives the data read from the
   *         SRAM memory.
   * @param  ReadAddr : SRAM memory internal address to read from.
   * @param  NumHalfwordToRead : number of half-words to read.
@@ -115,9 +115,9 @@ static void SRAM_ReadBuffer(uint16_t* pBuffer, uint32_t ReadAddr, uint32_t NumHa
     /*!< Read a half-word from the memory */
     *pBuffer++ = *(__IO uint16_t*) (EXT_SRAM_BEGIN + ReadAddr);
 
-    /*!< Increment the address*/  
+    /*!< Increment the address*/
     ReadAddr += 2;
-  }  
+  }
 }
 
 /**
@@ -146,9 +146,9 @@ int sram_test(void)
 
 
     /* Read data from XMC SRAM memory */
-    SRAM_ReadBuffer(RT_RxBuffer, RT_WRITE_READ_ADDR, RT_BUFFER_SIZE);  
+    SRAM_ReadBuffer(RT_RxBuffer, RT_WRITE_READ_ADDR, RT_BUFFER_SIZE);
 
-    /* Read back SRAM memory and check content correctness */   
+    /* Read back SRAM memory and check content correctness */
     for (Index = 0x00; (Index < RT_BUFFER_SIZE) && (WriteReadStatus == 0); Index++)
     {
         if (RT_RxBuffer[Index] != RT_TxBuffer[Index])
@@ -156,7 +156,7 @@ int sram_test(void)
             WriteReadStatus = Index + 1;
         }
     }
-    
+
     if(WriteReadStatus == 0)
     {
         LOG_D("SRAM test success!");
@@ -165,7 +165,7 @@ int sram_test(void)
     {
         LOG_E("SRAM test failed!");
     }
-    
+
     return RT_EOK;
 }
 MSH_CMD_EXPORT(sram_test, sram test)

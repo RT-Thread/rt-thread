@@ -1,8 +1,8 @@
 /***************************************************************************//**
- * @file 	board.c
- * @brief 	Board support of RT-Thread RTOS for EFM32
+ * @file    board.c
+ * @brief   Board support of RT-Thread RTOS for EFM32
  *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
+ * @author  onelife
  * @version 1.0
  *******************************************************************************
  * @section License
@@ -10,12 +10,12 @@
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2010-12-21	onelife		Initial creation for EFM32
- * 2011-05-06	onelife		Add EFM32 development kit and SPI Flash support
- * 2011-07-12	onelife		Add SWO output enable function
- * 2011-12-08	onelife		Add giant gecko development kit support
- * 2011-12-09	onelife		Add giant gecko support
+ * Date         Author      Notes
+ * 2010-12-21   onelife     Initial creation for EFM32
+ * 2011-05-06   onelife     Add EFM32 development kit and SPI Flash support
+ * 2011-07-12   onelife     Add SWO output enable function
+ * 2011-12-08   onelife     Add giant gecko development kit support
+ * 2011-12-09   onelife     Add giant gecko support
  * 2011-12-09   onelife     Add LEUART module support
  * 2011-12-14   onelife     Add LFXO enabling routine in driver initialization
  *  function
@@ -37,19 +37,19 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define IS_NVIC_VECTTAB(VECTTAB) 		(((VECTTAB) == RAM_MEM_BASE) || \
-										((VECTTAB) == FLASH_MEM_BASE))
-#define IS_NVIC_OFFSET(OFFSET) 			((OFFSET) < 0x000FFFFF)
+#define IS_NVIC_VECTTAB(VECTTAB)        (((VECTTAB) == RAM_MEM_BASE) || \
+                                        ((VECTTAB) == FLASH_MEM_BASE))
+#define IS_NVIC_OFFSET(OFFSET)          ((OFFSET) < 0x000FFFFF)
 
 /***************************************************************************//**
  * @addtogroup SysTick_clock_source
  * @{
  ******************************************************************************/
 #define SysTick_CLKSource_MASK          ((rt_uint32_t)0x00000004)
-#define SysTick_CLKSource_RTC		    ((rt_uint32_t)0x00000000)
-#define SysTick_CLKSource_HFCORECLK		((rt_uint32_t)0x00000004)
-#define IS_SYSTICK_CLK_SOURCE(SOURCE)	(((SOURCE) == SysTick_CLKSource_RTC) || \
-										((SOURCE) == SysTick_CLKSource_HFCORECLK))
+#define SysTick_CLKSource_RTC           ((rt_uint32_t)0x00000000)
+#define SysTick_CLKSource_HFCORECLK     ((rt_uint32_t)0x00000004)
+#define IS_SYSTICK_CLK_SOURCE(SOURCE)   (((SOURCE) == SysTick_CLKSource_RTC) || \
+                                        ((SOURCE) == SysTick_CLKSource_HFCORECLK))
 /***************************************************************************//**
  * @}
  ******************************************************************************/
@@ -67,20 +67,20 @@
  * @note
  *
  * @param[in] NVIC_VectTab
- *	 Indicate the vector table is allocated in RAM or ROM
+ *   Indicate the vector table is allocated in RAM or ROM
  *
  * @param[in] Offset
  *   The vector table offset
  ******************************************************************************/
 static void NVIC_SetVectorTable(
-	rt_uint32_t NVIC_VectTab,
-	rt_uint32_t Offset)
+    rt_uint32_t NVIC_VectTab,
+    rt_uint32_t Offset)
 {
-	/* Check the parameters */
-	RT_ASSERT(IS_NVIC_VECTTAB(NVIC_VectTab));
-	RT_ASSERT(IS_NVIC_OFFSET(Offset));
+    /* Check the parameters */
+    RT_ASSERT(IS_NVIC_VECTTAB(NVIC_VectTab));
+    RT_ASSERT(IS_NVIC_OFFSET(Offset));
 
-	SCB->VTOR = NVIC_VectTab | (Offset & (rt_uint32_t)0x1FFFFF80);
+    SCB->VTOR = NVIC_VectTab | (Offset & (rt_uint32_t)0x1FFFFF80);
 }
 
 /***************************************************************************//**
@@ -95,19 +95,19 @@ static void NVIC_SetVectorTable(
 static void NVIC_Configuration(void)
 {
 #ifdef  VECT_TAB_RAM
-	/* Set the vector table allocated at 0x20000000 */
-	NVIC_SetVectorTable(RAM_MEM_BASE, 0x0);
+    /* Set the vector table allocated at 0x20000000 */
+    NVIC_SetVectorTable(RAM_MEM_BASE, 0x0);
 #else  /* VECT_TAB_FLASH  */
-	/* Set the vector table allocated at 0x00000000 */
-	NVIC_SetVectorTable(FLASH_MEM_BASE, 0x0);
+    /* Set the vector table allocated at 0x00000000 */
+    NVIC_SetVectorTable(FLASH_MEM_BASE, 0x0);
 #endif
 
-	/* Set NVIC Preemption Priority Bits: 0 bit for pre-emption, 4 bits for
-	   subpriority */
-	NVIC_SetPriorityGrouping(0x7UL);
+    /* Set NVIC Preemption Priority Bits: 0 bit for pre-emption, 4 bits for
+       subpriority */
+    NVIC_SetPriorityGrouping(0x7UL);
 
-	/* Set Base Priority Mask Register */
-	__set_BASEPRI(EFM32_BASE_PRI_DEFAULT);
+    /* Set Base Priority Mask Register */
+    __set_BASEPRI(EFM32_BASE_PRI_DEFAULT);
 }
 
 /***************************************************************************//**
@@ -119,13 +119,13 @@ static void NVIC_Configuration(void)
  * @note
  *
  * @param[in] SysTick_CLKSource
- *	 Specifies the SysTick clock source.
+ *   Specifies the SysTick clock source.
  *
  * @arg SysTick_CLKSource_HCLK_Div8
- * 	 AHB clock divided by 8 selected as SysTick clock source.
+ *   AHB clock divided by 8 selected as SysTick clock source.
  *
  * @arg SysTick_CLKSource_HCLK
- *	 AHB clock selected as SysTick clock source.
+ *   AHB clock selected as SysTick clock source.
  ******************************************************************************/
 static void SysTick_CLKSourceConfig(rt_uint32_t SysTick_CLKSource)
 {
@@ -184,14 +184,14 @@ static void  SysTick_Configuration(void)
     /* Start LETIMER0 */
     LETIMER_Init(LETIMER0, &letimerInit);
 #else
-	rt_uint32_t 	coreClk;
-	rt_uint32_t 	cnts;
+    rt_uint32_t     coreClk;
+    rt_uint32_t     cnts;
 
-	coreClk = SystemCoreClockGet();
-	cnts = coreClk / RT_TICK_PER_SECOND;
+    coreClk = SystemCoreClockGet();
+    cnts = coreClk / RT_TICK_PER_SECOND;
 
-	SysTick_Config(cnts);
-	SysTick_CLKSourceConfig(SysTick_CLKSource_HFCORECLK);
+    SysTick_Config(cnts);
+    SysTick_CLKSourceConfig(SysTick_CLKSource_HFCORECLK);
 #endif
 }
 
@@ -206,9 +206,9 @@ static void  SysTick_Configuration(void)
  ******************************************************************************/
 void Swo_Configuration(void)
 {
-	rt_uint32_t *dwt_ctrl = (rt_uint32_t *) 0xE0001000;
-	rt_uint32_t *tpiu_prescaler = (rt_uint32_t *) 0xE0040010;
-	rt_uint32_t *tpiu_protocol = (rt_uint32_t *) 0xE00400F0;
+    rt_uint32_t *dwt_ctrl = (rt_uint32_t *) 0xE0001000;
+    rt_uint32_t *tpiu_prescaler = (rt_uint32_t *) 0xE0040010;
+    rt_uint32_t *tpiu_protocol = (rt_uint32_t *) 0xE00400F0;
 
     CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_GPIO;
     /* Enable Serial wire output pin */
@@ -258,12 +258,12 @@ void Swo_Configuration(void)
  ******************************************************************************/
 void rt_hw_board_init(void)
 {
-	/* Chip errata */
-	CHIP_Init();
+    /* Chip errata */
+    CHIP_Init();
 
     /* Initialize DVK board register access */
 #if defined(EFM32_GXXX_DK)
-	DVK_init();
+    DVK_init();
 #elif defined(EFM32GG_DK3750)
     DVK_init(DVK_Init_EBI);
 
@@ -272,12 +272,12 @@ void rt_hw_board_init(void)
     DVK_clearInterruptFlags(BC_INTFLAG_MASK);
 #endif
 
-	/* config NVIC Configuration */
-	NVIC_Configuration();
+    /* config NVIC Configuration */
+    NVIC_Configuration();
 
 #if defined(EFM32_USING_HFXO)
-	/* Configure external oscillator */
-	SystemHFXOClockSet(EFM32_HFXO_FREQUENCY);
+    /* Configure external oscillator */
+    SystemHFXOClockSet(EFM32_HFXO_FREQUENCY);
 
     /* Switching the CPU clock source to HFXO */
     CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFXO);
@@ -293,15 +293,15 @@ void rt_hw_board_init(void)
 
 #if defined(EFM32_SWO_ENABLE)
     /* Enable SWO */
-	Swo_Configuration();
+    Swo_Configuration();
 #endif
 
-	/* Enable high frequency peripheral clock */
-	CMU_ClockEnable(cmuClock_HFPER, true);
-	/* Enabling clock to the interface of the low energy modules */
-	CMU_ClockEnable(cmuClock_CORELE, true);
+    /* Enable high frequency peripheral clock */
+    CMU_ClockEnable(cmuClock_HFPER, true);
+    /* Enabling clock to the interface of the low energy modules */
+    CMU_ClockEnable(cmuClock_CORELE, true);
     /* Enable GPIO clock */
-	CMU_ClockEnable(cmuClock_GPIO, true);
+    CMU_ClockEnable(cmuClock_GPIO, true);
 
     /* Configure the SysTick */
     SysTick_Configuration();
@@ -318,8 +318,8 @@ void rt_hw_board_init(void)
  ******************************************************************************/
 void rt_hw_driver_init(void)
 {
-	/* Initialize DMA */
-	rt_hw_dma_init();
+    /* Initialize DMA */
+    rt_hw_dma_init();
 
     /* Select LFXO for specified module (and wait for it to stabilize) */
 #if (!defined(EFM32_USING_LFXO) && defined(RT_USING_RTC))
@@ -331,11 +331,11 @@ void rt_hw_driver_init(void)
 #error "Low frequency clock source is needed for using LEUART"
 #endif
 
-	/* Initialize USART */
+    /* Initialize USART */
 #if (defined(RT_USING_USART0) || defined(RT_USING_USART1) || \
     defined(RT_USING_USART2) || defined(RT_USING_UART0) || \
     defined(RT_USING_UART1))
-	rt_hw_usart_init();
+    rt_hw_usart_init();
 #endif
 
     /* Initialize LEUART */
@@ -343,7 +343,7 @@ void rt_hw_driver_init(void)
     rt_hw_leuart_init();
 #endif
 
-	/* Setup Console */
+    /* Setup Console */
 #if defined(EFM32_GXXX_DK)
     DVK_enablePeripheral(DVK_RS232A);
     DVK_enablePeripheral(DVK_SPI);
@@ -354,31 +354,31 @@ void rt_hw_driver_init(void)
     DVK_enablePeripheral(DVK_RS232_LEUART);
  #endif
 #endif
-	rt_console_set_device(CONSOLE_DEVICE);
+    rt_console_set_device(CONSOLE_DEVICE);
 
-	/* Initialize Timer */
+    /* Initialize Timer */
 #if (defined(RT_USING_TIMER0) || defined(RT_USING_TIMER1) || defined(RT_USING_TIMER2))
-	rt_hw_timer_init();
+    rt_hw_timer_init();
 #endif
 
-	/* Initialize ADC */
+    /* Initialize ADC */
 #if defined(RT_USING_ADC0)
-	rt_hw_adc_init();
+    rt_hw_adc_init();
 #endif
 
-	/* Initialize ACMP */
+    /* Initialize ACMP */
 #if (defined(RT_USING_ACMP0) || defined(RT_USING_ACMP1))
-	rt_hw_acmp_init();
+    rt_hw_acmp_init();
 #endif
 
-	/* Initialize IIC */
+    /* Initialize IIC */
 #if (defined(RT_USING_IIC0) || defined(RT_USING_IIC1))
-	rt_hw_iic_init();
+    rt_hw_iic_init();
 #endif
 
-	/* Initialize RTC */
+    /* Initialize RTC */
 #if defined(RT_USING_RTC)
-	rt_hw_rtc_init();
+    rt_hw_rtc_init();
 #endif
 
     /* Enable SPI access to MicroSD card */

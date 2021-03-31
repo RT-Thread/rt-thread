@@ -89,7 +89,7 @@ void TRACE_SWOSetup(void)
 /**************************************************************************//**
  * @brief Profiler configuration
  * @return true if energyAware Profiler/SWO is enabled, false if not
- * @note If first word of the user page is zero, this will not 
+ * @note If first word of the user page is zero, this will not
  *       enable SWO profiler output, see trace.h
  *****************************************************************************/
 bool TRACE_ProfilerSetup(void)
@@ -105,7 +105,7 @@ bool TRACE_ProfilerSetup(void)
   {
     TRACE_SWOSetup();
     return true;
-  }  
+  }
 }
 
 /** @} (end group BSP) */

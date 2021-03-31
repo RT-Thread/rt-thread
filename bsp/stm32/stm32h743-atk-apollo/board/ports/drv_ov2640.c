@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,7 +38,7 @@ struct rt_i2c_bus_device *i2c_bus  = RT_NULL;
 #define JPEG_LINE_SIZE  1 * 1024
 
 static pcf8574_device_t pcf_dev = RT_NULL;
-   
+
 static rt_uint32_t *jpeg_data_buf = RT_NULL;
 static rt_uint32_t JPEG_LINE0_BUF[JPEG_LINE_SIZE];
 static rt_uint32_t JPEG_LINE1_BUF[JPEG_LINE_SIZE];
@@ -454,7 +454,7 @@ rt_uint8_t ov2640_set_image_window_size(rt_uint16_t offx, rt_uint16_t offy, rt_u
    temp|=(offy>>4)&0X70;
    temp|=(hsize>>5)&0X08;
    temp|=(offx>>8)&0X07;
-   write_reg(i2c_bus, 0X55,temp); 
+   write_reg(i2c_bus, 0X55,temp);
    write_reg(i2c_bus, 0X57,(hsize>>2)&0X80);
    write_reg(i2c_bus, 0XE0,0X00);
    return 0;
@@ -550,36 +550,36 @@ int ov2640_pwdn_set(rt_uint8_t sta)
         return -1;
     }
     pcf8574_pin_write(pcf_dev, DCMI_PWDN_IO, sta);
-    
+
     return 0;
 }
 
 void sw_ov2640_mode(void)
-{  
+{
     GPIO_InitTypeDef GPIO_Initure = {0};
-    
+
     ov2640_pwdn_set(0);
-    
-    GPIO_Initure.Pin       = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_11;  
-    GPIO_Initure.Mode      = GPIO_MODE_AF_PP; 
-    GPIO_Initure.Pull      = GPIO_PULLUP;     
-    GPIO_Initure.Speed     = GPIO_SPEED_HIGH; 
-    GPIO_Initure.Alternate = GPIO_AF13_DCMI;    
-    HAL_GPIO_Init(GPIOC,&GPIO_Initure);  
-} 
+
+    GPIO_Initure.Pin       = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_11;
+    GPIO_Initure.Mode      = GPIO_MODE_AF_PP;
+    GPIO_Initure.Pull      = GPIO_PULLUP;
+    GPIO_Initure.Speed     = GPIO_SPEED_HIGH;
+    GPIO_Initure.Alternate = GPIO_AF13_DCMI;
+    HAL_GPIO_Init(GPIOC,&GPIO_Initure);
+}
 
 void sw_sdcard_mode(void)
 {
     GPIO_InitTypeDef GPIO_Initure = {0};
-    
-    ov2640_pwdn_set(1); /* OV2640 Power Down */ 
 
-    GPIO_Initure.Pin       = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_11;  
-    GPIO_Initure.Mode      = GPIO_MODE_AF_PP; 
+    ov2640_pwdn_set(1); /* OV2640 Power Down */
+
+    GPIO_Initure.Pin       = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_11;
+    GPIO_Initure.Mode      = GPIO_MODE_AF_PP;
     GPIO_Initure.Pull      = GPIO_PULLUP;
-    GPIO_Initure.Speed     = GPIO_SPEED_HIGH; 
-    GPIO_Initure.Alternate = GPIO_AF12_SDMMC1;   
-    HAL_GPIO_Init(GPIOC, &GPIO_Initure);   
+    GPIO_Initure.Speed     = GPIO_SPEED_HIGH;
+    GPIO_Initure.Alternate = GPIO_AF12_SDMMC1;
+    HAL_GPIO_Init(GPIOC, &GPIO_Initure);
 }
 
 int rt_ov2640_init(void)
@@ -587,7 +587,7 @@ int rt_ov2640_init(void)
     rt_uint16_t i = 0;
     rt_err_t result = RT_EOK;
     rt_device_t dcmi_dev = RT_NULL;
-    
+
     sw_ov2640_mode();
     pcf_dev = pcf8574_init("i2c1", RT_NULL);
     if (pcf_dev == RT_NULL)
@@ -595,17 +595,17 @@ int rt_ov2640_init(void)
         LOG_E("can't find pcf8574, please check it");
         return -RT_ERROR;
     }
-    
+
     ov2640_pwdn_set(0);
-	rt_thread_delay(20);
-    
+    rt_thread_delay(20);
+
     /* ov2640 hard reset */
     rt_pin_mode(RESET_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(RESET_PIN, PIN_LOW);
     rt_thread_delay(20);
     rt_pin_write(RESET_PIN, PIN_HIGH);
     rt_thread_delay(20);
-    
+
     i2c_bus = rt_i2c_bus_device_find(I2C_NAME);
     if (i2c_bus == RT_NULL)
     {
@@ -687,7 +687,7 @@ int camera_sample(int argc, char **argv)
        rt_kprintf("camera_sample file.jpg\n");
        return -1;
    }
-   
+
    sw_ov2640_mode();
    DCMI_Start();
 

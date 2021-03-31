@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
-* Change Logs:
-* Date           Author       Notes
-* 2014-12-03     Bernard      Add copyright header.
-* 2014-12-29     Bernard      Add cplusplus initialization for ARMCC.
-* 2016-06-28     Bernard      Add _init/_fini routines for GCC.
-* 2016-10-02     Bernard      Add WEAK for cplusplus_system_init routine.
-*/
+ * Change Logs:
+ * Date           Author       Notes
+ * 2014-12-03     Bernard      Add copyright header.
+ * 2014-12-29     Bernard      Add cplusplus initialization for ARMCC.
+ * 2016-06-28     Bernard      Add _init/_fini routines for GCC.
+ * 2016-10-02     Bernard      Add WEAK for cplusplus_system_init routine.
+ */
 
 #include <rtthread.h>
 

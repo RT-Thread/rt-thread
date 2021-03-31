@@ -15,6 +15,8 @@
 // #define HAL_DAC_MODULE_ENABLED
 #define HAL_SD_MODULE_ENABLED
 #define HAL_TIM_MODULE_ENABLED
+#define HAL_RTC_MODULE_ENABLE
+#define HAL_ADC_MODULE_ENABLE
 
 /*  Includes  */
 #ifdef HAL_GPIO_MODULE_ENABLED
@@ -43,6 +45,14 @@
 
 #ifdef HAL_TIM_MODULE_ENABLED
 #include "ab32vg1_hal_tim.h"
+#endif
+
+#ifdef HAL_RTC_MODULE_ENABLE
+#include "ab32vg1_hal_rtc.h"
+#endif
+
+#ifdef HAL_ADC_MODULE_ENABLE
+#include "ab32vg1_hal_adc.h"
 #endif
 
 #include <assert.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-//XPT2049
+//XPT2046
 #define     READ_X                (0xD0)
 #define     READ_Y                (0x90)
 
@@ -104,7 +104,7 @@ no pressed:(0x800,0xfff)
 ------------------------------------
 */
 #define XMIN 0x800
-#define YMAX 0xfff 
+#define YMAX 0xfff
 void read_tp(void *dev, rt_uint16_t *x, rt_uint16_t *y)
 {
     struct rt_spi_device *touch_dev = (struct rt_spi_device *)dev;
@@ -218,7 +218,7 @@ static struct rt_touch_ops touch_ops =
     .touch_control = xpt2046_control,
 };
 
-static int hw_xpt2049_touch_init(void)
+static int hw_xpt2046_touch_init(void)
 {
     //touch sem
     rt_sem_init(&touch_ack, "touch_ack", 0, RT_IPC_FLAG_FIFO);
@@ -249,4 +249,4 @@ static int hw_xpt2049_touch_init(void)
 
     return 0;
 }
-INIT_DEVICE_EXPORT(hw_xpt2049_touch_init);
+INIT_DEVICE_EXPORT(hw_xpt2046_touch_init);

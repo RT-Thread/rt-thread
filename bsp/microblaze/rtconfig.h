@@ -93,7 +93,6 @@
 /* SECTION: a runtime libc library */
 /* a runtime libc library*/
 /* #define RT_USING_NEWLIB */
-#define RT_USING_MINILIBC
 
 /* SECTION: C++ support */
 /* Using C++ support*/

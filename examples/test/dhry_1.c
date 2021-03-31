@@ -3,9 +3,9 @@
  *
  *                   "DHRYSTONE" Benchmark Program
  *                   -----------------------------
- *                                                                            
+ *
  *  Version:    C, Version 2.1
- *                                                                            
+ *
  *  File:       dhry_1.c (part 2 of 3)
  *
  *  Date:       May 25, 1988
@@ -14,8 +14,8 @@
  *
  ****************************************************************************
  */
- 
-#define NUMBER_OF_RUNS	1000000
+
+#define NUMBER_OF_RUNS  1000000
 
 #include "dhry.h"
 #define printf rt_kprintf
@@ -34,7 +34,7 @@ int             Arr_2_Glob [50] [50];
 Enumeration     Func_1 ();
 
 /* forward declaration necessary since Enumeration may not simply be int */
-  
+
 #ifndef REG
         Boolean Reg = false;
 #define REG
@@ -71,7 +71,7 @@ void dhry_test(void)
   REG   int             Number_Of_Runs;
 
   /* Initializations */
-  
+
   Next_Ptr_Glob = (Rec_Pointer) rt_malloc (sizeof (Rec_Type));
   Ptr_Glob = (Rec_Pointer) rt_malloc (sizeof (Rec_Type));
 
@@ -79,7 +79,7 @@ void dhry_test(void)
   Ptr_Glob->Discr                       = Ident_1;
   Ptr_Glob->variant.var_1.Enum_Comp     = Ident_3;
   Ptr_Glob->variant.var_1.Int_Comp      = 40;
-  rt_strncpy (Ptr_Glob->variant.var_1.Str_Comp, 
+  rt_strncpy (Ptr_Glob->variant.var_1.Str_Comp,
           "DHRYSTONE PROGRAM, SOME STRING", sizeof(Ptr_Glob->variant.var_1.Str_Comp));
   rt_strncpy (Str_1_Loc, "DHRYSTONE PROGRAM, 1'ST STRING", sizeof(Str_1_Loc));
 
@@ -114,9 +114,9 @@ void dhry_test(void)
   /***************/
   /* Start timer */
   /***************/
-  
+
 // Add your timer initializing code here
- 
+
   Begin_Time = rt_tick_get(); /* get start tick */
 
   for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index)
@@ -169,8 +169,8 @@ void dhry_test(void)
   /* Stop timer */
   /**************/
 
-  End_Time = rt_tick_get();	// Get end tick
-  
+  End_Time = rt_tick_get(); // Get end tick
+
   printf ("Execution ends\n");
   printf ("\n");
   printf ("Final values of the variables used in the benchmark:\n");
@@ -226,7 +226,7 @@ void dhry_test(void)
 
   User_Time = (End_Time - Begin_Time) / RT_TICK_PER_SECOND;
 
-  Microseconds = (float) User_Time * Mic_secs_Per_Second 
+  Microseconds = (float) User_Time * Mic_secs_Per_Second
                       / (float) Number_Of_Runs;
   Dhrystones_Per_Second = (float) Number_Of_Runs / (float) User_Time;
 
@@ -237,7 +237,7 @@ void dhry_test(void)
   printf ("Dhrystones MIPS:                            ");
   printf ("%6d \n", (int)(Dhrystones_Per_Second / 1757.0));
   printf ("\n");
-  
+
 }
 
 Proc_1 (Ptr_Val_Par)
@@ -246,27 +246,27 @@ Proc_1 (Ptr_Val_Par)
 REG Rec_Pointer Ptr_Val_Par;
     /* executed once */
 {
-  REG Rec_Pointer Next_Record = Ptr_Val_Par->Ptr_Comp;  
+  REG Rec_Pointer Next_Record = Ptr_Val_Par->Ptr_Comp;
                                         /* == Ptr_Glob_Next */
   /* Local variable, initialized with Ptr_Val_Par->Ptr_Comp,    */
   /* corresponds to "rename" in Ada, "with" in Pascal           */
-  
-  structassign (*Ptr_Val_Par->Ptr_Comp, *Ptr_Glob); 
+
+  structassign (*Ptr_Val_Par->Ptr_Comp, *Ptr_Glob);
   Ptr_Val_Par->variant.var_1.Int_Comp = 5;
-  Next_Record->variant.var_1.Int_Comp 
+  Next_Record->variant.var_1.Int_Comp
         = Ptr_Val_Par->variant.var_1.Int_Comp;
   Next_Record->Ptr_Comp = Ptr_Val_Par->Ptr_Comp;
   Proc_3 (&Next_Record->Ptr_Comp);
-    /* Ptr_Val_Par->Ptr_Comp->Ptr_Comp 
+    /* Ptr_Val_Par->Ptr_Comp->Ptr_Comp
                         == Ptr_Glob->Ptr_Comp */
   if (Next_Record->Discr == Ident_1)
     /* then, executed */
   {
     Next_Record->variant.var_1.Int_Comp = 6;
-    Proc_6 (Ptr_Val_Par->variant.var_1.Enum_Comp, 
+    Proc_6 (Ptr_Val_Par->variant.var_1.Enum_Comp,
            &Next_Record->variant.var_1.Enum_Comp);
     Next_Record->Ptr_Comp = Ptr_Glob->Ptr_Comp;
-    Proc_7 (Next_Record->variant.var_1.Int_Comp, 10, 
+    Proc_7 (Next_Record->variant.var_1.Int_Comp, 10,
            &Next_Record->variant.var_1.Int_Comp);
   }
   else /* not executed */
@@ -281,7 +281,7 @@ Proc_2 (Int_Par_Ref)
 
 One_Fifty   *Int_Par_Ref;
 {
-  One_Fifty  Int_Loc;  
+  One_Fifty  Int_Loc;
   Enumeration   Enum_Loc;
 
   Int_Loc = *Int_Par_Ref + 10;

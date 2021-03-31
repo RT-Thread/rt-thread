@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -44,16 +44,16 @@ drv_uart_cfg_t m_uart0_cfg = {
 
 #ifdef BSP_USING_UART0
 static void uart0_event_hander(nrfx_uart_event_t const *p_event,void *p_context)
-{   
+{
     if (p_event->type == NRFX_UART_EVT_RX_DONE)
     {
         if(p_event->data.rxtx.bytes == 1)
         {
             m_uart0_cfg.rx_length = p_event->data.rxtx.bytes;
-            
+
             /* rx_byte equal p_data  */
-            //m_uart0_cfg.rx_byte = *(p_event->data.rxtx.p_data); 
-            
+            //m_uart0_cfg.rx_byte = *(p_event->data.rxtx.p_data);
+
             rt_hw_serial_isr(m_uart0_cfg.serial, RT_SERIAL_EVENT_RX_IND);
         }
         nrfx_uart_rx(&(m_uart0_cfg.uart),&m_uart0_cfg.rx_byte,1);
@@ -72,7 +72,7 @@ static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configu
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-  
+
     if (serial->parent.user_data == RT_NULL)
     {
         return -RT_ERROR;
@@ -107,7 +107,7 @@ static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configu
     config.hal_cfg.hwfc = NRF_UART_HWFC_DISABLED;
     config.pselrxd = instance->rx_pin;
     config.pseltxd = instance->tx_pin;
-    
+
     nrfx_uart_init(&(instance->uart), &config, instance->event_handler);
     nrfx_uart_rx(&(instance->uart),&(instance->rx_byte),1);
     nrf_uart_int_disable(instance->uart.p_reg, NRF_UART_INT_MASK_TXDRDY);
@@ -187,7 +187,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
     while (!nrf_uart_event_check(instance->uart.p_reg, NRF_UART_EVENT_TXDRDY))
     {
         //wait for TXD send
-    }    
+    }
     return rtn;
 }
 
@@ -205,7 +205,7 @@ static int _uart_getc(struct rt_serial_device *serial)
     if (serial->parent.user_data != RT_NULL)
     {
         instance = (drv_uart_cfg_t*)serial->parent.user_data;
-    }  
+    }
     if(instance->rx_length)
     {
         ch = instance->rx_byte;

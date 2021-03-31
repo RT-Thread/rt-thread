@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -436,8 +436,6 @@ rt_err_t rt_device_unregister(rt_device_t dev);
 
 rt_device_t rt_device_create(int type, int attach_size);
 void rt_device_destroy(rt_device_t device);
-
-rt_err_t rt_device_init_all(void);
 
 rt_err_t
 rt_device_set_rx_indicate(rt_device_t dev,

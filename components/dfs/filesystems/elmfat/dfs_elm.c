@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,7 +21,7 @@
 #include "ffconf.h"
 #include "ff.h"
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 
 /* ELM FatFs provide a DIR struct */
 #define HAVE_DIR_STRUCTURE
@@ -647,7 +647,7 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
 
         d->d_namlen = (rt_uint8_t)rt_strlen(fn);
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        rt_strncpy(d->d_name, fn, rt_strlen(fn) + 1);
+        rt_strncpy(d->d_name, fn, DFS_PATH_MAX);
 
         index ++;
         if (index * sizeof(struct dirent) >= count)
@@ -800,7 +800,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             tm_file.tm_min  = min;         /* Minutes: 0-59 */
             tm_file.tm_sec  = sec;         /* Seconds: 0-59 */
 
-            st->st_mtime = mktime(&tm_file);
+            st->st_mtime = timegm(&tm_file);
         } /* get st_mtime. */
     }
 
@@ -945,7 +945,7 @@ DWORD get_fattime(void)
 {
     DWORD fat_time = 0;
 
-#ifdef RT_USING_LIBC
+#ifdef RT_LIBC_USING_TIME
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
@@ -956,7 +956,7 @@ DWORD get_fattime(void)
     /* lock scheduler. */
     rt_enter_critical();
     /* converts calendar time time into local time. */
-    p_tm = localtime(&now);
+    p_tm = gmtime(&now);
     /* copy the statically located variable */
     memcpy(&tm_now, p_tm, sizeof(struct tm));
     /* unlock scheduler. */
