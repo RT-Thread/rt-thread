@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -285,9 +285,9 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t pclk1_doubler, pclk2_doubler;
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
-    
+
     pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
-    
+
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
@@ -350,7 +350,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     case PWM_CMD_ENABLE:
         return drv_pwm_enable(htim, configuration, RT_TRUE);
     case PWMN_CMD_DISABLE:
-        configuration->complementary = RT_TRUE;
+        configuration->complementary = RT_FALSE;
     case PWM_CMD_DISABLE:
         return drv_pwm_enable(htim, configuration, RT_FALSE);
     case PWM_CMD_SET:

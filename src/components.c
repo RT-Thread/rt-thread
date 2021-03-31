@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -173,19 +173,22 @@ struct rt_thread main_thread;
 void main_thread_entry(void *parameter)
 {
     extern int main(void);
-    extern int $Super$$main(void);
 
 #ifdef RT_USING_COMPONENTS_INIT
     /* RT-Thread components initialization */
     rt_components_init();
 #endif
+
 #ifdef RT_USING_SMP
     rt_hw_secondary_cpu_up();
 #endif
     /* invoke system main function */
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-    $Super$$main(); /* for ARMCC. */
-#elif defined(__ICCARM__) || defined(__GNUC__)
+    {
+        extern int $Super$$main(void);
+        $Super$$main(); /* for ARMCC. */
+    }
+#elif defined(__ICCARM__) || defined(__GNUC__) || defined(__TASKING__)
     main();
 #endif
 }

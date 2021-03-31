@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -57,7 +57,7 @@ struct nrfx_drv_spi_config
     nrfx_spi_t spi;
 };
 
-struct nrfx_drv_spi 
+struct nrfx_drv_spi
 {
     nrfx_spi_t spi;    /* nrfx spi driver instance. */
     nrfx_spi_config_t   spi_config; /* nrfx spi config Configuration */

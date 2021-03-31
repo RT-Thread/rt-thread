@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,6 +13,7 @@
 
 #include <rtthread.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 struct _pthread_cleanup
 {
@@ -61,8 +62,6 @@ struct _pthread_data
 typedef struct _pthread_data _pthread_data_t;
 
 _pthread_data_t *_pthread_get_data(pthread_t thread);
-
-int clock_time_to_tick(const struct timespec *time);
 
 void posix_mq_system_init(void);
 void posix_sem_system_init(void);

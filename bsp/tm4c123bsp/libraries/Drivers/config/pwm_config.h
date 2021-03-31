@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -90,7 +90,7 @@ extern "C" {
 #ifdef BSP_USING_PWM6
 #ifndef PWM6_CONFIG
 #define PWM6_CONFIG                                       \
-    {                                                     \ 
+    {                                                     \
         .name                    = "pwm6",                \
         .channel                 = 0    ,                 \
         .counterMode             = PWM_GEN_MODE_UP_DOWN , \

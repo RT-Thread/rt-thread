@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：动态线程
  *
  * 这个程序会初始化2个动态线程，它们拥有共同的入口函数，但参数不相同

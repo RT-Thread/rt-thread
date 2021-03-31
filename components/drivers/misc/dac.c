@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -148,7 +148,7 @@ static int dac(int argc, char **argv)
     int result = RT_EOK;
     static rt_dac_device_t dac_device = RT_NULL;
     char *result_str;
-    
+
     if (argc > 1)
     {
         if (!strcmp(argv[1], "probe"))

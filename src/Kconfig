@@ -284,21 +284,19 @@ menu "Memory Management"
 
     endchoice
 
-    if RT_USING_SMALL_MEM
-        config RT_USING_MEMTRACE
-            bool "Enable memory trace"
-            default n
-            help
-                When enable RT_USING_MEMTRACE with shell, developer can call cmd:
-                1. memtrace
-                   to dump memory block information.
-                2. memcheck
-                   to check memory block to avoid memory overwritten.
+    config RT_USING_MEMTRACE
+        bool "Enable memory trace"
+        default n
+        help
+            When enable RT_USING_MEMTRACE with shell, developer can call cmd:
+            1. memtrace
+                to dump memory block information.
+            2. memcheck
+                to check memory block to avoid memory overwritten.
 
-                And developer also can call memcheck() in each of scheduling
-                to check memory block to find which thread has wrongly modified
-                memory.
-    endif
+            And developer also can call memcheck() in each of scheduling
+            to check memory block to find which thread has wrongly modified
+            memory.
 
     config RT_USING_HEAP
         bool

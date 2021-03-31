@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -460,7 +460,7 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
             rx_fifo->is_full = RT_TRUE;
         }
     }
-    
+
     if(rx_fifo->is_full == RT_TRUE)
     {
         _serial_check_buffer_size();
@@ -615,7 +615,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
     /* initialize the Rx/Tx structure according to open flag */
     if (serial->serial_rx == RT_NULL)
-    { 
+    {
         if (oflag & RT_DEVICE_FLAG_INT_RX)
         {
             struct rt_serial_rx_fifo* rx_fifo;
@@ -634,7 +634,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             /* configure low level device */
             serial->ops->control(serial, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_RX);
         }
-#ifdef RT_SERIAL_USING_DMA        
+#ifdef RT_SERIAL_USING_DMA
         else if (oflag & RT_DEVICE_FLAG_DMA_RX)
         {
             if (serial->config.bufsz == 0) {
@@ -675,7 +675,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 #ifdef RT_SERIAL_USING_DMA
         else if (oflag & RT_DEVICE_FLAG_DMA_RX)
             dev->open_flag |= RT_DEVICE_FLAG_DMA_RX;
-#endif /* RT_SERIAL_USING_DMA */  
+#endif /* RT_SERIAL_USING_DMA */
     }
 
     if (serial->serial_tx == RT_NULL)
@@ -723,7 +723,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 #ifdef RT_SERIAL_USING_DMA
         else if (oflag & RT_DEVICE_FLAG_DMA_TX)
             dev->open_flag |= RT_DEVICE_FLAG_DMA_TX;
-#endif /* RT_SERIAL_USING_DMA */    
+#endif /* RT_SERIAL_USING_DMA */
     }
 
     /* set stream flag */
@@ -784,7 +784,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_RX);
     }
 #endif /* RT_SERIAL_USING_DMA */
-    
+
     if (dev->open_flag & RT_DEVICE_FLAG_INT_TX)
     {
         struct rt_serial_tx_fifo* tx_fifo;
@@ -845,7 +845,7 @@ static rt_size_t rt_serial_read(struct rt_device *dev,
     {
         return _serial_dma_rx(serial, (rt_uint8_t *)buffer, size);
     }
-#endif /* RT_SERIAL_USING_DMA */    
+#endif /* RT_SERIAL_USING_DMA */
 
     return _serial_poll_rx(serial, (rt_uint8_t *)buffer, size);
 }
@@ -866,7 +866,7 @@ static rt_size_t rt_serial_write(struct rt_device *dev,
     {
         return _serial_int_tx(serial, (const rt_uint8_t *)buffer, size);
     }
-#ifdef RT_SERIAL_USING_DMA    
+#ifdef RT_SERIAL_USING_DMA
     else if (dev->open_flag & RT_DEVICE_FLAG_DMA_TX)
     {
         return _serial_dma_tx(serial, (const rt_uint8_t *)buffer, size);
@@ -1113,9 +1113,19 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 struct winsize* p_winsize;
 
                 p_winsize = (struct winsize*)args;
-                rt_enter_critical();
                 rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
-                rt_exit_critical();
+            }
+            break;
+        case TIOCGWINSZ:
+            {
+                struct winsize* p_winsize;
+
+                p_winsize = (struct winsize*)args;
+                /* TODO: get windows size from console */
+                p_winsize->ws_col = 80;
+                p_winsize->ws_row = 24;
+                p_winsize->ws_xpixel = 0;/*unused*/
+                p_winsize->ws_ypixel = 0;/*unused*/
             }
             break;
 #endif /*RT_USING_POSIX_TERMIOS*/
@@ -1142,7 +1152,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops serial_ops = 
+const static struct rt_device_ops serial_ops =
 {
     rt_serial_init,
     rt_serial_open,

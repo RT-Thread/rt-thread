@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-14     balanceTWK   add sdcard port file
+ * 2021-02-26     Meco Man     fix a bug that cannot use fatfs in the main thread at starting up
  */
 
 #include <rtthread.h>
@@ -46,16 +47,24 @@ int stm32_sdcard_mount(void)
 {
     rt_thread_t tid;
 
-    tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
-                           1024, RT_THREAD_PRIORITY_MAX - 2, 20);
-    if (tid != RT_NULL)
+    if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
     {
-        rt_thread_startup(tid);
+        LOG_I("sd card mount to '/'");
     }
     else
     {
-        LOG_E("create sd_mount thread err!");
+        tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
+                               1024, RT_THREAD_PRIORITY_MAX - 2, 20);
+        if (tid != RT_NULL)
+        {
+            rt_thread_startup(tid);
+        }
+        else
+        {
+            LOG_E("create sd_mount thread err!");
+        }
     }
+
     return RT_EOK;
 }
 INIT_APP_EXPORT(stm32_sdcard_mount);

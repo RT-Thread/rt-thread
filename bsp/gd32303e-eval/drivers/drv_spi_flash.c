@@ -30,7 +30,7 @@ static int rt_hw_gd25q40_init(void)
     static rt_base_t gd25q_cs_pin;                       /* SPI设备CS片选引脚 */
 
     gd25q_cs_pin = GD25Q_SPI_CS_PIN;
-    
+
     rt_pin_mode(GD25Q_SPI_CS_PIN, GPIO_MODE_OUT_PP);
 
     res = rt_spi_bus_attach_device(&spi_dev_gd25q, SPI_DEVICE_NAME, SPI_BUS_NAME, (void*)gd25q_cs_pin);

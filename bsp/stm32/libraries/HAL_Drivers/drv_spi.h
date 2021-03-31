@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -62,7 +62,7 @@ struct stm32_spi
         DMA_HandleTypeDef handle_rx;
         DMA_HandleTypeDef handle_tx;
     } dma;
-    
+
     rt_uint8_t spi_dma_flag;
     struct rt_spi_bus spi_bus;
 };

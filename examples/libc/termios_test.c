@@ -1,8 +1,11 @@
 /*
- * termios_test.c
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  Created on: 2017-12-06
- *      Author: JasonJia
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-12-06     JasonJia     first version
  */
 
 #include <rtthread.h>

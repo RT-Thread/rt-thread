@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,7 @@
  * 2012-12-25     Bernard      return RT_EOK if the device interface not exist.
  * 2013-07-09     Grissiom     add ref_count support
  * 2016-04-02     Bernard      fix the open_flag initialization issue.
+ * 2021-03-19     Meco Man     remove rt_device_init_all()
  */
 
 #include <rtthread.h>
@@ -88,19 +89,6 @@ rt_err_t rt_device_unregister(rt_device_t dev)
     return RT_EOK;
 }
 RTM_EXPORT(rt_device_unregister);
-
-/**
- * This function initializes all registered device driver
- *
- * @return the error code, RT_EOK on successfully.
- *
- * @deprecated since 1.2.x, this function is not needed because the initialization
- *             of a device is performed when application opens it.
- */
-rt_err_t rt_device_init_all(void)
-{
-    return RT_EOK;
-}
 
 /**
  * This function finds a device driver by specified name.

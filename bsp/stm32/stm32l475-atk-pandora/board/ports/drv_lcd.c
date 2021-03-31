@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -955,7 +955,7 @@ rt_err_t lcd_show_qrcode(rt_uint16_t x, rt_uint16_t y, rt_uint8_t version, rt_ui
         {
             enlargement_factor = enlargement;
         }
-        
+
         /* malloc memory for quick display of qrcode */
         qrcode_buf = rt_malloc(qrcode.size * 2 * enlargement_factor * enlargement_factor);
         if (qrcode_buf == RT_NULL)

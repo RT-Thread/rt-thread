@@ -1,7 +1,13 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
-
 #include <stdio.h>
-
 #ifdef _WIN32
 #include <sdl.h>
 #else
@@ -190,7 +196,7 @@ static void sdlfb_hw_init(void)
         SDL_PixelFormatEnumToMasks(SDL_SCREEN_FORMAT, &bpp, &Rmask, &Gmask,
             &Bmask, &Amask);
 
-        _device.surface = SDL_CreateRGBSurface(0, SDL_SCREEN_WIDTH, SDL_SCREEN_HEIGHT, 
+        _device.surface = SDL_CreateRGBSurface(0, SDL_SCREEN_WIDTH, SDL_SCREEN_HEIGHT,
             bpp, Rmask, Gmask, Bmask, Amask);
     }
 
@@ -255,7 +261,7 @@ static void *sdl_loop(void *lpParam)
     int motion_tick = 50;
 
     int mouse_id = 1;
- 
+
 #ifndef _WIN32
     sigset_t  sigmask, oldmask;
     /* set the getchar without buffer */
@@ -455,7 +461,7 @@ static void *sdl_loop(void *lpParam)
             exit(1);
             break;
         }
-            
+
     }
     rt_hw_exit();
     return 0;

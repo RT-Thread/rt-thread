@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,7 +11,7 @@
  * 2018-02-16     armink       add auto sync time by NTP
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <rtthread.h>
 
@@ -30,7 +30,7 @@
 #endif /* RTC_SYNC_USING_NTP */
 
 /**
- * Set system date(time not modify).
+ * Set system date(time not modify, local timezone).
  *
  * @param rt_uint32_t year  e.g: 2012.
  * @param rt_uint32_t month e.g: 12 (1~12).
@@ -52,10 +52,10 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 
     /* lock scheduler. */
     rt_enter_critical();
-    /* converts calendar time time into local time. */
+    /* converts calendar time into local time. */
     p_tm = localtime(&now);
     /* copy the statically located variable */
-    memcpy(&tm_new, p_tm, sizeof(struct tm));
+    rt_memcpy(&tm_new, p_tm, sizeof(struct tm));
     /* unlock scheduler. */
     rt_exit_critical();
 
@@ -64,7 +64,7 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     tm_new.tm_mon  = month - 1; /* tm_mon: 0~11 */
     tm_new.tm_mday = day;
 
-    /* converts the local time in time to calendar time. */
+    /* converts the local time into the calendar time. */
     now = mktime(&tm_new);
 
     device = rt_device_find("rtc");
@@ -80,7 +80,7 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 }
 
 /**
- * Set system time(date not modify).
+ * Set system time(date not modify, local timezone).
  *
  * @param rt_uint32_t hour   e.g: 0~23.
  * @param rt_uint32_t minute e.g: 0~59.
@@ -102,10 +102,10 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 
     /* lock scheduler. */
     rt_enter_critical();
-    /* converts calendar time time into local time. */
+    /* converts calendar time into local time. */
     p_tm = localtime(&now);
     /* copy the statically located variable */
-    memcpy(&tm_new, p_tm, sizeof(struct tm));
+    rt_memcpy(&tm_new, p_tm, sizeof(struct tm));
     /* unlock scheduler. */
     rt_exit_critical();
 
@@ -114,7 +114,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     tm_new.tm_min  = minute;
     tm_new.tm_sec  = second;
 
-    /* converts the local time in time to calendar time. */
+    /* converts the local time into the calendar time. */
     now = mktime(&tm_new);
 
     device = rt_device_find("rtc");
@@ -164,7 +164,7 @@ int rt_rtc_ntp_sync_init(void)
     }
 
     init_ok = RT_TRUE;
-		
+
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(rt_rtc_ntp_sync_init);
@@ -174,6 +174,9 @@ INIT_COMPONENT_EXPORT(rt_rtc_ntp_sync_init);
 #include <finsh.h>
 #include <rtdevice.h>
 
+/**
+ * show date and time (local timezone)
+ */
 void list_date(void)
 {
     time_t now;
@@ -181,12 +184,15 @@ void list_date(void)
     now = time(RT_NULL);
     rt_kprintf("%.*s\n", 25, ctime(&now));
 }
-FINSH_FUNCTION_EXPORT(list_date, show date and time.)
+FINSH_FUNCTION_EXPORT(list_date, show date and time (local timezone))
+FINSH_FUNCTION_EXPORT(set_date, set date(local timezone) e.g: set_date(2010,2,28))
+FINSH_FUNCTION_EXPORT(set_time, set time(local timezone) e.g: set_time(23,59,59))
 
-FINSH_FUNCTION_EXPORT(set_date, set date. e.g: set_date(2010,2,28))
-FINSH_FUNCTION_EXPORT(set_time, set time. e.g: set_time(23,59,59))
 
 #if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
+/**
+ * get date and time or set (local timezone) [year month day hour min sec]
+ */
 static void date(uint8_t argc, char **argv)
 {
     if (argc == 1)
@@ -246,9 +252,9 @@ static void date(uint8_t argc, char **argv)
         rt_kprintf("e.g: date 2018 01 01 23 59 59 or date\n");
     }
 }
-MSH_CMD_EXPORT(date, get date and time or set [year month day hour min sec]);
+MSH_CMD_EXPORT(list_date, show date and time (local timezone))
+MSH_CMD_EXPORT(date, get date and time or set (local timezone) [year month day hour min sec])
+
 #endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
-
 #endif /* RT_USING_FINSH */
-
 #endif /* RT_USING_RTC */

@@ -16,7 +16,7 @@
 
 #include <rtdevice.h>
 #include <drv_i2s.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private define ---------------------------------------------------------------*/
 #define DBG_ENABLE

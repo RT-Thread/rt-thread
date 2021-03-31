@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -366,7 +366,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 drv_can->FilterConfig.FilterIdLow = id_l;
                 drv_can->FilterConfig.FilterMaskIdHigh = mask_h;
                 drv_can->FilterConfig.FilterMaskIdLow = mask_l;
-                    
+
                 drv_can->FilterConfig.FilterMode = filter_cfg->items[i].mode;
                 /* Filter conf */
                 HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);

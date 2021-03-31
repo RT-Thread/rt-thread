@@ -14,7 +14,7 @@
 #if defined(BSP_USING_HSOTG)
 #include <rtdevice.h>
 #include <rtdbg.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 
 /* This delay must be at least 10 us */

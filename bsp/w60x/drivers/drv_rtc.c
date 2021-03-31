@@ -11,7 +11,7 @@
 
 #include <rtdevice.h>
 #include <rtthread.h>
-#include <time.h>
+#include <sys/time.h>
 #include "wm_regs.h"
 #include "wm_irq.h"
 #include "tls_common.h"
@@ -42,7 +42,7 @@ static time_t wm_get_timestamp(void)
     tm_new.tm_min  = (ctrl1 & 0x00003f00) >>  8;
     tm_new.tm_sec  =  ctrl1 & 0x0000003f;
 
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static int wm_set_timestamp(time_t timestamp)
@@ -52,7 +52,7 @@ static int wm_set_timestamp(time_t timestamp)
 
     struct tm *tblock;
 
-    tblock = localtime(&timestamp);
+    tblock = gmtime(&timestamp);
 
     ctrl2  = tls_reg_read32(HR_PMU_RTC_CTRL2);  /* disable */
     ctrl2 &= ~(1 << 16);
@@ -84,7 +84,7 @@ static int wm_alarm_set_timestamp(struct rt_rtc_wkalarm *wkalarm)
     time_t timestamp = 0;
 
     timestamp = wm_get_timestamp();
-    tblock = localtime(&timestamp);
+    tblock = gmtime(&timestamp);
 
     tls_irq_enable(PMU_RTC_INT);
 
@@ -172,7 +172,7 @@ static rt_size_t wm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops _ops = 
+const static struct rt_device_ops _ops =
 {
     .init = wm_rtc_init,
     .open = wm_rtc_open,

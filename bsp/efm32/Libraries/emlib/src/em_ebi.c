@@ -105,7 +105,7 @@ void EBI_Init(const EBI_Init_TypeDef *ebiInit)
     ctrl |= (ebiInit->ardyDisableTimeout << _EBI_CTRL_ARDYTODIS_SHIFT);
     ctrl |= (ebiInit->blEnable << _EBI_CTRL_BL_SHIFT);
     ctrl |= (ebiInit->noIdle << _EBI_CTRL_NOIDLE_SHIFT);
-    if ( ebiInit->enable) 
+    if ( ebiInit->enable)
     {
       ctrl |= EBI_CTRL_BANK0EN;
     }
@@ -117,13 +117,13 @@ void EBI_Init(const EBI_Init_TypeDef *ebiInit)
               _EBI_CTRL_ARDY1EN_MASK|
               _EBI_CTRL_ARDYTO1DIS_MASK|
               _EBI_CTRL_NOIDLE1_MASK|
-              _EBI_CTRL_BANK1EN_MASK); 
+              _EBI_CTRL_BANK1EN_MASK);
     ctrl |= (ebiInit->mode << _EBI_CTRL_MODE1_SHIFT);
     ctrl |= (ebiInit->ardyEnable << _EBI_CTRL_ARDY1EN_SHIFT);
     ctrl |= (ebiInit->ardyDisableTimeout << _EBI_CTRL_ARDYTO1DIS_SHIFT);
     ctrl |= (ebiInit->blEnable << _EBI_CTRL_BL1_SHIFT);
     ctrl |= (ebiInit->noIdle << _EBI_CTRL_NOIDLE1_SHIFT);
-    if ( ebiInit->enable) 
+    if ( ebiInit->enable)
     {
       ctrl |= EBI_CTRL_BANK1EN;
     }
@@ -141,7 +141,7 @@ void EBI_Init(const EBI_Init_TypeDef *ebiInit)
     ctrl |= (ebiInit->ardyDisableTimeout << _EBI_CTRL_ARDYTO2DIS_SHIFT);
     ctrl |= (ebiInit->blEnable << _EBI_CTRL_BL2_SHIFT);
     ctrl |= (ebiInit->noIdle << _EBI_CTRL_NOIDLE2_SHIFT);
-    if ( ebiInit->enable) 
+    if ( ebiInit->enable)
     {
       ctrl |= EBI_CTRL_BANK2EN;
     }
@@ -153,13 +153,13 @@ void EBI_Init(const EBI_Init_TypeDef *ebiInit)
               _EBI_CTRL_ARDY3EN_MASK|
               _EBI_CTRL_ARDYTO3DIS_MASK|
               _EBI_CTRL_NOIDLE3_MASK|
-              _EBI_CTRL_BANK3EN_MASK); 
+              _EBI_CTRL_BANK3EN_MASK);
     ctrl |= (ebiInit->mode << _EBI_CTRL_MODE3_SHIFT);
     ctrl |= (ebiInit->ardyEnable << _EBI_CTRL_ARDY3EN_SHIFT);
     ctrl |= (ebiInit->ardyDisableTimeout << _EBI_CTRL_ARDYTO3DIS_SHIFT);
     ctrl |= (ebiInit->blEnable << _EBI_CTRL_BL3_SHIFT);
     ctrl |= (ebiInit->noIdle << _EBI_CTRL_NOIDLE3_SHIFT);
-    if ( ebiInit->enable) 
+    if ( ebiInit->enable)
     {
       ctrl |= EBI_CTRL_BANK3EN;
     }
@@ -172,7 +172,7 @@ void EBI_Init(const EBI_Init_TypeDef *ebiInit)
             _EBI_CTRL_BANK1EN_MASK|
             _EBI_CTRL_BANK2EN_MASK|
             _EBI_CTRL_BANK3EN_MASK);
-  if ( ebiInit->enable) 
+  if ( ebiInit->enable)
   {
     if ( ebiInit->banks & EBI_BANK0 )
     {
@@ -265,7 +265,7 @@ void EBI_Init(const EBI_Init_TypeDef *ebiInit)
   EBI_ChipSelectEnable(ebiInit->csLines, true);
 
   /* Activate new configuration */
-  EBI->CTRL = ctrl;  
+  EBI->CTRL = ctrl;
 }
 
 

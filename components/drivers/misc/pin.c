@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2015-01-20     Bernard      the first version
+ * 2021-02-06     Meco Man     fix RT_ENOSYS code in negative
  */
 
 #include <drivers/pin.h>
@@ -108,7 +109,7 @@ rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
     {
         return _hw_pin.ops->pin_attach_irq(&_hw_pin.parent, pin, mode, hdr, args);
     }
-    return RT_ENOSYS;
+    return -RT_ENOSYS;
 }
 rt_err_t rt_pin_detach_irq(rt_int32_t pin)
 {
@@ -117,7 +118,7 @@ rt_err_t rt_pin_detach_irq(rt_int32_t pin)
     {
         return _hw_pin.ops->pin_detach_irq(&_hw_pin.parent, pin);
     }
-    return RT_ENOSYS;
+    return -RT_ENOSYS;
 }
 
 rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
@@ -127,7 +128,7 @@ rt_err_t rt_pin_irq_enable(rt_base_t pin, rt_uint32_t enabled)
     {
         return _hw_pin.ops->pin_irq_enable(&_hw_pin.parent, pin, enabled);
     }
-    return RT_ENOSYS;
+    return -RT_ENOSYS;
 }
 
 /* RT-Thread Hardware PIN APIs */
@@ -156,7 +157,7 @@ rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     RT_ASSERT(name[0] == 'P');
-    
+
     if(_hw_pin.ops->pin_get == RT_NULL)
     {
         return -RT_ENOSYS;

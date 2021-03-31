@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2020-2021, Bluetrum Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,13 @@
 #define BOARD_H__
 
 #include <rtthread.h>
-#include "ab32vgx.h"
-#include "drv_gpio.h"
+#include <ab32vgx.h>
+#ifdef RT_USING_PIN
+#include <drv_gpio.h>
+#endif
+#ifdef RT_USING_WDT
+#include <drv_wdt.h>
+#endif
+
 
 #endif

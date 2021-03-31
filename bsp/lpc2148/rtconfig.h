@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second*/
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -62,12 +62,12 @@
 #define RT_USING_DEVICE
 #define RT_USING_UART1
 #define RT_USING_UART2
-#define RT_UART_RX_BUFFER_SIZE	64
+#define RT_UART_RX_BUFFER_SIZE  64
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
@@ -80,10 +80,6 @@
 /* Using QEMU or SkyEye*/
 /* #define RT_USING_EMULATOR */
 
-/* SECTION: a mini libc */
-/* Using mini libc library*/
-/* #define RT_USING_MINILIBC */
-
 /* SECTION: C++ support */
 /* Using C++ support*/
 /* #define RT_USING_CPLUSPLUS */
@@ -91,11 +87,11 @@
 /* SECTION: DFS options */
 /* #define RT_USING_DFS */
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
-/* the max number of cached sector 		*/
-#define DFS_CACHE_MAX_NUM   		8
+#define DFS_FILESYSTEMS_MAX         2
+/* the max number of opened files       */
+#define DFS_FD_MAX                  4
+/* the max number of cached sector      */
+#define DFS_CACHE_MAX_NUM           8
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
@@ -123,21 +119,21 @@
 /* #define RT_LWIP_DHCP */
 
 /* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	0
-#define RT_LWIP_IPADDR3	30
+#define RT_LWIP_IPADDR0 192
+#define RT_LWIP_IPADDR1 168
+#define RT_LWIP_IPADDR2 0
+#define RT_LWIP_IPADDR3 30
 
 /* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	0
-#define RT_LWIP_GWADDR3	1
+#define RT_LWIP_GWADDR0 192
+#define RT_LWIP_GWADDR1 168
+#define RT_LWIP_GWADDR2 0
+#define RT_LWIP_GWADDR3 1
 
 /* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+#define RT_LWIP_MSKADDR0    255
+#define RT_LWIP_MSKADDR1    255
+#define RT_LWIP_MSKADDR2    255
+#define RT_LWIP_MSKADDR3    0
 
 #endif
