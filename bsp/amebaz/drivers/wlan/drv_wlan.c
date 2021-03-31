@@ -1,21 +1,7 @@
 /*
- * File      : drv_wlan.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -151,20 +137,20 @@ int rthw_wifi_ap_start(char *ssid, char *password, int channel)
         return -1;
     }
 
-    while(1) 
+    while(1)
     {
         char essid[33];
         if(wext_get_ssid(name, (unsigned char *) essid) > 0)
         {
-            if(strcmp((const char *) essid, (const char *)ssid) == 0) 
+            if(strcmp((const char *) essid, (const char *)ssid) == 0)
             {
                 rt_kprintf("%s started\n", ssid);
                 break;
             }
         }
-        if(timeout == 0) 
+        if(timeout == 0)
         {
-            rt_kprintf("Start AP timeout\n");   
+            rt_kprintf("Start AP timeout\n");
             return -1;
         }
         rt_thread_delay(1 * RT_TICK_PER_SECOND);
@@ -183,7 +169,7 @@ static int rthw_wifi_disconnect(char *name)
     if (name == RT_NULL)
         return -1;
 
-    if (wext_get_ssid(name, (unsigned char *) essid) < 0) 
+    if (wext_get_ssid(name, (unsigned char *) essid) < 0)
     {
         rt_kprintf("\nWIFI disconnected!\n");
         return -1;
@@ -203,7 +189,7 @@ static int rthw_wifi_disconnect(char *name)
             break;
         }
 
-        if(timeout == 0) 
+        if(timeout == 0)
         {
             rt_kprintf("ERROR: Deassoc timeout!\n");
             return -1;
@@ -259,7 +245,7 @@ int rthw_wifi_ap_disconnect(void)
 
 int rthw_wifi_rssi_get(void)
 {
-    int rssi = 0;   
+    int rssi = 0;
     wifi_get_rssi(&rssi);
     return rssi;
 }
