@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 /*****************************************************************************
  *  Include Section
  *  add all #include here
@@ -67,15 +67,15 @@
 
 
 #ifndef HW_SDCARD_POWER_GPIO
-	#define HW_SDCARD_POWER_GPIO  63   //not used
+    #define HW_SDCARD_POWER_GPIO  63   //not used
 #endif
 /****************************************************************************
  * ADT section
  *  add definition of user defined Data Type that only be used in this file  here
  ***************************************************************************/
 struct st_platform_info {
-	char *name;
-	void *private_data;
+    char *name;
+    void *private_data;
 };
 
 /******************************************************************************
@@ -101,14 +101,14 @@ struct st_platform_info {
 
 void fh_mmc_reset(struct fh_mmc_obj *mmc_obj)
 {
-	rt_uint32_t value;
-	if (mmc_obj->id)
-		fh_pmu_write(REG_PMU_SWRST_AHB_CTRL, 0xfffffffd);
-	else
-		fh_pmu_write(REG_PMU_SWRST_AHB_CTRL, 0xfffffffb);
-	do {
-		fh_pmu_read(REG_PMU_SWRST_AHB_CTRL, &value);
-	} while (value != 0xffffffff);
+    rt_uint32_t value;
+    if (mmc_obj->id)
+        fh_pmu_write(REG_PMU_SWRST_AHB_CTRL, 0xfffffffd);
+    else
+        fh_pmu_write(REG_PMU_SWRST_AHB_CTRL, 0xfffffffb);
+    do {
+        fh_pmu_read(REG_PMU_SWRST_AHB_CTRL, &value);
+    } while (value != 0xffffffff);
 }
 
 static struct fh_mmc_obj mmc0_obj =
@@ -130,8 +130,8 @@ static struct fh_mmc_obj mmc1_obj =
 };
 
 #ifdef RT_USING_SPI
-#define SPI0_CLK_IN					(50000000)
-#define SPI0_MAX_BAUD				(SPI0_CLK_IN/2)
+#define SPI0_CLK_IN                 (50000000)
+#define SPI0_MAX_BAUD               (SPI0_CLK_IN/2)
 
 static struct spi_control_platform_data spi0_platform_data =
 {
@@ -152,8 +152,8 @@ static struct spi_control_platform_data spi0_platform_data =
 };
 
 
-#define SPI1_CLK_IN					(50000000)
-#define SPI1_MAX_BAUD				(SPI1_CLK_IN/2)
+#define SPI1_CLK_IN                 (50000000)
+#define SPI1_MAX_BAUD               (SPI1_CLK_IN/2)
 
 static struct spi_control_platform_data spi1_platform_data =
 {
@@ -217,10 +217,10 @@ static struct fh_wdt_obj wdt_obj =
 #ifdef RT_USING_SADC
 static struct wrap_sadc_obj sadc_obj =
 {
-		.id = 0,
-		.regs = (void *)SADC_REG_BASE,
-		.irq_no = SADC_IRQn,
-		.sample_mode = ISR_MODE,
+        .id = 0,
+        .regs = (void *)SADC_REG_BASE,
+        .irq_no = SADC_IRQn,
+        .sample_mode = ISR_MODE,
 };
 #endif
 
@@ -366,8 +366,8 @@ struct st_platform_info plat_sadc =
 #endif
 
 const static struct st_platform_info *platform_info[] = {
-		&plat_mmc0,
-		//&plat_mmc1,//by PeterJiang, wifi don't use SDIO framework...
+        &plat_mmc0,
+        //&plat_mmc1,//by PeterJiang, wifi don't use SDIO framework...
 #ifdef RT_USING_SPI
         &plat_spi0,
 #endif
@@ -400,168 +400,168 @@ const static struct st_platform_info *platform_info[] = {
 
  void clock_init(void)
  {
- 	//UINT32 reg;
- 	//gate enable, spi0, gmac, uart0, timer0, wdt, pts
+    //UINT32 reg;
+    //gate enable, spi0, gmac, uart0, timer0, wdt, pts
 #ifdef YG_TEK
-	fh_pmu_write_mask(REG_PMU_PAD_MAC_TXER_CFG, 0x100000, 0x100000);
+    fh_pmu_write_mask(REG_PMU_PAD_MAC_TXER_CFG, 0x100000, 0x100000);
 #endif
- 	//SPI0
-	fh_pmu_write_mask(REG_PMU_CLK_DIV3, 0xb, 0xff);
+    //SPI0
+    fh_pmu_write_mask(REG_PMU_CLK_DIV3, 0xb, 0xff);
 
- 	//GMAC
-	fh_pmu_write_mask(REG_PMU_CLK_DIV6, 0x5000000, 0xf000000);
+    //GMAC
+    fh_pmu_write_mask(REG_PMU_CLK_DIV6, 0x5000000, 0xf000000);
 
- 	//UART0
-	fh_pmu_write_mask(REG_PMU_CLK_DIV4, 0x1, 0xf);
+    //UART0
+    fh_pmu_write_mask(REG_PMU_CLK_DIV4, 0x1, 0xf);
 
- 	//TIMER0
-	fh_pmu_write_mask(REG_PMU_CLK_DIV5, 0x1d0000, 0x3f0000);
+    //TIMER0
+    fh_pmu_write_mask(REG_PMU_CLK_DIV5, 0x1d0000, 0x3f0000);
 
- 	//PTS
-	fh_pmu_write_mask(REG_PMU_CLK_DIV2, 0x23, 0x3f);
+    //PTS
+    fh_pmu_write_mask(REG_PMU_CLK_DIV2, 0x23, 0x3f);
 
- 	//WDT
-	//fh_pmu_write_mask(REG_PMU_CLK_DIV5, 0x1d00, 0x3f00);
-	fh_pmu_write_mask(REG_PMU_CLK_DIV5, 0x3500, 0x3f00);
+    //WDT
+    //fh_pmu_write_mask(REG_PMU_CLK_DIV5, 0x1d00, 0x3f00);
+    fh_pmu_write_mask(REG_PMU_CLK_DIV5, 0x3500, 0x3f00);
 
- 	//clock enable
-	fh_pmu_write_mask(REG_PMU_CLK_GATE, 0, 0x720ba080);
+    //clock enable
+    fh_pmu_write_mask(REG_PMU_CLK_GATE, 0, 0x720ba080);
 
     //sd0_drv_sel
-	fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x200000, 0x300000);
+    fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x200000, 0x300000);
     //sd0_sample_sel
-	fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x00000, 0x30000);
+    fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x00000, 0x30000);
 
- 	//sd1_drv_sel
-	fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x2000, 0x3000);
- 	//sd1_sample_sel
-	fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x000, 0x300);
+    //sd1_drv_sel
+    fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x2000, 0x3000);
+    //sd1_sample_sel
+    fh_pmu_write_mask(REG_PMU_CLK_SEL, 0x000, 0x300);
 
  }
 
 
 void fh_platform_info_register(void){
-	struct fh_board_info *test_info;
-	int i;
+    struct fh_board_info *test_info;
+    int i;
 
-	for(i=0;i<sizeof(platform_info)/sizeof(struct st_platform_info *);i++){
-		test_info = fh_board_info_register(platform_info[i]->name,platform_info[i]->private_data);
-		if(!test_info){
-			rt_kprintf("info_name(%s) failed registered\n", platform_info[i]->name);
-		}
-	}
+    for(i=0;i<sizeof(platform_info)/sizeof(struct st_platform_info *);i++){
+        test_info = fh_board_info_register(platform_info[i]->name,platform_info[i]->private_data);
+        if(!test_info){
+            rt_kprintf("info_name(%s) failed registered\n", platform_info[i]->name);
+        }
+    }
 }
 
 void rt_hw_board_init()
 {
-	/* initialize the system clock */
-	rt_hw_clock_init();
-	//add iomux init 2015-3-11 by yu.zhang for fh81(fullhan)
-	//iomux_init();
+    /* initialize the system clock */
+    rt_hw_clock_init();
+    //add iomux init 2015-3-11 by yu.zhang for fh81(fullhan)
+    //iomux_init();
     fh_iomux_init(PMU_REG_BASE + 0x5c);
-	//add clk init  2015-3-11 by yu.zhang for fh81(fullhan)
-	clock_init();
-	/* initialize uart */
-	rt_hw_uart_init();
-	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-	/* initialize timer1 */
-	rt_hw_timer_init();
-	//board data info init...
-	fh_board_info_init();
-	fh_platform_info_register();
+    //add clk init  2015-3-11 by yu.zhang for fh81(fullhan)
+    clock_init();
+    /* initialize uart */
+    rt_hw_uart_init();
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+    /* initialize timer1 */
+    rt_hw_timer_init();
+    //board data info init...
+    fh_board_info_init();
+    fh_platform_info_register();
 
 }
 
 void rt_board_driver_init(){
 
-	//add board init lock here...
-	/*rt_show_version();*/
-	int ret;
+    //add board init lock here...
+    /*rt_show_version();*/
+    int ret;
 
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
-	{
-		/* init the device filesystem */
-		dfs_init();
-		rt_kprintf("DFS initialized!\n");
+    {
+        /* init the device filesystem */
+        dfs_init();
+        rt_kprintf("DFS initialized!\n");
 #if defined(RT_USING_DFS_ELMFAT)
-		/* init the elm chan FatFs filesystam*/
-		elm_init();
-		rt_kprintf("ELM initialized!\n");
+        /* init the elm chan FatFs filesystam*/
+        elm_init();
+        rt_kprintf("ELM initialized!\n");
 #endif
 
 #if defined(RT_USING_DFS_ROMFS)
-		dfs_romfs_init();
-		if (dfs_mount(RT_NULL, "/rom", "rom", 0, &romfs_root) == 0)
-		{
-			rt_kprintf("ROM File System initialized!\n");
-		}
-		else
-			rt_kprintf("ROM File System initialzation failed!\n");
+        dfs_romfs_init();
+        if (dfs_mount(RT_NULL, "/rom", "rom", 0, &romfs_root) == 0)
+        {
+            rt_kprintf("ROM File System initialized!\n");
+        }
+        else
+            rt_kprintf("ROM File System initialzation failed!\n");
 #endif
 
 #if defined(RT_USING_DFS_DEVFS)
-		devfs_init();
-		if (dfs_mount(RT_NULL, "/dev", "devfs", 0, 0) == 0)
-			rt_kprintf("Device File System initialized!\n");
-		else
-			rt_kprintf("Device File System initialzation failed!\n");
+        devfs_init();
+        if (dfs_mount(RT_NULL, "/dev", "devfs", 0, 0) == 0)
+            rt_kprintf("Device File System initialized!\n");
+        else
+            rt_kprintf("Device File System initialzation failed!\n");
 
-		#ifdef RT_USING_NEWLIB
-		/* init libc */
-		libc_system_init(RT_CONSOLE_DEVICE_NAME);
-		#endif
+        #ifdef RT_USING_NEWLIB
+        /* init libc */
+        libc_system_init(RT_CONSOLE_DEVICE_NAME);
+        #endif
 #endif
 
 #if defined(RT_USING_DFS_UFFS)
-	{
-		/* init the uffs filesystem */
-		dfs_uffs_init();
+    {
+        /* init the uffs filesystem */
+        dfs_uffs_init();
 
-		/* mount flash device as flash directory */
-		if(dfs_mount("nand0", "/nand0", "uffs", 0, 0) == 0)
-			rt_kprintf("UFFS File System initialized!\n");
-		else
-			rt_kprintf("UFFS File System initialzation failed!\n");
-	}
+        /* mount flash device as flash directory */
+        if(dfs_mount("nand0", "/nand0", "uffs", 0, 0) == 0)
+            rt_kprintf("UFFS File System initialized!\n");
+        else
+            rt_kprintf("UFFS File System initialzation failed!\n");
+    }
 #endif
 
 
 #ifdef RT_USING_DFS_RAMFS
-	dfs_ramfs_init();
-	{
-		rt_uint8_t *ramfs_pool = RT_NULL;
-		struct dfs_ramfs* ramfs;
-		ramfs_pool = rt_malloc(0x800000);
-		if(ramfs_pool)
-		{
-			ramfs =(struct dfs_ramfs*) dfs_ramfs_create((rt_uint8_t*)ramfs_pool, 0x800000);
-			if (ramfs != RT_NULL)
-			{
-				if (dfs_mount(RT_NULL, "/", "ram", 0, ramfs) == 0)
-				{
-					rt_kprintf("Mount RAMDisk done!\n");
-				}
-				else
-				{
-					rt_kprintf("Mount RAMDisk failed.\n");
-				}
-			}
-		}
-		else
-		{
-			rt_kprintf("alloc ramfs poll failed\n");
-		}
-	}
+    dfs_ramfs_init();
+    {
+        rt_uint8_t *ramfs_pool = RT_NULL;
+        struct dfs_ramfs* ramfs;
+        ramfs_pool = rt_malloc(0x800000);
+        if(ramfs_pool)
+        {
+            ramfs =(struct dfs_ramfs*) dfs_ramfs_create((rt_uint8_t*)ramfs_pool, 0x800000);
+            if (ramfs != RT_NULL)
+            {
+                if (dfs_mount(RT_NULL, "/", "ram", 0, ramfs) == 0)
+                {
+                    rt_kprintf("Mount RAMDisk done!\n");
+                }
+                else
+                {
+                    rt_kprintf("Mount RAMDisk failed.\n");
+                }
+            }
+        }
+        else
+        {
+            rt_kprintf("alloc ramfs poll failed\n");
+        }
+    }
 #endif
-	}
+    }
 #endif
 /* Filesystem Initialization end*/
 
 #ifdef RT_USING_GPIO
     {
         rt_hw_gpio_init();
-	rt_kprintf("GPIO initialized!\n");
+    rt_kprintf("GPIO initialized!\n");
 
 #ifdef RT_USING_SDIO
         //wifi
@@ -572,7 +572,7 @@ void rt_board_driver_init(){
         //micro sd
         gpio_request(HW_SDCARD_POWER_GPIO);
         gpio_direction_output(HW_SDCARD_POWER_GPIO, 0);
-	rt_kprintf("SDIO initialized!\n");
+    rt_kprintf("SDIO initialized!\n");
 #endif
         //sensor
         gpio_request(HW_CIS_RST_GPIO);
@@ -585,7 +585,7 @@ void rt_board_driver_init(){
 #ifdef RT_USING_SDIO
 #ifndef RT_USING_WIFI_MARVEL
     rt_hw_mmc_init();
-	rt_kprintf("MMC initialized!\n");
+    rt_kprintf("MMC initialized!\n");
     rt_thread_delay(RT_TICK_PER_SECOND*2);
     /* mount sd card fat partition 1 as root directory */
     #ifdef RT_USING_DFS_ELMFAT
@@ -601,56 +601,56 @@ void rt_board_driver_init(){
 
 
 #ifdef RT_USING_FH_DMA
-	{
+    {
         rt_fh_dma_init();
-	rt_kprintf("DMA initialized!\n");
-	}
+    rt_kprintf("DMA initialized!\n");
+    }
 #endif
 
 
 
 #ifdef RT_USING_FH_ACW
-	{
-		 fh_audio_init();
-			rt_kprintf("AUDIO initialized!\n");
-	}
+    {
+         fh_audio_init();
+            rt_kprintf("AUDIO initialized!\n");
+    }
 #endif
 
 #ifdef RT_USING_LWIP
-	{
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("LWIP SYS initialized!\n");
-		eth_system_device_init();
-		rt_kprintf("ETH initialized!\n");
-	}
+    {
+        /* init lwip system */
+        lwip_sys_init();
+        rt_kprintf("LWIP SYS initialized!\n");
+        eth_system_device_init();
+        rt_kprintf("ETH initialized!\n");
+    }
 #endif
 
 #ifdef RT_USING_GMAC
         /* register ethernetif device */
         rt_app_fh_gmac_init();
-	rt_kprintf("GMAC initialized!\n");
+    rt_kprintf("GMAC initialized!\n");
 #endif
 
 
 #ifdef RT_USING_I2C
-	{
-	    rt_hw_i2c_init();
-		rt_kprintf("I2C initialized!\n");
-	}
+    {
+        rt_hw_i2c_init();
+        rt_kprintf("I2C initialized!\n");
+    }
 #endif
 
 #ifdef RT_USING_PWM
     {
         rt_hw_pwm_init();
-	rt_kprintf("PWM initialized!\n");
+    rt_kprintf("PWM initialized!\n");
 }
 #endif
 
 #ifdef RT_USING_WDT
     {
         rt_hw_wdt_init();
-	rt_kprintf("WDT initialized!\n");
+    rt_kprintf("WDT initialized!\n");
 }
 #endif
 
@@ -658,7 +658,7 @@ void rt_board_driver_init(){
 #ifdef RT_USING_SPI
     {
         rt_hw_spi_init();
-	rt_kprintf("SPI initialized!\n");
+    rt_kprintf("SPI initialized!\n");
     }
 #endif
 
@@ -668,21 +668,21 @@ void rt_board_driver_init(){
     rt_kprintf("FLASH initialized!\n");
 #endif
 
-	rt_kprintf("init done\n");
+    rt_kprintf("init done\n");
 #ifdef RT_USING_SADC
     rt_hw_sadc_init();
-	rt_kprintf("SADC initialized!\n");
+    rt_kprintf("SADC initialized!\n");
 #endif
 
 #ifdef RT_USING_ENC28J60
-	gpio_request(ENC28J60_INT);
-	gpio_direction_input(ENC28J60_INT);
-	gpio_set_irq_type(ENC28J60_INT, IRQ_TYPE_EDGE_FALLING);
-	rt_hw_interrupt_install(gpio_to_irq(ENC28J60_INT), (void *)enc28j60_isr, RT_NULL, RT_NULL);
-	gpio_irq_enable(gpio_to_irq(ENC28J60_INT));
-	gpio_release(ENC28J60_INT);
+    gpio_request(ENC28J60_INT);
+    gpio_direction_input(ENC28J60_INT);
+    gpio_set_irq_type(ENC28J60_INT, IRQ_TYPE_EDGE_FALLING);
+    rt_hw_interrupt_install(gpio_to_irq(ENC28J60_INT), (void *)enc28j60_isr, RT_NULL, RT_NULL);
+    gpio_irq_enable(gpio_to_irq(ENC28J60_INT));
+    gpio_release(ENC28J60_INT);
 
-	enc28j60_attach(ENC28J60_SPI_DEV);
+    enc28j60_attach(ENC28J60_SPI_DEV);
 #endif
 }
 

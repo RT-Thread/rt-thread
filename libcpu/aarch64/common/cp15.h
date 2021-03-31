@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -55,7 +55,7 @@ static inline void send_ipi_msg(int cpu, int ipi_vector)
 
 static inline void setup_bootstrap_addr(int cpu, int addr)
 {
-	CORE_MAILBOX3_SET(cpu) = addr;
+    CORE_MAILBOX3_SET(cpu) = addr;
 }
 
 static inline void enable_cpu_ipi_intr(int cpu)
@@ -65,7 +65,7 @@ static inline void enable_cpu_ipi_intr(int cpu)
 
 static inline void enable_cpu_timer_intr(int cpu)
 {
-	CORETIMER_INTCTL(cpu) = 0x8;
+    CORETIMER_INTCTL(cpu) = 0x8;
 }
 
 static inline void enable_cntv(void)

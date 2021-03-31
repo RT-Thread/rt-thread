@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -387,7 +387,7 @@ static void __rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t npages
             return;
         }
 
-        if (*(mmu_l2 + l2_off) & ARCH_MMU_USED_MASK) 
+        if (*(mmu_l2 + l2_off) & ARCH_MMU_USED_MASK)
         {
             *(mmu_l2 + l2_off) = 0;
             /* cache maintain */
@@ -691,7 +691,7 @@ void *rt_hw_kernel_virt_to_phys(void *v_addr, size_t size)
 
 //pa --> va
 void *rt_hw_kernel_phys_to_virt(void *p_addr, size_t size)
-{   
+{
     void *v_addr = 0;
 
     #ifdef RT_USING_USERSPACE

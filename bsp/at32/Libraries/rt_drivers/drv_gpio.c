@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 
 #ifdef RT_USING_PIN
 
-static const struct pin_index pins[] = 
+static const struct pin_index pins[] =
 {
 #if defined(GPIOA)
     __AT32_PIN(0 ,  A, 0 ),
@@ -414,7 +414,7 @@ static rt_err_t at32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         /* Configure GPIO_InitStructure */
         GPIO_StructInit(&GPIO_InitStruct);
         EXTI_StructInit(&EXTI_InitStruct);
-        GPIO_InitStruct.GPIO_Pins = irqmap->pinbit;        
+        GPIO_InitStruct.GPIO_Pins = irqmap->pinbit;
         GPIO_InitStruct.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
         EXTI_InitStruct.EXTI_Line = irqmap->pinbit;
         EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
@@ -462,24 +462,24 @@ static rt_err_t at32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         if (( irqmap->pinbit>=GPIO_Pins_5 )&&( irqmap->pinbit<=GPIO_Pins_9 ))
         {
             if(!(pin_irq_enable_mask&(GPIO_Pins_5|GPIO_Pins_6|GPIO_Pins_7|GPIO_Pins_8|GPIO_Pins_9)))
-            {    
+            {
                 NVIC_InitStruct.NVIC_IRQChannel = irqmap->irqno;
             }
         }
         else if (( irqmap->pinbit>=GPIO_Pins_10 )&&( irqmap->pinbit<=GPIO_Pins_15 ))
         {
             if(!(pin_irq_enable_mask&(GPIO_Pins_10|GPIO_Pins_11|GPIO_Pins_12|GPIO_Pins_13|GPIO_Pins_14|GPIO_Pins_15)))
-            {    
+            {
                 NVIC_InitStruct.NVIC_IRQChannel = irqmap->irqno;
             }
         }
         else
         {
             NVIC_InitStruct.NVIC_IRQChannel = irqmap->irqno;
-        }        
+        }
 
         NVIC_Init(&NVIC_InitStruct);
-        rt_hw_interrupt_enable(level);  
+        rt_hw_interrupt_enable(level);
     }
     else
     {

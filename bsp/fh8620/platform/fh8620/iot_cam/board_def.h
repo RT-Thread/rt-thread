@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,18 +18,18 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #ifndef BOARD_DEF_H_
 #define BOARD_DEF_H_
 
 
 /* ***********************
- * SECTION:	DRIVE
+ * SECTION: DRIVE
  * ***********************/
 // Basic drive..
 #define RT_USING_UART1
@@ -49,22 +49,22 @@
 #define CONFIG_PLAT_V2
 
 #ifndef FH_DDR_START
-#define	FH_DDR_START		0xA0000000
-#define FH_DDR_END		0xA1000000
+#define FH_DDR_START        0xA0000000
+#define FH_DDR_END      0xA1000000
 
-#define FH_RTT_OS_MEM_SIZE	0x00600000
-#define FH_DMA_MEM_SIZE		0x20000 /* 128k */
+#define FH_RTT_OS_MEM_SIZE  0x00600000
+#define FH_DMA_MEM_SIZE     0x20000 /* 128k */
 
-#define FH_RTT_OS_MEM_END	(FH_DDR_START + FH_RTT_OS_MEM_SIZE)
-#define FH_SDK_MEM_START	(FH_RTT_OS_MEM_END + FH_DMA_MEM_SIZE)
-#define FH_RTT_OS_HEAP_END	FH_SDK_MEM_START
-#define FH_SDK_MEM_SIZE		(FH_DDR_END - FH_SDK_MEM_START)
+#define FH_RTT_OS_MEM_END   (FH_DDR_START + FH_RTT_OS_MEM_SIZE)
+#define FH_SDK_MEM_START    (FH_RTT_OS_MEM_END + FH_DMA_MEM_SIZE)
+#define FH_RTT_OS_HEAP_END  FH_SDK_MEM_START
+#define FH_SDK_MEM_SIZE     (FH_DDR_END - FH_SDK_MEM_START)
 #endif /* end of FH_DDR_START*/
- 
+
 /* ***********************
- * SECTION:	DRIVE COMPONENT
+ * SECTION: DRIVE COMPONENT
  * ***********************/
-#define UART_NAME 						"uart1"
+#define UART_NAME                       "uart1"
 #define RT_USING_DMA_MEM
 
 #define RT_USING_MCI0

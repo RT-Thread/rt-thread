@@ -173,8 +173,8 @@ static void *thread_run(void *parameter)
     /*TODO:
      * 最后一行的pthread_exit永远没有机会执行，这是因为在threead->exit函数中
      * 会发生线程切换，并永久将此pthread线程挂起，所以更完美的解决方案是在这
-	 * 里发送信号给主线程，主线程中再次唤醒此线程令其自动退出。
-	 */
+     * 里发送信号给主线程，主线程中再次唤醒此线程令其自动退出。
+     */
     //sem_destroy(&thread->sem);
 
     pthread_exit(NULL);
