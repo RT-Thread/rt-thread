@@ -274,8 +274,11 @@ void *rt_malloc(rt_size_t size)
     rt_size_t ptr, ptr2;
     struct heap_mem *mem, *mem2;
 
-    if (size == 0)
+    if (size < 0) 
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc(%d): request size should not less than zero", size));
         return RT_NULL;
+    }
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 

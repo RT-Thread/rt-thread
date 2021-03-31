@@ -766,6 +766,12 @@ void *rt_malloc(rt_size_t size)
 {
     void *ptr;
 
+    if (size < 0)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc(%d): request size should not less than zero", size));
+        return RT_NULL;
+    }
+
     /* try to allocate in system heap */
     ptr = rt_memheap_alloc(&_heap, size);
     if (ptr == RT_NULL)

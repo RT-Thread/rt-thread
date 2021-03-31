@@ -482,9 +482,11 @@ void *rt_malloc(rt_size_t size)
     slab_chunk *chunk;
     struct memusage *kup;
 
-    /* zero size, return RT_NULL */
-    if (size == 0)
+    if (size < 0)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_SLAB, ("malloc(%d): request size should not less than zero", size));
         return RT_NULL;
+    }
 
     /*
      * Handle large allocations directly.  There should not be very many of
