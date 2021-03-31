@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,7 +31,7 @@ extern int tzcall(int id, rt_ubase_t arg0, rt_ubase_t arg1, rt_ubase_t arg2);
 
 rt_ubase_t rt_trustzone_current_context;
 
-#if defined(__CC_ARM) 
+#if defined(__CC_ARM)
 static __inline rt_uint32_t __get_IPSR(void)
 {
   register rt_uint32_t result          __asm("ipsr");
@@ -78,7 +78,7 @@ rt_err_t rt_trustzone_enter(rt_ubase_t module)
     rt_trustzone_init();
     if (tzcall(TZ_ALLOC_CONTEXT_ID, module, 0, 0))
     {
-        return RT_EOK; 
+        return RT_EOK;
     }
     return -RT_ERROR;
 }
