@@ -9,7 +9,7 @@
  */
 #ifndef __BOARD_H__
 #define __BOARD_H__
-void rt_hw_board_init(void);
+int rt_hw_board_init(void);
 rt_uint8_t *rt_hw_sram_init(void);
 
 /* SD Card init function */
