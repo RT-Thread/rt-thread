@@ -511,6 +511,8 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     dev->flags = flags;
     /* link changed status of device */
     dev->link_changed = 0x00;
+    /* avoid send the same mail to mailbox */
+    dev->rx_notice = 0x00;
     dev->parent.type = RT_Device_Class_NetIf;
     /* register to RT-Thread device manager */
     rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
@@ -605,10 +607,12 @@ rt_err_t eth_device_ready(struct eth_device* dev)
             dev->rx_notice = RT_TRUE;
             return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
         }
+        else
+            return RT_EOK;
         /* post message to Ethernet thread */
     }
-
-    return ERR_OK; /* netif is not initialized yet, just return. */
+    else
+        return -RT_ERROR; /* netif is not initialized yet, just return. */
 }
 
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
@@ -701,7 +705,11 @@ static void eth_rx_thread_entry(void* parameter)
                 else
                     netifapi_netif_set_link_down(device->netif);
             }
+
+            rt_enter_critical();
+            /* 'rx_notice' will be modify in the interrupt or here */
             device->rx_notice = RT_FALSE;
+            rt_exit_critical();
 
             /* receive all of buffer */
             while(1)
