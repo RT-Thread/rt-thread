@@ -550,10 +550,16 @@ rt_err_t eth_device_init(struct eth_device * dev, const char *name)
 rt_err_t eth_device_ready(struct eth_device* dev)
 {
     if (dev->netif)
+    {
+        if(dev->rx_notice == RT_FALSE)
+        {
+            dev->rx_notice = RT_TRUE;
+            return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+        }
         /* post message to Ethernet thread */
-        return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
-    else
-        return ERR_OK; /* netif is not initialized yet, just return. */
+    }
+
+    return ERR_OK; /* netif is not initialized yet, just return. */
 }
 
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
@@ -646,9 +652,10 @@ static void eth_rx_thread_entry(void* parameter)
                 else
                     netifapi_netif_set_link_down(device->netif);
             }
+            device->rx_notice = RT_FALSE;
 
             /* receive all of buffer */
-            do
+            while(1)
             {
             	if(device->eth_rx == RT_NULL) break;
 
@@ -664,7 +671,7 @@ static void eth_rx_thread_entry(void* parameter)
                     }
                 }
                 else break;
-            }while(rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t *)&device, RT_WAITING_NO) == RT_EOK);
+            }
         }
         else
         {
