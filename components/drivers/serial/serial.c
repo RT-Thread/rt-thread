@@ -816,11 +816,11 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         /* configure low level device */
         serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_TX);
     }
+#endif /* RT_SERIAL_USING_DMA */
 
     serial->ops->control(serial, RT_DEVICE_CTRL_CLOSE, RT_NULL);
     dev->flag &= ~RT_DEVICE_FLAG_ACTIVATED;
 
-#endif /* RT_SERIAL_USING_DMA */
     return RT_EOK;
 }
 
