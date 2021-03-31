@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2020-01-09     shelton      first version
  */
- 
+
 #include <board.h>
 #include "drv_spi.h"
 
@@ -24,7 +24,7 @@
 #ifdef DEBUG
 #define DEBUG_PRINTF(...)   rt_kprintf(__VA_ARGS__)
 #else
-#define DEBUG_PRINTF(...)   
+#define DEBUG_PRINTF(...)
 #endif
 
 /* private rt-thread spi ops function */
@@ -81,13 +81,13 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 static rt_err_t configure(struct rt_spi_device* device,
                           struct rt_spi_configuration* configuration)
 {
-    struct rt_spi_bus * spi_bus = (struct rt_spi_bus *)device->bus;	
+    struct rt_spi_bus * spi_bus = (struct rt_spi_bus *)device->bus;
     struct at32_spi *spi_instance = (struct at32_spi *)spi_bus->parent.user_data;
-    
+
     SPI_InitType SPI_InitStruct;
 
-	  RT_ASSERT(device != RT_NULL);
-	  RT_ASSERT(configuration != RT_NULL);
+      RT_ASSERT(device != RT_NULL);
+      RT_ASSERT(configuration != RT_NULL);
 
     at32_msp_spi_init(spi_instance->config->spix);
 
@@ -162,7 +162,7 @@ static rt_err_t configure(struct rt_spi_device* device,
             SPI_InitStruct.SPI_MCLKP = SPI_MCLKP_256;
         }
     } /* baudrate */
-    
+
     switch(configuration->mode & RT_SPI_MODE_3)
     {
     case RT_SPI_MODE_0:
@@ -172,11 +172,11 @@ static rt_err_t configure(struct rt_spi_device* device,
     case RT_SPI_MODE_1:
         SPI_InitStruct.SPI_CPHA = SPI_CPHA_2EDGE;
         SPI_InitStruct.SPI_CPOL = SPI_CPOL_LOW;
-        break;        
+        break;
     case RT_SPI_MODE_2:
         SPI_InitStruct.SPI_CPHA = SPI_CPHA_1EDGE;
         SPI_InitStruct.SPI_CPOL = SPI_CPOL_HIGH;
-        break;    
+        break;
     case RT_SPI_MODE_3:
         SPI_InitStruct.SPI_CPHA = SPI_CPHA_2EDGE;
         SPI_InitStruct.SPI_CPOL = SPI_CPOL_HIGH;
@@ -200,7 +200,7 @@ static rt_err_t configure(struct rt_spi_device* device,
     /* init SPI */
     SPI_Init(spi_instance->config->spix, &SPI_InitStruct);
     /* Enable SPI_MASTER */
-	  SPI_Enable(spi_instance->config->spix, ENABLE);
+      SPI_Enable(spi_instance->config->spix, ENABLE);
     SPI_CRCEN(spi_instance->config->spix, DISABLE);
 
     return RT_EOK;
@@ -213,9 +213,9 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
     struct rt_spi_configuration * config = &device->config;
     struct at32_spi_cs * at32_spi_cs = device->parent.user_data;
 
-	  RT_ASSERT(device != NULL);
-	  RT_ASSERT(message != NULL);
-	
+      RT_ASSERT(device != NULL);
+      RT_ASSERT(message != NULL);
+
     /* take CS */
     if(message->cs_take)
     {
@@ -229,7 +229,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
             const rt_uint8_t * send_ptr = message->send_buf;
             rt_uint8_t * recv_ptr = message->recv_buf;
             rt_uint32_t size = message->length;
-            
+
             DEBUG_PRINTF("spi poll transfer start: %d\n", size);
 
             while(size--)
@@ -240,12 +240,12 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 {
                     data = *send_ptr++;
                 }
-                
+
                 // Todo: replace register read/write by at32 lib
                 //Wait until the transmit buffer is empty
                 while(RESET == SPI_I2S_GetFlagStatus(spi_instance->config->spix, SPI_I2S_FLAG_TE));
                 // Send the byte
-				        SPI_I2S_TxData(spi_instance->config->spix, data);
+                        SPI_I2S_TxData(spi_instance->config->spix, data);
 
                 //Wait until a data is received
                 while(RESET == SPI_I2S_GetFlagStatus(spi_instance->config->spix, SPI_I2S_FLAG_RNE));
@@ -277,7 +277,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
                 //Wait until the transmit buffer is empty
                 while(RESET == SPI_I2S_GetFlagStatus(spi_instance->config->spix, SPI_I2S_FLAG_TE));
                 // Send the byte
-				        SPI_I2S_TxData(spi_instance->config->spix, data);
+                        SPI_I2S_TxData(spi_instance->config->spix, data);
 
                 //Wait until a data is received
                 while(RESET == SPI_I2S_GetFlagStatus(spi_instance->config->spix, SPI_I2S_FLAG_RNE));
@@ -295,7 +295,7 @@ static rt_uint32_t xfer(struct rt_spi_device* device, struct rt_spi_message* mes
     /* release CS */
     if(message->cs_release)
     {
-		    GPIO_SetBits(at32_spi_cs->GPIOx, at32_spi_cs->GPIO_Pin);
+            GPIO_SetBits(at32_spi_cs->GPIOx, at32_spi_cs->GPIO_Pin);
         DEBUG_PRINTF("spi release cs\n");
     }
 
@@ -306,7 +306,7 @@ static struct at32_spi_config configs[] = {
 #ifdef BSP_USING_SPI1
     {SPI1, "spi1"},
 #endif
-    
+
 #ifdef BSP_USING_SPI2
     {SPI2, "spi2"},
 #endif

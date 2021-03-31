@@ -157,7 +157,7 @@ typedef enum
 } EBI_ALow_TypeDef;
 
 /** Adress Pin Enable, high limit - higher limit of pins to enable */
-typedef enum 
+typedef enum
 {
   /** All EBI_A pins are disabled */
   ebiAHighA0 = EBI_ROUTE_APEN_A0,
@@ -218,9 +218,9 @@ typedef enum {
   /** EBI PIN I/O Location 1 */
   ebiLocation1 = EBI_ROUTE_LOCATION_LOC1,
   /** EBI PIN I/O Location 2 */
-  ebiLocation2 = EBI_ROUTE_LOCATION_LOC2,  
+  ebiLocation2 = EBI_ROUTE_LOCATION_LOC2,
   /** EBI PIN I/O Location 3 */
-  // ebiLocation3 = EBI_ROUTE_LOCATION_LOC3,  
+  // ebiLocation3 = EBI_ROUTE_LOCATION_LOC3,
 } EBI_Location_TypeDef;
 #endif
 
@@ -626,7 +626,7 @@ __STATIC_INLINE void EBI_TFTPixelSet(int pixel, uint32_t color)
  ******************************************************************************/
 __STATIC_INLINE void EBI_TFTMaskBlendMode(EBI_TFTMaskBlend_TypeDef maskBlend)
 {
-  EBI->TFTCTRL = (EBI->TFTCTRL & (~_EBI_TFTCTRL_MASKBLEND_MASK))|maskBlend;                  
+  EBI->TFTCTRL = (EBI->TFTCTRL & (~_EBI_TFTCTRL_MASKBLEND_MASK))|maskBlend;
 }
 
 
@@ -676,7 +676,7 @@ __STATIC_INLINE uint32_t EBI_TFTHCount(void)
 
 
 /***************************************************************************//**
- * @brief Set Frame Buffer Trigger  
+ * @brief Set Frame Buffer Trigger
  *   Frame buffer pointer will be updated either on each horizontal line (hsync)
  *   or vertical update (vsync)(
  ******************************************************************************/

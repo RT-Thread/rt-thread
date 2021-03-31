@@ -17,7 +17,7 @@
   *
   * <h2><center>&copy; COPYRIGHT 2018 ArteryTek</center></h2>
   ******************************************************************************
-  */ 
+  */
 
 /** @addtogroup CMSIS
   * @{
@@ -68,23 +68,23 @@
 
       Clock (MHz)
           PLL from HSE or HSI
-          SYSCLK	    HCLK	PCLK2	PCLK1
-          24	        24	    24	    24
-          36	        36	    36	    36
-          48	        48	    48	    24
-          56	        56	    56	    28
-          72	        72	    72	    36
-          96	        96	    48	    48
-          108	        108	    54	    54
-          120	        120	    60	    60
-          144	        144	    72	    72
-          150	        150	    75	    75
-          168	        168	    84	    84
-          176	        176	    88	    88
-          192	        192	    96	    96
-          200	        200	    100	    100
-          224	        224	    112	    112
-          240	        240	    120	    120
+          SYSCLK        HCLK    PCLK2   PCLK1
+          24            24      24      24
+          36            36      36      36
+          48            48      48      24
+          56            56      56      28
+          72            72      72      36
+          96            96      48      48
+          108           108     54      54
+          120           120     60      60
+          144           144     72      72
+          150           150     75      75
+          168           168     84      84
+          176           176     88      88
+          192           192     96      96
+          200           200     100     100
+          224           224     112     112
+          240           240     120     120
     */
 
 #if defined (AT32F403xx) || defined (AT32F413xx) || \
@@ -143,7 +143,7 @@
 /*!< Uncomment the following line if you need to relocate your vector Table in
      Internal SRAM. */
 /* #define VECT_TAB_SRAM */
-#define VECT_TAB_OFFSET  0x0 /*!< Vector Table base offset field. 
+#define VECT_TAB_OFFSET  0x0 /*!< Vector Table base offset field.
 This value must be a multiple of 0x200. */
 
 
@@ -573,7 +573,7 @@ static void SetSysClock(void)
 /**
   * @brief  Setup the external memory controller.
   *         Called in startup_at32f4xx_xx.s/.c before jump to main.
-  * 	      This function configures the external SRAM mounted
+  *           This function configures the external SRAM mounted
   *         (AT32 High density devices). This SRAM will be used as program
   *         data memory (including heap and stack).
   * @param  None
@@ -654,7 +654,7 @@ static void SetSysClockToHSE(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -674,7 +674,7 @@ static void SetSysClockToHSE(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_0;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_0;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -725,7 +725,7 @@ static void SetSysClockTo24M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -745,7 +745,7 @@ static void SetSysClockTo24M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_0;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_0;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -811,7 +811,7 @@ static void SetSysClockTo36M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -831,7 +831,7 @@ static void SetSysClockTo36M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -897,7 +897,7 @@ static void SetSysClockTo48M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -917,7 +917,7 @@ static void SetSysClockTo48M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -984,7 +984,7 @@ static void SetSysClockTo56M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1004,7 +1004,7 @@ static void SetSysClockTo56M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -1071,7 +1071,7 @@ static void SetSysClockTo72M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1091,7 +1091,7 @@ static void SetSysClockTo72M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -1158,7 +1158,7 @@ static void SetSysClockTo96M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1178,7 +1178,7 @@ static void SetSysClockTo96M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -1249,7 +1249,7 @@ static void SetSysClockTo108M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1269,7 +1269,7 @@ static void SetSysClockTo108M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -1341,7 +1341,7 @@ static void SetSysClockTo120M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1361,7 +1361,7 @@ static void SetSysClockTo120M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -1440,7 +1440,7 @@ static void SetSysClockTo144M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1460,7 +1460,7 @@ static void SetSysClockTo144M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -1475,7 +1475,7 @@ static void SetSysClockTo144M(void)
 
     /*  PLL configuration: PLLCLK = HSE * 18 = 144 MHz */
     RCC->CFG &= RCC_CFG_PLLCFG_MASK;
-    
+
 #if defined (AT32F415xx)
     RCC->CFG |= (uint32_t)(RCC_CFG_PLLRC_HSE | RCC_CFG_PLLMULT18);
 #else
@@ -1539,7 +1539,7 @@ static void SetSysClockTo150M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1559,7 +1559,7 @@ static void SetSysClockTo150M(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -1634,7 +1634,7 @@ static void SetSysClockTo168M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1720,7 +1720,7 @@ static void SetSysClockTo176M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1806,7 +1806,7 @@ static void SetSysClockTo192M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1892,7 +1892,7 @@ static void SetSysClockTo200M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -1978,7 +1978,7 @@ static void SetSysClockTo224M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -2064,7 +2064,7 @@ static void SetSysClockTo240M(void)
     StartUpCounter++;
   }
   while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
-#ifdef AT32F403xx 
+#ifdef AT32F403xx
   WaitHseStbl(HSE_STABLE_DELAY);
 #endif
   if ((RCC->CTRL & RCC_CTRL_HSESTBL) != RESET)
@@ -2168,7 +2168,7 @@ static void SetSysClockTo24MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_0;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_0;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2248,7 +2248,7 @@ static void SetSysClockTo36MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2328,7 +2328,7 @@ static void SetSysClockTo48MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2408,7 +2408,7 @@ static void SetSysClockTo56MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_1;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2488,7 +2488,7 @@ static void SetSysClockTo72MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2568,7 +2568,7 @@ static void SetSysClockTo96MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2653,7 +2653,7 @@ static void SetSysClockTo108MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2738,7 +2738,7 @@ static void SetSysClockTo120MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_3;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2830,7 +2830,7 @@ static void SetSysClockTo144MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -2922,7 +2922,7 @@ static void SetSysClockTo150MHSI(void)
 
     /* Flash 1 wait state */
     FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;    
+    FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_4;
 #endif
     /* HCLK = SYSCLK */
     RCC->CFG |= (uint32_t)RCC_CFG_AHBPSC_DIV1;
@@ -3454,4 +3454,4 @@ static void SetSysClockTo240MHSI(void)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2018 ArteryTek *****END OF FILE****/ 
+/******************* (C) COPYRIGHT 2018 ArteryTek *****END OF FILE****/

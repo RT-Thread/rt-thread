@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -410,10 +410,10 @@ int fh_gpio_probe(void *priv_data)
     int i;
 
     if(gpio_obj->id == 0){
-    	  rt_hw_interrupt_install(gpio_obj->irq, fh_gpio_interrupt, (void *)gpio_obj, "gpio_0");
+          rt_hw_interrupt_install(gpio_obj->irq, fh_gpio_interrupt, (void *)gpio_obj, "gpio_0");
     }
     else if(gpio_obj->id == 1){
-    	rt_hw_interrupt_install(gpio_obj->irq, fh_gpio_interrupt, (void *)gpio_obj, "gpio_1");
+        rt_hw_interrupt_install(gpio_obj->irq, fh_gpio_interrupt, (void *)gpio_obj, "gpio_1");
     }
 
 

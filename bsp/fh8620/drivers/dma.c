@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 /*****************************************************************************
  *  Include Section
  *  add all #include here
@@ -88,7 +88,7 @@ static rt_err_t rt_dma_control(struct rt_device *dev,
  *****************************************************************************/
 static rt_err_t rt_dma_init(struct rt_device *dev)
 {
-	struct rt_dma_device *dma;
+    struct rt_dma_device *dma;
 
     RT_ASSERT(dev != RT_NULL);
     dma = (struct rt_dma_device *)dev;
@@ -107,7 +107,7 @@ static rt_err_t rt_dma_open(struct rt_device *dev, rt_uint16_t oflag)
 
 static rt_err_t rt_dma_close(struct rt_device *dev)
 {
-	struct rt_dma_device *dma;
+    struct rt_dma_device *dma;
 
     RT_ASSERT(dev != RT_NULL);
     dma = (struct rt_dma_device *)dev;
@@ -124,7 +124,7 @@ static rt_err_t rt_dma_control(struct rt_device *dev,
                                     rt_uint8_t        cmd,
                                     void             *args)
 {
-	struct rt_dma_device *dma;
+    struct rt_dma_device *dma;
 
     RT_ASSERT(dev != RT_NULL);
     dma = (struct rt_dma_device *)dev;
@@ -141,7 +141,7 @@ rt_err_t rt_hw_dma_register(struct rt_dma_device *dma,
                                  rt_uint32_t                flag,
                                  void                      *data)
 {
-	rt_uint32_t ret;
+    rt_uint32_t ret;
     struct rt_device *device;
     RT_ASSERT(dma != RT_NULL);
 

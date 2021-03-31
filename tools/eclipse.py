@@ -188,7 +188,8 @@ def HandleToolOption(tools, env, project, reset):
             options = tool.findall('option')
             # find all compile options
             for option in options:
-                if option.get('id').find('compiler.include.paths') != -1 or option.get('id').find('compiler.option.includepaths') != -1:
+                option_id = option.get('id')
+                if ('compiler.include.paths' in  option_id) or ('compiler.option.includepaths' in  option_id) or ('compiler.tasking.include' in  option_id):
                     compile_include_paths_options += [option]
                 elif option.get('id').find('compiler.include.files') != -1 or option.get('id').find('compiler.option.includefiles') != -1 :
                     compile_include_files_options += [option]

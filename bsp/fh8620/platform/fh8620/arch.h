@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #ifndef ARCH_H_
 #define ARCH_H_
 
@@ -31,37 +31,37 @@
 /*****************************/
 /* BSP CONTROLLER BASE       */
 /*****************************/
-#define		INTC_REG_BASE		(0xE0200000)
-#define		SDC0_REG_BASE		(0xE2000000)
-#define		SDC1_REG_BASE		(0xE2100000)
-#define		TVE_REG_BASE		(0xE8000000)
-#define		VOU_REG_BASE		(0xE8100000)
-#define		AES_REG_BASE		(0xE8200000)
-#define		JPEG_REG_BASE		(0xE8300000)
-#define		ISPB_REG_BASE		(0xEA000000)
-#define		ISPF_REG_BASE		(0xEA100000)
-#define		VPU_REG_BASE		(0xEC000000)
-#define		VCU_REG_BASE		(0xEC100000)
-#define		DDRC_REG_BASE		(0xED000000)
-#define 	DMAC_REG_BASE		(0xEE000000)
-#define 	GMAC_REG_BASE		(0xEF000000)
-#define 	PMU_REG_BASE		(0xF0000000)
-#define 	I2C0_REG_BASE		(0xF0200000)
-#define 	GPIO0_REG_BASE		(0xF0300000)
+#define     INTC_REG_BASE       (0xE0200000)
+#define     SDC0_REG_BASE       (0xE2000000)
+#define     SDC1_REG_BASE       (0xE2100000)
+#define     TVE_REG_BASE        (0xE8000000)
+#define     VOU_REG_BASE        (0xE8100000)
+#define     AES_REG_BASE        (0xE8200000)
+#define     JPEG_REG_BASE       (0xE8300000)
+#define     ISPB_REG_BASE       (0xEA000000)
+#define     ISPF_REG_BASE       (0xEA100000)
+#define     VPU_REG_BASE        (0xEC000000)
+#define     VCU_REG_BASE        (0xEC100000)
+#define     DDRC_REG_BASE       (0xED000000)
+#define     DMAC_REG_BASE       (0xEE000000)
+#define     GMAC_REG_BASE       (0xEF000000)
+#define     PMU_REG_BASE        (0xF0000000)
+#define     I2C0_REG_BASE       (0xF0200000)
+#define     GPIO0_REG_BASE      (0xF0300000)
 #define     GPIO1_REG_BASE      (0xf4000000)
-#define 	PWM_REG_BASE		(0xF0400000)
-#define 	SPI0_REG_BASE		(0xF0500000)
-#define 	SPI1_REG_BASE		(0xF0600000)
-#define		UART0_REG_BASE		(0xF0700000)
-#define		UART1_REG_BASE		(0xF0800000)
-#define		I2S_REG_BASE		(0xF0900000)
-#define		ACODEC_REG_BASE		(0xF0A00000)
-#define		I2C1_REG_BASE		(0xF0B00000)
-#define		TMR_REG_BASE		(0xF0C00000)
-#define		WDT_REG_BASE		(0xF0D00000)
-#define		DPHY_REG_BASE		(0xF1000000)
-#define		MIPIC_REG_BASE		(0xF1100000)
-#define		SADC_REG_BASE		(0xF1200000)
+#define     PWM_REG_BASE        (0xF0400000)
+#define     SPI0_REG_BASE       (0xF0500000)
+#define     SPI1_REG_BASE       (0xF0600000)
+#define     UART0_REG_BASE      (0xF0700000)
+#define     UART1_REG_BASE      (0xF0800000)
+#define     I2S_REG_BASE        (0xF0900000)
+#define     ACODEC_REG_BASE     (0xF0A00000)
+#define     I2C1_REG_BASE       (0xF0B00000)
+#define     TMR_REG_BASE        (0xF0C00000)
+#define     WDT_REG_BASE        (0xF0D00000)
+#define     DPHY_REG_BASE       (0xF1000000)
+#define     MIPIC_REG_BASE      (0xF1100000)
+#define     SADC_REG_BASE       (0xF1200000)
 
 
 

@@ -21,9 +21,14 @@
 
 #include <sys/time.h>
 #include <rtthread.h>
+
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
 #endif
+
+#define DBG_TAG    "TIME"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -219,6 +224,7 @@ RT_WEAK time_t time(time_t *t)
 
     if(time_now == (time_t)-1)
     {
+        LOG_W("Cannot find a RTC device to provide time!");
         errno = ENOSYS;
     }
 
@@ -246,12 +252,13 @@ int stime(const time_t *t)
     }
     else
     {
+        LOG_W("Cannot find a RTC device to provide time!");
         errno = ENOSYS;
         return -1;
     }
     return 0;
-
 #else
+    LOG_W("Cannot find a RTC device to provide time!");
     errno = ENOSYS;
     return -1;
 #endif /* RT_USING_RTC */
