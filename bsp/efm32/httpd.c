@@ -1,8 +1,8 @@
 /***************************************************************************//**
- * @file 	httpd.c
- * @brief 	Simple http server demo application
+ * @file    httpd.c
+ * @brief   Simple http server demo application
  *  COPYRIGHT (C) 2012, RT-Thread Development Team
- * @author 	onelife
+ * @author  onelife
  * @version 1.0
  *******************************************************************************
  * @section License
@@ -10,8 +10,8 @@
  * LICENSE in this distribution or at http://www.rt-thread.org/license/LICENSE
  *******************************************************************************
  * @section Change Logs
- * Date			Author		Notes
- * 2011-07-04	onelife		Derive from Energy Micro demo application
+ * Date         Author      Notes
+ * 2011-07-04   onelife     Derive from Energy Micro demo application
  ******************************************************************************/
 
 /**************************************************************************//**
@@ -94,29 +94,29 @@
 static int temp, vdd;
 static char indexdata[700];
 static const char indexdata1[] =
-	"HTTP/1.0 200 OK\r\n\
-	Content-type: text/html\r\n\
-	Pragma: no-cache\r\n\
-	Refresh: 5\r\n\
-	\r\n\
-	<html>\
-	<head><title>EFM32 HTTPD DEMO</title><head>\
-	<body>\
-	<h1>This is a simple http server</h1>\
-	<br><br><B>Ethernet controller: ENC28J60</B>\
-	<br><br><B>Refreshing timers: ";
+    "HTTP/1.0 200 OK\r\n\
+    Content-type: text/html\r\n\
+    Pragma: no-cache\r\n\
+    Refresh: 5\r\n\
+    \r\n\
+    <html>\
+    <head><title>EFM32 HTTPD DEMO</title><head>\
+    <body>\
+    <h1>This is a simple http server</h1>\
+    <br><br><B>Ethernet controller: ENC28J60</B>\
+    <br><br><B>Refreshing timers: ";
 
 static const char indexdata2[] =
-	"<br><br><B>Current Vdd: ";
+    "<br><br><B>Current Vdd: ";
 
 static const char indexdata3[] =
-	" V</B>\
-	<br><br><B>Current temperature: ";
+    " V</B>\
+    <br><br><B>Current temperature: ";
 
 static const char indexdata4[] =
-	" C</B>\
-	</body>\
-	</html>";
+    " C</B>\
+    </body>\
+    </html>";
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -169,9 +169,9 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
         counter++;
       }
 
-	  vdd = rt_hw_get_vdd();
-	  rt_sprintf(&indexdata[counter], "%1d.%02d", vdd / 100, vdd % 100);
-	  counter += 4;
+      vdd = rt_hw_get_vdd();
+      rt_sprintf(&indexdata[counter], "%1d.%02d", vdd / 100, vdd % 100);
+      counter += 4;
 
       for (i = 0; i < sizeof(indexdata3) - 1; i++)
       {
@@ -179,15 +179,15 @@ static err_t http_recv(void *arg, struct tcp_pcb *pcb, struct pbuf *p, err_t err
         counter++;
       }
 
-	  temp = rt_hw_get_temp();
+      temp = rt_hw_get_temp();
       /*Set temperature sign*/
       if (temp < 0)
       {
         indexdata[counter] = '-';
         counter++;
       }
-	  rt_sprintf(&indexdata[counter], "%02d.%02d\n", temp / 100, temp % 100);
-	  counter += 5;
+      rt_sprintf(&indexdata[counter], "%02d.%02d\n", temp / 100, temp % 100);
+      counter += 5;
 
       for (i = 0; i < sizeof(indexdata4); i++)
       {
