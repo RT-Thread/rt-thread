@@ -18,10 +18,10 @@
           <Vendor>Nordic Semiconductor</Vendor>
           <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.38.0</PackID>
           <PackURL>http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/</PackURL>
-          <Cpu>IRAM(0x20000000,0x00004000) IROM(0x00000000,0x00040000) CPUTYPE("Cortex-M0") CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IROM(0x00000000,0x40000) IRAM(0x20000000,0x4000) CPUTYPE("Cortex-M0") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC4000 -FN1 -FF0nrf51xxx -FS00 -FL0200000 -FP0($$Device:nRF51822_xxAA$Flash\nrf51xxx.flm))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0nrf51xxx -FS00 -FL0200000 -FP0($$Device:nRF51822_xxAA$Flash\nrf51xxx.flm))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:nRF51822_xxAA$Device\Include\nrf.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:nRF51822_xxAA$SVD\nrf51.svd</SFDFile>
+          <SFDFile>$$Device:nRF51822_xxAA$SVD\nrf51.xml</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -52,7 +52,7 @@
           <OutputName>template</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
@@ -110,7 +110,7 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>  </SimDllArguments>
+          <SimDllArguments> </SimDllArguments>
           <SimDlgDll>DARMCM1.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM0</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99</MiscControls>
-              <Define>NRF51, USE_STDPERIPH_DRIVER</Define>
+              <Define>NRF51, __RTTHREAD__, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\Include;Libraries\nrf51822\Include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\common</IncludePath>
+              <IncludePath>applications;.;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;drivers;Libraries\CMSIS\Include;Libraries\nrf51822\Include;..\..\components\finsh;.;..\..\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -369,7 +369,7 @@
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\build\template.sct</ScatterFile>
+            <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -379,86 +379,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>Kernel</GroupName>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\components.c</FilePath>
-            </File>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\cpu.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\signal.c</FilePath>
-            </File>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -475,22 +395,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers</GroupName>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\uart.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>cpu</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -498,24 +403,24 @@
               <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
             <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-            <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
             <File>
-              <FileName>cpuport.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
+            </File>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -523,14 +428,24 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
             <File>
               <FileName>pipe.c</FileName>
@@ -543,19 +458,34 @@
               <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
             </File>
             <File>
-              <FileName>waitqueue.c</FileName>
+              <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+              <FilePath>drivers\uart.c</FilePath>
             </File>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>system_nrf51.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+              <FilePath>Libraries\nrf51822\Source\templates\system_nrf51.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_startup_nrf51.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\nrf51822\Source\templates\arm\arm_startup_nrf51.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -580,7 +510,74 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>::Device</GroupName>
+          <GroupName>Kernel</GroupName>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>
@@ -588,64 +585,8 @@
 
   <RTE>
     <apis/>
-    <components>
-      <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.27.1" condition="nRF51822 Device and CMSIS">
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.27.1"/>
-        <targetInfos>
-          <targetInfo name="rt-thread"/>
-        </targetInfos>
-      </component>
-      <component Cclass="Device" Cgroup="StartupConfig" Cvendor="NordicSemiconductor" Cversion="8.27.1" condition="Startup">
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.27.1"/>
-        <targetInfos>
-          <targetInfo name="rt-thread"/>
-        </targetInfos>
-      </component>
-    </components>
-    <files>
-      <file attr="config" category="source" condition="ARM Compiler" name="Device\Source\arm\arm_startup_nrf51.s">
-        <instance index="0" removed="1">RTE\Device\nRF51802_xxAA\arm_startup_nrf51.s</instance>
-        <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.27.1" condition="nRF51802 Device and CMSIS"/>
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.27.1"/>
-        <targetInfos/>
-      </file>
-      <file attr="config" category="header" name="Device\Source\startup_config.h">
-        <instance index="0" removed="1">RTE\Device\nRF51802_xxAA\startup_config.h</instance>
-        <component Cclass="Device" Cgroup="StartupConfig" Cvendor="NordicSemiconductor" Cversion="8.27.1" condition="Startup"/>
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.27.1"/>
-        <targetInfos/>
-      </file>
-      <file attr="config" category="source" name="Device\Source\system_nrf51.c">
-        <instance index="0" removed="1">RTE\Device\nRF51802_xxAA\system_nrf51.c</instance>
-        <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.27.1" condition="nRF51802 Device and CMSIS"/>
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.27.1"/>
-        <targetInfos/>
-      </file>
-      <file attr="config" category="source" condition="ARM Compiler" name="Device\Source\arm\arm_startup_nrf51.s" version="8.27.1">
-        <instance index="0">RTE\Device\nRF51822_xxAA\arm_startup_nrf51.s</instance>
-        <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.38.0" condition="nRF51822 Device and CMSIS"/>
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.38.0"/>
-        <targetInfos>
-          <targetInfo name="rt-thread"/>
-        </targetInfos>
-      </file>
-      <file attr="config" category="header" name="Device\Source\startup_config.h" version="8.27.1">
-        <instance index="0">RTE\Device\nRF51822_xxAA\startup_config.h</instance>
-        <component Cclass="Device" Cgroup="StartupConfig" Cvendor="NordicSemiconductor" Cversion="8.38.0" condition="Startup"/>
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.38.0"/>
-        <targetInfos>
-          <targetInfo name="rt-thread"/>
-        </targetInfos>
-      </file>
-      <file attr="config" category="source" name="Device\Source\system_nrf51.c" version="8.27.1">
-        <instance index="0">RTE\Device\nRF51822_xxAA\system_nrf51.c</instance>
-        <component Cclass="Device" Cgroup="Startup" Cvendor="NordicSemiconductor" Cversion="8.38.0" condition="nRF51822 Device and CMSIS"/>
-        <package license="License/license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.38.0"/>
-        <targetInfos>
-          <targetInfo name="rt-thread"/>
-        </targetInfos>
-      </file>
-    </files>
+    <components/>
+    <files/>
   </RTE>
 
 </Project>
