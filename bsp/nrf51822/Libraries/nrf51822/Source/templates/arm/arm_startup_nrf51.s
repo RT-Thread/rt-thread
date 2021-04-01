@@ -1,42 +1,55 @@
-; Copyright (c) 2013, Nordic Semiconductor ASA
-; All rights reserved.
+; Copyright (c) 2009-2021 ARM Limited. All rights reserved.
 ; 
-; Redistribution and use in source and binary forms, with or without
-; modification, are permitted provided that the following conditions are met:
+;     SPDX-License-Identifier: Apache-2.0
 ; 
-; * Redistributions of source code must retain the above copyright notice, this
-;   list of conditions and the following disclaimer.
+; Licensed under the Apache License, Version 2.0 (the License); you may
+; not use this file except in compliance with the License.
+; You may obtain a copy of the License at
 ; 
-; * Redistributions in binary form must reproduce the above copyright notice,
-;   this list of conditions and the following disclaimer in the documentation
-;   and/or other materials provided with the distribution.
+;     www.apache.org/licenses/LICENSE-2.0
 ; 
-; * Neither the name of Nordic Semiconductor ASA nor the names of its
-;   contributors may be used to endorse or promote products derived from
-;   this software without specific prior written permission.
+; Unless required by applicable law or agreed to in writing, software
+; distributed under the License is distributed on an AS IS BASIS, WITHOUT
+; WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+; See the License for the specific language governing permissions and
+; limitations under the License.
 ; 
-; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-; DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-; FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-; DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-; SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-; CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-; OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
-; NOTE: Template files (including this one) are application specific and therefore 
-; expected to be copied into the application project folder prior to its use!
+; NOTICE: This file has been modified by Nordic Semiconductor ASA.
 
-; Description message
+                IF :DEF: __STARTUP_CONFIG
+#ifdef  __STARTUP_CONFIG
+#include "startup_config.h"
+#ifndef __STARTUP_CONFIG_STACK_ALIGNEMENT
+#define __STARTUP_CONFIG_STACK_ALIGNEMENT 3
+#endif
+#endif
+                ENDIF
 
-Stack_Size      EQU     0x00000400
-                AREA    STACK, NOINIT, READWRITE, ALIGN=3
+                IF :DEF: __STARTUP_CONFIG
+Stack_Size      EQU __STARTUP_CONFIG_STACK_SIZE
+                ELIF :DEF: __STACK_SIZE
+Stack_Size      EQU __STACK_SIZE
+                ELSE
+Stack_Size      EQU 2048
+                ENDIF
+                
+                IF :DEF: __STARTUP_CONFIG
+Stack_Align     EQU __STARTUP_CONFIG_STACK_ALIGNEMENT
+                ELSE
+Stack_Align     EQU 3
+                ENDIF
+
+                AREA    STACK, NOINIT, READWRITE, ALIGN=Stack_Align
 Stack_Mem       SPACE   Stack_Size
 __initial_sp
 
-Heap_Size       EQU     0x00000000
+                IF :DEF: __STARTUP_CONFIG
+Heap_Size       EQU __STARTUP_CONFIG_HEAP_SIZE
+                ELIF :DEF: __HEAP_SIZE
+Heap_Size       EQU __HEAP_SIZE
+                ELSE
+Heap_Size       EQU 2048
+                ENDIF
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -54,9 +67,9 @@ __heap_limit
                 EXPORT  __Vectors_Size
 
 __Vectors       DCD     __initial_sp              ; Top of Stack
-                DCD     Reset_Handler             ; Reset Handler
-                DCD     NMI_Handler               ; NMI Handler
-                DCD     HardFault_Handler         ; Hard Fault Handler
+                DCD     Reset_Handler
+                DCD     NMI_Handler
+                DCD     HardFault_Handler
                 DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
@@ -64,46 +77,45 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
-                DCD     SVC_Handler               ; SVCall Handler
+                DCD     SVC_Handler
                 DCD     0                         ; Reserved
                 DCD     0                         ; Reserved
-                DCD     PendSV_Handler            ; PendSV Handler
-                DCD     SysTick_Handler           ; SysTick Handler
+                DCD     PendSV_Handler
+                DCD     SysTick_Handler
 
                 ; External Interrupts
-                DCD      POWER_CLOCK_IRQHandler ;POWER_CLOCK
-                DCD      RADIO_IRQHandler ;RADIO
-                DCD      UART0_IRQHandler ;UART0
-                DCD      SPI0_TWI0_IRQHandler ;SPI0_TWI0
-                DCD      SPI1_TWI1_IRQHandler ;SPI1_TWI1
-                DCD      0 ;Reserved
-                DCD      GPIOTE_IRQHandler ;GPIOTE
-                DCD      ADC_IRQHandler ;ADC
-                DCD      TIMER0_IRQHandler ;TIMER0
-                DCD      TIMER1_IRQHandler ;TIMER1
-                DCD      TIMER2_IRQHandler ;TIMER2
-                DCD      RTC0_IRQHandler ;RTC0
-                DCD      TEMP_IRQHandler ;TEMP
-                DCD      RNG_IRQHandler ;RNG
-                DCD      ECB_IRQHandler ;ECB
-                DCD      CCM_AAR_IRQHandler ;CCM_AAR
-                DCD      WDT_IRQHandler ;WDT
-                DCD      RTC1_IRQHandler ;RTC1
-                DCD      QDEC_IRQHandler ;QDEC
-                DCD      LPCOMP_IRQHandler ;LPCOMP
-                DCD      SWI0_IRQHandler ;SWI0
-                DCD      SWI1_IRQHandler ;SWI1
-                DCD      SWI2_IRQHandler ;SWI2
-                DCD      SWI3_IRQHandler ;SWI3
-                DCD      SWI4_IRQHandler ;SWI4
-                DCD      SWI5_IRQHandler ;SWI5
-                DCD      0 ;Reserved
-                DCD      0 ;Reserved
-                DCD      0 ;Reserved
-                DCD      0 ;Reserved
-                DCD      0 ;Reserved
-                DCD      0 ;Reserved
-
+                DCD     POWER_CLOCK_IRQHandler
+                DCD     RADIO_IRQHandler
+                DCD     UART0_IRQHandler
+                DCD     SPI0_TWI0_IRQHandler
+                DCD     SPI1_TWI1_IRQHandler
+                DCD     0                         ; Reserved
+                DCD     GPIOTE_IRQHandler
+                DCD     ADC_IRQHandler
+                DCD     TIMER0_IRQHandler
+                DCD     TIMER1_IRQHandler
+                DCD     TIMER2_IRQHandler
+                DCD     RTC0_IRQHandler
+                DCD     TEMP_IRQHandler
+                DCD     RNG_IRQHandler
+                DCD     ECB_IRQHandler
+                DCD     CCM_AAR_IRQHandler
+                DCD     WDT_IRQHandler
+                DCD     RTC1_IRQHandler
+                DCD     QDEC_IRQHandler
+                DCD     LPCOMP_IRQHandler
+                DCD     SWI0_IRQHandler
+                DCD     SWI1_IRQHandler
+                DCD     SWI2_IRQHandler
+                DCD     SWI3_IRQHandler
+                DCD     SWI4_IRQHandler
+                DCD     SWI5_IRQHandler
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
+                DCD     0                         ; Reserved
 
 __Vectors_End
 
@@ -113,16 +125,16 @@ __Vectors_Size  EQU     __Vectors_End - __Vectors
 
 ; Reset Handler
 
-NRF_POWER_RAMON_ADDRESS            EQU   0x40000524  ; NRF_POWER->RAMON address
-NRF_POWER_RAMONB_ADDRESS           EQU   0x40000554  ; NRF_POWER->RAMONB address
-NRF_POWER_RAMONx_RAMxON_ONMODE_Msk EQU   0x3         ; All RAM blocks on in onmode bit mask
+NRF_POWER_RAMON_ADDRESS              EQU   0x40000524  ; NRF_POWER->RAMON address
+NRF_POWER_RAMONB_ADDRESS             EQU   0x40000554  ; NRF_POWER->RAMONB address
+NRF_POWER_RAMONx_RAMxON_ONMODE_Msk   EQU   0x3         ; All RAM blocks on in onmode bit mask
 
 Reset_Handler   PROC
                 EXPORT  Reset_Handler             [WEAK]
                 IMPORT  SystemInit
                 IMPORT  __main
-                
-                MOVS    R1, #NRF_POWER_RAMONx_RAMxON_ONMODE_Msk
+
+                                MOVS    R1, #NRF_POWER_RAMONx_RAMxON_ONMODE_Msk
                 
                 LDR     R0, =NRF_POWER_RAMON_ADDRESS
                 LDR     R2, [R0]
@@ -133,7 +145,7 @@ Reset_Handler   PROC
                 LDR     R2, [R0]
                 ORRS    R2, R2, R1
                 STR     R2, [R0]
-                
+
                 LDR     R0, =SystemInit
                 BLX     R0
                 LDR     R0, =__main
@@ -216,7 +228,6 @@ SWI2_IRQHandler
 SWI3_IRQHandler
 SWI4_IRQHandler
 SWI5_IRQHandler
-
                 B .
                 ENDP
                 ALIGN
@@ -224,7 +235,7 @@ SWI5_IRQHandler
 ; User Initial Stack & Heap
 
                 IF      :DEF:__MICROLIB
-                
+
                 EXPORT  __initial_sp
                 EXPORT  __heap_base
                 EXPORT  __heap_limit
@@ -233,17 +244,18 @@ SWI5_IRQHandler
 
                 IMPORT  __use_two_region_memory
                 EXPORT  __user_initial_stackheap
-__user_initial_stackheap
+
+__user_initial_stackheap PROC
 
                 LDR     R0, = Heap_Mem
                 LDR     R1, = (Stack_Mem + Stack_Size)
                 LDR     R2, = (Heap_Mem + Heap_Size)
                 LDR     R3, = Stack_Mem
                 BX      LR
+                ENDP
 
                 ALIGN
 
                 ENDIF
 
                 END
-
