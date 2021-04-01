@@ -14,10 +14,10 @@
 
 
 
-#define RX_PIN_NUMBER          23
+#define RX_PIN_NUMBER          25
 #define TX_PIN_NUMBER          24
-#define CTS_PIN_NUMBER         25
-#define RTS_PIN_NUMBER         22
+#define CTS_PIN_NUMBER         26
+#define RTS_PIN_NUMBER         27
 #define HWFC                   false
 
 
