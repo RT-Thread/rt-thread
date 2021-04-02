@@ -43,6 +43,10 @@
 
 /* RT-Thread Components */
 
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
 
@@ -157,14 +161,18 @@
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
 
 
-/* games: games run on RT-Thread console */
+/* entertainment: terminal games and other interesting software packages */
 
+#define SOC_SIMULATOR
 #define RT_USING_DFS_WINSHAREDIR
 #include "rtconfig_project.h"
 
