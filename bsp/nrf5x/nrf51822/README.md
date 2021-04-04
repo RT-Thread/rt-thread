@@ -1,8 +1,8 @@
-# nRF52840-PCA10056 BSP说明
+# nRF51822 BSP说明
 
 ## 简介
 
-该文件夹主要存放所有主芯片为nRF52840的板级支持包。目前默认支持的开发板是官方[PCA10056](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-DK)
+该文件夹主要存放所有主芯片为nRF51822的板级支持包。目前默认支持的开发板是[Micro:bitV1.5](https://tech.microbit.org/hardware/1-5-revision/)
 本文主要内容如下：
 
 - 开发板资源介绍
@@ -10,24 +10,28 @@
 
 ## 开发板介绍
 
-PCA10056-nRF52840是Nordic 官方的开发板，搭载nRF52840 芯片，基于ARM Cortex-M4内核，最高主频64 MHz，具有丰富的外设资源。
+Microbit是BCC基于nordic的mcu nrf51822的开发板，基于ARM Cortex-M0内核，最高主频64 MHz，具有丰富的外设资源。
+
+
 
 开发板外观如下图所示
 
-![image-20201017202046725](../docs/images/nrf52840.png)
+![](../docs/images/microbit-overview-1-5.png)
 
-PCA10056-nrf52840 开发板常用 **板载资源** 如下：
+nrf51822 开发板常用 **板载资源** 如下：
 
-- MCU：NRF52840，主频 64MHz，1MB FLASH ，256kB RAM
-- MCU 外设: GPIO, UART, SPI, I2C(TWI), RTC,TIMER,NFC,QSPI,PWM,ADC,USB,I2S
-- 板载设
-  - LED：4个，USB communication (LD1), user LED (LD2), power LED (LD3) 。
-  - 按键：5个，4个USER and 1个RESET 。
-  - USB:   1个
-- 常用接口：USB device、Arduino Uno 接口
-- 调试接口：板载 J-LINK 调试器。
+- MCU：NRF51822，主频 16MHz，256kB FLASH ，16kB RAM
+- MCU 外设: GPIO, UART, SPI, I2C(TWI), RTC,TIMER,PWM,ADC
+- 板载外设
+  - LED墙：25个，矩阵控制。
+  - 按键：3个，2个USER and 1个RESET 。
+  - 三轴加速度传感器:   LSM303AGR 
+  - CMSIS-DAP: KL26Z调试器
+- 调试接口：板载CMSIS-DAP 调试器。
 
-开发板更多详细信息请参考NORDIC官方[PCA10056](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-DK)
+更详细的整理的资料见[nrf51822](https://github.com/supperthomas/BSP_BOARD_Nrf51822_microbit)
+
+官方主页[nrf51822](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fstruct_nrf51%2Fstruct%2Fnrf51822.html)
 
 
 
@@ -35,24 +39,19 @@ PCA10056-nrf52840 开发板常用 **板载资源** 如下：
 
 本 BSP 目前对外设的支持情况如下：
 
-| **片上外设** | **支持情况** |        **备注**        |
-| :----------- | :----------: | :--------------------: |
-| GPIO         |     支持     |         GPION          |
-| UART         |     支持     |         UART0          |
-| PWM          |     支持     |          支持          |
-| SPI          |     支持     |          支持          |
-| QSPI         |     支持     | 支持开发板上QSPI FLASH |
-| RTC          |     支持     |                        |
-| ADC          |     支持     |                        |
-|              |              |                        |
-|              |              |                        |
-|              |              |                        |
+| **片上外设** | **支持情况** | **备注** |
+| :----------- | :----------: | :------: |
+| GPIO         |    待支持    |          |
+| UART         |     支持     |  UART0   |
+|              |              |          |
+|              |              |          |
+|              |              |          |
 
 
 
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口 0 的功能，更多高级功能需要利用 env 工具对 BSP 进行配置，步骤如下：
+此 BSP 默认只开启了串口 0 的功能，更多高级功能需要利用 env 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
@@ -60,15 +59,15 @@ PCA10056-nrf52840 开发板常用 **板载资源** 如下：
 
 3. 输入`pkgs --update`命令更新软件包。
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+4. 输入`scons --target=mdk5命令重新生成工程。
 
 
 
 ## 支持其他开发板
 
-客户可以将自己的开发板的.config文件和board/Kconfig文件到board/$(board_name)下面添加README.md即可，使用的时候替换.config文件
+可以在board/Kconfig里面的`bsp choice`里面添加对应的其他开发板
 
-## 注意事项
+
 
 ## 联系人信息
 
