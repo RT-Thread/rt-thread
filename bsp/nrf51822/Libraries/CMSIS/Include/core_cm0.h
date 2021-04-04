@@ -138,15 +138,15 @@
     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
   #endif
 
-#elif defined ( __CSMC__ )      /* Cosmic */
-  #if ( __CSMC__ & 0x400)       // FPU present for parser
+#elif defined ( __CSMC__ )		/* Cosmic */
+  #if ( __CSMC__ & 0x400)		// FPU present for parser
     #error "Compiler generates FPU instructions for a device without an FPU (check __FPU_PRESENT)"
   #endif
 #endif
 
 #include <stdint.h>                      /* standard types definitions                      */
 #include <core_cmInstr.h>                /* Core Instruction Access                         */
-#include <core_cmFunc.h>                 /* Core Function Access                            */
+#include <core_cmFunc.h>                 /* Core Function Access                            */ 
 
 #ifdef __cplusplus
 }
