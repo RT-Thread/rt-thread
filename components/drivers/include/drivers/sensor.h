@@ -49,6 +49,7 @@ extern "C" {
 #define RT_SENSOR_CLASS_ECO2           (15) /* eCO2 sensor       */
 #define RT_SENSOR_CLASS_GNSS           (16) /* GPS/GNSS sensor   */
 #define RT_SENSOR_CLASS_TOF            (17) /* TOF sensor        */
+#define RT_SENSOR_CLASS_SPO2           (18) /* SpO2 sensor       */
 
 /* Sensor vendor types */
 
@@ -89,6 +90,7 @@ extern "C" {
 #define  RT_SENSOR_UNIT_PPB            (15) /* Concentration           unit: ppb        */
 #define  RT_SENSOR_UNIT_DMS            (16) /* Coordinates             unit: DMS        */
 #define  RT_SENSOR_UNIT_DD             (17) /* Coordinates             unit: DD         */
+#define  RT_SENSOR_UNIT_PERCENT        (18) /* Percentage              unit: %          */
 
 /* Sensor communication interface types */
 
@@ -217,6 +219,7 @@ struct rt_sensor_data
         rt_int32_t           force;         /* Force sensor.        unit: mN          */
         rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
         rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
+        rt_uint32_t          spo2;          /* SpO2 sensor.         unit: %           */
     } data;
 };
 
