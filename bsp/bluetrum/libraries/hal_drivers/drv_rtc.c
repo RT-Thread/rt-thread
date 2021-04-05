@@ -182,7 +182,7 @@ static void rt_rtc_init(void)
     hal_rtc_init();
 }
 
-static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
+static rt_err_t ab32_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t result = RT_EOK;
     RT_ASSERT(dev != RT_NULL);
@@ -224,7 +224,7 @@ const static struct rt_device_ops rtc_ops =
     RT_NULL,
     RT_NULL,
     RT_NULL,
-    rt_rtc_control
+    ab32_rtc_control
 };
 #endif
 
@@ -241,7 +241,7 @@ static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint
     device->close       = RT_NULL;
     device->read        = RT_NULL;
     device->write       = RT_NULL;
-    device->control     = rt_rtc_control;
+    device->control     = ab32_rtc_control;
 #endif
     device->type        = RT_Device_Class_RTC;
     device->rx_indicate = RT_NULL;
