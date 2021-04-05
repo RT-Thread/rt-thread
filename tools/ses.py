@@ -59,14 +59,14 @@ def SESProject(env) :
         group_tree = SDKAddGroup(project_node, group['name'], group['src'], project_path)
 
         # get each group's cc flags
-        if group.has_key('CCFLAGS') and group['CCFLAGS']:
+        if 'CCFLAGS' in group and group['CCFLAGS']:
             if CCFLAGS:
                 CCFLAGS += ' ' + group['CCFLAGS']
             else:
                 CCFLAGS += group['CCFLAGS']   
                 
         # get each group's link flags
-        if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
+        if 'LINKFLAGS' in group and group['LINKFLAGS']:
             if LINKFLAGS:
                 LINKFLAGS += ' ' + group['LINKFLAGS']
             else:
