@@ -116,6 +116,10 @@ config RT_TIMER_THREAD_STACK_SIZE
 
 endif
 
+config RT_KSERVICE_USING_STDLIB
+    bool "Enable kservice to use standard C library"
+    default n
+
 menuconfig RT_DEBUG
     bool "Enable debugging features"
     default y
