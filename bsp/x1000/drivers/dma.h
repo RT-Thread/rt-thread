@@ -1,21 +1,7 @@
 /*
- * File      : dma.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,7 +11,7 @@
 #ifndef _DMA_H_
 #define _DMA_H_
 /*********************************************************************************************************
-**   Í·ÎÄ¼ş
+**   å¤´æ–‡ä»¶
 *********************************************************************************************************/
 #include <stdlib.h>
 #include <rtdef.h>
@@ -40,21 +26,21 @@ extern "C"{
 #endif
 
 /*********************************************************************************************************
-**   DMA ×´Ì¬¶¨Òå
+**   DMA çŠ¶æ€å®šä¹‰
 *********************************************************************************************************/
-#define RT_DMA_STATUS_IDLE     0                                        /*  DMA ´¦ÓÚ¿ÕÏĞÄ£Ê½            */
-#define RT_DMA_STATUS_BUSY     1                                        /*  DMA ´¦ÓÚÕıÔÚ¹¤×÷            */
-#define RT_DMA_STATUS_ERROR    2                                        /*  DMA ´¦ÓÚ´íÎó×´Ì¬            */
+#define RT_DMA_STATUS_IDLE     0                                        /*  DMA å¤„äºç©ºé—²æ¨¡å¼            */
+#define RT_DMA_STATUS_BUSY     1                                        /*  DMA å¤„äºæ­£åœ¨å·¥ä½œ            */
+#define RT_DMA_STATUS_ERROR    2                                        /*  DMA å¤„äºé”™è¯¯çŠ¶æ€            */
 
 /*********************************************************************************************************
-**   DMA µØÖ··½Ïò¶¨Òå
+**   DMA åœ°å€æ–¹å‘å®šä¹‰
 *********************************************************************************************************/
-#define RT_DMA_ADDR_INC        0                                        /*  µØÖ·Ôö³¤·½Ê½                */
-#define RT_DMA_ADDR_FIX        1                                        /*  µØÖ·²»±ä                    */
-#define RT_DMA_ADDR_DEC        2                                        /*  µØÖ·¼õÉÙ·½Ê½                */
+#define RT_DMA_ADDR_INC        0                                        /*  åœ°å€å¢é•¿æ–¹å¼                */
+#define RT_DMA_ADDR_FIX        1                                        /*  åœ°å€ä¸å˜                    */
+#define RT_DMA_ADDR_DEC        2                                        /*  åœ°å€å‡å°‘æ–¹å¼                */
 
 /*********************************************************************************************************
-**   DMA ´«Êä·½Ïò¶¨Òå
+**   DMA ä¼ è¾“æ–¹å‘å®šä¹‰
 *********************************************************************************************************/
 #define RT_DMA_MEM_TO_MEM       0
 #define RT_DMA_MEM_TO_DEV       1
@@ -63,7 +49,7 @@ extern "C"{
 #define RT_DMA_TRANS_NONE       4
 
 /*********************************************************************************************************
-**   DMA ×ÜÏß¿í¶È
+**   DMA æ€»çº¿å®½åº¦
 *********************************************************************************************************/
 #define RT_DMA_BUSWIDTH_UNDEFINED   0
 #define RT_DMA_BUSWIDTH_1_BYTE      1
@@ -72,14 +58,14 @@ extern "C"{
 #define RT_DMA_BUSWIDTH_8_BYTES     8
 
 /*********************************************************************************************************
-**   DMA ´«Êä Ê±¼ä
+**   DMA ä¼ è¾“ æ—¶é—´
 *********************************************************************************************************/
 #define RT_DMA_EVENT_COMPLETE   0x01
 #define RT_DMA_EVENT_ERROR      0x02
 
 
 /*********************************************************************************************************
-**   Êı¾İ½á¹¹
+**   æ•°æ®ç»“æ„
 *********************************************************************************************************/
 struct rt_dma_channel;
 struct dma_message;
@@ -94,13 +80,13 @@ struct dma_ops
 
 struct dma_message
 {
-    rt_uint8_t  *src_addr;                          /*  Ô´¶Ë»º³åÇøµØÖ·              */
-    rt_uint8_t  *dst_addr;                          /*  Ä¿µÄ¶Ë»º³åÇøµØÖ·            */
-    rt_uint8_t  src_option;                         /*  Ô´¶ËµØÖ··½Ïò¿ØÖÆ            */
-    rt_uint8_t  dst_option;                         /*  Ä¿µÄµØÖ··½Ïò¿ØÖÆ            */
-    rt_size_t   t_size;                             /*  ´«ÊäµÄ×Ö½ÚÊı                */
+    rt_uint8_t  *src_addr;                          /*  æºç«¯ç¼“å†²åŒºåœ°å€              */
+    rt_uint8_t  *dst_addr;                          /*  ç›®çš„ç«¯ç¼“å†²åŒºåœ°å€            */
+    rt_uint8_t  src_option;                         /*  æºç«¯åœ°å€æ–¹å‘æ§åˆ¶            */
+    rt_uint8_t  dst_option;                         /*  ç›®çš„åœ°å€æ–¹å‘æ§åˆ¶            */
+    rt_size_t   t_size;                             /*  ä¼ è¾“çš„å­—èŠ‚æ•°                */
 
-    rt_uint32_t t_mode;                             /*  ´«ÊäÄ£Ê½, ×Ô¶¨Òå            */
+    rt_uint32_t t_mode;                             /*  ä¼ è¾“æ¨¡å¼, è‡ªå®šä¹‰            */
 
     void 	(*complete_cb)(void *data,void *pbuf);
     void	*complete_arg;
@@ -128,15 +114,15 @@ struct rt_dma_channel
     rt_uint16_t get_index;
     rt_uint16_t put_index;
 
-    void       (*start)(struct rt_dma_channel *dmac,struct dma_message *msg);        /* Æô¶¯´«Êä »Øµ÷º¯Êı */
-    void       (*complete)(struct rt_dma_channel *dmac,struct dma_message *msg);     /* ´«ÊäÍê³É »Øµ÷º¯Êı */
+    void       (*start)(struct rt_dma_channel *dmac,struct dma_message *msg);        /* å¯åŠ¨ä¼ è¾“ å›è°ƒå‡½æ•° */
+    void       (*complete)(struct rt_dma_channel *dmac,struct dma_message *msg);     /* ä¼ è¾“å®Œæˆ å›è°ƒå‡½æ•° */
 
-    void       *user_data;          /* ×Ô¶¨ÒåÊı¾İ   */
+    void       *user_data;          /* è‡ªå®šä¹‰æ•°æ®   */
 };
 
 
 /*********************************************************************************************************
-**   º¯ÊıÉêÃ÷
+**   å‡½æ•°ç”³æ˜
 *********************************************************************************************************/
 rt_err_t rt_dma_drv_install(struct rt_dma_channel *dmac, struct dma_ops *ops,struct dma_config *config,void* user_data);
 struct rt_dma_channel   *rt_dma_get_channel(int id);
@@ -153,3 +139,4 @@ rt_err_t rt_dma_contex_service (struct rt_dma_channel *dmac,rt_uint32_t event);
 #endif
 
 #endif /* _DMA_H_ */
+

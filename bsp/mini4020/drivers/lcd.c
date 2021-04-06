@@ -1,11 +1,7 @@
 /*
- * File      : lcd.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -67,7 +63,7 @@ void radio_rtgui_init(void)
     rt_memset((char*)pVideoBuffer,0xff,320*240*2);
     //rt_memcpy((char*)pVideoBuffer,pic,320*240*2);  //TESTING IMAGE
 
-    //´Ë´¦´ýÐÞÕý
+    //æ­¤å¤„å¾…ä¿®æ­£
     /* add lcd driver into graphic driver */
     // rtgui_graphic_driver_add(&_rtgui_lcd_driver);
 }

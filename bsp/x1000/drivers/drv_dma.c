@@ -1,21 +1,7 @@
 /*
- * File      : drv_dma.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -23,7 +9,7 @@
  */
 
 /*********************************************************************************************************
-**   Í·ÎÄ¼þ
+**   å¤´æ–‡ä»¶
 *********************************************************************************************************/
 #include <stdlib.h>
 #include <rthw.h>
@@ -45,12 +31,12 @@
 #define JZDMA_DBG(...)
 #endif
 
-/* È«¾Ö±äÁ¿ */
+/* å…¨å±€å˜é‡ */
 static struct jzdma_master      _g_jzdma_master;
 static struct rt_dma_channel    _g_rt_dma_channel[NR_DMA_CHANNELS];
 
 /*********************************************************************************************************
-**   ÄÚÁªº¯Êý
+**   å†…è”å‡½æ•°
 *********************************************************************************************************/
 const static char dcm_tsz[7] = { 1, 2, 0, 0, 3, 4, 5 };
 
@@ -161,18 +147,18 @@ void jzdma_funcs_reset(struct rt_dma_channel *rt_dmac)
 
     RT_ASSERT(rt_dmac != RT_NULL);
     jz_dmac = (struct jzdma_channel *)rt_dmac->user_data;
-    /* ÖÕÖ¹µ±Ç°´«Êä */
+    /* ç»ˆæ­¢å½“å‰ä¼ è¾“ */
     jz_dmac->status = STAT_STOPED;
     jz_dmac->desc_nr = 0;
 
     /* clear dma status */
     writel(0, jz_dmac->iomem + CH_DCS);
 
-    /* ÖØÐÂÉèÖÃ²ÎÊý */
+    /* é‡æ–°è®¾ç½®å‚æ•° */
     switch (rt_dmac->config.direction)
     {
         case RT_DMA_MEM_TO_DEV:
-            /* MEM_TO_DEV £¬°´ÕÕÉè±¸µÄµØÖ·¿í¶ÈÉèÖÃDCM */
+            /* MEM_TO_DEV ï¼ŒæŒ‰ç…§è®¾å¤‡çš„åœ°å€å®½åº¦è®¾ç½®DCM */
             switch(rt_dmac->config.dst_addr_width)
             {
             case RT_DMA_BUSWIDTH_1_BYTE:
@@ -191,7 +177,7 @@ void jzdma_funcs_reset(struct rt_dma_channel *rt_dmac)
 
             break;
         default:
-            /* ÆäËû·½Ê½ °´ÕÕÔ´µØÖ·¿í¶ÈÉèÖÃ DCM */
+            /* å…¶ä»–æ–¹å¼ æŒ‰ç…§æºåœ°å€å®½åº¦è®¾ç½® DCM */
             switch(rt_dmac->config.src_addr_width)
             {
             case RT_DMA_BUSWIDTH_1_BYTE:
@@ -224,7 +210,7 @@ rt_size_t jzdma_funcs_transfer(struct rt_dma_channel  *rt_dmac , struct dma_mess
 
     if(jz_dmac->status == STAT_RUNNING)
         return -RT_EBUSY;
-    /* Çå³ýÓ²¼þ¼Ä´æÆ÷ */
+    /* æ¸…é™¤ç¡¬ä»¶å¯„å­˜å™¨ */
 //    writel(0, jz_dmac->iomem + CH_DCM);
 //    writel(0, jz_dmac->iomem + CH_DCS);
 
@@ -232,7 +218,7 @@ rt_size_t jzdma_funcs_transfer(struct rt_dma_channel  *rt_dmac , struct dma_mess
     writel(0, jz_dmac->iomem + CH_DCS);
 
 
-    //Ë¢ÐÂcache
+    //åˆ·æ–°cache
     switch(rt_dmac->config.direction)
     {
     case RT_DMA_MEM_TO_DEV:
@@ -243,11 +229,11 @@ rt_size_t jzdma_funcs_transfer(struct rt_dma_channel  *rt_dmac , struct dma_mess
     default:
         break;
     }
-//    /* ÖØÐÂÉèÖÃ²ÎÊý */
+//    /* é‡æ–°è®¾ç½®å‚æ•° */
 //    switch (rt_dmac->config.direction)
 //    {
 //        case RT_DMA_MEM_TO_DEV:
-//            /* MEM_TO_DEV £¬°´ÕÕÉè±¸µÄµØÖ·¿í¶ÈÉèÖÃDCM */
+//            /* MEM_TO_DEV ï¼ŒæŒ‰ç…§è®¾å¤‡çš„åœ°å€å®½åº¦è®¾ç½®DCM */
 //            switch(rt_dmac->config.dst_addr_width)
 //            {
 //            case RT_DMA_BUSWIDTH_1_BYTE:
@@ -266,7 +252,7 @@ rt_size_t jzdma_funcs_transfer(struct rt_dma_channel  *rt_dmac , struct dma_mess
 //
 //            break;
 //        default:
-//            /* ÆäËû·½Ê½ °´ÕÕÔ´µØÖ·¿í¶ÈÉèÖÃ DCM */
+//            /* å…¶ä»–æ–¹å¼ æŒ‰ç…§æºåœ°å€å®½åº¦è®¾ç½® DCM */
 //            switch(rt_dmac->config.src_addr_width)
 //            {
 //            case RT_DMA_BUSWIDTH_1_BYTE:
@@ -290,7 +276,7 @@ rt_size_t jzdma_funcs_transfer(struct rt_dma_channel  *rt_dmac , struct dma_mess
     /* Disable desc link */
     jz_dmac->desc.dcm &= ~DCM_LINK;
 
-    /* Ê¶±ð´«ÊäµØÖ·¿ØÖÆ */
+    /* è¯†åˆ«ä¼ è¾“åœ°å€æŽ§åˆ¶ */
     switch(message->src_option)
     {
     case RT_DMA_ADDR_INC:
@@ -315,7 +301,7 @@ rt_size_t jzdma_funcs_transfer(struct rt_dma_channel  *rt_dmac , struct dma_mess
         return -RT_EIO;
     }
 
-    /* ÉèÖÃTSZ */
+    /* è®¾ç½®TSZ */
     if(rt_dmac->ch == 1)
     {
         /*
@@ -406,13 +392,13 @@ static void jzdma_int_handler(int vector,void *param)
             JZDMA_DBG("DMA Halt: DCS%d=%lx\n", i, dcs);
         }
 
-        /* DMA ´«ÊäÒÑÍê³É */
+        /* DMA ä¼ è¾“å·²å®Œæˆ */
         if (dcs & DCS_TT)
         {
             jz_dmac->status = STAT_STOPED;
             JZDMA_DBG("DMA CH%d Over\n",i);
 
-            //Ë¢ÐÂcache
+            //åˆ·æ–°cache
             switch(rt_dmac->config.direction)
             {
             case RT_DMA_DEV_TO_MEM:
@@ -467,7 +453,7 @@ static void jzdma_link_int_handler(int irq, void *param)
     writel((readl(master->base + DIC)&(~pending)),master->base + DIC);
 }
 
-/* RTDMA Çý¶¯²ã ½Ó¿Ú*/
+/* RTDMA é©±åŠ¨å±‚ æŽ¥å£*/
 struct dma_ops _g_jzdma_ops =
 {
     .reset     = jzdma_funcs_reset,
@@ -481,7 +467,7 @@ int rt_hw_jzdma_init(void)
     int i;
     struct jzdma_master *master = &_g_jzdma_master;
     uint32_t pdma_program = 0;
-    /* Ê¹ÄÜDMA Ê±ÖÓ */
+    /* ä½¿èƒ½DMA æ—¶é’Ÿ */
     master->clk = clk_get("pdma");
     clk_enable(master->clk);
 
@@ -525,7 +511,7 @@ int rt_hw_jzdma_init(void)
 
     jzdma_mcu_reset(master);
 
-    /* ×¢²á DMAÖÐ¶Ï */
+    /* æ³¨å†Œ DMAä¸­æ–­ */
     rt_hw_interrupt_install(IRQ_PDMA,jzdma_int_handler,RT_NULL,"PDMA");
     rt_hw_interrupt_umask(IRQ_PDMA);
 
@@ -535,3 +521,4 @@ int rt_hw_jzdma_init(void)
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_jzdma_init);
+
