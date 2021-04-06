@@ -572,6 +572,11 @@ void I2C1_INIT()
 
         rt_event_init(&i2c_event, "i2c_event", RT_IPC_FLAG_FIFO );
         i2c_mux = rt_mutex_create("i2c_mux", RT_IPC_FLAG_FIFO );
+        if (i2c_mux == RT_NULL) 
+        {
+            LOG_E("Create mutex for i2c_mux failed!");
+            return;
+        }
         i2c1_init_flag = 1;
     }
 }

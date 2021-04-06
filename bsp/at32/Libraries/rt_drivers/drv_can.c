@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -311,8 +311,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             {
                 can_instance->CanConfig.FilterConfig.CAN_FilterNumber = filter_cfg->items[i].hdr & (0x1fU);
                 can_instance->CanConfig.FilterConfig.CAN_FilterIdHigh = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                can_instance->CanConfig.FilterConfig.CAN_FilterIdLow = ((filter_cfg->items[i].id << 3) | 
-                                                    (filter_cfg->items[i].ide << 2) | 
+                can_instance->CanConfig.FilterConfig.CAN_FilterIdLow = ((filter_cfg->items[i].id << 3) |
+                                                    (filter_cfg->items[i].ide << 2) |
                                                     (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
                 can_instance->CanConfig.FilterConfig.CAN_FilterMskIdHigh = (filter_cfg->items[i].mask >> 16) & 0xFFFF;
                 can_instance->CanConfig.FilterConfig.CAN_FilterMskIdLow = filter_cfg->items[i].mask & 0xFFFF;
@@ -499,7 +499,7 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     else
         pmsg->ide = RxMessage.ExtId;
     pmsg->rtr = RxMessage.RTR;
-    
+
     return RT_EOK;
 }
 

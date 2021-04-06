@@ -1,21 +1,7 @@
 /*
- * File      : drv_uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -125,7 +111,7 @@ static int ameba_uart_getc (struct rt_serial_device *serial)
 {
     struct device_uart* uart = serial->parent.user_data;
 
-	if(!serial_readable(&uart->serial))
+    if(!serial_readable(&uart->serial))
         return -1;
 
     /* Receive Data Available */
@@ -140,13 +126,13 @@ static rt_size_t ameba_uart_dma_transmit (struct rt_serial_device *serial, rt_ui
 static void ameba_uart_irq(uint32_t id, SerialIrq event)
 {
     struct rt_serial_device *serial = (struct rt_serial_device *)id;
-	if(event == RxIrq)
+    if(event == RxIrq)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-	}
-	else if(event == TxIrq)
+    }
+    else if(event == TxIrq)
     {
-	}
+    }
 }
 
 static rt_err_t dbg_configure(struct rt_serial_device *serial, struct serial_configure *cfg);
@@ -155,7 +141,7 @@ static int dbg_putc(struct rt_serial_device *serial, char c);
 static int dbg_getc(struct rt_serial_device *serial);
 
 static struct rt_serial_device ameba_dbg_serial;
-const struct rt_uart_ops _ambed_dbg_ops = 
+const struct rt_uart_ops _ambed_dbg_ops =
 {
     dbg_configure,
     dbg_control,
@@ -177,7 +163,7 @@ void dbg_uart_irq_handler(void * data)
     DiagSetIsrEnReg(0);
 
     rt_hw_serial_isr(&ameba_dbg_serial, RT_SERIAL_EVENT_RX_IND);
-    
+
     DiagSetIsrEnReg(IrqEn);
 }
 
@@ -192,9 +178,9 @@ static rt_err_t dbg_control(struct rt_serial_device *serial, int cmd, void *arg)
 
     case RT_DEVICE_CTRL_SET_INT:
         /* install interrupt */
-    	DIAG_UartReInit((IRQ_FUN) dbg_uart_irq_handler);
+        DIAG_UartReInit((IRQ_FUN) dbg_uart_irq_handler);
         /* Enable the UART Interrupt */
-    	NVIC_SetPriority(UART_LOG_IRQ, 10); /* this is rom_code_patch */
+        NVIC_SetPriority(UART_LOG_IRQ, 10); /* this is rom_code_patch */
         break;
     }
 
@@ -214,12 +200,12 @@ static int dbg_getc(struct rt_serial_device *serial)
 
     if(!UART_Readable(UART2_DEV))
         return -1;
-    
+
     c = DiagGetChar(_FALSE);
 
     return c;
 }
- 
+
 /*
  * UART Initiation
  */
@@ -231,7 +217,7 @@ int rt_hw_uart_init(void)
 #ifdef BSP_USING_UART0
     {
         struct device_uart      *uart;
-        
+
         serial  = &serial0;
         uart    = &uart0;
 
@@ -256,7 +242,7 @@ int rt_hw_uart_init(void)
 
         serial->ops = &_ambed_dbg_ops;
         serial->config = config;
-        
+
         rt_hw_serial_register(serial,
                               RT_CONSOLE_DEVICE_NAME,
                               RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
