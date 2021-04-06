@@ -687,6 +687,7 @@ static void eth_rx_thread_entry(void* parameter)
     {
         if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t *)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
+            rt_base_t level;
             struct pbuf *p;
 
             /* check link status */
@@ -706,10 +707,10 @@ static void eth_rx_thread_entry(void* parameter)
                     netifapi_netif_set_link_down(device->netif);
             }
 
-            rt_enter_critical();
+            level = rt_hw_interrupt_disable();
             /* 'rx_notice' will be modify in the interrupt or here */
             device->rx_notice = RT_FALSE;
-            rt_exit_critical();
+            rt_hw_interrupt_enable(level);
 
             /* receive all of buffer */
             while(1)
