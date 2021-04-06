@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import click
+import yaml
 import chardet
 import logging
 import datetime
@@ -25,18 +26,39 @@ def init_logger():
                         datefmt=date_format,
                         )
 
+
 class CheckOut:
     def __init__(self, rtt_repo, rtt_branch):
         self.root = os.getcwd()
         self.rtt_repo = rtt_repo
         self.rtt_branch = rtt_branch
 
+    def __exclude_file(self, file_path):
+        ignore_file_path = os.path.join(self.root, 'ignore_format.yml')
+        try:
+            with open(ignore_file_path) as f:
+                ignore_config = yaml.safe_load(f.read())
+            file_ignore = ignore_config.get("file_path", [])
+            dir_ignore = ignore_config.get("dir_path", [])
+        except Exception as e:
+            logging.error(e)
+            return 1
+
+        if file_path in file_ignore:
+            return 0
+
+        file_dir_path = os.path.dirname(file_path)
+        if file_dir_path in dir_ignore:
+            return 0
+
+        return 1
+
     def get_new_file(self):
         file_list = list()
         try:
-            os.system('git remote add rtt_repo {}'.format(self.rtt_repo))
-            os.system('git fetch rtt_repo')
-            os.system('git reset rtt_repo/{} --soft'.format(self.rtt_branch))
+            os.system('git remote add rtt_repo {} 1>/dev/null'.format(self.rtt_repo))
+            os.system('git fetch rtt_repo 1>/dev/null')
+            os.system('git reset rtt_repo/{} --soft 1>/dev/null'.format(self.rtt_branch))
             os.system('git status > git.txt')
         except Exception as e:
             logging.error(e)
@@ -60,7 +82,9 @@ class CheckOut:
             else:
                 continue
 
-            file_list.append(file_path)
+            result = self.__exclude_file(file_path)
+            if result != 0:
+                file_list.append(file_path)
 
         return file_list
 
@@ -96,13 +120,11 @@ class FormatCheck:
         encoding_check_result = True
         format_check_result = True
         for file_path in self.file_list:
-            file_lines = ''
             code = ''
             if file_path.endswith(".c") or file_path.endswith(".h"):
                 try:
-                    with open(file_path, 'r') as f:
+                    with open(file_path, 'rb') as f:
                         file = f.read()
-                        file_lines = f.readlines()
                         # get file encoding
                         code = chardet.detect(file)['encoding']
                 except Exception as e:
@@ -116,6 +138,8 @@ class FormatCheck:
             else:
                 logging.info('[{0}]: encoding check success.'.format(file_path))
 
+            with open(file_path, 'r') as f:
+                file_lines = f.readlines()
             format_check_result = self.__check_file(file_lines)    
 
         if not encoding_check_result or not format_check_result:
@@ -155,8 +179,8 @@ class LicenseCheck:
                     true_year = '2006-{}'.format(current_year)
                     if license_year != true_year:
                         logging.warning("[{0}]: license year: {} is not true: {}, please update.".format(file_path,
-                                                                                                        license_year,
-                                                                                                        true_year))
+                                                                                                         license_year,
+                                                                                                         true_year))
                                                                                                 
                     else:
                         logging.info("[{0}]: license check success.".format(file_path))
