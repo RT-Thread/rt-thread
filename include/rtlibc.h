@@ -11,6 +11,8 @@
 #ifndef RTLIBC_H__
 #define RTLIBC_H__
 
+#ifndef __CI_ENV__
+
 /* definitions for libc if toolchain has no these definitions */
 #include "libc/libc_stat.h"
 #include "libc/libc_errno.h"
@@ -32,6 +34,8 @@ typedef int mode_t;
 typedef signed long off_t;
 typedef int mode_t;
 #endif
+
+#endif /** end __CI_ENV__ */
 
 #endif
 

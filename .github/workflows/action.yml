@@ -172,3 +172,11 @@ jobs:
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
           scons -C bsp/$RTT_BSP
+  ci_test:
+    runs-on: ubuntu-latest
+    name: ci-test
+    steps:
+      - name: run ci tests
+        shell: bash
+        run: |
+          make test gcov clean -C tests
