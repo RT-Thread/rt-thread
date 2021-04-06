@@ -59,9 +59,9 @@
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
-#define RT_ETHERNETIF_THREAD_PREORITY	0x90
+#define RT_ETHERNETIF_THREAD_PREORITY   0x90
 #else
-#define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
+#define RT_ETHERNETIF_THREAD_PREORITY   RT_LWIP_ETHTHREAD_PRIORITY
 #endif
 
 #ifndef LWIP_NO_TX_THREAD
@@ -70,8 +70,8 @@
  */
 struct eth_tx_msg
 {
-    struct netif 	*netif;
-    struct pbuf 	*buf;
+    struct netif    *netif;
+    struct pbuf     *buf;
 };
 
 static struct rt_mailbox eth_tx_thread_mb;
@@ -368,7 +368,7 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
     struct eth_tx_msg msg;
     struct eth_device* enetif;
 
-	RT_ASSERT(netif != RT_NULL);
+    RT_ASSERT(netif != RT_NULL);
     enetif = (struct eth_device*)netif->state;
 
     /* send a message to eth tx thread */
@@ -382,13 +382,13 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
 #else
     struct eth_device* enetif;
 
-	RT_ASSERT(netif != RT_NULL);
+    RT_ASSERT(netif != RT_NULL);
     enetif = (struct eth_device*)netif->state;
 
-	if (enetif->eth_tx(&(enetif->parent), p) != RT_EOK)
-	{
-		return ERR_IF;
-	}
+    if (enetif->eth_tx(&(enetif->parent), p) != RT_EOK)
+    {
+        return ERR_IF;
+    }
 #endif
     return ERR_OK;
 }
@@ -481,16 +481,16 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     netif->name[1] = name[1];
 
     /* set hw address to 6 */
-    netif->hwaddr_len 	= 6;
+    netif->hwaddr_len   = 6;
     /* maximum transfer unit */
-    netif->mtu			= ETHERNET_MTU;
+    netif->mtu          = ETHERNET_MTU;
 
     /* get hardware MAC address */
     rt_device_control(&(dev->parent), NIOCTL_GADDR, netif->hwaddr);
 
     /* set output */
-    netif->output		= etharp_output;
-    netif->linkoutput	= ethernetif_linkoutput;
+    netif->output       = etharp_output;
+    netif->linkoutput   = ethernetif_linkoutput;
 
 #if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
@@ -587,12 +587,12 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 /* NOTE: please not use it in interrupt when no RxThread exist */
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 {
-	if (up == RT_TRUE)
-		netifapi_netif_set_link_up(dev->netif);
-	else
-		netifapi_netif_set_link_down(dev->netif);
+    if (up == RT_TRUE)
+        netifapi_netif_set_link_up(dev->netif);
+    else
+        netifapi_netif_set_link_down(dev->netif);
 
-	return RT_EOK;
+    return RT_EOK;
 }
 #endif
 
@@ -666,7 +666,7 @@ static void eth_rx_thread_entry(void* parameter)
             /* receive all of buffer */
             while(1)
             {
-            	if(device->eth_rx == RT_NULL) break;
+                if(device->eth_rx == RT_NULL) break;
 
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
