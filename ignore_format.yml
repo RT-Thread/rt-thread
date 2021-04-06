@@ -1,0 +1,22 @@
+# files format check exclude path, please follow the instructions below to modify; 
+# If you need to exclude an entire folder, add the folder path in dir_path;
+# If you need to exclude a file, add the path to the file in file_path.
+
+file_path:
+- D:/repo/github/rt-thread/bsp/stm32/stm32f072-st-nucleo/board/CubeMX_Config/Src/main.c
+
+dir_path:
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32F0xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32F1xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32F2xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32F4xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32F7xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32G0xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32G4xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32H7xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32L0xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32L1xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32L4xx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32MPxx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32WBxx_HAL
+- D:/repo/github/rt-thread/bsp/stm32/libraries/STM32WLxx_HAL
