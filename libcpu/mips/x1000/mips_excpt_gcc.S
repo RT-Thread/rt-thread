@@ -1,25 +1,11 @@
 /*
- * File      : mips_excpt_asm.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ7ÈÕ     Urey         the first version
+ * 2016-9-7       Urey         the first version
  */
 
 #ifndef __ASSEMBLY__
@@ -31,7 +17,7 @@
 #define _EXC_STKSIZE 	20*1024
 
 ;/*********************************************************************************************************
-;  PTE BASE Ïà¹Ø¶¨Òå
+;  PTE BASE ç›¸å…³å®šä¹‰
 ;*********************************************************************************************************/
 
 #define PTE_BASE_OFFSET                 23
@@ -52,9 +38,9 @@ LEAF(mips_tlb_refill_handlerx)
     ; * K1 = CP0_CTXT
     ; * K0 = K1
     ; */
-    mfc0    k1 , CP0_CONTEXT                                            ;/*  K1 µÈÓÚ Context ¼Ä´æÆ÷      */
+    mfc0    k1 , CP0_CONTEXT                                            ;/*  K1 ç­‰äºŽ Context å¯„å­˜å™¨      */
     ehb
-    move    k0 , k1                                                     ;/*  K0 µÈÓÚ Context ¼Ä´æÆ÷      */
+    move    k0 , k1                                                     ;/*  K0 ç­‰äºŽ Context å¯„å­˜å™¨      */
 
     ;/*
     ; * K1 <<= PTE_BASE_SIZE
@@ -64,7 +50,7 @@ LEAF(mips_tlb_refill_handlerx)
     ; * K1 <<= 3
     ; */
     sll     k1 , PTE_BASE_SIZE
-    srl     k1 , (PTE_BASE_SIZE + 4 + MIPS32_BADVPN2_SHIFT)             ;/*  K1 Îª BAD VPN2              */
+    srl     k1 , (PTE_BASE_SIZE + 4 + MIPS32_BADVPN2_SHIFT)             ;/*  K1 ä¸º BAD VPN2              */
     sll     k1 , (4 - 1)
 
     ;/*
@@ -72,12 +58,12 @@ LEAF(mips_tlb_refill_handlerx)
     ; * K0 <<= PTE_BASE_OFFSET
     ; */
     srl     k0 , PTE_BASE_OFFSET
-    sll     k0 , PTE_BASE_OFFSET                                        ;/*  K0 Îª PTE BASE              */
+    sll     k0 , PTE_BASE_OFFSET                                        ;/*  K0 ä¸º PTE BASE              */
 
     ;/*
     ; * K1 = K1 | K0
     ; */
-    or      k1 , k1 , k0                                                ;/*  ºÏ³É                        */
+    or      k1 , k1 , k0                                                ;/*  åˆæˆ                        */
 
     ;/*
     ; * K0 = *K1
@@ -94,9 +80,9 @@ LEAF(mips_tlb_refill_handlerx)
     mtc0    k1 , CP0_ENTRYLO1                                             ;/*  EntryLo1                    */
     ehb
 
-    tlbwr                                                               ;/*  TLB Ëæ»úÌæ»»                */
+    tlbwr                                                               ;/*  TLB éšæœºæ›¿æ¢                */
 
-    eret                                                                ;/*  Òì³£·µ»Ø                    */
+    eret                                                                ;/*  å¼‚å¸¸è¿”å›ž                    */
 
     .set    pop
 END(mips_tlb_refill_handlerx)
