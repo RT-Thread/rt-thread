@@ -69,6 +69,7 @@
 /* Command shell */
 
 #define RT_USING_FINSH
+#define RT_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
@@ -77,9 +78,6 @@
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 80
-#define FINSH_USING_MSH
-#define FINSH_USING_MSH_DEFAULT
-#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -117,7 +115,9 @@
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
-#define RT_USING_PWM
+#define RT_USING_NULL
+#define RT_USING_ZERO
+#define RT_USING_RANDOM
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
 #define RT_USING_SDIO
@@ -140,6 +140,7 @@
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
+#define RT_USING_POSIX_CLOCKTIME
 
 /* Network */
 
@@ -216,9 +217,11 @@
 
 #define RT_USING_LWP
 #define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
 #define RT_CH_MSG_MAX_NR 1024
 #define RT_LWP_SHM_MAX_NR 64
 #define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
 
 /* RT-Thread online packages */
 
@@ -257,16 +260,16 @@
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
 
 
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
+/* entertainment: terminal games and other interesting software packages */
 
 #define BCM2711_SOC
 

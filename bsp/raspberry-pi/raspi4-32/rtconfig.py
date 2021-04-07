@@ -3,23 +3,11 @@ import os
 # toolchains options
 ARCH        ='arm'
 CPU         ='cortex-a'
-CROSS_TOOL  ='gcc'
-
-if os.getenv('RTT_ROOT'):
-    RTT_ROOT = os.getenv('RTT_ROOT')
-else:
-    RTT_ROOT = r'../../..'
-
-if os.getenv('RTT_CC'):
-    CROSS_TOOL = os.getenv('RTT_CC')
-
+RTT_ROOT    = os.getenv('RTT_ROOT') or r'../../..'
+CROSS_TOOL  = os.getenv('RTT_CC') or 'gcc'
 PLATFORM    = 'gcc'
-EXEC_PATH   = r'/opt/gcc-arm-none-eabi-5_4-2016q3/bin/'
-
-BUILD = 'debug'
-
-if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+EXEC_PATH   = os.getenv('RTT_EXEC_PATH') or r'/opt/gcc-arm-none-eabi-5_4-2016q3/bin/'
+BUILD       = os.getenv('RTT_BUILD') or 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
