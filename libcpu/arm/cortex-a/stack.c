@@ -10,7 +10,6 @@
  */
 #include <rtthread.h>
 #include <board.h>
-#include <arch.h>
 
 /**
  * @addtogroup ARM Cortex-A

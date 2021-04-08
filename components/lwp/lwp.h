@@ -22,8 +22,6 @@
 #include <rtthread.h>
 #include <dfs.h>
 
-#include "arch.h"
-
 #include "lwp_pid.h"
 #include "lwp_ipc.h"
 #include "lwp_signal.h"

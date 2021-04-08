@@ -317,7 +317,7 @@ struct rt_hw_register
 };
 
 #include <rtdef.h>
-#include <armv7.h>
+#include <cpuport.h>
 
 /* Interrupt Control Interface */
 #define ARM_GIC_CPU_BASE    0x1E000000

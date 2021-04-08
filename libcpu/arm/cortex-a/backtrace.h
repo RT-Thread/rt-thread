@@ -2,7 +2,7 @@
 #define __BACKTRACE_H
 
 #ifndef __ASSEMBLY__
-#include <armv7.h>
+#include <cpuport.h>
 
 /* Unwind reason code according the the ARM EABI documents */
 enum unwind_reason_code

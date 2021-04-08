@@ -22,6 +22,7 @@
 #include <rtconfig.h>
 #include <rtdebug.h>
 #include <rtdef.h>
+#include <cpuport.h>
 #include <rtservice.h>
 #include <rtm.h>
 
@@ -203,6 +204,7 @@ void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
 #endif
 
 #ifdef RT_USING_SMP
+void rt_secondary_cpu_entry(void);
 void rt_scheduler_ipi_handler(int vector, void *param);
 #endif
 
