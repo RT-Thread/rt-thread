@@ -17,6 +17,10 @@
 #include "gic.h"
 #include "cp15.h"
 
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#endif
+
 struct arm_gic
 {
     rt_uint32_t offset;         /* the first interrupt index in the vector table */
@@ -28,6 +32,8 @@ struct arm_gic
 /* 'ARM_GIC_MAX_NR' is the number of cores */
 static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 
+/** Macro to access the Generic Interrupt Controller Interface (GICC)
+*/
 #define GIC_CPU_CTRL(hw_base)               __REG32((hw_base) + 0x00)
 #define GIC_CPU_PRIMASK(hw_base)            __REG32((hw_base) + 0x04)
 #define GIC_CPU_BINPOINT(hw_base)           __REG32((hw_base) + 0x08)
@@ -35,7 +41,10 @@ static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 #define GIC_CPU_EOI(hw_base)                __REG32((hw_base) + 0x10)
 #define GIC_CPU_RUNNINGPRI(hw_base)         __REG32((hw_base) + 0x14)
 #define GIC_CPU_HIGHPRI(hw_base)            __REG32((hw_base) + 0x18)
+#define GIC_CPU_IIDR(hw_base)               __REG32((hw_base) + 0xFC)
 
+/** Macro to access the Generic Interrupt Controller Distributor (GICD)
+*/
 #define GIC_DIST_CTRL(hw_base)              __REG32((hw_base) + 0x000)
 #define GIC_DIST_TYPE(hw_base)              __REG32((hw_base) + 0x004)
 #define GIC_DIST_IGROUP(hw_base, n)         __REG32((hw_base) + 0x080 + ((n)/32) * 4)
@@ -50,6 +59,7 @@ static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 #define GIC_DIST_CONFIG(hw_base, n)         __REG32((hw_base) + 0xc00 + ((n)/16) * 4)
 #define GIC_DIST_SOFTINT(hw_base)           __REG32((hw_base) + 0xf00)
 #define GIC_DIST_CPENDSGI(hw_base, n)       __REG32((hw_base) + 0xf10 + ((n)/4) * 4)
+#define GIC_DIST_SPENDSGI(hw_base, n)       __REG32((hw_base) + 0xf20 + ((n)/4) * 4)
 #define GIC_DIST_ICPIDR2(hw_base)           __REG32((hw_base) + 0xfe8)
 
 static unsigned int _gic_max_irq;
@@ -90,7 +100,7 @@ void arm_gic_mask(rt_uint32_t index, int irq)
     GIC_DIST_ENABLE_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
 }
 
-void arm_gic_clear_pending(rt_uint32_t index, int irq)
+void arm_gic_umask(rt_uint32_t index, int irq)
 {
     rt_uint32_t mask = 1 << (irq % 32);
 
@@ -99,7 +109,107 @@ void arm_gic_clear_pending(rt_uint32_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
-    GIC_DIST_PENDING_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
+    GIC_DIST_ENABLE_SET(_gic_table[index].dist_hw_base, irq) = mask;
+}
+
+rt_uint32_t arm_gic_get_pending_irq(rt_uint32_t index, int irq)
+{
+    rt_uint32_t pend;
+
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    if (irq >= 16)
+    {
+        pend = (GIC_DIST_PENDING_SET(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1;
+    }
+    else
+    {
+        /* INTID 0-15 Software Generated Interrupt */
+        pend = (GIC_DIST_SPENDSGI(_gic_table[index].dist_hw_base, irq) >> ((irq % 4) * 8)) & 0xFF;
+        /* No CPU identification offered */
+        if (pend != 0)
+        {
+            pend = 1;
+        }
+        else
+        {
+            pend = 0;
+        }
+    }
+
+    return (pend);
+}
+
+void arm_gic_set_pending_irq(rt_uint32_t index, int irq)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    if (irq >= 16)
+    {
+        GIC_DIST_PENDING_SET(_gic_table[index].dist_hw_base, irq) = 1 << (irq % 32);
+    }
+    else
+    {
+        /* INTID 0-15 Software Generated Interrupt */
+        /* Forward the interrupt to the CPU interface that requested it */
+        GIC_DIST_SOFTINT(_gic_table[index].dist_hw_base) = (irq | 0x02000000);
+    }
+}
+
+void arm_gic_clear_pending_irq(rt_uint32_t index, int irq)
+{
+    rt_uint32_t mask;
+
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    if (irq >= 16)
+    {
+        mask = 1 << (irq % 32);
+        GIC_DIST_PENDING_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
+    }
+    else
+    {
+        mask =  1 << ((irq % 4) * 8);
+        GIC_DIST_CPENDSGI(_gic_table[index].dist_hw_base, irq) = mask;
+    }
+}
+
+void arm_gic_set_configuration(rt_uint32_t index, int irq, uint32_t config)
+{
+    rt_uint32_t icfgr;
+    rt_uint32_t shift;
+
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    icfgr = GIC_DIST_CONFIG(_gic_table[index].dist_hw_base, irq);
+    shift = (irq % 16) << 1;
+
+    icfgr &= (~(3 << shift));
+    icfgr |= (config << shift);
+
+    GIC_DIST_CONFIG(_gic_table[index].dist_hw_base, irq) = icfgr;
+}
+
+rt_uint32_t arm_gic_get_configuration(rt_uint32_t index, int irq)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    return (GIC_DIST_CONFIG(_gic_table[index].dist_hw_base, irq) >> ((irq % 16) >> 1));
 }
 
 void arm_gic_clear_active(rt_uint32_t index, int irq)
@@ -115,7 +225,7 @@ void arm_gic_clear_active(rt_uint32_t index, int irq)
 }
 
 /* Set up the cpu mask for the specific interrupt */
-void arm_gic_set_cpu(rt_uint32_t index, int irq, unsigned int cpumask)
+void arm_gic_set_target_cpu(rt_uint32_t index, int irq, unsigned int cpumask)
 {
     rt_uint32_t old_tgt;
 
@@ -126,70 +236,140 @@ void arm_gic_set_cpu(rt_uint32_t index, int irq, unsigned int cpumask)
 
     old_tgt = GIC_DIST_TARGET(_gic_table[index].dist_hw_base, irq);
 
-    old_tgt &= ~(0x0FFUL << ((irq % 4)*8));
-    old_tgt |=   cpumask << ((irq % 4)*8);
+    old_tgt &= ~(0x0FF << ((irq % 4)*8));
+    old_tgt |= cpumask << ((irq % 4)*8);
 
     GIC_DIST_TARGET(_gic_table[index].dist_hw_base, irq) = old_tgt;
 }
 
-void arm_gic_umask(rt_uint32_t index, int irq)
+rt_uint32_t arm_gic_get_target_cpu(rt_uint32_t index, int irq)
 {
-    rt_uint32_t mask = 1 << (irq % 32);
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    return (GIC_DIST_TARGET(_gic_table[index].dist_hw_base, irq) >> ((irq % 4) * 8)) & 0xFF;
+}
+
+void arm_gic_set_priority(rt_uint32_t index, int irq, rt_uint32_t priority)
+{
+    rt_uint32_t mask;
 
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
-    GIC_DIST_ENABLE_SET(_gic_table[index].dist_hw_base, irq) = mask;
+    mask = GIC_DIST_PRI(_gic_table[index].dist_hw_base, irq);
+    mask &= ~(0xFF << ((irq % 4) * 8));
+    mask |= ((priority & 0xFF) << ((irq % 4) * 8));
+    GIC_DIST_PRI(_gic_table[index].dist_hw_base, irq) = mask;
 }
 
-void arm_gic_dump_type(rt_uint32_t index)
+rt_uint32_t arm_gic_get_priority(rt_uint32_t index, int irq)
 {
-    unsigned int gic_type;
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
 
-    gic_type = GIC_DIST_TYPE(_gic_table[index].dist_hw_base);
-    rt_kprintf("GICv%d on %p, max IRQs: %d, %s security extension(%08x)\n",
-               (GIC_DIST_ICPIDR2(_gic_table[index].dist_hw_base) >> 4) & 0xf,
-               _gic_table[index].dist_hw_base,
-               _gic_max_irq,
-               gic_type & (1 << 10) ? "has" : "no",
-               gic_type);
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    return (GIC_DIST_PRI(_gic_table[index].dist_hw_base, irq) >> ((irq % 4) * 8)) & 0xFF;
 }
 
-void arm_gic_dump(rt_uint32_t index)
+void arm_gic_set_interface_prior_mask(rt_uint32_t index, rt_uint32_t priority)
 {
-    unsigned int i, k;
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
 
-    k = GIC_CPU_HIGHPRI(_gic_table[index].cpu_hw_base);
-    rt_kprintf("--- high pending priority: %d(%08x)\n", k, k);
-    rt_kprintf("--- hw mask ---\n");
-    for (i = 0; i < _gic_max_irq / 32; i++)
-    {
-        rt_kprintf("0x%08x, ",
-                   GIC_DIST_ENABLE_SET(_gic_table[index].dist_hw_base,
-                                       i * 32));
-    }
-    rt_kprintf("\n--- hw pending ---\n");
-    for (i = 0; i < _gic_max_irq / 32; i++)
-    {
-        rt_kprintf("0x%08x, ",
-                   GIC_DIST_PENDING_SET(_gic_table[index].dist_hw_base,
-                                        i * 32));
-    }
-    rt_kprintf("\n--- hw active ---\n");
-    for (i = 0; i < _gic_max_irq / 32; i++)
-    {
-        rt_kprintf("0x%08x, ",
-                   GIC_DIST_ACTIVE_SET(_gic_table[index].dist_hw_base,
-                                       i * 32));
-    }
-    rt_kprintf("\n");
+    /* set priority mask */
+    GIC_CPU_PRIMASK(_gic_table[index].cpu_hw_base) = priority & 0xFF;
 }
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT_ALIAS(arm_gic_dump, gic, show gic status);
-#endif
+
+rt_uint32_t arm_gic_get_interface_prior_mask(rt_uint32_t index)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    return GIC_CPU_PRIMASK(_gic_table[index].cpu_hw_base);
+}
+
+void arm_gic_set_binary_point(rt_uint32_t index, rt_uint32_t binary_point)
+{
+    GIC_CPU_BINPOINT(_gic_table[index].cpu_hw_base) = binary_point & 0x7;
+}
+
+rt_uint32_t arm_gic_get_binary_point(rt_uint32_t index)
+{
+    return GIC_CPU_BINPOINT(_gic_table[index].cpu_hw_base);
+}
+
+rt_uint32_t arm_gic_get_irq_status(rt_uint32_t index, int irq)
+{
+    rt_uint32_t pending;
+    rt_uint32_t active;
+
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    active = (GIC_DIST_ACTIVE_SET(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1;
+    pending = (GIC_DIST_PENDING_SET(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1;
+
+    return ((active << 1) | pending);
+}
+
+void arm_gic_send_sgi(rt_uint32_t index, int irq, rt_uint32_t target_list, rt_uint32_t filter_list)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    GIC_DIST_SOFTINT(_gic_table[index].dist_hw_base) = ((filter_list & 0x3) << 24) | ((target_list & 0xFF) << 16) | (irq & 0x0F);
+}
+
+rt_uint32_t arm_gic_get_high_pending_irq(rt_uint32_t index)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    return GIC_CPU_HIGHPRI(_gic_table[index].cpu_hw_base);
+}
+
+rt_uint32_t arm_gic_get_interface_id(rt_uint32_t index)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    return GIC_CPU_IIDR(_gic_table[index].cpu_hw_base);
+}
+
+void arm_gic_set_group(rt_uint32_t index, int irq, rt_uint32_t group)
+{
+    uint32_t igroupr;
+    uint32_t shift;
+
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+    RT_ASSERT(group <= 1);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    igroupr = GIC_DIST_IGROUP(_gic_table[index].dist_hw_base, irq);
+    shift = (irq % 32);
+    igroupr &= (~(1 << shift));
+    igroupr |= ( (group & 0x1) << shift);
+
+    GIC_DIST_IGROUP(_gic_table[index].dist_hw_base, irq) = igroupr;
+}
+
+rt_uint32_t arm_gic_get_group(rt_uint32_t index, int irq)
+{
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    irq = irq - _gic_table[index].offset;
+    RT_ASSERT(irq >= 0);
+
+    return (GIC_DIST_IGROUP(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1;
+}
 
 int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
 {
@@ -265,36 +445,50 @@ int arm_gic_cpu_init(rt_uint32_t index, rt_uint32_t cpu_base)
     return 0;
 }
 
-void arm_gic_set_group(rt_uint32_t index, int vector, int group)
+void arm_gic_dump_type(rt_uint32_t index)
 {
-    /* As for GICv2, there are only group0 and group1. */
-    RT_ASSERT(group <= 1);
-    RT_ASSERT(vector < _gic_max_irq);
+    unsigned int gic_type;
 
-    if (group == 0)
-    {
-        GIC_DIST_IGROUP(_gic_table[index].dist_hw_base,
-                        vector) &= ~(1 << (vector % 32));
-    }
-    else if (group == 1)
-    {
-        GIC_DIST_IGROUP(_gic_table[index].dist_hw_base,
-                        vector) |=  (1 << (vector % 32));
-    }
+    gic_type = GIC_DIST_TYPE(_gic_table[index].dist_hw_base);
+    rt_kprintf("GICv%d on %p, max IRQs: %d, %s security extension(%08x)\n",
+               (GIC_DIST_ICPIDR2(_gic_table[index].dist_hw_base) >> 4) & 0xf,
+               _gic_table[index].dist_hw_base,
+               _gic_max_irq,
+               gic_type & (1 << 10) ? "has" : "no",
+               gic_type);
 }
 
-#ifdef RT_USING_SMP
-void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
- {
-     /* note: ipi_vector maybe different with irq_vector */
-     GIC_DIST_SOFTINT(_gic_table[0].dist_hw_base) = (cpu_mask << 16) | ipi_vector;
+void arm_gic_dump(rt_uint32_t index)
+{
+    unsigned int i, k;
+
+    k = GIC_CPU_HIGHPRI(_gic_table[index].cpu_hw_base);
+    rt_kprintf("--- high pending priority: %d(%08x)\n", k, k);
+    rt_kprintf("--- hw mask ---\n");
+    for (i = 0; i < _gic_max_irq / 32; i++)
+    {
+        rt_kprintf("0x%08x, ",
+                   GIC_DIST_ENABLE_SET(_gic_table[index].dist_hw_base,
+                                       i * 32));
+    }
+    rt_kprintf("\n--- hw pending ---\n");
+    for (i = 0; i < _gic_max_irq / 32; i++)
+    {
+        rt_kprintf("0x%08x, ",
+                   GIC_DIST_PENDING_SET(_gic_table[index].dist_hw_base,
+                                        i * 32));
+    }
+    rt_kprintf("\n--- hw active ---\n");
+    for (i = 0; i < _gic_max_irq / 32; i++)
+    {
+        rt_kprintf("0x%08x, ",
+                   GIC_DIST_ACTIVE_SET(_gic_table[index].dist_hw_base,
+                                       i * 32));
+    }
+    rt_kprintf("\n");
 }
+
+#ifdef RT_USING_FINSH
+FINSH_FUNCTION_EXPORT_ALIAS(arm_gic_dump, gic, show gic status);
 #endif
 
-#ifdef RT_USING_SMP
-void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
-{
-    /* note: ipi_vector maybe different with irq_vector */
-    rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
-}
-#endif
