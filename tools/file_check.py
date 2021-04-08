@@ -12,6 +12,7 @@ import os
 import re
 import sys
 import click
+import yaml
 import chardet
 import logging
 import datetime
@@ -25,18 +26,63 @@ def init_logger():
                         datefmt=date_format,
                         )
 
+
 class CheckOut:
     def __init__(self, rtt_repo, rtt_branch):
         self.root = os.getcwd()
         self.rtt_repo = rtt_repo
         self.rtt_branch = rtt_branch
 
+    def __exclude_file(self, file_path):
+        dir_number = file_path.split('/')
+        ignore_path = file_path
+
+        # gets the file path depth.
+        for i in dir_number:
+            # current directory.
+            dir_name = os.path.dirname(ignore_path)
+            ignore_path = dir_name
+            # judge the ignore file exists in the current directory.
+            ignore_file_path = os.path.join(dir_name, ".ignore_format.yml")
+            if not os.path.exists(ignore_file_path):
+                continue
+            try:
+                with open(ignore_file_path) as f:
+                    ignore_config = yaml.safe_load(f.read())
+                file_ignore = ignore_config.get("file_path", [])
+                dir_ignore = ignore_config.get("dir_path", [])
+            except Exception as e:
+                logging.error(e)
+                continue
+         
+            try:
+                # judge file_path in the ignore file.
+                for file in file_ignore:
+                    if file is not None:
+                        file_real_path = os.path.join(dir_name, file)
+                        if file_real_path == file_path:
+                            logging.info("ignore file path: {}".format(file_real_path))
+                            return 0
+                
+                file_dir_path = os.path.dirname(file_path)
+                for _dir in dir_ignore:
+                    if _dir is not None:
+                        dir_real_path = os.path.join(dir_name, _dir)
+                        if dir_real_path == file_dir_path:
+                            logging.info("ignore dir path: {}".format(dir_real_path))
+                            return 0
+            except Exception as e:
+                logging.error(e)
+                continue
+
+        return 1
+
     def get_new_file(self):
         file_list = list()
         try:
-            os.system('git remote add rtt_repo {}'.format(self.rtt_repo))
-            os.system('git fetch rtt_repo')
-            os.system('git reset rtt_repo/{} --soft'.format(self.rtt_branch))
+            os.system('git remote add rtt_repo {} 1>/dev/null'.format(self.rtt_repo))
+            os.system('git fetch rtt_repo 1>/dev/null')
+            os.system('git reset rtt_repo/{} --soft 1>/dev/null'.format(self.rtt_branch))
             os.system('git status > git.txt')
         except Exception as e:
             logging.error(e)
@@ -60,7 +106,9 @@ class CheckOut:
             else:
                 continue
 
-            file_list.append(file_path)
+            result = self.__exclude_file(file_path)
+            if result != 0:
+                file_list.append(file_path)
 
         return file_list
 
@@ -69,7 +117,7 @@ class FormatCheck:
     def __init__(self, file_list):
         self.file_list = file_list
 
-    def __check_file(self, file_lines):
+    def __check_file(self, file_lines, file_path):
         line_num = 1
         check_result = False
         for line in file_lines:
@@ -77,12 +125,12 @@ class FormatCheck:
             line_start = line.replace(' ', '')
             # find tab
             if line_start.startswith('\t'):
-                logging.error("line[{}]: please use space replace tab at the start of this line.".format(line_num))
+                logging.error("{} line[{}]: please use space replace tab at the start of this line.".format(file_path, line_num))
                 check_result = False
             # check line end
             lin_end = line.split('\n')[0]
             if lin_end.endswith(' ') or lin_end.endswith('\t'):
-                logging.error("line[{}]: please delete extra space at the end of this line.".format(line_num))
+                logging.error("{} line[{}]: please delete extra space at the end of this line.".format(file_path, line_num))
                 check_result = False
             line_num += 1
 
@@ -96,13 +144,11 @@ class FormatCheck:
         encoding_check_result = True
         format_check_result = True
         for file_path in self.file_list:
-            file_lines = ''
             code = ''
             if file_path.endswith(".c") or file_path.endswith(".h"):
                 try:
-                    with open(file_path, 'r') as f:
+                    with open(file_path, 'rb') as f:
                         file = f.read()
-                        file_lines = f.readlines()
                         # get file encoding
                         code = chardet.detect(file)['encoding']
                 except Exception as e:
@@ -116,7 +162,9 @@ class FormatCheck:
             else:
                 logging.info('[{0}]: encoding check success.'.format(file_path))
 
-            format_check_result = self.__check_file(file_lines)    
+            with open(file_path, 'r') as f:
+                file_lines = f.readlines()
+            format_check_result = self.__check_file(file_lines, file_path)    
 
         if not encoding_check_result or not format_check_result:
             logging.error("files format check fail.")
@@ -155,8 +203,8 @@ class LicenseCheck:
                     true_year = '2006-{}'.format(current_year)
                     if license_year != true_year:
                         logging.warning("[{0}]: license year: {} is not true: {}, please update.".format(file_path,
-                                                                                                        license_year,
-                                                                                                        true_year))
+                                                                                                         license_year,
+                                                                                                         true_year))
                                                                                                 
                     else:
                         logging.info("[{0}]: license check success.".format(file_path))
