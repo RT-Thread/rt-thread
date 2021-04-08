@@ -125,6 +125,8 @@ void rt_hw_board_init(void)
     rt_hw_mmu_map_init(&mmu_info, (void*)GPIO_BASE_ADDR, 0x10000000, MMUTable, 0);
 #endif
 
+    /* map peripheral address to virtual address */
+
     //gpio
     gpio_base_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)GPIO_BASE_ADDR, 0x1000);
     //uart
@@ -185,11 +187,9 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
-
 }
 
 #ifdef RT_USING_GDBSERVER
-
 #include <dfs_posix.h>
 
 #define GDB_CONNECT_DEVICE "/dev/uart4"
