@@ -7,3 +7,4 @@ file_path:
 
 dir_path:
 - tools
+- bsp/nrf51822
