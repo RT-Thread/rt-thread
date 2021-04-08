@@ -1,5 +1,6 @@
 #ifndef __RASPI4_H__
 #define __RASPI4_H__
+
 //https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0.pdf
 
 #define __REG32(x)  (*((volatile unsigned int *)(x)))
@@ -76,7 +77,8 @@ extern uint32_t arm_timer_base;
 #define PACTL_CS_ADDR               (PER_BASE + PACTL_CS_OFFSET)
 extern uint32_t     pactl_cs_base;
 #define PACTL_CS                    HWREG32(pactl_cs_base)
-typedef enum {
+typedef enum
+{
     IRQ_SPI0 = 0x00000000,
     IRQ_SPI1 = 0x00000002,
     IRQ_SPI2 = 0x00000004,
@@ -149,11 +151,11 @@ extern uint32_t stimer_base_addr;
 #define STIMER_C2    __REG32(stimer_base_addr + 0x0014)
 #define STIMER_C3    __REG32(stimer_base_addr + 0x0018)
 
-#define DELAY_MICROS(micros) \
-    do{ \
- rt_uint32_t compare = STIMER_CLO + micros * 25; \
- while (STIMER_CLO < compare); \
-    } while (0) \
+#define DELAY_MICROS(micros)                            \
+    do{                                                 \
+        rt_uint32_t compare = STIMER_CLO + micros * 25; \
+        while (STIMER_CLO < compare);                   \
+    } while (0)
 
 //External Mass Media Controller (SD Card)
 #define MMC0_BASE_ADDR    (PER_BASE+0x300000)
@@ -184,9 +186,4 @@ rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
     return GIC_PL400_CONTROLLER_PPTR;
 }
 
-static inline  void __DSB(void)
-{
-    __asm__ volatile ("dsb 0xF":::"memory");
-}
 #endif
-
