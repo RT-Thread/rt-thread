@@ -30,27 +30,28 @@ static void rt_hw_timer2_isr(int vector, void *param)
     timer_clear_pending(0);
 }
 
-#ifdef RT_USING_USERSPACE
-extern void set_secondary_cpu_boot_address(uint32_t pv_off, void *second_boot_reg);
-#else
-extern void set_secondary_cpu_boot_address(void);
-#endif
-
 void rt_hw_secondary_cpu_up(void)
 {
-#ifdef RT_USING_USERSPACE
-    void *plat_boot_reg;
+    volatile void **plat_boot_reg = (volatile void **)0x10000034;
+    char *entry = (char *)rt_secondary_cpu_entry;
 
-    plat_boot_reg = rt_hw_mmu_map(&mmu_info, 0, (void*)0x10000034, 0x1000, MMU_MAP_K_RW);
-    set_secondary_cpu_boot_address(PV_OFFSET, plat_boot_reg);
-#else
-    extern void set_secondary_cpu_boot_address(void);
+#ifdef RT_USING_USERSPACE
+    plat_boot_reg = (volatile void **)rt_hw_mmu_map(&mmu_info, 0, (void *)plat_boot_reg, 0x1000, MMU_MAP_K_RW);
+    if (!plat_boot_reg)
+    {
+        /* failed */
+        return;
+    }
+    entry += PV_OFFSET;
 #endif
-    __asm__ volatile ("dsb":::"memory");
+    *plat_boot_reg-- = (void *)(size_t)-1;
+    *plat_boot_reg = (void *)entry;
+    rt_hw_dsb();
     rt_hw_ipi_send(0, 1 << 1);
 }
 
-void secondary_cpu_c_start(void)
+/* Interface */
+void rt_hw_secondary_cpu_bsp_start(void)
 {
     rt_hw_vector_init();
 

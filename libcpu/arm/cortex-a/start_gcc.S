@@ -613,32 +613,13 @@ vector_resv:
     b       .
 
 #ifdef RT_USING_SMP
-.global set_secondary_cpu_boot_address
-set_secondary_cpu_boot_address:
-#ifdef RT_USING_USERSPACE
-    ldr     r2,  =secondary_cpu_start
-    add     r0, r2
-
-    mvn     r2, #0 //0xffffffff
-    str     r2, [r1]
-    str     r0, [r1, #-4]
-#else
-    ldr     r0, =secondary_cpu_start
-
-    mvn     r1, #0 //0xffffffff
-    ldr     r2, =0x10000034
-    str     r1, [r2]
-    str     r0, [r2, #-4]
-#endif
-    mov     pc, lr
-
 .global rt_clz
 rt_clz:
     clz r0, r0
     bx lr
 
-.global secondary_cpu_start
-secondary_cpu_start:
+.global rt_secondary_cpu_entry
+rt_secondary_cpu_entry:
 #ifdef RT_USING_USERSPACE
     ldr     r5, =PV_OFFSET
 
@@ -687,7 +668,7 @@ after_enable_mmu2:
     bl rt_hw_mmu_init
 #endif
 
-    b secondary_cpu_c_start
+    b rt_hw_secondary_cpu_bsp_start
 #endif
 
 .bss

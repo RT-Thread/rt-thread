@@ -13,7 +13,6 @@
 #include <board.h>
 #include <backtrace.h>
 
-#include "arch.h"
 #include "interrupt.h"
 
 #ifdef RT_USING_FINSH

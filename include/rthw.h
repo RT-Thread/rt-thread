@@ -63,15 +63,15 @@ void rt_hw_cpu_dcache_ops(int ops, void* addr, int size);
 #else
 
 /* define cache ops as empty */
-#define rt_hw_cpu_icache_enable
-#define rt_hw_cpu_icache_disable
-#define rt_hw_cpu_icache_ops
-#define rt_hw_cpu_dcache_enable
-#define rt_hw_cpu_dcache_disable
-#define rt_hw_cpu_dcache_ops
+#define rt_hw_cpu_icache_enable(...)
+#define rt_hw_cpu_icache_disable(...)
+#define rt_hw_cpu_icache_ops(...)
+#define rt_hw_cpu_dcache_enable(...)
+#define rt_hw_cpu_dcache_disable(...)
+#define rt_hw_cpu_dcache_ops(...)
 
-#define rt_hw_cpu_icache_status 0
-#define rt_hw_cpu_dcache_status 0
+#define rt_hw_cpu_icache_status(...) 0
+#define rt_hw_cpu_dcache_status(...) 0
 
 #endif
 
@@ -151,13 +151,6 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context));
 void rt_hw_us_delay(rt_uint32_t us);
 
 #ifdef RT_USING_SMP
-typedef union {
-    unsigned long slock;
-    struct __arch_tickets {
-        unsigned short owner;
-        unsigned short next;
-    } tickets;
-} rt_hw_spinlock_t;
 
 struct rt_spinlock
 {
@@ -197,7 +190,7 @@ void rt_hw_secondary_cpu_up(void);
 void rt_hw_secondary_cpu_idle_exec(void);
 #else
 
-#define RT_DEFINE_SPINLOCK(x)  
+#define RT_DEFINE_SPINLOCK(x)
 #define RT_DECLARE_SPINLOCK(x)    rt_ubase_t x
 
 #define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()

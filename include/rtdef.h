@@ -200,6 +200,8 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #error not supported tool chain
 #endif
 
+#include <cpuport.h>
+
 /* initialization export */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);

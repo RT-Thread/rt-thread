@@ -6,8 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  */
-#ifndef __ARMV7_H__
-#define __ARMV7_H__
+
+#ifndef  CPUPORT_H__
+#define  CPUPORT_H__
 
 /* the exception stack without VFP registers */
 struct rt_hw_exp_stack
@@ -69,24 +70,29 @@ struct rt_hw_stack
 #define E_Bit       (1<<9)
 #define J_Bit       (1<<24)
 
-rt_inline void isb(void)
+#ifdef RT_USING_SMP
+typedef union {
+    unsigned long slock;
+    struct __arch_tickets {
+        unsigned short owner;
+        unsigned short next;
+    } tickets;
+} rt_hw_spinlock_t;
+#endif
+
+rt_inline void rt_hw_isb(void)
 {
     asm volatile ("isb":::"memory");
 }
 
-rt_inline void dmb(void)
+rt_inline void rt_hw_dmb(void)
 {
     asm volatile ("dmb":::"memory");
 }
 
-rt_inline void dsb(void)
+rt_inline void rt_hw_dsb(void)
 {
     asm volatile ("dsb":::"memory");
 }
 
-rt_inline void icache_invalid_all(void)
-{
-    asm volatile ("mcr p15, 0, r0, c7, c5, 0":::"memory");//iciallu
-    isb();
-}
-#endif
+#endif  /*CPUPORT_H__*/
