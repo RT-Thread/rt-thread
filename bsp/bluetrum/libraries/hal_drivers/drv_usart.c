@@ -10,6 +10,7 @@
 
 #include "board.h"
 #include "drv_usart.h"
+#include <shell.h>
 
 #ifdef RT_USING_SERIAL
 
@@ -147,6 +148,7 @@ static int ab32_putc(struct rt_serial_device *serial, char ch)
     return 1;
 }
 
+RT_SECTION(".irq.usart")
 static int ab32_getc(struct rt_serial_device *serial)
 {
     int ch;
@@ -168,6 +170,72 @@ static rt_size_t ab32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *
     return -1;
 }
 
+extern struct finsh_shell *shell;
+
+RT_SECTION(".irq.usart")
+static rt_err_t shell_rx_ind(void)
+{
+    RT_ASSERT(shell != RT_NULL);
+
+    /* release semaphore to let finsh thread rx data */
+    rt_sem_release(&shell->rx_sem);
+
+    return RT_EOK;
+}
+
+RT_SECTION(".irq.usart")
+void uart_irq_process(struct rt_serial_device *serial)
+{
+    int ch = -1;
+    rt_base_t level;
+    struct rt_serial_rx_fifo* rx_fifo;
+
+    /* interrupt mode receive */
+    rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
+    RT_ASSERT(rx_fifo != RT_NULL);
+
+    while (1)
+    {
+        ch = serial->ops->getc(serial);
+        if (ch == -1) break;
+
+
+        /* disable interrupt */
+        level = rt_hw_interrupt_disable();
+
+        rx_fifo->buffer[rx_fifo->put_index] = ch;
+        rx_fifo->put_index += 1;
+        if (rx_fifo->put_index >= serial->config.bufsz) rx_fifo->put_index = 0;
+
+        /* if the next position is read index, discard this 'read char' */
+        if (rx_fifo->put_index == rx_fifo->get_index)
+        {
+            rx_fifo->get_index += 1;
+            rx_fifo->is_full = RT_TRUE;
+            if (rx_fifo->get_index >= serial->config.bufsz) rx_fifo->get_index = 0;
+
+            // _serial_check_buffer_size();
+        }
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+    }
+
+    rt_size_t rx_length;
+
+    /* get rx length */
+    level = rt_hw_interrupt_disable();
+    rx_length = (rx_fifo->put_index >= rx_fifo->get_index)? (rx_fifo->put_index - rx_fifo->get_index):
+        (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
+    rt_hw_interrupt_enable(level);
+
+    if (rx_length)
+    {
+        shell_rx_ind();
+    }
+}
+
+RT_SECTION(".irq.usart")
 static void uart_isr(int vector, void *param)
 {
     rt_interrupt_enter();
@@ -175,19 +243,19 @@ static void uart_isr(int vector, void *param)
 #ifdef BSP_USING_UART0
     if(hal_uart_getflag(UART0_BASE, UART_FLAG_RXPND))       //RX one byte finish
     {
-        rt_hw_serial_isr(&(uart_obj[UART0_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+        uart_irq_process(&(uart_obj[UART0_INDEX].serial));
     }
 #endif
 #ifdef BSP_USING_UART1
     if(hal_uart_getflag(UART1_BASE, UART_FLAG_RXPND))       //RX one byte finish
     {
-        rt_hw_serial_isr(&(uart_obj[UART1_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+        uart_irq_process(&(uart_obj[UART1_INDEX].serial));
     }
 #endif
 #ifdef BSP_USING_UART2
     if(hal_uart_getflag(UART2_BASE, UART_FLAG_RXPND))       //RX one byte finish
     {
-        rt_hw_serial_isr(&(uart_obj[UART2_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+        uart_irq_process(&(uart_obj[UART2_INDEX].serial));
     }
 #endif
 
