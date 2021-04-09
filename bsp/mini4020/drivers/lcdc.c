@@ -1,11 +1,7 @@
 /*
- * File      : lcdc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -23,20 +19,20 @@ rt_err_t sep4020_lcd_init(void)
 {
     pVideoBuffer =(unsigned long)rt_malloc(LCDWIDTH * LCDHEIGHT * 2);
 
-    *(RP)GPIO_PORTC_SEL  |= 0X0008;      //Portc8ÉèÖÃÎªÍ¨ÓÃ¿Ú
-    *(RP)GPIO_PORTC_DIR  &= (~0X0008);   //Portc8ÉèÖÃÎªÊä³ö
-    *(RP)GPIO_PORTC_DATA |= 0X0008;      //Portc8Êä³ö¸ßµçÆ½
+    *(RP)GPIO_PORTC_SEL  |= 0X0008;      //Portc8è®¾ç½®ä¸ºé€šç”¨å£
+    *(RP)GPIO_PORTC_DIR  &= (~0X0008);   //Portc8è®¾ç½®ä¸ºè¾“å‡º
+    *(RP)GPIO_PORTC_DATA |= 0X0008;      //Portc8è¾“å‡ºé«˜ç”µå¹³
 
-    writel(0x00000000,LCDC_LECR);     //½ûÓÃLCDC
-    writel(pVideoBuffer,LCDC_SSA);    //lcdÊı¾İÖ¡µÄÆğÊ¼µØÖ·
+    writel(0x00000000,LCDC_LECR);     //ç¦ç”¨LCDC
+    writel(pVideoBuffer,LCDC_SSA);    //lcdæ•°æ®å¸§çš„èµ·å§‹åœ°å€
     writel(YMAX | XMAX,LCDC_SIZE);
     writel(TFT|COLOR|PBSIZE|BPIX|PIXPOL|FLMPOL|LPPOL|CLKPOL|OEPOL|END_SEL|ACD_SEL|ACD|PCD,LCDC_PCR);
     writel(H_WIDTH|H_WAIT_1|H_WAIT_2,LCDC_HCR);
     writel(V_WIDTH|PASS_FRAME_WAIT|V_WAIT_1|V_WAIT_2,LCDC_VCR);
     writel(SCR|CC_EN|PW,LCDC_PWMR);
     writel(BL|HM|TM,LCDC_DMACR);
-    writel(0x00000001,LCDC_LECR);         //Ê¹ÄÜLCDC
-    writel(0x00000000,LCDC_LCDISREN);     //ÖĞ¶ÏÔÚ¼ÓÔØÖ¡µÄ×îºóÒ»¸ö»òµÚÒ»¸öÊı¾İÊ±ÉèÖÃ£¬µ½LCDÖ®¼ä»áÓĞÒ»¸öÑÓÊ±
+    writel(0x00000001,LCDC_LECR);         //ä½¿èƒ½LCDC
+    writel(0x00000000,LCDC_LCDISREN);     //ä¸­æ–­åœ¨åŠ è½½å¸§çš„æœ€åä¸€ä¸ªæˆ–ç¬¬ä¸€ä¸ªæ•°æ®æ—¶è®¾ç½®ï¼Œåˆ°LCDä¹‹é—´ä¼šæœ‰ä¸€ä¸ªå»¶æ—¶
 
     return RT_EOK;
 }
