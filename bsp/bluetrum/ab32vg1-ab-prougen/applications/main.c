@@ -8,6 +8,12 @@
  * 2020/12/10     greedyhao    The first version
  */
 
+/**
+ * Notice!
+ * All functions or data that are called during an interrupt need to be in RAM.
+ * You can do it the way exception_isr() does.
+ */
+
 #include <rtthread.h>
 #include "board.h"
 
