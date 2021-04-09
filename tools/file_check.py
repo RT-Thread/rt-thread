@@ -80,9 +80,9 @@ class CheckOut:
     def get_new_file(self):
         file_list = list()
         try:
-            os.system('git remote add rtt_repo {} 1>/dev/null'.format(self.rtt_repo))
-            os.system('git fetch rtt_repo 1>/dev/null')
-            os.system('git reset rtt_repo/{} --soft 1>/dev/null'.format(self.rtt_branch))
+            os.system('git remote add rtt_repo {}'.format(self.rtt_repo))
+            os.system('git fetch rtt_repo')
+            os.system('git reset rtt_repo/{} --soft'.format(self.rtt_branch))
             os.system('git status > git.txt')
         except Exception as e:
             logging.error(e)
@@ -119,7 +119,7 @@ class FormatCheck:
 
     def __check_file(self, file_lines, file_path):
         line_num = 1
-        check_result = False
+        check_result = True
         for line in file_lines:
             # check line start
             line_start = line.replace(' ', '')
@@ -140,7 +140,7 @@ class FormatCheck:
         logging.info("Start to check files format.")
         if len(self.file_list) == 0:
             logging.warning("There are no files to check license.")
-            return 0
+            return True
         encoding_check_result = True
         format_check_result = True
         for file_path in self.file_list:
@@ -156,13 +156,13 @@ class FormatCheck:
             else:
                 continue
 
-            if code != 'utf-8':
+            if code != 'utf-8' and code != 'ascii':
                 logging.error("[{0}]: encoding not utf-8, please format it.".format(file_path))
                 encoding_check_result = False
             else:
                 logging.info('[{0}]: encoding check success.'.format(file_path))
 
-            with open(file_path, 'r') as f:
+            with open(file_path, 'r', encoding = "utf-8") as f:
                 file_lines = f.readlines()
             format_check_result = self.__check_file(file_lines, file_path)    
 
