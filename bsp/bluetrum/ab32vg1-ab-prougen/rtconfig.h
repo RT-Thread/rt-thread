@@ -86,7 +86,7 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
+#define RT_LIBC_USING_TIME
 
 /* Network */
 
@@ -145,23 +145,26 @@
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
 
 
-/* games: games run on RT-Thread console */
+/* entertainment: terminal games and other interesting software packages */
 
 
 /* Hardware Drivers Config */
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_UART
 #define BSP_USING_UART0
 
 /* Board extended module Drivers */
