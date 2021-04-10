@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright (c) 2006-2018, RT-Thread Development Team
+/* Copyright (c) 2006-2021, RT-Thread Development Team
  * Copyright (c) 2020, duhuanpeng<548708880@qq.com>
  *
  * Change Logs:

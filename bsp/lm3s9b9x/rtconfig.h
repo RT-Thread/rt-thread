@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX*/
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second*/
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug*/
@@ -65,7 +65,7 @@
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: FinSH shell options */
 /* Using FinSH as Shell*/
@@ -80,11 +80,11 @@
 #define RT_DFS_ELM_WORD_ACCESS
 
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX		1
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
-/* the max number of cached sector 		*/
-#define DFS_CACHE_MAX_NUM   		4
+#define DFS_FILESYSTEMS_MAX     1
+/* the max number of opened files       */
+#define DFS_FD_MAX                  4
+/* the max number of cached sector      */
+#define DFS_CACHE_MAX_NUM           4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
@@ -106,7 +106,7 @@
 #define RT_LWIP_TCP
 
 /* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
+#define RT_LWIP_TCP_PCB_NUM 5
 
 /* Ethernet padding size */
 #define RT_LWIP_ETH_PAD_SIZE 2
@@ -129,21 +129,21 @@
 #define RT_LWIP_MSKADDR  "255.255.255.0"
 
 /* tcp thread options */
-#define RT_LWIP_TCPTHREAD_PRIORITY		12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE		4
-#define RT_LWIP_TCPTHREAD_STACKSIZE		1024
+#define RT_LWIP_TCPTHREAD_PRIORITY      12
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE     4
+#define RT_LWIP_TCPTHREAD_STACKSIZE     1024
 
 /* ethernet if thread options */
-#define RT_LWIP_ETHTHREAD_PRIORITY		15
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
-#define RT_LWIP_ETHTHREAD_STACKSIZE		512
+#define RT_LWIP_ETHTHREAD_PRIORITY      15
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE     4
+#define RT_LWIP_ETHTHREAD_STACKSIZE     512
 
 /* TCP sender buffer space */
-#define RT_LWIP_TCP_SND_BUF	8192
+#define RT_LWIP_TCP_SND_BUF 8192
 /* TCP receive window. */
-#define RT_LWIP_TCP_WND		8192
+#define RT_LWIP_TCP_WND     8192
 
 /* the size of each pbuf in the pbuf pool. */
-#define RT_LWIP_PBUF_POOL_BUFSIZE	1500
+#define RT_LWIP_PBUF_POOL_BUFSIZE   1500
 
 #endif

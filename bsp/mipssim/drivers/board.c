@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,8 +21,8 @@
 #include "exception.h"
 #include "drv_uart.h"
 
-#define CPU_HZ	(100 * 1000 * 1000)
-#define RT_HW_HEAP_END	(0x80000000 + 64 * 1024 * 1024)
+#define CPU_HZ  (100 * 1000 * 1000)
+#define RT_HW_HEAP_END  (0x80000000 + 64 * 1024 * 1024)
 
 extern unsigned char __bss_end;
 

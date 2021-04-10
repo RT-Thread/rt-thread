@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,7 +10,7 @@
 /*
  * 程序清单：这是一个通过PIN脚控制LED亮灭的使用例程
  * 例程导出了 led_sample 命令到控制终端
- * 命令调用格式：led_sample 
+ * 命令调用格式：led_sample
  * 命令解释：命令第二个参数是要使用的PIN脚编号，为空则使用例程默认的引脚编号。
  * 程序功能：程序创建一个led线程，线程每隔1000ms改变PIN脚状态，达到控制led灯
  *            亮灭的效果。

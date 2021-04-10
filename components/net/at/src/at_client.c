@@ -8,7 +8,7 @@
  * 2018-03-30     chenyong     first version
  * 2018-04-12     chenyong     add client implement
  * 2018-08-17     chenyong     multiple client support
- * 2021-03-17     Meco Man     fix a buf of leaking memory 
+ * 2021-03-17     Meco Man     fix a buf of leaking memory
  */
 
 #include <at.h>

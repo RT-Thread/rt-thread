@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,9 +41,9 @@ static void can_rx_thread(void *parameter)
     rt_device_set_rx_indicate(can_dev, can_rx_call);
 
 #ifdef RT_CAN_USING_HDR
-    
+
     rt_err_t res;
-    
+
     struct rt_can_filter_item items[5] =
     {
         RT_CAN_FILTER_ITEM_INIT(0x100, 0, 0, 0, 0x700, RT_NULL, RT_NULL), /* std,match ID:0x100~0x1ff，hdr为-1，设置默认过滤表 */
@@ -84,7 +84,7 @@ int can_sample(int argc, char *argv[])
     rt_size_t  size;
     rt_thread_t thread;
     char can_name[RT_NAME_MAX];
-    
+
     if (argc == 2)
     {
         rt_strncpy(can_name, argv[1], RT_NAME_MAX);
@@ -137,7 +137,7 @@ int can_sample(int argc, char *argv[])
     {
         rt_kprintf("can dev write data failed!\n");
     }
-    
+
     return res;
 }
 /* 导出到 msh 命令列表中 */

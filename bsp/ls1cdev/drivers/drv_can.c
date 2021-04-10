@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,7 +40,7 @@ static rt_err_t bxmodifyfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_i
     rt_int32_t hdr, fbase, foff;
     CAN_TypeDef* CANx;
     CANx = pbxcan->reg;
-    
+
     /*pitem->mode     1-掩码模式; 0- 滤波器模式 SJA1000中使用以下方式*/
     /*SJA1000中AFM    1-单滤波器模式; 0- 双滤波器模式 */
 
@@ -72,7 +72,7 @@ static rt_err_t bxmodifyfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_i
     }
 
     CAN_FilterInitTypeDef   CAN_FilterInitStruct;
-    unsigned char ide, rtr, id , idmask, mode; 
+    unsigned char ide, rtr, id , idmask, mode;
     ide =  (unsigned char) pitem->ide;
     rtr = (unsigned char)  pitem->rtr;
     id = pitem->id;
@@ -84,7 +84,7 @@ static rt_err_t bxmodifyfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_i
     CAN_FilterInitStruct.IDMASK = idmask;
     CAN_FilterInitStruct.MODE = mode;
     CAN_FilterInit(CANx, &CAN_FilterInitStruct);
-    
+
     return RT_EOK;
 }
 
@@ -109,15 +109,15 @@ static rt_err_t setfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_config
 static void bxcan0_filter_init(struct rt_can_device *can)
 {
         struct ls1c_bxcan *pbxcan;
-        pbxcan = (struct ls1c_bxcan *) can->parent.user_data; 
-    
+        pbxcan = (struct ls1c_bxcan *) can->parent.user_data;
+
 }
 
 static void bxcan1_filter_init(struct rt_can_device *can)
 {
         struct ls1c_bxcan *pbxcan;
-        pbxcan = (struct ls1c_bxcan *) can->parent.user_data; 
-    
+        pbxcan = (struct ls1c_bxcan *) can->parent.user_data;
+
 }
 
 static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
@@ -161,7 +161,7 @@ static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
         break;
     case RT_CAN_MODE_LOOPBACK:
         CAN_InitStructure.CAN_Mode = CAN_Mode_STM;
-        
+
         break;
     case RT_CAN_MODE_LOOPBACKANLISEN:
         CAN_InitStructure.CAN_Mode = CAN_Mode_STM|CAN_Mode_LOM;
@@ -171,37 +171,37 @@ static void bxcan_init(CAN_TypeDef *pcan, rt_uint32_t baud, rt_uint32_t mode)
 
     switch (bps)
     {
-        case LS1C_CAN1MBaud: 
+        case LS1C_CAN1MBaud:
             CAN_InitStructure.CAN_Prescaler = 9;
             CAN_InitStructure.CAN_BS1 = CAN_BS1_4tq;
             CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN800kBaud: 
+        case LS1C_CAN800kBaud:
             CAN_InitStructure.CAN_Prescaler = 8;
             CAN_InitStructure.CAN_BS1 = CAN_BS1_7tq;
             CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN500kBaud: 
+        case LS1C_CAN500kBaud:
             CAN_InitStructure.CAN_Prescaler = 9;
             CAN_InitStructure.CAN_BS1 = CAN_BS1_11tq;
             CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN250kBaud: 
+        case LS1C_CAN250kBaud:
             CAN_InitStructure.CAN_Prescaler = 36;
             CAN_InitStructure.CAN_BS1 = CAN_BS1_4tq;
             CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN125kBaud: 
+        case LS1C_CAN125kBaud:
             CAN_InitStructure.CAN_Prescaler = 36;
             CAN_InitStructure.CAN_BS1 = CAN_BS1_11tq;
             CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN100kBaud: 
+        case LS1C_CAN100kBaud:
             CAN_InitStructure.CAN_Prescaler = 63;
             CAN_InitStructure.CAN_BS1 = CAN_BS1_7tq;
             CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN50kBaud: 
+        case LS1C_CAN50kBaud:
             CAN_InitStructure.CAN_Prescaler = 63;
             CAN_InitStructure.CAN_BS1 = CAN_BS1_16tq;
             CAN_InitStructure.CAN_BS2 = CAN_BS2_3tq;
@@ -244,14 +244,14 @@ static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
     if (pbxcan == CAN0)
     {
 #ifdef USING_BXCAN0
-        bxcan0_hw_init();  
+        bxcan0_hw_init();
         bxcan_init(pbxcan, cfg->baud_rate, cfg->mode);
 #endif
     }
     else  if (pbxcan == CAN1)
     {
 #ifdef USING_BXCAN1
-        bxcan1_hw_init();  
+        bxcan1_hw_init();
         bxcan_init(pbxcan, cfg->baud_rate, cfg->mode);
 #endif
     }
@@ -328,7 +328,7 @@ static rt_err_t control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_GET_STATUS:
-    { 
+    {
         rt_uint32_t errtype;
 
         errtype = pbxcan->reg->RXERR;
@@ -380,7 +380,7 @@ static int recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxno)
 
     pbxcan = ((struct ls1c_bxcan *) can->parent.user_data)->reg;
 
-    pmsg->ide = (rt_uint32_t) RxMessage.IDE; 
+    pmsg->ide = (rt_uint32_t) RxMessage.IDE;
     if(RxMessage.IDE == 1)
         pmsg->id = RxMessage.ExtId;
     else
@@ -405,37 +405,37 @@ static const struct rt_can_ops canops =
 
 #ifdef USING_BXCAN0
 struct rt_can_device bxcan0;
-void ls1c_can0_irqhandler(int irq, void *param)  
-{  
+void ls1c_can0_irqhandler(int irq, void *param)
+{
     CAN_TypeDef* CANx;
     unsigned char status;
     CANx =  CAN0;
     /*读寄存器清除中断*/
    status = CANx->IR;
-   
+
     /*接收中断*/
-    if (( status & CAN_IR_RI) == CAN_IR_RI) 
+    if (( status & CAN_IR_RI) == CAN_IR_RI)
     {
         /*清除RI 中断*/
        CAN_Receive(CANx, &RxMessage);
-       CANx->CMR |= CAN_CMR_RRB; 
-       CANx->CMR |= CAN_CMR_CDO; 
+       CANx->CMR |= CAN_CMR_RRB;
+       CANx->CMR |= CAN_CMR_CDO;
        rt_hw_can_isr(&bxcan0, RT_CAN_EVENT_RX_IND);
        rt_kprintf("\r\nCan0 int RX happened!\r\n");
     }
     /*发送中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_TI) 
+    else if (( status  & CAN_IR_TI) == CAN_IR_TI)
     {
        rt_hw_can_isr(&bxcan0, RT_CAN_EVENT_TX_DONE | 0 << 8);
        rt_kprintf("\r\nCan0 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI) 
+    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI)
     {
        rt_hw_can_isr(&bxcan0, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan0 int RX OF happened!\r\n");
     }
-}  
+}
 static struct ls1c_bxcan bxcan0data =
 {
     .reg = CAN0,
@@ -445,37 +445,37 @@ static struct ls1c_bxcan bxcan0data =
 
 #ifdef USING_BXCAN1
 struct rt_can_device bxcan1;
-void ls1c_can1_irqhandler(int irq, void *param)  
-{  
+void ls1c_can1_irqhandler(int irq, void *param)
+{
     CAN_TypeDef* CANx;
     unsigned char status;
     CANx =  CAN1;
     /*读寄存器清除中断*/
    status = CANx->IR;
-   
+
     /*接收中断*/
-    if (( status & CAN_IR_RI) == CAN_IR_RI) 
+    if (( status & CAN_IR_RI) == CAN_IR_RI)
     {
         /*清除RI 中断*/
        CAN_Receive(CANx, &RxMessage);
-       CANx->CMR |= CAN_CMR_RRB; 
-       CANx->CMR |= CAN_CMR_CDO; 
+       CANx->CMR |= CAN_CMR_RRB;
+       CANx->CMR |= CAN_CMR_CDO;
        rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RX_IND);
        rt_kprintf("\r\nCan1 int RX happened!\r\n");
     }
     /*发送中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_TI) 
+    else if (( status  & CAN_IR_TI) == CAN_IR_TI)
     {
        rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_TX_DONE | 0 << 8);
        rt_kprintf("\r\nCan1 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI) 
+    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI)
     {
        rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan1 int RX OF happened!\r\n");
     }
-}  
+}
 static struct ls1c_bxcan bxcan1data =
 {
     .reg = CAN1,
@@ -499,9 +499,9 @@ int ls1c_bxcan_init(void)
 #endif
     rt_hw_can_register(&bxcan0, "bxcan0", &canops, &bxcan0data);
     rt_kprintf("\r\ncan0 register! \r\n");
-    
-    rt_hw_interrupt_install(LS1C_CAN0_IRQ,( rt_isr_handler_t)bxcan0data.irq , RT_NULL, "can0");  
-    rt_hw_interrupt_umask(LS1C_CAN0_IRQ);  
+
+    rt_hw_interrupt_install(LS1C_CAN0_IRQ,( rt_isr_handler_t)bxcan0data.irq , RT_NULL, "can0");
+    rt_hw_interrupt_umask(LS1C_CAN0_IRQ);
 #endif
 #ifdef USING_BXCAN1
     bxcan1.config.baud_rate = CAN250kBaud;
@@ -515,9 +515,9 @@ int ls1c_bxcan_init(void)
 #endif
     rt_hw_can_register(&bxcan1, "bxcan1", &canops, &bxcan1data);
     rt_kprintf("\r\ncan1 register! \r\n");
-    
-    rt_hw_interrupt_install(LS1C_CAN1_IRQ,( rt_isr_handler_t)bxcan1data.irq , RT_NULL, "can1");  
-    rt_hw_interrupt_umask(LS1C_CAN1_IRQ); 
+
+    rt_hw_interrupt_install(LS1C_CAN1_IRQ,( rt_isr_handler_t)bxcan1data.irq , RT_NULL, "can1");
+    rt_hw_interrupt_umask(LS1C_CAN1_IRQ);
 #endif
     return RT_EOK;
 }

@@ -579,7 +579,7 @@ int rt_hw_sdio_init(void)
 #endif
 
 #ifdef BSP_USING_SDIO2
-    
+
     if (IS_ENGINEERING_BOOT_MODE())
     {
         MX_RTC_Init();

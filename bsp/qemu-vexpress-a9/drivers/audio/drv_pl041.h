@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,11 +14,11 @@
 #define PL041_BASE_ADDR    (0x10004000)
 
 /* offsets in CTRL_CH */
-#define AACI_RXCR        0x00	/* 29 bits Control Rx FIFO */
-#define AACI_TXCR        0x04	/* 17 bits Control Tx FIFO */
-#define AACI_SR          0x08	/* 12 bits Status */
-#define AACI_ISR         0x0C	/* 7 bits  Int Status */
-#define AACI_IE          0x10	/* 7 bits  Int Enable */
+#define AACI_RXCR        0x00   /* 29 bits Control Rx FIFO */
+#define AACI_TXCR        0x04   /* 17 bits Control Tx FIFO */
+#define AACI_SR          0x08   /* 12 bits Status */
+#define AACI_ISR         0x0C   /* 7 bits  Int Status */
+#define AACI_IE          0x10   /* 7 bits  Int Enable */
 
 /* both for AACI_RXCR and AACI_TXCR */
 #define AACI_CR_FEN           (1 << 16)  /* fifo enable */
@@ -39,7 +39,7 @@
 #define AACI_CR_SL3           (1 << 3)
 #define AACI_CR_SL2           (1 << 2)
 #define AACI_CR_SL1           (1 << 1)
-#define AACI_CR_EN            (1 << 0)	/* receive enable */
+#define AACI_CR_EN            (1 << 0)  /* receive enable */
 
 /* status register bits */
 #define AACI_SR_RXTOFE        (1 << 11)  /* rx timeout fifo empty */
@@ -66,29 +66,29 @@
 /* interrupt enable */
 #define AACI_IE_RXTOIE        (1 << 6)   /*rx timeout interrupt enable*/
 #define AACI_IE_URIE          (1 << 5)   /*Transmit underrun interrupt enable*/
-#define AACI_IE_ORIE          (1 << 4)	 /*Overrun receive interrupt enable*/
+#define AACI_IE_ORIE          (1 << 4)   /*Overrun receive interrupt enable*/
 #define AACI_IE_RXIE          (1 << 3)   /*Receive interrupt enable*/
 #define AACI_IE_TXIE          (1 << 2)   /*Transmit interrupt enable*/
 #define AACI_IE_RXTIE         (1 << 1)   /*Receive timeout interrupt enable*/
-#define AACI_IE_TXCIE         (1 << 0)	 /*Transmit complete interrupt enable*/
+#define AACI_IE_TXCIE         (1 << 0)   /*Transmit complete interrupt enable*/
 
 /* interrupt status */
-#define AACI_ISR_RXTOFE	(1 << 6)	/* rx timeout fifo empty */
-#define AACI_ISR_UR		(1 << 5)	/* tx fifo underrun */
-#define AACI_ISR_OR		(1 << 4)	/* rx fifo overrun */
-#define AACI_ISR_RX		(1 << 3)	/* rx interrupt status */
-#define AACI_ISR_TX		(1 << 2)	/* tx interrupt status */
-#define AACI_ISR_RXTO	(1 << 1)	/* rx timeout */
-#define AACI_ISR_TXC	(1 << 0)	/* tx complete */
+#define AACI_ISR_RXTOFE (1 << 6)    /* rx timeout fifo empty */
+#define AACI_ISR_UR     (1 << 5)    /* tx fifo underrun */
+#define AACI_ISR_OR     (1 << 4)    /* rx fifo overrun */
+#define AACI_ISR_RX     (1 << 3)    /* rx interrupt status */
+#define AACI_ISR_TX     (1 << 2)    /* tx interrupt status */
+#define AACI_ISR_RXTO   (1 << 1)    /* rx timeout */
+#define AACI_ISR_TXC    (1 << 0)    /* tx complete */
 
 /* interrupt enable */
-#define AACI_IE_RXTOFE	(1 << 6)	/* rx timeout fifo empty */
-#define AACI_IE_UR		(1 << 5)	/* tx fifo underrun */
-#define AACI_IE_OR		(1 << 4)	/* rx fifo overrun */
-#define AACI_IE_RX		(1 << 3)	/* rx interrupt status */
-#define AACI_IE_TX		(1 << 2)	/* tx interrupt status */
-#define AACI_IE_RXTO	(1 << 1)	/* rx timeout */
-#define AACI_IE_TXC		(1 << 0)	/* tx complete */
+#define AACI_IE_RXTOFE  (1 << 6)    /* rx timeout fifo empty */
+#define AACI_IE_UR      (1 << 5)    /* tx fifo underrun */
+#define AACI_IE_OR      (1 << 4)    /* rx fifo overrun */
+#define AACI_IE_RX      (1 << 3)    /* rx interrupt status */
+#define AACI_IE_TX      (1 << 2)    /* tx interrupt status */
+#define AACI_IE_RXTO    (1 << 1)    /* rx timeout */
+#define AACI_IE_TXC     (1 << 0)    /* tx complete */
 
 /* slot flag register bits */
 #define AACI_SLFR_RWIS        (1 << 13)    /* raw wake-up interrupt status */
@@ -120,7 +120,7 @@
 #define AACI_ICLR_RXOEC2      (1 << 2)       /* Receive overrun error clear */
 #define AACI_ICLR_RXOEC1      (1 << 1)       /* Receive overrun error clear */
 #define AACI_ICLR_WISC        (1 << 0)       /* Wake-up interrupt status clear */
-                                
+
 /* Main control register bits AACI_MAINCR */
 #define AACI_MAINCR_SCRA(x)   ((x) << 10)     /* secondary codec reg access */
 #define AACI_MAINCR_DMAEN     (1 << 9)        /* dma enable */
@@ -141,8 +141,8 @@
 #define SYNC_FORCE   (1 << 0)
 
 /* Main flag register bits. P66 */
-#define MAINFR_TXB   (1 << 1)	/* transmit busy */
-#define MAINFR_RXB   (1 << 0)	/* receive busy */
+#define MAINFR_TXB   (1 << 1)   /* transmit busy */
+#define MAINFR_RXB   (1 << 0)   /* receive busy */
 
 #define PL041_CHANNEL_LEFT_DAC    (0x1 << 3)
 #define PL041_CHANNEL_RIGHT_DAC   (0x1 << 3)
