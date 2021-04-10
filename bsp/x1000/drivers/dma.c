@@ -1,21 +1,7 @@
 /*
- * File      : dma.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -24,7 +10,7 @@
 
 
 /*********************************************************************************************************
-**   Í·ÎÄ¼þ
+**   å¤´æ–‡ä»¶
 *********************************************************************************************************/
 #include <rthw.h>
 #include <rtthread.h>
@@ -34,12 +20,12 @@
 
 
 /*********************************************************************************************************
-**   È«¾Ö±äÁ¿
+**   å…¨å±€å˜é‡
 *********************************************************************************************************/
 
 
 /*********************************************************************************************************
-**   ºê¶¨Òå
+**   å®å®šä¹‰
 *********************************************************************************************************/
 #define DMA_DEBUG 0
 #if DMA_DEBUG
@@ -71,17 +57,17 @@
 
 
 /*********************************************************************************************************
-**   È«¾Ö±äÁ¿
+**   å…¨å±€å˜é‡
 *********************************************************************************************************/
 struct rt_dma_channel   _g_dma_chan_head;
 static rt_bool_t        rt_dma_init_flag = RT_FALSE;
 
 /*********************************************************************************************************
-** º¯ÊýÃû³Æ: _dma_init
-** ¹¦ÄÜÃèÊö: ³õÊ¼»¯ DMA
-** Êä¡¡  Èë: void
-** ·µ    »Ø: void
-** ±¸    ×¢: NONE
+** å‡½æ•°åç§°: _dma_init
+** åŠŸèƒ½æè¿°: åˆå§‹åŒ– DMA
+** è¾“ã€€  å…¥: void
+** è¿”    å›ž: void
+** å¤‡    æ³¨: NONE
 *********************************************************************************************************/
 void  _dma_init (void)
 {
@@ -91,15 +77,15 @@ void  _dma_init (void)
 
 
 /*********************************************************************************************************
-** º¯ÊýÃû³Æ: rt_dma_drv_install
-** ¹¦ÄÜÃèÊö: DMA Í¨ÓÃÇý¶¯³ÌÐò°²×°
-** Êä¡¡  Èë: rt_uint32_t channel,RT_DMA_FUNCS* funcs,rt_size_t maxBurstBytes
-** ·µ    »Ø: rt_err_t
-** ±¸    ×¢: NONE
+** å‡½æ•°åç§°: rt_dma_drv_install
+** åŠŸèƒ½æè¿°: DMA é€šç”¨é©±åŠ¨ç¨‹åºå®‰è£…
+** è¾“ã€€  å…¥: rt_uint32_t channel,RT_DMA_FUNCS* funcs,rt_size_t maxBurstBytes
+** è¿”    å›ž: rt_err_t
+** å¤‡    æ³¨: NONE
 *********************************************************************************************************/
 rt_err_t rt_dma_drv_install(struct rt_dma_channel *dmac, struct dma_ops *ops,struct dma_config *config,void* user_data)
 {
-    /* ²ÎÊý¼ì²é */
+    /* å‚æ•°æ£€æŸ¥ */
     RT_ASSERT(dmac != RT_NULL);
 
     if(rt_dma_init_flag == RT_FALSE)
@@ -115,7 +101,7 @@ rt_err_t rt_dma_drv_install(struct rt_dma_channel *dmac, struct dma_ops *ops,str
 
         return -RT_EIO;
     }
-    /* ¹ÒÔØµ½Í¨µÀÁÐ±í */
+    /* æŒ‚è½½åˆ°é€šé“åˆ—è¡¨ */
     rt_list_insert_after(&(_g_dma_chan_head.list),&(dmac->list));
 
     dmac->ops   = ops;
@@ -151,18 +137,18 @@ struct rt_dma_channel *rt_dma_get_channel(int id)
 }
 //
 ///*********************************************************************************************************
-//** º¯ÊýÃû³Æ: rt_dma_flush
-//** ¹¦ÄÜÃèÊö: É¾³ýËùÓÐ±»ÑÓ³Ù´¦ÀíµÄ´«ÊäÇëÇó (²»µ÷ÓÃ»Øµ÷º¯Êý)
-//** Êä¡¡  Èë: rt_uint32_t channel
-//** ·µ    »Ø: rt_err_t
-//** ±¸    ×¢: NONE
+//** å‡½æ•°åç§°: rt_dma_flush
+//** åŠŸèƒ½æè¿°: åˆ é™¤æ‰€æœ‰è¢«å»¶è¿Ÿå¤„ç†çš„ä¼ è¾“è¯·æ±‚ (ä¸è°ƒç”¨å›žè°ƒå‡½æ•°)
+//** è¾“ã€€  å…¥: rt_uint32_t channel
+//** è¿”    å›ž: rt_err_t
+//** å¤‡    æ³¨: NONE
 //*********************************************************************************************************/
 //rt_err_t  rt_dma_flush (struct rt_dma_channel *dmac)
 //{
 //    rt_size_t data_size;
 //    struct dma_message *last_message,*message;
 //    rt_uint16_t next_index;
-//    /* ²ÎÊý¼ì²é */
+//    /* å‚æ•°æ£€æŸ¥ */
 //    RT_ASSERT(dmac != RT_NULL);
 //
 //
@@ -173,7 +159,7 @@ struct rt_dma_channel *rt_dma_get_channel(int id)
 //
 ////    while (rt_data_queue_pop(&(dmac->tmsg_queue),(const void **)&message, &data_size, 0) == RT_EOK)
 ////    {
-////        /* Çå³ý DMAÏûÏ¢ */
+////        /* æ¸…é™¤ DMAæ¶ˆæ¯ */
 //////        if(message->release_cb != RT_NULL)
 //////            message->release_cb(dmac,message);
 ////    }
@@ -185,11 +171,11 @@ struct rt_dma_channel *rt_dma_get_channel(int id)
 //}
 
 /*********************************************************************************************************
-** º¯ÊýÃû³Æ: rt_dma_trans_message
-** ¹¦ÄÜÃèÊö: Ìí¼Ó Ò»¸öDMAÇëÇó
-** Êä¡¡  Èë: rt_uint32_t channel DMA_MSG *pMsg
-** ·µ    »Ø: rt_err_t
-** ±¸    ×¢: NONE
+** å‡½æ•°åç§°: rt_dma_trans_message
+** åŠŸèƒ½æè¿°: æ·»åŠ  ä¸€ä¸ªDMAè¯·æ±‚
+** è¾“ã€€  å…¥: rt_uint32_t channel DMA_MSG *pMsg
+** è¿”    å›ž: rt_err_t
+** å¤‡    æ³¨: NONE
 *********************************************************************************************************/
 rt_err_t  rt_dma_trans_message (struct rt_dma_channel *dmac,struct dma_message* message)
 {
@@ -197,7 +183,7 @@ rt_err_t  rt_dma_trans_message (struct rt_dma_channel *dmac,struct dma_message* 
     rt_err_t    result;
     rt_uint16_t  next_index;
     struct dma_message *msg_node;
-    /* ²ÎÊý¼ì²é */
+    /* å‚æ•°æ£€æŸ¥ */
     RT_ASSERT(dmac != RT_NULL);
     RT_ASSERT(message != RT_NULL);
     RT_ASSERT(message->t_size <= (64 * 1024));
@@ -211,7 +197,7 @@ rt_err_t  rt_dma_trans_message (struct rt_dma_channel *dmac,struct dma_message* 
         return RT_EOK;
     }
 
-    //ÅÐ¶Ï´«Êä¶ÓÁÐÊÇ·ñÂú
+    //åˆ¤æ–­ä¼ è¾“é˜Ÿåˆ—æ˜¯å¦æ»¡
     next_index = dmac->put_index + 1;
     if(next_index >= RT_DMA_MAX_NODES)
         next_index = 0;
@@ -223,7 +209,7 @@ rt_err_t  rt_dma_trans_message (struct rt_dma_channel *dmac,struct dma_message* 
     msg_node = &(dmac->msg_list[dmac->put_index]);
     dmac->put_index = next_index;
 
-    //±£´æmessage
+    //ä¿å­˜message
     rt_memcpy(msg_node,message,sizeof(struct dma_message));
 
     next_index = dmac->get_index + 1;
@@ -239,7 +225,7 @@ rt_err_t  rt_dma_trans_message (struct rt_dma_channel *dmac,struct dma_message* 
 
         do{
             int ret;
-            __DMA_CHANNEL_TRANS(dmac, message, ret);             /*  ³õÊ¼»¯´«ÊäÖîÔª              */
+            __DMA_CHANNEL_TRANS(dmac, message, ret);             /*  åˆå§‹åŒ–ä¼ è¾“è¯¸å…ƒ              */
             (void)ret;
         } while (0);
     }
@@ -252,15 +238,15 @@ rt_err_t  rt_dma_trans_message (struct rt_dma_channel *dmac,struct dma_message* 
 }
 
 /*********************************************************************************************************
-** º¯ÊýÃû³Æ: rt_dma_configture
-** ¹¦ÄÜÃèÊö: DMA Í¨µÀÅäÖÃ
-** Êä¡¡  Èë: struct rt_dma_channel *dmac,struct dma_config *config
-** ·µ    »Ø: rt_err_t
-** ±¸    ×¢: NONE
+** å‡½æ•°åç§°: rt_dma_configture
+** åŠŸèƒ½æè¿°: DMA é€šé“é…ç½®
+** è¾“ã€€  å…¥: struct rt_dma_channel *dmac,struct dma_config *config
+** è¿”    å›ž: rt_err_t
+** å¤‡    æ³¨: NONE
 *********************************************************************************************************/
 rt_err_t  rt_dma_configture (struct rt_dma_channel *dmac,struct dma_config *config)
 {
-    /* ²ÎÊý¼ì²é */
+    /* å‚æ•°æ£€æŸ¥ */
     RT_ASSERT(dmac != RT_NULL);
     RT_ASSERT(config != RT_NULL);
 
@@ -276,11 +262,11 @@ rt_err_t  rt_dma_configture (struct rt_dma_channel *dmac,struct dma_config *conf
 } /* rt_dma_configture */
 
 /*********************************************************************************************************
-** º¯ÊýÃû³Æ: rt_dma_get_current_message
-** ¹¦ÄÜÃèÊö: DMA »ñÈ¡µ±Ç°´«ÊäµÄÏûÏ¢¾ä±ú
-** Êä¡¡  Èë: struct rt_dma_channel *dmac
-** ·µ    »Ø:  struct dma_message *
-** ±¸    ×¢: NONE
+** å‡½æ•°åç§°: rt_dma_get_current_message
+** åŠŸèƒ½æè¿°: DMA èŽ·å–å½“å‰ä¼ è¾“çš„æ¶ˆæ¯å¥æŸ„
+** è¾“ã€€  å…¥: struct rt_dma_channel *dmac
+** è¿”    å›ž:  struct dma_message *
+** å¤‡    æ³¨: NONE
 *********************************************************************************************************/
 struct dma_message *  rt_dma_get_current_message (struct rt_dma_channel *dmac)
 {
@@ -296,11 +282,11 @@ struct dma_message *  rt_dma_get_current_message (struct rt_dma_channel *dmac)
 } /* rt_dma_get_current_message */
 
 /*********************************************************************************************************
-** º¯ÊýÃû³Æ: rt_dma_contex_service
-** ¹¦ÄÜÃèÊö: DMA ÖÐ¶Ï·þÎñ
-** Êä¡¡  Èë: rt_uint32_t channel
-** ·µ    »Ø: rt_err_t
-** ±¸    ×¢: global
+** å‡½æ•°åç§°: rt_dma_contex_service
+** åŠŸèƒ½æè¿°: DMA ä¸­æ–­æœåŠ¡
+** è¾“ã€€  å…¥: rt_uint32_t channel
+** è¿”    å›ž: rt_err_t
+** å¤‡    æ³¨: global
 *********************************************************************************************************/
 rt_err_t rt_dma_contex_service (struct rt_dma_channel *dmac,rt_uint32_t event)
 {
@@ -309,7 +295,7 @@ rt_err_t rt_dma_contex_service (struct rt_dma_channel *dmac,rt_uint32_t event)
     struct dma_message *last_message,*message;
     rt_uint16_t next_index;
 
-    /* ²ÎÊý¼ì²é */
+    /* å‚æ•°æ£€æŸ¥ */
     RT_ASSERT(dmac != RT_NULL);
     switch (event)
     {
@@ -319,12 +305,12 @@ rt_err_t rt_dma_contex_service (struct rt_dma_channel *dmac,rt_uint32_t event)
             next_index = 0;
 
         level = rt_hw_interrupt_disable();
-        /* ÓÅÏÈ·¢ËÍ »º³åÇøÖÐµÄÏûÏ¢ */
+        /* ä¼˜å…ˆå‘é€ ç¼“å†²åŒºä¸­çš„æ¶ˆæ¯ */
         last_message = &(dmac->msg_list[dmac->get_index]);
         dmac->get_index = next_index;
         if(dmac->get_index != dmac->put_index)
         {
-            /* ¶ÓÁÐÖÐÓÐÏûÏ¢Î´·¢ËÍ£¬ÓÅÏÈ´¦Àí */
+            /* é˜Ÿåˆ—ä¸­æœ‰æ¶ˆæ¯æœªå‘é€ï¼Œä¼˜å…ˆå¤„ç† */
             message = &(dmac->msg_list[dmac->get_index]);
 
             rt_hw_interrupt_enable(level);
@@ -334,7 +320,7 @@ rt_err_t rt_dma_contex_service (struct rt_dma_channel *dmac,rt_uint32_t event)
 
             do{
                 int ret;
-                __DMA_CHANNEL_TRANS(dmac, message, ret);             /*  ³õÊ¼»¯´«ÊäÖîÔª              */
+                __DMA_CHANNEL_TRANS(dmac, message, ret);             /*  åˆå§‹åŒ–ä¼ è¾“è¯¸å…ƒ              */
                 (void)ret;
             } while (0);
         }
@@ -343,7 +329,7 @@ rt_err_t rt_dma_contex_service (struct rt_dma_channel *dmac,rt_uint32_t event)
             rt_hw_interrupt_enable(level);
         }
 
-        /* ´¦ÀíÉÏÒ»¸öÏûÏ¢µÄ»Øµ÷º¯Êý */
+        /* å¤„ç†ä¸Šä¸€ä¸ªæ¶ˆæ¯çš„å›žè°ƒå‡½æ•° */
         if (dmac->complete != RT_NULL)
         {
         	dmac->complete(dmac, last_message);
@@ -355,3 +341,4 @@ rt_err_t rt_dma_contex_service (struct rt_dma_channel *dmac,rt_uint32_t event)
 
     return RT_EOK;
 }
+

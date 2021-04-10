@@ -1,11 +1,7 @@
 /*
- * File      : dm9161.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -319,7 +315,7 @@ static void update_link_speed(unsigned short phy_addr)
 	{
 		mac_cfg |= 0x800;			/* set speed 100 M */
 		//bmcr &=(~0x2000);
-		//write_phy(lp->phy_address, MII_BMCR, bmcr); //½«dm9161µÄËÙ¶ÈÉèÎª10M
+		//write_phy(lp->phy_address, MII_BMCR, bmcr); //å°†dm9161çš„é€Ÿåº¦è®¾ä¸º10M
 		if (duplex == DUPLEX_FULL)              /* 100 Full Duplex */
 			mac_cfg |= 0x400;
 		else                                    /* 100 Half Duplex */
@@ -380,7 +376,7 @@ static rt_err_t rt_dm9161_init(rt_device_t dev)
 				//get_mac_address(dev);		/* Get ethernet address and store it in dev->dev_addr */
 				update_mac_address();	/* Program ethernet address into MAC */
 			
-				//ÓÃ¹şÏ£¼Ä´æÆ÷±È½Ïµ±Ç°Èº²¥µØÖ·£¬È«Ë«¹¤£¬Ìí¼ÓCRCĞ£Ñé£¬¶ÌÊı¾İÖ¡½øĞĞÌî³ä
+				//ç”¨å“ˆå¸Œå¯„å­˜å™¨æ¯”è¾ƒå½“å‰ç¾¤æ’­åœ°å€ï¼Œå…¨åŒå·¥ï¼Œæ·»åŠ CRCæ ¡éªŒï¼ŒçŸ­æ•°æ®å¸§è¿›è¡Œå¡«å……
 				sep_emac_write(MAC_CTRL, 0xa413);
 				#warning SHOULD DETERMIN LINK SPEED
 				update_link_speed(phy_address);
@@ -411,7 +407,7 @@ static void sepether_start(void)
  
 	sep_emac_write(MAC_TXBD_NUM,MAX_TX_DESCR);
 
-	//³õÊ¼»¯·¢ËÍºÍ½ÓÊÕÃèÊö·û
+	//åˆå§‹åŒ–å‘é€å’Œæ¥æ”¶æè¿°ç¬¦
 	for (i = 0; i < MAX_TX_DESCR; i++)
 	{
 		tempaddr=(MAC_TX_BD+i*8);
@@ -457,17 +453,17 @@ static rt_err_t rt_dm9161_open(rt_device_t dev, rt_uint16_t oflag)
 	enable_mdi();
 	mask_irq(28);
 
-	sep_emac_write(MAC_INTMASK,0x0);  //Ê×ÏÈÆÁ±ÎÖĞ¶Ï
+	sep_emac_write(MAC_INTMASK,0x0);  //é¦–å…ˆå±è”½ä¸­æ–­
 
 	sepether_start();
 
 	/* Enable PHY interrupt */
-	*(volatile unsigned long*)GPIO_PORTA_DIR |= 0x0080 ;          //1 stands for in
-	*(volatile unsigned long*)GPIO_PORTA_SEL |= 0x0080 ;       //for common use
-	*(volatile unsigned long*)GPIO_PORTA_INCTL |= 0x0080;      //ÖĞ¶ÏÊäÈë·½Ê½
-	*(volatile unsigned long*)GPIO_PORTA_INTRCTL |= (0x3UL<<14);    //ÖĞ¶ÏÀàĞÍÎªµÍµçÆ½½â·¢
-	*(volatile unsigned long*)GPIO_PORTA_INTRCLR |= 0x0080;    //Çå³ıÖĞ¶Ï
-	*(volatile unsigned long*)GPIO_PORTA_INTRCLR = 0x0000;          //Çå³ıÖĞ¶Ï
+	*(volatile unsigned long*)GPIO_PORTA_DIR |= 0x0080 ;            //1 stands for in
+	*(volatile unsigned long*)GPIO_PORTA_SEL |= 0x0080 ;            //for common use
+	*(volatile unsigned long*)GPIO_PORTA_INCTL |= 0x0080;           //ä¸­æ–­è¾“å…¥æ–¹å¼
+	*(volatile unsigned long*)GPIO_PORTA_INTRCTL |= (0x3UL<<14);    //ä¸­æ–­ç±»å‹ä¸ºä½ç”µå¹³è§£å‘
+	*(volatile unsigned long*)GPIO_PORTA_INTRCLR |= 0x0080;         //æ¸…é™¤ä¸­æ–­
+	*(volatile unsigned long*)GPIO_PORTA_INTRCLR = 0x0000;          //æ¸…é™¤ä¸­æ–­
 
 	rt_hw_interrupt_install(INTSRC_MAC, rt_dm9161_isr, RT_NULL, "EMAC");
 	enable_irq(INTSRC_EXINT7);
@@ -482,7 +478,7 @@ static rt_err_t rt_dm9161_open(rt_device_t dev, rt_uint16_t oflag)
 	
 	/************************************************************************************/
 	/* Enable MAC interrupts */
-	sep_emac_write(MAC_INTMASK,0xff);  //openÖĞ¶Ï
+	sep_emac_write(MAC_INTMASK,0xff);  //openä¸­æ–­
 	sep_emac_write(MAC_INTSRC,0xff);   //clear all mac irq
 	unmask_irq(28);
 	disable_mdi();
@@ -505,7 +501,7 @@ static rt_err_t rt_dm9161_close(rt_device_t dev)
 //	disable_phyirq(dev);
 	
 	/* Disable MAC interrupts */
-	sep_emac_write(MAC_INTMASK,0);  //ÆÁ±ÎÖĞ¶Ï
+	sep_emac_write(MAC_INTMASK,0);  //å±è”½ä¸­æ–­
 
 //	INT_DISABLE(28);
 	

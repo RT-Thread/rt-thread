@@ -297,7 +297,7 @@ static void app_main(void *parameter)
     }
 //    rtgui_win_set_box(win_hello, box);
 
-    label = rtgui_label_create("¹şÂŞ,íïÅÖ!");
+    label = rtgui_label_create("å“ˆç½—,ç›¹èƒ–!");
 	if(label == RT_NULL)
     {
         rt_kprintf("Create lable failed!\n");

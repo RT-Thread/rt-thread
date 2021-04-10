@@ -1,21 +1,7 @@
 /*
- * File      : mmcsd.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author		Notes
@@ -102,16 +88,16 @@ static void delay_us(rt_uint32_t us)
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: calculate_freq_for_card()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚ¼ÆËãÉèÖÃSD¿¨ÆµÂÊËùÐèµÄ·ÖÆµÊý
+** å‡½æ•°åç§°: calculate_freq_for_card()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽè®¡ç®—è®¾ç½®SDå¡é¢‘çŽ‡æ‰€éœ€çš„åˆ†é¢‘æ•°
 ** 
-** Êä¡¡Èë: host			->	DM365 MMC host¾ä±ú
-**         mmc_req_freq	->	MMC¹¤×÷ÆµÂÊ
+** è¾“ã€€å…¥: host			->	DM365 MMC hostå¥æŸ„
+**         mmc_req_freq	->	MMCå·¥ä½œé¢‘çŽ‡
 **
-** Êä¡¡³ö: ·ÖÆµÖµ
+** è¾“ã€€å‡º: åˆ†é¢‘å€¼
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static rt_uint32_t calculate_freq_for_card(struct mmc_dm365_host *host, rt_uint32_t mmc_req_freq)
@@ -142,16 +128,16 @@ static rt_uint32_t calculate_freq_for_card(struct mmc_dm365_host *host, rt_uint3
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: calculate_freq_for_card()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚ¼ÆËãMMC clock·ÖÆµÊý
+** å‡½æ•°åç§°: calculate_freq_for_card()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽè®¡ç®—MMC clockåˆ†é¢‘æ•°
 ** 
-** Êä¡¡Èë: host			->	DM365 MMC host¾ä±ú
-**         ios			->	MMC ²Ù×÷¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 MMC hostå¥æŸ„
+**         ios			->	MMC æ“ä½œå¥æŸ„
 **
-** Êä¡¡³ö: ¶ÁÈ¡µ½µÄPHY¼Ä´æÆ÷Öµ
+** è¾“ã€€å‡º: è¯»å–åˆ°çš„PHYå¯„å­˜å™¨å€¼
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void calculate_clk_divider(struct rt_mmcsd_host *mmc, struct rt_mmcsd_io_cfg *ios)
@@ -205,16 +191,16 @@ static void calculate_clk_divider(struct rt_mmcsd_host *mmc, struct rt_mmcsd_io_
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_set_ios()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÊÇmmcÉèÖÃÉèÖÃ
+** å‡½æ•°åç§°: mmc_dm365_set_ios()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°æ˜¯mmcè®¾ç½®è®¾ç½®
 ** 
-** Êä¡¡Èë: mmc			->	mmc host ¾ä±ú 
-**         ios			->	mmc ²Ù×÷¾ä±ú
+** è¾“ã€€å…¥: mmc			->	mmc host å¥æŸ„ 
+**         ios			->	mmc æ“ä½œå¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_set_ios(struct rt_mmcsd_host *mmc, struct rt_mmcsd_io_cfg *ios)
@@ -266,16 +252,16 @@ static void mmc_dm365_set_ios(struct rt_mmcsd_host *mmc, struct rt_mmcsd_io_cfg 
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: dm365_fifo_data_trans()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÊÇfifoÄ£Ê½´«Êä
+** å‡½æ•°åç§°: dm365_fifo_data_trans()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°æ˜¯fifoæ¨¡å¼ä¼ è¾“
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         n			->	´«Êä×Ö½ÚÊý
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         n			->	ä¼ è¾“å­—èŠ‚æ•°
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void dm365_fifo_data_trans(struct mmc_dm365_host *host, rt_uint32_t n)
@@ -326,16 +312,16 @@ static void dm365_fifo_data_trans(struct mmc_dm365_host *host, rt_uint32_t n)
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_start_command()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÊÇ¿ªÊ¼·¢ËÍSDÃüÁî
+** å‡½æ•°åç§°: mmc_dm365_start_command()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°æ˜¯å¼€å§‹å‘é€SDå‘½ä»¤
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         cmd			->	SDÃüÁî¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         cmd			->	SDå‘½ä»¤å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_start_command(struct mmc_dm365_host *host, struct rt_mmcsd_cmd *cmd)
@@ -436,15 +422,15 @@ static void mmc_dm365_start_command(struct mmc_dm365_host *host, struct rt_mmcsd
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: dm365_abort_dma()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÖÕÖ¹DMA´«Êä
+** å‡½æ•°åç§°: dm365_abort_dma()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç»ˆæ­¢DMAä¼ è¾“
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void dm365_abort_dma(struct mmc_dm365_host *host)
@@ -462,16 +448,16 @@ static void dm365_abort_dma(struct mmc_dm365_host *host)
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_request_done()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚ½áÊø´¦ÀíÒ»¸öMMCÇëÇó
+** å‡½æ•°åç§°: mmc_request_done()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽç»“æŸå¤„ç†ä¸€ä¸ªMMCè¯·æ±‚
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         mrq			->	request ¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         mrq			->	request å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 void mmc_request_done(struct rt_mmcsd_host *host, struct rt_mmcsd_req *mrq)
@@ -515,16 +501,16 @@ void mmc_request_done(struct rt_mmcsd_host *host, struct rt_mmcsd_req *mrq)
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_xfer_done()
-** ¹¦ÄÜÃèÊö: Êý¾Ý´«ËÍ½áÊøµ÷ÓÃ´Ëº¯Êý
+** å‡½æ•°åç§°: mmc_dm365_xfer_done()
+** åŠŸèƒ½æè¿°: æ•°æ®ä¼ é€ç»“æŸè°ƒç”¨æ­¤å‡½æ•°
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         data			->	data ¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         data			->	data å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_xfer_done(struct mmc_dm365_host *host, struct rt_mmcsd_data *data)
@@ -595,17 +581,17 @@ static void mmc_dm365_dma_cb(unsigned channel, rt_uint16_t ch_status, void *data
 
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_dma_setup()
-** ¹¦ÄÜÃèÊö: DMA ÉèÖÃº¯Êý
+** å‡½æ•°åç§°: mmc_dm365_dma_setup()
+** åŠŸèƒ½æè¿°: DMA è®¾ç½®å‡½æ•°
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         tx			->	²¼¶û±äÁ¿£¬ÓÃÓÚÅÐ¶ÏTx»òÕßÊÇRx
-**         template		->	ÓÃÓÚ±£´æEDMA3CCPaRAMEntry»ú¹¹Êý¾Ý
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         tx			->	å¸ƒå°”å˜é‡ï¼Œç”¨äºŽåˆ¤æ–­Txæˆ–è€…æ˜¯Rx
+**         template		->	ç”¨äºŽä¿å­˜EDMA3CCPaRAMEntryæœºæž„æ•°æ®
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_dma_setup(struct mmc_dm365_host *host, rt_bool_t tx, struct edmacc_param *template)
@@ -708,16 +694,16 @@ static void mmc_dm365_dma_setup(struct mmc_dm365_host *host, rt_bool_t tx, struc
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_send_dma_request()
-** ¹¦ÄÜÃèÊö: ·¢ËÍDMAÇëÇó
+** å‡½æ•°åç§°: mmc_dm365_send_dma_request()
+** åŠŸèƒ½æè¿°: å‘é€DMAè¯·æ±‚
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         data			->	DMA´«ËÍÊý¾Ý½á¹¹¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         data			->	DMAä¼ é€æ•°æ®ç»“æž„å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_send_dma_request(struct mmc_dm365_host *host, struct rt_mmcsd_data *data)
@@ -770,16 +756,16 @@ static void mmc_dm365_send_dma_request(struct mmc_dm365_host *host, struct rt_mm
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_start_dma_transfer()
-** ¹¦ÄÜÃèÊö: ¿ªÊ¼DMA´«Êä
+** å‡½æ•°åç§°: mmc_dm365_start_dma_transfer()
+** åŠŸèƒ½æè¿°: å¼€å§‹DMAä¼ è¾“
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         data			->	DMA´«ËÍÊý¾Ý½á¹¹¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         data			->	DMAä¼ é€æ•°æ®ç»“æž„å¥æŸ„
 **
-** Êä¡¡³ö: DMA´«Êä×Ö½ÚÊý
+** è¾“ã€€å‡º: DMAä¼ è¾“å­—èŠ‚æ•°
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static int mmc_dm365_start_dma_transfer(struct mmc_dm365_host *host, struct rt_mmcsd_data *data)
@@ -820,15 +806,15 @@ static int mmc_dm365_start_dma_transfer(struct mmc_dm365_host *host, struct rt_m
 
 #if 0
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: acquire_dma_channels()
-** ¹¦ÄÜÃèÊö: »ñÈ¡DMA channel
+** å‡½æ•°åç§°: acquire_dma_channels()
+** åŠŸèƒ½æè¿°: èŽ·å–DMA channel
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
 **
-** Êä¡¡³ö: DMA Í¨µÀºÅ
+** è¾“ã€€å‡º: DMA é€šé“å·
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static int acquire_dma_channels(struct mmc_dm365_host *host)
@@ -913,16 +899,16 @@ free_master_write:
 
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_prepare_data()
-** ¹¦ÄÜÃèÊö: ×¼±¸ DMA Êý¾Ý
+** å‡½æ•°åç§°: mmc_dm365_prepare_data()
+** åŠŸèƒ½æè¿°: å‡†å¤‡ DMA æ•°æ®
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         req			->	SD request ½á¹¹¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         req			->	SD request ç»“æž„å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_prepare_data(struct mmc_dm365_host *host, struct rt_mmcsd_req *req)
@@ -997,16 +983,16 @@ static void mmc_dm365_prepare_data(struct mmc_dm365_host *host, struct rt_mmcsd_
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_request()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÊµÏÖSD request²Ù×÷
+** å‡½æ•°åç§°: mmc_dm365_request()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°å®žçŽ°SD requestæ“ä½œ
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         req			->	SD request ½á¹¹¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         req			->	SD request ç»“æž„å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_request(struct rt_mmcsd_host *mmc, struct rt_mmcsd_req *req)
@@ -1071,16 +1057,16 @@ static const struct rt_mmcsd_host_ops mmc_dm365_ops =
 };
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_reset_ctrl()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚreset mmc¿ØÖÆÆ÷
+** å‡½æ•°åç§°: mmc_dm365_reset_ctrl()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽreset mmcæŽ§åˆ¶å™¨
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         val			->	ÅÐ¶Ï×öreset»¹ÊÇenable
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         val			->	åˆ¤æ–­åšresetè¿˜æ˜¯enable
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_reset_ctrl(struct mmc_dm365_host *host, int val)
@@ -1100,15 +1086,15 @@ static void mmc_dm365_reset_ctrl(struct mmc_dm365_host *host, int val)
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: init_mmcsd_host()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚ³õÊ¼»¯DM365 MMCSD¿ØÖÆÆ÷
+** å‡½æ•°åç§°: init_mmcsd_host()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽåˆå§‹åŒ–DM365 MMCSDæŽ§åˆ¶å™¨
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void init_mmcsd_host(struct mmc_dm365_host *host)
@@ -1125,16 +1111,16 @@ static void init_mmcsd_host(struct mmc_dm365_host *host)
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_cmd_done()
-** ¹¦ÄÜÃèÊö: ½áÊøSD ÃüÁîºóµ÷ÓÃ´Ëº¯Êý
+** å‡½æ•°åç§°: mmc_dm365_cmd_done()
+** åŠŸèƒ½æè¿°: ç»“æŸSD å‘½ä»¤åŽè°ƒç”¨æ­¤å‡½æ•°
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         cmd			->	SD ÃüÁî½á¹¹¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         cmd			->	SD å‘½ä»¤ç»“æž„å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_cmd_done(struct mmc_dm365_host *host, struct rt_mmcsd_cmd *cmd)
@@ -1168,16 +1154,16 @@ static void mmc_dm365_cmd_done(struct mmc_dm365_host *host, struct rt_mmcsd_cmd 
 }
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: dm365_abort_data()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚÖÕÖ¹Êý¾Ý´«Êä
+** å‡½æ•°åç§°: dm365_abort_data()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽç»ˆæ­¢æ•°æ®ä¼ è¾“
 ** 
-** Êä¡¡Èë: host			->	DM365 mmc host ¾ä±ú 
-**         data			->	data ½á¹¹¾ä±ú
+** è¾“ã€€å…¥: host			->	DM365 mmc host å¥æŸ„ 
+**         data			->	data ç»“æž„å¥æŸ„
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void dm365_abort_data(struct mmc_dm365_host *host, struct rt_mmcsd_data *data)
@@ -1202,15 +1188,15 @@ static void mmc_dm365_sdio_irq(int irq, void *param)
 
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: mmc_dm365_irq()
-** ¹¦ÄÜÃèÊö: MMCSDµÄÖÐ¶Ï´¦Àí³ÌÐò
+** å‡½æ•°åç§°: mmc_dm365_irq()
+** åŠŸèƒ½æè¿°: MMCSDçš„ä¸­æ–­å¤„ç†ç¨‹åº
 ** 
-** Êä¡¡Èë: irq	->ÖÐ¶ÏÏòÁ¿ºÅ
+** è¾“ã€€å…¥: irq	->ä¸­æ–­å‘é‡å·
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void mmc_dm365_irq(int irq, void *param)
@@ -1353,15 +1339,15 @@ static void mmc_dm365_irq(int irq, void *param)
 #if 0
 
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: rt_hw_edma_init()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚ³õÊ¼»¯EDMA3
+** å‡½æ•°åç§°: rt_hw_edma_init()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽåˆå§‹åŒ–EDMA3
 ** 
-** Êä¡¡Èë: ÎÞ
+** è¾“ã€€å…¥: æ— 
 **
-** Êä¡¡³ö: ÎÞ
+** è¾“ã€€å‡º: æ— 
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 static void rt_hw_edma_init(void)
@@ -1377,15 +1363,15 @@ static void rt_hw_edma_init(void)
 }
 #endif
 /*******************************************************************************************************
-** º¯ÊýÃû³Æ: rt_hw_mmcsd_init()
-** ¹¦ÄÜÃèÊö: ´Ëº¯ÊýÓÃÓÚ³õÊ¼»¯MMCÇý¶¯Ä£¿é
+** å‡½æ•°åç§°: rt_hw_mmcsd_init()
+** åŠŸèƒ½æè¿°: æ­¤å‡½æ•°ç”¨äºŽåˆå§‹åŒ–MMCé©±åŠ¨æ¨¡å—
 ** 
-** Êä¡¡Èë: ÎÞ
+** è¾“ã€€å…¥: æ— 
 **
-** Êä¡¡³ö: Èç¹û³õÊ¼»¯³É¹¦£¬·µ»Ø0£»Èç¹û³õÊ¼»¯Ê§°Ü£¬·µ»Ø-RT_ENOMEM
+** è¾“ã€€å‡º: å¦‚æžœåˆå§‹åŒ–æˆåŠŸï¼Œè¿”å›ž0ï¼›å¦‚æžœåˆå§‹åŒ–å¤±è´¥ï¼Œè¿”å›ž-RT_ENOMEM
 **         
-** È«¾Ö±äÁ¿: 
-** µ÷ÓÃÄ£¿é: ÎÞ
+** å…¨å±€å˜é‡: 
+** è°ƒç”¨æ¨¡å—: æ— 
 **
 ********************************************************************************************************/
 int rt_hw_mmcsd_init(void)
