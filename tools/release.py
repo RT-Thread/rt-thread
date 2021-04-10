@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*- 
 
-# File      : formatting.py
+# File      : release.py
 # This file is part of RT-Thread RTOS
 # COPYRIGHT (C) 2006 - 2021, RT-Thread Development Team
 #
