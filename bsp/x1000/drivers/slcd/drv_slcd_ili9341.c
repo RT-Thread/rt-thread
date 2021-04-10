@@ -1,21 +1,7 @@
 /*
- * File      : drv_slcdc_ili9341.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -46,12 +32,12 @@ const struct slcd_data_table _ili9341_data_table[] =
 	{SMART_CONFIG_CMD,  0x11},
 	{SMART_CONFIG_UDELAY, 1200},
 
-	{SMART_CONFIG_CMD,  0xCF},	//Power control B ¹¦ºÄ¿ØÖÆB ¡¾3²ÎÊı¡¿
+	{SMART_CONFIG_CMD,  0xCF},	//Power control B åŠŸè€—æ§åˆ¶B ã€3å‚æ•°ã€‘
 	{SMART_CONFIG_DATA, 0x00},
 	{SMART_CONFIG_DATA, 0xAA},
 	{SMART_CONFIG_DATA, 0XB0},
 
-	{SMART_CONFIG_CMD,  0xED},	//Power on sequence control µçÔ´Ê±Ğò¿ØÖÆB ¡¾4²ÎÊı¡¿
+	{SMART_CONFIG_CMD,  0xED},	//Power on sequence control ç”µæºæ—¶åºæ§åˆ¶B ã€4å‚æ•°ã€‘
 	{SMART_CONFIG_DATA, 0x64},
 	{SMART_CONFIG_DATA, 0x03},
 	{SMART_CONFIG_DATA, 0X12},
@@ -87,14 +73,14 @@ const struct slcd_data_table _ili9341_data_table[] =
 	{SMART_CONFIG_DATA, 0x11},	//SAP[2:0];BT[3:0]
 
 	{SMART_CONFIG_CMD,  0xC5},	//VCM control
-	{SMART_CONFIG_DATA, 0x31},	//¶Ô±È¶Èµ÷½Ú 0x31
+	{SMART_CONFIG_DATA, 0x31},	//å¯¹æ¯”åº¦è°ƒèŠ‚ 0x31
 	{SMART_CONFIG_DATA, 0x3C},
 
 	{SMART_CONFIG_CMD,  0xC7},	//VCM control2
 	{SMART_CONFIG_DATA, 0xd3},
 
 	{SMART_CONFIG_CMD,  0x36},	// Memory Access Control
-	{SMART_CONFIG_DATA, 0x68},	// ¡ñ¶¨ÒåÖ¡´æ´¢Æ÷µÄ¶ÁĞ´É¨Ãè·½Ïò   //[ÊúÆÁ]0x48	0x88	[ºáÆÁ]0x28 0xE8  0x68 //0x08
+	{SMART_CONFIG_DATA, 0x68},	// â—å®šä¹‰å¸§å­˜å‚¨å™¨çš„è¯»å†™æ‰«ææ–¹å‘   //[ç«–å±]0x48	0x88	[æ¨ªå±]0x28 0xE8  0x68 //0x08
 
 	{SMART_CONFIG_CMD,  0x3A},	//COLMOD: Pixel Format Set
 	{SMART_CONFIG_DATA, 0x55},

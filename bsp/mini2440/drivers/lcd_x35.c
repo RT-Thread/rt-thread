@@ -1,11 +1,7 @@
 /*
- * File      : lcd_x35.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -145,7 +141,7 @@ static void LcdBkLtSet(rt_uint32_t HiRatio)
 #define FREQ_PWM1		1000
 	if(!HiRatio)
 	{
-		GPBCON  = GPBCON & (~(3<<2)) | (1<<2) ;	//GPB1ÉèÖÃÎªoutput
+		GPBCON  = GPBCON & (~(3<<2)) | (1<<2) ;	//GPB1è®¾ç½®ä¸ºoutput
 		GPBDAT &= ~(1<<1);
 		return;
 	}
