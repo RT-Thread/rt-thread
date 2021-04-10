@@ -287,7 +287,7 @@ int rt_pages_free(void *addr, uint32_t size_bits)
     return real_free;
 }
 
-void rt_pageinfo_dump(void)
+void list_page(void)
 {
     int i;
     size_t total = 0;
@@ -313,7 +313,7 @@ void rt_pageinfo_dump(void)
     rt_kprintf("free pages is %08x\n", total);
     rt_kprintf("-------------------------------\n");
 }
-MSH_CMD_EXPORT(rt_pageinfo_dump, show page info);
+MSH_CMD_EXPORT(list_page, show page info);
 
 void rt_page_get_info(size_t *total_nr, size_t *free_nr)
 {
