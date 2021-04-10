@@ -80,7 +80,7 @@ void RTC0_IRQHandler(void)
  */
 void rt_hw_board_init()
 {
-    lfclk_config();
+    //lfclk_config();
     rtc_config();
     NRF_RTC0->TASKS_START = 1;
     /* Initial usart deriver, and set console device */

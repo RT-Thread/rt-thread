@@ -69,7 +69,7 @@ elif PLATFORM == 'armcc':
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-stm32.map --scatter nrf51822_rom.sct'
 
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC' 
     LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
 
     EXEC_PATH += '/arm/bin40/'
