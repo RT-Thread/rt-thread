@@ -19,8 +19,8 @@
 .equ Mode_UND,        0x1B
 .equ Mode_SYS,        0x1F
 
-.equ I_Bit,           0x80            @ when I bit is set, IRQ is disabled
-.equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
+.equ I_Bit,           0x80   /* when I bit is set, IRQ is disabled */
+.equ F_Bit,           0x40   /* when F bit is set, FIQ is disabled */
 
 .equ UND_Stack_Size,     0x00000400
 .equ SVC_Stack_Size,     0x00000400
@@ -67,8 +67,8 @@ overHyped: /* Get out of HYP mode */
     adr r1, continue
     msr ELR_hyp, r1
     mrs r1, cpsr_all
-    and r1, r1, #0x1f    ;@ CPSR_MODE_MASK
-    orr r1, r1, #0x13    ;@ CPSR_MODE_SUPERVISOR
+    and r1, r1, #0x1f    /* CPSR_MODE_MASK */
+    orr r1, r1, #0x13    /* CPSR_MODE_SUPERVISOR */
     msr SPSR_hyp, r1
     eret
 
@@ -96,8 +96,8 @@ overHyped: /* Get out of HYP mode */
     adr r1, continue
     msr ELR_hyp, r1
     mrs r1, cpsr_all
-    and r1, r1, #0x1f    ;@ CPSR_MODE_MASK
-    orr r1, r1, #0x13    ;@ CPSR_MODE_SUPERVISOR
+    and r1, r1, #0x1f    /* CPSR_MODE_MASK */
+    orr r1, r1, #0x13    /* CPSR_MODE_SUPERVISOR */
     msr SPSR_hyp, r1
     eret
 
@@ -116,15 +116,16 @@ continue:
     sub r7, #1
     mvn r8, r7
 
+
     ldr r9, =KERNEL_VADDR_START
 
     ldr r6, =__bss_end
     add r6, r7
-    and r6, r8 //r6 end vaddr align up to 1M
-    sub r6, r9 //r6 is size
+    and r6, r8    /* r6 end vaddr align up to 1M */
+    sub r6, r9    /* r6 is size */
 
     ldr sp, =stack_top
-    add sp, r5 //use paddr
+    add sp, r5    /* use paddr */
 
     ldr r0, =init_mtbl
     add r0, r5
@@ -171,7 +172,7 @@ bss_loop:
     mrc p15, 0, r1, c1, c0, 1
     mov r0, #(1<<6)
     orr r1, r0
-    mcr p15, 0, r1, c1, c0, 1 //enable smp
+    mcr p15, 0, r1, c1, c0, 1   /* enable smp */
 #endif
 
     /* initialize the mmu table and enable mmu */
@@ -181,14 +182,14 @@ bss_loop:
     bl rt_hw_init_mmu_table
 
 #ifdef RT_USING_USERSPACE
-    ldr r0, =MMUTable    /* vaddr    */
-    add r0, r5           /* to paddr */
+    ldr r0, =MMUTable     /* vaddr    */
+    add r0, r5            /* to paddr */
     bl  switch_mmu
 #else
     bl rt_hw_mmu_init
 #endif
 
-    /* call C++ constructors of global objects                          */
+    /* call C++ constructors of global objects */
     ldr     r0, =__ctors_start__
     ldr     r1, =__ctors_end__
 
@@ -211,25 +212,25 @@ _rtthread_startup:
 stack_setup:
     ldr     r0, =stack_top
 
-    @  Set the startup stack for svc
+    /* Set the startup stack for svc */
     mov     sp, r0
 
-    @  Enter Undefined Instruction Mode and set its Stack Pointer
+    /* Enter Undefined Instruction Mode and set its Stack Pointer */
     msr     cpsr_c, #Mode_UND|I_Bit|F_Bit
     mov     sp, r0
     sub     r0, r0, #UND_Stack_Size
 
-    @  Enter Abort Mode and set its Stack Pointer
+    /* Enter Abort Mode and set its Stack Pointer */
     msr     cpsr_c, #Mode_ABT|I_Bit|F_Bit
     mov     sp, r0
     sub     r0, r0, #ABT_Stack_Size
 
-    @  Enter FIQ Mode and set its Stack Pointer
+    /* Enter FIQ Mode and set its Stack Pointer */
     msr     cpsr_c, #Mode_FIQ|I_Bit|F_Bit
     mov     sp, r0
     sub     r0, r0, #RT_FIQ_STACK_PGSZ
 
-    @  Enter IRQ Mode and set its Stack Pointer
+    /* Enter IRQ Mode and set its Stack Pointer */
     msr     cpsr_c, #Mode_IRQ|I_Bit|F_Bit
     mov     sp, r0
     sub     r0, r0, #RT_IRQ_STACK_PGSZ
@@ -243,23 +244,23 @@ stack_setup:
 .global enable_mmu
 enable_mmu:
     orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0 //ttbr0
+    mcr p15, 0, r0, c2, c0, 0    /* ttbr0 */
 
-    mov r0, #(1 << 5)         //PD1=1
-    mcr p15, 0, r0, c2, c0, 2 //ttbcr
+    mov r0, #(1 << 5)            /* PD1=1 */
+    mcr p15, 0, r0, c2, c0, 2    /* ttbcr */
 
     mov r0, #1
-    mcr p15, 0, r0, c3, c0, 0 //dacr
+    mcr p15, 0, r0, c3, c0, 0    /* dacr */
 
-    // invalid tlb before enable mmu
+    /* invalid tlb before enable mmu */
     mov r0, #0
     mcr p15, 0, r0, c8, c7, 0
-    mcr p15, 0, r0, c7, c5, 0   ;//iciallu
-    mcr p15, 0, r0, c7, c5, 6   ;//bpiall
+    mcr p15, 0, r0, c7, c5, 0    /* iciallu */
+    mcr p15, 0, r0, c7, c5, 6    /* bpiall */
 
     mrc p15, 0, r0, c1, c0, 0
-    orr r0, #(1 | 4)
-    orr r0, #(1 << 12)
+    orr r0, #((1 << 12) | (1 << 11))    /* instruction cache, branch prediction */
+    orr r0, #((1 << 2) | (1 << 0))      /* data cache, mmu enable */
     mcr p15, 0, r0, c1, c0, 0
     dsb
     isb
@@ -273,20 +274,20 @@ set_process_id:
 .global switch_mmu
 switch_mmu:
     orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0 //ttbr0
+    mcr p15, 0, r0, c2, c0, 0    /* ttbr0 */
 
-    // invalid tlb
+    /* invalid tlb */
     mov r0, #0
     mcr p15, 0, r0, c8, c7, 0
-    mcr p15, 0, r0, c7, c5, 0   ;//iciallu
-    mcr p15, 0, r0, c7, c5, 6   ;//bpiall
+    mcr p15, 0, r0, c7, c5, 0    /* iciallu */
+    mcr p15, 0, r0, c7, c5, 6    /* bpiall */
 
     dsb
     isb
     mov pc, lr
 .global mmu_table_get
 mmu_table_get:
-    mrc p15, 0, r0, c2, c0, 0 //ttbr0
+    mrc p15, 0, r0, c2, c0, 0    /* ttbr0 */
     bic r0, #0x18
     mov pc, lr
 #endif
@@ -295,7 +296,7 @@ _halt:
     wfe
     b _halt
 
-/* exception handlers: undef, swi, padt, dabt, resv, irq, fiq          */
+/* exception handlers: undef, swi, padt, dabt, resv, irq, fiq */
 .section .text.isr, "ax"
     .align  5
 .globl vector_fiq
@@ -328,7 +329,7 @@ vector_irq:
 
     cps     #Mode_IRQ
     sub     lr, #4
-    stmfd   r0!, {r1, lr}       /* svc_lr, svc_pc */
+    stmfd   r0!, {r1, lr}     /* svc_lr, svc_pc */
     stmfd   r0!, {r2 - r12}
     ldmfd   sp!, {r1, r2}     /* original r0, r1 */
     stmfd   r0!, {r1 - r2}
@@ -336,7 +337,7 @@ vector_irq:
     stmfd   r0!, {r1}
 
 #ifdef RT_USING_LWP
-    stmfd   r0, {r13, r14}^ /* usr_sp, usr_lr */
+    stmfd   r0, {r13, r14}^   /* usr_sp, usr_lr */
     sub     r0, #8
 #endif
 #ifdef RT_USING_FPU
@@ -376,8 +377,8 @@ vector_irq:
     bl      rt_hw_trap_irq
     bl      rt_interrupt_leave
 
-    @ if rt_thread_switch_interrupt_flag set, jump to
-    @ rt_hw_context_switch_interrupt_do and don't return
+    /* if rt_thread_switch_interrupt_flag set, jump to
+     * rt_hw_context_switch_interrupt_do and don't return */
     ldr     r0, =rt_thread_switch_interrupt_flag
     ldr     r1, [r0]
     cmp     r1, #1
@@ -415,28 +416,28 @@ vector_irq:
 #endif
 
 rt_hw_context_switch_interrupt_do:
-    mov     r1,  #0         @ clear flag
+    mov     r1,  #0             /* clear flag */
     str     r1,  [r0]
 
-    mov     r1, sp          @ r1 point to {r0-r3} in stack
+    mov     r1, sp              /* r1 point to {r0-r3} in stack */
     add     sp, sp, #4*4
-    ldmfd   sp!, {r4-r12,lr}@ reload saved registers
-    mrs     r0,  spsr       @ get cpsr of interrupt thread
-    sub     r2,  lr, #4     @ save old task's pc to r2
+    ldmfd   sp!, {r4-r12,lr}    /* reload saved registers */
+    mrs     r0,  spsr           /* get cpsr of interrupt thread */
+    sub     r2,  lr, #4         /* save old task's pc to r2 */
 
-    @ Switch to SVC mode with no interrupt. If the usr mode guest is
-    @ interrupted, this will just switch to the stack of kernel space.
-    @ save the registers in kernel space won't trigger data abort.
+    /* Switch to SVC mode with no interrupt. If the usr mode guest is
+     * interrupted, this will just switch to the stack of kernel space.
+     * save the registers in kernel space won't trigger data abort. */
     msr     cpsr_c, #I_Bit|F_Bit|Mode_SVC
 
-    stmfd   sp!, {r2}       @ push old task's pc
-    stmfd   sp!, {r4-r12,lr}@ push old task's lr,r12-r4
-    ldmfd   r1,  {r1-r4}    @ restore r0-r3 of the interrupt thread
-    stmfd   sp!, {r1-r4}    @ push old task's r0-r3
-    stmfd   sp!, {r0}       @ push old task's cpsr
+    stmfd   sp!, {r2}           /* push old task's pc */
+    stmfd   sp!, {r4-r12,lr}    /* push old task's lr,r12-r4 */
+    ldmfd   r1,  {r1-r4}        /* restore r0-r3 of the interrupt thread */
+    stmfd   sp!, {r1-r4}        /* push old task's r0-r3 */
+    stmfd   sp!, {r0}           /* push old task's cpsr */
 
 #ifdef RT_USING_LWP
-    stmfd   sp, {r13, r14}^  @push usr_sp, usr_lr
+    stmfd   sp, {r13, r14}^     /*push usr_sp, usr_lr */
     sub     sp, #8
 #endif
 
@@ -455,11 +456,11 @@ rt_hw_context_switch_interrupt_do:
 
     ldr     r4,  =rt_interrupt_from_thread
     ldr     r5,  [r4]
-    str     sp,  [r5]       @ store sp in preempted tasks's TCB
+    str     sp,  [r5]       /* store sp in preempted tasks's TCB */
 
     ldr     r6,  =rt_interrupt_to_thread
     ldr     r6,  [r6]
-    ldr     sp,  [r6]       @ get new task's stack pointer
+    ldr     sp,  [r6]       /* get new task's stack pointer */
 
 #ifdef RT_USING_USERSPACE
     ldr     r1, =rt_current_thread
@@ -468,7 +469,7 @@ rt_hw_context_switch_interrupt_do:
 #endif
 
 #ifdef RT_USING_FPU
-/* fpu context */
+    /* fpu context */
     ldmfd sp!, {r6}
     vmsr fpexc, r6
     tst  r6, #(1<<30)
@@ -481,11 +482,11 @@ rt_hw_context_switch_interrupt_do:
 #endif
 
 #ifdef RT_USING_LWP
-    ldmfd sp, {r13, r14}^  @pop usr_sp, usr_lr
+    ldmfd sp, {r13, r14}^    /*pop usr_sp, usr_lr */
     add sp, #8
 #endif
 
-    ldmfd   sp!, {r4}       @ pop new task's cpsr to spsr
+    ldmfd   sp!, {r4}        /* pop new task's cpsr to spsr */
     msr     spsr_cxsf, r4
 
 #ifdef RT_USING_GDBSERVER
@@ -505,26 +506,27 @@ rt_hw_context_switch_interrupt_do:
     b       ret_to_user
 1:
 #endif
-    ldmfd   sp!, {r0-r12,lr,pc}^ @ pop new task's r0-r12,lr & pc, copy spsr to cpsr
+    /* pop new task's r0-r12,lr & pc, copy spsr to cpsr */
+    ldmfd   sp!, {r0-r12,lr,pc}^
 
 #endif
 
 .macro push_svc_reg
-    sub     sp, sp, #17 * 4         @/* Sizeof(struct rt_hw_exp_stack)  */
-    stmia   sp, {r0 - r12}          @/* Calling r0-r12                  */
+    sub     sp, sp, #17 * 4         /* Sizeof(struct rt_hw_exp_stack)  */
+    stmia   sp, {r0 - r12}          /* Calling r0-r12                  */
     mov     r0, sp
     add     sp, sp, #17 * 4
-    mrs     r6, spsr                @/* Save CPSR                       */
-    str     lr, [r0, #15*4]         @/* Push PC                         */
-    str     r6, [r0, #16*4]         @/* Push CPSR                       */
+    mrs     r6, spsr                /* Save CPSR                       */
+    str     lr, [r0, #15*4]         /* Push PC                         */
+    str     r6, [r0, #16*4]         /* Push CPSR                       */
     and     r1, r6, #0x1f
     cmp     r1, #0x10
     cps     #Mode_SYS
-    streq   sp, [r0, #13*4]         @/* Save calling SP                 */
-    streq   lr, [r0, #14*4]         @/* Save calling PC                 */
+    streq   sp, [r0, #13*4]         /* Save calling SP                 */
+    streq   lr, [r0, #14*4]         /* Save calling PC                 */
     cps     #Mode_SVC
-    strne   sp, [r0, #13*4]         @/* Save calling SP                 */
-    strne   lr, [r0, #14*4]         @/* Save calling PC                 */
+    strne   sp, [r0, #13*4]         /* Save calling SP                 */
+    strne   lr, [r0, #14*4]         /* Save calling PC                 */
 .endm
 
     .align  5
@@ -555,7 +557,7 @@ vector_pabt:
     push_svc_reg
 #ifdef RT_USING_USERSPACE
     /* cp Mode_ABT stack to SVC */
-    sub     sp, sp, #17 * 4         @/* Sizeof(struct rt_hw_exp_stack)  */
+    sub     sp, sp, #17 * 4     /* Sizeof(struct rt_hw_exp_stack)  */
     mov     lr, r0
     ldmia   lr, {r0 - r12}
     stmia   sp, {r0 - r12}
@@ -566,9 +568,9 @@ vector_pabt:
     mov     r0, sp
     bl      rt_hw_trap_pabt
     /* return to user */
-    ldr     lr, [sp, #16*4]  //orign spsr
+    ldr     lr, [sp, #16*4]     /* orign spsr */
     msr     spsr_cxsf, lr
-    ldr     lr, [sp, #15*4]  //orign pc
+    ldr     lr, [sp, #15*4]     /* orign pc */
     ldmia   sp, {r0 - r12}
     add     sp, #17 * 4
     b       ret_to_user
@@ -583,7 +585,7 @@ vector_dabt:
     push_svc_reg
 #ifdef RT_USING_USERSPACE
     /* cp Mode_ABT stack to SVC */
-    sub     sp, sp, #17 * 4         @/* Sizeof(struct rt_hw_exp_stack)  */
+    sub     sp, sp, #17 * 4    /* Sizeof(struct rt_hw_exp_stack)  */
     mov     lr, r0
     ldmia   lr, {r0 - r12}
     stmia   sp, {r0 - r12}
@@ -594,9 +596,9 @@ vector_dabt:
     mov     r0, sp
     bl      rt_hw_trap_dabt
     /* return to user */
-    ldr     lr, [sp, #16*4]  //orign spsr
+    ldr     lr, [sp, #16*4]    /* orign spsr */
     msr     spsr_cxsf, lr
-    ldr     lr, [sp, #15*4]  //orign pc
+    ldr     lr, [sp, #15*4]    /* orign pc */
     ldmia   sp, {r0 - r12}
     add     sp, #17 * 4
     b       ret_to_user
@@ -642,7 +644,7 @@ after_enable_mmu2:
     mrc p15, 0, r1, c1, c0, 1
     mov r0, #(1<<6)
     orr r1, r0
-    mcr p15, 0, r1, c1, c0, 1 //enable smp
+    mcr p15, 0, r1, c1, c0, 1    /* enable smp */
 
     mrc p15, 0, r0, c1, c0, 0
     bic r0, #(1<<13)
@@ -672,7 +674,7 @@ after_enable_mmu2:
 #endif
 
 .bss
-.align 2   //align to  2~2=4
+.align 2     /* align to  2~2=4 */
 svc_stack_2:
     .space (1 << 10)
 svc_stack_2_limit:
