@@ -37,20 +37,22 @@ _start:
     la      a2, __bss_size
     call    memset
 
+    call    cache_init
+
     la      a0, __comm_vma
     sw      a0, PICADR(zero)
 
     call    entry
-//    la      ra, __exception
-//    jr      ra
+    la      ra, __exception
+    jr      ra
 
 .section .vector, "ax"
-//    .org    0x10
-//__exception:
-//    li      sp, 0x10600                     //出错后，不破坏错误点的堆栈数据
-//    jal     exception_isr
-//    1: j       1b
-//    mret
+    .org    0x10
+__exception:
+    li      sp, 0x10600                     //出错后，不破坏错误点的堆栈数据
+    jal     exception_isr
+    1: j       1b
+    mret
 
     .org    0x40
     jal x0, low_prio_irq

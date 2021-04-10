@@ -253,6 +253,7 @@ static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint
 }
 
 #ifdef RT_USING_ALARM
+RT_SECTION(".irq.rtc")
 static void rtc_isr(int vector, void *param)
 {
     rt_interrupt_enter();

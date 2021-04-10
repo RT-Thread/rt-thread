@@ -1,21 +1,7 @@
 ;/*
-; * File      : startup_gd32f4xx.c
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+; * Copyright (c) 2006-2021, RT-Thread Development Team
 ; *
-; *  This program is free software; you can redistribute it and/or modify
-; *  it under the terms of the GNU General Public License as published by
-; *  the Free Software Foundation; either version 2 of the License, or
-; *  (at your option) any later version.
-; *
-; *  This program is distributed in the hope that it will be useful,
-; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; *  GNU General Public License for more details.
-; *
-; *  You should have received a copy of the GNU General Public License along
-; *  with this program; if not, write to the Free Software Foundation, Inc.,
-; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -34,7 +20,7 @@
     .type  g_pfnVectors, %object
 
 g_pfnVectors:
-    .word     _estack                      	// Top of Stack
+    .word     _estack                       // Top of Stack
     .word     Reset_Handler                     // Reset Handler
     .word     NMI_Handler                       // NMI Handler
     .word     HardFault_Handler                 // Hard Fault Handler
@@ -195,13 +181,13 @@ MemManage_Handler:
 BusFault_Handler:
     b       .
     .size   BusFault_Handler, . - BusFault_Handler
-    
+
     .weak   UsageFault_Handler
     .type   UsageFault_Handler, %function
 UsageFault_Handler:
     b       .
     .size   UsageFault_Handler, . - UsageFault_Handler
-    
+
     .weak   SVC_Handler
     .type   SVC_Handler, %function
 SVC_Handler:
@@ -219,13 +205,13 @@ DebugMon_Handler:
 PendSV_Handler:
     b       .
     .size   PendSV_Handler, . - PendSV_Handler
-    
+
     .weak   SysTick_Handler
     .type   SysTick_Handler, %function
 SysTick_Handler:
     b       .
     .size   SysTick_Handler, . - SysTick_Handler
-    
+
     /* IQR Handler */
     .section  .text.Default_Handler,"ax",%progbits
     .type  Default_Handler, %function

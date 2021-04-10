@@ -1,21 +1,7 @@
 /*
- * File      : interrupt.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -26,7 +12,7 @@
 #include "at91sam9g45.h"
 #include "interrupt.h"
 
-#define AIC_IRQS	32
+#define AIC_IRQS    32
 #define MAX_HANDLERS    (AIC_IRQS + PIN_IRQS)
 
 extern rt_uint32_t rt_interrupt_nest;
@@ -101,17 +87,17 @@ rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t bank, void *param)
 {
     rt_uint32_t isr, irq_n;
-	AT91PS_PIO pio;
+    AT91PS_PIO pio;
     void *parameter;
 
     switch (bank)
     {
-	case 0: pio = AT91C_BASE_PIOA; break;
-	case 1: pio = AT91C_BASE_PIOB; break;
-	case 2: pio = AT91C_BASE_PIOC; break;
-	case 3: pio = AT91C_BASE_PIOD; break;
-	case 4: pio = AT91C_BASE_PIOE; break;
-	default: return RT_NULL;
+    case 0: pio = AT91C_BASE_PIOA; break;
+    case 1: pio = AT91C_BASE_PIOB; break;
+    case 2: pio = AT91C_BASE_PIOC; break;
+    case 3: pio = AT91C_BASE_PIOD; break;
+    case 4: pio = AT91C_BASE_PIOE; break;
+    default: return RT_NULL;
     }
     irq_n = AIC_IRQS + 32*bank;
     isr = readl(pio->PIO_ISR);
@@ -133,21 +119,21 @@ rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t bank, void *param)
 unsigned int SpuriousCount = 0;
 static void DefaultSpuriousHandler( void )
 {
-	SpuriousCount++;
-	rt_kprintf("Spurious interrupt %d occured!!!\n", SpuriousCount);
-	return ;
+    SpuriousCount++;
+    rt_kprintf("Spurious interrupt %d occured!!!\n", SpuriousCount);
+    return ;
 }
 
 static void DefaultFiqHandler(void)
 {
-	rt_kprintf("Unhandled FIQ occured!!!\n");
-	while (1);
+    rt_kprintf("Unhandled FIQ occured!!!\n");
+    while (1);
 }
 
 static void DefaultIrqHandler(void)
 {
-	rt_kprintf("Unhandled IRQ %d occured!!!\n", AT91C_BASE_AIC->AIC_ISR);
-	while (1);
+    rt_kprintf("Unhandled IRQ %d occured!!!\n", AT91C_BASE_AIC->AIC_ISR);
+    while (1);
 }
 
 /*
@@ -345,7 +331,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
             irq_desc[vector].param = param;
 #ifdef RT_USING_INTERRUPT_INFO
             rt_snprintf(irq_desc[vector].name, RT_NAME_MAX - 1, "%s", name);
-			irq_desc[vector].counter = 0;
+            irq_desc[vector].counter = 0;
 #endif
         }
     }
@@ -446,16 +432,16 @@ void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
 #ifdef RT_USING_INTERRUPT_INFO
 void list_irq(void)
 {
-	int irq;
+    int irq;
 
-	rt_kprintf("number\tcount\tname\n");
-	for (irq = 0; irq < MAX_HANDLERS; irq++)
-	{
-		if (rt_strncmp(irq_desc[irq].name, "default", sizeof("default")))
-		{
-			rt_kprintf("%02ld: %10ld  %s\n", irq, irq_desc[irq].counter, irq_desc[irq].name);
-		}
-	}
+    rt_kprintf("number\tcount\tname\n");
+    for (irq = 0; irq < MAX_HANDLERS; irq++)
+    {
+        if (rt_strncmp(irq_desc[irq].name, "default", sizeof("default")))
+        {
+            rt_kprintf("%02ld: %10ld  %s\n", irq, irq_desc[irq].counter, irq_desc[irq].name);
+        }
+    }
 }
 
 #include <finsh.h>
