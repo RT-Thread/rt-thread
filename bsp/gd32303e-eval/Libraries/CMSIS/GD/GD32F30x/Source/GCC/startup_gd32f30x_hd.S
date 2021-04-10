@@ -1,21 +1,7 @@
 ;/*
-; * File      : startup_gd32f30x_hd.s
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+; * Copyright (c) 2006-2021, RT-Thread Development Team
 ; *
-; *  This program is free software; you can redistribute it and/or modify
-; *  it under the terms of the GNU General Public License as published by
-; *  the Free Software Foundation; either version 2 of the License, or
-; *  (at your option) any later version.
-; *
-; *  This program is distributed in the hope that it will be useful,
-; *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-; *  GNU General Public License for more details.
-; *
-; *  You should have received a copy of the GNU General Public License along
-; *  with this program; if not, write to the Free Software Foundation, Inc.,
-; *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -34,7 +20,7 @@
     .type  g_pfnVectors, %object
 
 g_pfnVectors:
-    .word     _estack                      	// Top of Stack
+    .word     _estack                       // Top of Stack
     .word     Reset_Handler                     // Reset Handler
     .word     NMI_Handler                       // NMI Handler
     .word     HardFault_Handler                 // Hard Fault Handler
@@ -78,7 +64,7 @@ g_pfnVectors:
     .word     EXTI5_9_IRQHandler                // 39:EXTI5 to EXTI9
     .word     TIMER0_BRK_IRQHandler             // 40:TIMER0 Break
     .word     TIMER0_UP_IRQHandler              // 41:TIMER0 Update
-    .word     TIMER0_TRG_CMT_IRQHandler         // 42:TIMER0 Trigger and Commutation 
+    .word     TIMER0_TRG_CMT_IRQHandler         // 42:TIMER0 Trigger and Commutation
     .word     TIMER0_Channel_IRQHandler         // 43:TIMER0 Channel Capture Compare
     .word     TIMER1_IRQHandler                 // 44:TIMER1
     .word     TIMER2_IRQHandler                 // 45:TIMER2
@@ -95,8 +81,8 @@ g_pfnVectors:
     .word     EXTI10_15_IRQHandler              // 56:EXTI10 to EXTI15
     .word     RTC_Alarm_IRQHandler              // 57:RTC Alarm
     .word     USBD_WKUP_IRQHandler              // 58:USBD Wakeup
-    .word     TIMER7_BRK_IRQHandler             // 59:TIMER7 Break 
-    .word     TIMER7_UP_IRQHandler              // 60:TIMER7 Update 
+    .word     TIMER7_BRK_IRQHandler             // 59:TIMER7 Break
+    .word     TIMER7_UP_IRQHandler              // 60:TIMER7 Update
     .word     TIMER7_TRG_CMT_IRQHandler         // 61:TIMER7 Trigger and Commutation
     .word     TIMER7_Channel_IRQHandler         // 62:TIMER7 Channel Capture Compare
     .word     ADC2_IRQHandler                   // 63:ADC2
@@ -106,7 +92,7 @@ g_pfnVectors:
     .word     SPI2_IRQHandler                   // 67:SPI2
     .word     UART3_IRQHandler                  // 68:UART3
     .word     UART4_IRQHandler                  // 69:UART4
-    .word     TIMER5_IRQHandler                 // 70:TIMER5 
+    .word     TIMER5_IRQHandler                 // 70:TIMER5
     .word     TIMER6_IRQHandler                 // 71:TIMER6
     .word     DMA1_Channel0_IRQHandler          // 72:DMA1 Channel0
     .word     DMA1_Channel1_IRQHandler          // 73:DMA1 Channel1
@@ -166,13 +152,13 @@ MemManage_Handler:
 BusFault_Handler:
     b       .
     .size   BusFault_Handler, . - BusFault_Handler
-    
+
     .weak   UsageFault_Handler
     .type   UsageFault_Handler, %function
 UsageFault_Handler:
     b       .
     .size   UsageFault_Handler, . - UsageFault_Handler
-    
+
     .weak   SVC_Handler
     .type   SVC_Handler, %function
 SVC_Handler:
@@ -190,13 +176,13 @@ DebugMon_Handler:
 PendSV_Handler:
     b       .
     .size   PendSV_Handler, . - PendSV_Handler
-    
+
     .weak   SysTick_Handler
     .type   SysTick_Handler, %function
 SysTick_Handler:
     b       .
     .size   SysTick_Handler, . - SysTick_Handler
-    
+
     /* IQR Handler */
     .section  .text.Default_Handler,"ax",%progbits
     .type  Default_Handler, %function
