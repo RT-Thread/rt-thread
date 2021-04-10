@@ -1,11 +1,7 @@
 /*
- * File      : uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  */
 
@@ -72,7 +68,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
         NRF_UART0->CONFIG  = (UART_CONFIG_HWFC_Enabled << UART_CONFIG_HWFC_Pos);
     }
 
-    NRF_UART0->BAUDRATE      = (UART_BAUDRATE_BAUDRATE_Baud38400 << UART_BAUDRATE_BAUDRATE_Pos);
+    NRF_UART0->BAUDRATE      = (UART_BAUDRATE_BAUDRATE_Baud115200 << UART_BAUDRATE_BAUDRATE_Pos);
     NRF_UART0->ENABLE        = (UART_ENABLE_ENABLE_Enabled << UART_ENABLE_ENABLE_Pos);
     NRF_UART0->TASKS_STARTTX = 1;
     NRF_UART0->TASKS_STARTRX = 1;

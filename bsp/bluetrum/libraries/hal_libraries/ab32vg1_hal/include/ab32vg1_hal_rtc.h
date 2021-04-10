@@ -34,7 +34,7 @@ enum
 
 // RTCCPND
 #define RTC_CPND_1S                         (0x1u <<  18)    /*!< Clear RTC 1S pending              */
-#define RTC_CPND_ALM                      (0x1u <<  17)    /*!< Clear RTC alarm pendind           */
+#define RTC_CPND_ALM                        (0x1u <<  17)    /*!< Clear RTC alarm pendind           */
 
 // RTCCON0
 #define RTC_CON0_PWRUP_FIRST                (0x01u << 7)    /*!< RTC first power up flag            */

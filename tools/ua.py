@@ -45,7 +45,7 @@ def PrepareUA(project, RTT_ROOT, BSP_ROOT):
         # ua.write('import sys\n')
         ua.write('\n')
         
-        print RTT_ROOT
+        print(RTT_ROOT)
         
         CPPPATH = []
         CPPDEFINES = []
