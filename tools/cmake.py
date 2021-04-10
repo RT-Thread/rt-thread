@@ -1,5 +1,6 @@
 """
 Utils for CMake
+Author: https://github.com/klivelinux
 """
 
 import os
