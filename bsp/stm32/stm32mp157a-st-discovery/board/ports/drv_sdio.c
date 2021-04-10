@@ -54,7 +54,7 @@ struct rthw_sdio
 };
 
 /* SYSRAM SDMMC1/2 accesses */
-#define SDCARD_ADDR          0x2FFC0000
+#define SDCARD_ADDR          0x2FFFF000
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 __attribute__((at(SDCARD_ADDR))) static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 #elif defined ( __GNUC__ )
@@ -579,7 +579,11 @@ int rt_hw_sdio_init(void)
 #endif
 
 #ifdef BSP_USING_SDIO2
-    MX_RTC_Init();
+    
+    if (IS_ENGINEERING_BOOT_MODE())
+    {
+        MX_RTC_Init();
+    }
     LBEE5KL1DX_init();
 
     struct stm32_sdio_des sdio_des2;

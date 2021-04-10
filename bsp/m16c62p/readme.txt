@@ -1,17 +1,13 @@
 /*
- * File      : readme.txt
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2011-02-17     lgnq         the first version
  */
- 
+
 Summary:
 ========
 This directory contains the source code for M16C porting to rt-thread
@@ -23,7 +19,7 @@ finsh    - a user shell, comes with rt-thread
 Where to get help:
 ==================
 In case you have questions about, problems with or contributions for
-Renesas M16C prot to rt-thread, you can send a mail to dzzxzz@gmail.com. 
+Renesas M16C prot to rt-thread, you can send a mail to dzzxzz@gmail.com.
 
 or you can post a message to the rt-thread forum
 there are two forums:
@@ -48,10 +44,10 @@ Directory Hierarchy:
                 /startup.c              - rt-thread start, include main()
             /drivers
                 /board.c                - hardware init, init uart0
-                /board.h                
+                /board.h
                 /bsp.c                  - include led_init(), mcu_init(), timer0_init()
                 /bsp.h
-                /uart.c                 - implement uart0 device 
+                /uart.c                 - implement uart0 device
                 /uart.h
                 /start_iar.asm          - assembly start of iar
                 /interrupts_iar.asm     - include time0 interrupt handler, uart0 interrupt handler
@@ -75,7 +71,7 @@ Directory Hierarchy:
                 /context_gcc.S      - rt-thread context switch, used by SCONS + gcc
                 /interrupt.c
                 /stack.c            - rt-thread stack initlization
-                
+
 Build Project:
 ==============
 there are two ways to build the renesase M16C project:
@@ -84,7 +80,7 @@ there are two ways to build the renesase M16C project:
     rebuild all
     the target file(rtt2m16c.mot) will be produced in /rt-thread/bsp/m16c62p/Debug/Exe
     you can download the rtt2m16c.mot to m16c board with E8A
-                   
+
 2,  install python, scons and IAR for m16c(recommend python2.7, scons1.3.1 and EWM16C-EV-3501.exe)
     open a windows cmd, and change directory to m16c project, like /rt-thread/bsp/m16c62p/
     #set PATH=C:\Python27\Scripts;%PATH%

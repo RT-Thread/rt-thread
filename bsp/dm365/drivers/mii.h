@@ -1,25 +1,11 @@
 /*
- * File      : mii.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author		Notes
- * 2011-03-18     weety		first version
+ * Date           Author        Notes
+ * 2011-03-18     weety     first version
  */
 
 
@@ -37,7 +23,7 @@
 #define MII_EXPANSION       0x06        /* Expansion register          */
 #define MII_CTRL1000        0x09        /* 1000BASE-T control          */
 #define MII_STAT1000        0x0a        /* 1000BASE-T status           */
-#define MII_ESTATUS	    0x0f	/* Extended Status */
+#define MII_ESTATUS     0x0f    /* Extended Status */
 #define MII_DCOUNTER        0x12        /* Disconnect counter          */
 #define MII_FCSCOUNTER      0x13        /* False carrier counter       */
 #define MII_NWAYTEST        0x14        /* N-way auto-neg test reg     */
@@ -52,7 +38,7 @@
 
 /* Basic mode control register. */
 #define BMCR_RESV               0x003f  /* Unused...                   */
-#define BMCR_SPEED1000		0x0040  /* MSB of Speed (1000)         */
+#define BMCR_SPEED1000      0x0040  /* MSB of Speed (1000)         */
 #define BMCR_CTST               0x0080  /* Collision test              */
 #define BMCR_FULLDPLX           0x0100  /* Full duplex                 */
 #define BMCR_ANRESTART          0x0200  /* Auto negotiation restart    */
@@ -71,7 +57,7 @@
 #define BMSR_RFAULT             0x0010  /* Remote fault detected       */
 #define BMSR_ANEGCOMPLETE       0x0020  /* Auto-negotiation complete   */
 #define BMSR_RESV               0x00c0  /* Unused...                   */
-#define BMSR_ESTATEN		0x0100	/* Extended Status in R15 */
+#define BMSR_ESTATEN        0x0100  /* Extended Status in R15 */
 #define BMSR_100HALF2           0x0200  /* Can do 100BASE-T2 HDX */
 #define BMSR_100FULL2           0x0400  /* Can do 100BASE-T2 FDX */
 #define BMSR_10HALF             0x0800  /* Can do 10mbps, half-duplex  */
@@ -100,7 +86,7 @@
 #define ADVERTISE_NPAGE         0x8000  /* Next page bit               */
 
 #define ADVERTISE_FULL (ADVERTISE_100FULL | ADVERTISE_10FULL | \
-			ADVERTISE_CSMA)
+            ADVERTISE_CSMA)
 #define ADVERTISE_ALL (ADVERTISE_10HALF | ADVERTISE_10FULL | \
                        ADVERTISE_100HALF | ADVERTISE_100FULL)
 
@@ -122,8 +108,8 @@
 #define LPA_LPACK               0x4000  /* Link partner acked us       */
 #define LPA_NPAGE               0x8000  /* Next page bit               */
 
-#define LPA_DUPLEX		(LPA_10FULL | LPA_100FULL)
-#define LPA_100			(LPA_100FULL | LPA_100HALF | LPA_100BASE4)
+#define LPA_DUPLEX      (LPA_10FULL | LPA_100FULL)
+#define LPA_100         (LPA_100FULL | LPA_100HALF | LPA_100BASE4)
 
 /* Expansion register for auto-negotiation. */
 #define EXPANSION_NWAY          0x0001  /* Can do N-way auto-nego      */
@@ -133,8 +119,8 @@
 #define EXPANSION_MFAULTS       0x0010  /* Multiple faults detected    */
 #define EXPANSION_RESV          0xffe0  /* Unused...                   */
 
-#define ESTATUS_1000_TFULL	0x2000	/* Can do 1000BT Full */
-#define ESTATUS_1000_THALF	0x1000	/* Can do 1000BT Half */
+#define ESTATUS_1000_TFULL  0x2000  /* Can do 1000BT Full */
+#define ESTATUS_1000_THALF  0x1000  /* Can do 1000BT Half */
 
 /* N-way test register. */
 #define NWAYTEST_RESV1          0x00ff  /* Unused...                   */
@@ -152,8 +138,8 @@
 #define LPA_1000HALF            0x0400  /* Link partner 1000BASE-T half duplex */
 
 /* Flow control flags */
-#define FLOW_CTRL_TX		0x01
-#define FLOW_CTRL_RX		0x02
+#define FLOW_CTRL_TX        0x01
+#define FLOW_CTRL_RX        0x02
 
 /**
  * mii_nway_result
@@ -188,11 +174,11 @@ rt_inline unsigned int mii_nway_result (unsigned int negotiated)
 }
 
 /* The forced speed, 10Mb, 100Mb, gigabit, 2.5Gb, 10GbE. */
-#define SPEED_10		10
-#define SPEED_100		100
-#define SPEED_1000		1000
-#define SPEED_2500		2500
-#define SPEED_10000		10000
+#define SPEED_10        10
+#define SPEED_100       100
+#define SPEED_1000      1000
+#define SPEED_2500      2500
+#define SPEED_10000     10000
 
 
 #endif /* __MII_H__ */
