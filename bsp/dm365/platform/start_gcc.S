@@ -1,21 +1,7 @@
 /*
- * File      : start.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -46,21 +32,21 @@
 .equ    I_BIT,              0x80    @ when I bit is set, IRQ is disabled
 .equ    F_BIT,              0x40    @ when F bit is set, FIQ is disabled
 
-.equ 	USERMODE, 			0x10
-.equ 	FIQMODE,			0x11
-.equ 	IRQMODE,			0x12
-.equ 	SVCMODE,			0x13
-.equ 	ABORTMODE,			0x17
-.equ 	UNDEFMODE,			0x1b
-.equ 	MODEMASK,			0x1f
-.equ 	NOINT,				0xc0
+.equ    USERMODE,           0x10
+.equ    FIQMODE,            0x11
+.equ    IRQMODE,            0x12
+.equ    SVCMODE,            0x13
+.equ    ABORTMODE,          0x17
+.equ    UNDEFMODE,          0x1b
+.equ    MODEMASK,           0x1f
+.equ    NOINT,              0xc0
 
-.equ 	RAM_BASE,			0x00000000	/*Start address of RAM		*/
-.equ 	ROM_BASE,			0x80000000	/*Start address of Flash	*/
+.equ    RAM_BASE,           0x00000000  /*Start address of RAM      */
+.equ    ROM_BASE,           0x80000000  /*Start address of Flash    */
 
 
-.equ	EINT_ENABLE0,			0x01c48018
-.equ	EINT_ENABLE1,			0x01c4801c
+.equ    EINT_ENABLE0,           0x01c48018
+.equ    EINT_ENABLE1,           0x01c4801c
 
 /*
  *************************************************************************
@@ -124,7 +110,7 @@ _rtthread_end:
  * rtthread bss start and end which are defined in linker script
  */
 .globl _bss_start
-_bss_start:	
+_bss_start:
     .word __bss_start
 
 .globl _bss_end
@@ -147,7 +133,7 @@ UNDEFINED_STACK_START:
 .globl ABORT_STACK_START
 ABORT_STACK_START:
     .word _abort_stack_start + CONFIG_STACKSIZE
-	
+
 .globl _STACK_START
 _STACK_START:
     .word _svc_stack_start + 1024
@@ -162,16 +148,16 @@ reset:
     msr     cpsr,r0
 
     /* mask all IRQs by clearing all bits in the INTMRs               */
-	mov	r1, $0
-	ldr	r0, =EINT_ENABLE0
-	str	r1, [r0]
-	ldr	r0, =EINT_ENABLE1
-	str	r1, [r0]
+    mov r1, $0
+    ldr r0, =EINT_ENABLE0
+    str r1, [r0]
+    ldr r0, =EINT_ENABLE1
+    str r1, [r0]
 #if 0
     /* set interrupt vector        */
     ldr     r0, _TEXT_BASE
-    mov	r1, #0x00
-    add	r2, r0, #0x40         /* size, 32bytes                   */
+    mov r1, #0x00
+    add r2, r0, #0x40         /* size, 32bytes                   */
 
 copy_loop:
     ldmia   r0!, {r3-r10}           /* copy from source address [r0]    */
@@ -212,13 +198,13 @@ ctor_end:
     /* start RT-Thread Kernel        */
     ldr     pc, _rtthread_startup
 
-_rtthread_startup: 
+_rtthread_startup:
     .word rtthread_startup
 #if defined (__FLASH_BUILD__)
-_load_address: 
+_load_address:
     .word ROM_BASE + _TEXT_BASE
 #else
-_load_address: 
+_load_address:
     .word RAM_BASE + _TEXT_BASE
 #endif
 

@@ -212,7 +212,7 @@ def HandleToolOption(tools, env, project, reset):
                     linker_nostart_option = option
                 elif option.get('id').find('linker.libs') != -1:
                     linker_libs_option = option
-                elif option.get('id').find('linker.paths') != -1 and env.has_key('LIBPATH'):
+                elif option.get('id').find('linker.paths') != -1 and 'LIBPATH' in env:
                     linker_paths_option = option
                 elif option.get('id').find('linker.usenewlibnano') != -1:
                     linker_newlib_nano_option = option
@@ -317,7 +317,7 @@ def HandleToolOption(tools, env, project, reset):
                 option.remove(item)
 
         # add new libs
-        if env.has_key('LIBS'):
+        if 'LIBS' in env:
             for lib in env['LIBS']:
                 formatedLib = ConverToRttEclipseLibFormat(lib)
                 SubElement(option, 'listOptionValue', {
