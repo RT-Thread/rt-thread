@@ -54,7 +54,9 @@ class CheckOut:
             except Exception as e:
                 logging.error(e)
                 continue
-         
+            logging.debug("ignore file path: {}".format(ignore_file_path))
+            logging.debug("file_ignore: {}".format(file_ignore))
+            logging.debug("dir_ignore: {}".format(dir_ignore))
             try:
                 # judge file_path in the ignore file.
                 for file in file_ignore:
@@ -68,7 +70,7 @@ class CheckOut:
                 for _dir in dir_ignore:
                     if _dir is not None:
                         dir_real_path = os.path.join(dir_name, _dir)
-                        if dir_real_path == file_dir_path:
+                        if file_dir_path.startswith(dir_real_path):
                             logging.info("ignore dir path: {}".format(dir_real_path))
                             return 0
             except Exception as e:
@@ -139,7 +141,7 @@ class FormatCheck:
     def check(self):
         logging.info("Start to check files format.")
         if len(self.file_list) == 0:
-            logging.warning("There are no files to check license.")
+            logging.warning("There are no files to check format.")
             return True
         encoding_check_result = True
         format_check_result = True
