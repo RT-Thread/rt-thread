@@ -66,13 +66,13 @@ void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq coming..., irq nest:%d\n",
-                                rt_interrupt_nest));
-
     level = rt_hw_interrupt_disable();
     rt_interrupt_nest ++;
     RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
     rt_hw_interrupt_enable(level);
+
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq nest:%d\n",
+                                rt_interrupt_nest));
 }
 RTM_EXPORT(rt_interrupt_enter);
 
