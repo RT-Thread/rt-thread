@@ -114,7 +114,6 @@ env:
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='x86' # x86
   - RTT_BSP='beaglebone' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='zynq7000' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='frdm-k64f' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='fh8620' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
