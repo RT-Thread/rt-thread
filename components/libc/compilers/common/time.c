@@ -224,7 +224,8 @@ RT_WEAK time_t time(time_t *t)
 
     if(time_now == (time_t)-1)
     {
-        LOG_W("Cannot find a RTC device to provide time!");
+        /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
+        rt_kprintf("Cannot find a RTC device to provide time!\r\n");
         errno = ENOSYS;
     }
 
