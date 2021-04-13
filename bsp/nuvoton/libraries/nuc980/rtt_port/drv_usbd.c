@@ -829,7 +829,7 @@ static rt_err_t _init(rt_device_t device)
 
     nu_sys_ip_reset(nu_usbd.rstidx);
 
-    nu_systick_udelay(1000);
+    rt_hw_us_delay(1000);
 
     /* USBD Open */
     USBD_ENABLE_USB();

@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "jlink",
+            "cwd": "${workspaceRoot}",
+            "executable": "rt-thread.elf",
+            "name": "Cortex Debug",
+            "device": "nrf52",
+            "interface": "swd"
+        }
+    ]
+}

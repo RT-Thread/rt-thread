@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,7 +15,7 @@
 
 #define EXTI_(x)  BIT(x)
 
-static const struct pin_index pins[] = 
+static const struct pin_index pins[] =
 {
 #if defined(GPIOA)
     __GD32VF_PIN(0 ,  A, 0 ),
@@ -126,7 +126,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_12, EXTI10_15_IRQn},
     {GPIO_PIN_13, EXTI10_15_IRQn},
     {GPIO_PIN_14, EXTI10_15_IRQn},
-    {GPIO_PIN_15, EXTI10_15_IRQn}, 
+    {GPIO_PIN_15, EXTI10_15_IRQn},
 };
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
@@ -406,11 +406,11 @@ static rt_err_t gd32vf_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         gpio_bit_reset(index->gpio_periph, index->pin);
 
         pin_irq_enable_mask &= ~irqmap->pinbit;
- 
+
         eclic_irq_disable(irqmap->irqno);
         exti_interrupt_flag_clear(EXTI_(index->pin));
-         
-        rt_hw_interrupt_enable(level);  
+
+        rt_hw_interrupt_enable(level);
     }
     else
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -157,7 +157,7 @@ rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     RT_ASSERT(name[0] == 'P');
-    
+
     if(_hw_pin.ops->pin_get == RT_NULL)
     {
         return -RT_ENOSYS;

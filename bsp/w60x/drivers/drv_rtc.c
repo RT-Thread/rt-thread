@@ -172,7 +172,7 @@ static rt_size_t wm_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops _ops = 
+const static struct rt_device_ops _ops =
 {
     .init = wm_rtc_init,
     .open = wm_rtc_open,

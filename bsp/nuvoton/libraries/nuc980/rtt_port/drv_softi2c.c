@@ -17,7 +17,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include "drv_sys.h"
 
 /* Private define ---------------------------------------------------------------*/
@@ -106,7 +106,7 @@ static const struct rt_i2c_bit_ops nu_soft_i2c_bit_ops =
  */
 static void nu_soft_i2c_udelay(rt_uint32_t us)
 {
-    nu_systick_udelay(us);
+    rt_hw_us_delay(us);
 }
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -57,7 +57,7 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
         /* Peripheral clock enable */
         if(IS_ENGINEERING_BOOT_MODE())
         {
-            /** Initializes the peripherals clock 
+            /** Initializes the peripherals clock
             */
             PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SAI2;
             PeriphClkInit.Sai2ClockSelection = RCC_SAI2CLKSOURCE_PLL3_Q;
@@ -72,7 +72,7 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
         __HAL_RCC_GPIOF_CLK_ENABLE();
         __HAL_RCC_SAI2_CLK_ENABLE();
 
-        /**SAI2_A_Block_A GPIO Configuration    
+        /**SAI2_A_Block_A GPIO Configuration
         PE0     ------> SAI2_MCLK_A
         PI7     ------> SAI2_FS_A
         PI5     ------> SAI2_SCK_A
@@ -106,7 +106,7 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
         hdma_sai2_a.Init.Mode                = DMA_CIRCULAR;
         hdma_sai2_a.Init.Priority            = DMA_PRIORITY_HIGH;
         hdma_sai2_a.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
-        
+
         HAL_DMA_DeInit(&hdma_sai2_a);
         if (HAL_DMA_Init(&hdma_sai2_a) != HAL_OK)
         {
@@ -117,13 +117,13 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
         HAL_NVIC_SetPriority(DMA2_Stream5_IRQn, 2, 0);
         HAL_NVIC_EnableIRQ(DMA2_Stream5_IRQn);
     }
-    
+
     if(hsai->Instance==SAI2_Block_B)
     {
           /* Peripheral clock enable */
         if(IS_ENGINEERING_BOOT_MODE())
         {
-            /** Initializes the peripherals clock 
+            /** Initializes the peripherals clock
             */
             PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SAI2;
             PeriphClkInit.Sai2ClockSelection = RCC_SAI2CLKSOURCE_PLL3_Q;
@@ -135,9 +135,9 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
         }
         __HAL_RCC_GPIOF_CLK_ENABLE();
         __HAL_RCC_SAI2_CLK_ENABLE();
-                
-        /**SAI2_B_Block_B GPIO Configuration    
-        PF11     ------> SAI2_SD_B 
+
+        /**SAI2_B_Block_B GPIO Configuration
+        PF11     ------> SAI2_SD_B
         */
         GPIO_InitStruct.Pin = GPIO_PIN_11;
         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -148,7 +148,7 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
 
         __HAL_RCC_DMAMUX_CLK_ENABLE();
         __HAL_RCC_DMA2_CLK_ENABLE();
-        
+
         /* Peripheral DMA init*/
         hdma_sai2_b.Instance                 = DMA2_Stream4;
         hdma_sai2_b.Init.Request             = DMA_REQUEST_SAI2_B;
@@ -163,7 +163,7 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
         hdma_sai2_b.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
         hdma_sai2_b.Init.MemBurst            = DMA_MBURST_SINGLE;
         hdma_sai2_b.Init.PeriphBurst         = DMA_PBURST_SINGLE;
-		__HAL_LINKDMA(hsai,hdmarx,hdma_sai2_b);
+        __HAL_LINKDMA(hsai,hdmarx,hdma_sai2_b);
         HAL_DMA_DeInit(&hdma_sai2_b);
         if (HAL_DMA_Init(&hdma_sai2_b) != HAL_OK)
         {
@@ -172,7 +172,7 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
         __HAL_LINKDMA(hsai,hdmarx,hdma_sai2_b);
         __HAL_DMA_ENABLE(&hdma_sai2_b);
         HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 2, 0);
-        HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn); 
+        HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
     }
 }
 
@@ -182,14 +182,14 @@ void HAL_SAI_MspDeInit(SAI_HandleTypeDef* hsai)
     if(hsai->Instance==SAI2_Block_A)
     {
 
-        /* Peripheral clock disable */ 
+        /* Peripheral clock disable */
         __HAL_RCC_SAI2_CLK_DISABLE();
 
-        /**SAI2_A_Block_A GPIO Configuration    
+        /**SAI2_A_Block_A GPIO Configuration
         PE0     ------> SAI2_MCLK_A
         PI7     ------> SAI2_FS_A
         PI5     ------> SAI2_SCK_A
-        PI6     ------> SAI2_SD_A 
+        PI6     ------> SAI2_SD_A
         */
         HAL_GPIO_DeInit(GPIOE, GPIO_PIN_0);
 
@@ -198,14 +198,14 @@ void HAL_SAI_MspDeInit(SAI_HandleTypeDef* hsai)
         HAL_DMA_DeInit(hsai->hdmarx);
         HAL_DMA_DeInit(hsai->hdmatx);
     }
-    
+
     if(hsai->Instance==SAI2_Block_B)
     {
         /* Peripheral clock disable */
         __HAL_RCC_SAI2_CLK_DISABLE();
 
-        /**SAI2_B_Block_B GPIO Configuration    
-        PF11     ------> SAI2_SD_B 
+        /**SAI2_B_Block_B GPIO Configuration
+        PF11     ------> SAI2_SD_B
         */
         HAL_GPIO_DeInit(GPIOF, GPIO_PIN_11);
 
@@ -241,12 +241,12 @@ static void rt_hw_sai2a_init(void)
     hsai_BlockA2.FrameInit.FSDefinition      = SAI_FS_CHANNEL_IDENTIFICATION;
     hsai_BlockA2.FrameInit.FSPolarity        = SAI_FS_ACTIVE_LOW;
     hsai_BlockA2.FrameInit.FSOffset          = SAI_FS_BEFOREFIRSTBIT;
-    
+
     hsai_BlockA2.SlotInit.FirstBitOffset     = 0;
     hsai_BlockA2.SlotInit.SlotSize           = SAI_SLOTSIZE_32B;
     hsai_BlockA2.SlotInit.SlotNumber         = 2;
     hsai_BlockA2.SlotInit.SlotActive         = SAI_SLOTACTIVE_0 | SAI_SLOTACTIVE_1;
-    
+
     if(HAL_OK != HAL_SAI_Init(&hsai_BlockA2))
     {
         Error_Handler();
@@ -383,7 +383,7 @@ static rt_err_t sound_getcaps(struct rt_audio_device *audio, struct rt_audio_cap
 
     return result;
 }
-    
+
 static rt_err_t sound_configure(struct rt_audio_device *audio, struct rt_audio_caps *caps)
 {
     rt_err_t result = RT_EOK;
@@ -403,9 +403,9 @@ static rt_err_t sound_configure(struct rt_audio_device *audio, struct rt_audio_c
             rt_uint8_t volume = caps->udata.value;
 
             cs42l51_drv.set_volume(volume);
-            
+
             snd_dev->volume = volume;
-            
+
             LOG_D("set volume %d", volume);
             break;
         }
@@ -483,16 +483,16 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
     RT_ASSERT(audio != RT_NULL);
     snd_dev = (struct sound_device *)audio->parent.user_data;
 
-    cs42l51_drv.init(OUT_HEADPHONE, SOUND_BUS_NAME, 40); 
-    
+    cs42l51_drv.init(OUT_HEADPHONE, SOUND_BUS_NAME, 40);
+
     if (cs42l51_drv.read_id() != RT_EOK)
     {
         LOG_E("can't find low level audio device!");
         return RT_ERROR;
     }
-    
+
     rt_hw_sai2a_init();
-    
+
     /* set default params */
     SAIA_Frequency_Set(snd_dev->replay_config.samplerate);
     SAIA_Channels_Set(snd_dev->replay_config.channels);
@@ -510,10 +510,10 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
     if (stream == AUDIO_STREAM_REPLAY)
     {
         LOG_D("open sound device");
-        
+
         cs42l51_drv.init(OUT_HEADPHONE, SOUND_BUS_NAME, 60); /* set work mode */
         cs42l51_drv.play();
-        
+
         if (HAL_SAI_Transmit_DMA(&hsai_BlockA2, snd_dev->tx_fifo, TX_FIFO_SIZE / 2) != HAL_OK)
         {
             return RT_ERROR;
@@ -589,12 +589,12 @@ int rt_hw_sound_init(void)
     result = rt_audio_register(&snd_dev.audio, "sound0", RT_DEVICE_FLAG_WRONLY, &snd_dev);
     if (result != RT_EOK)
     {
-        device = &(snd_dev.audio.parent); 
+        device = &(snd_dev.audio.parent);
         rt_device_unregister(device);
         LOG_E("sound device init error!");
         return RT_ERROR;
     }
-    
+
     return RT_EOK;
 }
 

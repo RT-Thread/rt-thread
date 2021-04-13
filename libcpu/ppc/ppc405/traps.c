@@ -7,8 +7,8 @@ extern unsigned long search_exception_table(unsigned long);
 
 /* THIS NEEDS CHANGING to use the board info structure.
  */
-#define END_OF_MEM	0x800000
-#define UICB0_ALL	0
+#define END_OF_MEM  0x800000
+#define UICB0_ALL   0
 
 #define ESR_MCI 0x80000000
 #define ESR_PIL 0x08000000

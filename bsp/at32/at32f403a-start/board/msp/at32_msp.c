@@ -184,34 +184,34 @@ void at32_msp_adc_init(void *Instance)
     GPIO_InitType GPIO_InitStruct;
     ADC_Type *ADCx = (ADC_Type *)Instance;
 
-#ifdef BSP_USING_ADC1  
+#ifdef BSP_USING_ADC1
     if(ADCx == ADC1)
-    {   
+    {
         /* ADC1 & GPIO clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_ADC1 | RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB | RCC_APB2PERIPH_GPIOC,ENABLE);
-		
-        /* Configure ADC Channel as analog input */      
+
+        /* Configure ADC Channel as analog input */
         GPIO_StructInit(&GPIO_InitStruct);
         GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5;
         GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
         GPIO_Init(GPIOC, &GPIO_InitStruct);
-        
+
     }
 #endif
 
-#ifdef BSP_USING_ADC2  
+#ifdef BSP_USING_ADC2
     if(ADCx == ADC2)
     {
         /* ADC2 & GPIO clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_ADC2 | RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB | RCC_APB2PERIPH_GPIOC,ENABLE);
-      
-        /* Configure ADC Channel as analog input */      
+
+        /* Configure ADC Channel as analog input */
         GPIO_StructInit(&GPIO_InitStruct);
         GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5;
         GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
         GPIO_Init(GPIOC, &GPIO_InitStruct);
     }
-#endif     
+#endif
 }
 #endif /* BSP_USING_ADC */
 
@@ -226,7 +226,7 @@ void at32_msp_hwtmr_init(void *Instance)
         /* TMR3 clock enable */
         RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
     }
-#endif 
+#endif
 
 #ifdef BSP_USING_HWTMR4
     if(TMRx == TMR4)

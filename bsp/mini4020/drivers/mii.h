@@ -1,11 +1,7 @@
 /*
- * File      : mii.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,7 +21,7 @@
 #define MII_EXPANSION       0x06        /* Expansion register          */
 #define MII_CTRL1000        0x09        /* 1000BASE-T control          */
 #define MII_STAT1000        0x0a        /* 1000BASE-T status           */
-#define MII_ESTATUS	    0x0f	/* Extended Status */
+#define MII_ESTATUS     0x0f    /* Extended Status */
 #define MII_DCOUNTER        0x12        /* Disconnect counter          */
 #define MII_FCSCOUNTER      0x13        /* False carrier counter       */
 #define MII_NWAYTEST        0x14        /* N-way auto-neg test reg     */
@@ -40,7 +36,7 @@
 
 /* Basic mode control register. */
 #define BMCR_RESV               0x003f  /* Unused...                   */
-#define BMCR_SPEED1000		0x0040  /* MSB of Speed (1000)         */
+#define BMCR_SPEED1000      0x0040  /* MSB of Speed (1000)         */
 #define BMCR_CTST               0x0080  /* Collision test              */
 #define BMCR_FULLDPLX           0x0100  /* Full duplex                 */
 #define BMCR_ANRESTART          0x0200  /* Auto negotiation restart    */
@@ -59,9 +55,9 @@
 #define BMSR_RFAULT             0x0010  /* Remote fault detected       */
 #define BMSR_ANEGCOMPLETE       0x0020  /* Auto-negotiation complete   */
 #define BMSR_RESV               0x00c0  /* Unused...                   */
-#define BMSR_ESTATEN		0x0100	/* Extended Status in R15 */
-#define BMSR_100FULL2		0x0200	/* Can do 100BASE-T2 HDX */
-#define BMSR_100HALF2		0x0400	/* Can do 100BASE-T2 FDX */
+#define BMSR_ESTATEN        0x0100  /* Extended Status in R15 */
+#define BMSR_100FULL2       0x0200  /* Can do 100BASE-T2 HDX */
+#define BMSR_100HALF2       0x0400  /* Can do 100BASE-T2 FDX */
 #define BMSR_10HALF             0x0800  /* Can do 10mbps, half-duplex  */
 #define BMSR_10FULL             0x1000  /* Can do 10mbps, full-duplex  */
 #define BMSR_100HALF            0x2000  /* Can do 100mbps, half-duplex */
@@ -88,7 +84,7 @@
 #define ADVERTISE_NPAGE         0x8000  /* Next page bit               */
 
 #define ADVERTISE_FULL (ADVERTISE_100FULL | ADVERTISE_10FULL | \
-			ADVERTISE_CSMA)
+            ADVERTISE_CSMA)
 #define ADVERTISE_ALL (ADVERTISE_10HALF | ADVERTISE_10FULL | \
                        ADVERTISE_100HALF | ADVERTISE_100FULL)
 
@@ -110,8 +106,8 @@
 #define LPA_LPACK               0x4000  /* Link partner acked us       */
 #define LPA_NPAGE               0x8000  /* Next page bit               */
 
-#define LPA_DUPLEX		(LPA_10FULL | LPA_100FULL)
-#define LPA_100			(LPA_100FULL | LPA_100HALF | LPA_100BASE4)
+#define LPA_DUPLEX      (LPA_10FULL | LPA_100FULL)
+#define LPA_100         (LPA_100FULL | LPA_100HALF | LPA_100BASE4)
 
 /* Expansion register for auto-negotiation. */
 #define EXPANSION_NWAY          0x0001  /* Can do N-way auto-nego      */
@@ -121,8 +117,8 @@
 #define EXPANSION_MFAULTS       0x0010  /* Multiple faults detected    */
 #define EXPANSION_RESV          0xffe0  /* Unused...                   */
 
-#define ESTATUS_1000_TFULL	0x2000	/* Can do 1000BT Full */
-#define ESTATUS_1000_THALF	0x1000	/* Can do 1000BT Half */
+#define ESTATUS_1000_TFULL  0x2000  /* Can do 1000BT Full */
+#define ESTATUS_1000_THALF  0x1000  /* Can do 1000BT Half */
 
 /* N-way test register. */
 #define NWAYTEST_RESV1          0x00ff  /* Unused...                   */

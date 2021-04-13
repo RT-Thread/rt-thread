@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -27,7 +27,7 @@ static rt_err_t (*odev_rx_ind)(rt_device_t dev, rt_size_t size) = RT_NULL;
 #ifdef AT_USING_CLIENT
 static struct rt_semaphore client_rx_notice;
 static struct rt_ringbuffer *client_rx_fifo = RT_NULL;
-#endif 
+#endif
 
 static char console_getchar(void)
 {

@@ -55,7 +55,7 @@
  * @brief
  *   Enables the flash controller for writing.
  * @note
- *   IMPORTANT: This function must be called before flash operations when 
+ *   IMPORTANT: This function must be called before flash operations when
  *   AUXHFRCO clock has been changed from default 14MHz band.
  ******************************************************************************/
 void MSC_Init(void)

@@ -1,21 +1,7 @@
 /*
- * File      : ili9341.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,28 +11,28 @@
 #include "stm32f4xx_hal.h"
 #include "ili9341.h"
 
-/** 
-  * @brief  LCD Control pin  
-  */ 
+/**
+  * @brief  LCD Control pin
+  */
 #define LCD_NCS_PIN                             GPIO_PIN_2
 #define LCD_NCS_GPIO_PORT                       GPIOC
 #define LCD_NCS_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOC_CLK_ENABLE()
 #define LCD_NCS_GPIO_CLK_DISABLE()              __HAL_RCC_GPIOC_CLK_DISABLE()
 
-/** 
-  * @brief  LCD Command/data pin  
+/**
+  * @brief  LCD Command/data pin
   */
 #define LCD_WRX_PIN                             GPIO_PIN_13
 #define LCD_WRX_GPIO_PORT                       GPIOD
 #define LCD_WRX_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOD_CLK_ENABLE()
 #define LCD_WRX_GPIO_CLK_DISABLE()              __HAL_RCC_GPIOD_CLK_DISABLE()
-  
+
 #define LCD_RDX_PIN                             GPIO_PIN_12
 #define LCD_RDX_GPIO_PORT                       GPIOD
 #define LCD_RDX_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOD_CLK_ENABLE()
 #define LCD_RDX_GPIO_CLK_DISABLE()              __HAL_RCC_GPIOD_CLK_DISABLE()
 
-/* Maximum Timeout values for flags waiting loops */   
+/* Maximum Timeout values for flags waiting loops */
 #define SPIx_TIMEOUT_MAX              ((uint32_t)0x1000)
 
 /* Chip Select macro definition */
@@ -73,8 +59,8 @@ static void SPIx_Init(void)
   {
     /* SPI configuration -----------------------------------------------------*/
     SpiHandle.Instance = SPI5;
-    /* SPI baudrate is set to 5.6 MHz (PCLK2/SPI_BaudRatePrescaler = 90/16 = 5.625 MHz) 
-    */  
+    /* SPI baudrate is set to 5.6 MHz (PCLK2/SPI_BaudRatePrescaler = 90/16 = 5.625 MHz)
+    */
     SpiHandle.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
 
     /* On STM32F429I-Discovery, LCD ID cannot be read then keep a common configuration */
@@ -90,9 +76,9 @@ static void SPIx_Init(void)
     SpiHandle.Init.NSS            = SPI_NSS_SOFT;
     SpiHandle.Init.TIMode         = SPI_TIMODE_DISABLED;
     SpiHandle.Init.Mode           = SPI_MODE_MASTER;
-  
+
     HAL_SPI_Init(&SpiHandle);
-  } 
+  }
 }
 
 /**
@@ -101,11 +87,11 @@ static void SPIx_Init(void)
 static void LCD_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
-  
+
   if(Is_LCD_IO_Initialized == 0)
   {
-    Is_LCD_IO_Initialized = 1; 
-    
+    Is_LCD_IO_Initialized = 1;
+
     /* Configure NCS in Output Push-Pull mode */
     LCD_WRX_GPIO_CLK_ENABLE();
     GPIO_InitStructure.Pin     = LCD_WRX_PIN;
@@ -113,28 +99,28 @@ static void LCD_GPIO_Init(void)
     GPIO_InitStructure.Pull    = GPIO_NOPULL;
     GPIO_InitStructure.Speed   = GPIO_SPEED_FAST;
     HAL_GPIO_Init(LCD_WRX_GPIO_PORT, &GPIO_InitStructure);
-    
+
     LCD_RDX_GPIO_CLK_ENABLE();
     GPIO_InitStructure.Pin     = LCD_RDX_PIN;
     GPIO_InitStructure.Mode    = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStructure.Pull    = GPIO_NOPULL;
     GPIO_InitStructure.Speed   = GPIO_SPEED_FAST;
     HAL_GPIO_Init(LCD_RDX_GPIO_PORT, &GPIO_InitStructure);
-    
+
     /* Configure the LCD Control pins ----------------------------------------*/
     LCD_NCS_GPIO_CLK_ENABLE();
-    
+
     /* Configure NCS in Output Push-Pull mode */
     GPIO_InitStructure.Pin     = LCD_NCS_PIN;
     GPIO_InitStructure.Mode    = GPIO_MODE_OUTPUT_PP;
     GPIO_InitStructure.Pull    = GPIO_NOPULL;
     GPIO_InitStructure.Speed   = GPIO_SPEED_FAST;
     HAL_GPIO_Init(LCD_NCS_GPIO_PORT, &GPIO_InitStructure);
-    
+
     /* Set or Reset the control line */
     LCD_CS_LOW();
     LCD_CS_HIGH();
-    
+
     SPIx_Init();
   }
 }
@@ -148,12 +134,12 @@ static void ili9341_write_data(uint16_t data)
 {
   /* Set WRX to send data */
   LCD_WRX_HIGH();
-  
-  /* Reset LCD control line(/CS) and Send data */  
+
+  /* Reset LCD control line(/CS) and Send data */
   LCD_CS_LOW();
-  
-	HAL_SPI_Transmit(&SpiHandle, (uint8_t*) &data, 1, SPIx_TIMEOUT_MAX);
-	
+
+    HAL_SPI_Transmit(&SpiHandle, (uint8_t*) &data, 1, SPIx_TIMEOUT_MAX);
+
   /* Deselect: Chip Select high */
   LCD_CS_HIGH();
 }
@@ -167,12 +153,12 @@ static void ili9341_write_register(uint8_t reg)
 {
   /* Reset WRX to send command */
   LCD_WRX_LOW();
-  
+
   /* Reset LCD control line(/CS) and Send command */
   LCD_CS_LOW();
-  
+
   HAL_SPI_Transmit(&SpiHandle, (uint8_t*) &reg, 1, SPIx_TIMEOUT_MAX);
-  
+
   /* Deselect: Chip Select high */
   LCD_CS_HIGH();
 }
@@ -186,7 +172,7 @@ int ili9341_hw_init(void)
 {
   /* Initialize ILI9341 low level bus layer ----------------------------------*/
   LCD_GPIO_Init();
-  
+
   /* Configure LCD */
   ili9341_write_register(0xCA);
   ili9341_write_data(0xC3);
@@ -242,7 +228,7 @@ int ili9341_hw_init(void)
   ili9341_write_data(0xA7);
   ili9341_write_data(0x27);
   ili9341_write_data(0x04);
-  
+
   /* Colomn address set */
   ili9341_write_register(LCD_COLUMN_ADDR);
   ili9341_write_data(0x00);
@@ -259,13 +245,13 @@ int ili9341_hw_init(void)
   ili9341_write_data(0x01);
   ili9341_write_data(0x00);
   ili9341_write_data(0x06);
-  
+
   ili9341_write_register(LCD_GRAM);
   rt_thread_mdelay(20);
-  
+
   ili9341_write_register(LCD_GAMMA);
   ili9341_write_data(0x01);
-  
+
   ili9341_write_register(LCD_PGAMMA);
   ili9341_write_data(0x0F);
   ili9341_write_data(0x29);
@@ -298,14 +284,14 @@ int ili9341_hw_init(void)
   ili9341_write_data(0x28);
   ili9341_write_data(0x2F);
   ili9341_write_data(0x0F);
-  
+
   ili9341_write_register(LCD_SLEEP_OUT);
   rt_thread_mdelay(20);
   ili9341_write_register(LCD_DISPLAY_ON);
   /* GRAM start writing */
   ili9341_write_register(LCD_GRAM);
-	
-	return 0;
+
+    return 0;
 }
 INIT_DEVICE_EXPORT(ili9341_hw_init);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020-2021, Bluetrum Development Team
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
@@ -13,10 +13,21 @@
 
 int rt_hw_usart_init(void);
 void my_printf(const char *format, ...);
+void my_print_r(const void *buf, uint16_t cnt);
 void timer0_cfg(uint32_t ticks);
 void rt_soft_isr(int vector, void *param);
 void cpu_irq_comm(void);
 void set_cpu_irq_comm(void (*irq_hook)(void));
+void load_cache();
+void sys_error_hook(uint8_t err_no);
+
+typedef void (*os_cache_setfunc_func)(void *load_cache_func, void *io_read);
+typedef void (*spiflash_init_func)(uint8_t sf_read, uint8_t dummy);
+
+#define os_cache_setfunc        ((os_cache_setfunc_func) 0x84024)
+
+static struct rt_mutex mutex_spiflash = {0};
+extern volatile rt_uint8_t rt_interrupt_nest;
 extern uint32_t __heap_start, __heap_end;
 
 void hal_printf(const char *fmt, ...)
@@ -55,6 +66,7 @@ void hal_printf(const char *fmt, ...)
     va_end(args);
 }
 
+RT_SECTION(".irq.timer")
 void timer0_isr(int vector, void *param)
 {
     rt_interrupt_enter();
@@ -65,16 +77,16 @@ void timer0_isr(int vector, void *param)
 
 void timer0_init(void)
 {
-	TMR0CON =  BIT(7); //TIE
-	TMR0CNT = 0;
+    TMR0CON =  BIT(7); //TIE
+    TMR0CNT = 0;
 
-	rt_hw_interrupt_install(IRQ_TMR0_VECTOR, timer0_isr, RT_NULL, "tick");
+    rt_hw_interrupt_install(IRQ_TMR0_VECTOR, timer0_isr, RT_NULL, "tick");
 }
 
 void timer0_cfg(uint32_t ticks)
 {
-	TMR0PR  = (uint32_t)(ticks - 1UL);       //1ms interrupt
-	TMR0CON |= BIT(0); // EN
+    TMR0PR  = (uint32_t)(ticks - 1UL);       //1ms interrupt
+    TMR0CON |= BIT(0); // EN
 }
 
 void hal_mdelay(uint32_t ms)
@@ -126,4 +138,58 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+}
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+
+}
+
+RT_SECTION(".irq.cache")
+void cache_init(void)
+{
+    os_cache_setfunc(load_cache, NULL);
+    rt_mutex_init(&mutex_spiflash, "flash_mutex", RT_IPC_FLAG_FIFO);
+}
+
+RT_SECTION(".irq.cache")
+void os_spiflash_lock(void)
+{
+    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+        rt_mutex_take(&mutex_spiflash, RT_WAITING_FOREVER);
+    }
+}
+
+RT_SECTION(".irq.cache")
+void os_spiflash_unlock(void)
+{
+    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+        rt_mutex_release(&mutex_spiflash);
+    }
+}
+
+RT_SECTION(".irq.err.str")
+static const char stack_info[] = "thread sp=0x%x name=%s";
+
+void rt_hw_console_output(const char *str)
+{
+    my_printf(str);
+}
+
+/**
+ * @brief print exception error
+ * @note Every message needed to print, must put in .comm exction.
+ */
+RT_SECTION(".irq.err")
+void exception_isr(void)
+{
+    extern long list_thread(void);
+    sys_error_hook(1);
+
+    rt_console_set_device(RT_NULL);
+    rt_kprintf(stack_info, rt_thread_self()->sp, rt_thread_self()->name);
+
+    while(1);
 }

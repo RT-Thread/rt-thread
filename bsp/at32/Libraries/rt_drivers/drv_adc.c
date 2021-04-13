@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,7 +17,7 @@
 #include <drv_log.h>
 
 struct at32_adc
-{  
+{
     struct rt_adc_device at32_adc_device;
     ADC_Type *ADC_Handler;
     char *name;
@@ -109,9 +109,9 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     ADC_InitType ADC_InitStructure;
     RT_ASSERT(device != RT_NULL);
     at32_adc_handler = device->parent.user_data;
-  
+
     at32_msp_adc_init(at32_adc_handler);
-  
+
     /* ADCx configuration ------------------------------------------------------*/
     ADC_StructInit(&ADC_InitStructure);
     ADC_InitStructure.ADC_Mode              = ADC_Mode_Independent;
@@ -121,14 +121,14 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     ADC_InitStructure.ADC_DataAlign         = ADC_DataAlign_Right;
     ADC_InitStructure.ADC_NumOfChannel      = 1;
     ADC_Init(at32_adc_handler, &ADC_InitStructure);
-  
-    /* ADCx regular channels configuration */ 
-    ADC_RegularChannelConfig(at32_adc_handler, at32_adc_get_channel(channel), 1, ADC_SampleTime_28_5); 
-    
+
+    /* ADCx regular channels configuration */
+    ADC_RegularChannelConfig(at32_adc_handler, at32_adc_get_channel(channel), 1, ADC_SampleTime_28_5);
+
     /* Enable ADCx */
     ADC_Ctrl(at32_adc_handler, ENABLE);
-  
-    /* Enable ADCx reset calibration register */   
+
+    /* Enable ADCx reset calibration register */
     ADC_RstCalibration(at32_adc_handler);
     /* Check the end of ADCx reset calibration register */
     while(ADC_GetResetCalibrationStatus(at32_adc_handler));
@@ -161,7 +161,7 @@ static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
 
     at32_adc_handler = device->parent.user_data;
 
-    /* Start ADCx Software Conversion */ 
+    /* Start ADCx Software Conversion */
     ADC_SoftwareStartConvCtrl(at32_adc_handler, ENABLE);
 
     /* Wait for the ADC to convert */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -44,7 +44,7 @@ void rt_hw_timer_init(void)
     timerStep = rt_hw_get_gtimer_frq();
     __DSB();
     timerStep /= RT_TICK_PER_SECOND;
-    
+
     rt_hw_gtimer_enable();
     rt_hw_set_gtimer_val(timerStep);
     core0_timer_enable_interrupt_controller();
@@ -56,7 +56,7 @@ void idle_wfi(void)
 }
 
 /**
- *  Initialize the Hardware related stuffs. Called from rtthread_startup() 
+ *  Initialize the Hardware related stuffs. Called from rtthread_startup()
  *  after interrupt disabled.
  */
 void rt_hw_board_init(void)

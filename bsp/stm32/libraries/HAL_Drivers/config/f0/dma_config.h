@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -27,7 +27,7 @@ extern "C" {
 #define UART1_RX_DMA_INSTANCE            DMA1_Channel3
 #define UART1_RX_DMA_IRQ                 DMA1_Ch2_3_DMA2_Ch1_2_IRQn
 #elif defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
-#define SPI1_DMA_RX_TX_IRQHandler       DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler 
+#define SPI1_DMA_RX_TX_IRQHandler       DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler
 #define SPI1_RX_DMA_RCC                 RCC_AHBENR_DMA1EN
 #define SPI1_RX_DMA_INSTANCE            DMA1_Channel2
 #define SPI1_RX_DMA_IRQ                 DMA1_Ch2_3_DMA2_Ch1_2_IRQn

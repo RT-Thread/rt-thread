@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：动态定时器例程
  *
  * 这个例程会创建两个动态定时器对象，一个是单次定时，一个是周期性的定时

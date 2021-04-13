@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -126,15 +126,36 @@ static rt_err_t rt_usbh_hid_mouse_callback(void* arg)
     return RT_EOK;
 }
 
+rt_thread_t mouse_thread;
+void mouse_task(void* param)
+{
+    struct uhintf* intf = (struct uhintf*)param;
+    while (1)
+    {
+        if (rt_usb_hcd_pipe_xfer(intf->device->hcd, ((struct uhid*)intf->user_data)->pipe_in,
+            ((struct uhid*)intf->user_data)->buffer, ((struct uhid*)intf->user_data)->pipe_in->ep.wMaxPacketSize,
+            USB_TIMEOUT_BASIC) == 0)
+        {
+            break;
+        }
+
+        rt_usbh_hid_mouse_callback(intf->user_data);
+    }
+}
+
+
 static rt_err_t rt_usbh_hid_mouse_init(void* arg)
 {
-    struct uintf* intf = (struct uintf*)arg;
+    struct uhintf* intf = (struct uhintf*)arg;
 
     RT_ASSERT(intf != RT_NULL);
 
     rt_usbh_hid_set_protocal(intf, 0);
 
-    rt_usbh_hid_set_idle(intf, 10, 0);
+    rt_usbh_hid_set_idle(intf, 0, 0);
+
+    mouse_thread = rt_thread_create("mouse0", mouse_task, intf, 500, 8, 100);
+    rt_thread_startup(mouse_thread);
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("start usb mouse\n"));
 #ifdef RT_USING_RTGUI

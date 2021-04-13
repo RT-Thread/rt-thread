@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 #define SaturaLH(N, L, H) (((N)<(L))?(L):(((N)>(H))?(H):(N)))
-    
+
 #ifdef __cplusplus
 }
 #endif

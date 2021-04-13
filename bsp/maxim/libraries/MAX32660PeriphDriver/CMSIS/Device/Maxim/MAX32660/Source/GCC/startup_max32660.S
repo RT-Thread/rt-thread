@@ -223,7 +223,7 @@ Reset_Handler:
     blx     r0  
 
     /* Transfer control to users main program */
-    ldr     r0, =main
+    ldr     r0, =entry
     blx     r0 
 
 .SPIN:

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 enum{
     GET_ID,
     SET_FREQUENCE,
@@ -65,7 +65,7 @@ enum{
 #define AUDIO_FREQUENCY_22K           ((uint32_t)22050)
 #define AUDIO_FREQUENCY_16K           ((uint32_t)16000)
 #define AUDIO_FREQUENCY_11K           ((uint32_t)11025)
-#define AUDIO_FREQUENCY_8K            ((uint32_t)8000)  
+#define AUDIO_FREQUENCY_8K            ((uint32_t)8000)
 
 #define VOLUME_CONVERT(Volume)        (((Volume) > 100)? 100:((uint8_t)(((Volume) * 63) / 100)))
 #define VOLUME_IN_CONVERT(Volume)     (((Volume) >= 100)? 239:((uint8_t)(((Volume) * 240) / 100)))

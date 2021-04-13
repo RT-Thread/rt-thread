@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -85,7 +85,7 @@ static const struct sal_socket_ops at_socket_ops =
 #endif /* SAL_USING_POSIX */
 };
 
-static const struct sal_netdb_ops at_netdb_ops = 
+static const struct sal_netdb_ops at_netdb_ops =
 {
     at_gethostbyname,
     NULL,

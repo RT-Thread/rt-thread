@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -193,17 +193,15 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define rt_inline                   static inline
     #define RTT_API
 #elif defined (__TASKING__)
-
     #include <stdarg.h>
-    #define RT_SECTION(x)
-    #define RT_UNUSED
-    #define RT_USED
+    #define RT_SECTION(x)               __attribute__((section(x)))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used, protect))
     #define PRAGMA(x)                   _Pragma(#x)
-    #define ALIGN(n)
-    #define RT_WEAK
+    #define ALIGN(n)                    __attribute__((__align(n)))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API
-
 #else
     #error not supported tool chain
 #endif
@@ -212,7 +210,32 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER /* we do not support MS VC++ compiler */
-    #define INIT_EXPORT(fn, level)
+#pragma section("rti_fn$f",read)
+    #if RT_DEBUG_INIT
+        struct rt_init_desc
+        {
+            const char* level;
+            const init_fn_t fn;
+            const char* fn_name;
+        };
+        #define INIT_EXPORT(fn, level)                                  \
+                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                const char __rti_##fn##_name[] = #fn;                   \
+                                __declspec(allocate("rti_fn$f"))                        \
+                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                {__rti_level_##fn, fn, __rti_##fn##_name};
+    #else
+        struct rt_init_desc
+        {
+            const char* level;
+            const init_fn_t fn;
+        };
+        #define INIT_EXPORT(fn, level)                                  \
+                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                __declspec(allocate("rti_fn$f"))                        \
+                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                {__rti_level_##fn, fn };
+    #endif
 #else
     #if RT_DEBUG_INIT
         struct rt_init_desc
@@ -802,6 +825,9 @@ struct rt_memheap_item
 
     struct rt_memheap_item *next_free;                  /**< next free memheap item */
     struct rt_memheap_item *prev_free;                  /**< prev free memheap item */
+#ifdef RT_USING_MEMTRACE
+    rt_uint8_t              owner_thread_name[4];       /**< owner thread name */
+#endif
 };
 
 /**
@@ -1041,6 +1067,10 @@ struct rt_device_blk_sectors
 #define RTGRAPHIC_CTRL_GET_INFO         3
 #define RTGRAPHIC_CTRL_SET_MODE         4
 #define RTGRAPHIC_CTRL_GET_EXT          5
+#define RTGRAPHIC_CTRL_SET_BRIGHTNESS   6
+#define RTGRAPHIC_CTRL_GET_BRIGHTNESS   7
+#define RTGRAPHIC_CTRL_GET_MODE         8
+#define RTGRAPHIC_CTRL_GET_STATUS       9
 
 /* graphic deice */
 enum
@@ -1057,9 +1087,7 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
     RTGRAPHIC_PIXEL_FORMAT_ARGB888,
     RTGRAPHIC_PIXEL_FORMAT_ABGR888,
-    RTGRAPHIC_PIXEL_FORMAT_ARGB565,
-    RTGRAPHIC_PIXEL_FORMAT_ALPHA,
-    RTGRAPHIC_PIXEL_FORMAT_COLOR,
+    RTGRAPHIC_PIXEL_FORMAT_RESERVED,
 };
 
 /**
@@ -1074,7 +1102,7 @@ struct rt_device_graphic_info
 {
     rt_uint8_t  pixel_format;                           /**< graphic format */
     rt_uint8_t  bits_per_pixel;                         /**< bits per pixel */
-    rt_uint16_t reserved;                               /**< reserved field */
+    rt_uint16_t pitch;                                  /**< bytes per line */
 
     rt_uint16_t width;                                  /**< width of graphic device */
     rt_uint16_t height;                                 /**< height of graphic device */
