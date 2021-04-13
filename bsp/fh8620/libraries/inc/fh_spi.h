@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 #ifndef FH_SPI_H_
 #define FH_SPI_H_
 
@@ -97,8 +97,8 @@
 #define SPI_STATUS_BUSY             (1)
 
 
-#define SPI_TX_DMA			(1<<1)
-#define SPI_RX_DMA			(1<<0)
+#define SPI_TX_DMA          (1<<1)
+#define SPI_RX_DMA          (1<<0)
 
 
 struct spi_config

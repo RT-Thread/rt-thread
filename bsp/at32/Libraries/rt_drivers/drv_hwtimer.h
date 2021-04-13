@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,7 +26,7 @@ extern "C" {
         .maxcnt  = 0xFFFF,                      \
         .cntmode = HWTIMER_CNTMODE_UP,          \
     }
-#endif /* TIM_DEV_INFO_CONFIG */  
+#endif /* TIM_DEV_INFO_CONFIG */
 
 #ifdef BSP_USING_HWTMR2
 #ifndef TMR2_CONFIG
@@ -36,9 +36,9 @@ extern "C" {
        .tim_irqn      = TMR2_GLOBAL_IRQn, \
        .name          = "timer2",     \
     }
-#endif /* TMR2_CONFIG */  
-#endif /* BSP_USING_HWTMR2 */ 
-  
+#endif /* TMR2_CONFIG */
+#endif /* BSP_USING_HWTMR2 */
+
 #ifdef BSP_USING_HWTMR3
 #ifndef TMR3_CONFIG
 #define TMR3_CONFIG                   \
@@ -47,8 +47,8 @@ extern "C" {
        .tim_irqn      = TMR3_GLOBAL_IRQn, \
        .name          = "timer3",     \
     }
-#endif /* TMR3_CONFIG */  
-#endif /* BSP_USING_HWTMR3 */  
+#endif /* TMR3_CONFIG */
+#endif /* BSP_USING_HWTMR3 */
 
 #ifdef BSP_USING_HWTMR4
 #ifndef TMR4_CONFIG
@@ -58,9 +58,9 @@ extern "C" {
        .tim_irqn      = TMR4_GLOBAL_IRQn, \
        .name          = "timer4",     \
     }
-#endif /* TMR4_CONFIG */  
+#endif /* TMR4_CONFIG */
 #endif /* BSP_USING_HWTMR4 */
-    
+
 #ifdef BSP_USING_HWTMR5
 #ifndef TMR5_CONFIG
 #define TMR5_CONFIG                   \
@@ -69,9 +69,9 @@ extern "C" {
        .tim_irqn      = TMR5_GLOBAL_IRQn, \
        .name          = "timer5",     \
     }
-#endif /* TMR5_CONFIG */  
-#endif /* BSP_USING_HWTMR5 */    
-    
+#endif /* TMR5_CONFIG */
+#endif /* BSP_USING_HWTMR5 */
+
 #ifdef __cplusplus
 }
 #endif

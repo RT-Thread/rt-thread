@@ -15,7 +15,7 @@
 
 /*!
     \brief      lcd peripheral initialize
-    \param[in]  none 
+    \param[in]  none
     \param[out] none
     \retval     none
 */
@@ -37,15 +37,15 @@ void exmc_lcd_init(void)
     gpio_init(GPIOD, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1| GPIO_PIN_8 | GPIO_PIN_9 |
                                                          GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15);
 
-    /* PE7(EXMC_D4), PE8(EXMC_D5), PE9(EXMC_D6), PE10(EXMC_D7), PE11(EXMC_D8), PE12(EXMC_D9), 
+    /* PE7(EXMC_D4), PE8(EXMC_D5), PE9(EXMC_D6), PE10(EXMC_D7), PE11(EXMC_D8), PE12(EXMC_D9),
        PE13(EXMC_D10), PE14(EXMC_D11), PE15(EXMC_D12) */
-    gpio_init(GPIOE, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | 
-                                                         GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | 
+    gpio_init(GPIOE, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 |
+                                                         GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 |
                                                          GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
 
-    /* configure PE2(EXMC_A23) */ 
+    /* configure PE2(EXMC_A23) */
     gpio_init(GPIOE, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_2);
-    
+
     /* configure NOE and NWE */
     gpio_init(GPIOD, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_4 | GPIO_PIN_5);
 
@@ -106,7 +106,7 @@ uint16_t lcd_register_read(uint8_t register_id)
 {
     uint16_t data;
     *(__IO uint16_t *) (BANK0_LCD_C)= register_id;
-    data = *(__IO uint16_t *) (BANK0_LCD_D); 
+    data = *(__IO uint16_t *) (BANK0_LCD_D);
     return  data;
 }
 
@@ -154,13 +154,13 @@ void lcd_gram_write(uint16_t rgb_code)
 uint16_t lcd_gram_read(void)
 {
   uint16_t data;
-    
+
   /* write GRAM register (R22h) */
   *(__IO uint16_t *) (BANK0_LCD_C) = 0x0022;
   /* dummy read (invalid data) */
-  *(__IO uint16_t *) (BANK0_LCD_D); 
+  *(__IO uint16_t *) (BANK0_LCD_D);
 
-  data = *(__IO uint16_t *) (BANK0_LCD_D); 
+  data = *(__IO uint16_t *) (BANK0_LCD_D);
   return data;
 }
 
@@ -219,7 +219,7 @@ void lcd_init(void)
     }else{
         return;
     }
-    
+
     for(i=50000;i>0;i--);
 }
 
@@ -277,16 +277,16 @@ void lcd_point_set(uint16_t x,uint16_t y,uint16_t point)
     \param[in]  x: the row-coordinate
     \param[in]  y: the column-coordinate
     \param[out] none
-    \retval     GRAM value of point 
+    \retval     GRAM value of point
 */
 uint16_t lcd_point_get(uint16_t x,uint16_t y)
 {
     uint16_t data;
-    
+
     if ((x > 240)||(y > 320)){
         return 0;
     }
-    
+
     lcd_cursor_set(x,y);
     data = lcd_gram_read();
 
@@ -410,7 +410,7 @@ void lcd_picture_draw(uint16_t start_x,uint16_t start_y,uint16_t end_x,uint16_t 
     y = start_y;
 
     total = (end_x - start_x + 1) * (end_y - start_y + 1);
-    
+
     for(i = 0; i < total; i ++){
         /* set point according to the specified position and color */
         lcd_point_set(x,y,*picturepointer++);
@@ -441,7 +441,7 @@ void lcd_char_display(uint16_t x,uint16_t y,uint8_t c,char_format_struct c_forma
     uint16_t i = 0, j = 0;
     uint8_t temp_char = 0;
     uint16_t temp_char_16 = 0;
-    
+
     if(CHAR_FONT_8_16 == c_format.font){ /* 8x16 ASCII */
         for (i = 0; i < 16; i++) {
             temp_char = ascii_8x16[((c - 0x20) * 16) + i];

@@ -58,7 +58,7 @@ bool TRACE_ProfilerSetup(void);
  *        for TRACE_ProfilerSetup. If TRACE_ProfilerEnable(false) has been run,
  *        no example project will enable SWO trace.
  * @param[in] enable
- * @note Add "em_msc.c" to build to use this function. 
+ * @note Add "em_msc.c" to build to use this function.
  *****************************************************************************/
 __STATIC_INLINE void TRACE_ProfilerEnable(bool enable)
 {
@@ -69,7 +69,7 @@ __STATIC_INLINE void TRACE_ProfilerEnable(bool enable)
   data = *userpage;
   if(enable)
   {
-    if(data == 0xFFFFFFFF) 
+    if(data == 0xFFFFFFFF)
     {
       return;
     }

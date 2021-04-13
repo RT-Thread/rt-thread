@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 创建7个进程，tid20、tid21、tid22、tid23、tid24、tid25、tid26、tid27、tid28、tid29
  * 各任务优先级分别为20、21、22、23、24、25、26、27、28、29，
  * 其中tid26最先获得锁，tid22不需要使用到互斥锁，其他所有进程均需要使用互斥锁，

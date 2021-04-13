@@ -1,6 +1,6 @@
 /*
  * File      : mbox.h
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -32,7 +32,7 @@ extern volatile unsigned int* mbox;
 /* tags */
 #define MBOX_TAG_SETPOWER       0x28001
 #define MBOX_TAG_SETCLKRATE     0x38002
-#define MBOX_GET_MAC_ADDRESS	0x10003
+#define MBOX_GET_MAC_ADDRESS    0x10003
 #define MBOX_TAG_LAST           0
 
 #define MMIO_BASE       0x3F000000
@@ -47,12 +47,12 @@ extern volatile unsigned int* mbox;
 #define MBOX_FULL       0x80000000
 #define MBOX_EMPTY      0x40000000
 
-#define DEVICE_ID_SD_CARD	0
-#define DEVICE_ID_USB_HCD	3
-#define POWER_STATE_OFF		(0 << 0)
-#define POWER_STATE_ON		(1 << 0)
-#define POWER_STATE_WAIT	(1 << 1)
-#define POWER_STATE_NO_DEVICE	(1 << 1)	// in response
+#define DEVICE_ID_SD_CARD   0
+#define DEVICE_ID_USB_HCD   3
+#define POWER_STATE_OFF     (0 << 0)
+#define POWER_STATE_ON      (1 << 0)
+#define POWER_STATE_WAIT    (1 << 1)
+#define POWER_STATE_NO_DEVICE   (1 << 1)    // in response
 #define MMU_ENABLE 1
 #define MMU_DISABLE 0
 

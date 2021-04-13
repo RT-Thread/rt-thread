@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,12 +7,14 @@
  * Date           Author       Notes
  * 2021-02-11     Meco Man     remove _gettimeofday_r() and _times_r()
  * 2020-02-13     Meco Man     re-implement exit() and abort()
+ * 2020-02-21     Meco Man     improve and beautify syscalls
+ * 2020-02-24     Meco Man     fix bug of _isatty_r()
  */
 
 #include <reent.h>
-#include <sys/errno.h>
-#include <sys/time.h>
+#include <errno.h>
 #include <stdio.h>
+#include <sys/time.h>
 
 #include <rtthread.h>
 
@@ -35,10 +37,18 @@ __errno ()
 #endif
 
 int
+_getpid_r(struct _reent *ptr)
+{
+    return 0;
+}
+
+int
 _close_r(struct _reent *ptr, int fd)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     return close(fd);
 #endif
@@ -77,21 +87,17 @@ _fstat_r(struct _reent *ptr, int fd, struct stat *pstat)
 }
 
 int
-_getpid_r(struct _reent *ptr)
-{
-    return 0;
-}
-
-int
 _isatty_r(struct _reent *ptr, int fd)
 {
-    if (fd >=0 && fd < 3) return 1;
-
-    /* return "not supported" */
-    ptr->_errno = ENOTSUP;
-    return -1;
+    if (fd >=0 && fd < 3)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
-
 int
 _kill_r(struct _reent *ptr, int pid, int sig)
 {
@@ -112,7 +118,9 @@ _off_t
 _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     _off_t rc;
 
@@ -125,7 +133,9 @@ int
 _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -138,7 +148,9 @@ int
 _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -151,7 +163,9 @@ _ssize_t
 _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     _ssize_t rc;
 
@@ -164,7 +178,9 @@ int
 _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -173,18 +189,13 @@ _rename_r(struct _reent *ptr, const char *old, const char *new)
 #endif
 }
 
-void *
-_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
-{
-    /* no use this routine to get memory */
-    return RT_NULL;
-}
-
 int
 _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -197,6 +208,8 @@ int
 _unlink_r(struct _reent *ptr, const char *file)
 {
 #ifndef RT_USING_DFS
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
     return -1;
 #else
     return unlink(file);
@@ -211,11 +224,11 @@ _wait_r(struct _reent *ptr, int *status)
     return -1;
 }
 
-#ifdef RT_USING_DEVICE
 _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
+#ifdef RT_USING_DEVICE
     if (fileno(stdout) == fd)
     {
         rt_device_t console;
@@ -225,7 +238,11 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     }
 
     return 0;
-
+#else
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
+#endif /*RT_USING_DEVICE*/
 #else
     _ssize_t rc;
 
@@ -233,9 +250,8 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     return rc;
 #endif
 }
-#endif
 
-/* Memory routine */
+#ifdef RT_USING_HEAP /* Memory routine */
 void *
 _malloc_r (struct _reent *ptr, size_t size)
 {
@@ -283,8 +299,17 @@ _free_r (struct _reent *ptr, void *addr)
     rt_free (addr);
 }
 
-void
-exit (int status)
+#else
+void *
+_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
+{
+    return RT_NULL;
+}
+#endif /*RT_USING_HEAP*/
+
+/* for exit() and abort() */
+__attribute__ ((noreturn)) void
+_exit (int status)
 {
     extern void __rt_libc_exit(int status);
     __rt_libc_exit(status);
@@ -303,18 +328,6 @@ void __libc_init_array(void)
     /* we not use __libc init_aray to initialize C++ objects */
 }
 
-void abort(void)
-{
-    extern void __rt_libc_abort(void);
-    __rt_libc_abort();
-    while(1);
-}
-
-uid_t getuid(void)
-{
-    return 0;
-}
-
 mode_t umask(mode_t mask)
 {
     return 022;
@@ -326,7 +339,7 @@ int flock(int fd, int operation)
 }
 
 /*
-These functions will be implemented and replaced by the 'common/time.c' file
+These functions are implemented and replaced by the 'common/time.c' file
 int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
 _CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
 */

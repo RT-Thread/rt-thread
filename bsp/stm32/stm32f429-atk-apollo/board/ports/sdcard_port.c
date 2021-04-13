@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-13     balanceTWK   add sdcard port file
+ * 2021-02-18     DavidLin     Fixed the return bug
  */
 
 #include <rtthread.h>
@@ -53,6 +54,7 @@ int stm32_sdcard_mount(void)
     else
     {
         LOG_E("create sd_mount thread err!");
+        return -RT_ERROR;
     }
     return RT_EOK;
 }

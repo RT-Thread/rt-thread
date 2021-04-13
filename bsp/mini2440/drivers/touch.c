@@ -1,17 +1,13 @@
 /*
- * File      : touch.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2010 - 2012, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2010-01-01     Yi.Qiu      first version
  */
- 
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <s3c24x0.h>
@@ -104,7 +100,7 @@ struct rtgui_touch_device
 
     rt_uint16_t width;
     rt_uint16_t height;
-    
+
     rt_bool_t first_down_report;
 };
 static struct rtgui_touch_device *touch = RT_NULL;
@@ -120,7 +116,7 @@ static void report_touch_input(int updown)
     /* set emouse button */
     emouse.button = RTGUI_MOUSE_BUTTON_LEFT;
     emouse.parent.sender = RT_NULL;
-    
+
     if (updown)
     {
         ts.xp = ts.xp / ts.count;
@@ -166,7 +162,7 @@ static void report_touch_input(int updown)
             emouse.button |= RTGUI_MOUSE_BUTTON_DOWN;
         }
         else
-        {   
+        {
             emouse.parent.type = RTGUI_EVENT_MOUSE_MOTION;
             emouse.button = 0;
         }
@@ -174,7 +170,7 @@ static void report_touch_input(int updown)
     else
     {
         emouse.x = touch->x;
-        emouse.y = touch->y;    
+        emouse.y = touch->y;
         emouse.parent.type = RTGUI_EVENT_MOUSE_BUTTON;
         emouse.button |= RTGUI_MOUSE_BUTTON_UP;
         if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
@@ -185,11 +181,11 @@ static void report_touch_input(int updown)
     }
 
     /* rt_kprintf("touch %s: ts.x: %d, ts.y: %d\n", updown? "down" : "up",
-    touch->x, touch->y); */ 
-    
+    touch->x, touch->y); */
+
     /* send event to server */
     if (touch->calibrating != RT_TRUE)
-    {   
+    {
         rtgui_server_post_event((&emouse.parent), sizeof(emouse));
     }
 }
@@ -237,7 +233,7 @@ static void report_touch_input(int updown)
         {
             if (touch->calibrating != RT_TRUE && touch->eventpost_func)
             {
-                touch->eventpost_func(touch->eventpost_param, &touch_event); 
+                touch->eventpost_func(touch->eventpost_param, &touch_event);
             }
         }
     }
@@ -246,7 +242,7 @@ static void report_touch_input(int updown)
         touch_event.x = touch->x;
         touch_event.y = touch->y;
         touch_event.pressed = 0;
-        
+
         if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
         {
             /* callback function */
@@ -254,8 +250,8 @@ static void report_touch_input(int updown)
         }
 
         if (touch->calibrating != RT_TRUE && touch->eventpost_func)
-        {   
-            touch->eventpost_func(touch->eventpost_param, &touch_event); 
+        {
+            touch->eventpost_func(touch->eventpost_param, &touch_event);
         }
     }
 }
@@ -295,7 +291,7 @@ static void s3c2410_adc_stylus_action(void)
 
     data0 = ADCDAT0;
     data1 = ADCDAT1;
-    
+
     ts.xp += data0 & S3C2410_ADCDAT0_XPDATA_MASK;
     ts.yp += data1 & S3C2410_ADCDAT1_YPDATA_MASK;
     ts.count ++;
@@ -336,10 +332,10 @@ static void s3c2410_intc_stylus_updown(void)
 
     /* rt_kprintf("stylus: %s\n", updown? "down" : "up"); */
 
-    if (updown) 
+    if (updown)
     {
         touch_timer_fire(0);
-    }   
+    }
     else
     {
         /* stop timer */
@@ -437,7 +433,7 @@ static rt_err_t rtgui_touch_control(rt_device_t dev, int cmd, void *args)
         /*
             rt_kprintf("min_x = %d, max_x = %d, min_y = %d, max_y = %d\n",
                 touch->min_x, touch->max_x, touch->min_y, touch->max_y);
-        */      
+        */
     }
         break;
 
@@ -480,10 +476,10 @@ int rtgui_touch_hw_init(void)
     touch->parent.user_data = RT_NULL;
 
     device = rt_device_find("lcd");
-    if (device == RT_NULL) 
+    if (device == RT_NULL)
     {
         rt_kprintf("No lcd found\n");
-        return -RT_ERROR; /* no this device */  
+        return -RT_ERROR; /* no this device */
     }
 
     /* get graphic device info */
@@ -497,7 +493,7 @@ int rtgui_touch_hw_init(void)
 
     touch->width = info.width;
     touch->height = info.height;
-    
+
     /* create 1/8 second timer */
     touch->poll_timer = rt_timer_create("touch", touch_timer_fire, RT_NULL,
                                         RT_TICK_PER_SECOND/8, RT_TIMER_FLAG_PERIODIC);

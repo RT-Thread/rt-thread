@@ -15,7 +15,7 @@
 #if defined(BSP_USING_TIMER_CAPTURE)
 
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <drv_sys.h>
 
 /* Private define ---------------------------------------------------------------*/

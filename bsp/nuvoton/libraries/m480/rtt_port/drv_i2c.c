@@ -14,7 +14,7 @@
 
 #ifdef BSP_USING_I2C
 #include <rtdevice.h>
-#include <NuMicro.h>
+#include "NuMicro.h"
 
 /* Private define ---------------------------------------------------------------*/
 #define LOG_TAG         "drv.i2c"

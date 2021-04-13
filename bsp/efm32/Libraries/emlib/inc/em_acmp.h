@@ -173,7 +173,7 @@ typedef struct
    *  power used by the VDD and bandgap references. */
   bool                          lowPowerReferenceEnabled;
 
-  /** Vdd reference value. VDD_SCALED = VDD × VDDLEVEL × 50mV/3.8V.
+  /** Vdd reference value. VDD_SCALED = VDD Ã— VDDLEVEL Ã— 50mV/3.8V.
    *  Valid values are in the range 0-63. */
   uint32_t                      vddLevel;
 
@@ -229,7 +229,7 @@ typedef struct
    *  power used by the VDD and bandgap references. */
   bool                         lowPowerReferenceEnabled;
 
-  /** Vdd reference value. VDD_SCALED = VDD × VDDLEVEL × 50mV/3.8V.
+  /** Vdd reference value. VDD_SCALED = VDD Ã— VDDLEVEL Ã— 50mV/3.8V.
    *  Valid values are in the range 0-63. */
   uint32_t                     vddLevel;
 

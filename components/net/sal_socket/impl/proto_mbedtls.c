@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -59,7 +59,7 @@ static void *mebdtls_socket(int socket)
     {
         tls_free(session);
         session = RT_NULL;
-        
+
         return RT_NULL;
     }
 
@@ -68,7 +68,7 @@ static void *mebdtls_socket(int socket)
     {
         mbedtls_client_close(session);
         return RT_NULL;
-    }  
+    }
     session->server_fd.fd = socket;
 
     return (void *)session;
@@ -89,7 +89,7 @@ int mbedtls_net_send_cb(void *ctx, const unsigned char *buf, size_t len)
     {
         return -1;
     }
-    
+
     pf = (struct sal_proto_family *)sock->netdev->sal_user_data;
 
     /* Register scoket sendto option to TLS send data callback */
@@ -128,7 +128,7 @@ int mbedtls_net_recv_cb( void *ctx, unsigned char *buf, size_t len)
     }
 
     pf = (struct sal_proto_family *)sock->netdev->sal_user_data;
-    
+
     /* Register scoket recvfrom option to TLS recv data callback */
     ret = pf->skt_ops->recvfrom((int) sock->user_data, (void *)buf, len, 0, RT_NULL, RT_NULL);
     if (ret < 0)
@@ -183,7 +183,7 @@ static int mbedtls_connect(void *sock)
         mbedtls_x509_crt_verify_info((char *)session->buffer, session->buffer_len, "  ! ", ret);
         goto __exit;
     }
-    
+
     return ret;
 
 __exit:
@@ -199,27 +199,27 @@ static int mbedtls_closesocket(void *sock)
 {
     struct sal_socket *ssock;
     int socket;
-    
+
     if (sock == RT_NULL)
     {
         return 0;
     }
-    
+
     socket = ((MbedTLSSession *) sock)->server_fd.fd;
     ssock = sal_get_socket(socket);
     if (ssock == RT_NULL)
     {
         return -1;
     }
-    
+
     /* Close TLS client session, and clean user-data in SAL socket */
     mbedtls_client_close((MbedTLSSession *) sock);
     ssock->user_data_tls = RT_NULL;
-    
+
     return 0;
 }
 
-static const struct sal_proto_tls_ops mbedtls_proto_ops= 
+static const struct sal_proto_tls_ops mbedtls_proto_ops=
 {
     RT_NULL,
     mebdtls_socket,

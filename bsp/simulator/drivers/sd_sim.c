@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -125,7 +133,6 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-
 rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
 {
     int size;
@@ -136,6 +143,11 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
     device = &(sd->parent);
 
     lock = rt_mutex_create("lock", RT_IPC_FLAG_FIFO);
+    if (lock == RT_NULL) 
+    {
+        LOG_E("Create mutex in rt_hw_sdcard_init failed!");
+        return -RT_ERROR;
+    }
 
     /* open sd card file, if not exist, then create it  */
     sd->file = fopen(SDCARD_SIM, "rb+");

@@ -1,11 +1,7 @@
 /*
- * File      : ls1b_ram.lds
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -21,25 +17,25 @@ ENTRY(_start)
 SECTIONS
 {
     . = 0x80200000;
-    .text : 
+    .text :
     {
-	start = ABSOLUTE(.);
-	 *(.selfboot);
-	 *(.selfboot_data);
-	. = ALIGN(4);
-	__selfboot_end = .;
-	. = ALIGN(0x1000);
-	__ebase_entry = .;
-     	KEEP(*(.exc_vectors))
-     	__ebase_end = .;
-	 *(.start);
+    start = ABSOLUTE(.);
+     *(.selfboot);
+     *(.selfboot_data);
+    . = ALIGN(4);
+    __selfboot_end = .;
+    . = ALIGN(0x1000);
+    __ebase_entry = .;
+        KEEP(*(.exc_vectors))
+        __ebase_end = .;
+     *(.start);
          *(.text)
          *(.text.*)
          *(.rodata)
          *(.rodata.*)
          *(.rodata1)
          *(.rodata1.*)
-         
+
          /* section information for finsh shell */
          . = ALIGN(4);
          __fsymtab_start = .;
@@ -57,26 +53,26 @@ SECTIONS
           __rt_init_end = .;
          . = ALIGN(4);
     }
-    
-    .eh_frame_hdr : 
-    { 
-         *(.eh_frame_hdr) 
+
+    .eh_frame_hdr :
+    {
+         *(.eh_frame_hdr)
          *(.eh_frame_entry)
     }
     .eh_frame : ONLY_IF_RO { KEEP (*(.eh_frame)) }
 
     . = ALIGN(4);
-    .data : 
+    .data :
     {
          *(.data)
          *(.data.*)
-        
+
          *(.data1)
          *(.data1.*)
-         
+
          . = ALIGN(8);
          _gp = ABSOLUTE(.);     /* Base of small data */
-         
+
          *(.sdata)
          *(.sdata.*)
     }
@@ -90,7 +86,7 @@ SECTIONS
         _system_stack = .;
     }
 
-    .sbss : 
+    .sbss :
     {
         __bss_start = .;
         *(.sbss)

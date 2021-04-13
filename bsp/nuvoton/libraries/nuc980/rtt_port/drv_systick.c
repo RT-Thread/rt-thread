@@ -49,13 +49,13 @@ void rt_hw_systick_init(void)
     ETIMER_Start(USE_TIMER);
 } /* rt_hw_systick_init */
 
-void nu_systick_udelay(uint32_t delay_us)
+void rt_hw_us_delay(rt_uint32_t us)
 {
     rt_uint32_t ticks;
     rt_uint32_t told, tnow, tcnt = 0;
     rt_uint32_t cmp = ETIMER_GetCompareData(USE_TIMER);
 
-    ticks = delay_us * cmp / (1000000 / RT_TICK_PER_SECOND);
+    ticks = us * cmp / (1000000 / RT_TICK_PER_SECOND);
     told = ETIMER_GetCounter(USE_TIMER);
     while (1)
     {
@@ -82,5 +82,4 @@ void nu_systick_udelay(uint32_t delay_us)
             }
         }
     }
-
-} /* nu_systick_udelay */
+} /* rt_hw_us_delay */

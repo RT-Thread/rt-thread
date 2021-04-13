@@ -1,11 +1,7 @@
 /*
- * File      : vectors.s34
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -24,7 +20,7 @@
     EXTERN  rt_hw_timer_handler
     EXTERN  rt_hw_uart0_receive_handler
     EXTERN  os_context_switch
-    
+
     PUBLIC  RelocatableVectTbl
 
     RSEG    INTVEC:NOROOT

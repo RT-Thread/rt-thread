@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -179,7 +179,7 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-    config.bufsz	 = RT_SERIAL_RB_BUFSZ;
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial0.ops    = &lpc_uart_ops;
     serial0.config = config;
@@ -230,7 +230,7 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-    config.bufsz	 = RT_SERIAL_RB_BUFSZ;
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial2.ops    = &lpc_uart_ops;
     serial2.config = config;
@@ -282,7 +282,7 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-    config.bufsz	 = RT_SERIAL_RB_BUFSZ;
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     serial3.ops    = &lpc_uart_ops;
     serial3.config = config;

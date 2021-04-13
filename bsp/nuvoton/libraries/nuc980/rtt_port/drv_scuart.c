@@ -12,12 +12,9 @@
 
 #include <rtconfig.h>
 
-#define BSP_USING_SCUART
-#define BSP_USING_SCUART0
-
 #if defined(BSP_USING_SCUART)
 
-#include <NuMicro.h>
+#include "NuMicro.h"
 #include <rtdevice.h>
 #include <rthw.h>
 #include <drv_sys.h>
