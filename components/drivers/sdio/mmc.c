@@ -337,7 +337,7 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 
     for(trys = 0; trys < 5; trys++){
         mmcsd_set_bus_width(host, bus_width);
-        mmcsd_delay_ms(10); 
+        mmcsd_delay_ms(10);
         err = mmc_compare_ext_csds(card, ext_csd, bus_width);
         if(!err)
             break;
