@@ -20,6 +20,8 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f103-onenet-nbiot](stm32f103-onenet-nbiot) | STM32F103 OneNET NB-IoT 开发板 |
 | [stm32f103-yf-ufun](stm32f103-yf-ufun) | STM32F103 yf-ufun 开发板 |
 | [stm32f107-uc-eval](stm32f107-uc-eval) | uC/Eval STM32F107 评估板（中国版） |
+| **F2 系列** |  |
+| [stm32f207-st-nucleo](stm32f207-st-nucleo) | ST 官方 STM32F207-nucleo 开发板 |
 | **F4 系列** |  |
 | [stm32f401-st-nucleo](stm32f401-st-nucleo) | ST 官方 STM32F401 Nucleo-64 开发板 |
 | [stm32f405-smdz-breadfruit](stm32f405-smdz-breadfruit) | 三木电子 SM1432F405 开发板 |
