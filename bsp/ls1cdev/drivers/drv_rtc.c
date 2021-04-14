@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date			Author		Notes
+ * Date         Author      Notes
  * 2018-05-05   sundm75     first version
  */
 
@@ -20,29 +20,29 @@
 
 #if defined(RT_USING_RTC)
 #ifdef RT_RTC_DEBUG
-#define rtc_debug(format,args...) 			rt_kprintf(format, ##args)
+#define rtc_debug(format,args...)           rt_kprintf(format, ##args)
 #else
 #define rtc_debug(format,args...)
 #endif
 
 static struct rt_device rtc;
 
-RTC_TypeDef * RTC_Handler;  
+RTC_TypeDef * RTC_Handler;
 
-static time_t get_timestamp(void) 
+static time_t get_timestamp(void)
 {
-    struct tm tm_new = {0}; 
-    RTC_TimeTypeDef rtcDate; 
-    
-    RTC_GetTime(RTC_Handler, &rtcDate); 
-    
-    tm_new.tm_sec  = rtcDate.Seconds; 
-    tm_new.tm_min  = rtcDate.Minutes; 
+    struct tm tm_new = {0};
+    RTC_TimeTypeDef rtcDate;
+
+    RTC_GetTime(RTC_Handler, &rtcDate);
+
+    tm_new.tm_sec  = rtcDate.Seconds;
+    tm_new.tm_min  = rtcDate.Minutes;
     tm_new.tm_hour = rtcDate.Hours;
-    
-    tm_new.tm_mday = rtcDate.Date; 
-    tm_new.tm_mon  = rtcDate.Month- 1; 
-    tm_new.tm_year = rtcDate.Year + 2000 - 1900; 
+
+    tm_new.tm_mday = rtcDate.Date;
+    tm_new.tm_mon  = rtcDate.Month- 1;
+    tm_new.tm_year = rtcDate.Year + 2000 - 1900;
 
     return mktime(&tm_new);
 }
@@ -50,26 +50,26 @@ static time_t get_timestamp(void)
 static int set_timestamp(time_t timestamp)
 {
     struct tm *p_tm;
-    RTC_TimeTypeDef rtcDate; 
-    
-    p_tm = localtime(&timestamp);
-    
-    rtcDate.Seconds= p_tm->tm_sec ; 
-    rtcDate.Minutes= p_tm->tm_min ; 
-    rtcDate.Hours= p_tm->tm_hour; 
+    RTC_TimeTypeDef rtcDate;
 
-    rtcDate.Date= p_tm->tm_mday; 
-    rtcDate.Month= p_tm->tm_mon  + 1;  
-    rtcDate.Year= p_tm->tm_year + 1900 - 2000; 
-    
-    RTC_SetTime(RTC_Handler, &rtcDate); 
+    p_tm = localtime(&timestamp);
+
+    rtcDate.Seconds= p_tm->tm_sec ;
+    rtcDate.Minutes= p_tm->tm_min ;
+    rtcDate.Hours= p_tm->tm_hour;
+
+    rtcDate.Date= p_tm->tm_mday;
+    rtcDate.Month= p_tm->tm_mon  + 1;
+    rtcDate.Year= p_tm->tm_year + 1900 - 2000;
+
+    RTC_SetTime(RTC_Handler, &rtcDate);
     rt_kprintf("\r\nrtcDate is %d.%d.%d - %d:%d:%d",rtcDate.Year, rtcDate.Month, rtcDate.Date, rtcDate.Hours, rtcDate.Minutes, rtcDate.Seconds);
     return RT_EOK;
 }
 
 rt_uint8_t RTC_Init(void)
-{      
-    RTC_Handler = RTC; 
+{
+    RTC_Handler = RTC;
     return 0;
 }
 
@@ -89,7 +89,7 @@ static rt_size_t rt_rtc_read(
     void*           buffer,
     rt_size_t       size)
 {
-    
+
     return 0;
 }
 
@@ -108,7 +108,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
-       
+
         *(rt_uint32_t *)args = get_timestamp();
         rtc_debug("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
         break;

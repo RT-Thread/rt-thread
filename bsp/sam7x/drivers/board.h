@@ -19,9 +19,9 @@
 #include <rtthread.h>
 
 
-#define MCK		48054857
-#define BR    	115200			/* Baud Rate */
-#define BRD  	(MCK/16/BR)		/* Baud Rate Divisor */
+#define MCK     48054857
+#define BR      115200          /* Baud Rate */
+#define BRD     (MCK/16/BR)     /* Baud Rate Divisor */
 
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);

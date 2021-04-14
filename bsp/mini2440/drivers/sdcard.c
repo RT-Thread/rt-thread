@@ -286,15 +286,15 @@ static int sd_ocr(void)
 
 rt_err_t sd_cmd8(void)
 {
-    SDICARG = 0x000001AA; 
+    SDICARG = 0x000001AA;
     SDICCON = (0x1<<9) | (0x1<<8) | 0x48; //sht_resp, wait_resp, start
     if (sd_cmd_end(8, 1) == RT_ERROR)
         return RT_ERROR;
     SDICSTA = 0xa00;
-    
+
     if ((SDIRSP0&0x1aa) == 0x1aa)
-        return RT_EOK; 
-    else 
+        return RT_EOK;
+    else
         return RT_ERROR;
 }
 

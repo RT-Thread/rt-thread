@@ -101,7 +101,7 @@ void netif_pre_sleep_processing(void)
 }
 
 unsigned char *rltk_wlan_get_ip(int idx)
-{   
+{
     struct ameba_wifi *wifi;
 
     wifi = rthw_wifi_get_dev(idx);
@@ -116,7 +116,7 @@ unsigned char *rltk_wlan_get_ip(int idx)
 
 int netif_is_valid_IP(int idx, unsigned char *ip_dest)
 {
-    LOG_D("F:%s L:%d is run ip: %d:%d:%d:%d", __FUNCTION__, __LINE__, 
+    LOG_D("F:%s L:%d is run ip: %d:%d:%d:%d", __FUNCTION__, __LINE__,
         ip_dest[0], ip_dest[1], ip_dest[2], ip_dest[3]);
     return 1;
 }
@@ -362,9 +362,9 @@ static rt_err_t rthw_wlan_join                 (struct rt_wlan_device *wlan, str
             ssid = &sta_info->ssid.val[0];
         if (sta_info->key.len > 0)
             key = &sta_info->key.val[0];
-            LOG_D("bssid connect bssid: %02x:%02x:%02x:%02x:%02x:%02x ssid:%s ssid_len:%d key:%s key_len%d", 
+            LOG_D("bssid connect bssid: %02x:%02x:%02x:%02x:%02x:%02x ssid:%s ssid_len:%d key:%s key_len%d",
             sta_info->bssid[0],sta_info->bssid[1],sta_info->bssid[2],sta_info->bssid[3],sta_info->bssid[4],sta_info->bssid[5],
-            ssid, 
+            ssid,
             sta_info->ssid.len,
             key,
             sta_info->key.len
@@ -594,7 +594,7 @@ exit:
     return RT_EOK;
 }
 
-static const struct rt_wlan_dev_ops ops = 
+static const struct rt_wlan_dev_ops ops =
 {
     .wlan_init             =     rthw_wlan_init           ,
     .wlan_mode             =     rthw_wlan_mode           ,

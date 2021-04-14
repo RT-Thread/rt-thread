@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -246,9 +246,9 @@ int gettimeofday(struct timeval *tp, void *ignore)
 #if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
 #pragma module_name = "?time"
 #if _DLIB_TIME_USES_64
-time_t __time64(time_t *t) 
+time_t __time64(time_t *t)
 #else
-time_t __time32(time_t *t) 
+time_t __time32(time_t *t)
 #endif
 #else
 time_t time(time_t *t)

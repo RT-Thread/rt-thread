@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,13 +29,13 @@
 
  /****************************************************************************
  * #include section
- *	add #include here if any
+ *  add #include here if any
  ***************************************************************************/
 #include "fh_def.h"
 
  /****************************************************************************
  * #define section
- *	add constant #define here if any
+ *  add constant #define here if any
  ***************************************************************************/
 
 #define UART_RBR RBRTHRDLL
@@ -120,53 +120,53 @@
 #define UART_IIR_FIFOSE  (0x03 << 6)
 
 //uart baudrate cofig
-//#define 	UART_CLOCK_FREQ   	(27000000)   //27MHZ
+//#define   UART_CLOCK_FREQ     (27000000)   //27MHZ
 //
-//#define DIV(n)	(((UART_CLOCK_FREQ/(n))+8)/16)
+//#define DIV(n)    (((UART_CLOCK_FREQ/(n))+8)/16)
 
 
  /****************************************************************************
  * ADT section
- *	add Abstract Data Type definition here
+ *  add Abstract Data Type definition here
  ***************************************************************************/
 
 
 
 
 typedef struct {
-	RwReg RBRTHRDLL; /* UART_RBR, UART_THR, UART_DLL */
-	RwReg DLHIER;    /* UART_DLH, UART_IER */
-	RwReg IIRFCR;    /* UART_IIR, UART_FCR */
-	RwReg UART_LCR; /*(0x000c) */
-	RwReg UART_MCR; /*(0x0010) */
-	RwReg UART_LSR; /*(0x0014) */
-	RwReg UART_MSR; /*(0x0018) */
-	RwReg UART_SCR; /*(0x001c) */
-	RwReg reserved[20];
-	RwReg UART_FAR; /* (0x0070) */
-	RwReg UART_TFR; /* (0x0074) */
-	RwReg UART_RFW; /* (0x0078) */
-	RwReg UART_USR; /* (0x007c) */
-	RwReg UART_TFL; /* (0x0080) */
-	RwReg UART_RFL; /* (0x0084) */
-	RwReg UART_SRR; /* (0x0088) */
-	RwReg reserved1[3];
-	RwReg UART_SFE;  /* (0x0098) */
-	RwReg UART_SRT;  /* (0x009c) */
-	RwReg UART_STET; /* (0x00a0) */
-	RwReg UART_HTX;  /* (0x00a4) */
-	RwReg UART_DMASA; /* (0x00a8) */
-	RwReg reserved2[18];
-	RwReg UART_CPR;  /* (0x00f4) */
-	RwReg UART_UCV;  /* (0x00f8) */
-	RwReg UART_CTR;  /* (0x00fc) */
+    RwReg RBRTHRDLL; /* UART_RBR, UART_THR, UART_DLL */
+    RwReg DLHIER;    /* UART_DLH, UART_IER */
+    RwReg IIRFCR;    /* UART_IIR, UART_FCR */
+    RwReg UART_LCR; /*(0x000c) */
+    RwReg UART_MCR; /*(0x0010) */
+    RwReg UART_LSR; /*(0x0014) */
+    RwReg UART_MSR; /*(0x0018) */
+    RwReg UART_SCR; /*(0x001c) */
+    RwReg reserved[20];
+    RwReg UART_FAR; /* (0x0070) */
+    RwReg UART_TFR; /* (0x0074) */
+    RwReg UART_RFW; /* (0x0078) */
+    RwReg UART_USR; /* (0x007c) */
+    RwReg UART_TFL; /* (0x0080) */
+    RwReg UART_RFL; /* (0x0084) */
+    RwReg UART_SRR; /* (0x0088) */
+    RwReg reserved1[3];
+    RwReg UART_SFE;  /* (0x0098) */
+    RwReg UART_SRT;  /* (0x009c) */
+    RwReg UART_STET; /* (0x00a0) */
+    RwReg UART_HTX;  /* (0x00a4) */
+    RwReg UART_DMASA; /* (0x00a8) */
+    RwReg reserved2[18];
+    RwReg UART_CPR;  /* (0x00f4) */
+    RwReg UART_UCV;  /* (0x00f8) */
+    RwReg UART_CTR;  /* (0x00fc) */
 }uart;
 
 
 
 struct fh_uart {
-	uart *uart_port;
-	int irq;
+    uart *uart_port;
+    int irq;
 };
 
 
@@ -174,34 +174,34 @@ struct fh_uart {
 
 
 enum data_bits {
-	UART_DATA_BIT5 = 0,
-	UART_DATA_BIT6 = 1,
-	UART_DATA_BIT7 = 2,
-	UART_DATA_BIT8 = 3
+    UART_DATA_BIT5 = 0,
+    UART_DATA_BIT6 = 1,
+    UART_DATA_BIT7 = 2,
+    UART_DATA_BIT8 = 3
 };
 
 enum stop_bits {
-	UART_STOP_BIT1   = 0,
-	UART_STOP_BIT1_5 = 1,
-	UART_STOP_BIT2   = 2
+    UART_STOP_BIT1   = 0,
+    UART_STOP_BIT1_5 = 1,
+    UART_STOP_BIT2   = 2
 };
 
 enum parity {
-	UART_PARITY_NONE = 0,
-	UART_PARITY_EVEN = 1,
-	UART_PARITY_ODD  = 2,
-	UART_PARITY_ST   = 3 /* Stick Parity */
+    UART_PARITY_NONE = 0,
+    UART_PARITY_EVEN = 1,
+    UART_PARITY_ODD  = 2,
+    UART_PARITY_ST   = 3 /* Stick Parity */
 };
 
 
-#define 	UART_CLOCK_FREQ   	(30000000)   //30MHZ
+#define     UART_CLOCK_FREQ     (30000000)   //30MHZ
 typedef enum enum_uart_baudrate{
-	BAUDRATE_9600 	= (((UART_CLOCK_FREQ/9600)+8)/16),
-	BAUDRATE_19200 	= (((UART_CLOCK_FREQ/19200)+8)/16),
-	BAUDRATE_38400  = (((UART_CLOCK_FREQ/38400)+8)/16),
-	BAUDRATE_57600  = (((UART_CLOCK_FREQ/57600)+8)/16),
-	BAUDRATE_115200 = (((UART_CLOCK_FREQ/115200)+8)/16),
-	BAUDRATE_194000 = (((UART_CLOCK_FREQ/194000)+8)/16),
+    BAUDRATE_9600   = (((UART_CLOCK_FREQ/9600)+8)/16),
+    BAUDRATE_19200  = (((UART_CLOCK_FREQ/19200)+8)/16),
+    BAUDRATE_38400  = (((UART_CLOCK_FREQ/38400)+8)/16),
+    BAUDRATE_57600  = (((UART_CLOCK_FREQ/57600)+8)/16),
+    BAUDRATE_115200 = (((UART_CLOCK_FREQ/115200)+8)/16),
+    BAUDRATE_194000 = (((UART_CLOCK_FREQ/194000)+8)/16),
 }uart_baudrate_e;
 
 /****************************************************************************
@@ -213,8 +213,8 @@ extern int uart_init(uart *port);
 extern UINT32 uart_get_status(uart *port);
 
 extern void uart_configure(uart *port, enum data_bits data_bit,
-					enum stop_bits stop_bit, enum parity parity,
-					UINT32 buard_rate, UINT32 uart_clk);
+                    enum stop_bits stop_bit, enum parity parity,
+                    UINT32 buard_rate, UINT32 uart_clk);
 
 
 extern int uart_enable_irq(uart *port, UINT32 mode);
@@ -235,7 +235,7 @@ extern void uart_set_fifo_mode(uart *port, UINT32 fifo_mode);
 
 /****************************************************************************
 *  section
-*	add function prototype here if any
+*   add function prototype here if any
 ***************************************************************************/
 
 

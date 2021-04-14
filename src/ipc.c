@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -119,7 +119,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
         break;
 
     default:
-        break;  
+        break;
     }
 
     return RT_EOK;
@@ -912,7 +912,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                 rt_hw_interrupt_enable(temp); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
-            
+
             /* clear owner */
             mutex->owner             = RT_NULL;
             mutex->original_priority = 0xff;
@@ -1233,11 +1233,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-            
-        /* fill thread event info */            
+
+        /* fill thread event info */
         thread->event_set = (event->set & set);
         thread->event_info = option;
-        
+
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
@@ -1603,7 +1603,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     ++ mb->in_offset;
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
-    
+
     if(mb->entry < RT_MB_ENTRY_MAX)
     {
         /* increase message entry */
@@ -1614,7 +1614,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
@@ -2298,7 +2298,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {

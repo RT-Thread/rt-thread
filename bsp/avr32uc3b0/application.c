@@ -52,7 +52,7 @@ int rt_application_init()
 {
     /* create led1 thread */
     rt_thread_init(&thread_led1,
-				   "led1",
+                   "led1",
                    rt_thread_entry_led1,
                    RT_NULL,
                    &thread_led1_stack[0],

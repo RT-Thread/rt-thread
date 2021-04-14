@@ -20,10 +20,10 @@
 
 
 #define DBG_TAG  "MMC"
-// #define DBG_LVL DBG_LOG    
-// #define DBG_LVL DBG_INFO   
+// #define DBG_LVL DBG_LOG
+// #define DBG_LVL DBG_INFO
 #define DBG_LVL DBG_WARNING
-// #define DBG_LVL DBG_ERROR  
+// #define DBG_LVL DBG_ERROR
 #include <rtdbg.h>
 
 #ifdef RT_USING_SDIO
@@ -33,12 +33,12 @@
 struct mmc_xfe_des
 {
     rt_uint32_t size;    /* block size  */
-	rt_uint32_t num;     /* block num   */
-	rt_uint8_t *buff;    /* buff addr   */
-	rt_uint32_t flag;    /* write or read or stream */
-#define MMC_DATA_WRITE	(1 << 0)
-#define MMC_DATA_READ	(1 << 1)
-#define MMC_DATA_STREAM	(1 << 2)
+    rt_uint32_t num;     /* block num   */
+    rt_uint8_t *buff;    /* buff addr   */
+    rt_uint32_t flag;    /* write or read or stream */
+#define MMC_DATA_WRITE  (1 << 0)
+#define MMC_DATA_READ   (1 << 1)
+#define MMC_DATA_STREAM (1 << 2)
 };
 
 struct mmc_flag
@@ -57,7 +57,7 @@ struct sdio_drv
     tina_mmc_t mmc_des;
     rt_uint8_t *mmc_buf;
     rt_uint8_t usedma;
-    
+
 };
 
 #ifdef CONFIG_MMC_USE_DMA
@@ -122,7 +122,7 @@ static int mmc_update_clk(tina_mmc_t mmc)
     mmc->risr_reg = mmc->risr_reg;
     return RT_EOK;
 }
-    
+
 static rt_err_t mmc_trans_data_by_dma(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
 {
     ALIGN(32) static struct mmc_des_v4p1 pdes[128];  // mast ALIGN(32)
@@ -131,7 +131,7 @@ static rt_err_t mmc_trans_data_by_dma(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
     unsigned length = xfe->size * xfe->num;
     unsigned buff_frag_num = length >> SDXC_DES_NUM_SHIFT;
     unsigned remain = length & (SDXC_DES_BUFFER_MAX_LEN - 1);
-    
+
     if (remain)
     {
         buff_frag_num ++;
@@ -142,7 +142,7 @@ static rt_err_t mmc_trans_data_by_dma(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
     }
     memset(pdes, 0, sizeof(pdes));
     mmu_clean_dcache((rt_uint32_t)(xfe->buff), length);
-    for (i = 0, des_idx = 0; i < buff_frag_num; i++, des_idx++) 
+    for (i = 0, des_idx = 0; i < buff_frag_num; i++, des_idx++)
     {
         // memset((void*)&pdes[des_idx], 0, sizeof(struct mmc_v4p1));
         pdes[des_idx].des_chain = 1;
@@ -168,8 +168,8 @@ static rt_err_t mmc_trans_data_by_dma(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
             pdes[des_idx].last_des = 1;
             pdes[des_idx].end_of_ring = 1;
             pdes[des_idx].buf_addr_ptr2 = 0;
-        } 
-        else 
+        }
+        else
         {
             pdes[des_idx].buf_addr_ptr2 = (unsigned long)&pdes[des_idx+1];
         }
@@ -203,7 +203,7 @@ static rt_err_t mmc_trans_data_by_dma(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
     mmc->dmac_reg = (1 << 1) | (1 << 7);        /* idma on              */
     rval = mmc->idie_reg & (~3);
     if (xfe->flag == MMC_DATA_WRITE)
-        rval |= (1 << 0);        
+        rval |= (1 << 0);
     else
         rval |= (1 << 1);
     mmc->idie_reg = rval;
@@ -222,7 +222,7 @@ static rt_err_t mmc_trans_data_by_cpu(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
 
     if (xfe->flag == MMC_DATA_WRITE)
     {
-        for (i = 0; i < (byte_cnt >> 2); i++) 
+        for (i = 0; i < (byte_cnt >> 2); i++)
         {
             while(--timeout && (mmc->star_reg & (1 << 3)));
 
@@ -237,7 +237,7 @@ static rt_err_t mmc_trans_data_by_cpu(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
     }
     else
     {
-        for (i = 0; i < (byte_cnt >> 2); i++) 
+        for (i = 0; i < (byte_cnt >> 2); i++)
         {
             while(--timeout && (mmc->star_reg & (1 << 2)));
 
@@ -276,7 +276,7 @@ static rt_err_t mmc_config_clock(tina_mmc_t mmc, int clk)
     {
         mmc_set_clk(SDMMC1, clk);
     }
-    
+
     /* Re-enable card clock */
     rval = mmc->ckcr_reg;
     rval |=  (0x1 << 16); //(3 << 16);
@@ -369,7 +369,7 @@ static int mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_cmd *cmd)
         cmdval |= (1 << 7);
     if ((resp_type(cmd) != RESP_R3) && (resp_type(cmd) != RESP_R4))
         cmdval |= (1 << 8);
-    
+
     if (data)
     {
         cmdval |= (1 << 9) | (1 << 13);
@@ -592,7 +592,7 @@ static void sdio_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
 
     memset(&sdio->flag, 0, sizeof(struct mmc_flag));
     mmc_send_cmd(host, req->cmd);
-    
+
     return;
 }
 

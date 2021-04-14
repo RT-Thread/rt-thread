@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -59,17 +59,17 @@ static rt_err_t get(struct rt_device_pwm *device, struct rt_pwm_configuration *c
 {
     rt_err_t result = RT_EOK;
     struct rt_ls1c_pwm *ls1c_pwm_device = (struct rt_ls1c_pwm *)device;
-    
+
     if (configuration->channel > (PWM_CHANNEL_MAX - 1))
     {
         result = -RT_EIO;
         goto _exit;
     }
-    
+
     configuration->period = ls1c_pwm_device->period[configuration->channel];
     configuration->pulse = ls1c_pwm_device->pulse[configuration->channel];
     rt_kprintf("drv_pwm.c get channel %d: period: %d, pulse: %d\n", configuration->channel, configuration->period, configuration->pulse);
-    
+
 _exit:
     return result;
 }
@@ -84,7 +84,7 @@ static rt_err_t control(struct rt_device_pwm *device, int cmd, void *arg)
     if (cmd == PWM_CMD_ENABLE)
     {
         rt_kprintf("PWM_CMD_ENABLE\n");
-        
+
         pwm_info_t pwm_info;
         switch ( configuration->channel)
         {
@@ -107,9 +107,9 @@ static rt_err_t control(struct rt_device_pwm *device, int cmd, void *arg)
         default:
             break;
         }
-        pwm_info.mode = PWM_MODE_NORMAL;         
-        pwm_info.duty =  ( (float)configuration->pulse ) / ((float)configuration->period ); 
-        pwm_info.period_ns = configuration->period;       
+        pwm_info.mode = PWM_MODE_NORMAL;
+        pwm_info.duty =  ( (float)configuration->pulse ) / ((float)configuration->period );
+        pwm_info.period_ns = configuration->period;
         pwm_init(&pwm_info);
         pwm_enable(&pwm_info);
     }
@@ -138,9 +138,9 @@ static rt_err_t control(struct rt_device_pwm *device, int cmd, void *arg)
         default:
             break;
         }
-        pwm_info.mode = PWM_MODE_NORMAL;            
-        pwm_info.duty =  ( (float)configuration->pulse ) / ((float)configuration->period ); 
-        pwm_info.period_ns = configuration->period;          
+        pwm_info.mode = PWM_MODE_NORMAL;
+        pwm_info.duty =  ( (float)configuration->pulse ) / ((float)configuration->period );
+        pwm_info.period_ns = configuration->period;
         pwm_init(&pwm_info);
         pwm_disable(&pwm_info);
     }

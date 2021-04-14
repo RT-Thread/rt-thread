@@ -29,7 +29,7 @@ void thread_led1_entry(void* parameter)
 
 static void thread_led2_entry(void* parameter)
 {
-	// configure PORTD.RD2 = output
+    // configure PORTD.RD2 = output
     mPORTDSetPinsDigitalOut(BIT_2);
 
     while (1)

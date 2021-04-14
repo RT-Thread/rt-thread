@@ -23,7 +23,7 @@ void rt_init_thread_entry(void *parameter)
     platform_init();
     mnt_init();
 
-	platform_post_init();
+    platform_post_init();
 
 #if defined(PKG_USING_GUIENGINE) && defined(GUIENGINE_USING_DEMO)
     {

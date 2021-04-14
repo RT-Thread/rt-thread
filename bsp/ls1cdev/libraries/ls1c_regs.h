@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -83,8 +83,8 @@
 #define LS1C_REG_BASE_PWM3                  (0xbfe5c030)
 
 //CAN基地址
-#define  LS1C_REG_BASE_CAN0				    (0xbfe50000)
-#define  LS1C_REG_BASE_CAN1					(0xbfe54000)
+#define  LS1C_REG_BASE_CAN0                 (0xbfe50000)
+#define  LS1C_REG_BASE_CAN1                 (0xbfe54000)
 
 // 中断配置寄存器
 #define LS1C_INT0_SR                        (0xbfd01040)

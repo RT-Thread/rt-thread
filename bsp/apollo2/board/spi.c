@@ -211,7 +211,7 @@ static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message* mes
                 u32TransferSize = 64;
                 am_hal_iom_spi_write(am_spi_bus->u32Module, am_spi_cs->chip_select,
                                     (uint32_t *)send_ptr, u32TransferSize, AM_HAL_IOM_RAW);
-        
+
             }
             else
             {
@@ -243,7 +243,7 @@ static const struct rt_spi_ops am_spi_ops =
 };
 
 #ifdef RT_USING_SPI0
-static struct am_spi_bus am_spi_bus_0 = 
+static struct am_spi_bus am_spi_bus_0 =
 {
     {0},
     AM_SPI0_IOM_INST

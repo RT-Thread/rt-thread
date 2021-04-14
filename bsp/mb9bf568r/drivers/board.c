@@ -60,7 +60,7 @@ rt_uint32_t rt_hw_tick_get_microsecond(void)
     rt_tick_t tick;
     rt_uint32_t value;
 
-#define TICK_US	(1000000/RT_TICK_PER_SECOND)
+#define TICK_US (1000000/RT_TICK_PER_SECOND)
 
     tick = rt_tick_get();
     value = tick * TICK_US + (SysTick->LOAD - SysTick->VAL) * TICK_US / SysTick->LOAD;

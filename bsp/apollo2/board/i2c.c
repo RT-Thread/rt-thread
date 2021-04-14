@@ -119,7 +119,7 @@ static const struct rt_i2c_bus_device_ops am_i2c_ops =
 };
 
 #ifdef RT_USING_I2C0
-static struct am_i2c_bus am_i2c_bus_0 = 
+static struct am_i2c_bus am_i2c_bus_0 =
 {
     {0},
     AM_I2C0_IOM_INST
@@ -127,7 +127,7 @@ static struct am_i2c_bus am_i2c_bus_0 =
 #endif
 
 #ifdef RT_USING_I2C1
-static struct am_i2c_bus am_i2c_bus_1 = 
+static struct am_i2c_bus am_i2c_bus_1 =
 {
     {1},
     AM_I2C1_IOM_INST
@@ -135,7 +135,7 @@ static struct am_i2c_bus am_i2c_bus_1 =
 #endif
 
 #ifdef RT_USING_I2C2
-static struct am_i2c_bus am_i2c_bus_2 = 
+static struct am_i2c_bus am_i2c_bus_2 =
 {
     {2},
     AM_I2C2_IOM_INST
@@ -143,7 +143,7 @@ static struct am_i2c_bus am_i2c_bus_2 =
 #endif
 
 #ifdef RT_USING_I2C3
-static struct am_i2c_bus am_i2c_bus_3 = 
+static struct am_i2c_bus am_i2c_bus_3 =
 {
     {3},
     AM_I2C3_IOM_INST
@@ -151,7 +151,7 @@ static struct am_i2c_bus am_i2c_bus_3 =
 #endif
 
 #ifdef RT_USING_I2C4
-static struct am_i2c_bus am_i2c_bus_4 = 
+static struct am_i2c_bus am_i2c_bus_4 =
 {
     {4},
     AM_I2C4_IOM_INST

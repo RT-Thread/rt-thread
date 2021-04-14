@@ -36,16 +36,16 @@ typedef struct
     volatile rt_uint32_t ISO7816STATUS[4];
 } HW_USART_TypeDef;
 
-#define USART0	((HW_USART_TypeDef *)UART0_BASE)
-#define USART1	((HW_USART_TypeDef *)UART1_BASE)
-#define USART2	((HW_USART_TypeDef *)UART2_BASE)
-#define USART3	((HW_USART_TypeDef *)UART3_BASE)
-#define USART4	((HW_USART_TypeDef *)UART4_BASE)
-#define USART5	((HW_USART_TypeDef *)UART5_BASE)
-#define USART6	((HW_USART_TypeDef *)UART6_BASE)
-#define USART7	((HW_USART_TypeDef *)UART7_BASE)
-#define USART8	((HW_USART_TypeDef *)UART8_BASE)
-#define USART9	((HW_USART_TypeDef *)UART9_BASE)
+#define USART0  ((HW_USART_TypeDef *)UART0_BASE)
+#define USART1  ((HW_USART_TypeDef *)UART1_BASE)
+#define USART2  ((HW_USART_TypeDef *)UART2_BASE)
+#define USART3  ((HW_USART_TypeDef *)UART3_BASE)
+#define USART4  ((HW_USART_TypeDef *)UART4_BASE)
+#define USART5  ((HW_USART_TypeDef *)UART5_BASE)
+#define USART6  ((HW_USART_TypeDef *)UART6_BASE)
+#define USART7  ((HW_USART_TypeDef *)UART7_BASE)
+#define USART8  ((HW_USART_TypeDef *)UART8_BASE)
+#define USART9  ((HW_USART_TypeDef *)UART9_BASE)
 
 
 #define ASM_UART_INTR_RXIS   (1UL << 4)
@@ -91,7 +91,7 @@ typedef struct
 extern void Hw_UartDisable(HW_USART_TypeDef* uartBase);
 extern void Hw_UartEnable(HW_USART_TypeDef* uartBase);
 extern void Hw_UartReset(HW_USART_TypeDef* uartBase);
-extern void Hw_UartConfig(HW_USART_TypeDef* uartBase, int baudRate, 
+extern void Hw_UartConfig(HW_USART_TypeDef* uartBase, int baudRate,
                           int dataBits, int stopBits, int parity);
 extern void Hw_UartInit(int index);
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,15 +23,15 @@ unsigned char  set_reset_mode(CAN_TypeDef* CANx)
 
   /* 关闭中断 */
   CANx->IER = 0x00;
-  
+
   for (i = 0; i < 100; i++)
   {
     if((status & CAN_Mode_RM) == CAN_Mode_RM)
         return 1;
-  
+
     /* 设置复位*/
     CANx->MOD |=  ((unsigned char)CAN_Mode_RM);
-  
+
     /*延时*/
     delay_us(10);
 
@@ -39,7 +39,7 @@ unsigned char  set_reset_mode(CAN_TypeDef* CANx)
     status = CANx->MOD;
   }
   printf("\r\nSetting SJA1000 into reset mode failed!\r\n");
-  return 0;  
+  return 0;
 }
 
 static unsigned char  set_normal_mode(CAN_TypeDef* CANx)
@@ -49,20 +49,20 @@ static unsigned char  set_normal_mode(CAN_TypeDef* CANx)
 
   /*检查复位标志*/
   status = CANx->MOD;
-  
+
   for (i = 0; i < 100; i++)
   {
     if((status & CAN_Mode_RM) != CAN_Mode_RM)
     {
       /*开所有中断 （总线错误中断不开）*/
-      CANx->IER |= (~(unsigned char)CAN_IR_BEI);	
+      CANx->IER |= (~(unsigned char)CAN_IR_BEI);
       return 1;
     }
     /* 设置正常工作模式*/
-    CANx->MOD &= (~(unsigned char) CAN_Mode_RM); 
+    CANx->MOD &= (~(unsigned char) CAN_Mode_RM);
     /*延时*/
-    delay_us(10); 
-    status = CANx->MOD;	
+    delay_us(10);
+    status = CANx->MOD;
   }
   printf("\r\nSetting SJA1000 into normal mode failed!\r\n");
   return 0;
@@ -75,9 +75,9 @@ unsigned char  set_start(CAN_TypeDef* CANx)
   /*复位RX错误计数器*/
   CANx->RXERR = 0;
   /*时钟分频寄存器: PeliCAN模式; CBP=1,中止输入比较器, RX0激活*/
-  CANx->CDR = 0xC0;	
- 
-  return  set_normal_mode(CANx);  
+  CANx->CDR = 0xC0;
+
+  return  set_normal_mode(CANx);
 }
 
 unsigned char CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
@@ -89,64 +89,64 @@ unsigned char CAN_Init(CAN_TypeDef* CANx, CAN_InitTypeDef* CAN_InitStruct)
   status = CANx->MOD;
   if( status == 0xFF)
   {
-    printf("\n Probe can0 failed \r\n");  	   
+    printf("\n Probe can0 failed \r\n");
     return CAN_InitStatus_Failed;
   }
 
    /* 进入复位模式 */
   InitStatus = set_reset_mode(CANx);
-  
-  if((CAN_InitStruct->CAN_Mode & CAN_Mode_SM) == CAN_Mode_SM) 
+
+  if((CAN_InitStruct->CAN_Mode & CAN_Mode_SM) == CAN_Mode_SM)
   {
     /* 睡眠模式 1: 睡眠 0: 唤醒*/
-    CANx->MOD|= (unsigned char)CAN_Mode_SM;    
+    CANx->MOD|= (unsigned char)CAN_Mode_SM;
   }
   else
   {
-     CANx->MOD&=~ (unsigned char)CAN_Mode_SM; 
+     CANx->MOD&=~ (unsigned char)CAN_Mode_SM;
   }
 
- if((CAN_InitStruct->CAN_Mode & CAN_Mode_LOM) == CAN_Mode_LOM) 
+ if((CAN_InitStruct->CAN_Mode & CAN_Mode_LOM) == CAN_Mode_LOM)
   {
     /*只听模式 1:只听  0:正常 */
-    CANx->MOD|= (unsigned char)CAN_Mode_LOM;    
+    CANx->MOD|= (unsigned char)CAN_Mode_LOM;
   }
   else
   {
-     CANx->MOD&=~ (unsigned char)CAN_Mode_LOM; 
+     CANx->MOD&=~ (unsigned char)CAN_Mode_LOM;
   }
 
-  if((CAN_InitStruct->CAN_Mode & CAN_Mode_AFM) == CAN_Mode_AFM) 
+  if((CAN_InitStruct->CAN_Mode & CAN_Mode_AFM) == CAN_Mode_AFM)
   {
     /*单滤波模式 1:单 0: 双*/
-    CANx->MOD |= (unsigned char)CAN_Mode_AFM;    
+    CANx->MOD |= (unsigned char)CAN_Mode_AFM;
   }
   else
   {
-     CANx->MOD&=~ (unsigned char)CAN_Mode_AFM; 
+     CANx->MOD&=~ (unsigned char)CAN_Mode_AFM;
   }
 
-  if((CAN_InitStruct->CAN_Mode & CAN_Mode_STM) == CAN_Mode_STM) 
+  if((CAN_InitStruct->CAN_Mode & CAN_Mode_STM) == CAN_Mode_STM)
   {
     /*自检测模式 1:自检测  0:正常  */
-    CANx->MOD |= (unsigned char)CAN_Mode_STM;    
+    CANx->MOD |= (unsigned char)CAN_Mode_STM;
   }
   else
   {
      CANx->MOD&=~ (unsigned char)CAN_Mode_STM;
   }
-  
+
   /* 配置时钟频率 */
   CANx->BTR0 = (( unsigned char )( unsigned char )CAN_InitStruct->CAN_Prescaler -1) | \
                (unsigned char)CAN_InitStruct->CAN_SJW << 6;
-  
+
   CANx->BTR1 = ((unsigned char)CAN_InitStruct->CAN_BS1) | \
                ((unsigned char)CAN_InitStruct->CAN_BS2 << 4) | \
                ((unsigned char)CAN_InitStruct->CAN_SJW<<7);
 
    /* 进入工作模式 */
-  set_start(CANx);    
-  
+  set_start(CANx);
+
   /* 返回初始化结果 */
   return InitStatus;
 }
@@ -169,11 +169,11 @@ void CAN_FilterInit(CAN_TypeDef* CANx,    CAN_FilterInitTypeDef * CAN_FilterInit
     thismask1 = (CAN_FilterInitStruct->IDMASK & 0xFFFF0000 )>>16;
     thisid2 = (CAN_FilterInitStruct->ID & 0x0000FFFF );
     thismask2 = ( CAN_FilterInitStruct->IDMASK& 0x0000FFFF  );
-    rtr = CAN_FilterInitStruct->RTR; 
+    rtr = CAN_FilterInitStruct->RTR;
     ide = CAN_FilterInitStruct->IDE;
     firstdata = CAN_FilterInitStruct->First_Data;
     datamask = CAN_FilterInitStruct->Data_Mask;
-    fcase = CAN_FilterInitStruct->MODE; 
+    fcase = CAN_FilterInitStruct->MODE;
 
     if(ide == 0)//标准帧
     {
@@ -230,7 +230,7 @@ void CAN_FilterInit(CAN_TypeDef* CANx,    CAN_FilterInitTypeDef * CAN_FilterInit
 
     /* 进入复位模式 */
     set_reset_mode(CANx);
-  
+
     if(fcase == 1)// 1-单滤波器模式
     {
         /*单滤波模式 */
@@ -257,62 +257,62 @@ void CAN_FilterInit(CAN_TypeDef* CANx,    CAN_FilterInitTypeDef * CAN_FilterInit
 unsigned char CAN_SetBps(CAN_TypeDef* CANx, Ls1c_CanBPS_t  Bps)
 {
     unsigned char InitStatus = CAN_InitStatus_Failed;
-    unsigned char  CAN_Prescaler, CAN_BS1, CAN_BS2, CAN_SJW; 
+    unsigned char  CAN_Prescaler, CAN_BS1, CAN_BS2, CAN_SJW;
     CAN_SJW = CAN_SJW_1tq;
    /* 进入复位模式 */
   InitStatus = set_reset_mode(CANx);
   if( InitStatus == CAN_InitStatus_Failed)
-  	return CAN_InitStatus_Failed;
+    return CAN_InitStatus_Failed;
 
     /* BaudRate= f(APB)/((1+BS1+BS2)(SJW*2*Prescaler))=126000000/[(1+7+2)*1*2*63]=100000=100K*/
     /* BPS     PRE   BS1   BS2   最低40K
-       1M      9       4       2   
-       800K    8       7       2   
-       500K    9       11      2   
-       250K    36      4       2   
-       125K    36      11      2   
-       100K    63      7       2   
-       50K     63      16      3`  
-       40K     63      16      8   
+       1M      9       4       2
+       800K    8       7       2
+       500K    9       11      2
+       250K    36      4       2
+       125K    36      11      2
+       100K    63      7       2
+       50K     63      16      3`
+       40K     63      16      8
     */
     switch (Bps)
     {
-        case LS1C_CAN1MBaud: 
+        case LS1C_CAN1MBaud:
             CAN_Prescaler = 9;
             CAN_BS1 = CAN_BS1_4tq;
             CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN800kBaud: 
+        case LS1C_CAN800kBaud:
             CAN_Prescaler = 8;
             CAN_BS1 = CAN_BS1_7tq;
             CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN500kBaud: 
+        case LS1C_CAN500kBaud:
             CAN_Prescaler = 9;
             CAN_BS1 = CAN_BS1_11tq;
             CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN250kBaud: 
+        case LS1C_CAN250kBaud:
             CAN_Prescaler = 36;
             CAN_BS1 = CAN_BS1_4tq;
             CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN125kBaud: 
+        case LS1C_CAN125kBaud:
             CAN_Prescaler = 36;
             CAN_BS1 = CAN_BS1_11tq;
             CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN100kBaud: 
+        case LS1C_CAN100kBaud:
             CAN_Prescaler = 63;
             CAN_BS1 = CAN_BS1_7tq;
             CAN_BS2 = CAN_BS2_2tq;
         break;
-        case LS1C_CAN50kBaud: 
+        case LS1C_CAN50kBaud:
             CAN_Prescaler = 63;
             CAN_BS1 = CAN_BS1_16tq;
             CAN_BS2 = CAN_BS2_3tq;
         break;
-        case LS1C_CAN40kBaud: 
+        case LS1C_CAN40kBaud:
             CAN_Prescaler = 63;
             CAN_BS1 = CAN_BS1_16tq;
             CAN_BS2 = CAN_BS2_8tq;
@@ -326,13 +326,13 @@ unsigned char CAN_SetBps(CAN_TypeDef* CANx, Ls1c_CanBPS_t  Bps)
   /* 配置时钟频率 */
   CANx->BTR0 = (( unsigned char )CAN_Prescaler -1) | \
                (unsigned char)CAN_SJW << 6;
-  
+
   CANx->BTR1 = ((unsigned char)CAN_BS1) | \
                ((unsigned char)CAN_BS2 << 4) | \
                ((unsigned char)CAN_SJW<<7);
 
    /* 进入工作模式 */
-  set_start(CANx);    
+  set_start(CANx);
   /* 返回初始化结果 */
   return CAN_InitStatus_Failed;
 }
@@ -347,30 +347,30 @@ unsigned char CAN_SetMode(CAN_TypeDef* CANx, unsigned char  mode)
    /* 进入复位模式 */
   InitStatus = set_reset_mode(CANx);
   if( InitStatus == CAN_InitStatus_Failed)
-  	return CAN_InitStatus_Failed;
+    return CAN_InitStatus_Failed;
 
   switch( mode )
   {
     case 0://正常
-        CANx->MOD &= ~(unsigned char)CAN_Mode_STM;  
-        CANx->MOD &= ~(unsigned char)CAN_Mode_LOM;  
+        CANx->MOD &= ~(unsigned char)CAN_Mode_STM;
+        CANx->MOD &= ~(unsigned char)CAN_Mode_LOM;
       break;
     case 1://只听
-        CANx->MOD &= ~(unsigned char)CAN_Mode_STM;  
-        CANx->MOD |= (unsigned char)CAN_Mode_LOM;  
+        CANx->MOD &= ~(unsigned char)CAN_Mode_STM;
+        CANx->MOD |= (unsigned char)CAN_Mode_LOM;
       break;
     case 2://回环
-        CANx->MOD |= (unsigned char)CAN_Mode_STM;  
-        CANx->MOD &= ~(unsigned char)CAN_Mode_LOM;  
+        CANx->MOD |= (unsigned char)CAN_Mode_STM;
+        CANx->MOD &= ~(unsigned char)CAN_Mode_LOM;
       break;
     case 3://只听回环
-        CANx->MOD |= (unsigned char)CAN_Mode_STM;  
-        CANx->MOD |= (unsigned char)CAN_Mode_LOM;  
+        CANx->MOD |= (unsigned char)CAN_Mode_STM;
+        CANx->MOD |= (unsigned char)CAN_Mode_LOM;
       break;
   }
    /* 进入工作模式 */
-  set_start(CANx);    
-  
+  set_start(CANx);
+
   /* 返回初始化结果 */
   return CAN_InitStatus_Failed;
  }
@@ -442,6 +442,6 @@ void CAN_Receive(CAN_TypeDef* CANx,  CanRxMsg* RxMessage)
     RxMessage->Data[5] = (unsigned char)CANx->BUF[5];
     RxMessage->Data[6] = (unsigned char)CANx->BUF[6];
     RxMessage->Data[7] = (unsigned char)CANx->BUF[7];
-  }  
+  }
 }
 

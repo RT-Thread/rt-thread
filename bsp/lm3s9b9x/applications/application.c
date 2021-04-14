@@ -35,45 +35,45 @@ void rt_init_thread_entry(void *parameter)
 {
 /* Filesystem Initialization */
 #ifdef RT_USING_DFS
-	{
-		/* init the device filesystem */
-		dfs_init();
+    {
+        /* init the device filesystem */
+        dfs_init();
 #ifdef RT_USING_DFS_ELMFAT
-		/* init the elm chan FatFs filesystam*/
-		elm_init();
+        /* init the elm chan FatFs filesystam*/
+        elm_init();
 
-		/* mount sd card fat partition 1 as root directory */
-		if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
-		{
-			rt_kprintf("File System initialized!\n");
-		}
-		else
-			rt_kprintf("File System initialzation failed!\n");
+        /* mount sd card fat partition 1 as root directory */
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+        {
+            rt_kprintf("File System initialized!\n");
+        }
+        else
+            rt_kprintf("File System initialzation failed!\n");
 #endif
-	}
+    }
 #endif
 
 /* LwIP Initialization */
 #ifdef RT_USING_LWIP
-	{
-		extern void lwip_sys_init(void);
-				
-		/* init lwip system */
-		lwip_sys_init();
-		rt_kprintf("TCP/IP initialized!\n");
-	}
+    {
+        extern void lwip_sys_init(void);
+
+        /* init lwip system */
+        lwip_sys_init();
+        rt_kprintf("TCP/IP initialized!\n");
+    }
 #endif
 }
 
 int rt_application_init()
 {
-	rt_thread_t init_thread;
+    rt_thread_t init_thread;
 
-	init_thread = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								1024, 21, 20);
-	rt_thread_startup(init_thread);
+    init_thread = rt_thread_create("init",
+                                rt_init_thread_entry, RT_NULL,
+                                1024, 21, 20);
+    rt_thread_startup(init_thread);
 
-	return 0;
+    return 0;
 }
 /*@}*/

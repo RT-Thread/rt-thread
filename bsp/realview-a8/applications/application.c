@@ -19,7 +19,7 @@ int rt_application_init()
 {
     rt_thread_t tid;
 
-    tid = rt_thread_create("init", init_thread, RT_NULL, 
+    tid = rt_thread_create("init", init_thread, RT_NULL,
         1024, RT_THREAD_PRIORITY_MAX/3, 10);
     if (tid != RT_NULL) rt_thread_startup(tid);
 

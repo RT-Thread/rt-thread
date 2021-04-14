@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -128,21 +128,21 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 
 /**
  * rt_list_for_each - iterate over a list
- * @pos:	the rt_list_t * to use as a loop cursor.
- * @head:	the head for your list.
+ * @pos:    the rt_list_t * to use as a loop cursor.
+ * @head:   the head for your list.
  */
 #define rt_list_for_each(pos, head) \
     for (pos = (head)->next; pos != (head); pos = pos->next)
 
 /**
  * rt_list_for_each_safe - iterate over a list safe against removal of list entry
- * @pos:	the rt_list_t * to use as a loop cursor.
- * @n:		another rt_list_t * to use as temporary storage
- * @head:	the head for your list.
+ * @pos:    the rt_list_t * to use as a loop cursor.
+ * @n:      another rt_list_t * to use as temporary storage
+ * @head:   the head for your list.
  */
 #define rt_list_for_each_safe(pos, n, head) \
-	for (pos = (head)->next, n = pos->next; pos != (head); \
-		pos = n, n = pos->next)
+    for (pos = (head)->next, n = pos->next; pos != (head); \
+        pos = n, n = pos->next)
 
 /**
  * rt_list_for_each_entry  -   iterate over list of given type

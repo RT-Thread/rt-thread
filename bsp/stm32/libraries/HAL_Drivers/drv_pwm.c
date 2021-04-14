@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -205,7 +205,7 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
 #endif
     }
-    
+
     if (__HAL_TIM_GET_CLOCKDIVISION(htim) == TIM_CLOCKDIVISION_DIV2)
     {
         tim_clock = tim_clock / 2;

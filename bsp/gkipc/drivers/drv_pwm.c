@@ -254,19 +254,19 @@ static int pwm_set_clock_divider(int ratio)
         return -1;
     }
 
-	if ((ratio != 1) && (ratio != 2) && (ratio != 3))
-	{
-	    rt_kprintf("pwm_set_clock_divider:%d wrong param.\n", ratio);
-		return -1;
-	}
+    if ((ratio != 1) && (ratio != 2) && (ratio != 3))
+    {
+        rt_kprintf("pwm_set_clock_divider:%d wrong param.\n", ratio);
+        return -1;
+    }
 
-	if (GD_OK != GD_PWM_Set_Clock_Divider(pwm_obj->id, ratio))
-	{
-		rt_kprintf("gadi_pwm_set_clock_divider:%d set error.\n", ratio);
-		return -1;
-	}
+    if (GD_OK != GD_PWM_Set_Clock_Divider(pwm_obj->id, ratio))
+    {
+        rt_kprintf("gadi_pwm_set_clock_divider:%d set error.\n", ratio);
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 static int pwm_set_active_channel(int id)
@@ -476,7 +476,7 @@ struct gk_platform_driver pwm_driver_ops = {
 
 void rt_hw_pwm_init(void)
 {
-	gk_platform_driver_init(&pwm_driver_ops);
+    gk_platform_driver_init(&pwm_driver_ops);
 }
 
 #ifdef GK_TEST_PWM

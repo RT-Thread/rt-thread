@@ -13,7 +13,7 @@
 #include <rtthread.h>
 
 #include "board.h"
-#define A_K0BASE		0x80000000
+#define A_K0BASE        0x80000000
 
 /**
  * @addtogroup Loongson LS1B

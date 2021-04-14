@@ -137,20 +137,20 @@ int rthw_wifi_ap_start(char *ssid, char *password, int channel)
         return -1;
     }
 
-    while(1) 
+    while(1)
     {
         char essid[33];
         if(wext_get_ssid(name, (unsigned char *) essid) > 0)
         {
-            if(strcmp((const char *) essid, (const char *)ssid) == 0) 
+            if(strcmp((const char *) essid, (const char *)ssid) == 0)
             {
                 rt_kprintf("%s started\n", ssid);
                 break;
             }
         }
-        if(timeout == 0) 
+        if(timeout == 0)
         {
-            rt_kprintf("Start AP timeout\n");   
+            rt_kprintf("Start AP timeout\n");
             return -1;
         }
         rt_thread_delay(1 * RT_TICK_PER_SECOND);
@@ -169,7 +169,7 @@ static int rthw_wifi_disconnect(char *name)
     if (name == RT_NULL)
         return -1;
 
-    if (wext_get_ssid(name, (unsigned char *) essid) < 0) 
+    if (wext_get_ssid(name, (unsigned char *) essid) < 0)
     {
         rt_kprintf("\nWIFI disconnected!\n");
         return -1;
@@ -189,7 +189,7 @@ static int rthw_wifi_disconnect(char *name)
             break;
         }
 
-        if(timeout == 0) 
+        if(timeout == 0)
         {
             rt_kprintf("ERROR: Deassoc timeout!\n");
             return -1;
@@ -245,7 +245,7 @@ int rthw_wifi_ap_disconnect(void)
 
 int rthw_wifi_rssi_get(void)
 {
-    int rssi = 0;   
+    int rssi = 0;
     wifi_get_rssi(&rssi);
     return rssi;
 }

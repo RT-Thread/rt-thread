@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
  */
- 
+
 #ifndef __DRV_CONFIG_H__
 #define __DRV_CONFIG_H__
 
@@ -42,7 +42,7 @@ extern "C" {
 #include "f2/adc_config.h"
 #include "f2/tim_config.h"
 #include "f2/sdio_config.h"
-#include "f2/pwm_config.h"	
+#include "f2/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32F4)
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"

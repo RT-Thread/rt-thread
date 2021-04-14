@@ -90,7 +90,7 @@ static rt_err_t rt_sdcard_open(rt_device_t dev, rt_uint16_t oflag)
         PRINT_MMC_DBG("----ALREADY_OPEN SDIO_%d----\n",index);
     }
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_err_t rt_sdcard_close(rt_device_t dev)
@@ -121,7 +121,7 @@ static rt_err_t rt_sdcard_close(rt_device_t dev)
         mmc_drv->partP[index] = NULL;
     }
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
@@ -215,7 +215,7 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
     }
 
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 
