@@ -1,25 +1,11 @@
 /*
- * File      : mips_regs.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ7ÈÕ     Urey         the first version
+ * 2016-9-7       Urey         the first version
  */
 
 #ifndef _MIPS_REGS_H_
@@ -31,19 +17,19 @@
 
 #define MIPS_REG_NR             32
 typedef struct {
-    rt_uint32_t  regs[MIPS_REG_NR];                             	/*  32 ¸öÍ¨ÓÃÄ¿µÄ¼Ä´æÆ÷         */
-    rt_uint32_t  CP0Status;                                        	/*  CP0 Ğ­´¦ÀíÆ÷×´Ì¬¼Ä´æÆ÷      */
-    rt_uint32_t  CP0DataHI;                                        	/*  ³ıÊı¸ßÎ»¼Ä´æÆ÷              */
-    rt_uint32_t  CP0DataLO;                                        	/*  ³ıÊıµÍÎ»¼Ä´æÆ÷              */
-    rt_uint32_t  CP0BadVAddr;                                      	/*  ³ö´íµØÖ·¼Ä´æÆ÷              */
-    rt_uint32_t  CP0Cause;                                         	/*  ²úÉúÖĞ¶Ï»òÕßÒì³£²é¿´µÄ¼Ä´æÆ÷*/
-    rt_uint32_t  CP0EPC;                                           	/*  ³ÌĞò¼ÆÊıÆ÷¼Ä´æÆ÷			*/
+    rt_uint32_t  regs[MIPS_REG_NR];                             	/*  32 ä¸ªé€šç”¨ç›®çš„å¯„å­˜å™¨         */
+    rt_uint32_t  CP0Status;                                        	/*  CP0 åå¤„ç†å™¨çŠ¶æ€å¯„å­˜å™¨      */
+    rt_uint32_t  CP0DataHI;                                        	/*  é™¤æ•°é«˜ä½å¯„å­˜å™¨              */
+    rt_uint32_t  CP0DataLO;                                        	/*  é™¤æ•°ä½ä½å¯„å­˜å™¨              */
+    rt_uint32_t  CP0BadVAddr;                                      	/*  å‡ºé”™åœ°å€å¯„å­˜å™¨              */
+    rt_uint32_t  CP0Cause;                                         	/*  äº§ç”Ÿä¸­æ–­æˆ–è€…å¼‚å¸¸æŸ¥çœ‹çš„å¯„å­˜å™¨*/
+    rt_uint32_t  CP0EPC;                                           	/*  ç¨‹åºè®¡æ•°å™¨å¯„å­˜å™¨			*/
 } mips_reg_ctx;
 
 #define MIPS_ARG_REG_NR         4
 typedef struct
 {
-	rt_uint32_t  args[MIPS_ARG_REG_NR];                              /*  4 ¸ö²ÎÊı¼Ä´æÆ÷              */
+	rt_uint32_t  args[MIPS_ARG_REG_NR];                              /*  4 ä¸ªå‚æ•°å¯„å­˜å™¨              */
 } mips_arg_ctx;
 
 struct linkctx
@@ -85,7 +71,7 @@ struct fp64ctx
 #define MIPS_STK_CTX_WORD_SIZE			38
 #define SZREG			4
 /*********************************************************************************************************
-  MIPS µÄ¼Ä´æÆ÷Ë÷Òı
+  MIPS çš„å¯„å­˜å™¨ç´¢å¼•
 *********************************************************************************************************/
 #define REG_ZERO                0                                       /*  wired zero                  */
 #define REG_AT                  1                                       /*  assembler temp              */
@@ -1166,3 +1152,4 @@ __BUILD_SET_C0(config,CP0_CONFIG)
 #endif /* !__ASSEMBLY__ */
 
 #endif /* _MIPS_REGS_H_ */
+
