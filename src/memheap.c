@@ -50,7 +50,7 @@ rt_inline void rt_memheap_setname(struct rt_memheap_item *item, const char *name
         ptr[index] = name[index];
     }
     if (name[index] == '\0') ptr[index] = '\0';
-    else 
+    else
     {
         ptr = (rt_uint8_t*)&(item->prev_free);
         for (index = 0; index < sizeof(void*) && (index + sizeof(void*))< RT_NAME_MAX; index ++)
@@ -686,7 +686,7 @@ int rt_memheap_dump(struct rt_memheap *heap)
     if (heap == RT_NULL) return 0;
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
-    rt_kprintf("\n[%.*s] [0x%08x - 0x%08x]->\n", RT_NAME_MAX, heap->parent.name, 
+    rt_kprintf("\n[%.*s] [0x%08x - 0x%08x]->\n", RT_NAME_MAX, heap->parent.name,
         (rt_ubase_t)heap->start_addr, (rt_ubase_t)heap->start_addr + heap->pool_size);
     rt_kprintf("------------------------------\n");
 

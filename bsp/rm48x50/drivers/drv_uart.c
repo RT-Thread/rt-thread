@@ -194,7 +194,7 @@ void rt_hw_uart_init(void)
     config.parity    = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
     config.invert    = NRZ_NORMAL;
-	config.bufsz	 = RT_SERIAL_RB_BUFSZ;
+    config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
     _sci2_serial.ops    = &_sci_ops;
     _sci2_serial.config = config;

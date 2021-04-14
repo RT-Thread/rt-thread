@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2017-08-24     chinesebear  first version
  */
 
- 
+
 #ifndef SYNOP_GMAC_NETWORK_INTERFACE_H
 #define SYNOP_GMAC_NETWORK_INTERFACE_H 1
 

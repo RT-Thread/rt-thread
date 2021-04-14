@@ -87,15 +87,15 @@ typedef struct {
        \ref GAPI_SDIO_VersionEnumT "GAPI_SDIO_VERSION".
     */
     RT_SDIO_VersionEnumT      version;
-	RT_SDIO_TransferTypeEnumT type;
+    RT_SDIO_TransferTypeEnumT type;
     /*!
     ** The handle specific notification function.
     */
     RT_SDIO_NotifyFuncT  notifyFunc;
 
-	RT_SDIO_IRQFuncT	 irqFunc;
+    RT_SDIO_IRQFuncT     irqFunc;
 
-	RT_SDIO_RESETFuncT   resetFunc;
+    RT_SDIO_RESETFuncT   resetFunc;
     /*!
     ** Optional data pointer for the notification function.
     */

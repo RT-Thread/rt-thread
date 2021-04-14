@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "ls1c_i2c.h"  
+#include "ls1c_i2c.h"
 #include "../libraries/ls1c_pin.h"
 
 #ifdef RT_USING_I2C
@@ -26,30 +26,30 @@ rt_size_t rt_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                           rt_uint32_t               num)
 {
     struct ls1c_i2c_bus * i2c_bus = (struct ls1c_i2c_bus *)bus;
-    ls1c_i2c_info_t i2c_info;  
+    ls1c_i2c_info_t i2c_info;
     struct rt_i2c_msg *msg;
     int i;
     rt_int32_t ret = RT_EOK;
-    i2c_info.clock = 50000;       // 50kb/s  
+    i2c_info.clock = 50000;       // 50kb/s
     i2c_info.I2Cx  = i2c_bus->u32Module;
     i2c_init(&i2c_info);
-    
+
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
         if (msg->flags == RT_I2C_RD)
         {
-            i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_READ);  
-            i2c_receive_ack(&i2c_info); 
-            i2c_receive_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);  
-            i2c_send_stop(&i2c_info);   
+            i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_READ);
+            i2c_receive_ack(&i2c_info);
+            i2c_receive_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);
+            i2c_send_stop(&i2c_info);
          }
         else if(msg->flags == RT_I2C_WR)
         {
-            i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_WRITE);  
-            i2c_receive_ack(&i2c_info);  
-            i2c_send_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);  
-            i2c_send_stop(&i2c_info);  
+            i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_WRITE);
+            i2c_receive_ack(&i2c_info);
+            i2c_send_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);
+            i2c_send_stop(&i2c_info);
         }
         ret++;
     }
@@ -85,7 +85,7 @@ static const struct rt_i2c_bus_device_ops ls1c_i2c_ops =
 
 
 #ifdef RT_USING_I2C0
-static struct ls1c_i2c_bus ls1c_i2c_bus_0 = 
+static struct ls1c_i2c_bus ls1c_i2c_bus_0 =
 {
     {1},
     LS1C_I2C_0,
@@ -93,7 +93,7 @@ static struct ls1c_i2c_bus ls1c_i2c_bus_0 =
 #endif
 
 #ifdef RT_USING_I2C1
-static struct ls1c_i2c_bus ls1c_i2c_bus_1 = 
+static struct ls1c_i2c_bus ls1c_i2c_bus_1 =
 {
     {1},
     LS1C_I2C_1,
@@ -101,7 +101,7 @@ static struct ls1c_i2c_bus ls1c_i2c_bus_1 =
 #endif
 
 #ifdef RT_USING_I2C2
-static struct ls1c_i2c_bus ls1c_i2c_bus_2 = 
+static struct ls1c_i2c_bus ls1c_i2c_bus_2 =
 {
     {1},
     LS1C_I2C_2,

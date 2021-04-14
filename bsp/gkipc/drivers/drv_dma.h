@@ -30,12 +30,12 @@
 #include <rtthread.h>
 /****************************************************************************
 * #include section
-*	add #include here if any
+*   add #include here if any
 ***************************************************************************/
 
 /****************************************************************************
 * #define section
-*	add constant #define here if any
+*   add constant #define here if any
 ***************************************************************************/
 #define RT_DEVICE_CTRL_DMA_OPEN (1)
 #define RT_DEVICE_CTRL_DMA_CLOSE (2)
@@ -52,7 +52,7 @@
 #define RT_DEVICE_CTRL_DMA_PAUSE (10)
 #define RT_DEVICE_CTRL_DMA_RESUME (11)
 
-//#define RT_DEVICE_CTRL_  	 (3) /* get the left time before reboot(in
+//#define RT_DEVICE_CTRL_    (3) /* get the left time before reboot(in
 //seconds) */
 //#define RT_DEVICE_CTRL_      (4) /* refresh watchdog */
 //#define RT_DEVICE_CTRL_      (5) /* start watchdog */
@@ -60,7 +60,7 @@
 
 /****************************************************************************
 * ADT section
-*	add Abstract Data Type definition here
+*   add Abstract Data Type definition here
 ***************************************************************************/
 
 #define ADC_CMD_READ_RAW_DATA (0x22)
@@ -93,7 +93,7 @@ typedef struct
 {
     rt_uint32_t      channel;
     rt_uint32_t      mode;
-	RT_DMA_NOTIFIER_F intNotifier;
+    RT_DMA_NOTIFIER_F intNotifier;
 }RT_DMA_OPEN_PARAM_S;
 
 typedef struct rt_dma_device
@@ -111,7 +111,7 @@ typedef struct rt_dma_device
 
 /****************************************************************************
 *  section
-*	add function prototype here if any
+*   add function prototype here if any
 ***************************************************************************/
 
 void rt_gk_dma_init(void);

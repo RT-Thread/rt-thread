@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,16 +19,16 @@
 #define AHB_CLK                 (RT_OSC_CLK)
 #define APB_CLK                 (AHB_CLK)
 
-#define DIV_DC_EN			(0x1 << 31)
-#define DIV_DC				(0x1f << 26)
-#define DIV_CPU_EN			(0x1 << 25)
-#define DIV_CPU				(0x1f << 20)
-#define DIV_DDR_EN			(0x1 << 19)
-#define DIV_DDR				(0x1f << 14)
+#define DIV_DC_EN           (0x1 << 31)
+#define DIV_DC              (0x1f << 26)
+#define DIV_CPU_EN          (0x1 << 25)
+#define DIV_CPU             (0x1f << 20)
+#define DIV_DDR_EN          (0x1 << 19)
+#define DIV_DDR             (0x1f << 14)
 
-#define DIV_DC_SHIFT			26
-#define DIV_CPU_SHIFT			20
-#define DIV_DDR_SHIFT			14
+#define DIV_DC_SHIFT            26
+#define DIV_CPU_SHIFT           20
+#define DIV_DDR_SHIFT           14
 
 
 /*
@@ -41,8 +41,8 @@ unsigned long clk_get_pll_rate(void)
     unsigned long pll_rate = 0;
 
     ctrl = reg_read_32((volatile unsigned int *)LS1B_START_FREQ);
-	pll_rate = (12 + (ctrl & 0x3f)) * APB_CLK / 2
-		+ ((ctrl >> 8) & 0x3ff) * APB_CLK / 1024 / 2;
+    pll_rate = (12 + (ctrl & 0x3f)) * APB_CLK / 2
+        + ((ctrl >> 8) & 0x3ff) * APB_CLK / 1024 / 2;
 
     return pll_rate;
 }
@@ -59,7 +59,7 @@ unsigned long clk_get_cpu_rate(void)
 
     pll_rate = clk_get_pll_rate();
     ctrl = reg_read_32((volatile unsigned int *)LS1B_CLK_DIV_PARAM);
-	cpu_rate = pll_rate / ((ctrl & DIV_CPU) >> DIV_CPU_SHIFT);
+    cpu_rate = pll_rate / ((ctrl & DIV_CPU) >> DIV_CPU_SHIFT);
 
     return cpu_rate;
 }
@@ -72,12 +72,12 @@ unsigned long clk_get_cpu_rate(void)
 unsigned long clk_get_ddr_rate(void)
 {
     unsigned long pll_rate, ddr_rate;
-	unsigned int ctrl;
+    unsigned int ctrl;
 
-	pll_rate = clk_get_pll_rate();
-	ctrl = reg_read_32((volatile unsigned int *)LS1B_CLK_DIV_PARAM);
+    pll_rate = clk_get_pll_rate();
+    ctrl = reg_read_32((volatile unsigned int *)LS1B_CLK_DIV_PARAM);
 
-	ddr_rate = pll_rate / ((ctrl & DIV_DDR) >> DIV_DDR_SHIFT);
+    ddr_rate = pll_rate / ((ctrl & DIV_DDR) >> DIV_DDR_SHIFT);
 
     return ddr_rate;
 }

@@ -204,7 +204,7 @@ struct gk_platform_driver wdt_driver_ops = {
 
 void rt_hw_wdt_init(void)
 {
-	gk_platform_driver_init(&wdt_driver_ops);
+    gk_platform_driver_init(&wdt_driver_ops);
 }
 
 void gk_wdt_test(int timeout, int mode)

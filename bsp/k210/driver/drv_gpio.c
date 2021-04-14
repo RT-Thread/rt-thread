@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -122,7 +122,7 @@ static int drv_pin_read(struct rt_device *device, rt_base_t pin)
     return gpiohs_get_pin(pin_channel) == GPIO_PV_HIGH ? PIN_HIGH : PIN_LOW;
 }
 
-static struct 
+static struct
 {
     void (*hdr)(void *args);
     void *args;
@@ -239,7 +239,7 @@ static rt_err_t drv_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     {
         rt_hw_interrupt_mask(IRQN_GPIOHS0_INTERRUPT + pin_channel);
     }
-    
+
     return RT_EOK;
 }
 
