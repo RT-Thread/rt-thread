@@ -120,7 +120,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
     time_t local_tz;
     int utc_plus;
 
-    utc_plus = 0; /* GTM: UTC+0 */
+    utc_plus = 8; /* GMT: UTC+8 */
     local_tz = *t + utc_plus * 3600;
     return gmtime_r(&local_tz, r);
 }
@@ -183,18 +183,14 @@ char* ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
-/**
- * Returns the current time.
- *
- * @param time_t * t the timestamp pointer, if not used, keep NULL.
- *
- * @return The value ((time_t)-1) is returned if the calendar time is not available.
- *         If timer is not a NULL pointer, the return value is also stored in timer.
- *
- */
-RT_WEAK time_t time(time_t *t)
+static void get_timeval(struct timeval *tv)
 {
-    time_t time_now = ((time_t)-1); /* default is not available */
+    if (tv == RT_NULL)
+        return;
+    /* default is not available */
+    tv->tv_sec = -1;
+    /* default is 0 */
+    tv->tv_usec = 0;
 
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
@@ -210,26 +206,41 @@ RT_WEAK time_t time(time_t *t)
     {
         if (rt_device_open(device, 0) == RT_EOK)
         {
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME_US, &tv->tv_usec);
             rt_device_close(device);
         }
     }
 #endif /* RT_USING_RTC */
 
-    /* if t is not NULL, write timestamp to *t */
-    if (t != RT_NULL)
-    {
-        *t = time_now;
-    }
-
-    if(time_now == (time_t)-1)
+    if (tv->tv_sec == (time_t) -1)
     {
         /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
         rt_kprintf("Cannot find a RTC device to provide time!\r\n");
         errno = ENOSYS;
     }
+}
 
-    return time_now;
+/**
+ * Returns the current time.
+ *
+ * @param time_t * t the timestamp pointer, if not used, keep NULL.
+ *
+ * @return The value ((time_t)-1) is returned if the calendar time is not available.
+ *         If timer is not a NULL pointer, the return value is also stored in timer.
+ *
+ */
+RT_WEAK time_t time(time_t *t)
+{
+    struct timeval now;
+
+    get_timeval(&now);
+
+    if (t)
+    {
+        *t = now.tv_sec;
+    }
+    return now.tv_sec;
 }
 RTM_EXPORT(time);
 
@@ -344,12 +355,10 @@ RTM_EXPORT(timegm);
 /* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    time_t t = time(RT_NULL);
+    get_timeval(tv);
 
-    if (tv != RT_NULL && t != (time_t)-1)
+    if (tv != RT_NULL && tv->tv_sec != (time_t) -1)
     {
-        tv->tv_sec = t;
-        tv->tv_usec = 0;
         return 0;
     }
     else

@@ -962,10 +962,12 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set time */
+#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get second time */
+#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set second time */
 #define RT_DEVICE_CTRL_RTC_GET_ALARM    0x12            /**< get alarm */
 #define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
+#define RT_DEVICE_CTRL_RTC_GET_TIME_US  0x14            /**< get microsecond time */
+#define RT_DEVICE_CTRL_RTC_SET_TIME_US  0x15            /**< set microsecond time */
 
 typedef struct rt_device *rt_device_t;
 
