@@ -51,9 +51,9 @@ typedef struct ab32_irrx_data *ab32_irrx_data_t;
 static struct ab32_irrx_data _irrx = {0};
 
 /**
- * @brief A non-zero value is returned 
+ * @brief A non-zero value is returned
  *        when IR key is detectedto be pressed.
- * 
+ *
  * @param addr inverted address   Extended NEC: 16bits address
  * @param cmd  inverted command
  */
@@ -74,7 +74,7 @@ uint8_t ab32_get_irkey(uint16_t *addr, uint16_t *cmd)
 
 /**
  * @brief Invalid the current IR key.
- * 
+ *
  */
 void ab32_clr_irkey(void)
 {
@@ -190,9 +190,9 @@ static void irrx_isr(int vector, void *param)
 static void timer3_init(void)
 {
     rt_hw_interrupt_install(IRQ_IRRX_VECTOR, irrx_isr, RT_NULL, "irrx_isr");
-	TMR3CNT  = 0;
-	TMR3PR   = TMR3_RCLK*110 - 1;                                //110ms Timer overflow interrupt
-	TMR3CON  = BIT(8) | BIT(7) | BIT(5) | BIT(2) | BIT(1) | BIT(0);   //capture & overflow interrupt enable, falling edge, Capture Mode
+    TMR3CNT  = 0;
+    TMR3PR   = TMR3_RCLK*110 - 1;                                //110ms Timer overflow interrupt
+    TMR3CON  = BIT(8) | BIT(7) | BIT(5) | BIT(2) | BIT(1) | BIT(0);   //capture & overflow interrupt enable, falling edge, Capture Mode
 }
 
 static void _irrx_hw_init(void)
