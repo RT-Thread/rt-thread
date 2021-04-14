@@ -261,12 +261,12 @@ __exit:
     if (result > 0)
     {
         LOG_D("Set network interface device(%s) internet status up.", netdev->name);
-        netdev->flags |= NETDEV_FLAG_INTERNET_UP;
+        netdev_low_level_set_internet_status(netdev, RT_TRUE);
     }
     else
     {
         LOG_D("Set network interface device(%s) internet status down.", netdev->name);
-        netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+        netdev_low_level_set_internet_status(netdev, RT_FALSE);
     }
 
     if (sockfd >= 0)
