@@ -192,6 +192,18 @@ menu "On-chip Peripheral Drivers"
                 default y
         endif
 
+    menuconfig BSP_USING_IRRX
+        bool "Enable IRRX(HW or SW)"
+        default n
+        if BSP_USING_IRRX
+            config BSP_USING_IRRX_HW
+                bool "Enable hardware IRRX"
+                default y
+            config BSP_USING_IRRX_SW
+                bool "Enable software IRRX"
+                default n
+        endif
+
 endmenu
 
 menu "Board extended module Drivers"

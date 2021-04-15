@@ -19,6 +19,9 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 256
+
+/* kservice optimization */
+
 #define RT_DEBUG
 
 /* Inter-Thread communication */
