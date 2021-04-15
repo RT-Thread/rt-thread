@@ -234,7 +234,13 @@ RTM_EXPORT(localtime);
 /* TODO: timezone */
 time_t mktime(struct tm * const t)
 {
-    return timegm(t);
+    time_t timestamp;
+    int utc_plus;
+
+    utc_plus = 8; /* GMT: UTC+8 */
+    timestamp = timegm(t);
+    timestamp = timestamp - 3600 * utc_plus;
+    return timestamp;
 }
 RTM_EXPORT(mktime);
 
