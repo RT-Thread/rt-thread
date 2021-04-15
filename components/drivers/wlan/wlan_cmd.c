@@ -13,6 +13,15 @@
 #include <wlan_cfg.h>
 #include <wlan_prot.h>
 
+#define DBG_TAG "WLAN.cmd"
+#ifdef RT_WLAN_MGNT_DEBUG
+#define DBG_LVL DBG_LOG
+#else
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_MGNT_DEBUG */
+#include <rtdbg.h>
+
+
 #if defined(RT_WLAN_MANAGE_ENABLE) && defined(RT_WLAN_MSH_CMD_ENABLE)
 
 struct wifi_cmd_des
@@ -142,15 +151,138 @@ static int wifi_status(int argc, char *argv[])
     return 0;
 }
 
-// static void print_ap_info(struct rt_wlan_info *info,int index)
-static void print_ap_info(int event, struct rt_wlan_buff *buff, void *parameter)
+static struct rt_wlan_scan_result scan_result;
+/*ToDo:what is the scan_filter.*/
+static struct rt_wlan_info *scan_filter;
+static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info)
 {
-        int index = 0;
+    struct rt_wlan_info *ptable;
+    rt_err_t err = RT_EOK;
+    int i, insert = -1;
+    rt_base_t level;
+
+    // if (_sta_is_null() || (info == RT_NULL) || (info->ssid.len == 0)) return RT_EOK;
+
+    if ((info == RT_NULL) || (info->ssid.len == 0)) return RT_EOK;
+    LOG_D("ssid:%s len:%d mac:%02x:%02x:%02x:%02x:%02x:%02x", info->ssid.val, info->ssid.len,
+                  info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
+
+    if (err != RT_EOK)
+        return err;
+
+    /* scanning result filtering */
+    level = rt_hw_interrupt_disable();
+    if (scan_filter)
+    {
+        struct rt_wlan_info _tmp_info = *scan_filter;
+        rt_hw_interrupt_enable(level);
+        if (rt_wlan_info_isequ(&_tmp_info, info) != RT_TRUE)
+        {
+            return RT_EOK;
+        }
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
+
+    /* de-duplicatio */
+    for (i = 0; i < scan_result.num; i++)
+    {
+        if ((info->ssid.len == scan_result.info[i].ssid.len) &&
+                (rt_memcmp(&info->bssid[0], &scan_result.info[i].bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0))
+        {
+            return RT_EOK;
+        }
+#ifdef RT_WLAN_SCAN_SORT
+        if (insert >= 0)
+        {
+            continue;
+        }
+        /* Signal intensity comparison */
+        if ((info->rssi < 0) && (scan_result.info[i].rssi < 0))
+        {
+            if (info->rssi > scan_result.info[i].rssi)
+            {
+                insert = i;
+                continue;
+            }
+            else if (info->rssi < scan_result.info[i].rssi)
+            {
+                continue;
+            }
+        }
+
+        /* Channel comparison */
+        if (info->channel < scan_result.info[i].channel)
+        {
+            insert = i;
+            continue;
+        }
+        else if (info->channel > scan_result.info[i].channel)
+        {
+            continue;
+        }
+
+        /* data rate comparison */
+        if ((info->datarate > scan_result.info[i].datarate))
+        {
+            insert = i;
+            continue;
+        }
+        else if (info->datarate < scan_result.info[i].datarate)
+        {
+            continue;
+        }
+#endif
+    }
+
+    /* Insert the end */
+    if (insert == -1)
+        insert = scan_result.num;
+
+    if (scan_result.num >= RT_WLAN_SCAN_CACHE_NUM)
+        return RT_EOK;
+
+    /* malloc memory */
+    ptable = rt_malloc(sizeof(struct rt_wlan_info) * (scan_result.num + 1));
+    if (ptable == RT_NULL)
+    {
+        LOG_E("wlan info malloc failed!");
+        return -RT_ENOMEM;
+    }
+    scan_result.num ++;
+
+    /* copy info */
+    for (i = 0; i < scan_result.num; i++)
+    {
+        if (i < insert)
+        {
+            ptable[i] = scan_result.info[i];
+        }
+        else if (i > insert)
+        {
+            ptable[i] = scan_result.info[i - 1];
+        }
+        else if (i == insert)
+        {
+            ptable[i] = *info;
+        }
+    }
+    rt_free(scan_result.info);
+    scan_result.info = ptable;
+    return err;
+}
+
+static void print_ap_info(struct rt_wlan_info *info,int index)
+// static void print_ap_info(int event, struct rt_wlan_buff *buff, void *parameter)
+{
+        // int index = 0;
         char *security;
-        struct rt_wlan_info *info = (struct rt_wlan_info *)buff->data;
+        // struct rt_wlan_info *info = (struct rt_wlan_info *)buff->data;
       
 
-        index = *((int *)(parameter));
+        // index = *((int *)(parameter));
 
         if(index == 0)
         {
@@ -210,15 +342,29 @@ static void print_ap_info(int event, struct rt_wlan_buff *buff, void *parameter)
             rt_kprintf("%4d\n", info->datarate / 1000000);
         }
 
-        index++;
-        *((int *)(parameter)) = index;
+        // index++;
+        // *((int *)(parameter)) = index;
 
 }
 
+static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *parameter)
+{
+    struct rt_wlan_info *info = (struct rt_wlan_info *)buff->data;
+    int index = 0;
+
+    index = *((int *)(parameter));
+
+    rt_wlan_scan_result_cache(info);
+
+    print_ap_info(info,index);
+
+    index++;
+    *((int *)(parameter)) = index;
+}
 static int wifi_scan(int argc, char *argv[])
 {
     struct rt_wlan_info *info = RT_NULL;
-    struct rt_wlan_scan_result *scan_result = RT_NULL;
+    // struct rt_wlan_scan_result *scan_result = RT_NULL;
     struct rt_wlan_info filter;
     int i = 0;
 
@@ -231,27 +377,28 @@ static int wifi_scan(int argc, char *argv[])
         SSID_SET(&filter, argv[2]);
         info = &filter;
     }
-    rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT,print_ap_info,&i);
+    rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT,user_ap_info_callback,&i);
 
-    scan_result = rt_wlan_scan_with_info(info);
+    // scan_result = rt_wlan_scan_with_info(info);
+    rt_wlan_scan_with_info(info);
 
-    if (scan_result)
+    // if (scan_result)
     {
         int index = 0, num = 0;
-        struct rt_wlan_buff buff;
+        // struct rt_wlan_buff buff;
 
-        num = scan_result->num;
+        num = scan_result.num;
         for(index = 0;index < num;index++)
         {
-            buff.len  = sizeof(struct rt_wlan_info);
-            buff.data =&(scan_result->info[index]); 
+            // buff.len  = sizeof(struct rt_wlan_info);
+            // buff.data =&(scan_result->info[index]);
 
-            // print_ap_info(index,&buff,RT_NULL);
+            print_ap_info(&(scan_result.info[index]),index);
         }
     }
-    else
+    // else
     {
-        rt_kprintf("wifi scan result is null\n");
+        // rt_kprintf("wifi scan result is null\n");
     }
  
     /* clean scan result */
