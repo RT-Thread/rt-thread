@@ -77,7 +77,6 @@ static int get_timeval(struct timeval *tv)
 {
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
-#endif
     rt_err_t rst = -RT_ERROR;
 
     if (tv == RT_NULL)
@@ -87,7 +86,6 @@ static int get_timeval(struct timeval *tv)
     tv->tv_sec = 0;
     tv->tv_usec = 0;
 
-#ifdef RT_USING_RTC
     /* optimization: find rtc device only first */
     if (device == RT_NULL)
     {
@@ -127,15 +125,13 @@ static int get_timeval(struct timeval *tv)
  */
 static int set_timeval(struct timeval *tv)
 {
-    rt_err_t rst = -RT_ERROR;
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
-#endif
+    rt_err_t rst = -RT_ERROR;
 
     if (tv == RT_NULL)
         return -1;
 
-#ifdef RT_USING_RTC
     /* optimization: find rtc device only first */
     if (device == RT_NULL)
     {
@@ -311,7 +307,7 @@ RT_WEAK time_t time(time_t *t)
     else
     {
         errno = EFAULT;
-        return -1;
+        return ((time_t)-1);
     }
 }
 RTM_EXPORT(time);
