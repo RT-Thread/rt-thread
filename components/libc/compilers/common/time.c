@@ -68,6 +68,100 @@ static void num2str(char *c, int i)
     c[1] = i % 10 + '0';
 }
 
+/**
+ * Get time from RTC device (without timezone)
+ * @param tv: struct timeval
+ * @return -1 failure; 1 success
+ */
+static int get_timeval(struct timeval *tv)
+{
+#ifdef RT_USING_RTC
+    static rt_device_t device = RT_NULL;
+    rt_err_t rst = -RT_ERROR;
+
+    if (tv == RT_NULL)
+        return -1;
+
+    /* default is 0 */
+    tv->tv_sec = 0;
+    tv->tv_usec = 0;
+
+    /* optimization: find rtc device only first */
+    if (device == RT_NULL)
+    {
+        device = rt_device_find("rtc");
+    }
+
+    /* read timestamp from RTC device */
+    if (device != RT_NULL)
+    {
+        if (rt_device_open(device, 0) == RT_EOK)
+        {
+            rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME_US, &tv->tv_usec);
+            rt_device_close(device);
+        }
+    }
+    else
+    {
+        /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
+        rt_kprintf("Cannot find a RTC device to provide time!\r\n");
+        return -1;
+    }
+
+    return (rst < 0) ? -1 : 1;
+
+#else
+    /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
+    rt_kprintf("Cannot find a RTC device to provide time!\r\n");
+    return -1;
+#endif /* RT_USING_RTC */
+}
+
+/**
+ * Set time to RTC device (without timezone)
+ * @param tv: struct timeval
+ * @return -1 failure; 1 success
+ */
+static int set_timeval(struct timeval *tv)
+{
+#ifdef RT_USING_RTC
+    static rt_device_t device = RT_NULL;
+    rt_err_t rst = -RT_ERROR;
+
+    if (tv == RT_NULL)
+        return -1;
+
+    /* optimization: find rtc device only first */
+    if (device == RT_NULL)
+    {
+        device = rt_device_find("rtc");
+    }
+
+    /* read timestamp from RTC device */
+    if (device != RT_NULL)
+    {
+        if (rt_device_open(device, 0) == RT_EOK)
+        {
+            rst = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &tv->tv_sec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME_US, &tv->tv_usec);
+            rt_device_close(device);
+        }
+    }
+    else
+    {
+        LOG_W("Cannot find a RTC device to provide time!");
+        return -1;
+    }
+
+    return (rst < 0) ? -1 : 1;
+
+#else
+    LOG_W("Cannot find a RTC device to provide time!");
+    return -1;
+#endif /* RT_USING_RTC */
+}
+
 struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     time_t i;
@@ -136,7 +230,13 @@ RTM_EXPORT(localtime);
 /* TODO: timezone */
 time_t mktime(struct tm * const t)
 {
-    return timegm(t);
+    time_t timestamp;
+    int utc_plus;
+
+    utc_plus = 8; /* GMT: UTC+8 */
+    timestamp = timegm(t);
+    timestamp = timestamp - 3600 * utc_plus;
+    return timestamp;
 }
 RTM_EXPORT(mktime);
 
@@ -183,49 +283,6 @@ char* ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
-/*-1 failure; 1 success*/
-static int get_timeval(struct timeval *tv)
-{
-    if (tv == RT_NULL)
-        return -1;
-
-    /* default is not available */
-    tv->tv_sec = -1;
-    /* default is 0 */
-    tv->tv_usec = 0;
-
-#ifdef RT_USING_RTC
-    static rt_device_t device = RT_NULL;
-
-    /* optimization: find rtc device only first */
-    if (device == RT_NULL)
-    {
-        device = rt_device_find("rtc");
-    }
-
-    /* read timestamp from RTC device */
-    if (device != RT_NULL)
-    {
-        if (rt_device_open(device, 0) == RT_EOK)
-        {
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME_US, &tv->tv_usec);
-            rt_device_close(device);
-        }
-    }
-#endif /* RT_USING_RTC */
-
-    if (tv->tv_sec == (time_t) -1)
-    {
-        /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
-        rt_kprintf("Cannot find a RTC device to provide time!\r\n");
-        tv->tv_sec = 0;
-        return -1;
-    }
-
-    return 1;
-}
-
 /**
  * Returns the current time.
  *
@@ -239,7 +296,7 @@ RT_WEAK time_t time(time_t *t)
 {
     struct timeval now;
 
-    if(get_timeval(&now)>0)
+    if(get_timeval(&now) > 0)
     {
         if (t)
         {
@@ -250,7 +307,7 @@ RT_WEAK time_t time(time_t *t)
     else
     {
         errno = EFAULT;
-        return -1;
+        return ((time_t)-1);
     }
 }
 RTM_EXPORT(time);
@@ -263,28 +320,24 @@ RTM_EXPORT(clock);
 
 int stime(const time_t *t)
 {
-#ifdef RT_USING_RTC
-    rt_device_t device;
+    struct timeval tv;
 
-    /* read timestamp from RTC device. */
-    device = rt_device_find("rtc");
-    if (rt_device_open(device, 0) == RT_EOK)
+    if (!t)
     {
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, (void*)t);
-        rt_device_close(device);
-    }
-    else
-    {
-        LOG_W("Cannot find a RTC device to provide time!");
         errno = EFAULT;
         return -1;
     }
-    return 0;
-#else
-    LOG_W("Cannot find a RTC device to provide time!");
-    errno = EFAULT;
-    return -1;
-#endif /* RT_USING_RTC */
+
+    tv.tv_sec = *t;
+    if (set_timeval(&tv) > 0)
+    {
+        return 0;
+    }
+    else
+    {
+        errno = EFAULT;
+        return -1;
+    }
 }
 RTM_EXPORT(stime);
 
@@ -366,7 +419,7 @@ RTM_EXPORT(timegm);
 /* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    if (tv != RT_NULL && get_timeval(tv)>0)
+    if (tv != RT_NULL && get_timeval(tv) > 0)
     {
         return 0;
     }
@@ -385,7 +438,15 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     {
         if(tv->tv_sec >= 0 && tv->tv_usec >= 0)
         {
-            return stime((const time_t *)&tv->tv_sec);
+            if(set_timeval((struct timeval *)tv) > 0)
+            {
+                return 0;
+            }
+            else
+            {
+                errno = EFAULT;
+                return -1;
+            }
         }
         else
         {
