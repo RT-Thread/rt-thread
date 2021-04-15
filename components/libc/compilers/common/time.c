@@ -183,10 +183,12 @@ char* ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
-static void get_timeval(struct timeval *tv)
+/*-1 failure; 1 success*/
+static int get_timeval(struct timeval *tv)
 {
     if (tv == RT_NULL)
-        return;
+        return -1;
+
     /* default is not available */
     tv->tv_sec = -1;
     /* default is 0 */
@@ -217,8 +219,11 @@ static void get_timeval(struct timeval *tv)
     {
         /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
         rt_kprintf("Cannot find a RTC device to provide time!\r\n");
-        errno = ENOSYS;
+        tv->tv_sec = 0;
+        return -1;
     }
+
+    return 1;
 }
 
 /**
@@ -234,13 +239,19 @@ RT_WEAK time_t time(time_t *t)
 {
     struct timeval now;
 
-    get_timeval(&now);
-
-    if (t)
+    if(get_timeval(&now)>0)
     {
-        *t = now.tv_sec;
+        if (t)
+        {
+            *t = now.tv_sec;
+        }
+        return now.tv_sec;
     }
-    return now.tv_sec;
+    else
+    {
+        errno = EFAULT;
+        return -1;
+    }
 }
 RTM_EXPORT(time);
 
@@ -265,13 +276,13 @@ int stime(const time_t *t)
     else
     {
         LOG_W("Cannot find a RTC device to provide time!");
-        errno = ENOSYS;
+        errno = EFAULT;
         return -1;
     }
     return 0;
 #else
     LOG_W("Cannot find a RTC device to provide time!");
-    errno = ENOSYS;
+    errno = EFAULT;
     return -1;
 #endif /* RT_USING_RTC */
 }
@@ -355,15 +366,13 @@ RTM_EXPORT(timegm);
 /* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    get_timeval(tv);
-
-    if (tv != RT_NULL && tv->tv_sec != (time_t) -1)
+    if (tv != RT_NULL && get_timeval(tv)>0)
     {
         return 0;
     }
     else
     {
-        errno = ENOSYS;
+        errno = EFAULT;
         return -1;
     }
 }
@@ -374,11 +383,19 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 {
     if (tv != RT_NULL)
     {
-        return stime((const time_t *)&tv->tv_sec);
+        if(tv->tv_sec >= 0 && tv->tv_usec >= 0)
+        {
+            return stime((const time_t *)&tv->tv_sec);
+        }
+        else
+        {
+            errno = EINVAL;
+            return -1;
+        }
     }
     else
     {
-        errno = ENOSYS;
+        errno = EFAULT;
         return -1;
     }
 }
