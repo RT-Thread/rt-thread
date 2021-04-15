@@ -4,16 +4,16 @@
 #include "lwip/netif.h"
 #include <rtthread.h>
 
-#define NIOCTL_GADDR        0x01
+#define NIOCTL_GADDR		0x01
 #ifndef RT_LWIP_ETH_MTU
-#define ETHERNET_MTU        1500
+#define ETHERNET_MTU		1500
 #else
-#define ETHERNET_MTU        RT_LWIP_ETH_MTU
+#define ETHERNET_MTU		RT_LWIP_ETH_MTU
 #endif
 
 /* eth flag with auto_linkup or phy_linkup */
-#define ETHIF_LINK_AUTOUP   0x0000
-#define ETHIF_LINK_PHYUP    0x0100
+#define ETHIF_LINK_AUTOUP	0x0000
+#define ETHIF_LINK_PHYUP	0x0100
 
 struct eth_device
 {
