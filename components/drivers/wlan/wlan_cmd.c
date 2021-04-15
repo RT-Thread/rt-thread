@@ -255,7 +255,7 @@ static int wifi_scan(int argc, char *argv[])
     }
  
     /* clean scan result */
-    rt_wlan_scan_result_clean();
+    // rt_wlan_scan_result_clean();
     return 0;
 }
 

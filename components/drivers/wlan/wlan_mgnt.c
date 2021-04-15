@@ -38,8 +38,8 @@
 #define STA_DEVICE()  (_sta_mgnt.device)
 #define AP_DEVICE()  (_ap_mgnt.device)
 
-#define SRESULT_LOCK()    (rt_mutex_take(&scan_result_mutex, RT_WAITING_FOREVER))
-#define SRESULT_UNLOCK()  (rt_mutex_release(&scan_result_mutex))
+// #define SRESULT_LOCK()    (rt_mutex_take(&scan_result_mutex, RT_WAITING_FOREVER))
+// #define SRESULT_UNLOCK()  (rt_mutex_release(&scan_result_mutex))
 
 #define STAINFO_LOCK()    (rt_mutex_take(&sta_info_mutex, RT_WAITING_FOREVER))
 #define STAINFO_UNLOCK()  (rt_mutex_release(&sta_info_mutex))
@@ -109,8 +109,8 @@ static struct rt_mutex mgnt_mutex;
 static struct rt_wlan_mgnt_des _sta_mgnt;
 static struct rt_wlan_mgnt_des _ap_mgnt;
 
-static struct rt_wlan_scan_result scan_result;
-static struct rt_mutex scan_result_mutex;
+// static struct rt_wlan_scan_result scan_result;
+// static struct rt_mutex scan_result_mutex;
 
 static struct rt_wlan_sta_des sta_info;
 static struct rt_mutex sta_info_mutex;
@@ -277,6 +277,7 @@ static rt_err_t rt_wlan_send_to_thread(rt_wlan_event_t event, void *buff, int le
 }
 #endif
 
+#if 0
 static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info, int timeout)
 {
     struct rt_wlan_info *ptable;
@@ -400,7 +401,7 @@ static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info, int timeout
     rt_mutex_release(&scan_result_mutex);
     return err;
 }
-
+#endif
 static rt_err_t rt_wlan_sta_info_add(struct rt_wlan_info *info, int timeout)
 {
     struct rt_wlan_sta_list *sta_list;
@@ -685,14 +686,14 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         user_event = RT_WLAN_EVT_SCAN_REPORT;
         if (user_buff.len != sizeof(struct rt_wlan_info))
             break;
-        rt_wlan_scan_result_cache(user_buff.data, 0);
+        // rt_wlan_scan_result_cache(user_buff.data, 0);
         break;
     }
     case RT_WLAN_DEV_EVT_SCAN_DONE:
     {
         RT_WLAN_LOG_D("event: SCAN_DONE");
-        user_buff.data = &scan_result;
-        user_buff.len = sizeof(scan_result);
+        // user_buff.data = &scan_result;
+        // user_buff.len = sizeof(scan_result);
         user_event = RT_WLAN_EVT_SCAN_DONE;
         break;
     }
@@ -992,7 +993,7 @@ rt_wlan_mode_t rt_wlan_get_mode(const char *dev_name)
 
     return mode;
 }
-
+#if 0
 rt_bool_t rt_wlan_find_best_by_cache(const char *ssid, struct rt_wlan_info *info)
 {
     int i, ssid_len;
@@ -1046,6 +1047,7 @@ rt_bool_t rt_wlan_find_best_by_cache(const char *ssid, struct rt_wlan_info *info
     *info = *info_best;
     return RT_TRUE;
 }
+#endif
 
 rt_err_t rt_wlan_connect(const char *ssid, const char *password)
 {
@@ -1738,6 +1740,7 @@ rt_err_t rt_wlan_scan(void)
     return err;
 }
 
+#if 0
 struct rt_wlan_scan_result *rt_wlan_scan_sync(void)
 {
     struct rt_wlan_scan_result *result;
@@ -1748,6 +1751,7 @@ struct rt_wlan_scan_result *rt_wlan_scan_sync(void)
     MGNT_UNLOCK();
     return result;
 }
+#endif
 
 struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
 {
@@ -1756,7 +1760,7 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     rt_uint32_t set = 0, recved = 0;
     static struct rt_wlan_info scan_filter_info;
     rt_base_t level;
-    struct rt_wlan_scan_result *result;
+    // struct rt_wlan_scan_result *result;
 
     if (_sta_is_null())
     {
@@ -1775,7 +1779,8 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     if (complete == RT_NULL)
     {
         MGNT_UNLOCK();
-        return &scan_result;
+        // return &scan_result;
+        return RT_NULL;
     }
 
     /* add scan info filter */
@@ -1793,7 +1798,7 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     {
         rt_wlan_complete_delete(complete);
         RT_WLAN_LOG_E("scan sync fail");
-        result = RT_NULL;
+        // result = RT_NULL;
         goto scan_exit;
     }
 
@@ -1807,7 +1812,7 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     if (!(recved & set))
     {
         RT_WLAN_LOG_E("scan wait timeout!");
-        result = &scan_result;
+        // result = &scan_result;
         goto scan_exit;
     }
 
@@ -1816,10 +1821,11 @@ scan_exit:
     level = rt_hw_interrupt_disable();
     scan_filter = RT_NULL;
     rt_hw_interrupt_enable(level);
-    result = &scan_result;
-    return result;
+    // result = &scan_result;
+    return RT_NULL;
 }
 
+#if 0
 int rt_wlan_scan_get_info_num(void)
 {
     int num = 0;
@@ -1875,6 +1881,7 @@ int rt_wlan_scan_find_cache(struct rt_wlan_info *info, struct rt_wlan_info *out_
         return 0;
     }
     SRESULT_LOCK();
+
     /* Traversing the cache to find a qualified hot spot information */
     for (i = 0; (i < scan_result.num) && (count < num); i++)
     {
@@ -1891,7 +1898,7 @@ int rt_wlan_scan_find_cache(struct rt_wlan_info *info, struct rt_wlan_info *out_
 
     return count;
 }
-
+#endif
 rt_err_t rt_wlan_set_powersave(int level)
 {
     rt_err_t err = RT_EOK;
@@ -2016,10 +2023,10 @@ int rt_wlan_init(void)
     {
         rt_memset(&_sta_mgnt, 0, sizeof(struct rt_wlan_mgnt_des));
         rt_memset(&_ap_mgnt, 0, sizeof(struct rt_wlan_mgnt_des));
-        rt_memset(&scan_result, 0, sizeof(struct rt_wlan_scan_result));
+        // rt_memset(&scan_result, 0, sizeof(struct rt_wlan_scan_result));
         rt_memset(&sta_info, 0, sizeof(struct rt_wlan_sta_des));
         rt_mutex_init(&mgnt_mutex, "mgnt", RT_IPC_FLAG_FIFO);
-        rt_mutex_init(&scan_result_mutex, "scan", RT_IPC_FLAG_FIFO);
+        // rt_mutex_init(&scan_result_mutex, "scan", RT_IPC_FLAG_FIFO);
         rt_mutex_init(&sta_info_mutex, "sta", RT_IPC_FLAG_FIFO);
         rt_mutex_init(&complete_mutex, "complete", RT_IPC_FLAG_FIFO);
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
