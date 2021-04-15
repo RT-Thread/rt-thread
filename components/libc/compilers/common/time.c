@@ -120,7 +120,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
     time_t local_tz;
     int utc_plus;
 
-    utc_plus = 0; /* GTM: UTC+0 */
+    utc_plus = 8; /* GMT: UTC+8 */
     local_tz = *t + utc_plus * 3600;
     return gmtime_r(&local_tz, r);
 }
@@ -183,18 +183,16 @@ char* ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
-/**
- * Returns the current time.
- *
- * @param time_t * t the timestamp pointer, if not used, keep NULL.
- *
- * @return The value ((time_t)-1) is returned if the calendar time is not available.
- *         If timer is not a NULL pointer, the return value is also stored in timer.
- *
- */
-RT_WEAK time_t time(time_t *t)
+/*-1 failure; 1 success*/
+static int get_timeval(struct timeval *tv)
 {
-    time_t time_now = ((time_t)-1); /* default is not available */
+    if (tv == RT_NULL)
+        return -1;
+
+    /* default is not available */
+    tv->tv_sec = -1;
+    /* default is 0 */
+    tv->tv_usec = 0;
 
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
@@ -210,26 +208,50 @@ RT_WEAK time_t time(time_t *t)
     {
         if (rt_device_open(device, 0) == RT_EOK)
         {
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &tv->tv_sec);
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME_US, &tv->tv_usec);
             rt_device_close(device);
         }
     }
 #endif /* RT_USING_RTC */
 
-    /* if t is not NULL, write timestamp to *t */
-    if (t != RT_NULL)
-    {
-        *t = time_now;
-    }
-
-    if(time_now == (time_t)-1)
+    if (tv->tv_sec == (time_t) -1)
     {
         /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
         rt_kprintf("Cannot find a RTC device to provide time!\r\n");
-        errno = ENOSYS;
+        tv->tv_sec = 0;
+        return -1;
     }
 
-    return time_now;
+    return 1;
+}
+
+/**
+ * Returns the current time.
+ *
+ * @param time_t * t the timestamp pointer, if not used, keep NULL.
+ *
+ * @return The value ((time_t)-1) is returned if the calendar time is not available.
+ *         If timer is not a NULL pointer, the return value is also stored in timer.
+ *
+ */
+RT_WEAK time_t time(time_t *t)
+{
+    struct timeval now;
+
+    if(get_timeval(&now)>0)
+    {
+        if (t)
+        {
+            *t = now.tv_sec;
+        }
+        return now.tv_sec;
+    }
+    else
+    {
+        errno = EFAULT;
+        return -1;
+    }
 }
 RTM_EXPORT(time);
 
@@ -254,13 +276,13 @@ int stime(const time_t *t)
     else
     {
         LOG_W("Cannot find a RTC device to provide time!");
-        errno = ENOSYS;
+        errno = EFAULT;
         return -1;
     }
     return 0;
 #else
     LOG_W("Cannot find a RTC device to provide time!");
-    errno = ENOSYS;
+    errno = EFAULT;
     return -1;
 #endif /* RT_USING_RTC */
 }
@@ -344,17 +366,13 @@ RTM_EXPORT(timegm);
 /* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    time_t t = time(RT_NULL);
-
-    if (tv != RT_NULL && t != (time_t)-1)
+    if (tv != RT_NULL && get_timeval(tv)>0)
     {
-        tv->tv_sec = t;
-        tv->tv_usec = 0;
         return 0;
     }
     else
     {
-        errno = ENOSYS;
+        errno = EFAULT;
         return -1;
     }
 }
@@ -365,11 +383,19 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 {
     if (tv != RT_NULL)
     {
-        return stime((const time_t *)&tv->tv_sec);
+        if(tv->tv_sec >= 0 && tv->tv_usec >= 0)
+        {
+            return stime((const time_t *)&tv->tv_sec);
+        }
+        else
+        {
+            errno = EINVAL;
+            return -1;
+        }
     }
     else
     {
-        errno = ENOSYS;
+        errno = EFAULT;
         return -1;
     }
 }
