@@ -57,6 +57,10 @@ time_t timegm(struct tm * const t);
 int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
 
+#if defined(__ARMCC_VERSION) || defined (__ICCARM__)
+struct tm *gmtime_r(const time_t *timep, struct tm *r);
+#endif
+
 #ifdef RT_USING_POSIX
 #include <sys/types.h>
 /* posix clock and timer */
