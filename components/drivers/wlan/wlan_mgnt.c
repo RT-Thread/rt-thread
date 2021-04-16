@@ -1015,6 +1015,42 @@ rt_bool_t rt_wlan_find_best_by_cache(const char *ssid, struct rt_wlan_info *info
 }
 #endif
 
+static void rt_wlan_join_scan_callback(int event, struct rt_wlan_buff *buff, void *parameter)
+{
+    struct rt_wlan_info *info = RT_NULL;
+    struct rt_wlan_info *tgt_info = RT_NULL;
+    int ret = RT_EOK;
+
+    RT_ASSERT(event == RT_WLAN_EVT_SCAN_REPORT);
+    RT_ASSERT(buff != NULL);
+    RT_ASSERT(parameter != NULL);
+
+    info = (struct rt_wlan_info *)buff->data;
+    tgt_info = (struct rt_wlan_info *)parameter;
+
+
+    RT_WLAN_LOG_D("%s info len:%d tgt info len:%d", __FUNCTION__,info->ssid.len,tgt_info->ssid.len);
+    RT_WLAN_LOG_D("%s info ssid:%s tgt info ssid:%s", __FUNCTION__,&info->ssid.val[0],&tgt_info->ssid.val[0]);
+    
+    if(rt_memcmp(&info->ssid.val[0], &tgt_info->ssid.val[0], info->ssid.len) == 0 &&
+            info->ssid.len == tgt_info->ssid.len)
+    {
+        /*Get the rssi the max ap*/
+        if(info->rssi > tgt_info->rssi)
+        {
+            tgt_info->security  = info->security;
+            tgt_info->band      = info->band;
+            tgt_info->datarate  = info->datarate;
+            tgt_info->channel   = info->channel;
+            tgt_info->rssi      = info->rssi;
+            tgt_info->hidden    = info->hidden;
+            /* hwaddr */
+            rt_memcmp(tgt_info->bssid,info->bssid,RT_WLAN_BSSID_MAX_LENGTH);
+        }
+    }
+}
+
+
 rt_err_t rt_wlan_connect(const char *ssid, const char *password)
 {
     rt_err_t err = RT_EOK;
@@ -1051,14 +1087,28 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password)
     /* get info from cache */
     INVALID_INFO(&info);
     MGNT_LOCK();
-#if 0
-    while (scan_retry-- && rt_wlan_find_best_by_cache(ssid, &info) != RT_TRUE)
-    {
-        rt_wlan_scan_sync();
-    }
-    rt_wlan_scan_result_clean();
 
-    if (info.ssid.len <= 0)
+    rt_memcpy(&info.ssid.val[0],ssid,rt_strlen(ssid));
+    info.ssid.len = rt_strlen(ssid);
+
+#define RT_WLAN_JOIN_SCAN_BY_MGNT
+#ifdef RT_WLAN_JOIN_SCAN_BY_MGNT
+    err = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT,rt_wlan_join_scan_callback,&info);
+    if(err != RT_EOK)
+    {
+        LOG_E("Scan register user callback error:%d!\n",err);
+        return err;
+    }
+
+    err = rt_wlan_scan_with_info(&info);
+    if(err != RT_EOK)
+    {
+        LOG_E("Scan with info error:%d!\n",err);
+        return err;
+    }
+
+    // if (info.ssid.len <= 0 || info.rssi <= 0)
+    if (info.channel <= 0)
     {
         RT_WLAN_LOG_W("not find ap! ssid:%s,info.ssid.len=%d", ssid,info.ssid.len);
         MGNT_UNLOCK();
@@ -1067,10 +1117,8 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password)
 
     RT_WLAN_LOG_D("find best info ssid:%s mac: %02x %02x %02x %02x %02x %02x",
                   info.ssid.val, info.bssid[0], info.bssid[1], info.bssid[2], info.bssid[3], info.bssid[4], info.bssid[5]);
-#else
-    memcpy(&info.ssid.val[0],ssid,strlen(ssid));
-    info.ssid.len = strlen(ssid);
 #endif
+
     /* create event wait complete */
     complete = rt_wlan_complete_create("join");
     if (complete == RT_NULL)
