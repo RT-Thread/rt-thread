@@ -119,13 +119,13 @@ static struct rt_wlan_event_desc event_tab[RT_WLAN_EVT_MAX];
 
 static struct rt_wlan_complete_des *complete_tab[5];
 static struct rt_mutex complete_mutex;
-static struct rt_wlan_info *scan_filter;
+// static struct rt_wlan_info *scan_filter;
 
 #ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 static struct rt_timer reconnect_time;
 #endif
 
-rt_inline int _sta_is_null(void)
+int _sta_is_null(void)
 {
     if (_sta_mgnt.device == RT_NULL)
     {
@@ -134,7 +134,7 @@ rt_inline int _sta_is_null(void)
     return 0;
 }
 
-rt_inline int _ap_is_null(void)
+int _ap_is_null(void)
 {
     if (_ap_mgnt.device == RT_NULL)
     {
@@ -143,7 +143,7 @@ rt_inline int _ap_is_null(void)
     return 0;
 }
 
-rt_inline rt_bool_t _is_do_connect(void)
+rt_bool_t _is_do_connect(void)
 {
     if ((rt_wlan_get_autoreconnect_mode() == RT_FALSE) ||
             (rt_wlan_is_connected() == RT_TRUE) ||
@@ -155,40 +155,6 @@ rt_inline rt_bool_t _is_do_connect(void)
 }
 
 #ifdef RT_WLAN_WORK_THREAD_ENABLE
-
-static rt_bool_t rt_wlan_info_isequ(struct rt_wlan_info *info1, struct rt_wlan_info *info2)
-{
-    rt_bool_t is_equ = 1;
-    rt_uint8_t bssid_zero[RT_WLAN_BSSID_MAX_LENGTH] = { 0 };
-
-    if (is_equ && (info1->security != SECURITY_UNKNOWN) && (info2->security != SECURITY_UNKNOWN))
-    {
-        is_equ &= info2->security == info1->security;
-    }
-    if (is_equ && ((info1->ssid.len > 0) && (info2->ssid.len > 0)))
-    {
-        is_equ &= info1->ssid.len == info2->ssid.len;
-        is_equ &= rt_memcmp(&info2->ssid.val[0], &info1->ssid.val[0], info1->ssid.len) == 0;
-    }
-    if (is_equ && (rt_memcmp(&info1->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)) &&
-       (rt_memcmp(&info2->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)))
-    {
-        is_equ &= rt_memcmp(&info1->bssid[0], &info2->bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0;
-    }
-    if (is_equ && info1->datarate && info2->datarate)
-    {
-        is_equ &= info1->datarate == info2->datarate;
-    }
-    if (is_equ && (info1->channel >= 0) && (info2->channel >= 0))
-    {
-        is_equ &= info1->channel == info2->channel;
-    }
-    if (is_equ && (info1->rssi < 0) && (info2->rssi < 0))
-    {
-        is_equ &= info1->rssi == info2->rssi;
-    }
-    return is_equ;
-}
 
 static void rt_wlan_mgnt_work(void *parameter)
 {
@@ -1753,24 +1719,22 @@ struct rt_wlan_scan_result *rt_wlan_scan_sync(void)
 }
 #endif
 
-struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
+rt_err_t rt_wlan_scan_with_info(struct rt_wlan_info *info)
 {
     rt_err_t err = RT_EOK;
     struct rt_wlan_complete_des *complete;
     rt_uint32_t set = 0, recved = 0;
     static struct rt_wlan_info scan_filter_info;
-    rt_base_t level;
-    // struct rt_wlan_scan_result *result;
 
     if (_sta_is_null())
     {
-        return RT_NULL;
+        return -RT_EINVAL;
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
     if (info != RT_NULL && info->ssid.len > RT_WLAN_SSID_MAX_LENGTH)
     {
         RT_WLAN_LOG_E("ssid is to long!");
-        return RT_NULL;
+        return -RT_EINVAL;
     }
 
     /* Create an event that needs to wait. */
@@ -1780,18 +1744,9 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     {
         MGNT_UNLOCK();
         // return &scan_result;
-        return RT_NULL;
+        return -RT_EIO;
     }
-
-    /* add scan info filter */
-    if (info)
-    {
-        scan_filter_info = *info;
-        level = rt_hw_interrupt_disable();
-        scan_filter = &scan_filter_info;
-        rt_hw_interrupt_enable(level);
-    }
-
+    
     /* run scan */
     err = rt_wlan_dev_scan(STA_DEVICE(), info);
     if (err != RT_EOK)
@@ -1799,7 +1754,8 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
         rt_wlan_complete_delete(complete);
         RT_WLAN_LOG_E("scan sync fail");
         // result = RT_NULL;
-        goto scan_exit;
+        MGNT_UNLOCK();
+        return -RT_ERROR;
     }
 
     /* Initializing events that need to wait */
@@ -1813,16 +1769,12 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     {
         RT_WLAN_LOG_E("scan wait timeout!");
         // result = &scan_result;
-        goto scan_exit;
+        MGNT_UNLOCK();
+        return -RT_ETIMEOUT;
     }
 
-scan_exit:
     MGNT_UNLOCK();
-    level = rt_hw_interrupt_disable();
-    scan_filter = RT_NULL;
-    rt_hw_interrupt_enable(level);
-    // result = &scan_result;
-    return RT_NULL;
+    return RT_EOK;
 }
 
 #if 0

@@ -153,7 +153,42 @@ static int wifi_status(int argc, char *argv[])
 
 static struct rt_wlan_scan_result scan_result;
 /*ToDo:what is the scan_filter.*/
-static struct rt_wlan_info *scan_filter;
+static struct rt_wlan_info *scan_filter = RT_NULL;
+
+static rt_bool_t rt_wlan_info_isequ(struct rt_wlan_info *info1, struct rt_wlan_info *info2)
+{
+    rt_bool_t is_equ = 1;
+    rt_uint8_t bssid_zero[RT_WLAN_BSSID_MAX_LENGTH] = { 0 };
+
+    if (is_equ && (info1->security != SECURITY_UNKNOWN) && (info2->security != SECURITY_UNKNOWN))
+    {
+        is_equ &= info2->security == info1->security;
+    }
+    if (is_equ && ((info1->ssid.len > 0) && (info2->ssid.len > 0)))
+    {
+        is_equ &= info1->ssid.len == info2->ssid.len;
+        is_equ &= rt_memcmp(&info2->ssid.val[0], &info1->ssid.val[0], info1->ssid.len) == 0;
+    }
+    if (is_equ && (rt_memcmp(&info1->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)) &&
+       (rt_memcmp(&info2->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)))
+    {
+        is_equ &= rt_memcmp(&info1->bssid[0], &info2->bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0;
+    }
+    if (is_equ && info1->datarate && info2->datarate)
+    {
+        is_equ &= info1->datarate == info2->datarate;
+    }
+    if (is_equ && (info1->channel >= 0) && (info2->channel >= 0))
+    {
+        is_equ &= info1->channel == info2->channel;
+    }
+    if (is_equ && (info1->rssi < 0) && (info2->rssi < 0))
+    {
+        is_equ &= info1->rssi == info2->rssi;
+    }
+    return is_equ;
+}
+
 static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info)
 {
     struct rt_wlan_info *ptable;
@@ -161,14 +196,10 @@ static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info)
     int i, insert = -1;
     rt_base_t level;
 
-    // if (_sta_is_null() || (info == RT_NULL) || (info->ssid.len == 0)) return RT_EOK;
+    if (_sta_is_null() || (info == RT_NULL) || (info->ssid.len == 0)) return -RT_EINVAL;
 
-    if ((info == RT_NULL) || (info->ssid.len == 0)) return RT_EOK;
     LOG_D("ssid:%s len:%d mac:%02x:%02x:%02x:%02x:%02x:%02x", info->ssid.val, info->ssid.len,
                   info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
-
-    if (err != RT_EOK)
-        return err;
 
     /* scanning result filtering */
     level = rt_hw_interrupt_disable();
@@ -274,16 +305,24 @@ static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info)
     return err;
 }
 
-static void print_ap_info(struct rt_wlan_info *info,int index)
-// static void print_ap_info(int event, struct rt_wlan_buff *buff, void *parameter)
+
+
+static void rt_wlan_scan_result_clean(void)
 {
-        // int index = 0;
+
+    /* If there is data */
+    if (scan_result.num)
+    {
+        scan_result.num = 0;
+        rt_free(scan_result.info);
+        scan_result.info = RT_NULL;
+    }
+}
+
+static void print_ap_info(struct rt_wlan_info *info,int index)
+{
         char *security;
-        // struct rt_wlan_info *info = (struct rt_wlan_info *)buff->data;
       
-
-        // index = *((int *)(parameter));
-
         if(index == 0)
         {
             rt_kprintf("             SSID                      MAC            security    rssi chn Mbps\n");
@@ -342,30 +381,47 @@ static void print_ap_info(struct rt_wlan_info *info,int index)
             rt_kprintf("%4d\n", info->datarate / 1000000);
         }
 
-        // index++;
-        // *((int *)(parameter)) = index;
-
 }
 
 static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *parameter)
 {
-    struct rt_wlan_info *info = (struct rt_wlan_info *)buff->data;
+    struct rt_wlan_info *info = RT_NULL;
     int index = 0;
+    int ret = RT_EOK;
 
+    RT_ASSERT(event == RT_WLAN_EVT_SCAN_REPORT);
+    RT_ASSERT(buff != NULL);
+    RT_ASSERT(parameter != NULL);
+
+    info = (struct rt_wlan_info *)buff->data;
     index = *((int *)(parameter));
 
-    rt_wlan_scan_result_cache(info);
+    ret = rt_wlan_scan_result_cache(info);
+    // if(ret != RT_EOK)
+    // {
+        // LOG_E("Can't cache this ap info ret:%d,%s.",ret,&(info->ssid.val[0]));
+    // }
+    if(ret == RT_EOK)
+    {
+        if(scan_filter == RT_NULL || 
+                (scan_filter != RT_NULL &&
+                 scan_filter->ssid.len == info->ssid.len && 
+                 rt_memcmp(&scan_filter->ssid.val[0], &info->ssid.val[0], scan_filter->ssid.len) == 0))
+        {
+            /*Print the info*/
+            print_ap_info(info,index);
+        
+            index++;
+            *((int *)(parameter)) = index;
+        }
+    }
 
-    print_ap_info(info,index);
-
-    index++;
-    *((int *)(parameter)) = index;
 }
 static int wifi_scan(int argc, char *argv[])
 {
     struct rt_wlan_info *info = RT_NULL;
-    // struct rt_wlan_scan_result *scan_result = RT_NULL;
     struct rt_wlan_info filter;
+    int ret = 0;
     int i = 0;
 
     if (argc > 3)
@@ -378,31 +434,26 @@ static int wifi_scan(int argc, char *argv[])
         info = &filter;
     }
     rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT,user_ap_info_callback,&i);
-
-    // scan_result = rt_wlan_scan_with_info(info);
-    rt_wlan_scan_with_info(info);
-
-    // if (scan_result)
+    
+    if(info)
     {
-        int index = 0, num = 0;
-        // struct rt_wlan_buff buff;
-
-        num = scan_result.num;
-        for(index = 0;index < num;index++)
-        {
-            // buff.len  = sizeof(struct rt_wlan_info);
-            // buff.data =&(scan_result->info[index]);
-
-            print_ap_info(&(scan_result.info[index]),index);
-        }
+        scan_filter = info;
     }
-    // else
+
+
+    /*Todo: what can i do for it return val */
+    ret = rt_wlan_scan_with_info(info);
+    if(ret != RT_EOK)
     {
-        // rt_kprintf("wifi scan result is null\n");
+        LOG_E("Scan with info error:%d!\n",ret);
     }
- 
+
     /* clean scan result */
-    // rt_wlan_scan_result_clean();
+    rt_wlan_scan_result_clean();
+    if(info)
+    {
+        scan_filter = RT_NULL;
+    }
     return 0;
 }
 
