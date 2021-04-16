@@ -433,8 +433,14 @@ static int wifi_scan(int argc, char *argv[])
         SSID_SET(&filter, argv[2]);
         info = &filter;
     }
-    rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT,user_ap_info_callback,&i);
-    
+
+    ret = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT,user_ap_info_callback,&i);
+    if(ret != RT_EOK)
+    {
+        LOG_E("Scan register user callback error:%d!\n",ret);
+        return 0;
+    }
+
     if(info)
     {
         scan_filter = info;
