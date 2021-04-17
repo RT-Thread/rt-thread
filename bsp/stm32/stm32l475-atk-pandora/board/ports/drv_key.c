@@ -103,7 +103,7 @@ static int onboard_key_init(void)
     button_init(&key_wkup, _cb_key_wkup_pin_level, PIN_HIGH);
 
     /*---- user codes area begin ----*/
-    /*ssers can modify according to needs*/
+    /*users can modify according to needs*/
     button_attach(&key0, PRESS_DOWN, key0_BtnCallback);
     button_attach(&key1, PRESS_DOWN, key1_BtnCallback);
     button_attach(&key2, PRESS_DOWN, key2_BtnCallback);
