@@ -40,7 +40,7 @@ struct timeval {
 #endif
 #endif /* _TIMEVAL_DEFINED */
 
-#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)) && !defined (__ICCARM__) && !defined (_WIN32)
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined (__ICCARM__) && !defined (_WIN32)
 struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
@@ -56,6 +56,9 @@ int stime(const time_t *t);
 time_t timegm(struct tm * const t);
 int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
+#if defined(__ARMCC_VERSION) || defined (__ICCARM__)
+struct tm *gmtime_r(const time_t *timep, struct tm *r);
+#endif
 
 #ifdef RT_USING_POSIX
 #include <sys/types.h>
