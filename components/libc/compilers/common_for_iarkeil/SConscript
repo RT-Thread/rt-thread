@@ -1,0 +1,13 @@
+from building import *
+
+Import('rtconfig')
+
+if rtconfig.PLATFORM == 'iar' or rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+    src   = []
+    cwd   = GetCurrentDir()
+    CPPPATH = [cwd]
+    group = []
+    src += Glob('*.c')
+
+    group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], CPPPATH = CPPPATH)
+    Return('group')
