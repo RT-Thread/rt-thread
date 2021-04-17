@@ -30,7 +30,7 @@ static struct button key2;
 static struct button key_wkup;
 
 /*---- user codes area begin ----*/
-/*ssers can modify according to needs*/
+/*users can modify according to needs*/
 static void key0_BtnCallback(void* state)
 {
     rt_kprintf("key0!\n");
