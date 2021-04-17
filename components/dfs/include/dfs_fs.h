@@ -12,6 +12,7 @@
 #define __DFS_FS_H__
 
 #include <dfs.h>
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
