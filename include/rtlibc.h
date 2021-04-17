@@ -23,11 +23,6 @@
 #include "libc/libc_limits.h"
 #include "libc/libc_stdio.h"
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM) || defined(__IAR_SYSTEMS_ICC__)
-typedef signed long off_t;
-typedef int mode_t;
-#endif
-
 #if defined(__MINGW32__) || defined(_WIN32)
 typedef signed long off_t;
 typedef int mode_t;

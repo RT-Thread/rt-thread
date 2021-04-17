@@ -10,6 +10,9 @@
 #ifndef _SYS_IOCTL_H
 #define _SYS_IOCTL_H
 
-
+#include <rtconfig.h>
+#ifdef RT_USING_POSIX
+#include <dfs_posix.h>
+#endif
 
 #endif
