@@ -146,7 +146,7 @@ void rt_pin_write(rt_base_t pin, rt_base_t value)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_write, pinWrite, write value to hardware pin);
 
-int  rt_pin_read(rt_base_t pin)
+int rt_pin_read(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);

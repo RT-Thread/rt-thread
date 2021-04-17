@@ -15,6 +15,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART1
         default y
 
+    config BSP_USING_KEY
+        bool "Enable onboard keys"
+        select RT_USING_PIN
+        select RT_USING_TIMER_SOFT
+        select PKG_USING_MULTIBUTTON
+        default n
+
     config BSP_USING_QSPI_FLASH
         bool "Enable QSPI FLASH (W25Q128 qspi1)"
         select BSP_USING_QSPI
