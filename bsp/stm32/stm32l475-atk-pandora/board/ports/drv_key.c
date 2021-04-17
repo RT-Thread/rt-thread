@@ -78,11 +78,11 @@ static uint8_t _cb_key_wkup_pin_level(void)
 }
 
 static int onboard_key_init(void)
-{   
-    rt_timer_init(&key_timer, 
-                  "key timer", 
-                  _cb_key_timer, 
-                  RT_NULL, 
+{
+    rt_timer_init(&key_timer,
+                  "key timer",
+                  _cb_key_timer,
+                  RT_NULL,
                   rt_tick_from_millisecond(TICKS_INTERVAL),
                   RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
 
@@ -91,17 +91,17 @@ static int onboard_key_init(void)
         LOG_E("drv_key timer initialization failed");
         return -1;
     }
-    
+
     rt_pin_mode(KEY0_PIN, PIN_MODE_INPUT);
     rt_pin_mode(KEY1_PIN, PIN_MODE_INPUT);
     rt_pin_mode(KEY2_PIN, PIN_MODE_INPUT);
     rt_pin_mode(KEY_WKUP_PIN, PIN_MODE_INPUT);
-    
+
     button_init(&key0, _cb_key0_pin_level, PIN_LOW);
     button_init(&key1, _cb_key1_pin_level, PIN_LOW);
     button_init(&key2, _cb_key2_pin_level, PIN_LOW);
     button_init(&key_wkup, _cb_key_wkup_pin_level, PIN_HIGH);
-    
+
     /*---- user codes area begin ----*/
     /*ssers can modify according to needs*/
     button_attach(&key0, PRESS_DOWN, key0_BtnCallback);
@@ -109,12 +109,12 @@ static int onboard_key_init(void)
     button_attach(&key2, PRESS_DOWN, key2_BtnCallback);
     button_attach(&key_wkup, PRESS_UP, key_wkup_BtnCallback);
     /*---- user codes area end ----*/
-    
+
     button_start(&key0);
     button_start(&key1);
     button_start(&key2);
     button_start(&key_wkup);
-    
+
     return 0;
 }
 INIT_APP_EXPORT(onboard_key_init);
