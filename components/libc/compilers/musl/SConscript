@@ -1,3 +1,4 @@
+import os
 from building import *
 Import('rtconfig')
 
@@ -5,14 +6,20 @@ src = Glob('*.c')
 cwd = GetCurrentDir()
 group = []
 
-CFLAGS     = ' -nostdinc'
-CPPPATH    = [cwd, cwd + '/libc/include']
-CPPDEFINES = ['__STDC_ISO_10646__=201206L', '_STDC_PREDEF_H']
-LIBS       = ['c', 'gcc']
-LIBPATH    = [cwd + '/libc/lib']
+if rtconfig.PLATFORM == 'gcc' and GetDepend('RT_USING_MUSL'):
+    CPPDEFINES = ['__STDC_ISO_10646__=201206L', '_STDC_PREDEF_H']
+    LIBS       = ['c', 'gcc']
 
-if rtconfig.PLATFORM == 'gcc':
-    group = DefineGroup('musl', src, depend = ['RT_USING_LIBC', 'RT_USING_MUSL'], CFLAGS = CFLAGS, 
-        CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS, LIBPATH = LIBPATH)
+    if os.path.exists(os.path.join(cwd, 'libc', 'lib', 'libc.a')):
+        CFLAGS     = ' -nostdinc'
+        CPPPATH    = [cwd, cwd + '/libc/include']
+        LIBPATH    = [cwd + '/libc/lib']
+
+        group = DefineGroup('musl', src, depend = ['RT_USING_LIBC', 'RT_USING_MUSL'], CFLAGS = CFLAGS, 
+            CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS, LIBPATH = LIBPATH)
+    else:
+        LINKFLAGS = ' --specs=kernel.specs'
+        group = DefineGroup('musl', src, depend = ['RT_USING_LIBC', 'RT_USING_MUSL'], LINKFLAGS = LINKFLAGS, 
+            CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 
 Return('group')

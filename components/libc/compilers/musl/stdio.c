@@ -12,7 +12,6 @@
 
 #include <rtthread.h>
 #include "libc.h"
-#include "dfs.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
 
@@ -61,9 +60,13 @@ int libc_stdio_set_console(const char* device_name, int mode)
     return -1;
 }
 
-int libc_stdio_get_console(void) {
+int libc_stdio_get_console(void)
+{
+    int ret = -1;
     if (std_console)
-        return fileno(std_console);
-    else
-        return -1;
+    {
+        ret = fileno(std_console);
+    }
+
+    return ret;
 }
