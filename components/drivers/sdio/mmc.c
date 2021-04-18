@@ -300,7 +300,7 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     MMCSD_BUS_WIDTH_1
   };
   struct rt_mmcsd_host *host = card->host;
-  unsigned idx, bus_width = 0;
+  unsigned idx, trys, bus_width = 0;
   int err = 0;
 
   if (GET_BITS(card->resp_cid, 122, 4) < 4)
@@ -335,10 +335,13 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     if (err)
       continue;
 
-    bus_width = bus_widths[idx];
-    mmcsd_set_bus_width(host, bus_width);
-    mmcsd_delay_ms(20); //delay 10ms
-    err = mmc_compare_ext_csds(card, ext_csd, bus_width);
+    for(trys = 0; trys < 5; trys++){
+        mmcsd_set_bus_width(host, bus_width);
+        mmcsd_delay_ms(10);
+        err = mmc_compare_ext_csds(card, ext_csd, bus_width);
+        if(!err)
+            break;
+    }
     if (!err) {
       err = bus_width;
       break;
