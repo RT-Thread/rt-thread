@@ -39,7 +39,7 @@ def GenerateCFiles(env,project):
         cm_file.write("SET(CMAKE_SIZE \""+ SIZE + "\")\n\n")
 
 
-        cm_file.write("SET(CMAKE_C_FLAGS \""+ rtconfig.CFLAGS + " -nostdlib\")\n")
+        cm_file.write("SET(CMAKE_C_FLAGS \""+ rtconfig.CFLAGS + "\")\n")
         cm_file.write("SET(CMAKE_CXX_FLAGS \""+ rtconfig.CXXFLAGS + "\")\n")
         cm_file.write("SET(CMAKE_ASM_FLAGS \""+ rtconfig.AFLAGS + "\")\n")
         cm_file.write("SET(CMAKE_EXE_LINKER_FLAGS \""+ re.sub('-T(\s*)', '-T ${CMAKE_SOURCE_DIR}/',rtconfig.LFLAGS) + "\")\n\n")
