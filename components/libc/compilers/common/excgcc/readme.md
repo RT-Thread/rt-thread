@@ -1,3 +1,3 @@
 ## Attentions
 
-This folder is "common" for armlibc and dlib.
+This folder is "common" for toolchains excluding gcc.
