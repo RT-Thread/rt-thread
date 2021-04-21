@@ -29,8 +29,6 @@ pipeline {
                         // ['gd32e230k-start', 'sourcery-arm'], /* CI compile not support */
                         ['gd32303e-eval', 'sourcery-arm'],
                         // ['gd32450z-eval', 'sourcery-arm'], /* CI link not support */
-                        ['gkipc', 'sourcery-arm'],
-                        ['imx6sx/cortex-a9', 'sourcery-arm'],
                         // ['imxrt/imxrt1052-atk-commander', 'sourcery-arm'], /* CI compile not support */
                         // ['imxrt/imxrt1052-fire-pro', 'sourcery-arm'], /* CI compile not support */
                         // ['imxrt/imxrt1052-nxp-evk', 'sourcery-arm'], /* CI compile not support */
@@ -108,7 +106,6 @@ pipeline {
                         ['swm320-lq100', 'sourcery-arm'],
                         ['beaglebone', 'sourcery-arm'],
                         ['frdm-k64f', 'sourcery-arm'],
-                        ['fh8620', 'sourcery-arm'],
                         ['xplorer4330/M4', 'sourcery-arm'],
                         // ['at32/at32f403a-start', 'sourcery-arm'],/* CI link not support */
                         // ['at32/at32f407-start', 'sourcery-arm']/* CI compile C99 not support */
