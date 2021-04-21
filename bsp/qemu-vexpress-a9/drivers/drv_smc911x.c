@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,12 +46,12 @@ int mdelay(int value)
 #if defined (CONFIG_SMC911X_32_BIT)
 rt_inline uint32_t smc911x_reg_read(struct eth_device_smc911x *dev, uint32_t offset)
 {
-    return *(volatile uint32_t*)(dev->iobase + offset);
+    return *(volatile uint32_t *)(dev->iobase + offset);
 }
 
 rt_inline void smc911x_reg_write(struct eth_device_smc911x *dev, uint32_t offset, uint32_t val)
 {
-    *(volatile uint32_t*)(dev->iobase + offset) = val;
+    *(volatile uint32_t *)(dev->iobase + offset) = val;
 }
 
 #elif defined (CONFIG_SMC911X_16_BIT)
@@ -78,14 +78,14 @@ struct chip_id
 
 static const struct chip_id chip_ids[] =
 {
-    { CHIP_89218,"LAN89218" },
+    { LAN9118_ID_89218, "LAN89218" },
     { LAN9118_ID_9115, "LAN9115" },
     { LAN9118_ID_9116, "LAN9116" },
     { LAN9118_ID_9117, "LAN9117" },
     { LAN9118_ID_9118, "LAN9118" },
     { LAN9210_ID_9211, "LAN9211" },
     { LAN9218_ID_9215, "LAN9215" },
-    { CHIP_9216, "LAN9216" },
+    { LAN9218_ID_9216, "LAN9216" },
     { LAN9218_ID_9217, "LAN9217" },
     { LAN9218_ID_9218, "LAN9218" },
     { LAN9220_ID_9220, "LAN9220" },
@@ -95,23 +95,23 @@ static const struct chip_id chip_ids[] =
 
 static uint32_t smc911x_get_mac_csr(struct eth_device_smc911x *dev, uint8_t reg)
 {
-    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_LAN9118_MAC_CSR_CMD_BUSY) ;
+    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_MAC_CSR_CMD_BUSY) ;
 
-    smc911x_reg_write(dev, LAN9118_MAC_CSR_CMD, LAN9118_LAN9118_MAC_CSR_CMD_BUSY | LAN9118_LAN9118_MAC_CSR_CMD_R | reg);
+    smc911x_reg_write(dev, LAN9118_MAC_CSR_CMD, LAN9118_MAC_CSR_CMD_BUSY | LAN9118_MAC_CSR_CMD_R | reg);
 
-    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_LAN9118_MAC_CSR_CMD_BUSY) ;
+    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_MAC_CSR_CMD_BUSY) ;
 
     return smc911x_reg_read(dev, LAN9118_MAC_CSR_DATA);
 }
 
 static void smc911x_set_mac_csr(struct eth_device_smc911x *dev, uint8_t reg, uint32_t data)
 {
-    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_LAN9118_MAC_CSR_CMD_BUSY) ;
+    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_MAC_CSR_CMD_BUSY) ;
 
     smc911x_reg_write(dev, LAN9118_MAC_CSR_DATA, data);
-    smc911x_reg_write(dev, LAN9118_MAC_CSR_CMD, LAN9118_LAN9118_MAC_CSR_CMD_BUSY | reg);
+    smc911x_reg_write(dev, LAN9118_MAC_CSR_CMD, LAN9118_MAC_CSR_CMD_BUSY | reg);
 
-    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_LAN9118_MAC_CSR_CMD_BUSY) ;
+    while (smc911x_reg_read(dev, LAN9118_MAC_CSR_CMD) & LAN9118_MAC_CSR_CMD_BUSY) ;
 }
 
 static int smc911x_detect_chip(struct eth_device_smc911x *dev)
@@ -176,7 +176,7 @@ static void smc911x_reset(struct eth_device_smc911x *dev)
     smc911x_reg_write(dev, LAN9118_HW_CFG, LAN9118_HW_CFG_SRST);
 
     timeout = 1000;
-    while (timeout-- && smc911x_reg_read(dev, LAN9118_E2P_CMD) & E2P_CMD_EPC_BUSY)
+    while (timeout-- && smc911x_reg_read(dev, LAN9118_E2P_CMD) & LAN9118_E2P_CMD)
         udelay(10);
 
     if (timeout < 0)
@@ -186,7 +186,7 @@ static void smc911x_reset(struct eth_device_smc911x *dev)
     }
 
     /* Reset the FIFO level and flow control settings */
-    smc911x_set_mac_csr(dev, LAN9118_FLOW, FLOW_FCPT | LAN9118_FLOW_FCEN);
+    smc911x_set_mac_csr(dev, LAN9118_FLOW, LAN9118_FLOW_FCPT(0xffff) | LAN9118_FLOW_FCEN);
     smc911x_reg_write(dev, LAN9118_AFC_CFG, 0x0050287F);
 
     /* Set to LED outputs */
@@ -255,10 +255,10 @@ static void smc911x_phy_configure(struct eth_device_smc911x *dev)
 
     smc911x_phy_reset(dev);
 
-    smc911x_eth_phy_write(dev, 1, MII_BMCR, BMCR_RESET);
+    smc911x_eth_phy_write(dev, 1, LAN9118_MII_BMCR, LAN9118_BMCR_RESET);
     mdelay(1);
-    smc911x_eth_phy_write(dev, 1, MII_ADVERTISE, 0x01e1);
-    smc911x_eth_phy_write(dev, 1, MII_BMCR, BMCR_ANENABLE | BMCR_ANRESTART);
+    smc911x_eth_phy_write(dev, 1, LAN9118_MII_ADVERTISE, 0x01e1);
+    smc911x_eth_phy_write(dev, 1, LAN9118_MII_BMCR, LAN9118_BMCR_ANENABLE | LAN9118_BMCR_ANRESTART);
 
     timeout = 5000;
     do
@@ -267,10 +267,10 @@ static void smc911x_phy_configure(struct eth_device_smc911x *dev)
         if ((timeout--) == 0)
             goto err_out;
 
-        if (smc911x_eth_phy_read(dev, 1, MII_BMSR, &status) != 0)
+        if (smc911x_eth_phy_read(dev, 1, LAN9118_MII_BMSR, &status) != 0)
             goto err_out;
     }
-    while (!(status & BMSR_LSTATUS));
+    while (!(status & LAN9118_BMSR_LSTATUS));
 
     return;
 
@@ -281,9 +281,9 @@ err_out:
 static void smc911x_enable(struct eth_device_smc911x *dev)
 {
     /* Enable TX */
-    smc911x_reg_write(dev, LAN9118_HW_CFG, 8 << 16 | HW_CFG_SF);
+    smc911x_reg_write(dev, LAN9118_HW_CFG, 8 << 16 | LAN9118_HW_CFG_SF);
 
-    smc911x_reg_write(dev, LAN9118_GPT_CFG, GPT_CFG_TIMER_EN | 10000);
+    smc911x_reg_write(dev, LAN9118_GPT_CFG, LAN9118_GPT_CFG_TIMER_EN | 10000);
 
     smc911x_reg_write(dev, LAN9118_TX_CFG, LAN9118_TX_CFG_TX_ON);
 
@@ -291,7 +291,7 @@ static void smc911x_enable(struct eth_device_smc911x *dev)
     smc911x_reg_write(dev, LAN9118_RX_CFG, 0);
 
     smc911x_set_mac_csr(dev, LAN9118_MAC_CR, LAN9118_MAC_CR_TXEN | LAN9118_MAC_CR_RXEN |
-                        MAC_CR_HBDIS);
+                        LAN9118_MAC_CR_HBDIS);
 }
 
 #if defined(CONFIG_MII) || defined(CONFIG_CMD_MII)
@@ -330,8 +330,8 @@ static void smc911x_isr(int vector, void *param)
     emac = SMC911X_EMAC_DEVICE(param);
 
     status = smc911x_reg_read(emac, LAN9118_INT_STS);
-    
-    if (status & INT_STS_RSFL)
+
+    if (status & LAN9118_INT_STS_RSFL)
     {
         eth_device_ready(&emac->parent);
     }
@@ -360,7 +360,7 @@ static rt_err_t smc911x_emac_init(rt_device_t dev)
 #if 1
     /* Interrupt on every received packet */
     smc911x_reg_write(emac, LAN9118_FIFO_INT, 0x01 << 8);
-    smc911x_reg_write(emac, LAN9118_INT_EN, INT_EN_RDFL_EN | LAN9118_INT_RSFL);
+    smc911x_reg_write(emac, LAN9118_INT_EN, LAN9118_INT_EN_RDFL_EN | LAN9118_INT_RSFL);
 
     /* enable interrupt */
     smc911x_reg_write(emac, LAN9118_IRQ_CFG, LAN9118_IRQ_CFG_IRQ_EN | LAN9118_IRQ_CFG_IRQ_POL | LAN9118_IRQ_CFG_IRQ_TYPE);
@@ -386,11 +386,11 @@ static rt_err_t smc911x_emac_control(rt_device_t dev, int cmd, void *args)
     emac = SMC911X_EMAC_DEVICE(dev);
     RT_ASSERT(emac != RT_NULL);
 
-    switch(cmd)
+    switch (cmd)
     {
     case NIOCTL_GADDR:
         /* get MAC address */
-        if(args) rt_memcpy(args, emac->enetaddr, 6);
+        if (args) rt_memcpy(args, emac->enetaddr, 6);
         else return -RT_ERROR;
         break;
     default :
@@ -402,7 +402,7 @@ static rt_err_t smc911x_emac_control(rt_device_t dev, int cmd, void *args)
 /* Ethernet device interface */
 /* transmit packet. */
 static uint8_t tx_buf[2048];
-rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf* p)
+rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf *p)
 {
     struct eth_device_smc911x *emac;
 
@@ -418,7 +418,7 @@ rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf* p)
     pbuf_copy_partial(p, tx_buf, p->tot_len, 0);
 
     /* send it out */
-    data = (uint32_t*)tx_buf;
+    data = (uint32_t *)tx_buf;
     length = p->tot_len;
 
     smc911x_reg_write(emac, LAN9118_TXDFIFOP, LAN9118_TXC_A_FS | LAN9118_TXC_A_LS | length);
@@ -431,14 +431,14 @@ rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf* p)
     }
 
     /* wait for transmission */
-    while (!((smc911x_reg_read(emac, LAN9118_TX_FIFO_INF) & TX_FIFO_INF_TSUSED) >> 16));
+    while (!(LAN9118_TX_FIFO_INF_TXSUSED(smc911x_reg_read(emac, LAN9118_TX_FIFO_INF))));
 
     /* get status. Ignore 'no carrier' error, it has no meaning for
      * full duplex operation
      */
     status = smc911x_reg_read(emac, LAN9118_TXSFIFOP) &
              (LAN9118_TXS_LOC | LAN9118_TXS_LCOL | LAN9118_TXS_ECOL |
-              LAN9118_TXS_ED | TX_STS_UNDERRUN);
+              LAN9118_TXS_ED | LAN9118_TX_STS_UNDERRUN);
 
     if (!status) return 0;
 
@@ -447,7 +447,7 @@ rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf* p)
                status & LAN9118_TXS_LCOL ? "LAN9118_TXS_LCOL " : "",
                status & LAN9118_TXS_ECOL ? "LAN9118_TXS_ECOL " : "",
                status & LAN9118_TXS_ED ? "LAN9118_TXS_ED " : "",
-               status & TX_STS_UNDERRUN ? "TX_STS_UNDERRUN" : "");
+               status & LAN9118_TX_STS_UNDERRUN ? "LAN9118_TX_STS_UNDERRUN" : "");
 
     return -RT_EIO;
 }
@@ -455,14 +455,14 @@ rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf* p)
 /* reception packet. */
 struct pbuf *smc911x_emac_rx(rt_device_t dev)
 {
-    struct pbuf* p = RT_NULL;
+    struct pbuf *p = RT_NULL;
     struct eth_device_smc911x *emac;
 
     emac = SMC911X_EMAC_DEVICE(dev);
     RT_ASSERT(emac != RT_NULL);
 
     /* take the emac buffer to the pbuf */
-    if ((smc911x_reg_read(emac, LAN9118_RX_FIFO_INF) & RX_FIFO_INF_RXSUSED) >> 16)
+    if (LAN9118_RX_FIFO_INF_RXSUSED(smc911x_reg_read(emac, LAN9118_RX_FIFO_INF)))
     {
         uint32_t status;
         uint32_t pktlen, tmplen;
@@ -470,7 +470,7 @@ struct pbuf *smc911x_emac_rx(rt_device_t dev)
         status = smc911x_reg_read(emac, LAN9118_RXSFIFOP);
 
         /* get frame length */
-        pktlen = (status & RX_STS_PKT_LEN) >> 16;
+        pktlen = (status & LAN9118_RX_STS_PKT_LEN) >> 16;
 
         smc911x_reg_write(emac, LAN9118_RX_CFG, 0);
 
@@ -497,7 +497,7 @@ struct pbuf *smc911x_emac_rx(rt_device_t dev)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops smc911x_emac_ops = 
+const static struct rt_device_ops smc911x_emac_ops =
 {
     smc911x_emac_init,
     RT_NULL,
