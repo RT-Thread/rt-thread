@@ -54,7 +54,6 @@ pipeline {
                         ['nuvoton_m05x', 'sourcery-arm'],
                         ['qemu-vexpress-a9', 'sourcery-arm'],
                         ['qemu-vexpress-gemini', 'sourcery-arm'],
-                        ['sam7x', 'sourcery-arm'],
                         // ['stm32/stm32f072-st-nucleo', 'sourcery-arm'], /* CI compile C99 not support */
                         // ['stm32/stm32f091-st-nucleo', 'sourcery-arm'], /* CI compile C99 not support */
                         // ['stm32/stm32f103-atk-nano', 'sourcery-arm'], /* CI compile C99 not support */
