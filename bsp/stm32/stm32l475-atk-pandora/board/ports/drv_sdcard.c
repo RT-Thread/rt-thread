@@ -23,7 +23,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-void sd_mount(void *parameter)
+static void sd_mount(void *parameter)
 {
     while (1)
     {
@@ -43,7 +43,7 @@ void sd_mount(void *parameter)
     }
 }
 
-int stm32_sdcard_mount(void)
+static int onboard_sdcard_mount(void)
 {
     rt_thread_t tid;
 
@@ -67,7 +67,7 @@ int stm32_sdcard_mount(void)
 
     return RT_EOK;
 }
-INIT_APP_EXPORT(stm32_sdcard_mount);
+INIT_APP_EXPORT(onboard_sdcard_mount);
 
 static int rt_hw_spi1_tfcard(void)
 {
