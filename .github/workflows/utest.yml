@@ -1,0 +1,45 @@
+name: RT-Thread-Utest
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
+  schedule:
+    - cron:  '0 16 1 * *'
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.legs.UTEST }}
+    strategy:
+      fail-fast: false
+      matrix:
+       legs:
+         - {UTEST: "kernel/object",   RTT_BSP: "bsp/stm32/stm32f429-atk-apollo", QEMU_ARCH: "stm32f429-atk-apollo", CONFIG_FILE: "utest/kernel/object"}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@master
+        with:
+          python-version: 3.9
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+      - name: Run Utest
+        if: ${{ success() }}
+        shell: bash     
+        run: |
+          docker pull ${{ secrets.DOCKERHUB_REPO }}
+          if [ ! -n "${{ matrix.legs.SD_PATH }}" ]; then
+            docker run -v "`pwd`:/rt-thread" -i ${{ secrets.DOCKERHUB_REPO }} /bin/bash -c "python utest/rtt_utest.py -b ${{ matrix.legs.RTT_BSP }} -q ${{ matrix.legs.QEMU_ARCH }} -c ${{ matrix.legs.CONFIG_FILE }} -d 60"
+          else
+            docker run -v "`pwd`:/rt-thread" -i ${{ secrets.DOCKERHUB_REPO }} /bin/bash -c "python utest/rtt_utest.py -b ${{ matrix.legs.RTT_BSP }} -q ${{ matrix.legs.QEMU_ARCH }} -c ${{ matrix.legs.CONFIG_FILE }} -d 60 -s ${{ matrix.legs.SD_PATH }}"
+          fi
