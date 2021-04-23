@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,7 +22,7 @@
 #include <vbus.h>
 #endif
 
-static const unsigned char _M0_CODE[] SECTION("M0_CODE") = {
+static const unsigned char _M0_CODE[] RT_SECTION("M0_CODE") = {
 #include "M0_CODE.h"
 };
 
@@ -32,10 +32,10 @@ static void _boot_M0(void)
 
     LPC_CREG->M0APPMEMMAP = (uint32_t)&_M0_CODE[0];
 
-    // Release Slave from reset,  first read status 
+    // Release Slave from reset,  first read status
     u32REG = LPC_RGU->RESET_ACTIVE_STATUS1;
 
-    // If the M0 is being held in reset,  release it... 
+    // If the M0 is being held in reset,  release it...
     // 1 = no reset,  0 = reset
     while(!(u32REG & (1u << 24)))
     {

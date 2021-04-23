@@ -32,7 +32,7 @@ static rt_err_t rt_uart_init (rt_device_t dev)
 {
     set_baudrate(115200);
 
-    IOWR_ALTERA_AVALON_UART_CONTROL(RS232_BASE, 0x80);//接收中断使能
+    IOWR_ALTERA_AVALON_UART_CONTROL(RS232_BASE, 0x80);//鎺ユ敹涓柇浣胯兘
     IOWR_ALTERA_AVALON_UART_STATUS(RS232_BASE, 0x0); // clean status
 
     rx_put_index = 0;
@@ -99,17 +99,17 @@ void rt_hw_uart_init(void)
 {
     // init uart
     set_baudrate(115200);
-    IOWR_ALTERA_AVALON_UART_CONTROL(RS232_BASE, 0x80);//接收中断使能
+    IOWR_ALTERA_AVALON_UART_CONTROL(RS232_BASE, 0x80);//鎺ユ敹涓柇浣胯兘
     IOWR_ALTERA_AVALON_UART_STATUS(RS232_BASE, 0x0); // clean status
     alt_irq_register(RS232_IRQ, NULL, uart_isr);
 
     // register device
     uart_device.type = RT_Device_Class_Char;
     /* device interface */
-    uart_device.init 	    = rt_uart_init;
-    uart_device.open 	    = rt_uart_open;
+    uart_device.init        = rt_uart_init;
+    uart_device.open        = rt_uart_open;
     uart_device.close       = rt_uart_close;
-    uart_device.read 	    = rt_uart_read;
+    uart_device.read        = rt_uart_read;
     uart_device.write       = rt_uart_write;
     uart_device.control     = rt_uart_control;
 

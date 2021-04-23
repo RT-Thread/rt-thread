@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2006-2018, RT-Thread Development Team
+ * COPYRIGHT (C) 2006-2021, RT-Thread Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,

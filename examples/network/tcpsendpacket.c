@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #include <rtthread.h>
 
 #include <netdb.h>   /* 为了解析主机名，需要包含netdb.h头文件 */
@@ -26,9 +35,9 @@ void tcp_senddata(const char *url, int port, int length)
     {
         /* 申请内存失败 */
         rt_kprintf("No memory\n");
-        return;        
+        return;
     }
-    
+
     /* 构造发送数据 */
     for (index = 0; index < length; index ++)
         buffer_ptr[index] = index & 0xff;

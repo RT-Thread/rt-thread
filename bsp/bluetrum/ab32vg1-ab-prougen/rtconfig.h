@@ -19,6 +19,9 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 256
+
+/* kservice optimization */
+
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -72,12 +75,6 @@
 
 /* Device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_ROMFS
 
 /* Device Drivers */
 
@@ -86,10 +83,6 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_AUDIO
-#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 1024
-#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
-#define RT_AUDIO_RECORD_PIPE_SIZE 512
 
 /* Using USB */
 
@@ -155,25 +148,26 @@
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
 
 
-/* games: games run on RT-Thread console */
+/* entertainment: terminal games and other interesting software packages */
 
 
 /* Hardware Drivers Config */
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_USB_TO_USART
-#define BSP_USING_AUDIO
-#define BSP_USING_AUDIO_PLAY
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_UART
 #define BSP_USING_UART0
 
 /* Board extended module Drivers */

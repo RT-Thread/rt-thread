@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
-#define STM32_FLASH_SIZE             (64 * 1024)
+#define STM32_FLASH_SIZE             (128 * 1024)
 #define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
 /* Internal SRAM memory size[Kbytes] <8-64>, Default: 64*/

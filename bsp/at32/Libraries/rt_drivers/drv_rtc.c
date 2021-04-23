@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,7 @@
 
 #include "board.h"
 #include <rtthread.h>
+#include <sys/time.h>
 
 #ifdef BSP_USING_RTC
 
@@ -42,7 +43,7 @@ static time_t get_rtc_timestamp(void)
     tm_new.tm_year = ERTC_DateStruct.ERTC_Year + 100;
 
     LOG_D("get rtc time.");
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 #else
     return RTC_GetCounter();
 #endif
@@ -56,7 +57,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
     struct tm *p_tm;
 
-    p_tm = localtime(&time_stamp);
+    p_tm = gmtime(&time_stamp);
     if (p_tm->tm_year < 100)
     {
         return -RT_ERROR;
@@ -78,10 +79,10 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
         return -RT_ERROR;
     }
 #else
-	/* Set the RTC counter value */
-	RTC_SetCounter(time_stamp);
-	/* Wait until last write operation on RTC registers has finished */
-	RTC_WaitForLastTask();
+    /* Set the RTC counter value */
+    RTC_SetCounter(time_stamp);
+    /* Wait until last write operation on RTC registers has finished */
+    RTC_WaitForLastTask();
 #endif /* SOC_SERIES_AT32F415 */
     LOG_D("set rtc time.");
 #ifdef SOC_SERIES_AT32F415
@@ -116,7 +117,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
     ERTC_InitType ERTC_InitStructure;
 #endif
     /* Allow access to BKP Domain */
-    PWR_BackupAccessCtrl(ENABLE); 
+    PWR_BackupAccessCtrl(ENABLE);
 
 #ifdef SOC_SERIES_AT32F415
   #ifdef BSP_RTC_USING_LSI
@@ -147,7 +148,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #else
     if (BKP_ReadBackupReg(BKP_DT1) != BKUP_REG_DATA)
 #endif
-  	{
+    {
         LOG_I("RTC hasn't been configured, please use <date> command to config.");
 #ifdef SOC_SERIES_AT32F415
         /* Configure the ERTC data register and ERTC prescaler */

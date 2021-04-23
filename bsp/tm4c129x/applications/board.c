@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -72,10 +68,10 @@ void rt_hw_board_init()
 int rt_hw_cpu_init(void)
 {
     MAP_IntMasterDisable();
-    IntRegister(FAULT_HARD, HardFault_Handler);	
+    IntRegister(FAULT_HARD, HardFault_Handler);
     IntRegister(FAULT_PENDSV, PendSV_Handler);
     IntRegister(FAULT_SYSTICK, SysTick_Handler);
-    
+
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
     // extra stack usage.
@@ -91,7 +87,7 @@ int rt_hw_cpu_init(void)
     MAP_SysTickDisable();
     MAP_SysTickPeriodSet(SystemCoreClock/ RT_TICK_PER_SECOND - 1);
     MAP_SysTickIntEnable();
-    MAP_SysTickEnable();	
+    MAP_SysTickEnable();
 
     return 0;
 }

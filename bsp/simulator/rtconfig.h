@@ -39,10 +39,14 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "console"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
 
 /* RT-Thread Components */
 
+#define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
 
@@ -77,6 +81,8 @@
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_0
 #define RT_DFS_ELM_USE_LFN 0
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
@@ -96,6 +102,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_LIBC_USING_TIME
 
 /* Network */
 
@@ -148,7 +155,13 @@
 /* system packages */
 
 
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
 /* peripheral libraries and drivers */
+
+
+/* AI packages */
 
 
 /* miscellaneous packages */
@@ -156,6 +169,10 @@
 
 /* samples: kernel and components samples */
 
+
+/* entertainment: terminal games and other interesting software packages */
+
+#define SOC_SIMULATOR
 #define RT_USING_DFS_WINSHAREDIR
 #include "rtconfig_project.h"
 

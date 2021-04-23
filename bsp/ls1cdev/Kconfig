@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$RTT_DIR/libcpu/mips/common/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-config SOC_1C300
+config SOC_LS1C300
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN

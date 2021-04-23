@@ -1,21 +1,7 @@
 /*
- * File      : start.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date                 Author          Notes
@@ -183,7 +169,7 @@ reset:
     mrc p15, 0, r1, c0, c0, 1     @/* Read cache type {0x1d152152}*/
     mrc p15, 0, r2, c0, c0, 2     @/* Read TCM status {0x10001}*/
 
-#ifdef GK7102C    
+#ifdef GK7102C
     @mrc    p15, 0, r0, c15,c14,0  @ read CP15 register c15 into r0
     @orr    r0,  r0,#0x80000000    @ system bit enabled
     @bic    r0,  r0,#0x00000077    @
@@ -194,7 +180,7 @@ reset:
     orr     r0,  r0,#0x00000040    @CZ bit enabled
     mcr     p15, 0, r0, c1, c0, 1  @read CP15 register c1 into r0
 #endif
-    
+
     @/* Turn on instrucion cache and disable MMU */
     mrc p15, 0, r0, c1, c0, 0     @/* Read control register {0x5327d}*/
     @bic r0, r0, #0x1000          @ Turn off bit 12 - I-cache

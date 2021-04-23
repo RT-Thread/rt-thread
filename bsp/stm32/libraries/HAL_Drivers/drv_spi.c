@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -317,7 +317,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         already_send_length = message->length - send_length - message_length;
         send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
         recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
-        
+
         /* start once data exchange in DMA mode */
         if (message->send_buf && message->recv_buf)
         {
@@ -447,8 +447,8 @@ static int rt_hw_spi_bus_init(void)
                 SET_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
                 /* Delay after an RCC peripheral clock enabling */
                 tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
-#elif defined(SOC_SERIES_STM32MP1) 
-                __HAL_RCC_DMAMUX_CLK_ENABLE(); 
+#elif defined(SOC_SERIES_STM32MP1)
+                __HAL_RCC_DMAMUX_CLK_ENABLE();
                 SET_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_rx->dma_rcc);
                 tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_rx->dma_rcc);
 #endif
@@ -490,7 +490,7 @@ static int rt_hw_spi_bus_init(void)
                 /* Delay after an RCC peripheral clock enabling */
                 tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_tx->dma_rcc);
 #elif defined(SOC_SERIES_STM32MP1)
-                __HAL_RCC_DMAMUX_CLK_ENABLE(); 
+                __HAL_RCC_DMAMUX_CLK_ENABLE();
                 SET_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_tx->dma_rcc);
                 tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_tx->dma_rcc);
 #endif
@@ -900,23 +900,23 @@ static void stm32_get_dma_info(void)
 }
 
 #if defined(SOC_SERIES_STM32F0)
-void SPI1_DMA_RX_TX_IRQHandler(void) 
+void SPI1_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
     SPI1_DMA_TX_IRQHandler();
 #endif
-    
+
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
     SPI1_DMA_RX_IRQHandler();
 #endif
 }
 
-void SPI2_DMA_RX_TX_IRQHandler(void) 
+void SPI2_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
     SPI2_DMA_TX_IRQHandler();
 #endif
-    
+
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
     SPI2_DMA_RX_IRQHandler();
 #endif

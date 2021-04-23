@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2018-10-30     SummerGift        first version
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
- 
+
 #ifndef __DRV_CONFIG_H__
 #define __DRV_CONFIG_H__
 
@@ -43,7 +43,7 @@ extern "C" {
 #include "f2/adc_config.h"
 #include "f2/tim_config.h"
 #include "f2/sdio_config.h"
-#include "f2/pwm_config.h"	
+#include "f2/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32F4)
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
@@ -114,14 +114,19 @@ extern "C" {
 #include "mp1/qspi_config.h"
 #include "mp1/spi_config.h"
 #include "mp1/adc_config.h"
-#include "mp1/dac_config.h"    
+#include "mp1/dac_config.h"
 #include "mp1/tim_config.h"
-#include "mp1/pwm_config.h"    
+#include "mp1/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32WL)
+#include "wl/dma_config.h"
+#include "wl/uart_config.h"
+#include "wl/spi_config.h"
+#include "wl/tim_config.h"
 #elif  defined(SOC_SERIES_STM32WB)
 #include "wb/adc_config.h"
 #include "wb/dma_config.h"
 #include "wb/pwm_config.h"
-#include "wb/qspi_config.h" 
+#include "wb/qspi_config.h"
 #include "wb/spi_config.h"
 #include "wb/tim_config.h"
 #include "wb/uart_config.h"

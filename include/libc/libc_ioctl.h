@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@
 #define _IOC_WRITE 1U
 #define _IOC_READ  2U
 
-#ifndef _WIN32
+#if !defined (_WIN32) && !defined (__TASKING__)
 #define _IO(a,b)    _IOC(_IOC_NONE,(a),(b),0)
 #define _IOW(a,b,c) _IOC(_IOC_WRITE,(a),(b),sizeof(c))
 #define _IOR(a,b,c) _IOC(_IOC_READ,(a),(b),sizeof(c))

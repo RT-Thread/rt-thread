@@ -116,25 +116,25 @@
 
 typedef struct
 {
-    uint32_t DAT;                   /*!< [0x0000] UART Receive/Transmit Buffer Register                            */
-    uint32_t INTEN;                 /*!< [0x0004] UART Interrupt Enable Register                                   */
-    uint32_t FIFO;                  /*!< [0x0008] UART FIFO Control Register                                       */
-    uint32_t LINE;                  /*!< [0x000c] UART Line Control Register                                       */
-    uint32_t MODEM;                 /*!< [0x0010] UART Modem Control Register                                      */
-    uint32_t MODEMSTS;              /*!< [0x0014] UART Modem Status Register                                       */
-    uint32_t FIFOSTS;               /*!< [0x0018] UART FIFO Status Register                                        */
-    uint32_t INTSTS;                /*!< [0x001c] UART Interrupt Status Register                                   */
-    uint32_t TOUT;                  /*!< [0x0020] UART Time-out Register                                           */
-    uint32_t BAUD;                  /*!< [0x0024] UART Baud Rate Divider Register                                  */
-    uint32_t IRDA;                  /*!< [0x0028] UART IrDA Control Register                                       */
-    uint32_t ALTCTL;                /*!< [0x002c] UART Alternate Control/Status Register                           */
-    uint32_t FUNCSEL;               /*!< [0x0030] UART Function Select Register                                    */
-    uint32_t LINCTL;                /*!< [0x0034] UART LIN Control Register                                        */
-    uint32_t LINSTS;                /*!< [0x0038] UART LIN Status Register                                         */
-    uint32_t BRCOMP;                /*!< [0x003c] UART Baud Rate Compensation Register                             */
-    uint32_t WKCTL;                 /*!< [0x0040] UART Wake-up Control Register                                    */
-    uint32_t WKSTS;                 /*!< [0x0044] UART Wake-up Status Register                                     */
-    uint32_t DWKCOMP;               /*!< [0x0048] UART Incoming Data Wake-up Compensation Register                 */
+    __IO uint32_t DAT;                   /*!< [0x0000] UART Receive/Transmit Buffer Register                            */
+    __IO uint32_t INTEN;                 /*!< [0x0004] UART Interrupt Enable Register                                   */
+    __IO uint32_t FIFO;                  /*!< [0x0008] UART FIFO Control Register                                       */
+    __IO uint32_t LINE;                  /*!< [0x000c] UART Line Control Register                                       */
+    __IO uint32_t MODEM;                 /*!< [0x0010] UART Modem Control Register                                      */
+    __IO uint32_t MODEMSTS;              /*!< [0x0014] UART Modem Status Register                                       */
+    __IO uint32_t FIFOSTS;               /*!< [0x0018] UART FIFO Status Register                                        */
+    __IO uint32_t INTSTS;                /*!< [0x001c] UART Interrupt Status Register                                   */
+    __IO uint32_t TOUT;                  /*!< [0x0020] UART Time-out Register                                           */
+    __IO uint32_t BAUD;                  /*!< [0x0024] UART Baud Rate Divider Register                                  */
+    __IO uint32_t IRDA;                  /*!< [0x0028] UART IrDA Control Register                                       */
+    __IO uint32_t ALTCTL;                /*!< [0x002c] UART Alternate Control/Status Register                           */
+    __IO uint32_t FUNCSEL;               /*!< [0x0030] UART Function Select Register                                    */
+    __IO uint32_t LINCTL;                /*!< [0x0034] UART LIN Control Register                                        */
+    __IO uint32_t LINSTS;                /*!< [0x0038] UART LIN Status Register                                         */
+    __IO uint32_t BRCOMP;                /*!< [0x003c] UART Baud Rate Compensation Register                             */
+    __IO uint32_t WKCTL;                 /*!< [0x0040] UART Wake-up Control Register                                    */
+    __IO uint32_t WKSTS;                 /*!< [0x0044] UART Wake-up Status Register                                     */
+    __IO uint32_t DWKCOMP;               /*!< [0x0048] UART Incoming Data Wake-up Compensation Register                 */
 
 } UART_T;
 

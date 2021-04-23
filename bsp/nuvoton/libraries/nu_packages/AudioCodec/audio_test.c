@@ -23,10 +23,12 @@
   - For record function: Run it w/o parameter.
   - For replay function: Run it with parameter.
 */
-static void audio_test(int argc, char **argv)
+static int audio_test(int argc, char **argv)
 {
 #define DEF_MAX_ARGV_NUM 8
-    int smplrate[] = {8000, 11025, 16000, 22050, 32000, 44100, 48000};
+#define DEF_MAX_TEST_SECOND 5
+
+    int smplrate[] = {8000, 16000, 44100, 48000};
     int smplbit[] = {16};
     int chnum[] = {1, 2};
     struct wavrecord_info info;
@@ -54,9 +56,9 @@ static void audio_test(int argc, char **argv)
                     info.samplebits = smplbit[j];
                     info.channels = chnum[k];
                     wavrecorder_start(&info);
-                    rt_thread_mdelay(10000);
+                    rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
                     wavrecorder_stop();
-                    rt_thread_mdelay(1000);
+                    rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
                 }
                 else
                 {
@@ -68,12 +70,14 @@ static void audio_test(int argc, char **argv)
 
                     rt_kprintf("Replay file at %s\n", strbuf);
                     wavplayer_play(strbuf);
-                    rt_thread_mdelay(10000);
+                    rt_thread_mdelay(DEF_MAX_TEST_SECOND * 1000);
                     wavplayer_stop();
                 }
             } // k
         } // j
     } // i
+
+    return 0;
 }
 
 #ifdef FINSH_USING_MSH

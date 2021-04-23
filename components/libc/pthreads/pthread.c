@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,6 +13,7 @@
 #include <rthw.h>
 #include <pthread.h>
 #include <sched.h>
+#include <sys/time.h>
 #include "pthread_internal.h"
 
 RT_DEFINE_SPINLOCK(pth_lock);
@@ -200,13 +201,15 @@ int pthread_create(pthread_t            *pid,
 
     /* allocate posix thread data */
     pth_id = _pthread_data_create();
-    if (pth_id == PTHREAD_NUM_MAX) 
+    if (pth_id == PTHREAD_NUM_MAX)
     {
         ret = ENOMEM;
         goto __exit;
     }
     /* get pthread data */
     ptd = _pthread_get_data(pth_id);
+
+    RT_ASSERT(ptd != RT_NULL);
 
     if (attr != RT_NULL)
     {
@@ -298,6 +301,12 @@ int pthread_detach(pthread_t thread)
 {
     int ret = 0;
     _pthread_data_t *ptd = _pthread_get_data(thread);
+    if (ptd == RT_NULL)
+    {
+        /* invalid pthread id */
+        ret = EINVAL;
+        goto __exit;
+    }
 
     rt_enter_critical();
     if (ptd->attr.detachstate == PTHREAD_CREATE_DETACHED)
@@ -359,6 +368,12 @@ int pthread_join(pthread_t thread, void **value_ptr)
     rt_err_t result;
 
     ptd = _pthread_get_data(thread);
+
+    if (ptd == RT_NULL)
+    {
+        return EINVAL; /* invalid pthread id */
+    }
+
     if (ptd && ptd->tid == rt_thread_self())
     {
         /* join self */
@@ -366,7 +381,9 @@ int pthread_join(pthread_t thread, void **value_ptr)
     }
 
     if (ptd->attr.detachstate == PTHREAD_CREATE_DETACHED)
+    {
         return EINVAL; /* join on a detached pthread */
+    }
 
     result = rt_sem_take(ptd->joinable_sem, RT_WAITING_FOREVER);
     if (result == RT_EOK)
@@ -661,7 +678,10 @@ int pthread_cancel(pthread_t thread)
 
     /* get posix thread data */
     ptd = _pthread_get_data(thread);
-    RT_ASSERT(ptd != RT_NULL);
+    if (ptd == RT_NULL)
+    {
+        return EINVAL;
+    }
 
     /* cancel self */
     if (ptd->tid == rt_thread_self())
@@ -687,4 +707,3 @@ int pthread_cancel(pthread_t thread)
     return 0;
 }
 RTM_EXPORT(pthread_cancel);
-

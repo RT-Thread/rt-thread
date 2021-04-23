@@ -243,10 +243,11 @@ exit_nu_spii2s_capacity_check:
 static rt_err_t nu_spii2s_dai_setup(nu_i2s_t psNuSPII2s, struct rt_audio_configure *pconfig)
 {
     rt_err_t result = RT_EOK;
-    nu_acodec_ops_t pNuACodecOps = RT_NULL;
+    nu_acodec_ops_t pNuACodecOps;
+    SPI_T *spii2s_base = (SPI_T *)psNuSPII2s->i2s_base;
+
     RT_ASSERT(psNuSPII2s->AcodecOps != RT_NULL);
     pNuACodecOps = psNuSPII2s->AcodecOps;
-    SPI_T *spii2s_base = (SPI_T *)psNuSPII2s->i2s_base;
 
     /* Open SPII2S */
     if (nu_spii2s_capacity_check(pconfig) == RT_TRUE)
@@ -281,9 +282,10 @@ static rt_err_t nu_spii2s_dai_setup(nu_i2s_t psNuSPII2s, struct rt_audio_configu
         LOG_I("Open SPII2S.");
 
         /* Set MCLK and enable MCLK */
-        SPII2S_EnableMCLK(spii2s_base, __HXT);
+        /* The target MCLK is related to audio codec setting. */
+        SPII2S_EnableMCLK(spii2s_base, 12000000);
 
-        /* Set unmute */
+        /* Set un-mute */
         if (pNuACodecOps->nu_acodec_mixer_control)
             pNuACodecOps->nu_acodec_mixer_control(AUDIO_MIXER_MUTE, RT_FALSE);
     }
@@ -298,14 +300,11 @@ exit_nu_spii2s_dai_setup:
 static rt_err_t nu_spii2s_getcaps(struct rt_audio_device *audio, struct rt_audio_caps *caps)
 {
     rt_err_t result = RT_EOK;
-    nu_i2s_t psNuSPII2s;
-    nu_acodec_ops_t pNuACodecOps = RT_NULL;
+    nu_i2s_t psNuSPII2s = (nu_i2s_t)audio;
+    nu_acodec_ops_t pNuACodecOps;
 
     RT_ASSERT(audio != RT_NULL);
     RT_ASSERT(caps != RT_NULL);
-
-    psNuSPII2s = (nu_i2s_t)audio;
-
     RT_ASSERT(psNuSPII2s->AcodecOps != RT_NULL);
 
     pNuACodecOps = psNuSPII2s->AcodecOps;
@@ -367,6 +366,10 @@ static rt_err_t nu_spii2s_getcaps(struct rt_audio_device *audio, struct rt_audio
         } // switch (caps->sub_type)
         break;
 
+    default:
+        result = -RT_ERROR;
+        break;
+
     } // switch (caps->main_type)
 
     return result;
@@ -375,16 +378,14 @@ static rt_err_t nu_spii2s_getcaps(struct rt_audio_device *audio, struct rt_audio
 static rt_err_t nu_spii2s_configure(struct rt_audio_device *audio, struct rt_audio_caps *caps)
 {
     rt_err_t result = RT_EOK;
-    nu_i2s_t psNuSPII2s;
-    nu_acodec_ops_t pNuACodecOps = RT_NULL;
+    nu_i2s_t psNuSPII2s = (nu_i2s_t)audio;
+    nu_acodec_ops_t pNuACodecOps;
     int stream = -1;
 
     RT_ASSERT(audio != RT_NULL);
     RT_ASSERT(caps != RT_NULL);
-
-    psNuSPII2s = (nu_i2s_t)audio;
-
     RT_ASSERT(psNuSPII2s->AcodecOps != RT_NULL);
+
     pNuACodecOps = psNuSPII2s->AcodecOps;
 
     switch (caps->main_type)
@@ -393,7 +394,6 @@ static rt_err_t nu_spii2s_configure(struct rt_audio_device *audio, struct rt_aud
         if (psNuSPII2s->AcodecOps->nu_acodec_mixer_control)
             psNuSPII2s->AcodecOps->nu_acodec_mixer_control(caps->sub_type, caps->udata.value);
         break;
-
 
     case AUDIO_TYPE_INPUT:
         stream = AUDIO_STREAM_RECORD;
@@ -445,6 +445,7 @@ static rt_err_t nu_spii2s_configure(struct rt_audio_device *audio, struct rt_aud
         }
     }
     break;
+
     default:
         result = -RT_ERROR;
         break;
@@ -456,11 +457,9 @@ static rt_err_t nu_spii2s_configure(struct rt_audio_device *audio, struct rt_aud
 static rt_err_t nu_spii2s_init(struct rt_audio_device *audio)
 {
     rt_err_t result = RT_EOK;
-    nu_i2s_t psNuSPII2s;
+    nu_i2s_t psNuSPII2s = (nu_i2s_t)audio;
 
     RT_ASSERT(audio != RT_NULL);
-
-    psNuSPII2s = (nu_i2s_t)audio;
 
     /* Reset this module */
     SYS_ResetModule(psNuSPII2s->i2s_rst);
@@ -470,13 +469,12 @@ static rt_err_t nu_spii2s_init(struct rt_audio_device *audio)
 
 static rt_err_t nu_spii2s_start(struct rt_audio_device *audio, int stream)
 {
-    nu_i2s_t psNuSPII2s;
+    nu_i2s_t psNuSPII2s = (nu_i2s_t)audio;
+    SPI_T *spii2s_base;
 
     RT_ASSERT(audio != RT_NULL);
 
-    psNuSPII2s = (nu_i2s_t)audio;
-
-    SPI_T *spii2s_base = (SPI_T *)psNuSPII2s->i2s_base;
+    spii2s_base = (SPI_T *)psNuSPII2s->i2s_base;
 
     /* Restart all: SPII2S and codec. */
     nu_spii2s_stop(audio, stream);
@@ -512,6 +510,8 @@ static rt_err_t nu_spii2s_start(struct rt_audio_device *audio, int stream)
         LOG_I("Start record.");
     }
     break;
+    default:
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -519,14 +519,13 @@ static rt_err_t nu_spii2s_start(struct rt_audio_device *audio, int stream)
 
 static rt_err_t nu_spii2s_stop(struct rt_audio_device *audio, int stream)
 {
-    nu_i2s_t psNuSPII2s;
+    nu_i2s_t psNuSPII2s = (nu_i2s_t)audio;
     nu_i2s_dai_t psNuSPII2sDai = RT_NULL;
+    SPI_T *spii2s_base;
 
     RT_ASSERT(audio != RT_NULL);
 
-    psNuSPII2s = (nu_i2s_t)audio;
-
-    SPI_T *spii2s_base = (SPI_T *)psNuSPII2s->i2s_base;
+    spii2s_base = (SPI_T *)psNuSPII2s->i2s_base;
 
     switch (stream)
     {
@@ -574,12 +573,10 @@ static rt_err_t nu_spii2s_stop(struct rt_audio_device *audio, int stream)
 
 static void nu_spii2s_buffer_info(struct rt_audio_device *audio, struct rt_audio_buf_info *info)
 {
-    nu_i2s_t psNuSPII2s;
+    nu_i2s_t psNuSPII2s = (nu_i2s_t)audio;
 
     RT_ASSERT(audio != RT_NULL);
     RT_ASSERT(info != RT_NULL);
-
-    psNuSPII2s = (nu_i2s_t)audio;
 
     info->buffer = (rt_uint8_t *)psNuSPII2s->i2s_dais[NU_I2S_DAI_PLAYBACK].fifo ;
     info->total_size = NU_I2S_DMA_FIFO_SIZE;
@@ -618,12 +615,12 @@ nu_hw_spii2s_pdma_allocate:
 
 int rt_hw_spii2s_init(void)
 {
-    int i = 0, j = 0;
+    int j = 0;
     nu_i2s_dai_t psNuSPII2sDai;
-
 
     for (j = (SPII2S_START + 1); j < SPII2S_CNT; j++)
     {
+        int i = 0;
         for (i = 0; i < NU_I2S_DAI_CNT; i++)
         {
             uint8_t *pu8ptr = rt_malloc(NU_I2S_DMA_FIFO_SIZE);

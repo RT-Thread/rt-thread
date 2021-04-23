@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,6 +16,6 @@ void phy_reset(void)
      * The PHY reset pin of NUCLEO-F767ZI is connected to the MCU reset pin,
      * so no additional reset is required.
      */
-    
+
     return ;
 }

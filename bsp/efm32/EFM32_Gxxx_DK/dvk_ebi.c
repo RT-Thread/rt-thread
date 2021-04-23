@@ -163,7 +163,7 @@ bool DVK_EBI_init(void)
    * be configured for EBI access */
   ebiMagic = DVK_EBI_readRegister(BC_MAGIC);
   while ((ebiMagic != BC_MAGIC_VALUE) && retry)
-  {    
+  {
     DVK_EBI_disable();
     /* Enable SPI interface */
     DVK_SPI_init();
@@ -172,13 +172,13 @@ bool DVK_EBI_init(void)
     DVK_SPI_writeRegister(BC_CFG, BC_CFG_EBI);
     /* Disable SPI */
     DVK_SPI_disable();
- 
+
     /* Now setup EBI again */
     DVK_EBI_configure();
     /* Wait until ready */
     ebiMagic = DVK_EBI_readRegister(BC_MAGIC);
     if (ebiMagic == BC_MAGIC_VALUE) break;
-    
+
     retry--;
   }
   if ( ! retry ) return false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,10 +34,11 @@
  * 2013-09-14     Grissiom     add an option check in rt_event_recv
  * 2018-10-02     Bernard      add 64bit support for mailbox
  * 2019-09-16     tyx          add send wait support for message queue
- * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
+ * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
  * 2021-01-03     Meco Man     add rt_mb_urgent()
+ * 2021-01-20     hupu         fix priority inversion bug of mutex
  */
 
 #include <rtthread.h>
@@ -123,7 +124,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
         break;
 
     default:
-        break;  
+        break;
     }
 
     return RT_EOK;
@@ -189,6 +190,31 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
     }
 
     return RT_EOK;
+}
+
+/**
+ * This function will get the highest priority from the specified
+ * list of threads
+ *
+ * @param list of the threads
+ *
+ * @return the highest priority
+ */
+rt_uint8_t rt_ipc_get_highest_priority(rt_list_t *list)
+{
+    struct rt_list_node *n;
+    struct rt_thread *sthread;
+    rt_uint8_t priority = RT_THREAD_PRIORITY_MAX - 1;
+
+    for (n = list->next; n != list; n = n->next)
+    {
+        sthread = rt_list_entry(n, struct rt_thread, tlist);
+
+        priority = priority < sthread->current_priority ?
+                    priority :
+                    sthread->current_priority;
+    }
+    return priority;
 }
 
 #ifdef RT_USING_SEMAPHORE
@@ -829,6 +855,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     register rt_base_t temp;
     struct rt_thread *thread;
     rt_bool_t need_schedule;
+    rt_uint8_t max_priority_in_queue = RT_THREAD_PRIORITY_MAX - 1;
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -889,6 +916,22 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             /* set new owner and priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
+
+            /* Priority adjustment occurs only when the following conditions
+             * are met simultaneously:
+             * 1.The type of mutex is RT_IPC_FLAG_FIFO;
+             * 2.The priority of the thread to be resumed is not equal to the
+             *   highest priority in the queue;
+             */
+            max_priority_in_queue = rt_ipc_get_highest_priority(&mutex->parent.suspend_thread);
+            if (mutex->parent.parent.flag == RT_IPC_FLAG_FIFO &&
+                thread->current_priority != max_priority_in_queue)
+            {
+                rt_thread_control(thread,
+                        RT_THREAD_CTRL_CHANGE_PRIORITY,
+                        &(max_priority_in_queue));
+            }
+
             if(mutex->hold < RT_MUTEX_HOLD_MAX)
             {
                 mutex->hold ++;
@@ -916,7 +959,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                 rt_hw_interrupt_enable(temp); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
-            
+
             /* clear owner */
             mutex->owner             = RT_NULL;
             mutex->original_priority = 0xff;
@@ -1237,11 +1280,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-            
-        /* fill thread event info */            
+
+        /* fill thread event info */
         thread->event_set = (event->set & set);
         thread->event_info = option;
-        
+
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
@@ -1606,7 +1649,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     ++ mb->in_offset;
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
-    
+
     if(mb->entry < RT_MB_ENTRY_MAX)
     {
         /* increase message entry */
@@ -1617,7 +1660,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
@@ -2160,7 +2203,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     }
 
     /* message queue is full */
-    while ((msg = mq->msg_queue_free) == RT_NULL)
+    while ((msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
     {
         /* reset error number in thread */
         thread->error = RT_EOK;
@@ -2366,7 +2409,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {

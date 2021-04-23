@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,7 +33,7 @@
 #define NVIC_ISPR       HWREG32(SCB_BASE + 0x200)
 #define NVIC_ICPR       HWREG32(SCB_BASE + 0x280)
 #define NVIC_IPR(irqno) HWREG32(SCB_BASE + 0x400 + (((irqno) / 4) << 2))
-#define SCB_SHPR3       HWREG32(SCB_BASE + 0xd20) 
+#define SCB_SHPR3       HWREG32(SCB_BASE + 0xd20)
 
 extern unsigned char __bss_end__[];
 extern unsigned char _ram_end[];

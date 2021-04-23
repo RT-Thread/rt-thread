@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author                   Notes
  * 2020-10-28     0xcccccccccccc           Initial Version
+ * 2021-01-17     0xcccccccccccc           Bug Fixed : clock division cannot been adjusted as expected due to wrong register configuration.
  */
 /**
  * @addtogroup ls2k
@@ -21,11 +22,11 @@
 #ifdef RT_USING_SPI
 static void spi_init(uint8_t spre_spr, uint8_t copl, uint8_t cpha)
 {
-    SET_SPI(SPSR, 0xc0 | (spre_spr & 0b00000011));
+    SET_SPI(SPSR, 0xc0); 
     SET_SPI(PARAM, 0x40);
     SET_SPI(PARAM2, 0x01);
     SET_SPI(SPER, (spre_spr & 0b00001100) >> 2);
-    SET_SPI(SPCR, 0x50 | copl << 3 | cpha << 2);
+    SET_SPI(SPCR, 0x50 | copl << 3 | cpha << 2 | (spre_spr & 0b00000011)); 
     SET_SPI(SOFTCS, 0xff);
 }
 

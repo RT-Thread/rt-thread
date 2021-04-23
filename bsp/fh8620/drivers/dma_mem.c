@@ -1,8 +1,8 @@
 /*
  *  This file is part of FH8620 BSP for RT-Thread distribution.
  *
- *	Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd. 
- *	All rights reserved
+ *  Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
+ *  All rights reserved
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *	Visit http://www.fullhan.com to get contact with Fullhan.
+ *  Visit http://www.fullhan.com to get contact with Fullhan.
  *
  * Change Logs:
  * Date           Author       Notes
  */
- 
+
 /*****************************************************************************
  *  Include Section
  *  add all #include here
@@ -86,27 +86,27 @@ static struct rt_memheap dma_heap = {0};
  *      what does this function returned?
  *****************************************************************************/
 rt_err_t fh_dma_mem_init(rt_uint32_t *mem_start,rt_uint32_t size){
-	return rt_memheap_init(&dma_heap,"dma_heap",mem_start,size);
+    return rt_memheap_init(&dma_heap,"dma_heap",mem_start,size);
 }
 
 
 void *fh_dma_mem_malloc(rt_uint32_t size){
-	return rt_memheap_alloc(&dma_heap, size);
+    return rt_memheap_alloc(&dma_heap, size);
 }
 
 
 void fh_dma_mem_free(void *ptr){
-	rt_memheap_free(ptr);
+    rt_memheap_free(ptr);
 }
 
 #ifdef FH_TEST_DMA_MEM
 int dma_mem_debug(void *ptr){
-	//rt_memheap_free(ptr);
-	rt_kprintf("dma mem start 0x%08x\n",(rt_uint32_t)dma_heap.start_addr);
-	rt_kprintf("dma mem total size 0x%08x\n",dma_heap.pool_size);
-	rt_kprintf("dma mem left size 0x%08x\n",dma_heap.available_size);
-	rt_kprintf("dma mem max use size 0x%08x\n",dma_heap.max_used_size);
-	return 0;
+    //rt_memheap_free(ptr);
+    rt_kprintf("dma mem start 0x%08x\n",(rt_uint32_t)dma_heap.start_addr);
+    rt_kprintf("dma mem total size 0x%08x\n",dma_heap.pool_size);
+    rt_kprintf("dma mem left size 0x%08x\n",dma_heap.available_size);
+    rt_kprintf("dma mem max use size 0x%08x\n",dma_heap.max_used_size);
+    return 0;
 }
 #endif
 

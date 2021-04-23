@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020, Bluetrum Development Team
+ * Copyright (c) 2020-2021, Bluetrum Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,5 +14,7 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdevice.h>
+
+#define GET_PIN(PORTx,PIN) (uint8_t)__AB32_GET_PIN_##PORTx(PIN)
 
 #endif // DRV_COMMON_H__

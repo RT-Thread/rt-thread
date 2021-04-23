@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,7 +28,7 @@
 #define DBG_SECTION_NAME    "RNDIS"
 #include <rtdbg.h>
 
-
+#define RNDIS_INTF_STR_INDEX 12
 /* RT-Thread LWIP ethernet interface */
 #include <netif/ethernetif.h>
 
@@ -123,7 +123,11 @@ const static struct ucdc_comm_descriptor _comm_desc =
         USB_CDC_CLASS_COMM,
         USB_CDC_SUBCLASS_ACM,
         USB_CDC_PROTOCOL_VENDOR,
+#ifdef RT_USB_DEVICE_COMPOSITE
+        RNDIS_INTF_STR_INDEX,
+#else
         0x00,
+#endif
     },
     /* Header Functional Descriptor */
     {
@@ -215,7 +219,7 @@ const static char* _ustring[] =
 };
 
 ALIGN(4)
-struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc = 
+struct usb_os_function_comp_id_descriptor rndis_func_comp_id_desc =
 {
     .bFirstInterfaceNumber = USB_DYNAMIC,
     .reserved1          = 0x01,
@@ -347,7 +351,7 @@ static rt_err_t _rndis_init_response(ufunction_t func, rndis_init_msg_t msg)
         rt_list_insert_before(&((rt_rndis_eth_t)func->user_data)->response_list, &response->list);
         rt_hw_interrupt_enable(level);
     }
-    
+
 
     return RT_EOK;
 }
@@ -764,7 +768,7 @@ static rt_err_t send_encapsulated_command_done(udevice_t device, rt_size_t size)
 }
 //#error here have bug ep 0x82 send failed
 static rt_err_t _rndis_send_encapsulated_command(ufunction_t func, ureq_t setup)
-{    
+{
     RT_ASSERT(setup->wLength <= sizeof(rndis_message_buffer));
     function = func;
     rt_usbd_ep0_read(func->device,rndis_message_buffer,setup->wLength,send_encapsulated_command_done);
@@ -808,7 +812,7 @@ static rt_err_t _rndis_get_encapsulated_response(ufunction_t func, ureq_t setup)
         data[1] = 0;
         ((rt_rndis_eth_t)func->user_data)->eps.ep_cmd->request.buffer = ((rt_rndis_eth_t)func->user_data)->eps.ep_cmd->buffer;
         ((rt_rndis_eth_t)func->user_data)->eps.ep_cmd->request.size = 8;
-        ((rt_rndis_eth_t)func->user_data)->eps.ep_cmd->request.req_type = UIO_REQUEST_WRITE;    
+        ((rt_rndis_eth_t)func->user_data)->eps.ep_cmd->request.req_type = UIO_REQUEST_WRITE;
         rt_usbd_io_request(func->device, ((rt_rndis_eth_t)func->user_data)->eps.ep_cmd, &((rt_rndis_eth_t)func->user_data)->eps.ep_cmd->request);
     }
     else
@@ -983,7 +987,7 @@ static rt_err_t _function_enable(ufunction_t func)
         ((rt_rndis_eth_t)func->user_data)->need_notify = RT_TRUE;
         rt_hw_interrupt_enable(level);
     }
-    
+
     return RT_EOK;
 }
 
@@ -1022,7 +1026,7 @@ static rt_err_t _function_disable(ufunction_t func)
         rt_hw_interrupt_enable(level);
     }
 
-    
+
     /* link down. */
     eth_device_linkchange(&((rt_rndis_eth_t)func->user_data)->parent, RT_FALSE);
 
@@ -1318,12 +1322,15 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     RT_ASSERT(device != RT_NULL);
 
     /* set usb device string description */
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_interface_string(device, RNDIS_INTF_STR_INDEX, _ustring[2]);
+#else
     rt_usbd_device_set_string(device, _ustring);
-
+#endif
     /* create a cdc class */
     cdc = rt_usbd_function_new(device, &_dev_desc, &ops);
     rt_usbd_device_set_qualifier(device, &dev_qualifier);
-    _rndis= rt_malloc(sizeof(struct rt_rndis_eth)); 
+    _rndis= rt_malloc(sizeof(struct rt_rndis_eth));
     rt_memset(_rndis, 0, sizeof(struct rt_rndis_eth));
     cdc->user_data = _rndis;
 
@@ -1357,7 +1364,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     rt_usbd_set_altsetting(intf_comm, 0);
     /* add the communication interface to the cdc class */
     rt_usbd_function_add_interface(cdc, intf_comm);
-    
+
     /* create a bulk in and a bulk out endpoint */
     data_desc = (ucdc_data_desc_t)data_setting->desc;
     eps->ep_out = rt_usbd_endpoint_new(&data_desc->ep_out_desc, _ep_out_handler);
@@ -1434,7 +1441,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
     return cdc;
 }
 
-struct udclass rndis_class = 
+struct udclass rndis_class =
 {
     .rt_usbd_function_create = rt_usbd_function_rndis_create
 };

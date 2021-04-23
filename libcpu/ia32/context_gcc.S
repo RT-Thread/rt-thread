@@ -1,11 +1,7 @@
 /*
- * File      : context_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -83,31 +79,3 @@ rt_hw_context_switch_to:
 	pop %ds
 	add $4, %esp			/* skip irqno */
 	iret
-
-/*
- * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
- */
-.globl rt_thread_switch_interrupt_flag
-.globl rt_interrupt_from_thread
-.globl rt_interrupt_to_thread
-.globl rt_hw_context_switch_interrupt
-rt_hw_context_switch_interrupt:
-	pushl %ebp
-	movl %esp, %ebp
-	movl 0xc(%ebp), %eax
-	movl 0x8(%ebp), %ebx
-	
-	movl $rt_thread_switch_interrupt_flag, %ecx
-	movl (%ecx), %edx
-	cmp $0x1, %edx
-	jz _reswitch
-	
-	movl $0x1, %edx				/*set rt_thread_switch_interrupt_flag to 1*/
-	movl %edx, (%ecx)
-	movl $rt_interrupt_from_thread, %edx	/*set rt_interrupt_from_thread*/
-	movl %ebx, (%edx)
-_reswitch:
-	movl $rt_interrupt_to_thread, %edx		/*set rt_interrupt_to_thread*/
-	movl %eax, (%edx)
-	leave
-	ret

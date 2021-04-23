@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：挂起线程
  *
  * 这个例子中将创建两个动态线程，高优先级线程将在一定时刻后挂起低优先级线程。

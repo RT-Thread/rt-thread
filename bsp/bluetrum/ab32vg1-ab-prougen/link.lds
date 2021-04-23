@@ -3,8 +3,8 @@ __max_flash_size = 1024k;
 
 __data_ram_size = 8k;
 __stack_ram_size = 4k;
-__comm_ram_size = 83k;
-__heap_ram_size = 29k;
+__comm_ram_size = 42k;
+__heap_ram_size = 70k;
 
 __base = 0x10000000;
 
@@ -34,12 +34,6 @@ SECTIONS
     } > init
 
     .ram1 __ram1_vma : {
-        *components*drivers**.o(.text* .rodata*)
-        *device.o(.text*)
-        . = ALIGN(32);
-    } > ram1 AT > flash
-
-    .rti : {
         . = ALIGN(4);
         /* section information for initial */
         __rt_init_start = .;
@@ -47,28 +41,53 @@ SECTIONS
         __rt_init_end = .;
 
         . = ALIGN(4);
-        __fsymtab_start = .;
-        KEEP(*(FSymTab))
-        __fsymtab_end = .;
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
 
         . = ALIGN(4);
-        __vsymtab_start = .;
-        KEEP(*(VSymTab))
-        __vsymtab_end = .;
+        *save-restore.o (.text* .rodata*)
+        *libcpu*cpu*context_gcc.o (.text* .rodata*)
+        *libcpu*cpu*interrupt.o (.text* .rodata*)
+        *libcpu**.o (.rodata*)
 
-        . = ALIGN(32);
+        *components*drivers*misc*pin.o(.text*)
+        *components*drivers*misc*adc.o(.text*)
+
+        . = ALIGN(4);
+        *src*ipc.o (.text* .rodata*)
+        *src*irq.o (.text* .rodata*)
+        *src*object.o (.text* .rodata*)
+        *src*thread.o (.text* .rodata*)
+        *src*timer.o (.text* .rodata*)
+        *src*mempool.o (.text* .rodata*)
+        *src*scheduler.o (.text* .rodata*)
+        *src*clock.o (.text* .rodata*)
+        *src*kservice.o (.text* .rodata*)
+        *src*device.o (.text* .rodata*)
+        *src*idle.o (.text* .rodata*)
+        *src*components.o (.text* .rodata*)
     } > ram1 AT > flash
 
-    .comm : {
+    .comm __comm_vma : {
+        . = ALIGN(4);
         KEEP(*(.vector))
-        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *romfs.o *lib_a**.o) *(.text*)
-        *finsh*shell.o (.text*)
-        EXCLUDE_FILE (*components*libc**.o *romfs.o *lib_a**.o) *(.rodata*)
-        *(.srodata*)
+        *(.irq*)
+        /*applications**.o (.text .rodata)*/
+        *hal_libraries*ab32vg1_hal**.o (.text .rodata)
+        *(.text.unlikely)
+        *(.text.startup)
+        *hal_drivers**.o (.rodata)
+        *audio*drv_sound.o (.rodata)
+        *system_ab32vgx.o (.rodata)
+        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o *cp-demangle.o 
+        *src*mem.o *src*memheap.o *dfs**.o *components.o *drivers*sdio**.o *cmd.o *msh_file.o
+        *drv_sdio.o *drv_wdt.o) *(.rodata.str1.4)
+        EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata)
         *(.rela*)
         *(.data*)
-	    *(.sdata*)
-        . = ALIGN(512);
+        *(.sdata*)
     } > comm AT > flash
 
     .bss (NOLOAD):
@@ -96,8 +115,20 @@ SECTIONS
     } > heap
 
     .flash : {
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+
+        . = ALIGN(4);
         *(.text*)
         *(.rodata*)
+        *(.srodata*)
         . = ALIGN(512);
     } > flash
 }
@@ -107,4 +138,4 @@ __bank_size = SIZEOF(.flash);
 __comm_lma = LOADADDR(.comm);
 __comm_size = SIZEOF(.comm);
 __ram1_lma = LOADADDR(.ram1);
-__ram1_size = SIZEOF(.ram1) + SIZEOF(.rti);
+__ram1_size = SIZEOF(.ram1);

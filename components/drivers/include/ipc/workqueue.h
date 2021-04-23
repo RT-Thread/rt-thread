@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,6 +29,7 @@ enum
 struct rt_workqueue
 {
     rt_list_t      work_list;
+    rt_list_t      delayed_list;
     struct rt_work *work_current; /* current work */
 
     struct rt_semaphore sem;
@@ -62,6 +63,7 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t time);
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work);
+rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time);

@@ -24,6 +24,7 @@ documentation/html
 *.d
 tools/kconfig-frontends/kconfig-mconf
 packages
+dist
 cconfig.h
 GPUCache
 
@@ -34,3 +35,6 @@ ncscope.*
 #ctag files
 tags
 
+.idea
+CMakeLists.txt
+cmake-build-debug

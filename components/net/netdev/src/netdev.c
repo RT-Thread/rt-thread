@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -76,6 +76,14 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     }
     netdev->status_callback = RT_NULL;
     netdev->addr_callback = RT_NULL;
+
+    if(rt_strlen(name) > RT_NAME_MAX)
+    {
+        char netdev_name[RT_NAME_MAX + 1] = {0};
+
+        rt_strncpy(netdev_name, name, RT_NAME_MAX);
+        LOG_E("netdev name[%s] length is so long that have been cut into [%s].", name, netdev_name);
+    }
 
     /* fill network interface device */
     rt_strncpy(netdev->name, name, RT_NAME_MAX);
@@ -260,7 +268,7 @@ struct netdev *netdev_get_by_name(const char *name)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
-        if (netdev && (rt_strncmp(netdev->name, name, RT_NAME_MAX) == 0))
+        if (netdev && (rt_strncmp(netdev->name, name, rt_strlen(netdev->name) < RT_NAME_MAX ? rt_strlen(netdev->name) : RT_NAME_MAX) == 0))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -816,6 +824,34 @@ void netdev_low_level_set_link_status(struct netdev *netdev, rt_bool_t is_up)
         if (netdev->status_callback)
         {
             netdev->status_callback(netdev, is_up ? NETDEV_CB_STATUS_LINK_UP : NETDEV_CB_STATUS_LINK_DOWN);
+        }
+    }
+}
+
+/**
+ * This function will set network interface device active internet status.
+ * @NOTE it can only be called in the network interface device driver.
+ *
+ * @param netdev the network interface device to change
+ * @param is_up the new internet status
+ */
+void netdev_low_level_set_internet_status(struct netdev *netdev, rt_bool_t is_up)
+{
+    if (netdev && netdev_is_internet_up(netdev) != is_up)
+    {
+        if (is_up)
+        {
+            netdev->flags |= NETDEV_FLAG_INTERNET_UP;
+        }
+        else
+        {
+            netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+        }
+
+        /* execute  network interface device status change callback function */
+        if (netdev->status_callback)
+        {
+            netdev->status_callback(netdev, is_up ? NETDEV_CB_STATUS_INTERNET_UP : NETDEV_CB_STATUS_INTERNET_DOWN);
         }
     }
 }

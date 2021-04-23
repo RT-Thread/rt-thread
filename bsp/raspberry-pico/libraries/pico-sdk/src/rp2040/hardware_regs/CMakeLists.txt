@@ -1,0 +1,3 @@
+add_library(hardware_regs INTERFACE)
+target_include_directories(hardware_regs INTERFACE include)
+target_link_libraries(hardware_regs INTERFACE hardware_base)
