@@ -1284,6 +1284,8 @@ static rt_err_t _rt_event_recv(rt_event_t   event,
 
     if (status == RT_EOK)
     {
+        thread->error = RT_EOK;
+
         /* set received event */
         if (recved)
             *recved = (event->set & set);
