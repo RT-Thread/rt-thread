@@ -1,7 +1,7 @@
 /*
- * ³ÌĞòÇåµ¥£ºÏß³ÌÇ¶Ì×¹ÒÆğ
+ * ç¨‹åºæ¸…å•ï¼šçº¿ç¨‹åµŒå¥—æŒ‚èµ·
  *
- * ÇëÔÚrtconfig.hÖĞ¶¨ÒåRT_USING_SUSPEND_NESTINGÒÔ¿ªÆô¸Ã¹¦ÄÜ
+ * è¯·åœ¨rtconfig.hä¸­å®šä¹‰RT_USING_SUSPEND_NESTINGä»¥å¼€å¯è¯¥åŠŸèƒ½
  *
  * 2020-10-26    Meco Man    First Version
  */
@@ -11,69 +11,69 @@
 
 #ifdef RT_USING_SUSPEND_NESTING
 
-/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
+/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
 static rt_thread_t tid1 = RT_NULL;
 static rt_thread_t tid2 = RT_NULL;
-/* Ïß³Ì1Èë¿Ú */
+/* çº¿ç¨‹1å…¥å£ */
 static void thread1_entry(void* parameter)
 {
     rt_uint32_t count = 0;
-    
+
     while (1)
     {
-        /* Ïß³Ì1²ÉÓÃµÍÓÅÏÈ¼¶ÔËĞĞ£¬Ò»Ö±´òÓ¡¼ÆÊıÖµ */
+        /* çº¿ç¨‹1é‡‡ç”¨ä½ä¼˜å…ˆçº§è¿è¡Œï¼Œä¸€ç›´æ‰“å°è®¡æ•°å€¼ */
         rt_kprintf("thread1 count: %d\n", count ++);
         rt_thread_delay(200);
     }
 }
 
-/* Ïß³Ì2Èë¿Ú */
+/* çº¿ç¨‹2å…¥å£ */
 static void thread2_entry(void* parameter)
 {
     while(1)
     {
-        /* Á¬Ğø¹ÒÆğ5´ÎÏß³Ì1,²âÊÔÇ¶Ì×¹ÒÆğ */
+        /* è¿ç»­æŒ‚èµ·5æ¬¡çº¿ç¨‹1,æµ‹è¯•åµŒå¥—æŒ‚èµ· */
         rt_thread_suspend(tid1);
         rt_thread_suspend(tid1);
         rt_thread_suspend(tid1);
         rt_thread_suspend(tid1);
         rt_thread_suspend(tid1);
-        
-        /* ´òÓ¡´ËÊ±thread1Ïß³ÌµÄÇ¶Ì×¹ÒÆğ²ãÊı */
+
+        /* æ‰“å°æ­¤æ—¶thread1çº¿ç¨‹çš„åµŒå¥—æŒ‚èµ·å±‚æ•° */
         rt_kprintf("thread1 suspend_ctr: %d\n", tid1->suspend_ctr);
-        
-        /* ÑÓÊ±2000¸öOS Tick */
+
+        /* å»¶æ—¶2000ä¸ªOS Tick */
         rt_thread_delay(1000);
-        
-        /* Á¬Ğø½â¹Ò5´ÎÏß³Ì1,²âÊÔÇ¶Ì×½â¹Ò */
+
+        /* è¿ç»­è§£æŒ‚5æ¬¡çº¿ç¨‹1,æµ‹è¯•åµŒå¥—è§£æŒ‚ */
         rt_thread_resume(tid1);
         rt_thread_resume(tid1);
         rt_thread_resume(tid1);
         rt_thread_resume(tid1);
         rt_thread_resume(tid1);
-        
-        /* ´òÓ¡´ËÊ±thread1Ïß³ÌµÄÇ¶Ì×¹ÒÆğ²ãÊı */
+
+        /* æ‰“å°æ­¤æ—¶thread1çº¿ç¨‹çš„åµŒå¥—æŒ‚èµ·å±‚æ•° */
         rt_kprintf("thread1 suspend_ctr: %d\n", tid1->suspend_ctr);
-        
-        /* ÑÓÊ±2000¸öOS Tick */
-        rt_thread_delay(1000);        
+
+        /* å»¶æ—¶2000ä¸ªOS Tick */
+        rt_thread_delay(1000);
     }
 }
 
 int thread_suspend_init(void)
 {
-    /* ´´½¨Ïß³Ì1 */
+    /* åˆ›å»ºçº¿ç¨‹1 */
     tid1 = rt_thread_create("thread1",
-        thread1_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread1_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
+        thread1_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread1_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
         THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid1 != RT_NULL)
         rt_thread_startup(tid1);
     else
         tc_stat(TC_STAT_END | TC_STAT_FAILED);
 
-    /* ´´½¨Ïß³Ì2 */
+    /* åˆ›å»ºçº¿ç¨‹2 */
     tid2 = rt_thread_create("thread2",
-        thread2_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread2_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
+        thread2_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread2_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
         THREAD_STACK_SIZE, THREAD_PRIORITY - 1, THREAD_TIMESLICE);
     if (tid2 != RT_NULL)
         rt_thread_startup(tid2);
@@ -84,5 +84,5 @@ int thread_suspend_init(void)
 }
 
 #else
-    #warning "ÇëÔÚrtconfig.hÖĞ¶¨ÒåRT_USING_SUSPEND_NESTINGÒÔ¿ªÆô¸Ã¹¦ÄÜ"
+    #warning "è¯·åœ¨rtconfig.hä¸­å®šä¹‰RT_USING_SUSPEND_NESTINGä»¥å¼€å¯è¯¥åŠŸèƒ½"
 #endif
