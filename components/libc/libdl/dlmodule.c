@@ -464,7 +464,7 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     }
 
     /* check ELF class */
-    if (elf_module->e_ident[EI_CLASS] != ELFCLASS32)
+    if ((elf_module->e_ident[EI_CLASS] != ELFCLASS32)&&(elf_module->e_ident[EI_CLASS] != ELFCLASS64))
     {
         rt_kprintf("Module: ELF class error\n");
         goto __exit;
