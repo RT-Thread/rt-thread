@@ -1,15 +1,27 @@
-# RT-Thread building script for bridge
-
-import os
 from building import *
 
-cwd = GetCurrentDir()
-objs = []
-list = os.listdir(cwd)
+Import('rtconfig')
 
-for d in list:
-    path = os.path.join(cwd, d)
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+src   = []
+cwd   = GetCurrentDir()
+group = []
+CPPPATH = [cwd]
 
-Return('objs')
+if GetDepend('RT_USING_LIBC'):
+    src += Glob('*.c')
+else:
+    if GetDepend('RT_LIBC_USING_TIME'):
+        src += ['time.c']
+
+if GetDepend('RT_USING_POSIX') == False:
+    SrcRemove(src, ['unistd.c'])
+
+if rtconfig.CROSS_TOOL == 'keil':
+    CPPDEFINES = ['__CLK_TCK=RT_TICK_PER_SECOND']
+else:
+    CPPDEFINES = []
+
+if GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME'):
+    group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')
