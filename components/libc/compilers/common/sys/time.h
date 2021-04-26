@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-12     Meco Man     move all definitions located in <clock_time.h> to this file
+ * 2021-04-25     Meco Man     fix a bug of compatible with different tool chains in terms of struct timeval
  */
 #ifndef _SYS_TIME_H_
 #define _SYS_TIME_H_
@@ -18,27 +19,12 @@
 extern "C" {
 #endif
 
-/*
- * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
- */
-#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
-#define _TIMESPEC_DEFINED
-#endif
-
-
-#ifndef _TIMEVAL_DEFINED
-#define _TIMEVAL_DEFINED
-/*
- * Structure returned by gettimeofday(2) system call,
- * and used in other calls.
- */
-#if !(defined(_WIN32))
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !(defined(_WIN32))
 struct timeval {
     long    tv_sec;     /* seconds */
     long    tv_usec;    /* and microseconds */
 };
 #endif
-#endif /* _TIMEVAL_DEFINED */
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined (__ICCARM__) && !defined (_WIN32)
 struct timespec {
