@@ -12,6 +12,9 @@
 #define __DFS_FS_H__
 
 #include <dfs.h>
+#ifdef RT_USING_LIBC
+#include <sys/types.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
