@@ -38,12 +38,14 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#define X8_F  "02x"
 #define U16_F "hu"
 #define S16_F "hd"
 #define X16_F "hx"
 #define U32_F "lu"
 #define S32_F "ld"
 #define X32_F "lx"
+#define SZT_F U32_F
 
 #if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/time.h>
