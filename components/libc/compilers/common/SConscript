@@ -23,5 +23,9 @@ else:
 
 if GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME'):
     group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
-
+    list = os.listdir(cwd)
+    for d in list:
+        path = os.path.join(cwd, d)
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            group = group + SConscript(os.path.join(d, 'SConscript'))
 Return('group')

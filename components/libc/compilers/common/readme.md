@@ -1,6 +1,6 @@
 ## Attentions
 
-1. This folder is "common" for armlibc newlibc and dlib.
+1. This folder is "common" for all toolchains.
 
 2. If you want to add new `.c` files, please do not forget to fix SConscript file too. eg:
 
