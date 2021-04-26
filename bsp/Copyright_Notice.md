@@ -125,16 +125,6 @@ Path:
 - bsp/essemi/es32f0654/libraries/CMSIS/Include
 - bsp/essemi/es8p508x/libraries/CMSIS
 
-### fh8620
-
-License: gpl-2.0-plus
-
-Copyright: Copyright (c) 2016 Shanghai Fullhan Microelectronics Co., Ltd.
-
-Path:
-
-- bsp/fh8620
-
 ### frdm-k64f
 
 License: bsd-new
@@ -204,26 +194,6 @@ Path:
 - bsp/gd32103c-eval/Libraries/CMSIS/core
 - bsp/gd32303e-eval/Libraries/CMSIS/core
 
-### gkipc
-
-License: gpl-2.0-plus
-
-Copyright: Copyright (c) 2017 GOKE Microelectronics Co., Ltd.
-
-Path:
-
-- bsp/gkipc/drivers
-
-------
-
-License:  未注明
-
-Copyright: Copyright 2012 - 2013 (c) GoKe Microelectronics ShangHai Branch
-
-Path:
-
-- bsp/gkipc/libraries
-
 ### hc32f4a0
 
 License: bsd-new
@@ -247,7 +217,7 @@ Path:
 
 ------
 
-License: bsd-new、robert-hubley、other-permissive、proprietary-license、gpl-2.0
+License: bsd-new、robert-hubley、other-permissive、proprietary-license
 
 Copyright: Copyright (c) 2012, Freescale Semiconductor, Inc.
 
@@ -257,7 +227,7 @@ Path:
 
 ### imx6ul
 
-License: bsd-new、proprietary-license、robert-hubley、gpl-2.0
+License: bsd-new、proprietary-license、robert-hubley
 
 Copyright: Copyright (c) 2012, Freescale Semiconductor, Inc.
 
