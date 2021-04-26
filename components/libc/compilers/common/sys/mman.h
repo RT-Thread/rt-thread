@@ -15,6 +15,8 @@
 extern "C" {
 #endif
 
+#include <sys/types.h>
+    
 #define MAP_FAILED     ((void *) -1)
 
 #define MAP_SHARED     0x01
