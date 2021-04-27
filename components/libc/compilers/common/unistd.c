@@ -15,18 +15,29 @@
 
 #ifdef RT_USING_POSIX_TERMIOS
 #include "termios.h"
-
 int isatty(int fd)
 {
     struct termios ts;
-    return(tcgetattr(fd,&ts) != -1);/*true if no error (is a tty)*/
+    return(tcgetattr(fd, &ts) != -1); /*true if no error (is a tty)*/
 }
-RTM_EXPORT(isatty);
+#else
+int isatty(int fd)
+{
+    if (fd >=0 && fd < 3)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
 #endif
+RTM_EXPORT(isatty);
 
 char *ttyname(int fd)
 {
-    return "/dev/tty0"; /*TODO: need to add more specific*/
+    return "/dev/tty"; /*TODO: need to add more specific*/
 }
 RTM_EXPORT(ttyname);
 
@@ -50,10 +61,15 @@ int usleep(useconds_t usec)
 }
 RTM_EXPORT(usleep);
 
-pid_t getpid(void)
+pid_t gettid(void)
 {
     /*TODO*/
     return 0;
+}
+
+pid_t getpid(void)
+{
+    return gettid();
 }
 RTM_EXPORT(getpid);
 
