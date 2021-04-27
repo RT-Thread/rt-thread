@@ -66,13 +66,11 @@
 
 #endif
 
-
 int     isatty      (int fd);
 char *  ttyname     (int desc);
-
 unsigned int sleep(unsigned int seconds);
 int usleep(useconds_t usec);
-
+pid_t gettid(void);
 pid_t getpid(void);
 pid_t getppid(void);
 uid_t getuid(void);

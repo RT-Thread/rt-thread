@@ -98,6 +98,7 @@ _isatty_r(struct _reent *ptr, int fd)
         return 0;
     }
 }
+
 int
 _kill_r(struct _reent *ptr, int pid, int sig)
 {
