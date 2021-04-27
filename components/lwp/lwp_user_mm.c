@@ -73,6 +73,7 @@ void lwp_mmu_switch(struct rt_thread *thread)
 #endif
         switch_mmu(new_mmu_table);
     }
+    rt_cpu_set_thread_idr(thread->thread_idr);
 #ifdef RT_USING_GDBSERVER
     if (l && l->debug)
     {
