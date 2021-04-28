@@ -437,7 +437,7 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
     }
 
 #ifdef AT_PRINT_RAW_CMD
-    at_print_raw_cmd("sendline", buf, size);
+    at_print_raw_cmd("senddata", buf, size);
 #endif
 
     return rt_device_write(client->device, 0, buf, size);
@@ -508,7 +508,7 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
     }
 
 #ifdef AT_PRINT_RAW_CMD
-    at_print_raw_cmd("urc_recv", buf, size);
+    at_print_raw_cmd("recvdata", buf, read_idx);
 #endif
 
     return read_idx;
@@ -715,10 +715,6 @@ static int at_recv_readline(at_client_t client)
         last_ch = ch;
     }
 
-#ifdef AT_PRINT_RAW_CMD
-    at_print_raw_cmd("recvline", client->recv_line_buf, read_len);
-#endif
-
     return read_len;
 }
 
@@ -735,13 +731,18 @@ static void client_parser(at_client_t client)
                 /* current receive is request, try to execute related operations */
                 if (urc->func != RT_NULL)
                 {
+#ifdef AT_PRINT_RAW_CMD
+                    at_print_raw_cmd(" urc_cmd", client->recv_line_buf, client->recv_line_len);
+#endif
                     urc->func(client, client->recv_line_buf, client->recv_line_len);
                 }
             }
             else if (client->resp != RT_NULL)
             {
                 at_response_t resp = client->resp;
-
+#ifdef AT_PRINT_RAW_CMD
+                at_print_raw_cmd("recvline", client->recv_line_buf, client->recv_line_len);
+#endif
                 /* current receive is response */
                 client->recv_line_buf[client->recv_line_len - 1] = '\0';
                 if (resp->buf_len + client->recv_line_len < resp->buf_size)
@@ -785,7 +786,9 @@ static void client_parser(at_client_t client)
             }
             else
             {
-//                log_d("unrecognized line: %.*s", client->recv_line_len, client->recv_line_buf);
+#ifdef AT_PRINT_RAW_CMD
+                at_print_raw_cmd("    drop", client->recv_line_buf, client->recv_line_len);
+#endif
             }
         }
     }
