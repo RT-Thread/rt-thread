@@ -7,7 +7,6 @@
  * Date           Author       Notes
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-12     Meco Man     move all definitions located in <clock_time.h> to this file
- * 2021-04-25     Meco Man     fix a bug of compatible with different tool chains in terms of struct timeval
  */
 #ifndef _SYS_TIME_H_
 #define _SYS_TIME_H_
@@ -20,16 +19,13 @@ extern "C" {
 #endif
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined(_WIN32)
-#ifndef _TIMEVAL_DEFINED
-#define _TIMEVAL_DEFINED
 struct timeval {
     long    tv_sec;     /* seconds */
     long    tv_usec;    /* and microseconds */
 };
 #endif
-#endif
 
-#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined (__ICCARM__) && !defined (_WIN32)
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !(defined(__ICCARM__) && (__VER__ >= 8010001)) && !defined(_WIN32)
 struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
@@ -50,7 +46,6 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r);
 #endif
 
 #ifdef RT_USING_POSIX
-
 #include <sys/types.h>
 /* posix clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
@@ -82,7 +77,6 @@ int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
 int clock_time_to_tick(const struct timespec *time);
-
 #endif /* RT_USING_POSIX */
 
 #ifdef __cplusplus
