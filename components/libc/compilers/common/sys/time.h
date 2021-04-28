@@ -24,6 +24,8 @@ struct timeval {
     long    tv_sec;     /* seconds */
     long    tv_usec;    /* and microseconds */
 };
+#elif defined (RT_COMPILING_NEWLIB) /*newlib*/
+#include <sys/_timeval.h>
 #endif
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined (__ICCARM__) && !defined (_WIN32)
@@ -31,6 +33,8 @@ struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
+#elif defined (RT_COMPILING_NEWLIB) /*newlib*/
+#include <sys/_timespec.h>
 #endif
 
 struct timezone {
@@ -47,6 +51,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r);
 #endif
 
 #ifdef RT_USING_POSIX
+
 #include <sys/types.h>
 /* posix clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
@@ -78,6 +83,7 @@ int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
 int clock_time_to_tick(const struct timespec *time);
+
 #endif /* RT_USING_POSIX */
 
 #ifdef __cplusplus
