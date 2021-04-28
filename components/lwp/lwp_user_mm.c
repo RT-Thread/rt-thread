@@ -376,19 +376,18 @@ rt_base_t lwp_brk(void *addr)
     }
     else
     {
-        size_t size;
-        void *va;
+        size_t size = 0;
+        void *va = RT_NULL;
 
-        size = (((size_t)addr - lwp->end_heap) + ARCH_PAGE_SIZE - 1) & ~ARCH_PAGE_MASK;
-        va = lwp_map_user(lwp, (void *)lwp->end_heap, size, 0);
+        if ((size_t)addr <= USER_HEAP_VEND)
+        {
+            size = (((size_t)addr - lwp->end_heap) + ARCH_PAGE_SIZE - 1) & ~ARCH_PAGE_MASK;
+            va = lwp_map_user(lwp, (void *)lwp->end_heap, size, 0);
+        }
         if (va)
         {
             lwp->end_heap += size;
-            ret = 0;
-        }
-        else
-        {
-            ret = -1;
+            ret = lwp->end_heap;
         }
     }
     rt_hw_interrupt_enable(level);

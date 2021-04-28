@@ -743,9 +743,9 @@ struct rt_thread
     int debug_suspend;
     struct rt_hw_exp_stack *regs;
     void * thread_idr;                                 /** lwp thread indicator */
-    int tid;
     int *clear_child_tid;
 #endif
+    int tid;
 #endif
 
     rt_ubase_t user_data;                             /**< private user data beyond this thread */

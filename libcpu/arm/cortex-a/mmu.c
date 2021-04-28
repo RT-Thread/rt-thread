@@ -388,6 +388,17 @@ static int check_vaddr(rt_mmu_info *mmu_info, void *va, int pages)
         return -1;
     }
 
+    l1_off = ((size_t)va >> ARCH_SECTION_SHIFT);
+    if (l1_off < mmu_info->vstart || l1_off > mmu_info->vend)
+    {
+        return -1;
+    }
+    l1_off += ((pages << ARCH_PAGE_SHIFT) >> ARCH_SECTION_SHIFT);
+    if (l1_off < mmu_info->vstart || l1_off > mmu_info->vend + 1)
+    {
+        return -1;
+    }
+
     while (pages--)
     {
         l1_off = (loop_va >> ARCH_SECTION_SHIFT);

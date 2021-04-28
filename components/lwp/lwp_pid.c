@@ -387,9 +387,9 @@ void lwp_free(struct rt_lwp* lwp)
             LOG_D("lwp text free: %p", lwp->text_entry);
 #ifndef RT_USING_USERSPACE
 #ifdef RT_USING_CACHE
-            rt_free_align(lwp->text_entry);
+            rt_free_align((void*)lwp->load_off);
 #else
-            rt_free(lwp->text_entry);
+            rt_free((void*)lwp->load_off);
 #endif
 #endif
             lwp->text_entry = RT_NULL;
