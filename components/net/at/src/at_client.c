@@ -304,6 +304,13 @@ int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr
 
     rt_mutex_take(client->lock, RT_WAITING_FOREVER);
 
+    /* clear the needless "rx buffer" data, ignore useless data */
+    if(client->rx_notice != RT_NULL)
+    {
+        char ch;
+        while(rt_device_read(client->device, 0, &ch, 1) != 0);
+    }
+
     client->resp_status = AT_RESP_OK;
     client->resp = resp;
 
