@@ -5,7 +5,7 @@ src = []
 cwd = GetCurrentDir()
 group = []
 LIBS = []
-CPPDEFINES = ['RT_COMPILING_NEWLIB']
+CPPDEFINES = []
 CPPPATH = [cwd]
 
 if rtconfig.PLATFORM == 'gcc':

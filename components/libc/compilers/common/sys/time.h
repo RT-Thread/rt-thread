@@ -19,13 +19,14 @@
 extern "C" {
 #endif
 
-#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !(defined(_WIN32))
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined(_WIN32)
+#ifndef _TIMEVAL_DEFINED
+#define _TIMEVAL_DEFINED
 struct timeval {
     long    tv_sec;     /* seconds */
     long    tv_usec;    /* and microseconds */
 };
-#elif defined (RT_COMPILING_NEWLIB) /*newlib*/
-#include <sys/_timeval.h>
+#endif
 #endif
 
 #if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined (__ICCARM__) && !defined (_WIN32)
@@ -33,8 +34,6 @@ struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
-#elif defined (RT_COMPILING_NEWLIB) /*newlib*/
-#include <sys/_timespec.h>
 #endif
 
 struct timezone {
