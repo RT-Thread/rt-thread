@@ -221,36 +221,23 @@ void uart_irq_process(struct rt_serial_device *serial)
         rt_hw_interrupt_enable(level);
     }
 
-    if(serial == &uart_obj[0].serial)
-    {
-        rt_size_t rx_length;
+    rt_size_t rx_length;
 
-        /* get rx length */
-        level = rt_hw_interrupt_disable();
-        rx_length = (rx_fifo->put_index >= rx_fifo->get_index)? (rx_fifo->put_index - rx_fifo->get_index):
-            (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
-        rt_hw_interrupt_enable(level);
+    /* get rx length */
+    level = rt_hw_interrupt_disable();
+    rx_length = (rx_fifo->put_index >= rx_fifo->get_index)? (rx_fifo->put_index - rx_fifo->get_index):
+        (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
+    rt_hw_interrupt_enable(level);
 
-        if (rx_length)
-        {
+    if ((serial->parent.rx_indicate != RT_NULL) && (rx_length != 0)) {
+    #ifdef RT_CONSOLE_DEVICE_NAME
+        if (serial == &uart_obj[*(RT_CONSOLE_DEVICE_NAME + 4) - '0'].serial) {
             shell_rx_ind();
-        }
-    }else {
-        /* invoke callback */
-        if (serial->parent.rx_indicate != RT_NULL)
+        } else
+    #endif
         {
-            rt_size_t rx_length;
-
-            /* get rx length */
-            level = rt_hw_interrupt_disable();
-            rx_length = (rx_fifo->put_index >= rx_fifo->get_index)? (rx_fifo->put_index - rx_fifo->get_index):
-                (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
-            rt_hw_interrupt_enable(level);
-
-            if (rx_length)
-            {
-                serial->parent.rx_indicate(&serial->parent, rx_length);
-            }
+            rt_kprintf("rx_indicate must loacted in the .comm section!\n");
+            //serial->parent.rx_indicate(&serial->parent, rx_length);
         }
     }
 
