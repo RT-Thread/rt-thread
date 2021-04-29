@@ -43,3 +43,27 @@ config LWP_TID_MAX_NR
     int "The maximum number of lwp thread id"
     default 64
     depends on RT_USING_LWP
+
+config LWP_UNIX98_PTY 
+    bool "The unix98 PTY support"
+    default n
+    depends on RT_USING_LWP
+
+config LWP_PTY_INPUT_BFSZ 
+    int "The unix98 PTY input buffer size"
+    default 1024 
+    depends on RT_USING_LWP
+    depends on LWP_UNIX98_PTY
+
+config LWP_PTY_PTS_SIZE 
+    int "The unix98 PTY device max num"
+    default 3 
+    depends on RT_USING_LWP
+    depends on LWP_UNIX98_PTY
+
+config LWP_PTY_USING_DEBUG 
+    bool "The unix98 PTY debug output"
+    default n 
+    depends on RT_USING_LWP
+    depends on LWP_UNIX98_PTY
+    
