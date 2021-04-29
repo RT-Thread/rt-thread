@@ -110,6 +110,7 @@ void fdt_fd_release(struct dfs_fdtable* fdt, int fd);
 int fd_new(void);
 int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_fd *file);
 struct dfs_fd *fd_get(int fd);
+int fd_get_fd_index(struct dfs_fd *file);
 void fd_release(int fd);
 
 void fd_init(struct dfs_fd *fd);
