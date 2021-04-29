@@ -22,6 +22,7 @@
 #endif
 
 #include "lwp.h"
+#include "lwp_arch.h"
 
 #define DBG_TAG "LWP"
 #define DBG_LVL DBG_WARNING
@@ -35,18 +36,13 @@
 
 #include <lwp_mm_area.h>
 #include <lwp_user_mm.h>
-
-#ifdef ARCH_RISCV64
-    #define USER_LOAD_VADDR 0x200000000
-#else
-    #define USER_LOAD_VADDR 0x100000
-#endif
 #endif
 
 static const char elf_magic[] = {0x7f, 'E', 'L', 'F'};
 
 extern void lwp_user_entry(void *args, const void *text, void *data, void *k_stack);
 extern int libc_stdio_get_console(void);
+int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[]);
 
 /**
  * RT-Thread light-weight process
@@ -318,6 +314,7 @@ void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, s
 void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, void *got_start, size_t got_size, Elf_sym *dynsym);
 #endif
 
+#ifdef RT_USING_USERSPACE
 struct map_range
 {
     void *start;
@@ -350,33 +347,76 @@ static void expand_map_range(struct map_range *m, void *start, size_t size)
 
 static int map_range_ckeck(struct map_range *m1, struct map_range *m2)
 {
-    int ret = 0;
     void *m1_start = (void *)((size_t)m1->start & ~ARCH_PAGE_MASK);
     void *m1_end = (void *)((((size_t)m1->start + m1->size) + ARCH_PAGE_MASK) & ~ARCH_PAGE_MASK);
     void *m2_start = (void *)((size_t)m2->start & ~ARCH_PAGE_MASK);
     void *m2_end = (void *)((((size_t)m2->start + m2->size) + ARCH_PAGE_MASK) & ~ARCH_PAGE_MASK);
 
-    if (m1_start < m2_start)
+    if (m1->size)
     {
-        if (m1_end > m2_start)
+        if (m1_start < (void *)USER_LOAD_VADDR)
         {
-            ret = -1;
+            return -1;
+        }
+        if (m1_start > (void *)USER_STACK_VSTART)
+        {
+            return -1;
+        }
+        if (m1_end < (void *)USER_LOAD_VADDR)
+        {
+            return -1;
+        }
+        if (m1_end > (void *)USER_STACK_VSTART)
+        {
+            return -1;
         }
     }
-    else /* m2_start <= m1_start */
+    if (m2->size)
     {
-        if (m2_end > m1_start)
+        if (m2_start < (void *)USER_LOAD_VADDR)
         {
-            ret = -1;
+            return -1;
+        }
+        if (m2_start > (void *)USER_STACK_VSTART)
+        {
+            return -1;
+        }
+        if (m2_end < (void *)USER_LOAD_VADDR)
+        {
+            return -1;
+        }
+        if (m2_end > (void *)USER_STACK_VSTART)
+        {
+            return -1;
         }
     }
-    return ret;
+
+    if ((m1->size != 0) && (m2->size != 0))
+    {
+        if (m1_start < m2_start)
+        {
+            if (m1_end > m2_start)
+            {
+                return -1;
+            }
+        }
+        else /* m2_start <= m1_start */
+        {
+            if (m2_end > m1_start)
+            {
+                return -1;
+            }
+        }
+    }
+    return 0;
 }
+#endif
 
 static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, struct process_aux *aux)
 {
     uint32_t i;
     uint32_t off = 0;
+    size_t load_off = 0;
     char *p_section_str = 0;
     Elf_sym *dynsym = 0;
     Elf_Ehdr eheader;
@@ -391,10 +431,10 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
     size_t rel_dyn_size = 0;
     size_t dynsym_off = 0;
     size_t dynsym_size = 0;
-    struct map_range text_area = {NULL, 0};
-    struct map_range data_area = {NULL, 0};
 #ifdef RT_USING_USERSPACE
+    struct map_range user_area[2] = {{NULL, 0}, {NULL, 0}}; /* 0 is text, 1 is data */
     void *pa, *va;
+    void *va_self;
 #endif
 
 #ifdef RT_USING_USERSPACE
@@ -446,17 +486,46 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         return -RT_ERROR;
     }
 
+#ifdef RT_USING_USERSPACE
+    {
+        off = eheader.e_phoff;
+        for (i = 0; i < eheader.e_phnum; i++, off += sizeof pheader)
+        {
+            check_off(off, len);
+            lseek(fd, off, SEEK_SET);
+            read_len = load_fread(&pheader, 1, sizeof pheader, fd);
+            check_read(read_len, sizeof pheader);
+
+            if (pheader.p_type == PT_DYNAMIC)
+            {
+                /* load ld.so */
+                return 1; /* 1 means dynamic */
+            }
+        }
+    }
+#endif
+
+    if (eheader.e_entry != 0)
+    {
+        if ((eheader.e_entry != USER_LOAD_VADDR)
+                && (eheader.e_entry != LDSO_LOAD_VADDR))
+        {
+            /* the entry is invalidate */
+            return -RT_ERROR;
+        }
+    }
+
     { /* load aux */
         uint8_t *process_header;
         size_t process_header_size;
 
         off = eheader.e_phoff;
         process_header_size = eheader.e_phnum * sizeof pheader;
-        if (process_header_size > ARCH_PAGE_SIZE)
+#ifdef RT_USING_USERSPACE
+        if (process_header_size > ARCH_PAGE_SIZE - sizeof(char[16]))
         {
             return -RT_ERROR;
         }
-#ifdef RT_USING_USERSPACE
         va = (uint8_t *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE * 2), process_header_size, 0);
         if (!va)
         {
@@ -465,7 +534,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         pa = rt_hw_mmu_v2p(m_info, va);
         process_header = (uint8_t *)pa - PV_OFFSET;
 #else
-        process_header = (uint8_t *)rt_malloc(process_header_size);
+        process_header = (uint8_t *)rt_malloc(process_header_size + sizeof(char[16]));
         if (!process_header)
         {
             return -RT_ERROR;
@@ -480,9 +549,29 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
 #endif
 
         aux->item[1].key = AT_PAGESZ;
+#ifdef RT_USING_USERSPACE
         aux->item[1].value = ARCH_PAGE_SIZE;
+#else
+        aux->item[1].value = RT_MM_PAGE_SIZE;
+#endif
         aux->item[2].key = AT_RANDOM;
-        aux->item[2].value = rt_tick_get();
+        {
+            uint32_t random_value = rt_tick_get();
+            uint8_t *random;
+#ifdef RT_USING_USERSPACE
+            uint8_t *krandom;
+
+            random = (uint8_t *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE - sizeof(char[16]));
+
+            krandom = (uint8_t *)rt_hw_mmu_v2p(m_info, random);
+            krandom = (uint8_t *)krandom - PV_OFFSET;
+            rt_memcpy(krandom, &random_value, sizeof random_value);
+#else
+            random = (uint8_t *)(process_header + process_header_size);
+            rt_memcpy(random, &random_value, sizeof random_value);
+#endif
+            aux->item[2].value = (uint32_t)(size_t)random;
+        }
         aux->item[3].key = AT_PHDR;
 #ifdef RT_USING_USERSPACE
         aux->item[3].value = (uint32_t)(size_t)va;
@@ -498,64 +587,144 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
 #endif
     }
 
-#ifdef RT_USING_USERSPACE
-    /* map user */
-    off = eheader.e_shoff;
-    for (i = 0; i < eheader.e_shnum; i++, off += sizeof sheader)
+    if (load_addr)
     {
-        check_off(off, len);
-        lseek(fd, off, SEEK_SET);
-        read_len = load_fread(&sheader, 1, sizeof sheader, fd);
-        check_read(read_len, sizeof sheader);
-
-        if ((sheader.sh_flags & SHF_ALLOC) == 0)
+        load_off = (size_t)load_addr;
+    }
+#ifdef RT_USING_USERSPACE
+    else
+    {
+        /* map user */
+        off = eheader.e_shoff;
+        for (i = 0; i < eheader.e_shnum; i++, off += sizeof sheader)
         {
-            continue;
-        }
+            check_off(off, len);
+            lseek(fd, off, SEEK_SET);
+            read_len = load_fread(&sheader, 1, sizeof sheader, fd);
+            check_read(read_len, sizeof sheader);
 
-        switch (sheader.sh_type)
-        {
+            if ((sheader.sh_flags & SHF_ALLOC) == 0)
+            {
+                continue;
+            }
+
+            switch (sheader.sh_type)
+            {
             case SHT_PROGBITS:
                 if ((sheader.sh_flags & SHF_WRITE) == 0)
                 {
-                    expand_map_range(&text_area, (void *)sheader.sh_addr, sheader.sh_size);
+                    expand_map_range(&user_area[0], (void *)sheader.sh_addr, sheader.sh_size);
                 }
                 else
                 {
-                    expand_map_range(&data_area, (void *)sheader.sh_addr, sheader.sh_size);
+                    expand_map_range(&user_area[1], (void *)sheader.sh_addr, sheader.sh_size);
                 }
                 break;
             case SHT_NOBITS:
-                expand_map_range(&data_area, (void *)sheader.sh_addr, sheader.sh_size);
+                expand_map_range(&user_area[1], (void *)sheader.sh_addr, sheader.sh_size);
+                break;
+            default:
+                expand_map_range(&user_area[1], (void *)sheader.sh_addr, sheader.sh_size);
+                break;
+            }
+        }
+
+        if (user_area[0].size == 0)
+        {
+            /* no code */
+            result = -RT_ERROR;
+            goto _exit;
+        }
+
+        if (user_area[0].start == NULL)
+        {
+            /* DYN */
+            load_off = USER_LOAD_VADDR;
+            user_area[0].start = (void *)((char*)user_area[0].start + load_off);
+            user_area[1].start = (void *)((char*)user_area[1].start + load_off);
+        }
+
+        if (map_range_ckeck(&user_area[0], &user_area[1]) != 0)
+        {
+            result = -RT_ERROR;
+            goto _exit;
+        }
+
+        /* text and data */
+        for (i = 0; i < 2; i++)
+        {
+            if (user_area[i].size != 0)
+            {
+                va = lwp_map_user(lwp, user_area[i].start, user_area[i].size, (int)(i == 0));
+                if (!va || (va != user_area[i].start))
+                {
+                    result = -RT_ERROR;
+                    goto _exit;
+                }
+            }
+        }
+        lwp->text_size = user_area[0].size;
+    }
+#else
+    else
+    {
+        size_t start = -1UL;
+        size_t end = 0UL;
+        size_t total_size;
+
+        off = eheader.e_shoff;
+        for (i = 0; i < eheader.e_shnum; i++, off += sizeof sheader)
+        {
+            check_off(off, len);
+            lseek(fd, off, SEEK_SET);
+            read_len = load_fread(&sheader, 1, sizeof sheader, fd);
+            check_read(read_len, sizeof sheader);
+
+            if ((sheader.sh_flags & SHF_ALLOC) == 0)
+            {
+                continue;
+            }
+
+            switch (sheader.sh_type)
+            {
+            case SHT_PROGBITS:
+            case SHT_NOBITS:
+                if (start > sheader.sh_addr)
+                {
+                    start = sheader.sh_addr;
+                }
+                if (sheader.sh_addr + sheader.sh_size > end)
+                {
+                    end = sheader.sh_addr + sheader.sh_size;
+                }
                 break;
             default:
                 break;
+            }
         }
-    }
-    if (map_range_ckeck(&text_area, &data_area) != 0)
-    {
-        result = -RT_ERROR;
-        goto _exit;
-    }
-    if (text_area.start)
-    {
-        va = lwp_map_user(lwp, text_area.start, text_area.size, 1);
-        if (!va || (va != text_area.start))
+
+        total_size = end - start;
+
+#ifdef RT_USING_CACHE
+        load_off = (size_t)rt_malloc_align(total_size, RT_CPU_CACHE_LINE_SZ);
+#else
+        load_off = (size_t)rt_malloc(total_size);
+#endif
+        if (load_off == 0)
         {
-            result = -RT_ERROR;
+            LOG_E("alloc text memory faild!");
+            result = -RT_ENOMEM;
             goto _exit;
         }
-    }
-    if (data_area.start)
-    {
-        va = lwp_map_user(lwp, data_area.start, data_area.size, 0);
-        if (!va || (va != data_area.start))
+        else
         {
-            result = -RT_ERROR;
-            goto _exit;
+            LOG_D("lwp text malloc : %p, size: %d!", (void *)load_off, lwp->text_size);
         }
+        lwp->load_off = load_off; /* for free */
+        lwp->text_size = total_size;
     }
 #endif
+    lwp->text_entry = (void *)(eheader.e_entry + load_off);
 
     off = eheader.e_phoff;
     for (i = 0; i < eheader.e_phnum; i++, off += sizeof pheader)
@@ -571,95 +740,43 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             {
                 return -RT_ERROR;
             }
-            if (load_addr)
-            {
-                if (eheader.e_type == ET_EXEC)
-                {
-                    result = -RT_ERROR;
-                    goto _exit;
-                }
-                lwp->text_entry = load_addr;
-            }
-            else
-            {
-#ifdef RT_USING_USERSPACE
-                void *va;
 
-                if (eheader.e_type == ET_EXEC)
-                {
-                    if (pheader.p_vaddr != USER_LOAD_VADDR)
-                    {
-                        result = -RT_ERROR;
-                        goto _exit;
-                    }
-                }
-                va = (void *)pheader.p_vaddr;
-                if (va)
-                {
-                    lwp->text_entry = va;
-                    lwp->text_size = pheader.p_memsz;
-                }
-                else
-                {
-                    lwp->text_entry = RT_NULL;
-                }
-#else
-#ifdef RT_USING_CACHE
-                lwp->text_entry = (rt_uint8_t *)rt_malloc_align(pheader.p_memsz, RT_CPU_CACHE_LINE_SZ);
-#else
-                lwp->text_entry = (rt_uint8_t *)rt_malloc(pheader.p_memsz);
-#endif
-#endif
-                if (lwp->text_entry == RT_NULL)
-                {
-                    LOG_E("alloc text memory faild!");
-                    result = -RT_ENOMEM;
-                    goto _exit;
-                }
-                else
-                {
-                    LOG_D("lwp text malloc : %p, size: %d!", lwp->text_entry, lwp->text_size);
-                }
-                check_off(pheader.p_offset, len);
-                lseek(fd, pheader.p_offset, SEEK_SET);
+            check_off(pheader.p_offset, len);
+            lseek(fd, pheader.p_offset, SEEK_SET);
 #ifdef RT_USING_USERSPACE
-                {
-                    uint32_t size = pheader.p_filesz;
-                    void *va_self;
-                    void *pa;
-                    size_t tmp_len = 0;
+            {
+                uint32_t size = pheader.p_filesz;
+                size_t tmp_len = 0;
 
-                    read_len = 0;
-                    while (size)
-                    {
-                        pa = rt_hw_mmu_v2p(m_info, va);
-                        va_self = (void *)((char *)pa - PV_OFFSET);
-                        LOG_D("va_self = %p pa = %p", va_self, pa);
-                        tmp_len = (size < ARCH_PAGE_SIZE) ? size : ARCH_PAGE_SIZE;
-                        tmp_len = load_fread(va_self, 1, tmp_len, fd);
-                        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, va_self, tmp_len);
-                        read_len += tmp_len;
-                        size -= tmp_len;
-                        va = (void *)((char *)va + ARCH_PAGE_SIZE);
-                    }
+                va = (void *)(pheader.p_vaddr + load_addr);
+                read_len = 0;
+                while (size)
+                {
+                    pa = rt_hw_mmu_v2p(m_info, va);
+                    va_self = (void *)((char *)pa - PV_OFFSET);
+                    LOG_D("va_self = %p pa = %p", va_self, pa);
+                    tmp_len = (size < ARCH_PAGE_SIZE) ? size : ARCH_PAGE_SIZE;
+                    tmp_len = load_fread(va_self, 1, tmp_len, fd);
+                    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, va_self, tmp_len);
+                    read_len += tmp_len;
+                    size -= tmp_len;
+                    va = (void *)((char *)va + ARCH_PAGE_SIZE);
                 }
-#else
-                read_len = load_fread(lwp->text_entry, 1, pheader.p_filesz, fd);
-#endif
-                check_read(read_len, pheader.p_filesz);
             }
+#else
+            read_len = load_fread((void*)(pheader.p_vaddr + load_off), 1, pheader.p_filesz, fd);
+#endif
+            check_read(read_len, pheader.p_filesz);
+
             if (pheader.p_filesz < pheader.p_memsz)
             {
 #ifdef RT_USING_USERSPACE
-                void *va = (void *)((char *)lwp->text_entry + pheader.p_filesz);
-                void *va_self;
-                void *pa;
                 uint32_t size = pheader.p_memsz - pheader.p_filesz;
                 uint32_t size_s;
                 uint32_t off;
 
                 off = pheader.p_filesz & ARCH_PAGE_MASK;
-                va = (void *)(((size_t)lwp->text_entry + pheader.p_filesz) & ~ARCH_PAGE_MASK);
+                va = (void *)((pheader.p_vaddr + pheader.p_filesz + load_off) & ~ARCH_PAGE_MASK);
                 while (size)
                 {
                     size_s = (size < ARCH_PAGE_SIZE - off) ? size : ARCH_PAGE_SIZE - off;
@@ -672,13 +789,13 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                     va = (void *)((char *)va + ARCH_PAGE_SIZE);
                 }
 #else
-                memset((uint8_t *)lwp->text_entry + pheader.p_filesz, 0, (size_t)(pheader.p_memsz - pheader.p_filesz));
+                memset((uint8_t *)pheader.p_vaddr + pheader.p_filesz + load_off, 0, (size_t)(pheader.p_memsz - pheader.p_filesz));
 #endif
             }
-            break;
         }
     }
 
+    /* relocate */
     if (eheader.e_type == ET_DYN)
     {
         /* section info */
@@ -709,18 +826,14 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             read_len = load_fread(&sheader, 1, sizeof sheader, fd);
             check_read(read_len, sizeof sheader);
 
-            if (strcmp(p_section_str + sheader.sh_name, "text") == 0)
+            if (strcmp(p_section_str + sheader.sh_name, ".got") == 0)
             {
-                lwp->text_size = sheader.sh_size;
-            }
-            else if (strcmp(p_section_str + sheader.sh_name, ".got") == 0)
-            {
-                got_start = (void *)((uint8_t *)lwp->text_entry + sheader.sh_addr);
+                got_start = (void *)((uint8_t *)sheader.sh_addr + load_off);
                 got_size = (size_t)sheader.sh_size;
             }
             else if (strcmp(p_section_str + sheader.sh_name, ".rel.dyn") == 0)
             {
-                rel_dyn_start = (void *)((uint8_t *)lwp->text_entry + sheader.sh_addr);
+                rel_dyn_start = (void *)((uint8_t *)sheader.sh_addr + load_off);
                 rel_dyn_size = (size_t)sheader.sh_size;
             }
             else if (strcmp(p_section_str + sheader.sh_name, ".dynsym") == 0)
@@ -745,9 +858,9 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             check_read(read_len, dynsym_size);
         }
 #ifdef RT_USING_USERSPACE
-        lwp_elf_reloc(m_info, (void *)lwp->text_entry, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
+        lwp_elf_reloc(m_info, (void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
 #else
-        lwp_elf_reloc((void *)lwp->text_entry, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
+        lwp_elf_reloc((void *)load_off, rel_dyn_start, rel_dyn_size, got_start, got_size, dynsym);
 
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, lwp->text_entry, lwp->text_size);
         rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, lwp->text_entry, lwp->text_size);
@@ -767,7 +880,7 @@ _exit:
     }
     if (result != RT_EOK)
     {
-        LOG_E("lwp dynamic load faild, %d", result);
+        LOG_E("lwp load faild, %d", result);
     }
     return result;
 }
@@ -816,7 +929,7 @@ RT_WEAK int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_add
     lseek(fd, 0, SEEK_SET);
 
     ret = load_elf(fd, len, lwp, ptr, aux);
-    if (ret != RT_EOK)
+    if ((ret != RT_EOK) && (ret != 1))
     {
         LOG_E("lwp load ret = %d", ret);
     }
@@ -834,7 +947,10 @@ void lwp_cleanup(struct rt_thread *tid)
     rt_base_t level;
     struct rt_lwp *lwp;
 
-    if (tid == NULL) return;
+    if (tid == NULL)
+    {
+        return;
+    }
 
     LOG_I("cleanup thread: %s, stack_addr: %08X", tid->name, tid->stack_addr);
 
@@ -971,6 +1087,12 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
     }
 
     result = lwp_load(filename, lwp, RT_NULL, 0, aux);
+    if (result == 1)
+    {
+        /* dynmaic */
+        lwp_unmap_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE));
+        result = load_ldso(lwp, filename, argv, envp);
+    }
     if (result == RT_EOK)
     {
         rt_thread_t thread = RT_NULL;

@@ -201,12 +201,7 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     struct rt_cpu* pcpu = rt_cpu_self();
 
 #ifdef RT_USING_USERSPACE
-    if (pcpu->current_thread)
-    {
-        pcpu->current_thread->thread_idr = rt_cpu_get_thread_idr();
-    }
     lwp_mmu_switch(thread);
-    rt_cpu_set_thread_idr(thread->thread_idr);
 #endif
     pcpu->current_thread = thread;
     if (!thread->cpus_lock_nest)

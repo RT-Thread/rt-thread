@@ -70,6 +70,9 @@ struct rt_lwp
     uint32_t text_size;
     void *data_entry;
     uint32_t data_size;
+#ifndef RT_USING_USERSPACE
+    size_t load_off;
+#endif
 
     int ref;
     void *args;

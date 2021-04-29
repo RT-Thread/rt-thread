@@ -1818,6 +1818,134 @@ quit:
     return page;
 }
 
+int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[])
+{
+    int ret = -1;
+    int i;
+    void *page;
+    void *new_page;
+    int argc = 0;
+    int envc = 0;
+    int size;
+    char **kargv;
+    char **kenvp;
+    size_t len;
+    char *p;
+    char *i_arg;
+    struct lwp_args_info args_info;
+    struct process_aux *aux;
+
+    size = sizeof(char *);
+    if (argv)
+    {
+        while (1)
+        {
+            if (!argv[argc])
+            {
+                break;
+            }
+            len = rt_strlen((const char *)argv[argc]);
+            size += sizeof(char *) + len + 1;
+            argc++;
+        }
+    }
+    if (envp)
+    {
+        while (1)
+        {
+            if (!envp[envc])
+            {
+                break;
+            }
+            len = rt_strlen((const char *)envp[envc]);
+            size += sizeof(char *) + len + 1;
+            envc++;
+        }
+    }
+
+    page = rt_pages_alloc(0); /* 1 page */
+    if (!page)
+    {
+        rt_set_errno(ENOMEM);
+        goto quit;
+    }
+    kargv = (char **)page;
+    kenvp = kargv + argc + 1;
+    p = (char *)(kenvp + envc + 1);
+    /* copy argv */
+    if (argv)
+    {
+        for (i = 0; i < argc; i++)
+        {
+            kargv[i] = p;
+            len = rt_strlen(argv[i]) + 1;
+            rt_memcpy(p, argv[i], len);
+            p += len;
+        }
+        kargv[i] = NULL;
+    }
+    /* copy envp */
+    if (envp)
+    {
+        for (i = 0; i < envc; i++)
+        {
+            kenvp[i] = p;
+            len = rt_strlen(envp[i]) + 1;
+            rt_memcpy(p, envp[i], len);
+            p += len;
+        }
+        kenvp[i] = NULL;
+    }
+
+    args_info.argc = argc;
+    args_info.argv = kargv;
+    args_info.envc = envc;
+    args_info.envp = kenvp;
+    args_info.size = size;
+
+    new_page = _insert_args(1, &exec_name, &args_info);
+    rt_pages_free(page, 0);
+    page = new_page;
+    if (!page)
+    {
+        goto quit;
+    }
+
+    i_arg = "-e";
+    new_page = _insert_args(1, &i_arg, &args_info);
+    rt_pages_free(page, 0);
+    page = new_page;
+    if (!page)
+    {
+        goto quit;
+    }
+
+    i_arg = "ld.so";
+    new_page = _insert_args(1, &i_arg, &args_info);
+    rt_pages_free(page, 0);
+    page = new_page;
+    if (!page)
+    {
+        goto quit;
+    }
+
+    if ((aux = lwp_argscopy(lwp, args_info.argc, args_info.argv, args_info.envp)) == NULL)
+    {
+        rt_set_errno(ENOMEM);
+        goto quit;
+    }
+
+    ret = lwp_load("/bin/ld.so", lwp, RT_NULL, 0, aux);
+
+    rt_strncpy(lwp->cmd, exec_name, RT_NAME_MAX);
+quit:
+    if (page)
+    {
+        rt_pages_free(page, 0);
+    }
+    return ret;
+}
+
 int sys_execve(const char *path, char *const argv[], char *const envp[])
 {
     int ret = -1;
@@ -1995,6 +2123,12 @@ int sys_execve(const char *path, char *const argv[], char *const envp[])
         goto quit;
     }
     ret = lwp_load(path, new_lwp, RT_NULL, 0, aux);
+    if (ret == 1)
+    {
+        /* dynamic */
+        lwp_unmap_user(new_lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE));
+        ret = load_ldso(new_lwp, (char *)path, args_info.argv, args_info.envp);
+    }
     if (ret == RT_EOK)
     {
         int off = 0;
@@ -2068,7 +2202,7 @@ quit:
     {
         lwp_ref_dec(new_lwp);
     }
-    return -1;
+    return ret;
 }
 
 rt_err_t sys_thread_delete(rt_thread_t thread)
@@ -3505,6 +3639,8 @@ int sys_setrlimit(unsigned int resource, struct rlimit *rlim)
     return -1;
 }
 
+int sys_cacheflush(void *addr, int len, int cache);
+
 const static void* func_table[] =
 {
     (void *)sys_exit,            /* 01 */
@@ -3627,8 +3763,8 @@ const static void* func_table[] =
     (void *)sys_sigaction,
     (void *)sys_sigprocmask,
     (void *)sys_tkill,             /* 105 */
-    (void *)sys_notimpl,
     (void *)sys_thread_sigprocmask,
+    (void *)sys_cacheflush,
     (void *)sys_notimpl,
     (void *)sys_notimpl,
     (void *)sys_waitpid,          /* 110 */
