@@ -877,7 +877,7 @@ int lsof(int argc, char *argv[])
     return 0;
 }
 MSH_CMD_EXPORT(lsof, list open files); 
-#ifdef RT_USING_LWP
+#endif /* RT_USING_LWP */ 
 
 /*
  * If no argument is specified, display the mount history;

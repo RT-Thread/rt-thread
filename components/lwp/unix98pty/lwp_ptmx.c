@@ -39,7 +39,7 @@ static struct rt_pts_device *ptmxfd2pts(struct dfs_fd *fd)
     int ptmx_fd = -1; 
     struct rt_pts_device *pts = RT_NULL; 
 
-    ptmx_fd = fd_get_fd(fd); 
+    ptmx_fd = fd_get_fd_index(fd); 
     for(int i = 0; i < LWP_PTY_PTS_SIZE; i++)
     {
         struct rt_pts_device *_pts = RT_NULL; 
@@ -73,7 +73,7 @@ static int ptmx_file_open(struct dfs_fd *fd)
     }
 
     /* 注册 pts 设备 */ 
-    ptmx_fd = fd_get_fd(fd); 
+    ptmx_fd = fd_get_fd_index(fd); 
     ret = lwp_pts_register(pts, ptmx_fd, ptmx->pts_index); 
     if(ret != RT_EOK)
     {
