@@ -31,7 +31,7 @@
 #include <rtdbg.h>
 
 #ifndef RT_LIBC_FIXED_TIMEZONE
-#define RT_LIBC_FIXED_TIMEZONE 8
+#define RT_LIBC_FIXED_TIMEZONE 8 /* UTC+8 */
 #endif
 
 /* seconds per day */
