@@ -212,14 +212,11 @@ struct tm* gmtime(const time_t* t)
 }
 RTM_EXPORT(gmtime);
 
-/*TODO: timezone */
 struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
-    int utc_plus;
 
-    utc_plus = RT_LIBC_FIXED_TIMEZONE;
-    local_tz = *t + utc_plus * 3600;
+    local_tz = *t + RT_LIBC_FIXED_TIMEZONE * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -231,15 +228,12 @@ struct tm* localtime(const time_t* t)
 }
 RTM_EXPORT(localtime);
 
-/* TODO: timezone */
 time_t mktime(struct tm * const t)
 {
     time_t timestamp;
-    int utc_plus;
 
-    utc_plus = RT_LIBC_FIXED_TIMEZONE;
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * utc_plus;
+    timestamp = timestamp - 3600 * RT_LIBC_FIXED_TIMEZONE;
     return timestamp;
 }
 RTM_EXPORT(mktime);
