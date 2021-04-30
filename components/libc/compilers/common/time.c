@@ -214,7 +214,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
     time_t local_tz;
     int utc_plus;
 
-    utc_plus = 8; /* GMT: UTC+8 */
+    utc_plus = RT_LIBC_FIXED_TIMEZONE;
     local_tz = *t + utc_plus * 3600;
     return gmtime_r(&local_tz, r);
 }
@@ -233,7 +233,7 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
     int utc_plus;
 
-    utc_plus = 8; /* GMT: UTC+8 */
+    utc_plus = RT_LIBC_FIXED_TIMEZONE;
     timestamp = timegm(t);
     timestamp = timestamp - 3600 * utc_plus;
     return timestamp;
