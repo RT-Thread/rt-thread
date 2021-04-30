@@ -30,6 +30,10 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#ifndef RT_LIBC_FIXED_TIMEZONE
+#define RT_LIBC_FIXED_TIMEZONE 8
+#endif
+
 /* seconds per day */
 #define SPD 24*60*60
 
