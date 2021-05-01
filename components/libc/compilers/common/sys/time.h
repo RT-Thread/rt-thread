@@ -18,14 +18,6 @@
 extern "C" {
 #endif
 
-/*
- * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
- */
-#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
-#define _TIMESPEC_DEFINED
-#endif
-
-
 #ifndef _TIMEVAL_DEFINED
 #define _TIMEVAL_DEFINED
 /*
@@ -40,7 +32,7 @@ struct timeval {
 #endif
 #endif /* _TIMEVAL_DEFINED */
 
-#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !defined (__ICCARM__) && !defined (_WIN32)
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !(defined(__ICCARM__) && (__VER__ >= 8010001)) && !defined(_WIN32)
 struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */

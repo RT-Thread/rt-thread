@@ -16,7 +16,7 @@
  * 2012-12-08     Bernard      <clock_time.c> fix the issue of _timevalue.tv_usec initialization,
  *                             which found by Rob <rdent@iinet.net.au>
  * 2021-02-12     Meco Man     move all of the functions located in <clock_time.c> to this file
- * 2021-03-15     Meco Man     fixed bug: https://club.rt-thread.org/ask/question/423650.html
+ * 2021-03-15     Meco Man     fixed a bug of leaking memory in asctime()
  */
 
 #include <sys/time.h>
@@ -104,7 +104,7 @@ static int get_timeval(struct timeval *tv)
     }
     else
     {
-        /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
+        /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
         rt_kprintf("Cannot find a RTC device to provide time!\r\n");
         return -1;
     }
@@ -112,7 +112,7 @@ static int get_timeval(struct timeval *tv)
     return (rst < 0) ? -1 : 1;
 
 #else
-    /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
+    /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
     rt_kprintf("Cannot find a RTC device to provide time!\r\n");
     return -1;
 #endif /* RT_USING_RTC */
@@ -270,16 +270,16 @@ char* asctime(const struct tm *timeptr)
 }
 RTM_EXPORT(asctime);
 
-char *ctime_r (const time_t * tim_p, char * result)
+char *ctime_r(const time_t * tim_p, char * result)
 {
     struct tm tm;
-    return asctime_r (localtime_r (tim_p, &tm), result);
+    return asctime_r(localtime_r(tim_p, &tm), result);
 }
 RTM_EXPORT(ctime_r);
 
 char* ctime(const time_t *tim_p)
 {
-    return asctime (localtime (tim_p));
+    return asctime(localtime(tim_p));
 }
 RTM_EXPORT(ctime);
 
