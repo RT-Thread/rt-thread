@@ -8,12 +8,18 @@ CPPPATH = [cwd]
 support_arch  = {"arm": ["cortex-m3", "cortex-m4", "cortex-m7", "arm926", "cortex-a"],"risc-v": ["virt64"]}
 platform_file = {'armcc': 'rvds.S', 'gcc': 'gcc.S', 'iar': 'iar.S'}
 
+if GetDepend('LWP_UNIX98_PTY'):
+    print("LWP_UNIX98_PTY")
+    # src += ['unix98pty/lwp_ptmx.c', 'unix98pty/lwp_pts.c']
+    src += Glob('unix98pty/*.c') 
+    CPPPATH += ['unix98pty/']
+
 if rtconfig.PLATFORM in platform_file.keys(): # support platforms
     if rtconfig.ARCH in support_arch.keys() and rtconfig.CPU in support_arch[rtconfig.ARCH]:
         # arch/arm/cortex-m7/lwp_gcc.S
         asm_path = 'arch/' + rtconfig.ARCH + '/' + rtconfig.CPU + '/*_' + platform_file[rtconfig.PLATFORM]
         arch_common = 'arch/' + rtconfig.ARCH + '/' + 'common/*.c'
-        src = Glob('*.c') + Glob(asm_path) + Glob(arch_common)
+        src += Glob('*.c') + Glob(asm_path) + Glob(arch_common)
         src += Glob('arch/' + rtconfig.ARCH + '/' + rtconfig.CPU + '/*.c')
         CPPPATH = [cwd]
         CPPPATH += ['arch/' + rtconfig.ARCH + '/' + rtconfig.CPU]

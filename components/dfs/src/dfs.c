@@ -443,6 +443,39 @@ exit:
     return retfd;
 }
 
+static int fd_get_fd_index_form_fdt(struct dfs_fdtable *fdt, struct dfs_fd *file)
+{
+    int fd = -1;
+
+    if (file == RT_NULL) 
+    {
+        return -1;
+    }
+
+    dfs_fd_lock();
+
+    for(int index = 0; index < (int)fdt->maxfd; index++)
+    {
+        if(fdt->fds[index] == file)
+        {
+            fd = index; 
+            break; 
+        }
+    }
+
+    dfs_fd_unlock();
+
+    return fd;
+}
+
+int fd_get_fd_index(struct dfs_fd *file)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+    return fd_get_fd_index_form_fdt(fdt, file);
+}
+
 int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_fd *file)
 {
     int retfd = -1;
@@ -668,6 +701,22 @@ struct dfs_fdtable *dfs_fdtable_get(void)
     return fdt;
 }
 
+#ifdef RT_USING_LWP
+struct dfs_fdtable *dfs_fdtable_get_pid(int pid)
+{
+    struct rt_lwp *lwp = RT_NULL;
+    struct dfs_fdtable *fdt = RT_NULL;
+
+    lwp = lwp_from_pid(pid); 
+    if (lwp)
+    {
+        fdt = &lwp->fdt;
+    }
+
+    return fdt;
+}
+#endif 
+
 struct dfs_fdtable *dfs_fdtable_get_global(void)
 {
     return &_fdtab;
@@ -698,7 +747,7 @@ int list_fd(void)
             else if (fd->fnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
             else if (fd->fnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
             else if (fd->fnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->fnode->type == FT_DEVICE)   rt_kprintf("%-7.7s ", "device");
+            else if (fd->fnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
             rt_kprintf("%3d ", fd->fnode->ref_count);
             rt_kprintf("%04x  ", fd->magic);
@@ -717,6 +766,118 @@ int list_fd(void)
     return 0;
 }
 MSH_CMD_EXPORT(list_fd, list file descriptor);
+
+#ifdef RT_USING_LWP
+static int lsofp(int pid)
+{
+    int index;
+    struct dfs_fdtable *fd_table = RT_NULL;
+
+    if (pid == (-1))
+    {
+        fd_table = dfs_fdtable_get();
+        if (!fd_table) return -1;
+    }
+    else
+    {
+        fd_table = dfs_fdtable_get_pid(pid);
+        if (!fd_table) 
+        {
+            rt_kprintf("PID %s is not a applet(lwp)\n", pid);
+            return -1;
+        }
+    }
+
+    rt_kprintf("--- -- ------  ------ ----- ---------- ---------- ---------- ------\n");
+
+    rt_enter_critical();
+    for (index = 0; index < (int)fd_table->maxfd; index++)
+    {
+        struct dfs_fd *fd = fd_table->fds[index];
+
+        if (fd && fd->fnode->fops)
+        {
+            if(pid == (-1))
+            {
+                rt_kprintf("  K ");
+            }
+            else
+            {
+                rt_kprintf("%3d ", pid);
+            }
+
+            rt_kprintf("%2d ", index);
+            if (fd->fnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (fd->fnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (fd->fnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (fd->fnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->fnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
+            else rt_kprintf("%-8.8s ", "unknown");
+            rt_kprintf("%6d ", fd->fnode->ref_count);
+            rt_kprintf("%04x  0x%.8x ", fd->magic, (int)fd->fnode);
+
+            if(fd->fnode == RT_NULL)
+            {
+                rt_kprintf("0x%.8x 0x%.8x ", (int)0x00000000, (int)fd);
+            }
+            else
+            {
+                rt_kprintf("0x%.8x 0x%.8x ", (int)(fd->fnode->data), (int)fd);
+            }
+            
+            if (fd->fnode->path)
+            {
+                rt_kprintf("%s \n", fd->fnode->path);
+            }
+            else
+            {
+                rt_kprintf("\n");
+            }
+        }
+    }
+    rt_exit_critical();
+
+    return 0;
+}
+
+int lsof(int argc, char *argv[])
+{
+    rt_kprintf("PID fd type    fd-ref magic fnode      fnode/data addr       path  \n");
+
+    if (argc == 1)
+    {
+        struct rt_list_node *node, *list;
+        struct lwp_avl_struct *pids = lwp_get_pid_ary();
+
+        lsofp(-1); 
+
+        for (int index = 0; index < RT_LWP_MAX_NR; index++)
+        {
+            struct rt_lwp *lwp = (struct rt_lwp *)pids[index].data;
+
+            if (lwp)
+            {
+                list = &lwp->t_grp;
+                for (node = list->next; node != list; node = node->next)
+                {
+                    lsofp(lwp_to_pid(lwp)); 
+                }
+            }
+        }
+    }
+    else if (argc == 3)
+    {
+        if (argv[1][0] == '-' && argv[1][1] == 'p')
+        {
+            int pid = atoi(argv[2]);
+            lsofp(pid); 
+        }
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT(lsof, list open files); 
+#endif /* RT_USING_LWP */ 
 
 /*
  * If no argument is specified, display the mount history;

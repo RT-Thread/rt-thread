@@ -45,6 +45,11 @@ static int lwp_pid_ary_alloced = 0;
 static struct lwp_avl_struct *lwp_pid_root = RT_NULL;
 static pid_t current_pid = 0;
 
+struct lwp_avl_struct *lwp_get_pid_ary(void)
+{
+    return lwp_pid_ary; 
+}
+
 static pid_t lwp_pid_get(void)
 {
     rt_base_t level;

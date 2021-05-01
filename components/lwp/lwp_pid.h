@@ -17,6 +17,8 @@ extern "C" {
 
 struct rt_lwp;
 
+struct lwp_avl_struct *lwp_get_pid_ary(void);
+
 struct rt_lwp* lwp_new(void);
 void lwp_free(struct rt_lwp* lwp);
 

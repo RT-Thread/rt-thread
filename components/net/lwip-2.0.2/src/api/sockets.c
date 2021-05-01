@@ -2748,7 +2748,7 @@ lwip_fcntl(int s, int cmd, int val)
     sock_set_errno(sock, 0);
     break;
   case F_SETFL:
-    if ((val & ~O_NONBLOCK) == 0) {
+    if ((val & O_NONBLOCK) == O_NONBLOCK) {
       /* only O_NONBLOCK, all other bits are zero */
       netconn_set_nonblocking(sock->conn, val & O_NONBLOCK);
       ret = 0;
