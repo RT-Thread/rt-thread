@@ -228,7 +228,7 @@ void finsh_set_device(const char *device_name)
         }
 
         /* clear line buffer before switch to new device */
-        memset(shell->line, 0, sizeof(shell->line));
+        rt_memset(shell->line, 0, sizeof(shell->line));
         shell->line_curpos = shell->line_position = 0;
 
         shell->device = dev;
@@ -463,17 +463,17 @@ static void shell_push_history(struct finsh_shell *shell)
         if (shell->history_count >= FINSH_HISTORY_LINES)
         {
             /* if current cmd is same as last cmd, don't push */
-            if (memcmp(&shell->cmd_history[FINSH_HISTORY_LINES - 1], shell->line, FINSH_CMD_SIZE))
+            if (rt_memcmp(&shell->cmd_history[FINSH_HISTORY_LINES - 1], shell->line, FINSH_CMD_SIZE))
             {
                 /* move history */
                 int index;
                 for (index = 0; index < FINSH_HISTORY_LINES - 1; index ++)
                 {
-                    memcpy(&shell->cmd_history[index][0],
+                    rt_memcpy(&shell->cmd_history[index][0],
                            &shell->cmd_history[index + 1][0], FINSH_CMD_SIZE);
                 }
-                memset(&shell->cmd_history[index][0], 0, FINSH_CMD_SIZE);
-                memcpy(&shell->cmd_history[index][0], shell->line, shell->line_position);
+                rt_memset(&shell->cmd_history[index][0], 0, FINSH_CMD_SIZE);
+                rt_memcpy(&shell->cmd_history[index][0], shell->line, shell->line_position);
 
                 /* it's the maximum history */
                 shell->history_count = FINSH_HISTORY_LINES;
@@ -482,11 +482,11 @@ static void shell_push_history(struct finsh_shell *shell)
         else
         {
             /* if current cmd is same as last cmd, don't push */
-            if (shell->history_count == 0 || memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, FINSH_CMD_SIZE))
+            if (shell->history_count == 0 || rt_memcmp(&shell->cmd_history[shell->history_count - 1], shell->line, FINSH_CMD_SIZE))
             {
                 shell->current_history = shell->history_count;
-                memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
-                memcpy(&shell->cmd_history[shell->history_count][0], shell->line, shell->line_position);
+                rt_memset(&shell->cmd_history[shell->history_count][0], 0, FINSH_CMD_SIZE);
+                rt_memcpy(&shell->cmd_history[shell->history_count][0], shell->line, shell->line_position);
 
                 /* increase count and set current history position */
                 shell->history_count ++;
@@ -586,7 +586,7 @@ void finsh_thread_entry(void *parameter)
                 }
 
                 /* copy the history command */
-                memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
+                rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
                 shell->line_curpos = shell->line_position = strlen(shell->line);
                 shell_handle_history(shell);
@@ -608,7 +608,7 @@ void finsh_thread_entry(void *parameter)
                         continue;
                 }
 
-                memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
+                rt_memcpy(shell->line, &shell->cmd_history[shell->current_history][0],
                        FINSH_CMD_SIZE);
                 shell->line_curpos = shell->line_position = strlen(shell->line);
                 shell_handle_history(shell);
@@ -716,7 +716,7 @@ void finsh_thread_entry(void *parameter)
             }
 
             rt_kprintf(FINSH_PROMPT);
-            memset(shell->line, 0, sizeof(shell->line));
+            rt_memset(shell->line, 0, sizeof(shell->line));
             shell->line_curpos = shell->line_position = 0;
             continue;
         }

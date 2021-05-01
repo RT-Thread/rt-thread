@@ -321,7 +321,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
         return -RT_ERROR;
 
     /* split arguments */
-    memset(argv, 0x00, sizeof(argv));
+    rt_memset(argv, 0x00, sizeof(argv));
     argc = msh_split(cmd, length, argv);
     if (argc == 0)
         return -RT_ERROR;
