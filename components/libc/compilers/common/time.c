@@ -124,11 +124,11 @@ static rt_err_t get_timeval(struct timeval *tv)
 }
 
 /**
- * Set time to RTC device (without timezone, UTC+0)
+ * Set time to RTC device (without timezone)
  * @param tv: struct timeval
  * @return the operation status, RT_EOK on successful
  */
-static rt_err_t set_timeval(struct timeval *tv)
+static int set_timeval(const struct timeval *tv)
 {
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
@@ -415,9 +415,13 @@ time_t timegm(struct tm * const t)
 }
 RTM_EXPORT(timegm);
 
-/* TODO: Daylight Saving Time */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
+    /* The use of the timezone structure is obsolete;
+     * the tz argument should normally be specified as NULL.
+     * The tz_dsttime field has never been used under Linux.
+     * Thus, the following is purely of historic interest.
+     */
     if(tz != RT_NULL)
     {
         tz->tz_dsttime = 0;
@@ -436,32 +440,23 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 }
 RTM_EXPORT(gettimeofday);
 
-/* TODO: Daylight Saving Time */
 int settimeofday(const struct timeval *tv, const struct timezone *tz)
 {
-    if (tv != RT_NULL)
+    /* The use of the timezone structure is obsolete;
+     * the tz argument should normally be specified as NULL.
+     * The tz_dsttime field has never been used under Linux.
+     * Thus, the following is purely of historic interest.
+     */
+    if (tv != RT_NULL
+        && tv->tv_sec >= 0
+        && tv->tv_usec >= 0
+        && set_timeval(tv) == RT_EOK)
     {
-        if(tv->tv_sec >= 0 && tv->tv_usec >= 0)
-        {
-            if(set_timeval((struct timeval *)tv) == RT_EOK)
-            {
-                return 0;
-            }
-            else
-            {
-                rt_set_errno(EFAULT);
-                return -1;
-            }
-        }
-        else
-        {
-            rt_set_errno(EINVAL);
-            return -1;
-        }
+        return 0;
     }
     else
     {
-        rt_set_errno(EFAULT);
+        rt_set_errno(EINVAL);
         return -1;
     }
 }
