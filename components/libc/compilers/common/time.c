@@ -124,11 +124,11 @@ static rt_err_t get_timeval(struct timeval *tv)
 }
 
 /**
- * Set time to RTC device (without timezone)
+ * Set time to RTC device (without timezone, UTC+0)
  * @param tv: struct timeval
  * @return the operation status, RT_EOK on successful
  */
-static int set_timeval(struct timeval *tv)
+static rt_err_t set_timeval(struct timeval *tv)
 {
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
