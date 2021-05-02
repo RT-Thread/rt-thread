@@ -20,7 +20,7 @@
  * 2021-05-01     Meco Man     support fixed timezone
  */
 
-#include <sys/time.h>
+#include "sys/time.h"
 #include <rtthread.h>
 
 #ifdef RT_USING_DEVICE
