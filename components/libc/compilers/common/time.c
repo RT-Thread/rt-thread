@@ -424,7 +424,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
      */
     if(tz != RT_NULL)
     {
-        tz->tz_dsttime = 0;
+        tz->tz_dsttime = DST_NONE;
         tz->tz_minuteswest = -(RT_LIBC_FIXED_TIMEZONE * 60);
     }
 
