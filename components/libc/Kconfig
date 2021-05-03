@@ -7,7 +7,7 @@ config RT_USING_LIBC
 if RT_USING_LIBC && RT_USING_LWP
     choice
         prompt "Select c standard library"
-        default RT_USING_NEWLIB
+        default RT_USING_MUSL
         help
             Select c standard library
 
