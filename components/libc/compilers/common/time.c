@@ -128,7 +128,7 @@ static rt_err_t get_timeval(struct timeval *tv)
  * @param tv: struct timeval
  * @return the operation status, RT_EOK on successful
  */
-static int set_timeval(const struct timeval *tv)
+static int set_timeval(struct timeval *tv)
 {
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
@@ -450,7 +450,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     if (tv != RT_NULL
         && tv->tv_sec >= 0
         && tv->tv_usec >= 0
-        && set_timeval(tv) == RT_EOK)
+        && set_timeval((struct timeval *)tv) == RT_EOK)
     {
         return 0;
     }
