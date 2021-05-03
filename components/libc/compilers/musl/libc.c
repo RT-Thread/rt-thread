@@ -15,15 +15,14 @@
 
 #include "libc.h"
 
-#ifdef RT_USING_PTHREADS
-#include <pthread.h>
-#endif
-
 int _EXFUN(putenv,(char *__string));
+extern char **__environ;
 
 int libc_system_init(void)
 {
-#if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS) & defined(RT_USING_CONSOLE)
+#if defined(RT_USING_DFS) & defined(RT_USING_DFS_DEVFS)
+
+#if defined(RT_USING_CONSOLE)
     rt_device_t dev_console;
 
     dev_console = rt_console_get_device();
@@ -35,16 +34,55 @@ int libc_system_init(void)
         libc_stdio_set_console(dev_console->parent.name, O_WRONLY);
     #endif
     }
+#endif
 
     /* set PATH and HOME */
     putenv("PATH=/bin");
     putenv("HOME=/home");
 #endif
 
-#if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
-    pthread_system_init();
-#endif
-
     return 0;
 }
 INIT_COMPONENT_EXPORT(libc_system_init);
+
+int env_set(int argc, char** argv)
+{
+    switch (argc)
+    {
+    case 1:
+        {
+            int index;
+
+            /* show all of environment variables */
+            for(index = 0; __environ[index]!=NULL; index++)
+            {
+                printf("%2d.%s\n", index, __environ[index]);
+            }
+        }
+        break;
+    case 2:
+        {
+            char *c = strchr(argv[1], '=');
+            if (c)
+            {
+                /* use setenv to add/update environment variable */
+                *c = '\0';
+                setenv(argv[1], c + 1, 1);
+            }
+            else
+            {
+                const char *value = getenv(argv[1]);
+                if (value)
+                {
+                    printf("%s=%s\n", argv[1], value);
+                }
+            }
+        }
+        break;
+    default:
+        break;
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(env_set, set, set or show environment variable);
