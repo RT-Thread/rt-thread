@@ -352,7 +352,7 @@ static void lwp_user_thread(void *parameter)
     user_stack &= ~7; //align 8
     set_user_context((void *)user_stack);
 
-    lwp_user_entry(parameter, tid->user_entry, lwp->data_entry, RT_NULL);
+    lwp_user_entry(parameter, tid->user_entry, lwp->data_entry, tid->stack_addr + tid->stack_size);
 }
 
 /* thread/process */
