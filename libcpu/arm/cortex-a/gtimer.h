@@ -14,6 +14,7 @@
 #include <rtdef.h>
 
 void gtimer_set_counter_frequency(rt_uint32_t value);
+rt_uint32_t gtimer_get_counter_frequency(void);
 void gtimer_set_load_value(rt_uint32_t value);
 rt_uint32_t gtimer_get_current_value(void);
 rt_uint64_t gtimer_get_current_physical_value(void);

@@ -110,6 +110,14 @@ void gtimer_set_counter_frequency(rt_uint32_t value)
     __asm__ volatile ("isb 0xF":::"memory");
 }
 
+/** Get the frequency the timer shall run at.
+ *  return timer frequency in Hz.
+ */
+rt_uint32_t gtimer_get_counter_frequency(void)
+{
+    return(__get_cntfrq());
+}
+
 /** Sets the reset value of the timer.
  *  param value: The value the timer is loaded with.
  */
