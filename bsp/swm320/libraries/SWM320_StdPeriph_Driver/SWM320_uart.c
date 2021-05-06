@@ -21,7 +21,6 @@
 #include "SWM320.h"
 #include "SWM320_uart.h"
 
-
 /****************************************************************************************************************************************** 
 * 函数名称:	UART_Init()
 * 功能说明:	UART串口初始化
@@ -30,106 +29,114 @@
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_Init(UART_TypeDef * UARTx, UART_InitStructure * initStruct)
-{	
-	switch((uint32_t)UARTx)
-	{
-	case ((uint32_t)UART0):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_UART0_Pos);
-		break;
-	
-	case ((uint32_t)UART1):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_UART1_Pos);
-		break;
-	
-	case ((uint32_t)UART2):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_UART2_Pos);
-		break;
-	
-	case ((uint32_t)UART3):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_UART3_Pos);
-		break;
-	}
-	
-	UART_Close(UARTx);	//一些关键寄存器只能在串口关闭时设置
-	
-	UARTx->CTRL |= (0x01 << UART_CTRL_BAUDEN_Pos);
-	UARTx->BAUD &= ~UART_BAUD_BAUD_Msk;
-	UARTx->BAUD |= ((SystemCoreClock/16/initStruct->Baudrate - 1) << UART_BAUD_BAUD_Pos);
-	
-	UARTx->CTRL &= ~(UART_CTRL_DATA9b_Msk | UART_CTRL_PARITY_Msk | UART_CTRL_STOP2b_Msk);
-	UARTx->CTRL |= (initStruct->DataBits << UART_CTRL_DATA9b_Pos) |
-				   (initStruct->Parity   << UART_CTRL_PARITY_Pos) |
-				   (initStruct->StopBits << UART_CTRL_STOP2b_Pos);
-	
-	/* 在SWM320中，当 RXLVL >= RXTHR 时触发中断，如果RXTHR设置为0的话，在未接收到数据时就会一直触发中断；
+void UART_Init(UART_TypeDef *UARTx, UART_InitStructure *initStruct)
+{
+    switch ((uint32_t)UARTx)
+    {
+    case ((uint32_t)UART0):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_UART0_Pos);
+        break;
+
+    case ((uint32_t)UART1):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_UART1_Pos);
+        break;
+
+    case ((uint32_t)UART2):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_UART2_Pos);
+        break;
+
+    case ((uint32_t)UART3):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_UART3_Pos);
+        break;
+    }
+
+    UART_Close(UARTx); //一些关键寄存器只能在串口关闭时设置
+
+    UARTx->CTRL |= (0x01 << UART_CTRL_BAUDEN_Pos);
+    UARTx->BAUD &= ~UART_BAUD_BAUD_Msk;
+    UARTx->BAUD |= ((SystemCoreClock / 16 / initStruct->Baudrate - 1) << UART_BAUD_BAUD_Pos);
+
+    UARTx->CTRL &= ~(UART_CTRL_DATA9b_Msk | UART_CTRL_PARITY_Msk | UART_CTRL_STOP2b_Msk);
+    UARTx->CTRL |= (initStruct->DataBits << UART_CTRL_DATA9b_Pos) |
+                   (initStruct->Parity << UART_CTRL_PARITY_Pos) |
+                   (initStruct->StopBits << UART_CTRL_STOP2b_Pos);
+
+    /* 在SWM320中，当 RXLVL >= RXTHR 时触发中断，如果RXTHR设置为0的话，在未接收到数据时就会一直触发中断；
 	   其他芯片中，当 RXLVL >  RXTHR 时触发中断，为解决SWM320中RXTHR不能为0的问题，并统一库函数API，这里将RXTHR设置值加一
 	*/
-	switch((uint32_t)UARTx)  // 软件复位不能清零 NVIC 寄存器，若不手动清除，下面的代码清零 RXTHR 时会导致一直进入 ISR
+    switch ((uint32_t)UARTx) // 软件复位不能清零 NVIC 寄存器，若不手动清除，下面的代码清零 RXTHR 时会导致一直进入 ISR
     {
-    case ((uint32_t)UART0):  NVIC_DisableIRQ(UART0_IRQn);  break;
-    case ((uint32_t)UART1):  NVIC_DisableIRQ(UART1_IRQn);  break;
-    case ((uint32_t)UART2):  NVIC_DisableIRQ(UART2_IRQn);  break;
-    case ((uint32_t)UART3):  NVIC_DisableIRQ(UART3_IRQn);  break;
+    case ((uint32_t)UART0):
+        NVIC_DisableIRQ(UART0_IRQn);
+        break;
+    case ((uint32_t)UART1):
+        NVIC_DisableIRQ(UART1_IRQn);
+        break;
+    case ((uint32_t)UART2):
+        NVIC_DisableIRQ(UART2_IRQn);
+        break;
+    case ((uint32_t)UART3):
+        NVIC_DisableIRQ(UART3_IRQn);
+        break;
     }
-	UARTx->FIFO &= ~(UART_FIFO_RXTHR_Msk | UART_FIFO_TXTHR_Msk);
-	UARTx->FIFO |= ((initStruct->RXThreshold + 1) << UART_FIFO_RXTHR_Pos) | 
-				   (initStruct->TXThreshold << UART_FIFO_TXTHR_Pos);
-	
-	UARTx->CTRL &= ~UART_CTRL_TOTIME_Msk;
-	UARTx->CTRL |= (initStruct->TimeoutTime << UART_CTRL_TOTIME_Pos);
-	
-	UARTx->CTRL &= ~(UART_CTRL_RXIE_Msk | UART_CTRL_TXIE_Msk | UART_CTRL_TOIE_Msk);
-	UARTx->CTRL |= (initStruct->RXThresholdIEn << UART_CTRL_RXIE_Pos) |
-				   (initStruct->TXThresholdIEn << UART_CTRL_TXIE_Pos) |
-				   (initStruct->TimeoutIEn << UART_CTRL_TOIE_Pos);
-	
-	switch((uint32_t)UARTx)
-	{
-	case ((uint32_t)UART0):		
-		if(initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
-		{
-			NVIC_EnableIRQ(UART0_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(UART0_IRQn);
-		}
-		break;
-	
-	case ((uint32_t)UART1):		
-		if(initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
-		{
-			NVIC_EnableIRQ(UART1_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(UART1_IRQn);
-		}
-		break;
-	
-	case ((uint32_t)UART2):		
-		if(initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
-		{
-			NVIC_EnableIRQ(UART2_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(UART2_IRQn);
-		}
-		break;
-	
-	case ((uint32_t)UART3):		
-		if(initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
-		{
-			NVIC_EnableIRQ(UART3_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(UART3_IRQn);
-		}
-		break;
-	}
+    UARTx->FIFO &= ~(UART_FIFO_RXTHR_Msk | UART_FIFO_TXTHR_Msk);
+    UARTx->FIFO |= ((initStruct->RXThreshold + 1) << UART_FIFO_RXTHR_Pos) |
+                   (initStruct->TXThreshold << UART_FIFO_TXTHR_Pos);
+
+    UARTx->CTRL &= ~UART_CTRL_TOTIME_Msk;
+    UARTx->CTRL |= (initStruct->TimeoutTime << UART_CTRL_TOTIME_Pos);
+
+    UARTx->CTRL &= ~(UART_CTRL_RXIE_Msk | UART_CTRL_TXIE_Msk | UART_CTRL_TOIE_Msk);
+    UARTx->CTRL |= (initStruct->RXThresholdIEn << UART_CTRL_RXIE_Pos) |
+                   (initStruct->TXThresholdIEn << UART_CTRL_TXIE_Pos) |
+                   (initStruct->TimeoutIEn << UART_CTRL_TOIE_Pos);
+
+    switch ((uint32_t)UARTx)
+    {
+    case ((uint32_t)UART0):
+        if (initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
+        {
+            NVIC_EnableIRQ(UART0_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(UART0_IRQn);
+        }
+        break;
+
+    case ((uint32_t)UART1):
+        if (initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
+        {
+            NVIC_EnableIRQ(UART1_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(UART1_IRQn);
+        }
+        break;
+
+    case ((uint32_t)UART2):
+        if (initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
+        {
+            NVIC_EnableIRQ(UART2_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(UART2_IRQn);
+        }
+        break;
+
+    case ((uint32_t)UART3):
+        if (initStruct->RXThresholdIEn | initStruct->TXThresholdIEn | initStruct->TimeoutIEn)
+        {
+            NVIC_EnableIRQ(UART3_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(UART3_IRQn);
+        }
+        break;
+    }
 }
 
 /****************************************************************************************************************************************** 
@@ -139,9 +146,9 @@ void UART_Init(UART_TypeDef * UARTx, UART_InitStructure * initStruct)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_Open(UART_TypeDef * UARTx)
+void UART_Open(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL |= (0x01 << UART_CTRL_EN_Pos);
+    UARTx->CTRL |= (0x01 << UART_CTRL_EN_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -151,9 +158,9 @@ void UART_Open(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_Close(UART_TypeDef * UARTx)
+void UART_Close(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL &= ~(0x01 << UART_CTRL_EN_Pos);
+    UARTx->CTRL &= ~(0x01 << UART_CTRL_EN_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -164,9 +171,9 @@ void UART_Close(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_WriteByte(UART_TypeDef * UARTx, uint32_t data)
+void UART_WriteByte(UART_TypeDef *UARTx, uint32_t data)
 {
-	UARTx->DATA = data;
+    UARTx->DATA = data;
 }
 
 /****************************************************************************************************************************************** 
@@ -177,15 +184,16 @@ void UART_WriteByte(UART_TypeDef * UARTx, uint32_t data)
 * 输    出: uint32_t				0 无错误    UART_ERR_PARITY 奇偶校验错误
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_ReadByte(UART_TypeDef * UARTx, uint32_t * data)
+uint32_t UART_ReadByte(UART_TypeDef *UARTx, uint32_t *data)
 {
-	uint32_t reg = UARTx->DATA;
-	
-	*data = (reg & UART_DATA_DATA_Msk);
-	
-	if(reg & UART_DATA_PAERR_Msk) return UART_ERR_PARITY;
-	
-	return 0;
+    uint32_t reg = UARTx->DATA;
+
+    *data = (reg & UART_DATA_DATA_Msk);
+
+    if (reg & UART_DATA_PAERR_Msk)
+        return UART_ERR_PARITY;
+
+    return 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -195,9 +203,9 @@ uint32_t UART_ReadByte(UART_TypeDef * UARTx, uint32_t * data)
 * 输    出: uint32_t				1 UART正在发送数据    0 数据已发完
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_IsTXBusy(UART_TypeDef * UARTx)
+uint32_t UART_IsTXBusy(UART_TypeDef *UARTx)
 {
-	return (UARTx->CTRL & UART_CTRL_TXIDLE_Msk) ? 0 : 1;
+    return (UARTx->CTRL & UART_CTRL_TXIDLE_Msk) ? 0 : 1;
 }
 
 /****************************************************************************************************************************************** 
@@ -207,9 +215,9 @@ uint32_t UART_IsTXBusy(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 接收FIFO空    0 接收FIFO非空
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_IsRXFIFOEmpty(UART_TypeDef * UARTx)
+uint32_t UART_IsRXFIFOEmpty(UART_TypeDef *UARTx)
 {
-	return (UARTx->CTRL & UART_CTRL_RXNE_Msk) ? 0 : 1;
+    return (UARTx->CTRL & UART_CTRL_RXNE_Msk) ? 0 : 1;
 }
 
 /****************************************************************************************************************************************** 
@@ -219,9 +227,9 @@ uint32_t UART_IsRXFIFOEmpty(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 发送FIFO满    0 发送FIFO不满
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_IsTXFIFOFull(UART_TypeDef * UARTx)
+uint32_t UART_IsTXFIFOFull(UART_TypeDef *UARTx)
 {
-	return (UARTx->CTRL & UART_CTRL_TXFF_Msk) ? 1 : 0;
+    return (UARTx->CTRL & UART_CTRL_TXFF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -232,10 +240,10 @@ uint32_t UART_IsTXFIFOFull(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 不要在串口工作时更改波特率，使用此函数前请先调用UART_Close()关闭串口
 ******************************************************************************************************************************************/
-void UART_SetBaudrate(UART_TypeDef * UARTx, uint32_t baudrate)
+void UART_SetBaudrate(UART_TypeDef *UARTx, uint32_t baudrate)
 {
-	UARTx->BAUD &= ~UART_BAUD_BAUD_Msk;
-	UARTx->BAUD |= ((SystemCoreClock/16/baudrate - 1) << UART_BAUD_BAUD_Pos);
+    UARTx->BAUD &= ~UART_BAUD_BAUD_Msk;
+    UARTx->BAUD |= ((SystemCoreClock / 16 / baudrate - 1) << UART_BAUD_BAUD_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -245,9 +253,9 @@ void UART_SetBaudrate(UART_TypeDef * UARTx, uint32_t baudrate)
 * 输    出: uint32_t				当前波特率
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_GetBaudrate(UART_TypeDef * UARTx)
+uint32_t UART_GetBaudrate(UART_TypeDef *UARTx)
 {
-	return SystemCoreClock/16/(((UARTx->BAUD & UART_BAUD_BAUD_Msk) >> UART_BAUD_BAUD_Pos) + 1);
+    return SystemCoreClock / 16 / (((UARTx->BAUD & UART_BAUD_BAUD_Msk) >> UART_BAUD_BAUD_Pos) + 1);
 }
 
 /****************************************************************************************************************************************** 
@@ -259,11 +267,11 @@ uint32_t UART_GetBaudrate(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_CTSConfig(UART_TypeDef * UARTx, uint32_t enable, uint32_t polarity)
+void UART_CTSConfig(UART_TypeDef *UARTx, uint32_t enable, uint32_t polarity)
 {
-	UARTx->CTSCR &= ~(UART_CTSCR_EN_Msk | UART_CTSCR_POL_Msk);
-	UARTx->CTSCR |= (enable   << UART_CTSCR_EN_Pos) |
-					(polarity << UART_CTSCR_POL_Pos);
+    UARTx->CTSCR &= ~(UART_CTSCR_EN_Msk | UART_CTSCR_POL_Msk);
+    UARTx->CTSCR |= (enable << UART_CTSCR_EN_Pos) |
+                    (polarity << UART_CTSCR_POL_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -273,9 +281,9 @@ void UART_CTSConfig(UART_TypeDef * UARTx, uint32_t enable, uint32_t polarity)
 * 输    出: uint32_t				0 CTS线当前为低电平    1 CTS线当前为高电平
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_CTSLineState(UART_TypeDef * UARTx)
+uint32_t UART_CTSLineState(UART_TypeDef *UARTx)
 {
-	return (UARTx->CTSCR & UART_CTSCR_STAT_Msk) ? 1 : 0;
+    return (UARTx->CTSCR & UART_CTSCR_STAT_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -288,12 +296,12 @@ uint32_t UART_CTSLineState(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_RTSConfig(UART_TypeDef * UARTx, uint32_t enable, uint32_t polarity, uint32_t threshold)
+void UART_RTSConfig(UART_TypeDef *UARTx, uint32_t enable, uint32_t polarity, uint32_t threshold)
 {
-	UARTx->RTSCR &= ~(UART_RTSCR_EN_Msk | UART_RTSCR_POL_Msk | UART_RTSCR_THR_Msk);
-	UARTx->RTSCR |= (enable    << UART_RTSCR_EN_Pos)  |
-					(polarity  << UART_RTSCR_POL_Pos) |
-					(threshold << UART_RTSCR_THR_Pos);
+    UARTx->RTSCR &= ~(UART_RTSCR_EN_Msk | UART_RTSCR_POL_Msk | UART_RTSCR_THR_Msk);
+    UARTx->RTSCR |= (enable << UART_RTSCR_EN_Pos) |
+                    (polarity << UART_RTSCR_POL_Pos) |
+                    (threshold << UART_RTSCR_THR_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -303,9 +311,9 @@ void UART_RTSConfig(UART_TypeDef * UARTx, uint32_t enable, uint32_t polarity, ui
 * 输    出: uint32_t				0 RTS线当前为低电平    1 RTS线当前为高电平
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_RTSLineState(UART_TypeDef * UARTx)
+uint32_t UART_RTSLineState(UART_TypeDef *UARTx)
 {
-	return (UARTx->RTSCR & UART_RTSCR_STAT_Msk) ? 1 : 0;
+    return (UARTx->RTSCR & UART_RTSCR_STAT_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -317,11 +325,11 @@ uint32_t UART_RTSLineState(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_LINConfig(UART_TypeDef * UARTx, uint32_t detectedIEn, uint32_t generatedIEn)
+void UART_LINConfig(UART_TypeDef *UARTx, uint32_t detectedIEn, uint32_t generatedIEn)
 {
-	UARTx->LINCR &= ~(UART_LINCR_BRKDETIE_Msk | UART_LINCR_GENBRKIE_Msk);
-	UARTx->LINCR |= (detectedIEn  << UART_LINCR_BRKDETIE_Pos) |
-					(generatedIEn << UART_LINCR_GENBRKIE_Pos);
+    UARTx->LINCR &= ~(UART_LINCR_BRKDETIE_Msk | UART_LINCR_GENBRKIE_Msk);
+    UARTx->LINCR |= (detectedIEn << UART_LINCR_BRKDETIE_Pos) |
+                    (generatedIEn << UART_LINCR_GENBRKIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -331,9 +339,9 @@ void UART_LINConfig(UART_TypeDef * UARTx, uint32_t detectedIEn, uint32_t generat
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_LINGenerate(UART_TypeDef * UARTx)
+void UART_LINGenerate(UART_TypeDef *UARTx)
 {
-	UARTx->LINCR |= (1 << UART_LINCR_GENBRK_Pos);
+    UARTx->LINCR |= (1 << UART_LINCR_GENBRK_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -343,9 +351,9 @@ void UART_LINGenerate(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 检测到LIN Break    0 未检测到LIN Break
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_LINIsDetected(UART_TypeDef * UARTx)
+uint32_t UART_LINIsDetected(UART_TypeDef *UARTx)
 {
-	return (UARTx->LINCR & UART_LINCR_BRKDETIF_Msk) ? 1 : 0;
+    return (UARTx->LINCR & UART_LINCR_BRKDETIF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -355,9 +363,9 @@ uint32_t UART_LINIsDetected(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 LIN Break 发送完成    0 LIN Break发送未完成
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_LINIsGenerated(UART_TypeDef * UARTx)
+uint32_t UART_LINIsGenerated(UART_TypeDef *UARTx)
 {
-	return (UARTx->LINCR & UART_LINCR_GENBRKIF_Msk) ? 1 : 0;
+    return (UARTx->LINCR & UART_LINCR_GENBRKIF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -370,19 +378,25 @@ uint32_t UART_LINIsGenerated(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 自动波特率检测时不能开启奇偶校验
 ******************************************************************************************************************************************/
-void UART_ABRStart(UART_TypeDef * UARTx, uint32_t detectChar)
+void UART_ABRStart(UART_TypeDef *UARTx, uint32_t detectChar)
 {
-	uint32_t bits;
-	
-	if((detectChar == 0xFF) || (detectChar == 0x1FF))      bits = 0;
-	else if((detectChar == 0xFE) || (detectChar == 0x1FE)) bits = 1;
-	else if((detectChar == 0xF8) || (detectChar == 0x1F8)) bits = 2;
-	else if((detectChar == 0x80) || (detectChar == 0x180)) bits = 3;
-	else while(1);
-	
-	UARTx->BAUD &= ~(UART_BAUD_ABREN_Msk | UART_BAUD_ABRBIT_Msk);
-	UARTx->BAUD |= (1    << UART_BAUD_ABREN_Pos) |
-				   (bits << UART_BAUD_ABRBIT_Pos);
+    uint32_t bits;
+
+    if ((detectChar == 0xFF) || (detectChar == 0x1FF))
+        bits = 0;
+    else if ((detectChar == 0xFE) || (detectChar == 0x1FE))
+        bits = 1;
+    else if ((detectChar == 0xF8) || (detectChar == 0x1F8))
+        bits = 2;
+    else if ((detectChar == 0x80) || (detectChar == 0x180))
+        bits = 3;
+    else
+        while (1)
+            ;
+
+    UARTx->BAUD &= ~(UART_BAUD_ABREN_Msk | UART_BAUD_ABRBIT_Msk);
+    UARTx->BAUD |= (1 << UART_BAUD_ABREN_Pos) |
+                   (bits << UART_BAUD_ABRBIT_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -392,20 +406,20 @@ void UART_ABRStart(UART_TypeDef * UARTx, uint32_t detectChar)
 * 输    出: uint32_t				0 未完成    UART_ABR_RES_OK 已完成，且成功    UART_ABR_RES_ERR 已完成，但失败、出错
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_ABRIsDone(UART_TypeDef * UARTx)
+uint32_t UART_ABRIsDone(UART_TypeDef *UARTx)
 {
-	if(UARTx->BAUD & UART_BAUD_ABREN_Msk)
-	{
-		return 0;
-	}
-	else if(UARTx->BAUD & UART_BAUD_ABRERR_Msk)
-	{
-		return UART_ABR_RES_ERR;
-	}
-	else
-	{
-		return UART_ABR_RES_OK;
-	}
+    if (UARTx->BAUD & UART_BAUD_ABREN_Msk)
+    {
+        return 0;
+    }
+    else if (UARTx->BAUD & UART_BAUD_ABRERR_Msk)
+    {
+        return UART_ABR_RES_ERR;
+    }
+    else
+    {
+        return UART_ABR_RES_OK;
+    }
 }
 
 /****************************************************************************************************************************************** 
@@ -415,9 +429,9 @@ uint32_t UART_ABRIsDone(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTRXThresholdEn(UART_TypeDef * UARTx)
+void UART_INTRXThresholdEn(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL |= (0x01 << UART_CTRL_RXIE_Pos);
+    UARTx->CTRL |= (0x01 << UART_CTRL_RXIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -427,9 +441,9 @@ void UART_INTRXThresholdEn(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTRXThresholdDis(UART_TypeDef * UARTx)
+void UART_INTRXThresholdDis(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL &= ~(0x01 << UART_CTRL_RXIE_Pos);
+    UARTx->CTRL &= ~(0x01 << UART_CTRL_RXIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -439,9 +453,9 @@ void UART_INTRXThresholdDis(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 RX FIFO中数据个数 >= RXThreshold		0 RX FIFO中数据个数 < RXThreshold
 * 注意事项: RXIF = RXTHRF & RXIE
 ******************************************************************************************************************************************/
-uint32_t UART_INTRXThresholdStat(UART_TypeDef * UARTx)
+uint32_t UART_INTRXThresholdStat(UART_TypeDef *UARTx)
 {
-	return (UARTx->BAUD & UART_BAUD_RXIF_Msk) ? 1 : 0;
+    return (UARTx->BAUD & UART_BAUD_RXIF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -451,9 +465,9 @@ uint32_t UART_INTRXThresholdStat(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTTXThresholdEn(UART_TypeDef * UARTx)
+void UART_INTTXThresholdEn(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL |= (0x01 << UART_CTRL_TXIE_Pos);	
+    UARTx->CTRL |= (0x01 << UART_CTRL_TXIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -463,9 +477,9 @@ void UART_INTTXThresholdEn(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTTXThresholdDis(UART_TypeDef * UARTx)
+void UART_INTTXThresholdDis(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL &= ~(0x01 << UART_CTRL_TXIE_Pos);
+    UARTx->CTRL &= ~(0x01 << UART_CTRL_TXIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -475,9 +489,9 @@ void UART_INTTXThresholdDis(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 TX FIFO中数据个数 <= TXThreshold		0 TX FIFO中数据个数 > TXThreshold
 * 注意事项: TXIF = TXTHRF & TXIE
 ******************************************************************************************************************************************/
-uint32_t UART_INTTXThresholdStat(UART_TypeDef * UARTx)
+uint32_t UART_INTTXThresholdStat(UART_TypeDef *UARTx)
 {
-	return (UARTx->BAUD & UART_BAUD_TXIF_Msk) ? 1 : 0;
+    return (UARTx->BAUD & UART_BAUD_TXIF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -487,9 +501,9 @@ uint32_t UART_INTTXThresholdStat(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTTimeoutEn(UART_TypeDef * UARTx)
+void UART_INTTimeoutEn(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL |= (0x01 << UART_CTRL_TOIE_Pos);	
+    UARTx->CTRL |= (0x01 << UART_CTRL_TOIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -499,9 +513,9 @@ void UART_INTTimeoutEn(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTTimeoutDis(UART_TypeDef * UARTx)
+void UART_INTTimeoutDis(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL &= ~(0x01 << UART_CTRL_TOIE_Pos);
+    UARTx->CTRL &= ~(0x01 << UART_CTRL_TOIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -511,9 +525,9 @@ void UART_INTTimeoutDis(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 发生了接收超时		0 未发生接收超时
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_INTTimeoutStat(UART_TypeDef * UARTx)
+uint32_t UART_INTTimeoutStat(UART_TypeDef *UARTx)
 {
-	return (UARTx->BAUD & UART_BAUD_TOIF_Msk) ? 1 : 0;
+    return (UARTx->BAUD & UART_BAUD_TOIF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -523,9 +537,9 @@ uint32_t UART_INTTimeoutStat(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTTXDoneEn(UART_TypeDef * UARTx)
+void UART_INTTXDoneEn(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL |= (0x01 << UART_CTRL_TXDOIE_Pos);	
+    UARTx->CTRL |= (0x01 << UART_CTRL_TXDOIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -535,9 +549,9 @@ void UART_INTTXDoneEn(UART_TypeDef * UARTx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void UART_INTTXDoneDis(UART_TypeDef * UARTx)
+void UART_INTTXDoneDis(UART_TypeDef *UARTx)
 {
-	UARTx->CTRL &= ~(0x01 << UART_CTRL_TXDOIE_Pos);
+    UARTx->CTRL &= ~(0x01 << UART_CTRL_TXDOIE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -547,7 +561,7 @@ void UART_INTTXDoneDis(UART_TypeDef * UARTx)
 * 输    出: uint32_t				1 发送FIFO空且发送移位寄存器空		0 发送FIFO或发送移位寄存器未空
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t UART_INTTXDoneStat(UART_TypeDef * UARTx)
+uint32_t UART_INTTXDoneStat(UART_TypeDef *UARTx)
 {
-	return (UARTx->BAUD & UART_BAUD_TXDOIF_Msk) ? 1 : 0;
+    return (UARTx->BAUD & UART_BAUD_TXDOIF_Msk) ? 1 : 0;
 }

@@ -21,7 +21,6 @@
 #include "SWM320.h"
 #include "SWM320_spi.h"
 
-
 /****************************************************************************************************************************************** 
 * 函数名称:	SPI_Init()
 * 功能说明:	SPI同步串行接口初始化，包括帧长度设定、时序设定、速度设定、中断设定、FIFO触发设定
@@ -30,61 +29,61 @@
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_Init(SPI_TypeDef * SPIx, SPI_InitStructure * initStruct)
+void SPI_Init(SPI_TypeDef *SPIx, SPI_InitStructure *initStruct)
 {
-	switch((uint32_t)SPIx)
-	{
-	case ((uint32_t)SPI0):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_SPI0_Pos);
-		break;
+    switch ((uint32_t)SPIx)
+    {
+    case ((uint32_t)SPI0):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_SPI0_Pos);
+        break;
 
-	case ((uint32_t)SPI1):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_SPI0_Pos);		//与SPI0使用同一位时钟使能
-		break;
-	}
-	
-	SPI_Close(SPIx);	//一些关键寄存器只能在SPI关闭时设置
-	
-	SPIx->CTRL &= ~(SPI_CTRL_FFS_Msk | SPI_CTRL_CPHA_Msk | SPI_CTRL_CPOL_Msk |
-				  SPI_CTRL_SIZE_Msk | SPI_CTRL_MSTR_Msk | SPI_CTRL_CLKDIV_Msk | SPI_CTRL_SSN_H_Msk);
-	SPIx->CTRL |= (initStruct->FrameFormat   << SPI_CTRL_FFS_Pos) |
-				(initStruct->SampleEdge    << SPI_CTRL_CPHA_Pos) |
-				(initStruct->IdleLevel     << SPI_CTRL_CPOL_Pos) |
-				((initStruct->WordSize-1)  << SPI_CTRL_SIZE_Pos) |
-				(initStruct->Master        << SPI_CTRL_MSTR_Pos) |
-				(initStruct->clkDiv        << SPI_CTRL_CLKDIV_Pos) |
-				(0                         << SPI_CTRL_SSN_H_Pos);
-	
-	SPIx->IF = (0x01 << SPI_IF_RFOVF_Pos);	//清除中断标志
-	SPIx->IE &= ~(SPI_IE_RFHF_Msk | SPI_IE_TFHF_Msk | SPI_IE_FTC_Msk);
-	SPIx->IE |= (initStruct->RXHFullIEn << SPI_IE_RFHF_Pos) |
-				(initStruct->TXEmptyIEn << SPI_IE_TFHF_Pos) |
-				(initStruct->TXCompleteIEn << SPI_IE_FTC_Pos);
-	
-	switch((uint32_t)SPIx)
-	{
-	case ((uint32_t)SPI0):		
-		if(initStruct->RXHFullIEn | initStruct->TXEmptyIEn | initStruct->TXCompleteIEn)
-		{
-			NVIC_EnableIRQ(SPI0_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(SPI0_IRQn);
-		}
-		break;
-	
-	case ((uint32_t)SPI1):		
-		if(initStruct->RXHFullIEn | initStruct->TXEmptyIEn | initStruct->TXCompleteIEn)
-		{
-			NVIC_EnableIRQ(SPI1_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(SPI1_IRQn);
-		}
-		break;
-	}
+    case ((uint32_t)SPI1):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_SPI0_Pos); //与SPI0使用同一位时钟使能
+        break;
+    }
+
+    SPI_Close(SPIx); //一些关键寄存器只能在SPI关闭时设置
+
+    SPIx->CTRL &= ~(SPI_CTRL_FFS_Msk | SPI_CTRL_CPHA_Msk | SPI_CTRL_CPOL_Msk |
+                    SPI_CTRL_SIZE_Msk | SPI_CTRL_MSTR_Msk | SPI_CTRL_CLKDIV_Msk | SPI_CTRL_SSN_H_Msk);
+    SPIx->CTRL |= (initStruct->FrameFormat << SPI_CTRL_FFS_Pos) |
+                  (initStruct->SampleEdge << SPI_CTRL_CPHA_Pos) |
+                  (initStruct->IdleLevel << SPI_CTRL_CPOL_Pos) |
+                  ((initStruct->WordSize - 1) << SPI_CTRL_SIZE_Pos) |
+                  (initStruct->Master << SPI_CTRL_MSTR_Pos) |
+                  (initStruct->clkDiv << SPI_CTRL_CLKDIV_Pos) |
+                  (0 << SPI_CTRL_SSN_H_Pos);
+
+    SPIx->IF = (0x01 << SPI_IF_RFOVF_Pos); //清除中断标志
+    SPIx->IE &= ~(SPI_IE_RFHF_Msk | SPI_IE_TFHF_Msk | SPI_IE_FTC_Msk);
+    SPIx->IE |= (initStruct->RXHFullIEn << SPI_IE_RFHF_Pos) |
+                (initStruct->TXEmptyIEn << SPI_IE_TFHF_Pos) |
+                (initStruct->TXCompleteIEn << SPI_IE_FTC_Pos);
+
+    switch ((uint32_t)SPIx)
+    {
+    case ((uint32_t)SPI0):
+        if (initStruct->RXHFullIEn | initStruct->TXEmptyIEn | initStruct->TXCompleteIEn)
+        {
+            NVIC_EnableIRQ(SPI0_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(SPI0_IRQn);
+        }
+        break;
+
+    case ((uint32_t)SPI1):
+        if (initStruct->RXHFullIEn | initStruct->TXEmptyIEn | initStruct->TXCompleteIEn)
+        {
+            NVIC_EnableIRQ(SPI1_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(SPI1_IRQn);
+        }
+        break;
+    }
 }
 
 /****************************************************************************************************************************************** 
@@ -94,9 +93,9 @@ void SPI_Init(SPI_TypeDef * SPIx, SPI_InitStructure * initStruct)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_Open(SPI_TypeDef * SPIx)
+void SPI_Open(SPI_TypeDef *SPIx)
 {
-	SPIx->CTRL |= (0x01 << SPI_CTRL_EN_Pos);
+    SPIx->CTRL |= (0x01 << SPI_CTRL_EN_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -106,9 +105,9 @@ void SPI_Open(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_Close(SPI_TypeDef * SPIx)
+void SPI_Close(SPI_TypeDef *SPIx)
 {
-	SPIx->CTRL &= ~SPI_CTRL_EN_Msk;
+    SPIx->CTRL &= ~SPI_CTRL_EN_Msk;
 }
 
 /****************************************************************************************************************************************** 
@@ -118,9 +117,9 @@ void SPI_Close(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				读取到的数据
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_Read(SPI_TypeDef * SPIx)
+uint32_t SPI_Read(SPI_TypeDef *SPIx)
 {
-	return SPIx->DATA;
+    return SPIx->DATA;
 }
 
 /****************************************************************************************************************************************** 
@@ -131,9 +130,9 @@ uint32_t SPI_Read(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_Write(SPI_TypeDef * SPIx, uint32_t data)
+void SPI_Write(SPI_TypeDef *SPIx, uint32_t data)
 {
-	SPIx->DATA = data;
+    SPIx->DATA = data;
 }
 
 /****************************************************************************************************************************************** 
@@ -144,13 +143,14 @@ void SPI_Write(SPI_TypeDef * SPIx, uint32_t data)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_WriteWithWait(SPI_TypeDef * SPIx, uint32_t data)
+void SPI_WriteWithWait(SPI_TypeDef *SPIx, uint32_t data)
 {
-	SPIx->STAT |= (1 << SPI_STAT_WTC_Pos);
-	
-	SPIx->DATA = data;
-	
-	while((SPIx->STAT & SPI_STAT_WTC_Msk) == 0);
+    SPIx->STAT |= (1 << SPI_STAT_WTC_Pos);
+
+    SPIx->DATA = data;
+
+    while ((SPIx->STAT & SPI_STAT_WTC_Msk) == 0)
+        ;
 }
 
 /****************************************************************************************************************************************** 
@@ -161,12 +161,13 @@ void SPI_WriteWithWait(SPI_TypeDef * SPIx, uint32_t data)
 * 输    出: uint32_t				接收到的数据
 * 注意事项: 对于同一个SPI模块，此函数不应与SPI_Write()混着用，因为SPI_Write()不清除SPI_STAT_RFNE状态
 ******************************************************************************************************************************************/
-uint32_t SPI_ReadWrite(SPI_TypeDef * SPIx, uint32_t data)
+uint32_t SPI_ReadWrite(SPI_TypeDef *SPIx, uint32_t data)
 {
-	SPIx->DATA = data;
-	while(!(SPIx->STAT & SPI_STAT_RFNE_Msk));
-	
-	return SPIx->DATA;
+    SPIx->DATA = data;
+    while (!(SPIx->STAT & SPI_STAT_RFNE_Msk))
+        ;
+
+    return SPIx->DATA;
 }
 
 /****************************************************************************************************************************************** 
@@ -176,9 +177,9 @@ uint32_t SPI_ReadWrite(SPI_TypeDef * SPIx, uint32_t data)
 * 输    出: uint32_t				1 接收FIFO空    0 接收FIFO非空
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_IsRXEmpty(SPI_TypeDef * SPIx)
+uint32_t SPI_IsRXEmpty(SPI_TypeDef *SPIx)
 {
-	return (SPIx->STAT & SPI_STAT_RFNE_Msk) ? 0 : 1;
+    return (SPIx->STAT & SPI_STAT_RFNE_Msk) ? 0 : 1;
 }
 
 /****************************************************************************************************************************************** 
@@ -188,9 +189,9 @@ uint32_t SPI_IsRXEmpty(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 发送FIFO满    0 发送FIFO不满
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_IsTXFull(SPI_TypeDef * SPIx)
+uint32_t SPI_IsTXFull(SPI_TypeDef *SPIx)
 {
-	return (SPIx->STAT & SPI_STAT_TFNF_Msk) ? 0 : 1;
+    return (SPIx->STAT & SPI_STAT_TFNF_Msk) ? 0 : 1;
 }
 
 /****************************************************************************************************************************************** 
@@ -200,11 +201,10 @@ uint32_t SPI_IsTXFull(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 发送FIFO空    0 发送FIFO非空
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_IsTXEmpty(SPI_TypeDef * SPIx)
+uint32_t SPI_IsTXEmpty(SPI_TypeDef *SPIx)
 {
-	return (SPIx->STAT & SPI_STAT_TFE_Msk) ? 1 : 0;
+    return (SPIx->STAT & SPI_STAT_TFE_Msk) ? 1 : 0;
 }
-
 
 /****************************************************************************************************************************************** 
 * 函数名称:	SPI_INTRXHalfFullEn()
@@ -213,9 +213,9 @@ uint32_t SPI_IsTXEmpty(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXHalfFullEn(SPI_TypeDef * SPIx)
+void SPI_INTRXHalfFullEn(SPI_TypeDef *SPIx)
 {
-	SPIx->IE |= (0x01 << SPI_IE_RFHF_Pos);
+    SPIx->IE |= (0x01 << SPI_IE_RFHF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -225,9 +225,9 @@ void SPI_INTRXHalfFullEn(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXHalfFullDis(SPI_TypeDef * SPIx)
+void SPI_INTRXHalfFullDis(SPI_TypeDef *SPIx)
 {
-	SPIx->IE &= ~(0x01 << SPI_IE_RFHF_Pos);
+    SPIx->IE &= ~(0x01 << SPI_IE_RFHF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -237,9 +237,9 @@ void SPI_INTRXHalfFullDis(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXHalfFullClr(SPI_TypeDef * SPIx)
+void SPI_INTRXHalfFullClr(SPI_TypeDef *SPIx)
 {
-	SPIx->IF = (1 << SPI_IF_RFHF_Pos);
+    SPIx->IF = (1 << SPI_IF_RFHF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -249,9 +249,9 @@ void SPI_INTRXHalfFullClr(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 接收FIFO达到半满    0 接收FIFO未达到半满
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_INTRXHalfFullStat(SPI_TypeDef * SPIx)
+uint32_t SPI_INTRXHalfFullStat(SPI_TypeDef *SPIx)
 {
-	return (SPIx->IF & SPI_IF_RFHF_Msk) ? 1 : 0;
+    return (SPIx->IF & SPI_IF_RFHF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -261,9 +261,9 @@ uint32_t SPI_INTRXHalfFullStat(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXFullEn(SPI_TypeDef * SPIx)
+void SPI_INTRXFullEn(SPI_TypeDef *SPIx)
 {
-	SPIx->IE |= (0x01 << SPI_IE_RFF_Pos);
+    SPIx->IE |= (0x01 << SPI_IE_RFF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -273,9 +273,9 @@ void SPI_INTRXFullEn(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXFullDis(SPI_TypeDef * SPIx)
+void SPI_INTRXFullDis(SPI_TypeDef *SPIx)
 {
-	SPIx->IE &= ~(0x01 << SPI_IE_RFF_Pos);
+    SPIx->IE &= ~(0x01 << SPI_IE_RFF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -285,9 +285,9 @@ void SPI_INTRXFullDis(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXFullClr(SPI_TypeDef * SPIx)
+void SPI_INTRXFullClr(SPI_TypeDef *SPIx)
 {
-	SPIx->IF = (1 << SPI_IF_RFF_Pos);
+    SPIx->IF = (1 << SPI_IF_RFF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -297,9 +297,9 @@ void SPI_INTRXFullClr(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 接收FIFO满    0 接收FIFO未满
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_INTRXFullStat(SPI_TypeDef * SPIx)
+uint32_t SPI_INTRXFullStat(SPI_TypeDef *SPIx)
 {
-	return (SPIx->IF & SPI_IF_RFF_Msk) ? 1 : 0;
+    return (SPIx->IF & SPI_IF_RFF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -309,9 +309,9 @@ uint32_t SPI_INTRXFullStat(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXOverflowEn(SPI_TypeDef * SPIx)
+void SPI_INTRXOverflowEn(SPI_TypeDef *SPIx)
 {
-	SPIx->IE |= (0x01 << SPI_IE_RFOVF_Pos);
+    SPIx->IE |= (0x01 << SPI_IE_RFOVF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -321,9 +321,9 @@ void SPI_INTRXOverflowEn(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXOverflowDis(SPI_TypeDef * SPIx)
+void SPI_INTRXOverflowDis(SPI_TypeDef *SPIx)
 {
-	SPIx->IE &= ~(0x01 << SPI_IE_RFOVF_Pos);
+    SPIx->IE &= ~(0x01 << SPI_IE_RFOVF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -333,9 +333,9 @@ void SPI_INTRXOverflowDis(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTRXOverflowClr(SPI_TypeDef * SPIx)
+void SPI_INTRXOverflowClr(SPI_TypeDef *SPIx)
 {
-	SPIx->IF = (0x01 << SPI_IF_RFOVF_Pos);
+    SPIx->IF = (0x01 << SPI_IF_RFOVF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -345,9 +345,9 @@ void SPI_INTRXOverflowClr(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 接收FIFO溢出    0 接收FIFO未溢出
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_INTRXOverflowStat(SPI_TypeDef * SPIx)
+uint32_t SPI_INTRXOverflowStat(SPI_TypeDef *SPIx)
 {
-	return (SPIx->IF & SPI_IF_RFOVF_Msk) ? 1 : 0;
+    return (SPIx->IF & SPI_IF_RFOVF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -357,9 +357,9 @@ uint32_t SPI_INTRXOverflowStat(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXHalfFullEn(SPI_TypeDef * SPIx)
+void SPI_INTTXHalfFullEn(SPI_TypeDef *SPIx)
 {
-	SPIx->IE |= (0x01 << SPI_IE_TFHF_Pos);
+    SPIx->IE |= (0x01 << SPI_IE_TFHF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -369,9 +369,9 @@ void SPI_INTTXHalfFullEn(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXHalfFullDis(SPI_TypeDef * SPIx)
+void SPI_INTTXHalfFullDis(SPI_TypeDef *SPIx)
 {
-	SPIx->IE &= ~(0x01 << SPI_IE_TFHF_Pos);
+    SPIx->IE &= ~(0x01 << SPI_IE_TFHF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -381,9 +381,9 @@ void SPI_INTTXHalfFullDis(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXHalfFullClr(SPI_TypeDef * SPIx)
+void SPI_INTTXHalfFullClr(SPI_TypeDef *SPIx)
 {
-	SPIx->IF = (1 << SPI_IF_TFHF_Pos);
+    SPIx->IF = (1 << SPI_IF_TFHF_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -393,9 +393,9 @@ void SPI_INTTXHalfFullClr(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 发送FIFO达到半满    0 发送FIFO未达到半满
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_INTTXHalfFullStat(SPI_TypeDef * SPIx)
+uint32_t SPI_INTTXHalfFullStat(SPI_TypeDef *SPIx)
 {
-	return (SPIx->IF & SPI_IF_TFHF_Msk) ? 1 : 0;
+    return (SPIx->IF & SPI_IF_TFHF_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -405,9 +405,9 @@ uint32_t SPI_INTTXHalfFullStat(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXEmptyEn(SPI_TypeDef * SPIx)
+void SPI_INTTXEmptyEn(SPI_TypeDef *SPIx)
 {
-	SPIx->IE |= (0x01 << SPI_IE_TFE_Pos);
+    SPIx->IE |= (0x01 << SPI_IE_TFE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -417,9 +417,9 @@ void SPI_INTTXEmptyEn(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXEmptyDis(SPI_TypeDef * SPIx)
+void SPI_INTTXEmptyDis(SPI_TypeDef *SPIx)
 {
-	SPIx->IE &= ~(0x01 << SPI_IE_TFE_Pos);
+    SPIx->IE &= ~(0x01 << SPI_IE_TFE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -429,9 +429,9 @@ void SPI_INTTXEmptyDis(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXEmptyClr(SPI_TypeDef * SPIx)
+void SPI_INTTXEmptyClr(SPI_TypeDef *SPIx)
 {
-	SPIx->IF = (1 << SPI_IF_TFE_Pos);
+    SPIx->IF = (1 << SPI_IF_TFE_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -441,9 +441,9 @@ void SPI_INTTXEmptyClr(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 发送FIFO空    0 发送FIFO非空
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_INTTXEmptyStat(SPI_TypeDef * SPIx)
+uint32_t SPI_INTTXEmptyStat(SPI_TypeDef *SPIx)
 {
-	return (SPIx->IF & SPI_IF_TFE_Msk) ? 1 : 0;
+    return (SPIx->IF & SPI_IF_TFE_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -453,9 +453,9 @@ uint32_t SPI_INTTXEmptyStat(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXCompleteEn(SPI_TypeDef * SPIx)
+void SPI_INTTXCompleteEn(SPI_TypeDef *SPIx)
 {
-	SPIx->IE |= (0x01 << SPI_IE_FTC_Pos);
+    SPIx->IE |= (0x01 << SPI_IE_FTC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -465,9 +465,9 @@ void SPI_INTTXCompleteEn(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXCompleteDis(SPI_TypeDef * SPIx)
+void SPI_INTTXCompleteDis(SPI_TypeDef *SPIx)
 {
-	SPIx->IE &= ~(0x01 << SPI_IE_FTC_Pos);
+    SPIx->IE &= ~(0x01 << SPI_IE_FTC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -477,9 +477,9 @@ void SPI_INTTXCompleteDis(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXCompleteClr(SPI_TypeDef * SPIx)
+void SPI_INTTXCompleteClr(SPI_TypeDef *SPIx)
 {
-	SPIx->IF = (1 << SPI_IF_FTC_Pos);
+    SPIx->IF = (1 << SPI_IF_FTC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -489,9 +489,9 @@ void SPI_INTTXCompleteClr(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 发送FIFO空且发送移位寄存器空    0 发送FIFO或发送移位寄存器非空
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_INTTXCompleteStat(SPI_TypeDef * SPIx)
+uint32_t SPI_INTTXCompleteStat(SPI_TypeDef *SPIx)
 {
-	return (SPIx->IF & SPI_IF_FTC_Msk) ? 1 : 0;
+    return (SPIx->IF & SPI_IF_FTC_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -501,9 +501,9 @@ uint32_t SPI_INTTXCompleteStat(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXWordCompleteEn(SPI_TypeDef * SPIx)
+void SPI_INTTXWordCompleteEn(SPI_TypeDef *SPIx)
 {
-	SPIx->IE |= (0x01 << SPI_IE_WTC_Pos);
+    SPIx->IE |= (0x01 << SPI_IE_WTC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -513,9 +513,9 @@ void SPI_INTTXWordCompleteEn(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXWordCompleteDis(SPI_TypeDef * SPIx)
+void SPI_INTTXWordCompleteDis(SPI_TypeDef *SPIx)
 {
-	SPIx->IE &= ~(0x01 << SPI_IE_WTC_Pos);
+    SPIx->IE &= ~(0x01 << SPI_IE_WTC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -525,9 +525,9 @@ void SPI_INTTXWordCompleteDis(SPI_TypeDef * SPIx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SPI_INTTXWordCompleteClr(SPI_TypeDef * SPIx)
+void SPI_INTTXWordCompleteClr(SPI_TypeDef *SPIx)
 {
-	SPIx->IF = (1 << SPI_IF_WTC_Pos);
+    SPIx->IF = (1 << SPI_IF_WTC_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -537,7 +537,7 @@ void SPI_INTTXWordCompleteClr(SPI_TypeDef * SPIx)
 * 输    出: uint32_t				1 发送完成中断已发生    0 发送完成中断未发生
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t SPI_INTTXWordCompleteStat(SPI_TypeDef * SPIx)
+uint32_t SPI_INTTXWordCompleteStat(SPI_TypeDef *SPIx)
 {
-	return (SPIx->IF & SPI_IF_WTC_Msk) ? 1 : 0;
+    return (SPIx->IF & SPI_IF_WTC_Msk) ? 1 : 0;
 }

@@ -21,7 +21,6 @@
 #include "SWM320.h"
 #include "SWM320_sram.h"
 
-
 /****************************************************************************************************************************************** 
 * 函数名称:	SRAM_Init()
 * 功能说明:	SRAM控制器初始化
@@ -29,25 +28,29 @@
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void SRAM_Init(SRAM_InitStructure * initStruct)
+void SRAM_Init(SRAM_InitStructure *initStruct)
 {
-	uint32_t i;
-	
-	// 配置SRAM前需要刷新下SDRAM控制器
-	do {
-		SYS->CLKEN |=  (1 << SYS_CLKEN_SDRAM_Pos);
-		
-		while(SDRAMC->REFDONE == 0);
-		SDRAMC->REFRESH &= ~(1 << SDRAMC_REFRESH_EN_Pos);
-		
-		for(i = 0; i < 1000; i++) __NOP();
-		SYS->CLKEN &= ~(1 << SYS_CLKEN_SDRAM_Pos);
-	} while(0);
-	
-	SYS->CLKEN |= (1 << SYS_CLKEN_RAMC_Pos);
-	for(i = 0; i < 10; i++) __NOP();
-	
-	SRAMC->CR = (initStruct->ClkDiv << SRAMC_CR_RWTIME_Pos) |
-				(initStruct->DataWidth << SRAMC_CR_BYTEIF_Pos) |
-			    (0 << SRAMC_CR_HBLBDIS_Pos);	// 使能字节、半字访问
+    uint32_t i;
+
+    // 配置SRAM前需要刷新下SDRAM控制器
+    do
+    {
+        SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
+
+        while (SDRAMC->REFDONE == 0)
+            ;
+        SDRAMC->REFRESH &= ~(1 << SDRAMC_REFRESH_EN_Pos);
+
+        for (i = 0; i < 1000; i++)
+            __NOP();
+        SYS->CLKEN &= ~(1 << SYS_CLKEN_SDRAM_Pos);
+    } while (0);
+
+    SYS->CLKEN |= (1 << SYS_CLKEN_RAMC_Pos);
+    for (i = 0; i < 10; i++)
+        __NOP();
+
+    SRAMC->CR = (initStruct->ClkDiv << SRAMC_CR_RWTIME_Pos) |
+                (initStruct->DataWidth << SRAMC_CR_BYTEIF_Pos) |
+                (0 << SRAMC_CR_HBLBDIS_Pos); // 使能字节、半字访问
 }

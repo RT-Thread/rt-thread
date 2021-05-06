@@ -79,7 +79,7 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     GPIOA5_Handler
                 DCD     GPIOA6_Handler
                 DCD     GPIOA7_Handler
-				DCD     GPIOB0_Handler
+                DCD     GPIOB0_Handler
                 DCD     GPIOB1_Handler
                 DCD     GPIOB2_Handler
                 DCD     GPIOB3_Handler
@@ -103,19 +103,19 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     GPIOM5_Handler
                 DCD     GPIOM6_Handler
                 DCD     GPIOM7_Handler
-				DCD     DMA_Handler
+                DCD     DMA_Handler
                 DCD     LCD_Handler
                 DCD     NORFLC_Handler
-				DCD		CAN_Handler
+                DCD     CAN_Handler
                 DCD     PULSE_Handler
                 DCD     WDT_Handler
                 DCD     PWM_Handler
                 DCD     UART0_Handler
-				DCD     UART1_Handler
-				DCD     UART2_Handler
-				DCD     UART3_Handler
-				DCD     0
-				DCD     I2C0_Handler
+                DCD     UART1_Handler
+                DCD     UART2_Handler
+                DCD     UART3_Handler
+                DCD     0
+                DCD     I2C0_Handler
                 DCD     I2C1_Handler
                 DCD     SPI0_Handler
                 DCD     ADC0_Handler
@@ -130,13 +130,13 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     GPIOP_Handler
                 DCD     ADC1_Handler
                 DCD     FPU_Handler
-				DCD     SPI1_Handler
-				DCD     TIMR0_Handler
-				DCD     TIMR1_Handler
-				DCD     TIMR2_Handler
-				DCD     TIMR3_Handler
-				DCD     TIMR4_Handler
-				DCD     TIMR5_Handler
+                DCD     SPI1_Handler
+                DCD     TIMR0_Handler
+                DCD     TIMR1_Handler
+                DCD     TIMR2_Handler
+                DCD     TIMR3_Handler
+                DCD     TIMR4_Handler
+                DCD     TIMR5_Handler
                          
 __Vectors_End
 

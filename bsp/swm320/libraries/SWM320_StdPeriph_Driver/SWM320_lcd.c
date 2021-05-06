@@ -31,45 +31,47 @@
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void LCD_Init(LCD_TypeDef * LCDx, LCD_InitStructure * initStruct)
-{	
-	switch((uint32_t)LCDx)
-	{
-	case ((uint32_t)LCD):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_LCD_Pos);
-		break;
-	}
-	
-	LCDx->CR0 = ((initStruct->HnPixel - 1) << LCD_CR0_HPIX_Pos) |
-				((initStruct->VnPixel - 1) << LCD_CR0_VPIX_Pos) |
-				(initStruct->ClkAlways << LCD_CR0_DCLK_Pos) |
-				(initStruct->HsyncWidth << LCD_CR0_HLOW_Pos);
-	
-	LCDx->CR1 = ((initStruct->Hfp - 1) << LCD_CR1_HFP_Pos)  |
-				((initStruct->Hbp - 1) << LCD_CR1_HBP_Pos)  |
-				((initStruct->Vfp - 1) << LCD_CR1_VFP_Pos)  |
-				((initStruct->Vbp - 1) << LCD_CR1_VBP_Pos)  |
-				(initStruct->ClkDiv << LCD_CR1_DCLKDIV_Pos) |
-				(initStruct->SamplEdge << LCD_CR1_DCLKINV_Pos);
-	
-	LCDx->IE = 1;
-	LCDx->IF = 1;	//清除标志
-	if(initStruct->IntEOTEn) LCD_INTEn(LCDx);
-	else					 LCD_INTDis(LCDx);
-	
-	switch((uint32_t)LCDx)
-	{
-	case ((uint32_t)LCD):		
-		if(initStruct->IntEOTEn)
-		{
-			NVIC_EnableIRQ(LCD_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(LCD_IRQn);
-		}
-		break;
-	}
+void LCD_Init(LCD_TypeDef *LCDx, LCD_InitStructure *initStruct)
+{
+    switch ((uint32_t)LCDx)
+    {
+    case ((uint32_t)LCD):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_LCD_Pos);
+        break;
+    }
+
+    LCDx->CR0 = ((initStruct->HnPixel - 1) << LCD_CR0_HPIX_Pos) |
+                ((initStruct->VnPixel - 1) << LCD_CR0_VPIX_Pos) |
+                (initStruct->ClkAlways << LCD_CR0_DCLK_Pos) |
+                (initStruct->HsyncWidth << LCD_CR0_HLOW_Pos);
+
+    LCDx->CR1 = ((initStruct->Hfp - 1) << LCD_CR1_HFP_Pos) |
+                ((initStruct->Hbp - 1) << LCD_CR1_HBP_Pos) |
+                ((initStruct->Vfp - 1) << LCD_CR1_VFP_Pos) |
+                ((initStruct->Vbp - 1) << LCD_CR1_VBP_Pos) |
+                (initStruct->ClkDiv << LCD_CR1_DCLKDIV_Pos) |
+                (initStruct->SamplEdge << LCD_CR1_DCLKINV_Pos);
+
+    LCDx->IE = 1;
+    LCDx->IF = 1; //清除标志
+    if (initStruct->IntEOTEn)
+        LCD_INTEn(LCDx);
+    else
+        LCD_INTDis(LCDx);
+
+    switch ((uint32_t)LCDx)
+    {
+    case ((uint32_t)LCD):
+        if (initStruct->IntEOTEn)
+        {
+            NVIC_EnableIRQ(LCD_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(LCD_IRQn);
+        }
+        break;
+    }
 }
 
 /****************************************************************************************************************************************** 
@@ -79,9 +81,9 @@ void LCD_Init(LCD_TypeDef * LCDx, LCD_InitStructure * initStruct)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void LCD_Start(LCD_TypeDef * LCDx)
+void LCD_Start(LCD_TypeDef *LCDx)
 {
-	LCDx->START |= (1 << LCD_START_GO_Pos) | (1 << LCD_START_BURST_Pos);
+    LCDx->START |= (1 << LCD_START_GO_Pos) | (1 << LCD_START_BURST_Pos);
 }
 
 /****************************************************************************************************************************************** 
@@ -91,9 +93,9 @@ void LCD_Start(LCD_TypeDef * LCDx)
 * 输    出: uint32_t			1 正在传输数据    0 数据传输已完成
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t LCD_IsBusy(LCD_TypeDef * LCDx)
+uint32_t LCD_IsBusy(LCD_TypeDef *LCDx)
 {
-	return (LCDx->START & LCD_START_GO_Msk) ? 1 : 0;
+    return (LCDx->START & LCD_START_GO_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -103,9 +105,9 @@ uint32_t LCD_IsBusy(LCD_TypeDef * LCDx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void LCD_INTEn(LCD_TypeDef * LCDx)
+void LCD_INTEn(LCD_TypeDef *LCDx)
 {
-	LCDx->IM = 0;
+    LCDx->IM = 0;
 }
 
 /****************************************************************************************************************************************** 
@@ -115,9 +117,9 @@ void LCD_INTEn(LCD_TypeDef * LCDx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void LCD_INTDis(LCD_TypeDef * LCDx)
+void LCD_INTDis(LCD_TypeDef *LCDx)
 {
-	LCDx->IM = 1;
+    LCDx->IM = 1;
 }
 
 /****************************************************************************************************************************************** 
@@ -127,9 +129,9 @@ void LCD_INTDis(LCD_TypeDef * LCDx)
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
-void LCD_INTClr(LCD_TypeDef * LCDx)
+void LCD_INTClr(LCD_TypeDef *LCDx)
 {
-	LCDx->IF = 1;
+    LCDx->IF = 1;
 }
 
 /****************************************************************************************************************************************** 
@@ -139,7 +141,7 @@ void LCD_INTClr(LCD_TypeDef * LCDx)
 * 输    出: uint32_t			1 完成指定长度的数据传输    0 未完成指定长度的数据传输
 * 注意事项: 无
 ******************************************************************************************************************************************/
-uint32_t LCD_INTStat(LCD_TypeDef * LCDx)
+uint32_t LCD_INTStat(LCD_TypeDef *LCDx)
 {
-	return (LCDx->IF & 0x01) ? 1 : 0;
+    return (LCDx->IF & 0x01) ? 1 : 0;
 }
