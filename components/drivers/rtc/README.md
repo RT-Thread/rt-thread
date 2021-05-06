@@ -76,5 +76,3 @@ msh />
 
 在 menuconfig 中启用 `RT_USING_SOFT_RTC` 配置。
 
-> 注意：如果没有使用组件自动初始化功能，则需手动调用 `int rt_soft_rtc_init(void)` ，完成该功能初始化。
-
