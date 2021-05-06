@@ -2,57 +2,57 @@
 #define	__SWM320_PWM_H__
 
 typedef struct {
-	uint8_t  clk_div;		//PWM_CLKDIV_1¡¢PWM_CLKDIV_8
+	uint8_t  clk_div;		//PWM_CLKDIV_1ã€PWM_CLKDIV_8
 	
-	uint8_t  mode;			//PWM_MODE_INDEP¡¢PWM_MODE_COMPL¡¢PWM_MODE_INDEP_CALIGN¡¢PWM_MODE_COMPL_CALIGN
+	uint8_t  mode;			//PWM_MODE_INDEPã€PWM_MODE_COMPLã€PWM_MODE_INDEP_CALIGNã€PWM_MODE_COMPL_CALIGN
 	
-	uint16_t cycleA;		//AÂ·ÖÜÆÚ
-	uint16_t hdutyA;		//AÂ·Õ¼¿Õ±È
-	uint16_t deadzoneA;		//AÂ·ËÀÇøÊ±³¤£¬È¡Öµ0--1023
-	uint8_t  initLevelA;	//AÂ·³õÊ¼Êä³öµçÆ½£¬0 µÍµçÆ½    1 ¸ßµçÆ½
+	uint16_t cycleA;		//Aè·¯å‘¨æœŸ
+	uint16_t hdutyA;		//Aè·¯å ç©ºæ¯”
+	uint16_t deadzoneA;		//Aè·¯æ­»åŒºæ—¶é•¿ï¼Œå–å€¼0--1023
+	uint8_t  initLevelA;	//Aè·¯åˆå§‹è¾“å‡ºç”µå¹³ï¼Œ0 ä½ç”µå¹³    1 é«˜ç”µå¹³
 	
-	uint16_t cycleB;		//BÂ·ÖÜÆÚ
-	uint16_t hdutyB;		//BÂ·Õ¼¿Õ±È
-	uint16_t deadzoneB;		//BÂ·ËÀÇøÊ±³¤£¬È¡Öµ0--1023
-	uint8_t  initLevelB;	//BÂ·³õÊ¼Êä³öµçÆ½£¬0 µÍµçÆ½    1 ¸ßµçÆ½
+	uint16_t cycleB;		//Bè·¯å‘¨æœŸ
+	uint16_t hdutyB;		//Bè·¯å ç©ºæ¯”
+	uint16_t deadzoneB;		//Bè·¯æ­»åŒºæ—¶é•¿ï¼Œå–å€¼0--1023
+	uint8_t  initLevelB;	//Bè·¯åˆå§‹è¾“å‡ºç”µå¹³ï¼Œ0 ä½ç”µå¹³    1 é«˜ç”µå¹³
 	
-	uint8_t  HEndAIEn;		//AÂ·¸ßµçÆ½½áÊøÖĞ¶ÏÊ¹ÄÜ
-	uint8_t  NCycleAIEn;	//AÂ·ĞÂÖÜÆÚ¿ªÊ¼ÖĞ¶ÏÊ¹ÄÜ
-	uint8_t  HEndBIEn;		//BÂ·¸ßµçÆ½½áÊøÖĞ¶ÏÊ¹ÄÜ
-	uint8_t  NCycleBIEn;	//BÂ·ĞÂÖÜÆÚ¿ªÊ¼ÖĞ¶ÏÊ¹ÄÜ
+	uint8_t  HEndAIEn;		//Aè·¯é«˜ç”µå¹³ç»“æŸä¸­æ–­ä½¿èƒ½
+	uint8_t  NCycleAIEn;	//Aè·¯æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­ä½¿èƒ½
+	uint8_t  HEndBIEn;		//Bè·¯é«˜ç”µå¹³ç»“æŸä¸­æ–­ä½¿èƒ½
+	uint8_t  NCycleBIEn;	//Bè·¯æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­ä½¿èƒ½
 } PWM_InitStructure;
 
 #define PWM_CLKDIV_1	0
 #define PWM_CLKDIV_8	1
 
-#define PWM_MODE_INDEP			0		//AÂ·ºÍBÂ·ÎªÁ½Â·¶ÀÁ¢Êä³ö
-#define PWM_MODE_COMPL			1		//AÂ·ºÍBÂ·ÎªÒ»Â·»¥²¹Êä³ö
-#define PWM_MODE_INDEP_CALIGN	3		//AÂ·ºÍBÂ·ÎªÁ½Â·¶ÀÁ¢Êä³ö£¬ÖĞĞÄ¶ÔÆë
-#define PWM_MODE_COMPL_CALIGN	4		//AÂ·ºÍBÂ·ÎªÒ»Â·»¥²¹Êä³ö£¬ÖĞĞÄ¶ÔÆë
+#define PWM_MODE_INDEP			0		//Aè·¯å’ŒBè·¯ä¸ºä¸¤è·¯ç‹¬ç«‹è¾“å‡º
+#define PWM_MODE_COMPL			1		//Aè·¯å’ŒBè·¯ä¸ºä¸€è·¯äº’è¡¥è¾“å‡º
+#define PWM_MODE_INDEP_CALIGN	3		//Aè·¯å’ŒBè·¯ä¸ºä¸¤è·¯ç‹¬ç«‹è¾“å‡ºï¼Œä¸­å¿ƒå¯¹é½
+#define PWM_MODE_COMPL_CALIGN	4		//Aè·¯å’ŒBè·¯ä¸ºä¸€è·¯äº’è¡¥è¾“å‡ºï¼Œä¸­å¿ƒå¯¹é½
 
 #define PWM_CH_A	0
 #define PWM_CH_B	1
 
 
-void PWM_Init(PWM_TypeDef * PWMx, PWM_InitStructure * initStruct);			//PWM³õÊ¼»¯
-void PWM_Start(PWM_TypeDef * PWMx, uint32_t chA, uint32_t chB);				//Æô¶¯PWM£¬¿ªÊ¼PWMÊä³ö
-void PWM_Stop(PWM_TypeDef * PWMx, uint32_t chA, uint32_t chB);				//¹Ø±ÕPWM£¬Í£Ö¹PWMÊä³ö
+void PWM_Init(PWM_TypeDef * PWMx, PWM_InitStructure * initStruct);			//PWMåˆå§‹åŒ–
+void PWM_Start(PWM_TypeDef * PWMx, uint32_t chA, uint32_t chB);				//å¯åŠ¨PWMï¼Œå¼€å§‹PWMè¾“å‡º
+void PWM_Stop(PWM_TypeDef * PWMx, uint32_t chA, uint32_t chB);				//å…³é—­PWMï¼Œåœæ­¢PWMè¾“å‡º
 
-void PWM_SetCycle(PWM_TypeDef * PWMx, uint32_t chn, uint16_t cycle);		//ÉèÖÃÖÜÆÚ
-uint16_t PWM_GetCycle(PWM_TypeDef * PWMx, uint32_t chn);	   				//»ñÈ¡ÖÜÆÚ
-void PWM_SetHDuty(PWM_TypeDef * PWMx, uint32_t chn, uint16_t hduty);		//ÉèÖÃ¸ßµçÆ½Ê±³¤
-uint16_t PWM_GetHDuty(PWM_TypeDef * PWMx, uint32_t chn);					//»ñÈ¡¸ßµçÆ½Ê±³¤
-void PWM_SetDeadzone(PWM_TypeDef * PWMx, uint32_t chn, uint8_t deadzone);	//ÉèÖÃËÀÇøÊ±³¤
-uint8_t  PWM_GetDeadzone(PWM_TypeDef * PWMx, uint32_t chn);		 			//»ñÈ¡ËÀÇøÊ±³¤
+void PWM_SetCycle(PWM_TypeDef * PWMx, uint32_t chn, uint16_t cycle);		//è®¾ç½®å‘¨æœŸ
+uint16_t PWM_GetCycle(PWM_TypeDef * PWMx, uint32_t chn);	   				//è·å–å‘¨æœŸ
+void PWM_SetHDuty(PWM_TypeDef * PWMx, uint32_t chn, uint16_t hduty);		//è®¾ç½®é«˜ç”µå¹³æ—¶é•¿
+uint16_t PWM_GetHDuty(PWM_TypeDef * PWMx, uint32_t chn);					//è·å–é«˜ç”µå¹³æ—¶é•¿
+void PWM_SetDeadzone(PWM_TypeDef * PWMx, uint32_t chn, uint8_t deadzone);	//è®¾ç½®æ­»åŒºæ—¶é•¿
+uint8_t  PWM_GetDeadzone(PWM_TypeDef * PWMx, uint32_t chn);		 			//è·å–æ­»åŒºæ—¶é•¿
 
-void PWM_IntNCycleEn(PWM_TypeDef * PWMx, uint32_t chn);   					//ĞÂÖÜÆÚ¿ªÊ¼ÖĞ¶ÏÊ¹ÄÜ
-void PWM_IntNCycleDis(PWM_TypeDef * PWMx, uint32_t chn);  					//ĞÂÖÜÆÚ¿ªÊ¼ÖĞ¶Ï½ûÄÜ
-void PWM_IntNCycleClr(PWM_TypeDef * PWMx, uint32_t chn);  					//ĞÂÖÜÆÚ¿ªÊ¼ÖĞ¶Ï±êÖ¾Çå³ı
-uint32_t PWM_IntNCycleStat(PWM_TypeDef * PWMx, uint32_t chn); 				//ĞÂÖÜÆÚ¿ªÊ¼ÖĞ¶ÏÊÇ·ñ·¢Éú
-void PWM_IntHEndEn(PWM_TypeDef * PWMx, uint32_t chn); 						//¸ßµçÆ½½áÊøÖĞ¶ÏÊ¹ÄÜ
-void PWM_IntHEndDis(PWM_TypeDef * PWMx, uint32_t chn);						//¸ßµçÆ½½áÊøÖĞ¶Ï½ûÄÜ
-void PWM_IntHEndClr(PWM_TypeDef * PWMx, uint32_t chn);	 					//¸ßµçÆ½½áÊøÖĞ¶Ï±êÖ¾Çå³ı
-uint32_t PWM_IntHEndStat(PWM_TypeDef * PWMx, uint32_t chn);					//¸ßµçÆ½½áÊøÖĞ¶ÏÊÇ·ñ·¢Éú
+void PWM_IntNCycleEn(PWM_TypeDef * PWMx, uint32_t chn);   					//æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­ä½¿èƒ½
+void PWM_IntNCycleDis(PWM_TypeDef * PWMx, uint32_t chn);  					//æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­ç¦èƒ½
+void PWM_IntNCycleClr(PWM_TypeDef * PWMx, uint32_t chn);  					//æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­æ ‡å¿—æ¸…é™¤
+uint32_t PWM_IntNCycleStat(PWM_TypeDef * PWMx, uint32_t chn); 				//æ–°å‘¨æœŸå¼€å§‹ä¸­æ–­æ˜¯å¦å‘ç”Ÿ
+void PWM_IntHEndEn(PWM_TypeDef * PWMx, uint32_t chn); 						//é«˜ç”µå¹³ç»“æŸä¸­æ–­ä½¿èƒ½
+void PWM_IntHEndDis(PWM_TypeDef * PWMx, uint32_t chn);						//é«˜ç”µå¹³ç»“æŸä¸­æ–­ç¦èƒ½
+void PWM_IntHEndClr(PWM_TypeDef * PWMx, uint32_t chn);	 					//é«˜ç”µå¹³ç»“æŸä¸­æ–­æ ‡å¿—æ¸…é™¤
+uint32_t PWM_IntHEndStat(PWM_TypeDef * PWMx, uint32_t chn);					//é«˜ç”µå¹³ç»“æŸä¸­æ–­æ˜¯å¦å‘ç”Ÿ
 
 
 #endif //__SWM320_PWM_H__

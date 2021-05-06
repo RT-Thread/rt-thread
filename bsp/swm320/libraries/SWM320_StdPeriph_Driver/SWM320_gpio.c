@@ -31,7 +31,7 @@
 *			uint32_t pull_up	   上拉电阻，0 关闭上拉    1 开启上拉
 *			uint32_t pull_down	   下拉电阻，0 关闭下拉    1 开启下拉
 * 输    出: 无
-* 注意事项: GPIOA、GPIOC、GPIOM、GPIOP只有上拉，GPIOB、GPION只有下拉
+* 注意事项: GPIOA、GPIOC、GPIOM、GPIOP只有上拉，GPIOB、GPION只有下拉（PN0、PN1、PN2三个引脚有上拉没下拉）
 ******************************************************************************************************************************************/
 void GPIO_Init(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t dir, uint32_t pull_up, uint32_t pull_down)
 {

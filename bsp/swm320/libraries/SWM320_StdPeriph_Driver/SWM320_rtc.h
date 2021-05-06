@@ -13,17 +13,17 @@
 
 typedef struct {
 	uint16_t Year;
-	uint8_t  Month;			//È¡Öµ1--12
-	uint8_t  Date;			//È¡Öµ1--31
-	uint8_t  Hour;			//È¡Öµ0--23
-	uint8_t  Minute;		//È¡Öµ0--59
-	uint8_t  Second;		//È¡Öµ0--59
+	uint8_t  Month;			//å–å€¼1--12
+	uint8_t  Date;			//å–å€¼1--31
+	uint8_t  Hour;			//å–å€¼0--23
+	uint8_t  Minute;		//å–å€¼0--59
+	uint8_t  Second;		//å–å€¼0--59
 	uint8_t  SecondIEn;
 	uint8_t  MinuteIEn;
 } RTC_InitStructure;
 
 typedef struct {
-	uint8_t  Days;			//RTC_SUN¡¢RTC_MON¡¢RTC_TUE¡¢RTC_WED¡¢RTC_THU¡¢RTC_FRI¡¢RTC_SAT¼°Æä»òÔËËã×éºÏ
+	uint8_t  Days;			//RTC_SUNã€RTC_MONã€RTC_TUEã€RTC_WEDã€RTC_THUã€RTC_FRIã€RTC_SATåŠå…¶æˆ–è¿ç®—ç»„åˆ
 	uint8_t  Hour;
 	uint8_t  Minute;
 	uint8_t  Second;
@@ -34,7 +34,7 @@ typedef struct {
 	uint16_t Year;
 	uint8_t  Month;
 	uint8_t  Date;
-	uint8_t  Day;			//RTC_SUN¡¢RTC_MON¡¢RTC_TUE¡¢RTC_WED¡¢RTC_THU¡¢RTC_FRI¡¢RTC_SAT
+	uint8_t  Day;			//RTC_SUNã€RTC_MONã€RTC_TUEã€RTC_WEDã€RTC_THUã€RTC_FRIã€RTC_SAT
 	uint8_t  Hour;
 	uint8_t  Minute;
 	uint8_t  Second;

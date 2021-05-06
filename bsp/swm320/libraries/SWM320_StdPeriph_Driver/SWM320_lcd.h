@@ -2,10 +2,7 @@
 #define __SWM320_LCD_H__
 
 
-typedef struct {
-	uint8_t  Interface;		//LCD屏接口：LCD_INTERFACE_RGB、LCD_INTERFACE_I80、LCD_INTERFACE_M68
-	
-	/* RGB同步接口参数 */
+typedef struct {	
 	uint16_t HnPixel;		//水平方向像素个数，最大取值1024
 	uint16_t VnPixel;		//垂直方向像素个数，最大取值 768
 	uint8_t  Hfp;			//horizonal front porch，最大取值32
@@ -20,10 +17,6 @@ typedef struct {
 	uint8_t  IntEOTEn;		//End of Transter（传输完成）中断使能
 } LCD_InitStructure;
 
-
-#define LCD_INTERFACE_RGB	0
-#define LCD_INTERFACE_I80	1
-#define LCD_INTERFACE_M68	2
 
 #define LCD_SAMPLEDGE_RISE	0	//屏幕在DOTCLK的上升沿采样数据
 #define LCD_SAMPLEDGE_FALL	1	//屏幕在DOTCLK的下降沿采样数据

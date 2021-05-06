@@ -7,14 +7,14 @@
 #define DMA_CH2		2
 
 
-void DMA_CHM_Config(uint32_t chn, uint32_t src_addr, uint32_t src_addr_incr, uint32_t dst_addr, uint32_t dst_addr_incr, uint32_t num_word, uint32_t int_en);	//DMAÍ¨µÀÅäÖÃ£¬ÓÃÓÚ´æ´¢Æ÷¼ä£¨ÈçFlashºÍRAM¼ä£©°áÔËÊı¾İ
-void DMA_CH_Open(uint32_t chn);					//DMAÍ¨µÀ´ò¿ª
-void DMA_CH_Close(uint32_t chn);				//DMAÍ¨µÀ¹Ø±Õ
+void DMA_CHM_Config(uint32_t chn, uint32_t src_addr, uint32_t src_addr_incr, uint32_t dst_addr, uint32_t dst_addr_incr, uint32_t num_word, uint32_t int_en);	//DMAé€šé“é…ç½®ï¼Œç”¨äºå­˜å‚¨å™¨é—´ï¼ˆå¦‚Flashå’ŒRAMé—´ï¼‰æ¬è¿æ•°æ®
+void DMA_CH_Open(uint32_t chn);					//DMAé€šé“æ‰“å¼€
+void DMA_CH_Close(uint32_t chn);				//DMAé€šé“å…³é—­
 
-void DMA_CH_INTEn(uint32_t chn);				//DMAÖĞ¶ÏÊ¹ÄÜ£¬Êı¾İ°áÔËÍê³Éºó´¥·¢ÖĞ¶Ï
-void DMA_CH_INTDis(uint32_t chn);				//DMAÖĞ¶Ï½ûÖ¹£¬Êı¾İ°áÔËÍê³Éºó²»´¥·¢ÖĞ¶Ï
-void DMA_CH_INTClr(uint32_t chn);				//DMAÖĞ¶Ï±êÖ¾Çå³ı
-uint32_t DMA_CH_INTStat(uint32_t chn);			//DMAÖĞ¶Ï×´Ì¬²éÑ¯£¬1 Êı¾İ°áÔËÍê³É    0 Êı¾İ°áÔËÎ´Íê³É
+void DMA_CH_INTEn(uint32_t chn);				//DMAä¸­æ–­ä½¿èƒ½ï¼Œæ•°æ®æ¬è¿å®Œæˆåè§¦å‘ä¸­æ–­
+void DMA_CH_INTDis(uint32_t chn);				//DMAä¸­æ–­ç¦æ­¢ï¼Œæ•°æ®æ¬è¿å®Œæˆåä¸è§¦å‘ä¸­æ–­
+void DMA_CH_INTClr(uint32_t chn);				//DMAä¸­æ–­æ ‡å¿—æ¸…é™¤
+uint32_t DMA_CH_INTStat(uint32_t chn);			//DMAä¸­æ–­çŠ¶æ€æŸ¥è¯¢ï¼Œ1 æ•°æ®æ¬è¿å®Œæˆ    0 æ•°æ®æ¬è¿æœªå®Œæˆ
 
 
 #endif //__SWM320_DMA_H__
