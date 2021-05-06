@@ -2,8 +2,8 @@
 #define __SWM320_SRAM_H__
 
 typedef struct {
-	uint8_t ClkDiv;				//SRAM_CLKDIV_5...SRAM_CLKDIV_16������SRAMоƬ�����ܵ����Ƶ��ѡ����ʷ�Ƶ
-	uint8_t DataWidth;			//SRAM_DATAWIDTH_8��SRAM_DATAWIDTH_16
+	uint8_t ClkDiv;				//SRAM_CLKDIV_5...SRAM_CLKDIV_16，根据SRAM芯片所能跑的最高频率选择合适分频
+	uint8_t DataWidth;			//SRAM_DATAWIDTH_8、SRAM_DATAWIDTH_16
 } SRAM_InitStructure;
 
 

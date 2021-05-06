@@ -2,17 +2,17 @@
 #define __SWM320_SDRAM_H__
 
 typedef struct {	
-	uint8_t CellSize;			// SDRAM¿ÅÁ£µÄÈİÁ¿£¬SDRAM_CELLSIZE_16Mb¡¢SDRAM_CELLSIZE_64Mb¡¢SDRAM_CELLSIZE_128Mb¡¢SDRAM_CELLSIZE_256Mb
-	uint8_t CellBank;			// SDRAM¿ÅÁ£ÓĞ¼¸¸öbank£¬SDRAM_CELLBANK_2¡¢SDRAM_CELLBANK_4
-	uint8_t CellWidth;			// SDRAM¿ÅÁ£µÄÎ»¿í£¬SDRAM_CELLWIDTH_16¡¢SDRAM_CELLWIDTH_32
-	uint8_t CASLatency;			// ÁĞµØÖ·µ½ÓĞĞ§Êı¾İÊä³ö¼ä¸ô£¬SDRAM_CASLATENCY_2¡¢SDRAM_CASLATENCY_3
+	uint8_t CellSize;			// SDRAMé¢—ç²’çš„å®¹é‡ï¼ŒSDRAM_CELLSIZE_16Mbã€SDRAM_CELLSIZE_64Mbã€SDRAM_CELLSIZE_128Mbã€SDRAM_CELLSIZE_256Mb
+	uint8_t CellBank;			// SDRAMé¢—ç²’æœ‰å‡ ä¸ªbankï¼ŒSDRAM_CELLBANK_2ã€SDRAM_CELLBANK_4
+	uint8_t CellWidth;			// SDRAMé¢—ç²’çš„ä½å®½ï¼ŒSDRAM_CELLWIDTH_16ã€SDRAM_CELLWIDTH_32
+	uint8_t CASLatency;			// åˆ—åœ°å€åˆ°æœ‰æ•ˆæ•°æ®è¾“å‡ºé—´éš”ï¼ŒSDRAM_CASLATENCY_2ã€SDRAM_CASLATENCY_3
 	
 	uint8_t TimeTMRD;			// MRS to New Command
 	uint8_t TimeTRRD;			// Activate to activate on different banks
-	uint8_t TimeTRAS;			// Self refresh time£¬×îĞ¡Self-refreshÖÜÆÚ
-	uint8_t TimeTRC;			// Row cycle delay£¬RefreshÃüÁîµ½ActivateÃüÁî¼äÑÓÊ±£¬Ò²ÊÇÁ½¸öÁ¬ĞøRefreshÃüÁî¼äÑÓÊ±
-	uint8_t TimeTRCD;			// Row to column delay£¬ĞĞµØÖ·µ½ÁĞµØÖ·¼äÑÓÊ±£¬Ò²¼´ActivateÃüÁîµ½¶ÁĞ´ÃüÁî¼äÑÓÊ±
-	uint8_t TimeTRP;			// Row precharge delay£¬PrechargeÃüÁîµ½ÁíÒ»¸öÃüÁî¼äÑÓÊ±
+	uint8_t TimeTRAS;			// Self refresh timeï¼Œæœ€å°Self-refreshå‘¨æœŸ
+	uint8_t TimeTRC;			// Row cycle delayï¼ŒRefreshå‘½ä»¤åˆ°Activateå‘½ä»¤é—´å»¶æ—¶ï¼Œä¹Ÿæ˜¯ä¸¤ä¸ªè¿ç»­Refreshå‘½ä»¤é—´å»¶æ—¶
+	uint8_t TimeTRCD;			// Row to column delayï¼Œè¡Œåœ°å€åˆ°åˆ—åœ°å€é—´å»¶æ—¶ï¼Œä¹Ÿå³Activateå‘½ä»¤åˆ°è¯»å†™å‘½ä»¤é—´å»¶æ—¶
+	uint8_t TimeTRP;			// Row precharge delayï¼ŒPrechargeå‘½ä»¤åˆ°å¦ä¸€ä¸ªå‘½ä»¤é—´å»¶æ—¶
 } SDRAM_InitStructure;
 
 #define SDRAM_CELLSIZE_16Mb		3

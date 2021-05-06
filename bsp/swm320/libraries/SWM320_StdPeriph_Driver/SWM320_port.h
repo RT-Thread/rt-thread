@@ -1,7 +1,7 @@
 #ifndef __SWM320_PORT_H__
 #define __SWM320_PORT_H__
 
-void PORT_Init(uint32_t PORTx, uint32_t n, uint32_t func, uint32_t digit_in_en);	//¶Ë¿ÚÒı½Å¹¦ÄÜÑ¡Ôñ£¬Æä¿ÉÈ¡ÖµÈçÏÂ£º
+void PORT_Init(uint32_t PORTx, uint32_t n, uint32_t func, uint32_t digit_in_en);	//ç«¯å£å¼•è„šåŠŸèƒ½é€‰æ‹©ï¼Œå…¶å¯å–å€¼å¦‚ä¸‹ï¼š
 
 #define PORTA	0
 #define PORTB	1
@@ -425,8 +425,8 @@ void PORT_Init(uint32_t PORTx, uint32_t n, uint32_t func, uint32_t digit_in_en);
 
 
 
-/* ÏÂÃæºê¶¨ÒåµÄÈ¡ÖµÈ«²¿ÔÚÕıÈ·ÖµµÄ»ù´¡ÉÏ¡°¼Ó100¡±£¬ÒÔÇø·ÖÉÏÃæºê¶¨ÒåµÄÖµ£¬´Ó¶ø·½±ã¿âº¯ÊıµÄ±àĞ´*/
-/* ÏÂÃæÕâĞ©ÖµÊÇÅ¼Êı±àºÅÒı½ÅµÄ¹¦ÄÜÈ¡Öµ£¬ÈçPIN0¡¢PIN2¡¢... */
+/* ä¸‹é¢å®å®šä¹‰çš„å–å€¼å…¨éƒ¨åœ¨æ­£ç¡®å€¼çš„åŸºç¡€ä¸Šâ€œåŠ 100â€ï¼Œä»¥åŒºåˆ†ä¸Šé¢å®å®šä¹‰çš„å€¼ï¼Œä»è€Œæ–¹ä¾¿åº“å‡½æ•°çš„ç¼–å†™*/
+/* ä¸‹é¢è¿™äº›å€¼æ˜¯å¶æ•°ç¼–å·å¼•è„šçš„åŠŸèƒ½å–å€¼ï¼Œå¦‚PIN0ã€PIN2ã€... */
 #define FUNMUX0_UART0_RXD	    100
 #define FUNMUX0_UART1_RXD	    101
 #define FUNMUX0_UART2_RXD	    102
@@ -452,7 +452,7 @@ void PORT_Init(uint32_t PORTx, uint32_t n, uint32_t func, uint32_t digit_in_en);
 #define FUNMUX0_UART2_CTS		123
 #define FUNMUX0_UART3_CTS		124
 
-/* ÏÂÃæÕâĞ©ÖµÊÇÆæÊı±àºÅÒı½ÅµÄ¹¦ÄÜÈ¡Öµ£¬ÈçPIN1¡¢PIN3¡¢... */
+/* ä¸‹é¢è¿™äº›å€¼æ˜¯å¥‡æ•°ç¼–å·å¼•è„šçš„åŠŸèƒ½å–å€¼ï¼Œå¦‚PIN1ã€PIN3ã€... */
 #define FUNMUX1_UART0_TXD	    100
 #define FUNMUX1_UART1_TXD	    101
 #define FUNMUX1_UART2_TXD	    102

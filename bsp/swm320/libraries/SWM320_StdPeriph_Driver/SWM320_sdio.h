@@ -35,10 +35,10 @@
 #define SD_CMD_SDIO_RW_EXTENDED                    ((uint8_t)53)
 
 
-#define SD_RESP_NO			0	//0 ÎŞÏìÓ¦
-#define SD_RESP_32b			2	//2 32Î»ÏìÓ¦
-#define SD_RESP_128b		1	//1 128Î»ÏìÓ¦
-#define SD_RESP_32b_busy	3	//3 32Î»ÏìÓ¦£¬check Busy after response
+#define SD_RESP_NO			0	//0 æ— å“åº”
+#define SD_RESP_32b			2	//2 32ä½å“åº”
+#define SD_RESP_128b		1	//1 128ä½å“åº”
+#define SD_RESP_32b_busy	3	//3 32ä½å“åº”ï¼Œcheck Busy after response
 
 #define SD_BUSWIDTH_1b		0
 #define SD_BUSWIDTH_4b		2
@@ -133,11 +133,11 @@ uint32_t SDIO_MultiBlockRead(uint32_t block_addr, uint16_t block_cnt, uint32_t b
 uint32_t SDIO_DMABlockWrite(uint32_t block_addr, uint16_t block_cnt, uint32_t buff[]);
 uint32_t SDIO_DMABlockRead(uint32_t block_addr, uint16_t block_cnt, uint32_t buff[]);
 
-uint32_t _SDIO_SendCmd(uint32_t cmd, uint32_t arg, uint32_t _resp_type, uint32_t *resp_data, uint32_t have_data, uint32_t data_read, uint16_t block_cnt, uint32_t use_dma);
+uint32_t _SDIO_SendCmd(uint32_t cmd, uint32_t arg, uint32_t resp_type, uint32_t *resp_data, uint32_t have_data, uint32_t data_read, uint16_t block_cnt, uint32_t use_dma);
 
-#define SDIO_SendCmd(cmd, arg, _resp_type, resp_data)                                      _SDIO_SendCmd(cmd, arg, _resp_type, resp_data, 0, 0, 0, 0)
-#define SDIO_SendCmdWithData(cmd, arg, _resp_type, resp_data, data_read, block_cnt)        _SDIO_SendCmd(cmd, arg, _resp_type, resp_data, 1, data_read, block_cnt, 0)
-#define SDIO_SendCmdWithDataByDMA(cmd, arg, _resp_type, resp_data, data_read, block_cnt)   _SDIO_SendCmd(cmd, arg, _resp_type, resp_data, 1, data_read, block_cnt, 1)
+#define SDIO_SendCmd(cmd, arg, resp_type, resp_data)                                      _SDIO_SendCmd(cmd, arg, resp_type, resp_data, 0, 0, 0, 0)
+#define SDIO_SendCmdWithData(cmd, arg, resp_type, resp_data, data_read, block_cnt)        _SDIO_SendCmd(cmd, arg, resp_type, resp_data, 1, data_read, block_cnt, 0)
+#define SDIO_SendCmdWithDataByDMA(cmd, arg, resp_type, resp_data, data_read, block_cnt)   _SDIO_SendCmd(cmd, arg, resp_type, resp_data, 1, data_read, block_cnt, 1)
 
 void parseCID(uint32_t CID_Tab[4]);
 void parseCSD(uint32_t CID_Tab[4]);

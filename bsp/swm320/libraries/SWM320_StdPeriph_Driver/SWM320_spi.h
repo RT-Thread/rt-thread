@@ -2,26 +2,26 @@
 #define __SWM320_SPI_H__
 
 typedef struct {
-	uint8_t  FrameFormat;	//Ö¡¸ñÊ½£ºSPI_FORMAT_SPI¡¢SPI_FORMAT_TI_SSI
-	uint8_t  SampleEdge;	//ÔÚSPIÖ¡¸ñÊ½ÏÂ£¬Ñ¡ÔñÊı¾İ²ÉÑù±ßÑØ£ºSPI_FIRST_EDGE¡¢SPI_SECOND_EDGE
-	uint8_t  IdleLevel;		//ÔÚSPIÖ¡¸ñÊ½ÏÂ£¬Ñ¡Ôñ¿ÕÏĞÊ±£¨ÎŞÊı¾İ´«ÊäÊ±£©Ê±ÖÓÏßµÄµçÆ½£ºSPI_LOW_LEVEL¡¢SPI_HIGH_LEVEL
-	uint8_t  WordSize;		//×Ö³¤¶È, ÓĞĞ§Öµ4-16
-	uint8_t  Master;		//1 Ö÷»úÄ£Ê½    0 ´Ó»úÄ£Ê½
-	uint8_t  clkDiv;		//SPI_CLK = SYS_CLK / clkDiv£¬ÓĞĞ§Öµ£ºSPI_CLKDIV_4¡¢SPI_CLKDIV_8¡¢... ... ¡¢SPI_CLKDIV_512
+	uint8_t  FrameFormat;	//å¸§æ ¼å¼ï¼šSPI_FORMAT_SPIã€SPI_FORMAT_TI_SSI
+	uint8_t  SampleEdge;	//åœ¨SPIå¸§æ ¼å¼ä¸‹ï¼Œé€‰æ‹©æ•°æ®é‡‡æ ·è¾¹æ²¿ï¼šSPI_FIRST_EDGEã€SPI_SECOND_EDGE
+	uint8_t  IdleLevel;		//åœ¨SPIå¸§æ ¼å¼ä¸‹ï¼Œé€‰æ‹©ç©ºé—²æ—¶ï¼ˆæ— æ•°æ®ä¼ è¾“æ—¶ï¼‰æ—¶é’Ÿçº¿çš„ç”µå¹³ï¼šSPI_LOW_LEVELã€SPI_HIGH_LEVEL
+	uint8_t  WordSize;		//å­—é•¿åº¦, æœ‰æ•ˆå€¼4-16
+	uint8_t  Master;		//1 ä¸»æœºæ¨¡å¼    0 ä»æœºæ¨¡å¼
+	uint8_t  clkDiv;		//SPI_CLK = SYS_CLK / clkDivï¼Œæœ‰æ•ˆå€¼ï¼šSPI_CLKDIV_4ã€SPI_CLKDIV_8ã€... ... ã€SPI_CLKDIV_512
 	
-	uint8_t  RXHFullIEn;	//½ÓÊÕFIFO°ëÂúÖĞ¶ÏÊ¹ÄÜ
-	uint8_t  TXEmptyIEn;	//·¢ËÍFIFO  ¿ÕÖĞ¶ÏÊ¹ÄÜ
-	uint8_t  TXCompleteIEn;	//·¢ËÍFIFO  ¿ÕÇÒ·¢ËÍÒÆÎ»¼Ä´æÆ÷¿ÕÖĞ¶ÏÊ¹ÄÜ
+	uint8_t  RXHFullIEn;	//æ¥æ”¶FIFOåŠæ»¡ä¸­æ–­ä½¿èƒ½
+	uint8_t  TXEmptyIEn;	//å‘é€FIFO  ç©ºä¸­æ–­ä½¿èƒ½
+	uint8_t  TXCompleteIEn;	//å‘é€FIFO  ç©ºä¸”å‘é€ç§»ä½å¯„å­˜å™¨ç©ºä¸­æ–­ä½¿èƒ½
 } SPI_InitStructure;
 
-#define SPI_FORMAT_SPI			0		//Motorola SPI ¸ñÊ½
-#define SPI_FORMAT_TI_SSI		1		//TI SSI ¸ñÊ½
+#define SPI_FORMAT_SPI			0		//Motorola SPI æ ¼å¼
+#define SPI_FORMAT_TI_SSI		1		//TI SSI æ ¼å¼
 
-#define SPI_FIRST_EDGE			0		//µÚÒ»¸öÊ±ÖÓÑØ¿ªÊ¼²ÉÑù
-#define SPI_SECOND_EDGE			1		//µÚ¶ş¸öÊ±ÖÓÑØ¿ªÊ¼²ÉÑù
+#define SPI_FIRST_EDGE			0		//ç¬¬ä¸€ä¸ªæ—¶é’Ÿæ²¿å¼€å§‹é‡‡æ ·
+#define SPI_SECOND_EDGE			1		//ç¬¬äºŒä¸ªæ—¶é’Ÿæ²¿å¼€å§‹é‡‡æ ·
 
-#define SPI_LOW_LEVEL			0		//¿ÕÏĞÊ±Ê±ÖÓÏß±£³ÖµÍµçÆ½
-#define SPI_HIGH_LEVEL			1		//¿ÕÏĞÊ±Ê±ÖÓÏß±£³Ö¸ßµçÆ½
+#define SPI_LOW_LEVEL			0		//ç©ºé—²æ—¶æ—¶é’Ÿçº¿ä¿æŒä½ç”µå¹³
+#define SPI_HIGH_LEVEL			1		//ç©ºé—²æ—¶æ—¶é’Ÿçº¿ä¿æŒé«˜ç”µå¹³
 
 #define SPI_CLKDIV_4			0
 #define SPI_CLKDIV_8			1
@@ -34,18 +34,18 @@ typedef struct {
 
 
 
-void SPI_Init(SPI_TypeDef * SPIx, SPI_InitStructure * initStruct);		//SPI³õÊ¼»¯
-void SPI_Open(SPI_TypeDef * SPIx);										//SPI´ò¿ª£¬ÔÊĞíÊÕ·¢
-void SPI_Close(SPI_TypeDef * SPIx);										//SPI¹Ø±Õ£¬½ûÖ¹ÊÕ·¢
+void SPI_Init(SPI_TypeDef * SPIx, SPI_InitStructure * initStruct);		//SPIåˆå§‹åŒ–
+void SPI_Open(SPI_TypeDef * SPIx);										//SPIæ‰“å¼€ï¼Œå…è®¸æ”¶å‘
+void SPI_Close(SPI_TypeDef * SPIx);										//SPIå…³é—­ï¼Œç¦æ­¢æ”¶å‘
 
 uint32_t SPI_Read(SPI_TypeDef * SPIx);
 void SPI_Write(SPI_TypeDef * SPIx, uint32_t data);
 void SPI_WriteWithWait(SPI_TypeDef * SPIx, uint32_t data);
 uint32_t SPI_ReadWrite(SPI_TypeDef * SPIx, uint32_t data);
 
-uint32_t SPI_IsRXEmpty(SPI_TypeDef * SPIx);				//½ÓÊÕFIFOÊÇ·ñ¿Õ£¬Èç¹û²»¿ÕÔò¿ÉÒÔ¼ÌĞøSPI_Read()
-uint32_t SPI_IsTXFull(SPI_TypeDef * SPIx);				//·¢ËÍFIFOÊÇ·ñÂú£¬Èç¹û²»ÂúÔò¿ÉÒÔ¼ÌĞøSPI_Write()
-uint32_t SPI_IsTXEmpty(SPI_TypeDef * SPIx);				//·¢ËÍFIFOÊÇ·ñ¿Õ
+uint32_t SPI_IsRXEmpty(SPI_TypeDef * SPIx);				//æ¥æ”¶FIFOæ˜¯å¦ç©ºï¼Œå¦‚æœä¸ç©ºåˆ™å¯ä»¥ç»§ç»­SPI_Read()
+uint32_t SPI_IsTXFull(SPI_TypeDef * SPIx);				//å‘é€FIFOæ˜¯å¦æ»¡ï¼Œå¦‚æœä¸æ»¡åˆ™å¯ä»¥ç»§ç»­SPI_Write()
+uint32_t SPI_IsTXEmpty(SPI_TypeDef * SPIx);				//å‘é€FIFOæ˜¯å¦ç©º
 
 
 void SPI_INTRXHalfFullEn(SPI_TypeDef * SPIx);

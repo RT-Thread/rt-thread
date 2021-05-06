@@ -2,16 +2,16 @@
 #define	__SWM320_GPIO_H__
 
 
-void GPIO_Init(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t dir, uint32_t pull_up, uint32_t pull_down);	//Òı½Å³õÊ¼»¯£¬°üº¬Òı½Å·½Ïò¡¢ÉÏÀ­µç×è¡¢ÏÂÀ­µç×è
+void GPIO_Init(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t dir, uint32_t pull_up, uint32_t pull_down);	//å¼•è„šåˆå§‹åŒ–ï¼ŒåŒ…å«å¼•è„šæ–¹å‘ã€ä¸Šæ‹‰ç”µé˜»ã€ä¸‹æ‹‰ç”µé˜»
 
-void GPIO_SetBit(GPIO_TypeDef * GPIOx, uint32_t n);						//½«²ÎÊıÖ¸¶¨µÄÒı½ÅµçÆ½ÖÃ¸ß
-void GPIO_ClrBit(GPIO_TypeDef * GPIOx, uint32_t n);						//½«²ÎÊıÖ¸¶¨µÄÒı½ÅµçÆ½ÖÃµÍ
-void GPIO_InvBit(GPIO_TypeDef * GPIOx, uint32_t n);						//½«²ÎÊıÖ¸¶¨µÄÒı½ÅµçÆ½·´×ª
-uint32_t GPIO_GetBit(GPIO_TypeDef * GPIOx, uint32_t n);					//¶ÁÈ¡²ÎÊıÖ¸¶¨µÄÒı½ÅµÄµçÆ½×´Ì¬
-void GPIO_SetBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);		//½«²ÎÊıÖ¸¶¨µÄ´Ón¿ªÊ¼µÄwÎ»Á¬ĞøÒı½ÅµÄµçÆ½ÖÃ¸ß
-void GPIO_ClrBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);		//½«²ÎÊıÖ¸¶¨µÄ´Ón¿ªÊ¼µÄwÎ»Á¬ĞøÒı½ÅµÄµçÆ½ÖÃµÍ
-void GPIO_InvBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);		//½«²ÎÊıÖ¸¶¨µÄ´Ón¿ªÊ¼µÄwÎ»Á¬ĞøÒı½ÅµÄµçÆ½·´×ª
-uint32_t GPIO_GetBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);	//¶ÁÈ¡²ÎÊıÖ¸¶¨µÄ´Ón¿ªÊ¼µÄwÎ»Á¬ĞøÒı½ÅµÄµçÆ½×´Ì¬
+void GPIO_SetBit(GPIO_TypeDef * GPIOx, uint32_t n);						//å°†å‚æ•°æŒ‡å®šçš„å¼•è„šç”µå¹³ç½®é«˜
+void GPIO_ClrBit(GPIO_TypeDef * GPIOx, uint32_t n);						//å°†å‚æ•°æŒ‡å®šçš„å¼•è„šç”µå¹³ç½®ä½
+void GPIO_InvBit(GPIO_TypeDef * GPIOx, uint32_t n);						//å°†å‚æ•°æŒ‡å®šçš„å¼•è„šç”µå¹³åè½¬
+uint32_t GPIO_GetBit(GPIO_TypeDef * GPIOx, uint32_t n);					//è¯»å–å‚æ•°æŒ‡å®šçš„å¼•è„šçš„ç”µå¹³çŠ¶æ€
+void GPIO_SetBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);		//å°†å‚æ•°æŒ‡å®šçš„ä»nå¼€å§‹çš„wä½è¿ç»­å¼•è„šçš„ç”µå¹³ç½®é«˜
+void GPIO_ClrBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);		//å°†å‚æ•°æŒ‡å®šçš„ä»nå¼€å§‹çš„wä½è¿ç»­å¼•è„šçš„ç”µå¹³ç½®ä½
+void GPIO_InvBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);		//å°†å‚æ•°æŒ‡å®šçš„ä»nå¼€å§‹çš„wä½è¿ç»­å¼•è„šçš„ç”µå¹³åè½¬
+uint32_t GPIO_GetBits(GPIO_TypeDef * GPIOx, uint32_t n, uint32_t w);	//è¯»å–å‚æ•°æŒ‡å®šçš„ä»nå¼€å§‹çš„wä½è¿ç»­å¼•è„šçš„ç”µå¹³çŠ¶æ€
 
 void GPIO_AtomicSetBit(GPIO_TypeDef * GPIOx, uint32_t n);
 void GPIO_AtomicClrBit(GPIO_TypeDef * GPIOx, uint32_t n);
