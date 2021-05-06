@@ -19,12 +19,10 @@
 #include "SWM320.h"
 #include "SWM320_flash.h"
 
-
 IAP_Cache_Reset_t IAP_Cache_Reset = (IAP_Cache_Reset_t)0x11000601;
 IAP_Flash_Param_t IAP_Flash_Param = (IAP_Flash_Param_t)0x11000681;
 IAP_Flash_Erase_t IAP_Flash_Erase = (IAP_Flash_Erase_t)0x11000781;
 IAP_Flash_Write_t IAP_Flash_Write = (IAP_Flash_Write_t)0x11000801;
-
 
 /****************************************************************************************************************************************** 
 * 函数名称: FLASH_Erase()
@@ -34,14 +32,14 @@ IAP_Flash_Write_t IAP_Flash_Write = (IAP_Flash_Write_t)0x11000801;
 * 注意事项: 无
 ******************************************************************************************************************************************/
 void FLASH_Erase(uint32_t addr)
-{	
-	__disable_irq();
-	
-	IAP_Flash_Erase(addr / 0x1000);
-	
-	IAP_Cache_Reset();
-	
-	__enable_irq();
+{
+    __disable_irq();
+
+    IAP_Flash_Erase(addr / 0x1000);
+
+    IAP_Cache_Reset();
+
+    __enable_irq();
 }
 
 /****************************************************************************************************************************************** 
@@ -55,13 +53,13 @@ void FLASH_Erase(uint32_t addr)
 ******************************************************************************************************************************************/
 void FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t count)
 {
-	__disable_irq();
-	
-	IAP_Flash_Write(addr, (uint32_t)buff, count/4);
-	
-	IAP_Cache_Reset();
-	
-	__enable_irq();
+    __disable_irq();
+
+    IAP_Flash_Write(addr, (uint32_t)buff, count / 4);
+
+    IAP_Cache_Reset();
+
+    __enable_irq();
 }
 
 /****************************************************************************************************************************************** 
@@ -73,25 +71,25 @@ void FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t count)
 ******************************************************************************************************************************************/
 void Flash_Param_at_xMHz(uint32_t x)
 {
-	__disable_irq();
-	switch(x)
-	{
-	case 30:
-		IAP_Flash_Param(0x489, 0xabf41f25);
-		break;
-	
-	case 40:
-		IAP_Flash_Param(0x489, 0xabf42929);
-		break;
-	
-	case 80:
-		IAP_Flash_Param(0x489, 0xabf8524d);
-		break;
-	
-	case 120:
-	default:
-		IAP_Flash_Param(0x48a, 0xabfc7a6e);
-		break;
-	}
-	__enable_irq();
+    __disable_irq();
+    switch (x)
+    {
+    case 30:
+        IAP_Flash_Param(0x489, 0xabf41f25);
+        break;
+
+    case 40:
+        IAP_Flash_Param(0x489, 0xabf42929);
+        break;
+
+    case 80:
+        IAP_Flash_Param(0x489, 0xabf8524d);
+        break;
+
+    case 120:
+    default:
+        IAP_Flash_Param(0x48a, 0xabfc7a6e);
+        break;
+    }
+    __enable_irq();
 }
