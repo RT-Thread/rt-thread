@@ -49,7 +49,7 @@ static rt_err_t drv_clcd_init(struct rt_device *device)
 {
     struct drv_clcd_device *lcd = CLCD_DEVICE(device);
 
-    lcd = lcd; /* nothing, right now */
+    (void)lcd; /* nothing, right now */
     return RT_EOK;
 }
 
@@ -63,7 +63,7 @@ static rt_err_t drv_clcd_control(struct rt_device *device, int cmd, void *args)
         {
             struct rt_device_rect_info *info = (struct rt_device_rect_info*)args;
 
-            info = info; /* nothing, right now */
+            (void)info; /* nothing, right now */
             rt_kprintf("update screen...\n");
         }
         break;
@@ -156,9 +156,9 @@ int drv_clcd_hw_init(void)
     memset(_lcd.fb, 0xff, _lcd.width * _lcd.height * 2);
 #endif
 
-    plio = (PL111MMIO *)rt_hw_kernel_phys_to_virt((void*)PL111_IOBASE, 0x1000);
+    plio = (PL111MMIO *)rt_ioremap((void*)PL111_IOBASE, 0x1000);
 
-    plio->tim0 = 0x3F1F3C00 | ((CLCD_WIDTH/16 - 1) << 2);
+    plio->tim0 = 0x3F1F3C00 | ((CLCD_WIDTH / 16 - 1) << 2);
     plio->tim1 = 0x080B6000 | (CLCD_HEIGHT - 1);
 
     plio->upbase = (uint32_t)_lcd.fb;

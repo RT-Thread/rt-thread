@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include "raspi4.h"
 #include "mmu.h"
+#include "ioremap.h"
 
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;

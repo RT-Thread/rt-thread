@@ -74,8 +74,8 @@ int rt_hw_timer_init(void)
 {
     rt_uint32_t val;
 
-    sys_ctrl = (void*)rt_hw_kernel_phys_to_virt((void*)REALVIEW_SCTL_BASE, 0x1000);
-    timer_hw_base = (void*)rt_hw_kernel_phys_to_virt((void*)REALVIEW_TIMER2_3_BASE, 0x1000);
+    sys_ctrl = (void*)rt_ioremap((void*)REALVIEW_SCTL_BASE, 0x1000);
+    timer_hw_base = (void*)rt_ioremap((void*)REALVIEW_TIMER2_3_BASE, 0x1000);
 
     SYS_CTRL |= REALVIEW_REFCLK;
 
@@ -103,7 +103,7 @@ void timer_init(int timer, unsigned int preload)
 
     if (timer == 0)
     {
-        timer01_hw_base = (void*)rt_hw_kernel_phys_to_virt((void*)TIMER01_HW_BASE_PHY, 0x1000);
+        timer01_hw_base = (void*)rt_ioremap((void*)TIMER01_HW_BASE_PHY, 0x1000);
         /* Setup Timer0 for generating irq */
         val = TIMER_CTRL(TIMER01_HW_BASE);
         val &= ~TIMER_CTRL_ENABLE;
@@ -117,7 +117,7 @@ void timer_init(int timer, unsigned int preload)
     }
     else
     {
-        timer23_hw_base = (void*)rt_hw_kernel_phys_to_virt((void*)TIMER23_HW_BASE_PHY, 0x1000);
+        timer23_hw_base = (void*)rt_ioremap((void*)TIMER23_HW_BASE_PHY, 0x1000);
         /* Setup Timer1 for generating irq */
         val = TIMER_CTRL(TIMER23_HW_BASE);
         val &= ~TIMER_CTRL_ENABLE;

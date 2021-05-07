@@ -126,50 +126,50 @@ void rt_hw_board_init(void)
 #endif
 
     /* map peripheral address to virtual address */
-
-    //gpio
-    gpio_base_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)GPIO_BASE_ADDR, 0x1000);
-    //uart
-    //uart_base_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)UART_BASE, 0x1000);
-    //aux
-    //aux_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)AUX_BASE_ADDR, 0x1000);
-    //timer
-    arm_timer_base = (size_t)rt_hw_kernel_phys_to_virt((void*)ARM_TIMER_BASE, 0x1000);
-    //gic
-    //gic_base_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)GIC_V2_BASE, 0x10000);
-    //pactl
-    pactl_cs_base = (size_t)rt_hw_kernel_phys_to_virt((void*)PACTL_CS_ADDR, 0x1000);
-
-    //stimer
-    stimer_base_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)STIMER_BASE, 0x1000);
-
-    //mmc2_base_addr 
-    mmc2_base_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)MMC2_BASE_ADDR, 0x1000);
-
-    //mbox
-    videocore_mbox = (size_t)rt_hw_kernel_phys_to_virt((void*)VIDEOCORE_MBOX, 0x1000);
-
-    //mbox msg
-    mbox_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)MBOX_ADDR, 0x1000);
-    mbox = (volatile unsigned int *)mbox_addr;
-
-    //wdt
-    wdt_base_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)WDT_BASE, 0x1000);
-
-    //mac
-    mac_reg_base_addr = (void *)rt_hw_kernel_phys_to_virt((void*)MAC_REG, 0x80000);
-
-    //eth data
-    eth_send_no_cache = (void *)rt_hw_kernel_phys_to_virt((void*)SEND_DATA_NO_CACHE, 0x200000);
-    eth_recv_no_cache = (void *)rt_hw_kernel_phys_to_virt((void*)RECV_DATA_NO_CACHE, 0x200000);
-
-    /* initialize hardware interrupt */
-    rt_hw_interrupt_init();
-
 #ifdef RT_USING_HEAP
     /* initialize memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
+
+    //gpio
+    gpio_base_addr = (size_t)rt_ioremap((void*)GPIO_BASE_ADDR, 0x1000);
+    //uart
+    //uart_base_addr = (size_t)rt_ioremap((void*)UART_BASE, 0x1000);
+    //aux
+    //aux_addr = (size_t)rt_ioremap((void*)AUX_BASE_ADDR, 0x1000);
+    //timer
+    arm_timer_base = (size_t)rt_ioremap((void*)ARM_TIMER_BASE, 0x1000);
+    //gic
+    //gic_base_addr = (size_t)rt_ioremap((void*)GIC_V2_BASE, 0x10000);
+    //pactl
+    pactl_cs_base = (size_t)rt_ioremap((void*)PACTL_CS_ADDR, 0x1000);
+
+    //stimer
+    stimer_base_addr = (size_t)rt_ioremap((void*)STIMER_BASE, 0x1000);
+
+    //mmc2_base_addr 
+    mmc2_base_addr = (size_t)rt_ioremap((void*)MMC2_BASE_ADDR, 0x1000);
+
+    //mbox
+    videocore_mbox = (size_t)rt_ioremap((void*)VIDEOCORE_MBOX, 0x1000);
+
+    //mbox msg
+    mbox_addr = (size_t)rt_ioremap((void*)MBOX_ADDR, 0x1000);
+    mbox = (volatile unsigned int *)mbox_addr;
+
+    //wdt
+    wdt_base_addr = (size_t)rt_ioremap((void*)WDT_BASE, 0x1000);
+
+    //mac
+    mac_reg_base_addr = (void *)rt_ioremap((void*)MAC_REG, 0x80000);
+
+    //eth data
+    eth_send_no_cache = (void *)rt_ioremap((void*)SEND_DATA_NO_CACHE, 0x200000);
+    eth_recv_no_cache = (void *)rt_ioremap((void*)RECV_DATA_NO_CACHE, 0x200000);
+
+    /* initialize hardware interrupt */
+    rt_hw_interrupt_init();
+
     /* initialize uart */
     rt_hw_uart_init();
 

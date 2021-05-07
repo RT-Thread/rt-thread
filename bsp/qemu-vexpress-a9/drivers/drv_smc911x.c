@@ -1,5 +1,6 @@
 #include <board.h>
 #include <rtthread.h>
+#include <rtdevice.h>
 #include <automac.h>
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
@@ -499,7 +500,7 @@ int smc911x_emac_hw_init(void)
 {
     rt_memset(&_emac, 0x0, sizeof(_emac));
 
-    _emac.iobase = (uint32_t)rt_hw_kernel_phys_to_virt((void*)VEXPRESS_ETH_BASE, 0x1000);
+    _emac.iobase = (uint32_t)rt_ioremap((void*)VEXPRESS_ETH_BASE, 0x1000);
     _emac.irqno  = IRQ_VEXPRESS_A9_ETH;
 
     if (smc911x_detect_chip(&_emac))

@@ -75,11 +75,11 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     volatile unsigned int *CCM_CSCDR1;
     volatile unsigned int *CCM_CCGR5;
 
-    IOMUXC_SW_MUX_CTL_PAD_UART1_TX_DATA     = (volatile unsigned int *)rt_hw_kernel_phys_to_virt((void *)0x20E0084, 4);
-    IOMUXC_SW_MUX_CTL_PAD_UART1_RX_DATA     = (volatile unsigned int *)rt_hw_kernel_phys_to_virt((void *)0x20E0088, 4);
-    IOMUXC_UART1_RX_DATA_SELECT_INPUT       = (volatile unsigned int *)rt_hw_kernel_phys_to_virt((void *)0x20E0624, 4);
-    CCM_CSCDR1 = (volatile unsigned int *)rt_hw_kernel_phys_to_virt((void *)0x020C4024, 4);
-    CCM_CCGR5 = (volatile unsigned int *)rt_hw_kernel_phys_to_virt((void *)0x020C407C, 4);
+    IOMUXC_SW_MUX_CTL_PAD_UART1_TX_DATA     = (volatile unsigned int *)rt_ioremap((void *)0x20E0084, 4);
+    IOMUXC_SW_MUX_CTL_PAD_UART1_RX_DATA     = (volatile unsigned int *)rt_ioremap((void *)0x20E0088, 4);
+    IOMUXC_UART1_RX_DATA_SELECT_INPUT       = (volatile unsigned int *)rt_ioremap((void *)0x20E0624, 4);
+    CCM_CSCDR1 = (volatile unsigned int *)rt_ioremap((void *)0x020C4024, 4);
+    CCM_CCGR5 = (volatile unsigned int *)rt_ioremap((void *)0x020C407C, 4);
 
     struct hw_uart_device * uart = (struct hw_uart_device *)serial->parent.user_data;
 
@@ -220,7 +220,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
-    _uart0_device.hw_base = (uint32_t)rt_hw_kernel_phys_to_virt((void*)_uart0_device.hw_base, 0x1000);
+    _uart0_device.hw_base = (uint32_t)rt_ioremap((void*)_uart0_device.hw_base, 0x1000);
     uart = &_uart0_device;
 
     _serial0.ops    = &_uart_ops;
@@ -234,7 +234,7 @@ int rt_hw_uart_init(void)
 #endif
 
 #ifdef RT_USING_UART1
-    _uart1_device.hw_base = (uint32_t)rt_hw_kernel_phys_to_virt((void*)_uart1_device.hw_base, 0x1000);
+    _uart1_device.hw_base = (uint32_t)rt_ioremap((void*)_uart1_device.hw_base, 0x1000);
     uart = &_uart1_device;
     _serial1.ops = &_uart_ops;
     _serial1.config = config;

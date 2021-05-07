@@ -29,6 +29,7 @@ extern "C" {
 #endif
 
 int arch_user_space_init(struct rt_lwp *lwp);
+void arch_user_space_vtable_free(struct rt_lwp *lwp);
 void *arch_kernel_mmu_table_get(void);
 void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors);
 int arch_expand_user_stack(void *addr);

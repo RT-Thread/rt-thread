@@ -108,7 +108,4 @@ void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void* p_addr, size_t size, size_t att
 void rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size);
 void *rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void* v_addr);
 
-void *rt_hw_kernel_phys_to_virt(void *p_addr, size_t size);
-void *rt_hw_kernel_virt_to_phys(void *v_addr);
-
 #endif

@@ -751,42 +751,6 @@ void _rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t size)
     rt_hw_cpu_tlb_invalidate();
 }
 
-
-extern void *_rt_hw_mmu_v2p(rt_mmu_info *mmu_info, void* v_addr);
-//va --> pa
-// void *rt_hw_kernel_virt_to_phys(void *v_addr, size_t size)
-void *rt_hw_kernel_virt_to_phys(void *v_addr)
-{
-    void *p_addr = 0;
-    #ifdef RT_USING_USERSPACE
-    rt_base_t level;
-
-    extern rt_mmu_info mmu_info;
-    level = rt_hw_interrupt_disable();
-    p_addr = _rt_hw_mmu_v2p(&mmu_info, v_addr);
-    rt_hw_interrupt_enable(level);
-    #else
-    p_addr = v_addr;
-    #endif
-
-    return p_addr;
-}
-
-//pa --> va
-void *rt_hw_kernel_phys_to_virt(void *p_addr, size_t size)
-{
-    void *v_addr = 0;
-
-    #ifdef RT_USING_USERSPACE
-    extern rt_mmu_info mmu_info;
-    v_addr = rt_hw_mmu_map(&mmu_info, 0, p_addr, size, MMU_MAP_K_RW);
-    #else
-    v_addr = p_addr;
-    #endif
-
-    return v_addr;
-}
-
 #ifdef RT_USING_USERSPACE
 void *rt_hw_mmu_map(rt_mmu_info *mmu_info, void *v_addr, void* p_addr, size_t size, size_t attr)
 {

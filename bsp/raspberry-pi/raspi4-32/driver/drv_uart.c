@@ -296,7 +296,7 @@ int rt_hw_uart_init(void)
     _serial0.ops    = &_uart_ops;
     _serial0.config = config;
 
-    uart0_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)UART0_BASE, 0x1000);
+    uart0_addr = (size_t)rt_ioremap((void*)UART0_BASE, 0x1000);
     uart0->hw_base = uart0_addr;
 
     
@@ -315,7 +315,7 @@ int rt_hw_uart_init(void)
     _serial1.ops    = &_uart_ops;
     _serial1.config = config;
     
-    uart1->hw_base = (size_t)rt_hw_kernel_phys_to_virt((void*)AUX_BASE, 0x1000);
+    uart1->hw_base = (size_t)rt_ioremap((void*)AUX_BASE, 0x1000);
 
     /* register UART1 device */
     rt_hw_serial_register(&_serial1, "uart1",
@@ -331,7 +331,7 @@ int rt_hw_uart_init(void)
     _serial3.ops    = &_uart_ops;
     _serial3.config = config;
 
-    uart3_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)UART3_BASE, 0x1000);
+    uart3_addr = (size_t)rt_ioremap((void*)UART3_BASE, 0x1000);
     uart3->hw_base = uart3_addr;
 
     /* register UART3 device */
@@ -348,7 +348,7 @@ int rt_hw_uart_init(void)
     _serial4.ops    = &_uart_ops;
     _serial4.config = config;
 
-    uart4_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)UART4_BASE, 0x1000);
+    uart4_addr = (size_t)rt_ioremap((void*)UART4_BASE, 0x1000);
     uart4->hw_base = uart4_addr;
 
     /* register UART4 device */
@@ -365,7 +365,7 @@ int rt_hw_uart_init(void)
     _serial5.ops    = &_uart_ops;
     _serial5.config = config;
 
-    uart5_addr = (size_t)rt_hw_kernel_phys_to_virt((void*)UART5_BASE, 0x1000);
+    uart5_addr = (size_t)rt_ioremap((void*)UART5_BASE, 0x1000);
     uart5->hw_base = uart5_addr;
 
     /* register UART5 device */

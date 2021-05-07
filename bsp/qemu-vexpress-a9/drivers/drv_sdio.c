@@ -286,13 +286,13 @@ static rt_err_t sdhci_pl180_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
 
     if(clock)
     {
-        temp = read32(pdat->virt + PL180_CLOCK) | (0x1<<8);
-        temp = temp; // skip warning
+        temp = read32(pdat->virt + PL180_CLOCK) | (0x1 << 8);
+        (void)temp; // skip warning
         write32(pdat->virt + PL180_CLOCK, 0x100);
     }
     else
     {
-        //write32(pdat->virt + PL180_CLOCK, read32(pdat->virt + PL180_CLOCK) & (~(0x1<<8)));
+        //write32(pdat->virt + PL180_CLOCK, read32(pdat->virt + PL180_CLOCK) & (~(0x1 << 8)));
     }
     return RT_EOK;
 }
@@ -410,8 +410,8 @@ int pl180_init(void)
         goto err;
     }
     rt_memset(sdhci, 0, sizeof(struct sdhci_t));
-    
-    virt = (rt_uint32_t)rt_hw_kernel_phys_to_virt((void*)MMC_BASE_ADDR, 0x1000);
+
+    virt = (rt_uint32_t)rt_ioremap((void*)MMC_BASE_ADDR, 0x1000);
 
     id = (((read32((virt + 0xfec)) & 0xff) << 24) |
                 ((read32((virt + 0xfe8)) & 0xff) << 16) |
