@@ -708,7 +708,7 @@ struct rt_mmcsd_host *mmcsd_alloc_host(void)
     host->max_blk_size = 512;
     host->max_blk_count = 4096;
 
-    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&host->bus_lock, "sd_bus_lock", RT_IPC_FLAG_PRIO);
     rt_sem_init(&host->sem_ack, "sd_ack", 0, RT_IPC_FLAG_FIFO);
 
     return host;

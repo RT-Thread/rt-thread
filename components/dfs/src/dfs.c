@@ -63,7 +63,7 @@ int dfs_init(void)
     memset(&_fdtab, 0, sizeof(_fdtab));
 
     /* create device filesystem lock */
-    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_PRIO);
 
 #ifdef DFS_USING_WORKDIR
     /* set current working directory */

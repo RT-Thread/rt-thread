@@ -149,7 +149,7 @@ RT_SECTION(".irq.cache")
 void cache_init(void)
 {
     os_cache_setfunc(load_cache, NULL);
-    rt_mutex_init(&mutex_spiflash, "flash_mutex", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&mutex_spiflash, "flash_mutex", RT_IPC_FLAG_PRIO);
 }
 
 RT_SECTION(".irq.cache")

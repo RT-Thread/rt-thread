@@ -570,7 +570,7 @@ struct rt_mmcsd_host *sdio_host_create(struct ab32_sdio_des *sdio_des)
     sdio->sdio_des.clk_get = (sdio_des->clk_get == RT_NULL ? ab32_sdio_clk_get : sdio_des->clk_get);
 
     rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
 
     /* set host defautl attributes */
     host->ops = &ab32_sdio_ops;

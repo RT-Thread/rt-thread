@@ -339,7 +339,7 @@ static rt_err_t rt_sdcard_init(rt_device_t dev)
     BYTE drvnum = *((BYTE *)dev->user_data);
 
     rt_snprintf(sdlock_name, sizeof(sdlock_name), "sdlock%d", drvnum);
-    if (rt_mutex_init(&sd_lock[drvnum], sdlock_name, RT_IPC_FLAG_FIFO) != RT_EOK)
+    if (rt_mutex_init(&sd_lock[drvnum], sdlock_name, RT_IPC_FLAG_PRIO) != RT_EOK)
     {
         LOG_E("init sdlock semaphore failed\n");
     }
