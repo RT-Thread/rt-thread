@@ -11,8 +11,9 @@
 #define __DELAY_H__
 
 void msleep(unsigned int msecs);
+void ssleep(unsigned int seconds);
+void mdelay(unsigned long msecs)
 void udelay(unsigned long usecs);
 void ndelay(unsigned long nsecs);
-void ssleep(unsigned int seconds);
 
 #endif

@@ -16,6 +16,18 @@ void msleep(unsigned int msecs)
 }
 RTM_EXPORT(msleep);
 
+void ssleep(unsigned int seconds)
+{
+    msleep(seconds * 1000);
+}
+RTM_EXPORT(ssleep);
+
+void mdelay(unsigned long msecs)
+{
+    rt_hw_us_delay(usecs * 1000);
+}
+RTM_EXPORT(mdelay);
+
 void udelay(unsigned long usecs)
 {
     rt_hw_us_delay(usecs);
@@ -27,9 +39,3 @@ void ndelay(unsigned long nsecs)
     rt_hw_us_delay(1);
 }
 RTM_EXPORT(ndelay);
-
-void ssleep(unsigned int seconds)
-{
-    msleep(seconds * 1000);
-}
-RTM_EXPORT(ssleep);
