@@ -35,3 +35,6 @@ ncscope.*
 #ctag files
 tags
 
+.idea
+CMakeLists.txt
+cmake-build-debug

@@ -829,6 +829,34 @@ void netdev_low_level_set_link_status(struct netdev *netdev, rt_bool_t is_up)
 }
 
 /**
+ * This function will set network interface device active internet status.
+ * @NOTE it can only be called in the network interface device driver.
+ *
+ * @param netdev the network interface device to change
+ * @param is_up the new internet status
+ */
+void netdev_low_level_set_internet_status(struct netdev *netdev, rt_bool_t is_up)
+{
+    if (netdev && netdev_is_internet_up(netdev) != is_up)
+    {
+        if (is_up)
+        {
+            netdev->flags |= NETDEV_FLAG_INTERNET_UP;
+        }
+        else
+        {
+            netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+        }
+
+        /* execute  network interface device status change callback function */
+        if (netdev->status_callback)
+        {
+            netdev->status_callback(netdev, is_up ? NETDEV_CB_STATUS_INTERNET_UP : NETDEV_CB_STATUS_INTERNET_DOWN);
+        }
+    }
+}
+
+/**
  * This function will set network interface device DHCP status.
  * @NOTE it can only be called in the network interface device driver.
  *

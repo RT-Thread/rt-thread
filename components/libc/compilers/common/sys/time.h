@@ -18,13 +18,17 @@
 extern "C" {
 #endif
 
-/*
- * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
- */
-#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
-#define _TIMESPEC_DEFINED
-#endif
-
+#define DST_NONE    0   /* not on dst */
+#define DST_USA     1   /* USA style dst */
+#define DST_AUST    2   /* Australian style dst */
+#define DST_WET     3   /* Western European dst */
+#define DST_MET     4   /* Middle European dst */
+#define DST_EET     5   /* Eastern European dst */
+#define DST_CAN     6   /* Canada */
+#define DST_GB      7   /* Great Britain and Eire */
+#define DST_RUM     8   /* Rumania */
+#define DST_TUR     9   /* Turkey */
+#define DST_AUSTALT 10  /* Australian style with shift in 1986 */
 
 #ifndef _TIMEVAL_DEFINED
 #define _TIMEVAL_DEFINED
@@ -40,7 +44,7 @@ struct timeval {
 #endif
 #endif /* _TIMEVAL_DEFINED */
 
-#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)) && !defined (__ICCARM__) && !defined (_WIN32)
+#if !(defined(__GNUC__) && !defined(__ARMCC_VERSION)/*GCC*/) && !(defined(__ICCARM__) && (__VER__ >= 8010001)) && !defined(_WIN32)
 struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
@@ -56,6 +60,9 @@ int stime(const time_t *t);
 time_t timegm(struct tm * const t);
 int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
+#if defined(__ARMCC_VERSION) || defined (__ICCARM__)
+struct tm *gmtime_r(const time_t *timep, struct tm *r);
+#endif
 
 #ifdef RT_USING_POSIX
 #include <sys/types.h>

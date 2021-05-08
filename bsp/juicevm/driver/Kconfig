@@ -1,0 +1,3 @@
+config BSP_USING_UART0
+    bool "Enable UART0"
+    default y

@@ -53,9 +53,9 @@ def generate(env):
 
     if rtconfig.EXEC_PATH:
         if not os.path.exists(rtconfig.EXEC_PATH):
-            print
-            print 'warning: rtconfig.EXEC_PATH(%s) does not exists.' % rtconfig.EXEC_PATH
-            print
+            print()
+            print('warning: rtconfig.EXEC_PATH(%s) does not exists.' % rtconfig.EXEC_PATH)
+            print()
             return
         env.AppendENVPath('PATH', rtconfig.EXEC_PATH)
 

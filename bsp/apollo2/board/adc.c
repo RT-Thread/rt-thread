@@ -1,21 +1,7 @@
 /*
- * File      : adc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -32,15 +18,15 @@
 struct rt_messagequeue adcbat_mq;
 
 #define BATTERY_GPIO            35                        /* Battery */
-#define BATTERY_ADC_PIN         AM_HAL_PIN_35_ADCSE7 
-#define BATTERY_ADC_CHANNEL     AM_HAL_ADC_SLOT_CHSEL_SE7 /* BATTERY ADC²É¼¯Í¨µÀ */
-#define BATTERY_ADC_CHANNELNUM  7                         /* BATTERY ADC²É¼¯Í¨µÀºÅ */
+#define BATTERY_ADC_PIN         AM_HAL_PIN_35_ADCSE7
+#define BATTERY_ADC_CHANNEL     AM_HAL_ADC_SLOT_CHSEL_SE7 /* BATTERY ADCé‡‡é›†é€šé“ */
+#define BATTERY_ADC_CHANNELNUM  7                         /* BATTERY ADCé‡‡é›†é€šé“å· */
 
-#define ADC_CTIMER_NUM          3                         /* ADCÊ¹ÓÃ¶¨Ê±Æ÷ */
+#define ADC_CTIMER_NUM          3                         /* ADCä½¿ç”¨å®šæ—¶å™¨ */
 #define ADC_CTIMER_COUNT        (2048/512 - 1)
 
-#define ADC_CHANNEL_NUM         1                         /* ADC²É¼¯Í¨µÀ¸öÊı */
-#define ADC_SAMPLE_NUM          8                         /* ADC²ÉÑù¸öÊı */
+#define ADC_CHANNEL_NUM         1                         /* ADCé‡‡é›†é€šé“ä¸ªæ•° */
+#define ADC_SAMPLE_NUM          8                         /* ADCé‡‡æ ·ä¸ªæ•° */
 
 rt_uint8_t bat_adc_cnt = 0;
 static rt_uint8_t am_adcbat_buffer_pool[256];
@@ -52,7 +38,7 @@ rt_uint8_t am_adc_data_get(rt_uint8_t channel, rt_int16_t *buff, rt_uint16_t siz
 
     if (channel == BATTERY_ADC_CHANNELNUM)
     {
-        /* wait adc message forever */	
+        /* wait adc message forever */
         rt_mq_recv(&adcbat_mq, adc_bufftemp, 32, RT_WAITING_FOREVER);
     }
 

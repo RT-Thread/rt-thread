@@ -831,7 +831,7 @@ int finsh_system_init(void)
                                __section_end("FSymTab"));
     finsh_system_var_init(__section_begin("VSymTab"),
                           __section_end("VSymTab"));
-#elif defined (__GNUC__) || defined(__TI_COMPILER_VERSION__)
+#elif defined (__GNUC__) || defined(__TI_COMPILER_VERSION__) || defined(__TASKING__)
     /* GNU GCC Compiler and TI CCS */
     extern const int __fsymtab_start;
     extern const int __fsymtab_end;
