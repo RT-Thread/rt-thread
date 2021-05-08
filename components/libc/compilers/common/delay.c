@@ -24,7 +24,7 @@ RTM_EXPORT(ssleep);
 
 void mdelay(unsigned long msecs)
 {
-    rt_hw_us_delay(usecs * 1000);
+    rt_hw_us_delay(msecs * 1000);
 }
 RTM_EXPORT(mdelay);
 
