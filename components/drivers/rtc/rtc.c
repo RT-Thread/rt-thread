@@ -15,7 +15,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <rtthread.h>
+
 #ifdef RT_USING_RTC
+
+
 
 /**
  * Set system date(time not modify, local timezone).
@@ -120,17 +123,6 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 #ifdef FINSH_USING_MSH
 #include <finsh.h>
 /**
- * show date and time (local timezone)
- */
-void list_date(void)
-{
-    time_t now;
-
-    now = time(RT_NULL);
-    rt_kprintf("%.*s\n", 25, ctime(&now));
-}
-
-/**
  * get date and time or set (local timezone) [year month day hour min sec]
  */
 static void date(uint8_t argc, char **argv)
@@ -192,7 +184,6 @@ static void date(uint8_t argc, char **argv)
         rt_kprintf("e.g: date 2018 01 01 23 59 59 or date\n");
     }
 }
-MSH_CMD_EXPORT(list_date, show date and time (local timezone))
 MSH_CMD_EXPORT(date, get date and time or set (local timezone) [year month day hour min sec])
 #endif /* FINSH_USING_MSH */
 
