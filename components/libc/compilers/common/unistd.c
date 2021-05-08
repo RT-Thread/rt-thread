@@ -41,7 +41,7 @@ char *ttyname(int fd)
 }
 RTM_EXPORT(ttyname);
 
-RT_WEAK unsigned int sleep(unsigned int seconds)
+unsigned int sleep(unsigned int seconds)
 {
     rt_tick_t delta_tick;
 
@@ -53,7 +53,7 @@ RT_WEAK unsigned int sleep(unsigned int seconds)
 }
 RTM_EXPORT(sleep);
 
-RT_WEAK int usleep(useconds_t usec)
+int usleep(useconds_t usec)
 {
     rt_thread_mdelay(usec / 1000u);
     rt_hw_us_delay(usec % 1000u);

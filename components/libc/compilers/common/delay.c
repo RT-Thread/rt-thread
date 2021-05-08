@@ -10,25 +10,25 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-RT_WEAK void msleep(unsigned int msecs)
+void msleep(unsigned int msecs)
 {
     rt_thread_mdelay(msecs);
 }
 RTM_EXPORT(msleep);
 
-RT_WEAK void udelay(unsigned long usecs)
+void udelay(unsigned long usecs)
 {
     rt_hw_us_delay(usecs);
 }
 RTM_EXPORT(udelay);
 
-RT_WEAK void ndelay(unsigned long nsecs)
+void ndelay(unsigned long nsecs)
 {
     rt_hw_us_delay(1);
 }
 RTM_EXPORT(ndelay);
 
-RT_WEAK void ssleep(unsigned int seconds)
+void ssleep(unsigned int seconds)
 {
     msleep(seconds * 1000);
 }
