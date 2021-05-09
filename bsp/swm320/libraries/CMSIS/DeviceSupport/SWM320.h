@@ -1716,7 +1716,8 @@ typedef struct
 
     __IO uint32_t LINCR;
 
-    union {
+    union
+    {
         __IO uint32_t CTSCR;
 
         __IO uint32_t RTSCR;
@@ -2690,7 +2691,7 @@ typedef struct
 
     __I uint32_t SR; //Status Register
 
-    __I uint32_t IF; //Interrupt Flag
+    __I uint32_t IF; //Interrupt Flag，读取清零
 
     __IO uint32_t IE; //Interrupt Enable
 
@@ -2712,7 +2713,8 @@ typedef struct
 
     __IO uint32_t TXERR; //TX错误计数
 
-    union {
+    union
+    {
         struct
         {                         //在复位时可读写，正常工作模式下不可访问
             __IO uint32_t ACR[4]; //Acceptance Check Register, 验收寄存器
@@ -2722,7 +2724,8 @@ typedef struct
             uint32_t RESERVED[5];
         } FILTER;
 
-        union { //在正常工作模式下可读写，复位时不可访问
+        union
+        { //在正常工作模式下可读写，复位时不可访问
             struct
             {
                 __O uint32_t INFO;
@@ -2869,8 +2872,6 @@ typedef struct
     __IO uint32_t PRECMDV; //在MPU接口中，发送数据前，RS拉低的那一拍，数据总线上的值
 } LCD_TypeDef;
 
-#define LCD_START_MPUEN_Pos 0 //0 RGB接口    1 MPU接口
-#define LCD_START_MPUEN_Msk (0x01 << LCD_START_MPUEN_Pos)
 #define LCD_START_GO_Pos 1 //写1开始传输数据，数据传输结束后自动清零
 #define LCD_START_GO_Msk (0x01 << LCD_START_GO_Pos)
 #define LCD_START_BURST_Pos 2
@@ -3120,7 +3121,7 @@ typedef struct
 {
     __IO uint32_t DATA;
     __IO uint32_t ADDR;
-    __IO uint32_t _ERASE; //和mmcsd_cmd.h(59)名字冲突，这里修改为_ERASE
+    __IO uint32_t ERASE;
     __IO uint32_t CACHE;
     __IO uint32_t CFG0;
     __IO uint32_t CFG1;
