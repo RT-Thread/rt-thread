@@ -922,7 +922,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             s = va_arg(args, char *);
             if (!s) s = "(NULL)";
 
-            len = rt_strlen(s);
+            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
 #ifdef RT_PRINTF_PRECISION
             if (precision > 0 && len > precision) len = precision;
 #endif
