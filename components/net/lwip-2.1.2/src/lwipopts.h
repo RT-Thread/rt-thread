@@ -1,7 +1,7 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
-#include <rtconfig.h>
+#include <rtthread.h>
 
 #define ERRNO                       1
 
@@ -243,6 +243,9 @@
 #endif
 
 /* ---------- Memory options ---------- */
+#define SMEMCPY(dst,src,len)            rt_memcpy(dst,src,len)
+#define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
+
 #define MEM_ALIGNMENT               4
 #define MEMP_OVERFLOW_CHECK         1 ////
 #define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1 ////
