@@ -9,6 +9,7 @@
  * 2012-04-12     aozima       optimization: find rtc device only first.
  * 2012-04-16     aozima       add scheduler lock for set_date and set_time.
  * 2018-02-16     armink       add auto sync time by NTP
+ * 2021-05-09     Meco Man     remove NTP
  */
 
 #include <time.h>
