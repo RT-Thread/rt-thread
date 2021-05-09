@@ -54,6 +54,9 @@ menu "Onboard Peripheral Drivers"
         default n
         select RT_USING_LWIP
         select PHY_USING_LAN8720A
+        select RT_LWIP_USING_HW_CHECKSUM
+        select RT_USING_SAL
+        select SAL_USING_POSIX
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c1)"
