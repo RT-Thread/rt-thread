@@ -144,7 +144,7 @@ class FormatCheck:
             logging.warning("There are no files to check format.")
             return True
         encoding_check_result = True
-        format_check_result = True
+        format_check_fail_files = 0
         for file_path in self.file_list:
             code = ''
             if file_path.endswith(".c") or file_path.endswith(".h"):
@@ -166,9 +166,10 @@ class FormatCheck:
 
             with open(file_path, 'r', encoding = "utf-8") as f:
                 file_lines = f.readlines()
-            format_check_result = self.__check_file(file_lines, file_path)    
+            if not self.__check_file(file_lines, file_path):
+                format_check_fail_files += 1    
 
-        if not encoding_check_result or not format_check_result:
+        if (not encoding_check_result) or (format_check_fail_files != 0):
             logging.error("files format check fail.")
             return False
 
