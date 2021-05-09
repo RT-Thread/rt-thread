@@ -243,8 +243,8 @@
 #endif
 
 /* ---------- Memory options ---------- */
-#define SMEMCPY(dst,src,len)            rt_memcpy(dst,src,len)
-#define MEMCPY(dst,src,len)             rt_memcpy(dst,src,len)
+#define SMEMCPY(dst,src,len)        rt_memcpy(dst,src,len)
+#define MEMCPY(dst,src,len)         rt_memcpy(dst,src,len)
 
 #define MEM_ALIGNMENT               4
 #define MEMP_OVERFLOW_CHECK         1 ////

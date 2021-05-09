@@ -1,7 +1,7 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
-#include <rtconfig.h>
+#include <rtthread.h>
 
 #define ERRNO                       1
 
@@ -222,6 +222,9 @@
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
 /* ---------- Memory options ---------- */
+#define SMEMCPY(dst,src,len)        rt_memcpy(dst,src,len)
+#define MEMCPY(dst,src,len)         rt_memcpy(dst,src,len)
+
 #define MEM_ALIGNMENT               4
 
 #define MEM_LIBC_MALLOC             1
