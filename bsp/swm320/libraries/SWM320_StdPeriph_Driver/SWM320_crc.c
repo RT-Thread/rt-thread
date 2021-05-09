@@ -1,10 +1,10 @@
 /****************************************************************************************************************************************** 
-* ÎÄ¼þÃû³Æ: SWM320_crc.c
-* ¹¦ÄÜËµÃ÷:	SWM320µ¥Æ¬»úµÄCRCÄ£¿éÇý¶¯¿â
-* ¼¼ÊõÖ§³Ö:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî: 
-* °æ±¾ÈÕÆÚ:	V1.1.0		2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼: 
+* æ–‡ä»¶åç§°: SWM320_crc.c
+* åŠŸèƒ½è¯´æ˜Ž:	SWM320å•ç‰‡æœºçš„CRCæ¨¡å—é©±åŠ¨åº“
+* æŠ€æœ¯æ”¯æŒ:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹: 
+* ç‰ˆæœ¬æ—¥æœŸ:	V1.1.0		2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•: 
 *
 *
 *******************************************************************************************************************************************
@@ -21,31 +21,30 @@
 #include "SWM320.h"
 #include "SWM320_crc.h"
 
-
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CRC_Init()
-* ¹¦ÄÜËµÃ÷:	CRC ³õÊ¼»¯
-* Êä    Èë: CRC_TypeDef * CRCx	Ö¸¶¨Òª±»ÉèÖÃµÄCRC½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CRC
-*			uint32_t mode		¹¤×÷Ä£Ê½£¬ÓÐÐ§ÖµÓÐ£ºCRC32_IN32¡¢CRC32_IN16¡¢CRC32_IN8¡¢CRC16_IN16¡¢CRC16_IN8
-*			uint32_t out_not	Êä³ö½á¹ûÊÇ·ñÈ¡·´
-*			uint32_t out_rev	Êä³ö½á¹ûÊÇ·ñ·­×ª
-*			uint32_t ini_val	CRC³õÊ¼Öµ
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CRC_Init()
+* åŠŸèƒ½è¯´æ˜Ž:	CRC åˆå§‹åŒ–
+* è¾“    å…¥: CRC_TypeDef * CRCx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CRCæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CRC
+*			uint32_t mode		å·¥ä½œæ¨¡å¼ï¼Œæœ‰æ•ˆå€¼æœ‰ï¼šCRC32_IN32ã€CRC32_IN16ã€CRC32_IN8ã€CRC16_IN16ã€CRC16_IN8
+*			uint32_t out_not	è¾“å‡ºç»“æžœæ˜¯å¦å–å
+*			uint32_t out_rev	è¾“å‡ºç»“æžœæ˜¯å¦ç¿»è½¬
+*			uint32_t ini_val	CRCåˆå§‹å€¼
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CRC_Init(CRC_TypeDef * CRCx, uint32_t mode, uint32_t out_not, uint32_t out_rev, uint32_t ini_val)
+void CRC_Init(CRC_TypeDef *CRCx, uint32_t mode, uint32_t out_not, uint32_t out_rev, uint32_t ini_val)
 {
-	switch((uint32_t)CRCx)
-	{
-	case ((uint32_t)CRC):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_CRC_Pos);
-		break;
-	}
-	
-	CRCx->CR = (1 << CRC_CR_EN_Pos) |
-			   (mode << CRC_CR_CRC16_Pos) |
-			   (out_not << CRC_CR_ONOT_Pos) |
-			   (out_rev << CRC_CR_OREV_Pos);
-	
-	CRCx->INIVAL = ini_val;
+    switch ((uint32_t)CRCx)
+    {
+    case ((uint32_t)CRC):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_CRC_Pos);
+        break;
+    }
+
+    CRCx->CR = (1 << CRC_CR_EN_Pos) |
+               (mode << CRC_CR_CRC16_Pos) |
+               (out_not << CRC_CR_ONOT_Pos) |
+               (out_rev << CRC_CR_OREV_Pos);
+
+    CRCx->INIVAL = ini_val;
 }

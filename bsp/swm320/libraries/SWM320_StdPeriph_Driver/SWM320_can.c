@@ -1,10 +1,10 @@
 /****************************************************************************************************************************************** 
-* ÎÄ¼þÃû³Æ: SWM320_can.c
-* ¹¦ÄÜËµÃ÷:	SWM320µ¥Æ¬»úµÄCANÄ£¿éÇý¶¯¿â
-* ¼¼ÊõÖ§³Ö:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî: 
-* °æ±¾ÈÕÆÚ:	V1.1.0		2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼: 
+* æ–‡ä»¶åç§°: SWM320_can.c
+* åŠŸèƒ½è¯´æ˜Ž:	SWM320å•ç‰‡æœºçš„CANæ¨¡å—é©±åŠ¨åº“
+* æŠ€æœ¯æ”¯æŒ:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹: 
+* ç‰ˆæœ¬æ—¥æœŸ:	V1.1.0		2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•: 
 *
 *
 *******************************************************************************************************************************************
@@ -21,668 +21,583 @@
 #include "SWM320.h"
 #include "SWM320_can.h"
 
-
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_Init()
-* ¹¦ÄÜËµÃ÷:	CAN½Ó¿Ú³õÊ¼»¯
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-*			CAN_InitStructure * initStruct    °üº¬CAN½Ó¿ÚÏà¹ØÉè¶¨ÖµµÄ½á¹¹Ìå
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_Init()
+* åŠŸèƒ½è¯´æ˜Ž:	CANæŽ¥å£åˆå§‹åŒ–
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+*			CAN_InitStructure * initStruct    åŒ…å«CANæŽ¥å£ç›¸å…³è®¾å®šå€¼çš„ç»“æž„ä½“
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_Init(CAN_TypeDef * CANx, CAN_InitStructure * initStruct)
-{	
-	switch((uint32_t)CANx)
-	{
-	case ((uint32_t)CAN):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_CAN_Pos);
-		break;
-	}
-	
-	CAN_Close(CANx);	//Ò»Ð©¹Ø¼ü¼Ä´æÆ÷Ö»ÄÜÔÚCAN¹Ø±ÕÊ±ÉèÖÃ
-	
-	CANx->CR &= ~(CAN_CR_LOM_Msk | CAN_CR_STM_Msk | CAN_CR_AFM_Msk);
-	CANx->CR |= (initStruct->Mode << CAN_CR_LOM_Pos) |
-				(initStruct->FilterMode << CAN_CR_AFM_Pos);
-	
-	CANx->FILTER.AMR[3] = initStruct->FilterMask32b & 0xFF;
-	CANx->FILTER.AMR[2] = (initStruct->FilterMask32b >>  8) & 0xFF;
-	CANx->FILTER.AMR[1] = (initStruct->FilterMask32b >> 16) & 0xFF;
-	CANx->FILTER.AMR[0] = (initStruct->FilterMask32b >> 24) & 0xFF;
-	
-	CANx->FILTER.ACR[3] = initStruct->FilterCheck32b & 0xFF;
-	CANx->FILTER.ACR[2] = (initStruct->FilterCheck32b >>  8) & 0xFF;
-	CANx->FILTER.ACR[1] = (initStruct->FilterCheck32b >> 16) & 0xFF;
-	CANx->FILTER.ACR[0] = (initStruct->FilterCheck32b >> 24) & 0xFF;
-	
-	CANx->BT1 = (0 << CAN_BT1_SAM_Pos) |
-				(initStruct->CAN_BS1 << CAN_BT1_TSEG1_Pos) |
-				(initStruct->CAN_BS2 << CAN_BT1_TSEG2_Pos);
-	
-	CANx->BT0 = (initStruct->CAN_SJW << CAN_BT0_SJW_Pos) |
-				((SystemCoreClock/2/initStruct->Baudrate/(1 + (initStruct->CAN_BS1 + 1) + (initStruct->CAN_BS2 + 1)) - 1) << CAN_BT0_BRP_Pos);
-	
-	CANx->RXERR = 0;	//Ö»ÄÜÔÚ¸´Î»Ä£Ê½ÏÂÇå³ý
-	CANx->TXERR = 0;
-	
-	CANx->IE = (initStruct->RXNotEmptyIEn << CAN_IE_RXDA_Pos)    |
-			   (initStruct->RXOverflowIEn << CAN_IE_RXOV_Pos)    |
-			   (initStruct->ArbitrLostIEn << CAN_IE_ARBLOST_Pos) |
-			   (initStruct->ErrPassiveIEn << CAN_IE_ERRPASS_Pos);
-	
-	switch((uint32_t)CANx)
-	{
-	case ((uint32_t)CAN):
-		if(initStruct->RXNotEmptyIEn | initStruct->RXOverflowIEn | initStruct->ArbitrLostIEn | initStruct->ErrPassiveIEn)
-		{
-			NVIC_EnableIRQ(CAN_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(CAN_IRQn);
-		}
-		break;
-	}
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_Open()
-* ¹¦ÄÜËµÃ÷:	CAN½Ó¿Ú´ò¿ª
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-void CAN_Open(CAN_TypeDef * CANx)
+void CAN_Init(CAN_TypeDef *CANx, CAN_InitStructure *initStruct)
 {
-	CANx->CR &= ~(0x01 << CAN_CR_RST_Pos);	//ÍË³ö¸´Î»Ä£Ê½£¬½øÈë¹¤×÷Ä£Ê½
+    switch ((uint32_t)CANx)
+    {
+    case ((uint32_t)CAN):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_CAN_Pos);
+        break;
+    }
+
+    CAN_Close(CANx); //ä¸€äº›å…³é”®å¯„å­˜å™¨åªèƒ½åœ¨CANå…³é—­æ—¶è®¾ç½®
+
+    CANx->CR &= ~(CAN_CR_LOM_Msk | CAN_CR_STM_Msk | CAN_CR_AFM_Msk);
+    CANx->CR |= (initStruct->Mode << CAN_CR_LOM_Pos) |
+                (initStruct->FilterMode << CAN_CR_AFM_Pos);
+
+    CANx->FILTER.AMR[3] = initStruct->FilterMask32b & 0xFF;
+    CANx->FILTER.AMR[2] = (initStruct->FilterMask32b >> 8) & 0xFF;
+    CANx->FILTER.AMR[1] = (initStruct->FilterMask32b >> 16) & 0xFF;
+    CANx->FILTER.AMR[0] = (initStruct->FilterMask32b >> 24) & 0xFF;
+
+    CANx->FILTER.ACR[3] = initStruct->FilterCheck32b & 0xFF;
+    CANx->FILTER.ACR[2] = (initStruct->FilterCheck32b >> 8) & 0xFF;
+    CANx->FILTER.ACR[1] = (initStruct->FilterCheck32b >> 16) & 0xFF;
+    CANx->FILTER.ACR[0] = (initStruct->FilterCheck32b >> 24) & 0xFF;
+
+    CANx->BT1 = (0 << CAN_BT1_SAM_Pos) |
+                (initStruct->CAN_BS1 << CAN_BT1_TSEG1_Pos) |
+                (initStruct->CAN_BS2 << CAN_BT1_TSEG2_Pos);
+
+    CANx->BT0 = (initStruct->CAN_SJW << CAN_BT0_SJW_Pos) |
+                ((SystemCoreClock / 2 / initStruct->Baudrate / (1 + (initStruct->CAN_BS1 + 1) + (initStruct->CAN_BS2 + 1)) - 1) << CAN_BT0_BRP_Pos);
+
+    CANx->RXERR = 0; //åªèƒ½åœ¨å¤ä½æ¨¡å¼ä¸‹æ¸…é™¤
+    CANx->TXERR = 0;
+
+    CANx->IE = (initStruct->RXNotEmptyIEn << CAN_IE_RXDA_Pos) |
+               (initStruct->RXOverflowIEn << CAN_IE_RXOV_Pos) |
+               (initStruct->ArbitrLostIEn << CAN_IE_ARBLOST_Pos) |
+               (initStruct->ErrPassiveIEn << CAN_IE_ERRPASS_Pos);
+
+    switch ((uint32_t)CANx)
+    {
+    case ((uint32_t)CAN):
+        if (initStruct->RXNotEmptyIEn | initStruct->RXOverflowIEn | initStruct->ArbitrLostIEn | initStruct->ErrPassiveIEn)
+        {
+            NVIC_EnableIRQ(CAN_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(CAN_IRQn);
+        }
+        break;
+    }
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_Close()
-* ¹¦ÄÜËµÃ÷:	CAN½Ó¿Ú¹Ø±Õ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_Open()
+* åŠŸèƒ½è¯´æ˜Ž:	CANæŽ¥å£æ‰“å¼€
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_Close(CAN_TypeDef * CANx)
+void CAN_Open(CAN_TypeDef *CANx)
 {
-	CANx->CR |= (0x01 << CAN_CR_RST_Pos);	//½øÈë¸´Î»Ä£Ê½£¬²»ÄÜ·¢ËÍºÍ½ÓÊÕÊý¾Ý
+    CANx->CR &= ~(0x01 << CAN_CR_RST_Pos); //é€€å‡ºå¤ä½æ¨¡å¼ï¼Œè¿›å…¥å·¥ä½œæ¨¡å¼
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_Transmit()
-* ¹¦ÄÜËµÃ÷:	CAN·¢ËÍÊý¾Ý
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-*			uint32_t format		CAN_FRAME_STD ±ê×¼Ö¡    CAN_FRAME_EXT À©Õ¹Ö¡
-*			uint32_t id			ÏûÏ¢ID
-*			uint8_t data[]		Òª·¢ËÍµÄÊý¾Ý
-*			uint32_t size		Òª·¢ËÍµÄÊý¾ÝµÄ¸öÊý
-*			uint32_t once		Ö»·¢ËÍÒ»´Î£¬¼´Ê¹·¢ËÍÊ§°Ü£¨ÖÙ²Ã¶ªÊ§¡¢·¢ËÍ³ö´í¡¢NAK£©Ò²²»³¢ÊÔÖØ·¢
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_Close()
+* åŠŸèƒ½è¯´æ˜Ž:	CANæŽ¥å£å…³é—­
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_Transmit(CAN_TypeDef * CANx, uint32_t format, uint32_t id, uint8_t data[], uint32_t size, uint32_t once)
+void CAN_Close(CAN_TypeDef *CANx)
 {
-	uint32_t i;
-	
-	if(format == CAN_FRAME_STD)
-	{
-		CANx->TXFRAME.INFO = (0 << CAN_INFO_FF_Pos)  |
-							 (0 << CAN_INFO_RTR_Pos) |
-							 (size << CAN_INFO_DLC_Pos);
-		
-		CANx->TXFRAME.DATA[0] = id >> 3;
-		CANx->TXFRAME.DATA[1] = id << 5;
-		
-		for(i = 0; i < size; i++)
-		{
-			CANx->TXFRAME.DATA[i+2] = data[i];
-		}
-	}
-	else //if(format == CAN_FRAME_EXT)
-	{
-		CANx->TXFRAME.INFO = (1 << CAN_INFO_FF_Pos)  |
-							 (0 << CAN_INFO_RTR_Pos) |
-							 (size << CAN_INFO_DLC_Pos);
-		
-		CANx->TXFRAME.DATA[0] = id >> 21;
-		CANx->TXFRAME.DATA[1] = id >> 13;
-		CANx->TXFRAME.DATA[2] = id >>  5;
-		CANx->TXFRAME.DATA[3] = id <<  3;
-		
-		for(i = 0; i < size; i++)
-		{
-			CANx->TXFRAME.DATA[i+4] = data[i];
-		}
-	}
-	
-	if(CANx->CR & CAN_CR_STM_Msk)
-	{
-		CANx->CMD = (1 << CAN_CMD_SRR_Pos);
-	}
-	else
-	{
-		if(once == 0)
-		{
-			CANx->CMD = (1 << CAN_CMD_TXREQ_Pos);
-		}
-		else
-		{
-			CANx->CMD = (1 << CAN_CMD_TXREQ_Pos) | (1 << CAN_CMD_ABTTX_Pos);
-		}
-	}
+    CANx->CR |= (0x01 << CAN_CR_RST_Pos); //è¿›å…¥å¤ä½æ¨¡å¼ï¼Œä¸èƒ½å‘é€å’ŒæŽ¥æ”¶æ•°æ®
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_TransmitRequest()
-* ¹¦ÄÜËµÃ÷:	CAN·¢ËÍÔ¶³ÌÇëÇó£¬ÇëÇóÔ¶³Ì½Úµã·¢ËÍÊý¾Ý
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-*			uint32_t format		CAN_FRAME_STD ±ê×¼Ö¡    CAN_FRAME_EXT À©Õ¹Ö¡
-*			uint32_t id			ÏûÏ¢ID
-*			uint32_t once		Ö»·¢ËÍÒ»´Î£¬¼´Ê¹·¢ËÍÊ§°Ü£¨ÖÙ²Ã¶ªÊ§¡¢·¢ËÍ³ö´í¡¢NAK£©Ò²²»³¢ÊÔÖØ·¢
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_Transmit()
+* åŠŸèƒ½è¯´æ˜Ž:	CANå‘é€æ•°æ®
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+*			uint32_t format		CAN_FRAME_STD æ ‡å‡†å¸§    CAN_FRAME_EXT æ‰©å±•å¸§
+*			uint32_t id			æ¶ˆæ¯ID
+*			uint8_t data[]		è¦å‘é€çš„æ•°æ®
+*			uint32_t size		è¦å‘é€çš„æ•°æ®çš„ä¸ªæ•°
+*			uint32_t once		åªå‘é€ä¸€æ¬¡ï¼Œå³ä½¿å‘é€å¤±è´¥ï¼ˆä»²è£ä¸¢å¤±ã€å‘é€å‡ºé”™ã€NAKï¼‰ä¹Ÿä¸å°è¯•é‡å‘
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_TransmitRequest(CAN_TypeDef * CANx, uint32_t format, uint32_t id, uint32_t once)
+void CAN_Transmit(CAN_TypeDef *CANx, uint32_t format, uint32_t id, uint8_t data[], uint32_t size, uint32_t once)
 {
-	if(format == CAN_FRAME_STD)
-	{
-		CANx->TXFRAME.INFO = (0 << CAN_INFO_FF_Pos)  |
-							 (1 << CAN_INFO_RTR_Pos) |
-							 (0 << CAN_INFO_DLC_Pos);
-		
-		CANx->TXFRAME.DATA[0] = id >> 3;
-		CANx->TXFRAME.DATA[1] = id << 5;
-	}
-	else //if(format == CAN_FRAME_EXT)
-	{
-		CANx->TXFRAME.INFO = (1 << CAN_INFO_FF_Pos)  |
-							 (1 << CAN_INFO_RTR_Pos) |
-							 (0 << CAN_INFO_DLC_Pos);
-		
-		CANx->TXFRAME.DATA[0] = id >> 21;
-		CANx->TXFRAME.DATA[1] = id >> 13;
-		CANx->TXFRAME.DATA[2] = id >>  5;
-		CANx->TXFRAME.DATA[3] = id <<  3;
-	}
-	
-	if(once == 0)
-	{
-		CANx->CMD = (1 << CAN_CMD_TXREQ_Pos);
-	}
-	else
-	{
-		CANx->CMD = (1 << CAN_CMD_TXREQ_Pos) | (1 << CAN_CMD_ABTTX_Pos);
-	}
+    uint32_t i;
+
+    if (format == CAN_FRAME_STD)
+    {
+        CANx->TXFRAME.INFO = (0 << CAN_INFO_FF_Pos) |
+                             (0 << CAN_INFO_RTR_Pos) |
+                             (size << CAN_INFO_DLC_Pos);
+
+        CANx->TXFRAME.DATA[0] = id >> 3;
+        CANx->TXFRAME.DATA[1] = id << 5;
+
+        for (i = 0; i < size; i++)
+        {
+            CANx->TXFRAME.DATA[i + 2] = data[i];
+        }
+    }
+    else //if(format == CAN_FRAME_EXT)
+    {
+        CANx->TXFRAME.INFO = (1 << CAN_INFO_FF_Pos) |
+                             (0 << CAN_INFO_RTR_Pos) |
+                             (size << CAN_INFO_DLC_Pos);
+
+        CANx->TXFRAME.DATA[0] = id >> 21;
+        CANx->TXFRAME.DATA[1] = id >> 13;
+        CANx->TXFRAME.DATA[2] = id >> 5;
+        CANx->TXFRAME.DATA[3] = id << 3;
+
+        for (i = 0; i < size; i++)
+        {
+            CANx->TXFRAME.DATA[i + 4] = data[i];
+        }
+    }
+
+    if (CANx->CR & CAN_CR_STM_Msk)
+    {
+        CANx->CMD = (1 << CAN_CMD_SRR_Pos);
+    }
+    else
+    {
+        if (once == 0)
+        {
+            CANx->CMD = (1 << CAN_CMD_TXREQ_Pos);
+        }
+        else
+        {
+            CANx->CMD = (1 << CAN_CMD_TXREQ_Pos) | (1 << CAN_CMD_ABTTX_Pos);
+        }
+    }
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_Receive()
-* ¹¦ÄÜËµÃ÷:	CAN½ÓÊÕÊý¾Ý
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-*			CAN_RXMessage *msg	½ÓÊÕµ½µÄÏûÏ¢´æ´¢ÔÚ´Ë½á¹¹Ìå±äÁ¿ÖÐ
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_TransmitRequest()
+* åŠŸèƒ½è¯´æ˜Ž:	CANå‘é€è¿œç¨‹è¯·æ±‚ï¼Œè¯·æ±‚è¿œç¨‹èŠ‚ç‚¹å‘é€æ•°æ®
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+*			uint32_t format		CAN_FRAME_STD æ ‡å‡†å¸§    CAN_FRAME_EXT æ‰©å±•å¸§
+*			uint32_t id			æ¶ˆæ¯ID
+*			uint32_t once		åªå‘é€ä¸€æ¬¡ï¼Œå³ä½¿å‘é€å¤±è´¥ï¼ˆä»²è£ä¸¢å¤±ã€å‘é€å‡ºé”™ã€NAKï¼‰ä¹Ÿä¸å°è¯•é‡å‘
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_Receive(CAN_TypeDef * CANx, CAN_RXMessage *msg)
+void CAN_TransmitRequest(CAN_TypeDef *CANx, uint32_t format, uint32_t id, uint32_t once)
 {
-	uint32_t i;
-	msg->format = (CANx->RXFRAME.INFO & CAN_INFO_FF_Msk) >> CAN_INFO_FF_Pos;
-	
-	msg->remote = (CANx->RXFRAME.INFO & CAN_INFO_RTR_Msk) >> CAN_INFO_RTR_Pos;
-	msg->size = (CANx->RXFRAME.INFO & CAN_INFO_DLC_Msk) >> CAN_INFO_DLC_Pos;
-	
-	if(msg->format == CAN_FRAME_STD)
-	{
-		msg->id = (CANx->RXFRAME.DATA[0] << 3) | (CANx->RXFRAME.DATA[1] >> 5);
-		
-		for(i = 0; i < msg->size; i++)
-		{
-			msg->data[i] = CANx->RXFRAME.DATA[i+2];
-		}
-	}
-	else //if(msg->format == CAN_FRAME_EXT)
-	{
-		msg->id = (CANx->RXFRAME.DATA[0] << 21) | (CANx->RXFRAME.DATA[1] << 13) | (CANx->RXFRAME.DATA[2] << 5) | (CANx->RXFRAME.DATA[3] >> 3);
-		
-		for(i = 0; i < msg->size; i++)
-		{
-			msg->data[i] = CANx->RXFRAME.DATA[i+4];
-		}
-	}
-	
-	CANx->CMD = (1 << CAN_CMD_RRB_Pos);
+    if (format == CAN_FRAME_STD)
+    {
+        CANx->TXFRAME.INFO = (0 << CAN_INFO_FF_Pos) |
+                             (1 << CAN_INFO_RTR_Pos) |
+                             (0 << CAN_INFO_DLC_Pos);
+
+        CANx->TXFRAME.DATA[0] = id >> 3;
+        CANx->TXFRAME.DATA[1] = id << 5;
+    }
+    else //if(format == CAN_FRAME_EXT)
+    {
+        CANx->TXFRAME.INFO = (1 << CAN_INFO_FF_Pos) |
+                             (1 << CAN_INFO_RTR_Pos) |
+                             (0 << CAN_INFO_DLC_Pos);
+
+        CANx->TXFRAME.DATA[0] = id >> 21;
+        CANx->TXFRAME.DATA[1] = id >> 13;
+        CANx->TXFRAME.DATA[2] = id >> 5;
+        CANx->TXFRAME.DATA[3] = id << 3;
+    }
+
+    if (once == 0)
+    {
+        CANx->CMD = (1 << CAN_CMD_TXREQ_Pos);
+    }
+    else
+    {
+        CANx->CMD = (1 << CAN_CMD_TXREQ_Pos) | (1 << CAN_CMD_ABTTX_Pos);
+    }
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_TXComplete()
-* ¹¦ÄÜËµÃ÷:	·¢ËÍÊÇ·ñÍê³É
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ¾­Íê³É    0 »¹Î´Íê³É
-* ×¢ÒâÊÂÏî: ·¢ËÍ±»AbortÒ²»á´¥·¢·¢ËÍÍê³É£¬µ«²»»á´¥·¢·¢ËÍ³É¹¦
+* å‡½æ•°åç§°:	CAN_Receive()
+* åŠŸèƒ½è¯´æ˜Ž:	CANæŽ¥æ”¶æ•°æ®
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+*			CAN_RXMessage *msg	æŽ¥æ”¶åˆ°çš„æ¶ˆæ¯å­˜å‚¨åœ¨æ­¤ç»“æž„ä½“å˜é‡ä¸­
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t CAN_TXComplete(CAN_TypeDef * CANx)
+void CAN_Receive(CAN_TypeDef *CANx, CAN_RXMessage *msg)
 {
-	return (CANx->SR & CAN_SR_TXBR_Msk) ? 1 : 0;
+    uint32_t i;
+    msg->format = (CANx->RXFRAME.INFO & CAN_INFO_FF_Msk) >> CAN_INFO_FF_Pos;
+
+    msg->remote = (CANx->RXFRAME.INFO & CAN_INFO_RTR_Msk) >> CAN_INFO_RTR_Pos;
+    msg->size = (CANx->RXFRAME.INFO & CAN_INFO_DLC_Msk) >> CAN_INFO_DLC_Pos;
+
+    if (msg->format == CAN_FRAME_STD)
+    {
+        msg->id = (CANx->RXFRAME.DATA[0] << 3) | (CANx->RXFRAME.DATA[1] >> 5);
+
+        for (i = 0; i < msg->size; i++)
+        {
+            msg->data[i] = CANx->RXFRAME.DATA[i + 2];
+        }
+    }
+    else //if(msg->format == CAN_FRAME_EXT)
+    {
+        msg->id = (CANx->RXFRAME.DATA[0] << 21) | (CANx->RXFRAME.DATA[1] << 13) | (CANx->RXFRAME.DATA[2] << 5) | (CANx->RXFRAME.DATA[3] >> 3);
+
+        for (i = 0; i < msg->size; i++)
+        {
+            msg->data[i] = CANx->RXFRAME.DATA[i + 4];
+        }
+    }
+
+    CANx->CMD = (1 << CAN_CMD_RRB_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_TXSuccess()
-* ¹¦ÄÜËµÃ÷:	·¢ËÍÊÇ·ñ³É¹¦
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ·¢ËÍ³É¹¦    0 ·¢ËÍÊ§°Ü
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_TXComplete()
+* åŠŸèƒ½è¯´æ˜Ž:	å‘é€æ˜¯å¦å®Œæˆ
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: uint32_t			1 å·²ç»å®Œæˆ    0 è¿˜æœªå®Œæˆ
+* æ³¨æ„äº‹é¡¹: å‘é€è¢«Abortä¹Ÿä¼šè§¦å‘å‘é€å®Œæˆï¼Œä½†ä¸ä¼šè§¦å‘å‘é€æˆåŠŸ
 ******************************************************************************************************************************************/
-uint32_t CAN_TXSuccess(CAN_TypeDef * CANx)
+uint32_t CAN_TXComplete(CAN_TypeDef *CANx)
 {
-	return (CANx->SR & CAN_SR_TXOK_Msk) ? 1 : 0;
+    return (CANx->SR & CAN_SR_TXBR_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_AbortTransmit()
-* ¹¦ÄÜËµÃ÷:	ÖÕÖ¹·¢ËÍ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÕýÔÚ½øÐÐµÄ·¢ËÍÎÞ·¨ÖÕÖ¹£¬µ«Ö´ÐÐ´ËÃüÁîºóÈô·¢ËÍÊ§°Ü²»»áÔÙÖØ·¢
+* å‡½æ•°åç§°:	CAN_TXSuccess()
+* åŠŸèƒ½è¯´æ˜Ž:	å‘é€æ˜¯å¦æˆåŠŸ
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: uint32_t			1 å‘é€æˆåŠŸ    0 å‘é€å¤±è´¥
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_AbortTransmit(CAN_TypeDef * CANx)
+uint32_t CAN_TXSuccess(CAN_TypeDef *CANx)
 {
-	CANx->CMD = (1 << CAN_CMD_ABTTX_Pos);
+    return (CANx->SR & CAN_SR_TXOK_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_TXBufferReady()
-* ¹¦ÄÜËµÃ÷:	TX BufferÊÇ·ñ×¼±¸ºÃ¿ÉÒÔÐ´ÈëÏûÏ¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ×¼±¸ºÃ    0 Î´×¼±¸ºÃ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_AbortTransmit()
+* åŠŸèƒ½è¯´æ˜Ž:	ç»ˆæ­¢å‘é€
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ­£åœ¨è¿›è¡Œçš„å‘é€æ— æ³•ç»ˆæ­¢ï¼Œä½†æ‰§è¡Œæ­¤å‘½ä»¤åŽè‹¥å‘é€å¤±è´¥ä¸ä¼šå†é‡å‘
 ******************************************************************************************************************************************/
-uint32_t CAN_TXBufferReady(CAN_TypeDef * CANx)
+void CAN_AbortTransmit(CAN_TypeDef *CANx)
 {
-	return (CANx->SR & CAN_SR_TXBR_Msk) ? 1 : 0;
+    CANx->CMD = (1 << CAN_CMD_ABTTX_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_RXDataAvailable()
-* ¹¦ÄÜËµÃ÷:	RX FIFOÖÐÊÇ·ñÓÐÊý¾Ý¿É¶Á³ö
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÓÐÊý¾Ý¿É¶Á³ö    0 Ã»ÓÐÊý¾Ý
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_TXBufferReady()
+* åŠŸèƒ½è¯´æ˜Ž:	TX Bufferæ˜¯å¦å‡†å¤‡å¥½å¯ä»¥å†™å…¥æ¶ˆæ¯
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: uint32_t			1 å·²å‡†å¤‡å¥½    0 æœªå‡†å¤‡å¥½
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t CAN_RXDataAvailable(CAN_TypeDef * CANx)
+uint32_t CAN_TXBufferReady(CAN_TypeDef *CANx)
 {
-	return (CANx->SR & CAN_SR_RXDA_Msk) ? 1 : 0;
+    return (CANx->SR & CAN_SR_TXBR_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_SetBaudrate()
-* ¹¦ÄÜËµÃ÷:	ÉèÖÃ²¨ÌØÂÊ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-*			uint32_t baudrate	²¨ÌØÂÊ£¬¼´Î»´«ÊäËÙÂÊ
-*			uint32_t CAN_BS1	CAN_BS1_1tq¡¢CAN_BS1_2tq¡¢... ... ¡¢CAN_BS1_16tq
-*			uint32_t CAN_BS2	CAN_BS2_1tq¡¢CAN_BS2_2tq¡¢... ... ¡¢CAN_BS2_8tq
-*			uint32_t CAN_SJW	CAN_SJW_1tq¡¢CAN_SJW_2tq¡¢CAN_SJW_3tq¡¢CAN_SJW_4tq
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÉèÖÃÇ°ÐèÒªÏÈµ÷ÓÃCAN_Close()¹Ø±ÕCANÄ£¿é
+* å‡½æ•°åç§°:	CAN_RXDataAvailable()
+* åŠŸèƒ½è¯´æ˜Ž:	RX FIFOä¸­æ˜¯å¦æœ‰æ•°æ®å¯è¯»å‡º
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: uint32_t			1 æœ‰æ•°æ®å¯è¯»å‡º    0 æ²¡æœ‰æ•°æ®
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_SetBaudrate(CAN_TypeDef * CANx, uint32_t baudrate, uint32_t CAN_BS1, uint32_t CAN_BS2, uint32_t CAN_SJW)
+uint32_t CAN_RXDataAvailable(CAN_TypeDef *CANx)
 {
-	CANx->BT1 = (0 << CAN_BT1_SAM_Pos) |
-				(CAN_BS1 << CAN_BT1_TSEG1_Pos) |
-				(CAN_BS2 << CAN_BT1_TSEG2_Pos);
-	
-	CANx->BT0 = (CAN_SJW << CAN_BT0_SJW_Pos) |
-				((SystemCoreClock/2/baudrate/(1 + (CAN_BS1 + 1) + (CAN_BS2 + 1)) - 1) << CAN_BT0_BRP_Pos);
+    return (CANx->SR & CAN_SR_RXDA_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_SetFilter32b()
-* ¹¦ÄÜËµÃ÷:	ÉèÖÃ½ÓÊÕÂË²¨Æ÷£¬1¸ö32Î»ÂË²¨Æ÷
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-*			uint32_t check		ÓëmaskÒ»Æð¾ö¶¨ÁË½ÓÊÕµ½µÄMessageÊÇ·ñÊÇ×Ô¼ºÐèÒªµÄ£ºcheck & (~mask) == ID & (~mask)µÄMessageÍ¨¹ý¹ýÂË
+* å‡½æ•°åç§°:	CAN_SetBaudrate()
+* åŠŸèƒ½è¯´æ˜Ž:	è®¾ç½®æ³¢ç‰¹çŽ‡
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+*			uint32_t baudrate	æ³¢ç‰¹çŽ‡ï¼Œå³ä½ä¼ è¾“é€ŸçŽ‡
+*			uint32_t CAN_BS1	CAN_BS1_1tqã€CAN_BS1_2tqã€... ... ã€CAN_BS1_16tq
+*			uint32_t CAN_BS2	CAN_BS2_1tqã€CAN_BS2_2tqã€... ... ã€CAN_BS2_8tq
+*			uint32_t CAN_SJW	CAN_SJW_1tqã€CAN_SJW_2tqã€CAN_SJW_3tqã€CAN_SJW_4tq
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: è®¾ç½®å‰éœ€è¦å…ˆè°ƒç”¨CAN_Close()å…³é—­CANæ¨¡å—
+******************************************************************************************************************************************/
+void CAN_SetBaudrate(CAN_TypeDef *CANx, uint32_t baudrate, uint32_t CAN_BS1, uint32_t CAN_BS2, uint32_t CAN_SJW)
+{
+    CANx->BT1 = (0 << CAN_BT1_SAM_Pos) |
+                (CAN_BS1 << CAN_BT1_TSEG1_Pos) |
+                (CAN_BS2 << CAN_BT1_TSEG2_Pos);
+
+    CANx->BT0 = (CAN_SJW << CAN_BT0_SJW_Pos) |
+                ((SystemCoreClock / 2 / baudrate / (1 + (CAN_BS1 + 1) + (CAN_BS2 + 1)) - 1) << CAN_BT0_BRP_Pos);
+}
+
+/****************************************************************************************************************************************** 
+* å‡½æ•°åç§°:	CAN_SetFilter32b()
+* åŠŸèƒ½è¯´æ˜Ž:	è®¾ç½®æŽ¥æ”¶æ»¤æ³¢å™¨ï¼Œ1ä¸ª32ä½æ»¤æ³¢å™¨
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+*			uint32_t check		ä¸Žmaskä¸€èµ·å†³å®šäº†æŽ¥æ”¶åˆ°çš„Messageæ˜¯å¦æ˜¯è‡ªå·±éœ€è¦çš„ï¼šcheck & (~mask) == ID & (~mask)çš„Messageé€šè¿‡è¿‡æ»¤
 *			uint32_t mask
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÉèÖÃÇ°ÐèÒªÏÈµ÷ÓÃCAN_Close()¹Ø±ÕCANÄ£¿é
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: è®¾ç½®å‰éœ€è¦å…ˆè°ƒç”¨CAN_Close()å…³é—­CANæ¨¡å—
 ******************************************************************************************************************************************/
-void CAN_SetFilter32b(CAN_TypeDef * CANx, uint32_t check, uint32_t mask)
+void CAN_SetFilter32b(CAN_TypeDef *CANx, uint32_t check, uint32_t mask)
 {
-	CANx->CR &= ~CAN_CR_AFM_Msk;
-	CANx->CR |= (CAN_FILTER_32b << CAN_CR_AFM_Pos);
-	
-	CANx->FILTER.AMR[3] =  mask & 0xFF;
-	CANx->FILTER.AMR[2] = (mask >>  8) & 0xFF;
-	CANx->FILTER.AMR[1] = (mask >> 16) & 0xFF;
-	CANx->FILTER.AMR[0] = (mask >> 24) & 0xFF;
-	
-	CANx->FILTER.ACR[3] =  check & 0xFF;
-	CANx->FILTER.ACR[2] = (check >>  8) & 0xFF;
-	CANx->FILTER.ACR[1] = (check >> 16) & 0xFF;
-	CANx->FILTER.ACR[0] = (check >> 24) & 0xFF;
+    CANx->CR &= ~CAN_CR_AFM_Msk;
+    CANx->CR |= (CAN_FILTER_32b << CAN_CR_AFM_Pos);
+
+    CANx->FILTER.AMR[3] = mask & 0xFF;
+    CANx->FILTER.AMR[2] = (mask >> 8) & 0xFF;
+    CANx->FILTER.AMR[1] = (mask >> 16) & 0xFF;
+    CANx->FILTER.AMR[0] = (mask >> 24) & 0xFF;
+
+    CANx->FILTER.ACR[3] = check & 0xFF;
+    CANx->FILTER.ACR[2] = (check >> 8) & 0xFF;
+    CANx->FILTER.ACR[1] = (check >> 16) & 0xFF;
+    CANx->FILTER.ACR[0] = (check >> 24) & 0xFF;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_SetFilter16b()
-* ¹¦ÄÜËµÃ÷:	ÉèÖÃ½ÓÊÕÂË²¨Æ÷£¬2¸ö16Î»ÂË²¨Æ÷
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-*			uint16_t check1		ÓëmaskÒ»Æð¾ö¶¨ÁË½ÓÊÕµ½µÄMessageÊÇ·ñÊÇ×Ô¼ºÐèÒªµÄ£ºcheck & (~mask) == ID & (~mask)µÄMessageÍ¨¹ý¹ýÂË
+* å‡½æ•°åç§°:	CAN_SetFilter16b()
+* åŠŸèƒ½è¯´æ˜Ž:	è®¾ç½®æŽ¥æ”¶æ»¤æ³¢å™¨ï¼Œ2ä¸ª16ä½æ»¤æ³¢å™¨
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+*			uint16_t check1		ä¸Žmaskä¸€èµ·å†³å®šäº†æŽ¥æ”¶åˆ°çš„Messageæ˜¯å¦æ˜¯è‡ªå·±éœ€è¦çš„ï¼šcheck & (~mask) == ID & (~mask)çš„Messageé€šè¿‡è¿‡æ»¤
 *			uint16_t mask1
 *			uint16_t check2
 *			uint16_t mask2
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÉèÖÃÇ°ÐèÒªÏÈµ÷ÓÃCAN_Close()¹Ø±ÕCANÄ£¿é
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: è®¾ç½®å‰éœ€è¦å…ˆè°ƒç”¨CAN_Close()å…³é—­CANæ¨¡å—
 ******************************************************************************************************************************************/
-void CAN_SetFilter16b(CAN_TypeDef * CANx, uint16_t check1, uint16_t mask1, uint16_t check2, uint16_t mask2)
+void CAN_SetFilter16b(CAN_TypeDef *CANx, uint16_t check1, uint16_t mask1, uint16_t check2, uint16_t mask2)
 {
-	CANx->CR &= ~CAN_CR_AFM_Msk;
-	CANx->CR |= (CAN_FILTER_16b << CAN_CR_AFM_Pos);
-	
-	CANx->FILTER.AMR[3] =  mask1 & 0xFF;
-	CANx->FILTER.AMR[2] = (mask1 >>  8) & 0xFF;
-	CANx->FILTER.AMR[1] =  mask2 & 0xFF;
-	CANx->FILTER.AMR[0] = (mask2 >>  8) & 0xFF;
-	
-	CANx->FILTER.ACR[3] =  check1 & 0xFF;
-	CANx->FILTER.ACR[2] = (check1 >>  8) & 0xFF;
-	CANx->FILTER.ACR[1] =  check2 & 0xFF;
-	CANx->FILTER.ACR[0] = (check2 >>  8) & 0xFF;
+    CANx->CR &= ~CAN_CR_AFM_Msk;
+    CANx->CR |= (CAN_FILTER_16b << CAN_CR_AFM_Pos);
+
+    CANx->FILTER.AMR[3] = mask1 & 0xFF;
+    CANx->FILTER.AMR[2] = (mask1 >> 8) & 0xFF;
+    CANx->FILTER.AMR[1] = mask2 & 0xFF;
+    CANx->FILTER.AMR[0] = (mask2 >> 8) & 0xFF;
+
+    CANx->FILTER.ACR[3] = check1 & 0xFF;
+    CANx->FILTER.ACR[2] = (check1 >> 8) & 0xFF;
+    CANx->FILTER.ACR[1] = check2 & 0xFF;
+    CANx->FILTER.ACR[0] = (check2 >> 8) & 0xFF;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTRXNotEmptyEn()
-* ¹¦ÄÜËµÃ÷:	µ±RX FIFOÖÐÓÐÊý¾ÝÊ±£¨·Ç¿Õ£©´¥·¢ÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTRXNotEmptyEn()
+* åŠŸèƒ½è¯´æ˜Ž:	å½“RX FIFOä¸­æœ‰æ•°æ®æ—¶ï¼ˆéžç©ºï¼‰è§¦å‘ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTRXNotEmptyEn(CAN_TypeDef * CANx)
+void CAN_INTRXNotEmptyEn(CAN_TypeDef *CANx)
 {
-	CANx->IE |= (1 << CAN_IE_RXDA_Pos);
+    CANx->IE |= (1 << CAN_IE_RXDA_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTRXNotEmptyDis()
-* ¹¦ÄÜËµÃ÷:	µ±RX FIFOÖÐÓÐÊý¾ÝÊ±£¨·Ç¿Õ£©´¥·¢ÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTRXNotEmptyDis()
+* åŠŸèƒ½è¯´æ˜Ž:	å½“RX FIFOä¸­æœ‰æ•°æ®æ—¶ï¼ˆéžç©ºï¼‰è§¦å‘ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTRXNotEmptyDis(CAN_TypeDef * CANx)
+void CAN_INTRXNotEmptyDis(CAN_TypeDef *CANx)
 {
-	CANx->IE &= ~(1 << CAN_IE_RXDA_Pos);
+    CANx->IE &= ~(1 << CAN_IE_RXDA_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTRXNotEmptyStat()
-* ¹¦ÄÜËµÃ÷:	RX FIFO·Ç¿ÕÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTTXBufEmptyEn()
+* åŠŸèƒ½è¯´æ˜Ž:	å½“TX Bufferç©ºæ—¶è§¦å‘ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t CAN_INTRXNotEmptyStat(CAN_TypeDef * CANx)
+void CAN_INTTXBufEmptyEn(CAN_TypeDef *CANx)
 {
-	return (CANx->IF & CAN_IF_RXDA_Msk) ? 1 : 0;
+    CANx->IE |= (1 << CAN_IE_TXBR_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTTXBufEmptyEn()
-* ¹¦ÄÜËµÃ÷:	µ±TX Buffer¿ÕÊ±´¥·¢ÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTTXBufEmptyDis()
+* åŠŸèƒ½è¯´æ˜Ž:	å½“TX Bufferç©ºæ—¶è§¦å‘ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTTXBufEmptyEn(CAN_TypeDef * CANx)
+void CAN_INTTXBufEmptyDis(CAN_TypeDef *CANx)
 {
-	CANx->IE |= (1 << CAN_IE_TXBR_Pos);
+    CANx->IE &= ~(1 << CAN_IE_TXBR_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTTXBufEmptyDis()
-* ¹¦ÄÜËµÃ÷:	µ±TX Buffer¿ÕÊ±´¥·¢ÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTErrWarningEn()
+* åŠŸèƒ½è¯´æ˜Ž:	TXERR/RXERRè®¡æ•°å€¼è¾¾åˆ°Error Warning Limitæ—¶è§¦å‘ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTTXBufEmptyDis(CAN_TypeDef * CANx)
+void CAN_INTErrWarningEn(CAN_TypeDef *CANx)
 {
-	CANx->IE &= ~(1 << CAN_IE_TXBR_Pos);
+    CANx->IE |= (1 << CAN_IE_ERRWARN_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTTXBufEmptyStat()
-* ¹¦ÄÜËµÃ÷:	TX Buffer¿ÕÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTErrWarningDis()
+* åŠŸèƒ½è¯´æ˜Ž:	TXERR/RXERRè®¡æ•°å€¼è¾¾åˆ°Error Warning Limitæ—¶è§¦å‘ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t CAN_INTTXBufEmptyStat(CAN_TypeDef * CANx)
+void CAN_INTErrWarningDis(CAN_TypeDef *CANx)
 {
-	return (CANx->IF & CAN_IF_TXBR_Msk) ? 1 : 0;
+    CANx->IE &= ~(1 << CAN_IE_ERRWARN_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTErrWarningEn()
-* ¹¦ÄÜËµÃ÷:	TXERR/RXERR¼ÆÊýÖµ´ïµ½Error Warning LimitÊ±´¥·¢ÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTRXOverflowEn()
+* åŠŸèƒ½è¯´æ˜Ž:	RX FIFO æº¢å‡ºæ—¶è§¦å‘ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTErrWarningEn(CAN_TypeDef * CANx)
+void CAN_INTRXOverflowEn(CAN_TypeDef *CANx)
 {
-	CANx->IE |= (1 << CAN_IE_ERRWARN_Pos);
+    CANx->IE |= (1 << CAN_IE_RXOV_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTErrWarningDis()
-* ¹¦ÄÜËµÃ÷:	TXERR/RXERR¼ÆÊýÖµ´ïµ½Error Warning LimitÊ±´¥·¢ÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTRXOverflowDis()
+* åŠŸèƒ½è¯´æ˜Ž:	RX FIFO æº¢å‡ºæ—¶è§¦å‘ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTErrWarningDis(CAN_TypeDef * CANx)
+void CAN_INTRXOverflowDis(CAN_TypeDef *CANx)
 {
-	CANx->IE &= ~(1 << CAN_IE_ERRWARN_Pos);
+    CANx->IE &= ~(1 << CAN_IE_RXOV_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTErrWarningStat()
-* ¹¦ÄÜËµÃ÷:	TXERR/RXERR¼ÆÊýÖµ´ïµ½Error Warning LimitÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTRXOverflowClear()
+* åŠŸèƒ½è¯´æ˜Ž:	RX FIFO æº¢å‡ºä¸­æ–­æ¸…é™¤
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t CAN_INTErrWarningStat(CAN_TypeDef * CANx)
+void CAN_INTRXOverflowClear(CAN_TypeDef *CANx)
 {
-	return (CANx->IF & CAN_IF_ERRWARN_Msk) ? 1 : 0;
+    CANx->CMD = (1 << CAN_CMD_CLROV_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTRXOverflowEn()
-* ¹¦ÄÜËµÃ÷:	RX FIFO Òç³öÊ±´¥·¢ÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTWakeupEn()
+* åŠŸèƒ½è¯´æ˜Ž:	å”¤é†’äº‹ä»¶è§¦å‘ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTRXOverflowEn(CAN_TypeDef * CANx)
+void CAN_INTWakeupEn(CAN_TypeDef *CANx)
 {
-	CANx->IE |= (1 << CAN_IE_RXOV_Pos);
+    CANx->IE |= (1 << CAN_IE_WKUP_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTRXOverflowDis()
-* ¹¦ÄÜËµÃ÷:	RX FIFO Òç³öÊ±´¥·¢ÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTWakeupDis()
+* åŠŸèƒ½è¯´æ˜Ž:	å”¤é†’äº‹ä»¶è§¦å‘ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTRXOverflowDis(CAN_TypeDef * CANx)
+void CAN_INTWakeupDis(CAN_TypeDef *CANx)
 {
-	CANx->IE &= ~(1 << CAN_IE_RXOV_Pos);
+    CANx->IE &= ~(1 << CAN_IE_WKUP_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTRXOverflowStat()
-* ¹¦ÄÜËµÃ÷:	RX FIFO Òç³öÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTErrPassiveEn()
+* åŠŸèƒ½è¯´æ˜Ž:	TXERR/RXERRè®¡æ•°å€¼è¾¾åˆ°127æ—¶ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t CAN_INTRXOverflowStat(CAN_TypeDef * CANx)
+void CAN_INTErrPassiveEn(CAN_TypeDef *CANx)
 {
-	return (CANx->IF & CAN_IF_RXOV_Msk) ? 1 : 0;
+    CANx->IE |= (1 << CAN_IE_ERRPASS_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTRXOverflowClear()
-* ¹¦ÄÜËµÃ÷:	RX FIFO Òç³öÖÐ¶ÏÇå³ý
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTErrPassiveDis()
+* åŠŸèƒ½è¯´æ˜Ž:	TXERR/RXERRè®¡æ•°å€¼è¾¾åˆ°127æ—¶ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTRXOverflowClear(CAN_TypeDef * CANx)
+void CAN_INTErrPassiveDis(CAN_TypeDef *CANx)
 {
-	CANx->CMD = (1 << CAN_CMD_CLROV_Pos);
+    CANx->IE &= ~(1 << CAN_IE_ERRPASS_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTWakeupEn()
-* ¹¦ÄÜËµÃ÷:	»½ÐÑÊÂ¼þ´¥·¢ÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTArbitrLostEn()
+* åŠŸèƒ½è¯´æ˜Ž:	ä»²è£å¤±è´¥ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTWakeupEn(CAN_TypeDef * CANx)
+void CAN_INTArbitrLostEn(CAN_TypeDef *CANx)
 {
-	CANx->IE |= (1 << CAN_IE_WKUP_Pos);
+    CANx->IE |= (1 << CAN_IE_ARBLOST_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTWakeupDis()
-* ¹¦ÄÜËµÃ÷:	»½ÐÑÊÂ¼þ´¥·¢ÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTArbitrLostDis()
+* åŠŸèƒ½è¯´æ˜Ž:	ä»²è£å¤±è´¥ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTWakeupDis(CAN_TypeDef * CANx)
+void CAN_INTArbitrLostDis(CAN_TypeDef *CANx)
 {
-	CANx->IE &= ~(1 << CAN_IE_WKUP_Pos);
+    CANx->IE &= ~(1 << CAN_IE_ARBLOST_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTWakeupStat()
-* ¹¦ÄÜËµÃ÷:	»½ÐÑÊÂ¼þÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTBusErrorEn()
+* åŠŸèƒ½è¯´æ˜Ž:	æ€»çº¿é”™è¯¯ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t CAN_INTWakeupStat(CAN_TypeDef * CANx)
+void CAN_INTBusErrorEn(CAN_TypeDef *CANx)
 {
-	return (CANx->IF & CAN_IF_WKUP_Msk) ? 1 : 0;
+    CANx->IE |= (1 << CAN_IE_BUSERR_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTErrPassiveEn()
-* ¹¦ÄÜËµÃ÷:	TXERR/RXERR¼ÆÊýÖµ´ïµ½127Ê±ÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTBusErrorDis()
+* åŠŸèƒ½è¯´æ˜Ž:	æ€»çº¿é”™è¯¯ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void CAN_INTErrPassiveEn(CAN_TypeDef * CANx)
+void CAN_INTBusErrorDis(CAN_TypeDef *CANx)
 {
-	CANx->IE |= (1 << CAN_IE_ERRPASS_Pos);
+    CANx->IE &= ~(1 << CAN_IE_BUSERR_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTErrPassiveDis()
-* ¹¦ÄÜËµÃ÷:	TXERR/RXERR¼ÆÊýÖµ´ïµ½127Ê±ÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	CAN_INTStat()
+* åŠŸèƒ½è¯´æ˜Ž:	æŸ¥è¯¢ä¸­æ–­çŠ¶æ€
+* è¾“    å…¥: CAN_TypeDef * CANx	æŒ‡å®šè¦è¢«è®¾ç½®çš„CANæŽ¥å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬CAN
+* è¾“    å‡º: uint32_t			å½“å‰ä¸­æ–­çŠ¶æ€
+* æ³¨æ„äº‹é¡¹: CANx->IFè¯»å–æ¸…é›¶ï¼Œå› æ­¤åœ¨ä¸­æ–­ISRä¸­åªèƒ½è¯»å–ä¸€æ¬¡ï¼Œä¸èƒ½å¤šæ¬¡è¯»å–
 ******************************************************************************************************************************************/
-void CAN_INTErrPassiveDis(CAN_TypeDef * CANx)
+uint32_t CAN_INTStat(CAN_TypeDef *CANx)
 {
-	CANx->IE &= ~(1 << CAN_IE_ERRPASS_Pos);
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTErrPassiveStat()
-* ¹¦ÄÜËµÃ÷:	TXERR/RXERR¼ÆÊýÖµ´ïµ½127ÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-uint32_t CAN_INTErrPassiveStat(CAN_TypeDef * CANx)
-{
-	return (CANx->IF & CAN_IF_ERRPASS_Msk) ? 1 : 0;
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTArbitrLostEn()
-* ¹¦ÄÜËµÃ÷:	ÖÙ²ÃÊ§°ÜÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-void CAN_INTArbitrLostEn(CAN_TypeDef * CANx)
-{
-	CANx->IE |= (1 << CAN_IE_ARBLOST_Pos);
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTArbitrLostDis()
-* ¹¦ÄÜËµÃ÷:	ÖÙ²ÃÊ§°ÜÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-void CAN_INTArbitrLostDis(CAN_TypeDef * CANx)
-{
-	CANx->IE &= ~(1 << CAN_IE_ARBLOST_Pos);
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTArbitrLostStat()
-* ¹¦ÄÜËµÃ÷:	ÖÙ²ÃÊ§°ÜÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-uint32_t CAN_INTArbitrLostStat(CAN_TypeDef * CANx)
-{
-	return (CANx->IF & CAN_IF_ARBLOST_Msk) ? 1 : 0;
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTBusErrorEn()
-* ¹¦ÄÜËµÃ÷:	×ÜÏß´íÎóÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-void CAN_INTBusErrorEn(CAN_TypeDef * CANx)
-{
-	CANx->IE |= (1 << CAN_IE_BUSERR_Pos);
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTBusErrorDis()
-* ¹¦ÄÜËµÃ÷:	×ÜÏß´íÎóÖÐ¶Ï½ûÖ¹
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-void CAN_INTBusErrorDis(CAN_TypeDef * CANx)
-{
-	CANx->IE &= ~(1 << CAN_IE_BUSERR_Pos);
-}
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	CAN_INTBusErrorStat()
-* ¹¦ÄÜËµÃ÷:	×ÜÏß´íÎóÖÐ¶ÏÊÇ·ñ´¥·¢
-* Êä    Èë: CAN_TypeDef * CANx	Ö¸¶¨Òª±»ÉèÖÃµÄCAN½Ó¿Ú£¬ÓÐÐ§Öµ°üÀ¨CAN
-* Êä    ³ö: uint32_t			1 ÒÑ´¥·¢    0 Î´´¥·¢
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-uint32_t CAN_INTBusErrorStat(CAN_TypeDef * CANx)
-{
-	return (CANx->IF & CAN_IF_BUSERR_Msk) ? 1 : 0;
+    return CANx->IF;
 }
