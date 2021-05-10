@@ -55,6 +55,11 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_LWIP
         select PHY_USING_LAN8720A
         select RT_LWIP_USING_HW_CHECKSUM
+
+    config BSP_USING_ETH_SAL
+        bool "Enable Ethernet with SAL"
+        depends on BSP_USING_ETH
+        default y
         select RT_USING_SAL
         select SAL_USING_POSIX
 
