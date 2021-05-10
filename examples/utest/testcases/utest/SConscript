@@ -1,0 +1,14 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+
+if GetDepend('UTEST_SELF_PASS_TC'):
+    src += ['pass_tc.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = ['UTEST_SELF_PASS_TC'], CPPPATH = CPPPATH)
+
+Return('group')
