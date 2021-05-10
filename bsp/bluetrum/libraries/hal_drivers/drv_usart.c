@@ -229,10 +229,18 @@ void uart_irq_process(struct rt_serial_device *serial)
         (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
     rt_hw_interrupt_enable(level);
 
-    if (rx_length)
-    {
-        shell_rx_ind();
+    if ((serial->parent.rx_indicate != RT_NULL) && (rx_length != 0)) {
+    #ifdef RT_CONSOLE_DEVICE_NAME
+        if (serial == &uart_obj[*(RT_CONSOLE_DEVICE_NAME + 4) - '0'].serial) {
+            shell_rx_ind();
+        } else
+    #endif
+        {
+            rt_kprintf("rx_indicate must loacted in the .comm section!\n");
+            //serial->parent.rx_indicate(&serial->parent, rx_length);
+        }
     }
+
 }
 
 RT_SECTION(".irq.usart")

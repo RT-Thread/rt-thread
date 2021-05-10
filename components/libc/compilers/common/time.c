@@ -16,10 +16,11 @@
  * 2012-12-08     Bernard      <clock_time.c> fix the issue of _timevalue.tv_usec initialization,
  *                             which found by Rob <rdent@iinet.net.au>
  * 2021-02-12     Meco Man     move all of the functions located in <clock_time.c> to this file
- * 2021-03-15     Meco Man     fixed bug: https://club.rt-thread.org/ask/question/423650.html
+ * 2021-03-15     Meco Man     fixed a bug of leaking memory in asctime()
+ * 2021-05-01     Meco Man     support fixed timezone
  */
 
-#include <sys/time.h>
+#include "sys/time.h"
 #include <rtthread.h>
 
 #ifdef RT_USING_DEVICE
@@ -29,6 +30,10 @@
 #define DBG_TAG    "TIME"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
+
+#ifndef RT_LIBC_FIXED_TIMEZONE
+#define RT_LIBC_FIXED_TIMEZONE 8 /* UTC+8 */
+#endif
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -69,18 +74,18 @@ static void num2str(char *c, int i)
 }
 
 /**
- * Get time from RTC device (without timezone)
+ * Get time from RTC device (without timezone, UTC+0)
  * @param tv: struct timeval
- * @return -1 failure; 1 success
+ * @return the operation status, RT_EOK on successful
  */
-static int get_timeval(struct timeval *tv)
+static rt_err_t get_timeval(struct timeval *tv)
 {
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
     rt_err_t rst = -RT_ERROR;
 
     if (tv == RT_NULL)
-        return -1;
+        return -RT_EINVAL;
 
     /* default is 0 */
     tv->tv_sec = 0;
@@ -104,24 +109,24 @@ static int get_timeval(struct timeval *tv)
     }
     else
     {
-        /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
+        /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
         rt_kprintf("Cannot find a RTC device to provide time!\r\n");
-        return -1;
+        return -RT_ENOSYS;
     }
 
-    return (rst < 0) ? -1 : 1;
+    return rst;
 
 #else
-    /* LOG_W will cause a recursive printing if ulog timestamp function is turned on */
+    /* LOG_W will cause a recursive printing if ulog timestamp function is enabled */
     rt_kprintf("Cannot find a RTC device to provide time!\r\n");
-    return -1;
+    return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
 
 /**
  * Set time to RTC device (without timezone)
  * @param tv: struct timeval
- * @return -1 failure; 1 success
+ * @return the operation status, RT_EOK on successful
  */
 static int set_timeval(struct timeval *tv)
 {
@@ -130,7 +135,7 @@ static int set_timeval(struct timeval *tv)
     rt_err_t rst = -RT_ERROR;
 
     if (tv == RT_NULL)
-        return -1;
+        return -RT_EINVAL;
 
     /* optimization: find rtc device only first */
     if (device == RT_NULL)
@@ -151,14 +156,14 @@ static int set_timeval(struct timeval *tv)
     else
     {
         LOG_W("Cannot find a RTC device to provide time!");
-        return -1;
+        return -RT_ENOSYS;
     }
 
-    return (rst < 0) ? -1 : 1;
+    return rst;
 
 #else
     LOG_W("Cannot find a RTC device to provide time!");
-    return -1;
+    return -RT_ENOSYS;
 #endif /* RT_USING_RTC */
 }
 
@@ -208,14 +213,11 @@ struct tm* gmtime(const time_t* t)
 }
 RTM_EXPORT(gmtime);
 
-/*TODO: timezone */
 struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
-    int utc_plus;
 
-    utc_plus = 8; /* GMT: UTC+8 */
-    local_tz = *t + utc_plus * 3600;
+    local_tz = *t + RT_LIBC_FIXED_TIMEZONE * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -227,15 +229,12 @@ struct tm* localtime(const time_t* t)
 }
 RTM_EXPORT(localtime);
 
-/* TODO: timezone */
 time_t mktime(struct tm * const t)
 {
     time_t timestamp;
-    int utc_plus;
 
-    utc_plus = 8; /* GMT: UTC+8 */
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * utc_plus;
+    timestamp = timestamp - 3600 * RT_LIBC_FIXED_TIMEZONE;
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -270,16 +269,16 @@ char* asctime(const struct tm *timeptr)
 }
 RTM_EXPORT(asctime);
 
-char *ctime_r (const time_t * tim_p, char * result)
+char *ctime_r(const time_t * tim_p, char * result)
 {
     struct tm tm;
-    return asctime_r (localtime_r (tim_p, &tm), result);
+    return asctime_r(localtime_r(tim_p, &tm), result);
 }
 RTM_EXPORT(ctime_r);
 
 char* ctime(const time_t *tim_p)
 {
-    return asctime (localtime (tim_p));
+    return asctime(localtime(tim_p));
 }
 RTM_EXPORT(ctime);
 
@@ -296,7 +295,7 @@ RT_WEAK time_t time(time_t *t)
 {
     struct timeval now;
 
-    if(get_timeval(&now) > 0)
+    if(get_timeval(&now) == RT_EOK)
     {
         if (t)
         {
@@ -306,7 +305,7 @@ RT_WEAK time_t time(time_t *t)
     }
     else
     {
-        errno = EFAULT;
+        rt_set_errno(EFAULT);
         return ((time_t)-1);
     }
 }
@@ -324,18 +323,18 @@ int stime(const time_t *t)
 
     if (!t)
     {
-        errno = EFAULT;
+        rt_set_errno(EFAULT);
         return -1;
     }
 
     tv.tv_sec = *t;
-    if (set_timeval(&tv) > 0)
+    if (set_timeval(&tv) == RT_EOK)
     {
         return 0;
     }
     else
     {
-        errno = EFAULT;
+        rt_set_errno(EFAULT);
         return -1;
     }
 }
@@ -416,47 +415,48 @@ time_t timegm(struct tm * const t)
 }
 RTM_EXPORT(timegm);
 
-/* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    if (tv != RT_NULL && get_timeval(tv) > 0)
+    /* The use of the timezone structure is obsolete;
+     * the tz argument should normally be specified as NULL.
+     * The tz_dsttime field has never been used under Linux.
+     * Thus, the following is purely of historic interest.
+     */
+    if(tz != RT_NULL)
+    {
+        tz->tz_dsttime = DST_NONE;
+        tz->tz_minuteswest = -(RT_LIBC_FIXED_TIMEZONE * 60);
+    }
+
+    if (tv != RT_NULL && get_timeval(tv) == RT_EOK)
     {
         return 0;
     }
     else
     {
-        errno = EFAULT;
+        rt_set_errno(EFAULT);
         return -1;
     }
 }
 RTM_EXPORT(gettimeofday);
 
-/* TODO: timezone */
 int settimeofday(const struct timeval *tv, const struct timezone *tz)
 {
-    if (tv != RT_NULL)
+    /* The use of the timezone structure is obsolete;
+     * the tz argument should normally be specified as NULL.
+     * The tz_dsttime field has never been used under Linux.
+     * Thus, the following is purely of historic interest.
+     */
+    if (tv != RT_NULL
+        && tv->tv_sec >= 0
+        && tv->tv_usec >= 0
+        && set_timeval((struct timeval *)tv) == RT_EOK)
     {
-        if(tv->tv_sec >= 0 && tv->tv_usec >= 0)
-        {
-            if(set_timeval((struct timeval *)tv) > 0)
-            {
-                return 0;
-            }
-            else
-            {
-                errno = EFAULT;
-                return -1;
-            }
-        }
-        else
-        {
-            errno = EINVAL;
-            return -1;
-        }
+        return 0;
     }
     else
     {
-        errno = EFAULT;
+        rt_set_errno(EINVAL);
         return -1;
     }
 }
