@@ -17,6 +17,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_COM2
         bool "Enable COM2 (uart2 pin conflict with Ethernet and PWM)"
+        depends on (!BSP_USING_ETH && !BSP_USING_PWM)
         select BSP_USING_UART
         select BSP_USING_UART2
         default n
