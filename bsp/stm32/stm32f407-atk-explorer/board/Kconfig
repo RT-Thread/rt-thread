@@ -45,9 +45,6 @@ menu "Onboard Peripheral Drivers"
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
         default n
-
-    config PHY_USING_LAN8720A
-        bool
     
     config BSP_USING_ETH
         bool "Enable Ethernet"
@@ -75,12 +72,12 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
-    if BSP_USING_SDCARD
+
     config SDIO_MAX_FREQ
         int "sdio max freq"
         range 0 24000000
+        depends on BSP_USING_SDCARD
         default 1000000
-    endif
 
 endmenu
 
