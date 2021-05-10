@@ -447,6 +447,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                            variant_dir=kernel_vdir + '/components',
                            duplicate=0,
                            exports='remove_components'))
+    # include testcases
+    objs.extend(SConscript(Rtt_Root + '/examples/utest/testcases/SConscript',
+                           variant_dir=kernel_vdir + '/examples/utest/testcases',
+                           duplicate=0))
 
     return objs
 

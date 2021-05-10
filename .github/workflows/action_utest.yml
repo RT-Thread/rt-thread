@@ -1,0 +1,40 @@
+name: AutoTestCI
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: ${{ matrix.legs.UTEST }}
+    strategy:
+      fail-fast: false
+      matrix:
+       legs:
+         - {UTEST: "kernel/ipc",       RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/utest_self/config.h"}
+         - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/utest_self/config.h"}
+    
+    env:
+      TEST_BSP_ROOT: ${{ matrix.legs.RTT_BSP }}
+      TEST_CONFIG_FILE: ${{ matrix.legs.CONFIG_FILE }}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Prepare env
+      run: |
+        sudo apt-get update > /dev/null
+        sudo apt-get -yqq install scons qemu-system-arm git
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/arm-2017q2-v6/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2
+        sudo tar xjf gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 -C /opt
+    - name: Build bsp
+      run: |
+        export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-6-2017-q2-update/bin
+        /opt/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gcc --version
+        cp $TEST_CONFIG_FILE $TEST_BSP_ROOT/rtconfig.h
+        scons -j$(nproc) -C $TEST_BSP_ROOT
+    - name: Start test
+      run: |
+        git clone https://github.com/armink/UtestRunner.git
+        pushd $TEST_BSP_ROOT
+        dd if=/dev/zero of=sd.bin bs=1024 count=65536
+        popd
+        pushd UtestRunner
+        python3 qemu_runner.py --elf ../$TEST_BSP_ROOT/rtthread.elf --sd ../$TEST_BSP_ROOT/sd.bin
+        cat rtt_console.log
+        popd
