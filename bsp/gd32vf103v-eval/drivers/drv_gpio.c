@@ -349,13 +349,13 @@ static rt_err_t gd32vf_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     {
         return RT_ENOSYS;
     }
-    
+
     irqindex = bit2bitno(index->pin);
     if (irqindex < 0 || irqindex >= ITEM_NUM(pin_irq_map))
     {
         return RT_ENOSYS;
     }
-    
+
     if (enabled == PIN_IRQ_ENABLE)
     {
         level = rt_hw_interrupt_disable();
