@@ -59,10 +59,10 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SAL
         select SAL_USING_POSIX
 
-	config PHY_USING_LAN8720A
-		bool
-		depends on BSP_USING_ETH
-		default y
+    config PHY_USING_LAN8720A
+        bool
+        depends on BSP_USING_ETH
+        default y
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c1)"
