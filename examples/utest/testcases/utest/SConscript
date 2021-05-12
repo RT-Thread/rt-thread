@@ -2,10 +2,9 @@ Import('rtconfig')
 from building import *
 
 cwd     = GetCurrentDir()
-src     = []
-
-if GetDepend('UTEST_SELF_PASS_TC'):
-    src += ['pass_tc.c']
+src     = Split('''
+pass_tc.c
+''')
 
 CPPPATH = [cwd]
 
