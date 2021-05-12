@@ -229,8 +229,6 @@
 
 /* Utilities */
 
-#define RT_USING_RYM
-#define YMODEM_USING_FILE_TRANSFER
 #define RT_USING_LWP
 
 /* RT-Thread online packages */
