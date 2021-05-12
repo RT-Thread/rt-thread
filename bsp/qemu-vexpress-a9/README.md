@@ -34,7 +34,7 @@ QEMU/VExpress A9是QEMU模拟器针对ARM VExpress-A9 FPGA开发板进行软件�
 
 ## 3. 执行
 
-当要执行编译好的RT-Thread时，在这个bsp目录下已经提供了运行脚本文件：qemu.bat/qemu.sh
+当要执行编译好的RT-Thread时，在这个bsp目录下已经提供了运行脚本文件：qemu.bat和qemu.sh。可以在bsp目录下运行env，在env中敲入qemu.bat即可直接运行。
 
 这个执行脚本默认把串口输出到stdio（即控制台）上，所以直接执行脚本后就可以输出结果了。
 
@@ -99,7 +99,7 @@ start qemu-system-arm -M vexpress-a9 -kernel rtthread.elf -serial stdio -sd sd.b
 
 维护人：[bernard][4]
 
-  [1]: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.subset.boards.express/index.html
-  [2]: https://www.rt-thread.org/page/download.html
-  [3]: https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
-  [4]: https://github.com/BernardXiong
+[1]: http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.subset.boards.express/index.html
+[2]: https://www.rt-thread.org/page/download.html
+[3]: https://launchpad.net/gcc-arm-embedded/5.0/5-2016-q3-update/+download/gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
+[4]: https://github.com/BernardXiong
