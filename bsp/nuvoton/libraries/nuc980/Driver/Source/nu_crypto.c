@@ -2170,6 +2170,8 @@ static uint32_t mpShortDiv(uint32_t q[], const uint32_t u[], uint32_t v,
         bitmask >>= 1;
     }
 
+    if (shift == BITS_PER_DIGIT) return 0;   /* Avoid cppcheck false-alarm. */
+
     v <<= shift;
     overflow = mpShiftLeft(q, u, shift, ndigits);
     uu = q;
