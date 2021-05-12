@@ -494,7 +494,7 @@ rt_err_t rt_hw_mtd_spinand_init(void)
     if (u32IsInited)
         return RT_EOK;
 
-    result = rt_mutex_init(SPINAND_FLASH_LOCK, "spinand", RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(SPINAND_FLASH_LOCK, "spinand", RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 
     result = spinand_flash_init(SPINAND_FLASH_QSPI);

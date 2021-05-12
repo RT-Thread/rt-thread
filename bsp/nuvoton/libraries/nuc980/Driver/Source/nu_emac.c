@@ -191,7 +191,7 @@ void EMAC_PhyInit(EMAC_T *EMAC)
 
     while (!(EMAC_MdioRead(EMAC, PHY_STATUS_REG, EMAC_PHY_ADDR) & PHY_STATUS_LINK_VALID))
     {
-        if (i++ > 2000000UL)      /* Cable not connected */
+        if (i++ > 10000UL)      /* Cable not connected */
         {
             EMAC->CTL &= ~EMAC_CTL_OPMODE_Msk;
             EMAC->CTL &= ~EMAC_CTL_FUDUP_Msk;
@@ -199,7 +199,7 @@ void EMAC_PhyInit(EMAC_T *EMAC)
         }
     }
 
-    if (i <= 2000000UL)
+    if (i <= 10000UL)
     {
         /* Configure auto negotiation capability */
         EMAC_MdioWrite(EMAC, PHY_ANA_REG, EMAC_PHY_ADDR, PHY_ANA_DR100_TX_FULL |
