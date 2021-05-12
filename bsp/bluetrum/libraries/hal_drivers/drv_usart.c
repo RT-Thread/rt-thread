@@ -10,6 +10,7 @@
 
 #include "board.h"
 #include "drv_usart.h"
+#include <shell.h>
 
 #ifdef RT_USING_SERIAL
 
@@ -21,20 +22,40 @@
 
 enum
 {
+#ifdef BSP_USING_UART0
     UART0_INDEX,
+#endif
+#ifdef BSP_USING_UART1
     UART1_INDEX,
+#endif
+#ifdef BSP_USING_UART2
+    UART2_INDEX,
+#endif
 };
 
 static struct ab32_uart_config uart_config[] =
 {
+#ifdef BSP_USING_UART0
     {
         .name = "uart0",
         .instance = UART0_BASE,
+        .mode = UART_MODE_TX_RX | UART_MODE_1LINE,
     },
+#endif
+#ifdef BSP_USING_UART1
     {
         .name = "uart1",
         .instance = UART1_BASE,
+        .mode = UART_MODE_TX_RX,
+    },
+#endif
+#ifdef BSP_USING_UART2
+    {
+        .name = "uart2",
+        .instance = UART2_BASE,
+        .mode = UART_MODE_TX_RX,
     }
+#endif
 };
 
 static struct ab32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
@@ -48,7 +69,7 @@ static rt_err_t ab32_configure(struct rt_serial_device *serial, struct serial_co
     uart = rt_container_of(serial, struct ab32_uart, serial);
     uart->handle.instance           = uart->config->instance;
     uart->handle.init.baud          = cfg->baud_rate;
-    uart->handle.init.mode          = UART_MODE_TX_RX;
+    uart->handle.init.mode          = uart->config->mode;
 
     switch (cfg->data_bits)
     {
@@ -127,6 +148,7 @@ static int ab32_putc(struct rt_serial_device *serial, char ch)
     return 1;
 }
 
+RT_SECTION(".irq.usart")
 static int ab32_getc(struct rt_serial_device *serial)
 {
     int ch;
@@ -148,18 +170,102 @@ static rt_size_t ab32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *
     return -1;
 }
 
+extern struct finsh_shell *shell;
+
+RT_SECTION(".irq.usart")
+static rt_err_t shell_rx_ind(void)
+{
+    RT_ASSERT(shell != RT_NULL);
+
+    /* release semaphore to let finsh thread rx data */
+    rt_sem_release(&shell->rx_sem);
+
+    return RT_EOK;
+}
+
+RT_SECTION(".irq.usart")
+void uart_irq_process(struct rt_serial_device *serial)
+{
+    int ch = -1;
+    rt_base_t level;
+    struct rt_serial_rx_fifo* rx_fifo;
+
+    /* interrupt mode receive */
+    rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
+    RT_ASSERT(rx_fifo != RT_NULL);
+
+    while (1)
+    {
+        ch = serial->ops->getc(serial);
+        if (ch == -1) break;
+
+
+        /* disable interrupt */
+        level = rt_hw_interrupt_disable();
+
+        rx_fifo->buffer[rx_fifo->put_index] = ch;
+        rx_fifo->put_index += 1;
+        if (rx_fifo->put_index >= serial->config.bufsz) rx_fifo->put_index = 0;
+
+        /* if the next position is read index, discard this 'read char' */
+        if (rx_fifo->put_index == rx_fifo->get_index)
+        {
+            rx_fifo->get_index += 1;
+            rx_fifo->is_full = RT_TRUE;
+            if (rx_fifo->get_index >= serial->config.bufsz) rx_fifo->get_index = 0;
+
+            // _serial_check_buffer_size();
+        }
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+    }
+
+    rt_size_t rx_length;
+
+    /* get rx length */
+    level = rt_hw_interrupt_disable();
+    rx_length = (rx_fifo->put_index >= rx_fifo->get_index)? (rx_fifo->put_index - rx_fifo->get_index):
+        (serial->config.bufsz - (rx_fifo->get_index - rx_fifo->put_index));
+    rt_hw_interrupt_enable(level);
+
+    if ((serial->parent.rx_indicate != RT_NULL) && (rx_length != 0)) {
+    #ifdef RT_CONSOLE_DEVICE_NAME
+        if (serial == &uart_obj[*(RT_CONSOLE_DEVICE_NAME + 4) - '0'].serial) {
+            shell_rx_ind();
+        } else
+    #endif
+        {
+            rt_kprintf("rx_indicate must loacted in the .comm section!\n");
+            //serial->parent.rx_indicate(&serial->parent, rx_length);
+        }
+    }
+
+}
+
+RT_SECTION(".irq.usart")
 static void uart_isr(int vector, void *param)
 {
     rt_interrupt_enter();
 
+#ifdef BSP_USING_UART0
     if(hal_uart_getflag(UART0_BASE, UART_FLAG_RXPND))       //RX one byte finish
     {
-        rt_hw_serial_isr(&(uart_obj[UART0_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+        uart_irq_process(&(uart_obj[UART0_INDEX].serial));
     }
-    // if(hal_uart_getflag(UART1_BASE, UART_FLAG_RXPND))       //RX one byte finish
-    // {
-    //     rt_hw_serial_isr(&(uart_obj[UART1_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
-    // }
+#endif
+#ifdef BSP_USING_UART1
+    if(hal_uart_getflag(UART1_BASE, UART_FLAG_RXPND))       //RX one byte finish
+    {
+        uart_irq_process(&(uart_obj[UART1_INDEX].serial));
+    }
+#endif
+#ifdef BSP_USING_UART2
+    if(hal_uart_getflag(UART2_BASE, UART_FLAG_RXPND))       //RX one byte finish
+    {
+        uart_irq_process(&(uart_obj[UART2_INDEX].serial));
+    }
+#endif
 
     rt_interrupt_leave();
 }

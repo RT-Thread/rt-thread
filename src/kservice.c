@@ -17,6 +17,7 @@
  * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
+ * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  */
 
 #include <rtthread.h>
@@ -125,7 +126,7 @@ RTM_EXPORT(_rt_errno);
  */
 RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
-#ifdef RT_USING_TINY_SIZE
+#ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
 
     while (count--)
@@ -146,10 +147,10 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
-        /* If we get this far, we know that n is large and m is word-aligned. */
+        /* If we get this far, we know that count is large and s is word-aligned. */
         aligned_addr = (unsigned long *)s;
 
-        /* Store D into each char sized location in BUFFER so that
+        /* Store d into each char sized location in buffer so that
          * we can set large blocks quickly.
          */
         if (LBLOCKSIZE == 4)
@@ -209,7 +210,7 @@ RTM_EXPORT(rt_memset);
  */
 RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
-#ifdef RT_USING_TINY_SIZE
+#ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
     rt_ubase_t len;
 
@@ -279,6 +280,8 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif
 }
 RTM_EXPORT(rt_memcpy);
+
+#ifndef RT_KSERVICE_USING_STDLIB
 
 /**
  * This function will move memory content from source address to destination
@@ -505,6 +508,8 @@ rt_size_t rt_strlen(const char *s)
     return sc - s;
 }
 RTM_EXPORT(rt_strlen);
+
+#endif /*RT_KSERVICE_USING_STDLIB*/
 
 #ifdef RT_USING_HEAP
 /**
@@ -917,7 +922,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             s = va_arg(args, char *);
             if (!s) s = "(NULL)";
 
-            len = rt_strlen(s);
+            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
 #ifdef RT_PRINTF_PRECISION
             if (precision > 0 && len > precision) len = precision;
 #endif

@@ -125,7 +125,7 @@ void TRACE_SWOSetup(void)
 /**************************************************************************//**
  * @brief Profiler configuration for EFM32GG990F11024/EFM32GG-DK3750
  * @return true if energyAware Profiler/SWO is enabled, false if not
- * @note If first word of the user page is zero, this will not 
+ * @note If first word of the user page is zero, this will not
  *       enable SWO profiler output
  *****************************************************************************/
 bool TRACE_ProfilerSetup(void)
@@ -141,7 +141,7 @@ bool TRACE_ProfilerSetup(void)
   {
     TRACE_SWOSetup();
     return true;
-  }  
+  }
 }
 
 /** @} (end group BSP) */

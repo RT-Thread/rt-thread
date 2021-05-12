@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,9 @@
 #define __DFS_FS_H__
 
 #include <dfs.h>
+#ifdef RT_USING_LIBC
+#include <sys/types.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

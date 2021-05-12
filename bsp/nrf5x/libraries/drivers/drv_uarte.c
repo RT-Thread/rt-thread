@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -68,7 +68,7 @@ static void uarte_evt_handler(nrfx_uarte_event_t const * p_event,
         case NRFX_UARTE_EVT_ERROR:
             (void)nrfx_uarte_rx(&(p_cb->uarte_instance), p_cb->rx_buffer, 1);
             break;
-        
+
         case NRFX_UARTE_EVT_TX_DONE:
             if(p_cb->serial->parent.open_flag&RT_DEVICE_FLAG_INT_TX)
             {
@@ -90,7 +90,7 @@ static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configu
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-  
+
     if (serial->parent.user_data == RT_NULL)
     {
         return -RT_ERROR;
@@ -145,11 +145,11 @@ static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configu
                             NRF_UARTE_PARITY_EXCLUDED:NRF_UARTE_PARITY_INCLUDED;
     config.hal_cfg.hwfc = NRF_UARTE_HWFC_DISABLED;
     config.pselrxd = p_cb->rx_pin;
-    config.pseltxd = p_cb->tx_pin;   
+    config.pseltxd = p_cb->tx_pin;
     config.p_context = (void *)p_cb;
 
     nrfx_uarte_init(&(p_cb->uarte_instance),(nrfx_uarte_config_t const *)&config,uarte_evt_handler);
-    nrfx_uarte_rx(&(p_cb->uarte_instance),p_cb->rx_buffer,1);    
+    nrfx_uarte_rx(&(p_cb->uarte_instance),p_cb->rx_buffer,1);
     p_cb->isInit = true;
     return RT_EOK;
 }
@@ -227,7 +227,7 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
         while(nrfx_uarte_tx_in_progress(&(p_cb->uarte_instance)))
         {
         }
-    } 
+    }
     return rtn;
 }
 
@@ -240,7 +240,7 @@ static int _uart_getc(struct rt_serial_device *serial)
     if (serial->parent.user_data != RT_NULL)
     {
         p_cb = (drv_uart_cb_t*)serial->parent.user_data;
-    }  
+    }
     if(p_cb->rx_length)
     {
         ch = p_cb->rx_buffer[0];
@@ -260,15 +260,15 @@ void rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-#ifdef BSP_USING_UART0 
+#ifdef BSP_USING_UART0
     m_serial_0.config = config;
     m_serial_0.ops = &_uart_ops;
     m_uarte0_cb.serial = &m_serial_0;
     rt_hw_serial_register(&m_serial_0, "uart0", \
                             RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX ,  &m_uarte0_cb);
 #endif  /* BSP_USING_UART0 */
-    
-#ifdef BSP_USING_UART1 
+
+#ifdef BSP_USING_UART1
     m_serial_1.config = config;
     m_serial_1.ops = &_uart_ops;
     m_uarte1_cb.serial = &m_serial_1;

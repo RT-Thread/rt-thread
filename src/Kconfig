@@ -116,6 +116,18 @@ config RT_TIMER_THREAD_STACK_SIZE
 
 endif
 
+menu "kservice optimization"
+
+config RT_KSERVICE_USING_STDLIB
+    bool "Enable kservice to use standard C library"
+    default n
+
+config RT_KSERVICE_USING_TINY_SIZE
+    bool "Enable kservice to use tiny size"
+    default n
+
+endmenu
+
 menuconfig RT_DEBUG
     bool "Enable debugging features"
     default y
@@ -341,7 +353,7 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x40003
+    default 0x40004
     help
         RT-Thread version number
 

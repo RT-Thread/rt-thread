@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,7 +40,7 @@ struct lpc_uart
     USART_Type *uart_base;
     IRQn_Type irqn;
     clock_name_t clock_src;
-    
+
     struct rt_serial_device *serial;
     char *device_name;
 };
@@ -133,7 +133,7 @@ static const struct lpc_uart uarts[] =
         USART0,
         FLEXCOMM0_IRQn,
         kCLOCK_Flexcomm0,
-        
+
         &serial0,
         "uart",
     },
@@ -143,7 +143,7 @@ static const struct lpc_uart uarts[] =
         USART1,
         FLEXCOMM1_IRQn,
         kCLOCK_Flexcomm1,
-        
+
         &serial1,
         "uart1",
     },
@@ -153,7 +153,7 @@ static const struct lpc_uart uarts[] =
         USART2,
         FLEXCOMM2_IRQn,
         kCLOCK_Flexcomm2,
-        
+
         &serial2,
         "uart2",
     },
@@ -163,7 +163,7 @@ static const struct lpc_uart uarts[] =
         USART3,
         FLEXCOMM3_IRQn,
         kCLOCK_Flexcomm3,
-        
+
         &serial3,
         "uart3",
     },
@@ -173,7 +173,7 @@ static const struct lpc_uart uarts[] =
         USART4,
         FLEXCOMM4_IRQn,
         kCLOCK_Flexcomm4,
-        
+
         &serial4,
         "uart4",
     },
@@ -183,7 +183,7 @@ static const struct lpc_uart uarts[] =
         USART5,
         FLEXCOMM5_IRQn,
         kCLOCK_Flexcomm5,
-        
+
         &serial5,
         "uart5",
     },
@@ -193,7 +193,7 @@ static const struct lpc_uart uarts[] =
         USART6,
         FLEXCOMM6_IRQn,
         kCLOCK_Flexcomm6,
-        
+
         &serial6,
         "uart6",
     },
@@ -203,7 +203,7 @@ static const struct lpc_uart uarts[] =
         USART7,
         FLEXCOMM7_IRQn,
         kCLOCK_Flexcomm7,
-        
+
         &serial7,
         "uart7",
     },
@@ -270,11 +270,11 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    
+
     uart = (struct lpc_uart *)serial->parent.user_data;
 
     lpc_uart_gpio_init(uart);
-    
+
     /*
      * config.baudRate_Bps = 115200U;
      * config.parityMode = kUSART_ParityDisabled;
@@ -285,7 +285,7 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
      */
     USART_GetDefaultConfig(&config);
     config.baudRate_Bps = cfg->baud_rate;
-    
+
     switch (cfg->data_bits)
     {
         case DATA_BITS_7:
@@ -296,7 +296,7 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
             config.bitCountPerChar = kUSART_8BitsPerChar;
             break;
     }
-    
+
     switch (cfg->stop_bits)
     {
         case STOP_BITS_2:
@@ -306,7 +306,7 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
             config.stopBitCount = kUSART_OneStopBit;
             break;
     }
-    
+
     switch (cfg->parity)
     {
         case PARITY_ODD:
@@ -319,7 +319,7 @@ static rt_err_t lpc_configure(struct rt_serial_device *serial, struct serial_con
             config.parityMode = kUSART_ParityDisabled;
             break;
     }
-    
+
     config.enableTx = true;
     config.enableRx = true;
 
@@ -399,7 +399,7 @@ static void uart_isr(struct rt_serial_device *serial)
 
     /* UART in mode Receiver -------------------------------------------------*/
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -416,7 +416,7 @@ int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     int i;
-    
+
     for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
     {
         uarts[i].serial->ops    = &lpc_uart_ops;

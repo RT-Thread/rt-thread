@@ -1,11 +1,7 @@
 /*
- * File      : lcdc.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,40 +25,40 @@
 
 //Macro for PCR register setting
 #define TFT   ((U32)1 << 31)
-#define COLOR   (1 << 30)   //1ÎªÉ«²Ê.
+#define COLOR   (1 << 30)   //1ä¸ºè‰²å½©.
 #define PBSIZE   (0 << 28)
-#define BPIX     (4 << 25)   //´æ´¢Æ÷ÖÐÒ»¸öÏñËØ¶ÔÓ¦16bit
-#define PIXPOL   (0 << 24)   //ÏñËØ¼«ÐÔ¡ªÉèÖÃÏñËØµÄ¼«ÐÔ,¸ßÓÐÐ§	   //0<<24
-#define FLMPOL   (1 << 23)   //Ê×ÐÐ±êÖ¾¼«ÐÔ¡ªÉèÖÃÊ×ÐÐ±êÖ¾µÄ¼«ÐÔ,µÍÓÐÐ§.
-#define LPPOL   (1 << 22)   //ÐÐÂö³å¼«ÐÔ¡ªÉèÖÃÐÐÂö³åÐÅºÅµÄ¼«ÐÔ,µÍÓÐÐ§.
-#define CLKPOL   (0 << 21)   //LCD ÒÆÎ»Ê±ÖÓ¼«ÐÔ¡ªÉèÖÃLCD ÒÆÎ»Ê±ÖÓµÄÓÐÐ§ÑØµÄ¼«ÐÔ,ÏÂ½µÑÓÓÐÐ§.
-#define OEPOL   (1 << 20)   //Êä³öÊ¹ÄÜ¼«ÐÔ¡ªÉèÖÃÊä³öÊ¹ÄÜÐÅºÅµÄ¼«ÐÔ,¸ßÓÐÐ§.
-#define END_SEL (0 << 18)   //Ó¡µÚ°²¸ñÊ½Ñ¡Ôñ,Ð¡Ó¡µÚ°².
-#define ACD_SEL (0 << 15)   //ACDÊ±ÖÓÔ´Ñ¡Ôñ¡ªÑ¡Ôñ¾§Ïò±ä»»¼ÆÊýÆ÷µÄÊ±ÖÓ,Ê¹ÓÃFLM ×÷ÎªACD ¼ÆÊýÊ±ÖÓ
-#define ACD   (0 << 8 )   //±»¶¯Ä£Ê½.
+#define BPIX     (4 << 25)   //å­˜å‚¨å™¨ä¸­ä¸€ä¸ªåƒç´ å¯¹åº”16bit
+#define PIXPOL   (0 << 24)   //åƒç´ æžæ€§â€”è®¾ç½®åƒç´ çš„æžæ€§,é«˜æœ‰æ•ˆ    //0<<24
+#define FLMPOL   (1 << 23)   //é¦–è¡Œæ ‡å¿—æžæ€§â€”è®¾ç½®é¦–è¡Œæ ‡å¿—çš„æžæ€§,ä½Žæœ‰æ•ˆ.
+#define LPPOL   (1 << 22)   //è¡Œè„‰å†²æžæ€§â€”è®¾ç½®è¡Œè„‰å†²ä¿¡å·çš„æžæ€§,ä½Žæœ‰æ•ˆ.
+#define CLKPOL   (0 << 21)   //LCD ç§»ä½æ—¶é’Ÿæžæ€§â€”è®¾ç½®LCD ç§»ä½æ—¶é’Ÿçš„æœ‰æ•ˆæ²¿çš„æžæ€§,ä¸‹é™å»¶æœ‰æ•ˆ.
+#define OEPOL   (1 << 20)   //è¾“å‡ºä½¿èƒ½æžæ€§â€”è®¾ç½®è¾“å‡ºä½¿èƒ½ä¿¡å·çš„æžæ€§,é«˜æœ‰æ•ˆ.
+#define END_SEL (0 << 18)   //å°ç¬¬å®‰æ ¼å¼é€‰æ‹©,å°å°ç¬¬å®‰.
+#define ACD_SEL (0 << 15)   //ACDæ—¶é’Ÿæºé€‰æ‹©â€”é€‰æ‹©æ™¶å‘å˜æ¢è®¡æ•°å™¨çš„æ—¶é’Ÿ,ä½¿ç”¨FLM ä½œä¸ºACD è®¡æ•°æ—¶é’Ÿ
+#define ACD   (0 << 8 )   //è¢«åŠ¨æ¨¡å¼.
 #define PCD   (10)
 
-//Macro for HCR regiter setting //Ë®Æ½ÅäÖÃ¼Ä´æÆ÷.
+//Macro for HCR regiter setting //æ°´å¹³é…ç½®å¯„å­˜å™¨.
 #define H_WIDTH ((U32)46 << 26)
 #define H_WAIT_1 (20 << 8)
 #define H_WAIT_2 (20)
 
-//Macro for VCR register setting //´¹Ö±ÅäÖÃ¼Ä´æÆ÷.
+//Macro for VCR register setting //åž‚ç›´é…ç½®å¯„å­˜å™¨.
 #define V_WIDTH ((U32)10 << 26)
 #define PASS_FRAME_WAIT (0 <<16)
 #define V_WAIT_1 (3 << 8)
 #define V_WAIT_2 (3)
 
 //Macro for LGPR register setting
-#define GRAY   (4)    //»Ò¶ÈµÈ¼¶.
+#define GRAY   (4)    //ç°åº¦ç­‰çº§.
 
 //Macro for PWMR register setting
-#define SCR   (0 << 9)   //Ê±ÖÓÔ´Ñ¡Ôñ.ÐÐÂö³å.
-#define CC_EN (0 << 8)   //¶Ô±È¶È¿ØÖÆÊ¹ÄÜ,¹Ø.
-#define PW   (64)    //Êä³öÂö³åÊýÄ¿,
+#define SCR   (0 << 9)   //æ—¶é’Ÿæºé€‰æ‹©.è¡Œè„‰å†².
+#define CC_EN (0 << 8)   //å¯¹æ¯”åº¦æŽ§åˆ¶ä½¿èƒ½,å…³.
+#define PW   (64)    //è¾“å‡ºè„‰å†²æ•°ç›®,
 
 //Macro for DMACR register setting
-#define BL   ((U32)1 << 31)   //¹Ì¶¨³¤¶È.
+#define BL   ((U32)1 << 31)   //å›ºå®šé•¿åº¦.
 #define HM   (7 << 16)
 #define TM   (3)
 

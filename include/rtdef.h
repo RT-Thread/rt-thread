@@ -34,6 +34,7 @@
  * 2019-12-20     Bernard      change version number to v4.0.3
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
+ * 2021-05-10     armink       change version number to v4.0.4
  */
 
 #ifndef __RT_DEF_H__
@@ -55,7 +56,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      4L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     3L              /**< revise version number */
+#define RT_REVISION                     4L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -193,17 +194,15 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define rt_inline                   static inline
     #define RTT_API
 #elif defined (__TASKING__)
-
     #include <stdarg.h>
-    #define RT_SECTION(x)
-    #define RT_UNUSED
-    #define RT_USED
+    #define RT_SECTION(x)               __attribute__((section(x)))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used, protect))
     #define PRAGMA(x)                   _Pragma(#x)
-    #define ALIGN(n)
-    #define RT_WEAK
+    #define ALIGN(n)                    __attribute__((__align(n)))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API
-
 #else
     #error not supported tool chain
 #endif
@@ -212,7 +211,32 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER /* we do not support MS VC++ compiler */
-    #define INIT_EXPORT(fn, level)
+#pragma section("rti_fn$f",read)
+    #if RT_DEBUG_INIT
+        struct rt_init_desc
+        {
+            const char* level;
+            const init_fn_t fn;
+            const char* fn_name;
+        };
+        #define INIT_EXPORT(fn, level)                                  \
+                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                const char __rti_##fn##_name[] = #fn;                   \
+                                __declspec(allocate("rti_fn$f"))                        \
+                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                {__rti_level_##fn, fn, __rti_##fn##_name};
+    #else
+        struct rt_init_desc
+        {
+            const char* level;
+            const init_fn_t fn;
+        };
+        #define INIT_EXPORT(fn, level)                                  \
+                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                __declspec(allocate("rti_fn$f"))                        \
+                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                {__rti_level_##fn, fn };
+    #endif
 #else
     #if RT_DEBUG_INIT
         struct rt_init_desc
@@ -939,10 +963,12 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set time */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x12            /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
+#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get second time */
+#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set second time */
+#define RT_DEVICE_CTRL_RTC_GET_TIME_US  0x12            /**< get microsecond time */
+#define RT_DEVICE_CTRL_RTC_SET_TIME_US  0x13            /**< set microsecond time */
+#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x14            /**< get alarm */
+#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x15            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
 

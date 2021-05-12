@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,10 +11,9 @@
 #ifndef __RTC_H__
 #define __RTC_H__
 
+#include <rtconfig.h>
+
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);
-
-int rt_soft_rtc_init(void);
-int rt_rtc_ntp_sync_init(void);
 
 #endif /* __RTC_H__ */

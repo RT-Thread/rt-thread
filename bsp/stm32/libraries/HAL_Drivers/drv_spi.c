@@ -263,6 +263,12 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 0, 1);
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
+    
+    if(spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG || spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
+    {
+        HAL_NVIC_SetPriority(spi_drv->config->irq_type, 2, 0);
+        HAL_NVIC_EnableIRQ(spi_drv->config->irq_type);
+    }
 
     LOG_D("%s init done", spi_drv->config->bus_name);
     return RT_EOK;

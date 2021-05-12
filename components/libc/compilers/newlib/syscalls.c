@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -98,6 +98,7 @@ _isatty_r(struct _reent *ptr, int fd)
         return 0;
     }
 }
+
 int
 _kill_r(struct _reent *ptr, int pid, int sig)
 {

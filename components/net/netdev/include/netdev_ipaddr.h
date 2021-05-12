@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,30 +23,30 @@ extern "C" {
  * On subnets, the decomposition of addresses to host and net parts
  * is done according to subnet mask, not the masks here.
  */
-#define	IN_CLASSA(i)		(((long)(i) & 0x80000000) == 0)
-#define	IN_CLASSA_NET		0xff000000
-#define	IN_CLASSA_NSHIFT	24
-#define	IN_CLASSA_HOST		0x00ffffff
-#define	IN_CLASSA_MAX		128
+#define IN_CLASSA(i)        (((long)(i) & 0x80000000) == 0)
+#define IN_CLASSA_NET       0xff000000
+#define IN_CLASSA_NSHIFT    24
+#define IN_CLASSA_HOST      0x00ffffff
+#define IN_CLASSA_MAX       128
 
-#define	IN_CLASSB(i)		(((long)(i) & 0xc0000000) == 0x80000000)
-#define	IN_CLASSB_NET		0xffff0000
-#define	IN_CLASSB_NSHIFT	16
-#define	IN_CLASSB_HOST		0x0000ffff
-#define	IN_CLASSB_MAX		65536
+#define IN_CLASSB(i)        (((long)(i) & 0xc0000000) == 0x80000000)
+#define IN_CLASSB_NET       0xffff0000
+#define IN_CLASSB_NSHIFT    16
+#define IN_CLASSB_HOST      0x0000ffff
+#define IN_CLASSB_MAX       65536
 
-#define	IN_CLASSC(i)		(((long)(i) & 0xe0000000) == 0xc0000000)
-#define	IN_CLASSC_NET		0xffffff00
-#define	IN_CLASSC_NSHIFT	8
-#define	IN_CLASSC_HOST		0x000000ff
+#define IN_CLASSC(i)        (((long)(i) & 0xe0000000) == 0xc0000000)
+#define IN_CLASSC_NET       0xffffff00
+#define IN_CLASSC_NSHIFT    8
+#define IN_CLASSC_HOST      0x000000ff
 
-#define	IN_CLASSD(i)		(((long)(i) & 0xf0000000) == 0xe0000000)
-#define	IN_MULTICAST(i)		IN_CLASSD(i)
+#define IN_CLASSD(i)        (((long)(i) & 0xf0000000) == 0xe0000000)
+#define IN_MULTICAST(i)     IN_CLASSD(i)
 
-#define	IN_EXPERIMENTAL(i)	(((long)(i) & 0xe0000000) == 0xe0000000)
-#define	IN_BADCLASS(i)		(((long)(i) & 0xf0000000) == 0xf0000000)
+#define IN_EXPERIMENTAL(i)  (((long)(i) & 0xe0000000) == 0xe0000000)
+#define IN_BADCLASS(i)      (((long)(i) & 0xf0000000) == 0xf0000000)
 
-#define	IN_LOOPBACKNET		127			/* official! */
+#define IN_LOOPBACKNET      127         /* official! */
 
 /* IP address types for use in ip_addr_t.type member */
 enum netdev_ip_addr_type {
@@ -307,7 +307,7 @@ const char *netdev_inet_ntop(int af, const void *src, char *dst, int32_t size);
 int netdev_inet_pton(int af, const char *src, void *dst);
 
 #define inet_ntop(af, src, dst, size)       netdev_inet_ntop(af, src, dst, size)
-#define inet_pton(af, src, dst)             netdev_inet_pton(af, src, dst) 
+#define inet_pton(af, src, dst)             netdev_inet_pton(af, src, dst)
 
 #ifdef __cplusplus
 }
