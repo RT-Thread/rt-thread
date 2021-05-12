@@ -2,12 +2,6 @@ menu "Hardware Drivers Config"
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_USB_TO_USART
-        bool "Enable USB TO USART (uart0)"
-        select BSP_USING_UART
-        select BSP_USING_UART0
-        default y
-
     menuconfig BSP_USING_AUDIO
         bool "Enable Audio Device"
         select RT_USING_AUDIO
@@ -34,11 +28,22 @@ menu "Onboard Peripheral Drivers"
 endmenu
 
 menu "On-chip Peripheral Drivers"
-
-    menuconfig BSP_USING_UART0
-        bool "Enable UART0"
-        select RT_USING_SERIAL
-        default y
+    menuconfig BSP_USING_UART
+		bool "Enable UART"
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                select RT_USING_SERIAL
+                default y
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                select RT_USING_SERIAL
+                default n
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                select RT_USING_SERIAL
+                default n
+        endif
 
     config BSP_USING_SDIO
         bool "Enable SDIO"
@@ -85,16 +90,16 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_T4_PWM
                 config BSP_USING_T4_PWM1
                     bool "Enable Timer4 PWM1 (PA6)(Confit with uart0 rx)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_T5_PWM
             bool "Enable Timer5 PWM"
-            default n
+            default y
             if BSP_USING_T5_PWM
                 config BSP_USING_T5_PWM0
                     bool "Enable Timer5 PWM2 (PE1)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_LPWM0
@@ -104,7 +109,7 @@ menu "On-chip Peripheral Drivers"
                 comment "G1, G2 and G3 are mutually exclusive"
                 config BSP_USING_LPWM0_G1
                     bool "Enable LPWM0 G1 (PE4)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_LPWM1
@@ -114,7 +119,7 @@ menu "On-chip Peripheral Drivers"
                 comment "G1, G2 and G3 are mutually exclusive"
                 config BSP_USING_LPWM1_G3
                     bool "Enable LPWM1 G3 (PA1)"
-                    default n
+                    default y
             endif
 
         menuconfig BSP_USING_LPWM2
@@ -124,7 +129,7 @@ menu "On-chip Peripheral Drivers"
                 comment "G1, G2 and G3 are mutually exclusive"
                 config BSP_USING_LPWM2_G2
                     bool "Enable LPWM2 G2 (PE0)"
-                    default n
+                    default y
                 config BSP_USING_LPWM2_G3
                     bool "Enable LPWM2 G3 (PA2)"
                     default n
@@ -143,7 +148,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_TIM
             config BSP_USING_TIM1
                 bool "Enable TIM1"
-                default n
+                default y
 
             config BSP_USING_TIM2
                 bool "Enable TIM2"
@@ -162,11 +167,20 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    config BSP_USING_ONCHIP_RTC
+    menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         select RT_USING_LIBC
         default n
+        if BSP_USING_ONCHIP_RTC
+            config RTC_USING_INTERNAL_CLK
+            bool "Using internal clock RTC"
+            default y
+            config RTC_USING_1S_INT
+            bool "Using 1 second interrupt"
+            depends on RT_USING_ALARM
+            default n
+        endif
 
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
@@ -175,6 +189,18 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC0
                 bool "Enable ADC0"
+                default y
+        endif
+
+    menuconfig BSP_USING_IRRX
+        bool "Enable IRRX(HW or SW)"
+        default n
+        if BSP_USING_IRRX
+            config BSP_USING_IRRX_HW
+                bool "Enable hardware IRRX"
+                default y
+            config BSP_USING_IRRX_SW
+                bool "Enable software IRRX"
                 default n
         endif
 

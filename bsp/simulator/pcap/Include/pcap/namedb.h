@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 1994, 1996
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -12,8 +12,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- *	This product includes software developed by the Computer Systems
- *	Engineering Group at Lawrence Berkeley Laboratory.
+ *  This product includes software developed by the Computer Systems
+ *  Engineering Group at Lawrence Berkeley Laboratory.
  * 4. Neither the name of the University nor of the Laboratory may be used
  *    to endorse or promote products derived from this software without
  *    specific prior written permission.
@@ -48,13 +48,13 @@ extern "C" {
  * export these hooks since they'll
  */
 struct pcap_etherent {
-	u_char addr[6];
-	char name[122];
+    u_char addr[6];
+    char name[122];
 };
 #ifndef PCAP_ETHERS_FILE
 #define PCAP_ETHERS_FILE "/etc/ethers"
 #endif
-struct	pcap_etherent *pcap_next_etherent(FILE *);
+struct  pcap_etherent *pcap_next_etherent(FILE *);
 u_char *pcap_ether_hostton(const char*);
 u_char *pcap_ether_aton(const char *);
 
@@ -64,23 +64,23 @@ struct addrinfo *pcap_nametoaddrinfo(const char *);
 #endif
 bpf_u_int32 pcap_nametonetaddr(const char *);
 
-int	pcap_nametoport(const char *, int *, int *);
-int	pcap_nametoportrange(const char *, int *, int *, int *);
-int	pcap_nametoproto(const char *);
-int	pcap_nametoeproto(const char *);
-int	pcap_nametollc(const char *);
+int pcap_nametoport(const char *, int *, int *);
+int pcap_nametoportrange(const char *, int *, int *, int *);
+int pcap_nametoproto(const char *);
+int pcap_nametoeproto(const char *);
+int pcap_nametollc(const char *);
 /*
  * If a protocol is unknown, PROTO_UNDEF is returned.
  * Also, pcap_nametoport() returns the protocol along with the port number.
  * If there are ambiguous entried in /etc/services (i.e. domain
  * can be either tcp or udp) PROTO_UNDEF is returned.
  */
-#define PROTO_UNDEF		-1
+#define PROTO_UNDEF     -1
 
 /* XXX move these to pcap-int.h? */
 int __pcap_atodn(const char *, bpf_u_int32 *);
 int __pcap_atoin(const char *, bpf_u_int32 *);
-u_short	__pcap_nametodnaddr(const char *);
+u_short __pcap_nametodnaddr(const char *);
 
 #ifdef __cplusplus
 }

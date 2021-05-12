@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,7 +17,7 @@ void* dlsym(void *handle, const char* symbol)
 {
     int i;
     struct rt_dlmodule *module;
-    
+
     RT_ASSERT(handle != RT_NULL);
 
     module = (struct rt_dlmodule *)handle;

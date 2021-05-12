@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -325,7 +325,7 @@ void rt_device_hwtimer_isr(rt_hwtimer_t *timer)
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops hwtimer_ops = 
+const static struct rt_device_ops hwtimer_ops =
 {
     rt_hwtimer_init,
     rt_hwtimer_open,

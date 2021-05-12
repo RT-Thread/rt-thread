@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,7 @@ struct sound_device
 {
     struct rt_audio_device audio;
     struct rt_audio_configure replay_config;
-    rt_device_t decoder; 
+    rt_device_t decoder;
     rt_uint8_t *tx_fifo;
     rt_uint8_t volume;
 };
@@ -70,7 +70,7 @@ static void rt_hw_sai2a_init(void)
     hsai_BlockA2.FrameInit.FSDefinition      = SAI_FS_CHANNEL_IDENTIFICATION;
     hsai_BlockA2.FrameInit.FSPolarity        = SAI_FS_ACTIVE_LOW;
     hsai_BlockA2.FrameInit.FSOffset          = SAI_FS_BEFOREFIRSTBIT;
-    
+
     hsai_BlockA2.SlotInit.FirstBitOffset     = 0;
     hsai_BlockA2.SlotInit.SlotSize           = SAI_SLOTSIZE_DATASIZE;
     hsai_BlockA2.SlotInit.SlotNumber         = 2;
@@ -218,7 +218,7 @@ static rt_err_t sound_getcaps(struct rt_audio_device *audio, struct rt_audio_cap
 
     return result;
 }
-    
+
 static rt_err_t sound_configure(struct rt_audio_device *audio, struct rt_audio_caps *caps)
 {
     rt_err_t result = RT_EOK;
@@ -238,9 +238,9 @@ static rt_err_t sound_configure(struct rt_audio_device *audio, struct rt_audio_c
             rt_uint8_t volume = caps->udata.value;
 
             rt_device_control(snd_dev->decoder, SET_VOLUME, &volume);
-            
+
             snd_dev->volume = volume;
-            
+
             LOG_D("set volume %d", volume);
             break;
         }
@@ -315,16 +315,16 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
     rt_err_t result = RT_EOK;
     struct sound_device *snd_dev;
     rt_uint16_t play_type = OUTPUT_DEVICE_HEADPHONE;
-    
+
     RT_ASSERT(audio != RT_NULL);
     snd_dev = (struct sound_device *)audio->parent.user_data;
-    
+
     rt_hw_sai2a_init();
-    
+
     /* set default params */
     SAIA_Frequency_Set(snd_dev->replay_config.samplerate);
     SAIA_Channels_Set(snd_dev->replay_config.channels);
-    
+
     /* set audio play type */
     rt_device_control(snd_dev->decoder, SET_PLAY_TYPE, &play_type);
     /* open lowlevel audio device */
@@ -337,7 +337,7 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
         LOG_E("can't find low level audio device!");
         return RT_ERROR;
     }
- 
+
     return result;
 }
 
@@ -345,17 +345,17 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
 {
     struct sound_device *snd_dev;
     rt_uint16_t play_type = OUTPUT_DEVICE_HEADPHONE;
-    
+
     RT_ASSERT(audio != RT_NULL);
     snd_dev = (struct sound_device *)audio->parent.user_data;
-    
+
     if (stream == AUDIO_STREAM_REPLAY)
     {
         LOG_D("open sound device");
-        
+
         rt_device_control(snd_dev->decoder, SET_PLAY_TYPE, &play_type);
         rt_device_control(snd_dev->decoder, START_PLAY, RT_NULL);
-        
+
         if (HAL_SAI_Transmit_DMA(&hsai_BlockA2, snd_dev->tx_fifo, TX_FIFO_SIZE / 2) != HAL_OK)
         {
             return RT_ERROR;
@@ -368,7 +368,7 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
 static rt_err_t sound_stop(struct rt_audio_device *audio, int stream)
 {
     RT_ASSERT(audio != RT_NULL);
-    
+
     if (stream == AUDIO_STREAM_REPLAY)
     {
         HAL_SAI_DMAStop(&hsai_BlockA2);
@@ -385,7 +385,7 @@ static void sound_buffer_info(struct rt_audio_device *audio, struct rt_audio_buf
 
     RT_ASSERT(audio != RT_NULL);
     device = (struct sound_device *)audio->parent.user_data;
-    
+
     info->buffer      = device->tx_fifo;
     info->total_size  = TX_FIFO_SIZE;
     info->block_size  = TX_FIFO_SIZE / 2;
@@ -407,7 +407,7 @@ int rt_hw_sound_init(void)
 {
     rt_err_t result = RT_EOK;
     struct rt_device *device = RT_NULL;
-    
+
     rt_memset(AUDIO_TX_FIFO, 0, TX_FIFO_SIZE);
     snd_dev.tx_fifo = AUDIO_TX_FIFO;
 
@@ -416,7 +416,7 @@ int rt_hw_sound_init(void)
     snd_dev.replay_config.channels   = 2;
     snd_dev.replay_config.samplebits = 16;
     snd_dev.volume                   = 55;
-    
+
     /* find lowlevel decoder device*/
     snd_dev.decoder = rt_device_find("decoder");
     if (snd_dev.decoder == RT_NULL)
@@ -424,19 +424,19 @@ int rt_hw_sound_init(void)
         LOG_E("cant't find lowlevel decoder deivce!");
         return RT_ERROR;
     }
-    
+
     /* register sound device */
     snd_dev.audio.ops = &snd_ops;
     result = rt_audio_register(&snd_dev.audio, "sound0", RT_DEVICE_FLAG_WRONLY, &snd_dev);
     /* check sound device register success or not */
     if (result != RT_EOK)
     {
-        device = &(snd_dev.audio.parent); 
+        device = &(snd_dev.audio.parent);
         rt_device_unregister(device);
         LOG_E("sound device init error!");
         return RT_ERROR;
     }
-    
+
     return RT_EOK;
 }
 
@@ -485,7 +485,7 @@ int wavplay_sample(int argc, char **argv)
 #define BUFSZ   1024
 #define SOUND_DEVICE_NAME    "sound0"
 static rt_device_t sound_dev;
-    
+
     int fd = -1;
     uint8_t *buffer = NULL;
     struct wav_info *info = NULL;
@@ -528,9 +528,9 @@ static rt_device_t sound_dev;
 
     rt_device_open(sound_dev, RT_DEVICE_OFLAG_WRONLY);
 
-    caps.main_type               = AUDIO_TYPE_OUTPUT;                          
+    caps.main_type               = AUDIO_TYPE_OUTPUT;
     caps.sub_type                = AUDIO_DSP_PARAM;
-    caps.udata.config.samplerate = info->fmt_block.wav_format.SamplesPerSec; 
+    caps.udata.config.samplerate = info->fmt_block.wav_format.SamplesPerSec;
     caps.udata.config.channels   = info->fmt_block.wav_format.Channels;
     caps.udata.config.samplebits = 16;
     rt_device_control(sound_dev, AUDIO_CTL_CONFIGURE, &caps);

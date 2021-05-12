@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -52,7 +52,7 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
             : "r" (&lock->slock), "I" (1 << 16)
             : "cc");
 
-    while (lockval.tickets.next != lockval.tickets.owner) 
+    while (lockval.tickets.next != lockval.tickets.owner)
     {
         __WFE();
         lockval.tickets.owner = *(volatile unsigned short *)(&lock->tickets.owner);

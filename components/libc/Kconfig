@@ -55,8 +55,14 @@ endif
 
 if RT_USING_LIBC != y
     config RT_LIBC_USING_TIME
-    bool "Enable TIME FUNCTIONS WITHOUT COMPILER'S LIBC"
+    bool "Enable time functions without compiler's libc"
     default y
 endif
+
+config RT_LIBC_FIXED_TIMEZONE
+    depends on (RT_LIBC_USING_TIME || RT_USING_LIBC)
+    int "Manually set a fixed time zone (UTC+)"
+    range -12 12
+    default 8
 
 endmenu

@@ -1,10 +1,10 @@
 /****************************************************************************************************************************************** 
-* ÎÄ¼þÃû³Æ: SWM320_port.c
-* ¹¦ÄÜËµÃ÷:	SWM320µ¥Æ¬»úµÄ¶Ë¿ÚÒý½Å¹¦ÄÜÑ¡Ôñ¿âº¯Êý
-* ¼¼ÊõÖ§³Ö:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî:
-* °æ±¾ÈÕÆÚ: V1.1.0		2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼: 
+* æ–‡ä»¶åç§°: SWM320_port.c
+* åŠŸèƒ½è¯´æ˜Ž:	SWM320å•ç‰‡æœºçš„ç«¯å£å¼•è„šåŠŸèƒ½é€‰æ‹©åº“å‡½æ•°
+* æŠ€æœ¯æ”¯æŒ:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹:
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0		2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•: 
 *
 *
 *******************************************************************************************************************************************
@@ -21,201 +21,200 @@
 #include "SWM320.h"
 #include "SWM320_port.h"
 
-
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ: PORT_Init()
-* ¹¦ÄÜËµÃ÷:	¶Ë¿ÚÒý½Å¹¦ÄÜÑ¡Ôñ£¬¿ÉÓÃµÄ¹¦ÄÜ¼û"SWM320_port.h"ÎÄ¼þ
-* Êä    Èë: uint32_t PORTx	   		Ö¸¶¨PORT¶Ë¿Ú£¬ÓÐÐ§Öµ°üÀ¨PORTA¡¢PORTB¡¢PORTC¡¢PORTM¡¢PORTN¡¢PORTP
-*			uint32_t n		   		Ö¸¶¨PORTÒý½Å£¬ÓÐÐ§Öµ°üÀ¨PIN0¡¢PIN1¡¢PIN2¡¢... ... PIN22¡¢PIN23
-*			uint32_t func	   		Ö¸¶¨¶Ë¿ÚÒý½ÅÒªÉè¶¨µÄ¹¦ÄÜ£¬Æä¿ÉÈ¡Öµ¼û"SWM320_port.h"ÎÄ¼þ
-*			uint32_t digit_in_en   	Êý×ÖÊäÈëÊ¹ÄÜ
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: µ±Òý½Å±êºÅnÎªÅ¼ÊýÊ±£¬funcÈ¡ÖµÖ»ÄÜÊÇFUNMUX0¿ªÍ·µÄ£¬ÈçFUNMUX0_UART0_RXD
-*			µ±Òý½Å±êºÅnÎªÆæÊýÊ±£¬funcÈ¡ÖµÖ»ÄÜÊÇFUNMUX1¿ªÍ·µÄ£¬ÈçFUNMUX1_UART0_TXD
+* å‡½æ•°åç§°: PORT_Init()
+* åŠŸèƒ½è¯´æ˜Ž:	ç«¯å£å¼•è„šåŠŸèƒ½é€‰æ‹©ï¼Œå¯ç”¨çš„åŠŸèƒ½è§"SWM320_port.h"æ–‡ä»¶
+* è¾“    å…¥: uint32_t PORTx	   		æŒ‡å®šPORTç«¯å£ï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PORTAã€PORTBã€PORTCã€PORTMã€PORTNã€PORTP
+*			uint32_t n		   		æŒ‡å®šPORTå¼•è„šï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬PIN0ã€PIN1ã€PIN2ã€... ... PIN22ã€PIN23
+*			uint32_t func	   		æŒ‡å®šç«¯å£å¼•è„šè¦è®¾å®šçš„åŠŸèƒ½ï¼Œå…¶å¯å–å€¼è§"SWM320_port.h"æ–‡ä»¶
+*			uint32_t digit_in_en   	æ•°å­—è¾“å…¥ä½¿èƒ½
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: å½“å¼•è„šæ ‡å·nä¸ºå¶æ•°æ—¶ï¼Œfuncå–å€¼åªèƒ½æ˜¯FUNMUX0å¼€å¤´çš„ï¼Œå¦‚FUNMUX0_UART0_RXD
+*			å½“å¼•è„šæ ‡å·nä¸ºå¥‡æ•°æ—¶ï¼Œfuncå–å€¼åªèƒ½æ˜¯FUNMUX1å¼€å¤´çš„ï¼Œå¦‚FUNMUX1_UART0_TXD
 ******************************************************************************************************************************************/
 void PORT_Init(uint32_t PORTx, uint32_t n, uint32_t func, uint32_t digit_in_en)
 {
-	switch((uint32_t)PORTx)
-	{
-		case ((uint32_t)PORTA):
-			if(func > 99)
-			{
-				if(n < PIN6)
-				{
-					PORT->PORTA_MUX0 &= ~(0x1F << (n*5));
-					PORT->PORTA_MUX0 |= (func-100) << (n*5);
-				}
-				else if(n < PIN12)
-				{
-					PORT->PORTA_MUX1 &= ~(0x1F << ((n-6)*5));
-					PORT->PORTA_MUX1 |= (func-100) << ((n-6)*5);
-				}
-			}
-			
-			PORT->PORTA_SEL &= ~(0x03 << (n*2));
-			PORT->PORTA_SEL |= (func > 99 ? 1 : func) << (n*2);
-			
-			PORT->PORTA_INEN &= ~(0x01 << n);
-			PORT->PORTA_INEN |= (digit_in_en << n);
-			break;
-			
-		case ((uint32_t)PORTB):
-			if(func > 99)
-			{
-				if(n < PIN6)
-				{
-					PORT->PORTB_MUX0 &= ~(0x1F << (n*5));
-					PORT->PORTB_MUX0 |= (func-100) << (n*5);
-				}
-				else if(n < PIN12)
-				{
-					PORT->PORTB_MUX1 &= ~(0x1F << ((n-6)*5));
-					PORT->PORTB_MUX1 |= (func-100) << ((n-6)*5);
-				}
-			}
-			
-			PORT->PORTB_SEL &= ~(0x03 << (n*2));
-			PORT->PORTB_SEL |= (func > 99 ? 1 : func) << (n*2);
-			
-			PORT->PORTB_INEN &= ~(0x01 << n);
-			PORT->PORTB_INEN |= (digit_in_en << n);
-			break;
-		
-		case ((uint32_t)PORTC):
-			if(func > 99)
-			{
-				if(n < PIN6)
-				{
-					PORT->PORTC_MUX0 &= ~(0x1F << (n*5));
-					PORT->PORTC_MUX0 |= (func-100) << (n*5);
-				}
-				else if(n < PIN12)
-				{
-					PORT->PORTC_MUX1 &= ~(0x1F << ((n-6)*5));
-					PORT->PORTC_MUX1 |= (func-100) << ((n-6)*5);
-				}
-			}
-			
-			PORT->PORTC_SEL &= ~(0x03 << (n*2));
-			PORT->PORTC_SEL |= (func > 99 ? 1 : func) << (n*2);
-			
-			PORT->PORTC_INEN &= ~(0x01 << n);
-			PORT->PORTC_INEN |= (digit_in_en << n);
-			break;
-		
-		case ((uint32_t)PORTM):
-			if(func > 99)
-			{
-				if(n < PIN6)
-				{
-					PORT->PORTM_MUX0 &= ~(0x1F << (n*5));
-					PORT->PORTM_MUX0 |= (func-100) << (n*5);
-				}
-				else if(n < PIN12)
-				{
-					PORT->PORTM_MUX1 &= ~(0x1F << ((n-6)*5));
-					PORT->PORTM_MUX1 |= (func-100) << ((n-6)*5);
-				}
-				else if(n < PIN18)
-				{
-					PORT->PORTM_MUX2 &= ~(0x1F << ((n-12)*5));
-					PORT->PORTM_MUX2 |= (func-100) << ((n-12)*5);
-				}
-				else if(n < PIN24)
-				{
-					PORT->PORTM_MUX3 &= ~(0x1F << ((n-18)*5));
-					PORT->PORTM_MUX3 |= (func-100) << ((n-18)*5);
-				}
-			}
-			
-			if(n < 16)
-			{
-				PORT->PORTM_SEL0 &= ~(0x03 << (n*2));
-				PORT->PORTM_SEL0 |= (func > 99 ? 1 : func) << (n*2);
-			}
-			else
-			{
-				PORT->PORTM_SEL1 &= ~(0x03 << ((n-16)*2));
-				PORT->PORTM_SEL1 |= (func > 99 ? 1 : func) << ((n-16)*2);
-			}
-			
-			PORT->PORTM_INEN &= ~(0x01 << n);
-			PORT->PORTM_INEN |= (digit_in_en << n);
-			break;
-		
-		case ((uint32_t)PORTN):
-			if(func > 99)
-			{
-				if(n < PIN6)
-				{
-					PORT->PORTN_MUX0 &= ~(0x1F << (n*5));
-					PORT->PORTN_MUX0 |= (func-100) << (n*5);
-				}
-				else if(n < PIN12)
-				{
-					PORT->PORTN_MUX1 &= ~(0x1F << ((n-6)*5));
-					PORT->PORTN_MUX1 |= (func-100) << ((n-6)*5);
-				}
-				else if(n < PIN18)
-				{
-					PORT->PORTN_MUX2 &= ~(0x1F << ((n-12)*5));
-					PORT->PORTN_MUX2 |= (func-100) << ((n-12)*5);
-				}
-			}
-			
-			if(n < 16)
-			{
-				PORT->PORTN_SEL0 &= ~(0x03 << (n*2));
-				PORT->PORTN_SEL0 |= (func > 99 ? 1 : func) << (n*2);
-			}
-			else
-			{
-				PORT->PORTN_SEL1 &= ~(0x03 << ((n-16)*2));
-				PORT->PORTN_SEL1 |= (func > 99 ? 1 : func) << ((n-16)*2);
-			}
-			
-			PORT->PORTN_INEN &= ~(0x01 << n);
-			PORT->PORTN_INEN |= (digit_in_en << n);
-			break;
-			
-		case ((uint32_t)PORTP):
-			if(func > 99)
-			{
-				if(n < PIN6)
-				{
-					PORT->PORTP_MUX0 &= ~(0x1F << (n*5));
-					PORT->PORTP_MUX0 |= (func-100) << (n*5);
-				}
-				else if(n < PIN12)
-				{
-					PORT->PORTP_MUX1 &= ~(0x1F << ((n-6)*5));
-					PORT->PORTP_MUX1 |= (func-100) << ((n-6)*5);
-				}
-				else if(n < PIN18)
-				{
-					PORT->PORTP_MUX2 &= ~(0x1F << ((n-12)*5));
-					PORT->PORTP_MUX2 |= (func-100) << ((n-12)*5);
-				}
-				else if(n < PIN24)
-				{
-					PORT->PORTP_MUX3 &= ~(0x1F << ((n-18)*5));
-					PORT->PORTP_MUX3 |= (func-100) << ((n-18)*5);
-				}
-			}
-			
-			if(n < 16)
-			{
-				PORT->PORTP_SEL0 &= ~(0x03 << (n*2));
-				PORT->PORTP_SEL0 |= (func > 99 ? 1 : func) << (n*2);
-			}
-			else
-			{
-				PORT->PORTP_SEL1 &= ~(0x03 << ((n-16)*2));
-				PORT->PORTP_SEL1 |= (func > 99 ? 1 : func) << ((n-16)*2);
-			}
-			
-			PORT->PORTP_INEN &= ~(0x01 << n);
-			PORT->PORTP_INEN |= (digit_in_en << n);
-			break;
-	}
+    switch ((uint32_t)PORTx)
+    {
+    case ((uint32_t)PORTA):
+        if (func > 99)
+        {
+            if (n < PIN6)
+            {
+                PORT->PORTA_MUX0 &= ~(0x1F << (n * 5));
+                PORT->PORTA_MUX0 |= (func - 100) << (n * 5);
+            }
+            else if (n < PIN12)
+            {
+                PORT->PORTA_MUX1 &= ~(0x1F << ((n - 6) * 5));
+                PORT->PORTA_MUX1 |= (func - 100) << ((n - 6) * 5);
+            }
+        }
+
+        PORT->PORTA_SEL &= ~(0x03 << (n * 2));
+        PORT->PORTA_SEL |= (func > 99 ? 1 : func) << (n * 2);
+
+        PORT->PORTA_INEN &= ~(0x01 << n);
+        PORT->PORTA_INEN |= (digit_in_en << n);
+        break;
+
+    case ((uint32_t)PORTB):
+        if (func > 99)
+        {
+            if (n < PIN6)
+            {
+                PORT->PORTB_MUX0 &= ~(0x1F << (n * 5));
+                PORT->PORTB_MUX0 |= (func - 100) << (n * 5);
+            }
+            else if (n < PIN12)
+            {
+                PORT->PORTB_MUX1 &= ~(0x1F << ((n - 6) * 5));
+                PORT->PORTB_MUX1 |= (func - 100) << ((n - 6) * 5);
+            }
+        }
+
+        PORT->PORTB_SEL &= ~(0x03 << (n * 2));
+        PORT->PORTB_SEL |= (func > 99 ? 1 : func) << (n * 2);
+
+        PORT->PORTB_INEN &= ~(0x01 << n);
+        PORT->PORTB_INEN |= (digit_in_en << n);
+        break;
+
+    case ((uint32_t)PORTC):
+        if (func > 99)
+        {
+            if (n < PIN6)
+            {
+                PORT->PORTC_MUX0 &= ~(0x1F << (n * 5));
+                PORT->PORTC_MUX0 |= (func - 100) << (n * 5);
+            }
+            else if (n < PIN12)
+            {
+                PORT->PORTC_MUX1 &= ~(0x1F << ((n - 6) * 5));
+                PORT->PORTC_MUX1 |= (func - 100) << ((n - 6) * 5);
+            }
+        }
+
+        PORT->PORTC_SEL &= ~(0x03 << (n * 2));
+        PORT->PORTC_SEL |= (func > 99 ? 1 : func) << (n * 2);
+
+        PORT->PORTC_INEN &= ~(0x01 << n);
+        PORT->PORTC_INEN |= (digit_in_en << n);
+        break;
+
+    case ((uint32_t)PORTM):
+        if (func > 99)
+        {
+            if (n < PIN6)
+            {
+                PORT->PORTM_MUX0 &= ~(0x1F << (n * 5));
+                PORT->PORTM_MUX0 |= (func - 100) << (n * 5);
+            }
+            else if (n < PIN12)
+            {
+                PORT->PORTM_MUX1 &= ~(0x1F << ((n - 6) * 5));
+                PORT->PORTM_MUX1 |= (func - 100) << ((n - 6) * 5);
+            }
+            else if (n < PIN18)
+            {
+                PORT->PORTM_MUX2 &= ~(0x1F << ((n - 12) * 5));
+                PORT->PORTM_MUX2 |= (func - 100) << ((n - 12) * 5);
+            }
+            else if (n < PIN24)
+            {
+                PORT->PORTM_MUX3 &= ~(0x1F << ((n - 18) * 5));
+                PORT->PORTM_MUX3 |= (func - 100) << ((n - 18) * 5);
+            }
+        }
+
+        if (n < 16)
+        {
+            PORT->PORTM_SEL0 &= ~(0x03 << (n * 2));
+            PORT->PORTM_SEL0 |= (func > 99 ? 1 : func) << (n * 2);
+        }
+        else
+        {
+            PORT->PORTM_SEL1 &= ~(0x03 << ((n - 16) * 2));
+            PORT->PORTM_SEL1 |= (func > 99 ? 1 : func) << ((n - 16) * 2);
+        }
+
+        PORT->PORTM_INEN &= ~(0x01 << n);
+        PORT->PORTM_INEN |= (digit_in_en << n);
+        break;
+
+    case ((uint32_t)PORTN):
+        if (func > 99)
+        {
+            if (n < PIN6)
+            {
+                PORT->PORTN_MUX0 &= ~(0x1F << (n * 5));
+                PORT->PORTN_MUX0 |= (func - 100) << (n * 5);
+            }
+            else if (n < PIN12)
+            {
+                PORT->PORTN_MUX1 &= ~(0x1F << ((n - 6) * 5));
+                PORT->PORTN_MUX1 |= (func - 100) << ((n - 6) * 5);
+            }
+            else if (n < PIN18)
+            {
+                PORT->PORTN_MUX2 &= ~(0x1F << ((n - 12) * 5));
+                PORT->PORTN_MUX2 |= (func - 100) << ((n - 12) * 5);
+            }
+        }
+
+        if (n < 16)
+        {
+            PORT->PORTN_SEL0 &= ~(0x03 << (n * 2));
+            PORT->PORTN_SEL0 |= (func > 99 ? 1 : func) << (n * 2);
+        }
+        else
+        {
+            PORT->PORTN_SEL1 &= ~(0x03 << ((n - 16) * 2));
+            PORT->PORTN_SEL1 |= (func > 99 ? 1 : func) << ((n - 16) * 2);
+        }
+
+        PORT->PORTN_INEN &= ~(0x01 << n);
+        PORT->PORTN_INEN |= (digit_in_en << n);
+        break;
+
+    case ((uint32_t)PORTP):
+        if (func > 99)
+        {
+            if (n < PIN6)
+            {
+                PORT->PORTP_MUX0 &= ~(0x1F << (n * 5));
+                PORT->PORTP_MUX0 |= (func - 100) << (n * 5);
+            }
+            else if (n < PIN12)
+            {
+                PORT->PORTP_MUX1 &= ~(0x1F << ((n - 6) * 5));
+                PORT->PORTP_MUX1 |= (func - 100) << ((n - 6) * 5);
+            }
+            else if (n < PIN18)
+            {
+                PORT->PORTP_MUX2 &= ~(0x1F << ((n - 12) * 5));
+                PORT->PORTP_MUX2 |= (func - 100) << ((n - 12) * 5);
+            }
+            else if (n < PIN24)
+            {
+                PORT->PORTP_MUX3 &= ~(0x1F << ((n - 18) * 5));
+                PORT->PORTP_MUX3 |= (func - 100) << ((n - 18) * 5);
+            }
+        }
+
+        if (n < 16)
+        {
+            PORT->PORTP_SEL0 &= ~(0x03 << (n * 2));
+            PORT->PORTP_SEL0 |= (func > 99 ? 1 : func) << (n * 2);
+        }
+        else
+        {
+            PORT->PORTP_SEL1 &= ~(0x03 << ((n - 16) * 2));
+            PORT->PORTP_SEL1 |= (func > 99 ? 1 : func) << ((n - 16) * 2);
+        }
+
+        PORT->PORTP_INEN &= ~(0x01 << n);
+        PORT->PORTP_INEN |= (digit_in_en << n);
+        break;
+    }
 }

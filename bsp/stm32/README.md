@@ -20,6 +20,8 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f103-onenet-nbiot](stm32f103-onenet-nbiot) | STM32F103 OneNET NB-IoT 开发板 |
 | [stm32f103-yf-ufun](stm32f103-yf-ufun) | STM32F103 yf-ufun 开发板 |
 | [stm32f107-uc-eval](stm32f107-uc-eval) | uC/Eval STM32F107 评估板（中国版） |
+| **F2 系列** |  |
+| [stm32f207-st-nucleo](stm32f207-st-nucleo) | ST 官方 STM32F207-nucleo 开发板 |
 | **F4 系列** |  |
 | [stm32f401-st-nucleo](stm32f401-st-nucleo) | ST 官方 STM32F401 Nucleo-64 开发板 |
 | [stm32f405-smdz-breadfruit](stm32f405-smdz-breadfruit) | 三木电子 SM1432F405 开发板 |
@@ -41,7 +43,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **F7 系列** |  |
 | [stm32f746-st-disco](stm32f746-st-disco) | ST 官方 STM32F746-discovery 开发板 |
 | [stm32f767-atk-apollo](stm32f767-atk-apollo) | 正点原子 F767 阿波罗开发板 |
-| [stm32f767-fire-challenger](stm32f767-fire-challenger/) | 野火 F767 挑战者开发板 |
+| [stm32f767-fire-challenger-v1](stm32f767-fire-challenger-v1/) | 野火 F767-V1 挑战者开发板 |
 | [stm32f767-st-nucleo](stm32f767-st-nucleo) | ST 官方 STM32F767-nucleo 开发板 |
 | [stm32f769-st-disco](stm32f769-st-disco) | ST 官方 STM32f769-discovery 开发板 |
 | **G0 系列** |  |

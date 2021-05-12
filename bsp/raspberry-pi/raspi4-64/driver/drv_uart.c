@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -117,7 +117,7 @@ static const struct rt_uart_ops _uart_ops =
 
 static void rt_hw_uart_isr(int irqno, void *param)
 {
-    struct rt_serial_device *serial = (struct rt_serial_device*)param; 
+    struct rt_serial_device *serial = (struct rt_serial_device*)param;
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     PL011_REG_ICR(UART0_BASE) = PL011_INTERRUPT_RECEIVE;
 }
