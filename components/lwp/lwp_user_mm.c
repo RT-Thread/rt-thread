@@ -115,7 +115,6 @@ static void unmap_range(struct rt_lwp *lwp, void *addr, size_t size, int pa_need
 void lwp_unmap_user_space(struct rt_lwp *lwp)
 {
     struct lwp_avl_struct *node = RT_NULL;
-    rt_mmu_info *m_info = &lwp->mmu_info;
 
     while ((node = lwp_map_find_first(lwp->map_area)) != 0)
     {
@@ -138,11 +137,7 @@ void lwp_unmap_user_space(struct rt_lwp *lwp)
         lwp_map_area_remove(&lwp->map_area, ma->addr);
     }
 
-#ifdef ARCH_RISCV
-    rt_pages_free(m_info->vtable, 0);
-#else
-    rt_pages_free(m_info->vtable, 2);
-#endif
+    arch_user_space_vtable_free(lwp);
 }
 
 static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
@@ -315,11 +310,14 @@ static void *_lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa, 
     }
 
     va = rt_hw_mmu_map(m_info, map_va, map_pa, map_size, attr);
-    ret = lwp_map_area_insert(&lwp->map_area, (size_t)va, map_size, type);
-    if (ret != 0)
+    if (va)
     {
-        unmap_range(lwp, va, map_size, 0);
-        return 0;
+        ret = lwp_map_area_insert(&lwp->map_area, (size_t)va, map_size, type);
+        if (ret != 0)
+        {
+            unmap_range(lwp, va, map_size, 0);
+            return 0;
+        }
     }
     return va;
 }

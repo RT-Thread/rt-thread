@@ -96,8 +96,8 @@ volatile unsigned int *CCM_CLPCR;
 
 static void imx6ull_enable_clk_in_waitmode(void)
 {
-    CCM_CLPCR = rt_hw_kernel_phys_to_virt((void*)0x20C4054, 4);
-    *CCM_CLPCR &= ~(1<<5 | 0x3);
+    CCM_CLPCR = rt_ioremap((void*)0x20C4054, 4);
+    *CCM_CLPCR &= ~((1 << 5) | 0x3);
 }
 
 static void system_counter_clk_source_init(void)
@@ -112,7 +112,7 @@ static void system_counter_init(void)
 #define CONFIG_SC_TIMER_CLK  8000000
 
     /* imx6ull, enable system counter */
-    struct sctr_regs *sctr = (struct sctr_regs *)rt_hw_kernel_phys_to_virt((void*)SCTR_BASE_ADDR, sizeof(struct sctr_regs));
+    struct sctr_regs *sctr = (struct sctr_regs *)rt_ioremap((void*)SCTR_BASE_ADDR, sizeof(struct sctr_regs));
     unsigned long val, freq;
 
     freq = CONFIG_SC_TIMER_CLK;

@@ -20,6 +20,7 @@
 #include "vexpress_a9.h"
 
 #include "mmu.h"
+#include "ioremap.h"
 
 #if defined(__CC_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;

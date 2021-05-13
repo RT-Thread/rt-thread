@@ -230,7 +230,7 @@ int rt_hw_mouse_init(void)
     virtual_addr_t virt;
     int irq = MOUSE_IRQ_NUM;
 
-    virt = (virtual_addr_t)rt_hw_kernel_phys_to_virt((void*)MOUSE_ADDRESS, 0x1000);
+    virt = (virtual_addr_t)rt_ioremap((void*)MOUSE_ADDRESS, 0x1000);
 
     id = (((read32(virt + 0xfec) & 0xff) << 24) |
                 ((read32(virt + 0xfe8) & 0xff) << 16) |

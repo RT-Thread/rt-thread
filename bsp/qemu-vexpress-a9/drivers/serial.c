@@ -153,7 +153,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
-    _uart0_device.hw_base = (uint32_t)rt_hw_kernel_phys_to_virt((void*)_uart0_device.hw_base, 0x1000);
+    _uart0_device.hw_base = (uint32_t)rt_ioremap((void*)_uart0_device.hw_base, 0x1000);
     uart = &_uart0_device;
 
     _serial0.ops    = &_uart_ops;
@@ -169,7 +169,7 @@ int rt_hw_uart_init(void)
 #endif
 
 #ifdef RT_USING_UART1
-    _uart1_device.hw_base = (uint32_t)rt_hw_kernel_phys_to_virt((void*)_uart1_device.hw_base, 0x1000);
+    _uart1_device.hw_base = (uint32_t)rt_ioremap((void*)_uart1_device.hw_base, 0x1000);
     uart = &_uart1_device;
     _serial1.ops = &_uart_ops;
     _serial1.config = config;

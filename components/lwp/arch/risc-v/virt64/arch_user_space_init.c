@@ -45,4 +45,11 @@ void *arch_kernel_mmu_table_get(void)
     return (void*)((char*)MMUTable);
 }
 
+void arch_user_space_vtable_free(struct rt_lwp *lwp)
+{
+    if (lwp && lwp->mmu_info.vtable)
+    {
+        rt_pages_free(lwp->mmu_info.vtable, 0);
+    }
+}
 #endif

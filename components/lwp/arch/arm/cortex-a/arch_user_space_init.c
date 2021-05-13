@@ -60,4 +60,12 @@ void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors)
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)((char*)vectors + 0x1000 - kuser_sz), kuser_sz);
     rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void*)((char*)vectors + 0x1000 - kuser_sz), kuser_sz);
 }
+
+void arch_user_space_vtable_free(struct rt_lwp *lwp)
+{
+    if (lwp && lwp->mmu_info.vtable)
+    {
+        rt_pages_free(lwp->mmu_info.vtable, 2);
+    }
+}
 #endif
