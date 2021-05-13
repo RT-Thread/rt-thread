@@ -9,6 +9,8 @@
 .global _start
 .section .reset, "ax"
 _start:
+    la      tp, _tp
+    la      gp, _gp
 
     //load comm
     la      a0, __comm_vma
@@ -25,7 +27,7 @@ _start:
     la      a0, __irq_stack_start           //Stack清成0x23
     li      a1, 0x23
     la      a2, __irq_stack_size
-    call    memset
+    call    0x84040
     la      ra, __irq_stack
     lui	    a5, 0x1
     sw	    zero, -1920(a5)
@@ -35,7 +37,7 @@ _start:
     la      a0, __bss_start
     li      a1, 0
     la      a2, __bss_size
-    call    memset
+    call    0x84040
 
     call    cache_init
 
@@ -56,32 +58,33 @@ __exception:
 
     .org    0x40
     jal x0, low_prio_irq
-    mret
 
     .org    0x80
 #define METHOD 1
 #if METHOD == 1
     addi    sp, sp, -6*4
-    lw      a0, PICEN(zero)
+    # lw      a0, PICEN(zero)
     lw      a1, EPC(zero)
     lw      a2, EPICCON(zero)
-    sw      a0, 3*4(sp)
+    # sw      a0, 3*4(sp)
     sw      a1, 4*4(sp)
     sw      a2, 5*4(sp)
-    andi    a0, a0, 1
-    sw      a0, PICEN(zero)
+    # andi    a0, a0, 1
+    # sw      a0, PICEN(zero)
+    li      a2, 0
+    sw      a2, EPICCON(zero)
     la      a0, 0f
     sw      a0, EPC(zero)
-    j       0x84020
+    j       isr_cache
 0:
     sw      a0, 0(sp)
     sw      a1, 4(sp)
     sw      a2, 8(sp)
 
-    lw      a0, 3*4(sp)
+    # lw      a0, 3*4(sp)
     lw      a1, 4*4(sp)
     lw      a2, 5*4(sp)
-    sw      a0, PICEN(zero)
+    # sw      a0, PICEN(zero)
     sw      a1, EPC(zero)
     sw      a2, EPICCON(zero)
 
@@ -90,9 +93,6 @@ __exception:
     lw      a2, 8(sp)
     addi    sp, sp, 6*4
     mret
-    .align  4
-1:  .word   0, 0
-    j       0x84020
 #endif
 
     .global cpu_irq_comm
@@ -102,3 +102,6 @@ cpu_irq_comm:
     j       cpu_irq_comm_do
 
     ret
+
+    .global _tp
+    .set    _tp,        0x84800
