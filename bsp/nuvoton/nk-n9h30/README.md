@@ -4,11 +4,10 @@ Nuvoton offers the emWin platform which is embedded with Nuvoton N9H MPU, it pro
 
 [![NK-N9H30](https://i.imgur.com/B04MCCf.png "NK-N9H30")](https://i.imgur.com/B04MCCf.png "NK-N9H30")
 
-### 1.1 MCU specification
-
+### 1.1 MPU specification
 |  | Features |
 | -- | -- |
-| Part NO. | N9H30F61IEC (LQFP216 pin MCP package with DDR (64 MB) |
+| Part NO. | N9H30F61IEC(or N9H30F63IEC) (LQFP216 pin MCP package with DDR (64 MB) |
 | CPU ARCH. | 32-bit ARM926EJ-S |
 | Operation frequency | 300 MHz |
 | Embedded SDRAM size | Built-in 64MB |
@@ -19,8 +18,9 @@ Nuvoton offers the emWin platform which is embedded with Nuvoton N9H MPU, it pro
 | Extern storage |  32MB SPI-NOR Flash |
 | SD card slot |  SD |
 
-### 1.2 Interface
+**Notice: Please remember to select corresponding Part NO in NuWriter.**
 
+### 1.2 Interface
 | Interface |
 | -- |
 | Two RJ45 Ethernet |
@@ -30,12 +30,13 @@ Nuvoton offers the emWin platform which is embedded with Nuvoton N9H MPU, it pro
 | An ICE connector |
 
 ### 1.3 On-board devices
-
 | Device | Description | Driver supporting status |
 | -- | -- | -- |
 |Ethernet PHY | IP101GR | Supported |
-|Keypad |  | Supported |
+|Keypad | K[1, 6] | Supported |
 |LEDs |  | Supported |
+|TFT-LCD panel | 7" inch 24b RGB  | Supported |
+|Touch panel | 7" inch resistive | Supported |
 |Audio Codec | NAU8822, Supports MIC and earphone | Supported |
 |USB Device | VCOM + MStorage | Supported |
 |USB Host | MStorage | Supported |
@@ -43,7 +44,6 @@ Nuvoton offers the emWin platform which is embedded with Nuvoton N9H MPU, it pro
 
 ## 2. Supported compiler
 Support GCC, MDK4 and MDK5 IDE/compilers. More information of these compiler version as following:
-
 | IDE/Compiler  | Tested version            |
 | ---------- | ---------------------------- |
 | MDK5       | 5.26.2                       |
@@ -88,7 +88,7 @@ You can use Tera Term terminate emulator (or other software) to type commands of
 
 ## 5. Demo
 
-* Run NUemWin2RTT on NK-N9H30
+* Run NUemWin on NK-N9H30
 
 ```bash
  \ | /
@@ -106,7 +106,6 @@ msh /> nuemwin_stop
 
   [![NUemWin2RTT on NK-N9H30](https://img.youtube.com/vi/TAfkOKpySQk/0.jpg)](https://www.youtube.com/watch?v=TAfkOKpySQk)
 
-
 * Run LittlevGL2RTT on NK-N9H30
 
     **Please check out modified version with GE2D accelerating from [HERE](https://github.com/wosayttn/LittlevGL2RTT).**
@@ -122,8 +121,6 @@ msh /> lv_demo
 
 <Enjoy LvGL with H/W 2D Graphics Accelerating>
 ```
-
-
 
   [![LvGL2RTT on NK-N9H30](https://img.youtube.com/vi/djz0jAKrfjs/0.jpg)](https://www.youtube.com/watch?v=djz0jAKrfjs)
 
