@@ -21,7 +21,7 @@ static inline void usleep(unsigned long useconds)
 
 static inline void sleep(unsigned int seconds)
 {
-	rt_thread_delay(seconds);
+	rt_thread_delay(seconds*RT_TICK_PER_SECOND);
 }
 
 #ifdef __cplusplus
