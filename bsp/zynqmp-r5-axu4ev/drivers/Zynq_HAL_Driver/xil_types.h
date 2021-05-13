@@ -54,6 +54,9 @@ typedef long LONG;
 typedef unsigned long ULONG;
 #endif
 
+#define ULONG64_HI_MASK	0xFFFFFFFF00000000U
+#define ULONG64_LO_MASK	~ULONG64_HI_MASK
+
 /** @{ */
 /**
  * This data type defines an interrupt handler for a device.
