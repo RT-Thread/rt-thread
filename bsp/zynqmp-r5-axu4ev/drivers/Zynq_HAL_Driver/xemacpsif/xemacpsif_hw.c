@@ -32,7 +32,7 @@
 #include "lwipopts.h"
 
 #if XPAR_GIGE_PCS_PMA_1000BASEX_CORE_PRESENT == 1 || \
-	XPAR_GIGE_PCS_PMA_SGMII_CORE_PRESENT == 1
+    XPAR_GIGE_PCS_PMA_SGMII_CORE_PRESENT == 1
 #define PCM_PMA_CORE_PRESENT
 #else
 #undef PCM_PMA_CORE_PRESENT
@@ -51,44 +51,44 @@ extern long xInsideISR;
 
 XEmacPs_Config *xemacps_lookup_config(unsigned mac_base)
 {
-	XEmacPs_Config *cfgptr = NULL;
-	s32_t i;
+    XEmacPs_Config *cfgptr = NULL;
+    s32_t i;
 
-	for (i = 0; i < XPAR_XEMACPS_NUM_INSTANCES; i++) {
-		if (XEmacPs_ConfigTable[i].BaseAddress == mac_base) {
-			cfgptr = &XEmacPs_ConfigTable[i];
-			break;
+    for (i = 0; i < XPAR_XEMACPS_NUM_INSTANCES; i++) {
+	    if (XEmacPs_ConfigTable[i].BaseAddress == mac_base) {
+		    cfgptr = &XEmacPs_ConfigTable[i];
+		    break;
 		}
 	}
 
-	return (cfgptr);
+    return (cfgptr);
 }
 
 void init_emacps(xemacpsif_s *xemacps, struct netif *netif)
 {
-	XEmacPs *xemacpsp;
-	s32_t status = XST_SUCCESS;
-	u32_t i;
-	u32_t phyfoundforemac0 = FALSE;
-	u32_t phyfoundforemac1 = FALSE;
+    XEmacPs *xemacpsp;
+    s32_t status = XST_SUCCESS;
+    u32_t i;
+    u32_t phyfoundforemac0 = FALSE;
+    u32_t phyfoundforemac1 = FALSE;
 
-	xemacpsp = &xemacps->emacps;
+    xemacpsp = &xemacps->emacps;
 
 #ifdef ZYNQMP_USE_JUMBO
-	XEmacPs_SetOptions(xemacpsp, XEMACPS_JUMBO_ENABLE_OPTION);
+    XEmacPs_SetOptions(xemacpsp, XEMACPS_JUMBO_ENABLE_OPTION);
 #endif
 
 #ifdef LWIP_IGMP
-	XEmacPs_SetOptions(xemacpsp, XEMACPS_MULTICAST_OPTION);
+    XEmacPs_SetOptions(xemacpsp, XEMACPS_MULTICAST_OPTION);
 #endif
 
 	/* set mac address */
-	status = XEmacPs_SetMacAddress(xemacpsp, (void*)(netif->hwaddr), 1);
-	if (status != XST_SUCCESS) {
-		xil_printf("In %s:Emac Mac Address set failed...\r\n",__func__);
+    status = XEmacPs_SetMacAddress(xemacpsp, (void*)(netif->hwaddr), 1);
+    if (status != XST_SUCCESS) {
+	    xil_printf("In %s:Emac Mac Address set failed...\r\n",__func__);
 	}
 
-	XEmacPs_SetMdioDivisor(xemacpsp, MDC_DIV_224);
+    XEmacPs_SetMdioDivisor(xemacpsp, MDC_DIV_224);
 
 /*  Please refer to file header comments for the file xemacpsif_physpeed.c
  *  to know more about the PHY programming sequence.
@@ -102,92 +102,92 @@ void init_emacps(xemacpsif_s *xemacps, struct netif *netif)
  */
 #ifdef PCM_PMA_CORE_PRESENT
 #ifdef  XPAR_GIGE_PCS_PMA_1000BASEX_CORE_PRESENT
-	link_speed = phy_setup_emacps(xemacpsp, XPAR_PCSPMA_1000BASEX_PHYADDR);
+    link_speed = phy_setup_emacps(xemacpsp, XPAR_PCSPMA_1000BASEX_PHYADDR);
 #elif XPAR_GIGE_PCS_PMA_SGMII_CORE_PRESENT
-	link_speed = phy_setup_emacps(xemacpsp, XPAR_PCSPMA_SGMII_PHYADDR);
+    link_speed = phy_setup_emacps(xemacpsp, XPAR_PCSPMA_SGMII_PHYADDR);
 #endif
 #else
-	detect_phy(xemacpsp);
-	for (i = 31; i > 0; i--) {
-		if (xemacpsp->Config.BaseAddress == XPAR_XEMACPS_0_BASEADDR) {
-			if (phymapemac0[i] == TRUE) {
-				link_speed = phy_setup_emacps(xemacpsp, i);
-				phyfoundforemac0 = TRUE;
-				phyaddrforemac = i;
+    detect_phy(xemacpsp);
+    for (i = 31; i > 0; i--) {
+	    if (xemacpsp->Config.BaseAddress == XPAR_XEMACPS_0_BASEADDR) {
+		    if (phymapemac0[i] == TRUE) {
+			    link_speed = phy_setup_emacps(xemacpsp, i);
+			    phyfoundforemac0 = TRUE;
+			    phyaddrforemac = i;
 			}
 		} else {
-			if (phymapemac1[i] == TRUE) {
-				link_speed = phy_setup_emacps(xemacpsp, i);
-				phyfoundforemac1 = TRUE;
-				phyaddrforemac = i;
+		    if (phymapemac1[i] == TRUE) {
+			    link_speed = phy_setup_emacps(xemacpsp, i);
+			    phyfoundforemac1 = TRUE;
+			    phyaddrforemac = i;
 			}
 		}
 	}
 	/* If no PHY was detected, use broadcast PHY address of 0 */
-	if (xemacpsp->Config.BaseAddress == XPAR_XEMACPS_0_BASEADDR) {
-		if (phyfoundforemac0 == FALSE)
-			link_speed = phy_setup_emacps(xemacpsp, 0);
+    if (xemacpsp->Config.BaseAddress == XPAR_XEMACPS_0_BASEADDR) {
+	    if (phyfoundforemac0 == FALSE)
+		    link_speed = phy_setup_emacps(xemacpsp, 0);
 	} else {
-		if (phyfoundforemac1 == FALSE)
-			link_speed = phy_setup_emacps(xemacpsp, 0);
+	    if (phyfoundforemac1 == FALSE)
+		    link_speed = phy_setup_emacps(xemacpsp, 0);
 	}
 #endif
 
-	if (link_speed == XST_FAILURE) {
-		eth_link_status = ETH_LINK_DOWN;
-		xil_printf("Phy setup failure %s \n\r",__func__);
-		return;
+    if (link_speed == XST_FAILURE) {
+	    eth_link_status = ETH_LINK_DOWN;
+	    xil_printf("Phy setup failure %s \n\r",__func__);
+	    return;
 	} else {
-		eth_link_status = ETH_LINK_UP;
+	    eth_link_status = ETH_LINK_UP;
 	}
 
-	XEmacPs_SetOperatingSpeed(xemacpsp, link_speed);
+    XEmacPs_SetOperatingSpeed(xemacpsp, link_speed);
 	/* Setting the operating speed of the MAC needs a delay. */
 	{
-		volatile s32_t wait;
-		for (wait=0; wait < 20000; wait++);
+	    volatile s32_t wait;
+	    for (wait=0; wait < 20000; wait++);
 	}
 }
 
 void init_emacps_on_error (xemacpsif_s *xemacps, struct netif *netif)
 {
-	XEmacPs *xemacpsp;
-	s32_t status = XST_SUCCESS;
+    XEmacPs *xemacpsp;
+    s32_t status = XST_SUCCESS;
 
-	xemacpsp = &xemacps->emacps;
+    xemacpsp = &xemacps->emacps;
 
 	/* set mac address */
-	status = XEmacPs_SetMacAddress(xemacpsp, (void*)(netif->hwaddr), 1);
-	if (status != XST_SUCCESS) {
-		xil_printf("In %s:Emac Mac Address set failed...\r\n",__func__);
+    status = XEmacPs_SetMacAddress(xemacpsp, (void*)(netif->hwaddr), 1);
+    if (status != XST_SUCCESS) {
+	    xil_printf("In %s:Emac Mac Address set failed...\r\n",__func__);
 	}
 
-	XEmacPs_SetOperatingSpeed(xemacpsp, link_speed);
+    XEmacPs_SetOperatingSpeed(xemacpsp, link_speed);
 
 	/* Setting the operating speed of the MAC needs a delay. */
 	{
-		volatile s32_t wait;
-		for (wait=0; wait < 20000; wait++);
+	    volatile s32_t wait;
+	    for (wait=0; wait < 20000; wait++);
 	}
 }
 
 void setup_isr (struct xemac_s *xemac)
 {
-	xemacpsif_s   *xemacpsif;
+    xemacpsif_s   *xemacpsif;
 
-	xemacpsif = (xemacpsif_s *)(xemac->state);
+    xemacpsif = (xemacpsif_s *)(xemac->state);
 	/*
 	 * Setup callbacks
 	 */
-	XEmacPs_SetHandler(&xemacpsif->emacps, XEMACPS_HANDLER_DMASEND,
+    XEmacPs_SetHandler(&xemacpsif->emacps, XEMACPS_HANDLER_DMASEND,
 				     (void *) emacps_send_handler,
 				     (void *) xemac);
 
-	XEmacPs_SetHandler(&xemacpsif->emacps, XEMACPS_HANDLER_DMARECV,
+    XEmacPs_SetHandler(&xemacpsif->emacps, XEMACPS_HANDLER_DMARECV,
 				    (void *) emacps_recv_handler,
 				    (void *) xemac);
 
-	XEmacPs_SetHandler(&xemacpsif->emacps, XEMACPS_HANDLER_ERROR,
+    XEmacPs_SetHandler(&xemacpsif->emacps, XEMACPS_HANDLER_ERROR,
 				    (void *) emacps_error_handler,
 				    (void *) xemac);
 }
@@ -195,82 +195,82 @@ void setup_isr (struct xemac_s *xemac)
 void start_emacps (xemacpsif_s *xemacps)
 {
 	/* start the temac */
-	XEmacPs_Start(&xemacps->emacps);
+    XEmacPs_Start(&xemacps->emacps);
 }
 
 void restart_emacps_transmitter (xemacpsif_s *xemacps) {
-	u32_t Reg;
-	Reg = XEmacPs_ReadReg(xemacps->emacps.Config.BaseAddress,
-					XEMACPS_NWCTRL_OFFSET);
-	Reg = Reg & (~XEMACPS_NWCTRL_TXEN_MASK);
-	XEmacPs_WriteReg(xemacps->emacps.Config.BaseAddress,
-										XEMACPS_NWCTRL_OFFSET, Reg);
+    u32_t Reg;
+    Reg = XEmacPs_ReadReg(xemacps->emacps.Config.BaseAddress,
+				    XEMACPS_NWCTRL_OFFSET);
+    Reg = Reg & (~XEMACPS_NWCTRL_TXEN_MASK);
+    XEmacPs_WriteReg(xemacps->emacps.Config.BaseAddress,
+									    XEMACPS_NWCTRL_OFFSET, Reg);
 
-	Reg = XEmacPs_ReadReg(xemacps->emacps.Config.BaseAddress,
-						XEMACPS_NWCTRL_OFFSET);
-	Reg = Reg | (XEMACPS_NWCTRL_TXEN_MASK);
-	XEmacPs_WriteReg(xemacps->emacps.Config.BaseAddress,
-										XEMACPS_NWCTRL_OFFSET, Reg);
+    Reg = XEmacPs_ReadReg(xemacps->emacps.Config.BaseAddress,
+					    XEMACPS_NWCTRL_OFFSET);
+    Reg = Reg | (XEMACPS_NWCTRL_TXEN_MASK);
+    XEmacPs_WriteReg(xemacps->emacps.Config.BaseAddress,
+									    XEMACPS_NWCTRL_OFFSET, Reg);
 }
 
 void emacps_error_handler(void *arg,u8 Direction, u32 ErrorWord)
 {
-	struct xemac_s *xemac;
-	xemacpsif_s   *xemacpsif;
-	XEmacPs_BdRing *rxring;
-	XEmacPs_BdRing *txring;
+    struct xemac_s *xemac;
+    xemacpsif_s   *xemacpsif;
+    XEmacPs_BdRing *rxring;
+    XEmacPs_BdRing *txring;
 #ifdef OS_IS_FREERTOS
-	xInsideISR++;
+    xInsideISR++;
 #endif
 
-	xemac = (struct xemac_s *)(arg);
-	xemacpsif = (xemacpsif_s *)(xemac->state);
-	rxring = &XEmacPs_GetRxRing(&xemacpsif->emacps);
-	txring = &XEmacPs_GetTxRing(&xemacpsif->emacps);
+    xemac = (struct xemac_s *)(arg);
+    xemacpsif = (xemacpsif_s *)(xemac->state);
+    rxring = &XEmacPs_GetRxRing(&xemacpsif->emacps);
+    txring = &XEmacPs_GetTxRing(&xemacpsif->emacps);
 
-	if (ErrorWord != 0) {
-		switch (Direction) {
-			case XEMACPS_RECV:
-			if (ErrorWord & XEMACPS_RXSR_HRESPNOK_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Receive DMA error\r\n"));
-				HandleEmacPsError(xemac);
+    if (ErrorWord != 0) {
+	    switch (Direction) {
+		    case XEMACPS_RECV:
+		    if (ErrorWord & XEMACPS_RXSR_HRESPNOK_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Receive DMA error\r\n"));
+			    HandleEmacPsError(xemac);
 			}
-			if (ErrorWord & XEMACPS_RXSR_RXOVR_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Receive over run\r\n"));
-				emacps_recv_handler(arg);
-				setup_rx_bds(xemacpsif, rxring);
+		    if (ErrorWord & XEMACPS_RXSR_RXOVR_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Receive over run\r\n"));
+			    emacps_recv_handler(arg);
+			    setup_rx_bds(xemacpsif, rxring);
 			}
-			if (ErrorWord & XEMACPS_RXSR_BUFFNA_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Receive buffer not available\r\n"));
-				emacps_recv_handler(arg);
-				setup_rx_bds(xemacpsif, rxring);
+		    if (ErrorWord & XEMACPS_RXSR_BUFFNA_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Receive buffer not available\r\n"));
+			    emacps_recv_handler(arg);
+			    setup_rx_bds(xemacpsif, rxring);
 			}
-			break;
-			case XEMACPS_SEND:
-			if (ErrorWord & XEMACPS_TXSR_HRESPNOK_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Transmit DMA error\r\n"));
-				HandleEmacPsError(xemac);
+		    break;
+		    case XEMACPS_SEND:
+		    if (ErrorWord & XEMACPS_TXSR_HRESPNOK_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Transmit DMA error\r\n"));
+			    HandleEmacPsError(xemac);
 			}
-			if (ErrorWord & XEMACPS_TXSR_URUN_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Transmit under run\r\n"));
-				HandleTxErrors(xemac);
+		    if (ErrorWord & XEMACPS_TXSR_URUN_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Transmit under run\r\n"));
+			    HandleTxErrors(xemac);
 			}
-			if (ErrorWord & XEMACPS_TXSR_BUFEXH_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Transmit buffer exhausted\r\n"));
-				HandleTxErrors(xemac);
+		    if (ErrorWord & XEMACPS_TXSR_BUFEXH_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Transmit buffer exhausted\r\n"));
+			    HandleTxErrors(xemac);
 			}
-			if (ErrorWord & XEMACPS_TXSR_RXOVR_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Transmit retry excessed limits\r\n"));
-				HandleTxErrors(xemac);
+		    if (ErrorWord & XEMACPS_TXSR_RXOVR_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Transmit retry excessed limits\r\n"));
+			    HandleTxErrors(xemac);
 			}
-			if (ErrorWord & XEMACPS_TXSR_FRAMERX_MASK) {
-				LWIP_DEBUGF(NETIF_DEBUG, ("Transmit collision\r\n"));
+		    if (ErrorWord & XEMACPS_TXSR_FRAMERX_MASK) {
+			    LWIP_DEBUGF(NETIF_DEBUG, ("Transmit collision\r\n"));
 				// process_sent_bds(xemacpsif, txring);
 			}
-			break;
+		    break;
 		}
 	}
 #ifdef OS_IS_FREERTOS
-	xInsideISR--;
+    xInsideISR--;
 #endif
 }

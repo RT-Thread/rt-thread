@@ -12,15 +12,15 @@ extern "C" {
 /************************** Constant Definitions *****************************/
 
 #ifndef TRUE
-#  define TRUE		1U
+#  define TRUE	    1U
 #endif
 
 #ifndef FALSE
-#  define FALSE		0U
+#  define FALSE	    0U
 #endif
 
 #ifndef NULL
-#define NULL		0U
+#define NULL	    0U
 #endif
 
 #define XIL_COMPONENT_IS_READY     0x11111111U  /**< In device drivers, This macro will be
@@ -54,7 +54,7 @@ typedef long LONG;
 typedef unsigned long ULONG;
 #endif
 
-#define ULONG64_HI_MASK	0xFFFFFFFF00000000U
+#define ULONG64_HI_MASK    0xFFFFFFFF00000000U
 #define ULONG64_LO_MASK	~ULONG64_HI_MASK
 
 /** @{ */
@@ -73,15 +73,15 @@ typedef void (*XExceptionHandler) (void *InstancePtr);
 /************************** Constant Definitions *****************************/
 
 #ifndef TRUE
-#define TRUE		1U
+#define TRUE	    1U
 #endif
 
 #ifndef FALSE
-#define FALSE		0U
+#define FALSE	    0U
 #endif
 
 #ifndef NULL
-#define NULL		0U
+#define NULL	    0U
 #endif
 
 #ifdef __cplusplus
