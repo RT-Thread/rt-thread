@@ -56,16 +56,16 @@ extern XEmacPs_Config XEmacPs_ConfigTable[XPAR_XEMACPS_NUM_INSTANCES];
 ******************************************************************************/
 XEmacPs_Config *XEmacPs_LookupConfig(u16 DeviceId)
 {
-	XEmacPs_Config *CfgPtr = NULL;
-	u32 i;
+    XEmacPs_Config *CfgPtr = NULL;
+    u32 i;
 
-	for (i = 0U; i < (u32)XPAR_XEMACPS_NUM_INSTANCES; i++) {
-		if (XEmacPs_ConfigTable[i].DeviceId == DeviceId) {
-			CfgPtr = &XEmacPs_ConfigTable[i];
-			break;
+    for (i = 0U; i < (u32)XPAR_XEMACPS_NUM_INSTANCES; i++) {
+	    if (XEmacPs_ConfigTable[i].DeviceId == DeviceId) {
+		    CfgPtr = &XEmacPs_ConfigTable[i];
+		    break;
 		}
 	}
 
-	return (XEmacPs_Config *)(CfgPtr);
+    return (XEmacPs_Config *)(CfgPtr);
 }
 /** @} */

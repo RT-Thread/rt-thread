@@ -87,7 +87,7 @@ extern "C" {
 #define XST_NOT_ENABLED                 29L	/*!< A requested service is not
 						   available because it has not
 						   been enabled */
-#define XST_NO_ACCESS			30L	/* Generic access error */
+#define XST_NO_ACCESS		    30L	/* Generic access error */
 #define XST_TIMEOUT                     31L	/*!< Event timeout occurred */
 
 /** @} */
@@ -258,7 +258,7 @@ extern "C" {
 #define XST_IIC_TBA_READBACK_ERROR      1087	/*!< Read of the 10 bit addr reg */
 					     /* didn't return written value */
 #define XST_IIC_NOT_SLAVE               1088	/*!< The device isn't a slave    */
-#define XST_IIC_ARB_LOST 				1089 	/*!< Arbitration lost for master	*/
+#define XST_IIC_ARB_LOST 			    1089 	/*!< Arbitration lost for master	*/
 /** @} */
 /**
 @name ATMC Status Codes 1101 - 1125
@@ -422,10 +422,10 @@ extern "C" {
 */
 /********************** FlexRay constants 1400 - 1409 *************************/
 
-#define XST_FR_TX_ERROR			1400
-#define XST_FR_TX_BUSY			1401
-#define XST_FR_BUF_LOCKED		1402
-#define XST_FR_NO_BUF			1403
+#define XST_FR_TX_ERROR		    1400
+#define XST_FR_TX_BUSY		    1401
+#define XST_FR_BUF_LOCKED	    1402
+#define XST_FR_NO_BUF		    1403
 /** @} */
 /**
 @name USB constants 1410 - 1420
@@ -433,11 +433,11 @@ extern "C" {
 */
 /****************** USB constants 1410 - 1420  *******************************/
 
-#define XST_USB_ALREADY_CONFIGURED	1410
-#define XST_USB_BUF_ALIGN_ERROR		1411
-#define XST_USB_NO_DESC_AVAILABLE	1412
-#define XST_USB_BUF_TOO_BIG		1413
-#define XST_USB_NO_BUF			1414
+#define XST_USB_ALREADY_CONFIGURED    1410
+#define XST_USB_BUF_ALIGN_ERROR	    1411
+#define XST_USB_NO_DESC_AVAILABLE    1412
+#define XST_USB_BUF_TOO_BIG	    1413
+#define XST_USB_NO_BUF		    1414
 /** @} */
 /**
 @name HWICAP constants 1421 - 1429
@@ -445,7 +445,7 @@ extern "C" {
 */
 /****************** HWICAP constants 1421 - 1429  *****************************/
 
-#define XST_HWICAP_WRITE_DONE		1421
+#define XST_HWICAP_WRITE_DONE	    1421
 
 /** @} */
 /**
@@ -454,7 +454,7 @@ extern "C" {
 */
 /****************** AXI VDMA constants 1430 - 1440  *****************************/
 
-#define XST_VDMA_MISMATCH_ERROR		1430
+#define XST_VDMA_MISMATCH_ERROR	    1430
 /** @} */
 /**
 @name NAND Flash Status Codes 1441 - 1459
@@ -462,35 +462,35 @@ extern "C" {
 */
 /*********************** NAND Flash statuses 1441 - 1459  *********************/
 
-#define XST_NAND_BUSY			1441L	/*!< Flash is erasing or
+#define XST_NAND_BUSY		    1441L	/*!< Flash is erasing or
 						 * programming
 						 */
-#define XST_NAND_READY			1442L	/*!< Flash is ready for commands
+#define XST_NAND_READY		    1442L	/*!< Flash is ready for commands
 						 */
-#define XST_NAND_ERROR			1443L	/*!< Flash had detected an
+#define XST_NAND_ERROR		    1443L	/*!< Flash had detected an
 						 * internal error.
 						 */
-#define XST_NAND_PART_NOT_SUPPORTED	1444L	/*!< Flash type not supported by
+#define XST_NAND_PART_NOT_SUPPORTED    1444L	/*!< Flash type not supported by
 						 * driver
 						 */
-#define XST_NAND_OPT_NOT_SUPPORTED	1445L	/*!< Operation not supported
+#define XST_NAND_OPT_NOT_SUPPORTED    1445L	/*!< Operation not supported
 						 */
-#define XST_NAND_TIMEOUT_ERROR		1446L	/*!< Programming or erase
+#define XST_NAND_TIMEOUT_ERROR	    1446L	/*!< Programming or erase
 						 * operation aborted due to a
 						 * timeout
 						 */
-#define XST_NAND_ADDRESS_ERROR		1447L	/*!< Accessed flash outside its
+#define XST_NAND_ADDRESS_ERROR	    1447L	/*!< Accessed flash outside its
 						 * addressible range
 						 */
-#define XST_NAND_ALIGNMENT_ERROR	1448L	/*!< Write alignment error
+#define XST_NAND_ALIGNMENT_ERROR    1448L	/*!< Write alignment error
 						 */
-#define XST_NAND_PARAM_PAGE_ERROR	1449L	/*!< Failed to read parameter
+#define XST_NAND_PARAM_PAGE_ERROR    1449L	/*!< Failed to read parameter
 						 * page of the device
 						 */
-#define XST_NAND_CACHE_ERROR		1450L	/*!< Flash page buffer error
+#define XST_NAND_CACHE_ERROR	    1450L	/*!< Flash page buffer error
 						 */
 
-#define XST_NAND_WRITE_PROTECTED	1451L	/*!< Flash is write protected
+#define XST_NAND_WRITE_PROTECTED    1451L	/*!< Flash is write protected
 						 */
 /** @} */
 

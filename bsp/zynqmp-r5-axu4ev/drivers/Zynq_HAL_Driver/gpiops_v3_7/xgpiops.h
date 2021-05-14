@@ -67,10 +67,10 @@
 *		      for output pins on all banks during initialization.
 * 1.02a hk   08/22/13 Added low level reset API
 * 2.1   hk   04/29/14 Use Input data register DATA_RO for read. CR# 771667.
-* 2.2	sk	 10/13/14 Used Pin number in Bank instead of pin number
+* 2.2    sk	 10/13/14 Used Pin number in Bank instead of pin number
 * 					  passed to APIs. CR# 822636
 * 3.00  kvn  02/13/15 Modified code for MISRA-C:2012 compliance.
-* 3.1	kvn  04/13/15 Add support for Zynq Ultrascale+ MP. CR# 856980.
+* 3.1    kvn  04/13/15 Add support for Zynq Ultrascale+ MP. CR# 856980.
 *       ms   03/17/17 Added readme.txt file in examples folder for doxygen
 *                     generation.
 *       ms   04/05/17 Added tabspace for return statements in functions of
@@ -89,9 +89,9 @@
 * 3.5   sne  03/14/19 Added Versal support.
 * 3.6   mus  04/05/19 Replaced XPLAT_versal macro with XPLAT_VERSAL, to be in
 *                     sync with standalone BSP
-* 3.6	sne  06/12/19 Fixed IAR compiler warning.
+* 3.6    sne  06/12/19 Fixed IAR compiler warning.
 * 3.6   sne  08/14/19 Added interrupt handler support on versal.
-* 3.7	sne  12/04/19 Reverted versal examples support.
+* 3.7    sne  12/04/19 Reverted versal examples support.
 *
 * </pre>
 *
@@ -116,43 +116,43 @@ extern "C" {
  * The following constants define the interrupt types that can be set for each
  * GPIO pin.
  */
-#define XGPIOPS_IRQ_TYPE_EDGE_RISING	0x00U  /**< Interrupt on Rising edge */
-#define XGPIOPS_IRQ_TYPE_EDGE_FALLING	0x01U  /**< Interrupt Falling edge */
-#define XGPIOPS_IRQ_TYPE_EDGE_BOTH	0x02U  /**< Interrupt on both edges */
-#define XGPIOPS_IRQ_TYPE_LEVEL_HIGH	0x03U  /**< Interrupt on high level */
-#define XGPIOPS_IRQ_TYPE_LEVEL_LOW	0x04U  /**< Interrupt on low level */
+#define XGPIOPS_IRQ_TYPE_EDGE_RISING    0x00U  /**< Interrupt on Rising edge */
+#define XGPIOPS_IRQ_TYPE_EDGE_FALLING    0x01U  /**< Interrupt Falling edge */
+#define XGPIOPS_IRQ_TYPE_EDGE_BOTH    0x02U  /**< Interrupt on both edges */
+#define XGPIOPS_IRQ_TYPE_LEVEL_HIGH    0x03U  /**< Interrupt on high level */
+#define XGPIOPS_IRQ_TYPE_LEVEL_LOW    0x04U  /**< Interrupt on low level */
 /*@}*/
 
 #define XGPIOPS_BANK_MAX_PINS		(u32)32 /**< Max pins in a GPIO bank */
-#define XGPIOPS_BANK0			0x00U  /**< GPIO Bank 0 */
-#define XGPIOPS_BANK1			0x01U  /**< GPIO Bank 1 */
-#define XGPIOPS_BANK2			0x02U  /**< GPIO Bank 2 */
-#define XGPIOPS_BANK3			0x03U  /**< GPIO Bank 3 */
+#define XGPIOPS_BANK0		    0x00U  /**< GPIO Bank 0 */
+#define XGPIOPS_BANK1		    0x01U  /**< GPIO Bank 1 */
+#define XGPIOPS_BANK2		    0x02U  /**< GPIO Bank 2 */
+#define XGPIOPS_BANK3		    0x03U  /**< GPIO Bank 3 */
 
 #ifdef XPAR_PSU_GPIO_0_BASEADDR
-#define XGPIOPS_BANK4			0x04U  /**< GPIO Bank 4 */
-#define XGPIOPS_BANK5			0x05U  /**< GPIO Bank 5 */
+#define XGPIOPS_BANK4		    0x04U  /**< GPIO Bank 4 */
+#define XGPIOPS_BANK5		    0x05U  /**< GPIO Bank 5 */
 #endif
 
-#define XGPIOPS_MAX_BANKS_ZYNQMP		0x06U  /**< Max banks in a
-										*	Zynq Ultrascale+ MP GPIO device
+#define XGPIOPS_MAX_BANKS_ZYNQMP	    0x06U  /**< Max banks in a
+										*    Zynq Ultrascale+ MP GPIO device
 										*/
-#define XGPIOPS_MAX_BANKS		0x04U  /**< Max banks in a Zynq GPIO device */
+#define XGPIOPS_MAX_BANKS	    0x04U  /**< Max banks in a Zynq GPIO device */
 
 #define XGPIOPS_DEVICE_MAX_PIN_NUM_ZYNQMP	(u32)174 /**< Max pins in the
-						  *	Zynq Ultrascale+ MP GPIO device
+						  *    Zynq Ultrascale+ MP GPIO device
 					      * 0 - 25,  Bank 0
 					      * 26 - 51, Bank 1
-					      *	52 - 77, Bank 2
-					      *	78 - 109, Bank 3
-					      *	110 - 141, Bank 4
-					      *	142 - 173, Bank 5
+					      *    52 - 77, Bank 2
+					      *    78 - 109, Bank 3
+					      *    110 - 141, Bank 4
+					      *    142 - 173, Bank 5
 					      */
 #define XGPIOPS_DEVICE_MAX_PIN_NUM	(u32)118 /**< Max pins in the Zynq GPIO device
 					      * 0 - 31,  Bank 0
 					      * 32 - 53, Bank 1
-					      *	54 - 85, Bank 2
-					      *	86 - 117, Bank 3
+					      *    54 - 85, Bank 2
+					      *    86 - 117, Bank 3
 					      */
 
 /**************************** Type Definitions *******************************/
@@ -165,13 +165,13 @@ extern "C" {
  * driven mode. The handler executes in an interrupt context such that minimal
  * processing should be performed.
  *
- * @param	CallBackRef is a callback reference passed in by the upper layer
- *		when setting the callback functions for a GPIO bank. It is
- *		passed back to the upper layer when the callback is invoked. Its
- *		type is not important to the driver component, so it is a void
- *		pointer.
- * @param	Bank is the bank for which the interrupt status has changed.
- * @param	Status is the Interrupt status of the GPIO bank.
+ * @param    CallBackRef is a callback reference passed in by the upper layer
+ *	    when setting the callback functions for a GPIO bank. It is
+ *	    passed back to the upper layer when the callback is invoked. Its
+ *	    type is not important to the driver component, so it is a void
+ *	    pointer.
+ * @param    Bank is the bank for which the interrupt status has changed.
+ * @param    Status is the Interrupt status of the GPIO bank.
  *
  *****************************************************************************/
 typedef void (*XGpioPs_Handler) (void *CallBackRef, u32 Bank, u32 Status);
@@ -180,8 +180,8 @@ typedef void (*XGpioPs_Handler) (void *CallBackRef, u32 Bank, u32 Status);
  * This typedef contains configuration information for a device.
  */
 typedef struct {
-	u16 DeviceId;		/**< Unique ID of device */
-	u32 BaseAddr;		/**< Register base address */
+    u16 DeviceId;		/**< Unique ID of device */
+    u32 BaseAddr;		/**< Register base address */
 } XGpioPs_Config;
 
 /**
@@ -190,13 +190,13 @@ typedef struct {
  * to a variable of this type is then passed to the driver API functions.
  */
 typedef struct {
-	XGpioPs_Config GpioConfig;	/**< Device configuration */
-	u32 IsReady;			/**< Device is initialized and ready */
-	XGpioPs_Handler Handler;	/**< Status handlers for all banks */
-	void *CallBackRef; 		/**< Callback ref for bank handlers */
-	u32 Platform;			/**< Platform data */
-	u32 MaxPinNum;			/**< Max pins in the GPIO device */
-	u8 MaxBanks;			/**< Max banks in a GPIO device */
+    XGpioPs_Config GpioConfig;	/**< Device configuration */
+    u32 IsReady;			/**< Device is initialized and ready */
+    XGpioPs_Handler Handler;	/**< Status handlers for all banks */
+    void *CallBackRef; 		/**< Callback ref for bank handlers */
+    u32 Platform;			/**< Platform data */
+    u32 MaxPinNum;			/**< Max pins in the GPIO device */
+    u8 MaxBanks;			/**< Max banks in a GPIO device */
         u32 PmcGpio;                    /**< Flag for accessing PS GPIO for versal*/
 } XGpioPs;
 

@@ -52,7 +52,7 @@
 * This function runs a self-test on the GPIO driver/device. This function
 * does a register read/write test on some of the Interrupt Registers.
 *
-* @param	InstancePtr is a pointer to the XGpioPs instance.
+* @param    InstancePtr is a pointer to the XGpioPs instance.
 *
 * @return
 *		- XST_SUCCESS if the self-test passed.
@@ -62,51 +62,51 @@
 ******************************************************************************/
 s32 XGpioPs_SelfTest(const XGpioPs *InstancePtr)
 {
-	s32 Status = XST_SUCCESS;
-	u32 IntrEnabled;
-	u32 CurrentIntrType = 0U;
-	u32 CurrentIntrPolarity = 0U;
-	u32 CurrentIntrOnAny = 0U;
-	u32 IntrType = 0U;
-	u32 IntrPolarity = 0U;
-	u32 IntrOnAny = 0U;
-	u32 IntrTestValue = 0x22U;
+    s32 Status = XST_SUCCESS;
+    u32 IntrEnabled;
+    u32 CurrentIntrType = 0U;
+    u32 CurrentIntrPolarity = 0U;
+    u32 CurrentIntrOnAny = 0U;
+    u32 IntrType = 0U;
+    u32 IntrPolarity = 0U;
+    u32 IntrOnAny = 0U;
+    u32 IntrTestValue = 0x22U;
 
-	Xil_AssertNonvoid(InstancePtr != NULL);
-	Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
+    Xil_AssertNonvoid(InstancePtr != NULL);
+    Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
 	/* Disable the Interrupts for Bank 0 . */
-	IntrEnabled = XGpioPs_IntrGetEnabled(InstancePtr, XGPIOPS_BANK0);
-	XGpioPs_IntrDisable(InstancePtr, XGPIOPS_BANK0, IntrEnabled);
+    IntrEnabled = XGpioPs_IntrGetEnabled(InstancePtr, XGPIOPS_BANK0);
+    XGpioPs_IntrDisable(InstancePtr, XGPIOPS_BANK0, IntrEnabled);
 
 	/*
 	 * Get the Current Interrupt properties for Bank 0.
 	 * Set them to a known value, read it back and compare.
 	 */
-	XGpioPs_GetIntrType(InstancePtr, XGPIOPS_BANK0, &CurrentIntrType,
+    XGpioPs_GetIntrType(InstancePtr, XGPIOPS_BANK0, &CurrentIntrType,
 			     &CurrentIntrPolarity, &CurrentIntrOnAny);
 
-	XGpioPs_SetIntrType(InstancePtr, XGPIOPS_BANK0, IntrTestValue,
+    XGpioPs_SetIntrType(InstancePtr, XGPIOPS_BANK0, IntrTestValue,
 			     IntrTestValue, IntrTestValue);
 
-	XGpioPs_GetIntrType(InstancePtr, XGPIOPS_BANK0, &IntrType,
+    XGpioPs_GetIntrType(InstancePtr, XGPIOPS_BANK0, &IntrType,
 			     &IntrPolarity, &IntrOnAny);
 
-	if ((IntrType != IntrTestValue) && (IntrPolarity != IntrTestValue) &&
+    if ((IntrType != IntrTestValue) && (IntrPolarity != IntrTestValue) &&
 	    (IntrOnAny != IntrTestValue)) {
 
-		Status = XST_FAILURE;
+	    Status = XST_FAILURE;
 	}
 
 	/*
 	 * Restore the contents of all the interrupt registers modified in this
 	 * test.
 	 */
-	XGpioPs_SetIntrType(InstancePtr, XGPIOPS_BANK0, CurrentIntrType,
+    XGpioPs_SetIntrType(InstancePtr, XGPIOPS_BANK0, CurrentIntrType,
 			     CurrentIntrPolarity, CurrentIntrOnAny);
 
-	XGpioPs_IntrEnable(InstancePtr, XGPIOPS_BANK0, IntrEnabled);
+    XGpioPs_IntrEnable(InstancePtr, XGPIOPS_BANK0, IntrEnabled);
 
-	return Status;
+    return Status;
 }
 /** @} */

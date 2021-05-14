@@ -72,24 +72,24 @@ extern "C" {
 #define ZYNQMP_EMACPS_2_BASEADDR 0xFF0D0000
 #define ZYNQMP_EMACPS_3_BASEADDR 0xFF0E0000
 
-#define CRL_APB_GEM0_REF_CTRL	0xFF5E0050
-#define CRL_APB_GEM1_REF_CTRL	0xFF5E0054
-#define CRL_APB_GEM2_REF_CTRL	0xFF5E0058
-#define CRL_APB_GEM3_REF_CTRL	0xFF5E005C
+#define CRL_APB_GEM0_REF_CTRL    0xFF5E0050
+#define CRL_APB_GEM1_REF_CTRL    0xFF5E0054
+#define CRL_APB_GEM2_REF_CTRL    0xFF5E0058
+#define CRL_APB_GEM3_REF_CTRL    0xFF5E005C
 
-#define CRL_APB_GEM_DIV0_MASK	0x00003F00
-#define CRL_APB_GEM_DIV0_SHIFT	8
-#define CRL_APB_GEM_DIV1_MASK	0x003F0000
-#define CRL_APB_GEM_DIV1_SHIFT	16
+#define CRL_APB_GEM_DIV0_MASK    0x00003F00
+#define CRL_APB_GEM_DIV0_SHIFT    8
+#define CRL_APB_GEM_DIV1_MASK    0x003F0000
+#define CRL_APB_GEM_DIV1_SHIFT    16
 
 #define VERSAL_EMACPS_0_BASEADDR 0xFF0C0000
 #define VERSAL_EMACPS_1_BASEADDR 0xFF0D0000
 
-#define VERSAL_CRL_GEM0_REF_CTRL	0xFF5E0118
-#define VERSAL_CRL_GEM1_REF_CTRL	0xFF5E011C
+#define VERSAL_CRL_GEM0_REF_CTRL    0xFF5E0118
+#define VERSAL_CRL_GEM1_REF_CTRL    0xFF5E011C
 
-#define VERSAL_CRL_GEM_DIV_MASK		0x0003FF00
-#define VERSAL_CRL_APB_GEM_DIV_SHIFT	8
+#define VERSAL_CRL_GEM_DIV_MASK	    0x0003FF00
+#define VERSAL_CRL_APB_GEM_DIV_SHIFT    8
 
 #if defined (ARMR5) || (__aarch64__) || (ARMA53_32) || (__MICROBLAZE__)
 #if defined (USE_JUMBO_FRAMES)
@@ -97,40 +97,40 @@ extern "C" {
 #endif
 #endif
 
-#define GEM_VERSION_ZYNQMP	7
-#define GEM_VERSION_VERSAL	0x107
+#define GEM_VERSION_ZYNQMP    7
+#define GEM_VERSION_VERSAL    0x107
 
 #define MAX_FRAME_SIZE_JUMBO (XEMACPS_MTU_JUMBO + XEMACPS_HDR_SIZE + XEMACPS_TRL_SIZE)
 
-void 	xemacpsif_setmac(u32_t index, u8_t *addr);
-u8_t*	xemacpsif_getmac(u32_t index);
-err_t 	xemacpsif_init(struct netif *netif);
-s32_t 	xemacpsif_input(struct netif *netif);
+void     xemacpsif_setmac(u32_t index, u8_t *addr);
+u8_t*    xemacpsif_getmac(u32_t index);
+err_t     xemacpsif_init(struct netif *netif);
+s32_t     xemacpsif_input(struct netif *netif);
 
 /* xaxiemacif_hw.c */
-void 	xemacps_error_handler(XEmacPs * Temac);
+void     xemacps_error_handler(XEmacPs * Temac);
 
 /* structure within each netif, encapsulating all information required for
  * using a particular temac instance
  */
 typedef struct {
-	XEmacPs emacps;
+    XEmacPs emacps;
 
 	/* queue to store overflow packets */
-	pq_queue_t *recv_q;
-	pq_queue_t *send_q;
+    pq_queue_t *recv_q;
+    pq_queue_t *send_q;
 
 	/* pointers to memory holding buffer descriptors (used only with SDMA) */
-	void *rx_bdspace;
-	void *tx_bdspace;
+    void *rx_bdspace;
+    void *tx_bdspace;
 
-	unsigned int last_rx_frms_cntr;
+    unsigned int last_rx_frms_cntr;
 
 } xemacpsif_s;
 
 extern xemacpsif_s xemacpsif;
 
-s32_t	is_tx_space_available(xemacpsif_s *emac);
+s32_t    is_tx_space_available(xemacpsif_s *emac);
 
 /* xemacpsif_dma.c */
 

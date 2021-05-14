@@ -265,7 +265,7 @@
  *		       removed. It is expected that all BDs are allocated in
  *		       from uncached area.
  * 1.06a asa  11/02/13 Changed the value for XEMACPS_RXBUF_LEN_MASK from 0x3fff
- *				to 0x1fff. This fixes the CR#744902.
+ *			    to 0x1fff. This fixes the CR#744902.
  *			  Made changes in example file xemacps_example.h to fix compilation
  *			  issues with iarcc compiler.
  * 2.0   adk  10/12/13 Updated as per the New Tcl API's
@@ -412,8 +412,8 @@ extern "C" {
 /**< Enable the TX checksum offload
  *   This option defaults to enabled (set) */
 
-#define XEMACPS_JUMBO_ENABLE_OPTION	0x00004000U
-#define XEMACPS_SGMII_ENABLE_OPTION	0x00008000U
+#define XEMACPS_JUMBO_ENABLE_OPTION    0x00004000U
+#define XEMACPS_SGMII_ENABLE_OPTION    0x00008000U
 
 #define XEMACPS_DEFAULT_OPTIONS                     \
     ((u32)XEMACPS_FLOW_CONTROL_OPTION |                  \
@@ -463,10 +463,10 @@ extern "C" {
 
 /* DMACR Bust length hash defines */
 
-#define XEMACPS_SINGLE_BURST	0x00000001
-#define XEMACPS_4BYTE_BURST		0x00000004
-#define XEMACPS_8BYTE_BURST		0x00000008
-#define XEMACPS_16BYTE_BURST	0x00000010
+#define XEMACPS_SINGLE_BURST    0x00000001
+#define XEMACPS_4BYTE_BURST	    0x00000004
+#define XEMACPS_8BYTE_BURST	    0x00000008
+#define XEMACPS_16BYTE_BURST    0x00000010
 
 
 /**************************** Type Definitions ******************************/
@@ -507,12 +507,12 @@ typedef void (*XEmacPs_ErrHandler) (void *CallBackRef, u8 Direction,
  * This typedef contains configuration information for a device.
  */
 typedef struct {
-	u16 DeviceId;	/**< Unique ID  of device */
-	UINTPTR BaseAddress;/**< Physical base address of IPIF registers */
-	u8 IsCacheCoherent; /**< Applicable only to A53 in EL1 mode;
+    u16 DeviceId;	/**< Unique ID  of device */
+    UINTPTR BaseAddress;/**< Physical base address of IPIF registers */
+    u8 IsCacheCoherent; /**< Applicable only to A53 in EL1 mode;
 				* describes whether Cache Coherent or not */
 #if defined  (XCLOCKING)
-	u32 RefClk;	/**< Input clock */
+    u32 RefClk;	/**< Input clock */
 #endif
 } XEmacPs_Config;
 
@@ -523,26 +523,26 @@ typedef struct {
  * to a structure of this type is then passed to the driver API functions.
  */
 typedef struct XEmacPs_Instance {
-	XEmacPs_Config Config;	/* Hardware configuration */
-	u32 IsStarted;		/* Device is currently started */
-	u32 IsReady;		/* Device is initialized and ready */
-	u32 Options;		/* Current options word */
+    XEmacPs_Config Config;	/* Hardware configuration */
+    u32 IsStarted;		/* Device is currently started */
+    u32 IsReady;		/* Device is initialized and ready */
+    u32 Options;		/* Current options word */
 
-	XEmacPs_BdRing TxBdRing;	/* Transmit BD ring */
-	XEmacPs_BdRing RxBdRing;	/* Receive BD ring */
+    XEmacPs_BdRing TxBdRing;	/* Transmit BD ring */
+    XEmacPs_BdRing RxBdRing;	/* Receive BD ring */
 
-	XEmacPs_Handler SendHandler;
-	XEmacPs_Handler RecvHandler;
-	void *SendRef;
-	void *RecvRef;
+    XEmacPs_Handler SendHandler;
+    XEmacPs_Handler RecvHandler;
+    void *SendRef;
+    void *RecvRef;
 
-	XEmacPs_ErrHandler ErrorHandler;
-	void *ErrorRef;
-	u32 Version;
-	u32 RxBufMask;
-	u32 MaxMtuSize;
-	u32 MaxFrameSize;
-	u32 MaxVlanFrameSize;
+    XEmacPs_ErrHandler ErrorHandler;
+    void *ErrorRef;
+    u32 Version;
+    u32 RxBufMask;
+    u32 MaxMtuSize;
+    u32 MaxFrameSize;
+    u32 MaxVlanFrameSize;
 
 } XEmacPs;
 
@@ -598,8 +598,8 @@ typedef struct XEmacPs_Instance {
 *
 *****************************************************************************/
 #define XEmacPs_IntEnable(InstancePtr, Mask)                            \
-	XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-		XEMACPS_IER_OFFSET,                                     \
+    XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
+	    XEMACPS_IER_OFFSET,                                     \
 		((Mask) & XEMACPS_IXR_ALL_MASK));
 
 /****************************************************************************/
@@ -619,8 +619,8 @@ typedef struct XEmacPs_Instance {
 *
 *****************************************************************************/
 #define XEmacPs_IntDisable(InstancePtr, Mask)                           \
-	XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-		XEMACPS_IDR_OFFSET,                                     \
+    XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
+	    XEMACPS_IDR_OFFSET,                                     \
 		((Mask) & XEMACPS_IXR_ALL_MASK));
 
 /****************************************************************************/
@@ -640,8 +640,8 @@ typedef struct XEmacPs_Instance {
 *
 *****************************************************************************/
 #define XEmacPs_IntQ1Enable(InstancePtr, Mask)                            \
-	XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-		XEMACPS_INTQ1_IER_OFFSET,                                \
+    XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
+	    XEMACPS_INTQ1_IER_OFFSET,                                \
 		((Mask) & XEMACPS_INTQ1_IXR_ALL_MASK));
 
 /****************************************************************************/
@@ -661,8 +661,8 @@ typedef struct XEmacPs_Instance {
 *
 *****************************************************************************/
 #define XEmacPs_IntQ1Disable(InstancePtr, Mask)                           \
-	XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-		XEMACPS_INTQ1_IDR_OFFSET,                               \
+    XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
+	    XEMACPS_INTQ1_IDR_OFFSET,                               \
 		((Mask) & XEMACPS_INTQ1_IXR_ALL_MASK));
 
 /****************************************************************************/
@@ -750,7 +750,7 @@ typedef struct XEmacPs_Instance {
 * @note
 *
 * Signature: void XEmacPs_SetRXWatermark(XEmacPs *InstancePtr, u16 High,
-* 					u16 Low)
+* 				    u16 Low)
 *
 *****************************************************************************/
 #define XEmacPs_SetRXWatermark(InstancePtr, High, Low)                     \
@@ -797,7 +797,7 @@ XEmacPs_Config *XEmacPs_LookupConfig(u16 DeviceId);
  * DMA only and FIFO is not supported. This DMA does not support coalescing.
  */
 LONG XEmacPs_SetHandler(XEmacPs *InstancePtr, u32 HandlerType,
-			void *FuncPointer, void *CallBackRef);
+		    void *FuncPointer, void *CallBackRef);
 void XEmacPs_IntrHandler(void *XEmacPsPtr);
 
 /*
@@ -816,7 +816,7 @@ void XEmacPs_ClearHash(XEmacPs *InstancePtr);
 void XEmacPs_GetHash(XEmacPs *InstancePtr, void *AddressPtr);
 
 void XEmacPs_SetMdioDivisor(XEmacPs *InstancePtr,
-				XEmacPs_MdcDiv Divisor);
+			    XEmacPs_MdcDiv Divisor);
 void XEmacPs_SetOperatingSpeed(XEmacPs *InstancePtr, u16 Speed);
 u16 XEmacPs_GetOperatingSpeed(XEmacPs *InstancePtr);
 LONG XEmacPs_PhyRead(XEmacPs *InstancePtr, u32 PhyAddress,

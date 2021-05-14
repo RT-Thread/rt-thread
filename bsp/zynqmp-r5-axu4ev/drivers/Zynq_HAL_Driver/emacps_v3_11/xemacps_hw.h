@@ -89,7 +89,7 @@ extern "C" {
  * @{
  */
 typedef enum { MDC_DIV_8 = 0U, MDC_DIV_16, MDC_DIV_32, MDC_DIV_48,
-	MDC_DIV_64, MDC_DIV_96, MDC_DIV_128, MDC_DIV_224
+    MDC_DIV_64, MDC_DIV_96, MDC_DIV_128, MDC_DIV_224
 } XEmacPs_MdcDiv;
 
 /*@}*/
@@ -276,29 +276,29 @@ typedef enum { MDC_DIV_8 = 0U, MDC_DIV_16, MDC_DIV_32, MDC_DIV_48,
 						      nanosecond counter */
 
 #define XEMACPS_INTQ1_STS_OFFSET     0x00000400U /**< Interrupt Q1 Status
-							reg */
+						    reg */
 #define XEMACPS_TXQ1BASE_OFFSET	     0x00000440U /**< TX Q1 Base address
-							reg */
+						    reg */
 #define XEMACPS_RXQ1BASE_OFFSET	     0x00000480U /**< RX Q1 Base address
-							reg */
+						    reg */
 #define XEMACPS_MSBBUF_TXQBASE_OFFSET  0x000004C8U /**< MSB Buffer TX Q Base
-							reg */
+						    reg */
 #define XEMACPS_MSBBUF_RXQBASE_OFFSET  0x000004D4U /**< MSB Buffer RX Q Base
-							reg */
+						    reg */
 #define XEMACPS_INTQ1_IER_OFFSET     0x00000600U /**< Interrupt Q1 Enable
-							reg */
+						    reg */
 #define XEMACPS_INTQ1_IDR_OFFSET     0x00000620U /**< Interrupt Q1 Disable
-							reg */
+						    reg */
 #define XEMACPS_INTQ1_IMR_OFFSET     0x00000640U /**< Interrupt Q1 Mask
-							reg */
+						    reg */
 
 /* Define some bit positions for registers. */
 
 /** @name network control register bit definitions
  * @{
  */
-#define XEMACPS_NWCTRL_FLUSH_DPRAM_MASK	0x00040000U /**< Flush a packet from
-							Rx SRAM */
+#define XEMACPS_NWCTRL_FLUSH_DPRAM_MASK    0x00040000U /**< Flush a packet from
+						    Rx SRAM */
 #define XEMACPS_NWCTRL_ZEROPAUSETX_MASK 0x00000800U /**< Transmit zero quantum
                                                          pause frame */
 #define XEMACPS_NWCTRL_PAUSETX_MASK     0x00000800U /**< Transmit pause frame */
@@ -382,23 +382,23 @@ typedef enum { MDC_DIV_8 = 0U, MDC_DIV_16, MDC_DIV_32, MDC_DIV_48,
 /** @name DMA control register bit definitions
  * @{
  */
-#define XEMACPS_DMACR_ADDR_WIDTH_64		0x40000000U /**< 64 bit address bus */
-#define XEMACPS_DMACR_TXEXTEND_MASK		0x20000000U /**< Tx Extended desc mode */
-#define XEMACPS_DMACR_RXEXTEND_MASK		0x10000000U /**< Rx Extended desc mode */
-#define XEMACPS_DMACR_RXBUF_MASK		0x00FF0000U /**< Mask bit for RX buffer
-													size */
-#define XEMACPS_DMACR_RXBUF_SHIFT 		16U	/**< Shift bit for RX buffer
-												size */
-#define XEMACPS_DMACR_TCPCKSUM_MASK		0x00000800U /**< enable/disable TX
+#define XEMACPS_DMACR_ADDR_WIDTH_64	    0x40000000U /**< 64 bit address bus */
+#define XEMACPS_DMACR_TXEXTEND_MASK	    0x20000000U /**< Tx Extended desc mode */
+#define XEMACPS_DMACR_RXEXTEND_MASK	    0x10000000U /**< Rx Extended desc mode */
+#define XEMACPS_DMACR_RXBUF_MASK	    0x00FF0000U /**< Mask bit for RX buffer
+												    size */
+#define XEMACPS_DMACR_RXBUF_SHIFT 	    16U	/**< Shift bit for RX buffer
+											    size */
+#define XEMACPS_DMACR_TCPCKSUM_MASK	    0x00000800U /**< enable/disable TX
 													    checksum offload */
-#define XEMACPS_DMACR_TXSIZE_MASK		0x00000400U /**< TX buffer memory size */
-#define XEMACPS_DMACR_RXSIZE_MASK		0x00000300U /**< RX buffer memory size */
-#define XEMACPS_DMACR_ENDIAN_MASK		0x00000080U /**< endian configuration */
-#define XEMACPS_DMACR_BLENGTH_MASK		0x0000001FU /**< buffer burst length */
-#define XEMACPS_DMACR_SINGLE_AHB_BURST	0x00000001U /**< single AHB bursts */
-#define XEMACPS_DMACR_INCR4_AHB_BURST	0x00000004U /**< 4 bytes AHB bursts */
-#define XEMACPS_DMACR_INCR8_AHB_BURST	0x00000008U /**< 8 bytes AHB bursts */
-#define XEMACPS_DMACR_INCR16_AHB_BURST	0x00000010U /**< 16 bytes AHB bursts */
+#define XEMACPS_DMACR_TXSIZE_MASK	    0x00000400U /**< TX buffer memory size */
+#define XEMACPS_DMACR_RXSIZE_MASK	    0x00000300U /**< RX buffer memory size */
+#define XEMACPS_DMACR_ENDIAN_MASK	    0x00000080U /**< endian configuration */
+#define XEMACPS_DMACR_BLENGTH_MASK	    0x0000001FU /**< buffer burst length */
+#define XEMACPS_DMACR_SINGLE_AHB_BURST    0x00000001U /**< single AHB bursts */
+#define XEMACPS_DMACR_INCR4_AHB_BURST    0x00000004U /**< 4 bytes AHB bursts */
+#define XEMACPS_DMACR_INCR8_AHB_BURST    0x00000008U /**< 8 bytes AHB bursts */
+#define XEMACPS_DMACR_INCR16_AHB_BURST    0x00000010U /**< 16 bytes AHB bursts */
 /*@}*/
 
 /** @name transmit status register bit definitions
@@ -435,7 +435,7 @@ typedef enum { MDC_DIV_8 = 0U, MDC_DIV_16, MDC_DIV_32, MDC_DIV_48,
                                        (u32)XEMACPS_RXSR_RXOVR_MASK | \
                                        (u32)XEMACPS_RXSR_BUFFNA_MASK)
 
-#define XEMACPS_SR_ALL_MASK	0xFFFFFFFFU /**< Mask for full register */
+#define XEMACPS_SR_ALL_MASK    0xFFFFFFFFU /**< Mask for full register */
 
 /*@}*/
 
@@ -443,8 +443,8 @@ typedef enum { MDC_DIV_8 = 0U, MDC_DIV_16, MDC_DIV_32, MDC_DIV_48,
  * @name Interrupt Q1 status register bit definitions
  * @{
  */
-#define XEMACPS_INTQ1SR_TXCOMPL_MASK	0x00000080U /**< Transmit completed OK */
-#define XEMACPS_INTQ1SR_TXERR_MASK	0x00000040U /**< Transmit AMBA Error */
+#define XEMACPS_INTQ1SR_TXCOMPL_MASK    0x00000080U /**< Transmit completed OK */
+#define XEMACPS_INTQ1SR_TXERR_MASK    0x00000040U /**< Transmit AMBA Error */
 
 #define XEMACPS_INTQ1_IXR_ALL_MASK	((u32)XEMACPS_INTQ1SR_TXCOMPL_MASK | \
 					 (u32)XEMACPS_INTQ1SR_TXERR_MASK)
@@ -457,15 +457,15 @@ typedef enum { MDC_DIV_8 = 0U, MDC_DIV_16, MDC_DIV_32, MDC_DIV_48,
  * XEMACPS_IER_OFFSET, XEMACPS_IDR_OFFSET, and XEMACPS_IMR_OFFSET
  * @{
  */
-#define XEMACPS_IXR_PTPPSTX_MASK	0x02000000U /**< PTP Pdelay_resp TXed */
-#define XEMACPS_IXR_PTPPDRTX_MASK	0x01000000U /**< PTP Pdelay_req TXed */
-#define XEMACPS_IXR_PTPPSRX_MASK	0x00800000U /**< PTP Pdelay_resp RXed */
-#define XEMACPS_IXR_PTPPDRRX_MASK	0x00400000U /**< PTP Pdelay_req RXed */
+#define XEMACPS_IXR_PTPPSTX_MASK    0x02000000U /**< PTP Pdelay_resp TXed */
+#define XEMACPS_IXR_PTPPDRTX_MASK    0x01000000U /**< PTP Pdelay_req TXed */
+#define XEMACPS_IXR_PTPPSRX_MASK    0x00800000U /**< PTP Pdelay_resp RXed */
+#define XEMACPS_IXR_PTPPDRRX_MASK    0x00400000U /**< PTP Pdelay_req RXed */
 
-#define XEMACPS_IXR_PTPSTX_MASK		0x00200000U /**< PTP Sync TXed */
-#define XEMACPS_IXR_PTPDRTX_MASK	0x00100000U /**< PTP Delay_req TXed */
-#define XEMACPS_IXR_PTPSRX_MASK		0x00080000U /**< PTP Sync RXed */
-#define XEMACPS_IXR_PTPDRRX_MASK	0x00040000U /**< PTP Delay_req RXed */
+#define XEMACPS_IXR_PTPSTX_MASK	    0x00200000U /**< PTP Sync TXed */
+#define XEMACPS_IXR_PTPDRTX_MASK    0x00100000U /**< PTP Delay_req TXed */
+#define XEMACPS_IXR_PTPSRX_MASK	    0x00080000U /**< PTP Sync RXed */
+#define XEMACPS_IXR_PTPDRRX_MASK    0x00040000U /**< PTP Delay_req RXed */
 
 #define XEMACPS_IXR_PAUSETX_MASK    0x00004000U	/**< Pause frame transmitted */
 #define XEMACPS_IXR_PAUSEZERO_MASK  0x00002000U	/**< Pause time has reached
@@ -511,9 +511,9 @@ typedef enum { MDC_DIV_8 = 0U, MDC_DIV_16, MDC_DIV_32, MDC_DIV_48,
 /** @name RX watermark bit definitions
  * @{
  */
-#define XEMACPS_RXWM_HIGH_MASK		0x0000FFFFU	/**< RXWM high mask */
-#define XEMACPS_RXWM_LOW_MASK		0xFFFF0000U	/**< RXWM low mask */
-#define XEMACPS_RXWM_LOW_SHFT_MSK	16U	/**< Shift for RXWM low */
+#define XEMACPS_RXWM_HIGH_MASK	    0x0000FFFFU	/**< RXWM high mask */
+#define XEMACPS_RXWM_LOW_MASK	    0xFFFF0000U	/**< RXWM low mask */
+#define XEMACPS_RXWM_LOW_SHFT_MSK    16U	/**< Shift for RXWM low */
 /*@}*/
 
 /* Transmit buffer descriptor status words offset

@@ -64,7 +64,7 @@ void rt_zynqmp_eth_link_detect(struct rt_zynqmp_eth *eth_dev)
     if ((xemacp->IsReady != (u32)XIL_COMPONENT_IS_READY) ||
             (eth_link_status == ETH_LINK_UNDEFINED))
         return;
-    
+
     phy_link_status = phy_link_detect(xemacp, phyaddrforemac);
 
     if ((eth_link_status == ETH_LINK_UP) && (!phy_link_status))
@@ -173,7 +173,7 @@ static rt_err_t rt_zynqmp_eth_init(rt_device_t dev)
 
     setup_isr(xemac);
     init_dma(xemac);
-    
+
     xtopologyp = &xtopology[xemac->topology_index];
     /*
     * Connect the device driver handler that will be called when an
@@ -190,7 +190,7 @@ static rt_err_t rt_zynqmp_eth_init(rt_device_t dev)
 
     if (eth_link_status == ETH_LINK_UP)
         eth_device_linkchange(&eth_dev->parent, RT_TRUE);
-    
+
     rt_thread_t tid;
     tid = rt_thread_create("phylnk",
                            phy_monitor_thread,

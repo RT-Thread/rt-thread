@@ -23,7 +23,7 @@
 * 1.02a hk   08/22/13 Added low level reset API function prototype and
 *                     related constant definitions
 * 3.00  kvn  02/13/15 Modified code for MISRA-C:2012 compliance.
-* 3.1	kvn  04/13/15 Corrected reset values of banks.
+* 3.1    kvn  04/13/15 Corrected reset values of banks.
 * 3.5   sne  03/14/19 Added versal support.
 * </pre>
 *
@@ -106,33 +106,33 @@ extern "C" {
 *
 * This macro reads the given register.
 *
-* @param	BaseAddr is the base address of the device.
-* @param	RegOffset is the register offset to be read.
+* @param    BaseAddr is the base address of the device.
+* @param    RegOffset is the register offset to be read.
 *
-* @return	The 32-bit value of the register
+* @return    The 32-bit value of the register
 *
-* @note		None.
+* @note	    None.
 *
 *****************************************************************************/
 #define XGpioPs_ReadReg(BaseAddr, RegOffset)		\
-		Xil_In32((BaseAddr) + (u32)(RegOffset))
+	    Xil_In32((BaseAddr) + (u32)(RegOffset))
 
 /****************************************************************************/
 /**
 *
 * This macro writes to the given register.
 *
-* @param	BaseAddr is the base address of the device.
-* @param	RegOffset is the offset of the register to be written.
-* @param	Data is the 32-bit value to write to the register.
+* @param    BaseAddr is the base address of the device.
+* @param    RegOffset is the offset of the register to be written.
+* @param    Data is the 32-bit value to write to the register.
 *
-* @return	None.
+* @return    None.
 *
-* @note		None.
+* @note	    None.
 *
 *****************************************************************************/
 #define XGpioPs_WriteReg(BaseAddr, RegOffset, Data)	\
-		Xil_Out32((BaseAddr) + (u32)(RegOffset), (u32)(Data))
+	    Xil_Out32((BaseAddr) + (u32)(RegOffset), (u32)(Data))
 
 /************************** Function Prototypes ******************************/
 

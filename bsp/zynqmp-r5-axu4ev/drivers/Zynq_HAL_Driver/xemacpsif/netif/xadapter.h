@@ -52,34 +52,34 @@ extern "C" {
 #include <netif/ethernetif.h>
 
 struct xemac_s {
-	enum xemac_types type;
-	int  topology_index;
-	void *state;
+    enum xemac_types type;
+    int  topology_index;
+    void *state;
 #if 0
     sys_sem_t sem_rx_data_available;
 #else
-	struct eth_device *rt_eth_device;
+    struct eth_device *rt_eth_device;
 #endif
 #if defined(OS_IS_FREERTOS) && defined(__arm__) && !defined(ARMR5)
-	TimerHandle_t xTimer;
+    TimerHandle_t xTimer;
 #endif
 };
 
 enum ethernet_link_status {
-	ETH_LINK_UNDEFINED = 0,
-	ETH_LINK_UP,
-	ETH_LINK_DOWN,
-	ETH_LINK_NEGOTIATING
+    ETH_LINK_UNDEFINED = 0,
+    ETH_LINK_UP,
+    ETH_LINK_DOWN,
+    ETH_LINK_NEGOTIATING
 };
 
 void eth_link_detect(struct netif *netif);
-void 		lwip_raw_init();
-int 		xemacif_input(struct netif *netif);
-void 		xemacif_input_thread(struct netif *netif);
-struct netif *	xemac_add(struct netif *netif,
-	ip_addr_t *ipaddr, ip_addr_t *netmask, ip_addr_t *gw,
-	unsigned char *mac_ethernet_address,
-	unsigned mac_baseaddr);
+void 	    lwip_raw_init();
+int 	    xemacif_input(struct netif *netif);
+void 	    xemacif_input_thread(struct netif *netif);
+struct netif *    xemac_add(struct netif *netif,
+    ip_addr_t *ipaddr, ip_addr_t *netmask, ip_addr_t *gw,
+    unsigned char *mac_ethernet_address,
+    unsigned mac_baseaddr);
 #if defined (__arm__) || defined (__aarch64__)
 void xemacpsif_resetrx_on_no_rxdata(struct netif *netif);
 #endif
