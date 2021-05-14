@@ -13,4 +13,4 @@ extern "C" {
 }
 #endif
 
-#endif	/* end of protection macro */
+#endif    /* end of protection macro */

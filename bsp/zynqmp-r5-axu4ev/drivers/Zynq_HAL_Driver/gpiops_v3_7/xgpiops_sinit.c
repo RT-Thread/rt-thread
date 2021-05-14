@@ -13,7 +13,7 @@
 * This file contains the implementation of the XGpioPs driver's static
 * initialization functionality.
 *
-* @note	    None.
+* @note        None.
 *
 * <pre>
 *
@@ -53,9 +53,9 @@ extern XGpioPs_Config XGpioPs_ConfigTable[XPAR_XGPIOPS_NUM_INSTANCES];
 * @param    DeviceId is the unique device ID of the device being looked up.
 *
 * @return    A pointer to the configuration table entry corresponding to the
-*	    given device ID, or NULL if no match is found.
+*        given device ID, or NULL if no match is found.
 *
-* @note	    None.
+* @note        None.
 *
 ******************************************************************************/
 XGpioPs_Config *XGpioPs_LookupConfig(u16 DeviceId)
@@ -64,11 +64,11 @@ XGpioPs_Config *XGpioPs_LookupConfig(u16 DeviceId)
     u32 Index;
 
     for (Index = 0U; Index < (u32)XPAR_XGPIOPS_NUM_INSTANCES; Index++) {
-	    if (XGpioPs_ConfigTable[Index].DeviceId == DeviceId) {
-		    CfgPtr = &XGpioPs_ConfigTable[Index];
-		    break;
-		}
-	}
+        if (XGpioPs_ConfigTable[Index].DeviceId == DeviceId) {
+            CfgPtr = &XGpioPs_ConfigTable[Index];
+            break;
+        }
+    }
 
     return (XGpioPs_Config *)CfgPtr;
 }

@@ -51,8 +51,8 @@
  * ***************************************************************************
  */
 
-#ifndef XEMACPS_BD_H		/* prevent circular inclusions */
-#define XEMACPS_BD_H		/* by using protection macros */
+#ifndef XEMACPS_BD_H        /* prevent circular inclusions */
+#define XEMACPS_BD_H        /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -117,7 +117,7 @@ typedef u32 XEmacPs_Bd[XEMACPS_BD_NUM_WORDS];
 *
 *****************************************************************************/
 #define XEmacPs_BdRead(BaseAddress, Offset)             \
-	(*(u32 *)((UINTPTR)((void*)(BaseAddress)) + (u32)(Offset)))
+    (*(u32 *)((UINTPTR)((void*)(BaseAddress)) + (u32)(Offset)))
 
 /****************************************************************************/
 /**
@@ -153,10 +153,10 @@ typedef u32 XEmacPs_Bd[XEMACPS_BD_NUM_WORDS];
  *****************************************************************************/
 #if defined(__aarch64__) || defined(__arch64__)
 #define XEmacPs_BdSetAddressTx(BdPtr, Addr)                        \
-    XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_OFFSET,		\
-			(u32)((Addr) & ULONG64_LO_MASK));		\
-    XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_HI_OFFSET,		\
-	(u32)(((Addr) & ULONG64_HI_MASK) >> 32U));
+    XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_OFFSET,        \
+            (u32)((Addr) & ULONG64_LO_MASK));        \
+    XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_HI_OFFSET,        \
+    (u32)(((Addr) & ULONG64_HI_MASK) >> 32U));
 #else
 #define XEmacPs_BdSetAddressTx(BdPtr, Addr)                        \
     XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_OFFSET, (u32)(Addr))
@@ -180,9 +180,9 @@ typedef u32 XEmacPs_Bd[XEMACPS_BD_NUM_WORDS];
 #define XEmacPs_BdSetAddressRx(BdPtr, Addr)                        \
     XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_OFFSET,              \
     ((XEmacPs_BdRead((BdPtr), XEMACPS_BD_ADDR_OFFSET) &           \
-	~XEMACPS_RXBUF_ADD_MASK) | ((u32)((Addr) & ULONG64_LO_MASK))));  \
-    XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_HI_OFFSET, 	\
-	(u32)(((Addr) & ULONG64_HI_MASK) >> 32U));
+    ~XEMACPS_RXBUF_ADD_MASK) | ((u32)((Addr) & ULONG64_LO_MASK))));  \
+    XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_HI_OFFSET,     \
+    (u32)(((Addr) & ULONG64_HI_MASK) >> 32U));
 #else
 #define XEmacPs_BdSetAddressRx(BdPtr, Addr)                        \
     XEmacPs_BdWrite((BdPtr), XEMACPS_BD_ADDR_OFFSET,              \
@@ -239,8 +239,8 @@ typedef u32 XEmacPs_Bd[XEMACPS_BD_NUM_WORDS];
  *****************************************************************************/
 #if defined(__aarch64__) || defined(__arch64__)
 #define XEmacPs_BdGetBufAddr(BdPtr)                               \
-    (XEmacPs_BdRead((BdPtr), XEMACPS_BD_ADDR_OFFSET) |		  \
-	(XEmacPs_BdRead((BdPtr), XEMACPS_BD_ADDR_HI_OFFSET)) << 32U)
+    (XEmacPs_BdRead((BdPtr), XEMACPS_BD_ADDR_OFFSET) |          \
+    (XEmacPs_BdRead((BdPtr), XEMACPS_BD_ADDR_HI_OFFSET)) << 32U)
 #else
 #define XEmacPs_BdGetBufAddr(BdPtr)                               \
     (XEmacPs_BdRead((BdPtr), XEMACPS_BD_ADDR_OFFSET))

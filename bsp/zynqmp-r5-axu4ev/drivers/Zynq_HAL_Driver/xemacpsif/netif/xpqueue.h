@@ -43,9 +43,9 @@ typedef struct {
 } pq_queue_t;
 
 pq_queue_t*    pq_create_queue();
-int 	    pq_enqueue(pq_queue_t *q, void *p);
-void*	    pq_dequeue(pq_queue_t *q);
-int	    pq_qlength(pq_queue_t *q);
+int         pq_enqueue(pq_queue_t *q, void *p);
+void*        pq_dequeue(pq_queue_t *q);
+int        pq_qlength(pq_queue_t *q);
 
 #ifdef __cplusplus
 }

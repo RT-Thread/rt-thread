@@ -20,7 +20,7 @@
 *
 * Ver   Who      Date     Changes
 * ----- -------- -------- -----------------------------------------------
-* 5.00     pkp  	 05/29/14 First release
+* 5.00     pkp       05/29/14 First release
 * 6.00  mus      08/19/16 Remove checking of __LITTLE_ENDIAN__ flag for
 *                         ARM processors
 * 7.20  har      01/03/20 Added Xil_SecureOut32 for avoiding blindwrite for
@@ -132,7 +132,7 @@ static INLINE u64 Xil_In64(UINTPTR Addr)
 static INLINE void Xil_Out8(UINTPTR Addr, u8 Value)
 {
     volatile u8 *LocalAddr = (volatile u8 *)Addr;
-	*LocalAddr = Value;
+    *LocalAddr = Value;
 }
 
 /*****************************************************************************/
@@ -150,7 +150,7 @@ static INLINE void Xil_Out8(UINTPTR Addr, u8 Value)
 static INLINE void Xil_Out16(UINTPTR Addr, u16 Value)
 {
     volatile u16 *LocalAddr = (volatile u16 *)Addr;
-	*LocalAddr = Value;
+    *LocalAddr = Value;
 }
 
 /*****************************************************************************/
@@ -170,7 +170,7 @@ static INLINE void Xil_Out32(UINTPTR Addr, u32 Value)
 {
 #ifndef ENABLE_SAFETY
     volatile u32 *LocalAddr = (volatile u32 *)Addr;
-	*LocalAddr = Value;
+    *LocalAddr = Value;
 #else
     XStl_RegUpdate(Addr, Value);
 #endif
@@ -191,7 +191,7 @@ static INLINE void Xil_Out32(UINTPTR Addr, u32 Value)
 static INLINE void Xil_Out64(UINTPTR Addr, u64 Value)
 {
     volatile u64 *LocalAddr = (volatile u64 *)Addr;
-	*LocalAddr = Value;
+    *LocalAddr = Value;
 }
 
 #ifdef __cplusplus

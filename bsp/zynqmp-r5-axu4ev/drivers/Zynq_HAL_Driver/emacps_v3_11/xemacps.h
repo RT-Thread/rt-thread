@@ -241,46 +241,46 @@
  * ----- ---- -------- -------------------------------------------------------
  * 1.00a wsy  01/10/10 First release
  * 1.00a asa  11/21/11 The function XEmacPs_BdRingFromHwTx in file
- *		       xemacps_bdring.c is modified. Earlier it was checking for
- *		       "BdLimit"(passed argument) number of BDs for finding out
- *		       which BDs are successfully processed. Now one more check
- *		       is added. It looks for BDs till the current BD pointer
- *		       reaches HwTail. By doing this processing time is saved.
+ *               xemacps_bdring.c is modified. Earlier it was checking for
+ *               "BdLimit"(passed argument) number of BDs for finding out
+ *               which BDs are successfully processed. Now one more check
+ *               is added. It looks for BDs till the current BD pointer
+ *               reaches HwTail. By doing this processing time is saved.
  * 1.00a asa  01/24/12 The function XEmacPs_BdRingFromHwTx in file
- *		       xemacps_bdring.c is modified. Now start of packet is
- *		       searched for returning the number of BDs processed.
+ *               xemacps_bdring.c is modified. Now start of packet is
+ *               searched for returning the number of BDs processed.
  * 1.02a asa  11/05/12 Added a new API for deleting an entry from the HASH
- *		       registers. Added a new API to set the bust length.
- *		       Added some new hash-defines.
+ *               registers. Added a new API to set the bust length.
+ *               Added some new hash-defines.
  * 1.03a asa  01/23/12 Fix for CR #692702 which updates error handling for
- *		       Rx errors. Under heavy Rx traffic, there will be a large
- *		       number of errors related to receive buffer not available.
- *		       Because of a HW bug (SI #692601), under such heavy errors,
- *		       the Rx data path can become unresponsive. To reduce the
- *		       probabilities for hitting this HW bug, the SW writes to
- *		       bit 18 to flush a packet from Rx DPRAM immediately. The
- *		       changes for it are done in the function
- *		       XEmacPs_IntrHandler.
+ *               Rx errors. Under heavy Rx traffic, there will be a large
+ *               number of errors related to receive buffer not available.
+ *               Because of a HW bug (SI #692601), under such heavy errors,
+ *               the Rx data path can become unresponsive. To reduce the
+ *               probabilities for hitting this HW bug, the SW writes to
+ *               bit 18 to flush a packet from Rx DPRAM immediately. The
+ *               changes for it are done in the function
+ *               XEmacPs_IntrHandler.
  * 1.05a asa  09/23/13 Cache operations on BDs are not required and hence
- *		       removed. It is expected that all BDs are allocated in
- *		       from uncached area.
+ *               removed. It is expected that all BDs are allocated in
+ *               from uncached area.
  * 1.06a asa  11/02/13 Changed the value for XEMACPS_RXBUF_LEN_MASK from 0x3fff
- *			    to 0x1fff. This fixes the CR#744902.
- *			  Made changes in example file xemacps_example.h to fix compilation
- *			  issues with iarcc compiler.
+ *                to 0x1fff. This fixes the CR#744902.
+ *              Made changes in example file xemacps_example.h to fix compilation
+ *              issues with iarcc compiler.
  * 2.0   adk  10/12/13 Updated as per the New Tcl API's
  * 2.1   adk  11/08/14 Fixed the CR#811288. Changes are made in the driver tcl file.
  * 2.1   bss  09/08/14 Modified driver tcl to fix CR#820349 to export phy
- *		       address in xparameters.h when GMII to RGMII converter
- *		       is present in hw.
+ *               address in xparameters.h when GMII to RGMII converter
+ *               is present in hw.
  * 2.1   srt  07/15/14 Add support for Zynq Ultrascale Mp GEM specification and 64-bit
- *		       changes.
+ *               changes.
  * 2.2   adk  29/10/14 Fixed CR#827686 when PCS/PMA core is configured with
  *                    1000BASE-X mode export proper values to the xparameters.h
  *                    file. Changes are made in the driver tcl file.
  * 3.0   adk  08/1/15  Don't include gem in peripheral test when gem is
  *                    configured with PCS/PMA Core. Changes are made in the
- *		       test app tcl(CR:827686).
+ *               test app tcl(CR:827686).
  * 3.0   kvn  02/13/15 Modified code for MISRA-C:2012 compliance.
  * 3.0   hk   03/18/15 Added support for jumbo frames. Increase AHB burst.
  *                     Disable extended mode. Perform all 64 bit changes under
@@ -302,10 +302,10 @@
  * 3.5   hk   08/14/17 Update cache coherency information of the interface in
  *                     its config structure.
  * 3.6   rb   09/08/17 HwCnt variable (in XEmacPs_BdRing structure) is
- *		       changed to volatile.
- *		       Add API XEmacPs_BdRingPtrReset() to reset pointers
+ *               changed to volatile.
+ *               Add API XEmacPs_BdRingPtrReset() to reset pointers
  * 3.8   hk   07/19/18 Fixed CPP, GCC and doxygen warnings - CR-1006327
- *	 hk   09/17/18 Fix PTP interrupt masks and cleanup comments.
+ *     hk   09/17/18 Fix PTP interrupt masks and cleanup comments.
  * 3.9   hk   01/23/19 Add RX watermark support
  * 3.11  sd   02/14/20 Add clock support
  *
@@ -313,8 +313,8 @@
  *
  ****************************************************************************/
 
-#ifndef XEMACPS_H		/* prevent circular inclusions */
-#define XEMACPS_H		/* by using protection macros */
+#ifndef XEMACPS_H        /* prevent circular inclusions */
+#define XEMACPS_H        /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -447,13 +447,13 @@ extern "C" {
 /* The next few constants help upper layers determine the size of memory
  * pools used for Ethernet buffers and descriptor lists.
  */
-#define XEMACPS_MAC_ADDR_SIZE   6U	/* size of Ethernet header */
+#define XEMACPS_MAC_ADDR_SIZE   6U    /* size of Ethernet header */
 
-#define XEMACPS_MTU             1500U	/* max MTU size of Ethernet frame */
-#define XEMACPS_MTU_JUMBO       10240U	/* max MTU size of jumbo frame */
-#define XEMACPS_HDR_SIZE        14U	/* size of Ethernet header */
-#define XEMACPS_HDR_VLAN_SIZE   18U	/* size of Ethernet header with VLAN */
-#define XEMACPS_TRL_SIZE        4U	/* size of Ethernet trailer (FCS) */
+#define XEMACPS_MTU             1500U    /* max MTU size of Ethernet frame */
+#define XEMACPS_MTU_JUMBO       10240U    /* max MTU size of jumbo frame */
+#define XEMACPS_HDR_SIZE        14U    /* size of Ethernet header */
+#define XEMACPS_HDR_VLAN_SIZE   18U    /* size of Ethernet header with VLAN */
+#define XEMACPS_TRL_SIZE        4U    /* size of Ethernet trailer (FCS) */
 #define XEMACPS_MAX_FRAME_SIZE       (XEMACPS_MTU + XEMACPS_HDR_SIZE + \
         XEMACPS_TRL_SIZE)
 #define XEMACPS_MAX_VLAN_FRAME_SIZE  (XEMACPS_MTU + XEMACPS_HDR_SIZE + \
@@ -464,8 +464,8 @@ extern "C" {
 /* DMACR Bust length hash defines */
 
 #define XEMACPS_SINGLE_BURST    0x00000001
-#define XEMACPS_4BYTE_BURST	    0x00000004
-#define XEMACPS_8BYTE_BURST	    0x00000008
+#define XEMACPS_4BYTE_BURST        0x00000004
+#define XEMACPS_8BYTE_BURST        0x00000008
 #define XEMACPS_16BYTE_BURST    0x00000010
 
 
@@ -499,7 +499,7 @@ typedef void (*XEmacPs_Handler) (void *CallBackRef);
  *
  */
 typedef void (*XEmacPs_ErrHandler) (void *CallBackRef, u8 Direction,
-				     u32 ErrorWord);
+                     u32 ErrorWord);
 
 /*@}*/
 
@@ -507,12 +507,12 @@ typedef void (*XEmacPs_ErrHandler) (void *CallBackRef, u8 Direction,
  * This typedef contains configuration information for a device.
  */
 typedef struct {
-    u16 DeviceId;	/**< Unique ID  of device */
+    u16 DeviceId;    /**< Unique ID  of device */
     UINTPTR BaseAddress;/**< Physical base address of IPIF registers */
     u8 IsCacheCoherent; /**< Applicable only to A53 in EL1 mode;
-				* describes whether Cache Coherent or not */
+                * describes whether Cache Coherent or not */
 #if defined  (XCLOCKING)
-    u32 RefClk;	/**< Input clock */
+    u32 RefClk;    /**< Input clock */
 #endif
 } XEmacPs_Config;
 
@@ -523,13 +523,13 @@ typedef struct {
  * to a structure of this type is then passed to the driver API functions.
  */
 typedef struct XEmacPs_Instance {
-    XEmacPs_Config Config;	/* Hardware configuration */
-    u32 IsStarted;		/* Device is currently started */
-    u32 IsReady;		/* Device is initialized and ready */
-    u32 Options;		/* Current options word */
+    XEmacPs_Config Config;    /* Hardware configuration */
+    u32 IsStarted;        /* Device is currently started */
+    u32 IsReady;        /* Device is initialized and ready */
+    u32 Options;        /* Current options word */
 
-    XEmacPs_BdRing TxBdRing;	/* Transmit BD ring */
-    XEmacPs_BdRing RxBdRing;	/* Receive BD ring */
+    XEmacPs_BdRing TxBdRing;    /* Transmit BD ring */
+    XEmacPs_BdRing RxBdRing;    /* Receive BD ring */
 
     XEmacPs_Handler SendHandler;
     XEmacPs_Handler RecvHandler;
@@ -599,8 +599,8 @@ typedef struct XEmacPs_Instance {
 *****************************************************************************/
 #define XEmacPs_IntEnable(InstancePtr, Mask)                            \
     XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-	    XEMACPS_IER_OFFSET,                                     \
-		((Mask) & XEMACPS_IXR_ALL_MASK));
+        XEMACPS_IER_OFFSET,                                     \
+        ((Mask) & XEMACPS_IXR_ALL_MASK));
 
 /****************************************************************************/
 /**
@@ -620,8 +620,8 @@ typedef struct XEmacPs_Instance {
 *****************************************************************************/
 #define XEmacPs_IntDisable(InstancePtr, Mask)                           \
     XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-	    XEMACPS_IDR_OFFSET,                                     \
-		((Mask) & XEMACPS_IXR_ALL_MASK));
+        XEMACPS_IDR_OFFSET,                                     \
+        ((Mask) & XEMACPS_IXR_ALL_MASK));
 
 /****************************************************************************/
 /**
@@ -641,8 +641,8 @@ typedef struct XEmacPs_Instance {
 *****************************************************************************/
 #define XEmacPs_IntQ1Enable(InstancePtr, Mask)                            \
     XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-	    XEMACPS_INTQ1_IER_OFFSET,                                \
-		((Mask) & XEMACPS_INTQ1_IXR_ALL_MASK));
+        XEMACPS_INTQ1_IER_OFFSET,                                \
+        ((Mask) & XEMACPS_INTQ1_IXR_ALL_MASK));
 
 /****************************************************************************/
 /**
@@ -662,8 +662,8 @@ typedef struct XEmacPs_Instance {
 *****************************************************************************/
 #define XEmacPs_IntQ1Disable(InstancePtr, Mask)                           \
     XEmacPs_WriteReg((InstancePtr)->Config.BaseAddress,             \
-	    XEMACPS_INTQ1_IDR_OFFSET,                               \
-		((Mask) & XEMACPS_INTQ1_IXR_ALL_MASK));
+        XEMACPS_INTQ1_IDR_OFFSET,                               \
+        ((Mask) & XEMACPS_INTQ1_IXR_ALL_MASK));
 
 /****************************************************************************/
 /**
@@ -740,17 +740,17 @@ typedef struct XEmacPs_Instance {
 *
 * @param InstancePtr is a pointer to the XEmacPs instance to be worked on.
 * @param High is the non-zero RX high watermark value. When SRAM fill level
-*	 is above this, a pause frame will be sent.
+*     is above this, a pause frame will be sent.
 * @param Low is the non-zero RX low watermark value. When SRAM fill level
-*	 is below this, a zero length pause frame will be sent IF the last
-*	 pause frame sent was non-zero.
+*     is below this, a zero length pause frame will be sent IF the last
+*     pause frame sent was non-zero.
 *
 * @return None
 *
 * @note
 *
 * Signature: void XEmacPs_SetRXWatermark(XEmacPs *InstancePtr, u16 High,
-* 				    u16 Low)
+*                     u16 Low)
 *
 *****************************************************************************/
 #define XEmacPs_SetRXWatermark(InstancePtr, High, Low)                     \
@@ -780,12 +780,12 @@ typedef struct XEmacPs_Instance {
  * Initialization functions in xemacps.c
  */
 LONG XEmacPs_CfgInitialize(XEmacPs *InstancePtr, XEmacPs_Config *CfgPtr,
-			   UINTPTR EffectiveAddress);
+               UINTPTR EffectiveAddress);
 void XEmacPs_Start(XEmacPs *InstancePtr);
 void XEmacPs_Stop(XEmacPs *InstancePtr);
 void XEmacPs_Reset(XEmacPs *InstancePtr);
 void XEmacPs_SetQueuePtr(XEmacPs *InstancePtr, UINTPTR QPtr, u8 QueueNum,
-			 u16 Direction);
+             u16 Direction);
 
 /*
  * Lookup configuration in xemacps_sinit.c
@@ -797,7 +797,7 @@ XEmacPs_Config *XEmacPs_LookupConfig(u16 DeviceId);
  * DMA only and FIFO is not supported. This DMA does not support coalescing.
  */
 LONG XEmacPs_SetHandler(XEmacPs *InstancePtr, u32 HandlerType,
-		    void *FuncPointer, void *CallBackRef);
+            void *FuncPointer, void *CallBackRef);
 void XEmacPs_IntrHandler(void *XEmacPsPtr);
 
 /*
@@ -816,13 +816,13 @@ void XEmacPs_ClearHash(XEmacPs *InstancePtr);
 void XEmacPs_GetHash(XEmacPs *InstancePtr, void *AddressPtr);
 
 void XEmacPs_SetMdioDivisor(XEmacPs *InstancePtr,
-			    XEmacPs_MdcDiv Divisor);
+                XEmacPs_MdcDiv Divisor);
 void XEmacPs_SetOperatingSpeed(XEmacPs *InstancePtr, u16 Speed);
 u16 XEmacPs_GetOperatingSpeed(XEmacPs *InstancePtr);
 LONG XEmacPs_PhyRead(XEmacPs *InstancePtr, u32 PhyAddress,
-		     u32 RegisterNum, u16 *PhyDataPtr);
+             u32 RegisterNum, u16 *PhyDataPtr);
 LONG XEmacPs_PhyWrite(XEmacPs *InstancePtr, u32 PhyAddress,
-		      u32 RegisterNum, u16 PhyData);
+              u32 RegisterNum, u16 PhyData);
 LONG XEmacPs_SetTypeIdCheck(XEmacPs *InstancePtr, u32 Id_Check, u8 Index);
 
 LONG XEmacPs_SendPausePacket(XEmacPs *InstancePtr);

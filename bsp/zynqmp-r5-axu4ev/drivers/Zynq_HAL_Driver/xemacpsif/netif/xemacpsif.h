@@ -45,7 +45,7 @@ extern "C" {
 #include "xstatus.h"
 #include "sleep.h"
 #include "xparameters.h"
-#include "xparameters_ps.h"	/* defines XPAR values */
+#include "xparameters_ps.h"    /* defines XPAR values */
 #include "xil_types.h"
 #include "xil_assert.h"
 #include "xil_io.h"
@@ -55,7 +55,7 @@ extern "C" {
 #include "xil_cache.h"
 #include "xil_printf.h"
 // #include "xscugic.h"
-#include "xemacps.h"		/* defines XEmacPs API */
+#include "xemacps.h"        /* defines XEmacPs API */
 
 #include "netif/xpqueue.h"
 #include "xlwipconfig.h"
@@ -88,7 +88,7 @@ extern "C" {
 #define VERSAL_CRL_GEM0_REF_CTRL    0xFF5E0118
 #define VERSAL_CRL_GEM1_REF_CTRL    0xFF5E011C
 
-#define VERSAL_CRL_GEM_DIV_MASK	    0x0003FF00
+#define VERSAL_CRL_GEM_DIV_MASK        0x0003FF00
 #define VERSAL_CRL_APB_GEM_DIV_SHIFT    8
 
 #if defined (ARMR5) || (__aarch64__) || (ARMA53_32) || (__MICROBLAZE__)
@@ -116,11 +116,11 @@ void     xemacps_error_handler(XEmacPs * Temac);
 typedef struct {
     XEmacPs emacps;
 
-	/* queue to store overflow packets */
+    /* queue to store overflow packets */
     pq_queue_t *recv_q;
     pq_queue_t *send_q;
 
-	/* pointers to memory holding buffer descriptors (used only with SDMA) */
+    /* pointers to memory holding buffer descriptors (used only with SDMA) */
     void *rx_bdspace;
     void *tx_bdspace;
 

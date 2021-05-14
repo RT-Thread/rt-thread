@@ -56,7 +56,7 @@
 *
 * @return    None
 *
-* @note	    None.
+* @note        None.
 *
 ******************************************************************************/
 void XGpioPs_ResetHw(u32 BaseAddress)
