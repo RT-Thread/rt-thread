@@ -263,6 +263,8 @@ static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args)
 
     case RT_DEVICE_CTRL_RTC_SET_ALARM:
 
+        RTC_GetDateAndTime(&hw_alarm);
+
         wkalarm = (struct rt_rtc_wkalarm *) args;
         hw_alarm.u32Hour = wkalarm->tm_hour;
         hw_alarm.u32Minute = wkalarm->tm_min;

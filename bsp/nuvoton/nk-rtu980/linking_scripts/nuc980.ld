@@ -24,16 +24,12 @@ SECTIONS
         KEEP(*(FSymTab))
         __fsymtab_end = .;
         . = ALIGN(4);
+
+        . = ALIGN(4);
         __vsymtab_start = .;
         KEEP(*(VSymTab))
         __vsymtab_end = .;
         . = ALIGN(4);   
-
-        . = ALIGN(4);
-        __rt_init_start = .;
-        KEEP(*(SORT(.rti_fn*)))
-        __rt_init_end = .;
-        . = ALIGN(4);
 
         /* section information for modules */
         . = ALIGN(4);
@@ -54,6 +50,7 @@ SECTIONS
         __rt_utest_tc_tab_start = .;
         KEEP(*(UtestTcTab))
         __rt_utest_tc_tab_end = .;
+        . = ALIGN(4);
     }
 
     . = ALIGN(4);
