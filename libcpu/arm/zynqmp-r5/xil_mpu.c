@@ -64,7 +64,7 @@
 #include "xstatus.h"
 
 #include <rtthread.h>
-#define DBG_TAG           "xil_mpu"  
+#define DBG_TAG           "xil_mpu"
 #define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
