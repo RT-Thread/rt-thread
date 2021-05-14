@@ -267,7 +267,7 @@ void CAP_Close(void)
 {
     // 1. Disable IP's interrupt
     sysDisableInterrupt(CAP_IRQn);
-    // 2. Disable IP’s clock
+    // 2. Disable IP's clock
     outp32(REG_CLK_HCLKEN, inp32(REG_CLK_HCLKEN) & ~(0x1 << 25));
     CAP_Reset();
     outp32(REG_CLK_HCLKEN, inp32(REG_CLK_HCLKEN) & ~(0x1 << 26));
