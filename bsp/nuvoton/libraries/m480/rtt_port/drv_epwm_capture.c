@@ -484,7 +484,7 @@ int nu_epwm_capture_device_init(void)
 
         }
     }
-#endif //#if (BSP_USING_EPWM0_CAPTURE_CHMSK!=0) 
+#endif //#if (BSP_USING_EPWM0_CAPTURE_CHMSK!=0)
 #if (BSP_USING_EPWM1_CAPTURE_CHMSK!=0)
     for (int i = 0; i < EPWM_CHANNEL_NUM; i++)
     {

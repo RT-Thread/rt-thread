@@ -82,11 +82,11 @@ static rt_err_t nu_crypto_init(void)
     SHA_ENABLE_INT(CRPT);
 
     //init cipher mutex
-    rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_PRIO);
+    rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_PRIO);
 #if !defined(BSP_USING_TRNG)
     PRNG_ENABLE_INT(CRPT);
-    rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_PRIO);
 #endif
 
     return RT_EOK;
