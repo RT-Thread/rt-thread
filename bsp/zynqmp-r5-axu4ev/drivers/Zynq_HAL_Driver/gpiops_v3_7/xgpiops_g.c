@@ -22,10 +22,10 @@
 
 XGpioPs_Config XGpioPs_ConfigTable[XPAR_XGPIOPS_NUM_INSTANCES] =
 {
-	{
-	    XPAR_PSU_GPIO_0_DEVICE_ID,
-	    XPAR_PSU_GPIO_0_BASEADDR
-	}
+    {
+        XPAR_PSU_GPIO_0_DEVICE_ID,
+        XPAR_PSU_GPIO_0_BASEADDR
+    }
 };
 
 

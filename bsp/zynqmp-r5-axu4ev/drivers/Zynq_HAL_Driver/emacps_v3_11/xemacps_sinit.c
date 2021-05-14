@@ -60,11 +60,11 @@ XEmacPs_Config *XEmacPs_LookupConfig(u16 DeviceId)
     u32 i;
 
     for (i = 0U; i < (u32)XPAR_XEMACPS_NUM_INSTANCES; i++) {
-	    if (XEmacPs_ConfigTable[i].DeviceId == DeviceId) {
-		    CfgPtr = &XEmacPs_ConfigTable[i];
-		    break;
-		}
-	}
+        if (XEmacPs_ConfigTable[i].DeviceId == DeviceId) {
+            CfgPtr = &XEmacPs_ConfigTable[i];
+            break;
+        }
+    }
 
     return (XEmacPs_Config *)(CfgPtr);
 }

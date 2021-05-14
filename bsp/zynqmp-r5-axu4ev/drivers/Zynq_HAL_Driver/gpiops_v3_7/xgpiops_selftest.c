@@ -55,8 +55,8 @@
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 *
 * @return
-*		- XST_SUCCESS if the self-test passed.
-* 		- XST_FAILURE otherwise.
+*        - XST_SUCCESS if the self-test passed.
+*         - XST_FAILURE otherwise.
 *
 *
 ******************************************************************************/
@@ -75,35 +75,35 @@ s32 XGpioPs_SelfTest(const XGpioPs *InstancePtr)
     Xil_AssertNonvoid(InstancePtr != NULL);
     Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
-	/* Disable the Interrupts for Bank 0 . */
+    /* Disable the Interrupts for Bank 0 . */
     IntrEnabled = XGpioPs_IntrGetEnabled(InstancePtr, XGPIOPS_BANK0);
     XGpioPs_IntrDisable(InstancePtr, XGPIOPS_BANK0, IntrEnabled);
 
-	/*
-	 * Get the Current Interrupt properties for Bank 0.
-	 * Set them to a known value, read it back and compare.
-	 */
+    /*
+     * Get the Current Interrupt properties for Bank 0.
+     * Set them to a known value, read it back and compare.
+     */
     XGpioPs_GetIntrType(InstancePtr, XGPIOPS_BANK0, &CurrentIntrType,
-			     &CurrentIntrPolarity, &CurrentIntrOnAny);
+                 &CurrentIntrPolarity, &CurrentIntrOnAny);
 
     XGpioPs_SetIntrType(InstancePtr, XGPIOPS_BANK0, IntrTestValue,
-			     IntrTestValue, IntrTestValue);
+                 IntrTestValue, IntrTestValue);
 
     XGpioPs_GetIntrType(InstancePtr, XGPIOPS_BANK0, &IntrType,
-			     &IntrPolarity, &IntrOnAny);
+                 &IntrPolarity, &IntrOnAny);
 
     if ((IntrType != IntrTestValue) && (IntrPolarity != IntrTestValue) &&
-	    (IntrOnAny != IntrTestValue)) {
+        (IntrOnAny != IntrTestValue)) {
 
-	    Status = XST_FAILURE;
-	}
+        Status = XST_FAILURE;
+    }
 
-	/*
-	 * Restore the contents of all the interrupt registers modified in this
-	 * test.
-	 */
+    /*
+     * Restore the contents of all the interrupt registers modified in this
+     * test.
+     */
     XGpioPs_SetIntrType(InstancePtr, XGPIOPS_BANK0, CurrentIntrType,
-			     CurrentIntrPolarity, CurrentIntrOnAny);
+                 CurrentIntrPolarity, CurrentIntrOnAny);
 
     XGpioPs_IntrEnable(InstancePtr, XGPIOPS_BANK0, IntrEnabled);
 

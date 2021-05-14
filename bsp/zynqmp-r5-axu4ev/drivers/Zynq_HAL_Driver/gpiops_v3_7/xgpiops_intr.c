@@ -18,8 +18,8 @@
 * Ver   Who  Date     Changes
 * ----- ---- -------- -----------------------------------------------
 * 1.00a sv   01/18/10 First Release
-* 2.2    sk	 10/13/14 Used Pin number in Bank instead of pin number
-* 					  passed to API's. CR# 822636
+* 2.2    sk     10/13/14 Used Pin number in Bank instead of pin number
+*                       passed to API's. CR# 822636
 * 3.00  kvn  02/13/15 Modified code for MISRA-C:2012 compliance.
 * 3.1    kvn  04/13/15 Add support for Zynq Ultrascale+ MP. CR# 856980.
 * 3.1   aru  07/13/18 Ressolved doxygen reported warnings. CR# 1006331.
@@ -63,14 +63,14 @@ void StubHandler(const void *CallBackRef, u32 Bank, u32 Status);
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Bank is the bank number of the GPIO to operate on.
-*	    Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
+*        Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
 * @param    Mask is the bit mask of the pins for which interrupts are to
-*	    be enabled. Bit positions of 1 will be enabled. Bit positions
-*	    of 0 will keep the previous setting.
+*        be enabled. Bit positions of 1 will be enabled. Bit positions
+*        of 0 will keep the previous setting.
 *
 * @return    None.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_IntrEnable(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
@@ -87,8 +87,8 @@ void XGpioPs_IntrEnable(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
 #endif
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTEN_OFFSET, Mask);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTEN_OFFSET, Mask);
 }
 
 /****************************************************************************/
@@ -98,11 +98,11 @@ void XGpioPs_IntrEnable(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Pin is the pin number for which the interrupt is to be enabled.
-*	    Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*        Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
 *
 * @return    None.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_IntrEnablePin(const XGpioPs *InstancePtr, u32 Pin)
@@ -115,7 +115,7 @@ void XGpioPs_IntrEnablePin(const XGpioPs *InstancePtr, u32 Pin)
     Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
     Xil_AssertVoid(Pin < InstancePtr->MaxPinNum);
 
-	/* Get the Bank number and Pin number within the bank. */
+    /* Get the Bank number and Pin number within the bank. */
 #ifdef versal
     XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
 #else
@@ -124,8 +124,8 @@ void XGpioPs_IntrEnablePin(const XGpioPs *InstancePtr, u32 Pin)
 
     IntrReg = ((u32)1 << (u32)PinNumber);
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTEN_OFFSET, IntrReg);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTEN_OFFSET, IntrReg);
 }
 
 /****************************************************************************/
@@ -136,14 +136,14 @@ void XGpioPs_IntrEnablePin(const XGpioPs *InstancePtr, u32 Pin)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Bank is the bank number of the GPIO to operate on.
-*	    Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
+*        Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
 * @param    Mask is the bit mask of the pins for which interrupts are
-*	    to be disabled. Bit positions of 1 will be disabled. Bit
-*	    positions of 0 will keep the previous setting.
+*        to be disabled. Bit positions of 1 will be disabled. Bit
+*        positions of 0 will keep the previous setting.
 *
 * @return    None.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_IntrDisable(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
@@ -160,8 +160,8 @@ void XGpioPs_IntrDisable(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
 #endif
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTDIS_OFFSET, Mask);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTDIS_OFFSET, Mask);
 }
 
 /****************************************************************************/
@@ -171,11 +171,11 @@ void XGpioPs_IntrDisable(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Pin is the pin number for which the interrupt is to be disabled.
-*	    Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*        Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
 *
 * @return    None.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_IntrDisablePin(const XGpioPs *InstancePtr, u32 Pin)
@@ -188,7 +188,7 @@ void XGpioPs_IntrDisablePin(const XGpioPs *InstancePtr, u32 Pin)
     Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
     Xil_AssertVoid(Pin < InstancePtr->MaxPinNum);
 
-	/* Get the Bank number and Pin number within the bank. */
+    /* Get the Bank number and Pin number within the bank. */
 #ifdef versal
     XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
 #else
@@ -197,8 +197,8 @@ void XGpioPs_IntrDisablePin(const XGpioPs *InstancePtr, u32 Pin)
 
     IntrReg = ((u32)1 << (u32)PinNumber);
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTDIS_OFFSET, IntrReg);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTDIS_OFFSET, IntrReg);
 }
 
 /****************************************************************************/
@@ -208,14 +208,14 @@ void XGpioPs_IntrDisablePin(const XGpioPs *InstancePtr, u32 Pin)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Bank is the bank number of the GPIO to operate on.
-*	    Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
+*        Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
 *
 * @return    Enabled interrupt(s) in a 32-bit format. Bit positions with 1
-*	    indicate that the interrupt for that pin is enabled, bit
-*	    positions with 0 indicate that the interrupt for that pin is
-*	    disabled.
+*        indicate that the interrupt for that pin is enabled, bit
+*        positions with 0 indicate that the interrupt for that pin is
+*        disabled.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 u32 XGpioPs_IntrGetEnabled(const XGpioPs *InstancePtr, u8 Bank)
@@ -234,8 +234,8 @@ u32 XGpioPs_IntrGetEnabled(const XGpioPs *InstancePtr, u8 Bank)
 #endif
 
     IntrMask = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				    ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				    XGPIOPS_INTMASK_OFFSET);
+                    ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                    XGPIOPS_INTMASK_OFFSET);
     return (~IntrMask);
 }
 
@@ -246,14 +246,14 @@ u32 XGpioPs_IntrGetEnabled(const XGpioPs *InstancePtr, u8 Bank)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Pin is the pin number for which the interrupt enable status
-*	    is to be known.
-*	    Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*        is to be known.
+*        Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
 *
 * @return
-*		- TRUE if the interrupt is enabled.
-*		- FALSE if the interrupt is disabled.
+*        - TRUE if the interrupt is enabled.
+*        - FALSE if the interrupt is disabled.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 u32 XGpioPs_IntrGetEnabledPin(const XGpioPs *InstancePtr, u32 Pin)
@@ -266,7 +266,7 @@ u32 XGpioPs_IntrGetEnabledPin(const XGpioPs *InstancePtr, u32 Pin)
     Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
     Xil_AssertNonvoid(Pin < InstancePtr->MaxPinNum);
 
-	/* Get the Bank number and Pin number within the bank. */
+    /* Get the Bank number and Pin number within the bank. */
 #ifdef versal
     XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
 #else
@@ -274,8 +274,8 @@ u32 XGpioPs_IntrGetEnabledPin(const XGpioPs *InstancePtr, u32 Pin)
 #endif
 
     IntrReg  = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				    ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				    XGPIOPS_INTMASK_OFFSET);
+                    ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                    XGPIOPS_INTMASK_OFFSET);
 
     return (((IntrReg & ((u32)1 << PinNumber)) != (u32)0)? FALSE : TRUE);
 }
@@ -287,11 +287,11 @@ u32 XGpioPs_IntrGetEnabledPin(const XGpioPs *InstancePtr, u32 Pin)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Bank is the bank number of the GPIO to operate on.
-*	    Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
+*        Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
 *
 * @return    The value read from Interrupt Status Register.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 u32 XGpioPs_IntrGetStatus(const XGpioPs *InstancePtr, u8 Bank)
@@ -308,8 +308,8 @@ u32 XGpioPs_IntrGetStatus(const XGpioPs *InstancePtr, u8 Bank)
 #endif
 
     return XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			    XGPIOPS_INTSTS_OFFSET);
+                ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                XGPIOPS_INTSTS_OFFSET);
 }
 
 /****************************************************************************/
@@ -319,14 +319,14 @@ u32 XGpioPs_IntrGetStatus(const XGpioPs *InstancePtr, u8 Bank)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Pin is the pin number for which the interrupt enable status
-*	    is to be known.
-*	    Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*        is to be known.
+*        Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
 *
 * @return
-*		- TRUE if the interrupt has occurred.
-*		- FALSE if the interrupt has not occurred.
+*        - TRUE if the interrupt has occurred.
+*        - FALSE if the interrupt has not occurred.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 u32 XGpioPs_IntrGetStatusPin(const XGpioPs *InstancePtr, u32 Pin)
@@ -339,7 +339,7 @@ u32 XGpioPs_IntrGetStatusPin(const XGpioPs *InstancePtr, u32 Pin)
     Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
     Xil_AssertNonvoid(Pin < InstancePtr->MaxPinNum);
 
-	/* Get the Bank number and Pin number within the bank. */
+    /* Get the Bank number and Pin number within the bank. */
 #ifdef versal
     XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
 #else
@@ -347,8 +347,8 @@ u32 XGpioPs_IntrGetStatusPin(const XGpioPs *InstancePtr, u32 Pin)
 #endif
 
     IntrReg = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				   XGPIOPS_INTSTS_OFFSET);
+                   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                   XGPIOPS_INTSTS_OFFSET);
 
     return (((IntrReg & ((u32)1 << PinNumber)) != (u32)0)? TRUE : FALSE);
 }
@@ -362,12 +362,12 @@ u32 XGpioPs_IntrGetStatusPin(const XGpioPs *InstancePtr, u32 Pin)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Bank is the bank number of the GPIO to operate on.
-*	    Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
+*        Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
 * @param    Mask is the mask of the interrupts to be cleared. Bit positions
-*	    of 1 will be cleared. Bit positions of 0 will not change the
-*	    previous interrupt status.
+*        of 1 will be cleared. Bit positions of 0 will not change the
+*        previous interrupt status.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_IntrClear(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
@@ -383,10 +383,10 @@ void XGpioPs_IntrClear(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
         }
 #endif
 
-	/* Clear the currently pending interrupts. */
+    /* Clear the currently pending interrupts. */
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTSTS_OFFSET, Mask);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTSTS_OFFSET, Mask);
 }
 
 /****************************************************************************/
@@ -397,9 +397,9 @@ void XGpioPs_IntrClear(const XGpioPs *InstancePtr, u8 Bank, u32 Mask)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    Pin is the pin number for which the interrupt status is to be
-*	    cleared. Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*        cleared. Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_IntrClearPin(const XGpioPs *InstancePtr, u32 Pin)
@@ -412,22 +412,22 @@ void XGpioPs_IntrClearPin(const XGpioPs *InstancePtr, u32 Pin)
     Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
     Xil_AssertVoid(Pin < InstancePtr->MaxPinNum);
 
-	/* Get the Bank number and Pin number within the bank. */
+    /* Get the Bank number and Pin number within the bank. */
 #ifdef versal
     XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
 #else
     XGpioPs_GetBankPin((u8)Pin, &Bank, &PinNumber);
 #endif
 
-	/* Clear the specified pending interrupts. */
+    /* Clear the specified pending interrupts. */
     IntrReg = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				   XGPIOPS_INTSTS_OFFSET);
+                   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                   XGPIOPS_INTSTS_OFFSET);
 
     IntrReg &= ((u32)1 << PinNumber);
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTSTS_OFFSET, IntrReg);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTSTS_OFFSET, IntrReg);
 }
 
 /****************************************************************************/
@@ -438,28 +438,28 @@ void XGpioPs_IntrClearPin(const XGpioPs *InstancePtr, u32 Pin)
 *
 * @param    InstancePtr is a pointer to an XGpioPs instance.
 * @param    Bank is the bank number of the GPIO to operate on.
-*	    Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
+*        Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
 * @param    IntrType is the 32 bit mask of the interrupt type.
-*	    0 means Level Sensitive and 1 means Edge Sensitive.
+*        0 means Level Sensitive and 1 means Edge Sensitive.
 * @param    IntrPolarity is the 32 bit mask of the interrupt polarity.
-*	    0 means Active Low or Falling Edge and 1 means Active High or
-*	    Rising Edge.
+*        0 means Active Low or Falling Edge and 1 means Active High or
+*        Rising Edge.
 * @param    IntrOnAny is the 32 bit mask of the interrupt trigger for
-*	    edge triggered interrupts. 0 means trigger on single edge using
-*	    the configured interrupt polarity and 1 means  trigger on both
-*	    edges.
+*        edge triggered interrupts. 0 means trigger on single edge using
+*        the configured interrupt polarity and 1 means  trigger on both
+*        edges.
 *
 * @return    None.
 *
-* @note	    This function is used for setting the interrupt related
-*	    properties of all the pins in the specified bank. The previous
-*	    state of the pins is not maintained.
-*	    To change the Interrupt properties of a single GPIO pin, use the
-*	    function XGpioPs_SetPinIntrType().
+* @note        This function is used for setting the interrupt related
+*        properties of all the pins in the specified bank. The previous
+*        state of the pins is not maintained.
+*        To change the Interrupt properties of a single GPIO pin, use the
+*        function XGpioPs_SetPinIntrType().
 *
 *****************************************************************************/
 void XGpioPs_SetIntrType(const XGpioPs *InstancePtr, u8 Bank, u32 IntrType,
-			  u32 IntrPolarity, u32 IntrOnAny)
+              u32 IntrPolarity, u32 IntrOnAny)
 {
     Xil_AssertVoid(InstancePtr != NULL);
     Xil_AssertVoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
@@ -473,16 +473,16 @@ void XGpioPs_SetIntrType(const XGpioPs *InstancePtr, u8 Bank, u32 IntrType,
 #endif
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTTYPE_OFFSET, IntrType);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTTYPE_OFFSET, IntrType);
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTPOL_OFFSET, IntrPolarity);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTPOL_OFFSET, IntrPolarity);
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTANY_OFFSET, IntrOnAny);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTANY_OFFSET, IntrOnAny);
 }
 
 /****************************************************************************/
@@ -493,24 +493,24 @@ void XGpioPs_SetIntrType(const XGpioPs *InstancePtr, u8 Bank, u32 IntrType,
 *
 * @param    InstancePtr is a pointer to an XGpioPs instance.
 * @param    Bank is the bank number of the GPIO to operate on.
-*	    Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
+*        Valid values are 0-3 in Zynq and 0-5 in Zynq Ultrascale+ MP.
 * @param    IntrType returns the 32 bit mask of the interrupt type.
-*	    0 means Level Sensitive and 1 means Edge Sensitive.
+*        0 means Level Sensitive and 1 means Edge Sensitive.
 * @param    IntrPolarity returns the 32 bit mask of the interrupt
-*	    polarity. 0 means Active Low or Falling Edge and 1 means
-*	    Active High or Rising Edge.
+*        polarity. 0 means Active Low or Falling Edge and 1 means
+*        Active High or Rising Edge.
 * @param    IntrOnAny returns the 32 bit mask of the interrupt trigger for
-*	    edge triggered interrupts. 0 means trigger on single edge using
-*	    the configured interrupt polarity and 1 means trigger on both
-*	    edges.
+*        edge triggered interrupts. 0 means trigger on single edge using
+*        the configured interrupt polarity and 1 means trigger on both
+*        edges.
 *
 * @return    None.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_GetIntrType(const XGpioPs *InstancePtr, u8 Bank, u32 *IntrType,
-			  u32 *IntrPolarity, u32 *IntrOnAny)
+              u32 *IntrPolarity, u32 *IntrOnAny)
 
 {
     Xil_AssertVoid(InstancePtr != NULL);
@@ -524,17 +524,17 @@ void XGpioPs_GetIntrType(const XGpioPs *InstancePtr, u8 Bank, u32 *IntrType,
         }
 #endif
 
-	*IntrType = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				     ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				     XGPIOPS_INTTYPE_OFFSET);
+    *IntrType = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
+                     ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                     XGPIOPS_INTTYPE_OFFSET);
 
-	*IntrPolarity = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-					 ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-					 XGPIOPS_INTPOL_OFFSET);
+    *IntrPolarity = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
+                     ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                     XGPIOPS_INTPOL_OFFSET);
 
-	*IntrOnAny = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				      ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				      XGPIOPS_INTANY_OFFSET);
+    *IntrOnAny = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
+                      ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                      XGPIOPS_INTANY_OFFSET);
 }
 
 /****************************************************************************/
@@ -544,13 +544,13 @@ void XGpioPs_GetIntrType(const XGpioPs *InstancePtr, u8 Bank, u32 *IntrType,
 *
 * @param    InstancePtr is a pointer to an XGpioPs instance.
 * @param    Pin is the pin number whose IRQ type is to be set.
-*	    Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*        Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
 * @param    IrqType is the IRQ type for GPIO Pin. Use XGPIOPS_IRQ_TYPE_*
-*	    defined in xgpiops.h to specify the IRQ type.
+*        defined in xgpiops.h to specify the IRQ type.
 *
 * @return    None.
 *
-* @note	    None.
+* @note        None.
 *
 *****************************************************************************/
 void XGpioPs_SetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin, u8 IrqType)
@@ -566,7 +566,7 @@ void XGpioPs_SetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin, u8 IrqType)
     Xil_AssertVoid(Pin < InstancePtr->MaxPinNum);
     Xil_AssertVoid(IrqType <= XGPIOPS_IRQ_TYPE_LEVEL_LOW);
 
-	/* Get the Bank number and Pin number within the bank. */
+    /* Get the Bank number and Pin number within the bank. */
 #ifdef versal
     XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
 #else
@@ -574,56 +574,56 @@ void XGpioPs_SetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin, u8 IrqType)
 #endif
 
     IntrTypeReg = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				       ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				       XGPIOPS_INTTYPE_OFFSET);
+                       ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                       XGPIOPS_INTTYPE_OFFSET);
 
     IntrPolReg = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				      ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				      XGPIOPS_INTPOL_OFFSET);
+                      ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                      XGPIOPS_INTPOL_OFFSET);
 
     IntrOnAnyReg = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-					((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				    XGPIOPS_INTANY_OFFSET);
+                    ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                    XGPIOPS_INTANY_OFFSET);
 
     switch (IrqType) {
-	    case XGPIOPS_IRQ_TYPE_EDGE_RISING:
-		    IntrTypeReg |= ((u32)1 << (u32)PinNumber);
-		    IntrPolReg |= ((u32)1 << (u32)PinNumber);
-		    IntrOnAnyReg &= ~((u32)1 << (u32)PinNumber);
-		    break;
-	    case XGPIOPS_IRQ_TYPE_EDGE_FALLING:
-		    IntrTypeReg |= ((u32)1 << (u32)PinNumber);
-		    IntrPolReg &= ~((u32)1 << (u32)PinNumber);
-		    IntrOnAnyReg &= ~((u32)1 << (u32)PinNumber);
-		    break;
-	    case XGPIOPS_IRQ_TYPE_EDGE_BOTH:
-		    IntrTypeReg |= ((u32)1 << (u32)PinNumber);
-		    IntrOnAnyReg |= ((u32)1 << (u32)PinNumber);
-		    break;
-	    case XGPIOPS_IRQ_TYPE_LEVEL_HIGH:
-		    IntrTypeReg &= ~((u32)1 << (u32)PinNumber);
-		    IntrPolReg |= ((u32)1 << (u32)PinNumber);
-		    break;
-	    case XGPIOPS_IRQ_TYPE_LEVEL_LOW:
-		    IntrTypeReg &= ~((u32)1 << (u32)PinNumber);
-		    IntrPolReg &= ~((u32)1 << (u32)PinNumber);
-		    break;
-	    default:
-			/**< Default statement is added for MISRA C compliance. */
-		    break;
-	}
+        case XGPIOPS_IRQ_TYPE_EDGE_RISING:
+            IntrTypeReg |= ((u32)1 << (u32)PinNumber);
+            IntrPolReg |= ((u32)1 << (u32)PinNumber);
+            IntrOnAnyReg &= ~((u32)1 << (u32)PinNumber);
+            break;
+        case XGPIOPS_IRQ_TYPE_EDGE_FALLING:
+            IntrTypeReg |= ((u32)1 << (u32)PinNumber);
+            IntrPolReg &= ~((u32)1 << (u32)PinNumber);
+            IntrOnAnyReg &= ~((u32)1 << (u32)PinNumber);
+            break;
+        case XGPIOPS_IRQ_TYPE_EDGE_BOTH:
+            IntrTypeReg |= ((u32)1 << (u32)PinNumber);
+            IntrOnAnyReg |= ((u32)1 << (u32)PinNumber);
+            break;
+        case XGPIOPS_IRQ_TYPE_LEVEL_HIGH:
+            IntrTypeReg &= ~((u32)1 << (u32)PinNumber);
+            IntrPolReg |= ((u32)1 << (u32)PinNumber);
+            break;
+        case XGPIOPS_IRQ_TYPE_LEVEL_LOW:
+            IntrTypeReg &= ~((u32)1 << (u32)PinNumber);
+            IntrPolReg &= ~((u32)1 << (u32)PinNumber);
+            break;
+        default:
+            /**< Default statement is added for MISRA C compliance. */
+            break;
+    }
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTTYPE_OFFSET, IntrTypeReg);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTTYPE_OFFSET, IntrTypeReg);
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTPOL_OFFSET, IntrPolReg);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTPOL_OFFSET, IntrPolReg);
 
     XGpioPs_WriteReg(InstancePtr->GpioConfig.BaseAddr,
-			  ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-			  XGPIOPS_INTANY_OFFSET, IntrOnAnyReg);
+              ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+              XGPIOPS_INTANY_OFFSET, IntrOnAnyReg);
 }
 
 /****************************************************************************/
@@ -633,12 +633,12 @@ void XGpioPs_SetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin, u8 IrqType)
 *
 * @param    InstancePtr is a pointer to an XGpioPs instance.
 * @param    Pin is the pin number whose IRQ type is to be obtained.
-*	    Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
+*        Valid values are 0-117 in Zynq and 0-173 in Zynq Ultrascale+ MP.
 *
 * @return    None.
 *
-* @note	    Use XGPIOPS_IRQ_TYPE_* defined in xgpiops.h for the IRQ type
-*	    returned by this function.
+* @note        Use XGPIOPS_IRQ_TYPE_* defined in xgpiops.h for the IRQ type
+*        returned by this function.
 *
 *****************************************************************************/
 u8 XGpioPs_GetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin)
@@ -654,7 +654,7 @@ u8 XGpioPs_GetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin)
     Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
     Xil_AssertNonvoid(Pin < InstancePtr->MaxPinNum);
 
-	/* Get the Bank number and Pin number within the bank. */
+    /* Get the Bank number and Pin number within the bank. */
 #ifdef versal
     XGpioPs_GetBankPin(InstancePtr,(u8)Pin, &Bank, &PinNumber);
 #else
@@ -662,39 +662,39 @@ u8 XGpioPs_GetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin)
 #endif
 
     IntrType = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				    ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				    XGPIOPS_INTTYPE_OFFSET) & ((u32)1 << PinNumber);
+                    ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                    XGPIOPS_INTTYPE_OFFSET) & ((u32)1 << PinNumber);
 
     if (IntrType == ((u32)1 << PinNumber)) {
 
-	    IntrOnAny = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				     ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				     XGPIOPS_INTANY_OFFSET) & ((u32)1 << PinNumber);
+        IntrOnAny = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
+                     ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                     XGPIOPS_INTANY_OFFSET) & ((u32)1 << PinNumber);
 
-	    IntrPol = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				   XGPIOPS_INTPOL_OFFSET) & ((u32)1 << PinNumber);
+        IntrPol = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
+                   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                   XGPIOPS_INTPOL_OFFSET) & ((u32)1 << PinNumber);
 
 
-	    if (IntrOnAny == ((u32)1 << PinNumber)) {
-		    IrqType = XGPIOPS_IRQ_TYPE_EDGE_BOTH;
-		} else if (IntrPol == ((u32)1 << PinNumber)) {
-		    IrqType = XGPIOPS_IRQ_TYPE_EDGE_RISING;
-		} else {
-		    IrqType = XGPIOPS_IRQ_TYPE_EDGE_FALLING;
-		}
-	} else {
+        if (IntrOnAny == ((u32)1 << PinNumber)) {
+            IrqType = XGPIOPS_IRQ_TYPE_EDGE_BOTH;
+        } else if (IntrPol == ((u32)1 << PinNumber)) {
+            IrqType = XGPIOPS_IRQ_TYPE_EDGE_RISING;
+        } else {
+            IrqType = XGPIOPS_IRQ_TYPE_EDGE_FALLING;
+        }
+    } else {
 
-	    IntrPol = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
-				   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
-				   XGPIOPS_INTPOL_OFFSET) & ((u32)1 << PinNumber);
+        IntrPol = XGpioPs_ReadReg(InstancePtr->GpioConfig.BaseAddr,
+                   ((u32)(Bank) * XGPIOPS_REG_MASK_OFFSET) +
+                   XGPIOPS_INTPOL_OFFSET) & ((u32)1 << PinNumber);
 
-	    if (IntrPol == ((u32)1 << PinNumber)) {
-		    IrqType = XGPIOPS_IRQ_TYPE_LEVEL_HIGH;
-		} else {
-		    IrqType = XGPIOPS_IRQ_TYPE_LEVEL_LOW;
-		}
-	}
+        if (IntrPol == ((u32)1 << PinNumber)) {
+            IrqType = XGPIOPS_IRQ_TYPE_LEVEL_HIGH;
+        } else {
+            IrqType = XGPIOPS_IRQ_TYPE_LEVEL_LOW;
+        }
+    }
 
     return IrqType;
 }
@@ -707,19 +707,19 @@ u8 XGpioPs_GetIntrTypePin(const XGpioPs *InstancePtr, u32 Pin)
 *
 * @param    InstancePtr is a pointer to the XGpioPs instance.
 * @param    CallBackRef is the upper layer callback reference passed back
-*	    when the callback function is invoked.
+*        when the callback function is invoked.
 * @param    FuncPointer is the pointer to the callback function.
 *
 *
 * @return    None.
 *
-* @note	    The handler is called within interrupt context, so it should do
-*	    its work quickly and queue potentially time-consuming work to a
-*	    task-level thread.
+* @note        The handler is called within interrupt context, so it should do
+*        its work quickly and queue potentially time-consuming work to a
+*        task-level thread.
 *
 ******************************************************************************/
 void XGpioPs_SetCallbackHandler(XGpioPs *InstancePtr, void *CallBackRef,
-				 XGpioPs_Handler FuncPointer)
+                 XGpioPs_Handler FuncPointer)
 {
     Xil_AssertVoid(InstancePtr != NULL);
     Xil_AssertVoid(FuncPointer != NULL);
@@ -742,8 +742,8 @@ void XGpioPs_SetCallbackHandler(XGpioPs *InstancePtr, void *CallBackRef,
 *
 * @return    None.
 *
-* @note	    This function does not save and restore the processor context
-*	    such that the user must provide this processing.
+* @note        This function does not save and restore the processor context
+*        such that the user must provide this processing.
 *
 ******************************************************************************/
 void XGpioPs_IntrHandler(const XGpioPs *InstancePtr)
@@ -757,26 +757,26 @@ void XGpioPs_IntrHandler(const XGpioPs *InstancePtr)
 
     for (Bank = 0U; Bank < InstancePtr->MaxBanks; Bank++) {
 #ifdef versal
-	    if(InstancePtr->PmcGpio == TRUE) {
-		    if(Bank == XGPIOPS_TWO) {
-			    continue;
-			}
-		} else {
-		    if((Bank == XGPIOPS_ONE) || (Bank == XGPIOPS_TWO)) {
-			    continue;
-			}
-		}
+        if(InstancePtr->PmcGpio == TRUE) {
+            if(Bank == XGPIOPS_TWO) {
+                continue;
+            }
+        } else {
+            if((Bank == XGPIOPS_ONE) || (Bank == XGPIOPS_TWO)) {
+                continue;
+            }
+        }
 #endif
-	    IntrStatus = XGpioPs_IntrGetStatus(InstancePtr, Bank);
-	    IntrEnabled = XGpioPs_IntrGetEnabled(InstancePtr,Bank);
-	    if ((IntrStatus & IntrEnabled) != (u32)0) {
-		    XGpioPs_IntrClear(InstancePtr, Bank,
-					(IntrStatus & IntrEnabled));
-		    InstancePtr->Handler(InstancePtr->
-				    CallBackRef, Bank,
-					(IntrStatus & IntrEnabled));
-		}
-	}
+        IntrStatus = XGpioPs_IntrGetStatus(InstancePtr, Bank);
+        IntrEnabled = XGpioPs_IntrGetEnabled(InstancePtr,Bank);
+        if ((IntrStatus & IntrEnabled) != (u32)0) {
+            XGpioPs_IntrClear(InstancePtr, Bank,
+                    (IntrStatus & IntrEnabled));
+            InstancePtr->Handler(InstancePtr->
+                    CallBackRef, Bank,
+                    (IntrStatus & IntrEnabled));
+        }
+    }
 }
 
 /*****************************************************************************/
@@ -791,14 +791,14 @@ void XGpioPs_IntrHandler(const XGpioPs *InstancePtr)
 *
 * @return    None.
 *
-* @note	    None.
+* @note        None.
 *
 ******************************************************************************/
 void StubHandler(const void *CallBackRef, u32 Bank, u32 Status)
 {
-	(void) CallBackRef;
-	(void) Bank;
-	(void) Status;
+    (void) CallBackRef;
+    (void) Bank;
+    (void) Status;
 
     Xil_AssertVoidAlways();
 }

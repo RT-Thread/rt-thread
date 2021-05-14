@@ -24,14 +24,14 @@
 * 2.2   hk     07/28/14 Make changes to enable use of data cache.
 * 2.3   sk     09/23/14 Send command for relative card address
 *                       when re-initialization is done.CR# 819614.
-*					    Use XSdPs_Change_ClkFreq API whenever changing
-*					    clock.CR# 816586.
-* 2.4    sk	   12/04/14 Added support for micro SD without
-* 					    WP/CD. CR# 810655.
-*					    Checked for DAT Inhibit mask instead of CMD
-* 					    Inhibit mask in Cmd Transfer API.
-*					    Added Support for SD Card v1.0
-* 2.5     sg	   07/09/15 Added SD 3.0 features
+*                        Use XSdPs_Change_ClkFreq API whenever changing
+*                        clock.CR# 816586.
+* 2.4    sk       12/04/14 Added support for micro SD without
+*                         WP/CD. CR# 810655.
+*                        Checked for DAT Inhibit mask instead of CMD
+*                         Inhibit mask in Cmd Transfer API.
+*                        Added Support for SD Card v1.0
+* 2.5     sg       07/09/15 Added SD 3.0 features
 *       kvn    07/15/15 Modified the code according to MISRAC-2012.
 * 2.6   sk     10/12/15 Added support for SD card v1.0 CR# 840601.
 * 2.7   sk     11/24/15 Considered the slot type befoe checking CD/WP pins.
@@ -104,32 +104,32 @@
 *
 * @param    InstancePtr is a pointer to the XSdPs instance.
 * @param    ConfigPtr is a reference to a structure containing information
-*	    about a specific SD device. This function initializes an
-*	    InstancePtr object for a specific device specified by the
-*	    contents of Config.
+*        about a specific SD device. This function initializes an
+*        InstancePtr object for a specific device specified by the
+*        contents of Config.
 * @param    EffectiveAddr is the device base address in the virtual memory
-*	    address space. The caller is responsible for keeping the address
-*	    mapping from EffectiveAddr to the device physical base address
-*	    unchanged once this function is invoked. Unexpected errors may
-*	    occur if the address mapping changes after this function is
-*	    called. If address translation is not used, use
-*	    ConfigPtr->Config.BaseAddress for this device.
+*        address space. The caller is responsible for keeping the address
+*        mapping from EffectiveAddr to the device physical base address
+*        unchanged once this function is invoked. Unexpected errors may
+*        occur if the address mapping changes after this function is
+*        called. If address translation is not used, use
+*        ConfigPtr->Config.BaseAddress for this device.
 *
 * @return
-*		- XST_SUCCESS if successful.
-*		- XST_DEVICE_IS_STARTED if the device is already started.
-*	    It must be stopped to re-initialize.
+*        - XST_SUCCESS if successful.
+*        - XST_DEVICE_IS_STARTED if the device is already started.
+*        It must be stopped to re-initialize.
 *
-* @note	    This function initializes the host controller.
-*	    Initial clock of 400KHz is set.
-*	    Voltage of 3.3V is selected as that is supported by host.
-*	    Interrupts status is enabled and signal disabled by default.
-*	    Default data direction is card to host and
-*	    32 bit ADMA2 is selected. Default Block size is 512 bytes.
+* @note        This function initializes the host controller.
+*        Initial clock of 400KHz is set.
+*        Voltage of 3.3V is selected as that is supported by host.
+*        Interrupts status is enabled and signal disabled by default.
+*        Default data direction is card to host and
+*        32 bit ADMA2 is selected. Default Block size is 512 bytes.
 *
 ******************************************************************************/
 s32 XSdPs_CfgInitialize(XSdPs *InstancePtr, XSdPs_Config *ConfigPtr,
-			    u32 EffectiveAddr)
+                u32 EffectiveAddr)
 {
     s32 Status;
 
@@ -140,13 +140,13 @@ s32 XSdPs_CfgInitialize(XSdPs *InstancePtr, XSdPs_Config *ConfigPtr,
     InstancePtr->Config.RefClk = ConfigPtr->RefClk;
     Xil_ClockEnable(InstancePtr->Config.RefClk);
 #endif
-	/* If this API is getting called twice, return value accordingly */
+    /* If this API is getting called twice, return value accordingly */
     if (InstancePtr->IsReady == XIL_COMPONENT_IS_READY) {
-	    Status = (s32)XST_DEVICE_IS_STARTED;
-	    goto RETURN_PATH ;
-	}
+        Status = (s32)XST_DEVICE_IS_STARTED;
+        goto RETURN_PATH ;
+    }
 
-	/* Set some default values. */
+    /* Set some default values. */
     InstancePtr->Config.DeviceId = ConfigPtr->DeviceId;
     InstancePtr->Config.BaseAddress = EffectiveAddr;
     InstancePtr->Config.InputClockHz = ConfigPtr->InputClockHz;
@@ -163,26 +163,26 @@ s32 XSdPs_CfgInitialize(XSdPs *InstancePtr, XSdPs_Config *ConfigPtr,
     InstancePtr->Dma64BitAddr = 0U;
     InstancePtr->SlcrBaseAddr = XPS_SYS_CTRL_BASEADDR;
 
-	/* Host Controller version is read. */
+    /* Host Controller version is read. */
     InstancePtr->HC_Version =
-			(u8)(XSdPs_ReadReg16(InstancePtr->Config.BaseAddress,
-		    XSDPS_HOST_CTRL_VER_OFFSET) & XSDPS_HC_SPEC_VER_MASK);
+            (u8)(XSdPs_ReadReg16(InstancePtr->Config.BaseAddress,
+            XSDPS_HOST_CTRL_VER_OFFSET) & XSDPS_HC_SPEC_VER_MASK);
 
-	/*
-	 * Read capabilities register and update it in Instance pointer.
-	 * It is sufficient to read this once on power on.
-	 */
+    /*
+     * Read capabilities register and update it in Instance pointer.
+     * It is sufficient to read this once on power on.
+     */
     InstancePtr->Host_Caps = XSdPs_ReadReg(InstancePtr->Config.BaseAddress,
-					    XSDPS_CAPS_OFFSET);
+                        XSDPS_CAPS_OFFSET);
 
-	/* Reset the SD bus lines */
+    /* Reset the SD bus lines */
     Status = XSdPs_ResetConfig(InstancePtr);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH ;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH ;
+    }
 
-	/* Configure the SD Host Controller */
+    /* Configure the SD Host Controller */
     XSdPs_HostConfig(InstancePtr);
 
     InstancePtr->IsReady = XIL_COMPONENT_IS_READY;
@@ -205,12 +205,12 @@ RETURN_PATH:
 * @param    InstancePtr is a pointer to the instance to be worked on.
 *
 * @return
-* 		- XST_SUCCESS if initialization was successful
-* 		- XST_FAILURE if failure - could be because
-* 		    a) SD is already initialized
-* 		    b) There is no card inserted
-* 		    c) One of the steps (commands) in the
-*			   initialization cycle failed
+*         - XST_SUCCESS if initialization was successful
+*         - XST_FAILURE if failure - could be because
+*             a) SD is already initialized
+*             b) There is no card inserted
+*             c) One of the steps (commands) in the
+*               initialization cycle failed
 *
 *
 ******************************************************************************/
@@ -221,7 +221,7 @@ s32 XSdPs_CardInitialize(XSdPs *InstancePtr)
     Xil_AssertNonvoid(InstancePtr != NULL);
     Xil_AssertNonvoid(InstancePtr->IsReady == XIL_COMPONENT_IS_READY);
 
-	/* Default settings */
+    /* Default settings */
     InstancePtr->BusWidth = XSDPS_1_BIT_WIDTH;
     InstancePtr->CardType = XSDPS_CARD_SD;
     InstancePtr->Switch1v8 = 0U;
@@ -231,34 +231,34 @@ s32 XSdPs_CardInitialize(XSdPs *InstancePtr)
     Xil_ClockEnable(InstancePtr->Config.RefClk);
 #endif
 
-	/* Change the clock frequency to 400 KHz */
+    /* Change the clock frequency to 400 KHz */
     Status = XSdPs_Change_ClkFreq(InstancePtr, InstancePtr->BusSpeed);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH ;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH ;
+    }
 
-	/* Identify the Card whether it is SD, MMC or eMMC */
+    /* Identify the Card whether it is SD, MMC or eMMC */
     Status = XSdPs_IdentifyCard(InstancePtr);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH;
+    }
 
-	/* Initialize the identified card */
+    /* Initialize the identified card */
     if (InstancePtr->CardType == XSDPS_CARD_SD) {
-	    Status = XSdPs_SdCardInitialize(InstancePtr);
-	    if (Status != XST_SUCCESS) {
-		    Status = XST_FAILURE;
-		    goto RETURN_PATH;
-		}
-	} else {
-	    Status = XSdPs_MmcCardInitialize(InstancePtr);
-	    if (Status != XST_SUCCESS) {
-		    Status = XST_FAILURE;
-		    goto RETURN_PATH;
-		}
-	}
+        Status = XSdPs_SdCardInitialize(InstancePtr);
+        if (Status != XST_SUCCESS) {
+            Status = XST_FAILURE;
+            goto RETURN_PATH;
+        }
+    } else {
+        Status = XSdPs_MmcCardInitialize(InstancePtr);
+        if (Status != XST_SUCCESS) {
+            Status = XST_FAILURE;
+            goto RETURN_PATH;
+        }
+    }
 
 RETURN_PATH:
 #if defined  (XCLOCKING)
@@ -274,14 +274,14 @@ RETURN_PATH:
 *
 * @param    InstancePtr is a pointer to the instance to be worked on.
 * @param    Arg is the address passed by the user that is to be sent as
-* 	    argument along with the command.
+*         argument along with the command.
 * @param    BlkCnt - Block count passed by the user.
 * @param    Buff - Pointer to the data buffer for a DMA transfer.
 *
 * @return
-* 		- XST_SUCCESS if initialization was successful
-* 		- XST_FAILURE if failure - could be because another transfer
-* 	    is in progress or command or data inhibit is set
+*         - XST_SUCCESS if initialization was successful
+*         - XST_FAILURE if failure - could be because another transfer
+*         is in progress or command or data inhibit is set
 *
 ******************************************************************************/
 s32 XSdPs_ReadPolled(XSdPs *InstancePtr, u32 Arg, u32 BlkCnt, u8 *Buff)
@@ -295,19 +295,19 @@ s32 XSdPs_ReadPolled(XSdPs *InstancePtr, u32 Arg, u32 BlkCnt, u8 *Buff)
     Xil_ClockEnable(InstancePtr->Config.RefClk);
 #endif
 
-	/* Setup the Read Transfer */
+    /* Setup the Read Transfer */
     Status = XSdPs_SetupTransfer(InstancePtr);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH;
+    }
 
-	/* Read from the card */
+    /* Read from the card */
     Status = XSdPs_Read(InstancePtr, Arg, BlkCnt, Buff);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH;
+    }
 
 RETURN_PATH:
 #if defined  (XCLOCKING)
@@ -323,14 +323,14 @@ RETURN_PATH:
 *
 * @param    InstancePtr is a pointer to the instance to be worked on.
 * @param    Arg is the address passed by the user that is to be sent as
-* 	    argument along with the command.
+*         argument along with the command.
 * @param    BlkCnt - Block count passed by the user.
 * @param    Buff - Pointer to the data buffer for a DMA transfer.
 *
 * @return
-* 		- XST_SUCCESS if initialization was successful
-* 		- XST_FAILURE if failure - could be because another transfer
-* 	    is in progress or command or data inhibit is set
+*         - XST_SUCCESS if initialization was successful
+*         - XST_FAILURE if failure - could be because another transfer
+*         is in progress or command or data inhibit is set
 *
 ******************************************************************************/
 s32 XSdPs_WritePolled(XSdPs *InstancePtr, u32 Arg, u32 BlkCnt, const u8 *Buff)
@@ -344,19 +344,19 @@ s32 XSdPs_WritePolled(XSdPs *InstancePtr, u32 Arg, u32 BlkCnt, const u8 *Buff)
     Xil_ClockEnable(InstancePtr->Config.RefClk);
 #endif
 
-	/* Setup the Write Transfer */
+    /* Setup the Write Transfer */
     Status = XSdPs_SetupTransfer(InstancePtr);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH;
+    }
 
-	/* Write to the card */
+    /* Write to the card */
     Status = XSdPs_Write(InstancePtr, Arg, BlkCnt, Buff);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH;
+    }
 
 RETURN_PATH:
 #if defined  (XCLOCKING)
@@ -376,7 +376,7 @@ RETURN_PATH:
 *
 * @return    None
 *
-* @note	    None.
+* @note        None.
 *
 ******************************************************************************/
 s32 XSdPs_Idle(XSdPs *InstancePtr)
@@ -390,24 +390,24 @@ s32 XSdPs_Idle(XSdPs *InstancePtr)
     Xil_ClockEnable(InstancePtr->Config.RefClk);
 #endif
 
-	/* Check if the bus is idle */
+    /* Check if the bus is idle */
     Status = XSdPs_CheckBusIdle(InstancePtr, XSDPS_PSR_INHIBIT_CMD_MASK
-										| XSDPS_PSR_INHIBIT_DAT_MASK
-										| XSDPS_PSR_DAT_ACTIVE_MASK);
+                                        | XSDPS_PSR_INHIBIT_DAT_MASK
+                                        | XSDPS_PSR_DAT_ACTIVE_MASK);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH ;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH ;
+    }
 
-	/* Disable the Bus Power */
+    /* Disable the Bus Power */
     XSdPs_DisableBusPower(InstancePtr);
 
-	/* Reset Command and Data Lines */
+    /* Reset Command and Data Lines */
     Status = XSdPs_Reset(InstancePtr, XSDPS_SWRST_ALL_MASK);
     if (Status != XST_SUCCESS) {
-	    Status = XST_FAILURE;
-	    goto RETURN_PATH ;
-	}
+        Status = XST_FAILURE;
+        goto RETURN_PATH ;
+    }
 
     Status = XST_SUCCESS;
 

@@ -44,14 +44,14 @@ pq_create_queue()
     pq_queue_t *q = NULL;
 
     if (i >= NUM_QUEUES) {
-	    xil_printf("ERR: Max Queues allocated\n\r");
-	    return q;
-	}
+        xil_printf("ERR: Max Queues allocated\n\r");
+        return q;
+    }
 
     q = &pq_queue[i++];
 
     if (!q)
-	    return q;
+        return q;
 
     q->head = q->tail = q->len = 0;
 
@@ -62,7 +62,7 @@ int
 pq_enqueue(pq_queue_t *q, void *p)
 {
     if (q->len == PQ_QUEUE_SIZE)
-	    return -1;
+        return -1;
 
     q->data[q->head] = p;
     q->head = (q->head + 1)%PQ_QUEUE_SIZE;
@@ -77,7 +77,7 @@ pq_dequeue(pq_queue_t *q)
     int ptail;
 
     if (q->len == 0)
-	    return NULL;
+        return NULL;
 
     ptail = q->tail;
     q->tail = (q->tail + 1)%PQ_QUEUE_SIZE;

@@ -73,9 +73,9 @@ enum ethernet_link_status {
 };
 
 void eth_link_detect(struct netif *netif);
-void 	    lwip_raw_init();
-int 	    xemacif_input(struct netif *netif);
-void 	    xemacif_input_thread(struct netif *netif);
+void         lwip_raw_init();
+int         xemacif_input(struct netif *netif);
+void         xemacif_input_thread(struct netif *netif);
 struct netif *    xemac_add(struct netif *netif,
     ip_addr_t *ipaddr, ip_addr_t *netmask, ip_addr_t *gw,
     unsigned char *mac_ethernet_address,

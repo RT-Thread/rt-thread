@@ -22,14 +22,14 @@
 * 2.1   srt  07/15/14 Add support for Zynq Ultrascale Mp architecture.
 * 3.0   kvn  02/13/15 Modified code for MISRA-C:2012 compliance.
 * 3.6   rb   09/08/17 HwCnt variable (in XEmacPs_BdRing structure) is
-*		      changed to volatile.
+*              changed to volatile.
 *
 * </pre>
 *
 ******************************************************************************/
 
-#ifndef XEMACPS_BDRING_H	/* prevent curcular inclusions */
-#define XEMACPS_BDRING_H	/* by using protection macros */
+#ifndef XEMACPS_BDRING_H    /* prevent curcular inclusions */
+#define XEMACPS_BDRING_H    /* by using protection macros */
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,21 +41,21 @@ extern "C" {
 /** This is an internal structure used to maintain the DMA list */
 typedef struct {
     UINTPTR PhysBaseAddr;/**< Physical address of 1st BD in list */
-    UINTPTR BaseBdAddr;	 /**< Virtual address of 1st BD in list */
-    UINTPTR HighBdAddr;	 /**< Virtual address of last BD in the list */
-    u32 Length;	 /**< Total size of ring in bytes */
-    u32 RunState;	 /**< Flag to indicate DMA is started */
-    u32 Separation;	 /**< Number of bytes between the starting address
+    UINTPTR BaseBdAddr;     /**< Virtual address of 1st BD in list */
+    UINTPTR HighBdAddr;     /**< Virtual address of last BD in the list */
+    u32 Length;     /**< Total size of ring in bytes */
+    u32 RunState;     /**< Flag to indicate DMA is started */
+    u32 Separation;     /**< Number of bytes between the starting address
                                   of adjacent BDs */
     XEmacPs_Bd *FreeHead;
-			     /**< First BD in the free group */
+                 /**< First BD in the free group */
     XEmacPs_Bd *PreHead;/**< First BD in the pre-work group */
     XEmacPs_Bd *HwHead; /**< First BD in the work group */
     XEmacPs_Bd *HwTail; /**< Last BD in the work group */
     XEmacPs_Bd *PostHead;
-			     /**< First BD in the post-work group */
+                 /**< First BD in the post-work group */
     XEmacPs_Bd *BdaRestart;
-			     /**< BDA to load when channel is started */
+                 /**< BDA to load when channel is started */
 
     volatile u32 HwCnt;    /**< Number of BDs in work group */
     u32 PreCnt;     /**< Number of BDs in pre-work group */
@@ -187,21 +187,21 @@ typedef struct {
  * Scatter gather DMA related functions in xemacps_bdring.c
  */
 LONG XEmacPs_BdRingCreate(XEmacPs_BdRing * RingPtr, UINTPTR PhysAddr,
-			  UINTPTR VirtAddr, u32 Alignment, u32 BdCount);
+              UINTPTR VirtAddr, u32 Alignment, u32 BdCount);
 LONG XEmacPs_BdRingClone(XEmacPs_BdRing * RingPtr, XEmacPs_Bd * SrcBdPtr,
-			 u8 Direction);
+             u8 Direction);
 LONG XEmacPs_BdRingAlloc(XEmacPs_BdRing * RingPtr, u32 NumBd,
-			 XEmacPs_Bd ** BdSetPtr);
+             XEmacPs_Bd ** BdSetPtr);
 LONG XEmacPs_BdRingUnAlloc(XEmacPs_BdRing * RingPtr, u32 NumBd,
-			   XEmacPs_Bd * BdSetPtr);
+               XEmacPs_Bd * BdSetPtr);
 LONG XEmacPs_BdRingToHw(XEmacPs_BdRing * RingPtr, u32 NumBd,
-		    XEmacPs_Bd * BdSetPtr);
+            XEmacPs_Bd * BdSetPtr);
 LONG XEmacPs_BdRingFree(XEmacPs_BdRing * RingPtr, u32 NumBd,
-		    XEmacPs_Bd * BdSetPtr);
+            XEmacPs_Bd * BdSetPtr);
 u32 XEmacPs_BdRingFromHwTx(XEmacPs_BdRing * RingPtr, u32 BdLimit,
-				 XEmacPs_Bd ** BdSetPtr);
+                 XEmacPs_Bd ** BdSetPtr);
 u32 XEmacPs_BdRingFromHwRx(XEmacPs_BdRing * RingPtr, u32 BdLimit,
-				 XEmacPs_Bd ** BdSetPtr);
+                 XEmacPs_Bd ** BdSetPtr);
 LONG XEmacPs_BdRingCheck(XEmacPs_BdRing * RingPtr, u8 Direction);
 
 void XEmacPs_BdRingPtrReset(XEmacPs_BdRing * RingPtr, void *virtaddrloc);
