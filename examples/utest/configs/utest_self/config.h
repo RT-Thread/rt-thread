@@ -87,9 +87,9 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEMS_MAX 2
 #define DFS_FILESYSTEM_TYPES_MAX 8
-#define DFS_FD_MAX 32
+#define DFS_FD_MAX 16
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -151,7 +151,6 @@
 #define RT_USING_POSIX
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
-#define RT_USING_POSIX_GETLINE
 #define RT_USING_POSIX_AIO
 #define RT_LIBC_FIXED_TIMEZONE 8
 
@@ -180,7 +179,7 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP212
+#define RT_USING_LWIP202
 #define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
@@ -229,7 +228,18 @@
 
 /* Utilities */
 
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 4096
+#define UTEST_THR_PRIORITY 20
 #define RT_USING_LWP
+
+/* RT-Thread Utestcases */
+
+#define RT_USING_UTESTCASES
+
+/* Utest Self Testcase */
+
+#define UTEST_SELF_PASS_TC
 
 /* RT-Thread online packages */
 
@@ -268,13 +278,16 @@
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
 
 
-/* games: games run on RT-Thread console */
+/* entertainment: terminal games and other interesting software packages */
 
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0

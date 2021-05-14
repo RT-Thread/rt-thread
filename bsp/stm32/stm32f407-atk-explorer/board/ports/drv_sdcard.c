@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-13     balanceTWK   add sdcard port file
+ * 2021-05-10     Meco Man     fix a bug that cannot use fatfs in the main thread at starting up
  */
 
 #include <rtthread.h>
@@ -20,7 +21,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-void sd_mount(void *parameter)
+static void sd_mount(void *parameter)
 {
     while (1)
     {
@@ -40,23 +41,30 @@ void sd_mount(void *parameter)
     }
 }
 
-int stm32_sdcard_mount(void)
+static int onboard_sdcard_mount(void)
 {
     rt_thread_t tid;
 
-    tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
-                           1024, RT_THREAD_PRIORITY_MAX - 2, 20);
-    if (tid != RT_NULL)
+    if (dfs_mount("sd0", "/", "elm", 0, 0) == RT_EOK)
     {
-        rt_thread_startup(tid);
+        LOG_I("sd card mount to '/'");
     }
     else
     {
-        LOG_E("create sd_mount thread err!");
+        tid = rt_thread_create("sd_mount", sd_mount, RT_NULL,
+                               1024, RT_THREAD_PRIORITY_MAX - 2, 20);
+        if (tid != RT_NULL)
+        {
+            rt_thread_startup(tid);
+        }
+        else
+        {
+            LOG_E("create sd_mount thread err!");
+        }
     }
+
     return RT_EOK;
 }
-INIT_APP_EXPORT(stm32_sdcard_mount);
+INIT_APP_EXPORT(onboard_sdcard_mount);
 
 #endif /* BSP_USING_SDCARD */
-
