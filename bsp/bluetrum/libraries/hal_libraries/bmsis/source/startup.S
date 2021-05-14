@@ -6,6 +6,7 @@
 
 #include "ab32vg1.h"
 
+.set _memcpy,    0x84044
 .global _start
 .section .reset, "ax"
 _start:
@@ -16,18 +17,18 @@ _start:
     la      a0, __comm_vma
     la      a1, __comm_lma
     la      a2, __comm_size
-    call    0x84044
+    call    _memcpy
 
     //load ram1
     la      a0, __ram1_vma
     la      a1, __ram1_lma
     la      a2, __ram1_size
-    call    0x84044
+    call    _memcpy
 
     la      a0, __irq_stack_start           //Stack清成0x23
     li      a1, 0x23
     la      a2, __irq_stack_size
-    call    0x84040
+    call    rt_memset
     la      ra, __irq_stack
     lui	    a5, 0x1
     sw	    zero, -1920(a5)
@@ -37,7 +38,7 @@ _start:
     la      a0, __bss_start
     li      a1, 0
     la      a2, __bss_size
-    call    0x84040
+    call    rt_memset
 
     call    cache_init
 
