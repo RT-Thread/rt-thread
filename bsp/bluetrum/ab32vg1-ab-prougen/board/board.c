@@ -19,14 +19,13 @@ void rt_soft_isr(int vector, void *param);
 void cpu_irq_comm(void);
 void set_cpu_irq_comm(void (*irq_hook)(void));
 void load_cache();
+void os_cache_init(void);
 void sys_error_hook(uint8_t err_no);
 
-typedef void (*os_cache_setfunc_func)(void *load_cache_func, void *io_read);
 typedef void (*spiflash_init_func)(uint8_t sf_read, uint8_t dummy);
 
-#define os_cache_setfunc        ((os_cache_setfunc_func) 0x84024)
-
 static struct rt_mutex mutex_spiflash = {0};
+static struct rt_mutex mutex_cache = {0};
 extern volatile rt_uint8_t rt_interrupt_nest;
 extern uint32_t __heap_start, __heap_end;
 
@@ -148,8 +147,9 @@ void rt_hw_us_delay(rt_uint32_t us)
 RT_SECTION(".irq.cache")
 void cache_init(void)
 {
-    os_cache_setfunc(load_cache, NULL);
+    os_cache_init();
     rt_mutex_init(&mutex_spiflash, "flash_mutex", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&mutex_cache, "cache_mutex", RT_IPC_FLAG_FIFO);
 }
 
 RT_SECTION(".irq.cache")
@@ -167,6 +167,24 @@ void os_spiflash_unlock(void)
     // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
     if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
         rt_mutex_release(&mutex_spiflash);
+    }
+}
+
+RT_SECTION(".irq.cache")
+void os_cache_lock(void)
+{
+    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+        rt_mutex_take(&mutex_cache, RT_WAITING_FOREVER);
+    }
+}
+
+RT_SECTION(".irq.cache")
+void os_cache_unlock(void)
+{
+    // if (rt_thread_self()->stat == RT_THREAD_RUNNING) {
+    if ((rt_thread_self() != RT_NULL) && (rt_interrupt_nest == 0)) {
+        rt_mutex_release(&mutex_cache);
     }
 }
 

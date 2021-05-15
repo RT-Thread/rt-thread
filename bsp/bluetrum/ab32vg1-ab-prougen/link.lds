@@ -43,7 +43,7 @@ SECTIONS
         . = ALIGN(4);
         PROVIDE(__ctors_start__ = .);
         KEEP (*(SORT(.init_array.*)))
-        KEEP (*(.init_array))
+        KEEP (*(.init_array*))
         PROVIDE(__ctors_end__ = .);
 
         . = ALIGN(4);
@@ -73,21 +73,17 @@ SECTIONS
     .comm __comm_vma : {
         . = ALIGN(4);
         KEEP(*(.vector))
+        *(.irq.cache)
         *(.irq*)
-        /*applications**.o (.text .rodata)*/
-        *hal_libraries*ab32vg1_hal**.o (.text .rodata)
-        *(.text.unlikely)
-        *(.text.startup)
-        *hal_drivers**.o (.rodata)
-        *audio*drv_sound.o (.rodata)
-        *system_ab32vgx.o (.rodata)
-        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o *cp-demangle.o 
-        *src*mem.o *src*memheap.o *dfs**.o *components.o *drivers*sdio**.o *cmd.o *msh_file.o
-        *drv_sdio.o *drv_wdt.o) *(.rodata.str1.4)
-        EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata)
+        *components*src**.o (.text* .rodata*)
+        *ab32vg1_hal**.o (.text* .rodata*)
+        *drv_gpio.o (.text* .rodata*)
+        *drv_usart.o (.rodata*)
+        EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata*)
         *(.rela*)
         *(.data*)
         *(.sdata*)
+        *(.com_text*)
     } > comm AT > flash
 
     .bss (NOLOAD):
