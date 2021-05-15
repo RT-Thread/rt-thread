@@ -38,7 +38,6 @@ typedef struct
     int cur;
 } DIR;
 
-#ifndef HAVE_DIRENT_STRUCTURE
 struct dirent
 {
     rt_uint8_t  d_type;             /* The type of the file */
@@ -46,7 +45,6 @@ struct dirent
     rt_uint16_t d_reclen;           /* length of this record */
     char d_name[256];               /* The null-terminated file name */
 };
-#endif
 
 int            closedir(DIR *);
 DIR           *opendir(const char *);
