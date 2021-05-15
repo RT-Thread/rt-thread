@@ -27,6 +27,12 @@
 typedef signed long off_t;
 typedef int mode_t;
 #endif
+
+/* dirent.h */
+#define DT_UNKNOWN           0x00
+#define DT_REG               0x01
+#define DT_DIR               0x02
+
 #endif
 
 #if defined(__MINGW32__) || defined(_WIN32)
