@@ -9,8 +9,8 @@
 #ifndef __RTT_DIRENT_H__
 #define __RTT_DIRENT_H__
 
-#include <rtthread.h>
-
+#include <rtconfig.h>
+#include <rtdef.h>
 /*
 * dirent.h - format of directory entries
  * Ref: http://www.opengroup.org/onlinepubs/009695399/basedefs/dirent.h.html
@@ -32,18 +32,24 @@ extern "C" {
 
 typedef struct
 {
-    int fd;                         /* directory file */
+    int fd;  /* directory file */
     char buf[512];
     int num;
     int cur;
 } DIR;
 
+
+#ifdef DFS_PATH_MAX
+#define DIRENT_NAME_MAX    DFS_PATH_MAX
+#else
+#define DIRENT_NAME_MAX    256
+#endif
 struct dirent
 {
     rt_uint8_t  d_type;             /* The type of the file */
     rt_uint8_t  d_namlen;           /* The length of the not including the terminating null file name */
     rt_uint16_t d_reclen;           /* length of this record */
-    char d_name[256];               /* The null-terminated file name */
+    char d_name[DIRENT_NAME_MAX];   /* The null-terminated file name */
 };
 
 int            closedir(DIR *);

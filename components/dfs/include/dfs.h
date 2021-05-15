@@ -74,14 +74,6 @@ struct statfs
     size_t f_bfree;   /* free blocks in file system */
 };
 
-struct dirent
-{
-    uint8_t d_type;           /* The type of the file */
-    uint8_t d_namlen;         /* The length of the not including the terminating null file name */
-    uint16_t d_reclen;        /* length of this record */
-    char d_name[DFS_PATH_MAX];   /* The null-terminated file name */
-};
-
 struct dfs_fdtable
 {
     uint32_t maxfd;

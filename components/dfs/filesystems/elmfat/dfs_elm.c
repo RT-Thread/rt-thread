@@ -23,7 +23,6 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include <dfs_fs.h>
 #include <dfs_file.h>
 
 static rt_device_t disk[FF_VOLUMES] = {0};
