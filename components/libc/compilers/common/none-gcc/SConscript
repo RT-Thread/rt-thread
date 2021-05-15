@@ -8,6 +8,6 @@ CPPPATH = [cwd]
 group = []
 src += Glob('*.c')
 
-if rtconfig.PLATFORM != 'gcc':
+if rtconfig.PLATFORM != 'gcc' or rtconfig.ARCH == 'sim':
     group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], CPPPATH = CPPPATH)
 Return('group')
