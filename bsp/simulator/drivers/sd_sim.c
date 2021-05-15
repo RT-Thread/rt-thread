@@ -57,7 +57,7 @@ static rt_size_t rt_sdcard_read(rt_device_t device, rt_off_t position, void *buf
     struct sdcard_device *sd;
     int result = 0;
 
-    LOG_I("sd read: pos %d, size %d\n", position, size);
+    LOG_I("sd read: pos %d, size %d", position, size);
 
     rt_mutex_take(lock, RT_WAITING_FOREVER);
     sd = SDCARD_DEVICE(device);
@@ -71,7 +71,7 @@ static rt_size_t rt_sdcard_read(rt_device_t device, rt_off_t position, void *buf
     return size;
 
 _err:
-    LOG_E("sd read errors!\n");
+    LOG_E("sd read errors!");
     rt_mutex_release(lock);
     return 0;
 }
@@ -85,7 +85,7 @@ static rt_size_t rt_sdcard_write(rt_device_t device, rt_off_t position, const vo
     struct sdcard_device *sd;
     int result = 0;
 
-    LOG_I("sst write: pos %d, size %d\n", position, size);
+    LOG_I("sst write: pos %d, size %d", position, size);
 
     rt_mutex_take(lock, RT_WAITING_FOREVER);
     sd = SDCARD_DEVICE(device);
@@ -99,7 +99,7 @@ static rt_size_t rt_sdcard_write(rt_device_t device, rt_off_t position, const vo
     return size;
 
 _err:
-    LOG_E("sd write errors!\n");
+    LOG_E("sd write errors!");
     rt_mutex_release(lock);
     return 0;
 }
@@ -166,7 +166,7 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
             ptr = (unsigned char *) malloc(1024 * 1024);
             if (ptr == NULL)
             {
-                LOG_E("malloc error, no memory!\n");
+                LOG_E("malloc error, no memory!");
                 return RT_ERROR;
             }
             memset(ptr, 0x0, 1024 * 1024);
