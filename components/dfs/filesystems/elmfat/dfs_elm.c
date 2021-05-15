@@ -23,9 +23,6 @@
 #include <string.h>
 #include <sys/time.h>
 
-/* ELM FatFs provide a DIR struct */
-#define HAVE_DIR_STRUCTURE
-
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
@@ -133,10 +130,10 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     if (result == FR_OK)
     {
         char drive[8];
-        DIR *dir;
+        FFDIR *dir;
 
         rt_snprintf(drive, sizeof(drive), "%d:/", index);
-        dir = (DIR *)rt_malloc(sizeof(DIR));
+        dir = (FFDIR *)rt_malloc(sizeof(FFDIR));
         if (dir == RT_NULL)
         {
             f_mount(RT_NULL, (const TCHAR *)logic_nbr, 1);
@@ -351,7 +348,7 @@ int dfs_elm_open(struct dfs_fd *file)
 
     if (file->flags & O_DIRECTORY)
     {
-        DIR *dir;
+        FFDIR *dir;
 
         if (file->flags & O_CREAT)
         {
@@ -366,7 +363,7 @@ int dfs_elm_open(struct dfs_fd *file)
         }
 
         /* open directory */
-        dir = (DIR *)rt_malloc(sizeof(DIR));
+        dir = (FFDIR *)rt_malloc(sizeof(FFDIR));
         if (dir == RT_NULL)
         {
 #if FF_VOLUMES > 1
@@ -451,9 +448,9 @@ int dfs_elm_close(struct dfs_fd *file)
     result = FR_OK;
     if (file->type == FT_DIRECTORY)
     {
-        DIR *dir;
+        FFDIR *dir;
 
-        dir = (DIR *)(file->data);
+        dir = (FFDIR *)(file->data);
         RT_ASSERT(dir != RT_NULL);
 
         /* release memory */
@@ -589,9 +586,9 @@ int dfs_elm_lseek(struct dfs_fd *file, rt_off_t offset)
     else if (file->type == FT_DIRECTORY)
     {
         /* which is a directory */
-        DIR *dir;
+        FFDIR *dir;
 
-        dir = (DIR *)(file->data);
+        dir = (FFDIR *)(file->data);
         RT_ASSERT(dir != RT_NULL);
 
         result = f_seekdir(dir, offset / sizeof(struct dirent));
@@ -608,13 +605,13 @@ int dfs_elm_lseek(struct dfs_fd *file, rt_off_t offset)
 
 int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
 {
-    DIR *dir;
+    FFDIR *dir;
     FILINFO fno;
     FRESULT result;
     rt_uint32_t index;
     struct dirent *d;
 
-    dir = (DIR *)(file->data);
+    dir = (FFDIR *)(file->data);
     RT_ASSERT(dir != RT_NULL);
 
     /* make integer count */
