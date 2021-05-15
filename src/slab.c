@@ -540,7 +540,7 @@ void *rt_malloc(rt_size_t size)
     {
         RT_ASSERT(z->z_nfree > 0);
 
-        /* Remove us from the zone_array[] when we become empty */
+        /* Remove us from the zone_array[] when we become full */
         if (--z->z_nfree == 0)
         {
             zone_array[zi] = z->z_next;
