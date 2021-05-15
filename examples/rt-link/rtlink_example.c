@@ -35,7 +35,7 @@ rt_err_t rt_link_receive_example_callback(void *data, rt_size_t length)
 {
     LOG_I("recv data %d",length);
     LOG_HEX("example",8,data,length);
-    rt_free(data);	
+    rt_free(data);
     return RT_EOK;
 }
 
@@ -115,7 +115,6 @@ void rt_link_speed_test(void *paremeter)
     LOG_W("speed test end, type %d",speed_test_type);
 }
 
-
 int rt_link_example_send(int argc, char **argv)
 {
     char *receive = RT_NULL;
@@ -175,7 +174,6 @@ int rt_link_example_send(int argc, char **argv)
             LOG_E("Invalid parameter.");
         }
     }
-    
     return 0;
 }
 MSH_CMD_EXPORT(rt_link_example_send, rt link layer send test);
