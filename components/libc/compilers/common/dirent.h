@@ -30,7 +30,6 @@
 extern "C" {
 #endif
 
-#ifndef HAVE_DIR_STRUCTURE
 typedef struct
 {
     int fd;                         /* directory file */
@@ -38,7 +37,6 @@ typedef struct
     int num;
     int cur;
 } DIR;
-#endif
 
 #ifndef HAVE_DIRENT_STRUCTURE
 struct dirent
