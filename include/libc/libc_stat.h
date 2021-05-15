@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+#if (defined( __GNUC__ ) && !defined(__ARMCC_VERSION)/*GCC*/)
 /* use header file of newlib */
 #include <sys/stat.h>
 

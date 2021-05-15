@@ -24,8 +24,7 @@
 
 #define FIONREAD    _IOR('f', 127, int) /* get # bytes to read */
 #define FIONBIO     _IOW('f', 126, int) /* set/clear non-blocking i/o */
-#define FIONWRITE   _IOR('f', 121, int) /* get # bytes outstanding
-                         * in send queue. */
+#define FIONWRITE   _IOR('f', 121, int) /* get # bytes outstanding in send queue */
 #endif
 
 #define TCGETS      0x5401
