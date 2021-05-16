@@ -513,11 +513,7 @@ void emacps_recv_handler(void *arg)
         /* free up the BD's */
         XEmacPs_BdRingFree(rxring, bd_processed, rxbdset);
         setup_rx_bds(xemacpsif, rxring);
-#if 0
-        sys_sem_signal(&xemac->sem_rx_data_available);
-#else
         eth_device_ready(xemac->rt_eth_device);
-#endif
     }
 
 #ifdef OS_IS_FREERTOS

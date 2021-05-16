@@ -353,9 +353,6 @@ static err_t low_level_init(struct netif *netif)
     netif->flags |= NETIF_FLAG_IGMP;
 #endif
 
-#if 0
-    sys_sem_new(&xemac->sem_rx_data_available, 0);
-#endif
     /* obtain config of this emac */
     mac_config = (XEmacPs_Config *)xemacps_lookup_config((unsigned)(UINTPTR)netif->state);
 
