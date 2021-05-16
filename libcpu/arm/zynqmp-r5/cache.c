@@ -108,14 +108,6 @@ void Xil_DCacheInvalidate(void)
     currmask = mfcpsr();
     mtcpsr(currmask | IRQ_FIQ_MASK);
 
-#if 0
-    stack_end = (u32 )&_stack_end;
-    stack_start = (u32 )&__undef_stack;
-    stack_size = stack_start-stack_end;
-
-    /* Flush stack memory to save return address */
-    Xil_DCacheFlushRange(stack_end, stack_size);
-#endif
     mtcp(XREG_CP15_CACHE_SIZE_SEL, 0);
 
     /*invalidate all D cache*/

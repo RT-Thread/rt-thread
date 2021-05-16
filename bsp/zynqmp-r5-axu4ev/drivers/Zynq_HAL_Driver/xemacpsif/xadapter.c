@@ -197,29 +197,6 @@ xemac_add(struct netif *netif,
     }
 }
 
-#if 0
-/*
- * The input thread calls lwIP to process any received packets.
- * This thread waits until a packet is received (sem_rx_data_available),
- * and then calls xemacif_input which processes 1 packet at a time.
- */
-void
-xemacif_input_thread(struct netif *netif)
-{
-    struct xemac_s *emac = (struct xemac_s *)netif->state;
-    while (1) {
-        /* sleep until there are packets to process
-         * This semaphore is set by the packet receive interrupt
-         * routine.
-         */
-        sys_sem_wait(&emac->sem_rx_data_available);
-
-        /* move all received packets to lwIP */
-        xemacif_input(netif);
-    }
-}
-#endif
-
 int
 xemacif_input(struct netif *netif)
 {

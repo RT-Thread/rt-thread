@@ -55,11 +55,7 @@ struct xemac_s {
     enum xemac_types type;
     int  topology_index;
     void *state;
-#if 0
-    sys_sem_t sem_rx_data_available;
-#else
     struct eth_device *rt_eth_device;
-#endif
 #if defined(OS_IS_FREERTOS) && defined(__arm__) && !defined(ARMR5)
     TimerHandle_t xTimer;
 #endif
