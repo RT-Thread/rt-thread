@@ -84,6 +84,7 @@ class CheckOut:
         try:
             os.system('git remote add rtt_repo {}'.format(self.rtt_repo))
             os.system('git fetch rtt_repo')
+            os.system('git merge rtt_repo/{}'.format(self.rtt_branch))
             os.system('git reset rtt_repo/{} --soft'.format(self.rtt_branch))
             os.system('git status > git.txt')
         except Exception as e:
