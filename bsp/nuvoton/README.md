@@ -9,3 +9,4 @@ Current supported BSP shown in below table:
 | [numaker-m2354](numaker-m2354) | Nuvoton NuMaker-M2354 |
 | [nk-rtu980](nk-rtu980) | Nuvoton NK-RTU980 |
 | [nk-n9h30](nk-n9h30) | Nuvoton NK-N9H30 |
+| [numaker-m032ki](numaker-m032ki) | Nuvoton NuMaker-M032KI |
