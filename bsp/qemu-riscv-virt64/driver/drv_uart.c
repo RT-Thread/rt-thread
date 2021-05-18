@@ -98,23 +98,25 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
 static int drv_uart_putc(struct rt_serial_device *serial, char c)
 {
-    SBI_CALL_1(SBI_CONSOLE_PUTCHAR, c);
+    sbi_console_putchar(c);
     return (1);
 }
 
 static int drv_uart_getc(struct rt_serial_device *serial)
 {
-    return SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+    return sbi_console_getchar();
 }
 
+#if 0
 void drv_uart_puts(char *str)
 {
     sbi_console_putstr(str);
 }
+#endif
 
 char rt_hw_console_getchar(void)
 {
-    return SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+    return sbi_console_getchar();
 }
 
 static void uart_rx(void *param)
