@@ -1,5 +1,5 @@
-#ifndef XPLATFORM_INFO_H		/* prevent circular inclusions */
-#define XPLATFORM_INFO_H		/* by using protection macros */
+#ifndef XPLATFORM_INFO_H        /* prevent circular inclusions */
+#define XPLATFORM_INFO_H        /* by using protection macros */
 
 #include "xil_types.h"
 #include "xparameters.h"
@@ -12,12 +12,12 @@ extern "C" {
 #define XPAR_PMC_TAP_BASEADDR 0xF11A0000U
 #define XPAR_PMC_TAP_VERSION_OFFSET 0x00000004U
 #define XPLAT_PS_VERSION_ADDRESS (XPAR_PMC_TAP_BASEADDR + \
-									XPAR_PMC_TAP_VERSION_OFFSET)
+                                    XPAR_PMC_TAP_VERSION_OFFSET)
 #else
 #define XPAR_CSU_BASEADDR 0xFFCA0000U
-#define	XPAR_CSU_VER_OFFSET 0x00000044U
+#define    XPAR_CSU_VER_OFFSET 0x00000044U
 #define XPLAT_PS_VERSION_ADDRESS (XPAR_CSU_BASEADDR + \
-									XPAR_CSU_VER_OFFSET)
+                                    XPAR_CSU_VER_OFFSET)
 #endif
 #define XPLAT_ZYNQ_ULTRA_MP_SILICON 0x0
 #define XPLAT_ZYNQ_ULTRA_MP 0x1
@@ -44,13 +44,13 @@ extern "C" {
 static INLINE u32 XGetPlatform_Info()
 {
 #if defined (versal)
-	return XPLAT_VERSAL;
+    return XPLAT_VERSAL;
 #elif defined (ARMR5) || (__aarch64__) || (ARMA53_32) || (PSU_PMU)
-	return XPLAT_ZYNQ_ULTRA_MP;
+    return XPLAT_ZYNQ_ULTRA_MP;
 #elif (__microblaze__)
-	return XPLAT_MICROBLAZE;
+    return XPLAT_MICROBLAZE;
 #else
-	return XPLAT_ZYNQ;
+    return XPLAT_ZYNQ;
 #endif
 }
 
