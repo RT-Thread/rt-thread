@@ -38,7 +38,8 @@ void primary_cpu_entry(void)
     extern void entry(void);
 
     /* disable global interrupt */
-    init_bss();
+    rt_memset(&__bss_start, 0x0, &__bss_end - &__bss_start);
+    // init_bss();
     rt_hw_interrupt_disable();
     entry();
 }
@@ -76,7 +77,7 @@ void rt_hw_board_init(void)
 
 void rt_hw_cpu_reset(void)
 {
-    SBI_CALL_0(SBI_SHUTDOWN);
+    sbi_shutdown();
     while(1);
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
