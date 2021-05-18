@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -45,9 +45,9 @@ static const rt_uint8_t tacc_value[] =
 rt_inline rt_uint32_t GET_BITS(rt_uint32_t *resp,
                                rt_uint32_t  start,
                                rt_uint32_t  size)
-{                               
+{
         const rt_int32_t __size = size;
-        const rt_uint32_t __mask = (__size < 32 ? 1 << __size : 0) - 1; 
+        const rt_uint32_t __mask = (__size < 32 ? 1 << __size : 0) - 1;
         const rt_int32_t __off = 3 - ((start) / 32);
         const rt_int32_t __shft = (start) & 31;
         rt_uint32_t __res;
@@ -67,7 +67,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
       rt_uint32_t a, b;
       struct rt_mmcsd_csd *csd = &card->csd;
       rt_uint32_t *resp = card->resp_csd;
-      
+
       /*
       * We only understand CSD structure v1.1 and v1.2.
       * v1.2 has extra information in bits 15, 11 and 10.
@@ -76,10 +76,10 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
       csd->csd_structure = GET_BITS(resp, 126, 2);
       if (csd->csd_structure == 0) {
         LOG_E("unrecognised CSD structure version %d!", csd->csd_structure);
-        
+
         return -RT_ERROR;
       }
-      
+
       csd->taac = GET_BITS(resp, 112, 8);
       csd->nsac = GET_BITS(resp, 104, 8);
       csd->tran_speed = GET_BITS(resp, 96, 8);
@@ -95,7 +95,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
       csd->wr_blk_len = GET_BITS(resp, 22, 4);
       csd->wr_blk_partial = GET_BITS(resp, 21, 1);
       csd->csd_crc = GET_BITS(resp, 1, 7);
-      
+
       card->card_blksize = 1 << csd->rd_blk_len;
       card->tacc_clks = csd->nsac * 100;
       card->tacc_ns = (tacc_uint[csd->taac&0x07] * tacc_value[(csd->taac&0x78)>>3] + 9) / 10;
@@ -106,7 +106,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
         card->erase_size = (a + 1) * (b + 1);
         card->erase_size <<= csd->wr_blk_len - 9;
       }
-      
+
       return 0;
 }
 
@@ -119,12 +119,12 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
   struct rt_mmcsd_req req;
   struct rt_mmcsd_cmd cmd;
   struct rt_mmcsd_data data;
-  
+
   *new_ext_csd = RT_NULL;
-  
+
   if (GET_BITS(card->resp_cid, 122, 4) < 4)
      return 0;
-  
+
   /*
   * As the ext_csd is so large and mostly unused, we don't store the
   * raw block in mmc_card.
@@ -134,29 +134,29 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
     LOG_E("alloc memory failed when get ext csd!");
     return -RT_ENOMEM;
   }
-  
+
   rt_memset(&req, 0, sizeof(struct rt_mmcsd_req));
   rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
   rt_memset(&data, 0, sizeof(struct rt_mmcsd_data));
-  
+
   req.cmd = &cmd;
   req.data = &data;
-  
+
   cmd.cmd_code = SEND_EXT_CSD;
   cmd.arg = 0;
-  
+
   /* NOTE HACK:  the RESP_SPI_R1 is always correct here, but we
   * rely on callers to never use this with "native" calls for reading
   * CSD or CID.  Native versions of those commands use the R2 type,
   * not R1 plus a data block.
   */
   cmd.flags = RESP_SPI_R1 | RESP_R1 | CMD_ADTC;
-  
+
   data.blksize = 512;
   data.blks = 1;
   data.flags = DATA_DIR_READ;
   data.buf = ext_csd;
-  
+
   /*
   * Some cards require longer data read timeout than indicated in CSD.
   * Address this by setting the read timeout to a "reasonably high"
@@ -165,14 +165,14 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
   */
   data.timeout_ns = 300000000;
   data.timeout_clks = 0;
-  
+
   mmcsd_send_request(card->host, &req);
-  
+
   if (cmd.err)
     return cmd.err;
   if (data.err)
     return data.err;
-  
+
   *new_ext_csd = ext_csd;
   return 0;
 }
@@ -192,13 +192,13 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 
   card->flags |=  CARD_FLAG_HIGHSPEED;
   card->hs_max_data_rate = 52000000;
-  
+
   card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
   card_capacity *= card->card_blksize;
   card_capacity >>= 10; /* unit:KB */
   card->card_capacity = card_capacity;
   LOG_I("emmc card capacity %d KB.", card->card_capacity);
-  
+
   return 0;
 }
 
@@ -211,41 +211,41 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
  *
  *   Modifies the EXT_CSD register for selected card.
  */
-static int mmc_switch(struct rt_mmcsd_card *card, rt_uint8_t set, 
+static int mmc_switch(struct rt_mmcsd_card *card, rt_uint8_t set,
                       rt_uint8_t index, rt_uint8_t value)
 {
   int err;
   struct rt_mmcsd_host *host = card->host;
   struct rt_mmcsd_cmd cmd = {0};
-  
+
   cmd.cmd_code = SWITCH;
   cmd.arg = (MMC_SWITCH_MODE_WRITE_BYTE << 24) |
     (index << 16) | (value << 8) | set;
   cmd.flags = RESP_SPI_R1 | RESP_R1 | CMD_AC;
-  
+
   err = mmcsd_send_cmd(host, &cmd, 3);
   if (err)
     return err;
-  
+
   return 0;
 }
 
-static int mmc_compare_ext_csds(struct rt_mmcsd_card *card, 
+static int mmc_compare_ext_csds(struct rt_mmcsd_card *card,
                                 rt_uint8_t *ext_csd, rt_uint32_t bus_width)
 {
   rt_uint8_t *bw_ext_csd;
   int err;
-  
+
   if (bus_width == MMCSD_BUS_WIDTH_1)
     return 0;
-  
+
   err = mmc_get_ext_csd(card, &bw_ext_csd);
-  
+
   if (err || bw_ext_csd == RT_NULL) {
     err = -RT_ERROR;
     goto out;
   }
-  
+
   /* only compare read only fields */
   err = !((ext_csd[EXT_CSD_PARTITION_SUPPORT] == bw_ext_csd[EXT_CSD_PARTITION_SUPPORT]) &&
           (ext_csd[EXT_CSD_ERASED_MEM_CONT] == bw_ext_csd[EXT_CSD_ERASED_MEM_CONT]) &&
@@ -273,10 +273,10 @@ static int mmc_compare_ext_csds(struct rt_mmcsd_card *card,
           (ext_csd[EXT_CSD_PWR_CL_DDR_52_195] == bw_ext_csd[EXT_CSD_PWR_CL_DDR_52_195]) &&
           (ext_csd[EXT_CSD_PWR_CL_DDR_52_360] == bw_ext_csd[EXT_CSD_PWR_CL_DDR_52_360]) &&
           (ext_csd[EXT_CSD_PWR_CL_DDR_200_360] == bw_ext_csd[EXT_CSD_PWR_CL_DDR_200_360]));
-  
+
   if (err)
      err = -RT_ERROR;
-  
+
 out:
   rt_free(bw_ext_csd);
   return err;
@@ -300,12 +300,12 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     MMCSD_BUS_WIDTH_1
   };
   struct rt_mmcsd_host *host = card->host;
-  unsigned idx, bus_width = 0;
+  unsigned idx, trys, bus_width = 0;
   int err = 0;
-  
+
   if (GET_BITS(card->resp_cid, 122, 4) < 4)
      return 0;
-  
+
   /*
   * Unlike SD, MMC cards dont have a configuration register to notify
   * supported bus width. So bus test command should be run to identify
@@ -323,22 +323,25 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     * set by drivers.
     */
      if ((!(host->flags & MMCSD_BUSWIDTH_8) &&
-	  ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8) ||
+      ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8) ||
          (!(host->flags & MMCSD_BUSWIDTH_4) &&
-	  (ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_4 ||
-	  ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8)))
-	     continue;
+      (ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_4 ||
+      ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8)))
+         continue;
 
     err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
                      EXT_CSD_BUS_WIDTH,
                      ext_csd_bits[idx]);
     if (err)
       continue;
-    
-    bus_width = bus_widths[idx];
-    mmcsd_set_bus_width(host, bus_width);
-    mmcsd_delay_ms(20); //delay 10ms
-    err = mmc_compare_ext_csds(card, ext_csd, bus_width);
+
+    for(trys = 0; trys < 5; trys++){
+        mmcsd_set_bus_width(host, bus_width);
+        mmcsd_delay_ms(10);
+        err = mmc_compare_ext_csds(card, ext_csd, bus_width);
+        if(!err)
+            break;
+    }
     if (!err) {
       err = bus_width;
       break;
@@ -358,10 +361,10 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
       }
     }
   }
-  
+
   return err;
 }
-rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host, 
+rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
                           rt_uint32_t ocr, rt_uint32_t *rocr)
 {
     struct rt_mmcsd_cmd cmd;
@@ -369,20 +372,20 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
     rt_err_t err = RT_EOK;
 
     rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
-    
+
     cmd.cmd_code = SEND_OP_COND;
     cmd.arg = controller_is_spi(host) ? 0 : ocr;
     cmd.flags = RESP_SPI_R1 | RESP_R3 | CMD_BCR;
-  
+
     for (i = 100; i; i--) {
       err = mmcsd_send_cmd(host, &cmd, 3);
       if (err)
         break;
-      
+
       /* if we're just probing, do a single pass */
       if (ocr == 0)
         break;
-      
+
       /* otherwise wait until reset completes */
       if (controller_is_spi(host)) {
         if (!(cmd.resp[0] & R1_SPI_IDLE))
@@ -391,15 +394,15 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
         if (cmd.resp[0] & CARD_BUSY)
           break;
       }
-      
+
       err = -RT_ETIMEOUT;
-      
+
       mmcsd_delay_ms(10); //delay 10ms
     }
-  
+
   if (rocr && !controller_is_spi(host))
     *rocr = cmd.resp[0];
-  
+
   return err;
 }
 
@@ -407,17 +410,17 @@ static rt_err_t mmc_set_card_addr(struct rt_mmcsd_host *host, rt_uint32_t rca)
 {
   rt_err_t err;
   struct rt_mmcsd_cmd cmd;
-  
+
   rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
-  
+
   cmd.cmd_code = SET_RELATIVE_ADDR;
   cmd.arg = rca << 16;
   cmd.flags = RESP_R1 | CMD_AC;
-  
+
   err = mmcsd_send_cmd(host, &cmd, 3);
   if (err)
     return err;
-  
+
   return 0;
 }
 
@@ -432,19 +435,19 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     struct rt_mmcsd_card *card = RT_NULL;
 
     mmcsd_go_idle(host);
-    
+
     /* The extra bit indicates that we support high capacity */
     err = mmc_send_op_cond(host, ocr | (1 << 30), &rocr);
     if (err)
       goto err;
-    
-    if (controller_is_spi(host)) 
+
+    if (controller_is_spi(host))
     {
         err = mmcsd_spi_use_crc(host, 1);
         if (err)
             goto err1;
     }
-    
+
     if (controller_is_spi(host))
         err = mmcsd_get_cid(host, resp);
     else
@@ -453,7 +456,7 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
         goto err;
 
     card = rt_malloc(sizeof(struct rt_mmcsd_card));
-    if (!card) 
+    if (!card)
     {
         LOG_E("malloc card failed!");
         err = -RT_ENOMEM;
@@ -469,7 +472,7 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     /*
      * For native busses:  get card RCA and quit open drain mode.
      */
-    if (!controller_is_spi(host)) 
+    if (!controller_is_spi(host))
     {
         err = mmc_set_card_addr(host, card->rca);
         if (err)
@@ -486,24 +489,24 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     if (err)
         goto err1;
 
-    if (!controller_is_spi(host)) 
+    if (!controller_is_spi(host))
     {
         err = mmcsd_select_card(card);
         if (err)
             goto err1;
     }
-    
+
     /*
     * Fetch and process extended CSD.
     */
-    
+
     err = mmc_get_ext_csd(card, &ext_csd);
     if (err)
       goto err1;
     err = mmc_parse_ext_csd(card, ext_csd);
     if (err)
       goto err1;
-    
+
     /* If doing byte addressing, check if required to do sector
     * addressing.  Handle the case of <2GB cards needing sector
     * addressing.  See section 8.1 JEDEC Standard JED84-A441;
@@ -511,9 +514,9 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     */
     if (!(card->flags & CARD_FLAG_SDHC) && (rocr & (1<<30)))
         card->flags |= CARD_FLAG_SDHC;
- 
+
     /* set bus speed */
-    if (card->flags & CARD_FLAG_HIGHSPEED) 
+    if (card->flags & CARD_FLAG_HIGHSPEED)
         max_data_rate = card->hs_max_data_rate;
     else
         max_data_rate = card->max_data_rate;
@@ -522,7 +525,7 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
 
     /*switch bus width*/
     mmc_select_bus_width(card, ext_csd);
-    
+
     host->card = card;
 
     rt_free(ext_csd);

@@ -1,11 +1,7 @@
 /*
- * File      : start.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -52,8 +48,8 @@ multiboot_entry:
 	pushl	$0
 	popf
 
-	/*rebuild globe describe table*/
-	lgdt	mygdtdesc
+	/* rebuild globe describe table */
+	lgdt	__gdtdesc
 
 	movl	$0x10,%eax
 	movw	%ax,%ds
@@ -77,7 +73,7 @@ spin:
 
 .data
 .p2align	2
-mygdt:
+__gdt:
 	.word	0,0,0,0
 
 	.word	0x07FF		/* 8Mb - limit=2047 */
@@ -90,8 +86,8 @@ mygdt:
 	.word	0x9200		/* data read/write */
 	.word	0x00C0
 
-mygdtdesc:
+__gdtdesc:
 	.word	0x17
-	.long	mygdt
+	.long	__gdt
 
 /*@}*/

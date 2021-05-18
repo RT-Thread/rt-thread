@@ -156,16 +156,16 @@ static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_
 static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 {
     netdev_low_level_set_dhcp_status(netif, is_enabled);
-	
+
     if(RT_TRUE == is_enabled)
     {
         dhcp_start((struct netif *)netif->user_data);
     }
     else
     {
-        dhcp_stop((struct netif *)netif->user_data);    
+        dhcp_stop((struct netif *)netif->user_data);
     }
-	
+
     return ERR_OK;
 }
 #endif /* RT_LWIP_DHCP */
@@ -469,6 +469,8 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     dev->flags = flags;
     /* link changed status of device */
     dev->link_changed = 0x00;
+    /* avoid send the same mail to mailbox */
+    dev->rx_notice = 0x00;
     dev->parent.type = RT_Device_Class_NetIf;
     /* register to RT-Thread device manager */
     rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
@@ -550,10 +552,18 @@ rt_err_t eth_device_init(struct eth_device * dev, const char *name)
 rt_err_t eth_device_ready(struct eth_device* dev)
 {
     if (dev->netif)
+    {
+        if(dev->rx_notice == RT_FALSE)
+        {
+            dev->rx_notice = RT_TRUE;
+            return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+        }
+        else
+            return RT_EOK;
         /* post message to Ethernet thread */
-        return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+    }
     else
-        return ERR_OK; /* netif is not initialized yet, just return. */
+        return -RT_ERROR; /* netif is not initialized yet, just return. */
 }
 
 rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
@@ -628,6 +638,7 @@ static void eth_rx_thread_entry(void* parameter)
     {
         if (rt_mb_recv(&eth_rx_thread_mb, (rt_ubase_t*)&device, RT_WAITING_FOREVER) == RT_EOK)
         {
+            rt_base_t level;
             struct pbuf *p;
 
             /* check link status */
@@ -647,8 +658,13 @@ static void eth_rx_thread_entry(void* parameter)
                     netifapi_netif_set_link_down(device->netif);
             }
 
+            level = rt_hw_interrupt_disable();
+            /* 'rx_notice' will be modify in the interrupt or here */
+            device->rx_notice = RT_FALSE;
+            rt_hw_interrupt_enable(level);
+
             /* receive all of buffer */
-            while (1)
+            while(1)
             {
             	if(device->eth_rx == RT_NULL) break;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -101,7 +101,7 @@ int msh_exec_script(const char *cmd_line, int size)
         int length;
 
         line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
-        if (line_buf == RT_NULL) 
+        if (line_buf == RT_NULL)
         {
             close(fd);
             return -RT_ENOMEM;
@@ -295,7 +295,7 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
         if (dirent == RT_NULL)
             break;
         if (rt_strcmp(".", dirent->d_name) != 0 &&
-            rt_strcmp("..", dirent->d_name) != 0)
+                rt_strcmp("..", dirent->d_name) != 0)
         {
             rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
             if (dirent->d_type == DT_REG)
@@ -347,13 +347,20 @@ int cmd_rm(int argc, char **argv)
         {
             switch (argv[1][n])
             {
-                case 'f': f = 1; break;
-                case 'r': r = 1; break;
-                case 'v': v = 1; break;
-                case '-': break;
-                default:
-                    rt_kprintf("Error: Bad option: %c\n", argv[1][n]);
-                    return 0;
+            case 'f':
+                f = 1;
+                break;
+            case 'r':
+                r = 1;
+                break;
+            case 'v':
+                v = 1;
+                break;
+            case '-':
+                break;
+            default:
+                rt_kprintf("Error: Bad option: %c\n", argv[1][n]);
+                return 0;
             }
         }
         argc -= 1;
@@ -363,7 +370,7 @@ int cmd_rm(int argc, char **argv)
     for (index = 1; index < argc; index ++)
     {
         struct stat s;
-        if (stat (argv[index], &s) == 0)
+        if (stat(argv[index], &s) == 0)
         {
             if (s.st_mode & S_IFDIR)
             {
@@ -469,8 +476,81 @@ int cmd_mkfs(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_mkfs, __cmd_mkfs, format disk with file system);
 
+extern struct dfs_filesystem filesystem_table[];
+int cmd_mount(int argc, char *argv[])
+{
+    if (argc == 1)
+    {
+        struct dfs_filesystem *iter;
+
+        /* display the mount history */
+        rt_kprintf("filesystem  device  mountpoint\n");
+        rt_kprintf("----------  ------  ----------\n");
+        for (iter = &filesystem_table[0];
+                iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
+        {
+            if ((iter != NULL) && (iter->path != NULL))
+            {
+                rt_kprintf("%-10s  %-6s  %-s\n",
+                           iter->ops->name, iter->dev_id->parent.name, iter->path);
+            }
+        }
+        return 0;
+    }
+    else if (argc == 4)
+    {
+        char *device = argv[1];
+        char *path = argv[2];
+        char *fstype = argv[3];
+
+        /* mount a filesystem to the specified directory */
+        rt_kprintf("mount device %s(%s) onto %s ... ", device, fstype, path);
+        if (dfs_mount(device, path, fstype, 0, 0) == 0)
+        {
+            rt_kprintf("succeed!\n");
+            return 0;
+        }
+        else
+        {
+            rt_kprintf("failed!\n");
+            return -1;
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: mount <device> <mountpoint> <fstype>.\n");
+        return -1;
+    }
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_mount, __cmd_mount, mount <device> <mountpoint> <fstype>);
+
+/* unmount the filesystem from the specified mountpoint */
+int cmd_umount(int argc, char *argv[])
+{
+    char *path = argv[1];
+
+    if (argc != 2)
+    {
+        rt_kprintf("Usage: unmount <mountpoint>.\n");
+        return -1;
+    }
+
+    rt_kprintf("unmount %s ... ", path);
+    if (dfs_unmount(path) < 0)
+    {
+        rt_kprintf("failed!\n");
+        return -1;
+    }
+    else
+    {
+        rt_kprintf("succeed!\n");
+        return 0;
+    }
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_umount, __cmd_umount, Unmount device from file system);
+
 extern int df(const char *path);
-int cmd_df(int argc, char** argv)
+int cmd_df(int argc, char **argv)
 {
     if (argc != 2)
     {
@@ -492,7 +572,7 @@ int cmd_df(int argc, char** argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_df, __cmd_df, disk free);
 
-int cmd_echo(int argc, char** argv)
+int cmd_echo(int argc, char **argv)
 {
     if (argc == 2)
     {
@@ -505,7 +585,7 @@ int cmd_echo(int argc, char** argv)
         fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
         if (fd >= 0)
         {
-            write (fd, argv[1], strlen(argv[1]));
+            write(fd, argv[1], strlen(argv[1]));
             close(fd);
         }
         else

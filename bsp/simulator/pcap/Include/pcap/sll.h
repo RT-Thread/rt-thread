@@ -1,6 +1,6 @@
 /*-
  * Copyright (c) 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997
- *	The Regents of the University of California.  All rights reserved.
+ *  The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from the Stanford/CMU enet packet filter,
  * (net/enet.c) distributed as part of 4.3BSD, and code contributed
@@ -42,22 +42,22 @@
  * For captures on Linux cooked sockets, we construct a fake header
  * that includes:
  *
- *	a 2-byte "packet type" which is one of:
+ *  a 2-byte "packet type" which is one of:
  *
- *		LINUX_SLL_HOST		packet was sent to us
- *		LINUX_SLL_BROADCAST	packet was broadcast
- *		LINUX_SLL_MULTICAST	packet was multicast
- *		LINUX_SLL_OTHERHOST	packet was sent to somebody else
- *		LINUX_SLL_OUTGOING	packet was sent *by* us;
+ *      LINUX_SLL_HOST      packet was sent to us
+ *      LINUX_SLL_BROADCAST packet was broadcast
+ *      LINUX_SLL_MULTICAST packet was multicast
+ *      LINUX_SLL_OTHERHOST packet was sent to somebody else
+ *      LINUX_SLL_OUTGOING  packet was sent *by* us;
  *
- *	a 2-byte Ethernet protocol field;
+ *  a 2-byte Ethernet protocol field;
  *
- *	a 2-byte link-layer type;
+ *  a 2-byte link-layer type;
  *
- *	a 2-byte link-layer address length;
+ *  a 2-byte link-layer address length;
  *
- *	an 8-byte source link-layer address, whose actual length is
- *	specified by the previous value.
+ *  an 8-byte source link-layer address, whose actual length is
+ *  specified by the previous value.
  *
  * All fields except for the link-layer address are in network byte order.
  *
@@ -79,15 +79,15 @@
 /*
  * A DLT_LINUX_SLL fake link-layer header.
  */
-#define SLL_HDR_LEN	16		/* total header length */
-#define SLL_ADDRLEN	8		/* length of address field */
+#define SLL_HDR_LEN 16      /* total header length */
+#define SLL_ADDRLEN 8       /* length of address field */
 
 struct sll_header {
-	u_int16_t sll_pkttype;		/* packet type */
-	u_int16_t sll_hatype;		/* link-layer address type */
-	u_int16_t sll_halen;		/* link-layer address length */
-	u_int8_t sll_addr[SLL_ADDRLEN];	/* link-layer address */
-	u_int16_t sll_protocol;		/* protocol */
+    u_int16_t sll_pkttype;      /* packet type */
+    u_int16_t sll_hatype;       /* link-layer address type */
+    u_int16_t sll_halen;        /* link-layer address length */
+    u_int8_t sll_addr[SLL_ADDRLEN]; /* link-layer address */
+    u_int16_t sll_protocol;     /* protocol */
 };
 
 /*
@@ -96,11 +96,11 @@ struct sll_header {
  * available even on systems other than Linux, and so that they
  * don't change even if the PACKET_ values change.
  */
-#define LINUX_SLL_HOST		0
-#define LINUX_SLL_BROADCAST	1
-#define LINUX_SLL_MULTICAST	2
-#define LINUX_SLL_OTHERHOST	3
-#define LINUX_SLL_OUTGOING	4
+#define LINUX_SLL_HOST      0
+#define LINUX_SLL_BROADCAST 1
+#define LINUX_SLL_MULTICAST 2
+#define LINUX_SLL_OTHERHOST 3
+#define LINUX_SLL_OUTGOING  4
 
 /*
  * The LINUX_SLL_ values for "sll_protocol"; these correspond to the
@@ -108,22 +108,22 @@ struct sll_header {
  * available even on systems other than Linux.  We assume, for now,
  * that the ETH_P_ values won't change in Linux; if they do, then:
  *
- *	if we don't translate them in "pcap-linux.c", capture files
- *	won't necessarily be readable if captured on a system that
- *	defines ETH_P_ values that don't match these values;
+ *  if we don't translate them in "pcap-linux.c", capture files
+ *  won't necessarily be readable if captured on a system that
+ *  defines ETH_P_ values that don't match these values;
  *
- *	if we do translate them in "pcap-linux.c", that makes life
- *	unpleasant for the BPF code generator, as the values you test
- *	for in the kernel aren't the values that you test for when
- *	reading a capture file, so the fixup code run on BPF programs
- *	handed to the kernel ends up having to do more work.
+ *  if we do translate them in "pcap-linux.c", that makes life
+ *  unpleasant for the BPF code generator, as the values you test
+ *  for in the kernel aren't the values that you test for when
+ *  reading a capture file, so the fixup code run on BPF programs
+ *  handed to the kernel ends up having to do more work.
  *
  * Add other values here as necessary, for handling packet types that
  * might show up on non-Ethernet, non-802.x networks.  (Not all the ones
  * in the Linux "if_ether.h" will, I suspect, actually show up in
  * captures.)
  */
-#define LINUX_SLL_P_802_3	0x0001	/* Novell 802.3 frames without 802.2 LLC header */
-#define LINUX_SLL_P_802_2	0x0004	/* 802.2 frames (not D/I/X Ethernet) */
+#define LINUX_SLL_P_802_3   0x0001  /* Novell 802.3 frames without 802.2 LLC header */
+#define LINUX_SLL_P_802_2   0x0004  /* 802.2 frames (not D/I/X Ethernet) */
 
 #endif

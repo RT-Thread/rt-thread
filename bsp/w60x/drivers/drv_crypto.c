@@ -465,25 +465,25 @@ static rt_err_t _bignum_exptmod(struct hwcrypto_bignum *bignum_ctx,
                     const struct hw_bignum_mpi *b,
                     const struct hw_bignum_mpi *c)
 {
-	pstm_int pa, pb, pm, pres;
+    pstm_int pa, pb, pm, pres;
     u32 * buff_a = NULL;
-	u32 * buff_b = NULL;
-	u32 * buff_m = NULL;
-	int err = -1;
+    u32 * buff_b = NULL;
+    u32 * buff_m = NULL;
+    int err = -1;
     void *buff;
     int buff_len;
 
     pstm_init(NULL, &pres);
 
     buff_a = tls_mem_alloc(a->total);
-	if(buff_a == NULL)
-		goto out;
-	buff_b = tls_mem_alloc(b->total);
-	if(buff_b == NULL)
-		goto out;
-	buff_m = tls_mem_alloc(c->total);
-	if(buff_m == NULL)
-		goto out;
+    if(buff_a == NULL)
+        goto out;
+    buff_b = tls_mem_alloc(b->total);
+    if(buff_b == NULL)
+        goto out;
+    buff_m = tls_mem_alloc(c->total);
+    if(buff_m == NULL)
+        goto out;
 
     memset(buff_a, 0, a->total);
     memset(buff_b, 0, b->total);
@@ -494,29 +494,29 @@ static rt_err_t _bignum_exptmod(struct hwcrypto_bignum *bignum_ctx,
     memcpy(buff_m, c->p, c->total);
 
     pstm_reverse((unsigned char *)buff_a, a->total);
-	pstm_reverse((unsigned char *)buff_b, b->total);
-	pstm_reverse((unsigned char *)buff_m, c->total);
+    pstm_reverse((unsigned char *)buff_b, b->total);
+    pstm_reverse((unsigned char *)buff_m, c->total);
 
 //    *((volatile unsigned int *)0x40000710) = *((volatile unsigned int *)0x40000710) | (0x1 << 28);
 
-	if ((err = pstm_init_for_read_unsigned_bin(NULL, &pa, a->total)) != PS_SUCCESS){
-		goto out;
-	}
-	if ((err = pstm_read_unsigned_bin(&pa, (unsigned char *)buff_a, a->total)) != PS_SUCCESS) {
-		goto out;
-	}
-	if ((err = pstm_init_for_read_unsigned_bin(NULL, &pb, b->total)) != PS_SUCCESS){
-		goto out;
-	}
-	if ((err = pstm_read_unsigned_bin(&pb, (unsigned char *)buff_b, b->total)) != PS_SUCCESS) {
-		goto out;
-	}
-	if ((err = pstm_init_for_read_unsigned_bin(NULL, &pm, c->total)) != PS_SUCCESS){
-		goto out;
-	}
-	if ((err = pstm_read_unsigned_bin(&pm, (unsigned char *)buff_m, c->total)) != PS_SUCCESS) {
-		goto out;
-	}
+    if ((err = pstm_init_for_read_unsigned_bin(NULL, &pa, a->total)) != PS_SUCCESS){
+        goto out;
+    }
+    if ((err = pstm_read_unsigned_bin(&pa, (unsigned char *)buff_a, a->total)) != PS_SUCCESS) {
+        goto out;
+    }
+    if ((err = pstm_init_for_read_unsigned_bin(NULL, &pb, b->total)) != PS_SUCCESS){
+        goto out;
+    }
+    if ((err = pstm_read_unsigned_bin(&pb, (unsigned char *)buff_b, b->total)) != PS_SUCCESS) {
+        goto out;
+    }
+    if ((err = pstm_init_for_read_unsigned_bin(NULL, &pm, c->total)) != PS_SUCCESS){
+        goto out;
+    }
+    if ((err = pstm_read_unsigned_bin(&pm, (unsigned char *)buff_m, c->total)) != PS_SUCCESS) {
+        goto out;
+    }
 
     tls_crypto_exptmod(&pa, &pb, &pm, &pres);
     buff_len = pstm_unsigned_bin_size(&pres);
@@ -528,16 +528,16 @@ static rt_err_t _bignum_exptmod(struct hwcrypto_bignum *bignum_ctx,
 
 out:
     if(buff_a)
-		tls_mem_free(buff_a);
-	if(buff_b)
-		tls_mem_free(buff_b);
-	if(buff_m)
-		tls_mem_free(buff_m);
+        tls_mem_free(buff_a);
+    if(buff_b)
+        tls_mem_free(buff_b);
+    if(buff_m)
+        tls_mem_free(buff_m);
 
-	pstm_clear(&pa);
-	pstm_clear(&pb);
-	pstm_clear(&pm);
-	pstm_clear(&pres);
+    pstm_clear(&pa);
+    pstm_clear(&pb);
+    pstm_clear(&pm);
+    pstm_clear(&pres);
 
     if (a->sign < 0)
     {
@@ -583,7 +583,7 @@ static const struct hwcrypto_crc_ops crc_ops =
     .update = _crc_update,
 };
 
-static const struct hwcrypto_bignum_ops bignum_ops = 
+static const struct hwcrypto_bignum_ops bignum_ops =
 {
     .add = RT_NULL,
     .sub = RT_NULL,
@@ -722,7 +722,7 @@ int wm_hw_crypto_device_init(void)
 
     _crypto_dev.dev.ops = &_ops;
     _crypto_dev.dev.id = 0;
-    rt_memcpy(&_crypto_dev.dev.id, wpa_supplicant_get_mac(), 
+    rt_memcpy(&_crypto_dev.dev.id, wpa_supplicant_get_mac(),
         sizeof(_crypto_dev.dev.id) > 6 ?
         6 : sizeof(_crypto_dev.dev.id));
     _crypto_dev.dev.user_data = &_crypto_dev;

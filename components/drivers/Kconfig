@@ -153,20 +153,6 @@ config RT_USING_RTC
         config RT_USING_SOFT_RTC
             bool "Using software simulation RTC device"
             default n
-
-        config RTC_SYNC_USING_NTP
-            bool "Using NTP auto sync RTC time"
-            depends on PKG_NETUTILS_NTP
-            default y
-
-            if RTC_SYNC_USING_NTP
-                config RTC_NTP_FIRST_SYNC_DELAY
-                    int "NTP first sync delay time(second) for network connect"
-                    default 30
-                config RTC_NTP_SYNC_PERIOD
-                    int "NTP auto sync period(second)"
-                    default 3600
-           endif
     endif
 
 config RT_USING_SDIO
@@ -641,6 +627,14 @@ menu "Using USB"
                     config UDISK_MOUNTPOINT
                     string "Udisk mount dir"
                     default "/"
+                endif
+            config RT_USBH_HID
+                bool "Enable HID Drivers"
+                default n
+                if RT_USBH_HID
+                    config RT_USBH_HID_MOUSE
+                    bool "Enable HID mouse protocol"
+                    default n
                 endif
         endif
     config RT_USING_USB_DEVICE

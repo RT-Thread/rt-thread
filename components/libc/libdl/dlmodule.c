@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -464,7 +464,7 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     }
 
     /* check ELF class */
-    if (elf_module->e_ident[EI_CLASS] != ELFCLASS32)
+    if ((elf_module->e_ident[EI_CLASS] != ELFCLASS32)&&(elf_module->e_ident[EI_CLASS] != ELFCLASS64))
     {
         rt_kprintf("Module: ELF class error\n");
         goto __exit;
@@ -547,7 +547,7 @@ struct rt_dlmodule* dlmodule_exec(const char* pgname, const char* cmd, int cmd_s
             if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
             if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
 
-            tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module, 
+            tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module,
                 module->stack_size, module->priority, 10);
             if (tid)
             {
@@ -724,7 +724,7 @@ struct rt_dlmodule* dlmodule_exec_custom(const char* pgname, const char* cmd, in
             if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
             if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
 
-            tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module, 
+            tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module,
                 module->stack_size, module->priority, 10);
             if (tid)
             {
@@ -758,7 +758,7 @@ void dlmodule_exit(int ret_code)
     rt_enter_critical();
 
     /* module is not running */
-    if (module->stat != RT_DLMODULE_STAT_RUNNING) 
+    if (module->stat != RT_DLMODULE_STAT_RUNNING)
     {
         /* restore scheduling */
         rt_exit_critical();

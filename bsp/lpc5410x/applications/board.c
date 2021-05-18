@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -46,7 +46,7 @@ void rt_hw_board_init()
     SCB->VTOR  = (0x00000000 & NVIC_VTOR_MASK);
 #endif
     SystemCoreClockUpdate();
-    /* init systick  1 systick = 1/(100M / 100) 100¸ösystick = 1s*/
+    /* init systick  1 systick = 1/(100M / 100) 100ä¸ªsystick = 1s*/
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);

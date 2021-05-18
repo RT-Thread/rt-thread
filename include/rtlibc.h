@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,9 +23,11 @@
 #include "libc/libc_limits.h"
 #include "libc/libc_stdio.h"
 
+#ifndef RT_USING_LIBC
 #if defined(__CC_ARM) || defined(__CLANG_ARM) || defined(__IAR_SYSTEMS_ICC__)
 typedef signed long off_t;
 typedef int mode_t;
+#endif
 #endif
 
 #if defined(__MINGW32__) || defined(_WIN32)

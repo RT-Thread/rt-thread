@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
+
 #ifndef __LPC17XX_EMAC_H
 #define __LPC17XX_EMAC_H
 
@@ -11,7 +20,7 @@
 #define ETH_MAX_FLEN        1536        /* Max. Ethernet Frame Size          */
 
 /* EMAC variables located in 16K Ethernet SRAM */
-#define RX_DESC_BASE		0x20080000
+#define RX_DESC_BASE        0x20080000
 #define RX_STAT_BASE        (RX_DESC_BASE + NUM_RX_FRAG*8)
 #define TX_DESC_BASE        (RX_STAT_BASE + NUM_RX_FRAG*8)
 #define TX_STAT_BASE        (TX_DESC_BASE + NUM_TX_FRAG*8)

@@ -209,7 +209,7 @@ void EMAC_PhyInit(void)
 
     while (!(EMAC_MdioRead(PHY_STATUS_REG, EMAC_PHY_ADDR) & PHY_STATUS_LINK_VALID))
     {
-        if (i++ > 80000UL)      /* Cable not connected */
+        if (i++ > 10000UL)      /* Cable not connected */
         {
             EMAC->CTL &= ~EMAC_CTL_OPMODE_Msk;
             EMAC->CTL &= ~EMAC_CTL_FUDUP_Msk;
@@ -217,7 +217,7 @@ void EMAC_PhyInit(void)
         }
     }
 
-    if (i <= 80000UL)
+    if (i <= 10000UL)
     {
         /* Configure auto negotiation capability */
         EMAC_MdioWrite(PHY_ANA_REG, EMAC_PHY_ADDR, PHY_ANA_DR100_TX_FULL |
@@ -747,7 +747,8 @@ uint32_t EMAC_SendPktDone(void)
             desc->u32Next = desc->u32Backup2;
             /* go to next descriptor in link */
             desc = (EMAC_DESCRIPTOR_T *)desc->u32Next;
-        } while (last_tx_desc != (uint32_t)desc);    /* If we reach last sent Tx descriptor, leave the loop */
+        }
+        while (last_tx_desc != (uint32_t)desc);      /* If we reach last sent Tx descriptor, leave the loop */
 
         /* Save last processed Tx descriptor */
         u32CurrentTxDesc = (uint32_t)desc;
@@ -1115,7 +1116,7 @@ uint8_t *EMAC_ClaimFreeTXBuf(void)
   * @return An data length of avaiable RX buffer.
   * @note   This API should be called before EMAC_RecvPktDone_WoTrigger calling. Caller will do data-copy.
   */
-uint32_t EMAC_GetAvailRXBufSize(uint8_t** ppuDataBuf)
+uint32_t EMAC_GetAvailRXBufSize(uint8_t **ppuDataBuf)
 {
     EMAC_DESCRIPTOR_T *desc = (EMAC_DESCRIPTOR_T *)u32CurrentRxDesc;
 
@@ -1126,7 +1127,7 @@ uint32_t EMAC_GetAvailRXBufSize(uint8_t** ppuDataBuf)
         /* It is good and no CRC error. */
         if ((status & EMAC_RXFD_RXGD) && !(status & EMAC_RXFD_CRCE))
         {
-            *ppuDataBuf = (uint8_t*)desc->u32Backup1;
+            *ppuDataBuf = (uint8_t *)desc->u32Backup1;
             return desc->u32Status1 & 0xFFFFUL;
         }
         else

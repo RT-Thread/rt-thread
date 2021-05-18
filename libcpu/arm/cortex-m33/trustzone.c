@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,11 +10,19 @@
 
 #include <rtthread.h>
 
+#ifdef ARM_CM33_ENABLE_TRUSTZONE
 extern void TZ_InitContextSystem_S(void);
 extern rt_uint32_t TZ_AllocModuleContext_S (rt_uint32_t module);
 extern rt_uint32_t TZ_FreeModuleContext_S(rt_uint32_t id);
 extern rt_uint32_t TZ_LoadContext_S(rt_uint32_t id);
 extern rt_uint32_t TZ_StoreContext_S(rt_uint32_t id);
+#else
+void TZ_InitContextSystem_S(void){}
+rt_uint32_t TZ_AllocModuleContext_S (rt_uint32_t module){return 0;}
+rt_uint32_t TZ_FreeModuleContext_S(rt_uint32_t id) {return 0;}
+rt_uint32_t TZ_LoadContext_S(rt_uint32_t id){return 0;};
+rt_uint32_t TZ_StoreContext_S(rt_uint32_t id){return 0;};
+#endif
 extern int tzcall(int id, rt_ubase_t arg0, rt_ubase_t arg1, rt_ubase_t arg2);
 
 #define TZ_INIT_CONTEXT_ID     (0x1001)
@@ -23,7 +31,7 @@ extern int tzcall(int id, rt_ubase_t arg0, rt_ubase_t arg1, rt_ubase_t arg2);
 
 rt_ubase_t rt_trustzone_current_context;
 
-#if defined(__CC_ARM) 
+#if defined(__CC_ARM)
 static __inline rt_uint32_t __get_IPSR(void)
 {
   register rt_uint32_t result          __asm("ipsr");
@@ -70,7 +78,7 @@ rt_err_t rt_trustzone_enter(rt_ubase_t module)
     rt_trustzone_init();
     if (tzcall(TZ_ALLOC_CONTEXT_ID, module, 0, 0))
     {
-        return RT_EOK; 
+        return RT_EOK;
     }
     return -RT_ERROR;
 }

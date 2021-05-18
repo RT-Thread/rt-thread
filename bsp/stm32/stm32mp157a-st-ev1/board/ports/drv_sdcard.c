@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,7 +28,7 @@ struct stm32_sd
     struct rt_semaphore sd_lock;
     volatile rt_uint8_t write_flage;
     volatile rt_uint8_t read_flage;
-    volatile rt_base_t level;    
+    volatile rt_base_t level;
 };
 static struct stm32_sd sd_device;
 
@@ -47,7 +47,7 @@ __attribute__((at(SDCARD_ADDR))) static rt_uint32_t cache_buf[SDIO_BUFF_SIZE];
 #elif defined ( __GNUC__ )
 static rt_uint32_t cache_buf[SDIO_BUFF_SIZE] __attribute__((section(".SdCardSection")));
 #elif defined(__ICCARM__)
-#pragma location = SDCARD_ADDR 
+#pragma location = SDCARD_ADDR
 __no_init static rt_uint32_t cache_buf[SDIO_BUFF_SIZE];
 #endif
 
@@ -79,7 +79,7 @@ static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
 
 static rt_err_t rt_hw_sd_is_detected(void)
 {
-   return rt_pin_read(DETECT_PIN); 
+   return rt_pin_read(DETECT_PIN);
 }
 
 static rt_err_t rt_hw_sd_init(void)
@@ -94,46 +94,46 @@ static rt_err_t rt_hw_sd_init(void)
         LOG_E("can't find sd card!");
         return RT_ERROR;
     }
-    
+
     SDCARD_Handler.Instance = SDMMC1;
     HAL_SD_DeInit(&SDCARD_Handler);
-    
+
   /* if CLKDIV = 0 then SDMMC Clock frequency = SDMMC Kernel Clock
-     else SDMMC Clock frequency = SDMMC Kernel Clock / [2 * CLKDIV]. 
+     else SDMMC Clock frequency = SDMMC Kernel Clock / [2 * CLKDIV].
      SDMMC Kernel Clock = 99MHz, SDMMC Clock frequency = 50MHz  */
-    
+
     SDCARD_Handler.Init.ClockDiv             = 1;
-    SDCARD_Handler.Init.ClockPowerSave       = SDMMC_CLOCK_POWER_SAVE_DISABLE;      
-    SDCARD_Handler.Init.ClockEdge            = SDMMC_CLOCK_EDGE_FALLING;             
-    SDCARD_Handler.Init.HardwareFlowControl  = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE; 
-    SDCARD_Handler.Init.BusWide              = SDMMC_BUS_WIDE_4B;                                    
-    
+    SDCARD_Handler.Init.ClockPowerSave       = SDMMC_CLOCK_POWER_SAVE_DISABLE;
+    SDCARD_Handler.Init.ClockEdge            = SDMMC_CLOCK_EDGE_FALLING;
+    SDCARD_Handler.Init.HardwareFlowControl  = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
+    SDCARD_Handler.Init.BusWide              = SDMMC_BUS_WIDE_4B;
+
     if (HAL_SD_Init(&SDCARD_Handler) != RT_EOK)
     {
         LOG_E("sd device init error!");
-        return RT_ERROR; 
+        return RT_ERROR;
     }
 
     if (HAL_SD_ConfigWideBusOperation(&SDCARD_Handler, SDMMC_BUS_WIDE_4B) != RT_EOK)
     {
         LOG_E("sd bus config error!");
-        return RT_ERROR;   
+        return RT_ERROR;
     }
 
     if (HAL_SD_GetCardInfo(&SDCARD_Handler, &SDCardInfo) != RT_EOK)
     {
         LOG_E("sd get card info error!");
-        return RT_ERROR;    
+        return RT_ERROR;
     }
-    
+
     rt_thread_mdelay(100);
-    
+
     if(HAL_SD_GetCardState(&SDCARD_Handler) != HAL_SD_CARD_TRANSFER)
     {
         LOG_E("sd get card state error!");
-        return RT_ERROR; 
+        return RT_ERROR;
     }
-    
+
     return RT_EOK;
 }
 
@@ -145,7 +145,7 @@ static void rt_hw_sd_deinit(void)
 static rt_err_t sdcard_wait_ok(void)
 {
     rt_uint32_t tick_start = 0;
-    
+
     tick_start = rt_tick_get();
     while ((rt_tick_get() - tick_start) < SD_TIMEOUT)
     {
@@ -166,19 +166,19 @@ void HAL_SD_DriveTransceiver_1_8V_Callback(FlagStatus status)
     else
     {
         rt_pin_write(LDO_PIN, PIN_LOW);
-    } 
+    }
 }
 
 static rt_err_t rt_sdcard_init(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
     struct stm32_sd *sd = (struct stm32_sd *)dev;
-    
+
     if (rt_sem_init(&sd->sd_lock, "sdlock", 1, RT_IPC_FLAG_FIFO) != RT_EOK)
     {
         LOG_E("init sd lock semaphore failed\n");
     }
-    
+
     return RT_EOK;
 }
 
@@ -207,24 +207,24 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t sector, void *buffer, 
 {
     RT_ASSERT(dev != RT_NULL);
     struct stm32_sd *sd = (struct stm32_sd *)dev;
-    
+
     rt_uint8_t ret = RT_EOK;
     volatile uint32_t tickstart = 0;
     sd->read_flage  = 0;
-    
+
     rt_memset(cache_buf, 0x00, BLOCKSIZE * count);
-    
+
     ret = sdcard_wait_ok();
     if (ret != RT_EOK)
     {
         LOG_D("sdmmc busy!");
         return 0;
     }
-    
+
     rt_sem_take(&sd->sd_lock, RT_WAITING_FOREVER);
     ret = HAL_SD_ReadBlocks_DMA(&SDCARD_Handler, (rt_uint8_t *)cache_buf, (uint32_t)sector, count);
     rt_sem_release(&sd->sd_lock);
-    
+
     /* Wait that writing process is completed or a timeout occurs */
     tickstart = rt_tick_get();
     if (ret == HAL_OK)
@@ -247,7 +247,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t sector, void *buffer, 
               {
                  sd->level=rt_hw_interrupt_disable();
                  rt_memcpy((rt_uint8_t *)(buffer), cache_buf, BLOCKSIZE * count);
-                 rt_hw_interrupt_enable(sd->level); 
+                 rt_hw_interrupt_enable(sd->level);
 #if defined(SDMMC_RX_DUMP)
                 rt_kprintf("\nsd rx: \n");
                 dump_hex(cache_buf, BLOCKSIZE * count);
@@ -257,7 +257,7 @@ static rt_size_t rt_sdcard_read(rt_device_t dev, rt_off_t sector, void *buffer, 
           }
         }
     }
-    
+
     return 0;
 }
 
@@ -275,14 +275,14 @@ static rt_size_t rt_sdcard_write(rt_device_t dev, rt_off_t sector, const void *b
     struct stm32_sd *sd = (struct stm32_sd *)dev;
     rt_uint32_t i = 0;
     rt_uint8_t ret = RT_EOK;
-    
+
     for (i = 0; i < count; i++)
     {
         sd->level = rt_hw_interrupt_disable();
         rt_memset(cache_buf, 0x00, BLOCKSIZE);
         rt_memcpy(cache_buf, (rt_uint32_t *)((uintptr_t)buffer + BLOCKSIZE * i), BLOCKSIZE);
         rt_hw_interrupt_enable(sd->level);
-        
+
 #if defined(SDMMC_TX_DUMP)
         rt_kprintf("\nsd tx: \n");
         dump_hex(cache_buf, BLOCKSIZE);
@@ -303,14 +303,14 @@ static rt_size_t rt_sdcard_write(rt_device_t dev, rt_off_t sector, const void *b
         rt_completion_wait(&tx_comp,RT_WAITING_FOREVER);
 
     }
-    
+
     return count;
 }
 
 static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev != RT_NULL);
-    
+
     if (cmd == RT_DEVICE_CTRL_BLK_GETGEOME)
     {
         struct rt_device_blk_geometry *geometry;
@@ -372,9 +372,9 @@ int rt_hw_sdcard_init(void)
     sd_device.sdcard.user_data = &SDCardInfo;
 
     rt_device_register(&sd_device.sdcard, "sd_card", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
-    
+
     LOG_I("sd card init success!");
-    
+
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdcard_init);
@@ -383,7 +383,7 @@ INIT_DEVICE_EXPORT(rt_hw_sdcard_init);
 int mnt_init(void)
 {
     rt_device_t sd_dev = RT_NULL;
-    
+
     LOG_I("init sd card file system.");
 #if defined(SDMMC_RX_DUMP) || defined(SDMMC_TX_DUMP)
     rt_thread_delay(3000);
@@ -396,7 +396,7 @@ int mnt_init(void)
         LOG_E("can't find sd deivce name!");
         return RT_ERROR;
     }
-    
+
     if (dfs_mount("sd_card", "/", "elm", 0, 0) != 0)
     {
         rt_kprintf("file system mount failed!\n");

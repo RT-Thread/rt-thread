@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -47,30 +47,24 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
 {
 #ifdef RT_USING_FPU
     {
-        uint32_t ins;
+        uint32_t val;
         uint32_t addr;
 
         if (regs->cpsr & (1 << 5))
         {
             /* thumb mode */
             addr = regs->pc - 2;
-            ins = (uint32_t)*(uint16_t*)addr;
-            if ((ins & (3 << 11)) != 0)
-            {
-                /* 32 bit ins */
-                ins <<= 16;
-                ins += *(uint16_t*)(addr + 2);
-            }
         }
         else
         {
             addr = regs->pc - 4;
-            ins = *(uint32_t*)addr;
         }
-        if ((ins & 0xe00) == 0xa00)
+        asm volatile ("vmrs %0, fpexc" : "=r"(val)::"memory");
+
+        if (!(val & 0x40000000))
         {
             /* float ins */
-            uint32_t val = (1U << 30);
+            val = (1U << 30);
 
             asm volatile ("vmsr fpexc, %0"::"r"(val):"memory");
             regs->pc = addr;

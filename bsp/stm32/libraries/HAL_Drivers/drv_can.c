@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,6 +11,7 @@
  *                             fix bug.port to BSP [stm32]
  * 2019-03-27     YLZ          support double can channels, support stm32F4xx (only Legacy mode).
  * 2019-06-17     YLZ          port to new STM32F1xx HAL V1.1.3.
+ * 2021-02-02     YuZhe XU     fix bug in filter config
  */
 
 #include "drv_can.h"
@@ -292,6 +293,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
     case RT_CAN_CMD_SET_FILTER:
+    {
+        rt_uint32_t id_h = 0;
+        rt_uint32_t id_l = 0;
+        rt_uint32_t mask_h = 0;
+        rt_uint32_t mask_l = 0;
+        rt_uint32_t mask_l_tail = 0;  //CAN_FxR2 bit [2:0]
+
         if (RT_NULL == arg)
         {
             /* default filter config */
@@ -303,19 +311,69 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
-                drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
-                drv_can->FilterConfig.FilterIdHigh = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                drv_can->FilterConfig.FilterIdLow = ((filter_cfg->items[i].id << 3) | 
-                                                    (filter_cfg->items[i].ide << 2) | 
-                                                    (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
-                drv_can->FilterConfig.FilterMaskIdHigh = (filter_cfg->items[i].mask >> 16) & 0xFFFF;
-                drv_can->FilterConfig.FilterMaskIdLow = filter_cfg->items[i].mask & 0xFFFF;
+                if (filter_cfg->items[i].hdr == -1)
+                {
+                    drv_can->FilterConfig.FilterBank = i;
+                }
+                else
+                {
+                    drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
+                }
+                 /**
+                 * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
+                 * MASK   | CAN_FxR2[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
+                 * STD ID |     STID[10:3]  | STDID[2:0] |<-                21bit                  ->|
+                 * EXT ID |    EXTID[28:21] | EXTID[20:13]    | EXTID[12:5]    | EXTID[4:0] IDE RTR 0|
+                 * @note the 32bit STD ID must << 21 to fill CAN_FxR1[31:21] and EXT ID must << 3,
+                 *       -> but the id bit of struct rt_can_filter_item is 29, 
+                 *       -> so STD id << 18 and EXT id Don't need << 3, when get the high 16bit.
+                 *       -> FilterIdHigh : (((STDid << 18) or (EXT id)) >> 13) & 0xFFFF,
+                 *       -> FilterIdLow:   ((STDid << 18) or (EXT id << 3)) & 0xFFFF. 
+                 * @note the mask bit of struct rt_can_filter_item is 32, 
+                 *       -> FilterMaskIdHigh: (((STD mask << 21) or (EXT mask <<3)) >> 16) & 0xFFFF  
+                 *       -> FilterMaskIdLow: ((STD mask << 21) or (EXT mask <<3)) & 0xFFFF  
+                 */
+                if (filter_cfg->items[i].mode == CAN_FILTERMODE_IDMASK)
+                {
+                    /* make sure the CAN_FxR1[2:0](IDE RTR) work */
+                    mask_l_tail = 0x06;
+                }
+                else if (filter_cfg->items[i].mode == CAN_FILTERMODE_IDLIST)
+                {
+                    /* same as CAN_FxR1 */
+                    mask_l_tail = (filter_cfg->items[i].ide << 2) | 
+                                   (filter_cfg->items[i].rtr << 1);
+                }
+                if (filter_cfg->items[i].ide == RT_CAN_STDID)
+                {
+                    id_h = ((filter_cfg->items[i].id << 18) >> 13) & 0xFFFF;
+                    id_l = ((filter_cfg->items[i].id << 18) | 
+                            (filter_cfg->items[i].ide << 2) | 
+                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                    mask_h = ((filter_cfg->items[i].mask << 21) >> 16) & 0xFFFF;
+                    mask_l = ((filter_cfg->items[i].mask << 21) | mask_l_tail) & 0xFFFF;
+                }
+                else if (filter_cfg->items[i].ide == RT_CAN_EXTID)
+                {
+                    id_h = (filter_cfg->items[i].id >> 13) & 0xFFFF;
+                    id_l = ((filter_cfg->items[i].id << 3)   | 
+                            (filter_cfg->items[i].ide << 2)  | 
+                            (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
+                    mask_h = ((filter_cfg->items[i].mask << 3) >> 16) & 0xFFFF;
+                    mask_l = ((filter_cfg->items[i].mask << 3) | mask_l_tail) & 0xFFFF;
+                }
+                drv_can->FilterConfig.FilterIdHigh = id_h;
+                drv_can->FilterConfig.FilterIdLow = id_l;
+                drv_can->FilterConfig.FilterMaskIdHigh = mask_h;
+                drv_can->FilterConfig.FilterMaskIdLow = mask_l;
+
                 drv_can->FilterConfig.FilterMode = filter_cfg->items[i].mode;
                 /* Filter conf */
                 HAL_CAN_ConfigFilter(&drv_can->CanHandle, &drv_can->FilterConfig);
             }
         }
         break;
+    }
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL &&

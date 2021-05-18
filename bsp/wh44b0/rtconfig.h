@@ -65,10 +65,6 @@
 /* Using FinSH as Shell*/
 /* #define RT_USING_FINSH */
 
-/* SECTION: a mini libc */
-/* Using mini libc library*/
-/* #define RT_USING_MINILIBC */
-
 /* SECTION: C++ support */
 /* Using C++ support*/
 /* #define RT_USING_CPLUSPLUS */

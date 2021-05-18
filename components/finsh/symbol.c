@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2010-03-22     Bernard      first version
  */
- 
+
 #include <rtthread.h>
 
 #if defined(RT_USING_FINSH) && !defined(FINSH_USING_SYMTAB)

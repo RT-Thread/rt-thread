@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ */
 #ifndef _DMA_H
 #define _DMA_H
 
@@ -94,7 +101,7 @@ static __inline__ void ClearDmaFF(unsigned int dmanr)
         OUTB(0,  DMA2_CLEAR_FF_REG);
 }
 
-/* 
+/*
  * 清空DMA 晶体计数器
  */
 static __inline__ void SetDmaMode(unsigned int dmanr, char mode)

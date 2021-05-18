@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -831,7 +831,7 @@ int finsh_system_init(void)
                                __section_end("FSymTab"));
     finsh_system_var_init(__section_begin("VSymTab"),
                           __section_end("VSymTab"));
-#elif defined (__GNUC__) || defined(__TI_COMPILER_VERSION__)
+#elif defined (__GNUC__) || defined(__TI_COMPILER_VERSION__) || defined(__TASKING__)
     /* GNU GCC Compiler and TI CCS */
     extern const int __fsymtab_start;
     extern const int __fsymtab_end;
@@ -844,7 +844,7 @@ int finsh_system_init(void)
     finsh_system_var_init(&__vsymtab_start, &__vsymtab_end);
 #elif defined(_MSC_VER)
     unsigned int *ptr_begin, *ptr_end;
-		
+
     if(shell)
     {
         rt_kprintf("finsh shell already init.\n");

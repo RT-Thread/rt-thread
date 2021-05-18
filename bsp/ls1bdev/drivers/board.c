@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2012, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,7 +29,7 @@ extern unsigned char __bss_end;
 /**
  * @addtogroup Loongson LS1B
  */
- 
+
 /*@{*/
 
 /**
@@ -43,10 +39,10 @@ void rt_hw_board_init(void)
 {
     /* init hardware interrupt */
     rt_hw_exception_init();
-    
+
     /* init hardware interrupt */
     rt_hw_interrupt_init();
-    
+
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void*)&__bss_end, (void*)RT_HW_HEAP_END);
 #endif

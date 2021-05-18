@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,7 +34,7 @@
  * 2013-09-14     Grissiom     add an option check in rt_event_recv
  * 2018-10-02     Bernard      add 64bit support for mailbox
  * 2019-09-16     tyx          add send wait support for message queue
- * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
+ * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
  * 2021-01-03     Meco Man     add rt_mb_urgent()
@@ -124,7 +124,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
         break;
 
     default:
-        break;  
+        break;
     }
 
     return RT_EOK;
@@ -959,7 +959,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                 rt_hw_interrupt_enable(temp); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
-            
+
             /* clear owner */
             mutex->owner             = RT_NULL;
             mutex->original_priority = 0xff;
@@ -1280,11 +1280,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-            
-        /* fill thread event info */            
+
+        /* fill thread event info */
         thread->event_set = (event->set & set);
         thread->event_info = option;
-        
+
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
@@ -1649,7 +1649,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     ++ mb->in_offset;
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
-    
+
     if(mb->entry < RT_MB_ENTRY_MAX)
     {
         /* increase message entry */
@@ -1660,7 +1660,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
@@ -2203,7 +2203,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     }
 
     /* message queue is full */
-    while ((msg = mq->msg_queue_free) == RT_NULL)
+    while ((msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
     {
         /* reset error number in thread */
         thread->error = RT_EOK;
@@ -2409,7 +2409,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {

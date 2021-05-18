@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,7 +21,7 @@ static void (*rt_interrupt_leave_hook)(void);
 
 /**
  * @ingroup Hook
- * This function set a hook function when the system enter a interrupt 
+ * This function set a hook function when the system enter a interrupt
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */
@@ -31,7 +31,7 @@ void rt_interrupt_enter_sethook(void (*hook)(void))
 }
 /**
  * @ingroup Hook
- * This function set a hook function when the system exit a interrupt. 
+ * This function set a hook function when the system exit a interrupt.
  *
  * @note the hook function must be simple and never be blocked or suspend.
  */
@@ -66,13 +66,13 @@ void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq coming..., irq nest:%d\n",
-                                rt_interrupt_nest));
-
     level = rt_hw_interrupt_disable();
     rt_interrupt_nest ++;
     RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
     rt_hw_interrupt_enable(level);
+
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq current nest:%d\n",
+                                rt_interrupt_nest));
 }
 RTM_EXPORT(rt_interrupt_enter);
 
@@ -87,7 +87,7 @@ void rt_interrupt_leave(void)
 {
     rt_base_t level;
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq leave, irq nest:%d\n",
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq is going to leave, irq current nest:%d\n",
                                 rt_interrupt_nest));
 
     level = rt_hw_interrupt_disable();

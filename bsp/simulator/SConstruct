@@ -86,6 +86,19 @@ def ObjRemove(objs, remove):
              objs.remove(item)
     return
 
+def ProjectRemove(group, remove):
+    global Projects
+    for item in Projects:
+        if item['name'] == group:
+            for src in item['src']:
+                if os.path.basename(str(src)) in remove:
+                    # print(type(src), os.path.basename(str(src)) )
+                    item['src'].remove(src)
+    return
+
+ObjRemove(objs, ['components.obj', 'components.o', 'components.c'])
+ProjectRemove('Kernel', ['components.obj', 'components.o', 'components.c'])
+
 # build program  -shared
 if GetDepend('RT_USING_MODULE'):
     # Remove module.c in $RTT_ROOT/src

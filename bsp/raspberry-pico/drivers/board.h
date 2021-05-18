@@ -20,9 +20,9 @@
 #define PICO_SRAM_SIZE         256
 #define PICO_SRAM_END          (0x20000000 + PICO_SRAM_SIZE * 1024)
 
-extern int __bss_end;
-#define HEAP_BEGIN      (&__bss_end)
-#define HEAP_END        PICO_SRAM_END
+extern int __bss_end__;
+#define HEAP_BEGIN      (&__bss_end__)
+#define HEAP_END        ((void *)PICO_SRAM_END)
 
 int rt_hw_uart_init(void);
 

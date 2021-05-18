@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,7 +9,7 @@
  * 2020-03-16     SummerGift   add device close feature
  * 2020-03-20     SummerGift   fix bug caused by ORE
  * 2020-05-02     whj4674672   support stm32h7 uart dma
- * 2020-09-09     forest-rain  support stm32wl uart 
+ * 2020-09-09     forest-rain  support stm32wl uart
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
 
@@ -114,7 +114,10 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     switch (cfg->data_bits)
     {
     case DATA_BITS_8:
-        uart->handle.Init.WordLength = UART_WORDLENGTH_8B;
+        if (cfg->parity == PARITY_ODD || cfg->parity == PARITY_EVEN)
+            uart->handle.Init.WordLength = UART_WORDLENGTH_9B;
+        else
+            uart->handle.Init.WordLength = UART_WORDLENGTH_8B;
         break;
     case DATA_BITS_9:
         uart->handle.Init.WordLength = UART_WORDLENGTH_9B;
@@ -213,7 +216,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-        HAL_NVIC_SetPriority(uart->config->irq_type, 1, 0); 
+        HAL_NVIC_SetPriority(uart->config->irq_type, 1, 0);
         HAL_NVIC_EnableIRQ(uart->config->irq_type);
         /* enable interrupt */
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_RXNE);
@@ -871,7 +874,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     || defined(SOC_SERIES_STM32G4)|| defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32WB)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
-        tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc); 
+        tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
 #elif defined(SOC_SERIES_STM32MP1)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->MP_AHB2ENSETR, dma_config->dma_rcc);
@@ -880,7 +883,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 
 #if (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)) && defined(DMAMUX1)
         /* enable DMAMUX clock for L4+ and G4 */
-        __HAL_RCC_DMAMUX1_CLK_ENABLE();   
+        __HAL_RCC_DMAMUX1_CLK_ENABLE();
 #elif defined(SOC_SERIES_STM32MP1)
         __HAL_RCC_DMAMUX_CLK_ENABLE();
 #endif
@@ -1029,7 +1032,7 @@ static void _dma_tx_complete(struct rt_serial_device *serial)
 /**
   * @brief  HAL_UART_TxCpltCallback
   * @param  huart: UART handle
-  * @note   This callback can be called by two functions, first in UART_EndTransmit_IT when 
+  * @note   This callback can be called by two functions, first in UART_EndTransmit_IT when
   *         UART Tx complete and second in UART_DMATransmitCplt function in DMA Circular mode.
   * @retval None
   */

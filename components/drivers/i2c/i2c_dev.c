@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author        Notes
  * 2012-04-25     weety         first version
  * 2014-08-03     bernard       fix some compiling warning
+ * 2021-04-20     RiceChen      added support for bus clock control
  */
 
 #include <rtdevice.h>
@@ -66,6 +67,7 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
     rt_err_t ret;
     struct rt_i2c_priv_data *priv_data;
     struct rt_i2c_bus_device *bus = (struct rt_i2c_bus_device *)dev->user_data;
+    rt_uint32_t bus_clock;
 
     RT_ASSERT(bus != RT_NULL);
 
@@ -89,6 +91,14 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
             return -RT_EIO;
         }
         break;
+    case RT_I2C_DEV_CTRL_CLK:
+        bus_clock = *(rt_uint32_t *)args;
+        ret = rt_i2c_control(bus, cmd, bus_clock);
+        if (ret < 0)
+        {
+            return -RT_EIO;
+        }
+        break;
     default:
         break;
     }
@@ -97,9 +107,9 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops i2c_ops = 
+const static struct rt_device_ops i2c_ops =
 {
-    RT_NULL, 
+    RT_NULL,
     RT_NULL,
     RT_NULL,
     i2c_bus_device_read,

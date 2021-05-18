@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,8 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <time.h>
-
 #include <rtm.h>
 
 /* some export routines for module */
@@ -34,11 +32,6 @@ RTM_EXPORT(memchr);
 
 RTM_EXPORT(toupper);
 RTM_EXPORT(atoi);
-
-#ifdef RT_USING_RTC
-RTM_EXPORT(localtime);
-RTM_EXPORT(time);
-#endif
 
 /* import the full stdio for printf */
 #if defined(RT_USING_MODULE) && defined(__MICROLIB)

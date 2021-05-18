@@ -25,7 +25,7 @@
  */
 RT_WEAK void rt_hw_cpu_reset()
 {
-	/*NOTREACHED*/
+    /*NOTREACHED*/
 }
 
 /**
@@ -34,9 +34,9 @@ RT_WEAK void rt_hw_cpu_reset()
  */
 void rt_hw_cpu_shutdown()
 {
-	rt_kprintf("shutdown...\n");
+    rt_kprintf("shutdown...\n");
 
-	RT_ASSERT(0);
+    RT_ASSERT(0);
 }
 
 /*@}*/
