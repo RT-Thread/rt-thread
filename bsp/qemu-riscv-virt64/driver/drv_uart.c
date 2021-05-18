@@ -107,13 +107,6 @@ static int drv_uart_getc(struct rt_serial_device *serial)
     return sbi_console_getchar();
 }
 
-#if 0
-void drv_uart_puts(char *str)
-{
-    sbi_console_putstr(str);
-}
-#endif
-
 char rt_hw_console_getchar(void)
 {
     return sbi_console_getchar();
