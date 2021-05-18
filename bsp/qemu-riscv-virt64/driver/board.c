@@ -22,23 +22,13 @@
 #include "riscv.h"
 #include "stack.h"
 
-void init_bss(void)
-{
-    unsigned int *dst;
-
-    dst = &__bss_start;
-    while (dst < &__bss_end)
-    {
-        *dst++ = 0;
-    }
-}
-
 void primary_cpu_entry(void)
 {
     extern void entry(void);
 
     /* disable global interrupt */
-    init_bss();
+    rt_memset(&__bss_start, 0x0, (rt_uint8_t*)&__bss_end - (rt_uint8_t*)&__bss_start);
+
     rt_hw_interrupt_disable();
     entry();
 }
@@ -76,7 +66,7 @@ void rt_hw_board_init(void)
 
 void rt_hw_cpu_reset(void)
 {
-    SBI_CALL_0(SBI_SHUTDOWN);
+    sbi_shutdown();
     while(1);
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);
