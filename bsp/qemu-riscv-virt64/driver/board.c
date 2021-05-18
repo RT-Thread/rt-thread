@@ -22,24 +22,13 @@
 #include "riscv.h"
 #include "stack.h"
 
-void init_bss(void)
-{
-    unsigned int *dst;
-
-    dst = &__bss_start;
-    while (dst < &__bss_end)
-    {
-        *dst++ = 0;
-    }
-}
-
 void primary_cpu_entry(void)
 {
     extern void entry(void);
 
     /* disable global interrupt */
-    rt_memset(&__bss_start, 0x0, &__bss_end - &__bss_start);
-    // init_bss();
+    rt_memset(&__bss_start, 0x0, (rt_uint8_t*)&__bss_end - (rt_uint8_t*)&__bss_start);
+
     rt_hw_interrupt_disable();
     entry();
 }
