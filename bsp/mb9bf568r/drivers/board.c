@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2011 RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -64,7 +60,7 @@ rt_uint32_t rt_hw_tick_get_microsecond(void)
     rt_tick_t tick;
     rt_uint32_t value;
 
-#define TICK_US	(1000000/RT_TICK_PER_SECOND)
+#define TICK_US (1000000/RT_TICK_PER_SECOND)
 
     tick = rt_tick_get();
     value = tick * TICK_US + (SysTick->LOAD - SysTick->VAL) * TICK_US / SysTick->LOAD;

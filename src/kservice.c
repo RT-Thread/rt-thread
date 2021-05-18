@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,6 +17,7 @@
  * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
+ * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  */
 
 #include <rtthread.h>
@@ -125,7 +126,7 @@ RTM_EXPORT(_rt_errno);
  */
 RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
-#ifdef RT_USING_TINY_SIZE
+#ifdef RT_KSERVICE_USING_TINY_SIZE
     char *xs = (char *)s;
 
     while (count--)
@@ -146,10 +147,10 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 
     if (!TOO_SMALL(count) && !UNALIGNED(s))
     {
-        /* If we get this far, we know that n is large and m is word-aligned. */
+        /* If we get this far, we know that count is large and s is word-aligned. */
         aligned_addr = (unsigned long *)s;
 
-        /* Store D into each char sized location in BUFFER so that
+        /* Store d into each char sized location in buffer so that
          * we can set large blocks quickly.
          */
         if (LBLOCKSIZE == 4)
@@ -209,7 +210,7 @@ RTM_EXPORT(rt_memset);
  */
 RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
-#ifdef RT_USING_TINY_SIZE
+#ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
     rt_ubase_t len;
 
@@ -279,6 +280,8 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif
 }
 RTM_EXPORT(rt_memcpy);
+
+#ifndef RT_KSERVICE_USING_STDLIB
 
 /**
  * This function will move memory content from source address to destination
@@ -456,7 +459,7 @@ RTM_EXPORT(rt_strncmp);
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
-    {        
+    {
         cs++;
         ct++;
     }
@@ -505,6 +508,8 @@ rt_size_t rt_strlen(const char *s)
     return sc - s;
 }
 RTM_EXPORT(rt_strlen);
+
+#endif /*RT_KSERVICE_USING_STDLIB*/
 
 #ifdef RT_USING_HEAP
 /**
@@ -917,7 +922,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             s = va_arg(args, char *);
             if (!s) s = "(NULL)";
 
-            len = rt_strlen(s);
+            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
 #ifdef RT_PRINTF_PRECISION
             if (precision > 0 && len > precision) len = precision;
 #endif
@@ -1127,10 +1132,10 @@ rt_device_t rt_console_set_device(const char *name)
 
     /* find new console device */
     new_device = rt_device_find(name);
-    
+
     /* check whether it's a same device */
     if (new_device == old_device) return RT_NULL;
-    
+
     if (new_device != RT_NULL)
     {
         if (_console_device != RT_NULL)
@@ -1385,27 +1390,5 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
 }
 RTM_EXPORT(rt_assert_handler);
 #endif /* RT_DEBUG */
-
-#if !defined (RT_USING_NEWLIB) && defined (RT_USING_MINILIBC) && defined (__GNUC__)
-#include <sys/types.h>
-void *memcpy(void *dest, const void *src, size_t n) __attribute__((weak, alias("rt_memcpy")));
-void *memset(void *s, int c, size_t n) __attribute__((weak, alias("rt_memset")));
-void *memmove(void *dest, const void *src, size_t n) __attribute__((weak, alias("rt_memmove")));
-int   memcmp(const void *s1, const void *s2, size_t n) __attribute__((weak, alias("rt_memcmp")));
-
-size_t strlen(const char *s) __attribute__((weak, alias("rt_strlen")));
-char *strstr(const char *s1, const char *s2) __attribute__((weak, alias("rt_strstr")));
-int strcasecmp(const char *a, const char *b) __attribute__((weak, alias("rt_strcasecmp")));
-char *strncpy(char *dest, const char *src, size_t n) __attribute__((weak, alias("rt_strncpy")));
-int strncmp(const char *cs, const char *ct, size_t count) __attribute__((weak, alias("rt_strncmp")));
-#ifdef RT_USING_HEAP
-char *strdup(const char *s) __attribute__((weak, alias("rt_strdup")));
-#endif
-
-int sprintf(char *buf, const char *format, ...) __attribute__((weak, alias("rt_sprintf")));
-int snprintf(char *buf, rt_size_t size, const char *fmt, ...) __attribute__((weak, alias("rt_snprintf")));
-int vsprintf(char *buf, const char *format, va_list arg_ptr) __attribute__((weak, alias("rt_vsprintf")));
-
-#endif
 
 /**@}*/

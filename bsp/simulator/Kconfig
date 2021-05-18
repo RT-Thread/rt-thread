@@ -18,8 +18,16 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
+config SOC_SIMULATOR
+    bool 
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
 if RT_USING_DFS
     config RT_USING_DFS_WINSHAREDIR
     bool "Enable shared file system between windows"
     default n
 endif
+
+

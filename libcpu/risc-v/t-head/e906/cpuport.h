@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -42,13 +42,13 @@
 #define FSTORE                  fsd
 #define FLOAD                   fld
 #define FREGBYTES               8
-#define rv_floatreg_t           rt_int64_t  	       
+#define rv_floatreg_t           rt_int64_t
 #endif
 #ifdef ARCH_RISCV_FPU_S
 #define FSTORE                  fsw
 #define FLOAD                   flw
 #define FREGBYTES               4
-#define rv_floatreg_t           rt_int32_t  	       
+#define rv_floatreg_t           rt_int32_t
 #endif
 #endif
 

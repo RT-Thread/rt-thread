@@ -15,7 +15,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'D:/Softwares/RT-ThreadStudio/repo/Extract/ToolChain_Support_Packages/RISC-V/RISC-V-GCC/10.1.0/bin'
+    EXEC_PATH   = r'D:/program_files/programming/RT-ThreadStudio/repo/Extract/ToolChain_Support_Packages/RISC-V/RISC-V-GCC/10.1.0/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -39,9 +39,9 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     # DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32 -fsingle-precision-constant'
-    DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32'
+    DEVICE  = ' -mcmodel=medany -march=rv32imc -mabi=ilp32 -msave-restore'
     # CFLAGS  = DEVICE + ' -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields'
-    CFLAGS = DEVICE
+    CFLAGS = DEVICE + ' -D_USE_LONG_TIME_T'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
     CPATH   = ''

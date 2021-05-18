@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  * 2018-03-30     chenyong     first version
  * 2018-04-12     chenyong     add client implement
  * 2018-08-17     chenyong     multiple client support
+ * 2021-03-17     Meco Man     fix a buf of leaking memory 
  */
 
 #include <at.h>
@@ -104,17 +105,22 @@ void at_delete_resp(at_response_t resp)
  */
 at_response_t at_resp_set_info(at_response_t resp, rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout)
 {
+    char *p_temp;
     RT_ASSERT(resp);
 
     if (resp->buf_size != buf_size)
     {
         resp->buf_size = buf_size;
 
-        resp->buf = (char *) rt_realloc(resp->buf, buf_size);
-        if (!resp->buf)
+        p_temp = (char *) rt_realloc(resp->buf, buf_size);
+        if (p_temp == RT_NULL)
         {
             LOG_D("No memory for realloc response buffer size(%d).", buf_size);
             return RT_NULL;
+        }
+        else
+        {
+            resp->buf = p_temp;
         }
     }
 
@@ -434,20 +440,18 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
 {
     rt_err_t result = RT_EOK;
 
-__retry:
-    result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
-    if (result != RT_EOK)
+    while (rt_device_read(client->device, 0, ch, 1) == 0)
     {
-        return result;
+        result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+
+        rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
     }
-    if(rt_device_read(client->device, 0, ch, 1) == 1)
-    {
-        return RT_EOK;
-    }
-    else
-    {
-        goto __retry;
-    }
+
+    return RT_EOK;
 }
 
 /**
@@ -579,7 +583,7 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc *urc_table, rt_
         client->urc_table[client->urc_table_size].urc = urc_table;
         client->urc_table[client->urc_table_size].urc_size = table_sz;
         client->urc_table_size++;
-        
+
         rt_free(old_urc_table);
     }
 

@@ -1,21 +1,30 @@
 /*
- * ³ÌĞòÇåµ¥£ºÏûÏ¢¶ÓÁĞÀı³Ì
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * Õâ¸ö³ÌĞò»á´´½¨3¸ö¶¯Ì¬Ïß³Ì£¬Ò»¸öÏß³Ì»á´ÓÏûÏ¢¶ÓÁĞÖĞÊÕÈ¡ÏûÏ¢£»Ò»¸öÏß³Ì»á¶¨Ê±¸øÏû
- * Ï¢¶ÓÁĞ·¢ËÍÏûÏ¢£»Ò»¸öÏß³Ì»á¶¨Ê±¸øÏûÏ¢¶ÓÁĞ·¢ËÍ½ô¼±ÏûÏ¢¡£
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
+ * ç¨‹åºæ¸…å•ï¼šæ¶ˆæ¯é˜Ÿåˆ—ä¾‹ç¨‹
+ *
+ * è¿™ä¸ªç¨‹åºä¼šåˆ›å»º3ä¸ªåŠ¨æ€çº¿ç¨‹ï¼Œä¸€ä¸ªçº¿ç¨‹ä¼šä»æ¶ˆæ¯é˜Ÿåˆ—ä¸­æ”¶å–æ¶ˆæ¯ï¼›ä¸€ä¸ªçº¿ç¨‹ä¼šå®šæ—¶ç»™æ¶ˆ
+ * æ¯é˜Ÿåˆ—å‘é€æ¶ˆæ¯ï¼›ä¸€ä¸ªçº¿ç¨‹ä¼šå®šæ—¶ç»™æ¶ˆæ¯é˜Ÿåˆ—å‘é€ç´§æ€¥æ¶ˆæ¯ã€‚
  */
 #include <rtthread.h>
 #include "tc_comm.h"
 
-/* Ö¸ÏòÏß³Ì¿ØÖÆ¿éµÄÖ¸Õë */
+/* æŒ‡å‘çº¿ç¨‹æ§åˆ¶å—çš„æŒ‡é’ˆ */
 static rt_thread_t tid = RT_NULL;
 
-/* ÏûÏ¢¶ÓÁĞ¿ØÖÆ¿é */
+/* æ¶ˆæ¯é˜Ÿåˆ—æ§åˆ¶å— */
 static struct rt_messagequeue mq;
-/* ÏûÏ¢¶ÓÁĞÖĞÓÃµ½µÄ·ÅÖÃÏûÏ¢µÄÄÚ´æ³Ø */
+/* æ¶ˆæ¯é˜Ÿåˆ—ä¸­ç”¨åˆ°çš„æ”¾ç½®æ¶ˆæ¯çš„å†…å­˜æ±  */
 static char msg_pool[2048];
 
-/* ¶¨Ê±Æ÷µÄ¿ØÖÆ¿é */
+/* å®šæ—¶å™¨çš„æ§åˆ¶å— */
 static struct rt_timer timer;
 static rt_uint16_t no = 0;
 static void timer_timeout(void* parameter)
@@ -27,24 +36,24 @@ static void timer_timeout(void* parameter)
     rt_mq_send(&mq, &buf[0], length);
 }
 
-/* Ïß³ÌÈë¿Úº¯Êı */
+/* çº¿ç¨‹å…¥å£å‡½æ•° */
 static void thread_entry(void* parameter)
 {
     char buf[64];
     rt_err_t result;
 
-    /* ³õÊ¼»¯¶¨Ê±Æ÷ */
-    rt_timer_init(&timer, "timer",  /* ¶¨Ê±Æ÷Ãû×ÖÊÇ timer1 */
-        timer_timeout, /* ³¬Ê±Ê±»Øµ÷µÄ´¦Àíº¯Êı */
-        RT_NULL, /* ³¬Ê±º¯ÊıµÄÈë¿Ú²ÎÊı */
-        1, /* ¶¨Ê±³¤¶È£¬ÒÔOS TickÎªµ¥Î»£¬¼´1¸öOS Tick */
-        RT_TIMER_FLAG_PERIODIC); /* ÖÜÆÚĞÔ¶¨Ê±Æ÷ */
+    /* åˆå§‹åŒ–å®šæ—¶å™¨ */
+    rt_timer_init(&timer, "timer",  /* å®šæ—¶å™¨åå­—æ˜¯ timer1 */
+        timer_timeout, /* è¶…æ—¶æ—¶å›è°ƒçš„å¤„ç†å‡½æ•° */
+        RT_NULL, /* è¶…æ—¶å‡½æ•°çš„å…¥å£å‚æ•° */
+        1, /* å®šæ—¶é•¿åº¦ï¼Œä»¥OS Tickä¸ºå•ä½ï¼Œå³1ä¸ªOS Tick */
+        RT_TIMER_FLAG_PERIODIC); /* å‘¨æœŸæ€§å®šæ—¶å™¨ */
 
     while (1)
     {
         rt_memset(&buf[0], 0, sizeof(buf));
 
-        /* ´ÓÏûÏ¢¶ÓÁĞÖĞ½ÓÊÕÏûÏ¢ */
+        /* ä»æ¶ˆæ¯é˜Ÿåˆ—ä¸­æ¥æ”¶æ¶ˆæ¯ */
         result = rt_mq_recv(&mq, &buf[0], sizeof(buf), 1);
         if (result == RT_EOK)
         {
@@ -59,16 +68,16 @@ static void thread_entry(void* parameter)
 
 int timer_timeout_init()
 {
-    /* ³õÊ¼»¯ÏûÏ¢¶ÓÁĞ */
-    rt_mq_init(&mq, "mqt", 
-        &msg_pool[0], /* ÄÚ´æ³ØÖ¸Ïòmsg_pool */ 
-        128 - sizeof(void*), /* Ã¿¸öÏûÏ¢µÄ´óĞ¡ÊÇ 128 - void* */
-        sizeof(msg_pool), /* ÄÚ´æ³ØµÄ´óĞ¡ÊÇmsg_poolµÄ´óĞ¡ */
-        RT_IPC_FLAG_FIFO); /* Èç¹ûÓĞ¶à¸öÏß³ÌµÈ´ı£¬°´ÕÕÏÈÀ´ÏÈµÃµ½µÄ·½·¨·ÖÅäÏûÏ¢ */
+    /* åˆå§‹åŒ–æ¶ˆæ¯é˜Ÿåˆ— */
+    rt_mq_init(&mq, "mqt",
+        &msg_pool[0], /* å†…å­˜æ± æŒ‡å‘msg_pool */
+        128 - sizeof(void*), /* æ¯ä¸ªæ¶ˆæ¯çš„å¤§å°æ˜¯ 128 - void* */
+        sizeof(msg_pool), /* å†…å­˜æ± çš„å¤§å°æ˜¯msg_poolçš„å¤§å° */
+        RT_IPC_FLAG_FIFO); /* å¦‚æœæœ‰å¤šä¸ªçº¿ç¨‹ç­‰å¾…ï¼ŒæŒ‰ç…§å…ˆæ¥å…ˆå¾—åˆ°çš„æ–¹æ³•åˆ†é…æ¶ˆæ¯ */
 
-    /* ´´½¨Ïß³Ì */
+    /* åˆ›å»ºçº¿ç¨‹ */
     tid = rt_thread_create("t",
-        thread_entry, RT_NULL, /* Ïß³ÌÈë¿ÚÊÇthread_entry, Èë¿Ú²ÎÊıÊÇRT_NULL */
+        thread_entry, RT_NULL, /* çº¿ç¨‹å…¥å£æ˜¯thread_entry, å…¥å£å‚æ•°æ˜¯RT_NULL */
         THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (tid != RT_NULL)
         rt_thread_startup(tid);
@@ -81,38 +90,38 @@ int timer_timeout_init()
 #ifdef RT_USING_TC
 static void _tc_cleanup()
 {
-    /* µ÷¶ÈÆ÷ÉÏËø£¬ÉÏËøºó£¬½«²»ÔÙÇĞ»»µ½ÆäËûÏß³Ì£¬½öÏìÓ¦ÖĞ¶Ï */
+    /* è°ƒåº¦å™¨ä¸Šé”ï¼Œä¸Šé”åï¼Œå°†ä¸å†åˆ‡æ¢åˆ°å…¶ä»–çº¿ç¨‹ï¼Œä»…å“åº”ä¸­æ–­ */
     rt_enter_critical();
 
-    /* É¾³ıÏß³Ì */
+    /* åˆ é™¤çº¿ç¨‹ */
     if (tid != RT_NULL && tid->stat != RT_THREAD_CLOSE)
         rt_thread_delete(tid);
 
-    /* Ö´ĞĞÏûÏ¢¶ÓÁĞ¶ÔÏóÍÑÀë */
+    /* æ‰§è¡Œæ¶ˆæ¯é˜Ÿåˆ—å¯¹è±¡è„±ç¦» */
     rt_mq_detach(&mq);
-    /* Ö´ĞĞ¶¨Ê±Æ÷ÍÑÀë */
+    /* æ‰§è¡Œå®šæ—¶å™¨è„±ç¦» */
     rt_timer_detach(&timer);
 
-    /* µ÷¶ÈÆ÷½âËø */
+    /* è°ƒåº¦å™¨è§£é” */
     rt_exit_critical();
 
-    /* ÉèÖÃTestCase×´Ì¬ */
+    /* è®¾ç½®TestCaseçŠ¶æ€ */
     tc_done(TC_STAT_PASSED);
 }
 
 int _tc_timer_timeout()
 {
-    /* ÉèÖÃTestCaseÇåÀí»Øµ÷º¯Êı */
+    /* è®¾ç½®TestCaseæ¸…ç†å›è°ƒå‡½æ•° */
     tc_cleanup(_tc_cleanup);
     timer_timeout_init();
 
-    /* ·µ»ØTestCaseÔËĞĞµÄ×î³¤Ê±¼ä */
+    /* è¿”å›TestCaseè¿è¡Œçš„æœ€é•¿æ—¶é—´ */
     return 100;
 }
-/* Êä³öº¯ÊıÃüÁîµ½finsh shellÖĞ */
+/* è¾“å‡ºå‡½æ•°å‘½ä»¤åˆ°finsh shellä¸­ */
 FINSH_FUNCTION_EXPORT(_tc_timer_timeout, a thread timer testcase);
 #else
-/* ÓÃ»§Ó¦ÓÃÈë¿Ú */
+/* ç”¨æˆ·åº”ç”¨å…¥å£ */
 int rt_application_init()
 {
     timer_timeout_init();

@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ *
+ */
+
+/*
  * 程序清单：动态信号量
  *
  * 这个例子中将创建一个动态信号量（初始值为0 ）及一个动态线程，在这个动态线程中

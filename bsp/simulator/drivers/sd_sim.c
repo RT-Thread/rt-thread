@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -5,11 +13,9 @@
 #include <rtthread.h>
 #include <dfs.h>
 
-#ifdef DEBUG
-#  define SD_TRACE     rt_kprintf
-#else
-#  define SD_TRACE(...)
-#endif
+#define DBG_TAG    "sd.sim"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 #define SDCARD_SIM  "sd.bin"
 #define SDCARD_SIZE (16*1024*1024)  //16M
@@ -51,7 +57,7 @@ static rt_size_t rt_sdcard_read(rt_device_t device, rt_off_t position, void *buf
     struct sdcard_device *sd;
     int result = 0;
 
-    SD_TRACE("sd read: pos %d, size %d\n", position, size);
+    LOG_I("sd read: pos %d, size %d", position, size);
 
     rt_mutex_take(lock, RT_WAITING_FOREVER);
     sd = SDCARD_DEVICE(device);
@@ -65,7 +71,7 @@ static rt_size_t rt_sdcard_read(rt_device_t device, rt_off_t position, void *buf
     return size;
 
 _err:
-    SD_TRACE("sd read errors!\n");
+    LOG_E("sd read errors!");
     rt_mutex_release(lock);
     return 0;
 }
@@ -79,7 +85,7 @@ static rt_size_t rt_sdcard_write(rt_device_t device, rt_off_t position, const vo
     struct sdcard_device *sd;
     int result = 0;
 
-    SD_TRACE("sst write: pos %d, size %d\n", position, size);
+    LOG_I("sst write: pos %d, size %d", position, size);
 
     rt_mutex_take(lock, RT_WAITING_FOREVER);
     sd = SDCARD_DEVICE(device);
@@ -93,7 +99,7 @@ static rt_size_t rt_sdcard_write(rt_device_t device, rt_off_t position, const vo
     return size;
 
 _err:
-    SD_TRACE("sd write errors!\n");
+    LOG_E("sd write errors!");
     rt_mutex_release(lock);
     return 0;
 }
@@ -125,7 +131,6 @@ static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-
 rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
 {
     int size;
@@ -136,6 +141,11 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
     device = &(sd->parent);
 
     lock = rt_mutex_create("lock", RT_IPC_FLAG_FIFO);
+    if (lock == RT_NULL)
+    {
+        LOG_E("Create mutex in rt_hw_sdcard_init failed!");
+        return -RT_ERROR;
+    }
 
     /* open sd card file, if not exist, then create it  */
     sd->file = fopen(SDCARD_SIM, "rb+");
@@ -156,7 +166,7 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
             ptr = (unsigned char *) malloc(1024 * 1024);
             if (ptr == NULL)
             {
-                SD_TRACE("malloc error, no memory!\n");
+                LOG_E("malloc error, no memory!");
                 return RT_ERROR;
             }
             memset(ptr, 0x0, 1024 * 1024);

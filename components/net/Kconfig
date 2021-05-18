@@ -114,7 +114,7 @@ config RT_USING_LWIP
     if RT_USING_LWIP
         choice
             prompt "lwIP version"
-            default RT_USING_LWIP202
+            default RT_USING_LWIP212
             help
                 Select the lwIP version
 

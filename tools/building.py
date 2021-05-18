@@ -85,7 +85,7 @@ class Win32Spawn:
                 try:
                     os.remove(f)
                 except Exception as e:
-                    print ('Error removing file: ' + e)
+                    print('Error removing file: ' + e)
                     return -1
             return 0
 
@@ -106,8 +106,8 @@ class Win32Spawn:
         try:
             proc = subprocess.Popen(cmdline, env=_e, shell=False)
         except Exception as e:
-            print ('Error in calling command:' + cmdline.split(' ')[0])
-            print ('Exception: ' + os.strerror(e.errno))
+            print('Error in calling command:' + cmdline.split(' ')[0])
+            print('Exception: ' + os.strerror(e.errno))
             if (os.strerror(e.errno) == "No such file or directory"):
                 print ("\nPlease check Toolchains PATH setting.\n")
 
@@ -208,7 +208,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--target',
                       dest = 'target',
                       type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite')
+                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
     AddOption('--stackanalysis',
                 dest = 'stackanalysis',
                 action = 'store_true',
@@ -257,6 +257,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'makefile':('gcc', 'gcc'),
                 'eclipse':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc'),
+                'cmake':('gcc', 'gcc'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -274,11 +275,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             os.environ['RTT_CC'] = rtconfig.CROSS_TOOL
             utils.ReloadModule(rtconfig)
         except KeyError:
-            print ('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
+            print('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
             sys.exit(1)
-    elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
-        and rtconfig.PLATFORM == 'gcc':
-        AddDepend('RT_USING_MINILIBC')
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
     if not os.path.exists(rtconfig.EXEC_PATH):
@@ -449,6 +447,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                            variant_dir=kernel_vdir + '/components',
                            duplicate=0,
                            exports='remove_components'))
+    # include testcases
+    if os.path.isfile(os.path.join(Rtt_Root, 'examples/utest/testcases/SConscript')):
+        objs.extend(SConscript(Rtt_Root + '/examples/utest/testcases/SConscript',
+                           variant_dir=kernel_vdir + '/examples/utest/testcases',
+                           duplicate=0))
 
     return objs
 
@@ -629,6 +632,8 @@ def DefineGroup(name, src, depend, **parameters):
     group['name'] = name
     group['path'] = group_path
     if type(src) == type([]):
+        # remove duplicate elements from list
+        src = list(set(src))
         group['src'] = File(src)
     else:
         group['src'] = src
@@ -663,7 +668,7 @@ def DefineGroup(name, src, depend, **parameters):
     # check whether to clean up library
     if GetOption('cleanlib') and os.path.exists(os.path.join(group['path'], GroupLibFullName(name, Env))):
         if group['src'] != []:
-            print ('Remove library:'+ GroupLibFullName(name, Env))
+            print('Remove library:'+ GroupLibFullName(name, Env))
             fn = os.path.join(group['path'], GroupLibFullName(name, Env))
             if os.path.exists(fn):
                 os.unlink(fn)
@@ -736,7 +741,7 @@ def BuildLibInstallAction(target, source, env):
         if Group['name'] == lib_name:
             lib_name = GroupLibFullName(Group['name'], env)
             dst_name = os.path.join(Group['path'], lib_name)
-            print ('Copy '+lib_name+' => ' +dst_name)
+            print('Copy '+lib_name+' => ' + dst_name)
             do_copy_file(lib_name, dst_name)
             break
 
@@ -878,6 +883,10 @@ def GenTargetProject(program = None):
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)
 
+    if GetOption('target') == 'cmake':
+        from cmake import CMakeProject
+        CMakeProject(Env,Projects)
+
 
 def EndBuilding(target, program = None):
     import rtconfig
@@ -997,11 +1006,11 @@ def GetVersion():
     prepcessor.process_contents(contents)
     def_ns = prepcessor.cpp_namespace
 
-    version = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_VERSION']))
-    subversion = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_SUBVERSION']))
+    version = int([ch for ch in def_ns['RT_VERSION'] if ch in '0123456789.'])
+    subversion = int([ch for ch in def_ns['RT_SUBVERSION'] if ch in '0123456789.'])
 
     if 'RT_REVISION' in def_ns:
-        revision = int(filter(lambda ch: ch in '0123456789.', def_ns['RT_REVISION']))
+        revision = int([ch for ch in def_ns['RT_REVISION'] if ch in '0123456789.'])
         return '%d.%d.%d' % (version, subversion, revision)
 
     return '0.%d.%d' % (version, subversion)

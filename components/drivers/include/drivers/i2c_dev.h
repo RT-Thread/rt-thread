@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
  * 2012-04-25     weety         first version
+ * 2021-04-20     RiceChen      added bus clock command
  */
 
 #ifndef __I2C_DEV_H__
@@ -21,6 +22,7 @@ extern "C" {
 #define RT_I2C_DEV_CTRL_ADDR         0x21
 #define RT_I2C_DEV_CTRL_TIMEOUT      0x22
 #define RT_I2C_DEV_CTRL_RW           0x23
+#define RT_I2C_DEV_CTRL_CLK          0x24
 
 struct rt_i2c_priv_data
 {

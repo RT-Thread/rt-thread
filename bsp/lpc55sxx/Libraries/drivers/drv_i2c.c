@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2019-07-15     Magicoe      The first version for LPC55S6x
  */
- 
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
@@ -86,7 +86,7 @@ out:
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
-{    
+{
 
     lpc_i2c_xfer,
     RT_NULL,
@@ -115,7 +115,7 @@ int rt_hw_i2c_init(void)
     lpc_i2c1.device_name = "LPC Flexcomm1 as I2C";
     rt_i2c_bus_device_register(&lpc_i2c1.parent, "i2c1");
 #endif /* BSP_USING_I2C1 */
-    
+
 #ifdef BSP_USING_I2C4
     static struct lpc_i2c_bus lpc_i2c4;
     /* attach 12 MHz clock to FLEXCOMM2 (I2C master for touch controller) */

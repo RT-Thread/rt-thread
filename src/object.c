@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -200,7 +200,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 /**
  * This function will return the specified type of object information.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  *
  * @return the object type information or RT_NULL
@@ -220,7 +220,7 @@ RTM_EXPORT(rt_object_get_information);
 /**
  * This function will return the length of object list in object container.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  * @return the length of object list
  */
@@ -247,10 +247,10 @@ int rt_object_get_length(enum rt_object_class_type type)
 RTM_EXPORT(rt_object_get_length);
 
 /**
- * This function will copy the object pointer of the specified type, 
+ * This function will copy the object pointer of the specified type,
  * with the maximum size specified by maxlen.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  * @param pointers the pointers will be saved to
  * @param maxlen the maximum number of pointers can be saved

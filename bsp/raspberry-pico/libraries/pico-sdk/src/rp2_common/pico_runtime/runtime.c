@@ -27,6 +27,7 @@
 #endif
 
 extern char __StackLimit; /* Set by linker.  */
+extern void _exit(int status);
 
 uint32_t __attribute__((section(".ram_vector_table"))) ram_vector_table[48];
 
@@ -136,57 +137,6 @@ void runtime_init(void) {
 
     spin_locks_reset();
     irq_init_priorities();
-    alarm_pool_init_default();
-
-    // Start and end points of the constructor list,
-    // defined by the linker script.
-    extern void (*__init_array_start)();
-    extern void (*__init_array_end)();
-
-    // Call each function in the list.
-    // We have to take the address of the symbols, as __init_array_start *is*
-    // the first function pointer, not the address of it.
-    for (void (**p)() = &__init_array_start; p < &__init_array_end; ++p) {
-        (*p)();
-    }
-
-}
-
-void _exit(int status) {
-#if PICO_ENTER_USB_BOOT_ON_EXIT
-    reset_usb_boot(0,0);
-#else
-    while (1) {
-        __breakpoint();
-    }
-#endif
-}
-
-void *_sbrk(int incr) {
-    extern char end; /* Set by linker.  */
-    static char *heap_end;
-    char *prev_heap_end;
-
-    if (heap_end == 0)
-        heap_end = &end;
-
-    prev_heap_end = heap_end;
-    char *next_heap_end = heap_end + incr;
-
-    if (__builtin_expect(next_heap_end >= (&__StackLimit), false)) {
-#if PICO_USE_OPTIMISTIC_SBRK
-        if (next_heap_end == &__StackLimit) {
-//        errno = ENOMEM;
-            return (char *) -1;
-        }
-        next_heap_end = &__StackLimit;
-#else
-        return (char *) -1;
-#endif
-    }
-
-    heap_end = next_heap_end;
-    return (void *) prev_heap_end;
 }
 
 // exit is not useful... no desire to pull in __call_exitprocs

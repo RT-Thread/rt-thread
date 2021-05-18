@@ -19,6 +19,9 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 256
+
+/* kservice optimization */
+
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -43,7 +46,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40003
+#define RT_VER_NUM 0x40004
 
 /* RT-Thread Components */
 
@@ -87,6 +90,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_LIBC_FIXED_TIMEZONE 8
 
 /* Network */
 
@@ -106,6 +110,9 @@
 
 
 /* Utilities */
+
+
+/* RT-Thread Utestcases */
 
 
 /* RT-Thread online packages */
@@ -145,23 +152,26 @@
 /* peripheral libraries and drivers */
 
 
+/* AI packages */
+
+
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
 
 
-/* games: games run on RT-Thread console */
+/* entertainment: terminal games and other interesting software packages */
 
 
 /* Hardware Drivers Config */
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_UART
 #define BSP_USING_UART0
 
 /* Board extended module Drivers */
