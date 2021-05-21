@@ -11,72 +11,131 @@
  */
 
 #include "cpuport.h"
-#include "encoding.h"
-#include "stackframe.h"
 
   .section      .text.entry
   .align 2
   .global trap_entry
-  .extern __stack_cpu0
-  .extern get_current_thread_kernel_stack_top
 trap_entry:
-    //backup sp
-    csrrw sp, sscratch, sp
-    //load interrupt stack
-    la sp, __stack_cpu0
-    //backup context
-    SAVE_ALL
-    
-    RESTORE_SYS_GP
+#ifdef ARCH_RISCV_FPU
+    addi    sp, sp, -32 * FREGBYTES
 
-    csrr a0, scause
-    csrrc a1, stval, zero
-    csrr  a2, sepc
-    mv    a3, sp
+    FSTORE  f0, 0 * FREGBYTES(sp)
+    FSTORE  f1, 1 * FREGBYTES(sp)
+    FSTORE  f2, 2 * FREGBYTES(sp)
+    FSTORE  f3, 3 * FREGBYTES(sp)
+    FSTORE  f4, 4 * FREGBYTES(sp)
+    FSTORE  f5, 5 * FREGBYTES(sp)
+    FSTORE  f6, 6 * FREGBYTES(sp)
+    FSTORE  f7, 7 * FREGBYTES(sp)
+    FSTORE  f8, 8 * FREGBYTES(sp)
+    FSTORE  f9, 9 * FREGBYTES(sp)
+    FSTORE  f10, 10 * FREGBYTES(sp)
+    FSTORE  f11, 11 * FREGBYTES(sp)
+    FSTORE  f12, 12 * FREGBYTES(sp)
+    FSTORE  f13, 13 * FREGBYTES(sp)
+    FSTORE  f14, 14 * FREGBYTES(sp)
+    FSTORE  f15, 15 * FREGBYTES(sp)
+    FSTORE  f16, 16 * FREGBYTES(sp)
+    FSTORE  f17, 17 * FREGBYTES(sp)
+    FSTORE  f18, 18 * FREGBYTES(sp)
+    FSTORE  f19, 19 * FREGBYTES(sp)
+    FSTORE  f20, 20 * FREGBYTES(sp)
+    FSTORE  f21, 21 * FREGBYTES(sp)
+    FSTORE  f22, 22 * FREGBYTES(sp)
+    FSTORE  f23, 23 * FREGBYTES(sp)
+    FSTORE  f24, 24 * FREGBYTES(sp)
+    FSTORE  f25, 25 * FREGBYTES(sp)
+    FSTORE  f26, 26 * FREGBYTES(sp)
+    FSTORE  f27, 27 * FREGBYTES(sp)
+    FSTORE  f28, 28 * FREGBYTES(sp)
+    FSTORE  f29, 29 * FREGBYTES(sp)
+    FSTORE  f30, 30 * FREGBYTES(sp)
+    FSTORE  f31, 31 * FREGBYTES(sp)
 
-    /* scause, stval, sepc, sp */
+#endif
+
+    /* save thread context to thread stack */
+    addi sp, sp, -32 * REGBYTES
+
+    STORE x1,   1 * REGBYTES(sp)
+
+    csrr  x1, SRC_XSTATUS
+    STORE x1,   2 * REGBYTES(sp)
+
+    csrr  x1, SRC_XEPC
+    STORE x1, 0 * REGBYTES(sp)
+
+    STORE x4,   4 * REGBYTES(sp)
+    STORE x5,   5 * REGBYTES(sp)
+    STORE x6,   6 * REGBYTES(sp)
+    STORE x7,   7 * REGBYTES(sp)
+    STORE x8,   8 * REGBYTES(sp)
+    STORE x9,   9 * REGBYTES(sp)
+    STORE x10, 10 * REGBYTES(sp)
+    STORE x11, 11 * REGBYTES(sp)
+    STORE x12, 12 * REGBYTES(sp)
+    STORE x13, 13 * REGBYTES(sp)
+    STORE x14, 14 * REGBYTES(sp)
+    STORE x15, 15 * REGBYTES(sp)
+    STORE x16, 16 * REGBYTES(sp)
+    STORE x17, 17 * REGBYTES(sp)
+    STORE x18, 18 * REGBYTES(sp)
+    STORE x19, 19 * REGBYTES(sp)
+    STORE x20, 20 * REGBYTES(sp)
+    STORE x21, 21 * REGBYTES(sp)
+    STORE x22, 22 * REGBYTES(sp)
+    STORE x23, 23 * REGBYTES(sp)
+    STORE x24, 24 * REGBYTES(sp)
+    STORE x25, 25 * REGBYTES(sp)
+    STORE x26, 26 * REGBYTES(sp)
+    STORE x27, 27 * REGBYTES(sp)
+    STORE x28, 28 * REGBYTES(sp)
+    STORE x29, 29 * REGBYTES(sp)
+    STORE x30, 30 * REGBYTES(sp)
+    STORE x31, 31 * REGBYTES(sp)
+
+    /* switch to interrupt stack */
+    move  s0, sp
+
+#ifndef RISCV_S_MODE
+    /* get cpu id */
+    csrr  t0, mhartid
+#else
+    li    t0, 0
+#endif
+
+    /* switch interrupt stack of current cpu */
+    la    sp, __stack_start__
+    addi  t1, t0, 1
+    li    t2, __STACKSIZE__
+    mul   t1, t1, t2
+    add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
+
+    /* handle interrupt */
+    call  rt_interrupt_enter
+    csrr  a0, SRC_XCAUSE
+    csrr  a1, SRC_XEPC
+    mv    a2, s0
     call  handle_trap
+    call  rt_interrupt_leave
+
+#ifdef RT_USING_SMP
+    /* s0 --> sp */
+    mv  sp, s0
+    mv  a0, s0
+    call rt_scheduler_do_irq_switch
+    tail   rt_hw_context_switch_exit
+
+#else
+
+    /* switch to from_thread stack */
+    move  sp, s0
 
     /* need to switch new thread */
     la    s0, rt_thread_switch_interrupt_flag
     lw    s2, 0(s0)
     beqz  s2, spurious_interrupt
     sw    zero, 0(s0)
-
-.global rt_hw_context_switch_interrupt_do
-rt_hw_context_switch_interrupt_do:
-
-//switch to thread kernel stack
-    csrr t0, sstatus
-    andi t0, t0, 0x100
-    beqz t0, __restore_sp_from_tcb_interrupt
-
-__restore_sp_from_sscratch_interrupt:
-    csrr t0, sscratch
-    j __move_stack_context_interrupt
-
-__restore_sp_from_tcb_interrupt:
-    la    s0, rt_interrupt_from_thread
-    LOAD  a0, 0(s0)
-    jal rt_thread_sp_to_thread
-    jal get_thread_kernel_stack_top
-    mv t0, a0
-
-__move_stack_context_interrupt:
-    mv t1, sp//src
-    mv sp, t0//switch stack
-    addi sp, sp, -33 * REGBYTES
-    //copy context
-    li s0, 33//cnt
-    mv t2, sp//dst
-
-copy_context_loop_interrupt:
-    LOAD t0, 0(t1)
-    STORE t0, 0(t2)
-    addi s0, s0, -1
-    addi t1, t1, 8
-    addi t2, t2, 8
-    bnez s0, copy_context_loop_interrupt
 
     la    s0, rt_interrupt_from_thread
     LOAD  s1, 0(s0)
@@ -86,16 +145,7 @@ copy_context_loop_interrupt:
     LOAD  s1, 0(s0)
     LOAD  sp, 0(s1)
 
+#endif
+
 spurious_interrupt:
-    RESTORE_ALL
-    sret
-
-.global rt_hw_interrupt_enable
-rt_hw_interrupt_enable:
-    csrs sstatus, a0
-    jr ra
-
-.global rt_hw_interrupt_disable
-rt_hw_interrupt_disable:
-    csrrci a0, sstatus, 2
-    jr ra
+    tail rt_hw_context_switch_exit

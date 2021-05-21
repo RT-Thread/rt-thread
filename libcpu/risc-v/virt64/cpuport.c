@@ -18,17 +18,17 @@
 
 /**
  * @brief from thread used interrupt context switch
- * 
+ *
  */
 volatile rt_ubase_t  rt_interrupt_from_thread = 0;
 /**
  * @brief to thread used interrupt context switch
- * 
+ *
  */
 volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
 /**
  * @brief flag to indicate context switch in interrupt or not
- * 
+ *
  */
 volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
@@ -70,8 +70,11 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     frame->epc     = (rt_ubase_t)tentry;
     frame->user_sp_exc_stack = (rt_ubase_t)(((rt_ubase_t)stk) + sizeof(struct rt_hw_stack_frame));
 
-    /* force to supervisor mode(SPP=1) and set SPIE and SUM to 1 */
-    frame->sstatus = 0x00040120;
+#ifndef RISCV_S_MODE
+    frame->xstatus = 0x00007880;
+#else
+    frame->xstatus = 0x00040120;
+#endif
 
     return stk;
 }
