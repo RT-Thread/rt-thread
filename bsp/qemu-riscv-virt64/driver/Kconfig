@@ -1,6 +1,6 @@
 
 
-menu "General Purpose UARTs"
+menu "RISCV qemu virt64 configs"
 
 menuconfig BSP_USING_UART1
     bool "Enable UART1"
@@ -14,5 +14,8 @@ menuconfig BSP_USING_UART1
             default 21
     endif
 
-endmenu
+config RISCV_S_MODE
+    bool "RT-Thread run in riscv smode"
+    default y
 
+endmenu

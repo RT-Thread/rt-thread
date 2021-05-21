@@ -177,7 +177,7 @@
 #define BOARD_virt
 #define RT_USING_USERSPACE
 
-/* General Purpose UARTs */
+/* RISCV qemu virt64 configs */
 
 #define __STACKSIZE__ 16384
 
