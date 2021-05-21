@@ -1,0 +1,1 @@
+由于原版FATFS的DIR结构体与标准C库的DIR结构体命名冲突，因此将FATFS的ff.c/ff.h内的DIR结构体改名为FFDIR，FATFS升级时请留意。
