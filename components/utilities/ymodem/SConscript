@@ -7,7 +7,7 @@ ymodem.c
  
 CPPPATH = [cwd]
 
-if GetDepend('RT_USING_DFS') and GetDepend('YMODEM_USING_FILE_TRANSFER'):
+if GetDepend('YMODEM_USING_FILE_TRANSFER'):
     src += ['ry_sy.c']
 
 group   = DefineGroup('Utilities', src, depend = ['RT_USING_RYM'], CPPPATH = CPPPATH)
