@@ -158,7 +158,7 @@ void dump_regs(struct rt_hw_stack_frame *regs)
     rt_size_t satp_v = read_csr(satp);
     rt_kprintf("satp = 0x%p\n",satp_v);
     const char *mode_str = "Unknown Address Translation/Protection Mode";
-    
+
     switch(__MASKVALUE(satp_v >> 60,__MASK(4)))
     {
         case 0:
@@ -188,7 +188,7 @@ void handle_trap(rt_size_t xcause,rt_size_t xtval,rt_size_t xepc,struct rt_hw_st
         {
             case IRQ_M_SOFT:
                 {
-                    
+
                 }
                 break;
             case IRQ_M_TIMER:

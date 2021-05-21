@@ -18,17 +18,17 @@
 
 /**
  * @brief from thread used interrupt context switch
- * 
+ *
  */
 volatile rt_ubase_t  rt_interrupt_from_thread = 0;
 /**
  * @brief to thread used interrupt context switch
- * 
+ *
  */
 volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
 /**
  * @brief flag to indicate context switch in interrupt or not
- * 
+ *
  */
 volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 

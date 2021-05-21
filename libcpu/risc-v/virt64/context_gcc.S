@@ -28,7 +28,6 @@ rt_hw_interrupt_disable:
 #endif
     ret
 
-
 /*
  * void rt_hw_interrupt_enable(rt_base_t level);
  */

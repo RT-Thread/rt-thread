@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -55,7 +55,7 @@ void rt_hw_board_init(void)
     #endif /* RT_USING_CONSOLE */
     rt_hw_tick_init();
     rt_kprintf("heap: [0x%08x - 0x%08x]\n", (rt_ubase_t) RT_HW_HEAP_BEGIN, (rt_ubase_t) RT_HW_HEAP_END);
-    
+
     #ifdef RT_USING_COMPONENTS_INIT
         rt_components_board_init();
     #endif
