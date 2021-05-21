@@ -19,10 +19,10 @@
 
     STORE x1,   1 * REGBYTES(sp)
 
-    csrr  x1, sstatus
+    csrr  x1, SRC_XSTATUS
     STORE x1,   2 * REGBYTES(sp)
 
-    csrr  x1, sepc
+    csrr  x1, SRC_XEPC
     STORE x1, 0 * REGBYTES(sp)
 
     STORE x3,   3 * REGBYTES(sp)
@@ -54,17 +54,17 @@
     STORE x29, 29 * REGBYTES(sp)
     STORE x30, 30 * REGBYTES(sp)
     STORE x31, 31 * REGBYTES(sp)
-    csrr t0, sscratch
+    csrr t0, SRC_XSCRATCH
     STORE t0, 32 * REGBYTES(sp)
 .endm
 
 .macro RESTORE_ALL_ONLY
         /* resw ra to sepc */
     LOAD x1,   0 * REGBYTES(sp)
-    csrw sepc, x1
+    csrw SRC_XEPC, x1
 
     LOAD x1,   2 * REGBYTES(sp)
-    csrw sstatus, x1
+    csrw SRC_XSTATUS, x1
 
     LOAD x1,   1 * REGBYTES(sp)
 
@@ -104,10 +104,10 @@
 .macro RESTORE_ALL
         /* resw ra to sepc */
     LOAD x1,   0 * REGBYTES(sp)
-    csrw sepc, x1
+    csrw SRC_XEPC, x1
 
     LOAD x1,   2 * REGBYTES(sp)
-    csrw sstatus, x1
+    csrw SRC_XSTATUS, x1
 
     LOAD x1,   1 * REGBYTES(sp)
 
@@ -150,14 +150,6 @@
     .option norelax
         la gp, __global_pointer$
     .option pop
-.endm
-
-.macro OPEN_INTERRUPT
-    csrsi sstatus, 2
-.endm
-
-.macro CLOSE_INTERRUPT
-    csrci sstatus, 2
 .endm
 
 #endif
