@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -36,8 +36,7 @@ int tick_isr(void)
 #ifdef RISCV_S_MODE
     sbi_set_timer(get_ticks() + tick_cycles);
 #else
-    int id = r_mhartid();
-    *(uint64_t*)CLINT_MTIMECMP(id) = *(uint64_t*)CLINT_MTIME + tick_cycles;
+    *(uint64_t*)CLINT_MTIMECMP(r_mhartid()) = *(uint64_t*)CLINT_MTIME + tick_cycles;
 #endif
 
     return 0;
@@ -57,14 +56,13 @@ int rt_hw_tick_init(void)
     tick_cycles = 40000;
     /* Set timer */
     sbi_set_timer(get_ticks() + tick_cycles);
-    
+
     /* Enable the Supervisor-Timer bit in SIE */
     set_csr(sie, SIP_STIP);
 #else
     clear_csr(mie, MIP_MTIP);
     clear_csr(mip, MIP_MTIP);
-    int id = r_mhartid();
-    *(uint64_t*)CLINT_MTIMECMP(id) = *(uint64_t*)CLINT_MTIME + interval;
+    *(uint64_t*)CLINT_MTIMECMP(r_mhartid()) = *(uint64_t*)CLINT_MTIME + interval;
     set_csr(mie, MIP_MTIP);
 #endif
     return 0;

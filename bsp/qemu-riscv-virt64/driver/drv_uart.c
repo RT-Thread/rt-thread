@@ -84,7 +84,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 }
 
 static int drv_uart_putc(struct rt_serial_device *serial, char c)
-{   
+{
     while ((uart_read_reg(LSR) & LSR_TX_IDLE) == 0);
     return uart_write_reg(THR, c);
 }
@@ -143,9 +143,9 @@ int rt_hw_uart_init(void)
                               RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                               uart);
         rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, "uart");
-        
+
         rt_hw_interrupt_umask(uart->irqno);
     }
-    
+
     return 0;
 }

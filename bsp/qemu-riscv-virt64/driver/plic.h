@@ -15,7 +15,7 @@
 /*
  * This machine puts platform-level interrupt controller (PLIC) here.
  * Here only list PLIC registers in Machine mode.
- * 
+ *
  */
 
 #define VIRT_PLIC_BASE 0x0c000000L
@@ -48,8 +48,6 @@
 
 #define PLIC_PRIORITY(id)              (VIRT_PLIC_BASE + PLIC_PRIORITY_OFFSET + (id) * 4)
 #define PLIC_PENDING(id)               (VIRT_PLIC_BASE + PLIC_PENDING_OFFSET + ((id) / 32))
-
-
 
 void plic_set_priority(int irq, int priority);
 void plic_irq_enable(int irq);
