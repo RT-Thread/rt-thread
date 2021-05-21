@@ -45,18 +45,17 @@
 #define S32_F "ld"
 #define X32_F "lx"
 
-#ifdef RT_USING_LIBC
 #include <sys/errno.h>
+/* some errno not defined in newlib */
 #ifndef ENSRNOTFOUND
 #define ENSRNOTFOUND 163  /* Domain name not found */
-#endif
-#ifndef ESHUTDOWN
 /* WARNING: ESHUTDOWN also not defined in newlib. We chose
             180 here because the number "108" which is used
             in arch.h has been assigned to another error code. */
+#endif
+#ifndef ESHUTDOWN
 #define ESHUTDOWN 180
 #endif
-#endif /* RT_USING_LIBC */
 
 #if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/time.h>
