@@ -37,10 +37,8 @@ defined in armcc/errno.h
 #define ERROR_BASE_NO    0
 #endif
 
-#if !defined(_WIN32)
-
+#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
 #include <errno.h>
-
 #define EPERM            (ERROR_BASE_NO + 1)
 #define ENOENT           (ERROR_BASE_NO + 2)
 #define ESRCH            (ERROR_BASE_NO + 3)

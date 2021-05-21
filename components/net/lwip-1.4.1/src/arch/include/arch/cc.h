@@ -54,16 +54,16 @@ typedef uintptr_t mem_ptr_t;
 #define S32_F "ld"
 #define X32_F "lx"
 
-#ifdef RT_USING_LIBC
-#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__)
-
+#include <sys/errno.h>
 /* some errno not defined in newlib */
+#ifndef ENSRNOTFOUND
 #define ENSRNOTFOUND 163  /* Domain name not found */
 /* WARNING: ESHUTDOWN also not defined in newlib. We chose
             180 here because the number "108" which is used
             in arch.h has been assigned to another error code. */
+#endif
+#ifndef ESHUTDOWN
 #define ESHUTDOWN 180
-#endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
 #endif
 
 #if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
