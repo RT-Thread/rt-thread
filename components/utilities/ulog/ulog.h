@@ -25,6 +25,7 @@ extern "C" {
  */
 int ulog_init(void);
 int ulog_async_init(void);
+void ulog_output_lock_enabled(rt_bool_t enabled);
 void ulog_deinit(void);
 
 /*
