@@ -5,6 +5,8 @@
 
 #define ERRNO                       1
 
+#define LWIP_ERRNO_STDINCLUDE
+
 #define LWIP_IPV4                   1
 
 #ifdef RT_USING_LWIP_IPV6
