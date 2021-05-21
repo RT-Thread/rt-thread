@@ -46,7 +46,7 @@
 #define X32_F "lx"
 
 #ifdef RT_USING_LIBC
-#include <errno.h>
+#include <sys/errno.h>
 #ifndef ENSRNOTFOUND
 #define ENSRNOTFOUND 163  /* Domain name not found */
 #endif

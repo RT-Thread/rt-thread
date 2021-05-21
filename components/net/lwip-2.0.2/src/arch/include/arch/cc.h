@@ -84,7 +84,7 @@ void sys_arch_assert(const char* file, int line);
 #define LWIP_PLATFORM_DIAG(x)   do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) do {rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__);}while(0)
 
-#include "string.h"
+#include <string.h>
 
 #define SYS_ARCH_DECL_PROTECT(level)
 #define SYS_ARCH_PROTECT(level)     rt_enter_critical()

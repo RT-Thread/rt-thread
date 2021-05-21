@@ -15,7 +15,7 @@
 #ifdef RT_USING_LIBC
 #include <sys/types.h>
 #endif
-
+#include <sys/errno.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
