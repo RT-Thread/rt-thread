@@ -1,0 +1,178 @@
+
+#include "asmArm.h"
+
+
+    .globl  FUNC(sys_icc_igrpen0_set)
+    .globl  FUNC(sys_icc_igrpen0_get)
+    .globl  FUNC(sys_icc_igrpen1_set)
+    .globl  FUNC(sys_icc_igrpen1_get)
+    .globl  FUNC(sys_icc_ctlr_set)
+    .globl  FUNC(sys_icc_bpr_set)
+    .globl  FUNC(sys_icc_hppir0_get)
+    .globl  FUNC(sys_icc_hppir1_get)
+    .globl  FUNC(sys_icc_eoir0_set)
+    .globl  FUNC(sys_icc_eoir1_set)
+    .globl  FUNC(sys_icc_pmr_set)
+    .globl  FUNC(sys_icc_iar1_get)
+    .globl  FUNC(sys_icc_sgi1r_set)
+    .globl  FUNC(sys_icc_sgi0r_set)
+    .globl  FUNC(sys_icc_sre_set)
+    .globl  FUNC(sys_icc_sre_get)	
+    .globl  FUNC(vxMpidrGet)
+    .globl  FUNC(armSmcCall)
+    .globl  FUNC(sys_cntkctl_get)
+    .globl  FUNC(sys_dfar_get)
+    .globl  FUNC(sys_dfsr_get)
+    .globl  FUNC(sys_ifar_get)
+    .globl  FUNC(sys_ifsr_get)
+    .text
+    .balign 4
+
+/* void sys_icc_igrpen0_set(unsigned int) */
+FUNC_BEGIN(sys_icc_igrpen0_set)
+    mcr p15, 0, r0, c12, c12, 6
+    isb
+    mov pc, lr
+
+/* unsigned int sys_icc_igrpen0_get(void) */
+FUNC_BEGIN(sys_icc_igrpen0_get)
+    mrc p15, 0, r0, c12, c12, 6
+    mov pc, lr  
+    
+/* void sys_icc_igrpen1_set(unsigned int) */
+FUNC_BEGIN(sys_icc_igrpen1_set)
+    mcr p15, 0, r0, c12, c12, 7
+    isb
+    mov pc, lr
+
+/* void sys_icc_igrpen1_get(unsigned int) */
+FUNC_BEGIN(sys_icc_igrpen1_get)
+    mrc p15, 0, r0, c12, c12, 7
+    isb
+    mov pc, lr
+    
+/* void sys_icc_ctlr_set(unsigned int) */
+FUNC_BEGIN(sys_icc_ctlr_set)
+    mcr p15, 0, r0, c12, c12, 4
+    mov pc, lr   
+
+/* unsigned int sys_icc_hppir0_get(void) */
+FUNC_BEGIN(sys_icc_hppir0_get)
+    mrc p15, 0, r0, c12, c8, 2
+    isb
+    mov pc, lr  
+
+/* unsigned int sys_icc_hppir1_get(void) */
+FUNC_BEGIN(sys_icc_hppir1_get)
+    mrc p15, 0, r0, c12, c12, 2
+    isb
+    mov pc, lr  
+
+/* void sys_icc_bpr_set(unsigned int) */
+FUNC_BEGIN(sys_icc_bpr_set)
+    mcr p15, 0, r0, c12, c8, 3
+    isb
+    mov pc, lr  
+
+
+    
+/* void sys_icc_eoir0_set(unsigned int) */
+FUNC_BEGIN(sys_icc_eoir0_set)
+    mcr p15, 0, r0, c12, c8, 1
+    isb
+    mov pc, lr  
+
+
+/* void sys_icc_eoir1_set(unsigned int) */
+FUNC_BEGIN(sys_icc_eoir1_set)
+    mcr p15, 0, r0, c12, c12, 1
+    isb
+    mov pc, lr  
+
+/* void sys_icc_pmr_set(unsigned int) */
+FUNC_BEGIN(sys_icc_pmr_set)
+    mcr p15, 0, r0, c4, c6, 0
+    isb
+    mov pc, lr  
+
+/* unsigned int sys_icc_iar1_get(void) */
+FUNC_BEGIN(sys_icc_iar1_get)
+    mrc p15, 0, r0, c12, c12, 0
+    isb
+    mov pc, lr  
+#if 0    
+/* void sys_icc_igrpen1_set(unsigned int) */
+FUNC_BEGIN(sys_icc_sgi1r_set)
+    mcrr p15, 0, r0, r1, c12
+    isb
+    mov pc, lr
+
+FUNC_BEGIN(sys_icc_sgi0r_set)
+    mcrr p15, 2, r0, r1, c12
+    isb
+    mov pc, lr
+#endif
+/* void sys_icc_sre_set(unsigned int) */
+FUNC_BEGIN(sys_icc_sre_set)
+    mcr p15, 0, r0, c12, c12, 5
+    isb
+    mov pc, lr  
+
+/* unsigned int sys_icc_sre_get(void) */
+FUNC_BEGIN(sys_icc_sre_get)
+    mrc p15, 0, r0, c12, c12, 5
+    isb
+    mov pc, lr  
+   
+ /* unsigned int sys_icc_sre_get(void) */
+FUNC_BEGIN(sys_cntkctl_get)
+    mcr	p15, 0, r0, c14, c1, 0 
+    isb
+    mov pc, lr    
+
+FUNC_BEGIN(sys_dfar_get)
+    MRC p15,0,r0,c6,c0,0
+    isb
+    mov pc, lr    
+
+FUNC_BEGIN(sys_dfsr_get)
+    MRC p15,0,r0,c5,c0,0
+    isb
+    mov pc, lr   
+
+FUNC_BEGIN(sys_ifar_get)
+   MRC p15,0,r0,c6,c0,2
+    isb
+    mov pc, lr  
+
+FUNC_BEGIN(sys_ifsr_get)
+   MRC p15,0,r0,c5,c0,1
+    isb
+    mov pc, lr 
+
+#if 0    
+FUNC_BEGIN(vxCpsrGet)
+    MRS     r0, cpsr
+    isb
+    mov pc, lr      
+
+#endif
+FUNC_BEGIN(vxMpidrGet)
+        MRC p15, 0, r0, c0, c0, 5
+        MOV pc, lr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

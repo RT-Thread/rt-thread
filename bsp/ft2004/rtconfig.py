@@ -1,0 +1,82 @@
+'''
+Author: your name
+Date: 2021-03-01 18:57:53
+LastEditTime: 2021-05-18 18:51:53
+LastEditors: Please set LastEditors
+Description: In User Settings Edit
+FilePath: \rtthread\bsp\ft2004\rtconfig.py
+'''
+import os
+
+# header = '''
+# #ifndef __MAC_AUTO_GENERATE_H__
+# #define __MAC_AUTO_GENERATE_H__
+
+# /* Automatically generated file; DO NOT EDIT. */
+# /* mac configure file for RT-Thread qemu */
+
+# #define AUTOMAC0  0x52
+# #define AUTOMAC1  0x54
+# #define AUTOMAC2  0x00
+# #define AUTOMAC'''
+
+# end = '''
+# #endif
+# '''
+
+# toolchains options
+ARCH='arm'
+CPU='cortex-a'
+CROSS_TOOL='gcc'
+
+if os.getenv('RTT_CC'):
+    CROSS_TOOL = os.getenv('RTT_CC')
+
+# only support GNU GCC compiler.
+PLATFORM    = 'gcc'
+EXEC_PATH   = '/usr/lib/arm-none-eabi/bin'
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+
+BUILD = 'debug'
+
+LIBPATH  = '/usr/lib/arm-none-eabi/lib'
+
+
+if PLATFORM == 'gcc':
+    # toolchains
+    PREFIX = 'arm-none-eabi-'
+    CC = PREFIX + 'gcc'
+    CXX = PREFIX + 'g++'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
+    TARGET_EXT = 'elf'
+    SIZE = PREFIX + 'size'
+    OBJDUMP = PREFIX + 'objdump'
+    OBJCPY = PREFIX + 'objcopy'
+    STRIP = PREFIX + 'strip'
+
+    
+    DEVICE = ' -march=armv8-a  -mfpu=vfpv4-d16 -ftree-vectorize -ffast-math -mfloat-abi=soft --specs=nano.specs --specs=nosys.specs -fno-builtin '
+    # DEVICE = ' -march=armv7-a  -mfpu=vfpv3-d16 -ftree-vectorize -ffast-math -mfloat-abi=hard'
+    CFLAGS = DEVICE + ' -Wall'
+    AFLAGS = ' -c'+ DEVICE + ' -fsingle-precision-constant  -fno-builtin -x assembler-with-cpp -D__ASSEMBLY__'    
+    LINK_SCRIPT = 'ft_aarch32.lds'
+    LFLAGS = DEVICE + '  -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
+                      ' -T %s' % LINK_SCRIPT
+
+    CPATH = ''
+    LPATH = LIBPATH
+
+    # generate debug info in all cases
+    AFLAGS += ' -gdwarf-2'
+    CFLAGS += ' -g -gdwarf-2'
+
+    if BUILD == 'debug':
+        CFLAGS += ' -O0'
+    else:
+        CFLAGS += ' -O2'
+
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
+                  SIZE + ' $TARGET \n'
