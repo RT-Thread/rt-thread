@@ -62,9 +62,6 @@ typedef uintptr_t mem_ptr_t;
             180 here because the number "108" which is used
             in arch.h has been assigned to another error code. */
 #endif
-#ifndef ESHUTDOWN
-#define ESHUTDOWN 180
-#endif
 
 #if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/time.h>
