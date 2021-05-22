@@ -225,15 +225,6 @@ Path:
 
 - bsp/imx6sx/iMX6_Platform_SDK
 
-### imx6ul
-
-License: bsd-new、proprietary-license、robert-hubley
-
-Copyright: Copyright (c) 2012, Freescale Semiconductor, Inc.
-
-Path:
-
-- bsp/imx6ul/platform
 
 ### imxrt
 
