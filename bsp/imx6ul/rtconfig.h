@@ -42,8 +42,8 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x40003
+#define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_VER_NUM 0x40004
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V2
@@ -96,6 +96,7 @@
 
 #define RT_USING_LIBC
 #define RT_USING_POSIX
+#define RT_LIBC_FIXED_TIMEZONE 8
 
 /* Network */
 
@@ -115,6 +116,9 @@
 
 
 /* Utilities */
+
+
+/* RT-Thread Utestcases */
 
 
 /* RT-Thread online packages */
@@ -148,7 +152,13 @@
 /* system packages */
 
 
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
 /* peripheral libraries and drivers */
+
+
+/* AI packages */
 
 
 /* miscellaneous packages */
@@ -156,6 +166,10 @@
 
 /* samples: kernel and components samples */
 
+
+/* entertainment: terminal games and other interesting software packages */
+
+#define RT_USING_UART1
 #define SOC_MCIMX6X4
 
 #endif
