@@ -3,8 +3,6 @@
 
 #include <rtconfig.h>
 
-#define ERRNO                       1
-
 #define LWIP_ERRNO_STDINCLUDE
 
 #define LWIP_IPV4                   1
