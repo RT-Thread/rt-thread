@@ -11,6 +11,8 @@
 
 #include <rtconfig.h>
 
+#include <sys/fcntl.h>
+
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif
