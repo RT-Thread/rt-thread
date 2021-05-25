@@ -26,6 +26,7 @@ Change log since v3.1.4
 * Fix the issue of critical protection when `rt_thread_delete` change the status of thread;
 * Fix bug in rt_realloc of mem.c, which may cause memory leak
 * Use object_find to implement thread_find/device_find
+* fix the timer code depends on c99
 
 ## Components
 
@@ -36,7 +37,6 @@ Change log since v3.1.4
 * Modify the spelling error of the macro definition, modify the printing error when printing the IMEI number
 * Fix the issue that the server closed the connection when web socket requests the data that comes back from the server, and the socket status is incorrectly judged at that point
 * Fix the issue of incorrect sal_getaddrinfo release when sal socket supports multiple network cards
-
 * Adjust where the AT socket callback function
 * Fix at_client, avoid creating the same client repeatedly and prevent working exceptions and memory leaks.
 * Fix the bug that rx_notice out of sync when the data is received after last rt_device_read() is zero
@@ -54,6 +54,8 @@ Change log since v3.1.4
   * Double free intf
   * dname buffer size is too small
   * Reset child pointer after detaching instance
+* remove jffs
+* remove uffs
 
 ## BSP and CPU porting
 
@@ -68,6 +70,10 @@ Change log since v3.1.4
 * Adjust the interrupt priority configuration of some peripherals of the STM32 series BSP
 * Fix stm32 f1 series rtc bug
 * Fix PWM timer init about pwm
+* remove zynq7000
+* delete stm32f20x/fh8620/gkipc/realview-a8
+* update sam7x/simulator/qemu-vexpress-a9/imx6ul
+* add Copyright_Notice.md
 
 ## Tools
 
