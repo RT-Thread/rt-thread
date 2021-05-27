@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -71,7 +71,7 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_PIN_12, EXTI4_15_IRQn},
     {GPIO_PIN_13, EXTI4_15_IRQn},
     {GPIO_PIN_14, EXTI4_15_IRQn},
-    {GPIO_PIN_15, EXTI4_15_IRQn}, 
+    {GPIO_PIN_15, EXTI4_15_IRQn},
 #else
     {GPIO_PIN_0, EXTI0_IRQn},
     {GPIO_PIN_1, EXTI1_IRQn},

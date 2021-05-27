@@ -150,11 +150,11 @@ static rt_err_t am_configure(struct rt_serial_device *serial, struct serial_conf
     else if (cfg->stop_bits == STOP_BITS_2)
         uart_cfg.bTwoStopBits = true;
 
-    if (cfg->parity == PARITY_NONE)    
+    if (cfg->parity == PARITY_NONE)
         uart_cfg.ui32Parity = AM_HAL_UART_PARITY_NONE;
-    else if (cfg->parity == PARITY_ODD)    
+    else if (cfg->parity == PARITY_ODD)
         uart_cfg.ui32Parity = AM_HAL_UART_PARITY_ODD;
-    else if (cfg->parity == PARITY_EVEN)    
+    else if (cfg->parity == PARITY_EVEN)
         uart_cfg.ui32Parity = AM_HAL_UART_PARITY_EVEN;
 
     uart_cfg.ui32FlowCtrl = AM_HAL_UART_FLOW_CTRL_NONE;

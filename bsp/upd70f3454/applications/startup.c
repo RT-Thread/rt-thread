@@ -48,10 +48,10 @@ void rtthread_startup(void)
 
     /* init tick */
     rt_system_tick_init();
-    
+
     /* init kernel object */
     rt_system_object_init();
-    
+
     /* init timer system */
     rt_system_timer_init();
 
@@ -93,7 +93,7 @@ int main(void)
 
     /* init system setting */
     TAB0_Start();
-    
+
     /* startup RT-Thread RTOS */
     rtthread_startup();
 

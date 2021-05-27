@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2015-04-14     ArdaFu      first version
  */
- 
+
 #include "asm9260t.h"
 #include "rtthread.h"
 #include "uart.h"

@@ -527,7 +527,7 @@ rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz)
         *mmc_clk &= ~(0x1 << 31);
         return RT_EOK;
     }
-    
+
     if (hz <= 24000000)
     {
         pll = (0x0 << 24);
@@ -579,7 +579,7 @@ rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz)
         oclk_dly = 1;
         sclk_dly = 4;
     }
-    
+
     *mmc_clk = (0x1 << 31) | pll | (sclk_dly << 20) | \
            (n << 16) | (oclk_dly << 8) | (div - 1);
 

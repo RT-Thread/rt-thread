@@ -19,23 +19,23 @@
 
 /* whether use board external SRAM memory */
 // <e>Use external SRAM memory on the board
-// 	<i>Enable External SRAM memory
+//  <i>Enable External SRAM memory
 #define LM3S_EXT_SRAM          1
-//	<o>Begin Address of External SRAM
-//		<i>Default: 0x60000000
+//  <o>Begin Address of External SRAM
+//      <i>Default: 0x60000000
 #define LM3S_EXT_SRAM_BEGIN    0x60000000 /* the begining address of external SRAM */
-//	<o>End Address of External SRAM
-//		<i>Default: 0x60000000
+//  <o>End Address of External SRAM
+//      <i>Default: 0x60000000
 #define LM3S_EXT_SRAM_END      0x607FFFFF /* the end address of external SRAM */
 // </e>
 
 // <o> Internal SRAM memory size[Kbytes] <8-64>
-//	<i>Default: 64
+//  <i>Default: 64
 #define LM3S_SRAM_SIZE         96
 #define LM3S_SRAM_END          (0x20000000 + LM3S_SRAM_SIZE * 1024)
 
 // For lm3s9b9x, it should be SYSCTL_XTAL_16MHZ
-#define LM3S_XTAL_TYPE      	SYSCTL_XTAL_168MHZ
+#define LM3S_XTAL_TYPE          SYSCTL_XTAL_168MHZ
 
 void rt_hw_board_led_on(int n);
 void rt_hw_board_led_off(int n);

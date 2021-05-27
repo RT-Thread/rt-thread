@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	8
+#define RT_NAME_MAX 8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	100
+#define RT_TICK_PER_SECOND  100
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -27,9 +27,9 @@
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
-#define RT_TIMER_THREAD_PRIO		4
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
+#define RT_TIMER_THREAD_PRIO        4
+#define RT_TIMER_THREAD_STACK_SIZE  512
+#define RT_TIMER_TICK_PER_SECOND    10
 
 /* SECTION: IPC */
 /* Using Semaphore */
@@ -62,12 +62,12 @@
 #define RT_USING_DEVICE
 /* RT_USING_UART */
 #define RT_USING_UART0
-#define RT_UART_RX_BUFFER_SIZE	64
+#define RT_UART_RX_BUFFER_SIZE  64
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console */
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 
 /* SECTION: finsh, a C-Express shell */
 /* Using FinSH as Shell*/
@@ -81,10 +81,10 @@
 ///#define RT_USING_DFS_ELMFAT
 
 /* the max number of mounted filesystem */
-///#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-///#define DFS_FD_MAX					4
-/* the max number of cached sector 		*/
-///#define DFS_CACHE_MAX_NUM   		4
+///#define DFS_FILESYSTEMS_MAX          2
+/* the max number of opened files       */
+///#define DFS_FD_MAX                   4
+/* the max number of cached sector      */
+///#define DFS_CACHE_MAX_NUM        4
 
 #endif

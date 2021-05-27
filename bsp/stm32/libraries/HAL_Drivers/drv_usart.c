@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -205,7 +205,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-        HAL_NVIC_SetPriority(uart->config->irq_type, 1, 0); 
+        HAL_NVIC_SetPriority(uart->config->irq_type, 1, 0);
         HAL_NVIC_EnableIRQ(uart->config->irq_type);
         /* enable interrupt */
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_RXNE);
@@ -273,12 +273,12 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
-    
+
     if (size == 0)
     {
         return 0;
     }
-    
+
     if (RT_SERIAL_DMA_TX == direction)
     {
         if (HAL_UART_Transmit_DMA(&uart->handle, buf, size) == HAL_OK)
@@ -867,7 +867,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 
 #if (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)) && defined(DMAMUX1)
         /* enable DMAMUX clock for L4+ and G4 */
-        __HAL_RCC_DMAMUX1_CLK_ENABLE();   
+        __HAL_RCC_DMAMUX1_CLK_ENABLE();
 #elif defined(SOC_SERIES_STM32MP1)
     __HAL_RCC_DMAMUX_CLK_ENABLE();
     __HAL_RCC_DMA2_CLK_ENABLE();
@@ -1018,7 +1018,7 @@ static void _dma_tx_complete(struct rt_serial_device *serial)
 /**
   * @brief  HAL_UART_TxCpltCallback
   * @param  huart: UART handle
-  * @note   This callback can be called by two functions, first in UART_EndTransmit_IT when 
+  * @note   This callback can be called by two functions, first in UART_EndTransmit_IT when
   *         UART Tx complete and second in UART_DMATransmitCplt function in DMA Circular mode.
   * @retval None
   */

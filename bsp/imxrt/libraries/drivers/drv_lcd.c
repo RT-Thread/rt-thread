@@ -8,7 +8,7 @@
  * 2017-10-30     Tanek        the first version
  * 2018-04-05     Liu2guang    export LCD config parameters.
  */
- 
+
 #include <rtthread.h>
 
 #ifdef BSP_USING_LCD

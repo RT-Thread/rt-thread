@@ -1,7 +1,7 @@
 #ifndef __TC_COMM_H__
 #define __TC_COMM_H__
 
-/* 
+/*
  * RT-Thread TestCase
  *
  */

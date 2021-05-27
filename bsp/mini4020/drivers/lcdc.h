@@ -28,7 +28,7 @@
 #define COLOR   (1 << 30)   //1为色彩.
 #define PBSIZE   (0 << 28)
 #define BPIX     (4 << 25)   //存储器中一个像素对应16bit
-#define PIXPOL   (0 << 24)   //像素极性—设置像素的极性,高有效	   //0<<24
+#define PIXPOL   (0 << 24)   //像素极性—设置像素的极性,高有效    //0<<24
 #define FLMPOL   (1 << 23)   //首行标志极性—设置首行标志的极性,低有效.
 #define LPPOL   (1 << 22)   //行脉冲极性—设置行脉冲信号的极性,低有效.
 #define CLKPOL   (0 << 21)   //LCD 移位时钟极性—设置LCD 移位时钟的有效沿的极性,下降延有效.

@@ -28,8 +28,8 @@
 #define mSDA_OUT()        am_hal_gpio_pin_config(SMBUS_GPIO_SDA, AM_HAL_GPIO_OUTPUT)                      /* Set SDA as Output */
 #define mSCL_OUT()        am_hal_gpio_pin_config(SMBUS_GPIO_SCL, AM_HAL_GPIO_OUTPUT)                      /* Set SCL as Output */
 
-#define ACK	      0
-#define	NACK      1
+#define ACK       0
+#define NACK      1
 
 /* SCL keep time */
 static void keep_delay(void)
@@ -46,7 +46,7 @@ static void few_delay(void)
 }
 
 static rt_uint8_t am_smbus_send_bit(rt_uint8_t send_bit)
-{       
+{
     mSDA_OUT();
     few_delay();
 
@@ -114,7 +114,7 @@ static void am_smbus_stop_bit(void)
 
 static rt_uint8_t am_smbus_tx_byte(rt_uint8_t tx_byte)
 {
-    int	i;
+    int i;
     rt_uint8_t ack_bit;
     rt_uint8_t bit_out;
 
@@ -162,7 +162,7 @@ rt_uint8_t am_smbus_tx_then_tx(rt_uint8_t SlaveAddress, rt_uint8_t command, rt_u
     int i;
 
     am_smbus_start_bit();                      /* Start condition */
-		
+
     if(am_smbus_tx_byte(SlaveAddress))         /* Send SlaveAddress and write */
         return 1;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -64,7 +64,7 @@ void rtthread_startup(void)
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
 #endif
-    
+
     /* init scheduler system */
     rt_system_scheduler_init();
 

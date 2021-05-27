@@ -64,10 +64,10 @@ void rt_hw_board_init()
 int rt_hw_cpu_init(void)
 {
     MAP_IntMasterDisable();
-    IntRegister(FAULT_HARD, HardFault_Handler);	
+    IntRegister(FAULT_HARD, HardFault_Handler);
     IntRegister(FAULT_PENDSV, PendSV_Handler);
     IntRegister(FAULT_SYSTICK, SysTick_Handler);
-    
+
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
     // extra stack usage.
@@ -83,7 +83,7 @@ int rt_hw_cpu_init(void)
     MAP_SysTickDisable();
     MAP_SysTickPeriodSet(SystemCoreClock/ RT_TICK_PER_SECOND - 1);
     MAP_SysTickIntEnable();
-    MAP_SysTickEnable();	
+    MAP_SysTickEnable();
 
     return 0;
 }

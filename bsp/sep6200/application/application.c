@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author		Notes
+ * Date           Author        Notes
  * 2013-7-14      Peng Fan  Simple application
  */
 
@@ -45,31 +45,31 @@ void rt_test2_thread_entry(void *parameter)
 
 int rt_application_init(void)
 {
-	rt_thread_t init_thread;
-	rt_thread_t test1_thread;
-	rt_thread_t test2_thread;
+    rt_thread_t init_thread;
+    rt_thread_t test1_thread;
+    rt_thread_t test2_thread;
 
-	init_thread = rt_thread_create("init",
-								rt_init_thread_entry, RT_NULL,
-								RT_INIT_THREAD_STACK_SIZE, 8, 20);
+    init_thread = rt_thread_create("init",
+                                rt_init_thread_entry, RT_NULL,
+                                RT_INIT_THREAD_STACK_SIZE, 8, 20);
 
-	test1_thread = rt_thread_create("test1",
-								rt_test1_thread_entry, RT_NULL,
-								512, 200, 20);
-	test2_thread = rt_thread_create("test2",
-								rt_test2_thread_entry, RT_NULL,
-								512, 200, 20);
+    test1_thread = rt_thread_create("test1",
+                                rt_test1_thread_entry, RT_NULL,
+                                512, 200, 20);
+    test2_thread = rt_thread_create("test2",
+                                rt_test2_thread_entry, RT_NULL,
+                                512, 200, 20);
 
-	if (init_thread != RT_NULL)
-		rt_thread_startup(init_thread);
+    if (init_thread != RT_NULL)
+        rt_thread_startup(init_thread);
 
-	if (test1_thread != RT_NULL)
-		rt_thread_startup(test1_thread);
+    if (test1_thread != RT_NULL)
+        rt_thread_startup(test1_thread);
 
-	if (test2_thread != RT_NULL)
-		rt_thread_startup(test2_thread);
+    if (test2_thread != RT_NULL)
+        rt_thread_startup(test2_thread);
 
-	return 0;
+    return 0;
 }
 
 /*@}*/

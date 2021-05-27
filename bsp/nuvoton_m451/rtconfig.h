@@ -3,16 +3,16 @@
 #define __RTTHREAD_CFG_H__
 
 /* RT_NAME_MAX*/
-#define RT_NAME_MAX	   8
+#define RT_NAME_MAX    8
 
 /* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+#define RT_ALIGN_SIZE   4
 
 /* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
+#define RT_THREAD_PRIORITY_MAX  32
 //#define IDLE_THREAD_STACK_SIZE 128
 /* Tick per Second */
-#define RT_TICK_PER_SECOND	1000
+#define RT_TICK_PER_SECOND  1000
 
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
@@ -26,9 +26,9 @@
 
 /* Using Software Timer */
 /* #define RT_USING_TIMER_SOFT */
-#define RT_TIMER_THREAD_PRIO		4
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
+#define RT_TIMER_THREAD_PRIO        4
+#define RT_TIMER_THREAD_STACK_SIZE  512
+#define RT_TIMER_TICK_PER_SECOND    10
 
 /* SECTION: IPC */
 /* Using Semaphore*/
@@ -71,9 +71,9 @@
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
 /* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE  128
 // <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
-#define RT_CONSOLE_DEVICE_NAME	    "uart0"
+#define RT_CONSOLE_DEVICE_NAME      "uart0"
 
 
 
@@ -82,9 +82,9 @@
 /* configure finsh parameters */
 /*
 #define FINSH_THREAD_PRIORITY 25
-#define FINSH_THREAD_STACK_SIZE	1024
+#define FINSH_THREAD_STACK_SIZE 1024
 #define FINSH_USING_HISTORY 0
-#define FINSH_HISTORY_LINES	1
+#define FINSH_HISTORY_LINES 1
 */
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
@@ -100,17 +100,17 @@
 /* Reentrancy (thread safe) of the FatFs module.  */
 #define RT_DFS_ELM_REENTRANT
 /* Number of volumes (logical drives) to be used. */
-#define RT_DFS_ELM_DRIVES			2
-/* #define RT_DFS_ELM_USE_LFN			1 */
-#define RT_DFS_ELM_MAX_LFN			255
+#define RT_DFS_ELM_DRIVES           2
+/* #define RT_DFS_ELM_USE_LFN           1 */
+#define RT_DFS_ELM_MAX_LFN          255
 /* Maximum sector size to be handled. */
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  512
 
 #define RT_USING_DFS_ROMFS
 
 /* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
+#define DFS_FILESYSTEMS_MAX         2
+/* the max number of opened files       */
+#define DFS_FD_MAX                  4
 
 #endif

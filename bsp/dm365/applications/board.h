@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author		Notes
- * 2011-01-13     weety		first version
+ * Date           Author        Notes
+ * 2011-01-13     weety     first version
  */
 
 

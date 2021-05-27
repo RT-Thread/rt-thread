@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2018-02-08     Zhangyihong  the first version
  * 2018-10-29     XY
  */
- 
+
 #ifndef __DRV_TOUCH_H__
 #define __DRV_TOUCH_H__
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,9 +12,9 @@
 #define DRV_ONESHOT_H__
 
 typedef enum{
-	WM_UDP,
+    WM_UDP,
     WM_APSOCKET,
-	WM_APWEB
+    WM_APWEB
 }WM_ONESHOT_MODE;
 
 

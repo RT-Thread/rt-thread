@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,17 +20,17 @@
 
 void rt_hw_trap_irq(void)
 {
-	int irqno;
-	extern struct rt_irq_desc irq_desc[]; 
+    int irqno;
+    extern struct rt_irq_desc irq_desc[];
 
-	/* get interrupt number */
-	irqno = AT91C_BASE_AIC->AIC_ISR;
+    /* get interrupt number */
+    irqno = AT91C_BASE_AIC->AIC_ISR;
 
-	/* invoke isr with parameters */
-	irq_desc[irqno].handler(irqno, irq_desc[irqno].param);
+    /* invoke isr with parameters */
+    irq_desc[irqno].handler(irqno, irq_desc[irqno].param);
 
-	/* end of interrupt */
-	AT91C_BASE_AIC->AIC_EOICR = 0;
+    /* end of interrupt */
+    AT91C_BASE_AIC->AIC_EOICR = 0;
 }
 
 void rt_hw_trap_fiq(void)
@@ -41,9 +41,9 @@ void rt_hw_trap_fiq(void)
 extern struct rt_thread* rt_current_thread;
 void rt_hw_trap_abort(void)
 {
-	rt_kprintf("Abort occured!!! Thread [%s] suspended.\n",rt_current_thread->name);
-	rt_thread_suspend(rt_current_thread);
-	rt_schedule();
+    rt_kprintf("Abort occured!!! Thread [%s] suspended.\n",rt_current_thread->name);
+    rt_thread_suspend(rt_current_thread);
+    rt_schedule();
 
 }
 /*@}*/
