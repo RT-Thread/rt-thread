@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -531,7 +531,9 @@ void rt_timer_check(void)
     struct rt_timer *t;
     rt_tick_t current_tick;
     register rt_base_t level;
-    rt_list_t list = RT_LIST_OBJECT_INIT(list);
+    rt_list_t list;
+
+    rt_list_init(&list);
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("timer check enter\n"));
 
@@ -613,7 +615,9 @@ void rt_soft_timer_check(void)
     rt_tick_t current_tick;
     struct rt_timer *t;
     register rt_base_t level;
-    rt_list_t list = RT_LIST_OBJECT_INIT(list);
+    rt_list_t list;
+
+    rt_list_init(&list);
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check enter\n"));
 
