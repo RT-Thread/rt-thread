@@ -24,6 +24,7 @@ config FT2004
     select ARCH_ARM_CORTEX_A
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_GIC_V3
     default y
 
 
