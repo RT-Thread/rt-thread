@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-5-30      Bernard      the first version
  */
- 
+
 #ifndef __DRV_WIFI_H__
 #define __DRV_WIFI_H__
 

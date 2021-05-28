@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author		Notes
- * 2010-11-13     weety		first version
+ * Date           Author        Notes
+ * 2010-11-13     weety     first version
  */
 
 
@@ -24,7 +24,7 @@
  */
 void machine_reset()
 {
-	reset_system();
+    reset_system();
 }
 
 /**
@@ -44,14 +44,14 @@ FINSH_FUNCTION_EXPORT_ALIAS(rt_hw_cpu_reset, reset, restart the system);
 #ifdef FINSH_USING_MSH
 int cmd_reset(int argc, char** argv)
 {
-	rt_hw_cpu_reset();
-	return 0;
+    rt_hw_cpu_reset();
+    return 0;
 }
 
 int cmd_shutdown(int argc, char** argv)
 {
-	rt_hw_cpu_shutdown();
-	return 0;
+    rt_hw_cpu_shutdown();
+    return 0;
 }
 
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_reset, __cmd_reset, restart the system.);

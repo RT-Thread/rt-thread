@@ -24,17 +24,17 @@ extern int elm_init(void);
 void components_init(void)
 {
 #ifdef RT_USING_DFS
-	rt_floppy_init();
-	/* initialize the device file system */
-	dfs_init();
+    rt_floppy_init();
+    /* initialize the device file system */
+    dfs_init();
 
 #ifdef RT_USING_DFS_ELMFAT
-	/* initialize the elm chan FatFS file system*/
-	elm_init();
+    /* initialize the elm chan FatFS file system*/
+    elm_init();
 #endif
 
 #ifdef RT_USING_MODULE
-	rt_system_dlmodule_init();
+    rt_system_dlmodule_init();
 #endif
 #endif
 }

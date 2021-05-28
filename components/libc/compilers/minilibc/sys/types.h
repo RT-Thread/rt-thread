@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,7 +38,7 @@ typedef int caddr_t;
 typedef unsigned int wint_t;
 typedef unsigned long useconds_t;
 
-typedef	unsigned long clock_t; /* clock() */
+typedef unsigned long clock_t; /* clock() */
 
 #ifndef NULL
 #define NULL        (0)

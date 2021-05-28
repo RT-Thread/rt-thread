@@ -21,21 +21,21 @@ extern void finsh_set_device(const char* device);
 int main(void)
 {
 #ifdef RT_USING_HEAP
-	extern void __heap_start__;
-	extern void __heap_end__;
+    extern void __heap_start__;
+    extern void __heap_end__;
 #endif
 
-	rt_hw_board_init();
-	rt_system_tick_init();
-	rt_system_object_init();
-	rt_system_timer_init();
+    rt_hw_board_init();
+    rt_system_tick_init();
+    rt_system_object_init();
+    rt_system_timer_init();
 
 #ifdef RT_USING_HEAP
-	rt_system_heap_init(&__heap_start__, &__heap_end__);
+    rt_system_heap_init(&__heap_start__, &__heap_end__);
 #endif
 
-	rt_system_scheduler_init();
-	rt_application_init();
+    rt_system_scheduler_init();
+    rt_application_init();
 
 #ifdef RT_USING_FINSH
     /* init finsh */
@@ -44,7 +44,7 @@ int main(void)
 #endif
 
     rt_thread_idle_init();
-	rt_system_scheduler_start();
+    rt_system_scheduler_start();
 
-	return 0;
+    return 0;
 }

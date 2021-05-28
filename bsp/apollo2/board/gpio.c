@@ -56,7 +56,7 @@ void am_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     else if (value == PIN_HIGH)
     {
         am_hal_gpio_out_bit_set(pin);
-    }    
+    }
 }
 
 int am_pin_read(rt_device_t dev, rt_base_t pin)

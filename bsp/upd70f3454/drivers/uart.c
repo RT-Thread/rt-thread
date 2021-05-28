@@ -192,7 +192,7 @@ static rt_size_t rt_uart_write(rt_device_t dev, rt_off_t pos, const void* buffer
             while (UA1TSF == 1U)
                 ;
             UA1TX = *ptr;
-  
+
             ptr ++;
             size --;
         }

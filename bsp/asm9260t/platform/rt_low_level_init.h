@@ -9,7 +9,7 @@
  */
 #ifndef __RT_LOW_LEVEL_INIT_H__
 #define __RT_LOW_LEVEL_INIT_H__
- 
+
 /*-------- Stack size of CPU modes -------------------------------------------*/
 #define UND_STK_SIZE 512
 #define SVC_STK_SIZE 4096

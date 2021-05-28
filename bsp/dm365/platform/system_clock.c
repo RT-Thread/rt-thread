@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author		Notes
- * 2010-11-13     weety		first version
+ * Date           Author        Notes
+ * 2010-11-13     weety     first version
  */
 
 
@@ -19,6 +19,6 @@ extern int davinci_clk_init(void);
  */
 void rt_hw_clock_init(void)
 {
-	davinci_clk_init();
+    davinci_clk_init();
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,7 @@
  * 2018-10-30     SummerGift   first version
  * 2019-01-05     zylx         modify dma support
  */
- 
+
 #ifndef __UART_CONFIG_H__
 #define __UART_CONFIG_H__
 
@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #if defined(BSP_USING_UART1)
-#ifndef UART1_CONFIG    
+#ifndef UART1_CONFIG
 #define UART1_CONFIG                                                \
     {                                                               \
         .name = "uart1",                                            \
@@ -74,7 +74,7 @@ extern "C" {
     }
 #endif /* UART2_DMA_TX_CONFIG */
 #endif /* BSP_UART2_TX_USING_DMA */
-    
+
 #if defined(BSP_USING_UART3)
 #ifndef UART3_CONFIG
 #define UART3_CONFIG                                                \

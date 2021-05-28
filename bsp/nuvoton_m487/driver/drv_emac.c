@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -101,7 +101,7 @@ static void init_tx_desc(void)
 
     cur_tx_desc_ptr = fin_tx_desc_ptr = &tx_desc[0];
 
-    for(i = 0; i < TX_DESCRIPTOR_NUM; i++) 
+    for(i = 0; i < TX_DESCRIPTOR_NUM; i++)
     {
         tx_desc[i].status1 = TXFD_PADEN | TXFD_CRCAPP | TXFD_INTEN;
         tx_desc[i].buf = (rt_uint8_t*)tx_buf[i];
@@ -248,7 +248,7 @@ __inline static rt_uint8_t *emac_get_tx_buf(void)
 __inline static void ETH_trigger_tx(rt_uint16_t length)
 {
     struct eth_descriptor volatile *desc;
-    
+
     cur_tx_desc_ptr->status2 = (unsigned int)length;
     desc = cur_tx_desc_ptr->next;    // in case TX is transmitting and overwrite next pointer before we can update cur_tx_desc_ptr
     cur_tx_desc_ptr->status1 |= OWNERSHIP_EMAC;
@@ -290,7 +290,7 @@ void EMAC_RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    
+
     unsigned int status = EMAC->INTSTS;
 
     if(status & EMAC_INTSTS_RDUIF_Msk)
@@ -523,7 +523,7 @@ static rt_err_t rt_m480_emac_init(rt_device_t dev)
 #if LWIP_IPV4 && LWIP_IGMP
     netif_set_igmp_mac_filter(eth.netif, igmp_mac_filter);
 #endif /* LWIP_IPV4 && LWIP_IGMP */
-    
+
     return RT_EOK;
 }
 
@@ -666,7 +666,7 @@ start:
     }
 
     return p;
-    
+
 end:
     if(!(EMAC->INTEN & EMAC_INTEN_RDUIEN_Msk))
     {
@@ -680,7 +680,7 @@ end:
         EMAC->INTSTS = EMAC_INTSTS_RXGDIF_Msk;
         EMAC->INTEN |= EMAC_INTEN_RXGDIEN_Msk;
     }
-    
+
     return RT_NULL;
 }
 

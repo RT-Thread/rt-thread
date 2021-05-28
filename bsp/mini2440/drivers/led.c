@@ -18,19 +18,19 @@
 
 void rt_hw_led_init(void)
 {
-	/* GPB5,GPB6,GPB7,GPB8 for LED */
-	GPBCON = GPBCON & (~(0xff << 10)) | (0x55 << 10);
-	GPBUP  |= (0x0f << 5);
+    /* GPB5,GPB6,GPB7,GPB8 for LED */
+    GPBCON = GPBCON & (~(0xff << 10)) | (0x55 << 10);
+    GPBUP  |= (0x0f << 5);
 }
 
 void rt_hw_led_on(unsigned char value)
 {
-	GPBDAT &= ~ ((value & 0x0f) << 5);
+    GPBDAT &= ~ ((value & 0x0f) << 5);
 }
 
 void rt_hw_led_off(unsigned char value)
 {
-	GPBDAT |= (value & 0x0f) << 5;
+    GPBDAT |= (value & 0x0f) << 5;
 }
 
 /*@}*/

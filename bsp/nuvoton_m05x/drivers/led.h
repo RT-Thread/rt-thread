@@ -15,7 +15,7 @@
 #include <rtthread.h>
 #include "M051Series.h"
 
-void rt_hw_led_on(void); 
+void rt_hw_led_on(void);
 void rt_hw_led_off(void);
 
 #endif

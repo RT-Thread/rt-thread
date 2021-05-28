@@ -18,7 +18,7 @@
 struct rt_messagequeue adcbat_mq;
 
 #define BATTERY_GPIO            35                        /* Battery */
-#define BATTERY_ADC_PIN         AM_HAL_PIN_35_ADCSE7 
+#define BATTERY_ADC_PIN         AM_HAL_PIN_35_ADCSE7
 #define BATTERY_ADC_CHANNEL     AM_HAL_ADC_SLOT_CHSEL_SE7 /* BATTERY ADC采集通道 */
 #define BATTERY_ADC_CHANNELNUM  7                         /* BATTERY ADC采集通道号 */
 
@@ -38,7 +38,7 @@ rt_uint8_t am_adc_data_get(rt_uint8_t channel, rt_int16_t *buff, rt_uint16_t siz
 
     if (channel == BATTERY_ADC_CHANNELNUM)
     {
-        /* wait adc message forever */	
+        /* wait adc message forever */
         rt_mq_recv(&adcbat_mq, adc_bufftemp, 32, RT_WAITING_FOREVER);
     }
 

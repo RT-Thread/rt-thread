@@ -14,7 +14,7 @@
 extern void cache_init(rt_ubase_t cache_size, rt_ubase_t cache_line_size);
 void r4k_cache_init(void)
 {
-//	cache_init(dcache_size, cpu_dcache_line_size);
+//  cache_init(dcache_size, cpu_dcache_line_size);
 }
 
 void r4k_cache_flush_all(void)
@@ -31,7 +31,7 @@ void r4k_icache_flush_all(void)
 
 void r4k_icache_flush_range(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
+    rt_ubase_t end, a;
 
     if (size > g_mips_core.icache_size)
     {
@@ -39,7 +39,7 @@ void r4k_icache_flush_range(rt_ubase_t addr, rt_ubase_t size)
     }
     else
     {
-    	rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
+        rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
 
         a = addr & ~(ic_lsize - 1);
         end = ((addr + size) - 1) & ~(ic_lsize - 1);
@@ -55,8 +55,8 @@ void r4k_icache_flush_range(rt_ubase_t addr, rt_ubase_t size)
 
 void r4k_icache_lock_range(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
-	rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
+    rt_ubase_t end, a;
+    rt_ubase_t ic_lsize = g_mips_core.icache_line_size;
 
     a = addr & ~(ic_lsize - 1);
     end = ((addr + size) - 1) & ~(ic_lsize - 1);
@@ -71,7 +71,7 @@ void r4k_icache_lock_range(rt_ubase_t addr, rt_ubase_t size)
 
 void r4k_dcache_inv(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
+    rt_ubase_t end, a;
     rt_ubase_t dc_lsize = g_mips_core.dcache_line_size;
 
     a = addr & ~(dc_lsize - 1);
@@ -87,7 +87,7 @@ void r4k_dcache_inv(rt_ubase_t addr, rt_ubase_t size)
 
 void r4k_dcache_wback_inv(rt_ubase_t addr, rt_ubase_t size)
 {
-	rt_ubase_t end, a;
+    rt_ubase_t end, a;
 
     if (size >= g_mips_core.dcache_size)
     {
@@ -95,7 +95,7 @@ void r4k_dcache_wback_inv(rt_ubase_t addr, rt_ubase_t size)
     }
     else
     {
-    	rt_ubase_t dc_lsize = g_mips_core.dcache_line_size;
+        rt_ubase_t dc_lsize = g_mips_core.dcache_line_size;
 
         a = addr & ~(dc_lsize - 1);
         end = ((addr + size) - 1) & ~(dc_lsize - 1);

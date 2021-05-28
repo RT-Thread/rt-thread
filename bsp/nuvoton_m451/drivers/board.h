@@ -18,7 +18,7 @@
 
 /* board configuration */
 // <o> Internal SRAM memory size[Kbytes]
-//	<i>Default: 64
+//  <i>Default: 64
 #define M451_SRAM_SIZE         32
 #define M451_SRAM_END          (0x20000000 + M451_SRAM_SIZE * 1024)
 

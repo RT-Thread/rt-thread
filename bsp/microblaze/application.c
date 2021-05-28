@@ -16,7 +16,7 @@
 
 int rt_application_init()
 {
-	return 0;
+    return 0;
 }
 
 /*@}*/

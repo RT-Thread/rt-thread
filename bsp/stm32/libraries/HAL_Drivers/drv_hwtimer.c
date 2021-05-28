@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -173,10 +173,10 @@ static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_dou
     }
     if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
     {
-       *pclk2_doubler = 2; 
+       *pclk2_doubler = 2;
     }
 #else
-    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)    
+    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
     {
          *pclk1_doubler = 2;
     }
@@ -282,7 +282,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     {
         tim->Instance->CR1 &= (~TIM_OPMODE_SINGLE);
     }
-	
+
     /* start timer */
     if (HAL_TIM_Base_Start_IT(tim) != HAL_OK)
     {
