@@ -358,6 +358,8 @@ RTM_EXPORT(rt_thread_startup);
  */
 rt_err_t rt_thread_detach(rt_thread_t thread)
 {
+    rt_base_t lock;
+
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
@@ -377,11 +379,17 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
 
+    /* disable interrupt */
+    lock = rt_hw_interrupt_disable();
+
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
     /* detach thread object */
     rt_object_detach((rt_object_t)thread);
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(lock);
 
     return RT_EOK;
 }
