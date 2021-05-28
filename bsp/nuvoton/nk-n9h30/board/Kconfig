@@ -1,0 +1,75 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        source "$BSP_DIR/../libraries/n9h30/rtt_port/Kconfig"
+    endmenu
+
+    menu "On-board Peripheral Drivers"
+
+        config BSP_USING_CONSOLE
+            bool "Enable UART0 for RTT Console(uart0)"
+            select BSP_USING_UART
+            select BSP_USING_UART0
+            default y
+
+        config BOARD_USING_IP101GR
+            bool "Enable ethernet phy supporting(over emac/mdio)"
+            select BSP_USING_EMAC
+            select BSP_USING_EMAC0
+            select BSP_USING_EMAC1
+            default n
+
+        config BOARD_USING_NAU8822
+            bool "NAU8822 Audio Codec supporting(over i2s, i2c0)"
+            select NU_PKG_USING_NAU8822
+            select BSP_USING_I2C0
+            select BSP_USING_I2S
+            select BSP_USING_I2S0
+            default n
+
+        config BOARD_USING_STORAGE_SDCARD
+            bool "SDCARD supporting(over sdh1)"
+            select BSP_USING_SDH
+            select BSP_USING_SDH1
+            default y
+
+        config BOARD_USING_STORAGE_SPIFLASH
+            bool "SPIFLASH supporting(over qspi0)"
+            select BSP_USING_QSPI
+            select BSP_USING_QSPI0
+            default y
+
+        config BOARD_USING_BUZZER
+            bool "BUZZER.(over pwm0_ch1)"
+            select BSP_USING_PWM
+            select BSP_USING_PWM0
+            default n
+
+        config BOARD_USING_LCM
+            bool "NuDesign TFT-LCD7(over vpost)"
+            select BSP_USING_VPOST
+            select LCM_USING_FW070TFT
+            default y
+
+        config BOARD_USING_USB0_DEVICE_HOST
+            select BSP_USING_USBH
+            select BSP_USING_USBD
+            bool "Enable USB0 Device/Host"
+            help
+                Choose this option if you need USB device or host function mode.
+                    If you need USB host, please remember short to ground on JP1 jumper.
+
+        config BOARD_USING_USB1_HOST
+            select BSP_USING_USBH
+            bool "Enable USB1 Host"
+            help
+                Choose this option if you need USB1 HOST.
+
+    endmenu
+
+    menu "Board extended module drivers"
+
+    endmenu
+
+
+endmenu

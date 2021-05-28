@@ -124,6 +124,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
         break;
 
     default:
+        RT_ASSERT(0);
         break;
     }
 

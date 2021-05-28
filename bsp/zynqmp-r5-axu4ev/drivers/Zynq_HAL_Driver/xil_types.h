@@ -1,5 +1,5 @@
-#ifndef XIL_TYPES_H	/* prevent circular inclusions */
-#define XIL_TYPES_H	/* by using protection macros */
+#ifndef XIL_TYPES_H    /* prevent circular inclusions */
+#define XIL_TYPES_H    /* by using protection macros */
 
 #include <rtdef.h>
 #include <stdint.h>
@@ -12,25 +12,25 @@ extern "C" {
 /************************** Constant Definitions *****************************/
 
 #ifndef TRUE
-#  define TRUE		1U
+#  define TRUE        1U
 #endif
 
 #ifndef FALSE
-#  define FALSE		0U
+#  define FALSE        0U
 #endif
 
 #ifndef NULL
-#define NULL		0U
+#define NULL        0U
 #endif
 
 #define XIL_COMPONENT_IS_READY     0x11111111U  /**< In device drivers, This macro will be
                                                  assigend to "IsReady" member of driver
-												 instance to indicate that driver
-												 instance is initialized and ready to use. */
+                                                 instance to indicate that driver
+                                                 instance is initialized and ready to use. */
 #define XIL_COMPONENT_IS_STARTED   0x22222222U  /**< In device drivers, This macro will be assigend to
                                                  "IsStarted" member of driver instance
-												 to indicate that driver instance is
-												 started and it can be enabled. */
+                                                 to indicate that driver instance is
+                                                 started and it can be enabled. */
 
 typedef rt_uint8_t u8;
 typedef rt_uint16_t u16;
@@ -54,6 +54,9 @@ typedef long LONG;
 typedef unsigned long ULONG;
 #endif
 
+#define ULONG64_HI_MASK    0xFFFFFFFF00000000U
+#define ULONG64_LO_MASK    ~ULONG64_HI_MASK
+
 /** @{ */
 /**
  * This data type defines an interrupt handler for a device.
@@ -70,15 +73,15 @@ typedef void (*XExceptionHandler) (void *InstancePtr);
 /************************** Constant Definitions *****************************/
 
 #ifndef TRUE
-#define TRUE		1U
+#define TRUE        1U
 #endif
 
 #ifndef FALSE
-#define FALSE		0U
+#define FALSE        0U
 #endif
 
 #ifndef NULL
-#define NULL		0U
+#define NULL        0U
 #endif
 
 #ifdef __cplusplus
@@ -90,7 +93,7 @@ typedef void (*XExceptionHandler) (void *InstancePtr);
 }
 #endif
 
-#endif	/* end of protection macro */
+#endif    /* end of protection macro */
 /**
 * @} End of "addtogroup common_types".
 */

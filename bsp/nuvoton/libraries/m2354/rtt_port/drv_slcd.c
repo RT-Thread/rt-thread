@@ -222,7 +222,7 @@ static int rt_hw_slcd_init(void)
     {
         ret = rt_hw_slcd_register(&nu_slcd_arr[i].dev, nu_slcd_arr[i].name, RT_DEVICE_FLAG_RDWR, NULL);
         RT_ASSERT(ret == RT_EOK);
-        nu_slcd_arr[i].lock = rt_mutex_create(nu_slcd_arr[i].name, RT_IPC_FLAG_FIFO);
+        nu_slcd_arr[i].lock = rt_mutex_create(nu_slcd_arr[i].name, RT_IPC_FLAG_PRIO);
         RT_ASSERT(nu_slcd_arr[i].lock != RT_NULL);
     }
 

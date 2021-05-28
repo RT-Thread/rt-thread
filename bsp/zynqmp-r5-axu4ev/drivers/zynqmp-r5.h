@@ -9,11 +9,11 @@
 #define __REG8(x)  (*((volatile rt_uint8_t *)(x)))
 
 #define ZynqMP_CRL_APB_BASEADDR        XPAR_PSU_CRL_APB_S_AXI_BASEADDR
-#define ZynqMP_CRL_APB_IOPLL_CTRL	   0x020    
-#define ZynqMP_CRL_APB_IOPLL_CFG	   0x024   
-#define ZynqMP_CRL_APB_UART0_REF_CTRL  0x074   
-#define ZynqMP_CRL_APB_UART1_REF_CTRL  0x078   
-#define ZynqMP_CRL_APB_LPD_LSBUS_CTRL  0x0AC  
+#define ZynqMP_CRL_APB_IOPLL_CTRL       0x020
+#define ZynqMP_CRL_APB_IOPLL_CFG       0x024
+#define ZynqMP_CRL_APB_UART0_REF_CTRL  0x074
+#define ZynqMP_CRL_APB_UART1_REF_CTRL  0x078
+#define ZynqMP_CRL_APB_LPD_LSBUS_CTRL  0x0AC
 #define ZynqMP_CRL_APB_RESET_CTRL      0x218
 #define ZynqMP_RESET_MASK       0x10
 

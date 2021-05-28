@@ -22,7 +22,7 @@
 
 USBH_T     *_ohci;
 
-static UDEV_DRV_T *  _drivers[MAX_UDEV_DRIVER];
+static UDEV_DRV_T   *_drivers[MAX_UDEV_DRIVER];
 static CONN_FUNC  *g_conn_func, *g_disconn_func;
 
 /// @endcond HIDDEN_SYMBOLS
@@ -34,7 +34,7 @@ static CONN_FUNC  *g_conn_func, *g_disconn_func;
   */
 void  usbh_core_init()
 {
-    if((__PC() & NS_OFFSET) == NS_OFFSET)
+    if ((__PC() & NS_OFFSET) == NS_OFFSET)
     {
         _ohci = USBH_NS;
     }
@@ -50,7 +50,7 @@ void  usbh_core_init()
     g_conn_func = NULL;
     g_disconn_func = NULL;
 
- //   usbh_hub_init();
+//   usbh_hub_init();
 
     usbh_memory_init();
 
@@ -111,7 +111,7 @@ int usbh_connect_device(UDEV_T *udev)
 
     if (g_conn_func)
         g_conn_func(udev, 0);
-    
+
     return 0;
 }
 
@@ -123,8 +123,8 @@ void usbh_disconnect_device(UDEV_T *udev)
     if (g_disconn_func)
         g_disconn_func(udev, 0);
 
-    
-#if 1    //CHECK: Maybe create a new API to quit_xfer and free udev for application    
+
+#if 1    //CHECK: Maybe create a new API to quit_xfer and free udev for application
     usbh_quit_xfer(udev, &(udev->ep0));    /* Quit control transfer if hw_pipe is not NULL.  */
 
     /* remove device from global device list */
@@ -153,7 +153,7 @@ int usbh_reset_port(UDEV_T *udev)
     if (udev->parent == NULL)
     {
         if (udev->hc_driver)
-            return udev->hc_driver->rthub_port_reset(udev->port_num-1);
+            return udev->hc_driver->rthub_port_reset(udev->port_num - 1);
         else
             return USBH_ERR_NOT_FOUND;
     }
@@ -171,7 +171,7 @@ int usbh_reset_port(UDEV_T *udev)
   */
 int usbh_quit_utr(UTR_T *utr)
 {
-    if(!utr || !utr->udev)
+    if (!utr || !utr->udev)
         return USBH_ERR_NOT_FOUND;
 
     return utr->udev->hc_driver->quit_xfer(utr, NULL);
