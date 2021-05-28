@@ -76,10 +76,14 @@ void rt_tick_increase(void)
     -- thread->remaining_tick;
     if (thread->remaining_tick == 0)
     {
+        rt_base_t level;
+
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;
 
+        level = rt_hw_interrupt_disable();
         thread->stat |= RT_THREAD_STAT_YIELD;
+        rt_hw_interrupt_enable(level);
 
         rt_schedule();
     }
