@@ -53,7 +53,7 @@ volatile unsigned int *gpio_get_en_reg(unsigned int gpio)
 {
     volatile unsigned int *gpio_enx = NULL;         // GPIO_ENx寄存器
     unsigned int port = GPIO_GET_PORT(gpio);
-    
+
     switch (port)
     {
         case 0:
@@ -235,4 +235,4 @@ void gpio_set_irq_type(unsigned int gpio, gpio_irq_type_t type)
 }
 
 
-    
+

@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-03-27     Liuguang     the first version.
  */
- 
+
 #ifndef DRV_SPI_H__
 #define DRV_SPI_H__
 

@@ -53,7 +53,7 @@ void *uart_get_base(ls1b_uart_t UARTx)
         case LS1B_UART1:
             base = (void *)LS1B_UART1_BASE;
             break;
-        
+
         case LS1B_UART2:
             base = (void *)LS1B_UART2_BASE;
             break;
@@ -61,7 +61,7 @@ void *uart_get_base(ls1b_uart_t UARTx)
         case LS1B_UART3:
             base = (void *)LS1B_UART3_BASE;
             break;
-        
+
         case LS1B_UART4:
             base = (void *)LS1B_UART4_BASE;
             break;
@@ -165,7 +165,7 @@ BOOL uart_is_transmit_empty(ls1b_uart_t uartx)
 void uart_putc(ls1b_uart_t uartx, unsigned char ch)
 {
     void *uart_base = uart_get_base(uartx);
-    
+
     // 等待
     while (FALSE == uart_is_transmit_empty(uartx))
         ;
@@ -205,7 +205,7 @@ void uart2_init(void)
     // 设置复用
     pin_set_remap(tx_gpio, PIN_REMAP_SECOND);
     pin_set_remap(rx_gpio, PIN_REMAP_SECOND);
-    
+
     // 初始化相关寄存器
     debug_uart_info.UARTx = LS1B_UART2;
     debug_uart_info.baudrate = 115200;

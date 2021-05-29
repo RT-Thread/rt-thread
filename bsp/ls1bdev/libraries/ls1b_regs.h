@@ -74,8 +74,8 @@
 #define LS1B_REG_BASE_PWM3                  (0xbfe5c030)
 
 //CAN基地址
-#define  LS1B_REG_BASE_CAN0				    (0xbfe50000)
-#define  LS1B_REG_BASE_CAN1					(0xbfe54000)
+#define  LS1B_REG_BASE_CAN0                 (0xbfe50000)
+#define  LS1B_REG_BASE_CAN1                 (0xbfe54000)
 
 // 中断配置寄存器
 #define LS1B_INT0_SR                        (0xbfd01040)

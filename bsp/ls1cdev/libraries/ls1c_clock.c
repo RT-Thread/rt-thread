@@ -56,7 +56,7 @@ unsigned long clk_get_pll_rate(void)
 
     ctrl = reg_read_32((volatile unsigned int *)LS1C_START_FREQ);
     pll_rate = (((ctrl & M_PLL) >> M_PLL_SHIFT) + ((ctrl & FRAC_N) >> FRAC_N_SHIFT)) * APB_CLK / 4;
-    
+
     return pll_rate;
 }
 

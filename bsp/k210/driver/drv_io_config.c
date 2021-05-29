@@ -22,7 +22,7 @@ static struct io_config
     int io_num;
     fpioa_function_t func;
     const char * func_name;
-} io_config[] = 
+} io_config[] =
 {
 #ifdef BSP_USING_LCD
     IOCONFIG(BSP_LCD_CS_PIN, FUNC_SPI0_SS0),                 /* LCD CS PIN */

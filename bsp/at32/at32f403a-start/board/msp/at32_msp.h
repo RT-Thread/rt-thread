@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2021-04-13     shelton      first version
  */
- 
+
 #ifndef __AT32_MSP_H__
 #define __AT32_MSP_H__
 

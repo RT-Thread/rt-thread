@@ -43,7 +43,7 @@ static int pwm_led_sample(int argc, char *argv[])
     rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, period, pulse);
     /* 使能设备 */
     rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
-    
+
     while (1)
     {
         rt_thread_mdelay(50);

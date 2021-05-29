@@ -20,14 +20,14 @@ typedef rt_int32_t              Elf32_Sword;   /* Signed large integer */
 typedef rt_uint32_t             Elf32_Word;    /* Unsigned large integer */
 typedef rt_uint16_t             Elf32_Half;    /* Unsigned medium integer */
 
-typedef rt_uint64_t	            Elf64_Addr;
-typedef rt_uint16_t	            Elf64_Half;
-typedef rt_int16_t	            Elf64_SHalf;
-typedef rt_uint64_t	            Elf64_Off;
-typedef rt_int32_t	            Elf64_Sword;
-typedef rt_uint32_t	            Elf64_Word;
-typedef rt_uint64_t	            Elf64_Xword;
-typedef rt_int64_t	            Elf64_Sxword;
+typedef rt_uint64_t             Elf64_Addr;
+typedef rt_uint16_t             Elf64_Half;
+typedef rt_int16_t              Elf64_SHalf;
+typedef rt_uint64_t             Elf64_Off;
+typedef rt_int32_t              Elf64_Sword;
+typedef rt_uint32_t             Elf64_Word;
+typedef rt_uint64_t             Elf64_Xword;
+typedef rt_int64_t              Elf64_Sxword;
 typedef uint16_t                Elf64_Section;
 
 
@@ -93,13 +93,13 @@ typedef struct elfhdr
 
 
 typedef struct elf64_hdr {
-  unsigned char     e_ident[EI_NIDENT];        /* ELF Identification */ 
+  unsigned char     e_ident[EI_NIDENT];        /* ELF Identification */
   Elf64_Half        e_type;                    /* object file type */
   Elf64_Half        e_machine;                 /* machine */
   Elf64_Word        e_version;                 /* object file version */
-  Elf64_Addr        e_entry;                   /* virtual entry point */ 
-  Elf64_Off         e_phoff;                   /* program header table offset */ 
-  Elf64_Off         e_shoff;                   /* section header table offset */ 
+  Elf64_Addr        e_entry;                   /* virtual entry point */
+  Elf64_Off         e_phoff;                   /* program header table offset */
+  Elf64_Off         e_shoff;                   /* section header table offset */
   Elf64_Word        e_flags;                   /* processor-specific flags */
   Elf64_Half        e_ehsize;                  /* ELF header size */
   Elf64_Half        e_phentsize;               /* program header entry size */
@@ -108,7 +108,7 @@ typedef struct elf64_hdr {
   Elf64_Half        e_shnum;                   /* number of section header entries */
   Elf64_Half        e_shstrndx;                /* section header table's "section
                                                 header string table" entry offset */
-} Elf64_Ehdr;                                   
+} Elf64_Ehdr;
 
 /* Section Header */
 typedef struct

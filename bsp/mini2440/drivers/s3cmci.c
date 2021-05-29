@@ -13,7 +13,7 @@
 #include <drivers/mmcsd_core.h>
 #include <s3c24x0.h>
 
-#define S3C_PCLK	50000000
+#define S3C_PCLK    50000000
 
 
 static void s3c_mmc_set_clk(struct rt_mmcsd_host *host, rt_uint32_t clock)
@@ -21,10 +21,10 @@ static void s3c_mmc_set_clk(struct rt_mmcsd_host *host, rt_uint32_t clock)
     rt_uint32_t prescale;
     rt_uint32_t realClk;
 
-    for(prescale = 0; prescale < 256; ++prescale) 
+    for(prescale = 0; prescale < 256; ++prescale)
     {
         realClk = S3C_PCLK / (1 + prescale);
-        if(realClk <= clock) 
+        if(realClk <= clock)
         {
             break;
         }
@@ -59,15 +59,15 @@ static rt_uint32_t s3c_mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_
 
     SDICCON = ccon; /* start cmd */
 
-    if(cmd->flags & 0xF) 
+    if(cmd->flags & 0xF)
     {
         cmdSta = SDICSTA;
-        while((cmdSta & 0x200) != 0x200 && (cmdSta & 0x400) != 0x400) 
+        while((cmdSta & 0x200) != 0x200 && (cmdSta & 0x400) != 0x400)
         {
             cmdSta = SDICSTA;
         }
 
-        if((cmdSta & 0x1000) == 0x1000 && (cmd->flags & 0xF) != RESP_R3 && (cmd->flags & 0xF) != RESP_R4) 
+        if((cmdSta & 0x1000) == 0x1000 && (cmd->flags & 0xF) != RESP_R3 && (cmd->flags & 0xF) != RESP_R4)
         {
             // crc error, but R3 R4 ignore it
             SDICSTA = cmdSta;
@@ -81,7 +81,7 @@ static rt_uint32_t s3c_mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_
         }
 
         cmd->resp[0] = SDIRSP0;
-        if((cmd->flags & 0xF) == RESP_R2) 
+        if((cmd->flags & 0xF) == RESP_R2)
         {
             cmd->resp[1] = SDIRSP1;
             cmd->resp[2] = SDIRSP2;
@@ -94,7 +94,7 @@ static rt_uint32_t s3c_mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_
         while((cmdSta & 0x800) != 0x800)
         {
             cmdSta = SDICSTA;
-        } 
+        }
     }
 
     SDICSTA = cmdSta; // clear current status
@@ -126,7 +126,7 @@ static rt_uint32_t s3c_mmc_xfer_data(struct rt_mmcsd_data *data)
             if ((SDIDSTA & 0x20) == 0x20)
             {
                 SDIDSTA = (0x1 << 0x5);
-                break; 
+                break;
             }
 
             status = SDIFSTA;
@@ -137,7 +137,7 @@ static rt_uint32_t s3c_mmc_xfer_data(struct rt_mmcsd_data *data)
             }
         }
     }
-    else 
+    else
     {
         while(handled_size < xfer_size)
         {
@@ -184,9 +184,9 @@ static void mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
     cmd = req->cmd;
 
     /* prepare for data transfer*/
-    if(req->data != RT_NULL) 
+    if(req->data != RT_NULL)
     {
-        SDIFSTA = SDIFSTA | (1<<16); // reset fifo 
+        SDIFSTA = SDIFSTA | (1<<16); // reset fifo
 
         while(SDIDSTA & 0x03)
         {
@@ -215,12 +215,12 @@ static void mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
             val |= (1 << 16); // wide bus mode(4bit data)
         }
 
-        if(data->flags & DATA_DIR_READ) 
+        if(data->flags & DATA_DIR_READ)
         {
-            // for data read 
+            // for data read
             val |= (2 << 12);
         }
-        else 
+        else
         {
             val |= (3 << 12);
         }
@@ -260,7 +260,7 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
     case MMCSD_POWER_UP:
         /* Enable PCLK into SDI Block */
         CLKCON |= 1 << 9;
-        
+
         /* Setup GPIO as SD and SDCMD, SDDAT[3:0] Pull up En */
         GPEUP  = GPEUP  & (~(0x3f << 5))   | (0x01 << 5);
         GPECON = GPECON & (~(0xfff << 10)) | (0xaaa << 10);
@@ -268,7 +268,7 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
 
     case MMCSD_POWER_OFF:
     default:
-        break;                 
+        break;
     }
 
     s3c_mmc_set_clk(host, io_cfg->clock);
@@ -284,7 +284,7 @@ static void mmc_enable_sdio_irq(struct rt_mmcsd_host *host, rt_int32_t en)
 {
 }
 
-static const struct rt_mmcsd_host_ops ops = 
+static const struct rt_mmcsd_host_ops ops =
 {
     mmc_request,
     mmc_set_iocfg,

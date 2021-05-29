@@ -233,7 +233,7 @@ static void drv_lcd_clear(lcd_8080_device_t lcd, uint16_t color)
 }
 
 static void rt_bitblt(rt_uint16_t * dest, int dest_segment, int dest_common, int dest_x, int dest_y, int width, int height,
-        rt_uint16_t *src, int src_segment, int src_common, int src_x, int src_y) 
+        rt_uint16_t *src, int src_segment, int src_common, int src_x, int src_y)
 {
     int sx0, sx1, sy0, sy1;
     int dx0, dx1, dy0, dy1;
@@ -412,7 +412,7 @@ static rt_err_t drv_lcd_close(rt_device_t dev)
 
 static rt_size_t drv_lcd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    
+
     /* Not need */
 
     return 0;
@@ -420,7 +420,7 @@ static rt_size_t drv_lcd_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_si
 
 static rt_size_t drv_lcd_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
-    
+
     /* Not need */
 
     return 0;

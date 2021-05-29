@@ -22,4 +22,4 @@ typedef signed int s32;
 
 typedef u32 dma_addr_t;
 
-#endif	/*__TYPES__H*/
+#endif  /*__TYPES__H*/

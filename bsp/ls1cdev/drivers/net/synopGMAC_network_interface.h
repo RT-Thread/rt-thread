@@ -8,7 +8,7 @@
  * 2017-08-24     chinesebear  first version
  */
 
- 
+
 #ifndef SYNOP_GMAC_NETWORK_INTERFACE_H
 #define SYNOP_GMAC_NETWORK_INTERFACE_H 1
 

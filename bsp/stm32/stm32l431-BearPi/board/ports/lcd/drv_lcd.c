@@ -202,7 +202,7 @@ static int rt_hw_lcd_init(void)
     rt_thread_mdelay(100);
 
     lcd_clear(WHITE);
-		lcd_show_string(0, 0, 32, "RT-Thread");
+        lcd_show_string(0, 0, 32, "RT-Thread");
 
     /* display on */
     rt_pin_write(LCD_PWR_PIN, PIN_HIGH);

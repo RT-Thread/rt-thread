@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2009-01-05     Bernard      the first version
- * 2014-04-27     Bernard      make code cleanup. 
+ * 2014-04-27     Bernard      make code cleanup.
  */
 
 #include <board.h>

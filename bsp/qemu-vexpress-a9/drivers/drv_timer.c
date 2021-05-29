@@ -89,7 +89,7 @@ void timer_init(int timer, unsigned int preload)
 {
     uint32_t val;
 
-    if (timer == 0) 
+    if (timer == 0)
     {
         /* Setup Timer0 for generating irq */
         val = TIMER_CTRL(TIMER01_HW_BASE);
@@ -101,8 +101,8 @@ void timer_init(int timer, unsigned int preload)
 
         /* enable timer */
         TIMER_CTRL(TIMER01_HW_BASE) |= TIMER_CTRL_ENABLE;
-    } 
-    else 
+    }
+    else
     {
         /* Setup Timer1 for generating irq */
         val = TIMER_CTRL(TIMER23_HW_BASE);
@@ -122,7 +122,7 @@ void timer_clear_pending(int timer)
     if (timer == 0)
     {
         TIMER_INTCLR(TIMER01_HW_BASE) = 0x01;
-    } 
+    }
     else
     {
         TIMER_INTCLR(TIMER23_HW_BASE) = 0x01;

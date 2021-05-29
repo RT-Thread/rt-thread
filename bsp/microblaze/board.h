@@ -13,7 +13,7 @@
 #define __BOARD_H__
 
 
-#define MCK		50000000
+#define MCK     50000000
 
 void rt_hw_board_led_on(rt_uint32_t);
 void rt_hw_board_led_off(rt_uint32_t);
