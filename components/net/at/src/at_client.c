@@ -8,7 +8,8 @@
  * 2018-03-30     chenyong     first version
  * 2018-04-12     chenyong     add client implement
  * 2018-08-17     chenyong     multiple client support
- * 2021-03-17     Meco Man     fix a buf of leaking memory 
+ * 2021-03-17     Meco Man     fix a buf of leaking memory
+ * 2021-05-29     Sszl         fix a buf of leaking memory
  */
 
 #include <at.h>
@@ -562,29 +563,18 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc *urc_table, rt_
     else
     {
         struct at_urc_table *old_urc_table = RT_NULL;
-        size_t old_table_size = client->urc_table_size * sizeof(struct at_urc_table);
 
-        old_urc_table = (struct at_urc_table *) rt_malloc(old_table_size);
+        /* realloc urc table space */
+        old_urc_table = (struct at_urc_table *) rt_realloc(client->urc_table,client->urc_table_size * sizeof(struct at_urc_table) + sizeof(struct at_urc_table));
         if (old_urc_table == RT_NULL)
         {
             return -RT_ENOMEM;
         }
-        rt_memcpy(old_urc_table, client->urc_table, old_table_size);
 
-        /* realloc urc table space */
-        client->urc_table = (struct at_urc_table *) rt_realloc(client->urc_table,
-                old_table_size + sizeof(struct at_urc_table));
-        if (client->urc_table == RT_NULL)
-        {
-            rt_free(old_urc_table);
-            return -RT_ENOMEM;
-        }
-        rt_memcpy(client->urc_table, old_urc_table, old_table_size);
         client->urc_table[client->urc_table_size].urc = urc_table;
         client->urc_table[client->urc_table_size].urc_size = table_sz;
         client->urc_table_size++;
 
-        rt_free(old_urc_table);
     }
 
     return RT_EOK;
