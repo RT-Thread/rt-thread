@@ -37,7 +37,8 @@
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
- * 2021-01-03     Meco Man     add rt_mb_urgent()
+ * 2021-01-03     Meco Man     implement rt_mb_urgent()
+ * 2021-05-30     Meco Man     implement rt_mutex_trytake()
  * 2021-01-20     hupu         fix priority inversion bug of mutex
  */
 
@@ -452,7 +453,7 @@ RTM_EXPORT(rt_sem_take);
  */
 rt_err_t rt_sem_trytake(rt_sem_t sem)
 {
-    return rt_sem_take(sem, 0);
+    return rt_sem_take(sem, RT_WAITING_NO);
 }
 RTM_EXPORT(rt_sem_trytake);
 
@@ -842,6 +843,19 @@ __again:
     return RT_EOK;
 }
 RTM_EXPORT(rt_mutex_take);
+
+/**
+ * This function will try to take a mutex and immediately return
+ *
+ * @param mutex the mutex object
+ *
+ * @return the error code
+ */
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex)
+{
+    return rt_mutex_take(mutex, RT_WAITING_NO);
+}
+RTM_EXPORT(rt_mutex_trytake);
 
 /**
  * This function will release a mutex, if there are threads suspended on mutex,

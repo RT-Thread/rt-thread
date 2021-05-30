@@ -322,6 +322,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag);
 rt_err_t rt_mutex_delete(rt_mutex_t mutex);
 
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time);
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex);
 rt_err_t rt_mutex_release(rt_mutex_t mutex);
 rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg);
 #endif
