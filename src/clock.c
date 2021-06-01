@@ -62,6 +62,9 @@ void rt_tick_set(rt_tick_t tick)
 void rt_tick_increase(void)
 {
     struct rt_thread *thread;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
 
     /* increase the global tick */
 #ifdef RT_USING_SMP
@@ -76,16 +79,16 @@ void rt_tick_increase(void)
     -- thread->remaining_tick;
     if (thread->remaining_tick == 0)
     {
-        rt_base_t level;
-
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;
-
-        level = rt_hw_interrupt_disable();
         thread->stat |= RT_THREAD_STAT_YIELD;
-        rt_hw_interrupt_enable(level);
 
+        rt_hw_interrupt_enable(level);
         rt_schedule();
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
     }
 
     /* check timer */
