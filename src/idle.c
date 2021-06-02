@@ -15,6 +15,7 @@
  * 2018-07-14     armink       add idle hook list
  * 2018-11-22     Jesven       add per cpu idle task
  *                             combine the code of primary and secondary cpu
+ * 2021-06-02     Meco Man     add critical zone protection for idle hooks
  */
 
 #include <rthw.h>
@@ -205,10 +206,12 @@ static void rt_thread_idle_entry(void *parameter)
 
         for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
         {
+            rt_enter_critical();
             if (idle_hook_list[i] != RT_NULL)
             {
                 idle_hook_list[i]();
             }
+            rt_exit_critical();
         }
 #endif
 
