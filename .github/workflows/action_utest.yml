@@ -23,12 +23,12 @@ jobs:
       run: |
         sudo apt-get update > /dev/null
         sudo apt-get -yqq install scons qemu-system-arm git
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/arm-2017q2-v6/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2
-        sudo tar xjf gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 -C /opt
+        wget -q https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+        sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
     - name: Build bsp
       run: |
-        export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-6-2017-q2-update/bin
-        /opt/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gcc --version
+        export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin
+        /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
         cp $TEST_CONFIG_FILE $TEST_BSP_ROOT/rtconfig.h
         scons -j$(nproc) -C $TEST_BSP_ROOT
     - name: Start test
