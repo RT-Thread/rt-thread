@@ -17,6 +17,7 @@
  * 2013-05-24     Bernard      fix the rt_memheap_realloc issue.
  * 2013-07-11     Grissiom     fix the memory block splitting issue.
  * 2013-07-15     Grissiom     optimize rt_memheap_realloc
+ * 2021-06-03     Flybreak     Fix the crash problem after opening Oz optimization on ac6.
  */
 
 #include <rthw.h>
@@ -369,7 +370,8 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     if (newsize > oldsize)
     {
         void *new_ptr;
-        struct rt_memheap_item *next_ptr;
+        /* Fix the crash problem after opening Oz optimization on ac6  */
+        volatile struct rt_memheap_item *next_ptr;
 
         /* lock memheap */
         result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
@@ -441,14 +443,14 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
 
                 next_ptr->prev          = header_ptr;
                 next_ptr->next          = header_ptr->next;
-                header_ptr->next->prev = next_ptr;
-                header_ptr->next       = next_ptr;
+                header_ptr->next->prev = (struct rt_memheap_item *)next_ptr;
+                header_ptr->next       = (struct rt_memheap_item *)next_ptr;
 
                 /* insert next_ptr to free list */
                 next_ptr->next_free = heap->free_list->next_free;
                 next_ptr->prev_free = heap->free_list;
-                heap->free_list->next_free->prev_free = next_ptr;
-                heap->free_list->next_free            = next_ptr;
+                heap->free_list->next_free->prev_free = (struct rt_memheap_item *)next_ptr;
+                heap->free_list->next_free            = (struct rt_memheap_item *)next_ptr;
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("new ptr: next_free 0x%08x, prev_free 0x%08x",
                                                 next_ptr->next_free,
                                                 next_ptr->prev_free));
