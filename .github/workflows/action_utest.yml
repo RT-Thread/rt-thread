@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
        legs:
-         - {UTEST: "kernel/ipc",       RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/utest_self/config.h"}
+         - {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/kernel/config.h"}
          - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/utest_self/config.h"}
     
     env:

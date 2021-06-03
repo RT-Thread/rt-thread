@@ -17,6 +17,7 @@
  * 2013-05-24     Bernard      fix the rt_memheap_realloc issue.
  * 2013-07-11     Grissiom     fix the memory block splitting issue.
  * 2013-07-15     Grissiom     optimize rt_memheap_realloc
+ * 2021-06-03     Flybreak     Fix the crash problem after opening Oz optimization on ac6.
  */
 
 #include <rthw.h>
@@ -41,31 +42,31 @@
 rt_inline void rt_memheap_setname(struct rt_memheap_item *item, const char *name)
 {
     int index;
-    rt_uint8_t* ptr;
+    rt_uint8_t *ptr;
 
-    ptr = (rt_uint8_t*)&(item->next_free);
-    for (index = 0; index < sizeof(void*); index ++)
+    ptr = (rt_uint8_t *) & (item->next_free);
+    for (index = 0; index < sizeof(void *); index ++)
     {
         if (name[index] == '\0') break;
         ptr[index] = name[index];
     }
     if (name[index] == '\0') ptr[index] = '\0';
-    else 
+    else
     {
-        ptr = (rt_uint8_t*)&(item->prev_free);
-        for (index = 0; index < sizeof(void*) && (index + sizeof(void*))< RT_NAME_MAX; index ++)
+        ptr = (rt_uint8_t *) & (item->prev_free);
+        for (index = 0; index < sizeof(void *) && (index + sizeof(void *)) < RT_NAME_MAX; index ++)
         {
-            if (name[sizeof(void*) + index] == '\0') break;
-            ptr[index] = name[sizeof(void*) + index];
+            if (name[sizeof(void *) + index] == '\0') break;
+            ptr[index] = name[sizeof(void *) + index];
         }
 
-        if (name[sizeof(void*) + index] == '\0') ptr[index] = '\0';
+        if (name[sizeof(void *) + index] == '\0') ptr[index] = '\0';
     }
 }
 
-void rt_mem_set_tag(void* ptr, const char* name)
+void rt_mem_set_tag(void *ptr, const char *name)
 {
-    struct rt_memheap_item* item;
+    struct rt_memheap_item *item;
 
     if (ptr && name)
     {
@@ -369,7 +370,8 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     if (newsize > oldsize)
     {
         void *new_ptr;
-        struct rt_memheap_item *next_ptr;
+        /* Fix the crash problem after opening Oz optimization on ac6  */
+        volatile struct rt_memheap_item *next_ptr;
 
         /* lock memheap */
         result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
@@ -441,14 +443,14 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
 
                 next_ptr->prev          = header_ptr;
                 next_ptr->next          = header_ptr->next;
-                header_ptr->next->prev = next_ptr;
-                header_ptr->next       = next_ptr;
+                header_ptr->next->prev = (struct rt_memheap_item *)next_ptr;
+                header_ptr->next       = (struct rt_memheap_item *)next_ptr;
 
                 /* insert next_ptr to free list */
                 next_ptr->next_free = heap->free_list->next_free;
                 next_ptr->prev_free = heap->free_list;
-                heap->free_list->next_free->prev_free = next_ptr;
-                heap->free_list->next_free            = next_ptr;
+                heap->free_list->next_free->prev_free = (struct rt_memheap_item *)next_ptr;
+                heap->free_list->next_free            = (struct rt_memheap_item *)next_ptr;
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("new ptr: next_free 0x%08x, prev_free 0x%08x",
                                                 next_ptr->next_free,
                                                 next_ptr->prev_free));
@@ -666,17 +668,17 @@ void rt_memheap_free(void *ptr)
 RTM_EXPORT(rt_memheap_free);
 
 #ifdef RT_USING_FINSH
-static void _memheap_dump_tag(struct rt_memheap_item* item)
+static void _memheap_dump_tag(struct rt_memheap_item *item)
 {
-    rt_uint8_t name[2 * sizeof(void*)];
-    rt_uint8_t* ptr;
+    rt_uint8_t name[2 * sizeof(void *)];
+    rt_uint8_t *ptr;
 
-    ptr = (rt_uint8_t*)&(item->next_free);
-    rt_memcpy(name, ptr, sizeof(void*));
-    ptr = (rt_uint8_t*)&(item->prev_free);
-    rt_memcpy(&name[sizeof(void*)], ptr, sizeof(void*));
+    ptr = (rt_uint8_t *) & (item->next_free);
+    rt_memcpy(name, ptr, sizeof(void *));
+    ptr = (rt_uint8_t *) & (item->prev_free);
+    rt_memcpy(&name[sizeof(void *)], ptr, sizeof(void *));
 
-    rt_kprintf("%.*s", 2 * sizeof(void*), name);
+    rt_kprintf("%.*s", 2 * sizeof(void *), name);
 }
 
 int rt_memheap_dump(struct rt_memheap *heap)
@@ -686,15 +688,15 @@ int rt_memheap_dump(struct rt_memheap *heap)
     if (heap == RT_NULL) return 0;
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
-    rt_kprintf("\n[%.*s] [0x%08x - 0x%08x]->\n", RT_NAME_MAX, heap->parent.name, 
-        (rt_ubase_t)heap->start_addr, (rt_ubase_t)heap->start_addr + heap->pool_size);
+    rt_kprintf("\n[%.*s] [0x%08x - 0x%08x]->\n", RT_NAME_MAX, heap->parent.name,
+               (rt_ubase_t)heap->start_addr, (rt_ubase_t)heap->start_addr + heap->pool_size);
     rt_kprintf("------------------------------\n");
 
     /* lock memheap */
     rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
     item = heap->block_list;
 
-    end = (struct rt_memheap_item *) ((rt_uint8_t *)heap->start_addr + heap->pool_size - RT_MEMHEAP_SIZE);
+    end = (struct rt_memheap_item *)((rt_uint8_t *)heap->start_addr + heap->pool_size - RT_MEMHEAP_SIZE);
 
     /* for each memory block */
     while ((rt_ubase_t)item < ((rt_ubase_t)end))
@@ -730,13 +732,13 @@ int memheaptrace(void)
         int index;
         extern int list_memheap(void);
 
-        heaps = (struct rt_memheap**)rt_malloc(sizeof(struct rt_memheap*) * count);
+        heaps = (struct rt_memheap **)rt_malloc(sizeof(struct rt_memheap *) * count);
         if (heaps == RT_NULL) return 0;
 
         list_memheap();
 
         rt_kprintf("memheap header size: %d\n", RT_MEMHEAP_SIZE);
-        count = rt_object_get_pointers(RT_Object_Class_MemHeap, (rt_object_t*)heaps, count);
+        count = rt_object_get_pointers(RT_Object_Class_MemHeap, (rt_object_t *)heaps, count);
         for (index = 0; index < count; index++)
         {
             rt_memheap_dump(heaps[index]);
@@ -966,15 +968,15 @@ void dump_used_memheap(struct rt_memheap *mh)
         {
             /* dump information */
             rt_kprintf("[0x%08x - %d - %c%c%c%c] used\n", header_ptr, block_size,
-                header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
-                header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
+                       header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
+                       header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
         }
         else
         {
             /* dump information */
             rt_kprintf("[0x%08x - %d - %c%c%c%c] free\n", header_ptr, block_size,
-                header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
-                header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
+                       header_ptr->owner_thread_name[0], header_ptr->owner_thread_name[1],
+                       header_ptr->owner_thread_name[2], header_ptr->owner_thread_name[3]);
         }
 
         /* move to next used memory block */

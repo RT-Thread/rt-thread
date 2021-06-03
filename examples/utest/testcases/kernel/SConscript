@@ -1,0 +1,15 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+''')
+
+if GetDepend(['UTEST_MEMHEAP_TC']):
+    src += ['memheap_tc.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = [], CPPPATH = CPPPATH)
+
+Return('group')
