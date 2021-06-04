@@ -1,11 +1,24 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0 
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Change Logs:
  * Date           Author        Notes
- * 2020-01-14     wangyq        the first version
+ * 2020-01-14     wangyq        the first version   
+ * 2021-04-20     liuhy         the second version
  */
 
 #include <rthw.h>
@@ -13,7 +26,6 @@
 #include "board.h"
 #include "drv_uart.h"
 #include "drv_gpio.h"
-#include <ald_cmu.h>
 #include <ald_gpio.h>
 
 /**
@@ -42,11 +54,68 @@ void NVIC_Configuration(void)
  *******************************************************************************/
 void  SystemClock_Config(void)
 {
-    /* hosc 12MHz, from hosc/3 pll to 96MHz */
-    ald_cmu_pll1_config(CMU_PLL1_INPUT_HOSC_3, CMU_PLL1_OUTPUT_96M);
-    /*  SYSCLK 96MHz */
-    ald_cmu_clock_config(CMU_CLOCK_PLL1, 96000000);
+    
+	SYSCFG_UNLOCK();
+#if  ES_CMU_LRC_EN   
+    SET_BIT(CMU->CLKENR, CMU_CLKENR_LRCEN_MSK);
+#else
+    CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_LRCEN_MSK);
+#endif  /*ES_CMU_LRC_EN*/  
+ 
+#if ES_CMU_LOSC_EN 
+    SET_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
+#else
+    CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_LOSCEN_MSK);
+#endif  /*ES_CMU_LOSC_EN*/    
+    
+#if ES_CMU_HRC_EN     
+    SET_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
+#else
+    CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_HRCEN_MSK);
+#endif  /*ES_CMU_HRC_EN*/    
+    
+#if ES_CMU_HOSC_EN     
+    SET_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
+#else
+    CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_HOSCEN_MSK);
+#endif  /*ES_CMU_HOSC_EN*/    
+
+	SYSCFG_LOCK();
+
+#if  ES_CMU_PLL1_EN   
+    /*PLL的源必须是4M*/
+    ald_cmu_pll1_config(ES_PLL1_REFER_CLK, ES_PLL1_OUT_CLK);
+    
+    #if ES_CMU_PLL1_SAFE_EN
+        ald_cmu_pll_safe_config(ENABLE);
+    #else
+        ald_cmu_pll_safe_config(DISABLE);
+    #endif
+    
+#else
+    CLEAR_BIT(CMU->CLKENR, CMU_CLKENR_PLL1EN_MSK);
+#endif  /*ES_CMU_PLL1_EN*/ 
+    
+    ald_cmu_clock_config(ES_SYS_CLK_SOURSE, ES_SYS_CLK);
+    
+    ald_cmu_div_config(CMU_SYS,ES_CMU_SYS_DIV);
+    ald_cmu_div_config(CMU_HCLK_1,ES_CMU_HCLK_1_DIV);
+    ald_cmu_div_config(CMU_HCLK_2,ES_CMU_HCLK_2_DIV);
+    ald_cmu_div_config(CMU_PCLK_1,ES_CMU_PCLK_1_DIV);
+    ald_cmu_div_config(CMU_PCLK_2,ES_CMU_PCLK_2_DIV);
+    
     ald_cmu_perh_clock_config(CMU_PERH_ALL, ENABLE);
+    
+/*低功耗时钟使能*/    
+#ifdef RT_USING_PM
+        SYSCFG_UNLOCK();
+        SET_BIT(CMU->LPENR, CMU_LPENR_LRCEN_MSK);
+        SET_BIT(CMU->LPENR, CMU_LPENR_LOSCEN_MSK);
+        SET_BIT(CMU->LPENR, CMU_LPENR_HRCEN_MSK);
+        SET_BIT(CMU->LPENR, CMU_LPENR_HOSCEN_MSK);
+        SYSCFG_LOCK();
+#endif
+    
 }
 
 /*******************************************************************************
@@ -70,9 +139,19 @@ void SysTick_Handler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
+    ald_inc_tick();
     rt_tick_increase();
     /* leave interrupt */
     rt_interrupt_leave();
+}
+
+/**
+ * This is the cmu interrupt service.
+ *
+ */
+void CMU_Handler(void)
+{
+    ald_cmu_irq_handler();
 }
 
 /*@}*/
