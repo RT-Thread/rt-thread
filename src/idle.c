@@ -127,6 +127,7 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 
 #endif
 
+#ifdef RT_USING_HEAP
 /* Return whether there is defunctional thread to be deleted. */
 rt_inline int _has_defunct_thread(void)
 {
@@ -140,6 +141,7 @@ rt_inline int _has_defunct_thread(void)
 
     return l->next != l;
 }
+#endif
 
 /**
  * @ingroup Thread
@@ -200,12 +202,14 @@ static void rt_thread_idle_entry(void *parameter)
     {
 #ifdef RT_USING_IDLE_HOOK
         rt_size_t i;
+        void (*idle_hook)(void);
 
         for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
         {
-            if (idle_hook_list[i] != RT_NULL)
+            idle_hook = idle_hook_list[i];
+            if (idle_hook != RT_NULL)
             {
-                idle_hook_list[i]();
+                idle_hook();
             }
         }
 #endif

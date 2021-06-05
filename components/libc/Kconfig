@@ -16,26 +16,26 @@ endif
 
 if RT_USING_LIBC && RT_USING_DFS
     config RT_USING_POSIX
-        bool "Enable POSIX layer for poll/select, stdin etc"
+        bool "Enable POSIX layer for compatibility with UNIX APIs, poll/select etc"
         select RT_USING_DFS_DEVFS
         default y
 
     if RT_USING_POSIX
-    config RT_USING_POSIX_MMAP
-        bool "Enable mmap() API"
-        default n
+        config RT_USING_POSIX_MMAP
+            bool "Enable mmap() API"
+            default n
 
-    config RT_USING_POSIX_TERMIOS
-        bool "Enable termios APIs"
-        default n
+        config RT_USING_POSIX_TERMIOS
+            bool "Enable termios APIs"
+            default n
 
-    config RT_USING_POSIX_GETLINE
-        bool "Enable getline()/getdelim() APIs"
-        default n
+        config RT_USING_POSIX_GETLINE
+            bool "Enable getline()/getdelim() APIs"
+            default n
 
-    config RT_USING_POSIX_AIO
-        bool "Enable AIO"
-        default n
+        config RT_USING_POSIX_AIO
+            bool "Enable AIO"
+            default n
     endif
 
 endif

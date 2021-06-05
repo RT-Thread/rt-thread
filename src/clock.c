@@ -13,7 +13,8 @@
  * 2010-07-13     Bernard      fix rt_tick_from_millisecond issue found by kuronca
  * 2011-06-26     Bernard      add rt_tick_set function.
  * 2018-11-22     Jesven       add per cpu tick
- * 2020-12-29     Meco Man     add function rt_tick_get_millisecond()
+ * 2020-12-29     Meco Man     implement rt_tick_get_millisecond()
+ * 2021-06-01     Meco Man     add critical section projection for rt_tick_increase()
  */
 
 #include <rthw.h>
@@ -22,7 +23,7 @@
 #ifdef RT_USING_SMP
 #define rt_tick rt_cpu_index(0)->tick
 #else
-static rt_tick_t rt_tick = 0;
+static volatile rt_tick_t rt_tick = 0;
 #endif
 
 /**
@@ -62,6 +63,9 @@ void rt_tick_set(rt_tick_t tick)
 void rt_tick_increase(void)
 {
     struct rt_thread *thread;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
 
     /* increase the global tick */
 #ifdef RT_USING_SMP
@@ -78,10 +82,14 @@ void rt_tick_increase(void)
     {
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;
-
         thread->stat |= RT_THREAD_STAT_YIELD;
 
+        rt_hw_interrupt_enable(level);
         rt_schedule();
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
     }
 
     /* check timer */
