@@ -8,6 +8,7 @@ config RT_USING_UTESTCASES
 if RT_USING_UTESTCASES
 
 source "$RTT_DIR/examples/utest/testcases/utest/Kconfig"
+source "$RTT_DIR/examples/utest/testcases/kernel/Kconfig"
 
 endif
 

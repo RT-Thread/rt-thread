@@ -1,0 +1,8 @@
+menu "Kernel Testcase"
+
+config UTEST_MEMHEAP_TC
+    bool "memheap stability test"
+    default y
+    depends on RT_USING_MEMHEAP
+
+endmenu
