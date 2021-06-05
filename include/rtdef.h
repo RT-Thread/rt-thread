@@ -35,6 +35,7 @@
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
  * 2021-05-10     armink       change version number to v4.0.4
+ * 2021-06-05     Meco Man     remove .init_priority
  */
 
 #ifndef __RT_DEF_H__
@@ -632,7 +633,6 @@ struct rt_thread
 
     /* priority */
     rt_uint8_t  current_priority;                       /**< current priority */
-    rt_uint8_t  init_priority;                          /**< initialized priority */
 #if RT_THREAD_PRIORITY_MAX > 32
     rt_uint8_t  number;
     rt_uint8_t  high_mask;

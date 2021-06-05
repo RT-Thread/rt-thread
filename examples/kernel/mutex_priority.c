@@ -48,8 +48,8 @@ static void thread20_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread20, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid20->init_priority, tid20->current_priority);
+        rt_kprintf("[%d] thread20, current_priority=%d\n",
+                rt_tick_get(), tid20->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread20 exit!\n", rt_tick_get());
@@ -73,8 +73,8 @@ static void thread21_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread21, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid21->init_priority, tid21->current_priority);
+        rt_kprintf("[%d] thread21, current_priority=%d\n",
+                rt_tick_get(), tid21->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread21 exit!\n", rt_tick_get());
@@ -92,8 +92,8 @@ static void thread22_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 100)
     {
-        rt_kprintf("[%d] thread22 running..., init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid22->init_priority, tid22->current_priority);
+        rt_kprintf("[%d] thread22 running..., current_priority=%d\n",
+                rt_tick_get(), tid22->current_priority);
         rt_thread_delay(2);
     }
     rt_kprintf("[%d] thread22 exit!\n", rt_tick_get());
@@ -117,8 +117,8 @@ static void thread23_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread23, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid23->init_priority, tid23->current_priority);
+        rt_kprintf("[%d] thread23, current_priority=%d\n",
+                rt_tick_get(), tid23->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread23 exit!\n", rt_tick_get());
@@ -143,8 +143,8 @@ static void thread24_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread24, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid24->init_priority, tid24->current_priority);
+        rt_kprintf("[%d] thread24, current_priority=%d\n",
+                rt_tick_get(), tid24->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread24 exit!\n", rt_tick_get());
@@ -168,8 +168,8 @@ static void thread25_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread25, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid25->init_priority, tid25->current_priority);
+        rt_kprintf("[%d] thread25, current_priority=%d\n",
+                rt_tick_get(), tid25->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread25 exit!\n", rt_tick_get());
@@ -192,8 +192,8 @@ static void thread26_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 50)
     {
-        rt_kprintf("[%d] thread26, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid26->init_priority, tid26->current_priority);
+        rt_kprintf("[%d] thread26, current_priority=%d\n",
+                rt_tick_get(), tid26->current_priority);
         rt_thread_delay(1);
     }
     rt_mutex_release(mutex);
@@ -219,8 +219,8 @@ static void thread27_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread27, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid27->init_priority, tid27->current_priority);
+        rt_kprintf("[%d] thread27, current_priority=%d\n",
+                rt_tick_get(), tid27->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread27 exit!\n", rt_tick_get());
@@ -245,8 +245,8 @@ static void thread28_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread28, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid28->init_priority, tid28->current_priority);
+        rt_kprintf("[%d] thread28, current_priority=%d\n",
+                rt_tick_get(), tid28->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread28 exit!\n", rt_tick_get());
@@ -271,8 +271,8 @@ static void thread29_entry(void* parameter)
     tick = rt_tick_get();
     while (rt_tick_get() - tick < 5)
     {
-        rt_kprintf("[%d] thread29, init_priority=%d, current_priority=%d\n",
-                rt_tick_get(), tid29->init_priority, tid29->current_priority);
+        rt_kprintf("[%d] thread29, current_priority=%d\n",
+                rt_tick_get(), tid29->current_priority);
     }
     rt_mutex_release(mutex);
     rt_kprintf("[%d] thread29 exit!\n", rt_tick_get());
