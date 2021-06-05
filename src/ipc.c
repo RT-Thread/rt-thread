@@ -39,7 +39,6 @@
  * 2020-10-11     Meco Man     add value overflow-check code
  * 2021-01-03     Meco Man     implement rt_mb_urgent()
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
- * 2021-01-20     hupu         fix priority inversion bug of mutex
  */
 
 #include <rtthread.h>
