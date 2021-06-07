@@ -155,7 +155,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
     item->next_free = item->prev_free = RT_NULL;
 
     /* initialize semaphore lock */
-    rt_sem_init(&(memheap->lock), name, 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&(memheap->lock), name, 1, RT_IPC_FLAG_PRIO);
 
     RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                  ("memory heap: start addr 0x%08x, size %d, free list header 0x%08x\n",
