@@ -21,6 +21,7 @@
 # Date           Author       Notes
 # 2021-03-02     Meco Man     The first version
 # 2021-03-04     Meco Man     增加统一转换成UTF-8编码格式功能
+# 2021-06-07     iysheng      Add support with format single file
 
 
 #本文件会自动对指定路径下的所有文件包括子文件夹的文件（仅针对.c.h）进行扫描
@@ -75,9 +76,11 @@ def format_codes(filename):
         file.close()
         os.remove(filename)
         os.rename('temp',filename)
+    except:
+        pass
 
 def get_encode_info(file):
-    with open(file, 'rb') as f:
+     with open(file, 'rb') as f:
         code = chardet.detect(f.read())['encoding']       
         #charde库有一定几率对当前文件的编码识别不准确        
         if code == 'EUC-JP': #容易将含着少量中文的英文字符文档识别为日语编码格式
@@ -95,7 +98,7 @@ def get_encode_info(file):
 
 #将单个文件转为UTF-8编码
 def conver_to_utf_8 (path):
-    try: 
+    try:
         info = get_encode_info(path)
         if info == None:
             return 0 #0 失败
@@ -115,6 +118,11 @@ def conver_to_utf_8 (path):
         print("UnicodeEncodeError未处理，需人工确认"+path)
         return 0
 
+def formatfile(file):
+    if file.endswith(".c") == True or file.endswith(".h") == True: #只处理.c和.h文件
+        if conver_to_utf_8(file) == 1: #先把这个文件转为UTF-8编码,1成功
+            format_codes(file) #再对这个文件进行格式整理
+
 # 递归扫描目录下的所有文件
 def traversalallfile(path):
     filelist=os.listdir(path)
@@ -123,13 +131,14 @@ def traversalallfile(path):
         if os.path.isdir(filepath):
             traversalallfile(filepath)
         elif os.path.isfile(filepath):
-            if filepath.endswith(".c") == True or filepath.endswith(".h") == True: #只处理.c和.h文件
-                if conver_to_utf_8(filepath) == 1: #先把这个文件转为UTF-8编码,1成功
-                    format_codes(filepath) #再对这个文件进行格式整理
+            formatfile(filepath)
 
 def formatfiles():
-    workpath = input('enter work path: ')
-    traversalallfile(workpath)
+    workpath = input('enter work path or file: ')
+    if os.path.isdir(workpath):
+        traversalallfile(workpath)
+    else:
+        formatfile(workpath)
 
 if __name__ == '__main__':
     formatfiles()
