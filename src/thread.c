@@ -27,6 +27,7 @@
  * 2018-11-22     Jesven       yield is same to rt_schedule
  *                             add support for tasks bound to cpu
  * 2021-02-24     Meco Man     rearrange rt_thread_control() - schedule the thread when close it
+ * 2021-06-08     Meco Man     add RT_THREAD_CTRL_PRIORITY_INHER command
  */
 
 #include <rthw.h>
@@ -319,9 +320,6 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-
-    /* set current priority to initialize priority */
-    thread->current_priority = thread->init_priority;
 
     /* calculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -670,6 +668,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
     switch (cmd)
     {
         case RT_THREAD_CTRL_CHANGE_PRIORITY:
+        case RT_THREAD_CTRL_PRIORITY_INHER:
         {
             /* disable interrupt */
             temp = rt_hw_interrupt_disable();
@@ -707,6 +706,28 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
     #else
                 thread->number_mask = 1 << thread->current_priority;
     #endif
+            }
+
+            if(cmd == RT_THREAD_CTRL_CHANGE_PRIORITY)
+            {
+    #ifdef RT_USING_MUTEX
+                rt_mutex_t mutex = RT_NULL;
+                struct rt_list_node *node = RT_NULL;
+                struct rt_object_information *information = RT_NULL;
+
+                information = rt_object_get_information(RT_Object_Class_Mutex);
+
+                rt_list_for_each(node, &(information->object_list))
+                {
+                    mutex = (rt_mutex_t)rt_list_entry(node, struct rt_object, list);
+                    if (mutex->owner == thread)
+                    {
+                        mutex->original_priority = thread->current_priority;
+                        break;
+                    }
+                }
+    #endif
+                thread->init_priority = thread->current_priority;
             }
 
             /* enable interrupt */

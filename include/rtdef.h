@@ -35,6 +35,7 @@
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
  * 2021-05-10     armink       change version number to v4.0.4
+ * 2021-06-08     Meco Man     add RT_THREAD_CTRL_PRIORITY_INHER command
  */
 
 #ifndef __RT_DEF_H__
@@ -555,8 +556,9 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CTRL_STARTUP          0x00                /**< Startup thread. */
 #define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread. */
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
-#define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
-#define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
+#define RT_THREAD_CTRL_PRIORITY_INHER   0x03                /**< Change thread priority for priority inheritance (internal used). */
+#define RT_THREAD_CTRL_INFO             0x04                /**< Get thread information. */
+#define RT_THREAD_CTRL_BIND_CPU         0x05                /**< Set thread bind cpu. */
 
 #ifdef RT_USING_SMP
 

@@ -760,7 +760,7 @@ __again:
                 {
                     /* change the owner thread priority */
                     rt_thread_control(mutex->owner,
-                                      RT_THREAD_CTRL_CHANGE_PRIORITY,
+                                      RT_THREAD_CTRL_PRIORITY_INHER,
                                       &thread->current_priority);
                 }
 
@@ -886,7 +886,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         if (mutex->original_priority != mutex->owner->current_priority)
         {
             rt_thread_control(mutex->owner,
-                              RT_THREAD_CTRL_CHANGE_PRIORITY,
+                              RT_THREAD_CTRL_PRIORITY_INHER,
                               &(mutex->original_priority));
         }
 
