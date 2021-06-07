@@ -39,6 +39,7 @@
  * 2020-10-11     Meco Man     add value overflow-check code
  * 2021-01-03     Meco Man     implement rt_mb_urgent()
  * 2021-05-30     Meco Man     implement rt_mutex_trytake()
+ * 2021-06-07     Meco Man     only RT_IPC_FLAG_PRIO needs to execute priority inheritance
  * 2021-01-20     hupu         fix priority inversion bug of mutex
  */
 
@@ -781,8 +782,9 @@ __again:
                 RT_DEBUG_LOG(RT_DEBUG_IPC, ("mutex_take: suspend thread: %s\n",
                                             thread->name));
 
-                /* change the owner thread priority of mutex */
-                if (thread->current_priority < mutex->owner->current_priority)
+                /* priority inheritance */
+                if (thread->current_priority < mutex->owner->current_priority
+                    && mutex->parent.parent.flag == RT_IPC_FLAG_PRIO)
                 {
                     /* change the owner thread priority */
                     rt_thread_control(mutex->owner,
