@@ -111,16 +111,6 @@
 
 /* Utilities */
 
-#define RT_USING_RT_LINK
-#define RT_LINK_USING_SF_CRC
-
-/* rt-link hardware device configuration */
-
-#define RT_LINK_HW_DEVICE_NAME "uart2"
-#define RT_LINK_USING_UART
-
-/* rt link debug option */
-
 
 /* RT-Thread Utestcases */
 

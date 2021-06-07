@@ -112,7 +112,7 @@ struct serial_configure
 };
 
 /*
- * Serial FIFO mode 
+ * Serial Receive FIFO mode
  */
 struct rt_serial_rx_fifo
 {
@@ -128,6 +128,9 @@ struct rt_serial_rx_fifo
     rt_uint8_t buffer[];
 };
 
+/*
+ * Serial Transmit FIFO mode
+ */
 struct rt_serial_tx_fifo
 {
     struct rt_ringbuffer rb;
@@ -173,15 +176,6 @@ struct rt_uart_ops
                                  rt_size_t               size,
                                  rt_uint32_t             tx_flag);
 };
-
-rt_size_t rt_serial_get_linear_buffer(struct rt_ringbuffer     *rb,
-                                             rt_uint8_t       **ptr);
-
-rt_size_t rt_serial_update_read_index(struct rt_ringbuffer     *rb,
-                                             rt_uint16_t        read_index);
-
-rt_size_t rt_serial_update_write_index(struct rt_ringbuffer    *rb,
-                                              rt_uint16_t       write_index);
 
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event);
 

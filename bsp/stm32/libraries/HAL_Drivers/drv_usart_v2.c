@@ -342,37 +342,42 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
 {
     struct stm32_uart *uart;
     rt_base_t level;
-    rt_uint16_t recv_len = 0;
+    rt_size_t recv_len, counter;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
-    struct rt_serial_rx_fifo *rx_fifo;
-    rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-    RT_ASSERT(rx_fifo != RT_NULL);
-
     level = rt_hw_interrupt_disable();
-    rt_uint16_t index = __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
+    recv_len = 0;
+    counter = __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
+
     switch (isr_flag)
     {
-
-    case UART_RX_DMA_IT_TC_FLAG:
-        if(index >= uart->dma_rx.remaining_cnt)
-            recv_len = serial->config.rx_bufsz + uart->dma_rx.remaining_cnt - index;
+    case UART_RX_DMA_IT_IDLE_FLAG:
+        if (counter <= uart->dma_rx.remaining_cnt)
+            recv_len = uart->dma_rx.remaining_cnt - counter;
+        else
+            recv_len = serial->config.rx_bufsz + uart->dma_rx.remaining_cnt - counter;
         break;
 
     case UART_RX_DMA_IT_HT_FLAG:
-    case UART_RX_DMA_IT_IDLE_FLAG:
-        if(index < uart->dma_rx.remaining_cnt)
-            recv_len = uart->dma_rx.remaining_cnt - index;
+        if (counter < uart->dma_rx.remaining_cnt)
+            recv_len = uart->dma_rx.remaining_cnt - counter;
         break;
+
+    case UART_RX_DMA_IT_TC_FLAG:
+        if(counter >= uart->dma_rx.remaining_cnt)
+            recv_len = serial->config.rx_bufsz + uart->dma_rx.remaining_cnt - counter;
 
     default:
         break;
     }
 
-    uart->dma_rx.remaining_cnt = index;
-    rt_serial_update_write_index(&(rx_fifo->rb), recv_len);
+    if (recv_len)
+    {
+        uart->dma_rx.remaining_cnt = counter;
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
+    }
     rt_hw_interrupt_enable(level);
 
 }
@@ -444,7 +449,6 @@ static void uart_isr(struct rt_serial_device *serial)
              && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_IDLE) != RESET))
     {
         dma_recv_isr(serial, UART_RX_DMA_IT_IDLE_FLAG);
-        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         __HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
     }
 #endif
@@ -1051,9 +1055,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     struct stm32_uart *uart;
     RT_ASSERT(huart != NULL);
     uart = (struct stm32_uart *)huart;
-
     dma_recv_isr(&uart->serial, UART_RX_DMA_IT_TC_FLAG);
-    rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_DMADONE);
 }
 
 /**
@@ -1068,15 +1070,13 @@ void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
     struct stm32_uart *uart;
     RT_ASSERT(huart != NULL);
     uart = (struct stm32_uart *)huart;
-
     dma_recv_isr(&uart->serial, UART_RX_DMA_IT_HT_FLAG);
-    rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_DMADONE);
 }
 
 /**
   * @brief  HAL_UART_TxCpltCallback
   * @param  huart: UART handle
-  * @note   This callback can be called by two functions, first in UART_EndTransmit_IT when 
+  * @note   This callback can be called by two functions, first in UART_EndTransmit_IT when
   *         UART Tx complete and second in UART_DMATransmitCplt function in DMA Circular mode.
   * @retval None
   */
