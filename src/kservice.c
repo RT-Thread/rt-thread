@@ -1228,7 +1228,7 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
 RTM_EXPORT(rt_kprintf);
 #endif
 
-#ifdef RT_USING_HEAP
+#if defined (RT_USING_HEAP) && !defined(RT_USING_USERHEAP_ALIGN)
 /**
  * This function allocates a memory block, which address is aligned to the
  * specified alignment size.

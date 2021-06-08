@@ -284,7 +284,7 @@ menu "Memory Management"
         endif
 
         config RT_USING_USERHEAP
-            bool "Use user heap"
+            bool "Use user heap Algorithm"
             help
                 If this option is selected, please implement these functions:
                     rt_malloc(), rt_malloc_sethook()
@@ -295,6 +295,15 @@ menu "Memory Management"
                 And if FinSH is used at the same time, please implement list_mem()
 
     endchoice
+
+    if RT_USING_USERHEAP
+    config RT_USING_USERHEAP_ALIGN
+        bool "Using user heap algorithm align"
+        default n
+        help
+            If this option is selected, please implement these functions:
+                rt_malloc_align(), rt_free_align()
+    endif
 
     config RT_USING_MEMTRACE
         bool "Enable memory trace"
