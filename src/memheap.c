@@ -38,6 +38,41 @@
 #define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 #define MEMITEM(ptr)            (struct rt_memheap_item*)((rt_uint8_t*)ptr - RT_MEMHEAP_SIZE)
 
+#if defined(RT_USING_MUTEX)
+#define MEM_LOCK_INIT(obj) \
+    rt_mutex_init(&(obj)->lock, "heap", RT_IPC_FLAG_PRIO)
+#define MEM_LOCK_DEINIT(obj) \
+    rt_mutex_detach(&(obj)->lock)
+#define MEM_LOCK(obj)   \
+    rt_thread_self() ? rt_mutex_take(&(obj)->lock, RT_WAITING_FOREVER) : RT_EOK
+#define MEM_UNLOCK(obj) \
+    rt_thread_self() ? rt_mutex_release(&(obj)->lock) : RT_EOK
+#elif defined(RT_USING_SEMAPHORE)
+#define MEM_LOCK_INIT(obj) \
+    rt_sem_init(&(obj)->lock, "heap", 1, RT_IPC_FLAG_PRIO)
+#define MEM_LOCK_DEINIT(obj) \
+    rt_sem_detach(&(obj)->lock)
+#define MEM_LOCK(obj)   \
+    rt_thread_self() ? rt_sem_take(&(obj)->lock, RT_WAITING_FOREVER) : RT_EOK
+#define MEM_UNLOCK(obj) \
+    rt_thread_self() ? rt_sem_release(&(obj)->lock) : RT_EOK
+#else
+rt_inline rt_err_t _mem_lock(void)
+{
+    rt_enter_critical();
+    return RT_EOK;
+}
+rt_inline rt_err_t _mem_unlock(void)
+{
+    rt_exit_critical();
+    return RT_EOK;
+}
+#define MEM_LOCK_INIT(obj)
+#define MEM_LOCK_DEINIT(obj)
+#define MEM_LOCK(obj) _mem_lock()
+#define MEM_UNLOCK(obj) _mem_unlock()
+#endif
+
 #ifdef RT_USING_MEMTRACE
 rt_inline void rt_memheap_setname(struct rt_memheap_item *item, const char *name)
 {
@@ -154,8 +189,8 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
     /* not in free list */
     item->next_free = item->prev_free = RT_NULL;
 
-    /* initialize semaphore lock */
-    rt_sem_init(&(memheap->lock), name, 1, RT_IPC_FLAG_PRIO);
+    /* initialize mem lock */
+    MEM_LOCK_INIT(memheap);
 
     RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                  ("memory heap: start addr 0x%08x, size %d, free list header 0x%08x\n",
@@ -171,7 +206,7 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
     RT_ASSERT(rt_object_is_systemobject(&heap->parent));
 
-    rt_sem_detach(&heap->lock);
+    MEM_LOCK_DEINIT(heap);
     rt_object_detach(&(heap->parent));
 
     /* Return a successful completion. */
@@ -202,7 +237,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
         free_size = 0;
 
         /* lock memheap */
-        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+        result = MEM_LOCK(heap);
         if (result != RT_EOK)
         {
             rt_set_errno(result);
@@ -313,7 +348,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 #endif
 
             /* release lock */
-            rt_sem_release(&(heap->lock));
+            MEM_UNLOCK(heap);
 
             /* Return a memory address to the caller.  */
             RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
@@ -326,7 +361,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
         }
 
         /* release lock */
-        rt_sem_release(&(heap->lock));
+        MEM_UNLOCK(heap);
     }
 
     RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("allocate memory: failed\n"));
@@ -374,7 +409,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
         volatile struct rt_memheap_item *next_ptr;
 
         /* lock memheap */
-        result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+        result = MEM_LOCK(heap);
         if (result != RT_EOK)
         {
             rt_set_errno(result);
@@ -456,14 +491,14 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                                                 next_ptr->prev_free));
 
                 /* release lock */
-                rt_sem_release(&(heap->lock));
+                MEM_UNLOCK(heap);
 
                 return ptr;
             }
         }
 
         /* release lock */
-        rt_sem_release(&(heap->lock));
+        MEM_UNLOCK(heap);
 
         /* re-allocate a memory block */
         new_ptr = (void *)rt_memheap_alloc(heap, newsize);
@@ -481,7 +516,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
         return ptr;
 
     /* lock memheap */
-    result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+    result = MEM_LOCK(heap);
     if (result != RT_EOK)
     {
         rt_set_errno(result);
@@ -549,7 +584,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     heap->available_size = heap->available_size + MEMITEM_SIZE(new_ptr);
 
     /* release lock */
-    rt_sem_release(&(heap->lock));
+    MEM_UNLOCK(heap);
 
     /* return the old memory block */
     return ptr;
@@ -592,7 +627,7 @@ void rt_memheap_free(void *ptr)
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
     /* lock memheap */
-    result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+    result = MEM_LOCK(heap);
     if (result != RT_EOK)
     {
         rt_set_errno(result);
@@ -663,7 +698,7 @@ void rt_memheap_free(void *ptr)
 #endif
 
     /* release lock */
-    rt_sem_release(&(heap->lock));
+    MEM_UNLOCK(heap);
 }
 RTM_EXPORT(rt_memheap_free);
 
@@ -684,6 +719,7 @@ static void _memheap_dump_tag(struct rt_memheap_item *item)
 int rt_memheap_dump(struct rt_memheap *heap)
 {
     struct rt_memheap_item *item, *end;
+    rt_err_t result;
 
     if (heap == RT_NULL) return 0;
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
@@ -693,7 +729,13 @@ int rt_memheap_dump(struct rt_memheap *heap)
     rt_kprintf("------------------------------\n");
 
     /* lock memheap */
-    rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
+    result = MEM_LOCK(heap);
+    if (result != RT_EOK)
+    {
+        rt_set_errno(result);
+
+        return result;
+    }
     item = heap->block_list;
 
     end = (struct rt_memheap_item *)((rt_uint8_t *)heap->start_addr + heap->pool_size - RT_MEMHEAP_SIZE);
@@ -717,7 +759,7 @@ int rt_memheap_dump(struct rt_memheap *heap)
 
         item = item->next;
     }
-    rt_sem_release(&(heap->lock));
+    MEM_UNLOCK(heap);
 
     return 0;
 }
@@ -799,7 +841,6 @@ void *rt_malloc(rt_size_t size)
                 break;
         }
     }
-
 
 #ifdef RT_USING_MEMTRACE
     if (ptr == RT_NULL)

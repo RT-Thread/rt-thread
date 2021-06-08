@@ -128,9 +128,39 @@ static struct heap_mem *heap_end;
 #define MIN_SIZE_ALIGNED     RT_ALIGN(MIN_SIZE, RT_ALIGN_SIZE)
 #define SIZEOF_STRUCT_MEM    RT_ALIGN(sizeof(struct heap_mem), RT_ALIGN_SIZE)
 
-static struct heap_mem *lfree;   /* pointer to the lowest free block */
+#if defined(RT_USING_MUTEX)
+static struct rt_mutex heap_lock;
+#define MEM_LOCK_INIT() \
+    rt_mutex_init(&heap_lock, "heap", RT_IPC_FLAG_PRIO)
+#define MEM_LOCK()   \
+    rt_thread_self() ? rt_mutex_take(&heap_lock, RT_WAITING_FOREVER) : RT_EOK
+#define MEM_UNLOCK() \
+    rt_thread_self() ? rt_mutex_release(&heap_lock) : RT_EOK
+#elif defined(RT_USING_SEMAPHORE)
+static struct rt_semaphore heap_lock;
+#define MEM_LOCK_INIT() \
+    rt_sem_init(&heap_lock, "heap", 1, RT_IPC_FLAG_PRIO)
+#define MEM_LOCK()   \
+    rt_thread_self() ? rt_sem_take(&heap_lock, RT_WAITING_FOREVER) : RT_EOK
+#define MEM_UNLOCK() \
+    rt_thread_self() ? rt_sem_release(&heap_lock) : RT_EOK
+#else
+rt_inline rt_err_t _mem_lock(void)
+{
+    rt_enter_critical();
+    return RT_EOK;
+}
+rt_inline rt_err_t _mem_unlock(void)
+{
+    rt_exit_critical();
+    return RT_EOK;
+}
+#define MEM_LOCK_INIT()
+#define MEM_LOCK() _mem_lock()
+#define MEM_UNLOCK() _mem_unlock()
+#endif
 
-static struct rt_semaphore heap_sem;
+static struct heap_mem *lfree;   /* pointer to the lowest free block */
 static rt_size_t mem_size_aligned;
 
 #ifdef RT_MEM_STATS
@@ -250,7 +280,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     rt_mem_setname(heap_end, "INIT");
 #endif
 
-    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
+    MEM_LOCK_INIT();
 
     /* initialize the lowest-free pointer to the start of the heap */
     lfree = (struct heap_mem *)heap_ptr;
@@ -300,7 +330,7 @@ void *rt_malloc(rt_size_t size)
         size = MIN_SIZE_ALIGNED;
 
     /* take memory semaphore */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+    MEM_LOCK();
 
     for (ptr = (rt_uint8_t *)lfree - heap_ptr;
          ptr < mem_size_aligned - size;
@@ -386,7 +416,7 @@ void *rt_malloc(rt_size_t size)
                 RT_ASSERT(((lfree == heap_end) || (!lfree->used)));
             }
 
-            rt_sem_release(&heap_sem);
+            MEM_UNLOCK();
             RT_ASSERT((rt_ubase_t)mem + SIZEOF_STRUCT_MEM + size <= (rt_ubase_t)heap_end);
             RT_ASSERT((rt_ubase_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM) % RT_ALIGN_SIZE == 0);
             RT_ASSERT((((rt_ubase_t)mem) & (RT_ALIGN_SIZE - 1)) == 0);
@@ -404,7 +434,7 @@ void *rt_malloc(rt_size_t size)
         }
     }
 
-    rt_sem_release(&heap_sem);
+    MEM_UNLOCK();
 
     return RT_NULL;
 }
@@ -445,13 +475,13 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
     if (rmem == RT_NULL)
         return rt_malloc(newsize);
 
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+    MEM_LOCK();
 
     if ((rt_uint8_t *)rmem < (rt_uint8_t *)heap_ptr ||
         (rt_uint8_t *)rmem >= (rt_uint8_t *)heap_end)
     {
         /* illegal memory */
-        rt_sem_release(&heap_sem);
+        MEM_UNLOCK();
 
         return rmem;
     }
@@ -463,7 +493,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
     if (size == newsize)
     {
         /* the size is the same as */
-        rt_sem_release(&heap_sem);
+        MEM_UNLOCK();
 
         return rmem;
     }
@@ -498,11 +528,11 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 
         plug_holes(mem2);
 
-        rt_sem_release(&heap_sem);
+        MEM_UNLOCK();
 
         return rmem;
     }
-    rt_sem_release(&heap_sem);
+    MEM_UNLOCK();
 
     /* expand memory */
     nmem = rt_malloc(newsize);
@@ -582,7 +612,7 @@ void rt_free(void *rmem)
 
 
     /* protect the heap from concurrent access */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+    MEM_LOCK();
 
     /* ... which has to be in a used state ... */
     if (!mem->used || mem->magic != HEAP_MAGIC)
@@ -611,7 +641,7 @@ void rt_free(void *rmem)
 
     /* finally, see if prev or next are free also */
     plug_holes(mem);
-    rt_sem_release(&heap_sem);
+    MEM_UNLOCK();
 }
 RTM_EXPORT(rt_free);
 

@@ -231,7 +231,39 @@ struct rt_page_head
     char dummy[RT_MM_PAGE_SIZE - (sizeof(struct rt_page_head *) + sizeof(rt_size_t))];
 };
 static struct rt_page_head *rt_page_list;
-static struct rt_semaphore heap_sem;
+static struct rt_mutex heap_lock;
+
+#if defined(RT_USING_MUTEX)
+static struct rt_mutex heap_lock;
+#define MEM_LOCK_INIT() \
+    rt_mutex_init(&heap_lock, "heap", RT_IPC_FLAG_PRIO)
+#define MEM_LOCK()   \
+    rt_thread_self() ? rt_mutex_take(&heap_lock, RT_WAITING_FOREVER) : RT_EOK
+#define MEM_UNLOCK() \
+    rt_thread_self() ? rt_mutex_release(&heap_lock) : RT_EOK
+#elif defined(RT_USING_SEMAPHORE)
+static struct rt_semaphore heap_lock;
+#define MEM_LOCK_INIT() \
+    rt_sem_init(&heap_lock, "heap", 1, RT_IPC_FLAG_PRIO)
+#define MEM_LOCK()   \
+    rt_thread_self() ? rt_sem_take(&heap_lock, RT_WAITING_FOREVER) : RT_EOK
+#define MEM_UNLOCK() \
+    rt_thread_self() ? rt_sem_release(&heap_lock) : RT_EOK
+#else
+rt_inline rt_err_t _mem_lock(void)
+{
+    rt_enter_critical();
+    return RT_EOK;
+}
+rt_inline rt_err_t _mem_unlock(void)
+{
+    rt_exit_critical();
+    return RT_EOK;
+}
+#define MEM_LOCK_INIT()
+#define MEM_LOCK() _mem_lock()
+#define MEM_UNLOCK() _mem_unlock()
+#endif
 
 void *rt_page_alloc(rt_size_t npages)
 {
@@ -242,7 +274,7 @@ void *rt_page_alloc(rt_size_t npages)
         return RT_NULL;
 
     /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+    MEM_LOCK();
     for (prev = &rt_page_list; (b = *prev) != RT_NULL; prev = &(b->next))
     {
         if (b->page > npages)
@@ -264,7 +296,7 @@ void *rt_page_alloc(rt_size_t npages)
     }
 
     /* unlock heap */
-    rt_sem_release(&heap_sem);
+    MEM_UNLOCK();
 
     return b;
 }
@@ -281,7 +313,7 @@ void rt_page_free(void *addr, rt_size_t npages)
     n = (struct rt_page_head *)addr;
 
     /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+    MEM_LOCK();
 
     for (prev = &rt_page_list; (b = *prev) != RT_NULL; prev = &(b->next))
     {
@@ -318,7 +350,7 @@ void rt_page_free(void *addr, rt_size_t npages)
 
 _return:
     /* unlock heap */
-    rt_sem_release(&heap_sem);
+    MEM_UNLOCK();
 }
 
 /*
@@ -363,7 +395,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     npages  = limsize / RT_MM_PAGE_SIZE;
 
     /* initialize heap semaphore */
-    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
+    MEM_LOCK_INIT();
 
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n",
                                  heap_start, heap_end, limsize, npages));
@@ -510,7 +542,7 @@ void *rt_malloc(rt_size_t size)
                       ((rt_ubase_t)chunk - heap_start) >> RT_MM_PAGE_BITS));
 
         /* lock heap */
-        rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+        MEM_LOCK();
 
 #ifdef RT_MEM_STATS
         used_mem += size;
@@ -521,7 +553,7 @@ void *rt_malloc(rt_size_t size)
     }
 
     /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+    MEM_LOCK();
 
     /*
      * Attempt to allocate out of an existing zone.  First try the free list,
@@ -596,7 +628,7 @@ void *rt_malloc(rt_size_t size)
         else
         {
             /* unlock heap, since page allocator will think about lock */
-            rt_sem_release(&heap_sem);
+            MEM_UNLOCK();
 
             /* allocate a zone from page */
             z = rt_page_alloc(zone_size / RT_MM_PAGE_SIZE);
@@ -607,7 +639,7 @@ void *rt_malloc(rt_size_t size)
             }
 
             /* lock heap */
-            rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+            MEM_LOCK();
 
             RT_DEBUG_LOG(RT_DEBUG_SLAB, ("alloc a new zone: 0x%x\n",
                                          (rt_ubase_t)z));
@@ -659,7 +691,7 @@ void *rt_malloc(rt_size_t size)
     }
 
 done:
-    rt_sem_release(&heap_sem);
+    MEM_UNLOCK();
     RT_OBJECT_HOOK_CALL(rt_malloc_hook, ((char *)chunk, size));
 
 __exit:
@@ -799,7 +831,7 @@ void rt_free(void *ptr)
         rt_ubase_t size;
 
         /* lock heap */
-        rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+        MEM_LOCK();
         /* clear page counter */
         size = kup->size;
         kup->size = 0;
@@ -807,7 +839,7 @@ void rt_free(void *ptr)
 #ifdef RT_MEM_STATS
         used_mem -= size * RT_MM_PAGE_SIZE;
 #endif
-        rt_sem_release(&heap_sem);
+        MEM_UNLOCK();
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB,
                      ("free large memory block 0x%x, page count %d\n",
@@ -820,7 +852,7 @@ void rt_free(void *ptr)
     }
 
     /* lock heap */
-    rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
+    MEM_LOCK();
 
     /* zone case. get out zone. */
     z = (slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
@@ -891,7 +923,7 @@ void rt_free(void *ptr)
             }
 
             /* unlock heap */
-            rt_sem_release(&heap_sem);
+            MEM_UNLOCK();
 
             /* release pages */
             rt_page_free(z, zone_size / RT_MM_PAGE_SIZE);
@@ -900,7 +932,7 @@ void rt_free(void *ptr)
         }
     }
     /* unlock heap */
-    rt_sem_release(&heap_sem);
+    MEM_UNLOCK();
 }
 RTM_EXPORT(rt_free);
 

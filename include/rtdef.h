@@ -848,8 +848,11 @@ struct rt_memheap
 
     struct rt_memheap_item *free_list;                  /**< free block list */
     struct rt_memheap_item  free_header;                /**< free block list header */
-
+#if defined(RT_USING_MUTEX)
+    struct rt_mutex         lock;                       /**< mutex lock */
+#elif defined(RT_USING_SEMAPHORE)
     struct rt_semaphore     lock;                       /**< semaphore lock */
+#endif
 };
 #endif
 
