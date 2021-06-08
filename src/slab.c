@@ -363,7 +363,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     npages  = limsize / RT_MM_PAGE_SIZE;
 
     /* initialize heap semaphore */
-    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
 
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("heap[0x%x - 0x%x], size 0x%x, 0x%x pages\n",
                                  heap_start, heap_end, limsize, npages));
