@@ -757,11 +757,38 @@ static struct rt_memheap _heap;
 
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
+    RT_ASSERT((rt_uint32_t)end_addr > (rt_uint32_t)begin_addr);
+
     /* initialize a default heap in the system */
     rt_memheap_init(&_heap,
                     "heap",
                     begin_addr,
                     (rt_uint32_t)end_addr - (rt_uint32_t)begin_addr);
+}
+
+void *rt_system_heap_add(void *begin_addr, void *end_addr)
+{
+    RT_ASSERT((rt_uint32_t)end_addr > (rt_uint32_t)begin_addr);
+
+    static rt_uint8_t cnt = 0;
+    char name[RT_NAME_MAX] = {0};
+
+    rt_sprintf(name, "heap%d", cnt++);
+
+    struct rt_memheap *heap = rt_malloc(sizeof(struct rt_memheap));
+    if (heap == RT_NULL)
+    {
+        return RT_NULL;
+    }
+    rt_memheap_init(heap, name, begin_addr, ((rt_uint32_t)end_addr - (rt_uint32_t)begin_addr));
+    return heap;
+}
+
+void rt_system_heap_remove(void *heap)
+{
+    RT_ASSERT(heap != RT_NULL);
+    rt_memheap_detach((struct rt_memheap *)heap);
+    rt_free(heap);
 }
 
 void *rt_malloc(rt_size_t size)
