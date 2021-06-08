@@ -270,6 +270,9 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size));
 void rt_free_sethook(void (*hook)(void *ptr));
 #endif
 
+void *rt_system_heap_add(void *begin_addr, void *end_addr);
+void rt_system_heap_remove(void *heap);
+
 #endif
 
 #ifdef RT_USING_MEMHEAP
