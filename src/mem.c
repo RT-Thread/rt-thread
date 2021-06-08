@@ -250,7 +250,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     rt_mem_setname(heap_end, "INIT");
 #endif
 
-    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
 
     /* initialize the lowest-free pointer to the start of the heap */
     lfree = (struct heap_mem *)heap_ptr;
