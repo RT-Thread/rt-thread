@@ -1,6 +1,8 @@
 #ifndef XIL_CACHE_H
 #define XIL_CACHE_H
 
+#include <rthw.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
