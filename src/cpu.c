@@ -185,4 +185,4 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
 
-#endif
+#endif /* RT_USING_SMP */
