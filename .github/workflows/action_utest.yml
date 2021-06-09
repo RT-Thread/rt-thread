@@ -13,22 +13,33 @@ jobs:
        legs:
          - {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/kernel/config.h"}
          - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/utest_self/config.h"}
-    
+         - {UTEST: "kernel/mem/riscv64", RTT_BSP: "bsp/qemu-riscv-virt64", QEMU_ARCH: "virt",     CONFIG_FILE: "examples/utest/configs/kernel/config_riscv64.h"}
+
     env:
       TEST_BSP_ROOT: ${{ matrix.legs.RTT_BSP }}
       TEST_CONFIG_FILE: ${{ matrix.legs.CONFIG_FILE }}
     steps:
     - uses: actions/checkout@v1
-    - name: Prepare env
+    - name: Prepare arm env
+      if: ${{ matrix.legs.QEMU_ARCH == 'vexpress-a9' && success() }}
       run: |
         sudo apt-get update > /dev/null
         sudo apt-get -yqq install scons qemu-system-arm git
         wget -q https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
         sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
-    - name: Build bsp
-      run: |
         export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin
         /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
+    - name: Prepare riscv env
+      if: ${{ matrix.legs.QEMU_ARCH == 'virt' && success() }}
+      run: |
+        sudo apt-get update > /dev/null
+        sudo apt-get -yqq install scons qemu-system-riscv git
+        wget -q https://static.dev.sifive.com/dev-tools/freedom-tools/v2020.12/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+        sudo tar zxvf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+        export RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin
+        /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+    - name: Build bsp
+      run: |
         cp $TEST_CONFIG_FILE $TEST_BSP_ROOT/rtconfig.h
         scons -j$(nproc) -C $TEST_BSP_ROOT
     - name: Start test
