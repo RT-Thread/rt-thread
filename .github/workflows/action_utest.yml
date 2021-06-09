@@ -44,7 +44,8 @@ jobs:
       run: |
         cp $TEST_CONFIG_FILE $TEST_BSP_ROOT/rtconfig.h
         scons -j$(nproc) -C $TEST_BSP_ROOT
-    - name: Start test
+    - name: Start arm test
+      if: ${{ matrix.legs.QEMU_ARCH == 'arm' && success() }}
       run: |
         git clone https://github.com/guozhanxin/UtestRunner.git
         pushd $TEST_BSP_ROOT
@@ -52,5 +53,13 @@ jobs:
         popd
         pushd UtestRunner
         python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.elf --sd ../$TEST_BSP_ROOT/sd.bin
+        cat rtt_console.log
+        popd
+    - name: Start riscv test
+      if: ${{ matrix.legs.QEMU_ARCH == 'riscv64' && success() }}
+      run: |
+        git clone https://github.com/guozhanxin/UtestRunner.git
+        pushd UtestRunner
+        python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.elf
         cat rtt_console.log
         popd
