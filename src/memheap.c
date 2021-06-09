@@ -766,6 +766,14 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
                     (rt_uint32_t)end_addr - (rt_uint32_t)begin_addr);
 }
 
+/**
+  * Add a heap into the system.
+  *
+  * @param begin_addr, the begin address of new memory.
+  * @param end_addr, the end address of new memory. The value should greater than begin address.
+  *
+  * @return The heap pointer.
+  */
 void *rt_system_heap_add(void *begin_addr, void *end_addr)
 {
     RT_ASSERT((rt_uint32_t)end_addr > (rt_uint32_t)begin_addr);
@@ -783,13 +791,20 @@ void *rt_system_heap_add(void *begin_addr, void *end_addr)
     rt_memheap_init(heap, name, begin_addr, ((rt_uint32_t)end_addr - (rt_uint32_t)begin_addr));
     return heap;
 }
+RTM_EXPORT(rt_system_heap_add);
 
+/**
+  * Remove a heap from system.
+  *
+  * @param heap The heap pointer returned by rt_system_heap_add().
+  */
 void rt_system_heap_remove(void *heap)
 {
     RT_ASSERT(heap != RT_NULL);
     rt_memheap_detach((struct rt_memheap *)heap);
     rt_free(heap);
 }
+RTM_EXPORT(rt_system_heap_remove);
 
 void *rt_malloc(rt_size_t size)
 {
