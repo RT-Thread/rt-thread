@@ -1,12 +1,37 @@
 /*!
-    \file  gd32f4xx_dma.h
-    \brief definitions for the DMA
+    \file    gd32f4xx_dma.c
+    \brief   definitions for the DMA
+
+    \version 2016-08-15, V1.0.0, firmware for GD32F4xx
+    \version 2018-12-12, V2.0.0, firmware for GD32F4xx
+    \version 2020-09-30, V2.1.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (C) 2016 GigaDevice
+    Copyright (c) 2020, GigaDevice Semiconductor Inc.
 
-    2016-08-15, V1.0.0, firmware for GD32F4xx
+    Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this
+       list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.
 */
 
 #ifndef GD32F4XX_DMA_H
@@ -123,10 +148,10 @@
 #define DMA_CHXPADDR_PADDR                BITS(0,31)                    /*!< peripheral base address */
 
 /* DMA_CHxM0ADDR,x=0..7 */
-#define DMA_CHXM0ADDR_PADDR               BITS(0,31)                    /*!< memory 0 base address */
+#define DMA_CHXM0ADDR_M0ADDR              BITS(0,31)                    /*!< memory 0 base address */
 
 /* DMA_CHxM1ADDR,x=0..7 */
-#define DMA_CHXM1ADDR_PADDR               BITS(0,31)                    /*!< memory 1 base address */
+#define DMA_CHXM1ADDR_M0ADDR              BITS(0,31)                    /*!< memory 1 base address */
 
 /* DMA_CHxFCTL,x=0..7 */
 #define DMA_CHXFCTL_FCCV                  BITS(0,1)                     /*!< FIFO counter critical value */
@@ -136,7 +161,7 @@
 
 /* constants definitions */
 /* DMA channel select */
-typedef enum 
+typedef enum
 {
     DMA_CH0 = 0,                                    /*!< DMA Channel 0 */
     DMA_CH1,                                        /*!< DMA Channel 1 */
@@ -149,7 +174,7 @@ typedef enum
 } dma_channel_enum;
 
 /* DMA peripheral select */
-typedef enum 
+typedef enum
 {
     DMA_SUBPERI0 = 0,                               /*!< DMA Peripheral 0 */
     DMA_SUBPERI1,                                   /*!< DMA Peripheral 1 */
@@ -166,7 +191,7 @@ typedef struct
 {
     uint32_t periph_addr;                           /*!< peripheral base address */
     uint32_t periph_width;                          /*!< transfer data size of peripheral */
-    uint32_t periph_inc;                            /*!< peripheral increasing mode */  
+    uint32_t periph_inc;                            /*!< peripheral increasing mode */
 
     uint32_t memory0_addr;                          /*!< memory 0 base address */
     uint32_t memory_width;                          /*!< transfer data size of memory */
@@ -176,7 +201,7 @@ typedef struct
     uint32_t periph_burst_width;                    /*!< multi data mode enable */
     uint32_t critical_value;                        /*!< FIFO critical */
 
-    uint32_t circular_mode;
+    uint32_t circular_mode;                         /*!< DMA circular mode */
     uint32_t direction;                             /*!< channel data transfer direction */
     uint32_t number;                                /*!< channel transfer number */
     uint32_t priority;                              /*!< channel priority level */
@@ -186,7 +211,7 @@ typedef struct
 typedef struct
 {
     uint32_t periph_addr;                           /*!< peripheral base address */
-    uint32_t periph_inc;                            /*!< peripheral increasing mode */  
+    uint32_t periph_inc;                            /*!< peripheral increasing mode */
 
     uint32_t memory0_addr;                          /*!< memory 0 base address */
     uint32_t memory_inc;                            /*!< memory increasing mode */
@@ -296,85 +321,108 @@ typedef struct
 #define DMA_FIFO_STATUS_FULL              ((uint32_t)0x00000005U)                   /*!< the data in the FIFO is full */
 
 /* DMA reset value */
-#define DMA_CHCTL_RESET_VALUE             ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXCTL register  */
-#define DMA_CHCNT_RESET_VALUE             ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXCNT register  */
-#define DMA_CHPADDR_RESET_VALUE           ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXPADDR register  */
-#define DMA_CHMADDR_RESET_VALUE           ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXMADDR register  */
-#define DMA_CHINTF_RESET_VALUE            ((uint32_t)0x0000003DU)                   /*!< clear DMA channel CHXINTFS register  */
-#define DMA_CHFCTL_RESET_VALUE            ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXFCTL register  */
+#define DMA_CHCTL_RESET_VALUE             ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXCTL register */
+#define DMA_CHCNT_RESET_VALUE             ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXCNT register */
+#define DMA_CHPADDR_RESET_VALUE           ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXPADDR register */
+#define DMA_CHMADDR_RESET_VALUE           ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXMADDR register */
+#define DMA_CHINTF_RESET_VALUE            ((uint32_t)0x0000003DU)                   /*!< clear DMA channel CHXINTFS register */
+#define DMA_CHFCTL_RESET_VALUE            ((uint32_t)0x00000000U)                   /*!< the reset value of DMA channel CHXFCTL register */
+
+/* DMA_INTF register */
+/* interrupt flag bits */
+#define DMA_INT_FLAG_FEE                  DMA_INTF_FEEIF                            /*!< FIFO error and exception flag */
+#define DMA_INT_FLAG_SDE                  DMA_INTF_SDEIF                            /*!< single data mode exception flag */
+#define DMA_INT_FLAG_TAE                  DMA_INTF_TAEIF                            /*!< transfer access error flag */
+#define DMA_INT_FLAG_HTF                  DMA_INTF_HTFIF                            /*!< half transfer finish flag */
+#define DMA_INT_FLAG_FTF                  DMA_INTF_FTFIF                            /*!< full transfer finish flag */
+
+/* flag bits */
+#define DMA_FLAG_FEE                      DMA_INTF_FEEIF                            /*!< FIFO error and exception flag */
+#define DMA_FLAG_SDE                      DMA_INTF_SDEIF                            /*!< single data mode exception flag */
+#define DMA_FLAG_TAE                      DMA_INTF_TAEIF                            /*!< transfer access error flag */
+#define DMA_FLAG_HTF                      DMA_INTF_HTFIF                            /*!< half transfer finish flag */
+#define DMA_FLAG_FTF                      DMA_INTF_FTFIF                            /*!< full transfer finish flag */
+
 
 /* function declarations */
+/* DMA deinitialization and initialization functions */
 /* deinitialize DMA a channel registers */
-void dma_deinit(uint32_t dma_periph,dma_channel_enum channelx);
+void dma_deinit(uint32_t dma_periph, dma_channel_enum channelx);
+/* initialize the DMA single data mode parameters struct with the default values */
+void dma_single_data_para_struct_init(dma_single_data_parameter_struct* init_struct);
+/* initialize the DMA multi data mode parameters struct with the default values */
+void dma_multi_data_para_struct_init(dma_multi_data_parameter_struct* init_struct);
 /* DMA single data mode initialize */
-void dma_single_data_mode_init(uint32_t dma_periph,dma_channel_enum channelx,dma_single_data_parameter_struct init_struct);
+void dma_single_data_mode_init(uint32_t dma_periph, dma_channel_enum channelx, dma_single_data_parameter_struct* init_struct);
 /* DMA multi data mode initialize */
-void dma_multi_data_mode_init(uint32_t dma_periph,dma_channel_enum channelx,dma_multi_data_parameter_struct init_struct);
+void dma_multi_data_mode_init(uint32_t dma_periph, dma_channel_enum channelx, dma_multi_data_parameter_struct* init_struct);
 
+/* DMA configuration functions */
 /* set DMA peripheral base address */
-void dma_periph_address_config(uint32_t dma_periph,dma_channel_enum channelx,uint32_t address);
+void dma_periph_address_config(uint32_t dma_periph, dma_channel_enum channelx, uint32_t address);
 /* set DMA Memory base address */
-void dma_memory_address_config(uint32_t dma_periph,dma_channel_enum channelx,uint8_t memory_flag,uint32_t address);
+void dma_memory_address_config(uint32_t dma_periph, dma_channel_enum channelx, uint8_t memory_flag, uint32_t address);
 
 /* set the number of remaining data to be transferred by the DMA */
-void dma_transfer_number_config(uint32_t dma_periph,dma_channel_enum channelx,uint32_t number);
+void dma_transfer_number_config(uint32_t dma_periph,dma_channel_enum channelx, uint32_t number);
 /* get the number of remaining data to be transferred by the DMA */
-uint32_t dma_transfer_number_get(uint32_t dma_periph,dma_channel_enum channelx);
+uint32_t dma_transfer_number_get(uint32_t dma_periph, dma_channel_enum channelx);
 
 /* configure priority level of DMA channel */
-void dma_priority_config(uint32_t dma_periph,dma_channel_enum channelx,uint32_t priority);
+void dma_priority_config(uint32_t dma_periph, dma_channel_enum channelx, uint32_t priority);
 
 /* configure transfer burst beats of memory */
-void dma_memory_burst_beats_config (uint32_t dma_periph,dma_channel_enum channelx,uint32_t mbeat);
+void dma_memory_burst_beats_config (uint32_t dma_periph, dma_channel_enum channelx, uint32_t mbeat);
 /* configure transfer burst beats of peripheral */
-void dma_periph_burst_beats_config (uint32_t dma_periph,dma_channel_enum channelx,uint32_t pbeat);
+void dma_periph_burst_beats_config (uint32_t dma_periph, dma_channel_enum channelx, uint32_t pbeat);
 /* configure transfer data size of memory */
-void dma_memory_width_config (uint32_t dma_periph,dma_channel_enum channelx,uint32_t msize);
+void dma_memory_width_config (uint32_t dma_periph, dma_channel_enum channelx, uint32_t msize);
 /* configure transfer data size of peripheral */
-void dma_periph_width_config (uint32_t dma_periph,dma_channel_enum channelx,uint32_t psize);
+void dma_periph_width_config (uint32_t dma_periph, dma_channel_enum channelx, uint32_t psize);
 
 /* configure next address increasement algorithm of memory */
-void dma_memory_address_generation_config(uint32_t dma_periph,dma_channel_enum channelx,uint8_t generation_algorithm);
+void dma_memory_address_generation_config(uint32_t dma_periph, dma_channel_enum channelx, uint8_t generation_algorithm);
 /* configure next address increasement algorithm of peripheral */
-void dma_peripheral_address_generation_config(uint32_t dma_periph,dma_channel_enum channelx,uint8_t generation_algorithm);
+void dma_peripheral_address_generation_config(uint32_t dma_periph, dma_channel_enum channelx, uint8_t generation_algorithm);
 
 /* enable DMA circulation mode */
-void dma_circulation_enable(uint32_t dma_periph,dma_channel_enum channelx);
+void dma_circulation_enable(uint32_t dma_periph, dma_channel_enum channelx);
 /* disable DMA circulation mode */
-void dma_circulation_disable(uint32_t dma_periph,dma_channel_enum channelx);
+void dma_circulation_disable(uint32_t dma_periph, dma_channel_enum channelx);
 /* enable DMA channel */
-void dma_channel_enable(uint32_t dma_periph,dma_channel_enum channelx);
+void dma_channel_enable(uint32_t dma_periph, dma_channel_enum channelx);
 /* disable DMA channel */
-void dma_channel_disable(uint32_t dma_periph,dma_channel_enum channelx);
+void dma_channel_disable(uint32_t dma_periph, dma_channel_enum channelx);
 
 /* configure the direction of data transfer on the channel */
-void dma_transfer_direction_config(uint32_t dma_periph,dma_channel_enum channelx,uint8_t direction);
+void dma_transfer_direction_config(uint32_t dma_periph, dma_channel_enum channelx, uint8_t direction);
 
 /* DMA switch buffer mode config */
-void dma_switch_buffer_mode_config(uint32_t dma_periph,dma_channel_enum channelx,uint32_t memory1_addr,uint32_t memory_select);
+void dma_switch_buffer_mode_config(uint32_t dma_periph, dma_channel_enum channelx, uint32_t memory1_addr, uint32_t memory_select);
 /* DMA using memory get */
-uint32_t dma_using_memory_get(uint32_t dma_periph,dma_channel_enum channelx);
+uint32_t dma_using_memory_get(uint32_t dma_periph, dma_channel_enum channelx);
 
 /* DMA channel peripheral select */
-void dma_channel_subperipheral_select(uint32_t dma_periph,dma_channel_enum channelx,dma_subperipheral_enum sub_periph);
+void dma_channel_subperipheral_select(uint32_t dma_periph, dma_channel_enum channelx, dma_subperipheral_enum sub_periph);
 /* DMA flow controller configure */
-void dma_flow_controller_config(uint32_t dma_periph,dma_channel_enum channelx,uint32_t controller);
+void dma_flow_controller_config(uint32_t dma_periph, dma_channel_enum channelx, uint32_t controller);
 /* DMA flow controller enable */
-void dma_switch_buffer_mode_enable(uint32_t dma_periph,dma_channel_enum channelx,ControlStatus newvalue);
+void dma_switch_buffer_mode_enable(uint32_t dma_periph, dma_channel_enum channelx, ControlStatus newvalue);
 /* DMA FIFO status get */
-uint32_t dma_fifo_status_get(uint32_t dma_periph,dma_channel_enum channelx);
+uint32_t dma_fifo_status_get(uint32_t dma_periph, dma_channel_enum channelx);
 
+/* flag and interrupt functions */
 /* check DMA flag is set or not */
-FlagStatus dma_flag_get(uint32_t dma_periph,dma_channel_enum channelx,uint32_t flag);
+FlagStatus dma_flag_get(uint32_t dma_periph, dma_channel_enum channelx, uint32_t flag);
 /* clear DMA a channel flag */
-void dma_flag_clear(uint32_t dma_periph,dma_channel_enum channelx,uint32_t flag);
+void dma_flag_clear(uint32_t dma_periph, dma_channel_enum channelx, uint32_t flag);
 /* check DMA flag is set or not */
-FlagStatus dma_interrupt_flag_get(uint32_t dma_periph,dma_channel_enum channelx,uint32_t interrupt);
+FlagStatus dma_interrupt_flag_get(uint32_t dma_periph, dma_channel_enum channelx, uint32_t interrupt);
 /* clear DMA a channel flag */
-void dma_interrupt_flag_clear(uint32_t dma_periph,dma_channel_enum channelx,uint32_t interrupt);
+void dma_interrupt_flag_clear(uint32_t dma_periph, dma_channel_enum channelx, uint32_t interrupt);
 /* enable DMA interrupt */
-void dma_interrupt_enable(uint32_t dma_periph,dma_channel_enum channelx,uint32_t source);
+void dma_interrupt_enable(uint32_t dma_periph, dma_channel_enum channelx, uint32_t source);
 /* disable DMA interrupt */
-void dma_interrupt_disable(uint32_t dma_periph,dma_channel_enum channelx,uint32_t source);
+void dma_interrupt_disable(uint32_t dma_periph, dma_channel_enum channelx, uint32_t source);
 
 #endif /* GD32F4XX_DMA_H */
