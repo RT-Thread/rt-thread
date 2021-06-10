@@ -74,7 +74,7 @@ void rt_mem_set_tag(void *ptr, const char *name)
         rt_memheap_setname(item, name);
     }
 }
-#endif
+#endif /* RT_USING_MEMTRACE */
 
 /*
  * The initialized memory pool will be:
@@ -127,7 +127,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
 
 #ifdef RT_USING_MEMTRACE
     rt_memset(item->owner_thread_name, ' ', sizeof(item->owner_thread_name));
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     item->next = (struct rt_memheap_item *)
                  ((rt_uint8_t *)item + memheap->available_size + RT_MEMHEAP_SIZE);
@@ -252,7 +252,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 
 #ifdef RT_USING_MEMTRACE
                 rt_memset(new_ptr->owner_thread_name, ' ', sizeof(new_ptr->owner_thread_name));
-#endif
+#endif /* RT_USING_MEMTRACE */
 
                 /* break down the block list */
                 new_ptr->prev          = header_ptr;
@@ -310,7 +310,7 @@ void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
                 rt_memcpy(header_ptr->owner_thread_name, rt_thread_self()->name, sizeof(header_ptr->owner_thread_name));
             else
                 rt_memcpy(header_ptr->owner_thread_name, "NONE", sizeof(header_ptr->owner_thread_name));
-#endif
+#endif /* RT_USING_MEMTRACE */
 
             /* release lock */
             rt_sem_release(&(heap->lock));
@@ -439,7 +439,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
 
 #ifdef RT_USING_MEMTRACE
                 rt_memset(next_ptr->owner_thread_name, ' ', sizeof(next_ptr->owner_thread_name));
-#endif
+#endif /* RT_USING_MEMTRACE */
 
                 next_ptr->prev          = header_ptr;
                 next_ptr->next          = header_ptr->next;
@@ -507,7 +507,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
 
 #ifdef RT_USING_MEMTRACE
     rt_memset(new_ptr->owner_thread_name, ' ', sizeof(new_ptr->owner_thread_name));
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     /* break down the block list */
     new_ptr->prev          = header_ptr;
@@ -660,7 +660,7 @@ void rt_memheap_free(void *ptr)
 
 #ifdef RT_USING_MEMTRACE
     rt_memset(header_ptr->owner_thread_name, ' ', sizeof(header_ptr->owner_thread_name));
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     /* release lock */
     rt_sem_release(&(heap->lock));
@@ -750,7 +750,7 @@ int memheaptrace(void)
     return 0;
 }
 MSH_CMD_EXPORT(memheaptrace, dump memory trace information);
-#endif
+#endif /* RT_USING_FINSH */
 
 #ifdef RT_USING_MEMHEAP_AS_HEAP
 static struct rt_memheap _heap;
@@ -816,7 +816,7 @@ void *rt_malloc(rt_size_t size)
 
         RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc => 0x%08x : %d", ptr, size));
     }
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     return ptr;
 }
@@ -882,7 +882,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("realloc => 0x%08x : %d",
                                         new_ptr, newsize));
     }
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     return new_ptr;
 }
@@ -912,7 +912,7 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
         RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("calloc => 0x%08x : %d",
                                         ptr, count * size));
     }
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     return ptr;
 }
@@ -932,7 +932,7 @@ void rt_memory_info(rt_uint32_t *total,
         *max_used = _heap.max_used_size;
 }
 
-#endif
+#endif /* RT_USING_MEMHEAP_AS_HEAP */
 
 #ifdef RT_USING_MEMTRACE
 
@@ -1004,8 +1004,8 @@ void memtrace_heap()
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 MSH_CMD_EXPORT(memtrace_heap, dump memory trace for heap);
-#endif /* end of RT_USING_FINSH */
+#endif /* RT_USING_FINSH */
 
-#endif /* end of RT_USING_MEMTRACE */
+#endif /* RT_USING_MEMTRACE */
 
-#endif /* end of RT_USING_MEMHEAP */
+#endif /* RT_USING_MEMHEAP */
