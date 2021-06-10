@@ -31,11 +31,11 @@ static rt_list_t rt_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 
 #ifndef RT_TIMER_THREAD_STACK_SIZE
 #define RT_TIMER_THREAD_STACK_SIZE     512
-#endif
+#endif /* RT_TIMER_THREAD_STACK_SIZE */
 
 #ifndef RT_TIMER_THREAD_PRIO
 #define RT_TIMER_THREAD_PRIO           0
-#endif
+#endif /* RT_TIMER_THREAD_PRIO */
 
 /* soft timer status */
 static rt_uint8_t soft_timer_status = RT_SOFT_TIMER_IDLE;
@@ -44,7 +44,7 @@ static rt_list_t rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_thread timer_thread;
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
-#endif
+#endif /* RT_USING_TIMER_SOFT */
 
 #ifdef RT_USING_HOOK
 extern void (*rt_object_take_hook)(struct rt_object *object);
@@ -81,7 +81,7 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer))
 }
 
 /**@}*/
-#endif
+#endif /* RT_USING_HOOK */
 
 static void _rt_timer_init(rt_timer_t timer,
                            void (*timeout)(void *parameter),
@@ -171,7 +171,7 @@ void rt_timer_dump(rt_list_t timer_heads[])
     }
     rt_kprintf("\n");
 }
-#endif
+#endif /* RT_DEBUG_TIMER */
 
 /**
  * @addtogroup Clock
@@ -303,7 +303,7 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
     return RT_EOK;
 }
 RTM_EXPORT(rt_timer_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will start the timer
@@ -348,7 +348,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
         timer_list = rt_soft_timer_list;
     }
     else
-#endif
+#endif /* RT_USING_TIMER_SOFT */
     {
         /* insert timer to system timer list */
         timer_list = rt_timer_list;
@@ -422,7 +422,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
             rt_schedule();
         }
     }
-#endif
+#endif /* RT_USING_TIMER_SOFT */
 
     return RT_EOK;
 }
@@ -718,7 +718,7 @@ static void rt_thread_timer_entry(void *parameter)
         rt_soft_timer_check();
     }
 }
-#endif
+#endif /* RT_USING_TIMER_SOFT */
 
 /**
  * @ingroup SystemInit
@@ -764,7 +764,7 @@ void rt_system_timer_thread_init(void)
 
     /* startup */
     rt_thread_startup(&timer_thread);
-#endif
+#endif /* RT_USING_TIMER_SOFT */
 }
 
 /**@}*/
