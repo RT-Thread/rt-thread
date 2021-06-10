@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Xilinx, Inc.  
+ * Copyright (C) 2014-2020 Xilinx, Inc.
  * Copyright (c) 2020-2021, WangHuachen
  * All rights reserved.
  * SPDX-License-Identifier: MIT
