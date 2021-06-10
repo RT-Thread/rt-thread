@@ -48,7 +48,7 @@
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
-#endif
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup IPC
@@ -93,7 +93,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
     {
     case RT_IPC_FLAG_FIFO:
         rt_list_insert_before(list, &(thread->tlist));
-        break;
+        break; /* RT_IPC_FLAG_FIFO */
 
     case RT_IPC_FLAG_PRIO:
         {
@@ -121,7 +121,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
             if (n == list)
                 rt_list_insert_before(list, &(thread->tlist));
         }
-        break;
+        break;/* RT_IPC_FLAG_PRIO */
 
     default:
         RT_ASSERT(0);
@@ -319,7 +319,7 @@ rt_err_t rt_sem_delete(rt_sem_t sem)
     return RT_EOK;
 }
 RTM_EXPORT(rt_sem_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will take a semaphore, if the semaphore is unavailable, the
@@ -533,7 +533,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_sem_control);
-#endif /* end of RT_USING_SEMAPHORE */
+#endif /* RT_USING_SEMAPHORE */
 
 #ifdef RT_USING_MUTEX
 /**
@@ -659,7 +659,7 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mutex_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will take a mutex, if the mutex is unavailable, the
@@ -714,7 +714,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     {
 #ifdef RT_USING_SIGNALS
 __again:
-#endif /* end of RT_USING_SIGNALS */
+#endif /* RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -794,7 +794,7 @@ __again:
 #ifdef RT_USING_SIGNALS
                     /* interrupt by signal, try it again */
                     if (thread->error == -RT_EINTR) goto __again;
-#endif /* end of RT_USING_SIGNALS */
+#endif /* RT_USING_SIGNALS */
 
                     /* return error */
                     return thread->error;
@@ -968,7 +968,7 @@ rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mutex_control);
-#endif /* end of RT_USING_MUTEX */
+#endif /* RT_USING_MUTEX */
 
 #ifdef RT_USING_EVENT
 /**
@@ -1084,7 +1084,7 @@ rt_err_t rt_event_delete(rt_event_t event)
     return RT_EOK;
 }
 RTM_EXPORT(rt_event_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will send an event to the event object, if there are threads
@@ -1361,7 +1361,7 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_event_control);
-#endif /* end of RT_USING_EVENT */
+#endif /* RT_USING_EVENT */
 
 #ifdef RT_USING_MAILBOX
 /**
@@ -1512,7 +1512,7 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mb_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will send a mail to mailbox object. If the mailbox is full,
@@ -1919,7 +1919,7 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mb_control);
-#endif /* end of RT_USING_MAILBOX */
+#endif /* RT_USING_MAILBOX */
 
 #ifdef RT_USING_MESSAGEQUEUE
 struct rt_mq_message
@@ -2121,7 +2121,7 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mq_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will send a message to message queue object. If the message queue is full,
@@ -2625,6 +2625,6 @@ rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mq_control);
-#endif /* end of RT_USING_MESSAGEQUEUE */
+#endif /* RT_USING_MESSAGEQUEUE */
 
 /**@}*/
