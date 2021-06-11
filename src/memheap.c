@@ -757,6 +757,8 @@ static struct rt_memheap _heap;
 
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
+    RT_ASSERT((rt_uint32_t)end_addr > (rt_uint32_t)begin_addr);
+
     /* initialize a default heap in the system */
     rt_memheap_init(&_heap,
                     "heap",
