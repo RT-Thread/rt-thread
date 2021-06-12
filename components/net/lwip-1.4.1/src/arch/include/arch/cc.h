@@ -63,12 +63,9 @@ typedef uintptr_t mem_ptr_t;
             in arch.h has been assigned to another error code. */
 #endif
 
-#if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+/* LWIP_TIMEVAL_PRIVATE: provided by <sys/time.h> */
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE       0
-#else
-#define LWIP_TIMEVAL_PRIVATE       1
-#endif
 
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x
