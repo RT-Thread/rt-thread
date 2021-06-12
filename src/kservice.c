@@ -1238,7 +1238,7 @@ RTM_EXPORT(rt_kprintf);
  *
  * @return the allocated memory block on successful, otherwise returns RT_NULL
  */
-void *rt_malloc_align(rt_size_t size, rt_size_t align)
+RT_WEAK void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
     void *ptr;
     void *align_ptr;
@@ -1284,7 +1284,7 @@ RTM_EXPORT(rt_malloc_align);
  *
  * @param ptr the memory block pointer
  */
-void rt_free_align(void *ptr)
+RT_WEAK void rt_free_align(void *ptr)
 {
     void *real_ptr;
 
