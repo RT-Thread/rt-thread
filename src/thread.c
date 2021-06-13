@@ -76,7 +76,7 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
     rt_thread_inited_hook = hook;
 }
 
-#endif
+#endif /* RT_USING_HOOK */
 
 /* must be invoke witch rt_hw_interrupt_disable */
 static void _rt_thread_cleanup_execute(rt_thread_t thread)
@@ -84,7 +84,7 @@ static void _rt_thread_cleanup_execute(rt_thread_t thread)
     register rt_base_t level;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = RT_NULL;
-#endif
+#endif /* RT_USING_MODULE */
     level = rt_hw_interrupt_disable();
 #ifdef RT_USING_MODULE
     module = (struct rt_dlmodule*)thread->module_id;
@@ -92,14 +92,14 @@ static void _rt_thread_cleanup_execute(rt_thread_t thread)
     {
         dlmodule_destroy(module);
     }
-#endif
+#endif /* RT_USING_MODULE */
     /* invoke thread cleanup */
     if (thread->cleanup != RT_NULL)
         thread->cleanup(thread);
 
 #ifdef RT_USING_SIGNALS
     rt_thread_free_sig(thread);
-#endif
+#endif /* RT_USING_SIGNALS */
     rt_hw_interrupt_enable(level);
 }
 
@@ -170,7 +170,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
                                           (rt_uint8_t *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
                                           (void *)_rt_thread_exit);
-#endif
+#endif /* ARCH_CPU_STACK_GROWS_UPWARD */
 
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
@@ -181,7 +181,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 #if RT_THREAD_PRIORITY_MAX > 32
     thread->number = 0;
     thread->high_mask = 0;
-#endif
+#endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     /* tick init */
     thread->init_tick      = tick;
@@ -200,7 +200,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->scheduler_lock_nest = 0;
     thread->cpus_lock_nest = 0;
     thread->critical_lock_nest = 0;
-#endif /*RT_USING_SMP*/
+#endif /* RT_USING_SMP */
 
     /* initialize cleanup function and user data */
     thread->cleanup   = 0;
@@ -221,14 +221,14 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 
 #ifndef RT_USING_SMP
     thread->sig_ret     = RT_NULL;
-#endif
+#endif /* RT_USING_SMP */
     thread->sig_vectors = RT_NULL;
     thread->si_list     = RT_NULL;
-#endif
+#endif /* RT_USING_SIGNALS */
 
 #ifdef RT_USING_LWP
     thread->lwp = RT_NULL;
-#endif
+#endif /* RT_USING_LWP */
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
@@ -302,7 +302,7 @@ rt_thread_t rt_thread_self(void)
     extern rt_thread_t rt_current_thread;
 
     return rt_current_thread;
-#endif
+#endif /* RT_USING_SMP */
 }
 RTM_EXPORT(rt_thread_self);
 
@@ -330,7 +330,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     thread->high_mask   = 1L << (thread->current_priority & 0x07);  /* 3bit */
 #else
     thread->number_mask = 1L << thread->current_priority;
-#endif
+#endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("startup a thread:%s with priority:%d\n",
                                    thread->name, thread->init_priority));
@@ -492,7 +492,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will let current thread yield processor, and scheduler will
@@ -690,7 +690,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
                 thread->high_mask   = 1 << (thread->current_priority & 0x07);   /* 3bit */
     #else
                 thread->number_mask = 1 << thread->current_priority;
-    #endif
+    #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
                 /* insert thread to schedule queue again */
                 rt_schedule_insert_thread(thread);
@@ -706,7 +706,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
                 thread->high_mask   = 1 << (thread->current_priority & 0x07);   /* 3bit */
     #else
                 thread->number_mask = 1 << thread->current_priority;
-    #endif
+    #endif /* RT_THREAD_PRIORITY_MAX > 32 */
             }
 
             /* enable interrupt */
@@ -732,7 +732,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
             {
                 rt_err = rt_thread_delete(thread);
             }
-    #endif
+    #endif /* RT_USING_HEAP */
             rt_schedule();
             return rt_err;
         }
@@ -752,7 +752,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
             thread->bind_cpu = cpu > RT_CPUS_NR? RT_CPUS_NR : cpu;
             break;
         }
-    #endif /*RT_USING_SMP*/
+    #endif /* RT_USING_SMP */
 
         default:
             break;

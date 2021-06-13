@@ -52,7 +52,6 @@
 
 #ifndef RT_USING_MEMHEAP_AS_HEAP
 
-/* #define RT_MEM_DEBUG */
 #define RT_MEM_STATS
 
 #if defined (RT_USING_HEAP) && defined (RT_USING_SMALL_MEM)
@@ -90,7 +89,7 @@ void rt_free_sethook(void (*hook)(void *ptr))
 
 /**@}*/
 
-#endif
+#endif /* RT_USING_HOOK */
 
 #define HEAP_MAGIC 0x1ea0
 struct heap_mem
@@ -100,7 +99,7 @@ struct heap_mem
     rt_uint16_t used;
 #ifdef ARCH_CPU_64BIT
     rt_uint32_t resv;
-#endif
+#endif /* ARCH_CPU_64BIT */
 
     rt_size_t next, prev;
 
@@ -109,8 +108,8 @@ struct heap_mem
     rt_uint8_t thread[8];
 #else
     rt_uint8_t thread[4];   /* thread name */
-#endif
-#endif
+#endif /* ARCH_CPU_64BIT */
+#endif /* RT_USING_MEMTRACE */
 };
 
 /** pointer to the heap: for alignment, heap_ptr is now a pointer instead of an array */
@@ -123,7 +122,7 @@ static struct heap_mem *heap_end;
 #define MIN_SIZE 24
 #else
 #define MIN_SIZE 12
-#endif
+#endif /* ARCH_CPU_64BIT */
 
 #define MIN_SIZE_ALIGNED     RT_ALIGN(MIN_SIZE, RT_ALIGN_SIZE)
 #define SIZEOF_STRUCT_MEM    RT_ALIGN(sizeof(struct heap_mem), RT_ALIGN_SIZE)
@@ -135,7 +134,8 @@ static rt_size_t mem_size_aligned;
 
 #ifdef RT_MEM_STATS
 static rt_size_t used_mem, max_mem;
-#endif
+#endif /* RT_MEM_STATS */
+
 #ifdef RT_USING_MEMTRACE
 rt_inline void rt_mem_setname(struct heap_mem *mem, const char *name)
 {
@@ -151,7 +151,7 @@ rt_inline void rt_mem_setname(struct heap_mem *mem, const char *name)
         mem->thread[index] = ' ';
     }
 }
-#endif
+#endif /* RT_USING_MEMTRACE */
 
 static void plug_holes(struct heap_mem *mem)
 {
@@ -238,7 +238,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     mem->used  = 0;
 #ifdef RT_USING_MEMTRACE
     rt_mem_setname(mem, "INIT");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     /* initialize the end of the heap */
     heap_end        = (struct heap_mem *)&heap_ptr[mem->next];
@@ -248,7 +248,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     heap_end->prev  = mem_size_aligned + SIZEOF_STRUCT_MEM;
 #ifdef RT_USING_MEMTRACE
     rt_mem_setname(heap_end, "INIT");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     rt_sem_init(&heap_sem, "heap", 1, RT_IPC_FLAG_PRIO);
 
@@ -336,7 +336,7 @@ void *rt_malloc(rt_size_t size)
                 mem2->prev = ptr;
 #ifdef RT_USING_MEMTRACE
                 rt_mem_setname(mem2, "    ");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
                 /* and insert it between mem and mem->next */
                 mem->next = ptr2;
@@ -350,7 +350,7 @@ void *rt_malloc(rt_size_t size)
                 used_mem += (size + SIZEOF_STRUCT_MEM);
                 if (max_mem < used_mem)
                     max_mem = used_mem;
-#endif
+#endif /* RT_MEM_STATS */
             }
             else
             {
@@ -366,7 +366,7 @@ void *rt_malloc(rt_size_t size)
                 used_mem += mem->next - ((rt_uint8_t *)mem - heap_ptr);
                 if (max_mem < used_mem)
                     max_mem = used_mem;
-#endif
+#endif /* RT_MEM_STATS */
             }
             /* set memory block magic */
             mem->magic = HEAP_MAGIC;
@@ -375,7 +375,7 @@ void *rt_malloc(rt_size_t size)
                 rt_mem_setname(mem, rt_thread_self()->name);
             else
                 rt_mem_setname(mem, "NONE");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
             if (mem == lfree)
             {
@@ -473,7 +473,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         /* split memory block */
 #ifdef RT_MEM_STATS
         used_mem -= (size - newsize);
-#endif
+#endif /* RT_MEM_STATS */
 
         ptr2 = ptr + SIZEOF_STRUCT_MEM + newsize;
         mem2 = (struct heap_mem *)&heap_ptr[ptr2];
@@ -483,7 +483,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         mem2->prev = ptr;
 #ifdef RT_USING_MEMTRACE
         rt_mem_setname(mem2, "    ");
-#endif
+#endif /* RT_USING_MEMTRACE */
         mem->next = ptr2;
         if (mem2->next != mem_size_aligned + SIZEOF_STRUCT_MEM)
         {
@@ -597,7 +597,7 @@ void rt_free(void *rmem)
     mem->magic = HEAP_MAGIC;
 #ifdef RT_USING_MEMTRACE
     rt_mem_setname(mem, "    ");
-#endif
+#endif /* RT_USING_MEMTRACE */
 
     if (mem < lfree)
     {
@@ -607,7 +607,7 @@ void rt_free(void *rmem)
 
 #ifdef RT_MEM_STATS
     used_mem -= (mem->next - ((rt_uint8_t *)mem - heap_ptr));
-#endif
+#endif /* RT_MEM_STATS */
 
     /* finally, see if prev or next are free also */
     plug_holes(mem);
@@ -706,12 +706,12 @@ int memtrace(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT(memtrace, dump memory trace information);
-#endif /* end of RT_USING_MEMTRACE */
-#endif /* end of RT_USING_FINSH    */
+#endif /* RT_USING_MEMTRACE */
+#endif /* RT_USING_FINSH */
 
-#endif
+#endif /* defined (RT_USING_HEAP) && defined (RT_USING_SMALL_MEM) */
 
 /**@}*/
 
-#endif /* end of RT_USING_HEAP */
-#endif /* end of RT_USING_MEMHEAP_AS_HEAP */
+#endif /* RT_MEM_STATS */
+#endif /* RT_USING_MEMHEAP_AS_HEAP */
