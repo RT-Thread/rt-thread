@@ -9,7 +9,7 @@
 /* Multi-thread searching.
    Illustrates: thread cancellation, cleanup handlers. */
 
-#include <errno.h>
+#include <sys/errno.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
