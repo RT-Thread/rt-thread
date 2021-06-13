@@ -38,6 +38,7 @@
 #ifdef RT_USING_POSIX
 #include <dfs_posix.h>
 #include <dfs_poll.h>
+#include <sys/ioctl.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
 #include <posix_termios.h>
