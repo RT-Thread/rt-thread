@@ -45,12 +45,18 @@
 #define S32_F "ld"
 #define X32_F "lx"
 
-#if defined(RT_USING_LIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+#include <sys/errno.h>
+/* some errno not defined in newlib */
+#ifndef ENSRNOTFOUND
+#define ENSRNOTFOUND 163  /* Domain name not found */
+/* WARNING: ESHUTDOWN also not defined in newlib. We chose
+            180 here because the number "108" which is used
+            in arch.h has been assigned to another error code. */
+#endif
+
+/* LWIP_TIMEVAL_PRIVATE: provided by <sys/time.h> */
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE       0
-#else
-#define LWIP_TIMEVAL_PRIVATE       1
-#endif
 
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x
@@ -84,7 +90,7 @@ void sys_arch_assert(const char* file, int line);
 #define LWIP_PLATFORM_DIAG(x)   do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) do {rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__);}while(0)
 
-#include "string.h"
+#include <string.h>
 
 #define SYS_ARCH_DECL_PROTECT(level)
 #define SYS_ARCH_PROTECT(level)     rt_enter_critical()

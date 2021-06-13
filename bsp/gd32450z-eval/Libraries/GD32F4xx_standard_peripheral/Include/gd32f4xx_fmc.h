@@ -1,13 +1,40 @@
 /*!
-    \file  gd32f4xx_fmc.h
-    \brief definitions for the FMC
+    \file    gd32f4xx_fmc.h
+    \brief   definitions for the FMC
+
+    \version 2016-08-15, V1.0.0, firmware for GD32F4xx
+    \version 2018-12-12, V2.0.0, firmware for GD32F4xx
+    \version 2020-09-30, V2.1.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (C) 2016 GigaDevice
+    Copyright (c) 2020, GigaDevice Semiconductor Inc.
 
-    2016-08-15, V1.0.0, firmware for GD32F4xx
+    Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this
+       list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.
 */
+
+
 #ifndef GD32F4XX_FMC_H
 #define GD32F4XX_FMC_H
 
@@ -18,15 +45,15 @@
 #define OB                         OB_BASE                        /*!< option byte base address */
 
 /* registers definitions */
-#define FMC_WS                     REG32((FMC) + 0x00U)           /*!< FMC wait state register */
-#define FMC_KEY                    REG32((FMC) + 0x04U)           /*!< FMC unlock key register */
-#define FMC_OBKEY                  REG32((FMC) + 0x08U)           /*!< FMC option byte unlock key register */
-#define FMC_STAT                   REG32((FMC) + 0x0CU)           /*!< FMC status register */
-#define FMC_CTL                    REG32((FMC) + 0x10U)           /*!< FMC control register */
-#define FMC_OBCTL0                 REG32((FMC) + 0x14U)           /*!< FMC option byte control register 0 */
-#define FMC_OBCTL1                 REG32((FMC) + 0x18U)           /*!< FMC option byte control register 1 */
-#define FMC_WSEN                   REG32((FMC) + 0xFCU)           /*!< FMC wait state enable register */
-#define FMC_PID                    REG32((FMC) + 0x100U)          /*!< FMC product ID register */
+#define FMC_WS                     REG32((FMC) + 0x0000U)           /*!< FMC wait state register */
+#define FMC_KEY                    REG32((FMC) + 0x0004U)           /*!< FMC unlock key register */
+#define FMC_OBKEY                  REG32((FMC) + 0x0008U)           /*!< FMC option byte unlock key register */
+#define FMC_STAT                   REG32((FMC) + 0x000CU)           /*!< FMC status register */
+#define FMC_CTL                    REG32((FMC) + 0x0010U)           /*!< FMC control register */
+#define FMC_OBCTL0                 REG32((FMC) + 0x0014U)           /*!< FMC option byte control register 0 */
+#define FMC_OBCTL1                 REG32((FMC) + 0x0018U)           /*!< FMC option byte control register 1 */
+#define FMC_WSEN                   REG32((FMC) + 0x00FCU)           /*!< FMC wait state enable register */
+#define FMC_PID                    REG32((FMC) + 0x0100U)           /*!< FMC product ID register */
 
 #define OB_WP1                     REG32((OB) + 0x00000008U)      /*!< option byte write protection 1 */
 #define OB_USER                    REG32((OB) + 0x00010000U)      /*!< option byte user value*/
@@ -98,7 +125,6 @@ typedef enum
     FMC_WPERR,                                                    /*!< erase/program protection error */
     FMC_OPERR,                                                    /*!< operation error */
     FMC_PGERR,                                                    /*!< program error */
-    FMC_TOERR                                                     /*!< timeout error */
 }fmc_state_enum;
 
 /* unlock key */
@@ -107,9 +133,6 @@ typedef enum
 
 #define OB_UNLOCK_KEY0             ((uint32_t)0x08192A3BU)        /*!< ob unlock key 0 */
 #define OB_UNLOCK_KEY1             ((uint32_t)0x4C5D6E7FU)        /*!< ob unlock key 1 */
-
-/* FMC time out */
-#define FMC_TIMEOUT_COUNT          ((uint32_t)0x000F0000)         /*!< enable FMC error timeout */
 
 /* option byte write protection */
 #define OB_LWP                     ((uint32_t)0x000000FFU)        /*!< write protection low bits */
@@ -146,7 +169,7 @@ typedef enum
 #define OB_BB_DISABLE              OBCTL0_BB(0)                   /*!< boot from bank0 */
 #define OB_BB_ENABLE               OBCTL0_BB(1)                   /*!< boot from bank1 or bank0 if bank1 is void */
 
-/* option byte software/hardware free watch dog timer */  
+/* option byte software/hardware free watch dog timer */
 #define OBCTL0_NWDG_HW(regval)     (BIT(5) & ((uint32_t)(regval))<< 5)
 #define OB_FWDGT_SW                OBCTL0_NWDG_HW(1)              /*!< software free watchdog */
 #define OB_FWDGT_HW                OBCTL0_NWDG_HW(0)              /*!< hardware free watchdog */
@@ -179,19 +202,19 @@ typedef enum
 #define OB_WP_9                    ((uint32_t)0x00000200U)        /*!< erase/program protection of sector 9  */
 #define OB_WP_10                   ((uint32_t)0x00000400U)        /*!< erase/program protection of sector 10 */
 #define OB_WP_11                   ((uint32_t)0x00000800U)        /*!< erase/program protection of sector 11 */
-#define OB_WP_12                   ((uint32_t)0x00000001U)        /*!< erase/program protection of sector 12 */
-#define OB_WP_13                   ((uint32_t)0x00000002U)        /*!< erase/program protection of sector 13 */
-#define OB_WP_14                   ((uint32_t)0x00000004U)        /*!< erase/program protection of sector 14 */
-#define OB_WP_15                   ((uint32_t)0x00000008U)        /*!< erase/program protection of sector 15 */
-#define OB_WP_16                   ((uint32_t)0x00000010U)        /*!< erase/program protection of sector 16 */
-#define OB_WP_17                   ((uint32_t)0x00000020U)        /*!< erase/program protection of sector 17 */
-#define OB_WP_18                   ((uint32_t)0x00000040U)        /*!< erase/program protection of sector 18 */
-#define OB_WP_19                   ((uint32_t)0x00000080U)        /*!< erase/program protection of sector 19 */
-#define OB_WP_20                   ((uint32_t)0x00000100U)        /*!< erase/program protection of sector 20 */
-#define OB_WP_21                   ((uint32_t)0x00000200U)        /*!< erase/program protection of sector 21 */
-#define OB_WP_22                   ((uint32_t)0x00000400U)        /*!< erase/program protection of sector 22 */
-#define OB_WP_23_30                ((uint32_t)0x00000800U)        /*!< erase/program protection of sector 23~30 */
-#define OB_WP_ALL                  ((uint32_t)0x00000FFFU)        /*!< erase/program protection of all sectors */
+#define OB_WP_12                   ((uint32_t)0x00010000U)        /*!< erase/program protection of sector 12 */
+#define OB_WP_13                   ((uint32_t)0x00020000U)        /*!< erase/program protection of sector 13 */
+#define OB_WP_14                   ((uint32_t)0x00040000U)        /*!< erase/program protection of sector 14 */
+#define OB_WP_15                   ((uint32_t)0x00080000U)        /*!< erase/program protection of sector 15 */
+#define OB_WP_16                   ((uint32_t)0x00100000U)        /*!< erase/program protection of sector 16 */
+#define OB_WP_17                   ((uint32_t)0x00200000U)        /*!< erase/program protection of sector 17 */
+#define OB_WP_18                   ((uint32_t)0x00400000U)        /*!< erase/program protection of sector 18 */
+#define OB_WP_19                   ((uint32_t)0x00800000U)        /*!< erase/program protection of sector 19 */
+#define OB_WP_20                   ((uint32_t)0x01000000U)        /*!< erase/program protection of sector 20 */
+#define OB_WP_21                   ((uint32_t)0x02000000U)        /*!< erase/program protection of sector 21 */
+#define OB_WP_22                   ((uint32_t)0x04000000U)        /*!< erase/program protection of sector 22 */
+#define OB_WP_23_27                ((uint32_t)0x08000000U)        /*!< erase/program protection of sector 23~27 */
+#define OB_WP_ALL                  ((uint32_t)0x0FFF0FFFU)        /*!< erase/program protection of all sectors */
 
 /* option bytes D-bus read protection */
 #define OB_DRP_0                   ((uint32_t)0x00000001U)        /*!< D-bus read protection protection of sector 0  */
@@ -206,26 +229,25 @@ typedef enum
 #define OB_DRP_9                   ((uint32_t)0x00000200U)        /*!< D-bus read protection protection of sector 9  */
 #define OB_DRP_10                  ((uint32_t)0x00000400U)        /*!< D-bus read protection protection of sector 10 */
 #define OB_DRP_11                  ((uint32_t)0x00000800U)        /*!< D-bus read protection protection of sector 11 */
-#define OB_DRP_12                  ((uint32_t)0x00000001U)        /*!< D-bus read protection protection of sector 12 */
-#define OB_DRP_13                  ((uint32_t)0x00000002U)        /*!< D-bus read protection protection of sector 13 */
-#define OB_DRP_14                  ((uint32_t)0x00000004U)        /*!< D-bus read protection protection of sector 14 */
-#define OB_DRP_15                  ((uint32_t)0x00000008U)        /*!< D-bus read protection protection of sector 15 */
-#define OB_DRP_16                  ((uint32_t)0x00000010U)        /*!< D-bus read protection protection of sector 16 */
-#define OB_DRP_17                  ((uint32_t)0x00000020U)        /*!< D-bus read protection protection of sector 17 */
-#define OB_DRP_18                  ((uint32_t)0x00000040U)        /*!< D-bus read protection protection of sector 18 */
-#define OB_DRP_19                  ((uint32_t)0x00000080U)        /*!< D-bus read protection protection of sector 19 */
-#define OB_DRP_20                  ((uint32_t)0x00000100U)        /*!< D-bus read protection protection of sector 20 */
-#define OB_DRP_21                  ((uint32_t)0x00000200U)        /*!< D-bus read protection protection of sector 21 */
-#define OB_DRP_22                  ((uint32_t)0x00000400U)        /*!< D-bus read protection protection of sector 22 */
-#define OB_DRP_23_30               ((uint32_t)0x00000800U)        /*!< D-bus read protection protection of sector 23~30 */
-#define OB_DRP_ALL                 ((uint32_t)0x00000FFFU)        /*!< D-bus read protection protection of all sectors */
+#define OB_DRP_12                  ((uint32_t)0x00010000U)        /*!< D-bus read protection protection of sector 12 */
+#define OB_DRP_13                  ((uint32_t)0x00020000U)        /*!< D-bus read protection protection of sector 13 */
+#define OB_DRP_14                  ((uint32_t)0x00040000U)        /*!< D-bus read protection protection of sector 14 */
+#define OB_DRP_15                  ((uint32_t)0x00080000U)        /*!< D-bus read protection protection of sector 15 */
+#define OB_DRP_16                  ((uint32_t)0x00100000U)        /*!< D-bus read protection protection of sector 16 */
+#define OB_DRP_17                  ((uint32_t)0x00200000U)        /*!< D-bus read protection protection of sector 17 */
+#define OB_DRP_18                  ((uint32_t)0x00400000U)        /*!< D-bus read protection protection of sector 18 */
+#define OB_DRP_19                  ((uint32_t)0x00800000U)        /*!< D-bus read protection protection of sector 19 */
+#define OB_DRP_20                  ((uint32_t)0x01000000U)        /*!< D-bus read protection protection of sector 20 */
+#define OB_DRP_21                  ((uint32_t)0x02000000U)        /*!< D-bus read protection protection of sector 21 */
+#define OB_DRP_22                  ((uint32_t)0x04000000U)        /*!< D-bus read protection protection of sector 22 */
+#define OB_DRP_23_27               ((uint32_t)0x08000000U)        /*!< D-bus read protection protection of sector 23~27 */
 
-/* double banks or single bank selection when flash size is 1M bytes */  
+/* double banks or single bank selection when flash size is 1M bytes */
 #define OBCTL0_DBS(regval)         (BIT(30) & ((uint32_t)(regval)<<30))
 #define OB_DBS_DISABLE             OBCTL0_DBS(0)                  /*!< single bank when flash size is 1M bytes */
 #define OB_DBS_ENABLE              OBCTL0_DBS(1)                  /*!< double bank when flash size is 1M bytes */
 
-/* option bytes D-bus read protection mode */  
+/* option bytes D-bus read protection mode */
 #define OBCTL0_DRP(regval)         (BIT(31) & ((uint32_t)(regval)<<31))
 #define OB_DRP_DISABLE             OBCTL0_DRP(0)                  /*!< the WPx bits used as erase/program protection of each sector */
 #define OB_DRP_ENABLE              OBCTL0_DRP(1)                  /*!< the WPx bits used as erase/program protection and D-bus read protection of each sector */
@@ -260,19 +282,17 @@ typedef enum
 #define CTL_SECTOR_NUMBER_21       CTL_SN(25)                     /*!< sector 21  */
 #define CTL_SECTOR_NUMBER_22       CTL_SN(26)                     /*!< sector 22  */
 #define CTL_SECTOR_NUMBER_23       CTL_SN(27)                     /*!< sector 23  */
-#define CTL_SECTOR_NUMBER_28       CTL_SN(28)                     /*!< sector 28  */
-#define CTL_SECTOR_NUMBER_29       CTL_SN(29)                     /*!< sector 29  */
-#define CTL_SECTOR_NUMBER_30       CTL_SN(30)                     /*!< sector 30  */
 
-/* FMC program size */ 
+
+/* FMC program size */
 #define CTL_PSZ(regval)            (BITS(8,9) & ((uint32_t)(regval))<< 8)
 #define CTL_PSZ_BYTE               CTL_PSZ(0)                     /*!< FMC program by byte access */
 #define CTL_PSZ_HALF_WORD          CTL_PSZ(1)                     /*!< FMC program by half-word access */
 #define CTL_PSZ_WORD               CTL_PSZ(2)                     /*!< FMC program by word access */
 
 /* FMC interrupt enable */
-#define FMC_INTEN_END              ((uint32_t)0x01000000U)        /*!< enable FMC end of program interrupt */
-#define FMC_INTEN_ERR              ((uint32_t)0x02000000U)        /*!< enable FMC error interrupt */
+#define FMC_INT_END              ((uint32_t)0x01000000U)        /*!< enable FMC end of program interrupt */
+#define FMC_INT_ERR              ((uint32_t)0x02000000U)        /*!< enable FMC error interrupt */
 
 /* FMC flags */
 #define FMC_FLAG_END               ((uint32_t)0x00000001U)        /*!< FMC end of operation flag bit */
@@ -281,7 +301,7 @@ typedef enum
 #define FMC_FLAG_PGMERR            ((uint32_t)0x00000040U)        /*!< FMC program size not match error flag bit */
 #define FMC_FLAG_PGSERR            ((uint32_t)0x00000080U)        /*!< FMC program sequence error flag bit */
 #define FMC_FLAG_RDDERR            ((uint32_t)0x00000100U)        /*!< FMC read D-bus protection error flag bit */
-#define FMC_FLAG_BUSY              ((uint32_t)0x00010000U)        /*!< FMC busy flag */ 
+#define FMC_FLAG_BUSY              ((uint32_t)0x00010000U)        /*!< FMC busy flag */
 
 /* function declarations */
 /* FMC main memory programming functions */
@@ -313,25 +333,17 @@ void ob_unlock(void);
 void ob_lock(void);
 /* send option byte change command */
 void ob_start(void);
+/* erase option byte */
+void ob_erase(void);
 /* enable write protect */
-void ob_write_protection0_enable(uint32_t ob_wp);
+void ob_write_protection_enable(uint32_t ob_wp);
 /* disable write protect */
-void ob_write_protection0_disable(uint32_t ob_wp);
-/* enable write protect */
-void ob_write_protection1_enable(uint32_t ob_wp);
-/* disable write protect */
-void ob_write_protection1_disable(uint32_t ob_wp);
-/* configure the erase/program protection mode */
-void ob_drp_config(uint32_t ob_drp);
-/* enable the erase/program protection mode */
-void ob_drp0_enable(uint32_t ob_drp);
-/* disable the erase/program protection mode */
-void ob_drp0_disable(uint32_t ob_drp);
-/* enable the erase/program protection mode */
-void ob_drp1_enable(uint32_t ob_drp);
-/* disable the erase/program protection mode */
-void ob_drp1_disable(uint32_t ob_drp);
-/* set the option byte security protection level  */
+void ob_write_protection_disable(uint32_t ob_wp);
+/* enable erase/program protection and D-bus read protection */
+void ob_drp_enable(uint32_t ob_drp);
+/* disable erase/program protection and D-bus read protection */
+void ob_drp_disable(uint32_t ob_drp);
+/* set the option byte security protection level */
 void ob_security_protection_config(uint8_t ob_spc);
 /* write the FMC option byte user */
 void ob_user_write(uint32_t ob_fwdgt, uint32_t ob_deepsleep, uint32_t ob_stdby);
@@ -366,6 +378,6 @@ void fmc_flag_clear(uint32_t fmc_flag);
 /* return the FMC state */
 fmc_state_enum fmc_state_get(void);
 /* check FMC ready or not */
-fmc_state_enum fmc_ready_wait(uint32_t count);
+fmc_state_enum fmc_ready_wait(void);
 
 #endif /* GD32F4XX_FMC_H */

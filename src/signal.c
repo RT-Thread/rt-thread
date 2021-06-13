@@ -20,7 +20,7 @@
 
 #ifndef RT_SIG_INFO_MAX
 #define RT_SIG_INFO_MAX 32
-#endif
+#endif /* RT_SIG_INFO_MAX */
 
 #define DBG_TAG     "SIGN"
 #define DBG_LVL     DBG_WARNING
@@ -67,7 +67,7 @@ static void _signal_entry(void *parameter)
     /* return to thread */
     tid->sp = tid->sig_ret;
     tid->sig_ret = RT_NULL;
-#endif
+#endif /* RT_USING_SMP */
 
     LOG_D("switch back to: 0x%08x\n", tid->sp);
     tid->stat &= ~RT_THREAD_STAT_SIGNAL;
@@ -76,7 +76,7 @@ static void _signal_entry(void *parameter)
     rt_hw_context_switch_to((rt_base_t)&parameter, tid);
 #else
     rt_hw_context_switch_to((rt_ubase_t)&(tid->sp));
-#endif /*RT_USING_SMP*/
+#endif /* RT_USING_SMP */
 }
 
 /*
@@ -153,7 +153,7 @@ static void _signal_deliver(rt_thread_t tid)
             tid->sig_ret = tid->sp;
             tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
                                        (void *)((char *)tid->sig_ret - 32), RT_NULL);
-#endif
+#endif /* RT_USING_SMP */
 
             rt_hw_interrupt_enable(level);
             LOG_D("signal stack pointer @ 0x%08x", tid->sp);
@@ -204,7 +204,7 @@ void *rt_signal_check(void* context)
     rt_hw_interrupt_enable(level);
     return context;
 }
-#endif
+#endif /* RT_USING_SMP */
 
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 {
@@ -586,4 +586,4 @@ int rt_system_signal_init(void)
     return 0;
 }
 
-#endif
+#endif /* RT_USING_SIGNALS */

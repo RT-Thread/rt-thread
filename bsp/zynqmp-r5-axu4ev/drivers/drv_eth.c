@@ -7,8 +7,6 @@
  * Date           Author       Notes
  * 2021-5-10     WangHuachen  the first version
  */
-
-
 #include "board.h"
 #include <netif/ethernetif.h>
 #include "lwipopts.h"

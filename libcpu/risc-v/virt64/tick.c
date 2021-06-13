@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,8 +11,12 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <encoding.h>
 #include "sbi.h"
+#include "tick.h"
+#include <riscv_io.h>
+#include <encoding.h>
+
+#define VIRT_CLINT_TIMEBASE_FREQ    (10000000)
 
 static volatile uint64_t time_elapsed = 0;
 static volatile unsigned long tick_cycles = 0;
@@ -27,11 +31,13 @@ static uint64_t get_ticks()
 
 int tick_isr(void)
 {
-    // uint64_t core_id = current_coreid();
-    int tick_cycles = 40000;
-    // clint->mtimecmp[core_id] += tick_cycles;
+    int tick_cycles = VIRT_CLINT_TIMEBASE_FREQ / RT_TICK_PER_SECOND;
     rt_tick_increase();
+#ifdef RISCV_S_MODE
     sbi_set_timer(get_ticks() + tick_cycles);
+#else
+    *(uint64_t*)CLINT_MTIMECMP(r_mhartid()) = *(uint64_t*)CLINT_MTIME + tick_cycles;
+#endif
 
     return 0;
 }
@@ -39,10 +45,9 @@ int tick_isr(void)
 /* Sets and enable the timer interrupt */
 int rt_hw_tick_init(void)
 {
-    /* Read core id */
-    // unsigned long core_id = current_coreid();
-    unsigned long interval = 1000/RT_TICK_PER_SECOND;
+    unsigned long interval = VIRT_CLINT_TIMEBASE_FREQ / RT_TICK_PER_SECOND;
 
+#ifdef RISCV_S_MODE
     /* Clear the Supervisor-Timer bit in SIE */
     clear_csr(sie, SIP_STIP);
 
@@ -54,6 +59,11 @@ int rt_hw_tick_init(void)
 
     /* Enable the Supervisor-Timer bit in SIE */
     set_csr(sie, SIP_STIP);
-
+#else
+    clear_csr(mie, MIP_MTIP);
+    clear_csr(mip, MIP_MTIP);
+    *(uint64_t*)CLINT_MTIMECMP(r_mhartid()) = *(uint64_t*)CLINT_MTIME + interval;
+    set_csr(mie, MIP_MTIP);
+#endif
     return 0;
 }

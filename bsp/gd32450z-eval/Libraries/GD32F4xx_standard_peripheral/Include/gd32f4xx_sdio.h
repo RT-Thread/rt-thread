@@ -1,12 +1,37 @@
 /*!
-    \file  gd32f4xx_sdio.h
-    \brief definitions for the SDIO
+    \file    gd32f4xx_sdio.h
+    \brief   definitions for the SDIO
+
+    \version 2016-08-15, V1.0.0, firmware for GD32F4xx
+    \version 2018-12-12, V2.0.0, firmware for GD32F4xx
+    \version 2020-09-30, V2.1.0, firmware for GD32F4xx
 */
 
 /*
-    Copyright (C) 2016 GigaDevice
+    Copyright (c) 2020, GigaDevice Semiconductor Inc.
 
-    2016-08-15, V1.0.0, firmware for GD32F4xx
+    Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    1. Redistributions of source code must retain the above copyright notice, this
+       list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
+       and/or other materials provided with the distribution.
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
+       specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+OF SUCH DAMAGE.
 */
 
 #ifndef GD32F4XX_SDIO_H
@@ -179,7 +204,7 @@
 #define SDIO_FLAG_SDIOINT               BIT(22)                /*!< SD I/O interrupt received flag */
 #define SDIO_FLAG_ATAEND                BIT(23)                /*!< CE-ATA command completion signal received (only for CMD61) flag */
 
-/* SDIO interrupt flags */
+/* SDIO interrupt enable or disable */
 #define SDIO_INT_CCRCERR                BIT(0)                 /*!< SDIO CCRCERR interrupt */
 #define SDIO_INT_DTCRCERR               BIT(1)                 /*!< SDIO DTCRCERR interrupt */
 #define SDIO_INT_CMDTMOUT               BIT(2)                 /*!< SDIO CMDTMOUT interrupt */
@@ -204,6 +229,32 @@
 #define SDIO_INT_RXDTVAL                BIT(21)                /*!< SDIO RXDTVAL interrupt */
 #define SDIO_INT_SDIOINT                BIT(22)                /*!< SDIO SDIOINT interrupt */
 #define SDIO_INT_ATAEND                 BIT(23)                /*!< SDIO ATAEND interrupt */
+
+/* SDIO interrupt flags */
+#define SDIO_INT_FLAG_CCRCERR           BIT(0)                 /*!< SDIO CCRCERR interrupt flag */
+#define SDIO_INT_FLAG_DTCRCERR          BIT(1)                 /*!< SDIO DTCRCERR interrupt flag */
+#define SDIO_INT_FLAG_CMDTMOUT          BIT(2)                 /*!< SDIO CMDTMOUT interrupt flag */
+#define SDIO_INT_FLAG_DTTMOUT           BIT(3)                 /*!< SDIO DTTMOUT interrupt flag */
+#define SDIO_INT_FLAG_TXURE             BIT(4)                 /*!< SDIO TXURE interrupt flag */
+#define SDIO_INT_FLAG_RXORE             BIT(5)                 /*!< SDIO RXORE interrupt flag */
+#define SDIO_INT_FLAG_CMDRECV           BIT(6)                 /*!< SDIO CMDRECV interrupt flag */
+#define SDIO_INT_FLAG_CMDSEND           BIT(7)                 /*!< SDIO CMDSEND interrupt flag */
+#define SDIO_INT_FLAG_DTEND             BIT(8)                 /*!< SDIO DTEND interrupt flag */
+#define SDIO_INT_FLAG_STBITE            BIT(9)                 /*!< SDIO STBITE interrupt flag */
+#define SDIO_INT_FLAG_DTBLKEND          BIT(10)                /*!< SDIO DTBLKEND interrupt flag */
+#define SDIO_INT_FLAG_CMDRUN            BIT(11)                /*!< SDIO CMDRUN interrupt flag */
+#define SDIO_INT_FLAG_TXRUN             BIT(12)                /*!< SDIO TXRUN interrupt flag */
+#define SDIO_INT_FLAG_RXRUN             BIT(13)                /*!< SDIO RXRUN interrupt flag */
+#define SDIO_INT_FLAG_TFH               BIT(14)                /*!< SDIO TFH interrupt flag */
+#define SDIO_INT_FLAG_RFH               BIT(15)                /*!< SDIO RFH interrupt flag */
+#define SDIO_INT_FLAG_TFF               BIT(16)                /*!< SDIO TFF interrupt flag */
+#define SDIO_INT_FLAG_RFF               BIT(17)                /*!< SDIO RFF interrupt flag */
+#define SDIO_INT_FLAG_TFE               BIT(18)                /*!< SDIO TFE interrupt flag */
+#define SDIO_INT_FLAG_RFE               BIT(19)                /*!< SDIO RFE interrupt flag */
+#define SDIO_INT_FLAG_TXDTVAL           BIT(20)                /*!< SDIO TXDTVAL interrupt flag */
+#define SDIO_INT_FLAG_RXDTVAL           BIT(21)                /*!< SDIO RXDTVAL interrupt flag */
+#define SDIO_INT_FLAG_SDIOINT           BIT(22)                /*!< SDIO SDIOINT interrupt flag */
+#define SDIO_INT_FLAG_ATAEND            BIT(23)                /*!< SDIO ATAEND interrupt flag */
 
 /* SDIO power control */
 #define PWRCTL_PWRCTL(regval)           (BITS(0,1) & ((uint32_t)(regval) << 0))
@@ -275,6 +326,7 @@
 #define SDIO_READWAITTYPE_CLK           SDIO_DATACTL_RWTYPE    /*!< read wait control by stopping SDIO_CLK */
 
 /* function declarations */
+/* de/initialization functions, hardware clock, bus mode, power_state and SDIO clock configuration */
 /* deinitialize the SDIO */
 void sdio_deinit(void);
 /* configure the SDIO clock */
@@ -294,7 +346,7 @@ void sdio_clock_enable(void);
 /* disable SDIO_CLK clock output */
 void sdio_clock_disable(void);
 
-/* configure the command index, argument, response type, wait type and CSM to send command */
+/* configure the command index, argument, response type, wait type and CSM to send command functions */
 /* configure the command and response */
 void sdio_command_response_config(uint32_t cmd_index, uint32_t cmd_argument, uint32_t response_type);
 /* set the command state machine wait type */
@@ -308,7 +360,7 @@ uint8_t sdio_command_index_get(void);
 /* get the response for the last received command */
 uint32_t sdio_response_get(uint32_t sdio_responsex);
 
-/* configure the data timeout, length, block size, transfer mode, direction and DSM for data transfer */
+/* configure the data timeout, length, block size, transfer mode, direction and DSM for data transfer functions */
 /* configure the data timeout, data length and data block size */
 void sdio_data_config(uint32_t data_timeout, uint32_t data_length, uint32_t data_blocksize);
 /* configure the data transfer mode and direction */
@@ -330,6 +382,7 @@ void sdio_dma_enable(void);
 /* disable the DMA request for SDIO */
 void sdio_dma_disable(void);
 
+/* flag and interrupt functions */
 /* get the flags state of SDIO */
 FlagStatus sdio_flag_get(uint32_t flag);
 /* clear the pending flags of SDIO */
@@ -343,6 +396,7 @@ FlagStatus sdio_interrupt_flag_get(uint32_t int_flag);
 /* clear the interrupt pending flags of SDIO */
 void sdio_interrupt_flag_clear(uint32_t int_flag);
 
+/* SD I/O card functions */
 /* enable the read wait mode(SD I/O only) */
 void sdio_readwait_enable(void);
 /* disable the read wait mode(SD I/O only) */
@@ -362,6 +416,7 @@ void sdio_suspend_enable(void);
 /* disable the SD I/O suspend operation(SD I/O only) */
 void sdio_suspend_disable(void);
 
+/* CE-ATA functions */
 /* enable the CE-ATA command(CE-ATA only) */
 void sdio_ceata_command_enable(void);
 /* disable the CE-ATA command(CE-ATA only) */
