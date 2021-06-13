@@ -3,7 +3,7 @@
 
 #include <rtconfig.h>
 
-#define ERRNO                       1
+#define ERRNO
 
 #define NO_SYS                      0
 #define LWIP_SOCKET                 1
