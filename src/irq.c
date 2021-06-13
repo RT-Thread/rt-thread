@@ -39,9 +39,7 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 {
     rt_interrupt_leave_hook = hook;
 }
-#endif
-
-/* #define IRQ_DEBUG */
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup Kernel
@@ -53,7 +51,7 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 #define rt_interrupt_nest rt_cpu_self()->irq_nest
 #else
 volatile rt_uint8_t rt_interrupt_nest = 0;
-#endif
+#endif /* RT_USING_SMP */
 
 /**
  * This function will be invoked by BSP, when enter interrupt service routine

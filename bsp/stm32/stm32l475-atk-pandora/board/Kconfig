@@ -78,7 +78,35 @@ menu "Onboard Peripheral Drivers"
             bool "Enable Audio Record"
             default n
         endif
-        
+
+    menuconfig BSP_USING_USB_AUDIO
+        bool "Enable USB Audio"
+        select RT_USB_DEVICE_AUDIO
+        select BSP_USING_USBD
+        select BSP_USBD_EP_ISOC
+        select BSP_USING_AUDIO
+        default n
+
+        if BSP_USING_USB_AUDIO
+            config BSP_USING_USB_AUDIO_SPEAKER
+            bool "Enable USB Audio Spearker"
+            select RT_USB_DEVICE_AUDIO_SPEAKER
+            select BSP_USING_AUDIO_PLAY
+            default y
+
+            config BSP_USING_USB_AUDIO_MIC
+            bool "Enable USB Audio Mic"
+            select RT_USB_DEVICE_AUDIO_MIC
+            select BSP_USING_AUDIO_RECORD
+            default n
+
+            config _BSP_USB_DEVICE_COMPOSITE
+            bool
+            select RT_USB_DEVICE_COMPOSITE
+            default y
+            depends on BSP_USING_USB_AUDIO_SPEAKER && BSP_USING_USB_AUDIO_MIC
+        endif
+
     config BSP_USING_WIFI
             bool "Enable WiFi (AP6181)"
             select PKG_USING_WLAN_WICED
@@ -351,6 +379,11 @@ menu "On-chip Peripheral Drivers"
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
         default n
+
+    config BSP_USBD_EP_ISOC
+        bool
+        default n
+        depends on BSP_USING_USBD
 
     config BSP_USING_STM32_SDIO
             bool "Enable SDIO"

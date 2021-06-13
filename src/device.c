@@ -16,9 +16,9 @@
  */
 
 #include <rtthread.h>
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
 #include <rtdevice.h> /* for wqueue_init */
-#endif
+#endif /* RT_USING_POSIX */
 
 #ifdef RT_USING_DEVICE
 
@@ -36,7 +36,7 @@
 #define device_read     (dev->read)
 #define device_write    (dev->write)
 #define device_control  (dev->control)
-#endif
+#endif /* RT_USING_DEVICE_OPS */
 
 /**
  * This function registers a device driver with specified name.
@@ -62,10 +62,10 @@ rt_err_t rt_device_register(rt_device_t dev,
     dev->ref_count = 0;
     dev->open_flag = 0;
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
     dev->fops = RT_NULL;
     rt_wqueue_init(&(dev->wait_queue));
-#endif
+#endif /* RT_USING_POSIX */
 
     return RT_EOK;
 }
@@ -150,7 +150,7 @@ void rt_device_destroy(rt_device_t dev)
     rt_free(dev);
 }
 RTM_EXPORT(rt_device_destroy);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will initialize the specified device
@@ -434,4 +434,4 @@ rt_device_set_tx_complete(rt_device_t dev,
 }
 RTM_EXPORT(rt_device_set_tx_complete);
 
-#endif
+#endif /* RT_USING_DEVICE */
