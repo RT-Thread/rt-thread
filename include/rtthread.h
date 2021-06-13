@@ -567,7 +567,7 @@ rt_size_t rt_strlen(const char *src);
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
 char *rt_strdup(const char *s);
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
 /* lack strdup interface */
 char* strdup(const char* str);
 #endif
