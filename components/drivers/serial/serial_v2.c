@@ -726,7 +726,6 @@ static rt_err_t rt_serial_rx_enable(struct rt_device        *dev,
     RT_ASSERT(rx_fifo != RT_NULL);
     rt_ringbuffer_init(&(rx_fifo->rb), rx_fifo->buffer, serial->config.rx_bufsz);
 
-    rx_fifo->rx_index = serial->config.rx_bufsz;
     serial->serial_rx = rx_fifo;
     dev->read = _serial_fifo_rx;
 
@@ -813,6 +812,9 @@ static rt_err_t rt_serial_tx_disable(struct rt_device        *dev,
     dev->write = RT_NULL;
     if (serial->serial_tx == RT_NULL) return RT_EOK;
 
+    tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
+    RT_ASSERT(tx_fifo != RT_NULL);
+
     do
     {
         if (tx_oflag == RT_SERIAL_TX_NON_BLOCKING)
@@ -825,14 +827,13 @@ static rt_err_t rt_serial_tx_disable(struct rt_device        *dev,
             break;
         }
 
+        rt_completion_done(&(tx_fifo->tx_cpt));
         dev->open_flag &= ~ RT_SERIAL_TX_BLOCKING;
         serial->ops->control(serial,
                             RT_DEVICE_CTRL_CLR_INT,
                             (void *)RT_SERIAL_TX_BLOCKING);
     } while (0);
 
-    tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
-    RT_ASSERT(tx_fifo != RT_NULL);
     rt_free(tx_fifo);
     serial->serial_tx = RT_NULL;
 
@@ -875,6 +876,13 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
+
+    /* Check that the device has been turned on */
+    if ((dev->open_flag) & (15 << 12))
+    {
+        LOG_D("(%s) serial device has already been opened, it will run in its original configuration", dev->parent.name);
+        return RT_EOK;
+    }
 
     LOG_D("open serial device: 0x%08x with open flag: 0x%04x",
         dev, oflag);

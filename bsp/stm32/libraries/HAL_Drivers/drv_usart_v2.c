@@ -456,6 +456,7 @@ static void uart_isr(struct rt_serial_device *serial)
     {
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_ORE) != RESET)
         {
+            LOG_E("(%s) serial device Overrun error!", serial->parent.parent.name);
             __HAL_UART_CLEAR_OREFLAG(&uart->handle);
         }
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_NE) != RESET)

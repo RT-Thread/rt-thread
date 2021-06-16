@@ -2,6 +2,7 @@ from building import *
 
 cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
+group = []
 if GetDepend(['RT_USING_SERIAL']):
     if GetDepend(['RT_USING_SERIAL_V2']):
         src = Glob('serial_v2.c')
