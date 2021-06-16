@@ -55,3 +55,8 @@ void rt_hw_board_init(void)
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
 #endif
 }
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+
+}
