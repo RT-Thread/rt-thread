@@ -10,7 +10,7 @@ CPPPATH = [cwd]
 if GetDepend('RT_USING_LIBC'):
     src += Glob('*.c')
     if GetDepend('RT_USING_POSIX') == False:
-        SrcRemove(src, ['unistd.c'])
+        SrcRemove(src, ['unistd.c', 'delay.c'])
 elif GetDepend('RT_LIBC_USING_TIME'):
     src += ['time.c']
 
