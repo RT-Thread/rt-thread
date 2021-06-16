@@ -118,8 +118,6 @@ struct rt_serial_rx_fifo
 {
     struct rt_ringbuffer rb;
 
-    rt_uint16_t rx_index;
-
     struct rt_completion rx_cpt;
 
     rt_uint16_t rx_cpt_index;
