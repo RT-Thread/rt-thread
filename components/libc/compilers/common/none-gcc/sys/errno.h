@@ -10,7 +10,7 @@
 #ifndef _SYS_ERRNO_H
 #define _SYS_ERRNO_H
 
-#if defined(__CC_ARM)
+#if defined(__ARMCC_VERSION)
 /*
 defined in armcc/errno.h
 
@@ -37,7 +37,7 @@ defined in armcc/errno.h
 #define ERROR_BASE_NO    0
 #endif
 
-#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
+#if defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__)
 #include <errno.h>
 #define EPERM            (ERROR_BASE_NO + 1)
 #define ENOENT           (ERROR_BASE_NO + 2)
