@@ -724,7 +724,7 @@ extern SDH_INFO_T SD0, SD1;
  *            0: Card removed.
  * \hideinitializer
  */
-#define SDH_IS_CARD_PRESENT(sdh) (((sdh) == SDH0)? SD0.IsCardInsert : SD1.IsCardInsert)
+//#define SDH_IS_CARD_PRESENT(sdh) (((sdh) == SDH0)? SD0.IsCardInsert : SD1.IsCardInsert)
 
 /**
  *  @brief    Get SD Card capacity.
@@ -734,17 +734,17 @@ extern SDH_INFO_T SD0, SD1;
  *  @return   SD Card capacity. (unit: KByte)
  * \hideinitializer
  */
-#define SDH_GET_CARD_CAPACITY(sdh)  (((sdh) == SDH0)? SD0.diskSize : SD1.diskSize)
+//#define SDH_GET_CARD_CAPACITY(sdh)  (((sdh) == SDH0)? SD0.diskSize : SD1.diskSize)
 
 
-void SDH_Open(SDH_T *sdh, uint32_t u32CardDetSrc);
-uint32_t SDH_Probe(SDH_T *sdh);
-uint32_t SDH_Read(SDH_T *sdh, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
-uint32_t SDH_Write(SDH_T *sdh, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
+void SDH_Open(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardDetSrc);
+uint32_t SDH_Probe(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num);
+uint32_t SDH_Read(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
+uint32_t SDH_Write(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
 
-uint32_t SDH_CardDetection(SDH_T *sdh);
-void SDH_Open_Disk(SDH_T *sdh, uint32_t u32CardDetSrc);
-void SDH_Close_Disk(SDH_T *sdh);
+uint32_t SDH_CardDetection(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num);
+void SDH_Open_Disk(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardDetSrc);
+void SDH_Close_Disk(SDH_T *sdh, SDH_INFO_T *pSD);
 
 
 /*@}*/ /* end of group N9H30_SDH_EXPORTED_FUNCTIONS */

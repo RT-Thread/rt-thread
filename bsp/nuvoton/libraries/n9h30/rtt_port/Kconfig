@@ -275,11 +275,23 @@ config SOC_SERIES_N9H30
         select RT_USING_DFS
 
         if BSP_USING_SDH
-            config BSP_USING_SDH0
-                bool "Enable SDH0"
 
-            config BSP_USING_SDH1
-                bool "Enable SDH1"
+            config BSP_USING_EMMC
+                bool "Enable FMI_EMMC"
+
+            choice
+                prompt "Select SDH Port number"
+
+                config BSP_USING_SDH_NONE
+                    bool "Disable SDH Function"
+
+                config BSP_USING_SDH0
+                    bool "Enable SDH_PORT0"
+
+                config BSP_USING_SDH1
+                    bool "Enable SDH_PORT1"
+
+            endchoice
 
             config NU_SDH_HOTPLUG
                 bool "Using HOTPLUG"

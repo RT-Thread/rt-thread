@@ -28,8 +28,12 @@
 
 #if defined(NU_SDH_MOUNT_ON_ROOT)
 
+    #if !defined(NU_SDH_MOUNTPOINT_EMMC)
+        #define NU_SDH_MOUNTPOINT_EMMC  "/"
+    #endif
+
     #if !defined(NU_SDH_MOUNTPOINT_SDH0)
-        #define NU_SDH_MOUNTPOINT_SDH0  "/"
+        #define NU_SDH_MOUNTPOINT_SDH0  NU_SDH_MOUNTPOINT_SDH0"/sd0"
     #endif
 
     #if !defined(NU_SDH_MOUNTPOINT_SDH1)
@@ -44,6 +48,10 @@
 
 #endif
 
+#if !defined(NU_SDH_MOUNTPOINT_EMMC)
+    #define NU_SDH_MOUNTPOINT_EMMC  NU_SDH_MOUNTPOINT_ROOT"/emmc"
+#endif
+
 #if !defined(NU_SDH_MOUNTPOINT_SDH0)
     #define NU_SDH_MOUNTPOINT_SDH0  NU_SDH_MOUNTPOINT_ROOT"/sd0"
 #endif
@@ -55,6 +63,9 @@
 enum
 {
     SDH_START = -1,
+#if defined(BSP_USING_EMMC)
+    EMMC_IDX,
+#endif
 #if defined(BSP_USING_SDH0)
     SDH0_IDX,
 #endif
@@ -71,12 +82,13 @@ enum
 #endif
 
 #if defined(NU_SDH_HOTPLUG)
-enum
+typedef enum 
 {
-    NU_SDH_CARD_DETECTED_SD0 = (1 << 0),
-    NU_SDH_CARD_DETECTED_SD1 = (1 << 1),
-    NU_SDH_CARD_EVENT_ALL = (NU_SDH_CARD_DETECTED_SD0 | NU_SDH_CARD_DETECTED_SD1)
-};
+    NU_SDH_CARD_DETECTED_EMMC = (1 << 0),
+    NU_SDH_CARD_DETECTED_SD0  = (1 << 1),
+    NU_SDH_CARD_DETECTED_SD1  = (1 << 2),
+    NU_SDH_CARD_EVENT_ALL = (NU_SDH_CARD_DETECTED_EMMC | NU_SDH_CARD_DETECTED_SD0 | NU_SDH_CARD_DETECTED_SD1)
+} E_CARD_EVENT;
 #endif
 
 /* Private typedef --------------------------------------------------------------*/
@@ -91,6 +103,11 @@ struct nu_sdh
     IRQn_Type             irqn;
     E_SYS_IPRST           rstidx;
     E_SYS_IPCLK           clkidx;
+
+#if defined(NU_SDH_HOTPLUG)
+    E_CARD_EVENT          card_detected_event;
+#endif
+    uint32_t              card_num;
 
     uint32_t              is_card_inserted;
     SDH_INFO_T           *info;
@@ -123,21 +140,42 @@ static int rt_hw_sdh_init(void);
 
 
 /* Private variables ------------------------------------------------------------*/
+static SDH_INFO_T EMMC, SD0, SD1;
+
 static struct nu_sdh nu_sdh_arr [] =
 {
+#if defined(BSP_USING_EMMC)
+    {
+        .name = "emmc",
+#if defined(NU_SDH_HOTPLUG)
+        .mounted_point = NU_SDH_MOUNTPOINT_EMMC,
+#endif
+        .irqn = IRQ_FMI,
+        .base = SDH0,
+        .card_num = SD_PORT0,
+        .rstidx = FMIRST,
+        .clkidx = EMMCCKEN,
+        .info = &EMMC,
+        .card_detected_event = NU_SDH_CARD_DETECTED_EMMC,
+    },
+#endif
+
 #if defined(BSP_USING_SDH0)
     {
         .name = "sdh0",
 #if defined(NU_SDH_HOTPLUG)
         .mounted_point = NU_SDH_MOUNTPOINT_SDH0,
 #endif
-        .irqn = IRQ_FMI,
-        .base = SDH0,
-        .rstidx = FMIRST,
-        .clkidx = EMMCCKEN,
+        .irqn = IRQ_SDH,
+        .base = SDH1,
+        .card_num = SD_PORT0,
+        .rstidx = SDIORST,
+        .clkidx = SDHCKEN,
         .info = &SD0,
+        .card_detected_event = NU_SDH_CARD_DETECTED_SD0,
     },
 #endif
+
 #if defined(BSP_USING_SDH1)
     {
         .name = "sdh1",
@@ -146,9 +184,11 @@ static struct nu_sdh nu_sdh_arr [] =
 #endif
         .irqn = IRQ_SDH,
         .base = SDH1,
+        .card_num = SD_PORT1,
         .rstidx = SDIORST,
         .clkidx = SDHCKEN,
         .info = &SD1,
+        .card_detected_event = NU_SDH_CARD_DETECTED_SD1,
     },
 #endif
 }; /* struct nu_sdh nu_sdh_arr [] */
@@ -177,16 +217,22 @@ static void SDH_IRQHandler(int vector, void *param)
         SDH_CLR_INT_FLAG(sdh_base, SDH_INTSTS_BLKDIF_Msk);
     }
 
-    if (isr & SDH_INTSTS_CDIF_Msk)   // card detect
+    if (isr & SDH_INTSTS_CDIF_Msk)   // card number=0 detect
     {
-#if defined(NU_SDH_HOTPLUG)
-        if (sdh->base == SDH0)
-            rt_event_send(&sdh_event, NU_SDH_CARD_DETECTED_SD0);
-        else if (sdh->base == SDH1)
-            rt_event_send(&sdh_event, NU_SDH_CARD_DETECTED_SD1);
-#endif
+        #if defined(NU_SDH_HOTPLUG)
+            rt_event_send(&sdh_event, sdh->card_detected_event);
+        #endif
         /* Clear CDIF interrupt flag */
         SDH_CLR_INT_FLAG(sdh_base, SDH_INTSTS_CDIF_Msk);
+    } 
+    else if (isr & SDH_INTSTS_CDIF1_Msk)   // card number=1 detect
+    {
+        #if defined(NU_SDH_HOTPLUG)
+            rt_event_send(&sdh_event, sdh->card_detected_event);
+        #endif
+
+        /* Clear CDIF1 interrupt flag */
+        SDH_CLR_INT_FLAG(sdh_base, SDH_INTSTS_CDIF1_Msk);
     }
 
     // CRC error interrupt
@@ -234,7 +280,7 @@ static rt_err_t nu_sdh_open(rt_device_t dev, rt_uint16_t oflag)
 
     RT_ASSERT(dev != RT_NULL);
 
-    return (SDH_Probe(sdh->base) == 0) ? RT_EOK :  -(RT_ERROR);
+    return (SDH_Probe(sdh->base, sdh->info, sdh->card_num) == 0) ? RT_EOK :  -(RT_ERROR);
 }
 
 static rt_err_t nu_sdh_close(rt_device_t dev)
@@ -268,7 +314,7 @@ static rt_size_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
         for (i = 0; i < blk_nb; i++)
         {
             /* Read to temp buffer from specified sector. */
-            ret = SDH_Read(sdh->base, (uint8_t *)((uint32_t)&sdh->pbuf[0] | NONCACHEABLE), pos, 1);
+            ret = SDH_Read(sdh->base, sdh->info, (uint8_t *)((uint32_t)&sdh->pbuf[0] | NONCACHEABLE), pos, 1);
             if (ret != Successful)
                 goto exit_nu_sdh_read;
 
@@ -286,7 +332,7 @@ static rt_size_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 #endif
 
         /* Read to user's buffer from specified sector. */
-        ret = SDH_Read(sdh->base, (uint8_t *)((uint32_t)buffer | NONCACHEABLE), pos, blk_nb);
+        ret = SDH_Read(sdh->base, sdh->info, (uint8_t *)((uint32_t)buffer | NONCACHEABLE), pos, blk_nb);
     }
 
 exit_nu_sdh_read:
@@ -339,7 +385,7 @@ static rt_size_t nu_sdh_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 
             memcpy((void *)&sdh->pbuf[0], copy_buffer, SDH_BLOCK_SIZE);
 
-            ret = SDH_Write(sdh->base, (uint8_t *)((uint32_t)&sdh->pbuf[0] | NONCACHEABLE), pos, 1);
+            ret = SDH_Write(sdh->base, sdh->info, (uint8_t *)((uint32_t)&sdh->pbuf[0] | NONCACHEABLE), pos, 1);
             if (ret != Successful)
                 goto exit_nu_sdh_write;
 
@@ -354,7 +400,7 @@ static rt_size_t nu_sdh_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 #endif
 
         /* Write to device directly. */
-        ret = SDH_Write(sdh->base, (uint8_t *)((uint32_t)buffer | NONCACHEABLE), pos, blk_nb);
+        ret = SDH_Write(sdh->base, sdh->info, (uint8_t *)((uint32_t)buffer | NONCACHEABLE), pos, blk_nb);
     }
 
 exit_nu_sdh_write:
@@ -407,6 +453,11 @@ static int rt_hw_sdh_init(void)
 
     ret = rt_event_init(&sdh_event, "sdh_event", RT_IPC_FLAG_FIFO);
     RT_ASSERT(ret == RT_EOK);
+
+#if defined(BSP_USING_EMMC)
+    nu_sys_ipclk_enable(FMICKEN);
+    nu_sys_ipclk_enable(NANDCKEN);
+#endif
 
     for (i = (SDH_START + 1); i < SDH_CNT; i++)
     {
@@ -559,8 +610,10 @@ exit_nu_sdh_hotplug_unmount:
 static void nu_card_detector(nu_sdh_t sdh)
 {
     SDH_T *sdh_base = sdh->base;
+    uint32_t u32INTSTS_CDSTS_Msk = (sdh->card_num==SD_PORT0)?SDH_INTSTS_CDSTS_Msk:SDH_INTSTS_CDSTS1_Msk;
     unsigned int volatile isr = sdh_base->INTSTS;
-    if (isr & SDH_INTSTS_CDSTS_Msk)
+
+    if (isr & u32INTSTS_CDSTS_Msk)
     {
         /* Card removed */
         sdh->info->IsCardInsert = FALSE;   // SDISR_CD_Card = 1 means card remove for GPIO mode
@@ -569,8 +622,8 @@ static void nu_card_detector(nu_sdh_t sdh)
     }
     else
     {
-        SDH_Open(sdh_base, CardDetect_From_GPIO);
-        if (!SDH_Probe(sdh_base))
+        SDH_Open(sdh_base, sdh->info, CardDetect_From_GPIO|sdh->card_num );
+        if (!SDH_Probe(sdh_base, sdh->info, sdh->card_num))
         {
             /* Card inserted */
             nu_sdh_hotplug_mount(sdh);
@@ -586,9 +639,9 @@ static void sdh_hotplugger(void *param)
     for (i = (SDH_START + 1); i < SDH_CNT; i++)
     {
         /* Try to detect SD card on selected port. */
-        SDH_Open(nu_sdh_arr[i].base, CardDetect_From_GPIO);
-        if (!SDH_Probe(nu_sdh_arr[i].base) &&
-                SDH_IS_CARD_PRESENT(nu_sdh_arr[i].base))
+        SDH_Open(nu_sdh_arr[i].base, nu_sdh_arr[i].info, CardDetect_From_GPIO|nu_sdh_arr[i].card_num);
+        if (!SDH_Probe(nu_sdh_arr[i].base, nu_sdh_arr[i].info, nu_sdh_arr[i].card_num) &&
+                nu_sdh_arr[i].info->IsCardInsert)
         {
             nu_sdh_hotplug_mount(&nu_sdh_arr[i]);
         }
@@ -604,6 +657,11 @@ static void sdh_hotplugger(void *param)
             rt_thread_mdelay(200);
             switch (e)
             {
+#if defined(BSP_USING_EMMC)
+            case NU_SDH_CARD_DETECTED_EMMC:
+                nu_card_detector(&nu_sdh_arr[EMMC_IDX]);
+                break;
+#endif
 #if defined(BSP_USING_SDH0)
             case NU_SDH_CARD_DETECTED_SD0:
                 nu_card_detector(&nu_sdh_arr[SDH0_IDX]);
