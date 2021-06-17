@@ -1,3 +1,13 @@
+/*
+ * Copyright (C) 2014-2020 Xilinx, Inc.
+ * Copyright (c) 2020-2021, WangHuachen
+ * All rights reserved.
+ * SPDX-License-Identifier: MIT
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-11-30     WangHuachen  the first version
+ */
 #ifndef XPLATFORM_INFO_H        /* prevent circular inclusions */
 #define XPLATFORM_INFO_H        /* by using protection macros */
 

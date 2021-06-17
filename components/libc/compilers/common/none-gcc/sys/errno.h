@@ -5,20 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016-11-12     Bernard      The first version
+ * 2021-05-22     Meco Man     The first version.
  */
+#ifndef _SYS_ERRNO_H
+#define _SYS_ERRNO_H
 
-#ifndef LIBC_ERRNO_H__
-#define LIBC_ERRNO_H__
-
-#include <rtconfig.h>
-
-#if defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
-/* use errno.h file in toolchains */
-#include <errno.h>
-#endif
-
-#if defined(__CC_ARM)
+#if defined(__ARMCC_VERSION)
 /*
 defined in armcc/errno.h
 
@@ -29,6 +21,7 @@ defined in armcc/errno.h
 #define EINVAL  5
 #define ENOMEM  6
 */
+
 #define ERROR_BASE_NO    7
 
 #elif defined(__IAR_SYSTEMS_ICC__)
@@ -41,12 +34,11 @@ defined in armcc/errno.h
 #define ERROR_BASE_NO    36
 
 #else
-
 #define ERROR_BASE_NO    0
 #endif
 
-#if !defined(RT_USING_NEWLIB) && !defined(_WIN32) && !(defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
-
+#if defined(__ARMCC_VERSION) || defined(__IAR_SYSTEMS_ICC__)
+#include <errno.h>
 #define EPERM            (ERROR_BASE_NO + 1)
 #define ENOENT           (ERROR_BASE_NO + 2)
 #define ESRCH            (ERROR_BASE_NO + 3)
@@ -200,7 +192,6 @@ defined in armcc/errno.h
 #define ENOTRECOVERABLE (ERROR_BASE_NO + 131)
 #define ERFKILL         (ERROR_BASE_NO + 132)
 #define EHWPOISON       (ERROR_BASE_NO + 133)
-
 #endif
 
 #endif
