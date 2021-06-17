@@ -17,7 +17,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define HWTIMER_DEV_NAME   "timer0"     /* 定时器名称 */
+#ifdef RT_USING_HWTIMER
+
+#define HWTIMER_DEV_NAME   "timer1"     /* 定时器名称 */
 
 /* 定时器超时回调函数 */
 static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
@@ -83,3 +85,5 @@ static int hwtimer_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(hwtimer_sample, hwtimer sample);
+
+#endif

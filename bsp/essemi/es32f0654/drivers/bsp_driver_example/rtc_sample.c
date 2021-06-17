@@ -17,6 +17,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#ifdef RT_USING_RTC
+
 static int rtc_sample(int argc, char *argv[])
 {
     rt_err_t ret = RT_EOK;
@@ -49,3 +51,5 @@ static int rtc_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(rtc_sample, rtc sample);
+
+#endif
