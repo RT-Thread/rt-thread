@@ -21,12 +21,11 @@
 #include <ctype.h>
 #include <rtthread.h>
 
-#include "cmd.h"
+#include "cmd_parser.h"
 #include "strref.h"
 #include "common.h"
 #include "util.h"
 #include "app.h"
-#include "ota.h"
 
 /**---------------------------------------------------------------------------*
  **                            Debugging Flag                                 *
@@ -195,8 +194,7 @@ static CMD_HANDLER_FUNC _CMD_GetHandlerFunc(const StrConstRef_T* pctStrRefParam)
 	{
 		return NULL;
 	}
-	//rt_kprintf("pctStrRefParam=%s\r\n",pctStrRefParam->pcStr);
-
+	
 	CMD_HANDLER_FUNC handlerFunc = NULL;
 	/* 查找并处理指令 */
 	uint32_t u32TblLen = ARRAY_SIZE(s_tCmdHandlerTbl);
@@ -205,17 +203,10 @@ static CMD_HANDLER_FUNC _CMD_GetHandlerFunc(const StrConstRef_T* pctStrRefParam)
 	{ // 查找Cmd对应的处理函数
 		/* 严格比较长度和内容 */
 		uint32_t u32CmdNameLen = s_tCmdHandlerTbl[i].u32CmdNameLen;
-//					rt_kprintf("u32CmdNameLen=%d\r\n",u32CmdNameLen);
 		if ((u32CmdNameLen == pctStrRefParam->u32Len)
 			&& (0 == memcmp(s_tCmdHandlerTbl[i].pcszCmdName, pctStrRefParam->pcStr, u32CmdNameLen)))
 		{
-
 			handlerFunc = s_tCmdHandlerTbl[i].handlerFunc;
-//			rt_kprintf("pctStrRefParam=%s\r\n",pctStrRefParam->pcStr);
-//			rt_kprintf("pctStrRefParam->u32Len)=%s\r\n",pctStrRefParam->u32Len);			
-//			rt_kprintf("s_tCmdHandlerTbl[i].pcszCmdName%s\r\n",s_tCmdHandlerTbl[i].pcszCmdName);
-//			rt_kprintf("u32CmdNameLen%s\r\n",u32CmdNameLen);			
-	
 			break;
 		}
 	}
@@ -237,7 +228,8 @@ static void _CMD_PacketProcess(const uint8_t* pcu8Packet, uint32_t u32PacketLen)
 	if ((NULL == pcu8Packet) || (u32PacketLen < 2))
 	{
 		return;
-	}	
+	}
+	
 	// Packet内容(去除包头、包尾)
 	StrConstRef_T tPacketContent = {u32PacketLen - 2, (const char*)(pcu8Packet + 1)};
 	StrConstRef_T tStrRefSplitList[2] = {{0, NULL}, };
@@ -247,6 +239,7 @@ static void _CMD_PacketProcess(const uint8_t* pcu8Packet, uint32_t u32PacketLen)
 		_CMD_Response("[ERR]");
 		return;
 	}
+	
 	// 找到CMD处理函数
 	CMD_HANDLER_FUNC handlerFunc = _CMD_GetHandlerFunc(&(tStrRefSplitList[0]));
 	if (!handlerFunc)

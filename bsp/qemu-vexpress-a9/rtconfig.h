@@ -49,7 +49,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARM_CORTEX_A9
@@ -132,13 +132,8 @@
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
-
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -178,6 +173,7 @@
 
 #define RT_USING_LWIP
 #define RT_USING_LWIP202
+#define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
 #define RT_LWIP_DHCP
@@ -213,11 +209,9 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-
-/* Modbus master and slave stack */
-
 
 /* AT commands */
 
@@ -226,6 +220,21 @@
 
 
 /* Utilities */
+
+#define RT_USING_ULOG
+#define ULOG_OUTPUT_LVL_D
+#define ULOG_OUTPUT_LVL 7
+#define ULOG_ASSERT_ENABLE
+#define ULOG_LINE_BUF_SIZE 128
+
+/* log format */
+
+#define ULOG_USING_COLOR
+#define ULOG_OUTPUT_TIME
+#define ULOG_OUTPUT_LEVEL
+#define ULOG_OUTPUT_TAG
+#define ULOG_BACKEND_USING_CONSOLE
+#define ULOG_USING_FILTER
 #define RT_USING_LWP
 
 /* RT-Thread online packages */
@@ -257,6 +266,9 @@
 
 
 /* system packages */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
 
 
 /* peripheral libraries and drivers */

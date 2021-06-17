@@ -124,8 +124,6 @@ bool STRREF_IsInteger(const StrConstRef_T* pctStrRef);
 *************************************************/
 uint32_t STRREF_Split(const StrConstRef_T* pctStrRef, char chSep, StrConstRef_T ptStrRefPartListBuf[], uint32_t u32ListBufLen);
 
-
-void split(char *src,const char *separator,char **dest,int *num);
 /**--------------------------------------------------------------------------*
 **                         Compiler Flag                                     *
 **---------------------------------------------------------------------------*/

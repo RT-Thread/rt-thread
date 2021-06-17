@@ -418,11 +418,6 @@
               <FilePath>applications\main.cpp</FilePath>
             </File>
             <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\cmd.c</FilePath>
-            </File>
-            <File>
               <FileName>strref.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\strref.c</FilePath>
@@ -436,6 +431,11 @@
               <FileName>cyclequeue.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\cyclequeue.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd_parser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\cmd_parser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -598,7 +598,7 @@
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
             <File>
-              <FileName>finsh_cmd.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
