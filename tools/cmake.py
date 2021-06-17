@@ -4,6 +4,7 @@ Author: https://github.com/klivelinux
 """
 
 import os
+import sys
 import re
 import utils
 import rtconfig
@@ -13,17 +14,26 @@ def GenerateCFiles(env,project):
     """
     Generate CMakeLists.txt files
     """
-
     info = utils.ProjectInfo(env)
-    
-    CC = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
-    CXX = os.path.join(rtconfig.EXEC_PATH, rtconfig.CXX)
-    AS = os.path.join(rtconfig.EXEC_PATH, rtconfig.AS)
-    AR = os.path.join(rtconfig.EXEC_PATH, rtconfig.AR)
-    LINK = os.path.join(rtconfig.EXEC_PATH, rtconfig.LINK)
-    SIZE = os.path.join(rtconfig.EXEC_PATH, rtconfig.SIZE)
-    OBJDUMP = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJDUMP)
-    OBJCOPY = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJCPY)
+
+    CC = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC).replace('\\', "/")
+    CXX = os.path.join(rtconfig.EXEC_PATH, rtconfig.CXX).replace('\\', "/")
+    AS = os.path.join(rtconfig.EXEC_PATH, rtconfig.AS).replace('\\', "/")
+    AR = os.path.join(rtconfig.EXEC_PATH, rtconfig.AR).replace('\\', "/")
+    LINK = os.path.join(rtconfig.EXEC_PATH, rtconfig.LINK).replace('\\', "/")
+    SIZE = os.path.join(rtconfig.EXEC_PATH, rtconfig.SIZE).replace('\\', "/")
+    OBJDUMP = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJDUMP).replace('\\', "/")
+    OBJCOPY = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJCPY).replace('\\', "/")
+
+    if "win32" in sys.platform:
+        CC += ".exe"
+        CXX += ".exe"
+        AS += ".exe"
+        AR += ".exe"
+        LINK += ".exe"
+        SIZE += ".exe"
+        OBJDUMP += ".exe"
+        OBJCOPY += ".exe"
 
     cm_file = open('CMakeLists.txt', 'w')
     if cm_file:
@@ -49,7 +59,7 @@ def GenerateCFiles(env,project):
                 
         cm_file.write("INCLUDE_DIRECTORIES(\n")
         for i in info['CPPPATH']:
-                cm_file.write( "\t" +i + "\n")
+                cm_file.write( "\t" + i.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
 
@@ -61,21 +71,21 @@ def GenerateCFiles(env,project):
         cm_file.write("SET(PROJECT_SOURCES\n")
         for group in project:
             for f in group['src']:
-                cm_file.write( "\t"+os.path.normpath(f.rfile().abspath)+"\n" )
+                cm_file.write( "\t" + os.path.normpath(f.rfile().abspath).replace("\\", "/") + "\n" )
         cm_file.write(")\n\n")
         
         cm_file.write("LINK_DIRECTORIES(\n")
         for group in project:
             if 'LIBPATH' in group.keys():
                 for f in group['LIBPATH']:
-                    cm_file.write( "\t"+ f + "\n" )
+                    cm_file.write( "\t"+ f.replace("\\", "/") + "\n" )
         cm_file.write(")\n\n")
 
         cm_file.write("LINK_LIBRARIES(\n")
         for group in project:
             if 'LIBS' in group.keys():
                 for f in group['LIBS']:
-                    cm_file.write( "\t"+ "{}\n".format(f))
+                    cm_file.write( "\t"+ "{}\n".format(f.replace("\\", "/")))
         cm_file.write(")\n\n")
 
         cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES})\n")
