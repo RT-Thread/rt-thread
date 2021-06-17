@@ -939,6 +939,10 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     rt_serial_tx_disable(dev, dev->open_flag &
                         (RT_SERIAL_TX_BLOCKING | RT_SERIAL_TX_NON_BLOCKING));
 
+    /* Clear the callback function */
+    serial->parent.rx_indicate = RT_NULL;
+    serial->parent.tx_complete = RT_NULL;
+
     /* Call the control() API to close the serial device */
     serial->ops->control(serial, RT_DEVICE_CTRL_CLOSE, RT_NULL);
     dev->flag &= ~RT_DEVICE_FLAG_ACTIVATED;
