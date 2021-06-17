@@ -412,7 +412,7 @@ static rt_err_t at_cmd_get_name(const char *cmd_buffer, char *cmd_name)
     return -RT_ERROR;
 }
 
-static rt_err_t at_server_gerchar(at_server_t server, char *ch, rt_int32_t timeout)
+static rt_err_t at_server_getchar(at_server_t server, char *ch, rt_int32_t timeout)
 {
     rt_err_t result = RT_EOK;
 
@@ -595,7 +595,7 @@ int at_server_init(void)
         goto __exit;
     }
 
-    at_server_local->get_char = at_server_gerchar;
+    at_server_local->get_char = at_server_getchar;
     memcpy(at_server_local->end_mark, AT_CMD_END_MARK, sizeof(AT_CMD_END_MARK));
 
     at_server_local->parser_entry = server_parser;
