@@ -236,6 +236,7 @@
   </Target>
 
   <Group>
+<<<<<<< HEAD
     <GroupName>Applications</GroupName>
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
@@ -1740,10 +1741,14 @@
 
   <Group>
     <GroupName>Utilities</GroupName>
+=======
+    <GroupName>Source Group 1</GroupName>
+>>>>>>> 70f2cb3e84b772b8e7c070620536f4f54e248557
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
+<<<<<<< HEAD
     <File>
       <GroupNumber>15</GroupNumber>
       <FileNumber>108</FileNumber>
@@ -1770,6 +1775,8 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+=======
+>>>>>>> 70f2cb3e84b772b8e7c070620536f4f54e248557
   </Group>
 
 </ProjectOpt>

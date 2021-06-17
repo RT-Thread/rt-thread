@@ -1,9 +1,48 @@
-<mxfile host="65bd71144e" modified="2020-11-26T03:48:17.216Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.51.1 Chrome/83.0.4103.122 Electron/9.3.3 Safari/537.36" version="13.6.5" etag="U9dGi8Tnyfb1tgRJTJCZ">
+<mxfile host="65bd71144e" modified="2020-11-27T06:40:16.382Z" agent="5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.51.1 Chrome/83.0.4103.122 Electron/9.3.3 Safari/537.36" etag="J_5g0VFTdnTnkBT6wD_t" version="13.6.5">
     <diagram id="FN-8v5i5ieyYpjM6NDEu" name="Page-1">
-        <mxGraphModel dx="587" dy="667" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="281" dy="643" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="005DNSE&lt;br&gt;压力传感器驱动" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="110" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="压力传感器数据" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="190" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Pressure_Comp.h" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="110" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Init()" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="170" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Pressure()" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="230" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="AutoZero()" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="290" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="读取指定长度数据" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="290" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="发送ADC命令？" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="350" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="读取ADC命令？" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="400" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="开始数据采集" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="460" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="停止数据采集" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="510" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="设置传感器频率" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="565" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="读取采样率" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="130" y="630" width="120" height="40" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
