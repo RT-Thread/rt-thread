@@ -15,7 +15,7 @@
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 512
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
 
@@ -26,6 +26,7 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
+#define RT_USING_SIGNALS
 
 /* Memory Management */
 
@@ -76,22 +77,14 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_CAN
-#define RT_USING_HWTIMER
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
-#define RT_USING_ADC
-#define RT_USING_PWM
-#define RT_USING_PM
-#define RT_USING_RTC
-#define RT_USING_SPI
 
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
+#define RT_LIBC_USING_TIME
 
 /* Network */
 
@@ -144,6 +137,9 @@
 /* system packages */
 
 
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
 /* peripheral libraries and drivers */
 
 
@@ -151,6 +147,9 @@
 
 
 /* samples: kernel and components samples */
+
+
+/* games: games run on RT-Thread console */
 
 #define SOC_ES32F3696LT
 
@@ -179,7 +178,7 @@
 /* RTC Drivers */
 
 
-/* HWtimer Drivers */
+/* HWTIMER Drivers */
 
 
 /* PWM Drivers */
