@@ -28,7 +28,7 @@ int rt_hw_usart_init(void);
 
 #else
 #define UART_SET_TDR(__HANDLE__, __DATA__)  ((__HANDLE__)->Instance->DR = (__DATA__))
-#define UART_GET_RDR(__HANDLE__)  (return (__HANDLE__)->Instance->DR & 0xFF))
+#define UART_GET_RDR(__HANDLE__)            ((__HANDLE__)->Instance->DR & 0xFF)
 #endif
 
 
