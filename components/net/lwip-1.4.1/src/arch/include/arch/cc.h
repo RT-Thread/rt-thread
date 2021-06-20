@@ -37,8 +37,9 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
+#include <string.h>
 #include <stdint.h>
+
 typedef uint8_t   u8_t;
 typedef int8_t    s8_t;
 typedef uint16_t  u16_t;
@@ -99,11 +100,8 @@ void sys_arch_assert(const char* file, int line);
 #define LWIP_PLATFORM_DIAG(x)   do {rt_kprintf x;} while(0)
 #define LWIP_PLATFORM_ASSERT(x) do {rt_kprintf(x); sys_arch_assert(__FILE__, __LINE__);}while(0)
 
-#include <string.h>
-
-#define SYS_ARCH_DECL_PROTECT(level)
-#define SYS_ARCH_PROTECT(level)     rt_enter_critical()
-#define SYS_ARCH_UNPROTECT(level)   rt_exit_critical()
+#define SYS_ARCH_DECL_PROTECT(level)    register rt_base_t level
+#define SYS_ARCH_PROTECT(level)         do {level = rt_hw_interrupt_disable();} while(0)
+#define SYS_ARCH_UNPROTECT(level)       do {rt_hw_interrupt_enable(level);} while(0)
 
 #endif /* __ARCH_CC_H__ */
-
