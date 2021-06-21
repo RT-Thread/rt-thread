@@ -645,7 +645,6 @@ typedef struct SDH_info_t
 /*@}*/ /* end of group N9H30_SDH_EXPORTED_TYPEDEF */
 
 /// @cond HIDDEN_SYMBOLS
-extern SDH_INFO_T SD0, SD1;
 
 /// @endcond HIDDEN_SYMBOLS
 
