@@ -13,6 +13,7 @@
 
 #include <dfs.h>
 #include <dfs_fs.h>
+#include <fcntl.h>
 
 #ifdef __cplusplus
 extern "C" {
