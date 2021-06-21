@@ -741,6 +741,7 @@ uint32_t SDH_Probe(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num);
 uint32_t SDH_Read(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
 uint32_t SDH_Write(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32StartSec, uint32_t u32SecCount);
 
+void SDH_CardSelect(SDH_T *sdh, uint32_t u32CardSrc);
 uint32_t SDH_CardDetection(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num);
 void SDH_Open_Disk(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardDetSrc);
 void SDH_Close_Disk(SDH_T *sdh, SDH_INFO_T *pSD);
