@@ -75,7 +75,7 @@ SECTIONS
         KEEP(*(.vector))
         *(.irq.cache)
         *(.irq*)
-        *components*src**.o (.text* .rodata*)
+        /* *components*src**.o (.text* .rodata*) */
         *ab32vg1_hal**.o (.text* .rodata*)
         *drv_gpio.o (.text* .rodata*)
         *drv_usart.o (.rodata*)
