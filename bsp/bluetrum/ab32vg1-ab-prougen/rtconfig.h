@@ -81,6 +81,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
@@ -144,6 +145,8 @@
 
 
 /* system packages */
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */
