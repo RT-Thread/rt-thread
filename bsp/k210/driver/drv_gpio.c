@@ -180,10 +180,10 @@ static rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     switch (mode)
     {
         case PIN_IRQ_MODE_RISING:
-            irq_table[pin_channel].edge = GPIO_PE_FALLING;
+            irq_table[pin_channel].edge = GPIO_PE_RISING;
             break;
         case PIN_IRQ_MODE_FALLING:
-            irq_table[pin_channel].edge = GPIO_PE_RISING;
+            irq_table[pin_channel].edge = GPIO_PE_FALLING;
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
             irq_table[pin_channel].edge = GPIO_PE_BOTH;
