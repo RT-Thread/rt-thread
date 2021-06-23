@@ -1,7 +1,19 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0 
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -11,18 +23,26 @@
  * 程序清单：这是一个 pm睡眠唤醒的使用例程
  * 例程导出了 pm_sample 命令到控制终端
  * 命令调用格式：pm_sample
- * 命令解释：进入不同的睡眠模式，然后用按键唤醒
+ * 命令解释：进入不同的睡眠模式，然后用按键唤醒。
  * 程序功能：通过串口输出字符串，告知进入睡眠和唤醒睡眠的情况。
+ * 注意：进入睡眠前，如果有中断挂起（SYSTICK、UART、EXTI等），睡眠将被瞬间唤醒。
 */
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "drv_pm.h"
+#include "drv_pm.h"    
+#include "ald_gpio.h"
+
+
+#ifdef RT_USING_PM
 
 #define PM_NAME       "pm"      /* 设备名称 */
 #define WAKE_UP_PIN     51      /* 唤醒源 */
 #define SLEEP_TIMES     12      /* 进入睡眠次数，轮流进入不同的睡眠模式，包括无睡眠模式 */
 
+/*部分芯片进入深度睡眠后，部分外设的部分寄存器可能会丢失*/
+#define SAVE_REG          UART0
+#define SAVE_REG_TYPE     UART_TypeDef
 
 struct pm_callback_t
 {
@@ -64,14 +84,15 @@ void sleep_in_out_callback(rt_uint8_t event, rt_uint8_t mode, void *data)
         /*进入睡眠前*/
         case RT_PM_ENTER_SLEEP: g_pm_data.flag = 1;
                                 rt_kprintf("\n\r##%d :  ENTER  ",g_pm_data.in_fun_times);
-                                save_register(UART0,sizeof(UART_TypeDef),save_load_mem);    /*备份寄存器的值*/
+                                /*进入深度睡眠后，部分外设的部分寄存器可能会丢失*/
+                                save_register(SAVE_REG,sizeof(SAVE_REG_TYPE),save_load_mem);    /*备份寄存器的值*/
                                 g_pm_data.in_fun_times++;     /*进入睡眠次数+1*/
                                 break;
         /*睡眠唤醒后*/
         case RT_PM_EXIT_SLEEP:  g_pm_data.flag = 0;  /*睡眠唤醒后*/
-                                load_register(UART0,sizeof(UART_TypeDef),save_load_mem);    /*还原寄存器的值*/
+                                load_register(SAVE_REG,sizeof(SAVE_REG_TYPE),save_load_mem);    /*还原寄存器的值*/
                                 rt_kprintf("\n\rEXIT\n\r");
-                                rt_pm_release(mode);   /*释放休眠模式*/
+                                rt_pm_request(PM_SLEEP_MODE_NONE);  /*进无休眠模式*/
                                 return;
         
         default: break;
@@ -118,7 +139,7 @@ static void pm_test(void *parameter)
     
     /*设置回调函数和私有数据*/
     rt_pm_notify_set(sleep_in_out_callback,RT_NULL);
-       
+    
     while(i < SLEEP_TIMES)
    {
        
@@ -130,9 +151,12 @@ static void pm_test(void *parameter)
             g_pm_data.flag = 2;  
        
        }
+        
+       /*彻底释放无休眠模式*/
+       rt_pm_release_all(PM_SLEEP_MODE_NONE);  
        
        /*请求选择的休眠模式*/
-       rt_pm_request(in_mode[i%6]);
+       rt_pm_request(in_mode[i%6]); 
 
        rt_thread_mdelay(500);
        
@@ -142,14 +166,19 @@ static void pm_test(void *parameter)
            rt_thread_mdelay(500);
        }
        
-       /*释放选择的休眠模式*/
-       rt_pm_release(in_mode[i%6]);
+       /*释放选择的休眠模式 ，彻底释放*/
+       rt_pm_release_all(in_mode[i%6]);
        
        i++;
        
    }
-      /*清除回调函数和私有数据*/
+   
+    /*切换为无睡眠模式*/
+    rt_pm_request(PM_SLEEP_MODE_NONE);
+   
+    /*清除回调函数和私有数据*/
     rt_pm_notify_set(RT_NULL,RT_NULL);
+   
     rt_kprintf("thread pm_test close\n\r");
    
 }
@@ -187,3 +216,5 @@ static int pm_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(pm_sample, pm sample);
+
+#endif
