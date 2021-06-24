@@ -134,7 +134,7 @@ void rt_application_init(void);
 void rt_hw_board_init(void);
 int rtthread_startup(void);
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
 extern int $Super$$main(void);
 /* re-define main function */
 int $Sub$$main(void)
@@ -183,7 +183,7 @@ void main_thread_entry(void *parameter)
     rt_hw_secondary_cpu_up();
 #endif /* RT_USING_SMP */
     /* invoke system main function */
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
     {
         extern int $Super$$main(void);
         $Super$$main(); /* for ARMCC. */
