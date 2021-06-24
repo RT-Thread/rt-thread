@@ -588,7 +588,7 @@ rt_err_t rt_mutex_detach(rt_mutex_t mutex)
     /* wakeup all suspended threads */
     rt_ipc_list_resume_all(&(mutex->parent.suspend_thread));
 
-    /* detach semaphore object */
+    /* detach mutex object */
     rt_object_detach(&(mutex->parent.parent));
 
     return RT_EOK;
