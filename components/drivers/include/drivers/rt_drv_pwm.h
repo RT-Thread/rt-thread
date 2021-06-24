@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
+ * 2021-06-24     wangqiang    add pwm interrupt callback
  */
 
 #ifndef __DRV_PWM_H_INCLUDE__
@@ -14,12 +15,13 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define PWM_CMD_ENABLE      (128 + 0)
-#define PWM_CMD_DISABLE     (128 + 1)
-#define PWM_CMD_SET         (128 + 2)
-#define PWM_CMD_GET         (128 + 3)
-#define PWMN_CMD_ENABLE     (128 + 4)
-#define PWMN_CMD_DISABLE    (128 + 5)
+#define PWM_CMD_ENABLE          (128 + 0)
+#define PWM_CMD_DISABLE         (128 + 1)
+#define PWM_CMD_SET             (128 + 2)
+#define PWM_CMD_GET             (128 + 3)
+#define PWMN_CMD_ENABLE         (128 + 4)
+#define PWMN_CMD_DISABLE        (128 + 5)
+#define PWM_CMD_INT_REGISTER    (128 + 6)       /* Command for regist interrupt */
 
 struct rt_pwm_configuration
 {
@@ -32,6 +34,11 @@ struct rt_pwm_configuration
      * RT_FALSE : The channel of pwm is nomal.
     */
     rt_bool_t  complementary;
+
+    #ifdef RT_USING_PWM_INT
+    /* interrupt callback */
+    void (*int_callback)(void);
+    #endif
 };
 
 struct rt_device_pwm;
@@ -51,5 +58,18 @@ rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, 
 rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel);
 rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel);
 rt_err_t rt_pwm_set(struct rt_device_pwm *device, int channel, rt_uint32_t period, rt_uint32_t pulse);
+
+#ifdef RT_USING_PWM_INT
+/**
+ * This function will register interrupt callback function to driver
+ *
+ * @param device pwm device handle
+ * @param channel pwm device channel
+ * @param action callback function for pwm interrupt
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_pwm_interrupt(struct rt_device_pwm *device, int channel, void (*action)(void));
+#endif
 
 #endif /* __DRV_PWM_H_INCLUDE__ */

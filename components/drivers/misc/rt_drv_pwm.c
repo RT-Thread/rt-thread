@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-05-07     aozima       the first version
+ * 2021-06-24     wangqiang    add pwm interrupt callback
  */
 
 #include <string.h>
@@ -142,6 +143,33 @@ rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel)
 
     return result;
 }
+
+#ifdef RT_USING_PWM_INT
+/**
+ * This function will register interrupt callback function to driver
+ *
+ * @param device pwm device handle
+ * @param channel pwm device channel
+ * @param action callback function for pwm interrupt
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_pwm_interrupt(struct rt_device_pwm *device, int channel, void (*action)(void))
+{
+    rt_err_t result = RT_EOK;
+    struct rt_pwm_configuration configuration = {0};
+
+    if (!device)
+    {
+        return -RT_EIO;
+    }
+    configuration.channel = (channel > 0) ? (channel) : (-channel); /* Make it is positive num forever */
+    configuration.int_callback = action;
+    result = rt_device_control(&device->parent, PWM_CMD_INT_REGISTER, &configuration);
+
+    return result;
+}
+#endif
 
 rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel)
 {
