@@ -11,7 +11,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
@@ -22,15 +21,12 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
 
 /* Inter-Thread communication */
 
 #define RT_USING_SEMAPHORE
 #define RT_USING_MUTEX
 #define RT_USING_EVENT
-#define RT_USING_MAILBOX
-#define RT_USING_MESSAGEQUEUE
 
 /* Memory Management */
 
@@ -69,7 +65,6 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
-#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -171,27 +166,32 @@
 #define SOC_NORDIC
 #define BSP_BOARD_PCA_10056
 
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_JLINK_TO_USART
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
-#define NRFX_GPIOTE_ENABLED 1
 #define BSP_USING_UART
+#define NRFX_USING_UART
 #define BSP_USING_UART0
 #define BSP_UART0_RX_PIN 8
 #define BSP_UART0_TX_PIN 6
 
-/* On-chip flash config */
+/* MCU flash config */
 
 #define MCU_FLASH_START_ADDRESS 0x00000000
 #define MCU_FLASH_SIZE_KB 1024
 #define MCU_SRAM_START_ADDRESS 0x20000000
 #define MCU_SRAM_SIZE_KB 256
 #define MCU_FLASH_PAGE_SIZE 0x1000
+#define BLE_STACK_USING_NULL
 #define NRFX_CLOCK_ENABLED 1
 #define NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY 7
 #define NRFX_CLOCK_CONFIG_LF_SRC 1
-#define NRFX_USING_UART
 #define NRFX_UART_ENABLED 1
 #define NRFX_UART0_ENABLED 1
+#define NRFX_GPIOTE_ENABLED 1
 
 #endif
