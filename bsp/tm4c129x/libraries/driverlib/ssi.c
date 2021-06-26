@@ -2,25 +2,25 @@
 //
 // ssi.c - Driver for Synchronous Serial Interface.
 //
-// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,8 +32,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -176,9 +176,9 @@ _SSIIntNumberGet(uint32_t ui32Base)
 //! The \e ui32Protocol parameter defines the data frame format.  The
 //! \e ui32Protocol parameter can be one of the following values:
 //! \b SSI_FRF_MOTO_MODE_0, \b SSI_FRF_MOTO_MODE_1, \b SSI_FRF_MOTO_MODE_2,
-//! \b SSI_FRF_MOTO_MODE_3, \b SSI_FRF_TI, or \b SSI_FRF_NMW. Note that 
+//! \b SSI_FRF_MOTO_MODE_3, \b SSI_FRF_TI, or \b SSI_FRF_NMW. Note that
 //! the \b SSI_FRF_NMW option is only available on some devices. Refer to the
-//! device data sheet to determine if the Microwire format is supported on 
+//! device data sheet to determine if the Microwire format is supported on
 //! a particular device.  The Motorola  frame formats encode the following
 //! polarity and phase configurations:
 //!
@@ -213,7 +213,7 @@ _SSIIntNumberGet(uint32_t ui32Base)
 //! the system clock is the value returned by SysCtlClockGet() for TM4C123x
 //! devices or the value returned by SysCtlClockFreqSet() for TM4C129x devices,
 //! or it can be explicitly hard coded if it is constant and known (to save the
-//! code/execution overhead of a call to SysCtlClockGet() or fetch of the 
+//! code/execution overhead of a call to SysCtlClockGet() or fetch of the
 //! variable call holding the return value of SysCtlClockFreqSet()).
 //!
 //! \return None.
@@ -692,10 +692,10 @@ SSIDataGet(uint32_t ui32Base, uint32_t *pui32Data)
 //! \param pui32Data is a pointer to a storage location for data that was
 //! received over the SSI interface.
 //!
-//! This function gets received data from the receive FIFO of the specified SSI
-//! module and places that data into the location specified by the \e ui32Data
-//! parameter.  If there is no data in the FIFO, then this function returns a
-//! zero.
+//! This function gets one received data element from the receive FIFO of the
+//! specified SSI module and places that data into the location specified by
+//! the \e ui32Data parameter.  If there is no data in the FIFO, then this
+//! function returns a zero.
 //!
 //! \note Only the lower N bits of the value written to \e pui32Data contain
 //! valid data, where N is the data width as configured by
@@ -703,7 +703,7 @@ SSIDataGet(uint32_t ui32Base, uint32_t *pui32Data)
 //! 8-bit data width, only the lower 8 bits of the value written to
 //! \e pui32Data contain valid data.
 //!
-//! \return Returns the number of elements read from the SSI receive FIFO.
+//! \return Returns 1 if there is data element read or 0 if no data in FIFO
 //
 //*****************************************************************************
 int32_t
@@ -1013,7 +1013,7 @@ SSIAdvDataPutFrameEnd(uint32_t ui32Base, uint32_t ui32Data)
     // Check the arguments.
     //
     ASSERT(_SSIBaseValid(ui32Base));
-    ASSERT((ui32Data & 0xff) == 0);
+    ASSERT((ui32Data & 0xffffff00) == 0);
 
     //
     // Wait until there is space.
@@ -1058,7 +1058,7 @@ SSIAdvDataPutFrameEndNonBlocking(uint32_t ui32Base, uint32_t ui32Data)
     // Check the arguments.
     //
     ASSERT(_SSIBaseValid(ui32Base));
-    ASSERT((ui32Data & 0xff) == 0);
+    ASSERT((ui32Data & 0xffffff00) == 0);
 
     //
     // Check for space to write.
@@ -1111,7 +1111,7 @@ SSIAdvFrameHoldEnable(uint32_t ui32Base)
 
 //*****************************************************************************
 //
-//! Configures the SSI advanced mode to de-assert the SSIFss signal after every 
+//! Configures the SSI advanced mode to de-assert the SSIFss signal after every
 //! byte transfer.
 //!
 //! \param ui32Base is the base address of the SSI module.
@@ -1140,6 +1140,61 @@ SSIAdvFrameHoldDisable(uint32_t ui32Base)
     // Clear the hold frame bit.
     //
     HWREG(ui32Base + SSI_O_CR1) &= ~(SSI_CR1_FSSHLDFRM);
+}
+
+//*****************************************************************************
+//
+//! Enables the use of SSI Loopback mode.
+//!
+//! \param ui32Base is the base address of the SSI module.
+//!
+//! This function configures the SSI module to enter loopback mode.  When in
+//! loopback mode, the output of the transmit serial shift register is
+//! connected internally to the input of the receive serial shift register.
+//! This mode is useful for diagnostic/debug testing of the SSI module.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+SSILoopbackEnable(uint32_t ui32Base)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(_SSIBaseValid(ui32Base));
+
+    //
+    // Enable Loopback mode
+    //
+    HWREG(ui32Base + SSI_O_CR1) |= 1u;
+}
+
+//*****************************************************************************
+//
+//! Disables the use of SSI Loopback mode.
+//!
+//! \param ui32Base is the base address of the SSI module.
+//!
+//! This function restores the SSI module to be in normal serial port operation
+//! where the the input of the receive serial shift register is no longer
+//! connected internally to the output of the transmit serial shift register.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+SSILoopbackDisable(uint32_t ui32Base)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(_SSIBaseValid(ui32Base));
+
+    //
+    // Disable Loopback mode
+    //
+    HWREG(ui32Base + SSI_O_CR1) &= ~(1u);
 }
 
 //*****************************************************************************
