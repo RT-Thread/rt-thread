@@ -4,6 +4,41 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+/* Hardware Drivers Config */
+
+#define SOC_NRF52840
+#define SOC_NORDIC
+#define BSP_BOARD_PCA_10056
+
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_JLINK_TO_USART
+#define RT_BSP_LED_PIN 13
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_GPIO
+#define BSP_USING_UART
+#define NRFX_USING_UART
+#define BSP_USING_UART0
+#define BSP_UART0_RX_PIN 8
+#define BSP_UART0_TX_PIN 6
+
+/* MCU flash config */
+
+#define MCU_FLASH_START_ADDRESS 0x00000000
+#define MCU_FLASH_SIZE_KB 1024
+#define MCU_SRAM_START_ADDRESS 0x20000000
+#define MCU_SRAM_SIZE_KB 256
+#define MCU_FLASH_PAGE_SIZE 0x1000
+#define BLE_STACK_USING_NULL
+#define NRFX_CLOCK_ENABLED 1
+#define NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY 7
+#define NRFX_CLOCK_CONFIG_LF_SRC 1
+#define NRFX_UART_ENABLED 1
+#define NRFX_UART0_ENABLED 1
+#define NRFX_GPIOTE_ENABLED 1
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -159,39 +194,5 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-
-/* Hardware Drivers Config */
-
-#define SOC_NRF52840
-#define SOC_NORDIC
-#define BSP_BOARD_PCA_10056
-
-/* Onboard Peripheral Drivers */
-
-#define BSP_USING_JLINK_TO_USART
-
-/* On-chip Peripheral Drivers */
-
-#define BSP_USING_GPIO
-#define BSP_USING_UART
-#define NRFX_USING_UART
-#define BSP_USING_UART0
-#define BSP_UART0_RX_PIN 8
-#define BSP_UART0_TX_PIN 6
-
-/* MCU flash config */
-
-#define MCU_FLASH_START_ADDRESS 0x00000000
-#define MCU_FLASH_SIZE_KB 1024
-#define MCU_SRAM_START_ADDRESS 0x20000000
-#define MCU_SRAM_SIZE_KB 256
-#define MCU_FLASH_PAGE_SIZE 0x1000
-#define BLE_STACK_USING_NULL
-#define NRFX_CLOCK_ENABLED 1
-#define NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY 7
-#define NRFX_CLOCK_CONFIG_LF_SRC 1
-#define NRFX_UART_ENABLED 1
-#define NRFX_UART0_ENABLED 1
-#define NRFX_GPIOTE_ENABLED 1
 
 #endif
