@@ -12,6 +12,8 @@
 | [ARDUINO NANO 33 BLE](https://store.arduino.cc/usa/nano-33-ble-sense-with-headers) | 3 LED                       | 需要连接jlink shell采用RTT 方式交互 |
 |                                                              |                             |                                     |
 
+相关开发板资料原理图整理在[BSP_BOARD_NRF52840](https://github.com/supperthomas/BSP_BOARD_NRF52840)
+
 选择开发板请使用`menuconfig` -> `Hardware Driver Config` -> `Select Bsp board`
 
 选择对应的开发板
