@@ -15,19 +15,32 @@ choice
     default BSP_BOARD_PCA_10056
 
     config BSP_BOARD_PCA_10056
+        select BSP_USING_UART
+        select BSP_USING_UART0
         bool "NRF52840 pca10056 "
-        
+
+    config BSP_BOARD_ARDUINO_NANO_33_BLE
+        bool "Arduino Nano 33 BLE (Sense)"    
 endchoice
 
 menu "Onboard Peripheral Drivers"
     config BSP_USING_JLINK_TO_USART
         bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
         default y
+        depends on BSP_BOARD_PCA_10056
+
+    config RT_BSP_LED_PIN
+        int 
+        default 13 if BSP_BOARD_PCA_10056
+        default 16 if BSP_BOARD_ARDUINO_NANO_33_BLE
+        depends on BSP_USING_GPIO
+
 
     menuconfig BSP_USING_QSPI_FLASH
         select PKG_USING_FAL
         bool "Enable QSPI FLASH(MX25R64 8MB)"
         default n
+        depends on BSP_BOARD_PCA_10056
 
         if BSP_USING_QSPI_FLASH
             config NRFX_QSPI_ENABLED
@@ -89,8 +102,6 @@ menu "On-chip Peripheral Drivers"
 		endchoice
 		endif
         if BSP_USING_UART&&NRFX_USING_UART
-
-
             config BSP_USING_UART0
                 bool "Enable UART0"
                 default y 
