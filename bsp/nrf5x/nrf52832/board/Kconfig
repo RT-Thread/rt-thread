@@ -341,6 +341,10 @@ menu "On-chip Peripheral Drivers"
         select PKG_USING_FAL
         bool "Enable on-chip FLASH"
         default n
+    
+    config BSP_USING_ON_CHIP_FS
+        bool "Enable on-chip filesystem" 
+        default n
 
     menu "On-chip flash config"
 
