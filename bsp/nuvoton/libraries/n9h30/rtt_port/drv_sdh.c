@@ -225,6 +225,11 @@ static void SDH_IRQHandler(int vector, void *param)
     unsigned int volatile isr;
     SDH_INFO_T *pSD = sdh->info;
 
+#if defined(BSP_USING_SDH1)
+    if (SDH_WhichCardIsSelected(sdh_base) == SD_PORT1)
+        pSD = &SD1;
+#endif
+
     // FMI data abort interrupt
     if (sdh_base->GINTSTS & SDH_GINTSTS_DTAIF_Msk)
     {
@@ -252,9 +257,8 @@ static void SDH_IRQHandler(int vector, void *param)
     else if (isr & SDH_INTSTS_CDIF1_Msk)   // card number=1 detect
     {
 #if defined(NU_SDH_HOTPLUG)
-        rt_event_send(&sdh_event, sdh->card_detected_event);
+        rt_event_send(&sdh_event, NU_SDH_CARD_DETECTED_SD1);
 #endif
-
         /* Clear CDIF1 interrupt flag */
         SDH_CLR_INT_FLAG(sdh_base, SDH_INTSTS_CDIF1_Msk);
     }
@@ -301,7 +305,7 @@ static rt_err_t nu_sdh_init(rt_device_t dev)
 static rt_err_t nu_sdh_open(rt_device_t dev, rt_uint16_t oflag)
 {
     nu_sdh_t sdh = (nu_sdh_t)dev;
-    rt_err_t result;
+    rt_err_t result = RT_EOK;
 
     RT_ASSERT(dev != RT_NULL);
 
@@ -311,7 +315,7 @@ static rt_err_t nu_sdh_open(rt_device_t dev, rt_uint16_t oflag)
         result = rt_mutex_take(&g_shared_lock, RT_WAITING_FOREVER);
         RT_ASSERT(result == RT_EOK);
     }
-    SDH_CardSelect(sdh->base, sdh->card_num);
+    SDH_CardSelect(sdh->base, sdh->info, sdh->card_num);
 #endif
 
     if (SDH_Probe(sdh->base, sdh->info, sdh->card_num) == 0)
@@ -353,7 +357,7 @@ static rt_size_t nu_sdh_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
         result = rt_mutex_take(&g_shared_lock, RT_WAITING_FOREVER);
         RT_ASSERT(result == RT_EOK);
     }
-    SDH_CardSelect(sdh->base, sdh->card_num);
+    SDH_CardSelect(sdh->base, sdh->info, sdh->card_num);
 #endif
 
     result = rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
@@ -435,7 +439,7 @@ static rt_size_t nu_sdh_write(rt_device_t dev, rt_off_t pos, const void *buffer,
         result = rt_mutex_take(&g_shared_lock, RT_WAITING_FOREVER);
         RT_ASSERT(result == RT_EOK);
     }
-    SDH_CardSelect(sdh->base, sdh->card_num);
+    SDH_CardSelect(sdh->base, sdh->info, sdh->card_num);
 #endif
 
     result = rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
@@ -724,7 +728,7 @@ static void nu_card_detector(nu_sdh_t sdh)
             rt_err_t result = rt_mutex_take(&g_shared_lock, RT_WAITING_FOREVER);
             RT_ASSERT(result == RT_EOK);
         }
-        SDH_CardSelect(sdh_base, sdh->card_num);
+        SDH_CardSelect(sdh->base, sdh->info, sdh->card_num);
 #endif
 
         SDH_Open(sdh_base, sdh->info, CardDetect_From_GPIO | sdh->card_num);
@@ -755,7 +759,7 @@ static void sdh_hotplugger(void *param)
             rt_err_t result = rt_mutex_take(&g_shared_lock, RT_WAITING_FOREVER);
             RT_ASSERT(result == RT_EOK);
         }
-        SDH_CardSelect(nu_sdh_arr[i].base, nu_sdh_arr[i].card_num);
+        SDH_CardSelect(nu_sdh_arr[i].base, nu_sdh_arr[i].info, nu_sdh_arr[i].card_num);
 #endif
 
         /* Try to detect SD card on selected port. */
@@ -781,7 +785,7 @@ static void sdh_hotplugger(void *param)
                           RT_WAITING_FOREVER, &e) == RT_EOK)
         {
             /* Debounce */
-            rt_thread_mdelay(200);
+            rt_thread_mdelay(500);
             switch (e)
             {
 #if defined(BSP_USING_EMMC)

@@ -43,6 +43,23 @@
     static uint8_t _SDH1_ucSDHCBuffer[512] __attribute__((aligned(32)));
 #endif
 
+void dump_sdh_regs(SDH_T *sdh)
+{
+    rt_kprintf("\n+++++++++++++++++++++++\n");
+    rt_kprintf("    %s\n", sdh->CTL & SDH_CTL_SDPORT_Msk ? "SD1" : "SD0");
+    rt_kprintf("    DMACTL   = 0x%08x\n", sdh->DMACTL);
+    rt_kprintf("    GCTL   = 0x%08x\n", sdh->GCTL);
+    rt_kprintf("    GINTEN   = 0x%08x\n", sdh->GINTEN);
+    rt_kprintf("    GINTSTS   = 0x%08x\n", sdh->GINTSTS);
+    rt_kprintf("    CTL   = 0x%08x\n", sdh->CTL);
+    rt_kprintf("    INTEN   = 0x%08x\n", sdh->INTEN);
+    rt_kprintf("    INTSTS   = 0x%08x\n", sdh->INTSTS);
+    rt_kprintf("    BLEN   = 0x%08x\n", sdh->BLEN);
+    rt_kprintf("    TOUT   = 0x%08x\n", sdh->TOUT);
+    rt_kprintf("    ECTL   = 0x%08x\n", sdh->ECTL);
+    rt_kprintf("\n+++++++++++++++++++++++\n");
+}
+
 void SDH_CheckRB(SDH_T *sdh)
 {
     while (1)
@@ -271,17 +288,17 @@ uint32_t SDH_CardDetection(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num)
     uint32_t u32INTSTS_CDSTS_Msk;
     uint32_t u32CTL_CLKKEEP_Msk;
 
-    if (card_num == SD_PORT1)
+    if (card_num & SD_PORT0)
+    {
+        u32INTEN_CDSRC_Msk = SDH_INTEN_CDSRC_Msk;
+        u32INTSTS_CDSTS_Msk = SDH_INTSTS_CDSTS_Msk;
+        u32CTL_CLKKEEP_Msk = SDH_CTL_CLKKEEP0_Msk;
+    }
+    else if (card_num & SD_PORT1)
     {
         u32INTEN_CDSRC_Msk = SDH_INTEN_CDSRC1_Msk;
         u32INTSTS_CDSTS_Msk = SDH_INTSTS_CDSTS1_Msk;
         u32CTL_CLKKEEP_Msk = SDH_CTL_CLKKEEP1_Msk;
-    }
-    else
-    {
-        u32INTEN_CDSRC_Msk = SDH_INTEN_CDSRC_Msk;
-        u32INTSTS_CDSTS_Msk = SDH_INTSTS_CDSTS_Msk;
-        u32CTL_CLKKEEP_Msk = SDH_CTL_CLKKEEP_Msk;
     }
 
     if ((sdh->INTEN & u32INTEN_CDSRC_Msk) == u32INTEN_CDSRC_Msk)   /* Card detect pin from GPIO */
@@ -320,7 +337,12 @@ uint32_t SDH_CardDetection(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t card_num)
     return val;
 }
 
-void SDH_CardSelect(SDH_T *sdh, uint32_t u32CardSrc)
+uint32_t SDH_WhichCardIsSelected(SDH_T *sdh)
+{
+    return (sdh->CTL & SDH_CTL_SDPORT_Msk) ? SD_PORT1 : SD_PORT0;
+}
+
+void SDH_CardSelect(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardSrc)
 {
     if (u32CardSrc & SD_PORT0)
     {
@@ -330,6 +352,26 @@ void SDH_CardSelect(SDH_T *sdh, uint32_t u32CardSrc)
     {
         sdh->CTL &= ~SDH_CTL_SDPORT_Msk;
         sdh->CTL |= (1 << SDH_CTL_SDPORT_Pos);
+    }
+
+    switch (pSD->CardType)
+    {
+    case SDH_TYPE_MMC:
+        sdh->CTL |= SDH_CTL_DBW_Msk; /* set bus width to 4-bit mode for SD host controller */
+        SDH_Set_clock(sdh, MMC_FREQ);
+        break;
+    case SDH_TYPE_SD_LOW:
+    case SDH_TYPE_EMMC:
+        sdh->CTL |= SDH_CTL_DBW_Msk; /* set bus width to 4-bit mode for SD host controller */
+        SDH_Set_clock(sdh, SD_FREQ);
+        break;
+    case SDH_TYPE_SD_HIGH:
+        sdh->CTL |= SDH_CTL_DBW_Msk; /* set bus width to 4-bit mode for SD host controller */
+        SDH_Set_clock(sdh, SDHC_FREQ);
+        break;
+    case SDH_TYPE_UNKNOWN:
+    default:
+        break;
     }
 }
 
@@ -362,6 +404,8 @@ uint32_t SDH_Init(SDH_T *sdh, SDH_INFO_T *pSD)
     /* initial SDHC */
     pSD->R7Flag = 1ul;
     u32CmdTimeOut = 0xFFFFFul;
+
+    //dump_sdh_regs(sdh);
 
     i = SDH_SDCmdAndRsp(sdh, pSD, 8ul, 0x00000155ul, u32CmdTimeOut);
     if (i == Successful)
@@ -451,6 +495,7 @@ uint32_t SDH_Init(SDH_T *sdh, SDH_INFO_T *pSD)
         else
         {
             pSD->CardType = SDH_TYPE_UNKNOWN;
+
             return SDH_INIT_ERROR;
         }
     }
@@ -743,30 +788,53 @@ void SDH_Open(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardDetSrc)
     uint32_t u32INTEN_CDSRC_Msk = 0;
     uint32_t u32INTSTS_CDIF_Msk = 0;
     uint32_t u32INTEN_CDIEN_Msk = 0;
+    uint32_t u32CTL_CLKKEEP_Msk = 0;
 
     if (u32CardDetSrc & SD_PORT0)
     {
         u32INTEN_CDSRC_Msk = SDH_INTEN_CDSRC_Msk;
         u32INTSTS_CDIF_Msk = SDH_INTSTS_CDIF_Msk;
         u32INTEN_CDIEN_Msk = SDH_INTEN_CDIEN_Msk;
+        u32CTL_CLKKEEP_Msk = SDH_CTL_CLKKEEP0_Msk;
     }
     else if (u32CardDetSrc & SD_PORT1)
     {
         u32INTEN_CDSRC_Msk = SDH_INTEN_CDSRC1_Msk;
         u32INTSTS_CDIF_Msk = SDH_INTSTS_CDIF1_Msk;
         u32INTEN_CDIEN_Msk = SDH_INTEN_CDIEN1_Msk;
+        u32CTL_CLKKEEP_Msk = SDH_CTL_CLKKEEP1_Msk;
     }
 
-    // enable DMAC
+    // Enable DMAC
     sdh->DMACTL = SDH_DMACTL_DMARST_Msk;
     while ((sdh->DMACTL & SDH_DMACTL_DMARST_Msk) == SDH_DMACTL_DMARST_Msk)
     {
     }
     sdh->DMACTL = SDH_DMACTL_DMAEN_Msk;
 
-    //Reset Global
+    // Reset Global
     sdh->GCTL = SDH_GCTL_GCTLRST_Msk | SDH_GCTL_SDEN_Msk;
     while ((sdh->GCTL & SDH_GCTL_GCTLRST_Msk) == SDH_GCTL_GCTLRST_Msk)
+    {
+    }
+
+    if (sdh == SDH1)
+    {
+        /* Enable Power, 0: Enable, 1:Disable */
+        if (u32CardDetSrc & SD_PORT0)
+        {
+            sdh->ECTL &= ~SDH_ECTL_POWEROFF0_Msk;
+        }
+        else if (u32CardDetSrc & SD_PORT1)
+        {
+            sdh->ECTL &= ~SDH_ECTL_POWEROFF1_Msk;
+        }
+        /* disable SD clock output */
+        sdh->CTL &= ~(0xFF | u32CTL_CLKKEEP_Msk);
+    }
+
+    sdh->CTL |= SDH_CTL_CTLRST_Msk;
+    while ((sdh->CTL & SDH_CTL_CTLRST_Msk) == SDH_CTL_CTLRST_Msk)
     {
     }
 
@@ -800,12 +868,9 @@ void SDH_Open(SDH_T *sdh, SDH_INFO_T *pSD, uint32_t u32CardDetSrc)
 
     sdh->INTSTS = u32INTSTS_CDIF_Msk;
     sdh->INTEN |= u32INTEN_CDIEN_Msk;
-
-    sdh->CTL |= SDH_CTL_CTLRST_Msk;
-    while ((sdh->CTL & SDH_CTL_CTLRST_Msk) == SDH_CTL_CTLRST_Msk)
-    {
-    }
 }
+
+
 
 /**
  *  @brief  This function use to initial SD card.
@@ -889,6 +954,7 @@ uint32_t SDH_Read(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32
     {
         return status;
     }
+
     SDH_CheckRB(sdh);
 
     sdh->BLEN = blksize - 1ul;       /* the actual byte count is equal to (SDBLEN+1) */
@@ -984,6 +1050,7 @@ uint32_t SDH_Read(SDH_T *sdh, SDH_INFO_T *pSD, uint8_t *pu8BufAddr, uint32_t u32
     {
         return SDH_CRC7_ERROR;
     }
+
     SDH_CheckRB(sdh);
 
     SDH_SDCommand(sdh, pSD, 7ul, 0ul);
