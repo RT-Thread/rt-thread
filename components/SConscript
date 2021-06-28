@@ -7,6 +7,11 @@ objs = []
 cwd  = GetCurrentDir()
 list = os.listdir(cwd)
 
+# In some old bsp folder, Only define RT_USING_LWIP but not define which of LWIP stack.
+# For this reason, the default lwip stack will be set LWIP2.0.3.
+if not GetDepend('RT_USING_LWIP141') and not GetDepend('RT_USING_LWIP202') and not GetDepend('RT_USING_LWIP203') and not GetDepend('RT_USING_LWIP212'):
+    AddDepend('RT_USING_LWIP203')
+
 for item in list:
     if item in remove_components:
         continue
