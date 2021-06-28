@@ -4,6 +4,41 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+/* Hardware Drivers Config */
+
+#define SOC_NRF52840
+#define SOC_NORDIC
+#define BSP_BOARD_PCA_10056
+
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_JLINK_TO_USART
+#define RT_BSP_LED_PIN 13
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_GPIO
+#define BSP_USING_UART
+#define NRFX_USING_UART
+#define BSP_USING_UART0
+#define BSP_UART0_RX_PIN 8
+#define BSP_UART0_TX_PIN 6
+
+/* MCU flash config */
+
+#define MCU_FLASH_START_ADDRESS 0x00000000
+#define MCU_FLASH_SIZE_KB 1024
+#define MCU_SRAM_START_ADDRESS 0x20000000
+#define MCU_SRAM_SIZE_KB 256
+#define MCU_FLASH_PAGE_SIZE 0x1000
+#define BLE_STACK_USING_NULL
+#define NRFX_CLOCK_ENABLED 1
+#define NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY 7
+#define NRFX_CLOCK_CONFIG_LF_SRC 1
+#define NRFX_UART_ENABLED 1
+#define NRFX_UART0_ENABLED 1
+#define NRFX_GPIOTE_ENABLED 1
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -11,7 +46,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
@@ -19,15 +53,15 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
-#define RT_DEBUG
+
+/* kservice optimization */
+
 
 /* Inter-Thread communication */
 
 #define RT_USING_SEMAPHORE
 #define RT_USING_MUTEX
 #define RT_USING_EVENT
-#define RT_USING_MAILBOX
-#define RT_USING_MESSAGEQUEUE
 
 /* Memory Management */
 
@@ -41,7 +75,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40003
+#define RT_VER_NUM 0x40004
 
 /* RT-Thread Components */
 
@@ -66,7 +100,6 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
-#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -85,7 +118,6 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
 
 /* Network */
 
@@ -105,6 +137,9 @@
 
 
 /* Utilities */
+
+
+/* RT-Thread Utestcases */
 
 
 /* RT-Thread online packages */
@@ -137,11 +172,19 @@
 
 /* system packages */
 
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
 
 /* peripheral libraries and drivers */
 
 #define PKG_USING_NRFX
-#define PKG_USING_NRFX_V210
+#define PKG_USING_NRFX_LATEST_VERSION
+
+/* AI packages */
+
 
 /* miscellaneous packages */
 
@@ -149,37 +192,7 @@
 /* samples: kernel and components samples */
 
 
-/* Hardware Drivers Config */
+/* entertainment: terminal games and other interesting software packages */
 
-#define SOC_NRF52840
-#define NRFX_CLOCK_ENABLED 1
-#define NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY 7
-#define NRFX_CLOCK_CONFIG_LF_SRC 1
-#define SOC_NORDIC
-
-/* Onboard Peripheral Drivers */
-
-#define BSP_USING_JLINK_TO_USART
-
-/* On-chip Peripheral Drivers */
-
-#define BSP_USING_GPIO
-#define NRFX_GPIOTE_ENABLED 1
-#define BSP_USING_UART
-#define NRFX_USING_UART
-#define NRFX_UART_ENABLED 1
-#define BSP_USING_UART0
-#define NRFX_UART0_ENABLED 1
-#define BSP_UART0_RX_PIN 8
-#define BSP_UART0_TX_PIN 6
-
-/* On-chip flash config */
-
-#define MCU_FLASH_START_ADDRESS 0x00000000
-#define MCU_FLASH_SIZE_KB 1024
-#define MCU_SRAM_START_ADDRESS 0x20000000
-#define MCU_SRAM_SIZE_KB 256
-#define MCU_FLASH_PAGE_SIZE 0x1000
-#define BLE_STACK_USING_NULL
 
 #endif

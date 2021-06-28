@@ -13,7 +13,6 @@
 
 // #define USE_UART0_1         0
 
-void rt_hw_uart_init(void);
 
 #endif
 
