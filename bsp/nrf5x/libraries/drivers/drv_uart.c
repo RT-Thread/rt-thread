@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-04-28     xckhmf       Modify for <nrfx>
+ * 2021-06-26     supperthomas fix rt_hw_uart_init
  *
  */
 #include <rtdevice.h>
@@ -236,7 +237,7 @@ static struct rt_uart_ops _uart_ops = {
     _uart_getc
 };
 
-void rt_hw_uart_init(void)
+int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
@@ -249,5 +250,5 @@ void rt_hw_uart_init(void)
 #endif  /* BSP_USING_UART0 */
 
 }
-
+INIT_BOARD_EXPORT(rt_hw_uart_init);
 #endif /* BSP_USING_UART */
