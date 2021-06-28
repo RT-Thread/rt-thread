@@ -815,7 +815,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         /* wait the receive semaphore */
         if (rt_sem_take(sock->recv_notice, timeout) < 0)
         {
-            LOG_E("AT socket (%d) receive timeout (%d)!", socket, timeout);
+            LOG_D("AT socket (%d) receive timeout (%d)!", socket, timeout);
             errno = EAGAIN;
             result = -1;
             goto __exit;
