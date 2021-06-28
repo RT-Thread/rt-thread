@@ -149,7 +149,7 @@
 /* peripheral libraries and drivers */
 
 #define PKG_USING_NRFX
-#define PKG_USING_NRFX_V210
+#define PKG_USING_NRFX_LATEST_VERSION
 
 /* miscellaneous packages */
 
