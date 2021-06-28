@@ -9,4 +9,5 @@ dir_path:
 - tools
 - components/net/lwip-1.4.1
 - components/net/lwip-2.0.2
+- components/net/lwip-2.0.3
 - components/net/lwip-2.1.2
