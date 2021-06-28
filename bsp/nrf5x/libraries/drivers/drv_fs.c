@@ -33,12 +33,11 @@
 #include "fal.h"
 #include <dfs_posix.h>
 
-#define LOG_TAG             "drv.fs"
-#define DBG_LVL              DBG_LOG
+#define LOG_TAG "drv.fs"
+#define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
 #define FS_PARTITION_NAME ON_CHIP_PARTION_NAME
-
 
 /**
   * @brief  on chip filesystem init
@@ -49,7 +48,7 @@
 static int on_chip_fs_init(void)
 {
     int result = 0;
-    
+
     fal_init();
 
     struct rt_device *flash_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);
