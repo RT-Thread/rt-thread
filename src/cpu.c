@@ -89,8 +89,6 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
     unsigned long level;
 
-    rt_preempt_disable();
-
     level = rt_hw_local_irq_disable();
     rt_hw_spin_lock(&lock->lock);
 
@@ -102,8 +100,6 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
-
-    rt_preempt_enable();
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 

@@ -64,10 +64,18 @@ void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
     level = rt_hw_interrupt_disable();
+#endif
     rt_interrupt_nest ++;
     RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
     rt_hw_interrupt_enable(level);
+#endif
 
     RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq current nest:%d\n",
                                 rt_interrupt_nest));
@@ -88,10 +96,18 @@ void rt_interrupt_leave(void)
     RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq is going to leave, irq current nest:%d\n",
                                 rt_interrupt_nest));
 
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
     level = rt_hw_interrupt_disable();
+#endif
     rt_interrupt_nest --;
     RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
     rt_hw_interrupt_enable(level);
+#endif
 }
 RTM_EXPORT(rt_interrupt_leave);
 
@@ -108,9 +124,17 @@ RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
     rt_uint8_t ret;
     rt_base_t level;
 
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
     level = rt_hw_interrupt_disable();
+#endif
     ret = rt_interrupt_nest;
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
     rt_hw_interrupt_enable(level);
+#endif
     return ret;
 }
 RTM_EXPORT(rt_interrupt_get_nest);

@@ -29,6 +29,13 @@ void rt_hw_cpu_icache_invalidate(void *addr, int size)
     rt_uint32_t line_size = rt_cpu_icache_line_size();
     rt_uint32_t start_addr = (rt_uint32_t)addr;
     rt_uint32_t end_addr = (rt_uint32_t) addr + size + line_size - 1;
+    rt_base_t   level;
+    
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
+    level = rt_hw_interrupt_disable();
+#endif
 
     asm volatile ("dmb":::"memory");
     start_addr &= ~(line_size-1);
@@ -39,6 +46,12 @@ void rt_hw_cpu_icache_invalidate(void *addr, int size)
         start_addr += line_size;
     }
     asm volatile ("dsb\n\tisb":::"memory");
+
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
+    rt_hw_interrupt_enable(level);
+#endif
 }
 
 void rt_hw_cpu_dcache_invalidate(void *addr, int size)
@@ -46,6 +59,13 @@ void rt_hw_cpu_dcache_invalidate(void *addr, int size)
     rt_uint32_t line_size = rt_cpu_dcache_line_size();
     rt_uint32_t start_addr = (rt_uint32_t)addr;
     rt_uint32_t end_addr = (rt_uint32_t) addr + size + line_size - 1;
+    rt_base_t   level;
+
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
+    level = rt_hw_interrupt_disable();
+#endif
 
     asm volatile ("dmb":::"memory");
     start_addr &= ~(line_size-1);
@@ -56,6 +76,57 @@ void rt_hw_cpu_dcache_invalidate(void *addr, int size)
         start_addr += line_size;
     }
     asm volatile ("dsb":::"memory");
+
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
+    rt_hw_interrupt_enable(level);
+#endif
+}
+
+void rt_hw_cpu_dcache_inv_range(void *addr, int size)
+{
+    rt_uint32_t line_size = rt_cpu_dcache_line_size();
+    rt_uint32_t start_addr = (rt_uint32_t)addr;
+    rt_uint32_t end_addr = (rt_uint32_t)addr + size;
+    rt_base_t   level;
+
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
+    level = rt_hw_interrupt_disable();
+#endif
+
+    asm volatile ("dmb":::"memory");
+
+    if ((start_addr & (line_size - 1)) != 0)
+    {
+        start_addr &= ~(line_size - 1);
+        asm volatile ("mcr p15, 0, %0, c7, c14, 1" :: "r"(start_addr));
+        start_addr += line_size;
+        asm volatile ("dsb":::"memory");
+    }
+
+    if ((end_addr & (line_size - 1)) != 0)
+    {
+        end_addr &= ~(line_size - 1);
+        asm volatile ("mcr p15, 0, %0, c7, c14, 1" :: "r"(end_addr));
+        //end_addr += line_size;
+        asm volatile ("dsb":::"memory");
+    }
+
+    while (start_addr < end_addr)
+    {
+        asm volatile ("mcr p15, 0, %0, c7, c6, 1" :: "r"(start_addr));  /* dcimvac */
+        start_addr += line_size;
+    }
+    asm volatile ("dsb":::"memory");
+
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
+    rt_hw_interrupt_enable(level);
+#endif
 }
 
 void rt_hw_cpu_dcache_clean(void *addr, int size)
@@ -63,6 +134,13 @@ void rt_hw_cpu_dcache_clean(void *addr, int size)
     rt_uint32_t line_size = rt_cpu_dcache_line_size();
     rt_uint32_t start_addr = (rt_uint32_t)addr;
     rt_uint32_t end_addr = (rt_uint32_t) addr + size + line_size - 1;
+    rt_base_t   level;
+
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
+    level = rt_hw_interrupt_disable();
+#endif
 
     asm volatile ("dmb":::"memory");
     start_addr &= ~(line_size-1);
@@ -73,6 +151,42 @@ void rt_hw_cpu_dcache_clean(void *addr, int size)
         start_addr += line_size;
     }
     asm volatile ("dsb":::"memory");
+
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
+    rt_hw_interrupt_enable(level);
+#endif
+}
+
+void rt_hw_cpu_dcache_clean_inv(void *addr, int size)
+{
+    rt_uint32_t line_size = rt_cpu_dcache_line_size();
+    rt_uint32_t start_addr = (rt_uint32_t)addr;
+    rt_uint32_t end_addr = (rt_uint32_t) addr + size + line_size - 1;
+    rt_base_t   level;
+
+#ifdef RT_USING_SMP
+    level = rt_hw_local_irq_disable();
+#else
+    level = rt_hw_interrupt_disable();
+#endif
+
+    asm volatile ("dmb":::"memory");
+    start_addr &= ~(line_size-1);
+    end_addr &= ~(line_size-1);
+    while (start_addr < end_addr)
+    {
+        asm volatile ("mcr p15, 0, %0, c7, c14, 1" :: "r"(start_addr));
+        start_addr += line_size;
+    }
+    asm volatile ("dsb":::"memory");
+
+#ifdef RT_USING_SMP
+    rt_hw_local_irq_enable(level);
+#else
+    rt_hw_interrupt_enable(level);
+#endif
 }
 
 void rt_hw_cpu_icache_ops(int ops, void *addr, int size)

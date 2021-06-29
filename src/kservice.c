@@ -1187,6 +1187,10 @@ void rt_kputs(const char *str)
 #endif /* RT_USING_DEVICE */
 }
 
+#ifdef RT_USING_SMP
+struct rt_spinlock kp_lock = {0};
+#endif
+
 /**
  * This function will print a formatted string on system console
  *
@@ -1196,7 +1200,10 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length;
+    rt_base_t level;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
+
+    level = rt_spin_lock_irqsave(&kp_lock);
 
     va_start(args, fmt);
     /* the return value of vsnprintf is the number of bytes that would be
@@ -1214,16 +1221,14 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->open_flag;
-
-        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, rt_log_buf, length);
-        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(rt_log_buf);
 #endif /* RT_USING_DEVICE */
     va_end(args);
+
+    rt_spin_unlock_irqrestore(&kp_lock, level);
 }
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
