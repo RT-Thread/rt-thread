@@ -341,6 +341,10 @@ rt_hw_context_switch_interrupt_do:
     ldr     r6,  [r6]
     ldr     sp,  [r6]       @ get new task's stack pointer
 
+#ifdef RT_USING_CPU_USAGE
+    bl cpu_usage_update_duration
+#endif
+
 #ifdef RT_USING_FPU
 /* fpu context */
     ldmfd sp!, {r6}

@@ -36,6 +36,8 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
 }
 
 void (*rt_trap_hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int exception_type);
+void (*rt_trap_irq_enter_hook)(struct rt_thread *tid);
+void (*rt_trap_irq_exit_hook)(struct rt_thread *tid);
 
 /**
  * This function will set a hook function to trap handler.
@@ -45,6 +47,16 @@ void (*rt_trap_hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int 
 void rt_hw_trap_set_hook(void (*hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int exception_type))
 {
     rt_trap_hook = hook;
+}
+
+void rt_hw_irq_trap_enter_sethook(void (*hook)(struct rt_thread *tid))
+{
+    rt_trap_irq_enter_hook = hook;
+}
+
+void rt_hw_irq_trap_exit_sethook(void (*hook)(struct rt_thread *tid))
+{
+    rt_trap_irq_exit_hook = hook;
 }
 
 /**
@@ -206,9 +218,12 @@ void rt_hw_trap_irq(void)
     int int_ack;
     int ir;
     rt_isr_handler_t isr_func;
+    rt_thread_t tid = rt_thread_self();
     extern struct rt_irq_desc isr_table[];
 
     int_ack = rt_hw_interrupt_get_irq();
+
+    RT_OBJECT_HOOK_CALL(rt_trap_irq_enter_hook, (tid));
 
     ir = int_ack & GIC_ACK_INTID_MASK;
     if (ir == 1023)
@@ -232,6 +247,8 @@ void rt_hw_trap_irq(void)
 
     /* end of interrupt */
     rt_hw_interrupt_ack(int_ack);
+
+    RT_OBJECT_HOOK_CALL(rt_trap_irq_exit_hook, (tid));
 }
 
 void rt_hw_trap_fiq(void)

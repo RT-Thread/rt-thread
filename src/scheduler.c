@@ -49,6 +49,7 @@ rt_uint8_t rt_current_priority;
 
 #ifdef RT_USING_HOOK
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
+static void (*rt_scheduler_cpu_usage_hook)(struct rt_thread *tid);
 
 /**
  * @addtogroup Hook
@@ -66,6 +67,12 @@ void
 rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
 {
     rt_scheduler_hook = hook;
+}
+
+void
+rt_scheduler_cpu_usage_sethook(void (*hook)(struct rt_thread *tid))
+{
+    rt_scheduler_cpu_usage_hook = hook;
 }
 
 /**@}*/
@@ -364,6 +371,8 @@ void rt_schedule(void)
                 _rt_scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
+                RT_OBJECT_HOOK_CALL(rt_scheduler_cpu_usage_hook, (current_thread));
+
                 rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
                         (rt_ubase_t)&to_thread->sp, to_thread);
             }
@@ -472,6 +481,8 @@ void rt_schedule(void)
                 if (rt_interrupt_nest == 0)
                 {
                     extern void rt_thread_handle_sig(rt_bool_t clean_state);
+
+                    RT_OBJECT_HOOK_CALL(rt_scheduler_cpu_usage_hook, (from_thread));
 
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
@@ -608,6 +619,8 @@ void rt_scheduler_do_irq_switch(void *context)
 
                 current_thread->cpus_lock_nest--;
                 current_thread->scheduler_lock_nest--;
+
+                RT_OBJECT_HOOK_CALL(rt_scheduler_cpu_usage_hook, (current_thread));
 
                 rt_hw_context_switch_interrupt(context, (rt_ubase_t)&current_thread->sp,
                         (rt_ubase_t)&to_thread->sp, to_thread);
