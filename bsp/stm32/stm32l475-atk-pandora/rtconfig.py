@@ -91,7 +91,6 @@ elif PLATFORM == 'armcc':
 
 
     CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
