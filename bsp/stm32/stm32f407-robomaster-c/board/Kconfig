@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F407ZG
+config SOC_STM32F407IG
     bool
     select SOC_SERIES_STM32F4
     select RT_USING_COMPONENTS_INIT

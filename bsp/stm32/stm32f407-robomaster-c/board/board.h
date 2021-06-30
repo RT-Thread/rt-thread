@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-5      SummerGift   first version
+ * 2021-06-30     crazt        modify for robomaster C board
  */
 
 #ifndef __BOARD_H__
