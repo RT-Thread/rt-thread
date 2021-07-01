@@ -30,6 +30,10 @@
 #error "if you want to use on chip filesystem, you need to enable mtd nor"
 #endif
 
+#ifndef PKG_USING_LITTLEFS
+#error "if you want to use on chip filesystem, you need to enable littlefs"
+#endif
+
 #include "fal.h"
 #include <dfs_posix.h>
 
