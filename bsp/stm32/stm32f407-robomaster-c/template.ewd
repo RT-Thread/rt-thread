@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.11.3.13977</state>
+                    <state>8.32.1.18618</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -826,12 +826,12 @@
                 </option>
                 <option>
                     <name>CCJLinkInterfaceRadio</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCJLinkResetList</name>
                     <version>6</version>
-                    <state>7</state>
+                    <state>5</state>
                 </option>
                 <option>
                     <name>CCJLinkInterfaceCmdLine</name>
@@ -896,7 +896,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state>168.0</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -1375,7 +1375,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
@@ -1561,7 +1561,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.11.3.13977</state>
+                    <state>8.32.1.18618</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -2856,7 +2856,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>2</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
