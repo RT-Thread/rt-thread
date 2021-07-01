@@ -19,7 +19,7 @@
 int main(void)
 {
     int count = 1;
-    /* set LED0 pin mode to output */
+    /* set LED Blue pin mode to output */
     rt_pin_mode(LED_B_PIN, PIN_MODE_OUTPUT);
 
     while (count++)
