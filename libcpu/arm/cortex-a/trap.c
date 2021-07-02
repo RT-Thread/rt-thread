@@ -35,6 +35,30 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
 }
 
+void (*rt_trap_hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int exception_type);
+void (*rt_trap_irq_enter_hook)(struct rt_thread *tid);
+void (*rt_trap_irq_exit_hook)(struct rt_thread *tid);
+
+/**
+ * This function will set a hook function to trap handler.
+ *
+ * @param hook the hook function
+ */
+void rt_hw_trap_set_hook(void (*hook)(struct rt_hw_exp_stack *regs, const char *ex, unsigned int exception_type))
+{
+    rt_trap_hook = hook;
+}
+
+void rt_hw_irq_trap_enter_sethook(void (*hook)(struct rt_thread *tid))
+{
+    rt_trap_irq_enter_hook = hook;
+}
+
+void rt_hw_irq_trap_exit_sethook(void (*hook)(struct rt_thread *tid))
+{
+    rt_trap_irq_exit_hook = hook;
+}
+
 /**
  * When comes across an instruction which it cannot handle,
  * it takes the undefined instruction trap.
@@ -72,12 +96,20 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
         }
     }
 #endif
-    rt_kprintf("undefined instruction:\n");
-    rt_hw_show_register(regs);
+
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("undefined instruction:\n");
+        rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
-    list_thread();
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "undefined instruction", UND_EXCEPTION);
+    }
 }
 
 /**
@@ -91,12 +123,19 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("software interrupt:\n");
-    rt_hw_show_register(regs);
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("software interrupt:\n");
+        rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
-    list_thread();
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "software instruction", SWI_EXCEPTION);
+    }
 }
 
 /**
@@ -109,12 +148,19 @@ void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("prefetch abort:\n");
-    rt_hw_show_register(regs);
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("prefetch abort:\n");
+        rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
-    list_thread();
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "prefetch abort", PABT_EXCEPTION);
+    }
 }
 
 /**
@@ -127,12 +173,19 @@ void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("data abort:");
-    rt_hw_show_register(regs);
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("data abort:");
+        rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
-    list_thread();
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "data abort", DABT_EXCEPTION);
+    }
 }
 
 /**
@@ -144,23 +197,35 @@ void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
 {
-    rt_kprintf("reserved trap:\n");
-    rt_hw_show_register(regs);
+    if (rt_trap_hook == RT_NULL)
+    {
+        rt_kprintf("reserved trap:\n");
+        rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
-    list_thread();
+        list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+        rt_hw_cpu_shutdown();
+    }
+    else
+    {
+        rt_trap_hook(regs, "reserved trap", RESV_EXCEPTION);
+    }
 }
 
 void rt_hw_trap_irq(void)
 {
     void *param;
+    int int_ack;
     int ir;
     rt_isr_handler_t isr_func;
+    rt_thread_t tid = rt_thread_self();
     extern struct rt_irq_desc isr_table[];
 
-    ir = rt_hw_interrupt_get_irq();
+    int_ack = rt_hw_interrupt_get_irq();
 
+    RT_OBJECT_HOOK_CALL(rt_trap_irq_enter_hook, (tid));
+
+    ir = int_ack & GIC_ACK_INTID_MASK;
     if (ir == 1023)
     {
         /* Spurious interrupt */
@@ -181,7 +246,9 @@ void rt_hw_trap_irq(void)
     }
 
     /* end of interrupt */
-    rt_hw_interrupt_ack(ir);
+    rt_hw_interrupt_ack(int_ack);
+
+    RT_OBJECT_HOOK_CALL(rt_trap_irq_exit_hook, (tid));
 }
 
 void rt_hw_trap_fiq(void)

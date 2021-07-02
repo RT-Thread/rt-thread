@@ -47,10 +47,9 @@ struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /* RT_USING_SMP */
 
-rt_list_t rt_thread_defunct;
-
 #ifdef RT_USING_HOOK
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
+static void (*rt_scheduler_switchto_hook)(struct rt_thread *tid);
 
 /**
  * @addtogroup Hook
@@ -68,6 +67,12 @@ void
 rt_scheduler_sethook(void (*hook)(struct rt_thread *from, struct rt_thread *to))
 {
     rt_scheduler_hook = hook;
+}
+
+void
+rt_scheduler_switchto_sethook(void (*hook)(struct rt_thread *tid))
+{
+    rt_scheduler_switchto_hook = hook;
 }
 
 /**@}*/
@@ -224,9 +229,6 @@ void rt_system_scheduler_init(void)
     /* initialize ready table */
     rt_memset(rt_thread_ready_table, 0, sizeof(rt_thread_ready_table));
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-
-    /* initialize thread defunct */
-    rt_list_init(&rt_thread_defunct);
 }
 
 /**
@@ -369,6 +371,8 @@ void rt_schedule(void)
                 _rt_scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
 
+                RT_OBJECT_HOOK_CALL(rt_scheduler_switchto_hook, (current_thread));
+
                 rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
                         (rt_ubase_t)&to_thread->sp, to_thread);
             }
@@ -477,6 +481,8 @@ void rt_schedule(void)
                 if (rt_interrupt_nest == 0)
                 {
                     extern void rt_thread_handle_sig(rt_bool_t clean_state);
+
+                    RT_OBJECT_HOOK_CALL(rt_scheduler_switchto_hook, (from_thread));
 
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
@@ -613,6 +619,8 @@ void rt_scheduler_do_irq_switch(void *context)
 
                 current_thread->cpus_lock_nest--;
                 current_thread->scheduler_lock_nest--;
+
+                RT_OBJECT_HOOK_CALL(rt_scheduler_switchto_hook, (current_thread));
 
                 rt_hw_context_switch_interrupt(context, (rt_ubase_t)&current_thread->sp,
                         (rt_ubase_t)&to_thread->sp, to_thread);

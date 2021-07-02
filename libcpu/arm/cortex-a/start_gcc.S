@@ -341,6 +341,10 @@ rt_hw_context_switch_interrupt_do:
     ldr     r6,  [r6]
     ldr     sp,  [r6]       @ get new task's stack pointer
 
+#ifdef RT_USING_CPU_USAGE
+    bl cpu_usage_update_duration
+#endif
+
 #ifdef RT_USING_FPU
 /* fpu context */
     ldmfd sp!, {r6}
@@ -373,9 +377,14 @@ rt_hw_context_switch_interrupt_do:
     mrs     r6, spsr                @/* Save CPSR                       */
     str     lr, [r0, #15*4]         @/* Push PC                         */
     str     r6, [r0, #16*4]         @/* Push CPSR                       */
-    cps     #Mode_SVC
+    mrs     r5, cpsr                @/* Save CPSR                       */
+
+    orr     r6, r6, #0x80           @/* Switch to previous mode, then save SP & PC */
+    msr     cpsr_c, r6
     str     sp, [r0, #13*4]         @/* Save calling SP                 */
     str     lr, [r0, #14*4]         @/* Save calling PC                 */
+
+    msr     cpsr, r5                @/* Switch back to current mode */
 .endm
 
     .align  5
@@ -481,6 +490,8 @@ secondary_cpu_start:
 
 .bss
 .align 2   //align to  2~2=4
+
+.global sub_stack_top /* used for backtrace to calculate stack top of irq mode */
 
 sub_stack_start:
     .space (SUB_ISR_Stack_Size * (RT_CPUS_NR-1))

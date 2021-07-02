@@ -32,8 +32,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-extern rt_list_t rt_thread_defunct;
-
 #ifdef RT_USING_HOOK
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
 static void (*rt_thread_resume_hook) (rt_thread_t thread);
@@ -131,7 +129,7 @@ static void _rt_thread_exit(void)
     else
     {
         /* insert to defunct thread list */
-        rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+        rt_thread_defunct_enqueue(thread);
     }
 
     /* switch to next task */
@@ -229,6 +227,10 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 #ifdef RT_USING_LWP
     thread->lwp = RT_NULL;
 #endif /* RT_USING_LWP */
+
+#ifdef RT_USING_CPU_USAGE
+    thread->duration_tick = 0;
+#endif
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
@@ -379,17 +381,22 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
 
-    /* disable interrupt */
-    lock = rt_hw_interrupt_disable();
-
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
-    /* detach thread object */
-    rt_object_detach((rt_object_t)thread);
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(lock);
+    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
+    {
+        rt_object_detach((rt_object_t)thread);
+    }
+    else
+    {
+        /* disable interrupt */
+        lock = rt_hw_interrupt_disable();
+        /* insert to defunct thread list */
+        rt_thread_defunct_enqueue(thread);
+        /* enable interrupt */
+        rt_hw_interrupt_enable(lock);
+    }
 
     return RT_EOK;
 }
@@ -484,7 +491,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     thread->stat = RT_THREAD_CLOSE;
 
     /* insert to defunct thread list */
-    rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
+    rt_thread_defunct_enqueue(thread);
 
     /* enable interrupt */
     rt_hw_interrupt_enable(lock);
@@ -847,11 +854,11 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     rt_timer_stop(&thread->thread_timer);
 
-    /* enable interrupt */
-    rt_hw_interrupt_enable(temp);
-
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(temp);
 
     RT_OBJECT_HOOK_CALL(rt_thread_resume_hook, (thread));
     return RT_EOK;
@@ -867,6 +874,7 @@ RTM_EXPORT(rt_thread_resume);
 void rt_thread_timeout(void *parameter)
 {
     struct rt_thread *thread;
+    register rt_base_t temp;
 
     thread = (struct rt_thread *)parameter;
 
@@ -874,6 +882,9 @@ void rt_thread_timeout(void *parameter)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
 
     /* set error number */
     thread->error = -RT_ETIMEOUT;
@@ -883,6 +894,9 @@ void rt_thread_timeout(void *parameter)
 
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(temp);
 
     /* do schedule */
     rt_schedule();
