@@ -10,7 +10,6 @@ cache.c
 cpu.c
 mmu.c
 stack.c
-
 ''')
 CPPPATH = [cwd]
 

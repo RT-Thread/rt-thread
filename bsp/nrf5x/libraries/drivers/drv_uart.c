@@ -250,5 +250,4 @@ int rt_hw_uart_init(void)
 #endif  /* BSP_USING_UART0 */
 
 }
-INIT_BOARD_EXPORT(rt_hw_uart_init);
 #endif /* BSP_USING_UART */
