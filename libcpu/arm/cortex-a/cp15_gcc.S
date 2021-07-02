@@ -8,9 +8,11 @@
  * 2013-07-05     Bernard      the first version
  */
 
-.globl rt_cpu_get_smp_id
-rt_cpu_get_smp_id:
-    mrc     p15, #0, r0, c0, c0, #5
+.weak rt_hw_cpu_id
+rt_hw_cpu_id:
+    mrc     p15, #0, r0, c0, c0, #5         @ read multiprocessor affinity register
+    ldr     r1, =0xFFFF03                   @ Affinity mask off, leaving CPU ID field, [0:1]CPU ID, [8:15]Cluster ID Aff1, [16:23]Cluster ID Aff2
+    and     r0, r0, r1
     bx      lr
 
 .globl rt_cpu_vector_set_base

@@ -38,6 +38,7 @@
 #ifdef RT_USING_POSIX
 #include <dfs_posix.h>
 #include <dfs_poll.h>
+#include <sys/ioctl.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
 #include <posix_termios.h>
@@ -746,19 +747,24 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     {
         struct rt_serial_rx_fifo* rx_fifo;
 
+        /* configure low level device */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_INT_RX);
+        dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
+
         rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
         rt_free(rx_fifo);
         serial->serial_rx = RT_NULL;
-        dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
 
-        /* configure low level device */
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_INT_RX);
     }
 #ifdef RT_SERIAL_USING_DMA
     else if (dev->open_flag & RT_DEVICE_FLAG_DMA_RX)
     {
+        /* configure low level device */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_RX);
+        dev->open_flag &= ~RT_DEVICE_FLAG_DMA_RX;
+
         if (serial->config.bufsz == 0)
         {
             struct rt_serial_rx_dma* rx_dma;
@@ -778,10 +784,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
             rt_free(rx_fifo);
         }
         serial->serial_rx = RT_NULL;
-        dev->open_flag &= ~RT_DEVICE_FLAG_DMA_RX;
 
-        /* configure low level device */
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_RX);
     }
 #endif /* RT_SERIAL_USING_DMA */
 
@@ -789,20 +792,25 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     {
         struct rt_serial_tx_fifo* tx_fifo;
 
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_INT_TX);
+        dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
+
         tx_fifo = (struct rt_serial_tx_fifo*)serial->serial_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
 
         rt_free(tx_fifo);
         serial->serial_tx = RT_NULL;
-        dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
 
         /* configure low level device */
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_INT_TX);
     }
 #ifdef RT_SERIAL_USING_DMA
     else if (dev->open_flag & RT_DEVICE_FLAG_DMA_TX)
     {
         struct rt_serial_tx_dma* tx_dma;
+
+        /* configure low level device */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_TX);
+        dev->open_flag &= ~RT_DEVICE_FLAG_DMA_TX;
 
         tx_dma = (struct rt_serial_tx_dma*)serial->serial_tx;
         RT_ASSERT(tx_dma != RT_NULL);
@@ -811,10 +819,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
 
         rt_free(tx_dma);
         serial->serial_tx = RT_NULL;
-        dev->open_flag &= ~RT_DEVICE_FLAG_DMA_TX;
 
-        /* configure low level device */
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_TX);
     }
 #endif /* RT_SERIAL_USING_DMA */
 
@@ -950,9 +955,7 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
             {
                 RT_ASSERT(RT_NULL != rx_fifo);
                 level = rt_hw_interrupt_disable();
-                rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
-                rx_fifo->put_index = 0;
-                rx_fifo->get_index = 0;
+                rx_fifo->get_index = rx_fifo->put_index;
                 rx_fifo->is_full = RT_FALSE;
                 rt_hw_interrupt_enable(level);
             }

@@ -11,8 +11,8 @@ config RT_USING_RYM
 
         config YMODEM_USING_FILE_TRANSFER
         bool "Enable file transfer feature"
-        select RT_USING_DFS
-        default n
+        depends on RT_USING_DFS
+        default y
     endif
 
 config RT_USING_ULOG
@@ -204,5 +204,7 @@ config RT_USING_UTEST
             int "The utest thread priority"
             default 20
     endif
+
+source "$RTT_DIR/components/utilities/rt-link/Kconfig"
 
 endmenu

@@ -313,15 +313,13 @@ static const struct dfs_filesystem_ops _device_fs =
     "devfs",
     DFS_FS_FLAG_DEFAULT,
     &_device_fops,
-
     dfs_device_fs_mount,
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-
-    RT_NULL,
+    RT_NULL, /*unmount*/
+    RT_NULL, /*mkfs*/
+    RT_NULL, /*statfs*/
+    RT_NULL, /*unlink*/
     dfs_device_fs_stat,
-    RT_NULL,
+    RT_NULL, /*rename*/
 };
 
 int devfs_init(void)

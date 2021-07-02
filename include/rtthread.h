@@ -322,6 +322,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag);
 rt_err_t rt_mutex_delete(rt_mutex_t mutex);
 
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time);
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex);
 rt_err_t rt_mutex_release(rt_mutex_t mutex);
 rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg);
 #endif
@@ -521,7 +522,6 @@ rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 rt_int32_t rt_sprintf(char *buf, const char *format, ...);
 rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
-rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
@@ -566,7 +566,7 @@ rt_size_t rt_strlen(const char *src);
 #endif /*RT_KSERVICE_USING_STDLIB*/
 
 char *rt_strdup(const char *s);
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
 /* lack strdup interface */
 char* strdup(const char* str);
 #endif

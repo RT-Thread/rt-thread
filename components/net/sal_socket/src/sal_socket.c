@@ -619,7 +619,9 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
             LOG_E("New socket registered failed, return error %d.", retval);
             return -1;
         }
-
+		
+        /* new socket create by accept should have the same netdev with server*/
+        new_sock->netdev = sock->netdev;
         /* socket structure user_data used to store the acquired new socket */
         new_sock->user_data = (void *) new_socket;
 

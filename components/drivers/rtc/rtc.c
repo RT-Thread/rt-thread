@@ -9,25 +9,17 @@
  * 2012-04-12     aozima       optimization: find rtc device only first.
  * 2012-04-16     aozima       add scheduler lock for set_date and set_time.
  * 2018-02-16     armink       add auto sync time by NTP
+ * 2021-05-09     Meco Man     remove NTP
  */
 
-#include <sys/time.h>
+#include <time.h>
 #include <string.h>
+#include <stdlib.h>
 #include <rtthread.h>
 
 #ifdef RT_USING_RTC
 
-/* Using NTP auto sync RTC time */
-#ifdef RTC_SYNC_USING_NTP
-/* NTP first sync delay time for network connect, unit: second */
-#ifndef RTC_NTP_FIRST_SYNC_DELAY
-#define RTC_NTP_FIRST_SYNC_DELAY                 (30)
-#endif
-/* NTP sync period, unit: second */
-#ifndef RTC_NTP_SYNC_PERIOD
-#define RTC_NTP_SYNC_PERIOD                      (1L*60L*60L)
-#endif
-#endif /* RTC_SYNC_USING_NTP */
+
 
 /**
  * Set system date(time not modify, local timezone).
@@ -129,67 +121,8 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     return ret;
 }
 
-#ifdef RTC_SYNC_USING_NTP
-static void ntp_sync_thread_enrty(void *param)
-{
-    extern time_t ntp_sync_to_rtc(const char *host_name);
-    /* first sync delay for network connect */
-    rt_thread_delay(RTC_NTP_FIRST_SYNC_DELAY * RT_TICK_PER_SECOND);
-
-    while (1)
-    {
-        ntp_sync_to_rtc(NULL);
-        rt_thread_delay(RTC_NTP_SYNC_PERIOD * RT_TICK_PER_SECOND);
-    }
-}
-
-int rt_rtc_ntp_sync_init(void)
-{
-    static rt_bool_t init_ok = RT_FALSE;
-    rt_thread_t thread;
-
-    if (init_ok)
-    {
-        return 0;
-    }
-
-    thread = rt_thread_create("ntp_sync", ntp_sync_thread_enrty, RT_NULL, 1536, 26, 2);
-    if (thread)
-    {
-        rt_thread_startup(thread);
-    }
-    else
-    {
-        return -RT_ENOMEM;
-    }
-
-    init_ok = RT_TRUE;
-
-    return RT_EOK;
-}
-INIT_COMPONENT_EXPORT(rt_rtc_ntp_sync_init);
-#endif /* RTC_SYNC_USING_NTP */
-
-#ifdef RT_USING_FINSH
+#ifdef FINSH_USING_MSH
 #include <finsh.h>
-#include <rtdevice.h>
-
-/**
- * show date and time (local timezone)
- */
-void list_date(void)
-{
-    time_t now;
-
-    now = time(RT_NULL);
-    rt_kprintf("%.*s\n", 25, ctime(&now));
-}
-FINSH_FUNCTION_EXPORT(list_date, show date and time (local timezone))
-FINSH_FUNCTION_EXPORT(set_date, set date(local timezone) e.g: set_date(2010,2,28))
-FINSH_FUNCTION_EXPORT(set_time, set time(local timezone) e.g: set_time(23,59,59))
-
-
-#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
 /**
  * get date and time or set (local timezone) [year month day hour min sec]
  */
@@ -252,9 +185,7 @@ static void date(uint8_t argc, char **argv)
         rt_kprintf("e.g: date 2018 01 01 23 59 59 or date\n");
     }
 }
-MSH_CMD_EXPORT(list_date, show date and time (local timezone))
 MSH_CMD_EXPORT(date, get date and time or set (local timezone) [year month day hour min sec])
+#endif /* FINSH_USING_MSH */
 
-#endif /* defined(RT_USING_FINSH) && defined(FINSH_USING_MSH) */
-#endif /* RT_USING_FINSH */
 #endif /* RT_USING_RTC */

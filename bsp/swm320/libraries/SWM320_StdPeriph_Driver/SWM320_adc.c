@@ -1,10 +1,10 @@
 /****************************************************************************************************************************************** 
-* ÎÄ¼þÃû³Æ:	SWM320_adc.c
-* ¹¦ÄÜËµÃ÷:	SWM320µ¥Æ¬»úµÄADCÊýÄ£×ª»»Æ÷¹¦ÄÜÇý¶¯¿â
-* ¼¼ÊõÖ§³Ö:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî:
-* °æ±¾ÈÕÆÚ: V1.1.0		2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼: 
+* æ–‡ä»¶åç§°:	SWM320_adc.c
+* åŠŸèƒ½è¯´æ˜Ž:	SWM320å•ç‰‡æœºçš„ADCæ•°æ¨¡è½¬æ¢å™¨åŠŸèƒ½é©±åŠ¨åº“
+* æŠ€æœ¯æ”¯æŒ:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹:
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0		2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•: 
 *******************************************************************************************************************************************
 * @attention
 *
@@ -19,492 +19,507 @@
 #include "SWM320.h"
 #include "SWM320_adc.h"
 
-
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ: ADC_Init()
-* ¹¦ÄÜËµÃ÷:	ADCÄ£Êý×ª»»Æ÷³õÊ¼»¯
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬ÓÐÐ§Öµ°üÀ¨ADC0¡¢ADC1
-*			ADC_InitStructure * initStruct		°üº¬ADC¸÷Ïà¹Ø¶¨ÖµµÄ½á¹¹Ìå
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°: ADC_Init()
+* åŠŸèƒ½è¯´æ˜Ž:	ADCæ¨¡æ•°è½¬æ¢å™¨åˆå§‹åŒ–
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œæœ‰æ•ˆå€¼åŒ…æ‹¬ADC0ã€ADC1
+*			ADC_InitStructure * initStruct		åŒ…å«ADCå„ç›¸å…³å®šå€¼çš„ç»“æž„ä½“
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_Init(ADC_TypeDef * ADCx, ADC_InitStructure * initStruct)
+void ADC_Init(ADC_TypeDef *ADCx, ADC_InitStructure *initStruct)
 {
-	switch((uint32_t)ADCx)
-	{
-	case ((uint32_t)ADC0):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_ADC0_Pos);
-		break;
-	
-	case ((uint32_t)ADC1):
-		SYS->CLKEN |= (0x01 << SYS_CLKEN_ADC1_Pos);
-		break;
-	}
-	
-	ADC_Close(ADCx);		//Ò»Ð©¹Ø¼ü¼Ä´æÆ÷Ö»ÄÜÔÚADC¹Ø±ÕÊ±ÉèÖÃ
-	
-	if(initStruct->clk_src == ADC_CLKSRC_HRC)
-	{
-		ADCx->CTRL |= (1 << ADC_CTRL_CLKSRC_Pos);
-		
-		ADCx->CTRL2 &= ~ADC_CTRL2_CLKDIV_Msk;
-		ADCx->CTRL2 |= (initStruct->clk_div << ADC_CTRL2_CLKDIV_Pos);
-	}
-	else
-	{
-		if(SYS->PLLCR & SYS_PLLCR_OFF_Msk) PLLInit();
-		
-		ADCx->CTRL &= ~(1 << ADC_CTRL_CLKSRC_Pos);
-		
-		SYS->PLLDIV &= ~SYS_PLLDIV_ADVCO_Msk;
-		SYS->PLLDIV |= ((initStruct->clk_src - 2) << SYS_PLLDIV_ADVCO_Pos);
-		
-		SYS->PLLDIV &= ~SYS_PLLDIV_ADDIV_Msk;
-		SYS->PLLDIV |= (initStruct->clk_div << SYS_PLLDIV_ADDIV_Pos);
-	}
-	
-	ADCx->CALIBSET = (ADCx == ADC0) ? SYS->BKP[0] : SYS->BKP[1];
-	ADCx->CALIBEN  = (1 << ADC_CALIBEN_OFFSET_Pos) | (1 << ADC_CALIBEN_K_Pos);
-	
-	ADCx->CTRL2 &= ~(ADC_CTRL2_ADCEVCM_Msk | ADC_CTRL2_PGAIVCM_Msk | ADC_CTRL2_PGAGAIN_Msk | ADC_CTRL2_PGAVCM_Msk);
-	ADCx->CTRL2 |= (0                    << ADC_CTRL2_ADCEVCM_Pos) |
-	               (initStruct->pga_ref  << ADC_CTRL2_PGAIVCM_Pos) |
-				   (6                    << ADC_CTRL2_PGAGAIN_Pos) |
-				   ((uint32_t)6          << ADC_CTRL2_PGAVCM_Pos);
-	
-	ADCx->CTRL &= ~(               0xFF << ADC_CTRL_CH0_Pos);
-	ADCx->CTRL |= (initStruct->channels << ADC_CTRL_CH0_Pos);
-	
-	ADCx->CTRL &= ~(ADC_CTRL_AVG_Msk | ADC_CTRL_TRIG_Msk | ADC_CTRL_CONT_Msk);
-	ADCx->CTRL |= (initStruct->samplAvg << ADC_CTRL_AVG_Pos)  |
-				  (initStruct->trig_src << ADC_CTRL_TRIG_Pos) |
-				  (initStruct->Continue << ADC_CTRL_CONT_Pos);
-	
-	ADCx->IF = 0xFFFFFFFF;	//Çå³ýÖÐ¶Ï±êÖ¾
-	
-	ADCx->IE &= ~(ADC_IE_CH0EOC_Msk | ADC_IE_CH1EOC_Msk | ADC_IE_CH2EOC_Msk | ADC_IE_CH3EOC_Msk |
-				  ADC_IE_CH4EOC_Msk | ADC_IE_CH5EOC_Msk | ADC_IE_CH6EOC_Msk | ADC_IE_CH7EOC_Msk);
-	ADCx->IE |= (((initStruct->EOC_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0EOC_Pos) |
-				(((initStruct->EOC_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1EOC_Pos) |
-				(((initStruct->EOC_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2EOC_Pos) |
-				(((initStruct->EOC_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3EOC_Pos) |
-				(((initStruct->EOC_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4EOC_Pos) |
-				(((initStruct->EOC_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5EOC_Pos) |
-				(((initStruct->EOC_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6EOC_Pos) |
-				(((initStruct->EOC_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7EOC_Pos);
-				
-	ADCx->IE &= ~(ADC_IE_CH0OVF_Msk | ADC_IE_CH1OVF_Msk | ADC_IE_CH2OVF_Msk | ADC_IE_CH3OVF_Msk |
-				  ADC_IE_CH4OVF_Msk | ADC_IE_CH5OVF_Msk | ADC_IE_CH6OVF_Msk | ADC_IE_CH7OVF_Msk);
-	ADCx->IE |= (((initStruct->OVF_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0OVF_Pos) |
-				(((initStruct->OVF_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1OVF_Pos) |
-				(((initStruct->OVF_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2OVF_Pos) |
-				(((initStruct->OVF_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3OVF_Pos) |
-				(((initStruct->OVF_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4OVF_Pos) |
-				(((initStruct->OVF_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5OVF_Pos) |
-				(((initStruct->OVF_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6OVF_Pos) |
-				(((initStruct->OVF_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7OVF_Pos);
-	
-	ADCx->IE &= ~(ADC_IE_CH0HFULL_Msk | ADC_IE_CH1HFULL_Msk | ADC_IE_CH2HFULL_Msk | ADC_IE_CH3HFULL_Msk |
-				  ADC_IE_CH4HFULL_Msk | ADC_IE_CH5HFULL_Msk | ADC_IE_CH6HFULL_Msk | ADC_IE_CH7HFULL_Msk);
-	ADCx->IE |= (((initStruct->HFULL_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0HFULL_Pos) |
-				(((initStruct->HFULL_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1HFULL_Pos) |
-				(((initStruct->HFULL_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2HFULL_Pos) |
-				(((initStruct->HFULL_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3HFULL_Pos) |
-				(((initStruct->HFULL_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4HFULL_Pos) |
-				(((initStruct->HFULL_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5HFULL_Pos) |
-				(((initStruct->HFULL_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6HFULL_Pos) |
-				(((initStruct->HFULL_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7HFULL_Pos);
-	
-	ADCx->IE &= ~(uint32_t)(ADC_IE_CH0FULL_Msk | ADC_IE_CH1FULL_Msk | ADC_IE_CH2FULL_Msk | ADC_IE_CH3FULL_Msk |
-				  ADC_IE_CH4FULL_Msk | ADC_IE_CH5FULL_Msk | ADC_IE_CH6FULL_Msk | ADC_IE_CH7FULL_Msk);
-	ADCx->IE |= (((initStruct->FULL_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0FULL_Pos) |
-				(((initStruct->FULL_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1FULL_Pos) |
-				(((initStruct->FULL_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2FULL_Pos) |
-				(((initStruct->FULL_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3FULL_Pos) |
-				(((initStruct->FULL_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4FULL_Pos) |
-				(((initStruct->FULL_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5FULL_Pos) |
-				(((initStruct->FULL_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6FULL_Pos) |
-				(((initStruct->FULL_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7FULL_Pos);
-	
-	switch((uint32_t)ADCx)
-	{
-	case ((uint32_t)ADC0):		
-		if(initStruct->EOC_IEn | initStruct->OVF_IEn | initStruct->HFULL_IEn | initStruct->FULL_IEn)
-		{
-			NVIC_EnableIRQ(ADC0_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(ADC0_IRQn);
-		}
-		break;
-	
-	case ((uint32_t)ADC1):		
-		if(initStruct->EOC_IEn | initStruct->OVF_IEn | initStruct->HFULL_IEn | initStruct->FULL_IEn)
-		{
-			NVIC_EnableIRQ(ADC1_IRQn);
-		}
-		else
-		{
-			NVIC_DisableIRQ(ADC1_IRQn);
-		}
-		break;
-	}
+    switch ((uint32_t)ADCx)
+    {
+    case ((uint32_t)ADC0):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_ADC0_Pos);
+        break;
+
+    case ((uint32_t)ADC1):
+        SYS->CLKEN |= (0x01 << SYS_CLKEN_ADC1_Pos);
+        break;
+    }
+
+    ADC_Close(ADCx); //ä¸€äº›å…³é”®å¯„å­˜å™¨åªèƒ½åœ¨ADCå…³é—­æ—¶è®¾ç½®
+
+    if (initStruct->clk_src == ADC_CLKSRC_HRC)
+    {
+        ADCx->CTRL |= (1 << ADC_CTRL_CLKSRC_Pos);
+
+        ADCx->CTRL2 &= ~ADC_CTRL2_CLKDIV_Msk;
+        ADCx->CTRL2 |= (initStruct->clk_div << ADC_CTRL2_CLKDIV_Pos);
+    }
+    else
+    {
+        if (SYS->PLLCR & SYS_PLLCR_OFF_Msk)
+            PLLInit();
+
+        ADCx->CTRL &= ~(1 << ADC_CTRL_CLKSRC_Pos);
+
+        SYS->PLLDIV &= ~SYS_PLLDIV_ADVCO_Msk;
+        SYS->PLLDIV |= ((initStruct->clk_src - 2) << SYS_PLLDIV_ADVCO_Pos);
+
+        SYS->PLLDIV &= ~SYS_PLLDIV_ADDIV_Msk;
+        SYS->PLLDIV |= (initStruct->clk_div << SYS_PLLDIV_ADDIV_Pos);
+    }
+
+    ADCx->CALIBSET = (ADCx == ADC0) ? SYS->BKP[0] : SYS->BKP[1];
+    ADCx->CALIBEN = (1 << ADC_CALIBEN_OFFSET_Pos) | (1 << ADC_CALIBEN_K_Pos);
+
+    ADCx->CTRL2 &= ~(ADC_CTRL2_ADCEVCM_Msk | ADC_CTRL2_PGAIVCM_Msk | ADC_CTRL2_PGAGAIN_Msk | ADC_CTRL2_PGAVCM_Msk);
+    ADCx->CTRL2 |= (0 << ADC_CTRL2_ADCEVCM_Pos) |
+                   (initStruct->pga_ref << ADC_CTRL2_PGAIVCM_Pos) |
+                   (6 << ADC_CTRL2_PGAGAIN_Pos) |
+                   ((uint32_t)6 << ADC_CTRL2_PGAVCM_Pos);
+
+    ADCx->CTRL &= ~(0xFF << ADC_CTRL_CH0_Pos);
+    ADCx->CTRL |= (initStruct->channels << ADC_CTRL_CH0_Pos);
+
+    ADCx->CTRL &= ~(ADC_CTRL_AVG_Msk | ADC_CTRL_TRIG_Msk | ADC_CTRL_CONT_Msk);
+    ADCx->CTRL |= (initStruct->samplAvg << ADC_CTRL_AVG_Pos) |
+                  (initStruct->trig_src << ADC_CTRL_TRIG_Pos) |
+                  (initStruct->Continue << ADC_CTRL_CONT_Pos);
+
+    ADCx->IF = 0xFFFFFFFF; //æ¸…é™¤ä¸­æ–­æ ‡å¿—
+
+    ADCx->IE &= ~(ADC_IE_CH0EOC_Msk | ADC_IE_CH1EOC_Msk | ADC_IE_CH2EOC_Msk | ADC_IE_CH3EOC_Msk |
+                  ADC_IE_CH4EOC_Msk | ADC_IE_CH5EOC_Msk | ADC_IE_CH6EOC_Msk | ADC_IE_CH7EOC_Msk);
+    ADCx->IE |= (((initStruct->EOC_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0EOC_Pos) |
+                (((initStruct->EOC_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1EOC_Pos) |
+                (((initStruct->EOC_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2EOC_Pos) |
+                (((initStruct->EOC_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3EOC_Pos) |
+                (((initStruct->EOC_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4EOC_Pos) |
+                (((initStruct->EOC_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5EOC_Pos) |
+                (((initStruct->EOC_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6EOC_Pos) |
+                (((initStruct->EOC_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7EOC_Pos);
+
+    ADCx->IE &= ~(ADC_IE_CH0OVF_Msk | ADC_IE_CH1OVF_Msk | ADC_IE_CH2OVF_Msk | ADC_IE_CH3OVF_Msk |
+                  ADC_IE_CH4OVF_Msk | ADC_IE_CH5OVF_Msk | ADC_IE_CH6OVF_Msk | ADC_IE_CH7OVF_Msk);
+    ADCx->IE |= (((initStruct->OVF_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0OVF_Pos) |
+                (((initStruct->OVF_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1OVF_Pos) |
+                (((initStruct->OVF_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2OVF_Pos) |
+                (((initStruct->OVF_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3OVF_Pos) |
+                (((initStruct->OVF_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4OVF_Pos) |
+                (((initStruct->OVF_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5OVF_Pos) |
+                (((initStruct->OVF_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6OVF_Pos) |
+                (((initStruct->OVF_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7OVF_Pos);
+
+    ADCx->IE &= ~(ADC_IE_CH0HFULL_Msk | ADC_IE_CH1HFULL_Msk | ADC_IE_CH2HFULL_Msk | ADC_IE_CH3HFULL_Msk |
+                  ADC_IE_CH4HFULL_Msk | ADC_IE_CH5HFULL_Msk | ADC_IE_CH6HFULL_Msk | ADC_IE_CH7HFULL_Msk);
+    ADCx->IE |= (((initStruct->HFULL_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0HFULL_Pos) |
+                (((initStruct->HFULL_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1HFULL_Pos) |
+                (((initStruct->HFULL_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2HFULL_Pos) |
+                (((initStruct->HFULL_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3HFULL_Pos) |
+                (((initStruct->HFULL_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4HFULL_Pos) |
+                (((initStruct->HFULL_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5HFULL_Pos) |
+                (((initStruct->HFULL_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6HFULL_Pos) |
+                (((initStruct->HFULL_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7HFULL_Pos);
+
+    ADCx->IE &= ~(uint32_t)(ADC_IE_CH0FULL_Msk | ADC_IE_CH1FULL_Msk | ADC_IE_CH2FULL_Msk | ADC_IE_CH3FULL_Msk |
+                            ADC_IE_CH4FULL_Msk | ADC_IE_CH5FULL_Msk | ADC_IE_CH6FULL_Msk | ADC_IE_CH7FULL_Msk);
+    ADCx->IE |= (((initStruct->FULL_IEn & ADC_CH0) ? 1 : 0) << ADC_IE_CH0FULL_Pos) |
+                (((initStruct->FULL_IEn & ADC_CH1) ? 1 : 0) << ADC_IE_CH1FULL_Pos) |
+                (((initStruct->FULL_IEn & ADC_CH2) ? 1 : 0) << ADC_IE_CH2FULL_Pos) |
+                (((initStruct->FULL_IEn & ADC_CH3) ? 1 : 0) << ADC_IE_CH3FULL_Pos) |
+                (((initStruct->FULL_IEn & ADC_CH4) ? 1 : 0) << ADC_IE_CH4FULL_Pos) |
+                (((initStruct->FULL_IEn & ADC_CH5) ? 1 : 0) << ADC_IE_CH5FULL_Pos) |
+                (((initStruct->FULL_IEn & ADC_CH6) ? 1 : 0) << ADC_IE_CH6FULL_Pos) |
+                (((initStruct->FULL_IEn & ADC_CH7) ? 1 : 0) << ADC_IE_CH7FULL_Pos);
+
+    switch ((uint32_t)ADCx)
+    {
+    case ((uint32_t)ADC0):
+        if (initStruct->EOC_IEn | initStruct->OVF_IEn | initStruct->HFULL_IEn | initStruct->FULL_IEn)
+        {
+            NVIC_EnableIRQ(ADC0_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(ADC0_IRQn);
+        }
+        break;
+
+    case ((uint32_t)ADC1):
+        if (initStruct->EOC_IEn | initStruct->OVF_IEn | initStruct->HFULL_IEn | initStruct->FULL_IEn)
+        {
+            NVIC_EnableIRQ(ADC1_IRQn);
+        }
+        else
+        {
+            NVIC_DisableIRQ(ADC1_IRQn);
+        }
+        break;
+    }
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_Open()
-* ¹¦ÄÜËµÃ÷:	ADC¿ªÆô£¬¿ÉÒÔÈí¼þÆô¶¯¡¢»òÓ²¼þ´¥·¢ADC×ª»»
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_Open()
+* åŠŸèƒ½è¯´æ˜Ž:	ADCå¼€å¯ï¼Œå¯ä»¥è½¯ä»¶å¯åŠ¨ã€æˆ–ç¡¬ä»¶è§¦å‘ADCè½¬æ¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_Open(ADC_TypeDef * ADCx)
+void ADC_Open(ADC_TypeDef *ADCx)
 {
-	ADCx->CTRL |= (0x01 << ADC_CTRL_EN_Pos);
+    ADCx->CTRL |= (0x01 << ADC_CTRL_EN_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_Close()
-* ¹¦ÄÜËµÃ÷:	ADC¹Ø±Õ£¬ÎÞ·¨Èí¼þÆô¶¯¡¢»òÓ²¼þ´¥·¢ADC×ª»»
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_Close()
+* åŠŸèƒ½è¯´æ˜Ž:	ADCå…³é—­ï¼Œæ— æ³•è½¯ä»¶å¯åŠ¨ã€æˆ–ç¡¬ä»¶è§¦å‘ADCè½¬æ¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_Close(ADC_TypeDef * ADCx)
+void ADC_Close(ADC_TypeDef *ADCx)
 {
-	ADCx->CTRL &= ~(0x01 << ADC_CTRL_EN_Pos);
+    ADCx->CTRL &= ~(0x01 << ADC_CTRL_EN_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_Start()
-* ¹¦ÄÜËµÃ÷:	Èí¼þ´¥·¢Ä£Ê½ÏÂÆô¶¯ADC×ª»»
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_Start()
+* åŠŸèƒ½è¯´æ˜Ž:	è½¯ä»¶è§¦å‘æ¨¡å¼ä¸‹å¯åŠ¨ADCè½¬æ¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_Start(ADC_TypeDef * ADCx)
+void ADC_Start(ADC_TypeDef *ADCx)
 {
-	ADCx->START |= (0x01 << ADC_START_GO_Pos);
+    ADCx->START |= (0x01 << ADC_START_GO_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_Stop()
-* ¹¦ÄÜËµÃ÷:	Èí¼þ´¥·¢Ä£Ê½ÏÂÍ£Ö¹ADC×ª»»
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_Stop()
+* åŠŸèƒ½è¯´æ˜Ž:	è½¯ä»¶è§¦å‘æ¨¡å¼ä¸‹åœæ­¢ADCè½¬æ¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_Stop(ADC_TypeDef * ADCx)
-{									 
-	ADCx->START &= ~(0x01 << ADC_START_GO_Pos);
+void ADC_Stop(ADC_TypeDef *ADCx)
+{
+    ADCx->START &= ~(0x01 << ADC_START_GO_Pos);
 }
 
 static uint32_t chn2idx(uint32_t chn)
 {
-	uint32_t idx = 0;
-	
-	switch(chn)
-	{
-		case 0x01: idx = 0; break;
-		case 0x02: idx = 1; break;
-		case 0x04: idx = 2; break;
-		case 0x08: idx = 3; break;
-		case 0x10: idx = 4; break;
-		case 0x20: idx = 5; break;
-		case 0x40: idx = 6; break;
-		case 0x80: idx = 7; break;
-	}
-	
-	return idx;
+    uint32_t idx = 0;
+
+    switch (chn)
+    {
+    case 0x01:
+        idx = 0;
+        break;
+    case 0x02:
+        idx = 1;
+        break;
+    case 0x04:
+        idx = 2;
+        break;
+    case 0x08:
+        idx = 3;
+        break;
+    case 0x10:
+        idx = 4;
+        break;
+    case 0x20:
+        idx = 5;
+        break;
+    case 0x40:
+        idx = 6;
+        break;
+    case 0x80:
+        idx = 7;
+        break;
+    }
+
+    return idx;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_Read()
-* ¹¦ÄÜËµÃ÷:	´ÓÖ¸¶¨Í¨µÀ¶ÁÈ¡×ª»»½á¹û
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			Òª¶ÁÈ¡×ª»»½á¹ûµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: uint32_t				¶ÁÈ¡µ½µÄ×ª»»½á¹û
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_Read()
+* åŠŸèƒ½è¯´æ˜Ž:	ä»ŽæŒ‡å®šé€šé“è¯»å–è½¬æ¢ç»“æžœ
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è¯»å–è½¬æ¢ç»“æžœçš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: uint32_t				è¯»å–åˆ°çš„è½¬æ¢ç»“æžœ
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t ADC_Read(ADC_TypeDef * ADCx, uint32_t chn)
+uint32_t ADC_Read(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t dat = 0;
-	uint32_t idx = chn2idx(chn);
-	
-	dat = ADCx->CH[idx].DATA;
-	
-	ADCx->CH[idx].STAT = 0x01;		//Çå³ýEOC±êÖ¾
-	
-	return dat;
+    uint32_t dat = 0;
+    uint32_t idx = chn2idx(chn);
+
+    dat = ADCx->CH[idx].DATA;
+
+    ADCx->CH[idx].STAT = 0x01; //æ¸…é™¤EOCæ ‡å¿—
+
+    return dat;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IsEOC()
-* ¹¦ÄÜËµÃ÷:	Ö¸¶¨Í¨µÀÊÇ·ñEnd Of Conversion
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			Òª²éÑ¯×´Ì¬µÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: uint32_t				1 ¸ÃÍ¨µÀÍê³ÉÁË×ª»»    0 ¸ÃÍ¨µÀÎ´Íê³É×ª»»
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IsEOC()
+* åŠŸèƒ½è¯´æ˜Ž:	æŒ‡å®šé€šé“æ˜¯å¦End Of Conversion
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦æŸ¥è¯¢çŠ¶æ€çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: uint32_t				1 è¯¥é€šé“å®Œæˆäº†è½¬æ¢    0 è¯¥é€šé“æœªå®Œæˆè½¬æ¢
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t ADC_IsEOC(ADC_TypeDef * ADCx, uint32_t chn)
+uint32_t ADC_IsEOC(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	return (ADCx->CH[idx].STAT & ADC_STAT_EOC_Msk) ? 1 : 0;
+    uint32_t idx = chn2idx(chn);
+
+    return (ADCx->CH[idx].STAT & ADC_STAT_EOC_Msk) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_ChnSelect()
-* ¹¦ÄÜËµÃ÷:	ADCÍ¨µÀÑ¡Í¨£¬Ä£Êý×ª»»»áÔÚÑ¡Í¨µÄÍ¨µÀÉÏÒÀ´Î²ÉÑù×ª»»
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chns			ÒªÑ¡Í¨µÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7¼°Æä×éºÏ£¨¼´¡°°´Î»»ò¡±ÔËËã£©
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_ChnSelect()
+* åŠŸèƒ½è¯´æ˜Ž:	ADCé€šé“é€‰é€šï¼Œæ¨¡æ•°è½¬æ¢ä¼šåœ¨é€‰é€šçš„é€šé“ä¸Šä¾æ¬¡é‡‡æ ·è½¬æ¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chns			è¦é€‰é€šçš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7åŠå…¶ç»„åˆï¼ˆå³â€œæŒ‰ä½æˆ–â€è¿ç®—ï¼‰
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_ChnSelect(ADC_TypeDef * ADCx, uint32_t chns)
+void ADC_ChnSelect(ADC_TypeDef *ADCx, uint32_t chns)
 {
-	ADCx->CTRL &= ~(0xFF << ADC_CTRL_CH0_Pos);
-	ADCx->CTRL |=  (chns << ADC_CTRL_CH0_Pos);
-}
-
-
-/****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntEOCEn()
-* ¹¦ÄÜËµÃ÷:	×ª»»Íê³ÉÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
-******************************************************************************************************************************************/
-void ADC_IntEOCEn(ADC_TypeDef * ADCx, uint32_t chn)
-{
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE |= (0x01 << (idx*4));
+    ADCx->CTRL &= ~(0xFF << ADC_CTRL_CH0_Pos);
+    ADCx->CTRL |= (chns << ADC_CTRL_CH0_Pos);
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntEOCDis()
-* ¹¦ÄÜËµÃ÷:	×ª»»Íê³ÉÖÐ¶Ï½ûÖ¹
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntEOCEn()
+* åŠŸèƒ½è¯´æ˜Ž:	è½¬æ¢å®Œæˆä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntEOCDis(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntEOCEn(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE &= ~(0x01 << (idx*4));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE |= (0x01 << (idx * 4));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntEOCClr()
-* ¹¦ÄÜËµÃ÷:	×ª»»Íê³ÉÖÐ¶Ï±êÖ¾Çå³ý
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntEOCDis()
+* åŠŸèƒ½è¯´æ˜Ž:	è½¬æ¢å®Œæˆä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntEOCClr(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntEOCDis(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IF = (0x01 << (idx*4));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE &= ~(0x01 << (idx * 4));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntEOCStat()
-* ¹¦ÄÜËµÃ÷:	×ª»»Íê³ÉÖÐ¶Ï×´Ì¬
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			Òª²éÑ¯µÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: uint32_t				1 ¸ÃÍ¨µÀÍê³ÉÁË×ª»»    0 ¸ÃÍ¨µÀÎ´Íê³É×ª»»
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntEOCClr()
+* åŠŸèƒ½è¯´æ˜Ž:	è½¬æ¢å®Œæˆä¸­æ–­æ ‡å¿—æ¸…é™¤
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t ADC_IntEOCStat(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntEOCClr(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	return (ADCx->IF & (0x01 << (idx*4))) ? 1 : 0;
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IF = (0x01 << (idx * 4));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntOVFEn()
-* ¹¦ÄÜËµÃ÷:	Êý¾ÝÒç³öÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntEOCStat()
+* åŠŸèƒ½è¯´æ˜Ž:	è½¬æ¢å®Œæˆä¸­æ–­çŠ¶æ€
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦æŸ¥è¯¢çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: uint32_t				1 è¯¥é€šé“å®Œæˆäº†è½¬æ¢    0 è¯¥é€šé“æœªå®Œæˆè½¬æ¢
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntOVFEn(ADC_TypeDef * ADCx, uint32_t chn)
+uint32_t ADC_IntEOCStat(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE |= (0x01 << (idx*4+1));
+    uint32_t idx = chn2idx(chn);
+
+    return (ADCx->IF & (0x01 << (idx * 4))) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntOVFDis()
-* ¹¦ÄÜËµÃ÷:	Êý¾ÝÒç³öÖÐ¶Ï½ûÖ¹
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntOVFEn()
+* åŠŸèƒ½è¯´æ˜Ž:	æ•°æ®æº¢å‡ºä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntOVFDis(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntOVFEn(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE &= ~(0x01 << (idx*4+1));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE |= (0x01 << (idx * 4 + 1));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntOVFClr()
-* ¹¦ÄÜËµÃ÷:	Êý¾ÝÒç³öÖÐ¶Ï±êÖ¾Çå³ý
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntOVFDis()
+* åŠŸèƒ½è¯´æ˜Ž:	æ•°æ®æº¢å‡ºä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntOVFClr(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntOVFDis(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IF = (0x01 << (idx*4+1));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE &= ~(0x01 << (idx * 4 + 1));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntOVFStat()
-* ¹¦ÄÜËµÃ÷:	Êý¾ÝÒç³öÖÐ¶Ï×´Ì¬
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			Òª²éÑ¯µÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: uint32_t				1 ¸ÃÍ¨µÀÍê³ÉÁË×ª»»    0 ¸ÃÍ¨µÀÎ´Íê³É×ª»»
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntOVFClr()
+* åŠŸèƒ½è¯´æ˜Ž:	æ•°æ®æº¢å‡ºä¸­æ–­æ ‡å¿—æ¸…é™¤
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t ADC_IntOVFStat(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntOVFClr(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	return (ADCx->IF & (0x01 << (idx*4+1))) ? 1 : 0;
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IF = (0x01 << (idx * 4 + 1));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntHFULLEn()
-* ¹¦ÄÜËµÃ÷:	FIFO°ëÂúÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntOVFStat()
+* åŠŸèƒ½è¯´æ˜Ž:	æ•°æ®æº¢å‡ºä¸­æ–­çŠ¶æ€
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦æŸ¥è¯¢çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: uint32_t				1 è¯¥é€šé“å®Œæˆäº†è½¬æ¢    0 è¯¥é€šé“æœªå®Œæˆè½¬æ¢
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntHFULLEn(ADC_TypeDef * ADCx, uint32_t chn)
+uint32_t ADC_IntOVFStat(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE |= (0x01 << (idx*4+2));
+    uint32_t idx = chn2idx(chn);
+
+    return (ADCx->IF & (0x01 << (idx * 4 + 1))) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntHFULLDis()
-* ¹¦ÄÜËµÃ÷:	FIFO°ëÂúÖÐ¶Ï½ûÖ¹
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntHFULLEn()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOåŠæ»¡ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntHFULLDis(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntHFULLEn(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE &= ~(0x01 << (idx*4+2));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE |= (0x01 << (idx * 4 + 2));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntHFULLClr()
-* ¹¦ÄÜËµÃ÷:	FIFO°ëÂúÖÐ¶Ï±êÖ¾Çå³ý
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntHFULLDis()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOåŠæ»¡ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntHFULLClr(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntHFULLDis(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IF = (0x01 << (idx*4+2));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE &= ~(0x01 << (idx * 4 + 2));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntHFULLStat()
-* ¹¦ÄÜËµÃ÷:	FIFO°ëÂúÖÐ¶Ï×´Ì¬
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			Òª²éÑ¯µÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: uint32_t				1 ¸ÃÍ¨µÀÍê³ÉÁË×ª»»    0 ¸ÃÍ¨µÀÎ´Íê³É×ª»»
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntHFULLClr()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOåŠæ»¡ä¸­æ–­æ ‡å¿—æ¸…é™¤
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t ADC_IntHFULLStat(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntHFULLClr(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	return (ADCx->IF & (0x01 << (idx*4+2))) ? 1 : 0;
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IF = (0x01 << (idx * 4 + 2));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntFULLEn()
-* ¹¦ÄÜËµÃ÷:	FIFOÂúÖÐ¶ÏÊ¹ÄÜ
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntHFULLStat()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOåŠæ»¡ä¸­æ–­çŠ¶æ€
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦æŸ¥è¯¢çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: uint32_t				1 è¯¥é€šé“å®Œæˆäº†è½¬æ¢    0 è¯¥é€šé“æœªå®Œæˆè½¬æ¢
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntFULLEn(ADC_TypeDef * ADCx, uint32_t chn)
+uint32_t ADC_IntHFULLStat(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE |= (0x01 << (idx*4+3));
+    uint32_t idx = chn2idx(chn);
+
+    return (ADCx->IF & (0x01 << (idx * 4 + 2))) ? 1 : 0;
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntFULLDis()
-* ¹¦ÄÜËµÃ÷:	FIFOÂúÖÐ¶Ï½ûÖ¹
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntFULLEn()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOæ»¡ä¸­æ–­ä½¿èƒ½
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntFULLDis(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntFULLEn(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IE &= ~(0x01 << (idx*4+3));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE |= (0x01 << (idx * 4 + 3));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntFULLClr()
-* ¹¦ÄÜËµÃ÷:	FIFOÂúÖÐ¶Ï±êÖ¾Çå³ý
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			ÒªÉèÖÃµÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntFULLDis()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOæ»¡ä¸­æ–­ç¦æ­¢
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void ADC_IntFULLClr(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntFULLDis(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	ADCx->IF = (0x01 << (idx*4+3));
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IE &= ~(0x01 << (idx * 4 + 3));
 }
 
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	ADC_IntFULLStat()
-* ¹¦ÄÜËµÃ÷:	FIFOÂúÖÐ¶Ï×´Ì¬
-* Êä    Èë: ADC_TypeDef * ADCx		Ö¸¶¨Òª±»ÉèÖÃµÄADC£¬¿ÉÈ¡Öµ°üÀ¨ADC
-*			uint32_t chn			Òª²éÑ¯µÄÍ¨µÀ£¬ÓÐÐ§ÖµADC_CH0¡¢ADC_CH1¡¢... ... ¡¢ADC_CH7		
-* Êä    ³ö: uint32_t				1 ¸ÃÍ¨µÀÍê³ÉÁË×ª»»    0 ¸ÃÍ¨µÀÎ´Íê³É×ª»»
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	ADC_IntFULLClr()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOæ»¡ä¸­æ–­æ ‡å¿—æ¸…é™¤
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦è®¾ç½®çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-uint32_t ADC_IntFULLStat(ADC_TypeDef * ADCx, uint32_t chn)
+void ADC_IntFULLClr(ADC_TypeDef *ADCx, uint32_t chn)
 {
-	uint32_t idx = chn2idx(chn);
-	
-	return (ADCx->IF & (0x01 << (idx*4+3))) ? 1 : 0;
+    uint32_t idx = chn2idx(chn);
+
+    ADCx->IF = (0x01 << (idx * 4 + 3));
+}
+
+/****************************************************************************************************************************************** 
+* å‡½æ•°åç§°:	ADC_IntFULLStat()
+* åŠŸèƒ½è¯´æ˜Ž:	FIFOæ»¡ä¸­æ–­çŠ¶æ€
+* è¾“    å…¥: ADC_TypeDef * ADCx		æŒ‡å®šè¦è¢«è®¾ç½®çš„ADCï¼Œå¯å–å€¼åŒ…æ‹¬ADC
+*			uint32_t chn			è¦æŸ¥è¯¢çš„é€šé“ï¼Œæœ‰æ•ˆå€¼ADC_CH0ã€ADC_CH1ã€... ... ã€ADC_CH7		
+* è¾“    å‡º: uint32_t				1 è¯¥é€šé“å®Œæˆäº†è½¬æ¢    0 è¯¥é€šé“æœªå®Œæˆè½¬æ¢
+* æ³¨æ„äº‹é¡¹: æ— 
+******************************************************************************************************************************************/
+uint32_t ADC_IntFULLStat(ADC_TypeDef *ADCx, uint32_t chn)
+{
+    uint32_t idx = chn2idx(chn);
+
+    return (ADCx->IF & (0x01 << (idx * 4 + 3))) ? 1 : 0;
 }

@@ -11,11 +11,13 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include <stdint.h>
+#include <sys/errno.h>
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
 #include <dfs_file.h>
 #include <dfs_posix.h>
 #include <dfs_poll.h>
+#include <sys/ioctl.h>
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
@@ -374,7 +376,7 @@ rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t
 
     if (device == RT_NULL)
     {
-        rt_set_errno(-EINVAL);
+        rt_set_errno(EINVAL);
         return 0;
     }
     if (count == 0) return 0;
@@ -402,7 +404,7 @@ rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt
 
     if (device == RT_NULL)
     {
-        rt_set_errno(-EINVAL);
+        rt_set_errno(EINVAL);
         return 0;
     }
     if (count == 0) return 0;
@@ -516,12 +518,12 @@ int rt_pipe_delete(const char *name)
         }
         else
         {
-            result = -ENODEV;
+            result = -RT_EINVAL;
         }
     }
     else
     {
-        result = -ENODEV;
+        result = -RT_EINVAL;
     }
 
     return result;

@@ -37,8 +37,8 @@
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
- * 2021-01-03     Meco Man     add rt_mb_urgent()
- * 2021-01-20     hupu         fix priority inversion bug of mutex
+ * 2021-01-03     Meco Man     implement rt_mb_urgent()
+ * 2021-05-30     Meco Man     implement rt_mutex_trytake()
  */
 
 #include <rtthread.h>
@@ -48,7 +48,7 @@
 extern void (*rt_object_trytake_hook)(struct rt_object *object);
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
-#endif
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup IPC
@@ -93,7 +93,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
     {
     case RT_IPC_FLAG_FIFO:
         rt_list_insert_before(list, &(thread->tlist));
-        break;
+        break; /* RT_IPC_FLAG_FIFO */
 
     case RT_IPC_FLAG_PRIO:
         {
@@ -121,9 +121,10 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
             if (n == list)
                 rt_list_insert_before(list, &(thread->tlist));
         }
-        break;
+        break;/* RT_IPC_FLAG_PRIO */
 
     default:
+        RT_ASSERT(0);
         break;
     }
 
@@ -190,31 +191,6 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
     }
 
     return RT_EOK;
-}
-
-/**
- * This function will get the highest priority from the specified
- * list of threads
- *
- * @param list of the threads
- *
- * @return the highest priority
- */
-rt_uint8_t rt_ipc_get_highest_priority(rt_list_t *list)
-{
-    struct rt_list_node *n;
-    struct rt_thread *sthread;
-    rt_uint8_t priority = RT_THREAD_PRIORITY_MAX - 1;
-
-    for (n = list->next; n != list; n = n->next)
-    {
-        sthread = rt_list_entry(n, struct rt_thread, tlist);
-
-        priority = priority < sthread->current_priority ?
-                    priority :
-                    sthread->current_priority;
-    }
-    return priority;
 }
 
 #ifdef RT_USING_SEMAPHORE
@@ -343,7 +319,7 @@ rt_err_t rt_sem_delete(rt_sem_t sem)
     return RT_EOK;
 }
 RTM_EXPORT(rt_sem_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will take a semaphore, if the semaphore is unavailable, the
@@ -451,7 +427,7 @@ RTM_EXPORT(rt_sem_take);
  */
 rt_err_t rt_sem_trytake(rt_sem_t sem)
 {
-    return rt_sem_take(sem, 0);
+    return rt_sem_take(sem, RT_WAITING_NO);
 }
 RTM_EXPORT(rt_sem_trytake);
 
@@ -557,7 +533,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_sem_control);
-#endif /* end of RT_USING_SEMAPHORE */
+#endif /* RT_USING_SEMAPHORE */
 
 #ifdef RT_USING_MUTEX
 /**
@@ -612,7 +588,7 @@ rt_err_t rt_mutex_detach(rt_mutex_t mutex)
     /* wakeup all suspended threads */
     rt_ipc_list_resume_all(&(mutex->parent.suspend_thread));
 
-    /* detach semaphore object */
+    /* detach mutex object */
     rt_object_detach(&(mutex->parent.parent));
 
     return RT_EOK;
@@ -683,7 +659,7 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mutex_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will take a mutex, if the mutex is unavailable, the
@@ -738,7 +714,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     {
 #ifdef RT_USING_SIGNALS
 __again:
-#endif /* end of RT_USING_SIGNALS */
+#endif /* RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -818,7 +794,7 @@ __again:
 #ifdef RT_USING_SIGNALS
                     /* interrupt by signal, try it again */
                     if (thread->error == -RT_EINTR) goto __again;
-#endif /* end of RT_USING_SIGNALS */
+#endif /* RT_USING_SIGNALS */
 
                     /* return error */
                     return thread->error;
@@ -843,6 +819,19 @@ __again:
 RTM_EXPORT(rt_mutex_take);
 
 /**
+ * This function will try to take a mutex and immediately return
+ *
+ * @param mutex the mutex object
+ *
+ * @return the error code
+ */
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex)
+{
+    return rt_mutex_take(mutex, RT_WAITING_NO);
+}
+RTM_EXPORT(rt_mutex_trytake);
+
+/**
  * This function will release a mutex, if there are threads suspended on mutex,
  * it will be waked up.
  *
@@ -855,7 +844,6 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     register rt_base_t temp;
     struct rt_thread *thread;
     rt_bool_t need_schedule;
-    rt_uint8_t max_priority_in_queue = RT_THREAD_PRIORITY_MAX - 1;
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -916,21 +904,6 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             /* set new owner and priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
-
-            /* Priority adjustment occurs only when the following conditions
-             * are met simultaneously:
-             * 1.The type of mutex is RT_IPC_FLAG_FIFO;
-             * 2.The priority of the thread to be resumed is not equal to the
-             *   highest priority in the queue;
-             */
-            max_priority_in_queue = rt_ipc_get_highest_priority(&mutex->parent.suspend_thread);
-            if (mutex->parent.parent.flag == RT_IPC_FLAG_FIFO &&
-                thread->current_priority != max_priority_in_queue)
-            {
-                rt_thread_control(thread,
-                        RT_THREAD_CTRL_CHANGE_PRIORITY,
-                        &(max_priority_in_queue));
-            }
 
             if(mutex->hold < RT_MUTEX_HOLD_MAX)
             {
@@ -995,7 +968,7 @@ rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mutex_control);
-#endif /* end of RT_USING_MUTEX */
+#endif /* RT_USING_MUTEX */
 
 #ifdef RT_USING_EVENT
 /**
@@ -1111,7 +1084,7 @@ rt_err_t rt_event_delete(rt_event_t event)
     return RT_EOK;
 }
 RTM_EXPORT(rt_event_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will send an event to the event object, if there are threads
@@ -1388,7 +1361,7 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_event_control);
-#endif /* end of RT_USING_EVENT */
+#endif /* RT_USING_EVENT */
 
 #ifdef RT_USING_MAILBOX
 /**
@@ -1539,7 +1512,7 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mb_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will send a mail to mailbox object. If the mailbox is full,
@@ -1946,7 +1919,7 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mb_control);
-#endif /* end of RT_USING_MAILBOX */
+#endif /* RT_USING_MAILBOX */
 
 #ifdef RT_USING_MESSAGEQUEUE
 struct rt_mq_message
@@ -2148,7 +2121,7 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
     return RT_EOK;
 }
 RTM_EXPORT(rt_mq_delete);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will send a message to message queue object. If the message queue is full,
@@ -2652,6 +2625,6 @@ rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
     return -RT_ERROR;
 }
 RTM_EXPORT(rt_mq_control);
-#endif /* end of RT_USING_MESSAGEQUEUE */
+#endif /* RT_USING_MESSAGEQUEUE */
 
 /**@}*/

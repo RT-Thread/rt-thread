@@ -15,8 +15,7 @@
 #define __get_cp64(cp, op1, Rt, CRm) __asm__ volatile("MRRC p" # cp ", " # op1 ", %Q0, %R0, c" # CRm  : "=r" (Rt) : : "memory" )
 #define __set_cp64(cp, op1, Rt, CRm) __asm__ volatile("MCRR p" # cp ", " # op1 ", %Q0, %R0, c" # CRm  : : "r" (Rt) : "memory" )
 
-unsigned long rt_cpu_get_smp_id(void);
-
+int rt_hw_cpu_id(void);
 void rt_cpu_mmu_disable(void);
 void rt_cpu_mmu_enable(void);
 void rt_cpu_tlb_set(volatile unsigned long*);

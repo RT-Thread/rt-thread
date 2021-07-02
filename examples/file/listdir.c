@@ -13,7 +13,7 @@
 
 void list_dir(const char* path)
 {
-    char * fullpath;
+    char * fullpath = RT_NULL;
     DIR *dir;
 
     dir = opendir(path);
@@ -57,7 +57,10 @@ void list_dir(const char* path)
         rt_kprintf("open %s directory failed\n", path);
     }
 
-    rt_free(fullpath);
+    if (RT_NULL != fullpath)
+    {
+        rt_free(fullpath);
+    }
 }
 
 #ifdef RT_USING_FINSH
@@ -80,6 +83,6 @@ static void cmd_list_dir(int argc, char *argv[])
     }
     list_dir(filename);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_list_dir, __cmd_list_dir, list directory);
+MSH_CMD_EXPORT_ALIAS(cmd_list_dir, list_dir, list directory);
 #endif /* FINSH_USING_MSH */
 #endif /* RT_USING_FINSH */

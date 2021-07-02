@@ -210,7 +210,7 @@ static void nu_pdma_init(void)
     if (nu_pdma_inited)
         return;
 
-    g_mutex_sg = rt_mutex_create("sgtbles", RT_IPC_FLAG_FIFO);
+    g_mutex_sg = rt_mutex_create("sgtbles", RT_IPC_FLAG_PRIO);
     RT_ASSERT(g_mutex_sg != RT_NULL);
 
     nu_pdma_chn_mask = ~(NU_PDMA_CH_Msk);
@@ -534,7 +534,7 @@ rt_err_t nu_pdma_desc_setup(int i32ChannID, nu_pdma_desc_t dma_desc, uint32_t u3
         goto exit_nu_pdma_desc_setup;
     else if ((u32AddrSrc % (u32DataWidth / 8)) || (u32AddrDst % (u32DataWidth / 8)))
         goto exit_nu_pdma_desc_setup;
-    else if ( i32TransferCnt > NU_PDMA_MAX_TXCNT )
+    else if (i32TransferCnt > NU_PDMA_MAX_TXCNT)
         goto exit_nu_pdma_desc_setup;
 
     PDMA = NU_PDMA_GET_BASE(i32ChannID);
@@ -890,7 +890,7 @@ static void nu_pdma_memfun_actor_init(void)
         nu_pdma_memfun_actor_maxnum = i;
         nu_pdma_memfun_actor_mask = ~(((1 << i) - 1));
         nu_pdma_memfun_actor_pool_sem = rt_sem_create("mempool_sem", nu_pdma_memfun_actor_maxnum, RT_IPC_FLAG_FIFO);
-        nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_FIFO);
+        nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_PRIO);
     }
 }
 
