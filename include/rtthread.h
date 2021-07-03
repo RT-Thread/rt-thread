@@ -186,7 +186,6 @@ rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
-void rt_scheduler_switchto_sethook(void (*hook)(struct rt_thread *tid));
 #endif
 
 #ifdef RT_USING_SMP
