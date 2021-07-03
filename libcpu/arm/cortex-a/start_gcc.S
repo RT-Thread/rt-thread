@@ -42,7 +42,7 @@
 #define SUB_ISR_Stack_Size  (SUB_UND_Stack_Size + SUB_SVC_Stack_Size + SUB_ABT_Stack_Size + \
                  SUB_RT_FIQ_STACK_PGSZ + SUB_RT_IRQ_STACK_PGSZ)
 
-.section .data.share.isr
+.section .bss.share.isr
 /* stack */
 .globl stack_start
 .globl stack_top
