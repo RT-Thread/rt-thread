@@ -44,11 +44,21 @@
 #define _CPUS_NR                1
 #endif /* RT_USING_SMP */
 
-extern rt_list_t rt_thread_defunct;
+static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);;
 
 static struct rt_thread idle[_CPUS_NR];
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t rt_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
+
+#ifdef RT_USING_SMP
+#ifndef SYSTEM_THREAD_STACK_SIZE
+#define SYSTEM_THREAD_STACK_SIZE IDLE_THREAD_STACK_SIZE
+#endif
+static struct rt_thread rt_system_thread;
+ALIGN(RT_ALIGN_SIZE)
+static rt_uint8_t rt_system_stack[SYSTEM_THREAD_STACK_SIZE];
+static struct rt_semaphore system_sem;
+#endif
 
 #ifdef RT_USING_IDLE_HOOK
 #ifndef RT_IDLE_HOOK_LIST_SIZE
@@ -127,43 +137,75 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 
 #endif /* RT_USING_IDLE_HOOK */
 
-#ifdef RT_USING_HEAP
+#ifdef RT_USING_MODULE
 /* Return whether there is defunctional thread to be deleted. */
 rt_inline int _has_defunct_thread(void)
 {
     /* The rt_list_isempty has prototype of "int rt_list_isempty(const rt_list_t *l)".
-     * So the compiler has a good reason that the rt_thread_defunct list does
-     * not change within rt_thread_idle_excute thus optimize the "while" loop
+     * So the compiler has a good reason that the _rt_thread_defunct list does
+     * not change within rt_thread_defunct_exceute thus optimize the "while" loop
      * into a "if".
      *
      * So add the volatile qualifier here. */
-    const volatile rt_list_t *l = (const volatile rt_list_t *)&rt_thread_defunct;
+    const volatile rt_list_t *l = (const volatile rt_list_t *)&_rt_thread_defunct;
 
     return l->next != l;
 }
-#endif /* RT_USING_HEAP */
+#endif /* RT_USING_MODULE */
+
+/* enqueue a thread to defunct queue
+ * it must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable
+ */
+void rt_thread_defunct_enqueue(rt_thread_t thread)
+{
+    rt_list_insert_after(&_rt_thread_defunct, &thread->tlist);
+#ifdef RT_USING_SMP
+    rt_sem_release(&system_sem);
+#endif
+}
+
+/* dequeue a thread from defunct queue
+ * it must be called between rt_hw_interrupt_disable and rt_hw_interrupt_enable
+ */
+rt_thread_t rt_thread_defunct_dequeue(void)
+{
+    rt_thread_t thread = RT_NULL;
+    rt_list_t *l = &_rt_thread_defunct;
+
+    if (l->next != l)
+    {
+        thread = rt_list_entry(l->next,
+                struct rt_thread,
+                tlist);
+        rt_list_remove(&(thread->tlist));
+    }
+    return thread;
+}
 
 /**
  * @ingroup Thread
  *
  * This function will perform system background job when system idle.
  */
-void rt_thread_idle_excute(void)
+static void rt_defunct_execute(void)
 {
-    /* Loop until there is no dead thread. So one call to rt_thread_idle_excute
+    /* Loop until there is no dead thread. So one call to rt_defunct_execute
      * will do all the cleanups. */
-    /* disable interrupt */
-
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
-#ifdef RT_USING_HEAP
     while (1)
     {
         rt_base_t lock;
         rt_thread_t thread;
+        void (*cleanup)(struct rt_thread *tid);
 
+#ifdef RT_USING_MODULE
+        struct rt_dlmodule *module = RT_NULL;
+#endif
+        RT_DEBUG_NOT_IN_INTERRUPT;
+
+        /* disable interrupt */
         lock = rt_hw_interrupt_disable();
 
+#ifdef RT_USING_MODULE
         /* check whether list is empty */
         if (!_has_defunct_thread())
         {
@@ -171,18 +213,56 @@ void rt_thread_idle_excute(void)
             break;
         }
         /* get defunct thread */
-        thread = rt_list_entry(rt_thread_defunct.next,
+        thread = rt_list_entry(_rt_thread_defunct.next,
                 struct rt_thread,
                 tlist);
+        module = (struct rt_dlmodule*)thread->module_id;
+        if (module)
+        {
+            dlmodule_destroy(module);
+        }
         /* remove defunct thread */
         rt_list_remove(&(thread->tlist));
-        /* release thread's stack */
-        RT_KERNEL_FREE(thread->stack_addr);
-        /* delete thread object */
-        rt_object_delete((rt_object_t)thread);
-        rt_hw_interrupt_enable(lock);
+#else
+        thread = rt_thread_defunct_dequeue();
+        if (!thread)
+        {
+            rt_hw_interrupt_enable(lock);
+            break;
+        }
+#endif
+        /* invoke thread cleanup */
+        cleanup = thread->cleanup;
+        if (cleanup != RT_NULL)
+        {
+            rt_hw_interrupt_enable(lock);
+            cleanup(thread);
+            lock = rt_hw_interrupt_disable();
+        }
+
+#ifdef RT_USING_SIGNALS
+        rt_thread_free_sig(thread);
+#endif
+
+        /* if it's a system object, not delete it */
+        if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
+        {
+            /* detach this object */
+            rt_object_detach((rt_object_t)thread);
+            /* enable interrupt */
+            rt_hw_interrupt_enable(lock);
+        }
+        else
+        {
+            rt_hw_interrupt_enable(lock);
+#ifdef RT_USING_HEAP
+            /* release thread's stack */
+            RT_KERNEL_FREE(thread->stack_addr);
+            /* delete thread object */
+            rt_object_delete((rt_object_t)thread);
+#endif
+        }
     }
-#endif /* RT_USING_HEAP */
 }
 
 extern void rt_system_power_manager(void);
@@ -214,12 +294,26 @@ static void rt_thread_idle_entry(void *parameter)
         }
 #endif /* RT_USING_IDLE_HOOK */
 
-        rt_thread_idle_excute();
+#ifndef RT_USING_SMP
+        rt_defunct_execute();
+#endif /* RT_USING_SMP */
+
 #ifdef RT_USING_PM
         rt_system_power_manager();
 #endif /* RT_USING_PM */
     }
 }
+
+#ifdef RT_USING_SMP
+static void rt_thread_system_entry(void *parameter)
+{
+    while (1)
+    {
+        rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        rt_defunct_execute();
+    }
+}
+#endif
 
 /**
  * @ingroup SystemInit
@@ -250,6 +344,24 @@ void rt_thread_idle_init(void)
         /* startup */
         rt_thread_startup(&idle[i]);
     }
+
+#ifdef RT_USING_SMP
+    RT_ASSERT(RT_THREAD_PRIORITY_MAX > 2);
+
+    rt_sem_init(&system_sem, "defunct", 1, RT_IPC_FLAG_FIFO);
+
+    /* create defunct thread */
+    rt_thread_init(&rt_system_thread,
+            "tsystem",
+            rt_thread_system_entry,
+            RT_NULL,
+            rt_system_stack,
+            sizeof(rt_system_stack),
+            RT_THREAD_PRIORITY_MAX - 2,
+            32);
+    /* startup */
+    rt_thread_startup(&rt_system_thread);
+#endif
 }
 
 /**
