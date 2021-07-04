@@ -16,10 +16,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <rtthread.h>
+#include <drivers/rtc.h>
 
 #ifdef RT_USING_RTC
-
-
 
 /**
  * Set system date(time not modify, local timezone).
