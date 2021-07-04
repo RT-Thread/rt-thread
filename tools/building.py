@@ -943,7 +943,7 @@ def EndBuilding(target, program = None):
 
     if not GetOption('help') and not GetOption('target'):
         if not os.path.exists(rtconfig.EXEC_PATH):
-            print ("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") is not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
+            print ("Error: the toolchain path (" + rtconfig.EXEC_PATH + ") does not exist, please check 'EXEC_PATH' in path or rtconfig.py.")
             need_exit = True
 
     if need_exit:
