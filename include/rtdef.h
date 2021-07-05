@@ -567,6 +567,10 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_SCHEDULE_IPI                 0
 #endif
 
+#ifndef RT_STOP_IPI
+#define RT_STOP_IPI                     1
+#endif
+
 /**
  * CPUs definitions
  *
