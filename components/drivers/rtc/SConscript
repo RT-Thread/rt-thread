@@ -13,7 +13,7 @@ CPPPATH = [cwd + '/../include']
 group = []
 
 if GetDepend(['RT_USING_RTC']):
-    src = src + rtc
+    src = src + ['rtc.c', 'rtc_core.c']
     if GetDepend(['RT_USING_ALARM']): 
         src = src + rtc_alarm
     if GetDepend(['RT_USING_SOFT_RTC']): 
