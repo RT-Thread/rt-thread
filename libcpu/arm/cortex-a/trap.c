@@ -155,12 +155,14 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
 void rt_hw_trap_irq(void)
 {
     void *param;
+    int int_ack;
     int ir;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
-    ir = rt_hw_interrupt_get_irq();
+    int_ack = rt_hw_interrupt_get_irq();
 
+    ir = int_ack & GIC_ACK_INTID_MASK;
     if (ir == 1023)
     {
         /* Spurious interrupt */
@@ -181,7 +183,7 @@ void rt_hw_trap_irq(void)
     }
 
     /* end of interrupt */
-    rt_hw_interrupt_ack(ir);
+    rt_hw_interrupt_ack(int_ack);
 }
 
 void rt_hw_trap_fiq(void)
