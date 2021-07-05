@@ -663,6 +663,10 @@ struct rt_thread
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
 
+#ifdef RT_USING_CPU_USAGE
+    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+#endif
+
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
