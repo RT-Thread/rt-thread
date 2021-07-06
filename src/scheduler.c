@@ -47,8 +47,6 @@ struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /* RT_USING_SMP */
 
-rt_list_t rt_thread_defunct;
-
 #ifdef RT_USING_HOOK
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
 
@@ -224,9 +222,6 @@ void rt_system_scheduler_init(void)
     /* initialize ready table */
     rt_memset(rt_thread_ready_table, 0, sizeof(rt_thread_ready_table));
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-
-    /* initialize thread defunct */
-    rt_list_init(&rt_thread_defunct);
 }
 
 /**

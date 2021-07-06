@@ -8,11 +8,8 @@ cwd     = GetCurrentDir()
 src     = Split('''
 cache.c
 cpu.c
-gtimer.c
 mmu.c
-pmu.c
 stack.c
-
 ''')
 CPPPATH = [cwd]
 

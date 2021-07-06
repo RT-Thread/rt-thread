@@ -258,6 +258,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'eclipse':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc'),
                 'cmake':('gcc', 'gcc'),
+                'cmake-armclang':('keil', 'armclang'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -883,7 +884,7 @@ def GenTargetProject(program = None):
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)
 
-    if GetOption('target') == 'cmake':
+    if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
         CMakeProject(Env,Projects)
 
