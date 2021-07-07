@@ -564,7 +564,7 @@ rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
     mutex->original_priority = 0xFF;
     mutex->hold  = 0;
 
-    /* set flag and it can only be RT_IPC_FLAG_PRIO */
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
     mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
 
     return RT_EOK;
@@ -628,7 +628,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
     mutex->original_priority  = 0xFF;
     mutex->hold               = 0;
 
-    /* set flag and it can only be RT_IPC_FLAG_PRIO */
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
     mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
 
     return mutex;
