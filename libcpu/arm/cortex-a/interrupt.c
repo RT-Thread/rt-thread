@@ -27,6 +27,20 @@ struct rt_irq_desc isr_table[MAX_HANDLERS];
 rt_uint32_t rt_interrupt_from_thread        = 0;
 rt_uint32_t rt_interrupt_to_thread          = 0;
 rt_uint32_t rt_thread_switch_interrupt_flag = 0;
+
+#ifdef RT_USING_HOOK
+static void (*rt_interrupt_switch_hook)(void);
+
+void rt_interrupt_switch_sethook(void (*hook)(void))
+{
+    rt_interrupt_switch_hook = hook;
+}
+#endif
+
+void rt_interrupt_hook(void)
+{
+    RT_OBJECT_HOOK_CALL(rt_interrupt_switch_hook, ());
+}
 #endif
 
 const unsigned int VECTOR_BASE = 0x00;
