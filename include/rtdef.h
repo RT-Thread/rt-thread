@@ -567,6 +567,10 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_SCHEDULE_IPI                 0
 #endif
 
+#ifndef RT_STOP_IPI
+#define RT_STOP_IPI                     1
+#endif
+
 /**
  * CPUs definitions
  *
@@ -658,6 +662,10 @@ struct rt_thread
 
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
+
+#ifdef RT_USING_CPU_USAGE
+    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+#endif
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
