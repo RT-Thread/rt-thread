@@ -548,6 +548,8 @@ RTM_EXPORT(rt_sem_control);
  */
 rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
 {
+    (void)flag;
+
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
 
@@ -562,8 +564,8 @@ rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
     mutex->original_priority = 0xFF;
     mutex->hold  = 0;
 
-    /* set flag */
-    mutex->parent.parent.flag = flag;
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
+    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
 
     return RT_EOK;
 }
@@ -609,6 +611,7 @@ RTM_EXPORT(rt_mutex_detach);
 rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
 {
     struct rt_mutex *mutex;
+    (void)flag;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -625,8 +628,8 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
     mutex->original_priority  = 0xFF;
     mutex->hold               = 0;
 
-    /* set flag */
-    mutex->parent.parent.flag = flag;
+    /* flag can only be RT_IPC_FLAG_PRIO. RT_IPC_FLAG_FIFO cannot solve the unbounded priority inversion problem */
+    mutex->parent.parent.flag = RT_IPC_FLAG_PRIO;
 
     return mutex;
 }
