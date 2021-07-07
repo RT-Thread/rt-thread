@@ -735,6 +735,8 @@ static void client_parser(at_client_t client)
             {
                 at_response_t resp = client->resp;
 
+                char end_ch = client->recv_line_buf[client->recv_line_len - 1];
+
                 /* current receive is response */
                 client->recv_line_buf[client->recv_line_len - 1] = '\0';
                 if (resp->buf_len + client->recv_line_len < resp->buf_size)
@@ -752,7 +754,12 @@ static void client_parser(at_client_t client)
                     LOG_E("Read response buffer failed. The Response buffer size is out of buffer size(%d)!", resp->buf_size);
                 }
                 /* check response result */
-                if (rt_memcmp(client->recv_line_buf, AT_RESP_END_OK, rt_strlen(AT_RESP_END_OK)) == 0
+                if ((client->end_sign != 0) && (end_ch == client->end_sign) && (resp->line_num == 0))
+                {
+                    /* get the end sign, return response state END_OK.*/
+                    client->resp_status = AT_RESP_OK;
+                }
+                else if (rt_memcmp(client->recv_line_buf, AT_RESP_END_OK, rt_strlen(AT_RESP_END_OK)) == 0
                         && resp->line_num == 0)
                 {
                     /* get the end data by response result, return response state END_OK. */
