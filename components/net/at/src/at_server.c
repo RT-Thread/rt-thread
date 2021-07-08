@@ -38,6 +38,10 @@ static at_server_t at_server_local = RT_NULL;
 static at_cmd_t cmd_table = RT_NULL;
 static rt_size_t cmd_num;
 
+extern rt_size_t at_utils_send(rt_device_t dev,
+                               rt_off_t    pos,
+                               const void *buffer,
+                               rt_size_t   size);
 extern void at_vprintf(rt_device_t device, const char *format, va_list args);
 extern void at_vprintfln(rt_device_t device, const char *format, va_list args);
 
@@ -187,7 +191,7 @@ rt_size_t at_server_send(at_server_t server, const char *buf, rt_size_t size)
         return 0;
     }
 
-    return rt_device_write(server->device, 0, buf, size);
+    return at_utils_send(server->device, 0, buf, size);
 }
 
 /**
