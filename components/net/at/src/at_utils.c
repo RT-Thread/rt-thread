@@ -65,6 +65,14 @@ const char *at_get_last_cmd(rt_size_t *cmd_size)
     return send_buf;
 }
 
+RT_WEAK rt_size_t at_utils_send(rt_device_t dev,
+                                rt_off_t    pos,
+                                const void *buffer,
+                                rt_size_t   size)
+{
+    return rt_device_write(dev, pos, buffer, size);
+}
+
 rt_size_t at_vprintf(rt_device_t device, const char *format, va_list args)
 {
     last_cmd_len = vsnprintf(send_buf, sizeof(send_buf), format, args);
@@ -75,7 +83,7 @@ rt_size_t at_vprintf(rt_device_t device, const char *format, va_list args)
     at_print_raw_cmd("sendline", send_buf, last_cmd_len);
 #endif
 
-    return at_device_send(device, 0, send_buf, last_cmd_len);
+    return at_utils_send(device, 0, send_buf, last_cmd_len);
 }
 
 rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list args)
@@ -93,5 +101,5 @@ rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list args)
     at_print_raw_cmd("sendline", send_buf, len);
 #endif
 
-    return at_device_send(device, 0, send_buf, len);
+    return at_utils_send(device, 0, send_buf, len);
 }
