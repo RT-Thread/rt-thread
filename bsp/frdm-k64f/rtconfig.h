@@ -103,6 +103,7 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 #define RT_USING_LWIP
+#define RT_USING_LWIP203
 /* Enable LwIP debug output */
 //#define RT_LWIP_DEBUG
 /* Enable ICMP protocol*/

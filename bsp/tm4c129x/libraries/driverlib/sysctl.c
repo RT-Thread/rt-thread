@@ -2,25 +2,25 @@
 //
 // sysctl.c - Driver for the system controller.
 //
-// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,8 +32,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -2216,7 +2216,7 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
         }
 
         HWREG(SYSCTL_MOSCCTL) = ui32MOSCCTL;
-        
+
         //
         // Timeout using the legacy delay value.
         //
@@ -2241,7 +2241,7 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
             return(0);
         }
 
-        
+
     }
     else
     {
@@ -2495,8 +2495,8 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
 //! many of which are grouped into sets where only one can be chosen.
 //!
 //! The system clock divider is chosen with one of the following values:
-//! \b SYSCTL_SYSDIV_1, \b SYSCTL_SYSDIV_2, \b SYSCTL_SYSDIV_3, ...
-//! \b SYSCTL_SYSDIV_64.
+//! \b SYSCTL_SYSDIV_1, \b SYSCTL_SYSDIV_2, \b SYSCTL_SYSDIV_2_5,
+//! \b SYSCTL_SYSDIV_3, ... \b SYSCTL_SYSDIV_63_5, \b SYSCTL_SYSDIV_64.
 //!
 //! The use of the PLL is chosen with either \b SYSCTL_USE_PLL or
 //! \b SYSCTL_USE_OSC.
@@ -3522,8 +3522,9 @@ SysCtlVoltageEventClear(uint32_t ui32Status)
 //
 //! Gets the effective VCO frequency.
 //!
-//! \param ui32Crystal holds the crystal value used for the PLL.
-//! \param pui32VCOFrequency is a pointer to the storage location which holds 
+//! \param ui32Crystal holds the crystal value definition from \b sysctl.h
+//! such as \b SYSCTL_XTAL_25MHZ.
+//! \param pui32VCOFrequency is a pointer to the storage location which holds
 //! value of the VCO computed.
 //!
 //! This function calculates the VCO of the PLL before the system divider is
@@ -3566,9 +3567,9 @@ SysCtlVCOGet(uint32_t ui32Crystal, uint32_t *pui32VCOFrequency)
         // Return error if PLL is not used.
         //
         *pui32VCOFrequency = 0;
-        return(false);  
+        return(false);
     }
-    
+
     //
     // Get the index of the crystal from the ui32Config parameter.
     //
@@ -3586,13 +3587,13 @@ SysCtlVCOGet(uint32_t ui32Crystal, uint32_t *pui32VCOFrequency)
     ui32PLLFreq0 = HWREG(SYSCTL_PLLFREQ0);
     ui32PLLFreq1 = HWREG(SYSCTL_PLLFREQ1);
 
-    ui32MInt = (ui32PLLFreq0 & SYSCTL_PLLFREQ0_MINT_M) >> 
+    ui32MInt = (ui32PLLFreq0 & SYSCTL_PLLFREQ0_MINT_M) >>
                SYSCTL_PLLFREQ0_MINT_S;
-    ui32MFrac = (ui32PLLFreq0 & SYSCTL_PLLFREQ0_MFRAC_M) >> 
+    ui32MFrac = (ui32PLLFreq0 & SYSCTL_PLLFREQ0_MFRAC_M) >>
                 SYSCTL_PLLFREQ0_MFRAC_S;
-    ui32NDiv = (ui32PLLFreq1 & SYSCTL_PLLFREQ1_N_M) >> 
+    ui32NDiv = (ui32PLLFreq1 & SYSCTL_PLLFREQ1_N_M) >>
                SYSCTL_PLLFREQ1_N_S;
-    ui32QDiv = (ui32PLLFreq1 & SYSCTL_PLLFREQ1_Q_M) >> 
+    ui32QDiv = (ui32PLLFreq1 & SYSCTL_PLLFREQ1_Q_M) >>
                SYSCTL_PLLFREQ1_Q_S;
 
     //
@@ -3600,7 +3601,7 @@ SysCtlVCOGet(uint32_t ui32Crystal, uint32_t *pui32VCOFrequency)
     //
     ui32TempVCO = (ui32Osc * ui32MInt) + ((ui32Osc * ui32MFrac) / 1024);
     ui32TempVCO /= ((ui32NDiv + 1) * (ui32QDiv + 1));
-    
+
     *pui32VCOFrequency = ui32TempVCO;
     return(true);
 }

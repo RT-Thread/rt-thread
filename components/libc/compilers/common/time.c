@@ -21,6 +21,7 @@
  */
 
 #include "sys/time.h"
+#include <sys/errno.h>
 #include <rtthread.h>
 
 #ifdef RT_USING_DEVICE

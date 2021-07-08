@@ -21,6 +21,9 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
+
+/* kservice optimization */
+
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -44,7 +47,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x40003
+#define RT_VER_NUM 0x40004
 #define ARCH_ARM
 #define ARCH_ARM_ARM9
 
@@ -89,6 +92,8 @@
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_3
 #define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
@@ -104,6 +109,7 @@
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
@@ -128,12 +134,14 @@
 #define RT_USING_POSIX_AIO
 #define RT_USING_MODULE
 #define RT_USING_CUSTOM_DLMODULE
+#define RT_LIBC_FIXED_TIMEZONE 8
 
 /* Network */
 
 /* Socket abstraction layer */
 
 #define RT_USING_SAL
+#define SAL_INTERNET_CHECK
 
 /* protocol stack implement */
 
@@ -153,7 +161,8 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP210
+#define RT_USING_LWIP203
+#define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
@@ -189,6 +198,7 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
 #define RT_LWIP_NETIF_LOOPBACK
 #define LWIP_NETIF_LOOPBACK 1
 #define RT_LWIP_STATS
@@ -205,6 +215,9 @@
 #define RT_USING_RYM
 #define YMODEM_USING_CRC_TABLE
 #define YMODEM_USING_FILE_TRANSFER
+
+/* RT-Thread Utestcases */
+
 
 /* RT-Thread online packages */
 
@@ -237,13 +250,22 @@
 /* system packages */
 
 
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
 /* peripheral libraries and drivers */
+
+
+/* AI packages */
 
 
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
+
+
+/* entertainment: terminal games and other interesting software packages */
 
 
 #endif

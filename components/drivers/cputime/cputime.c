@@ -10,6 +10,7 @@
 
 #include <rtdevice.h>
 #include <rtthread.h>
+#include <sys/errno.h>
 
 static const struct rt_clock_cputime_ops *_cputime_ops  = RT_NULL;
 
@@ -24,7 +25,7 @@ float clock_cpu_getres(void)
     if (_cputime_ops)
         return _cputime_ops->cputime_getres();
 
-    rt_set_errno(-ENOSYS);
+    rt_set_errno(ENOSYS);
     return 0;
 }
 
@@ -38,7 +39,7 @@ uint32_t clock_cpu_gettime(void)
     if (_cputime_ops)
         return _cputime_ops->cputime_gettime();
 
-    rt_set_errno(-ENOSYS);
+    rt_set_errno(ENOSYS);
     return 0;
 }
 

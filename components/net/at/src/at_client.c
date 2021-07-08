@@ -8,7 +8,7 @@
  * 2018-03-30     chenyong     first version
  * 2018-04-12     chenyong     add client implement
  * 2018-08-17     chenyong     multiple client support
- * 2021-03-17     Meco Man     fix a buf of leaking memory 
+ * 2021-03-17     Meco Man     fix a buf of leaking memory
  */
 
 #include <at.h>
@@ -28,6 +28,10 @@
 
 static struct at_client at_client_table[AT_CLIENT_NUM_MAX] = { 0 };
 
+extern rt_size_t at_utils_send(rt_device_t dev,
+                               rt_off_t    pos,
+                               const void *buffer,
+                               rt_size_t   size);
 extern rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list args);
 extern void at_print_raw_cmd(const char *type, const char *cmd, rt_size_t size);
 extern const char *at_get_last_cmd(rt_size_t *cmd_size);
@@ -392,7 +396,7 @@ int at_client_obj_wait_connect(at_client_t client, rt_uint32_t timeout)
         /* Check whether it is already connected */
         resp->buf_len = 0;
         resp->line_counts = 0;
-        rt_device_write(client->device, 0, "AT\r\n", 4);
+        at_utils_send(client->device, 0, "AT\r\n", 4);
 
         if (rt_sem_take(client->resp_notice, resp->timeout) != RT_EOK)
             continue;
@@ -433,7 +437,13 @@ rt_size_t at_client_obj_send(at_client_t client, const char *buf, rt_size_t size
     at_print_raw_cmd("sendline", buf, size);
 #endif
 
-    return rt_device_write(client->device, 0, buf, size);
+    rt_mutex_take(client->lock, RT_WAITING_FOREVER);
+
+    rt_size_t len = at_utils_send(client->device, 0, buf, size);
+
+    rt_mutex_release(client->lock);
+
+    return len;
 }
 
 static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeout)
@@ -735,6 +745,8 @@ static void client_parser(at_client_t client)
             {
                 at_response_t resp = client->resp;
 
+                char end_ch = client->recv_line_buf[client->recv_line_len - 1];
+
                 /* current receive is response */
                 client->recv_line_buf[client->recv_line_len - 1] = '\0';
                 if (resp->buf_len + client->recv_line_len < resp->buf_size)
@@ -752,7 +764,12 @@ static void client_parser(at_client_t client)
                     LOG_E("Read response buffer failed. The Response buffer size is out of buffer size(%d)!", resp->buf_size);
                 }
                 /* check response result */
-                if (rt_memcmp(client->recv_line_buf, AT_RESP_END_OK, rt_strlen(AT_RESP_END_OK)) == 0
+                if ((client->end_sign != 0) && (end_ch == client->end_sign) && (resp->line_num == 0))
+                {
+                    /* get the end sign, return response state END_OK.*/
+                    client->resp_status = AT_RESP_OK;
+                }
+                else if (rt_memcmp(client->recv_line_buf, AT_RESP_END_OK, rt_strlen(AT_RESP_END_OK)) == 0
                         && resp->line_num == 0)
                 {
                     /* get the end data by response result, return response state END_OK. */

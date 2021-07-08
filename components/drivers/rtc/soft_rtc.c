@@ -104,7 +104,7 @@ const static struct rt_device_ops soft_rtc_ops =
 };
 #endif
 
-int rt_soft_rtc_init(void)
+static int rt_soft_rtc_init(void)
 {
     static rt_bool_t init_ok = RT_FALSE;
     struct tm time_new = SOFT_RTC_TIME_DEFAULT;
