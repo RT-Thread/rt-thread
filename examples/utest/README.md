@@ -54,26 +54,20 @@ msh />utest_run
 
 ### 3. 提交
 
-1. 如果是对已有测试集合的完善，需要把添加的测试用例的配置项添加到对应测试集合的配置文件里，如：[examples\utest\configs\utest_self\config.h](./configs/utest_self/config.h)。
+1. 如果是对已有测试集合的完善，需要把添加的测试用例的配置项，以及对应的依赖项添加到对应测试集合的配置文件里，如：[examples\utest\configs\kernel\mem.conf](./configs/kernel/mem.conf)。
 
 ```
-/* RT-Thread Utestcases */
+CONFIG_UTEST_MEMHEAP_TC=y
 
-#define RT_USING_UTESTCASES
-
-/* Utest Self Testcase */
-
-#define UTEST_SELF_PASS_TC
-
-/* xxx Testcase */
-#define UTEST_XXX_TC
+# dependencies
+CONFIG_RT_USING_MEMHEAP=y
 ```
 
 2. 如果要添加新的测试集合，需要参考已有的测试集合，在 [examples\utest\configs](./configs) 目录下添加新的测试集合配置项。并更新 [.github\workflows\action_utest.yml](../../.github/workflows/action_utest.yml) 内的测试集合。
 
 ```
-- {UTEST: "kernel/ipc",       RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/utest_self/config.h"}
-- {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "vexpress-a9", CONFIG_FILE: "examples/utest/configs/utest_self/config.h"}
+- {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9",   QEMU_ARCH: "arm", QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/mem.conf", SD_FILE: "sd.bin"}
+- {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",   QEMU_ARCH: "arm", QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin"}
 ```
 
 3. 向 RT-Thread 主仓库提交合并请求。
