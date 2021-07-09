@@ -228,6 +228,10 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->lwp = RT_NULL;
 #endif /* RT_USING_LWP */
 
+#ifdef RT_USING_CPU_USAGE
+    thread->duration_tick = 0;
+#endif
+
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
 
     return RT_EOK;
