@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/time.h>
+#include <sys/errno.h>
 
 #include <at_socket.h>
 #include <at_device.h>
