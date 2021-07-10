@@ -652,14 +652,20 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
     RT_ASSERT(event == AT_SOCKET_EVT_RECV);
 
     /* check the socket object status */
-    if (sock->magic != AT_SOCKET_MAGIC)
+    if (sock->magic != AT_SOCKET_MAGIC || sock->state != AT_SOCKET_CONNECT)
     {
+        rt_free((void *)buff);
         return;
     }
 
     /* put receive buffer to receiver packet list */
     rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-    at_recvpkt_put(&(sock->recvpkt_list), buff, bfsz);
+    if (!at_recvpkt_put(&(sock->recvpkt_list), buff, bfsz))
+    {
+        rt_free((void *)buff);
+        rt_mutex_release(sock->recv_lock);
+        return;
+    }
     rt_mutex_release(sock->recv_lock);
 
     rt_sem_release(sock->recv_notice);
