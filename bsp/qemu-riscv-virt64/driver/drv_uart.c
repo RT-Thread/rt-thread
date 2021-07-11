@@ -140,11 +140,11 @@ int rt_hw_uart_init(void)
 
         rt_hw_serial_register(serial,
                               "uart",
-                              RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                              RT_DEVICE_FLAG_STREAM | RT_DEVICE_FLAG_RDWR, // | RT_DEVICE_FLAG_INT_RX,
                               uart);
-        rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, "uart");
+        // rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, serial, "uart");
 
-        rt_hw_interrupt_umask(uart->irqno);
+        // rt_hw_interrupt_umask(uart->irqno);
     }
 
     return 0;
