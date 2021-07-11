@@ -15,7 +15,7 @@
 
 int main(void)
 {
-    printf("Hello RISC-V!\n");
+    rt_kprintf("Hello RISC-V!\n");
 
     return 0;
 }
