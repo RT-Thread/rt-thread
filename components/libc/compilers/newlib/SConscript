@@ -8,7 +8,7 @@ LIBS = []
 CPPDEFINES = []
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM == 'gcc' and not GetDepend('USING_RV64_LINUX_GNU_TOOLCHAIN'):
     if GetDepend('RT_USING_LIBC'):
         CPPDEFINES += ['RT_USING_NEWLIB']
         # link with libc and libm:

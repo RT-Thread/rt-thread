@@ -15,7 +15,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/home/lizhirui/workspace/riscv64-toolchains/bin'
+    EXEC_PATH   = r'/usr/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -27,7 +27,7 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX  = 'riscv64-unknown-elf-'
+    PREFIX  = 'riscv64-linux-gnu-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
