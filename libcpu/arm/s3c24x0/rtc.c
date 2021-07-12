@@ -12,11 +12,12 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
 #include <sys/time.h>
 #include <s3c24x0.h>
 
 // #define RTC_DEBUG
-
+#ifdef RT_USING_RTC
 #define RTC_ENABLE      RTCCON |=  0x01;    /*RTC read and write enable */
 #define RTC_DISABLE     RTCCON &= ~0x01;    /* RTC read and write disable */
 #define BCD2BIN(n)      (((((n) >> 4) & 0x0F) * 10) + ((n) & 0x0F))
@@ -182,4 +183,5 @@ void list_date()
     }
 }
 FINSH_FUNCTION_EXPORT(list_date, list date);
+#endif
 #endif
