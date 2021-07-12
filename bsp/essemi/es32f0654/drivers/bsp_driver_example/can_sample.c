@@ -18,7 +18,9 @@
 #include <rtthread.h>
 #include "rtdevice.h"
 
-#define CAN_DEV_NAME       "can"      /* CAN 设备名称 */
+#ifdef RT_USING_CAN
+
+#define CAN_DEV_NAME       "can0"      /* CAN 设备名称 */
 
 static struct rt_semaphore rx_sem;     /* 用于接收消息的信号量 */
 static rt_device_t can_dev;            /* CAN 设备句柄 */
@@ -142,3 +144,5 @@ int can_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(can_sample, can device sample);
+
+#endif

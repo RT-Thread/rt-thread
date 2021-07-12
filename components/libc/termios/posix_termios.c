@@ -9,9 +9,8 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include <rtthread.h>
 #include <dfs_posix.h>
-
+#include <sys/errno.h>
 #include <termios.h>
 
 int tcgetattr(int fd, struct termios *tio)
@@ -128,4 +127,3 @@ int cfsetspeed(struct termios *tio, speed_t speed)
     return cfsetospeed(tio, speed);
 }
 #endif
-

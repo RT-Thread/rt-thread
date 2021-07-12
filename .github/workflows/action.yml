@@ -82,6 +82,7 @@ jobs:
          - {RTT_BSP: "stm32/stm32f401-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f405-smdz-breadfruit", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f407-atk-explorer", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "stm32/stm32f407-robomaster-c", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f407-st-discovery", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f410-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "stm32/stm32f411-atk-nano", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -149,10 +150,10 @@ jobs:
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
         shell: bash
         run: |
-          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/arm-2017q2-v6/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2
-          sudo tar xjf gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 -C /opt
-          /opt/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gcc --version
-          echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-6-2017-q2-update/bin" >> $GITHUB_ENV
+          wget -q https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
+          sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
+          /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
 
       - name: Install Mips ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-mips' && success() }}

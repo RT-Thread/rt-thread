@@ -567,6 +567,10 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_SCHEDULE_IPI                 0
 #endif
 
+#ifndef RT_STOP_IPI
+#define RT_STOP_IPI                     1
+#endif
+
 /**
  * CPUs definitions
  *
@@ -658,6 +662,10 @@ struct rt_thread
 
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
+
+#ifdef RT_USING_CPU_USAGE
+    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+#endif
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
@@ -963,12 +971,6 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get second time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set second time */
-#define RT_DEVICE_CTRL_RTC_GET_TIME_US  0x12            /**< get microsecond time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME_US  0x13            /**< set microsecond time */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x14            /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x15            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
 

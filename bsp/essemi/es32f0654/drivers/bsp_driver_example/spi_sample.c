@@ -1,7 +1,19 @@
 /*
  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd.
  *
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0 
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -17,13 +29,14 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#ifdef RT_USING_SPI
+
 #define SPI_DEVICE_NAME     "spi00"
 #define BUF_LEN             16
 
 static void spi_io_sample(int argc, char *argv[])
 {
     struct rt_spi_device * spi_dev;          /* spi设备的句柄 */
-    struct rt_spi_configuration spi_config;
     rt_uint8_t i,buffer[BUF_LEN] = { 0U };
     rt_err_t s_stat;
     rt_err_t result;
@@ -37,23 +50,8 @@ static void spi_io_sample(int argc, char *argv[])
         return;
     }
     
-    
-    /* 清空配置结构体 */
-    rt_memset(&spi_config,0,sizeof(struct rt_spi_configuration));
-    
-    spi_config.mode &= ~RT_SPI_SLAVE; /* 主机模式 */
-    spi_config.mode &= ~RT_SPI_3WIRE; /* 4线，双向传输 */
-    spi_config.mode |= RT_SPI_CPHA;   /* 第二边沿采样 */
-    spi_config.mode |= RT_SPI_CPOL;   /* 空闲高电平 */
-    spi_config.mode |= RT_SPI_NO_CS;  /* 禁用软件从机选择管理 */
-    spi_config.mode |= RT_SPI_MSB;    /* 高位在前 */
-    
-    spi_config.data_width = 8;        /* 数据长度：8 */
-    
-    spi_config.max_hz = 2000000;      /* 最快时钟频率 */
-    
     /* 配置SPI设备 */
-    s_stat = rt_spi_configure(spi_dev,&spi_config);
+    s_stat = rt_spi_configure(spi_dev,&(spi_dev->config));
     
     if(s_stat != RT_EOK)
     {
@@ -150,3 +148,5 @@ static void spi_io_sample(int argc, char *argv[])
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(spi_io_sample, spi  sample);
+
+#endif

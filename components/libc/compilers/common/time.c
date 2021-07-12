@@ -21,6 +21,7 @@
  */
 
 #include "sys/time.h"
+#include <sys/errno.h>
 #include <rtthread.h>
 
 #ifdef RT_USING_DEVICE
@@ -475,12 +476,17 @@ static int clock_time_system_init()
     rt_device_t device;
 
     time = 0;
+
+#ifdef RT_USING_RTC
     device = rt_device_find("rtc");
     if (device != RT_NULL)
     {
         /* get realtime seconds */
         rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
     }
+#else
+    LOG_W("Cannot find a RTC device to provide time!");
+#endif
 
     /* get tick */
     tick = rt_tick_get();
@@ -593,6 +599,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
     _timevalue.tv_sec = second - tick/RT_TICK_PER_SECOND - 1;
 
+#ifdef RT_USING_RTC
     /* update for RTC device */
     device = rt_device_find("rtc");
     if (device != RT_NULL)
@@ -601,6 +608,9 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
         rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &second);
     }
     else
+#else
+    LOG_W("Cannot find a RTC device to save time!");
+#endif
         return -1;
 
     return 0;

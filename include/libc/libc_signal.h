@@ -71,7 +71,7 @@ typedef unsigned long sigset_t;
 
 #include <signal.h>
 
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#ifdef __ARMCC_VERSION
 
 #define SIGHUP       1
 /* #define SIGINT       2 */
