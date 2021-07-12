@@ -48,7 +48,7 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 | FLASH        |   即将支持   | 对接 FAL                                  |
 | TIMER        |     支持     |                                           |
 | PWM          |     支持     | LPWM 的 G1 G2 G3 之间是互斥的，只能三选一 |
-| FM receive   |   即将支持   |                                           |
+| FM receive   |     支持     |                                           |
 | USB Device   |   暂不支持   |                                           |
 | USB Host     |   暂不支持   |                                           |
 

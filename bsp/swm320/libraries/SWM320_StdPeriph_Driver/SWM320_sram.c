@@ -1,10 +1,10 @@
 /****************************************************************************************************************************************** 
-* ÎÄ¼þÃû³Æ: SWM320_sram.c
-* ¹¦ÄÜËµÃ÷:	SWM320µ¥Æ¬»úµÄSRAMÇý¶¯³ÌÐò
-* ¼¼ÊõÖ§³Ö:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
-* ×¢ÒâÊÂÏî:
-* °æ±¾ÈÕÆÚ: V1.1.0		2017Äê10ÔÂ25ÈÕ
-* Éý¼¶¼ÇÂ¼: 
+* æ–‡ä»¶åç§°: SWM320_sram.c
+* åŠŸèƒ½è¯´æ˜Ž:	SWM320å•ç‰‡æœºçš„SRAMé©±åŠ¨ç¨‹åº
+* æŠ€æœ¯æ”¯æŒ:	http://www.synwit.com.cn/e/tool/gbook/?bid=1
+* æ³¨æ„äº‹é¡¹:
+* ç‰ˆæœ¬æ—¥æœŸ: V1.1.0		2017å¹´10æœˆ25æ—¥
+* å‡çº§è®°å½•: 
 *
 *
 *******************************************************************************************************************************************
@@ -21,33 +21,36 @@
 #include "SWM320.h"
 #include "SWM320_sram.h"
 
-
 /****************************************************************************************************************************************** 
-* º¯ÊýÃû³Æ:	SRAM_Init()
-* ¹¦ÄÜËµÃ÷:	SRAM¿ØÖÆÆ÷³õÊ¼»¯
-* Êä    Èë: SRAM_InitStructure * initStruct    °üº¬ SRAM ¿ØÖÆÆ÷Ïà¹ØÉè¶¨ÖµµÄ½á¹¹Ìå
-* Êä    ³ö: ÎÞ
-* ×¢ÒâÊÂÏî: ÎÞ
+* å‡½æ•°åç§°:	SRAM_Init()
+* åŠŸèƒ½è¯´æ˜Ž:	SRAMæŽ§åˆ¶å™¨åˆå§‹åŒ–
+* è¾“    å…¥: SRAM_InitStructure * initStruct    åŒ…å« SRAM æŽ§åˆ¶å™¨ç›¸å…³è®¾å®šå€¼çš„ç»“æž„ä½“
+* è¾“    å‡º: æ— 
+* æ³¨æ„äº‹é¡¹: æ— 
 ******************************************************************************************************************************************/
-void SRAM_Init(SRAM_InitStructure * initStruct)
+void SRAM_Init(SRAM_InitStructure *initStruct)
 {
-	uint32_t i;
-	
-	// ÅäÖÃSRAMÇ°ÐèÒªË¢ÐÂÏÂSDRAM¿ØÖÆÆ÷
-	do {
-		SYS->CLKEN |=  (1 << SYS_CLKEN_SDRAM_Pos);
-		
-		while(SDRAMC->REFDONE == 0);
-		SDRAMC->REFRESH &= ~(1 << SDRAMC_REFRESH_EN_Pos);
-		
-		for(i = 0; i < 1000; i++) __NOP();
-		SYS->CLKEN &= ~(1 << SYS_CLKEN_SDRAM_Pos);
-	} while(0);
-	
-	SYS->CLKEN |= (1 << SYS_CLKEN_RAMC_Pos);
-	for(i = 0; i < 10; i++) __NOP();
-	
-	SRAMC->CR = (initStruct->ClkDiv << SRAMC_CR_RWTIME_Pos) |
-				(initStruct->DataWidth << SRAMC_CR_BYTEIF_Pos) |
-			    (0 << SRAMC_CR_HBLBDIS_Pos);	// Ê¹ÄÜ×Ö½Ú¡¢°ë×Ö·ÃÎÊ
+    uint32_t i;
+
+    // é…ç½®SRAMå‰éœ€è¦åˆ·æ–°ä¸‹SDRAMæŽ§åˆ¶å™¨
+    do
+    {
+        SYS->CLKEN |= (1 << SYS_CLKEN_SDRAM_Pos);
+
+        while (SDRAMC->REFDONE == 0)
+            ;
+        SDRAMC->REFRESH &= ~(1 << SDRAMC_REFRESH_EN_Pos);
+
+        for (i = 0; i < 1000; i++)
+            __NOP();
+        SYS->CLKEN &= ~(1 << SYS_CLKEN_SDRAM_Pos);
+    } while (0);
+
+    SYS->CLKEN |= (1 << SYS_CLKEN_RAMC_Pos);
+    for (i = 0; i < 10; i++)
+        __NOP();
+
+    SRAMC->CR = (initStruct->ClkDiv << SRAMC_CR_RWTIME_Pos) |
+                (initStruct->DataWidth << SRAMC_CR_BYTEIF_Pos) |
+                (0 << SRAMC_CR_HBLBDIS_Pos); // ä½¿èƒ½å­—èŠ‚ã€åŠå­—è®¿é—®
 }

@@ -20,7 +20,7 @@
 
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
-#endif
+#endif /* RT_USING_MODULE */
 
 /*
  * define object_info for the number of rt_object_container items.
@@ -189,7 +189,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 }
 
 /**@}*/
-#endif
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup KernelObject
@@ -305,7 +305,7 @@ void rt_object_init(struct rt_object         *object,
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
-#endif
+#endif /* RT_USING_MODULE */
 
     /* get object information */
     information = rt_object_get_information(type);
@@ -349,7 +349,7 @@ void rt_object_init(struct rt_object         *object,
         object->module_id = (void *)module;
     }
     else
-#endif
+#endif /* RT_USING_MODULE */
     {
         /* insert object into information object list */
         rt_list_insert_after(&(information->object_list), &(object->list));
@@ -403,7 +403,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
-#endif
+#endif /* RT_USING_MODULE */
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -444,7 +444,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         object->module_id = (void *)module;
     }
     else
-#endif
+#endif /* RT_USING_MODULE */
     {
         /* insert object into information object list */
         rt_list_insert_after(&(information->object_list), &(object->list));
@@ -487,7 +487,7 @@ void rt_object_delete(rt_object_t object)
     /* free the memory of object */
     RT_KERNEL_FREE(object);
 }
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will judge the object is system object or not.
