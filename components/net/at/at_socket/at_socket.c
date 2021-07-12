@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/time.h>
+#include <sys/errno.h>
 
 #include <at_socket.h>
 #include <at_device.h>
@@ -1100,7 +1101,7 @@ static uint32_t ipstr_to_u32(char *ipstr)
 struct hostent *at_gethostbyname(const char *name)
 {
     struct at_device *device = RT_NULL;
-    ip_addr_t addr;
+    ip_addr_t addr = {0};
     char ipstr[16] = { 0 };
     /* buffer variables for at_gethostbyname() */
     static struct hostent s_hostent;
