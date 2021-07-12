@@ -12,8 +12,12 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "interrupt.h"
-#include "gic.h"
 
+#ifdef RT_USING_GIC_V2
+#include "gic.h"
+#else
+#include "gicv3.h"
+#endif
 
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
@@ -23,6 +27,20 @@ struct rt_irq_desc isr_table[MAX_HANDLERS];
 rt_uint32_t rt_interrupt_from_thread        = 0;
 rt_uint32_t rt_interrupt_to_thread          = 0;
 rt_uint32_t rt_thread_switch_interrupt_flag = 0;
+
+#ifdef RT_USING_HOOK
+static void (*rt_interrupt_switch_hook)(void);
+
+void rt_interrupt_switch_sethook(void (*hook)(void))
+{
+    rt_interrupt_switch_hook = hook;
+}
+#endif
+
+void rt_interrupt_hook(void)
+{
+    RT_OBJECT_HOOK_CALL(rt_interrupt_switch_hook, ());
+}
 #endif
 
 const unsigned int VECTOR_BASE = 0x00;
@@ -34,6 +52,7 @@ void rt_hw_vector_init(void)
     rt_cpu_vector_set_base((unsigned int)&system_vectors);
 }
 
+#ifdef RT_USING_GIC_V2
 /**
  * This function will initialize hardware interrupt
  */
@@ -58,6 +77,33 @@ void rt_hw_interrupt_init(void)
     arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
     arm_gic_cpu_init(0, gic_cpu_base);
 }
+#else
+/**
+ * This function will initialize hardware interrupt
+ * Called by the primary cpu(cpu0)
+ */
+void rt_hw_interrupt_init(void)
+{
+    rt_uint32_t gic_dist_base;
+    rt_uint32_t gic_irq_start;
+
+    /* initialize vector table */
+    rt_hw_vector_init();
+
+    /* initialize exceptions table */
+    rt_memset(isr_table, 0x00, sizeof(isr_table));
+
+    /* initialize ARM GIC */
+    gic_dist_base = platform_get_gic_dist_base();
+    gic_irq_start = GIC_IRQ_START;
+
+    arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
+
+    arm_gic_cpu_init(0);
+    arm_gic_redist_init(0);
+}
+
+#endif
 
 /**
  * This function will mask a interrupt.
@@ -245,7 +291,7 @@ unsigned int rt_hw_interrupt_get_prior_group_bits(void)
  * @param old_handler the old interrupt service routine
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, const char *name)
+                                         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
@@ -269,7 +315,11 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 #ifdef RT_USING_SMP
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
+#ifdef RT_USING_GIC_V2
     arm_gic_send_sgi(0, ipi_vector, cpu_mask, 0);
+#else
+    arm_gic_send_affinity_sgi(0, ipi_vector, cpu_mask, ROUTED_TO_SPEC);
+#endif
 }
 
 void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)

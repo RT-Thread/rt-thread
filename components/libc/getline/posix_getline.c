@@ -11,8 +11,8 @@
 
 #include "posix_getline.h"
 #include <stdlib.h>
-#include <errno.h>
-#include <rtlibc.h>
+#include <limits.h>
+#include <sys/errno.h>
 
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
     char *cur_pos, *new_lineptr;
@@ -43,7 +43,7 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
             break;
 
         if ((*lineptr + *n - cur_pos) < 2) {
-            if (SSIZE_MAX / 2 < *n) {
+            if (LONG_MAX / 2 < *n) {
 #ifdef EOVERFLOW
                 errno = EOVERFLOW;
 #else

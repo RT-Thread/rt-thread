@@ -46,7 +46,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40003
+#define RT_VER_NUM 0x40004
 
 /* RT-Thread Components */
 
@@ -81,6 +81,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
@@ -90,6 +91,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_LIBC_FIXED_TIMEZONE 8
 
 /* Network */
 
@@ -109,6 +111,9 @@
 
 
 /* Utilities */
+
+
+/* RT-Thread Utestcases */
 
 
 /* RT-Thread online packages */
@@ -140,6 +145,8 @@
 
 
 /* system packages */
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
 
 
 /* Micrium: Micrium software products porting for RT-Thread */

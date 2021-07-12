@@ -314,7 +314,7 @@ static int nu_fmc_init(void)
     FMC_ENABLE_ISP();
     SYS_LockReg();
 
-    g_mutex_fmc = rt_mutex_create("nu_fmc_lock", RT_IPC_FLAG_FIFO);
+    g_mutex_fmc = rt_mutex_create("nu_fmc_lock", RT_IPC_FLAG_PRIO);
 
     /* PKG_USING_FAL */
 #if defined(PKG_USING_FAL)

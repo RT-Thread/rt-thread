@@ -16,7 +16,7 @@
 
 #ifdef RT_USING_MTD_NOR
 #define NOR_SIM "nor.bin"
-/* JEDEC Manufacturer’s ID */
+/* JEDEC Manufacturer's ID */
 #define MF_ID           (0xBF)
 /* JEDEC Device ID : Memory Type */
 #define MT_ID           (0x25)

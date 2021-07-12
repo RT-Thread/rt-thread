@@ -374,7 +374,7 @@ int msh_exec(char *cmd, rt_size_t length)
     int cmd_ret;
 
     /* strim the beginning of command */
-    while (*cmd  == ' ' || *cmd == '\t')
+    while ((length > 0) && (*cmd  == ' ' || *cmd == '\t'))
     {
         cmd++;
         length--;

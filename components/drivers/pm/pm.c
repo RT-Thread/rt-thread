@@ -836,12 +836,10 @@ rt_uint32_t rt_pm_module_get_status(void)
     rt_uint32_t req_status = 0x00;
     pm = &_pm;
 
-    for (index = 0; index < 32; index ++)
+    for (index = 0; index < PM_MODULE_MAX_ID; index ++)
     {
         if (pm->module_status[index].req_status == 0x01)
             req_status |= 1<<index;
-        if (index >= PM_MODULE_MAX_ID)
-            break;
     }
 
     return req_status;

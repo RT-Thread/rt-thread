@@ -94,7 +94,7 @@ rt_err_t nu_crc_init(void)
 {
     SYS_ResetModule(CRC_RST);
 
-    rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_PRIO);
     return RT_EOK;
 }
 
