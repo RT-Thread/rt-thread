@@ -258,6 +258,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 'eclipse':('gcc', 'gcc'),
                 'ses' : ('gcc', 'gcc'),
                 'cmake':('gcc', 'gcc'),
+                'cmake-armclang':('keil', 'armclang'),
                 'codelite' : ('gcc', 'gcc')}
     tgt_name = GetOption('target')
 
@@ -883,7 +884,7 @@ def GenTargetProject(program = None):
         from codelite import TargetCodelite
         TargetCodelite(Projects, program)
 
-    if GetOption('target') == 'cmake':
+    if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
         CMakeProject(Env,Projects)
 
@@ -925,14 +926,11 @@ def EndBuilding(target, program = None):
         project_name = GetOption('project-name')
 
         if not isinstance(project_path, str) or len(project_path) == 0 :
-            print("\nwarning : --project-path=your_project_path parameter is required.")
-            print("\nstop!")
-            exit(0)
-
+            project_path = os.path.join(BSP_ROOT, 'dist_ide_project')
+            print("\nwarning : --project-path not specified, use default path: {0}.".format(project_path))
         if not isinstance(project_name, str) or len(project_name) == 0:
-            print("\nwarning : --project-name=your_project_name parameter is required.")
-            print("\nstop!")
-            exit(0)
+            project_name = "dist_ide_project"
+            print("\nwarning : --project-name not specified, use default project name: {0}.".format(project_name))
 
         rtt_ide = {'project_path' : project_path, 'project_name' : project_name}
         MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)

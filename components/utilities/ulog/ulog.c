@@ -77,6 +77,7 @@
 struct rt_ulog
 {
     rt_bool_t init_ok;
+    rt_bool_t output_lock_enabled;
     struct rt_semaphore output_locker;
     /* all backends */
     rt_slist_t backend_list;
@@ -186,6 +187,9 @@ size_t ulog_ultoa(char *s, unsigned long int n)
 
 static void output_unlock(void)
 {
+    if (!ulog.output_lock_enabled)
+        return;
+
     /* is in thread context */
     if (rt_interrupt_get_nest() == 0)
     {
@@ -201,6 +205,9 @@ static void output_unlock(void)
 
 static void output_lock(void)
 {
+    if (!ulog.output_lock_enabled)
+        return;
+
     /* is in thread context */
     if (rt_interrupt_get_nest() == 0)
     {
@@ -212,6 +219,11 @@ static void output_lock(void)
         ulog.output_locker_isr_lvl = rt_hw_interrupt_disable();
 #endif
     }
+}
+
+void ulog_output_lock_enabled(rt_bool_t enabled)
+{
+    ulog.output_lock_enabled = enabled;
 }
 
 static char *get_log_buf(void)
@@ -1392,6 +1404,7 @@ int ulog_init(void)
         return 0;
 
     rt_sem_init(&ulog.output_locker, "ulog lock", 1, RT_IPC_FLAG_FIFO);
+    ulog.output_lock_enabled = RT_TRUE;
     rt_slist_init(&ulog.backend_list);
 
 #ifdef ULOG_USING_FILTER

@@ -6,8 +6,10 @@ src   = []
 cwd   = GetCurrentDir()
 CPPPATH = [cwd]
 group = []
-src += Glob('*.c')
+
+if GetDepend('RT_USING_LIBC'):
+    src += Glob('*.c')
 
 if rtconfig.PLATFORM != 'gcc' or rtconfig.ARCH == 'sim':
-    group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], CPPPATH = CPPPATH)
+    group = DefineGroup('libc', src, depend = [], CPPPATH = CPPPATH)
 Return('group')

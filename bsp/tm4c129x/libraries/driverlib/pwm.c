@@ -2,25 +2,25 @@
 //
 // pwm.c - API for the PWM modules
 //
-// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,8 +32,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -1624,11 +1624,11 @@ PWMIntStatus(uint32_t ui32Base, bool bMasked)
 //! \e ui32FaultInts must be the logical OR of any of \b PWM_INT_FAULT0,
 //! \b PWM_INT_FAULT1, \b PWM_INT_FAULT2, or \b PWM_INT_FAULT3.
 //!
-//! The fault interrupts are derived by performing a logical OR of each of the 
+//! The fault interrupts are derived by performing a logical OR of each of the
 //! configured fault trigger signals for a given generator.  Therefore, these
-//! interrupts are not directly related to the four possible FAULTn inputs to 
-//! the device but indicate that a fault has been signaled to one of the four 
-//! possible PWM generators. 
+//! interrupts are not directly related to the four possible FAULTn inputs to
+//! the device but indicate that a fault has been signaled to one of the four
+//! possible PWM generators.
 //!
 //! \note Because there is a write buffer in the Cortex-M processor, it may
 //! take several clock cycles before the interrupt source is actually cleared.
@@ -1993,7 +1993,8 @@ PWMClockSet(uint32_t ui32Base, uint32_t ui32Config)
     // Check the arguments.
     //
     ASSERT((ui32Base == PWM0_BASE) || (ui32Base == PWM1_BASE));
-    ASSERT((ui32Config == PWM_SYSCLK_DIV_2) ||
+    ASSERT((ui32Config == PWM_SYSCLK_DIV_1) ||
+           (ui32Config == PWM_SYSCLK_DIV_2) ||
            (ui32Config == PWM_SYSCLK_DIV_4) ||
            (ui32Config == PWM_SYSCLK_DIV_8) ||
            (ui32Config == PWM_SYSCLK_DIV_16) ||

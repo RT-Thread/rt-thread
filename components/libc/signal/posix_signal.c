@@ -10,7 +10,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <time.h>
+#include <sys/time.h>
+#include <sys/errno.h>
 
 #include "posix_signal.h"
 #define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)

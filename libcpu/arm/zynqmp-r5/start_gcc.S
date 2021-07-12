@@ -6,6 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-03-19 	  WangHuachen  first version
+ * 2021-05-11 	  WangHuachen  Added call to Xil_InitializeExistingMPURegConfig to
+ *                             initialize the MPU configuration table with the MPU
+ *                             configurations already set in Init_Mpu function.
  */
 
 .equ Mode_USR,        0x10
@@ -234,6 +237,7 @@ ctor_loop:
     b       ctor_loop
 ctor_end:
 
+    bl 	Xil_InitializeExistingMPURegConfig	/* Initialize MPU config */
     /* start RT-Thread Kernel       */
     ldr     pc, _entry
 
