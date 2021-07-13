@@ -19,6 +19,7 @@
 #ifdef RT_USING_POSIX
 #include <dfs_posix.h>
 #include <dfs_poll.h>
+#include <sys/ioctl.h>
 
 #ifdef getc
 #undef getc
@@ -609,7 +610,10 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
             return -RT_EINVAL;
         }
 
+#ifndef RT_USING_DEVICE_OPS
         dev->write = _serial_poll_tx;
+#endif
+
         dev->open_flag |= RT_SERIAL_TX_BLOCKING;
         return RT_EOK;
     }
@@ -637,7 +641,10 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
                                 tx_fifo->buffer,
                                 serial->config.tx_bufsz);
             serial->serial_tx = tx_fifo;
+
+#ifndef RT_USING_DEVICE_OPS
             dev->write = _serial_fifo_tx_blocking_buf;
+#endif
         }
         else
         {
@@ -648,7 +655,11 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
             RT_ASSERT(tx_fifo != RT_NULL);
 
             serial->serial_tx = tx_fifo;
+
+#ifndef RT_USING_DEVICE_OPS
             dev->write = _serial_fifo_tx_blocking_nbuf;
+#endif
+
             /* Call the control() API to configure the serial device by RT_SERIAL_TX_BLOCKING*/
             serial->ops->control(serial,
                                 RT_DEVICE_CTRL_CONFIG,
@@ -676,7 +687,10 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
                         serial->config.tx_bufsz);
     serial->serial_tx = tx_fifo;
 
+#ifndef RT_USING_DEVICE_OPS
     dev->write = _serial_fifo_tx_nonblocking;
+#endif
+
     dev->open_flag |= RT_SERIAL_TX_NON_BLOCKING;
     /* Call the control() API to configure the serial device by RT_SERIAL_TX_NON_BLOCKING*/
     serial->ops->control(serial,
@@ -712,7 +726,10 @@ static rt_err_t rt_serial_rx_enable(struct rt_device        *dev,
             return -RT_EINVAL;
         }
 
+#ifndef RT_USING_DEVICE_OPS
         dev->read = _serial_poll_rx;
+#endif
+
         dev->open_flag |= RT_SERIAL_RX_BLOCKING;
         return RT_EOK;
     }
@@ -727,7 +744,10 @@ static rt_err_t rt_serial_rx_enable(struct rt_device        *dev,
     rt_ringbuffer_init(&(rx_fifo->rb), rx_fifo->buffer, serial->config.rx_bufsz);
 
     serial->serial_rx = rx_fifo;
+
+#ifndef RT_USING_DEVICE_OPS
     dev->read = _serial_fifo_rx;
+#endif
 
     if (rx_oflag == RT_SERIAL_RX_NON_BLOCKING)
     {
@@ -766,7 +786,10 @@ static rt_err_t rt_serial_rx_disable(struct rt_device        *dev,
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
 
+#ifndef RT_USING_DEVICE_OPS
     dev->read = RT_NULL;
+#endif
+
     if (serial->serial_rx == RT_NULL) return RT_EOK;
 
     do
@@ -809,7 +832,10 @@ static rt_err_t rt_serial_tx_disable(struct rt_device        *dev,
     RT_ASSERT(dev != RT_NULL);
     serial = (struct rt_serial_device *)dev;
 
+#ifndef RT_USING_DEVICE_OPS
     dev->write = RT_NULL;
+#endif
+
     if (serial->serial_tx == RT_NULL) return RT_EOK;
 
     tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
@@ -1006,6 +1032,60 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 }
 
 #ifdef RT_USING_DEVICE_OPS
+static rt_size_t rt_serial_read(struct rt_device *dev,
+                                rt_off_t          pos,
+                                void             *buffer,
+                                rt_size_t         size)
+{
+    struct rt_serial_device *serial;
+
+    RT_ASSERT(dev != RT_NULL);
+    if (size == 0) return 0;
+
+    serial = (struct rt_serial_device *)dev;
+
+    if (serial->config.rx_bufsz)
+    {
+        return _serial_fifo_rx(dev, pos, buffer, size);
+    }
+
+    return _serial_poll_rx(dev, pos, buffer, size);
+}
+
+
+static rt_size_t rt_serial_write(struct rt_device *dev,
+                                 rt_off_t          pos,
+                                 const void       *buffer,
+                                 rt_size_t         size)
+{
+    struct rt_serial_device *serial;
+    struct rt_serial_tx_fifo *tx_fifo;
+
+    RT_ASSERT(dev != RT_NULL);
+    if (size == 0) return 0;
+
+    serial = (struct rt_serial_device *)dev;
+    RT_ASSERT((serial != RT_NULL) && (buffer != RT_NULL));
+    tx_fifo = (struct rt_serial_tx_fifo *) serial->serial_tx;
+
+    if (serial->config.tx_bufsz == 0)
+    {
+        return _serial_poll_tx(dev, pos, buffer, size);
+    }
+
+    if (dev->open_flag | RT_SERIAL_TX_BLOCKING)
+    {
+        if ((tx_fifo->rb.buffer_ptr) == RT_NULL)
+        {
+            return _serial_fifo_tx_blocking_nbuf(dev, pos, buffer, size);
+        }
+
+        return _serial_fifo_tx_blocking_buf(dev, pos, buffer, size);
+    }
+
+    return _serial_fifo_tx_nonblocking(dev, pos, buffer, size);
+}
+
 const static struct rt_device_ops serial_ops =
 {
     rt_serial_init,
