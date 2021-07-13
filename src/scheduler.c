@@ -23,7 +23,7 @@
  * 2013-12-21     Grissiom     add rt_critical_level
  * 2018-11-22     Jesven       remove the current task from ready queue
  *                             add per cpu ready queue
- *                             add _rt_get_highest_priority_thread to find highest priority task
+ *                             add _scheduler_get_highest_priority_thread to find highest priority task
  *                             rt_schedule_insert_thread won't insert current task to ready queue
  *                             in smp version, rt_hw_context_switch_interrupt maybe switch to
  *                               new task directly
@@ -114,7 +114,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
  * get the highest priority thread in ready queue
  */
 #ifdef RT_USING_SMP
-static struct rt_thread* _rt_get_highest_priority_thread(rt_ubase_t *highest_prio)
+static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
     register struct rt_thread *highest_priority_thread;
     register rt_ubase_t highest_ready_priority, local_highest_ready_priority;
@@ -150,7 +150,7 @@ static struct rt_thread* _rt_get_highest_priority_thread(rt_ubase_t *highest_pri
     return highest_priority_thread;
 }
 #else
-static struct rt_thread* _rt_get_highest_priority_thread(rt_ubase_t *highest_prio)
+static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
     register struct rt_thread *highest_priority_thread;
     register rt_ubase_t highest_ready_priority;
@@ -239,7 +239,7 @@ void rt_system_scheduler_start(void)
     register struct rt_thread *to_thread;
     rt_ubase_t highest_ready_priority;
 
-    to_thread = _rt_get_highest_priority_thread(&highest_ready_priority);
+    to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
 
 #ifdef RT_USING_SMP
     to_thread->oncpu = rt_hw_cpu_id();
@@ -327,7 +327,7 @@ void rt_schedule(void)
 
         if (rt_thread_ready_priority_group != 0 || pcpu->priority_group != 0)
         {
-            to_thread = _rt_get_highest_priority_thread(&highest_ready_priority);
+            to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
             current_thread->oncpu = RT_CPU_DETACHED;
             if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
@@ -425,7 +425,7 @@ void rt_schedule(void)
             /* need_insert_from_thread: need to insert from_thread to ready queue */
             int need_insert_from_thread = 0;
 
-            to_thread = _rt_get_highest_priority_thread(&highest_ready_priority);
+            to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
 
             if ((rt_current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
@@ -576,7 +576,7 @@ void rt_scheduler_do_irq_switch(void *context)
 
         if (rt_thread_ready_priority_group != 0 || pcpu->priority_group != 0)
         {
-            to_thread = _rt_get_highest_priority_thread(&highest_ready_priority);
+            to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
             current_thread->oncpu = RT_CPU_DETACHED;
             if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
             {
