@@ -1176,11 +1176,7 @@ void rt_kputs(const char *str)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->open_flag;
-
-        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, str, rt_strlen(str));
-        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(str);
@@ -1214,11 +1210,7 @@ RT_WEAK void rt_kprintf(const char *fmt, ...)
     }
     else
     {
-        rt_uint16_t old_flag = _console_device->open_flag;
-
-        _console_device->open_flag |= RT_DEVICE_FLAG_STREAM;
         rt_device_write(_console_device, 0, rt_log_buf, length);
-        _console_device->open_flag = old_flag;
     }
 #else
     rt_hw_console_output(rt_log_buf);
