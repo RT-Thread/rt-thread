@@ -186,7 +186,7 @@ int sem_init(sem_t *sem, int pshared, unsigned int value)
 
     rt_snprintf(name, sizeof(name), "psem%02d", psem_number++);
     sem->sem = rt_sem_create(name, value, RT_IPC_FLAG_FIFO);
-    if (sem == RT_NULL)
+    if (sem->sem == RT_NULL)
     {
         rt_set_errno(ENOMEM);
 
