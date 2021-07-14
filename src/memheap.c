@@ -852,6 +852,7 @@ void *rt_malloc(rt_size_t size)
 
     /* try to allocate in system heap */
     ptr = rt_memheap_alloc(&_heap, size);
+#ifdef RT_USING_MEMHEAP_AUTO_BINDING
     if (ptr == RT_NULL)
     {
         struct rt_object *object;
@@ -881,6 +882,7 @@ void *rt_malloc(rt_size_t size)
                 break;
         }
     }
+#endif /* RT_USING_MEMHEAP_AUTO_BINDING */
 
 #ifdef RT_USING_MEMTRACE
     if (ptr == RT_NULL)
