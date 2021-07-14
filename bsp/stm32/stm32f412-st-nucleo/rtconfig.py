@@ -90,7 +90,6 @@ elif PLATFORM == 'armcc':
 
 
     CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=c99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
@@ -123,8 +122,7 @@ elif PLATFORM == 'armclang':
     else:
         CFLAGS += ' -O2'
         
-    CXXFLAGS = CFLAGS
-    CFLAGS += ' -std=c99'
+    CXXFLAGS = CFLAGS + ' -fno-exceptions'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 

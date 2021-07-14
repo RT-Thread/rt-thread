@@ -11,8 +11,16 @@
 
 #ifdef RT_USING_HEAP
 
-#ifdef __CC_ARM
+#ifdef __CLANG_ARM
 /* avoid the heap and heap-using library functions supplied by arm */
+__asm(".global __use_no_heap\n\t");
+extern void $Super$$__rt_lib_init_heap_2(void);
+/* avoid the heap and heap-using library functions supplied by arm */
+void $Sub$$__rt_lib_init_heap_2(void)
+{
+    /* empty */
+}
+#else
 #pragma import(__use_no_heap)
 #endif
 
