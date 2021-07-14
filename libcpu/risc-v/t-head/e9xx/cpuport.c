@@ -53,6 +53,9 @@ struct rt_hw_stack_frame
     rt_ubase_t t4;         /* x29 - t4     - temporary register 4                */
     rt_ubase_t t5;         /* x30 - t5     - temporary register 5                */
     rt_ubase_t t6;         /* x31 - t6     - temporary register 6                */
+#ifdef ARCH_RISCV_DSP
+    rt_ubase_t vxsat;      /* P-ext vxsat reg */
+#endif
 #ifdef ARCH_RISCV_FPU
     rv_floatreg_t f0;      /* f0  */
     rv_floatreg_t f1;      /* f1  */
