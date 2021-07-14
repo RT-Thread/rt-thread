@@ -26,7 +26,7 @@ extern void ioreuse_initial(void);
 
 
 /**
- * This function will initial smartl-evb(e906) board.
+ * This function will initial smart-evb board.
  */
 void rt_hw_board_init(void)
 {
