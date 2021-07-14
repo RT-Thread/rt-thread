@@ -30,6 +30,10 @@
 /* use precision */
 #define RT_PRINTF_PRECISION
 
+#ifdef ARCH_CPU_64BIT
+    #define RT_PRINTF_LONGLONG
+#endif
+
 /**
  * @addtogroup KernelService
  */
