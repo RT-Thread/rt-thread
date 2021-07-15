@@ -347,6 +347,10 @@ menu "Kernel Device Object"
         config RT_CONSOLE_DEVICE_NAME
             string "the device name for console"
             default "uart"
+
+        config RT_PRINTF_LONGLONG
+            bool "rt_kprintf support long long"
+            default n
     endif
 
 endmenu
