@@ -18,6 +18,7 @@
  * 2021-02-12     Meco Man     move all of the functions located in <clock_time.c> to this file
  * 2021-03-15     Meco Man     fixed a bug of leaking memory in asctime()
  * 2021-05-01     Meco Man     support fixed timezone
+ * 2021-07-21     Meco Man     implement that change/set timezone APIs
  */
 
 #include "sys/time.h"
@@ -31,10 +32,6 @@
 #define DBG_TAG    "TIME"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
-
-#ifndef RT_LIBC_FIXED_TIMEZONE
-#define RT_LIBC_FIXED_TIMEZONE 8 /* UTC+8 */
-#endif
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -202,7 +199,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
 
-    r->tm_isdst = 0;
+    r->tm_isdst = rt_tz_is_dst();
     return r;
 }
 RTM_EXPORT(gmtime_r);
@@ -218,7 +215,7 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
 
-    local_tz = *t + RT_LIBC_FIXED_TIMEZONE * 3600;
+    local_tz = *t + rt_tz_get() * 3600;
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -235,7 +232,7 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * RT_LIBC_FIXED_TIMEZONE;
+    timestamp = timestamp - 3600 * rt_tz_get();
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -426,7 +423,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     if(tz != RT_NULL)
     {
         tz->tz_dsttime = DST_NONE;
-        tz->tz_minuteswest = -(RT_LIBC_FIXED_TIMEZONE * 60);
+        tz->tz_minuteswest = -(rt_tz_get() * 60);
     }
 
     if (tv != RT_NULL && get_timeval(tv) == RT_EOK)
@@ -651,3 +648,31 @@ int clock_time_to_tick(const struct timespec *time)
 RTM_EXPORT(clock_time_to_tick);
 
 #endif /* RT_USING_POSIX */
+
+
+/* timezone APIs (Not standard LIBC APIs) */
+#ifndef RT_LIBC_DEFAULT_TIMEZONE
+#define RT_LIBC_DEFAULT_TIMEZONE    8
+#endif
+
+#include <rthw.h>
+
+volatile static rt_int8_t rt_current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
+
+void rt_tz_set(rt_int8_t tz)
+{
+    register rt_base_t level;
+    level = rt_hw_interrupt_disable();
+    rt_current_timezone = tz;
+    rt_hw_interrupt_enable(level);
+}
+
+rt_int8_t rt_tz_get(void)
+{
+    return rt_current_timezone;
+}
+
+rt_int8_t rt_tz_is_dst(void)
+{
+    return 0;
+}
