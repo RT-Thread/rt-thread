@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,70 +21,70 @@
  * This function will initialize thread stack
  *
  * @param tentry the entry of thread
- * @param parameter the parameter of entry
+ * @param parameter the parameter of entry 
  * @param stack_addr the beginning stack address
  * @param texit the function will be called when thread exit
  *
  * @return stack address
  */
 rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
-    rt_uint8_t *stack_addr, void *texit)
+	rt_uint8_t *stack_addr, void *texit)
 {
-    rt_ubase_t *stk;
-    rt_ubase_t current_el;
+	rt_ubase_t *stk;
+	rt_ubase_t current_el;
 
-    stk      = (rt_ubase_t*)stack_addr;
+	stk 	 = (rt_ubase_t*)stack_addr;
 
-    *(--stk) = ( rt_ubase_t ) 11;           /* X1 */
-    *(--stk) = ( rt_ubase_t ) parameter;    /* X0 */
-    *(--stk) = ( rt_ubase_t ) 33;           /* X3 */
-    *(--stk) = ( rt_ubase_t ) 22;           /* X2 */
-    *(--stk) = ( rt_ubase_t ) 55;           /* X5 */
-    *(--stk) = ( rt_ubase_t ) 44;           /* X4 */
-    *(--stk) = ( rt_ubase_t ) 77;           /* X7 */
-    *(--stk) = ( rt_ubase_t ) 66;           /* X6 */
-    *(--stk) = ( rt_ubase_t ) 99;           /* X9 */
-    *(--stk) = ( rt_ubase_t ) 88;           /* X8 */
-    *(--stk) = ( rt_ubase_t ) 11;           /* X11 */
-    *(--stk) = ( rt_ubase_t ) 10;           /* X10 */
-    *(--stk) = ( rt_ubase_t ) 13;           /* X13 */
-    *(--stk) = ( rt_ubase_t ) 12;           /* X12 */
-    *(--stk) = ( rt_ubase_t ) 15;           /* X15 */
-    *(--stk) = ( rt_ubase_t ) 14;           /* X14 */
-    *(--stk) = ( rt_ubase_t ) 17;           /* X17 */
-    *(--stk) = ( rt_ubase_t ) 16;           /* X16 */
-    *(--stk) = ( rt_ubase_t ) 19;           /* X19 */
-    *(--stk) = ( rt_ubase_t ) 18;           /* X18 */
-    *(--stk) = ( rt_ubase_t ) 21;           /* X21 */
-    *(--stk) = ( rt_ubase_t ) 20;           /* X20 */
-    *(--stk) = ( rt_ubase_t ) 23;           /* X23 */
-    *(--stk) = ( rt_ubase_t ) 22;           /* X22 */
-    *(--stk) = ( rt_ubase_t ) 25;           /* X25 */
-    *(--stk) = ( rt_ubase_t ) 24;           /* X24 */
-    *(--stk) = ( rt_ubase_t ) 27;           /* X27 */
-    *(--stk) = ( rt_ubase_t ) 26;           /* X26 */
-    *(--stk) = ( rt_ubase_t ) 29;           /* X29 */
-    *(--stk) = ( rt_ubase_t ) 28;           /* X28 */
-    *(--stk) = ( rt_ubase_t ) 0;            /* XZR - has no effect, used so there are an even number of registers. */
-    *(--stk) = ( rt_ubase_t ) texit;        /* X30 - procedure call link register. */
+	*(--stk) = ( rt_ubase_t ) 11;			/* R1 */
+	*(--stk) = ( rt_ubase_t ) parameter; 	/* R0 */
+	*(--stk) = ( rt_ubase_t ) 33;			/* R3 */
+	*(--stk) = ( rt_ubase_t ) 22;			/* R2 */
+	*(--stk) = ( rt_ubase_t ) 55;			/* R5 */
+	*(--stk) = ( rt_ubase_t ) 44;			/* R4 */
+	*(--stk) = ( rt_ubase_t ) 77;			/* R7 */
+	*(--stk) = ( rt_ubase_t ) 66;			/* R6 */
+	*(--stk) = ( rt_ubase_t ) 99;			/* R9 */
+	*(--stk) = ( rt_ubase_t ) 88;			/* R8 */
+	*(--stk) = ( rt_ubase_t ) 11;			/* R11 */
+	*(--stk) = ( rt_ubase_t ) 10;			/* R10 */
+	*(--stk) = ( rt_ubase_t ) 13;			/* R13 */
+	*(--stk) = ( rt_ubase_t ) 12;			/* R12 */
+	*(--stk) = ( rt_ubase_t ) 15;			/* R15 */
+	*(--stk) = ( rt_ubase_t ) 14;			/* R14 */
+	*(--stk) = ( rt_ubase_t ) 17;			/* R17 */
+	*(--stk) = ( rt_ubase_t ) 16;			/* R16 */
+	*(--stk) = ( rt_ubase_t ) 19;			/* R19 */
+	*(--stk) = ( rt_ubase_t ) 18;			/* R18 */
+	*(--stk) = ( rt_ubase_t ) 21;			/* R21 */
+	*(--stk) = ( rt_ubase_t ) 20;			/* R20 */
+	*(--stk) = ( rt_ubase_t ) 23;			/* R23 */
+	*(--stk) = ( rt_ubase_t ) 22;			/* R22 */
+	*(--stk) = ( rt_ubase_t ) 25;			/* R25 */
+	*(--stk) = ( rt_ubase_t ) 24;			/* R24 */
+	*(--stk) = ( rt_ubase_t ) 27;			/* R27 */
+	*(--stk) = ( rt_ubase_t ) 26;			/* R26 */
+	*(--stk) = ( rt_ubase_t ) 29;			/* R29 */
+	*(--stk) = ( rt_ubase_t ) 28;			/* R28 */
+	*(--stk) = ( rt_ubase_t ) 0;			/* XZR - has no effect, used so there are an even number of registers. */
+	*(--stk) = ( rt_ubase_t ) texit;		/* R30 - procedure call link register. */
 
-    current_el = rt_hw_get_current_el();
+	current_el = rt_hw_get_current_el();
 
-    if(current_el == 3)
-    {
-        *(--stk) = INITIAL_SPSR_EL3;
-    }
-    else if(current_el == 2)
-    {
-        *(--stk) = INITIAL_SPSR_EL2;
-    }
-    else
-    {
-        *(--stk) = INITIAL_SPSR_EL1;
-    }
+	if(current_el == 3)
+	{
+		*(--stk) = INITIAL_SPSR_EL3;
+	}
+	else if(current_el == 2)
+	{
+		*(--stk) = INITIAL_SPSR_EL2;
+	}
+	else
+	{
+		*(--stk) = INITIAL_SPSR_EL1;
+	}
 
-    *(--stk) = ( rt_ubase_t ) tentry;       /* Exception return address. */
+	*(--stk) = ( rt_ubase_t ) tentry; 		/* Exception return address. */
 
-    /* return task's current stack address */
-    return (rt_uint8_t *)stk;
+	/* return task's current stack address */
+	return (rt_uint8_t *)stk;
 }

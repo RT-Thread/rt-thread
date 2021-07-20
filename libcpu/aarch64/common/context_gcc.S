@@ -1,51 +1,7 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
  * Date           Author       Notes
  * 2018-10-06     ZhaoXiaowei    the first version
  */
-
-  /*
- *enable gtimer
- */
-.globl rt_hw_gtimer_enable
-rt_hw_gtimer_enable:
-	MOV X0,#1
-	MSR CNTP_CTL_EL0,X0
-	RET
-
-/*
- *set gtimer CNTP_TVAL_EL0 value
- */
-.globl rt_hw_set_gtimer_val
-rt_hw_set_gtimer_val:
-	MSR CNTP_TVAL_EL0,X0
-	RET
-
-/*
- *get gtimer CNTP_TVAL_EL0 value
- */
-.globl rt_hw_get_gtimer_val
-rt_hw_get_gtimer_val:
-	MRS X0,CNTP_TVAL_EL0
-	RET
-
-
-.globl rt_hw_get_cntpct_val
-rt_hw_get_cntpct_val:
-	MRS X0, CNTPCT_EL0
-	RET
-
-/*
- *get gtimer frq value
- */
-.globl rt_hw_get_gtimer_frq
-rt_hw_get_gtimer_frq:
-	MRS X0,CNTFRQ_EL0
-	RET
 
 .macro SAVE_CONTEXT
 
@@ -346,6 +302,9 @@ vector_irq_exit:
     .align  8
     .globl  vector_error
 vector_error:
+    mrs x1, esr_el1
+    mrs x2, elr_el1
+    bl process_exception
     SAVE_CONTEXT
     BL      rt_hw_trap_error
     B       .

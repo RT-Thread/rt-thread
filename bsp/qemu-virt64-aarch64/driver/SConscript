@@ -1,0 +1,16 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+board.c
+drv_uart.c
+gic_pl400.c
+exception.c
+''')
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

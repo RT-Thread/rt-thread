@@ -1,20 +1,9 @@
-/*
- * Copyright (c) 2006-2020, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Date           Author       Notes
- * 2020-01-15     bigmagic    the first version
- */
-
 .section ".text.entrypoint"
 
 .set EL1_stack,         __el1_stack
-
+.extern entry
 .global _start
-
-// This symbol is set to 0x80000 in ld script. That is the address that raspi3's firmware
-// loads 'kernel8.img' file in.
+// TODO ： OPPO replace startup code before .L__in_el1
 _start:
     // read cpu id, stop slave cores
     mrs     x1, mpidr_el1            // MPIDR_EL1: Multi-Processor Affinity Register
@@ -35,7 +24,8 @@ _start:
 	// ldr	x2, =EL1_stack
 	// mov	sp, x2
 
-    ldr     x1, =_start
+    // TODO ： OPPO keep stack settings
+    ldr     x1, =init_el1_stack_limit
 
     // set up EL1
     mrs     x0, CurrentEL           // CurrentEL Register. bit 2, 3. Others reserved
@@ -62,30 +52,31 @@ _start:
     // in EL2
     msr     sp_el1, x1             // Set sp of EL1 to _start
 
-    // enable CNTP for EL1
+    // TODO ： OPPO enable CNTP for EL1
     mrs     x0, cnthctl_el2         // Counter-timer Hypervisor Control register
     orr     x0, x0, #3
     msr     cnthctl_el2, x0
     msr     cntvoff_el2, xzr
 
-    // enable AArch64 in EL1
+    // TODO ： OPPO enable AArch64 in EL1
     mov     x0, #(1 << 31)          // AArch64
-    orr     x0, x0, #(1 << 1)       // SWIO hardwired on Pi3
+    orr     x0, x0, #(1 << 1)
     msr     hcr_el2, x0
     mrs     x0, hcr_el2
 
-    // change execution level to EL1
+    // TODO ： OPPO change execution level to EL1
     mov     x2, #0x3c4
     msr     spsr_el2, x2        // 1111000100
     adr     x2, .L__in_el1
     msr     elr_el2, x2
     eret                        // exception return. from EL2. continue from .L__in_el1
 
+// TODO ： OPPO keep following code
 .L__in_el1:
     mov     sp, x1             // in EL1. Set sp to _start
 
     // Set CPACR_EL1 (Architecture Feature Access Control Register) to avoid trap from SIMD or float point instruction
-    mov     x1, #0x00300000       // Don't trap any SIMD/FP instructions in both EL0 and EL1
+    mov     x1, #0x00300000        // Don't trap any SIMD/FP instructions in both EL0 and EL1
     msr     cpacr_el1, x1
 
     mrs x1, sctlr_el1
@@ -109,3 +100,9 @@ _start:
     bl      entry
     // for failsafe, halt this core too
     b       .L__current_cpu_idle
+
+.bss
+.align 3
+init_el1_stack:
+    .space 4096
+init_el1_stack_limit:
