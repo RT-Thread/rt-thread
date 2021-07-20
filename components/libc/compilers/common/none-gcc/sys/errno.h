@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2021-05-22     Meco Man     The first version.
  */
-#ifndef _SYS_ERRNO_H
-#define _SYS_ERRNO_H
+#ifndef __SYS_ERRNO_H__
+#define __SYS_ERRNO_H__
 
 #if defined(__ARMCC_VERSION)
 /*
