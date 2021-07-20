@@ -1,0 +1,37 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+
+src = Glob('n32g45x_std_periph_driver/src/*.c')
+src += [cwd + '/CMSIS/device/system_n32g45x.c']
+
+#add for startup script
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [cwd + '/CMSIS/device/startup/startup_n32g45x_gcc.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/CMSIS/device/startup/startup_n32g45x.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/CMSIS/device/startup/startup_n32g45x_EWARM.s']
+
+path = [
+    cwd + '/CMSIS/core',
+    cwd + '/CMSIS/device',
+    cwd + '/n32g45x_std_periph_driver/inc',]
+    
+if GetDepend(['RT_USING_BSP_USB']):
+    path += [cwd + '/n32g45x_usbfs_driver/inc']
+    src  += [cwd + '/n32g45x_usbfs_driver/src']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER', 'N32G45X']
+
+group = DefineGroup('N32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+#print('CROSS_TOOL=[%s]' %(rtconfig.CROSS_TOOL))
+#print('path=[%s]' %(path))
+
+Return('group')
