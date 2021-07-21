@@ -83,7 +83,7 @@ int sigtimedwait(const sigset_t *set, siginfo_t *info,
     if (timeout)
     {
         extern int clock_time_to_tick(const struct timespec *time);
-        tick = clock_time_to_tick(timeout);
+        tick = rt_timespec_to_tick(timeout);
     }
 #endif
 
