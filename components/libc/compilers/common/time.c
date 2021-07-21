@@ -24,7 +24,7 @@
 #include "sys/time.h"
 #include <sys/errno.h>
 #include <rtthread.h>
-
+#include <rthw.h>
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
 #endif
@@ -470,6 +470,7 @@ RTM_EXPORT(strftime);
 static volatile struct timeval _timevalue;
 static int _rt_clock_time_system_init()
 {
+    register rt_base_t level;
     time_t time = 0;
     rt_tick_t tick;
     rt_device_t device;
@@ -480,16 +481,20 @@ static int _rt_clock_time_system_init()
         /* get realtime seconds */
         if(rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time) == RT_EOK)
         {
-            /* get tick */
-            tick = rt_tick_get();
+            level = rt_hw_interrupt_disable();
+            tick = rt_tick_get(); /* get tick */
             _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
             _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
+            rt_hw_interrupt_enable(level);
             return 0;
         }
     }
 
+    level = rt_hw_interrupt_disable();
     _timevalue.tv_usec = 0;
     _timevalue.tv_sec = 0;
+    rt_hw_interrupt_enable(level);
+
     return -1;
 }
 INIT_COMPONENT_EXPORT(_rt_clock_time_system_init);
@@ -552,11 +557,14 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     {
     case CLOCK_REALTIME:
         {
-            /* get tick */
-            int tick = rt_tick_get();
+            int tick;
+            register rt_base_t level;
 
+            level = rt_hw_interrupt_disable();
+            tick = rt_tick_get(); /* get tick */
             tp->tv_sec  = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
             tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
+            rt_hw_interrupt_enable(level);
         }
         break;
 
@@ -590,6 +598,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     LOG_W("Cannot find a RTC device to save time!");
     return -1;
 #else
+    register rt_base_t level;
     int second;
     rt_tick_t tick;
     rt_device_t device;
@@ -602,12 +611,13 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 
     /* get second */
     second = tp->tv_sec;
-    /* get tick */
-    tick = rt_tick_get();
 
+    level = rt_hw_interrupt_disable();
+    tick = rt_tick_get(); /* get tick */
     /* update timevalue */
     _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
     _timevalue.tv_sec = second - tick/RT_TICK_PER_SECOND - 1;
+    rt_hw_interrupt_enable(level);
 
     /* update for RTC device */
     device = rt_device_find("rtc");
@@ -666,8 +676,6 @@ RTM_EXPORT(rt_timespec_to_tick);
 #define RT_LIBC_DEFAULT_TIMEZONE    8
 #endif
 
-#include <rthw.h>
-
 static volatile rt_int8_t rt_current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
 
 void rt_tz_set(rt_int8_t tz)
@@ -680,14 +688,7 @@ void rt_tz_set(rt_int8_t tz)
 
 rt_int8_t rt_tz_get(void)
 {
-    rt_int8_t tz;
-    register rt_base_t level;
-
-    level = rt_hw_interrupt_disable();
-    tz = rt_current_timezone;
-    rt_hw_interrupt_enable(level);
-
-    return tz;
+    return rt_current_timezone;
 }
 
 rt_int8_t rt_tz_is_dst(void)
