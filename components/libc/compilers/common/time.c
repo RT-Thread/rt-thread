@@ -465,8 +465,8 @@ RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
 #ifdef RT_USING_POSIX
-static struct timeval _timevalue;
-static int clock_time_system_init()
+static volatile struct timeval _timevalue;
+static int _rt_clock_time_system_init()
 {
     time_t time;
     rt_tick_t tick;
@@ -493,7 +493,7 @@ static int clock_time_system_init()
 
     return 0;
 }
-INIT_COMPONENT_EXPORT(clock_time_system_init);
+INIT_COMPONENT_EXPORT(_rt_clock_time_system_init);
 
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
@@ -614,7 +614,7 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 }
 RTM_EXPORT(clock_settime);
 
-int clock_time_to_tick(const struct timespec *time)
+int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
     int nsecond, second;
@@ -645,19 +645,19 @@ int clock_time_to_tick(const struct timespec *time)
 
     return tick;
 }
-RTM_EXPORT(clock_time_to_tick);
+RTM_EXPORT(rt_timespec_to_tick);
 
 #endif /* RT_USING_POSIX */
 
 
-/* timezone APIs (Not standard LIBC APIs) */
+/* timezone */
 #ifndef RT_LIBC_DEFAULT_TIMEZONE
 #define RT_LIBC_DEFAULT_TIMEZONE    8
 #endif
 
 #include <rthw.h>
 
-volatile static rt_int8_t rt_current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
+static volatile rt_int8_t rt_current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
 
 void rt_tz_set(rt_int8_t tz)
 {
@@ -669,7 +669,14 @@ void rt_tz_set(rt_int8_t tz)
 
 rt_int8_t rt_tz_get(void)
 {
-    return rt_current_timezone;
+    rt_int8_t tz;
+    register rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    tz = rt_current_timezone;
+    rt_hw_interrupt_enable(level);
+
+    return tz;
 }
 
 rt_int8_t rt_tz_is_dst(void)
