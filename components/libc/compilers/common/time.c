@@ -465,38 +465,42 @@ RTM_EXPORT(difftime);
 RTM_EXPORT(strftime);
 
 #ifdef RT_USING_POSIX
+
+#ifdef RT_USING_RTC
 static volatile struct timeval _timevalue;
 static int _rt_clock_time_system_init()
 {
-    time_t time;
+    time_t time = 0;
     rt_tick_t tick;
     rt_device_t device;
 
-    time = 0;
-
-#ifdef RT_USING_RTC
     device = rt_device_find("rtc");
     if (device != RT_NULL)
     {
         /* get realtime seconds */
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
+        if(rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time) == RT_EOK)
+        {
+            /* get tick */
+            tick = rt_tick_get();
+            _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
+            _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
+            return 0;
+        }
     }
-#else
-    LOG_W("Cannot find a RTC device to provide time!");
-#endif
 
-    /* get tick */
-    tick = rt_tick_get();
-
-    _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
-    _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
-
-    return 0;
+    _timevalue.tv_usec = 0;
+    _timevalue.tv_sec = 0;
+    return -1;
 }
 INIT_COMPONENT_EXPORT(_rt_clock_time_system_init);
+#endif /* RT_USING_RTC */
 
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
+#ifndef RT_USING_RTC
+    LOG_W("Cannot find a RTC device to save time!");
+    return -1;
+#else
     int ret = 0;
 
     if (res == RT_NULL)
@@ -526,11 +530,16 @@ int clock_getres(clockid_t clockid, struct timespec *res)
     }
 
     return ret;
+#endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_getres);
 
 int clock_gettime(clockid_t clockid, struct timespec *tp)
 {
+#ifndef RT_USING_RTC
+    LOG_W("Cannot find a RTC device to save time!");
+    return -1;
+#else
     int ret = 0;
 
     if (tp == RT_NULL)
@@ -571,11 +580,16 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     }
 
     return ret;
+#endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_gettime);
 
 int clock_settime(clockid_t clockid, const struct timespec *tp)
 {
+#ifndef RT_USING_RTC
+    LOG_W("Cannot find a RTC device to save time!");
+    return -1;
+#else
     int second;
     rt_tick_t tick;
     rt_device_t device;
@@ -583,7 +597,6 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     if ((clockid != CLOCK_REALTIME) || (tp == RT_NULL))
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
 
@@ -596,21 +609,19 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
     _timevalue.tv_sec = second - tick/RT_TICK_PER_SECOND - 1;
 
-#ifdef RT_USING_RTC
     /* update for RTC device */
     device = rt_device_find("rtc");
     if (device != RT_NULL)
     {
         /* set realtime seconds */
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &second);
+        if(rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &second) == RT_EOK)
+        {
+            return 0;
+        }
     }
-    else
-#else
-    LOG_W("Cannot find a RTC device to save time!");
-#endif
-        return -1;
 
-    return 0;
+    return -1;
+#endif /* RT_USING_RTC */
 }
 RTM_EXPORT(clock_settime);
 
