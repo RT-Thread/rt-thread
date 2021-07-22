@@ -358,7 +358,7 @@ rt_err_t rt_work_cancel(struct rt_work *work)
     return rt_workqueue_cancel_work(sys_workq, work);
 }
 
-int rt_work_sys_workqueue_init(void)
+static int rt_work_sys_workqueue_init(void)
 {
     if (sys_workq != RT_NULL)
         return RT_EOK;
@@ -370,5 +370,5 @@ int rt_work_sys_workqueue_init(void)
     return RT_EOK;
 }
 INIT_PREV_EXPORT(rt_work_sys_workqueue_init);
-#endif
-#endif
+#endif /* RT_USING_SYSTEM_WORKQUEUE */
+#endif /* RT_USING_HEAP */
