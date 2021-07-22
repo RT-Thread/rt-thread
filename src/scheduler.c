@@ -42,8 +42,8 @@ rt_uint8_t rt_thread_ready_table[32];
 
 #ifndef RT_USING_SMP
 extern volatile rt_uint8_t rt_interrupt_nest;
-static rt_int16_t rt_scheduler_lock_nest;
-struct rt_thread *rt_current_thread = RT_NULL;
+static volatile rt_int16_t rt_scheduler_lock_nest;
+volatile rt_thread_t rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /* RT_USING_SMP */
 
@@ -977,13 +977,18 @@ RTM_EXPORT(rt_exit_critical);
  */
 rt_uint16_t rt_critical_level(void)
 {
-#ifdef RT_USING_SMP
-    struct rt_thread *current_thread = rt_cpu_self()->current_thread;
+    register rt_base_t level;
+    rt_uint16_t nest;
 
-    return current_thread->critical_lock_nest;
+    level = rt_hw_interrupt_disable();
+#ifdef RT_USING_SMP
+    nest = rt_cpu_self()->current_thread->critical_lock_nest;
 #else
-    return rt_scheduler_lock_nest;
+    nest = rt_scheduler_lock_nest;
 #endif /* RT_USING_SMP */
+    rt_hw_interrupt_enable(level);
+    return nest;
+
 }
 RTM_EXPORT(rt_critical_level);
 

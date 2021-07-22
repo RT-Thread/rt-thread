@@ -301,9 +301,15 @@ rt_thread_t rt_thread_self(void)
     rt_hw_local_irq_enable(lock);
     return self;
 #else
-    extern rt_thread_t rt_current_thread;
+    register rt_base_t level;
+    rt_thread_t current_thread;
+    extern volatile rt_thread_t rt_current_thread;
 
-    return rt_current_thread;
+    level = rt_hw_interrupt_disable();
+    current_thread = rt_current_thread;
+    rt_hw_interrupt_enable(level);
+
+    return current_thread;
 #endif /* RT_USING_SMP */
 }
 RTM_EXPORT(rt_thread_self);

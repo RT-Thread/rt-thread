@@ -39,8 +39,14 @@ static volatile rt_tick_t rt_tick = 0;
  */
 rt_tick_t rt_tick_get(void)
 {
-    /* return the global tick */
-    return rt_tick;
+    rt_tick_t tick;
+    register rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    tick = rt_tick;
+    rt_hw_interrupt_enable(level);
+
+    return tick;
 }
 RTM_EXPORT(rt_tick_get);
 
@@ -49,7 +55,7 @@ RTM_EXPORT(rt_tick_get);
  */
 void rt_tick_set(rt_tick_t tick)
 {
-    rt_base_t level;
+    register rt_base_t level;
 
     level = rt_hw_interrupt_disable();
     rt_tick = tick;
@@ -63,7 +69,7 @@ void rt_tick_set(rt_tick_t tick)
 void rt_tick_increase(void)
 {
     struct rt_thread *thread;
-    rt_base_t level;
+    register rt_base_t level;
 
     level = rt_hw_interrupt_disable();
 
