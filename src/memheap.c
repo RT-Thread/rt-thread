@@ -438,7 +438,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                 next_ptr->pool_ptr = heap;
 
 #ifdef RT_USING_MEMTRACE
-                rt_memset(next_ptr->owner_thread_name, ' ', sizeof(next_ptr->owner_thread_name));
+                rt_memset((void *)next_ptr->owner_thread_name, ' ', sizeof(next_ptr->owner_thread_name));
 #endif /* RT_USING_MEMTRACE */
 
                 next_ptr->prev          = header_ptr;
