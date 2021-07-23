@@ -35,7 +35,7 @@ void tc_thread_entry(void* parameter)
     struct finsh_syscall* index;
 
     /* create tc semaphore */
-    rt_sem_init(&_tc_sem, "tc", 0, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&_tc_sem, "tc", 0, RT_IPC_FLAG_PRIO);
 
     do {
         for (index = _syscall_table_begin; index < _syscall_table_end; FINSH_NEXT_SYSCALL(index))
