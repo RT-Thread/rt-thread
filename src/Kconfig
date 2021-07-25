@@ -98,6 +98,11 @@ config IDLE_THREAD_STACK_SIZE
     int "The stack size of idle thread"
     default 256
 
+config SYSTEM_THREAD_STACK_SIZE
+    int "The stack size of system thread (for defunct etc.)"
+    depends on RT_USING_SMP
+    default IDLE_THREAD_STACK_SIZE
+
 config RT_USING_TIMER_SOFT
     bool "Enable software timer with a timer thread"
     default y
@@ -347,6 +352,10 @@ menu "Kernel Device Object"
         config RT_CONSOLE_DEVICE_NAME
             string "the device name for console"
             default "uart"
+
+        config RT_PRINTF_LONGLONG
+            bool "rt_kprintf support long long"
+            default n
     endif
 
 endmenu

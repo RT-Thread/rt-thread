@@ -11,11 +11,10 @@
  * 2019-09-03     xiaofan      optimize link change detection process
  */
 
-#include "board.h"
 #include "drv_config.h"
-#include <netif/ethernetif.h>
-#include "lwipopts.h"
 #include "drv_eth.h"
+#include <netif/ethernetif.h>
+#include <lwipopts.h>
 
 /*
 * Emac driver uses CubeMX tool to generate emac and phy's configuration,
