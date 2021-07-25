@@ -81,7 +81,7 @@ int semaphore_static_init(void)
     rt_err_t result;
 
     /* 初始化信号量，初始值是0 */
-    result = rt_sem_init(&sem, "sem", 0, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&sem, "sem", 0, RT_IPC_FLAG_PRIO);
     if (result != RT_EOK)
     {
         tc_stat(TC_STAT_END | TC_STAT_FAILED);

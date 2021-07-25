@@ -29,21 +29,18 @@
 /* Reentrant versions of system calls.  */
 
 #ifndef _REENT_ONLY
-int *
-__errno ()
+int *__errno ()
 {
   return _rt_errno();
 }
 #endif
 
-int
-_getpid_r(struct _reent *ptr)
+int _getpid_r(struct _reent *ptr)
 {
     return 0;
 }
 
-int
-_close_r(struct _reent *ptr, int fd)
+int _close_r(struct _reent *ptr, int fd)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -54,40 +51,35 @@ _close_r(struct _reent *ptr, int fd)
 #endif
 }
 
-int
-_execve_r(struct _reent *ptr, const char * name, char *const *argv, char *const *env)
+int _execve_r(struct _reent *ptr, const char * name, char *const *argv, char *const *env)
 {
     /* return "not supported" */
     ptr->_errno = ENOTSUP;
     return -1;
 }
 
-int
-_fcntl_r(struct _reent *ptr, int fd, int cmd, int arg)
+int _fcntl_r(struct _reent *ptr, int fd, int cmd, int arg)
 {
     /* return "not supported" */
     ptr->_errno = ENOTSUP;
     return -1;
 }
 
-int
-_fork_r(struct _reent *ptr)
+int _fork_r(struct _reent *ptr)
 {
     /* return "not supported" */
     ptr->_errno = ENOTSUP;
     return -1;
 }
 
-int
-_fstat_r(struct _reent *ptr, int fd, struct stat *pstat)
+int _fstat_r(struct _reent *ptr, int fd, struct stat *pstat)
 {
     /* return "not supported" */
     ptr->_errno = ENOTSUP;
     return -1;
 }
 
-int
-_isatty_r(struct _reent *ptr, int fd)
+int _isatty_r(struct _reent *ptr, int fd)
 {
     if (fd >=0 && fd < 3)
     {
@@ -99,24 +91,21 @@ _isatty_r(struct _reent *ptr, int fd)
     }
 }
 
-int
-_kill_r(struct _reent *ptr, int pid, int sig)
+int _kill_r(struct _reent *ptr, int pid, int sig)
 {
     /* return "not supported" */
     ptr->_errno = ENOTSUP;
     return -1;
 }
 
-int
-_link_r(struct _reent *ptr, const char *old, const char *new)
+int _link_r(struct _reent *ptr, const char *old, const char *new)
 {
     /* return "not supported" */
     ptr->_errno = ENOTSUP;
     return -1;
 }
 
-_off_t
-_lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
+_off_t _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -130,8 +119,7 @@ _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 #endif
 }
 
-int
-_mkdir_r(struct _reent *ptr, const char *name, int mode)
+int _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -145,8 +133,7 @@ _mkdir_r(struct _reent *ptr, const char *name, int mode)
 #endif
 }
 
-int
-_open_r(struct _reent *ptr, const char *file, int flags, int mode)
+int _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -160,8 +147,7 @@ _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 #endif
 }
 
-_ssize_t
-_read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
+_ssize_t _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -175,8 +161,7 @@ _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 #endif
 }
 
-int
-_rename_r(struct _reent *ptr, const char *old, const char *new)
+int _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -190,8 +175,7 @@ _rename_r(struct _reent *ptr, const char *old, const char *new)
 #endif
 }
 
-int
-_stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
+int _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -205,8 +189,7 @@ _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 #endif
 }
 
-int
-_unlink_r(struct _reent *ptr, const char *file)
+int _unlink_r(struct _reent *ptr, const char *file)
 {
 #ifndef RT_USING_DFS
     /* return "not supported" */
@@ -217,16 +200,14 @@ _unlink_r(struct _reent *ptr, const char *file)
 #endif
 }
 
-int
-_wait_r(struct _reent *ptr, int *status)
+int _wait_r(struct _reent *ptr, int *status)
 {
     /* return "not supported" */
     ptr->_errno = ENOTSUP;
     return -1;
 }
 
-_ssize_t
-_write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
+_ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
 #ifdef RT_USING_DEVICE
@@ -253,8 +234,7 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 }
 
 #ifdef RT_USING_HEAP /* Memory routine */
-void *
-_malloc_r (struct _reent *ptr, size_t size)
+void *_malloc_r (struct _reent *ptr, size_t size)
 {
     void* result;
 
@@ -267,8 +247,7 @@ _malloc_r (struct _reent *ptr, size_t size)
     return result;
 }
 
-void *
-_realloc_r (struct _reent *ptr, void *old, size_t newlen)
+void *_realloc_r (struct _reent *ptr, void *old, size_t newlen)
 {
     void* result;
 
@@ -294,8 +273,7 @@ void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
     return result;
 }
 
-void
-_free_r (struct _reent *ptr, void *addr)
+void _free_r (struct _reent *ptr, void *addr)
 {
     rt_free (addr);
 }
@@ -309,16 +287,14 @@ _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 #endif /*RT_USING_HEAP*/
 
 /* for exit() and abort() */
-__attribute__ ((noreturn)) void
-_exit (int status)
+__attribute__ ((noreturn)) void _exit (int status)
 {
     extern void __rt_libc_exit(int status);
     __rt_libc_exit(status);
     while(1);
 }
 
-void
-_system(const char *s)
+void _system(const char *s)
 {
     extern int __rt_libc_system(const char *string);
     __rt_libc_system(s);

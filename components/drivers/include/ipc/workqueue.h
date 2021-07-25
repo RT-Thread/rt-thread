@@ -64,11 +64,12 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue);
+rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *work);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time);
 rt_err_t rt_work_cancel(struct rt_work *work);
-#endif
+#endif /* RT_USING_SYSTEM_WORKQUEUE */
 
 rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_work *work, void *work_data),
                             void *work_data)
@@ -84,7 +85,6 @@ rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_wo
 void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
                           void *work_data), void *work_data);
 
-int rt_work_sys_workqueue_init(void);
-#endif
+#endif /* RT_USING_HEAP */
 
 #endif

@@ -238,6 +238,12 @@ Each peripheral supporting condition for this BSP is as follows:
 
 
 
+### 3.9 How to create RT-Studio Project
+
+- [RT-Thread RTOS Tutorial #3 | Advanced Skills - YouTube](https://www.youtube.com/watch?v=k4-ArvvIiR8)
+
+
+
 ## 4 **Advanced Features**
 
 This BSP only enables GPIO and USART1 by default. If you need more advanced features such as SPI, ADC, or to add software packages, you need to configure the BSP with RT-Thread [ENV tool](https://www.rt-thread.io/download.html?download=Env), as follows:
@@ -292,7 +298,7 @@ Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1
 
 ### 4.2 How to extend Blue Pill board’s Flash space
 
-According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM32F103C8 and STM32F103CB use the same type of silicon die, which means STM32F103C8 also has 128KB ROM in theory, but ST locked the high 64KB. Basically, to force the debugger to download program can unlock the high 64KB. There is a good news that **Keil5 will help you to unlock the Blue Pill Board high 64KB block** if you use Blue Pill Board BSP as a template to create your project. You just need to press the "Flash Download" button as usual. What you only need to remember is that Blue Pill board has 128KB of Flash rather than 64KB.
+According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM32F103C8 and STM32F103CB use the same type of silicon die, which means STM32F103C8 also has 128KB ROM in theory, but ST locked the high 64KB. Basically, to force the debugger to download program can unlock the high 64KB. There is a good news that **Keil5 / IAR / RT-Studio will help you to unlock the Blue Pill Board high 64KB block** if you use this Blue Pill Board BSP as a template to create your project. You just need to press the "Flash Download" button as usual. What you only need to remember is that Blue Pill board has 128KB of Flash rather than 64KB.
 
 
 
@@ -309,8 +315,7 @@ According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM3
 
 ## 6 Maintained By
 
-Meco Man @ RT-Thread Community
+[Meco Man](https://github.com/mysterywolf) @ RT-Thread Community
 
 jiantingman@foxmail.com 
 
-https://github.com/mysterywolf

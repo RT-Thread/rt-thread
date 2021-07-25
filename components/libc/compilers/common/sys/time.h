@@ -12,6 +12,7 @@
 #define _SYS_TIME_H_
 
 #include <rtconfig.h>
+#include <rtdef.h>
 #include <time.h>
 
 #ifdef __cplusplus
@@ -97,6 +98,12 @@ int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
 int clock_time_to_tick(const struct timespec *time);
 #endif /* RT_USING_POSIX */
+
+
+/* timezone APIs (Not standard LIBC APIs) */
+void rt_tz_set(rt_int8_t tz);
+rt_int8_t rt_tz_get(void);
+rt_int8_t rt_tz_is_dst(void);
 
 #ifdef __cplusplus
 }
