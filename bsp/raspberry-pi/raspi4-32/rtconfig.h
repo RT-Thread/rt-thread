@@ -5,7 +5,7 @@
 /* RT-Thread Project Configuration */
 
 /* RT-Thread Kernel */
-#define RT_USING_GIC_V2
+
 #define RT_NAME_MAX 8
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
@@ -43,6 +43,10 @@
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40003
 #define ARCH_ARMV8
+#define ARCH_ARM
+#define RT_USING_CPU_FFS
+#define ARCH_ARM_CORTEX_A
+#define RT_USING_GIC_V2
 
 /* RT-Thread Components */
 
