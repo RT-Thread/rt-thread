@@ -104,7 +104,7 @@ static const struct pin_irq_map pin_irq_map[] =
 #else
     {GPIO_PIN_0, EXTI0_IRQn},
     {GPIO_PIN_1, EXTI1_IRQn},
-    {GPIO_PIN_2, EXTI2_IRQn},
+    {GPIO_PIN_2, EXTI2_TSC_IRQn},
     {GPIO_PIN_3, EXTI3_IRQn},
     {GPIO_PIN_4, EXTI4_IRQn},
     {GPIO_PIN_5, EXTI9_5_IRQn},
