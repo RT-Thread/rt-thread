@@ -6,6 +6,11 @@ ARCH        ='aarch64'
 CPU         ='cortex-a53'
 CROSS_TOOL  ='gcc'
 
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.join(os.getcwd(), '..', '..')
+
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
@@ -14,10 +19,10 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = 'C:/Program Files/gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf/bin'
+    EXEC_PATH   = r'C:/Program Files/gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf/bin'
 
-# if os.getenv('RTT_EXEC_PATH'):
-#     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 # TODO : OPPO debug or not
 BUILD = 'debug'
