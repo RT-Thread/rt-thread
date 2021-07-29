@@ -12,7 +12,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <board.h>
-//#include "cp15.h"
+#include "cp15.h"
 
 int rt_hw_cpu_id(void)
 {
@@ -73,7 +73,6 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 /**
  * @addtogroup ARM CPU
  */
-/*@{*/
 
 /** shutdown CPU */
 void rt_hw_cpu_shutdown()
@@ -87,5 +86,3 @@ void rt_hw_cpu_shutdown()
         RT_ASSERT(0);
     }
 }
-
-/*@}*/
