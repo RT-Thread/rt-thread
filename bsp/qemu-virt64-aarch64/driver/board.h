@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include <rthw.h>
+#include "gic_pl400.h"
 
 #define __REG32 HWREG32
 extern unsigned char __bss_start;
