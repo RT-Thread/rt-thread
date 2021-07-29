@@ -20,8 +20,6 @@
 
 #ifdef RT_USING_RTC
 
-
-
 /**
  * Set system date(time not modify, local timezone).
  *
@@ -30,12 +28,10 @@
  * @param rt_uint32_t day   e.g: 31.
  *
  * @return rt_err_t if set success, return RT_EOK.
- *
  */
 rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
 {
     time_t now;
-    struct tm *p_tm;
     struct tm tm_new;
     rt_device_t device;
     rt_err_t ret = -RT_ERROR;
@@ -43,14 +39,8 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     /* get current time */
     now = time(RT_NULL);
 
-    /* lock scheduler. */
-    rt_enter_critical();
     /* converts calendar time into local time. */
-    p_tm = localtime(&now);
-    /* copy the statically located variable */
-    rt_memcpy(&tm_new, p_tm, sizeof(struct tm));
-    /* unlock scheduler. */
-    rt_exit_critical();
+    localtime_r(&now, &tm_new);
 
     /* update date. */
     tm_new.tm_year = year - 1900;
@@ -80,12 +70,10 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
  * @param rt_uint32_t second e.g: 0~59.
  *
  * @return rt_err_t if set success, return RT_EOK.
- *
  */
 rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 {
     time_t now;
-    struct tm *p_tm;
     struct tm tm_new;
     rt_device_t device;
     rt_err_t ret = -RT_ERROR;
@@ -93,14 +81,8 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
     /* get current time */
     now = time(RT_NULL);
 
-    /* lock scheduler. */
-    rt_enter_critical();
     /* converts calendar time into local time. */
-    p_tm = localtime(&now);
-    /* copy the statically located variable */
-    rt_memcpy(&tm_new, p_tm, sizeof(struct tm));
-    /* unlock scheduler. */
-    rt_exit_critical();
+    localtime_r(&now, &tm_new);
 
     /* update time. */
     tm_new.tm_hour = hour;
