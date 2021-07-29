@@ -6,7 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-10-10     aozima       first version.
- * 2021-06-11     iysheng      implement RTC v2.0
+ * 2021-06-11     iysheng      implement RTC framework V2.0
+ * 2021-07-30     Meco Man     move rtc_core.h to rtc.h
  */
 
 #ifndef __RTC_H__
@@ -38,7 +39,7 @@ typedef struct rt_rtc_device
     const struct rt_rtc_ops *ops;
 } rt_rtc_dev_t;
 
-rt_err_t rt_hw_rtc_register(rt_rtc_dev_t *rtc,
+rt_err_t rt_hw_rtc_register(rt_rtc_dev_t  *rtc,
                             const char    *name,
                             rt_uint32_t    flag,
                             void          *data);

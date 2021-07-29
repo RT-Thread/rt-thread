@@ -265,8 +265,8 @@ static rt_err_t stm32_rtc_set_secs(void *args)
 static const struct rt_rtc_ops stm32_rtc_ops =
 {
     stm32_rtc_init,
-    stm32_rtc_get_secs, /* get_secs */
-    stm32_rtc_set_secs, /* set secs */
+    stm32_rtc_get_secs,
+    stm32_rtc_set_secs,
     RT_NULL,
     RT_NULL,
     RT_NULL,
