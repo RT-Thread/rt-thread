@@ -8,6 +8,10 @@
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01
 
+#if defined(__RASPI_H__) || defined(BCM283X_H__)
+#define BSP_IS_RASPI
+#endif
+
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);

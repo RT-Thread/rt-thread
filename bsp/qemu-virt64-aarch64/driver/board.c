@@ -72,7 +72,7 @@ void rt_hw_board_init(void)
     cont -= 0x40000000;
     cont >>= 21;
     /* TODO : OPPO replace memory location*/
-    armv8_map_2M(0x40000000, 0x40000000, cont, MEM_ATTR_MORMAL);
+    armv8_map_2M(0x40000000, 0x40000000, cont, MEM_ATTR_MEMORY);
     /* TODO : OPPO replace uart location*/
     armv8_map_2M(0x09000000, 0x09000000, 0x1, MEM_ATTR_IO);
     /* TODO : OPPO replace gic location*/

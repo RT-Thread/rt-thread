@@ -45,7 +45,7 @@ struct gic_dist_map {
     uint32_t dist_ident;            /* 0x008 */
     uint32_t res1[29];              /* [0x00C, 0x080) */
 
-    uint32_t group[32];          /* [0x080, 0x100) */
+    uint32_t group[32];             /* [0x080, 0x100) */
 
     uint32_t enable_set[32];        /* [0x100, 0x180) */
     uint32_t enable_clr[32];        /* [0x180, 0x200) */
@@ -60,11 +60,11 @@ struct gic_dist_map {
     uint32_t targets[255];          /* [0x800, 0xBFC) */
     uint32_t res3;                  /* 0xBFC */
 
-    uint32_t config[64];             /* [0xC00, 0xD00) */
+    uint32_t config[64];            /* [0xC00, 0xD00) */
 
     uint32_t ppi_status;            /* [0xD00, 0xD04) */
     uint32_t spi_status[15];        /* [0xD04, 0xD40) */
-    uint32_t res4[112];              /* [0xD40, 0xF00) */
+    uint32_t res4[112];             /* [0xD40, 0xF00) */
 
     uint32_t sgi_control;           /* 0xF00 */
     uint32_t res5[3];               /* [0xF04, 0xF10) */
@@ -72,7 +72,7 @@ struct gic_dist_map {
     uint32_t sgi_pending_set[4];    /* [0xF20, 0xF30) */
     uint32_t res10[40];             /* [0xF30, 0xFD0) */
 
-    uint32_t periph_id[8];         /* [0xFD0, 0xFF0) */
+    uint32_t periph_id[8];          /* [0xFD0, 0xFF0) */
     uint32_t component_id[4];       /* [0xFF0, 0xFFF] */
 };
 
@@ -91,12 +91,12 @@ struct gic_cpu_iface_map {
     uint32_t ns_alias_eoi;          /*  0x024 GIC_PL400 only */
     uint32_t ns_alias_hi_pend;      /*  0x028 GIC_PL400 only */
 
-    uint32_t res1[41];              /* [0x02C, 0x0D0) */
+    uint32_t res1[41];              /* [0x02C, 0x0D0)               */
     uint32_t active_priority[4];    /* [0x0D0, 0xC0] GIC_PL400 only */
-    uint32_t ns_active_priority[4]; /* [0xE0,0xF0] GIC_PL400 only */
+    uint32_t ns_active_priority[4]; /* [0xE0,0xF0] GIC_PL400 only   */
     uint32_t res4[3];               /* [0xF0, 0xFC] */
 
-    uint32_t cpu_if_ident;          /*  0x0FC         */
+    uint32_t cpu_if_ident;          /*  0x0FC   */
     uint32_t deactive;              /* [0x1000] */
 };
 
@@ -196,13 +196,6 @@ static void dist_init(void)
     int nirqs = 32 * ((gic_dist->ic_type & 0x1f) + 1);
     gic_dist->enable = 0;
 
-#if 0
-    /* configure to group 0 for security */
-    for (i = 0; i < nirqs; i += 32) {
-        gic_dist->group[i / 32] = 0xffffffff;
-    }
-#endif
-
     for (i = 0; i < nirqs; i += 32) {
         /* disable */
         gic_dist->enable_clr[i / 32] = IRQ_SET_ALL;
@@ -268,7 +261,6 @@ void initIRQController(void)
     dist_init();
     cpu_iface_init();
 }
-
 
 
 /*

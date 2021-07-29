@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,15 +7,17 @@
  * Date           Author       Notes
  * 2018/5/3       Bernard      first version
  * 2019-07-28     zdzn         add smp support
- * 2019-08-09     zhangjun     fixup the problem of smp startup and scheduling issues, 
+ * 2019-08-09     zhangjun     fixup the problem of smp startup and scheduling issues,
  *                             write addr to mailbox3 to startup smp, and we use mailbox0 for ipi
  */
 
 #include <rthw.h>
-#include <rtthread.h>
-#include <gic_pl400.h>
 #include <board.h>
-#include <armv8.h>
+#include <rtthread.h>
+
+#include "cp15.h"
+#include "armv8.h"
+#include "interrupt.h"
 
 #define MAX_HANDLERS                72
 
@@ -39,13 +41,94 @@ void rt_hw_vector_init(void)
     rt_hw_set_current_vbar((rt_ubase_t)&system_vectors);  // cpu_gcc.S
 }
 
+#ifdef BSP_IS_RASPI
+static void default_isr_handler(int vector, void *param)
+{
+#ifdef RT_USING_SMP
+    rt_kprintf("cpu %d unhandled irq: %d\n", rt_hw_cpu_id(),vector);
+#else
+    rt_kprintf("unhandled irq: %d\n",vector);
+#endif
+}
+#endif /* BSP_IS_RASPI */
+
 /**
  * This function will initialize hardware interrupt
  */
 void rt_hw_interrupt_init(void)
 {
+#ifdef BSP_IS_RASPI
+    rt_uint32_t index;
+
+    /* mask all of interrupts */
+    IRQ_DISABLE_BASIC = 0x000000ff;
+    IRQ_DISABLE1      = 0xffffffff;
+    IRQ_DISABLE2      = 0xffffffff;
+    for (index = 0; index < MAX_HANDLERS; index ++)
+    {
+        isr_table[index].handler = default_isr_handler;
+        isr_table[index].param = NULL;
+#ifdef RT_USING_INTERRUPT_INFO
+        rt_strncpy(isr_table[index].name, "unknown", RT_NAME_MAX);
+        isr_table[index].counter = 0;
+#endif
+    }
+
+    /* init interrupt nest, and context in thread sp */
+    rt_interrupt_nest = 0;
+    rt_interrupt_from_thread = 0;
+    rt_interrupt_to_thread = 0;
+    rt_thread_switch_interrupt_flag = 0;
+#else
     initIRQController();
+#endif /* BSP_IS_RASPI */
 }
+
+#ifdef BSP_IS_RASPI
+/**
+ * This function will mask a interrupt.
+ * @param vector the interrupt number
+ */
+void rt_hw_interrupt_mask(int vector)
+{
+    if (vector < 32)
+    {
+        IRQ_DISABLE1 = (1 << vector);
+    }
+    else if (vector<64)
+    {
+        vector = vector % 32;
+        IRQ_DISABLE2 = (1 << vector);
+    }
+    else
+    {
+        vector = vector - 64;
+        IRQ_DISABLE_BASIC = (1 << vector);
+    }
+}
+
+/**
+ * This function will un-mask a interrupt.
+ * @param vector the interrupt number
+ */
+void rt_hw_interrupt_umask(int vector)
+{
+    if (vector < 32)
+    {
+        IRQ_ENABLE1 = (1 << vector);
+    }
+    else if (vector < 64)
+    {
+        vector = vector % 32;
+        IRQ_ENABLE2 = (1 << vector);
+    }
+    else
+    {
+        vector = vector - 64;
+        IRQ_ENABLE_BASIC = (1 << vector);
+    }
+}
+#endif /* BSP_IS_RASPI */
 
 /**
  * This function will install a interrupt service routine to a interrupt.
@@ -85,15 +168,15 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
     }
     if(cpu_mask & 0x2)
     {
-    	send_ipi_msg(1, ipi_vector);
+        send_ipi_msg(1, ipi_vector);
     }
     if(cpu_mask & 0x4)
     {
-    	send_ipi_msg(2, ipi_vector);
+        send_ipi_msg(2, ipi_vector);
     }
     if(cpu_mask & 0x8)
     {
-    	send_ipi_msg(3, ipi_vector);
+        send_ipi_msg(3, ipi_vector);
     }
     __DSB();
 }

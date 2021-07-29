@@ -5,15 +5,7 @@ from building import *
 Import('rtconfig')
 
 cwd     = GetCurrentDir()
-src     = Split('''
-context_gcc.S
-cpu.c
-cpu_gcc.S
-mmu.c
-startup_gcc.S
-vector_gcc.S
-cache.S
-''')
+src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
 CPPPATH = [cwd]
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
