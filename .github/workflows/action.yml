@@ -146,6 +146,15 @@ jobs:
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 
+      # Copied from https://github.com/jens-maus/RaspberryMatic/blob/ea6b8ce0dd2d53ea88b2766ba8d7f8e1d667281f/.github/workflows/ci.yml#L34-L40
+      # and https://github.com/actions/virtual-environments/issues/709#issuecomment-612569242
+      - name: Free disk space
+        run: |
+          df --human-readable
+          sudo apt clean
+          docker rmi $(docker image ls --all --quiet)
+          df --human-readable
+
       - name: Install Arm ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && success() }}
         shell: bash
