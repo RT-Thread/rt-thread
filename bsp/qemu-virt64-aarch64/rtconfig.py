@@ -21,8 +21,8 @@ if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = r'C:/Program Files/gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf/bin'
 
-# if os.getenv('RTT_EXEC_PATH'):
-#     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 # TODO : OPPO debug or not
 BUILD = 'debug'

@@ -26,4 +26,3 @@ extern unsigned char __bss_end;
 void rt_hw_board_init(void);
 
 #endif
-

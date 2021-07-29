@@ -15,4 +15,3 @@
 int rt_hw_uart_init(void);
 
 #endif /* DRV_UART_H__ */
-

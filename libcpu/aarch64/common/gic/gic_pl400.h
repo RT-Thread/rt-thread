@@ -58,4 +58,3 @@ void arm_gic_dump_type(rt_uint32_t index);
 void arm_gic_dump(rt_uint32_t index);
 
 #endif
-
