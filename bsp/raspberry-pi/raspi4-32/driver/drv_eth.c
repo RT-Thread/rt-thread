@@ -99,7 +99,7 @@ static void eth_rx_irq(int irq, void *param)
 
     if (val & GENET_IRQ_TXDMA_DONE)
     {
-    rt_sem_release(&send_finsh_sem_lock);
+        rt_sem_release(&send_finsh_sem_lock);
     }
 }
 
@@ -192,8 +192,9 @@ static int bcmgenet_mdio_write(rt_uint32_t addr, rt_uint32_t reg, rt_uint32_t va
     write32(MAC_REG + MDIO_CMD, reg_val);
 
     while ((read32(MAC_REG + MDIO_CMD) & MDIO_START_BUSY) && (--count))
+    {
         DELAY_MICROS(1);
-
+    }
     reg_val = read32(MAC_REG + MDIO_CMD);
 
     return reg_val & 0xffff;
@@ -213,8 +214,9 @@ static int bcmgenet_mdio_read(rt_uint32_t addr, rt_uint32_t reg)
     write32(MAC_REG + MDIO_CMD, reg_val);
 
     while ((read32(MAC_REG + MDIO_CMD) & MDIO_START_BUSY) && (--count))
+    {
         DELAY_MICROS(1);
-
+    }
     reg_val = read32(MAC_REG + MDIO_CMD);
 
     return reg_val & 0xffff;
@@ -396,8 +398,9 @@ static int bcmgenet_gmac_eth_start(void)
 
     /* wait tx index clear */
     while ((read32(MAC_REG + TDMA_CONS_INDEX) != 0) && (--count))
+    {
         DELAY_MICROS(1);
-
+    }
     tx_index = read32(MAC_REG + TDMA_CONS_INDEX);
     write32(MAC_REG + TDMA_PROD_INDEX, tx_index);
 
