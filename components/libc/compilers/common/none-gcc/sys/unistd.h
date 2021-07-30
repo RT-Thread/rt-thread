@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2020-12-16     Meco Man     add usleep
  */
-#ifndef _SYS_UNISTD_H
-#define _SYS_UNISTD_H
+#ifndef __SYS_UNISTD_H__
+#define __SYS_UNISTD_H__
 
 #include <rtconfig.h>
 #include "types.h"
