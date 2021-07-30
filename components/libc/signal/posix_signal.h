@@ -15,7 +15,6 @@
 extern "C" {
 #endif
 
-#include <rtthread.h>
 #include <sys/signal.h>
 
 enum rt_signal_value{
