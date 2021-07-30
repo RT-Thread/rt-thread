@@ -4,7 +4,7 @@
 
 file_path:
 - bsp/allwinner_tina/libcpu/cpu.c
-
+- bsp/stm32/libraries
 dir_path:
 - tools
 - components/net/lwip-1.4.1
