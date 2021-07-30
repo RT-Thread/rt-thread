@@ -31,10 +31,9 @@ menu "Onboard Peripheral Drivers"
                     bool "DM9161CEP"
 				
 				config PHY_USING_LAN8742A
-                    bool "LAN8742A"
-
-            endchoice
-        endif
+					bool "LAN8742A"	
+			endchoice
+		endif
  
 endmenu
 

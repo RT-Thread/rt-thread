@@ -48,7 +48,7 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart3"
 /* end of Kernel Device Object */
-#define RT_VER_NUM 0x40003
+#define RT_VER_NUM 0x40004
 /* end of RT-Thread Kernel */
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
@@ -97,9 +97,12 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_RTC
+#define RT_USING_SOFT_RTC
 #define RT_USING_SPI
 
 /* Using USB */
@@ -111,6 +114,7 @@
 
 #define RT_USING_LIBC
 #define RT_USING_POSIX
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 /* end of POSIX layer and C standard library */
 
 /* Network */
