@@ -327,8 +327,8 @@ void
 ackInterrupt(irq_t irq)
 {
     if (!(IS_IRQ_VALID(active_irq) && (active_irq & IRQ_MASK) == irq)) {
-		return;
-	}
+        return;
+    }
     if (is_irq_edge_triggered(irq)) {
         dist_pending_clr(irq);
     }

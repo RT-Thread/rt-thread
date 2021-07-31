@@ -258,4 +258,3 @@ void arm_gic_set_group(rt_uint32_t index, int vector, int group)
                         vector) |=  (1 << (vector % 32));
     }
 }
-

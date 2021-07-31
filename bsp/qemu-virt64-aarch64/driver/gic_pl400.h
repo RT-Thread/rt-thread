@@ -1,4 +1,3 @@
-
 #ifndef __ARCH_MACHINE_GIC_PL400_H
 #define __ARCH_MACHINE_GIC_PL400_H
 
