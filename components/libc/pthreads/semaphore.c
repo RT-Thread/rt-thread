@@ -319,7 +319,7 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
         return EINVAL;
 
     /* calculate os tick */
-    tick = clock_time_to_tick(abs_timeout);
+    tick = rt_timespec_to_tick(abs_timeout);
 
     result = rt_sem_take(sem->sem, tick);
     if (result == -RT_ETIMEOUT)
