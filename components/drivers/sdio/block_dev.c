@@ -515,15 +515,3 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
         }
     }
 }
-
-/*
- * This function will initialize block device on the mmc/sd.
- *
- * @deprecated since 2.1.0, this function does not need to be invoked
- * in the system initialization.
- */
-int rt_mmcsd_blk_init(void)
-{
-    /* nothing */
-    return 0;
-}
