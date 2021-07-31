@@ -83,7 +83,7 @@ int sigtimedwait(const sigset_t *set, siginfo_t *info,
 
     if (timeout)
     {
-        tick = clock_time_to_tick(timeout);
+        tick = rt_timespec_to_tick(timeout);
     }
 
     ret = rt_signal_wait(set, info, tick);
