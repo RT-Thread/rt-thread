@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017-5-30      Bernard      the first version
+ * 2021-7-31      GUI          add virt64_aarch64 definition
  */
 
 #ifndef BOARD_H__
@@ -13,10 +14,9 @@
 
 #include <stdint.h>
 
+#include "virt64_aarch64.h"
 #include <rthw.h>
-#include "gic_pl400.h"
 
-#define __REG32 HWREG32
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
 

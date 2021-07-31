@@ -5,6 +5,7 @@
  *
  * Date           Author       Notes
  * 2018-10-06     ZhaoXiaowei    the first version
+ * 2021-07-31     GUI          Add gic_pl390 branch
  */
 
 #include <rtthread.h>
@@ -12,6 +13,10 @@
 
 #include "interrupt.h"
 #include "armv8.h"
+
+#ifdef BSP_USING_GIC390
+#include <gic_pl390.h>
+#endif
 
 extern struct rt_thread *rt_current_thread;
 #ifdef RT_USING_FINSH
@@ -59,11 +64,6 @@ void rt_hw_trap_error(struct rt_hw_exp_stack *regs)
 #define GIC_ACK_INTID_MASK              (0x000003ff)
 #define CORE0_IRQ_SOURCE                (0x40000060)
 
-#ifndef BSP_IS_RASPI
-int rt_hw_interrupt_get_irq(void);
-void rt_hw_interrupt_ack(int fiq_irq);
-#endif /* BSP_IS_RASPI */
-
 void rt_hw_trap_irq(void)
 {
     void *param;
@@ -71,7 +71,7 @@ void rt_hw_trap_irq(void)
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
-#ifdef BSP_IS_RASPI
+#ifndef BSP_USING_GIC390
     uint32_t value = 0;
     value = IRQ_PEND_BASIC & 0x3ff;
 #ifdef BSP_USING_CORETIMER
@@ -108,14 +108,14 @@ void rt_hw_trap_irq(void)
             irq = __rt_ffs(value) + 63;
         }
 #else
-    irq = rt_hw_interrupt_get_irq();
+    irq = arm_gic_get_active_irq();
 
     if (irq == 1023)
     {
         /* Spurious interrupt */
         return;
     }
-#endif /* BSP_IS_RASPI */
+#endif
 
         /* get interrupt service routine */
         isr_func = isr_table[irq].handler;
@@ -129,17 +129,17 @@ void rt_hw_trap_irq(void)
             /* turn to interrupt service routine */
             isr_func(irq, param);
         }
-#ifdef BSP_IS_RASPI
+#ifndef BSP_USING_GIC390
     }
 #else
     /* end of interrupt */
-    rt_hw_interrupt_ack(irq);
-#endif /* BSP_IS_RASPI */
+    arm_gic_ack(irq);
+#endif
 }
 
 void rt_hw_trap_fiq(void)
 {
-#ifdef BSP_IS_RASPI
+#ifndef BSP_USING_GIC390
     void *param;
     uint32_t irq;
     rt_isr_handler_t isr_func;
@@ -221,5 +221,5 @@ void rt_hw_trap_fiq(void)
             isr_func(irq, param);
         }
     }
-#endif /* BSP_IS_RASPI */
+#endif
 }

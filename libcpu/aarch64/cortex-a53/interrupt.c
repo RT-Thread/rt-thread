@@ -9,15 +9,20 @@
  * 2019-07-28     zdzn         add smp support
  * 2019-08-09     zhangjun     fixup the problem of smp startup and scheduling issues,
  *                             write addr to mailbox3 to startup smp, and we use mailbox0 for ipi
+ * 2021-07-31     GUI          Add gic pl390 branch
  */
 
 #include <rthw.h>
-#include <board.h>
 #include <rtthread.h>
+#include <board.h>
 
 #include "cp15.h"
 #include "armv8.h"
 #include "interrupt.h"
+
+#ifdef BSP_USING_GIC390
+#include <gic_pl390.h>
+#endif
 
 #define MAX_HANDLERS                72
 
@@ -41,7 +46,7 @@ void rt_hw_vector_init(void)
     rt_hw_set_current_vbar((rt_ubase_t)&system_vectors);  // cpu_gcc.S
 }
 
-#ifdef BSP_IS_RASPI
+#ifndef BSP_USING_GIC
 static void default_isr_handler(int vector, void *param)
 {
 #ifdef RT_USING_SMP
@@ -50,14 +55,16 @@ static void default_isr_handler(int vector, void *param)
     rt_kprintf("unhandled irq: %d\n",vector);
 #endif
 }
-#endif /* BSP_IS_RASPI */
+#endif
 
 /**
  * This function will initialize hardware interrupt
  */
 void rt_hw_interrupt_init(void)
 {
-#ifdef BSP_IS_RASPI
+#ifdef BSP_USING_GIC390
+    arm_gic_irq_init();
+#else
     rt_uint32_t index;
 
     /* mask all of interrupts */
@@ -79,18 +86,18 @@ void rt_hw_interrupt_init(void)
     rt_interrupt_from_thread = 0;
     rt_interrupt_to_thread = 0;
     rt_thread_switch_interrupt_flag = 0;
-#else
-    initIRQController();
-#endif /* BSP_IS_RASPI */
+#endif
 }
 
-#ifdef BSP_IS_RASPI
 /**
  * This function will mask a interrupt.
  * @param vector the interrupt number
  */
 void rt_hw_interrupt_mask(int vector)
 {
+#ifdef BSP_USING_GIC390
+    arm_gic_mask(vector);
+#else
     if (vector < 32)
     {
         IRQ_DISABLE1 = (1 << vector);
@@ -105,6 +112,7 @@ void rt_hw_interrupt_mask(int vector)
         vector = vector - 64;
         IRQ_DISABLE_BASIC = (1 << vector);
     }
+#endif
 }
 
 /**
@@ -113,6 +121,9 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
+#ifdef BSP_USING_GIC390
+    arm_gic_umask(vector);
+#else
     if (vector < 32)
     {
         IRQ_ENABLE1 = (1 << vector);
@@ -127,8 +138,8 @@ void rt_hw_interrupt_umask(int vector)
         vector = vector - 64;
         IRQ_ENABLE_BASIC = (1 << vector);
     }
+#endif
 }
-#endif /* BSP_IS_RASPI */
 
 /**
  * This function will install a interrupt service routine to a interrupt.

@@ -10,14 +10,17 @@
 .section ".text.entrypoint"
 
 .set EL1_stack,         __el1_stack
+
 .extern entry
 .global _start
-// TODO ： OPPO replace startup code before .L__in_el1
+
+// This symbol is set to 0x80000 in ld script. That is the address that raspi3's firmware
+// loads 'kernel8.img' file in.
 _start:
     // read cpu id, stop slave cores
-    mrs     x1, mpidr_el1               // MPIDR_EL1: Multi-Processor Affinity Register
+    mrs     x1, mpidr_el1           // MPIDR_EL1: Multi-Processor Affinity Register
     and     x1, x1, #3
-    cbz     x1, .L__cpu_0               // .L prefix is the local label in ELF
+    cbz     x1, .L__cpu_0           // .L prefix is the local label in ELF
 
     // cpu id > 0, stop
     // cpu id == 0 will also goto here after returned from entry() if possible
@@ -33,7 +36,6 @@ _start:
     // ldr  x2, =EL1_stack
     // mov  sp, x2
 
-    // TODO ： OPPO keep stack settings
     ldr     x1, =init_el1_stack_limit
 
     // set up EL1
@@ -87,11 +89,11 @@ _start:
     mov     x1, #0x00300000         // Don't trap any SIMD/FP instructions in both EL0 and EL1
     msr     cpacr_el1, x1
 
-    mrs x1, sctlr_el1
-    orr x1, x1, #(1 << 12)
-    bic x1, x1, #(3 << 3)
-    bic x1, x1, #(1 << 1)
-    msr sctlr_el1, x1
+    mrs     x1, sctlr_el1
+    orr     x1, x1, #(1 << 12)
+    bic     x1, x1, #(3 << 3)
+    bic     x1, x1, #(1 << 1)
+    msr     sctlr_el1, x1
 
     // clear bss
     ldr     x1, =__bss_start

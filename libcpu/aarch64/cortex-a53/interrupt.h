@@ -14,10 +14,6 @@
 #include <rthw.h>
 #include <board.h>
 
-#if defined(__RASPI_H__) || defined(BCM283X_H__)
-#define BSP_IS_RASPI
-#endif
-
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01
 

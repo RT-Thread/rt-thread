@@ -13,22 +13,17 @@
 #include <rtdevice.h>
 
 #include "board.h"
-#include "pl011.h"
+#include "virt64_aarch64.h"
 
-#include <rtdevice.h>
-
-/* TODO : OPPO replace PL011 by your hw*/
-
-#define PL011_UART0_BASE        0x09000000
-
-unsigned int readl(volatile void *addr) {
+unsigned int readl(volatile void *addr)
+{
     return *(volatile unsigned int *)addr;
 }
 
-void writel(unsigned int v, volatile void *addr) {
+void writel(unsigned int v, volatile void *addr)
+{
     *(volatile unsigned int *)addr = v;
 }
-
 
 struct hw_uart_device
 {
@@ -38,12 +33,6 @@ struct hw_uart_device
 
 static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    /*
-       struct hw_uart_device *uart;
-
-       RT_ASSERT(serial != RT_NULL);
-       uart = (struct hw_uart_device *)serial->parent.user_data;
-     */
     return RT_EOK;
 }
 
@@ -84,9 +73,9 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    while (readl((volatile void *)(uart->hw_base + UARTFR)) & (1 << PL011_UARTFR_TXFF_BIT))
+    while (readl((volatile void *)(uart->hw_base + PL011_UARTFR)) & (1 << PL011_UARTFR_TXFF_BIT))
         ;
-    writel(c, (volatile void *)( uart->hw_base + UARTDR));
+    writel(c, (volatile void *)( uart->hw_base + PL011_UARTDR));
 
     return 1;
 }

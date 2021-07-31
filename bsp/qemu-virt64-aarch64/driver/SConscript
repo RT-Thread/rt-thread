@@ -6,7 +6,6 @@ cwd     = GetCurrentDir()
 src     = Split('''
 board.c
 drv_uart.c
-gic_pl400.c
 exception.c
 ''')
 CPPPATH = [cwd]

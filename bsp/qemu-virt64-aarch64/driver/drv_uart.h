@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,6 @@
  * Date           Author       Notes
  * 2017-5-30      Bernard      the first version
  */
-
 
 #ifndef DRV_UART_H__
 #define DRV_UART_H__

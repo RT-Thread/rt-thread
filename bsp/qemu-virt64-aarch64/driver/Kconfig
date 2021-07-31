@@ -19,6 +19,16 @@ menu "Hardware Drivers Config"
                     bool "Enabel UART 1"
                     default n
             endif
+
+        menuconfig BSP_USING_GIC
+            bool "Enable GIC"
+            select RT_USING_GIC
+            default y
+        if BSP_USING_GIC
+            config BSP_USING_GIC390
+                bool "Enable GIC390"
+                default y
+        endif
          
         config BSP_USING_PIN
             bool "Using PIN"

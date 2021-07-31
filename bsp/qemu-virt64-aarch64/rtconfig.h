@@ -186,6 +186,8 @@
 
 #define BSP_USING_UART
 #define RT_USING_UART0
+#define BSP_USING_GIC
+#define BSP_USING_GIC390
 #define BSP_USING_PIN
 
 /* Board Peripheral Drivers */
