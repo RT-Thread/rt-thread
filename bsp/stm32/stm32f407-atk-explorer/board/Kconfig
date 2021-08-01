@@ -71,26 +71,27 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
 
-    menuconfig BSP_USING_FS
-        bool "Enable filesystem"
-        select RT_USING_DFS
-        select RT_USING_DFS_ROMFS
-        default n
+    menu "Enable File System"
+        config BSP_USING_FS
+            bool
+            default n
 
-        if BSP_USING_FS
-            config BSP_USING_SDCARD
-                bool "Enable SDCARD (FATFS)"
-                select BSP_USING_SDIO
-                select RT_USING_DFS
-                select RT_USING_DFS_ELMFAT
-                default n
+        config BSP_USING_SDCARD
+            bool "Enable SDCARD (FATFS)"
+            select BSP_USING_SDIO
+            select RT_USING_DFS
+            select RT_USING_DFS_ELMFAT
+            select RT_USING_DFS_ROMFS
+            select BSP_USING_FS
+            select RT_USING_SYSTEM_WORKQUEUE
+            default n
 
-            config SDIO_MAX_FREQ
-                int "sdio max freq"
-                range 0 24000000
-                depends on BSP_USING_SDCARD
-                default 1000000
-        endif
+        config SDIO_MAX_FREQ
+            int "sdio max freq"
+            range 0 24000000
+            depends on BSP_USING_SDCARD
+            default 1000000
+    endmenu
 
 endmenu
 
