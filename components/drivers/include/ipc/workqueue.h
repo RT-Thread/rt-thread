@@ -5,6 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-08-01     Meco Man     remove rt_delayed_work_init() and rt_delayed_work structure
  */
 #ifndef WORKQUEUE_H__
 #define WORKQUEUE_H__
@@ -48,11 +49,6 @@ struct rt_work
     struct rt_workqueue *workqueue;
 };
 
-struct rt_delayed_work
-{
-    struct rt_work work;
-};
-
 #ifdef RT_USING_HEAP
 /**
  * WorkQueue for DeviceDriver
@@ -81,9 +77,6 @@ rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_wo
     work->flags = 0;
     work->type = 0;
 }
-
-void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
-                          void *work_data), void *work_data);
 
 #endif /* RT_USING_HEAP */
 
