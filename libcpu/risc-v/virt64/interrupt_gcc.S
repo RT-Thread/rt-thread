@@ -108,7 +108,14 @@ trap_entry:
     la    sp, __stack_start__
     addi  t1, t0, 1
     li    t2, __STACKSIZE__
-    mul   t1, t1, t2
+    /*mul   t1, t1, t2*/
+    li    t3, 0
+mul_begin:
+    add   t3, t3, t2
+    addi  t1, t1, -1
+    bnez  t1, mul_begin
+    mv    t1, t3
+
     add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
 
     /* handle interrupt */
