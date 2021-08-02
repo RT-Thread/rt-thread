@@ -10,7 +10,7 @@
 #ifndef DFS_SELECT_H__
 #define DFS_SELECT_H__
 
-#include <libc/libc_fdset.h>
+#include <sys/select.h>
 
 #ifdef __cplusplus
 extern "C" {

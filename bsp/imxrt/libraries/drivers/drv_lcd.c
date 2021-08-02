@@ -42,7 +42,7 @@ struct imxrt_lcd
 };
 
 static struct imxrt_lcd lcd;
-ALIGN(64) static uint16_t frame_buffer[LCD_HEIGHT][LCD_WIDTH] RT_SECTION("NonCacheable");
+AT_NONCACHEABLE_SECTION_ALIGN(static uint16_t frame_buffer[LCD_HEIGHT][LCD_WIDTH], 64);
 
 static rt_err_t imxrt_lcd_init(rt_device_t device)
 {
