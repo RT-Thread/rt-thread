@@ -49,6 +49,26 @@ scons generates a UF2 file:
 - Copy the rtthread-pico.uf2 file to the "RPI-RP2" disk
 - Then led blink.
 
+### Attentions
+
+If there is a compiling error, when you are using `scons` command to compile the project in the ENV tool:
+
+```
+libraries\pico-sdk\src\rp2_common\hardware_irq\irq_handler_chain.S:54: Error: junk at end of line, first unrecognized character is `u'
+libraries\pico-sdk\src\rp2_common\hardware_irq\irq_handler_chain.S:54: Error: bad instruction `u'
+libraries\pico-sdk\src\rp2_common\hardware_irq\irq_handler_chain.S:54: Error: junk at end of line, first unrecognized character is `u'
+scons: *** [build\libraries\pico-sdk\src\rp2_common\hardware_irq\irq_handler_chain.o] Error 1
+scons: building terminated because of errors.
+```
+
+You need to set the path of compiler :
+
+```
+set RTT_CC=gcc
+set RTT_EXEC_PATH=D:/softwareRaspberryPi-Picogcc2020-q4-majorbin
+scons
+```
+
 ## Running Result
 
 The output information on serial port should be like this:
