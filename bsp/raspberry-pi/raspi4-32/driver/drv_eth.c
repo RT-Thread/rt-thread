@@ -418,7 +418,7 @@ static int bcmgenet_gmac_eth_start(void)
 
     write32(MAC_REG + UMAC_CMD, rx_tx_en);
 
-    // eanble IRQ for TxDMA done and RxDMA done
+    /* eanble IRQ for TxDMA done and RxDMA done */
     write32(MAC_REG + GENET_INTRL2_CPU_CLEAR_MASK, GENET_IRQ_TXDMA_DONE | GENET_IRQ_RXDMA_DONE);
     return 0;
 }
@@ -692,7 +692,7 @@ int rt_hw_eth_init(void)
     eth_dev.parent.eth_rx            = rt_eth_rx;
 
     eth_device_init(&(eth_dev.parent), "e0");
-    eth_device_linkchange(&eth_dev.parent, RT_FALSE);   //link down
+    eth_device_linkchange(&eth_dev.parent, RT_FALSE);
     return 0;
 }
 INIT_COMPONENT_EXPORT(rt_hw_eth_init);
