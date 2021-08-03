@@ -169,7 +169,7 @@ static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
         /* get mac address */
         if (args)
         {
-            rt_memcpy(args, stm32_eth_device.dev_addr, 6);
+            SMEMCPY(args, stm32_eth_device.dev_addr, 6);
         }
         else
         {
@@ -220,7 +220,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
         while ((byteslefttocopy + bufferoffset) > ETH_TX_BUF_SIZE)
         {
             /* Copy data to Tx buffer*/
-            rt_memcpy((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset));
+            SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), (ETH_TX_BUF_SIZE - bufferoffset));
 
             /* Point to next descriptor */
             DmaTxDesc = (ETH_DMADescTypeDef *)(DmaTxDesc->Buffer2NextDescAddr);
@@ -242,7 +242,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
         }
 
         /* Copy the remaining bytes */
-        rt_memcpy((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), byteslefttocopy);
+        SMEMCPY((uint8_t *)((uint8_t *)buffer + bufferoffset), (uint8_t *)((uint8_t *)q->payload + payloadoffset), byteslefttocopy);
         bufferoffset = bufferoffset + byteslefttocopy;
         framelength = framelength + byteslefttocopy;
     }
@@ -333,7 +333,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
             while ((byteslefttocopy + bufferoffset) > ETH_RX_BUF_SIZE)
             {
                 /* Copy data to pbuf */
-                rt_memcpy((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), (ETH_RX_BUF_SIZE - bufferoffset));
+                SMEMCPY((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), (ETH_RX_BUF_SIZE - bufferoffset));
 
                 /* Point to next descriptor */
                 dmarxdesc = (ETH_DMADescTypeDef *)(dmarxdesc->Buffer2NextDescAddr);
@@ -344,7 +344,7 @@ struct pbuf *rt_stm32_eth_rx(rt_device_t dev)
                 bufferoffset = 0;
             }
             /* Copy remaining data in pbuf */
-            rt_memcpy((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), byteslefttocopy);
+            SMEMCPY((uint8_t *)((uint8_t *)q->payload + payloadoffset), (uint8_t *)((uint8_t *)buffer + bufferoffset), byteslefttocopy);
             bufferoffset = bufferoffset + byteslefttocopy;
         }
     }
