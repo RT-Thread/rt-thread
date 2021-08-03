@@ -1,5 +1,14 @@
 # RT-Thread #
 
+Build from repository
+----------------------
+
+      $  git clone https://github.com/OSCPU/rt-thread.git
+      $  cd rt-thread/bsp/qemu-riscv-virt64
+      $  scons
+
+The rest of the document is the introduction to RT-Thread.
+
 [中文页](README_zh.md) |
 
 [![GitHub](https://img.shields.io/github/license/RT-Thread/rt-thread.svg)](https://github.com/RT-Thread/rt-thread/blob/master/LICENSE)
