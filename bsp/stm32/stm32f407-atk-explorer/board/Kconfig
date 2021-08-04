@@ -91,6 +91,17 @@ menu "Onboard Peripheral Drivers"
             range 0 24000000
             depends on BSP_USING_SDCARD
             default 1000000
+
+        config BSP_USING_NOR_MTD_FS
+            bool "Enable LITTLEFS"
+            select RT_USING_DFS
+            select RT_USING_MTD_NOR
+            select BSP_USING_ON_CHIP_FLASH
+            select BSP_USING_SPI_FLASH
+            select BSP_USING_FS
+            select RT_USING_SYSTEM_WORKQUEUE
+            default n
+
     endmenu
 
 endmenu
