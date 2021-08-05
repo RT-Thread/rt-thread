@@ -32,7 +32,7 @@ struct dma_config {
     rt_uint32_t dma_rcc;
     IRQn_Type dma_irq;
 
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)|| defined(SOC_SERIES_STM32F3)
     rt_uint32_t channel;
 #endif
 
