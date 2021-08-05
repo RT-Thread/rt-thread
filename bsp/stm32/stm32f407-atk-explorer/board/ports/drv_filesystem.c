@@ -18,8 +18,6 @@
 #include <dfs_posix.h>
 #include <fal.h>
 
-#define BSP_USING_NOR_MTD_FS
-
 #if DFS_FILESYSTEMS_MAX < 4
 #error "Please define DFS_FILESYSTEMS_MAX more than 4"
 #endif
@@ -78,11 +76,11 @@ static int onboard_sdcard_mount(void)
 }
 #endif
 
-#ifdef BSP_USING_NOR_MTD_FS
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
 
 #define FS_PARTITION_NAME              "filesystem"
 
-static void mtd_mount(void *parameter)
+static void spiflash_mount(void *parameter)
 {
     struct rt_device *mtd_dev = RT_NULL;
     fal_init();
@@ -98,28 +96,28 @@ static void mtd_mount(void *parameter)
         {
             if (dfs_mount(FS_PARTITION_NAME, "/flash", "lfs", 0, 0) == RT_EOK)
             {
-                LOG_I("mtd nor flash mount to '/flash'");
+                LOG_I("spi flash mount to '/flash'");
                 break;
             }
             else
             {
-                LOG_W("mtd nor flash mount to '/flash' failed!");
+                LOG_W("spi flash mount to '/flash' failed!");
             }
         }
     }
 }
 
-static int onboard_mtd_mount(void)
+static int onboard_spiflash_mount(void)
 {
     rt_thread_t tid;
 
     if (dfs_mount(FS_PARTITION_NAME, "/flash", "lfs", 0, 0) == RT_EOK)
     {
-        LOG_I("mtd nor flash mount to '/flash'");
+        LOG_I("spi flash mount to '/flash'");
     }
     else
     {
-        tid = rt_thread_create("mtd_mount", mtd_mount, RT_NULL,
+        tid = rt_thread_create("spiflash_mount", spiflash_mount, RT_NULL,
                                1024, RT_THREAD_PRIORITY_MAX - 3, 20);
         if (tid != RT_NULL)
         {
@@ -127,7 +125,7 @@ static int onboard_mtd_mount(void)
         }
         else
         {
-            LOG_E("create mtd_mount thread err!");
+            LOG_E("create spiflash_mount thread err!");
         }
     }
 
@@ -141,11 +139,10 @@ static const struct romfs_dirent _romfs_root[] =
 #ifdef BSP_USING_SDCARD
     {ROMFS_DIRENT_DIR, "sdcard", RT_NULL, 0},
 #endif
-#ifdef BSP_USING_NOR_MTD_FS
+
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
     {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
 #endif
-    
-//  {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
 };
 
 const struct romfs_dirent romfs_root =
@@ -163,8 +160,8 @@ static int filesystem_mount(void)
     onboard_sdcard_mount();
 #endif
     
-#ifdef BSP_USING_NOR_MTD_FS
-    onboard_mtd_mount();
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
+    onboard_spiflash_mount();
 #endif
     
     return RT_EOK;

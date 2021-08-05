@@ -20,7 +20,6 @@ if GetDepend(['BSP_USING_SPI_FLASH']):
 
 if GetDepend(['BSP_USING_FS']):
     src += Glob('ports/drv_filesystem.c')
-    src += Glob('ports/dfs_romfs.h')
 
 if GetDepend(['BSP_USING_SRAM']):
     src += Glob('ports/drv_sram.c')

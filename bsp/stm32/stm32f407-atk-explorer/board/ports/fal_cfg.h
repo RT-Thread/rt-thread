@@ -14,17 +14,16 @@
 #include <rtthread.h>
 #include <board.h>
 
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
+extern struct fal_flash_dev nor_flash0;
+#else
 #define FLASH_SIZE_GRANULARITY_16K   (4 * 16 * 1024)
 #define FLASH_SIZE_GRANULARITY_64K   (64 * 1024)
 #define FLASH_SIZE_GRANULARITY_128K  (7 * 128 * 1024)
-
 #define STM32_FLASH_START_ADRESS_16K  STM32_FLASH_START_ADRESS
 #define STM32_FLASH_START_ADRESS_64K  (STM32_FLASH_START_ADRESS_16K + FLASH_SIZE_GRANULARITY_16K)
 #define STM32_FLASH_START_ADRESS_128K (STM32_FLASH_START_ADRESS_64K + FLASH_SIZE_GRANULARITY_64K)
 
-#ifdef BSP_USING_NOR_MTD_FS
-extern struct fal_flash_dev nor_flash0;
-#else
 extern const struct fal_flash_dev stm32_onchip_flash_16k;
 extern const struct fal_flash_dev stm32_onchip_flash_64k;
 extern const struct fal_flash_dev stm32_onchip_flash_128k;
@@ -32,7 +31,7 @@ extern const struct fal_flash_dev stm32_onchip_flash_128k;
 
 
 /* flash device table */
-#ifdef BSP_USING_NOR_MTD_FS
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
 #define FAL_FLASH_DEV_TABLE                                          \
 {                                                                    \
     &nor_flash0,                                                     \
@@ -50,10 +49,10 @@ extern const struct fal_flash_dev stm32_onchip_flash_128k;
 #ifdef FAL_PART_HAS_TABLE_CFG
 
 /* partition table */
-#ifdef BSP_USING_NOR_MTD_FS
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
 #define FAL_PART_TABLE                                                                                                     \
 {                                                                                                                          \
-    {FAL_PART_MAGIC_WROD, "filesystem",FAL_USING_NOR_FLASH_DEV_NAME, 0 , 1024 * 1024, 0}, \
+    {FAL_PART_MAGIC_WROD, "filesystem",FAL_USING_NOR_FLASH_DEV_NAME, 0 , 16 * 1024 * 1024, 0}, \
 }
 #else
 #define FAL_PART_TABLE                                                                                                     \
