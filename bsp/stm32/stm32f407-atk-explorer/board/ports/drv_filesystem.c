@@ -159,11 +159,11 @@ static int filesystem_mount(void)
 #ifdef BSP_USING_SDCARD
     onboard_sdcard_mount();
 #endif
-    
+
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
     onboard_spiflash_mount();
 #endif
-    
+
     return RT_EOK;
 }
 INIT_APP_EXPORT(filesystem_mount);
