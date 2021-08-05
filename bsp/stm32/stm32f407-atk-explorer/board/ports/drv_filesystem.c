@@ -16,7 +16,6 @@
 #include <dfs_romfs.h>
 #include <dfs_fs.h>
 #include <dfs_posix.h>
-#include <fal.h>
 
 #if DFS_FILESYSTEMS_MAX < 4
 #error "Please define DFS_FILESYSTEMS_MAX more than 4"
@@ -77,62 +76,40 @@ static int onboard_sdcard_mount(void)
 #endif
 
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
+#include <fal.h>
+#define FS_PARTITION_NAME              "spiflash0"
 
-#define FS_PARTITION_NAME              "filesystem"
-
-static void spiflash_mount(void *parameter)
+static int onboard_spiflash_mount(void)
 {
     struct rt_device *mtd_dev = RT_NULL;
+
     fal_init();
     mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);
     if (!mtd_dev)
     {
         LOG_E("Can't create a mtd device on '%s' partition.", FS_PARTITION_NAME);
     }
-    while (1)
-    {
-        rt_thread_mdelay(500);
-        if(rt_device_find(FS_PARTITION_NAME) != RT_NULL)
-        {
-            if (dfs_mount(FS_PARTITION_NAME, "/flash", "lfs", 0, 0) == RT_EOK)
-            {
-                LOG_I("spi flash mount to '/flash'");
-                break;
-            }
-            else
-            {
-                LOG_W("spi flash mount to '/flash' failed!");
-            }
-        }
-    }
-}
 
-static int onboard_spiflash_mount(void)
-{
-    rt_thread_t tid;
-
-    if (dfs_mount(FS_PARTITION_NAME, "/flash", "lfs", 0, 0) == RT_EOK)
+    if (dfs_mount(FS_PARTITION_NAME, "/spiflash", "lfs", 0, 0) == RT_EOK)
     {
-        LOG_I("spi flash mount to '/flash'");
+        LOG_I("spi flash mount to '/spiflash'");
     }
     else
     {
-        tid = rt_thread_create("spiflash_mount", spiflash_mount, RT_NULL,
-                               1024, RT_THREAD_PRIORITY_MAX - 3, 20);
-        if (tid != RT_NULL)
+        dfs_mkfs("lfs", FS_PARTITION_NAME);
+        if (dfs_mount(FS_PARTITION_NAME, "/spiflash", "lfs", 0, 0) == RT_EOK)
         {
-            rt_thread_startup(tid);
+            LOG_I("spi flash mount to '/spiflash'");
         }
         else
         {
-            LOG_E("create spiflash_mount thread err!");
+            LOG_E("spi flash failed to mount to '/spiflash'");
         }
     }
 
     return RT_EOK;
 }
 #endif
-
 
 static const struct romfs_dirent _romfs_root[] =
 {
@@ -141,7 +118,7 @@ static const struct romfs_dirent _romfs_root[] =
 #endif
 
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
-    {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
+    {ROMFS_DIRENT_DIR, "spiflash", RT_NULL, 0},
 #endif
 };
 
