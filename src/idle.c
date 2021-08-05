@@ -139,7 +139,7 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 
 #ifdef RT_USING_MODULE
 /* Return whether there is defunctional thread to be deleted. */
-rt_inline int _has_defunct_thread(void)
+rt_inline int _idle_has_defunct_thread(void)
 {
     /* The rt_list_isempty has prototype of "int rt_list_isempty(const rt_list_t *l)".
      * So the compiler has a good reason that the _rt_thread_defunct list does
@@ -207,7 +207,7 @@ static void rt_defunct_execute(void)
 
 #ifdef RT_USING_MODULE
         /* check whether list is empty */
-        if (!_has_defunct_thread())
+        if (!_idle_has_defunct_thread())
         {
             rt_hw_interrupt_enable(lock);
             break;
