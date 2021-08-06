@@ -413,7 +413,7 @@ static void imxrt_lcd_pins_init(void)
         0U);                          /* Software Input On Field: Input Path is determined by functionality */
     IOMUXC_SetPinMux(
         IOMUXC_GPIO_B1_03_LCD_DATA15, /* GPIO_B1_03 is configured as LCD_DATA15 */
-        0U);                          /* Software Input On Field: Input Path is determined by functionality */x
+        0U);                          /* Software Input On Field: Input Path is determined by functionality */
     IOMUXC_SetPinConfig(
         IOMUXC_GPIO_AD_B0_02_GPIO1_IO02, /* GPIO_AD_B0_02 PAD functional properties : */
         0x10B0u);                        /* Slew Rate Field: Slow Slew Rate

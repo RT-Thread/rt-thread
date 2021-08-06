@@ -265,8 +265,8 @@ static rt_err_t stm32_rtc_set_secs(void *args)
 static const struct rt_rtc_ops stm32_rtc_ops =
 {
     stm32_rtc_init,
-    stm32_rtc_get_secs, /* get_secs */
-    stm32_rtc_set_secs, /* set secs */
+    stm32_rtc_get_secs,
+    stm32_rtc_set_secs,
     RT_NULL,
     RT_NULL,
     RT_NULL,
@@ -280,7 +280,7 @@ static int rt_hw_rtc_init(void)
     rt_err_t result;
 
     stm32_rtc_dev.ops = &stm32_rtc_ops;
-    result = rt_rtc_dev_register(&stm32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
+    result = rt_hw_rtc_register(&stm32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);
