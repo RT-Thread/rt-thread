@@ -76,7 +76,7 @@ menu "Onboard Peripheral Drivers"
             bool
             default n
 
-        config BSP_USING_SDCARD
+        config BSP_USING_SDCARD_FATFS
             bool "Enable SDCARD (FATFS)"
             select BSP_USING_SDIO
             select RT_USING_DFS
@@ -93,7 +93,7 @@ menu "Onboard Peripheral Drivers"
             default 1000000
 
         config BSP_USING_SPI_FLASH_LITTLEFS
-            bool "Enable LITTLEFS"
+            bool "Enable SPI-FLASH (LittleFS)"
             select RT_USING_DFS
             select RT_USING_DFS_ROMFS
             select RT_USING_MTD_NOR
