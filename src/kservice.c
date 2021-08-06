@@ -198,6 +198,7 @@ RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 }
 RTM_EXPORT(rt_memset);
 
+#ifndef RT_USING_ASM_MEMCPY
 /**
  * This function will copy memory content from source address to destination
  * address.
@@ -208,7 +209,7 @@ RTM_EXPORT(rt_memset);
  *
  * @return the address of destination memory
  */
-RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_KSERVICE_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
@@ -280,6 +281,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif /* RT_KSERVICE_USING_TINY_SIZE */
 }
 RTM_EXPORT(rt_memcpy);
+#endif /* RT_USING_ASM_MEMCPY */
 
 #ifndef RT_KSERVICE_USING_STDLIB
 
