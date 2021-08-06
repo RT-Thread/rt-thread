@@ -11,3 +11,4 @@ dir_path:
 - components/net/lwip-2.0.2
 - components/net/lwip-2.0.3
 - components/net/lwip-2.1.2
+- bsp/mm32f327x/Libraries
