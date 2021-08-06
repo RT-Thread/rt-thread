@@ -86,7 +86,7 @@ void SystemInit(void)
     /* get interrupt level from info */
     CLIC->CLICCFG = (((CLIC->CLICINFO & CLIC_INFO_CLICINTCTLBITS_Msk) >> CLIC_INFO_CLICINTCTLBITS_Pos) << CLIC_CLICCFG_NLBIT_Pos);
 
-    for (i = 0; i < 64; i++) 
+    for (i = 0; i < 64; i++)
     {
         CLIC->CLICINT[i].IP = 0;
         CLIC->CLICINT[i].ATTR = 1; /* use vector interrupt */
