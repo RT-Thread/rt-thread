@@ -201,14 +201,14 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     {
         return -RT_ERROR;
     }
-    rt_memcpy(&h, &res->ai_addr, sizeof(struct sockaddr_in *));
-    rt_memcpy(&ina, &h->sin_addr, sizeof(ina));
+    SMEMCPY(&h, &res->ai_addr, sizeof(struct sockaddr_in *));
+    SMEMCPY(&ina, &h->sin_addr, sizeof(ina));
     lwip_freeaddrinfo(res);
     if (inet_aton(inet_ntoa(ina), &target_addr) == 0)
     {
         return -RT_ERROR;
     }
-    rt_memcpy(&(ping_resp->ip_addr), &target_addr, sizeof(ip_addr_t));
+    SMEMCPY(&(ping_resp->ip_addr), &target_addr, sizeof(ip_addr_t));
 
     /* new a socket */
     if ((s = lwip_socket(AF_INET, SOCK_RAW, IP_PROTO_ICMP)) < 0)
@@ -331,7 +331,7 @@ static int netdev_add(struct netif *lwip_netif)
     netdev->mtu = lwip_netif->mtu;
     netdev->ops = &lwip_netdev_ops;
     netdev->hwaddr_len =  lwip_netif->hwaddr_len;
-    rt_memcpy(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
+    SMEMCPY(netdev->hwaddr, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
     netdev->ip_addr = lwip_netif->ip_addr;
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;

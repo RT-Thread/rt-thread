@@ -52,7 +52,7 @@ extern const struct fal_flash_dev stm32_onchip_flash_128k;
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
 #define FAL_PART_TABLE                                                                                                     \
 {                                                                                                                          \
-    {FAL_PART_MAGIC_WROD, "filesystem",FAL_USING_NOR_FLASH_DEV_NAME, 0 , 16 * 1024 * 1024, 0}, \
+    {FAL_PART_MAGIC_WROD, "spiflash0", FAL_USING_NOR_FLASH_DEV_NAME, 0 , 16 * 1024 * 1024, 0}, \
 }
 #else
 #define FAL_PART_TABLE                                                                                                     \
