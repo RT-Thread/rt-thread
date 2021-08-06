@@ -28,7 +28,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#ifdef BSP_USING_SDCARD
+#ifdef BSP_USING_SDCARD_FATFS
 static void sd_mount(void *parameter)
 {
     while (1)
@@ -84,6 +84,7 @@ static int onboard_spiflash_mount(void)
     struct rt_device *mtd_dev = RT_NULL;
 
     fal_init();
+
     mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);
     if (!mtd_dev)
     {
@@ -113,7 +114,7 @@ static int onboard_spiflash_mount(void)
 
 static const struct romfs_dirent _romfs_root[] =
 {
-#ifdef BSP_USING_SDCARD
+#ifdef BSP_USING_SDCARD_FATFS
     {ROMFS_DIRENT_DIR, "sdcard", RT_NULL, 0},
 #endif
 
@@ -133,7 +134,7 @@ static int filesystem_mount(void)
     {
         LOG_E("rom mount to '/' failed!");
     }
-#ifdef BSP_USING_SDCARD
+#ifdef BSP_USING_SDCARD_FATFS
     onboard_sdcard_mount();
 #endif
 
