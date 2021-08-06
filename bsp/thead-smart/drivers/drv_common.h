@@ -43,7 +43,7 @@ typedef void *drv_handle_t;
 /**
 \brief General power states
 */
-typedef enum  
+typedef enum
 {
     DRV_POWER_OFF,                        ///< Power off: no operation possible
     DRV_POWER_LOW,                        ///< Low Power mode: retain state, detect and signal wake-up events

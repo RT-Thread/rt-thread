@@ -302,7 +302,7 @@ typedef struct
   \brief      Type definitions for the SYSMAP Registers
   @{
  */
-typedef struct 
+typedef struct
 {
     __IOM uint32_t SYSMAPADDR0;               /*!< Offset: 0x000 (R/W)  SYSMAP configure register */
     __IOM uint32_t SYSMAPCFG0;              /*!< Offset: 0x004 (R/W)  SYSMAP configure register */
@@ -745,7 +745,7 @@ __STATIC_INLINE uint32_t csi_coret_get_valueh(void)
  */
 __STATIC_INLINE uint8_t __get_SYSMAPCFGx(uint32_t idx)
 {
-    switch (idx) 
+    switch (idx)
     {
     case 0: return SYSMAP->SYSMAPCFG0;
     case 1: return SYSMAP->SYSMAPCFG1;
@@ -767,7 +767,7 @@ __STATIC_INLINE uint8_t __get_SYSMAPCFGx(uint32_t idx)
  */
 __STATIC_INLINE void __set_SYSMAPCFGx(uint32_t idx, uint32_t sysmapxcfg)
 {
-    switch (idx) 
+    switch (idx)
     {
     case 0: SYSMAP->SYSMAPCFG0 = sysmapxcfg; break;
     case 1: SYSMAP->SYSMAPCFG1 = sysmapxcfg; break;
@@ -811,7 +811,7 @@ __STATIC_INLINE uint32_t __get_SYSMAPADDRx(uint32_t idx)
  */
 __STATIC_INLINE void __set_SYSMAPADDRx(uint32_t idx, uint32_t sysmapxaddr)
 {
-    switch (idx) 
+    switch (idx)
     {
     case 0: SYSMAP->SYSMAPADDR0 = sysmapxaddr; break;
     case 1: SYSMAP->SYSMAPADDR1 = sysmapxaddr; break;
