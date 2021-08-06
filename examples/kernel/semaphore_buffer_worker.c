@@ -209,7 +209,7 @@ int semaphore_buffer_worker_init()
     rb_init(&working_rb, working_buffer, BUFFER_SIZE);
 
     /* 创建信号量 */
-    sem = rt_sem_create("sem", 1, RT_IPC_FLAG_FIFO);
+    sem = rt_sem_create("sem", 1, RT_IPC_FLAG_PRIO);
     if (sem == RT_NULL)
     {
         tc_stat(TC_STAT_END | TC_STAT_FAILED);

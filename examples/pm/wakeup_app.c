@@ -61,7 +61,7 @@ static int wakeup_app(void)
 {
     rt_thread_t tid;
 
-    wakeup_event = rt_event_create("wakup", RT_IPC_FLAG_FIFO);
+    wakeup_event = rt_event_create("wakup", RT_IPC_FLAG_PRIO);
     RT_ASSERT(wakeup_event != RT_NULL);
 
     tid = rt_thread_create("wakeup_app", wakeup_app_entry, RT_NULL,

@@ -59,9 +59,9 @@ if RT_USING_LIBC != y
     default y
 endif
 
-config RT_LIBC_FIXED_TIMEZONE
+config RT_LIBC_DEFAULT_TIMEZONE
     depends on (RT_LIBC_USING_TIME || RT_USING_LIBC)
-    int "Manually set a fixed time zone (UTC+)"
+    int "Set the default time zone (UTC+)"
     range -12 12
     default 8
 
