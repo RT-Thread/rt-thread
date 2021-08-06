@@ -15,7 +15,7 @@
 #include <board.h>
 
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
-extern struct fal_flash_dev nor_flash0;
+extern struct fal_flash_dev w25q128;
 #else
 #define FLASH_SIZE_GRANULARITY_16K   (4 * 16 * 1024)
 #define FLASH_SIZE_GRANULARITY_64K   (64 * 1024)
@@ -34,7 +34,7 @@ extern const struct fal_flash_dev stm32_onchip_flash_128k;
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
 #define FAL_FLASH_DEV_TABLE                                          \
 {                                                                    \
-    &nor_flash0,                                                     \
+    &w25q128,                                                     \
 }
 #else
 #define FAL_FLASH_DEV_TABLE                                          \
@@ -52,7 +52,7 @@ extern const struct fal_flash_dev stm32_onchip_flash_128k;
 #ifdef BSP_USING_SPI_FLASH_LITTLEFS
 #define FAL_PART_TABLE                                                                                                     \
 {                                                                                                                          \
-    {FAL_PART_MAGIC_WROD, "spiflash0", FAL_USING_NOR_FLASH_DEV_NAME, 0 , 16 * 1024 * 1024, 0}, \
+    {FAL_PART_MAGIC_WROD, "spiflash0", "W25Q128", 0 , 16 * 1024 * 1024, 0}, \
 }
 #else
 #define FAL_PART_TABLE                                                                                                     \
