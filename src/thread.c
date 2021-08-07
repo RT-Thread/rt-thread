@@ -77,7 +77,7 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 #endif /* RT_USING_HOOK */
 
 /* must be invoke witch rt_hw_interrupt_disable */
-static void _rt_thread_cleanup_execute(rt_thread_t thread)
+static void _thread_cleanup_execute(rt_thread_t thread)
 {
     register rt_base_t level;
 #ifdef RT_USING_MODULE
@@ -101,7 +101,7 @@ static void _rt_thread_cleanup_execute(rt_thread_t thread)
     rt_hw_interrupt_enable(level);
 }
 
-static void _rt_thread_exit(void)
+static void _thread_exit(void)
 {
     struct rt_thread *thread;
     register rt_base_t level;
@@ -112,7 +112,7 @@ static void _rt_thread_exit(void)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    _rt_thread_cleanup_execute(thread);
+    _thread_cleanup_execute(thread);
 
     /* remove from schedule */
     rt_schedule_remove_thread(thread);
@@ -139,14 +139,14 @@ static void _rt_thread_exit(void)
     rt_hw_interrupt_enable(level);
 }
 
-static rt_err_t _rt_thread_init(struct rt_thread *thread,
-                                const char       *name,
-                                void (*entry)(void *parameter),
-                                void             *parameter,
-                                void             *stack_start,
-                                rt_uint32_t       stack_size,
-                                rt_uint8_t        priority,
-                                rt_uint32_t       tick)
+static rt_err_t _thread_init(struct rt_thread *thread,
+                             const char       *name,
+                             void (*entry)(void *parameter),
+                             void             *parameter,
+                             void             *stack_start,
+                             rt_uint32_t       stack_size,
+                             rt_uint8_t        priority,
+                             rt_uint32_t       tick)
 {
     /* init thread list */
     rt_list_init(&(thread->tlist));
@@ -163,11 +163,11 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
                                           (void *)((char *)thread->stack_addr),
-                                          (void *)_rt_thread_exit);
+                                          (void *)_thread_exit);
 #else
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
                                           (rt_uint8_t *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
-                                          (void *)_rt_thread_exit);
+                                          (void *)_thread_exit);
 #endif /* ARCH_CPU_STACK_GROWS_UPWARD */
 
     /* priority init */
@@ -274,14 +274,14 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
     /* initialize thread object */
     rt_object_init((rt_object_t)thread, RT_Object_Class_Thread, name);
 
-    return _rt_thread_init(thread,
-                           name,
-                           entry,
-                           parameter,
-                           stack_start,
-                           stack_size,
-                           priority,
-                           tick);
+    return _thread_init(thread,
+                        name,
+                        entry,
+                        parameter,
+                        stack_start,
+                        stack_size,
+                        priority,
+                        tick);
 }
 RTM_EXPORT(rt_thread_init);
 
@@ -376,7 +376,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
         rt_schedule_remove_thread(thread);
     }
 
-    _rt_thread_cleanup_execute(thread);
+    _thread_cleanup_execute(thread);
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
@@ -440,7 +440,7 @@ rt_thread_t rt_thread_create(const char *name,
         return RT_NULL;
     }
 
-    _rt_thread_init(thread,
+    _thread_init(thread,
                     name,
                     entry,
                     parameter,
@@ -479,7 +479,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
         rt_schedule_remove_thread(thread);
     }
 
-    _rt_thread_cleanup_execute(thread);
+    _thread_cleanup_execute(thread);
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
