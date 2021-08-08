@@ -21,6 +21,7 @@ void set_cpu_irq_comm(void (*irq_hook)(void));
 void load_cache();
 void os_cache_init(void);
 void sys_error_hook(uint8_t err_no);
+void huart_timer_isr(void);
 
 typedef void (*spiflash_init_func)(uint8_t sf_read, uint8_t dummy);
 
@@ -71,6 +72,9 @@ void timer0_isr(int vector, void *param)
     rt_interrupt_enter();
     TMR0CPND = BIT(9);
     rt_tick_increase();
+#ifdef RT_USING_SERIAL
+    huart_timer_isr();
+#endif
     rt_interrupt_leave();
 }
 

@@ -4,6 +4,7 @@ from building import *
 
 cwd     = GetCurrentDir()
 src     = []
+src    += ['drv_common.c']
 path    = [cwd]
 path   += [cwd + '/config']
 
