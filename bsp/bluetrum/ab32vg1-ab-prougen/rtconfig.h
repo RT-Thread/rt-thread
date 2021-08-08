@@ -91,7 +91,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_LIBC_FIXED_TIMEZONE 8
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
 
@@ -176,6 +176,7 @@
 
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_UART0_FIFO_SIZE 10
 
 /* Board extended module Drivers */
 
