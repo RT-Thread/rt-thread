@@ -83,7 +83,9 @@ static int onboard_spiflash_mount(void)
 {
     struct rt_device *mtd_dev = RT_NULL;
 
+#ifndef FAL_USING_AUTO_INIT
     fal_init();
+#endif
 
     mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);
     if (!mtd_dev)
