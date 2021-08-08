@@ -101,7 +101,8 @@ menu "Onboard Peripheral Drivers"
             select BSP_USING_SPI_FLASH            
             select BSP_USING_FS
             select PKG_USING_FAL
-            select FAL_USING_SFUD_PORT
+            select FAL_USING_AUTO_INIT
+            select FAL_PART_HAS_TABLE_CFG
             select PKG_USING_LITTLEFS
             select RT_USING_SYSTEM_WORKQUEUE
             default n
