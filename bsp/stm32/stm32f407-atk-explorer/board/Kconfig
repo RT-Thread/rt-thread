@@ -5,6 +5,7 @@ config SOC_STM32F407ZG
     select SOC_SERIES_STM32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select PKG_USING_RT_MEMCPY_CM
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -387,6 +388,34 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+
+    menuconfig BSP_USING_AT_ESP8266
+        bool "Enable ESP8266(AT Command, COM3)"
+        default n
+        select BSP_USING_COM3
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP8266
+        select AT_DEVICE_ESP8266_SAMPLE
+
+        if BSP_USING_AT_ESP8266
+
+            config ESP8266_SAMPLE_WIFI_SSID
+                string "WIFI ssid"
+                default "rtthread"
+
+            config ESP8266_SAMPLE_WIFI_PASSWORD
+                string "WIFI password"
+                default "12345678"
+
+            config ESP8266_SAMPLE_CLIENT_NAME
+                string "AT client device name (Must be 'uart3')"
+                default "uart3"
+
+            config ESP8266_SAMPLE_RECV_BUFF_LEN
+                int "The maximum length of receive line buffer"
+                default 512
+
+        endif
 
 endmenu
 
