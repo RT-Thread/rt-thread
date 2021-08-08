@@ -17,4 +17,8 @@
 
 #define GET_PIN(PORTx,PIN) (uint8_t)__AB32_GET_PIN_##PORTx(PIN)
 
+void uart0_irq_post(void);
+void uart1_irq_post(void);
+void uart2_irq_post(void);
+
 #endif // DRV_COMMON_H__
