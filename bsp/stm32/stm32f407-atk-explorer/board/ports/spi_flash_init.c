@@ -14,12 +14,19 @@
 #include "drv_spi.h"
 
 #if defined(BSP_USING_SPI_FLASH)
+
+#ifdef FAL_USING_NOR_FLASH_DEV_NAME
+#define _SPI_FLASH_NAME FAL_USING_NOR_FLASH_DEV_NAME
+#else
+#define _SPI_FLASH_NAME "W25Q128"
+#endif
+
 static int rt_hw_spi_flash_init(void)
 {
     __HAL_RCC_GPIOB_CLK_ENABLE();
     rt_hw_spi_device_attach("spi1", "spi10", GPIOB, GPIO_PIN_14);
 
-    if (RT_NULL == rt_sfud_flash_probe("W25Q128", "spi10"))
+    if (RT_NULL == rt_sfud_flash_probe(_SPI_FLASH_NAME, "spi10"))
     {
         return -RT_ERROR;
     };
