@@ -29,40 +29,40 @@ endmenu
 
 menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_UART
-		bool "Enable UART"
+        bool "Enable UART"
         if BSP_USING_UART
             config BSP_USING_UART0
                 bool "Enable UART0"
                 select RT_USING_SERIAL
                 default y
-			if BSP_USING_UART0
-				config BSP_UART0_FIFO_SIZE
-					int "BSP_UART0_FIFO_SIZE"
-					range 5 255
-					default 10
-			endif
+            if BSP_USING_UART0
+                config BSP_UART0_FIFO_SIZE
+                    int "BSP_UART0_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
 
             config BSP_USING_UART1
                 bool "Enable UART1"
                 select RT_USING_SERIAL
                 default n
-			if BSP_USING_UART1
-				config BSP_UART1_FIFO_SIZE
-					int "BSP_UART1_FIFO_SIZE"
-					range 5 255
-					default 10
-			endif
+            if BSP_USING_UART1
+                config BSP_UART1_FIFO_SIZE
+                    int "BSP_UART1_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
 
             config BSP_USING_UART2
                 bool "Enable UART2"
                 select RT_USING_SERIAL
                 default n
-			if BSP_USING_UART2
-				config BSP_UART2_FIFO_SIZE
-					int "BSP_UART2_FIFO_SIZE"
-					range 5 255
-					default 10
-			endif
+            if BSP_USING_UART2
+                config BSP_UART2_FIFO_SIZE
+                    int "BSP_UART2_FIFO_SIZE"
+                    range 5 255
+                    default 10
+            endif
         endif
 
     config BSP_USING_SDIO
@@ -194,12 +194,12 @@ menu "On-chip Peripheral Drivers"
         default n
         if BSP_USING_ONCHIP_RTC
             config RTC_USING_INTERNAL_CLK
-	            bool "Using internal clock RTC"
-	            default y
+                bool "Using internal clock RTC"
+                default y
             config RTC_USING_1S_INT
-	            bool "Using 1 second interrupt"
-	            depends on RT_USING_ALARM
-	            default n
+                bool "Using 1 second interrupt"
+                depends on RT_USING_ALARM
+                default n
         endif
 
     menuconfig BSP_USING_ADC
