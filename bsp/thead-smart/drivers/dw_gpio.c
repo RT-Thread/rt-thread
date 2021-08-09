@@ -31,7 +31,7 @@ extern int32_t drv_pin_config_mode(port_name_e port, uint8_t offset, gpio_mode_e
 
 typedef void *gpio_port_handle_t;
 
-typedef struct 
+typedef struct
 {
 #ifdef CONFIG_LPM
     uint8_t gpio_power_status;
@@ -46,7 +46,7 @@ typedef struct
     uint32_t value;             ///< gpio value
 } dw_gpio_priv_t;
 
-typedef struct 
+typedef struct
 {
     uint8_t     portidx;
     uint8_t     idx;
@@ -71,13 +71,13 @@ static int32_t gpio_set_direction(
     dw_gpio_priv_t *gpio_priv = port;
     dw_gpio_reg_t *gpio_reg = (dw_gpio_reg_t *)(gpio_priv->base);
 
-    if (direction == GPIO_DIRECTION_INPUT) 
+    if (direction == GPIO_DIRECTION_INPUT)
     {
         gpio_reg->SWPORT_DDR &= (~gpio_priv->mask);
-    } else if (direction == GPIO_DIRECTION_OUTPUT) 
+    } else if (direction == GPIO_DIRECTION_OUTPUT)
     {
         gpio_reg->SWPORT_DDR |= gpio_priv->mask;
-    } else 
+    } else
     {
         return ERR_GPIO(GPIO_ERROR_DIRECTION);
     }
@@ -139,7 +139,7 @@ static int32_t gpio_set_irq_mode(gpio_pin_handle_t pin, gpio_irq_mode_e irq_mode
     uint32_t offset = gpio_pin_priv->idx;
     uint32_t mask = 1 << offset;
 
-    switch (irq_mode) 
+    switch (irq_mode)
     {
         /* rising edge interrupt mode */
         case GPIO_IRQ_MODE_RISING_EDGE:
@@ -240,7 +240,7 @@ static void gpio_irq_disable(gpio_pin_handle_t pin)
 
 void dw_gpio_irqhandler(int idx)
 {
-    if (idx >= CONFIG_GPIO_NUM) 
+    if (idx >= CONFIG_GPIO_NUM)
     {
         return;
     }
@@ -251,24 +251,24 @@ void dw_gpio_irqhandler(int idx)
     uint8_t i;
 
     /* find the interrput pin */
-    for (i = 0; i < 32; i++) 
+    for (i = 0; i < 32; i++)
     {
-        if (value & (1U << i)) 
+        if (value & (1U << i))
         {
             uint32_t pin_idx = i;
 
 #ifndef CONFIG_CHIP_DANICA
             uint8_t j;
 
-            if (idx > 0) 
+            if (idx > 0)
             {
-                for (j = 0; j < idx; j++) 
+                for (j = 0; j < idx; j++)
                 {
                     pin_idx += gpio_handle[j].pin_num;
                 }
             }
 
-            if (pin_idx >= CONFIG_GPIO_PIN_NUM) 
+            if (pin_idx >= CONFIG_GPIO_PIN_NUM)
             {
                 return;
             }
@@ -279,7 +279,7 @@ void dw_gpio_irqhandler(int idx)
             gpio_irq_clear(gpio_pin_priv, (1 << i));  //clear the gpio interrupt
 
             /* execute the callback function */
-            if ((gpio_event_cb_t)(gpio_pin_priv->cb)) 
+            if ((gpio_event_cb_t)(gpio_pin_priv->cb))
             {
                 ((gpio_event_cb_t)(gpio_pin_priv->cb))(gpio_pin_priv->offset);
             }
@@ -304,7 +304,7 @@ gpio_port_handle_t csi_gpio_port_initialize(int32_t port)
     void *handler;
     int32_t idx = target_gpio_port_init(port, &base, &irq, &handler, &pin_num);
 
-    if (idx < 0 || idx >= CONFIG_GPIO_NUM) 
+    if (idx < 0 || idx >= CONFIG_GPIO_NUM)
     {
         return NULL;
     }
@@ -384,14 +384,14 @@ static void do_wakeup_sleep_action(void *handle)
 gpio_pin_handle_t csi_gpio_pin_initialize(int32_t gpio_pin, gpio_event_cb_t cb_event)
 {
 
-    if (gpio_pin < 0 || gpio_pin >= CONFIG_GPIO_PIN_NUM) 
+    if (gpio_pin < 0 || gpio_pin >= CONFIG_GPIO_PIN_NUM)
     {
         return NULL;
     }
 
     uint32_t i;
 
-    for (i = 0; i < CONFIG_GPIO_NUM; i++) 
+    for (i = 0; i < CONFIG_GPIO_NUM; i++)
     {
         csi_gpio_port_initialize(i);
     }
@@ -400,14 +400,14 @@ gpio_pin_handle_t csi_gpio_pin_initialize(int32_t gpio_pin, gpio_event_cb_t cb_e
     uint32_t port_idx;
     int32_t pin_idx = target_gpio_pin_init(gpio_pin, &port_idx);
 
-    if (pin_idx < 0) 
+    if (pin_idx < 0)
     {
         return NULL;
     }
 
     int32_t idx = pin_idx;
 
-    for (i = 0; i < port_idx; i++) 
+    for (i = 0; i < port_idx; i++)
     {
         idx += (gpio_handle[i].pin_num);
     }
@@ -430,7 +430,7 @@ gpio_pin_handle_t csi_gpio_pin_initialize(int32_t gpio_pin, gpio_event_cb_t cb_e
 */
 int32_t csi_gpio_pin_uninitialize(gpio_pin_handle_t handle)
 {
-    if (handle == NULL) 
+    if (handle == NULL)
     {
         return ERR_GPIO(DRV_ERROR_PARAMETER);
     }
@@ -455,7 +455,7 @@ int32_t csi_gpio_power_control(gpio_pin_handle_t handle, csi_power_stat_e state)
 
 #ifdef CONFIG_LPM
     dw_gpio_pin_priv_t *gpio_pin_priv = (dw_gpio_pin_priv_t *)handle;
-    power_cb_t callback = 
+    power_cb_t callback =
     {
         .wakeup = do_wakeup_sleep_action,
         .sleep = do_prepare_sleep_action,
@@ -509,7 +509,7 @@ int32_t csi_gpio_pin_config_direction(gpio_pin_handle_t handle,
 
     uint32_t ret = gpio_set_direction(gpio_priv, dir);
 
-    if (ret) 
+    if (ret)
     {
         return ret;
     }
@@ -542,7 +542,7 @@ int32_t csi_gpio_pin_config(gpio_pin_handle_t handle,
 
     uint32_t ret = gpio_set_direction(gpio_priv, dir);
 
-    if (ret) 
+    if (ret)
     {
         return ret;
     }
@@ -613,18 +613,18 @@ int32_t csi_gpio_pin_set_irq(gpio_pin_handle_t handle, gpio_irq_mode_e mode, boo
 
     uint32_t ret = 0;
 
-    if (enable) 
+    if (enable)
     {
         ret = gpio_set_irq_mode(handle, mode);
 
-        if (ret) 
+        if (ret)
         {
             return ret;
         }
 
         gpio_irq_enable(handle);
 
-    } else 
+    } else
     {
         gpio_irq_disable(handle);
 

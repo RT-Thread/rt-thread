@@ -181,7 +181,11 @@ PendSV_Handler:
     FSTORE  f31, 31 * FREGBYTES(sp)
 #endif
 
+#ifdef ARCH_RISCV_DSP
+    addi    sp, sp, -33 * REGBYTES
+#else
     addi    sp, sp, -32 * REGBYTES
+#endif
 
     STORE   x1, 1 * REGBYTES(sp)
     csrr    x1, mepc
@@ -221,6 +225,10 @@ PendSV_Handler:
     STORE   x29, 29 * REGBYTES(sp)
     STORE   x30, 30 * REGBYTES(sp)
     STORE   x31, 31 * REGBYTES(sp)
+#ifdef ARCH_RISCV_DSP
+    csrr    t0, vxsat
+    STORE   t0, 32 * REGBYTES(sp)
+#endif
 
     /* store from_thread sp */
     la      t0, rt_interrupt_from_thread
@@ -236,6 +244,12 @@ PendSV_Handler:
     la      t0, rt_interrupt_to_thread
     lw      t0, (t0)
     LOAD    sp, (t0)
+
+
+#ifdef ARCH_RISCV_DSP
+    LOAD    a1, 32 * REGBYTES(sp)
+    csrw    vxsat, a1
+#endif
 
     /* restore ra to mepc */
     LOAD    a1, 0 * REGBYTES(sp)
@@ -277,7 +291,11 @@ PendSV_Handler:
     LOAD    x30, 30 * REGBYTES(sp)
     LOAD    x31, 31 * REGBYTES(sp)
 
+#ifdef ARCH_RISCV_DSP
+    addi    sp, sp, 33 * REGBYTES
+#else
     addi    sp, sp, 32 * REGBYTES
+#endif
 
 #ifdef ARCH_RISCV_FPU
     FLOAD   f0, 0 * FREGBYTES(sp)
