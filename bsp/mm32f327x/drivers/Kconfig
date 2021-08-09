@@ -18,6 +18,23 @@ menu "Hardware Drivers Config"
                 select RT_USING_SERIAL
                 default y
         endmenu 
+        menu "Flash Drivers"
+            config BSP_USING_OCFLASH
+                bool "Enable On Chip Flash"
+                default n
+            config OCFLASH_USE_FAL
+                bool "Enable On Chip Flash FAL Driver"
+                depends on BSP_USING_OCFLASH
+                select PKG_USING_FAL
+                default n
+            config OCFLASH_USE_LFS
+                bool "Enable On Chip Flash DFS Driver"
+                depends on OCFLASH_USE_FAL
+                select RT_USING_DFS
+                select RT_USING_MTD_NOR
+                select PKG_USING_LITTLEFS
+                default n
+        endmenu 
     endmenu
         
 endmenu
