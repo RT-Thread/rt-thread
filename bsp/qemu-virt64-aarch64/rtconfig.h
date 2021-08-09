@@ -178,19 +178,14 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define OPPO_A55_SOC
+#define SOC_VIRT64_AARCH64
 
-/* Hardware Drivers Config */
+/* AARCH64 qemu virt64 configs */
 
-/* BCM Peripheral Drivers */
-
+#define BSP_SUPPORT_FPU
 #define BSP_USING_UART
 #define RT_USING_UART0
 #define BSP_USING_GIC
 #define BSP_USING_GIC390
-#define BSP_USING_PIN
-
-/* Board Peripheral Drivers */
-
 
 #endif
