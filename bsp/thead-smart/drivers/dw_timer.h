@@ -33,11 +33,11 @@ typedef struct
     __IOM uint32_t TxLoadCount;              /* Offset: 0x000 (R/W)  Receive buffer register */
     __IM  uint32_t TxCurrentValue;            /* Offset: 0x004 (R)  Transmission hold register */
     __IOM uint8_t  TxControl: 5;              /* Offset: 0x008 (R/W)  Clock frequency division low section register */
-    uint8_t  	   RESERVED0[3];
+    uint8_t        RESERVED0[3];
     __IM  uint8_t  TxEOI: 1;                   /* Offset: 0x00c (R)  Clock frequency division high section register */
-    uint8_t  	   RESERVED1[3];
+    uint8_t        RESERVED1[3];
     __IM  uint8_t  TxIntStatus: 1;             /* Offset: 0x010 (R)  Interrupt enable register */
-    uint8_t  	   RESERVED2[3];
+    uint8_t        RESERVED2[3];
 } dw_timer_reg_t;
 
 #ifdef __cplusplus
