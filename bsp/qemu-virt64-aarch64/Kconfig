@@ -18,13 +18,12 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-config OPPO_A55_SOC
+config SOC_VIRT64_AARCH64
     bool
     select ARCH_ARM_CORTEX_A53
     select ARCH_CPU_64BIT
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select RT_USING_RTC
     default y
 
 source "$BSP_DIR/driver/Kconfig"
