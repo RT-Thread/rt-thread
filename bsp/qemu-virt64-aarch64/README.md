@@ -1,6 +1,6 @@
 # QEMU/AArch64 VIRT BSP Introduction
 
-[中文页](README_ZH.md) | English
+[中文页](README_zh.md) | English
 
 ## 1. Introduction
 

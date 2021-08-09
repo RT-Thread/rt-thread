@@ -24,6 +24,8 @@ config SOC_VIRT64_AARCH64
     select ARCH_CPU_64BIT
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_GIC
+    select RT_USING_RTC
     default y
 
 source "$BSP_DIR/driver/Kconfig"
