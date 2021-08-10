@@ -35,7 +35,7 @@ _start:
 	// ldr	x2, =EL1_stack
 	// mov	sp, x2
 
-    ldr     x1, =_start
+    ldr     x1, =init_el1_stack_limit
 
     // set up EL1
     mrs     x0, CurrentEL           // CurrentEL Register. bit 2, 3. Others reserved
@@ -109,3 +109,8 @@ _start:
     bl      entry
     // for failsafe, halt this core too
     b       .L__current_cpu_idle
+.bss
+.align 3
+init_el1_stack:
+    .space 4096
+init_el1_stack_limit:
