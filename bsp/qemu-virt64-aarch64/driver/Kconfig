@@ -15,13 +15,11 @@ menu "AARCH64 qemu virt64 configs"
             default y
         endif
 
-    menuconfig BSP_USING_GIC
-            bool "Enable GIC"
-            select RT_USING_GIC
-            default y
-        if BSP_USING_GIC
-            config BSP_USING_GIC390
-                bool "Enable GIC390"
-                default y
-        endif
+    config BSP_USING_GIC
+    bool
+    default y
+
+    config BSP_USING_GIC390
+    bool
+    default y
 endmenu
