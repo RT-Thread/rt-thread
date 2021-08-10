@@ -5,8 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   first version
- * 2019-04-09     jhb
+ * 2021-08-09     supperthomas first version
  */
 
 #ifndef __BOARD_H__
@@ -25,12 +24,22 @@ extern "C" {
 #define STM32_FLASH_SIZE               (2048 * 1024)
 #define STM32_FLASH_END_ADDRESS        ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#define STM32_SRAM3_SIZE               (384)
-#define STM32_SRAM3_START              (0x20040000)
-#define STM32_SRAM3_END                (STM32_SRAM3_START + STM32_SRAM3_SIZE * 1024)
+#define STM32_SRAM1_SIZE               (640)
+#define STM32_SRAM1_START              (0x20000000)
+#define STM32_SRAM1_END                (STM32_SRAM1_START + STM32_SRAM1_SIZE * 1024)
 
-#define HEAP_BEGIN                     STM32_SRAM3_START
-#define HEAP_END                       STM32_SRAM3_END
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
+#elif __ICCARM__
+#pragma section="CSTACK"
+#define HEAP_BEGIN      (__segment_end("CSTACK"))
+#else
+extern int __bss_end;
+#define HEAP_BEGIN      ((void *)&__bss_end)
+#endif
+
+#define HEAP_END                       STM32_SRAM1_END
 
 void SystemClock_Config(void);
 
