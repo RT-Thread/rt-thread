@@ -74,7 +74,7 @@
         HAL_GPIO_WritePin()/HAL_GPIO_TogglePin().
 
    (#) To lock pin configuration until next reset use HAL_GPIO_LockPin().
-  
+
     (#) During and just after reset, the alternate functions are not
         active and the GPIO pins are configured in input floating mode (except JTAG
         pins).
@@ -140,7 +140,7 @@
 /**
   * @}
   */
-  
+
 /* Private macros ------------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup GPIO_Private_Macros GPIO Private Macros
@@ -157,7 +157,7 @@
   * @{
   */
 
-/** @defgroup GPIO_Exported_Functions_Group1 Initialization/de-initialization functions 
+/** @defgroup GPIO_Exported_Functions_Group1 Initialization/de-initialization functions
  *  @brief    Initialization and Configuration functions
  *
 @verbatim
@@ -329,7 +329,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
         /* Clear EXTI line configuration */
         EXTI->IMR &= ~((uint32_t)iocurrent);
         EXTI->EMR &= ~((uint32_t)iocurrent);
-        
+
         /* Clear Rising Falling edge configuration */
         EXTI->RTSR &= ~((uint32_t)iocurrent);
         EXTI->FTSR &= ~((uint32_t)iocurrent);
@@ -364,7 +364,7 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
   * @}
   */
 
-/** @defgroup GPIO_Exported_Functions_Group2 IO operation functions 
+/** @defgroup GPIO_Exported_Functions_Group2 IO operation functions
  *  @brief GPIO Read, Write, Toggle, Lock and EXTI management functions.
  *
 @verbatim

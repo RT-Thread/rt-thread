@@ -380,7 +380,7 @@ HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp)
       {
         hcomp->MspInitCallback = HAL_COMP_MspInit; /* Legacy weak MspInit  */
       }
-      
+
       /* Init the low level hardware */
       hcomp->MspInitCallback(hcomp);
 #else
@@ -444,7 +444,7 @@ HAL_StatusTypeDef HAL_COMP_DeInit(COMP_HandleTypeDef *hcomp)
     {
       hcomp->MspDeInitCallback = HAL_COMP_MspDeInit; /* Legacy weak MspDeInit  */
     }
-    
+
     /* DeInit the low level hardware: SYSCFG, GPIO, CLOCK and NVIC */
     hcomp->MspDeInitCallback(hcomp);
 #else
@@ -508,7 +508,7 @@ __weak void HAL_COMP_MspDeInit(COMP_HandleTypeDef *hcomp)
 HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_CallbackIDTypeDef CallbackID, pCOMP_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
-  
+
   if (pCallback == NULL)
   {
     /* Update the error code */
@@ -516,7 +516,7 @@ HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_
 
     return HAL_ERROR;
   }
-  
+
   if (HAL_COMP_STATE_READY == hcomp->State)
   {
     switch (CallbackID)
@@ -524,19 +524,19 @@ HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_
       case HAL_COMP_TRIGGER_CB_ID :
         hcomp->TriggerCallback = pCallback;
         break;
-      
+
       case HAL_COMP_MSPINIT_CB_ID :
         hcomp->MspInitCallback = pCallback;
         break;
-      
+
       case HAL_COMP_MSPDEINIT_CB_ID :
         hcomp->MspDeInitCallback = pCallback;
         break;
-      
+
       default :
         /* Update the error code */
         hcomp->ErrorCode |= HAL_COMP_ERROR_INVALID_CALLBACK;
-        
+
         /* Return error status */
         status = HAL_ERROR;
         break;
@@ -549,15 +549,15 @@ HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_
       case HAL_COMP_MSPINIT_CB_ID :
         hcomp->MspInitCallback = pCallback;
         break;
-      
+
       case HAL_COMP_MSPDEINIT_CB_ID :
         hcomp->MspDeInitCallback = pCallback;
         break;
-      
+
       default :
         /* Update the error code */
         hcomp->ErrorCode |= HAL_COMP_ERROR_INVALID_CALLBACK;
-        
+
         /* Return error status */
         status = HAL_ERROR;
         break;
@@ -567,11 +567,11 @@ HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_
   {
     /* Update the error code */
     hcomp->ErrorCode |= HAL_COMP_ERROR_INVALID_CALLBACK;
-    
+
     /* Return error status */
     status =  HAL_ERROR;
   }
-  
+
   return status;
 }
 
@@ -598,7 +598,7 @@ HAL_StatusTypeDef HAL_COMP_UnRegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COM
       case HAL_COMP_TRIGGER_CB_ID :
         hcomp->TriggerCallback = HAL_COMP_TriggerCallback;         /* Legacy weak callback */
         break;
-      
+
       case HAL_COMP_MSPINIT_CB_ID :
         hcomp->MspInitCallback = HAL_COMP_MspInit;                 /* Legacy weak MspInit */
         break;
@@ -1053,7 +1053,7 @@ uint32_t HAL_COMP_GetError(COMP_HandleTypeDef *hcomp)
 {
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(hcomp->Instance));
-  
+
   return hcomp->ErrorCode;
 }
 

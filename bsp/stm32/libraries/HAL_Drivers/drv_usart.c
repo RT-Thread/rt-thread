@@ -369,7 +369,7 @@ static void uart_isr(struct rt_serial_device *serial)
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_PE) != RESET)
         {
             __HAL_UART_CLEAR_PEFLAG(&uart->handle);
-        }              
+        }
 #if !defined(SOC_SERIES_STM32L4) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32F7) && !defined(SOC_SERIES_STM32F0) \
     && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0) && !defined(SOC_SERIES_STM32H7) \
     && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB)
@@ -378,13 +378,13 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBDF);
         }
-#else        
+#else
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBD);
-        }                
+        }
 #endif
-#endif        
+#endif
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_CTS) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_CTS);

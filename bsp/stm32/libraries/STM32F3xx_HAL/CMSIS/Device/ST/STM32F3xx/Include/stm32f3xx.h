@@ -2,17 +2,17 @@
   ******************************************************************************
   * @file    stm32f3xx.h
   * @author  MCD Application Team
-  * @brief   CMSIS STM32F3xx Device Peripheral Access Layer Header File.           
-  *            
+  * @brief   CMSIS STM32F3xx Device Peripheral Access Layer Header File.
+  *
   *          The file is the unique include file that the application programmer
   *          is using in the C source code, usually in main.c. This file contains:
   *           - Configuration section that allows to select:
   *              - The STM32F3xx device used in the target application
-  *              - To use or not the peripheral’s drivers in application code(i.e. 
-  *                code will be based on direct access to peripheral’s registers 
-  *                rather than drivers API), this option is controlled by 
+  *              - To use or not the peripheralâ€™s drivers in application code(i.e.
+  *                code will be based on direct access to peripheralâ€™s registers
+  *                rather than drivers API), this option is controlled by
   *                "#define USE_HAL_DRIVER"
-  *  
+  *
   ******************************************************************************
   * @attention
   *
@@ -34,14 +34,14 @@
 /** @addtogroup stm32f3xx
   * @{
   */
-    
+
 #ifndef __STM32F3xx_H
 #define __STM32F3xx_H
 
 #ifdef __cplusplus
  extern "C" {
 #endif /* __cplusplus */
-   
+
 /** @addtogroup Library_configuration_section
   * @{
   */
@@ -54,7 +54,7 @@
 #endif /* STM32F3 */
 
 /* Uncomment the line below according to the target STM32 device used in your
-   application 
+   application
   */
 
 #if !defined (STM32F301x8) && !defined (STM32F302x8) && !defined (STM32F318xx) && \
@@ -62,7 +62,7 @@
     !defined (STM32F303x8) && !defined (STM32F334x8) && !defined (STM32F328xx) && \
     !defined (STM32F302xE) && !defined (STM32F303xE) && !defined (STM32F398xx) && \
     !defined (STM32F373xC) && !defined (STM32F378xx)
-    
+
   /* #define STM32F301x8 */   /*!< STM32F301K6, STM32F301K8, STM32F301C6, STM32F301C8,
                                    STM32F301R6 and STM32F301R8 Devices */
   /* #define STM32F302x8 */   /*!< STM32F302K6, STM32F302K8, STM32F302C6, STM32F302C8,
@@ -71,7 +71,7 @@
                                    STM32F302VB and STM32F302VC Devices */
   /* #define STM32F302xE */   /*!< STM32F302RE, STM32F302VE, STM32F302ZE, STM32F302RD,
                                    STM32F302VD and STM32F302ZD Devices */
-  /* #define STM32F303x8 */   /*!< STM32F303K6, STM32F303K8, STM32F303C6, STM32F303C8, 
+  /* #define STM32F303x8 */   /*!< STM32F303K6, STM32F303K8, STM32F303C6, STM32F303C8,
                                    STM32F303R6 and STM32F303R8 Devices */
   /* #define STM32F303xC */   /*!< STM32F303CB, STM32F303CC, STM32F303RB, STM32F303RC,
                                    STM32F303VB and STM32F303VC Devices */
@@ -89,15 +89,15 @@
   /* #define STM32F378xx */   /*!< STM32F378CC, STM32F378RC, STM32F378VC: STM32F373xC with regulator off: STM32F378xx Devices */
   /* #define STM32F398xx */   /*!< STM32F398VE: STM32F303xE with regulator off: STM32F398xx Devices */
 #endif
-   
+
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.
   */
 #if !defined  (USE_HAL_DRIVER)
 /**
  * @brief Comment the line below if you will not use the peripherals drivers.
-   In this case, these drivers will not be included and the application code will 
-   be based on direct access to peripherals registers 
+   In this case, these drivers will not be included and the application code will
+   be based on direct access to peripherals registers
    */
   /*#define USE_HAL_DRIVER */
 #endif /* USE_HAL_DRIVER */
@@ -160,21 +160,21 @@
 
 /** @addtogroup Exported_types
   * @{
-  */ 
-typedef enum 
+  */
+typedef enum
 {
-  RESET = 0U, 
+  RESET = 0U,
   SET = !RESET
 } FlagStatus, ITStatus;
 
-typedef enum 
+typedef enum
 {
-  DISABLE = 0U, 
+  DISABLE = 0U,
   ENABLE = !DISABLE
 } FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))
 
-typedef enum 
+typedef enum
 {
   SUCCESS = 0U,
   ERROR = !SUCCESS
@@ -202,7 +202,7 @@ typedef enum
 
 #define MODIFY_REG(REG, CLEARMASK, SETMASK)  WRITE_REG((REG), (((READ_REG(REG)) & (~(CLEARMASK))) | (SETMASK)))
 
-#define POSITION_VAL(VAL)     (__CLZ(__RBIT(VAL))) 
+#define POSITION_VAL(VAL)     (__CLZ(__RBIT(VAL)))
 
 
 /**
@@ -225,7 +225,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 
 
 

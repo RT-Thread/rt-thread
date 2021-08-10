@@ -358,7 +358,7 @@ HAL_StatusTypeDef HAL_OPAMP_Init(OPAMP_HandleTypeDef *hopamp)
                                         hopamp->Init.PgaGain | \
                                         hopamp->Init.UserTrimming | \
                                         (hopamp->Init.TrimmingValueP << OPAMP_INPUT_NONINVERTING) | \
-                                        (hopamp->Init.TrimmingValueN << OPAMP_INPUT_INVERTING));  
+                                        (hopamp->Init.TrimmingValueN << OPAMP_INPUT_INVERTING));
 
     }
     else /* OPAMP_STANDALONE_MODE */
@@ -374,7 +374,7 @@ HAL_StatusTypeDef HAL_OPAMP_Init(OPAMP_HandleTypeDef *hopamp)
                                         hopamp->Init.PgaGain | \
                                         hopamp->Init.UserTrimming | \
                                         (hopamp->Init.TrimmingValueP << OPAMP_INPUT_NONINVERTING) | \
-                                        (hopamp->Init.TrimmingValueN << OPAMP_INPUT_INVERTING));     
+                                        (hopamp->Init.TrimmingValueN << OPAMP_INPUT_INVERTING));
     }
 
     /* Update the OPAMP state*/
