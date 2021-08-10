@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -16,7 +16,7 @@ int main(void)
 {
     /* LED pin: PB13 */
     rt_uint16_t led = rt_pin_get("PB.13");
-    
+
     /* set LED pin mode to output */
     rt_pin_mode(led, PIN_MODE_OUTPUT);
 

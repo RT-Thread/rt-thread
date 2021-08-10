@@ -1022,7 +1022,7 @@
 /**
   * @}
   */
-  
+
 /** @defgroup HAL_RTC_Aliased_Defines HAL RTC Aliased Defines maintained for legacy purpose
   * @{
   */
