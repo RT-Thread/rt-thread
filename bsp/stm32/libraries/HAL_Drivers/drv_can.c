@@ -325,13 +325,13 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                  * STD ID |     STID[10:3]  | STDID[2:0] |<-                21bit                  ->|
                  * EXT ID |    EXTID[28:21] | EXTID[20:13]    | EXTID[12:5]    | EXTID[4:0] IDE RTR 0|
                  * @note the 32bit STD ID must << 21 to fill CAN_FxR1[31:21] and EXT ID must << 3,
-                 *       -> but the id bit of struct rt_can_filter_item is 29, 
+                 *       -> but the id bit of struct rt_can_filter_item is 29,
                  *       -> so STD id << 18 and EXT id Don't need << 3, when get the high 16bit.
                  *       -> FilterIdHigh : (((STDid << 18) or (EXT id)) >> 13) & 0xFFFF,
-                 *       -> FilterIdLow:   ((STDid << 18) or (EXT id << 3)) & 0xFFFF. 
-                 * @note the mask bit of struct rt_can_filter_item is 32, 
-                 *       -> FilterMaskIdHigh: (((STD mask << 21) or (EXT mask <<3)) >> 16) & 0xFFFF  
-                 *       -> FilterMaskIdLow: ((STD mask << 21) or (EXT mask <<3)) & 0xFFFF  
+                 *       -> FilterIdLow:   ((STDid << 18) or (EXT id << 3)) & 0xFFFF.
+                 * @note the mask bit of struct rt_can_filter_item is 32,
+                 *       -> FilterMaskIdHigh: (((STD mask << 21) or (EXT mask <<3)) >> 16) & 0xFFFF
+                 *       -> FilterMaskIdLow: ((STD mask << 21) or (EXT mask <<3)) & 0xFFFF
                  */
                 if (filter_cfg->items[i].mode == CAN_FILTERMODE_IDMASK)
                 {
@@ -341,14 +341,14 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 else if (filter_cfg->items[i].mode == CAN_FILTERMODE_IDLIST)
                 {
                     /* same as CAN_FxR1 */
-                    mask_l_tail = (filter_cfg->items[i].ide << 2) | 
+                    mask_l_tail = (filter_cfg->items[i].ide << 2) |
                                    (filter_cfg->items[i].rtr << 1);
                 }
                 if (filter_cfg->items[i].ide == RT_CAN_STDID)
                 {
                     id_h = ((filter_cfg->items[i].id << 18) >> 13) & 0xFFFF;
-                    id_l = ((filter_cfg->items[i].id << 18) | 
-                            (filter_cfg->items[i].ide << 2) | 
+                    id_l = ((filter_cfg->items[i].id << 18) |
+                            (filter_cfg->items[i].ide << 2) |
                             (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 21) >> 16) & 0xFFFF;
                     mask_l = ((filter_cfg->items[i].mask << 21) | mask_l_tail) & 0xFFFF;
@@ -356,8 +356,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 else if (filter_cfg->items[i].ide == RT_CAN_EXTID)
                 {
                     id_h = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                    id_l = ((filter_cfg->items[i].id << 3)   | 
-                            (filter_cfg->items[i].ide << 2)  | 
+                    id_l = ((filter_cfg->items[i].id << 3)   |
+                            (filter_cfg->items[i].ide << 2)  |
                             (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 3) >> 16) & 0xFFFF;
                     mask_l = ((filter_cfg->items[i].mask << 3) | mask_l_tail) & 0xFFFF;
