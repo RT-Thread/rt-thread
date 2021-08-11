@@ -6,10 +6,6 @@ src = Split('''
 main.c
 ''')
 
-if GetDepend(['BSP_USING_USBD']):
-    if GetDepend(['RT_USB_DEVICE_CDC']):
-        src += ['uart_sample.c']
-
 CPPPATH = [str(Dir('#')), cwd]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
