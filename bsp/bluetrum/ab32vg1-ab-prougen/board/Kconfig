@@ -1,5 +1,10 @@
 menu "Hardware Drivers Config"
 
+config SOC_AB32VG1
+    bool
+    select PKG_USING_BLUETRUM_SDK
+    default y
+
 menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_AUDIO
