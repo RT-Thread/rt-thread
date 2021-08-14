@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017-02-27     Bernard      fix the re-work issue.
  * 2021-08-01     Meco Man     remove rt_delayed_work_init()
+ * 2021-08-14     Jackistang   add commets for function interface.
  */
 
 #include <rthw.h>
