@@ -83,9 +83,9 @@ void rt_ringbuffer_destroy(struct rt_ringbuffer *rb);
 
 /**
  * @brief Get buffer size of the ringbuffer object.
- * 
+ *
  * @param rb        A pointer to the ringbuffer object.
- * 
+ *
  * @return  Buffer size.
  */
 rt_inline rt_uint16_t rt_ringbuffer_get_size(struct rt_ringbuffer *rb)
