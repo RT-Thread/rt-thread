@@ -1,12 +1,8 @@
 from building import *
 
 cwd     = GetCurrentDir()
-
-src = Split('''
-main.c
-''')
-
-CPPPATH = [str(Dir('#')), cwd]
+src     = Glob('*.c')
+CPPPATH = [cwd]
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
