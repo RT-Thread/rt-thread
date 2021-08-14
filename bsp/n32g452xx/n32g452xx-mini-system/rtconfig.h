@@ -19,6 +19,9 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
+
+/* kservice optimization */
+
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -41,7 +44,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x30105
+#define RT_VER_NUM 0x40004
 
 /* RT-Thread Components */
 
@@ -70,12 +73,19 @@
 
 /* Device virtual file system */
 
+#define RT_USING_DFS
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
@@ -86,6 +96,8 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_USING_POSIX
+#define RT_LIBC_FIXED_TIMEZONE 8
 
 /* Network */
 
@@ -105,6 +117,9 @@
 
 
 /* Utilities */
+
+
+/* RT-Thread Utestcases */
 
 
 /* RT-Thread online packages */
@@ -157,7 +172,17 @@
 
 /* entertainment: terminal games and other interesting software packages */
 
+
+/* Hardware Drivers Config */
+
 #define SOC_N32G452XX
+
+/* Onboard Peripheral Drivers */
+
+/* On-chip Peripheral Drivers */
+
+#define RT_USING_GPIO
+#define RT_USING_UART
 #define RT_USING_UART1
 
 #endif

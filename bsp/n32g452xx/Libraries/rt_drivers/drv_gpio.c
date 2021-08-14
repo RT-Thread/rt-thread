@@ -15,7 +15,7 @@
 
 #ifdef RT_USING_PIN
 
-#define N32F10X_PIN_NUMBERS 100 //[48, 64, 100, 144 ]
+#define N32F10X_PIN_NUMBERS 64 //[48, 64, 100, 144 ]
 
 #define __N32_PIN(index, rcc, gpio, gpio_index) \
 { \
