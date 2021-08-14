@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-01     Meco Man     remove rt_delayed_work_init() and rt_delayed_work structure
+ * 2021-08-14     Jackistang   add commets for rt_work_init()
  */
 #ifndef WORKQUEUE_H__
 #define WORKQUEUE_H__
