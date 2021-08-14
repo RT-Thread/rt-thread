@@ -30,7 +30,7 @@ rt_inline enum rt_ringbuffer_state rt_ringbuffer_status(struct rt_ringbuffer *rb
 
 /**
  * @brief Init a ringbuffer object with a given buffer.
- * 
+ *
  * @param rb        A pointer to the ringbuffer object.
  * @param pool      A pointer to the buffer.
  * @param size      Size of the buffer in bytes.
@@ -54,11 +54,11 @@ RTM_EXPORT(rt_ringbuffer_init);
 
 /**
  * @brief Put a block of data into the ringbuffer. If the size of ringbuffer is not enough, it will discard out-of-range data.
- * 
+ *
  * @param rb            A pointer to the ringbuffer object.
  * @param ptr           A pointer to the data buffer.
  * @param length        The size of data in bytes.
- * 
+ *
  * @return Return the size in bytes put into the ringbuffer actually.
  */
 rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
@@ -107,11 +107,11 @@ RTM_EXPORT(rt_ringbuffer_put);
 
 /**
  * @brief Put a block of data into the ringbuffer. If the size of ringbuffer is not enough, it will overwrite the existing data in the ringbuffer.
- * 
+ *
  * @param rb            A pointer to the ringbuffer object.
  * @param ptr           A pointer to the data buffer.
  * @param length        The size of data in bytes.
- * 
+ *
  * @return Return the size in bytes put into the ringbuffer actually.
  */
 rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
@@ -168,11 +168,11 @@ RTM_EXPORT(rt_ringbuffer_put_force);
 
 /**
  * @brief Get a block of data from the ringbuffer.
- * 
+ *
  * @param rb            A pointer to the ringbuffer.
  * @param ptr           A pointer to the data buffer.
  * @param length        The size of data we want to read from the ringbuffer.
- * 
+ *
  * @return Return the size of data we read from the ringbuffer actually.
  */
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
@@ -225,10 +225,10 @@ RTM_EXPORT(rt_ringbuffer_get);
 
 /**
  * @brief Peak data from the ringbuffer.
- * 
+ *
  * @param rb        A pointer to the ringbuffer.
  * @param ptr       When this function return, *ptr is a pointer to the first character of ringbuffer.
- * 
+ *
  * @return Return the size of ringbuffer.
  */
 rt_size_t rt_ringbuffer_peak(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
@@ -264,10 +264,10 @@ RTM_EXPORT(rt_ringbuffer_peak);
 
 /**
  * @brief Put a character into the ringbuffer. If ringbuffer is full, This operation will fail.
- * 
+ *
  * @param rb        A pointer to the ringbuffer object.
  * @param ch        A character to be put into the ringbuffer.
- * 
+ *
  * @return Return the size in bytes put into the ringbuffer. If return 0, it means the ringbuffer if full. If return 1, it means success.
  */
 rt_size_t rt_ringbuffer_putchar(struct rt_ringbuffer *rb, const rt_uint8_t ch)
@@ -297,10 +297,10 @@ RTM_EXPORT(rt_ringbuffer_putchar);
 
 /**
  * @brief Put a character into the ringbuffer. If ringbuffer is full, it will discard one old data and put into a new data.
- * 
+ *
  * @param rb        A pointer to the ringbuffer object.
  * @param ch        A character to be put into the ringbuffer.
- * 
+ *
  * @return Return the size in bytes put into the ringbuffer. Always return 1.
  */
 rt_size_t rt_ringbuffer_putchar_force(struct rt_ringbuffer *rb, const rt_uint8_t ch)
@@ -341,10 +341,10 @@ RTM_EXPORT(rt_ringbuffer_putchar_force);
 
 /**
  * @brief Get a character from the ringbuffer.
- * 
+ *
  * @param rb        The pointer to ringbuffer object.
  * @param ch        The buffer to store character read from ringbuffer.
- * 
+ *
  * @return 0    Ringbuffer is empty.
  * @return 1    Success
  */
@@ -375,9 +375,9 @@ RTM_EXPORT(rt_ringbuffer_getchar);
 
 /**
  * @brief Get the size of data in the ringbuffer in bytes.
- * 
+ *
  * @param rb        The pointer to ringbuffer object.
- * 
+ *
  * @return Return the size of data in the ringbuffer in bytes.
  */
 rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
@@ -400,7 +400,7 @@ RTM_EXPORT(rt_ringbuffer_data_len);
 
 /**
  * @brief Reset the ringbuffer object, and clear all contents in the buffer.
- * 
+ *
  * @param rb        A pointer to the ringbuffer object.
  */
 void rt_ringbuffer_reset(struct rt_ringbuffer *rb)
@@ -418,12 +418,12 @@ RTM_EXPORT(rt_ringbuffer_reset);
 
 /**
  * @brief Create a ringbuffer object with a given size.
- * 
+ *
  * @param size      Size of the buffer in bytes.
- * 
+ *
  * @return Return a pointer to ringbuffer object. When the return value is RT_NULL, it means the creation failed.
  */
-struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t size)
+struct rt_ringbuffer *rt_ringbuffer_create(rt_uint16_t size)
 {
     struct rt_ringbuffer *rb;
     rt_uint8_t *pool;
@@ -452,7 +452,7 @@ RTM_EXPORT(rt_ringbuffer_create);
 
 /**
  * @brief Destroy a ringbuffer object, which is created by rt_ringbuffer_create() .
- * 
+ *
  * @param rb        A pointer to the ringbuffer object.
  */
 void rt_ringbuffer_destroy(struct rt_ringbuffer *rb)
