@@ -15,6 +15,11 @@
 #define RT_COMPLETED    1
 #define RT_UNCOMPLETED  0
 
+/**
+ * @brief initialize the completion object
+ * 
+ * @param completion the point of completion object
+ */
 void rt_completion_init(struct rt_completion *completion)
 {
     rt_base_t level;
@@ -27,6 +32,19 @@ void rt_completion_init(struct rt_completion *completion)
 }
 RTM_EXPORT(rt_completion_init);
 
+/**
+ * @brief waitting for the completion done
+ *        NOTE: We should not use this api when 
+ * 
+ * @param completion the point of completion object
+ * @param timeout    is a timeout period (unit: an OS tick). If the completion is unavailable, the thread will wait for
+ *                   the completion up to the amount of time specified by the argument.
+ *                   NOTE: Generally, we use the macro RT_WAITING_FOREVER to set this parameter, which means that when the
+ *                   completion is unavailable, the thread will be waitting forever.
+ * 
+ * @return Return the operation status. ONLY When the return value is RT_EOK, the operation is successful.
+ *         If the return value is any other values, it means that the completion wait failed.
+ */
 rt_err_t rt_completion_wait(struct rt_completion *completion,
                             rt_int32_t            timeout)
 {
@@ -94,6 +112,11 @@ __exit:
 }
 RTM_EXPORT(rt_completion_wait);
 
+/**
+ * @brief indicate the completion has done
+ * 
+ * @param completion the point of completion object
+ */
 void rt_completion_done(struct rt_completion *completion)
 {
     rt_base_t level;
