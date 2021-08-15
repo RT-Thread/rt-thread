@@ -85,18 +85,39 @@ static rt_size_t rt_link_hw_buffer_write(void *data, rt_size_t count)
 /* increases buffer pointer by one and circle around if necessary */
 void rt_link_hw_buffer_point_shift(rt_uint8_t **pointer_address, rt_size_t length)
 {
-    rt_uint8_t *pointer = RT_NULL;
+    rt_uint8_t *pointer = *pointer_address + length;
 
-    pointer = *pointer_address + length;
-    if (pointer >= rx_buffer->end_point)
+    if (rx_buffer->write_point >= rx_buffer->read_point)
     {
-        rt_size_t offset = 0;
-        offset = pointer - rx_buffer->end_point;
-        *pointer_address = rx_buffer->data + offset;
+        if (pointer >= rx_buffer->write_point)
+        {
+            *pointer_address = rx_buffer->write_point;
+        }
+        else
+        {
+            *pointer_address = pointer;
+        }
     }
     else
     {
-        *pointer_address = *pointer_address + length;
+        if (pointer >= rx_buffer->end_point)
+        {
+            *pointer_address = rx_buffer->data;
+            pointer = pointer - rx_buffer->end_point + rx_buffer->data;
+
+            if (pointer >= rx_buffer->write_point)
+            {
+                *pointer_address = rx_buffer->write_point;
+            }
+            else
+            {
+                *pointer_address = pointer;
+            }
+        }
+        else
+        {
+            *pointer_address = pointer;
+        }
     }
 }
 
@@ -119,9 +140,13 @@ void rt_link_hw_copy(rt_uint8_t *dst, rt_uint8_t *src, rt_size_t count)
     }
 }
 
-/* Tells, how many chars are saved into the buffer */
+/* Length of data received */
 rt_size_t rt_link_hw_recv_len(struct rt_link_receive_buffer *buffer)
 {
+    if (buffer == RT_NULL)
+    {
+        return 0;
+    }
     if (buffer->write_point >= buffer->read_point)
     {
         return (buffer->write_point - buffer->read_point);
@@ -183,15 +208,18 @@ rt_uint32_t rt_link_get_crc(rt_uint8_t using_buffer_ring, rt_uint8_t *data, rt_s
     return crc32;
 }
 
-rt_err_t rt_link_hw_send(void *data, rt_size_t length)
+rt_size_t rt_link_hw_send(void *data, rt_size_t length)
 {
     rt_size_t send_len = 0;
     send_len = rt_link_port_send(data, length);
-    LOG_D("hw_send len= %d", send_len);
+    if (send_len <= 0)
+    {
+        rt_link_port_reconnect();
+        send_len = rt_link_port_send(data, length);
+    }
     return send_len;
 }
 
-/* provide this function to hardware spi/uart/usb to store data */
 rt_size_t rt_link_hw_write_cb(void *data, rt_size_t length)
 {
     /* write real data into rtlink receive buffer */
@@ -220,11 +248,17 @@ rt_err_t rt_link_hw_init(void)
     scb->rx_buffer = rx_buffer;
     scb->calculate_crc = rt_link_get_crc;
 
-    rt_link_port_init();
+    if (RT_EOK != rt_link_port_init())
+    {
+        return -RT_ERROR;
+    }
 
 #ifdef LINK_LAYER_USING_HW_CRC
     /* crc hardware device for mcu and node */
-    rt_link_hw_crc32_init();
+    if (RT_EOK != rt_link_hw_crc32_init())
+    {
+        return -RT_ERROR;
+    }
 #endif
 
     LOG_I("link layer hardware environment init successful.");
@@ -244,11 +278,17 @@ rt_err_t rt_link_hw_deinit(void)
         scb->rx_buffer = rx_buffer;
         scb->calculate_crc = RT_NULL;
     }
-    rt_link_port_deinit();
+    if (RT_EOK != rt_link_port_deinit())
+    {
+        return -RT_ERROR;
+    }
 
 #ifdef LINK_LAYER_USING_HW_CRC
     /* crc hardware device for mcu and node */
-    rt_link_hw_crc32_deinit();
+    if (RT_EOK != rt_link_hw_crc32_deinit())
+    {
+        return -RT_ERROR;
+    }
 #endif
 
     LOG_I("rtlink hardware deinit successful.");

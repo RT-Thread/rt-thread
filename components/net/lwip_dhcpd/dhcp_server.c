@@ -306,7 +306,7 @@ static void dhcpd_thread_entry(void *parameter)
     while (1)
     {
         bytes_read = recvfrom(sock, recv_data, BUFSZ - 1, 0,
-                              (struct sockaddr *)&client_addr, &addr_len);
+                              (struct sockaddr *)&client_addr, (socklen_t *)&addr_len);
         if (bytes_read <= 0)
         {
             closesocket(sock);

@@ -510,7 +510,7 @@ typedef struct rt_timer *rt_timer_t;
  * @addtogroup Signal
  */
 #ifdef RT_USING_SIGNALS
-#include <libc/libc_signal.h>
+#include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
 typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;
@@ -908,6 +908,7 @@ enum rt_device_class_type
     RT_Device_Class_I2CBUS,                             /**< I2C bus device */
     RT_Device_Class_USBDevice,                          /**< USB slave device */
     RT_Device_Class_USBHost,                            /**< USB host bus */
+    RT_Device_Class_USBOTG,                             /**< USB OTG bus */
     RT_Device_Class_SPIBUS,                             /**< SPI bus device */
     RT_Device_Class_SPIDevice,                          /**< SPI device */
     RT_Device_Class_SDIO,                               /**< SDIO bus device */
