@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,7 +26,7 @@ extern void ioreuse_initial(void);
 
 
 /**
- * This function will initial smartl-evb(e906) board.
+ * This function will initial smart-evb board.
  */
 void rt_hw_board_init(void)
 {

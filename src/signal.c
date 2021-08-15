@@ -35,7 +35,7 @@ struct siginfo_node
     struct rt_slist_node list;
 };
 
-static struct rt_mempool *_rt_siginfo_pool;
+static struct rt_mempool *_siginfo_pool;
 static void _signal_deliver(rt_thread_t tid);
 void rt_thread_handle_sig(rt_bool_t clean_state);
 
@@ -538,7 +538,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     }
     rt_hw_interrupt_enable(level);
 
-    si_node = (struct siginfo_node *) rt_mp_alloc(_rt_siginfo_pool, 0);
+    si_node = (struct siginfo_node *) rt_mp_alloc(_siginfo_pool, 0);
     if (si_node)
     {
         rt_slist_init(&(si_node->list));
@@ -576,8 +576,8 @@ int rt_thread_kill(rt_thread_t tid, int sig)
 
 int rt_system_signal_init(void)
 {
-    _rt_siginfo_pool = rt_mp_create("signal", RT_SIG_INFO_MAX, sizeof(struct siginfo_node));
-    if (_rt_siginfo_pool == RT_NULL)
+    _siginfo_pool = rt_mp_create("signal", RT_SIG_INFO_MAX, sizeof(struct siginfo_node));
+    if (_siginfo_pool == RT_NULL)
     {
         LOG_E("create memory pool for signal info failed.");
         RT_ASSERT(0);

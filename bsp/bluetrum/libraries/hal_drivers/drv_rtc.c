@@ -144,151 +144,68 @@ void hal_rtc_init(void)
 }
 /************** HAL End *******************/
 
-static time_t get_rtc_time_stamp(void)
+static rt_err_t ab32_rtc_get_secs(void *args)
 {
-    time_t sec = 0;
-
-    sec = irtc_time_read(RTCCNT_CMD);
-    LOG_D("get rtc time.");
-
-    return sec;
-}
-
-static rt_err_t set_rtc_time_stamp(time_t time_stamp)
-{
-    irtc_time_write(RTCCNT_CMD, time_stamp);
+    *(rt_uint32_t *)args = irtc_time_read(RTCCNT_CMD);
+    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
 
     return RT_EOK;
 }
 
-static rt_err_t set_rtc_alarm_stamp(time_t alarm_stamp)
+static rt_err_t ab32_rtc_set_secs(void *args)
 {
-    irtc_time_write(RTCALM_CMD, alarm_stamp);
+    irtc_time_write(RTCCNT_CMD, *(rt_uint32_t *)args);
 
     return RT_EOK;
 }
 
-static time_t get_rtc_alarm_stamp(void)
+static rt_err_t ab32_rtc_get_alarm(void *args)
 {
-    time_t sec = 0;
+    *(rt_uint32_t *)args = irtc_time_read(RTCALM_CMD);
 
-    sec = irtc_time_read(RTCALM_CMD);
-
-    return sec;
+    return RT_EOK;
 }
 
-static void rt_rtc_init(void)
+static rt_err_t ab32_rtc_set_alarm(void *args)
+{
+    irtc_time_write(RTCALM_CMD, *(rt_uint32_t *)args);
+
+    return RT_EOK;
+}
+
+static rt_err_t ab32_rtc_init(void)
 {
     hal_rtc_init();
+
+    return RT_EOK;
 }
 
-static rt_err_t ab32_rtc_control(rt_device_t dev, int cmd, void *args)
+static const struct rt_rtc_ops ab32_rtc_ops =
 {
-    rt_err_t result = RT_EOK;
-    RT_ASSERT(dev != RT_NULL);
-    switch (cmd)
-    {
-    case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *(time_t *)args = get_rtc_time_stamp();
-        LOG_D("RTC: get rtc_time %x", *(time_t *)args);
-        break;
-
-    case RT_DEVICE_CTRL_RTC_SET_TIME:
-        if (set_rtc_time_stamp(*(time_t *)args))
-        {
-            result = -RT_ERROR;
-        }
-        LOG_D("RTC: set rtc_time %x", *(time_t *)args);
-        break;
-    case RT_DEVICE_CTRL_RTC_SET_ALARM:
-        if (set_rtc_alarm_stamp(*(time_t *)args))
-        {
-            result = -RT_ERROR;
-        }
-        LOG_D("RTC: set alarm_stamp %x", *(time_t *)args);
-        break;
-    case RT_DEVICE_CTRL_RTC_GET_ALARM:
-        *(time_t *)args = get_rtc_alarm_stamp();
-        LOG_D("RTC: get alarm_stamp %x", *(time_t *)args);
-        break;
-    }
-
-    return result;
-}
-
-#ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops rtc_ops =
-{
+    ab32_rtc_init,
+    ab32_rtc_get_secs,
+    ab32_rtc_set_secs,
+    ab32_rtc_get_alarm,
+    ab32_rtc_set_alarm,
     RT_NULL,
     RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    ab32_rtc_control
 };
-#endif
 
-static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint32_t flag)
-{
-    RT_ASSERT(device != RT_NULL);
+static rt_rtc_dev_t ab32_rtc_dev;
 
-    rt_rtc_init();
-#ifdef RT_USING_DEVICE_OPS
-    device->ops         = &rtc_ops;
-#else
-    device->init        = RT_NULL;
-    device->open        = RT_NULL;
-    device->close       = RT_NULL;
-    device->read        = RT_NULL;
-    device->write       = RT_NULL;
-    device->control     = ab32_rtc_control;
-#endif
-    device->type        = RT_Device_Class_RTC;
-    device->rx_indicate = RT_NULL;
-    device->tx_complete = RT_NULL;
-    device->user_data   = RT_NULL;
-
-    /* register a character device */
-    return rt_device_register(device, name, flag);
-}
-
-#ifdef RT_USING_ALARM
-RT_SECTION(".irq.rtc")
-static void rtc_isr(int vector, void *param)
-{
-    rt_interrupt_enter();
-
-    if (RTCCON & RTC_CON_ALM_PEND)
-    {
-        RTCCPND |= RTC_CPND_ALM;
-    }
-
-#ifdef RTC_USING_1S_INT
-    if (RTCCON & RTC_CON_1S_PEND)
-    {
-        RTCCPND |= RTC_CPND_1S;
-    }
-#endif
-
-    rt_interrupt_leave();
-}
-#endif
-
-int rt_hw_rtc_init(void)
+static int rt_hw_rtc_init(void)
 {
     rt_err_t result;
 
-    result = rt_hw_rtc_register(&rtc, "rtc", RT_DEVICE_FLAG_RDWR);
+    ab32_rtc_dev.ops = &ab32_rtc_ops;
+    result = rt_hw_rtc_register(&ab32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);
         return result;
     }
-
-#ifdef RT_USING_ALARM
-    rt_hw_interrupt_install(IRQ_RTC_VECTOR, rtc_isr, RT_NULL, "rtc_isr");
-#endif
     LOG_D("rtc init success");
+
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);

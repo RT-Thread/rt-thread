@@ -6,3 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  */
+
+ #ifndef __SYS_STAT_H__
+ #define __SYS_STAT_H__
+
+ #endif
