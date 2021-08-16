@@ -22,11 +22,11 @@ static void (*rt_interrupt_leave_hook)(void);
 
 /**
  * @ingroup Hook
- * 
+ *
  * @brief This function set a hook function when the system enter a interrupt
- * 
+ *
  * @note the hook function must be simple and never be blocked or suspend.
- * 
+ *
  * @param hook The function point to be called
  */
 void rt_interrupt_enter_sethook(void (*hook)(void))
@@ -36,11 +36,11 @@ void rt_interrupt_enter_sethook(void (*hook)(void))
 
 /**
  * @ingroup Hook
- * 
+ *
  * @brief This function set a hook function when the system exit a interrupt.
- * 
+ *
  * @note the hook function must be simple and never be blocked or suspend.
- * 
+ *
  * @param hook The function point to be called
  */
 void rt_interrupt_leave_sethook(void (*hook)(void))
@@ -64,9 +64,9 @@ volatile rt_uint8_t rt_interrupt_nest = 0;
 
 /**
  * @brief This function will be invoked by BSP, when enter interrupt service routine
- * 
+ *
  * @note please don't invoke this routine in application
- * 
+ *
  * @see rt_interrupt_leave
  */
 void rt_interrupt_enter(void)
@@ -86,9 +86,9 @@ RTM_EXPORT(rt_interrupt_enter);
 
 /**
  * @brief This function will be invoked by BSP, when leave interrupt service routine
- * 
+ *
  * @note please don't invoke this routine in application
- * 
+ *
  * @see rt_interrupt_enter
  */
 void rt_interrupt_leave(void)
@@ -108,10 +108,10 @@ RTM_EXPORT(rt_interrupt_leave);
 
 /**
  * @brief This function will return the nest of interrupt.
- * 
+ *
  * User application can invoke this function to get whether current
  * context is interrupt context.
- * 
+ *
  * @return rt_uint8_t  the number of nested interrupts.
  */
 RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
