@@ -23,7 +23,7 @@
 #endif /* RT_USING_MODULE */
 
 /*
- * define object_info for the number of rt_object_container items.
+ * define object_info for the number of _object_container items.
  */
 enum rt_object_info_type
 {
@@ -60,8 +60,9 @@ enum rt_object_info_type
 };
 
 #define _OBJ_CONTAINER_LIST_INIT(c)     \
-    {&(rt_object_container[c].object_list), &(rt_object_container[c].object_list)}
-static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] =
+    {&(_object_container[c].object_list), &(_object_container[c].object_list)}
+
+static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
 {
     /* initialize object container - thread */
     {RT_Object_Class_Thread, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Thread), sizeof(struct rt_thread)},
@@ -211,7 +212,7 @@ rt_object_get_information(enum rt_object_class_type type)
     int index;
 
     for (index = 0; index < RT_Object_Info_Unknown; index ++)
-        if (rt_object_container[index].type == type) return &rt_object_container[index];
+        if (_object_container[index].type == type) return &_object_container[index];
 
     return RT_NULL;
 }

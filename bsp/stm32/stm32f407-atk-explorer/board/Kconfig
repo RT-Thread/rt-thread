@@ -5,6 +5,7 @@ config SOC_STM32F407ZG
     select SOC_SERIES_STM32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select PKG_USING_RT_MEMCPY_CM
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -76,7 +77,7 @@ menu "Onboard Peripheral Drivers"
             bool
             default n
 
-        config BSP_USING_SDCARD
+        config BSP_USING_SDCARD_FATFS
             bool "Enable SDCARD (FATFS)"
             select BSP_USING_SDIO
             select RT_USING_DFS
@@ -91,6 +92,21 @@ menu "Onboard Peripheral Drivers"
             range 0 24000000
             depends on BSP_USING_SDCARD
             default 1000000
+
+        config BSP_USING_SPI_FLASH_LITTLEFS
+            bool "Enable SPI-FLASH (LittleFS)"
+            select RT_USING_DFS
+            select RT_USING_DFS_ROMFS
+            select RT_USING_MTD_NOR
+            select BSP_USING_SPI_FLASH            
+            select BSP_USING_FS
+            select PKG_USING_FAL
+            select FAL_USING_AUTO_INIT
+            select FAL_PART_HAS_TABLE_CFG
+            select PKG_USING_LITTLEFS
+            select RT_USING_SYSTEM_WORKQUEUE
+            default n
+
     endmenu
 
 endmenu
@@ -373,6 +389,34 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+
+    menuconfig BSP_USING_AT_ESP8266
+        bool "Enable ESP8266(AT Command, COM3)"
+        default n
+        select BSP_USING_COM3
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP8266
+        select AT_DEVICE_ESP8266_SAMPLE
+
+        if BSP_USING_AT_ESP8266
+
+            config ESP8266_SAMPLE_WIFI_SSID
+                string "WIFI ssid"
+                default "rtthread"
+
+            config ESP8266_SAMPLE_WIFI_PASSWORD
+                string "WIFI password"
+                default "12345678"
+
+            config ESP8266_SAMPLE_CLIENT_NAME
+                string "AT client device name (Must be 'uart3')"
+                default "uart3"
+
+            config ESP8266_SAMPLE_RECV_BUFF_LEN
+                int "The maximum length of receive line buffer"
+                default 512
+
+        endif
 
 endmenu
 
