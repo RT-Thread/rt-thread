@@ -188,7 +188,8 @@ int rt_hw_can_init(void)
 
 #ifdef BSP_USING_CAN1
     drv_can1.can_handle.Config.InstanceId = 1;
-    drv_can0.device.config.baud_rate = 1000000;
+    drv_can1.device.config.ticks = 20000;
+    drv_can1.device.config.baud_rate = 1000000;
     rt_sem_init(&drv_can1.recv_semaphore, "can1_recv", 0, RT_IPC_FLAG_FIFO);
     rt_hw_can_register(&drv_can1.device,
                        drv_can1.name,
