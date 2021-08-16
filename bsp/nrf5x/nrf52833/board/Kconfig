@@ -91,6 +91,25 @@ if BSP_USING_UART
     depends on BSP_USING_UART0
 endif
 
+choice
+prompt "BLE STACK"
+default BLE_STACK_USING_NULL
+help
+    Select the ble stack
+
+config BLE_STACK_USING_NULL
+    bool "not use the ble stack"
+
+config  BSP_USING_SOFTDEVICE
+    select PKG_USING_NRF5X_SDK
+    bool "Nordic softdevice(perpheral)"
+
+config BSP_USING_NIMBLE
+    select PKG_USING_NIMBLE
+    select PKG_NIMBLE_BSP_NRF52840
+    bool "use nimble stack(iot)"
+endchoice
+
 
 endmenu
 
