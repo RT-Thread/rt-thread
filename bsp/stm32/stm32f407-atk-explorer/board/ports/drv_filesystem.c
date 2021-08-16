@@ -28,7 +28,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#ifdef BSP_USING_SDCARD
+#ifdef BSP_USING_SDCARD_FATFS
 static void sd_mount(void *parameter)
 {
     while (1)
@@ -75,12 +75,54 @@ static int onboard_sdcard_mount(void)
 }
 #endif
 
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
+#include <fal.h>
+#define FS_PARTITION_NAME              "spiflash0"
+
+static int onboard_spiflash_mount(void)
+{
+    struct rt_device *mtd_dev = RT_NULL;
+
+#ifndef FAL_USING_AUTO_INIT
+    fal_init();
+#endif
+
+    mtd_dev = fal_mtd_nor_device_create(FS_PARTITION_NAME);
+    if (!mtd_dev)
+    {
+        LOG_E("Can't create a mtd device on '%s' partition.", FS_PARTITION_NAME);
+    }
+
+    if (dfs_mount(FS_PARTITION_NAME, "/spiflash", "lfs", 0, 0) == RT_EOK)
+    {
+        LOG_I("spi flash mount to '/spiflash'");
+    }
+    else
+    {
+        dfs_mkfs("lfs", FS_PARTITION_NAME);
+        if (dfs_mount(FS_PARTITION_NAME, "/spiflash", "lfs", 0, 0) == RT_EOK)
+        {
+            LOG_I("spi flash mount to '/spiflash'");
+        }
+        else
+        {
+            LOG_E("spi flash failed to mount to '/spiflash'");
+        }
+    }
+
+    return RT_EOK;
+}
+#endif
+
 static const struct romfs_dirent _romfs_root[] =
 {
-#ifdef BSP_USING_SDCARD
+#ifdef BSP_USING_SDCARD_FATFS
     {ROMFS_DIRENT_DIR, "sdcard", RT_NULL, 0},
 #endif
-//  {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
+
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
+    {ROMFS_DIRENT_DIR, "spiflash", RT_NULL, 0},
+#endif
 };
 
 const struct romfs_dirent romfs_root =
@@ -94,8 +136,12 @@ static int filesystem_mount(void)
     {
         LOG_E("rom mount to '/' failed!");
     }
-#ifdef BSP_USING_SDCARD
+#ifdef BSP_USING_SDCARD_FATFS
     onboard_sdcard_mount();
+#endif
+
+#ifdef BSP_USING_SPI_FLASH_LITTLEFS
+    onboard_spiflash_mount();
 #endif
 
     return RT_EOK;

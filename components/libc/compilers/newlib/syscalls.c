@@ -210,7 +210,7 @@ int _wait_r(struct _reent *ptr, int *status)
 _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
-#ifdef RT_USING_DEVICE
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     if (fileno(stdout) == fd)
     {
         rt_device_t console;
