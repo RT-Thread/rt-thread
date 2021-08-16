@@ -16,7 +16,7 @@
  * 2012-12-15     Bernard      fix the next timeout issue in soft timer
  * 2014-07-12     Bernard      does not lock scheduler when invoking soft-timer
  *                             timeout function.
- * 2021-08-15     supperthomas add the comment 
+ * 2021-08-15     supperthomas add the comment
  */
 
 #include <rtthread.h>
@@ -60,9 +60,9 @@ static void (*rt_timer_exit_hook)(struct rt_timer *timer);
 /**@{*/
 
 /**
- * @brief This function will set a hook function on timer, 
+ * @brief This function will set a hook function on timer,
  * which will be invoked when enter timer timeout callback function.
- * 
+ *
  * @param hook the function point of timer
  */
 void rt_timer_enter_sethook(void (*hook)(struct rt_timer *timer))
@@ -71,9 +71,9 @@ void rt_timer_enter_sethook(void (*hook)(struct rt_timer *timer))
 }
 
 /**
- * @brief This function will set a hook function, which will be 
+ * @brief This function will set a hook function, which will be
  * invoked when exit * timer timeout callback function.
- * 
+ *
  * @param hook the function point of timer
  */
 void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer))
@@ -87,11 +87,11 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer))
 
 /**
  * @brief [internal] the init funtion of timer
- * 
+ *
  * the internal called function of rt_timer_init
- * 
+ *
  * @see rt_timer_init
- * 
+ *
  * @param timer the static timer object
  * @param timeout the timeout function
  * @param parameter the parameter of timeout function
@@ -127,9 +127,9 @@ static void _rt_timer_init(rt_timer_t timer,
 
 /**
  * @brief  find the next emtpy timer
- * 
+ *
  * @param timer_list the timer of the next timeout
- * 
+ *
  * @return rt_tick_t the point of timer
  */
 static rt_tick_t rt_timer_list_next_timeout(rt_list_t timer_list[])
@@ -155,8 +155,8 @@ static rt_tick_t rt_timer_list_next_timeout(rt_list_t timer_list[])
 }
 
 /**
- * @brief remove the timer 
- * 
+ * @brief remove the timer
+ *
  * @param timer the point of timer
  */
 rt_inline void _rt_timer_remove(rt_timer_t timer)
@@ -172,8 +172,8 @@ rt_inline void _rt_timer_remove(rt_timer_t timer)
 #if RT_DEBUG_TIMER
 /**
  * @brief the number of timer
- * 
- * @param timer 
+ *
+ * @param timer
  * @return int the count
  */
 static int rt_timer_count_height(struct rt_timer *timer)
@@ -189,7 +189,7 @@ static int rt_timer_count_height(struct rt_timer *timer)
 }
 /**
  * @brief dump the all timer information
- * 
+ *
  * @param timer_heads the head of timer
  */
 void rt_timer_dump(rt_list_t timer_heads[])
@@ -244,7 +244,7 @@ RTM_EXPORT(rt_timer_init);
 
 /**
  * @brief This function will detach a timer from timer management.
- * 
+ *
  * @param timer the timer to be detached
  * @return rt_err_t RT_EOK
  */
@@ -555,7 +555,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 RTM_EXPORT(rt_timer_control);
 
 /**
- * @brief This function will check timer list, if a timeout event happens, 
+ * @brief This function will check timer list, if a timeout event happens,
  *        the corresponding timeout function will be invoked.
  *
  * @note this function shall be invoked in operating system timer interrupt.
@@ -719,9 +719,9 @@ void rt_soft_timer_check(void)
 }
 
 /**
- * @brief system timer thread entry 
- * 
- * @param parameter 
+ * @brief system timer thread entry
+ *
+ * @param parameter
  */
 static void rt_thread_timer_entry(void *parameter)
 {
