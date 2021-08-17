@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-02-27     Bernard      fix the re-work issue.
  * 2021-08-01     Meco Man     remove rt_delayed_work_init()
- * 2021-08-14     Jackistang   add commets for function interface.
+ * 2021-08-14     Jackistang   add comments for function interface.
  */
 
 #include <rthw.h>
@@ -217,7 +217,7 @@ static void _delayed_work_timeout_handler(void *parameter)
  * @param stack_size    The stack size for work queue thread.
  * @param priority      The priority for work queue thread.
  *
- * @return Return a pointer to workqueue object. When the return value is RT_NULL, it means the creation failed.
+ * @return Return a pointer to workqueue object. It will return RT_NULL if failed.
  */
 struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_size, rt_uint8_t priority)
 {
@@ -272,7 +272,7 @@ rt_err_t rt_workqueue_destroy(struct rt_workqueue *queue)
  * @param work          A pointer to work item object.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is been executing now.
+ * @return -RT_EBUSY    This work item is executing.
  */
 rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
 {
@@ -287,10 +287,10 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work)
  *
  * @param queue     A pointer to workqueue object.
  * @param work      A pointer to work item object.
- * @param time      This work item will be delayed by time (unit: an OS tick) before it's been submitted to the work queue.
+ * @param time      This work item will be delayed by time (unit: an OS ticks) before it's been submitted to the work queue.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is been executing now.
+ * @return -RT_EBUSY    This work item is executing.
  * @return -RT_ERROR    Time is invalid.
  */
 rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t time)
@@ -343,7 +343,7 @@ rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *
  * @param work      A pointer to work item object.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is been executing now.
+ * @return -RT_EBUSY    This work item is executing.
  */
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work)
 {
@@ -419,7 +419,7 @@ static struct rt_workqueue *sys_workq;
  * @param time      This work item will be delayed by time (unit: an OS tick) before it's been submitted to system work queue.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is been executing now.
+ * @return -RT_EBUSY    This work item is executing.
  * @return -RT_ERROR    Time is invalid.
  */
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time)
@@ -433,7 +433,7 @@ rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time)
  * @param work      A pointer to work item object.
  *
  * @return RT_EOK       Success.
- * @return -RT_EBUSY    This work item is been executing now.
+ * @return -RT_EBUSY    This work item is executing.
  */
 rt_err_t rt_work_cancel(struct rt_work *work)
 {
