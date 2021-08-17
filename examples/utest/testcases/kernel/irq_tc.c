@@ -32,10 +32,6 @@ static void irq_test(void)
     uassert_int_not_equal(0, max_get_nest_count);
 }
 
-
-
-
-
 static rt_err_t utest_tc_init(void)
 {
     irq_count = 0;
