@@ -12,12 +12,13 @@
  * 2012-12-25     Bernard      return RT_EOK if the device interface not exist.
  * 2013-07-09     Grissiom     add ref_count support
  * 2016-04-02     Bernard      fix the open_flag initialization issue.
+ * 2021-03-19     Meco Man     remove rt_device_init_all()
  */
 
 #include <rtthread.h>
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
 #include <rtdevice.h> /* for wqueue_init */
-#endif
+#endif /* RT_USING_POSIX */
 
 #ifdef RT_USING_DEVICE
 
@@ -35,7 +36,7 @@
 #define device_read     (dev->read)
 #define device_write    (dev->write)
 #define device_control  (dev->control)
-#endif
+#endif /* RT_USING_DEVICE_OPS */
 
 /**
  * This function registers a device driver with specified name.
@@ -61,10 +62,10 @@ rt_err_t rt_device_register(rt_device_t dev,
     dev->ref_count = 0;
     dev->open_flag = 0;
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
     dev->fops = RT_NULL;
     rt_wqueue_init(&(dev->wait_queue));
-#endif
+#endif /* RT_USING_POSIX */
 
     return RT_EOK;
 }
@@ -88,19 +89,6 @@ rt_err_t rt_device_unregister(rt_device_t dev)
     return RT_EOK;
 }
 RTM_EXPORT(rt_device_unregister);
-
-/**
- * This function initializes all registered device driver
- *
- * @return the error code, RT_EOK on successfully.
- *
- * @deprecated since 1.2.x, this function is not needed because the initialization
- *             of a device is performed when application opens it.
- */
-rt_err_t rt_device_init_all(void)
-{
-    return RT_EOK;
-}
 
 /**
  * This function finds a device driver by specified name.
@@ -162,7 +150,7 @@ void rt_device_destroy(rt_device_t dev)
     rt_free(dev);
 }
 RTM_EXPORT(rt_device_destroy);
-#endif
+#endif /* RT_USING_HEAP */
 
 /**
  * This function will initialize the specified device
@@ -446,4 +434,4 @@ rt_device_set_tx_complete(rt_device_t dev,
 }
 RTM_EXPORT(rt_device_set_tx_complete);
 
-#endif
+#endif /* RT_USING_DEVICE */

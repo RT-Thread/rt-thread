@@ -14,6 +14,7 @@
  * 2013-06-24     Bernard      add rt_kprintf re-define when not use RT_USING_CONSOLE.
  * 2016-08-09     ArdaFu       add new thread and interrupt hook.
  * 2018-11-22     Jesven       add all cpu's lock and ipi handler
+ * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  */
 
 #ifndef __RT_THREAD_H__
@@ -167,7 +168,6 @@ void rt_thread_idle_init(void);
 rt_err_t rt_thread_idle_sethook(void (*hook)(void));
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif
-void rt_thread_idle_excute(void);
 rt_thread_t rt_thread_idle_gethandler(void);
 
 /*
@@ -186,6 +186,7 @@ rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
 void rt_scheduler_sethook(void (*hook)(rt_thread_t from, rt_thread_t to));
+void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid));
 #endif
 
 #ifdef RT_USING_SMP
@@ -321,6 +322,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag);
 rt_err_t rt_mutex_delete(rt_mutex_t mutex);
 
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time);
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex);
 rt_err_t rt_mutex_release(rt_mutex_t mutex);
 rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg);
 #endif
@@ -394,6 +396,10 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
 rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg);
 #endif
 
+/* defunct */
+void rt_thread_defunct_enqueue(rt_thread_t thread);
+rt_thread_t rt_thread_defunct_dequeue(void);
+
 /*
  * spinlock
  */
@@ -436,8 +442,6 @@ rt_err_t rt_device_unregister(rt_device_t dev);
 
 rt_device_t rt_device_create(int type, int attach_size);
 void rt_device_destroy(rt_device_t device);
-
-rt_err_t rt_device_init_all(void);
 
 rt_err_t
 rt_device_set_rx_indicate(rt_device_t dev,
@@ -517,6 +521,7 @@ void rt_components_board_init(void);
 void rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
 #endif
+
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 rt_int32_t rt_sprintf(char *buf, const char *format, ...);
@@ -541,22 +546,34 @@ int __rt_ffs(int value);
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
-rt_int32_t rt_strcmp(const char *cs, const char *ct);
-rt_size_t rt_strlen(const char *src);
-rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
-char *rt_strdup(const char *s);
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
-/* leak strdup interface */
-char* strdup(const char* str);
-#endif
-
-char *rt_strstr(const char *str1, const char *str2);
-rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
-char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
+#ifndef RT_KSERVICE_USING_STDLIB
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
+char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_strcasecmp(const char *a, const char *b);
+char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
+rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
+rt_int32_t rt_strcmp(const char *cs, const char *ct);
+rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
+rt_size_t rt_strlen(const char *src);
+#else
+#include <string.h>
+#define rt_memmove(dest, src, n)    memmove(dest, src, n)
+#define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
+#define rt_strstr(str1, str2)       strstr(str1, str2)
+#define rt_strcasecmp(a, b)         strcasecmp(a, b)
+#define rt_strncpy(dest, src, n)    strncpy(dest, src, n)
+#define rt_strncmp(cs, ct, count)   strncmp(cs, ct, count)
+#define rt_strcmp(cs, ct)           strcmp(cs, ct)
+#define rt_strnlen(s, maxlen)       strnlen(s, maxlen)
+#define rt_strlen(src)              strlen(src)
+#endif /*RT_KSERVICE_USING_STDLIB*/
+
+char *rt_strdup(const char *s);
+#ifdef __ARMCC_VERSION
+/* lack strdup interface */
+char* strdup(const char* str);
+#endif
 
 void rt_show_version(void);
 

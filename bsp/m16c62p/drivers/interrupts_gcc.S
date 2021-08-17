@@ -1,11 +1,7 @@
 /*
- * File      : interrupt.s34
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -15,23 +11,23 @@
  * Toolchain : IAR's EW for M16C v3.401
  */
 
- 	.text
+    .text
 
-	.globl	_rt_hw_context_switch_interrupt_do
-	.type	_rt_hw_context_switch_interrupt_do, #function
+    .globl  _rt_hw_context_switch_interrupt_do
+    .type   _rt_hw_context_switch_interrupt_do, #function
 _rt_hw_context_switch_interrupt_do:
     MOV.B   #0, _rt_thread_switch_interrupt_flag
     MOV.W   _rt_interrupt_from_thread, A0
     STC     ISP, [A0]
-    
+
     MOV.W   _rt_interrupt_to_thread, A0
     LDC     [A0], ISP
     POPM    R0,R1,R2,R3,A0,A1,SB,FB             ; Restore all processor registers from the new task's stack
     REIT
-    
- 	.text
-	.globl	_rt_hw_timer_handler
-	.type	_rt_hw_timer_handler, #function
+
+    .text
+    .globl  _rt_hw_timer_handler
+    .type   _rt_hw_timer_handler, #function
 _rt_hw_timer_handler:
     PUSHM   R0,R1,R2,R3,A0,A1,SB,FB             ; Save current task's registers
     jsr.a     _rt_interrupt_enter
@@ -40,22 +36,22 @@ _rt_hw_timer_handler:
 
     CMP.B   #1, _rt_thread_switch_interrupt_flag
     JEQ     _rt_hw_context_switch_interrupt_do
-    
+
     POPM    R0,R1,R2,R3,A0,A1,SB,FB             ; Restore current task's registers
     REIT                                        ; Return from interrup
 
- 	.text
-	.globl	_rt_hw_uart0_receive_handler
-	.type	_rt_hw_uart0_receive_handler, #function
+    .text
+    .globl  _rt_hw_uart0_receive_handler
+    .type   _rt_hw_uart0_receive_handler, #function
 _rt_hw_uart0_receive_handler:
     PUSHM   R0,R1,R2,R3,A0,A1,SB,FB             ; Save current task's registers
-    jsr.a     _rt_interrupt_enter 
+    jsr.a     _rt_interrupt_enter
     jsr.a     _u0rec_handler
     jsr.a     _rt_interrupt_leave
 
     CMP.B   #1, _rt_thread_switch_interrupt_flag
     JEQ     _rt_hw_context_switch_interrupt_do
-    
+
     POPM    R0,R1,R2,R3,A0,A1,SB,FB             ; Restore current task's registers
     REIT                                        ; Return from interrup
 

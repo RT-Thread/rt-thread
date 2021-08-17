@@ -100,7 +100,7 @@ rt_err_t nu_crc_init(void)
 
     SYS_ResetModule(CRC_RST);
 
-    result = rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&s_CRC_mutex, NU_CRYPTO_CRC_NAME, RT_IPC_FLAG_PRIO);
     RT_ASSERT(result == RT_EOK);
 
     return RT_EOK;

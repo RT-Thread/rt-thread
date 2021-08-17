@@ -222,7 +222,7 @@ int pthread_cond_timedwait(pthread_cond_t        *cond,
     int timeout;
     rt_err_t result;
 
-    timeout = clock_time_to_tick(abstime);
+    timeout = rt_timespec_to_tick(abstime);
     result = _pthread_cond_timedwait(cond, mutex, timeout);
     if (result == RT_EOK)
         return 0;

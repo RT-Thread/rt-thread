@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -39,10 +39,10 @@ void rtthread_startup(void)
 
     /* initialize scheduler system */
     rt_system_scheduler_init();
-	
+
     /* initialize system timer*/
     rt_system_timer_init();
-	
+
     /* initialize application */
     rt_application_init();
 

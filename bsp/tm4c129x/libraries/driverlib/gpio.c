@@ -2,25 +2,25 @@
 //
 // gpio.c - API for GPIO ports
 //
-// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2020 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
-// 
+//
 //   Redistribution and use in source and binary forms, with or without
 //   modification, are permitted provided that the following conditions
 //   are met:
-// 
+//
 //   Redistributions of source code must retain the above copyright
 //   notice, this list of conditions and the following disclaimer.
-// 
+//
 //   Redistributions in binary form must reproduce the above copyright
 //   notice, this list of conditions and the following disclaimer in the
-//   documentation and/or other materials provided with the  
+//   documentation and/or other materials provided with the
 //   distribution.
-// 
+//
 //   Neither the name of Texas Instruments Incorporated nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 // "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,8 +32,8 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
+//
+// This is part of revision 2.2.0.295 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -479,8 +479,9 @@ GPIOIntTypeGet(uint32_t ui32Port, uint8_t ui8Pin)
     ui32IS = HWREG(ui32Port + GPIO_O_IS);
     ui32IEV = HWREG(ui32Port + GPIO_O_IEV);
     ui32SI = HWREG(ui32Port + GPIO_O_SI);
+
     return(((ui32IBE & ui8Pin) ? 1 : 0) | ((ui32IS & ui8Pin) ? 2 : 0) |
-           ((ui32IEV & ui8Pin) ? 4 : 0) | (ui32SI & 0x01) ? 0x10000 : 0);
+            ((ui32IEV & ui8Pin) ? 4 : 0) | ((ui32SI & 0x01) ? 0x10000 : 0));
 }
 
 //*****************************************************************************
@@ -573,21 +574,22 @@ GPIOPadConfigSet(uint32_t ui32Port, uint8_t ui8Pins,
            (ui32PinType == GPIO_PIN_TYPE_WAKE_HIGH) ||
            (ui32PinType == GPIO_PIN_TYPE_ANALOG));
 
-
-    //
-    // Set the GPIO peripheral configuration register first as required.  This
-    // register only appears in TM4E111 and later device classes, but is a
-    // harmless write on older devices. Walk pins 0-7 and clear or set the
-    // provided PC[EDMn] encoding.
-    //
-    for(ui8Bit = 0; ui8Bit < 8; ui8Bit++)
+    if (!(CLASS_IS_TM4C123))
     {
-        if(ui8Pins & (1 << ui8Bit))
+        //
+        // Set the GPIO peripheral configuration register first as required.
+        // This register only appears in TM4C129x devices, but is a harmless
+        // write on older devices.
+        //
+        for(ui8Bit = 0; ui8Bit < 8; ui8Bit++)
         {
-            HWREG(ui32Port + GPIO_O_PC) = (HWREG(ui32Port + GPIO_O_PC) &
-                                           ~(0x3 << (2 * ui8Bit)));
-            HWREG(ui32Port + GPIO_O_PC) |= (((ui32Strength >> 5) & 0x3) <<
-                                            (2 * ui8Bit));
+            if(ui8Pins & (1 << ui8Bit))
+            {
+                HWREG(ui32Port + GPIO_O_PC) = (HWREG(ui32Port + GPIO_O_PC) &
+                                               ~(0x3 << (2 * ui8Bit)));
+                HWREG(ui32Port + GPIO_O_PC) |= (((ui32Strength >> 5) & 0x3) <<
+                                                (2 * ui8Bit));
+            }
         }
     }
 
@@ -615,56 +617,62 @@ GPIOPadConfigSet(uint32_t ui32Port, uint8_t ui8Pins,
                                     (HWREG(ui32Port + GPIO_O_SLR) &
                                      ~(ui8Pins)));
 
-    //
-    // Set the 12-mA drive select register.  This register only appears in
-    // TM4E111 and later device classes, but is a harmless write on older
-    // devices.
-    //
-    HWREG(ui32Port + GPIO_O_DR12R) = ((ui32Strength & 0x10) ?
-                                      (HWREG(ui32Port + GPIO_O_DR12R) |
-                                       ui8Pins) :
-                                      (HWREG(ui32Port + GPIO_O_DR12R) &
-                                       ~(ui8Pins)));
+    if (!(CLASS_IS_TM4C123))
+    {
+        //
+        // Set the 12-mA drive select register.  This register only appears in
+        // TM4C129x and later device classes, but is a harmless write on older
+        // devices.
+        //
+        HWREG(ui32Port + GPIO_O_DR12R) = ((ui32Strength & 0x10) ?
+                                          (HWREG(ui32Port + GPIO_O_DR12R) |
+                                           ui8Pins) :
+                                          (HWREG(ui32Port + GPIO_O_DR12R) &
+                                           ~(ui8Pins)));
+    }
 
     //
     // Set the pin type.
     //
     HWREG(ui32Port + GPIO_O_ODR) = ((ui32PinType & 1) ?
-                                    (HWREG(ui32Port + GPIO_O_ODR) | ui8Pins) :
-                                    (HWREG(ui32Port + GPIO_O_ODR) & ~(ui8Pins)));
+                                  (HWREG(ui32Port + GPIO_O_ODR) | ui8Pins) :
+                                  (HWREG(ui32Port + GPIO_O_ODR) & ~(ui8Pins)));
     HWREG(ui32Port + GPIO_O_PUR) = ((ui32PinType & 2) ?
-                                    (HWREG(ui32Port + GPIO_O_PUR) | ui8Pins) :
-                                    (HWREG(ui32Port + GPIO_O_PUR) & ~(ui8Pins)));
+                                  (HWREG(ui32Port + GPIO_O_PUR) | ui8Pins) :
+                                  (HWREG(ui32Port + GPIO_O_PUR) & ~(ui8Pins)));
     HWREG(ui32Port + GPIO_O_PDR) = ((ui32PinType & 4) ?
-                                    (HWREG(ui32Port + GPIO_O_PDR) | ui8Pins) :
-                                    (HWREG(ui32Port + GPIO_O_PDR) & ~(ui8Pins)));
+                                  (HWREG(ui32Port + GPIO_O_PDR) | ui8Pins) :
+                                  (HWREG(ui32Port + GPIO_O_PDR) & ~(ui8Pins)));
     HWREG(ui32Port + GPIO_O_DEN) = ((ui32PinType & 8) ?
-                                    (HWREG(ui32Port + GPIO_O_DEN) | ui8Pins) :
-                                    (HWREG(ui32Port + GPIO_O_DEN) & ~(ui8Pins)));
+                                  (HWREG(ui32Port + GPIO_O_DEN) | ui8Pins) :
+                                  (HWREG(ui32Port + GPIO_O_DEN) & ~(ui8Pins)));
 
-    //
-    // Set the wake pin enable register and the wake level register.  These
-    // registers only appear in TM4E111 and later device classes, but are
-    // harmless writes on older devices.
-    //
-    HWREG(ui32Port + GPIO_O_WAKELVL) = ((ui32PinType & 0x200) ?
-                                        (HWREG(ui32Port + GPIO_O_WAKELVL) |
-                                         ui8Pins) :
-                                        (HWREG(ui32Port + GPIO_O_WAKELVL) &
-                                         ~(ui8Pins)));
-    HWREG(ui32Port + GPIO_O_WAKEPEN) = ((ui32PinType & 0x300) ?
-                                        (HWREG(ui32Port + GPIO_O_WAKEPEN) |
-                                         ui8Pins) :
-                                        (HWREG(ui32Port + GPIO_O_WAKEPEN) &
-                                         ~(ui8Pins)));
+    if (!(CLASS_IS_TM4C123))
+    {
+        //
+        // Set the wake pin enable register and the wake level register.  These
+        // registers only appear in TM4C129x and later device classes, but are
+        // harmless writes on older devices.
+        //
+        HWREG(ui32Port + GPIO_O_WAKELVL) = ((ui32PinType & 0x200) ?
+                                            (HWREG(ui32Port + GPIO_O_WAKELVL) |
+                                             ui8Pins) :
+                                            (HWREG(ui32Port + GPIO_O_WAKELVL) &
+                                             ~(ui8Pins)));
+        HWREG(ui32Port + GPIO_O_WAKEPEN) = ((ui32PinType & 0x300) ?
+                                            (HWREG(ui32Port + GPIO_O_WAKEPEN) |
+                                             ui8Pins) :
+                                            (HWREG(ui32Port + GPIO_O_WAKEPEN) &
+                                             ~(ui8Pins)));
+    }
 
     //
     // Set the analog mode select register.
     //
     HWREG(ui32Port + GPIO_O_AMSEL) =
-        ((ui32PinType == GPIO_PIN_TYPE_ANALOG) ?
-         (HWREG(ui32Port + GPIO_O_AMSEL) | ui8Pins) :
-         (HWREG(ui32Port + GPIO_O_AMSEL) & ~(ui8Pins)));
+          ((ui32PinType == GPIO_PIN_TYPE_ANALOG) ?
+           (HWREG(ui32Port + GPIO_O_AMSEL) | ui8Pins) :
+           (HWREG(ui32Port + GPIO_O_AMSEL) & ~(ui8Pins)));
 }
 
 //*****************************************************************************
@@ -710,9 +718,12 @@ GPIOPadConfigGet(uint32_t ui32Port, uint8_t ui8Pin,
     ui32Strength |= ((HWREG(ui32Port + GPIO_O_DR4R) & ui8Pin) ? 2 : 0);
     ui32Strength |= ((HWREG(ui32Port + GPIO_O_DR8R) & ui8Pin) ? 4 : 0);
     ui32Strength |= ((HWREG(ui32Port + GPIO_O_SLR) & ui8Pin) ? 8 : 0);
-    ui32Strength |= ((HWREG(ui32Port + GPIO_O_DR12R) & ui8Pin) ? 0x10 : 0);
-    ui32Strength |= (((HWREG(ui32Port + GPIO_O_PC) >>
-                       (2 * ui8Pin)) & 0x3) << 5);
+    if (!(CLASS_IS_TM4C123))
+    {
+        ui32Strength |= ((HWREG(ui32Port + GPIO_O_DR12R) & ui8Pin) ? 0x10 : 0);
+        ui32Strength |= (((HWREG(ui32Port + GPIO_O_PC) >>
+                           (2 * ui8Pin)) & 0x3) << 5);
+    }
     *pui32Strength = ui32Strength;
 
     //
@@ -722,10 +733,13 @@ GPIOPadConfigGet(uint32_t ui32Port, uint8_t ui8Pin,
     ui32PinType |= ((HWREG(ui32Port + GPIO_O_PUR) & ui8Pin) ? 2 : 0);
     ui32PinType |= ((HWREG(ui32Port + GPIO_O_PDR) & ui8Pin) ? 4 : 0);
     ui32PinType |= ((HWREG(ui32Port + GPIO_O_DEN) & ui8Pin) ? 8 : 0);
-    if(HWREG(ui32Port + GPIO_O_WAKEPEN) & ui8Pin)
+    if (!(CLASS_IS_TM4C123))
     {
-        ui32PinType |= ((HWREG(ui32Port + GPIO_O_WAKELVL) & ui8Pin) ?
-                        0x200 : 0x100);
+        if(HWREG(ui32Port + GPIO_O_WAKEPEN) & ui8Pin)
+        {
+            ui32PinType |= ((HWREG(ui32Port + GPIO_O_WAKELVL) & ui8Pin) ?
+                            0x200 : 0x100);
+        }
     }
     *pui32PinType = ui32PinType;
 }
@@ -2612,6 +2626,41 @@ GPIOADCTriggerDisable(uint32_t ui32Port, uint8_t ui8Pins)
     // Set the pin as a DMA trigger.
     //
     HWREG(ui32Port + GPIO_O_ADCCTL) &= (~ui8Pins);
+}
+
+//*****************************************************************************
+//
+//! Unlocks a GPIO pin which had been previously locked.
+//!
+//! \param ui32Port is the base address of the GPIO port.
+//! \param ui8Pins is the bit-packed representation of the pin(s).
+//!
+//! This function is used to unlock pins which were locked for specific
+//! functionality such as JTAG operation.  To be able to use pins which have
+//! been locked, the following procedure is required to unlock the pin and
+//! commit the change.  This function will have no effect on pins which are
+//! not protected by the GPIOCR register.
+//!
+//! \return None.
+//
+//*****************************************************************************
+void
+GPIOUnlockPin(uint32_t ui32Port, uint8_t ui8Pins)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(_GPIOBaseValid(ui32Port));
+
+    //
+    // Unlock the port by using the device LOCK key
+    //
+    HWREG(ui32Port + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+
+    //
+    // Commit the pin to keep it in GPIO mode
+    //
+    HWREG(ui32Port + GPIO_O_CR) |= ui8Pins;
 }
 
 //*****************************************************************************

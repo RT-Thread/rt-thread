@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 #include <rtdef.h>
 #include <board.h>
 
-/* The L1-caches on all Cortex®-M7s are divided into lines of 32 bytes. */
+/* The L1-caches on all CortexÂ®-M7s are divided into lines of 32 bytes. */
 #define L1CACHE_LINESIZE_BYTE       (32)
 
 void rt_hw_cpu_icache_enable(void)

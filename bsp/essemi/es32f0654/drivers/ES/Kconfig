@@ -1,0 +1,160 @@
+menu "UART Drivers"
+
+    config BSP_USING_UART0
+        bool "Register UART0"
+        select RT_USING_SERIAL
+        default n
+
+    config BSP_USING_UART1
+        bool "Register UART1"
+        select RT_USING_SERIAL
+        default n
+
+    config BSP_USING_UART2
+        bool "Register UART2"
+        select RT_USING_SERIAL
+        default y
+
+    config BSP_USING_UART3
+        bool "Register UART3"
+        select RT_USING_SERIAL
+        default n
+
+    config BSP_USING_USART0
+        bool "Register USART0"
+        select RT_USING_SERIAL
+        default n
+
+    config BSP_USING_USART1
+        bool "Register USART1"
+        select RT_USING_SERIAL
+        default n
+endmenu
+
+menu "SPI Drivers"
+
+    config BSP_USING_SPI0
+        bool "Register SPI0"
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+
+    config BSP_USING_SPI1
+        bool "Register SPI1"
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+endmenu
+
+menu "I2C Drivers"
+    config BSP_USING_I2C0
+        bool "Register I2C0"
+        select RT_USING_I2C
+        default n
+
+    config BSP_USING_I2C1
+        bool "Register I2C1"
+        select RT_USING_I2C
+        default n
+endmenu
+
+menu "CAN Drivers"
+    config BSP_USING_CAN0
+        bool "Register CAN0"
+        select RT_USING_CAN
+        select RT_CAN_USING_HDR
+        default n
+endmenu
+
+menu "PWM Drivers"
+    config BSP_USING_AD16C4T0_PWM
+        bool "Register pwm0"
+        select RT_USING_PWM
+        default n 
+
+    config BSP_USING_GP16C4T0_PWM
+        bool "Register pwm1"
+        select RT_USING_PWM
+        default n
+
+    config BSP_USING_GP16C2T0_PWM
+        bool "Register pwm2"
+        select RT_USING_PWM
+        default n
+
+    config BSP_USING_GP16C2T1_PWM
+        bool "Register pwm3"
+        select RT_USING_PWM
+        default n
+endmenu
+
+menu "HWtimer Drivers"
+    config BSP_USING_AD16C4T0_HWTIMER
+        bool "Register timer0"
+        select RT_USING_HWTIMER
+        default n
+        depends on !BSP_USING_AD16C4T0_PWM
+
+    config BSP_USING_GP16C4T0_HWTIMER
+        bool "Register timer1"
+        select RT_USING_HWTIMER
+        default n
+        depends on !BSP_USING_GP16C4T0_PWM
+
+    config BSP_USING_GP16C2T0_HWTIMER
+        bool "Register timer2"
+        select RT_USING_HWTIMER
+        default n
+        depends on !BSP_USING_GP16C2T0_PWM
+
+    config BSP_USING_GP16C2T1_HWTIMER
+        bool "Register timer3"
+        select RT_USING_HWTIMER
+        default n
+        depends on !BSP_USING_GP16C2T1_PWM
+
+    config BSP_USING_BS16T0_HWTIMER
+        bool "Register timer4"
+        select RT_USING_HWTIMER
+        default n
+
+    config BSP_USING_BS16T1_HWTIMER
+        bool "Register timer5"
+        select RT_USING_HWTIMER
+        default n
+        depends on !BSP_USING_UART2
+
+    config BSP_USING_BS16T2_HWTIMER
+        bool "Register timer6"
+        select RT_USING_HWTIMER
+        default n
+        depends on !BSP_USING_UART3
+
+    config BSP_USING_BS16T3_HWTIMER
+        bool "Register timer7"
+        select RT_USING_HWTIMER
+        default n
+endmenu
+
+menu "RTC Drivers"
+    config BSP_USING_RTC
+        bool "Register RTC"
+        select RT_USING_RTC
+        default n
+endmenu
+
+menu "PM Drivers"
+    config BSP_USING_PM
+        bool "Using PM"
+        select RT_USING_PM
+        default n
+endmenu
+
+menu "ADC Drivers"
+    config BSP_USING_ADC0
+        bool "Using ADC"
+        select RT_USING_ADC
+        select BSP_USING_ADC
+        default n
+endmenu
+

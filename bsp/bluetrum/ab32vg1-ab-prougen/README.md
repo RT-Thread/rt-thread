@@ -34,20 +34,21 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 | :----------- | :----------: | :---------------------------------------- |
 | USB 转串口   |     支持     |                                           |
 | SD卡         |     支持     |                                           |
-| IRDA         |   即将支持   |                                           |
-| 音频接口     |     支持     |                                           |
+| IRDA         |     支持     |                                           |
+| 音频接口     |     支持     | 支持音频输出                              |
 | **片上外设** | **支持情况** | **备注**                                  |
 | GPIO         |     支持     | PA PB PE PF                               |
 | UART         |     支持     | UART0/1/2                                 |
 | SDIO         |     支持     |                                           |
-| ADC          |   即将支持   |                                           |
+| ADC          |     支持     | 10bit ADC                                 |
 | SPI          |   即将支持   | 软件 SPI                                  |
 | I2C          |     支持     | 软件 I2C                                  |
-| RTC          |   即将支持   |                                           |
+| RTC          |     支持     |                                           |
 | WDT          |     支持     |                                           |
-| FLASH        |   即将支持   |                                           |
+| FLASH        |   即将支持   | 对接 FAL                                  |
 | TIMER        |     支持     |                                           |
 | PWM          |     支持     | LPWM 的 G1 G2 G3 之间是互斥的，只能三选一 |
+| FM receive   |     支持     |                                           |
 | USB Device   |   暂不支持   |                                           |
 | USB Host     |   暂不支持   |                                           |
 
@@ -67,8 +68,6 @@ ab32vg1-prougen 是 中科蓝讯(Bluetrum) 推出的一款基于 RISC-V 内核�
 ### 快速上手
 
 本 BSP 为开发者提供 GCC 开发环境。下面介绍如何将系统运行起来。
-
-教学视频：https://www.bilibili.com/video/BV1RV411v75P/
 
 #### 硬件连接
 
@@ -96,11 +95,12 @@ msh >
 此 BSP 默认只开启了 GPIO 和 串口0 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-3. 输入`pkgs --update`命令更新软件包。
-4. 输入`scons` 命令重新编译工程。
 
-更多细节请参见使用指南：https://ab32vg1-example.readthedocs.io/zh/latest/introduction.html
+2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+
+3. 输入`pkgs --update`命令更新软件包。
+
+4. 输入`scons` 命令重新编译工程。
 
 ## 注意事项
 
@@ -110,10 +110,24 @@ msh >
 
 编译报错的时候，如果出现重复定义的报错，可能需要在 `cconfig.h` 中手动添加以下配置
 
-```
+``` c
 #define HAVE_SIGEVENT 1
 #define HAVE_SIGINFO 1
 #define HAVE_SIGVAL 1
+```
+
+所有在中断中使用的函数或数据需要放在 RAM 中，否则会导致系统运行报错。具体做法可以参考下面
+
+``` c
+RT_SECTION(".irq.example.str")
+static const char example_info[] = "example 0x%x";
+
+RT_SECTION(".irq.example")
+void example_isr(void)
+{
+    rt_kprintf(example_info, 11);
+    ...
+}
 ```
 
 ## 维护人信息

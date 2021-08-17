@@ -3,7 +3,7 @@ Import('rtconfig')
 from building import *
 
 # get current directory
-cwd = GetCurrentDir()
+cwd = GetCurrentDir() 
 
 src	= Glob('*.c')
 CPPPATH = [cwd]

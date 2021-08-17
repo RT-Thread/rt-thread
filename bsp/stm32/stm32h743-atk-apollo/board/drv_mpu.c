@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -55,7 +55,7 @@ int mpu_init(void)
     /* Enable CACHE */
     SCB_EnableICache();
     SCB_EnableDCache();
-    
+
     return 0;
 
 }

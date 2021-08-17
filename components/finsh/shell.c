@@ -97,7 +97,7 @@ int finsh_set_prompt(const char * prompt)
 }
 #endif /* RT_USING_HEAP */
 
-#if defined(RT_USING_DFS)
+#ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif /* RT_USING_DFS */
 
@@ -817,7 +817,7 @@ int finsh_system_init(void)
     rt_thread_t tid;
 
 #ifdef FINSH_USING_SYMTAB
-#if defined(__CC_ARM) || defined(__CLANG_ARM)          /* ARM C Compiler */
+#ifdef __ARMCC_VERSION  /* ARM C Compiler */
     extern const int FSymTab$$Base;
     extern const int FSymTab$$Limit;
     extern const int VSymTab$$Base;
@@ -831,7 +831,7 @@ int finsh_system_init(void)
                                __section_end("FSymTab"));
     finsh_system_var_init(__section_begin("VSymTab"),
                           __section_end("VSymTab"));
-#elif defined (__GNUC__) || defined(__TI_COMPILER_VERSION__)
+#elif defined (__GNUC__) || defined(__TI_COMPILER_VERSION__) || defined(__TASKING__)
     /* GNU GCC Compiler and TI CCS */
     extern const int __fsymtab_start;
     extern const int __fsymtab_end;

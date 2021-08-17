@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -446,18 +446,33 @@ void lcd_draw_line(rt_uint16_t x1, rt_uint16_t y1, rt_uint16_t x2, rt_uint16_t y
     if (y1 == y2)
     {
         /* fast draw transverse line */
-        lcd_address_set(x1, y1, x2, y2);
+        rt_uint32_t x_offset = 0;
+        if (x1 < x2)
+        {
+            x_offset = x2 - x1;
+            lcd_address_set(x1, y1, x2, y2);
+        }
+        else if (x1 > x2)
+        {
+            x_offset = x1 - x2;
+            lcd_address_set(x2, y2, x1, y1);
+        }
+        else
+        {
+            lcd_draw_point(x1, y1);
+            return;
+        }
 
         rt_uint8_t line_buf[480] = {0};
 
-        for (i = 0; i < x2 - x1; i++)
+        for (i = 0; i < x_offset; i++)
         {
             line_buf[2 * i] = FORE_COLOR >> 8;
             line_buf[2 * i + 1] = FORE_COLOR;
         }
 
         rt_pin_write(LCD_DC_PIN, PIN_HIGH);
-        rt_spi_send(spi_dev_lcd, line_buf, (x2 - x1) * 2);
+        rt_spi_send(spi_dev_lcd, line_buf, x_offset * 2);
 
         return ;
     }
@@ -955,7 +970,7 @@ rt_err_t lcd_show_qrcode(rt_uint16_t x, rt_uint16_t y, rt_uint8_t version, rt_ui
         {
             enlargement_factor = enlargement;
         }
-        
+
         /* malloc memory for quick display of qrcode */
         qrcode_buf = rt_malloc(qrcode.size * 2 * enlargement_factor * enlargement_factor);
         if (qrcode_buf == RT_NULL)

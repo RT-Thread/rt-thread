@@ -8,6 +8,7 @@
  * 2012-09-30     Bernard      first version.
  * 2013-05-08     Grissiom     reimplement
  * 2016-08-18     heyuanjie    add interface
+ * 2021-07-20     arminker     fix write_index bug in function rt_ringbuffer_put_force
  */
 
 #include <rtthread.h>
@@ -138,7 +139,8 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
 
     if (length > space_length)
     {
-        rb->read_mirror = ~rb->read_mirror;
+        if (rb->write_index <= rb->read_index)
+            rb->read_mirror = ~rb->read_mirror;
         rb->read_index = rb->write_index;
     }
 

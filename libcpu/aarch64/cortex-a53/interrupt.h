@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,8 +13,6 @@
 
 #include <rthw.h>
 #include <board.h>
-
-#include "raspi.h"
 
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01

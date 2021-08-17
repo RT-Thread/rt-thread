@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-08-02     Yang        the first version
  */
- 
+
 #include "drv_sdram.h"
 
 #include <fsl_emc.h>
@@ -15,10 +15,10 @@
 
 
 /*******************************************************************************************
-* @º¯ÊıÃû£ºsdram_gpio_config()
-* @²ÎÊı  £ºvoid
-* @·µ»ØÖµ£ºvoid
-* @ÃèÊö  £ºSDRAM¹Ü½ÅÅäÖÃº¯Êı£¬ÄÚ²¿µ÷ÓÃ
+* @å‡½æ•°åï¼šsdram_gpio_config()
+* @å‚æ•°  ï¼švoid
+* @è¿”å›å€¼ï¼švoid
+* @æè¿°  ï¼šSDRAMç®¡è„šé…ç½®å‡½æ•°ï¼Œå†…éƒ¨è°ƒç”¨
 *********************************************************************************************/
 static void  sdram_gpio_config(void)
 {

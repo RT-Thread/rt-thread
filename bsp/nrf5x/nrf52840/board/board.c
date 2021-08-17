@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020-04-29     supperthomas first version
+ * 2020-04-29     supperthomas fix component init
  *
  */
 #include <rtthread.h>
@@ -71,6 +72,7 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+
 
 #ifdef BSP_USING_SOFTDEVICE
     extern uint32_t  Image$$RW_IRAM1$$Base;

@@ -18,8 +18,8 @@
 #ifdef RT_USING_DFS_MNTTABLE
 #include "dfs_fs.h"
 #endif
-
 #ifdef RT_USB_DEVICE_MSTORAGE
+#define MSTRORAGE_INTF_STR_INDEX 11
 
 enum STAT
 {
@@ -131,7 +131,11 @@ const static struct umass_descriptor _mass_desc =
         USB_CLASS_MASS_STORAGE,     //bInterfaceClass;
         0x06,                       //bInterfaceSubClass;
         0x50,                       //bInterfaceProtocol;
+#ifdef RT_USB_DEVICE_COMPOSITE
+        MSTRORAGE_INTF_STR_INDEX,
+#else
         0x00,                       //iInterface;
+#endif
     },
 
     {
@@ -1097,7 +1101,11 @@ ufunction_t rt_usbd_function_mstorage_create(udevice_t device)
     RT_ASSERT(device != RT_NULL);
 
     /* set usb device string description */
+#ifdef RT_USB_DEVICE_COMPOSITE
+    rt_usbd_device_set_interface_string(device, MSTRORAGE_INTF_STR_INDEX, _ustring[2]);
+#else
     rt_usbd_device_set_string(device, _ustring);
+#endif
 
     /* create a mass storage function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);

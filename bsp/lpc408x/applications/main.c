@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, Synwit Technology Co.,Ltd.
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-12-10     armink    first version
+ * 2018-12-10     armink       first version
  */
 
 #include <rtthread.h>
@@ -14,6 +14,6 @@
 int main(void)
 {
     rt_kprintf("Hello RT-Thread!\n");
-    
+
     return RT_EOK;
-} 
+}

@@ -21,31 +21,31 @@
 /* Exported types ------------------------------------------------------------*/
 enum efm32_irq_hook_type_t
 {
-	efm32_irq_type_dma = 0,
-	efm32_irq_type_rtc,
-	efm32_irq_type_timer,
+    efm32_irq_type_dma = 0,
+    efm32_irq_type_rtc,
+    efm32_irq_type_timer,
     efm32_irq_type_letimer,
-	efm32_irq_type_gpio,
-	efm32_irq_type_acmp,
-	efm32_irq_type_usart,
-	efm32_irq_type_leuart,
-	efm32_irq_type_iic
+    efm32_irq_type_gpio,
+    efm32_irq_type_acmp,
+    efm32_irq_type_usart,
+    efm32_irq_type_leuart,
+    efm32_irq_type_iic
 };
 
 typedef void (*efm32_irq_callback_t)(rt_device_t device);
 
 typedef struct
 {
-	enum efm32_irq_hook_type_t type;
-	rt_uint8_t unit;
-	efm32_irq_callback_t cbFunc;
-	void *userPtr;
+    enum efm32_irq_hook_type_t type;
+    rt_uint8_t unit;
+    efm32_irq_callback_t cbFunc;
+    void *userPtr;
 } efm32_irq_hook_init_t;
 
 typedef struct
 {
-	efm32_irq_callback_t cbFunc;
-	void *userPtr;
+    efm32_irq_callback_t cbFunc;
+    void *userPtr;
 } efm32_irq_hook_t;
 
 /* Exported constants --------------------------------------------------------*/

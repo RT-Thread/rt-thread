@@ -1,21 +1,7 @@
 /*
- * File      : uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -164,11 +150,11 @@ static rt_err_t am_configure(struct rt_serial_device *serial, struct serial_conf
     else if (cfg->stop_bits == STOP_BITS_2)
         uart_cfg.bTwoStopBits = true;
 
-    if (cfg->parity == PARITY_NONE)    
+    if (cfg->parity == PARITY_NONE)
         uart_cfg.ui32Parity = AM_HAL_UART_PARITY_NONE;
-    else if (cfg->parity == PARITY_ODD)    
+    else if (cfg->parity == PARITY_ODD)
         uart_cfg.ui32Parity = AM_HAL_UART_PARITY_ODD;
-    else if (cfg->parity == PARITY_EVEN)    
+    else if (cfg->parity == PARITY_EVEN)
         uart_cfg.ui32Parity = AM_HAL_UART_PARITY_EVEN;
 
     uart_cfg.ui32FlowCtrl = AM_HAL_UART_FLOW_CTRL_NONE;

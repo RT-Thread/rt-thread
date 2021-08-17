@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-02-27     bernard      fix the re-work issue.
+ * 2017-02-27     Bernard      fix the re-work issue.
+ * 2021-08-01     Meco Man     remove rt_delayed_work_init()
  */
 
 #include <rthw.h>
@@ -339,12 +340,6 @@ rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
     return RT_EOK;
 }
 
-void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
-                          void *work_data), void *work_data)
-{
-    rt_work_init(&work->work, work_func, work_data);
-}
-
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 static struct rt_workqueue *sys_workq;
 
@@ -358,7 +353,7 @@ rt_err_t rt_work_cancel(struct rt_work *work)
     return rt_workqueue_cancel_work(sys_workq, work);
 }
 
-int rt_work_sys_workqueue_init(void)
+static int rt_work_sys_workqueue_init(void)
 {
     if (sys_workq != RT_NULL)
         return RT_EOK;
@@ -370,5 +365,5 @@ int rt_work_sys_workqueue_init(void)
     return RT_EOK;
 }
 INIT_PREV_EXPORT(rt_work_sys_workqueue_init);
-#endif
-#endif
+#endif /* RT_USING_SYSTEM_WORKQUEUE */
+#endif /* RT_USING_HEAP */

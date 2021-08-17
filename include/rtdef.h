@@ -35,6 +35,7 @@
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
  * 2021-03-19     Meco Man     add security devices
+ * 2021-05-10     armink       change version number to v4.0.4
  */
 
 #ifndef __RT_DEF_H__
@@ -56,7 +57,7 @@ extern "C" {
 /* RT-Thread version information */
 #define RT_VERSION                      4L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     3L              /**< revise version number */
+#define RT_REVISION                     4L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -194,17 +195,15 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define rt_inline                   static inline
     #define RTT_API
 #elif defined (__TASKING__)
-
     #include <stdarg.h>
-    #define RT_SECTION(x)
-    #define RT_UNUSED
-    #define RT_USED
+    #define RT_SECTION(x)               __attribute__((section(x)))
+    #define RT_UNUSED                   __attribute__((unused))
+    #define RT_USED                     __attribute__((used, protect))
     #define PRAGMA(x)                   _Pragma(#x)
-    #define ALIGN(n)
-    #define RT_WEAK
+    #define ALIGN(n)                    __attribute__((__align(n)))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API
-
 #else
     #error not supported tool chain
 #endif
@@ -213,7 +212,32 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #ifdef RT_USING_COMPONENTS_INIT
 typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER /* we do not support MS VC++ compiler */
-    #define INIT_EXPORT(fn, level)
+#pragma section("rti_fn$f",read)
+    #if RT_DEBUG_INIT
+        struct rt_init_desc
+        {
+            const char* level;
+            const init_fn_t fn;
+            const char* fn_name;
+        };
+        #define INIT_EXPORT(fn, level)                                  \
+                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                const char __rti_##fn##_name[] = #fn;                   \
+                                __declspec(allocate("rti_fn$f"))                        \
+                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                {__rti_level_##fn, fn, __rti_##fn##_name};
+    #else
+        struct rt_init_desc
+        {
+            const char* level;
+            const init_fn_t fn;
+        };
+        #define INIT_EXPORT(fn, level)                                  \
+                                const char __rti_level_##fn[] = level"__rt_init_"#fn;   \
+                                __declspec(allocate("rti_fn$f"))                        \
+                                RT_USED const struct rt_init_desc __rt_init_msc_##fn =  \
+                                {__rti_level_##fn, fn };
+    #endif
 #else
     #if RT_DEBUG_INIT
         struct rt_init_desc
@@ -487,7 +511,7 @@ typedef struct rt_timer *rt_timer_t;
  * @addtogroup Signal
  */
 #ifdef RT_USING_SIGNALS
-#include <libc/libc_signal.h>
+#include <sys/signal.h>
 typedef unsigned long rt_sigset_t;
 typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;
@@ -542,6 +566,10 @@ typedef siginfo_t rt_siginfo_t;
 
 #ifndef RT_SCHEDULE_IPI
 #define RT_SCHEDULE_IPI                 0
+#endif
+
+#ifndef RT_STOP_IPI
+#define RT_STOP_IPI                     1
 #endif
 
 /**
@@ -635,6 +663,10 @@ struct rt_thread
 
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
+
+#ifdef RT_USING_CPU_USAGE
+    rt_uint64_t  duration_tick;                          /**< cpu usage tick */
+#endif
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
@@ -877,6 +909,7 @@ enum rt_device_class_type
     RT_Device_Class_I2CBUS,                             /**< I2C bus device */
     RT_Device_Class_USBDevice,                          /**< USB slave device */
     RT_Device_Class_USBHost,                            /**< USB host bus */
+    RT_Device_Class_USBOTG,                             /**< USB OTG bus */
     RT_Device_Class_SPIBUS,                             /**< SPI bus device */
     RT_Device_Class_SPIDevice,                          /**< SPI device */
     RT_Device_Class_SDIO,                               /**< SDIO bus device */
@@ -941,10 +974,6 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_BLK_AUTOREFRESH  0x13            /**< block device : enter/exit auto refresh mode */
 #define RT_DEVICE_CTRL_NETIF_GETMAC     0x10            /**< get mac address */
 #define RT_DEVICE_CTRL_MTD_FORMAT       0x10            /**< format a MTD device */
-#define RT_DEVICE_CTRL_RTC_GET_TIME     0x10            /**< get time */
-#define RT_DEVICE_CTRL_RTC_SET_TIME     0x11            /**< set time */
-#define RT_DEVICE_CTRL_RTC_GET_ALARM    0x12            /**< get alarm */
-#define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
 

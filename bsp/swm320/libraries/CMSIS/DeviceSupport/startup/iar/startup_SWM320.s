@@ -84,7 +84,7 @@ __vector_table
         DCD     DMA_Handler
         DCD     LCD_Handler
         DCD     NORFLC_Handler
-        DCD	CAN_Handler
+        DCD     CAN_Handler
         DCD     PULSE_Handler
         DCD     WDT_Handler
         DCD     PWM_Handler

@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
 #include "board.h"
 
@@ -28,9 +36,9 @@ static rt_err_t rt_led_init (rt_device_t dev)
     /* led0-1-2 : P27-P38-PE0 */
     FM4_GPIO->PFR2 &= ~((1<<7) );  /* set P27 fuction is GPIO. */
     FM4_GPIO->DDR2 |=  (1<<7) ;    /* set P27 output. */
-		FM4_GPIO->PFR3 &= ~((1<<8) );  /* set P38 fuction is GPIO. */
+        FM4_GPIO->PFR3 &= ~((1<<8) );  /* set P38 fuction is GPIO. */
     FM4_GPIO->DDR3 |=  (1<<8) ;    /* set P38 output. */
-		FM4_GPIO->PFRE &= ~((1<<0) );  /* set PE0 fuction is GPIO. */
+        FM4_GPIO->PFRE &= ~((1<<0) );  /* set PE0 fuction is GPIO. */
     FM4_GPIO->DDRE |=  (1<<0) ;    /* set PE0 output. */
 
     /* LED0 */
@@ -127,16 +135,16 @@ static rt_err_t rt_led_control (rt_device_t dev, int cmd, void *args)
 
 void rt_led_hw_init(void)
 {
-    fm4_led.parent.type 		= RT_Device_Class_Char;
+    fm4_led.parent.type         = RT_Device_Class_Char;
     fm4_led.parent.rx_indicate  = RT_NULL;
     fm4_led.parent.tx_complete  = RT_NULL;
-    fm4_led.parent.init 		= rt_led_init;
-    fm4_led.parent.open		    = rt_led_open;
-    fm4_led.parent.close		= rt_led_close;
+    fm4_led.parent.init         = rt_led_init;
+    fm4_led.parent.open         = rt_led_open;
+    fm4_led.parent.close        = rt_led_close;
     fm4_led.parent.read         = rt_led_read;
-    fm4_led.parent.write 		= rt_led_write;
-    fm4_led.parent.control 	    = rt_led_control;
-    fm4_led.parent.user_data	= RT_NULL;
+    fm4_led.parent.write        = rt_led_write;
+    fm4_led.parent.control      = rt_led_control;
+    fm4_led.parent.user_data    = RT_NULL;
 
     /* register a character device */
     rt_device_register(&fm4_led.parent, "led", RT_DEVICE_FLAG_RDWR);
