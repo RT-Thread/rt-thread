@@ -77,6 +77,7 @@
 struct rt_ulog
 {
     rt_bool_t init_ok;
+    rt_bool_t output_lock_enabled;
     struct rt_semaphore output_locker;
     /* all backends */
     rt_slist_t backend_list;
@@ -186,6 +187,9 @@ size_t ulog_ultoa(char *s, unsigned long int n)
 
 static void output_unlock(void)
 {
+    if (!ulog.output_lock_enabled)
+        return;
+
     /* is in thread context */
     if (rt_interrupt_get_nest() == 0)
     {
@@ -201,6 +205,9 @@ static void output_unlock(void)
 
 static void output_lock(void)
 {
+    if (!ulog.output_lock_enabled)
+        return;
+
     /* is in thread context */
     if (rt_interrupt_get_nest() == 0)
     {
@@ -212,6 +219,11 @@ static void output_lock(void)
         ulog.output_locker_isr_lvl = rt_hw_interrupt_disable();
 #endif
     }
+}
+
+void ulog_output_lock_enabled(rt_bool_t enabled)
+{
+    ulog.output_lock_enabled = enabled;
 }
 
 static char *get_log_buf(void)
@@ -260,19 +272,36 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     /* add time info */
     {
 #ifdef ULOG_TIME_USING_TIMESTAMP
-        static time_t now;
+        static struct timeval now;
         static struct tm *tm, tm_tmp;
+        static rt_bool_t check_usec_support = RT_FALSE, usec_is_support = RT_FALSE;
 
-        now = time(NULL);
-        tm = gmtime_r(&now, &tm_tmp);
-
-#ifdef RT_USING_SOFT_RTC
-        rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d.%03d", tm->tm_mon + 1,
-                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, rt_tick_get() % 1000);
-#else
-        rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d", tm->tm_mon + 1,
-                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
-#endif /* RT_USING_SOFT_RTC */
+        if (gettimeofday(&now, NULL) >= 0)
+        {
+            time_t t = now.tv_sec;
+            tm = localtime_r(&t, &tm_tmp);
+            /* show the time format MM-DD HH:MM:SS */
+            rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%02d-%02d %02d:%02d:%02d", tm->tm_mon + 1,
+                    tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+            /* check the microseconds support when kernel is startup */
+            if (!check_usec_support && rt_thread_self() != RT_NULL)
+            {
+                long old_usec = now.tv_usec;
+                /* delay some time for wait microseconds changed */
+                rt_thread_delay(2);
+                gettimeofday(&now, NULL);
+                check_usec_support = RT_TRUE;
+                /* the microseconds is not equal between two gettimeofday calls */
+                if (now.tv_usec != old_usec)
+                    usec_is_support = RT_TRUE;
+            }
+            if (usec_is_support)
+            {
+                /* show the millisecond */
+                log_len += rt_strlen(log_buf + log_len);
+                rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, ".%03d", now.tv_usec / 1000);
+            }
+        }
 
 #else
         static rt_size_t tick_len = 0;
@@ -318,9 +347,14 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
         /* is not in interrupt context */
         if (rt_interrupt_get_nest() == 0)
         {
-            rt_size_t name_len = rt_strnlen(rt_thread_self()->name, RT_NAME_MAX);
-
-            rt_strncpy(log_buf + log_len, rt_thread_self()->name, name_len);
+            rt_size_t name_len = 0;
+            const char *thread_name = "N/A";
+            if (rt_thread_self())
+            {
+                thread_name = rt_thread_self()->name;
+            }
+            name_len = rt_strnlen(thread_name, RT_NAME_MAX);
+            rt_strncpy(log_buf + log_len, thread_name, name_len);
             log_len += name_len;
         }
         else
@@ -1370,6 +1404,7 @@ int ulog_init(void)
         return 0;
 
     rt_sem_init(&ulog.output_locker, "ulog lock", 1, RT_IPC_FLAG_FIFO);
+    ulog.output_lock_enabled = RT_TRUE;
     rt_slist_init(&ulog.backend_list);
 
 #ifdef ULOG_USING_FILTER

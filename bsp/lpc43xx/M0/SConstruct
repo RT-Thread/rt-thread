@@ -35,12 +35,12 @@ if rtconfig.CROSS_TOOL == 'gcc':
 
     if sys.platform.startswith('linux'):
         import glob
-        ocwd = os.getcwdu()
+        ocwd = os.getcwd()
         res = os.system('cd ../Libraries/; find -name \*.o -exec rm {} \;')
         os.chdir(ocwd)
     else:
         # Assume Windows.
-        ocwd = os.getcwdu()
+        ocwd = os.getcwd()
         print('TODO: remove the object files in ../Libraries')
         os.chdir(ocwd)
 

@@ -24,6 +24,7 @@ STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc.c
 STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rcc_ex.c
 STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rng.c
 STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_gpio.c
+STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_hsem.c
 ''')
   
 if GetDepend(['RT_USING_SERIAL']):

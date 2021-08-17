@@ -26,6 +26,8 @@ if GetDepend(['RT_USING_I2C']):
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     src += ['drv_soft_i2c.c']
 
+if GetDepend(['BSP_USING_ONCHIP_RTC']):
+    src += ['drv_rtc.c']
 
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']

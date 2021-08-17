@@ -1,11 +1,7 @@
 /*
- * File      : usart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -381,14 +377,14 @@ static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd, void *arg
         /* disable rx irq */
         NVIC_DisableIRQ(uart->irqn);
         /* disable interrupt */
-        usart_interrupt_disable(uart->uart_periph, USART_INTEN_RBNEIE);
+        usart_interrupt_disable(uart->uart_periph, USART_INT_RBNE);
 
         break;
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
         NVIC_EnableIRQ(uart->irqn);
         /* enable interrupt */
-        usart_interrupt_enable(uart->uart_periph, USART_INTEN_RBNEIE);
+        usart_interrupt_enable(uart->uart_periph, USART_INT_RBNE);
         break;
     }
 
@@ -434,7 +430,7 @@ static void uart_isr(struct rt_serial_device *serial)
     RT_ASSERT(uart != RT_NULL);
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_RBNEIE) != RESET) &&
+    if ((usart_interrupt_flag_get(uart->uart_periph, USART_INT_FLAG_RBNE) != RESET) &&
             (usart_flag_get(uart->uart_periph, USART_FLAG_RBNE) != RESET))
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);

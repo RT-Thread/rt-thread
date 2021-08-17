@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2021, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
 #include "board.h"
 
@@ -5,8 +13,6 @@
 
 int platform_init(void)
 {
-    finsh_system_init();
-
 #ifdef RT_USING_LWIP
 #ifdef RT_USING_TAPNETIF
     tap_netif_hw_init();
@@ -31,6 +37,7 @@ int platform_init(void)
 
     return 0;
 }
+INIT_COMPONENT_EXPORT(platform_init);
 
 int platform_post_init(void)
 {
@@ -43,6 +50,6 @@ int platform_post_init(void)
         rt_hw_sdl_start();
     }
 #endif
-
     return 0;
 }
+INIT_COMPONENT_EXPORT(platform_post_init);

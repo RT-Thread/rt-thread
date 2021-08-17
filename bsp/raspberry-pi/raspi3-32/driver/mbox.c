@@ -1,6 +1,6 @@
 /*
  * File      : mbox.c
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -41,7 +41,7 @@ int mbox_call(unsigned char ch, int mmu_enable)
         do
         {
             asm volatile("nop");
-        } 
+        }
         while (*MBOX_STATUS & MBOX_EMPTY);
         /* is it a response to our message? */
         if (r == *MBOX_READ)

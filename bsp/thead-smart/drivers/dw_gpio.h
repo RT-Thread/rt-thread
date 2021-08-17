@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 
-typedef struct 
+typedef struct
 {
     __IOM uint32_t SWPORT_DR;                     /* Offset: 0x000 (W/R)  PortA data register */
     __IOM uint32_t SWPORT_DDR;                    /* Offset: 0x004 (W/R)  PortA data direction register */

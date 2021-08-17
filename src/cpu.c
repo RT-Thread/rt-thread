@@ -11,13 +11,13 @@
 #include <rtthread.h>
 
 #ifdef RT_USING_SMP
-static struct rt_cpu rt_cpus[RT_CPUS_NR];
+static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
 
 /*
  * disable scheduler
  */
-static void rt_preempt_disable(void)
+static void _cpu_preempt_disable(void)
 {
     register rt_base_t level;
     struct rt_thread *current_thread;
@@ -42,7 +42,7 @@ static void rt_preempt_disable(void)
 /*
  * enable scheduler
  */
-static void rt_preempt_enable(void)
+static void _cpu_preempt_enable(void)
 {
     register rt_base_t level;
     struct rt_thread *current_thread;
@@ -73,7 +73,7 @@ RTM_EXPORT(rt_spin_lock_init)
 
 void rt_spin_lock(struct rt_spinlock *lock)
 {
-    rt_preempt_disable();
+    _cpu_preempt_disable();
     rt_hw_spin_lock(&lock->lock);
 }
 RTM_EXPORT(rt_spin_lock)
@@ -81,7 +81,7 @@ RTM_EXPORT(rt_spin_lock)
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
     rt_hw_spin_unlock(&lock->lock);
-    rt_preempt_enable();
+    _cpu_preempt_enable();
 }
 RTM_EXPORT(rt_spin_unlock)
 
@@ -89,7 +89,7 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
     unsigned long level;
 
-    rt_preempt_disable();
+    _cpu_preempt_disable();
 
     level = rt_hw_local_irq_disable();
     rt_hw_spin_lock(&lock->lock);
@@ -103,7 +103,7 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
 
-    rt_preempt_enable();
+    _cpu_preempt_enable();
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 
@@ -112,12 +112,12 @@ RTM_EXPORT(rt_spin_unlock_irqrestore)
  */
 struct rt_cpu *rt_cpu_self(void)
 {
-    return &rt_cpus[rt_hw_cpu_id()];
+    return &_cpus[rt_hw_cpu_id()];
 }
 
 struct rt_cpu *rt_cpu_index(int index)
 {
-    return &rt_cpus[index];
+    return &_cpus[index];
 }
 
 /**
@@ -185,4 +185,4 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
 
-#endif
+#endif /* RT_USING_SMP */

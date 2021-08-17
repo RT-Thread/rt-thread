@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,8 +7,9 @@
  * Date           Author       Notes
  * 2018/5/3       Bernard      first version
  * 2019-07-28     zdzn         add smp support
- * 2019-08-09     zhangjun     fixup the problem of smp startup and scheduling issues, 
+ * 2019-08-09     zhangjun     fixup the problem of smp startup and scheduling issues,
  *                             write addr to mailbox3 to startup smp, and we use mailbox0 for ipi
+ * 2021-07-31     GuEe-GUI     Add gic pl390 branch
  */
 
 #include <rthw.h>
@@ -18,6 +19,10 @@
 #include "cp15.h"
 #include "armv8.h"
 #include "interrupt.h"
+
+#ifdef BSP_USING_GIC390
+#include <gic_pl390.h>
+#endif
 
 #define MAX_HANDLERS                72
 
@@ -41,6 +46,7 @@ void rt_hw_vector_init(void)
     rt_hw_set_current_vbar((rt_ubase_t)&system_vectors);  // cpu_gcc.S
 }
 
+#ifndef BSP_USING_GIC
 static void default_isr_handler(int vector, void *param)
 {
 #ifdef RT_USING_SMP
@@ -49,12 +55,16 @@ static void default_isr_handler(int vector, void *param)
     rt_kprintf("unhandled irq: %d\n",vector);
 #endif
 }
+#endif
 
 /**
  * This function will initialize hardware interrupt
  */
 void rt_hw_interrupt_init(void)
 {
+#ifdef BSP_USING_GIC390
+    arm_gic_irq_init();
+#else
     rt_uint32_t index;
 
     /* mask all of interrupts */
@@ -76,6 +86,7 @@ void rt_hw_interrupt_init(void)
     rt_interrupt_from_thread = 0;
     rt_interrupt_to_thread = 0;
     rt_thread_switch_interrupt_flag = 0;
+#endif
 }
 
 /**
@@ -84,6 +95,9 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int vector)
 {
+#ifdef BSP_USING_GIC390
+    arm_gic_mask(vector);
+#else
     if (vector < 32)
     {
         IRQ_DISABLE1 = (1 << vector);
@@ -98,6 +112,7 @@ void rt_hw_interrupt_mask(int vector)
         vector = vector - 64;
         IRQ_DISABLE_BASIC = (1 << vector);
     }
+#endif
 }
 
 /**
@@ -106,6 +121,9 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
+#ifdef BSP_USING_GIC390
+    arm_gic_umask(vector);
+#else
     if (vector < 32)
     {
         IRQ_ENABLE1 = (1 << vector);
@@ -120,6 +138,7 @@ void rt_hw_interrupt_umask(int vector)
         vector = vector - 64;
         IRQ_ENABLE_BASIC = (1 << vector);
     }
+#endif
 }
 
 /**
@@ -160,15 +179,15 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
     }
     if(cpu_mask & 0x2)
     {
-    	send_ipi_msg(1, ipi_vector);
+        send_ipi_msg(1, ipi_vector);
     }
     if(cpu_mask & 0x4)
     {
-    	send_ipi_msg(2, ipi_vector);
+        send_ipi_msg(2, ipi_vector);
     }
     if(cpu_mask & 0x8)
     {
-    	send_ipi_msg(3, ipi_vector);
+        send_ipi_msg(3, ipi_vector);
     }
     __DSB();
 }

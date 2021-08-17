@@ -87,7 +87,7 @@ __STATIC_INLINE uint32_t BURTC_DivToLog2(uint32_t div)
  *    Configures the BURTC peripheral.
  *
  * @note
- *   Before initialization, BURTC module must first be enabled by clearing the 
+ *   Before initialization, BURTC module must first be enabled by clearing the
  *   reset bit in the RMU, i.e.
  * @verbatim
  *   RMU_ResetControl(rmuResetBU, false);
@@ -123,7 +123,7 @@ void BURTC_Init(const BURTC_Init_TypeDef *burtcInit)
   presc = BURTC_DivToLog2(burtcInit->clkDiv);
 
   /* Make sure all registers are updated simultaneously */
-  if (burtcInit->enable) 
+  if (burtcInit->enable)
   {
     BURTC_FreezeEnable(true);
   }
@@ -132,7 +132,7 @@ void BURTC_Init(const BURTC_Init_TypeDef *burtcInit)
   BURTC->LPMODE = (uint32_t)(burtcInit->lowPowerMode);
 
   /* New configuration */
-  ctrl = ((BURTC_CTRL_RSTEN) | 
+  ctrl = ((BURTC_CTRL_RSTEN) |
           (burtcInit->mode) |
           (burtcInit->debugRun << _BURTC_CTRL_DEBUGRUN_SHIFT) |
           (burtcInit->compare0Top << _BURTC_CTRL_COMP0TOP_SHIFT) |

@@ -13,6 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/time.h>
+#include <sys/errno.h>
 
 #include <at_socket.h>
 #include <at_device.h>
@@ -78,7 +79,7 @@ struct at_socket *at_get_socket(int socket)
 }
 
 /* get a block to the AT socket receive list*/
-static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
+static rt_err_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
 {
     at_recv_pkt_t pkt = RT_NULL;
 
@@ -86,7 +87,7 @@ static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
     if (pkt == RT_NULL)
     {
         LOG_E("No memory for receive packet table!");
-        return 0;
+        return -RT_ENOMEM;
     }
 
     pkt->bfsz_totle = length;
@@ -95,7 +96,7 @@ static size_t at_recvpkt_put(rt_slist_t *rlist, const char *ptr, size_t length)
 
     rt_slist_append(rlist, &pkt->list);
 
-    return length;
+    return RT_EOK;
 }
 
 /* delete and free all receive buffer list */
@@ -651,14 +652,20 @@ static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, con
     RT_ASSERT(event == AT_SOCKET_EVT_RECV);
 
     /* check the socket object status */
-    if (sock->magic != AT_SOCKET_MAGIC)
+    if (sock->magic != AT_SOCKET_MAGIC || sock->state == AT_SOCKET_CLOSED)
     {
+        rt_free((void *)buff);
         return;
     }
 
     /* put receive buffer to receiver packet list */
     rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-    at_recvpkt_put(&(sock->recvpkt_list), buff, bfsz);
+    if (at_recvpkt_put(&(sock->recvpkt_list), buff, bfsz) != RT_EOK)
+    {
+        rt_free((void *)buff);
+        rt_mutex_release(sock->recv_lock);
+        return;
+    }
     rt_mutex_release(sock->recv_lock);
 
     rt_sem_release(sock->recv_notice);
@@ -815,7 +822,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         /* wait the receive semaphore */
         if (rt_sem_take(sock->recv_notice, timeout) < 0)
         {
-            LOG_E("AT socket (%d) receive timeout (%d)!", socket, timeout);
+            LOG_D("AT socket (%d) receive timeout (%d)!", socket, timeout);
             errno = EAGAIN;
             result = -1;
             goto __exit;

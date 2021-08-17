@@ -15,7 +15,7 @@ if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= r'C:\Program Files (x86)\GNU Tools ARM Embedded\6 2017-q1-update\bin'
 elif CROSS_TOOL == 'keil':
-	PLATFORM 	= 'armcc'
+	PLATFORM 	= 'armclang'
 	EXEC_PATH 	= r'C:\Keil_v5'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
@@ -56,9 +56,9 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
-elif PLATFORM == 'armcc':
+elif PLATFORM == 'armclang':
     # toolchains
-    CC = 'armcc'
+    CC = 'armclang'
     AS = 'armasm'
     AR = 'armar'
     LINK = 'armlink'

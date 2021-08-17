@@ -20,7 +20,7 @@
 
 #ifndef RT_SIG_INFO_MAX
 #define RT_SIG_INFO_MAX 32
-#endif
+#endif /* RT_SIG_INFO_MAX */
 
 #define DBG_TAG     "SIGN"
 #define DBG_LVL     DBG_WARNING
@@ -35,7 +35,7 @@ struct siginfo_node
     struct rt_slist_node list;
 };
 
-static struct rt_mempool *_rt_siginfo_pool;
+static struct rt_mempool *_siginfo_pool;
 static void _signal_deliver(rt_thread_t tid);
 void rt_thread_handle_sig(rt_bool_t clean_state);
 
@@ -67,7 +67,7 @@ static void _signal_entry(void *parameter)
     /* return to thread */
     tid->sp = tid->sig_ret;
     tid->sig_ret = RT_NULL;
-#endif
+#endif /* RT_USING_SMP */
 
     LOG_D("switch back to: 0x%08x\n", tid->sp);
     tid->stat &= ~RT_THREAD_STAT_SIGNAL;
@@ -76,7 +76,7 @@ static void _signal_entry(void *parameter)
     rt_hw_context_switch_to((rt_base_t)&parameter, tid);
 #else
     rt_hw_context_switch_to((rt_ubase_t)&(tid->sp));
-#endif /*RT_USING_SMP*/
+#endif /* RT_USING_SMP */
 }
 
 /*
@@ -153,7 +153,7 @@ static void _signal_deliver(rt_thread_t tid)
             tid->sig_ret = tid->sp;
             tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
                                        (void *)((char *)tid->sig_ret - 32), RT_NULL);
-#endif
+#endif /* RT_USING_SMP */
 
             rt_hw_interrupt_enable(level);
             LOG_D("signal stack pointer @ 0x%08x", tid->sp);
@@ -204,7 +204,7 @@ void *rt_signal_check(void* context)
     rt_hw_interrupt_enable(level);
     return context;
 }
-#endif
+#endif /* RT_USING_SMP */
 
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 {
@@ -538,7 +538,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     }
     rt_hw_interrupt_enable(level);
 
-    si_node = (struct siginfo_node *) rt_mp_alloc(_rt_siginfo_pool, 0);
+    si_node = (struct siginfo_node *) rt_mp_alloc(_siginfo_pool, 0);
     if (si_node)
     {
         rt_slist_init(&(si_node->list));
@@ -576,8 +576,8 @@ int rt_thread_kill(rt_thread_t tid, int sig)
 
 int rt_system_signal_init(void)
 {
-    _rt_siginfo_pool = rt_mp_create("signal", RT_SIG_INFO_MAX, sizeof(struct siginfo_node));
-    if (_rt_siginfo_pool == RT_NULL)
+    _siginfo_pool = rt_mp_create("signal", RT_SIG_INFO_MAX, sizeof(struct siginfo_node));
+    if (_siginfo_pool == RT_NULL)
     {
         LOG_E("create memory pool for signal info failed.");
         RT_ASSERT(0);
@@ -586,4 +586,4 @@ int rt_system_signal_init(void)
     return 0;
 }
 
-#endif
+#endif /* RT_USING_SIGNALS */

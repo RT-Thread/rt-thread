@@ -12,8 +12,9 @@
 #include <rtthread.h>
 
 #ifdef RT_USING_HEAP /* Memory routine */
-void *
-_malloc_r (struct _reent *ptr, size_t size)
+#include <sys/errno.h>
+
+void * _malloc_r (struct _reent *ptr, size_t size)
 {
     void* result;
 
@@ -26,8 +27,7 @@ _malloc_r (struct _reent *ptr, size_t size)
     return result;
 }
 
-void *
-_realloc_r (struct _reent *ptr, void *old, size_t newlen)
+void * _realloc_r (struct _reent *ptr, void *old, size_t newlen)
 {
     void* result;
 
@@ -53,15 +53,13 @@ void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
     return result;
 }
 
-void
-_free_r (struct _reent *ptr, void *addr)
+void _free_r (struct _reent *ptr, void *addr)
 {
     rt_free (addr);
 }
 
 #else
-void *
-_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
+void * _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 {
     return RT_NULL;
 }

@@ -21,6 +21,9 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 1024
+
+/* kservice optimization */
+
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
 
@@ -49,9 +52,11 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40004
 #define ARCH_ARM
+#define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_A
+#define RT_USING_GIC_V2
 #define ARCH_ARM_CORTEX_A9
 
 /* RT-Thread Components */
@@ -84,9 +89,9 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEMS_MAX 4
 #define DFS_FILESYSTEM_TYPES_MAX 8
-#define DFS_FD_MAX 16
+#define DFS_FD_MAX 32
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -95,6 +100,8 @@
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_3
 #define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
@@ -132,13 +139,8 @@
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
-
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -151,13 +153,16 @@
 #define RT_USING_POSIX
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
+#define RT_USING_POSIX_GETLINE
 #define RT_USING_POSIX_AIO
+#define RT_LIBC_FIXED_TIMEZONE 8
 
 /* Network */
 
 /* Socket abstraction layer */
 
 #define RT_USING_SAL
+#define SAL_INTERNET_CHECK
 
 /* protocol stack implement */
 
@@ -177,7 +182,8 @@
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP202
+#define RT_USING_LWIP212
+#define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
 #define RT_LWIP_DHCP
@@ -213,11 +219,9 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-
-/* Modbus master and slave stack */
-
 
 /* AT commands */
 
@@ -226,6 +230,7 @@
 
 
 /* Utilities */
+
 #define RT_USING_LWP
 
 /* RT-Thread online packages */
@@ -259,6 +264,9 @@
 /* system packages */
 
 
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
 /* peripheral libraries and drivers */
 
 
@@ -266,6 +274,9 @@
 
 
 /* samples: kernel and components samples */
+
+
+/* games: games run on RT-Thread console */
 
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0

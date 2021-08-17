@@ -78,6 +78,7 @@ struct uart_handle
   */
 #define UART_MODE_TX                        (0x00u)         /*!< TX mode                    */
 #define UART_MODE_TX_RX                     (0x01u)         /*!< RX and TX mode             */
+#define UART_MODE_1LINE                     (0x02u)         /*!< oneline mode             */
 
 /**
   * @}

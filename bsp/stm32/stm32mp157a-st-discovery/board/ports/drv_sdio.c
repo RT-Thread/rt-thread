@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -54,13 +54,13 @@ struct rthw_sdio
 };
 
 /* SYSRAM SDMMC1/2 accesses */
-#define SDCARD_ADDR          0x2FFC0000
+#define SDCARD_ADDR          0x2FFFF000
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 __attribute__((at(SDCARD_ADDR))) static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 #elif defined ( __GNUC__ )
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE] __attribute__((section(".SdCardSection")));
 #elif defined(__ICCARM__)
-#pragma location = SDCARD_ADDR 
+#pragma location = SDCARD_ADDR
 __no_init static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 #endif
 
@@ -151,7 +151,7 @@ static void rthw_sdio_wait_completed(struct rthw_sdio *sdio)
     {
         return;
     }
-    
+
     cmd->resp[0] = hw_sdio->resp1;
     cmd->resp[1] = hw_sdio->resp2;
     cmd->resp[2] = hw_sdio->resp3;
@@ -167,22 +167,22 @@ static void rthw_sdio_wait_completed(struct rthw_sdio *sdio)
         {
             cmd->err = -RT_ERROR;
         }
-        
+
         if (status & SDMMC_STA_CTIMEOUT)
         {
             cmd->err = -RT_ETIMEOUT;
         }
-        
+
         if (status & SDMMC_STA_DCRCFAIL)
         {
             data->err = -RT_ERROR;
         }
-        
+
         if (status & SDMMC_STA_DTIMEOUT)
         {
             data->err = -RT_ETIMEOUT;
         }
-        
+
         if (cmd->err == RT_EOK)
         {
             LOG_D("sta:0x%08X [%08X %08X %08X %08X]", status, cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]);
@@ -205,7 +205,7 @@ static void rthw_sdio_wait_completed(struct rthw_sdio *sdio)
                   data ? data->blksize : 0
                  );
         }
-        
+
     }
     else
     {
@@ -226,7 +226,7 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     struct rt_mmcsd_data *data = cmd->data;
     struct stm32_sdio *hw_sdio = sdio->sdio_des.hw_sdio;
     rt_uint32_t reg_cmd;
-    
+
     sdio->pkg = pkg;
 
     LOG_D("CMD:%d ARG:0x%08x RES:%s%s%s%s%s%s%s%s%s rw:%c len:%d blksize:%d\n",
@@ -254,9 +254,9 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
         reg_cmd |= SDMMC_RESPONSE_LONG;
     else
         reg_cmd |= SDMMC_RESPONSE_SHORT;
-    
+
     hw_sdio->mask |= SDIO_MASKR_ALL;
-        
+
     /* data pre configuration */
     if (data != RT_NULL)
     {
@@ -292,7 +292,7 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
 
     /* close irq, keep sdio irq */
     hw_sdio->mask = hw_sdio->mask & SDMMC_IT_SDIOIT ? SDMMC_IT_SDIOIT : 0x00;
-    
+
     /* data post configuration */
     if (data != RT_NULL)
     {
@@ -316,7 +316,7 @@ static void rthw_sdio_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
     struct rt_mmcsd_data *data;
 
     RTHW_SDIO_LOCK(sdio);
-    
+
     if (req->cmd != RT_NULL)
     {
         rt_memset(&pkg, 0, sizeof(pkg));
@@ -346,7 +346,7 @@ static void rthw_sdio_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
     }
 
     RTHW_SDIO_UNLOCK(sdio);
-    
+
     mmcsd_req_complete(sdio->host);
 }
 
@@ -392,7 +392,7 @@ static void rthw_sdio_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *
          );
 
     RTHW_SDIO_LOCK(sdio);
-    
+
     clk_src = SDIO_CLOCK_FREQ;
 
     if (clk > 0)
@@ -425,7 +425,7 @@ static void rthw_sdio_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *
 
     if (io_cfg->power_mode == MMCSD_POWER_ON)
         hw_sdio->power |= SDMMC_POWER_PWRCTRL;
-    
+
     RTHW_SDIO_UNLOCK(sdio);
 }
 
@@ -513,7 +513,7 @@ err:
     {
         rt_free(sdio);
     }
-    
+
     return RT_NULL;
 }
 
@@ -522,7 +522,7 @@ void SDMMC1_IRQHandler(void)
     rt_interrupt_enter();
     /* Process All SDIO Interrupt Sources */
     rthw_sdio_irq_process(host1);
-    
+
     rt_interrupt_leave();
 }
 
@@ -577,9 +577,13 @@ int rt_hw_sdio_init(void)
         return RT_NULL;
     }
 #endif
-    
+
 #ifdef BSP_USING_SDIO2
-    MX_RTC_Init();
+    
+    if (IS_ENGINEERING_BOOT_MODE())
+    {
+        MX_RTC_Init();
+    }
     LBEE5KL1DX_init();
 
     struct stm32_sdio_des sdio_des2;
@@ -591,7 +595,7 @@ int rt_hw_sdio_init(void)
     {
         LOG_E("host2 create fail");
         return RT_NULL;
-    }    
+    }
 #endif
     return RT_EOK;
 }
@@ -601,7 +605,7 @@ INIT_DEVICE_EXPORT(rt_hw_sdio_init);
 int mnt_init(void)
 {
     rt_device_t sd = RT_NULL;
-    
+
     rt_thread_delay(RT_TICK_PER_SECOND);
 
     sd = rt_device_find("sd0");
@@ -610,7 +614,7 @@ int mnt_init(void)
         rt_kprintf("can't find sd0 device!\n");
         return RT_ERROR;
     }
-    
+
     if (dfs_mount("sd0", "/", "elm", 0, 0) != 0)
     {
         rt_kprintf("file system mount failed!\n");

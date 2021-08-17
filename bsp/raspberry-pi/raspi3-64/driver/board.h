@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,6 +12,7 @@
 #define BOARD_H__
 
 #include <stdint.h>
+#include "raspi.h"
 
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;

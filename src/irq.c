@@ -9,6 +9,7 @@
  * 2006-05-03     Bernard      add IRQ_DEBUG
  * 2016-08-09     ArdaFu       add interrupt enter and leave hook.
  * 2018-11-22     Jesven       rt_interrupt_get_nest function add disable irq
+ * 2021-08-15     Supperthomas fix the comment
  */
 
 #include <rthw.h>
@@ -21,27 +22,32 @@ static void (*rt_interrupt_leave_hook)(void);
 
 /**
  * @ingroup Hook
- * This function set a hook function when the system enter a interrupt
+ *
+ * @brief This function set a hook function when the system enter a interrupt
  *
  * @note the hook function must be simple and never be blocked or suspend.
+ *
+ * @param hook The function point to be called
  */
 void rt_interrupt_enter_sethook(void (*hook)(void))
 {
     rt_interrupt_enter_hook = hook;
 }
+
 /**
  * @ingroup Hook
- * This function set a hook function when the system exit a interrupt.
+ *
+ * @brief This function set a hook function when the system exit a interrupt.
  *
  * @note the hook function must be simple and never be blocked or suspend.
+ *
+ * @param hook The function point to be called
  */
 void rt_interrupt_leave_sethook(void (*hook)(void))
 {
     rt_interrupt_leave_hook = hook;
 }
-#endif
-
-/* #define IRQ_DEBUG */
+#endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup Kernel
@@ -53,10 +59,11 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 #define rt_interrupt_nest rt_cpu_self()->irq_nest
 #else
 volatile rt_uint8_t rt_interrupt_nest = 0;
-#endif
+#endif /* RT_USING_SMP */
+
 
 /**
- * This function will be invoked by BSP, when enter interrupt service routine
+ * @brief This function will be invoked by BSP, when enter interrupt service routine
  *
  * @note please don't invoke this routine in application
  *
@@ -66,18 +73,19 @@ void rt_interrupt_enter(void)
 {
     rt_base_t level;
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq coming..., irq nest:%d\n",
-                                rt_interrupt_nest));
-
     level = rt_hw_interrupt_disable();
     rt_interrupt_nest ++;
     RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
     rt_hw_interrupt_enable(level);
+
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq current nest:%d\n",
+                                rt_interrupt_nest));
 }
 RTM_EXPORT(rt_interrupt_enter);
 
+
 /**
- * This function will be invoked by BSP, when leave interrupt service routine
+ * @brief This function will be invoked by BSP, when leave interrupt service routine
  *
  * @note please don't invoke this routine in application
  *
@@ -87,23 +95,24 @@ void rt_interrupt_leave(void)
 {
     rt_base_t level;
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq leave, irq nest:%d\n",
+    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq is going to leave, irq current nest:%d\n",
                                 rt_interrupt_nest));
 
     level = rt_hw_interrupt_disable();
-    rt_interrupt_nest --;
     RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+    rt_interrupt_nest --;
     rt_hw_interrupt_enable(level);
 }
 RTM_EXPORT(rt_interrupt_leave);
 
+
 /**
- * This function will return the nest of interrupt.
+ * @brief This function will return the nest of interrupt.
  *
  * User application can invoke this function to get whether current
  * context is interrupt context.
  *
- * @return the number of nested interrupts.
+ * @return rt_uint8_t  the number of nested interrupts.
  */
 RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
 {

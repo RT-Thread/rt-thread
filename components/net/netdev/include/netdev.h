@@ -186,6 +186,7 @@ void netdev_low_level_set_gw(struct netdev *netdev, const ip_addr_t *gw);
 void netdev_low_level_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
 void netdev_low_level_set_status(struct netdev *netdev, rt_bool_t is_up);
 void netdev_low_level_set_link_status(struct netdev *netdev, rt_bool_t is_up);
+void netdev_low_level_set_internet_status(struct netdev *netdev, rt_bool_t is_up);
 void netdev_low_level_set_dhcp_status(struct netdev *netdev, rt_bool_t is_enable);
 
 #ifdef __cplusplus

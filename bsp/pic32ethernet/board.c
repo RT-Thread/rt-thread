@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,12 +32,12 @@
 #pragma config DEBUG    = OFF           // Debugger Disabled for Starter Kit
 
 //  The following is used by the main application
-#define SYS_FREQ		(80000000UL)
+#define SYS_FREQ        (80000000UL)
 
-#define PB_DIV         		(1 << ((OSCCON&_OSCCON_PBDIV0_MASK)>>_OSCCON_PBDIV0_POSITION) )
-#define PRESCALE       		256
-#define TOGGLES_PER_SEC		RT_TICK_PER_SECOND
-#define T1_TICK       		(SYS_FREQ/PB_DIV/PRESCALE/TOGGLES_PER_SEC)
+#define PB_DIV              (1 << ((OSCCON&_OSCCON_PBDIV0_MASK)>>_OSCCON_PBDIV0_POSITION) )
+#define PRESCALE            256
+#define TOGGLES_PER_SEC     RT_TICK_PER_SECOND
+#define T1_TICK             (SYS_FREQ/PB_DIV/PRESCALE/TOGGLES_PER_SEC)
 
 static void rt_hw_show_info(void)
 {
@@ -68,18 +64,18 @@ static void rt_hw_timer_handler(void)
 void rt_hw_board_init()
 {
     // Configure the device for maximum performance, but do not change the PBDIV clock divisor.
-	// Given the options, this function will change the program Flash wait states,
-	// RAM wait state and enable prefetch cache, but will not change the PBDIV.
+    // Given the options, this function will change the program Flash wait states,
+    // RAM wait state and enable prefetch cache, but will not change the PBDIV.
     // The PBDIV value is already set via the pragma FPBDIV option above.
-   	SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
+    SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
 
-   	/* use DBPRINTF */
-   	/* rt_hw_console_init(); */
+    /* use DBPRINTF */
+    /* rt_hw_console_init(); */
 
-	rt_hw_usart_init();
-	rt_console_set_device("uart1");
+    rt_hw_usart_init();
+    rt_console_set_device("uart1");
 
-   	rt_hw_show_info();
+    rt_hw_show_info();
 
     // enable multi-vector interrupts
     INTEnableSystemMultiVectoredInt();
@@ -97,7 +93,7 @@ void rt_hw_board_init()
     ConfigIntTimer1(T1_INT_ON | T1_INT_PRIOR_2);
 
     /* Setup the software interrupt. */
-	mConfigIntCoreSW0( CSW_INT_ON | CSW_INT_PRIOR_1 | CSW_INT_SUB_PRIOR_0 );
+    mConfigIntCoreSW0( CSW_INT_ON | CSW_INT_PRIOR_1 | CSW_INT_SUB_PRIOR_0 );
 }
 
 void __ISR(_TIMER_1_VECTOR, ipl2) Timer1Handler(void)

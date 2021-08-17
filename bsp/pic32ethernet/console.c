@@ -1,11 +1,7 @@
 /*
- * File      : console.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -23,8 +19,8 @@
 
 void rt_hw_console_init(void)
 {
-	//Initialize the DB_UTILS IO channel
-//	DBINIT();
+    //Initialize the DB_UTILS IO channel
+//  DBINIT();
 }
 
 /**

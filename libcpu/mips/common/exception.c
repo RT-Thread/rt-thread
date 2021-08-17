@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -164,7 +164,7 @@ void rt_general_exc_dispatch(struct pt_regs *regs)
 {
     rt_ubase_t cause, exccode;
     cause = read_c0_cause();
-    exccode = (cause & CAUSEF_EXCCODE) >> CAUSEB_EXCCODE;    
+    exccode = (cause & CAUSEF_EXCCODE) >> CAUSEB_EXCCODE;
 
     if (exccode == 0)
     {

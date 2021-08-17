@@ -11,11 +11,13 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include <stdint.h>
+#include <sys/errno.h>
 
-#if defined(RT_USING_POSIX)
+#ifdef RT_USING_POSIX
 #include <dfs_file.h>
 #include <dfs_posix.h>
 #include <dfs_poll.h>
+#include <sys/ioctl.h>
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
@@ -320,7 +322,7 @@ static const struct dfs_file_ops pipe_fops =
 };
 #endif /* end of RT_USING_POSIX */
 
-rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
+rt_err_t  rt_pipe_open(rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
     rt_err_t ret = RT_EOK;
@@ -348,7 +350,7 @@ __exit:
     return ret;
 }
 
-rt_err_t  rt_pipe_close  (rt_device_t device)
+rt_err_t  rt_pipe_close(rt_device_t device)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
 
@@ -366,7 +368,7 @@ rt_err_t  rt_pipe_close  (rt_device_t device)
     return RT_EOK;
 }
 
-rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
+rt_size_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t read_bytes = 0;
@@ -374,7 +376,7 @@ rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_siz
 
     if (device == RT_NULL)
     {
-        rt_set_errno(-EINVAL);
+        rt_set_errno(EINVAL);
         return 0;
     }
     if (count == 0) return 0;
@@ -394,7 +396,7 @@ rt_size_t rt_pipe_read   (rt_device_t device, rt_off_t pos, void *buffer, rt_siz
     return read_bytes;
 }
 
-rt_size_t rt_pipe_write  (rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
+rt_size_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count)
 {
     uint8_t *pbuf;
     rt_size_t write_bytes = 0;
@@ -402,7 +404,7 @@ rt_size_t rt_pipe_write  (rt_device_t device, rt_off_t pos, const void *buffer, 
 
     if (device == RT_NULL)
     {
-        rt_set_errno(-EINVAL);
+        rt_set_errno(EINVAL);
         return 0;
     }
     if (count == 0) return 0;
@@ -516,12 +518,12 @@ int rt_pipe_delete(const char *name)
         }
         else
         {
-            result = -ENODEV;
+            result = -RT_EINVAL;
         }
     }
     else
     {
-        result = -ENODEV;
+        result = -RT_EINVAL;
     }
 
     return result;
@@ -531,8 +533,8 @@ int rt_pipe_delete(const char *name)
 int pipe(int fildes[2])
 {
     rt_pipe_t *pipe;
-    char dname[8];
-    char dev_name[32];
+    char dname[RT_NAME_MAX];
+    char dev_name[RT_NAME_MAX * 4];
     static int pipeno = 0;
 
     rt_snprintf(dname, sizeof(dname), "pipe%d", pipeno++);
