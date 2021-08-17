@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-08-14     Jackistang   add commets for function inferface.
+ * 2021-08-14     Jackistang   add comments for function interface.
  */
 #ifndef RINGBUFFER_H__
 #define RINGBUFFER_H__
@@ -82,9 +82,9 @@ void rt_ringbuffer_destroy(struct rt_ringbuffer *rb);
 #endif
 
 /**
- * @brief Get buffer size of the ringbuffer object.
+ * @brief Get buffer size of the ring buffer object.
  *
- * @param rb        A pointer to the ringbuffer object.
+ * @param rb        A pointer to the ring buffer object.
  *
  * @return  Buffer size.
  */
