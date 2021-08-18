@@ -72,8 +72,8 @@ rt_err_t rt_work_cancel(struct rt_work *work);
  * @brief Initialize a work item, binding with a callback function.
  *
  * @param work          A pointer to the work item object.
- * @param work_func     A callback function will be called when this work item is executed.
- * @param work_data     A user data passed to the callback function as it's second parameter.
+ * @param work_func     A callback function that will be called when this work item is executed.
+ * @param work_data     A user data passed to the callback function as the second parameter.
  */
 rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_work *work, void *work_data),
                             void *work_data)
