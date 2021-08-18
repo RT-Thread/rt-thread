@@ -11,15 +11,16 @@
 #include <rtthread.h>
 #include "utest.h"
 #define UTEST_NAME "irq_tc"
-static uint32_t irq_count=0;
+static uint32_t irq_count = 0;
 static uint32_t max_get_nest_count = 0;
+
 static void irq_callback()
 {
     if(rt_interrupt_get_nest() >  max_get_nest_count)
     {
         max_get_nest_count = rt_interrupt_get_nest();
     }
-    irq_count++;
+    irq_count ++;
 }
 
 static void irq_test(void)
@@ -27,8 +28,8 @@ static void irq_test(void)
     rt_interrupt_enter_sethook(irq_callback);
     rt_thread_delay(2);
     LOG_D("start irq_test OK!\n");
-    LOG_D("%s test irq_test! irq_count %d  max_get_nest_count %d\n",UTEST_NAME,irq_count,max_get_nest_count);
-    uassert_int_not_equal(0,irq_count);
+    LOG_D("%s test irq_test! irq_count %d  max_get_nest_count %d\n", UTEST_NAME, irq_count, max_get_nest_count);
+    uassert_int_not_equal(0, irq_count);
     uassert_int_not_equal(0, max_get_nest_count);
 }
 
