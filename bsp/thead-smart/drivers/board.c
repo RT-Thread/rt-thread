@@ -23,7 +23,7 @@ extern int __bss_end__;
 
 extern usart_handle_t console_handle;
 extern void ioreuse_initial(void);
-
+extern int rt_hw_usart_init(void);
 
 /**
  * This function will initial smart-evb board.

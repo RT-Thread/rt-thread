@@ -68,11 +68,6 @@ struct mem_desc platform_mem_desc[] = {
 
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]);
 
-rt_uint32_t platform_get_gic_dist_base(void)
-{
-    return FT_GICV3_DISTRIBUTOR_BASEADDRESS;
-}
-
 static rt_uint32_t timerStep;
 
 void rt_hw_timer_isr(int vector, void *parameter)
