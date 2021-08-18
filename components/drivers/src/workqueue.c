@@ -302,7 +302,7 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
 }
 
 /**
- * @brief Submit a work item to the work queue without delay. This work item will be executed after the current work item is executed.
+ * @brief Submit a work item to the work queue without delay. This work item will be executed after the current work item.
  *
  * @param queue     A pointer to the workqueue object.
  * @param work      A pointer to the work item object.
