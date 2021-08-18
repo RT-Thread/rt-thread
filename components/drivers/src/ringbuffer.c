@@ -29,7 +29,7 @@ rt_inline enum rt_ringbuffer_state rt_ringbuffer_status(struct rt_ringbuffer *rb
 }
 
 /**
- * @brief Initialize the ring buffer object with the given buffer.
+ * @brief Initialize the ring buffer object.
  *
  * @param rb        A pointer to the ring buffer object.
  * @param pool      A pointer to the buffer.
@@ -415,7 +415,7 @@ RTM_EXPORT(rt_ringbuffer_reset);
  *
  * @param size      The size of the buffer in bytes.
  *
- * @return Return a pointer to ring buffer object. When the return value is RT_NULL, it means the creation failed.
+ * @return Return a pointer to ring buffer object. When the return value is RT_NULL, it means this creation failed.
  */
 struct rt_ringbuffer *rt_ringbuffer_create(rt_uint16_t size)
 {
