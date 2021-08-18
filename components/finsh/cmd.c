@@ -810,6 +810,7 @@ static char *const device_type_str[] =
     "I2C Bus",
     "USB Slave Device",
     "USB Host Bus",
+    "USB OTG Bus",
     "SPI Bus",
     "SPI Device",
     "SDIO Bus",

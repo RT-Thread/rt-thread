@@ -1,11 +1,13 @@
 /*
  * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2021, Alibaba Group Holding Limited
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2020/08/20     zx.chen      The T-HEAD RISC-V CPU E906 porting implementation
+ * 2021/08/13     zx.chen      update T-HEAD E9xx-series(E906/7/F/D/P) CPU porting code.
  */
 
 #include "cpuport.h"
@@ -28,8 +30,6 @@ vPortYield:
     sb      t1, (t0)
 
     ret
-
-
 
 /*
  * #ifdef RT_USING_SMP
@@ -56,12 +56,10 @@ rt_hw_context_switch_to:
     li      t1, 1
     STORE   t1, (t0)
 
-    /* enable mexstatus SPUSHEN and SPSWAPEN */
-#if ((CONFIG_CPU_E906==1) || (CONFIG_CPU_E906F==1) || (CONFIG_CPU_E906FD==1))
-    uint32_t mexstatus;
-    mexstatus  = __get_MEXSTATUS();
-    mexstatus |= (0x2 << 16);
-    __set_MEXSTATUS(mexstatus);
+    /* enable mexstatus SPUSHEN */
+#ifdef CONFIG_THEAD_EXT_SPUSHEN
+    li      t0, 0x10000
+    csrs    mexstatus, t0
 #endif
 
     csrw    mscratch, sp
@@ -140,7 +138,7 @@ PendSV_Handler:
     lw      t1, (t0)
     beqz    t1, .switch_to_thead
     
-    /* save from thread context */
+    /* restore from thread context t0,t1 */
     lw      t0, (-4)(sp)
     lw      t1, (-8)(sp)
 
@@ -191,10 +189,6 @@ PendSV_Handler:
     csrr    x1, mepc
     STORE   x1, 0 * REGBYTES(sp)
     csrr    x1, mstatus
-    andi    x1, x1, 8
-    beqz    x1, .save_mpie
-    li      x1, 0x80
-.save_mpie:
     STORE   x1, 2 * REGBYTES(sp)
     /* x3 don't need save */
     STORE   x4, 4 * REGBYTES(sp)
@@ -256,11 +250,9 @@ PendSV_Handler:
     csrw    mepc, a1
     LOAD    x1, 1 * REGBYTES(sp)
 
-    /* force to machin mode(MPP=11) */
-    li      a1, 0x1880
-    csrs    mstatus, a1
+    /* force to machine mode(MPP=11) */
     LOAD    a1, 2 * REGBYTES(sp)
-    csrs    mstatus, a1
+    csrw    mstatus, a1
     /* x3 don't need restore */
     LOAD    x4, 4 * REGBYTES(sp)
     LOAD    x5, 5 * REGBYTES(sp)
