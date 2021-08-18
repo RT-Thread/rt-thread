@@ -82,7 +82,7 @@ void rt_ringbuffer_destroy(struct rt_ringbuffer *rb);
 #endif
 
 /**
- * @brief Get buffer size of the ring buffer object.
+ * @brief Get the buffer size of the ring buffer object.
  *
  * @param rb        A pointer to the ring buffer object.
  *
