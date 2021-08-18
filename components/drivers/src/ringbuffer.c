@@ -335,11 +335,15 @@ rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
         return rb->buffer_size;
     case RT_RINGBUFFER_HALFFULL:
     default:
-        if (rb->write_index > rb->read_index)
-            return rb->write_index - rb->read_index;
+    {
+        rt_size_t wi = rb->write_index, ri = rb->read_index;
+
+        if (wi > ri)
+            return wi - ri;
         else
-            return rb->buffer_size - (rb->read_index - rb->write_index);
-    };
+            return rb->buffer_size - (ri - wi);
+    }
+    }
 }
 RTM_EXPORT(rt_ringbuffer_data_len);
 
