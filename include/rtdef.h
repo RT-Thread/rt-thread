@@ -81,6 +81,21 @@ typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned inte
 #endif
 #endif
 
+#if defined(RT_CHECKER_BITWISE) && defined(__GNUC__)
+#define __bitwise__ __attribute__((bitwise))
+#else
+#define __bitwise__
+#endif
+
+#define __bitwise __bitwise__
+
+typedef rt_uint16_t __bitwise           rt_le16_t;      /**< 16bit little endian type */
+typedef rt_uint16_t __bitwise           rt_be16_t;      /**< 16bit big endian type */
+typedef rt_uint32_t __bitwise           rt_le32_t;      /**< 32bit little endian type */
+typedef rt_uint32_t __bitwise           rt_be32_t;      /**< 32bit big endian type */
+typedef rt_uint64_t __bitwise           rt_le64_t;      /**< 64bit little endian type */
+typedef rt_uint64_t __bitwise           rt_be64_t;      /**< 64bit big endian type */
+
 typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
 typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
