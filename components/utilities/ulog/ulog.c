@@ -445,6 +445,7 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
         {
             /* recalculate the log start address and log size when backend not supported color */
             rt_size_t color_info_len = 0, output_size = size;
+            char *output_log = log;
 
             if (color_output_info[level] != RT_NULL)
                 color_info_len = rt_strlen(color_output_info[level]);
@@ -453,10 +454,10 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
             {
                 rt_size_t color_hdr_len = rt_strlen(CSI_START) + color_info_len;
 
-                log += color_hdr_len;
+                output_log += color_hdr_len;
                 output_size -= (color_hdr_len + (sizeof(CSI_END) - 1));
             }
-            backend->output(backend, level, tag, is_raw, log, output_size);
+            backend->output(backend, level, tag, is_raw, output_log, output_size);
         }
 #endif /* !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG) */
     }
