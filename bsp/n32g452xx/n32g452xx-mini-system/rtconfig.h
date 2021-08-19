@@ -88,7 +88,11 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_ADC
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -97,7 +101,7 @@
 
 #define RT_USING_LIBC
 #define RT_USING_POSIX
-#define RT_LIBC_FIXED_TIMEZONE 8
+#define RT_LIBC_DEFAULT_TIMEZONE 8
 
 /* Network */
 
@@ -182,7 +186,19 @@
 /* On-chip Peripheral Drivers */
 
 #define RT_USING_GPIO
+#define BSP_USING_ON_CHIP_FLASH
 #define RT_USING_UART
 #define RT_USING_UART1
+#define RT_USING_UART2
+#define RT_USING_UART3
+#define BSP_USING_SPI
+#define BSP_USING_SPI1
+#define BSP_USING_SPI2
+#define BSP_USING_I2C1
+#define BSP_I2C1_SCL_PIN 22
+#define BSP_I2C1_SDA_PIN 23
+#define BSP_USING_ADC
+#define BSP_USING_ADC1
+#define BSP_USING_ADC2
 
 #endif

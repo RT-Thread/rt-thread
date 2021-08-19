@@ -9,9 +9,11 @@ cwd = GetCurrentDir()
 # add general drivers
 src = Split('''
 board.c
+msp/n32_msp.c
 ''')
 
 path = [cwd]
+path += [cwd + '/msp']
 
 startup_path_prefix = SDK_LIB
 
