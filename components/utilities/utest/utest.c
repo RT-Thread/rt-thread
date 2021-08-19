@@ -83,13 +83,16 @@ int utest_init(void)
     tc_num = (utest_tc_export_t) &__rt_utest_tc_tab_end - tc_table;
 #endif
 
-    tc_fail_list = rt_malloc(TC_FAIL_LIST_SIZE);
-    if(!tc_fail_list)
-    {
-        LOG_E("no memory, tc_fail_list init failed!");
-    }
     LOG_I("utest is initialize success.");
     LOG_I("total utest testcase num: (%d)", tc_num);
+    if (tc_num > 0)
+    {
+        tc_fail_list = rt_malloc(TC_FAIL_LIST_SIZE);
+        if(!tc_fail_list)
+        {
+            LOG_E("no memory, tc_fail_list init failed!");
+        }
+    }
     return tc_num;
 }
 INIT_COMPONENT_EXPORT(utest_init);
