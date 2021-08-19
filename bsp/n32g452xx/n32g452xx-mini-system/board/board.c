@@ -5,13 +5,18 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      first implementation
+ * 2018-11-06     balanceTWK   first version
  */
+
 #include <stdint.h>
 #include <rthw.h>
 #include <rtthread.h>
+
 #include <board.h>
 
+#ifdef BSP_USING_SRAM
+#include "drv_sram.h"
+#endif
 /**
   * @brief  This function is executed in case of error occurrence.
   * @param  None
@@ -51,9 +56,9 @@ void SysTick_Handler(void)
 }
 
 /**
- * This function will initial N32 board.
+ * This function will initial AT32 board.
  */
-void rt_hw_board_init(void)
+void rt_hw_board_init()
 {
     /* NVIC Configuration */
 #define NVIC_VTOR_MASK              0x3FFFFF80
@@ -75,9 +80,9 @@ void rt_hw_board_init(void)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-#ifdef RT_USING_HEAP
-    rt_system_heap_init((void*)HEAP_BEGIN, (void*)HEAP_END);
+#ifdef BSP_USING_SRAM
+    rt_system_heap_init((void *)EXT_SRAM_BEGIN, (void *)EXT_SRAM_END);
+#else
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 }
-
-/*@}*/

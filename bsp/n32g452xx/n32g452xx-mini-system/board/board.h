@@ -5,41 +5,45 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-09-22     Bernard      add board.h to this bsp
+ * 2020-01-15     shelton      first version
+ * 2021-02-09     shelton      add flash macros
  */
 
-// <<< Use Configuration Wizard in Context Menu >>>
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
 #include <n32g45x.h>
+#include "n32_msp.h"
 
-// <o> Internal SRAM memory size[Kbytes]
-//  <i>Default: 80
-#ifdef __ICCARM__
-// Use *.icf ram symbal, to avoid hardcode.
-extern char __ICFEDIT_region_RAM_end__;
-#define N32_SRAM_END            &__ICFEDIT_region_RAM_end__
-#else
-#define N32_SRAM_SIZE           80
-#define N32_SRAM_END            (0x20000000 + N32_SRAM_SIZE * 1024)
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#ifdef __CC_ARM
+/* Just only support for AT32F40xxG */
+#define N32_FLASH_START_ADRESS      ((uint32_t)0x08000000)
+#define FLASH_PAGE_SIZE             (2 * 1024)
+#define N32_FLASH_SIZE              (256 * 1024)
+#define N32_FLASH_END_ADDRESS       ((uint32_t)(N32_FLASH_START_ADRESS + N32_FLASH_SIZE))
+
+/* Internal SRAM memory size[Kbytes] <80>, Default: 80*/
+#define N32_SRAM_SIZE       (80)
+#define N32_SRAM_END        (0x20000000 + N32_SRAM_SIZE * 1024)
+
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
+#define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
-#pragma section="HEAP"
-#define HEAP_BEGIN    (__segment_end("HEAP"))
+#pragma section="CSTACK"
+#define HEAP_BEGIN      (__segment_end("CSTACK"))
 #else
 extern int __bss_end;
-#define HEAP_BEGIN    (&__bss_end)
+#define HEAP_BEGIN      ((void *)&__bss_end)
 #endif
 
-#define HEAP_END          N32_SRAM_END
+#define HEAP_END        N32_SRAM_END
 
-void rt_hw_board_init(void);
-
+#ifdef __cplusplus
+}
 #endif
 
-//*** <<< end of configuration section >>>    ***
+#endif /* __BOARD_H__ */
